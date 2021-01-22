@@ -1,18 +1,20 @@
-newPackage("SuffixTreePackage",
+-- this package is a Macaulay2 implementation of the Suffix Tree as given
+-- in Amir et.al.  It is used for debugging and prototyping the C++ implementation
+-- of this data structure in e/NCAlgebras/SuffixTree.{hpp,cpp}
+
+newPackage("SuffixTrees",
      Headline => "Data Type for a Suffix Tree as laid out by Amir et.al.",
      Version => "0.1",
-     Date => "Jan 29, 2019",
-     Authors => {
-	  {Name => "Frank Moore",
-	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html",
-	   Email => "moorewf@wfu.edu"},
-	  {Name => "Mike Stillman",
-	   HomePage => "",
-	   Email => ""}},
-     PackageImports => {},
-     AuxiliaryFiles => true,
-     DebuggingMode => true,
-     CacheExampleOutput =>true
+     Date => "Jan 22, 2021",
+    Authors => {{Name => "Frank Moore", 
+	   Email => "moorewf@wfu.edu",
+	   HomePage => "https://math.wfu.edu/moore"},
+	{Name => "Mike Stillman",  
+            Email => "mike@math.cornell.edu", 
+            HomePage => "http://www.math.cornell.edu/~mike"}
+        },
+     DebuggingMode => false,
+     Keywords => {"Noncommutative Algebra"}
      )
 
 protect label
@@ -418,10 +420,27 @@ checkDivisions = sups -> all(sups, sup -> (sup#2)_(toList((sup#1)..(sup#1 + #(su
 
 --- checkTree -- can we write something like this?
 
-end
+beginDocumentation()
+
+doc ///
+   Key
+    SuffixTree
+   Headline
+    Macaulay2 implementation of the Suffix Tree data type
+   Description
+      Text
+        This package is a Macaulay2 implementation of the Suffix Tree as given
+	in Amir et.al.  It is used for debugging and prototyping the C++ implementation
+	of this data structure in e/NCAlgebras/SuffixTree.{hpp,cpp}.  This package has
+	no tests or further documentation.
+///
+
+
+end----
 
 restart
-debug needsPackage "SuffixTreePackage"
+debug needsPackage "SuffixTrees"
+installPackage "SuffixTrees"
 
 (tree,rightOverlaps) := suffixTree {{c,c,1},{c,a,b,2},{b,a,b,a,3}}
 
@@ -430,7 +449,7 @@ suffixTreeInsert(tree, {c,a,b,2})
 suffixTreeInsert(tree, {b,a,b,a,3})
 
 restart
-debug needsPackage "SuffixTreePackage"
+debug needsPackage "SuffixTrees"
 --- gens of lead term ideal of generic Sklyanin algebra out to degree 12 (as lists of symbols)
 --- I tried putting all this on one line but the parser doesn't like it.
 mons = {{Z, X}, {Z, Y}, {Z, Z}, {Y, Y, X}, {Y, Y, Z}, {Y, X, Y, Y}, {Y, Y, Y, Y}, {Y, X, Y, X, X},
@@ -489,7 +508,7 @@ mons = sortUsing(mons, length)
 
 -- subwords bug!!!
 restart
-debug needsPackage "SuffixTreePackage"
+debug needsPackage "SuffixTrees"
 --- gens of lead term ideal of generic Sklyanin algebra out to degree 12 (as lists of symbols)
 --- I tried putting all this on one line but the parser doesn't like it.
 mons = {{Z, X}, {Z, Y}, {Z, Z}, {Y, Y, X}}
@@ -498,7 +517,7 @@ subwords = suffixTreeSubwords(tree, {symbol Y, symbol Y, symbol Z})
 
 -- second bug.
 restart
-debug needsPackage "SuffixTreePackage"
+debug needsPackage "SuffixTrees"
 mons = {{Z,Z},{Z,Y},{Z,X},{Y,Y,X},{Y,Y,Z},{Y,Y,Y,Y},{Y,X,Y,Y},{Y,X,Y,X,Y},
     {Y,X,Y,X,Z},{Y,X,Y,X,X},{Y,X,X,Y,Y,Y},{Y,X,X,Y,X,X},{Y,X,X,Y,X,Z},
     {Y,X,X,Y,X,Y,Z},{Y,X,X,Y,X,Y,X},{Y,X,X,X,Y,X,Y},{Y,X,X,X,Y,Y,Y},
@@ -509,7 +528,7 @@ mons = {{Z,Z},{Z,Y},{Z,X},{Y,Y,X},{Y,Y,Z},{Y,Y,Y,Y},{Y,X,Y,Y},{Y,X,Y,X,Y},
 subwords = suffixTreeSubwords(tree, {Y,X,X,X,X,Y,X,Y,Z,Z})
 
 restart
-debug needsPackage "SuffixTreePackage"
+debug needsPackage "SuffixTrees"
 mons = {{Z,X},{Z,Y},{Z,Z},{Y,Y,X}}
 (tree,rightOverlaps) = suffixTree mons;
 subwords = suffixTreeSubwords(tree, {Y,Y,Z})
@@ -526,7 +545,7 @@ print toString JgbLT
 
 -- 'correct' term order
 restart
-debug needsPackage "SuffixTreePackage"
+debug needsPackage "SuffixTrees"
 mons = {{X, X}, {X, Z}, {X, Y}, {Y, Y, X}, {Y, Y, Z}, {Y, Z, Y, Y}, {Y, Y, Y, Y},
         {Y, Z, Y, Z, Z}, {Y, Z, Y, Z, Y}, {Y, Z, Y, Z, X}, {Y, Z, Z, Y, Y, Y},
 	{Y, Z, Z, Y, Z, X}, {Y, Z, Z, Y, Z, Z}, {Y, Z, Z, Z, Y, Y, Y},

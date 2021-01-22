@@ -32,7 +32,7 @@ doc ///
             their (2-sided) Groebner bases, bases, and a number of
             other features.
         Example
-            R = (ZZ/32003)<|a,b,c|>
+            R = ZZ/32003<|a,b,c|>
             I = ideal(2*a*b + 3*b*a + 5*c^2,
                 2*b*c + 3*c*b + 5*a^2,
                 2*c*a + 3*a*c + 5*b^2)

@@ -4,12 +4,12 @@ newPackage(
     Date => "21 Jan 2021",
     Authors => {{Name => "Frank Moore", 
 	   Email => "moorewf@wfu.edu",
-	   HomePage => "http://www.math.wfu.edu/Faculty/Moore.html"},
+	   HomePage => "https://math.wfu.edu/moore"},
 	{Name => "Mike Stillman",  
             Email => "mike@math.cornell.edu", 
             HomePage => "http://www.math.cornell.edu/~mike"}
         },
-    Headline => "Non-commutative algebra",
+    Headline => "Noncommutative algebra",
     Keywords => {"Noncommutative Algebra"},
     DebuggingMode => false,
     PackageExports =>{"IntegralClosure"},
@@ -100,34 +100,19 @@ export {
     }
 
 -- symbols into hash table for ring
-generatorSymbols = Core#"private dictionary"#"generatorSymbols"
-generatorExpressions = Core#"private dictionary"#"generatorExpressions"
-liftDegree = Core#"private dictionary"#"liftDegree"
-promoteDegree = Core#"private dictionary"#"promoteDegree"
-indexStrings = Core#"private dictionary"#"indexStrings"
-indexSymbols = Core#"private dictionary"#"indexSymbols"
+importFrom_Core {"generatorSymbols","generatorExpressions",
+    "liftDegree","promoteDegree","indexStrings","indexSymbols"}
 
 -- local functions in the commutative ring code from core that are needed
-findSymbols = value Core#"private dictionary"#"findSymbols"
-ReverseDictionary = value Core#"private dictionary"#"ReverseDictionary"
-makepromoter = value Core#"private dictionary"#"makepromoter"
-processWeights = value Core#"private dictionary"#"processWeights"
-hasAttribute = value Core#"private dictionary"#"hasAttribute"
-getAttribute = value Core#"private dictionary"#"getAttribute"
-processDegrees = value Core#"private dictionary"#"processDegrees"
-commonEngineRingInitializations = value Core#"private dictionary"#"commonEngineRingInitializations"
+importFrom_Core {"findSymbols","ReverseDictionary","makepromoter",
+    "processWeights","hasAttribute","getAttribute",
+    "processDegrees","commonEngineRingInitializations"}
 
--- raw function calls to engine
-raw = value Core#"private dictionary"#"raw"
-rawPairs = value Core#"private dictionary"#"rawPairs"
-rawQuotientRing = value Core#"private dictionary"#"rawQuotientRing"
-rawGetTerms = value Core#"private dictionary"#"rawGetTerms"
-rawSparseListFormMonomial = value Core#"private dictionary"#"rawSparseListFormMonomial"
-rawNCFreeAlgebra = value Core#"private dictionary"#"rawNCFreeAlgebra"
-rawNCBasis = value Core#"private dictionary"#"rawNCBasis"
-rawNCReductionTwoSided = value Core#"private dictionary"#"rawNCReductionTwoSided"
-rawNCGroebnerBasisTwoSided = value Core#"private dictionary"#"rawNCGroebnerBasisTwoSided"
-RawRingElement = value Core#"private dictionary"#"RawRingElement"
+-- raw functions for the engine interface
+importFrom_Core{"raw","rawPairs","rawQuotientRing","rawGetTerms",
+    "rawSparseListFormMonomial","rawNCFreeAlgebra",
+    "rawNCBasis","rawNCReductionTwoSided","rawNCGroebnerBasisTwoSided",
+    "RawRingElement"}
 
 --- debugging/benchmark tools
 BUG = str -> ()
@@ -290,8 +275,6 @@ freeAlgebra(Ring, BasicList) := FreeAlgebra => (A, args)  -> (
 Ring AngleBarList := Ring => (R,variables) -> (
     use freeAlgebra(R, variables)
     )
-
-Ring List := Ring => (R,variables) -> error "I should not occur"
 
 FreeAlgebra _ ZZ := (R, n) -> (R.generators)#n
 coefficientRing FreeAlgebra := R -> last R.baseRings
