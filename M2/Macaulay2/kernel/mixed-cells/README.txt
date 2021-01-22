@@ -18,8 +18,8 @@ run
 etags *.cpp *.h
 in the shell.
 Then in emacs place the cursor on a variable or type name and 
-press META "." to jump to the first occurence 
-press CTRL-u META-"." to jump to the next occurence
+press META "." to jump to the first occurrence 
+press CTRL-u META-"." to jump to the next occurrence
 
 Mysterious symbols:
 
@@ -33,7 +33,7 @@ Have an exact field, which stores its elements in words when they fit. For examp
 
 Do LP solving with doubles, and transform certificates to exact arithmetics.
 
-Increase perturbations precission dynamically.
+Increase perturbations precision dynamically.
 
 
 
