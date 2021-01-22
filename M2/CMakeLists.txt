@@ -23,6 +23,8 @@ set(CMAKE_CXX_STANDARD 17)
 ## Use the C11 (C0X) standard
 set(CMAKE_C_STANDARD 11)
 
+set(WITH_TBB ON CACHE BOOL "whether to use TBB")
+
 ###############################################################################
 ## Set the default build configuration
 if(NOT CMAKE_BUILD_TYPE)
