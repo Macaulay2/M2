@@ -919,7 +919,7 @@ document {
 	  },
      EXAMPLE lines ///
 	  for i from 1 to 9 do (x := 0 .. 10000 ; registerFinalizer(x, "-- finalizing sequence #"|i|" --"))
-	  collectGarbage()
+	  collectGarbage() -* no-capture-flag *-
 	  ///,
      Caveat => "This function should mainly be used for debugging.  Having a large number of finalizers
      might degrade the performance of the program.  Moreover, registering two or more objects that are members of a circular chain
