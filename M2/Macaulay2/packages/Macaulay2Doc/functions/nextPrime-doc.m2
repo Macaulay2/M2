@@ -94,12 +94,12 @@ doc ///
        of a K-rational point on V(I)
   Description
      Text
-       If X has codimension 1, then we intersect X with a randomly choosen
+       If X has codimension 1, then we intersect X with a randomly chosen
        line, and hope that the decomposition of the the intersection contains a 
        K-rational point. If n=degree X then the probability P that this happens, is the 
        proportion  of permutations in $S_n$ with a fix point on $\{1,\ldots,n \}$,
        i.e. $$P=\sum_{j=1}^n (-1)^{j-1} binomial(n,j)(n-j)!/n! = 1-1/2+1/3! + \ldots $$
-       which approachs $1-exp(-1) = 0.63\ldots$. Thus a probabilistic approach works.
+       which approaches $1-exp(-1) = 0.63\ldots$. Thus a probabilistic approach works.
 	
        For higher codimension we first project X birationally onto a 
        hypersurface Y, and find a point on Y. Then we take the preimage of this point.
@@ -121,37 +121,4 @@ doc ///
        I=ideal random(n,R); 
        time (#select(apply(100,i->(degs=apply(decompose(I+ideal random(1,R)),c->degree c); 
 		      #select(degs,d->d==1))),f->f>0))
-///
-	 
-
--- tests for nextprime
-TEST ///
-  assert( nextPrime(-10) == 2)
-  assert( nextPrime 100 == 101)
-  assert( nextPrime 1000 == 1009)
-///
-
-TEST ///
-     setRandomSeed("getPrimeOfUnity")
-     (p,r)=getPrimeWithRootOfUnity(2,3,Range=>(10^3,10^4))
-     assert( (p,r)==(3511,-1)) -- works if the random number generator is not unchanged 
-     (p,r)=getPrimeWithRootOfUnity(15,20)
-     assert((p,r)==(18181,21))
-     (p,r)=getPrimeWithRootOfUnity(12,2,Range=>(100,200))     	  
-     assert(r^12%p==1 and r^6%p !=1 and r^4%p != 1)
-/// 
-
-TEST ///
-     setRandomSeed 0
-     p=10007,kk=ZZ/p 
-     R=kk[x_0..x_2]
-     I=ideal(random(4,R)); 
-     time randomKRationalPoint(I)
-     R=kk[x_0..x_4]
-     I=minors(3,random(R^5,R^{3:-1}));
-     codim I
-     time pt = randomKRationalPoint(I)
-     -- The following is the answer given the above random seed.
-     ans = ideal(x_3+74*x_4,x_2+2336*x_4,x_1-4536*x_4,x_0-4976*x_4)
-     assert(pt == ans)
 ///

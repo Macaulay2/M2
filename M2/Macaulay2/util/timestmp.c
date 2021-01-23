@@ -1,4 +1,4 @@
-/* Unfortunately, the 'date' command doesn't exist on MSDOS, so we provide
+/* Unfortunately, the 'date' command does not exist on MS-DOS, so we provide
    this for generating a timestamp.
    The timestamp is used to distinguish one binary of Macaulay2 from the next.
    This is important to prevent a mismatch between the executable and the

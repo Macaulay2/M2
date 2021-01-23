@@ -220,7 +220,7 @@ gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
         GH#"EHxt" = makeSLProgram(varMat, GH#"Hx"|GH#"Ht");
         GH#"EHxH" = makeSLProgram(varMat, GH#"Hx"|GH#"H");
         )
-    else error "uknown Software option value";
+    else error "unknown Software option value";
     if para then (
         GPH := new GateParameterHomotopy;
         GPH.GateHomotopy = GH;		

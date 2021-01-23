@@ -88,7 +88,7 @@ document {
      Key => "Singular Book 1.1.8",
      Headline => "computation in fields",
      SUBSECTION "Computation over ZZ and QQ",
-     "In Macaulay2, Integers are arbitary precision.  The ring of integers is denoted ZZ.",
+     "In Macaulay2, Integers are arbitrary precision.  The ring of integers is denoted ZZ.",
      EXAMPLE {
 	  "123456789^5",
 	  "matrix{{123456789^5}}",

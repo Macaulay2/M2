@@ -147,7 +147,7 @@ W = makeWA(QQ[x_1..x_2]);
 
 F = {x_1^3+x_2^2,x_1^2+x_2^3}
 
-F = {x_1,(x_2^2+x_1^3)} -- Maynadier, H. Polynomes de Bernstein-Sato associs  une intersection compelte quasi-homogene  singularite isole. 
+F = {x_1,(x_2^2+x_1^3)} -- Maynadier, H. Polynômes de Bernstein-Sato associés à une intersection complète quasi-homogène à singularité isolée.
 -- Bull. Soc. Math. France  125  (1997),  No. 4, 547--571. (cf. page 554)
 -- answer should be: (s_1+1)(s_2+1)(2s_1+6s_2+5)(2s_1+6s_2+7)(2s_1+6s_2+9)(2s_1+6s_2+11)
 

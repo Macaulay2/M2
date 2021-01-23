@@ -429,7 +429,7 @@ makeHom4psInput (Ring, List) := (R, T) -> (
 --      T = polynomials of target system (in R)
 -- OUT: (name, perm), where
 --      name = input filename   
---      perm = hashtable of order of appearences of variables in the input
+--      perm = hashtable of order of appearances of variables in the input
   filename := temporaryFileName() | "input"; 
   s := "{\n";
   scan(T, p -> s = s | replace("ii", "I", toString p) | ";\n");

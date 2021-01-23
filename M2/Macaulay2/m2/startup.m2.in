@@ -16,12 +16,12 @@ firstTime := class PackageDictionary === Symbol
 
 if firstTime then (
      -- we do this bit *before* "debug Core", so that Core (the symbol, not the package), which may not be there yet, ends up in the right dictionary
-     assert = x -> (
+     assert' = x -> (
 	  if class x =!= Boolean then error "assert: expected true or false";
 	  if not x then error "assertion failed");
      PackageDictionary = new Dictionary;
      dictionaryPath = append(dictionaryPath,PackageDictionary);
-     assert( not isGlobalSymbol "Core" );
+     assert'( not isGlobalSymbol "Core" );
      PackageDictionary#("Package$Core") = getGlobalSymbol(PackageDictionary,"Core");
      ) 
 -- we can't make this an else-clause, because then "Core" will be in the wrong dictionary
@@ -522,14 +522,12 @@ action2 := hashTable {
 	       error ("--check ",arg,": expected 1, 2, or 3")
 	  else if phase == 1 and arg == "1" then
 	       runBasicTests()
-	  else if phase == 4 and arg == "2" then
-	       try check "Macaulay2Doc" then exit 0 else exit 1
-	  else if phase == 4 and arg == "3" then (
-	       fails := 0;
-	       scan(separate(" ", version#"packages"),
-		    pkg -> try check pkg else fails = fails + 1);
-	       exit fails
-	  )
+	  else if phase == 4 and arg == "2" then (
+	       argumentMode = defaultMode - SetCaptureErr - SetUlimit -
+		    if noinitfile then 0 else ArgQ;
+	       if runString(///check("Core", Verbose => true)///, Core, false)
+		    then exit 0 else exit 1
+	  ) else if phase == 4 and arg == "3" then exit checkAllPackages()
      }
 
 scriptCommandLine = {}

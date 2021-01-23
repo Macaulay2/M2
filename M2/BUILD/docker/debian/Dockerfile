@@ -30,7 +30,7 @@ RUN apt-get install -y libeigen3-dev  libglpk-dev libgmp3-dev libmpfr-dev \
 RUN apt-get install -y mlocate bash-completion
 
 # Add non-root user for building and running Macaulay2
-RUN useradd -G sudo -g root -u 1000 -m macaulay
+RUN useradd -G sudo -g root -u 1000 -m macaulay && echo "macaulay ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER 1000:0
 
 ENV PKG_CONFIG_PATH /usr/lib/x86_64-linux-gnu/pkgconfig

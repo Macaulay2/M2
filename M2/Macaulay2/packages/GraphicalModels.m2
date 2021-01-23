@@ -1284,7 +1284,7 @@ doc ///
   
     Text
       {\bf Graphical Models} is a package for algebraic statistics. It constructs ideals of discrete and 
-      Gaussian graphical models. This package supercedes Markov.m2.
+      Gaussian graphical models. This package supersedes Markov.m2.
        
       This package constructs ideals of discrete Bayesian networks (directed acyclic graphs)
       as described in several places, including the paper: Luis David Garcia, Michael Stillman and Bernd Sturmfels,
@@ -1929,7 +1929,7 @@ doc ///
     S:List 
       list of conditional independence statements among discrete random variables. 
     VarNames:List
-      list of names of the random variables in the statements of $S$.  If this is omited 
+      list of names of the random variables in the statements of $S$.  If this is omitted 
       it is assumed that these are integers in the range from 1 to $n$ where $n$ is the number of 
       random variables in the declaration of markovRing. 
     
@@ -2149,7 +2149,7 @@ doc ///
       edges in the graph.
       
       - The $p_{(i,j)}$ indeterminates  in the {\tt gaussianRing} are the nonzero entries in the covariance matrix of the error terms
-      in the graphical model associatd to a mixed graph with bidirected edges. 
+      in the graphical model associated to a mixed graph with bidirected edges. 
       
       Note that since version 2.0 of the package, 
       {\tt gaussianRing} of a directed graph is built as a {\tt gaussianRing} of a mixed graph with only directed edges, see @TO (gaussianRing,MixedGraph)@.
@@ -2178,7 +2178,7 @@ doc ///
       a polynomial ring with indeterminates $s_{(i,j)},k_{(i,j)},l_{(i,j)},p_{(i,j)}$ 
   Description
     Text
-      This function accepts a mixed graph as input. The outputed ring contains the indeterminates $s_{(i,j)}$ associated to the 
+      This function accepts a mixed graph as input. The outputted ring contains the indeterminates $s_{(i,j)}$ associated to the 
       covariance matrix of the model plus two or three new lists of indeterminates depending on the type of edges of the graph:
       
       - The $k_{(i,j)}$ indeterminates in the {\tt gaussianRing} are the nonzero entries in the concentration
@@ -2188,7 +2188,7 @@ doc ///
       edges in the graph.
       
       - The $p_{(i,j)}$ indeterminates  in the {\tt gaussianRing} are the nonzero entries in the covariance matrix of the error terms
-      in the graphical model associatd to a mixed graph with bidirected edges. 
+      in the graphical model associated to a mixed graph with bidirected edges. 
       
       Mixed graphs in this package can be of two different types depending on their edges:
       

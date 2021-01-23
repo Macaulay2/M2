@@ -40,10 +40,3 @@ document {
      ///,
      SeeAlso => {"MinimalPrimes :: minimalPrimes"}
      }
-
-TEST ///
-R = QQ[w,x,y,z];
-(L,p) = irreducibleCharacteristicSeries ideal(x^2-y*w,x^3-z*w^2)
-n = apply(L, m -> p m)
-assert( n === {matrix {{-x^3+w^2*z, -x^2+w*y}}, matrix {{x, w}}} )
-///

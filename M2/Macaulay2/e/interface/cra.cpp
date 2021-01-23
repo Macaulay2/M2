@@ -24,19 +24,19 @@ const RingElement *rawRingElementCRA(const RingElement *f,
   if (Rf != Rg)
     {
       ERROR("expected same ring");
-      return 0;
+      return nullptr;
     }
   const PolyRing *P = Rf->cast_to_PolyRing();
-  if (P == 0)
+  if (P == nullptr)
     {
       // check whether Rf is ZZ.  If not, error.
       if (!Rf->is_ZZ())
         {
           ERROR("expected ZZ, or polynomial ring over ZZ");
-          return 0;
+          return nullptr;
         }
       ERROR("not implemented yet");
-      return 0;
+      return nullptr;
     }
   else
     {
@@ -51,11 +51,11 @@ const RingElement *rawRingElementCRA(const RingElement *f,
       else
         {
           ERROR("expected coefficient ring to be ZZ");
-          return 0;
+          return nullptr;
         }
     }
   ERROR("not written yet");
-  return 0;
+  return nullptr;
 }
 
 const Matrix *rawMatrixCRA(const Matrix *f, const Matrix *g, mpz_srcptr m, mpz_srcptr n)
@@ -64,13 +64,13 @@ const Matrix *rawMatrixCRA(const Matrix *f, const Matrix *g, mpz_srcptr m, mpz_s
   if (f->get_ring() != g->get_ring())
     {
       ERROR("matrices have different base rings");
-      return 0;
+      return nullptr;
     }
   if (f->rows()->rank() != g->rows()->rank() ||
       f->cols()->rank() != g->cols()->rank())
     {
       ERROR("matrices have different shapes");
-      return 0;
+      return nullptr;
     }
 
   // Assumption: f and g are either matrices over ZZ, or over a polynomial ring
@@ -99,16 +99,16 @@ const RingElement *rawRingElementRatConversion(const RingElement *f,
   const PolyRing *P = Rf->cast_to_PolyRing();
   const PolyRing *PQ = RQ->cast_to_PolyRing();
 
-  if (P == 0)
+  if (P == nullptr)
     {
       // check whether Rf is ZZ.  If not, error.
       if (!Rf->is_ZZ())
         {
           ERROR("expected ZZ, or polynomial ring over ZZ");
-          return 0;
+          return nullptr;
         }
       ERROR("not implemented yet");
-      return 0;
+      return nullptr;
     }
   else
     {
@@ -122,11 +122,11 @@ const RingElement *rawRingElementRatConversion(const RingElement *f,
       else
         {
           ERROR("expected coefficient ring to be ZZ");
-          return 0;
+          return nullptr;
         }
     }
   ERROR("not written yet");
-  return 0;
+  return nullptr;
 }
 
 // f should be an element in the polynomial ring R (over ZZ).
@@ -137,10 +137,10 @@ const Matrix *rawMatrixRatConversion(const Matrix *f, mpz_srcptr m, const Ring *
   const PolyRing *R = f->get_ring()->cast_to_PolyRing();
   const PolyRing *PQ = RQ->cast_to_PolyRing();
 
-  if (R == 0)
+  if (R == nullptr)
     {
       ERROR("expected polynomial ring over ZZ");
-      return 0;
+      return nullptr;
     }
 
   const FreeModule *F = f->rows();

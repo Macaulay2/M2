@@ -465,7 +465,7 @@ isAmple ToricDivisor := Boolean => D -> (
      -- line which we treat as a simply special case
      if dim X === 1 then return sum entries vector D > 0;
      -- the "toric Kleiman criterion" states that a torus-invariant divisor is
-     -- ample if and only if the interesection with every torus-invariant
+     -- ample if and only if the intersection with every torus-invariant
      -- curve is positive
      m := cartierCoefficients D;
      coneList := max X;

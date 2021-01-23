@@ -14,6 +14,7 @@ doc///
    {\bf lists} (of class @TO List@),@BR{}@
    {\bf sequences} (of class @TO Sequence@),@BR{}@
    {\bf arrays} (of class @TO Array@),
+   {\bf angle bar lists} (of class @TO AngleBarList@),
    and@BR{}@
    {\bf mutable lists} (of class @TO MutableList@).
    
@@ -67,6 +68,11 @@ doc///
   Example
    v = [1,2,3]
    ZZ[a,b,c]
+  Text
+   An {\bf angle bar list} is another type of list, created and displayed using angle bars.  They are used in much the same way as arrays are.
+  Example
+   v = <|1,2,3|>
+   v#1
   Text
    Lists, sequences, and arrays are the three examples of what we call {\bf visible lists}, 
    which constitute the class @TO VisibleList@. Many functions are defined to act uniformly 
@@ -520,6 +526,27 @@ document {
      ///,
      PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
      }
+
+document {
+     Key => AngleBarList,
+     Headline => "the class of lists delimited by <| ... |>",
+     PARA {
+	  "An angle bar list can be created by enclosing elements of any type between angle bars."
+	  },
+     EXAMPLE lines ///
+     x = <|a,b,c|>
+     # x
+     x#1
+     ///,
+     PARA {
+	  "To convert angle bar lists to and from other types of ", TO "BasicList", ", one may use ", TO "new", "."
+	  },
+     EXAMPLE lines ///
+     new AngleBarList from {a,b,c}
+     new Sequence from <|a,b,c|>
+     ///,
+     PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."}
+     }     
 
 document {
      Key => Array,

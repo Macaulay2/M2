@@ -53,7 +53,7 @@ doc ///
 		   If two quotients by Lie ideals are performed successively, 
 		   then
 		   the program converts the final result to a quotient of the first
-		   Lie algebra by a singel ideal. 
+		   Lie algebra by a single ideal. 
 		   In 
 		   the example below, $L5=(M/J)/K$ and this is transformed to 
 		   $M/P$, where $P$ is the inverse image of $K$ under 

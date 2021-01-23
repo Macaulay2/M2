@@ -515,7 +515,7 @@ minimalBetti oo
 ///
 
 -*
----possible rewrite for speed, currently imcomplete.
+---possible rewrite for speed, currently incomplete.
 Scrolls := apply(#scroll, i->hankelMatrix(T, y_(i,0), 2, scroll_i));
 J0 := sum(#scroll, i->minors(2, Scrolls_i));
 --
@@ -1280,7 +1280,7 @@ doc ///
       a complex over S, the same as F but now with homogeneous with respect to all gradings of S   
    Description
     Text
-     Given a resolution F of an ideal, with carries additional homogenity with respect
+     Given a resolution F of an ideal, with carries additional homogeneity with respect
      to the finer graded ring S, we compute the grading.
     Example
      a=3,b=3
@@ -1434,7 +1434,7 @@ doc ///
    Caveat
      Already for (e_1,e_2) fairly small, the algorithm might give wrong answers
      since the lift to characteristic zero  might be incorrect. A correction is easy to implement as soon
-     res(.,FastNonminimal=>true) allows QQ (or ZZ) as coefficient ring. Another possibily
+     res(.,FastNonminimal=>true) allows QQ (or ZZ) as coefficient ring. Another possibility
      would be to use the Chinese remainder for lifting to ZZ.
    SeeAlso
     carpetBettiTable
@@ -1517,7 +1517,7 @@ doc ///
      of names
    Description
     Text
-     We name the generators of the syzygies by the list ofthe  monomial parts 
+     We name the generators of the syzygies by the list of the monomial parts 
      of the leadTerm with position m recursively:
      
      schreyerName(F,i,n) = append(schreyerName(F,i-1,m),mon)
@@ -1783,7 +1783,7 @@ doc ///
      ST = (flattenRing(T**S))_0
      irrel = irrelevantIdeal ST;
     Text
-     Here the irrelevant ideal is the intersection of the 4 ideals of coordinats
+     Here the irrelevant ideal is the intersection of the 4 ideals of coordinates
      (P^2 and the three copies of P^1).
      Next, define the pairs of sections on the curve giving the three projections:
     Example
@@ -2219,7 +2219,7 @@ lineCorrespondence(List,List) := (scroll,correspondence) ->(
     --what should one do in the case one of the scroll sizes is < the correspondence size?
     --when the scroll size is 1, it's easy -- just take the corresponding secant matrix to
     --be a column using the correspondence-size monomials. But in general??
-    n := #scroll; -- dimension of the scroll -- note that in this contruction the line corr is bigger
+    n := #scroll; -- dimension of the scroll -- note that in this construction the line corr is bigger
     p := reverse sort apply(n, i->{scroll_i,correspondence_i}); -- put biggest scrolls first
     sscroll := p/(i->i_0); -- sorted scroll sizes
     scorr :=  p/(i->i_1); -- sorted correspondence degrees

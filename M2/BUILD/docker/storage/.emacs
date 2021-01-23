@@ -1,8 +1,5 @@
 ;; .emacs
 
-;; Macaulay2 start
-(load "M2-init")
-
 (custom-set-variables
  '(column-number-mode t)
  '(inhibit-startup-screen t)

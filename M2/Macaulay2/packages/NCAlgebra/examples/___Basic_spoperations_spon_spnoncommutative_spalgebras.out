@@ -63,7 +63,9 @@ Normal monomials of degree 3:
 none
 Components of the normal variety, excluding normal monomials:
 
-o10 = {| n_(y^2*z) n_(y*x*z)+n_(x*y*z) n_(x^2*z) n_(y^3)-n_(x*y*z) n_(x*y^2) n_(y*x*y) n_(x^2*y) n_(x*y*x) n_(x^3)+n_(x*y*z) |}
+o10 = {| n_(y^2*z) n_(y*x*z)+n_(x*y*z) n_(x^2*z) n_(y^3)-n_(x*y*z) n_(x*y^2)
+      -----------------------------------------------------------------------
+      n_(y*x*y) n_(x^2*y) n_(x*y*x) n_(x^3)+n_(x*y*z) |}
 
 o10 : List
 
@@ -306,7 +308,13 @@ Normal monomials of degree 2:
 a
 Components of the normal variety, excluding normal monomials:
 
-o42 = {| P_(w*a) P_(z*a) P_(y*a) P_(x*a) P_(z*w) P_(y*w) P_(x*w) P_(y*z) P_(x*z) P_(x*y) P_(z^2)^2-P_(y^2)P_(w^2) P_(y^2)P_(z^2)-P_(x^2)P_(w^2) P_(x^2)P_(z^2)-P_(w^2)^2 P_(y^2)^2-P_(w^2)^2 P_(x^2)P_(y^2)-P_(z^2)P_(w^2) P_(x^2)^2-P_(y^2)P_(w^2) |}
+o42 = {| P_(w*a) P_(z*a) P_(y*a) P_(x*a) P_(z*w) P_(y*w) P_(x*w) P_(y*z)
+      -----------------------------------------------------------------------
+      P_(x*z) P_(x*y) P_(z^2)^2-P_(y^2)P_(w^2) P_(y^2)P_(z^2)-P_(x^2)P_(w^2)
+      -----------------------------------------------------------------------
+      P_(x^2)P_(z^2)-P_(w^2)^2 P_(y^2)^2-P_(w^2)^2
+      -----------------------------------------------------------------------
+      P_(x^2)P_(y^2)-P_(z^2)P_(w^2) P_(x^2)^2-P_(y^2)P_(w^2) |}
 
 o42 : List
 
@@ -443,9 +451,13 @@ i65 : B = endomorphismRing(M,X);
 
 i66 : gensI = gens ideal B
 
-                                                                                                         2    2        2    2
-o66 = {X X +-X , -X +X X , -X +X X , X X , X X , X X +-X , X X , X X +-X , X X , X X +-X , X X , X X , X  , X  +-X , X  , X  +-X }
-        0 1   0    3  0 2    2  1 2   0 3   1 3   2 3   2   1 0   2 0   1   2 1   3 0   0   3 1   3 2   0    1    1   2    3    3
+                                                                          
+o66 = {X X +-X , -X +X X , -X +X X , X X , X X , X X +-X , X X , X X +-X ,
+        0 1   0    3  0 2    2  1 2   0 3   1 3   2 3   2   1 0   2 0   1 
+      -----------------------------------------------------------------------
+                                    2    2        2    2
+      X X , X X +-X , X X , X X , X  , X  +-X , X  , X  +-X }
+       2 1   3 0   0   3 1   3 2   0    1    1   2    3    3
 
 o66 : List
 

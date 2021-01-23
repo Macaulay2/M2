@@ -430,7 +430,7 @@ tangentialChowForm (Ideal,ZZ,ZZ) := o -> (I,s,l) -> (
    if l >= n or l <=-1 then return 1_(Grass(l,n,K,Variable=>p));
    mnr := o.AffineChartGrass;
    if mnr === true then mnr = (random toList(0..n))_{0..r};
-   if mnr =!= false then (try assert(ring matrix{mnr} === ZZ and min mnr >=0 and max mnr <=n and # unique mnr == r+1 and # mnr == r+1) else error("bad value for option AffineChartGrass: expected either boolean value or list of "|toString(r+1)|" distinct integers beetween 0 and "|toString(n))); 
+   if mnr =!= false then (try assert(ring matrix{mnr} === ZZ and min mnr >=0 and max mnr <=n and # unique mnr == r+1 and # mnr == r+1) else error("bad value for option AffineChartGrass: expected either boolean value or list of "|toString(r+1)|" distinct integers between 0 and "|toString(n))); 
    if mnr =!= false then mnr = sort mnr; 
    if (class o.AssumeOrdinary =!= Boolean and o.AssumeOrdinary =!= null) then error "expected true or false for option AssumeOrdinary";
    limitNumGens := if (o.AssumeOrdinary === true or (o.AssumeOrdinary === null and s==0 and l==n-d-1+s)) then 1 else infinity;  
@@ -464,7 +464,7 @@ tangentialChowForm (Ideal,ZZ,ZZ) := o -> (I,s,l) -> (
    ); 
    jj := o.AffineChartProj;
    if jj === true then jj = random(n+1); 
-   if jj =!= false then (try assert(class jj === ZZ and jj >=0 and jj <=n) else error("bad value for option AffineChartProj: expected either boolean value or integer beetween 0 and "|toString(n))); 
+   if jj =!= false then (try assert(class jj === ZZ and jj >=0 and jj <=n) else error("bad value for option AffineChartProj: expected either boolean value or integer between 0 and "|toString(n))); 
    if s>0 and Irr =!= ideal(x_0..x_n) then jj = false;
    if jj === false then Inc = saturate(Inc,Irr) else ( 
        tt := x_jj;
@@ -689,7 +689,7 @@ projectionMap (Ring,Boolean) := o -> (G,B) -> (
    mnr := o.AffineChartGrass;
    if mnr === false then return (psi,M);
    if mnr === true then mnr = (random toList(0..n))_{0..k};
-   try assert(ring matrix{mnr} === ZZ and min mnr >=0 and max mnr <=n and # unique mnr == k+1 and # mnr == k+1) else error("bad value for option AffineChartGrass: expected either boolean value or list of "|toString(k+1)|" distinct integers beetween 0 and "|toString(n)); 
+   try assert(ring matrix{mnr} === ZZ and min mnr >=0 and max mnr <=n and # unique mnr == k+1 and # mnr == k+1) else error("bad value for option AffineChartGrass: expected either boolean value or list of "|toString(k+1)|" distinct integers between 0 and "|toString(n)); 
    mnr = sort mnr; 
    R = KK[flatten entries submatrix'(transpose M,mnr)];
    M = sub(sub(M,flatten for i to k list for j to k list M_(mnr_i,j) => (if i == j then 1 else 0)),R);

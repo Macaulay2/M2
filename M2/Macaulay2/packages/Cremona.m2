@@ -9,8 +9,8 @@
 
 newPackage(
        "Cremona",
-	Version => "5.0", 
-        Date => "November 20, 2020",
+	Version => "5.1", 
+        Date => "January 22, 2021",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "rational maps between projective varieties",
 	Keywords => {"Algebraic Geometry"},
@@ -84,7 +84,7 @@ isInverseMap = method(TypicalValue => Boolean);
 projectiveDegrees = method(TypicalValue => List, Options => {MathMode => false, NumDegrees => infinity, BlowUpStrategy => "Eliminate", Verbose => true});
 toMap = method(TypicalValue => RingMap, Options => {Dominant => null});
 approximateInverseMap = method(Options => {MathMode => false, CodimBsInv => null, Verbose => true});
-parametrize = method(TypicalValue => RationalMap);
+parametrize = method();
 specialCremonaTransformation = method(TypicalValue=>RationalMap);
 quadroQuadricCremonaTransformation = method(TypicalValue=>RationalMap);
 specialQuadraticTransformation = method(TypicalValue=>RationalMap);
@@ -92,11 +92,11 @@ specialCubicTransformation = method(TypicalValue=>RationalMap);
 rationalMap = method(TypicalValue => RationalMap, Options => {Dominant => null});
 forceInverseMap = method(TypicalValue => Nothing);
 forceImage = method(TypicalValue => Nothing);
-point = method(TypicalValue => Ideal);
+point = method();
 segre = method(TypicalValue => RationalMap);
 abstractRationalMap = method();
 isMorphism = method(TypicalValue => Boolean);
-exceptionalLocus = method(TypicalValue => Ideal);
+exceptionalLocus = method(TypicalValue => Ideal, Options => {MathMode => false});
 
 rationalMap (RingMap) := o -> (phi) -> ( 
    checkMultihomogeneousRationalMap phi;
@@ -207,13 +207,14 @@ rationalMap (Ring) := o -> (R) -> rationalMap(R,R,Dominant=>o.Dominant);
 rationalMap (Ring,Tally) := o -> (R,E) -> ( 
     if not isField coefficientRing R then error "the coefficient ring needs to be a field";
     if not ((isPolynomialRing R or isQuotientRing R) and isPolynomialRing ambient R and isHomogeneous ideal R) then error "the base ring must be a quotient of a polynomial ring by a homogeneous ideal";
-    if # heft R =!= 1 then error "expected standard grading";
+    -- if # heft R =!= 1 then error "expected standard grading";
     for X in keys E do if not(instance(X,Ideal) and (ring X === R or ring X === ambient R)) then error "expected a tally whose elements represent pure codimension 1 subschemes of a projective variety";
     D := pairs E;
     if not isPolynomialRing R then D = apply(D,d -> if ring first d === ambient R then (trim sub(first d,R),last d) else d);
     I := trim intersect for d in D list (first d)^(last d); 
     J := quotient(ideal I_0,I);
-    d := first first degrees I;
+    d := first degrees I;
+    if # heft R == 1 then d = first d;
     rationalMap(J,d,Dominant=>o.Dominant)
 );
 
@@ -385,7 +386,23 @@ toMap (MultihomogeneousRationalMap) := o -> (Phi) -> (
 
 map (RationalMap) := o -> (Phi) -> Phi#"map";
 
+map (ZZ,RationalMap) := o -> (i,Phi) -> (
+    if i < 0 then error "expected a nonnegative integer";
+    if i == 0 then return map Phi;
+    n := # maps Phi;
+    if i > n-1 then error("the number of minimal representatives of the map is "|toString(n));
+    (Phi#"maps")_i
+);
+
 map (MultihomogeneousRationalMap) := o -> (Phi) -> Phi#"map";
+
+map (ZZ,MultihomogeneousRationalMap) := o -> (i,Phi) -> (
+    if i < 0 then error "expected a nonnegative integer";
+    if i == 0 then return map Phi;
+    n := # maps Phi;
+    if i > n-1 then error("the number of minimal representatives of the map is "|toString(n));
+    (Phi#"maps")_i
+);
 
 expression RationalMap := (Phi) -> (
     if Phi#"dimTarget" < 0 or Phi#"dimSource" < 0 then return expression("map from " | expressionVar(Phi#"dimTarget" , Phi#"dimAmbientTarget") | " to " | expressionVar(Phi#"dimSource" , Phi#"dimAmbientSource"));
@@ -478,7 +495,10 @@ toString MultihomogeneousRationalMap := (Phi) -> "rationalMap("|toExternalString
 
 imageInt = method()
 imageInt (MutableHashTable) := (Phi) -> (
-   if Phi#"idealImage" === null then setKeyValue(Phi,"idealImage",trim kernel Phi#"map");
+   if Phi#"idealImage" =!= null then return Phi#"idealImage";
+   f := Phi#"map";
+   if all(flatten apply(entries Phi,degree),o -> o <= 0) then f = map(target f,source f,(first gens target f) * toMatrix f);
+   setKeyValue(Phi,"idealImage",trim kernel f);
    return Phi#"idealImage";
 );
 imageInt (MutableHashTable,ZZ) := (Phi,d) -> (
@@ -555,9 +575,30 @@ image (RationalMap,String) := (phi,alg) -> (
    image phi
 );
 
+image (MultihomogeneousRationalMap,String) := (phi,alg) -> (
+   if alg =!= "F4" and alg =!= "MGB" then error "expected Strategy to be \"F4\" or \"MGB\"";
+   error "not implemented yet in the case the source is a multi-projective variety";
+);
+
 matrix (RationalMap) := o -> (Phi) -> toMatrix map Phi;
 
+matrix (ZZ,RationalMap) := o -> (i,Phi) -> (
+    if i < 0 then error "expected a nonnegative integer";
+    if i == 0 then return matrix Phi;
+    n := # maps Phi;
+    if i > n-1 then error("the number of minimal representatives of the map is "|toString(n));
+    toMatrix (Phi#"maps")_i
+);
+
 matrix (MultihomogeneousRationalMap) := o -> (Phi) -> toMatrix map Phi;
+
+matrix (ZZ,MultihomogeneousRationalMap) := o -> (i,Phi) -> (
+    if i < 0 then error "expected a nonnegative integer";
+    if i == 0 then return matrix Phi;
+    n := # maps Phi;
+    if i > n-1 then error("the number of minimal representatives of the map is "|toString(n));
+    toMatrix (Phi#"maps")_i
+);
 
 coefficients (RationalMap) := o -> (Phi) ->  ( -- matrix M s.t M * (transpose gens((ideal vars R)^d)) == transpose F
     if o.Variables =!= null then error "option not available";
@@ -1035,6 +1076,8 @@ inverseMap (RationalMap,Nothing) := o -> (Phi,nothing) -> ( -- code copied from 
     ) else return Psi;
 );
 
+inverseMap (MultihomogeneousRationalMap) := o -> (Phi) -> error "not implemented yet: inverse map of a birational map from a multi-projective variety";
+
 inverseMap (RingMap) := o -> (phi) -> (
    checkRationalMap phi;
    map inverseMap(rationalMapWithoutChecking phi,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose)
@@ -1190,17 +1233,14 @@ forceInverseMap (RationalMap,RationalMap) := (Phi,Psi) -> (
      if Psi#"inverseRationalMap" === null then setKeyValue(Psi,"inverseRationalMap",Phi);
 );
 
-compose (RingMap,RingMap) := (phi,psi) -> (
-   if source phi =!= target psi then error "rational maps not composable: incompatible target and source";
-   linSys := flatten entries toMatrix (phi*psi);
-   fixComp := try gcd linSys else 1_(target phi);
-   eta := if (max degrees ideal linSys > degree fixComp) then (
-              qr := apply(linSys,g -> quotientRemainder(g,fixComp)); 
-              if # select(qr,g -> last g != 0) > 0 then error "internal error encountered";
-              map(target phi,source psi,apply(qr,first))
-          ) else map(target phi,source psi,linSys);
-   if toMatrix eta == 0 then error "rational maps not composable: their composition would be the empty map";
-   eta
+compose (RingMap,RingMap) := (f,g) -> (
+    if source f =!= target g then error "rational maps not composable: incompatible target and source";
+    L := toMatrix (f * g);
+    if L == 0 then error "rational maps may not be composable: got the empty map by composing chosen representatives";
+    D := try gcd flatten entries compress L else 1_(target f);
+    local Q;
+    M := if D != 0 and D != 1 then apply(flatten entries L,l -> (Q = quotientRemainder(l,D); assert(last Q == 0); first Q)) else flatten entries L;
+    return map(target f,source g,M);
 );
 
 composeInt = method()
@@ -1268,12 +1308,12 @@ mapsInt (MutableHashTable) := (Phi) -> (
                        setKeyValue(Phi,"maps",{Phi#"map"});
                  ) else (
                        setKeyValue(Phi,"maps",{compose(map(source Phi,source Phi,vars source Phi),map Phi)});
-                       if (unique max degrees ideal compress matrix first Phi#"maps" != {0}) then setKeyValue(Phi,"map",first Phi#"maps");
+                       setKeyValue(Phi,"map",first Phi#"maps");
                  );
             ) else (
                  setKeyValue(Phi,"maps",maps Phi#"map");
                  try apply(Phi#"maps",F -> checkMultihomogeneousRationalMap F) else error "internal error encountered";
-                 if (unique max degrees ideal compress matrix first Phi#"maps" != {0}) then setKeyValue(Phi,"map",first Phi#"maps");
+                 setKeyValue(Phi,"map",first Phi#"maps");
             );
    );
    Phi#"maps"
@@ -1573,10 +1613,12 @@ graph (RingMap) := o -> (phi) -> (
   apply(graphInt(rationalMapWithoutChecking phi,BlowUpStrategy=>o.BlowUpStrategy),map)
 );
 
-exceptionalLocus (RationalMap) := (Phi) -> (
-   B := ideal inverse Phi;
-   Phi^* B
+exceptionalLocus (RationalMap) := o -> (Phi) -> (
+   B := ideal inverse(Phi,MathMode=>o.MathMode);
+   if o.MathMode then Phi^** B else Phi^* B
 );
+
+exceptionalLocus (MultihomogeneousRationalMap) := o -> (Phi) -> error "not implemented yet: exceptional locus of a birational map from a multi-projective variety";
 
 changeCoefficientRing = method()
 changeCoefficientRing (MutableHashTable,Ring) := (Phi,KK) -> (
@@ -1795,6 +1837,7 @@ setKeyValue (MutableHashTable,String,Thing) := (Phi,str,val) -> (
     if str === "idealImage" then (
          if class val =!= Ideal then errorClass();
          if ring val =!= source Phi#"map" then errorClass();
+         if not isHomogeneous val then error "tried to set a nonhomogeneous ideal as image";
          Phi#str = val;
          if Phi#"isDominant" === null then setKeyValue(Phi,"isDominant",val == 0);
          return;
@@ -1914,7 +1957,9 @@ point (Ideal,Boolean) := (I,b) -> (  -- see also: code(randomKRationalPoint,Idea
    local par;
    if c == 1 then (
        L := {}; 
-       while #L == 0 do (par = parametrize randomLinearSubspace(R,1); L = select(decompose par^* I,q -> dim q == 1 and degree q == 1));
+       maxAttempts := 20; attempt := 0;
+       while #L == 0 and attempt < maxAttempts do (attempt = attempt+1; par = parametrize randomLinearSubspace(R,1); L = select(decompose par^* I,q -> dim q == 1 and degree q == 1));
+       if #L == 0 and attempt >= maxAttempts then error("reached maximum number of "|toString(maxAttempts)|" attempts to find point");
        p = par first L;
    ); 
    if c > 1 and n - c >= 2 then (
