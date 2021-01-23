@@ -1048,7 +1048,7 @@ hybridNoetherianOperators (Ideal, Ideal, Matrix) := List => true >> opts -> (I,P
     IS := sub(I,S);
     kP := toField(S/PS);
     RCC := (ring pt) monoid R;
-    nopsAtPoint := numNoethOpsAtPoint(sub(I,RCC), pt, opts, DependentSet => depVars / (i->sub(i,RCC)));
+    nopsAtPoint := numNoethOpsAtPoint(sub(I,RCC), pt, opts, DependentSet => depVars / (i->sub(i,RCC)), IntegralStrategy => false);
     sort flatten for op in nopsAtPoint list (
         dBasis := sub(matrix{keys op / (m -> R_(first exponents m))}, S);
         maxdeg := flatten entries dBasis / sum @@ degree // max;
@@ -1104,9 +1104,9 @@ numericalNoetherianOperators(Ideal) := List => true >> opts -> (I) -> (
     R := (ultimate(coefficientRing, ring matrix goodPoint)) monoid S;
     J := sub(I,R);
 
-
-
-    nopsTemplate := numNoethOpsAtPoint(J, goodPoint, opts, DependentSet => depSet / (i -> sub(i,R)), Tolerance => tol, DegreeLimit => noethDegLim);
+    --here integral strategy must be false to get the same kernel basis as in interpolateFromTemplate
+    nopsTemplate := numNoethOpsAtPoint(J, goodPoint, opts, DependentSet => depSet / (i -> sub(i,R)), Tolerance => tol, DegreeLimit => noethDegLim, IntegralStrategy => false);
+    --nopsTemplate := specializedNoetherianOperators(I, goodPoint, opts, DependentSet => depSet, Tolerance => tol, DegreeLimit => noethDegLim);
     if not S.?cache then S.cache = new CacheTable;
     S.cache#"interp point list" = new List;
     nopsTemplate / (tmpl -> interpolateFromTemplate(I, tmpl, opts, Tolerance => tol, Sampler => sampler))
