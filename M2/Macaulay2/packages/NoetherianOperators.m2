@@ -775,6 +775,7 @@ coefficients DiffOp := opts -> D -> (
     coefs := mons / (m -> if D#?m then D#m else 0_R);
     matrix{mons}, transpose matrix{coefs}
 )
+support DiffOp := D -> support matrix {keys D}
 
 
 -- instances of ZeroDiffOp are differential operators that
@@ -3148,6 +3149,29 @@ Description
 SeeAlso
     coefficients
     (coefficients, RingElement)
+///
+
+doc ///
+Key
+    (support, DiffOp)
+Headline
+    list of differential variables occurring in a differential operator
+Usage
+    support D
+Inputs
+    D:DiffOp
+Outputs
+    :List
+        of @TO2 {RingElement, "ring elements"}@, the variables occurring in differential monomials of {\tt D}
+Description
+    Text
+        Lists variables occurring in differential monomials with non-zero coefficients.
+        The variables occurring in the polynomial coefficients are ignored.
+        The resulting list will contain @TO2 {RingElement, "ring elements"}@ in the base ring.
+    Example
+        R = QQ[x,y,z];
+        D = diffOp{1_R=> z^2, x^2*y => 2}
+        support D
 ///
 
 doc ///
