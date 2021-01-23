@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
     "NoetherianOperators",
-    Version => "1.1",
-    Date => "Dec 22, 2020",
+    Version => "1.2",
+    Date => "Jan 23, 2020",
     Authors => {
         {Name => "Robert Krone", 
         Email => "krone@math.gatech.edu"},
