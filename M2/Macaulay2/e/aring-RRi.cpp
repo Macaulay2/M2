@@ -21,11 +21,19 @@ void ARingRRi::elem_text_out(buffer &o,
     !p_one && ((s2->len == 1 && s2->array[0] == '1') ||
                (s2->len == 2 && s2->array[1] == '1' && s2->array[0] == '-'));
 
-  if (prepend_plus) o << "+";
-  if (strip_last)
-    o.put((char *)s->array, s->len - 1);
-  else
-    o.put((char *)s->array, s->len);
+  o << "[";
+  if (prepend_plus1) o << "+";
+    if (strip_last1)
+      o.put((char *)s1->array, s1->len - 1);
+    else
+      o.put((char *)s1->array, s1->len);
+  o << ",";
+  if (prepend_plus2) o << "+";
+    if (strip_last2)
+      o.put((char *)s2->array, s2->len - 1);
+    else
+      o.put((char *)s2->array, s2->len);
+  o << "]";
 }
 
 };  // end namespace M2

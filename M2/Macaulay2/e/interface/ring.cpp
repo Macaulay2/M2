@@ -85,7 +85,7 @@ const Ring /* or null */ *rawGaloisField(const RingElement *f)
   }
 }
 
-const Ring /* or null */ *rawRingRRi(unsigned long prec)
+const Ring /* or null */ *IM2_Ring_RRi(unsigned long prec)
 {
   return M2::ConcreteRing<M2::ARingRRi>::create(new M2::ARingRRi(prec));
 }

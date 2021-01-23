@@ -42,6 +42,7 @@ for A in {ZZ,QQ,RR,RRi} do
 for B in {ZZ,QQ,RR,RRi} do
 isSubset(A,B) := (N,M) -> subsetRRi(N,M);
 
+-- FIXME: conflicts with intersection form NAGtypes/PolyDualSpaces.m2
 intersection = method(Options => {Precision => -1})
 
 for A in {ZZ,QQ,RR} do (
