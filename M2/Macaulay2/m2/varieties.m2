@@ -481,7 +481,7 @@ randomKRationalPoint Ideal := I -> (
      R:=ring I;
      if char R == 0 then error "expected a finite ground field";
      if not class R === PolynomialRing then error "expected an ideal in a polynomial ring";
-     if not isHomogeneous I then error "expected a homogenous ideal";
+     if not isHomogeneous I then error "expected a homogeneous ideal";
      n:=dim I;
      if n<=1 then error "expected a positive dimensional scheme";
      c:=codim I;

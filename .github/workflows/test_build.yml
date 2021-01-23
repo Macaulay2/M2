@@ -77,11 +77,11 @@ jobs:
         run: |
           brew config
           brew tap macaulay2/tap
-          brew install autoconf automake bison ccache cmake gnu-tar libtool make ninja pkg-config yasm
-          brew install bdw-gc boost eigen gdbm readline libatomic_ops libxml2 libomp tbb
-          brew install gmp mpfr ntl flint@2.6.3 factory@4.1.3 mpsolve glpk
-          brew install frobby memtailor mathic mathicgb givaro fflas-ffpack
-          brew install 4ti2 cohomcalg csdp gfan lrs nauty normaliz topcom
+          brew install autoconf automake bison ccache cmake ctags gnu-tar libtool make ninja pkg-config yasm
+          brew install --with-tbb --only-dependencies macaulay2/tap/M2
+          HOMEBREW_DEPS=`brew deps --1 --include-optional macaulay2/tap/M2 | tr '\n' ';'`
+          HOMEBREW_PREFIX=`brew --prefix`
+          echo "OPT_PREFIX=$HOMEBREW_PREFIX/opt/${HOMEBREW_DEPS//;/;$HOMEBREW_PREFIX/opt/}" >> $GITHUB_ENV
 
 # ----------------------
 #   Install missing tools and libraries for Linux
@@ -138,11 +138,9 @@ jobs:
       - name: Configure Macaulay2 using CMake
         if: matrix.build-system == 'cmake'
         run: |
-          deps=`brew deps --1 --include-optional macaulay2/tap/M2 | tr '\n' ';'`
-          paths=$HOMEBREW_PREFIX/opt/${deps//;/;$HOMEBREW_PREFIX/opt/}
           cmake -S../.. -B. -GNinja \
             -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_NATIVE=OFF \
-            -DCMAKE_PREFIX_PATH=$paths \
+            -DCMAKE_PREFIX_PATH=$OPT_PREFIX \
             -DCMAKE_INSTALL_PREFIX=/usr
 
       - name: Build libraries using Ninja
@@ -183,15 +181,17 @@ jobs:
 # ----------------------
 
       - name: Run Tests using CTest
-        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'default'
+        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'clang10'
         run: |
+          ./M2 -q --check 1 -e 'exit 0'
+          # TODO: uncomment these when https://github.com/Macaulay2/M2/issues/1849 is fixed
+          #./M2 -q --check 2 -e 'exit 0'
+          #./M2 -q --check 3 -e 'exit 0'
           cmake --build . --target M2-tests
           cmake --build . --target M2-unit-tests
           ctest -j1 --output-on-failure -R "unit-tests"
-          # TODO: remove the excluded normal tests
-          ctest -j4 --output-on-failure -R "normal/" -E "command|program|threads"
           ctest -j4 --output-on-failure -R "ComputationsBook"
-          # TODO: add engine tests
+          # TODO: add Macaulay2/tests/engine when https://github.com/Macaulay2/M2/issues/1213 is fixed
 
       - name: Run Tests using Autotools
         if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'default'

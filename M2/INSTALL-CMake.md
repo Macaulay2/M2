@@ -6,12 +6,17 @@ Building Macaulay2 from Source using CMake
 ## Why CMake?
 CMake is a cross-platform system for generating build environments using native tools such as Makefiles and Ninja or IDEs such as Xcode and Visual Studio. See this article on [why the KDE project switched to CMake](https://lwn.net/Articles/188693/) and this list of [cool CMake features](https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/Really-Cool-CMake-Features).
 
+Also see [this guide](BUILD/docker/README.md) for building and packaging Macaulay2 in a Docker container.
+
 ## Getting started
 [Download](https://cmake.org/download/) the latest CMake for your platform.
+CMake is availeble through [Homebrew](https://brew.sh/) for both Mac OS X and Linux distributions.
 If using a packaged distribution, confirm using `cmake --version` that you have version at least 3.15.
+This build system is tested on GCC 6+, Clang 6+, and Xcode 9+ compilers.
 
-**NOTE**: This build system is tested on GCC, Clang, and AppleClang compilers. Optionally, install `ccache` for caching compiler artifacts and `ninja-build` (`ninja` on Brew) for optimized parallel builds.
+**TIP**: install `ccache` for caching compiler artifacts and `ninja-build` (`ninja` on Brew) for optimized parallel builds.
 
+#### Requirements
 There are various tools needed to compile Macaulay2 dependencies.
 - On Debian/Ubuntu, install `autoconf build-essential bison libtool pkg-config yasm`.
 - On Fedora/CentOS, install `autoconf automake bison libtool pkg-config yasm`.
@@ -27,8 +32,14 @@ Finally, there are 2 optional libraries that help with building other requiremen
 - On Fedora/CentOS, install `libomp-devel tbb-devel`.
 - On Mac OS X, using Homebrew, install `libomp tbb`.
 
-**NOTE**: the source directory must not contain any build artifacts from an in-source build. If you have built Macaulay2 in-source before, clean the build artifacts first by running `make clean distclean` in the source directory.
+**TIP**: x86_64 binary packages for all dependencies on Mac OS X 10.15+ and Linux distributions are available through the [Macaulay2 tap](https://github.com/Macaulay2/homebrew-tap/) for Homebrew. To download the dependencies this way run:
+```
+brew tap Macaulay2/tap
+brew install --only-dependencies macaulay2/tap/M2
+```
+and append ``-DCMAKE_PREFIX_PATH=`brew --prefix` `` to an invocation of CMake prior to starting the build so that CMake can find the dependencies installed through Homebrew.
 
+#### Quick build
 A quick build involves the following steps:
 ```
 git clone https://github.com/Macaulay2/M2.git
@@ -39,6 +50,8 @@ cmake --build M2/M2/BUILD/build --target M2-emacs
 cmake --install M2/M2/BUILD/build
 ```
 Each step is explained separately in the next section.
+
+**NOTE**: the source directory must not contain any build artifacts from an in-source build. If you have built Macaulay2 in-source before, clean the build artifacts first by running `make clean distclean` in the source directory.
 
 ### Building Macaulay2
 1. Clone Macaulay2:
@@ -116,6 +129,10 @@ CMake also supports creating rpm and deb packages as well as archives and dmg im
 cpack -G DEB	# requires dpkg
 cpack -G RPM	# requires rpmbuild
 ```
+
+**TIP**: see [this guide](BUILD/docker/README.md) for packaging Macaulay2 for other Linux distributions using Docker.
+
+**NOTE**: Macaulay2 is packaged for Mac OS X as a Homebrew bottle available through the [Macaulay2 tap](https://github.com/Macaulay2/homebrew-tap).
 
 
 ## Advanced cached flags
@@ -261,13 +278,12 @@ Note: rerun the corresponding `build-[library]-install` target after the targets
 The main targets for building Macaulay2 are:
 - `M2-engine`: build the `libM2-engine` library
 - `M2-binary`: build the Macaulay2 executable
-- `M2-core`: build (and install) the core
-- `M2-emacs`: build the M2-mode package for Emacs
+- `M2-core`: generate and copy the Core package
+- `M2-emacs`: generate the M2-mode package for Emacs
 
 In addition, the following targets are available:
 - `scc1`: build the Safe C Compiler
 - `M2-interpreter`: translate `.d` and `.dd` sources into C and C++ sources
-- `M2-regex`: build the vendored GNU regex library
 - `M2-supervisor`: build the Macaulay2 multithreading supervisor
 - `M2-tests`: build various miscellaneous tests (currently `ComputationsBook`)
 
@@ -286,7 +302,7 @@ For specific packages, the following targets are also available:
 
 ### Targets for Generating Macaulay2 Syntax Highlighters
 - `M2-emacs`: generate the [M2.el](https://github.com/Macaulay2/M2-emacs) package for Emacs
-- `M2-editors`: generate various syntax highlighting grammar files
+- `M2-editors`: generate various syntax highlighting grammar files, such as [this one](https://github.com/Macaulay2/language-macaulay2)
 
 
 ## FAQ
@@ -299,19 +315,6 @@ Below are a list of common issues and errors. If you run into a problem not list
 On macOS CMake automatically finds libraries installed on the Homebrew prefix. In order to use Linuxbrew (which has the same interface and packages), use the following command to tell CMake to look under the right prefix:
 ```
 cmake -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` .
-```
-</details>
-
-<details>
-<summary>Building from the source code tarfile</summary>
-
-When building from a source code tarfile (e.g. downloaded from GitHub, rather than a git clone), you may see an error like this:
-```
-  No download info given for 'build-bdwgc' and its source directory: ...
-```
-To resolve this, you should download and extract the source tarfiles for each git submodule in the `M2/submodules` directory. Also, you may need to manually turn off submodule updates:
-```
-cmake -DGIT_SUBMODULE=off .
 ```
 </details>
 

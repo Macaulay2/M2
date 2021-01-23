@@ -79,7 +79,24 @@ if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
     OUTPUT_VARIABLE   COMMIT_COUNT)
   set(GIT_DESCRIPTION version-${PROJECT_VERSION}-${COMMIT_COUNT}-${GIT_COMMIT})
 else()
-  set(GIT_DESCRIPTION version-${PROJECT_VERSION})
+  message(NOTICE "## Not building from a git repository; submodules may need to be manually populated")
+  set(GIT_DESCRIPTION version-${PROJECT_VERSION} CACHE INTERNAL "state of the repository")
+  file(GLOB _submodules LIST_DIRECTORIES true ${CMAKE_SOURCE_DIR}/submodules/*)
+  foreach(_submodule IN LISTS _submodules)
+    if(IS_DIRECTORY ${_submodule})
+      # CMake doesn't like empty source directories for ExternalProject_Add
+      file(TOUCH ${_submodule}/.nogit)
+    endif()
+  endforeach()
+endif()
+
+## Detect brew prefix
+find_program(BREW NAMES brew)
+if(EXISTS ${BREW})
+  execute_process(
+    COMMAND ${BREW} --prefix
+    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
+    OUTPUT_VARIABLE HOMEBREW_PREFIX)
 endif()
 
 message("## Configure Macaulay2
@@ -240,7 +257,8 @@ get_property(LINK_OPTIONS    DIRECTORY PROPERTY LINK_OPTIONS)
 
 message("\n## Compiler information
      C                 = ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION} (${CMAKE_C_COMPILER})
-     C++               = ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})\n")
+     C++               = ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})
+     Ccache            = ${CMAKE_C_COMPILER_LAUNCHER}\n")
 
 if(VERBOSE)
   message("## Build flags (excluding standard ${CMAKE_BUILD_TYPE} flags)

@@ -266,7 +266,7 @@ tt#":" = "_co"			    -- has a meaning for gnu make and in URLs
 tt#";" = "_se"			    -- has a meaning for gnu make and in URLs
 tt#"?" = "_qu"				      -- has a meaning in URLs and sh
 tt#"\""= "_dq"					 -- " has a meaning for xargs
-tt#"\\"= "_bs"			  -- can't occur in a file name: MSDOS and sh
+tt#"\\"= "_bs"			 -- can't occur in a file name: MS-DOS and sh
 tt#"_" = "_us"					      -- our escape character
 
 -- some OSes are case insensitive:
