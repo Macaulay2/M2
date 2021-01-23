@@ -1275,7 +1275,7 @@ Matrix *Matrix::compress() const
 #if 0
 // int Matrix::moneq(const int *exp, int *m, const int *vars, int *exp2) const
 //     // Internal private routine for 'coeffs'.
-//     // exp2 is a scratch value.  It is a paramter so we only have to allocate
+//     // exp2 is a scratch value. It is a parameter so we only have to allocate
 //     // it once...
 // {
 //   get_ring()->getMonoid()->to_expvector(m, exp2);

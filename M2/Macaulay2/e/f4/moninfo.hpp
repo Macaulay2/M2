@@ -46,7 +46,7 @@ class MonomialInfo : public our_new_delete
 
   int firstvar;  // = 2, if no weight vector, otherwise 2 + nweights
   int nweights;  // number of weight vector values placed.  These should all be
-                 // positve values?
+                 // positive values?
   M2_arrayint weight_vectors;  // array 0..nweights of array 0..nvars-1 of longs
 
   // monomial format: [hashvalue, component, pack1, pack2, ..., packr]
