@@ -875,6 +875,7 @@ macaulayMatrixKernel := true >> opts -> (I, kP) -> (
     if debugLevel > 1 then <<opts<<endl;
     tol := if not opts.?Tolerance then getTolerance(S,opts) else opts.Tolerance;
     degLim := if not opts.?DegreeLimit then -1 else opts.DegreeLimit;
+    if instance(degLim, InfiniteNumber) then degLim = -1;
     rat := if not opts.?Rational then false else opts.Rational;
     kerStrat := if not opts.?KernelStrategy then "Default" else opts.KernelStrategy;
     useBM := if not opts.?IntegralStrategy then null else opts.IntegralStrategy;
@@ -935,6 +936,7 @@ noetherianOperatorsViaMacaulayMatrix = method(Options => true)
 noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (I, P) -> (
     R := ring I;
     m := if opts.?DegreeLimit then opts.DegreeLimit else -1;
+    if instance(m, InfiniteNumber) then m = -1;
     rat := if opts.?Rational then opts.Rational else false;
 
     t := getTolerance(R,opts);
