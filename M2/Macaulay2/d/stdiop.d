@@ -44,7 +44,7 @@ shorten(s:string):string := (				    -- purely textual
 	  );
      );
 isAbsolutePath(s:string):bool := (                         			    -- purely textual
-     -- eventually make this happen only in MSDOS
+     -- eventually make this happen only in MS-DOS
      length(s) >= 1 && s.0 == '/' ||
      length(s) >= 3 && s.1 == ':' && s.2 == '/' ||
      s === "stdio"
