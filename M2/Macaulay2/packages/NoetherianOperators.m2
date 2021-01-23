@@ -713,7 +713,14 @@ diffOp RingElement := f -> (
     R := R'.cache#"preWA";
     diffOp(f, R)
 )
-
+-- matrices with mons and coeffs
+diffOp (List, List) := (mons, coefs) -> (
+    if #mons != #coefs then error"expected same number of monomials and coefficients";
+    diffOp apply(mons,coefs, (m,c) -> m => c)
+)
+diffOp (Matrix, Matrix) := (mons, coefs) -> (
+    diffOp(flatten entries mons, flatten entries coefs)
+)
 
 
 -- Vector space operations
@@ -756,6 +763,18 @@ DiffOp == ZZ := (D, z) -> if z == 0 then false else error"cannot compare DiffOp 
 ZZ == DiffOp := (z, D) -> D == z
 evaluate (DiffOp, Matrix) := (D,p) -> applyValues(D, v -> promote((evaluate(matrix{{v}}, p))_(0,0), ring D))
 evaluate (DiffOp, Point) := (D,p) -> evaluate(D, matrix p)
+coefficients DiffOp := opts -> D -> (
+    R := ring D;
+    if opts.Variables =!= null then error"option Variables is not yet implemented for (coefficients, DiffOp)";
+    mons := if opts.Monomials === null then keys D
+        else if instance(opts.Monomials, Matrix) then first entries opts.Matrix
+        else if instance(opts.Monomials, List) then opts.Monomials
+        else if instance(opts.Monomials, Sequence) then toList opts.Monomials
+        else error "expected 'Monomials=>'' argument to be a list, sequence, or matrix";
+
+    coefs := mons / (m -> if D#?m then D#m else 0_R);
+    matrix{mons}, transpose matrix{coefs}
+)
 
 
 -- instances of ZeroDiffOp are differential operators that
@@ -2290,6 +2309,39 @@ SeeAlso
 
 doc ///
 Key
+    (diffOp, Matrix, Matrix)
+    (diffOp, List, List)
+Headline
+    create a differential operator from lists of monomials and coefficients
+Usage
+    diffOp(mons, coefs)
+Inputs
+    mons:Matrix
+        or a @TO "list"@ of differential monomials (in the base ring)
+    coefs:Matrix
+        or a @TO "list"@ of coefficients
+Outputs
+    :DiffOp
+Description
+    Text
+        Create a differential operator from lists or matrices.
+        Each entry in the monomial list or matrix corresponds to the respective element in the coefficient list or matrix.
+    Example
+        R = QQ[x,y,z];
+        mons = {x^2, y^2*z}
+        coefs = {y^2+2*x, z^4-2*x*y}
+        D = diffOp(mons, coefs)
+    Text
+        This method can be used with @TO (coefficients, DiffOp)@ to select some terms from a differential operator.
+    Example
+        D' = diffOp coefficients(D, Monomials => {x^2})
+SeeAlso
+    DiffOp
+    diffOp
+///
+
+doc ///
+Key
     (symbol +, DiffOp, DiffOp)
 Headline
     addition of differential operators
@@ -3061,6 +3113,41 @@ Description
     Example
         E = new InterpolatedDiffOp from {x => (x, x^2 + y^2)}
         evaluate(E, point{{1,2}})
+///
+
+doc ///
+Key
+    (coefficients, DiffOp)
+Headline
+    coefficients of a differential operator
+Usage
+    (mon, coef) = coefficients D
+Inputs
+    D:DiffOp
+    Variables =>
+        not yet implemented
+    Monomials => List
+        or a @TO Sequence@ or a @TO Matrix@
+Outputs
+    mon:Matrix
+    coef:Matrix
+Description
+    Text
+        Get the differential monomials and their corresponding polynomial coefficients.
+        The monomials are returned as a row matrix in the base ring, and the coefficients are returned as a column matrix.
+    Example
+        R = QQ[x,y];
+        D = diffOp{x => 2*x^2 + 1, x*y => y^2}
+        coefficients D
+    Text
+        Coefficients of given differential monomials can be obtained using the option @TO [coefficients, Monomials]@.
+        The output can be used with @TO (diffOp, Matrix, Matrix)@ to obtain new differential operators.
+    Example
+        coefficients(D, Monomials => {x*y, y^2})
+        diffOp coefficients(D, Monomials => {x*y, y^2})
+SeeAlso
+    coefficients
+    (coefficients, RingElement)
 ///
 
 doc ///
