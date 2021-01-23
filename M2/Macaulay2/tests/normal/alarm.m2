@@ -1,3 +1,4 @@
+-- no-check-flag (see https://github.com/Macaulay2/M2/issues/1392)
 -- test that alarms work
 
 time try ( alarm(1); while true do 1 ) else true
