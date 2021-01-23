@@ -1191,8 +1191,10 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
                     nop := specializedNopsFromTemplate(I, p, tmpl, opts, Tolerance => opts.Tolerance);
                     if nop === null then continue else {nop, p}
                 );
-                opList = opList | first transpose nopList;
-                ptList = ptList | last transpose nopList;
+                if #nopList > 0 then (
+                    opList = opList | first transpose nopList;
+                    ptList = ptList | last transpose nopList;
+                );
             );
             
             interpPoints := numColumns numBasis + numColumns denBasis + 1;
