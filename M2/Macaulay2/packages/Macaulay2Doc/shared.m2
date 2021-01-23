@@ -4,6 +4,7 @@ methodstr := PARA { "This function is a method function, defined in the core so 
 
 document { Key => decompose,    methodstr, SeeAlso => { "MinimalPrimes::MinimalPrimes" } }
 document { Key => truncate,     methodstr, SeeAlso => { "Truncations::Truncations" } }
+document { Key => intersection, methodstr, SeeAlso => { "NAGtypes::intersection(PolySpace,PolySpace)" } }
 document { Key => chi,          methodstr }
 
 document {
