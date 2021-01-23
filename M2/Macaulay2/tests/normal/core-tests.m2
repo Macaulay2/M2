@@ -1,28 +1,26 @@
-TEST' := teststr -> assert not first capture(teststr, UserMode => false)
-
 -- these tests were in random places in Macaulay2Doc
 -- TODO: move them somewhere appropriate
-TEST' ///
+--
      k = ZZ/101
      R = k[a,b,c,d]/(a^4+b^4+c^4+d^4)
      X = Proj R
      result = table(3,3,(p,q) -> timing ((p,q) => rank HH^q(cotangentSheaf(p,X))))
      assert( {{1, 0, 1}, {0, 20, 0}, {1, 0, 1}} === applyTable(result,last@@last) )
      print new MatrixExpression from result
-     ///
+
 
 -- Example 4.1: the bounds can be sharp.
-TEST' ///
+--
      S = QQ[w,x,y,z];
      X = Proj S;
      I = monomialCurveIdeal(S,{1,3,4})
      N = S^1/I;
      assert(Ext^1(OO_X,N~(>= 0)) == prune truncate(0,Ext^1(truncate(2,S^1),N)))
      assert(Ext^1(OO_X,N~(>= 0)) != prune truncate(0,Ext^1(truncate(1,S^1),N)))
-     ///
+
 
 -- Example 4.2: locally free sheaves and global Ext.
-TEST' ///
+--
      S = ZZ/32003[u,v,w,x,y,z];
      I = minors(2,genericSymmetricMatrix(S,u,3));
      X = variety I;
@@ -30,10 +28,10 @@ TEST' ///
      Omega = cotangentSheaf X;
      OmegaDual = dual Omega;
      assert(Ext^1(OmegaDual, OO_X^1(>= 0)) == Ext^1(OO_X^1, Omega(>= 0)))
-     ///
+
 
 -- Example 4.3: Serre-Grothendieck duality.
-TEST' ///
+--
      S = QQ[v,w,x,y,z];
      X = variety ideal(w*x+y*z,w*y+x*z);
      R = ring X;
@@ -42,20 +40,20 @@ TEST' ///
      assert(Ext^2(G,omega) == dual HH^0(G))
      assert(Ext^1(G,omega) == dual HH^1(G))
      assert(Ext^0(G,omega) == dual HH^2(G))
-     ///
 
-///
+
+
 R = QQ[vars(0..24)]
 f = () -> (alarm 4; try res coker vars R else "ran out of time")
 time f()
-///
 
-TEST' "
+
+--
 fib = memoize( n -> if n <= 1 then 1 else fib(n-1) + fib(n-2) )
 assert ( fib 10 == 89 )
-"
 
-TEST' "
+
+--
 a = 0
 f = memoize ( x -> ( a = a + 1; true ))
 f 1
@@ -68,10 +66,10 @@ f 1
 f 2
 f 3
 assert( a == 3 )
-"
 
 
-TEST' "
+
+--
 x = set {1,2,3}
 y = set {3,4,5}
 assert( member(2,x) )
@@ -84,42 +82,44 @@ assert ( x ** y === set {
 	  } )
 assert ( x - y === set {2, 1} )
 assert ( x + y === set {1, 2, 3, 4, 5} )
-assert ( toString x === \"set {1, 2, 3}\" )
-"
+assert ( toString x === "set {1, 2, 3}" )
 
-TEST' ///
+
+--
+clearAll
 frac(QQ[a,b])
 assert ( a == denominator(b/a) )
 assert ( b == numerator(b/a) )
 assert ( 1 == numerator(b/b) )
-///
 
-TEST' ///
+
+--
      assert( net (2/1) === "2" )
      assert( net (1/1) === "1" )
-///
 
-TEST' "
+
+--
 -- test name
 R = ZZ/101[a..e]
 f = symmetricPower(2,vars R)
 assert( f == value toExternalString f )
 assert( f == value toString f )
-"
 
-TEST' "
+
+--
 R = ZZ/101[a,b,c]
 M = cokernel matrix {{a,b^2,c^3}}
 N = image M_{0}
 assert( M == N )
-"
 
-TEST' "
+
+--
 assert isDirectSum (QQ^1 ++ QQ^2)
 assert isDirectSum (QQ^1 ++ QQ^2)
-"
 
-TEST' ///
+
+--
+clearAll
      R = ZZ[x_1..x_12,y]
      f = genericMatrix(R,3,4)
      assert(source (f_{1,2}) == R^{-1,-1})
@@ -139,10 +139,10 @@ TEST' ///
      n = submatrix(h, {1,2}, )
      assert(target n === R^2)
      assert(source n === source h)
-///
 
 
-TEST' ///
+
+--
   -- test of submatrixByDegrees
   R = QQ[a..d]
   I = ideal"a2b-c3,abc-d3,ac2-bd2-cd2,abcd-c4"
@@ -154,54 +154,54 @@ TEST' ///
   F = source C.dd_2
   -- rawSelectByDegrees(raw F, {-4}, {-3})
   -- rawSelectByDegrees(raw F, {}, {8})
-///
 
-TEST' "
+
+--
 R = ZZ/101[a..d]
 I = monomialCurveIdeal(R,{1,3,4})
 A = R/I
 jacobian A
 singA = minors(codim ideal presentation A, jacobian A)
 generators gb singA
-"
 
-TEST' "
+
+--
 R=ZZ/101[a..d]
 f = matrix {{a}}
 assert( isHomogeneous f )
 g = reshape(R^1, R^{-1}, f)
 assert isHomogeneous g
-"
 
-TEST' "
+
+--
 ZZ[t]
 assert (matrix {{t}} ** matrix {{t}} == matrix{{t^2}})
-"
 
-TEST' "
+
+--
 R = ZZ/101[x,y,z]
 I = ideal(x,y)
 assert( 1 == dim I )
 assert( 2 == codim I )
-"
 
-TEST' "
+
+--
      R=ZZ/101[x,y,z]
      assert( dim singularLocus ideal {y^2*z - x*(x - z)*(x + z) } === 0 )
      assert( dim singularLocus ideal {y^2*z - x*(x - z)*(x - z) } === 1 )
      S = ZZ/103[a..d]
      assert( dim singularLocus ideal { a^2 + b^2 + c^2 + d^2, a^2 + b^2 + 3*c^2 + 2*d^2 } === 1 )
      assert( dim singularLocus ideal { a^2 + b^2 + c^2 + d^2, a^2 + 5*b^2 + 3*c^2 + 2*d^2 } === 0 )
-     "
-TEST' "
+
+--
 R = ZZ/101[a]
 assert isInjective R^2_{0}
 assert not isInjective R^2_{0,0}
 assert isSurjective R^2_{0,0,1}
 assert not isSurjective R^2_{1}
-"
 
-TEST' ///
+
+--
     R = ZZ[x,y,z]
     modules = {
 	 image matrix {{x^2,x,y}},
@@ -210,8 +210,8 @@ TEST' ///
 	 image matrix {{x,y}} ++ coker matrix {{y,z}}
 	 }
     scan(modules, M -> assert( cover exteriorPower(2,M) == exteriorPower(2,cover M) ))
-///
-TEST' "
+
+--
 R = ZZ/101[x];
 k = coker vars R;
 M = R^3 ++ k^5;
@@ -225,8 +225,8 @@ assert( fittingIdeal(6,M) == ideal x^2 )
 assert( fittingIdeal(7,M) == ideal x )
 assert( fittingIdeal(8,M) == ideal 1_R )
 assert( fittingIdeal(9,M) == ideal 1_R )
-"
-TEST' ///
+
+--
     R = ZZ[x,y,z]
     modules = {
 	 image matrix {{x^2,x,y}},
@@ -235,23 +235,24 @@ TEST' ///
 	 image matrix {{x,y}} ++ coker matrix {{y,z}}
 	 }
     table(modules, modules, (P,Q) -> assert(cover P ** cover Q == cover (P ** Q)));
-///
-TEST' "
+
+--
 scan(3, n -> scan(-3 .. 3, d -> (
 	       h := projectiveHilbertPolynomial(n,d);
 	       scan(3, i -> assert( h i === binomial(n+d+i,n) )))))
-"
-TEST' "
+
+--
 r = ZZ/101[a,b]
 assert ( 2 * degree (a * b^2) === {6} )
 M = cokernel matrix (r,{{1}})
 assert ( isFreeModule prune M )
-"
-TEST' "
+
+--
 GF(8,Variable => x)
 assert ( det matrix{{x,1},{x^2,x^3}} == x^4 - x^2 )
-"
-TEST' "
+
+--
+clearAll
 R = ZZ/101[a..f]
 M = cokernel matrix (R, {{1},{-1}})
 N = prune M
@@ -264,8 +265,8 @@ assert isIsomorphism p
 assert isIsomorphism p^-1
 assert ( p * p^-1 == id_M )
 assert ( p^-1 * p == id_N )
-"
-TEST' ///
+
+--
 S = ZZ/101[a..d]
 I = monomialCurveIdeal(S, {1,3,4})
 R = S/I
@@ -284,9 +285,9 @@ assert (degrees f' === {{{1}}, {{0}}})
 assert (degrees f === {{{1}}, {{1}}})
 assert (degree f == {0})
 assert (degree f' == {1})
-///
 
-     TEST' ///
+
+     --
 	  R = ZZ[x]
 	  m = random(R^2,R^{-1,-2,-3,-4,-5})
 	  F = target m
@@ -302,8 +303,8 @@ assert (degree f' == {1})
 	  assert( source h === dual P ** Q )
 	  assert( target h === dual F ** G )
 	  scan(f, i -> scan(g, j -> scan(p, k -> scan(q, l -> assert( h_(g*i+j,q*k+l) === contract(m_(i,k),n_(j,l)))))))
-	  ///
-     TEST' ///
+
+     --
 	  R = ZZ[x]
 	  m = random(R^2,R^{-6,-7,-8,-9})
 	  F = target m
@@ -319,8 +320,8 @@ assert (degree f' == {1})
 	  assert( source h === P ** dual Q )
 	  assert( target h === F ** dual G )
 	  scan(f, i -> scan(g, j -> scan(p, k -> scan(q, l -> assert( h_(g*i+j,q*k+l) === contract(n_(j,l),m_(i,k)))))))
-	  ///
-     TEST' ///
+
+     --
 	  R = ZZ[x]
 	  m = random(R^2,R^{-6,-7,-8,-9})
 	  F = target m
@@ -336,9 +337,10 @@ assert (degree f' == {1})
 	  assert( source h === P ** dual Q )
 	  assert( target h === F ** dual G )
 	  scan(f, i -> scan(g, j -> scan(p, k -> scan(q, l -> assert( h_(g*i+j,q*k+l) === diff(n_(j,l),m_(i,k)))))))
-	  ///
 
-TEST' "
+
+--
+clearAll
 R=ZZ/101[a..f]
 assert( degrees( R^{1} ++ R^{2} ) == {{-1}, {-2}} )
 assert( degrees (R^{1,2} ** R^{3,5}) == {{-4}, {-6}, {-5}, {-7}} )
@@ -351,9 +353,9 @@ assert ( rank kernel f == 5 )
 assert ( rank cokernel f == 0 )
 assert(R^{0,0} == R^2)
 assert(R^{0,0} != R^{0,1})
-"
 
-TEST' "
+
+--
 R = ZZ/103[a..c]
 C = resolution cokernel vars R
 assert(regularity C === 0)
@@ -363,9 +365,9 @@ time C = resolution M
 assert(regularity C === 2)
 f = symmetricPower(2,vars R)
 assert(f%a + a * (f//a) == f)
-"
 
-TEST' "
+
+--
 S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
 m = matrix pack (3,toList (t_1 .. t_9))			  -- 3 by 3
 n = matrix pack (3,toList (u_1 .. u_9))			  -- 3 by 3
@@ -378,9 +380,9 @@ T = (degreesRing S)_0
 assert( poincare cokernel j == 1-8*T^2+2*T^3+31*T^4-32*T^5-25*T^6+58*T^7-32*T^8+4*T^9+T^10 )
 v = apply(7, i -> numgens source generators gb(k,DegreeLimit => i) )
 assert (v  === {0, 0, 8, 20, 25, 26, 26} )
-"
 
-TEST' "
+
+--
 R = ZZ/101[a..d]
 A = image matrix {{a}}
 B = image matrix {{b}}
@@ -393,9 +395,9 @@ assert( g*f == 1 )
 assert isWellDefined f
 assert isWellDefined g
 assert not isWellDefined inducedMap(R^1,cokernel matrix {{a}},Verify => false)
-"
 
-TEST' "
+
+--
 S = ZZ/107[vars ( 0 .. 5 ) ]
 
 g = matrix {{a*b*c - d*e*f, a*d^2 - e^3, a*e^2 - b*c*e}}
@@ -418,8 +420,9 @@ assert ( so h1 == so matrix {{
 	       +12*a*b*c^2+6*b^2*c^2+4*a*c^3+4*b*c^3+c^4,
 	       a*b^3+b^4+b^3*c
 	       }} )
-"
-TEST' "
+
+--
+clearAll
 R = ZZ/101[a..d,t]
 f = a^2-d^3*b-1
 assert(homogenize(f,t) == a^2*t^2 - d^3*b - t^4)
@@ -440,22 +443,23 @@ R = ZZ/101[a..d]/(a^2-b^2, a*b)
 use R
 f = c^2 - 1 + b^2 - b
 assert(homogenize(f,a) == c^2)
-"
 
-TEST' "
+
+--
 R = ZZ/5[t]/(t^2+t+1)
 assert (not isPrimitive t)
 assert isPrimitive (t-1)
 assert (not isPrimitive 0_R)
-"
 
-TEST' ///
+
+--
 assert ( class (x->x) === FunctionClosure )
 assert ( class sin === CompiledFunction )
 assert ( class depth === MethodFunction )
-///
 
-TEST' ///
+
+--
+clearAll
     R := ZZ/101[a..f];
     -- plane quintic, genus=6
     I1 := monomialCurveIdeal(R,{3,5});
@@ -474,10 +478,10 @@ TEST' ///
     -- smooth rational quartic in P^3
     I4 := monomialCurveIdeal(R,{1,3,4});
     assert(I4 == image matrix {{b*c-a*d, c^3-b*d^2, a*c^2-b^2*d, b^3-a^2*c}});
-///
+
 
 -- used to be in coefficients-doc.m2
-TEST' ///
+--
      R = QQ[a,b,c,d,e,f][x,y];
      F = a*x^2+b*x*y+c*y^2
      (M,C) = coefficients F
@@ -485,9 +489,9 @@ TEST' ///
 	  last coefficients(F, Monomials=>M)
 	  == C)
      coefficients(F, Variables=>{x,y,R_2})
-///
 
-TEST' ///
+
+--
      R = QQ[a,b,c,d,e,f][x,y];
      F = a*x^2+b*x*y+c*y^2
      G = d*x^2+e*x*y+f*y^2
@@ -500,9 +504,9 @@ TEST' ///
 	  last coefficients(FG, Monomials=>mons1)
 	  == C)
      coefficients(F, Variables=>{x,y,R_2})
-///
 
-TEST' ///
+
+--
   -- Using this for basis(d, f), where f is a map of modules
   R = ZZ/101[a..d]
   M = matrix"a,b;c,d"
@@ -534,10 +538,10 @@ TEST' ///
   f2 = basis(2,source f)
   last coefficients(f * f2, Monomials=>f1)
   f * f2
-///
 
 
-TEST' ///
+
+--
      R = QQ[x,y,z]
      C = res coker vars R
      D = C ++ C
@@ -545,9 +549,9 @@ TEST' ///
      E = coker D_[0]
      E = image D_[0]
      E = coimage D_[0]
-///
 
-TEST' "
+
+--
 R = ZZ/101[x,y]
 M = cokernel matrix {{x^2+y^4, y^2 + x*y^3 + 11, 1 + x*y^2}}
 C = res M
@@ -557,9 +561,9 @@ assert (HH_1 C == 0)
 assert (HH_2 C == 0)
 assert (HH_3 C == 0)
 assert (HH_4 C == 0)
-"
 
-TEST' ///
+
+--
 S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
 m = matrix pack (3,toList (t_1 .. t_9))			  -- 3 by 3
 n = matrix pack (3,toList (u_1 .. u_9))			  -- 3 by 3
@@ -626,29 +630,29 @@ assert( rank C_3 == 60 )
 assert( rank C_4 == 61 )
 C = res(M, LengthLimit => 4, DegreeLimit => 4+2, Strategy => alg)
 assert( rank C_5 == 0 )
-///
 
-TEST' ///
+
+--
      assert( (     M = ZZ^2 ++ ZZ^3) === ZZ^5 );
      assert( (     formation M) === new FunctionApplication from {directSum,(ZZ^2,ZZ^3)} );
      assert( (     M = directSum(ZZ^2, ZZ^3, ZZ^4)) === ZZ^9 );
      assert( (     formation M) === new FunctionApplication from {directSum,(ZZ^2,ZZ^3,ZZ^4)} );
      assert( (     M = ZZ^2 ** ZZ^3) === ZZ^6 );
      assert( (     formation M) === new FunctionApplication from {tensor,(ZZ^2,ZZ^3)} );
-///
 
-TEST' "
+
+--
 stream = (action,state) -> () -> stream(action, action state)
 fib = stream( (i,j) -> (j,i+j), (0,1))
 scan(1 .. 22, i -> fib = fib())
-"
 
-TEST' "
+
+--
 assert( partitions 4 === {{4},{3,1},{2,2},{2,1,1},{1,1,1,1}} / (x -> new Partition from x) )
 assert( partitions(5,3) === {{3,2},{3,1,1},{2,2,1},{2,1,1,1},{1,1,1,1,1}} / (x -> new Partition from x) )
-"
 
-TEST' ("
+
+--
      R=ZZ/101[a..d]
      C=resolution cokernel vars R
      D = C ++ C[1] ++ C[2]
@@ -657,19 +661,19 @@ TEST' ("
      assert( degree HH_0 D === 1 )
      assert( degree HH_-1 D === 1 )
      assert( degree HH_-2 D === 1 )
-     ")
 
-TEST' ///
+
+--
 assert( toString tally {1,1,1,2,1,3,2} === "new Tally from {1 => 4, 2 => 2, 3 => 1}" )
 assert( tally {1,1,1,2,1,3,2} === new Tally from {(1,4),(2,2),(3,1)} )
-///
 
 
-TEST' "
-assert( toString Tor == \"Tor\" )
-"
 
-TEST' "
+--
+assert( toString Tor == "Tor" )
+
+
+--
 R = ZZ/101[x,y]
 assert(
      intersect(image matrix {{1},{x}}, image matrix {{x}, {x^2}})
@@ -679,9 +683,9 @@ assert(
      intersect(image matrix {{1},{x}}, image matrix {{x}, {x^3}}) ==  0
      )
 assert( intersect( ideal(x^2,y), ideal (x,y^2)) == ideal (y^2, x^2, x*y) )
-"
 
-TEST' "
+
+--
 R = ZZ/101[a..d]
 assert(
      intersect(
@@ -691,23 +695,23 @@ assert(
      ==
      subquotient(matrix {{a*b}},matrix {{d}})
      )
-"
 
-TEST' "
+
+--
 R = ZZ/101[a..c]
 I = image vars R
 J = image symmetricPower (2,vars R)
 g = extend( resolution (R^1/I), resolution (R^1/J), id_(R^1))
 E = cone g
-"
 
-TEST' ///
+
+--
 R=ZZ[a]
 assert( toString a === "a" )
 assert( toString a^2 === "a^2" )
-///
 
-TEST' "
+
+--
     -- test of lift/promote of an ideal
     A = ZZ/101[a..d]
     A = QQ[a..d]
@@ -728,9 +732,9 @@ TEST' "
     I5 = trim lift(I3,A)
     use A
     assert(I5 == ideal(a,b,c^3,d^2))
-"
 
-TEST' ///
+
+--
      z = 2 - 3*ii
      w = 4 + 5*ii
      x = 2 + ii - ii
@@ -750,26 +754,26 @@ TEST' ///
      assert( x == 2. )
      assert( x == 2/1 )
      assert( net ( 2 - 3 * ii ) === "2-3*ii" )
-     ///
 
 
-TEST' "
+
+--
 assert (
      (0,0)..(2,3) ==
      ((0,0),(0,1),(0,2),(0,3),(1,0),(1,1),(1,2),(1,3),(2,0),(2,1),(2,2),(2,3))
      )
-"
 
-TEST' "
+
+--
 R=ZZ/101[a,b]
 f=matrix(R,{{1,a},{0,1}})
 g=matrix(R,{{1,0},{b,1}})
 h=f*g*f*g
 assert( h^3 * h^-1 == h^2 * h^0 )
 assert( h * h^-1 == 1 )
-"
 
-TEST' "
+
+--
 R=ZZ/101[a,b]
 f = matrix {{a}}
 assert( source f != target f)
@@ -777,9 +781,9 @@ assert( target f == target f^2 )
 assert( source f == source f^2 )
 assert( target f == target f^0 )
 assert( source f != source f^0 )
-"
 
-TEST' "
+
+--
 R = ZZ/101[a..d]
 F = R^3
 H = subquotient(F_{1,2}, F_{2})
@@ -789,24 +793,26 @@ assert( kernel f == image R^2_{1} )
 assert( isWellDefined f )
 assert( isSurjective f )
 assert( not isInjective f )
-"
 
 
-TEST' "
+
+--
+clearAll
 R = ZZ/101[x,y,z]
 assert isHomogeneous map(R^2,2,(i,j)->R_j)
 assert isHomogeneous map(R^2,5,{{x,y,z,x^2,y^2},{x,0,z,z^2,0}})
-"
 
-TEST' "
+
+--
 R = ZZ/101[a..d]
 f=1+a+b+c+d
 assert(size f == 5)
 S = R/a
 assert(size promote(f,S) == 4)
-"
 
-TEST' "
+
+--
+clearAll
 R = ZZ/101
 exteriorPower(3,R^5)
 R = ZZ/101[a..d]
@@ -831,9 +837,9 @@ N1 = coker presentation N
 m1 = map(N1,M1,matrix m)
 M2 = trim exteriorPower(2,M)
 N2 = trim exteriorPower(2,N)
-"
 
-TEST' "
+
+--
 R = ZZ/101[a .. i]
 m = genericMatrix(R,a,3,3)
 assert( exteriorPower(1,m) == m )
@@ -847,22 +853,23 @@ assert(
 	  {-c*d+a*f, -c*g+a*i, -f*g+d*i},
 	  {-c*e+b*f, -c*h+b*i, -f*h+e*i}} )
 assert( exteriorPower(3,m) == matrix {{-c*e*g+b*f*g+c*d*h-a*f*h-b*d*i+a*e*i}} )
-"
 
-TEST' "
+
+--
 k = ZZ/101
 f = random(k^3,k^9)
 R = k[a,b,c]
 g = random(R^4,R^{-2,-2})
-"
 
-TEST' "
+
+--
 R = ZZ/101[a..d]
 assert( hilbertFunction(3,R) === 20 )
 assert( hilbertFunction(10,R) === 286 )
-"
 
-TEST' "
+
+--
+clearAll
 R = ZZ/101[a..f]
 assert( dim image matrix {{a,b}} == 6 )
 assert( dim coker matrix {{a,b}} == 4 )
@@ -871,73 +878,75 @@ assert( dim ideal (a,b) == 4 )
 assert( codim ideal (a,b) == 2 )
 assert( dim R == 6 )
 assert( dim (R/a) == 5 )
-"
 
-TEST' "
+
+--
 	R = ZZ/101[a..d]
 	f = matrix{{a,b},{c,d}}
 	g = matrix(R,{{1},{0}})
 	M = subquotient(g,f)
 	assert( numgens source basis(3,M) == 16 )
-"
 
-TEST' "
+
+--
 L = ZZ/5[t]
 M = L/(t^2+t+1)
 G = GF(M,Variable => v,PrimitiveElement => t-1)
 assert( lift(v,M) + 1 == lift (v+1,M) )
 assert( lift(v^6,M) == (lift(v,M))^6 )
 assert( lift(v^7,M) == (lift(v,M))^7 )
-"
 
-TEST' "
+
+--
 R=ZZ/101[a,b,c]
 f = map(R,R,matrix(ZZ/101,{{1,2,3},{4,5,6},{7,8,9}}))
 assert( f(a) == a + 4*b + 7*c )
 assert( kernel f == ideal ( a-2*b+c ) )
-"
 
-TEST' "
+
+--
+clearAll
 f = map(frac (QQ[r,s,t]), QQ[x,y,z], {(r-s)/t,(s-t)/r,(t-r)/s})
 assert( kernel( f, SubringLimit => 1 ) == ideal(x*y*z+x+y+z) )
-"
 
-TEST' "
+
+--
 S = ZZ/101[x,y]
 R = ZZ/101[t,u]
 f = map(S,R,{x,0})
 assert( kernel f == ideal u )
-"
 
-TEST' "
+
+--
 S = ZZ/101[x,y]
 R = ZZ/101[t,u]
 f = map(S,R,{x,1})
 assert( kernel f == ideal (u-1) )
-"
 
-TEST' "
+
+--
+clearAll
 R = ZZ/101[a..f]
 m = matrix {{a*b*c*d, b^2*c*d, b*c^2*d, b*c*d^2, b*c*d*e,
 	     c*d*e*f, a*d*e*f, a*b*e*f, a*b*c*f, b*c*d*f}}
 f = map(R,ZZ/101[x_0..x_9],m)
 J = kernel f
-"
 
-TEST' "
+
+--
 S = ZZ/101[a..j]
 m = matrix {{d*g*i-a*g*j, c*h^2-e*h*i, a*b^2*g-a*b*d*h, b*d*f-d*e*j}}
 E = Ext^3(cokernel m, S)
 annihilator E
-"
 
-TEST' "
+
+--
     R = ZZ/101[s,t]
     J = image matrix {{s^4, s^3*t, s*t^3, t^4}}
     S = symmetricAlgebra J  -- MES: make an assertion here...
-"
 
-TEST' "
+
+--
 R = ZZ/101[a,b,c,d]
 f = matrix {{c^3-b*d^2, b*c-a*d, b^3-a^2*c, a*c^2-b^2*d}}
 M = cokernel f
@@ -972,9 +981,10 @@ assert( pdim P === 4 )
 assert( degree Ext^4(P,P) === 15 )
 
 image g / image(g**g**g)
-"
 
-TEST' "
+
+--
+clearAll
 eg1 = () -> (
   R = ZZ/101[a..d];
   m = matrix {{a*d - b*c, a^2*c - b^3, c^3 - b*d^2, a*c^2 - b^2*d}};
@@ -998,9 +1008,9 @@ eg3 = () -> (
   m = matrix {{a-b+c, a-d-f}};
   newCoordinateSystem(R, m))
 --eg3()
-"
 
-TEST' ///
+
+--
      Q = ZZ/101[x,y]
      I = ideal(x^3,y^5)
      R = Q/I
@@ -1012,9 +1022,9 @@ TEST' ///
 	  assert(
 	       tally splice apply(-10..10,i -> rank source basis({-d,i},E) : {i}) ===
 	       tally apply(rank source bd, i -> degree bd_i))))
-///
 
-TEST' "
+
+--
 -- copyright 1995 Michael E. Stillman
 -- several tests of tensor products and Tor
 -- many of these examples were created by David Eisenbud
@@ -1100,15 +1110,15 @@ assert( degree U1 == 4 )
 assert( degree U2 == 1 )
 assert( degree U3 == 0 )
 assert( degree U4 == 0 )
-"
 
-TEST' "
+
+--
 R=ZZ/101[x]
 assert(monomialIdeal vars R != 0)
 assert(monomialIdeal map(R^1,R^1,0) == 0)
-"
 
-TEST' ///
+
+--
      -- here we test the commutativity of the pentagon of associativities!
      C = QQ^1[0] ++ QQ^1[-1]
      assert(
@@ -1116,9 +1126,9 @@ TEST' ///
 	  ==
 	  tensorAssociativity(C**C,C,C) * tensorAssociativity(C,C,C**C)
 	  )
-     ///
 
-TEST' "
+
+--
 R = ZZ/101[a .. d,Degrees=>{1,2,3,5}]
 f = vars R
 C = resolution cokernel f
@@ -1135,9 +1145,9 @@ W = kernel f ++ cokernel f
 P = poincare W
 assert( P == poincare kernel f + poincare cokernel f )
 assert( P == poincare prune W )
-"
 
-TEST' ///
+
+--
      -- here we test the commutativity of the pentagon of associativities!
      C = QQ^1[0] ++ QQ^1[-1]
      assert(
@@ -1145,17 +1155,17 @@ TEST' ///
 	  ==
 	  tensorAssociativity(C**C,C,C) * tensorAssociativity(C,C,C**C)
 	  )
-     ///
 
-TEST' "
+
+--
     R = ZZ/101[a,b]
     S = ZZ/101[a,b,c]
     M = cokernel matrix{{c^3}}
     f = map(S,R)
     assert( R^{0,-1,-2} == pushForward(f,M) )
-"
 
-TEST' ///
+
+--
 debug Core
 M = mutableMatrix(map(ZZ^5, ZZ^7, (i,j) -> 3*i^3 + j^2 +3),Dense=>false)
 rawInsertColumns(raw M,3,4)
@@ -1183,9 +1193,9 @@ rawDeleteColumns(raw M,3,6)
 M
 rawDeleteRows(raw M,4,9)
 M
-///
 
-TEST' "
+
+--
 R = QQ[a..d, MonomialOrder => GRevLex]
 a*c + b^2 + a*c^3
 R = QQ[a..d, MonomialOrder => {GRevLex=>2, GRevLex=>2}]
@@ -1195,10 +1205,10 @@ a*c + b^2 + a*c^3
 R = QQ[a..d, MonomialOrder => RevLex => 4, Global => false]
 1 + a*c + b^2 + a*c^3
 a+a^2
-"
 
 
-TEST' ///
+
+--
 str = "HTTP/1.1 200 OK\r
 Date: Thu, 23 Jun 2016 13:10:59 GMT\r
 Server: Apache/2.2\r
@@ -1300,40 +1310,32 @@ Exceeded limit of 5
 </pre></body>
 ")
 
-///
 
-///
--- example for use with splitWWW
-str = getWWW "http://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?h11=10&L=5";
-(head,body) = splitWWW str;
-head
-body
-///
-
-TEST' ///
+--
 A = ZZ[a..d]
 B = A[r,s,t]
 C = B[x,y,z]
-///
 
 
-TEST' ///
+
+--
      assert( accumulate(toList,a,{b,c,d}) == {{a, b}, {{a, b}, c}, {{{a, b}, c}, d}} )
      assert( accumulate({a,b,c},d,toList) == {{a, {b, {c, d}}}, {b, {c, d}}, {c, d}} )
      assert( accumulate(toList,{a,b,c,d}) == {{a, b}, {{a, b}, c}, {{{a, b}, c}, d}} )
      assert( accumulate({a,b,c,d},toList) == {{a, {b, {c, d}}}, {b, {c, d}}, {c, d}} )
-///
 
-TEST' ///
+
+--
   R = ZZ/101[a..d]
   F = a + d^2 + a*b*c
   assert(F == antipode F)
   assert((1_R) == antipode(1_R))
   assert((0_R) == antipode(0_R))
   assert((R_0) == antipode(R_0))
-///
 
-TEST' ///
+
+--
+clearAll
   R = ZZ/101[a..f, SkewCommutative=>true]
   F = a + b*d + a*b*c + b*c*d*e + a*b*c*e*f + a*b*c*d*e*f
   assert(a - b*d - a*b*c + b*c*d*e + a*b*c*e*f - a*b*c*d*e*f == antipode F)
@@ -1349,9 +1351,9 @@ TEST' ///
   N = syz M
   assert(M * N == 0)
   assert((transpose N) * (transpose M) == 0) -- fails without antipode!
-///
 
-TEST' ///
+
+--
   R = ZZ/101[a..f, SkewCommutative=>{0,1,3,5}]
   F = a - b*d - a*b*c - b*c*d*e - a*b*c*e*f + a*b*c*d*e*f
   antipode F
@@ -1365,9 +1367,9 @@ TEST' ///
   Mt = matrix transpose entries M
   Nt = matrix transpose entries N
   assert(Nt*Mt != 0)
-///
 
-TEST' ///
+
+--
 R = RR_100[x,y]
 F = x+.01*y^2
 G = clean(.001,F^3) - (.03p200*x^2*y^2+x^3)
@@ -1394,17 +1396,17 @@ clean(0.1,A) -- works fine
 A = mutableMatrix({{1_RR}}, Dense=>false)
 assert try (clean(0.1,A);false) else true  -- not yet implemented.
 
-///
 
-TEST' ///
+
+--
 needsPackage "SimplicialComplexes"
 R = QQ[a..d]
 D = simplicialComplex {a*b*c,a*b*d,a*c*d,b*c*d}
 C = chainComplex D
 assert ( rank HH_2 C == 1 )
-///
 
-TEST' ///
+
+--
     R = QQ[x,y,z]
     modules = {
 	 image matrix {{x^2,x,y}},
@@ -1413,9 +1415,9 @@ TEST' ///
 	 image matrix {{x,y}} ++ coker matrix {{y,z}}
 	 }
     scan(modules, M -> assert( cover cokernel M_{1} ==  cover M ) )
-///
 
-TEST' ///
+
+--
   R = ZZ[x]
   M = image map(R^2,,{{2},{0}})
   f = coverMap M
@@ -1426,9 +1428,9 @@ TEST' ///
   f = coverMap M
   assert isSurjective f
   assert ( cokernel f == 0 )
-///
 
-TEST' ///
+
+--
 R = QQ[a..d]
 f = a^3*b+c^4+d^2-d
 assert((0,4) == weightRange({1,1,0,0},f))
@@ -1439,9 +1441,9 @@ assert((1,2) == weightRange({1,2},f))
 assert((1,2) == weightRange({1,2,0,0,0,0,231,12312,132,3212,2,123,12123,23},f))
 (34489274,534535353) == weightRange({34489274,534535353},f)
 weightRange({0,0,3,7,1},f)
-///
 
-TEST' ///
+
+--
   R = ZZ[x,y,z]
   f = y^4*(3*z^3-z^2-1) - y^3*z^7 + y + z^12
   assert(topCoefficients f == (y^4, 3*z^3-z^2-1))
@@ -1453,25 +1455,25 @@ TEST' ///
   assert(topCoefficients matrix{{1_R}} == (matrix{{1_R}}, matrix{{1_R}}))
   assert(topCoefficients(x*y-1) == (x,y))
   assert(topCoefficients(x+3*x^2+5*x^3+7*x^4+19) == (x^4, 7_R))
-///
 
-TEST' ///
+
+--
   A = ZZ[a,b]
   B = A[c,d,e]
   f = a*c^2-b*c
   assert(topCoefficients f == (c^2, a))
   g = sub(a^2*b+a*b, B)
   assert(topCoefficients g == (a^2, b)) -- this is perhaps not completely expected behavior
-///
 
-TEST' ///
+
+--
   A = ZZ/32003[a,b,c,d]/(a^2-b-1)
   f = a*(b+c+d^2) - 3
   topCoefficients f == (0,0) -- no, it should really treat it as a polynomial...
-///
 
 
-TEST' /// --Errors in the above code
+
+-- --Errors in the above code
 kk = ZZ/101
 A = kk[a,b]
 B = kk[c,d,e]
@@ -1486,25 +1488,25 @@ describe(C = tensor(A,B,Inverses=>true,MonomialOrder=>RevLex)) -- allowed, but n
 describe tensor(A,B,Weights=>{1,2,3,4,5}) -- ignored?
 describe tensor(A,B,Global=>false) -- ??
 describe(C = tensor(A,B,SkewCommutative=>true)) -- ignored
-///
 
-TEST' ///
+
+--
      assert( subsets(4,2) === {{0,1},{0,2},{1,2},{0,3},{1,3},{2,3}} )
      assert( subsets({a,b,c,d},2) === {{a,b},{a,c},{b,c},{a,d},{b,d},{c,d}} )
      assert(
       set subsets(set {a,b,c,d},2) ===
       set apply({{a,b},{a,c},{b,c},{a,d},{b,d},{c,d}},set) )
-///
 
-TEST' ///
+
+--
 R = ZZ[a..d]
 f = (a+b+c)^3
 assert(someTerms(f,0,1) == leadTerm f)
 assert(someTerms(f,-1,1) == c^3)
 assert(someTerms(f,-2,2) == 3*b*c^2 + c^3)
-///
 
-TEST' ///
+
+--
   P3 = ZZ/32003[a..i];
   M = comodule monomialCurveIdeal(P3,{1,3,8,9,12,13,17,21})
   P2 = ZZ/32003[a,b,c,d,e,f];
@@ -1516,10 +1518,10 @@ time   N = pushForward(F,M);
   hilbertPolynomial M
   hilbertPolynomial N
   ann N
-///
 
 
-TEST' ///
+
+--
 R = QQ[a..d]
 S = R/(a^2-b^2)
 T = S[x,y,z]
@@ -1554,9 +1556,9 @@ F 3
 	  lift(oo,QQ)
 
 
-///
 
-TEST' ///
+
+--
     R = ZZ[x,y,z]
     modules = {
 	 image matrix {{x^2,x,y}},
@@ -1565,28 +1567,29 @@ TEST' ///
 	 image matrix {{x,y}} ++ coker matrix {{y,z}}
 	 }
     scan(modules, M -> assert( cover M == target presentation M ) )
-///
 
-TEST' ///
+
+--
      assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
-///
 
 
-TEST'///
+
+--
     R = QQ[x,y,z];
     I = monomialIdeal(x^2,y^3,x*y^2*z,y*z^4);
     J = polarize(I);
     assert(betti res I==betti res J)
-///
 
-TEST'///
+
+--
     R = QQ[x,y,z];
     I = monomialIdeal(x^2*y^2,y^2*z^2,x*y*z^4);
     J = polarize(I, VariableBaseName => "whyNotAWord");
     assert(betti res I==betti res J)
-///
 
-TEST' ///
+
+--
+clearAll
 R=ZZ/101[a..f]
 m=genericSkewMatrix(R,a,4)
 assert( pfaffians(-2,m) == ideal(0_R) )
@@ -1595,9 +1598,9 @@ assert( pfaffians(1,m) == ideal(0_R) )
 assert( pfaffians(2,m) == ideal(a,b,c,d,e,f) )
 assert( pfaffians(3,m) == ideal(0_R) )
 assert( pfaffians(4,m) == ideal(c*d-b*e+a*f) )
-///
 
-TEST' ///
+
+--
 numgens ZZ
 numgens GF(9)
 A = ZZ[a,b,c]
@@ -1613,16 +1616,16 @@ numgens D
 minPres D -- error, perhaps it wants to use R.FlatMonoid instead of R.monoid here???
 K = frac A
 numgens K
-///
+
 
 -- tests for nextprime
-TEST' ///
+--
   assert( nextPrime(-10) == 2)
   assert( nextPrime 100 == 101)
   assert( nextPrime 1000 == 1009)
-///
 
-TEST' ///
+
+--
      setRandomSeed("getPrimeOfUnity")
      (p,r)=getPrimeWithRootOfUnity(2,3,Range=>(10^3,10^4))
      assert( (p,r)==(3511,-1)) -- works if the random number generator is not unchanged
@@ -1630,9 +1633,10 @@ TEST' ///
      assert((p,r)==(18181,21))
      (p,r)=getPrimeWithRootOfUnity(12,2,Range=>(100,200))
      assert(r^12%p==1 and r^6%p !=1 and r^4%p != 1)
-///
 
-TEST' ///
+
+--
+clearAll
      setRandomSeed 0
      p=10007,kk=ZZ/p
      R=kk[x_0..x_2]
@@ -1645,8 +1649,8 @@ TEST' ///
      -- The following is the answer given the above random seed.
      ans = ideal(x_3+74*x_4,x_2+2336*x_4,x_1-4536*x_4,x_0-4976*x_4)
      assert(pt == ans)
-///
-TEST' ///
+
+--
 R = ZZ[a..d]
 m = matrix{{(a*b-1)*(c*d-d^3)}}
 coefficients m
@@ -1663,37 +1667,38 @@ m_(0,0)
 coefficients(m, Variables => {x,y}, Monomials => matrix {{x^2, x*y, y}})
 monomials m
 coefficients m
-///
 
 
-TEST' "
+
+--
 R = ZZ/101[a..d,MonomialOrder => Position => Up]
 f = matrix{{a,b},{c,d}}
 h = matrix {{1,0,0},{0,c,d}}
 M = subquotient(h,f)
 assert( mingens M == matrix (R, {{1},{0}}))
-"
 
-TEST' "
+
+--
 R = ZZ/101[a..d,MonomialOrder => Position => Up]
 f = matrix{{a,b},{c,d}}
 h = matrix {{1,0,0},{0,c,d}}
 M = subquotient(h,f)
 assert( generators trim M == matrix (R, {{1},{0}}))
-"
 
-TEST' ///
+
+--
      assert(min{4,5,6} === 4)
      assert(min(4,5,6) === 4)
-///
 
-TEST' ///
+
+--
      assert(max{4,5,6} === 6)
      assert(max(4,5,6) === 6)
-///
 
 
-TEST' ///
+
+--
+clearAll
 R = ZZ/32003[a..d,x_1..x_4,y_(1,1)..y_(2,2)];
 F = time poly"a5+5a4b+10a3b2+10a2b3+5ab4+b5+5a4x[1]+20a3bx[1]
   +30a2b2x[1]+20ab3x[1]+5b4x[1]+10a3x[1]2+30a2bx[1]2
@@ -1731,9 +1736,9 @@ F = time poly"a5+5a4b+10a3b2+10a2b3+5ab4+b5+5a4x[1]+20a3bx[1]
   +20by[1,1]y[2,2]3+20x[1]y[1,1]y[2,2]3+10y[1,1]2y[2,2]3+5ay[2,2]4
   +5by[2,2]4+5x[1]y[2,2]4+5y[1,1]y[2,2]4+y[2,2]5"
 assert( F == (a+b+x_1+y_(1,1)+y_(2,2))^5 )
-///
 
-///
+
+
 R = ZZ/32003[a..d,x_1..x_4,y_(1,1)..y_(2,2)];
 assert( time (a+3*b+5*d-1)^7 ==
 time poly "a7+21a6b+189a5b2+945a4b3+2835a3b4+5103a2b5+5103ab6+2187b7+35a6d+630a5bd+
@@ -1751,9 +1756,9 @@ time poly "a7+21a6b+189a5b2+945a4b3+2835a3b4+5103a2b5+5103ab6+2187b7+35a6d+630a5
      6300a2bd-18900ab2d-18900b3d-5250a2d2-31500abd2-47250b2d2-17500ad3-52500bd3-
      21875d4+35a3+315a2b+945ab2+945b3+525a2d+3150abd+4725b2d+2625ad2+7875bd2+
      4375d3-21a2-126ab-189b2-210ad-630bd-525d2+7a+21b+35d-1" )
-///
 
-TEST' ///
+
+--
 kk = RR
 A = matrix"1,2,3;4,7,8" ** kk
 (P,L,U) = LUdecomposition A
@@ -1793,28 +1798,28 @@ fillMatrix(A, Density=>.5)
 Q = id_(kk^#P) _ P
 Q * (matrix L) * (matrix U) - matrix A
 -- warning: lapack support had many bugs in Macaulay2 versions <= 1.0
-///
 
-TEST' ///
+
+--
 A = QQ[a..d]
 f = (a+1)^2-a^2-2*a
 lift(f,ZZ)
 lift(lift(f,QQ),ZZ)
 
 lift(0.0 * ii + 3.0, RR)
-///
 
-TEST' "
+
+--
 assert( ZZ/2 === ZZ/(4,6) )
-"
 
-TEST' ///
+
+--
 assert not isPseudoprime(101*1617839547365369353)
 assert not isPseudoprime(18158848484363*1617839547365369353)
 assert isPseudoprime 1617839547365369353
-///
 
-TEST' "
+
+--
 assert (not isPrime 1333333)
 assert (not isPrime 3133333)
 assert (not isPrime 3313333)
@@ -1822,15 +1827,15 @@ assert ( isPrime 3331333)
 assert ( isPrime 3333133)
 assert ( isPrime 3333313)
 assert ( isPrime 3333331)
-"
 
-TEST' "
+
+--
 R=ZZ/2[t]
 assert isPrime (t^2+t+1)
 assert (not isPrime (t^2+1))
-"
 
-TEST' ///
+
+--
 isHomogeneous (ZZ/7)
 isHomogeneous (ZZ/7[x])
 isHomogeneous (ZZ/7[x]/(x^2-1))
@@ -1839,16 +1844,16 @@ A = QQ[a,b,c]
 B = A[x,y]
 isHomogeneous B
 isHomogeneous ideal(a*x+y,y^3-b*x^2*y)
-///
 
-TEST' ///
+
+--
 R = QQ[w,x,y,z];
 (L,p) = irreducibleCharacteristicSeries ideal(x^2-y*w,x^3-z*w^2)
 n = apply(L, m -> p m)
 assert( n === {matrix {{-x^3+w^2*z, -x^2+w*y}}, matrix {{x, w}}} )
-///
 
-TEST' ///
+
+--
 R = QQ[a..d];
 I = ideal random(R^1, R^{3:-3});
 time hf = poincare I
@@ -1883,9 +1888,10 @@ time gens gb J
 --status: it's a gb computation that seems to run out of memory far too soon
 --status: Mike?
 selectInSubring(1,gens gb J)
-///
 
-TEST' ///
+
+--
+clearAll
     R = ZZ/101[x_0 .. x_10]
     scan(11, i -> assert(index x_i == i))
     assert( try (index x_11;false) else true )
@@ -1894,9 +1900,9 @@ TEST' ///
     assert( index z == 1 )
     assert( index t == 2 )
     assert( index e == 3 )
-///
 
-TEST' "
+
+--
 S = ZZ/101[x,y,z]
 M = cokernel vars S
 assert ( 0 == HH_-1 res M )
@@ -1905,9 +1911,9 @@ assert ( 0 == HH_1 res M )
 assert ( 0 == HH_2 res M )
 assert ( 0 == HH_3 res M )
 assert ( 0 == HH_4 res M )
-"
 
-TEST' "
+
+--
 scan(3, n -> (
      x := local x;
      R := ZZ/101[x_0 .. x_n];
@@ -1915,8 +1921,8 @@ scan(3, n -> (
 	  M := R^{-d};
 	  h := hilbertPolynomial M;
 	  scan(d .. d + 4, e -> assert(numgens source basis(e,M) == h e))))))
-"
-TEST' "
+
+--
 scan(3, n -> (
      x := local x;
      R := ZZ/101[x_0 .. x_n];
@@ -1928,9 +1934,9 @@ scan(3, n -> (
 		    r := numgens source basis(e,M);
 		    s := substitute(h, { i => e/1 });
 		    assert( r == s)))))))
-"
 
-TEST' ///
+
+--
 R = ZZ/101[x,y]
 M = R^1/x
 T = degreesRing R
@@ -1938,9 +1944,9 @@ t = T_0
 assert( hilbertSeries (M, Order => 5) == t^4+t^3+t^2+t+1 )
 assert( hilbertSeries (M, Order => 4) == t^3+t^2+t+1 )
 assert( hilbertSeries (M, Order => 7) == t^6+t^5+t^4+t^3+t^2+t+1 )
-///
 
-     TEST' ///
+
+     --
 	  R = ZZ[x]
 	  m = random(R^2,R^{-1,-2,-3,-4,-5})
 	  F = target m
@@ -1956,14 +1962,14 @@ assert( hilbertSeries (M, Order => 7) == t^6+t^5+t^4+t^3+t^2+t+1 )
 	  assert( source h === dual P ** Q )
 	  assert( target h === dual F ** G )
 	  scan(f, i -> scan(g, j -> scan(p, k -> scan(q, l -> assert( h_(g*i+j,q*k+l) === diff(m_(i,k),n_(j,l)))))))
-	  ///
 
 
-TEST' ///
+
+--
      assert( class examples MutableList === Net )
-///
 
-TEST' ///
+
+--
 R = ZZ/101[a,b,c]/c^4
 assert ( genera R == {3,3} )
 assert ( genus R == 3 )
@@ -1972,9 +1978,9 @@ assert ( euler R == -2 )
 R = ZZ/101[a,b,c]/c^3
 assert ( genera R == {1,2} )
 assert ( eulers R == {0,3} )
-///
 
-TEST' ///
+
+--
 M = matrix{{1.0,1.0},{0.0,1.0}}
 eigenvalues M
 eigenvectors M
@@ -2009,18 +2015,18 @@ max (abs \ eigvals) / min (abs \ eigvals)
 apply(#eigvals, i -> norm ( m * eigvecs_i - eigvals_i * eigvecs_i ))
 scan(#eigvals, i -> assert( 1e-4 > norm ( m * eigvecs_i - eigvals_i * eigvecs_i )))
 
-///
 
-TEST' ///
+
+--
 m = map(CC^10, CC^10, (i,j) -> i^2 + j^3*ii)
 eigenvalues m
 m = map(CC^10, CC^10, (i,j) -> (i+1)^(j+1))
 eigenvalues m
 m = map(RR^10, RR^10, (i,j) -> (i+1)^(j+1))
 eigenvalues m
-///
 
-TEST' ("
+
+--
      R=ZZ/101[a..d]
      C=resolution cokernel vars R
      D = C ++ C[1] ++ C[2]
@@ -2029,16 +2035,16 @@ TEST' ("
      assert( degree HH_0 D === 1 )
      assert( degree HH_-1 D === 1 )
      assert( degree HH_-2 D === 1 )
-     ")
 
-TEST' ///
+
+--
      assert( fold(toList, a, {b,c,d}) === {{{a, b}, c}, d} )
      assert( fold({a,b,c}, d, toList) === {a, {b, {c, d}}} )
      assert( fold(toList, {a,b,c,d}) === {{{a, b}, c}, d} )
      assert( fold({a,b,c,d}, toList) === {a, {b, {c, d}}} )
-///
 
-TEST' ///
+
+--
 -- Test of various stopping conditions for GB's
 R = ZZ/32003[a..j]
 I = ideal random(R^1, R^{-2,-2,-2,-2,-2,-2,-2});
@@ -2088,13 +2094,12 @@ G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>2); -- SubringLimit now se
 G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>4);
 assert(numgens source selectInSubring(1,gens G) == 1)
 
-///
 
-TEST' "
+
+--
 -- For more determinant tests, see Macaulay2/test/testdet.m2
 R = ZZ/103[a,b,c,d]
 h = matrix {{a,b},{c,d}}
 assert( det h == a * d - b * c )
 assert( minors(1,h) == image matrix {{a,b,c,d}} )
 assert( minors(2,h) == image matrix {{a * d - b * c}} )
-"

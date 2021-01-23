@@ -1,7 +1,4 @@
-TEST' := teststr -> assert not first capture(teststr, UserMode => false)
-
 -- these tests should be rewritten to use coimage, eventually
-TEST' ///
 -- Sheaves on P1 x P1
 R = ZZ/32003[a..d];
 S = ZZ/32003[z_(1,1)..z_(2,2)]
@@ -59,4 +56,3 @@ F = map(R,S,{a+b,2*a+c,3*a+d,4*a+e})
 -- was : time pushForward1(F,comodule I)
 time relations coimage map(comodule I,F)
 assert( degrees oo == {{{0}}, {{15}}})
-///

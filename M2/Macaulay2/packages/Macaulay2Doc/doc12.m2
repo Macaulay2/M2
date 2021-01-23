@@ -13,7 +13,7 @@ document {
 document {
      Key => IndeterminateNumber,
      Headline => "the class of all indeterminate numbers",
-     "Indeterminate numbers result, for exmaple, from multiplying 0 by infinity.
+     "Indeterminate numbers result, for example, from multiplying 0 by infinity.
      There is only one instance of this class."
      }
 
@@ -252,7 +252,7 @@ document {
      Key => Holder,
      Headline => "the class of all holder expressions",
      PARA{},
-     "This type of expresssion is a container for a single, arbitrary, thing that
+     "This type of expression is a container for a single, arbitrary, thing that
      is basic enough that the correct method for printing does not depend
      on its neighbors in the containing expression.  A negative number would
      not be basic enough for this purpose, since as a member of a sum, it would
@@ -550,16 +550,32 @@ document {
      	  }
      }
 
-document {
-     Key => {pad,(pad, String, ZZ),(pad, ZZ, String)},
-     Headline => "pad a string with spaces",
-     TT "pad(s,n)", " -- pads the string ", TT "s", " to length ", TT "n", " with
-     spaces on the right.",
-     BR{},
- 
-     TT "pad(n,s)", " -- pads the string ", TT "s", " to length ", TT "n", " with
-     spaces on the left."
-     }
+doc ///
+  Key
+    pad
+    (pad, String, ZZ)
+    (pad, ZZ, String)
+    (pad, Net, ZZ)
+    (pad, ZZ, Net)
+  Headline
+    pad a string or net with spaces
+  Usage
+    pad(s,n)
+    pad(n,s)
+  Inputs
+    s:Net
+    n:ZZ
+  Description
+    Text
+      @TT "pad(s,n)"@ pads the string or net @TT "s"@ to length @TT
+      "n"@ with spaces on the right.
+
+      @TT "pad(n,s)"@ pads the string or net @TT "s"@ to length @TT
+      "n"@ with spaces on the left.
+    Example
+      pad(6, "foo")
+      pad("foo", 6) | "bar"
+///
 
 document {
      Key => columnate,

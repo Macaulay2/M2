@@ -442,7 +442,7 @@ computeLocalCohomOT = (I, M, n0, n1) -> (
      nW := numgens W;
      n := #W.dpairVars#0;
      N := presentation M;
-     -- create the auxilary D_(n+d) ring
+     -- create the auxiliary D_(n+d) ring
      t := symbol t;
      Dt := symbol Dt;
      LCW := (coefficientRing W)(monoid [(entries vars W)#0,

@@ -16,8 +16,12 @@
 #include "exptable.h"
 
 #include <vector>
-
+#include <iostream>
 #include "matrix-con.hpp"
+
+#include "monomial-collection.hpp"
+#include "M2FreeAlgebra.hpp"
+
 
 Matrix::Matrix(const FreeModule *rows0,
                const FreeModule *cols0,
@@ -873,38 +877,73 @@ Matrix *Matrix::lead_term(int nparts) const
 M2_arrayintOrNull Matrix::support() const
 {
   const PolynomialRing *R = get_ring()->cast_to_PolynomialRing();
-  if (R == nullptr)
-    {
-      ERROR("expected a polynomial ring");
-      return nullptr;
-    }
-  int n = R->n_vars();
-  int nsupp = 0;
-  int *exp = newarray_atomic(int, R->n_vars());
-  int *exp2 = newarray_atomic(int, R->n_vars());
-  for (int i = 0; i < R->n_vars(); i++) exp[i] = exp2[i] = 0;
-  for (int j = 0; j < n_cols(); j++)
-    for (vec v = elem(j); v != nullptr; v = v->next)
-      {
+  if (R != nullptr)
+  {
+    int n = R->n_vars();
+    int nsupp = 0;
+    int *exp = newarray_atomic(int, R->n_vars());
+    int *exp2 = newarray_atomic(int, R->n_vars());
+    for (int i = 0; i < R->n_vars(); i++) exp[i] = exp2[i] = 0;
+    for (int j = 0; j < n_cols(); j++)
+      for (vec v = elem(j); v != nullptr; v = v->next)
         for (const Nterm *f = v->coeff; f != nullptr; f = f->next)
-          {
-            R->getMonoid()->to_expvector(f->monom, exp2);
-            for (int k = 0; k < n; k++)
-              if (exp2[k] != 0 && exp[k] == 0)
-                {
-                  exp[k] = 1;
-                  if (++nsupp == n) goto out;
-                }
-          }
-      }
+        {
+          R->getMonoid()->to_expvector(f->monom, exp2);
+          for (int k = 0; k < n; k++)
+            if (exp2[k] != 0 && exp[k] == 0)
+            {
+              exp[k] = 1;
+              if (++nsupp == n) goto out;
+            }
+        }
 out:
-  M2_arrayint result = M2_makearrayint(nsupp);
-  int next = 0;
-  for (int i = 0; i < n; i++)
-    if (exp[i] > 0) result->array[next++] = i;
-  deletearray(exp);
-  deletearray(exp2);
-  return result;
+    M2_arrayint result = M2_makearrayint(nsupp);
+    int next = 0;
+    for (int i = 0; i < n; i++)
+      if (exp[i] > 0) result->array[next++] = i;
+    deletearray(exp);
+    deletearray(exp2);
+    return result;
+  }
+
+  // FreeAlgebraOrQuotient matrix support
+  const M2FreeAlgebraOrQuotient* Q = dynamic_cast<const M2FreeAlgebraOrQuotient*>(get_ring());
+  if (Q != nullptr)
+  {
+    int n = Q->n_vars();
+    int nsupp = 0;
+    std::vector<int> exp,exp2;  // commutative code above uses newarray_atomic.  Is std::vector ok?
+    for (int i = 0; i < n; i++) 
+      exp.push_back(0);
+    for (int j = 0; j < n_cols() && nsupp < n; j++)
+      for (vec v = elem(j); v != nullptr && nsupp < n; v = v->next)
+      {
+        auto f = Q->toPoly(v->coeff);
+        for (auto t = f->cbegin(); t != f->cend(); ++t)
+        {
+          Q->freeAlgebra().monoid().support(t.monom(),exp2);
+          for (int k = 0; k < exp2.size(); k++)
+          {
+            if (exp[exp2[k]] == 0)
+            {
+              exp[exp2[k]] = 1;
+              if (++nsupp == n) break;
+            }
+          }
+        }
+      }
+
+    M2_arrayint result = M2_makearrayint(nsupp);
+    int next = 0;
+    for (int i = 0; i < n; i++)
+      if (exp[i] > 0) result->array[next++] = i;
+    //deletearray(exp);
+    //deletearray(exp2);
+    return result;    
+  }
+
+  ERROR("expected a polynomial ring");
+  return nullptr;
 }
 
 Matrix *Matrix::top_coefficients(Matrix *&monoms) const
@@ -1504,6 +1543,117 @@ Matrix *Matrix::remove_monomial_factors(bool make_squarefree_only) const
 // }
 #endif
 
+//////////////////////////////////////////////
+// M2FreeAlgebra coeff, monoms commands //
+//////////////////////////////////////////////
+
+// NCMonomials: adds the monomials of 'M' to the hash table 'H'.
+void NCMonomials(ModuleMonomialSet& H, const Matrix* M)
+{
+  const M2FreeAlgebraOrQuotient* Q = dynamic_cast<const M2FreeAlgebraOrQuotient*>(M->get_ring());
+  if (Q == nullptr) return; 
+
+  // should not get here unless 'M' is a matrix over a M2FreeAlgebraOrQuotient
+  
+  for (int c = 0; c < M->n_cols(); c++)
+    {
+      vec v = M->elem(c);
+      for (; v != nullptr; v = v->next)
+        {
+          int comp = v->comp;
+          auto f = Q->toPoly(v->coeff);
+          for (auto i = f->cbegin(); i != f->cend(); ++i)
+            H.insert(i.monom(), comp);
+        }
+    }
+}
+
+// NCMonomialMatrix: makes a Matrix (with the same row space as 'M', where 'M' is the
+// matrix used when constructing H.
+Matrix* NCMonomialMatrix(ModuleMonomialSet& H, const FreeModule* target)
+{
+  const M2FreeAlgebraOrQuotient* Q = dynamic_cast<const M2FreeAlgebraOrQuotient*>(target->get_ring());
+  if (Q == nullptr)
+    {
+      ERROR("expected NC polynomial algebra");
+      return nullptr;
+    }
+  
+  MatrixConstructor mat(target, 0);
+  for (auto i = H.begin(); i != H.end(); ++i)
+    {
+      ring_elem rf = Q->fromModuleMonom(*i);
+      vec v = Q->make_vec(i->component(), rf);
+      mat.append(v);
+    }
+
+  // Finally, we sort them
+  Matrix *result = mat.to_matrix();
+  
+  M2_arrayint perm = result->sort(0, -1);
+  return result->sub_matrix(perm);
+}
+
+Matrix* NCCoefficientMatrix(ModuleMonomialSet& H, const Matrix* M)
+{
+  const M2FreeAlgebraOrQuotient* Q = dynamic_cast<const M2FreeAlgebraOrQuotient*>(M->get_ring());
+  if (Q == nullptr)
+    {
+      ERROR("expected NC polynomial algebra");
+      return nullptr;
+    }
+
+  // should not get here unless 'M' is a matrix over a M2FreeAlgebraOrQuotient
+
+  MatrixConstructor mat(Q->make_FreeModule(H.size()), M->cols());
+  for (int c = 0; c < M->n_cols(); c++)
+    {
+      vec v = M->elem(c);
+      for (; v != nullptr; v = v->next)
+        {
+          int comp = v->comp;
+          auto f = Q->toPoly(v->coeff);
+          for (auto i = f->cbegin(); i != f->cend(); ++i)
+            {
+              auto result = H.find(i.monom(), comp);
+              if (result.second)
+                {
+                  ring_elem cf = Q->from_coefficient(i.coeff());
+                  mat.set_entry(result.first, c, cf);
+                }
+            }
+        }
+    }
+  return mat.to_matrix();
+}
+
+// TODO: not done yet!!  Although, it is not yet called either.
+std::pair<Matrix*, Matrix*> NCCoefficientMatrix(const Matrix* M)
+{
+  const M2FreeAlgebraOrQuotient* Q = dynamic_cast<const M2FreeAlgebraOrQuotient*>(M->get_ring());
+  if (Q == nullptr)
+    {
+      ERROR("expected NC polynomial algebra");
+      return {nullptr, nullptr};
+    }
+
+  ModuleMonomialSet H(ModuleMonomDefaultConfig(Q->n_vars()));
+  NCMonomials(H, M);
+  
+  // now loop through all columns in M, monomials in column:
+  //   find index.
+  //   create coeff
+  // return matrix constructed.
+  return {nullptr, nullptr};
+}
+
+// Method to compute monomials for NC polynomial algebra case.
+//  NCMonomials(M:Matrix) --> HashTable, or a set.
+//  NCMonomialSet --> std::vector of monomials, sorted, with values stored in NCMonomialSet.
+//  monomials(NCMonomialSet) --> Matrix
+//  coeffs(NCMonomialSet, Matrix) --> Matrix of coeffs
+//  
+// 
 Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
 // Returns a one row matrix of all of the monomials in the variable subset
 // 'vars'
@@ -1513,8 +1663,24 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   if (P == nullptr)
     {
-      ERROR("expected a matrix over a polynomial ring");
-      return nullptr;
+      const M2FreeAlgebraOrQuotient* Q = dynamic_cast<const M2FreeAlgebraOrQuotient*>(get_ring());
+      if (Q == nullptr)
+        {
+          ERROR("expected polynomial ring");
+          return nullptr;
+        }
+      ModuleMonomialSet monom_set {ModuleMonomDefaultConfig(Q->n_vars())};
+      NCMonomials(monom_set, this);
+      //PRINT_ELEMENTS(monom_set.set(), "hashtable: ");
+      //PRINT_ELEMENTS(monom_set.uniqueMonoms(), "monoms: ");
+      //printHashTableState(monom_set.set());
+      //monom_set.display(std::cout);
+      return NCMonomialMatrix(monom_set, rows());
+      //      NCMonomialSet H(Q->n_vars());
+      //      NCMonomials(H, this);
+      //      MonomialAreaTest montest;
+      //      size_t sz = montest.test1();
+      //      std::cout << "sz = " << sz << std::endl;
     }
   const Monoid *M = P->getMonoid();
   const Ring *K = P->getCoefficients();
@@ -1653,58 +1819,65 @@ Matrix /* or null */ *Matrix::coeffs(M2_arrayint vars,
 
   // Step 0: Do some error checking
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  if (P == nullptr)
+  if (P != nullptr)
     {
-      ERROR("expected polynomial ring");
-      return nullptr;
-    }
-  int nvars = P->n_vars();
-  int nelements = monoms->n_cols();
-  if (monoms->n_rows() != n_rows())
-    {
-      ERROR("expected matrices with the same number of rows");
-      return nullptr;
-    }
-  for (unsigned int i = 0; i < vars->len; i++)
-    if (vars->array[i] < 0 || vars->array[i] >= nvars)
-      {
-        ERROR("coeffs: expected a set of variable indices");
-        return nullptr;
-      }
-
-  // Step 1: Make an exponent_table of all of the monoms.
-  // We set the value of the i th monomial to be 'i+1', since 0
-  // indicates a non-existent entry.
-
-  // The extra size in monomial refers to the component:
-  exponent_table *E = exponent_table_new(nelements, 1 + vars->len);
-  exponent EXP = newarray_atomic(int, nvars);
-  for (int i = 0; i < nelements; i++)
-    {
-      vec v = monoms->elem(i);
-      if (v == nullptr)
+      int nvars = P->n_vars();
+      int nelements = monoms->n_cols();
+      if (monoms->n_rows() != n_rows())
         {
-          ERROR("expected non-zero column");
+          ERROR("expected matrices with the same number of rows");
           return nullptr;
         }
-      ring_elem f = v->coeff;
-      const int *m = P->lead_flat_monomial(f);
-      P->getMonoid()->to_expvector(m, EXP);
+      for (unsigned int i = 0; i < vars->len; i++)
+        if (vars->array[i] < 0 || vars->array[i] >= nvars)
+          {
+            ERROR("coeffs: expected a set of variable indices");
+            return nullptr;
+          }
 
-      // grab only that part of the monomial we need
-      exponent e = newarray_atomic(int, 1 + vars->len);
-      get_part_of_expvector(vars, EXP, v->comp, e);
-      exponent_table_put(E, e, i + 1);
+      // Step 1: Make an exponent_table of all of the monoms.
+      // We set the value of the i th monomial to be 'i+1', since 0
+      // indicates a non-existent entry.
+
+      // The extra size in monomial refers to the component:
+      exponent_table *E = exponent_table_new(nelements, 1 + vars->len);
+      exponent EXP = newarray_atomic(int, nvars);
+      for (int i = 0; i < nelements; i++)
+        {
+          vec v = monoms->elem(i);
+          if (v == nullptr)
+            {
+              ERROR("expected non-zero column");
+              return nullptr;
+            }
+          ring_elem f = v->coeff;
+          const int *m = P->lead_flat_monomial(f);
+          P->getMonoid()->to_expvector(m, EXP);
+
+          // grab only that part of the monomial we need
+          exponent e = newarray_atomic(int, 1 + vars->len);
+          get_part_of_expvector(vars, EXP, v->comp, e);
+          exponent_table_put(E, e, i + 1);
+        }
+
+      // Step 2: for each vector column of 'this'
+      //     create a column, and put this vector into result.
+
+      MatrixConstructor mat(P->make_FreeModule(nelements), 0);
+      for (int i = 0; i < n_cols(); i++)
+        mat.append(coeffs_of_vec(E, vars, rows(), elem(i)));
+
+      return mat.to_matrix();
     }
-
-  // Step 2: for each vector column of 'this'
-  //     create a column, and put this vector into result.
-
-  MatrixConstructor mat(P->make_FreeModule(nelements), 0);
-  for (int i = 0; i < n_cols(); i++)
-    mat.append(coeffs_of_vec(E, vars, rows(), elem(i)));
-
-  return mat.to_matrix();
+  const M2FreeAlgebraOrQuotient* Q = dynamic_cast<const M2FreeAlgebraOrQuotient*>(get_ring());
+  if (Q != nullptr)
+    {
+      ModuleMonomialSet H(Q->n_vars());
+      NCMonomials(H, monoms);
+      return NCCoefficientMatrix(H, this);
+    }
+  ERROR("expected polynomial ring");
+  return nullptr;
 }
 
 MonomialIdeal *Matrix::make_monideal(

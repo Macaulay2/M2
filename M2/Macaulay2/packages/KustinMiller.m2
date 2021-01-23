@@ -516,7 +516,7 @@ assert(not isGorenstein ideal (x_1*x_2, x_1*x_3))
 ///
 
 ---------------------------------------------------------------------
--- some usefull stuff for chain complexes
+-- some useful stuff for chain complexes
 
 -- check whether a chain complex is a resolution
 -- that is it is exact everywhere except at the

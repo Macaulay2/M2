@@ -71,7 +71,6 @@ CPPFLAGS :=									\
 	-I@abs_top_srcdir@/include						\
 	-I@abs_top_builddir@/include						\
 	-I$(BUILTLIBPATH)/include						\
-	-I$(BUILTLIBPATH)/include/cdd						\
 	$(foreach S, @BUILDSUBLIST@, -I@abs_top_srcdir@/submodules/$S/src)	\
 	$(CPPFLAGS)
 

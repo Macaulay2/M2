@@ -286,7 +286,7 @@ document {
 	  GenerateAssertions => Boolean => {
 	       "whether to print assertion statements that can be used as input to Macaulay2 to
 	       check the behavior of the function remains the same.  Arguments and values are prepared
-	       with ", TO "toExternalString", ", failure of which is sliently ignored."
+	       with ", TO "toExternalString", ", failure of which is silently ignored."
 	       }
 	  },
      Outputs => { Function => {"a new function that returns the same values that ", TT "f", " would have returned, but has a few side effects
@@ -307,16 +307,36 @@ document {
      SeeAlso => {"lookup"}
      }
 
-document {
-     Key => assert,
-     Headline => "assert something is true",
-	   Usage => "assert x",
-     TT "assert x", " prints an error message if x isn't true.",
-     EXAMPLE lines ///
-     assert( (2+2) === 4 )
-     ///,
-     SeeAlso => {"generateAssertions"}
-     }
+doc ///
+  Key
+    assert
+    (assert, Thing)
+    (assert, Expression)
+  Headline
+    assert something is true
+  Usage
+    assert x
+  Inputs
+    x:Thing
+  Description
+    Text
+      @TT "assert x"@ prints an error message if @TT "x"@ isn't true.
+    CannedExample
+      i1 : assert( (2+2) === 4)
+
+      i2 : assert(rank matrix {{1, 2}, {2, 4}} == 2)
+      stdio:2:1:(3): error: assertion failed
+    Text
+      If @TT "x"@ is an @TO Expression@ that evaluates to false, then
+      a partially evaluated form is printed with the error message to
+      assist in debugging.
+    CannedExample
+      i3 : assert Equation(rank matrix {{1, 2}, {2, 4}}, 2)
+      stdio:3:1:(3): error: assertion failed:
+      1 == 2 is false
+  SeeAlso
+    generateAssertions
+///
 
 document {
      Key => notImplemented,
@@ -384,20 +404,18 @@ document {
      beforehand.",
      }
 
-
--- TODO
-undocumented {
-    (code, ZZ),
-	  (code, List),
-	  (code, Sequence),
-	  (code, Function),
-	  (code, Symbol),
-	  (code, Command),
-	  (code, Pseudocode),
-	  (code, Nothing)}
+undocumented {(code, Nothing)}
 
 document {
-     Key => code,
+  Key => {
+    code,
+   (code, Symbol),
+   (code, Command),
+   (code, Function),
+   (code, Sequence),
+   (code, Pseudocode),
+   (code, List),
+   (code, ZZ)},
      Headline => "display source code",
      SYNOPSIS (
 	  Usage => "code f",
@@ -464,7 +482,8 @@ document {
 		    Such a list can be obtained, for example, with ", TO "methods", "."
 		    }},
 	  EXAMPLE "code methods use"
-	  }
+	  },
+     SeeAlso => {"edit", "methods"}
      }
 
 document {
@@ -590,7 +609,8 @@ document {
      "This function operates by examining those types that are values of
      global symbols for keys that appear to be storing references to
      methods.  Types that don't appear as values of global variables will
-     not be examined, so perhaps not all methods will be found."
+     not be examined, so perhaps not all methods will be found.",
+     SeeAlso => {(code, List)}
      }
 
 document { Key => "backtrace",

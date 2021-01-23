@@ -489,8 +489,8 @@ indexSupport = F -> (
     n := width R;
     F = select(F, f-> f != 0);
     if #F == 0 then return toList (n:0);
-    vSupport := sum(apply(F, f->sum(listForm(f)/first))); --list of # occurrances of each variable in newF
-    nSupport := new MutableList from (n:0); --list of # occurances of each index value in variable support
+    vSupport := sum(apply(F, f->sum(listForm(f)/first))); --list of # occurrences of each variable in newF
+    nSupport := new MutableList from (n:0); --list of # occurrences of each index value in variable support
     for i from 0 to #(R.varIndices)-1 do (
 	if vSupport#i > 0 then (
 	    ind := R.varIndices#i;
@@ -1068,13 +1068,13 @@ doc ///
      Outputs
           R:Ring
 	       a polynomial ring with coefficient field {\tt F}, and a block of variables for each entry of {\tt X}.
-	       The coresponding integers in {\tt I} determine how many indices each block of variables has.
+	       The corresponding integers in {\tt I} determine how many indices each block of variables has.
 	       Variables with all index values from {\tt 0} to {\tt n-1} are included.
      Description
           Text
 	       The object produced by {\tt buildERing} is a @TO Ring@ with additional stored information.
 	       It is used to represent a polynomial ring {\tt F[Y]} with an infinite set of variables {\tt Y}, and
-	       an action of the infinte symmetric group on {\tt Y} such that it is composed of a finite number
+	       an action of the infinite symmetric group on {\tt Y} such that it is composed of a finite number
 	       of orbits.  Macaulay2 cannot store a ring with an infinite number of variables, so the ring produced
 	       contains only some of the variables.
 	       
@@ -1261,7 +1261,7 @@ doc ///
 	       
 	       If the optional argument {\tt Completely} is set to {\tt true} then normal form {\tt r} will
 	       contain only standard monomials.  If {\tt F} is an equivariant Gröbner basis, then the completely
-	       reduced normal form {\tt r} is uniquely determined, otherwise there is no such gaurantee.  
+	       reduced normal form {\tt r} is uniquely determined, otherwise there is no such guarantee.  
           Example
                R = buildERing({symbol x}, {1}, QQ, 3);
                reduce(x_0^2 + x_0*x_2, {x_1})

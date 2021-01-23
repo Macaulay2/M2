@@ -1420,6 +1420,11 @@ export evalraw(c:Code):Expr := (
 	       if length(v.z) == 0 then return emptyArray;
 	       r := evalSequence(v.z);
 	       if evalSequenceHadError then evalSequenceErrorMessage else Array(r)
+	       )
+	  is v:angleBarListCode do (
+	       if length(v.t) == 0 then return emptyAngleBarList;
+	       r := evalSequence(v.t);
+	       if evalSequenceHadError then evalSequenceErrorMessage else AngleBarList(r)
 	       ));
      when e is Error do handleError(c,e) else e);
 

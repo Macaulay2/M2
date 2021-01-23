@@ -41,7 +41,7 @@ addPointsToChart = method()
 addPointsToChart (PWSet, List, RingElement) := (PW,pts,H) -> (
     charts := PW#"charts";
     c := position(charts,WH->last WH==H); 
-    if c === null then error "uknown chart";
+    if c === null then error "unknown chart";
     W := first charts#c; 
     PW.Points = PW.Points | pts;
     W.Points = W.Points | pts;

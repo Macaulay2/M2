@@ -660,7 +660,7 @@ document {
 	w = random newForm(2,1,2,"a")
 	singularIdeal(w)
   ///,
-  PARA {"This routine is usefull to obtain the ", TO RingElement, " representing a 0-form"},
+  PARA {"This routine is useful to obtain the ", TO RingElement, " representing a 0-form"},
   EXAMPLE lines ///
 	w = random newForm(2,1,2,"a");
 	r = radial 2;
@@ -894,7 +894,7 @@ document {
   SeeAlso => {genIm},
   PARA {"This routine returns a basis of the kernel of ", TT "expr",", an homogeneous expression linear in ", TT "var","."},
   BR{},
-  PARA {"In the case of a non-homogeneous linear expression, this routine returns a pair having in the first coordinate a basis of the kernel of the associated homogeneous linear expression and in the secod coordinate a particular solution."},
+  PARA {"In the case of a non-homogeneous linear expression, this routine returns a pair having in the first coordinate a basis of the kernel of the associated homogeneous linear expression and in the second coordinate a particular solution."},
   BR{},
   PARA {"In the first example, we compute a basis of projective differential 1-forms in projective 3-space with polynomial coefficients of degree 1. Then, we define a random rational differential form of type ", TT {"(1,1)"}, " and compute its tangent directions using the generic projective form defined before."},
   BR{},
@@ -1316,7 +1316,6 @@ assert( (w^(diff (L_0)) + (L_0) ^ (diff w))#"f" == 0)
 ///
 
 TEST ///
--* no-capture-flag *-
 w = random newForm(3,2,2,"a")
 h = newForm(3,1,1,"b")
 L = genKer(w^(diff h) + h ^ (diff w), h)

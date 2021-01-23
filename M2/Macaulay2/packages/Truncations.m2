@@ -23,7 +23,7 @@ protect Exterior
 
 truncationPolyhedron = method(Options=>{Exterior => {}})
   -- Exterior should be a list of variable indices which are skew commutative.
-  -- i.e. have max degeree 1.
+  -- i.e. have max degree 1.
 truncationPolyhedron(Matrix, List) := Polyhedron => opts -> (A, b) -> (
     truncationPolyhedron(A, transpose matrix{b}, opts)
     )

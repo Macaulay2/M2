@@ -214,7 +214,7 @@ doc ///
             Given two positive integers {\tt d,e} and a ring {\tt F}, @TT "randomRationalCurve"@ returns the ideal of a
 	    random curve in $\PP^1\times\PP^2$ of degree {\tt (d,e)} defined over the base ring {\tt F}.
 
-            This is done by randomly generating two homogenous polynomials of degree {\tt d} and three homogenous
+            This is done by randomly generating two homogeneous polynomials of degree {\tt d} and three homogeneous
             polynomials of degree three in $F[s,t]$ defining maps $\PP^1\to\PP^1$ and $\PP^1\to\PP^2$,
             respectively. The graph of the product of these two maps in $\PP^1\times(\PP^1\times\PP^2)$ is computed,
             from which a curve of bi-degree {\tt (d,e)} in $\PP^1\times\PP^2$ over {\tt F} is obtained by

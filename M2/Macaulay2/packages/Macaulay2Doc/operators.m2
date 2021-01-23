@@ -150,7 +150,7 @@ document {
      Usage => "gcd(x,y,...)",
      Inputs => { "x" => ZZ, ", or ", ofClass QQ, ", or ",ofClass RingElement },
      Outputs => { ZZ => { ", or ", ofClass QQ, ", or ",ofClass RingElement, ",
-	       the greatest commond divisor of the arguments" } },
+	       the greatest common divisor of the arguments" } },
      EXAMPLE lines ///
      gcd(12,8,48)
      R = QQ[x,y,z];

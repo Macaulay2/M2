@@ -119,7 +119,9 @@ scan({net, info},
 	parser' HypertextContainer := x -> (BK, apply(toSequence x, parser'), BK);
 	-- rendering for special types
 	parser' String := identity;
-	parser' Option := x -> ();
+	parser' COMMENT :=
+	parser' LITERAL :=
+	parser' Option  := x -> ();
 	parser' BR     := x -> ("", BK);
 	-- and rendering for types that inherit from HypertextContainer, but
 	-- have special rendering rules which would lost with toSequence
@@ -211,7 +213,11 @@ info HREF := x -> (
      if #x === 1 then x#0
      else if match ("^mailto:",x#0) then toString x#1
      -- x#0 is sometimes the relative path to the file, but not from the current directory
-     else toString x#1 | " (see " | x#0 | " )")
+     else (
+	  r := horizontalJoin \\ net \ toList splice drop(x, 1);
+	  r | " (see " | x#0 | " )"
+	  )
+     )
 
 net TABLE :=  x -> (
      (op,ag) := override(options TABLE, toSequence x);

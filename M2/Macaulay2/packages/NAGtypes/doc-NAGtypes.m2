@@ -44,7 +44,7 @@ document {
 	  MaxPrecision, WindingNumber, DeflationNumber
 	  },
      Headline => "a type used to store a point in complex space",
-     "This type is used to store a solution to a polynomial system obtained by such fuctions as ", 
+     "This type is used to store a solution to a polynomial system obtained by such functions as ", 
      TO "NumericalAlgebraicGeometry::solveSystem", ", ", TO "NumericalAlgebraicGeometry::track",
      ". The following methods can be used to access a ", 
      TO "Point", ":",
@@ -91,7 +91,7 @@ document {
 	  {TO ErrorBoundEstimate, " -- an estimate of the distance from the approximation to the actual solution"},
 	  {TO MaxPrecision, " -- max precision used during the homotopy tracking"}, 
 	  {TO Multiplicity, " -- the multiplicity of an isolated solution"}, 
-	  {TO WindingNumber, " -- the winding numeber of a singular solution determined in the end-games"}, 
+	  {TO WindingNumber, " -- the winding number of a singular solution determined in the end-games"}, 
 	  {TO DeflationNumber, " -- number of first-order deflations in the regularization of a singular solution"},
 	  {TT "Tracker", " -- reserved for developers"}
 	  },
@@ -1187,7 +1187,7 @@ doc ///
     D = ...
   Inputs 
     M:[Type]
-      [optional decription]
+      [optional description]
     p:[Type]
   Outputs
     D:[Type]

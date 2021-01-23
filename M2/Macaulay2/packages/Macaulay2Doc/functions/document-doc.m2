@@ -68,7 +68,7 @@ Node
               Outputs      => { outputs, ... },
               SourceCode   => { METHOD1, ... }, -- usually not needed
               Consequences => { side-effects, ... },
-              "A list of strings containings names of files in the auxiliary
+              "A list of strings containing names of files in the auxiliary
               directory of the package can go here; the files will be visible
               in the current directory while example code is run.",
               ExampleFiles => {"datafile1", "datafile2"},
@@ -308,7 +308,7 @@ Node
     Code
       EXAMPLE { PRE ////Consequences => {
               { "the headline string will be used to annotate itemized
-                  lists of crossreferences to the documentation ", TO "Key" }}//// }
+                  lists of cross-references to the documentation ", TO "Key" }}//// }
 
 Node
   Key
@@ -393,7 +393,7 @@ Node
     document { ... , Subnodes => { ... }, ... }
   Consequences
     Item
-      the documentation subnodes listed will appear as decendents of this node in the documentation tree
+      the documentation subnodes listed will appear as descendents of this node in the documentation tree
   Description
     Text
       This option inserts into a documentation page a menu of subnodes and defines how the tree structure

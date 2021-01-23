@@ -1,6 +1,7 @@
 /*		Copyright 1993 by Daniel R. Grayson		*/
 
 #ifndef __cplusplus
+#undef bool
 typedef char bool;
 #endif
 

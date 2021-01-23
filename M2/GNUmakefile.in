@@ -88,7 +88,7 @@ copy-license-files-from-mathic: LICENSE_FILES = README.md lgpl-*
 copy-license-files-from-mathicgb: LICENSE_FILES = README.md gpl-*
 
 # the Makefile is the target used to run "configure" in the submodule:
-submodules/mathicgb/Makefile : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes --without-tbb
+submodules/mathicgb/Makefile : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes # possibly add this option? --with-tbb
 submodules/mathic/Makefile   : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes
 submodules/memtailor/Makefile: SUBMODULE_CONFIGOPTIONS += --with-gtest=yes
 submodules/fflas_ffpack/Makefile: LIBS += @LINALGLIBS@
@@ -210,15 +210,7 @@ ifeq (@BUILD_givaro@,yes)
 submodules/fflas_ffpack/Makefile: install-in-givaro
 endif
 
-all-in-Macaulay2:install-licenses
-
-install-licenses:all-in-submodules
-	: installing library and submodule licenses in @pre_licensesdir@
-	if [ -d $(BUILTLIBPATH)/licenses/. ] ; \
-	then rm -rf @pre_licensesdir@ ; \
-	     @INSTALL@ -d @pre_licensesdir@ ; \
-	     @TAR@ cf - -C $(BUILTLIBPATH)/licenses/. . | @TAR@ xf - -C @pre_licensesdir@ ; \
-	fi
+all-in-Macaulay2:all-in-submodules
 
 ## 
 distclean:clean distclean-in-subdirs distclean-this-dir

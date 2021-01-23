@@ -39,7 +39,7 @@ Node
       If @TT "UserMode => false"@ given, the dictionaries available to the user will not be
       affected by the evaluation and @TO collectGarbage@ is called afterwards.
 
-      Errors occured while evaluating @TT "str"@ do not cause an error outside of @TT "capture"@.
+      Errors occurred while evaluating @TT "str"@ do not cause an error outside of @TT "capture"@.
     Example
       (err, output) = capture //// stderr << "Checking a false statement:" << endl; 1/0 ////
       assert err

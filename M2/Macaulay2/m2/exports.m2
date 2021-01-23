@@ -55,6 +55,7 @@ export {
 	"AfterPrint",
 	"Algorithm",
 	"Alignment",
+	"AngleBarList",
 	"Array",
 	"Ascending",
 	"AssociativeExpression",

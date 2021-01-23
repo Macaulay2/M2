@@ -811,7 +811,7 @@ TEST ///
 
 TEST ///
 -- test for multiReesIdeal
--- Checking if different strategies yeild the same multi-Rees ideal
+-- Checking if different strategies yield the same multi-Rees ideal
   S=ZZ/101[x_0..x_4]
   I=monomialCurveIdeal(S,{5,9,11})
   time M1 = gens gb multiReesIdeal {I}; 

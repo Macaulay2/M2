@@ -3,6 +3,8 @@
 #endif
 #define M2_STDINC_M2_GUARD
 
+#warning TODO: remove e/stdinc-m2.hpp
+
 #include <cstddef>
 #include <memory>
 #include <utility>

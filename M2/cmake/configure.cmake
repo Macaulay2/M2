@@ -34,17 +34,12 @@ option(WITH_XML		"Link with the libxml2 library"		ON)
 option(WITH_PYTHON	"Link with the Python library"		OFF)
 option(WITH_MYSQL	"Link with the MySQL library"		OFF)
 
-set(BUILD_PROGRAMS "4ti2;Nauty;TOPCOM"
-  CACHE STRING "Build programs, even if found")
-set(BUILD_LIBRARIES "GTest"
-  CACHE STRING "Build libraries, even if found")
+set(BUILD_PROGRAMS  "" CACHE STRING "Build programs, even if found")
+set(BUILD_LIBRARIES "" CACHE STRING "Build libraries, even if found")
 set(PARALLEL_JOBS 4
   CACHE STRING "Number of parallel jobs for libraries and programs")
 set(SKIP_TESTS "mpsolve;googletest" CACHE STRING "Tests to skip")
 set(SLOW_TESTS "eigen;ntl;flint"    CACHE STRING "Slow tests to skip")
-
-# TODO: https://github.com/Macaulay2/M2/issues/1198
-list(APPEND BUILD_LIBRARIES "Frobby")
 
 # TODO: hopefully make these automatic
 if(USING_MPIR)
@@ -84,7 +79,7 @@ if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
     OUTPUT_VARIABLE   COMMIT_COUNT)
   set(GIT_DESCRIPTION version-${PROJECT_VERSION}-${COMMIT_COUNT}-${GIT_COMMIT})
 else()
-  set(GIT_DESCRIPTION version-${PROJECT_VERSION}-unknown)
+  set(GIT_DESCRIPTION version-${PROJECT_VERSION})
 endif()
 
 message("## Configure Macaulay2

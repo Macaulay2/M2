@@ -9,7 +9,7 @@
 
 newPackage(
        "SparseResultants",
-        Version => "1.0.1", 
+        Version => "1.1", 
         Date => "September 30, 2020",
         Headline => "computations with sparse resultants",
         Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
@@ -433,7 +433,7 @@ dualizedChowForm (RingMap) := o -> (phi) -> (
    if dim kerPhi =!= r+1 then error("hypothesis not satisfied by the set of monomials (the dimension of the associated toric variety is less than "|toString(r)|")");
    mnr := o.AffineChartGrass;
    if mnr === true then mnr = (random toList(0..n))_{0..r};
-   try assert(ring matrix{mnr} === ZZ and min mnr >=0 and max mnr <=n and # unique mnr == r+1 and # mnr == r+1) else error("bad value for option AffineChartGrass: expected either 'true' or list of "|toString(r+1)|" distinct integers beetween 0 and "|toString(n)); 
+   try assert(ring matrix{mnr} === ZZ and min mnr >=0 and max mnr <=n and # unique mnr == r+1 and # mnr == r+1) else error("bad value for option AffineChartGrass: expected either 'true' or list of "|toString(r+1)|" distinct integers between 0 and "|toString(n)); 
    mnr = sort mnr; 
    x := local x; u := local u;
    R := K[x_0..x_r,u_(0,0)..u_(r,n),MonomialOrder=>Eliminate(r+1),Degrees=>{r+1:{1,0},(r+1)*(n+1):{0,1}}];
@@ -539,6 +539,8 @@ memGenMultHomPols = memoize(
 -- Hyperdeterminants --
 
 MultidimensionalMatrix = new Type of HashTable;
+
+MultidimensionalMatrix.synonym = "multidimensional matrix";
 
 MultidimensionalMatrix#{Standard,AfterPrint} = MultidimensionalMatrix#{Standard,AfterNoPrint} = M -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << dim M << "-dimensional matrix of shape " << printedShape M << " over " << ring M << endl;
@@ -1233,7 +1235,7 @@ document {
     Usage => "multidimensionalMatrix F", 
     Inputs => {"F" => RingElement => {"a homogeneous polynomial of multidegree ",TEX///$(1,\ldots,1)$///," in a polynomial ring ",TEX///$R$///," with the ",TEX///$\mathbb{Z}^n$///,"-grading where the degree of each variable is a standard basis vector; in other words, ",TEX///$R$///," is the homogeneous coordinate ring of a product of ",TEX///$n$///," projective spaces."}},
     Outputs => {MultidimensionalMatrix => {"the ",TEX///$n$///,"-dimensional matrix having as entries the coefficients of ",TEX///$F$///,"."}},
-    PARA {"If ",TEX///$F$///," is a multilinear form on ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\ldots\times\mathbb{P}^{k_n}$///,", then the shape of the corresponding matrix is ",TEX///$(k_1+1)\times(k_2+1)\times\ldots\times(k_n+1)$///,". You can use ",TO permute," to rearrange the dimensions."},
+    PARA {"If ",TEX///$F$///," is a multilinear form on ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}$///,", then the shape of the corresponding matrix is ",TEX///$(k_1+1)\times(k_2+1)\times\cdots\times(k_n+1)$///,". You can use ",TO permute," to rearrange the dimensions."},
     EXAMPLE {
         "R = ZZ[x_1..x_3,y_1..y_4,z_1..z_2,Degrees=>{3:{1,0,0},4:{0,1,0},2:{0,0,1}}];",
         "F = random({1,1,1},R)",
@@ -1351,9 +1353,9 @@ document {
     Key => {(symbol *,MultidimensionalMatrix,MultidimensionalMatrix)}, 
     Headline => "product of multidimensional matrices", 
     Usage => "M * N", 
-    Inputs => {"M" => MultidimensionalMatrix => {"a multidimensional matrix of shape ",TEX///$k_1\times\ldots\times k_r$///},
-               "N" => MultidimensionalMatrix => {"a multidimensional matrix of shape ",TEX///$l_1\times\ldots\times l_s$///," with ",TEX///$k_r = l_1$///}},
-    Outputs => {MultidimensionalMatrix => {"the convolution (or product) ",TEX///$M * N$///,", which is a multidimensional matrix of shape ",TEX///$k_1\times\ldots\times k_{r-1}\times l_2\times\ldots\times l_s$///}},
+    Inputs => {"M" => MultidimensionalMatrix => {"a multidimensional matrix of shape ",TEX///$k_1\times\cdots\times k_r$///},
+               "N" => MultidimensionalMatrix => {"a multidimensional matrix of shape ",TEX///$l_1\times\cdots\times l_s$///," with ",TEX///$k_r = l_1$///}},
+    Outputs => {MultidimensionalMatrix => {"the convolution (or product) ",TEX///$M * N$///,", which is a multidimensional matrix of shape ",TEX///$k_1\times\cdots\times k_{r-1}\times l_2\times\cdots\times l_s$///}},
     EXAMPLE {
         "M = randomMultidimensionalMatrix {4,3}",
         "N = randomMultidimensionalMatrix {3,2}",
@@ -1433,7 +1435,7 @@ document {
     Headline => "make a generic multidimensional matrix of variables", 
     Usage => "genericMultidimensionalMatrix(d_1,...,d_n)", 
     Inputs => {{TT"(d_1,...,d_n)",", a sequence of positive integers."}},
-    Outputs => {{"the generic ",TO2{MultidimensionalMatrix,"multidimensional matrix"}," of shape ",TEX///$d_1\times\ldots\times d_n$///,"."}},
+    Outputs => {{"the generic ",TO2{MultidimensionalMatrix,"multidimensional matrix"}," of shape ",TEX///$d_1\times\cdots\times d_n$///,"."}},
     EXAMPLE {
         "genericMultidimensionalMatrix(2,4,3)",
         "genericMultidimensionalMatrix((2,2,3),CoefficientRing=>ZZ/101)",
@@ -1447,7 +1449,7 @@ document {
     Headline => "random multidimensional matrix", 
     Usage => "randomMultidimensionalMatrix(d_1,...,d_n)", 
     Inputs => {{TT"(d_1,...,d_n)",", a sequence of positive integers."}},
-    Outputs => {{"a random ",TO2{MultidimensionalMatrix,"multidimensional matrix"}," of shape ",TEX///$d_1\times\ldots\times d_n$///," over the ring specified by the option ",TO2 {[randomMultidimensionalMatrix,CoefficientRing],"CoefficientRing"}," (the default ring is ",TO ZZ,")."}},
+    Outputs => {{"a random ",TO2{MultidimensionalMatrix,"multidimensional matrix"}," of shape ",TEX///$d_1\times\cdots\times d_n$///," over the ring specified by the option ",TO2 {[randomMultidimensionalMatrix,CoefficientRing],"CoefficientRing"}," (the default ring is ",TO ZZ,")."}},
     EXAMPLE {
         "randomMultidimensionalMatrix(2,4,3)",
         "randomMultidimensionalMatrix((2,2,3),CoefficientRing=>ZZ/101)"
@@ -1488,7 +1490,7 @@ document {
     Key => {shape, (shape,MultidimensionalMatrix)}, 
     Headline => "shape of a multidimensional matrix", 
     Usage => "shape M", 
-    Inputs => {"M" => MultidimensionalMatrix => {"a ",TEX///$n$///,"-dimensional matrix of shape ",TEX///$k_1\times\ldots\times k_n$///}},
+    Inputs => {"M" => MultidimensionalMatrix => {"a ",TEX///$n$///,"-dimensional matrix of shape ",TEX///$k_1\times\cdots\times k_n$///}},
     Outputs => {List => {"the list of integers ",TEX///$\{k_1, \ldots, k_n\}$///}},
     EXAMPLE {
         "M = multidimensionalMatrix {{{0, 8, 3}, {7, 3, 2}, {2, 7, 0}, {4, 8, 4}}, {{0, 8, 1}, {3, 1, 0}, {4, 7, 4}, {0, 6, 9}}}",
@@ -1501,7 +1503,7 @@ document {
     Key => {(dim,MultidimensionalMatrix)}, 
     Headline => "dimension of a multidimensional matrix", 
     Usage => "dim M", 
-    Inputs => {"M" => MultidimensionalMatrix => {"a ",TEX///$n$///,"-dimensional matrix of shape ",TEX///$k_1\times\ldots\times k_n$///}},
+    Inputs => {"M" => MultidimensionalMatrix => {"a ",TEX///$n$///,"-dimensional matrix of shape ",TEX///$k_1\times\cdots\times k_n$///}},
     Outputs => {ZZ => {"the integer ",TEX///$n$///}},
     EXAMPLE {
         "M = multidimensionalMatrix {{{0, 8, 3}, {7, 3, 2}, {2, 7, 0}, {4, 8, 4}}, {{0, 8, 1}, {3, 1, 0}, {4, 7, 4}, {0, 6, 9}}}",
@@ -1515,7 +1517,7 @@ document {
     Headline => "make a generic symmetric multidimensional matrix of variables", 
     Usage => "genericSymmetricMultidimensionalMatrix(n,d)", 
     Inputs => {{TT"(n,d)",", two positive integers."}},
-    Outputs => {{"the generic symmetric ",TO2{MultidimensionalMatrix,"multidimensional matrix"}," of shape ",TEX///$d\times\ldots\times d$///," (",TEX///$n$///," times)."}},
+    Outputs => {{"the generic symmetric ",TO2{MultidimensionalMatrix,"multidimensional matrix"}," of shape ",TEX///$d\times\cdots\times d$///," (",TEX///$n$///," times)."}},
     PARA {"An ",TEX///$n$///,"-dimensional matrix ",TEX///$M$///," is symmetric if for every permutation ",TEX///$s$///," of the set ",TEX///$\{0,\ldots,n-1\}$///," we have ",TO permute,TT"(M,s) == M","."},
     EXAMPLE {
         "genericSymmetricMultidimensionalMatrix(3,2)",
@@ -1530,7 +1532,7 @@ document {
     Headline => "make a generic skew symmetric multidimensional matrix of variables", 
     Usage => "genericSkewMultidimensionalMatrix(n,d)", 
     Inputs => {{TT"(n,d)",", two positive integers."}},
-    Outputs => {{"the generic skew symmetric ",TO2{MultidimensionalMatrix,"multidimensional matrix"}," of shape ",TEX///$d\times\ldots\times d$///," (",TEX///$n$///," times)."}},
+    Outputs => {{"the generic skew symmetric ",TO2{MultidimensionalMatrix,"multidimensional matrix"}," of shape ",TEX///$d\times\cdots\times d$///," (",TEX///$n$///," times)."}},
     PARA {"An ",TEX///$n$///,"-dimensional matrix ",TEX///$M$///," is skew symmetric if for every permutation ",TEX///$s$///," of the set ",TEX///$\{0,\ldots,n-1\}$///," we have ",TO permute,TT"(M,s) == sign(s)*M","."},
     EXAMPLE {
         "genericSkewMultidimensionalMatrix(3,4)",
@@ -1544,7 +1546,7 @@ document {
     Key => {sylvesterMatrix,(sylvesterMatrix,MultidimensionalMatrix)}, 
     Headline => "Sylvester-type matrix for the hyperdeterminant of a matrix of boundary shape", 
     Usage => "sylvesterMatrix M", 
-    Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix of boundary shape ",TEX///$(k_1+1)\times\ldots\times (k_n+1)$///," (that is, ",TEX///$2 max\{k_1,\ldots,k_n\} = k_1+\ldots+k_n$///,")."}},
+    Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix of boundary shape ",TEX///$(k_1+1)\times\cdots\times (k_n+1)$///," (that is, ",TEX///$2 max\{k_1,\ldots,k_n\} = k_1+\ldots+k_n$///,")."}},
     Outputs => {Matrix => {"a particular square matrix whose determinant is ",TEX///$det(M)$///," (up to sign), introduced by Gelfand, Kapranov, and Zelevinsky."}},
     PARA{"This is an implementation of Theorem 3.3, Chapter 14, in ",HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},"."},
     EXAMPLE {
