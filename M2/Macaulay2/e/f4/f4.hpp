@@ -68,6 +68,10 @@
 //      Hilbert function use
 //
 
+#include "interface/computation.h"
+#include "interface/mutable-matrix.h"
+
+#include "comp.hpp"
 #include "f4-types.hpp"
 #include "f4-mem.hpp"
 #include "monhashtable.hpp"

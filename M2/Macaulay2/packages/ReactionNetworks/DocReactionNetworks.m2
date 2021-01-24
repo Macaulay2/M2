@@ -99,7 +99,7 @@ doc ///
 	    F' = toList apply(0..length SS-1, i-> sub(SS#i,P))
 	Text
 	    Next, we create the conservation equations and assume there is no
-	    translation, i.e., the intial conditions are all zero.
+	    translation, i.e., the initial conditions are all zero.
 	Example
 	    C = conservationEquations N
 	    L = {0,0,0,0,0}
@@ -319,7 +319,7 @@ doc ///
 	Text
 	    {\bf Substitute InitialValues}
 
-	    The example below demonstrates how to substitue specific values for
+	    The example below demonstrates how to substitute specific values for
 	    the initial values in a reaction network. The list of desired values
 	    must be input in the order of the initial values; for that order use
 	    N.InitialValues, where N is the name of the reaction network.
@@ -525,7 +525,7 @@ doc ///
     	shuttle model for Wnt signaling pathway
     Description
     	Text
-	    The cannonical Wnt/beta-catenin signaling pathway is important for essential
+	    The canonical Wnt/beta-catenin signaling pathway is important for essential
 	    cellular functions such as development, homeostasis, and is implicated in many
 	    diseases [MacLean, Rosen, Byrne, Harrington]. The Wnt shuttle model includes
 	    an abstraction of the signal transduction pathway

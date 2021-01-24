@@ -157,14 +157,16 @@ doc///
 
 doc///
  Key
-  keys
+   keys
+  (keys, Database)
+  (keys, Dictionary)
   (keys, HashTable)
  Headline
-  keys used in a hash table
+  keys used in a hash table, dictionary, or database
  Usage
   keys t
  Inputs
-  t:HashTable
+  t:{HashTable,Dictionary,Database}
  Outputs
   :List
    the keys occurring in the hash table {\tt t}

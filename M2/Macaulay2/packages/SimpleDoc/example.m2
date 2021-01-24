@@ -46,7 +46,7 @@ docExample = "doc ///
 
       o1 = 8
 
-      i1000 = 2+2
+      i1000 : 2+2
 
       o1000 = 4
    Text

@@ -157,7 +157,7 @@ doc ///
             g = x^2 - y^3;
             testModule({1/2, 1/2}, {f, g})
         Text
-            Sometimes it is convenient to specify the ambient canonical module, or the choice of element(s) that detemines the Frobenius trace on the canonical module, across multiple calls of testModule.
+            Sometimes it is convenient to specify the ambient canonical module, or the choice of element(s) that determines the Frobenius trace on the canonical module, across multiple calls of testModule.
 	    This can be done by using the options {\tt CanonicalIdeal} and {\tt GeneratorList}.
         Example
             R = ZZ/5[x,y,z]/(x*y, y*z, z*x);

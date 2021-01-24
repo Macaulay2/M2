@@ -367,6 +367,8 @@ NewOfFromFun = newoffromfun;
 
 export stdioS  := setupconst("stdio", Expr(stdIO));
 export stderrS := setupconst("stderr",Expr(stdError));
+export setStdIO   (f:file):void := ( stdIO    = f; setGlobalVariable(stdioS,  Expr(stdIO)));
+export setStdError(f:file):void := ( stdError = f; setGlobalVariable(stderrS, Expr(stdError)));
 
 openfilesfun(e:Expr):Expr := (
      n := 0;

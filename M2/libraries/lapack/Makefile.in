@@ -3,7 +3,7 @@
 #URL = http://www.netlib.org/lapack
 URL = http://macaulay2.com/Downloads/OtherSourceCode
 
-VERSION = 3.6.0
+VERSION = 3.9.0
 
 TARFILE = lapack-$(VERSION).tgz
 CONFIGURECMD = cp make.inc.example make.inc

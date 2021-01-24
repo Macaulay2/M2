@@ -36,7 +36,10 @@ assert(fileExists(dir | "/foo/bar/baz"))
 program = findProgram("foo", name, AdditionalPaths => {dir})
 assert(program#"path" == dir)
 
-fn << "echo -n 1.0" << close
+
+fn << "echo 1.0" << endl << close
+
+
 program = findProgram(name, name, MinimumVersion => ("0.9", name))
 assert(program#"version" == "1.0")
 program = findProgram(name, name, MinimumVersion => ("1.1", name),

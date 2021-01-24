@@ -43,10 +43,8 @@ member(A,RRi) := (N,M) -> subsetRRi(N,M);
 
 isSubset(RRi,RRi) := (N,M) -> subsetRRi(N,M);
 
-intersectIntervals = method(Options => {Precision => -1})
+intersection = method(Options => true)
 
-intersectIntervals(RRi,RRi) := opts -> (N,M) -> (
+intersectIntervals(RRi,RRi) := {Precision => -1} >> opts -> (N,M) -> (
     if opts.Precision < 0 then intersectRRi(N,M)
     else intersectRRi(opts.Precision,N,M))
-
-

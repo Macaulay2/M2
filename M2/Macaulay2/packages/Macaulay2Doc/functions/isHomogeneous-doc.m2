@@ -2,6 +2,13 @@
 --- author(s): MES
 --- notes: some changes Sept 2018 LS
 
+-*
+-- TODO
+(isHomogeneous,Number)
+(isHomogeneous,PolynomialRing)
+(isHomogeneous,QuotientRing)
+*-
+
 document { 
      Key => {isHomogeneous,
 	  (isHomogeneous,Ring),
@@ -82,14 +89,3 @@ document {
      PARA{},
      SeeAlso => {degree, degrees, homogenize, "graded and multigraded polynomial rings", "graded modules", prune}
      }
-
-TEST ///
-isHomogeneous (ZZ/7)
-isHomogeneous (ZZ/7[x])
-isHomogeneous (ZZ/7[x]/(x^2-1))
-isHomogeneous ZZ
-A = QQ[a,b,c]
-B = A[x,y]
-isHomogeneous B
-isHomogeneous ideal(a*x+y,y^3-b*x^2*y)
-///

@@ -62,7 +62,7 @@ randomCanonicalModelOfSpaceCurve (ZZ,ZZ,Ring) := opt -> (d,g,R) -> (
      S := (coefficientRing R)[y_0..y_3];
      RS := R**S;
      I := (random spaceCurve)(d,g,S,Certify=>opt.Certify,Attempts=>1);
-     -- the canoncial linear system
+     -- the canonical linear system
      omegaC := presentation prune truncate(0,Ext^1(I,S^{ -4}));
      graph := substitute(vars R,RS)*substitute(omegaC,RS);
      J := saturate(ideal graph,substitute(y_0,RS));
@@ -73,7 +73,7 @@ randomCanonicalModelOfSpaceCurve (ZZ,ZZ,Ring) := opt -> (d,g,R) -> (
 randomCanonicalCurve=method(TypicalValue=>Ideal,Options=>{Certify=>false})
 
 -- construct a random canonical curve of genus g
--- by using plane cuves, space curves and verras construction for g=14
+-- by using plane curves, space curves and verras construction for g=14
 -- R a ring with g variables
 randomCanonicalCurve(ZZ,PolynomialRing):= opt -> (g,R)->(
      if g>14 or g<4 then error "no method implemented";
@@ -82,7 +82,7 @@ randomCanonicalCurve(ZZ,PolynomialRing):= opt -> (g,R)->(
 	  s:=floor(g/3); -- the speciality of a plane model of minimal degree
 	  d=g+2-s; -- the degree of the plane model
 	  return randomCanonicalModelOfPlaneCurve(d,g,R,Certify=>opt.Certify));
-     -- the following space curve models are choosen such that the
+     -- the following space curve models are chosen such that the
      -- brill noether number is positive and the construction via
      -- Hartshorne-Rao-Modules works
      if g==11 then return randomCanonicalModelOfSpaceCurve(12,11,R,Certify=>opt.Certify);

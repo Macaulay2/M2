@@ -415,7 +415,7 @@ doc ///
     @EM "Quasidegrees"@ is a package that enables the user to construct multigraded rings
     and look at the graded structure of multigraded finitely generated modules over a
     polynomial ring.  The quasidegree set of a $\ZZ^d$-graded module $M$ is the Zariski closure 
-    in ${\mathbb C}^d$ of the degrees of the nonzero homogeneous components of $M$.  This package 
+    in $\CC^d$ of the degrees of the nonzero homogeneous components of $M$.  This package
     can compute the quasidegree set of a finitely generated module over a $\ZZ^d$-graded 
     polynomial ring.  This package also computes the quasidegree sets of local cohomology modules 
     supported at the maximal irrelevant ideal of modules over a $\ZZ^d$-graded polynomial ring.
@@ -639,7 +639,7 @@ doc ///
       that is presented by a monomial matrix and computes the quasidegree set of $M$.  The 
       quasidegrees of $M$ are indexed by a list of pairs $(v,F)$ where $v$ is a vector and $F$ 
       is a list of vectors f@SUB TT"1"@,...,f@SUB TT"l"@.  The pair $(v,F)$ indexes the plane 
-      $v+span_{\mathbb C}F$.  The quasidegree set of M is the union of all such planes that the 
+      $v+span_\CCF$.  The quasidegree set of M is the union of all such planes that the
       pairs (v,F) index.
      
      Text
@@ -720,10 +720,10 @@ doc ///
       included in the input, {\tt quasidegreesLocalCohomology(i,M)} computes the quasidegree 
       set of the $i-th$ local cohomology module, supported at the maximal irrelevant ideal, of 
       $M$.  If an integer is excluded from the input, then {\tt quasidegreesLocalCohomology(M)} 
-      computes the quasidegree set of $H_{\bf m}^0(M)\oplus\cdots\oplus H_{\bf m}^{d-1}(M)$. 
+      computes the quasidegree set of $H_{\mathbf m}^0(M)\oplus\cdots\oplus H_{\mathbf m}^{d-1}(M)$.
       The quasidegrees of local cohomology are indexed by a list of pairs $(v,F)$ where $v$ is 
       a vector and $F$ is a list of vectors.  The pair $(v,F)$ indexes the plane 
-      $v+span_{\mathbb C}F$.  The quasidegree set of the local cohomology modules is the union 
+      $v+span_\CCF$.  The quasidegree set of the local cohomology modules is the union
       of all such planes that the pairs $(v,F)$ index.
      
      Text
@@ -735,7 +735,7 @@ doc ///
      
      Text 
       The first example computes the quasidegree set of 
-      $H_{\bf m}^0(R/I)\oplus H_{\bf m}^1(R/I)$ where $I$ is the toric ideal associated to the 
+      $H_{\mathbf m}^0(R/I)\oplus H_{\mathbf m}^1(R/I)$ where $I$ is the toric ideal associated to the
       matrix $A$.
 
      Example
@@ -793,11 +793,11 @@ doc ///
     Description
      Text
       This method takes a $d\times n$ integer matrix $A$ and computes the exceptional parameters
-      of $A$.  The exceptional parameters of $A$ are the $\beta\in{\mathbb C}^d$ such that the 
+      of $A$.  The exceptional parameters of $A$ are the $\beta\in\CC^d$ such that the
       rank of the hypergeometric system $H_\beta(A)$ does not take the expected value.  The 
       exceptional parameters of $A$ are indexed by a list of pairs $(v,F)$ where $v$ is a 
       vector and $F$ is a list of vectors.  The pair $(v,F)$ represents the plane 
-      $v+span_{\mathbb C} F$.  The set of exceptional parameters of $A$ is the union of all such
+      $v+span_\CC F$.  The set of exceptional parameters of $A$ is the union of all such
       planes given by the pairs $(v,F)$.
       
      Example

@@ -11,7 +11,7 @@ toString Type := X -> (
 	  if hasAttribute(X,PrintNames) then return getAttribute(X,PrintNames);
 	  if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
 	  );
-     concatenate(toString class X, " of ", toString parent X, "{...", toString(#X), "...}"))
+     concatenate(toString class X, " of ", toString parent X))
 toString HashTable := s -> (
      concatenate (
 	  "new ", toString class s,
@@ -28,6 +28,7 @@ toString BasicList := s -> concatenate(
      "{", between(", ",apply(toList s,toStringn)), "}"
      )
 toString Array := s -> concatenate ( "[", between(", ",toStringn \ toList s), "]" )
+toString AngleBarList := s -> concatenate ( "<|", between(", ",toStringn \ toList s), "|>" )
 toString Sequence := s -> (
      if # s === 1 then concatenate("1 : (",toString s#0,")")
      else concatenate("(",between(",",toStringn \ s),")")
@@ -66,7 +67,9 @@ toString Manipulator := f -> (
 toExternalString String := format
 
 toString Net := x -> demark("\n",unstack x)
-toExternalString Net := x -> concatenate(format toString x, "^", toString(height x - 1))
+toExternalString Net := x -> if height x + depth x == 0 then
+     concatenate("(horizontalJoin())", "^", toString height x) else
+     concatenate(format toString x, "^", toString(height x - 1))
 
 toExternalString MutableHashTable := s -> (
      if hasAttribute(s,ReverseDictionary) then return toString getAttribute(s,ReverseDictionary);
@@ -165,6 +168,10 @@ net Array := x -> horizontalJoin deepSplice (
      "[",
      toSequence between(comma,apply(x,netn)),
      "]")
+net AngleBarList := x -> horizontalJoin deepSplice (
+     "<|",
+     toSequence between(comma,apply(x,netn)),
+     "|>")
 net BasicList := x -> horizontalJoin deepSplice (
       net class x, 
       "{",
@@ -198,7 +205,7 @@ net Type := X -> (
 	  if hasAttribute(X,PrintNames) then return net getAttribute(X,PrintNames);
 	  if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
 	  );
-     horizontalJoin ( net class X, if #X > 0 then ("{...", toString(#X), "...}") else "{}" ))
+     horizontalJoin ( net class X, " of ", net parent X))
 
 -----------------------------------------------------------------------------
 
@@ -259,10 +266,12 @@ netList VisibleList := o -> (x) -> (
 
 -- TODO: move to debugging, except for Net?
 commentize = method(Dispatch => Thing)
-commentize Nothing := s -> ""
-commentize String  :=
-commentize Thing   := s -> concatenate(" -- ", between("\n -- ", separate concatenate s))
-commentize Net     := S -> stack(commentize \ unstack S)
+commentize Nothing   := s -> ""
+commentize BasicList := s -> commentize horizontalJoin s
+commentize String    := s -> concatenate(" -- ", between("\n -- ", separate s))
+commentize Net       := S -> (
+    baseline := height S - if height S == -depth S then 0 else 1;
+    (stack(commentize \ unstack S))^baseline)
 
 printerr = msg -> (stderr << commentize msg << endl;) -- always return null
 warning  = msg -> if debugLevel > 0 then (

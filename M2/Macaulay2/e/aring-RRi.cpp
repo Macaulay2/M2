@@ -24,15 +24,15 @@ void ARingRRi::elem_text_out(buffer &o,
   o << "[";
   if (prepend_plus1) o << "+";
     if (strip_last1)
-      o.put(s1->array, s1->len - 1);
+      o.put((char *)s1->array, s1->len - 1);
     else
-      o.put(s1->array, s1->len);
+      o.put((char *)s1->array, s1->len);
   o << ",";
   if (prepend_plus2) o << "+";
     if (strip_last2)
-      o.put(s2->array, s2->len - 1);
+      o.put((char *)s2->array, s2->len - 1);
     else
-      o.put(s2->array, s2->len);
+      o.put((char *)s2->array, s2->len);
   o << "]";
 }
 

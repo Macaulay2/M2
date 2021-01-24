@@ -145,7 +145,7 @@ doc ///
     k:ZZ
       maximum size of each entry in partitions
     n:ZZ
-      number of entries in paritition
+      number of entries in partition
     d:ZZ
       number being partitioned
   Outputs
@@ -361,13 +361,13 @@ doc ///
     Example
       chordstotwocurves = integral cycleofchords^2
     Text
-      Now if we want to answer our specific question, we just subsitute in the desired values
+      Now if we want to answer our specific question, we just substitute in the desired values
       for $d$ and $g$:
     Example
       sub(chordstotwocurves, {d' => 3, g => 0/1})
     Text
       WARNING: because of some ugly M2 design decisions, if you don't make at least one of $d'$ or
-      $g$ a rational number, this subsitute will return the wrong answer!  Hopefully this design
+      $g$ a rational number, this substitute will return the wrong answer!  Hopefully this design
       will be changed in the future.
       
       Exercise 4.25 (a):

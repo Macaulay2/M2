@@ -1,10 +1,10 @@
 // Copyright 2005  Michael E. Stillman
 
-#include "../newdelete.hpp"
-#include "moninfo.hpp"
-#include "monordering.h"
-#include <cstdio>
 #include <cstdlib>
+
+#include "interface/monomial-ordering.h"
+#include "moninfo.hpp"
+#include "newdelete.hpp"
 
 MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
 {

@@ -33,7 +33,7 @@ assert(numericalRank evaluate(jacobian p.SolutionSystem,p) == 2)
 
 -----------------------------------------------------------------------
 -- DECOMPOSITION
-decompose WitnessSet := (W) -> (
+decompose WitnessSet := {} >> unusedOpts -> (W) -> (
      R := ring W;
      n := numgens R;
      k := dim W;

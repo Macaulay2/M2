@@ -3,6 +3,7 @@
 -- html output
 -----------------------------------------------------------------------------
 
+-- TODO: unify the definition of the tex macros so book/M2book.tex can use them
 KaTeX := () -> (
     katexPath := locateCorePackageFileRelative("Style",
 	layout -> replace("PKG", "Style", layout#"package") | "katex", installPrefix, htmlDirectory);
@@ -13,8 +14,6 @@ KaTeX := () -> (
     <script defer="defer" type="text/javascript">
       var macros = {
           "\\break": "\\\\",
-          "\\R": "\\mathbb{R}",
-          "\\C": "\\mathbb{C}",
           "\\ZZ": "\\mathbb{Z}",
           "\\NN": "\\mathbb{N}",
           "\\QQ": "\\mathbb{Q}",
@@ -26,9 +25,9 @@ KaTeX := () -> (
           { left: "\\[", right: "\\]", display: true},
           { left: "$",   right: "$",   display: false},
           { left: "\\(", right: "\\)", display: false}
-      ];
+      ], ignoredTags = ["tt", "script", "noscript", "style", "textarea", "pre", "code", "option"];
       document.addEventListener("DOMContentLoaded", function() {
-        renderMathInElement(document.body, { delimiters: delimiters, macros: macros, trust: true });
+        renderMathInElement(document.body, { delimiters: delimiters, macros: macros, ignoredTags: ignoredTags, trust: true });
       });
     </script>
     <style type="text/css">.katex { font-size: 1em; }</style>
@@ -89,6 +88,8 @@ browser := () -> (
 
 -- This method applies to all types that inherit from Hypertext
 -- Most MarkUpTypes automatically work recursively
+html1 := x -> (if class x === String then htmlLiteral else html) x -- slightly annoying workaround for the ambiguous role of strings in/out of Hypertext
+
 html Hypertext := x -> (
     T := class x;
     qname := T.qname;
@@ -105,7 +106,7 @@ html Hypertext := x -> (
     popIndentLevel(1, if #cont == 0
 	then concatenate(head, "<", qname, attr, "/>", tail)
 	else concatenate(head, "<", qname, attr, ">", prefix,
-	    apply(cont, html), suffix, "</", qname, ">", tail)))
+	    apply(cont, html1), suffix, "</", qname, ">", tail)))
 
 -----------------------------------------------------------------------------
 -- Exceptional (html, MarkUpType) methods
@@ -114,8 +115,8 @@ html Hypertext := x -> (
 -- TOH  -- see format.m2
 
 html LITERAL := x -> concatenate x
-html String  := x -> htmlLiteral x
-html TEX     := x -> concatenate apply(x, html)
+--html String  := x -> htmlLiteral x
+html TEX     := x -> concatenate apply(x, html1) -- TODO: retire this
 
 html HTML := x -> demark(newline, {
     	///<?xml version="1.0" encoding="utf-8" ?>///,
@@ -124,17 +125,17 @@ html HTML := x -> demark(newline, {
     	popIndentLevel(pushIndentLevel 1, apply(x, html)),
 	///</html>///})
 
-treatImgSrc := x -> apply(x, y -> if class y === Option and y#0 === "src" then "src" => htmlLiteral toURL y#1 else y)
+treatImgSrc := x -> apply(x, y -> if class y === Option and y#0 === "src" then "src" => toURL y#1 else y)
 html IMG := (lookup(html, IMG)) @@ treatImgSrc
 
-splitLines := x -> apply(x, y -> if class y === String then demark(newline, lines y) else y) -- effectively, \r\n -> \n and removes last [\r]\n
-html PRE := (lookup(html, PRE)) @@ splitLines
+fixNewlines := x -> apply(x, y -> if class y === String then replace("\r\n","\n",y) else y)
+html PRE := (lookup(html, PRE)) @@ fixNewlines
 
-html CDATA   := x -> concatenate("<![CDATA[",x,"]]>")
-html COMMENT := x -> concatenate("<!--",x,"-->")
+html CDATA   := x -> concatenate("<![CDATA[", x ,"]]>", newline)
+html COMMENT := x -> concatenate("<!--", x, "-->", newline)
 
 html HREF := x -> (
-     r := concatenate apply(splice if #x > 1 then drop(x, 1) else x, html);
+     r := concatenate apply(splice if #x > 1 then drop(x, 1) else x, html1);
      r = if match("^ +$", r) then #r : "&nbsp;&nbsp;" else r;
      concatenate("<a href=\"", htmlLiteral toURL first x, "\">", r, "</a>")
      )
@@ -143,16 +144,49 @@ html MENU := x -> html redoMENU x
 
 html TO   := x -> html TO2{tag := x#0, format tag | if x#?1 then x#1 else ""}
 html TO2  := x -> (
-    tag := getPrimaryTag x#0;
+    tag := getPrimaryTag fixup x#0;
     fkey := format tag;
     -- TODO: add this to htmlLiteral?
     name := if match("^ +$", x#1) then #x#1 : "&nbsp;&nbsp;" else x#1;
     if isUndocumented tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
     if isMissingDoc   tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
-    concatenate(html ANCHOR{"title" => htmlLiteral headline tag, "href"  => toURL htmlFilename tag, htmlLiteral name}))
+    concatenate(html ANCHOR{"title" => htmlLiteral headline tag, "href"  => toURL htmlFilename tag, name}))
 
-html VerticalList         := x -> html UL apply(x, html)
-html NumberedVerticalList := x -> html OL apply(x, html)
+----------------------------------------------------------------------------
+-- html'ing non Hypertext
+----------------------------------------------------------------------------
+
+html Thing := htmlLiteral @@ tex -- by default, we use tex (as opposed to actual html)
+
+-- text stuff: we use html instead of tex, much faster (and better spacing)
+html Net := n -> concatenate("<pre style=\"display:inline-table;text-align:left;vertical-align:",
+    toString(if height n+depth n>0 then 100*(height n-1) else 0), "%\">\n", -- the % is relative to line-height
+    apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre>")
+html String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x,
+    if #x>0 and last x === "\n" then " " else "", -- fix for html ignoring trailing \n
+    "</pre>")
+html Descent := x -> concatenate("<span style=\"display:inline-table;text-align:left\">\n", apply(sortByName pairs x,
+     (k,v) -> (
+	  if #v === 0
+	  then html k
+	  else html k | " : " | html v
+	  ) | "<br/>"), "</span>")
+html Time := x -> html x#1 | html DIV ("-- ", toString x#0, " seconds")
+-- a few types are just strings
+html File :=
+html IndeterminateNumber :=
+html GroebnerBasis :=
+html Package :=
+html Boolean :=
+html Function :=
+html Type := html @@ toString
+-- except not these descendants
+html Monoid :=
+html RingFamily :=
+html Ring := lookup(html,Thing)
+
+--html VerticalList         := x -> html UL apply(x, y -> new LI from hold y)
+--html NumberedVerticalList := x -> html OL apply(x, y -> new LI from hold y)
 
 -----------------------------------------------------------------------------
 -- Viewing rendered html in a browser

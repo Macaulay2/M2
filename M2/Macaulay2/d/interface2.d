@@ -7,8 +7,8 @@ use common;
 use hashtables;
 use util;
 use struct;
-header "#include <engine.h>";
 
+header "#include <engine.h>"; -- required for rawBIBasis, rawGbBoolean, NAG routines
 
 -- rawPointArray
 export rawPointArray(e:Expr):Expr := (

@@ -34,7 +34,7 @@ isOn: merge two versions?
 
 numericalIntersection: need to handle witness sets with ProjectionDimension key
 
-engine track: problem with the origin (change handling relative error tolerance, wee witness-set examples)
+engine track: problem with the origin (change handling relative error tolerance, see witness-set examples)
 
 NAGtrace: separate "progress update" from other "talk"?
 

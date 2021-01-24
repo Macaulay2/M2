@@ -21,7 +21,7 @@ doc ///
       with the ring, and its opposite ring, i.e. this switches left and right modules of the ring.
       
       This is implemented in the following simple manner: each monomial which has exactly $d$
-      skew commuting variables occuring (thus, with exponent 1 each), is multiplied by 
+      skew commuting variables occurring (thus, with exponent 1 each), is multiplied by 
       $(-1)^{(d-1)(d-2)/2}$.
     Example
       R = ZZ/32003[a..f, SkewCommutative => true]
@@ -58,47 +58,4 @@ doc ///
      function returns an element in the same ring.
    SeeAlso
      transpose
-///
-
-TEST ///
-  R = ZZ/101[a..d]
-  F = a + d^2 + a*b*c
-  assert(F == antipode F)
-  assert((1_R) == antipode(1_R))
-  assert((0_R) == antipode(0_R))
-  assert((R_0) == antipode(R_0))
-///
-
-TEST ///
-  R = ZZ/101[a..f, SkewCommutative=>true]
-  F = a + b*d + a*b*c + b*c*d*e + a*b*c*e*f + a*b*c*d*e*f
-  assert(a - b*d - a*b*c + b*c*d*e + a*b*c*e*f - a*b*c*d*e*f == antipode F)
-  assert((1_R) == antipode(1_R))
-  assert((0_R) == antipode(0_R))
-  assert((R_0) == antipode(R_0))
-
-  kk = coefficientRing R
-  assert(1_kk == antipode (1_kk))
-  assert(17_kk == antipode (17_kk))
-
-  M = matrix{{a*b-1, a*c-d, e-a*b*c}}
-  N = syz M
-  assert(M * N == 0)
-  assert((transpose N) * (transpose M) == 0) -- fails without antipode!
-///
-
-TEST ///
-  R = ZZ/101[a..f, SkewCommutative=>{0,1,3,5}]
-  F = a - b*d - a*b*c - b*c*d*e - a*b*c*e*f + a*b*c*d*e*f
-  antipode F
-
-  M = matrix{{a*b-1, a*c-d, e-a*b*c}}
-  N = syz M
-  assert(M * N == 0)
-  assert((transpose N) * (transpose M) == 0) -- fails without antipode!
-
-  -- Just taking transpose gives wrong values!
-  Mt = matrix transpose entries M
-  Nt = matrix transpose entries N
-  assert(Nt*Mt != 0)
 ///

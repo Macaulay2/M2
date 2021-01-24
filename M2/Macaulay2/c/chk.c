@@ -1645,6 +1645,7 @@ static node chkdefinition(node e, scope v){
 			EQUAL!=strcmp("volatile int",ltype->body.type.Cname) &&
 			EQUAL!=strcmp("volatile bool",ltype->body.type.Cname) &&
 			EQUAL!=strcmp("char",ltype->body.type.Cname) &&
+			EQUAL!=strcmp("signed char",ltype->body.type.Cname) &&
 			EQUAL!=strcmp("unsigned char",ltype->body.type.Cname) &&
 			EQUAL!=strcmp("short",ltype->body.type.Cname) &&
 			EQUAL!=strcmp("unsigned short",ltype->body.type.Cname))

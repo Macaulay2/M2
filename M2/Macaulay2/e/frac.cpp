@@ -1,6 +1,8 @@
 // Copyright 1995 Michael E. Stillman
 
 #include "frac.hpp"
+
+#include "interface/factory.h"
 #include "text-io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"

@@ -117,7 +117,7 @@ toString Package := pkg -> if pkg#?"pkgname" then pkg#"pkgname" else "-*package*
 texMath  Package := pkg -> texMath toString pkg
 options  Package := pkg -> pkg.Options
 
--- TODO: what is this for?
+-- TODO: should this go elsewhere?
 toString Dictionary := dict -> (
     if hasAnAttribute dict then (
 	if hasAttribute(dict, PrintNames)        then getAttribute(dict, PrintNames) else
@@ -193,8 +193,8 @@ needsPackage String  := opts -> pkgname -> (
 -- used as the default loadOptions in newPackage
 loadPackageOptions#"default" = new MutableHashTable from options loadPackage
 
-getpkg       = pkgname -> if PackageDictionary#?pkgname then value PackageDictionary#pkgname else dismiss needsPackage pkgname
-getpkgNoLoad = pkgname -> if PackageDictionary#?pkgname then value PackageDictionary#pkgname
+getpkg       = pkgname -> if isPackageLoaded pkgname then value PackageDictionary#pkgname else dismiss needsPackage pkgname
+getpkgNoLoad = pkgname -> if isPackageLoaded pkgname then value PackageDictionary#pkgname
 
 -----------------------------------------------------------------------------
 -- newPackage
@@ -385,7 +385,6 @@ newPackage String := opts -> pkgname -> (
     setAttribute(newpkg.Dictionary,           PrintNames, pkgname | ".Dictionary");
     setAttribute(newpkg#"private dictionary", PrintNames, pkgname | "#\"private dictionary\"");
     debuggingMode = opts.DebuggingMode;		    -- last step before turning control back to code of package
-    -- if pkgname =!= "SimpleDoc" and pkgname =!= "Core" and pkgname =!= "Text" then needsPackage "SimpleDoc";
     scan(opts.PackageImports, needsPackage);
     scan(opts.PackageExports, needsPackage);
     newpkg.loadDepth = loadDepth;
@@ -432,9 +431,12 @@ exportMutable = method(Dispatch => Thing)
 exportMutable String := x -> exportMutable {x}
 exportMutable List   := v -> currentPackage#"exported mutable symbols" = join_(currentPackage#"exported mutable symbols") (export v)
 
+importFrom = method()
+importFrom(String,  List) := (P, x) -> importFrom(getpkg P, x)
+importFrom(Package, List) := (P, x) -> apply(nonnull x, s -> currentPackage#"private dictionary"#s = P#"private dictionary"#s)
+
 exportFrom = method()
-exportFrom(Package, List) := (P, x) -> (
-    export \\ toString \ (s -> currentPackage#"private dictionary"#s = P#"private dictionary"#s) \ x)
+exportFrom(Package, List) := (P, x) -> export \\ toString \ importFrom(P, x)
 
 ---------------------------------------------------------------------
 -- Here is where Core officially becomes a package
@@ -494,56 +496,51 @@ endPackage String := title -> (
      -- TODO: check for hadDocumentationWarning and Error here?
      pkg)
 
-
 beginDocumentation = () -> (
-    if loadPackageOptions#?(currentPackage#"pkgname") and not loadPackageOptions#(currentPackage#"pkgname").LoadDocumentation
+    pkgname := currentPackage#"pkgname";
+    if loadPackageOptions#?pkgname and not loadPackageOptions#pkgname.LoadDocumentation
     and currentPackage#?rawKeyDB and isOpen currentPackage#rawKeyDB then (
-	if notify then stderr << "--beginDocumentation: using documentation database, skipping the rest of " << currentFileName << endl;
+	if notify then printerr("beginDocumentation: using documentation database, skipping the rest of ", currentFileName);
 	currentPackage#"documentation not loaded" = true;
 	return end);
-     if notify then stderr << "--beginDocumentation: reading the rest of " << currentFileName << endl;
-     if currentPackage#"pkgname" != "Text" and  currentPackage#"pkgname" != "SimpleDoc" then (
-	 needsPackage "Text";
-	 needsPackage "SimpleDoc";
-	  );
-     )
+    if notify then printerr("beginDocumentation: reading the rest of ", currentFileName);
+    if not member(pkgname, {"Text", "SimpleDoc"}) then needsPackage \ {"Text", "SimpleDoc"};)
 
 ---------------------------------------------------------------------
 
 package = method (Dispatch => Thing, TypicalValue => Package)
-package Dictionary := d -> (
-    if currentPackage =!= null and (currentPackage.Dictionary === d or currentPackage#?"private dictionary" and currentPackage#"private dictionary" === d)
-    then currentPackage
-    else scan(values PackageDictionary, pkg -> if class value pkg === Package and (value pkg).Dictionary === d then break (value pkg))
-    )
-package Thing      := x -> ( d := dictionary x; if d =!= null then package d )
-package String     := s -> ( if (d := fetchAnyRawDocumentation s) =!= null then package d.DocumentTag )
-package Symbol     := s -> (
+package Package  := identity
+package Nothing  := x -> null
+package Option   := o -> youngest(package \ toSequence o)
+package Array    :=
+package Sequence := s -> if (d := fetchAnyRawDocumentation makeDocumentTag s) =!= null then package d.DocumentTag
+package String   := s -> if (d := fetchAnyRawDocumentation                 s) =!= null then package d.DocumentTag
+package Thing    := x -> if (d := dictionary x)                               =!= null then package d
+package Symbol   := s -> (
+    if instance(value s, Package) then return value s;
     n := toString s;
-    r := scan(values PackageDictionary, p ->
-	if (value p).?Dictionary and (value p).Dictionary#?n and (value p).Dictionary#n === s then break value p);
+    r := scan(values PackageDictionary, pkg ->
+	if (pkg = value pkg).?Dictionary and pkg.Dictionary#?n and pkg.Dictionary#n === s then break pkg);
     if r =!= null then return r;
-    scan(dictionaryPath, d -> if d#?n and d#n === s then (
-	    if d === PackageDictionary and class value s === Package then break value s
-	    else if package d =!= null then break package d)));
-package HashTable :=
-package Function  := x -> if hasAttribute(x, ReverseDictionary) then package getAttribute(x, ReverseDictionary)
-package Sequence  := s -> youngest (package \ s)
-package Array     := s -> package toSequence s
+    scan(dictionaryPath, d -> if d#?n and d#n === s then if package d =!= null then break package d))
+package Function   :=
+package HashTable  := x -> if hasAttribute(x, ReverseDictionary) then package getAttribute(x, ReverseDictionary)
+package Dictionary := d -> (
+    if currentPackage =!= null
+    and (  currentPackage.?Dictionary
+	and currentPackage.Dictionary === d
+	or currentPackage#?"private dictionary"
+	and currentPackage#"private dictionary" === d) then currentPackage
+    else scan(values PackageDictionary, pkg ->
+	if (pkg = value pkg).?Dictionary and pkg.Dictionary === d then break pkg))
 
+-- TODO: should this reset the values of exported mutable symbols?
 use Package := pkg -> (
-     a := member(pkg, loadedPackages);
-     b := member(pkg.Dictionary, dictionaryPath);
-     if a and not b then error("use: package ", toString pkg, " appears in loadedPackages, but its dictionary is missing from dictionaryPath");
-     if b and not a then error("use: package ", toString pkg, " does not appear in loadedPackages, but its dictionary appears in dictionaryPath");
-     if not a and not b then (
-     	  scan(pkg.Options.PackageExports, needsPackage);
-     	  loadedPackages = prepend(pkg, loadedPackages);
-	  --- if mutable pkg.Dictionary then error("package ", toString pkg, " not completely loaded yet");
-	  dictionaryPath = prepend(pkg.Dictionary, dictionaryPath);
-	  checkShadow();
-	  );
-     if pkg.?use then pkg.use pkg else pkg)
+    scan(pkg.Options.PackageExports, needsPackage);
+    loadedPackages = prepend(pkg,            delete(pkg,            loadedPackages));
+    dictionaryPath = prepend(pkg.Dictionary, delete(pkg.Dictionary, dictionaryPath));
+    checkShadow();
+    if pkg.?use then pkg.use pkg else pkg)
 
 debug = method()
 debug ZZ      := i   -> debugWarningHashcode = i
@@ -555,13 +552,17 @@ debug Package := pkg -> (
 -----------------------------------------------------------------------------
 -- evaluateWithPackage
 -----------------------------------------------------------------------------
+-- this trick allows us to take advantage of tail-call optimization
+-- in order to reduce the stack size in recursive calls
+pushDictionary :=  d     -> (dictionaryPath = prepend(d, dictionaryPath); d)
+popDictionary  := (d, s) -> (dictionaryPath =    drop(dictionaryPath, 1); s)
+
 -- This is only used to inquire about a symbol from the Text package.
 -- Probably only necessary because Text documents Hypertext objects.
 -- Is there an alternative way? Is is used by document.m2 and installPackage.m2
 evaluateWithPackage = (pkg, object, func) -> (
     if member(pkg.Dictionary, dictionaryPath) then return func object;
-    dictionaryPath = prepend(pkg.Dictionary, dictionaryPath);
-    first (func object, dictionaryPath = drop(dictionaryPath, 1)))
+    popDictionary(pushDictionary pkg.Dictionary, func object))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

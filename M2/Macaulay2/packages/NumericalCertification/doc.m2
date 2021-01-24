@@ -201,7 +201,7 @@ doc ///
 	    (computeConstants, PolySystem, Point)
 	    "(computeConstants, PolySystem, Point)"
 	Headline
-	    compute the auxilary quantities related to alpha theory
+	    compute the auxiliary quantities related to alpha theory
 	Usage
 	    (alpha, beta, gamma) = computeConstants(PS, P)
 	Inputs
@@ -209,9 +209,9 @@ doc ///
 	    P:Point
 	Description
 	    Text
-    	    	alpha theory uses three auxilary quantities related to the input polynomial system and point.
+    	    	alpha theory uses three auxiliary quantities related to the input polynomial system and point.
 
-		Beta value is defined by the length of the Newton step and gamma value is the quantity which is inversely propotional to the length between exact solution and the given point.
+		Beta value is defined by the length of the Newton step and gamma value is the quantity which is inversely proportional to the length between exact solution and the given point.
 
 		Alpha value is defined by the multiplication of beta and gamma. When it is smaller than  $0.157671$, then the input point is an approximate solution to the system. The function @TO "certifySolution"@ does this process.
 	    Example

@@ -138,7 +138,7 @@ statePolytope Ideal := I -> (
 -- PURPOSE : Computing the closest point of a polyhedron to a given point
 --   INPUT : (p,P),  where 'p' is a point given by a one column matrix over ZZ or QQ and
 --                   'P' is a Polyhedron
---  OUTPUT : the point in 'P' with the minimal euclidian distance to 'p'
+--  OUTPUT : the point in 'P' with the minimal euclidean distance to 'p'
 proximum = method(TypicalValue => Matrix)
 proximum (Matrix,Polyhedron) := (p,P) -> (
      -- Checking for input errors
@@ -228,7 +228,7 @@ proximum (Matrix,Polyhedron) := (p,P) -> (
 
 --   INPUT : (p,C),  where 'p' is a point given by a one column matrix over ZZ or QQ and
 --                   'C' is a Cone
---  OUTPUT : the point in 'C' with the minimal euclidian distance to 'p'
+--  OUTPUT : the point in 'C' with the minimal euclidean distance to 'p'
 proximum (Matrix,Cone) := (p,C) -> proximum(p,polyhedron C)
 
 
@@ -265,7 +265,7 @@ compute#Fan#polytopal Fan := F -> (
       edgeTCNoTable := hashTable apply(edgeTable, e -> e#0 => (e#2,e#3));
       edgeTable = hashTable apply(edgeTable, e -> e#1 => (e#2,e#3));
       -- Computing the list of correspondencies, i.e. for each codim 2 cone ( corresponding to 2dim-faces of the polytope) save 
-      -- the indeces of the top cones containing it
+      -- the indices of the top cones containing it
       corrList := hashTable {};
       scan(keys L, 
          j -> (

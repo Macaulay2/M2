@@ -2,6 +2,20 @@
 --- author(s): MES, DRG
 --- notes: BUG to fix
 
+-*
+-- TODO
+lift(Matrix,type of CC_*,type of CC_*)
+lift(Matrix,type of RR_*,type of RR_*)
+lift(Module,type of InexactNumber')
+lift(Module,type of InexactNumber)
+lift(Module,type of Number)
+lift(Module,type of RingElement)
+lift(MutableMatrix,type of InexactNumber')
+lift(MutableMatrix,type of InexactNumber)
+lift(MutableMatrix,type of Number)
+lift(MutableMatrix,type of RingElement)
+*-
+
 document { 
      Key => {lift,
 	  (lift,Ideal,RingElement),[lift,Verify],
@@ -108,12 +122,3 @@ document {
      ///,
      SeeAlso => {baseRings,liftable,promote}
      }
-
-TEST ///
-A = QQ[a..d]
-f = (a+1)^2-a^2-2*a
-lift(f,ZZ)
-lift(lift(f,QQ),ZZ)
-
-lift(0.0 * ii + 3.0, RR)
-///

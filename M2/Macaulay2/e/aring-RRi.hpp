@@ -4,6 +4,7 @@
 #define _aring_RRi_hpp_
 
 #include <mpfi.h>
+#include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"

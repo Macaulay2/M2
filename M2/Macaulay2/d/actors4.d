@@ -7,12 +7,24 @@ use struct;
 use pthread;
 use regex;
 
-header "#include <engine.h>";
+header "// required for toString routines
+#include <engine.h>                         // for IM2_GB_to_string, rawMuta... // TODO: remove this one
+#include <interface/NAG.h>                  // for rawHomotopyToString, rawP...
+#include <interface/freemodule.h>           // for IM2_FreeModule_to_string
+#include <interface/matrix.h>               // for IM2_Matrix_to_string
+#include <interface/monoid.h>               // for IM2_Monoid_to_string
+#include <interface/monomial-ordering.h>    // for IM2_MonomialOrdering_to_s...
+#include <interface/mutable-matrix.h>       // for IM2_MutableMatrix_to_string
+#include <interface/random.h>               // for system_randomint
+#include <interface/ring.h>                 // for IM2_Ring_to_string
+#include <interface/ringelement.h>          // for IM2_RingElement_to_string
+#include <interface/ringmap.h>              // for IM2_RingMap_to_string";
 
-header "#ifndef WITH_PYTHON
-# define PyObject_Str(o) 0
-# define PyString_AS_STRING(o) 0
-# define Py_DECREF(o) 0
+header "
+#ifndef WITH_PYTHON
+#  define PyObject_Str(o)       0
+#  define PyString_AS_STRING(o) 0
+#  define Py_DECREF(o)          0
 #endif";
 
 internalName(s:string):string := (
@@ -604,10 +616,8 @@ stringcatfun(e:Expr):Expr := (
      is y:SymbolClosure do toExpr(y.symbol.word.name)
      is n:ZZcell do (
 	  if isInt(n) then (
-	       m := toInt(n);
-	       if m >= 0
-	       then toExpr(new string len m do provide ' ')
-	       else buildErrorPacket("encountered negative integer")
+	       m := max(toInt(n), 0);
+	       toExpr(new string len m do provide ' ')
 	       )
 	  else buildErrorPacket("encountered a large integer")
 	  )
@@ -1536,6 +1546,7 @@ locate(e:Code):void := (
      is nullCode do nothing
      is v:adjacentCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
      is v:arrayCode do foreach c in v.z do locate(c)
+     is v:angleBarListCode do foreach c in v.t do locate(c)
      is v:Error do lookat(v.position)
      is v:semiCode do foreach c in v.w do locate(c)
      is v:binaryCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)

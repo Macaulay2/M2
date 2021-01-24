@@ -1072,7 +1072,7 @@ doc ///
 	      symbolicPower(I,2)
 	      
        Text
-       	   When computing symbolic powers of a quasi-homogeneous ideal, the method runs faster if the ideal is changed to be homegeneous.
+       	   When computing symbolic powers of a quasi-homogeneous ideal, the method runs faster if the ideal is changed to be homogeneous.
 	   
        Example
        	   P = ker map(QQ[t],QQ[x,y,z],{t^3,t^4,t^5})

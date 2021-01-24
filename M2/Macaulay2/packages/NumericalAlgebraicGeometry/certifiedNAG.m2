@@ -21,7 +21,7 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
      
      -- M2 (main code)  --------------------------------------------------------     
      setupStartTime := currentTime();
-     -- threshholds and other tuning parameters (should include most of them as options)
+     -- thresholds and other tuning parameters (should include most of them as options)
      theSmallestNumber := 1e-12;
      
      K := coefficientRing R;

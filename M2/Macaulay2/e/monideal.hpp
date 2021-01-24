@@ -11,7 +11,7 @@
 
 class MinimalPrimes;
 
-class Nmi_node  // monomial ideal internal node ///
+class Nmi_node : public our_new_delete  // monomial ideal internal node ///
 {
   friend class MonomialIdeal;
   friend class AssociatedPrimes;

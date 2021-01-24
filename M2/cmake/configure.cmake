@@ -34,17 +34,12 @@ option(WITH_XML		"Link with the libxml2 library"		ON)
 option(WITH_PYTHON	"Link with the Python library"		OFF)
 option(WITH_MYSQL	"Link with the MySQL library"		OFF)
 
-set(BUILD_PROGRAMS "4ti2;Nauty;TOPCOM"
-  CACHE STRING "Build programs, even if found")
-set(BUILD_LIBRARIES "GTest"
-  CACHE STRING "Build libraries, even if found")
+set(BUILD_PROGRAMS  "" CACHE STRING "Build programs, even if found")
+set(BUILD_LIBRARIES "" CACHE STRING "Build libraries, even if found")
 set(PARALLEL_JOBS 4
   CACHE STRING "Number of parallel jobs for libraries and programs")
 set(SKIP_TESTS "mpsolve;googletest" CACHE STRING "Tests to skip")
 set(SLOW_TESTS "eigen;ntl;flint"    CACHE STRING "Slow tests to skip")
-
-# TODO: https://github.com/Macaulay2/M2/issues/1198
-list(APPEND BUILD_LIBRARIES "Frobby")
 
 # TODO: hopefully make these automatic
 if(USING_MPIR)
@@ -65,17 +60,48 @@ set(PACKAGE_VERSION ${Macaulay2_VERSION})
 ## Summary of git status
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
-  # previous describe code: git describe --dirty --long --always --abbrev=40 --tags --match "version-*"
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+    COMMAND ${GIT_EXECUTABLE} describe --dirty --always --match HEAD
     ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE   GIT_COMMIT)
+  # TODO: currently finds the last commit that changed the VERSION file
+  # but ideally it should get the last release commit instead
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-list -1 HEAD VERSION
+    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE   _release_commit)
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-list ${_release_commit}..HEAD --count
+    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE   COMMIT_COUNT)
+  set(GIT_DESCRIPTION version-${PROJECT_VERSION}-${COMMIT_COUNT}-${GIT_COMMIT})
+else()
+  message(NOTICE "## Not building from a git repository; submodules may need to be manually populated")
+  set(GIT_DESCRIPTION version-${PROJECT_VERSION} CACHE INTERNAL "state of the repository")
+  file(GLOB _submodules LIST_DIRECTORIES true ${CMAKE_SOURCE_DIR}/submodules/*)
+  foreach(_submodule IN LISTS _submodules)
+    if(IS_DIRECTORY ${_submodule})
+      # CMake doesn't like empty source directories for ExternalProject_Add
+      file(TOUCH ${_submodule}/.nogit)
+    endif()
+  endforeach()
+endif()
+
+## Detect brew prefix
+find_program(BREW NAMES brew)
+if(EXISTS ${BREW})
+  execute_process(
+    COMMAND ${BREW} --prefix
+    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
+    OUTPUT_VARIABLE HOMEBREW_PREFIX)
 endif()
 
 message("## Configure Macaulay2
      M2 version        = ${PROJECT_VERSION}
-     Git commit        = ${GIT_COMMIT}
+     Git description   = ${GIT_DESCRIPTION}
      Install prefix    = ${CMAKE_INSTALL_PREFIX}\n
      CMAKE_BUILD_TYPE  = ${CMAKE_BUILD_TYPE}
      BUILD_NATIVE      = ${BUILD_NATIVE}
@@ -180,7 +206,7 @@ endif()
 # Note: certain flags are initialized by CMake based on the compiler and build type.
 if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging
   # INIT: -g
-  add_compile_options(-O0 -DGC_DEBUG)
+  add_compile_options(-O0 -DGC_DEBUG -DMEMT_DEBUG -DMATHIC_DEBUG -DMATHICGB_DEBUG)
 else()
   add_compile_options(-DNDEBUG -DOM_NDEBUG -DSING_NDEBUG -Wuninitialized)
 endif()
@@ -231,7 +257,8 @@ get_property(LINK_OPTIONS    DIRECTORY PROPERTY LINK_OPTIONS)
 
 message("\n## Compiler information
      C                 = ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION} (${CMAKE_C_COMPILER})
-     C++               = ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})\n")
+     C++               = ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})
+     Ccache            = ${CMAKE_C_COMPILER_LAUNCHER}\n")
 
 if(VERBOSE)
   message("## Build flags (excluding standard ${CMAKE_BUILD_TYPE} flags)
@@ -254,13 +281,6 @@ endif()
 include(CheckTypeSize)
 check_type_size("int *" SIZEOF_INT_P)
 check_type_size("long" SIZEOF_LONG)
-
-include(CheckSymbolExists)
-CHECK_SYMBOL_EXISTS(ADDR_NO_RANDOMIZE "linux/personality.h" HAVE_DECL_ADDR_NO_RANDOMIZE)
-CHECK_SYMBOL_EXISTS(herror       "stdlib.h;stdio.h;errno.h" HAVE_DECL_HERROR)
-CHECK_SYMBOL_EXISTS(environ                      "unistd.h" HAVE_DECL_ENVIRON)
-CHECK_SYMBOL_EXISTS(_environ                     "unistd.h" HAVE_DECL__ENVIRON)
-CHECK_SYMBOL_EXISTS(__environ                    "unistd.h" HAVE_DECL___ENVIRON)
 
 include(CheckLibraryExists)
 check_library_exists(rt clock_gettime "" HAVE_CLOCK_GETTIME)
@@ -305,12 +325,7 @@ include(CheckFunctionExists)
 # TODO: can't getaddrinfo
 check_function_exists(herror	HAVE_HERROR)
 check_function_exists(error	HAVE_ERROR)
-check_function_exists(backtrace	HAVE_BACKTRACE)
 check_function_exists(clock_gettime	HAVE_CLOCK_GETTIME)
-check_function_exists(__environ	HAVE___ENVIRON)
-check_function_exists(_environ	HAVE__ENVIRON)
-check_function_exists(environ	HAVE_ENVIRON)
-check_function_exists(_setmode	HAVE__SETMODE)
 check_function_exists(getaddrinfo	HAVE_GETADDRINFO)
 check_function_exists(hstrerror	HAVE_HSTRERROR)
 check_function_exists(sync	HAVE_SYNC)
@@ -340,9 +355,6 @@ check_function_exists(ioctl	HAVE_IOCTL)
 
 include(CheckCSourceCompiles)
 include(CheckCXXSourceCompiles)
-
-# TODO: what is this for?
-check_c_source_compiles("int main(){__builtin_return_address(1);return 0;}" BUILTIN_RETURN_ADDRESS_ACCEPTS_NONZERO_ARGUMENT)
 
 # TODO: is this necessary?
 # whether getaddrinfo can handle numeric service (port) numbers

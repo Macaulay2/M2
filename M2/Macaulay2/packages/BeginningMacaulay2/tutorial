@@ -271,7 +271,7 @@ Description
 	  hilbertPolynomial(R/I)
      Text
 	  The output above may not be what the user expected:
-	  the term ${\bf P}_m$ represents the Hilbert polynomial of
+	  the term ${\mathbf P}_m$ represents the Hilbert polynomial of
 	  projective $m$-space.  Thus the output tells
 	  us that the Hilbert polynomial of $M$ is
 	  $i \mapsto{} -3*1+4*(i+1) = 4i + 1$.  Thus the degree
@@ -596,7 +596,7 @@ Description
 	  {\em Macaulay2} can compute the homology of complexes;
 	  for example, let's compute the homology of a
 	  Koszul complex that is not a resolution:
-	  $$ {\bf K}(x^2, x y^2):\ \  0 \rightarrow{} S(-5) \rightarrow{} S(-2)\oplus S(-3) \rightarrow{} S \rightarrow 0 $$
+	  $$ {\mathbf K}(x^2, x y^2):\ \  0 \rightarrow{} S(-5) \rightarrow{} S(-2)\oplus S(-3) \rightarrow{} S \rightarrow 0 $$
 	  The free module $S(-2) \oplus{} S(-3)$ can be defined with this
 	  syntax:
      Example

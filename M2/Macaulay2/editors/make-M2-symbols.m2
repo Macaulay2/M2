@@ -22,7 +22,7 @@ isAlphaNumeric := s -> match("^[[:alnum:]]+$", s)
 isType     := is Type
 isKeyword  := is Keyword
 isFunction := is Function
-isConst    := (name, symb) -> (isAlpha name
+isConst    := (name, symb) -> (isAlphaNumeric name
     and not (isFunction or isType or isKeyword) (name, symb)
     and (symb === symbol null or value symb =!= null))
 
@@ -56,11 +56,9 @@ KEYWORDS  = first \ select(symbols, isKeyword)
 DATATYPES = first \ select(symbols, isType)
 FUNCTIONS = first \ select(symbols, isFunction)
 CONSTANTS = first \ select(symbols, isConst)
-CONSTANTS = CONSTANTS | {"Node", "Item", "Example", "CannedExample", "Pre", "Code"} -- SimpleDoc words
--- TODO: get this to work
---DOCWORDS  = format "doc ///\\\\(/?/?[^/]\\\\|\\\\(//\\\\)*////[^/]\\\\)*\\\\(//\\\\)*///"
+CONSTANTS = CONSTANTS | {"Node", "Item", "Example", "CannedExample", "Pre", "Code", "Tree", "Synopsis"} -- SimpleDoc words
+CONSTANTS = sort CONSTANTS
 STRINGS   = format "///\\\\(/?/?[^/]\\\\|\\\\(//\\\\)*////[^/]\\\\)*\\\\(//\\\\)*///"
-
 
 -------------------------------------------------------------------------------
 -- Substitute symbols, keywords, types, functions, and constants
@@ -87,7 +85,6 @@ symbolsForEmacs = template -> (
     output = replace("@M2DATATYPES@", demark(" ", format \ DATATYPES), output);
     output = replace("@M2FUNCTIONS@", demark(" ", format \ FUNCTIONS), output);
     output = replace("@M2CONSTANTS@", demark(" ", format \ CONSTANTS), output);
---    output = replace("@M2DOCWORDS@",  demark(" ", format \ DOCWORDS),  output);
     output = replace("@M2STRINGS@",                        STRINGS,    output);
     output)
 

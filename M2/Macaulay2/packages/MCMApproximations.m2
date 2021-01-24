@@ -78,7 +78,7 @@ profondeur(Ideal, Module) := (I,M) ->(
 
 profondeur Module := M  ->(
     --profondeur of a module with respect to the max ideal, via finite proj dim
-    --gives error if the ultimate coeficient ring of R = ring M is not a field.
+    --gives error if the ultimate coefficient ring of R = ring M is not a field.
     R := ring M;
     if not isCommutative R then error"profondeur undefined for noncommutative rings";
     (S,F) := flattenRing R;
@@ -642,7 +642,7 @@ doc ///
      with no free summands then the Auslander invariant is 0.
      
      Ding showed that if R is a hypersurface ring, then
-     auslanderInvariant (R^1)/((ideal vars R)^i) is zero precisely for i<multiplicty R.
+     auslanderInvariant (R^1)/((ideal vars R)^i) is zero precisely for i<multiplicity R.
      
      Experimentally, it looks as if for a complete intersection the power is the 
      a-invariant plus 1, but NOT for the codim 3 Pfaffian example.
