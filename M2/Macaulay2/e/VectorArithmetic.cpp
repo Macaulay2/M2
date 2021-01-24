@@ -8,7 +8,6 @@
 #include "aring-glue.hpp"
 
 #include <iostream>
-#include <execution>
 
 template<typename RingType>
 const VectorArithmetic* vectorArithmetic(const RingType& R)
@@ -124,7 +123,7 @@ public:
     auto& svec = * coeffVector(sparse);
     
     assert(comps.size() == svec.size());
-    assert(comps[comps.size()-1] < dense.size());
+    assert(comps[comps.size()-1] < dvec.size());
     
     auto len = comps.size();
     for (ComponentIndex i = 0; i < len; i++) mRing.set(dvec[comps[i]],svec[i]);

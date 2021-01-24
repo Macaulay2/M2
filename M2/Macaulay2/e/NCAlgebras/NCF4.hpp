@@ -23,9 +23,6 @@
 
 #include <tbb/tbb.h>                        // for tbb
 
-//#define TBB_PREVIEW_MEMORY_POOL 1
-//#include <tbb/memory_pool.h>                // for memory_pool (preview)
-
 class FreeAlgebra;
 union ring_elem;
 

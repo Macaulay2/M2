@@ -616,7 +616,7 @@ auto SuffixTree::leftOverlaps(const Word& w,
             {
               patternNum = i->second->getPatternNumber();
               if (!(avoidLast && patternNum == mMonomials.size()-1))
-                output.push_back(std::make_tuple(patternNum,
+                output.push_back(std::make_pair(patternNum,
                                                  mMonomials[patternNum].size()-tmpNode->label().size()));
             }
         }
@@ -632,7 +632,7 @@ auto SuffixTree::leftOverlaps(const Word& w,
     {
       patternNum = f->getPatternNumber();
       if (!(avoidLast && patternNum == mMonomials.size()-1))
-        output.push_back(std::make_tuple(patternNum,mMonomials[patternNum].size()-pre.size()));
+        output.push_back(std::make_pair(patternNum,mMonomials[patternNum].size()-pre.size()));
     }
   return;
 }
