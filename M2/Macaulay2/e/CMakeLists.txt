@@ -78,7 +78,6 @@ set(HPPONLYFILES
   smat.hpp
   stdinc-m2.hpp
   style.hpp
-  f4/moninfo2.hpp
   schreyer-resolution/res-memblock.hpp
   schreyer-resolution/res-monomial-types.hpp
   schreyer-resolution/res-schreyer-order.hpp
