@@ -1401,10 +1401,10 @@ restart
 needsPackage "AssociativeAlgebras"
 debug Core
 kk = GF(27)
-kk = GF(3^10) -- this don't seem to work on "Naive"
-kk = GF(7^5)  -- this don't seem to work on "Naive"
+kk = GF(3^10)
+kk = GF(7^5)
 kk = QQ
-kk = GF(13^2,Strategy=>"New")     -- not working yet (but not crashing)
+kk = GF(13^2,Strategy=>"New")
 kk = GF(27,Strategy=>"Givaro")
 kk = ZZp(32003,Strategy=>"Ffpack")
 kk = ZZp(32003,Strategy=>"Aring")
@@ -1418,7 +1418,7 @@ q = alpha*z*x + beta*x*z + gamma*y^2
 r = alpha*x*y + beta*y*x + gamma*z^2
 I = ideal{p,q,r}
 gbTrace = 100
-elapsedTime Igb = NCGB(I,10,Strategy=>"Naive"); --- crashes.  Not sure why...
+elapsedTime Igb = NCGB(I,10,Strategy=>"Naive");
 elapsedTime Igb = NCGB(I,12,Strategy=>"F4");
 I = ideal I_*; elapsedTime Igb = NCGB(I,15,Strategy=>"F4Parallel");
 B = A/I; all(13, i -> #(flatten entries ncBasis(i, B)) == binomial(i + 2,2))
@@ -1482,7 +1482,7 @@ d1 = matrix {{y, x, z}, {x, 16001*z, -2*y}, {-2*z, 16001*y, x}};
 net d0 || " " || net d1
 -- how to find a minimal generating set?
 NCReductionTwoSided(ncMatrixMult(d0,d1),I) -- should be zero
-(2/5)_A  ----- BUG: in promote?  Throwing away denominators.
+(2/5)_A  ----- BUG: in promote?  Throwing away denominators over a finite field
 sub(1/2,A)
 I2 = I + ideal {e - (b*y + c*x - 2*d*z),
                 f - (b*x + 16001*c*z + 16001*d*y),
@@ -1496,14 +1496,15 @@ net d0 || " " || net d1 || " " || net d2
 --- works on a small example
 restart
 debug needsPackage "AssociativeAlgebras"
-B = threeDimSklyanin(QQ,{1,1,-2},{x,y,z})
+B = threeDimSklyanin(ZZ/32003,{3,5,7},{x,y,z})
 d0 = matrix {{x,y,z}}
 d1 = rightKernel d0
 d2 = rightKernel d1
 d3 = rightKernel d2
 use B
-g = -y^3+(1/2)*y*z*x-(1/2)*z*y*x+z^3
-isCentral g
+g = first flatten entries centralElements(B,3)
+isCentral g -- central
+rightKernel matrix {{g}} -- regular element
 -- hypersurface example
 -- but not this one... (should be periodic, but it
 -- doesn't look like it
@@ -1511,14 +1512,20 @@ A = ambient B
 C = A/(ideal B + ideal lift(g,A))
 use C
 d0' = matrix {{x,y,z}}
-d1' = rightKernel d0'
-d2' = rightKernel d1'
-d3' = rightKernel d2'
-d4' = rightKernel d3'
-d5' = rightKernel d4'
-d6' = rightKernel d5'
-d7' = rightKernel d6'
-d8' = rightKernel d7'
+d1' = rightKernel(d0', DegreeLimit => 10)
+d2' = rightKernel(d1', DegreeLimit => 11)
+d3' = rightKernel(d2', DegreeLimit => 12)
+d4' = rightKernel(d3', DegreeLimit => 13)
+d5' = rightKernel(d4', DegreeLimit => 14)
+d6' = rightKernel(d5', DegreeLimit => 15)
+d7' = rightKernel(d6', DegreeLimit => 16)
+d8' = rightKernel(d7', DegreeLimit => 17)
+d9' = rightKernel(d8', DegreeLimit => 18)
+d10' = rightKernel(d9', DegreeLimit => 19)
+assert(0 == transpose((transpose d1')*(transpose d0')))
+assert(0 == transpose((transpose d2')*(transpose d1')))
+assert(0 == transpose((transpose d3')*(transpose d2')))
+assert(d4 == 0)
 
 -- cool example
 restart
