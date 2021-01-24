@@ -54,7 +54,6 @@ INTERFACE = \
 	schreyer-resolution/res-gausser-QQ \
 	schreyer-resolution/res-gausser-QQ-hybrid \
 	f4/f4 \
-	f4/f4-syz \
 	f4/f4-mem \
 	f4/f4-monlookup \
 	f4/f4-types \
