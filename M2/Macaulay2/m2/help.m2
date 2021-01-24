@@ -443,8 +443,10 @@ viewHelp Thing  := key -> (
         else error("missing documentation index: ", frontpage, ". Run makePackageIndex() or start M2 without -q"))
     else viewHelp makeDocumentTag key)
 viewHelp DocumentTag := tag -> (
-    docpage := concatenate htmlFilename ( tag = getPrimaryTag tag );
-    if fileExists docpage then show URL { docpage } else show help tag)
+    rawdoc := fetchAnyRawDocumentation tag;
+    if ( tag' := getOption(rawdoc, symbol DocumentTag) ) =!= null
+    and fileExists( docpage := concatenate htmlFilename tag' )
+    then show URL { docpage } else show help tag)
 viewHelp ZZ := i -> seeAbout(viewHelp, i)
 
 viewHelp = new Command from viewHelp

@@ -89,8 +89,8 @@ setupconst("RegexFlags", Expr(toHashTable(Sequence(
    "format_literal" => toExpr(Ccode(int, "boost::regex_constants::format_literal")), -- treat string as a literal
 
    "format_no_copy"    => toExpr(Ccode(int, "boost::format_no_copy")),    -- don't copy non-matching segments
-   "format_first_only" => toExpr(Ccode(int, "boost::format_first_only")), -- Only replace first occurance
-   "format_all"        => toExpr(Ccode(int, "boost::format_all"))         -- enable all extentions to sytax
+   "format_first_only" => toExpr(Ccode(int, "boost::format_first_only")), -- Only replace first occurrence
+   "format_all"        => toExpr(Ccode(int, "boost::format_all"))         -- enable all extensions to syntax
    ))));
 
 -----------------------------------------------------------------------------

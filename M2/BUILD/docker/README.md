@@ -1,6 +1,6 @@
 # Using Macaulay2 with Docker
 
-Docker is a containerization program for building, shipping, or running applications on different platforms.
+[Docker](https://docs.docker.com/get-docker/) is a containerization program for building, shipping, or running applications on different platforms.
 
 The `Dockerfile` in this directory creates a container image based on Ubuntu 20.04.1 LTS with Macaulay2 installed from the repository. Each subdirectory contains a `Dockerfile` built for other use cases:
 
