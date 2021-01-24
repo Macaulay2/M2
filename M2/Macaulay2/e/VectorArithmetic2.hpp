@@ -312,7 +312,52 @@ public:
     o << "]" << std::endl;
     return o;
   }
+
   
+  ////////////////////////
+  /// Append support /////
+  ////////////////////////
+  
+  void pushBackOne(CoeffVectorType& coeffs) const
+  {
+    auto& svec = * coeffVector(coeffs);
+    FieldElement one;
+    mRing->init_set(one, 1);
+    svec.emplace_back(one); // This grabs 'one' in cases where it is allocated...  I think...!
+  }
+
+  void pushBackMinusOne(CoeffVectorType& coeffs) const
+  {
+    auto& svec = * coeffVector(coeffs);
+    FieldElement minus_one;
+    mRing->init_set(minus_one, -1);
+    svec.emplace_back(minus_one);
+  }
+
+  void pushBackElement(CoeffVectorType& coeffs,
+                       const CoeffVectorType& take_from_here,
+                       size_t loc) const
+  {
+    auto& svec = * coeffVector(coeffs);
+    auto& svec2 = * coeffVector(take_from_here);
+    assert(loc < svec2.size());
+    FieldElement a;
+    mRing->init_set(a, svec2[loc]);
+    svec.emplace_back(a);
+  }
+  
+  void pushBackNegatedElement(CoeffVectorType& coeffs,
+                              const CoeffVectorType& take_from_here,
+                              size_t loc) const
+  {
+    auto& svec = * coeffVector(coeffs);
+    auto& svec2 = * coeffVector(take_from_here);
+    assert(loc < svec2.size());
+    FieldElement a;
+    mRing->init_set(a, svec2[loc]);
+    mRing->negate(a, a);
+    svec.emplace_back(a);
+  }
 };
 
 // `overloaded` construct (not standard until C++20)
