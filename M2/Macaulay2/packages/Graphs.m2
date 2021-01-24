@@ -416,14 +416,20 @@ showTikZ Digraph := opt -> G -> (
      )
 
 writeDotFile = method()
-writeDotFile (String, Graph) := (filename, G) -> (
+writeDotFile (String, Graph) := (filename, G) ->
+    writeDotFileHelper(filename, G, "graph", "--")
+writeDotFile (String, Digraph) := (filename, G) ->
+    writeDotFileHelper(filename, G, "digraph", "->")
+
+writeDotFileHelper = (filename, G, type, op) -> (
     fil := openOut filename;
-    fil << "graph G {" << endl;
+    fil << type << " G {" << endl;
     V := vertexSet G;
-    scan(#V, i -> fil << "\t" | toString i | " [label=\""|toString V_i|"\"];" << endl);
-    A := adjacencyMatrix G;
-    E := flatten for i from 0 to #V - 1 list for j from i+1 to #V - 1 list if A_(i,j) == 1 or A_(j,i) == 1 then {i, j} else continue;
-    scan(E, e -> fil << "\t" | toString e_0 | " -- " | toString e_1 | ";" << endl);
+    I := hashTable apply(#V, i -> V_i => i);
+    scan(V, v -> fil << "\t" << I#v << " [label=\"" << v << "\"];" << endl);
+    E := toList \ edges G;
+    scan(E, e -> fil << "\t" << I#(e_0) << " " << op << " " << I#(e_1) << ";"
+	<< endl);
     fil << "}" << endl << close;
     )
 
@@ -2120,6 +2126,7 @@ doc ///
     Key
         writeDotFile
         (writeDotFile, String, Graph)
+        (writeDotFile, String, Digraph)
     Headline
         Writes a graph to a dot file with a specified filename
     Usage
