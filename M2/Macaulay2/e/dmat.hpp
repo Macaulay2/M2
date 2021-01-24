@@ -26,8 +26,8 @@ class DMatConstIterator
 
   void operator++() { mCurrent += mStride; }
   const ElementType& operator*() { return *mCurrent; }
-  bool operator==(DMatConstIterator& i) const { return (&(*i) == mCurrent); }
-  bool operator!=(DMatConstIterator& i) const { return (&(*i) != mCurrent); }
+  bool operator==(const DMatConstIterator& i) const { return (&(*i.mCurrent) == mCurrent); }
+  bool operator!=(const DMatConstIterator& i) const { return (&(*i.mCurrent) != mCurrent); }
  private:
   const ElementType* mCurrent;
   size_t mStride;

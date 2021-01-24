@@ -228,9 +228,7 @@ public:
     // first can be -1 if the row is zero.  in this case, we should
     // not be accessing dense[i] for i negative.
     for (int i = first; i >= 0 and i <= last; i++)
-      {
 	if (not mRing->is_zero(dvec[i])) len++;
-      }
 
     comps = monomialSpace.safeAllocateArray<int,LockType>(len,lock);
     sparse = allocateCoeffVector(len);
@@ -264,7 +262,7 @@ public:
                                      Container& c) const
   {
     auto& svec = * coeffVector(sparse);
-    for (auto a : svec)
+    for (const auto& a : svec)
       {
 	ring_elem tmp;
 	mRing->to_ring_elem(tmp,a);
@@ -278,9 +276,7 @@ public:
     CoeffVectorType sparse = allocateCoeffVector(c.size());
     auto& svec = * coeffVector(sparse);
     for (auto i = 0; i < c.size(); ++i)
-      {
 	mRing->from_ring_elem(svec[i], c[i]);
-      }
     return sparse;
   }
 

@@ -113,6 +113,7 @@ int FreeMonoid::compare(const Monom& m1, const Monom& m2) const
       if (m1[j] > m2[j]) return GT;
       if (m1[j] < m2[j]) return LT;
     }
+  
   int m1WordLen = wordLength(m1);
   int m2WordLen = wordLength(m2);  
   if (m1WordLen > m2WordLen) return GT;
@@ -151,7 +152,7 @@ int FreeMonoid::compare(const Word& w1, const Word& w2) const
       if (w1[i] > w2[i]) return LT;
       if (w1[i] < w2[i]) return GT;
     }
-  // if we are here, the monomials are the same.
+  // if we are here, the monomials corresponding to the words are the same.
   return EQ;
 }
 
@@ -283,7 +284,8 @@ void FreeMonoid::fromMonomial(const int* monom, MonomialInserter& result) const
 void FreeMonoid::wordFromMonom(Word& result, const Monom& m) const
 {
   // just call the prefix command on the word length of the monom
-  wordPrefixFromMonom(result,m,wordLength(m));
+  result.init(m.begin() + mNumWeights + 1, m.end());
+  //wordPrefixFromMonom(result,m,wordLength(m));
 }
 
 void FreeMonoid::wordPrefixFromMonom(Word& result, const Monom& m, int endIndex) const 
@@ -294,40 +296,6 @@ void FreeMonoid::wordPrefixFromMonom(Word& result, const Monom& m, int endIndex)
 void FreeMonoid::wordSuffixFromMonom(Word& result, const Monom& m, int beginIndex) const
 {
   result.init(m.begin() + mNumWeights + 1 + beginIndex, m.end());
-}
-
-void FreeMonoid::monomPrefixFromMonom(std::vector<int>& result,
-                                      const Monom& m,
-                                      int toDrop) const
-{
-  if (is_one(m)) {   // if the monomial is the empty monomial
-    for (auto i : m) result.push_back(i);
-    return;
-  }  
-  result.push_back(m.size()-toDrop);
-  int monomOffset = numWeights() + 1;
-  for (int i = 0; i < numWeights(); ++i) result.push_back(0);
-  for (int i = 0; i < m.size()-toDrop; ++i)
-    result.push_back(m[monomOffset + i]);
-  Monom tmp(result.data());
-  setWeights(tmp);
-}
-
-void FreeMonoid::monomSuffixFromMonom(std::vector<int>& result,
-                                      const Monom& m,
-                                      int toDrop) const
-{
-  if (is_one(m)) {   // if the monomial is the empty monomial
-    for (auto i : m) result.push_back(i);
-    return;
-  }  
-  result.push_back(m.size()-toDrop);
-  int monomOffset = numWeights() + 1;
-  for (int i = 0; i < numWeights(); ++i) result.push_back(0);
-  for (int i = toDrop; i < m.size(); ++i)
-    result.push_back(m[monomOffset + i]);
-  Monom tmp(result.data());
-  setWeights(tmp);
 }
 
 void FreeMonoid::monomInsertFromWord(MonomialInserter& result, const Word& word) const
@@ -440,25 +408,6 @@ Monom FreeMonoid::wordProductAsMonom(const Word& left,
   return newmon;
 }
 
-// help the linker know to create these versions
-// template Monom FreeMonoid::wordProductAsMonom<tbb::null_mutex>(const Word& left,
-//                                                                const Monom& mid,
-//                                                                const Word& right,
-//                                                                MemoryBlock & memBlock,
-//                                                                tbb::null_mutex& noLock) const;
-
-// template Monom FreeMonoid::wordProductAsMonom<tbb::queuing_mutex>(const Word& left,
-//                                                                   const Monom& mid,
-//                                                                   const Word& right,
-//                                                                   MemoryBlock & memBlock,
-//                                                                   tbb::queuing_mutex& lock) const;
-
-// template Monom FreeMonoid::wordProductAsMonom<tbb::mutex>(const Word& left,
-//                                                           const Monom& mid,
-//                                                           const Word& right,
-//                                                           MemoryBlock & memBlock,
-//                                                           tbb::mutex& lock) const;
-
 // we are just placing the answer in result.  it is up to the caller
 // to clean it up.
 void FreeMonoid::support(const Monom& m, std::vector<int> &result) const
@@ -478,19 +427,6 @@ void FreeMonoid::support(const Monom& m, std::vector<int> &result) const
   for (auto i = 0; i < numVars(); i++)
     if (varsFound[i] > 0) result.push_back(i);
 } 
-
-Word FreeMonoid::firstVar(const Monom& m) const
-{
-  if (is_one(m)) return Word();
-  int monomOffset = numWeights() + 1;
-  return Word(m.begin() + monomOffset,m.begin() + monomOffset + 1);
-}
-
-Word FreeMonoid::lastVar(const Monom& m) const
-{
-  if (is_one(m)) return Word();
-  return Word(m.begin() + m.size() - 1, m.begin() + m.size());
-}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
