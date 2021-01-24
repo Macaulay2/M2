@@ -1,17 +1,26 @@
 // Copyright 2005 Michael E. Stillman.
 
-#include <M2/config.h>
-#include "../comp-gb.hpp"
-#include "../ZZp.hpp"
-#include "../polyring.hpp"
-#include "../coeffrings.hpp"
-#include "../matrix.hpp"
-#include "../matrix-con.hpp"
+#include "f4/f4-computation.hpp"
 
-#include "f4-computation.hpp"
-#include "f4-m2-interface.hpp"
-#include "f4.hpp"
-#include "moninfo.hpp"
+#include "buffer.hpp"              // for buffer
+#include "error.h"                 // for ERROR
+#include "f4/f4-m2-interface.hpp"  // for F4toM2Interface
+#include "f4/f4-mem.hpp"           // for F4Mem
+#include "f4/f4-types.hpp"         // for gb_array, gbelem
+#include "f4/f4.hpp"               // for F4GB
+#include "f4/gausser.hpp"          // for Gausser
+#include "f4/moninfo.hpp"          // for MonomialInfo
+#include "matrix-con.hpp"          // for MatrixConstructor
+#include "matrix.hpp"              // for Matrix
+#include "mem.hpp"                 // for stash
+#include "monoid.hpp"              // for Monoid
+#include "polyring.hpp"            // for PolynomialRing
+#include "ring.hpp"                // for Ring
+#include "ringelem.hpp"            // for vec
+#include "text-io.hpp"             // for emit
+
+class Computation;
+class RingElement;
 
 GBComputation *createF4GB(const Matrix *m,
                           M2_bool collect_syz,
@@ -25,12 +34,12 @@ GBComputation *createF4GB(const Matrix *m,
   const Ring *K = R->getCoefficients();
   F4Mem *Mem = new F4Mem;
   Gausser *KK = Gausser::newGausser(K, Mem);
-  if (KK == 0)
+  if (KK == nullptr)
     {
       ERROR(
           "cannot use Algorithm => LinearAlgebra with this type of coefficient "
           "ring");
-      return NULL;
+      return nullptr;
     }
 
   GBComputation *G;
@@ -115,7 +124,7 @@ const Matrix /* or null */ *F4Computation::get_mingens()
 //       mat.append(originalR->translate_gbvector_to_vec(_F, (*i)->g.f));
 //   return mat.to_matrix();
 #endif
-  return 0;
+  return nullptr;
 }
 
 const Matrix /* or null */ *F4Computation::get_change() { return 0; }
@@ -123,7 +132,7 @@ const Matrix /* or null */ *F4Computation::get_syzygies() { return 0; }
 const Matrix /* or null */ *F4Computation::get_initial(int nparts) { return 0; }
 const Matrix /* or null */ *F4Computation::matrix_remainder(const Matrix *m)
 {
-  return 0;
+  return nullptr;
 }
 
 M2_bool F4Computation::matrix_lift(
@@ -155,6 +164,7 @@ void F4Computation::text_out(buffer &o) const
 /* This displays statistical information, and depends on the
    M2_gbTrace value */
 {
+  // TODO: what to display?
 }
 
 void F4Computation::show() const  // debug display

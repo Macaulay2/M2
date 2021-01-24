@@ -1,14 +1,20 @@
-// Copyright 2005 Michael E. Stillman
+// Copyright 2005-2021 Michael E. Stillman
 
-#include "interface/mutable-matrix.h"
-#include "../polyring.hpp"
-#include "../freemod.hpp"
-#include "../matrix-con.hpp"
-#include "../matrix.hpp"
-#include "../mat.hpp"
-#include "../newdelete.hpp"
-#include "f4-m2-interface.hpp"
-#include "../gbring.hpp"
+#include "f4/f4-m2-interface.hpp"
+#include "f4/gausser.hpp"              // for Gausser
+#include "f4/moninfo.hpp"              // for monomial_word, MonomialInfo
+#include "f4/ntuple-monomial.hpp"      // for ntuple_word
+#include "freemod.hpp"                 // for FreeModule
+#include "gbring.hpp"                  // for gbvector, GBRing
+#include "interface/mutable-matrix.h"  // for IM2_MutableMatrix_make
+#include "mat.hpp"                     // for MutableMatrix
+#include "matrix-con.hpp"              // for MatrixConstructor
+#include "matrix.hpp"                  // for Matrix
+#include "monoid.hpp"                  // for Monoid
+#include "newdelete.hpp"               // for newarray, newarray_atomic, del...
+#include "polyring.hpp"                // for PolynomialRing
+#include "ring.hpp"                    // for Ring
+#include "style.hpp"                   // for INTSIZE
 
 void F4toM2Interface::from_M2_vec(const Gausser *KK,
                                   const MonomialInfo *MI,
@@ -32,7 +38,7 @@ void F4toM2Interface::from_M2_vec(const Gausser *KK,
   result.monoms = newarray_atomic(monomial_word, n * MI->max_monomial_size());
   n = 0;
   monomial_word *nextmonom = result.monoms;
-  for (gbvector *t = f; t != 0; t = t->next)
+  for (gbvector *t = f; t != nullptr; t = t->next)
     {
       relem_array[n] = t->coeff;
       M->to_expvector(t->monom, exp);
@@ -80,7 +86,7 @@ void F4toM2Interface::from_M2_matrix(const Gausser *KK,
     {
       gbelem *g = new gbelem;
       from_M2_vec(KK, MI, F, m->elem(i), g->f);
-      if (wts != 0) poly_set_degrees(KK, MI, wts, g->f, g->deg, g->alpha);
+      if (wts != nullptr) poly_set_degrees(KK, MI, wts, g->f, g->deg, g->alpha);
       result_polys.push_back(g);
     }
 }
@@ -118,7 +124,7 @@ vec F4toM2Interface::to_M2_vec(const Gausser *KK,
       for (int a = 0; a < M->n_vars(); a++) exp[a] = static_cast<int>(lexp[a]);
       M->from_expvector(exp, m1);
       Nterm *g = R->make_flat_term(relem_array[i], m1);
-      g->next = 0;
+      g->next = nullptr;
       if (last[comp] == 0)
         {
           comps[comp] = g;
@@ -130,7 +136,7 @@ vec F4toM2Interface::to_M2_vec(const Gausser *KK,
           last[comp] = g;
         }
     }
-  vec result = 0;
+  vec result = nullptr;
   for (int i = 0; i < F->rank(); i++)
     {
       if (comps[i] != 0)
@@ -170,9 +176,9 @@ MutableMatrix *F4toM2Interface::to_M2_MutableMatrix(const Gausser *KK,
     {
       row_elem &row = mat->rows[r];
       ring_elem *rowelems = newarray(ring_elem, row.len);
-      if (row.coeffs == 0)
+      if (row.coeffs == nullptr)
         {
-          if (row.monom == 0)
+          if (row.monom == nullptr)
             KK->to_ringelem_array(row.len, gens[row.elem]->f.coeffs, rowelems);
           else
             KK->to_ringelem_array(row.len, gb[row.elem]->f.coeffs, rowelems);

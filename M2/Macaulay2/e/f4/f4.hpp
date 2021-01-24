@@ -68,27 +68,27 @@
 //      Hilbert function use
 //
 
-#include "interface/computation.h"
-#include "interface/mutable-matrix.h"
+#include "engine-exports.h"         // for M2_arrayint, M2_bool
+#include "f4-types.hpp"             // for gb_array, MonomialLookupTable
+#include "f4/moninfo.hpp"           // for packed_monomial, MonomialInfo
+#include "gausser.hpp"              // for F4CoefficientArray, dense_row
+#include "interface/computation.h"  // for ComputationStatusCode, StopCondit...
+#include "memblock.hpp"             // for MemoryBlock
+#include "monhashtable.hpp"         // for MonomialHashTable
+#include "newdelete.hpp"            // for our_new_delete
 
-#include "comp.hpp"
-#include "f4-types.hpp"
-#include "f4-mem.hpp"
-#include "monhashtable.hpp"
-#include "memblock.hpp"
-#include "f4-spairs.hpp"
-#include "gausser.hpp"
-#include "hilb-fcn.hpp"
-#include "f4-m2-interface.hpp"
-#include "../mat.hpp"
-#include "../text-io.hpp"
+#include <ctime>                    // for clock, CLOCKS_PER_SEC, clock_t
+
+class F4Mem;
+class F4SPairSet;
+class FreeModule;
+class HilbertController;
+class RingElement;
 
 /////////////////////////////////////////////////////////////////////////////
 
 class F4GB : public our_new_delete
 {
-  typedef MonomialHashTable<MonomialInfo> MonomialHash;
-
   // Basic required information
   const Gausser *KK;
   const MonomialInfo *M;

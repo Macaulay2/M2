@@ -1,14 +1,13 @@
-/* Copyright 2005, Michael E. Stillman */
+/* Copyright 2005-2021, Michael E. Stillman */
 
 #ifndef _F4types_h_
 #define _F4types_h_
 
-#include <memory>
-
-#include "engine-includes.hpp"
-#include "f4-monlookup.hpp"
-#include "moninfo.hpp"
-#include "varpower-monomial.hpp"
+#include "f4/f4-monlookup.hpp"       // for F4MonomialLookupTableT
+#include "f4/moninfo.hpp"            // for MonomialInfo, monomial_word, pac...
+#include "f4/varpower-monomial.hpp"  // for varpower_monomials, varpower_mon...
+#include "newdelete.hpp"             // for our_new_delete, VECTOR, (gc_allocator)
+#include "style.hpp"                 // for LT
 
 #define sizeofspair(s, len) \
   (sizeof(*s) - sizeof(s->lcm) + (len) * sizeof(s->lcm[0]))

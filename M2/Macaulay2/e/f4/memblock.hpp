@@ -2,7 +2,7 @@
 #ifndef __memblock_h_
 #define __memblock_h_
 
-#include "../newdelete.hpp"
+#include "newdelete.hpp"
 
 template <typename T, long int NSLAB = 4092>
 class MemoryBlock : public our_new_delete

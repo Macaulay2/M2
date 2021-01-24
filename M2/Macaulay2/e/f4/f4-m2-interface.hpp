@@ -1,9 +1,15 @@
 #ifndef __F4toM2interface_h_
 #define __F4toM2interface_h_
 
-#include "f4-types.hpp"
-#include "gausser.hpp"
-#define MATTYPE DMat
+#include "engine-exports.h"  // for M2_arrayint
+#include "f4/f4-types.hpp"   // for gb_array, poly (ptr only), coefficient_m...
+#include "ringelem.hpp"      // for vec
+
+class FreeModule;
+class Gausser;
+class Matrix;
+class MonomialInfo;
+class MutableMatrix;
 
 class F4toM2Interface
 {

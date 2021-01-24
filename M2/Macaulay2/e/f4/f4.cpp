@@ -1,12 +1,34 @@
-// Copyright 2005-2010 Michael E. Stillman
+// Copyright 2005-2021 Michael E. Stillman
 
-// TODO: this code needs to be worked on
-#include <ctime>
-#include <algorithm>
+#include "f4/f4.hpp"
+#include "freemod.hpp"                 // for FreeModule
+#include "mat.hpp"                     // for MutableMatrix
+#include "text-io.hpp"                 // for emit
+#include "buffer.hpp"                  // for buffer
+#include "error.h"                     // for error
+#include "f4/f4-m2-interface.hpp"      // for F4toM2Interface
+#include "f4/f4-mem.hpp"               // for F4Mem, F4Vec
+#include "f4/f4-spairs.hpp"            // for F4SPairSet
+#include "f4/f4-types.hpp"             // for row_elem, coefficient_matrix
+#include "f4/gausser.hpp"              // for Gausser, F4CoefficientArray
+#include "f4/hilb-fcn.hpp"             // for HilbertController
+#include "f4/memblock.hpp"             // for MemoryBlock
+#include "f4/monhashtable.hpp"         // for MonomialHashTable
+#include "f4/moninfo.hpp"              // for MonomialInfo, monomial_word
+#include "f4/varpower-monomial.hpp"    // for varpower_word, varpower_monomial
+#include "interface/mutable-matrix.h"  // for IM2_MutableMatrix_make
+#include "interrupted.hpp"             // for system_interrupted
+#include "ring.hpp"                    // for Ring
+#include "ringelem.hpp"                // for ring_elem, vec
+#include "style.hpp"                   // for INTSIZE
 
-#include "f4.hpp"
-#include "../freemod.hpp"
-#include "interrupted.hpp"
+#include <gc/gc_allocator.h>           // for gc_allocator
+#include <cstdint>                     // for int32_t
+#include <cstdio>                      // for fprintf, stderr
+#include <algorithm>                   // for stable_sort
+#include <vector>                      // for swap, vector
+
+class RingElement;
 
 F4GB::F4GB(const Gausser *KK0,
            F4Mem *Mem0,
@@ -22,7 +44,7 @@ F4GB::F4GB(const Gausser *KK0,
       M(M0),
       F(F0),
       weights(weights0),
-      component_degrees(0),  // need to put this in
+      component_degrees(nullptr),  // need to put this in
       n_pairs_computed(0),
       n_reduction_steps(0),
       n_gens_left(0),
@@ -30,13 +52,13 @@ F4GB::F4GB(const Gausser *KK0,
       complete_thru_this_degree(-1),  // need to reset this in the body
       this_degree(),
       is_ideal(F0->rank() == 1),
-      hilbert(0),
+      hilbert(nullptr),
       gens(),
       gb(),
-      lookup(0),
-      S(0),
+      lookup(nullptr),
+      S(nullptr),
       next_col_to_process(0),
-      mat(0),
+      mat(nullptr),
       H(M0, 17),
       Mem(Mem0),
       B(),
@@ -61,9 +83,8 @@ void F4GB::set_hilbert_function(const RingElement *hf)
 
 void F4GB::delete_gb_array(gb_array &g)
 {
-  for (int i = 0; i < g.size(); i++)
+  for (auto g0 : g)
     {
-      gbelem *g0 = g[i];
       if (g0->f.coeffs)
         KK->deallocate_F4CCoefficientArray(g0->f.coeffs, g0->f.len);
       // Note: monomials will be cleared en-mass and so don't need to be freed.
@@ -98,7 +119,7 @@ void F4GB::new_generators(int lo, int hi)
 int F4GB::new_column(packed_monomial m)
 {
   // m is a packed monomial, unique via the hash table H, B.
-  column_elem c;
+  column_elem c{};
   int next_column = INTSIZE(mat->columns);
   m[-1] = next_column;
   c.monom = m;
@@ -142,12 +163,12 @@ void F4GB::load_gen(int which)
 {
   poly &g = gens[which]->f;
 
-  row_elem r;
-  r.monom = NULL;  // This says that this element corresponds to a generator
+  row_elem r{};
+  r.monom = nullptr;  // This says that this element corresponds to a generator
   r.elem = which;
 
   r.len = g.len;
-  r.coeffs = 0;  // will be fetched when needed via get_coeffs_array
+  r.coeffs = nullptr;  // will be fetched when needed via get_coeffs_array
   r.comps = Mem->components.allocate(g.len);
 
   monomial_word *w = g.monoms;
@@ -165,12 +186,12 @@ void F4GB::load_row(packed_monomial monom, int which)
 {
   poly &g = gb[which]->f;
 
-  row_elem r;
+  row_elem r{};
   r.monom = monom;
   r.elem = which;
 
   r.len = g.len;
-  r.coeffs = 0;  // will be fetched when needed via get_coeffs_array
+  r.coeffs = nullptr;  // will be fetched when needed via get_coeffs_array
   r.comps = Mem->components.allocate(g.len);
 
   monomial_word *w = g.monoms;
@@ -373,14 +394,13 @@ void F4GB::reset_matrix()
 void F4GB::clear_matrix()
 {
   // Clear the rows first
-  for (int i = 0; i < mat->rows.size(); i++)
+  for (auto & r : mat->rows)
     {
-      row_elem &r = mat->rows[i];
       if (r.coeffs) KK->deallocate_F4CCoefficientArray(r.coeffs, r.len);
       Mem->components.deallocate(r.comps);
       r.len = 0;
       r.elem = -1;
-      r.monom = 0;
+      r.monom = nullptr;
     }
   mat->rows.clear();
   mat->columns.clear();
@@ -439,7 +459,7 @@ F4CoefficientArray F4GB::get_coeffs_array(row_elem &r)
   if (r.coeffs || r.len == 0) return r.coeffs;
 
   // At this point, we must go find the coeff array
-  if (r.monom == 0)  // i.e. a generator
+  if (r.monom == nullptr)  // i.e. a generator
     return gens[r.elem]->f.coeffs;
   return gb[r.elem]->f.coeffs;
 }
@@ -543,7 +563,7 @@ void F4GB::tail_reduce()
   for (int i = nrows - 1; i >= 0; i--)
     {
       row_elem &r = mat->rows[i];
-      if (r.len <= 1 || r.coeffs == 0)
+      if (r.len <= 1 || r.coeffs == nullptr)
         continue;  // row reduced to zero, ignore it.
       // At this point, we should have an element to reduce
       bool anychange = false;
@@ -618,7 +638,7 @@ void F4GB::insert_gb_element(row_elem &r)
 
   result->f.coeffs = (r.coeffs ? r.coeffs : KK->copy_F4CoefficientArray(
                                                 r.len, get_coeffs_array(r)));
-  r.coeffs = 0;
+  r.coeffs = nullptr;
   ;
 
   result->f.monoms = Mem->allocate_monomial_array(nlongs);
@@ -885,10 +905,6 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 // Debugging routines only ///////
 //////////////////////////////////
 
-#include "f4-m2-interface.hpp"
-#include "../text-io.hpp"
-#include "../mat.hpp"
-#include "../freemod.hpp"
 
 void F4GB::show_gb_array(const gb_array &g) const
 {
@@ -940,46 +956,6 @@ void F4GB::show_matrix()
   emit(o.str());
 }
 
-//////////////////// LINBOX includes //////////////////////////////////////
-//#include <linbox/field/modular.h>
-//#include <linbox/blackbox/sparse.h>
-//#include <linbox/solutions/rank.h>
-//#include <linbox/util/timer.h>
-// using namespace LinBox;
-
-/////////////////// linbox ////////////////////////////////////
-
-void F4GB::gauss_reduce_linbox()
-// dumps the current matrix into a file in the linbox sparse matrix format
-{
-  // dump the matrix in a file
-  char fname[30];
-  sprintf(fname, "tmp.%i.matrix", this_degree);
-  FILE *mfile = fopen(fname, "w");
-  int nrows = INTSIZE(mat->rows);
-  int ncols = INTSIZE(mat->columns);
-
-  fprintf(mfile, "%i %i M\n", nrows, ncols);
-  for (int i = 0; i < nrows; i++)
-    {
-      row_elem &r = mat->rows[i];
-      int *sparseelems = static_cast<int *>(r.coeffs);
-      for (int j = 0; j < r.len; j++)
-        {
-          fprintf(
-              mfile,
-              "%i %i %i\n",
-              i + 1,
-              r.comps[j] + 1,
-              KK->coeff_to_int(*sparseelems++));  // is *sparseelems integer?
-        }
-    }
-  fprintf(mfile, "0 0 0\n");
-  fclose(mfile);
-}
-
-/////////////////// end linbox ///////////////////////////////
-
 void F4GB::show_new_rows_matrix()
 {
   int ncols = INTSIZE(mat->columns);
@@ -1022,11 +998,10 @@ void F4GB::show_new_rows_matrix()
   emit(o.str());
 }
 
-#include "moninfo.hpp"
-#include "../coeffrings.hpp"
 template class MemoryBlock<monomial_word>;
 template class MemoryBlock<pre_spair>;
+
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e f4/f4.o "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil
 // End:

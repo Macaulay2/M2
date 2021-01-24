@@ -1,7 +1,15 @@
-// Copyright 2005 Michael E. Stillman
+// Copyright 2005-2021 Michael E. Stillman
 
-#include <algorithm>
-#include "f4-spairs.hpp"
+#include "f4/f4-spairs.hpp"
+
+#include "mem.hpp"            // for stash
+#include "style.hpp"          // for INTSIZE
+
+#include <gc/gc_allocator.h>  // for gc_allocator
+#include <stdint.h>           // for int32_t
+#include <stdio.h>            // for fprintf, stderr, size_t
+#include <algorithm>          // for stable_sort
+#include <vector>             // for vector, vector<>::iterator
 
 F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0)
     : M(M0), gb(gb0), heap(0), this_set(0), nsaved_unneeded(0)
@@ -308,4 +316,5 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
 
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+//  indent-tabs-mode: nil
 //  End:

@@ -3,14 +3,20 @@
 #ifndef _F4Computation_h_
 #define _F4Computation_h_
 
-#include "../comp-gb.hpp"
-#include "f4.hpp"
-#include "gausser.hpp"
-#include <polyring.hpp>
+#include "comp-gb.hpp"              // for GBComputation
+#include "engine-exports.h"         // for M2_bool, M2_arrayint
+#include "f4/f4.hpp"                // for F4GB
+#include "interface/computation.h"  // for ComputationStatusCode
+#include "polyring.hpp"             // for PolynomialRing
 
-class PolynomialRing;
+class Computation;
+class F4Mem;
 class FreeModule;
-class RingType;
+class Gausser;
+class Matrix;
+class MonomialInfo;
+class RingElement;
+class buffer;
 
 class F4Computation : public GBComputation
 {
@@ -22,7 +28,6 @@ class F4Computation : public GBComputation
   const FreeModule *F;  // determines whether the monomial order is a
                         // Schreyer order.
                         // Also determines degrees of elements in F.
-  const RingType *K;
   const Gausser *KK;
   MonomialInfo *MI;
   F4Mem *Mem;

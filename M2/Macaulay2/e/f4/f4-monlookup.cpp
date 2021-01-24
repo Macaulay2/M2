@@ -1,9 +1,18 @@
-// (c) 1994-2006 Michael E. Stillman
+// (c) 1994-2021 Michael E. Stillman
 
-#include "../text-io.hpp"
+#include "f4/f4-monlookup.hpp"
+#include "buffer.hpp"                // for buffer
+#include "engine-exports.h"          // for newline
+#include "f4/varpower-monomial.hpp"  // for varpower_word, const_varpower_mo...
+#include "mem.hpp"                   // for stash
+#include "style.hpp"                 // for INTSIZE
+#include "text-io.hpp"               // for emit, emit_line
 
-#include "varpower-monomial.hpp"
-#include "f4-monlookup.hpp"
+#include <assert.h>                  // for assert
+#include <gc/gc_allocator.h>         // for gc_allocator
+#include <stddef.h>                  // for NULL
+#include <stdint.h>                  // for int32_t
+#include <vector>                    // for vector, vector<>::iterator
 
 template <typename Key>
 typename F4MonomialLookupTableT<Key>::mi_node *
