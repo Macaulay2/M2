@@ -463,7 +463,7 @@ export HashTable := {+
      mutex:SpinLock
      };
 
---This unfortunately needs to be here as it references Hash Tabe which needs expr.  
+--This unfortunately needs to be here as it references Hash Table which needs expr.  
 
 export m2cfile := Pointer "struct M2File*";	
 
@@ -503,7 +503,7 @@ export file := {+
 	outfd:int,		-- file descriptor or -1
         outisatty:bool,
 	unsyncOutputState:fileOutputSyncState, -- default sync state to use for unsync output
-	 -- Mutex for syncronization and for buffering 
+	 -- Mutex for synchronization and for buffering 
 	 -- Lock before output in sync output mode
 	threadSyncMutex:ThreadMutex,
 	-- C structure for this file that provides for thread support

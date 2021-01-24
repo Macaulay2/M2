@@ -231,7 +231,7 @@ class ARingTower : public RingInterface
 
   poly copy(int level, const poly f) const;
 
-  // possibly increase the capacity of 'f', to accomodate polynomials of degree
+  // possibly increase the capacity of 'f', to accommodate polynomials of degree
   // 'newdeg'
   void increase_capacity(int newdeg, poly &f) const;
 

@@ -416,7 +416,7 @@ inline bool mylift(const ARingCC& R,
 // CCC --> CC  Use lift.
 
 // RRR --> RR (truncate)
-// RR --> RRR (make new precison)
+// RR --> RRR (make new precision)
 // RRR --> RRR (change precision)
 // RR --> CC (imag part = 0)
 // RRR --> CC (RRR --> RR, and imag part = 0)

@@ -48,7 +48,7 @@ void test_over_RR_or_CC(const Ring *R);
 M2_arrayint rawMinimalBetti(Computation *G,
                             M2_arrayint slanted_degree_limit,
                             M2_arrayint length_limit);
-/* connectd: rawMinimialBetti */
+/* connected: rawMinimalBetti */
 
 ////////////////////////////////////
 // new GB computations /////////////

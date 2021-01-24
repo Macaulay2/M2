@@ -1,4 +1,4 @@
--- From email fro Josephine Yu, 10-27-09
+-- From email from Josephine Yu, 10-27-09
 M = matrix {{1.}} -- over RR
 MM = mutableMatrix M
 rowMult(MM,0,3);

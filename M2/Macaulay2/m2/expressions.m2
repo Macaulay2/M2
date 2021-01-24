@@ -719,6 +719,7 @@ returns = t -> x -> t
 	       precedence Boolean :=
 		  precedence List :=
 		 precedence Array :=
+	  precedence AngleBarList :=
 	      precedence Constant :=
 		precedence Symbol :=
 		   precedence Net :=
