@@ -32,6 +32,7 @@ class ARingZZp : public RingInterface
   typedef Z_mod ring_type;
   typedef int ElementType;
   typedef int elem;
+  typedef std::vector<elem> ElementContainerType;
 
   ARingZZp(size_t prime);
 

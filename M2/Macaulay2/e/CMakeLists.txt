@@ -136,7 +136,7 @@ set(CPPONLYFILES
 set(SRCLIST
 	myalloc
 	matrix-ncbasis
-    	VectorArithmetic
+    	# VectorArithmetic
 	M2FreeAlgebraQuotient
 	M2FreeAlgebra
 	NCAlgebras/Word

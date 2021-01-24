@@ -61,7 +61,9 @@ private:
     PreRowType preRowType;
   };
 
-  struct Row
+  // we must derive from our_new_delete since CoeffVector
+  // could point to either a VECTOR or a std::vector, depending on the ring.
+  struct Row : public our_new_delete
   {
     CoeffVector coeffVector;     // vector of coefficients
     Range<int> columnIndices;    // column indices used in the row.  Valid *only* after labelAndSortF4Matrix, 
@@ -79,8 +81,11 @@ private:
 
   //using ColumnsVector = tbb::concurrent_vector<Column>;
   using ColumnsVector = std::vector<Column>;
+
+  // unfortunately we must use the GC allocator here for now
+  using RowsVector = std::vector<Row,gc_allocator<Row>>;
   //using RowsVector = tbb::concurrent_vector<Row>;
-  using RowsVector = std::vector<Row>;
+
   using PreRowFeeder = tbb::parallel_do_feeder<PreRow>;
   // The pair in this unordered_map is (i,j) where:
   //    i is the column number
@@ -126,8 +131,7 @@ private:
   int mFirstOverlap; // First non pivot row (and all later ones are also non-pivot rows).
 
   // vector arithmetic class for reduction
-  //const VectorArithmetic *mVectorArithmetic;
-  const VectorArithmetic2 *mVectorArithmetic;
+  const VectorArithmetic* mVectorArithmetic;
 
   bool mIsParallel;
  
@@ -218,7 +222,7 @@ private:
                           int firstcol,
                           long &numCancellations,
                           DenseCoeffVector& dense,
-                          bool updatColumnIndex,
+                          bool updateColumnIndex,
                           LockType& lock);
 
   void reduceF4Row(int index,

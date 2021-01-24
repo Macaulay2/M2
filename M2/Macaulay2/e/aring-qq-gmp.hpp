@@ -27,6 +27,7 @@ class ARingQQGMP : public RingInterface
 
   typedef __mpq_struct ElementType;
   typedef ElementType elem;
+  typedef std::vector<elem> ElementContainerType;
 
   ARingQQGMP();
   ~ARingQQGMP();

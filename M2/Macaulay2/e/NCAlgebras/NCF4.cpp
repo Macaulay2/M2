@@ -3,7 +3,7 @@
 #include "text-io.hpp"                      // for emit_wrapped
 #include "NCAlgebras/FreeAlgebra.hpp"       // for FreeAlgebra
 #include "NCAlgebras/OverlapTable.hpp"      // for OverlapTable
-#include "VectorArithmetic.hpp"             // for VectorArithmetic
+#include "VectorArithmetic2.hpp"             // for VectorArithmetic
 #include "NCAlgebras/WordTable.hpp"         // for Overlap, WordTable
 #include "buffer.hpp"                       // for buffer
 #include "engine-exports.h"                 // for M2_gbTrace
@@ -30,7 +30,7 @@ NCF4::NCF4(const FreeAlgebra& A,
       mColumnMonomials(10,mMonomHash,mMonomHashEqual),
       mPreviousColumnMonomials(10,mMonomHash,mMonomHashEqual),
 //      mVectorArithmetic(vectorArithmetic(A.coefficientRing())),
-      mVectorArithmetic(new VectorArithmetic2(A.coefficientRing())),
+      mVectorArithmetic(new VectorArithmetic(A.coefficientRing())),
       mIsParallel(isParallel)
 {
   if (M2_gbTrace >= 1)
@@ -643,7 +643,7 @@ void NCF4::processPreRow(PreRow r,
   if (preRowType == PreviousReducerPreRow) delete elem;
 
   // add the processed row to the appropriate list
-  rowsVector.emplace_back(Row {coeffs, columnRange, wordRange});
+  rowsVector.emplace_back(Row {{},coeffs, columnRange, wordRange});
 }
 
 void NCF4::processPreRow(PreRow r,
@@ -833,40 +833,77 @@ void NCF4::labelAndSortF4Matrix()
   MonomSort<std::vector<Word>> monomialSorter(&freeAlgebra().monoid(),&tempWords);
   // stable sort was here before, but this sort is based on a total ordering
   // with no ties so we can use an unstable (and hence parallel!) sort.
-  tbb::parallel_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
-  
+  if (mIsParallel)
+    tbb::parallel_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
+  else
+    std::stable_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
+
+  // rewrite this with lambdas
+
   // apply the sorted labeling to the columns
   mColumns.resize(sz);
-  tbb::parallel_for(tbb::blocked_range<int>{0,(int)sz},
-         [&](const tbb::blocked_range<int>& r)
-         {
-           for (auto count = r.begin(); count != r.end(); ++count)
-             {
-               auto& val = mColumnMonomials[tempWords[columnIndices[count]]];
-               val.first = count;
-               mColumns[count].word = tempWords[columnIndices[count]];
-               mColumns[count].pivotRow = -1;
-             }
-         });
+  if (mIsParallel)
+  {
+    tbb::parallel_for(tbb::blocked_range<int>{0,(int)sz},
+                      [&](const tbb::blocked_range<int>& r)
+                      {
+                        for (auto count = r.begin(); count != r.end(); ++count)
+                          {
+                            auto& val = mColumnMonomials[tempWords[columnIndices[count]]];
+                            val.first = count;
+                            mColumns[count].word = tempWords[columnIndices[count]];
+                            mColumns[count].pivotRow = -1;
+                          }
+                      });
+  }
+  else
+  {
+    for (auto count = 0; count != sz; ++count)
+      {
+        auto& val = mColumnMonomials[tempWords[columnIndices[count]]];
+        val.first = count;
+        mColumns[count].word = tempWords[columnIndices[count]];
+        mColumns[count].pivotRow = -1;
+      }
+  }
 
   // now fix the column labels in the rows and set pivot rows in columns
-  tbb::parallel_for(tbb::blocked_range<int>{0,(int)mRows.size()},
-        [&](const tbb::blocked_range<int>& r)
-        {
-          for (auto i = r.begin(); i != r.end(); ++i)
+  if (mIsParallel)
+  {
+    tbb::parallel_for(tbb::blocked_range<int>{0,(int)mRows.size()},
+                      [&](const tbb::blocked_range<int>& r)
+                      {
+                        for (auto i = r.begin(); i != r.end(); ++i)
+                          {
+                            auto& comps = mRows[i].columnIndices;
+                            auto& words = mRows[i].columnWords;
+                            // sets the pivot row in the column if this is a reducer row
+                            if (i < mFirstOverlap)
+                              {
+                                mColumns[mColumnMonomials[words[0]].first].pivotRow = i;
+                                mColumnMonomials[words[0]].second = i;
+                              }
+                            for (int j = 0; j < words.size(); ++j)
+                              comps[j] = mColumnMonomials[words[j]].first;
+                          }
+                      });
+  }
+  else
+  {
+    for (auto i = 0; i != mRows.size(); ++i)
+      {
+        auto& comps = mRows[i].columnIndices;
+        auto& words = mRows[i].columnWords;
+        // sets the pivot row in the column if this is a reducer row
+        if (i < mFirstOverlap)
           {
-            auto& comps = mRows[i].columnIndices;
-            auto& words = mRows[i].columnWords;
-            // sets the pivot row in the column if this is a reducer row
-            if (i < mFirstOverlap)
-            {
-              mColumns[mColumnMonomials[words[0]].first].pivotRow = i;
-              mColumnMonomials[words[0]].second = i;
-            }
-            for (int j = 0; j < words.size(); ++j)
-              comps[j] = mColumnMonomials[words[j]].first;
+            mColumns[mColumnMonomials[words[0]].first].pivotRow = i;
+            mColumnMonomials[words[0]].second = i;
           }
-        });
+        for (int j = 0; j < words.size(); ++j)
+          comps[j] = mColumnMonomials[words[j]].first;
+      }
+  }
 }
 
 // both reduceF4Row and parallelReduceF4Row call this function
@@ -892,6 +929,7 @@ void NCF4::generalReduceF4Row(int index,
   mVectorArithmetic->sparseRowToDenseRow(dense,
                                          mRows[index].coeffVector,
                                          mRows[index].columnIndices);
+
   do {
     int pivotrow = mColumns[first].pivotRow;
     if (pivotrow >= 0)
@@ -901,6 +939,7 @@ void NCF4::generalReduceF4Row(int index,
                                                     mRows[pivotrow].coeffVector,
                                                     mRows[pivotrow].columnIndices);
         // last component in the row corresponding to pivotrow
+        
         int last1 = mRows[pivotrow].columnIndices.cend()[-1];
         last = (last1 > last ? last1 : last);
       }
@@ -910,7 +949,7 @@ void NCF4::generalReduceF4Row(int index,
       }
     first = mVectorArithmetic->denseRowNextNonzero(dense, first+1, last);
   } while (first <= last);
-  
+
   mVectorArithmetic->safeDenseRowToSparseRow(dense,
                                              mRows[index].coeffVector,
                                              mRows[index].columnIndices,
@@ -972,7 +1011,8 @@ void NCF4::parallelReduceF4Matrix()
                 numCancellations,
                 denseVector);
 
-  // interreduce the matrix with respect to these overlaps.  This needs to be sequential.
+  // interreduce the matrix with respect to these overlaps.
+  // This needs to be sequential as well
   for (int i = mRows.size()-1; i >= mFirstOverlap; --i)
     reduceF4Row(i,
                 mRows[i].columnIndices[1],

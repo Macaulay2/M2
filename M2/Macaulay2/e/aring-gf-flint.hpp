@@ -33,6 +33,7 @@ class ARingGFFlint : public RingInterface
   static const RingID ringID = ring_GFFlintZech;
   typedef fq_zech_struct ElementType;
   typedef ElementType elem;
+  typedef std::vector<elem> ElementContainerType;
 
   ARingGFFlint(const PolynomialRing& R, const ring_elem a);
 

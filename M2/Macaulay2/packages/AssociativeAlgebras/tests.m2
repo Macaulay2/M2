@@ -926,7 +926,7 @@ kk = ZZ/32003
 R = kk<|x,y,z,w|>
 I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x}
 -- Should be 10 gens, 108 rows in last matrix, 35, 61 new gb elts
-I = ideal I_*; elapsedTime Igb = NCGB(I, 6, Strategy=> "F4");
+I = ideal I_*; elapsedTime Igb = NCGB(I, 13, Strategy=> "F4Parallel");
 while (true) do (
     I = ideal I_*; elapsedTime Igb = NCGB(I, 6, Strategy=> "F4Parallel");
     assert(#(flatten entries Igb) == 18)
@@ -1383,11 +1383,11 @@ DEVELOPMENT ///
   elapsedTime runGBs(I = createIdeal kk) -- OK  
 
   I = createIdeal QQ
-    runIdeal(I, 10, "Naive"); -- CRASH
+    runIdeal(I, 10, "Naive"); -- 33 gens OK
     runIdeal(I, 10, "F4"); -- 33 gens -- OK
     runIdeal(I, 10, "F4Parallel"); -- 33 gens OK
-    runIdeal(I, 12, "Naive"); -- CRASH
-    runIdeal(I, 14, "F4"); -- hmmm, very long...! 87 sec! Mikes MBP
+    runIdeal(I, 12, "Naive"); -- 47 gens OK
+    runIdeal(I, 14, "F4"); -- hmmm, very long...! 87 sec! 60 gens Mikes MBP
     runIdeal(I, 14, "F4Parallel"); -- 19.83 sec Mikes MBP
     
   kk = GF(27, Strategy => "New")    
@@ -1563,4 +1563,15 @@ I = ideal {a}
 A = R<|c,d|>
 I   --- BUG: why are these parenthesis here?
 -- how can we get describe to give the 
+///
+
+DEVELOPMENT ///
+restart
+gbTrace = 2
+needsPackage "AssociativeAlgebras"
+S = threeDimSklyanin (frac(QQ[a,b,c]),{a,b,c},{x,y,z}, DegreeLimit => 2)
+S = threeDimSklyanin (QQ,{x,y,z}, DegreeLimit => 2)
+I = ideal S
+elapsedTime Igb = NCGB(I, 5, Strategy=>"F4Parallel")
+R = (ambient S)/I; all(7, i -> binomial(i+2,2) == numcols ncBasis(i,R))
 ///

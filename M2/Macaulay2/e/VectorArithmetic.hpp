@@ -15,11 +15,11 @@ class Ring;
 union ring_elem;
 using ComponentIndex = int;
 
-class CoeffVector
+class CoeffVector : public our_new_delete
 {
   template<typename T>
   friend class ConcreteVectorArithmetic;
-  template<typename T>
+  template<typename RingType>
   friend class ConcreteVectorArithmetic2;
   // disallow copy...
  public:
@@ -30,11 +30,11 @@ class CoeffVector
   void* mValue;
 };
 
-class DenseCoeffVector
+class DenseCoeffVector : public our_new_delete
 {
   template<typename T>
   friend class ConcreteVectorArithmetic;
-  template<typename T>
+  template<typename RingType>
   friend class ConcreteVectorArithmetic2;
   // disallow copy...
  public:

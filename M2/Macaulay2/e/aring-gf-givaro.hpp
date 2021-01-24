@@ -71,6 +71,7 @@ class ARingGFGivaro : public RingInterface
   typedef M2::ARingGFGivaro ring_type;
   using GivaroRandIter = FieldType::RandIter;
   typedef ElementType elem;
+  typedef std::vector<elem> ElementContainerType;
 
   typedef FieldType::Residu_t UTT;  ///< types depends on FieldType definition!
   // typedef Signed_Trait<FieldType::Residu_t>::signed_type  STT;///< types
