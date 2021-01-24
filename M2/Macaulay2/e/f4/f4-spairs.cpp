@@ -268,6 +268,10 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
       if (bins[i].size() == 0) continue;
       // First sort the monomials of this degree
 
+      // TODO: MES remove all uses of QuickSorter here.
+      //      QuickSorter<PreSPairSorter>::sort(&C, &(bins[i])[0],
+      //      bins[i].size());
+
       std::stable_sort(bins[i].begin(), bins[i].end(), C);
 
       // Loop through each degree and potentially insert...
