@@ -321,7 +321,10 @@ cmake -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` .
 <details>
 <summary><code>/usr/include/c++/10.1.0/bits/unique_ptr.h:594:9: error: no matching function for call to std::__uniq_ptr_data</code> when using GCC 10 or Clang 10</summary>
 
-This issue is due to an old version of FFLAS_FFPACK or Givaro libraries inserting an unnecessary `-fabi-version=6` flag to the compile command. Try uninstalling the packaged version of those libraries and building them using the `build-givaro` and `build-fflas_ffpack` targets.
+This issue is due to an old version of FFLAS_FFPACK or Givaro libraries inserting an unnecessary `-fabi-version=6` flag to the compile command. Use the following command to tell CMake to build those libraries:
+```
+cmake -DBUILD_LIBRARIES="Givaro;FFLAS_FFPACK" .
+```
 </details>
 
 <details>
@@ -428,11 +431,10 @@ This error occurs if the GC library path is not set correctly.
 CMakeFiles/scc1.dir/scc1.c.o: In function `getmem':
 /home/macaulay/M2/M2/Macaulay2/c/scc1.c:23: undefined reference to `GC_malloc'
 </pre>
-Solution:
-<pre>
-cmake --build . --target build-bdwgc-install
-cmake -U*BDWGC* .
-</pre>
+Use the following command to tell CMake to build BDWGC:
+```
+cmake -DBUILD_LIBRARIES=BDWGC .
+```
 </details>
 
 
@@ -450,11 +452,10 @@ In file included from /usr/include/NTL/lip.h:5:
 #error Runtime CPU support is only available with GCC 4.6 or later.
  ^
 </pre>
-Solution:
-<pre>
-cmake --build . --target build-ntl-install
-cmake -U*NTL_* .
-</pre>
+Use the following command to tell CMake to build NTL:
+```
+cmake -DBUILD_LIBRARIES=NTL .
+```
 </details>
 
 

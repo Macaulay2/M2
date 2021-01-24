@@ -224,7 +224,7 @@ foreach(_library IN LISTS LIBRARY_OPTIONS)
     elseif(BUILD_LIBRARIES MATCHES "(ALL|ON)" OR "${_name}" IN_LIST BUILD_LIBRARIES)
       # exists on the system, but we want to build it
       unset(${_library}_DIR CACHE) # for Eigen3
-      unset(${_name}_FOUND)
+      unset(${_name}_FOUND CACHE)
       unset(${_name}_LIBDIR CACHE)
       unset(${_name}_LIBRARY CACHE)
       unset(${_name}_LIBRARIES CACHE)
