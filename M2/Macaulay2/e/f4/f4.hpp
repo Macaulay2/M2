@@ -93,14 +93,12 @@ class F4GB : public our_new_delete
   const Gausser *KK;
   const MonomialInfo *M;
   const FreeModule *F;
-  FreeModule *syzF;     // syzygies ambient module (gebug only)
   M2_arrayint weights;  // The length of this is the number of variables, each
                         // entry is positive.
   M2_arrayint component_degrees;  // Degree of each free module element.
   // Also need Schreyer order info sometimes
 
   // Options and information about the computation
-  bool using_syz;
   long n_lcmdups;
   long n_pairs_computed;
   long n_reduction_steps;
@@ -108,8 +106,7 @@ class F4GB : public our_new_delete
   int n_subring;
   int complete_thru_this_degree;
   int this_degree;  // The current degree we are working on
-  bool is_ideal;    // true if no syzygies are being computed, and rank of F is
-                    // one.
+  bool is_ideal;    // true if the rank of F is one.
 
   // Hilbert function information
   HilbertController *hilbert;  // null if not being used
@@ -119,7 +116,6 @@ class F4GB : public our_new_delete
   // The main players in the computation
   gb_array gens;
   gb_array gb;
-  gb_array syz_basis;
   MonomialLookupTable *lookup;  // (monom,comp) --> index into gb
   F4SPairSet *S;
 
@@ -131,49 +127,15 @@ class F4GB : public our_new_delete
   MemoryBlock<monomial_word> B;
   monomial_word *next_monom;  // valid while creating the matrix
 
-  // The syzygy matrix and its construction
-  int syz_next_col_to_process;
-  coefficient_matrix *syz;         // recreated at every degree
-  coefficient_matrix *master_syz;  // collects all syzygies
-  MonomialHashTable<MonomialInfo> syzH;
-  MonomialHashTable<MonomialInfo> master_syzH;
-  MemoryBlock<monomial_word> syzB;
-  MemoryBlock<monomial_word> master_syzB;
-  monomial_word *syz_next_monom;  // valid while creating <syz>
-  monomial_word *master_syz_next_monom;
-  // F4Vec syzF4Vec; // syzygy vector manager
-
   // Local data for gaussian elimination
-  dense_row gauss_row, syz_row;
+  dense_row gauss_row;
 
   // cumulative timing info
   double clock_sort_columns;
   clock_t clock_gauss;
   clock_t clock_make_matrix;
-  double syz_clock_sort_columns;
 
  private:
-  ////////////////////////////////////
-  // Syzygy matrix manipulations:
-
-  // fill syz_row from syz->row[i]
-  void syz_dense_row_fill_from_sparse(int i);
-
-  // convert dense <syz_row> into sparse <s>
-  void syz_dense_row_to_sparse_row(row_elem &s);
-
-  // record "reduce current row (w/leading coeff <li>) with row[pivot]
-  // (...<lj>)"
-  void syzygy_row_record_reduction(int pivot, int li, int lj);
-
-  // divide row <i> with coefficient <c>
-  void syzygy_row_divide(int i, int c);
-
-  // insert syzygy corresponding to row r
-  // ( if g>=0 then this row resulted in gb[g] )
-  void insert_syz(row_elem &r, int g = -1);
-
-  // end (SYZYGY MANIPULATIONS)
   ////////////////////////////////////////////////////////////////////
   void delete_gb_array(gb_array &g);
 
@@ -189,23 +151,14 @@ class F4GB : public our_new_delete
 
   void reset_matrix();
   void clear_matrix();
-  void reset_syz_matrix();
-  void reset_master_syz();
-  void clear_syz_matrix();
-  void clear_master_syz();
   int new_column(packed_monomial m);
-  int syz_new_column(packed_monomial m);
   int find_or_append_column(packed_monomial m);
-  int syz_find_or_append_column(packed_monomial m);
   int mult_monomials(packed_monomial m, packed_monomial n);
   void load_gen(int which);
   void load_row(packed_monomial monom, int which);
-  void syz_load_gen(int which);
-  void syz_load_row(packed_monomial monom, int which);
   void process_column(int c);
   void process_s_pair(spair *p);
   void reorder_columns();
-  void syz_reorder_columns();
   void reorder_rows();
 
   F4CoefficientArray get_coeffs_array(row_elem &r);
@@ -260,12 +213,9 @@ class F4GB : public our_new_delete
 
   // Debugging routines
   void show_gb_array(const gb_array &g) const;
-  void append_to_syzF(const_packed_monomial m, int compare_number);
-  void show_syz_basis();
   void show_row_info() const;
   void show_column_info() const;
   void show_matrix();
-  void show_syz_matrix();
   void show_new_rows_matrix();
 };
 

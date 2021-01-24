@@ -271,7 +271,6 @@ set(SRCLIST
   f4/f4-mem
   f4/f4-monlookup
   f4/f4-spairs
-  f4/f4-syz
   f4/f4-types
   f4/f4
   f4/gausser
