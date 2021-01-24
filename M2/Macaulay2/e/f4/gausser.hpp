@@ -1,12 +1,14 @@
 #ifndef __gausser_h_
 #define __gausser_h_
 
-#include "../ring.hpp"
-#include "../ZZp.hpp"
-#include "../coeffrings.hpp"
+#include "coeffrings.hpp"  // for CoefficientRingZZp
+#include "newdelete.hpp"   // for our_new_delete
 
-typedef void *F4CoefficientArray;
 class F4Mem;
+class Ring;
+class Z_mod;
+union ring_elem;
+typedef void *F4CoefficientArray;
 
 struct dense_row : public our_new_delete
 {

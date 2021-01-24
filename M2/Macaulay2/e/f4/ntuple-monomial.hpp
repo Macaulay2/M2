@@ -3,9 +3,10 @@
 #ifndef _ntuple_monomial_hpp_
 #define _ntuple_monomial_hpp_
 
-#include <string.h>
+#include "engine-exports.h"  // for M2_arrayint, M2_arrayint_struct, M2_Arra...
+#include "style.hpp"         // for EQ, GT, LT
 
-#include "style.hpp"
+#include <string.h>          // for memcpy
 
 class buffer;
 

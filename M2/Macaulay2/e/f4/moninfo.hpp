@@ -1,12 +1,19 @@
-// Copyright 2005  Michael E. Stillman
+// Copyright 2005-2021  Michael E. Stillman
 
-#ifndef _moninfo_h_
-#define _moninfo_h_
+#ifndef _moninfo_hpp_
+#define _moninfo_hpp_
 
+#include "engine-exports.h"               // for M2_arrayint, M2_arrayint_st...
+#include "f4/ntuple-monomial.hpp"         // for ntuple_word, const_ntuple_m...
+#include "f4/varpower-monomial.hpp"       // for varpower_word, index_varpow...
+#include "interface/monomial-ordering.h"  // for MonomialOrdering
+#include "newdelete.hpp"                  // for our_new_delete
+#include "skew.hpp"                       // for SkewMultiplication
+
+#if 0
+#include <M2/config.h>                    // for HAVE_STDINT_H
 #include <cstdio>
 
-#include <M2/config.h>
-#include <stdio.h>
 #if HAVE_STDINT_H
 #include <stdint.h>
 #elif HAVE_INTTYPES_H
@@ -15,10 +22,7 @@
 #error integer type definitions not available
 #endif
 
-struct MonomialOrdering;
-#include "varpower-monomial.hpp"
-#include "ntuple-monomial.hpp"
-#include "../skew.hpp"
+#endif
 
 // typedef int64_t monomial_word; // Used for all types of monomials.  Is this
 // OK?
