@@ -79,7 +79,7 @@ void PolyRing::initialize_poly_ring(const Ring *K,
   gb_ring_ = 0;
 
   // A polynomial ring is ALWAYS graded (if the coeff vars, if any,
-  //   all have degree 0, which is hte case with our flattened poly rings
+  //   all have degree 0, which is the case with our flattened poly rings
   this->setIsGraded(true);
 
   exp_size = EXPONENT_BYTE_SIZE(nvars_);
@@ -1089,7 +1089,7 @@ ring_elem PolyRing::gcd_extended(const ring_elem f,
       v3 = t3;
     }
 
-  // make 'result' monic. (and divde 'u' by this as well)
+  // make 'result' monic. (and divide 'u' by this as well)
   if (!is_zero(result))
     {
       Nterm *t = result;
@@ -2272,9 +2272,9 @@ vec PolyRing::vec_coefficient_of_var(vec v, int x, int e) const
 vec PolyRing::vec_top_coefficient(const vec v, int &x, int &e) const
 // find the smallest index variable x which occurs in v, and also find e s.t.
 // x^e is
-// the largest power of x occuring in v.  Set x and e accordingly.
+// the largest power of x occurring in v.  Set x and e accordingly.
 // Return the coefficient of x^e.
-// IF v has no variables occuring in it, then set x to be #vars, e to be 0 and
+// IF v has no variables occurring in it, then set x to be #vars, e to be 0 and
 // return v.
 // If v is 0, then set x to -1, e to 0, and v to 0.
 {

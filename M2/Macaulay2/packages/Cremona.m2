@@ -9,8 +9,8 @@
 
 newPackage(
        "Cremona",
-	Version => "5.0", 
-        Date => "November 20, 2020",
+	Version => "5.1", 
+        Date => "January 22, 2021",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "rational maps between projective varieties",
 	Keywords => {"Algebraic Geometry"},
@@ -84,7 +84,7 @@ isInverseMap = method(TypicalValue => Boolean);
 projectiveDegrees = method(TypicalValue => List, Options => {MathMode => false, NumDegrees => infinity, BlowUpStrategy => "Eliminate", Verbose => true});
 toMap = method(TypicalValue => RingMap, Options => {Dominant => null});
 approximateInverseMap = method(Options => {MathMode => false, CodimBsInv => null, Verbose => true});
-parametrize = method(TypicalValue => RationalMap);
+parametrize = method();
 specialCremonaTransformation = method(TypicalValue=>RationalMap);
 quadroQuadricCremonaTransformation = method(TypicalValue=>RationalMap);
 specialQuadraticTransformation = method(TypicalValue=>RationalMap);
@@ -495,7 +495,10 @@ toString MultihomogeneousRationalMap := (Phi) -> "rationalMap("|toExternalString
 
 imageInt = method()
 imageInt (MutableHashTable) := (Phi) -> (
-   if Phi#"idealImage" === null then setKeyValue(Phi,"idealImage",trim kernel Phi#"map");
+   if Phi#"idealImage" =!= null then return Phi#"idealImage";
+   f := Phi#"map";
+   if all(flatten apply(entries Phi,degree),o -> o <= 0) then f = map(target f,source f,(first gens target f) * toMatrix f);
+   setKeyValue(Phi,"idealImage",trim kernel f);
    return Phi#"idealImage";
 );
 imageInt (MutableHashTable,ZZ) := (Phi,d) -> (
@@ -1230,17 +1233,14 @@ forceInverseMap (RationalMap,RationalMap) := (Phi,Psi) -> (
      if Psi#"inverseRationalMap" === null then setKeyValue(Psi,"inverseRationalMap",Phi);
 );
 
-compose (RingMap,RingMap) := (phi,psi) -> (
-   if source phi =!= target psi then error "rational maps not composable: incompatible target and source";
-   linSys := flatten entries toMatrix (phi*psi);
-   fixComp := try gcd linSys else 1_(target phi);
-   eta := if (max degrees ideal linSys > degree fixComp) then (
-              qr := apply(linSys,g -> quotientRemainder(g,fixComp)); 
-              if # select(qr,g -> last g != 0) > 0 then error "internal error encountered";
-              map(target phi,source psi,apply(qr,first))
-          ) else map(target phi,source psi,linSys);
-   if toMatrix eta == 0 then error "rational maps not composable: their composition would be the empty map";
-   eta
+compose (RingMap,RingMap) := (f,g) -> (
+    if source f =!= target g then error "rational maps not composable: incompatible target and source";
+    L := toMatrix (f * g);
+    if L == 0 then error "rational maps may not be composable: got the empty map by composing chosen representatives";
+    D := try gcd flatten entries compress L else 1_(target f);
+    local Q;
+    M := if D != 0 and D != 1 then apply(flatten entries L,l -> (Q = quotientRemainder(l,D); assert(last Q == 0); first Q)) else flatten entries L;
+    return map(target f,source g,M);
 );
 
 composeInt = method()
@@ -1308,12 +1308,12 @@ mapsInt (MutableHashTable) := (Phi) -> (
                        setKeyValue(Phi,"maps",{Phi#"map"});
                  ) else (
                        setKeyValue(Phi,"maps",{compose(map(source Phi,source Phi,vars source Phi),map Phi)});
-                       if (unique max degrees ideal compress matrix first Phi#"maps" != {0}) then setKeyValue(Phi,"map",first Phi#"maps");
+                       setKeyValue(Phi,"map",first Phi#"maps");
                  );
             ) else (
                  setKeyValue(Phi,"maps",maps Phi#"map");
                  try apply(Phi#"maps",F -> checkMultihomogeneousRationalMap F) else error "internal error encountered";
-                 if (unique max degrees ideal compress matrix first Phi#"maps" != {0}) then setKeyValue(Phi,"map",first Phi#"maps");
+                 setKeyValue(Phi,"map",first Phi#"maps");
             );
    );
    Phi#"maps"
@@ -1837,6 +1837,7 @@ setKeyValue (MutableHashTable,String,Thing) := (Phi,str,val) -> (
     if str === "idealImage" then (
          if class val =!= Ideal then errorClass();
          if ring val =!= source Phi#"map" then errorClass();
+         if not isHomogeneous val then error "tried to set a nonhomogeneous ideal as image";
          Phi#str = val;
          if Phi#"isDominant" === null then setKeyValue(Phi,"isDominant",val == 0);
          return;

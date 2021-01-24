@@ -175,7 +175,7 @@ SLP<Field> /* or null */* SLP<Field>::copy()
   make_nodes(res->nodes, num_consts + num_inputs + num_operations);
   for (int i = 0; i < num_consts; i++) res->nodes[i] = nodes[i];
   res->node_index = node_index;  // points to position in program (rel. to
-                                 // start) of operation correspoding to a node
+                                 // start) of operation corresponding to a node
   res->num_consts = num_consts;
   res->num_inputs = num_inputs;
   res->num_operations = num_operations;

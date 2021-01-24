@@ -918,10 +918,8 @@ document {
 	  when that object is collected as garbage"
 	  },
      EXAMPLE lines ///
-	  R = QQ[a..d];
-	  makeGB = (n) -> (g := gb((ideal vars R)^4); registerFinalizer(g, "gb("|n|")"););
-	  for i from 1 to 10 do (makeGB i);
-	  collectGarbage()
+	  for i from 1 to 9 do (x := 0 .. 10000 ; registerFinalizer(x, "-- finalizing sequence #"|i|" --"))
+	  collectGarbage() -* no-capture-flag *-
 	  ///,
      Caveat => "This function should mainly be used for debugging.  Having a large number of finalizers
      might degrade the performance of the program.  Moreover, registering two or more objects that are members of a circular chain
