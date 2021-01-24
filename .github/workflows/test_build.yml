@@ -33,24 +33,24 @@ jobs:
     name: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         build-system:
           - cmake
           - autotools
         os:
-          - ubuntu-latest
+          - ubuntu-20.04
           - macos-latest
         compiler:
           - default
         include:
           - build-system: cmake
-            os: ubuntu-latest
+            os: ubuntu-20.04
             compiler: gcc9
             cxx: g++-9
             cc: gcc-9
           - build-system: cmake
-            os: ubuntu-latest
+            os: ubuntu-20.04
             compiler: clang10
             cxx: clang++-10
             cc: clang-10
@@ -96,9 +96,9 @@ jobs:
           sudo apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-stacktrace-dev \
                   libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libntl-dev gfan \
-                  libgivaro-dev libboost-regex-dev libtbb-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
+                  libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
                   libsingular-dev singular-data libmemtailor-dev libmathic-dev libmathicgb-dev libcdd-dev \
-                  cohomcalg topcom 4ti2 normaliz coinor-csdp nauty lrslib w3c-markup-validator
+                  cohomcalg topcom 4ti2 normaliz coinor-csdp nauty lrslib w3c-markup-validator libtbb-dev libomp5-10
 
 # ----------------------
 #   Steps common to all build variants
@@ -110,9 +110,7 @@ jobs:
           echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
           if [[ "${{ runner.os }}" == "Linux" ]]
           then echo "/usr/lib/ccache" >> $GITHUB_PATH
-               # ccache doesn't seem to create the right symlink for clang-10 on ubuntu
-               sudo ln -s `which clang-10`   /usr/lib/ccache
-               sudo ln -s `which clang++-10` /usr/lib/ccache
+               echo "LIBRARY_PATH=`llvm-config-10 --libdir`" >> $GITHUB_PATH
           else echo `brew --prefix ccache`/libexec        >> $GITHUB_PATH
                echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
           fi
@@ -139,6 +137,7 @@ jobs:
         if: matrix.build-system == 'cmake'
         run: |
           cmake -S../.. -B. -GNinja \
+            -DBUILD_LIBRARIES="Givaro;FFLAS_FFPACK" \
             -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_NATIVE=OFF \
             -DCMAKE_PREFIX_PATH=$OPT_PREFIX \
             -DCMAKE_INSTALL_PREFIX=/usr
@@ -152,7 +151,7 @@ jobs:
         if: matrix.build-system == 'cmake'
         run: |
           cmake --build . --target M2-core M2-emacs install-packages
-          if [[ "${{ matrix.os }}" == ubuntu-latest ]] && [[ "${{ matrix.compiler }}" == clang10 ]]; then
+          if [[ "${{ matrix.os }}" == ubuntu-20.04 ]] && [[ "${{ matrix.compiler }}" == clang10 ]]; then
               sudo apt-get install -y -q --no-install-recommends dpkg-dev
               echo "GIT_COMMIT=`git describe --dirty --always --match HEAD`" >> $GITHUB_ENV
               cpack -G DEB
@@ -181,7 +180,7 @@ jobs:
 # ----------------------
 
       - name: Run Tests using CTest
-        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'clang10'
+        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-20.04' && matrix.compiler == 'clang10'
         run: |
           ./M2 -q --check 1 -e 'exit 0'
           ./M2 -q --check 2 -e 'exit 0'
@@ -193,7 +192,7 @@ jobs:
           # TODO: add Macaulay2/tests/engine when https://github.com/Macaulay2/M2/issues/1213 is fixed
 
       - name: Run Tests using Autotools
-        if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'default'
+        if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-20.04' && matrix.compiler == 'default'
         run: |
           make check -o check-in-libraries
           make -C Macaulay2/html-check-links check
@@ -220,7 +219,7 @@ jobs:
              M2/BUILD/build/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
 
       - name: Upload Macaulay2 package for Ubuntu (x86_64)
-        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'clang10' && success()
+        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-20.04' && matrix.compiler == 'clang10' && success()
         uses: actions/upload-artifact@v2
         with:
           name: Macaulay2-${{ env.GIT_COMMIT }}-ubuntu-x86_64
