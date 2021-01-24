@@ -38,19 +38,14 @@ span(RRi,RRi) := opts -> (N,M) -> (
     else if opts.Precision < 0 then toRRi(min(left N,left M),max(right N,right M))
     else toRRi(opts.Precision,min(left N,left M),max(right N,right M)))
 
-for A in {ZZ,QQ,RR,RRi} do
-for B in {ZZ,QQ,RR,RRi} do
-isSubset(A,B) := (N,M) -> subsetRRi(N,M);
+for A in {ZZ,QQ,RR} do
+member(A,RRi) := (N,M) -> subsetRRi(N,M);
 
-intersection = method(Options => {Precision => -1})
+isSubset(RRi,RRi) := (N,M) -> subsetRRi(N,M);
 
-for A in {ZZ,QQ,RR} do (
-intersection(RRi,A) := opts -> (N,M) -> (
-     if isSubset(M,N) then interval(opts,M)
-     else interval(1,0,Precision=>precision N));
-intersection(A,RRi) := opts -> (N,M) -> intersection(M,N))
+intersectIntervals = method(Options => {Precision => -1})
 
-intersection(RRi,RRi) := opts -> (N,M) -> (
+intersectIntervals(RRi,RRi) := opts -> (N,M) -> (
     if opts.Precision < 0 then intersectRRi(N,M)
     else intersectRRi(opts.Precision,N,M))
 

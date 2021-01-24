@@ -1420,7 +1420,7 @@ sameRRi(e:Expr):Expr := (
                 else WrongArg(1,"a pair of integral, rational, real numbers or intervals")) else
             WrongArg(1,"a pair of integral, rational, real numbers or intervals"))
          else WrongArg(1,"a pair of integral, rational, real numbers or intervals"));
-setupfun("sameRRi",sameRRi);
+setupfun("sameInterval",sameRRi);
                                                      
 intersectRRi(e:Expr):Expr := (
     when e
