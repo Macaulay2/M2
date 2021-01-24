@@ -415,6 +415,14 @@ showTikZ Digraph := opt -> G -> (
      get output
      )
 
+html Digraph := G -> if G.cache#?"svg" then G.cache#"svg" else (
+     dotfilename := temporaryFileName() | ".dot";
+     writeDotFile(dotfilename, G);
+     svgfilename := temporaryFileName() | ".svg";
+     runcmd(graphs'DotBinary  | " -Tsvg " | dotfilename | " -o " | svgfilename);
+     G.cache#"svg" = get svgfilename
+     )
+
 writeDotFile = method()
 writeDotFile (String, Graph) := (filename, G) ->
     writeDotFileHelper(filename, G, "graph", "--")
