@@ -259,7 +259,7 @@ Node
 			Many operating systems support limiting the amount of resources
 			(for instance, memory or CPU time) that a given instance of a
 			running program (``process'') may use.
-			Processes that use more than the alloted resource may have requests
+			Processes that use more than the allotted resource may have requests
 			denied (as in the case of memory or disk usage),
 			or may be terminated.
 			In some cases it is useful to apply these limits to Macaulay2.
@@ -705,7 +705,7 @@ defaultKeepStatsCommand := (f,c) -> (
 	-- Per the standard, time writes usage details to stderr.  Use a
 	-- technique suggested there to separate the usage details from
 	-- the command's output.
-	-- The parantheses are necessary for bash's builtin time command
+	-- The parentheses are necessary for bash's builtin time command
 	return " ("|whichTime|" sh -c '"|c|"') >\""|f|"\" 2>&1";
 );
 

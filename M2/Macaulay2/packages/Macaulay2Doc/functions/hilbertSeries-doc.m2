@@ -222,16 +222,6 @@ document {
      ///,
      }
 
-TEST ///
-R = ZZ/101[x,y]
-M = R^1/x
-T = degreesRing R
-t = T_0
-assert( hilbertSeries (M, Order => 5) == t^4+t^3+t^2+t+1 )
-assert( hilbertSeries (M, Order => 4) == t^3+t^2+t+1 )
-assert( hilbertSeries (M, Order => 7) == t^6+t^5+t^4+t^3+t^2+t+1 )
-///
-
 document {
      Key => [hilbertSeries,Reduce],
      Headline => "reduce the Hilbert series",

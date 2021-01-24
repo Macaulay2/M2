@@ -31,7 +31,9 @@ Normal monomials of degree 3:
 none
 Components of the normal variety, excluding normal monomials:
 
-o4 = {| t_(y^2*z) t_(y*x*z)+t_(x*y*z) t_(x^2*z) t_(y^3)-t_(x*y*z) t_(x*y^2) t_(y*x*y) t_(x^2*y) t_(x*y*x) t_(x^3)+t_(x*y*z) |}
+o4 = {| t_(y^2*z) t_(y*x*z)+t_(x*y*z) t_(x^2*z) t_(y^3)-t_(x*y*z) t_(x*y^2)
+     ------------------------------------------------------------------------
+     t_(y*x*y) t_(x^2*y) t_(x*y*x) t_(x^3)+t_(x*y*z) |}
 
 o4 : List
 

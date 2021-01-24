@@ -1440,6 +1440,39 @@ TEST ///
   assert(g == 0)
 ///
 
+TEST ///
+-*
+  restart
+  needsPackage "Complexes"
+*-
+  R = ZZ/101[x,y,z]/(y^2*z-x*(x-z)*(x-2*z));
+  M = truncate(1,R^1)
+  prune Ext^3(M, M)
+  B = basis(-4, Ext^3(M, M))
+  f = B_{2}
+  g = yonedaMap(f, LengthLimit => 8)
+  assert isHomogeneous g
+  assert isWellDefined g
+  assert isCommutative g
+  assert(degree g === -3)
+  assert(yonedaMap' g == map(target f, R^1, f, Degree => -4))
+  assert(isHomogeneous yonedaMap' g)
+
+  -- Here is a homogeneous map, which is not of degree 0.
+  -- If this test fails, that probably means that `homomorphism`
+  -- has been fixed (git issue #1693), and 
+  -- then the code `degree f + degree g`
+  -- in yonedaMap is probably no longer needed, and should be
+  -- changed to `degree g`.
+  f1 = map(target f, R^1, f, Degree => -4)
+  g1 = yonedaMap(f1, LengthLimit => 8)
+  assert isHomogeneous g1
+  assert isWellDefined g1
+  assert isCommutative g1
+  assert(degree g1 === -3)
+  assert(yonedaMap' g1 == f1)
+  assert(isHomogeneous yonedaMap' g1)
+///
 
 TEST ///
 -*

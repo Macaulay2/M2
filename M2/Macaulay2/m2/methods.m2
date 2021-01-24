@@ -1,9 +1,9 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 -- temporary definitions to get error messages to work before methods are working, so we can debug methods
-assert( class between === Symbol )
+assert'( class between === Symbol )
 between = (m,v) -> mingle(v,#v-1:m)			    -- provisional
-assert( class toString === Symbol )
+assert'( class toString === Symbol )
 toString = x -> (					    -- provisional
      if hasAttribute(x,ReverseDictionary) then simpleToString getAttribute(x,ReverseDictionary)
      else if class x === Net then concatenate between("\n",unstack x)
@@ -686,6 +686,10 @@ exp RingElement := RingElement => r -> (
 	       if rn == 0 then break e;
 	       e = e + rn;
 	       )))
+
+-- assert
+assert = method()
+assert Thing := x -> assert' x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

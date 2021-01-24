@@ -6,6 +6,7 @@ document {
      associated with the symbol ", TO "Print", " is applied to perform the printing,
      unless the printing is to be suppressed, as indicated by a semicolon at the end
      of the statement, in which case the ", TO "NoPrint", " method is applied.",
+     Subnodes => {TO "capture"},
      SeeAlso => {
 	  "Print",
 	  "NoPrint",
@@ -910,7 +911,7 @@ document { Key => FunctionBody,
      Headline => "the class of function bodies",
      SeeAlso => functionBody }
 
-document { Key => OutputDictionary,
+document { Key => symbol OutputDictionary,
      Headline => "the dictionary for output values",
      "The symbols ", TT "o1", ", ", TT "o2", ", ", TT "o3", ", etc., are used to store the output values arising from interaction with the user,
      one line at a time.  The dictionary ", TT "OutputDictionary", " is the dictionary in which those symbols reside.",
@@ -927,7 +928,7 @@ document { Key => Pseudocode,
      Headline => "the class of pseudocodes",
      "The Macaulay2 interpreter compiles its language into pseudocode, which is evaluated later, step by step.  At each
      step, the evaluator is considering a pseudocode item.  These pseudocode items are normally not available to the user, but
-     the interanl function ", TO "disassemble", " can display their contents, the function ", TO "pseudocode", " can convert
+     the internal function ", TO "disassemble", " can display their contents, the function ", TO "pseudocode", " can convert
      a function closure to pseudocode, the function ", TO "value", " can evaluate it (bindings of values to local symbols
      are enclosed with the pseudocode), the operator ", TO "===", " can be used for equality testing,
      and when the debugger is activated after an error, the variable ", TO "current", " contains the pseudcode step whose execution produced the error.",

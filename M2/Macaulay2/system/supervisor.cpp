@@ -18,7 +18,7 @@ const static int maxNumThreads = (numCores < 4) ? 4 : (16 < numCores ? 16 : numC
 static int currentAllowedThreads = 2;
 
 
-// The thread that the interperter runs in.
+// The thread that the interpreter runs in.
 pthread_t interpThread;
 
 extern "C" {

@@ -1706,7 +1706,7 @@ doc ///
       the function @TO isReduction@. It returns the smallest integer $k$ such that
       $JI^k = I^{k+1}$.
       
-      For further informaion, see the book:
+      For further information, see the book:
       Huneke, Craig; Swanson, Irena: Integral closure of ideals, rings, and modules, 
       London Mathematical Society Lecture Note Series, 336. Cambridge University Press, 
       Cambridge, 2006.
@@ -2297,7 +2297,7 @@ doc ///
     Example
      divisors = primaryDecomposition totalTransform
      strictTransform = divisors_0
-     exeptional = divisors_1
+     exceptional = divisors_1
      divisors/(i-> degree i/degree radical i)
     Text
      That is, the exceptional component occurs with multiplicity 2 (in general we'd 

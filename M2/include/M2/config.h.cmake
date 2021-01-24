@@ -51,9 +51,11 @@
 /* whether experimental code has been enabled */
 #cmakedefine EXPERIMENT
 
-// TODO: only used in Macaulay2/e/x-factor.cpp. Still needed?
 /* whether factory was built with --enable-streamio */
 #cmakedefine FACTORY_STREAMIO 1
+
+/* whether frobby has frobby_version >=0.9.4 or constants::version <0.9.4 */
+#cmakedefine HAVE_FROBBY_VERSION 1
 
 // TODO: only used in Macaulay2/d/scclib.c. Still needed?
 /* whether getaddrinfo can handle numeric service (port) numbers */

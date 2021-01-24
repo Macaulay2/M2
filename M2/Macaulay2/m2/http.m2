@@ -40,7 +40,7 @@ protocols := {
 		    ))),
      ("https://", (host,port,url,body) -> (
 	       cmd := (
-	       	    "!openssl s_client -quiet -verify 1 -CApath ~/.w3/certs/" |
+	       	    "!openssl s_client -quiet -verify 1 " |
 	       	    " -host " | host | " -port " | (if port =!= null then port else "443")
 		    | " 2>/dev/null"
 	       	    );
@@ -95,7 +95,7 @@ hexdigits = new HashTable from {
 hex = (str) -> (
     -- str: String, coming from getWWW
     -- each char of str should be 0..9,a..f, or A..F
-    -- transform this string into the corresponding hexidecimal number
+    -- transform this string into the corresponding hexadecimal number
     result := 0;
     for c in characters str do result = 16*result + hexdigits#c;
     result
@@ -112,7 +112,7 @@ extractChunk = (offset,str) -> (
     -- str: String, coming from getWWW
     --
     -- format of a chunk
-    -- hexidecimal digits giving the length n
+    -- hexadecimal digits giving the length n
     -- \r\n
     -- n characters
     -- \r\n

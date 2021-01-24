@@ -58,10 +58,6 @@ do case $i in
    esac
 done
 
-dnl: homebrew-provided compilers don't look here:
-CPPFLAGS="$CPPFLAGS -I/usr/include -I/usr/local/include"
-LDFLAGS="$LDFLAGS -L/usr/lib -L/usr/local/lib"
-
 dnl AC_MSG_CHECKING(whether $FIND is GNU find)
 dnl if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
 dnl then AC_MSG_RESULT(yes)
@@ -171,6 +167,7 @@ AC_CHECK_PROGS(FIND,gfind find,false)
 AC_CHECK_PROGS(OBJDUMP,objdump,false)
 AC_CHECK_PROGS(OBJCOPY,objcopy,false)
 AC_CHECK_PROGS(LDD,ldd,false)
+AC_CHECK_PROGS(GIT,git,false)
 
 AC_CHECK_TOOL(AR,ar,false)
 AC_CHECK_TOOL(AS,as,false)
@@ -559,8 +556,8 @@ fi
 AC_SUBST(GIT_DESCRIPTION)
 # TODO: currently finds the last commit that changed the VERSION file
 # but ideally it should get the last release commit instead
-NEW_COMMITS=`git rev-list $(git rev-list -1 HEAD $srcdir/VERSION)..HEAD --count`
-GIT_COMMIT=`git describe --dirty --always --match HEAD`
+NEW_COMMITS=`$GIT rev-list $($GIT rev-list -1 HEAD $srcdir/VERSION)..HEAD --count`
+GIT_COMMIT=`$GIT describe --dirty --always --match HEAD`
 if test "$NEW_COMMITS-$GIT_COMMIT" = "-"
 then GIT_DESCRIPTION=version-$PACKAGE_VERSION-unknown
 else GIT_DESCRIPTION=version-$PACKAGE_VERSION-$NEW_COMMITS-$GIT_COMMIT
@@ -940,15 +937,18 @@ dnl factory needs to know:
 AC_SUBST(BUILD_flint)
 if test $BUILD_flint = no
 then AC_LANG(C)
-     AC_MSG_CHECKING([for flint >= 2.6.0])
+     AC_MSG_CHECKING([for flint >= 2.6.3])
      AC_COMPILE_IFELSE(
         [AC_LANG_PROGRAM(
 	  [#include <flint/flint.h>
 	  ],
 	  [
-#if __FLINT_VERSION < 2 || (__FLINT_VERSION == 2 && __FLINT_VERSION_MINOR < 6)
-#error old flint
-#endif
+	  /* version == __FLINT_VERSION . __FLINT_VERSION_MINOR . __FLINT_VERSION_PATCHLEVEL */
+	  #if    (__FLINT_VERSION < 2) \
+	      || (__FLINT_VERSION == 2 && __FLINT_VERSION_MINOR < 6) \
+	      || (__FLINT_VERSION == 2 && __FLINT_VERSION_MINOR == 6 && __FLINT_VERSION_PATCHLEVEL < 3)
+	  #error old flint
+	  #endif
 	  ])],
 	  AC_MSG_RESULT([yes])
 	  if test $SHARED = no -a $TRY_STATIC = yes
@@ -1139,6 +1139,14 @@ AC_LANG(C++)
 AC_CHECK_HEADER(frobby.h,LIBS="-lfrobby $LIBS",BUILD_frobby=yes)
 if test $BUILD_frobby = yes
 then BUILTLIBS="-lfrobby $BUILTLIBS"
+    dnl uncomment this to [1] when frobby is built from a submodule (?)
+    dnl AC_DEFINE([HAVE_FROBBY_VERSION], [0], [whether frobby has frobby_version])
+else
+    AC_MSG_CHECKING([whether frobby has frobby_version])
+    AC_COMPILE_IFELSE(
+        [AC_LANG_PROGRAM([#include <frobby.h>], [frobby_version])],
+        [AC_MSG_RESULT([yes]) && AC_DEFINE([HAVE_FROBBY_VERSION], [1], [whether frobby has frobby_version])],
+        [AC_MSG_RESULT([no])])
 fi
 
 #############################################################################
@@ -1318,7 +1326,7 @@ if test $BUILD_fflas_ffpack = no
 then AC_MSG_CHECKING([for fflas_ffpack library, version at least 2])
      if test "`type -t fflas-ffpack-config`" = "file" && test "`fflas-ffpack-config --decimal-version`" -gt 20000
      then AC_MSG_RESULT(found)
-          FFLAS_FFPACK_CXXFLAGS=$(for x in $(fflas-ffpack-config --cflags 2>&1) ; do case $x in (-I*) echo -n "$x " ;; esac done)
+          FFLAS_FFPACK_CXXFLAGS=$(for x in $(fflas-ffpack-config --cflags 2>&1) ; do case $x in (-I*) /bin/echo -n "$x " ;; esac done)
 	  AC_MSG_NOTICE([adding fflas_ffpack flags $FFLAS_FFPACK_CXXFLAGS])
           M2_CXXFLAGS="$M2_CXXFLAGS $FFLAS_FFPACK_CXXFLAGS"
 	  LIBS="$LIBS `fflas-ffpack-config --libs`"
@@ -1350,7 +1358,7 @@ SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
 then
     AC_MSG_CHECKING([whether factory library is installed])
-    FACTORY_MINVERSION=4.0.0
+    FACTORY_MINVERSION=4.1.0
     if $PKG_CONFIG --exists "factory >= $FACTORY_MINVERSION"
     then
 	FACTORY_NAME=factory
@@ -1362,7 +1370,8 @@ then
     elif $PKG_CONFIG --exists factory || $PKG_CONFIG --exists singular-factory
     then
 	BUILD_factory=yes
-	AC_MSG_RESULT([yes, but version $FACTORY_MINVERSION required; will build])
+	FACVER=`pkg-config --modversion factory`
+	AC_MSG_RESULT([yes, version $FACVER is installed, but version $FACTORY_MINVERSION is required: will build])
     else
 	BUILD_factory=yes
 	AC_MSG_RESULT([no; will build])
@@ -1858,7 +1867,7 @@ complement() {
     for i in $1
     do 	case "$y" in
 	    *" $i "*) ;;
-	    *) echo -n "$i " ;;
+	    *) /bin/echo -n "$i " ;;
 	esac
     done
     echo
@@ -2026,7 +2035,7 @@ AC_MSG_NOTICE([staging area for architecture dependent files: $pre_exec_prefix])
 
 AC_SUBST(packagesdir,$datadir/Macaulay2)
 AC_SUBST(libm2dir,$libdir/Macaulay2)
-AC_SUBST(emacsdir,$datadir/emacs/site-lisp/Macaulay2)
+AC_SUBST(emacsdir,$datadir/emacs/site-lisp/macaulay2)
 AC_SUBST(librariesdir,$libm2dir/lib)
 AC_SUBST(programsdir,$libexecdir/Macaulay2/bin)
 AC_SUBST(licensesdir,$libexecdir/Macaulay2/program-licenses)
@@ -2034,7 +2043,7 @@ AC_SUBST(packagecachecoredir,$libm2dir/cache)
 
 AC_SUBST(tail_packagesdir,$tail_datadir/Macaulay2)
 AC_SUBST(tail_libm2dir,$tail_libdir/Macaulay2)
-AC_SUBST(tail_emacsdir,$tail_datadir/emacs/site-lisp/Macaulay2)
+AC_SUBST(tail_emacsdir,$tail_datadir/emacs/site-lisp/macaulay2)
 AC_SUBST(tail_librariesdir,$tail_libm2dir/lib)
 AC_SUBST(tail_programsdir,$tail_libexecdir/Macaulay2/bin)
 AC_SUBST(tail_licensesdir,$tail_libexecdir/Macaulay2/program-licenses)
@@ -2042,7 +2051,7 @@ AC_SUBST(tail_packagecachecoredir,$tail_libm2dir/cache)
 
 AC_SUBST(pre_packagesdir,$pre_datadir/Macaulay2)
 AC_SUBST(pre_libm2dir,$pre_libdir/Macaulay2)
-AC_SUBST(pre_emacsdir,$pre_datadir/emacs/site-lisp/Macaulay2)
+AC_SUBST(pre_emacsdir,$pre_datadir/emacs/site-lisp/macaulay2)
 AC_SUBST(pre_librariesdir,$pre_libm2dir/lib)
 AC_SUBST(pre_programsdir,$pre_libexecdir/Macaulay2/bin)
 AC_SUBST(pre_licensesdir,$pre_libexecdir/Macaulay2/program-licenses)

@@ -39,7 +39,7 @@ RESULTS := $(notdir $(patsubst %.m2, %.out, $(TESTFILES))) \
 	   $(notdir $(patsubst %.m2-input, %.out, $(wildcard $(SRCDIR)/*.m2-input)))
 
 PAT := 'internal error|:[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|^GC|^0x|^out of mem|non-zero status|^Command terminated|user.*system.*elapsed|^[0-9]+\.[0-9]+user'
-FILTER := egrep -a $(PAT)
+FILTER := $(if $(VERBOSE),tail,egrep -a $(PAT))
 
 ifeq ($(DEFERRED),no)
 check: $(RESULTS)

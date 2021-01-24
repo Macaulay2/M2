@@ -152,7 +152,7 @@ document { Key => {(randomMutableMatrix, ZZ, ZZ, RR, ZZ),
 	       entries is less than ", TT "max", ", and
 	       the frequency of entries equal to zero is given by ", TT "zerof", "." }
 	  },
-     "This function has been superceded by ", TO fillMatrix, ", which works over
+     "This function has been superseded by ", TO fillMatrix, ", which works over
      more rings, is much faster for large matrices, and is more flexible.",
      EXAMPLE lines ///
        randomMutableMatrix(10,15,.9,100)

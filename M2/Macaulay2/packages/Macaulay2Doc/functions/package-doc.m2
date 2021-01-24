@@ -187,7 +187,7 @@ Node
       loadPackage FirstPackage
     Text
       In fact this version of the command is simply a convenient shortcut for @TT "loadPackage"@ with the option
-      @TT "Reload"@ overriden to true.
+      @TT "Reload"@ overridden to true.
   SeeAlso
     "packages"
     readPackage
@@ -229,7 +229,7 @@ Node
   Consequences
     Item
       loads the package @TT "PackageName"@ by loading the file @TT "PackageName.m2"@ which should appear
-      in one of the directories occuring in the list @TO "path"@, unless it has already been loaded, in
+      in one of the directories occurring in the list @TO "path"@, unless it has already been loaded, in
       which case it ensures that the package's dictionary of exported symbols occurs in @TO "dictionaryPath"@
       and are thus available to the user. In addition, the function @TO needsPackage@ is applied to each
       of the packages whose names are specified by the @TO [newPackage, PackageExports]@ option for the

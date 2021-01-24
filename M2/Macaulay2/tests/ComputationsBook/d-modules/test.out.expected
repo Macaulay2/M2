@@ -45,7 +45,7 @@ i6 : DeltaBern = inw(Delta,{1,1,1,1,1,1})
 
 o6 = ideal (Dz, Dy, Dx)
 
-o6 : Ideal of QQ[x, y, z, Dx, Dy, Dz]
+o6 : Ideal of QQ[x..z, Dx, Dy, Dz]
 
 i7 : dim DeltaBern 
 
@@ -65,7 +65,7 @@ i10 : AnnFs(f)
 
 o10 = ideal (w*Dz - z*Dw, w*Dy - y*Dw, z*Dy - y*Dz, w*Dx - x*Dw, z*Dx - x*Dz, y*Dx - x*Dy, x*Dx + y*Dy + z*Dz + w*Dw - 2s)
 
-o10 : Ideal of QQ[x, y, z, w, Dx, Dy, Dz, Dw, s]
+o10 : Ideal of QQ[x..z, w, Dx, Dy, Dz, Dw, s]
 
 i11 : L=ideal(x,y,Dz,Dw)
 
@@ -77,7 +77,7 @@ i12 : AnnIFs(L,f)
 
 o12 = ideal (y, x, w*Dz - z*Dw, z*Dz + w*Dw - 2s)
 
-o12 : Ideal of QQ[x, y, z, w, Dx, Dy, Dz, Dw, s]
+o12 : Ideal of QQ[x..z, w, Dx, Dy, Dz, Dw, s]
 
 i13 : f
 
@@ -478,7 +478,7 @@ i89 : I = gkz(matrix{{1,2}}, {5})
 o89 = ideal (x D  + 2x D  - 5, D  - D )
               1 1     2 2       1    2
 
-o89 : Ideal of QQ[x , x , D , D ]
+o89 : Ideal of QQ[x ..x , D ..D ]
                    1   2   1   2
 
 i90 : PolySols I

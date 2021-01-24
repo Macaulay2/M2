@@ -1,7 +1,7 @@
 newPackage(
     "Complexes",
     Version => "0.99", 
-    Date => "30 Nov 2020",
+    Date => "14 Dec 2020",
     Authors => {
         {   Name => "Gregory G. Smith", 
             Email => "ggsmith@mast.queensu.ca", 
@@ -12,7 +12,6 @@ newPackage(
             HomePage => "http://www.math.cornell.edu/~mike"
             }},
     Headline => "development package for beta testing new version of chain complexes",
-    Keywords => {"Homological Algebra"},
     PackageExports => {"Truncations"},
     AuxiliaryFiles => true,
     DebuggingMode => false
@@ -218,7 +217,7 @@ doc ///
             D2.dd_-1
             assert(D1 != D2)
     Caveat
-        This is a temporary method to allow comparisions among the different data types,
+        This is a temporary method to allow comparisons among the different data types,
         and will be removed once the older data structure is replaced
     SeeAlso
         (chainComplex, Complex)
@@ -262,7 +261,7 @@ doc ///
             C2 = chainComplex D2
             assert(C2 == C1 ** C1)
     Caveat
-        This is a temporary method to allow comparisions among the different data types,
+        This is a temporary method to allow comparisons among the different data types,
         and will be removed once the older data structure is replaced
     SeeAlso
         (complex, ChainComplex)
@@ -313,7 +312,7 @@ doc ///
             g1 = extend(D1, D, matrix{{1_R}})
             assert(g == g1)
     Caveat
-        This is a temporary method to allow comparisions among the different data types,
+        This is a temporary method to allow comparisons among the different data types,
         and will be removed once the older data structure is replaced
     SeeAlso
         (chainComplex, ComplexMap)
@@ -362,7 +361,7 @@ doc ///
             assert(g == complex f)
             assert(isComplexMorphism g)
     Caveat
-        This is a temporary method to allow comparisions among the different data types,
+        This is a temporary method to allow comparisons among the different data types,
         and will be removed once the older data structure is replaced
     SeeAlso
         (complex, ChainComplexMap)
@@ -381,7 +380,7 @@ restart
 uninstallPackage "Complexes"
 
 restart
-installPackage("Complexes", Verbose => false)
+installPackage "Complexes"
 check "Complexes"
 
 restart
@@ -401,3 +400,7 @@ doc ///
 ///
 
 
+S = ZZ/101[a..d]
+K = res coker vars S
+L = K ** K
+elapsedTime L**L;

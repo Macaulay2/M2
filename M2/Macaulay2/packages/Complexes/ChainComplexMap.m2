@@ -645,8 +645,9 @@ homomorphism' ComplexMap := ComplexMap => (f) -> (
     H := Hom(C,D);
     (lo,hi) := concentration C;
     -- want R^1[0] --> H
-    g := map(H_d, R^1, matrix(for i from lo to hi list {matrix homomorphism' f_i}));
-    map(H, complex R, hashTable {0 => g}, Degree=>d)
+    -- TODO: remove this line if the next actually works...: g := map(H_d, R^1, matrix(for i from lo to hi list {matrix homomorphism' f_i}));
+    g := map(H_d,, matrix(for i from lo to hi list {matrix homomorphism' f_i}));
+    map(H, complex source g, hashTable {0 => g}, Degree=>d)
     )
 
 -- possible todo: allow to choose the homological degree of the map, and the internal degree of the map?
@@ -1299,7 +1300,7 @@ connectingMap(ComplexMap, ComplexMap) := ComplexMap => (g, f) -> (
 horseshoeResolution = method(Options => {LengthLimit=>infinity})
 horseshoeResolution Complex := Sequence => opts -> ses -> (
     -- check that ses is a short exact sequence of modules
-    -- occuring in homological degrees 0,1,2.
+    -- occurring in homological degrees 0,1,2.
     -- at least check that the length is correct.
     f := yonedaExtension' ses;
     g := yonedaMap(f, LengthLimit => opts.LengthLimit);

@@ -39,8 +39,8 @@ set(CheckDocumentation       "true" CACHE STRING "check documentation for comple
 set(IgnoreExampleErrors     "false" CACHE STRING "ignore errors in example code")
 set(RemakeAllDocumentation  "false" CACHE STRING "remake all documentation")
 set(RerunExamples           "false" CACHE STRING "rerun example outpuat files")
-## Arguments to the M2 subprocess that runs individual tests and exampels; see runFile in m2/html.m2
-set(ArgumentMode "(1<<31)|(1<<32)|(1<<64)" # |(1<<8) for --no-threads
+## Arguments to the M2 subprocess that runs individual tests and examples; see runFile in m2/run.m2
+set(ArgumentMode "InvertArgs|SetOutputFile|SetCaptureErr|NoCapture" # |ArgNoThreads for --no-threads
   CACHE INTERNAL "bitmask for ctest check arguments")
 
 # Allow arguments above to be set via environment variables
@@ -258,7 +258,7 @@ foreach(package IN LISTS PACKAGES)
   ## Everything bagel
   add_custom_target(all-${package}
     COMMENT "Installing and checking package ${package}"
-    COMMAND ${M2} ${M2_ARGS} -e ${M2_INSTALL_STRING} -e ${M2_COUNT_STRING} -e ${M2_CHECK_STRING} -e "exit 0"
+    COMMAND ${M2} ${M2_ARGS} -e ${M2_INSTALL_STRING} -e ${M2_INFO_STRING} -e ${M2_CHECK_STRING} -e "exit 0"
     VERBATIM
     ${USES_TERMINAL}
     DEPENDS M2-core

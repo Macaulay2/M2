@@ -86,7 +86,7 @@ document {
 	  is computed, so that reduction modulo the Gröbner basis can be used to determine membership in ", TT "M", ".  When relations are present, the
 	  option ", TO "SyzygyRows", " is set to the number of columns of ", TT "generators I", ", so that if ", TT "ChangeMatrix => true", " is used, then 
 	  division by the Gröbner basis can be to express
-	  an element of ", TT "F", " as a linear combination of columns of ", TT "generators I", ", avoiding the computation of the coefficents of the columns
+	  an element of ", TT "F", " as a linear combination of columns of ", TT "generators I", ", avoiding the computation of the coefficients of the columns
 	  of ", TT "relations I", ", leaving all the information that is required to specify an element of ", TT "I", "."
 	  },
      EXAMPLE lines ///
@@ -209,7 +209,7 @@ document {
      PARA{},
      "Indicates that during computation of a Gröbner basis, the reduction
      routine will be replaced by one that will handle long polynomials more
-     efficiently using \"geobuckets\", which accomodate the terms in buckets
+     efficiently using \"geobuckets\", which accommodate the terms in buckets
      of geometrically increasing length.  This method was first used
      successfully by Thomas Yan, graduate student in CS at Cornell.",
      SeeAlso => {[gb,Strategy]}
@@ -230,55 +230,3 @@ document {
 --       	  "gb(I, PairLimit => 3)"
 -- 	  }
 --      }
-
-TEST ///
--- Test of various stopping conditions for GB's
-R = ZZ/32003[a..j]
-I = ideal random(R^1, R^{-2,-2,-2,-2,-2,-2,-2});
-gbTrace=3
---time gens gb I;
-I = ideal flatten entries gens I;
-G = gb(I, StopBeforeComputation=>true); -- now works
-m = gbSnapshot I
-assert(m == 0)
-
-I = ideal flatten entries gens I;
-mI = mingens I; -- works now
-assert(numgens source mI == 7)
-
-I = ideal flatten entries gens I;
-mI = trim I; -- It should stop after mingens are known to be computed.
-assert(numgens source gens mI == 7)
-
-I = ideal flatten entries gens I;
-G = gb(I, DegreeLimit=>3); -- this one works
-assert(numgens source gbSnapshot I == 18)
-G = gb(I, DegreeLimit=>4); -- this one works
-assert(numgens source gbSnapshot I == 32)
-G = gb(I, DegreeLimit=>3); -- this one stops right away, as it should
-assert(numgens source gbSnapshot I == 32)
-G = gb(I, DegreeLimit=>5);
-assert(numgens source gbSnapshot I == 46)
-
-I = ideal flatten entries gens I;
-G = gb(I, BasisElementLimit=>3); -- does the first 3, as it should
-assert(numgens source gbSnapshot I == 3)
-G = gb(I, BasisElementLimit=>7); -- does 4 more.
-assert(numgens source gbSnapshot I == 7)
-
-I = ideal flatten entries gens I;
-G = gb(I, PairLimit=>23); -- 
-assert(numgens source gbSnapshot I == 16) -- ?? is this right??
-
-I = ideal flatten entries gens I;
-hf = poincare ideal apply(7, i -> R_i^2)
-G = gb(I, Hilbert=>hf); -- this works, it seems
-assert(numgens source gens G == 67)
-
-Rlex = ZZ/32003[a..j,MonomialOrder=>Eliminate 1]
-IL = substitute(I,Rlex);
-G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>2); -- SubringLimit now seems OK
-G = gb(IL, SubringLimit=>1, Hilbert=>hf, DegreeLimit=>4); 
-assert(numgens source selectInSubring(1,gens G) == 1)
-
-///

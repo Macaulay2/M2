@@ -375,18 +375,18 @@ Description
   Text
     {\em Permanents} is a package of functions for computing the permanent of a square matrix. 
     
-    Computing the permanent is believed to be computationally intractible. In Valiant's theory of algebraic complexity
+    Computing the permanent is believed to be computationally intractable. In Valiant's theory of algebraic complexity
     the permanent polynomial is complete for the class VNP. Even computing the permanent of 0-1 matrices is #P-complete.
     See Valiant, Leslie G. (1979), "The Complexity of Computing the Permanent," {\em Theoretical Computer Science (Elsevier)} 8 (2): 189-201.
   
     The permanent of a $n\times n$ matrix $(x_{i,j})$ is defined in analogy to the determinant as $\sum_{\sigma \in S_n} \prod x_{i,\sigma(i)}$. 
-    There are two other formulas for the permanent polynomial, Ryser's formula and Glynn's formula, both of which have the assymptotically smaller formula size of $O(2^n n^2)$. 
+    There are two other formulas for the permanent polynomial, Ryser's formula and Glynn's formula, both of which have the asymptotically smaller formula size of $O(2^n n^2)$. 
     This can be improved further to {$O(2^n n)$} arithmetic operations with the use of Gray codes, and we do so in this package.
     The connection between the two formulae and the possibility of others is discussed in Glynn, David G. (2013), "Permanent Formulae from the Veronesean." {\em Designs Codes and Cryptography}, 68(1-3) pp. 39-47.
     
     It is conjectured that the permanent polynomial does not have a polynomial size formula. By Valiant's theory, a possible strategy for proving this is to show
     that the permanent of the $n\times n$ generic matrix $N$ cannot be the determinant of a $p(n) \times p(n)$ matrix $M$ with entries affine linear entries of the variables of $M$ where $p(n)$ is a polynomial.
-    The best lower bound is quadartic, i.e. the permanent of the $nxn$ generic matrix is not the affine projection of the determinant of a $n^2/2xn^2/2$ matrix.
+    The best lower bound is quadratic, i.e. the permanent of the $nxn$ generic matrix is not the affine projection of the determinant of a $n^2/2xn^2/2$ matrix.
     See T. Mignon, N. Ressayre. "A Quadratic Bound for the Determinant and Permanent Problem." (2004).
     
     The best known upper bound is $2^n-1$ due to Grenet. More specifically, Grenet constructs a $2^n-1x2^n-1$ matrix $M$ with entries $0,1,-1$ and individual 
@@ -403,7 +403,7 @@ Key
   ryser
   (ryser,Matrix)
 Headline
-  compute permament using Ryser's formula
+  compute permanent using Ryser's formula
 Usage
   F = ryser M
 Inputs
@@ -411,7 +411,7 @@ Inputs
     a square matrix in any commutative ring
 Outputs
   F:RingElement
-    the permament of {\tt M}
+    the permanent of {\tt M}
 Description
   Text
     Uses Ryser's inclusion-exclusion formula (see page 27 of Ryser, Herbert John (1963), Combinatorial Mathematics, The Carus mathematical monographs, The Mathematical Association of America).
@@ -426,7 +426,7 @@ Description
     M = genericMatrix(R,a,3,3)
     ryser M
   Text
-    Here is the permenant of a 4x4 generic matrix of variables.
+    Here is the permanent of a 4x4 generic matrix of variables.
   Example
     R = QQ[vars(0..15)]
     M = genericMatrix(R,a,4,4)
@@ -447,7 +447,7 @@ Key
   glynn
   (glynn,Matrix)
 Headline
-  compute permament using Glynn's formula
+  compute permanent using Glynn's formula
 Usage
   F = glynn M
 Inputs
@@ -455,7 +455,7 @@ Inputs
     a square matrix in any commutative ring
 Outputs
   F:RingElement
-    the permament of {\tt M}
+    the permanent of {\tt M}
 Description
   Text
     Uses Glynn's formula (see Glynn, David G. (2010), "The permanent of a square matrix", European Journal of Combinatorics 31 (7): 1887–1891, doi:10.1016/j.ejc.2010.01.010).
@@ -470,7 +470,7 @@ Description
     M = genericMatrix(R,a,3,3)
     glynn M
   Text
-    Here is the permenant of a 4x4 generic matrix of variables.
+    Here is the permanent of a 4x4 generic matrix of variables.
   Example
     R = QQ[vars(0..15)]
     M = genericMatrix(R,a,4,4)

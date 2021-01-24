@@ -626,7 +626,7 @@ doc ///
     flag to switch to double double or quad double precision
   Description
     Text
-      By default, all computations occur in hardward double precision.
+      By default, all computations occur in hardware double precision.
       While this precision could be large enough to obtain accurate
       results, for larger problems, one may need to increase the
       precision to double double or to quad double precision.
@@ -866,7 +866,7 @@ doc ///
     f:List
       a system of polynomials
     sols:List
-      solutions of the sytem f, each of type @TO Point@ 
+      solutions of the system f, each of type @TO Point@ 
       (from a previous calculation)
     dp:ZZ
       the number of decimal places in working precision
@@ -880,7 +880,7 @@ doc ///
     Item
       invokes the command {\tt phc -v} (with option 3),
     Item 
-      stores phc output in a termporary file,
+      stores phc output in a temporary file,
     Item 
       parses and prints the refined solutions.
   Description

@@ -34,33 +34,38 @@ runString = (teststring, pkg, usermode) -> (
     ret)
 
 -- prefixes
-SetUlimit      := 1 << 20 -* sets ulimits *-
-GCMAXHEAP      := 1 << 21 -* sets GC_MAXIMUM_HEAP_SIZE=400M *-
-GCSTATS        := 1 << 22 -* sets GC_PRINT_STATS=1 *-
-GCVERBOSE      := 1 << 23 -* sets GC_PRINT_VERBOSE_STATS=1 *-
+SetUlimit      = 1 << 20 -* sets ulimits *-
+GCMAXHEAP      = 1 << 21 -* sets GC_MAXIMUM_HEAP_SIZE=400M *-
+GCSTATS        = 1 << 22 -* sets GC_PRINT_STATS=1 *-
+GCVERBOSE      = 1 << 23 -* sets GC_PRINT_VERBOSE_STATS=1 *-
 -- arguments
-ArgQ           := 1 <<  0 -* add -q *-
-ArgInt         := 1 <<  1 -* add --int *-
-ArgNoBacktrace := 1 <<  2 -* add --no-backtrace *-
-ArgNoDebug     := 1 <<  3 -* add --no-debug *-
-ArgNoPreload   := 1 <<  4 -* add --no-preload *-
-ArgNoRandomize := 1 <<  5 -* add --no-randomize *-
-ArgNoReadline  := 1 <<  6 -* add --no-readline *-
-ArgNoSetup     := 1 <<  7 -* add --no-setup *-
-ArgNoThreads   := 1 <<  8 -* add --no-threads *-
-ArgNoTTY       := 1 <<  9 -* add --no-tty *-
-ArgNoTValues   := 1 << 10 -* add --no-tvalues *-
-ArgNotify      := 1 << 11 -* add --notify *-
-ArgSilent      := 1 << 12 -* add --silent *-
-ArgStop        := 1 << 13 -* add --stop *-
-ArgPrintWidth  := 1 << 14 -* add --print-width 77 *-
+ArgQ           = 1 <<  0 -* add -q *-
+ArgInt         = 1 <<  1 -* add --int *-
+ArgNoBacktrace = 1 <<  2 -* add --no-backtrace *-
+ArgNoDebug     = 1 <<  3 -* add --no-debug *-
+ArgNoPreload   = 1 <<  4 -* add --no-preload *-
+ArgNoRandomize = 1 <<  5 -* add --no-randomize *-
+ArgNoReadline  = 1 <<  6 -* add --no-readline *-
+ArgNoSetup     = 1 <<  7 -* add --no-setup *-
+ArgNoThreads   = 1 <<  8 -* add --no-threads *-
+ArgNoTTY       = 1 <<  9 -* add --no-tty *-
+ArgNoTValues   = 1 << 10 -* add --no-tvalues *-
+ArgNotify      = 1 << 11 -* add --notify *-
+ArgSilent      = 1 << 12 -* add --silent *-
+ArgStop        = 1 << 13 -* add --stop *-
+ArgPrintWidth  = 1 << 14 -* add --print-width 77 *-
+ArgPrintWidthN = 77
 -- suffixes
-SetInputFile   := 1 << 30 -* add <inf *-
-SetOutputFile  := 1 << 31 -* add >>tmpf *-
-SetCaptureErr  := 1 << 32 -* add 2>&1 *-
+SetInputFile   = 1 << 30 -* add <inf *-
+SetOutputFile  = 1 << 31 -* add >>tmpf *-
+SetCaptureErr  = 1 << 32 -* add 2>&1 *-
+-- used by CMake to signal whether check should use capture
+NoCapture      = 1 << 63 -* don't use capture *-
+-- used by CMake to modify defaultMode rather than overriding it
+InvertArgs     = 1 << 64 -* negate the effect of argumentMode *-
 
 -* by default, the following commandline fixtures are used *-
-defaultMode := (SetUlimit + GCMAXHEAP + ArgQ + ArgInt -- + ArgNoPreload
+defaultMode  = (SetUlimit + GCMAXHEAP + ArgQ + ArgInt -- + ArgNoPreload
     + ArgNoRandomize + ArgNoReadline + ArgSilent + ArgStop
     + ArgPrintWidth + SetInputFile + SetOutputFile + SetCaptureErr)
 -* making this global, so it can be edited after entering debug Core *-
@@ -83,8 +88,8 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      rundir := temporaryFileName() | "-rundir/";
      makeDirectory rundir;
      -* The bits in the binary representation of argmode determine arguments to add.
-        If the 64th bit is set, argumentMode modifies the defaultMode rather than overriding them. *-
-     argmode := if 0 < argumentMode & (1<<64) then xor(defaultMode, argumentMode) else argumentMode;
+        If InvertArgs is set, argumentMode modifies the defaultMode rather than overriding them. *-
+     argmode := if 0 < argumentMode & InvertArgs then xor(defaultMode, argumentMode) else argumentMode;
      -* returns (" "|arg) if all bits in m are set in argmode *-
      readmode := (m, arg) -> if argmode & m == m then " " | arg else "";
      cmd := readmode(SetUlimit, ulimit);
@@ -109,11 +114,11 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      cmd = cmd | readmode(ArgNotify,      "--notify");
      cmd = cmd | readmode(ArgSilent,      "--silent");
      cmd = cmd | readmode(ArgStop,        "--stop");
-     cmd = cmd | readmode(ArgPrintWidth,  "--print-width 77");
+     cmd = cmd | readmode(ArgPrintWidth,  "--print-width " | ArgPrintWidthN);
      cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir ", format d));
      -- TODO: fix capture, add preloaded packages to Macaulay2Doc, then delete the following two lines
-     needsline := concatenate(" -e 'needsPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'");
-     cmd = cmd | if pkgname != "Macaulay2Doc" then needsline else "";
+     needsline := concatenate(" -e 'needsPackage(",format pkgname,",Reload=>true,FileName=>",format pkg#"source file",")'");
+     cmd = cmd | if pkgname != "Macaulay2Doc" and pkgname != "Core" then needsline else "";
      cmd = cmd | readmode(SetInputFile,   "<" | format inf);
      cmd = cmd | readmode(SetOutputFile,  ">>" | format toAbsolutePath tmpf);
      cmd = cmd | readmode(SetCaptureErr,  "2>&1");

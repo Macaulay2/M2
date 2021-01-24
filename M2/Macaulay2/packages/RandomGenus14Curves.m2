@@ -310,7 +310,7 @@ doc ///
 
       The fact that the example below works can be seen as computer aided proof of the
       unirationality of $M_{14}$. It proves the unirationality of $M_{14}$ for
-      fields of the choosen finite characteristic 10007, for fields of characteristic 0
+      fields of the chosen finite characteristic 10007, for fields of characteristic 0
       by semi-continuity, and, hence, for all but finitely many primes $p$.
 
     Example
@@ -361,7 +361,7 @@ check("RandomGenus14Curves")
 restart
 needsPackage("RandomGenus14Curves")
 
--- a more thourough check of certification (almost codim 3)
+-- a more thorough check of certification (almost codim 3)
 Fq= ZZ/5
 T = Fq[t_0..t_6]
 time L=apply(100,i->(print i;(random curveGenus14Degree18inP6)(T,Attempts=>1,Certify=>true)));#L

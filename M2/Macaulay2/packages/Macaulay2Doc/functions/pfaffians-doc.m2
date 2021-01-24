@@ -47,13 +47,3 @@ document {
 	  },
      SeeAlso => {det, "matrices"}
      }
-TEST ///
-R=ZZ/101[a..f]
-m=genericSkewMatrix(R,a,4)
-assert( pfaffians(-2,m) == ideal(0_R) )
-assert( pfaffians(0,m) == ideal(1_R) )
-assert( pfaffians(1,m) == ideal(0_R) )
-assert( pfaffians(2,m) == ideal(a,b,c,d,e,f) )
-assert( pfaffians(3,m) == ideal(0_R) )
-assert( pfaffians(4,m) == ideal(c*d-b*e+a*f) )
-///

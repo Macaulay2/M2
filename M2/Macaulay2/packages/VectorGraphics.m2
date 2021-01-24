@@ -293,7 +293,7 @@ jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
 --jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
 
-updateTransformMatrix := (g,m,p) -> ( -- (object,matrix,persepective matrix)
+updateTransformMatrix := (g,m,p) -> ( -- (object,matrix,perspective matrix)
     g.cache.CurrentMatrix = if g.?Static and g.Static then p else m; -- if static reset to perspective matrix
     if g.?TransformMatrix then g.cache.CurrentMatrix = g.cache.CurrentMatrix*g.TransformMatrix;
     )
@@ -995,7 +995,7 @@ multidoc ///
   Description
    Text
     A 4x4 matrix that is applied to 3d coordinates for perspective.
-    After this tranformation, the coordinates must be up to normalization $(x,y,z,p)$
+    After this transformation, the coordinates must be up to normalization $(x,y,z,p)$
     where $(x,y,z>0)$ are coordinates in the reference frame where the observer is at the origin looking in the $z$ direction,
     and $p$ is the distance from the observer to the screen.
     One can instead provide a real number $p$, which is equivalent to placing the screen
@@ -1056,7 +1056,7 @@ multidoc ///
    An option to make a VectorGraphics object unmoving
   Description
    Text
-    The @ TO {VectorGraphics} @ 3d object is unaffected by matrix tranformations of its ancestors.
+    The @ TO {VectorGraphics} @ 3d object is unaffected by matrix transformations of its ancestors.
  Node
   Key
    linearGradient

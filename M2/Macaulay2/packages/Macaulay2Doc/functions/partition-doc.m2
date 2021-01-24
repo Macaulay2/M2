@@ -31,7 +31,7 @@ document {
 	  partition(odd, tally L)
 	  partition (even, {3,3,5},{true,false})
 	  ///,
-     "The following example parititions the generators of an ideal by degree.",
+     "The following example partitions the generators of an ideal by degree.",
      EXAMPLE lines ///
           R = QQ[a..f]
 	  I = ideal"ab,ade,ac3,d4,b3,adf,f4,e10"

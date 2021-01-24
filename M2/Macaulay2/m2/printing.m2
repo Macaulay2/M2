@@ -4,6 +4,8 @@ pad = method()
 
 pad(String,ZZ) := String => (s,n) -> concatenate(s,n-# s)
 pad(ZZ,String) := String => (n,s) -> concatenate(n-# s,s)
+pad(Net, ZZ) := (S, n) -> S | (concatenate(n - width S))^(-depth S)
+pad(ZZ, Net) := (n, S) -> (concatenate(n - width S))^(height S - 1) | S
 
 columnate = (wid,items) -> (
      lens := apply(items,i -> #i);

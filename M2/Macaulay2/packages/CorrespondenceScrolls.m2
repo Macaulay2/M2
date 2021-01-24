@@ -140,7 +140,7 @@ minimalBetti oo
 *-
 
 -*
----possible rewrite for speed, currently imcomplete.
+---possible rewrite for speed, currently incomplete.
 Scrolls := apply(#scroll, i->hankelMatrix(T, y_(i,0), 2, scroll_i));
 J0 := sum(#scroll, i->minors(2, Scrolls_i));
 --
@@ -450,7 +450,7 @@ doc ///
      irrel = irrelevantIdeal ST;
     Text
      Here the irrelevant ideal is the 
-     intersection of the 4 ideals of coordinats
+     intersection of the 4 ideals of coordinates
      (P^2 and the three copies of P^1).
      Next, define the pairs of sections on the curve 
      giving the three projections:

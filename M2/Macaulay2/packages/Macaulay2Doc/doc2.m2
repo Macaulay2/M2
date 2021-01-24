@@ -177,7 +177,7 @@ document {
 	  tally {1,1,2} ? tally {1,2,3}
 	  tally {1,1,2} ? tally {1,1,2,3}
      ///,
-     SeeAlso => {sort, rsort}
+     SeeAlso => {sort, rsort, (symbol?, Symbol)}
      }
 
 protect incomparable
@@ -300,7 +300,7 @@ document {
      "This function can be used for multiplying polynomials, where it
      can be used in code something like this:", 
      PRE "     combine(x, y, monomialTimes, coeffTimes, coeffPlus)",
-     "We illustrate that with a simple-minded implmentation of the free ring on the English alphabet, representing words
+     "We illustrate that with a simple-minded implementation of the free ring on the English alphabet, representing words
      as string and polynomials as hash tables that associate coefficients to words.",
      EXAMPLE lines ///
      	  Poly = new Type of HashTable
