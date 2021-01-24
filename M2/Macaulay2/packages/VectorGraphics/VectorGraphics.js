@@ -23,7 +23,7 @@ function gfxInitData(el) {
 }
 
 // auto-rotation button
-function gfxToggleRotation(event) {
+window.gfxToggleRotation = function(event) {
     //    this.blur();
     //    var svgel=document.getElementById(svgid);
     //    if (!svgel) return;
@@ -58,7 +58,7 @@ function gfxToggleRotation(event) {
 var mouseDown=false;
 
 // mouse handling
-function gfxMouseDown(event) {
+window.gfxMouseDown = function (event) {
     if (!this.gfxdata) gfxInitData(this);
     if (!this.onmouseup) gfxInitMouse(this); // weak
     mouseDown=true;

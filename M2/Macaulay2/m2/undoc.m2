@@ -93,7 +93,16 @@ undocumented {
     (info, LATER),
     (info, HEADER3),
     (info, MENU),
-    (info, String)
+    (info, String),
+    (short, Thing),
+    (short, Expression),
+    (short, MatrixExpression),
+    (short, VectorExpression),
+    (short, VisibleList),
+    (short, Product),
+    (short, Sum),
+    (short, String),
+    (short, Net)
     }
 
 undocumented {
