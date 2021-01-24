@@ -46,6 +46,7 @@ class ARingGFFlintBig : public RingInterface
   // } nmod_poly_struct;
   
   typedef ElementType elem;
+  typedef std::vector<elem> ElementContainerType;
 
   ARingGFFlintBig(const PolynomialRing& R, const ring_elem a);
 

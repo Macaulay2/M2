@@ -158,6 +158,7 @@ class CoefficientRingR : public our_new_delete
   typedef Ring ring_type;
   typedef ring_elem elem;
   typedef elem ElementType;
+  typedef VECTOR(elem) ElementContainerType;
 
   CoefficientRingR(const Ring *R0) : R(R0) {}
   void init_set(elem &result, elem a) const { result = a; }

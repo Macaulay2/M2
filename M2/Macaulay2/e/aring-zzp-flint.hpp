@@ -34,6 +34,7 @@ class ARingZZpFlint : public RingInterface
   static const RingID ringID = ring_ZZpFlint;
   typedef mp_limb_t ElementType;  // most of the time an unsigned long.
   typedef ElementType elem;
+  typedef std::vector<elem> ElementContainerType;
 
   ARingZZpFlint(size_t prime);
 

@@ -1383,11 +1383,11 @@ DEVELOPMENT ///
   elapsedTime runGBs(I = createIdeal kk) -- OK  
 
   I = createIdeal QQ
-    runIdeal(I, 10, "Naive"); -- incorrect answer - off by in high degree
+    runIdeal(I, 10, "Naive"); -- 33 gens OK
     runIdeal(I, 10, "F4"); -- 33 gens -- OK
     runIdeal(I, 10, "F4Parallel"); -- 33 gens OK
-    runIdeal(I, 12, "Naive"); -- CRASH
-    runIdeal(I, 14, "F4"); -- hmmm, very long...! 87 sec! Mikes MBP
+    runIdeal(I, 12, "Naive"); -- 47 gens OK
+    runIdeal(I, 14, "F4"); -- hmmm, very long...! 87 sec! 60 gens Mikes MBP
     runIdeal(I, 14, "F4Parallel"); -- 19.83 sec Mikes MBP
     
   kk = GF(27, Strategy => "New")    

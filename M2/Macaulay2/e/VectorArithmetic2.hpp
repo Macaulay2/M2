@@ -5,9 +5,8 @@
 #include "newdelete.hpp"         // for VECTOR
 #include "ringelem.hpp"
 #include "aring-glue.hpp"
-#include "VectorArithmetic.hpp"
 #include <variant>
-#include <functional>
+#include <type_traits>
 
 #include <tbb/tbb.h>
 
@@ -16,83 +15,90 @@ union ring_elem;
 using ComponentIndex = int;
 class MemoryBlock;
 
-/*
-class CoeffVector
+// this is still deriving from our_new_delete, since this
+// class doesn't know whether mValue points to a std::vector or a VECTOR.
+// this issue persists in the Row struct in NCF4 as well.
+class CoeffVector : public our_new_delete
 {
-  template<typename T>
-  friend class ConcreteVectorArithmetic2;
   // disallow copy...
  public:
   CoeffVector() : mValue(nullptr) {}
   bool isNull() const { return mValue == nullptr; }
   void swap(CoeffVector& b) { std::swap(mValue, b.mValue); }
+  void* getValue() { return mValue; }
+  void setValue(void* newValue) { mValue = newValue; }
  private:
   void* mValue;
 };
 
 class DenseCoeffVector
 {
-  template<typename T>
-  friend class ConcreteVectorArithmetic2;
   // disallow copy...
  public:
   DenseCoeffVector() : mValue(nullptr) {}
   bool isNull() const { return mValue == nullptr; }
   void swap(DenseCoeffVector& b) { std::swap(mValue, b.mValue); }
+  void* getValue() { return mValue; }
+  void setValue(void* newValue) { mValue = newValue; }
  private:
   void* mValue;
 };
-*/
 
-template<typename RingType>
-class ConcreteVectorArithmetic2
+template<typename RingType,
+         typename CoeffVectorType = CoeffVector,
+         typename DenseCoeffVectorType = DenseCoeffVector>
+class ConcreteVectorArithmetic
 {
-  using RT = RingType;
-  using FieldElement = typename RT::ElementType;
+public:
+  using FieldElement = typename RingType::ElementType;
   using DenseFieldElement = FieldElement;
 
-  friend class VectorArithmetic2;
+  using CoeffVectorContainer = typename RingType::ElementContainerType;
+  // we may want to change the container type of dense vectors in the future.
+  using DenseCoeffVectorContainer = CoeffVectorContainer;
 
-  ConcreteVectorArithmetic2() : mRing(nullptr) {}
+  friend class VectorArithmetic;
 
-private:
-  const RT* mRing;
+  ConcreteVectorArithmetic() : mRing(nullptr) {}
 
-  std::vector<FieldElement>* coeffVector(CoeffVector f) const
+// private:
+  const RingType* mRing;
+
+  CoeffVectorContainer* coeffVector(CoeffVectorType f) const
   {
-    return reinterpret_cast<std::vector<FieldElement>*>(f.mValue);
+    return reinterpret_cast<CoeffVectorContainer*>(f.getValue());
   }
 
-  std::vector<DenseFieldElement>* denseCoeffVector(DenseCoeffVector f) const
+  DenseCoeffVectorContainer* denseCoeffVector(DenseCoeffVectorType f) const
   {
-    return reinterpret_cast<std::vector<DenseFieldElement>*>(f.mValue);
+    return reinterpret_cast<DenseCoeffVectorContainer*>(f.getValue());
   }
   
-  CoeffVector coeffVector(std::vector<FieldElement>* vals) const
+  CoeffVectorType coeffVector(CoeffVectorContainer* vals) const
   {
-    CoeffVector result;
-    result.mValue = vals;
+    CoeffVectorType result;
+    result.setValue(vals);
     vals = nullptr;
     return result;
   }
 
-  DenseCoeffVector denseCoeffVector(std::vector<DenseFieldElement>* vals) const
+  DenseCoeffVectorType denseCoeffVector(DenseCoeffVectorContainer* vals) const
   {
-    DenseCoeffVector result;
-    result.mValue = vals;
+    DenseCoeffVectorType result;
+    result.setValue(vals);
     vals = nullptr;
     return result;
   }
 
 public:
-  ConcreteVectorArithmetic2(const RT* R) : mRing(R) {}
+  ConcreteVectorArithmetic(const RingType* R) : mRing(R) {}
   
   /////////////////////////////
   // Allocation/Deallocation //
   /////////////////////////////
-  CoeffVector allocateCoeffVector(ComponentIndex nelems) const
+  CoeffVectorType allocateCoeffVector(ComponentIndex nelems) const
   {
-    auto tempPtr = new std::vector<FieldElement>(nelems);
+    auto tempPtr = new CoeffVectorContainer(nelems);
     for (auto& d : *tempPtr)
       {
 	mRing->init(d);
@@ -101,9 +107,9 @@ public:
     return coeffVector(tempPtr);    
   }
 
-  DenseCoeffVector allocateDenseCoeffVector(ComponentIndex nelems) const
+  DenseCoeffVectorType allocateDenseCoeffVector(ComponentIndex nelems) const
   {
-    auto tempPtr = new std::vector<DenseFieldElement>(nelems);
+    auto tempPtr = new DenseCoeffVectorContainer(nelems);
     for (auto& d : *tempPtr)
       {
 	mRing->init(d);
@@ -115,12 +121,12 @@ public:
   // {
   //   return coeffVector(new std::vector<FieldElement>);
   // }
-  void deallocateCoeffVector(CoeffVector& coeffs) const
+  void deallocateCoeffVector(CoeffVectorType& coeffs) const
   {
     delete coeffVector(coeffs);
   }
 
-  void deallocateCoeffVector(DenseCoeffVector& coeffs) const
+  void deallocateCoeffVector(DenseCoeffVectorType& coeffs) const
   {
     delete denseCoeffVector(coeffs);
   }
@@ -129,19 +135,19 @@ public:
   /// Linear Algebra /////
   ////////////////////////
 
-  size_t size(const CoeffVector& coeffs) const
+  size_t size(const CoeffVectorType& coeffs) const
   {
     return coeffVector(coeffs)->size();
   }
 
-  size_t size(const DenseCoeffVector& coeffs) const
+  size_t size(const DenseCoeffVectorType& coeffs) const
   {
     return denseCoeffVector(coeffs)->size();
   }
   
   // better name: fillDenseRow.
-  void sparseRowToDenseRow(DenseCoeffVector& dense,
-                           const CoeffVector& sparse,
+  void sparseRowToDenseRow(DenseCoeffVectorType& dense,
+                           const CoeffVectorType& sparse,
                            const Range<int>& comps) const
   {
     // Note: this function simply fills in the values coming from '(sparse, comps)'.
@@ -158,8 +164,8 @@ public:
     for (ComponentIndex i = 0; i < len; i++) mRing->set(dvec[comps[i]],svec[i]);
   }
 
-  void denseRowCancelFromSparse(DenseCoeffVector& dense,
-                                const CoeffVector& sparse,
+  void denseRowCancelFromSparse(DenseCoeffVectorType& dense,
+                                const CoeffVectorType& sparse,
                                 const Range<int>& comps) const
   {
     // ASSUMPTION: svec[0] == 1.
@@ -172,7 +178,7 @@ public:
       mRing->subtract_multiple(dvec[comps[i]], a, svec[i]);
   }
 
-  int denseRowNextNonzero(DenseCoeffVector& dense,
+  int denseRowNextNonzero(DenseCoeffVectorType& dense,
                           int first,
                           int last) const
   {
@@ -189,8 +195,8 @@ public:
     return last + 1;
   }
 
-  void denseRowToSparseRow(DenseCoeffVector& dense,
-                           CoeffVector& sparse, // output value: sets this value
+  void denseRowToSparseRow(DenseCoeffVectorType& dense,
+                           CoeffVectorType& sparse, // output value: sets this value
                            Range<int>& comps, // output value: sets comps
                            int first,
                            int last,
@@ -207,8 +213,8 @@ public:
   }
 
   template<typename LockType>
-  void safeDenseRowToSparseRow(DenseCoeffVector& dense,
-                               CoeffVector& sparse, // output value: sets this value
+  void safeDenseRowToSparseRow(DenseCoeffVectorType& dense,
+                               CoeffVectorType& sparse, // output value: sets this value
                                Range<int>& comps, // output value: sets comps
                                int first,
                                int last,
@@ -241,7 +247,7 @@ public:
 	}
   }
 
-  void sparseRowMakeMonic(CoeffVector& sparse) const
+  void sparseRowMakeMonic(CoeffVectorType& sparse) const
   {
     auto& svec = * coeffVector(sparse);
 
@@ -254,7 +260,7 @@ public:
   }
   
   template<typename Container>
-  void appendSparseVectorToContainer(const CoeffVector& sparse,
+  void appendSparseVectorToContainer(const CoeffVectorType& sparse,
                                      Container& c) const
   {
     auto& svec = * coeffVector(sparse);
@@ -267,9 +273,9 @@ public:
   }
 
   template<typename Container>
-  CoeffVector sparseVectorFromContainer(const Container& c) const
+  CoeffVectorType sparseVectorFromContainer(const Container& c) const
   {
-    CoeffVector sparse = allocateCoeffVector(c.size());
+    CoeffVectorType sparse = allocateCoeffVector(c.size());
     auto& svec = * coeffVector(sparse);
     for (auto i = 0; i < c.size(); ++i)
       {
@@ -278,7 +284,7 @@ public:
     return sparse;
   }
 
-  ring_elem ringElemFromSparseVector(const CoeffVector& sparse,
+  ring_elem ringElemFromSparseVector(const CoeffVectorType& sparse,
                                      int index) const
   {
     auto& svec = * coeffVector(sparse);
@@ -287,7 +293,7 @@ public:
     return tmp;
   }
 
-  std::ostream& displayVector(std::ostream& o, const CoeffVector& v) const
+  std::ostream& displayVector(std::ostream& o, const CoeffVectorType& v) const
   {
     auto& svec = * coeffVector(v);
 
@@ -309,6 +315,192 @@ public:
   
 };
 
+// `overloaded` construct (not standard until C++20)
+template<class... Ts> 
+struct overloaded : Ts... { using Ts::operator()...; };
+
+template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
+// this is the dispatching class using std::variant
+class VectorArithmetic
+{
+  using CoeffVectorType = CoeffVector;
+  using DenseCoeffVectorType = DenseCoeffVector;
+
+  using CVA_Type = std::variant<ConcreteVectorArithmetic<M2::ARingZZpFlint>*,
+                                ConcreteVectorArithmetic<M2::ARingGFFlintBig>*,
+                                ConcreteVectorArithmetic<M2::ARingGFFlint>*,
+                                ConcreteVectorArithmetic<M2::ARingQQGMP>*,
+                                ConcreteVectorArithmetic<M2::ARingZZpFFPACK>*,
+                                ConcreteVectorArithmetic<M2::ARingZZp>*,
+                                ConcreteVectorArithmetic<M2::ARingGFM2>*,
+                                ConcreteVectorArithmetic<M2::ARingGFGivaro>*,
+                                ConcreteVectorArithmetic<CoefficientRingR>*,
+                                ConcreteVectorArithmetic<M2::DummyRing>*>;
+
+private:
+  CVA_Type mConcreteVector;
+
+public:
+  VectorArithmetic(const Ring* R)
+  {
+    // if the rings coming in are defined in a similar way, we could avoid the switch
+    // statement here as well and make it compile time.  It would make the class templated
+    // on the variant class describing all the rings.
+    switch (R->ringID())
+      {
+      case M2::ring_ZZpFlint:
+        mConcreteVector = new ConcreteVectorArithmetic
+          (&dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFlint>* >(R)->ring());
+        break;
+      case M2::ring_GFFlintBig:
+        mConcreteVector = new ConcreteVectorArithmetic
+          (&dynamic_cast< const M2::ConcreteRing<M2::ARingGFFlintBig>* >(R)->ring());
+        break;
+      case M2::ring_GFFlintZech:
+        mConcreteVector = new ConcreteVectorArithmetic
+          (&dynamic_cast< const M2::ConcreteRing<M2::ARingGFFlint>* >(R)->ring());
+        break;
+      case M2::ring_QQ:
+        mConcreteVector = new ConcreteVectorArithmetic
+          (&dynamic_cast< const M2::ConcreteRing<M2::ARingQQGMP>* >(R)->ring());
+	break;
+      case M2::ring_ZZpFfpack:
+        mConcreteVector = new ConcreteVectorArithmetic
+          (&dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFFPACK>* >(R)->ring());
+	break;
+      case M2::ring_ZZp:
+        mConcreteVector = new ConcreteVectorArithmetic
+          (&dynamic_cast< const M2::ConcreteRing<M2::ARingZZp>* >(R)->ring());
+        break;
+      case M2::ring_GFM2:
+        mConcreteVector = new ConcreteVectorArithmetic
+          (&dynamic_cast< const M2::ConcreteRing<M2::ARingGFM2>* >(R)->ring());
+        break;
+      case M2::ring_GFGivaro:
+        mConcreteVector = new ConcreteVectorArithmetic
+          (&dynamic_cast< const M2::ConcreteRing<M2::ARingGFGivaro>* >(R)->ring());
+        break;
+      case M2::ring_old:
+        std::cout << "Using GC ring in VectorArithmetic." << std::endl;
+        mConcreteVector = new ConcreteVectorArithmetic(R->getCoefficientRingR());
+        break;
+      default:
+        // dummy ring type for default
+	// throw an error here...
+        std::cerr << "*** error! *** ring ID not found....!" << std::endl;
+        mConcreteVector = new ConcreteVectorArithmetic<M2::DummyRing>();
+      }
+  }
+
+  // provide simple visitor interface to underlying std::variant types
+  size_t size(const CoeffVectorType& coeffs) const {
+    return std::visit([&](auto& arg) -> size_t { return arg->size(coeffs); }, mConcreteVector);
+  }
+  
+  size_t size(const DenseCoeffVectorType& coeffs) const {
+    return std::visit([&](auto& arg) -> size_t { return arg->size(coeffs); }, mConcreteVector);
+  }
+
+  /////////////////////////////
+  // Allocation/Deallocation //
+  /////////////////////////////
+  /// Create a coefficient vector with room for `nelems` coefficients
+  CoeffVectorType allocateCoeffVector(ComponentIndex nelems) const {
+    return std::visit([&](auto& arg) -> CoeffVectorType { return arg->allocateCoeffVector(nelems);}, mConcreteVector);
+  }
+
+  DenseCoeffVectorType allocateDenseCoeffVector(ComponentIndex nelems) const {
+    return std::visit([&](auto& arg) -> DenseCoeffVectorType { return arg->allocateDenseCoeffVector(nelems);}, mConcreteVector);
+  }
+
+  /// Create a coefficient vector with 0 elements.  Can be increased in size.
+  // CoeffVectorType allocateCoeffVector() const = 0;
+
+  /// Deallocate all the coefficients, and the array itself.
+  void deallocateCoeffVector(CoeffVectorType& coeffs) const {
+    std::visit([&](auto& arg) { delete arg->coeffVector(coeffs); }, mConcreteVector);
+  }
+  
+  void deallocateCoeffVector(DenseCoeffVectorType& coeffs) const {
+    std::visit([&](auto& arg) { delete arg->denseCoeffVector(coeffs); }, mConcreteVector);
+  }
+
+  ////////////////////////
+  /// Linear Algebra /////
+  ////////////////////////
+  void sparseRowToDenseRow(DenseCoeffVectorType& dense,
+			   const CoeffVectorType& coeffs,
+			   const Range<int>& comps) const {
+    std::visit([&](auto& arg) { arg->sparseRowToDenseRow(dense,coeffs,comps); }, mConcreteVector);
+  }
+
+  void denseRowCancelFromSparse(DenseCoeffVectorType& dense,
+                                const CoeffVectorType& coeffs,
+                                const Range<int>& comps) const {
+    std::visit([&](auto& arg) { arg->denseRowCancelFromSparse(dense,coeffs,comps); }, mConcreteVector);
+  }
+
+  int denseRowNextNonzero(DenseCoeffVectorType& dense,
+                          int first,
+                          int last) const {
+    return std::visit([&](auto& arg) -> int { return arg->denseRowNextNonzero(dense,first,last); }, mConcreteVector);
+  }
+
+  void denseRowToSparseRow(DenseCoeffVectorType& dense,
+                           CoeffVectorType& coeffs, // sets coeffs
+                           Range<int>& comps, // sets comps
+                           int first,
+                           int last,
+                           MemoryBlock& monomialSpace) const {
+    std::visit([&](auto& arg) { arg->denseRowToSparseRow(dense,coeffs,comps,first,last,monomialSpace); }, mConcreteVector);  
+  }
+
+  template<typename LockType>
+  void safeDenseRowToSparseRow(DenseCoeffVectorType& dense,
+                               CoeffVectorType& coeffs, // sets coeffs
+                               Range<int>& comps, // sets comps
+                               int first,
+                               int last,
+                               MemoryBlock& monomialSpace,
+                               LockType& lock) const {
+    // the existence of 'template' here is a bit jarring to me, but it tells the compiler
+    // that safeDenseRowToSparseRow is a template function
+    std::visit([&](auto& arg) { arg->template safeDenseRowToSparseRow<LockType>(dense,coeffs,comps,first,last,monomialSpace,lock); }, mConcreteVector);      
+  }
+  
+  void sparseRowMakeMonic(CoeffVectorType& coeffs) const {
+    std::visit([&](auto& arg) { arg->sparseRowMakeMonic(coeffs); }, mConcreteVector);      
+  }
+
+  /////////////////////////////
+  /// Translation    //////////
+  /////////////////////////////
+
+  template<class Container>
+  void appendSparseVectorToContainer(const CoeffVectorType& coeffs,
+                                     Container& c) const {
+    std::visit([&](auto& arg) { arg->template appendSparseVectorToContainer<Container>(coeffs, c); }, mConcreteVector);      
+  }
+
+  template<class Container>
+  CoeffVectorType sparseVectorFromContainer(const Container& c) const {
+    return std::visit([&](auto& arg) -> CoeffVectorType { return arg->template sparseVectorFromContainer<Container>(c); }, mConcreteVector);
+  }
+
+  ring_elem ringElemFromSparseVector(const CoeffVectorType& coeffs,
+                                     int index) const {
+    return std::visit([&](auto& arg) -> ring_elem { return arg->ringElemFromSparseVector(coeffs,index); }, mConcreteVector);
+  }
+
+  std::ostream& displayVector(std::ostream& o, const CoeffVectorType& v) const
+  {
+    return std::visit([&](auto& arg) -> std::ostream& { return arg->displayVector(o, v); }, mConcreteVector);
+  }
+};
+
+// don't need this right now, but may again later.
+#if 0
 template<typename T>
 struct GCVector : public our_new_delete
 {
@@ -321,14 +513,14 @@ struct GCVector : public our_new_delete
 };
 
 template<> 
-class ConcreteVectorArithmetic2<Ring>
+class ConcreteVectorArithmetic<Ring>
 {
   using FieldElement = ring_elem;
   using DenseFieldElement = FieldElement;
 
-  friend class VectorArithmetic2;
+  friend class VectorArithmetic;
 
-  ConcreteVectorArithmetic2() : mRing(nullptr) {}
+  ConcreteVectorArithmetic() : mRing(nullptr) {}
 
 private:
   const Ring* mRing;
@@ -360,7 +552,7 @@ private:
   }
 
 public:
-  ConcreteVectorArithmetic2(const Ring* R) : mRing(R) {}
+  ConcreteVectorArithmetic(const Ring* R) : mRing(R) {}
   
   /////////////////////////////
   // Allocation/Deallocation //
@@ -578,182 +770,7 @@ public:
   
 };
 
-// this is the dispatching class using std::variant
-// this class
-class VectorArithmetic2
-{
-  using ConcreteVectorType = std::variant<ConcreteVectorArithmetic2<M2::ARingZZpFlint>*,
-                                          ConcreteVectorArithmetic2<M2::ARingGFFlintBig>*,
-                                          ConcreteVectorArithmetic2<M2::ARingGFFlint>*,
-                                          ConcreteVectorArithmetic2<M2::ARingQQGMP>*,
-                                          ConcreteVectorArithmetic2<M2::ARingZZpFFPACK>*,
-                                          ConcreteVectorArithmetic2<M2::ARingZZp>*,
-                                          ConcreteVectorArithmetic2<M2::ARingGFM2>*,
-                                          ConcreteVectorArithmetic2<M2::ARingGFGivaro>*,
-                                          ConcreteVectorArithmetic2<Ring>*,
-					  ConcreteVectorArithmetic2<M2::DummyRing>*>;
-
-private:
-  ConcreteVectorType mConcreteVector;
-
-public:
-  VectorArithmetic2(const Ring* R)
-  {
-    // if the rings coming in are defined in a similar way, we could avoid the switch
-    // statement here as well and make it compile time.  It would make the class templated
-    // on the variant class describing all the rings.
-    switch (R->ringID())
-      {
-      case M2::ring_ZZpFlint:
-        mConcreteVector = new ConcreteVectorArithmetic2<M2::ARingZZpFlint>
-          (&dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFlint>* >(R)->ring());
-        break;
-      case M2::ring_GFFlintBig:
-        mConcreteVector = new ConcreteVectorArithmetic2<M2::ARingGFFlintBig>
-          (&dynamic_cast< const M2::ConcreteRing<M2::ARingGFFlintBig>* >(R)->ring());
-        break;
-      case M2::ring_GFFlintZech:
-        mConcreteVector = new ConcreteVectorArithmetic2<M2::ARingGFFlint>
-          (&dynamic_cast< const M2::ConcreteRing<M2::ARingGFFlint>* >(R)->ring());
-        break;
-      case M2::ring_QQ:
-        mConcreteVector = new ConcreteVectorArithmetic2<M2::ARingQQGMP>
-          (&dynamic_cast< const M2::ConcreteRing<M2::ARingQQGMP>* >(R)->ring());
-	break;
-      case M2::ring_ZZpFfpack:
-        mConcreteVector = new ConcreteVectorArithmetic2<M2::ARingZZpFFPACK>
-          (&dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFFPACK>* >(R)->ring());
-	break;
-      case M2::ring_ZZp:
-        mConcreteVector = new ConcreteVectorArithmetic2<M2::ARingZZp>
-          (&dynamic_cast< const M2::ConcreteRing<M2::ARingZZp>* >(R)->ring());
-        break;
-      case M2::ring_GFM2:
-        mConcreteVector = new ConcreteVectorArithmetic2<M2::ARingGFM2>
-          (&dynamic_cast< const M2::ConcreteRing<M2::ARingGFM2>* >(R)->ring());
-        break;
-      case M2::ring_GFGivaro:
-        mConcreteVector = new ConcreteVectorArithmetic2<M2::ARingGFGivaro>
-          (&dynamic_cast< const M2::ConcreteRing<M2::ARingGFGivaro>* >(R)->ring());
-        break;
-      case M2::ring_old:
-        std::cout << "Using 'Old' rings in VectorArithmetic." << std::endl;
-        mConcreteVector = new ConcreteVectorArithmetic2(R);
-//        mConcreteVector = new ConcreteVectorArithmetic2(R->getCoefficientRingR());
-        break;
-      default:
-        // dummy ring type for default
-	// throw an error here...
-        std::cerr << "*** error! *** ring ID not found....!" << std::endl;
-        mConcreteVector = new ConcreteVectorArithmetic2<M2::DummyRing>();
-      }
-  }
-
-  // provide simple visitor interface to underlying std::variant types
-  size_t size(const CoeffVector& coeffs) const {
-    return std::visit([&](auto& arg) -> size_t { return arg->size(coeffs); }, mConcreteVector);
-  }
-  
-  size_t size(const DenseCoeffVector& coeffs) const {
-    return std::visit([&](auto& arg) -> size_t { return arg->size(coeffs); }, mConcreteVector);
-  }
-
-  /////////////////////////////
-  // Allocation/Deallocation //
-  /////////////////////////////
-  /// Create a coefficient vector with room for `nelems` coefficients
-  CoeffVector allocateCoeffVector(ComponentIndex nelems) const {
-    return std::visit([&](auto& arg) -> CoeffVector { return arg->allocateCoeffVector(nelems);}, mConcreteVector);
-  }
-
-  DenseCoeffVector allocateDenseCoeffVector(ComponentIndex nelems) const {
-    return std::visit([&](auto& arg) -> DenseCoeffVector { return arg->allocateDenseCoeffVector(nelems);}, mConcreteVector);
-  }
-
-  /// Create a coefficient vector with 0 elements.  Can be increased in size.
-  // CoeffVector allocateCoeffVector() const = 0;
-
-  /// Deallocate all the coefficients, and the array itself.
-  void deallocateCoeffVector(CoeffVector& coeffs) const {
-    std::visit([&](auto& arg) { delete arg->coeffVector(coeffs); }, mConcreteVector);
-  }
-  
-  void deallocateCoeffVector(DenseCoeffVector& coeffs) const {
-    std::visit([&](auto& arg) { delete arg->denseCoeffVector(coeffs); }, mConcreteVector);
-  }
-
-  ////////////////////////
-  /// Linear Algebra /////
-  ////////////////////////
-  void sparseRowToDenseRow(DenseCoeffVector& dense,
-			   const CoeffVector& coeffs,
-			   const Range<int>& comps) const {
-    std::visit([&](auto& arg) { arg->sparseRowToDenseRow(dense,coeffs,comps); }, mConcreteVector);
-  }
-
-  void denseRowCancelFromSparse(DenseCoeffVector& dense,
-                                const CoeffVector& coeffs,
-                                const Range<int>& comps) const {
-    std::visit([&](auto& arg) { arg->denseRowCancelFromSparse(dense,coeffs,comps); }, mConcreteVector);
-  }
-
-  int denseRowNextNonzero(DenseCoeffVector& dense,
-                          int first,
-                          int last) const {
-    return std::visit([&](auto& arg) -> int { return arg->denseRowNextNonzero(dense,first,last); }, mConcreteVector);
-  }
-
-  void denseRowToSparseRow(DenseCoeffVector& dense,
-                           CoeffVector& coeffs, // sets coeffs
-                           Range<int>& comps, // sets comps
-                           int first,
-                           int last,
-                           MemoryBlock& monomialSpace) const {
-    std::visit([&](auto& arg) { arg->denseRowToSparseRow(dense,coeffs,comps,first,last,monomialSpace); }, mConcreteVector);  
-  }
-
-  template<typename LockType>
-  void safeDenseRowToSparseRow(DenseCoeffVector& dense,
-                               CoeffVector& coeffs, // sets coeffs
-                               Range<int>& comps, // sets comps
-                               int first,
-                               int last,
-                               MemoryBlock& monomialSpace,
-                               LockType& lock) const {
-    // the existence of 'template' here is a bit jarring to me, but it tells the compiler
-    // that safeDenseRowToSparseRow is a template function
-    std::visit([&](auto& arg) { arg->template safeDenseRowToSparseRow<LockType>(dense,coeffs,comps,first,last,monomialSpace,lock); }, mConcreteVector);      
-  }
-  
-  void sparseRowMakeMonic(CoeffVector& coeffs) const {
-    std::visit([&](auto& arg) { arg->sparseRowMakeMonic(coeffs); }, mConcreteVector);      
-  }
-
-  /////////////////////////////
-  /// Translation    //////////
-  /////////////////////////////
-
-  template<class Container>
-  void appendSparseVectorToContainer(const CoeffVector& coeffs,
-                                     Container& c) const {
-    std::visit([&](auto& arg) { arg->template appendSparseVectorToContainer<Container>(coeffs, c); }, mConcreteVector);      
-  }
-
-  template<class Container>
-  CoeffVector sparseVectorFromContainer(const Container& c) const {
-    return std::visit([&](auto& arg) -> CoeffVector { return arg->template sparseVectorFromContainer<Container>(c); }, mConcreteVector);
-  }
-
-  ring_elem ringElemFromSparseVector(const CoeffVector& coeffs,
-                                     int index) const {
-    return std::visit([&](auto& arg) -> ring_elem { return arg->ringElemFromSparseVector(coeffs,index); }, mConcreteVector);
-  }
-
-  std::ostream& displayVector(std::ostream& o, const CoeffVector& v) const
-  {
-    return std::visit([&](auto& arg) -> std::ostream& { return arg->displayVector(o, v); }, mConcreteVector);
-  }
-};
+#endif
 
 #endif
 
