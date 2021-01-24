@@ -1,6 +1,8 @@
 // Copyright 2005  Michael E. Stillman
 
 #include "monsort.hpp"
+
+#if 0
 #include "moninfo.hpp"
 
 // Here is an example use of QuickSorter.
@@ -52,6 +54,8 @@ class MSorter
 };
 
 template class QuickSorter<MSorter>;
+#endif
+
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

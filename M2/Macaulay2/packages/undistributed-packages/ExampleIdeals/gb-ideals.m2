@@ -53,7 +53,7 @@ J1
   kk = ZZp(101, Strategy => "Old")
   R1=kk[vars(0..47), MonomialSize=>8];
   J1 = sub(J1, R1)
-  elapsedTime(gens gb(J1, Algorithm=>LinearAlgebra)); -- 30 seconds.
+  elapsedTime(gens gb(J1, Algorithm=>LinearAlgebra)); -- 30 seconds -- 23 sec MES MBP 1/24/21
 *-
 ----------------------------------------------
 --random5556
@@ -74,7 +74,7 @@ J1
   R1 = kk[a..g, MonomialSize=>8];
   J1 = ideal random(R1^1, R1^{-5,-5,-5,-6});
 
-  time gb(J1, Algorithm=>LinearAlgebra); -- 23 sec
+  time gb(J1, Algorithm=>LinearAlgebra); -- 23 sec -- 18 sec MES MBP 1/24/21
   gbTrace=1
   J1 = ideal J1_*;
   elapsedTime groebnerBasis(J1, Strategy => "F4"); -- 12.5 sec (5.2 sec, using TBB)
@@ -96,9 +96,9 @@ J1
 
    -- 28 Dec 202
   gbTrace=1
-  J1 = ideal J1_*; elapsedTime groebnerBasis(J1, Strategy => "F4"); -- 7.34 sec
+  J1 = ideal J1_*; elapsedTime groebnerBasis(J1, Strategy => "F4"); -- 7.34 sec (3.1 sec tbb MES MBP 1/24/21)
   J1 = ideal J1_*; elapsedTime groebnerBasis(J1, Strategy => "MGB"); -- 59.1 sec
-  J1 = ideal J1_*; elapsedTime gb(J1, Algorithm=>LinearAlgebra); -- 11.7 sec
+  J1 = ideal J1_*; elapsedTime gb(J1, Algorithm=>LinearAlgebra); -- 11.7 sec (10.0 sec MES MBP 1/24/21)
   J1 = ideal J1_*; elapsedTime gens gb(J1); -- much longer! > 720 sec
   J1 = ideal J1_*; elapsedTime gens gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- 438 sec
   J1 = ideal J1_*; elapsedTime gens gb(J1, Algorithm=>Homogeneous2, Strategy=>LongPolynomial); -- 419 sec
@@ -196,9 +196,9 @@ J1
   R1 = kk[reverse(p_(1,1,1,1,1)..p_(2,2,2,2,2)), MonomialSize=>8];
   J1 = sub(J1, R1)
   gbTrace=1
-  J1 = ideal J1_*; elapsedTime groebnerBasis(J1, Strategy => "F4"); -- 65 sec
-  J1 = ideal J1_*; elapsedTime groebnerBasis(J1, Strategy => "MGB"); -- 4.0  sec
-  J1 = ideal J1_*; elapsedTime gb(J1, Algorithm=>LinearAlgebra); -- 27.5  sec
+  J1 = ideal J1_*; elapsedTime groebnerBasis(J1, Strategy => "F4"); -- 65 sec (72 sec tbb MES MBP 1/24/21 hmmm)
+  J1 = ideal J1_*; elapsedTime groebnerBasis(J1, Strategy => "MGB"); -- 4.0  sec (3.4 sec MES MBP 1/24/21)
+  J1 = ideal J1_*; elapsedTime gb(J1, Algorithm=>LinearAlgebra); -- 27.5  sec (23.5 sec MES MBP 1/24/21)
   J1 = ideal J1_*; elapsedTime gens gb(J1); -- 21 sec
   J1 = ideal J1_*; elapsedTime gens gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- 20 sec (but printing debugging stuff too)
   J1 = ideal J1_*; elapsedTime gens gb(J1, Algorithm=>Homogeneous2, Strategy=>LongPolynomial); -- 10.8 sec
@@ -571,9 +571,18 @@ J1 = mayr(4,2,ZZ/101)
 R = ZZ/5[a,c..t,b,MonomialSize=>8]
 I = ideal"bip-dfq,djm-ehn,-bim+cgn,-gmp+hkq,cnp-dkr,-bhk+cfl,anq-bks,-bhnr+cgms,-gnr+hls,-ior+jms,-bor+clt"
 time gb(I, Algorithm=>LinearAlgebra); -- 3/11/10 MBP r11025: 19.68 sec
-elapsedTime groebnerBasis(I, Strategy => "F4");
-elapsedTime groebnerBasis(I, Strategy => "F4", "MGBOptions" => {"Threads" => 8});
-time gb I;
+elapsedTime groebnerBasis(I, Strategy => "F4"); -- (7.6 sec tbb MES MBP 1/24/21)
+I = ideal I_*; elapsedTime groebnerBasis(I, Strategy => "F4", "MGBOptions" => {"Threads" => 1});  -- about the same as with tbb.
+
+  debug Core
+  kk = ZZp(5, Strategy => "Old")
+  R1 = kk (monoid ring I)
+  J1 = sub(I, R1)
+  J1 = ideal J1_*; elapsedTime groebnerBasis(J1, Strategy => "F4"); -- (7.5 sec tbb MES MBP 1/24/21)
+  J1 = ideal J1_*; elapsedTime groebnerBasis(J1, Strategy => "MGB"); -- (3.9 sec MES MBP 1/24/21)
+  J1 = ideal J1_*; elapsedTime gb(J1, Algorithm=>LinearAlgebra); -- -- (7.6 sec MES MBP 1/24/21)
+
+  I = ideal I_*; elapsedTime gb I; -- (17.6 sec MES MBP 1/24/21)
 ----------------------------------------------
 --chow-flag-7-7-over-h
 (m,n) = (7,7)

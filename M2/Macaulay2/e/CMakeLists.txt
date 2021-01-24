@@ -226,6 +226,7 @@ set(SRCLIST
   monoid
   monomial-sets
   monomial
+  monsort
   montable
   montableZZ
   mutablecomplex
@@ -278,7 +279,6 @@ set(SRCLIST
   f4/memblock
   f4/monhashtable
   f4/moninfo
-  f4/monsort
   f4/ntuple-monomial
   f4/varpower-monomial
   # Schreyer resolution a la Linear algebra (F4 Faugere style)

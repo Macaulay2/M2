@@ -5,7 +5,7 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include "../newdelete.hpp"
+#include "newdelete.hpp"
 
 #if !defined(SAFEC_EXPORTS)
 #include <engine-exports.h>
