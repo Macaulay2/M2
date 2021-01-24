@@ -727,8 +727,9 @@ chromaticNumber = method()
 chromaticNumber Graph := ZZ => G -> (
     if #edges G == 0 and #vertexSet G == 0 then 0
     else if #edges G == 0 and #vertexSet G != 0 then 1
+    else if isBipartite G then 2
     else (
-        chi := 2;
+        chi := 3;
         J := coverIdeal G;
         m := product gens ring J;
         while ((m^(chi - 1) % J^chi) != 0) do chi = chi+ 1;
