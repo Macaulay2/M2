@@ -1506,11 +1506,10 @@ g = first flatten entries centralElements(B,3)
 isCentral g -- central
 rightKernel matrix {{g}} -- regular element
 -- hypersurface example
--- but not this one... (should be periodic, but it
--- doesn't look like it
 A = ambient B
 C = A/(ideal B + ideal lift(g,A))
 use C
+normalElements(C,2,X)
 d0' = matrix {{x,y,z}}
 d1' = rightKernel(d0', DegreeLimit => 10)
 d2' = rightKernel(d1', DegreeLimit => 11)
@@ -1525,7 +1524,19 @@ d10' = rightKernel(d9', DegreeLimit => 19)
 assert(0 == transpose((transpose d1')*(transpose d0')))
 assert(0 == transpose((transpose d2')*(transpose d1')))
 assert(0 == transpose((transpose d3')*(transpose d2')))
-assert(d4 == 0)
+assert(0 == transpose((transpose d4')*(transpose d3')))
+assert(0 == transpose((transpose d5')*(transpose d4')))
+assert(0 == transpose((transpose d6')*(transpose d5')))
+assert(0 == transpose((transpose d7')*(transpose d6')))
+assert(0 == transpose((transpose d8')*(transpose d7')))
+assert(0 == transpose((transpose d9')*(transpose d8')))
+assert(0 == transpose((transpose d10')*(transpose d9')))
+
+-- BAD BUG!
+restart
+M = sub(matrix {{0},{1}},ZZ/32003)
+N = sub(matrix {{1},{0}},ZZ/32003)
+M // N
 
 -- cool example
 restart

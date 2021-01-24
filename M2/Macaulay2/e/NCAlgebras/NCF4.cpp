@@ -839,58 +839,25 @@ void NCF4::labelAndSortF4Matrix()
     std::stable_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
 
   // rewrite this with lambdas
-
-  // apply the sorted labeling to the columns
-  mColumns.resize(sz);
-  if (mIsParallel)
-  {
-    tbb::parallel_for(tbb::blocked_range<int>{0,(int)sz},
-                      [&](const tbb::blocked_range<int>& r)
-                      {
-                        for (auto count = r.begin(); count != r.end(); ++count)
-                          {
-                            auto& val = mColumnMonomials[tempWords[columnIndices[count]]];
-                            val.first = count;
-                            mColumns[count].word = tempWords[columnIndices[count]];
-                            mColumns[count].pivotRow = -1;
-                          }
-                      });
-  }
-  else
-  {
-    for (auto count = 0; count != sz; ++count)
+  auto applyLabelingColumns = [&](const tbb::blocked_range<int>& r) {
+    for (auto count = r.begin(); count != r.end(); ++count)
       {
         auto& val = mColumnMonomials[tempWords[columnIndices[count]]];
         val.first = count;
         mColumns[count].word = tempWords[columnIndices[count]];
         mColumns[count].pivotRow = -1;
       }
-  }
+    };
 
-  // now fix the column labels in the rows and set pivot rows in columns
+  // apply the sorted labeling to the columns
+  mColumns.resize(sz);
   if (mIsParallel)
-  {
-    tbb::parallel_for(tbb::blocked_range<int>{0,(int)mRows.size()},
-                      [&](const tbb::blocked_range<int>& r)
-                      {
-                        for (auto i = r.begin(); i != r.end(); ++i)
-                          {
-                            auto& comps = mRows[i].columnIndices;
-                            auto& words = mRows[i].columnWords;
-                            // sets the pivot row in the column if this is a reducer row
-                            if (i < mFirstOverlap)
-                              {
-                                mColumns[mColumnMonomials[words[0]].first].pivotRow = i;
-                                mColumnMonomials[words[0]].second = i;
-                              }
-                            for (int j = 0; j < words.size(); ++j)
-                              comps[j] = mColumnMonomials[words[j]].first;
-                          }
-                      });
-  }
+    tbb::parallel_for(tbb::blocked_range<int>{0,(int)sz}, applyLabelingColumns);
   else
-  {
-    for (auto i = 0; i != mRows.size(); ++i)
+    applyLabelingColumns(tbb::blocked_range<int>{0,(int)sz});
+
+  auto applyLabelingRows = [&](const tbb::blocked_range<int>& r) {
+    for (auto i = r.begin(); i != r.end(); ++i)
       {
         auto& comps = mRows[i].columnIndices;
         auto& words = mRows[i].columnWords;
@@ -903,7 +870,13 @@ void NCF4::labelAndSortF4Matrix()
         for (int j = 0; j < words.size(); ++j)
           comps[j] = mColumnMonomials[words[j]].first;
       }
-  }
+    };
+
+  // now fix the column labels in the rows and set pivot rows in columns
+  if (mIsParallel)
+    tbb::parallel_for(tbb::blocked_range<int>{0,(int)mRows.size()},applyLabelingRows);
+  else
+    applyLabelingRows(tbb::blocked_range<int>{0,(int)mRows.size()});
 }
 
 // both reduceF4Row and parallelReduceF4Row call this function
