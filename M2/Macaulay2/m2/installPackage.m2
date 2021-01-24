@@ -783,6 +783,7 @@ installPackage Package := opts -> pkg -> (
     if not hadError then (
 	libDir := pkg#"package prefix" | replace("PKG", pkg#"pkgname", installLayout#"packagelib");
 	iname := libDir|".installed";
+	if not fileExists libDir then makeDirectory libDir;
 	iname << close;
 	verboseLog("file created: ", minimizeFilename iname);
 	);
