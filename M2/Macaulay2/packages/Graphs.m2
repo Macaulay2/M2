@@ -1466,7 +1466,6 @@ bipartiteColoring Graph := List => G -> (
     n := # vertexSet G;
     v := 0;
     if n == 0 then return {{},{}};
-    if not isBipartite G then error "graph must be bipartite";
     D := new MutableList from toList(n: infinity);
     while v != n do (
         uncolored := {position(toList D, i -> i == infinity)};
@@ -1481,7 +1480,8 @@ bipartiteColoring Graph := List => G -> (
                     D#y = 1 + D#x;
                     v = v + 1;
                     uncolored = append(uncolored, y);
-                    );
+                    ) else if (D#x - D#y) % 2 == 0 then
+                        error "graph must be bipartite";
                 );
             );
         );
