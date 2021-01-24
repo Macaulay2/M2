@@ -1234,7 +1234,8 @@ hasOddHole = method()
 hasOddHole Graph := Boolean => G -> any(ass (coverIdeal G)^2, i -> codim i > 3)
 
 isBipartite = method()
-isBipartite Graph := Boolean => G -> chromaticNumber G <= 2
+isBipartite Graph := Boolean => G ->
+    try bipartiteColoring G then true else false
 
 isCM = method()
 isCM Graph := Boolean => G -> (
