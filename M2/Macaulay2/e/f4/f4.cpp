@@ -1,12 +1,12 @@
-// Copyright 2005-2010 Michael E. Stillman
+// Copyright 2005-2021 Michael E. Stillman
 
 // TODO: this code needs to be worked on
+#include "f4/f4.hpp"
+#include "freemod.hpp"
+#include "interrupted.hpp"
+
 #include <ctime>
 #include <algorithm>
-
-#include "f4.hpp"
-#include "../freemod.hpp"
-#include "interrupted.hpp"
 
 F4GB::F4GB(const Gausser *KK0,
            F4Mem *Mem0,
@@ -273,31 +273,6 @@ void F4GB::reorder_columns()
   ColumnsSorter C(M, mat);
 
 // Actual sort of columns /////////////////
-
-#if 0
-  //TODO: MES remove the code in this ifdef 0
-  C.reset_ncomparisons();
-
-  clock_t begin_time = clock();
-  for (int i=0; i<ncols; i++)
-    {
-      column_order[i] = i;
-    }
-
-  if (M2_gbTrace >= 2)
-    fprintf(stderr, "ncomparisons = ");
-
-  QuickSorter<ColumnsSorter>::sort(&C, column_order, ncols);
-
-  clock_t end_time = clock();
-  if (M2_gbTrace >= 2)
-    fprintf(stderr, "%ld, ", C.ncomparisons());
-  double nsecs = (double)(end_time - begin_time)/CLOCKS_PER_SEC;
-  clock_sort_columns += nsecs;
-  if (M2_gbTrace >= 2)
-    fprintf(stderr, " time = %f\n", nsecs);
-#endif
-  // STL version ///////////////
 
   C.reset_ncomparisons();
 

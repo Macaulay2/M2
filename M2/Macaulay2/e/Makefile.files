@@ -54,7 +54,6 @@ INTERFACE = \
 	schreyer-resolution/res-gausser-QQ \
 	schreyer-resolution/res-gausser-QQ-hybrid \
 	f4/f4 \
-	f4/f4-syz \
 	f4/f4-mem \
 	f4/f4-monlookup \
 	f4/f4-types \
@@ -63,7 +62,6 @@ INTERFACE = \
 	f4/f4-m2-interface \
 	f4/hilb-fcn \
 	f4/monhashtable \
-	f4/monsort \
 	f4/moninfo \
 	f4/ntuple-monomial \
 	f4/varpower-monomial \
