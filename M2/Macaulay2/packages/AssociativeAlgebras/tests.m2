@@ -1401,10 +1401,10 @@ restart
 needsPackage "AssociativeAlgebras"
 debug Core
 kk = GF(27)
-kk = GF(3^10) -- this don't seem to work on "Naive"
-kk = GF(7^5)  -- this don't seem to work on "Naive"
+kk = GF(3^10)
+kk = GF(7^5)
 kk = QQ
-kk = GF(13^2,Strategy=>"New")     -- not working yet (but not crashing)
+kk = GF(13^2,Strategy=>"New")
 kk = GF(27,Strategy=>"Givaro")
 kk = ZZp(32003,Strategy=>"Ffpack")
 kk = ZZp(32003,Strategy=>"Aring")
@@ -1418,7 +1418,7 @@ q = alpha*z*x + beta*x*z + gamma*y^2
 r = alpha*x*y + beta*y*x + gamma*z^2
 I = ideal{p,q,r}
 gbTrace = 100
-elapsedTime Igb = NCGB(I,10,Strategy=>"Naive"); --- crashes.  Not sure why...
+elapsedTime Igb = NCGB(I,10,Strategy=>"Naive");
 elapsedTime Igb = NCGB(I,12,Strategy=>"F4");
 I = ideal I_*; elapsedTime Igb = NCGB(I,15,Strategy=>"F4Parallel");
 B = A/I; all(13, i -> #(flatten entries ncBasis(i, B)) == binomial(i + 2,2))

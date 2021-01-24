@@ -11,7 +11,7 @@ newPackage(
         },
     Headline => "Noncommutative algebra",
     Keywords => {"Noncommutative Algebra"},
-    DebuggingMode => false,
+    DebuggingMode => true,
     PackageExports =>{"IntegralClosure"},
     AuxiliaryFiles => true
     )
@@ -1258,20 +1258,22 @@ rightKernel Matrix := opts -> M -> (
    if kerGens == 0 then return map(source M, (ring M)^0,0);
    mkerGens := phi I + sum apply(gensAVars, v -> kerGens*v);
    mkerGensGB := NCGB(mkerGens,opts#DegreeLimit);
-   minKerGens := flatten entries compress NCReductionTwoSided(gens kerGens,mkerGensGB);
+   minKerGens := compress NCReductionTwoSided(gens kerGens,mkerGensGB);
+   (minKerMons, minKerCoeffs) := coefficients minKerGens;
+   linIndepKer := mingens image sub(minKerCoeffs,coefficientRing A);
+   linIndepKerGens := flatten entries (minKerMons*linIndepKer);
    ident := id_(AA^(numcols M));
    identColHash := hashTable apply(numcols M, i -> (colVars_i,ident_{i}));
    tempKerMat := matrix {
-       apply(minKerGens, f -> 
-             sum apply(terms f, t -> (
-	                (coeff, monList) := first toVariableList t;
-	                coeff*identColHash#(first monList)*(product drop(monList,1))
-	              ))
-            )
-	};
+     apply(linIndepKerGens, f -> 
+       sum apply(terms f, t -> (
+         (coeff, monList) := first toVariableList t;
+	 coeff*identColHash#(first monList)*(product drop(monList,1))
+       )))};
    targetDeg := (degrees source M) / (d -> -d);
-   sourceDeg := (minKerGens / degree) / (d -> -d+{1});
+   sourceDeg := (linIndepKerGens / degree) / (d -> -d+{1});
    kerMat := map(AA^targetDeg,AA^sourceDeg,tempKerMat);
+   error "err";
    sub(psi kerMat,B)
 )
 
