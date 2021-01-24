@@ -1273,7 +1273,6 @@ rightKernel Matrix := opts -> M -> (
    targetDeg := (degrees source M) / (d -> -d);
    sourceDeg := (linIndepKerGens / degree) / (d -> -d+{1});
    kerMat := map(AA^targetDeg,AA^sourceDeg,tempKerMat);
-   error "err";
    sub(psi kerMat,B)
 )
 
