@@ -3,8 +3,8 @@
 -------------------------------------------------------------------------------
 newPackage(
     "RationalPoints2",
-    Version => "0.1",
-    Date => "Jan 22, 2021",
+    Version => "0.2",
+    Date => "Jan 23, 2021",
     Authors => { {Name => "Jieao Song", Email => "jieao.song@imj-prg.fr"} },
     Headline => "find the common zeros for a set of polynomials over a finite field",
     Keywords => {"Commutative Algebra"},
@@ -18,17 +18,19 @@ newPackage(
 -- The algorithm naively tests points coordinate by coordinate. There are
 -- however several tricks used to improve the performance.
 --
--- * If at some coordinate we encounter some single variable polynomials, we
--- test only with their common roots instead of using the entire field k;
+-- * If at some coordinate we encounter some univariate polynomials, we test
+-- only with their common roots instead of using the entire field k.
 --
 -- * If we get a prime ideal of degree 1, we solve a linear system of equations
 -- to quickly get all the points contained in the corresponding linear
--- subspace; sometimes this can significantly improve the performance, for
--- example when the ideal has dimension 0;
+-- subspace.
 --
 -- * If the ideal is homogeneous, we will enumerate the rational points in the
 -- projective space first, then reconstruct the points in the affine space;
 -- this can also be done recursively.
+--
+-- * If the ideal is 0-dimensional and has relative small degree, we use
+-- the eliminant to solve the system.
 -------------------------------------------------------------------------------
 export{"rationalPoints", "Amount"}
 -------------------------------------------------------------------------------
@@ -53,7 +55,7 @@ fieldElements = (k) -> (
 -------------------------------------------------------------------------------
 -- takes a number n and a list
 -- produces the direct product of the list with itself n times
--- same as lst**lst**lst**...
+-- same as lst**lst**lst**... but with flattened elements
 --
 pow = (n, lst) -> (
     if n < 0 then error "power of a list is not defined for n negative";
@@ -70,7 +72,7 @@ shuffle = (ind, u, v) -> (
     return for k in (0..<#ind) list if ind_k==0 then (i=i+1; u_i) else (j=j+1; v_j);
 );
 -------------------------------------------------------------------------------
--- takes in a list of coefficients representing a single variable polynomial
+-- takes in a list of coefficients representing a univariate polynomial
 -- returns the list of zeros
 -- e.g. {2,-3,1} -> 2-3*x+x^2 which returns {1, 2}
 --
@@ -104,6 +106,11 @@ linearSolve := (I) -> (
 );
 linearSolve = memoize linearSolve;
 -------------------------------------------------------------------------------
+-- utility function that normalizes a list of homogeneous coordinates so that
+-- the first non-zero coordinate is 1
+--
+homoCoord = p -> (a := p_(position(p, x->(x!=0))); (x->x/a) \ p);
+-------------------------------------------------------------------------------
 -- the main function that carries out the enumeration of points
 -- takes in an ideal and enumerate the points coordinate by coordinate
 -- returns the list of points or the number of points if Amount is set to true
@@ -129,21 +136,24 @@ findPoints(Ideal) := opts -> I -> (
         if opts.Amount then return 1+(#els-1)*result
         else return {toList(n:0_k)} | join flatten((v->(a->a*v)\els_{1..<#els}) \ result);
     );
+    -- use findPoints0dim if I is of dim 0 and has degree smaller than the size
+    -- of the field k
+    -- if degree is large, the eliminant might not give much useful information
+    -- but takes a long time to compute
+    if dimI == 0 and degI < #els then return findPoints0dim(I, Amount=>opts.Amount);
     -- otherwise, enumerate the possible values
     possibleValues := els;
     pols := select(first entries gens I, p->(p!=0));
-    singleVarPols := pols;
+    univarPols := pols;
     if n > 1 then (
-        pols = partition(p->(support p == {x_0}), pols, {true, false});
-        singleVarPols = pols#true;
-        otherPols := pols#false;
+        univarPols = select(pols, p->(support p == {x_0}));
     );
-    if #singleVarPols > 0 then (
-        pol := singleVarPols_0;
+    if #univarPols > 0 then (
+        pol := univarPols_0;
         -- factor the first polynomial to find its roots
         coeffs := apply((degree pol)_0+1, i->coefficient(x_0^i, pol));
         possibleValues = zeros coeffs;
-        for p in singleVarPols_{1..<#singleVarPols} do ( -- keep only the common roots
+        for p in univarPols_{1..<#univarPols} do ( -- keep only the common roots
             eval := v->sum((degree p)_0+1, i->coefficient(x_0^i, p)*product toList(i:v));
             possibleValues = select(possibleValues, v->(eval v == 0));
         );
@@ -166,6 +176,58 @@ findPoints(Ideal) := opts -> I -> (
         );
         return result;
     );
+);
+-------------------------------------------------------------------------------
+-- the following is retrieved from https://www.math.tamu.edu/~sottile/research/ps/realroots.m2
+-- written by Dan Grayson & Frank Sottile
+-- computes the eliminant (up to multiplicity) of an element h in a zero
+-- dimension ring A=R/I
+-- takes in an element h and a univariate polynomial ring S
+-- returns the eliminant as an element of S
+--
+regularRep = f -> (
+    assert( dim ring f == 0 );
+    b := basis ring f;
+    k := coefficientRing ring f;
+    return substitute(contract(transpose b, f*b), k);
+);
+charPoly = (h, S) -> (
+    A := ring h;
+    F := coefficientRing A;
+    mh := regularRep h ** S;
+    Idz := S_0 * id_(S^(numgens source mh));
+    return det(Idz - mh);
+);
+-------------------------------------------------------------------------------
+-- findPoints for 0-dimensional ideals
+-- computes and solves the eliminant to get a list of possible values for the
+-- current coordinate
+--
+findPoints0dim = method(Options => {Amount=>false});
+findPoints0dim(Ideal) := opts -> I -> (
+    R := ring I;
+    k := coefficientRing R;
+    x := gens R;
+    n := #x;
+    -- using the eliminant to find the possible values
+    S := rings_1;
+    g := charPoly(sub(x_0, R/I), S);
+    coeffs := apply((degree g)_0+1, i->coefficient(S_0^i, g));
+    possibleValues := zeros coeffs;
+    R' := rings_(n-1);
+    x = gens R';
+    result := if opts.Amount then 0 else {};
+    for v in possibleValues do (
+        I' := (map(R', R, {v}|x)) I;
+        if degree I' == 1 then ( -- for a single point linearSolve is faster
+            if opts.Amount then result = result + 1
+            else result = result | (x->{v}|x) \ linearSolve I';
+        ) else (
+            if opts.Amount then result = result + findPoints0dim(I', Amount=>true)
+            else result = result | (x->{v}|x) \ findPoints0dim(I', Amount=>false);
+        );
+    );
+    return result;
 );
 -------------------------------------------------------------------------------
 -- takes in a homogeneous ideal and enumerate points in the projective space
@@ -228,11 +290,10 @@ rationalPoints(Ideal) := opts -> I -> (
         if unused > 0 then ( -- reconstruction
             if opts.Amount then result = result*(#els)^unused+((#els)^unused-1)//(#els-1)
             else (
-                -- homogenize so that the first non-zero coordinate is 1
-                homo := p -> (a := p_(position(p, x->(x!=0))); (x->x/a) \ p);
-                result = flatten table(pow_unused els, result, homo @@ shuffle_ind);
+                -- shuffle and homogenize so that the first non-zero coordinate is 1
+                result = flatten table(pow_unused els, result, homoCoord @@ shuffle_ind);
                 -- extra points lying in a projective subspace
-                result = result | (x->homo shuffle(ind, x, ((n-unused):0_k))) \ findProjPoints(ideal 0_(rings_unused));
+                result = result | (x->homoCoord shuffle(ind, x, ((n-unused):0_k))) \ findProjPoints(ideal 0_(rings_unused));
             );
         );
     ) else ( -- affine case
@@ -304,9 +365,12 @@ Description
         If a projective variety is considered, the rational points are given in
         homogeneous coordinates. The first non-zero coordinate will be
         normalized to 1.
+    Text
+        For example, since a nodal cubic curve is the smooth rational curve
+        glued along two points, it has exactly p points.
     Example
-        R = ZZ/5[x,y,z];
-        I = homogenize(ideal(y^2-x^3-x-1), z)
+        R = ZZ/11[x,y,z];
+        I = homogenize(ideal(y^2-x^3-x^2), z)
         rationalPoints(I, Projective => true)
         #rationalPoints variety I
     Text
@@ -319,7 +383,8 @@ Description
         time rationalPoints(I, Amount => true)
     Text
         The algorithm detects reduced linear subspaces, so sometimes it might
-        be helpful to pass the radical of the ideal (but not always!).
+        be helpful to pass the radical of the ideal (though the radical itself
+        might take a long time to compute).
     Example
         time rationalPoints(radical ideal(f^2), Amount => true)
     Text
@@ -348,10 +413,22 @@ TEST ///
     R = ZZ/101[u_0..u_10];
     I = ideal sum toList(u_0..u_10);
     assert(rationalPoints(I, Amount => true) == 101^10);
-    p = 11; F = ZZ/p; F[x,y,z,w];
-    I = ideal(4*x*z+2*x*w+y^2+4*y*w+(p-2)*z^2+(p-3)*w^2,
-      4*x^2+4*x*y+(p-2)*x*w+(p-1)*y^2+(p-2)*y*w+(p-2)*z^2+(p-4)*z*w+(p-3)*w^2);
-    assert(#rationalPoints variety I == 12);
+    R = ZZ/101[x,y,z];
+    I = homogenize(ideal(y^2-x^3-x^2), z);
+    assert(#rationalPoints variety I == 101);
+///
+-------------------------------------------------------------------------------
+TEST ///
+    F = ZZ/103;
+    R = F[a,b,c,d];
+    I = ideal"a3+b3+c3+d3";
+    S = F[p_0..p_3,q_0..q_3];
+    M = exteriorPower_2 matrix{{p_0..p_3},{q_0..q_3}};
+    S' = F[s,t,p_0..p_3,q_0..q_3];
+    f = map(S', R, s*matrix{{p_0..p_3}}+t*matrix{{q_0..q_3}});
+    J = ideal sub(last coefficients(gens f I, Variables=>{s,t}), S);
+    I = trim ker map(S/J, F[x_0..x_5], M);
+    assert(#rationalPoints variety I == 27);
 ///
 -------------------------------------------------------------------------------
 TEST ///
