@@ -18,6 +18,7 @@
 #include "ring.hpp"                // for Ring
 #include "ringelem.hpp"            // for vec
 #include "text-io.hpp"             // for emit
+#include "VectorArithmetic2.hpp"   // for VectorArithmetic, CoeffVector
 
 class Computation;
 class RingElement;
@@ -33,6 +34,7 @@ GBComputation *createF4GB(const Matrix *m,
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
   const Ring *K = R->getCoefficients();
   F4Mem *Mem = new F4Mem;
+  auto vectorArithmetic = new VectorArithmetic(K);
   Gausser *KK = Gausser::newGausser(K, Mem);
   if (KK == nullptr)
     {
@@ -44,6 +46,7 @@ GBComputation *createF4GB(const Matrix *m,
 
   GBComputation *G;
   G = new F4Computation(KK,
+                        vectorArithmetic,
                         Mem,
                         m,
                         collect_syz,
@@ -56,6 +59,7 @@ GBComputation *createF4GB(const Matrix *m,
 }
 
 F4Computation::F4Computation(Gausser *K0,
+                             const VectorArithmetic* VA,
                              F4Mem *Mem0,
                              const Matrix *m,
                              M2_bool collect_syz,
@@ -64,50 +68,54 @@ F4Computation::F4Computation(Gausser *K0,
                              int strategy,
                              M2_bool use_max_degree,
                              int max_degree)
+  : mFreeModule(m->rows()),
+    mVectorArithmetic(VA),
+    mMemoryBlock(Mem0)
 {
-  // Note: the F4Mem which K0 uses should be Mem.
-  KK = K0;
-  originalR = m->get_ring()->cast_to_PolynomialRing();
-  F = m->rows();
-  MI = new MonomialInfo(originalR->n_vars(),
-                        originalR->getMonoid()->getMonomialOrdering());
-  Mem = Mem0;
+  // Note: the F4Mem which K0 uses should be mMemoryBlock.
+  mGausser = K0;
+  mOriginalRing = m->get_ring()->cast_to_PolynomialRing();
+  mMonoid = new MonomialInfo(mOriginalRing->n_vars(),
+                        mOriginalRing->getMonoid()->getMonomialOrdering());
 
-  f4 = new F4GB(KK,
-                Mem0,
-                MI,
-                m->rows(),
-                collect_syz,
-                n_rows_to_keep,
-                gb_weights,
-                strategy,
-                use_max_degree,
-                max_degree);
 
-  F4toM2Interface::from_M2_matrix(KK, MI, m, gb_weights, f4->get_generators());
-  f4->new_generators(0, m->n_cols() - 1);
+  mF4GB = new F4GB(mGausser,
+                   mVectorArithmetic,
+                   Mem0,
+                   mMonoid,
+                   m->rows(),
+                   collect_syz,
+                   n_rows_to_keep,
+                   gb_weights,
+                   strategy,
+                   use_max_degree,
+                   max_degree);
+
+  F4toM2Interface::from_M2_matrix(mGausser, mVectorArithmetic, mMonoid, m, gb_weights, mF4GB->get_generators());
+  mF4GB->new_generators(0, m->n_cols() - 1);
 }
 
-F4Computation::~F4Computation() { delete Mem; }
+F4Computation::~F4Computation() { delete mMemoryBlock; }
 /*************************
  ** Top level interface **
  *************************/
 
-void F4Computation::start_computation() { f4->start_computation(stop_); }
+void F4Computation::start_computation() { mF4GB->start_computation(stop_); }
 Computation /* or null */ *F4Computation::set_hilbert_function(
     const RingElement *hf)
 {
-  f4->set_hilbert_function(hf);
+  mF4GB->set_hilbert_function(hf);
   return this;
 }
 
 const Matrix /* or null */ *F4Computation::get_gb()
 {
-  const gb_array &gb = f4->get_gb();
-  MatrixConstructor result(F, 0);
+  const gb_array &gb = mF4GB->get_gb();
+  MatrixConstructor result(mFreeModule, 0);
   for (int i = 0; i < gb.size(); i++)
     {
-      vec v = F4toM2Interface::to_M2_vec(KK, MI, gb[i]->f, F);
+      vec v = F4toM2Interface::to_M2_vec(
+          mGausser, mVectorArithmetic, mMonoid, gb[i]->f, mFreeModule);
       result.append(v);
     }
   return result.to_matrix();
@@ -121,7 +129,7 @@ const Matrix /* or null */ *F4Computation::get_mingens()
 //        i != gb.end();
 //        i++)
 //     if ((*i)->minlevel == ELEM_POSSIBLE_MINGEN)
-//       mat.append(originalR->translate_gbvector_to_vec(_F, (*i)->g.f));
+//       mat.append(mOriginalRing->translate_gbvector_to_vec(_F, (*i)->g.f));
 //   return mat.to_matrix();
 #endif
   return nullptr;
@@ -140,8 +148,8 @@ M2_bool F4Computation::matrix_lift(
     const Matrix /* or null */ **result_remainder,
     const Matrix /* or null */ **result_quotient)
 {
-  *result_remainder = 0;
-  *result_quotient = 0;
+  *result_remainder = nullptr;
+  *result_quotient = nullptr;
   ERROR("rawGBMatrixLift not implemented for LinearAlgebra GB's yets");
   return false;
 }
@@ -173,7 +181,7 @@ void F4Computation::show() const  // debug display
   stash::stats(o);
   emit(o.str());
 
-  Mem->show();
+  mMemoryBlock->show();
   // f4->show();
 }
 

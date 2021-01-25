@@ -53,7 +53,7 @@ J1
   kk = ZZp(101, Strategy => "Old")
   R1=kk[vars(0..47), MonomialSize=>8];
   J1 = sub(J1, R1)
-  elapsedTime(gens gb(J1, Algorithm=>LinearAlgebra)); -- 30 seconds -- 23 sec MES MBP 1/24/21
+  J1 = ideal J1_*; elapsedTime(gens gb(J1, Algorithm=>LinearAlgebra)); -- 30 seconds -- 23 sec MES MBP 1/24/21
 *-
 ----------------------------------------------
 --random5556

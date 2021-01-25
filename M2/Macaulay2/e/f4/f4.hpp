@@ -73,7 +73,7 @@
 #include "f4/moninfo.hpp"           // for packed_monomial, MonomialInfo
 #include "gausser.hpp"              // for F4CoefficientArray, dense_row
 #include "interface/computation.h"  // for ComputationStatusCode, StopCondit...
-#include "memblock.hpp"             // for MemoryBlock
+#include "memblock.hpp"             // for F4MemoryBlock
 #include "monhashtable.hpp"         // for MonomialHashTable
 #include "newdelete.hpp"            // for our_new_delete
 
@@ -84,13 +84,15 @@ class F4SPairSet;
 class FreeModule;
 class HilbertController;
 class RingElement;
+class VectorArithmetic;
 
 /////////////////////////////////////////////////////////////////////////////
 
 class F4GB : public our_new_delete
 {
   // Basic required information
-  const Gausser *KK;
+  const Gausser *mGausser;
+  const VectorArithmetic* mVectorArithmetic;
   const MonomialInfo *M;
   const FreeModule *F;
   M2_arrayint weights;  // The length of this is the number of variables, each
@@ -124,7 +126,7 @@ class F4GB : public our_new_delete
   coefficient_matrix *mat;
   MonomialHashTable<MonomialInfo> H;
   F4Mem *Mem;  // Used to allocate and deallocate arrays used in the matrix
-  MemoryBlock<monomial_word> B;
+  F4MemoryBlock<monomial_word> B;
   monomial_word *next_monom;  // valid while creating the matrix
 
   // Local data for gaussian elimination
@@ -185,6 +187,7 @@ class F4GB : public our_new_delete
 
  public:
   F4GB(const Gausser *KK0,
+       const VectorArithmetic* VA,
        F4Mem *Mem0,
        const MonomialInfo *MI,
        const FreeModule *F,  // used for debugging only...

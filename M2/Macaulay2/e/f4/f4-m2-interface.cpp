@@ -15,8 +15,10 @@
 #include "polyring.hpp"                // for PolynomialRing
 #include "ring.hpp"                    // for Ring
 #include "style.hpp"                   // for INTSIZE
+#include "VectorArithmetic2.hpp"
 
 void F4toM2Interface::from_M2_vec(const Gausser *KK,
+                                  const VectorArithmetic* VA,
                                   const MonomialInfo *MI,
                                   const FreeModule *F,
                                   vec v,
@@ -55,6 +57,7 @@ void F4toM2Interface::from_M2_vec(const Gausser *KK,
 }
 
 void F4toM2Interface::poly_set_degrees(const Gausser *KK,
+                                       const VectorArithmetic* VA,
                                        const MonomialInfo *MI,
                                        const M2_arrayint wts,
                                        const poly &f,
@@ -76,6 +79,7 @@ void F4toM2Interface::poly_set_degrees(const Gausser *KK,
 }
 
 void F4toM2Interface::from_M2_matrix(const Gausser *KK,
+                                     const VectorArithmetic* VA,
                                      const MonomialInfo *MI,
                                      const Matrix *m,
                                      M2_arrayint wts,
@@ -85,13 +89,14 @@ void F4toM2Interface::from_M2_matrix(const Gausser *KK,
   for (int i = 0; i < m->n_cols(); i++)
     {
       gbelem *g = new gbelem;
-      from_M2_vec(KK, MI, F, m->elem(i), g->f);
-      if (wts != nullptr) poly_set_degrees(KK, MI, wts, g->f, g->deg, g->alpha);
+      from_M2_vec(KK, VA, MI, F, m->elem(i), g->f);
+      if (wts != nullptr) poly_set_degrees(KK, VA, MI, wts, g->f, g->deg, g->alpha);
       result_polys.push_back(g);
     }
 }
 
 vec F4toM2Interface::to_M2_vec(const Gausser *KK,
+                               const VectorArithmetic* VA,
                                const MonomialInfo *MI,
                                const poly &f,
                                const FreeModule *F)
@@ -153,17 +158,19 @@ vec F4toM2Interface::to_M2_vec(const Gausser *KK,
 }
 
 Matrix *F4toM2Interface::to_M2_matrix(const Gausser *KK,
+                                      const VectorArithmetic* VA,
                                       const MonomialInfo *MI,
                                       gb_array &polys,
                                       const FreeModule *F)
 {
   MatrixConstructor result(F, INTSIZE(polys));
   for (int i = 0; i < polys.size(); i++)
-    result.set_column(i, to_M2_vec(KK, MI, polys[i]->f, F));
+    result.set_column(i, to_M2_vec(KK, VA, MI, polys[i]->f, F));
   return result.to_matrix();
 }
 
 MutableMatrix *F4toM2Interface::to_M2_MutableMatrix(const Gausser *KK,
+                                                    const VectorArithmetic* VA,
                                                     coefficient_matrix *mat,
                                                     gb_array &gens,
                                                     gb_array &gb)
@@ -200,4 +207,5 @@ MutableMatrix *F4toM2Interface::to_M2_MutableMatrix(const Gausser *KK,
 
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+//  indent-tabs-mode: nil
 //  End:

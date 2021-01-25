@@ -2,13 +2,13 @@
 #define __vector_arithmetic_2__
 
 #include "NCAlgebras/Range.hpp"  // for Range
+#include "MemoryBlock.hpp"
 #include "newdelete.hpp"         // for VECTOR
 #include "ringelem.hpp"
 #include "aring-glue.hpp"
 #include <variant>
 #include <type_traits>
-
-#include <tbb/tbb.h>
+#include <tbb/null_mutex.h>
 
 class Ring;
 union ring_elem;

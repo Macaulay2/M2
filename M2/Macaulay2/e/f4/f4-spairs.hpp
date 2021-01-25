@@ -4,7 +4,7 @@
 #define __f4spairs_h_
 
 #include "f4/f4-types.hpp"           // for spair (ptr only), gb_array, pre_...
-#include "f4/memblock.hpp"           // for MemoryBlock
+#include "f4/memblock.hpp"           // for F4MemoryBlock
 #include "f4/moninfo.hpp"            // for MonomialInfo (ptr only), packed_...
 #include "f4/varpower-monomial.hpp"  // for varpower_word
 #include "newdelete.hpp"             // for our_new_delete
@@ -66,8 +66,8 @@ class F4SPairSet : public our_new_delete
   // spair criteria.
 
  private:
-  MemoryBlock<pre_spair> PS;      // passed to constructor routine
-  MemoryBlock<varpower_word> VP;  // used for constructing new pairs
+  F4MemoryBlock<pre_spair> PS;      // passed to constructor routine
+  F4MemoryBlock<varpower_word> VP;  // used for constructing new pairs
   int max_varpower_size;
 
   const MonomialInfo *M;
