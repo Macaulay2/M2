@@ -18,7 +18,7 @@
 #include "ring.hpp"                // for Ring
 #include "ringelem.hpp"            // for vec
 #include "text-io.hpp"             // for emit
-#include "VectorArithmetic2.hpp"   // for VectorArithmetic, CoeffVector
+#include "VectorArithmetic.hpp"    // for VectorArithmetic, CoeffVector
 
 class Computation;
 class RingElement;

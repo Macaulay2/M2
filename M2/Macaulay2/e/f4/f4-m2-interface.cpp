@@ -15,7 +15,7 @@
 #include "polyring.hpp"                // for PolynomialRing
 #include "ring.hpp"                    // for Ring
 #include "style.hpp"                   // for INTSIZE
-#include "VectorArithmetic2.hpp"
+#include "VectorArithmetic.hpp"
 
 void F4toM2Interface::from_M2_vec(const Gausser *KK,
                                   const VectorArithmetic* VA,
@@ -36,7 +36,8 @@ void F4toM2Interface::from_M2_vec(const Gausser *KK,
   ntuple_word *lexp = newarray_atomic(ntuple_word, M->n_vars() + 1);
 
   result.len = n;
-  ring_elem *relem_array = newarray(ring_elem, n);
+  // VECTOR(ring_elem) relem_array(n); // add
+  ring_elem *relem_array = newarray(ring_elem, n); // rm
   result.monoms = newarray_atomic(monomial_word, n * MI->max_monomial_size());
   n = 0;
   monomial_word *nextmonom = result.monoms;
@@ -52,8 +53,11 @@ void F4toM2Interface::from_M2_vec(const Gausser *KK,
       nextmonom += MI->monomial_size(nextmonom);
       n++;
     }
-  result.coeffs = KK->from_ringelem_array(n, relem_array);
-  deletearray(relem_array);
+  //  result.coeffs = VA->sparseVectorFromContainer(relem_array); // add
+  result.coeffs = KK->from_ringelem_array(n, relem_array); // rm
+  deletearray(relem_array); // rm
+  deletearray(exp);
+  deletearray(lexp);
 }
 
 void F4toM2Interface::poly_set_degrees(const Gausser *KK,

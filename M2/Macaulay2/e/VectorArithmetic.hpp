@@ -1,8 +1,9 @@
-#ifndef __vector_arithmetic_2__
-#define __vector_arithmetic_2__
+#ifndef __vector_arithmetic_hpp__
+#define __vector_arithmetic_hpp__
 
 #include "NCAlgebras/Range.hpp"  // for Range
 #include "newdelete.hpp"         // for VECTOR
+#include "MemoryBlock.hpp"       // for MemoryBlock
 #include "ringelem.hpp"
 #include "aring-glue.hpp"
 #include <variant>
@@ -14,7 +15,6 @@
 class Ring;
 union ring_elem;
 using ComponentIndex = int;
-class MemoryBlock;
 
 // this is still deriving from our_new_delete, since this
 // class doesn't know whether mValue points to a std::vector or a VECTOR.

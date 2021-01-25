@@ -89,10 +89,6 @@ class Gausser : public our_new_delete
                                int last) const;
 
   void sparse_row_make_monic(int len, F4CoefficientArray sparse) const;
-  int coeff_to_int(int f) const  // anton
-  {
-    return Kp->to_int(f);
-  }
 
   mutable long n_dense_row_cancel;
   mutable long n_subtract_multiple;
