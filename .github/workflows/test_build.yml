@@ -140,6 +140,7 @@ jobs:
         if: matrix.build-system == 'cmake'
         run: |
           cmake -S../.. -B. -GNinja \
+            --debug-trycompile \
             -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_NATIVE=OFF \
             -DCMAKE_PREFIX_PATH=$OPT_PREFIX \
             -DCMAKE_INSTALL_PREFIX=/usr

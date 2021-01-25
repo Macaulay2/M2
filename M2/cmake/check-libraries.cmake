@@ -293,7 +293,7 @@ if(CHECK_LIBRARY_COMPATIBILITY)
   endforeach()
 
   check_cxx_source_compiles([[int main(){return 0;}]] LIBRARY_COMPATIBILITY
-    FAIL_REGEX "warning")
+    FAIL_REGEX "conflict")
 
   if(NOT LIBRARY_COMPATIBILITY)
     message(CHECK_FAIL " Detected library incompatibilities; rerun the build-libraries target")
