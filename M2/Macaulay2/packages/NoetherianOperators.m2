@@ -1070,16 +1070,18 @@ hybridNoetherianOperators (Ideal, Ideal, Matrix) := List => true >> opts -> (I,P
     RCC := (ring pt) monoid R;
     nopsAtPoint := numNoethOpsAtPoint(sub(I,RCC), pt, opts, DependentSet => depVars / (i->sub(i,RCC)), IntegralStrategy => false);
     sort flatten for op in nopsAtPoint list (
-        dBasis := sub(matrix{keys op / (m -> R_(first exponents m))}, S);
+        dBasis := sub(matrix{sort keys op / (m -> R_(first exponents m))}, S);
         maxdeg := flatten entries dBasis / sum @@ degree // max;
         K := dBasis;
         for d from 0 to maxdeg - 1 do (
             if debugLevel >= 1 then <<"hybridNoetherianOperators: trying degree "<<d<<" multiples of generators"<<endl;
             G := transpose (gens IS ** basis(0,d,S));
             M := sub(diff(dBasis, G), kP);
+            if debugLevel >= 1 then <<"computing kernel of a " << numColumns M << " x " << numRows M <<endl;
             K = myKernel(M, KernelStrategy => if opts.?KernelStrategy then opts.KernelStrategy else "Default");
             if numColumns K == 1 then break;
         );
+        if debugLevel >= 1 then <<"clearing denominators"<<endl;
         -- Clear denominators and return a DiffOp
         first matrixToDiffOps(liftColumns(lift(K, S), R), sub(dBasis, R))
     )
