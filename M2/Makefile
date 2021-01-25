@@ -213,7 +213,7 @@ grep :
 	@false
 else
 grep :
-	find . \( -name .svn -o -name BUILD -o -name autom4te.cache \) ! -prune -o -type f | xargs grep -nH -e $(SEARCH) || [ $$? = 123 ]
+	find . \( -name .git -o -name BUILD -o -name autom4te.cache \) ! -prune -o -type f | xargs grep -nH -e $(SEARCH) || [ $$? = 123 ]
 endif
 
 announce:
