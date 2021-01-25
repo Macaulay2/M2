@@ -23,6 +23,7 @@ INTERFACE = \
 	NCAlgebras/NCGroebner \
 	NCAlgebras/NCF4 \
 	NCAlgebras/OverlapTable \
+	NCResolutions/nc-res-computation \
 	Polynomial \
 	monomial-collection \
 	eigen \

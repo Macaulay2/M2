@@ -35,6 +35,7 @@ class SkewPolynomialRing;
 class SolvableAlgebra;
 class M2FreeAlgebra;
 class M2FreeAlgebraQuotient;
+class M2FreeAlgebraOrQuotient;
 
 class FreeModule;
 class RingMap;
@@ -202,10 +203,12 @@ class Ring : public MutableEngineObject
   virtual const LocalRing *cast_to_LocalRing() const { return 0; }
   virtual LocalRing *cast_to_LocalRing() { return 0; }
 
-  virtual const M2FreeAlgebra *cast_to_M2FreeAlgebra() const { return 0; }
-  virtual M2FreeAlgebra *cast_to_M2FreeAlgebra() { return 0; }
-  virtual const M2FreeAlgebraQuotient *cast_to_M2FreeAlgebraQuotient() const { return 0; }
-  virtual M2FreeAlgebraQuotient *cast_to_M2FreeAlgebraQuotient() { return 0; }
+  virtual const M2FreeAlgebra *cast_to_M2FreeAlgebra() const { return nullptr; }
+  virtual M2FreeAlgebra *cast_to_M2FreeAlgebra() { return nullptr; }
+  virtual const M2FreeAlgebraQuotient *cast_to_M2FreeAlgebraQuotient() const { return nullptr; }
+  virtual M2FreeAlgebraQuotient *cast_to_M2FreeAlgebraQuotient() { return nullptr; }
+  virtual const M2FreeAlgebraOrQuotient *cast_to_M2FreeAlgebraOrQuotient() const { return nullptr; }
+  virtual M2FreeAlgebraOrQuotient *cast_to_M2FreeAlgebraOrQuotient() { return nullptr; }
   
   virtual const SchurRing *cast_to_SchurRing() const { return 0; }
   virtual SchurRing *cast_to_SchurRing() { return 0; }

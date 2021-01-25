@@ -135,22 +135,23 @@ set(CPPONLYFILES
 # these files all have .hpp and .cpp files
 # MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
-	myalloc
-	matrix-ncbasis
-	M2FreeAlgebraQuotient
-	M2FreeAlgebra
-	NCAlgebras/Word
-	NCAlgebras/NCReduction
-	NCAlgebras/FreeAlgebraQuotient
-	NCAlgebras/FreeAlgebra
-	NCAlgebras/FreeMonoid
-	NCAlgebras/WordTable
-	NCAlgebras/SuffixTree
-	NCAlgebras/NCGroebner
-	NCAlgebras/NCF4
-	NCAlgebras/OverlapTable
-	Polynomial
-	monomial-collection
+  myalloc
+  matrix-ncbasis
+  M2FreeAlgebraQuotient
+  M2FreeAlgebra
+  NCAlgebras/Word
+  NCAlgebras/NCReduction
+  NCAlgebras/FreeAlgebraQuotient
+  NCAlgebras/FreeAlgebra
+  NCAlgebras/FreeMonoid
+  NCAlgebras/WordTable
+  NCAlgebras/SuffixTree
+  NCAlgebras/NCGroebner
+  NCAlgebras/NCF4
+  NCAlgebras/OverlapTable
+  NCResolutions/nc-res-computation
+  Polynomial
+  monomial-collection
   Eschreyer
   GF
   LLL
