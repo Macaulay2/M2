@@ -78,6 +78,8 @@ set(HPPONLYFILES
   smat.hpp
   stdinc-m2.hpp
   style.hpp
+  f4/f4-types.hpp
+  f4/memblock.hpp
   schreyer-resolution/res-memblock.hpp
   schreyer-resolution/res-monomial-types.hpp
   schreyer-resolution/res-schreyer-order.hpp
@@ -271,11 +273,9 @@ set(SRCLIST
   f4/f4-mem
   f4/f4-monlookup
   f4/f4-spairs
-  f4/f4-types
   f4/f4
   f4/gausser
   f4/hilb-fcn
-  f4/memblock
   f4/monhashtable
   f4/moninfo
   f4/ntuple-monomial
