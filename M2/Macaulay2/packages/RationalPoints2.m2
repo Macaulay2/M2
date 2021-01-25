@@ -3,8 +3,8 @@
 -------------------------------------------------------------------------------
 newPackage(
     "RationalPoints2",
-    Version => "0.3",
-    Date => "Jan 24, 2021",
+    Version => "0.31",
+    Date => "Jan 25, 2021",
     Authors => { {Name => "Jieao Song", Email => "jieao.song@imj-prg.fr"} },
     Headline => "find the rational points on a variety",
     Keywords => {"Commutative Algebra"},
@@ -36,6 +36,8 @@ newPackage(
 -- * If we get a 0-dimensional ideal with relative small degree, we again use
 -- the eliminant to solve the system.
 -------------------------------------------------------------------------------
+-- we use the `SwitchingFields` package to handle finite field extensions
+needsPackage "SwitchingFields";
 export{"rationalPoints", "Amount"}
 -------------------------------------------------------------------------------
 -- rings: a list of polynomial rings in increasing variable numbers
@@ -97,7 +99,7 @@ zeros := (coeffs) -> (
         k' := last k.baseRings;
         R = k'(monoid[y]);
         y = R_0;
-        p = sum apply(#coeffs, i->sub(coeffs_i, k')*y^i);
+        p = sum apply(#coeffs, i->(map(k',k,gens k')) coeffs_i * y^i);
         comps := select(decompose(ideal p, Strategy=>"Legacy"), c->(degree c == degree k'));
         return (c->sub(getValue_R (gens c)_(0,0), k)) \ comps;
     );
@@ -197,22 +199,23 @@ findPoints(Ideal) := opts -> I -> (
     );
 );
 -------------------------------------------------------------------------------
--- the following is based on https://www.math.tamu.edu/~sottile/research/ps/realroots.m2
--- written by Dan Grayson & Frank Sottile
--- computes the eliminant (up to multiplicity) of an element h in a zero
--- dimension ring A=R/I
--- takes in an element h and a univariate polynomial ring S
--- returns the characteristic polynomial of the action of h on A, as an element
--- of S
+-- we use the Stickelberger eigenvalue strategy to compute the eliminant for a
+-- 0-dimensional ideal
+-- this implementation runs faster than the one by Dan Grayson & Frank Sottile
+-- available at https://www.math.tamu.edu/~sottile/research/ps/realroots.m2
 --
-charPoly = (h, S) -> (
-    A := ring h;
-    assert(dim A == 0);
-    b := basis A;
-    k := coefficientRing A;
-    getConst := M -> matrix \\ (row->(row / coefficient_(1_A))) \ entries M;
-    Mh := getConst contract(transpose b, h*b);
-    return det(S_0 - Mh ** S);
+-- takes in the ideal I and a univariate polynomial ring S
+-- returns the characteristic polynomial of the multiplication of the first
+-- coordinate on R/I, as an element of S
+--
+eliminant = (I, S) -> (
+    assert(dim I == 0);
+    R := ring I;
+    x := gens R;
+    b := (map(R, R/I, x)) basis(R/I);
+    getConst := x -> first entries b / (bi -> coefficient(bi, x));
+    M := matrix \\ getConst \ first entries (x_0 * b % I);
+    return det(S_0 - M ** S);
 );
 -------------------------------------------------------------------------------
 -- `findPoints` for 0-dimensional ideals
@@ -227,7 +230,8 @@ findPoints0dim(Ideal) := opts -> I -> (
     n := #x;
     -- using the eliminant to find the possible values
     S := rings_1;
-    g := charPoly(sub(x_0, R/I), S);
+    I = ideal gens gb I;
+    g := eliminant(I, S);
     coeffs := apply((degree g)_0+1, i->coefficient(S_0^i, g));
     possibleValues := zeros coeffs;
     R' := rings_(n-1);
@@ -238,7 +242,7 @@ findPoints0dim(Ideal) := opts -> I -> (
     ) else (
         result := if opts.Amount then 0 else {};
         for v in possibleValues do (
-            I' := (map(R', R, {v}|x)) I;
+            I' := ideal gens gb (map(R', R, {v}|x)) I;
             if degree I' == 1 then ( -- for a single point `linearSolve` is faster
                 if opts.Amount then result = result + 1
                 else result = result | (x->{v}|x) \ linearSolve I';
@@ -286,7 +290,7 @@ findProjPoints(Ideal) := opts -> I -> (
 rationalPoints = method(Options => {Projective=>false, Amount=>false});
 rationalPoints(Ideal) := opts -> I -> (
     R := ring I;
-    if not isPolynomialRing R then error "expect a polynomial ring"; -- sanity check
+    if not isPolynomialRing R then error "expect I to be an ideal of a polynomial ring"; -- sanity check
     k := coefficientRing R;
     if not isField k then error "the coefficient ring is not a field"; -- sanity check
     if char k > 0 then els = listFieldElements k;
@@ -318,7 +322,7 @@ rationalPoints(Ideal) := opts -> I -> (
     -- enumeration of points and post-processing
     result := null;
     if opts.Projective then ( -- projective case
-        if not isHomogeneous I then error "not a homogeneous ideal"; -- sanity check
+        if not isHomogeneous I then error "I is not a homogeneous ideal"; -- sanity check
         result = findProjPoints(I, Amount=>opts.Amount);
         if unused > 0 then ( -- reconstruction
             if opts.Amount then result = result*(#els)^unused+((#els)^unused-1)//(#els-1)
@@ -345,17 +349,23 @@ rationalPoints(Ideal) := opts -> I -> (
 rationalPoints(Ring, Ideal) := opts -> (k, I) -> (
     if isField k then (
         R := ring I;
-        if not isPolynomialRing R then error "expect a polynomial ring"; -- sanity check
+        if not isPolynomialRing R then error "expect I to be an ideal of a polynomial ring"; -- sanity check
         k0 := coefficientRing R;
-        if char k0 != char k then error "different characteristics";
-        -- TODO how to correctly do a field extension?
-        if char k0 > 0 and not (isFinitePrimeField k0 or instance(k0, GaloisField) and k0.degree ==1)
-        then error "base field not prime";
-        if char k0 == 0 and k0 =!= QQ then error "base field not prime";
-        x := gens R;
-        I = sub(I, k(monoid[x]));
+        if char k0 != char k then error "the coefficient field has different characteristic than the ideal";
+        if char k0 > 0 then (
+            -- for finite fields, use the package `SwitchingFields` to perform base change
+            try (R', ext) := fieldBaseChange(R, k)
+            else error "the coefficient field is not an extension";
+            I = ext I;
+        ) else ( -- TODO how to correctly do a field extension?
+            if char k0 == 0 and k0 =!= QQ then error "the base field is not prime"
+            else (
+                x := gens R;
+                I = sub(I, k(monoid[x]));
+            );
+        );
         return rationalPoints(I, Amount=>opts.Amount, Projective=>opts.Projective);
-    ) else error "expect a field";
+    ) else error "the coefficient ring is not a field";
 );
 -------------------------------------------------------------------------------
 rationalPoints(AffineVariety) := opts -> X -> (
@@ -413,8 +423,7 @@ Inputs
         ProjectiveVariety@ can also be used
     F:Ring
         the coefficient field; if not specified then it is taken to be the
-        field of definition of {\tt I}, otherwise {\tt I} must be defined over
-        the prime field of {\tt F}
+        field of definition of {\tt I}
     Amount=>Boolean
         whether to only compute the number of rational points.
     Projective=>Boolean
@@ -431,16 +440,16 @@ Description
         by the input ideal {\tt I}. Over a finite field ({\tt ZZ/p} or {\tt GF
         q}), the ideal can have arbitrary dimension.
     Example
-        R = ZZ/5[x,y,z];
-        I = ideal(x^3-y*z, x+y);
+        R = ZZ/5[x,y,z]; I = ideal(x^3-y*z, x+y);
         rationalPoints I
         rationalPoints(Spec(R/I), Amount=>true)
         #rationalPoints_(GF 25) I
     Text
-        Over a number field the ideal must be of dimension 0.
+        Over a number field the ideal must be of dimension 0. We use the
+        Stickelberger eigenvalue strategy. A numerical version is implemented
+        in the package @TO local EigenSolver@.
     Example
-        R = QQ[x,y];
-        I = ideal(x^2+y^2-1,x^3+y^3-1);
+        R = QQ[x,y]; I = ideal(x^2+y^2-1,x^3+y^3-1);
         rationalPoints I
         F = toField(QQ[q]/(q^2+2));
         rationalPoints_F I
@@ -452,8 +461,7 @@ Description
         For example we can take the twisted cubic, which is a smooth rational
         curve so it has q+1 points over a finite field of q elements.
     Example
-        R = ZZ/5[x,y,z,w];
-        I = ideal "xz-y2,xw-yz,yw-z2";
+        R = ZZ/5[x,y,z,w]; I = ideal "xz-y2,xw-yz,yw-z2";
         rationalPoints(I, Projective => true)
         #rationalPoints variety I
         #rationalPoints_(GF 25) variety I
@@ -461,18 +469,17 @@ Description
         Another nice example is the 27 lines on the Fermat cubic surface. Note
         that only 3 of them are defined over the rational numbers.
     Example
-        R = QQ[a,b,c,d];
-        I = ideal(a^3+b^3+c^3+d^3);
+        R = QQ[a,b,c,d]; I = ideal(a^3+b^3+c^3+d^3);
         #rationalPoints variety Fano_1 I
-        F = toField(QQ[w]/(w^2+w+1));
-        #rationalPoints_F variety Fano_1 I
+        needsPackage "Cyclotomic"; F = cyclotomicField 3;
+        rationalPoints_F variety Fano_1 I
+        #oo
     Text
         If only the number of rational points is needed, set {\tt Amount} to
         {\tt true} can sometimes speed up the computation.
     Example
         R = ZZ/101[u_0..u_10];
-        f = sum toList(u_0..u_10);
-        I = ideal f
+        f = sum toList(u_0..u_10); I = ideal f
         time rationalPoints(I, Amount => true)
     Text
         This symbol is provided by the package @TO RationalPoints2@.
@@ -486,42 +493,36 @@ TEST ///
     R = ZZ/5[x_1..x_4];
     I = ideal(x_2^2+x_1*x_2+1, x_1*x_2*x_3*x_4+1);
     assert(#rationalPoints I == 8);
-    k = GF 9;
-    R = k[m,n,j];
-    I = ideal(m+1, n*j);
+    R = GF 9[m,n,j]; I = ideal(m+a, n*j);
     assert(rationalPoints(I,Amount => true) == 17);
-    R = ZZ/13[b,c,d];
-    I = ideal (0_R);
+    R = ZZ/13[b,c,d]; I = ideal (0_R);
     assert(rationalPoints(I,Amount => true) == 2197);
-    R = QQ[x];
-    I = ideal (x^2*(x+1)*(x^2-2));
+    R = QQ[x]; I = ideal (x^2*(x+1)*(x^2-2));
     assert(rationalPoints(I,Amount => true) == 2);
 ///
 -------------------------------------------------------------------------------
 TEST ///
     assert(#rationalPoints Grassmannian(1,3,CoefficientRing=>ZZ/2) == 36);
-    R = ZZ/101[u_0..u_10];
-    I = ideal sum toList(u_0..u_10);
+    R = ZZ/101[u_0..u_10]; I = ideal sum toList(u_0..u_10);
     assert(rationalPoints(I, Amount => true) == 101^10);
-    R = ZZ/101[x,y,z];
-    I = homogenize(ideal(y^2-x^3-x^2), z);
+    R = ZZ/101[x,y,z]; I = homogenize(ideal(y^2-x^3-x^2), z);
     assert(#rationalPoints variety I == 101);
-    R = QQ[x,y];
-    I = ideal(x^2+y^2-1,x^3+y^3-1);
+    R = QQ[x,y]; I = ideal(x^2+y^2-1,x^3+y^3-1);
     F = toField(QQ[q]/(q^2+2));
     assert(#rationalPoints_F I == 4);
+    R = GF 4[x]; I = ideal(x^3 - a);
+    assert(rationalPoints_(GF 64) I / (x -> (x_0)^9 - 1) == toList(3:0));
 ///
 -------------------------------------------------------------------------------
 TEST ///
-    R = QQ[a,b,c,d];
-    I = ideal(a^3+b^3+c^3+d^3);
-    F' = toField(QQ[w]/(w^2+w+1));
-    assert(#rationalPoints_F' variety Fano_1 I == 27);
+    R = QQ[a,b,c,d]; I = ideal(a^3+b^3+c^3+d^3);
+    needsPackage "Cyclotomic"; F = cyclotomicField 3;
+    assert(#rationalPoints_F variety Fano_1 I == 27);
 ///
 -------------------------------------------------------------------------------
 TEST ///
     needsPackage "Points";
-    k = ZZ/101; (m, n) = (10, 2); R = k[x_1..x_n];
+    k = ZZ/101; (m, n) = (15, 2); R = k[x_1..x_n];
     M = random(k^n, k^m);
     mul = toList(1..m) / (i->random(1, 3));
     I = ideal last affineFatPoints(M, mul, R);
