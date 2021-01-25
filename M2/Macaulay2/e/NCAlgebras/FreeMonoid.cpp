@@ -108,18 +108,21 @@ int FreeMonoid::compare(const Monom& m1, const Monom& m2) const
   // is this thread-safe?
   //FreeMonoidLogger::logCompare();
   
+  // compare weights first
   for (int j = 1; j <= mNumWeights; ++j)
-    {
+    {      
       if (m1[j] > m2[j]) return GT;
       if (m1[j] < m2[j]) return LT;
     }
-  
-  int m1WordLen = wordLength(m1);
-  int m2WordLen = wordLength(m2);  
-  if (m1WordLen > m2WordLen) return GT;
-  if (m1WordLen < m2WordLen) return LT;
+
+  // at this point, the weights are the same.
+  // the total length is just mNumWeights + 1 + wordLength, so just
+  // compare the total length (i.e. m1[0] and m2[0]
+  if (m1[0] > m2[0]) return GT;
+  if (m1[0] < m2[0]) return LT;
+
   // at this stage, they have the same weights and word length, so use lex order
-  for (int j = mNumWeights+1; j < m1WordLen + mNumWeights + 1; ++j)
+  for (int j = mNumWeights+1; j < m1.size(); ++j)
     {
       if (m1[j] > m2[j]) return LT;
       if (m1[j] < m2[j]) return GT;
@@ -132,6 +135,7 @@ int FreeMonoid::compare(const Word& w1, const Word& w2) const
 {
   int weight1;
   int weight2;
+
   // compute and compare weights
   for (int i = 0; i < mNumWeights; ++i)
   {
@@ -144,6 +148,7 @@ int FreeMonoid::compare(const Word& w1, const Word& w2) const
     if (weight1 > weight2) return GT;
     if (weight1 < weight2) return LT;
   }
+
   if (w1.size() > w2.size()) return GT;
   if (w1.size() < w2.size()) return LT;
   // at this stage, they have the same weights and word length, so use lex order

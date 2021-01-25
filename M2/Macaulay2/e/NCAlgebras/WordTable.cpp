@@ -57,8 +57,8 @@ void WordTable::subwordPositions(Word word1,
 }
 
 bool WordTable::subwordPosition(Word word1,
-                                 Word word2,
-                                 int& result_start_index)
+                                Word word2,
+                                int& result_start_index)
 // if there exists monomials p, q, such that p*word1*q == word2, then
 // the first position of word1 in word2 is returned in result_start_index
 // and true is returned.  If no match, then false is returned,
