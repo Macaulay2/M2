@@ -6,7 +6,6 @@
 #include "NCAlgebras/NCGroebner.hpp"   // for tryOutMathicCode
 #include "NCAlgebras/Word.hpp"         // for Word
 #include "myalloc.hpp"                 // for StatsAllocator
-#include "stdinc-m2.hpp"               // for make_unique
 #include "ring.hpp"                    // for Ring
 #include "style.hpp"                   // for EQ, LT, GT
 
