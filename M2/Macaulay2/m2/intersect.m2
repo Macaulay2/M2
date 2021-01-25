@@ -28,7 +28,6 @@ eliminationInfo Ring := (cacheValue symbol eliminationInfo) (R -> (
 
 intersect List     :=
 intersect Sequence := -* [same as input type] => *- true >> opts -> L -> (
-    print L;
     if not #L > 0 then error "intersect: expected at least one object";
     -- This will be the type of the result.
     type :=

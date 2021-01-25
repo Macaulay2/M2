@@ -184,6 +184,7 @@ jobs:
       - name: Run Tests using CTest
         if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest' && matrix.compiler == 'clang10'
         run: |
+          set -e
           ./M2 -q --check 1 -e 'exit 0'
           ./M2 -q --check 2 -e 'exit 0'
           ./M2 -q --check 3 -e 'exit 0'
