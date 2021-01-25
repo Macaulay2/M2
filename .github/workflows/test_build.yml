@@ -213,8 +213,9 @@ jobs:
              M2/BUILD/build/include/*
              M2/BUILD/build/libraries/*/build/*/config.log
              # CMake
-             M2/BUILD/build/CMakeFiles/CMakeCache.txt
-             M2/BUILD/build/CMakeFiles/CMake(Error|Output).log
+             M2/BUILD/build/CMakeCache.txt
+             M2/BUILD/build/CMakeFiles/CMakeError.log
+             M2/BUILD/build/CMakeFiles/CMakeOutput.log
              M2/BUILD/build/libraries/*/build/config.log
              # Example errors
              M2/BUILD/build/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
