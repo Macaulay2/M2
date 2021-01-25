@@ -212,7 +212,7 @@ void F4GB::process_column(int c)
 {
   /* If this column has been handled before, return.
      Otherwise, find a GB element whose lead term
-     divides this monomial, and either mark this colum
+     divides this monomial, and either mark this column
      as not an initial element, OR append a row
   */
 

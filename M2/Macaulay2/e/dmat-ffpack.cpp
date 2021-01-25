@@ -7,7 +7,7 @@
     template<class RingType>
     size_t DMat < CoeffRing >::rank(typename enable_if<is_givaro_or_ffpack<RingType>::value >::type* dummy ) const
     {
-        // assert not neccesary because the test is already done by  "enable_if<is_givaro_or_ffpack<RingType>::value >"
+        // assert not necessary because the test is already done by  "enable_if<is_givaro_or_ffpack<RingType>::value >"
         // assert( typeid(CoeffRing) == typeid(M2::ARingZZpFFPACK) || typeid(CoeffRing) == typeid(M2::ARingGFGivaro ));
         std::cout << "Calling rankGF_or_FFPACK" << std::endl;
         ElementType *N = newarray(ElementType, n_rows() * n_cols() );
