@@ -26,11 +26,12 @@ const int SPAIR_DEFERRED = 9;
 */
 class GBComputation : public Computation
 // This is the base type for all Groebner basis and syzygy computations
+// Note: some abstract methods in Computation need also to be defined.
 {
  protected:
   friend class GBProxy;
   GBComputation() {}
-  virtual bool stop_conditions_ok() = 0;
+  ////  bool stop_conditions_ok() override = 0;
   // If the stop conditions in _Stop are inappropriate,
   // return false, and use ERROR(...) to provide an error message.
 
@@ -39,7 +40,7 @@ class GBComputation : public Computation
 
   virtual void remove_gb() = 0;  // Should free all space associated with GB
 
-  virtual GBComputation *cast_to_GBComputation() { return this; }
+  GBComputation *cast_to_GBComputation() override { return this; }
   static GBComputation *choose_gb(const Matrix *m,
                                   M2_bool collect_syz,
                                   int n_rows_to_keep,
@@ -53,13 +54,14 @@ class GBComputation : public Computation
   // Returns NULL if an error occurs
 
   virtual const Ring *get_ring() const = 0;
+
   virtual Computation /* or null */ *set_hilbert_function(const RingElement *h);
   // The default version returns an error saying that Hilbert functions cannot
   // be used.
 
-  virtual void start_computation() = 0;
+  void start_computation() override = 0;
 
-  virtual int complete_thru_degree() const = 0;
+  int complete_thru_degree() const override = 0;
   // The computation is complete up through this degree.
 
   // Recall that the status of the computation is maintained by the Computation
@@ -96,7 +98,7 @@ class GBComputation : public Computation
   // Statistics and spair information //
   //////////////////////////////////////
 
-  virtual void text_out(buffer &o) const;
+  void text_out(buffer &o) const override;
   // This displays statistical information, and depends on the
   // M2_gbTrace value.
 };

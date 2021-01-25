@@ -114,30 +114,6 @@ void intern_res(ResolutionComputation *G)
         stderr, "\n   -- registering res %zd at %p\n", nfinalized, (void *)G);
 }
 //////////////////////////////////////////////////////
-extern "C" void remove_computation(void *p, void *cd)
-{
-  EngineComputation *G = static_cast<EngineComputation *>(p);
-  AO_t nremoved = AO_fetch_and_add1(&comp_nremoved);
-  if (M2_gbTrace >= 3)
-    fprintf(
-        stderr, "\n -- removing engine computation %zd at %p\n", nremoved, G);
-  G->destroy();
-}
-void intern_computation(EngineComputation *G)
-{
-  GC_REGISTER_FINALIZER(G, remove_computation, 0, 0, 0);
-  AO_t nfinalized = AO_fetch_and_add1(&comp_nfinalized);
-  if (M2_gbTrace >= 3)
-    {
-      // -- there is no gettid under Solaris
-      // int tid = static_cast<int>(syscall(SYS_gettid));
-      // fprintf(stderr, "\n   -- thread %d registering gb %zd at %p\n", tid,
-      // nfinalized, (void *)G);
-      fprintf(
-          stderr, "\n   -- registering gb %zd at %p\n", nfinalized, (void *)G);
-    }
-}
-//////////////////////////////////////////////////////
 extern "C" void remove_SchreyerOrder(void *p, void *cd)
 {
   SchreyerOrder *G = static_cast<SchreyerOrder *>(p);
