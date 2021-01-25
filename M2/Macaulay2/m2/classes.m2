@@ -36,8 +36,6 @@ QQ.texMath = ///{\mathbb Q}///
 Ring.synonym = "ring"
 Task.synonym = "task"
 
-uniform = (x) -> same apply(x,class)
-
 -- Now some extra stuff:
 
 Command   \ VisibleList := VisibleList => (f,v) -> apply(v,i -> f i)

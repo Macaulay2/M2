@@ -4,7 +4,7 @@
 export { 
     "DualSpace", "BasePoint", "dualSpace", "PolySpace", "polySpace", "Reduced", "Gens", "Space",
     "reduceSpace",
-    "addition", "isContained"
+    "addition", "intersection", "isContained" 
     }
 
 -------------------------------------------
@@ -69,7 +69,8 @@ isContained (PolySpace,PolySpace) := o -> (S,T) ->
 isContained (DualSpace,DualSpace) := o -> (L,K) ->
     areEqual(L.BasePoint,K.BasePoint,Tolerance=>o.Tolerance) and isContained(L.Space,K.Space,Tolerance=>o.Tolerance)
 
-intersection (PolySpace,PolySpace) := {Tolerance=>1e-6} >> o -> (S,T) -> (
+intersection = method(TypicalValue => PolySpace, Options => {Tolerance=>1e-6})
+intersection (PolySpace,PolySpace) := o -> (S,T) -> (
     (mons,coefs) := coefficients (gens S|gens T);
     Scoefs := submatrix(coefs,(0..dim S-1));
     Tcoefs := submatrix'(coefs,(0..dim T-1));

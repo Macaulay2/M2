@@ -4,8 +4,18 @@ methodstr := PARA { "This function is a method function, defined in the core so 
 
 document { Key => decompose,    methodstr, SeeAlso => { "MinimalPrimes::MinimalPrimes" } }
 document { Key => truncate,     methodstr, SeeAlso => { "Truncations::Truncations" } }
-document { Key => intersection, methodstr, SeeAlso => { "NAGtypes::intersection(PolySpace,PolySpace)" } }
 document { Key => chi,          methodstr }
+
+document {
+    Key => { intersect, (intersect, List), (intersect, Sequence) },
+    Headline => "compute an intersection",
+    PARA {
+	"This function calculates the intersection of a list or sequence of compatible objects."
+	},
+    SeeAlso => {
+	-- add references to intersect methods installed in packages _other than Core_ here
+	}
+    }
 
 document {
      Key => Jacobian,

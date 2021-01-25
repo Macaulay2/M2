@@ -1027,8 +1027,9 @@ doc ///
 
 doc ///
      Key
+          intersection
 	  (intersection,PolySpace,PolySpace)
-	  [(intersection,PolySpace,PolySpace),Tolerance]
+	  [intersection,Tolerance]
      Headline
           Intersection of polynomial spaces
      Usage
