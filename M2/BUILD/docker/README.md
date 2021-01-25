@@ -9,6 +9,7 @@ The `Dockerfile` in this directory creates a container image based on Ubuntu 20.
 - [`fedora`](fedora):   Packaging Macaulay2 for Fedora (.rpm)
 - [`brew`](brew):       Bottling  Macaulay2 for [Homebrew](https://brew.sh/)
 - [`nightly`](nightly): Testing the Nightly Build of Macaulay2
+- [`actions`](actions): Testing the GitHub Actions Build
 
 ## Getting Started
 0. Install Docker and start the daemon.
