@@ -610,13 +610,13 @@ public:
 
     iterator(DegreeZeroMapGenerator& D, int) : mGenerator(D), mColumn(D.numColumns()) {}
 
-    bool operator==(const iterator& sentinel)
+    bool operator==(const iterator& sentinel) const
     {
       // Do we need to check that these refer to the same object?
       return mColumn == sentinel.mColumn;
     }
 
-    bool operator!=(const iterator& sentinel)
+    bool operator!=(const iterator& sentinel) const
     {
       // Do we need to check that these refer to the same object?
       return mColumn != sentinel.mColumn;

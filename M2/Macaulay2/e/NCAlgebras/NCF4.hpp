@@ -10,8 +10,7 @@
 #include "NCAlgebras/OverlapTable.hpp"    // for OverlapTable
 #include "NCAlgebras/WordTable.hpp"       // for Overlap, WordTable
 #include "NCAlgebras/SuffixTree.hpp"      // for experimental suffix tree code
-//#include "VectorArithmetic.hpp"         // for VectorArithmetic, CoeffVector, etc
-#include "VectorArithmetic2.hpp"          // for VectorArithmetic, CoeffVector, etc
+#include "VectorArithmetic.hpp"           // for VectorArithmetic, CoeffVector, etc
 #include "Polynomial.hpp"                 // for Monom, ConstPolyList, Poly
 #include "newdelete.hpp"                  // for VECTOR, our_new_delete
 
@@ -115,7 +114,6 @@ private:
   MonomHashEqual mMonomHashEqual;
   MonomHash mMonomHash;
 
-  // TODO(?): we should change this to have keys 'Word's rather than 'Monom's since its unordered.
   MonomialHash mColumnMonomials;
   MonomialHash mPreviousColumnMonomials;
 
@@ -152,9 +150,9 @@ public:
 
   ~NCF4() { mMonomialSpace.deallocateAll(); mPreviousMonomialSpace.deallocateAll(); }
 
-  const FreeAlgebra& freeAlgebra() const { return mFreeAlgebra; }
+  [[nodiscard]] const FreeAlgebra& freeAlgebra() const { return mFreeAlgebra; }
 
-  const ConstPolyList& currentValue() const
+  [[nodiscard]] const ConstPolyList& currentValue() const
   { 
     return reinterpret_cast<const ConstPolyList&>(mGroebner);
   }
@@ -211,12 +209,11 @@ private:
                            PreRowFeeder* feeder);
 
   void preRowsFromOverlap(const Overlap& o);
-  void parallelPreRowsFromOverlap(const Overlap& o);
 
   std::pair<bool, PreRow> findDivisor(Word w);
 
   void autoreduceByLastElement();
-  ring_elem getCoeffOfMonom(const Poly& f, const Monom& m);
+  ring_elem getCoeffOfMonom(const Poly& f, const Monom& m) const;
 
   template<typename LockType>
   void generalReduceF4Row(int index,
