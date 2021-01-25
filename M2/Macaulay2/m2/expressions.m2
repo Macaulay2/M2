@@ -949,9 +949,9 @@ net MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
     if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
     net1 := if opts.CompactMatrix then toCompactString else net;
+    vbox0 := if opts.Degrees === null then 0 else 1;
+    (hbox,vbox) := if opts.BlockMatrix =!= null then (drop(accumulate(plus,0,opts.BlockMatrix#0),-1),prepend(vbox0,accumulate(plus,vbox0,opts.BlockMatrix#1))) else (false,{vbox0,vbox0+#m#0});
     m = if opts.Degrees =!= null then apply(#m,i->apply(prepend(opts.Degrees#0#i,m#i),net1)) else applyTable(m,net1);
-    (hbox,vbox) := if opts.BlockMatrix =!= null then (drop(accumulate(plus,0,opts.BlockMatrix#0),-1),prepend(0,accumulate(plus,0,opts.BlockMatrix#1))) else (false,{0,#m#0});
-    if opts.Degrees =!= null then vbox = apply(vbox, i -> if i<#m#0 then i+1 else i);
     netList(m,Boxes=>{hbox,vbox},matrixDisplayOptions#(opts.CompactMatrix))
     )
 

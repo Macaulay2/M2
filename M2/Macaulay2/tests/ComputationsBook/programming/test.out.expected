@@ -329,7 +329,7 @@ o65 = matrix {{x, y, z}}
 
 i66 : toExternalString vars R
 
-o66 = map(R^1,R^{{-1}, {-1}, {-1}},{{x,y,z}})
+o66 = map(R^1,R^{{-1}, {-1}, {-1}},{{x, y, z}})
 
 i67 : R = QQ[x,y,z]/(x^3-y)
 
