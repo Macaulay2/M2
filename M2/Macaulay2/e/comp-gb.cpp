@@ -14,45 +14,6 @@
 #include "text-io.hpp"
 #include "finalize.hpp"
 
-/////////////////////////////////////
-// GBBComputation ///////////////////
-/////////////////////////////////////
-GBBComputation *GBBComputation::choose_gb(const Matrix *m,
-                                          M2_bool collect_syz,
-                                          int n_rows_to_keep,
-                                          M2_arrayint gb_weights,
-                                          M2_bool use_max_degree,
-                                          int max_degree,
-                                          int algorithm,
-                                          int strategy,
-                                          int max_reduction_count)
-{
-  return 0;
-}
-
-void GBBComputation::text_out(buffer &o) const
-{
-  o << "-- a raw Groebner basis computation --";
-}
-
-/////////////////////////////////////
-// GroebnerBasis ////////////////////
-/////////////////////////////////////
-const Matrix /* or null */ *GroebnerBasis::get_parallel_lead_terms(
-    M2_arrayint w)
-{
-  ERROR(
-      "Cannot compute parallel lead terms for this kind of Groebner "
-      "computation");
-  return 0;
-}
-
-void GroebnerBasis::text_out(buffer &o) const
-{
-  o << "-- a raw Groebner Basis --";
-}
-/////////////////////////////////////
-
 GBComputation *createF4GB(const Matrix *m,
                           M2_bool collect_syz,
                           int n_rows_to_keep,

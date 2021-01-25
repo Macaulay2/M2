@@ -76,7 +76,6 @@ set(HPPONLYFILES
   ringelem.hpp
   schur-poly-heap.hpp
   smat.hpp
-  stdinc-m2.hpp
   style.hpp
   f4/f4-types.hpp
   f4/memblock.hpp
