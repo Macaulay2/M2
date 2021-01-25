@@ -601,7 +601,7 @@ ExternalProject_Add(build-fflas_ffpack
                       RANLIB=${CMAKE_RANLIB}
                       LIBS=${LA_LIBRARIES}
                       CBLAS_LIBS=${LA_LIBRARIES} # see macros/mkl-check.m4
-                      $<$<BOOL:${OpenMP_FOUND}>:"OMPFLAGS=${OpenMP_CXX_FLAGS} ${OpenMP_CXX_LDLIBS}">
+                      "OMPFLAGS=${OpenMP_CXX_FLAGS} ${OpenMP_CXX_LDLIBS}"
   BUILD_COMMAND     true
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install-data # only headers and fflas-ffpack.pc
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/fflas_ffpack
@@ -972,7 +972,7 @@ ExternalProject_Add(build-normaliz
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-                      $<$<BOOL:${OpenMP_FOUND}>:"OPENMP_CXXFLAGS=${OpenMP_CXX_FLAGS} ${OpenMP_CXX_LDLIBS}">
+                      "OPENMP_CXXFLAGS=${OpenMP_CXX_FLAGS} ${OpenMP_CXX_LDLIBS}"
             COMMAND patch --fuzz=10 --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/normaliz/patch-libtool
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
   INSTALL_COMMAND   ${CMAKE_STRIP} source/normaliz # TODO: for polymake ${MAKE} -j${PARALLEL_JOBS} install-strip
