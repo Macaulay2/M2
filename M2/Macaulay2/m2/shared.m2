@@ -9,6 +9,9 @@ export "decompose"
 protect Jacobian
 export "Jacobian"
 
+intersection = method(Options => true)
+export "intersection"
+
 chi = method()
 export "chi"
 

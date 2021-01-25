@@ -1438,12 +1438,12 @@ intersectRRi(e:Expr):Expr := (
 	     if length(s) > 3 then WrongNumArgs(1,3) else
 	     if length(s) == 2 then (
                when s.0 is x:RRicell do (
-               	       when s.1 is y:RRicell do toExpr(intersection(x.v,y.v))
+               	       when s.1 is y:RRicell do toExpr(intersectRRi(x.v,y.v))
                     	        else WrongArg(1,"a pair of intervals"))
                        else WrongArg("a pair of intervals"))
 	    else when s.0 is prec:ZZcell do (
 	           when s.1 is x:RRicell do (
-                       when s.2 is y:RRicell do toExpr(intersection(x.v,y.v,toULong(prec.v)))
+                       when s.2 is y:RRicell do toExpr(intersectRRi(x.v,y.v,toULong(prec.v)))
                                 else WrongArg(1,"a pair of intervals"))
 	       else WrongArg(1,"a pair of intervals"))
 	    else WrongArg(1,"a pair of intervals"))
