@@ -49,7 +49,11 @@ find_package(AtomicOps	REQUIRED QUIET) # See FindAtomicOps.cmake
 #   OpenMP	libomp-dev	libomp-devel	libomp
 #   TBB		libtbb-dev	tbb-devel	tbb
 
-find_package(OpenMP)
+if(WITH_OMP)
+  find_package(OpenMP REQUIRED)
+else()
+  find_package(OpenMP)
+endif()
 foreach(lang IN ITEMS C CXX)
   foreach(_dir IN LISTS OpenMP_${lang}_INCLUDE_DIRS)
     set(OpenMP_${lang}_FLAGS "${OpenMP_${lang}_FLAGS} -I${_dir}")
