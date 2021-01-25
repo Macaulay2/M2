@@ -3,7 +3,7 @@
 #include "text-io.hpp"                      // for emit_wrapped
 #include "NCAlgebras/FreeAlgebra.hpp"       // for FreeAlgebra
 #include "NCAlgebras/OverlapTable.hpp"      // for OverlapTable
-#include "VectorArithmetic2.hpp"            // for VectorArithmetic
+#include "VectorArithmetic.hpp"             // for VectorArithmetic
 #include "NCAlgebras/WordTable.hpp"         // for Overlap, WordTable
 #include "buffer.hpp"                       // for buffer
 #include "engine-exports.h"                 // for M2_gbTrace

@@ -926,7 +926,7 @@ kk = ZZ/32003
 R = kk<|x,y,z,w|>
 I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x}
 -- Should be 10 gens, 108 rows in last matrix, 35, 61 new gb elts
-I = ideal I_*; elapsedTime Igb = NCGB(I, 13, Strategy=> "F4Parallel");
+I = ideal I_*; elapsedTime Igb = NCGB(I, 11, Strategy=> "Naive");
 while (true) do (
     I = ideal I_*; elapsedTime Igb = NCGB(I, 6, Strategy=> "F4Parallel");
     assert(#(flatten entries Igb) == 18)
@@ -1532,11 +1532,29 @@ assert(0 == transpose((transpose d8')*(transpose d7')))
 assert(0 == transpose((transpose d9')*(transpose d8')))
 assert(0 == transpose((transpose d10')*(transpose d9')))
 
+-------------------------------
 -- BAD BUG!
+-- ../../m2/matrix2.m2:323:71-349:40: --source code:
+-- addHook((quotient, Matrix, Matrix), Strategy => Default, (opts, f, g) -> (
+-- under isQuotient(ZZ,ring target f), solve(g,f) returns null and is not handled
+-- correctly.
 restart
+errorDepth = 0
 M = sub(matrix {{0},{1}},ZZ/32003)
 N = sub(matrix {{1},{0}},ZZ/32003)
+m = mutableMatrix(M,Dense=>true)
+n = mutableMatrix(N,Dense=>true)
+solve(m,n)
+debug Core
+rawLinAlgSolve(raw m, raw n)
 M // N
+M = sub(matrix {{0},{1}},ZZ)
+N = sub(matrix {{1},{0}},ZZ)
+M // N
+M = sub(matrix {{0},{1}},QQ)
+N = sub(matrix {{1},{0}},QQ)
+M // N
+-------------------------------
 
 -- cool example
 restart

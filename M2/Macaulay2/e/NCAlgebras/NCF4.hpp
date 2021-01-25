@@ -8,7 +8,7 @@
 #include "NCAlgebras/OverlapTable.hpp"    // for OverlapTable
 #include "NCAlgebras/WordTable.hpp"       // for Overlap, WordTable
 #include "NCAlgebras/SuffixTree.hpp"      // for experimental suffix tree code
-#include "VectorArithmetic2.hpp"          // for VectorArithmetic, CoeffVector, etc
+#include "VectorArithmetic.hpp"           // for VectorArithmetic, CoeffVector, etc
 #include "Polynomial.hpp"                 // for Monom, ConstPolyList, Poly
 #include "newdelete.hpp"                  // for VECTOR, our_new_delete
 

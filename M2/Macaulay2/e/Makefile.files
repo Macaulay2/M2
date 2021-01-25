@@ -13,7 +13,6 @@ INTERFACE = \
 	matrix-ncbasis \
 	M2FreeAlgebraQuotient \
 	M2FreeAlgebra \
-	VectorArithmetic \
 	NCAlgebras/Word \
 	NCAlgebras/NCReduction \
 	NCAlgebras/FreeAlgebraQuotient \
@@ -207,7 +206,7 @@ COMMANDS = \
 	franzi-interface
 
 NAMES_H = \
-	VectorArithmetic2 \
+	VectorArithmetic \
 	MemoryBlock \
 	NCAlgebras/Range \
 	ringelem \
