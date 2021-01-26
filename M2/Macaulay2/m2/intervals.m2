@@ -38,47 +38,18 @@ span(RRi,RRi) := opts -> (N,M) -> (
     else if opts.Precision < 0 then toRRi(min(left N,left M),max(right N,right M))
     else toRRi(opts.Precision,min(left N,left M),max(right N,right M)))
 
-for A in {ZZ,QQ,RR,RRi} do
-for B in {ZZ,QQ,RR,RRi} do
-isSubset(A,B) := (N,M) -> subsetRRi(N,M);
+for A in {ZZ,QQ,RR} do
+member(A,RRi) := (N,M) -> subsetRRi(N,M);
 
--*
-intersection = method(Options => true)
-for A in {ZZ,QQ,RR} do (
-intersection(RRi, A) := {Precision => -1} >> opts -> (N,M) -> (
-    if isSubset(M,N) then interval(opts,M)
-    else interval(1,0,Precision=>precision N));
-intersection(A, RRi) := {Precision => -1} >> opts -> (N,M) -> intersection(M,N))
+isSubset(RRi,RRi) := (N,M) -> subsetRRi(N,M);
 
 intersection(RRi,RRi) := {Precision => -1} >> opts -> (N,M) -> (
     if opts.Precision < 0 then intersectRRi(N,M)
     else intersectRRi(opts.Precision,N,M))
-*-
 
-intersectRRiNumber := (opts, N, M) -> (
-    if any({ZZ, QQ, RR}, T -> instance(M, T)) then (
-	if isSubset(M, N)
-	then interval(opts, M)
-	else interval(1, 0, Precision => precision N))
-    else error("intersect: cannot intersect " | indefinite synonym RRi | " and " | indefinite synonym class M))
+intersect RRi := RRi => { Precision => -1 } >> opts -> identity
 
 -- see (intersect, Sequence) in intersect.m2
-RRi.intersect = { Precision => -1 } >> opts -> L -> (
-    -- TODO: can this also be implemented for a longer list or sequence?
-    -- in that case also implement intersect for a single RRi (and other Numbers?)
-    if #L != 2 then error "intersect: expected two numbers";
-    (N, M) := L;
-    if instance(N, RRi) and instance(M, RRi) then (
-	if opts.Precision < 0
-	then intersectRRi(N, M)
-	else intersectRRi(opts.Precision, N, M))
-    else if instance(N, RRi) then intersectRRiNumber(opts, N, M)
-    else if instance(M, RRi) then intersectRRiNumber(opts, M, N)
-    else error("intersect: expected at least one " | synonym RRi))
+RRi.intersect = { Precision => -1 } >> opts -> L -> fold(L, (N, M) -> intersection(N, M, opts))
 
--- Note: the method intersect is defined with Dispatch => Thing, which means that
--- RRi.intersect is mainly called via (intersect, List) or (intersect, Sequence).
--- These two lines only serve to install methods for the purpose of documentation.
--- They can be safely removed otherwise.
-intersect(RRi, RRi) := RRi.intersect
-scan({ZZ, QQ, RR}, T -> intersect(T, RRi) := intersect(RRi, T) := RRi.intersect)
+isEmpty RRi := Boolean => isEmptyRRi

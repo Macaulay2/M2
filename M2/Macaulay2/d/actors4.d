@@ -1360,11 +1360,11 @@ midpointRR(e:Expr):Expr := (
         else WrongArg("expected an interval"));
 setupfun("midpoint",midpointRR);
                                                      
-isEmpty(e:Expr):Expr := (
+isEmptyRRi(e:Expr):Expr := (
      when e
         is x:RRicell do toExpr(isEmpty(x.v))
         else WrongArg("expected an interval"));
-setupfun("isEmpty",isEmpty);
+setupfun("isEmptyRRi",isEmptyRRi);
                                                      
 subsetRRi(e:Expr):Expr := (
      when e is s:Sequence do (
@@ -1430,7 +1430,7 @@ sameRRi(e:Expr):Expr := (
                 else WrongArg(1,"a pair of integral, rational, real numbers or intervals")) else
             WrongArg(1,"a pair of integral, rational, real numbers or intervals"))
          else WrongArg(1,"a pair of integral, rational, real numbers or intervals"));
-setupfun("sameRRi",sameRRi);
+setupfun("sameInterval",sameRRi);
                                                      
 intersectRRi(e:Expr):Expr := (
     when e
@@ -1438,12 +1438,12 @@ intersectRRi(e:Expr):Expr := (
 	     if length(s) > 3 then WrongNumArgs(1,3) else
 	     if length(s) == 2 then (
                when s.0 is x:RRicell do (
-               	       when s.1 is y:RRicell do toExpr(intersection(x.v,y.v))
+               	       when s.1 is y:RRicell do toExpr(intersectRRi(x.v,y.v))
                     	        else WrongArg(1,"a pair of intervals"))
                        else WrongArg("a pair of intervals"))
 	    else when s.0 is prec:ZZcell do (
 	           when s.1 is x:RRicell do (
-                       when s.2 is y:RRicell do toExpr(intersection(x.v,y.v,toULong(prec.v)))
+                       when s.2 is y:RRicell do toExpr(intersectRRi(x.v,y.v,toULong(prec.v)))
                                 else WrongArg(1,"a pair of intervals"))
 	       else WrongArg(1,"a pair of intervals"))
 	    else WrongArg(1,"a pair of intervals"))

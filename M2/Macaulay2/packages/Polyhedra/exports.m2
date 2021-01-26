@@ -18,7 +18,6 @@ export {
    "facets",
    "Fan", 
    "PolyhedralComplex", 
-   "intersection", 
    "fan", 
    "fanFromGfan",
    "addCone", 
