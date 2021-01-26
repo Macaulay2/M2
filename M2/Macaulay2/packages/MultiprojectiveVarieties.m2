@@ -1636,7 +1636,7 @@ Outputs => {
 ZZ => {"the ",TEX///$i$///,"-th projective degree of ",TT"Phi"}},
 PARA{"This is calculated by means of the inverse image of an appropriate random subvariety of the target."},
 EXAMPLE {
-"Phi = last graph multirationalMap rationalMap ideal projectiveVariety({1},{4},ZZ/300007);",
+"Phi = last graph rationalMap projectiveVariety({1},{4},ZZ/300007);",
 "for i in {4,3,2,1,0} list time multidegree(i,Phi)",
 "time assert(oo == multidegree Phi)"},
 SeeAlso => {(multidegree,MultirationalMap),(projectiveDegrees,RationalMap),(degree,MultirationalMap,Option),(symbol ^*,MultirationalMap)},
@@ -1963,7 +1963,7 @@ Usage => "show Phi",
 Inputs => {"Phi" => MultirationalMap}, 
 Outputs => {Net => {"a net of ",TT"Phi"}},
 EXAMPLE { 
-"Phi = inverse first graph last graph multirationalMap rationalMap ideal projectiveVariety({1},{3},ZZ/33331)",
+"Phi = inverse first graph last graph rationalMap projectiveVariety({1},{3},ZZ/33331)",
 "time describe Phi",
 "show Phi"},
 SeeAlso => {(describe,MultirationalMap)}}
@@ -1975,7 +1975,7 @@ Usage => "degreeSequence Phi",
 Inputs => {"Phi" => MultirationalMap}, 
 Outputs => {List => {"the list of the degree sequences for the rational maps returned by ",TO2{(factor,MultirationalMap),"factor"},TT" Phi","."}},
 EXAMPLE { 
-"Phi = inverse first graph last graph multirationalMap rationalMap ideal projectiveVariety({1},{3},ZZ/33331);",
+"Phi = inverse first graph last graph rationalMap projectiveVariety({1},{3},ZZ/33331);",
 "degreeSequence Phi"},
 SeeAlso => {(factor,MultirationalMap)},
 References => {HREF{"https://www.sciencedirect.com/science/article/pii/S0021869304001930","Cremona transformations and some related algebras"},", by A. Simis."}}
@@ -1989,7 +1989,7 @@ Inputs => {"Phi" => MultirationalMap},
 Outputs => {{"a description of ",TT"Phi"}},
 PARA{TT"? Phi"," is a lite version of ",TT"describe Phi",". The latter has a different behavior than ",TO (describe,RationalMap),", since it performs computations."},
 EXAMPLE {
-"Phi = multirationalMap graph rationalMap ideal projectiveVariety({1},{4},ZZ/65521);",
+"Phi = multirationalMap graph rationalMap projectiveVariety({1},{4},ZZ/65521);",
 "time ? Phi",
 "image Phi;",
 "time ? Phi",
@@ -2006,7 +2006,7 @@ Inputs => {"X" => MultiprojectiveVariety},
 Outputs => {{"a description of ",TT"X"}},
 PARA{TT"? X"," is a lite version of ",TT"describe X","."},
 EXAMPLE {
-"X = source graph multirationalMap rationalMap ideal projectiveVariety({1},{3},ZZ/65521);",
+"X = source graph rationalMap projectiveVariety({1},{3},ZZ/65521);",
 "? X",
 "describe X",
 "? image segre X"},
@@ -2030,7 +2030,7 @@ Ring => "K" => {"the new coefficient ring (which must be a field)"}},
 Outputs => {MultirationalMap => {"a multi-rational map defined over ",TT"K",", obtained by coercing the coefficients of the multi-forms defining ",TT"Phi", " into ",TT"K"}}, 
 PARA {"It is necessary that all multi-forms in the old coefficient ring ",TT"F"," can be automatically coerced into the new coefficient ring ",TT"K","."},
 EXAMPLE {
-"Phi = inverse first graph rationalMap ideal projectiveVariety({2},{2},QQ);",
+"Phi = inverse first graph rationalMap projectiveVariety({2},{2},QQ);",
 "describe Phi",
 "K = ZZ/65521;",
 "Phi' = Phi ** K;",
@@ -2212,7 +2212,7 @@ assert(G * G' == 1 and G' * G == 1 and G' * F == Phi^-1)
 ///
 
 TEST///
-Phi = last graph multirationalMap rationalMap ideal projectiveVariety({1},{4},ZZ/300007);
+Phi = last graph rationalMap projectiveVariety({1},{4},ZZ/300007);
 assert(multidegree(,Phi) == multidegree Phi)
 degree(Phi,Strategy=>"random point")
 R = ZZ/33331[x_0..x_4];
