@@ -12,8 +12,9 @@ RUN apt-get update && \
     apt-get update && apt-get install -y autoconf ccache libtool lintian ninja-build python yasm && apt-get clean
 
 # Libraries we require
-RUN apt-get install -y libopenblas-dev libxml2-dev libreadline-dev libgdbm-dev libboost-regex-dev libboost-stacktrace-dev && \
-    apt-get clean # libomp-dev libtbb-dev
+RUN apt-get install -y libopenblas-dev libxml2-dev libreadline-dev libgdbm-dev \
+	libboost-regex-dev libboost-stacktrace-dev libomp-dev libtbb-dev && \
+	apt-get clean
 
 # This is a dependency that we should get rid of
 RUN apt-get install -y libatomic-ops-dev && apt-get clean

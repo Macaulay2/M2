@@ -577,7 +577,6 @@ _ADD_COMPONENT_DEPENDENCY(libraries givaro mp GIVARO_FOUND)
 # https://linbox-team.github.io/fflas-ffpack/
 # NOTE: fflas_ffpack is just header files, so we don't build it
 # instead we add an extra autotune target for generating fflas-ffpack-thresholds.h
-# TODO: to make sure AppleClang works with OpenMP see: https://github.com/linbox-team/fflas-ffpack/issues/309
 string(REGEX REPLACE
   "./configure$" "${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/autogen.sh" fflas_ffpack_AUTOGEN "${CONFIGURE}")
 set(fflas_ffpack_LICENSEFILES ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/COPYING)
@@ -588,7 +587,7 @@ ExternalProject_Add(build-fflas_ffpack
   CONFIGURE_COMMAND ${fflas_ffpack_AUTOGEN} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       # --enable-precompilation # build errors
-                      $<$<BOOL:${WITH_OMP}>:--enable-openmp>
+                      $<$<BOOL:${OpenMP_FOUND}>:--enable-openmp>
                       $<$<NOT:$<BOOL:${BUILD_NATIVE}>>:--without-archnative>
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -602,6 +601,7 @@ ExternalProject_Add(build-fflas_ffpack
                       RANLIB=${CMAKE_RANLIB}
                       LIBS=${LA_LIBRARIES}
                       CBLAS_LIBS=${LA_LIBRARIES} # see macros/mkl-check.m4
+                      "OMPFLAGS=${OpenMP_CXX_FLAGS} ${OpenMP_CXX_LDLIBS}"
   BUILD_COMMAND     true
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install-data # only headers and fflas-ffpack.pc
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/fflas_ffpack
@@ -949,8 +949,6 @@ _ADD_COMPONENT_DEPENDENCY(programs nauty "" NAUTY)
 
 # https://www.normaliz.uni-osnabrueck.de/
 # normaliz needs libgmp, libgmpxx, boost and is used by the package Normaliz
-# TODO: what to do when OpenMP is not found
-string(REPLACE " " "%20" normaliz_OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS} ${OpenMP_CXX_LDLIBS}")
 ExternalProject_Add(build-normaliz
   URL               https://github.com/Normaliz/Normaliz/releases/download/v3.8.9/normaliz-3.8.9.tar.gz
   URL_HASH          SHA256=a4c3eda39ffe42120adfd3bda9433b01d9965516e3f98e401b62752a54bee5dd
@@ -974,7 +972,7 @@ ExternalProject_Add(build-normaliz
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-                      OPENMP_CXXFLAGS=${normaliz_OpenMP_CXX_FLAGS}
+                      "OPENMP_CXXFLAGS=${OpenMP_CXX_FLAGS} ${OpenMP_CXX_LDLIBS}"
             COMMAND patch --fuzz=10 --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/normaliz/patch-libtool
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
   INSTALL_COMMAND   ${CMAKE_STRIP} source/normaliz # TODO: for polymake ${MAKE} -j${PARALLEL_JOBS} install-strip

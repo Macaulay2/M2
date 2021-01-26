@@ -2,7 +2,7 @@
 # Net usage:  ~100MB
 # Disk usage: <600MB docker image
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 RUN apt-get update && \
     apt-get install -y software-properties-common apt-transport-https curl git sudo unzip gnupg && \

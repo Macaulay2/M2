@@ -549,8 +549,17 @@ quickIsomorphismTest (Matroid, Matroid) := String => (M, N) -> (
 	if M == N then ( if debugLevel > 0 then print "Matroids are equal"; return "true" );
 	if not(betti ideal M === betti ideal N) then return "false";
 	if min(b, binomial(e, r) - b) <= 1 then ( if debugLevel > 0 then print "At most 1 basis/nonbasis"; return "true" );
-	try ( alarm 2; if not betti res dual ideal M === betti res dual ideal N then return "false" ) else "Could be isomorphic"
-)
+	try (
+	     alarm 2; 
+	     ret := if not betti res dual ideal M === betti res dual ideal N then "false";
+	     alarm 0;
+	     ret
+	     ) 
+	else (
+	     alarm 0;
+	     "Could be isomorphic"
+	     )
+	)
 
 areIsomorphic (Matroid, Matroid) := Boolean => (M, N) -> (
 	testResult := quickIsomorphismTest(M, N);
