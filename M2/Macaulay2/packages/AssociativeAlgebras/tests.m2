@@ -1611,3 +1611,32 @@ I = ideal S
 elapsedTime Igb = NCGB(I, 5, Strategy=>"F4Parallel")
 R = (ambient S)/I; all(7, i -> binomial(i+2,2) == numcols ncBasis(i,R))
 ///
+
+DEVELOPMENT ///
+restart
+debug needsPackage "AssociativeAlgebras"
+kk = QQ; w=2
+kk = frac(QQ[w]/ideal(w^4+1))
+A = kk <|x,y|>
+
+--- BUG!!!
+sub(1/w,A)
+
+B = A/ideal (x*y-w*y*x,x^3,y^3)
+d0 = matrix {{x,y}}
+d1 = rightKernel(d0, DegreeLimit => 10)
+d2 = rightKernel(d1, DegreeLimit => 12)
+d3 = rightKernel(d2, DegreeLimit => 14)
+d4 = rightKernel(d3, DegreeLimit => 16)
+d5 = rightKernel(d4, DegreeLimit => 18)
+d6 = rightKernel(d5, DegreeLimit => 20)
+d7 = rightKernel(d6, DegreeLimit => 22) -- crashes or hangs with frac kk above.  Probably a GC problem somewhere.
+
+A = kk <|x,y,z|>
+B = A/ideal (x*y-w*y*x,x*z-w^2*z*x,y*z+w*z*y,x^3,y^3,z^3)
+d0 = matrix {{x,y,z}}
+d1 = rightKernel(d0, DegreeLimit => 10)
+d2 = rightKernel(d1, DegreeLimit => 12)
+d3 = rightKernel(d2, DegreeLimit => 14)
+d4 = rightKernel(d3, DegreeLimit => 16) -- crashes or hangs with frac kk above.
+///
