@@ -776,6 +776,7 @@ coefficients DiffOp := opts -> D -> (
     matrix{mons}, transpose matrix{coefs}
 )
 support DiffOp := D -> support matrix {keys D}
+degree DiffOp := D -> keys D / degree // max
 
 
 -- instances of ZeroDiffOp are differential operators that
@@ -3174,6 +3175,34 @@ Description
         R = QQ[x,y,z];
         D = diffOp{1_R=> z^2, x^2*y => 2}
         support D
+///
+
+doc ///
+Key
+    (degree, DiffOp)
+Headline
+    degree of the differential part of a differential operator
+Usage
+    degree D
+Inputs
+    D:DiffOp
+Outputs
+    :List
+        the degree or multidegree of the differential monomials
+Description
+    Text
+        Returns the highest degree of a differential monomial.
+        The degrees of the polynomial coefficient is ignored.
+    Example
+        R = QQ[x,y];
+        D = diffOp{x^2*y^5 => x^100, x*y^3 => y^99}
+        degree D
+    Text
+        To accomodate polynomial rings having multigradings, degrees are lists of integers.
+    Example
+        S = QQ[x,y] ** QQ[a,b];
+        D = diffOp{x*a => a-b+x^2, b*y^2 => 1}
+        degree D
 ///
 
 doc ///
