@@ -23,7 +23,7 @@ RUN apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-sta
 	cohomcalg topcom 4ti2 normaliz coinor-csdp nauty lrslib w3c-markup-validator libtbb-dev
 
 # Testing with clang10 compiler
-#RUN apt-get install -y libomp5-10 clang-10 llvm-10 && apt-get clean
+RUN apt-get install -y libomp5-10 clang-10 llvm-10 && apt-get clean
 
 RUN apt-get install -y -q --no-install-recommends mlocate bash-completion && apt-get clean && updatedb
 

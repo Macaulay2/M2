@@ -337,7 +337,7 @@ else()
 endif()
 
 if(FROBBY_FOUND)
-  set(CMAKE_REQUIRED_INCLUDES "${FROBBY_INCLUDE_DIR}")
+  set(CMAKE_REQUIRED_INCLUDES "${FROBBY_INCLUDE_DIR};${MP_INCLUDE_DIRS}")
   # whether frobby has constants::version <0.9.4 or frobby_version >=0.9.4
   # TODO: remove when frobby is updated above 0.9.4 everywhere
   check_cxx_source_compiles([[#include <frobby.h>

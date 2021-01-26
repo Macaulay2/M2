@@ -1,7 +1,7 @@
 include ../Makefile
 
 ## Parameters
-TAG = m2-github-actions-ubuntu-20.04-gcc-9
+TAG = m2-github-actions-ubuntu-20.04-clang-10
 BUILD_DIR = M2/BUILD/build-actions
 BUILD_OPT = -DBLA_VENDOR=Generic -DBUILD_LIBRARIES="Givaro;FFLAS_FFPACK"
 
@@ -10,9 +10,9 @@ define M2_BUILD_SCRIPT
 set -xe
 
 export PATH=/usr/lib/ccache:$$PATH
-#export CC=`which clang-10`
-#export CXX=`which clang++-10`
-#export LIBRARY_PATH=`llvm-config-10 --libdir`
+export CC=`which clang-10`
+export CXX=`which clang++-10`
+export LIBRARY_PATH=`llvm-config-10 --libdir`
 
 #make -j -C M2/M2/BUILD/mahrud
 
