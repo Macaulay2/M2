@@ -7,8 +7,11 @@ chi = method()
 decompose = method(Options => true)
 
 intersect = method(Dispatch => Thing, Options => true)
+intersection = method(Options => true)
 
 truncate = method()
+
+isEmpty = method(TypicalValue => Boolean)
 
 -- symbols
 

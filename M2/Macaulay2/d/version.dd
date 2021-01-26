@@ -28,6 +28,9 @@ header "
 
    #include <boost/version.hpp>
 
+//   #include <mpfr.h>
+//   #include <mpfi.h>
+
    #include <memtailor.h>
    #include <mathic.h>
    #include <mathicgb.h>

@@ -31,7 +31,6 @@ intersect Sequence := -* [same as input type] => *- true >> opts -> L -> (
     if not #L > 0 then error "intersect: expected at least one object";
     -- This will be the type of the result.
     type :=
-    if all(L, l -> instance(l, Number)) then RRi else
     -- TODO: simplify this by either removing MonomialIdeal from top level
     -- or write a function to find a common category for a list of objects
     if all(L, l -> instance(l, Ideal))  then class L#0 else -- either Ideal or MonomialIdeal

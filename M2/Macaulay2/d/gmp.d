@@ -851,7 +851,7 @@ export toRRi(x:RRi,prec:ulong):RRi := (
 
 export toRR(s:string,prec:ulong):RR := (
      z := newRRmutable(prec);
-     Ccode( void,  "mpfr_set_str(",  z,", (char *)",  s, "->array,", "0,", "GMP_RNDN", ")" ); 
+     Ccode( void,  "mpfr_set_str(",  z,", (char *)",  s, "->array,", "10,", "GMP_RNDN", ")" );
      moveToRRandclear(z));
 
 export toRRi(s:string,prec:ulong):RRi := (
@@ -1305,12 +1305,12 @@ export contains (y:RR, x:RRi):bool := Ccode(int,"mpfi_is_inside_fr(",y,",",x,")"
                                     
 export contains (y:RRi, x:RRi):bool := Ccode(int,"mpfi_is_inside(",y,",",x,")") > 0;
                                     
-export intersection (x:RRi, y:RRi):RRi := (
+export intersectRRi (x:RRi, y:RRi):RRi := (
      z := newRRimutable(min(precision0(x),precision0(y)));
      Ccode( void, "mpfi_intersect(", z, ",",  x, ",",  y, ")" );
      moveToRRiandclear(z));
                                     
-export intersection (x:RRi, y:RRi, prec:ulong):RRi := (
+export intersectRRi (x:RRi, y:RRi, prec:ulong):RRi := (
      z := newRRimutable(prec);
      Ccode( void, "mpfi_intersect(", z, ",",  x, ",",  y, ")" );
      moveToRRiandclear(z));
