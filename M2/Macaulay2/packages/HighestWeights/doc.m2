@@ -376,7 +376,7 @@ doc ///
 	       there is a basis of homogeneous weight vectors $\{e_i''\}$ 
 	       of $E$, with $v_i$ the weight of $e_i''$.
 	       Notice that the change of basis from $\{e_i\}$ to $\{e_i''\}$ is
-	       not retuned.
+	       not returned.
 	       
 	       This method implements an algorithm introduced in 
 	       @HREF("http://dx.doi.org/10.1016/j.jsc.2015.05.004","Galetto - Propagating 

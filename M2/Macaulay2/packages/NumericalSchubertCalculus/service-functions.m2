@@ -129,7 +129,7 @@ printTree MutableHashTable := node ->(
 --------------------------------------------------------------------
 --    *** NOT USING THIS FUNCTION ***
 --
---   Frank thinks that this might be a useful alterative to checkIncidenceSolution.
+--   Frank thinks that this might be a useful alternative to checkIncidenceSolution.
 --    However, he has yet to find an instance where checkIncidenceSolution fails (but it should sometime)
 --
 checkNewtonIteration = method()
@@ -166,7 +166,7 @@ checkNewtonIteration (List,List,Sequence) := (Solns, Pblm, kn)->(
 ------------------------
 -- solutionsToAffineCoords
 ------------------------
--- writting the solutions in global coords
+-- writing the solutions in global coords
 -- as a set of solutions in terms of my
 -- favorite coordinate chart:
 -- s = [**||id] the identity on bottom

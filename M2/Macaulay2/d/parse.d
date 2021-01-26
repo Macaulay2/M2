@@ -225,13 +225,14 @@ export newFromCode   := {+newClause:Code,fromClause:Code,position:Position};
 export newOfCode     := {+newClause:Code,ofClause:Code,position:Position};
 export newCode       := {+newClause:Code,position:Position};
 
-export CodeSequence := tarray(Code);
-export sequenceCode := {+x:CodeSequence, position:Position};
-export listCode     := {+y:CodeSequence, position:Position};
-export arrayCode    := {+z:CodeSequence, position:Position};
-export semiCode     := {+w:CodeSequence, position:Position};
-export multaryCode := {+f:multop, args:CodeSequence, position:Position};
-export forCode := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
+export CodeSequence     := tarray(Code);
+export sequenceCode     := {+x:CodeSequence, position:Position};
+export listCode         := {+y:CodeSequence, position:Position};
+export arrayCode        := {+z:CodeSequence, position:Position};
+export angleBarListCode := {+t:CodeSequence, position:Position};
+export semiCode         := {+w:CodeSequence, position:Position};
+export multaryCode      := {+f:multop, args:CodeSequence, position:Position};
+export forCode          := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
 
 export newLocalFrameCode := {+
      frameID:int,
@@ -258,7 +259,7 @@ export Code := (
      or globalSymbolClosureCode or threadSymbolClosureCode or localSymbolClosureCode
      or parallelAssignmentCode 
      or unaryCode or binaryCode or ternaryCode or multaryCode or forCode
-     or sequenceCode or listCode or arrayCode or semiCode
+     or sequenceCode or listCode or arrayCode or angleBarListCode or semiCode
      or newCode or newFromCode or newOfCode or newOfFromCode
      or whileDoCode or whileListCode or whileListDoCode
      or ifCode or tryCode or adjacentCode or functionCode or catchCode
@@ -462,7 +463,7 @@ export HashTable := {+
      mutex:SpinLock
      };
 
---This unfortunately needs to be here as it references Hash Tabe which needs expr.  
+--This unfortunately needs to be here as it references Hash Table which needs expr.  
 
 export m2cfile := Pointer "struct M2File*";	
 
@@ -502,7 +503,7 @@ export file := {+
 	outfd:int,		-- file descriptor or -1
         outisatty:bool,
 	unsyncOutputState:fileOutputSyncState, -- default sync state to use for unsync output
-	 -- Mutex for syncronization and for buffering 
+	 -- Mutex for synchronization and for buffering 
 	 -- Lock before output in sync output mode
 	threadSyncMutex:ThreadMutex,
 	-- C structure for this file that provides for thread support

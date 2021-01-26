@@ -16,9 +16,9 @@ document {
      arithmetic genera of projective scheme ", TT "V"," with homogeneous coordinate
      ring ", TT "R"}
 	  },
-     "Computes the list of succesive linear sectional arithmetic genera, 
+     "Computes the list of successive linear sectional arithmetic genera, 
      where the i-th entry in the list is the arithmetic genus of the i-th
-     succesive generic hyperplane section of ", TT "V", " ", 
+     successive generic hyperplane section of ", TT "V", " ", 
      "(= (-1)^dim-lin-section * (chi(OO_lin-section) - 1)).",
      EXAMPLE {
 	  "R = ZZ/101[x_0..x_4];",
@@ -33,10 +33,10 @@ document {
      Inputs => {"M"
 	  },
      Outputs => {List =>{"of the successive linear sectional
-     arithmetic genera of the succesive generic hyperplane restrictions 
+     arithmetic genera of the successive generic hyperplane restrictions 
      of ", TT "M"}
 	  },
-     "Computes the list of succesive generic linear sectional arithmetic genera, 
+     "Computes the list of successive generic linear sectional arithmetic genera, 
      where the i-th entry in the list is 
      (-1)^dim-support -i  * (chi(M ** OO_lin-section) - 1)).",
      EXAMPLE {
@@ -54,9 +54,9 @@ document {
      Outputs => {List =>{"of the successive linear sectional
      arithmetic genera of ", TT "I"}
           }, 
-     "Computes the list of succesive linear sectional arithmetic genera, 
+     "Computes the list of successive linear sectional arithmetic genera, 
      where the i-th entry in the list is the arithmetic genus of the i-th
-     succesive generic hyperplane section of the zero-locus of ", TT "I", " ",  
+     successive generic hyperplane section of the zero-locus of ", TT "I", " ",  
      "(= (-1)^dim-lin-section * (chi(OO_lin-section) - 1)).",
      PARA{},
      "A complete intersection of type (2,3) in projective fourspace;
@@ -77,9 +77,9 @@ document {
      Outputs => {List => {"of the successive linear sectional
      arithmetic genera of ", TT "V"}
 	  },
-     "Computes the list of succesive linear sectional arithmetic genera, 
+     "Computes the list of successive linear sectional arithmetic genera, 
      where the i-th entry in the list is the arithmetic genus of the i-th
-     succesive generic hyperplane section of ", TT "V", " ", 
+     successive generic hyperplane section of ", TT "V", " ", 
      "(= (-1)^dim-lin-section * (chi(OO_lin-section) - 1)).",
      PARA{},
      "A complete intersection of type (2,3) in projective fourspace;

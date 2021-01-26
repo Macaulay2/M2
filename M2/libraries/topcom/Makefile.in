@@ -4,6 +4,7 @@ URL = http://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 0.17.8
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARFILE = TOPCOM-$(VERSION).tar.gz
+CPPFLAGS += -I$(BUILTLIBPATH)/include/cddlib
 PRECONFIGURE = autoreconf -vif
 LICENSEFILES = COPYING README
 PROGRAMS = src-reg/checkregularity src/points2finetriang src/points2chiro src/chiro2circuits src/chiro2cocircuits \

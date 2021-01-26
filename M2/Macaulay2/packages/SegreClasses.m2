@@ -391,7 +391,7 @@ makeProductRing (List):=(l)->(
 );
 makeProductRing (Ring, Symbol,List):=(kk,x,l)->(
     if not isField(kk) then (
-        <<"The coefficent ring must be a field, using the default field kk=ZZ/32749"<<endl;
+        <<"The coefficient ring must be a field, using the default field kk=ZZ/32749"<<endl;
         kk=ZZ/32749;
     );
     m:=length(l);
@@ -460,7 +460,7 @@ segre (Ideal,Ideal,QuotientRing) :=opts->(X,Y,A) -> (
     projectiveDegreesList := projectiveDegrees(sX,sY);
     if opts.Verbose then <<"Projective degrees= "<<projectiveDegreesList<<endl;
 
-    --build segre class recursivly from Proj Degs
+    --build segre class recursively from Proj Degs
     segreClass:=0_A;
     RHS:=sum(0..dim sX,i->alpha^(dim sY-i)*chowClass(sY)) - sum(projectiveDegreesList);
     basisByCodim := partition(i -> sum(flatten exponents i), IA.basis);
@@ -874,7 +874,7 @@ Node
 	    a multi-homogeneous primary ideal defining a closed subscheme of \PP^{n_1}x...x\PP^{n_m}; @TO makeProductRing@ builds the graded coordinate ring of \PP^{n_1}x...x\PP^{n_m}.
    Outputs
         contSingLoc:Boolean
-	    whether or not the variety X associated to IX is contained in the singular locus of the vareity asssociated to the radical of IY 
+	    whether or not the variety X associated to IX is contained in the singular locus of the variety associated to the radical of IY 
    Description
        Text
            For a subvariety X of \PP^{n_1}x...x\PP^{n_m} and an irreducible subscheme Y of \PP^{n_1}x...x\PP^{n_m} this command tests whether X is contained in the singular locus of the reduced scheme of Y (i.e. the singular locus of the variety defined by the radical of the ideal defining Y).

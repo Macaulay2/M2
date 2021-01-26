@@ -11,19 +11,18 @@ set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
 set(LIBRARIES_LIST MPSOLVE MATHICGB MATHIC MEMTAILOR FROBBY FACTORY FLINT NTL MPFR MP BDWGC LAPACK)
 set(LIBRARY_LIST   READLINE HISTORY GDBM ATOMICOPS)
 
-if(WITH_TBB)
-  append(LIBRARIES_LIST TBB)
-endif()
-
 message(CHECK_START " Checking for existing libraries and programs")
 
 ###############################################################################
 ## Program requirements: (git and bison are checked for elsewhere)
 find_package(PkgConfig	REQUIRED QUIET)
-find_package(Doxygen)
-find_package(Sphinx)
-find_program(MAKE  NAMES make gmake nmake)
+find_program(MAKE  NAMES gmake make)
 find_program(ETAGS NAMES etags)
+
+if(BUILD_DOCS)
+  find_package(Doxygen)
+  find_package(Sphinx)
+endif()
 
 ###############################################################################
 ## Requirement	Debian package	RPM package	Homebrew package
@@ -40,11 +39,10 @@ find_program(ETAGS NAMES etags)
 find_package(Threads	REQUIRED QUIET)
 find_package(LAPACK	REQUIRED QUIET)
 find_package(Boost	REQUIRED QUIET COMPONENTS regex ${Boost_stacktrace})
+# TODO: replace gdbm, see https://github.com/Macaulay2/M2/issues/594
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
-# TODO: replace gdbm with capnproto.org or msgpack.org
-# Alternatively protobuf: https://developers.google.com/protocol-buffers/docs/proto#maps
+# TODO: replace libatomic_ops, see https://github.com/Macaulay2/M2/issues/1113
 find_package(AtomicOps	REQUIRED QUIET) # See FindAtomicOps.cmake
-# TODO: remove libatomic_ops
 
 ###############################################################################
 ## Optional	Debian package	RPM package 	Homebrew package
@@ -63,16 +61,21 @@ foreach(lang IN ITEMS C CXX)
     set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} -L${_libdir} -l${_lib}")
   endforeach()
 endforeach()
-find_package(TBB) # See FindTBB.cmake
+
+if(WITH_TBB)
+  # See FindTBB.cmake
+  find_package(TBB REQUIRED)
+  list(APPEND LIBRARIES_LIST TBB)
+endif()
 
 ###############################################################################
 ## Platform dependent requirements:
 #   readline, history, termcap, ...
 #    (provided by libreadline-dev on Ubuntu and readline )
 
+# TODO: replace these two with libedit, see https://github.com/Macaulay2/M2/issues/825
 find_package(Readline	REQUIRED QUIET) # See FindReadline.cmake
 find_package(History	REQUIRED QUIET) # See FindHistory.cmake
-# TODO: replace Readline with https://github.com/AmokHuginnsson/replxx
 
 ###############################################################################
 ## Multi-precision arithmetic requirements:
@@ -127,7 +130,7 @@ find_package(Factory	4.1.0)
 find_package(MPSolve	3.2.0)
 # TODO: add minimum version checks
 find_package(Frobby	0.9.0)
-find_package(CDDLIB)  # 094h?
+find_package(CDDLIB)  # 0.94m?
 find_package(GTest	1.10)
 find_package(Memtailor	1.0.0)
 find_package(Mathic	1.0.0)
@@ -182,7 +185,7 @@ endif()
 #   Normaliz	affine monoids, lattice polytopes, and rational cones		(needs gmp, nauty, OpenMB)
 #   TOPCOM	triangulations of point configurations and oriented matroids	(needs cddlib)
 
-find_program(4TI2	NAMES	circuits)
+find_program(4TI2	NAMES	circuits 4ti2-circuits 4ti2_circuits)
 find_program(COHOMCALG	NAMES	cohomcalg)
 find_program(GFAN	NAMES	gfan)
 # TODO: library or program?
@@ -190,8 +193,8 @@ find_program(LRSLIB	NAMES	lrs)
 # TODO: check for alternatives as well: sdpa or mosek
 find_program(CSDP	NAMES	csdp)
 find_program(NORMALIZ	NAMES	normaliz)
-find_program(NAUTY	NAMES	dreadnaut)
-find_program(TOPCOM	NAMES	checkregularity)
+find_program(NAUTY	NAMES	dreadnaut nauty-dreadnaut)
+find_program(TOPCOM	NAMES	checkregularity topcom-checkregularity)
 # NOTE: we don't build the following by default, but some packages use them, so
 # we provide targets build-polymake, build-bertini, build-phcpack for building them.
 find_program(POLYMAKE	NAMES	polymake)
@@ -254,12 +257,6 @@ foreach(_program IN LISTS PROGRAM_OPTIONS)
       unset(${_name} CACHE) # Unlike libraries, programs are set in cache
     else()
       # exists on the system
-      # TODO: Make a symbolic link to the existing executable in the programs directory
-      # if(${program} AND NOT ${program} MATCHES ${M2_INSTALL_PROGRAMSDIR})
-      #   get_filename_component(program_name ${${program}} NAME)
-      #   file(CREATE_LINK ${${program}} ${M2_INSTALL_PROGRAMSDIR}/${program_name} SYMBOLIC)
-      # endif()
-      # TODO: alternatively, fix M2 to look for programs on PATH
     endif()
   else()
     # was not found
@@ -327,8 +324,20 @@ if(FACTORY_FOUND)
   check_cxx_source_compiles([[#include <factory/factory.h>
     int main(){Variable x; x = Variable(); std::cout << x;return 0;}]] FACTORY_STREAMIO)
   # whether Prem() from factory is public
+  # TODO: revert cb64eb37 once factory is updated above 4.0.3 everywhere
+  # see https://github.com/Macaulay2/M2/pull/1538#discussion_r537901750
   check_cxx_source_compiles([[#include <factory/factory.h>
     int main(){CanonicalForm p,q; Prem(p,q);return 0;}]] HAVE_FACTORY_PREM)
 else()
   unset(FACTORY_STREAMIO CACHE)
+endif()
+
+if(FROBBY_FOUND)
+  set(CMAKE_REQUIRED_INCLUDES "${FROBBY_INCLUDE_DIR}")
+  # whether frobby has constants::version <0.9.4 or frobby_version >=0.9.4
+  # TODO: remove when frobby is updated above 0.9.4 everywhere
+  check_cxx_source_compiles([[#include <frobby.h>
+    int main(){frobby_version;return 0;}]] HAVE_FROBBY_VERSION)
+else()
+  unset(HAVE_FROBBY_VERSION CACHE)
 endif()

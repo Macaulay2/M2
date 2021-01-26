@@ -64,7 +64,9 @@ getProgramPath = (name, cmds, opts) -> (
     pathsToTry = pathsToTry | opts.AdditionalPaths;
     -- finally, try PATH
     if getenv "PATH" != "" then
-	pathsToTry = join(pathsToTry, separate(":", getenv "PATH"));
+	pathsToTry = join(pathsToTry,
+	    apply(separate(":", getenv "PATH"), dir ->
+		if dir == "" then "." else dir));
     pathsToTry = apply(pathsToTry, addSlash);
     prefixes := {(".*", "")} | opts.Prefix;
     errorCode := 1;

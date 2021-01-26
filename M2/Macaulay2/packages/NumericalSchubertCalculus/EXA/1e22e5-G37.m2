@@ -8,7 +8,7 @@ SchPblm = randomSchubertProblemInstance(
  
 setRandomSeed 1 -- fails: "trackHomotopy: singularity encountered"
 
-setRandomSeed 23 -- fails: "a solution does not fit the expected pattern (numerical error occured)"            
+setRandomSeed 23 -- fails: "a solution does not fit the expected pattern (numerical error occurred)"            
 
 setRandomSeed 23; 
 setDefault(ErrorTolerance=>1e-12) -- fails

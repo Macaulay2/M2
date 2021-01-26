@@ -180,7 +180,7 @@ internalTestModule ( Number, RingElement, Ideal, List ) := o -> (tt, ff, canIdea
     -- fraction divided writes tt = (a/(p^b(p^c-1))
     -- the point is that
     -- tau(\omega, f^t) = (tau( omega, f^{a/(p^c-1)}) * u1^{(p^b-1)/(p-1)} )^{[1/p^b]}
-    --we need to managed the case when ttt = aa/(pp^cc - 1) is huge, we handle this as folows.
+    --we need to managed the case when ttt = aa/(pp^cc - 1) is huge, we handle this as follows.
     -- tau(\omega, ff^ttt) = \tau(\omega, ff^{ttt - floor(ttt)} ) * ff^{floor(ttt)}
     -- we do this because we never want to actually compute ff^{floor(ttt)}
     local aaa;
@@ -264,7 +264,7 @@ internalTestModule ( List, List, Ideal, List ) := o -> ( ttList, ffList, canIdea
                                                         (zz#0)*floor(pp^(maxBs - (zz#1)))*floor( (pp^lcmCs - 1)/(pp^(zz#2) - 1))
                                                  )
                         );
-    --we need to managed the case when ttt = aa/(pp^cc - 1) is huge, we handle this as folows.
+    --we need to managed the case when ttt = aa/(pp^cc - 1) is huge, we handle this as follows.
     -- tau(\omega, ff^ttt) = \tau(\omega, ff^{ttt - floor(ttt)} ) * ff^{floor(ttt)}
     -- we do this because we never want to actually compute ff^{floor(ttt)}
     aaListForCsReduced := apply(aaListForCs, aa -> (aa % (pp^lcmCs - 1)) );

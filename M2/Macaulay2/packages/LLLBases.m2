@@ -966,7 +966,7 @@ document {
   	  "RealFP -- double",
   	  "RealQP -- quad_float (quasi quadruple precision)
              useful when roundoff errors can cause problems",
-	  "RealQP1 -- only availabel in the BKZ variant, uses
+	  "RealQP1 -- only available in the BKZ variant, uses
 	     double precision for the search phase of the BKZ
 	     reduction, and quad_float for the orthogonalization",
   	  "RealXD -- xdouble (extended exponent doubles)
@@ -1124,7 +1124,7 @@ document {
      Key => CohenEngine,
      Headline => "use the original Macaulay2 LLL algorithm",
      TT "CohenEngine", " -- a strategy value for ", TO [LLL,Strategy], " used to specify
-     that the all-integer LLL algortithm from H.Cohen's book (with improvements
+     that the all-integer LLL algorithm from H.Cohen's book (with improvements
 	  by Euchner and Schnorr) should be used.  This is basically the same 
      algorithm as ", TT "Strategy=>NTL", ", but is often outperformed by that
      algorithm."
@@ -1133,7 +1133,7 @@ document {
      Key => CohenTopLevel,
      Headline => "use the Macaulay2 language LLL algorithm",
      TT "CohenTopLevel", " -- a strategy value for ", TO [LLL,Strategy], " used to specify
-     that the all-integer LLL algortithm from H.Cohen's book (with improvements
+     that the all-integer LLL algorithm from H.Cohen's book (with improvements
 	  by Euchner and Schnorr) should be used, as coded in the front-end of Macaulay2.  
      This is basically the same 
      algorithm as ", TT "Strategy=>CohenEngine", ", but is written at top level, so that 

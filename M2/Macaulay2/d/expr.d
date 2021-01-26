@@ -326,10 +326,11 @@ export rawSLProgramClass := newtypeof(rawObjectClass);    -- RawSLProgram
 export rawPointArrayClass := newtypeof(rawObjectClass);    -- RawPointArray
 -- NAG end
 export rawMutableComplexClass := newtypeof(rawObjectClass);	    -- RawMutableComplex
+export angleBarListClass := newtypeof(visibleListClass);
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 
---Error Handleing 
+--Error Handling 
 export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,nullE,false,dummyFrame));
 export buildErrorPacketErrno(msg:string,errnum:int):Expr := buildErrorPacket( msg + ": " + strerror(errnum) );
 

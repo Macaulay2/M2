@@ -643,7 +643,7 @@ isReduced(RootSystem,BasicList) := (R,L) ->
 	b
 	)
 
---check whether the length of the Weyl group element multplied on the left by the reflection in the list is l(w)+length of list
+--check whether the length of the Weyl group element multiplied on the left by the reflection in the list is l(w)+length of list
 isReduced(BasicList,WeylGroupElement) := (L,w) ->
 	(
 	b:=true;
@@ -929,7 +929,7 @@ poincareSeries(RootSystem,Parabolic,RingElement):=(R,P,x)->
 
 HasseDiagram = new Type of BasicList 
 
---(not used anymore, another algorithm below) compute the interval between two Weyl group elements for the Bruhat order, i.e. the set of elements w such that u<=w<=v together with the reflections involved. This is done by finding successively the "cone" of all elements i steps below u and above v until these two cones can intersect (have a row in the same lenght). Whether we go down from u or up from v is decided at each iteration (variable fromtop) according to what seems to have the least number of elements in the last computed row. Then, when the two computed cones arrive at a lenght where they can intersect, one computes if they actually do, and one goes back up (and down) using their intersection finding all elements above this intersection or below it that are in the cones.
+--(not used anymore, another algorithm below) compute the interval between two Weyl group elements for the Bruhat order, i.e. the set of elements w such that u<=w<=v together with the reflections involved. This is done by finding successively the "cone" of all elements i steps below u and above v until these two cones can intersect (have a row in the same length). Whether we go down from u or up from v is decided at each iteration (variable fromtop) according to what seems to have the least number of elements in the last computed row. Then, when the two computed cones arrive at a length where they can intersect, one computes if they actually do, and one goes back up (and down) using their intersection finding all elements above this intersection or below it that are in the cones.
 --intervalBruhat = method()
 --intervalBruhat(WeylGroupElement,WeylGroupElement):= (u,v) ->
 --	(

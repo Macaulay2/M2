@@ -118,7 +118,7 @@ if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       RESULT_VARIABLE GIT_SUBMOD_RESULT)
     if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-      message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+      message(WARNING "git submodule update failed, please checkout submodules manually")
     endif()
   endif()
 endif()
@@ -135,14 +135,19 @@ file(MAKE_DIRECTORY ${M2_INSTALL_LICENSESDIR})
 # See https://cmake.org/cmake/help/latest/module/ExternalProject.html
 
 # http://eigen.tuxfamily.org/
+if(CMAKE_BUILD_TYPE MATCHES "(Debug|Release|RelWithDebInfo)")
+  set(EIGEN_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+else()
+  set(EIGEN_BUILD_TYPE Release)
+endif()
 ExternalProject_Add(build-eigen
-  URL               https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.tar.gz
-  URL_HASH          SHA256=d56fbad95abf993f8af608484729e3d87ef611dd85b3380a8bad1d5cbc373a57
+  URL               https://gitlab.com/libeigen/eigen/-/archive/3.3.9/eigen-3.3.9.tar.bz2
+  URL_HASH          SHA256=0fa5cafe78f66d2b501b43016858070d52ba47bd9b1016b0165a7b8e04675677
   PREFIX            libraries/eigen
   BINARY_DIR        libraries/eigen/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
-                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                    -DCMAKE_BUILD_TYPE=${EIGEN_BUILD_TYPE}
                     -DBUILD_TESTING=${BUILD_TESTING}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                     -DCMAKE_CXX_FLAGS=${CXXFLAGS}
@@ -362,7 +367,6 @@ ExternalProject_Add(build-flint
                     -DCMAKE_CXX_FLAGS=${CXXFLAGS}
                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
                     -DIPO_SUPPORTED=OFF # TODO: because of clang; see https://github.com/wbhart/flint2/issues/644
-                    -DHAVE_TLS=OFF
                     -DWITH_NTL=ON
                     -DWITH_MPIR=${USING_MPIR}
                     # TODO: force SIMD flags off for distribution
@@ -389,13 +393,12 @@ _ADD_COMPONENT_DEPENDENCY(libraries flint "mp;mpfr;ntl" FLINT_FOUND)
 # https://service.mathematik.uni-kl.de/ftp/pub/Math/Singular/Factory/
 # TODO: what is ftmpl_inst.o?
 ExternalProject_Add(build-factory
-  URL               ${M2_SOURCE_URL}/factory-4.1.3.tar.gz
-  URL_HASH          SHA256=d004dd7e3aafc9881b2bf42b7bc935afac1326f73ad29d7eef0ad33eb72ee158
+  URL               https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode/factory-4.2.0.tar.gz
+  URL_HASH          SHA256=b66c4c78847e24b71386a42ea2fb368b721f5cb03966c8c78801f1677c45e6c0
   PREFIX            libraries/factory
   SOURCE_DIR        libraries/factory/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/factory/patch-4.1.3
   CONFIGURE_COMMAND autoreconf -vif &&
                     ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
@@ -431,39 +434,22 @@ if(GFTABLESDIR AND NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/facto
   message(STATUS "Copying gftables from ${GFTABLESDIR}/gftables")
   file(COPY ${GFTABLESDIR}/gftables DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory)
 endif()
-_ADD_COMPONENT_DEPENDENCY(libraries factory "mp;mpfr;ntl;flint" FACTORY_FOUND)
+_ADD_COMPONENT_DEPENDENCY(libraries factory "mp;ntl;flint" FACTORY_FOUND)
 
 
-# https://www.broune.com/frobby/
-# https://github.com/Macaulay2/frobby
-# TODO: to use Frobby as a submodule, it needs to support out-of-tree builds
+# https://github.com/Macaulay2/frobby (previously https://www.broune.com/frobby)
 ExternalProject_Add(build-frobby
-#  GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/frobby/.git
-#  GIT_TAG           HEAD # WIP: 51c3e075
-  URL               https://github.com/Macaulay2/frobby/archive/v0.9.1.tar.gz
-  URL_HASH          SHA256=4bd699ff009973bc2d209ec9abdee33ef09e11de83914046fcc4ce68e7cc25b5
-  DOWNLOAD_NAME     frobby-v0.9.1.tar.gz
   PREFIX            libraries/frobby
-  SOURCE_DIR        libraries/frobby/build
-  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
-  BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND true
-  BUILD_COMMAND     ${MAKE} library -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
-                      GMP_INC_DIR=${MP_INCLUDE_DIRS}
-                      CPPFLAGS=${CPPFLAGS}
-                      CFLAGS=${CFLAGS}
-                      CXXFLAGS=${CXXFLAGS}
-                      LDFLAGS=${LDFLAGS}
-                      CXX=${CMAKE_CXX_COMPILER}
-                      AR=${CMAKE_AR}
-                      OBJDUMP=${CMAKE_OBJDUMP}
-                      STRIP=${CMAKE_STRIP}
-                      RANLIB=${CMAKE_RANLIB}
-  INSTALL_COMMAND   ${CMAKE_COMMAND} -E copy bin/libfrobby.a ${M2_HOST_PREFIX}/lib/libfrobby.a
-          COMMAND   ${CMAKE_COMMAND} -E copy src/frobby.h src/stdinc.h ${M2_HOST_PREFIX}/include/
-          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/frobby
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/frobby
-  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} test
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/frobby
+  BINARY_DIR        libraries/frobby/build
+  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+                    -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
+                    -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
+                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                    -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
+                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                    -DCMAKE_CXX_FLAGS=${CXXFLAGS}
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
@@ -474,8 +460,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries frobby mp FROBBY_FOUND)
 # https://github.com/cddlib/cddlib
 # https://www.inf.ethz.ch/personal/fukudak/cdd_home/
 ExternalProject_Add(build-cddlib
-  URL               https://github.com/cddlib/cddlib/releases/download/0.94k/cddlib-0.94k.tar.gz
-  URL_HASH          SHA256=de7397d7fe32758a6b53453a889ec7619b6c68a15d84eb132421f3d7d457be44
+  URL               https://github.com/cddlib/cddlib/releases/download/0.94m/cddlib-0.94m.tar.gz
+  URL_HASH          SHA256=70dffdb3369b8704dc75428a1b3c42ab9047b81ce039f12f427e2eb2b1b0dee2
   PREFIX            libraries/cddlib
   SOURCE_DIR        libraries/cddlib/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -829,6 +815,7 @@ _ADD_COMPONENT_DEPENDENCY(programs cohomcalg "" COHOMCALG)
 
 # https://users-math.au.dk/~jensen/software/gfan/gfan.html
 # gfan needs cddlib and is used by the packages gfanInterface and StatePolytopes
+# TODO: would gfan benefit from enabling the USEFACTORY option?
 ExternalProject_Add(build-gfan
   URL               ${M2_SOURCE_URL}/gfan0.6.2.tar.gz
   URL_HASH          SHA256=a674d5e5dc43634397de0d55dd5da3c32bd358d05f72b73a50e62c1a1686f10a
@@ -842,11 +829,9 @@ ExternalProject_Add(build-gfan
                       cddnoprefix=yes
                       "GMP_LINKOPTIONS=-L${MP_LIBRARY_DIRS} -lgmp"
                       "GMP_INCLUDEOPTIONS=-I${MP_INCLUDE_DIRS}"
-                      CC=${CMAKE_C_COMPILER}
-                      CXX=${CMAKE_CXX_COMPILER}
                       "OPTFLAGS=${CPPFLAGS} -DGMPRATIONAL -I${CDDLIB_INCLUDE_DIR}"
-                      "CLINKER=${CMAKE_C_COMPILER} ${LDFLAGS} -L${CDDLIB_LIBRARY_DIR}"
                       "CCLINKER=${CMAKE_CXX_COMPILER} ${LDFLAGS} -L${CDDLIB_LIBRARY_DIR}"
+                      "CXX=${CMAKE_CXX_COMPILER}"
   INSTALL_COMMAND   ${CMAKE_STRIP} gfan
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/gfan
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE COPYING ${M2_INSTALL_LICENSESDIR}/gfan
@@ -856,7 +841,7 @@ ExternalProject_Add(build-gfan
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(programs gfan "mp;cddlib;factory" GFAN)
+_ADD_COMPONENT_DEPENDENCY(programs gfan "mp;cddlib" GFAN)
 
 
 # http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html

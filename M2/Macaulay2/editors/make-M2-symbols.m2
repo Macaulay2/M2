@@ -22,7 +22,7 @@ isAlphaNumeric := s -> match("^[[:alnum:]]+$", s)
 isType     := is Type
 isKeyword  := is Keyword
 isFunction := is Function
-isConst    := (name, symb) -> (isAlpha name
+isConst    := (name, symb) -> (isAlphaNumeric name
     and not (isFunction or isType or isKeyword) (name, symb)
     and (symb === symbol null or value symb =!= null))
 
@@ -56,7 +56,7 @@ KEYWORDS  = first \ select(symbols, isKeyword)
 DATATYPES = first \ select(symbols, isType)
 FUNCTIONS = first \ select(symbols, isFunction)
 CONSTANTS = first \ select(symbols, isConst)
-CONSTANTS = CONSTANTS | {"Node", "Item", "Example", "CannedExample", "Pre", "Code", "Tree"} -- SimpleDoc words
+CONSTANTS = CONSTANTS | {"Node", "Item", "Example", "CannedExample", "Pre", "Code", "Tree", "Synopsis"} -- SimpleDoc words
 CONSTANTS = sort CONSTANTS
 STRINGS   = format "///\\\\(/?/?[^/]\\\\|\\\\(//\\\\)*////[^/]\\\\)*\\\\(//\\\\)*///"
 

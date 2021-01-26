@@ -116,7 +116,7 @@ textTag(Point2D,String) := (p,s) -> new TextTag from {p,s}
 
 textTag(Point3D,String) := (p,s) -> new TextTag from {p,s} 
 
---Turning a GraphicPrimitive object into a formated one by specifying options. These options will be passed to the different methods to create pictures in different formats (ex: SVG, etc.) so they are not constrained here because I don't know what graphic formats will be supported in the future. 
+--Turning a GraphicPrimitive object into a formatted one by specifying options. These options will be passed to the different methods to create pictures in different formats (ex: SVG, etc.) so they are not constrained here because I don't know what graphic formats will be supported in the future. 
 formatGraphicPrimitives = method()
 formatGraphicPrimitives(BasicList,HashTable) := (gplist, h) ->
 	(
@@ -937,7 +937,7 @@ doc ///
 	Key
 		(formatGraphicPrimitives,BasicList,HashTable)
 	Headline
-		create a formated graphic primitive object
+		create a formatted graphic primitive object
 	Usage
 		textTag(gplist,h)	
 	Inputs

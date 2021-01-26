@@ -131,7 +131,7 @@ getIndentLevel = str -> (
 	else return level);
     infinity)
 
--- return list of intervals such that the start of all intervals has the same, minimum intentation
+-- return list of intervals such that the start of all intervals has the same, minimum indentation
 -- if empties is true then empty lines split intervals
 splitByIndent = (textlines, empties) -> (
     indents := for n in getIndent \ textlines list (if empties and n === infinity then -1 else n);

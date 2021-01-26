@@ -339,7 +339,7 @@ truncatedSVD = (A,tol) -> (
     )
 
 kernelGens = A -> (
-    -- Kernel up to a precision.  Becomes obselete when M2 gives the
+    -- Kernel up to a precision.  Becomes obsolete when M2 gives the
     -- kernel of a numerical matrix.
     if isExactField A then return gens kernel A;
     tol := HighPrecision;

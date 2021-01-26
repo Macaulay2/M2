@@ -29,45 +29,35 @@ TEST(String, String) := (title, teststring) -> (
 -- check
 -----------------------------------------------------------------------------
 
--- returns false if the inputs or the package are not known to behave well with capture
--- also see the one in examples.m2
-isCapturableTest := (inputs, pkg) -> (
-    not match("no-capture-flag", inputs) -- this flag is really necessary, but only sometimes
-    -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
-    and not match("(end|exit|restart)",                       inputs) -- these commands interrupt the interpreter
-    and not match("(gbTrace|read|run|stderr|stdio|print|<<)", inputs) -- stderr and prints are not handled correctly
-    and not match("([Cc]ommand|schedule|thread|Task)",        inputs) -- remove when threads work more predictably
-    and not match("(installMethod|load|export|newPackage)",   inputs) -- exports may land in the package User
-    and not match("(GlobalAssignHook|GlobalReleaseHook)",     inputs) -- same as above
-    and not match({"ThreadedGB", "RunExternalM2"},     pkg#"pkgname") -- TODO: eventually remove
-    )
+checkmsg := (verb, desc) ->
+    stderr << commentize pad(pad(verb, 10) | desc, 72) << flush;
 
-checkMessage := (verb, n, pkgname, filename, lineno) -> (
-    stderr
-    << commentize(verb, " check(", toString n, ", ", format pkgname, ") from source:") << endl
-    << pad("   " | filename | ":" | lineno - 1 | ":1:", 76)                            << flush)
-
-captureTestResult := (n, pkg, usermode) -> (
+captureTestResult := (desc, teststring, pkg, usermode) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
-    (filename, lineno, teststring) := pkg#"test inputs"#n;
+    if match("no-check-flag", teststring) then (
+	checkmsg("skipping", desc);
+	return true);
+    -- TODO: remove this when capture uses ArgQ
+    if usermode === not noinitfile then
     -- try capturing in the same process
-    if isCapturableTest(teststring, pkg) then (
-	checkMessage("capturing", n, pkg#"pkgname", filename, lineno);
-	(err, output) := capture(teststring, UserMode => false, Package => pkg);
-	if err then printerr "capture failed; trying again in an external process ..." else return true);
+    if isCapturable(teststring, pkg, true) then (
+	checkmsg("capturing", desc);
+	-- TODO: adjust and pass argumentMode, instead. This can be done earlier, too.
+	-- Note: UserMode option of capture is not related to UserMode option of check
+	(err, output) := capture(teststring, PackageExports => pkg, UserMode => false);
+	if err then printerr "capture failed; retrying ..." else return true);
     -- fallback to using an external process
-    checkMessage("running", n, pkg#"pkgname", filename, lineno);
+    checkmsg("running", desc);
     runString(teststring, pkg, usermode))
 
 loadTestDir := pkg -> (
-    if pkg#?"test directory loaded" then return;
     testDir := pkg#"package prefix" |
         replace("PKG", pkg#"pkgname", currentLayout#"packagetests");
     if fileExists testDir then (
         tmp := currentPackage;
         currentPackage = pkg;
         TEST(sort apply(select(readDirectory testDir, file ->
-            match("\\.m2$", file)), test -> testDir | "/" | test),
+            match("\\.m2$", file)), test -> testDir | test),
             FileName => true);
         currentPackage = tmp;
         pkg#"test directory loaded" = true;
@@ -81,29 +71,41 @@ check Package := opts -> pkg -> check(-1, pkg, opts)
 check(ZZ, String)  := opts -> (n, pkg) -> check(n, needsPackage (pkg, LoadDocumentation => true), opts)
 check(ZZ, Package) := opts -> (n, pkg) -> (
     if not pkg.Options.OptionalComponentsPresent then (
-        stderr << "--warning: optional components required for " <<
-            toString pkg << " tests are not present; skipping" << endl;
-        return);
+	printerr("warning: skipping tests; ", toString pkg, " requires optional components"); return);
+    usermode := if opts.UserMode === null then not noinitfile else opts.UserMode;
     --
     use pkg;
     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
+    if not pkg#?"test directory loaded" then loadTestDir pkg;
+    tests := if n == -1 then toList(0 .. pkg#"test number" - 1) else {n};
+    if #tests == 0 then printerr("warning: ", toString pkg,  " has no tests");
     --
-
-    if pkg#"pkgname" == "Core" then loadTestDir(pkg);
-
     errorList := {};
     (hadError, numErrors) = (false, 0);
-    scan(if n == -1 then keys pkg#"test inputs" else {n}, k -> (
-            ret := elapsedTime captureTestResult(k, pkg, if opts.UserMode === null then not noinitfile else opts.UserMode);
-            if ret then errorList = append(errorList, k)));
-    if hadError then error("test", if numErrors > 1 then "s" else "",
-        " #", demark(", ", toString \ errorList),
-        " of package ", toString pkg, " failed",
-        if opts.Verbose then (
-            numTests := if n == -1 then pkg#"test number" else 1;
-            ":" | newline |
-            concatenate(apply(if n == -1 then errorList else {0}, k ->
-                newline | get("!tail " | temporaryDirectory() |
-                toString(temporaryFilenameCounter + 2 * (k - numTests)) |
-                ".tmp")))
-        ) else "");)
+    scan(tests, k -> (
+	    (filename, lineno, teststring) := pkg#"test inputs"#k;
+	    desc := "check(" | toString k | ", " | format pkg#"pkgname" | ")";
+	    ret := elapsedTime captureTestResult(desc, teststring, pkg, usermode);
+	    if not ret then errorList = append(errorList,
+		 (k, temporaryFilenameCounter - 2))));
+    outfile := k -> temporaryDirectory() | toString k | ".tmp";
+    if hadError then (
+	if opts.Verbose then apply(errorList, (j, k) -> (
+		(filename, lineno, teststring) := pkg#"test inputs"#j;
+		stderr << filename << ":" << lineno - 1 << ":1: error:" << endl;
+		printerr get("!tail " | outfile k)));
+	error("test(s) #", demark(", ", toString \ first \ errorList), " of package ", toString pkg, " failed.")))
+
+checkAllPackages = () -> (
+    tmp := argumentMode;
+    argumentMode = defaultMode - SetCaptureErr - SetUlimit -
+	if noinitfile then 0 else ArgQ;
+    fails := for pkg in sort separate(" ", version#"packages") list (
+	stderr << HEADER1 pkg << endl;
+	if runString("check(" | format pkg | ", Verbose => true)",
+	    Core, false) then continue else pkg) do stderr << endl;
+    argumentMode = tmp;
+    if #fails > 0 then printerr("package(s) with failing tests: ",
+	demark(", ", fails));
+    return #fails;
+)

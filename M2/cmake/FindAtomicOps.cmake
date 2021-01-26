@@ -11,12 +11,12 @@
 # Redistribution and use is allowed according to the terms of the BSD license.
 
 find_path(ATOMICOPS_INCLUDE_DIR NAMES atomic_ops.h
-  HINTS /usr/local/opt/libatomic_ops
+  HINTS ${HOMEBREW_PREFIX}/opt/libatomic_ops/include
   PATHS ${INCLUDE_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/include
   )
 
 find_library(ATOMICOPS_LIBRARY NAMES atomic_ops
-  HINTS /usr/local/opt/libatomic_ops
+  HINTS ${HOMEBREW_PREFIX}/opt/libatomic_ops/lib
   PATHS ${LIB_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/lib
   )
 

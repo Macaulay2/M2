@@ -41,7 +41,7 @@ document {
      UL {
 	 LI { "functionality added:",
 	      UL {
-		   LI { "The function ", TO "importFrom", " has been added, for importing individual symbols from another package." },
+		   LI { "The function ", TO importFrom, " has been added, for importing individual symbols from another package." },
 		   LI { "The function ", TO readPackage, " has been added, for retrieving the options in the preamble of a package quickly." },
 		   LI { "The function ", TO hooks, " has been added, for retrieving the list of functions installed as hooks for handling computations of a specific type." },
 		   LI { "The function ", TO baseRing, " has been added, for retrieving the ring from which a ring was formed." },
@@ -52,7 +52,9 @@ document {
 	      },
          LI { "functionality improved:",
               UL {
-		   LI { "The function ", TO "installPackage", " accepts a new argument, ", TO "MakeHTML", "." },
+		   LI { "The function ", TO capture, " is now used for generating most examples and tests." },
+		   LI { "The function ", TO installPackage, " accepts two new argument: ",
+		       TO [installPackage, MakeHTML], " and ", TO [installPackage, MakePDF], ". The PDF output will be improved in a future release." },
 		   LI { "The new optional argument name ", TO "Keywords", " can now be used with packages to specify a list of key words (or phrases),
 			useful for searching and organizing the packages by topic, as seen here: ", TO "packages provided with Macaulay2", "."			
 			},
@@ -72,7 +74,7 @@ document {
 		   LI { "The option ", TO Boxes, " of ", TO netList,
 		       " has been made more flexible to allow customization of the box;",
 		       " it now accepts as input a pair of lists of rows and columns." },
-                   LI { "A brief documentation of various types of objects can be viewed usin ", TO (symbol?, Symbol), "." },
+                   LI { "A brief documentation of various types of objects can be viewed using ", TO (symbol?, Symbol), "." },
                    LI { "The ", TO document, " function now accepts three new options: ", TO "Acknowledgement", ", ",
 		       TO "Contributors", ", and ", TO "References", ". The content of each will appear under a subsection
 		       of the same name in the documentation. Moreover, ", TO "SimpleDoc :: document(String)", " is now a synonym for ",
@@ -95,6 +97,7 @@ document {
 	 	   LI { TO "GraphicalModelsMLE::GraphicalModelsMLE", ", a package by Carlos Amendola, Luis David Garcia Puente, Roser Homs Pons, Olga Kuznetsova, Harshit J Motwani, Elina Robeva, and David Swinarski, for maximum likelihood estimates for graphical statistical models, has been added." },
 	 	   LI { TO "Hadamard::Hadamard", ", a package by Iman Bahmani Jafarloo for Hadamard products of projective subvarieties, has been added." },
      		   LI { TO "MonomialOrbits::MonomialOrbits", ", a package by David Eisenbud and Mike Stillman for orbit representatives of monomial ideals, has been added." },
+		   LI { TO "MultiprojectiveVarieties::MultiprojectiveVarieties", ", a package by Giovanni Staglianò for multi-projective varieties, has been added." },
 	 	   LI { TO "MultiplicitySequence::MultiplicitySequence", ", a package by Justin Chen, Youngsu Kim, and Jonathan Montaño, for computing the multiplicity sequence of an ideal, has been added." },
 	 	   LI { TO "NoetherianOperators::NoetherianOperators", ", a package by Robert Krone, Justin Chen, Marc Harkonen, Yairon Cid-Ruiz, and Anton Leykin, for numerically computing local dual spaces, Hilbert functions, and Noetherian operators, has been added.
 			(The package ", TT "NumericalHilbert", " has been absorbed into this new package." },
@@ -138,6 +141,11 @@ document {
 		       TT "installMinprimes", " routine. A new routine ", TO "MinimalPrimes :: radicalContainment", " has been added, and
 		       the function ", TO "MinimalPrimes :: radical", " is moved to this package.
 		       In addition, partial computations in this package are now cached."
+		       },
+		   LI {
+		      "Version 2.0 of ", TO "InvariantRing :: InvariantRing", " introduces types for different group actions as well as rings of invariants.
+		      It also contains new functionality for computing invariants of finite groups, diagonal actions (tori/abelian groups), and linearly
+		      reductive groups. The code from version 1.1.0 has been updated to work with the new types."
 		       }
 		   }
 	       },
@@ -446,7 +454,7 @@ document {
 	       	    LI { TO "StronglyStableIdeals::StronglyStableIdeals", ", a package by Davide Alberelli and Paolo Lella for studying strongly stable ideals related to Hilbert polynomials, has been added." },
 	       	    LI { TO "SLnEquivariantMatrices::SLnEquivariantMatrices", ", a package by Ada Boralevi, Daniele Faenzi and Paolo Lella for computations related to the paper \"A construction of equivariant bundles on the space of symmetric forms\", has been added." },
 		    LI { TO "CorrespondenceScrolls::CorrespondenceScrolls", ", a package by David Eisenbud, Frank-Olaf Schreyer, and Alessio Sammartano, to compute and analyze examples of correspondence scrolls, has been added." },
-		    LI { TO "NCAlgebra::NCAlgebra", ", a package by Frank Moore, Andrew Conner, and Courtney Gibbons, implementating data types for noncommutative algebras, has been added." },
+		    LI { TO "NCAlgebra::NCAlgebra", ", a package by Frank Moore, Andrew Conner, and Courtney Gibbons, implementing data types for noncommutative algebras, has been added." },
 		    LI { TO "SpaceCurves::SpaceCurves", ", a package by Frank Schreyer, Mike Stillman, and Mengyuan Zhang, for generation of space curves, has been added." },
      	       	    LI { TO "ExteriorIdeals::ExteriorIdeals", ", a package by Marilena Crupi and Luca Amata for manipulating monomial ideals over exterior algebras, has been added." }
 		    }
@@ -1688,7 +1696,7 @@ document {
 			 "The function ", TO "Elimination::eliminate", , " has been fixed.  The function previously quietly assumed a flat polynomial ring,
 			 with no quotient elements, and also quietly assumed that the ring was commutative.  Now error
 			 messages are given when it would have produced incorrect answers, and it handles Weyl and skew 
-			 commutative poly rings correctly.  Addtionally, this function now uses an elimination order 
+			 commutative poly rings correctly.  Additionally, this function now uses an elimination order 
 			 rather than a product order, improving performance in many cases."
 			 },
 		    LI {
@@ -2252,13 +2260,13 @@ document {
      ///,
      PARA ///
      The speed of computation of projective resolutions when the first
-     components of the degrees of the variables are not necesarily positive has
+     components of the degrees of the variables are not necessarily positive has
      been improved.
      ///,
      PARA ///
      The interpreter has been fixed so it more often detects extreme recursion;
      one case was omitted that allowed the machine stack to overflow with a
-     segmenation fault.
+     segmentation fault.
      ///,
      PARA ///
      The function "betti" now returns a new type of object of class BettiTally,

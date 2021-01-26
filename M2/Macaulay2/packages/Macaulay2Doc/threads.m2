@@ -157,7 +157,7 @@ Node
  Outputs
   :
    a new task computing the value of the {\tt f(x)}, or, if {\tt x} is not provided, then of {\tt f()}.
-   Alternatively, the task {\tt t}, created previously with @ TO createTask @, is sheduled for execution.
+   Alternatively, the task {\tt t}, created previously with @ TO createTask @, is scheduled for execution.
  Description
   Text
    The computation proceeds in the background, in a thread.  The status of the task can be observed

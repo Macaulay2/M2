@@ -387,14 +387,6 @@ locate DocumentTag := tag -> (
 -- helpers for the document function
 -----------------------------------------------------------------------------
 
-headline = method(Dispatch => Thing)
-headline Thing := key -> (
-    s := fetchRawDocumentationNoLoad makeDocumentTag key;
-    if s =!= null and s#?Headline then s#Headline)
-headline DocumentTag := tag -> (
-    rawdoc := fetchRawDocumentation getPrimaryTag tag;
-    if rawdoc#?Headline then rawdoc#Headline)
-
 emptyOptionTable := new OptionTable from {}
 getOptionDefaultValues := method(Dispatch => Thing)
 getOptionDefaultValues Symbol   := x -> if value x =!= x then getOptionDefaultValues value x else emptyOptionTable
