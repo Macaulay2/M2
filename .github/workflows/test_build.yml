@@ -219,6 +219,8 @@ jobs:
              M2/BUILD/build/libraries/*/build/config.log
              # Example errors
              M2/BUILD/build/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
+             # Test errors
+             M2/BUILD/build/Macaulay2/tests/*/*.errors
 
       - name: Upload Macaulay2 package for Ubuntu (x86_64)
         if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-20.04' && matrix.compiler == 'clang10' && success()
