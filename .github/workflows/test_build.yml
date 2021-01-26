@@ -48,12 +48,11 @@ jobs:
             compiler: gcc7
             cxx: g++-7
             cc: gcc-7
-          # Uncomment when https://github.com/Macaulay2/M2/issues/1557 is fixed
-          #- build-system: cmake
-          #  os: ubuntu-20.04
-          #  compiler: clang10
-          #  cxx: clang++-10
-          #  cc: clang-10
+          - build-system: cmake
+            os: ubuntu-20.04
+            compiler: clang10
+            cxx: clang++-10
+            cc: clang-10
           # This build tests Clang rather than AppleClang (keep)
           - build-system: cmake
             os: macos-10.15
@@ -152,7 +151,7 @@ jobs:
         if: matrix.build-system == 'cmake'
         run: |
           cmake --build . --target M2-core M2-emacs install-packages
-          if [[ "${{ runner.os }}" == "Linux" ]] && [[ "${{ matrix.compiler }}" == "default" ]]; then
+          if [[ "${{ runner.os }}" == "Linux" ]] && [[ "${{ matrix.compiler }}" == "clang10" ]]; then
               sudo apt-get install -y -q --no-install-recommends dpkg-dev
               echo "GIT_COMMIT=`git describe --dirty --always --match HEAD`" >> $GITHUB_ENV
               cpack -G DEB
@@ -181,7 +180,7 @@ jobs:
 # ----------------------
 
       - name: Run Tests using CTest
-        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'default'
+        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang10'
         run: |
           set -xe
           ./M2 -q --check 1 -e 'exit 0'
@@ -222,7 +221,7 @@ jobs:
              M2/BUILD/build/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
 
       - name: Upload Macaulay2 package for Ubuntu (x86_64)
-        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'default' && success()
+        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang10' && success()
         uses: actions/upload-artifact@v2
         with:
           name: Macaulay2-${{ env.GIT_COMMIT }}-ubuntu-x86_64
