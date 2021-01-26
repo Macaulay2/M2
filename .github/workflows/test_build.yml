@@ -40,7 +40,7 @@ jobs:
           - autotools
         os:
           - ubuntu-20.04
-          - macos-latest
+          - macos-10.15
         compiler:
           - default
         include:
@@ -56,13 +56,13 @@ jobs:
             cc: clang-10
           # This build tests Clang rather than AppleClang (keep)
           - build-system: cmake
-            os: macos-latest
+            os: macos-10.15
             compiler: clang10
             cxx: clang++
             cc: clang
         exclude:
           - build-system: cmake
-            os: macos-latest
+            os: macos-10.15
             compiler: default
 
     steps:
@@ -110,7 +110,7 @@ jobs:
           echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
           if [[ "${{ runner.os }}" == "Linux" ]]
           then echo "/usr/lib/ccache" >> $GITHUB_PATH
-               echo "LIBRARY_PATH=`llvm-config-10 --libdir`" >> $GITHUB_PATH
+               echo "LIBRARY_PATH=`llvm-config-10 --libdir`" >> $GITHUB_ENV
           else echo `brew --prefix ccache`/libexec        >> $GITHUB_PATH
                echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
           fi
@@ -152,7 +152,7 @@ jobs:
         if: matrix.build-system == 'cmake'
         run: |
           cmake --build . --target M2-core M2-emacs install-packages
-          if [[ "${{ matrix.os }}" == ubuntu-20.04 ]] && [[ "${{ matrix.compiler }}" == clang10 ]]; then
+          if [[ "${{ runner.os }}" == "Linux" ]] && [[ "${{ matrix.compiler }}" == "clang10" ]]; then
               sudo apt-get install -y -q --no-install-recommends dpkg-dev
               echo "GIT_COMMIT=`git describe --dirty --always --match HEAD`" >> $GITHUB_ENV
               cpack -G DEB
@@ -181,8 +181,9 @@ jobs:
 # ----------------------
 
       - name: Run Tests using CTest
-        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-20.04' && matrix.compiler == 'clang10'
+        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang10'
         run: |
+          set -xe
           ./M2 -q --check 1 -e 'exit 0'
           ./M2 -q --check 2 -e 'exit 0'
           ./M2 -q --check 3 -e 'exit 0'
@@ -193,7 +194,7 @@ jobs:
           # TODO: add Macaulay2/tests/engine when https://github.com/Macaulay2/M2/issues/1213 is fixed
 
       - name: Run Tests using Autotools
-        if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-20.04' && matrix.compiler == 'default'
+        if: matrix.build-system == 'autotools' && runner.os == 'Linux' && matrix.compiler == 'default'
         run: |
           make check -o check-in-libraries
           make -C Macaulay2/html-check-links check
@@ -221,7 +222,7 @@ jobs:
              M2/BUILD/build/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
 
       - name: Upload Macaulay2 package for Ubuntu (x86_64)
-        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-20.04' && matrix.compiler == 'clang10' && success()
+        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang10' && success()
         uses: actions/upload-artifact@v2
         with:
           name: Macaulay2-${{ env.GIT_COMMIT }}-ubuntu-x86_64
