@@ -12,6 +12,7 @@ PACKAGES = $(ALL_PACKAGES)
 # packages under development that should be checked but not installed:
 DEVEL = EngineTests
 
+MakeDocumentation ?= true
 RemakeAllDocumentation ?= false
 IgnoreExampleErrors ?= false
 CheckDocumentation ?= true
@@ -20,7 +21,8 @@ RerunExamples ?= false
 debugLevel ?= 0
 errorDepth ?= 0
 
-ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation),	\
+ARGS := MakeDocumentation => $(MakeDocumentation),		\
+	RemakeAllDocumentation => $(RemakeAllDocumentation),	\
 	IgnoreExampleErrors => $(IgnoreExampleErrors),		\
 	RerunExamples => $(RerunExamples),			\
 	CheckDocumentation => $(CheckDocumentation),		\
