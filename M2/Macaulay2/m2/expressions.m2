@@ -1187,9 +1187,7 @@ texMath Table := m -> (
 texMath MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
     if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
-    net1 := if opts.CompactMatrix then toCompactString else net;
     if opts.BlockMatrix =!= null then ( j := 1; h := 0; );
---    texMath1 := if opts.CompactMatrix then texMath else x -> "\\displaystyle "|texMath x;
     m = applyTable(m,texMath);
     concatenate(
 	if opts.Degrees =!= null then (
