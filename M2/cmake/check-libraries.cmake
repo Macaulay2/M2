@@ -49,7 +49,11 @@ find_package(AtomicOps	REQUIRED QUIET) # See FindAtomicOps.cmake
 #   OpenMP	libomp-dev	libomp-devel	libomp
 #   TBB		libtbb-dev	tbb-devel	tbb
 
-find_package(OpenMP)
+if(WITH_OMP)
+  find_package(OpenMP REQUIRED)
+else()
+  find_package(OpenMP)
+endif()
 foreach(lang IN ITEMS C CXX)
   foreach(_dir IN LISTS OpenMP_${lang}_INCLUDE_DIRS)
     set(OpenMP_${lang}_FLAGS "${OpenMP_${lang}_FLAGS} -I${_dir}")
@@ -224,7 +228,7 @@ foreach(_library IN LISTS LIBRARY_OPTIONS)
     elseif(BUILD_LIBRARIES MATCHES "(ALL|ON)" OR "${_name}" IN_LIST BUILD_LIBRARIES)
       # exists on the system, but we want to build it
       unset(${_library}_DIR CACHE) # for Eigen3
-      unset(${_name}_FOUND)
+      unset(${_name}_FOUND CACHE)
       unset(${_name}_LIBDIR CACHE)
       unset(${_name}_LIBRARY CACHE)
       unset(${_name}_LIBRARIES CACHE)
@@ -292,7 +296,7 @@ if(CHECK_LIBRARY_COMPATIBILITY)
   endforeach()
 
   check_cxx_source_compiles([[int main(){return 0;}]] LIBRARY_COMPATIBILITY
-    FAIL_REGEX "warning")
+    FAIL_REGEX "conflict")
 
   if(NOT LIBRARY_COMPATIBILITY)
     message(CHECK_FAIL " Detected library incompatibilities; rerun the build-libraries target")
@@ -333,7 +337,7 @@ else()
 endif()
 
 if(FROBBY_FOUND)
-  set(CMAKE_REQUIRED_INCLUDES "${FROBBY_INCLUDE_DIR}")
+  set(CMAKE_REQUIRED_INCLUDES "${FROBBY_INCLUDE_DIR};${MP_INCLUDE_DIRS}")
   # whether frobby has constants::version <0.9.4 or frobby_version >=0.9.4
   # TODO: remove when frobby is updated above 0.9.4 everywhere
   check_cxx_source_compiles([[#include <frobby.h>
