@@ -35,7 +35,6 @@ engine.m2
 enginering.m2
 rationals.m2
 reals.m2
-intervals.m2
 quotient.m2
 powers.m2
 orderedmonoidrings.m2
@@ -101,5 +100,6 @@ undoc.m2
 obsolete.m2
 exports.m2
 shared.m2
+intervals.m2
 typicalvalues.m2
 last.m2
