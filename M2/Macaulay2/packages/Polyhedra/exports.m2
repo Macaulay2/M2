@@ -39,7 +39,6 @@ export {
    "contains", 
    "isCompact", 
    "isComplete", 
-   "isEmpty", 
    "isFace", 
    "isFullDimensional",
    "isLatticePolytope", 
