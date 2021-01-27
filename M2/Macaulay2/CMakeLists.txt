@@ -30,6 +30,8 @@ add_compile_options(
   -Wall -Wextra -Wfatal-errors -Wcast-qual # -Werror
   -Wno-unused-parameter # FIXME: caused by c/chk.c:244:40 and every scc1 generated file
   -Wno-attributes # caused by SIMD unpack functions in fflas-ffpack
+  # caused by unnecessary openmp linker flags due to fflas_ffpack dependency
+  $<$<CXX_COMPILER_ID:AppleClang,Clang>:-Wno-unused-command-line-argument>
   )
 
 ###############################################################################
