@@ -12,6 +12,7 @@ PACKAGES = $(ALL_PACKAGES)
 # packages under development that should be checked but not installed:
 DEVEL = EngineTests
 
+MakeDocumentation ?= true
 RemakeAllDocumentation ?= false
 IgnoreExampleErrors ?= false
 CheckDocumentation ?= true
@@ -20,7 +21,8 @@ RerunExamples ?= false
 debugLevel ?= 0
 errorDepth ?= 0
 
-ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation),	\
+ARGS := MakeDocumentation => $(MakeDocumentation),		\
+	RemakeAllDocumentation => $(RemakeAllDocumentation),	\
 	IgnoreExampleErrors => $(IgnoreExampleErrors),		\
 	RerunExamples => $(RerunExamples),			\
 	CheckDocumentation => $(CheckDocumentation),		\
@@ -78,7 +80,8 @@ unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
 	@echo "make: Leaving directory \`$(shell pwd)/$1-temporary'"
 	ls -l $1-temporary
 	rm -rf $1-temporary
-	install-info --info-dir=@pre_infodir@ @pre_infodir@/$1.info
+	if [ -e @pre_infodir@/$1.info ]; then \
+		install-info --info-dir=@pre_infodir@ @pre_infodir@/$1.info; fi
 	@ [ "${IgnoreExampleErrors}" = true -o -f $$@ ] || (echo error: file $$@ not made by installPackage >&2; false)
 check-info::@pre_infodir@/$1.info.errors
 @pre_infodir@/$1.info.errors: @pre_infodir@/$1.info
