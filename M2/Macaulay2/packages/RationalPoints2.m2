@@ -58,7 +58,7 @@ listFieldElements = (k) -> (
     if isFinitePrimeField k then return apply(char k, i->i*1_k);
     -- if k is constructed using `toField`
     if not instance(k, GaloisField) then (
-        try k = GF last k.baseRings
+        try k = GF baseRing k
         else error "the coefficient ring is not a field";
     );
     x := k.PrimitiveElement;
@@ -95,12 +95,12 @@ zeros := (coeffs) -> (
     k := ring first coeffs;
     (R, p, factors) := (null, null, null);
     getValue := (R, c) -> -coefficient(1_R, c) / coefficient(R_0, c);
-    if char k > 0 or k === QQ then (
+    try ( -- try use `factor` first
         R = k(monoid[getSymbol "x"]);
         p = sum apply(#coeffs, i -> coeffs_i * R_0^i);
         factors = value \ first \ toList factor p;
     ) else ( -- over k where `factor` is not defined, we use `decompose`
-        k' := last k.baseRings;
+        k' := baseRing k;
         R = k'(monoid[getSymbol "x"]);
         p = sum apply(#coeffs, i -> (map(k',k,gens k')) coeffs_i * R_0^i);
         factors = (c->(gens c)_(0,0)) \ decompose(ideal p, Strategy=>"Legacy");
@@ -111,7 +111,9 @@ zeros := (coeffs) -> (
     if verbose then listNonSplitPols = listNonSplitPols | otherFactors;
     return getValue_R \ linearFactors;
 );
--- distinguish zeros from mzeros for the verbose mode
+-- distinguish `zeros` from `mzeros`, since when using `mzeros` the
+-- factorization will not be run twice, and thus will not print the
+-- non-splitting polynomials in verbose mode
 mzeros = memoize zeros;
 -------------------------------------------------------------------------------
 -- takes in a linear ideal and returns the list of solutions
@@ -166,7 +168,7 @@ findPoints = I -> (
     if isHomogeneous I then (
         result = findProjPoints I;
         if amount then return 1+(#els-1)*result
-        else return {toList(n:0_k)} | join flatten((v->(a->a*v)\els_{1..<#els}) \ result);
+        else return {toList(n:0_k)} | join flatten((v->(for a in els_{1..<#els} list a*v)) \ result);
     );
     -- use `findPoints0dim` if I is of dim 0 and has degree smaller than the
     -- size of the field k (or when char k = 0)
