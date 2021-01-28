@@ -37,7 +37,7 @@ updateCremona = () -> (
     if not (fileExists(dir|"Cremona/documentation.m2") and fileExists(dir|"Cremona/examples.m2") and fileExists(dir|"Cremona/tests.m2")) then error "something went wrong in downloading the package Cremona";
     <<"-- installing Cremona..."<<endl;
     get("!"|"cd "|dir|/// && M2 -e "uninstallPackage \"Cremona\"" &///);
-    get("!"|"cd "|dir|/// && M2 -e "installPackage \"Cremona\"" &///);
+    get("!"|"cd "|dir|/// && M2 -e "installPackage(\"Cremona\",FileName=>\"///|dir|"Cremona.m2"|///\")" &///);
     removeFile(dir|"Cremona.m2"); 
     removeFile(dir|"Cremona/documentation.m2"); removeFile(dir|"Cremona/examples.m2"); removeFile(dir|"Cremona/tests.m2");
     removeDirectory(dir|"Cremona");   
@@ -55,7 +55,7 @@ updateOneFilePackage = packagename -> (
     if not fileExists(dir|packagename|".m2") then error("something went wrong in downloading the package "|packagename);
     <<"-- installing "<<packagename<<"..."<<endl;
     get("!"|"cd "|dir|/// && M2 -e "uninstallPackage \"///|packagename|///\"" &///);
-    get("!"|"cd "|dir|/// && M2 -e "installPackage \"///|packagename|///\"" &///);
+    get("!"|"cd "|dir|/// && M2 -e "installPackage(\"///|packagename|///\",FileName=>\"///|dir|packagename|".m2"|///\")" &///);
     removeFile(dir|packagename|".m2"); 
     get("!"|///M2 -e "needsPackage \"///|packagename|///\"; \"///|dir|///packageVersion.m2\"<<///|packagename|///.Options.Version<<close;" &///);
     v := get(dir|"packageVersion.m2");
