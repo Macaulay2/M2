@@ -32,7 +32,7 @@ class CoeffVector : public our_new_delete
   void* mValue;
 };
 
-class DenseCoeffVector
+class DenseCoeffVector : public our_new_delete
 {
   // disallow copy...
  public:

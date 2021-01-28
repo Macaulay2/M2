@@ -61,8 +61,6 @@ export {
     "ncBasis",
     "NCGB", -- uugh: change name!
     "NCReductionTwoSided",
-    "FreeAlgebra", -- change this name too! FM (?)
-    "FreeAlgebraQuotient", 
     "sequenceToVariableSymbols",
     "leftMultiplicationMap",
     "rightMultiplicationMap",
@@ -99,6 +97,9 @@ export {
     "ncMatrixMult"
     }
 
+-- types from Core
+exportFrom_Core {"FreeAlgebra", "FreeAlgebraQuotient"}
+
 -- symbols into hash table for ring
 importFrom_Core {"generatorSymbols","generatorExpressions",
     "liftDegree","promoteDegree","indexStrings","indexSymbols"}
@@ -125,10 +126,7 @@ BENCHMARK String := (s) -> null
 -- local hash table.
 RawRing = Core#"private dictionary"#"RawRing"
 
-FreeAlgebra = new Type of EngineRing
 FreeAlgebra.synonym = "free algebra"
-
-FreeAlgebraQuotient = new Type of QuotientRing
 FreeAlgebraQuotient.synonym = "quotient of a free algebra"
 
 new FreeAlgebra from List := (EngineRing, inits) -> new EngineRing of RingElement from new HashTable from inits
@@ -313,6 +311,15 @@ isWellDefined FreeAlgebra := Boolean => R -> (
     )
 -- listForm
 
+generators FreeAlgebra := opts -> R -> (
+            if opts.CoefficientRing === null then R.generators
+            else if opts.CoefficientRing === R then {}
+            else join(R.generators, generators(coefficientRing R, opts) / (r -> promote(r,R))))
+
+generators FreeAlgebraQuotient := opts -> (S) -> (
+            if opts.CoefficientRing === S then {}
+            else apply(generators(ambient S,opts), m -> promote(m,S)))
+	
 setNCGBStrategy := stratStr -> (
    if stratStr == "F4" then 16
    else if stratStr == "F4Parallel" then 48
