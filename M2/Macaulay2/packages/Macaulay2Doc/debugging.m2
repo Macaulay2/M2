@@ -299,7 +299,7 @@ document {
 	  are write-protected; fortunately, their methods are not, and can be replaced."
 	  },
      EXAMPLE lines ///
-     ker Matrix := on(lookup(ker,Matrix),GenerateAssertions=>true,Name=>"ker");
+     ker Matrix := on(lookup(ker,Matrix),GenerateAssertions=>true,Name=>"ker"); -* no-capture-flag *-
      f = x -> kernel (x|x);
      R = QQ[a..c];
      f vars R
