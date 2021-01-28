@@ -727,8 +727,9 @@ chromaticNumber = method()
 chromaticNumber Graph := ZZ => G -> (
     if #edges G == 0 and #vertexSet G == 0 then 0
     else if #edges G == 0 and #vertexSet G != 0 then 1
+    else if isBipartite G then 2
     else (
-        chi := 2;
+        chi := 3;
         J := coverIdeal G;
         m := product gens ring J;
         while ((m^(chi - 1) % J^chi) != 0) do chi = chi+ 1;
@@ -1234,7 +1235,8 @@ hasOddHole = method()
 hasOddHole Graph := Boolean => G -> any(ass (coverIdeal G)^2, i -> codim i > 3)
 
 isBipartite = method()
-isBipartite Graph := Boolean => G -> chromaticNumber G <= 2
+isBipartite Graph := Boolean => G ->
+    try bipartiteColoring G then true else false
 
 isCM = method()
 isCM Graph := Boolean => G -> (
@@ -1466,7 +1468,6 @@ bipartiteColoring Graph := List => G -> (
     n := # vertexSet G;
     v := 0;
     if n == 0 then return {{},{}};
-    if not isBipartite G then error "graph must be bipartite";
     D := new MutableList from toList(n: infinity);
     while v != n do (
         uncolored := {position(toList D, i -> i == infinity)};
@@ -1481,7 +1482,8 @@ bipartiteColoring Graph := List => G -> (
                     D#y = 1 + D#x;
                     v = v + 1;
                     uncolored = append(uncolored, y);
-                    );
+                    ) else if (D#x - D#y) % 2 == 0 then
+                        error "graph must be bipartite";
                 );
             );
         );
