@@ -11,7 +11,7 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 
 newPackage(
     "MultiprojectiveVarieties",
-    Version => "1.1", 
+    Version => "1.2", 
     Date => "January 28, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
@@ -22,86 +22,96 @@ newPackage(
     Reload => false
 )
 
--- if Cremona.Options.Version < "5.1" then error "your version of the Cremona package is outdated (required version 5.1 or newer); you can download the latest version from https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages";
-
-updateCremona = () -> (
-    <<"-- downloading Cremona..."<<endl;
-    dir := temporaryFileName() | "/";
-    mkdir dir;
-    run("curl -s -o "|dir|"Cremona.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona.m2");
-    if not fileExists(dir|"Cremona.m2") then error "something went wrong in downloading the package Cremona";
-    makeDirectory(dir|"/Cremona");
-    run("curl -s -o "|dir|"Cremona/documentation.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/documentation.m2");
-    run("curl -s -o "|dir|"Cremona/examples.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/examples.m2");
-    run("curl -s -o "|dir|"Cremona/tests.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/Cremona/tests.m2");
-    if not (fileExists(dir|"Cremona/documentation.m2") and fileExists(dir|"Cremona/examples.m2") and fileExists(dir|"Cremona/tests.m2")) then error "something went wrong in downloading the package Cremona";
-    <<"-- installing Cremona..."<<endl;
-    get("!"|"cd "|dir|/// && M2 -e "uninstallPackage \"Cremona\"" &///);
-    get("!"|"cd "|dir|/// && M2 -e "installPackage(\"Cremona\",FileName=>\"///|dir|"Cremona.m2"|///\")" &///);
-    removeFile(dir|"Cremona.m2"); 
-    removeFile(dir|"Cremona/documentation.m2"); removeFile(dir|"Cremona/examples.m2"); removeFile(dir|"Cremona/tests.m2");
-    removeDirectory(dir|"Cremona");   
-    get("!"|///M2 -e "needsPackage \"Cremona\"; \"///|dir|///CremonaVersion.m2\"<<Cremona.Options.Version<<close;" &///);
-    v := get(dir|"CremonaVersion.m2");
-    removeFile(dir|"CremonaVersion.m2");
-    return v;
-);
-
-updateOneFilePackage = packagename -> (
-    <<"-- downloading "<<packagename<<"..."<<endl;
+updatePackageFromDevelopment = method();
+updatePackageFromDevelopment (String,List) := (packagename,listauxfiles) -> (
+    try get "!curl -h 2>&1" else error "please install CURL on your system";
+    <<"-- checking updates for package "<<packagename<<"..."<<endl;
     dir := temporaryFileName() | "/";
     mkdir dir;
     run("curl -s -o "|dir|packagename|".m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/"|packagename|".m2");
     if not fileExists(dir|packagename|".m2") then error("something went wrong in downloading the package "|packagename);
-    <<"-- installing "<<packagename<<"..."<<endl;
-    get("!"|"cd "|dir|/// && M2 -e "uninstallPackage \"///|packagename|///\"" &///);
-    get("!"|"cd "|dir|/// && M2 -e "installPackage(\"///|packagename|///\",FileName=>\"///|dir|packagename|".m2"|///\")" &///);
+    if #listauxfiles > 0 then (
+        makeDirectory(dir|packagename);
+        for f in listauxfiles do (
+            run("curl -s -o "|dir|packagename|"/"|f|".m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/"|packagename|"/"|f|".m2");
+            if not fileExists(dir|packagename|"/"|f|".m2") then error("something went wrong in downloading the package "|packagename);
+        );
+    );
+    get("!"|"cd "|dir|/// && M2 -e "loadPackage(\"///|packagename|///\",FileName=>\"///|dir|packagename|".m2"|///\"); \"///|dir|///packageVersion.m2\"<<///|packagename|///.Options.Version<<close;" 2>&1 &///);
+    v0 := get(dir|"packageVersion.m2");
+    removeFile(dir|"packageVersion.m2");
+    if (value packagename).Options.Version == v0 then (<<"-- package "<<packagename<<" is already updated to version "<<v0<<" -- nothing to do."<<endl; return);
+    e := "";
+    while not(e == "y" or e == "yes" or e == "Y" or e == "Yes") do (
+        e = read("Your version of the package "|packagename|" is outdated. Do you want to download and install the latest version of "|packagename|" now? (y/n) ");
+        if e == "n" or e == "no" or e == "N" or e == "No" then return;
+    );
+    <<"-- installing package "<<packagename<<", version "<<v0<<"... (this may take a while)"<<endl;
+    get("!"|"cd "|dir|/// && M2 -e "uninstallPackage \"///|packagename|///\"" 2>&1 &///);
+    get("!"|"cd "|dir|/// && M2 -e "installPackage(\"///|packagename|///\",FileName=>\"///|dir|packagename|".m2"|///\")" 2>&1 &///);
     removeFile(dir|packagename|".m2"); 
-    get("!"|///M2 -e "needsPackage \"///|packagename|///\"; \"///|dir|///packageVersion.m2\"<<///|packagename|///.Options.Version<<close;" &///);
+    if #listauxfiles > 0 then (
+        for f in listauxfiles do removeFile(dir|packagename|"/"|f|".m2"); 
+        removeDirectory(dir|packagename);  
+    ); 
+    <<"--** package "<<packagename<<", version "<<v0<<", has been successfully installed **--"<<endl;
+    get("!"|///M2 -e "loadPackage \"///|packagename|///\"; \"///|dir|///packageVersion.m2\"<<///|packagename|///.Options.Version<<close;" 2>&1 &///);
     v := get(dir|"packageVersion.m2");
     removeFile(dir|"packageVersion.m2");
+    if v != v0 then (
+        sf := (value packagename)#"source file";
+        err := "Error in loading the new version of the package "|packagename|". Check that in your PATH you do not have any older version of the package.";
+        try moveFile(sf,sf|"-0") then (<<"--warning: the file "<<sf<<" has been renamed to "<<packagename|".m2-0 (you can also delete it)"<<endl) else error err;
+        get("!"|///M2 -e "loadPackage \"///|packagename|///\"; \"///|dir|///packageVersion.m2\"<<///|packagename|///.Options.Version<<close;" 2>&1 &///);
+        v = get(dir|"packageVersion.m2");
+        removeFile(dir|"packageVersion.m2");
+        if v != v0 then error err;   
+    );    
     return v;
 );
+updatePackageFromDevelopment String := packagename -> updatePackageFromDevelopment(packagename,{});
 
-askForUpdates  = s -> (
-    if Cremona.Options.Version < s 
-    then (
-        e := read "Your version of the Cremona package is outdated. Do you want to download and install the latest version of Cremona now? (y/n) ";
-        if e == "y" or e == "yes" or e == "Y" or e == "Yes" 
-        then (
-            try get "!curl -h 2>&1" else error "please install CURL on your system";
-            v := updateCremona();
-            if v < s then error "something went wrong in installing the package Cremona";
-            <<endl<<"--"|concatenate(67:"*")|"--"<<endl<<"--** The latest version of Cremona has been successfully installed **--"<<endl<<"--** You can now install the package MultiprojectiveVarieties with **--"<<endl<<"     installPackage \"MultiprojectiveVarieties\""<<endl<<"--"|concatenate(67:"*")|"--"<<endl<<endl; 
-            e' := read "Do you want to install the package MultiprojectiveVarieties now? (y/n) ";
-            if e' == "y" or e' == "yes" or e' == "Y" or e' == "Yes" then (
-                <<"-- installing MultiprojectiveVarieties..."<<endl;
-                get("!"|///M2 -e "uninstallPackage \"MultiprojectiveVarieties\"" &///);
-                get("!"|///M2 -e "installPackage \"MultiprojectiveVarieties\"" &///);
-                <<"-- installation of the package MultiprojectiveVarieties terminated"<<endl<<endl;
-            );
-            error toString(newline|"--"|(concatenate(40:"*")|"--"|newline|"--** A restart of Macaulay2 is required **--"|newline|"--"|(concatenate(40:"*")|"--"))))
-       else (
-            if e == "n" or e == "no" or e == "N" or e == "No" 
-            then error("this package requires Cremona version "|s|" or newer; you can download manually the latest version from https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages") 
-            else updateCremona s);
+askForUpdates = (s1,s2) -> (
+    if SparseResultants.Options.Version >= s1 and Cremona.Options.Version >= s2 then return;
+    if SparseResultants.Options.Version < s1 then (
+        v1 := updatePackageFromDevelopment "SparseResultants";
+        if v1 === null then error("this package requires SparseResultants version "|s1|" or newer; you can download manually the latest version from https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages");
     );
+    if Cremona.Options.Version < s2 then (
+        v2 := updatePackageFromDevelopment("Cremona",{"documentation","examples","tests"});
+        if v2 === null then error("this package requires Cremona version "|s2|" or newer; you can download manually the latest version from https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages");
+    );
+    <<endl<<endl<<"--"|concatenate(67:"*")|"--"<<endl<<"--** You can now install the package MultiprojectiveVarieties with **--"<<endl<<"     installPackage \"MultiprojectiveVarieties\""<<endl<<"--"|concatenate(67:"*")|"--"<<endl<<endl; 
+    e := "";
+    while not(e == "y" or e == "yes" or e == "Y" or e == "Yes" or e == "n" or e == "no" or e == "N" or e == "No") do (
+        e = read "Do you want to check for a newer version of MultiprojectiveVarieties (y/n) ";
+    );
+    if e == "y" or e == "yes" or e == "Y" or e == "Yes" then updatePackageFromDevelopment "MultiprojectiveVarieties";
+    <<endl<<endl;
+    e = "";
+    while not(e == "y" or e == "yes" or e == "Y" or e == "Yes") do (
+        e = read("Do you want to restart Macaulay2 now (y/n) ");
+        if e == "n" or e == "no" or e == "N" or e == "No" then error toString(newline|"--"|(concatenate(40:"*")|"--"|newline|"--** A restart of Macaulay2 is required **--"|newline|"--"|(concatenate(40:"*")|"--")));
+    );
+    return restart;
 );
 
-askForUpdates "5.1";
+askForUpdates("1.1", "5.1");
 
 updatePackage = () -> (
-    e := read "The package MultiprojectiveVarieties and its dependencies packages will be updated to the latest version available on GitHub? Do you want to continue? (y/n) ";
-    if e == "n" or e == "no" or e == "N" or e == "No" then return;
-    if e == "y" or e == "yes" or e == "Y" or e == "Yes" then (
-        updateOneFilePackage "Resultants";
-        updateOneFilePackage "SparseResultants";
-        updateCremona();
-        v := updateOneFilePackage "MultiprojectiveVarieties";
-        <<endl<<endl<<"*** MultiprojectiveVarieties, version "<<v<<" ***"<<endl<<endl;
-        r := read "do you want to restart Macaulay2 now (y/n) ";
-        if r == "y" or r == "yes" or r == "Y" or r == "Yes" then return restart;
-    ) else updatePackage();
+    v1 := updatePackageFromDevelopment "Resultants";
+    v2 := updatePackageFromDevelopment "SparseResultants";
+    v3 := updatePackageFromDevelopment("Cremona",{"documentation","examples","tests"});
+    v4 := updatePackageFromDevelopment "MultiprojectiveVarieties";
+    if not(v1 === null and v2 === null and v3 === null and v4 === null) then (
+        <<endl<<endl;
+        e := "";
+        while not(e == "y" or e == "yes" or e == "Y" or e == "Yes") do (
+            e = read("Do you want to restart Macaulay2 now (y/n) ");
+            if e == "n" or e == "no" or e == "N" or e == "No" then return;
+        );
+        return restart;
+    );
 );
 
 export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct",
