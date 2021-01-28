@@ -77,10 +77,7 @@ jobs:
           brew config
           brew tap macaulay2/tap
           brew install autoconf automake bison ccache cmake ctags gnu-tar libtool make ninja pkg-config yasm
-          brew install --with-tbb --only-dependencies macaulay2/tap/M2
-          HOMEBREW_DEPS=`brew deps --1 --include-optional macaulay2/tap/M2 | tr '\n' ';'`
-          HOMEBREW_PREFIX=`brew --prefix`
-          echo "OPT_PREFIX=$HOMEBREW_PREFIX/opt/${HOMEBREW_DEPS//;/;$HOMEBREW_PREFIX/opt/}" >> $GITHUB_ENV
+          brew install --only-dependencies macaulay2/tap/M2
 
 # ----------------------
 #   Install missing tools and libraries for Linux
@@ -139,7 +136,7 @@ jobs:
             --debug-trycompile \
             -DBUILD_LIBRARIES="Givaro;FFLAS_FFPACK" \
             -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_NATIVE=OFF \
-            -DCMAKE_PREFIX_PATH=$OPT_PREFIX \
+            -DCMAKE_PREFIX_PATH=`brew --prefix` \
             -DCMAKE_INSTALL_PREFIX=/usr
 
       - name: Build libraries using Ninja
