@@ -43,7 +43,7 @@ updatePackageFromDevelopment (String,List) := (packagename,listauxfiles) -> (
     if (value packagename).Options.Version == v0 then (<<"-- package "<<packagename<<" is already updated to version "<<v0<<" -- nothing to do."<<endl; return);
     e := "";
     while not(e == "y" or e == "yes" or e == "Y" or e == "Yes") do (
-        e = read("Your version of the package "|packagename|" is outdated. Do you want to download and install the latest version of "|packagename|" now? (y/n) ");
+        e = read("Your version of the package "|packagename|" is outdated. Do you want to install the latest version of "|packagename|" now? (y/n) ");
         if e == "n" or e == "no" or e == "N" or e == "No" then return;
     );
     <<"-- installing package "<<packagename<<", version "<<v0<<"... (this may take a while)"<<endl;
@@ -60,8 +60,9 @@ updatePackageFromDevelopment (String,List) := (packagename,listauxfiles) -> (
     removeFile(dir|"packageVersion.m2");
     if v != v0 then (
         sf := (value packagename)#"source file";
-        err := "Error in loading the new version of the package "|packagename|". Check that in your PATH you do not have any older version of the package.";
-        try moveFile(sf,sf|"-0") then (<<"--warning: the file "<<sf<<" has been renamed to "<<packagename|".m2-0 (you can also delete it)"<<endl) else error err;
+        err := "Error in loading the new version of the package "|packagename|". Check that in your path you do not have any older version of the package.";
+        i0 := 0; while fileExists(sf|"-"|toString(i0)) do i0 = i0+1;
+        try moveFile(sf,sf|"-"|toString(i0)) then (<<"--warning: the file "<<sf<<" has been renamed to "<<packagename|".m2-"|toString(i0)|" (you can also delete it)"<<endl) else error err;
         get("!"|///M2 -e "loadPackage \"///|packagename|///\"; \"///|dir|///packageVersion.m2\"<<///|packagename|///.Options.Version<<close;" 2>&1 &///);
         v = get(dir|"packageVersion.m2");
         removeFile(dir|"packageVersion.m2");
@@ -88,12 +89,13 @@ askForUpdates = (s1,s2) -> (
     );
     if e == "y" or e == "yes" or e == "Y" or e == "Yes" then updatePackageFromDevelopment "MultiprojectiveVarieties";
     <<endl<<endl;
-    e = "";
-    while not(e == "y" or e == "yes" or e == "Y" or e == "Yes") do (
-        e = read("Do you want to restart Macaulay2 now (y/n) ");
-        if e == "n" or e == "no" or e == "N" or e == "No" then error toString(newline|"--"|(concatenate(40:"*")|"--"|newline|"--** A restart of Macaulay2 is required **--"|newline|"--"|(concatenate(40:"*")|"--")));
-    );
-    return restart;
+    -- e = "";
+    -- while not(e == "y" or e == "yes" or e == "Y" or e == "Yes") do (
+    --     e = read("Do you want to restart Macaulay2 now (y/n) ");
+    --     if e == "n" or e == "no" or e == "N" or e == "No" then error toString(newline|"--"|(concatenate(40:"*")|"--"|newline|"--** A restart of Macaulay2 is required **--"|newline|"--"|(concatenate(40:"*")|"--")));
+    -- );
+    -- restart -- this restart does not work!
+    error toString("Don't worry, this is not an error"|newline|"--"|(concatenate(40:"*")|"--"|newline|"--** A restart of Macaulay2 is required **--"|newline|"--"|(concatenate(40:"*")|"--")));
 );
 
 askForUpdates("1.1", "5.1");
