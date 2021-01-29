@@ -288,7 +288,8 @@ evalForCode(c:forCode):Expr := (
 	  when invalue is Error do return invalue
 	  is ww:Sequence do w = ww
 	  is vv:List do w = vv.v
-	  else return printErrorMessageE(c.inClause,"expected a list or sequence");	  
+	  is s:stringCell do w = strtoseq(s)
+	  else return printErrorMessageE(c.inClause,"expected a list, sequence, or string");
 	  )
      else (
 	  if c.fromClause != dummyCode then (
