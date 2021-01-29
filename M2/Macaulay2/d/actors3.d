@@ -2057,7 +2057,8 @@ toSequence(e:Expr):Expr := (
 	  then Expr(new Sequence len length(b.v) do foreach i in b.v do provide i)
 	  else Expr(b.v)
 	  )
-     else WrongArg("a list or sequence"));
+     is s:stringCell do Expr(strtoseq(s))
+     else WrongArg("a list, sequence, or string"));
 setupfun("toSequence",toSequence);
 
 sequencefun(e:Expr):Expr := (
