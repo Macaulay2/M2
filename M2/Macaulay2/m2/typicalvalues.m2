@@ -97,7 +97,7 @@ substring(String,ZZ,ZZ) := String => substring
 substring(ZZ,String) := String => substring
 substring(Sequence,String) := String => substring
 substring(ZZ,ZZ,String) := String => substring
-toList Set := toList BasicList := List => toList
+toList Set := toList BasicList := toList String := List => toList
 toSequence BasicList := Sequence => toSequence
 xor(ZZ,ZZ) := ZZ => xor
 ascii String := List => ascii
