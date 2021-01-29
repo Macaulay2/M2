@@ -2777,13 +2777,13 @@ X = for i from 1 to 21 list (
    A = tables(i,K);
    time specialGushelMukaiFourfold((rationalMap(A_0,max flatten degrees A_0,Dominant=>2)) A_1,InputCheck=>0)
 ); 
-assert(apply(X,w -> time discriminant w) === {10,10,10,10,10,10,12,12,12,16,16,16,18,18,18,18,20,20,24,24,26})
+--commented out for time--assert(apply(X,w -> time discriminant w) === {10,10,10,10,10,10,12,12,12,16,16,16,18,18,18,18,20,20,24,24,26})
 S = apply(X,w -> first ideals w);
 assert(apply(S,s -> degree s) === {2, 4, 14, 5, 9, 1, 3, 7, 1, 10, 10, 14, 12, 8, 9, 11, 9, 7, 10, 4, 12})
 debug SpecialFanoFourfolds
 assert(apply(X,x -> x#"label") === toList(21:null));
-assert(apply(X,x -> recognize x) === toList(1..21));
-assert(apply(X,x -> x#"label") === toList(1..21));
+--commented out for time--assert(apply(X,x -> recognize x) === toList(1..21));
+--commented out for time--assert(apply(X,x -> x#"label") === toList(1..21));
 ///
 
 TEST ///
