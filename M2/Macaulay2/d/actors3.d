@@ -2029,7 +2029,8 @@ scan(e:Expr,f:Expr):Expr := (
 	  if !isInt(i)
 	  then WrongArgSmallInteger(1)
 	  else scan(toInt(i),f))
-     else buildErrorPacket("scan expects a list"));
+     is s:stringCell do scan(strtoseq(s), f)
+     else buildErrorPacket("scan expects a list, sequence, integer, or string"));
 scan(e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 2
