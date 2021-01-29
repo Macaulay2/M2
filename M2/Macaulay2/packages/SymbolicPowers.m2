@@ -1679,7 +1679,7 @@ doc ///
 	[symbolicDefect,CIPrimes]
 	[containmentProblem,CIPrimes]
     Headline
-    	an option to compute the symbolic power by taking the intersection of the powers of the primary components
+    	compute the symbolic power by taking the intersection of the powers of the primary components
     Description
     	Text
 	    The default value is false.  When defined to be true, the @TO symbolicPower@ function tests whether the primary components are complete intersections having the same height.  If each component is, then the function takes the intersection of the powers of the components:
