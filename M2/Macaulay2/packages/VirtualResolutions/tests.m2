@@ -180,22 +180,25 @@ TEST ///
     I = saturate(ideal(x_(0,0)^2*x_(1,0)^2+x_(0,1)^2*x_(1,1)^2+x_(0,0)*x_(0,1)*x_(1,2)^2,
             x_(0,0)^3*x_(1,2)+x_(0,1)^3*(x_(1,0)+x_(1,1))), B);
     -- taking the ring of a productOfProjectiveSpaces as input
-    elapsedTime assert(multigradedRegularity(S, I) == {{1,5},{2,2},{4,1}}) -- 9 -> 2.43
+    elapsedTime assert(multigradedRegularity(S, I) == {{2,2},{4,1},{1,5}}) -- 9 -> 2.43
 ///
 
 TEST ///
   S = QQ[x_(0,0),x_(0,1),x_(1,0),x_(1,1), Degrees => {{1,0},{1,0},{0,1},{0,1}}]
   S = imbueRingWithTateData S;
   M = cokernel matrix{{x_(1,0)^2*x_(0,1), x_(0,0)^2*x_(1,0)*x_(0,1), x_(0,1)^3*x_(1,1)^2, x_(1,0)*x_(0,1)^3*x_(1,1), x_(0,0)^4*x_(1,0), x_(1,0)*x_(0,1)^5}}
+  -- This is an unsaturated input test, where res truncate({3,2}, M) is quasi-linear, but not short
+  -- elapsedTime assert(multigradedRegularity(S, M) == {{4,2}}) -- 1
+  I = saturate(ideal relations M, intersect last ringData S)
   -- taking an arbitrary multigraded ring as input
-  elapsedTime assert(multigradedRegularity(S, M) == {{4,2}}) -- 1
+  elapsedTime assert(multigradedRegularity(S, I) == {{2,0}}) -- < 0.2
 ///
 
 TEST /// -- testing picard rank 3
     (S, E) = productOfProjectiveSpaces {1, 1, 2};
     irr = intersect(ideal(x_(0,0), x_(0,1)), ideal(x_(1,0), x_(1,1)), ideal(x_(2,0), x_(2,1), x_(2,2)))
     I = saturate(intersect apply(6,i-> ideal(random({1,0,0},S),random({0,1,0},S), random({0,0,1},S),random({0,0,1},S))), irr);
-    elapsedTime assert(multigradedRegularity(S, I) == {{0,0,2},{0,1,1},{0,5,0},{1,0,1},{1,2,0},{2,1,0},{5,0,0}}) -- 5.4 -> 8.5 -> 2.7
+    elapsedTime assert(multigradedRegularity(S, I) == {{0,0,2},{0,1,1},{1,0,1},{1,2,0},{2,1,0},{0,5,0},{5,0,0}}) -- 5.4 -> 8.5 -> 2.7
 ///
 
 TEST /// -- testing twisted modules
@@ -225,8 +228,9 @@ TEST /// -- example 5.8 of BES
       - x_(0,1) * x_(1,0)^2 * x_(1,2) * x_(1,3),
       x_(1,1)^6 - x_(1,0) * x_(1,1)^2 * x_(1,2)^3 + 2 * x_(1,1)^5 * x_(1,3) + x_(1,0)^3
       * x_(1,2)^2 * x_(1,3) - x_(1,0) * x_(1,1) * x_(1,2)^3 * x_(1,3) + x_(1,1)^4 * x_(1,3)^2)
-  C = res truncate({1, 3}, comodule I)
-  assert isQuasiLinear({1, 3}, C)
+  M = truncate({1, 3}, comodule I)
+  C = res M
+  assert isQuasiLinear({1, 3}, M)
   assert(ann HH_0 C == I)
 
   D = virtualOfPair(comodule I, {{2, 6}})

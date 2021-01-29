@@ -540,6 +540,7 @@ multigradedRegularityDefaultStrategy = (X, M, opts) -> (
         "reg M = " | toString r,
         "mindegs = " | toString mindegs};
     H := hilbertPolynomial(X, M);
+    HP := x -> (map(QQ, ring H, x))(H);
     debugInfo \ {
 	"HP M = " | toString H,
 	"degs = " | toString degs};
@@ -551,36 +552,23 @@ multigradedRegularityDefaultStrategy = (X, M, opts) -> (
     debugInfo("Computing cohomologyHashTable from ", toString low, " to ", toString high);
     L := pairs cohomologyHashTable(M, low, high);
     --
-    -- Based on findHashTableCorner from TateOnProducts
-    P := multigradedPolynomialRing toList(n:0);
-    -- We use this trick 
-    Q := gradedPolynomialRing toList(n:0);
-    phi := map(P, Q, gens P);
     gt := new MutableHashTable;
     debugInfo("Beginning search in Picard group");
     -- TODO: rewrite this loop
     apply(L, ell -> (
             -- Check that Hilbert function and Hilbert polynomial match
             -- (this imposes a condition on the alternating sum of local cohomology dimensions)
-            if hilbertFunction(ell_0_0, M) != (map(QQ, ring H, ell_0_0))(H) then (
-                gt#(ell_0_0) = true);
+            if hilbertFunction(ell_0_0, M) != HP(ell_0_0) then gt#(ell_0_0) = true;
             -- Check that higher local cohomology vanishes (i.e., H^i_B(M) = 0 for i > 1)
-            -- TODO: do I really need to check ell_0_1 > 0?
-            if ell_1 != 0 and ell_0_1 > 0 then
-                scan(flatten entries phi basis(0, ell_0_1, Q),
-                    j -> gt#(ell_0_0 + degree j) = true);
+            if ell_1 != 0 and ell_0_1 > 0 then scan(LL(ell_0_1, n), j -> gt#(ell_0_0 + j) = true);
             ));
-    debugInfo("Calculating minimal generators");
-    if debugLevel > 0 and n == 2 then printRegion(gt, low, high);
-    -- TODO: use findMins here when it is mature
-    I := ideal apply(L, ell ->
-        if all(n, j -> ell_0_0_j >= mindegs_j)
-        and not gt#?(ell_0_0) then P_(ell_0_0 - mindegs) else 0);
     -- retrieve the container
     container := opts.cache;
     container.LowerLimit = low;
     container.UpperLimit = high;
-    container.Result = sort apply(flatten entries mingens I, g -> (flatten exponents g) + mindegs))
+    debugInfo("Calculating minimal generators");
+    if debugLevel > 0 and n == 2 then printRegion(gt, low, high);
+    container.Result = findRegion({mindegs, high}, M, (ell, M) -> not gt#?ell))
 
 -- The default strategy applies to both modules and ideals in a product of projective spaces,
 -- but by using hooks we allow better strategies to be added later
