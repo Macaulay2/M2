@@ -271,6 +271,9 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 	       else if i == length(r) then r
 	       else new Sequence len i do foreach x in r do provide x)));
 
+export strtoseq(s:stringCell):Sequence := new Sequence len length(s.v) do
+    foreach c in s.v do provide stringCell(string(c));
+
 evalForCode(c:forCode):Expr := (
      r := if c.listClause == dummyCode then emptySequence else new Sequence len 1 do provide nullE;
      i := 0;				    -- index in r
