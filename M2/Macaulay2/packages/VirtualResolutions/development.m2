@@ -18,9 +18,12 @@ isVirtualOfPair(List, Module) := opts -> (d, M) -> (
     B := opts.IrrelevantIdeal;
     l := d + dimVector ring M;
     -- TODO: return false if l < all degrees of I
-    F := virtualOfPair(M, {l});
-    -- TODO: can caching help here?
-    isVirtual(B, F) and saturate(ann HH^0 F, B) == ann M)
+    F := virtualOfPair(res M, {l});
+    -- For ideals, this is sufficient:
+    -- saturate(ann HH^0 F, B) == ann M
+    -- TODO: is caching helping here?
+    isVirtual(B, F) and isIsomorphismOfSheaves(B, F.cache.winnowingMap))
+
 
 isChiH0 = method(Options => {IrrelevantIdeal => null})
 isChiH0(List, Module) := opts -> (d, M) -> (

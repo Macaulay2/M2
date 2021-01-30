@@ -87,12 +87,19 @@ isZeroSheaf(Ideal,              Module) := opts -> (B, M) -> (
     if opts.Strategy === "Support" then isSupportedInZeroLocus(B, M)
     else (J := ann M) == 1 or J != 0 and ourSaturation(J, B) == 1)
 
+isIsomorphismOfSheaves = method(TypicalValue => Boolean)
+isIsomorphismOfSheaves(Ideal, ModuleMap) := (B, f) -> (
+    isZeroSheaf(B, ker f) and isZeroSheaf(B, coker f))
+
 -- Helper for virtualOfPair
 -- TODO: complete this into the dual of submatrixByDegrees
 submatrixWinnow = (m, alphas) -> (
     col := positions(degrees source m, deg -> any(alphas, alpha -> all(alpha - deg, x -> x >= 0)));
     row := positions(degrees target m, deg -> any(alphas, alpha -> all(alpha - deg, x -> x >= 0)));
     submatrix(m, row, col))
+submatrixWinnowMap = (phi, alphas) -> (
+    col := positions(degrees source phi, deg -> any(alphas, alpha -> all(alpha - deg, x -> x >= 0)));
+    submatrix(phi, , col))
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
@@ -103,6 +110,7 @@ submatrixWinnow = (m, alphas) -> (
 --See Algorithm 3.4 of [BES]
 --------------------------------------------------------------------
 --------------------------------------------------------------------
+protect winnowingMap
 virtualOfPair = method(Options => {LengthLimit => infinity})
 virtualOfPair(Ideal,  List) := ChainComplex => opts -> (I, alphas) -> virtualOfPair(comodule I, alphas, opts)
 -- TODO: return the map M --> HH_0 F, so isVirtualOfPair can use it
@@ -110,7 +118,7 @@ virtualOfPair(Ideal,  List) := ChainComplex => opts -> (I, alphas) -> virtualOfP
 virtualOfPair(Module, List) := ChainComplex => opts -> (M, alphas) -> (
     R := ring M;
     if M.cache.?resolution then return virtualOfPair(M.cache.resolution, alphas, opts);
-    if any(alphas, alpha -> #alpha =!= degreeLength ring M) then error "degree has wrong length";
+    if any(alphas, alpha -> #alpha =!= degreeLength R) then error "degree has wrong length";
     m := schreyerOrder gens gb presentation M;
     m = submatrixWinnow(m, alphas);
     i := 2;
@@ -119,9 +127,14 @@ virtualOfPair(Module, List) := ChainComplex => opts -> (M, alphas) -> (
     chainComplex L)
 virtualOfPair(ChainComplex, List) := ChainComplex => opts -> (F, alphas) -> (
     if any(alphas, alpha -> #alpha =!= degreeLength ring F) then error "degree has wrong length";
-    L := apply(min F .. max F - 1, i -> submatrixWinnow(F.dd_(i+1), alphas));
-    chainComplex L)
-
+    L := chainComplex apply(min F .. max F - 1, i -> submatrixWinnow(F.dd_(i+1), alphas));
+    M := HH_0 F;
+    N := HH_0 L;
+    phi := map(M, source F.dd_0, id_(F_0));
+    phi  = submatrixWinnowMap(phi, alphas);
+    -- TODO: return a single map or a chain complex map?
+    L.cache.winnowingMap = map(M, N, phi);
+    L)
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
