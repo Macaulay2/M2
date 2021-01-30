@@ -1,19 +1,64 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 
+-----------------------------------------------------------------------------
+-- Local variables
+-----------------------------------------------------------------------------
+
+algorithms := new MutableHashTable from {}
+
+-----------------------------------------------------------------------------
+-- Local utilities
+-----------------------------------------------------------------------------
+
 inf := t -> if t === infinity then -1 else t
 
-spots := C -> select(keys C, i -> class i === ZZ)
+spots := C -> select(keys C, i -> instance(i, ZZ))
 
-defaultResolutionLength := (R) -> (
+defaultResolutionLength := R -> (
     A := ultimate(coefficientRing, R);
     nvars := # generators(R, CoefficientRing => A);
     nvars + 1 + if A === ZZ then 1 else 0
     -- numgens R + 1 + if ZZ === ultimate(coefficientRing, R) then 1 else 0
     )
 
-resolutionLength := (R,opts) -> (
-     if opts.LengthLimit == infinity then defaultResolutionLength R else opts.LengthLimit
-     )
+resolutionLength := (R, opts) -> (
+    if opts.LengthLimit == infinity
+    then defaultResolutionLength R
+    else opts.LengthLimit )
+
+-----------------------------------------------------------------------------
+-- helpers for resolution
+-----------------------------------------------------------------------------
+
+default := (o, defaults) -> merge(o, defaults, (x, y) -> if x === null then y else x)
+Strategy0 := new OptionTable from { Strategy => 0 }
+Strategy1 := new OptionTable from { Strategy => 1 }
+Strategy2 := new OptionTable from { Strategy => 2 }
+Strategy3 := new OptionTable from { Strategy => 3 }
+Strategy4 := new OptionTable from { Strategy => 4 }
+
+engineReady := M -> (
+    R := ring M;
+    -- Needed to compute resolutions, (algorithms 0,1,2,3):
+    --    Ring is (tower of) poly ring(s) over a field (or skew commutative, or quotient ring of such, or both)
+    --    Ring is graded
+    --    Ring is homogeneous in this grading
+    --    Matrix is homogeneous in this grading
+    -- Additional requirements for resolution algorithm 3 (which uses hilbert function):
+    --    Ring is singly graded
+    R.?Engine
+    and isHomogeneous M
+    and (isCommutative R or isSkewCommutative R)
+    and (
+	k := ultimate(coefficientRing, R);
+	k =!= R
+	and isField k
+	))
+
+-----------------------------------------------------------------------------
+-- strategies for resolution
+-----------------------------------------------------------------------------
+-- TODO: move FastNonminimal here as well
 
 resolutionByHomogenization := opts -> (M) -> (
      if gbTrace >= 1 then << "using resolution by homogenization" << endl;
@@ -70,7 +115,6 @@ resolutionBySyzygies := opts -> (M) -> (
 	       );
 	  );
      C)
-
 
 resolutionInEngine := opts -> (M) -> (
      local C;
@@ -164,12 +208,9 @@ resolutionInEngine := opts -> (M) -> (
 		    )));
      C)
 
-default := (o,defaults) -> merge(o,defaults,(x,y) -> if x === null then y else x)
-Strategy0 := new OptionTable from { Strategy => 0 }
-Strategy1 := new OptionTable from { Strategy => 1 }
-Strategy2 := new OptionTable from { Strategy => 2 }
-Strategy3 := new OptionTable from { Strategy => 3 }
-Strategy4 := new OptionTable from { Strategy => 4 }
+-----------------------------------------------------------------------------
+-- resolution
+-----------------------------------------------------------------------------
 
 resolution = method(
      Options => {
@@ -186,42 +227,70 @@ resolution = method(
 	  }
      )
 
-engineReady := M -> (
-     R := ring M;
-     -- Needed to compute resolutions, (algorithms 0,1,2,3):
-     --    Ring is (tower of) poly ring(s) over a field (or skew commutative, or quotient ring of such, or both)
-     --    Ring is graded
-     --    Ring is homogeneous in this grading
-     --    Matrix is homogeneous in this grading
-     -- Additional requirements for resolution algorithm 3 (which uses hilbert function):
-     --    Ring is singly graded
-     R.?Engine 
-     and isHomogeneous M
-     and (isCommutative R or isSkewCommutative R)
-     and (
-     	  k := ultimate(coefficientRing, R);
-	  k =!= R
-     	  and isField k
-	  )
-     )
+-- keys: none so far
+ResolutionOptions = new SelfInitializingType of BasicList
+ResolutionOptions.synonym = "resolution options"
 
-protect ManualResolution				    -- not to be exported
+-- keys: LengthLimit
+-- TODO: what else?
+-- SyzygyLimit, HardDegreeLimit, StopBeforeComputation,
+-- DegreeLimit, FastNonminimal, SortStrategy, PairLimit
+ResolutionComputation = new Type of MutableHashTable
+ResolutionComputation.synonym = "resolution computation"
+
+new ResolutionComputation from Module := (C, M) -> (
+    -- if there is a compatible computation stored in M.cache,
+    -- returns the computation object, otherwise creates the entry:
+    --   ResolutionOptions{} => ResolutionComputation{ Result, LengthLimit, ... }
+    cacheKey := ResolutionOptions{};
+    try M.cache#cacheKey else M.cache#cacheKey = new ResolutionComputation from {
+	Result => null, LengthLimit => -1 })
+
+isComputationDone ResolutionComputation := Boolean => options resolution >> opts -> container -> (
+    -- this function determines whether we can use the cached result, or further computation is necessary
+    try instance(container.Result, ChainComplex) and opts.LengthLimit <= container.LengthLimit else false)
+
+cacheHit := type -> if debugLevel > 0 then printerr("Cache hit on a ", synonym type, "! 🎉");
+
+cacheComputation = method(TypicalValue => CacheFunction, Options => true)
+cacheComputation ResolutionComputation := CacheFunction => options resolution >> opts -> container -> new CacheFunction from (
+    -- this function takes advantage of FunctionClosures by modifying the container
+    computation -> (
+	if isComputationDone(opts, container) then ( cacheHit class container; container.Result ) else
+	if (result := computation(opts, container)) =!= null then (
+	    container.LengthLimit = opts.LengthLimit;
+	    container.Result = result)))
+
+-- TODO: document this
+-- TODO: how to combine this with caching?
+protect ManualResolution -- not to be exported
 storefuns#resolution = (M,C) -> M.cache.ManualResolution = C
 
-resolution Module := ChainComplex => o -> (M) -> (
-     if M.cache.?ManualResolution then return M.cache.ManualResolution;
-     C := runHooks((resolution, Module), (o, M));
-     if C =!= null then return C;
-     R := ring M;
-     if isField R then return chainComplex map(minimalPresentation M,R^0,0);
-     k := ultimate(coefficientRing, R);
-     oR := options R;
-     if engineReady M and (options R).Heft =!= null
-     then (resolutionInEngine default(o,if o.FastNonminimal then Strategy4 else if isQuotientRing R or isSkewCommutative R then Strategy2 else Strategy1))(M)
-     else if k === ZZ then (resolutionBySyzygies o)(M)
-     else if not isHomogeneous M and isCommutative R and degreeLength R === 1 then (resolutionByHomogenization o)(M)
-     else (resolutionBySyzygies o)(M)
-     )
+resolution Module := ChainComplex => opts -> M -> (
+    verboseLog := if debugLevel > 5 then printerr else identity;
+
+    if M.cache.?ManualResolution then return (
+	verboseLog "returning manually provided resolution";
+	M.cache.ManualResolution);
+
+    R := ring M;
+    strategy := opts.Strategy;
+
+    -- this logic runs the strategies in order, or the specified strategy
+    computation := (opts, container) -> (
+	if isField R then return map(minimalPresentation M, R^0, 0);
+	runHooks((resolution, Module), (opts, M), Strategy => strategy));
+
+    -- this is the logic for caching partial resolution computations. A.cache contains an option:
+    --   ResolutionOptions{} => ResolutionComputation{ Result, LengthLimit, ... }
+    container := new ResolutionComputation from M;
+
+    -- the actual computation of the resolution occurs here
+    C := (cacheComputation(opts, container)) computation;
+
+    if C =!= null then C else if strategy === null
+    then error("no applicable strategy for resolving over ", toString R)
+    else error("assumptions for resolution strategy ", toString strategy, " are not met"))
 
 resolution Matrix := ChainComplexMap => options -> (f) -> extend(
      resolution(target f, options), 
@@ -233,6 +302,49 @@ resolution Ideal := ChainComplex => options -> (I) -> resolution(
      then I.cache.quotient
      else I.cache.quotient = cokernel generators I, -- used to be (ring I)^1/I, but that needs GB recomputation...
      options)
+
+-----------------------------------------------------------------------------
+
+algorithms#(resolution, Module) = new MutableHashTable from {
+    Engine => (opts, M) -> (
+	R := ring M;
+	if not engineReady M
+	or (options R).Heft === null
+	then return null;
+	opts = default(opts,
+	    if opts.FastNonminimal then Strategy4 else
+	    if isQuotientRing R
+	    or isSkewCommutative R then Strategy2 else Strategy1);
+	(resolutionInEngine opts) M),
+
+    "OverZZ" => (opts, M) -> (
+	if ZZ =!= ultimate(coefficientRing, ring M)
+	then return null;
+	(resolutionBySyzygies opts) M),
+
+    "ByHomogenization" => (opts, M) -> (
+	R := ring M;
+	if isHomogeneous M
+	or not isCommutative R
+	-- TODO: generalize to multigraded setting
+	or not degreeLength R === 1
+	then return null;
+	(resolutionByHomogenization opts) M),
+
+    "BySyzygies" => (opts, M) -> (resolutionBySyzygies opts) M,
+    }
+
+-- FIXME
+algorithms#(resolution, Module)#ZZ =
+algorithms#(resolution, Module)#QQ = algorithms#(resolution, Module)#Engine
+
+-- Installing hooks for resolution
+scan({"BySyzygies", "ByHomogenization", "OverZZ", Engine, ZZ, QQ}, strategy ->
+    addHook(key := (resolution, Module), algorithms#key#strategy, Strategy => strategy))
+
+-----------------------------------------------------------------------------
+-- FastNonminimal strategy
+-----------------------------------------------------------------------------
 
 resolutionNonminimal = (opts,M) -> (
     -- options allowed:
@@ -350,9 +462,14 @@ resolutionNonminimal = (opts,M) -> (
 addHook((resolution, Module), Strategy => FastNonminimal, resolutionNonminimal)
 
 -----------------------------------------------------------------------------
-getpairs := g -> rawGBBetti(raw g,1)
-remaining := g -> rawGBBetti(raw g,2)
-nmonoms := g -> rawGBBetti(raw g,3)
+-- status: status of a resolution computation
+-----------------------------------------------------------------------------
+-- TODO: extend to other computations
+
+-- TODO: where and how should these be used?
+getpairs  := g -> rawGBBetti(raw g, 1)
+remaining := g -> rawGBBetti(raw g, 2)
+nmonoms   := g -> rawGBBetti(raw g, 3)
 
 status Resolution := options -> (r) -> (
      r = raw r;

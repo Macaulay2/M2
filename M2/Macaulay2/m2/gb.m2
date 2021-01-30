@@ -96,7 +96,7 @@ toEngineNat  := n -> if n === infinity then -1 else n
 ---------------------------
 
 -- also used in res.m2 and tests/engine/raw-gb.m2
-isComputationDone = c -> if RawStatusCodes#?c then "done" === RawStatusCodes#c else error "unknown computation status code"
+isComputationDone ZZ := {} >> o -> c -> if RawStatusCodes#?c then "done" === RawStatusCodes#c else error "unknown computation status code"
 
 processStrategy := strategies -> sum(flatten {strategies}, strategy ->
     if RawStrategyCodes#?strategy then RawStrategyCodes#strategy else error "gb: unknown strategy encountered")
