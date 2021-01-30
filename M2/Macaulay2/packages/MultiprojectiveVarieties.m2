@@ -492,6 +492,56 @@ builtInProjectiveVariety = memoize(X -> Proj ring X);
 
 variety EmbeddedProjectiveVariety := X -> builtInProjectiveVariety X; 
 
+linearSpan = method();
+linearSpanMem = memoize(X -> (Y := projectiveVariety ideal image basis(1,ideal X); if Y == ambient X then return ambient X; if Y == X then return X; Y));
+linearSpan EmbeddedProjectiveVariety := X -> linearSpanMem X;
+
+EmbeddedProjectiveVariety ! := X -> (
+    if coefficientRing X === QQ then (
+        p := nextPrime random(300,10000000);
+        -- <<"*** reduction to char "<< p <<" ***"<<endl;
+        return (X ** (ZZ/p))!;
+    );
+    <<"dim:.................. "<<dim X;<<endl;
+    <<"codim:................ "<<codim X<<endl;
+    if dim X == -1 then return;
+    <<"degree:............... "<<degree X<<endl;
+    if codim X == 0 then return;
+    if dim X >= 2 then <<"sectional genus:...... "<<(reverse genera ideal X)_1<<endl;
+    if dim X == 1 then <<"genus:................ "<<(reverse genera ideal X)_1<<endl;
+    <<"generators:........... "<<toStringDegreesVar X<<endl;
+    d := null;
+    if # degrees X == 1 and first first degrees X >= {2} and last first degrees X >= dim ambient X +1 then <<"degree associated map: "<<toString(d = degreeMap rationalMap ideal X)<<endl;
+    ln := null;
+    if linearSpan X == ambient X then <<"linear normality:..... "<<toString(ln = rank HH^0(OO_(variety X)(1)) == dim ambient X + 1)<<endl;
+    nc := null;
+    <<"connected components:. "<<toString(nc = rank HH^0(OO_(variety X)))<<endl;
+    <<"purity:............... "<<X == top X<<endl; 
+    if X == top X then (
+        <<"dim sing. l.:......... "<<dim singularLocus X<<endl;
+        if dim singularLocus X >= 0 then <<"degree sing. l.:...... "<<degree singularLocus X<<endl;
+        if dim singularLocus X >= 0 then <<"gens. sing. l.:....... "<<toStringDegreesVar singularLocus X<<endl;
+    ) else return;
+    if ln === true and linearSpan X == ambient X and nc === 1 and X == top X and dim singularLocus X == -1 and dim X >= 1 and codim X > 1 and codim X == degree X - 1 then (if codim X == 3 and dim X == 2 and d === 1 then (<<"*** This is the Veronese surface in P^5 ***"<<endl) else (if dim X > 1 then <<"*** This is a rational normal scroll of dimension "<<dim X<<" and degree "<<degree X<<" in PP^"<<first shape X<<" ***"<<endl else <<"*** This is a rational normal curve of degree "<<degree X<<" in PP^"<<first shape X<<" ***"<<endl));
+    if # degrees X == 1 and d === 1 then (
+        <<"*** This is the base locus of a ";
+        if X == top X and dim singularLocus X == -1 and nc === 1 then <<"special ";
+        if last first degrees X == first shape X + 1 then <<"Cremona " else <<"birational ";
+        <<"transformation of PP^"<<first shape X<<" ***"<<endl;
+    );
+    if codim X == 1 and X == top X then (
+        <<"*** This is a"; 
+        if dim singularLocus X == -1 then <<" smooth" else if dim singularLocus X < dim X - 3 then <<" factorial";
+        <<" hypersurface of degree "<<degree X<<" in PP^"<<first shape X<<" ***"<<endl;
+    );
+    if codim X > 1 and X == top X and numgens ideal X == codim X then (
+        <<"*** This is a"; 
+        if dim singularLocus X == -1 then <<" smooth" else if dim singularLocus X < dim X - 3 then <<" factorial";
+        <<" complete intersection of type "<<toString(toSequence flatten degrees ideal X)<<" in PP^"<<first shape X<< " ***"<<endl;
+    );
+    if ln === true and linearSpan X == ambient X and X == top X and dim singularLocus X == -1 and nc === 1 and codim X == 4 and dim X == 3 and degree X == 6 and d === 0 then (<<"*** This is P^1xP^1xP^1 in P^7 ***"<<endl);
+);
+
 
 MultirationalMap = new Type of MutableHashTable;
 
@@ -2116,6 +2166,22 @@ EXAMPLE {
 "describe X",
 "? image segre X"},
 SeeAlso => {(describe,MultirationalMap)}}
+
+document { 
+Key => {(symbol !,EmbeddedProjectiveVariety)}, 
+Headline => "print a more detailed description of an embedded projective variety", 
+Usage => "X!", 
+Inputs => {"X" => EmbeddedProjectiveVariety},
+EXAMPLE lines ///
+K = ZZ/333331; K[t_0..t_5];
+X = projectiveVariety ideal(t_4^2-t_3*t_5,t_2*t_4-t_1*t_5,t_2*t_3-t_1*t_4,t_2^2-t_0*t_5,t_1*t_2-t_0*t_4,t_1^2-t_0*t_3);
+X!
+K[x_0..x_7];
+X = projectiveVariety ideal(x_5*x_6-x_4*x_7,x_4*x_6-x_3*x_7,x_2*x_6-x_1*x_7,x_1*x_6-x_0*x_7,x_4^2-x_3*x_5,x_2*x_4-x_1*x_5,x_1*x_4-x_0*x_5,x_2*x_3-x_0*x_5,x_1*x_3-x_0*x_4,x_1^2-x_0*x_2);
+X!
+(random({2},X))!
+(random({{2},{2}},X))!///,
+SeeAlso => {(describe,MultiprojectiveVariety),(symbol ?,MultiprojectiveVariety)}}
 
 document { 
 Key => {(clean,MultirationalMap)}, 
