@@ -22,15 +22,10 @@ There are various tools needed to compile Macaulay2 dependencies.
 - On Fedora/CentOS, install `autoconf automake bison libtool pkg-config yasm`.
 - On Mac OS X, using Homebrew, install `autoconf automake bison libtool pkg-config yasm`.
 
-There are 7 libraries that must be found on the system.
-- On Debian/Ubuntu, install `libopenblas-dev libgmp3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-regex-dev libboost-stacktrace-dev libatomic-ops-dev`.
-- On Fedora/CentOS, install `openblas-devel gmp-devel libxml2-devel readline-devel gdbm-devel boost-devel libatomic_ops-devel`.
-- On Mac OS X, using Homebrew, install `gmp libxml2 readline gdbm boost libatomic_ops`.
-
-Finally, there are 2 optional libraries that help with building other requirements.
-- On Debian/Ubuntu, install `libomp-dev libtbb-dev`.
-- On Fedora/CentOS, install `libomp-devel tbb-devel`.
-- On Mac OS X, using Homebrew, install `libomp tbb`.
+There are 10 libraries that must be found on the system.
+- On Debian/Ubuntu, install `libopenblas-dev libgmp3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-regex-dev libboost-stacktrace-dev libatomic-ops-dev libomp-dev libtbb-dev`.
+- On Fedora/CentOS, install `openblas-devel gmp-devel libxml2-devel readline-devel gdbm-devel boost-devel libatomic_ops-devel libomp-devel tbb-devel`.
+- On Mac OS X, using Homebrew, install `gmp libxml2 readline gdbm boost libatomic_ops libomp tbb`.
 
 **TIP**: x86_64 binary packages for all dependencies on Mac OS X 10.15+ and Linux distributions are available through the [Macaulay2 tap](https://github.com/Macaulay2/homebrew-tap/) for Homebrew. To download the dependencies this way run:
 ```
@@ -154,7 +149,6 @@ For a complete list, along with descriptions, try `cmake -LAH .` or see `cmake/c
 - `WITH_OMP:BOOL=OFF`: link with the OpenMP library
 - `WITH_PYTHON:BOOL=OFF`: link with the Python library
 - `WITH_SQL:BOOL=OFF`: link with the MySQL library
-- `WITH_TBB:BOOL=OFF`: link with the TBB library
 - `WITH_XML:BOOL=ON`: link with the libxml2 library
 - `BUILD_DOCS:BOOL=OFF`: build internal documentation
 - `BUILD_NATIVE:BOOL=ON`: use native SIMD instructions
