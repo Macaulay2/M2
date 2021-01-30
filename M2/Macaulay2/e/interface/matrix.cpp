@@ -520,15 +520,6 @@ const Matrix /* or null */ *IM2_Matrix_homogenize(const Matrix *M,
   return M->homogenize(var, wts);
 }
 
-const engine_RawMatrixPair_struct *IM2_Matrix_coeffs(const Matrix *M,
-                                                     M2_arrayint vars)
-{
-#ifdef DEVELOPMENT
-#warning "implement IM2_Matrix_coeffs"
-#endif
-  return 0;
-}
-
 const Matrix /* or null */ *rawCoefficients(M2_arrayint vars,
                                             const Matrix *monoms,
                                             const Matrix *M)

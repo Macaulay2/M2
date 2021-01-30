@@ -46,8 +46,14 @@ runtests: $(UNITTEST_TARGET)
 ARingRRRTest :  gtest-include.o ARingRRRTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
-ARingGFTest :  gtest-include.o ARingGFTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)  ../../system/supervisor.o
+ARingGFTest :  gtest-include.o ARingGFTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES) ../../system/supervisor.o
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
+
+NCGroebnerTest :  gtest-include.o NCGroebnerTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES) ../../system/supervisor.o
+	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
+
+runNCGroebnerTest : NCGroebnerTest
+	time ./NCGroebnerTest
 
 ARingRRRZZpTest :  gtest-include.o  \
     ARingZZpTest.o  \

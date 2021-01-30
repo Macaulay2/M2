@@ -181,7 +181,7 @@ CFLAGS   += -Wunused-function
 CXXFLAGS += -Wunused-function
 
 CFLAGS   += -Wfatal-errors
-CXXFLAGS += -Wfatal-errors
+CXXFLAGS += -Wfatal-errors -std=c++17
 
 version.o : CXXFLAGS += -Wno-unused-local-typedefs
 
