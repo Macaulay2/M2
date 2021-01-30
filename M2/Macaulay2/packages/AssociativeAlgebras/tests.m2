@@ -1616,8 +1616,9 @@ DEVELOPMENT ///
 restart
 debug needsPackage "AssociativeAlgebras"
 kk = QQ; w=2
---kk = frac(QQ[w]/ideal(w^4+1)) -- computations crash if this is used
-kk = toField(QQ[w]/ideal(w^4+1))
+kk = frac(QQ[w]/ideal(w^4+1)) -- computations crash if this is used
+kk = frac(QQ[w])
+--kk = toField(QQ[w]/ideal(w^4+1))
 A = kk <|x,y|>
 
 --- BUG!!!

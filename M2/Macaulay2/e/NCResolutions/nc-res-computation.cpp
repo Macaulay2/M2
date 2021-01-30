@@ -2,21 +2,21 @@
 #include "M2FreeAlgebraQuotient.hpp"
 
 NCResComputation::NCResComputation(const FreeAlgebraQuotient& ring,
-				   const Matrix& gbMatrix,
+				   const Matrix& gbModuleMatrix,
 				   int max_level)
  : mRing(ring),
-   mInputGroebnerBasis(gbMatrix),
+   mInputModuleGB(gbModuleMatrix),
    mMaxLevel(max_level)
 {
 }
 
-ResolutionComputation* createNCRes(const Matrix* gbMatrix,
+ResolutionComputation* createNCRes(const Matrix* gbModuleMatrix,
 				   int max_level,
 				   int strategy)
 {
-  const M2FreeAlgebraQuotient* ring = gbMatrix->get_ring()->cast_to_M2FreeAlgebraQuotient();
+  const M2FreeAlgebraQuotient* ring = gbModuleMatrix->get_ring()->cast_to_M2FreeAlgebraQuotient();
   if (ring != nullptr)  
-    return new NCResComputation(ring->freeAlgebraQuotient(),*gbMatrix,max_level);
+    return new NCResComputation(ring->freeAlgebraQuotient(),*gbModuleMatrix,max_level);
   ERROR("Expected a Matrix over a FreeAlgebraQuotient");
   return nullptr;
 }

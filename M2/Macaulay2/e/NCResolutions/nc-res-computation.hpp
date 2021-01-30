@@ -12,7 +12,7 @@ class NCResComputation : public ResolutionComputation
 {
  private:
   NCResComputation(const FreeAlgebraQuotient& ring,
-                   const Matrix& gbMatrix,
+                   const Matrix& gbIdealMatrix,
                    int max_level);
 
  public:
@@ -38,7 +38,7 @@ class NCResComputation : public ResolutionComputation
   // The computation is complete up through this slanted degree.
 
   const Matrix /* or null */* get_matrix(int level) {
-    if (level == 1) return &mInputGroebnerBasis;
+    if (level == 1) return &mInputModuleGB;
     MatrixConstructor matCon(get_free(level-1), get_free(level));
     return matCon.to_matrix();
   }
@@ -46,9 +46,9 @@ class NCResComputation : public ResolutionComputation
   MutableMatrix /* or null */* get_matrix(int slanted_degree, int level) {return nullptr; }
 
   const FreeModule /* or null */* get_free(int level) {
-    if (level == 0) return mInputGroebnerBasis.rows();
-    if (level == 1) return mInputGroebnerBasis.cols();
-    return mInputGroebnerBasis.get_ring()->make_FreeModule(0);
+    if (level == 0) return mInputModuleGB.rows();
+    if (level == 1) return mInputModuleGB.cols();
+    return mInputModuleGB.get_ring()->make_FreeModule(0);
   }
 
   M2_arrayint get_betti(int type) const { return nullptr; }
@@ -59,13 +59,59 @@ class NCResComputation : public ResolutionComputation
   }
 
  private:
-  // something like a Schreyer frame which will be the free res object
-
+  // input information coming from M2 objects
   const FreeAlgebraQuotient& mRing;
-  const Matrix& mInputGroebnerBasis;
+  //const Matrix& mInputIdealGB; // probably a computation type from a partial GB.
+  const Matrix& mInputModuleGB;  // maybe not a GB of the module either...
   int mMaxLevel;
 };
 
+#if 0
+//  Data Types
+class NCSchreyerResolution
+{
+  // internal information for this resolution computation
+  std::vector<Level> mLevels;
+  MemoryBlock mMemoryBlock; // where all the monomials are stored
+  std::unordered_set<Monom> mAllMonomials; // or <int*>?
+};
+
+class Level
+{
+  std::vector<Element> mElements;
+  // SchreyerOrder at this level
+};
+
+class Element
+{
+  ModulePoly mPoly;
+  // degree
+  // component of previous step
+  // bool indicating that the element has been computed entirely?
+};
+
+class ModulePoly
+{
+  CoeffVector mCoeffVector;
+  std::vector<int> mMonomials;
+};
+
+#endif
+
+// to create the frame:
+
+// 1. Fill in level 0 - (Take the degree information from the target mInputModGB)
+// 2. Fill in level 1 - (This is really just the info on the entries of mInputModGB)
+//                      This is more difficult the GB is not known out to that point yet.
+// 3. Fill in level 2 - This requires us to find all the spairs on module elements vs
+//                      elements of the ring Groebner basis
+// 4. Rinse and repeat.
+
+// creation of the frame
+// creation of level0and1 (translation of matrix to our information)
+// fillInSyzygies - fill in a level and degree of the frame.
+// F4 matrix creation and reduction code
+// take result in the frame and translate back
 ResolutionComputation* createNCRes(const Matrix* m,
                                    int max_level,
                                    int strategy);
