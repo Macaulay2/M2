@@ -10,7 +10,7 @@
 newPackage(
        "Cremona",
 	Version => "5.1", 
-        Date => "January 22, 2021",
+        Date => "January 30, 2021",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "rational maps between projective varieties",
 	Keywords => {"Algebraic Geometry"},
@@ -89,7 +89,7 @@ specialCremonaTransformation = method(TypicalValue=>RationalMap);
 quadroQuadricCremonaTransformation = method(TypicalValue=>RationalMap);
 specialQuadraticTransformation = method(TypicalValue=>RationalMap);
 specialCubicTransformation = method(TypicalValue=>RationalMap);
-rationalMap = method(TypicalValue => RationalMap, Options => {Dominant => null});
+rationalMap = method(Options => {Dominant => null});
 forceInverseMap = method(TypicalValue => Nothing);
 forceImage = method(TypicalValue => Nothing);
 point = method();
@@ -1947,7 +1947,7 @@ getMultidegree (RingElement,List) := (mdeg,n) -> first getMultidegree(mdeg,n,0,(
 point (Ideal,Boolean) := (I,b) -> (  -- see also: code(randomKRationalPoint,Ideal)
    R := ring I;
    if not (isPolynomialRing R and isHomogeneous I) then error "expected a homogeneous ideal in a polynomial ring";
-   if degrees R =!= toList((numgens R):{1}) then error "expected a standard graded ring";
+   if degrees R =!= toList((numgens R):{1}) then error "expected a standard graded ring, but you may use the method point(MultiprojectiveVariety) from the package MultiprojectiveVarieties";
    c := codim I; 
    n := numgens R -1;
    if c >= n then error "expected a positive dimensional scheme";
