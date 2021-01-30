@@ -399,7 +399,7 @@ double norm2_complex_array(int n,
 #define MAX_NUM_PATH_TRACKERS 10
 
 /* Conventions in relative_position SLPs:
-   nodes are refered via negative integers;
+   nodes are referred via negative integers;
    i-th input --> i;
    i-th constant --> i + CONST_OFFSET. */
 
@@ -431,7 +431,7 @@ class SLP : public MutableEngineObject
   M2_arrayint program;        // std::vector???
   element_type* nodes;        // array of CCs
   intarray node_index;  // points to position in program (rel. to start) of
-                        // operation correspoding to a node
+                        // operation corresponding to a node
   int num_consts, num_inputs, num_operations, rows_out, cols_out;
 
   void* handle;  // dynamic library handle
