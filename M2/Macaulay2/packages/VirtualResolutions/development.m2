@@ -118,12 +118,12 @@ multigradedRegularityTruncationStrategy = (X, M, opts) -> (
     debugInfo("Recalculating minimal generators by adding U");
     R = U + ideal apply(R, ell -> P_(ell - low));
     -- FIXME: maybe remove this before release?
-    if R != U then error concatenate(10:"💥", "\n💥💥 TELL LCH 💥💥\n", 10:"💥");
+    if R != U then error concatenate(newline, 10:"💥", "\n💥💥 TELL LCH 💥💥\n", 10:"💥");
     -- retrieve the container
     container := opts.cache;
     container.LowerLimit = low;
     container.UpperLimit = high;
-    container.Result = sort apply(flatten entries mingens R, g -> (flatten exponents g) + low));
+    container.Result = apply(flatten entries mingens R, g -> (flatten exponents g) + low));
 
 -- The default strategy applies to both modules and ideals in a product of projective spaces,
 -- but by using hooks we allow better strategies to be added later

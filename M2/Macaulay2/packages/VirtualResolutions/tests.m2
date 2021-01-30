@@ -128,7 +128,6 @@ TEST ///
 
 -- Test for resolveViaFatPoint
 TEST ///
-    needsPackage "TateOnProducts"
     N = {1,1,2} -- Example 5.7 of [BES] uses 1x1x2 and 6 points
     pts = 6
     (S, E) = productOfProjectiveSpaces N
@@ -169,9 +168,9 @@ TEST ///
     S = ring X; B = ideal X;
     I = saturate(ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3)), B);
     -- taking NormalToricVariety as input
-    elapsedTime assert(multigradedRegularity(X, I) == {{1,5},{2,2},{4,1}}) -- 18 -> 8 -> 4
+    elapsedTime assert(multigradedRegularity(X, I) == {{2,2},{4,1},{1,5}}) -- 18 -> 8 -> 4
     -- taking the ring of NormalToricVariety as input
-    elapsedTime assert(multigradedRegularity(S, I) == {{1,5},{2,2},{4,1}}) -- woohoo cache hit!!
+    elapsedTime assert(multigradedRegularity(S, I) == {{2,2},{4,1},{1,5}}) -- woohoo cache hit!!
 ///
 
 TEST ///
@@ -184,6 +183,7 @@ TEST ///
 ///
 
 TEST ///
+  debug needsPackage "VirtualResolutions"
   S = QQ[x_(0,0),x_(0,1),x_(1,0),x_(1,1), Degrees => {{1,0},{1,0},{0,1},{0,1}}]
   S = imbueRingWithTateData S;
   M = cokernel matrix{{x_(1,0)^2*x_(0,1), x_(0,0)^2*x_(1,0)*x_(0,1), x_(0,1)^3*x_(1,1)^2, x_(1,0)*x_(0,1)^3*x_(1,1), x_(0,0)^4*x_(1,0), x_(1,0)*x_(0,1)^5}}
