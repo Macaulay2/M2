@@ -3,7 +3,7 @@ document {
 Key => CoincidentRootLoci, 
 Headline => "A package for computations with coincident root loci",
 PARA{"This package accompanies the paper ",HREF{"https://arxiv.org/abs/1804.08309","On the algebraic boundaries among typical ranks for real binary forms"}," (see also ",HREF{"https://arxiv.org/abs/1911.01958","Algebraic boundaries among typical ranks for real binary forms of arbitrary degree"},"). It provides some tools that can be useful for working with symmetric tensors of dimension 2. Such tensors are bijectively associated with homogeneous polynomials in two variables, which are also called binary forms. One of the main methods is ",TO realrank,", which uses ",HREF{"https://www.usna.edu/CS/qepcadweb/B/QEPCAD.html","QEPCAD"}," to compute the real rank of binary forms defined over ",TEX///$\mathbb{Q}$///,"."},
-PARA{"This package requires the following packages: ",TO Cremona," (version 4.3 or later) and ",TO Resultants," (version 1.2.2 or later)."}}
+Contributors => {UL {{"Maria Chiara Brambilla <",HREF{"mailto: brambilla@dipmat.univpm.it","brambilla@dipmat.univpm.it"},">"}}}}
 document { 
 Key => {CoincidentRootLocus}, 
 Headline => "the class of all coincident root loci",
