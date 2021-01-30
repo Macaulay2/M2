@@ -3,11 +3,10 @@ if version#"VERSION" < "1.15" then error "this package requires Macaulay2 versio
 
 newPackage(
        "CoincidentRootLoci",
-	Version => "0.1.2", 
-        Date => "June 22, 2020",
+	Version => "0.1.3", 
+        Date => "January 30, 2021",
     	Headline => "coincident root loci",
-        Authors => {{Name => "Maria Chiara Brambilla", Email => "brambilla@dipmat.univpm.it"},
-                    {Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
+        Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
 	Keywords => {"Real Algebraic Geometry", "Interfaces"},
         PackageExports => {"Cremona","Resultants"},
         DebuggingMode => false,
