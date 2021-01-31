@@ -31,7 +31,6 @@ export{"apolar",
        "randomInCoisotropic",
        "generic",
        "projectiveJoin",
-       "tangentSpace",
        "polarDegrees"
 }
 
@@ -49,6 +48,8 @@ KK = QQ;
 CRLOCUS := local CRLOCUS;
 
 CoincidentRootLocus = new Type of MutableHashTable;
+
+CoincidentRootLocus.synonym = "coincident root locus";
 
 coincidentRootLocus = method(TypicalValue => CoincidentRootLocus, Dispatch => Thing, Options => {Variable => VAR});
 
@@ -130,7 +131,15 @@ expression JoinOfCoincidentRootLoci := (Z) -> (
 
 net CoincidentRootLocus := (X) -> net expression X;
 
+CoincidentRootLocus#{Standard,AfterPrint} = CoincidentRootLocus#{Standard,AfterNoPrint} = X -> (
+  << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Coincident root locus" << endl;
+);
+
 net JoinOfCoincidentRootLoci := (Z) -> net expression Z;
+
+JoinOfCoincidentRootLoci#{Standard,AfterPrint} = JoinOfCoincidentRootLoci#{Standard,AfterNoPrint} = X -> (
+  << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Join of ", << #(X#"listCRloci") <<" coincident root loci" << endl;
+);
 
 toString CoincidentRootLocus := (X) -> "CRL("|toString partition X|","|toString coefficientRing X|","|"Variable=>"|toString X#"variable"|")"; 
 
@@ -408,7 +417,6 @@ CoincidentRootLocus + CoincidentRootLocus := (X,Y) -> ( -- intersection, undocum
    if #E == 1 then first E else E
 );
 
-tangentSpace = method() -- undocumented
 tangentSpace (CoincidentRootLocus,RingElement) := (X,F) -> (
    checkBinaryForm F;
    if first degree F =!= X#"ambient" then error("expected a binary form of degree "|toString(X#"ambient"));
@@ -416,15 +424,6 @@ tangentSpace (CoincidentRootLocus,RingElement) := (X,F) -> (
    if not member(F,X) then error("expected a binary form belonging to "|toString net X);
    J := sub(jacobian ideal X,apply(gens ring X,switch1 F,(x,s) -> x => s));
    sub(switch2 ideal((vars ring X) * J),vars ring F)
-);
-tangentSpace (Ideal,Ideal) := (I,p) -> (
-   if ring p =!= ring I then error "common ring not found";
-   if not isPolynomialRing ring I then error "expected a polynomial ring";
-   if not (isHomogeneous I and isHomogeneous p) then error "expected homogeneous ideals";
-   if not (dim p == 1 and degree p == 1 and unique degrees p == {{1}}) then error "expected second argument to be the ideal of a point";
-   if not isSubset(I,p) then error "expected a point of the variety";
-   subs := apply(gens ring I,flatten entries coefficients parametrize p,(x,s) -> x => s);
-   trim ideal((vars ring I) * sub(jacobian I,subs))
 );
 
 --================================================================

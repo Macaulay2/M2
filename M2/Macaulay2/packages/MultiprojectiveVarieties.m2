@@ -117,7 +117,7 @@ updatePackage = () -> (
 );
 
 export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct", 
-       "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan",
+       "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan", "tangentSpace",
        "MultirationalMap", "multirationalMap", "baseLocus", "degreeSequence", "inverse2",
        "updatePackage",
        "∏","⋂","⋃"}
@@ -562,6 +562,15 @@ EmbeddedProjectiveVariety ! := X -> (
 );
 
 dual EmbeddedProjectiveVariety := {} >> o -> X -> projectiveVariety(dualvariety ideal X,MinimalGenerators=>false,Saturate=>false); -- from SparseResultants
+
+tangentSpace = method();
+tangentSpace (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := (X,p) -> (
+    if not isPoint p then if isPoint X then return tangentSpace(p,X);
+    if not (isPoint p and isSubset(p,X)) then error "expected a point on the variety";
+    I := ideal X;
+    subs := apply(gens ring I,toList coordinates p,(x,s) -> x => s);
+    projectiveVariety(ideal((vars ring I) * sub(jacobian I,subs)),MinimalGenerators=>true,Saturate=>false)
+);
 
 linearlyNormalEmbedding = method();
 linearlyNormalEmbedding EmbeddedProjectiveVariety := X -> (
@@ -2349,7 +2358,7 @@ Usage => "dual X",
 Inputs => {"X" => EmbeddedProjectiveVariety},
 Outputs => {EmbeddedProjectiveVariety => {"the dual variety to ",TEX///$X$///}},
 EXAMPLE {"X = projectiveVariety({2},{2},QQ);","X' = dual X;", "describe X'","assert(dual X' == X)"},
-SeeAlso => {dualVariety}}
+SeeAlso => {dualVariety,tangentSpace}}
 
 document { 
 Key => {linearlyNormalEmbedding,(linearlyNormalEmbedding,EmbeddedProjectiveVariety)},
@@ -2376,6 +2385,19 @@ EXAMPLE {"P = projectiveVariety({7},ZZ/333331);",
 "S = apply(3,i -> point P)",
 "L = linearSpan ⋃ S;",
 "assert(dim L == 2 and degree L == 1)"}}
+
+document { 
+Key => {tangentSpace,(tangentSpace,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)},
+Headline => "tangent space to a projective variety at a point", 
+Usage => "tangentSpace(X,p)
+tangentSpace(p,X)", 
+Inputs => {"X" => EmbeddedProjectiveVariety,"p" => EmbeddedProjectiveVariety => {"a point on ",TEX///$X$///}},
+Outputs => {EmbeddedProjectiveVariety => {"the embedded tangent space ",TEX///$T_p(X)$///," to ",TEX///$X$///," at the point ",TEX///$p$///}},
+EXAMPLE {"X = projectiveVariety({3},{2},ZZ/333331);",
+"p := point X",
+"T = tangentSpace(X,p);",
+"? T"},
+SeeAlso => {(singularLocus,MultiprojectiveVariety),(dual,EmbeddedProjectiveVariety),(point,MultiprojectiveVariety)}}
 
 document { 
 Key => {"updatePackage"},
