@@ -1,6 +1,8 @@
 // Copyright 1995 Michael E. Stillman
 
 #include "frac.hpp"
+
+#include "interface/factory.h"
 #include "text-io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"
@@ -261,7 +263,7 @@ ring_elem FractionField::from_int(mpz_srcptr n) const
   return FRAC_RINGELEM(f);
 }
 
-bool FractionField::from_rational(mpq_ptr n, ring_elem &result) const
+bool FractionField::from_rational(mpq_srcptr n, ring_elem &result) const
 {
   frac_elem *f = new_frac_elem();
   f->numer = R_->from_int(mpq_numref(n));
@@ -543,7 +545,7 @@ ring_elem FractionField::power(const ring_elem a, int n) const
 
   return FRAC_RINGELEM(make_elem(top, bottom));
 }
-ring_elem FractionField::power(const ring_elem a, mpz_t n) const
+ring_elem FractionField::power(const ring_elem a, mpz_srcptr n) const
 {
   frac_elem *f = FRAC_VAL(a);
   ring_elem top, bottom;
@@ -561,12 +563,15 @@ ring_elem FractionField::power(const ring_elem a, mpz_t n) const
           ERROR("attempt to divide by zero");
           return zero();
         }
+      mpz_t abs_n;
+      mpz_init(abs_n);
+      mpz_abs(abs_n, n);
 
-      mpz_neg(n, n);
-      top = R_->power(f->denom, n);
-      bottom = R_->power(f->numer, n);
-      mpz_neg(n, n);
+      top = R_->power(f->denom, abs_n);
+      bottom = R_->power(f->numer, abs_n);
 
+      mpz_clear(abs_n);
+      
       if (R_->is_zero(bottom)) return set_non_unit_frac(f->numer);
     }
 

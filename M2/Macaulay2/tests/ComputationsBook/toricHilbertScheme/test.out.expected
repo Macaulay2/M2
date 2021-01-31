@@ -1,0 +1,852 @@
+
+i1 : A = {{1,1,1,1,1},{0,1,2,7,8}}; 
+
+i2 : R = QQ[a..e,Degrees=>transpose A]; 
+
+i3 : describe R 
+
+o3 = QQ[a..e, Degrees => {{1}, {1}, {1}, {1}, {1}}, Heft => {1, 0}, MonomialOrder => {MonomialSize => 32}, DegreeRank => 2]
+                          {0}  {1}  {2}  {7}  {8}                                    {GRevLex => {5:1}  }
+                                                                                     {Position => Up    }
+
+i4 : B = transpose syz matrix A 
+
+o4 = | 1 -2 1  0 0 |
+     | 0 5  -6 1 0 |
+     | 0 6  -7 0 1 |
+
+              3        5
+o4 : Matrix ZZ  <--- ZZ
+
+i5 : needsPackage "LLLBases"; 
+
+i6 : LLL syz matrix A 
+
+o6 = | 0  1  2  |
+     | 1  -1 0  |
+     | -1 0  -3 |
+     | -1 -1 2  |
+     | 1  1  -1 |
+
+              5        3
+o6 : Matrix ZZ  <--- ZZ
+
+i7 : B = transpose LLL syz matrix A 
+
+o7 = | 0 1  -1 -1 1  |
+     | 1 -1 0  -1 1  |
+     | 2 0  -3 2  -1 |
+
+              3        5
+o7 : Matrix ZZ  <--- ZZ
+
+i8 : toBinomial = (b,R) -> (
+          top := 1_R; bottom := 1_R;
+          scan(#b, i -> if b_i > 0 then top = top * R_i^(b_i)
+               else if b_i < 0 then bottom = bottom * R_i^(-b_i));
+          top - bottom); 
+
+i9 : J = ideal apply(entries B, b -> toBinomial(b,R)) 
+
+                                       2 2    3
+o9 = ideal (- c*d + b*e, - b*d + a*e, a d  - c e)
+
+o9 : Ideal of R
+
+i10 : scan(gens ring J, f -> J = saturate(J,f))
+
+i11 : toricIdeal = (A) -> (
+          n := #(A_0);  
+          R = QQ[vars(0..n-1),Degrees=>transpose A,MonomialSize=>16]; 
+          B := transpose LLL syz matrix A;
+          J := ideal apply(entries B, b -> toBinomial(b,R));
+          scan(gens ring J, f -> J = saturate(J,f));
+          J
+          ); 
+
+i12 : I = toricIdeal A; 
+
+o12 : Ideal of R
+
+i13 : transpose mingens I
+
+o13 = {-2, -9}  | cd-be    |
+      {-2, -8}  | bd-ae    |
+      {-2, -2}  | b2-ac    |
+      {-4, -14} | a2d2-c3e |
+      {-4, -8}  | c4-a3e   |
+      {-4, -7}  | bc3-a3d  |
+      {-5, -28} | ad4-c2e3 |
+      {-6, -42} | d6-ce5   |
+
+              8       1
+o13 : Matrix R  <--- R
+
+i14 : graver = (I) -> (
+          R := ring I;
+          k := coefficientRing R;
+          n := numgens R;
+          -- construct new ring S with 2n variables
+          S := k[Variables=>2*n,MonomialSize=>16];
+          toS := map(S,R,(vars S)_{0..n-1});
+          toR := map(R,S,vars R | matrix(R, {toList(n:1)}));
+          -- embed I in S
+          m := gens toS I;
+          -- construct the toric ideal of the Lawrence 
+          -- lifting of A
+          i := 0;
+          while i < n do (
+              wts := join(toList(i:0),{1},toList(n-i-1:0));
+              wts = join(wts,wts);
+              m = homogenize(m,S_(n+i),wts);
+              i=i+1;
+              );
+         J := ideal m;
+         scan(gens ring J, f -> J = saturate(J,f));
+         -- apply the map toR to the minimal generators of J 
+         f := matrix entries toR mingens J;
+         p := sortColumns f;
+         f_p) ;  
+
+i15 : Graver = graver I 
+
+o15 = | -cd+be -bd+ae -b2+ac -cd2+ae2 -a2d2+c3e -c4+a3e -c4+a2bd -bc3+a3d -ad4+c2e3 -abd3+c3e2 -a2d3+bc2e2 -ab2d2+c4e -a3d2+b2c2e -c5+a2b2e -c5+ab3d -b2c3+a4e -b3c2+a4d -d6+ce5 -bd5+c2e4 -ad5+bce4 -b2d4+c3e3 -a2d4+b2ce3 -b3d3+c4e2 -a3d3+b3ce2 -b4d2+c5e -a4d2+b4ce -c6+ab4e -c6+b5d -b4c2+a5e -b5c+a5d -d7+be6 -ad6+b2e5 -a2d5+b3e4 -a3d4+b4e3 -a4d3+b5e2 -a5d2+b6e -c7+b6e -c7+a5d2 -b6c+a6e -b7+a6d -d8+ae7 -b8+a7e |
+
+              1       42
+o15 : Matrix R  <--- R
+
+i16 : graverFibers = (Graver) -> (
+           ProductIdeal := (I) -> ( trim ideal(
+              apply(numgens I, a -> ( 
+                  f := I_a; leadTerm f * (leadTerm f - f))))); 
+           PI := ProductIdeal ideal Graver; 
+           R := ring Graver; 
+           new HashTable from apply(
+               unique degrees source Graver,
+               d -> d => compress (basis(d,R) % PI) ));
+
+i17 : fibers = graverFibers Graver 
+
+o17 = HashTable{{2, 2} => | ac b2 |                                  }
+                {2, 8} => | ae bd |
+                {2, 9} => | be cd |
+                {3, 16} => | ae2 bde cd2 |
+                {4, 7} => | a3d bc3 |
+                {4, 8} => | a3e a2bd c4 |
+                {4, 14} => | a2d2 c3e |
+                {5, 7} => | a4d abc3 b3c2 |
+                {5, 8} => | a4e a3bd ac4 b2c3 |
+                {5, 10} => | a3ce a2b2e a2bcd ab3d c5 |
+                {5, 14} => | a3d2 ac3e b2c2e bc3d |
+                {5, 16} => | a3e2 a2cd2 ab2d2 c4e |
+                {5, 21} => | a2d3 bc2e2 c3de |
+                {5, 22} => | a2d2e abd3 c3e2 |
+                {5, 28} => | ad4 c2e3 |
+                {6, 7} => | a5d a2bc3 b5c |
+                {6, 8} => | a5e a4bd a2c4 b4c2 |
+                {6, 12} => | a3c2e a2bc2d ab4e b5d c6 |
+                {6, 14} => | a4d2 a2c3e abc3d b4ce b3c2d |
+                {6, 18} => | a3ce2 a2b2e2 a2c2d2 b4d2 c5e |
+                {6, 21} => | a3d3 abc2e2 ac3de b3ce2 bc3d2 |
+                {6, 24} => | a3e3 a2cd2e abcd3 b3d3 c4e2 |
+                {6, 28} => | a2d4 ac2e3 b2ce3 c3d2e |
+                {6, 30} => | a2d2e2 acd4 b2d4 c3e3 |
+                {6, 35} => | ad5 bce4 c2de3 |
+                {6, 36} => | ad4e bd5 c2e4 |
+                {6, 42} => | ce5 d6 |
+                {7, 7} => | a6d a3bc3 b7 |
+                {7, 8} => | a6e a5bd a3c4 b6c |
+                {7, 14} => | a5d2 a3c3e a2bc3d b6e b5cd c7 |
+                {7, 21} => | a4d3 a2bc2e2 a2c3de abc3d2 b5e2 b3c2d2 |
+                {7, 28} => | a3d4 a2c2e3 ac3d2e b4e3 bc3d3 |
+                {7, 35} => | a2d5 abce4 ac2de3 b3e4 c3d3e |
+                {7, 42} => | ace5 ad6 b2e5 c2d2e3 |
+                {7, 49} => | be6 cde5 d7 |
+                {8, 8} => | a7e a6bd a4c4 b8 |
+                {8, 56} => | ae7 bde6 cd2e5 d8 |
+
+o17 : HashTable
+
+i18 : generateAmonos = (Graver) -> (
+           trueHS := poincare coker Graver;
+           fibers := graverFibers Graver;
+           fibers = apply(sort pairs fibers, last);
+           monos = {};
+           selectStandard := (fibers, J) -> (
+           if #fibers == 0 then (
+              if trueHS == poincare coker gens J
+              then (monos = append(monos,flatten entries mingens J));
+           ) else (
+              P := fibers_0;
+              fibers = drop(fibers,1);
+              P = compress(P % J);
+              nP := numgens source P; 
+              -- nP is the number of monomials not in J.
+              if nP > 0 then (
+                 if nP == 1 then selectStandard(fibers,J)
+                 else (--remove one monomial from P,take the rest.
+                       P = flatten entries P;
+                       scan(#P, i -> (
+                            J1 := J + ideal drop(P,{i,i});
+                            selectStandard(fibers, J1)))));
+           ));
+           selectStandard(fibers, ideal(0_(ring Graver)));
+           ) ; 
+
+i19 : generateAmonos Graver;
+
+i20 : #monos 
+
+o20 = 281
+
+i21 : scan(0..9, i -> print toString monos#i) 
+{c*d, b*d, b^2, c^3*e, c^4, b*c^3, c^2*e^3, b*c^2*e^2, b*c*e^4, d^6}
+{c*d, b*d, b^2, c^3*e, c^4, b*c^3, c^2*e^3, b*c^2*e^2, c*e^5, b*c*e^4, d^7}
+{c*d, b*d, b^2, c^3*e, c^4, b*c^3, c^2*e^3, b*c^2*e^2, c*e^5, b*c*e^4, b*e^6, d^8}
+{c*d, b*d, b^2, c^3*e, c^4, b*c^3, c^2*e^3, b*c^2*e^2, c*e^5, b*c*e^4, b*e^6, a*e^7}
+{c*d, b*d, b^2, c^3*e, c^4, b*c^3, c^2*e^3, b*c^2*e^2, d^6, a*d^5}
+{c*d, b*d, b^2, c^3*e, c^4, b*c^3, b*c^2*e^2, a*d^4, d^6}
+{c*d, b*d, b^2, c^3*e, c^4, b*c^3, a*d^4, a^2*d^3, d^6}
+{c*d, b*d, b^2, a^2*d^2, c^4, b*c^3, a*d^4, d^6}
+{c*d, b*d, b^2, a^2*d^2, a^3*d, c^4, a*d^4, d^6}
+{c*d, b*d, b^2, a^3*e, a^2*d^2, a^3*d, a*d^4, d^6}
+
+i22 : findPositiveVector = (m,s) -> (
+           expvector := first exponents s - first exponents m;
+           n := #expvector;
+           i := first positions(0..n-1, j -> expvector_j > 0);
+           splice {i:0, 1, (n-i-1):0}
+           );
+
+i23 : flips = (M) -> (
+           R := ring M;
+           -- store generators of M in monoms
+           monoms := first entries generators M;
+           result := {};
+           -- test each generator of M to see if it leads to a neighbor 
+           scan(#monoms, i -> (
+             m := monoms_i;
+             rest := drop(monoms,{i,i});
+             b := basis(degree m, R);
+             s := (compress (b % M))_(0,0);
+             J := ideal(m-s) + ideal rest;
+             if poincare coker gens J == poincare coker gens M then (
+               w := findPositiveVector(m,s);
+               R1 := (coefficientRing R)[generators R, Weights=>w];
+               J = substitute(J,R1);
+               J = trim ideal leadTerm J;
+               result = append(result,J);
+               )));
+           result
+      );
+
+i24 : R = QQ[a..e,Degrees=>transpose A];
+
+i25 : M = ideal(a*e,c*d,a*c,a^2*d^2,a^2*b*d,a^3*d,c^2*e^3,
+                c^3*e^2,c^4*e,c^5,c*e^5,a*d^5,b*e^6);
+
+o25 : Ideal of R
+
+i26 : F = flips M
+
+                              2 2   3    4   2 3   3 2     5     5     6                          2 2   2      3    3 2   4    5     4     5   2 4     6                          2 2   3    2      2 3   3 2   4    5     5       4     6     6                          2      3    2 2   2 3   3 2   4    5     5     5   7
+o26 = {ideal (a*e, c*d, a*c, a d , a d, c , c e , c e , a*d , c*e , b*e ), ideal (c*d, a*e, a*c, a d , a b*d, a d, c e , c e, c , a*d , c*e , c e , b*e ), ideal (a*e, c*d, a*c, a d , a d, a b*d, c e , c e , c e, c , c*e , b*c*e , a*d , b*e ), ideal (a*e, a*c, c*d, a b*d, a d, a d , c e , c e , c e, c , c*e , a*d , d )}
+
+o26 : List
+
+i27 : #F
+
+o27 = 4
+
+i28 : scan(#F, i -> print toString entries mingens F_i)
+{{a*e, c*d, a*c, a^2*d^2, a^3*d, c^4, c^2*e^3, c^3*e^2, a*d^5, c*e^5, b*e^6}}
+{{c*d, a*e, a*c, a^2*d^2, a^2*b*d, a^3*d, c^3*e^2, c^4*e, c^5, a*d^4, c*e^5, c^2*e^4, b*e^6}}
+{{a*e, c*d, a*c, a^2*d^2, a^3*d, a^2*b*d, c^2*e^3, c^3*e^2, c^4*e, c^5, c*e^5, b*c*e^4, a*d^6, b*e^6}}
+{{a*e, a*c, c*d, a^2*b*d, a^3*d, a^2*d^2, c^2*e^3, c^3*e^2, c^4*e, c^5, c*e^5, a*d^5, d^7}}
+
+i29 : stdMonomials = (M) -> (
+           R := ring M;
+           RM := R/M;
+           apply(numgens M, i -> (
+                 s := basis(degree(M_i),RM); lift(s_(0,0), R)))
+           ); 
+
+i30 : R = QQ[a..e,Degrees => transpose A ]; 
+
+i31 : M = ideal(a^3*d, a^2*b*d, a^2*d^2, a*b^3*d, a*b^2*d^2, a*b*d^3, 
+                a*c, a*d^4, a*e, b^5*d, b^4*d^2, b^3*d^3, b^2*d^4, 
+                b*d^5, b*e, c*e^5); 
+
+o31 : Ideal of R
+
+i32 : toString stdMonomials M 
+
+o32 = {b*c^3, c^4, c^3*e, c^5, c^4*e, c^3*e^2, b^2, c^2*e^3, b*d, c^6, c^5*e, c^4*e^2, c^3*e^3, c^2*e^4, c*d, d^6}
+
+i33 : inequalities = (M) -> (
+              stds := stdMonomials(M);
+              transpose matrix apply(numgens M, i -> (
+                  flatten exponents(M_i) - 
+                      flatten exponents(stds_i)))); 
+
+i34 : inequalities M
+
+o34 = | 3  2  2  1  1  1  1  1  1  0  0  0  0  0  0  0  |
+      | -1 1  0  3  2  1  -2 0  -1 5  4  3  2  1  1  0  |
+      | -3 -4 -3 -5 -4 -3 1  -2 0  -6 -5 -4 -3 -2 -1 1  |
+      | 1  1  2  1  2  3  0  4  -1 1  2  3  4  5  -1 -6 |
+      | 0  0  -1 0  -1 -2 0  -3 1  0  -1 -2 -3 -4 1  5  |
+
+               5        16
+o34 : Matrix ZZ  <--- ZZ
+
+i35 : primitive := (L) -> (
+           n := #L-1; g := L#n;
+           while n > 0 do (n = n-1; g = gcd(g, L#n););
+           if g === 1 then L else apply(L, i -> i // g));
+
+i36 : load "polarCone.m2" 
+
+i37 : decideCoherence = (M) -> (
+           ineqs := inequalities M;
+           c := first polarCone ineqs;
+           m := - sum(numgens source c, i -> c_{i});
+           prods := (transpose m) * ineqs;
+           if numgens source prods != numgens source compress prods
+           then false else primitive (first entries transpose m)); 
+
+i38 : decideCoherence M
+
+o38 = {0, 0, 1, 15, 18}
+
+o38 : List
+
+i39 : N = ideal(a*e,c*d,a*c,c^3*e,a^3*d,c^4,a*d^4,a^2*d^3,c*e^5,
+                 c^2*e^4,d^7);
+
+o39 : Ideal of R
+
+i40 : decideCoherence N
+
+o40 = false
+
+i41 : A22 =
+        {{1,1,1,1,1,1,1,1,1},{0,0,0,1,1,1,0,0,0},{0,0,0,0,0,0,1,1,1},
+        {1,0,0,1,0,0,1,0,0},{0,1,0,0,1,0,0,1,0},{0,0,1,0,0,1,0,0,1}}; 
+
+i42 : I22 = toricIdeal A22
+
+o42 = ideal (f*h - e*i, c*h - b*i, f*g - d*i, e*g - d*h, c*g - a*i, b*g - a*h, c*e - b*f, c*d - a*f, b*d - a*e)
+
+o42 : Ideal of R
+
+i43 : Graver22 = graver I22;
+
+              1       15
+o43 : Matrix R  <--- R
+
+i44 : generateAmonos(Graver22);
+
+i45 : #monos
+
+o45 = 108
+
+i46 : scan(0..9,i->print toString monos#i) 
+{f*h, c*h, f*g, e*g, c*g, b*g, c*e, c*d, b*d}
+{f*h, d*h, c*h, f*g, c*g, b*g, c*e, c*d, b*d}
+{d*i, f*h, d*h, c*h, c*g, b*g, c*e, c*d, b*d}
+{e*i, c*h, f*g, e*g, c*g, b*g, c*e, c*d, b*d}
+{e*i, d*i, c*h, e*g, c*g, b*g, c*e, c*d, b*d}
+{e*i, d*i, d*h, c*h, c*g, b*g, c*e, c*d, b*d}
+{f*h, c*h, f*g, e*g, c*g, b*g, c*e, a*e, c*d}
+{e*i, c*h, f*g, e*g, c*g, b*g, c*e, a*e, c*d, b*d*i}
+{e*i, c*h, f*g, e*g, c*g, b*g, c*e, a*e, c*d, a*f*h}
+{e*i, d*i, c*h, e*g, c*g, b*g, c*e, a*e, c*d}
+
+i47 : localCoherentEquations = (IA,w) -> (
+           -- IA is the toric ideal of A living in a ring equipped
+           -- with weight order w, if we are computing the local 
+           -- equations about the initial ideal of IA w.r.t. w.
+           R := ring IA;
+           M := ideal leadTerm IA;
+           S := first entries ((gens M) % IA);
+           -- Make the universal family J in a new ring.
+           nv := numgens R; n := numgens M;
+           T = (coefficientRing R)[generators R, z_1 .. z_n, 
+                                   Weights => flatten splice{w, n:0},
+                                   MonomialSize=>16];
+           M = substitute(generators M,T);
+           S = apply(S, s -> substitute(s,T));
+           J = ideal apply(n, i -> 
+                     M_(0,i) - T_(nv + i) * S_i);
+           -- Find the ideal Ihilb of local equations about M:
+           spairs := (gens J) * (syz M);
+           g := forceGB gens J;
+           B = (coefficientRing R)[z_1 .. z_n,MonomialSize=>16];
+           Fones := map(B,T, matrix(B,{splice {nv:1}}) | vars B);
+           Ihilb := ideal Fones (spairs % g);
+           Ihilb
+           );
+
+i48 : IA = toricIdeal A;
+
+o48 : Ideal of R
+
+i49 : Y = QQ[a..e, MonomialSize => 16,
+                  Degrees => transpose A, Weights => (w = {9,3,5,0,0})];
+
+i50 : IA = substitute(IA,Y);
+
+o50 : Ideal of Y
+
+i51 : JM = trim localCoherentEquations(IA,w)
+
+                                                                                                                                                                                                 3
+o51 = ideal (z  z   - z , z  z   - z , z z   - z  , z z   - z , z z   - z , z z   - z  , z z  - z , z z  - z  , z z  - z  , z z  - z , z z  - z , z z  - z , z z  - z , z z  - z z , z z  - z , z z  - z z )
+              11 12    7   10 11    4   7 11    13   2 11    9   9 10    7   2 10    12   8 9    4   4 9    13   2 8    10   5 6    2   2 6    8   3 5    4   2 4    7   2 3    4 6   1 2    3   2 9    5 7
+
+o51 : Ideal of B
+
+i52 : load "minPres.m2";
+
+i53 : G = removeRedundantVariables JM
+
+                                  2 3              3 4        2            2 3        3 4   3 4 2
+o53 = map(B,B,{z , z z , z z z , z z z  , z , z , z z z  , z z , z z z  , z z , z  , z z , z z z  })
+                1   5 6   1 5 6   5 6 11   5   6   5 6 11   5 6   5 6 11   5 6   11   5 6   5 6 11
+
+o53 : RingMap B <--- B
+
+i54 : ideal gens gb(G JM)
+
+             2 3         2
+o54 = ideal(z z z   - z z z )
+             5 6 11    1 5 6
+
+o54 : Ideal of B
+
+i55 : CX = QQ[a..e, z_1,z_5,z_6,z_11, Weights =>
+            {9,3,5,0,0,0,0,0,0}];
+
+i56 : F = map(CX, ring J, matrix{{a,b,c,d,e}} | 
+                  substitute(G.matrix,CX))
+
+                                                  2 3              3 4        2            2 3        3 4   3 4 2
+o56 = map(CX,T,{a, b, c, d, e, z , z z , z z z , z z z  , z , z , z z z  , z z , z z z  , z z , z  , z z , z z z  })
+                                1   5 6   1 5 6   5 6 11   5   6   5 6 11   5 6   5 6 11   5 6   11   5 6   5 6 11
+
+o56 : RingMap CX <--- T
+
+i57 : J1 = F J
+
+                6    7                       5    6                   2 3        5        4     2 3      4           2 3 4      3 2        3   2   2 2    3            4       2 2 2 3   2       4      5      3   3 4   3       3 3 4 2
+o57 = ideal (b*e  - d z , c*d - b*e*z z , c*e  - d z z z , a*e - b*d*z z z  , a*d  - b*c*e z , c e  - a*d z , a*c - b z z z  , c e  - a*b*d z z , a d  - c e*z z z  , c e - a*b d z z , a b*d - c z  , c  - a*b d*z z , a d - b*c z z z  )
+                       1             5 6            1 5 6             5 6 11                5              6           5 6 11                5 6              5 6 11               5 6             11              5 6             5 6 11
+
+o57 : Ideal of CX
+
+i58 : substitute(ideal(z_5^2),CX) + J1
+
+              2     6    7                       5    6                   2 3        5        4     2 3      4           2 3 4      3 2        3   2   2 2    3            4       2 2 2 3   2       4      5      3   3 4   3       3 3 4 2
+o58 = ideal (z , b*e  - d z , c*d - b*e*z z , c*e  - d z z z , a*e - b*d*z z z  , a*d  - b*c*e z , c e  - a*d z , a*c - b z z z  , c e  - a*b*d z z , a d  - c e*z z z  , c e - a*b d z z , a b*d - c z  , c  - a*b d*z z , a d - b*c z z z  )
+              5            1             5 6            1 5 6             5 6 11                5              6           5 6 11                5 6              5 6 11               5 6             11              5 6             5 6 11
+
+o58 : Ideal of CX
+
+i59 : A = {{1,1,1,1,1,1,1},{0,6,7,5,8,4,3},{3,7,2,0,7,6,1},
+         {6,5,2,6,5,0,0}};
+
+i60 : IA = toricIdeal A
+
+              2 3       3 2   2     4 4    8 4   4 3 6    7 2 4     4 7 3    8 7   7 2 8    2 6 5 4   3 3 10     3 7 7   12 6        12   3     5 4 9    3 5 11   3 8   7    4 4 11   13 3 2     3 13 3   2 7 11      2 6 11   5 2 13    6 6   7   10   10    4 5 8 4   5 11 5    5 2 3 11     11 9    4 11 3 3   10 13    3     7 11   7 14 3    6 5 2 11   7   16    9 5 3 7   13 12    6 4 11 4   5 17 3    21 2      3 10 12    7 10 5 3   3 2 16 5    20 5    7   18     22 4    9 17     7 8   11   9 19    12 4 5 7   34 5 3    8 30 2 2   35 2 6    10 31 2   57   10    17 49      58 13     19 2 50    79 14    24 67 2
+o60 = ideal (a c e - b*d f , a c*d*e f  - b g , d e f  - b c g , a*b c f  - e g , d e f  - a b c g , a b c  f - d e g , b  c  - a*d*e  f*g , a*c d f  - b e g  , a c d*f  - b e g  , b  c d f - a e  g , c d f   - a*b e g  , a b c   - d e f*g , d  e*f   - a b c g , a c  f  - b d e g  , a*b  c  - d e  f g , d  f   - a b*c*e g  , a c  f  - b d e g  , a b*c   - d e f g , d  f   - a b c  g , a e  f  - b  c d*g, a b  c   - d e  f g , a d e  f  - b  c g, a c*e  f - b  d g, a c  f - b d e*g  , a c   - d  e f g , b  c d  - a e  f g , b  c d  - a  e  g , b  c*d   - a  e  f*g, b  d  f - a  c e  g, b  d   - a  e  f )
+
+o60 : Ideal of R
+
+i61 : Y = QQ[a..g, MonomialSize => 16,
+                 Weights => (w = {0,0,276,220,0,0,215}),
+                 Degrees =>transpose A];
+
+i62 : IA = substitute(IA,Y);
+
+o62 : Ideal of Y
+
+i63 : M = ideal leadTerm IA
+
+              2 3    8 4   21 2      22 4    14 5 3   13 3 2    7 2 4   20 5    6   6 7   12 6   5 4 3 5   35 2 6     4 7 3   36 9 2   34 5 3   5 2 11 7   2 6 5 4   3 5 11     2 6 11   3 8   7   57   10     11 9   3     7 11   3 3 10    58 13    5 11 5   4 5 8 4   79 14   13 15 16   3 10 12   5 2 13   7 14 3   2 15 18   6 4 11 4   2 9 7 14   2   12 4 12   7   16   9 17    9 19     20 29     14 11 23     39 58     34 32 62   59 57 110
+o63 = ideal (a c e, b g , b  c d*g, b  d g, b  d f , b  c d f, b c g , b  c g, b c*d f , b  c , b c d f , b  c d , a*b c f , b  d f , b  c d , a c e  g , a b c g , b e g  , a*b e g  , a c d*f , b  c*d  , a*b  c , a b*c*e g  , a b c  f, b  d  f, a c  f , a b c g , b  d  , b  d  f  , a b  c  , a b c  , a c  f , a e  g  , a b c  g , b c d f  , a b*c  d f  , a b*c  , a c  f, a c  , a*e  g  , a*c  d  f  , b*e  g  , b*c  d  f  , c  d  f   )
+
+o63 : Ideal of Y
+
+i64 : JM = trim localCoherentEquations(IA,w)
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          2
+o64 = ideal (z  z   - z  , z  z   - z  , z  z   - z  z  , z  z   - z  , z  z   - z , z  z   - z  z  , z  z   - z  , z  z   - z  , z  z   - z  , z  z   - z  , z  z   - z  z  , z z   - z  , z z   - z  , z z   - z  , z  z   - z  , z  z   - z , z  z   - z  , z  z   - z  , z z   - z  , z  z   - z  , z  z   - z  , z  z   - z  , z  z   - z  , z z   - z  , z z   - z  , z z   - z  , z z   - z  , z  z   - z  , z  z   - z  , z z   - z  , z z   - z  , z  z   - z , z  z   - z , z z   - z  , z z   - z  , z z   - z  , z z   - z  , z z   - z  , z z   - z  , z  z   - z  , z  z   - z  , z  z   - z  , z z   - z  , z z   - z  , z z   - z  , z  z   - z  , z  z   - z  , z z   - z , z z   - z  , z z   - z  , z  z   - z , z  z   - z  , z z   - z  , z z   - z  , z z   - z  , z z   - z  , z  z   - z  , z  z   - z , z z   - z , z z   - z  , z  z   - z , z  z   - z , z z   - z  , z z   - z  , z z   - z , z z   - z , z z   - z  , z z   - z  , z z   - z  , z z   - z  , z z   - z  , z z   - z  , z z   - z  , z z   - z  , z z   - z  , z z   - z  , z z   - z , z z   - z  , z z   - z  , z z   - z , z z   - z  , z z  - z , z z  - z , z z  - z  , z z  - z , z z  - z , z z  - z  , z z  - z  , z z  - z  , z z  - z , z z  - z  , z z  - z  , z z  - z  , z z  - z , z z  - z , z z  - z , z z  - z , z z  - z , z z  z   - z )
+              42 44    43   42 43    35   41 43    40 44   41 42    40   40 41    1   35 41    40 43   33 41    20   19 41    36   18 41    35   35 40    19   18 40    35 42   7 38    39   2 38    37   1 37    39   18 36    13   33 35    1   19 35    13   18 35    11   1 35    36   20 33    16   18 33    40   13 33    23   11 33    19   9 33    18   7 32    37   2 32    31   1 32    38   19 31    34   18 31    27   2 31    30   1 31    37   23 29    5   16 29    9   1 27    34   7 26    31   2 26    24   1 26    32   3 25    28   1 25    21   23 24    34   19 24    27   18 24    17   7 24    30   2 24    22   1 24    31   13 23    27   11 23    17   9 23    7   1 22    30   4 21    28   18 20    1   11 20    36   9 20    35   7 20    24   2 20    13   1 20    26   13 19    17   11 19    7   9 19    2   1 19    23   13 18    7   11 18    2   1 18    19   1 17    27   9 16    1   5 16    7   2 16    23   4 14    25   3 14    21   1 14    12   7 13    22   2 13    10   1 13    24   4 12    21   1 12    15   7 11    10   2 11    6   1 11    13   4 10    15   2 10    8   1 10    22   7 9    6   2 9    5   1 9    11   6 7    8   5 7    3   1 7    17   4 6    12   3 6    15   2 6    3   1 6    10   4 5    14   3 5    12   2 5    4   1 5    6   1 4    3   1 3    8   1 2    7   1 29 33    2
+
+o64 : Ideal of B
+
+i65 : G = removeRedundantVariables JM;
+
+o65 : RingMap B <--- B
+
+i66 : toString ideal gens gb(G JM)
+
+o66 = ideal(z_33*z_42^2*z_44-z_41^2*z_42,z_29*z_33^3*z_41^2-z_42^2*z_44,z_29*z_33^4*z_41-z_41*z_42,z_29*z_33^2*z_41^4*z_42-z_42^4*z_44^2,z_29*z_33*z_41^6*z_42-z_42^5*z_44^3,z_29*z_41^8*z_42-z_42^6*z_44^4)
+
+i67 : K = ideal(z_32*z_42*z_44-z_37^2,z_32^4*z_35-z_42,
+          z_32^3*z_35*z_37^2-z_42^2*z_44,z_32^2*z_35*z_37^4-z_42^3*z_44^2,
+          z_32*z_35*z_37^6-z_42^4*z_44^3,z_35*z_37^8-z_42^5*z_44^4);
+
+o67 : Ideal of B
+
+i68 : GG = removeRedundantVariables K;
+
+o68 : RingMap B <--- B
+
+i69 : ideal gens gb (GG K)
+
+             5           2
+o69 = ideal(z  z  z   - z  )
+             32 35 44    37
+
+o69 : Ideal of B
+
+i70 : A = {{1,1,1,1},{0,1,2,3}};
+
+i71 : I = toricIdeal A;
+
+o71 : Ideal of R
+
+i72 : Graver = graver I;
+
+              1       5
+o72 : Matrix R  <--- R
+
+i73 : fibers = graverFibers Graver;
+
+i74 : peek fibers
+
+o74 = HashTable{{2, 2} => | ac b2 |     }
+                {2, 3} => | ad bc |
+                {2, 4} => | bd c2 |
+                {3, 3} => | a2d abc b3 |
+                {3, 6} => | ad2 bcd c3 |
+
+i75 : G = trim product(values fibers, ideal)
+
+              5     5   4 3 5   5 3 4   4 2 2 4   3 4   4   2 6 4   4   4 3   3 3 3 3   2 5 2 3     7   3   4 6 2   3 2 5 2   2 4 4 2     6 3 2   8 2 2   3   7    2 3 6      5 5    7 4    2 2 8     4 7   6 6
+o75 = ideal (a b*c*d , a b d , a c d , a b c d , a b c*d , a b d , a b*c d , a b c d , a b c d , a*b c*d , a c d , a b c d , a b c d , a*b c d , b c d , a b*c d, a b c d, a*b c d, b c d, a b c , a*b c , b c )
+
+o75 : Ideal of R
+
+i76 : numgens G
+
+o76 = 22
+
+i77 : z = symbol z;
+
+i78 : S = QQ[a,b,c,d,z];
+
+i79 : zG = z ** substitute(gens G, S);
+
+              1       22
+o79 : Matrix S  <--- S
+
+i80 : R = QQ[y_1 .. y_22];
+
+i81 : F = map(S,R,zG)
+
+                5     5    4 3 5    5 3 4    4 2 2 4    3 4   4    2 6 4    4   4 3    3 3 3 3    2 5 2 3      7   3    4 6 2    3 2 5 2    2 4 4 2      6 3 2    8 2 2    3   7      2 3 6        5 5      7 4      2 2 8      4 7    6 6
+o81 = map(S,R,{a b*c*d z, a b d z, a c d z, a b c d z, a b c*d z, a b d z, a b*c d z, a b c d z, a b c d z, a*b c*d z, a c d z, a b c d z, a b c d z, a*b c d z, b c d z, a b*c d*z, a b c d*z, a*b c d*z, b c d*z, a b c z, a*b c z, b c z})
+
+o81 : RingMap S <--- R
+
+i82 : PA = trim ker F
+
+              2                                                                                                                                                                                                                                                                                                                                                                                                                                                                               2                                                                                                                                                                                                            2                                                                                                                                                                                                                                                                        2                                                                                                                                                                                                                                                      2                                                                                                                                                                                                                                                                                                                                                  2                                                                                                                                                                                                    2                                                                                                                                                                                    2                                                                                                                                                                                                                                                                                             2                                                                                                      2                                                                                                             2                                                                                              2                                                                                                                         2                                                  2
+o82 = ideal (y   - y  y  , y  y   - y  y  , y  y   - y  y  , y  y   - y  y  , y  y   - y  y  , y  y   - y  y  , y  y   - y  y  , y  y   - y  y  , y  y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y  y   - y  y  , y  y   - y  y  , y  y   - y  y  , y  y   - y  y  , y  y   - y  y  , y  y   - y  y  , y  y   - y  y  , y  y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y   - y  y  , y  y   - y  y  , y  y   - y  y  , y  y   - y  y  , y  y   - y  y  , y  y   - y y  , y  y   - y y  , y  y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y   - y  y  , y  y   - y  y  , y  y   - y  y  , y  y   - y  y  , y  y   - y y  , y  y   - y y  , y  y   - y y  , y  y   - y y  , y  y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y   - y  y  , y  y   - y  y  , y  y   - y y  , y  y   - y y  , y  y   - y y  , y  y   - y y  , y  y   - y y  , y  y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y   - y  y  , y  y   - y y  , y  y   - y y  , y  y   - y y  , y  y   - y y  , y  y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y  y   - y  y  , y  y   - y y  , y  y   - y y  , y  y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y   - y y  , y  y   - y y  , y  y   - y y  , y  y   - y y  , y  y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y   - y y  , y  y   - y y  , y  y   - y y  , y  y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y   - y y  , y  y   - y y  , y  y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y  y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y y   - y y  , y  - y y  , y y  - y y  , y y  - y y  , y y  - y y  , y y  - y y  , y y  - y y  , y y  - y y  , y y  - y y  , y  - y y  , y y  - y y  , y y  - y y  , y y  - y y  , y y  - y y  , y y  - y y  , y y  - y y , y  - y y  , y y  - y y  , y y  - y y  , y y  - y y  , y y  - y y  , y y  - y y , y y  - y y  , y y  - y y  , y y  - y y , y  - y y  , y y  - y y , y y  - y y , y y  - y y , y  - y y , y y  - y y , y y  - y y , y y  - y y )
+              21    20 22   19 21    18 22   18 21    17 22   17 21    16 22   15 21    14 22   14 21    13 22   13 21    12 22   12 21    11 22   10 21    9 22   9 21    8 22   8 21    7 22   6 21    5 22   5 21    4 22   4 21    3 22   2 21    1 22   19 20    17 22   18 20    16 22   17 20    16 21   15 20    13 22   14 20    12 22   13 20    11 22   12 20    11 21   10 20    8 22   9 20    7 22   8 20    7 21   6 20    4 22   5 20    3 22   4 20    3 21   2 20    1 21   19    15 22   18 19    14 22   17 19    13 22   16 19    12 22   14 19    10 22   13 19    9 22   12 19    8 22   11 19    7 22   9 19    6 22   8 19    5 22   7 19    4 22   4 19    2 22   3 19    1 22   18    13 22   17 18    12 22   16 18    11 22   15 18    10 22   14 18    9 22   13 18    8 22   12 18    7 22   11 18    7 21   10 18    6 22   9 18    5 22   8 18    4 22   7 18    3 22   6 18    5 19   5 18    2 22   4 18    1 22   3 18    1 21   2 18    1 19   17    11 22   16 17    11 21   15 17    9 22   14 17    8 22   13 17    7 22   12 17    7 21   11 17    7 20   10 17    5 22   9 17    4 22   8 17    3 22   7 17    3 21   6 17    2 22   5 17    1 22   4 17    1 21   3 17    1 20   2 17    1 18   16    11 20   15 16    8 22   14 16    7 22   13 16    7 21   12 16    7 20   10 16    4 22   9 16    3 22   8 16    3 21   7 16    3 20   6 16    1 22   5 16    1 21   4 16    1 20   2 16    1 17   14 15    10 19   13 15    6 22   12 15    5 22   11 15    4 22   9 15    6 19   8 15    5 19   7 15    2 22   4 15    2 19   3 15    1 19   14    6 22   13 14    5 22   12 14    4 22   11 14    3 22   10 14    6 19   9 14    5 19   8 14    2 22   7 14    1 22   6 14    5 15   5 14    2 19   4 14    1 19   3 14    1 18   2 14    1 15   13    4 22   12 13    3 22   11 13    3 21   10 13    5 19   9 13    2 22   8 13    1 22   7 13    1 21   6 13    2 19   5 13    1 19   4 13    1 18   3 13    1 17   2 13    1 14   12    3 21   11 12    3 20   10 12    2 22   9 12    1 22   8 12    1 21   7 12    1 20   6 12    1 19   5 12    1 18   4 12    1 17   3 12    1 16   2 12    1 13   10 11    1 22   9 11    1 21   8 11    1 20   7 11    3 16   6 11    1 18   5 11    1 17   4 11    1 16   2 11    1 12   10    6 15   9 10    5 15   8 10    2 19   7 10    1 19   5 10    2 15   4 10    1 15   3 10    1 14   9    2 19   8 9    1 19   7 9    1 18   6 9    2 15   5 9    1 15   4 9    1 14   3 9    1 13   2 9    1 10   8    1 18   7 8    1 17   6 8    1 15   5 8    1 14   4 8    1 13   3 8    1 12   2 8    1 9   7    1 16   6 7    1 14   5 7    1 13   4 7    1 12   3 7    1 11   2 7    1 8   5 6    2 10   4 6    1 10   3 6    1 9   5    1 10   4 5    1 9   3 5    1 8   2 5    1 6   4    1 8   3 4    1 7   2 4    1 5   2 3    1 4
+
+o82 : Ideal of R
+
+i83 : codim PA
+
+o83 = 19
+
+i84 : degree PA
+
+o84 = 30
+
+i85 : Aff = apply(1..22, v -> (
+                             K = substitute(PA,y_v => 1);
+                             FF = removeRedundantVariables K;
+                             ideal gens gb (FF K)));
+
+i86 : scan(Aff, i -> print toString i);
+ideal()
+ideal()
+ideal()
+ideal(y_1^4*y_5*y_21-1)
+ideal(y_1^4*y_6^6*y_21-1)
+ideal()
+ideal(y_1^2*y_11^2*y_17-1)
+ideal(y_1^3*y_9^2*y_21^2-1)
+ideal(y_6^3*y_21-y_10,y_1*y_10^3-y_6^2,y_1*y_6*y_10^2*y_21-1)
+ideal(y_6*y_15-1,y_2*y_15^2-y_6*y_14,y_6^2*y_14-y_2*y_15)
+ideal()
+ideal(y_11*y_13-1,y_1^2*y_21^3-y_13^2)
+ideal(y_1^2*y_14^3*y_21^3-1)
+ideal(y_10^2*y_21-1,y_1*y_15^4-y_10^3)
+ideal()
+ideal(y_11*y_20-1,y_3*y_20^2-y_11*y_17,y_11^2*y_17-y_3*y_20)
+ideal(y_11*y_18*y_21-1,y_1*y_21^3-y_11*y_18^2,y_11^2*y_18^3-y_1*y_21^2)
+ideal(y_1*y_19^4*y_21^4-1)
+ideal(y_15*y_22-1)
+ideal()
+ideal(y_20*y_22-1)
+ideal()
+
+i87 : code primitive
+
+o87 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/toricHilbertScheme/test.m2:139:18-142:48: --source code:
+      primitive := (L) -> (
+           n := #L-1; g := L#n;
+           while n > 0 do (n = n-1; g = gcd(g, L#n););
+           if g === 1 then L else apply(L, i -> i // g));
+
+i88 : code toZZ
+
+o88 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/toricHilbertScheme/polarCone.m2:28:12-32:33: --source code:
+      toZZ = (L) -> (
+           d := apply(L, e -> denominator e);
+           R := ring d#0;             l := 1_R;
+           scan(d, i -> (l = (l*i // gcd(l,i))));    
+           apply(L, e -> (numerator(l*e))));
+
+i89 : code rotateMatrix
+
+o89 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/toricHilbertScheme/polarCone.m2:41:20-43:48: --source code:
+      rotateMatrix = (M) -> (
+           r := rank source M;        c := rank target M;
+           matrix table(r, c, (i,j) -> M_(c-j-1, r-i-1)));
+
+i90 : code isRedundant
+
+o90 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/toricHilbertScheme/polarCone.m2:57:25-65:12: --source code:
+      isRedundant = (V, vert) -> (
+           -- the row vector is redundant iff 'vert' contains an
+           -- entry in 'V'.
+           x := 0;            k := 0;
+           numRow := #V;      -- equals the number of inequalities
+           while x < 1 and k < numRow do (
+                if isSubset(V#k, vert) then x = x+1;
+                k = k+1;);     
+           x === 1);
+
+i91 : code fourierMotzkin'
+
+o91 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/toricHilbertScheme/polarCone.m2:89:32-118:14: --source code:
+      fourierMotzkin' = (A, V, spot) -> (
+           -- initializing local variables
+           numRow := #A;               -- equal to the length of V
+           numCol := #(A#0);           pos := {};       
+           neg := {};                  projA := {};     
+           projV := {};                k := 0;
+           -- divide the inequalities into three groups.
+           while k < numRow do (
+                if A#k#0 < 0 then neg = append(neg, k)
+                else if A#k#0 > 0 then pos = append(pos, k)
+                else (projA = append(projA, A#k);
+                     projV = append(projV, V#k););
+                k = k+1;);      
+           -- generate new irredundant inequalities.
+           scan(pos, i -> scan(neg, j -> (vert := V#i + V#j;
+                          if not isRedundant(projV, vert)  
+                          then (iRow := A#i;     jRow := A#j;
+                               iCoeff := - jRow#0;
+                               jCoeff := iRow#0;
+                               a := iCoeff*iRow + jCoeff*jRow;
+                               projA = append(projA, a);
+                               projV = append(projV, vert););)));
+           -- don't forget the implicit inequalities '-t <= 0'.
+           scan(pos, i -> (vert := V#i + set{spot};
+                if not isRedundant(projV, vert) then (
+                     projA = append(projA, A#i);
+                     projV = append(projV, vert););));
+           -- remove the first column 
+           projA = apply(projA, e -> e_{1..(numCol-1)});
+           {projA, projV});   
+
+i92 : code(polarCone,Matrix,Matrix)
+
+o92 = -- code for method: polarCone(Matrix,Matrix)
+      /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/toricHilbertScheme/polarCone.m2:137:37-192:10: --source code:
+      polarCone(Matrix, Matrix) := (Z, H) -> (
+           R := ring source Z;
+           if R =!= ring source H then error ("polarCone: " | 
+                "expected matrices over the same ring");
+           if rank target Z =!= rank target H then error (
+                "polarCone: expected matrices to have the " |
+                "same number of rows");     
+           if (R =!= ZZ) then error ("polarCone: expected " | 
+                "matrices over 'ZZ'");
+           -- expressing 'cone(Y)+affine(B)' as '{x : Ax <= 0}'
+           Y := substitute(Z, QQ);     B := substitute(H, QQ);   
+           if rank source B > 0 then Y = Y | B | -B;
+           n := rank source Y;         d := rank target Y;     
+           A := Y | -id_(QQ^d);
+           -- computing the row echelon form of 'A'
+           A = gens gb rotateMatrix A;
+           L := rotateMatrix leadTerm A;
+           A = rotateMatrix A;
+           -- find pivots
+           numRow = rank target A;                  -- numRow <= d
+           i := 0;                     pivotCol := {};
+           while i < numRow do (j := 0;
+                while j < n+d and L_(i,j) =!= 1_QQ do j = j+1;
+                pivotCol = append(pivotCol, j);
+                i = i+1;);
+           -- computing the row-reduced echelon form of 'A'
+           A = ((submatrix(A, pivotCol))^(-1)) * A;
+           -- converting 'A' into a list of integer row vectors 
+           A = entries A;
+           A = apply(A, e -> primitive toZZ e);
+           -- creating the vertex list 'V' for double description
+           -- and listing the variables 'T' which remain to be
+           -- eliminated
+           V := {};                    T := toList(0..(n-1));
+           scan(pivotCol, e -> (if e < n then (T = delete(e, T);
+                          V = append(V, set{e});)));
+           -- separating inequalities 'A' and equalities 'E'
+           eqnRow := {};               ineqnRow := {};
+           scan(numRow, i -> (if pivotCol#i >= n then 
+                     eqnRow = append(eqnRow, i)
+                     else ineqnRow = append(ineqnRow, i);));    
+           E := apply(eqnRow, i -> A#i);
+           E = apply(E, e -> e_{n..(n+d-1)});
+           A = apply(ineqnRow, i -> A#i);
+           A = apply(A, e -> e_(T | toList(n..(n+d-1)))); 
+           -- successive projections eliminate the variables 'T'.
+           if A =!= {} then scan(T, t -> (
+                     D := fourierMotzkin'(A, V, t);
+                     A = D#0;          V = D#1;));
+           -- output formatting
+           A = apply(A, e -> primitive e);
+           if A === {} then A = map(ZZ^d, ZZ^0, 0)
+           else A = transpose matrix A;
+           if E === {} then E = map(ZZ^d, ZZ^0, 0)
+           else E = transpose matrix E;
+           (A, E)); 
+
+i93 : code(polarCone,Matrix)
+
+o93 = -- code for method: polarCone(Matrix)
+      /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/toricHilbertScheme/polarCone.m2:199:26-200:49: --source code:
+      polarCone(Matrix) := (Z) -> (
+           polarCone(Z, map(ZZ^(rank target Z), ZZ^0, 0)));
+
+i94 : H = transpose matrix{
+      {1,2,3},
+      {1,3,2},
+      {2,1,3},
+      {2,3,1},
+      {3,1,2},
+      {3,2,1}};
+
+               3        6
+o94 : Matrix ZZ  <--- ZZ
+
+i95 : P = polarCone H
+
+o95 = (| 1  1  1  -1 -1 -5 |, 0)
+       | -1 1  -5 1  -1 1  |
+       | -1 -5 1  -1 1  1  |
+
+o95 : Sequence
+
+i96 : Q = polarCone P_0
+
+o96 = (| 1 1 2 2 3 3 |, 0)
+       | 2 3 1 3 1 2 |
+       | 3 2 3 1 2 1 |
+
+o96 : Sequence
+
+i97 : A = QQ[a..e];
+
+i98 : I = ideal(a-b^2-1, b-c^2, c-d^2, a^2-e^2)
+
+                2             2         2       2    2
+o98 = ideal (- b  + a - 1, - c  + b, - d  + c, a  - e )
+
+o98 : Ideal of A
+
+i99 : F = removeRedundantVariables I
+
+                8       4   2
+o99 = map(A,A,{d  + 1, d , d , d, e})
+
+o99 : RingMap A <--- A
+
+i100 : I1 = ideal gens gb(F I)
+
+              16     8    2
+o100 = ideal(d   + 2d  - e  + 1)
+
+o100 : Ideal of A
+
+i101 : ideal compress (F.matrix - vars A) + I1
+
+               8           4       2       16     8    2
+o101 = ideal (d  - a + 1, d  - b, d  - c, d   + 2d  - e  + 1)
+
+o101 : Ideal of A
+
+i102 : code findRedundant
+
+o102 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/toricHilbertScheme/minPres.m2:1:18-12:32: --source code:
+       findRedundant=(f)->(
+            A := ring(f);
+            p := first entries contract(vars A,f);
+            i := position(p, g -> g != 0 and first degree g === 0);
+            if i === null then
+                null
+            else (
+                 v := A_i;
+                 c := f_v;
+                 {i,(-1)*(c^(-1)*(f-c*v))}
+                 )
+            )
+
+i103 : code removeRedundantVariables
+
+o103 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/toricHilbertScheme/minPres.m2:14:32-39:21: --source code:
+       removeRedundantVariables = (I) -> (
+            A := ring I;
+            xmap := new MutableList from gens A;       
+            M := gens I;
+            findnext := () -> (
+                 p := null;
+                 next := 0;
+                 done := false;
+                 ngens := numgens source M;
+                 while next < ngens and not done do (
+                   p = findRedundant(M_(0,next));
+                   if p =!= null then
+                        done = true
+                   else next=next+1;
+                 );
+                 p);
+            p := findnext();
+            while p =!= null do (
+                 xmap#(p#0) = p#1;
+                 F1 := map(A,A,toList xmap);
+                 F2 := map(A,A, F1 (F1.matrix));
+                 xmap = new MutableList from first entries F2.matrix;
+                 M = compress(F2 M);
+                 p = findnext();
+                 );
+            map(A,A,toList xmap));
+
+i104 : 

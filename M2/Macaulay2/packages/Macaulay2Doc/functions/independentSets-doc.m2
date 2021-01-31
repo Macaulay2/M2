@@ -51,5 +51,5 @@ document {
           ///,
      PARA{},
      "This function is useful as a subroutine to primary decomposition algorithms.",
-     SeeAlso => {"PrimaryDecomposition::PrimaryDecomposition", minimalPrimes, support, rsort}
+     SeeAlso => {"PrimaryDecomposition::PrimaryDecomposition", "MinimalPrimes::minimalPrimes", support, rsort}
      }

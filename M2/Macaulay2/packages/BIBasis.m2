@@ -12,7 +12,8 @@ newPackage(
     Authors => {
         {Name => "Mikhail Zinin", Email => "mzinin@gmail.com"}
     },
-    Headline => "Involutive Pommaret basis in a Boolean ring",
+    Headline => "involutive Pommaret basis in a Boolean ring",
+    Keywords => {"Groebner Basis Algorithms"},
     PackageImports => {"BooleanGB"},
     DebuggingMode => false
     )

@@ -6,7 +6,6 @@
 #include "error.h"
 #include "ring.hpp"
 #include <cstddef>
-#include <gmp.h>
 
 namespace M2 {
 class ARingZZGMP;
@@ -31,7 +30,6 @@ class RingZZ : public Ring
   friend class M2::ARingZZGMP;
 
   mpz_ptr new_elem() const;
-  void remove_elem(mpz_ptr f) const;
 
   M2::ARingZZGMP *coeffR;
 
@@ -49,11 +47,10 @@ class RingZZ : public Ring
 
   RingZZ *cast_to_RingZZ() { return this; }
   const RingZZ *cast_to_RingZZ() const { return this; }
-  M2::ARingZZGMP *get_CoeffRing() const { return coeffR; }
   M2::ARingZZGMP *get_ARing() const
   {
     return coeffR;
-  }  // TODO: MES: change to ARing type once implemented.
+  }
 
   virtual MutableMatrix *makeMutableMatrix(size_t nrows,
                                            size_t ncols,
@@ -64,8 +61,8 @@ class RingZZ : public Ring
   virtual CoefficientType coefficient_type() const { return COEFF_ZZ; }
   virtual void text_out(buffer &o) const;
 
-  static unsigned int mod_ui(mpz_t n, unsigned int p);
-  static std::pair<bool, int> get_si(mpz_t n);
+  static unsigned int mod_ui(mpz_srcptr n, unsigned int p);
+  static std::pair<bool, int> get_si(mpz_srcptr n);
 
   // If the base ring of a is ZZ:
   // To get a bignum from a RingElement a, use: a.get_value().get_mpz()
@@ -77,7 +74,7 @@ class RingZZ : public Ring
 
   virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_srcptr n) const;
-  virtual bool from_rational(mpq_ptr q, ring_elem &result) const;
+  virtual bool from_rational(mpq_srcptr q, ring_elem &result) const;
   virtual bool promote(const Ring *R,
                        const ring_elem f,
                        ring_elem &result) const;
@@ -109,7 +106,7 @@ class RingZZ : public Ring
   virtual ring_elem add(const ring_elem f, const ring_elem g) const;
   virtual ring_elem subtract(const ring_elem f, const ring_elem g) const;
   virtual ring_elem mult(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem power(const ring_elem f, mpz_t n) const;
+  virtual ring_elem power(const ring_elem f, mpz_srcptr n) const;
   virtual ring_elem power(const ring_elem f, int n) const;
 
   virtual ring_elem invert(const ring_elem f) const;

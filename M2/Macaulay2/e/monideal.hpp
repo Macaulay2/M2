@@ -11,7 +11,7 @@
 
 class MinimalPrimes;
 
-class Nmi_node  // monomial ideal internal node ///
+class Nmi_node : public our_new_delete  // monomial ideal internal node ///
 {
   friend class MonomialIdeal;
   friend class AssociatedPrimes;
@@ -138,7 +138,7 @@ class MonomialIdeal : public EngineObject
   int search(const int *m, Bag *&b) const;
   // Search.  Return whether a monomial which divides 'm' is
   // found.  If so, return the baggage.  'm' is a varpower monomial.
-  void find_all_divisors(const int *exp, array<Bag *> &b) const;
+  void find_all_divisors(const int *exp, VECTOR(Bag *)& b) const;
   // Search. Return a list of all elements which divide 'exp'.
 
   Bag *operator[](Index<MonomialIdeal> i) const;

@@ -27,10 +27,10 @@ Authors => {
      HomePage => "https://witt.faculty.ku.edu"
      }
 },
-Headline => "A package for calculations of F-thresholds",
-DebuggingMode => true,
-Reload => true,
+Headline => "F-thresholds",
+Keywords => {"Commutative Algebra"},
 AuxiliaryFiles => true,
+PackageImports => {"MinimalPrimes"},
 PackageExports => {"TestIdeals"}
 )
 

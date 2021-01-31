@@ -41,6 +41,7 @@ newPackage(
   },
   Headline => "multiplier ideals, log canonical thresholds,
     and jumping numbers",
+  Keywords => {"D-modules"},
   PackageImports=>{
     "ReesAlgebra",
     "Normaliz"
@@ -324,7 +325,7 @@ jumpingNumbers CentralArrangement := o -> A -> jumpingNumbers(sequence A, o)
 --------------------------------------------------------------------------------
 
 -*
-  Unfortunately it is extremely difficult to acheive
+  Unfortunately it is extremely difficult to achieve
   compatibility with both Dmodules and HyperplaneArrangements,
   due primarily to conflicts in definitions of the method
   lct (defined in both Dmodules and HyperplaneArrangements)
@@ -1687,7 +1688,7 @@ TEST ///
 beginDocumentation()
 document { 
   Key => MultiplierIdeals,
-  Headline => "A package for computing multiplier ideals",
+  Headline => "multiplier ideals",
   PARA {
     EM "MultiplierIdeals",
     " is a package for computing multiplier ideals,

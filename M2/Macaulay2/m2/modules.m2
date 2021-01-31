@@ -76,11 +76,12 @@ Vector.synonym = "vector"
 Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
 entries Vector := v -> entries ambient v#0 / first
 norm Vector := v -> norm v#0
-expression Vector := v -> VectorExpression flatten entries super v#0
+expression Vector := v -> VectorExpression apply(flatten entries super v#0,expression)
 net Vector := v -> net expression v
 toExternalString Vector :=
 toString Vector := v -> toString expression v
 texMath Vector := v -> texMath expression v
+--html Vector := v -> html expression v
 ring Vector := v -> ring class v
 module Vector := v -> target v#0
 leadTerm Vector := v -> new class v from leadTerm v#0
@@ -210,7 +211,7 @@ expression Module := M -> (
      then (expression image) (expression M.generators)
      else (
 	 n := numgens M;
-	 new Superscript from {unhold expression ring M, if n =!= 0 then expression n else moduleZERO }
+	 new Superscript from {unhold expression ring M, if n =!= 0 then unhold expression n else moduleZERO }
      )
  )
 toString Module := M -> toString expression M

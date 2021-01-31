@@ -1,5 +1,3 @@
---path = prepend ("~/src/M2/Workshop-2018-Leipzig/Tropical/", path)
---Delete the line above when the "loading the wrong version" has been fixed.
 --polymakeOkay := try replace( "polymake version ", "", first lines get "!polymake --version 2>&1") >= "3.0" else false;
 --polymakeOkay := try replace( "polymake version ", "", first lines get "!polymake --version") >= "3.0" else false;
 
@@ -20,7 +18,8 @@ newPackage(
     		{Name => "Paolo Tripoli", Email => "paolo.tripoli@nottingham.ac.uk", HomePage=>"https://sites.google.com/view/paolotripoli/home"},
    		{Name => "Magdalena Zajaczkowska", Email => "Magdalena.A.Zajaczkowska@gmail.com", HomePage=>""}
 		},
-	Headline => "A package for doing computations in tropical geometry",
+	Headline => "tropical geometry",
+	Keywords => {"Tropical Geometry"},
 	Configuration => {
 		"path" => "",
 		"fig2devpath" => "",
@@ -30,7 +29,6 @@ newPackage(
 		"polymakeCommand" =>""
 	},
         PackageExports => {"gfanInterface","EliminationMatrices","Binomials"},
-	DebuggingMode => true,
 	AuxiliaryFiles => true,
 --	AuxiliaryFiles => false,
 	CacheExampleOutput => true
@@ -60,7 +58,8 @@ export {
 
 polymakeCommand = (options Tropical)#Configuration#"polymakeCommand"
 if polymakeCommand !="" then polymakeOkay=true else polymakeOkay=false;
-if polymakeOkay then << "-- polymake is installed\n" else << "-- polymake not present\n";
+if notify then
+  if polymakeOkay then << "-- polymake is installed\n" else << "-- polymake not present\n";
 
 
 ------------------------------------------------------------------------------
@@ -100,7 +99,7 @@ polynomialCoeffs := (parameter,polyn) -> (
 --inputs: var power of a monomial
 --outputs: term with power as coefficient
 expToCoeff = (var) -> (
-    temp := separate("^",toString(var));
+    temp := separate("\\^",toString(var));
     if (length temp === 1) then return var else return concatenate(temp_1,temp_0);
 )
 
@@ -109,7 +108,7 @@ expToCoeff = (var) -> (
 toTropPoly = method(TypicalValue=>String)
 
 toTropPoly (RingElement) := (polyn) ->(
-    termList := apply(apply(terms polyn,toString),term->separate("*",term));
+    termList := apply(apply(terms polyn,toString),term->separate("\\*",term));
     tropTerms := apply(apply(apply(termList, term->apply(term,expToCoeff)),term->between("+",term)),concatenate);
     return "min("|concatenate(between(",",tropTerms))|")";
 )
@@ -118,7 +117,7 @@ toTropPoly (RingElement) := (polyn) ->(
 --outputs: min of linear polynomials for polymake
 toTropPoly (Matrix,Matrix) := (termList,coeffs) ->(
     noCoeffs := sum flatten entries termList;
-    termString := apply(apply(terms noCoeffs,toString),term->separate("*",term));
+    termString := apply(apply(terms noCoeffs,toString),term->separate("\\*",term));
     tropTerms := apply(apply(apply(termString, term->apply(term,expToCoeff)),term->between("+",term)),concatenate);
     withCoeffs := for i when i<numColumns termList list toString((flatten entries coeffs)_i)|"+"|tropTerms_i;
     return "min("|concatenate(between(",",withCoeffs))|")"; 
@@ -1283,7 +1282,7 @@ doc///
     Key
 	(fan,TropicalCycle)
     Headline
-	    outputs the fan assocated to the tropical cycle
+	    outputs the fan associated to the tropical cycle
     Usage
     	fan(T)
     Inputs

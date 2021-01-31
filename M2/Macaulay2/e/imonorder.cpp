@@ -1,12 +1,16 @@
 // Copyright 2009 Michael E. Stillman
 
 #include "imonorder.hpp"
-#include "overflow.hpp"
+
+#include "engine-includes.hpp"
+
 #ifdef HAVE_ALLOCA_H
-#include <alloca.h>
+#  include <alloca.h>
 #else
-#include <malloc.h>
+#  include <malloc.h>
 #endif
+
+#include "overflow.hpp"
 
 /* TODO:
    -- negative exponent versions need to be included (at least for MO_LEX)

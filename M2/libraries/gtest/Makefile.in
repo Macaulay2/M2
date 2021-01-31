@@ -1,7 +1,8 @@
 # from https://github.com/google/googletest/archive/release-1.8.0.tar.gz, renamed to gtest-1.8.0.tar.gz
-VERSION = 1.8.0
+VERSION = 1.10.0
 TARDIR = googletest-release-$(VERSION)/googletest
-PRECONFIGURE = autoreconf -vif
+CONFIGURECMD = :
+BUILDCMD = :
 
 LICENSEFILES = LICENSE
 URL = http://macaulay2.com/Downloads/OtherSourceCode

@@ -3,7 +3,6 @@
 #ifndef _dmat_lu_inplace_hpp_
 #define _dmat_lu_inplace_hpp_
 
-#include "engine.h"
 #include "dmat.hpp"
 #include "mat-elem-ops.hpp"
 #include "mat-util.hpp"

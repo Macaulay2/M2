@@ -164,3 +164,21 @@ doc ///
         Text
             Valid values are {\tt Naive} and {\tt Safe}.
 ///
+
+doc ///
+    Key
+        frobeniusPreimage        
+        ( frobeniusPreimage, ZZ, Ideal )
+    Headline
+        finds the ideal of elements mapped into a given ideal, under all $p^{-e}$-linear maps
+    Description
+        Text
+            Given an ideal $Q$ in a ring $R$, one frequently considers $I_e(Q)$.  This is the ideal of elements $x \in R$ such that $\phi(x^{1/p^e}) \in Q$ for all $\phi : R^{1/p^e} \to R$.  Sometimes this ideal is called the Frobenius pre-image.
+            In a regular ring, it agrees with the frobenius power $Q^{[p^e]}$.
+        Example
+            R = ZZ/7[x,y,z]/ideal(x*y-z^2);
+            Q = ideal(x, z);
+            frobeniusPreimage(1, Q)
+        Text
+            In the previous example $I_1(Q)$ agrees with $Q^{(p)}$, the $p$th symbolic power of $Q$.
+///

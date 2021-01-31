@@ -3,9 +3,7 @@
 #define _system_m2file_h_
 
 #include "mutexclass.hpp"
-
-#include <M2/gc-include.h>
-#include <gc/gc_cpp.h>
+#include "gc_std.hpp"
 
 #include <map>
 
@@ -34,7 +32,7 @@ public:
   //current thread output mode.  0 is unsync, 1 is sync, 2 is thread exclusive
   int currentThreadMode; 
   //list of thread states for thread exclusive mode 
-  std::map<pthread_t,struct M2FileThreadState*> threadStates;
+  gc_map(pthread_t,struct M2FileThreadState*) threadStates;
   //sync state for unsync or sync mode
   stdio0_fileOutputSyncState unsyncState;
   //Mutex for guarding map & internals of file

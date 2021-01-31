@@ -123,3 +123,15 @@ frobeniusPower( QQ, Ideal ) := Ideal => o -> ( t, I ) ->
 	    frobeniusRoot( b, frobeniusPower( quot, I ) * J, FrobeniusRootStrategy => o.FrobeniusRootStrategy )
         )
 )
+
+frobeniusPreimage = method( Options => { } );
+
+frobeniusPreimage(ZZ, Ideal) := Ideal => o -> (e1, J1) -> (
+    R1 := ring J1;
+    I1 := ideal R1;
+    S1 := ambient R1;
+    Ipe := frobenius(e1, I1 );
+    Jpe := frobenius(e1, I1 + sub(J1, S1));
+    fedderColon := Ipe : I1;
+    return sub( Jpe : fedderColon , R1);
+)

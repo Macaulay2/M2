@@ -27,8 +27,9 @@ newPackage(
     		{Name => "Alvise Trevisan", Email => "a.trevisan@enpicom.com", HomePage => "http://www.enpicom.com"},
     		{Name => "Alexander I. Suciu", Email => "a.suciu@neu.edu"}
 		},  
+        Keywords => {"Toric Geometry"},
      	PackageImports => { "SimplicialComplexes" },
-    	Headline => "Toric topology"
+    	Headline => "toric topology"
     	)
 
 protect QTMSimplicialComplex

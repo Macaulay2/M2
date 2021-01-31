@@ -99,7 +99,7 @@ void set_from_mpz(ElementType& result, mpz_srcptr a) const
     fmpz_set_mpz(&result, a);
   }
 
-  bool set_from_mpq(ElementType& result, const mpq_ptr a) const
+  bool set_from_mpq(ElementType& result, mpq_srcptr a) const
   {
     if (mpz_cmp_si(mpq_denref(a), 1) == 0)
       {
@@ -180,7 +180,7 @@ void set_from_mpz(ElementType& result, mpz_srcptr a) const
 
   void power_mpz(ElementType& result,
                  const ElementType& a,
-                 const mpz_ptr n) const
+                 mpz_srcptr n) const
   {
     std::pair<bool, int> n1 = RingZZ::get_si(n);
     if (n1.first)
@@ -220,15 +220,16 @@ void set_from_mpz(ElementType& result, mpz_srcptr a) const
 
   void to_ring_elem(ring_elem& result, const ElementType& a) const
   {
-    fmpz b;
-    fmpz_init_set(&b, &a);
-    result.poly_val = reinterpret_cast<Nterm*>(b);
+    mpz_ptr b = getmemstructtype(mpz_ptr);
+    mpz_init(b);
+    fmpz_get_mpz(b, &a);
+    mpz_reallocate_limbs(b);
+    result = ring_elem(b);
   }
 
   void from_ring_elem(ElementType& result, const ring_elem& a) const
   {
-    fmpz t = reinterpret_cast<fmpz>(const_cast<Nterm*>(a.poly_val));
-    fmpz_set(&result, &t);
+    fmpz_set_mpz(&result, a.get_mpz());
   }
 
   /** @} */

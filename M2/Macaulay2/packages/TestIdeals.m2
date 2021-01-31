@@ -35,7 +35,7 @@ Authors => {
      {Name => "Drew Ellingson",
      Email => "drewtell@umich.edu"
      },
-     {Name => "Daniel Hernandez",
+     {Name => "Daniel Hernández",
      Email => "hernandez@ku.edu",
      HomePage => "https://hernandez.faculty.ku.edu"
      },
@@ -76,9 +76,25 @@ Authors => {
      HomePage => "https://witt.faculty.ku.edu"
      }
 },
-Headline => "A package for calculations of singularities in positive characteristic",
+Headline => "singularities in positive characteristic",
+Keywords => {"Commutative Algebra"},
 AuxiliaryFiles=>true,
-PackageExports=>{"Depth"}
+PackageExports=>{"Depth"},
+PackageImports => {"MinimalPrimes"},
+Certification => {
+     "journal name" => "The Journal of Software for Algebra and Geometry",
+     "journal URI" => "http://j-sag.org/",
+     "article title" => "The TestIdeals package for Macaulay2",
+     "acceptance date" => "19 July 2019",
+     "published article URI" => "https://msp.org/jsag/2019/9-2/p01.xhtml",
+     "published article DOI" => "10.2140/jsag.2019.9.89",
+     "published code URI" => "https://msp.org/jsag/2019/9-2/jsag-v9-n2-x01-TestIdeals.zip",
+     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/TestIdeals.m2",
+     "release at publication" => "fa98bdf2587243ef3e7e3042cac7cd9fc90fb6fc",	    -- git commit number in hex
+     "version at publication" => "1.01",
+     "volume number" => "9",
+     "volume URI" => "https://msp.org/jsag/2019/9-2/"
+     }
 )
 
 export{
@@ -106,6 +122,7 @@ export{
     "FrobeniusPowerStrategy",
     "Naive",
     "Safe",
+    "frobeniusPreimage",
 
 -- parameterTestIdeal.m2
     "AssumeCM", --an option for function, if true, then the function will do less work.

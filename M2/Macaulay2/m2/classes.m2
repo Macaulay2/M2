@@ -1,6 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-Option.synonym = "option"
 Net.synonym = "net"
 Time.synonym = "timing result"
 Boolean.synonym = "Boolean value"
@@ -25,6 +24,7 @@ List.synonym = "list"
 MutableList.synonym = "mutable list"
 File.synonym = "file"
 Array.synonym = "array"
+AngleBarList.synonym = "angle bar list"
 Symbol.synonym = "symbol"
 Keyword.synonym = "keyword"
 Dictionary.synonym = "dictionary"

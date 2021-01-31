@@ -14,6 +14,8 @@ struct res2term;
 class MutableMatrix;
 class MonomialIdeal;
 
+void showint(mpz_srcptr a);
+
 void dmatrix(const Matrix *M);
 
 void drelem(const RingElement *f);

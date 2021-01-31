@@ -196,7 +196,7 @@ noetherNormalization(I,Verbose => true)
 
 
 
--- Examples should be listed in a resonable order
+-- Examples should be listed in a reasonable order
 -- Comments should be given about why each example is good
 
 --========================================================

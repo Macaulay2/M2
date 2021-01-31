@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "text-io.hpp"
 #include "ZZ.hpp"
+#include "monoid.hpp"
 
 void tableau::initialize(int nvars)
 {
@@ -281,7 +282,7 @@ ring_elem SchurRing::mult_by_term(const ring_elem f,
     }
   return result;
 }
-ring_elem SchurRing::power(const ring_elem f, mpz_t n) const
+ring_elem SchurRing::power(const ring_elem f, mpz_srcptr n) const
 {
   if (mpz_sgn(n) < 0) throw exc::engine_error("element not invertible");
   std::pair<bool, int> n1 = RingZZ::get_si(n);

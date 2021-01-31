@@ -8,7 +8,8 @@ newPackage(
 		     Email => "j-suzuki@sigmath.es.osaka-u.ac.jp", 
 		     HomePage => "http://suzuki.bayesnet.org"}
 	},
-	Headline => "The Arithmetic of Miura Curves",
+	Headline => "arithmetic of Miura curves",
+        Keywords => {"Commutative Algebra"},
 	DebuggingMode => false
 	)
 
@@ -77,7 +78,7 @@ beginDocumentation()
 
 document{
      Key => Miura,
-     Headline => "A Package for Miura Curve Arithmetic",
+     Headline => "Miura curve arithmetic",
 	 PARA {"The Miura package realizes arithmetic on the curves such as hyper-elliptic curves (e.g., y^2=x^5+x+1), C_{ab} curves (e.g., y^3=x^4+2x+1), complete intersection (e.g. {y^2-x^3-1,z^2-x*y-1}).
 	 For the Miura form, the pole orders should be specified such as 2 and 3 for x and y of an elliptic curve.  
 	 Currently, only divisor class group computation is available for the package. 

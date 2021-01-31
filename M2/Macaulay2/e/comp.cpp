@@ -1,6 +1,9 @@
 // Copyright 2004 Michael E. Stillman
 
 #include "comp.hpp"
+
+#include <stdio.h>
+
 #include "buffer.hpp"
 #include "exceptions.hpp"
 #include "finalize.hpp"

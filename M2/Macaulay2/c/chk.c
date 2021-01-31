@@ -1195,19 +1195,18 @@ static node chkpackage1(node e, scope v, bool sig){
      if (!sig) {
 	  node code = NULL;
 	  code = join(
-	       list(4,
+	       list(3,
 		    list(3,Ccode_S,void_T, String("static struct FUNCTION_CELL this_final, this_thread_prepare")),
 		    list(3,Ccode_S,void_T, String("static int called_yet = 0")),
-		    list(3,Ccode_S,void_T, String("if (called_yet) return; else called_yet = 1")),
-		    list(3,Ccode_S,void_T, String("scc_core_prepare()"))
+		    list(3,Ccode_S,void_T, String("if (called_yet) return; else called_yet = 1"))
 		    ),
 	       join(
 		    reverse(v->before),
 		    list(6,
-			 list(4,Ccode_S,void_T, String("this_thread_prepare.fun = "),threadinitsymb),
+			 list(4,Ccode_S,void_T, String("this_thread_prepare.func = "), threadinitsymb),
 			 list(3,Ccode_S,void_T, String("this_thread_prepare.next = thread_prepare_list")),
 			 list(3,Ccode_S,void_T, String("thread_prepare_list = &this_thread_prepare")),
-			 list(4,Ccode_S,void_T, String("this_final.fun = "),finalsymb),
+			 list(4,Ccode_S,void_T, String("this_final.func = "), finalsymb),
 			 list(3,Ccode_S,void_T, String("this_final.next = final_list")),
 			 list(3,Ccode_S,void_T, String("final_list = &this_final"))
 			 )));
@@ -1646,6 +1645,7 @@ static node chkdefinition(node e, scope v){
 			EQUAL!=strcmp("volatile int",ltype->body.type.Cname) &&
 			EQUAL!=strcmp("volatile bool",ltype->body.type.Cname) &&
 			EQUAL!=strcmp("char",ltype->body.type.Cname) &&
+			EQUAL!=strcmp("signed char",ltype->body.type.Cname) &&
 			EQUAL!=strcmp("unsigned char",ltype->body.type.Cname) &&
 			EQUAL!=strcmp("short",ltype->body.type.Cname) &&
 			EQUAL!=strcmp("unsigned short",ltype->body.type.Cname))

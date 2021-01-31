@@ -19,10 +19,21 @@ degreeLength OrderedMonoid := M -> M.degreeLength
 terms := symbol terms
 PolynomialRing = new Type of EngineRing
 PolynomialRing.synonym = "polynomial ring"
+PolynomialRing#{Standard,AfterPrint} = R -> (
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : "; -- standard template
+    << "PolynomialRing";
+    if #R.monoid.Options.WeylAlgebra > 0
+    then << ", " << #R.monoid.Options.WeylAlgebra << " differential variables";
+    if #R.monoid.Options.SkewCommutative > 0
+    then << ", " << #R.monoid.Options.SkewCommutative << " skew commutative variables";
+    << endl;
+    )
 
 isPolynomialRing = method(TypicalValue => Boolean)
 isPolynomialRing Thing := x -> false
 isPolynomialRing PolynomialRing := (R) -> true
+
+isHomogeneous PolynomialRing := R -> true
 
 exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
 
@@ -30,7 +41,7 @@ expression PolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      k := last R.baseRings;
      T := if (options R).Local === true then List else Array;
-     (expression k) (new T from R.generatorExpressions)
+     (expression k) (new T from toSequence runLengthEncode R.generatorExpressions)
      )
 
 describe PolynomialRing := R -> (
@@ -281,7 +292,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    exps = append(exps,1);
 		    );
 	       new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
-	  isPrime RM := f -> (
+	  isPrime RM := {} >> o -> f -> (
 	      v := factor f;
 	      cnt := 0; -- counts number of factors
 	      scan(v, x -> ( if not isUnit(x#0) then cnt=cnt+x#1 ));

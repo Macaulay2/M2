@@ -1,12 +1,15 @@
-needsPackage "Bertini"
 
+restart
+loadPackage("Bertini",Reload=>true)
+peek Bertini
 ---we will do a sample homotopy
      R = CC[x,y,z]
 --F is the defining system of equations
      F = {(y^2+x^2+z^2-1)*x*z,
 	  (y^2+x^2+z^2-1)*y*z}
 --NV is a numerical variety  consisting of 2 components
-     NV = bertiniPosDimSolve(F,RandomSeed=>1)
+     BIC = {RandomSeed=>1}
+     NV = bertiniPosDimSolve(F,BertiniInputConfiguration=>BIC)
 --W1 is the 1 dimensional component
 --W2 is the 2 dimensional component
      W1 = NV#1_0 --z-axis

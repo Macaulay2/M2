@@ -18,7 +18,8 @@ newPackage select((
             {Name => "Sonja Mapes", Email => "smapes1@nd.edu", HomePage => "http://www.nd.edu/~smapes1/"},
             {Name => "Gwyn Whieldon", Email => "whieldon@hood.edu", HomePage => "http://www.hood.edu/Academics/Departments/Mathematics/Faculty/Gwyneth-Whieldon.html"}
         },
-        Headline => "Package for processing partially ordered sets (posets)",
+        Headline => "partially ordered sets (posets)",
+	Keywords => {"Combinatorics"},
         Configuration => {
             "DefaultPDFViewer" => "open", -- "open" for Macs and "evince" for Linux
             "DefaultPrecompute" => true,
@@ -183,6 +184,7 @@ export {
     "realRegions",
     "tuttePolynomial",
     "zetaPolynomial",
+    "coxeterPolynomial",
     --
     -- Properties
     "dilworthNumber",
@@ -866,7 +868,7 @@ lcmLatticeRecursive = G -> (
     )
 
 -- Portions of code for generating NCPartitions contributed by Andrew Hoefel.
--- New Type for Noncrossing Partitions to improve diplay of results.
+-- New Type for Noncrossing Partitions to improve display of results.
 NCPartition = new Type of List
 
 ncPartition = L -> new NCPartition from toList \ L
@@ -1319,10 +1321,11 @@ rankFunction Poset := List => P -> (
     if not P.cache.?coveringRelations then coveringRelations P;
     for r in P.cache.coveringRelations do (
         tmp := last rk#(r#1) - last rk#(r#0) - 1;
-        if tmp == 0 then continue;
         u := first rk#(r#0);
         v := first rk#(r#1);
-        if u == v then return P.cache.rankFunction = null;
+        if u == v then (
+	    if tmp == 0 then continue else return P.cache.rankFunction = null;
+	);
         rk = if tmp > 0 then apply(rk, g -> if first g == u then {v, last g + tmp} else g) else
                               apply(rk, g -> if first g == v then {u, last g - tmp} else g);
         );
@@ -1568,6 +1571,15 @@ zetaPolynomial Poset := RingElement => opts -> P -> (
     X := toList(2..dim oP+2);
     Y := apply(X, n -> sum(2..n, i -> fV#(i-2) * binomial(n-2, i-2)));
     sum(#X, i -> Y_i * product(drop(X, {i,i}), xj -> (R_0 - xj)/(X_i-xj)))
+    )
+
+coxeterPolynomial = method(Options => {symbol VariableName => getSymbol "t"})
+coxeterPolynomial Poset := RingElement => opts -> P -> (
+    R := ZZ(monoid [opts.VariableName]);
+    M := P.RelationMatrix;
+    n := numrows M;
+    C := -M * inverse transpose M;
+    det (R_0 * id_(R^n) - C)
     )
 
 ------------------------------------------
@@ -4071,11 +4083,11 @@ doc ///
         A:Array
             representing a poset in GAP-format
         S:String
-            representing a poste in GAP-format
+            representing a poset in GAP-format
         P:Poset
     Outputs
         S:String
-            representing a poste in GAP-format
+            representing a poset in GAP-format
         P:Poset
     Description
         Text
@@ -4096,7 +4108,7 @@ doc ///
             P = gapConvertPoset S
             P == augmentPoset booleanLattice 3
         Text
-            When convering to GAP format, the method automatically augments the poset.  In this example,
+            When converting to GAP format, the method automatically augments the poset.  In this example,
             the $3$ chain becomes a $5$ chain in GAP format.
         Example
             gapConvertPoset chain 3
@@ -5371,7 +5383,35 @@ doc ///
     SeeAlso
         chains
 ///
-
+-- coxeterPolynomial
+doc ///
+    Key
+        coxeterPolynomial
+        (coxeterPolynomial,Poset)
+        [coxeterPolynomial,VariableName]
+    Headline
+        computes the Coxeter polynomial of a poset
+    Usage
+        z = coxeterPolynomial P
+        z = coxeterPolynomial(P, VariableName => symbol)
+    Inputs
+        P:Poset
+        VariableName=>Symbol
+    Outputs
+        z:RingElement
+            the Coxeter polynomial of $P$
+    Description
+        Text
+            The Coxeter polynomial of $P$ is the
+            characteristic polynomial of the Coxeter
+            transformation matrix $ -M M^{-t}$, where $M$
+            is the relation matrix. This depends only on
+            the derived category of modules over
+            the incidence algebra.
+        Example
+            B = booleanLattice 3;
+            z = coxeterPolynomial B
+///
 ------------------------------------------
 -- Properties
 ------------------------------------------
@@ -6074,7 +6114,7 @@ doc ///
         isUpperSemimodular
         (isUpperSemimodular,Poset)
     Headline
-        determines if a lattice is upper semimoudlar
+        determines if a lattice is upper semimodular
     Usage
         i = isUpperSemimodular P
     Inputs
@@ -6371,6 +6411,7 @@ assert(moebiusFunction B === new HashTable from {("010","010") => 1, ("010","011
       ("100","111") => 1, ("111","100") => 0, ("011","101") => 0, ("101","011") => 0, ("111","101") => 0})
 assert(toString rankGeneratingFunction B === "q^3+3*q^2+3*q+1")
 assert(toString zetaPolynomial B == "q^3")
+assert(toString coxeterPolynomial B == "t^8+t^7+t^6-2*t^5-2*t^4-2*t^3+t^2+t+1")
 assert(dilworthNumber B === 3)
 assert(isAtomic B == true)
 assert(isBounded B == true)
@@ -6471,6 +6512,7 @@ assert(moebiusFunction B === new HashTable from {(5,2) => 0, (4,3) => 0, (2,5) =
        (3,3) => 1})
 assert(toString rankGeneratingFunction B === "q^4+q^3+q^2+q+1")
 assert(toString zetaPolynomial B == "(1/24)*q^4+(1/4)*q^3+(11/24)*q^2+(1/4)*q")
+assert(toString coxeterPolynomial B == "t^5+t^4+t^3+t^2+t+1")
 assert(dilworthNumber B === 1)
 assert(isAtomic B == false)
 assert(isBounded B == true)
@@ -6490,10 +6532,6 @@ assert(isUpperSemilattice B == true)
 assert(isUpperSemimodular B == true)
 
 ///
-
-
-
-
 
 --Tests for divisorPoset(ZZ)
 
@@ -6649,6 +6687,14 @@ assert(r == toList(0..#r-1))
 assert(adjoinMin(flagPoset(B,{1,2,3,4})) == B)
 assert(adjoinMax(flagPoset(B,{0,1,2,3})) == B)
 assert(augmentPoset(flagPoset(B,{1,2,3})) == B)
+///
+
+
+--Tests for isRanked
+
+TEST ///
+P = poset({0,1,2,3,4},{{0,2},{2,3},{1,4},{0,4},{1,3}})
+assert(isRanked P == false)
 ///
 
 end;

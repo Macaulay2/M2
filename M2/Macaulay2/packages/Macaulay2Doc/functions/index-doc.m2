@@ -42,14 +42,3 @@ document {
      SeeAlso => {indices, support, (symbol_,Ring,ZZ)}
      }
 
-TEST ///
-    R = ZZ/101[x_0 .. x_10]
-    scan(11, i -> assert(index x_i == i))
-    assert( try (index x_11;false) else true )
-    R = ZZ/101[w,z,t,e]
-    assert( index w == 0 )
-    assert( index z == 1 )
-    assert( index t == 2 )
-    assert( index e == 3 )
-///
-

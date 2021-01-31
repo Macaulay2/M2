@@ -79,11 +79,11 @@ TEST ///
 
 ///
 
-end
+end--
 
 debug Core
 
--- QQFlint: testrank:  takes alot of time, why?
+-- QQFlint: testrank:  takes a lot of time, why?
 --    testNullspace: bus error!
 -- ZZ: determinant: fails
 -- ZZpFlint: 

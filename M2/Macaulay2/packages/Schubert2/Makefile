@@ -1,5 +1,5 @@
 M = ~/src/M2/1.2/BUILD/dan/builds/ubuntu32/M2
-STOP = --stop --no-loaddata
+STOP = --stop
 demo :
 	$M $(STOP) --no-debug -e 'input "demo.m2"; exit 0' </dev/null
 	$M $(STOP) --no-debug -e 'input "demo2.m2"; exit 0' </dev/null

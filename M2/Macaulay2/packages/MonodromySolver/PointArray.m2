@@ -20,66 +20,61 @@ appendPoints    -- ....... list of points ..........
 position        -- find a poisiton of a point in the array (null = not there)
 points          -- returns a List of points
 
-!!!The goal is to make searching the array fast, 
-but for now it works only in linear time!!!
+Searching the array is likely to be O(log n), which is achieved via std::map. 
+(See M2/Macaulay2/e/NAG.hpp for implementation.)  
 *-
 
+debug Core
 PointArrayTolerance = 1e-4
-FAST = class rawPointArray === CompiledFunction
-if not FAST then (
-    export {"rawPointArray","rawPointArrayLookupOrAppend","rawPointArrayLookup"} 
-    )
 
 -- needsPackage "NAGtypes"
 PointArray = new Type of MutableHashTable
 pointArray = method()
 pointArray List := B -> (
     A := new PointArray from {};
-    if FAST then A#"raw" = null;
+    A#"raw" = null;
     appendPoints(A,B);
     A	 
     ) 
 net PointArray := P -> net values P
 
-length PointArray := P -> if FAST then #P - 1 else #P
+length PointArray := P -> #P - 1
 
 indices PointArray := P -> toList(0..length(P)-1) 
 
-points PointArray := P -> if FAST then P_(indices P) else values P
+points PointArray := P -> P_(indices P)
 
 appendPoint = method()
 appendPoint(PointArray,Point) := (A,b) -> (
-    if FAST then (
-	if A#"raw" === null then A#"raw" = rawPointArray(PointArrayTolerance,2*#coordinates b); -- 2*n real coordinates
-	if rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose sub(matrix b,CC_53),0) =!= length A 
-    	then error "can't append"
-	);
+    if A#"raw" === null then A#"raw" = rawPointArray(PointArrayTolerance,2*#coordinates b); -- 2*n real coordinates
+    if rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose sub(matrix b,CC_53),0) =!= length A 
+    then error "can't append";
     A#(length A) = b
     )
 appendPoints = method()
 appendPoints(PointArray,List) := (A,B) -> for b in B do appendPoint(A,b)
 
-member(Point,PointArray) := (b,A) -> position(b,A) =!= null
+member(Point,PointArray,FunctionClosure) := (b,A,eq) -> position(b,A,eq) =!= null
+member(Point,PointArray) := (b,A) -> member(b,A,x->x)
 
-position(Point,PointArray) := o -> (b,A) -> 
-    if FAST then (
-	if A#"raw" === null then return null;
-	ret := rawPointArrayLookup(A#"raw",raw mutableMatrix transpose sub(matrix b,CC_53),0);
-	if ret == -1 then null else ret
-	) else position(keys A, k->areEqual(A#k,b,Tolerance => PointArrayTolerance))
-    
+position(Point,PointArray,FunctionClosure) := o -> (b, A, eq) -> (
+    if A#"raw" === null then return null;
+    ret := rawPointArrayLookup(A#"raw",raw mutableMatrix transpose sub(matrix b,CC_53),0);
+    if ret == -1 then null else ret
+    )
+position(Point,PointArray) := o -> (b, A) -> position(b, A, x -> x)
+
 PointArray_List := (A,inds) -> apply(inds,i->A#i)
 
 PointArray_ZZ := (A,i) -> A#i
 
---This is inefficient, but it works for now.
-positions(PointArray, Function) := (A, f) -> (
-    error "this function is probably not needed...";
-    select(keys A,k->f(A#k))
-    );
+toExternalString PointArray := A -> "pointArray " | toExternalString points A     
+-- toExternalString is a bad option, since arrays might be large
+File << PointArray := File => (f,A) -> ( -- TODO
+    f << toExternalString A
+    ) 
 
 TEST /// 
-    restart
     needsPackage "MonodromySolver"
     p = point {{1_CC,2_CC}}
     A = pointArray {p}
@@ -96,8 +91,10 @@ TEST ///
     p = point {{1_(CC_100),2}}
     appendPoint(A,p)        
     assert member(point{{1,2}},A)        
+    value toExternalString A
 
     p = point {{1.79463+.302691*ii, -.379269+1.29466*ii, 2.49917+.526336*ii, 2.28917-1.3737*ii, -1.78834+.847366*ii}}
     A = pointArray {p}
-    rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose matrix p,0)
+    debug Core
+    assert(rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose matrix p,0)==0)
 ///

@@ -1,5 +1,6 @@
 // Copyright 1995-2004 Michael E. Stillman
 
+#include "interface/random.h"
 #include "style.hpp"
 #include "text-io.hpp"
 #include "ring.hpp"
@@ -1112,15 +1113,15 @@ Matrix /* or null */ *Matrix::koszul_monomials(int nskew,
   int *bexp = newarray_atomic(int, nvars);
   int *result_exp = newarray_atomic(int, nvars);
   int *m = M->make_one();
-  array<Bag *> divisors;
+  VECTOR(Bag *) divisors;
   for (int i = 0; i < ncols; i++)
     {
       if (c->elem(i) == nullptr) continue;
       a = P->lead_flat_monomial(c->elem(i)->coeff);
       M->to_expvector(a, aexp);
-      divisors.shrink(0);
+      divisors.clear();
       A->find_all_divisors(aexp, divisors);
-      for (int j = 0; j < divisors.length(); j++)
+      for (int j = 0; j < divisors.size(); j++)
         {
           int rownum = divisors[j]->basis_elem();
           const int *b = P->lead_flat_monomial(r->elem(rownum)->coeff);
@@ -1274,7 +1275,7 @@ Matrix *Matrix::compress() const
 #if 0
 // int Matrix::moneq(const int *exp, int *m, const int *vars, int *exp2) const
 //     // Internal private routine for 'coeffs'.
-//     // exp2 is a scratch value.  It is a paramter so we only have to allocate
+//     // exp2 is a scratch value. It is a parameter so we only have to allocate
 //     // it once...
 // {
 //   get_ring()->getMonoid()->to_expvector(m, exp2);
@@ -1862,7 +1863,7 @@ gmp_RRorNull Matrix::norm(gmp_RR p) const
       ERROR("expected ring over an RR or CC");
       return nullptr;
     }
-  gmp_RR nm = getmemstructtype(gmp_RR);
+  gmp_RRmutable nm = getmemstructtype(gmp_RRmutable);
   mpfr_init2(nm, mpfr_get_prec(p));
   mpfr_ui_div(nm, 1, p, GMP_RNDN);
   if (!mpfr_zero_p(nm))
@@ -1874,7 +1875,7 @@ gmp_RRorNull Matrix::norm(gmp_RR p) const
 
   for (int i = 0; i < n_cols(); i++) R->vec_increase_maxnorm(nm, elem(i));
 
-  return nm;
+  return moveTo_gmpRR(nm);
 }
 
 // Local Variables:

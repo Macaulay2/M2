@@ -12,7 +12,7 @@ LEX = flex
 LFLAGS += -f -s -i -8 -v
 CFLAGS += -Wall -g
 HSRC := buffer.h html-check-links.h getmem.h grammar.h
-CSRC := html-check-links.c getmem.c buffer.c
+CSRC := html-check-links.c getmem.c
 LSRC := lex.l
 YSRC := grammar.y
 SRC :=  $(YSRC) $(CSRC) $(LSRC) $(HSRC)
@@ -24,7 +24,7 @@ endif
 
 # we don't include @LIBS@ here because including -llapack would make it also
 # necessary to link with the fortran support libraries:
-LOADLIBES += @GC_LIBS@
+LOADLIBES += -lgc
 # we should have added this only after checking for its presence/necessity in configure.ac:
 # LOADLIBES += -ldl
 

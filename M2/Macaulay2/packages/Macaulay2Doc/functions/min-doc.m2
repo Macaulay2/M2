@@ -38,8 +38,3 @@ doc///
   sort
   "?"
 ///
-
-TEST ///
-     assert(min{4,5,6} === 4)
-     assert(min(4,5,6) === 4)    
-///

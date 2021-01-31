@@ -52,96 +52,6 @@ document {
      }
 
 document {
-     Key => "component example",
-     "The following simple example illustrates the use of 
-     ", TO "removeLowestDimension", ",", TO "topComponents", ",", TO "radical",
-     ", and ", TO "minimalPrimes", ".",
-     EXAMPLE {
-	  "R = ZZ/32003[a..d];",
-      	  "I = monomialCurveIdeal(R,{1,3,4})",
-      	  "J = ideal(a^3,b^3,c^3-d^3)",
-      	  "I = intersect(I,J)",
-      	  "removeLowestDimension I",
-      	  "topComponents I",
-      	  "radical I",
-      	  "minimalPrimes I"
-	  },
-     }
-
-TEST "
-    R = ZZ/32003[a..d]
-    I = monomialCurveIdeal(R,{1,3,4})
-    J = ideal(a^3,b^3,c^3-d^3)
-    I = intersect(I,J)
-    removeLowestDimension I
-    topComponents I
-    radical I
-    minimalPrimes I
-"
-TEST "
-    -- test of removeLowestDimension
-    R = ZZ/32003[a,b,c]
-    I = ideal(a^2,b^2)
-    J = ideal(a^3,b^3,c^3)
-    I = intersect(I,J)
-    time (I1 = removeLowestDimension I)
-    time topComponents I
-    time radical I
-"
-
-     
-TEST "
-    -- examples of use of: radical, UnmixedRadical, 
-    -- topComponents, removeLowestDimension
-
-    -- example 1: a simple monomial ideal
-    R = ZZ/101[a..d]
-    I = intersect(ideal(a^2,b^2,c), ideal(a,b^3,c^2))
-    time (Irad = radical(I,Unmixed=>true))
-
-    -- example 2: 
-    R = ZZ/101[a..d]
-    I = intersect(ideal(a^2,b^2,c), ideal(a,d^4), ideal(b^2,c^2,d^2))
-    time (Itop = topComponents I)
-    time (I1 = removeLowestDimension I)
-    time (Irad = radical I)
-"
-
-TEST "
-R = ZZ/101[symbol a..symbol d]
-I = monomialCurveIdeal(R,{1,2,3})
-I^2
-removeLowestDimension(I^2)
-assert(I == 
-     radical(I^2)
-     )
-assert(I == 
-     radical(I^2, Unmixed=>true)
-     )
-assert(
-     topComponents (I^2) == I^2
-     )
-S = R/(a^3, b^3)
-I = ideal(0_S)
-J = I^2
-J1 = topComponents J
-J1 == J   
-time (radical I)
-
--- 3 by 3 nilpotent matrices
-R = ZZ/101[vars(0..8)]
-M = genericMatrix(R,a,3,3)
-I = ideal (M^3)
-I1 = ideal(I_0,I_1,I_2)
-codim I1
-radical(I, CompleteIntersection=>I1)
--- radical(I,Unmixed=>true)
--- I1 = removeLowestDimension I
--- I2 = removeLowestDimension I1
-"
-
-
-document {
      Key => "diff and contract",
      "We may use the function ", TO "diff", " to differentiate polynomials:
      the first argument is the variable to differentiate with respect to,
@@ -328,11 +238,14 @@ document {
      examined with ", TO "status", ".  The computation can be continued
      with ", TT "res M", ".  Here is an example, with an alarm interrupting
      the computation several times before it's complete.  (On my machine, 
-     the computation takes a total of 14 seconds.)",
+     the computation takes a total of 14 seconds.)  (Example code, such as
+     the code below, is run in such a way that interrupts stop the program,
+     so to prevent that, we set ", TO "handleInterrupts", " to ", TO "true", ".)",
      PARA{},
      EXAMPLE {
 	  "R = ZZ/2[a..d];",
 	  "M = coker random(R^4, R^{5:-3,6:-4});",
+	  "handleInterrupts = true",
 ///(<< "-- computation started: " << endl;
  while true do try (
      alarm 1;
@@ -373,9 +286,8 @@ document { Key => "the debugger",
      EXAMPLE {"g 4", "g 3"},
      "However, the following attempt results in an error, and the debugger starts up automatically.",
      EXAMPLE "g 2",
-     "We use ", TO "help", ", as instructed, to view the commands available in the debugger.",
-     EXAMPLE "help",
-     "As suggested, we can use ", TO "listLocalSymbols", " to list the local symbols and their values.",
+     "You may use ", TO "help", ", as instructed, to view the commands available in the debugger.
+     As suggested by the help display, we can use ", TO "listLocalSymbols", " to list the local symbols and their values.",
      EXAMPLE "listLocalSymbols",
      "We see the the value of ", TT "x", " is 0, and that explains the error message about division by zero.
      The other local symbols are the ones defined in the body of the function ", TT "f", ", whose

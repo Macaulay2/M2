@@ -73,6 +73,7 @@ setupconst("Database",Expr(dbClass));
 setupconst("Sequence",Expr(sequenceClass));
 setupconst("VisibleList",Expr(visibleListClass));
 setupconst("Array",Expr(arrayClass));
+setupconst("AngleBarList",Expr(angleBarListClass));
 setupconst("Ring",Expr(ringClass));
 setupconst("Nothing",Expr(nothingClass));
 setupconst("Task",Expr(taskClass));
@@ -111,7 +112,7 @@ setupfun("parent",parentfun);
 
 
 export Class(e:Expr):HashTable := (
-     when e 
+     when e
      is obj:HashTable do obj.Class
      is x:List do x.Class
      is ZZcell do ZZClass
@@ -137,7 +138,7 @@ export Class(e:Expr):HashTable := (
      is CompiledFunction do compiledFunctionClass
      is CompiledFunctionClosure do compiledFunctionClosureClass
      is s:SymbolClosure do if s.symbol.word.parse == parseWORD then symbolClass else keywordClass
-     is s:SymbolBody do symbolBodyClass
+     is SymbolBody do symbolBodyClass
      is RRcell do RRClass
      is CCcell do CCClass
      is RawComputationCell do rawComputationClass

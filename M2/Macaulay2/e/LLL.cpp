@@ -1,11 +1,12 @@
 // Copyright 1998  Michael E. Stillman
 
 #include "LLL.hpp"
+
 #include "relem.hpp"
 #include "matrix.hpp"
-#include "frac.hpp"
 #include "text-io.hpp"
 #include "interrupted.hpp"
+
 bool LLLoperations::checkThreshold(ring_elem num, ring_elem den)
 {
   // Makes sure that 1/4 < num/den <= 1
@@ -126,7 +127,7 @@ void LLLoperations::REDI(int k,
   mpz_mul_2exp(d, b, 1);  // d = 2*D#ell
   mpz_fdiv_q(c, c, d);    // c = (almost) final q
   mpz_neg(c, c);
-  q = c;
+  q = ring_elem(c);
 
   // A->addColumnMultiple(ell,q,k);
   // lambda->addColumnMultiple(ell,q,k);

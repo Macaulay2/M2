@@ -491,7 +491,7 @@ monoid Array := opts -> args -> (
      else if args =!= () then error "variables provided conflict with Variables option";
      makeMonoid opts)
 
-tensor = method( Options => tensorDefaults)
+tensor = method( Options => tensorDefaults, Dispatch => Thing)
 
 Monoid ** Monoid := Monoid => (M,N) -> tensor(M,N)
 

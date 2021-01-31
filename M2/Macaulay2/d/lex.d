@@ -3,7 +3,6 @@
 use ctype;
 use tokens;
 use varstrin;
-use interrupts;
 
 export wordEOF := dummyWord; -- replaced later
 export wordEOC := dummyWord; -- replaced later
@@ -219,7 +218,6 @@ getstring(o:PosFile):(null or Word) := (
 	  );
      s := takestring(tokenbuf);
      Word(s,TCstring,0,parseWORD));
-ismore(file:PosFile):bool := ( c := peek(file); c != EOF && c != ERROR );
 swline := ushort(0);
 swcolumn := ushort(0);
 skipwhite(file:PosFile):int := (
@@ -260,10 +258,6 @@ skipwhite(file:PosFile):int := (
 		    if c == ERROR then return c; 
 		    c == int('\n') || c == EOF
 		    ) do getc(file);
-	       )
-	  else if c == int('{') && peek(file,1) == int('*') then (
-	       -- block comment: {* ... *}, deprecated style, not colored by emacs
-	       return DEPRECATED
 	       )
 	  else if c == int('-') && peek(file,1) == int('*') then (
 	       -- block comment: -* ... *-

@@ -170,20 +170,6 @@ export HorizontalJoin(v:NetList):Net := (
 export dummyNet := Net(0,0,array(string)());
 export dummyNetList := NetList(self,dummyNet);
 
-min(x:int,y:int):int := if x<y then x else y;
-
--- export (s:Net) < (t:Net) : bool := (
---      if s.height != t.height then return s.height < t.height;
---      n := min(length(s.body),length(t.body));
---      for i from 0 to n-1 do (
--- 	  if !(s.body.i === t.body.i) then return s.body.i < t.body.i;
--- 	  );
---      return length(s.body) < length(t.body);
---      );
--- export (s:Net) >= (t:Net) : bool := !(s<t);
--- export (s:Net) > (t:Net) : bool := t<s;
--- export (s:Net) <= (t:Net) : bool := !(t<s);
-
 export netcmp(s:Net, t:Net):int := (
      if s.height > t.height then return 1;
      if s.height < t.height then return -1;

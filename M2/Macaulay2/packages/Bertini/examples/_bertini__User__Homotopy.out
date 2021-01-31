@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: -699724426 *}
+-- -*- M2-comint -*- hash: -699724426
 
 i1 : R = CC[x,a,t]; -- include the path variable in the ring
 
@@ -18,16 +18,16 @@ o6 : List
 
 i7 : peek S0_0
 
-o7 = Point{AccuracyEst => 2.63837e-12        }
-           AccuracyEstInternal => 8.58761e-13
-           ConditionNumber => 5.31051
+o7 = Point{AccuracyEst => 1.21205e-14        }
+           AccuracyEstInternal => 1.43214e-14
+           ConditionNumber => 69.2692
            Coordinates => {1.41421}
            CycleNumber => 1
-           FinalTValue => .0015625
-           FunctionResidual => 7.1089e-16
+           FinalTValue => .000390625
+           FunctionResidual => 3.97205e-15
            MaxPrecisionUtilized => 52
            Multiplicity => 1
-           NewtonResidual => 7.61044e-17
+           NewtonResidual => 1.04182e-15
            PathNumber => 0
            PathsWithSameEndpoint => {}
            PrecisionIncreased => 0
@@ -61,7 +61,7 @@ o14 : List
 
 i15 : S0=bertiniUserHomotopy(t,{a=>t}, H, S1, HomVariableGroup=>{x,y}) --solutions to H when t=0
 
-o15 = {{1, .3-.556776*ii}, {1, .3+.556776*ii}}
+o15 = {{1, .3+.556776*ii}, {1, .3-.556776*ii}}
 
 o15 : List
 

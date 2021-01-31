@@ -4,16 +4,21 @@
 ## Source code ###
 ##################
 
-
-
-INTERFACE2 = \
-	interrupted \
-	newdelete \
+INTERFACE2 = interrupted
 
 INTERFACE = \
+	eigen \
 	monomial-sets \
 	mutablecomplex \
 	localring \
+	bibasis/bibasis \
+	bibasis/allocator \
+	bibasis/launcher \
+	bibasis/monom \
+	bibasis/monomDL \
+	bibasis/monomDRL \
+	bibasis/monomLex \
+	bibasis/settings-manager \
 	f4/res-monomial-sorter \
 	f4/res-varpower-monomial \
 	f4/res-f4-monlookup \
@@ -154,11 +159,6 @@ INTERFACE = \
 	varpower \
 	weylalg
 
-COMMANDS2 = \
-	x-monideal \
-	x-factor \
-	polyroots
-
 COMMANDS = \
 	ntl-internal \
 	ntl-debugio \
@@ -168,15 +168,22 @@ COMMANDS = \
 	ring-vecs \
         res-a2-gb \
 	engine \
-	x-aring \
-	x-monom \
-	x-monoid \
-	x-relem \
-	x-free \
-	x-mat \
-	x-gb \
-	x-ringmap \
-	x-mutablemat \
+	interface/aring \
+	interface/cra \
+	interface/factory \
+	interface/flint \
+	interface/freemodule \
+	interface/groebner \
+	interface/matrix \
+	interface/monoid \
+	interface/monomial-ideal \
+	interface/monomial-ordering \
+	interface/mutable-matrix \
+	interface/polyroots \
+	interface/random \
+	interface/ring \
+	interface/ringelement \
+	interface/ringmap \
 	franzi-gb \
 	franzi-interface
 
@@ -186,7 +193,7 @@ NAMES_H = ringelem \
 	index \
 	res-a0-pair
 
-C_FILES = error table exptable monordering complex rand
+C_FILES = error table exptable complex
 
 D_FILES = 
 DD_FILES = #test
@@ -195,7 +202,7 @@ DD_FILES = #test
 ## end of source code files ##
 ##############################
 
-CC_FILES := $(INTERFACE) $(INTERFACE2) $(COMMANDS) $(COMMANDS2)
+CC_FILES := $(INTERFACE) $(INTERFACE2) $(COMMANDS)
 FILES := $(CC_FILES) $(C_FILES)
 LOFILES := $(addsuffix .lo,$(CC_FILES) $(C_FILES))
 ENGINE_CCFILES := $(addsuffix .cpp,$(CC_FILES))

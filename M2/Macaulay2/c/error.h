@@ -11,7 +11,7 @@
 extern void fail(char *, int);
 extern void failpos(char *, int, node);
 extern int n_errors;
-void fatal(char *s,...);
+void fatal(const char *s,...);
 void error(char *s,...);
 void warning(char *s,...);
 void fatalpos(node p, char *s,...);

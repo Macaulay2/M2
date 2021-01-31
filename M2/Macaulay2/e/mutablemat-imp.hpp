@@ -6,14 +6,16 @@
 #define _mutable_mat_imp_hpp_
 
 template <typename Mat>
-SLEvaluator* MutableMat<Mat>::createSLEvaluator(SLProgram* P,
+M2SLEvaluator* MutableMat<Mat>::createSLEvaluator(M2SLProgram* P,
                                                 M2_arrayint constsPos,
                                                 M2_arrayint varsPos) const
 {
   if (n_rows() != 1 || n_cols() != constsPos->len) {
     ERROR("1-row matrix expected; or numbers of constants don't match");
     return nullptr;
-  } else return new SLEvaluatorConcrete<typename Mat::CoeffRing> (P, constsPos, varsPos, this);
+  } else return new M2SLEvaluator(
+    new SLEvaluatorConcrete<typename Mat::CoeffRing> (&(P->value()), constsPos, varsPos, this)
+  );
 }
 
 template <typename T>
@@ -183,6 +185,30 @@ M2_arrayintOrNull MutableMat<T>::LU(MutableMatrix* L, MutableMatrix* U) const
   return MatrixOps::LU(mat, *L1, *U1);
 }
 
+template <typename T> // T should be a matrix type, generally DMat<RT>
+M2_arrayintOrNull MutableMat<T>::LUincremental(std::vector<size_t>& P,
+                                  const MutableMatrix* v,
+                                  int m)
+{
+  T* LU1 = this->coerce<T>();
+  const T* v1 = const_cast<MutableMatrix*>(v)->coerce<T>();
+  if (LU1 == nullptr or v1 == nullptr)
+    throw exc::engine_error("expected matrices of the same ring/type");
+  return MatrixOps::LUincremental(P, *LU1, *v1, m);
+}
+
+template <typename T> // T should be a matrix type, generally DMat<RT>
+void MutableMat<T>::triangularSolve(MutableMatrix* x,
+                                    int m,
+                                    int strategy)
+{
+  T* Lv1 = this->coerce<T>();
+  T* x1 = x->coerce<T>();
+  if (Lv1 == nullptr or x1 == nullptr)
+    throw exc::engine_error("expected matrices of the same ring/type");
+  MatrixOps::triangularSolve(*Lv1, *x1, m, strategy);
+}
+
 template <typename T>
 bool MutableMat<T>::eigenvalues(MutableMatrix* eigenvals,
                                 bool is_symm_or_hermitian) const
@@ -299,12 +325,12 @@ gmp_RRorNull MutableMat<T>::norm() const
   if (get_ring()->get_precision() == 0)
     throw exc::engine_error("expected a matrix over RR or CC");
 
-  gmp_RR nm = getmemstructtype(gmp_RR);
+  gmp_RRmutable nm = getmemstructtype(gmp_RRmutable);
   mpfr_init2(nm, get_ring()->get_precision());
   mpfr_set_si(nm, 0, GMP_RNDN);
 
   MatrixOps::increase_norm(nm, mat);
-  return nm;
+  return moveTo_gmpRR(nm);
 }
 
 #endif

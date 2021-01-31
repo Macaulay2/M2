@@ -33,3 +33,20 @@ tree that contains the following subdirectories:
 
     bugs     The subdirectory "bugs" is where we keep track of older bug 
     	     reports.
+
+-----------------------------------------------------------------------------
+
+Contributions to the code of Macaulay2 are welcome.
+
+  To make a contribution, submit a "pull request" on github.  If the
+  contribution involves changing an existing package in a non-trivial way, we
+  will normally contact the authors to get their approval of the change.  If a
+  new package with mathematical content is submitted, it will normally be
+  accepted if it can be installed with "installPackage" and the tests pass as
+  determined by "check", in the latest version of Macaulay2.
+
+  To start working on an existing github "issue", volunteer to work on it, so
+  you can get "assigned" to the issue, thereby preventing duplication of
+  effort.
+
+  To report a bug, submit an "issue" on github.

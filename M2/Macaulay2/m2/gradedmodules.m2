@@ -214,6 +214,8 @@ ZZ == GradedModuleMap := (i,f) -> f == i
 
 degree GradedModuleMap := G -> G.degree
 
+formation GradedModule := M -> if M.cache.?formation then M.cache.formation
+
 directSum GradedModule := GradedModule => M -> directSum(1 : M)
 GradedModule.directSum = v -> (
      E := new GradedModule;
@@ -225,21 +227,14 @@ GradedModule.directSum = v -> (
      scan(v, M -> scan(spots M, i -> spts#i = 1));
      spts = keys spts;
      scan(spts, i -> E#i = directSum apply(v, M -> M_i));
-     E	       
-     )
+     if not E.?cache then E.cache = new CacheTable;
+     E.cache.components = v;
+     E.cache.formation = FunctionApplication { directSum, v };
+     E)
 
-GradedModuleMap ++ GradedModuleMap := GradedModuleMap => (f,g) -> (
-     if f.degree != g.degree then (
-	  error "expected maps of the same degree";
-	  );
-     h := new GradedModuleMap;
-     h.ring = ring f;
-     h.source = f.source ++ g.source;
-     h.target = f.target ++ g.target;
-     h.degree = f.degree;
-     scan(union(spots f, spots g), i -> h#i = f_i ++ g_i);
-     h.cache.components = {f,g};
-     h)
+formation GradedModuleMap := M -> if M.cache.?formation then M.cache.formation
+
+GradedModuleMap ++ GradedModuleMap := GradedModuleMap => directSum
 
 GradedModuleMap.directSum = args -> (
      R := ring args#0;
@@ -253,7 +248,9 @@ GradedModuleMap.directSum = args -> (
      g := map(directSum apply(args, target), directSum apply(args, source), 
 	  j -> directSum apply(args, f -> f_j), Degree => d);
      g.cache = new CacheTable;
+     if not g.?cache then g.cache = new CacheTable;
      g.cache.components = toList args;
+     g.cache.formation = FunctionApplication { directSum, args };
      g
      )
 
@@ -309,14 +306,7 @@ gradedModule Sequence := gradedModule List := GradedModule => modules -> (
      C)
 gradedModule Module := GradedModule => M -> gradedModule (1:M)
 
-GradedModule ++ GradedModule := GradedModule => (C,D) -> (
-     E := new GradedModule;
-     E.cache = new CacheTable;
-     R := E.ring = C.ring;
-     if R =!= D.ring then error "expected graded modules over the same ring";
-     scan(union(spots C, spots D), i -> E#i = C_i ++ D_i);
-     E.cache.components = {C,D};
-     E)
+GradedModule ++ GradedModule := GradedModule => directSum
 
 GradedModule ++ Module := GradedModule => (C,M) -> C ++ gradedModule M
 Module ++ GradedModule := GradedModule => (M,C) -> gradedModule M ++ C

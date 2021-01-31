@@ -3,7 +3,7 @@
 --- author(s): MES
 --- notes: 
 
-undocumented (monomialIdeal,MonomialIdeal)
+-- in Classic: (monomialIdeal, String)
 
 document { 
      Key => monomialIdeal,
@@ -43,8 +43,10 @@ document {
      SeeAlso => {MonomialIdeal}
      }
 document { 
-     Key => {(monomialIdeal,Ideal),
-	  (monomialIdeal,Module)},
+     Key => {
+	 (monomialIdeal, Ideal),
+	 (monomialIdeal, Module),
+	 (monomialIdeal, MonomialIdeal)},
      Headline => "monomial ideal of lead monomials of a Gröbner basis",
      Usage => "monomialIdeal J",
      Inputs => {

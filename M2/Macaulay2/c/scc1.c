@@ -2,6 +2,7 @@
 
 #include "scc.h"
 
+scope global_scope;
 FILE *dependfile;
 char *targetname;
 char *outfilename;
@@ -36,7 +37,7 @@ node newnode1(unsigned int len, enum TAG tag) {
 
 char *strnperm(const char *s, unsigned n){
      char *t = getmem(n+1);
-     strncpy(t,s,n);
+     memcpy(t,s,n);
      t[n]='\0';
      return t;
      }

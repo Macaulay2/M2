@@ -24,6 +24,8 @@ newPackage(
 			{Name => "Dan Roozemond", Email => "dan.roozemond@gmail.com", HomePage => "http://magma.maths.usyd.edu.au/~danr"}
 		},
     	Headline => "OpenMath for Macaulay2",
+	Keywords => {"System"},
+	PackageImports => {"MinimalPrimes"},
 	PackageExports => {"XML","ConwayPolynomials"},
     	DebuggingMode => false,
 		AuxiliaryFiles => true

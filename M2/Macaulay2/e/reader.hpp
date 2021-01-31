@@ -3,7 +3,6 @@
 
 #include "aring-zzp.hpp"
 #include <cstddef>
-#include <gmp.h>
 
 namespace M2 {
 

@@ -3,6 +3,7 @@
 #ifndef _aring_QQ_gmp_hpp_
 #define _aring_QQ_gmp_hpp_
 
+#include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
@@ -109,7 +110,7 @@ class ARingQQGMP : public RingInterface
     return false;
   }
 
-  bool set_from_mpq(ElementType& result, const mpq_ptr a) const
+  bool set_from_mpq(ElementType& result, mpq_srcptr a) const
   {
     mpq_set(&result, a);
     return true;
@@ -197,7 +198,7 @@ class ARingQQGMP : public RingInterface
 
   void power_mpz(ElementType& result,
                  const ElementType& a,
-                 const mpz_ptr n) const
+                 mpz_srcptr n) const
   {
     std::pair<bool, int> n1 = RingZZ::get_si(n);
     if (n1.first)
@@ -244,18 +245,19 @@ class ARingQQGMP : public RingInterface
 
   void to_ring_elem(ring_elem& result, const ElementType& a) const
   {
-    gmp_QQ b = getmemstructtype(gmp_QQ);
+    mpq_ptr b = getmemstructtype(mpq_ptr);
     mpq_init(b);
     mpq_set(b, &a);
-    result.poly_val = reinterpret_cast<Nterm*>(b);
+    mpz_reallocate_limbs(mpq_numref(b));
+    mpz_reallocate_limbs(mpq_denref(b));
+    result = ring_elem(b);
   }
 
   void from_ring_elem(ElementType& result, const ring_elem& a) const
   {
     // Currently, until QQ becomes a ConcreteRing, elements of QQ are gmp_QQ
     // (aka mpq_t)
-    gmp_QQ t = reinterpret_cast<gmp_QQ>(const_cast<Nterm*>(a.poly_val));
-    mpq_set(&result, t);
+    mpq_set(&result, a.get_mpq());
   }
 
 /** @} */

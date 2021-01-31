@@ -3,6 +3,7 @@
 #ifndef _aring_RRR_hpp_
 #define _aring_RRR_hpp_
 
+#include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
@@ -68,12 +69,12 @@ class ARingRRR : public RingInterface
     mpfr_ptr res = getmemstructtype(mpfr_ptr);
     mpfr_init2(res, mPrecision);
     mpfr_set(res, &a, GMP_RNDN);
-    result = MPF_RINGELEM(res);
+    result = ring_elem(moveTo_gmpRR(res));
   }
 
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
-    mpfr_set(&result, reinterpret_cast<mpfr_ptr>(a.poly_val), GMP_RNDN);
+    mpfr_set(&result, a.get_mpfr(), GMP_RNDN);
   }
 
   // 'init', 'init_set' functions
@@ -116,7 +117,7 @@ class ARingRRR : public RingInterface
     mpfr_set_z(&result, a, GMP_RNDN);
   }
 
-  bool set_from_mpq(ElementType &result, mpq_ptr a) const
+  bool set_from_mpq(ElementType &result, mpq_srcptr a) const
   {
     mpfr_set_q(&result, a, GMP_RNDN);
     return true;
@@ -197,7 +198,7 @@ class ARingRRR : public RingInterface
     mpfr_pow_si(&result, &a, n, GMP_RNDN);
   }
 
-  void power_mpz(ElementType &result, const ElementType &a, mpz_ptr n) const
+  void power_mpz(ElementType &result, const ElementType &a, mpz_srcptr n) const
   {
     mpfr_pow_z(&result, &a, n, GMP_RNDN);
   }
@@ -228,7 +229,7 @@ class ARingRRR : public RingInterface
 
   void random(ElementType &result) const  // redo?
   {
-    rawRandomMpfr(&result, mPrecision);
+    randomMpfr(&result);
   }
 
   void eval(const RingMap *map,
@@ -247,7 +248,7 @@ class ARingRRR : public RingInterface
   {
     if (mpfr_cmpabs(&a, epsilon) < 0) set_zero(a);
   }
-  void increase_norm(gmp_RR &norm, const ElementType &a) const
+  void increase_norm(gmp_RRmutable norm, const ElementType &a) const
   {
     if (mpfr_cmpabs(&a, norm) > 0)
       {

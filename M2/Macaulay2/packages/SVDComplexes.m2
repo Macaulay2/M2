@@ -13,7 +13,7 @@ newPackage(
         Version => "0.3", 
         Date => "May 23, 2018",
         Authors => {
-            {Name => "Frank Schreyer", 
+            {Name => "Frank-Olaf Schreyer", 
 		        Email => "schreyer@math.uni-sb.de",
 		        HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
 	        {Name => "Mike Stillman", 
@@ -21,6 +21,7 @@ newPackage(
                 HomePage => "http://www.math.cornell.edu/~mike"}
             },
         Headline => "SVD (singular value decomposition) of a complex over the reals and related functions",
+	Keywords => {"Homological Algebra", "Commutative Algebra"},
 	PackageExports => {"LLLBases"},
         DebuggingMode => false
         )
@@ -148,7 +149,7 @@ laplacians ChainComplex := (L) -> (
 
 commonEntries = method(Options =>{Threshold=>1e-4})
 commonEntries(List,List) := opts -> (A,B) -> (
-    -- A, B decending list of real numbers
+    -- A, B descending list of real numbers
     -- returns list of position, where these numbers coincide up to 4 digits
     Ac:={};Bc:={};
     i:=0;j:=0;
@@ -1209,7 +1210,7 @@ doc ///
       euclideanDistance(CR,D), euclideanDistance(C'',D), euclideanDistance(C',D)
    Caveat
       The algorithm does not produces the closest 
-      nearby complex in the euclidean norm. Instead it is a reminder to develope
+      nearby complex in the euclidean norm. Instead it is a reminder to develop
       such function. 
    SeeAlso
       SVDComplex

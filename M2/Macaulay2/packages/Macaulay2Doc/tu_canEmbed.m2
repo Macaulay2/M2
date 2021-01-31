@@ -4,9 +4,9 @@
 --
 -- The gonality of a curve is defined to be
 -- the smallest degree of a morphism from the
--- curve to the projective line ${\bf P}^1$.
+-- curve to the projective line $\PP^1$.
 -- It is known that a curve $C$ of genus $g$
--- admits a map to ${\bf P}^1$ of degree at most
+-- admits a map to $\PP^1$ of degree at most
 -- $[(g+3)/2]$.  Further, if $C$ is $d$-gonal,
 -- then in its canonical embedding $C$
 -- lies on a rational normal scroll of 
@@ -41,7 +41,7 @@
 -- of degree $e$ with an ordinary multiple point
 -- (that is, the branches have distinct tangents)
 -- of multiplicity $m$, then projection from the
--- point defines a map to ${\bf P}^1$ of degree $e-m$.
+-- point defines a map to $\PP^1$ of degree $e-m$.
 -- In this example we will illustrate the 
 -- ``principle'' that this is often the gonality
 -- of the curve by computing the canonical 
@@ -166,7 +166,7 @@ can3 = basis(3, intersect(ideal(a-b) + ipoint1^2, ipoint3))
 can3 = super (can3 ** R)
           
 -- These should all give embeddings of the
--- curves in ${\bf P}^6$, so we expect them to be
+-- curves in $\PP^6$, so we expect them to be
 -- linear series of vector space dimension $7$.
 -- Here's how to check:
 betti  can1
@@ -178,7 +178,7 @@ betti  can3
 -- find the algebraic relations among the
 -- generators of {\tt cani} modulo {\tt Fi}.
 --
--- The coordinate ring of ${\bf P}^6$
+-- The coordinate ring of $\PP^6$
 S = (coefficientRing R)[x_0..x_6]
 
 -- Find the canonical ideal {\tt IC1}
@@ -246,7 +246,7 @@ betti IC1res
 -- the structure
 -- sheaf of {\tt C1} as a sheaf on the projective
 -- plane, and compute its push-forward under
--- the map to ${\bf P}^6$ given by {\tt can1} (the image of
+-- the map to $\PP^6$ given by {\tt can1} (the image of
 -- the plane under this map is a Del Pezzo
 -- surface on which the canonical curve lies.)
 -- This is done as follows:

@@ -3,10 +3,10 @@
 #ifndef _aring_zzp_flint_hpp_
 #define _aring_zzp_flint_hpp_
 
+#include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-#include "rand.h"
 
 class RingMap;
 
@@ -99,7 +99,7 @@ class ARingZZpFlint : public RingInterface
     result = mpz_fdiv_ui(a, mCharac);
   }
 
-  bool set_from_mpq(ElementType &result, mpq_ptr a) const
+  bool set_from_mpq(ElementType &result, mpq_srcptr a) const
   {
     ElementType n, d;
     set_from_mpz(n, mpq_numref(a));
@@ -156,7 +156,7 @@ class ARingZZpFlint : public RingInterface
     result = n_powmod2_preinv(a, n, mModulus.n, mModulus.ninv);
   }
 
-  void power_mpz(ElementType &result, ElementType a, mpz_ptr n) const
+  void power_mpz(ElementType &result, ElementType a, mpz_srcptr n) const
   {
     unsigned long nbar = mpz_fdiv_ui(n, mCharac - 1);
     result = n_powmod2_ui_preinv(a, nbar, mModulus.n, mModulus.ninv);
@@ -208,20 +208,16 @@ class ARingZZpFlint : public RingInterface
   ////////////////////////////
   // to/from ringelem ////////
   ////////////////////////////
-  // These simply repackage the element as either a ringelem or an
-  // 'ElementType'.
-  // No reinitialization is done.
-  // Do not take the same element and store it as two different ring_elem's!!
+  
   void to_ring_elem(ring_elem &result, const ElementType &a) const
   {
-    ElementType b = a;
-    result.poly_val = reinterpret_cast<Nterm *>(b);
+    assert(sizeof(mp_limb_t) <= sizeof(long));
+    result = ring_elem(static_cast<long>(a));
   }
 
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
-    ElementType b = reinterpret_cast<ElementType>(a.poly_val);
-    result = b;
+    result = static_cast<mp_limb_t>(a.get_long());
   }
 
  private:

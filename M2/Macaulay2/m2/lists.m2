@@ -92,15 +92,11 @@ all = method(TypicalValue => Boolean)
 all(ZZ,Function) := all(HashTable,Function) := all(BasicList,Function) := (x,p) -> not any(x, i -> not p i)
 all(BasicList,BasicList,Function) := (x,y,p) -> not any(apply(x,y,identity), ij -> not p ij)
 
-same = v -> #v <= 1 or (
-     w := v#0;
-     for i from 1 to #v-1 do if w =!= v#i then return false;
-     true)
-
-sameresult = (f,v) -> #v <= 1 or (
-     w := f v#0;
-     for i from 1 to #v-1 do if w =!= f v#i then return false;
-     true)
+-- TODO: how to get this to work? When fixed, replace "same apply" with "same"
+--same = method(TypicalValue => Boolean)
+--same BasicList            :=  L     -> same(L, identity)
+--same(BasicList, Function) := (L, f) -> #L <= 1 or (t := f L#0; not any(L, l -> t =!= f l))
+same = L -> #L <= 1 or (t := L#0; not any(L, l -> t =!= l))
 
 member(Thing,VisibleList) := Boolean => (c,x) -> any(x, i -> c===i)
 
@@ -227,7 +223,7 @@ switch(ZZ,ZZ,VisibleList) := VisibleList => (i,j,s) -> (
      new class s from t)
 --
 
-replace(ZZ,Thing,VisibleList) := VisibleList => (i,x,s) -> (
+replace(ZZ,Thing,VisibleList) := VisibleList => {} >> o -> (i,x,s) -> (
      j := i;
      if j < 0 then j = j + #s;
      if j < 0 or j >= #s then error("replace: index ", toString i, " out of bounds: 0..", toString (length s - 1));
@@ -235,6 +231,10 @@ replace(ZZ,Thing,VisibleList) := VisibleList => (i,x,s) -> (
 
 isSorted = method(Dispatch => Thing)
 isSorted VisibleList := s -> all(#s-1, i -> s#i <= s#(i+1))
+
+deepApply' = (L, f, g) -> flatten if g L then toList apply(L, e -> deepApply'(e, f, g)) else toList{f L}
+deepApply  = (L, f) ->  deepApply'(L, f, e -> instance(e, BasicList))
+deepScan   = (L, f) -> (deepApply'(L, f, e -> instance(e, BasicList));) -- not memory efficient
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

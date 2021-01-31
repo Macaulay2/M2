@@ -1,7 +1,4 @@
--- -*- M2-comint -*- hash: -852521782
-***************************************************************************
-CoincidentRootLoci v.0.1.1 loaded successfully (last updated: June 1, 2018)
-***************************************************************************
+-- -*- M2-comint -*- hash: -1022613289
 
 i1 : F = randomBinaryForm 7
 
@@ -12,8 +9,7 @@ o1 = 18t  + 2t t  + 9t t  + 2t t  + 4t t  + 3t t  + 6t t  + 3t
 o1 : QQ[t , t ]
          0   1
 
-i2 : time apolar F
-     -- used 0.0721113 seconds
+i2 : apolar F
 
                   4          3             2 2             3          4 
 o2 = ideal (75621t  + 740842t t  - 3587636t t  - 2099787t t  + 741116t ,

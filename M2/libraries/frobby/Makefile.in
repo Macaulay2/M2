@@ -1,3 +1,5 @@
+# note: the next revision of frobby should come from https://github.com/Macaulay2/frobby
+
 LICENSEFILES = COPYING
 # author: Bjarke Roune <bjarke@cs.au.dk>
 #VERSION = 0.7.7-M2

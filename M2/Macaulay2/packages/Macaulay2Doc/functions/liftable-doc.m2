@@ -2,6 +2,8 @@
 --- author(s): MES
 --- notes: 
 
+-- TODO: (liftable,CC,RR')
+
 undocumented {(liftable, Number, Number), (liftable, Number, RingElement), 
      (liftable, RingElement, Number), (liftable, RingElement, RingElement),
      (liftable, QQ, QQ), (liftable, QQ, ZZ),

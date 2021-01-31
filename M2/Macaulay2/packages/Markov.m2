@@ -1,11 +1,12 @@
 -- -*- coding: utf-8 -*-
 newPackage("Markov",
      Authors => {
-	  {Name => "Luis Garcia"},
+	  {Name => "Luis Garcia-Puente"},
 	  {Name => "Mike Stillman"}
 	  },
      DebuggingMode => false,
-     Headline => "Markov ideals, arising from Bayesian networks in statistics",
+     Keywords => {"Statistics"},
+     Headline => "Markov ideals arising from Bayesian networks in statistics",
      Version => "1.2",
      PackageImports => {"Elimination"}
      )
@@ -601,7 +602,7 @@ document {
 	  J = gaussIdeal(R,G)
           ///,
      PARA{},
-     "A list of independence statments (as for example returned by globalMarkovStmts)
+     "A list of independence statements (as for example returned by globalMarkovStmts)
      can be provided instead of a graph.",
      PARA{},
      "The ideal corresponding to a conditional independence statement {A,B,C} (where A,B,C,

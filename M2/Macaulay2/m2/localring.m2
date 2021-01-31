@@ -21,27 +21,29 @@
 --        Legacy code from 2008 is stored in packages/LocalRings/legacy.m2 and is still loaded.
 ---------------------------------------------------------------------------
 
+-- exported in LocalRings.m2
+protect MaximalIdeal
+
 LocalRing = new Type of EngineRing
-LocalRing.synonym = "Local ring"
+LocalRing.synonym = "local ring"
+LocalRing#{Standard,AfterPrint} = RP -> (
+     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : "; -- standard template
+     << "LocalRing, maximal " << RP.MaximalIdeal << endl;
+     )
 
 localRing = method(TypicalValue => LocalRing)
       localRing LocalRing := identity
-     expression LocalRing := RP -> (expression localRing) (expression ring RP.MaximalIdeal, expression max RP)
-       describe LocalRing := RP -> net expression RP
-       toString LocalRing := RP -> (if hasAttribute(RP, ReverseDictionary)
-                                    then toString getAttribute(RP, ReverseDictionary)
-                                    else "localRing(" | toString ring RP.MaximalIdeal | ", " | toString RP.MaximalIdeal | ")")
-            net LocalRing := RP -> (if hasAttribute(RP, ReverseDictionary)
-                                    then toString getAttribute(RP, ReverseDictionary)
-                                    else net new FunctionApplication from { localRing, (ring RP.MaximalIdeal, RP.MaximalIdeal)})
+       describe LocalRing := RP -> Describe (expression localRing) (expression ring RP.MaximalIdeal, expression max RP)
+     expression LocalRing := RP -> if hasAttribute(RP, ReverseDictionary) then expression getAttribute(RP, ReverseDictionary) else describe RP
+toExternalString LocalRing:= RP -> toString describe RP
 coefficientRing LocalRing := RP -> coefficientRing ring RP.MaximalIdeal
   isWellDefined LocalRing := RP -> isPrime RP.MaximalIdeal
   isCommutative LocalRing := RP -> isCommutative ring RP.MaximalIdeal -- FIXME make sure this is correct
    degreeLength LocalRing := RP -> degreeLength ring RP.MaximalIdeal
    presentation LocalRing := RP -> map(RP^1, RP^0, 0)
-     generators LocalRing := opts ->
-                             RP -> (if opts.CoefficientRing =!= RP
-                                    then generators(ring RP.MaximalIdeal, opts) / (r -> promote(r, RP)) else {})
+     generators LocalRing := opts -> RP -> (if opts.CoefficientRing === ring RP.MaximalIdeal
+                                            then generators(ring RP.MaximalIdeal) / (r -> promote(r, RP))
+				            else generators(ring RP.MaximalIdeal, opts) / (r -> promote(r, RP)))
       precision LocalRing := RP -> precision ring RP.MaximalIdeal
         degrees LocalRing := RP -> degrees ring RP.MaximalIdeal
         numgens LocalRing := RP -> numgens ring RP.MaximalIdeal

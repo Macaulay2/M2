@@ -1,8 +1,9 @@
 -- -*- M2-comint -*- hash: -491356505
---loading configuration for package "NumericalAlgebraicGeometry" from file /home/tim/.Macaulay2/init-NumericalAlgebraicGeometry.m2
---loading configuration for package "PHCpack" from file /home/tim/.Macaulay2/init-PHCpack.m2
---loading configuration for package "Bertini" from file /home/tim/.Macaulay2/init-Bertini.m2
 --loading configuration for package "FourTiTwo" from file /home/tim/.Macaulay2/init-FourTiTwo.m2
+--loading configuration for package "Topcom" from file /home/tim/.Macaulay2/init-Topcom.m2
+--warning: file katex not installed yet in package Style
+--loading configuration for package "NumericalAlgebraicGeometry" from file /home/tim/.Macaulay2/init-NumericalAlgebraicGeometry.m2
+--loading configuration for package "Bertini" from file /home/tim/.Macaulay2/init-Bertini.m2
 
 i1 : R = CC[a,b,c,d,e,f,g,h][x,y,z];
 
@@ -10,11 +11,11 @@ i2 : polys = polySystem {a*x+b*y+c*z,d*x*y+e*x*z+f*y*z,g*x*y*z+h};
 
 i3 : (p0,x0) := createSeedPair polys
 
-o3 = ({-.614855+.085554*ii, 1.14605-.389426*ii, -.380571-.0460979*ii,
+o3 = ({-.395781-.24074*ii, 1.15221-.036791*ii, -.339811+.226642*ii,
      ------------------------------------------------------------------------
-     .391714-.470397*ii, -.289573+.311588*ii, .359049+.280186*ii,
+     .225376-.140718*ii, -.324066-.135951*ii, .509177+.360148*ii,
      ------------------------------------------------------------------------
-     .261008+.885559*ii, .057279+.512152*ii}, {.892712+.673395*ii,
+     .287657+.283636*ii, .130507+.183897*ii}, {.892712+.673395*ii,
      ------------------------------------------------------------------------
      .29398+.632944*ii, .025888+.714827*ii})
 
@@ -26,7 +27,7 @@ o4 = 6
 
 i5 : monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE, TargetSolutionCount=>mixedVolume)
 
-o5 = (HomotopyNode{...5...}, 12)
+o5 = (HomotopyNode{...7...}, 10)
 
 o5 : Sequence
 
