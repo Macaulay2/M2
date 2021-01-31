@@ -8,11 +8,11 @@ newPackage(
     	Headline => "coincident root loci",
         Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
 	Keywords => {"Real Algebraic Geometry", "Interfaces"},
-        PackageExports => {"Cremona","Resultants"},
+        PackageExports => {"MultiprojectiveVarieties"},
         DebuggingMode => false,
         AuxiliaryFiles => true,
         OptionalComponentsPresent => try get "!qepcad -h 2>&1" then true else false,
-        CacheExampleOutput => true,
+        CacheExampleOutput => false,
         Reload => false
 )
 
@@ -95,7 +95,7 @@ CRL = coincidentRootLocus;
 
 JoinOfCoincidentRootLoci = new Type of MutableHashTable;
 
-dualOfCoincidentRootLocus = method(TypicalValue => JoinOfCoincidentRootLoci);
+dualOfCoincidentRootLocus = method();
 
 dualOfCoincidentRootLocus (CoincidentRootLocus) := (X) -> ( 
    l := partition X;
@@ -191,7 +191,7 @@ singularLocus (CoincidentRootLocus) := (X) -> ( -- Chipalkatti - On equations de
    X#"singularLocus"
 );
 
-dual (CoincidentRootLocus) := JoinOfCoincidentRootLoci => {} >> o -> X -> (
+dual (CoincidentRootLocus) := {} >> o -> X -> (
    if X#"dual" === null then X#"dual" = dualOfCoincidentRootLocus X;
    X#"dual"
 );
@@ -919,7 +919,7 @@ joinOfAffineParameterizations (Thing) := o -> U -> (
     trim sub(sub(ideal selectInSubring(1,gens gb(W,SubringLimit=>o.SubringLimit)),K[z_0..z_N]),vars ringPN)
 );
 
-joinOfHooks = method(TypicalValue => JoinOfCoincidentRootLoci, Dispatch => Thing);
+joinOfHooks = method(Dispatch => Thing);
 joinOfHooks (Thing) := U -> (
     U = sequence U;
     r := #U-1;
