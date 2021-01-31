@@ -11,8 +11,8 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 
 newPackage(
     "MultiprojectiveVarieties",
-    Version => "1.3", 
-    Date => "January 30, 2021",
+    Version => "1.1", 
+    Date => "January 31, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -116,9 +116,11 @@ updatePackage = () -> (
     );
 );
 
-export{"MultiprojectiveVariety", "EmbeddedProjectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct",
+export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct", 
+       "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan",
        "MultirationalMap", "multirationalMap", "baseLocus", "degreeSequence", "inverse2",
-       "updatePackage"}
+       "updatePackage",
+       "∏","⋂","⋃"}
 
 debug Cremona;
 debug SparseResultants;
@@ -373,6 +375,9 @@ coordinates = memoize(p -> (
 
 MultiprojectiveVariety ** MultiprojectiveVariety := (X,Y) -> productMem(X,Y);
 
+∏ = method();
+∏ List := L -> productMem L;
+
 productMem = memoize(L -> (
     if not (#L > 0 and all(L,X -> instance(X,MultiprojectiveVariety))) then error "expected a list of multi-projective varieties";
     if #L == 1 then return first L;
@@ -399,6 +404,13 @@ MultiprojectiveVariety + MultiprojectiveVariety := (X,Y) -> (
     projectiveVariety(intersect(ideal X,ideal Y),MinimalGenerators=>true,Saturate=>false)
 );
 
+⋃ = method();
+⋃ List := L -> (
+    if not(#L>0 and all(L,X -> instance(X,MultiprojectiveVariety))) then error "expected a list of multi-projective varieties"; 
+    if # unique apply(L,ambient) > 1 then error "expected varieties in the same ambient";
+    projectiveVariety(intersect apply(L,ideal),MinimalGenerators=>true,Saturate=>false)   
+);
+
 MultiprojectiveVariety - MultiprojectiveVariety := (X,Y) -> (
     if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
     projectiveVariety(quotient(ideal X,ideal Y,MinimalGenerators=>true),MinimalGenerators=>false,Saturate=>false)
@@ -407,6 +419,13 @@ MultiprojectiveVariety - MultiprojectiveVariety := (X,Y) -> (
 MultiprojectiveVariety * MultiprojectiveVariety := (X,Y) -> (
     if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
     projectiveVariety(ideal X + ideal Y,MinimalGenerators=>true,Saturate=>true)
+);
+
+⋂ = method();
+⋂ List := L -> (
+    if not(#L>0 and all(L,X -> instance(X,MultiprojectiveVariety))) then error "expected a list of multi-projective varieties"; 
+    if # unique apply(L,ambient) > 1 then error "expected varieties in the same ambient";
+    projectiveVariety(sum apply(L,ideal),MinimalGenerators=>true,Saturate=>true)   
 );
 
 isSubset (MultiprojectiveVariety,MultiprojectiveVariety) := (X,Y) -> (
@@ -540,6 +559,28 @@ EmbeddedProjectiveVariety ! := X -> (
         <<" complete intersection of type "<<toString(toSequence flatten degrees ideal X)<<" in PP^"<<first shape X<< " ***"<<endl;
     );
     if ln === true and linearSpan X == ambient X and X == top X and dim singularLocus X == -1 and nc === 1 and codim X == 4 and dim X == 3 and degree X == 6 and d === 0 then (<<"*** This is P^1xP^1xP^1 in P^7 ***"<<endl);
+);
+
+dual EmbeddedProjectiveVariety := {} >> o -> X -> projectiveVariety(dualvariety ideal X,MinimalGenerators=>false,Saturate=>false); -- from SparseResultants
+
+linearlyNormalEmbedding = method();
+linearlyNormalEmbedding EmbeddedProjectiveVariety := X -> (
+    Phi := multirationalMap X;
+    f := first factor Phi;
+    d := degreeSequence f;
+    if not(#factor Phi == 1 and #d == #(maps f)) then error "internal error encountered";
+    if #d == 1 then return Phi;
+    local I;
+    for i to #d-1 do (
+        I = rationalMap(saturate ideal matrix(i,f),d_i);
+        if numgens ambient target I -1 > dim linearSpan X then (
+            I = multirationalMap rationalMap(I,Dominant=>true);
+            if ring source I =!= ring X then error "internal error encountered";
+            I#"source" = X;
+            if dim target I == dim X then (I#"isBirational" = true; return I);
+        );
+    );
+    error "failed to construct the embedding";
 );
 
 
@@ -1414,7 +1455,7 @@ Outputs => {
 Boolean => {"whether ",TT"X"," is contained in ",TT"Y"}}}
 
 document {Key => {(symbol **,MultiprojectiveVariety,MultiprojectiveVariety)}, 
-Headline => "product of multi-projective varieties", 
+Headline => "product of two multi-projective varieties", 
 Usage => "X ** Y", 
 Inputs => { 
 MultiprojectiveVariety => "X",
@@ -1429,7 +1470,20 @@ EXAMPLE {"R = ZZ/101[x_0..x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}];",
 "describe X",
 "describe Y",
 "describe XxY"},
-SeeAlso => {fiberProduct,(symbol ^,MultiprojectiveVariety,ZZ)}}
+SeeAlso => {fiberProduct,(symbol ^,MultiprojectiveVariety,ZZ),(∏,List)}}
+
+document {Key => {∏,(∏,List)}, 
+Headline => "product of multi-projective varieties", 
+Usage => "∏ {X,Y,Z,...}", 
+Inputs => {{ofClass List," ",TT"{X,Y,Z,...}"," of ",TO2{MultiprojectiveVariety,"multi-projective varieties"}}}, 
+Outputs => {MultiprojectiveVariety => {"the product ",TEX///$X\times Y \times Z\times \cdots$///}},
+EXAMPLE {"K = ZZ/33331;",
+"X = projectiveVariety({2},{2},K);",
+"Y = projectiveVariety({1,1,1},{2,3,1},K);",
+"Z = projectiveVariety({1},{4},K);",
+"∏ {X,Y,Z};",
+"assert(oo == ∏ {X ** Y,Z} and ∏ {X ** Y,Z} == ∏ {X, Y ** Z})"},
+SeeAlso => {(symbol **,MultiprojectiveVariety,MultiprojectiveVariety)}}
 
 document {Key => {(symbol ^,MultiprojectiveVariety,ZZ)}, 
 Headline => "power of a multi-projective variety", 
@@ -1445,7 +1499,7 @@ EXAMPLE {"X = projectiveVariety({1},{3},ZZ/33331);",
 SeeAlso => {(symbol **,MultiprojectiveVariety,MultiprojectiveVariety)}} 
 
 document {Key => {(symbol *,MultiprojectiveVariety,MultiprojectiveVariety)}, 
-Headline => "intersection of multi-projective varieties", 
+Headline => "intersection of two multi-projective varieties", 
 Usage => "X * Y", 
 Inputs => { 
 MultiprojectiveVariety => "X",
@@ -1456,10 +1510,24 @@ EXAMPLE {"R = ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}];",
 "X = projectiveVariety ideal random({2,1},R);",
 "Y = projectiveVariety ideal random({1,1},R);", 
 "Z = X * Y;"},
-SeeAlso => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety),(symbol +,Ideal,Ideal)}}
+SeeAlso => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety),(symbol +,Ideal,Ideal),(⋂,List)}}
+
+document {Key => {⋂,(⋂,List)}, 
+Headline => "intersection of multi-projective varieties", 
+Usage => "⋂ {X,Y,Z,...}", 
+Inputs => {{ofClass List," ",TT"{X,Y,Z,...}"," of ",TO2{MultiprojectiveVariety,"multi-projective varieties"}}}, 
+Outputs => {MultiprojectiveVariety => {"the intersection ",TEX///$X\cap Y \cap Z\cap \cdots$///}},
+EXAMPLE {"K = ZZ/33331;",
+"p = point projectiveVariety({1,2},{1,1},K);",
+"X = random({1,1},p);",
+"Y = random({2,1},p);",
+"Z = random({2,2},p);",
+"⋂ {X,Y,Z};",
+"describe oo"},
+SeeAlso => {(symbol *,MultiprojectiveVariety,MultiprojectiveVariety)}}
 
 document {Key => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety)}, 
-Headline => "union of multi-projective varieties", 
+Headline => "union of two multi-projective varieties", 
 Usage => "X + Y", 
 Inputs => { 
 MultiprojectiveVariety => "X",
@@ -1471,7 +1539,18 @@ EXAMPLE {"R = ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}];",
 "Y = projectiveVariety ideal random({1,1},R);", 
 "Z = X + Y;",
 "assert(Z - X == Y and Z - Y == X)"},
-SeeAlso => {(symbol -,MultiprojectiveVariety,MultiprojectiveVariety),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety),(intersect,List)}}
+SeeAlso => {(symbol -,MultiprojectiveVariety,MultiprojectiveVariety),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety),(intersect,List),(⋃,List)}}
+
+document {Key => {⋃,(⋃,List)}, 
+Headline => "union of multi-projective varieties", 
+Usage => "⋃ {X,Y,Z,...}", 
+Inputs => {{ofClass List," ",TT"{X,Y,Z,...}"," of ",TO2{MultiprojectiveVariety,"multi-projective varieties"}}}, 
+Outputs => {MultiprojectiveVariety => {"the union ",TEX///$X\cup Y \cup Z\cup \cdots$///}},
+EXAMPLE {"K = ZZ/33331;",
+"L = for i to 9 list point projectiveVariety({1,2,2},{1,1,3},K);",
+"⋃ L",
+"degree oo"},
+SeeAlso => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety)}}
 
 document {Key => {(symbol -,MultiprojectiveVariety,MultiprojectiveVariety)}, 
 Headline => "difference of multi-projective varieties", 
@@ -2262,6 +2341,41 @@ EXAMPLE {
 "X' = variety X;",
 "class X'",
 "assert(ring X === ring X')"}}
+
+document { 
+Key => {(dual,EmbeddedProjectiveVariety)},
+Headline => "the projectively dual variety to an embedded projective variety", 
+Usage => "dual X", 
+Inputs => {"X" => EmbeddedProjectiveVariety},
+Outputs => {EmbeddedProjectiveVariety => {"the dual variety to ",TEX///$X$///}},
+EXAMPLE {"X = projectiveVariety({2},{2},QQ);","X' = dual X;", "describe X'","assert(dual X' == X)"},
+SeeAlso => {dualVariety}}
+
+document { 
+Key => {linearlyNormalEmbedding,(linearlyNormalEmbedding,EmbeddedProjectiveVariety)},
+Headline => "get the linearly normal embedding", 
+Usage => "linearlyNormalEmbedding X", 
+Inputs => {"X" => EmbeddedProjectiveVariety},
+Outputs => {{"an ",TO2{MultirationalMap,"isomorphism"}," from ",TT"X"," to a linearly normal variety, whose inverse is a linear projection"}},
+EXAMPLE {"K = ZZ/333331;", 
+"X = projectiveVariety({1},{7},K); -- rational normal curve of degree 7",
+"time f = linearlyNormalEmbedding X;",
+"Y = (rationalMap {for i to 3 list random(1,ring ambient X)}) X; -- an isomorphic projection of X in PP^3",
+"time g = linearlyNormalEmbedding Y;",
+"assert(isIsomorphism g)",
+"describe g"},
+Caveat => {"This is an experimental function."}}
+
+document { 
+Key => {linearSpan,(linearSpan,EmbeddedProjectiveVariety)},
+Headline => "the linear span of an embedded projective variety", 
+Usage => "linearSpan X", 
+Inputs => {"X" => EmbeddedProjectiveVariety},
+Outputs => {EmbeddedProjectiveVariety => {"the linear span of ",TT"X"}},
+EXAMPLE {"P = projectiveVariety({7},ZZ/333331);",
+"S = apply(3,i -> point P)",
+"L = linearSpan ⋃ S;",
+"assert(dim L == 2 and degree L == 1)"}}
 
 document { 
 Key => {"updatePackage"},
