@@ -218,6 +218,7 @@ prune = method(
      Options => {
 	  Exclude => {}
 	  })
+debug = method()
 status = method (
      Options => new OptionTable from {
      	  TotalPairs => true,

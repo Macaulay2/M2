@@ -222,8 +222,8 @@ resolution = method(
      )
 
 -- keys: none so far
-ResolutionOptions = new SelfInitializingType of BasicList
-ResolutionOptions.synonym = "resolution options"
+ResolutionContext = new SelfInitializingType of BasicList
+ResolutionContext.synonym = "resolution context"
 
 -- keys: LengthLimit
 -- TODO: what else?
@@ -234,9 +234,9 @@ ResolutionComputation.synonym = "resolution computation"
 
 new ResolutionComputation from Module := (C, M) -> (
     -- if there is a compatible computation stored in M.cache,
-    -- returns the computation object, otherwise creates the entry:
-    --   ResolutionOptions{} => ResolutionComputation{ Result, LengthLimit, ... }
-    cacheKey := ResolutionOptions{};
+    -- returns the computation container, otherwise creates the entry:
+    --   ResolutionContext{} => ResolutionComputation{ Result, LengthLimit, ... }
+    cacheKey := ResolutionContext{};
     try M.cache#cacheKey else M.cache#cacheKey = new ResolutionComputation from {
 	Result => null, LengthLimit => -1 })
 
@@ -244,13 +244,11 @@ isComputationDone ResolutionComputation := Boolean => options resolution >> opts
     -- this function determines whether we can use the cached result, or further computation is necessary
     try instance(container.Result, ChainComplex) and opts.LengthLimit <= container.LengthLimit else false)
 
-cacheHit := type -> if debugLevel > 0 then printerr("Cache hit on a ", synonym type, "! 🎉");
-
 cacheComputation = method(TypicalValue => CacheFunction, Options => true)
 cacheComputation ResolutionComputation := CacheFunction => options resolution >> opts -> container -> new CacheFunction from (
     -- this function takes advantage of FunctionClosures by modifying the container
     computation -> (
-	if isComputationDone(opts, container) then ( cacheHit class container; container.Result ) else
+	if isComputationDone(opts, container) then ( cacheHit container; container.Result ) else
 	if (result := computation(opts, container)) =!= null then (
 	    container.LengthLimit = opts.LengthLimit;
 	    container.Result = result)))
@@ -276,7 +274,7 @@ resolution Module := ChainComplex => opts -> M -> (
 	runHooks((resolution, Module), (opts, M), Strategy => strategy));
 
     -- this is the logic for caching partial resolution computations. A.cache contains an option:
-    --   ResolutionOptions{} => ResolutionComputation{ Result, LengthLimit, ... }
+    --   ResolutionContext{} => ResolutionComputation{ Result, LengthLimit, ... }
     container := new ResolutionComputation from M;
 
     -- the actual computation of the resolution occurs here
