@@ -538,15 +538,6 @@ document {
 	  30.01!
      ///
      }
-     
-document {
-     Key => (symbol !, List),
-     Headline => "factorial of a list",
-     Usage => "v!",
-     Inputs => { "v" => "a list interpreted as a vector" },
-     Outputs => {{"the factorial of ", TT "v"}},
-     EXAMPLE "{1,3,5,6}!"
-     }
 
 document {
      Key => "not",

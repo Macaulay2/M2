@@ -22,8 +22,6 @@ List / Thing := List => (v,b) -> apply(v,x->x / b)	    -- slight conflict with L
 List // RingElement := List // Number := List => (v,b) -> apply(v,x->x // b)
 List  % RingElement := List  % Number := List => (v,b) -> apply(v,x->x  % b)
 
-List ! := List => v -> (for i in v list i!)
-
 VisibleList _ List := VisibleList => (x,y) -> apply(splice y, i -> x#i)
 
 Sequence .. Sequence := Sequence => (v,w) -> (
