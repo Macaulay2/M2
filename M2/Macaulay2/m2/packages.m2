@@ -542,7 +542,6 @@ use Package := pkg -> (
     checkShadow();
     if pkg.?use then pkg.use pkg else pkg)
 
-debug = method()
 debug ZZ      := i   -> debugWarningHashcode = i
 debug Package := pkg -> (
     dict := pkg#"private dictionary";
