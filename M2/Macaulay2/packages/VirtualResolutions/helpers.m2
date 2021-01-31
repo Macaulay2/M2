@@ -60,9 +60,13 @@ gradedPolynomialRing = n -> (
     yy := flatten apply(#n, i -> apply(n_i+1, j -> y_(i,j)));
     ZZ/32003[yy])
 
-printRegion = (gt, low, high) -> (
-    printerr net matrix table(min(high - low) + 1, max(high - low) + 1,
-	(i, j) -> if gt#?{j + first low, first high - i} then 0 else 1))
+plotRegion = method()
+plotRegion(Function, List, List) := (func, low, high) -> printerr netList(Boxes => false,
+    table(min(high - low) + 1, max(high - low) + 1,
+	(i, j) -> if func(j + first low, first high - i) then "." else "x"))
+plotRegion(List, List, List) := (L, low, high) -> plotRegion(
+    (i, j) -> any(L, ell -> i >= ell_0 and j >= ell_1), low, high)
+
 
 -- input: the NormalToricVariety of a product of projective spaces or its Cox ring
 -- output: the dimension vector for the product of projective spaces.

@@ -84,12 +84,13 @@ ourSaturation = (I,irr) -> saturate(I, decompose irr, Strategy => Eliminate);
 isZeroSheaf = method(TypicalValue => Boolean, Options => { Strategy => null })
 isZeroSheaf(NormalToricVariety, Module) := opts -> (X, M) -> isZeroSheaf(ideal X, M, opts)
 isZeroSheaf(Ideal,              Module) := opts -> (B, M) -> (
+    -- TODO: either cache this, or isSupportedInZeroLocus
     if opts.Strategy === "Support" then isSupportedInZeroLocus(B, M)
     else (J := ann M) == 1 or J != 0 and ourSaturation(J, B) == 1)
 
-isIsomorphismOfSheaves = method(TypicalValue => Boolean)
-isIsomorphismOfSheaves(Ideal, ModuleMap) := (B, f) -> (
-    isZeroSheaf(B, ker f) and isZeroSheaf(B, coker f))
+isIsomorphismOfSheaves = method(TypicalValue => Boolean, Options => options isZeroSheaf)
+isIsomorphismOfSheaves(Ideal, ModuleMap) := opts -> (B, f) -> (
+    isZeroSheaf(B, ker f, opts) and isZeroSheaf(B, coker f, opts))
 
 -- Helper for virtualOfPair
 -- TODO: complete this into the dual of submatrixByDegrees
@@ -112,9 +113,8 @@ submatrixWinnowMap = (phi, alphas) -> (
 --------------------------------------------------------------------
 protect winnowingMap
 virtualOfPair = method(Options => {LengthLimit => infinity})
+-- TODO: return a ModuleMap in the Module case and ChainComplexMap in the ChainComplex case
 virtualOfPair(Ideal,  List) := ChainComplex => opts -> (I, alphas) -> virtualOfPair(comodule I, alphas, opts)
--- TODO: return the map M --> HH_0 F, so isVirtualOfPair can use it
--- by checking whether it is an isomorphism
 virtualOfPair(Module, List) := ChainComplex => opts -> (M, alphas) -> (
     R := ring M;
     if M.cache.?resolution then return virtualOfPair(M.cache.resolution, alphas, opts);
@@ -128,8 +128,12 @@ virtualOfPair(Module, List) := ChainComplex => opts -> (M, alphas) -> (
 virtualOfPair(ChainComplex, List) := ChainComplex => opts -> (F, alphas) -> (
     if any(alphas, alpha -> #alpha =!= degreeLength ring F) then error "degree has wrong length";
     L := chainComplex apply(min F .. max F - 1, i -> submatrixWinnow(F.dd_(i+1), alphas));
+    -- winnowingMap is the map M --> HH_0 F
     M := HH_0 F;
     N := HH_0 L;
+    -- TODO: if the pruning map is the same for two different alphas, the ability to use the
+    -- same map would allow for a significant speedup in isVirtualOfPair and isIsomorphismOfSheaves
+    -- how can we cache this in F?
     phi := map(M, source F.dd_0, id_(F_0));
     phi  = submatrixWinnowMap(phi, alphas);
     -- TODO: return a single map or a chain complex map?
@@ -170,6 +174,7 @@ resolveViaFatPoint(Ideal, Ideal, List) := ChainComplex => (J, irr, A) -> (
 -- Note: the Determinatal strategy is based on Theorem 1.3 of [Loper2019].
 --------------------------------------------------------------------
 --------------------------------------------------------------------
+-- TODO: can this use winnowingMap?
 isVirtual = method(TypicalValue => Boolean, Options => {Strategy => null})
 isVirtual(NormalToricVariety, ChainComplex) := opts -> (X,   C) -> isVirtual(ideal X, C)
 isVirtual(Ideal,              ChainComplex) := opts -> (irr, C) -> (
@@ -580,7 +585,7 @@ multigradedRegularityDefaultStrategy = (X, M, opts) -> (
     container.LowerLimit = low;
     container.UpperLimit = high;
     debugInfo("Calculating minimal generators");
-    if debugLevel > 0 and n == 2 then printRegion(gt, low, high);
+    if debugLevel > 0 and n == 2 then plotRegion((i, j) -> not gt#?{i, j}, low, high);
     container.Result = findRegion({mindegs, high}, M, (ell, M) -> not gt#?ell))
 
 -- The default strategy applies to both modules and ideals in a product of projective spaces,

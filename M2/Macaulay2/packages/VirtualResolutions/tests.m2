@@ -199,6 +199,11 @@ TEST /// -- testing picard rank 3
     irr = intersect(ideal(x_(0,0), x_(0,1)), ideal(x_(1,0), x_(1,1)), ideal(x_(2,0), x_(2,1), x_(2,2)))
     I = saturate(intersect apply(6,i-> ideal(random({1,0,0},S),random({0,1,0},S), random({0,0,1},S),random({0,0,1},S))), irr);
     elapsedTime assert(multigradedRegularity(S, I) == {{0,0,2},{0,1,1},{1,0,1},{1,2,0},{2,1,0},{0,5,0},{5,0,0}}) -- 5.4 -> 8.5 -> 2.7
+    end
+    -- good benchmark test for isZeroSheaf and isIsomorphismOfSheaves
+    elapsedTime multigradedRegularity(S, module I) -- stuck in cohomologyHashTable
+    -- TODO: reduce the 117 degrees that get "maybe in regularity",
+    -- so that the computation above can actually finish!
 ///
 
 TEST /// -- testing twisted modules
@@ -237,4 +242,53 @@ TEST /// -- example 5.8 of BES
   assert isVirtual(variety S, D)
   assert(ann HH_0 D == I)
   elapsedTime assert(multigradedRegularity(S, I) === {{1, 3}, {2, 2}}) -- 6.1s
+///
+
+TEST ///
+  debug needsPackage "VirtualResolutions"
+  X = toricProjectiveSpace(1)**toricProjectiveSpace(2);
+  X = normalToricVarietyWithTateData X
+  S = ring X;
+  B = ideal X;
+  M = S^{{0,0},-{3,3}}
+  -- testing both strategies of isVirtualOfPair
+  -- TODO: benchmark
+  plotRegion((i,j) -> isVirtualOfPair({i,j}, M, IrrelevantIdeal => B), {0,0},{5,5})
+  plotRegion((i,j) ->         isChiH0({i,j}, M, IrrelevantIdeal => B), {0,0},{5,5})
+  assert not isVirtualOfPair({1,1}, M, IrrelevantIdeal => B)
+  assert     isVirtualOfPair({1,1}, M, IrrelevantIdeal => B, Strategy => "ann")
+///
+
+TEST /// -- Example 1.4 of BES, also in documentation of multigradedRegularity
+restart
+debugLevel=1
+  debug needsPackage "VirtualResolutions"
+  hooks multigradedRegularity
+  X = toricProjectiveSpace(1)**toricProjectiveSpace(2);
+  X = normalToricVarietyWithTateData X
+  S = ring X;
+  B = ideal X;
+  -- testing the winnowing map and isIsomorphismOfSheaves
+  I = saturate(ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3)), B)
+  elapsedTime L = multigradedRegularity(X, I) -- {{2, 1}, {4, 1}, {1, 5}}
+  -- TODO: why is this so slow?
+  --elapsedTime multigradedRegularity(S, module I, LowerLimit => {-3,-3})
+  M = comodule ideal I_*; -- maybe in regularity {{3, 1}, {2, 1}}
+  plotRegion(regularityBound M, {0,0}, {5,5})
+  plotRegion((i,j) -> isQuasiLinear({i,j}, M), {0,0},{5,5})
+  plotRegion((i,j) -> isChiH0({i,j}, M, IrrelevantIdeal => B), {0,0},{5,5})
+  plotRegion((i,j) -> isVirtualOfPair({i,j}, M, IrrelevantIdeal => B), {0,0},{5,5})
+  plotRegion(L, {0,0},{5,5})
+  -- in two spots, {2,1} and {3,1}, we get a virtual resolution, despite the fact that
+  -- the resolution of the truncation at those degrees, which are not in regularity, is not quasi-linear
+  V = virtualOfPair(res M, {{2,1} + {1,2}})
+  phi = V.cache.winnowingMap
+  -- TODO: test this more
+  assert isIsomorphismOfSheaves(B, phi, Strategy => "Support")
+  assert isIsomorphismOfSheaves(B, phi)
+  K = prune ker phi
+  assert(saturate(ann K, B) == 1)
+  -- a sheaf is zero if the Hilbert function vanishes
+  -- in some translation of the positive quadrant:
+  N = 2 * regularity K; matrix table(N,N, (y, x) -> hilbertFunction_{N - y - 1, x} K)
 ///

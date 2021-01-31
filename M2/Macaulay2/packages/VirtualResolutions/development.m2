@@ -5,24 +5,29 @@
 --  1. get virtualOfPair to also return a map, and check if it is an isomorphism
 --  2. can we increase the lower bound to speed up P3xP3 examples?
 
+-- FIXME FIXME FIXME: why does removing 'debug' make three tests fail?
 debug needsPackage "LinearTruncations"
+exportFrom_LinearTruncations {"IrrelevantIdeal","isQuasiLinear","regularityBound"}
 
--- TODO: confirm that M2 does ann comodule I === I always
-isVirtualOfPair = method(Options => {IrrelevantIdeal => null})
+isVirtualOfPair = method(Options => { Strategy => null, IrrelevantIdeal => null })
 isVirtualOfPair(List, Module) := opts -> (d, M) -> (
+    B := opts.IrrelevantIdeal;
+    l := d + dimVector ring M;
+    -- TODO: return false if l < all degrees of I
+    F := res M; -- TODO: remove when virtualOfPair for a module gives a winnowingMap
+    V := virtualOfPair(F, {l});
+    -- For ideals, it is sufficient to check saturate(ann HH^0 F, B) == ann M
+    -- but checking that the winnowing map is an isomophism may be better
+    -- TODO: improve caching here
+    if not isVirtual(B, V) then return false;
+    if opts.Strategy === "ann"
     -- Caveat: for modules that are not comodules of an ideal,
     -- this version may give false positives, but that is okay,
     -- because the multigraded regularity code will fall back
     -- to using cohomologyHashTable to check those degrees.
-    -- TODO: what is the appropriate check for modules that removes the caveat?
-    B := opts.IrrelevantIdeal;
-    l := d + dimVector ring M;
-    -- TODO: return false if l < all degrees of I
-    F := virtualOfPair(res M, {l});
-    -- For ideals, this is sufficient:
-    -- saturate(ann HH^0 F, B) == ann M
-    -- TODO: is caching helping here?
-    isVirtual(B, F) and isIsomorphismOfSheaves(B, F.cache.winnowingMap))
+    -- TODO: confirm that M2 does ann comodule I === I always (as in, pointers)
+    then ourSaturation(ann HH^0 V, B) == ann M
+    else isIsomorphismOfSheaves(B, V.cache.winnowingMap))
 
 
 isChiH0 = method(Options => {IrrelevantIdeal => null})
