@@ -175,7 +175,7 @@ Inputs => {"X" => CoincidentRootLocus},
 Outputs => {{"the dual variety to ",TEX///$X$///}},
 PARA{"The dual variety to a coincident root locus is the join of certain coincident root loci, as described in the paper by H. Lee and B. Sturmfels - Duality of multiple root loci - J. Algebra 446, 499-526, 2016."},
 EXAMPLE {"X = coincidentRootLocus {5,3,2,2,1,1}","dual X"},
-PARA{"In the example below, we apply some of the methods that are available for the objects returned by the method."},
+PARA{"In the example below, we apply some of the functions that are available for the returned objects."},
 EXAMPLE {"Y = dual coincidentRootLocus {4,2}","ring Y","coefficientRing Y","dim Y","codim Y","degree Y","dual Y","G = random Y","member(G,Y)","ideal Y;","describe Y"},
 SeeAlso => {(symbol *,CoincidentRootLocus,CoincidentRootLocus),dualVariety}}
 undocumented {(describe,CoincidentRootLocus)}
@@ -228,9 +228,44 @@ Inputs => {"F" => RingElement => {"a binary form ",TEX///$F\in K[x,y]$///," of d
 Outputs => {ZZ => {"the real rank of ",TEX///$F$///,", i.e., the minimum integer ",TEX///$r$///," such that there is a decomposition ",TEX///$F = c_1\,(l_1)^d+\cdots+c_r\,(l_r)^d$///," where ",TEX///$l_1,\ldots,l_r$///," are real linear forms and ",TEX///$c_1,\ldots,c_r\in\mathbb{R}$///}},
 PARA{"This method requires generally the program ",HREF{"https://www.usna.edu/CS/qepcadweb/B/QEPCAD.html","QEPCAD"}," to be installed. Source code and installation instructions for it are available at ",HREF{"https://www.usna.edu/CS/qepcadweb/INSTALL/IQ.html","Downloading and Installing QEPCAD"},"."},
 PARA{"Below we compute the real rank of a binary form of degree 7."},
-EXAMPLE {"R := QQ[x,y];","F = 2*x^7+7*x^6*y+168*x^5*y^2+140*x^4*y^3+70*x^3*y^4+21*x^2*y^5+56*x*y^6+4*y^7","realrank F"},
+PRE ///i1 : R := QQ[x,y];
+
+i2 : F = 2*x^7+7*x^6*y+168*x^5*y^2+140*x^4*y^3+70*x^3*y^4+21*x^2*y^5+56*x*y^6+4*y^7
+
+       7     6        5 2       4 3      3 4      2 5        6     7
+o2 = 2x  + 7x y + 168x y  + 140x y  + 70x y  + 21x y  + 56x*y  + 4y
+
+o2 : QQ[x..y]
+
+i3 : realrank F
+
+o3 = 5
+///,
+-- EXAMPLE {"R := QQ[x,y];","F = 2*x^7+7*x^6*y+168*x^5*y^2+140*x^4*y^3+70*x^3*y^4+21*x^2*y^5+56*x*y^6+4*y^7","realrank F"},
 PARA{"In the case when the coefficient ring ",TEX///$K$///," contains a variable, say ",TEX///$u$///,", then the method returns a value ",TEX///$r$///," if the real rank of ",TEX///$F$///," is ",TEX///$r$///," for all the real values of ",TEX///$u$///," in the range specified by the option ",TO [realrank, Range],". An error is thrown if the answer is not uniform."},
-EXAMPLE {"Ru := QQ[u][x,y];","F = u*x^4*y+2*x^2*y^3","realrank(F,Range=>(0,infinity))","realrank(F,Range=>[-1,0])","realrank(F,Range=>(-infinity,-1))"},
+PRE ///
+i4 : Ru := QQ[u][x,y];
+
+i5 : F = u*x^4*y+2*x^2*y^3
+
+        4      2 3
+o5 = u*x y + 2x y
+
+o5 : QQ[u][x..y]
+
+i6 : realrank(F,Range=>(0,infinity))
+
+o6 = 3
+
+i7 : realrank(F,Range=>[-1,0])
+
+o7 = 3
+
+i8 : realrank(F,Range=>(-infinity,-1))
+
+o8 = 3
+///,
+-- EXAMPLE {"Ru := QQ[u][x,y];","F = u*x^4*y+2*x^2*y^3","realrank(F,Range=>(0,infinity))","realrank(F,Range=>[-1,0])","realrank(F,Range=>(-infinity,-1))"},
 SeeAlso => {complexrank}}
 document { 
 Key => {complexrank,(complexrank,RingElement)},
@@ -324,7 +359,7 @@ Headline => "projective join of coincident root loci",
 Usage => "X * Y 
 projectiveJoin(X,Y)", 
 Inputs => {"X" => CoincidentRootLocus,"Y" => CoincidentRootLocus},
-Outputs => {JoinOfCoincidentRootLoci => {"the projective join of ",TEX///$X$///," and ",TEX///$Y$///}},
+Outputs => {{"the projective join of ",TEX///$X$///," and ",TEX///$Y$///}},
 PARA{"A partition of a number ",TEX///$n$///," is a hook if at most one part is not 1. The inputs of this method are required to be coincident root loci associated with hook partitions of ",TEX///$n$///,". In this case, the returned object is the dual of a certain coincident root locus; see the paper by H. Lee and B. Sturmfels - Duality of multiple root loci - J. Algebra 446, 499-526, 2016."},
 EXAMPLE {"X = coincidentRootLocus {11,1,1,1,1}","Y = coincidentRootLocus {13,1,1}","X * Y","X * Y * Y"},
 PARA{"More generally, if ",TEX///$I_1,I_2,\ldots$///," is a sequence of homogeneous ideals (resp. parameterizations) of projective varieties ",TEX///$X_1,X_2,\ldots \subset \mathbb{P}^n$///,", then ",TT "projectiveJoin(I_1,I_2,...)"," is the ideal of the projective join ",TEX///$X_1\,*\,X_2\,*\,\cdots \subset \mathbb{P}^n$///,"."},
