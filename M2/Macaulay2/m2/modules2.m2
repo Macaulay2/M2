@@ -353,12 +353,12 @@ Module == ZZ := (M,n) -> (
 	  )
      )
 
-dim Module := M -> (
+dim Module := (cacheValue symbol dim) (M -> (
      c := codim M;
      if c === infinity then -1 else dim ring M - c
-     )
+     ))
 
-degree Ring := R -> degree R^1
+degree Ring := (cacheValue symbol degree) (R -> degree R^1)
 degree Module := (
      () -> (
      	  -- constants:
@@ -366,7 +366,7 @@ degree Module := (
 	  local T;
 	  local h;
 	  local ev;
-	  M -> (
+	  (cacheValue symbol degree) (M -> (
 	       if ZZ1 === null then (
 		    ZZ1 = degreesRing 1;
 		    T = ZZ1_0;
@@ -382,7 +382,7 @@ degree Module := (
 	       if hn == 0 then return 0;
 	       while hn % h == 0 do hn = hn // h;
 	       if ev === null then ev = map(ZZ,ZZ1,{1}); -- ring maps are defined only later
-	       ev hn)))()
+	       ev hn))))()
 
 multidegree Module := M -> (
      A := degreesRing M;

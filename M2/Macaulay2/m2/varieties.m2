@@ -300,7 +300,7 @@ singularLocus(ProjectiveVariety) := X -> (
      f := presentation R;
      A := ring f;
      checkRing A;
-     Proj(A / saturate (minors(codim(R,Generic=>true), jacobian f) + ideal f)))
+     Proj(A / saturate (minors(codim(R,Generic=>true), jacobian f, Strategy=>Cofactor) + ideal f)))
 
 singularLocus(AffineVariety) := X -> Spec singularLocus ring X
 

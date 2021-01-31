@@ -491,11 +491,11 @@ Ideal#{Standard,AfterPrint} = Ideal#{Standard,AfterNoPrint} = (I) -> (
 Ideal ^ ZZ := Ideal => (I,n) -> ideal symmetricPower(n,generators I)
 Ideal * Ideal := Ideal => ((I,J) -> ideal flatten (generators I ** generators J)) @@ samering
 Ideal * Module := Module => ((I,M) -> subquotient (generators I ** generators M, relations M)) @@ samering
-dim Ideal := I -> dim cokernel generators I
+dim Ideal := (cacheValue symbol dim) (I -> dim cokernel generators I)
 Ideal + Ideal := Ideal => ((I,J) -> ideal (generators I | generators J)) @@ tosamering
 Ideal + RingElement := Ideal + Number := ((I,r) -> I + ideal r) @@ tosamering
 RingElement + Ideal := Number + Ideal := ((r,I) -> ideal r + I) @@ tosamering
-degree Ideal := I -> degree cokernel generators I
+degree Ideal := (cacheValue symbol degree) (I -> degree cokernel generators I)
 Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
 Matrix % Ideal := Matrix => ((f,I) -> 
      if numRows f === 1

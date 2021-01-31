@@ -265,7 +265,7 @@ presentation(PolynomialRing, PolynomialRing) := (R,S) -> (
 	  );
      v)
 
-dim QuotientRing := (R) -> (
+dim QuotientRing := (cacheValue symbol dim) ((R) -> (
      if isField R then 0
      else if R.?SkewCommutative then notImplemented()
      else (
@@ -273,7 +273,7 @@ dim QuotientRing := (R) -> (
 	  cd := codim I;
 	  if cd === infinity then -1 else dim ring I - codim I
 	  )
-     )
+     ))
 
 monoid QuotientRing := o -> (cacheValue monoid) (S -> monoid ambient S)
 degreesMonoid QuotientRing := (cacheValue degreesMonoid) (S -> degreesMonoid ambient S)
@@ -296,12 +296,12 @@ char QuotientRing := (stashValue symbol char) ((S) -> (
      if g == 0 then return char ring g;
      m := g_(0,0);
      if liftable(m,ZZ) then lift(m,ZZ) else 0))
-singularLocus(Ring) := QuotientRing => (R) -> (
+singularLocus(Ring) := QuotientRing => (cacheValue symbol singularLocus) ((R) -> (
      f := presentation R;
      A := ring f;
-     A / (ideal f + minors(codim(R,Generic=>true), jacobian presentation R)))
+     A / (ideal f + minors(codim(R,Generic=>true), jacobian f, Strategy=>Cofactor))))
 
-singularLocus(Ideal) := QuotientRing => (I) -> singularLocus(ring I / I)
+singularLocus(Ideal) := QuotientRing => (cacheValue symbol singularLocus) ((I) -> singularLocus(ring I / I))
 
 toField = method()
 toField Ring := R -> (
