@@ -11,7 +11,6 @@
 class Computation;
 class F4Mem;
 class FreeModule;
-class Gausser;
 class Matrix;
 class MonomialInfo;
 class RingElement;
@@ -29,13 +28,11 @@ class F4Computation : public GBComputation
                                    // Schreyer order.
                                    // Also determines degrees of elements in F.
   const VectorArithmetic* mVectorArithmetic;
-  const Gausser *mGausser;
   MonomialInfo *mMonoid;
   F4Mem *mMemoryBlock;
   F4GB *mF4GB;
  public:
-  F4Computation(Gausser *K,
-                const VectorArithmetic* VA,
+  F4Computation(const VectorArithmetic* VA,
                 F4Mem *Mem,
                 const Matrix *m,
                 M2_bool collect_syz,

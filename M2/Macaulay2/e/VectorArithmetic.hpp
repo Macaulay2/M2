@@ -60,9 +60,10 @@ public:
 
   friend class VectorArithmetic;
 
-  ConcreteVectorArithmetic() : mRing(nullptr) {}
+  ConcreteVectorArithmetic() : mOriginalRing(nullptr), mRing(nullptr) {}
 
 // private:
+  const Ring* mOriginalRing;
   const RingType* mRing;
 
   CoeffVectorContainer* coeffVector(CoeffVectorType f) const
@@ -92,7 +93,9 @@ public:
   }
 
 public:
-  ConcreteVectorArithmetic(const RingType* R) : mRing(R) {}
+  ConcreteVectorArithmetic(const Ring* origR, const RingType* R) : mOriginalRing(origR), mRing(R) {}
+
+  const Ring* ring() const { return mOriginalRing; }
   
   /////////////////////////////
   // Allocation/Deallocation //
@@ -104,6 +107,20 @@ public:
       {
 	mRing->init(d);
 	mRing->set_zero(d);
+      }
+    return coeffVector(tempPtr);    
+  }
+
+  CoeffVectorType copyCoeffVector(const CoeffVector& sparse) const
+  {
+    auto& v = * coeffVector(sparse);
+    auto tempPtr = new CoeffVectorContainer(v.size());
+
+    int n = 0;
+    for (auto& d : *tempPtr)
+      {
+	mRing->init_set(d, v[n]);
+        ++n;
       }
     return coeffVector(tempPtr);    
   }
@@ -246,6 +263,18 @@ public:
 	}
   }
 
+  void setZeroInRange(DenseCoeffVectorType& dense,
+                      int first,
+                      int last) const
+  {
+    auto& dvec = * denseCoeffVector(dense);
+    
+    // first can be -1 if the row is zero.  in this case, we should
+    // not be accessing dvec[i] for i negative.
+    for (int i = first; i >= 0 and i <= last; i++)
+      mRing->set_zero(dvec[i]);
+  }
+  
   void sparseRowMakeMonic(CoeffVectorType& sparse) const
   {
     auto& svec = * coeffVector(sparse);
@@ -257,7 +286,7 @@ public:
 
     for (auto& c : svec) { mRing->mult(c, c, leadCoeffInv); }
   }
-  
+
   template<typename Container>
   void appendSparseVectorToContainer(const CoeffVectorType& sparse,
                                      Container& c) const
@@ -348,39 +377,39 @@ public:
       {
       case M2::ring_ZZpFlint:
         mConcreteVector = new ConcreteVectorArithmetic
-          (&dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFlint>* >(R)->ring());
+          (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFlint>* >(R)->ring());
         break;
       case M2::ring_GFFlintBig:
         mConcreteVector = new ConcreteVectorArithmetic
-          (&dynamic_cast< const M2::ConcreteRing<M2::ARingGFFlintBig>* >(R)->ring());
+          (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingGFFlintBig>* >(R)->ring());
         break;
       case M2::ring_GFFlintZech:
         mConcreteVector = new ConcreteVectorArithmetic
-          (&dynamic_cast< const M2::ConcreteRing<M2::ARingGFFlint>* >(R)->ring());
+          (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingGFFlint>* >(R)->ring());
         break;
       case M2::ring_QQ:
         mConcreteVector = new ConcreteVectorArithmetic
-          (&dynamic_cast< const M2::ConcreteRing<M2::ARingQQGMP>* >(R)->ring());
+          (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingQQGMP>* >(R)->ring());
 	break;
       case M2::ring_ZZpFfpack:
         mConcreteVector = new ConcreteVectorArithmetic
-          (&dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFFPACK>* >(R)->ring());
+          (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFFPACK>* >(R)->ring());
 	break;
       case M2::ring_ZZp:
         mConcreteVector = new ConcreteVectorArithmetic
-          (&dynamic_cast< const M2::ConcreteRing<M2::ARingZZp>* >(R)->ring());
+          (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingZZp>* >(R)->ring());
         break;
       case M2::ring_GFM2:
         mConcreteVector = new ConcreteVectorArithmetic
-          (&dynamic_cast< const M2::ConcreteRing<M2::ARingGFM2>* >(R)->ring());
+          (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingGFM2>* >(R)->ring());
         break;
       case M2::ring_GFGivaro:
         mConcreteVector = new ConcreteVectorArithmetic
-          (&dynamic_cast< const M2::ConcreteRing<M2::ARingGFGivaro>* >(R)->ring());
+          (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingGFGivaro>* >(R)->ring());
         break;
       case M2::ring_old:
         std::cout << "Using GC ring in VectorArithmetic." << std::endl;
-        mConcreteVector = new ConcreteVectorArithmetic(R->getCoefficientRingR());
+        mConcreteVector = new ConcreteVectorArithmetic(R, R->getCoefficientRingR());
         break;
       default:
         // dummy ring type for default
@@ -388,6 +417,10 @@ public:
         std::cerr << "*** error! *** ring ID not found....!" << std::endl;
         mConcreteVector = new ConcreteVectorArithmetic<M2::DummyRing>();
       }
+  }
+
+  const Ring* ring() const {
+    return std::visit([&](auto& arg) -> const Ring* { return arg->ring(); }, mConcreteVector);
   }
 
   // provide simple visitor interface to underlying std::variant types
@@ -405,6 +438,10 @@ public:
   /// Create a coefficient vector with room for `nelems` coefficients
   CoeffVectorType allocateCoeffVector(ComponentIndex nelems) const {
     return std::visit([&](auto& arg) -> CoeffVectorType { return arg->allocateCoeffVector(nelems);}, mConcreteVector);
+  }
+
+  CoeffVectorType copyCoeffVector(const CoeffVector& sparse) const {
+    return std::visit([&](auto& arg) -> CoeffVectorType { return arg->copyCoeffVector(sparse);}, mConcreteVector);
   }
 
   DenseCoeffVectorType allocateDenseCoeffVector(ComponentIndex nelems) const {
@@ -464,6 +501,10 @@ public:
     // the existence of 'template' here is a bit jarring to me, but it tells the compiler
     // that safeDenseRowToSparseRow is a template function
     std::visit([&](auto& arg) { arg->template safeDenseRowToSparseRow<LockType>(dense,coeffs,comps,first,last,monomialSpace,lock); }, mConcreteVector);      
+  }
+
+  void setZeroInRange(DenseCoeffVectorType& dense, int first, int last) const {
+    std::visit([&](auto& arg) { arg->setZeroInRange(dense, first, last); }, mConcreteVector);      
   }
   
   void sparseRowMakeMonic(CoeffVectorType& coeffs) const {

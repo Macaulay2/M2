@@ -1,12 +1,11 @@
-/* Copyright 2014-2016, Michael E. Stillman */
+/* Copyright 2014-2021, Michael E. Stillman */
 
 #ifndef _res_f4_computation_hpp_
 #define _res_f4_computation_hpp_
 
 #include "res-poly-ring.hpp"
-
 #include "polyring.hpp"
-#include "../comp-res.hpp"
+#include "comp-res.hpp"
 
 #include <memory>  // For std::unique_ptr
 

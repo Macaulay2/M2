@@ -71,12 +71,11 @@
 #include "engine-exports.h"         // for M2_arrayint, M2_bool
 #include "f4-types.hpp"             // for gb_array, MonomialLookupTable
 #include "f4/moninfo.hpp"           // for packed_monomial, MonomialInfo
-#include "gausser.hpp"              // for F4CoefficientArray, dense_row
 #include "interface/computation.h"  // for ComputationStatusCode, StopCondit...
 #include "memblock.hpp"             // for F4MemoryBlock
 #include "monhashtable.hpp"         // for MonomialHashTable
 #include "newdelete.hpp"            // for our_new_delete
-
+#include "MemoryBlock.hpp"          // for MemoryBlock<T>
 #include <ctime>                    // for clock, CLOCKS_PER_SEC, clock_t
 
 class F4Mem;
@@ -91,7 +90,6 @@ class VectorArithmetic;
 class F4GB : public our_new_delete
 {
   // Basic required information
-  const Gausser *mGausser;
   const VectorArithmetic* mVectorArithmetic;
   const MonomialInfo *M;
   const FreeModule *F;
@@ -125,12 +123,11 @@ class F4GB : public our_new_delete
   int next_col_to_process;
   coefficient_matrix *mat;
   MonomialHashTable<MonomialInfo> H;
-  F4Mem *Mem;  // Used to allocate and deallocate arrays used in the matrix
   F4MemoryBlock<monomial_word> B;
   monomial_word *next_monom;  // valid while creating the matrix
-
-  // Local data for gaussian elimination
-  dense_row gauss_row;
+  
+  F4Mem *Mem;  // Used to allocate and deallocate arrays used in the matrix
+  MemoryBlock mComponentSpace; // stop-gap for use with VectorArithmetic and Mem.
 
   // cumulative timing info
   double clock_sort_columns;
@@ -140,8 +137,6 @@ class F4GB : public our_new_delete
  private:
   ////////////////////////////////////////////////////////////////////
   void delete_gb_array(gb_array &g);
-
-  void gauss_reduce_linbox();  // dumps matrices in linbox format
 
   void test_spair_code();  // test routine: probably will be removed
 
@@ -163,7 +158,7 @@ class F4GB : public our_new_delete
   void reorder_columns();
   void reorder_rows();
 
-  F4CoefficientArray get_coeffs_array(row_elem &r);
+  CoeffVector get_coeffs_array(row_elem &r);
   // If r.coeffs is set, returns that, otherwise returns the coeffs array from
   // the generator or GB element.  The resulting value should not be modified.
 
@@ -186,8 +181,7 @@ class F4GB : public our_new_delete
   void insert_gb_element(row_elem &r);
 
  public:
-  F4GB(const Gausser *KK0,
-       const VectorArithmetic* VA,
+  F4GB(const VectorArithmetic* VA,
        F4Mem *Mem0,
        const MonomialInfo *MI,
        const FreeModule *F,  // used for debugging only...

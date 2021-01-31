@@ -74,7 +74,7 @@ J1
   R1 = kk[a..g, MonomialSize=>8];
   J1 = ideal random(R1^1, R1^{-5,-5,-5,-6});
 
-  time gb(J1, Algorithm=>LinearAlgebra); -- 23 sec -- 18 sec MES MBP 1/24/21
+  elapsedTime gb(J1, Algorithm=>LinearAlgebra); -- 23 sec -- 18 sec MES MBP 1/24/21
   gbTrace=1
   J1 = ideal J1_*;
   elapsedTime groebnerBasis(J1, Strategy => "F4"); -- 12.5 sec (5.2 sec, using TBB)

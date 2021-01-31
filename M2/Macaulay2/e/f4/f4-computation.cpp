@@ -8,7 +8,6 @@
 #include "f4/f4-mem.hpp"           // for F4Mem
 #include "f4/f4-types.hpp"         // for gb_array, gbelem
 #include "f4/f4.hpp"               // for F4GB
-#include "f4/gausser.hpp"          // for Gausser
 #include "f4/moninfo.hpp"          // for MonomialInfo
 #include "matrix-con.hpp"          // for MatrixConstructor
 #include "matrix.hpp"              // for Matrix
@@ -35,18 +34,10 @@ GBComputation *createF4GB(const Matrix *m,
   const Ring *K = R->getCoefficients();
   F4Mem *Mem = new F4Mem;
   auto vectorArithmetic = new VectorArithmetic(K);
-  Gausser *KK = Gausser::newGausser(K, Mem);
-  if (KK == nullptr)
-    {
-      ERROR(
-          "cannot use Algorithm => LinearAlgebra with this type of coefficient "
-          "ring");
-      return nullptr;
-    }
+  // TODO: code here used to detect whether R, K is a valid ring here
 
   GBComputation *G;
-  G = new F4Computation(KK,
-                        vectorArithmetic,
+  G = new F4Computation(vectorArithmetic,
                         Mem,
                         m,
                         collect_syz,
@@ -58,8 +49,7 @@ GBComputation *createF4GB(const Matrix *m,
   return G;
 }
 
-F4Computation::F4Computation(Gausser *K0,
-                             const VectorArithmetic* VA,
+F4Computation::F4Computation(const VectorArithmetic* VA,
                              F4Mem *Mem0,
                              const Matrix *m,
                              M2_bool collect_syz,
@@ -72,15 +62,13 @@ F4Computation::F4Computation(Gausser *K0,
     mVectorArithmetic(VA),
     mMemoryBlock(Mem0)
 {
-  // Note: the F4Mem which K0 uses should be mMemoryBlock.
-  mGausser = K0;
+  // Note: the F4Mem which K0 uses should be mMemoryBlock. ??TODO: no longer valid, still containing useful info?
   mOriginalRing = m->get_ring()->cast_to_PolynomialRing();
   mMonoid = new MonomialInfo(mOriginalRing->n_vars(),
                         mOriginalRing->getMonoid()->getMonomialOrdering());
 
 
-  mF4GB = new F4GB(mGausser,
-                   mVectorArithmetic,
+  mF4GB = new F4GB(mVectorArithmetic,
                    Mem0,
                    mMonoid,
                    m->rows(),
@@ -91,7 +79,7 @@ F4Computation::F4Computation(Gausser *K0,
                    use_max_degree,
                    max_degree);
 
-  F4toM2Interface::from_M2_matrix(mGausser, mVectorArithmetic, mMonoid, m, gb_weights, mF4GB->get_generators());
+  F4toM2Interface::from_M2_matrix(mVectorArithmetic, mMonoid, m, gb_weights, mF4GB->get_generators());
   mF4GB->new_generators(0, m->n_cols() - 1);
 }
 
@@ -115,7 +103,7 @@ const Matrix /* or null */ *F4Computation::get_gb()
   for (int i = 0; i < gb.size(); i++)
     {
       vec v = F4toM2Interface::to_M2_vec(
-          mGausser, mVectorArithmetic, mMonoid, gb[i]->f, mFreeModule);
+          mVectorArithmetic, mMonoid, gb[i]->f, mFreeModule);
       result.append(v);
     }
   return result.to_matrix();

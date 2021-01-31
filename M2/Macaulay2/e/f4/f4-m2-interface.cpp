@@ -17,8 +17,7 @@
 #include "style.hpp"                   // for INTSIZE
 #include "VectorArithmetic.hpp"
 
-void F4toM2Interface::from_M2_vec(const Gausser *KK,
-                                  const VectorArithmetic* VA,
+void F4toM2Interface::from_M2_vec(const VectorArithmetic* VA,
                                   const MonomialInfo *MI,
                                   const FreeModule *F,
                                   vec v,
@@ -32,18 +31,17 @@ void F4toM2Interface::from_M2_vec(const Gausser *KK,
   GBRing *GR = R->get_gb_ring();
   int n = GR->gbvector_n_terms(f);
 
-  int *exp = newarray_atomic(int, M->n_vars() + 1);
-  ntuple_word *lexp = newarray_atomic(ntuple_word, M->n_vars() + 1);
+  int *exp = new int[M->n_vars() + 1]; // newarray_atomic(int, M->n_vars() + 1);
+  ntuple_word *lexp = new ntuple_word[M->n_vars() + 1]; // newarray_atomic(ntuple_word, M->n_vars() + 1);
 
   result.len = n;
-  // VECTOR(ring_elem) relem_array(n); // add
-  ring_elem *relem_array = newarray(ring_elem, n); // rm
+  std::vector<ring_elem> relem_array;
   result.monoms = newarray_atomic(monomial_word, n * MI->max_monomial_size());
   n = 0;
   monomial_word *nextmonom = result.monoms;
   for (gbvector *t = f; t != nullptr; t = t->next)
     {
-      relem_array[n] = t->coeff;
+      relem_array.push_back(t->coeff);
       M->to_expvector(t->monom, exp);
       for (int a = 0; a < M->n_vars(); a++) lexp[a] = exp[a];
       MI->from_exponent_vector(
@@ -53,15 +51,12 @@ void F4toM2Interface::from_M2_vec(const Gausser *KK,
       nextmonom += MI->monomial_size(nextmonom);
       n++;
     }
-  //  result.coeffs = VA->sparseVectorFromContainer(relem_array); // add
-  result.coeffs = KK->from_ringelem_array(n, relem_array); // rm
-  deletearray(relem_array); // rm
-  deletearray(exp);
-  deletearray(lexp);
+  result.coeffs = VA->sparseVectorFromContainer(relem_array);
+  delete [] exp;
+  delete [] lexp;
 }
 
-void F4toM2Interface::poly_set_degrees(const Gausser *KK,
-                                       const VectorArithmetic* VA,
+void F4toM2Interface::poly_set_degrees(const VectorArithmetic* VA,
                                        const MonomialInfo *MI,
                                        const M2_arrayint wts,
                                        const poly &f,
@@ -82,8 +77,7 @@ void F4toM2Interface::poly_set_degrees(const Gausser *KK,
   deg_result = static_cast<int>(deg);
 }
 
-void F4toM2Interface::from_M2_matrix(const Gausser *KK,
-                                     const VectorArithmetic* VA,
+void F4toM2Interface::from_M2_matrix(const VectorArithmetic* VA,
                                      const MonomialInfo *MI,
                                      const Matrix *m,
                                      M2_arrayint wts,
@@ -93,14 +87,13 @@ void F4toM2Interface::from_M2_matrix(const Gausser *KK,
   for (int i = 0; i < m->n_cols(); i++)
     {
       gbelem *g = new gbelem;
-      from_M2_vec(KK, VA, MI, F, m->elem(i), g->f);
-      if (wts != nullptr) poly_set_degrees(KK, VA, MI, wts, g->f, g->deg, g->alpha);
+      from_M2_vec(VA, MI, F, m->elem(i), g->f);
+      if (wts != nullptr) poly_set_degrees(VA, MI, wts, g->f, g->deg, g->alpha);
       result_polys.push_back(g);
     }
 }
 
-vec F4toM2Interface::to_M2_vec(const Gausser *KK,
-                               const VectorArithmetic* VA,
+vec F4toM2Interface::to_M2_vec(const VectorArithmetic* VA,
                                const MonomialInfo *MI,
                                const poly &f,
                                const FreeModule *F)
@@ -121,9 +114,6 @@ vec F4toM2Interface::to_M2_vec(const Gausser *KK,
   int *exp = newarray_atomic(int, M->n_vars() + 1);
   ntuple_word *lexp = newarray_atomic(ntuple_word, M->n_vars() + 1);
 
-  ring_elem *relem_array = newarray(ring_elem, f.len);
-  KK->to_ringelem_array(f.len, f.coeffs, relem_array);
-
   const monomial_word *w = f.monoms;
   for (int i = 0; i < f.len; i++)
     {
@@ -132,7 +122,8 @@ vec F4toM2Interface::to_M2_vec(const Gausser *KK,
       w = w + MI->monomial_size(w);
       for (int a = 0; a < M->n_vars(); a++) exp[a] = static_cast<int>(lexp[a]);
       M->from_expvector(exp, m1);
-      Nterm *g = R->make_flat_term(relem_array[i], m1);
+      ring_elem a = VA->ringElemFromSparseVector(f.coeffs, i);
+      Nterm *g = R->make_flat_term(a, m1);
       g->next = nullptr;
       if (last[comp] == 0)
         {
@@ -157,24 +148,21 @@ vec F4toM2Interface::to_M2_vec(const Gausser *KK,
         }
     }
 
-  deletearray(relem_array);
   return result;
 }
 
-Matrix *F4toM2Interface::to_M2_matrix(const Gausser *KK,
-                                      const VectorArithmetic* VA,
+Matrix *F4toM2Interface::to_M2_matrix(const VectorArithmetic* VA,
                                       const MonomialInfo *MI,
                                       gb_array &polys,
                                       const FreeModule *F)
 {
   MatrixConstructor result(F, INTSIZE(polys));
   for (int i = 0; i < polys.size(); i++)
-    result.set_column(i, to_M2_vec(KK, VA, MI, polys[i]->f, F));
+    result.set_column(i, to_M2_vec(VA, MI, polys[i]->f, F));
   return result.to_matrix();
 }
 
-MutableMatrix *F4toM2Interface::to_M2_MutableMatrix(const Gausser *KK,
-                                                    const VectorArithmetic* VA,
+MutableMatrix *F4toM2Interface::to_M2_MutableMatrix(const VectorArithmetic* VA,
                                                     coefficient_matrix *mat,
                                                     gb_array &gens,
                                                     gb_array &gb)
@@ -182,29 +170,29 @@ MutableMatrix *F4toM2Interface::to_M2_MutableMatrix(const Gausser *KK,
   int nrows = INTSIZE(mat->rows);
   int ncols = INTSIZE(mat->columns);
   MutableMatrix *M =
-      IM2_MutableMatrix_make(KK->get_ring(), nrows, ncols, false);
+      IM2_MutableMatrix_make(VA->ring(), nrows, ncols, false);
   for (int r = 0; r < nrows; r++)
     {
       row_elem &row = mat->rows[r];
       ring_elem *rowelems = newarray(ring_elem, row.len);
-      if (row.coeffs == nullptr)
+      const CoeffVector* coeffs;
+      if (row.coeffs.isNull())
         {
           if (row.monom == nullptr)
-            KK->to_ringelem_array(row.len, gens[row.elem]->f.coeffs, rowelems);
+            coeffs = & gens[row.elem]->f.coeffs;
           else
-            KK->to_ringelem_array(row.len, gb[row.elem]->f.coeffs, rowelems);
+            coeffs = & gb[row.elem]->f.coeffs;
         }
       else
         {
-          KK->to_ringelem_array(row.len, row.coeffs, rowelems);
+          coeffs = & row.coeffs;
         }
       for (int i = 0; i < row.len; i++)
         {
           int c = row.comps[i];
-          ////    c = mat->columns[c].ord;
-          M->set_entry(r, c, rowelems[i]);
+          ring_elem a = VA->ringElemFromSparseVector(* coeffs, i);
+          M->set_entry(r, c, a);
         }
-      deletearray(rowelems);
     }
   return M;
 }

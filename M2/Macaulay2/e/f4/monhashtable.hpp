@@ -65,8 +65,6 @@ class ResMonomialsIgnoringComponent
   const ResMonoid& mMonoid;
 };
 
-#include <memory>  // For std::unique_ptr
-
 // ValueType must implement the following:
 // values should have computed hash values stored with them
 //  typename ValueType::value
