@@ -453,19 +453,26 @@ viewHelp = new Command from viewHelp
 -- This ensures that "methods viewHelp" and "?viewHelp" work as expected
 setAttribute(viewHelp#0, ReverseDictionary, symbol viewHelp)
 
+makeInfo := tag -> (
+    infoFile := temporaryDirectory() | toFilename format tag | ".info";
+    if not fileExists infoFile then infoFile << "\037" << endl <<
+	"Node: Top, Up: (Macaulay2Doc)Top" << endl << endl <<
+	info help tag << endl << close;
+    infoFile
+)
+
 infoHelp = method(Dispatch => Thing)
 infoHelp Thing := key -> (
     if key === () then infoHelp "Macaulay2Doc"
     else infoHelp makeDocumentTag key)
 infoHelp DocumentTag := tag -> (
     rawdoc := fetchAnyRawDocumentation tag;
-    if (tag' := getOption(rawdoc, symbol DocumentTag)) =!= null
-    then (
-	infoTag := infoTagConvert tag';
-	if getenv "INSIDE_EMACS" == "" then chkrun ("info " | format infoTag)
-	-- used by M2-info-help in M2.el
-	else print("-*" | " infoHelp: " | infoTag | " *-");
-    ) else error("no documentation for ", format tag))
+    tag' := getOption(rawdoc, symbol DocumentTag);
+    infoTag := if tag' =!= null then infoTagConvert tag' else makeInfo tag;
+    if getenv "INSIDE_EMACS" == "" then chkrun ("info " | format infoTag)
+    -- used by M2-info-help in M2.el
+    else print("-*" | " infoHelp: " | infoTag | " *-")
+)
 infoHelp ZZ := i -> seeAbout(infoHelp, i)
 infoHelp = new Command from infoHelp
 -- This ensures that "methods infoHelp" and "?infoHelp" work as expected
