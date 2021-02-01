@@ -393,9 +393,13 @@ Headline
   Package for super algebra
 Description
   Text
-     This Package is to do the computation in superalgebras, or super vector spaces. \break
-     The computations are taken in a superRing, which is a ring with both symmetric and antisymmetric variables. \break
-     To see the definitions and theorems, see Varadarajan, V. S. (2004). "Supersymmetry for Mathematicians: An Introduction" (Vol. 11). American Mathematical Soc.\break
+     This Package is to do the computation in superalgebras, or super vector spaces. 
+     
+     The computations are taken in a superRing, which is a ring with both symmetric and antisymmetric variables. 
+     
+     To see the definitions and theorems, see Varadarajan, V. S. (2004). "Supersymmetry for Mathematicians:
+     An Introduction" (Vol. 11). American Mathematical Soc.
+     
 Caveat
 SeeAlso
 ///
@@ -419,7 +423,8 @@ Description
   Text
     Let $R_1$ and $R_2$ be Two Polynomial rings on different set of variables
     A superRing is a new polynomial ring with three sets of variables. 
-    One set comes from $R_1$ and the second one is the inverse of it.\break
+    One set comes from $R_1$ and the second one is the inverse of it.
+    
     For example, if we have x as a variable in $R_1$,
     then there is a new variable, say $inverseVariable_0$ which is the inverse of $x$.
     The third set of variables comes from $R_2$.
@@ -463,23 +468,29 @@ Description
    The number of rows in $M_1$ and $M_2$,
    and those of $M_3$ and $M_4$ should be equal.
    Also, the number of columns of $M_1$ and $M_3$,
-   and those of M_2 and M_4 must be equal./break
+   and those of M_2 and M_4 must be equal.
+   
    The idea is to define a (super) Matrix,
    which can be considered as $p|q\times r|s$ matrix.
    This super Matrix can be a morphism between super
-   modules $A^{p|q}$ and $A^{r|s}$ over super algebra $A$.  \break
+   modules $A^{p|q}$ and $A^{r|s}$ over super algebra $A$. 
 
    The function merges the matrices M_1 and M_2, and also M_3 and M_4. 
    Finally it merges two new matrices and 
    make a new matrix with the first four matrices as
    the blocks of the new matrix, say $\begin{pmatrix}
      M1&M2\\
-     M3&M4\end{pmatrix}$.  \break
-   The key supermatrix shows the result matrix created as above. \break
-   The key targetM1 shows the number of first part rows. \break
-   The key targetM3 shows the number of the rows of the second part.  \break
-   The key sourceM1 shows the number of columns in the first part.  \break
-   The key sourceM2 shows the number of columns in the second part.  \break
+     M3&M4\end{pmatrix}$.  
+     
+   The key supermatrix shows the result matrix created as above. 
+   
+   The key targetM1 shows the number of first part rows. 
+   
+   The key targetM3 shows the number of the rows of the second part.  
+   
+   The key sourceM1 shows the number of columns in the first part.  
+   
+   The key sourceM2 shows the number of columns in the second part.  
  Example
     M1 = matrix {{1,2},{5,6},{9,10}}
     M2 = matrix {{3,4},{7,8},{11,12}}
@@ -513,7 +524,8 @@ Description
     where $x_i$s are even and $e_j$s are odd generators. A (homogeneous) morphism $T:A^{p|q}\rightarrow A^{r|s}$ has a matrix representation. 
     Denote the matrix by $T$ then we have $T=\begin{pmatrix}
      T1&T2\\
-     T3&T4\end{pmatrix}$.  \break
+     T3&T4\end{pmatrix}$.  
+     
     The super trace of $T$ is defined by $superTrace(T)= Trace(T_1)-(-1)^{p(T)} Trace(T_4)$.
     The inputs of this function are a superMatrix, a ring, which should have skew-symmetric variables, and a list, 
     which is the list of skew-symmetric variables that are used in the superMatrix. 
@@ -557,7 +569,7 @@ Description
      M1&M2\\
      M3&M4\end{pmatrix}$.  is a super Matrix, and
   $M_4$ is invertible, then 
-  $Ber(M)= det(M_1-M_2M^{-1}_4M_3) det(M_4)^{-1}$.\break
+  $Ber(M)= det(M_1-M_2M^{-1}_4M_3) det(M_4)^{-1}$.
   
   If $M_1$ is invertible, then
   $Ber(M) = det(M_4-M_3M_1^{-1}M_2)^{-1} det(M_1)$.
@@ -625,7 +637,8 @@ Outputs
 Description
  Text
   A super Matrix $M={{M1,M2},{M3,M4}}$ 
-  is invertible, if both the diagonal blocks, $M_1$ and $M_4$ are invertible. \break
+  is invertible, if both the diagonal blocks, $M_1$ and $M_4$ are invertible. 
+  
   In this case, the inverse is given by a blocked matrix,
   $T=\begin{pmatrix}
      T1&T2\\
@@ -663,12 +676,18 @@ Outputs
     0 for even, 1 for odd and -1 for Nonhomogeneous
 Description
  Text
-  Let $A^{p|q}=Ax_1\oplus \cdots \oplus Ax_p \oplus Ae_1\oplus\cdots\oplus Ae_q$ be a free module over $A$, where $x_i$s are even and $e_j$s are odd generators. A morphism $T:A^{p|q}\rightarrow A^{r|s}$ has a matrix representation. Denote the matrix by $T$ then we have
+  Let $A^{p|q}=Ax_1\oplus \cdots \oplus Ax_p \oplus Ae_1\oplus\cdots\oplus Ae_q$ 
+  be a free module over $A$, where $x_i$s are even and $e_j$s are odd generators. 
+  A morphism $T:A^{p|q}\rightarrow A^{r|s}$ has a matrix representation. 
+  Denote the matrix by $T$ then we have
   $T=\begin{pmatrix}
      T1&T2\\
-     T3&T4\end{pmatrix}$. \break
-  The matrix (morphism) $T$ is said to be even (odd) if the blocks $T_1$ and $T_4$ are even, and $T_2$ and $T_3$ are odd ($T_1$ and $T_4$ are odd, and $T_2$ and $T_3$ are even).
-  Note that if $A$ is an algebra, i.e., it doesn't have odd involution, then to have an even (odd) matrix $T$, we should have $T_3=0$ and $T_2=0$ ($T_1=0$ and $T_4=0$).
+     T3&T4\end{pmatrix}$. 
+     
+  The matrix (morphism) $T$ is said to be even (odd) if the blocks $T_1$ and $T_4$
+  are even, and $T_2$ and $T_3$ are odd ($T_1$ and $T_4$ are odd, and $T_2$ and $T_3$ are even).
+  Note that if $A$ is an algebra, i.e., it doesn't have odd involution, then to 
+  have an even (odd) matrix $T$, we should have $T_3=0$ and $T_2=0$ ($T_1=0$ and $T_4=0$).
  Example
   R1 = QQ[x_0..x_3];
   R2 = QQ[z_0..z_2];
