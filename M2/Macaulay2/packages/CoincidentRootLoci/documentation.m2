@@ -228,7 +228,9 @@ Inputs => {"F" => RingElement => {"a binary form ",TEX///$F\in K[x,y]$///," of d
 Outputs => {ZZ => {"the real rank of ",TEX///$F$///,", i.e., the minimum integer ",TEX///$r$///," such that there is a decomposition ",TEX///$F = c_1\,(l_1)^d+\cdots+c_r\,(l_r)^d$///," where ",TEX///$l_1,\ldots,l_r$///," are real linear forms and ",TEX///$c_1,\ldots,c_r\in\mathbb{R}$///}},
 PARA{"This method requires generally the program ",HREF{"https://www.usna.edu/CS/qepcadweb/B/QEPCAD.html","QEPCAD"}," to be installed. Source code and installation instructions for it are available at ",HREF{"https://www.usna.edu/CS/qepcadweb/INSTALL/IQ.html","Downloading and Installing QEPCAD"},"."},
 PARA{"Below we compute the real rank of a binary form of degree 7."},
-PRE ///i1 : R := QQ[x,y];
+if CoincidentRootLoci.Options.OptionalComponentsPresent 
+then EXAMPLE {"R := QQ[x,y];","F = 2*x^7+7*x^6*y+168*x^5*y^2+140*x^4*y^3+70*x^3*y^4+21*x^2*y^5+56*x*y^6+4*y^7","realrank F"}
+else PRE ///i1 : R := QQ[x,y];
 
 i2 : F = 2*x^7+7*x^6*y+168*x^5*y^2+140*x^4*y^3+70*x^3*y^4+21*x^2*y^5+56*x*y^6+4*y^7
 
@@ -241,9 +243,10 @@ i3 : realrank F
 
 o3 = 5
 ///,
--- EXAMPLE {"R := QQ[x,y];","F = 2*x^7+7*x^6*y+168*x^5*y^2+140*x^4*y^3+70*x^3*y^4+21*x^2*y^5+56*x*y^6+4*y^7","realrank F"},
 PARA{"In the case when the coefficient ring ",TEX///$K$///," contains a variable, say ",TEX///$u$///,", then the method returns a value ",TEX///$r$///," if the real rank of ",TEX///$F$///," is ",TEX///$r$///," for all the real values of ",TEX///$u$///," in the range specified by the option ",TO [realrank, Range],". An error is thrown if the answer is not uniform."},
-PRE ///
+if CoincidentRootLoci.Options.OptionalComponentsPresent 
+then EXAMPLE {"Ru := QQ[u][x,y];","F = u*x^4*y+2*x^2*y^3","realrank(F,Range=>(0,infinity))","realrank(F,Range=>[-1,0])","realrank(F,Range=>(-infinity,-1))"}
+else PRE ///
 i4 : Ru := QQ[u][x,y];
 
 i5 : F = u*x^4*y+2*x^2*y^3
@@ -265,7 +268,6 @@ i8 : realrank(F,Range=>(-infinity,-1))
 
 o8 = 3
 ///,
--- EXAMPLE {"Ru := QQ[u][x,y];","F = u*x^4*y+2*x^2*y^3","realrank(F,Range=>(0,infinity))","realrank(F,Range=>[-1,0])","realrank(F,Range=>(-infinity,-1))"},
 SeeAlso => {complexrank}}
 document { 
 Key => {complexrank,(complexrank,RingElement)},
