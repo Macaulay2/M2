@@ -586,7 +586,7 @@ multigradedRegularityDefaultStrategy = (X, M, opts) -> (
     container.UpperLimit = high;
     debugInfo("Calculating minimal generators");
     if debugLevel > 0 and n == 2 then plotRegion((i, j) -> not gt#?{i, j}, low, high);
-    container.Result = findRegion({mindegs, high}, M, (ell, M) -> not gt#?ell))
+    container.Result = findRegion'({mindegs, high}, M, (ell, M) -> not gt#?ell))
 
 -- The default strategy applies to both modules and ideals in a product of projective spaces,
 -- but by using hooks we allow better strategies to be added later

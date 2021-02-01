@@ -5,9 +5,8 @@
 --  1. get virtualOfPair to also return a map, and check if it is an isomorphism
 --  2. can we increase the lower bound to speed up P3xP3 examples?
 
--- FIXME FIXME FIXME: why does removing 'debug' make three tests fail?
-debug needsPackage "LinearTruncations"
-exportFrom_LinearTruncations {"IrrelevantIdeal","isQuasiLinear","regularityBound"}
+needsPackage "LinearTruncations"
+exportFrom_LinearTruncations {"IrrelevantIdeal","isQuasiLinear","regularityBound","findRegion"}
 
 isVirtualOfPair = method(Options => { Strategy => null, IrrelevantIdeal => null })
 isVirtualOfPair(List, Module) := opts -> (d, M) -> (
@@ -72,10 +71,13 @@ multigradedRegularityTruncationStrategy = (X, M, opts) -> (
     low  := mindegs - toList(n:d);
     -- the combinatorial upperbound on regularity from betti numbers
     U0 := regularityBound M;
+    if debugLevel > 2 then plotRegion(U0, low, high);
     -- extend U0 to degrees where the truncation is quasi-linear (see Theorem 2.9 of BES)
     U0  = findRegion({mindegs, high}, M, isQuasiLinear, Inner => U0, IrrelevantIdeal => B);
+    if debugLevel > 2 then plotRegion(U0, low, high);
     -- limit U0 to degrees where H_B^1 vanishes
     U0  = findRegion({mindegs, high}, M, isChiH0,       Outer => U0, IrrelevantIdeal => B);
+    if debugLevel > 2 then plotRegion(U0, low, high);
     debugInfo("Upper bound from LinearTruncations: " | toString U0);
 
     debugInfo("Searching from ", toString low, " to ", toString high);
