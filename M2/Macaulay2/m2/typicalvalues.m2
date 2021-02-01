@@ -44,6 +44,10 @@ append(BasicList,Thing) := BasicList => append
 prepend(Thing,BasicList) := BasicList => prepend
 apply(BasicList,Function) := BasicList => apply
 apply(BasicList,BasicList,Function) := BasicList => apply
+apply(String,Function) := Sequence => apply
+apply(BasicList,String,Function) := Sequence => apply
+apply(String,BasicList,Function) := Sequence => apply
+apply(String,String,Function) := Sequence => apply
 apply(ZZ,Function) := List => apply
 applyKeys(HashTable,Function) := HashTable => applyKeys
 applyKeys(HashTable,Function,Function) := HashTable => applyKeys
