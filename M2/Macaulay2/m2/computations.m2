@@ -14,6 +14,16 @@
 -- You should have received a copy of the GNU General Public License along
 -- with this program.  If not, see <https://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
+-*
+  A Computation object is a container for the partial results of a computation.
+
+  Given that multiple simultaneous computations can be cached at the same time
+  (e.g. saturation with respect to different ideals), a Context object is
+  necessary to distinguish computations.
+
+  A computation cached in object X is stored in the CacheTable X.cache as:
+    Context{ ... } => Computation{ Result, ... }
+*-
 
 needs "classes.m2"
 needs "methods.m2"
@@ -33,19 +43,29 @@ ComputationCacheStats := new MutableHashTable from {}
 Context = new SelfInitializingType of BasicList
 Context.synonym = "computation context"
 
+-- TODO: support options?
+new Context from HashTable := (C, T) -> new C from {}
+
 -- container for computation results
 Computation = new Type of MutableHashTable
 Computation.synonym = "computation"
 
--- TODO: this might not be the best syntax, since the object is not always "new"
+new Computation from HashTable := (C, T) -> new C from { Result => null }
+
+-----------------------------------------------------------------------------
+-- fetchComputation
+-----------------------------------------------------------------------------
+
+-- TODO: not very happy with the inputs ... is there a better way?
 -- if there is a compatible computation stored in T.cache,
 -- returns the computation container, otherwise creates the entry:
---   Context{} => Computation{ Result }
-new Computation from HashTable := (C, T) -> (
-    -- TODO: use new Computation from (HashTable, ...) to also give the Context, perhaps
-    context := Context{};
+--   Context => Computation
+fetchComputation = method(Options => true)
+fetchComputation(Type, HashTable, Context) := Computation => true >> opts -> (C, T, context) -> (
+    -- TODO: look for other compatible contexts as well
     -- TODO: use https://github.com/Macaulay2/M2/issues/1596 when it is implemented
-    if T.cache#?context then T.cache#context else T.cache#context = new Computation from { Result => null })
+    if T.cache#?context then T.cache#context
+    else T.cache#context = new C from T)
 
 -----------------------------------------------------------------------------
 -- isComputationDone
@@ -54,15 +74,17 @@ new Computation from HashTable := (C, T) -> (
 -- determines whether further computation is necessary
 isComputationDone = method(TypicalValue => Boolean, Options => true)
 -- the default method only checks whether Result is non-null
-isComputationDone Computation := Boolean => {} >> opts -> container -> container.Result =!= null
+isComputationDone Computation := Boolean => true >> opts -> container -> container.Result =!= null
+-- TODO: use isReady?
 
 -----------------------------------------------------------------------------
 -- updateComputation
 -----------------------------------------------------------------------------
 
+-- update the computation with the given result
 updateComputation = method(Options => true)
-updateComputation(Computation, Thing)   := {} >> opts -> (container, result) -> container.Result = result
-updateComputation(Computation, Nothing) := {} >> opts -> (container, result) -> null
+updateComputation(Computation, Thing)   := true >> opts -> (container, result) -> container.Result = result
+updateComputation(Computation, Nothing) := true >> opts -> (container, result) -> null
 
 -----------------------------------------------------------------------------
 -- cacheComputation
@@ -72,7 +94,7 @@ updateComputation(Computation, Nothing) := {} >> opts -> (container, result) -> 
 cacheComputation = method(TypicalValue => CacheFunction, Options => true)
 -- the default method only sets the Result in the container
 -- Note: this function takes advantage of FunctionClosures by modifying the container
-cacheComputation Computation := CacheFunction => {} >> opts -> container -> new CacheFunction from (
+cacheComputation Computation := CacheFunction => true >> opts -> container -> new CacheFunction from (
     algorithm -> (
 	if isComputationDone(opts, container) then ( cacheHit container; container.Result )
 	else updateComputation(opts, container, algorithm(opts, container))))
@@ -81,7 +103,9 @@ cacheComputation Computation := CacheFunction => {} >> opts -> container -> new 
 -- Introspective tools for Computations
 -----------------------------------------------------------------------------
 
+-- enable printing debug information or collecting data about cache hits
 debug  Computation :=      C -> null
+-- print the status of the computation, or cache hit statistics
 status Computation := o -> C -> null
 
 --

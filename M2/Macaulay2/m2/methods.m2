@@ -566,6 +566,7 @@ runHooks(MutableHashTable, Thing, Thing) := true >> opts -> (store, key, args) -
     -- if Strategy is given, and it is among the known strategies, run only that hook
     if store.HookAlgorithms#?alg  then runHook(store.HookAlgorithms#alg,  key, alg,  args, opts) else
     -- otherwise, if the class of alg is a known strategy, run only that hook
+    -- TODO: implement reverse lookup to find strategy installed under ancestors of type?
     if store.HookAlgorithms#?type then runHook(store.HookAlgorithms#type, key, type, args, opts) else
     -- otherwise, give an error with the list of possible strategies
     error("unrecognized Strategy => '", toString alg, "' for ", toString key, newline,

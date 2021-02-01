@@ -4,26 +4,52 @@ needs "gradedmodules.m2"
 needs "gb.m2"
 needs "modules2.m2"
 
+-----------------------------------------------------------------------------
+-- Local utilities
+-----------------------------------------------------------------------------
+
 union := (x,y) -> keys(set x + set y)
 intersection := (x,y) -> keys(set x * set y)
 
+-----------------------------------------------------------------------------
+-- ChainComplex, ChainComplexMap, and Resolution type declarations and basic constructors
+-----------------------------------------------------------------------------
+
 Resolution = new Type of MutableHashTable
 Resolution.synonym = "resolution"
+
 toString Resolution := C -> toString raw C
-raw Resolution := X -> X.RawComputation
 
 ChainComplex = new Type of GradedModule
 ChainComplex.synonym = "chain complex"
-new ChainComplex := ChainComplex => (cl) -> (
-     C := newClass(ChainComplex,new MutableHashTable); -- sigh
-     C.cache = new CacheTable;
-     b := C.dd = new ChainComplexMap;
-     b.degree = -1;
-     b.source = b.target = C;
-     C)
-ring ChainComplex := C -> C.ring
 
+new ChainComplex := ChainComplex => T -> (
+    C := newClass(ChainComplex, new MutableHashTable); -- sigh
+    C.cache = new CacheTable;
+    C.dd = new ChainComplexMap;
+    C.dd.degree = -1;
+    C.dd.source =
+    C.dd.target = C)
+
+new ChainComplex from Resolution := ChainComplex => (T, R) -> (
+    C := new ChainComplex;
+    C.ring = R.ring;
+    C.Resolution = C.dd.Resolution = R;
+    C)
+
+ChainComplexMap = new Type of GradedModuleMap
+ChainComplexMap.synonym = "chain complex map"
+
+raw Resolution   := C -> C.RawComputation
 raw ChainComplex := C -> raw C.Resolution
+
+ring Resolution      :=
+ring ChainComplex    := C -> C.ring
+ring ChainComplexMap := C -> ring source C
+
+-----------------------------------------------------------------------------
+-- ChainComplex, ChainComplexMap, and Resolution methods
+-----------------------------------------------------------------------------
 
 complete ChainComplex := ChainComplex => C -> (
      if C.?Resolution and not C.?complete then (
@@ -82,9 +108,7 @@ texMath ChainComplex := C -> (
       )
 
 -----------------------------------------------------------------------------
-ChainComplexMap = new Type of GradedModuleMap
-ChainComplexMap.synonym = "chain complex map"
-ring ChainComplexMap := C -> ring source C
+
 complete ChainComplexMap := f -> (
      complete source f;
      if target f =!= source f then complete target f;

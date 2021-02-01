@@ -172,14 +172,13 @@ mathML GradedModuleMap :=
 mathML GroebnerBasis :=
 mathML IndexedVariableTable :=
 mathML Package :=
-mathML Resolution :=
 mathML ScriptedFunctor :=
 mathML Monoid :=
 mathML Variety :=
 mathML Thing := x -> (
      -- maybe "expression" should not just put unknown things in a holder ...
      -- anyway, we have to break the loop somehow here
-     if hasAttribute(x,ReverseDictionary) then mathML return mathML getAttribute(x,ReverseDictionary);
+     if hasAttribute(x,ReverseDictionary) then return mathML getAttribute(x,ReverseDictionary);
      y := expression x;
      if instance(y,Holder) and y#0 === x then mathML toString x else mathML y)
 mathML Nothing := x -> ""
