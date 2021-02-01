@@ -464,7 +464,7 @@ Outputs
   G:SuperMatrix
 Description
   Text
-   Let $M_1,M_2,M_3,M_4$ are four matrices. 
+   Let $M_1,M_2,M_3,M_4$ be four matrices. 
    The number of rows in $M_1$ and $M_2$,
    and those of $M_3$ and $M_4$ should be equal.
    Also, the number of columns of $M_1$ and $M_3$,
@@ -476,7 +476,7 @@ Description
    modules $A^{p|q}$ and $A^{r|s}$ over super algebra $A$. 
 
    The function merges the matrices M_1 and M_2, and also M_3 and M_4. 
-   Finally it merges two new matrices and 
+   Finally, it merges two new matrices and 
    make a new matrix with the first four matrices as
    the blocks of the new matrix, say $\begin{pmatrix}
      M1&M2\\
@@ -561,8 +561,8 @@ Outputs
   N:Number
 Description
  Text
-  If in a super Matrix, one of the first or the second diagonal block is invertible,
-  then we can define Berezinian (as a kind of super Determinant).
+  If in a super Matrix, one of the first or the second diagonal blocks is invertible,
+  then we can define the Berezinian (as a kind of super Determinant).
   The formula for the Berezinian is different base on which block is invertible.
   But it is shown that the two formulas are equivalent if two blocks are invertible.
   If $M=\begin{pmatrix}
