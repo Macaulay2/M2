@@ -13,7 +13,7 @@ cmake-appleclang:
 	cd builds.tmp/cmake-appleclang; cmake \
 		-GNinja \
 		-DCMAKE_C_COMPILER=mpicc \
-		-DCMAKE_CXX_COMPILER=mpiCC \
+		-DCMAKE_CXX_COMPILER=mpic++ \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
