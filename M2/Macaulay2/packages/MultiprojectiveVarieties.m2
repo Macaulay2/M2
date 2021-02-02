@@ -12,7 +12,7 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "1.1", 
-    Date => "January 31, 2021",
+    Date => "February 2, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -22,55 +22,8 @@ newPackage(
     Reload => false
 )
 
-updatePackageFromDevelopment = method();
-updatePackageFromDevelopment (String,List) := (packagename,listauxfiles) -> (
-    try get "!curl -h 2>&1" else error "please install CURL on your system";
-    <<"-- checking updates for package "<<packagename<<"..."<<endl;
-    dir := temporaryFileName() | "/";
-    mkdir dir;
-    run("curl -s -o "|dir|packagename|".m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/"|packagename|".m2");
-    if not fileExists(dir|packagename|".m2") then error("something went wrong in downloading the package "|packagename);
-    if #listauxfiles > 0 then (
-        makeDirectory(dir|packagename);
-        for f in listauxfiles do (
-            run("curl -s -o "|dir|packagename|"/"|f|".m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/"|packagename|"/"|f|".m2");
-            if not fileExists(dir|packagename|"/"|f|".m2") then error("something went wrong in downloading the package "|packagename);
-        );
-    );
-    get("!"|"cd "|dir|/// && M2 -e "loadPackage(\"///|packagename|///\",FileName=>\"///|dir|packagename|".m2"|///\"); \"///|dir|///packageVersion.m2\"<<///|packagename|///.Options.Version<<close;" 2>&1 &///);
-    v0 := get(dir|"packageVersion.m2");
-    removeFile(dir|"packageVersion.m2");
-    if (value packagename).Options.Version == v0 then (<<"-- package "<<packagename<<" is already updated to version "<<v0<<" -- nothing to do."<<endl; return);
-    e := "";
-    while not(e == "y" or e == "yes" or e == "Y" or e == "Yes") do (
-        e = read("Your version of the package "|packagename|" is outdated. Do you want to install the latest version of "|packagename|" now? (y/n) ");
-        if e == "n" or e == "no" or e == "N" or e == "No" then return;
-    );
-    <<"-- installing package "<<packagename<<", version "<<v0<<"... (this may take a while)"<<endl;
-    get("!"|"cd "|dir|/// && M2 -e "uninstallPackage \"///|packagename|///\"" 2>&1 &///);
-    get("!"|"cd "|dir|/// && M2 -e "installPackage(\"///|packagename|///\",FileName=>\"///|dir|packagename|".m2"|///\")" 2>&1 &///);
-    removeFile(dir|packagename|".m2"); 
-    if #listauxfiles > 0 then (
-        for f in listauxfiles do removeFile(dir|packagename|"/"|f|".m2"); 
-        removeDirectory(dir|packagename);  
-    ); 
-    <<"--** package "<<packagename<<", version "<<v0<<", has been successfully installed **--"<<endl;
-    get("!"|///M2 -e "loadPackage \"///|packagename|///\"; \"///|dir|///packageVersion.m2\"<<///|packagename|///.Options.Version<<close;" 2>&1 &///);
-    v := get(dir|"packageVersion.m2");
-    removeFile(dir|"packageVersion.m2");
-    if v != v0 then (
-        sf := (value packagename)#"source file";
-        err := "Error in loading the new version of the package "|packagename|". Check that in your path you do not have any older version of the package.";
-        i0 := 0; while fileExists(sf|"-"|toString(i0)) do i0 = i0+1;
-        try moveFile(sf,sf|"-"|toString(i0)) then (<<"--warning: the file "<<sf<<" has been renamed to "<<packagename|".m2-"|toString(i0)|" (you can also delete it)"<<endl) else error err;
-        get("!"|///M2 -e "loadPackage \"///|packagename|///\"; \"///|dir|///packageVersion.m2\"<<///|packagename|///.Options.Version<<close;" 2>&1 &///);
-        v = get(dir|"packageVersion.m2");
-        removeFile(dir|"packageVersion.m2");
-        if v != v0 then error err;   
-    );    
-    return v;
-);
-updatePackageFromDevelopment String := packagename -> updatePackageFromDevelopment(packagename,{});
+needsPackage "UpdatePackage";
+debug UpdatePackage;
 
 askForUpdates = (s1,s2) -> (
     if SparseResultants.Options.Version >= s1 and Cremona.Options.Version >= s2 then return;
@@ -79,7 +32,7 @@ askForUpdates = (s1,s2) -> (
         if v1 === null then error("this package requires SparseResultants version "|s1|" or newer; you can download manually the latest version from https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages");
     );
     if Cremona.Options.Version < s2 then (
-        v2 := updatePackageFromDevelopment("Cremona",{"documentation","examples","tests"});
+        v2 := updatePackageFromDevelopment("Cremona",auxFiles "Cremona");
         if v2 === null then error("this package requires Cremona version "|s2|" or newer; you can download manually the latest version from https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages");
     );
     <<endl<<endl<<"--"|concatenate(67:"*")|"--"<<endl<<"--** You can now install the package MultiprojectiveVarieties with **--"<<endl<<"     installPackage \"MultiprojectiveVarieties\""<<endl<<"--"|concatenate(67:"*")|"--"<<endl<<endl; 
@@ -89,37 +42,14 @@ askForUpdates = (s1,s2) -> (
     );
     if e == "y" or e == "yes" or e == "Y" or e == "Yes" then updatePackageFromDevelopment "MultiprojectiveVarieties";
     <<endl<<endl;
-    -- e = "";
-    -- while not(e == "y" or e == "yes" or e == "Y" or e == "Yes") do (
-    --     e = read("Do you want to restart Macaulay2 now (y/n) ");
-    --     if e == "n" or e == "no" or e == "N" or e == "No" then error toString(newline|"--"|(concatenate(40:"*")|"--"|newline|"--** A restart of Macaulay2 is required **--"|newline|"--"|(concatenate(40:"*")|"--")));
-    -- );
-    -- restart -- this restart does not work!
     error toString("Don't worry, this is not an error"|newline|"--"|(concatenate(40:"*")|"--"|newline|"--** A restart of Macaulay2 is required **--"|newline|"--"|(concatenate(40:"*")|"--")));
 );
 
 askForUpdates("1.1", "5.1");
 
-updatePackage = () -> (
-    v1 := updatePackageFromDevelopment "Resultants";
-    v2 := updatePackageFromDevelopment "SparseResultants";
-    v3 := updatePackageFromDevelopment("Cremona",{"documentation","examples","tests"});
-    v4 := updatePackageFromDevelopment "MultiprojectiveVarieties";
-    if not(v1 === null and v2 === null and v3 === null and v4 === null) then (
-        <<endl<<endl;
-        e := "";
-        while not(e == "y" or e == "yes" or e == "Y" or e == "Yes") do (
-            e = read("Do you want to restart Macaulay2 now (y/n) ");
-            if e == "n" or e == "no" or e == "N" or e == "No" then return;
-        );
-        return restart;
-    );
-);
-
 export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct", 
        "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan", "tangentSpace",
        "MultirationalMap", "multirationalMap", "baseLocus", "degreeSequence", "inverse2",
-       "updatePackage",
        "∏","⋂","⋃"}
 
 debug Cremona;
@@ -395,8 +325,13 @@ productMem = memoize(L -> (
 
 MultiprojectiveVariety ^ ZZ := (X,n) -> (
     if n < 0 then error "expected a nonnegative integer";
-    if n == 0 then return projectiveVariety ideal(1_(ring ambient X));
+    if n == 0 then return projectiveVariety((coefficientRing X)[],Saturate=>false);
     productMem toList(n : X)
+);
+
+ZZ * MultiprojectiveVariety := (n,X) -> (
+    if n < 0 then error "expected a nonnegative integer";
+    projectiveVariety((ideal X)^n,MinimalGenerators=>true,Saturate=>true)
 );
 
 MultiprojectiveVariety + MultiprojectiveVariety := (X,Y) -> (
@@ -411,9 +346,14 @@ MultiprojectiveVariety + MultiprojectiveVariety := (X,Y) -> (
     projectiveVariety(intersect apply(L,ideal),MinimalGenerators=>true,Saturate=>false)   
 );
 
-MultiprojectiveVariety - MultiprojectiveVariety := (X,Y) -> (
+MultiprojectiveVariety \ MultiprojectiveVariety := (X,Y) -> (
     if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
     projectiveVariety(quotient(ideal X,ideal Y,MinimalGenerators=>true),MinimalGenerators=>false,Saturate=>false)
+);
+
+MultiprojectiveVariety \\ MultiprojectiveVariety := (X,Y) -> (
+    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
+    projectiveVariety(saturate(ideal X,ideal Y,MinimalGenerators=>true),MinimalGenerators=>false,Saturate=>false)
 );
 
 MultiprojectiveVariety * MultiprojectiveVariety := (X,Y) -> (
@@ -480,6 +420,8 @@ euler (MultiprojectiveVariety,Option) := (X,opt) -> (
 
 euler MultiprojectiveVariety := X -> euler(X,Verify=>true);
 
+basisMem = memoize((d,X) -> flatten entries gens image basis(d,ideal X));
+
 random (List,MultiprojectiveVariety) := o -> (l,X) -> (
     K := coefficientRing X;
     n := # X#"dimAmbientSpaces";
@@ -488,7 +430,7 @@ random (List,MultiprojectiveVariety) := o -> (l,X) -> (
     if not all(L,i -> instance(first i,List) and # first i == n and all(first i,j -> instance(j,ZZ))) then error("expected lists of integers of length "|toString(n)); 
     local B;
     Y := projectiveVariety ideal flatten for d in L list (
-        B := flatten entries gens image basis(first d,ideal X);
+        B = basisMem(first d,X);
         if #B == 0 then error("unable to find random elements of degree "|(toString first d));
         for i from 1 to last d list sum(B,b -> (random K) * b)
     );
@@ -815,7 +757,11 @@ multirationalMap MultiprojectiveVariety := X -> (
     I
 );
 
-ZZ _ MultiprojectiveVariety := (n,X) -> (if n =!= 1 then error "expected integer to be 1"; multirationalMap X);
+ZZ _ MultiprojectiveVariety := (n,X) -> (
+    if n == 0 then return projectiveVariety ideal flatten X#"multigens";
+    if n =!= 1 then error "expected integer to be 1"; 
+    multirationalMap X
+);
 
 multirationalMap (MultiprojectiveVariety,MultiprojectiveVariety,Boolean) := (X,Y,b) -> ( --undocumented
     if X === Y then return multirationalMap X;
@@ -1547,8 +1493,8 @@ EXAMPLE {"R = ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}];",
 "X = projectiveVariety ideal random({2,1},R);",
 "Y = projectiveVariety ideal random({1,1},R);", 
 "Z = X + Y;",
-"assert(Z - X == Y and Z - Y == X)"},
-SeeAlso => {(symbol -,MultiprojectiveVariety,MultiprojectiveVariety),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety),(intersect,List),(⋃,List)}}
+///assert(Z \ X == Y and Z \ Y == X)///},
+SeeAlso => {(symbol \,MultiprojectiveVariety,MultiprojectiveVariety),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety),(intersect,List),(⋃,List)}}
 
 document {Key => {⋃,(⋃,List)}, 
 Headline => "union of multi-projective varieties", 
@@ -1561,20 +1507,35 @@ EXAMPLE {"K = ZZ/33331;",
 "degree oo"},
 SeeAlso => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety)}}
 
-document {Key => {(symbol -,MultiprojectiveVariety,MultiprojectiveVariety)}, 
+document {Key => {(symbol \,MultiprojectiveVariety,MultiprojectiveVariety)}, 
 Headline => "difference of multi-projective varieties", 
-Usage => "X - Y", 
+Usage => ///X \ Y///, 
 Inputs => { 
 MultiprojectiveVariety => "X",
 MultiprojectiveVariety => "Y"}, 
 Outputs => { 
-MultiprojectiveVariety => {"the difference of ",TT"X"," and ",TT"Y",", that is, the projective variety defined by the colon ideal ",TT"ideal X : ideal Y"}},
+MultiprojectiveVariety => {"the variety defined by the colon ideal ",TT"ideal X : ideal Y"}},
 EXAMPLE {"R = ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}];",
 "X = projectiveVariety ideal(x_0^3*y_0+2*x_0^2*x_1*y_0+2*x_0*x_1^2*y_0+x_1^3*y_0+2*x_0^2*x_2*y_0+3*x_0*x_1*x_2*y_0+2*x_1^2*x_2*y_0+2*x_0*x_2^2*y_0+2*x_1*x_2^2*y_0+x_2^3*y_0+x_0^3*y_1+2*x_0^2*x_1*y_1+2*x_0*x_1^2*y_1+x_1^3*y_1+2*x_0^2*x_2*y_1+3*x_0*x_1*x_2*y_1+2*x_1^2*x_2*y_1+2*x_0*x_2^2*y_1+2*x_1*x_2^2*y_1+x_2^3*y_1);",
 "Y = projectiveVariety ideal(x_0*y_0+x_1*y_0+x_2*y_0+x_0*y_1+x_1*y_1+x_2*y_1);", 
-"Z = X - Y;",
-"assert(Z + Y == X and X - Z == Y)"},
-SeeAlso => {(symbol +,MultiprojectiveVariety,MultiprojectiveVariety),(quotient,Ideal,Ideal)}}
+///Z = X \ Y;///,
+///assert(Z + Y == X and X \ Z == Y)///},
+SeeAlso => {(symbol \\,MultiprojectiveVariety,MultiprojectiveVariety),(symbol +,MultiprojectiveVariety,MultiprojectiveVariety),(quotient,Ideal,Ideal)}}
+
+document {Key => {(symbol \\,MultiprojectiveVariety,MultiprojectiveVariety)}, 
+Headline => "difference of multi-projective varieties", 
+Usage => ///X \\ Y///, 
+Inputs => { 
+MultiprojectiveVariety => "X",
+MultiprojectiveVariety => "Y"}, 
+Outputs => { 
+MultiprojectiveVariety => {"the variety defined by the saturation ideal ",TT"saturate(ideal X,ideal Y)"}},
+EXAMPLE {"R = ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}];",
+"X = projectiveVariety ideal(x_0^3*y_0^2+2*x_0^2*x_1*y_0^2+2*x_0*x_1^2*y_0^2+x_1^3*y_0^2+2*x_0^2*x_2*y_0^2+3*x_0*x_1*x_2*y_0^2+2*x_1^2*x_2*y_0^2+2*x_0*x_2^2*y_0^2+2*x_1*x_2^2*y_0^2+x_2^3*y_0^2+2*x_0^3*y_0*y_1+4*x_0^2*x_1*y_0*y_1+4*x_0*x_1^2*y_0*y_1+2*x_1^3*y_0*y_1+4*x_0^2*x_2*y_0*y_1+6*x_0*x_1*x_2*y_0*y_1+4*x_1^2*x_2*y_0*y_1+4*x_0*x_2^2*y_0*y_1+4*x_1*x_2^2*y_0*y_1+2*x_2^3*y_0*y_1+x_0^3*y_1^2+2*x_0^2*x_1*y_1^2+2*x_0*x_1^2*y_1^2+x_1^3*y_1^2+2*x_0^2*x_2*y_1^2+3*x_0*x_1*x_2*y_1^2+2*x_1^2*x_2*y_1^2+2*x_0*x_2^2*y_1^2+2*x_1*x_2^2*y_1^2+x_2^3*y_1^2);",
+"Y = projectiveVariety ideal(x_0*y_0+x_1*y_0+x_2*y_0+x_0*y_1+x_1*y_1+x_2*y_1);", 
+///Z = X \\ Y;///,
+///assert(Z == (X \ Y) \ Y)///},
+SeeAlso => {(symbol \,MultiprojectiveVariety,MultiprojectiveVariety),(symbol +,MultiprojectiveVariety,MultiprojectiveVariety),(quotient,Ideal,Ideal)}}
 
 document {Key => {fiberProduct,(fiberProduct,RationalMap,RationalMap)}, 
 Headline => "fiber product of multi-projective varieties", 
@@ -2399,11 +2360,6 @@ EXAMPLE {"X = projectiveVariety({3},{2},ZZ/333331);",
 "? T"},
 SeeAlso => {(singularLocus,MultiprojectiveVariety),(dual,EmbeddedProjectiveVariety),(point,MultiprojectiveVariety)}}
 
-document { 
-Key => {"updatePackage"},
-Headline => "update this package to the latest version available on GitHub",
-Usage => "updatePackage()"}
-
 undocumented {
 (expression,MultiprojectiveVariety),
 (net,MultiprojectiveVariety),
@@ -2413,6 +2369,7 @@ undocumented {
 (decompose,MultiprojectiveVariety),
 (degrees,MultiprojectiveVariety),
 (euler,MultiprojectiveVariety,Option),
+(symbol *,ZZ,MultiprojectiveVariety),
 (expression,MultirationalMap),
 (net,MultirationalMap),
 (multirationalMap,RationalMap),
