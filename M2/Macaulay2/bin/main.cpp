@@ -133,11 +133,10 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
     waitOnTask(interpTask);
   }
   
-  } //end// if (world_rank == 0) 
+  } //end// if (world_rank == 0)
   std::cout << "Bye world from processor " << processor_name
 	    << ", rank " << world_rank
 	    << " out of " << world_size << " processors" << std::endl;
-  while (true);
   MPI_Finalize();
   return 0;
 } //end// main

@@ -1,4 +1,9 @@
 --		Copyright 1994-2000 by Daniel R. Grayson
+header "
+#include <mpi.h>
+#include <iostream>
+";
+  
 
 newStartupMethod := true;				    -- for testing purposes
 use evaluate;
@@ -610,6 +615,8 @@ export process():void := (
      setMaxAllowableThreads();
      -- setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
      everytimeRun();
+     Ccode(void, "std::cout << \"Bye? -- says process 0 from interp.dd\\n\"");
+     Ccode(void, "MPI_Finalize()");
      -- we don't know the right directory; calls commandInterpreter and eventually returns:
      ret := readeval(stringTokenFile(startupFile.filename,startupFile.contents),false,false);
      when ret is err:Error do (
