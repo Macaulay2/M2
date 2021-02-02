@@ -10,7 +10,7 @@ i3 : m := matrix{{3, 2, 4, 6}};
 o3 : Matrix ZZ  <--- ZZ
 
 i4 : t := LRtriple(n,m);
-PHCv2.4.77 released 2020-06-12
+PHCv2.4.82 released 2020-11-30
 
 the input data for phc -e : 
 5
@@ -19,18 +19,19 @@ the input data for phc -e :
 0
 0
 0
-/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-96022-0/3PHCout
+/tmp/M2-26019-0/3PHCout
 0
 y
 y
 0
+n
 0
 0
 
-writing data to file /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-96022-0/2PHCip
-running phc -e, session output to /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-96022-0/4PHCses
-                writing output to /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-96022-0/3PHCout
-opening output file /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-96022-0/5PHCsolutions
+writing data to file /tmp/M2-26019-0/2PHCip
+running phc -e, session output to /tmp/M2-26019-0/4PHCses
+                writing output to /tmp/M2-26019-0/3PHCout
+opening output file /tmp/M2-26019-0/5PHCsolutions
 
 i5 : w := wrapTriplet(t);
 

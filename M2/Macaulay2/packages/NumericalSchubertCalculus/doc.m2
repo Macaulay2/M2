@@ -149,12 +149,12 @@ doc ///
       	 Represent a Schubert variety in the Grassmannian $Gr(k,n)$ 
 	 by a condition $c$ either a partition or a bracket (see  @TO partition2bracket@ for details) and a flag $F$ 
 	 (given as an $n$ by $n$ matrix).
-	 The codimention of the Schubert variety is $|c|$.
+	 The codimension of the Schubert variety is $|c|$.
 	 A Schubert problem is a list of Schubert varieties, whose codimention
 	 add up to $k(n-k)$, which is the dimension of the Grassmannian.
          -----
 	 
-	 The function solveSchubertProblem solves the given instnace of the Schubert problem by the Littlewood-Richardson
+	 The function solveSchubertProblem solves the given instance of the Schubert problem by the Littlewood-Richardson
 	 homotopy. This algorithm uses homotopy continuation to track 
 	 solutions of a simpler problem to a general problem according 
 	 to the specializations of the geometric Littlewood-Richardson.
@@ -212,7 +212,7 @@ doc ///
          Simple Schubert problem given as a list of sequences of the 
 	 form $(l,F)$ where $l$ is a partition (a list of weakly 
 	 decreasing integers) and $F$ is a flag ($n$ by $n$ matrix).
-         Necessarily, all partitions except possible the first two are \{1\}
+         Necessarily, all partitions except possibly the first two are $\{1\}$
       k:ZZ
       n:ZZ
          $k$ and $n$ define the Grassmannian $Gr(k,n)$ of $k$-planes in $n$-space
@@ -469,7 +469,7 @@ doc ///
       Solns:List
          solutions of a Schubert problem written as nxk matrices
       conds'F'G:Sequence
-         a triplet (C,F,G) where C is a list of m Schubert conditions,
+         a triple (C,F,G) where C is a list of m Schubert conditions,
 	 F is a list of m flags defining an instance with solution set Solns,
 	 G is a list of m flags defining the instance whose solutions we want.
    Outputs
@@ -477,7 +477,7 @@ doc ///
          solutions of the problem with respect to flags G.
    Description
     Text
-       If $Solns$ is a set of solutions to a Schubert problem $l_1,\ldots,l_m$
+       If Solns is a set of solutions to a Schubert problem $l_1,\ldots,l_m$
        with respect to a set of flags $F_1,\ldots, F_m$, uses parameter homotopies
        to move $S$ to a solution set $S'$ for the same Schubert problem, but with
        respect to another set of flags $G_1,\ldots, G_m$.
@@ -623,6 +623,8 @@ doc ///
 	 LRNumber({{1},{1},{1},{1}},2,4)
 	 -- the same problem but using brackets instead of partitions
 	 LRNumber({{2,4},{2,4},{2,4},{2,4}},2,4)
+	 -- the same problem but using phc implementation of Littlewood-Richardson rule
+	 LRNumber({{1},{1},{1},{1}},2,4,Strategy => "phc")
    Caveat
       This uses the package Schubert2 and the Strategy "phc" requires the string parsing capabilities of Macaulay2 version 1.17 or later
    SeeAlso
@@ -633,12 +635,12 @@ doc ///
    Key
       [LRNumber, Strategy]
    Headline
-      Strategy for computing the number of solutions to a Schubert problem
+      strategy for computing the number of solutions to a Schubert problem
    Usage
       LRNumber(...,Strategy=>S)
    Inputs
       S:String
-        "Schubert2", the default value,xs or "phc".
+        "Schubert2", the default value, or "phc".
    Description
     Text
      Determines which method to compute the number of solutions is created.

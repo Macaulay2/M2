@@ -57,84 +57,84 @@ i5 : setVerboseLevel 1;
 
 i6 : S = solveSchubertProblem(SchPblm,2,4)
 -- playCheckers
--- cpu time = .00539573
+-- cpu time = .00440144
 -- making a recursive call to resolveNode
 -- playCheckers
--- cpu time = .00289598
+-- cpu time = .00215815
 -- making a recursive call to resolveNode
 -- playCheckers
--- cpu time = .000425009
+-- cpu time = .000276183
 resolveNode reached node of no remaining conditions
--- time to make equations: .00539711
+-- time to make equations: .00381971
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00643529 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
--- time of performing one checker move: .0162409
--- time of performing one checker move: .00129526
--- time of performing one checker move: .00108252
--- time to make equations: .00512297
+ -- trackHomotopy time = .00478722 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
+-- time of performing one checker move: .0119941
+-- time of performing one checker move: .000825744
+-- time of performing one checker move: .000791851
+-- time to make equations: .00377361
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00621004 sec. for [{1, 2, 3, 0}, {1, infinity, infinity, 2}]
--- time of performing one checker move: .0157386
--- time to make equations: .00494226
+ -- trackHomotopy time = .00470186 sec. for [{1, 2, 3, 0}, {1, infinity, infinity, 2}]
+-- time of performing one checker move: .0117162
+-- time to make equations: .00384517
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0227318 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 2}]
--- time of performing one checker move: .0270201
--- time to make equations: .00515218
+ -- trackHomotopy time = .00468922 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 2}]
+-- time of performing one checker move: .0117648
+-- time to make equations: .00372481
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00644884 sec. for [{2, 3, 1, 0}, {2, infinity, infinity, 1}]
--- time of performing one checker move: .0162641
--- time to make equations: .012154
+ -- trackHomotopy time = .00470593 sec. for [{2, 3, 1, 0}, {2, infinity, infinity, 1}]
+-- time of performing one checker move: .0118149
+-- time to make equations: .0169213
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00734072 sec. for [{0, 1, 2, 3}, {infinity, 1, 2, infinity}]
--- time of performing one checker move: .0248003
--- time to make equations: .010912
+ -- trackHomotopy time = .00624225 sec. for [{0, 1, 2, 3}, {infinity, 1, 2, infinity}]
+-- time of performing one checker move: .0277237
+-- time to make equations: .00842894
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00769937 sec. for [{0, 1, 3, 2}, {infinity, 1, infinity, 2}]
--- time of performing one checker move: .023576
--- time of performing one checker move: .00109528
--- time of performing one checker move: .0010479
--- time to make equations: .0112248
+ -- trackHomotopy time = .00598928 sec. for [{0, 1, 3, 2}, {infinity, 1, infinity, 2}]
+-- time of performing one checker move: .0180725
+-- time of performing one checker move: .000840206
+-- time of performing one checker move: .000798823
+-- time to make equations: .00828869
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .023812 sec. for [{1, 3, 2, 0}, {infinity, 3, infinity, 1}]
--- time of performing one checker move: .0373028
+ -- trackHomotopy time = .00610545 sec. for [{1, 3, 2, 0}, {infinity, 3, infinity, 1}]
+-- time of performing one checker move: .0178737
 -- making a recursive call to resolveNode
 -- playCheckers
--- cpu time = .00287462
+-- cpu time = .00235005
 -- making a recursive call to resolveNode
 -- playCheckers
--- cpu time = .000375142
+-- cpu time = .000266934
 resolveNode reached node of no remaining conditions
--- time to make equations: .00588125
+-- time to make equations: .00383048
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00618983 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
--- time of performing one checker move: .0166493
--- time of performing one checker move: .00122486
--- time to make equations: .0051043
+ -- trackHomotopy time = .00471614 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
+-- time of performing one checker move: .0119966
+-- time of performing one checker move: .000823407
+-- time to make equations: .00376713
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00629835 sec. for [{0, 2, 3, 1}, {0, infinity, infinity, 2}]
--- time of performing one checker move: .0161014
--- time of performing one checker move: .00105875
--- time of performing one checker move: .000827553
--- time of performing one checker move: .00099036
--- time of performing one checker move: .001114
--- time of performing one checker move: .000817015
--- time of performing one checker move: .0012517
--- time of performing one checker move: .00115804
--- time to make equations: .0116294
+ -- trackHomotopy time = .00472638 sec. for [{0, 2, 3, 1}, {0, infinity, infinity, 2}]
+-- time of performing one checker move: .0117191
+-- time of performing one checker move: .00077149
+-- time of performing one checker move: .000591469
+-- time of performing one checker move: .000777139
+-- time of performing one checker move: .000874465
+-- time of performing one checker move: .000654962
+-- time of performing one checker move: .000871159
+-- time of performing one checker move: .000870191
+-- time to make equations: .00843536
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00765078 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 3}]
--- time of performing one checker move: .0393278
--- time of performing one checker move: .00182172
+ -- trackHomotopy time = .00605939 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 3}]
+-- time of performing one checker move: .0259382
+-- time of performing one checker move: .00126776
 
 o6 = {| -1.65573-.600637ii .0201935+.0437095ii   |, | -.154703+.175591ii 
       | -1.23037-1.66989ii -.0308057-.00120618ii |  | -.801221-.0354303ii
