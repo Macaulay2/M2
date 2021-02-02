@@ -1313,24 +1313,24 @@ toRRi(e:Expr):Expr := (
                	       when s.1 is y:ZZcell do toExpr(toRRi(x.v,y.v))
                                 is y:QQcell do toExpr(toRRi(x.v,y.v))
                                 is y:RRcell do toExpr(toRRi(x.v,y.v))
-                    	        else WrongArg(1,"a pair of integral, rational, or real numbers"))
+                    	        else WrongArg(1,"a pair of integral, rational, or real numbers, with a precision"))
                        else WrongArg("not implemented"))
 	    else when s.0 is prec:ZZcell do (
 	           when s.1 is x:ZZcell do (
                        when s.2 is y:ZZcell do toExpr(toRRi(x.v,y.v,toULong(prec.v)))
                                 is y:QQcell do toExpr(toRRi(x.v,y.v,toULong(prec.v)))
                                 is y:RRcell do toExpr(toRRi(x.v,y.v,toULong(prec.v)))
-                                else WrongArg(1,"a pair of integral, rational, or real numbers"))
+                                else WrongArg(1,"a pair of integral, rational, or real numbers, with a precision"))
                        is x:QQcell do (
                        when s.2 is y:ZZcell do toExpr(toRRi(x.v,y.v,toULong(prec.v)))
                                 is y:QQcell do toExpr(toRRi(x.v,y.v,toULong(prec.v)))
                                 is y:RRcell do toExpr(toRRi(x.v,y.v,toULong(prec.v)))
-                                else WrongArg(1,"a pair of integral, rational, or real numbers"))
+                                else WrongArg(1,"a pair of integral, rational, or real numbers, with a precision"))
                        is x:RRcell do (
                        when s.2 is y:ZZcell do toExpr(toRRi(x.v,y.v,toULong(prec.v)))
                                 is y:QQcell do toExpr(toRRi(x.v,y.v,toULong(prec.v)))
                                 is y:RRcell do toExpr(toRRi(x.v,y.v,toULong(prec.v)))
-                                else WrongArg(1,"a pair of integral, rational, or real numbers"))
+                                else WrongArg(1,"a pair of integral, rational, or real numbers, with a precision"))
 	       else WrongArg(1,"a pair of integral, rational, or real numbers, with a precision"))
 	    else WrongArg(1,"a pair or triple  of integral, rational, or real numbers"))
    	 else WrongArg("not implemented yet"));
@@ -1398,39 +1398,6 @@ subsetRRi(e:Expr):Expr := (
             WrongArg(1,"a pair of integral, rational, real numbers or intervals"))
          else WrongArg(1,"a pair of integral, rational, real numbers or intervals"));
 setupfun("subsetRRi",subsetRRi);
-                                                     
-sameRRi(e:Expr):Expr := (
-     when e is s:Sequence do (
-	    if length(s) > 3 then WrongNumArgs(1,3) else
-	    if length(s) == 2 then (
-               when s.0 is x:ZZcell do (
-               	    when s.1 is y:ZZcell do (toExpr(x.v===y.v))
-		    	             is y:QQcell do (toExpr(x.v===y.v))
-			                 is y:RRcell do (toExpr(x.v===y.v))
-                             is y:RRicell do (toExpr(x.v===y.v))
-                    else WrongArg(1,"a pair of integral, rational, real numbers or intervals"))
-               is x:QQcell do (
-               	    when s.1 is y:ZZcell do (toExpr(x.v===y.v))
-		    	             is y:QQcell do (toExpr(x.v===y.v))
-			                 is y:RRcell do (toExpr(x.v===y.v))
-                             is y:RRicell do (toExpr(x.v===y.v))
-                    else WrongArg(1,"a pair of integral, rational, real numbers or intervals"))
-               is x:RRcell do (
-               	    when s.1 is y:ZZcell do (toExpr(x.v===y.v))
-		    	             is y:QQcell do (toExpr(x.v===y.v))
-			                 is y:RRcell do (toExpr(x.v===y.v))
-                             is y:RRicell do (toExpr(x.v===y.v))
-                    else WrongArg(1,"a pair of integral, rational, real numbers or intervals"))
-                is x:RRicell do (
-                    when s.1 is y:ZZcell do (toExpr(x.v===y.v))
-                             is y:QQcell do (toExpr(x.v===y.v))
-                             is y:RRcell do (toExpr(x.v===y.v))
-                             is y:RRicell do (toExpr(contains(x.v,y.v) && contains(y.v,x.v)))
-                    else WrongArg(1,"a pair of integral, rational, real numbers or intervals"))
-                else WrongArg(1,"a pair of integral, rational, real numbers or intervals")) else
-            WrongArg(1,"a pair of integral, rational, real numbers or intervals"))
-         else WrongArg(1,"a pair of integral, rational, real numbers or intervals"));
-setupfun("sameInterval",sameRRi);
                                                      
 intersectRRi(e:Expr):Expr := (
     when e

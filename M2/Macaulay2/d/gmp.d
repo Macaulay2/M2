@@ -856,7 +856,7 @@ export toRR(s:string,prec:ulong):RR := (
 
 export toRRi(s:string,prec:ulong):RRi := (
     z := newRRimutable(prec);
-    Ccode( void,  "mpfi_set_str(",  z,",",  s, "->array,", "10", ")" );
+    Ccode( void,  "mpfi_set_str(",  z,", (char *)",  s, "->array,", "10", ")" );
     moveToRRiandclear(z));
 
 export toRR(x:QQ,prec:ulong):RR := (
