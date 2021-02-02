@@ -746,7 +746,7 @@ DiffOp == DiffOp := (D1, D2) -> return (D1 ? D2) === (symbol ==)
 addDsymbol = x -> (
     R := ring x;
     e := first exponents x;
-    product apply(numgens R, i -> (expression("d" | toString R_i))^(expression(e#i)))
+    product apply(numgens R, i -> (if instance(expression(R_i), Subscript) then new Subscript from {expression("d" | toString (expression (R_i))#0),(expression (R_i))#1} else expression("d" | toString (R_i)))^(expression(e#i)))
 )
 expression DiffOp := D -> 
     rsort(keys D, MonomialOrder => Lex) / 
