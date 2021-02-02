@@ -25,8 +25,6 @@ degmap0 := n -> ( d := toList ( n : 0 ); e -> d )
 map(RingFamily,Thing,Thing) := RingMap => opts -> (R,S,m) -> map(default R,S,m,opts)
 map(Thing,RingFamily,Thing) := RingMap => opts -> (R,S,m) -> map(R,default S,m,opts)
 
-workable = f -> try (f(); true) else false
-
 map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
      if not isFreeModule target m or not isFreeModule source m
      then error "expected a homomorphism between free modules";
@@ -49,7 +47,6 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 		    " into a degree of length ", toString degreeLength R);
 	       opts.DegreeMap
 	       )
-	  else if workable (() -> promote({},S,R)) then (d -> first promote({d},S,R))
 	  else if degreeLength R === degreeLength S then identity
 	  else if degreeLength S === 0 or degreeLength R === 0 then degmap0 degreeLength R
 	  else (
