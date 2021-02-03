@@ -43,3 +43,15 @@ assert(commentize("ABC","DEF")==" -- ABCDEF")
 assert(commentize("ABC\nDEF")==" -- ABC\n -- DEF")
 assert(commentize("ABC"^1)==" -- ABC"^1)
 assert(commentize("ABC\nDEF"^1)==" -- ABC\n -- DEF"^1)
+
+-- iteration
+assert Equation(toList "foo", {"f", "o", "o"})
+assert Equation(toSequence "foo", ("f", "o", "o"))
+assert Equation(for c in "foo" list c, {"f", "o", "o"})
+i = 0
+scan("aaaaaaaaaa", c -> (assert Equation(c, "a"); i = i + 1))
+assert Equation(i, 10)
+assert Equation(apply("foo", identity), ("f", "o", "o"))
+assert Equation(apply("foo", "bar", concatenate), ("fb", "oa", "or"))
+assert Equation(apply("foo", ("b", "a", "r"), concatenate), ("fb", "oa", "or"))
+assert Equation(apply(("f", "o", "o"), "bar", concatenate), ("fb", "oa", "or"))

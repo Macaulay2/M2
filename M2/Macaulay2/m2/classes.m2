@@ -42,12 +42,16 @@ uniform = (x) -> same apply(x,class)
 
 Command   \ VisibleList := VisibleList => (f,v) -> apply(v,i -> f i)
 Function  \ VisibleList := VisibleList => (f,v) -> apply(v,f)
+Command   \ String      := Sequence    => (f,s) -> apply(s,c -> f c)
+Function  \ String      := Sequence    => (f,s) -> apply(s,f)
 Command  \\ Thing       := 
 Function \\ Thing       := VisibleList => (f,v) -> f v
        List /  Function :=        List => (v,f) -> apply(v,f) -- just because of conflict with List / Thing!
        List /  Command  :=        List => (v,f) -> apply(v,i -> f i)
 VisibleList /  Command  := VisibleList => (v,f) -> apply(v,i -> f i)
 VisibleList /  Function := VisibleList => (v,f) -> apply(v,f)
+     String /  Command  := Sequence    => (s,f) -> apply(s,c -> f c)
+     String /  Function := Sequence    => (s,f) -> apply(s,f)
       Thing // Command  := 
       Thing // Function := VisibleList => (v,f) -> f v
 -----------------------------------------------------------------------------

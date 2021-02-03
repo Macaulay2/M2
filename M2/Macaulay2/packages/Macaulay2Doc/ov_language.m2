@@ -860,7 +860,7 @@ document { Key => "for",
 		 }}),
      SYNOPSIS (
 	  Usage => "for i in v when p list x do z",
-	  Inputs => { "v" => BasicList },
+	  Inputs => { "v" => ofClass{BasicList, String} },
 	  Consequences => {{"The variable ", TT "i", " is set to consecutive values of the list ", TT "v", ".  First ", TT "p", " is evaluated.  
 	       As long as the value of ", TT "p", " is true, evaluation of the loop continues.  Next ", TT "x", " is evaluated, and its value is saved.  Then
 	       ", TT "z", " is evaluated and its value is discarded.  Then the loop repeats with the next element of ", TT "v", ".  When the value of ", TT "p", " is false,
@@ -908,7 +908,9 @@ document { Key => "for",
      EXAMPLE lines "for i from 0 when i < 10 list (if i== 5 then break i; i^2)",
      PARA { "If ", TO "break", " is executed by ", TT "x", ", then the loop is stopped and the list accumulated so far is returned as the value." },
      EXAMPLE "for i from 0 when i < 10 list (if i== 5 then break; i^2)",
-     EXAMPLE "for i in 0..3 list i^2"
+     EXAMPLE "for i in 0..3 list i^2",
+     PARA { "You may also iterate over strings." },
+     EXAMPLE ///for c in "foo" do print c///
      }
 
 document {

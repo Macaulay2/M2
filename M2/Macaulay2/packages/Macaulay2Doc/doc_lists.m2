@@ -609,14 +609,15 @@ document {
      }
 
 document {
-     Key => {toSequence,(toSequence, BasicList)},
+     Key => {toSequence,(toSequence, BasicList),(toSequence, String)},
      Headline => "convert to sequence",
-     TT "toSequence x", " -- yields the elements of a list ", TT "x", " as a sequence.",
+     TT "toSequence x", " -- yields the elements of a list or string ", TT "x", " as a sequence.",
      PARA{},
      "If ", TT "x", " is a sequence, then ", TT "x", " is returned.",
      PARA{},
      EXAMPLE {
-	  "toSequence {1,2,3}"
+	  "toSequence {1,2,3}",
+	  ///toSequence "foo"///
 	  },
      }
 
