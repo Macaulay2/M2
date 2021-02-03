@@ -530,15 +530,17 @@ void F4GB::gauss_reduce(bool diagonalize)
         mVectorArithmetic->deallocateCoeffVector(r.coeffs);
       Mem->components.deallocate(r.comps);
       r.len = 0;
-      Range<int> monomRange;
-      mVectorArithmetic->denseRowToSparseRow(gauss_row, r.coeffs, monomRange, firstnonzero, last, mComponentSpace);
+      //Range<int> monomRange;
+      //mVectorArithmetic->denseRowToSparseRow(gauss_row, r.coeffs, monomRange, firstnonzero, last, mComponentSpace);
+      mVectorArithmetic->denseRowToSparseRow(gauss_row, r.coeffs, r.comps, firstnonzero, last, Mem->components);
       // TODO set r.comps from monomRange.  Question: who has allocated this space??
       // Maybe for now it is just the following line:
-      r.len = monomRange.size();
-      r.comps = Mem->components.allocate(r.len);
-      std::copy(monomRange.begin(), monomRange.end(), r.comps);
-      mComponentSpace.freeTopArray(monomRange.begin(), monomRange.end());
-      assert(r.len == mVectorArithmetic->size(r.coeffs));
+      r.len = mVectorArithmetic->size(r.coeffs);
+      //r.len = monomRange.size();
+      //r.comps = Mem->components.allocate(r.len);
+      //std::copy(monomRange.begin(), monomRange.end(), r.comps);
+      //mComponentSpace.freeTopArray(monomRange.begin(), monomRange.end());
+      //assert(r.len == mVectorArithmetic->size(r.coeffs));
       
       // the above line leaves gauss_row zero, and also handles the case when
       // r.len is 0 (TODO: check this!!)
@@ -600,16 +602,22 @@ void F4GB::tail_reduce()
           Mem->components.deallocate(r.comps);
           mVectorArithmetic->deallocateCoeffVector(r.coeffs);
           r.len = 0;
-          Range<int> monomRange;
+          //Range<int> monomRange;
+          //mVectorArithmetic->denseRowToSparseRow(gauss_row,
+          //                                       r.coeffs,
+          //                                       monomRange,
+          //                                       firstnonzero, last,
+          //                                       mComponentSpace);
           mVectorArithmetic->denseRowToSparseRow(gauss_row,
                                                  r.coeffs,
-                                                 monomRange,
+                                                 r.comps,
                                                  firstnonzero, last,
-                                                 mComponentSpace);
-          r.len = monomRange.size();
-          r.comps = Mem->components.allocate(r.len);
-          std::copy(monomRange.begin(), monomRange.end(), r.comps);
-          mComponentSpace.freeTopArray(monomRange.begin(), monomRange.end());
+                                                 Mem->components);
+          r.len = mVectorArithmetic->size(r.coeffs);
+          //r.len = monomRange.size();
+          //r.comps = Mem->components.allocate(r.len);
+          //std::copy(monomRange.begin(), monomRange.end(), r.comps);
+          //mComponentSpace.freeTopArray(monomRange.begin(), monomRange.end());
           assert(r.len == mVectorArithmetic->size(r.coeffs));
         }
       else

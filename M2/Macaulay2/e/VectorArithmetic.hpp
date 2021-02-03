@@ -270,7 +270,7 @@ public:
                            int*& comps,
                            int first,
                            int last,
-                           F4Vec* f4Vec) const
+                           F4Vec& f4Vec) const
   {
     auto& dvec = * denseCoeffVector(dense);
     
@@ -281,7 +281,7 @@ public:
     for (int i = first; i >= 0 and i <= last; i++)
 	if (not mRing->is_zero(dvec[i])) len++;
 
-    comps = f4Vec->allocate(len);
+    comps = f4Vec.allocate(len);
 
     sparse = allocateCoeffVector(len);
     auto& svec = * coeffVector(sparse);
@@ -522,6 +522,15 @@ public:
                            int last,
                            MemoryBlock& monomialSpace) const {
     std::visit([&](auto& arg) { arg->denseRowToSparseRow(dense,coeffs,comps,first,last,monomialSpace); }, mConcreteVector);  
+  }
+
+  void denseRowToSparseRow(DenseCoeffVectorType& dense,
+                           CoeffVectorType& coeffs, // sets coeffs
+                           int*& comps, // sets comps
+                           int first,
+                           int last,
+                           F4Vec& f4Vec) const {
+    std::visit([&](auto& arg) { arg->denseRowToSparseRow(dense,coeffs,comps,first,last,f4Vec); }, mConcreteVector);  
   }
 
   template<typename LockType>
