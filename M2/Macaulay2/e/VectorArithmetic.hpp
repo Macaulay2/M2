@@ -9,6 +9,8 @@
 #include <variant>
 #include <type_traits>
 
+#include "f4/f4-mem.hpp"         // for F4Mem
+
 //#include <tbb/tbb.h>
 #include <tbb/null_mutex.h>
 
@@ -249,6 +251,38 @@ public:
 	if (not mRing->is_zero(dvec[i])) len++;
 
     comps = monomialSpace.safeAllocateArray<int,LockType>(len,lock);
+    sparse = allocateCoeffVector(len);
+    auto& svec = * coeffVector(sparse);
+
+    int next = 0;
+    for (int i = first; i >= 0 and i <= last; i++)
+      if (not mRing->is_zero(dvec[i]))
+	{
+	  mRing->init_set(svec[next],dvec[i]);
+	  comps[next] = i;
+	  ++next;
+	  mRing->set_zero(dvec[i]);
+	}
+  }
+
+  void denseRowToSparseRow(DenseCoeffVectorType& dense,
+                           CoeffVectorType& sparse, // output value: sets this value
+                           int*& comps,
+                           int first,
+                           int last,
+                           F4Vec* f4Vec) const
+  {
+    auto& dvec = * denseCoeffVector(dense);
+    
+    int len = 0;
+    
+    // first can be -1 if the row is zero.  in this case, we should
+    // not be accessing dense[i] for i negative.
+    for (int i = first; i >= 0 and i <= last; i++)
+	if (not mRing->is_zero(dvec[i])) len++;
+
+    comps = f4Vec->allocate(len);
+
     sparse = allocateCoeffVector(len);
     auto& svec = * coeffVector(sparse);
 
