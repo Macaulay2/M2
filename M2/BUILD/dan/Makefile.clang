@@ -1,0 +1,14 @@
+# ubuntu: install with sudo apt install clang
+
+CC  = clang
+CXX = clang++
+DIRSUFF = -clang
+DEBUG = yes
+BUILDLIBS = gc
+
+include Makefile
+
+# Local Variables:
+# mode: Makefile
+# compile-command: "time make -f Makefile.clang"
+# End:
