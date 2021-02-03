@@ -455,7 +455,7 @@ setAttribute(viewHelp#0, ReverseDictionary, symbol viewHelp)
 
 makeInfo := tag -> (
     infoFile := temporaryDirectory() | toFilename format tag | ".info";
-    if not fileExists infoFile then infoFile << "\037" << endl <<
+    infoFile << "\037" << endl <<
 	"Node: Top, Up: (Macaulay2Doc)Top" << endl << endl <<
 	info help tag << endl << close;
     infoFile
