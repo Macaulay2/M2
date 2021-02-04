@@ -22,30 +22,8 @@ newPackage(
     Reload => false
 )
 
-needsPackage "UpdatePackage";
-debug UpdatePackage;
-
-askForUpdates = (s1,s2) -> (
-    if SparseResultants.Options.Version >= s1 and Cremona.Options.Version >= s2 then return;
-    if SparseResultants.Options.Version < s1 then (
-        v1 := updateSinglePackage "SparseResultants";
-        if v1 === null then error("this package requires SparseResultants version "|s1|" or newer; you can download manually the latest version from https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages");
-    );
-    if Cremona.Options.Version < s2 then (
-        v2 := updateSinglePackage("Cremona",auxFiles "Cremona");
-        if v2 === null then error("this package requires Cremona version "|s2|" or newer; you can download manually the latest version from https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages");
-    );
-    <<endl<<endl<<"--"|concatenate(67:"*")|"--"<<endl<<"--** You can now install the package MultiprojectiveVarieties with **--"<<endl<<"     installPackage \"MultiprojectiveVarieties\""<<endl<<"--"|concatenate(67:"*")|"--"<<endl<<endl; 
-    e := "";
-    while not(e == "y" or e == "yes" or e == "Y" or e == "Yes" or e == "n" or e == "no" or e == "N" or e == "No") do (
-        e = read "Do you want to check for a newer version of MultiprojectiveVarieties (y/n) ";
-    );
-    if e == "y" or e == "yes" or e == "Y" or e == "Yes" then updateSinglePackage "MultiprojectiveVarieties";
-    <<endl<<endl;
-    error toString("Don't worry, this is not an error"|newline|"--"|(concatenate(40:"*")|"--"|newline|"--** A restart of Macaulay2 is required **--"|newline|"--"|(concatenate(40:"*")|"--")));
-);
-
-askForUpdates("1.1", "5.1");
+if Cremona.Options.Version < "5.1" then error "your version of the Cremona package is outdated (required version 5.1 or newer); you can download the latest version from https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages";
+if SparseResultants.Options.Version < "1.1" then error "your version of the SparseResultants package is outdated (required version 1.1 or newer); you can download the latest version from https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages";
 
 export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct", 
        "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan", "tangentSpace",
