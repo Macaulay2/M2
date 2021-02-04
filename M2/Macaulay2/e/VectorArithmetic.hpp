@@ -396,6 +396,7 @@ class VectorArithmetic
                                 ConcreteVectorArithmetic<M2::ARingGFM2>*,
                                 ConcreteVectorArithmetic<M2::ARingGFGivaro>*,
                                 ConcreteVectorArithmetic<CoefficientRingR>*,
+                                ConcreteVectorArithmetic<CoefficientRingZZp>*,
                                 ConcreteVectorArithmetic<M2::DummyRing>*>;
 
 private:
@@ -442,8 +443,13 @@ public:
           (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingGFGivaro>* >(R)->ring());
         break;
       case M2::ring_old:
-        std::cout << "Using GC ring in VectorArithmetic." << std::endl;
-        mConcreteVector = new ConcreteVectorArithmetic(R, R->getCoefficientRingR());
+        if (R->cast_to_Z_mod() != nullptr)
+          mConcreteVector = new ConcreteVectorArithmetic(R, R->cast_to_Z_mod()->get_CoeffRing());
+        else
+          {
+            std::cout << "Using GC ring in VectorArithmetic." << std::endl;
+            mConcreteVector = new ConcreteVectorArithmetic(R, R->getCoefficientRingR());
+          }
         break;
       default:
         // dummy ring type for default
