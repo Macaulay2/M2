@@ -31,7 +31,7 @@ export { "isSupportedInZeroLocus" }
 exportFrom_Core { "saturate", "annihilator" }
 
 importFrom_Core { "nonnull", "printerr", "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "eliminationInfo" }
-importFrom_Core { "isComputationDone", "cacheComputation", "cacheHit" }
+importFrom_Core { "isComputationDone", "cacheComputation", "fetchComputation", "cacheHit", "Context", "Computation" }
 
 -- TODO: where should these be placed?
 trim MonomialIdeal := MonomialIdeal => opts -> (cacheValue (symbol trim => opts)) ((I) -> monomialIdeal trim(module I, opts))
@@ -113,28 +113,19 @@ grevLexRing(ZZ, Ring) := (i, R) -> (
 -- 6. PairLimit: stop after 100 S-pairs
 
 -- keys: the second object in the quotient
-QuotientContext = new SelfInitializingType of BasicList
+QuotientContext = new SelfInitializingType of Context
 QuotientContext.synonym = "quotient context"
 
 -- keys: TODO: BasisElementLimit, DegreeLimit, PairLimit
-QuotientComputation = new Type of MutableHashTable
+QuotientComputation = new Type of Computation
 QuotientComputation.synonym = "quotient computation"
 
-new QuotientComputation from Sequence := (C, S) -> (
-    (A, B) := S;
-    cacheKey := QuotientContext{ mingens B };
-    -- TODO: try to find other compatible cacheKeys that can be used in the computation
-    try A.cache#cacheKey else A.cache#cacheKey = new QuotientComputation from { Result => null })
+-- TODO: try to find a compatible context that can be used in the computation
+new QuotientContext from Sequence := (C, S) -> ( (A, B) := S; QuotientContext{ mingens B } )
+-- TODO: set BasisElementLimit, DegreeLimit, PairLimit?
+new QuotientComputation from Sequence := (C, S) -> new QuotientComputation from { Result => null }
 
-isComputationDone QuotientComputation := Boolean => options quotient >> opts -> container -> (
-    -- this function determines whether we can use the cached result, or further computation is necessary
-    try container.Result =!= null -* TODO: BasisElementLimit, DegreeLimit, PairLimit *- else false)
-
-cacheComputation QuotientComputation := CacheFunction => options quotient >> opts -> container -> new CacheFunction from (
-    -- this function takes advantage of FunctionClosures by modifying the container
-    computation -> (
-	if isComputationDone(opts, container) then ( cacheHit container; container.Result ) else
-	if (result := computation(opts, container)) =!= null then ( container.Result = result )))
+-- TODO: implement a specialization for (isComputationDone, QuotientComputation)
 
 --quotient = method(...) -- defined in m2/quotient.m2
 quotient(Ideal,  Ideal)       := Ideal  => opts -> (I, J) -> quotientHelper(I, J, (quotient, Ideal, Ideal), opts)
@@ -195,7 +186,7 @@ quotientHelper = (A, B, key, opts) -> (
 
     -- this is the logic for caching partial quotient computations. A.cache contains an option:
     --   QuotientContext{ mingens B } => QuotientComputation{ Result }
-    container := new QuotientComputation from (A, B);
+    container := fetchComputation(QuotientComputation, A, new QuotientContext from (A, B));
 
     -- the actual computation of quotient occurs here
     C := (cacheComputation(opts, container)) computation;
@@ -351,11 +342,9 @@ SaturateContext.synonym = "saturate context"
 SaturateComputation = new Type of QuotientComputation
 SaturateComputation.synonym = "saturate computation"
 
-new SaturateComputation from Sequence := (C, S) -> (
-    (A, B) := S;
-    cacheKey := SaturateContext{ mingens B };
-    -- TODO: try to find other compatible cacheKeys, perhaps of type QuotientContext, that can be used in the computation
-    try A.cache#cacheKey else A.cache#cacheKey = new SaturateComputation from { Result => null })
+-- TODO: try to find other compatible cacheKeys, perhaps of type QuotientContext, that can be used in the computation
+new SaturateContext from Sequence := (C, S) -> ( (A, B) := S; SaturateContext{ mingens B } )
+new SaturateComputation from Sequence := (C, S) -> new SaturateComputation from { Result => null }
 
 -- TODO: isComputationDone and cacheComputation now can inherit from QuotientComputation,
 -- but perhaps there is something smarter that can be done in this specific case
@@ -416,7 +405,7 @@ saturateHelper = (A, B, key, opts) -> (
 
     -- this is the logic for caching partial saturation computations. A.cache contains an option:
     --   SaturateContext{ mingens B } => SaturateComputation{ Result }
-    container := new SaturateComputation from (A, B');
+    container := fetchComputation(SaturateComputation, A, new SaturateContext from (A, B'));
 
     -- the actual computation of saturation occurs here
     C := (cacheComputation(opts, container)) computation;
@@ -617,8 +606,8 @@ isSupportedInZeroLocus(Ideal, Module) := (B, M) -> (
     -- annihilator is known, it's faster to check whether saturate(annihilator M, B) == ideal 1
     if M.cache.?annihilator then (
 	N := annihilator M;
-	container := new SaturateComputation from (N, B);
-	try isComputationDone container then ( cacheHit container; return saturate(N, B) == ideal 1_S ) else true);
+	container := fetchComputation(SaturateComputation, N, new SaturateContext from (N, B));
+	if isComputationDone container then ( cacheHit container; return saturate(N, B) == ideal 1_S ) else true);
     -- 2. check that a high enough power of elements of B annihilates M
     n := numgens S;
     all(first entries mingens B, g -> (
