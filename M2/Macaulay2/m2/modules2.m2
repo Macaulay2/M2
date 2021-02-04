@@ -353,10 +353,10 @@ Module == ZZ := (M,n) -> (
 	  )
      )
 
-dim Module := (cacheValue symbol dim) (M -> (
+dim Module := M -> (
      c := codim M;
      if c === infinity then -1 else dim ring M - c
-     ))
+     )
 
 degree Ring := (cacheValue symbol degree) (R -> degree R^1)
 degree Module := (
