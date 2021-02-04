@@ -145,7 +145,7 @@ NSC2phc (List,ZZ,ZZ) := (conds,k,n) -> (
 --   verifyLength  --
 --
 -- makes sure a partition l of k parts
--- has length k and it add zeroes at the
+-- has length k and add zeroes at the
 -- end if not
 --
 verifyLength = method(TypicalValue => List)
@@ -530,7 +530,8 @@ notAboveLambda = method()
 notAboveLambda(List,ZZ,ZZ) := (lambda,k,n) ->(
   -- We Assume that lambda is not the zero partition {0,0,...,0}
   -- k-#lambda is how many zeroes we have
-  L':=unique(lambda);
+  -- 0 is not a corner, so it needs to be deleted from L'
+  L':=unique(delete(0,lambda));
   pos'corners:= apply(L', l->position(lambda, i->i==l, Reverse=>true));
   maxElements:=apply(pos'corners, i->(  --the maximal elements of the ordered set notAbove
 	  toList(i:(n-k))|toList(k-i:lambda_i-1)
