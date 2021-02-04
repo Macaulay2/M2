@@ -51,8 +51,10 @@ captureTestResult := (desc, teststring, pkg, usermode) -> (
     runString(teststring, pkg, usermode))
 
 loadTestDir := pkg -> (
+    -- TODO: prioritize reading the tests from topSrcdir | "Macaulay2/tests/normal" instead
     testDir := pkg#"package prefix" |
         replace("PKG", pkg#"pkgname", currentLayout#"packagetests");
+    pkg#"test directory loaded" =
     if fileExists testDir then (
         tmp := currentPackage;
         currentPackage = pkg;
@@ -60,16 +62,15 @@ loadTestDir := pkg -> (
             match("\\.m2$", file)), test -> testDir | test),
             FileName => true);
         currentPackage = tmp;
-        pkg#"test directory loaded" = true;
-    ) else pkg#"test directory loaded" = false;
-)
+        true) else false)
 
 check = method(Options => {UserMode => null, Verbose => false})
-check String  := opts -> pkg -> check(-1, pkg, opts)
-check Package := opts -> pkg -> check(-1, pkg, opts)
-
-check(ZZ, String)  := opts -> (n, pkg) -> check(n, needsPackage (pkg, LoadDocumentation => true), opts)
-check(ZZ, Package) := opts -> (n, pkg) -> (
+check String  :=
+check Package := opts -> pkg -> check({}, pkg, opts)
+check(ZZ, String)  :=
+check(ZZ, Package) := opts -> (n, pkg) -> check({n}, pkg, opts)
+check(List, String)  := opts -> (L, pkg) -> check(L, needsPackage (pkg, LoadDocumentation => true), opts)
+check(List, Package) := opts -> (L, pkg) -> (
     if not pkg.Options.OptionalComponentsPresent then (
 	printerr("warning: skipping tests; ", toString pkg, " requires optional components"); return);
     usermode := if opts.UserMode === null then not noinitfile else opts.UserMode;
@@ -77,7 +78,7 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
     use pkg;
     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
     if not pkg#?"test directory loaded" then loadTestDir pkg;
-    tests := if n == -1 then toList(0 .. pkg#"test number" - 1) else {n};
+    tests := if L == {} then toList(0 .. pkg#"test number" - 1) else L;
     if #tests == 0 then printerr("warning: ", toString pkg,  " has no tests");
     --
     errorList := {};
@@ -107,5 +108,4 @@ checkAllPackages = () -> (
     argumentMode = tmp;
     if #fails > 0 then printerr("package(s) with failing tests: ",
 	demark(", ", fails));
-    return #fails;
-)
+    #fails)
