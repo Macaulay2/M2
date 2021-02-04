@@ -221,9 +221,9 @@ rationalPoints(Ideal) := opts -> I -> (
     if verbose then listNonSplitPols = {};
     --
     R := ring I;
-    if not isPolynomialRing R then error "expect I to be an ideal of a polynomial ring"; -- sanity check
+    if not isPolynomialRing R then error "expect I to be an ideal of a polynomial ring";
     k := coefficientRing R;
-    if not isField k then error "the coefficient ring is not a field"; -- sanity check
+    if not isField k then error "the coefficient ring is not a field";
     if char k > 0 then els = listFieldElements k;
     x := gens R;
     n := #x;
@@ -232,8 +232,8 @@ rationalPoints(Ideal) := opts -> I -> (
     --
     if char k == 0 then ( -- the number field case
         if (not projective and dim I > 0) or (projective and dim I > 1)
-        then error "over number fields, positive dimensional ideals are not implemented"
-        else if projective then result = findProjPoints I
+        then error "over number fields, positive dimensional ideals are not implemented";
+        if projective then result = findProjPoints I
         else result = findPoints I;
     ) else ( -- the finite field case
         -- we first get rid of the unused variables; they will be added at the end
@@ -247,7 +247,7 @@ rationalPoints(Ideal) := opts -> I -> (
         );
         -- enumeration of points and post-processing
         if projective then ( -- projective case
-            if not isHomogeneous I then error "I is not a homogeneous ideal"; -- sanity check
+            if not isHomogeneous I then error "I is not a homogeneous ideal";
             if isTrivial I then return result; -- trivial case
             result = findProjPoints I;
             if unused > 0 then ( -- reconstruction
@@ -278,31 +278,26 @@ rationalPoints(Ideal) := opts -> I -> (
 -- The interface to specify an extension field
 --
 rationalPoints(Ring, Ideal) := opts -> (k', I) -> (
-    if not isField k' then error "the coefficient ring is not a field" -- sanity check
-    else (
-        R := ring I;
-        if not isPolynomialRing R then error "expect I to be an ideal of a polynomial ring"; -- sanity check
-        k := coefficientRing R;
-        if char k != char k' then error "the coefficient field has different characteristic than the ideal";
-        x := gens R;
-        R' := k'(monoid[x]);
-        if isFinitePrimeField k or k === QQ then ( -- case where the base field is prime
-            I = (map(R',R,gens R')) I;
-        ) else ( -- otherwise try to lift a primitive element
-            y := gens baseRing k;
-            S := k'(monoid[y]);
-            -- p is the minimal polynomial
-            p := (map(S, ambient baseRing k, {S_0})) (gens ideal baseRing k)_(0,0);
-            coeffs := apply((degree p)_0+1, i->coefficient(S_0^i, p));
-            verbose = false;
-            lifts := zeros coeffs;
-            if (#lifts == 0) then error "cannot make the field extension";
-            q := lifts_0; -- q is a lift
-            R0 := (baseRing k)[x];
-            I = (map(R',R0,gens R'|{q})) sub(I, R0);
-        );
-        return rationalPoints(I, Amount=>opts.Amount, Projective=>opts.Projective, Verbose=>opts.Verbose);
+    if not isField k' then error "the coefficient ring is not a field";
+    R := ring I;
+    if not isPolynomialRing R then error "expect I to be an ideal of a polynomial ring";
+    k := coefficientRing R;
+    if char k != char k' then error "the coefficient field has different characteristic than the ideal";
+    x := gens R;
+    R' := k'(monoid[x]);
+    if k === QQ or isFinitePrimeField k or (instance(k, GaloisField) and k.degree == 1) then ( -- case where the base field is prime
+        I = (map(R',R,gens R')) I;
+    ) else ( -- otherwise try to lift a primitive element
+        p := (gens ideal baseRing k)_(0,0); -- p is the minimal polynomial
+        primeField := coefficientRing ring p;
+        coeffs := apply((degree p)_0+1, i->(map(k',primeField,{})) coefficient((ring p)_0^i, p));
+        verbose = false;
+        lifts := zeros coeffs; -- a list of possible lifts
+        if (#lifts == 0) then error "cannot make the field extension";
+        R0 := (baseRing k)(monoid[x]);
+        I = (map(R',R0,gens R'|{lifts_0})) sub(I, R0);
     );
+    return rationalPoints(I, Amount=>opts.Amount, Projective=>opts.Projective, Verbose=>opts.Verbose);
 );
 -------------------------------------------------------------------------------
 rationalPoints(AffineVariety) := opts -> X -> (
