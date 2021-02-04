@@ -45,6 +45,33 @@ ring Resolution      :=
 ring ChainComplex    := C -> C.ring
 ring ChainComplexMap := C -> ring source C
 
+chainComplex = method(TypicalValue => ChainComplex, Options => true, Dispatch => Thing)
+chainComplex Ring     := {} >> opts -> R -> ( C := new ChainComplex; C.ring = R; C )
+chainComplex Matrix   := {} >> opts -> f -> chainComplex {f}
+chainComplex Sequence :=
+chainComplex List     := {} >> opts -> maps -> (
+    if #maps === 0 then error "chainComplex: expected at least one differential map";
+    C := new ChainComplex;
+    R := C.ring = ring target maps#0;
+    scan(#maps, i -> (
+	    f := maps#i;
+	    if R =!= ring f then error "chainComplex: expected differential maps over the same ring";
+	    if i > 0 and C#i != target f then (
+		deg := degrees C#i - degrees target f;
+		if same deg then f = f ** R^(- deg#0)
+		else error "chainComplex: expected composable differential maps");
+	    C.dd#(i+1) = f;
+	    if i === 0 then C#i = target f;
+	    C#(i+1) = source f));
+    C)
+chainComplex GradedModule := {} >> opts -> M -> (
+    C := new ChainComplex from M;
+    C.cache = new CacheTable;
+    C.dd = new ChainComplexMap;
+    C.dd.degree = -1;
+    C.dd.source =
+    C.dd.target = C)
+
 -----------------------------------------------------------------------------
 -- ChainComplex, ChainComplexMap, and Resolution methods
 -----------------------------------------------------------------------------
@@ -540,36 +567,6 @@ homology(ChainComplexMap) := GradedModuleMap => opts -> (f) -> (
      scan(spots f, i -> g#i = homology(i,f));
      g)
 
-chainComplex = method(Options => true, Dispatch => Thing, TypicalValue => ChainComplex)
-
-chainComplex Ring := {} >> opts -> R -> (
-     C := new ChainComplex;
-     C.ring = R;
-     C)
-
-chainComplex Matrix := {} >> opts -> f -> chainComplex {f}
-
-chainComplex Sequence := 
-chainComplex List := {} >> opts -> maps -> (
-     if #maps === 0 then error "expected at least one differential map";
-     C := new ChainComplex;
-     R := C.ring = ring target maps#0;
-     scan(#maps, i -> (
-	       f := maps#i;
-	       if R =!= ring f
-	       then error "expected differential maps over the same ring";
-	       if i > 0 and C#i != target f then (
-		    diff := degrees C#i - degrees target f;
-		    if same diff
-		    then f = f ** R^(- diff#0)
-		    else error "expected composable differential maps";
-		    );
-	       C.dd#(i+1) = f;
-	       if i === 0 then C#i = target f;
-	       C#(i+1) = source f;
-	       ));
-     C)
-
 formation ChainComplex := M -> if M.cache.?formation then M.cache.formation
 
 directSum ChainComplex := C -> directSum(1 : C)
@@ -771,16 +768,13 @@ rawBetti = (computation, type) -> (
      w = select(w, option -> option#1 != 0);
      new BettiTally from w)
 
-ring Resolution := X -> X.ring
-heft Resolution := heft GradedModule := C -> heft ring C
-
 undocumented' (betti,Resolution)
 betti Resolution := opts -> X -> (
      -- this version works only for rings of degree length 1
      -- currently if opts.Minimize is true, then an error is given
      -- unless the FastNonminimal=>true option was given for the free resolution.
      b := rawBetti(X.RawComputation, if opts.Minimize then 4 else 0); -- the raw version takes no weight option
-     heftfn := heftfun(opts.Weights,heft X);
+     heftfn := heftfun(opts.Weights,heft ring X);
      b = applyKeys(b, (i,d,h) -> (i,d,heftfn d));
      b)
 
@@ -813,11 +807,11 @@ minimalBetti Module := {
    )
 
 betti GradedModule := opts -> C -> (
-     if C.?Resolution and degreeLength ring C === 1 and heft C === {1} then betti(C.Resolution,opts)
+     if C.?Resolution and degreeLength ring C === 1 and heft ring C === {1} then betti(C.Resolution,opts)
      else (
           if opts.Minimize then error "Minimize=>true is currently only supported for res(...,FastNonminimal=>true)";
 	  complete C;
-     	  heftfn := heftfun(opts.Weights,heft C);
+	  heftfn := heftfun(opts.Weights, heft ring C);
 	  new BettiTally from flatten apply(
 	       select(pairs C, (i,F) -> class i === ZZ), 
 	       (i,F) -> (
@@ -945,14 +939,6 @@ nonMinRes = m -> (
 syzygyScheme = (C,i,v) -> (
            g := extend(nonMinRes transpose (C.dd_i * v), dual C[-i], transpose v);
            minimalPresentation cokernel (C.dd_1  * transpose g_(i-1)))
------------------------------------------------------------------------------
-chainComplex GradedModule := ChainComplex => {} >> opts -> (M) -> (
-     C := new ChainComplex from M;
-     b := C.dd = new ChainComplexMap;
-     b.cache = new CacheTable;
-     b.degree = -1;
-     b.source = b.target = C;
-     C)
 -----------------------------------------------------------------------------
 
 tens := (R,f,g) -> map(R, rawTensor( f.RawMatrix, g.RawMatrix ))

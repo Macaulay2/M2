@@ -84,7 +84,6 @@ Macaulay2/editors/Makefile
 Macaulay2/html-check-links/Makefile
 Macaulay2/packages/Style/Makefile
 Macaulay2/m2/Makefile
-Macaulay2/m2/version.m2
 Macaulay2/man/Makefile
 Macaulay2/man/M2.1
 Macaulay2/packages/Makefile
