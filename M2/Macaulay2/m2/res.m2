@@ -1,6 +1,7 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 -- TODO:
 -- 1. set DegreeLimit to something other than null on initialization
+-- 2. replace Resolution with ResolutionComputation
 
 needs "chaincomplexes.m2"
 needs "computations.m2"
@@ -41,6 +42,10 @@ resolutionDegreeLimit := (R, degreeLimit) -> (
 -- helpers for resolution
 -----------------------------------------------------------------------------
 
+-- TODO: remove from Elimination and Saturation
+-- given a ring R, determines if R is a poly ring over ZZ or a field
+isFlatPolynomialRing = R -> isPolynomialRing R and (isField(kk := coefficientRing R) or kk === ZZ)
+
 -- TODO: support QQ and large finite fields
 fastnonminimalFieldCheck := (R, strategy) -> strategy < 4 or ( 0 < char R and char R < (1 << 15) ) or not instance(strategy, ZZ)
 
@@ -71,6 +76,7 @@ resolutionByHomogenization := (opts, M) -> (
     or not degreeLength R === 1
     then return null;
     resLog("using resolution by homogenization");
+    lengthlimit := resolutionLengthLimit(R, opts.LengthLimit);
      f    := presentation M;
      p    := presentation R;
      A    := ring p;
@@ -90,22 +96,27 @@ resolutionByHomogenization := (opts, M) -> (
      fH   := homogenize(toRH generators gb f',RH_n); 	  forceGB fH;
      MH   := cokernel fH;
      assert isHomogeneous MH;
-     C    := resolution(MH, opts, LengthLimit => resolutionLengthLimit(R, opts.LengthLimit));
+    C    := resolution(MH, opts, LengthLimit => lengthlimit);
      toR  := map(R, RH, vars R | 1);
      toR C)
 
--- TODO: check this
--- TODO: add assumptions
+-- TODO: confirm assumptions
 resolutionBySchreyerFrame := (opts, M) -> (
+    R := ring M;
+    -- the main requirement is rawSchreyerSource
+    -- FIXME: tower of polynomial rings is okay,
+    -- but exclude polynomial rings over a quotient ring
+    if not isPolynomialRing R
+    or not isCommutative R
+    then return null;
     resLog("using resolution by Schreyer orders");
-    lengthlimit := resolutionLengthLimit(R := ring M, opts.LengthLimit);
+    lengthlimit := resolutionLengthLimit(R, opts.LengthLimit);
+    -- FIXME: this strategy can't continue from another strategy
     C := if M.cache.?resolution then M.cache.resolution else (
-	-- TODO: is `generators gb` necessary? if not, remove it from VirtualResolutions too
-	-- used to be just presentation M
 	m := schreyerOrder generators gb presentation M;
 	M.cache.resolution = chainComplex m);
     i := length C;
-    m = C.dd#i;
+    m = C.dd_i;
     while i < lengthlimit and m != 0 do (
 	m = map(R, rawKernelOfGB raw m);
 	shield ( i = C.length = i + 1; C#i = source m; C.dd#i = m ));
@@ -117,7 +128,7 @@ resolutionBySyzygies := (opts, M) -> (
     C := if M.cache.?resolution then M.cache.resolution
     else M.cache.resolution = chainComplex presentation M;
     i := length C;
-    m := C.dd#i;
+    m := C.dd_i;
     while i < lengthlimit and m != 0 do (
 	m = syz m; -- TODO: pass options like DegreeLimit
 	shield ( i = C.length = i + 1; C#i = source m; C.dd#i = m ));
@@ -324,8 +335,6 @@ algorithms#(resolution, Module) = new MutableHashTable from {
 
     "Homogenization" => resolutionByHomogenization,
 
-    -- TODO: make sure this applies everywhere that the
-    -- Syzygies strategy applies, then remove that one
     "Schreyer" => resolutionBySchreyerFrame,
 
     "Syzygies" => resolutionBySyzygies,

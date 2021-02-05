@@ -147,19 +147,36 @@ r5 = rawMutableIdentity(R,5,true) -- mutable r5
 
   ----------------------
   -- rawInsertColumns --
-  ----------------------
-
-  ----------------------
   -- rawInsertRows -----
-  ----------------------
-
-  ----------------------
   -- rawDeleteColumns --
-  ----------------------
-
-  ----------------------
   -- rawDeleteRows -----
   ----------------------
+  M = mutableMatrix(map(ZZ^5, ZZ^7, (i,j) -> 3*i^3 + j^2 +3),Dense=>false)
+  rawInsertColumns(raw M,3,4)
+  M
+  rawDeleteColumns(raw M,8,9)
+  M
+
+  rawInsertRows(raw M,5,6)
+  M
+  rawDeleteRows(raw M,1,1)
+  M
+
+  M = mutableMatrix(map(ZZ^5, ZZ^7, (i,j) -> 3*i^3 + j^2 +3),Dense=>true)
+  rawInsertColumns(raw M,3,4)
+  M
+  rawDeleteColumns(raw M,8,9)
+  M
+
+  rawInsertRows(raw M,5,6)
+  M
+  rawDeleteRows(raw M,1,1)
+  M
+
+  rawDeleteColumns(raw M,3,6)
+  M
+  rawDeleteRows(raw M,4,9)
+  M
 
   -------------------------------
   -- rawMatrixColumnOperation2 --
