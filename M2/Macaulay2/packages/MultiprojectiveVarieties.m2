@@ -12,7 +12,7 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "1.1", 
-    Date => "February 2, 2021",
+    Date => "February 5, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -145,9 +145,11 @@ MultiprojectiveVariety#{Standard,AfterPrint} = MultiprojectiveVariety#{Standard,
 
 ideal MultiprojectiveVariety := X -> X#"idealVariety";
 
+quotientRingMem = memoize(I -> (ring I)/I); 
+
 ring MultiprojectiveVariety := X -> (
     if X#"ringVariety" =!= null then return X#"ringVariety";
-    X#"ringVariety" = (ring ideal X)/(ideal X)
+    X#"ringVariety" = quotientRingMem(ideal X)
 );
 
 coefficientRing MultiprojectiveVariety := X -> coefficientRing ring ideal X;
@@ -432,8 +434,15 @@ builtInProjectiveVariety = memoize(X -> Proj ring X);
 variety EmbeddedProjectiveVariety := X -> builtInProjectiveVariety X; 
 
 linearSpan = method();
-linearSpanMem = memoize(X -> (Y := projectiveVariety ideal image basis(1,ideal X); if Y == ambient X then return ambient X; if Y == X then return X; Y));
-linearSpan EmbeddedProjectiveVariety := X -> linearSpanMem X;
+linearSpan EmbeddedProjectiveVariety := X -> (
+    if not X#?"linearSpan" then (
+        Y := projectiveVariety ideal image basis(1,ideal X); 
+        if Y == ambient X then Y = ambient X; 
+        if Y == X then Y = X;
+        X#"linearSpan" = Y;
+    );
+    X#"linearSpan"
+);
 
 EmbeddedProjectiveVariety ! := X -> (
     if coefficientRing X === QQ then (
@@ -1114,6 +1123,24 @@ RationalMap | RationalMap := (Phi,Psi) -> (multirationalMap {Phi})|(multirationa
 MultihomogeneousRationalMap | RationalMap := (Phi,Psi) -> (multirationalMap {Phi})|(multirationalMap {Psi});
 RationalMap | MultihomogeneousRationalMap := (Phi,Psi) -> (multirationalMap {Phi})|(multirationalMap {Psi});
 MultihomogeneousRationalMap | MultihomogeneousRationalMap := (Phi,Psi) -> (multirationalMap {Phi})|(multirationalMap {Psi});
+
+MultirationalMap || MultirationalMap := (Phi,Psi) -> (
+    X := source Phi; Y := source Psi;
+    XxY := X ** Y;
+    r := # X#"dimAmbientSpaces";
+    s := # Y#"dimAmbientSpaces";
+    pX := multirationalMap(take(projections XxY,r),X);
+    pY := multirationalMap(take(projections XxY,-s),Y);
+    Eta := (pX * Phi) | (pY * Psi);
+    if ring source Eta =!= ring XxY then error "internal error encountered";
+    Eta#"source" = XxY;
+    return Eta;
+);
+
+RationalMap || MultirationalMap := (Phi,Psi) -> (multirationalMap {Phi})||Psi;
+MultirationalMap || RationalMap := (Phi,Psi) -> Phi||(multirationalMap {Psi});
+MultihomogeneousRationalMap || MultirationalMap := (Phi,Psi) -> (multirationalMap {Phi})||Psi;
+MultirationalMap || MultihomogeneousRationalMap := (Phi,Psi) -> Phi||(multirationalMap {Psi});
 
 describe MultirationalMap := Phi -> (
     n := # factor Phi;
@@ -2062,9 +2089,9 @@ document {
 Key => {(symbol |,MultirationalMap,MultirationalMap)}, 
 Headline => "product of multi-rational maps", 
 Usage => "Phi | Psi", 
-Inputs => {MultirationalMap => "Phi" => { TEX///$X \dashrightarrow Y$///},
-MultirationalMap => "Psi" => { TEX///$X \dashrightarrow Z$///}}, 
-Outputs => {MultirationalMap => {TEX///$X \dashrightarrow Y\times Z$///,", defined by the ",TO2{(symbol |,List,List),"join"}," of ",TO2{(factor,MultirationalMap),"factor"},TT" Phi"," with ",TO2{(factor,MultirationalMap),"factor"},TT" Psi"}}, 
+Inputs => {MultirationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
+MultirationalMap => "Psi" => { TEX///$\Psi:X \dashrightarrow Z$///}}, 
+Outputs => {MultirationalMap => {"the rational map ",TEX///$X \dashrightarrow Y\times Z$///," defined by ",TEX///$p\mapsto (\Phi(p),\Psi(p))$///,"; in other words, it is the map defined by the ",TO2{(symbol |,List,List),"join"}," of ",TO2{(factor,MultirationalMap),"factor"},TT" Phi"," with ",TO2{(factor,MultirationalMap),"factor"},TT" Psi"}}, 
 EXAMPLE {
 "Phi = rationalMap(veronese(1,2,ZZ/33331),Dominant=>true);",
 "Psi = rationalMap veronese(1,3,ZZ/33331);",
@@ -2073,7 +2100,23 @@ EXAMPLE {
 "Phi | Psi | Eta;",
 "super oo;",
 "rationalMap(oo,image oo);"},
-SeeAlso => {(symbol |,List,List),(factor,MultirationalMap),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety),(super,MultirationalMap)}}
+SeeAlso => {(symbol ||,MultirationalMap,MultirationalMap),(symbol |,List,List),(factor,MultirationalMap),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety),(super,MultirationalMap)}}
+
+document { 
+Key => {(symbol ||,MultirationalMap,MultirationalMap)}, 
+Headline => "product of multi-rational maps", 
+Usage => "Phi || Psi", 
+Inputs => {MultirationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
+MultirationalMap => "Psi" => { TEX///$\Psi:Z \dashrightarrow W$///}}, 
+Outputs => {MultirationalMap => {"the rational map ",TEX///$\Phi\times\Psi:X\times Z \dashrightarrow Y\times W$///," defined by ",TEX///$\Phi\times\Psi(p,q) = (\Phi(p),\Psi(q))$///}}, 
+EXAMPLE {
+"Phi = rationalMap(veronese(1,4,ZZ/33331),Dominant=>true);",
+"Psi = last graph rationalMap projectiveVariety({1},{3},ZZ/33331);",
+"Eta = Phi || Psi;",
+"Psi || Eta;",
+"Psi || Eta || Phi;",
+"assert(oo == (Psi || Eta) || Phi and (Psi || Eta) || Phi == Psi || (Eta || Phi))"},
+SeeAlso => {(symbol |,MultirationalMap,MultirationalMap)}}
 
 document { 
 Key => {(super,MultirationalMap)}, 
@@ -2380,6 +2423,8 @@ undocumented {
 (symbol |,RationalMap,MultirationalMap),
 (symbol |,MultirationalMap,RationalMap),
 (symbol |,RationalMap,RationalMap),
+(symbol ||,MultirationalMap,RationalMap),
+(symbol ||,RationalMap,MultirationalMap),
 (random,ZZ,MultiprojectiveVariety),
 (show,RationalMap),
 (degreeSequence,RationalMap)}
