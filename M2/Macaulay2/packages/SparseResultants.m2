@@ -1665,7 +1665,9 @@ property = (M) -> (
 assert property {{0,0,0},{1,0,0},{0,1,0},{0,0,1},{0,1,2}};
 assert property {{0,0,0},{1,0,0},{1,1,0},{0,1,0},{0,0,1},{0,1,2}};
 assert property {{0,0,0},{1,0,0},{1,1,0},{0,1,0},{0,0,2},{1,0,1}};
-assert property {{1,0,0,1},{1,1,0,1},{0,1,0,0},{0,0,2,0},{1,0,1,0}};
+-- the following takes ~125 seconds on a system w/ an intel core i3-4150 cpu
+-- (see https://github.com/Macaulay2/M2/issues/1914)
+-- assert property {{1,0,0,1},{1,1,0,1},{0,1,0,0},{0,0,2,0},{1,0,1,0}};
 assert property {{3,0},{0,3},{4,5},{4,2}};
 ///
 
