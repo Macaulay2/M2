@@ -1142,6 +1142,11 @@ MultirationalMap || RationalMap := (Phi,Psi) -> Phi||(multirationalMap {Psi});
 MultihomogeneousRationalMap || MultirationalMap := (Phi,Psi) -> (multirationalMap {Phi})||Psi;
 MultirationalMap || MultihomogeneousRationalMap := (Phi,Psi) -> Phi||(multirationalMap {Psi});
 
+RationalMap || RationalMap := (Phi,Psi) -> (multirationalMap {Phi})||(multirationalMap {Psi});
+MultihomogeneousRationalMap || RationalMap := (Phi,Psi) -> (multirationalMap {Phi})||(multirationalMap {Psi});
+RationalMap || MultihomogeneousRationalMap := (Phi,Psi) -> (multirationalMap {Phi})||(multirationalMap {Psi});
+MultihomogeneousRationalMap || MultihomogeneousRationalMap := (Phi,Psi) -> (multirationalMap {Phi})||(multirationalMap {Psi});
+
 describe MultirationalMap := Phi -> (
     n := # factor Phi;
     descr:="multi-rational map consisting of "|(if n == 1 then "one single rational map" else (toString(n))|" rational maps")|newline;
@@ -2425,6 +2430,7 @@ undocumented {
 (symbol |,RationalMap,RationalMap),
 (symbol ||,MultirationalMap,RationalMap),
 (symbol ||,RationalMap,MultirationalMap),
+(symbol ||,RationalMap,RationalMap),
 (random,ZZ,MultiprojectiveVariety),
 (show,RationalMap),
 (degreeSequence,RationalMap)}
