@@ -1,4 +1,6 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
+-- TODO:
+-- 1. support QQ in rawResolutionGetMatrix, then enable FastNonminimal for QQ
 
 needs "gradedmodules.m2"
 

@@ -1,4 +1,6 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
+-- TODO:
+-- 1. set DegreeLimit to something other than null on initialization
 
 needs "chaincomplexes.m2"
 needs "computations.m2"
@@ -21,12 +23,12 @@ spots := C -> select(keys C, i -> instance(i, ZZ))
 
 baseRing' := R -> ultimate(coefficientRing, R) -- Note: different from first R.baseRings
 
-resolutionLengthLimit := (R, opts) -> (
-    if opts.LengthLimit == infinity then (
+resolutionLengthLimit := (R, lengthLimit) -> (
+    if lengthLimit == infinity then (
 	A := baseRing' R;
 	nvars := # generators(R, CoefficientRing => A);
 	nvars + 1 + if A === ZZ then 1 else 0)
-    else opts.LengthLimit )
+    else lengthLimit )
 
 resolutionDegreeLimit := (R, degreeLimit) -> (
     degreeLimit = if degreeLimit =!= null      then  degreeLimit  else {};
@@ -38,6 +40,9 @@ resolutionDegreeLimit := (R, degreeLimit) -> (
 -----------------------------------------------------------------------------
 -- helpers for resolution
 -----------------------------------------------------------------------------
+
+-- TODO: support QQ and large finite fields
+fastnonminimalFieldCheck := (R, strategy) -> strategy < 4 or ( 0 < char R and char R < (1 << 15) ) or not instance(strategy, ZZ)
 
 engineReady := M -> (
     R := ring M;
@@ -85,7 +90,7 @@ resolutionByHomogenization := (opts, M) -> (
      fH   := homogenize(toRH generators gb f',RH_n); 	  forceGB fH;
      MH   := cokernel fH;
      assert isHomogeneous MH;
-     C    := resolution(MH, opts, LengthLimit => resolutionLengthLimit(R,opts));
+     C    := resolution(MH, opts, LengthLimit => resolutionLengthLimit(R, opts.LengthLimit));
      toR  := map(R, RH, vars R | 1);
      toR C)
 
@@ -93,7 +98,7 @@ resolutionByHomogenization := (opts, M) -> (
 -- TODO: add assumptions
 resolutionBySchreyerFrame := (opts, M) -> (
     resLog("using resolution by Schreyer orders");
-    lengthlimit := resolutionLengthLimit(R := ring M, opts);
+    lengthlimit := resolutionLengthLimit(R := ring M, opts.LengthLimit);
     C := if M.cache.?resolution then M.cache.resolution else (
 	-- TODO: is `generators gb` necessary? if not, remove it from VirtualResolutions too
 	-- used to be just presentation M
@@ -108,7 +113,7 @@ resolutionBySchreyerFrame := (opts, M) -> (
 
 resolutionBySyzygies := (opts, M) -> (
     resLog("using resolution by syzygyies");
-    lengthlimit := resolutionLengthLimit(R := ring M, opts);
+    lengthlimit := resolutionLengthLimit(R := ring M, opts.LengthLimit);
     C := if M.cache.?resolution then M.cache.resolution
     else M.cache.resolution = chainComplex presentation M;
     i := length C;
@@ -125,25 +130,18 @@ resolutionInEngine := (opts, M) -> (
      strategy := if instance(opts.Strategy, Number) then opts.Strategy else
      if opts.FastNonminimal then 4 else
      if isQuotientRing R or isSkewCommutative R then 2 else 1;
+     if not fastnonminimalFieldCheck(R, strategy) then return null;
      local C;
      degreelimit := resolutionDegreeLimit(R, opts.DegreeLimit);
-     lengthlimit := resolutionLengthLimit(R,opts);
+     lengthlimit := resolutionLengthLimit(R, opts.LengthLimit);
      if not M.cache.?resolution 
      or M.cache.resolution.Resolution.length < lengthlimit
      or (M.cache.resolution.Resolution.Strategy === 4 and strategy =!= 4)
      or (M.cache.resolution.Resolution.Strategy =!= 4 and strategy === 4)
      then M.cache.resolution = (
-          if strategy === 4 and not isFinitePrimeField (coefficientRing R)
-	  then error "fast non-minimal resolutions are implemented only over prime finite fields";
-          if flagInhomogeneity then (
-	       if not isHomogeneous M then error "internal error: res: inhomogeneous matrix flagged";
-	       );
+          if flagInhomogeneity and not isHomogeneous M
+	  then error "internal error: res: inhomogeneous matrix flagged";
 	  g := presentation M;
-	  if not (
-	       instance(strategy, ZZ)
-	       or
-	       class strategy === RR		    -- to allow 4.1, experimentally
-	       ) then error "resolution in engine: expected Strategy option to be an integer";
 	  if strategy === 0 or strategy === 4 or strategy === 4.1 then
 	      g = generators gb g;  -- this is needed since the (current)
 			      -- default algorithm, 0, needs a GB 
@@ -248,17 +246,26 @@ new ResolutionComputation from Module := (C, M) -> new ResolutionComputation fro
     FastNonminimal	=> false,
     Result		=> null}
 
+isComputationDone Resolution := Boolean => options resolution >> opts -> W -> (
+    lengthlimit := resolutionLengthLimit(W.ring, opts.LengthLimit);
+    degreelimit := resolutionDegreeLimit(W.ring, opts.DegreeLimit);
+    -- can returnCode ever be not defined?
+    isComputationDone W.returnCode
+    and lengthlimit <= W.length
+    and degreelimit <= W.DegreeLimit)
+
 isComputationDone ResolutionComputation := Boolean => options resolution >> opts -> container -> (
     -- this function determines whether we can use the cached result, or further computation is necessary
-    instance(container.Result, ChainComplex)
-    and(opts.FastNonminimal == container.FastNonminimal or not container.FastNonminimal)
-    and opts.DegreeLimit    <= container.DegreeLimit
-    and opts.LengthLimit    <= container.LengthLimit)
+    C := if instance(container.Result, ChainComplex) then container.Result else return false;
+    if C.?Resolution then isComputationDone(C.Resolution, opts) else
+    not ( container.FastNonminimal or opts.FastNonminimal == container.FastNonminimal )
+    and resolutionDegreeLimit(ring C, opts.DegreeLimit)   <= container.DegreeLimit
+    and resolutionLengthLimit(ring C, opts.LengthLimit)   <= container.LengthLimit)
 
 updateComputation(ResolutionComputation, ChainComplex) := ChainComplex => options resolution >> opts -> (container, result) -> (
     container.FastNonminimal = opts.FastNonminimal;
-    container.LengthLimit    = if result.dd_(max result) == 0 then opts.LengthLimit else length result;
     container.DegreeLimit    = opts.DegreeLimit;
+    container.LengthLimit    = length result;
     container.Result         = result)
 
 -- TODO: document this
@@ -301,7 +308,10 @@ resolution Matrix := ChainComplexMap => opts -> f -> extend(
 
 algorithms#(resolution, Module) = new MutableHashTable from {
     Number => (opts, M) -> (
+	-- TODO: clarify the requirements for engine routines and top-level routines, then
 	-- simplify the strategies, then add Engine and FastNonminimal as normal strategies
+	R := ring M;
+	if not char R < (1 << 15) then return null;
 	if (C := resolutionNonminimal(opts, M)) =!= null then C
 	else if (C = resolutionInEngine(opts, M)) =!= null then C
 	else null),
@@ -326,7 +336,7 @@ algorithms#(resolution, Module)#ZZ =
 algorithms#(resolution, Module)#RR = algorithms#(resolution, Module)#Number
 
 -- Installing hooks for resolution
-scan({"Schreyer", "Syzygies", "Homogenization", "ZZ-module", -*Engine,*- ZZ, RR}, strategy ->
+scan({"Schreyer", "Syzygies", "Homogenization", "ZZ-module", Engine, ZZ, RR}, strategy ->
     addHook(key := (resolution, Module), algorithms#key#strategy, Strategy => strategy))
 
 -----------------------------------------------------------------------------
@@ -356,7 +366,7 @@ resolutionNonminimal = (opts, M) -> (
     --       If it is not a GB, then this function will give an answer (which one has to interpret carefully), but
     --       at least won't crash.
     --  4. currently, for Strategy == 4 or 5, the coefficient ring must be a prime field of char 2 <= p < 32767.
-    or member(strategy, {4, 5}) and not (2 <= char R and char R < 32767)
+    or not fastnonminimalFieldCheck(R, strategy)
     --  5. M need not be homogeneous, or it may be multi-homogeneous.
     then return null;
     resLog("using resolution with FastNonminimal => true, Strategy => ", toString strategy);
@@ -374,7 +384,7 @@ resolutionNonminimal = (opts, M) -> (
     -- TODO MES:  Quickly determine if this function is "active"
     --  (so we can call addHook).
     degreelimit := resolutionDegreeLimit(R, opts.DegreeLimit);
-    lengthlimit := resolutionLengthLimit(R,opts);
+    lengthlimit := resolutionLengthLimit(R, opts.LengthLimit);
     -- the resulting complex.
     C := if M.cache.?resolutionNonminimal
     and  M.cache.resolutionNonminimal.Resolution.length >= lengthlimit
@@ -437,7 +447,7 @@ resolutionNonminimal = (opts, M) -> (
                 )));
     C)
 
---addHook((resolution, Module), Strategy => FastNonminimal, resolutionNonminimal)
+addHook((resolution, Module), Strategy => FastNonminimal, resolutionNonminimal)
 
 -----------------------------------------------------------------------------
 -- status: status of a resolution computation
