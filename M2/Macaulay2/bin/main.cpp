@@ -76,9 +76,9 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
   MPI_Get_processor_name(processor_name, &name_len);
 
   // Print off a hello world message
-  std::cout << "Hello world from processor " << processor_name
+  std::cout << "Hello world from process " << processor_name //???
 	    << ", rank " << world_rank
-	    << " out of " << world_size << " processors" << std::endl;
+	    << " out of " << world_size << " processes" << std::endl;
 
   if (world_rank == 0) {
     
@@ -134,10 +134,6 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
   }
   
   } //end// if (world_rank == 0)
-  std::cout << "Bye world from processor " << processor_name
-	    << ", rank " << world_rank
-	    << " out of " << world_size << " processors" << std::endl;
-  MPI_Finalize();
   return 0;
 } //end// main
 
