@@ -22,7 +22,16 @@ newPackage(
     Reload => false
 )
 
-if Cremona.Options.Version < "5.1" then error "your version of the Cremona package is outdated (required version 5.1 or newer); you can download the latest version from https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages";
+if Cremona.Options.Version < "5.1" then (
+    <<endl<<"Your version of the Cremona package is outdated (required version 5.1 or newer);"<<endl;
+    <<"you can manually download the latest version from"<<endl;
+    <<"https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages."<<endl;
+    <<"To automatically download the latest version of Cremona in your current directory,"<<endl;
+    <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
+    <<///(makeDirectory("Cremona"), for f in {"Cremona.m2","Cremona/documentation.m2","Cremona/examples.m2","Cremona/tests.m2"} do run("curl -s -o "|f|" https://raw.githubusercontent.com/Macaulay2/M2/master/M2/Macaulay2/packages/"|f));///<<endl<<endl<<"***"<<endl;
+    error "required Cremona package version 5.1 or newer";
+);
+
 if SparseResultants.Options.Version < "1.1" then error "your version of the SparseResultants package is outdated (required version 1.1 or newer); you can download the latest version from https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages";
 
 export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct", 
