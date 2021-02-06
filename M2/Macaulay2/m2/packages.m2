@@ -316,6 +316,7 @@ newPackage String := opts -> pkgname -> (
 	    m = regex("(/|^)" | Layout#1#"packages" | "$", currentFileDirectory);
 	    -- this can be useful when running from the source tree, but this is a kludge
 	    if m#?1 then substring(currentFileDirectory, 0, m#1#0 + m#1#1) else prefixDirectory));
+    packageLayout := detectCurrentLayout packagePrefix;
     --
     newpkg := new Package from nonnull {
 	"pkgname"                  => pkgname,
@@ -346,26 +347,14 @@ newPackage String := opts -> pkgname -> (
 	"package prefix"           => packagePrefix
 	};
     --
-    if packagePrefix =!= null then (
-	rawdbname := databaseFilename(Layout#(detectCurrentLayout packagePrefix), packagePrefix, pkgname);
+    if packageLayout =!= null then (
+	rawdbname := databaseFilename(Layout#packageLayout, packagePrefix, pkgname);
 	if fileExists rawdbname then (
 	    newpkg#rawKeyDB = rawdb := openDatabase rawdbname;
 	    addEndFunction(() -> if isOpen rawdb then close rawdb))
-	else if notify then stderr << "--database not present: " << rawdbname << endl;
-	newpkg#topFileName = packagePrefix | replace("PKG", newpkg#"pkgname", currentLayout#"packagehtml") | topFileName)
-    else if notify then stderr << "--package prefix null, not opening database for package " << newpkg << endl;
-    --
-    addStartFunction(() ->
-	if not ( newpkg#?rawKeyDB and isOpen newpkg#rawKeyDB ) and prefixDirectory =!= null
-	then (
-	    dbname := databaseFilename (currentLayout, prefixDirectory, pkgname); -- what if there is more than one prefix directory?
-	    if fileExists dbname then (
-		db := newpkg#rawKeyDB = openDatabase dbname;
-		if notify then stderr << "--opened database: " << rawdbname << endl;
-		addEndFunction(() -> if isOpen db then close db))
-	    else (
-		if notify then stderr << "--database not present: " << rawdbname << endl;
-		)));
+	else if notify then printerr("database not present: ", minimizeFilename rawdbname);
+	newpkg#topFileName = packagePrefix | replace("PKG", pkgname, currentLayout#"packagehtml") | topFileName)
+    else if notify then printerr("package prefix null, not opening database for package ", format pkgname);
     --
     pkgsym := (
 	if PackageDictionary#?pkgname then getGlobalSymbol(PackageDictionary, pkgname)
@@ -440,6 +429,7 @@ exportFrom(Package, List) := (P, x) -> export \\ toString \ importFrom(P, x)
 
 ---------------------------------------------------------------------
 -- Here is where Core officially becomes a package
+-- TODO: is this line necessary? when does it ever run?
 addStartFunction( () -> if prefixDirectory =!= null then Core#"package prefix" = prefixDirectory )
 newPackage("Core",
      Authors => {
@@ -462,10 +452,8 @@ endPackage String := title -> (
 	       protect s;
 	       ---if value s =!= s and not hasAttribute(value s, ReverseDictionary) then setAttribute((value s), ReverseDictionary, s)
 	       ));
-     if true or pkg =!= Core then (			    -- protect it later
-	  protect pkg#"private dictionary";
-	  protect exportDict;
-	  );
+     protect exportDict;
+     protect pkg#"private dictionary";
      if pkg#"pkgname" === "Core" then (
 	  loadedPackages = {pkg};
 	  dictionaryPath = {Core.Dictionary, OutputDictionary, PackageDictionary};
@@ -483,7 +471,7 @@ endPackage String := title -> (
      remove(pkg, "previous currentPackage");
      debuggingMode = pkg#"old debuggingMode"; remove(pkg, "old debuggingMode");
      checkShadow();
-     if notify then stderr << "--package \"" << pkg << "\" loaded" << endl;
+     if notify then printerr("package ", format title, " loaded");
      if pkg.?loadDepth then (
 	  loadDepth = pkg.loadDepth;
 	  remove(pkg, loadDepth);

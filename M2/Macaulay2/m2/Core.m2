@@ -1,16 +1,28 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
--- The source code of Macaulay2 is contained in multiple files, contained
--- in the subdirectory "Macaulay2/".
+-- The source code of Macaulay2 is contained in multiple files,
+-- all contained in the subdirectory "Macaulay2/".
 
-if class Core =!= Symbol then error "Core cannot be reloaded"
+if notify then printerr("reading ", minimizeFilename currentFileName)
 
+if class Core =!= Symbol
+or class oooo =!= Symbol then error "Core cannot be reloaded"
+if class RawMutableMatrix =!= Type then error "where is RawMutableMatrix?"
 
+-----------------------------------------------------------------------------
+-- Core utilities
+-----------------------------------------------------------------------------
+
+-- TODO: move to the interpreter, can it be made copy free?
 nonnull = x -> select(x, i -> i =!= null)
 nonempty = x -> select(x, i -> i =!= "")
-dashes  = n -> concatenate (n:"-")
-spaces  = n -> concatenate n
+
+-- TODO: deprecate these
+undocumentedkeys = new MutableHashTable
+undocumented' = key -> undocumentedkeys#key = true
+somethingElse = () -> error "something else needs to be implemented here"
 
 -- a first-in last-out list of symbol values
+-- TODO: move to the interpreter and make thread-safe
 varstack = new MutableHashTable
 pushvar = (sym,newval) -> (
      varstack#sym = if varstack#?sym then (value' sym,varstack#sym) else (value' sym, null);
@@ -23,33 +35,9 @@ popvar = (sym) -> if varstack#?sym then (
      varstack#sym = c#1;
      )
 
-SelfInitializingType = new Type of Type
-SelfInitializingType.synonym = "self initializing type"
-SelfInitializingType Thing := (T,z) -> new T from z
-
-SelfInitializingType\VisibleList := (T,z) -> (i -> T i) \ z
-List/SelfInitializingType := VisibleList/SelfInitializingType := (z,T) -> z / (i -> T i)
-SelfInitializingType \\ Thing := (T,z) -> T z
-Thing // SelfInitializingType := (z,T) -> T z
-
-Bag = new SelfInitializingType of MutableList
-Bag.synonym = "bag"
-Bag ? Bag := (x,y) -> incomparable			    -- so we can sort with them
-
-sortBy = f -> v -> last @@ last \ sort \\ (i -> (f i, new Bag from {i})) \ v
-sortByName = x -> (sortBy toString) x
-sortByHash = sortBy hash
-
-centerString = (wid,s) -> (
-     n := width s;
-     if n === wid then s
-     else (
-     	  w := (wid-n+1)//2;
-     	  horizontalJoin(spaces w,s,spaces(wid-w-n))))
-
-if class oooo =!= Symbol then error "setup.m2 already loaded"
-
-if class RawMutableMatrix =!= Type then error "where is RawMutableMatrix?"
+-----------------------------------------------------------------------------
+-- Dictionaries and Symbols
+-----------------------------------------------------------------------------
 
 OutputDictionary = new Dictionary
 dictionaryPath = append(dictionaryPath,OutputDictionary)
@@ -68,11 +56,9 @@ getSymbol = s -> (
      if instance(User,Symbol) then error "getSymbol used before package User created";
      getGlobalSymbol(User#"private dictionary", s))
 
-if notify then stderr << "--loading " << minimizeFilename currentFileName << endl
-
-match := X -> null =!= regex X -- defined as a method later
-
-somethingElse = () -> error "something else needs to be implemented here"
+-----------------------------------------------------------------------------
+-- Standard AfterEval and oo rotation
+-----------------------------------------------------------------------------
 
 rotateOutputLines := x -> (
      if ooo =!= null then global oooo <- ooo;
@@ -90,65 +76,52 @@ Thing#AfterEval = x -> (
 
 Nothing#{Standard,Print} = identity
 
-binaryOperators = join(fixedBinaryOperators,flexibleBinaryOperators)
-prefixOperators = join(fixedPrefixOperators,flexiblePrefixOperators)
-postfixOperators = join(fixedPostfixOperators,flexiblePostfixOperators)
-flexibleOperators = join(flexibleBinaryOperators,flexiblePrefixOperators,flexiblePostfixOperators)
-fixedOperators = join(fixedBinaryOperators,fixedPrefixOperators,fixedPostfixOperators)
-allOperators = join(fixedOperators,flexibleOperators)
+-----------------------------------------------------------------------------
+-- load, input, needs
+-----------------------------------------------------------------------------
 
-undocumentedkeys = new MutableHashTable
-undocumented' = key -> undocumentedkeys#key = true
+searchPath' = (path, name) -> select(path, dir -> fileExists concatPath(dir, name))
+loadPath := (path, filename, loadfun, notify) -> (
+    if class filename =!= String then error "expected a string";
+    ret := if isAbsolutePath filename then ( if first tryLoad(filename, filename, loadfun, notify) then "" )
+    else scan(if isStablePath filename then {currentFileDirectory} else path, dir -> (
+	    if class dir =!= String then error "member of 'path' not a string";
+	    filepath := concatPath(dir, filename);
+	    if debugLevel === 1011 then printerr("attempting to load ", filepath);
+	    if first tryLoad(filename, filepath, loadfun, notify) then break dir));
+    if ret =!= null then return ret;
+    error splice("file not found",
+	if isAbsolutePath filename then "" else
+	if isStablePath   filename then (" in ", format currentFileDirectory)
+	else " on path", ": ", format filename))
 
-pathdo := (loadfun,path,filename,reportfun) -> (
-     ret := null;
-     if class filename =!= String then error "expected a string";
-     newpath := (
-	  if isStablePath filename then {
-	       singledir := if isAbsolutePath filename then "" else currentFileDirectory
-	       }
-	  else path
-	  );
-     if null === scan(newpath, dir -> (
-	       if class dir =!= String then error "member of 'path' not a string";
-	       fullfilename := concatenate(dir, if dir#?0 and dir#-1 =!= "/" then "/", filename);
-	       if debugLevel === 1011 then stderr << "checking for file " << fullfilename << endl;
-	       if fileExists fullfilename then (
-	       	    if debugLevel === 1011 then stderr << "found it" << endl;
-		    filetime := fileTime fullfilename;
-		    ret = loadfun fullfilename;
-		    reportfun (fullfilename,filetime);
-		    break true)
-	       else (
-	       	    if debugLevel === 1011 then stderr << "didn't find it" << endl;
-		    )))
-     then error splice("file not found",
-	  if singledir === "" then ""
-	  else if singledir =!= null then (" in \"",singledir,"\"")
-	  else " on path",
-	  ": \"", filename, "\"");
-     ret)
+load  = filename -> (loadPath(path, filename, simpleLoad, notify);)
+input = filename -> (loadPath(path, filename, simpleInput, false);)
+needs = filename -> if not filesLoaded#?filename then load filename else (
+     (filepath, filetime) := filesLoaded#filename;
+     if filetime < fileTime filepath then load filepath)
 
-tryload := (filename,loadfun,notify) -> pathdo(loadfun,path,filename, (fullfilename,filetime) -> markLoaded(fullfilename,filename,notify,filetime))
-load = (filename) -> (
-     -- could assert something here ...
-     tryload(filename,simpleLoad,notify);
-     )
-input = (filename) -> (tryload(filename,simpleInput,false);)
-needs = s -> if not filesLoaded#?s then load s else (
-     (fullfilename,filetime) := filesLoaded#s;
-     if filetime < fileTime fullfilename then load fullfilename)
+-----------------------------------------------------------------------------
+-- Load the rest of Core
+-----------------------------------------------------------------------------
 
-lastLN := 0
-lastWI := 0
-     
+-- if nocore then end
+
 loads := minimizeFilename concatenate(currentFileDirectory, "loadsequence")
-if notify then stderr << "--about to read " << loads << endl
-scan(select("^\\w+\\.m2", "$&", get loads), load)
-if notify then stderr << "--read " << loads << endl
+if notify then printerr("about to read ", loads)
+scan(select("^\\w+\\.m2", "$&", get loads), needs)
+if notify then printerr("read ", loads)
 
--- after this point, private global symbols, such as noinitfile, are no longer visible
-protect Core.Dictionary
+corepath' := corepath
+userpath' := userpath
+noinitfile' := noinitfile
+-- after this point, private global symbols, such as noinitfile,
+-- are no longer visible, and public symbols have been exported
+endPackage "Core"
+
+path = select(if not noinitfile' then join(userpath', path) else path, dir -> not member(dir, corepath'))
+if #OutputDictionary > 0 then error("symbols entered into OutputDictionary from Core: ", toString keys OutputDictionary)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

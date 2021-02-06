@@ -101,7 +101,7 @@ addLayout = (prefix,i) -> (
      assert (i === 1 or i === 2);
      assert not currentLayoutTable#?prefix;
      currentLayoutTable#prefix = i;
-     if notify or debugLevel == 11 then stderr << "--Layout#" << i << " assigned for directory " << prefix << endl;
+     if notify or debugLevel == 11 then printerr("Layout#", toString i, " assigned for directory ", prefix);
      i)
 
 layoutToIndex := layout -> if layout === Layout#1 then 1 else if layout === Layout#2 then 2 else error "nonstandard layout detected"

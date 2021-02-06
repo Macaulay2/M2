@@ -463,6 +463,13 @@ installAssignmentMethod(Symbol,HashTable,Function) := (op,Y,f) -> (
      if numparms f =!= 2 and numparms f =!= -1 then error "expected assignment method to be a function of 2 arguments";
      installMethod((op,symbol =),Y,f))
 
+binaryOperators   = join(fixedBinaryOperators,    flexibleBinaryOperators)
+prefixOperators   = join(fixedPrefixOperators,    flexiblePrefixOperators)
+postfixOperators  = join(fixedPostfixOperators,   flexiblePostfixOperators)
+flexibleOperators = join(flexibleBinaryOperators, flexiblePrefixOperators, flexiblePostfixOperators)
+fixedOperators    = join(fixedBinaryOperators,    fixedPrefixOperators,    fixedPostfixOperators)
+allOperators      = join(fixedOperators, flexibleOperators)
+
 scan(flexibleBinaryOperators, op -> (
 	  installAssignmentMethod(op, Type, Type, (X,Y,am) -> installAssignmentMethod(op, X, Y, am));
 	  undocumented' ((op, symbol =), Type, Type);
@@ -502,6 +509,7 @@ dispatcherFunctions = join (dispatcherFunctions, {
 -- also see hooks in code.m2
 -- TODO: get this to work with lookup and flagLookup
 -- TODO: get this to work on HashTables
+-- TODO: get this to work with codeHelper
 
 protect symbol Hooks
 protect symbol HookAlgorithms
