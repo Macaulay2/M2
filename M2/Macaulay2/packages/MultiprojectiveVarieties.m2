@@ -12,7 +12,7 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "1.1", 
-    Date => "February 5, 2021",
+    Date => "February 6, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -57,17 +57,21 @@ EmbeddedProjectiveVariety.synonym = "embedded projective variety";
 projectiveVariety = method(TypicalValue => MultiprojectiveVariety, Options => {MinimalGenerators => true, Saturate => true});
 
 projectiveVariety Ideal := o -> I -> (
+    if (I#cache)#?"multiprojectiveVariety" then return (I#cache)#"multiprojectiveVariety";
     R := ring I;
     if not isPolynomialRing R then error "expected an ideal in a polynomial ring";
     if not isField coefficientRing R then error "the coefficient ring needs to be a field";
     m := multigens R;
     if flatten m != gens R then error "the given grading on the polynomial ring is not allowed: the degree of each variable must be a standard basis vector of ZZ^r in the commonly used order";
     if not isHomogeneous I then error "expected a (multi)-homogeneous ideal";
+    J := I;
     if o.Saturate 
-    then for x in m do I = saturate(I,ideal x,MinimalGenerators=>o.MinimalGenerators)
-    else if o.MinimalGenerators then I = trim I;
+    then for x in m do J = saturate(J,ideal x,MinimalGenerators=>o.MinimalGenerators)
+    else if o.MinimalGenerators then J = trim J;
+    if J === I then J = I; 
+    (J#cache)#"isMultisaturated" = if o.Saturate then true else null;
     X := new MultiprojectiveVariety from {
-        "idealVariety" => I,
+        "idealVariety" => J,
         "ringVariety" => null,
         "dimVariety" => null,        
         "dimAmbientSpaces" => apply(m, n -> (#n)-1),
@@ -81,30 +85,33 @@ projectiveVariety Ideal := o -> I -> (
         "projections" => null,
         "euler" => null,
         "expression" => null,
-        "IsSaturationCalculated" => o.Saturate
+        "isPoint" => null
     };
-    if # X#"dimAmbientSpaces" == 1 then return new EmbeddedProjectiveVariety from X else return X;
+    if # X#"dimAmbientSpaces" == 1 then X = new EmbeddedProjectiveVariety from X;
+    (J#cache)#"multiprojectiveVariety" = X;
+    (I#cache)#"multiprojectiveVariety" = (J#cache)#"multiprojectiveVariety"
 );
 
 projectiveVariety Ring := o -> R -> (
+    if R#?"multiprojectiveVariety" then return R#"multiprojectiveVariety";
+    I := ideal R;
+    if (I#cache)#?"multiprojectiveVariety" then (
+        X := (I#cache)#"multiprojectiveVariety";
+        if X#"ringVariety" === null then X#"ringVariety" = R;
+        if X#"ringVariety" === R then return (R#"multiprojectiveVariety" = X);
+    );
     if not isPolynomialRing ambient R then error "expected the ambient ring to be polynomial";
-    X := projVarFromRing R;
-    if o.Saturate then if not isSatIdeal X then error "the ideal is not multi-saturated";
-    X
+    Y := projectiveVariety(I,MinimalGenerators=>false,Saturate=>false);
+    if Y#"ringVariety" =!= null then error "internal error encountered: double assignment for ring of projective variety";
+    Y#"ringVariety" = R;
+    if o.Saturate then if not isMultisaturated(ideal Y) then error "the ideal is not multi-saturated";
+    R#"multiprojectiveVariety" = Y
 );
 
-projVarFromRing = memoize (R -> (
-    X := projectiveVariety(ideal R,MinimalGenerators=>false,Saturate=>false);
-    X#"ringVariety" = R;
-    X
-));
-
-isSatIdeal = memoize (X -> (
-    if X#"IsSaturationCalculated" then return true;
-    I := ideal X;
-    J := multisaturate I;
-    if I == J then (X#"IsSaturationCalculated" = true; return true) else return false;
-));
+isMultisaturated = I -> (
+    if (I#cache)#?"isMultisaturated" and (I#cache)#"isMultisaturated" =!= null then return (I#cache)#"isMultisaturated";
+    (I#cache)#"isMultisaturated" = I == multisaturate I
+);
 
 projectiveVariety MultidimensionalMatrix := o -> A -> projectiveVariety(ideal(A!),MinimalGenerators=>true,Saturate=>false);
 
@@ -137,7 +144,11 @@ projectiveVariety (List,List,Ring) := o -> (n,d,K) -> (
 );
 projectiveVariety (ZZ,ZZ,Ring) := o -> (n,d,K) -> projectiveVariety({n},{d},K);
 
-isPoint = memoize(X -> (n := X#"dimAmbientSpaces"; dim X == 0 and sort degrees X == sort pairs tally deepSplice apply(n,entries diagonalMatrix toList(#n:1),(i,d) -> i:d)));
+isPoint = X -> (
+    if X#"isPoint" =!= null then return X#"isPoint";
+    n := X#"dimAmbientSpaces";
+    X#"isPoint" = dim X == 0 and sort degrees X == sort pairs tally deepSplice apply(n,entries diagonalMatrix toList(#n:1),(i,d) -> i:d)
+);
 
 expression MultiprojectiveVariety := X -> (
     if X#"expression" =!= null then return X#"expression";
@@ -156,11 +167,12 @@ MultiprojectiveVariety#{Standard,AfterPrint} = MultiprojectiveVariety#{Standard,
 
 ideal MultiprojectiveVariety := X -> X#"idealVariety";
 
-quotientRingMem = memoize(I -> (ring I)/I); 
-
 ring MultiprojectiveVariety := X -> (
     if X#"ringVariety" =!= null then return X#"ringVariety";
-    X#"ringVariety" = quotientRingMem(ideal X)
+    I := ideal X;
+    R := (ring I)/I;
+    try assert(isPolynomialRing R or (I#cache).QuotientRing === R) else error "internal error encountered";
+    X#"ringVariety" = R
 );
 
 coefficientRing MultiprojectiveVariety := X -> coefficientRing ring ideal X;
@@ -288,16 +300,20 @@ point (MultiprojectiveVariety,Boolean) := (X,b) -> (
 );
 point MultiprojectiveVariety := X -> point(X,true);
 
-coordinates = memoize(p -> (
+coordinates = p -> (
     if not isPoint p then error "expected a point";
-    unsequence toSequence apply(projections p,h -> new Array from flatten entries coefficients parametrize image h)
-));
+    if not p#?"coordinates" then p#"coordinates" = unsequence toSequence apply(projections p,h -> new Array from flatten entries coefficients parametrize image h);
+    p#"coordinates"
+);
+
 |- MultiprojectiveVariety := X -> coordinates X;
 
 MultiprojectiveVariety ** MultiprojectiveVariety := (X,Y) -> productMem(X,Y);
 
 ∏ = method();
 ∏ List := L -> productMem L;
+
+quotientRingMem = memoize(I -> (ring I)/I); -- this makes the product strict associative
 
 productMem = memoize(L -> (
     if not (#L > 0 and all(L,X -> instance(X,MultiprojectiveVariety))) then error "expected a list of multi-projective varieties";
@@ -440,9 +456,10 @@ MultiprojectiveVariety ** Ring := (X,K) -> (
     projectiveVariety(sub(ideal X,vars ring projectiveVariety(shape X,K)),Saturate=>false,MinimalGenerators=>true)
 );
 
-builtInProjectiveVariety = memoize(X -> Proj ring X);
-
-variety EmbeddedProjectiveVariety := X -> builtInProjectiveVariety X; 
+variety EmbeddedProjectiveVariety := X -> (
+    if not X#?"Proj" then X#"Proj" = Proj ring X;
+    X#"Proj"
+);
 
 linearSpan = method();
 linearSpan EmbeddedProjectiveVariety := X -> (
@@ -640,8 +657,8 @@ rationalMap (MultirationalMap,MultiprojectiveVariety) := o -> (Phi,Y) -> multira
 
 strongCheck = method();
 strongCheck MultirationalMap := Phi -> (
-    if not isSatIdeal source Phi then error "the ideal of the source is not multi-saturated";
-    if not isSatIdeal target Phi then error "the ideal of the target is not multi-saturated";
+    if not isMultisaturated ideal source Phi then error "the ideal of the source is not multi-saturated";
+    if not isMultisaturated ideal target Phi then error "the ideal of the target is not multi-saturated";
     check Phi
 );
 
@@ -664,7 +681,7 @@ checkRepresentatives MultirationalMap := Phi -> (
 checkAndCompare = method();
 checkAndCompare (MultirationalMap,Boolean) := (Phi,recursive) -> (
     try (checkRepresentatives Phi; strongCheck Phi) else error "found a wrong map";
-    if Phi#"image" =!= null then (if not isSatIdeal image Phi then error "found a wrong ideal for an image");
+    if Phi#"image" =!= null then (if not isMultisaturated ideal image Phi then error "found a wrong ideal for an image");
     if Phi#"inverse" =!= null and recursive then (
         if Phi * Phi^-1 != 1 then error "found a wrong inverse map";
         if Phi#"isDominant" === false or Phi#"isBirational" === false or (inverse Phi)#"isDominant" === false or (inverse Phi)#"isBirational" === false then error "found wrong value for 'isDominant' or 'isBirational'";
@@ -2591,7 +2608,7 @@ psi'' = inverse phi'';
 assert(phi'' * psi'' == 1 and psi'' * phi'' == 1);
 ///
 
-/// -- product must be strict associative
+TEST /// -- product must be strict associative
 K = ZZ/333331;
 X = projectiveVariety({1,1},{2,3},K);
 Y = random({3},projectiveVariety(2,2,K));
@@ -2599,5 +2616,51 @@ Z = ⋃ {point X,point X,point X};
 W = projectiveVariety(1,3,K);
 assert((X ** Y) ** Z === X ** (Y ** Z))
 assert((∏ {X,Y,Z}) ** W === X ** ∏ {Y,Z,W} and X ** ∏ {Y,Z,W} === (X ** Y) ** (Z ** W))
+///
+
+TEST /// -- some cache tests
+K = ZZ/333331;
+I = trim kernel veronese(1,4,K)
+X = projectiveVariety I
+assert(X === projectiveVariety I)
+assert((I#cache)#"multiprojectiveVariety" === X)
+assert((I#cache)#"isMultisaturated" === true)
+R = (ring I)/I;
+assert(X === projectiveVariety R)
+
+R = quotient trim kernel veronese(2,2,K)
+X = projectiveVariety R
+assert(X === projectiveVariety ideal R)
+assert(R#"multiprojectiveVariety" === X)
+assert(((ideal X)#cache)#"isMultisaturated" === true)
+
+I' = trim ideal image basis(3,I);
+X' = projectiveVariety(I',Saturate=>false);
+assert(ideal X' === I')
+assert((I'#cache)#"isMultisaturated" === null)
+R' = (ring I)/I';
+assert(projectiveVariety R' === X')
+R'' = (ring I)/trim ideal image basis(3,I);
+assert(try projectiveVariety R'' then false else true)
+
+I = trim kernel veronese(1,5,K);
+J = trim kernel veronese(1,5,K);
+assert(I === J);
+R = quotient I; S = quotient J;
+assert(R =!= S);
+X = projectiveVariety I;
+assert(X === projectiveVariety R)
+Y = projectiveVariety J;
+assert(Y === projectiveVariety S)
+assert(X == Y and ideal X === ideal Y and ring X === R and ring Y === S and X =!= Y)
+assert(X^2 === X ** Y and X ** Y === Y^2)
+
+I = trim kernel veronese(1,5,K);
+J = trim kernel veronese(1,5,K);
+R = quotient I; S = quotient J;
+assert(R =!= S);
+X = projectiveVariety I;
+X#"ringVariety" = S;
+assert(try projectiveVariety R then false else true)
 ///
 
