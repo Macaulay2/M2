@@ -3,7 +3,7 @@ include ../Makefile
 ## Parameters
 TAG = m2-cmake-build
 BUILD_DIR = M2/BUILD/build-docker
-BUILD_OPT = -DCMAKE_BUILD_TYPE=Release
+BUILD_OPT = -DCMAKE_BUILD_TYPE=Release --debug-trycompile -DBUILD_LIBRARIES="Givaro;FFLAS_FFPACK"
 
 ## Script for building Macaulay2
 define M2_BUILD_SCRIPT
