@@ -69,7 +69,8 @@ projectiveVariety Ideal := o -> I -> (
     then for x in m do J = saturate(J,ideal x,MinimalGenerators=>o.MinimalGenerators)
     else if o.MinimalGenerators then J = trim J;
     if J === I then J = I; 
-    (J#cache)#"isMultisaturated" = if o.Saturate then true else null;
+    (J#cache)#"isMultisaturated" = if o.Saturate then true else null;  
+    (I#cache)#"isMultisaturated" = if o.Saturate then (if I === J then true else I == J) else null;
     X := new MultiprojectiveVariety from {
         "idealVariety" => J,
         "ringVariety" => null,
@@ -95,6 +96,7 @@ projectiveVariety Ideal := o -> I -> (
 projectiveVariety Ring := o -> R -> (
     if R#?"multiprojectiveVariety" then return R#"multiprojectiveVariety";
     I := ideal R;
+    if o.Saturate then if not isMultisaturated I then error "the ideal is not multi-saturated";
     if (I#cache)#?"multiprojectiveVariety" then (
         X := (I#cache)#"multiprojectiveVariety";
         if X#"ringVariety" === null then X#"ringVariety" = R;
@@ -104,7 +106,6 @@ projectiveVariety Ring := o -> R -> (
     Y := projectiveVariety(I,MinimalGenerators=>false,Saturate=>false);
     if Y#"ringVariety" =!= null then error "internal error encountered: double assignment for ring of projective variety";
     Y#"ringVariety" = R;
-    if o.Saturate then if not isMultisaturated(ideal Y) then error "the ideal is not multi-saturated";
     R#"multiprojectiveVariety" = Y
 );
 
