@@ -65,12 +65,14 @@ projectiveVariety Ideal := o -> I -> (
     if flatten m != gens R then error "the given grading on the polynomial ring is not allowed: the degree of each variable must be a standard basis vector of ZZ^r in the commonly used order";
     if not isHomogeneous I then error "expected a (multi)-homogeneous ideal";
     J := I;
-    if o.Saturate 
-    then for x in m do J = saturate(J,ideal x,MinimalGenerators=>o.MinimalGenerators)
-    else if o.MinimalGenerators then J = trim J;
+    if o.Saturate then (
+        if not((J#cache)#?"isMultisaturated" and (J#cache)#"isMultisaturated") then (
+            for x in m do J = saturate(J,ideal x,MinimalGenerators=>o.MinimalGenerators); 
+            (J#cache)#"isMultisaturated" = true;
+        );
+    ) else if o.MinimalGenerators then J = trim J;
     if J === I then J = I; 
-    (J#cache)#"isMultisaturated" = if o.Saturate then true else null;  
-    (I#cache)#"isMultisaturated" = if o.Saturate then (if I === J then true else I == J) else null;
+    if o.Saturate and (not (I#cache)#?"isMultisaturated") then (I#cache)#"isMultisaturated" = if I === J then true else I == J;
     X := new MultiprojectiveVariety from {
         "idealVariety" => J,
         "ringVariety" => null,
@@ -96,13 +98,13 @@ projectiveVariety Ideal := o -> I -> (
 projectiveVariety Ring := o -> R -> (
     if R#?"multiprojectiveVariety" then return R#"multiprojectiveVariety";
     I := ideal R;
-    if o.Saturate then if not isMultisaturated I then error "the ideal is not multi-saturated";
+    if not isPolynomialRing ambient R then error "expected the ambient ring to be polynomial";
+    if o.Saturate or (I#cache)#?"isMultisaturated" then if not isMultisaturated I then error "the ideal is not multi-saturated";
     if (I#cache)#?"multiprojectiveVariety" then (
         X := (I#cache)#"multiprojectiveVariety";
         if X#"ringVariety" === null then X#"ringVariety" = R;
         if X#"ringVariety" === R then return (R#"multiprojectiveVariety" = X);
     );
-    if not isPolynomialRing ambient R then error "expected the ambient ring to be polynomial";
     Y := projectiveVariety(I,MinimalGenerators=>false,Saturate=>false);
     if Y#"ringVariety" =!= null then error "internal error encountered: double assignment for ring of projective variety";
     Y#"ringVariety" = R;
@@ -110,7 +112,7 @@ projectiveVariety Ring := o -> R -> (
 );
 
 isMultisaturated = I -> (
-    if (I#cache)#?"isMultisaturated" and (I#cache)#"isMultisaturated" =!= null then return (I#cache)#"isMultisaturated";
+    if (I#cache)#?"isMultisaturated" then return (I#cache)#"isMultisaturated";
     (I#cache)#"isMultisaturated" = I == multisaturate I
 );
 
@@ -2638,11 +2640,13 @@ assert(((ideal X)#cache)#"isMultisaturated" === true)
 I' = trim ideal image basis(3,I);
 X' = projectiveVariety(I',Saturate=>false);
 assert(ideal X' === I')
-assert((I'#cache)#"isMultisaturated" === null)
+assert(not (I'#cache)#?"isMultisaturated")
 R' = (ring I)/I';
-assert(projectiveVariety R' === X')
+assert(try projectiveVariety R' then false else true)
+assert(try projectiveVariety(R',Saturate=>false) then false else true)
 R'' = (ring I)/trim ideal image basis(3,I);
-assert(try projectiveVariety R'' then false else true)
+assert(try projectiveVariety(R'',Saturate=>false) then true else false)
+assert(try projectiveVariety R'' then true else false)
 
 I = trim kernel veronese(1,5,K);
 J = trim kernel veronese(1,5,K);
