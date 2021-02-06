@@ -118,6 +118,7 @@ projectiveVariety (List,Ring) := o -> (l,K) -> (
     X#"singularLocus" = projectiveVariety(ideal(1_(ring ambient X)),MinimalGenerators=>true,Saturate=>false);
     return X;
 );
+projectiveVariety (ZZ,Ring) := o -> (l,K) -> projectiveVariety({l},K);
 
 projectiveVariety (List,List,Ring) := o -> (n,d,K) -> (
     if #n != #d then error "expected two lists of the same length";
@@ -134,6 +135,7 @@ projectiveVariety (List,List,Ring) := o -> (n,d,K) -> (
     X#"singularLocus" = projectiveVariety(ideal(1_(ring ambient X)),MinimalGenerators=>true,Saturate=>false);
     return X;
 );
+projectiveVariety (ZZ,ZZ,Ring) := o -> (n,d,K) -> projectiveVariety({n},{d},K);
 
 isPoint = memoize(X -> (n := X#"dimAmbientSpaces"; dim X == 0 and sort degrees X == sort pairs tally deepSplice apply(n,entries diagonalMatrix toList(#n:1),(i,d) -> i:d)));
 
@@ -306,7 +308,7 @@ productMem = memoize(L -> (
     R := ring first first gensRing(K,join n);
     j := for i to #L list sum toList join take(n,i);
     s := for i to #L-1 list map(R,ring ideal L_i,submatrix(vars R,j_i .. j_(i+1)-1));
-    W := projectiveVariety(sum(#L,i -> s_i ideal L_i),MinimalGenerators=>true,Saturate=>false);
+    W := projectiveVariety(quotientRingMem trim sum(#L,i -> s_i ideal L_i),MinimalGenerators=>false,Saturate=>false);
     W#"projections" = apply(projections W,apply(join toSequence apply(L,projections),target),(f,T) -> rationalMap((map f) * (map rationalMap(target f,T)),Dominant=>"notSimplify"));
     if all(L,X -> X#"euler" =!= null) then W#"euler" = product(L,euler);
     W
@@ -840,7 +842,7 @@ graphViaElim = Phi -> (
     yy := apply((target Phi)#"multigens",y -> suby matrix{y});
     F := apply(factor Phi,f -> subx lift(matrix f,ring ambient source Phi));
     I := subx(ideal source Phi) + sum(s,i -> ideal(yy_i - t_i * F_i));
-    projectiveVariety(sub(ideal selectInSubring(1,gens gb I),R'),MinimalGenerators=>true,Saturate=>false)
+    projectiveVariety(quotient trim sub(ideal selectInSubring(1,gens gb I),R'),MinimalGenerators=>false,Saturate=>false)
 );
 
 SymmIdeal = Phi -> (
@@ -866,7 +868,7 @@ graphViaSyzygies = Phi -> (
     subx := map(ring I,ring ambient source Phi,submatrix(vars ring I,{0 .. sum n - 1}));
     F := apply(factor Phi,f -> subx lift(first flatten entries compress matrix f,ring ambient source Phi));
     for i to #F-1 do I = saturate(I,F_i);
-    projectiveVariety(I,MinimalGenerators=>true,Saturate=>false)
+    projectiveVariety(quotient trim I,MinimalGenerators=>false,Saturate=>false)
 );
 
 graphViaKoszul = Phi -> (
@@ -881,7 +883,7 @@ graphViaKoszul = Phi -> (
     F := apply(factor Phi,f -> subx lift(matrix f,ring ambient source Phi));
     I := subx(ideal source Phi) + sum(s,i -> minors(2,yy_i || F_i));
     for i to s-1 do I = saturate(I,ideal F_i);
-    projectiveVariety(I,MinimalGenerators=>true,Saturate=>false)
+    projectiveVariety(quotient trim I,MinimalGenerators=>false,Saturate=>false)
 );
 
 graph MultirationalMap := o -> Phi -> (
@@ -913,7 +915,7 @@ reverseGraph (MultirationalMap,MultirationalMap) := (p1,p2) -> (
     m := apply((target p2)#"dimAmbientSpaces",i -> i+1);
     R := ring first first gensRing(coefficientRing G,m|n);
     s := map(R,ring ideal G,submatrix(vars R,{sum m .. sum m + sum n - 1}) | submatrix(vars R,{0 .. sum m - 1}));
-    G' := projectiveVariety(s ideal G,MinimalGenerators=>true,Saturate=>false);
+    G' := projectiveVariety(quotient trim s ideal G,MinimalGenerators=>false,Saturate=>false);
     p1' := multirationalMap(take(projections G',# m),target p2);
     p2' := multirationalMap(take(projections G',-(# n)),target p1);
     p1'#"isDominant" = p2#"isDominant";
@@ -1061,7 +1063,7 @@ inverse MultihomogeneousRationalMap := Phi -> inverse(Phi,Verify=>true);
 inverse2 = method(TypicalValue => MultirationalMap);
 inverse2 (MultirationalMap,Option) := (Phi,opt) -> (
     if Phi#"inverse" =!= null or Phi#"graph" =!= null then return inverse(Phi,opt);
-    G := projectiveVariety(SymmIdeal Phi,MinimalGenerators=>false,Saturate=>false); -- warning: this may not be multi-saturated
+    G := projectiveVariety(quotient SymmIdeal Phi,MinimalGenerators=>false,Saturate=>false); -- warning: this may not be multi-saturated
     (r,s) := (# (source Phi)#"dimAmbientSpaces", # (target Phi)#"dimAmbientSpaces");
     Phi' := multirationalMap(factor Phi,target Phi); Phi'#"source" = source Phi;
     Phi'#"graph" = (multirationalMap(take(projections G,r),source Phi'), multirationalMap(take(projections G,-s),target Phi'));
@@ -2405,6 +2407,8 @@ undocumented {
 (degrees,MultiprojectiveVariety),
 (euler,MultiprojectiveVariety,Option),
 (symbol *,ZZ,MultiprojectiveVariety),
+(projectiveVariety,ZZ,ZZ,Ring),
+(projectiveVariety,ZZ,Ring),
 (expression,MultirationalMap),
 (net,MultirationalMap),
 (multirationalMap,RationalMap),
@@ -2585,5 +2589,15 @@ time Gk'' := source graph(clean phi'',BlowUpStrategy=>"Koszul");
 assert(G'' == Gs'' and Gs'' == Gk'');
 psi'' = inverse phi'';
 assert(phi'' * psi'' == 1 and psi'' * phi'' == 1);
+///
+
+/// -- product must be strict associative
+K = ZZ/333331;
+X = projectiveVariety({1,1},{2,3},K);
+Y = random({3},projectiveVariety(2,2,K));
+Z = ⋃ {point X,point X,point X};
+W = projectiveVariety(1,3,K);
+assert((X ** Y) ** Z === X ** (Y ** Z))
+assert((∏ {X,Y,Z}) ** W === X ** ∏ {Y,Z,W} and X ** ∏ {Y,Z,W} === (X ** Y) ** (Z ** W))
 ///
 
