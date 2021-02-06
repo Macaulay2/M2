@@ -7,7 +7,7 @@ mergeopts := x -> fold2((a,b) -> merge(a,b,last), x)
 makeDir := name -> if name != "" and (not fileExists name or not isDirectory (name | "/.")) then mkdir name
 
 searchPath = method()
-searchPath(List,String) := List => (pth,fn) -> select(pth, dir -> fileExists(dir|"/"|fn))
+searchPath(List,String) := List => (pth,fn) -> searchPath'(pth,fn)
 searchPath(String) := List => (fn) -> searchPath(path,fn)
 
 makeDirectory = method()
