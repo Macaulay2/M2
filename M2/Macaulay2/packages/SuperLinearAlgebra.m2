@@ -5,10 +5,10 @@ newPackage(
   Authors => {
       {Name => "Fereshteh Bahadorykhalily", 
        Email => "f.bahadori.khalili@gmail.com", 
-       HomePage => "Your page here"},
+       HomePage => "https://www.researchgate.net/profile/Fereshte_Bahadorykhalily"},
       {Name => "Fatemeh Tarashi Kashani", 
        Email => "tarashikashanifatemeh@gmail.com", 
-       HomePage => "Your page here"}
+       HomePage => "https://www.linkedin.com/in/fatemehtarashi/"}
    },
    Headline => "Berezinian and supertrace of a supermatrix",
    DebuggingMode => true
@@ -42,19 +42,14 @@ export {
 --------------------------------------------------------------
 superRing = method();
 superRing (PolynomialRing,PolynomialRing):= (R1,R2) -> (
-         n := #gens R1;
          inverseVariable := symbol inverseVariable;
- 	 R11 := symbol R11; 
-	 R22 := symbol R22; 
-	 R111 := symbol R111;
-         R11 = (coefficientRing R1)[R1_0..R1_(n-1),inverseVariable_0..inverseVariable_(n-1)];
-	 R111 = R11/apply(0..(n-1), i -> sub(R1_i,R11) * inverseVariable_i - 1);
-         m := #gens R2;
-         w := (for i to m-1 list (0))|toList(0..(m-1));
-         R22 = (coefficientRing R2)[R2_0..R2_(m-1), MonomialOrder=>{Weights => w,Lex}, SkewCommutative=>true];
-         print concatenate {"is a super commutative ring of dimension", toString n, "|",toString m};
+         R11 := (coefficientRing R1)[R1_0..R1_(#gens R1 -1),inverseVariable_0..inverseVariable_(#gens R1 -1)];
+	 R111 := R11/apply(0..(#gens R1 -1), i -> sub(R1_i,R11) * inverseVariable_i - 1);
+         w := (for i to ( #gens R2)-1 list (0))|toList(0..( #gens R2 -1));
+	 R22 := (coefficientRing R2)[R2_0..R2_( #gens R2 -1), MonomialOrder=>{Weights => w,Lex}, SkewCommutative=>true];
+         print concatenate {"is a super commutative ring of dimension", toString (#gens R1), "|",toString ( #gens R2)};
          R111**R22
-         )         
+         )
  
 ------------------------------------------------------
 --SuperMatrix
