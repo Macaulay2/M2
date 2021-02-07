@@ -66,11 +66,6 @@ Command = new SelfInitializingType of BasicList
 Command.synonym = "command"
 globalAssignment Command
 
-chkrun = cmd -> if (ret := run cmd) =!= 2 then ret else (
-    -- On Mac OS and Linux, 2 = 130-128 indicates shell is terminated by Ctrl-C
-    -- See https://tldp.org/LDP/abs/html/exitcodes.html
-    endl(stderr); error("run: subprocess interrupted"); )
-
 new Command from Function := Command => (command, f)       -> command {f}
 new Command from String   := Command => (command, cmdname) -> command {x ->
     if x === ()

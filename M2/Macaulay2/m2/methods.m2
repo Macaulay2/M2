@@ -1,5 +1,7 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "option.m2"
+
 -- temporary definitions to get error messages to work before methods are working, so we can debug methods
 assert'( class between === Symbol )
 between = (m,v) -> mingle(v,#v-1:m)			    -- provisional
@@ -184,7 +186,7 @@ setupMethods((), {
 	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw, exp,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, assign, numgens, realPart, imaginaryPart, conjugate,
-	  autoload, relations, cone, standardForm, inverse, numeric, round, degree, multidegree,
+	  relations, cone, standardForm, inverse, numeric, round, degree, multidegree,
 	  presentation, dismiss, precision, 
 	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage,
 	  hasEngineLinearAlgebra, nullSpace,

@@ -5,6 +5,8 @@
 -- TODO: eye-friendly block indentation
 -----------------------------------------------------------------------------
 
+needs "format.m2"
+
 newpara := "\n\\par "
 maximumCodeWidth := 60 -- see also booktex.m2, an old file that sets the same variable
 

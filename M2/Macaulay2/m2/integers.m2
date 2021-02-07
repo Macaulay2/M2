@@ -1,5 +1,7 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "rings.m2"
+
 isHomogeneous Number := x -> true
 ring Number := class
 degree Number := i -> {}

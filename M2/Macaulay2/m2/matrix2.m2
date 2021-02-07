@@ -1,5 +1,9 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
+needs "gb.m2"
+needs "matrix1.m2"
+needs "quotring.m2"
+
 pivots = method()
 
 pivots Matrix := (p) -> (			    -- I wish this could be in the engine

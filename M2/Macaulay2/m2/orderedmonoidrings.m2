@@ -1,5 +1,9 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "methods.m2"
+needs "enginering.m2"
+needs "tables.m2"
+
 -----------------------------------------------------------------------------
 
 Monoid = new Type of Type

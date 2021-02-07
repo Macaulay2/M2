@@ -1,5 +1,11 @@
 -- Copyright 1996 Michael E. Stillman
 
+needs "galois.m2"
+needs "ofcm.m2"
+needs "quotring.m2"
+needs "ringmap.m2"
+needs "rings.m2"
+
 ----------------------------------
 -- new polynomial ring or quotient ring from old --
 ----------------------------------

@@ -1,5 +1,8 @@
 --		Copyright 1996-2000 by Daniel R. Grayson
 
+needs "set.m2" -- for demark
+needs "methods.m2"
+
 -- nets
 
 Net#{Standard,AfterPrint} = identity

@@ -1,5 +1,8 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
+needs "matrix1.m2"  -- for Ideal
+needs "quotring.m2" -- for QuotientRing
+
 Ideal * Vector := (I,v) -> (
      image((generators I) ** v#0)
      )

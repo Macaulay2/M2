@@ -3,6 +3,12 @@
 --   set debugLevel = 77 for debug information
 --   see processAlgorithm for a set of TODO items
 
+needs "computations.m2"
+needs "matrix1.m2"
+needs "modules.m2"
+needs "quotient.m2"
+needs "rings.m2"
+
 -----------------------------------------------------------------------------
 -- Local variables
 -----------------------------------------------------------------------------

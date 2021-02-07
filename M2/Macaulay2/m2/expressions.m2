@@ -1,6 +1,16 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 -- rewritten by P. Zinn-Justin 2018
 
+needs "files.m2"
+needs "fold.m2"
+needs "hypertext.m2"
+needs "max.m2"
+needs "methods.m2"
+needs "nets.m2"
+needs "remember.m2"
+needs "structure.m2"
+needs "system.m2"
+
 Constant = new Type of BasicList
 globalAssignment Constant
 

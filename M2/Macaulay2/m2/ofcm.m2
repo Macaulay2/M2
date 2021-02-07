@@ -1,5 +1,10 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "expressions.m2"
+needs "methods.m2"
+needs "orderedmonoidrings.m2"
+needs "variables.m2"
+
 MonoidElement = new Type of HashTable
 MonoidElement.synonym = "monoid element"
 new MonoidElement from RawMonomial := (MonoidElement, f) -> hashTable{ symbol RawMonomial => f }

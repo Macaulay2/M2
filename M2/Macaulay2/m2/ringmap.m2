@@ -1,5 +1,9 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
+needs "modules.m2"
+needs "mutablemat.m2"
+needs "matrix1.m2"
+
 RingMap = new Type of HashTable
 
 RingMap.synonym = "ring map"

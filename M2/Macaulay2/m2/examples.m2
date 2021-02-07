@@ -7,6 +7,8 @@
  * examples
  *-
 
+needs "hypertext.m2"
+
 processExamplesStrict = true
 
 -----------------------------------------------------------------------------

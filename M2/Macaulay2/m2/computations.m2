@@ -10,6 +10,9 @@
     Context{ ... } => Computation{ Result, ... }
 *-
 
+needs "classes.m2"
+needs "methods.m2"
+
 ComputationDebugLevel := new MutableHashTable from {}
 ComputationCacheStats := new MutableHashTable from {}
 

@@ -1,5 +1,7 @@
 -- all this code should go!!
 
+needs "nets.m2"
+
 simpleToString := toString
 
 timelimit := (t,f) -> (alarm t; r := f(); alarm 0; r)

@@ -1,5 +1,8 @@
 -- Copyright 1996 Michael E. Stillman
 
+needs "modules.m2"
+needs "ringmap.m2"
+
 PushforwardComputation = new SelfInitializingType of BasicList
 PushforwardComputation.synonym = "push-forward computation"
 

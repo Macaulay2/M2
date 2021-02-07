@@ -1,5 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "classes.m2" -- for codeHelper
+
 Option.synonym = "option"
 OptionTable.synonym = "option table"
 

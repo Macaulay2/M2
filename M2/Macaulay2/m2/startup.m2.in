@@ -360,7 +360,7 @@ prefixDirectory = null					    -- prefix directory, after installation, e.g., "/
 fullCopyright := false
 matchpart := (pat,i,s) -> substring_((regex(pat, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
-nocore := false
+nocore = false
 noinitfile = false
 interpreter := commandInterpreter
 
@@ -643,6 +643,9 @@ processCommandLineOptions 2				    -- just for path to core files and packages
 
 path = join(initialPath, path)
 
+-- a local way to use private global symbols after endPackage is called on Core
+core := nm -> value if nocore then getGlobalSymbol nm else Core#"private dictionary"#nm
+
 -- Here the Core is loaded
 if firstTime and not nocore then (
     loadDepth = 1;
@@ -650,16 +653,6 @@ if firstTime and not nocore then (
     if not any(path, prefix -> trySimpleLoad("Core.m2", minimizeFilename(prefix | "Core.m2"))) then (
 	if not notify then describePath();
 	error "Core.m2 was not found on path"));
-
--- remove the Core private dictionary -- it was added by "debug" above
--- and install a local way to use private global symbols
-local core
-if not nocore then (
-     dictionaryPath = select(dictionaryPath, d -> d =!= Core#"private dictionary");
-     core = nm -> value Core#"private dictionary"#nm;
-     ) else (
-     core = nm -> value getGlobalSymbol nm
-     )
 
 (loadDepth = 3; processCommandLineOptions 3; loadDepth = 0)
 (core "runStartFunctions")()

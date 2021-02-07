@@ -21,6 +21,9 @@
 --        Legacy code from 2008 is stored in packages/LocalRings/legacy.m2 and is still loaded.
 ---------------------------------------------------------------------------
 
+needs "enginering.m2"
+needs "matrix1.m2"
+
 -- exported in LocalRings.m2
 protect MaximalIdeal
 

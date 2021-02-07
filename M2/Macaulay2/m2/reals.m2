@@ -1,5 +1,7 @@
 --		Copyright 1993-2008 by Daniel R. Grayson
 
+needs "enginering.m2"
+
 -- ImmutableType
 
 ImmutableType = new Type of HashTable

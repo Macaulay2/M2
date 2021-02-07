@@ -1,5 +1,8 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "set.m2"
+needs "methods.m2"
+
 List#"major documentation node" = true
 
 List ? List := (s,t) -> if class s === class t then toSequence s ? toSequence t else (class s) ? (class t)

@@ -1,5 +1,13 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
+needs "ext.m2"
+needs "gateway.m2"
+needs "local.m2"
+needs "matrix1.m2"
+needs "modules.m2"
+needs "monideal.m2"
+needs "multilin.m2"
+
 Variety = new Type of MutableHashTable
 Variety.synonym = "variety"
 Variety.GlobalAssignHook = globalAssignFunction

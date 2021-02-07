@@ -6,6 +6,11 @@
 -- TODO: make orphan overview nodes subnodes of the top node
 -- TODO: not reentrant yet, see resetCounters
 
+needs "document.m2"
+needs "hypertext.m2"
+needs "packages.m2"
+needs "validate.m2"
+
 -----------------------------------------------------------------------------
 -- Generate the html documentation
 -----------------------------------------------------------------------------

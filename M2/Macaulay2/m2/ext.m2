@@ -1,5 +1,9 @@
 --		Copyright 1995 by Daniel R. Grayson
 
+needs "gateway.m2" -- for ScriptedFunctor
+needs "matrix1.m2"
+needs "modules.m2"
+
 ExtOptions = new OptionTable from {
      Prune => true
      }

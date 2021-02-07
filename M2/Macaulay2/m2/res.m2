@@ -2,6 +2,7 @@
 -- TODO:
 -- 1. set DegreeLimit to something other than null on initialization
 -- 2. replace Resolution with ResolutionComputation
+-- 3. integrate with the Complexes package
 
 needs "chaincomplexes.m2"
 needs "computations.m2"

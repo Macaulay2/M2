@@ -3,6 +3,9 @@
 -- The code here should stay the SAME as the code
 -- in the tutorial 'Fano.m2', if that is possible.
 --
+
+needs "matrix1.m2"
+
 Fano = method()
 -- Grassmannian = method()
 

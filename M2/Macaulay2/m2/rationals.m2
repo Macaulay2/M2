@@ -1,5 +1,7 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "expressions.m2"
+needs "integers.m2"
 
 QQ.RawRing = rawQQ()
 QQ.isBasic = true

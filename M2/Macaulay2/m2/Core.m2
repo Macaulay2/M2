@@ -105,6 +105,8 @@ needs = filename -> if not filesLoaded#?filename then load filename else (
 -- Load the rest of Core
 -----------------------------------------------------------------------------
 
+-- if nocore then end
+
 loads := minimizeFilename concatenate(currentFileDirectory, "loadsequence")
 if notify then printerr("about to read ", loads)
 scan(select("^\\w+\\.m2", "$&", get loads), load)
@@ -118,7 +120,7 @@ noinitfile' := noinitfile
 endPackage "Core"
 
 path = select(if not noinitfile' then join(userpath', path) else path, dir -> not member(dir, corepath'))
-if #OutputDictionary > 0 then error("symbols entered into OutputDictionary during startup phase: ", toString keys OutputDictionary)
+if #OutputDictionary > 0 then error("symbols entered into OutputDictionary from Core: ", toString keys OutputDictionary)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
