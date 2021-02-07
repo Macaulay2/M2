@@ -111,10 +111,7 @@ projectiveVariety Ring := o -> R -> (
     R#"multiprojectiveVariety" = Y
 );
 
-isMultisaturated = I -> (
-    if (I#cache)#?"isMultisaturated" then return (I#cache)#"isMultisaturated";
-    (I#cache)#"isMultisaturated" = I == multisaturate I
-);
+isMultisaturated = (cacheValue "isMultisaturated") (I -> I == multisaturate I);
 
 projectiveVariety MultidimensionalMatrix := o -> A -> projectiveVariety(ideal(A!),MinimalGenerators=>true,Saturate=>false);
 
