@@ -386,7 +386,7 @@ Description
   Over a number field the ideal must be of dimension 0. Set the option {\tt
   Verbose} to {\tt true} will print the polynomials found not splitting in the
   coefficient field. Note that a numerical version is implemented in the
-  package @TO local EigenSolver@.
+  package @TO "EigenSolver::EigenSolver"@.
  Example
   R = QQ[x,y]; I = ideal(x^2+y^2-1,x^3+y^3-1);
   #rationalPoints I
