@@ -354,7 +354,8 @@ installInfo := (pkg, installPrefix, installLayout, verboseLog) -> (
 	    if PREV#?tag then infofile << ", Prev: " << infoTagConvert' format PREV#tag;
 	    -- nodes without an Up: link tend to make the emacs info reader unable to construct the table of contents,
 	    -- and the display isn't as nice after that error occurs
-	    infofile << ", Up: " << if UP#?tag then infoTagConvert' format UP#tag else "Top";
+	    infofile << ", Up: " << if UP#?tag then infoTagConvert' format UP#tag else
+		if fkey == infotitle then "(dir)" else "Top";
 	    infofile << endl << endl << info fetchProcessedDocumentation(pkg, fkey) << endl));
     infofile << "\037" << endl << "Tag Table:" << endl;
     scan(values byteOffsets, b -> infofile << b << endl);
