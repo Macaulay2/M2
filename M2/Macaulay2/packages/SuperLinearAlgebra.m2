@@ -130,8 +130,8 @@ assert(Parity(1+2.5*ii,R,a) == 0)
 ----------------------------------
 --SuperMatrixParity
 --------------------------------
-SuperMatrixParity = method();
-SuperMatrixParity(SuperMatrix,Ring,List) := (SM,R1,a) ->(
+superMatrixParity = method();
+superMatrixParity(SuperMatrix,Ring,List) := (SM,R1,a) ->(
     r1 := symbol r1;
     r2 := symbol r2;
     c1 := symbol c1;
