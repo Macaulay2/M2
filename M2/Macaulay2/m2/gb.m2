@@ -68,7 +68,7 @@ stoppingOptionDefaults := new OptionTable from {
     -- StepLimit, maybe
     }
 
--- used here by gb and in matrix3.m2
+-- used here by gb and in pushforward.m2
 gbDefaults = merge(computationOptionDefaults, stoppingOptionDefaults, x -> error "overlap")
 
 notForSyz   := set { Syzygies, ChangeMatrix, CodimensionLimit, Hilbert, StopWithMinimalGenerators, SubringLimit }

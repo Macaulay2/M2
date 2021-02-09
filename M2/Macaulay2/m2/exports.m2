@@ -324,7 +324,6 @@ export {
 	"ProgramRun",
 	"Prune",
 	"Pseudocode",
-	"PushforwardComputation",
 	"QQ",
 	"QRDecomposition",
 	"Quotient",
