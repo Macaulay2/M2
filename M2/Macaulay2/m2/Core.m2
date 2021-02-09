@@ -109,7 +109,7 @@ needs = filename -> if not filesLoaded#?filename then load filename else (
 
 loads := minimizeFilename concatenate(currentFileDirectory, "loadsequence")
 if notify then printerr("about to read ", loads)
-scan(select("^\\w+\\.m2", "$&", get loads), load)
+scan(select("^\\w+\\.m2", "$&", get loads), needs)
 if notify then printerr("read ", loads)
 
 corepath' := corepath

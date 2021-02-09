@@ -16,6 +16,8 @@ degreeCheck = (d,R) -> (				    -- assume d =!= null
      if not ( all(d,i -> class i === ZZ) and #d === degreeLength R ) then oops R;
      toSequence d)
 
+listZ := v -> ( if not all(v,i -> instance(i, ZZ)) then error "expected list of integers"; v )
+
 map(Module,Module,RawMatrix) := opts -> (tar,src,f) -> (
      R := ring tar;
      if raw cover src =!= source f
@@ -400,7 +402,6 @@ Matrix || RingElement := (f,g) -> concatRows(f,g**id_(source f))
 ZZ || Matrix := (f,g) -> concatRows(f*id_(source g),g)
 Matrix || ZZ := (f,g) -> concatRows(f,g*id_(source f))
 
-listZ := v -> ( if not all(v,i -> instance(i, ZZ)) then error "expected list of integers"; v )
 Matrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)	-- get some columns
 Matrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,) -- get some rows
 
