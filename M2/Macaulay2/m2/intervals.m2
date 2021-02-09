@@ -63,10 +63,3 @@ intersect RRi := RRi => { Precision => -1 } >> opts -> identity
 RRi.intersect = { Precision => -1 } >> opts -> L -> fold(L, (N, M) -> intersection(N, M, opts))
 
 isEmpty RRi := Boolean => isEmptyRRi
-
-identical = method()
-
-identical(RRi,RRi) := (N,M) -> (
-    if isEmpty(N) and isEmpty(M) then true
-    else if (left N == left M) and (right N == right M) then true
-    else false)

@@ -1123,7 +1123,8 @@ export strictequality(x:RR,y:RR):bool := (
 
 export strictequality(x:RRi,y:RRi):bool := (
      Ccode( void, "mpfr_clear_flags()" ); -- No equivalent in mpfi
-     (x === y)
+     leftRR(x) === leftRR(y)
+     && rightRR(x) === rightRR(y)
      && !flagged0()
      && sign0(x) == sign0(y)
      && precision0(x) == precision0(y)

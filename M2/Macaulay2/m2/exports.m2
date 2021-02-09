@@ -739,7 +739,6 @@ export {
 	"id",
 	"ideal",
 	"identity",
-    "identical",
 	"if",
 	"ii",
 	"image",

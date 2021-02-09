@@ -342,7 +342,7 @@ compare(left:Expr,right:Expr):Expr := (
      is x:RRicell do (
             when right is y:RRicell do (
                 if flagged() then incomparableE
-                else if (((leftRR(x.v) === rightRR(x.v)) && (leftRR(x.v) === leftRR(y.v))) && (leftRR(x.v) === rightRR(y.v))) then EqualEqualE
+                else if ((leftRR(x.v) === leftRR(y.v)) && (rightRR(x.v) === rightRR(y.v)) && (widthRR(x.v) === 0)) then EqualEqualE
                 else if compare(rightRR(x.v),leftRR(y.v)) < 0  then LessE
                 else if compare(rightRR(x.v),leftRR(y.v)) <= 0 then LessEqualE
                 else if compare(leftRR(x.v),rightRR(y.v)) > 0 then GreaterE
