@@ -244,9 +244,10 @@ void NCGroebner::updateOverlaps(const Poly * toAdd)
   insertNewOverlaps(newOverlaps);
 }
 
-const ConstPolyList& NCGroebner::currentValue() const
+const PolyList& NCGroebner::currentValue() const
 {
-  return reinterpret_cast<const ConstPolyList&>(mGroebner);
+  //return reinterpret_cast<const ConstPolyList&>(mGroebner);
+  return mGroebner;
 }
 
 // new version of reduction code which uses a heap structure
@@ -258,7 +259,7 @@ auto NCGroebner::twoSidedReduction(const Poly* reducee) const -> Poly*
 
   // easy access to variables in the class
   const FreeAlgebra& A{ freeAlgebra() };
-  const ConstPolyList& reducers{ currentValue() };
+  const PolyList& reducers{ currentValue() };
   const WordTable& W{ mWordTable };
   //const SuffixTree& W{ mWordTable };
   

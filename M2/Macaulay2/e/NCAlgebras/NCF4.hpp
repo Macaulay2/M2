@@ -150,9 +150,10 @@ public:
 
   [[nodiscard]] const FreeAlgebra& freeAlgebra() const { return mFreeAlgebra; }
 
-  [[nodiscard]] const ConstPolyList& currentValue() const
+  const PolyList& currentValue() const
   { 
-    return reinterpret_cast<const ConstPolyList&>(mGroebner);
+    //return reinterpret_cast<const ConstPolyList&>(mGroebner);
+    return mGroebner;
   }
 
   void compute(int softDegreeLimit);
