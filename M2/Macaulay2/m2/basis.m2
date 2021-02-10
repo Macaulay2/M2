@@ -11,6 +11,7 @@
       assert try (basis(0, ZZ/101[a, Degrees => {0}]); false) else true
     This probably needs to be fixed in e/matrix-kbasis.cpp
  6. is there any way to better take advantage of the cache when Truncate => true?
+ 7. there is almost no caching when lower and upper limit have rank > 1
 *-
 
 needs "max.m2" -- for InfiniteNumber
@@ -133,6 +134,8 @@ updateComputation(BasisComputation, RawMatrix) := RawMatrix => options basis ++ 
     container.Result     = result)
 
 adjustComputation BasisComputation := RawMatrix => options basis ++ ExtraOpts >> opts -> container -> (
+    -- TODO: make sure this is correct
+    if container.DegreeRank == 0 then return container.Result;
     -- TODO: make sure this works with either a Matrix or a RawMatrix
     (lo, hi) := (opts.LowerLimit, opts.UpperLimit);
     degs := pack(container.DegreeRank, degrees source container.Result);

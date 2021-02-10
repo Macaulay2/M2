@@ -3,6 +3,14 @@ assert(basis F^6 == id_(F^6))
 R = F[]
 assert(basis R^6 == id_(R^6))
 
+M = image random(QQ^5, QQ^3)
+assert(basis M == map(M, QQ^3, id_(QQ^3)))
+assert(basis M == map(M, QQ^3, id_(QQ^3)))
+
+M = image random(ZZ^5, ZZ^3)
+assert(basis M == map(M, ZZ^3, id_(ZZ^3)))
+assert(basis M == map(M, ZZ^3, id_(ZZ^3)))
+
 A = ZZ/101[x]
 R = A[y]
 assert(basis(1, 2, R, SourceRing => A) == map(R^1, A^2, map(R, A), matrix{{y, y^2}}))
@@ -52,3 +60,4 @@ assert(truncate({0}, m) == truncate({0}, m))
 R = QQ[a,b,c, Degrees => {1,2,3}];
 assert(basis(2, R) == matrix"a2,b")
 assert(basis(2, R, Truncate => true) == matrix"a2,ab,ac,b,c")
+assert(basis(2, R) == matrix"a2,b")
