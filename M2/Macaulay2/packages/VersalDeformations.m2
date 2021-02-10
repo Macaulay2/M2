@@ -1259,7 +1259,7 @@ document {
      Headline => "determines hash table in which to cache solutions to the deformation equation",
      PARA{TT "CacheName"," is the name of an optional argument, whose value is either ",ofClass MutableHashTable," or ",TO null,". After each stage of lifting, the methods ",TO versalDeformation," and ",TO localHilbertScheme," will store the solution to the deformation equation 
 in ",TT "CacheName#VersalDeformationResults",". If the value of ",TT "CacheName"," is ",TO null,"
- as is the default, then the solution is stored in the hash table described in the documenatation of ",TO versalDeformation," and ",TO localHilbertScheme,"."}}
+ as is the default, then the solution is stored in the hash table described in the documentation of ",TO versalDeformation," and ",TO localHilbertScheme,"."}}
 
 document {
      Key =>VersalDeformationResults,
@@ -1366,6 +1366,7 @@ assert (checkComparisonTheorem gens J == true)
 ///
 
 TEST ///
+needsPackage "Truncations"
 S = ZZ/32003[a..d]
 I = monomialIdeal(a^2,a*b,b^4,a*c^3)
 J = truncate(3, I)

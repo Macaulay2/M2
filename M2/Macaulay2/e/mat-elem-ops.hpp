@@ -669,7 +669,7 @@ class MatElementaryOps<DMat<RT> >
  private:
 #if 0
   // MES June 2013: working on this code
-  // Internal functino for reduceByPivots
+  // Internal function for reduceByPivots
   static void perform_reduction(Mat& M,
                                 size_t r, size_t c,
                                 size_t nr, size_t nc,

@@ -87,16 +87,12 @@ markdown STRONG := x -> concatenate("**", apply(x, markdown), "**") -- **asteris
 -- Lists
 lvl := -1              -- nesting level
 ctr := new MutableList -- counters for ordered list
-markdown OL := x -> (
-    lvl = lvl + 1; ctr#lvl = 0;
-    out := shorten concatenate(newline, apply(x, markdown));
-    lvl = lvl - 1; out)
-markdown UL := x -> (
-    lvl = lvl + 1; ctr#lvl = -1;
-    out := shorten concatenate(newline, apply(x, markdown));
-    lvl = lvl - 1; out)
+pushLvl :=  n     -> (lvl = lvl + n; n)
+popLvl  := (n, s) -> (lvl = lvl - n; s)
+markdown OL := x -> popLvl(pushLvl 1, (ctr#lvl =  0; shorten concatenate(newline, apply(x, markdown))))
+markdown UL := x -> popLvl(pushLvl 1, (ctr#lvl = -1; shorten concatenate(newline, apply(x, markdown))))
 markdown LI := x -> (
-    pre := concatenate(lvl:"   ", if ctr#lvl < 0 then  "- " else (ctr#lvl = ctr#lvl + 1; toString ctr#lvl | ". "));
+    pre := concatenate(lvl:"  ", if ctr#lvl < 0 then  "- " else (ctr#lvl = ctr#lvl + 1; toString ctr#lvl | ". "));
     shorten concatenate(pre, apply(x, markdown)))
 
 -- Description lists
@@ -115,7 +111,7 @@ markdown HREF   := x -> concatenate("[", markdown last x, "](", toURL first x, "
 markdown IMG := x -> (
     (o, cn) := override(IMG.Options, toSequence x);
     if o#"alt" === null then error ("IMG item is missing alt attribute");
-    concatenate("![", format o#"alt", "](\"", toURL o#"src", "\")"))
+    concatenate("![", format o#"alt", "](", toURL o#"src", ")"))
 
 -- Code and Syntax Highlighting
 markdown PRE  := x -> markdown concatenate x -* TODO: syntax highlighting *-

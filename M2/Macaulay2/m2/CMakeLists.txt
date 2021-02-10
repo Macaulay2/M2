@@ -2,6 +2,7 @@
 ## This directory contains the rules for building M2-core
 
 set(CORE_DIR ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core)
+set(CORE_TESTS ${M2_DIST_PREFIX}/${M2_INSTALL_DOCDIR}/Core/tests)
 set(M2_ARGS -q --silent --stop -e errorDepth=0 --no-preload --no-tvalues)
 
 # List of Core sources
@@ -28,5 +29,9 @@ foreach(filename IN LISTS M2LIST ITEMS
     ${CMAKE_CURRENT_BINARY_DIR}/startup.m2 setup.m2 loadsequence installedpackages)
   file(COPY ${filename} DESTINATION ${CORE_DIR})
 endforeach()
+
+## Copy Core tests from Macaulay2/tests/normal to share/doc/Macaulay2/Core/tests
+file(COPY ${CMAKE_SOURCE_DIR}/Macaulay2/tests/normal/ DESTINATION ${CORE_TESTS}
+  FILES_MATCHING PATTERN "*.m2")
 
 # TODO: handle Style here.

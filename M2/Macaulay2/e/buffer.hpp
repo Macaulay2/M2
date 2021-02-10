@@ -82,7 +82,7 @@ class buffer : public our_new_delete
   }
   buffer &operator<<(M2_string s)
   {
-    put(s->array, s->len);
+    put((char *)s->array, s->len);
     return *this;
   }
   buffer &operator<<(std::string s)

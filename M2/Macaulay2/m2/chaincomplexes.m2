@@ -67,23 +67,14 @@ net ChainComplex := C -> (
 	  b := s#-1;
 	  horizontalJoin between(" <-- ", apply(a .. b,i -> stack (net C_i," ",net i)))))
 
-texMathShort := m -> (
-    if m == 0 then return "0";
-    x := entries m;
-    texRow := row -> if #row>8 then { texMath first row, "\\cdots", texMath last row } else texMath\row;
-    x = if #x>10 then ( t:= texRow first x; {t, toList(#t:"\\vphantom{\\Big|}\\vdots"), texRow last x } ) else texRow\x;
-    concatenate(
-	"\\begin{pmatrix}" | newline,
-	between(///\\/// | newline, apply(x, row -> concatenate between("&",row))),
-	"\\end{pmatrix}"
-	      )
-    )
-
 texMath ChainComplex := C -> (
      complete C;
      s := sort spots C;
      if # s === 0 then "0" else
-     concatenate apply(s,i->if i==s#0 then texUnder(texMath C_i,i) else "\\,\\xleftarrow{\\scriptsize " | texMathShort C.dd_i | "}\\," | texUnder(texMath C_i,i) )
+     concatenate apply(s,i->(
+	     if i>s#0 then "\\,\\xleftarrow{" | texMath short C.dd_i | "}\\,",
+	     texUnder(texMath C_i,i)
+	     ))
       )
 
 -----------------------------------------------------------------------------
@@ -907,7 +898,7 @@ hilbertSeries(ZZ,BettiTally) := o -> (n,B) -> (
 -----------------------------------------------------------------------------
 Ring ^ BettiTally := (R,b) -> (
    -- donated by Hans-Christian von Bothmer
-   -- given a betti Table b and a Ring R make a chainComplex -- with zero maps over R  that has betti diagramm b. --
+   -- given a betti Table b and a Ring R make a chainComplex -- with zero maps over R  that has betti diagram b. --
    -- negative entries are ignored
    -- rational entries produce an error
    -- multigraded R's work only if the betti Tally contains degrees of the correct degree length

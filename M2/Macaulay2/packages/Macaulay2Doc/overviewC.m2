@@ -93,7 +93,7 @@ document {
 	  TO2 {"integers modulo a prime", "ZZ/p"},
 	  TT "GF(p^n)"
 	  },
-     "Create a finite field with q = p^n elements using",
+     "Create a finite field with $q = p^n$ elements using",
      EXAMPLE "F = GF(81,Variable=>a)",
      "This creates the ring of characteristic 3, having 3^4 = 81 elements.  The elements
      of this ring are 0, a, a^2, a^3, ..., a^80.",
@@ -149,7 +149,7 @@ document {
 	  },
      "If you have a quotient ring that you know is a finite field, then you can
      convert it to ring that is known by the system to be a finite field.",
-     EXAMPLE "GF (ZZ/2[T]/(T^9+T+1), Variable => T)",
+     EXAMPLE "GF (ZZ/2[T]/(T^9+T+1), Variable => T) -* no-capture-flag *-",
      "You may also provide your own choice of primitive element.  Internally,
      elements of the finite field are stored as powers of the primitive element.
      First we assign our quotient ring to a global variable to ensure that
@@ -410,13 +410,6 @@ document {
      other in the monomial ordering.",
      EXAMPLE "f ? g",
      }
-
-TEST ///
-A = ZZ[a..d]
-B = A[r,s,t]
-C = B[x,y,z]
-
-///
 
 document {
      Key => "factoring polynomials",
@@ -722,7 +715,7 @@ Plan for the next node:
 --   computing up to a given degree
 ///
 
-TEST ///
+///
 -- document these routines DO THIS
 -- schreyerMatrix F -- DO THIS
 

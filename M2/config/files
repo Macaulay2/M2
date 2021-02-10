@@ -71,7 +71,6 @@ libraries/lapack/Makefile
 Macaulay2/Makefile
 Macaulay2/README
 Macaulay2/packages/SCSCP/docinput/Makefile
-Macaulay2/book/Makefile
 Macaulay2/c/Makefile
 Macaulay2/d/Makefile
 Macaulay2/d/Makefile.files

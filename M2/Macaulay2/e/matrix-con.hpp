@@ -2,7 +2,6 @@
 #define matrixcon_hpp_
 
 #include <vector>
-#include "engine.h"
 #include "ring.hpp"
 #include <utility>
 
@@ -44,7 +43,7 @@ class MatrixConstructor
   void set_entry(int r, int c, ring_elem a);
   void set_column(int c, vec v);
 
-  void compute_column_degrees(); /* Takes into acount the matrix degree */
+  void compute_column_degrees(); /* Takes into account the matrix degree */
 
   void set_column_degree(int i, const int *deg);
 

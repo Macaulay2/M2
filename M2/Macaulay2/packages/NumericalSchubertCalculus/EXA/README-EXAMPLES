@@ -1,3 +1,10 @@
+=========  Missing examples ==================================
+
+two last examples in Table 2
+2e622-G48
+1e822e2-G48
+
+
 =========  Examples that DO NOT WORK go here =================
 
 1e43e3111-G48.m2    ***works with multiprecision*** 
@@ -14,6 +21,10 @@
 
 =========   Examples that WORK go here. =======================
 
+21x2e3-G36.m2                Finds two solutions after 8.383s
+
+21e5-G38.m2                  Finds 32 solutions in 35m8.817s   wall 18m29.654s
+
 2e53e2-G48.m2                26 solutions computed in 408.48 
 
 1e6-G25.m2                   Finds five solutions in 4.475s
@@ -25,24 +36,19 @@
                                  LinearAlgebra false: 141.01s
         with Seed 2, this last one doesn't assert all checkIncidenceSolution
 21e422-G48.m2               42 solutions found and tested with all 3 engines:
-																M2engine: 4m 25.335s
-																BERTINI:  2m41.881s
-																PHCPACK:  1m51.526s
+	M2engine: 4m 25.335s
+	BERTINI:  2m41.881s
+	PHCPACK:  1m51.526s
 
 
-more
 
 
------  Other: -----
 
-21e3-G36_PHC.m2           !! Does nothing, yet.
-21e5-G38.m2                  Finds 32 solutions in 35m8.817s   wall 18m29.654s
-21x2e3-G36.m2                Finds two solutions after 8.383s
-4lines_osculating.m2     !!  Fails.  There is origin as a solution at some stage... This bug is fixed in the future M2
-4lines_real_test.m2          Works
-TestSept21.m2
-TripleIntersection.m2
-TripleIntersection_PHC.m2
-big-chunk-2.m2
-big-chunk-TEST.m2
+
+
+
+
+SUBDIRECTORIES:
+ProblemsG36/		family of examples (by Frank) 
+ProblemsG37/		family of examples (by Frank)
 

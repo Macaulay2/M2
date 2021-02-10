@@ -29,6 +29,7 @@ class ntuple
   static int lex_compare(int nvars, const int *a, const int *b);
   static void copy(int nvars, const int *a, int *result);
   static int weight(int nvars, const int *a, M2_arrayint wt);
+  static int weight(int nvars, const int *a, const std::vector<int>& wt);
   static int degree(int nvars, const int *a);
   static void elem_text_out(buffer &o,
                             unsigned int nvars,
@@ -140,6 +141,17 @@ inline int ntuple::weight(int nvars, const int *a, M2_arrayint wt)
   int sum = safe::mult(a[0], wt->array[0]);
   for (int i = 1; i < top; i++)
     sum = safe::add(sum, safe::mult(a[i], wt->array[i]), "weight overflow");
+  return sum;
+}
+
+inline int ntuple::weight(int nvars, const int *a, const std::vector<int>& wt)
+{
+  int top = wt.size();
+  if (nvars < top) top = nvars;
+  if (top == 0) return 0;
+  int sum = safe::mult(a[0], wt[0]);
+  for (int i = 1; i < top; i++)
+    sum = safe::add(sum, safe::mult(a[i], wt[i]), "weight overflow");
   return sum;
 }
 

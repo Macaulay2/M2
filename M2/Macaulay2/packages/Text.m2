@@ -1,8 +1,9 @@
 -- -*- coding: utf-8 -*-
 --		Copyright 1993-2008 by Daniel R. Grayson
+-- TODO: document (EXAMPLE, PRE)
 
 newPackage("Text",
-     Keywords => {"Miscellaneous"},
+     Keywords => {"Documentation"},
      Headline => "documentation and hypertext"
      )
 
@@ -504,12 +505,12 @@ document {
 	 HREF{"https://katex.org/docs/supported.html","supported functions and symbols"}, " for more information, or ",
 	 HREF{"https://en.wikibooks.org/wiki/LaTeX/Mathematics","this page"}, " for an introduction to math mode in $\\LaTeX$." },
      PARA {
-	 TEX "Equations in ", CODE "$..$", " or ", CODE "\\(...\\)", " appear in inline mode, such as $x^2-1$,
-	 while those in ", CODE "$$..$$", " or ", CODE "\\[...\\]", " appear in display mode:",
+	 TEX "Equations in ", TT "$..$", " or ", TT "\\(...\\)", " appear in inline mode, such as $x^2-1$,
+	 while those in ", TT "$$..$$", " or ", TT "\\[...\\]", " appear in display mode:",
 	 TEX {"$$", texMath genericMatrix(QQ[x,y,z,w],2,2), ".$$"} },
      PARA {
-	 "In addition, ", CODE "{\\bf ...}", ", ", CODE "{\\em ...}", ", ", CODE "{\\it ...}", ", ", CODE "{\\tt ...}",
-	 ", and ", CODE "\\url{...}", " are converted to ", TO Hypertext, " objects:" },
+	 "In addition, ", TT "{\\bf ...}", ", ", TT "{\\em ...}", ", ", TT "{\\it ...}", ", ", TT "{\\tt ...}",
+	 ", and ", TT "\\url{...}", " are converted to ", TO Hypertext, " objects:" },
      BLOCKQUOTE PARA TEX ///{\tt res(Module)} is the {\it method} for {\em making} {\bf resolutions} (see \url{https://macaulay2.com}).///,
      PARA {
 	 "Here are some examples designed to illustrate various other features of this function when viewed in a browser:" },
@@ -565,7 +566,7 @@ document {
 	 ( BLOCKQUOTE PRE s, value s )),
      PARA {
 	 TEX ///The macro can be used at any point after:
-	 $$ 0 \to 2\OO_{\\P^3}(-3) \to 3\OO_{\\P^3}(-2) \to \OO_{\\P^3} \to \OO_C \to 0 $$///},
+	 $$ 0 \to 2\OO_{\PP^3}(-3) \to 3\OO_{\PP^3}(-2) \to \OO_{\PP^3} \to \OO_C \to 0 $$///},
      SeeAlso => {tex, texMath, (show, TEX)}
      }
 
@@ -866,7 +867,7 @@ isMissingDoc := value Core#"private dictionary"#"isMissingDoc";
 isUndocumented := value Core#"private dictionary"#"isUndocumented";
 scan({peek', show, validate, html, net, info, tex, texMath, mathML, NewFromMethod, toString, toExternalString, symbol?}, m ->
     undocumented select(toList \\ makeDocumentTag \ methods m, x ->
-	    any(x.Key, s -> toString package s === "Text") and (isMissingDoc x or isUndocumented x)))
+	    x.Package === "Text" and (isMissingDoc x or isUndocumented x)))
 
 undocumented {
     (examples, Hypertext),

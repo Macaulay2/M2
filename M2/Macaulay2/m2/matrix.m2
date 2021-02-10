@@ -222,7 +222,7 @@ Matrix * Vector := Matrix Vector := Vector => (m,v) -> (
 expression Matrix := m -> (
     x := applyTable(entries m, expression);
     d := degrees -* cover *- target m;
-    if not all(d, i -> all(i, j -> j == 0)) then MatrixDegreeExpression {x,d, degrees source m} else MatrixExpression x
+    MatrixExpression if not all(d, i -> all(i, j -> j == 0)) then { x, Degrees=>{d, degrees source m} } else { x }
     )
 
 net Matrix := m -> net expression m
@@ -233,7 +233,7 @@ texMath Matrix := m -> texMath expression m
 describe Matrix := m -> (
     args:=(describe target m,describe source m);
     if m.?RingMap then args=append(args,describe m.RingMap);
-    args=append(args,expression if m == 0 then 0 else entries m);
+    args=append(args, expression if m == 0 then 0 else entries m);
     if not all(degree m,zero) then args=append(args,expression(Degree=>degree m));
     Describe (expression map) args
     )
@@ -261,7 +261,7 @@ ggConcatBlocks = (tar,src,mats) -> (
      f)
 
 sameringMatrices = mats -> (
-     if sameresult(m -> (if m.?RingMap then m.RingMap,ring target m, ring source m), mats)
+     if same apply(mats, m -> (if m.?RingMap then m.RingMap,ring target m, ring source m))
      then mats
      else (
 	  R := try ring sum apply(toList mats, m -> 0_(ring target m)) else error "expected matrices over compatible rings";
@@ -624,11 +624,8 @@ inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
      	  if ambient N' =!= ambient N then error "inducedMap: expected new target and target of map provided to be subquotients of same free module";
      	  if ambient M' =!= ambient M then error "inducedMap: expected new source and source of map provided to be subquotients of same free module";
 	  );
-     gbM  := gb(M,ChangeMatrix => true);
-     gbN' := gb(N',ChangeMatrix => true);
-     g := generators N * cover f * (generators M' // gbM);
-     f' := g // gbN';
-     f' = map(N',M',f',Degree => if opts.Degree === null then degree f else opts.Degree);
+     c := runHooks((inducedMap, Module, Module, Matrix), (opts, N', M', f));
+     (f', g, gbN', gbM) := if c =!= null then c else error "inducedMap: no method implemented for this type of input";
      if opts.Verify then (
 	  if relations M % relations M' != 0 then error "inducedMap: expected new source not to have fewer relations";
 	  if relations N % relations N' != 0 then error "inducedMap: expected new target not to have fewer relations";
@@ -641,11 +638,22 @@ inducedMap(Module,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(M,source f, f,o)
 inducedMap(Nothing,Module,Matrix) := o -> (M,N,f) -> inducedMap(target f,N, f,o)
 inducedMap(Nothing,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(target f,source f, f,o)
 
+addHook((inducedMap, Module, Module, Matrix), Strategy => Default, (opts, N', M', f) -> (
+     N := target f;
+     M := source f;
+     gbM  := gb(M,  ChangeMatrix => true);
+     gbN' := gb(N', ChangeMatrix => true);
+     g := generators N * cover f * (generators M' // gbM);
+     f' := g // gbN';
+     f' = map(N',M',f',Degree => if opts.Degree === null then degree f else opts.Degree);
+     (f', g, gbN', gbM)))
+
 inducedMap(Module,Module) := Matrix => o -> (M,N) -> (
      if ambient M != ambient N 
      then error "'inducedMap' expected modules with same ambient free module";
      inducedMap(M,N,id_(ambient N),o))
 
+-- TODO: deprecate this in favor of isWellDefined
 inducesWellDefinedMap = method(TypicalValue => Boolean)
 inducesWellDefinedMap(Module,Module,Matrix) := (M,N,f) -> (
      sM := target f;

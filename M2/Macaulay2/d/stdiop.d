@@ -44,7 +44,7 @@ shorten(s:string):string := (				    -- purely textual
 	  );
      );
 isAbsolutePath(s:string):bool := (                         			    -- purely textual
-     -- eventually make this happen only in MSDOS
+     -- eventually make this happen only in MS-DOS
      length(s) >= 1 && s.0 == '/' ||
      length(s) >= 3 && s.1 == ':' && s.2 == '/' ||
      s === "stdio"
@@ -127,12 +127,12 @@ cleanscreen():void := (
 printMessage(position:Position,message:string):void := (
      if !SuppressErrors then (
      	  cleanscreen();
-     	  stderr << position;
-	  if recursionDepth > 0 then stderr << "[" << recursionDepth << "]:";
+	  stdError << position;
+	  if recursionDepth > 0 then stdError << "[" << recursionDepth << "]:";
      	  -- gettid() is not there in Solaris
 	  -- tid := gettid();
-	  -- if tid != -1 && tid != getpid() then stderr << "<" << gettid() << ">:";
-	  stderr << " " << message << endl;
+	  -- if tid != -1 && tid != getpid() then stdError << "<" << gettid() << ">:";
+	  stdError << " " << message << endl;
 	  );
      );
 export printErrorMessage(position:Position,message:string):void := (

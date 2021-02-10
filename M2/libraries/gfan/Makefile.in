@@ -7,6 +7,7 @@ TARFILE = gfan$(VERSION).tar.gz
 TARDIR = gfan$(VERSION)
 CONFIGURECMD = true
 # adding cddnoprefix=yes here ensures that we include "cdd.h" instead of "cdd/cdd.h", which is necessary when trying to use cddlib as installed by homebrew on the Mac:
+CPPFLAGS += -I$(BUILTLIBPATH)/include/cddlib
 BUILDOPTIONS = CC="$(CC) $(CPPFLAGS)" CXX="$(CXX) $(CPPFLAGS)" CLINKER="$(CC) $(LDFLAGS)" CCLINKER="$(CXX) $(LDFLAGS)" PREFIX=/nowhere CDD_LINKOPTIONS=-lcddgmp cddnoprefix=yes
 INSTALLOPTIONS = PREFIX=$(LIBRARIESDIR)
 CHECKTARGET = .

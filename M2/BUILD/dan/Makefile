@@ -1,22 +1,19 @@
 # This makefile is the start of a generic makefile that works on all systems
 
 #############################################################################
-# Variables to override on the command line:
-
-# set the compilers to use, and clear any values set by "make", which can be wrong:
-CC  =
-CXX =
-FC  =
-AR  = 
-
+# Variables that could be overridden on the command line or in a makefile that includes this one:
+#  CC
+#  CXX
+#  FC
+#  AR
 # configure script options:
-OPTIONS =
-
+#  OPTIONS
 # libraries to build:
-BUILDLIBS = 
-
+#  BUILDLIBS
 # build directory name suffix
-DIRSUFF =
+#  DIRSUFF
+
+# careful: "make" might set CC incorrectly -- the usual values are CC=cc CXX=g++
 
 #############################################################################
 # Example:
@@ -30,6 +27,13 @@ CONFIGOPTIONS += --build=$(shell ../../config/config.guess)
 DEBIAN := $(shell if [ -d /var/lib/dpkg ] ; then echo yes ; else echo no; fi)
 RPM := $(shell if [ -d /var/lib/yum -o -d /var/lib/dnf ] ; then echo yes ; else echo no; fi)
 MACOSX := $(shell if [ `uname -s` = Darwin ] ; then echo yes ; else echo no; fi)
+
+ifeq ($(MACOSX),yes)
+# if we don't do this, we may get an absolute path in currentLayout:
+#    i8 : currentLayout#"factory gftables"
+#    o8 = /usr/local/Cellar/singular/4.1.3p2_2/share/factory/
+BUILDLIBS += gftables
+endif
 
 DIRECTORY ?= $(shell hostname)$(DIRSUFF)
 

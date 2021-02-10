@@ -85,7 +85,7 @@ doc ///
       C1.dd
     
    Caveat
-     Released in M2 1.9, still experimental.  Only works over finite prime fields. Uses quite alot of memory.
+     Released in M2 1.9, still experimental.  Only works over finite prime fields. Uses quite a lot of memory.
      For inhomogeneous ideals or modules, the monomial order must be a degree order.  For multi-graded
      ideals or modules, @TO "minimalBetti"@ is not yet implemented.
    SeeAlso

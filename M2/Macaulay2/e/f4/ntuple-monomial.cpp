@@ -1,7 +1,7 @@
 // Copyright 1997-2006 Michael E. Stillman
 
 #include "ntuple-monomial.hpp"
-#include "../text-io.hpp"
+#include "buffer.hpp"
 
 void ntuple_monomials::elem_text_out(buffer &o,
                                      unsigned int nvars,

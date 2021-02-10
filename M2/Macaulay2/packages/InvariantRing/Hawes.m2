@@ -26,7 +26,7 @@ o 'IsGroup' optional argument is not ported because our methods
 -- Considers two cases: when the field the matrices are defined over is QQ 
 -- and when it is a general number field.
 -- This is to get around the fact that frac for number fields is not yet
--- implimented in Macaulay2
+-- implemented in Macaulay2
 -- The author thanks an anonymous referee for suggested improvements to this 
 -- method to ensure a consistent class of polynomial is returned 
 -- Reference:

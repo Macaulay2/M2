@@ -3890,7 +3890,7 @@ doc ///
 
         {\it Oct 6, 2009 (Version 0.48)}
 
-           Resolved a compatiblity issue with the new version of the M2 package {\it OldPolyhedra}.
+           Resolved a compatibility issue with the new version of the M2 package {\it OldPolyhedra}.
 
 
         {\it Oct 3, 2009 (Version 0.47)}
@@ -3969,7 +3969,7 @@ doc ///
 
       This package has to be installed first, see its documentation for this.
 
-      It calls the Maple package Convex and is faster than OldPolyhedra, hence the perferable choice.
+      It calls the Maple package Convex and is faster than OldPolyhedra, hence the preferable choice.
       If you want to do non-trivial examples you have to go for it.
 
       To use it type
@@ -5957,7 +5957,7 @@ doc ///
         If R does not have a coker grading then the standard projective space fan rays are added, see @TO addCokerGrading@
         and @TO raysPPn@.
         
-        The Option computeFaces=>false suppresses the computaton of all faces.
+        The Option computeFaces=>false suppresses the computation of all faces.
         
         If Rdual is specified it is used for the vertices of the dual simplex, if not a new polynomial ring is created.
         It is graded by the coordinates of the vertices of the dual simplex.

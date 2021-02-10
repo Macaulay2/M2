@@ -9,21 +9,18 @@
 name: Build and Test Macaulay2
 
 on:
-  # trigger a test quick build at both PR (on dev)
-  # and pushing to master (after merging or by Dan or Mike)
+  workflow_dispatch:
   push:
     branches:
-      - master
-      - development
-      - global
-      - release-1.16
+      - pre-master # when we're ready to merge 'development' into 'master', we merge it first into 'pre-master', so it can be tested
   pull_request:
     branches:
       - master
       - development
   schedule:
-    # cron time in UTC; set to 6a EDT
-    - cron: '0 10 * * *'
+    # cron time in UTC
+    # a scheduled job runs on the default branch: 'master'
+    - cron: '0 6 * * *'
 
 defaults:
   run:
@@ -32,42 +29,40 @@ defaults:
 jobs:
   build:
     if: github.repository == 'Macaulay2/M2' || contains(github.ref, 'global')
-    name: ${{ matrix.os }}-${{ matrix.build-system }}-${{ matrix.compiler }}
+    name: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false  # eventually make this true
+      fail-fast: false
       matrix:
-        os:
-          - macos-latest
-          - ubuntu-latest
         build-system:
           - cmake
           - autotools
+        os:
+          - ubuntu-20.04
+          - macos-10.15
         compiler:
-#          - clang10
-          - gcc9
           - default
-#          - xcode11
-        # fine-tuning some configurations and excluding a few
         include:
-          - compiler: gcc9
-            cxx: g++-9
-            cc: gcc-9
-          - os: macos-latest
-            build-system: cmake
-            compiler: clang10
-            cxx: clang++
-            cc: clang
-          - os: ubuntu-latest
-            build-system: cmake
+          - build-system: cmake
+            os: ubuntu-20.04
+            compiler: gcc7
+            cxx: g++-7
+            cc: gcc-7
+          - build-system: cmake
+            os: ubuntu-20.04
             compiler: clang10
             cxx: clang++-10
             cc: clang-10
+          # This build tests Clang rather than AppleClang (keep)
+          - build-system: cmake
+            os: macos-10.15
+            compiler: clang10
+            cxx: clang++
+            cc: clang
         exclude:
-          - os: macos-latest
-            compiler: gcc9
-#          - os: ubuntu-latest
-#            compiler: xcode11
+          - build-system: cmake
+            os: macos-10.15
+            compiler: default
 
     steps:
       - uses: actions/checkout@v2
@@ -80,9 +75,9 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew config
-          # autoconf, libtool are already in the virtual env
-          brew install automake ccache gnu-tar make ninja pkg-config yasm
-          brew install bdw-gc boost cddlib eigen flint glpk libatomic_ops libomp mpfr mpir ncurses ntl tbb
+          brew tap macaulay2/tap
+          brew install autoconf automake bison ccache cmake ctags gnu-tar libtool make ninja pkg-config yasm
+          brew install --only-dependencies macaulay2/tap/M2
 
 # ----------------------
 #   Install missing tools and libraries for Linux
@@ -91,14 +86,15 @@ jobs:
       - name: Install requirements for Linux
         if: runner.os == 'Linux'
         run: |
+          sudo add-apt-repository -y ppa:macaulay2/macaulay2
           sudo apt-get update
           sudo apt-get install -y -q --no-install-recommends clang-10 gfortran libtool-bin ninja-build yasm ccache
           sudo apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-stacktrace-dev \
                   libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libntl-dev gfan \
-                  libcdd-dev libgivaro-dev libboost-regex-dev fflas-ffpack w3c-markup-validator
-          # TODO: help autotools detect flint from brew
-          brew install flint
+                  libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
+                  libsingular-dev singular-data libmemtailor-dev libmathic-dev libmathicgb-dev libcdd-dev \
+                  cohomcalg topcom 4ti2 normaliz coinor-csdp nauty lrslib w3c-markup-validator libtbb-dev libomp5-10
 
 # ----------------------
 #   Steps common to all build variants
@@ -106,27 +102,27 @@ jobs:
 
       - name: Prepare build environment
         run: |
-          echo "CC=${{ matrix.cc }}" >> $GITHUB_ENV
+          echo "CC=${{  matrix.cc  }}" >> $GITHUB_ENV
           echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
-          echo "LD_LIBRARY_PATH=`brew --prefix`/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
           if [[ "${{ runner.os }}" == "Linux" ]]
-          then echo "/usr/lib/ccache" >> $GITHUB_PATH
+          then echo "LIBRARY_PATH=`llvm-config-10 --libdir`" >> $GITHUB_ENV
+               echo "/usr/lib/ccache"                     >> $GITHUB_PATH
           else echo `brew --prefix ccache`/libexec        >> $GITHUB_PATH
                echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
           fi
 
       - uses: actions/cache@v2
-        if: matrix.build-system == 'cmake' # TODO: remove when autotools is more efficient with space
+        if: matrix.build-system == 'cmake'
         id: restore-cache
         with:
           path: |
             ~/.ccache
-            ~/M2/BUILD/build/usr-host
-          key: build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-${{ hashFiles('**/cmake/*-libraries.cmake') }}
-          restore-keys: |
-            build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-
-            build-cache-${{ runner.os }}-${{ matrix.compiler }}-
-            build-cache-${{ runner.os }}-
+            ~/work/M2/M2/M2/BUILD/build/usr-host
+          key: build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-${{ hashFiles('**/cmake/*-libraries.cmake', '.github/workflows/test_build.yml') }}
+          # restore-keys: |
+          #   build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-
+          #   build-cache-${{ runner.os }}-${{ matrix.compiler }}-
+          #   build-cache-${{ runner.os }}-
 
 
 # ----------------------
@@ -137,18 +133,26 @@ jobs:
         if: matrix.build-system == 'cmake'
         run: |
           cmake -S../.. -B. -GNinja \
-            -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_SYSTEM_PREFIX_PATH=`brew --prefix` \
-            -DBUILD_NATIVE=OFF -DBUILD_LIBRARIES="Givaro;FFLAS_FFPACK" # TODO: remove when the packages are updated
+            --debug-trycompile \
+            -DBUILD_LIBRARIES="Givaro;FFLAS_FFPACK" \
+            -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_NATIVE=OFF \
+            -DCMAKE_PREFIX_PATH=`brew --prefix` \
+            -DCMAKE_INSTALL_PREFIX=/usr
 
       - name: Build libraries using Ninja
-        if: matrix.build-system == 'cmake' # && steps.restore-cache.outputs.cache-hit != 'true'
+        if: matrix.build-system == 'cmake'
         run: |
           cmake --build . --target build-libraries build-programs
 
       - name: Build Macaulay2 using Ninja
         if: matrix.build-system == 'cmake'
         run: |
-          cmake --build . --target M2-core install-packages
+          cmake --build . --target M2-core M2-emacs install-packages
+          if [[ "${{ runner.os }}" == "Linux" ]] && [[ "${{ matrix.compiler }}" == "clang10" ]]; then
+              sudo apt-get install -y -q --no-install-recommends dpkg-dev
+              echo "GIT_COMMIT=`git describe --dirty --always --match HEAD`" >> $GITHUB_ENV
+              cpack -G DEB
+          fi
 
 # ----------------------
 #   Configure and build M2 using Autotools
@@ -159,6 +163,8 @@ jobs:
         run: |
           make -C ../.. get-libtool get-automake get-autoconf
           make -C ../.. all
+          export CPPFLAGS=-I`brew --prefix`/include
+          export  LDFLAGS=-L`brew --prefix`/lib
           ../../configure --enable-download
 
       - name: Build Macaulay2 using Make
@@ -171,35 +177,53 @@ jobs:
 # ----------------------
 
       - name: Run Tests using CTest
-        if: matrix.build-system == 'cmake' && matrix.os == 'ubuntu-latest'
+        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang10'
         run: |
-          # cmake --build . --target M2-unit-tests
-          # ctest -R "unit-tests"
-          ctest -R "normal/" -E "command|program|schenck|threads|doc-links" -j4 --output-on-failure
+          set -xe
+          ./M2 -q --check 1 -e 'exit 0'
+          ./M2 -q --check 2 -e 'exit 0'
+          ./M2 -q --check 3 -e 'exit 0'
+          cmake --build . --target M2-tests
+          cmake --build . --target M2-unit-tests
+          ctest -j1 --output-on-failure -R "unit-tests"
+          ctest -j4 --output-on-failure -R "ComputationsBook"
+          # TODO: add Macaulay2/tests/engine when https://github.com/Macaulay2/M2/issues/1213 is fixed
 
       - name: Run Tests using Autotools
-        if: matrix.build-system == 'autotools' && matrix.os == 'ubuntu-latest'
+        if: matrix.build-system == 'autotools' && runner.os == 'Linux' && matrix.compiler == 'default'
         run: |
-          make check
+          make check -o check-in-libraries
           make -C Macaulay2/html-check-links check
-          make validate-html
 
 # ----------------------
-#   Upload build logs
+#   Upload build artifacts
 # ----------------------
 
       - name: Upload build logs
         if: always()
         uses: actions/upload-artifact@v2
         with:
-           name: ${{ matrix.os }}-${{ matrix.build-system }}-${{ matrix.compiler }}-logs
+           name: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}-logs
            path: |
              # Autotools
              M2/BUILD/build/config.log
+             M2/BUILD/build/include/*
              M2/BUILD/build/libraries/*/build/*/config.log
              # CMake
-             M2/BUILD/build/CMakeFiles/CMakeCache.txt
-             M2/BUILD/build/CMakeFiles/CMake(Error|Output).log
+             M2/BUILD/build/CMakeCache.txt
+             M2/BUILD/build/CMakeFiles/CMakeError.log
+             M2/BUILD/build/CMakeFiles/CMakeOutput.log
              M2/BUILD/build/libraries/*/build/config.log
              # Example errors
              M2/BUILD/build/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
+             # Test errors
+             M2/BUILD/build/Macaulay2/tests/*/*.errors
+
+      - name: Upload Macaulay2 package for Ubuntu (x86_64)
+        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang10' && success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: Macaulay2-${{ env.GIT_COMMIT }}-ubuntu-x86_64
+          path: |
+            M2/BUILD/build/Macaulay2-*
+          retention-days: 1

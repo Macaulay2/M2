@@ -1,6 +1,9 @@
 /* Copyright 2017 Mahrud Sayrafi and Michael E. Stillman
    Mahrud Sayrafi's code in this file is in the public domain. */
 
+#include "localring.hpp"
+
+#include "interface/factory.h"
 #include "text-io.hpp"
 #include "ringmap.hpp"
 #include "monoid.hpp"
@@ -9,7 +12,6 @@
 #include "debug.hpp"
 #include "matrix.hpp"
 #include "matrix-con.hpp"
-#include "localring.hpp"
 #include "mutablecomplex.hpp"
 
 LocalRing *LocalRing::create(const PolyRing *R, GBComputation *P)
@@ -740,6 +742,8 @@ unsigned int LocalRing::computeHashValue(const ring_elem f) const
 /*                               Global functions */
 /********************************************************************************/
 
+extern "C" { // TODO: remove when this function is in e/interface
+
 Matrix *rawLiftLocalMatrix(const Ring *R, const Matrix *f)
 {
   const LocalRing *L = f->get_ring()->cast_to_LocalRing();
@@ -769,6 +773,8 @@ M2_bool rawIsLocalUnit(const RingElement *f)
     }
   return L->is_unit(f->get_value());
 }
+
+} // TODO: remove when this function is in e/interface
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

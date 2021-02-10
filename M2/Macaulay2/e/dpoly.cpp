@@ -1,11 +1,14 @@
 #include "dpoly.hpp"
-#include <cstdlib>
-#include <cctype>
-#include <sstream>
+
 #include <cassert>
+#include <cctype>
+#include <cstdlib>
+#include <sstream>
+#include <vector>
+
+#include "interface/random.h"
 #include "ZZ.hpp"
 
-#include <vector>
 #define DEBUGGCDno
 
 long gcd_extended(long a, long b, long &u, long &v)

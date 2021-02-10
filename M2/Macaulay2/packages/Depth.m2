@@ -169,7 +169,7 @@ time depth(ideal vars S, S^1)
 
 depth(Module) := ZZ => M -> (
     --depth of a module with respect to the max ideal, via finite proj dim
-    --gives error if the ultimate coeficient ring of R = ring M is not a field.
+    --gives error if the ultimate coefficient ring of R = ring M is not a field.
     R := ring M;
     if isHomogeneous M === false then print "-- Warning: This module is not homogeneous, computation may be incorrect.";
     if not isCommutative R then error"depth undefined for noncommutative rings";
@@ -550,7 +550,7 @@ doc ///
      K = koszul vars S
      apply(numgens S, i-> depth coker K.dd_(i+1))
     Text
-     and here is one computing systems of paramters. The "Density" (a number between
+     and here is one computing systems of parameters. The "Density" (a number between
      0 and 1) is a measure of the sparseness sought, and "Attempts" bounds
      the number of probabilistic attempts.
     Example

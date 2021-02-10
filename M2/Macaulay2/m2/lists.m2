@@ -90,15 +90,11 @@ all = method(TypicalValue => Boolean)
 all(ZZ,Function) := all(HashTable,Function) := all(BasicList,Function) := (x,p) -> not any(x, i -> not p i)
 all(BasicList,BasicList,Function) := (x,y,p) -> not any(apply(x,y,identity), ij -> not p ij)
 
-same = v -> #v <= 1 or (
-     w := v#0;
-     for i from 1 to #v-1 do if w =!= v#i then return false;
-     true)
-
-sameresult = (f,v) -> #v <= 1 or (
-     w := f v#0;
-     for i from 1 to #v-1 do if w =!= f v#i then return false;
-     true)
+-- TODO: how to get this to work? When fixed, replace "same apply" with "same"
+--same = method(TypicalValue => Boolean)
+--same BasicList            :=  L     -> same(L, identity)
+--same(BasicList, Function) := (L, f) -> #L <= 1 or (t := f L#0; not any(L, l -> t =!= f l))
+same = L -> #L <= 1 or (t := L#0; not any(L, l -> t =!= l))
 
 member(Thing,VisibleList) := Boolean => (c,x) -> any(x, i -> c===i)
 

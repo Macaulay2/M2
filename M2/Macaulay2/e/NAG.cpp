@@ -3,7 +3,11 @@
 // Anton Leykin's code in this file is in the public domain.
 
 #include "NAG.hpp"
-#include "matrix-con.hpp"
+
+#include "engine-includes.hpp" // need HAVE_DLFCN_H
+#include <M2/math-include.h>
+
+#include <time.h>
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
 #else
@@ -11,11 +15,15 @@
 #define dlsym(x, y) NULL
 #define dlclose(x) (-1)
 #endif
-#include <time.h>
-#include <exception>
+
+#include "interface/NAG.h"
 #include "lapack.hpp"
+#include "matrix-con.hpp"
+#include "matrix.hpp"
 #include "poly.hpp"
 #include "relem.hpp"
+
+class FreeModule;
 
 // Straight Line Program classes
 
@@ -167,7 +175,7 @@ SLP<Field> /* or null */* SLP<Field>::copy()
   make_nodes(res->nodes, num_consts + num_inputs + num_operations);
   for (int i = 0; i < num_consts; i++) res->nodes[i] = nodes[i];
   res->node_index = node_index;  // points to position in program (rel. to
-                                 // start) of operation correspoding to a node
+                                 // start) of operation corresponding to a node
   res->num_consts = num_consts;
   res->num_inputs = num_inputs;
   res->num_operations = num_operations;

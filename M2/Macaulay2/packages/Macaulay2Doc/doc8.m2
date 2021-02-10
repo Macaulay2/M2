@@ -162,100 +162,6 @@ document {
      
 -----------------------------------------------------------------------------
 
-TEST "
-R=ZZ/101[a..f]
-assert( degrees( R^{1} ++ R^{2} ) == {{-1}, {-2}} )
-assert( degrees (R^{1,2} ** R^{3,5}) == {{-4}, {-6}, {-5}, {-7}} )
-assert( numgens R^6 == 6 )
-assert( rank R^6 == 6 )
-f = vars R
-M = cokernel (transpose f * f)
-assert ( rank M == 5 )
-assert ( rank kernel f == 5 )
-assert ( rank cokernel f == 0 )
-assert(R^{0,0} == R^2)
-assert(R^{0,0} != R^{0,1})
-"
-document {
-     Key => GroebnerBasis,
-     Headline => "the class of all Gröbner bases",
-     "A Gröbner basis in Macaulay2 consists of a Gröbner basis
-     computation, and several associated matrices. Normally you don't
-     need to refer to these objects directly, as many operations on
-     matrices and modules create them, and refer to them.  For more
-     information, see ", TO "Gröbner bases", "."
-     }
-
-document {
-     Key => returnCode,
-     TT "returnCode", " --  a key for a ", TO "GroebnerBasis", " under which is
-     stored the return code from the engine for the computation."
-     }
-
-document {
-     Key => symbol gbTrace,
-     Headline => "provide tracing output during various computations in the 	 engine.",
-     TT "gbTrace = n", " -- set the tracing level for the ", TO "engine", " to
-     level ", TT "n", ".  Meaningful values for the user ", TT "n", " are
-     0, 1, 2, and 3.  Meaningful values for the developers are 4, 5, 8, 10, 11, and 100; the
-     parity also has an effect when the value is at least 5.",
-     PARA{},
-     "The notations used in tracing are :",
-     UL {
-	  "g       - a generator reduced to something nonzero and has been added to the basis.",
-	  "m       - an S-pair reduced to something nonzero and has been added to the basis.",
-	  "z       - an S-pair reduced to zero, and a syzygy has been recorded.",
-	  "u       - an S-pair reduced to zero, but the syzygy need not be recorded.",
-	  "o       - an S-pair or generator reduced to zero, but no new syzygy occurred.",
-	  "r       - an S-pair has been removed.",
-	  "{2}     - beginning to reduce the S-pairs of degree 2.",
-	  "(7)     - 7 more S-pairs need to be reduced.",
-	  LI {"(8,9)   - 9 S-pairs, 8 predicted basis elements (", TO [gb,Hilbert], ")"},
-	  ".       - a minor has been computed, or something has happened while computing a resolution.",
-	  }
-     }
-
-document {
-     Key => Sort,
-     TT "Sort", " -- a strategy used with the keyword ", TO "Strategy", ".",
-     PARA{},
-     "Indicates that the Gröbner basis should be sorted by lead term; usually
-     this is a bad idea.  Normally the basis is sorted only by degree. The
-     running time can change either for the good or bad.",
-     SeeAlso => {[gb,Strategy]}
-     }
-
-document {
-     Key => Homogeneous,
-     TT "Homogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
-     PARA{},
-     "This is an alternate Gröbner basis algorithm that can be used if the submodule
-     is homogeneous, and the ring is a (quotient of) a polynomial ring over a field.",
-     SeeAlso => {[gb,Strategy]}
-     }
-
-document {
-     Key => Inhomogeneous,
-     TT "Inhomogeneous", " -- a strategy used with the keyword ", TO "Strategy", ".",
-     PARA{},
-     "This is the default Gröbner basis algorithm used if the submodule is
-     inhomogeneous, and the ring is a (quotient of) a polynomial ring over a field.",
-     SeeAlso => {[gb,Strategy]}
-     }
-
-document {
-     Key => LongPolynomial,
-     TT "LongPolynomial", " -- a strategy used with the keyword ", TO "Strategy", ".",
-     PARA{},
-     "Indicates that during computation of a Gröbner basis, the reduction
-     routine will be replaced by one that will handle long polynomials more
-     efficiently using \"geobuckets\", which accomodate the terms in buckets
-     of geometrically increasing length.  This method was first used
-     successfully by Thomas Yan, graduate student in CS at Cornell.",
-     SeeAlso => {[gb,Strategy]}
-     }
-
-
 document {
      Key => {getChangeMatrix,(getChangeMatrix, GroebnerBasis)},
      Headline => "get the change of basis matrix",
@@ -266,35 +172,6 @@ document {
      "The option ", TO "ChangeMatrix", " can be used with ", TO "gb", " 
      to enable the computation of the change of basis matrix."
      }
-    
-
-TEST "
-R = ZZ/103[a..c]
-C = resolution cokernel vars R
-assert(regularity C === 0)
-R = ZZ/101[a .. r]
-M = cokernel genericMatrix(R,a,3,6)
-time C = resolution M
-assert(regularity C === 2)
-f = symmetricPower(2,vars R)
-assert(f%a + a * (f//a) == f)
-"
-
-TEST "
-S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
-m = matrix pack (3,toList (t_1 .. t_9))			  -- 3 by 3
-n = matrix pack (3,toList (u_1 .. u_9))			  -- 3 by 3
-j = flatten (m * n - n * m)
-k = flatten (m * n - n * m)
-G = gb j
-jj = generators G
-assert( numgens source jj == 26 )
-T = (degreesRing S)_0
-assert( poincare cokernel j == 1-8*T^2+2*T^3+31*T^4-32*T^5-25*T^6+58*T^7-32*T^8+4*T^9+T^10 )
-v = apply(7, i -> numgens source generators gb(k,DegreeLimit => i) )
-assert (v  === {0, 0, 8, 20, 25, 26, 26} )
-"
-
 
 document {
      Key => {(modulo, Matrix, Matrix),modulo,(modulo, Matrix, Nothing),(modulo, Nothing, Matrix)},
@@ -380,21 +257,6 @@ document {
      SeeAlso => {(symbol %, Matrix, Matrix), generators, diff, substitute, quotient, remainder, quotientRemainder }
      }
 
-TEST "
-R = ZZ/101[a..d]
-A = image matrix {{a}}
-B = image matrix {{b}}
-f = inducedMap((A+B)/A, B/intersect(A,B))
-assert isIsomorphism f
-g = f^-1
-assert( f^-1 === g )			  -- check caching of inverses
-assert( f*g == 1 )
-assert( g*f == 1 )
-assert isWellDefined f
-assert isWellDefined g
-assert not isWellDefined inducedMap(R^1,cokernel matrix {{a}},Verify => false)
-"
-
 document {
      Key => {(complement, Matrix),complement},
      Headline => "find the minimal generators for cokernel of a matrix (low level form)",
@@ -405,31 +267,6 @@ document {
      }
 
 -----------------------------------------------------------------------------
-
-TEST "
-S = ZZ/107[vars ( 0 .. 5 ) ]
-
-g = matrix {{a*b*c - d*e*f, a*d^2 - e^3, a*e^2 - b*c*e}}
-k = syz g
-assert( numgens source k === 4 )
-
-t = (a + b + c)^4 
-u = (a + b + c) * b^3
-v = a * t + b * u
-w = c * t - d * u
-x = b * t + f * u
-
-h = matrix {{t,u,v,w,x}}
-h1 = mingens image h
-
-so = m -> m_(sortColumns m)
-
-assert ( so h1 == so matrix {{
-	       a^4+4*a^3*b+6*a^2*b^2-3*b^4+4*a^3*c+12*a^2*b*c+12*a*b^2*c+6*a^2*c^2
-	       +12*a*b*c^2+6*b^2*c^2+4*a*c^3+4*b*c^3+c^4,
-	       a*b^3+b^4+b^3*c
-	       }} )
-"
 
 document {
      Key => {homogenize,(homogenize, Ideal, RingElement),(homogenize, Matrix, RingElement),
@@ -459,31 +296,10 @@ document {
 	  }
      }
 
-TEST "
-R = ZZ/101[a..d,t]
-f = a^2-d^3*b-1
-assert(homogenize(f,t) == a^2*t^2 - d^3*b - t^4)
-assert(homogenize(f,t,{1,2,3,4,1}) == a^2*t^12-t^14-b*d^3)
-assert(homogenize(f,b,{1,1,0,-1,1}) == a^2 - d^3*b^5 - b^2)
-
-m = map(R^{1,-1}, , {{a,b},{c,d-1}})
-assert(homogenize(m,t) == map(R^{1,-1}, , {{a*t^2, b*t^2}, {c, d-t}}))
-assert(homogenize(m,t,{-1,-1,-1,-1,1}) - map(R^{1,-1}, , {{a*t^2, b*t^3}, {c, d*t-1}}) == 0)
-
-v = m_0
-F = module v
-assert(homogenize(v,t) == a*t^2 * F_0 + c * F_1)
-assert(homogenize(v,t,{-1,-1,-1,-1,1}) == a*t^2 * F_0 + c * F_1)
-
--- now check to make sure that all is ok over quotient rings
-R = ZZ/101[a..d]/(a^2-b^2, a*b)
-use R
-f = c^2 - 1 + b^2 - b
-assert(homogenize(f,a) == c^2)
-"
 
 document {
      Key => Ascending,
+     Headline => "specify ascending order",
      TT "Ascending", " -- a symbol used as a value for optional
      arguments ", TO "DegreeOrder", " and ", TO "MonomialOrder", "."
      }
@@ -629,13 +445,6 @@ document {
      determine if ", TT "f", " generates the multiplicative group of this field.",
      EXAMPLE { "R = ZZ/5[t]/(t^2+t+1);", "isPrimitive t", "isPrimitive (t-1)" }
      }
-
-TEST "
-R = ZZ/5[t]/(t^2+t+1)
-assert (not isPrimitive t)
-assert isPrimitive (t-1)
-assert (not isPrimitive 0_R)
-"
 
 document {
      Key => order,

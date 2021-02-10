@@ -1,4 +1,4 @@
-/* svg stuff (used by Graphics.m2) */
+/* svg stuff (used by VectorGraphics.m2) */
 
 svg.M2Svg {
     vertical-align: middle;
@@ -8,16 +8,16 @@ svg.M2Svg {
     stroke-opacity: 1;
     fill: none;
     fill-opacity: 1;
-    cursor: grab;
 }
 
-.katex svg.M2Svg path { /* because of KaTeX annoying def */
-    stroke: inherit;
+svg.M2SvgClickable {
+    cursor: grab;
 }
 
 svg.M2Svg text {
 /*    font-size: 14px; /* /* just a reminder since code in M2 anyway:
 absolute sounds bad but actually it's not really absolute since it's in svg units */
+    font-family: sans-serif;
 }
 
 svg.M2Svg foreign-object {

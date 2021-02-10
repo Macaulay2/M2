@@ -5,18 +5,38 @@
 #ifndef _nag_
 #define _nag_
 
-#include "buffer.hpp"
-#include "matrix.hpp"
-#include "aring-CC.hpp"
-#include "complex.h"
-#include "style.hpp"
-#include "aring-glue.hpp"
-#include "SLP.hpp"
+#include "engine-includes.hpp"
 
-#include <memory>
+#include <algorithm>
+#include <assert.h>
 #include <map>
+#include <math.h>
+#include <memory>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <utility>
+#include <vector>
 
+#include "interface/NAG.h"
+#include "matrix.hpp"
+#include "SLP.hpp"
+#include "aring-CC.hpp"
+#include "aring-glue.hpp"
+#include "aring.hpp"
+#include "buffer.hpp"
+#include "error.h"
+#include "hash.hpp"
+#include "intarray.hpp"
+#include "newdelete.hpp"
+#include "ring.hpp"
+#include "ringelem.hpp"
+
+class Matrix;
 class PointArray;
+class PolyRing;
+class SLProgram;
 
 class M2PointArray : public MutableEngineObject
 {
@@ -379,7 +399,7 @@ double norm2_complex_array(int n,
 #define MAX_NUM_PATH_TRACKERS 10
 
 /* Conventions in relative_position SLPs:
-   nodes are refered via negative integers;
+   nodes are referred via negative integers;
    i-th input --> i;
    i-th constant --> i + CONST_OFFSET. */
 
@@ -411,7 +431,7 @@ class SLP : public MutableEngineObject
   M2_arrayint program;        // std::vector???
   element_type* nodes;        // array of CCs
   intarray node_index;  // points to position in program (rel. to start) of
-                        // operation correspoding to a node
+                        // operation corresponding to a node
   int num_consts, num_inputs, num_operations, rows_out, cols_out;
 
   void* handle;  // dynamic library handle

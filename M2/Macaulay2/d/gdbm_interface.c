@@ -66,7 +66,7 @@ int system_dbmclose(int handle) {
 
 static datum todatum(M2_string x) {
      datum y;
-     y.dptr = x->array;
+     y.dptr = (char *)x->array;
      y.dsize = x->len;
      return y;
      }

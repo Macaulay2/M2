@@ -528,7 +528,7 @@ void ReducedGB_Field_Local::remainder(POLY &f, bool use_denom, ring_elem &denom)
               if (head.next != 0)
                 {
                   // In this case, we can't reduce the tail without
-                  // risking an infinite loop.  So we delcare ourselves done
+                  // risking an infinite loop.  So we declare ourselves done
                   // Attach the rest of h.f to frem
                   frem->next = h.f;
                   break;
@@ -612,7 +612,7 @@ void ReducedGB_Field_Local::remainder(gbvector *&f,
               if (head.next != 0)
                 {
                   // In this case, we can't reduce the tail without
-                  // risking an infinite loop.  So we delcare ourselves done
+                  // risking an infinite loop.  So we declare ourselves done
                   // Attach the rest of h.f to frem
                   frem->next = h.f;
                   break;

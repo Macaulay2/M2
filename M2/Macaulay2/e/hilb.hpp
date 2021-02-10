@@ -15,7 +15,7 @@ class MonomialIdeal;
 
 class partition_table
 // Partition a monomial ideal into several such that
-// the graph of variables occuring in each is connected.
+// the graph of variables occurring in each is connected.
 // Implemented using a union-find algorithm.
 {
   int n_vars;

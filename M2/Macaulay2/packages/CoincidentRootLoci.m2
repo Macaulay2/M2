@@ -700,7 +700,7 @@ isRealRootedViaQEPCAD (RingElement) := o -> (F) -> (
    (dir|"-input") << S << close;
    C := "qepcad +N"|toString(first o.QepcadOptions)|" +L"|toString(last o.QepcadOptions)|" < '"|dir|"-input'";
    if o.Verbose then << "--running " << C << endl;
-   try (Out := get("!"|C); if CLEAR then removeFile(dir|"-input")) else error "error occured while executing QEPCAD. Please make sure that it is installed and configured correctly.";
+   try (Out := get("!"|C); if CLEAR then removeFile(dir|"-input")) else error "error occurred while executing QEPCAD. Please make sure that it is installed and configured correctly.";
    jj := toList first regex("An equivalent quantifier-free formula:"|newline|newline,Out);
    V := substring(Out,sum jj,5);
    if V === "TRUE"|newline then return true else if V === "FALSE" then return false else (
@@ -825,7 +825,7 @@ realroots (RingElement) := o -> (F) -> (
    F = sub(F,vars R);
    f := sub(sub(F,y => 1),K[x]);
    ro := toList(((first degree F) - (first degree f)) : [1.0,0.0]);
-   ro = ro | apply(select(roots f,a -> a == realPart a),r -> [realPart r,1.0]);
+   ro = ro | apply(select(roots f,a -> abs(imaginaryPart a) < 0.0000001),r -> [realPart r,1.0]);
    if o.Verbose then (
       <<"number real roots: "<<#ro<<endl;
       <<"number distinct real roots: "<<#unique ro<<endl;

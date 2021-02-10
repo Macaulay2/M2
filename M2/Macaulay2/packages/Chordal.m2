@@ -14,6 +14,7 @@ newPackage(
     Headline => "routines that exploit chordal structure",
     Keywords => {"Commutative Algebra", "Graph Theory"},
     AuxiliaryFiles => true,
+    PackageImports => {"PrimaryDecomposition"},
     PackageExports => {"Graphs","TriangularSets"}
 )
 

@@ -396,7 +396,7 @@ smoothFanoToricVariety (ZZ,ZZ) := NormalToricVariety => opts -> (d, i) -> (
 
 
 ------------------------------------------------------------------------------
--- Methods that inferface with the 'Polyhedra' package 
+-- Methods that interface with the 'Polyhedra' package 
 ------------------------------------------------------------------------------
 normalToricVariety Fan := opts -> F -> (
     normalToricVariety (entries transpose rays F, maxCones F,

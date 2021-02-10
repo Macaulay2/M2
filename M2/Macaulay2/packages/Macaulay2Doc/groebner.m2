@@ -118,7 +118,7 @@ document {
 
 document {
      Key => "normal forms",
-     TEX ///Let R = k[x_1, ..., x_n] be a polynomial ring over a field k,
+     TEX ///Let $R = k[x_1, ..., x_n]$ be a polynomial ring over a field k,
 	and let $I \subset{} R$ be an ideal. Let $\{g_1, ..., g_t\}$ be a Groebner
 	basis for $I$. For any $f \in{} R$, there is a unique `remainder' $r \in{} R$ such
 	that no term of $r$ is divisible by the leading term of any $g_i$ and such
@@ -223,10 +223,10 @@ document {
 	will then describe Groebner bases of submodules, and over more general
 	rings.", 
 	PARA{},
-     TEX ///Let $R = k[x_1, ..., x_n]$ be a polynomial ring over a field k,
-	and let $I \subset{} R$ be an ideal.  A {\it monomial order}
-	on R is a total order, $>$,  on the monomials of R, which satisfies two
-	conditions: (1) $m > 1$, for every monomial m \neq 1, and (2) the order is
+     TEX ///Let $R = k[x_1, ..., x_n]$ be a polynomial ring over a field $k$,
+	and let $I \subset R$ be an ideal.  A {\it monomial order}
+	on $R$ is a total order, $>$,  on the monomials of $R$, which satisfies two
+	conditions: (1) $m > 1$, for every monomial $m \neq 1$, and (2) the order is
 	multiplicative: $m > n$ implies that $mp > np$, for all monomials $m$, $n$, $p$.///,
      PARA{},
 	"In Macaulay2, each ring has a monomial order (also called a term order) 

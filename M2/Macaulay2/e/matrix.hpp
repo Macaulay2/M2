@@ -8,6 +8,7 @@
 #include "monideal.hpp"
 
 #include <vector>
+
 class MatrixConstructor;
 
 /**

@@ -18,6 +18,9 @@
 -- Store L = {R_(x_0),...,R_(x_n)}
 -- along with generators of C_(x_0),...,C_(x_n)
 -- and gluing maps from C_(x_i) <-- C_(x_j)
+--        4. make remainder and % work with local rings
+--        5. remove LocalRing from modules2.m2, matrix.m2,
+--           and move the contents of m2/localring.m2 here
 ---------------------------------------------------------------------------
 newPackage(
     "LocalRings",
@@ -30,12 +33,16 @@ newPackage(
         },
     Headline => "operations over a local ring (R, P)",
     Keywords => {"Commutative Algebra"},
-    PackageExports => {"PruneComplex"},
+    PackageExports => {"PruneComplex", "Saturation"},
     AuxiliaryFiles => true
     )
 
+export { "MaximalIdeal" }
+
 -- These two are defined in m2/localring.m2
 exportFrom_Core { "LocalRing", "localRing" }
+
+importFrom_Core { "printerr", "raw", "rawLiftLocalMatrix" }
 
 export {
     "liftUp",
@@ -57,8 +64,6 @@ export {
 -- << "-- The LocalRings package is experimental, but old methods are still available.     --" << endl;
 -- << "-- See the documentation and comments in the package to learn more.                 --" << endl;
 -- << "--------------------------------------------------------------------------------------" << endl;
-
-debug Core;
 
 --==================================== Basic Operations ====================================--
 -- Note: The following methods are extended to local rings in this package:
@@ -102,6 +107,7 @@ liftUp(Matrix, Ring)        := (m, R) ->
         liftUp(source m, R),
         rawLiftLocalMatrix(raw R, raw m))
 liftUp(MutableMatrix, Ring) := (m, R) -> mutableMatrix liftUp(matrix m, R)
+liftUp(RingElement, Ring)   := (r, R) -> (liftUp(matrix {{r}}, R))_(0,0)
 
 -- Computes syzygies of a matrix over local rings
 localSyzHook = method(Options => options syz)
@@ -294,24 +300,8 @@ hilbertSamuelFunction (Ideal, Module, ZZ, ZZ) := List => (q, M, n0, n1) -> (
 
 --===================================== addHooks Section =====================================--
 
--- syz
--- this method doesn't have hooks so we redefine it to allow runHooks
-oldSyz = lookup(syz, Matrix)
-syz Matrix := Matrix => opts -> m -> (
-    c := runHooks(Matrix, symbol syz, (opts,m));
-    if c =!= null then return c;
-    error "syz: no method implemented for this type of matrix"
-    )
-
-addHook(Matrix, symbol syz, (opts,m) -> break (oldSyz opts)(m))
-
-addHook(Matrix, symbol syz, (opts,m) -> (
-        if instance(ring m, LocalRing) then break localSyzHook(opts,m)
-        ))
-
 -- res, resolution
--- this method already has hooks installed, so we can simply add a new one
-addHook(Module, symbol resolution, (opts,M) -> (
+addHook((resolution, Module), Strategy => Local, (opts, M) -> (
         RP := ring M;
         if instance(RP, LocalRing) then (
             M' := liftUp M;
@@ -320,63 +310,31 @@ addHook(Module, symbol resolution, (opts,M) -> (
             CP = if isHomogeneous M'
               then pruneComplex(CP, UnitTest => isScalar, PruningMap => false)
               else pruneComplex(CP, PruningMap => false);
-            break CP)
+            CP)
         ))
+
+-- syz
+addHook((syz, Matrix), Strategy => Local, (opts, m) ->
+    if instance(ring m, LocalRing) then localSyzHook(opts, m))
 
 -- mingens
--- this method doesn't have hooks so we redefine it to allow runHooks
-oldMingens = lookup(mingens, Module)
-mingens Module := Matrix => opts -> (cacheValue symbol mingens) (M -> (
-        c := runHooks(Module, symbol mingens, (opts, M));
-        if c =!= null then return c;
-        error "mingens: no method implemented for this type of module"
-        ))
-
-addHook(Module, symbol mingens, (opts,M) -> break (oldMingens opts)(M))
-
-addHook(Module, symbol mingens, (opts,M) -> (
-        if instance(ring M, LocalRing) then break localMingensHook(opts,M)
-        ))
+addHook((mingens, Module), Strategy => Local, (opts, M) ->
+    if instance(ring M, LocalRing) then localMingensHook(opts, M))
 
 -- minimalPresentation
--- this method already has hooks installed, so we can simply add a new one
-addHook(Module, symbol minimalPresentation, (opts,M) -> (
-        if instance(ring M, LocalRing) then break localMinimalPresentationHook(opts,M)
-        ))
+addHook((minimalPresentation, Module), Strategy => Local, (opts, M) ->
+    if instance(ring M, LocalRing) then localMinimalPresentationHook(opts,M))
 
 -- length
 -- this method doesn't have hooks so we redefine it to allow runHooks
-oldLength = lookup(length, Module)
-length Module := ZZ => (cacheValue symbol trim) (M -> (
-    c := runHooks(Module, symbol length, M);
-    if c =!= null then return c;
-    error "length: no method implemented for this type of module"
-    ))
-
-addHook(Module, symbol length, M -> break oldLength M)
-
-addHook(Module, symbol length, M -> (
-        if instance(ring M, LocalRing) then break (localLengthHook M)
-        ))
+addHook((length, Module), Strategy => Local, M ->
+    if instance(ring M, LocalRing) then localLengthHook M)
 
 -- trim
--- this method doesn't have hooks so we redefine it to allow runHooks
-oldTrim = lookup(trim, Module)
-trim Module := Module => opts -> (cacheValue symbol trim) (M -> (
-    c := runHooks(Module, symbol trim, (opts,M));
-    if c =!= null then return c;
-    error "trim: no method implemented for this type of module"
-    ))
-
-addHook(Module, symbol trim, (opts,M) -> break (oldTrim opts)(M))
-
-addHook(Module, symbol trim, (opts,M) -> (
-        if instance(ring M, LocalRing) then (
-            if isFreeModule M then break M;
-            N := subquotient(mingens M, if M.?relations then mingens image relations M);
-            N.cache.trim = N;
-            break N)
-        ))
+addHook((trim, Module), Strategy => Local, (opts, M) ->
+    if instance(ring M, LocalRing) then subquotient(ambient M,
+	if M.?generators then localMingensHook(opts, image generators M),
+	if M.?relations  then localMingensHook(opts, image relations M)))
 
 -- (symbol//, Matrix, Matrix)
 -- Caution: this method is only correct when f = g * (f//g),
@@ -390,11 +348,8 @@ addHook(Module, symbol trim, (opts,M) -> (
 --   Let's say in the unit u in the column H_j, then we replace F_i by -1/u times the column
 --   [h_(n+1) h_(n+2) ... h_(n+m)]^T, remove the column H_j from H, and move on to F_(i+1).
 --   If there aren't any units in the i-th column, we replace F_i by a 0 column and move on to F_(i+1)
-oldQuotient = lookup(quotient, Matrix, Matrix)
-quotient(Matrix,Matrix) := Matrix => opts -> (f, g) -> (
+addHook((quotient, Matrix, Matrix), Strategy => Local, (opts, f, g) -> (
     RP := ring f;
-    if ring g =!= RP then error "expected objects of the same ring";
-    if target f =!= target g then error "expected maps with the same target";
     if instance(RP, LocalRing) then (
         G := syz liftUp(f | g);
         mat := for i from 0 to numColumns f - 1 list (
@@ -409,124 +364,72 @@ quotient(Matrix,Matrix) := Matrix => opts -> (f, g) -> (
         m := if mat === {} then 0_RP else raw matrix{mat};
         map(source g, source f, m,
 	    Degree => degree matrix f - degree matrix g)  -- set the degree in the engine instead
-        )
-    else (oldQuotient opts)(f, g)
-    )
+        )))
 
 -- inducedMap
--- TODO: verification of induced maps over local rings when opts.Verify = true
-oldInducedMap = lookup(inducedMap,Module,Module,Matrix)
-inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
+-- FIXME: Verify must be set to false because % doesn't work over local rings
+addHook((inducedMap, Module, Module, Matrix), Strategy => Local, (opts, N', M', f) -> (
     RP := ring f;
-    if ring N' =!= RP or ring M' =!= RP then error "inducedMap: expected modules and map over the same ring";
     if instance(RP, LocalRing) then (
         N := target f;
         M := source f;
-        if isFreeModule N and isFreeModule M and (N =!= ambient N' and rank N === rank ambient N' or M =!= ambient M' and rank M === rank ambient M')
-        then f = map(N = ambient N', M = ambient M', f)
-        else (
-	    if ambient N' =!= ambient N then error "inducedMap: expected new target and target of map provided to be subquotients of same free module";
-	    if ambient M' =!= ambient M then error "inducedMap: expected new source and source of map provided to be subquotients of same free module";
-	    );
         g := generators N * cover f * (generators M' // mingens image generators M);
         f' := g // mingens image generators N';
         f' = map(N',M',f',Degree => if opts.Degree === null then degree f else opts.Degree);
-        if false and opts.Verify then ( -- FIXME this is set to false because % doesn't work over local rings
-            if relations M % relations M' != 0 then error "inducedMap: expected new source not to have fewer relations";
-            if relations N % relations N' != 0 then error "inducedMap: expected new target not to have fewer relations";
-            if generators M' % mingens M != 0 then error "inducedMap: expected new source not to have more generators";
-            if g % mingens N' != 0 then error "inducedMap: expected matrix to induce a map";
-            if not isWellDefined f' then error "inducedMap: expected matrix to induce a well-defined map";
-            );
-        f')
-    else (oldInducedMap opts)(N',M',f)
-    )
+	(f', g, mingens N, mingens M))))
+
+-- TODO
+addHook((remainder, Matrix, Matrix), Strategy => Local, (f, g) -> (
+    RP := ring f;
+    if instance(RP, LocalRing) then error "remainder over local rings is not implemented"))
 
 --======================================= Experimental =======================================--
 
+baseRing := RP -> ( R := RP; while instance(R, LocalRing) do R = last R.baseRings; R )
+
 -- (symbol:, Thing, Thing)
 -- We rely on the fact that ideal and module quotients commute with localization
--- TODO: find a way to handle the options from quotient
-localQuotient = (A, B) -> (
+localQuotient := (opts, A, B) -> (
     RP := ring A;
-    if ring B =!= RP then error "expected objects of the same ring";
     if instance(RP, LocalRing) then (
-        if isSubset(B, A) then (
-            if class A === Ideal or class B === Module
-            then return ideal 1_RP
-            else return ambient A;
-            );
-        R := RP;
-        while class R === LocalRing do R = last R.baseRings;
+        R := baseRing RP;
         A' := liftUp(A, R);
         B' := liftUp(B, R);
-        C' := quotient(A', B');
-        C' ** RP
-        )
-    else quotient(A, B)
-    )
-
---FIXME: get quotient to work, currently A:B works
---quotient(Ideal ,Ideal      ) := Ideal  => opts -> (I,J) -> (quotientIdeal opts)(I,J)
---quotient(Ideal ,RingElement) := Ideal  => opts -> (I,f) -> (quotientIdeal opts)(I,ideal(f))
---quotient(Module,Ideal      ) := Module => opts -> (M,I) -> (quotientModule opts)(M,I)
---quotient(Module,RingElement) := Module => opts -> (M,f) -> (quotientModule opts)(M,ideal(f))
---quotient(Module,Module     ) := Ideal  => opts -> (M,N) -> (quotientAnn opts)(M,N)
-
-Ideal  : Ideal       := Ideal  => (I,J) -> localQuotient(I,J)
-Ideal  : RingElement := Ideal  => (I,r) -> localQuotient(I,ideal(r))
-Module : Ideal       := Module => (M,I) -> localQuotient(M,I)
-Module : RingElement := Module => (M,r) -> localQuotient(M,ideal(r))
-Module : Module      := Ideal  => (M,N) -> localQuotient(M,N)
-
--- annihilator
--- We rely on the fact that ideal and module annihilators commute with localization
-oldAnnihilator = lookup(annihilator, Module)
-annihilator Module := Ideal => opts -> (cacheValue symbol annihilator) (M -> (
-    RP := ring M;
-    if instance(RP, LocalRing) then (
-        if M == 0 then return ideal 1_RP;
-        R := RP;
-        while class R === LocalRing do R = last R.baseRings;
-        -- Does this theoretically work?
-        M' := liftUp(M, R);
-        N' := annihilator(M', opts);             -- Any options we need to care about?
-        N' ** RP
-        )
-    else (oldAnnihilator opts)(M)
-    ))
+        C' := quotient(A', B', opts);
+        C' ** RP))
 
 -- saturate
 -- We rely on the fact that ideal and module saturations commute with localization
-oldSaturateIdeal  = lookup(saturate, Ideal,  Ideal)
-oldSaturateModule = lookup(saturate, Module, Ideal)
-localSaturate := opts -> (A, B) -> (
+localSaturate := (opts, A, B) -> (
     RP := ring A;
-    if ring B =!= RP then error "expected objects of the same ring";
     if instance(RP, LocalRing) then (
-        if isSubset(B, A) then (
-            if class A === Ideal
-            then return ideal 1_RP
-            else return ambient A;
-            );
-        R := RP;
-        while class R === LocalRing do R = last R.baseRings;
+        R := baseRing RP;
         A' := liftUp(A, R);
         B' := liftUp(B, R);
         C' := saturate(A', B', opts);
-        C' ** RP             -- Any options we need to care about?
-        )
-    else if class A === Ideal
-    then (oldSaturateIdeal  opts)(A, B)
-    else (oldSaturateModule opts)(A, B)
-    )
+        C' ** RP))
 
-saturate Ideal                := Ideal  => opts ->  I     -> (localSaturate opts)(I, ideal vars ring I)
-saturate(Ideal, Ideal)        := Ideal  => opts -> (I, J) -> (localSaturate opts)(I, J)
-saturate(Ideal, RingElement)  := Ideal  => opts -> (I, f) -> (localSaturate opts)(I, ideal(f))
-saturate Module               := Module => opts ->  M     -> (localSaturate opts)(M, ideal vars ring M)
-saturate(Module, Ideal)       := Module => opts -> (M, I) -> (localSaturate opts)(M, I)
-saturate(Module, RingElement) := Module => opts -> (M, f) -> (localSaturate opts)(M, ideal(f))
+-- annihilator
+-- We rely on the fact that ideal and module annihilators commute with localization
+localAnnihilator := (opts, A) -> (
+    RP := ring A;
+    if instance(RP, LocalRing) then (
+        R := baseRing RP;
+        -- TODO: is this theoretically correct?
+        A' := liftUp(A, R);
+        B' := annihilator(A', opts);
+        B' ** RP))
+
+--============================= addHooks Section for Saturation =============================--
+
+-- Installing local hooks for quotient and saturate
+scan({	(quotient, Ideal,  Ideal),
+	(quotient, Module, Ideal),
+	(quotient, Module, Module)}, key -> addHook(key, localQuotient,    Strategy => Local))
+scan({	(saturate, Ideal,  Ideal),
+	(saturate, Ideal,  RingElement),
+	(saturate, Module, Ideal)},  key -> addHook(key, localSaturate,    Strategy => Local))
+scan({	(annihilator, Module)},      key -> addHook(key, localAnnihilator, Strategy => Local))
 
 --================================= Tests and Documentation =================================--
 

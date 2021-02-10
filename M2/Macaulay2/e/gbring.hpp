@@ -19,11 +19,26 @@
 //   [polyring,skew,weyl,solvable]
 //   quotient ideal
 
-#include "ring.hpp"
-#include "skew.hpp"
-// #include "ntuple.hpp"
-#include "coeffrings.hpp"
+#include <M2/math-include.h>
+#include "engine-includes.hpp"
+
 #include <iostream>
+#include <string>
+
+#include "buffer.hpp"
+#include "monoid.hpp"
+#include "newdelete.hpp"
+#include "ringelem.hpp"
+#include "skew.hpp"
+#include "style.hpp"
+
+class CoefficientRingZZp;
+class FreeModule;
+class Ring;
+class SolvableAlgebra;
+class WeylAlgebra;
+class gbvectorHeap;
+class stash;
 
 struct gbvector
 {
@@ -39,10 +54,7 @@ struct POLY
   gbvector *fsyz;
 };
 
-class TermIdeal;
 typedef int *monomial;
-
-class gbvectorHeap;
 
 class GBRing : public our_new_delete
 {

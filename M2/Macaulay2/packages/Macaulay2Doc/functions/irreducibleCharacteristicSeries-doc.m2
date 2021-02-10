@@ -30,7 +30,7 @@ document {
 	  The minimal associated primes of $I$ can thus be recovered from the
 	  irreducible characteristic series by saturation and by throwing away superfluous primes.
 	  ///,
-	  "This is done by ", TO "minimalPrimes", ", which uses this routine."
+	  "This is done by ", TO "MinimalPrimes :: minimalPrimes", ", which uses this routine."
      	  },	    
      EXAMPLE lines ///
      R = QQ[w,x,y,z];
@@ -38,12 +38,5 @@ document {
      apply(L, m -> p m)
      p^-1
      ///,
-     SeeAlso => {minimalPrimes}
+     SeeAlso => {"MinimalPrimes :: minimalPrimes"}
      }
-
-TEST ///
-R = QQ[w,x,y,z];
-(L,p) = irreducibleCharacteristicSeries ideal(x^2-y*w,x^3-z*w^2)
-n = apply(L, m -> p m)
-assert( n === {matrix {{-x^3+w^2*z, -x^2+w*y}}, matrix {{x, w}}} )
-///
