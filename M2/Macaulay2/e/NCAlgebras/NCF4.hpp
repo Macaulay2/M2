@@ -8,8 +8,7 @@
 #include "NCAlgebras/OverlapTable.hpp"    // for OverlapTable
 #include "NCAlgebras/WordTable.hpp"       // for Overlap, WordTable
 #include "NCAlgebras/SuffixTree.hpp"      // for experimental suffix tree code
-//#include "VectorArithmetic.hpp"         // for VectorArithmetic, CoeffVector, etc
-#include "VectorArithmetic2.hpp"          // for VectorArithmetic, CoeffVector, etc
+#include "VectorArithmetic.hpp"           // for VectorArithmetic, CoeffVector, etc
 #include "Polynomial.hpp"                 // for Monom, ConstPolyList, Poly
 #include "newdelete.hpp"                  // for VECTOR, our_new_delete
 
@@ -61,7 +60,9 @@ private:
     PreRowType preRowType;
   };
 
-  struct Row
+  // we must derive from our_new_delete since CoeffVector
+  // could point to either a VECTOR or a std::vector, depending on the ring.
+  struct Row : public our_new_delete
   {
     CoeffVector coeffVector;     // vector of coefficients
     Range<int> columnIndices;    // column indices used in the row.  Valid *only* after labelAndSortF4Matrix, 
@@ -79,8 +80,11 @@ private:
 
   //using ColumnsVector = tbb::concurrent_vector<Column>;
   using ColumnsVector = std::vector<Column>;
+
+  // unfortunately we must use the GC allocator here for now
+  using RowsVector = std::vector<Row,gc_allocator<Row>>;
   //using RowsVector = tbb::concurrent_vector<Row>;
-  using RowsVector = std::vector<Row>;
+
   using PreRowFeeder = tbb::parallel_do_feeder<PreRow>;
   // The pair in this unordered_map is (i,j) where:
   //    i is the column number
@@ -108,7 +112,6 @@ private:
   MonomHashEqual mMonomHashEqual;
   MonomHash mMonomHash;
 
-  // TODO(?): we should change this to have keys 'Word's rather than 'Monom's since its unordered.
   MonomialHash mColumnMonomials;
   MonomialHash mPreviousColumnMonomials;
 
@@ -126,8 +129,7 @@ private:
   int mFirstOverlap; // First non pivot row (and all later ones are also non-pivot rows).
 
   // vector arithmetic class for reduction
-  //const VectorArithmetic *mVectorArithmetic;
-  const VectorArithmetic2 *mVectorArithmetic;
+  const VectorArithmetic* mVectorArithmetic;
 
   bool mIsParallel;
  
@@ -146,9 +148,9 @@ public:
 
   ~NCF4() { mMonomialSpace.deallocateAll(); mPreviousMonomialSpace.deallocateAll(); }
 
-  const FreeAlgebra& freeAlgebra() const { return mFreeAlgebra; }
+  [[nodiscard]] const FreeAlgebra& freeAlgebra() const { return mFreeAlgebra; }
 
-  const ConstPolyList& currentValue() const
+  [[nodiscard]] const ConstPolyList& currentValue() const
   { 
     return reinterpret_cast<const ConstPolyList&>(mGroebner);
   }
@@ -205,12 +207,11 @@ private:
                            PreRowFeeder* feeder);
 
   void preRowsFromOverlap(const Overlap& o);
-  void parallelPreRowsFromOverlap(const Overlap& o);
 
   std::pair<bool, PreRow> findDivisor(Word w);
 
   void autoreduceByLastElement();
-  ring_elem getCoeffOfMonom(const Poly& f, const Monom& m);
+  ring_elem getCoeffOfMonom(const Poly& f, const Monom& m) const;
 
   template<typename LockType>
   void generalReduceF4Row(int index,
@@ -218,7 +219,7 @@ private:
                           int firstcol,
                           long &numCancellations,
                           DenseCoeffVector& dense,
-                          bool updatColumnIndex,
+                          bool updateColumnIndex,
                           LockType& lock);
 
   void reduceF4Row(int index,

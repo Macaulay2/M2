@@ -37,7 +37,7 @@ set(HFILES
 set(HPPONLYFILES
   MemoryBlock.hpp
   NCAlgebras/Range.hpp
-  VectorArithmetic2.hpp
+  VectorArithmetic.hpp
   newdelete.hpp
   timing.hpp
   SLP-defs.hpp
@@ -136,7 +136,6 @@ set(CPPONLYFILES
 set(SRCLIST
 	myalloc
 	matrix-ncbasis
-    	VectorArithmetic
 	M2FreeAlgebraQuotient
 	M2FreeAlgebra
 	NCAlgebras/Word

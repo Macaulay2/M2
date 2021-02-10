@@ -631,7 +631,7 @@ public:
     return true;
   }
   
-  std::pair<Monom, ring_elem> viewLeadTerm() override
+  Entry viewLeadTerm() override
   {
     return * (mMap.begin());
   }
@@ -664,7 +664,8 @@ public:
 private:
   FreeAlgebra mRing;
   MonomEq mMonomEq;
-  std::map<Monom, ring_elem, MonomEq, StatsAllocator<ConstEntry>> mMap;
+  //std::map<Monom, ring_elem, MonomEq, StatsAllocator<ConstEntry>> mMap;
+  std::map<Monom, ring_elem, MonomEq, gc_allocator<ConstEntry>> mMap;
   MemoryBlock mMonomialSpace;
 };
 

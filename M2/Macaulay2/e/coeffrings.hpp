@@ -158,6 +158,7 @@ class CoefficientRingR : public our_new_delete
   typedef Ring ring_type;
   typedef ring_elem elem;
   typedef elem ElementType;
+  typedef VECTOR(elem) ElementContainerType;
 
   CoefficientRingR(const Ring *R0) : R(R0) {}
   void init_set(elem &result, elem a) const { result = a; }
@@ -171,8 +172,12 @@ class CoefficientRingR : public our_new_delete
   bool is_equal(elem a, elem b) const { return R->is_equal(a, b); }
   bool is_unit(elem f) const { return R->is_unit(f); }
   void invert(elem &result, elem a) const { result = R->invert(a); }
-  void subtract_multiple(elem &result, elem a, elem b) const;
-  // result -= a*b
+  void subtract_multiple(elem &result, elem a, elem b) const 
+  {
+    // result -= a*b
+    elem tmp = R->mult(a,b);
+    result = R->subtract(result,tmp);
+  }
 
   void add(elem &result, elem a, elem b) const { result = R->add(a, b); }
   void negate(elem &result, elem a) const { result = R->negate(a); }

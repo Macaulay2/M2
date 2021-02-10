@@ -62,6 +62,7 @@ class DummyRing : public RingInterface
   typedef long ElementType;
 
   typedef ElementType elem;
+  typedef std::vector<elem> ElementContainerType;
 
   int characteristic() const { return 0; }
   unsigned int computeHashValue(const elem &a) const

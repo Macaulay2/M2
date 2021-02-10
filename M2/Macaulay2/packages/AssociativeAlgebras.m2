@@ -11,7 +11,7 @@ newPackage(
         },
     Headline => "Noncommutative algebra",
     Keywords => {"Noncommutative Algebra"},
-    DebuggingMode => false,
+    DebuggingMode => true,
     PackageExports =>{"IntegralClosure"},
     AuxiliaryFiles => true
     )
@@ -326,11 +326,11 @@ NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
     if not I.cache.?NCGB or I.cache.NCGB#0 < maxdeg then (
         tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
 	possField := ZZ/(char ultimate(coefficientRing, ring I));
-	f4Allowed := (possField === (coefficientRing ring I)) or instance(coefficientRing ring I, GaloisField) or coefficientRing ring I === QQ;
-	if not isHomogeneous I or not f4Allowed and (strat == "F4" or strat == "F4Parallel") then (
+	f4ParallelAllowed := (possField === (coefficientRing ring I)) or instance(coefficientRing ring I, GaloisField) or coefficientRing ring I === QQ;
+	if not isHomogeneous I or not f4ParallelAllowed and (strat == "F4Parallel") then (
 	   -- need to change to Naive algorithm if I is not homogeneous at this point.
 	   << "Warning:  F4 Algorithm not available over current coefficient ring." << endl;
-           strat = "Naive";
+           if isHomogeneous I then strat = "F4" else strat = "Naive";
 	);
 	gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, setNCGBStrategy(strat)));
         I.cache.NCGB = {maxdeg, gbI};
@@ -1258,19 +1258,20 @@ rightKernel Matrix := opts -> M -> (
    if kerGens == 0 then return map(source M, (ring M)^0,0);
    mkerGens := phi I + sum apply(gensAVars, v -> kerGens*v);
    mkerGensGB := NCGB(mkerGens,opts#DegreeLimit);
-   minKerGens := flatten entries compress NCReductionTwoSided(gens kerGens,mkerGensGB);
+   minKerGens := compress NCReductionTwoSided(gens kerGens,mkerGensGB);
+   (minKerMons, minKerCoeffs) := coefficients minKerGens;
+   linIndepKer := mingens image sub(minKerCoeffs,coefficientRing A);
+   linIndepKerGens := flatten entries (minKerMons*linIndepKer);
    ident := id_(AA^(numcols M));
    identColHash := hashTable apply(numcols M, i -> (colVars_i,ident_{i}));
    tempKerMat := matrix {
-       apply(minKerGens, f -> 
-             sum apply(terms f, t -> (
-	                (coeff, monList) := first toVariableList t;
-	                coeff*identColHash#(first monList)*(product drop(monList,1))
-	              ))
-            )
-	};
+     apply(linIndepKerGens, f -> 
+       sum apply(terms f, t -> (
+         (coeff, monList) := first toVariableList t;
+	 coeff*identColHash#(first monList)*(product drop(monList,1))
+       )))};
    targetDeg := (degrees source M) / (d -> -d);
-   sourceDeg := (minKerGens / degree) / (d -> -d+{1});
+   sourceDeg := (linIndepKerGens / degree) / (d -> -d+{1});
    kerMat := map(AA^targetDeg,AA^sourceDeg,tempKerMat);
    sub(psi kerMat,B)
 )
