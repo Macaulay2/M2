@@ -43,3 +43,12 @@ assert try (basis R; false) else true
 assert(basis_-1 R == 0)
 assert(basis_0 R == id_(R^1))
 assert(basis_1 R == 0)
+
+needsPackage "Truncations"
+R = QQ[a,b,c];
+m = map(R^{{-2}, {-2}, {-2}},R^{{-3}, {-3}},{{-c, 0}, {b, -b}, {0, a}})
+assert(truncate({0}, m) == truncate({0}, m))
+
+R = QQ[a,b,c, Degrees => {1,2,3}];
+assert(basis(2, R) == matrix"a2,b")
+assert(basis(2, R, Truncate => true) == matrix"a2,ab,ac,b,c")
