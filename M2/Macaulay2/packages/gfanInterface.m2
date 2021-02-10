@@ -86,13 +86,15 @@ export {
 	"multiplicitiesReorder"
 }
 
-fig2devPath = gfanInterface#Options#Configuration#"fig2devpath"
 gfanVerbose = gfanInterface#Options#Configuration#"verbose"
 -- for backward compatibility
 if not programPaths#?"gfan" and gfanInterface#Options#Configuration#"path" != ""
     then programPaths#"gfan" = gfanInterface#Options#Configuration#"path"
+if not programPaths#?"fig2dev" and gfanInterface#Options#Configuration#"fig2devpath" != ""
+    then programPaths#"fig2dev" = gfanInterface#Options#Configuration#"fig2devpath"
 
 gfanProgram = null
+fig2devProgram = null
 
 gfanKeepFiles = gfanInterface#Options#Configuration#"keepfiles"
 gfanCachePolyhedralOutput = gfanInterface#Options#Configuration#"cachePolyhedralOutput"
@@ -1938,6 +1940,13 @@ gfanPolynomialSetUnion (List, MarkedPolynomialList) := opts -> (L,M) -> (
 -- gfan_render
 --------------------------------------------------------
 
+runfig2dev = fileName -> (
+	if fig2devProgram === null then
+		fig2devProgram = findProgram("fig2dev", "fig2dev -V");
+	runProgram(fig2devProgram,
+		"-Lpng " | fileName | ".fig " | fileName | ".png");
+)
+
 gfanRender = method( Options => {
 	"L" => false,
 	"shiftVariables" => 0
@@ -1956,13 +1965,9 @@ gfanRender (String, List) := opts -> (fileName, L) -> (
 	figure := openOut(fileName | ".fig");
 	figure << out << close;
 	<< "Figure rendered to " << fileName << ".fig" << endl;
-	if fig2devPath != "" then (
-		run(fig2devPath | "fig2dev -Lpng " | fileName  | ".fig " | fileName |".png");
-		<< "Figure converted to png: " << fileName << ".png" << endl;
-		show URL("file://" | fileName | ".png");
-	) else (
-		<< "fig2dev path not set." << endl ;
-	)
+	runfig2dev fileName;
+	<< "Figure converted to png: " << fileName << ".png" << endl;
+	show URL("file://" | fileName | ".png");
 )
 
 
@@ -1992,12 +1997,9 @@ gfanRenderStaircase (String, List) := opts -> (fileName, L) -> (
 	figure := openOut(fileName | ".fig");
 	figure << out << close;
 	<< "Figure rendered to " << fileName << ".fig" << endl;
-
-	if fig2devPath != "" then (
-		run(fig2devPath | "fig2dev -Lpng " | fileName  | ".fig " | fileName |".png");
-		<< "Figure converted to png: " << fileName << ".png" << endl;
-		show URL("file://" | fileName | ".png");
-	) else << "fig2dev path not set." << endl ;
+	runfig2dev fileName;
+	<< "Figure converted to png: " << fileName << ".png" << endl;
+	show URL("file://" | fileName | ".png");
 )
 
 --------------------------------------------------------
