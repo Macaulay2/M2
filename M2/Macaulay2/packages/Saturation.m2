@@ -384,6 +384,7 @@ saturate(Vector, RingElement) := Module => opts -> (v, f) -> saturate(image matr
 saturate Vector               := Module => opts ->  v     -> saturate(image matrix {v}, opts)
 
 -- used when P = decompose irr
+-- TODO: do a one-step caching here
 saturate(Ideal,  List)        := Ideal  => opts -> (I, L) -> fold(L, I, (J, I) -> saturate(I, J, opts))
 saturate(Module, List)        := Module => opts -> (M, L) -> fold(L, M, (J, M) -> saturate(M, J, opts))
 saturate(Vector, List)        := Module => opts -> (v, L) -> saturate(image matrix {v}, L, opts)

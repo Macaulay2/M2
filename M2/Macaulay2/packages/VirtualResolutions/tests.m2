@@ -206,6 +206,9 @@ TEST /// -- testing picard rank 3
     -- so that the computation above can actually finish!
 ///
 
+--TODO
+-- warning: clearing value of symbol i to allow access to subscripted variables based on it
+--       : debug with expression   debug 8267   or with command line option   --debug 8267
 TEST /// -- testing twisted modules
   (S, E) = productOfProjectiveSpaces {1, 1}
   for i from -1 to 1 list(
