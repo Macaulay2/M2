@@ -2633,16 +2633,8 @@ doc ///
 
 		Text
 			Finally, if you want to be able to render Groebner fans and monomial staircases
-			to {\tt .png} files, you should install {\tt fig2dev} and specify its path
-			as follows:
-
-		Example
-			loadPackage("gfanInterface", Configuration => { "fig2devpath" => "/directory/to/fig2dev/"}, Reload => true)
-
-		Text
-			Again, the path should end in a slash.
-
-
+			to {\tt .png} files, you should install {\tt fig2dev}.  If it is installed in a
+			non-standard location, then you may specify its path using @TO "programPaths"@.
 ///
 
 doc ///
