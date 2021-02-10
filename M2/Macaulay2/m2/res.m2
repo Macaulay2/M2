@@ -6,6 +6,7 @@
 
 needs "chaincomplexes.m2"
 needs "computations.m2"
+needs "max.m2"
 
 -----------------------------------------------------------------------------
 -- Local variables
@@ -79,7 +80,6 @@ resolutionByHomogenization := (opts, M) -> (
     or not degreeLength R === 1
     then return null;
     resLog("using resolution by homogenization");
-    lengthlimit := resolutionLengthLimit(R, opts.LengthLimit);
      f    := presentation M;
      p    := presentation R;
      A    := ring p;
@@ -99,7 +99,7 @@ resolutionByHomogenization := (opts, M) -> (
      fH   := homogenize(toRH generators gb f',RH_n); 	  forceGB fH;
      MH   := cokernel fH;
      assert isHomogeneous MH;
-     C    := resolution(MH, opts, LengthLimit => lengthlimit);
+     C    := resolution(MH, opts, LengthLimit => opts.LengthLimit);
      toR  := map(R, RH, vars R | 1);
      toR C)
 
@@ -113,26 +113,24 @@ resolutionBySchreyerFrame := (opts, M) -> (
     or not isCommutative R
     then return null;
     resLog("using resolution by Schreyer orders");
-    lengthlimit := resolutionLengthLimit(R, opts.LengthLimit);
     -- FIXME: this strategy can't continue from another strategy
     C := if M.cache.?resolution then M.cache.resolution else (
 	m := schreyerOrder generators gb presentation M;
 	M.cache.resolution = chainComplex m);
     i := length C;
     m = C.dd_i;
-    while i < lengthlimit and m != 0 do (
+    while i < opts.LengthLimit and m != 0 do (
 	m = map(R, rawKernelOfGB raw m);
 	shield ( i = C.length = i + 1; C#i = source m; C.dd#i = m ));
     C)
 
 resolutionBySyzygies := (opts, M) -> (
     resLog("using resolution by syzygyies");
-    lengthlimit := resolutionLengthLimit(R := ring M, opts.LengthLimit);
     C := if M.cache.?resolution then M.cache.resolution
     else M.cache.resolution = chainComplex presentation M;
     i := length C;
     m := C.dd_i;
-    while i < lengthlimit and m != 0 do (
+    while i < opts.LengthLimit and m != 0 do (
 	m = syz m; -- TODO: pass options like DegreeLimit
 	shield ( i = C.length = i + 1; C#i = source m; C.dd#i = m ));
     C)
@@ -146,8 +144,8 @@ resolutionInEngine := (opts, M) -> (
      if isQuotientRing R or isSkewCommutative R then 2 else 1;
      if not fastnonminimalFieldCheck(R, strategy) then return null;
      local C;
-     degreelimit := resolutionDegreeLimit(R, opts.DegreeLimit);
-     lengthlimit := resolutionLengthLimit(R, opts.LengthLimit);
+     degreelimit := opts.DegreeLimit;
+     lengthlimit := opts.LengthLimit;
      if not M.cache.?resolution 
      or M.cache.resolution.Resolution.length < lengthlimit
      or (M.cache.resolution.Resolution.Strategy === 4 and strategy =!= 4)
@@ -250,36 +248,27 @@ new ResolutionContext from Module := (C, M) -> new C from {}
 ResolutionComputation = new Type of Computation
 ResolutionComputation.synonym = "resolution computation"
 
--- TODO: not all of these are necessary, reduce them!
-new ResolutionComputation from Module := (C, M) -> new ResolutionComputation from {
-    LengthLimit		=> infinity,	-- (infinity means numgens R)
-    DegreeLimit		=> infinity,	-- slant degree limit
-    SyzygyLimit		=> infinity,	-- number of min syzs found
-    PairLimit		=> infinity,	-- number of pairs computed
-    HardDegreeLimit	=> {},		-- throw out information in degrees above this one
-    FastNonminimal	=> false,
-    Result		=> null}
+new ResolutionComputation from HashTable := (C, H) -> merge(H, new HashTable from { Result => null }, last)
 
 isComputationDone Resolution := Boolean => options resolution >> opts -> W -> (
-    lengthlimit := resolutionLengthLimit(W.ring, opts.LengthLimit);
-    degreelimit := resolutionDegreeLimit(W.ring, opts.DegreeLimit);
     -- can returnCode ever be not defined?
     isComputationDone W.returnCode
-    and lengthlimit <= W.length
-    and degreelimit <= W.DegreeLimit)
+    and opts.LengthLimit <= W.length
+    and opts.DegreeLimit <= W.DegreeLimit)
 
 isComputationDone ResolutionComputation := Boolean => options resolution >> opts -> container -> (
     -- this function determines whether we can use the cached result, or further computation is necessary
     C := if instance(container.Result, ChainComplex) then container.Result else return false;
-    if C.?Resolution then isComputationDone(C.Resolution, opts) else
-    not ( container.FastNonminimal or opts.FastNonminimal == container.FastNonminimal )
-    and resolutionDegreeLimit(ring C, opts.DegreeLimit)   <= container.DegreeLimit
-    and resolutionLengthLimit(ring C, opts.LengthLimit)   <= container.LengthLimit)
+    -- if FastNonminimal sets returnCode correctly, the "not container.FastNonminimal" condition can be removed
+    if C.?Resolution and not container.FastNonminimal then isComputationDone(C.Resolution, opts) else
+    ( opts.FastNonminimal == container.FastNonminimal or not container.FastNonminimal )
+    and opts.DegreeLimit  <= container.DegreeLimit
+    and opts.LengthLimit  <= container.LengthLimit)
 
 updateComputation(ResolutionComputation, ChainComplex) := ChainComplex => options resolution >> opts -> (container, result) -> (
     container.FastNonminimal = opts.FastNonminimal;
     container.DegreeLimit    = opts.DegreeLimit;
-    container.LengthLimit    = length result;
+    container.LengthLimit    = opts.LengthLimit; -- length result;
     container.Result         = result)
 
 -- TODO: document this
@@ -295,6 +284,11 @@ resolution Module := ChainComplex => opts -> M -> (
 	resLog "returning manually provided resolution";
 	M.cache.ManualResolution);
 
+    opts = opts ++ {
+	DegreeLimit => resolutionDegreeLimit(R, opts.DegreeLimit),
+	LengthLimit => resolutionLengthLimit(R, opts.LengthLimit),
+	};
+
     -- this logic runs the strategies in order, or the specified strategy
     computation := (opts, container) -> (
 	if isField R then return map(minimalPresentation M, R^0, 0);
@@ -302,7 +296,7 @@ resolution Module := ChainComplex => opts -> M -> (
 
     -- this is the logic for caching partial resolution computations. M.cache contains an option:
     --   ResolutionContext{} => ResolutionComputation{ Result, LengthLimit, ... }
-    container := fetchComputation(ResolutionComputation, M, new ResolutionContext from M);
+    container := fetchComputation(ResolutionComputation, M, new HashTable from opts, new ResolutionContext from M);
 
     -- the actual computation of the resolution occurs here
     C := (cacheComputation(opts, container)) computation;
@@ -395,8 +389,8 @@ resolutionNonminimal = (opts, M) -> (
     --  . what else?  constant strands? labels? parts of each matrix?
     -- TODO MES:  Quickly determine if this function is "active"
     --  (so we can call addHook).
-    degreelimit := resolutionDegreeLimit(R, opts.DegreeLimit);
-    lengthlimit := resolutionLengthLimit(R, opts.LengthLimit);
+    degreelimit := opts.DegreeLimit;
+    lengthlimit := opts.LengthLimit;
     -- the resulting complex.
     C := if M.cache.?resolutionNonminimal
     and  M.cache.resolutionNonminimal.Resolution.length >= lengthlimit
