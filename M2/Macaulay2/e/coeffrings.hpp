@@ -34,6 +34,9 @@ class CoefficientRingZZp : public our_new_delete
  public:
   typedef Z_mod ring_type;
   typedef int elem;
+  typedef elem ElementType;
+
+  typedef std::vector<elem> ElementContainerType;
 
   CoefficientRingZZp(int p0, int *log, int *exps)
       : p(p0), p1(p - 1), zero(p - 1), log_table(log), exp_table(exps)
@@ -51,6 +54,13 @@ class CoefficientRingZZp : public our_new_delete
     result = log_table[a];
   }
 
+  long coerceToLongInteger(const elem &f) const
+  {
+    int n = exp_table[f];
+    if (n > p / 2) n -= p;
+    return n;
+  }
+  
   int to_int(int f) const { return exp_table[f]; }
   void init(elem &result) const {}
   void init_set(elem &result, elem a) const { result = a; }
@@ -145,6 +155,12 @@ class CoefficientRingZZp : public our_new_delete
     a = b;
     b = tmp;
   }
+
+  void elem_text_out(buffer &o,
+                     ElementType a,
+                     bool p_one = true,
+                     bool p_plus = false,
+                     bool p_parens = false) const;
 };
 
 /**

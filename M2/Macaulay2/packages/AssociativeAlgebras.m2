@@ -61,8 +61,6 @@ export {
     "ncBasis",
     "NCGB", -- uugh: change name!
     "NCReductionTwoSided",
-    "FreeAlgebra", -- change this name too! FM (?)
-    "FreeAlgebraQuotient", 
     "sequenceToVariableSymbols",
     "leftMultiplicationMap",
     "rightMultiplicationMap",
@@ -99,6 +97,9 @@ export {
     "ncMatrixMult"
     }
 
+-- types from Core
+exportFrom_Core {"FreeAlgebra", "FreeAlgebraQuotient"}
+
 -- symbols into hash table for ring
 importFrom_Core {"generatorSymbols","generatorExpressions",
     "liftDegree","promoteDegree","indexStrings","indexSymbols"}
@@ -125,10 +126,7 @@ BENCHMARK String := (s) -> null
 -- local hash table.
 RawRing = Core#"private dictionary"#"RawRing"
 
-FreeAlgebra = new Type of EngineRing
 FreeAlgebra.synonym = "free algebra"
-
-FreeAlgebraQuotient = new Type of QuotientRing
 FreeAlgebraQuotient.synonym = "quotient of a free algebra"
 
 new FreeAlgebra from List := (EngineRing, inits) -> new EngineRing of RingElement from new HashTable from inits
@@ -313,6 +311,15 @@ isWellDefined FreeAlgebra := Boolean => R -> (
     )
 -- listForm
 
+generators FreeAlgebra := opts -> R -> (
+            if opts.CoefficientRing === null then R.generators
+            else if opts.CoefficientRing === R then {}
+            else join(R.generators, generators(coefficientRing R, opts) / (r -> promote(r,R))))
+
+generators FreeAlgebraQuotient := opts -> (S) -> (
+            if opts.CoefficientRing === S then {}
+            else apply(generators(ambient S,opts), m -> promote(m,S)))
+	
 setNCGBStrategy := stratStr -> (
    if stratStr == "F4" then 16
    else if stratStr == "F4Parallel" then 48
@@ -1225,7 +1232,7 @@ ncMatrixMult (Matrix, Matrix) := (A,B) -> (
    if (numcols A != numrows B) then
        error "Maps not composable.";
    matrix table (numrows A, numcols B, (i,j) -> sum apply(numcols A, k -> A_(i,k)*B_(k,j)))
-);
+)
 
 rightKernel = method(Options=>{DegreeLimit=>10})
 rightKernel Matrix := opts -> M -> (
@@ -1249,6 +1256,7 @@ rightKernel Matrix := opts -> M -> (
    colVars := apply(toList((numgens A + numrows M)..(numgens AA-1)), i -> AA_i);
    phi := map(AA,A,apply(numgens A, i -> AA_i));
    psi := map(A,AA,gens A | toList(numrows M : 0) | toList(numcols M : 0));
+   psiB := map(B,AA,gens B | toList(numrows M : 0) | toList(numcols M : 0));
    diagMat := diagonalMatrix rowVars;
    outputs := matrix {(entries transpose ncMatrixMult(diagMat,phi liftM)) / sum};
    inputs := matrix {colVars};
@@ -1265,15 +1273,13 @@ rightKernel Matrix := opts -> M -> (
    ident := id_(AA^(numcols M));
    identColHash := hashTable apply(numcols M, i -> (colVars_i,ident_{i}));
    tempKerMat := matrix {
-     apply(linIndepKerGens, f -> 
-       sum apply(terms f, t -> (
-         (coeff, monList) := first toVariableList t;
-	 coeff*identColHash#(first monList)*(product drop(monList,1))
-       )))};
+     apply(flatten entries minKerMons, f -> (
+         (coeff, monList) := first toVariableList f;
+	 coeff*identColHash#(first monList)*(product drop(monList,1))))};
    targetDeg := (degrees source M) / (d -> -d);
    sourceDeg := (linIndepKerGens / degree) / (d -> -d+{1});
-   kerMat := map(AA^targetDeg,AA^sourceDeg,tempKerMat);
-   sub(psi kerMat,B)
+   result := map(B^targetDeg, B^sourceDeg, (psiB tempKerMat)*linIndepKer);
+   result
 )
 
 --- load the tests

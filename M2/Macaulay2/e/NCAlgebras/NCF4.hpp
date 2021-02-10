@@ -1,6 +1,8 @@
 #ifndef __nc_f4_hpp__
 #define __nc_f4_hpp__
 
+#include <tbb/tbb.h>                        // for tbb
+
 #include "NCAlgebras/FreeMonoid.hpp"      // for MonomEq
 #include "MemoryBlock.hpp"                // for MemoryBlock
 #include "NCAlgebras/Range.hpp"           // for Range
@@ -20,7 +22,7 @@
 #include <utility>                     // for pair
 #include <vector>                      // for vector
 
-#include <tbb/tbb.h>                        // for tbb
+
 
 class FreeAlgebra;
 union ring_elem;

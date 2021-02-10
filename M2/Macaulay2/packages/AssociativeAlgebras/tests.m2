@@ -1611,3 +1611,53 @@ I = ideal S
 elapsedTime Igb = NCGB(I, 5, Strategy=>"F4Parallel")
 R = (ambient S)/I; all(7, i -> binomial(i+2,2) == numcols ncBasis(i,R))
 ///
+
+DEVELOPMENT ///
+restart
+debug needsPackage "AssociativeAlgebras"
+kk = QQ; w=2
+kk = frac(QQ[w]/ideal(w^4+1)) -- computations crash if this is used
+kk = frac(QQ[w])
+--kk = toField(QQ[w]/ideal(w^4+1))
+A = kk <|x,y|>
+
+--- BUG!!!
+sub(1/w,A)
+methods sub
+code 24
+methods map
+code 30 -- need to fix this, but it's long...
+
+B = A/ideal (x*y-w*y*x,x^3,y^3)
+d0 = matrix {{x,y}}
+d1 = rightKernel(d0, DegreeLimit => 10)
+d2 = rightKernel(d1, DegreeLimit => 12)
+d3 = rightKernel(d2, DegreeLimit => 14)
+d4 = rightKernel(d3, DegreeLimit => 16)
+d5 = rightKernel(d4, DegreeLimit => 18)
+d6 = rightKernel(d5, DegreeLimit => 20)
+d7 = rightKernel(d6, DegreeLimit => 22) 
+d8 = rightKernel(d7, DegreeLimit => 22) -- crashes or hangs with frac kk above.  Probably a GC problem somewhere.
+d9 = rightKernel(d8, DegreeLimit => 22) -- does *not* crash with toField() rather than frac()
+d10 = rightKernel(d9, DegreeLimit => 22); k = 0; d = d10
+d' = rightKernel(d, DegreeLimit => 22+k); k = k + 2; d = d'
+
+A = kk <|x,y,z|>
+B = A/ideal (x*y-w*y*x,x*z-w^2*z*x,y*z+w*z*y,x^3,y^3,z^3)
+d0 = matrix {{x,y,z}}
+d1 = rightKernel(d0, DegreeLimit => 10)
+d2 = rightKernel(d1, DegreeLimit => 12)
+d3 = rightKernel(d2, DegreeLimit => 14)
+d4 = rightKernel(d3, DegreeLimit => 16) -- crashes or hangs with frac kk above, but not toField()
+k = 0; d = d4;
+d' = rightKernel(d, DegreeLimit => 13+k); k = k + 2; d = d'
+///
+
+DEVELOPMENT ///
+restart
+needsPackage "AssociativeAlgebras"
+B = threeDimSklyanin(ZZ/32003,{3,5,7},{x,y,z})
+M = coker matrix {{x,y,z}}
+errorDepth = 0
+C = res(M,Strategy=>10)
+///
