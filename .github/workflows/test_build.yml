@@ -12,15 +12,24 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - pre-master # when we're ready to merge 'development' into 'master', we merge it first into 'pre-master', so it can be tested
+      - SheafMaps
+      - quickfix/Hom
+      - Dmodules
+      - Truncations
+      - Varieties
+      - development
+      - feature/functors
+      - feature/monoids
+      - feature/torsion
+      - feature/varieties
+      - refactor/Core
+      - refactor/engine
+      - refactor/monoids
+      - research
   pull_request:
     branches:
       - master
       - development
-  schedule:
-    # cron time in UTC
-    # a scheduled job runs on the default branch: 'master'
-    - cron: '0 6 * * *'
 
 defaults:
   run:
@@ -28,7 +37,6 @@ defaults:
 
 jobs:
   build:
-    if: github.repository == 'Macaulay2/M2' || contains(github.ref, 'global')
     name: ${{ matrix.build-system }}-${{ matrix.os }}-${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     strategy:
