@@ -21,6 +21,12 @@ int mpfr_hash(mpfr_srcptr x) {
   return 777 + h * 3737 + x->_mpfr_exp + 11 * x->_mpfr_sign;
 }
 
+void mp_free_str(char *str){
+    void (*free_function) (void *ptr, size_t size);
+    mp_get_memory_functions(NULL,NULL,&free_function);
+    free_function(str,strlen(str)+1);
+}
+
 /*
  Local Variables:
  compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d "
