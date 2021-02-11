@@ -64,7 +64,6 @@ export {
     "transitiveClosure",
     --
     -- Set default configurations
-    "setPDFViewer",
     "setPrecompute",
         "Precompute",
     "setSuppressLabels",
@@ -286,13 +285,6 @@ transitiveClosure (List, List) := Matrix => (G, R) -> (
 ------------------------------------------
 -- Set default configurations
 ------------------------------------------
-
-setPDFViewer = method()
-setPDFViewer String := String => viewer -> (
-    alt := posets'PDFViewer;
-    posets'PDFViewer = viewer;
-    alt
-    )
 
 setPrecompute = method()
 setPrecompute Boolean := Boolean => pc -> (
@@ -2143,30 +2135,6 @@ doc ///
 ------------------------------------------
 -- Set default options
 ------------------------------------------
-
--- setPDFViewer
-doc ///
-    Key
-        setPDFViewer
-        (setPDFViewer,String)
-    Headline
-        sets the default PDFViewer option
-    Usage
-        alt = setPDFViewer viewer
-    Inputs
-        viewer:String
-            the new setting
-    Outputs
-        alt:String
-            the old setting
-    Description
-        Text
-            This method sets the default PDFViewer option.
-        Example
-            setPDFViewer "evince"
-    SeeAlso
-        PDFViewer
-///
 
 -- setPrecompute
 doc ///
