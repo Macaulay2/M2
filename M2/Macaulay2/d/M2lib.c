@@ -66,13 +66,8 @@ void clean_up(void) {
   int world_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
-  // Get the name of the processor
-  char processor_name[MPI_MAX_PROCESSOR_NAME];
-  int name_len;
-  MPI_Get_processor_name(processor_name, &name_len);
-
-  printf("Bye world from process %s, rank %d out of %d processes\n",
-	 processor_name, world_rank, world_size);
+  printf("Bye world from process %d out of %d processes\n",
+	 world_rank, world_size);
   MPI_Finalize();
 }
 
