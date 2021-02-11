@@ -220,7 +220,7 @@ jobs:
              M2/BUILD/build/Macaulay2/tests/*/*.errors
 
       - name: Upload Macaulay2 package for Ubuntu (x86_64)
-        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang10' && success()
+        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang10' && always()
         uses: actions/upload-artifact@v2
         with:
           name: Macaulay2-${{ env.GIT_COMMIT }}-ubuntu-x86_64
