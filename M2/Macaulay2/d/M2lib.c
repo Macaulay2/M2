@@ -41,6 +41,18 @@ void system_cpuTime_init(void) {
   startTime = system_cpuTime();
 }
 
+int MPInumberOfProcesses() {
+  int world_size;
+  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+  return world_size;
+}
+
+int MPImyProcessNumber() {
+  int world_rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+  return world_rank;
+}
+
 void clean_up(void) {
   extern void close_all_dbms();
   close_all_dbms();
@@ -58,16 +70,8 @@ void clean_up(void) {
 #ifndef NDEBUG
   trap();
 #endif
-  // Get the number of processes
-  int world_size;
-  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-  
-  // Get the rank of the process
-  int world_rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
-
   printf("Bye world from process %d out of %d processes\n",
-	 world_rank, world_size);
+	 MPImyProcessNumber(), MPInumberOfProcesses());
   MPI_Finalize();
 }
 
