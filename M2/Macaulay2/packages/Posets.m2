@@ -138,7 +138,6 @@ export {
     "outputTexPoset",
     "texPoset",
         "Jitter",
-        "PDFViewer",
         "SuppressLabels",
     --
     -- Vertices & vertex properties
@@ -1112,17 +1111,16 @@ youngSubposet ZZ := Poset => n -> (
 -- TeX & GAP
 ------------------------------------------
 
-displayPoset = method(Options => { symbol PDFDirectory => "", symbol SuppressLabels => posets'SuppressLabels, symbol PDFViewer => posets'PDFViewer, symbol Jitter => false })
+displayPoset = method(Options => { symbol PDFDirectory => "", symbol SuppressLabels => posets'SuppressLabels, symbol Jitter => false })
 displayPoset Poset := opts -> P -> (
     if not instance(opts.PDFDirectory, String) then error "The option PDFDirectory must be a string.";
-    if not instance(opts.PDFViewer, String) then error "The option PDFViewer must be a string.";
     if not instance(opts.SuppressLabels, Boolean) then error "The option SuppressLabels must be a Boolean.";
     if not instance(opts.Jitter, Boolean) then error "The option Jitter must be a Boolean.";
     name := temporaryFileName();
     if opts.PDFDirectory != "" then name = opts.PDFDirectory | first lines get openIn concatenate("!basename ", name);
     outputTexPoset(P, concatenate(name, ".tex"), symbol SuppressLabels => opts.SuppressLabels, symbol Jitter => opts.Jitter);
     run concatenate("pdflatex -output-directory `dirname ", name, ".tex` ", name, " 1>/dev/null");
-    run concatenate(opts.PDFViewer, " ", name,".pdf &");
+    show URL("file://" | toAbsolutePath(name | ".pdf"));
     )
 
 gapConvertPoset = method()
@@ -4020,25 +4018,20 @@ doc ///
         displayPoset
         (displayPoset,Poset)
         [displayPoset,SuppressLabels]
-        [displayPoset,PDFViewer]
         [displayPoset,Jitter]
         [displayPoset,PDFDirectory]
         PDFDirectory
-        PDFViewer
     Headline
         generates a PDF representation of a poset and attempts to display it
     Usage
         displayPoset P
         displayPoset(P, SuppressLabels => Boolean)
-        displayPoset(P, PDFViewer => String)
         displayPoset(P, PDFDirectory => String)
         displayPoset(P, Jitter => Boolean)
     Inputs
         P:Poset
         SuppressLabels=>Boolean
             whether to display or suppress the labels of the poset
-        PDFViewer=>String
-            which gives the calling path of a PDF-viewer
         Jitter=>Boolean
             whether to randomly jitter the poset vertices
         PDFDirectory=>String
@@ -4046,18 +4039,14 @@ doc ///
     Description
         Text
             This method generates a PDF of the Hasse Diagram of the Poset view LaTeX code which
-            uses TikZ.  The method attempts to display the PDF via the
-            specified PDFViewer.  See @TO "texPoset"@ for more about the
-            representation.
+            uses TikZ.  The method attempts to display the PDF using @TO "show"@.
+            See @TO "texPoset"@ for more about the representation.
 
             Normally, the vertices of the Poset are placed at regular intervals along
             horizontal lines.  However, this can sometimes cause edges to appear in the
             Hasse diagram that are not truly there.  The Jitter option can be used to randomly
             shift the positions of the vertices horizontally, which can often cause the
             edges to be more clear.
-
-            Note that @TT "PDFViewer"@ option's default value can be set in
-            the "~/.Macaulay2/init-Posets.m2" file.
     SeeAlso
         outputTexPoset
         texPoset
