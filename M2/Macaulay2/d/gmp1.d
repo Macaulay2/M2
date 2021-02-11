@@ -48,7 +48,7 @@ floor(x:double) ::= Ccode(double, "floor(", x, ")" );
 log2ten := log(10.) / log(2.);
 base := 10;
 
-getstr(returnexponent:long, base:int, sigdigs:int, x:RR):string := (
+getstr(returnexponent:long, base:int, sigdigs:int, x:RR) ::= (
      strptr := Ccode(charstarOrNull, "(M2_charstarOrNull) mpfr_get_str((char *)0,&", returnexponent, ",",
 	  base, ",(size_t)", sigdigs, ",", x, ",GMP_RNDN)");
      ret := tostring(strptr);
