@@ -40,7 +40,7 @@ newPackage select((
 	Keywords => {"Graph Theory"},
         Configuration => {
             "DotBinary" => "dot",
-            "JpgViewer" => "display"
+            "JpgViewer" => ""
             },
 	PackageImports => { "PrimaryDecomposition" },
         PackageExports => {
@@ -51,7 +51,10 @@ newPackage select((
 
 -- Load configurations
 graphs'DotBinary = if instance((options Graphs).Configuration#"DotBinary", String) then (options Graphs).Configuration#"DotBinary" else "dot";
-graphs'JpgViewer = if instance((options Graphs).Configuration#"JpgViewer", String) then (options Graphs).Configuration#"JpgViewer" else "display";
+
+importFrom_Core {"printerr"}
+if (options Graphs).Configuration#"JpgViewer" != "" then
+    printerr "warning: the \"JpgViewer\" configuration option is deprecated"
 
 -- Exports
 export {
