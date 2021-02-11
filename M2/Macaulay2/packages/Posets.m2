@@ -21,7 +21,7 @@ newPackage select((
         Headline => "partially ordered sets (posets)",
 	Keywords => {"Combinatorics"},
         Configuration => {
-            "DefaultPDFViewer" => "open", -- "open" for Macs and "evince" for Linux
+            "DefaultPDFViewer" => "",
             "DefaultPrecompute" => true,
             "DefaultSuppressLabels" => true
             },
@@ -48,9 +48,12 @@ newPackage select((
         ), x -> x =!= null)
 
 -- Load configurations
-posets'PDFViewer = if instance((options Posets).Configuration#"DefaultPDFViewer", String) then (options Posets).Configuration#"DefaultPDFViewer" else "open";
 posets'Precompute = if instance((options Posets).Configuration#"DefaultPrecompute", Boolean) then (options Posets).Configuration#"DefaultPrecompute" else true;
 posets'SuppressLabels = if instance((options Posets).Configuration#"DefaultSuppressLabels", Boolean) then (options Posets).Configuration#"DefaultSuppressLabels" else true;
+
+importFrom_Core {"printerr"}
+if (options Posets).Configuration#"DefaultPDFViewer" != "" then
+    printerr "warning: the \"DefaultPDFViewer\" configuration option is deprecated"
 
 export {
     --
