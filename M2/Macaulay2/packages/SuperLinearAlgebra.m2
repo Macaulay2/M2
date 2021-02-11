@@ -183,7 +183,7 @@ superMatrixParity(SuperMatrix,Ring,List) := (SM,R1,a) ->(
      	   count33:=symbol count33;
      	   count33=0;
 	   cout33:= symbol cout33;
-	   for  from 0 to (r2-1) do for j from 0 to (c1-1)
+	   for i from 0 to (r2-1) do for j from 0 to (c1-1)
 	       do( fij = Minor21_(i,j);
 	    	   if fij==0 then count3 = count3 else
 	    	   if (Parity(fij,R1,a)==-1) then (cout33=count33+1) else
