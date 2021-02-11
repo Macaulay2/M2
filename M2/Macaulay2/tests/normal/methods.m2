@@ -1,3 +1,20 @@
+-- associative binary methods
+B = method(Binary => true)
+B(String, String) := concatenate
+assert(B toSequence(ascii\ascii "hi") == "hi")
+assert(B toSequence(ascii\ascii "hello") == "hello")
+B(String, ZZ) := (s, n) -> concatenate(s, ascii n)
+assert(B("h", 105) == "hi")
+assert(B splice("h", toSequence ascii "ello") == "hello")
+B(ZZ, ZZ) := concatenate @@ ascii
+assert(B toSequence ascii "hi" == "hi")
+assert(B toSequence ascii "hello" == "hello")
+
+timer := (f, args) -> (t0 := cpuTime(); f args; cpuTime() - t0)
+B = method(Binary => true)
+B(ZZ, ZZ) := (a, B) -> (a+B)
+assert(timer(B, 4000000:1) < 4)
+
 -- this is documented behavior:
 s = method(Options => true)
 s ZZ := { Slope => 17 } >> o -> x -> o.Slope * x;

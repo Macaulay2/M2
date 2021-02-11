@@ -1,4 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
+-- TODO: reverse is not copy-free, optimize this!
+-- TODO: drop is not copy-free, optimize this!
+-- TODO: both can be solved using iterators
 
 needs "methods.m2"
 
