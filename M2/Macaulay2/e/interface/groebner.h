@@ -257,6 +257,41 @@ M2_bool IM2_GB_matrix_lift(Computation *C,
 
 int IM2_GB_contains(Computation *C, const Matrix *m);
 
+/*******************************************
+ * Noncommutative Groebner bases ***********
+ *******************************************/
+
+/* Returns a 2-sided GB of the 2-sided ideal from the one-row matrix 'input'
+   computed up to and including degree 'maxdeg'.  This 'maxdeg' is the heft
+   degree (in the case of multigradings). 'strategy': is an integer whose
+   various bits encode stratgy options Assumptions:
+     1. input is a one row matrix, whose entries are the generators of a 2-sided
+   ideal.
+     2. If the computation is interrupted, we return the elements we have
+   constructed so far.
+     3. use gbTrace as usual to get verbose messages during computation.
+   Not done yet:
+     writing GB elements in terms of original generators.
+     We will need a new function
+   Strategy bits:
+     bits 0..3: choice of reduction heap strategy.
+*/
+const Matrix *rawNCGroebnerBasisTwoSided(const Matrix *input,
+                                         int maxdeg,
+                                         int strategy);
+
+const Matrix *rawNCReductionTwoSided(const Matrix *toBeReduced,
+                                     const Matrix *reducers);
+
+const Matrix *rawNCBasis(const Matrix *gb2SidedIdeal,
+                         M2_arrayint lo_degree,
+                         M2_arrayint hi_degree,
+                         int limit);
+
+/*******************************************
+ *******************************************
+ *******************************************/
+
 const Matrix /* or null */ *rawResolutionGetMatrix(Computation *C, int level);
 
 MutableMatrix /* or null */ *rawResolutionGetMatrix2(Computation *C,

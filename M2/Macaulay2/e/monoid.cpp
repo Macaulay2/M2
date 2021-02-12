@@ -1,5 +1,8 @@
 // Copyright 1996 Michael E. Stillman
 
+#include <ctype.h>
+#include "util.hpp"
+#include "text-io.hpp"
 #include "monoid.hpp"
 
 #include <assert.h>
@@ -74,6 +77,20 @@ Monoid *Monoid::create(const MonomialOrdering *mo,
     }
 
   return new Monoid(mo, names, deg_ring, degs, hefts);
+}
+
+Monoid *Monoid::create(const MonomialOrdering *mo,
+                        const std::vector<std::string>& names,
+                        const PolynomialRing *DR, /* degree ring */
+                        const std::vector<int>& degs,
+                        const std::vector<int>& hefts)
+{
+  
+  return create(mo,
+                toM2ArrayString(names),
+                DR,
+                stdvector_to_M2_arrayint(degs),
+                stdvector_to_M2_arrayint(hefts));
 }
 
 Monoid::Monoid(const MonomialOrdering *mo,
@@ -629,6 +646,22 @@ int Monoid::degree_weights(const_monomial m, M2_arrayint wts) const
   int sz = (wts->len < nvars_ ? wts->len : nvars_);
   return ntuple::weight(sz, EXP1, wts);
 }
+
+template<typename T>
+T Monoid::degree_weights(const_monomial m, const std::vector<T>& wts) const
+{
+  if (nvars_ == 0) return 0;
+
+  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  to_expvector(m, EXP1);
+  int sz = (wts.size() < nvars_ ? wts.size() : nvars_);
+  T wt = 0;
+  for (int i=0; i<sz; i++)
+    wt += EXP1[i] * wts[i];
+  return wt;
+}
+
+template int Monoid::degree_weights<int>(const_monomial m, const std::vector<int>& wts) const;
 
 int Monoid::simple_degree(const_monomial m) const
 {

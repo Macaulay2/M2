@@ -308,7 +308,7 @@ extern "C" {
                       const MutableMatrix *Pts,
                       Matrix /* or null */ ** result_GB,
                       Matrix /* or null */ ** result_std_monoms);
-  /* Returns false if an error occured.
+  /* Returns false if an error occurred.
      Input: R: a polynomial ring of the form K[x1,...,xn]
             Pts: an n by d matrix over K.
      Action: Compute the ideal of the points in n-space

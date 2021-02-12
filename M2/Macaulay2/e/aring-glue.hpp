@@ -51,7 +51,7 @@ class ConcreteRing : public Ring
 
   bool isGaloisField() const
   {
-    return ringID() == ring_GF or ringID() == ring_GFGivaro or
+    return ringID() == ring_GFM2 or ringID() == ring_GFGivaro or
            ringID() == ring_GFFlintBig or ringID() == ring_GFFlintZech;
   }
 

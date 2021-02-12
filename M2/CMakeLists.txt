@@ -18,8 +18,8 @@
 cmake_minimum_required(VERSION 3.15...3.19)
 cmake_policy(VERSION 3.14)
 
-## Use the C++14 standard
-set(CMAKE_CXX_STANDARD 14)
+## Use the C++17 standard
+set(CMAKE_CXX_STANDARD 17)
 ## Use the C11 (C0X) standard
 set(CMAKE_C_STANDARD 11)
 

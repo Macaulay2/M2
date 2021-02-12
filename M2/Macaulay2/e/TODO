@@ -80,10 +80,10 @@ points, toric rings, LPP, what else?
 pushforward, pushforward1 should be stashed too, and should work functorially and with
 inhomogeneous maps and modules.
 
-subring, quotient, and saturation computations need to be interruptable: so we must
+subring, quotient, and saturation computations need to be interruptible: so we must
 stash the results.
 
-factorization and decomposition from singular needs to be interruptable.
+factorization and decomposition from singular needs to be interruptible.
 
 Groebner bases todo: HF use, mingens, subring elements, elements sorted in
 decreasing monomial order?

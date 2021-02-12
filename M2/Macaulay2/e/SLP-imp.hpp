@@ -434,7 +434,7 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
       // dt is an increment for t on the interval [0,1]
       R.set(dt, t_step);
       C.subtract(dc, c_end, c_init);
-      C.abs(abs2dc, dc);  // don't wnat to create new temporary elts: reusing dc
+      C.abs(abs2dc, dc);  // don't want to create new temporary elts: reusing dc
                           // and abs2dc
       R.divide(dt, dt, abs2dc);
 

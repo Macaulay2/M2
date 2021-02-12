@@ -133,7 +133,7 @@ class MonomialIdeal : public EngineObject
   int search_expvector(const int *m, Bag *&b) const;
   // Search.  Return whether a monomial which divides 'm' is
   // found.  If so, return the baggage.  'm' is assumed to be an
-  // exponent vector of length larger than the top variable occuring
+  // exponent vector of length larger than the top variable occurring
   // in 'this'
   int search(const int *m, Bag *&b) const;
   // Search.  Return whether a monomial which divides 'm' is

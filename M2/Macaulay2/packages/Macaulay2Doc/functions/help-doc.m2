@@ -113,6 +113,7 @@ doc ///
   Key
     infoHelp
     (infoHelp, Thing)
+    (infoHelp, DocumentTag)
   Headline
     view documentation in Info format
   Usage

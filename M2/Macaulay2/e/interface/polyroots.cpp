@@ -1,7 +1,11 @@
 #include "interface/factory.h"
 #include "interface/ring.h"
 
+// mps uses the c++ keyword register, which is no longer allowed in the C++17
+// standard, so we disable it by defining an empty macro.
+#define register
 #include <mps/mps.h>
+#undef register
 #include <stdlib.h>
 
 #include "aring-CCC.hpp"

@@ -19,8 +19,8 @@ o3 : PolynomialRing
 
 i4 : cubicMap = map(ringP1,ringP3,{s^3, s^2*t, s*t^2, t^3})
 
-                         3   2      2   3
-o4 = map(ringP1,ringP3,{s , s t, s*t , t })
+                            3   2      2   3
+o4 = map (ringP1, ringP3, {s , s t, s*t , t })
 
 o4 : RingMap ringP1 <--- ringP3
 

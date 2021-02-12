@@ -412,8 +412,8 @@ i52 : load "minPres.m2";
 i53 : G = removeRedundantVariables JM
 
                                   2 3              3 4        2            2 3        3 4   3 4 2
-o53 = map(B,B,{z , z z , z z z , z z z  , z , z , z z z  , z z , z z z  , z z , z  , z z , z z z  })
-                1   5 6   1 5 6   5 6 11   5   6   5 6 11   5 6   5 6 11   5 6   11   5 6   5 6 11
+o53 = map (B, B, {z , z z , z z z , z z z  , z , z , z z z  , z z , z z z  , z z , z  , z z , z z z  })
+                   1   5 6   1 5 6   5 6 11   5   6   5 6 11   5 6   5 6 11   5 6   11   5 6   5 6 11
 
 o53 : RingMap B <--- B
 
@@ -432,8 +432,8 @@ i56 : F = map(CX, ring J, matrix{{a,b,c,d,e}} |
                   substitute(G.matrix,CX))
 
                                                   2 3              3 4        2            2 3        3 4   3 4 2
-o56 = map(CX,T,{a, b, c, d, e, z , z z , z z z , z z z  , z , z , z z z  , z z , z z z  , z z , z  , z z , z z z  })
-                                1   5 6   1 5 6   5 6 11   5   6   5 6 11   5 6   5 6 11   5 6   11   5 6   5 6 11
+o56 = map (CX, T, {a, b, c, d, e, z , z z , z z z , z z z  , z , z , z z z  , z z , z z z  , z z , z  , z z , z z z  })
+                                   1   5 6   1 5 6   5 6 11   5   6   5 6 11   5 6   5 6 11   5 6   11   5 6   5 6 11
 
 o56 : RingMap CX <--- T
 
@@ -557,8 +557,8 @@ i80 : R = QQ[y_1 .. y_22];
 
 i81 : F = map(S,R,zG)
 
-                5     5    4 3 5    5 3 4    4 2 2 4    3 4   4    2 6 4    4   4 3    3 3 3 3    2 5 2 3      7   3    4 6 2    3 2 5 2    2 4 4 2      6 3 2    8 2 2    3   7      2 3 6        5 5      7 4      2 2 8      4 7    6 6
-o81 = map(S,R,{a b*c*d z, a b d z, a c d z, a b c d z, a b c*d z, a b d z, a b*c d z, a b c d z, a b c d z, a*b c*d z, a c d z, a b c d z, a b c d z, a*b c d z, b c d z, a b*c d*z, a b c d*z, a*b c d*z, b c d*z, a b c z, a*b c z, b c z})
+                   5     5    4 3 5    5 3 4    4 2 2 4    3 4   4    2 6 4    4   4 3    3 3 3 3    2 5 2 3      7   3    4 6 2    3 2 5 2    2 4 4 2      6 3 2    8 2 2    3   7      2 3 6        5 5      7 4      2 2 8      4 7    6 6
+o81 = map (S, R, {a b*c*d z, a b d z, a c d z, a b c d z, a b c*d z, a b d z, a b*c d z, a b c d z, a b c d z, a*b c*d z, a c d z, a b c d z, a b c d z, a*b c d z, b c d z, a b*c d*z, a b c d*z, a*b c d*z, b c d*z, a b c z, a*b c z, b c z})
 
 o81 : RingMap S <--- R
 
@@ -784,8 +784,8 @@ o98 : Ideal of A
 
 i99 : F = removeRedundantVariables I
 
-                8       4   2
-o99 = map(A,A,{d  + 1, d , d , d, e})
+                   8       4   2
+o99 = map (A, A, {d  + 1, d , d , d, e})
 
 o99 : RingMap A <--- A
 

@@ -40,6 +40,7 @@ namespace M2 {
 };
 
 #else
+#define bool_constant givaro_bool_constant
 #include <givaro/gfq.h>
 #include <givaro/givpower.h>
 #include <givaro/givtimer.h>
@@ -49,7 +50,7 @@ namespace M2 {
 #include <givaro/givintnumtheo.h>
 #include <givaro/givpower.h>
 #include <givaro/givpoly1padic.h>
-
+#undef bool_constant
 #include <type_traits>
 
 namespace M2 {
