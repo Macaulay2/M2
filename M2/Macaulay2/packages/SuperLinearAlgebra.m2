@@ -1,4 +1,4 @@
-+newPackage(
+newPackage(
     "SuperLinearAlgebra", 
     Version => "0.1", 
     Date => "29 January 2021", 
@@ -105,7 +105,7 @@ assert(G.sourceM2 == 2)
 parity = method();
 parity (RingElement, Ring, List) := (f, R, oddNumberList) -> (
     e := symbol e;
-    e = exponents f
+    e = exponents f;
     l := symbol l;
     l = {};
     for i from 0 to (#gens R-1) do (
