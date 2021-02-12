@@ -10,6 +10,8 @@ stopIfError = false
 notify = false
 debugWarningHashcode = null
 gotarg := arg -> any(commandLine, s -> s === arg)
+randomSeed = -- initializing this here so the startup is reproducible
+if gotarg "--no-randomize" then 0 else (currentTime() << 16) + processID()
 if gotarg "--notify" then notify = true
 if gotarg "--stop" then stopIfError = true
 if gotarg "--int"  then handleInterrupts = false

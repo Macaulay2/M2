@@ -8,10 +8,6 @@ degreesRing 0;
 
 setIOUnSynchronized()					    -- try to avoid deadlocks when running examples
 
-(addStartFunction if member("--no-randomize",commandLine) 
-   then (() -> setRandomSeed 0)
-   else (() -> setRandomSeed((currentTime() << 16) + processID())))
-
 addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
 addEndFunction(() -> path = {})
 
