@@ -12,7 +12,7 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "1.1", 
-    Date => "February 6, 2021",
+    Date => "February 11, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -74,6 +74,7 @@ projectiveVariety Ideal := o -> I -> (
     if J === I then J = I; 
     if o.Saturate and (not (I#cache)#?"isMultisaturated") then (I#cache)#"isMultisaturated" = if I === J then true else I == J;
     X := new MultiprojectiveVariety from {
+        symbol cache => new CacheTable,
         "idealVariety" => J,
         "ringVariety" => null,
         "dimVariety" => null,        
@@ -586,6 +587,7 @@ multirationalMap (List,MultiprojectiveVariety) := (L,Y) -> (
          then error("expected a subvariety of PP^"|toString(first m))
          else error("expected a subvariety of a product of "|toString(# m)|" projective spaces of dimensions "|(toString toSequence m));
     new MultirationalMap from {
+        symbol cache => new CacheTable,
         "maps" => L,
         "target" => Y,
         "source" => projectiveVariety(R,Saturate=>false),
@@ -630,13 +632,9 @@ rationalMap List := o -> L -> ( -- this redefines a method in Cremona.m2
 
 multirationalMap RationalMap := phi -> multirationalMap {phi};
 multirationalMap(RationalMap,RationalMap) := (phi1,phi2) -> multirationalMap {phi1,phi2};
-multirationalMap(RationalMap,RationalMap,RationalMap) := (phi1,phi2,phi3) -> multirationalMap {phi1,phi2,phi3};
 multirationalMap MultihomogeneousRationalMap := phi -> multirationalMap {phi};
 multirationalMap(MultihomogeneousRationalMap,MultihomogeneousRationalMap) := (phi1,phi2) -> multirationalMap {phi1,phi2};
-multirationalMap(MultihomogeneousRationalMap,MultihomogeneousRationalMap,MultihomogeneousRationalMap) := (phi1,phi2,phi3) -> multirationalMap {phi1,phi2,phi3};
-multirationalMap MultirationalMap := Phi -> multirationalMap factor Phi;
 multirationalMap (MultirationalMap,MultirationalMap) := (Phi1,Phi2) -> multirationalMap((factor Phi1)|(factor Phi2));
-multirationalMap (MultirationalMap,MultirationalMap,MultirationalMap) := (Phi1,Phi2,Phi3) -> multirationalMap((factor Phi1)|(factor Phi2)|(factor Phi3));
 
 multirationalMap (MultirationalMap,MultiprojectiveVariety) := (Phi,Y) -> (
     if Y === target Phi then return Phi;
@@ -1308,7 +1306,7 @@ EXAMPLE {
 "? X'"},
 SeeAlso => {(segre,MultiprojectiveVariety),(dim,MultiprojectiveVariety),(codim,MultiprojectiveVariety),(degree,MultiprojectiveVariety),(singularLocus,MultiprojectiveVariety),(point,MultiprojectiveVariety)}} 
 
-document {Key => {(projectiveVariety,List,Ring)}, 
+document {Key => {(projectiveVariety,List,Ring),(projectiveVariety,ZZ,Ring)}, 
 Headline => "product of projective spaces", 
 Usage => "projectiveVariety(n,K)", 
 Inputs => {"n" => List => {"a list of non-negative integers ",TEX///$n=\{n_1,n_2,\ldots,n_r\}$///},"K" => Ring => {"a field"}}, 
@@ -1316,7 +1314,7 @@ Outputs => {MultiprojectiveVariety => {"the product of projective spaces ", TEX/
 EXAMPLE {"projectiveVariety({2,1,3},ZZ/33331);","projectiveVariety({1,1,1,1},QQ);","projectiveVariety({},QQ);"},
 SeeAlso => {((projectiveVariety,List,List,Ring))}} 
 
-document {Key => {(projectiveVariety,List,List,Ring)}, 
+document {Key => {(projectiveVariety,List,List,Ring),(projectiveVariety,ZZ,ZZ,Ring)}, 
 Headline => "the Segre-Veronese variety", 
 Usage => "projectiveVariety(n,d,K)", 
 Inputs => {
@@ -1405,7 +1403,7 @@ Outputs => {{"the map returned by ",TO segre," ",TO2{(ring,MultiprojectiveVariet
 EXAMPLE {"X = projectiveVariety ideal random({2,1},ZZ/101[x_0,x_1,x_2,y_0,y_1,Degrees=>{3:{1,0},2:{0,1}}]);","segre X"}, 
 SeeAlso => {segre,(segre,MultirationalMap)}}
 
-document {Key => {(point,MultiprojectiveVariety)}, 
+document {Key => {(point,MultiprojectiveVariety),(symbol |-, MultiprojectiveVariety)}, 
 Headline => "pick a random rational point on a multi-projective variety", 
 Usage => "point X", 
 Inputs => {"X" => MultiprojectiveVariety => {"defined over a finite field"}}, 
@@ -1827,7 +1825,7 @@ source Phi211 == source Phi212 and target Phi211 == source Phi21 and target Phi2
 SeeAlso => {(graph,RationalMap),(symbol *,MultirationalMap,MultirationalMap),(symbol ==,MultirationalMap,MultirationalMap),(inverse,MultirationalMap)}}
 
 document { 
-Key => {(symbol *,MultirationalMap,MultirationalMap),(compose,MultirationalMap,MultirationalMap)}, 
+Key => {(symbol *,MultirationalMap,MultirationalMap),(compose,MultirationalMap,MultirationalMap),(symbol *,RationalMap,MultirationalMap),(symbol *,MultirationalMap,RationalMap),(symbol ^,MultirationalMap,ZZ)}, 
 Headline => "composition of multi-rational maps", 
 Usage => "Phi * Psi 
 compose(Phi,Psi)", 
@@ -1845,7 +1843,7 @@ EXAMPLE {
 SeeAlso => {(symbol *,RationalMap,RationalMap)}}
 
 document { 
-Key => {(symbol ==,MultirationalMap,MultirationalMap)}, 
+Key => {(symbol ==,MultirationalMap,MultirationalMap),(symbol ==,RationalMap,MultirationalMap),(symbol ==,MultirationalMap,RationalMap),(symbol ==,MultirationalMap,ZZ),(symbol ==,ZZ,MultirationalMap)}, 
 Headline => "equality of multi-rational maps", 
 Usage => "Phi == Psi", 
 Inputs => { 
@@ -2055,7 +2053,7 @@ ZZ/33331[a..d]; f = rationalMap {c^2-b*d,b*c-a*d,b^2-a*c};",
 SeeAlso => {(inverse,MultirationalMap),(isMorphism,MultirationalMap)}}
 
 document { 
-Key => {baseLocus,(baseLocus,MultirationalMap)}, 
+Key => {baseLocus,(baseLocus,MultirationalMap),(baseLocus,RationalMap)}, 
 Headline => "the base locus of a multi-rational map", 
 Usage => "baseLocus Phi", 
 Inputs => {MultirationalMap => "Phi"}, 
@@ -2082,7 +2080,7 @@ EXAMPLE {
 SeeAlso => {(det,MultidimensionalMatrix),(singularLocus,MultiprojectiveVariety)}}
 
 document { 
-Key => {(symbol |,MultirationalMap,MultiprojectiveVariety)}, 
+Key => {(symbol |,MultirationalMap,MultiprojectiveVariety),(symbol |,MultirationalMap,List)}, 
 Headline => "restriction of a multi-rational map", 
 Usage => "Phi | Z", 
 Inputs => {MultirationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
@@ -2100,7 +2098,7 @@ EXAMPLE {"Phi|{1,1,2};"},
 SeeAlso => {(symbol ||,MultirationalMap,MultiprojectiveVariety),(symbol |,RationalMap,Ideal),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety)}}
 
 document { 
-Key => {(symbol ||,MultirationalMap,MultiprojectiveVariety)}, 
+Key => {(symbol ||,MultirationalMap,MultiprojectiveVariety),(symbol ||,MultirationalMap,List)}, 
 Headline => "restriction of a multi-rational map", 
 Usage => "Phi || Z", 
 Inputs => {MultirationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
@@ -2119,7 +2117,7 @@ EXAMPLE {"Phi||{1,2};"},
 SeeAlso => {(symbol |,MultirationalMap,MultiprojectiveVariety),(symbol ||,RationalMap,Ideal),(symbol ^*,MultirationalMap)}}
 
 document { 
-Key => {(symbol |,MultirationalMap,MultirationalMap)}, 
+Key => {(symbol |,MultirationalMap,MultirationalMap),(symbol |,RationalMap,MultirationalMap),(symbol |,MultirationalMap,RationalMap),(symbol |,RationalMap,RationalMap)}, 
 Headline => "product of multi-rational maps", 
 Usage => "Phi | Psi", 
 Inputs => {MultirationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
@@ -2136,7 +2134,7 @@ EXAMPLE {
 SeeAlso => {(symbol ||,MultirationalMap,MultirationalMap),(symbol |,List,List),(factor,MultirationalMap),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety),(super,MultirationalMap)}}
 
 document { 
-Key => {(symbol ||,MultirationalMap,MultirationalMap)}, 
+Key => {(symbol ||,MultirationalMap,MultirationalMap),(symbol ||,MultirationalMap,RationalMap),(symbol ||,RationalMap,MultirationalMap),(symbol ||,RationalMap,RationalMap)}, 
 Headline => "product of multi-rational maps", 
 Usage => "Phi || Psi", 
 Inputs => {MultirationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
@@ -2165,7 +2163,7 @@ EXAMPLE {
 SeeAlso => {(target,MultirationalMap),(ambient,MultiprojectiveVariety),(super,RationalMap)}}
 
 document { 
-Key => {(random,List,MultiprojectiveVariety)}, 
+Key => {(random,List,MultiprojectiveVariety),(random,ZZ,MultiprojectiveVariety)}, 
 Headline => "get a random hypersurface of given multi-degree containing a multi-projective variety", 
 Usage => "random(d,X)", 
 Inputs => {List => "d" => {"a list of ",TEX///$n$///," nonnegative integers"},
@@ -2215,7 +2213,7 @@ EXAMPLE {
 SeeAlso => {(shape,MultidimensionalMatrix)}}
 
 document { 
-Key => {(show,MultirationalMap)}, 
+Key => {(show,MultirationalMap),(show,RationalMap)}, 
 Headline => "display a multi-rational map", 
 Usage => "show Phi", 
 Inputs => {"Phi" => MultirationalMap}, 
@@ -2227,7 +2225,7 @@ EXAMPLE {
 SeeAlso => {(describe,MultirationalMap)}}
 
 document { 
-Key => {degreeSequence,(degreeSequence,MultirationalMap)}, 
+Key => {degreeSequence,(degreeSequence,MultirationalMap),(degreeSequence,RationalMap)}, 
 Headline => "the (multi)-degree sequence of a (multi)-rational map", 
 Usage => "degreeSequence Phi", 
 Inputs => {"Phi" => MultirationalMap}, 
@@ -2287,7 +2285,7 @@ X!
 SeeAlso => {(describe,MultiprojectiveVariety),(symbol ?,MultiprojectiveVariety)}}
 
 document { 
-Key => {(clean,MultirationalMap)}, 
+Key => {(clean,MultirationalMap),(clean,RationalMap)}, 
 Headline => "clean the internal information of a multi-rational map", 
 Usage => "clean Phi", 
 Inputs => {"Phi" => MultirationalMap}, 
@@ -2331,7 +2329,7 @@ EXAMPLE {
 SeeAlso => {(coefficientRing,MultiprojectiveVariety),(symbol **,MultirationalMap,Ring)}}
 
 document { 
-Key => {"shortcuts"},
+Key => {"shortcuts",(rationalMap,MultiprojectiveVariety),(rationalMap,MultiprojectiveVariety,List),(rationalMap,MultiprojectiveVariety,ZZ),(rationalMap,MultiprojectiveVariety,ZZ,ZZ),(multirationalMap,RationalMap)},
 Headline => "Some convenient shortcuts for multi-rational maps consisting of a single rational map",
 Usage => "rationalMap X <==> multirationalMap {rationalMap ideal X}
 rationalMap(X,a) <==> multirationalMap {rationalMap(ideal X,a)}
@@ -2414,56 +2412,43 @@ EXAMPLE {"X = projectiveVariety({3},{2},ZZ/333331);",
 "? T"},
 SeeAlso => {(singularLocus,MultiprojectiveVariety),(dual,EmbeddedProjectiveVariety),(point,MultiprojectiveVariety)}}
 
+document {Key => {(decompose,MultiprojectiveVariety)}, 
+Headline => "irreducible components of a variety", 
+Usage => "decompose X", 
+Inputs => {"X" => MultiprojectiveVariety}, 
+Outputs => {List => {"the list of ",TO2{MultiprojectiveVariety,"multi-projective varieties"}," defined by the minimal associated primes of the ",TO2{(ideal,MultiprojectiveVariety),"ideal"}," of ",TT"X"}},
+PARA {"This calculation is performed using the function ",TO (decompose,Ideal),"."},
+EXAMPLE {"C = projectiveVariety({1},{4},ZZ/100003);", 
+"L = linearSpan sum{point C,point C}, L' = linearSpan sum{point C,point ambient C};",
+"X = ⋃ {C,L,L'};",
+"D = decompose X",
+"assert(X == ⋃ D)"}, 
+SeeAlso => {(decompose,Ideal)}} 
+
+document {Key => {(degrees,MultiprojectiveVariety)}, 
+Headline => "degrees for the minimal generators", 
+Usage => "degrees X", 
+Inputs => {"X" => MultiprojectiveVariety}, 
+Outputs => {{"the list of multi-degrees for the minimal generators of the ",TO2{(ideal,MultiprojectiveVariety),"ideal"}," of ",TT"X"}},
+EXAMPLE {"X = ⋃ for i to 10 list point projectiveVariety({2,3},ZZ/33331);", "? X", "degrees X"}} 
+
 undocumented {
 (expression,MultiprojectiveVariety),
 (net,MultiprojectiveVariety),
-(point,MultiprojectiveVariety,Boolean),
-(symbol |-, MultiprojectiveVariety),
-(top,MultiprojectiveVariety),
-(decompose,MultiprojectiveVariety),
-(degrees,MultiprojectiveVariety),
+(point,MultiprojectiveVariety,Boolean), -- Intended for internal use only
+(top,MultiprojectiveVariety), -- The user should think that varieties are at least equidimensional 
 (euler,MultiprojectiveVariety,Option),
-(symbol *,ZZ,MultiprojectiveVariety),
-(projectiveVariety,ZZ,ZZ,Ring),
-(projectiveVariety,ZZ,Ring),
+(symbol *,ZZ,MultiprojectiveVariety), -- hidden to the user, since it returns non-reduced varieties
 (expression,MultirationalMap),
 (net,MultirationalMap),
-(multirationalMap,RationalMap),
-(multirationalMap,RationalMap,RationalMap),
-(multirationalMap,RationalMap,RationalMap,RationalMap),
-(multirationalMap,MultirationalMap),
-(multirationalMap,MultirationalMap,MultirationalMap),
-(multirationalMap,MultirationalMap,MultirationalMap,MultirationalMap),
-(rationalMap,MultiprojectiveVariety),
-(rationalMap,MultiprojectiveVariety,List),
-(rationalMap,MultiprojectiveVariety,ZZ),
-(rationalMap,MultiprojectiveVariety,ZZ,ZZ),
-(symbol *,RationalMap,MultirationalMap),
-(symbol *,MultirationalMap,RationalMap),
-(symbol ^,MultirationalMap,ZZ),
-(symbol ==,RationalMap,MultirationalMap),
-(symbol ==,MultirationalMap,RationalMap),
-(symbol ==,MultirationalMap,ZZ),
-(symbol ==,ZZ,MultirationalMap),
-(multidegree,MultirationalMap,MultirationalMap),
+(multirationalMap,RationalMap,RationalMap), -- Intended for internal use only
+(multirationalMap,MultirationalMap,MultirationalMap), -- Intended for internal use only
+(multidegree,MultirationalMap,MultirationalMap), --  Intended for internal use only
 (multidegree,Nothing,MultirationalMap),
-(source,MultirationalMap,MultirationalMap),
-(clean,RationalMap),
+(source,MultirationalMap,MultirationalMap), -- Intended for internal use only
 (inverse,MultirationalMap,Option),
 (inverse2,MultirationalMap,Option),
-(multirationalMap,MultiprojectiveVariety,MultiprojectiveVariety,Boolean),
-(baseLocus,RationalMap),
-(symbol |,MultirationalMap,List),
-(symbol ||,MultirationalMap,List),
-(symbol |,RationalMap,MultirationalMap),
-(symbol |,MultirationalMap,RationalMap),
-(symbol |,RationalMap,RationalMap),
-(symbol ||,MultirationalMap,RationalMap),
-(symbol ||,RationalMap,MultirationalMap),
-(symbol ||,RationalMap,RationalMap),
-(random,ZZ,MultiprojectiveVariety),
-(show,RationalMap),
-(degreeSequence,RationalMap)}
+(multirationalMap,MultiprojectiveVariety,MultiprojectiveVariety,Boolean)} -- Intended for internal use only
 
 ---------------
 ---- Tests ----
