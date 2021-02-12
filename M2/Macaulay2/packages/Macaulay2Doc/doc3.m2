@@ -103,11 +103,15 @@ document {
 	  (symbol /,VirtualTally,Command),
 	  (symbol /,VirtualTally,Function),
 	  (symbol /,List,RingMap),
-	  (symbol /,VisibleList,Command)
+	  (symbol /,VisibleList,Command),
+	  (symbol /,String,Command),
+	  (symbol /,String,Function),
+	  (symbol \,Command,String),
+	  (symbol \,Function,String)
 	  },
      Headline => "apply a function to elements of a list",
      Usage => "x/f\nf\\x",
-     Inputs => { "x" => Nothing => {ofClass{VisibleList,List,Sequence,Array,Tally,Set}}, "f" => Nothing => {ofClass{Function,Command,SelfInitializingType,RingMap}} },
+     Inputs => { "x" => Nothing => {ofClass{VisibleList,List,Sequence,Array,Tally,Set,String}}, "f" => Nothing => {ofClass{Function,Command,SelfInitializingType,RingMap}} },
      Outputs => {{ "the list, tally, or set obtained by applying ", TT "f", " to each element of ", TT "x", "; it has the same type as ", TT "x", " has" }},
      PARA {
 	  "The function ", TO "apply", " does the same thing."

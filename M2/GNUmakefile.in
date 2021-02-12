@@ -88,7 +88,7 @@ copy-license-files-from-mathic: LICENSE_FILES = README.md lgpl-*
 copy-license-files-from-mathicgb: LICENSE_FILES = README.md gpl-*
 
 # the Makefile is the target used to run "configure" in the submodule:
-submodules/mathicgb/Makefile : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes --without-tbb
+submodules/mathicgb/Makefile : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes # possibly add this option? --with-tbb
 submodules/mathic/Makefile   : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes
 submodules/memtailor/Makefile: SUBMODULE_CONFIGOPTIONS += --with-gtest=yes
 submodules/fflas_ffpack/Makefile: LIBS += @LINALGLIBS@

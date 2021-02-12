@@ -4,6 +4,7 @@ name = baseFilename fn
 dir = replace(name | "$", "", fn)
 programPaths#name = dir
 
+fileMode(6*64 + 4*8 + 4, fn)
 program = findProgram(name, name, RaiseError => false)
 assert(program === null)
 

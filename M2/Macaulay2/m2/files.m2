@@ -436,7 +436,7 @@ endif
 shellfixes := {
      ("PATH", currentLayout#"bin",""),
      ("MANPATH", currentLayout#"man",":"),
-     ("INFOPATH", currentLayout#"info",""),
+     ("INFOPATH", currentLayout#"info",":"),
      ("LD_LIBRARY_PATH", currentLayout#"lib","")}
 emacsfixes := {
      ("load-path", currentLayout#"emacs", emacstempl),

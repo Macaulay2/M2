@@ -549,7 +549,7 @@ void ARingGFGivaro::divide(ElementType &result,
   givaroField.div(result, a, b);
 }
 
-/// @jakob overflow can be occured due to multiplication. use exact mpz for
+/// @jakob overflow can occur due to multiplication. use exact mpz for
 /// multiply and modulo operation instead!
 void ARingGFGivaro::power(ElementType &result,
                           const ElementType a,
@@ -604,7 +604,7 @@ void ARingGFGivaro::power_mpz(ElementType &result,
   power(result, a, n1);
 }
 
-///@note dublicate code
+///@note duplicate code
 void ARingGFGivaro::swap(ElementType &a, ElementType &b) const
 {
   ElementType tmp = a;

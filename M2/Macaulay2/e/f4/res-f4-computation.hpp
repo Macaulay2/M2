@@ -27,7 +27,7 @@ class F4ResComputation : public ResolutionComputation
 
   virtual ~F4ResComputation();
 
-  // Compute (if needed) enough to return the minimial betti numbers
+  // Compute (if needed) enough to return the minimal Betti numbers
   // of the free resolution.
   // 'length_limit': value is infinity if it has length 0, else it is first
   // entry.

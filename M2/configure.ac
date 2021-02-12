@@ -362,14 +362,16 @@ AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 
-dnl AC_SUBST(HAVE_LIBTBB,no)
-dnl AC_SUBST(LIBTBB)
-dnl    AC_LANG(C++)
-dnl    AC_CHECK_HEADER(tbb/tbb.h,
-dnl       [AC_SEARCH_LIBS(TBB_runtime_interface_version,tbb,
-dnl 	 LIBTBB=$ac_cv_search_TBB_runtime_interface_version
-dnl 	 HAVE_LIBTBB=yes)])
-dnl    AC_LANG(C)
+AC_SUBST(HAVE_LIBTBB,no)
+AC_SUBST(LIBTBB)
+   AC_LANG(C++)
+   AC_CHECK_HEADER(tbb/tbb.h,
+      [AC_SEARCH_LIBS(TBB_runtime_interface_version,"tbb",
+	 LIBTBB=$ac_cv_search_TBB_runtime_interface_version
+	 HAVE_LIBTBB=yes,
+	 [AC_MSG_ERROR([tbb not found])])])
+   AC_LANG(C)
+
 # the following line remove -ltbb from LIBS (only thing in LIBS so far).  It is not needed
 # for linking M2-binary.  It is used in mathicgb.
 # LIBS=
@@ -2035,7 +2037,7 @@ AC_MSG_NOTICE([staging area for architecture dependent files: $pre_exec_prefix])
 
 AC_SUBST(packagesdir,$datadir/Macaulay2)
 AC_SUBST(libm2dir,$libdir/Macaulay2)
-AC_SUBST(emacsdir,$datadir/emacs/site-lisp/Macaulay2)
+AC_SUBST(emacsdir,$datadir/emacs/site-lisp/macaulay2)
 AC_SUBST(librariesdir,$libm2dir/lib)
 AC_SUBST(programsdir,$libexecdir/Macaulay2/bin)
 AC_SUBST(licensesdir,$libexecdir/Macaulay2/program-licenses)
@@ -2043,7 +2045,7 @@ AC_SUBST(packagecachecoredir,$libm2dir/cache)
 
 AC_SUBST(tail_packagesdir,$tail_datadir/Macaulay2)
 AC_SUBST(tail_libm2dir,$tail_libdir/Macaulay2)
-AC_SUBST(tail_emacsdir,$tail_datadir/emacs/site-lisp/Macaulay2)
+AC_SUBST(tail_emacsdir,$tail_datadir/emacs/site-lisp/macaulay2)
 AC_SUBST(tail_librariesdir,$tail_libm2dir/lib)
 AC_SUBST(tail_programsdir,$tail_libexecdir/Macaulay2/bin)
 AC_SUBST(tail_licensesdir,$tail_libexecdir/Macaulay2/program-licenses)
@@ -2051,7 +2053,7 @@ AC_SUBST(tail_packagecachecoredir,$tail_libm2dir/cache)
 
 AC_SUBST(pre_packagesdir,$pre_datadir/Macaulay2)
 AC_SUBST(pre_libm2dir,$pre_libdir/Macaulay2)
-AC_SUBST(pre_emacsdir,$pre_datadir/emacs/site-lisp/Macaulay2)
+AC_SUBST(pre_emacsdir,$pre_datadir/emacs/site-lisp/macaulay2)
 AC_SUBST(pre_librariesdir,$pre_libm2dir/lib)
 AC_SUBST(pre_programsdir,$pre_libexecdir/Macaulay2/bin)
 AC_SUBST(pre_licensesdir,$pre_libexecdir/Macaulay2/program-licenses)

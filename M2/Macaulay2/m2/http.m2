@@ -40,7 +40,7 @@ protocols := {
 		    ))),
      ("https://", (host,port,url,body) -> (
 	       cmd := (
-	       	    "!openssl s_client -quiet -verify 1 -CApath ~/.w3/certs/" |
+	       	    "!openssl s_client -quiet -verify 1 " |
 	       	    " -host " | host | " -port " | (if port =!= null then port else "443")
 		    | " 2>/dev/null"
 	       	    );

@@ -770,6 +770,80 @@ export rawSolvableAlgebra(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawSolvableAlgebra",rawSolvableAlgebra);
 
+export rawNCFreeAlgebra(e:Expr):Expr := (
+     when e is a:Sequence do 
+     if length(a) == 6 then 
+     when a.0 is R:RawRingCell do
+     when a.2 is degR:RawRingCell do
+     if isSequenceOfStrings(a.1) then 
+     if isSequenceOfSmallIntegers(a.3) then (
+     if isSequenceOfSmallIntegers(a.4) then (
+     if isSequenceOfSmallIntegers(a.5) then (	  
+	     names := getSequenceOfStrings(a.1);
+         toExpr(Ccode(RawRingOrNull, "rawRingM2FreeAlgebra(", R.p, ",",
+ 	       names, ",",
+           degR.p, ",",
+           getSequenceOfSmallIntegers(a.3), ",",
+           getSequenceOfSmallIntegers(a.4), ",",
+           getSequenceOfSmallIntegers(a.5),
+ 	       ")" ))
+     ) else WrongArg(6,"a sequence of small integers") 
+     ) else WrongArg(5,"a sequence of small integers") 
+     ) else WrongArg(4,"a sequence of small integers")
+     else WrongArg(2,"a sequence of strings to be used as names")
+     else WrongArg(3,"a raw ring")
+     else WrongArg(1,"a raw ring")
+     else WrongNumArgs(6)
+     else WrongNumArgs(6));
+setupfun("rawNCFreeAlgebra",rawNCFreeAlgebra);
+
+export rawRingM2FreeAlgebraQuotient(e:Expr):Expr := (
+    when e is s:Sequence do (
+    	if length(s) == 2 then (
+    	    when s.0 is wa:RawMatrixCell do (
+		a := wa.p;
+    	    	when s.1 is wb:ZZcell do (
+    		    if isInt(wb) then (
+		    	b := toInt(wb);
+    		    	toExpr(Ccode(RawRingOrNull,
+    			       "rawRingM2FreeAlgebraQuotient(", a, ",", b, ")"))
+    		    ) 
+	            else WrongArgSmallInteger(1)
+		)
+	        else WrongArgZZ(1)
+    	    )
+	    else WrongArg(0,"a raw matrix")
+	)
+        else WrongNumArgs(2)
+    )
+    else WrongNumArgs(2)
+);
+setupfun("rawRingM2FreeAlgebraQuotient",rawRingM2FreeAlgebraQuotient);
+
+export rawNCBasis(e:Expr):Expr := (
+     when e is s:Sequence do (
+     when s.0 is M:RawMatrixCell do (
+     if isSequenceOfSmallIntegers(s.1) then (
+     if isSequenceOfSmallIntegers(s.2) then (
+     when s.3 is wb:ZZcell do (
+     if isInt(wb) then (b := toInt(wb); 
+             toExpr(Ccode(RawMatrixOrNull,
+	             "rawNCBasis(",
+	             M.p, ",",
+	             getSequenceOfSmallIntegers(s.1), ",", -- lo_degree
+	             getSequenceOfSmallIntegers(s.2), ",", -- hi_degree
+	             b,                                    -- limit
+		     ")"
+	             ))
+     ) else WrongArgSmallInteger(4)
+     ) else WrongArgZZ(4)
+     ) else WrongArg(3,"a sequence of small integers")
+     ) else WrongArg(2,"a sequence of small integers")
+     ) else WrongArgMatrix(1)
+     ) else WrongNumArgs(3)
+     );
+setupfun("rawNCBasis",rawNCBasis);
+
 export rawLocalRing(e:Expr):Expr := (			    -- localization at a prime ideal
   when e is s:Sequence do (
   if length(s) == 2 then (
@@ -3901,6 +3975,45 @@ export rawGBBetti(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawGBBetti", rawGBBetti);
 
+export rawNCGroebnerBasisTwoSided(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 3 then (
+  when s.0 is wa:RawMatrixCell do (a := wa.p;
+  when s.1 is wb:ZZcell do (
+  if isInt(wb) then (b := toInt(wb);
+  when s.2 is wstrat:ZZcell do (
+  if isInt(wstrat) then (strat := toInt(wstrat);
+    toExpr(Ccode(RawMatrixOrNull,
+      "rawNCGroebnerBasisTwoSided(",
+        a, ",", b, ",", strat,
+      ")"
+    ))
+  ) else WrongArgSmallInteger(2)
+  ) else WrongArgZZ(2)
+  ) else WrongArgSmallInteger(1)
+  ) else WrongArgZZ(1)
+  ) else WrongArg(0,"a raw matrix")
+  ) else WrongNumArgs(3)
+  ) else WrongNumArgs(3)
+  );
+setupfun("rawNCGroebnerBasisTwoSided",rawNCGroebnerBasisTwoSided);
+
+export rawNCReductionTwoSided(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 2 then (
+  when s.0 is wa:RawMatrixCell do (a := wa.p;
+  when s.1 is wb:RawMatrixCell do (b := wb.p;
+    toExpr(Ccode(RawMatrixOrNull,
+      "rawNCReductionTwoSided(",
+        a, ",", b, 
+      ")"
+    ))
+  ) else WrongArg(1,"a raw matrix")
+  ) else WrongArg(0,"a raw matrix")
+  ) else WrongNumArgs(2)
+  ) else WrongNumArgs(2)
+  );
+setupfun("rawNCReductionTwoSided",rawNCReductionTwoSided);
 -----------------------------------------------------------------------------
 -- LU
 -----------------------------------------------------------------------------

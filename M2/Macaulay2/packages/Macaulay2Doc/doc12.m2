@@ -360,23 +360,13 @@ document {
      TT "MatrixExpression", " is a type of ", TO "Expression", " representing
      a matrix.",
      PARA{},
-     EXAMPLE ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
-     SeeAlso => {"Table"}
-     }
-
-document {
-     Key => MatrixDegreeExpression,
-     Headline => "the class of all matrix expressions with prescribed degrees",
-     TT "MatrixDegreeExpression", " is a type of ", TO "Expression", " representing
-     a matrix with specified degrees of sources and targets, i.e., a general map between
-     free modules.",
-     PARA{},
      EXAMPLE {
+	 ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
 	 ///R=QQ[x,y];///,
-         ///MatrixDegreeExpression {applyTable({{x^2-y^2,x^3-y^3},{x^2-4*y^2,x^3+y^3}},factor),{{-2},{-3}},{{0},{0}}}///,
-	 ///value oo///,
+         ///MatrixExpression {applyTable({{x^2-y^2,x^3-y^3},{x^2-4*y^2,x^3+y^3}},factor),Degrees=>{{{-2},{-3}},{{0},{0}}}}///,
+	 ///value oo///
 	 },
-     SeeAlso => {"MatrixExpression"}
+     SeeAlso => {"Table"}
      }
 
 document {
