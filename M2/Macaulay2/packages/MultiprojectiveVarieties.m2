@@ -12,7 +12,7 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "1.1", 
-    Date => "February 11, 2021",
+    Date => "February 12, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -289,13 +289,16 @@ parametrization MultiprojectiveVariety := X -> (
     if X#"parametrization" =!= null then return X#"parametrization";
     t := local t;
     g := parametrizeProductOfProjectiveSpaces(ring ambient X,t);
-    X#"parametrization" = (multirationalMap(apply(projections ambient X,p -> rationalMap(g * (map p),Dominant=>"notSimplify")),ambient X))||X
+    G := (multirationalMap(apply(projections ambient X,p -> rationalMap(g * (map p),Dominant=>"notSimplify")),ambient X))||X;
+    degs := degrees ideal source G;
+    if (#degs>0 and all(degs,d -> d == {1})) then G = (parametrize ring source G) * G;
+    X#"parametrization" = G
 );
 
 point (MultiprojectiveVariety,Boolean) := (X,b) -> (
-    if # X#"dimAmbientSpaces" == 1 then return projectiveVariety(point(ideal X,b),MinimalGenerators=>false,Saturate=>false);
+    if # X#"dimAmbientSpaces" == 1 and X#"parametrization" === null and (codim X == 0 or any(degrees ideal X,d -> d != {1})) then return projectiveVariety(point(ideal X,b),MinimalGenerators=>false,Saturate=>false);
     f := parametrization X;
-    p := f point(source f,false);
+    p := f projectiveVariety(point(ideal source f,false),MinimalGenerators=>false,Saturate=>false);
     if b then if not (isPoint p and isSubset(ideal X,ideal p)) then error("something went wrong in trying to pick a random "|toString(coefficientRing X)|"-rational point on the variety");
     return p;
 );
@@ -457,6 +460,14 @@ MultiprojectiveVariety ** Ring := (X,K) -> (
     projectiveVariety(sub(ideal X,vars ring projectiveVariety(shape X,K)),Saturate=>false,MinimalGenerators=>true)
 );
 
+MultiprojectiveVariety ? MultiprojectiveVariety := (X,Y) -> (
+    if ring ideal X =!= ring ideal Y then return incomparable;
+    if X == Y then return symbol ==;
+    if isSubset(X,Y) then return symbol <;
+    if isSubset(Y,X) then return symbol >;
+    return incomparable;
+);
+
 variety EmbeddedProjectiveVariety := X -> (
     if not X#?"Proj" then X#"Proj" = Proj ring X;
     X#"Proj"
@@ -471,6 +482,11 @@ linearSpan EmbeddedProjectiveVariety := X -> (
         X#"linearSpan" = Y;
     );
     X#"linearSpan"
+);
+linearSpan List := L -> (
+    if #L == 0 then error "expected a nonempty list";
+    if not all(L,X -> instance(X,EmbeddedProjectiveVariety)) then error "expected a list of embedded projective varieties";
+    linearSpan ⋃ L
 );
 
 EmbeddedProjectiveVariety ! := X -> (
@@ -2389,14 +2405,15 @@ EXAMPLE {"K = ZZ/333331;",
 Caveat => {"This is an experimental function."}}
 
 document { 
-Key => {linearSpan,(linearSpan,EmbeddedProjectiveVariety)},
+Key => {linearSpan,(linearSpan,EmbeddedProjectiveVariety),(linearSpan,List)},
 Headline => "the linear span of an embedded projective variety", 
 Usage => "linearSpan X", 
-Inputs => {"X" => EmbeddedProjectiveVariety},
-Outputs => {EmbeddedProjectiveVariety => {"the linear span of ",TT"X"}},
+Inputs => {"X" => EmbeddedProjectiveVariety => {" (resp., a list of ",TO2{EmbeddedProjectiveVariety,"embedded projective varieties"},")"}},
+Outputs => {EmbeddedProjectiveVariety => {"the linear span of ",TT"X"," (resp., of the ",TO2{(⋃,List),"union"}," of the members of ",TT"X",")"}},
 EXAMPLE {"P = projectiveVariety({7},ZZ/333331);",
 "S = apply(3,i -> point P)",
 "L = linearSpan ⋃ S;",
+"assert(L == linearSpan S)",
 "assert(dim L == 2 and degree L == 1)"}}
 
 document { 
@@ -2448,7 +2465,8 @@ undocumented {
 (source,MultirationalMap,MultirationalMap), -- Intended for internal use only
 (inverse,MultirationalMap,Option),
 (inverse2,MultirationalMap,Option),
-(multirationalMap,MultiprojectiveVariety,MultiprojectiveVariety,Boolean)} -- Intended for internal use only
+(multirationalMap,MultiprojectiveVariety,MultiprojectiveVariety,Boolean), -- Intended for internal use only
+(symbol ?,MultiprojectiveVariety,MultiprojectiveVariety)}
 
 ---------------
 ---- Tests ----
@@ -2649,5 +2667,18 @@ assert(R =!= S);
 X = projectiveVariety I;
 X#"ringVariety" = S;
 assert(try projectiveVariety R then false else true)
+///
+
+TEST /// -- random points in char 0 and sorts
+p = for i to 5 list point projectiveVariety({2,3},QQ);
+P = reverse for i from 1 to 5 list sum take(p,i);
+assert(apply(P,degree) == {5,4,3,2,1} and apply(sort P,degree) == {1,2,3,4,5})
+p = for i to 6 list point projectiveVariety({2},{3},QQ);
+P = reverse for i from 1 to 6 list sum take(p,i);
+assert(apply(P,degree) == {6,5,4,3,2,1} and apply(sort P,degree) == {1,2,3,4,5,6})
+T = tangentSpace(projectiveVariety({3},{2},QQ),point projectiveVariety({3},{2},QQ));
+p = for i to 7 list point T;
+P = reverse for i from 1 to 7 list sum take(p,i);
+assert(apply(P,degree) == {7,6,5,4,3,2,1} and apply(sort P,degree) == {1,2,3,4,5,6,7})
 ///
 
