@@ -3,6 +3,7 @@ assert(basis F^6 == id_(F^6))
 R = F[]
 assert(basis R^6 == id_(R^6))
 
+-- FIXME: the ambient is incorrect in these two
 M = image random(QQ^5, QQ^3)
 assert(basis M == map(M, QQ^3, id_(QQ^3)))
 assert(basis M == map(M, QQ^3, id_(QQ^3)))
@@ -32,6 +33,12 @@ assert(basis(-1, R^1) == 0)
 -- FIXME: this needs to be fixed in the engine
 -- assert try (basis_0 R; false) else true
 assert(basis(1, R^1) == 0)
+
+-- FIXME: these are also broken
+R = ZZ/101[a,b, Degrees => {0,1}]
+basis(1, R)
+basis(1, R, Variables => {a,b})
+basis(1, R, SourceRing => coefficientRing R)
 
 -- https://github.com/Macaulay2/M2/issues/1312
 R = QQ[]

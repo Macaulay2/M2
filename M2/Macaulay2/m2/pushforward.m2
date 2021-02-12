@@ -1,8 +1,8 @@
 -- Copyright 1996 Michael E. Stillman
 -- TODO: see https://github.com/Macaulay2/M2/issues/1522
 -- TODO: adjust PushForward.m2 package to add a strategy
--- TODO: where is best for caching?
--- M may be a bad place to cache the computation, because M may not get garbage-collected
+-- TODO: would it be better to cache under the ring map instead?
+-- TODO: lift(M, S) should call pushForward in some cases
 
 needs "basis.m2"
 needs "modules.m2"
@@ -85,7 +85,7 @@ updateComputation(PushforwardComputation, Module) := Module => options pushForwa
 
 pushForward(RingMap, Module) := Module => opts -> (f, M) -> (
     R := ring M;
-    assert( ring M === R );
+    assert( target f === R );
     strategy := opts.Strategy;
 
     -- this logic runs the strategies in order, or the specified strategy
@@ -200,15 +200,24 @@ algorithms#(pushForward, RingMap, Module) = new MutableHashTable from {
 	if not isHomogeneous f
 	or not isHomogeneous M
 	then return null;
-	S := target f;
 	M = cokernel presentation M;
 	M1 := M / ideal f.matrix;
 	M2 := subquotient(matrix basis M1, relations M);
-	cokernel pushNonLinear(opts, f, M2))
+	cokernel pushNonLinear(opts, f, M2)),
+
+    -- By Justin Chen, see https://github.com/Macaulay2/M2/issues/1522
+    -- TODO: move this strategy ahead when the assumptions are ironed out
+    Quotient => (opts, f, M) -> (
+	(R, S) := (f.target, f.source);
+	ringRel := presentation R ** S;
+	liftRingRel := id_(lift(ambient M, S)) ** ringRel;
+	subquotient(
+	    lift(generators M, S),
+	    lift(relations M, S) | liftRingRel)),
     }
 
 -- Installing hooks for resolution
-scan({Default}, strategy ->
+scan({Quotient, Default}, strategy ->
     addHook(key := (pushForward, RingMap, Module), algorithms#key#strategy, Strategy => strategy))
 
 -----------------------------------------------------------------------------

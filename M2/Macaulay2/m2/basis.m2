@@ -12,6 +12,8 @@
     This probably needs to be fixed in e/matrix-kbasis.cpp
  6. is there any way to better take advantage of the cache when Truncate => true?
  7. there is almost no caching when lower and upper limit have rank > 1
+ 8. remove SourceRing option, possibly take a ring map instead
+ 9. answer over fields or ZZ gives an undesired minimal presentation
 *-
 
 needs "max.m2" -- for InfiniteNumber
@@ -65,7 +67,11 @@ findHeftandVars = (R, varlist, ndegs) -> (
 -- TODO: can this be done via a tensor or push forward?
 -- c.f. https://github.com/Macaulay2/M2/issues/1522
 liftBasis = (M, phi, B, offset) -> (
+    -- phi: R <- S a ring map
+    -- M an R-module
+    -- B: M <- R^n is an R-basis of M
     -- lifts a basis B of M via a ring map phi
+    -- i.e. M <- S^r
     (R, S) := (phi.target, phi.source);
     (n, m) := degreeLength \ (R, S);
     offset  = if offset =!= null then splice offset else toList( n:0 );
