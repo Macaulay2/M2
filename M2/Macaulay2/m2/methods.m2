@@ -44,10 +44,6 @@ chkopt0 := k -> if not ( instance(k, Symbol) ) then error "expected SYMBOL => VA
 chkopt  := o -> if not ( class o === Option and #o === 2 and instance(o#0, Symbol) ) then error "expected SYMBOL => VALUE"
 chkopts := x -> if class x === OptionTable then scan(keys x,chkopt0) else if class x === List then scan(x,chkopt) else error "expected list of optional arguments"
 
--- Common code for methods without options
-lookupCall := (m, key, args, outputs) -> (
-    if (f := lookup key) =!= null then f args else noMethod(m, args, outputs))
-
 -----------------------------------------------------------------------------
 -- MethodFunction* type declarations and basic constructors
 -----------------------------------------------------------------------------
@@ -74,50 +70,52 @@ MethodFunctionWithOptions.synonym = "method function with options"
 
 notImplemented = x -> error concatenate between(" ", splice {x, "not implemented yet"})
 
+-----------------------------------------------------------------------------
+
+-- Common code for methods without options
+binaryCaller := (M, key, args, outputs) -> (
+    if (f := lookup key) =!= null then f args else noMethod(M, args, outputs))
+
 -- TODO: implement options, then use this for interect, tensor, etc.
 BinaryWithOptions := (opts, outputs) -> notImplemented "associative methods with options"
 BinaryNoOptions   :=        outputs  -> (
+    -- TODO: this implementation cuts recursion depth by more than 6, do better!
     methodFunction := newmethod1(args -> noMethod(methodFunction, args, outputs), outputs, MethodFunctionBinary);
     methodFunction Sequence := args -> (
 	-- Common code for every associative method without options
-	binaryLookup := (x, y) -> lookupCall(methodFunction, (methodFunction, class x, class y), (x, y), outputs);
-	if #args == 0
-	then lookupCall(1 : methodFunction, args, outputs)
-	else foldL(binaryLookup, args#0, drop(args, 1)));
+	if #args == 0 then return binaryCaller(methodFunction, 1 : methodFunction, args, outputs);
+	-- TODO: a rudimentary caching of the lookup call here would be a significant benefit
+	binaryLookup := (x, y) -> binaryCaller(methodFunction, (methodFunction, class x, class y), (x, y), outputs);
+	foldL(binaryLookup, args#0, drop(args, 1)));
     methodFunction)
 
-SingleArgWithOptions := (opts, outputs) -> (
-     -- chkopts opts;
-     local methodFunction;
-     class' := if outputs then identity else class;
-     if opts === true then (
-	  methodFunction = opts >> 
-	  o ->
-	      arg -> (
-	       -- Common code for every method with options, single argument, with Options => true
-	       f := lookup(methodFunction, class' arg);
-	       if f === null then noMethodSingle(methodFunction,arg,outputs) else 
-	       if #o === 0 then f arg else f(o,arg)
-	       );
-	  methodFunction
-	  )
-     else (
-	  if instance(opts, List) then opts = new OptionTable from opts;
-	  methodFunction = opts >> 
-	  o ->
-	      arg -> (
-	       -- Common code for every method with options, single argument, not Options => true
-	       f := lookup(methodFunction, class' arg);
-	       if f === null then noMethodSingle(methodFunction,arg,outputs) else (f o) arg
-	       );
-	  methodFunction
-	  )
-     )
+-----------------------------------------------------------------------------
+
+-- Common code for methods with options or other special calling routines
+singleCaller := (M, key, args, outputs, dispacher) -> (
+    if (f := lookup key) =!= null then dispacher f else noMethodSingle(M, args, outputs))
+
+SingleNoOptions := outputs -> (
+    -- TODO: this implementation cuts recursion depth in half
+    methodFunction := newmethod1(args -> noMethodSingle(methodFunction, args, outputs), outputs, MethodFunctionSingle))
+SingleWithOptions := (opts, outputs) -> (
+    -- chkopts opts;
+    if instance(opts, List) then opts = new OptionTable from opts;
+    dispatchBy := if   outputs === true then identity else class;
+    dispatcher := if      opts === true then ((o, arg) -> if #o === 0 then (f -> f arg) else (f -> f(o, arg)))
+    else if instance(opts, OptionTable) then ((o, arg) -> (f -> (f o) arg))
+    else error "options must be declared as a list, an option table, or as true for arbitrary options";
+    methodFunction := opts >> o -> arg -> (
+	-- Common code for every method with options and a single argument
+	singleCaller(methodFunction, (methodFunction, dispatchBy arg), arg, outputs, dispatcher(o, arg))))
+
+-----------------------------------------------------------------------------
 
 MultipleArgsWithOptions := (methopts,opts,outputs) -> (
      if instance(opts,List) then opts = new OptionTable from opts;
      local innerMethodFunction;
      methodFunction := new MethodFunctionWithOptions from (opts >> o -> arg -> innerMethodFunction(o,arg));
+    -- TODO: this implementation cuts recursion depth by 3!
      innerMethodFunction = newmethod1234c(
 	  methodFunction,
 	  args -> noMethod(methodFunction,args,outputs),
@@ -129,23 +127,33 @@ MultipleArgsWithOptions := (methopts,opts,outputs) -> (
 MultipleArgsWithOptionsGetMethodOptions := meth -> (frames (frames meth)#0#1)#0#0 -- this recovers the value of methopts
 
 MultipleArgsNoOptions := (methopts,outputs) -> (
+    -- Note: this implementation is perfectly tuned for recursion!
      methodFunction := newmethod1234c(
 	  MethodFunction,
 	  args -> noMethod(methodFunction,args,outputs),
 	  (i,args) -> badClass(methodFunction,i,args),
 	  outputs,
 	  null
-	  )
-     )
-
+	  );
+     methodFunction)
 MultipleArgsNoOptionsGetMethodOptions := meth -> (frames (frames meth)#0#1)#0#0
+
+-----------------------------------------------------------------------------
+
+-- TODO: also support return type polymorphism
+-- https://github.com/Macaulay2/M2/issues/1375
+setReturnTypes := (methodFunction, returnType) -> (
+    if returnType === Thing       then Thing else
+    if instance(returnType, Type) then typicalValues#methodFunction = returnType
+    else error("expected typical value ", toString returnType, " to be a type"))
+
+getReturnTypes := methodFunction -> if typicalValues#?methodFunction then typicalValues#methodFunction
 
 -----------------------------------------------------------------------------
 -- method
 -----------------------------------------------------------------------------
 -- also see methods in code.m2
 -- TODO: https://github.com/Macaulay2/M2/issues/1690
--- TODO: https://github.com/Macaulay2/M2/issues/1375
 -- TODO: https://github.com/Macaulay2/M2/issues/62
 
 methodDefaults := new OptionTable from {
@@ -162,26 +170,21 @@ method = methodDefaults >> opts -> args -> (
      chk := c -> c === Thing or c === Type;
      if not if instance(opts.Dispatch,List) then all'(opts.Dispatch, chk) else chk opts.Dispatch
      then error "expected Dispatch option to be: Thing, Type, or a list of those";
-     singleArgDispatch := chk opts.Dispatch;
-     outputs := if not singleArgDispatch then apply(opts.Dispatch, c -> c === Type) else opts.Dispatch === Type;
+     singleDispatch := chk opts.Dispatch;
+     outputs := if not singleDispatch then apply(opts.Dispatch, c -> c === Type) else opts.Dispatch === Type;
      saveCurrentFileName := currentFileName;		    -- for debugging
      saveCurrentLineNumber := currentLineNumber();	    -- for debugging
      methodFunction := (
-	  if opts.Options === null then (
-       	       if opts.Binary then BinaryNoOptions(outputs)
-       	       else if singleArgDispatch then newmethod1 (args -> noMethodSingle(methodFunction,args,outputs), outputs, MethodFunctionSingle)
-       	       else MultipleArgsNoOptions(opts, outputs))
-	  else (
-       	       if opts.Binary then BinaryWithOptions(opts.Options,outputs)
-       	       else if singleArgDispatch then SingleArgWithOptions (opts.Options, outputs)
-       	       else MultipleArgsWithOptions(opts, opts.Options, outputs)
-	       )
-	  );
-     if opts.TypicalValue =!= Thing then (
-	  if not instance(opts.TypicalValue,Type) then error("expected typical value ", toString opts.TypicalValue, " to be a type");
-	  typicalValues#methodFunction = opts.TypicalValue;
-	  );
-     methodFunction)
+        if opts.Options === null then (
+	    if opts.Binary    then BinaryNoOptions(outputs) else
+	    if singleDispatch then SingleNoOptions(outputs)
+	    else MultipleArgsNoOptions(opts, outputs))
+	else (
+	    if opts.Binary    then BinaryWithOptions(opts.Options, outputs) else
+	    if singleDispatch then SingleWithOptions(opts.Options, outputs)
+	    else MultipleArgsWithOptions(opts, opts.Options, outputs)));
+    setReturnTypes(methodFunction, opts.TypicalValue);
+    methodFunction)
 
 -- get the options used when a method was declared
 methodOptions = method(TypicalValue => OptionTable)
