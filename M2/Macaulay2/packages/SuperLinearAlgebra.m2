@@ -201,68 +201,68 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
 		 else if (parity(fij, R1, a) == 1) then count1 = count1+1
                  else if (parity(fij, R1, a) == 0) then count1 = count1
              );
-	    if count11=!=0 then (return-1) 
-	    else if count1 == 0 then m1= 0 
-	    else m1=1;    
-            count2 := symbol count2;
-            count2 = 0;
-            count22 := symbol count22;
-            count22 = 0;
-            for i from 0 to (r1-1) do 
-	        for j from 0 to (c2-1) do (
-		    fij = Minor12_(i, j);
-                    if fij == 0 then count2 = count2 
-		    else if (parity(fij, R1, a) ==-1) then (count22 = count22+1) 
-		    else if (parity(fij, R1, a) == 1)then count2 = count2+1
-                    else if (parity(fij, R1, a) == 0) then count2 = count2
-	       );
-           if count22=!=0 then (return-1) 
-	   else if count2 == 0 then m2=0 
-	   else m2=1;
-           count3 := symbol count3;
-           count3 = 0;
-           count33 := symbol count33;
-           count33 = 0;
-           cout33 :=  symbol cout33;
-           for i from 0 to (r2-1) do 
-	       for j from 0 to (c1-1) do (
-		   fij = Minor21_(i, j);
-                   if fij == 0 then count3 = count3 
-		   else if (parity(fij, R1, a) ==-1) then (cout33=count33+1)
-		   else if (parity(fij, R1, a) == 1)then count3 = count3+1
-                   else if (parity(fij, R1, a) == 0) then count3 = count3
-	       );
-           if count33=!=0 then (return-1) 
-	   else if count3 == 0 then m3=0 
-	   else m3=1;
-           count4 := symbol count4;
-           count4 = 0;
-           count44 := symbol count44;
-           count44 = 0;
-           cout44 :=  symbol cout44;
-           for i from 0 to (r2-1) do 
-	       for j from 0 to (c2-1) do (
-		   fij = Minor22_(i, j);
-                   if fij == 0 then count4 = count4 
-		   else if (parity(fij, R1, a) ==-1) then (cout44=count44+1) 
-		   else if (parity(fij, R1, a) == 1)then count4 = count4+1
-                   else if (parity(fij, R1, a) == 0) then count4 = count4
-	       );
-           if count44=!=0 then (return-1) 
-	   else if count4 == 0 then m4=0 
-	   else m4=1;
-           R2 := symbol R2;
-           R2 = coefficientRing R1;
-           if (isSkewCommutative(R2) == true) then (
-	       if (m1 == 0 and m4 == 0 and m2 == 1 and m3 == 1) then (return 0)
-               else if (m1 == 1 and m4 == 1 and m2 == 0 and m3 == 0) then (return 1) 
-	       else (return-1)
-	   )
-           else (
-	       if (m1 == 0 and m4 == 0 and Minor12 == 0 and Minor21 == 0) then  (return 0)
-               else if (Minor11 == 0 and Minor22 == 0 and m2 == 0 and m3 == 0) then (return 1)
-               else (return-1)
-           )
+        if count11=!=0 then (return-1) 
+	else if count1 == 0 then m1= 0 
+	else m1=1;    
+        count2 := symbol count2;
+        count2 = 0;
+        count22 := symbol count22;
+        count22 = 0;
+        for i from 0 to (r1-1) do 
+	    for j from 0 to (c2-1) do (
+		 fij = Minor12_(i, j);
+                 if fij == 0 then count2 = count2 
+		 else if (parity(fij, R1, a) ==-1) then (count22 = count22+1) 
+		 else if (parity(fij, R1, a) == 1)then count2 = count2+1
+                 else if (parity(fij, R1, a) == 0) then count2 = count2
+	    );
+        if count22=!=0 then (return-1) 
+	else if count2 == 0 then m2=0 
+	else m2=1;
+	count3 := symbol count3;
+        count3 = 0;
+        count33 := symbol count33;
+        count33 = 0;
+        cout33 :=  symbol cout33;
+        for i from 0 to (r2-1) do 
+	    for j from 0 to (c1-1) do (
+                 fij = Minor21_(i, j);
+                 if fij == 0 then count3 = count3 
+		 else if (parity(fij, R1, a) ==-1) then (cout33=count33+1)
+		 else if (parity(fij, R1, a) == 1)then count3 = count3+1
+                 else if (parity(fij, R1, a) == 0) then count3 = count3
+	    );
+        if count33=!=0 then (return-1) 
+	else if count3 == 0 then m3=0 
+	else m3=1;
+        count4 := symbol count4;
+        count4 = 0;
+        count44 := symbol count44;
+        count44 = 0;
+        cout44 :=  symbol cout44;
+        for i from 0 to (r2-1) do 
+	    for j from 0 to (c2-1) do (
+                 fij = Minor22_(i, j);
+                 if fij == 0 then count4 = count4 
+		 else if (parity(fij, R1, a) ==-1) then (cout44=count44+1) 
+		 else if (parity(fij, R1, a) == 1)then count4 = count4+1
+                 else if (parity(fij, R1, a) == 0) then count4 = count4
+	    );
+        if count44=!=0 then (return-1) 
+	else if count4 == 0 then m4=0 
+	else m4=1;
+        R2 := symbol R2;
+        R2 = coefficientRing R1;
+        if (isSkewCommutative(R2) == true) then (
+	    if (m1 == 0 and m4 == 0 and m2 == 1 and m3 == 1) then (return 0)
+            else if (m1 == 1 and m4 == 1 and m2 == 0 and m3 == 0) then (return 1) 
+	    else (return-1)
+	)
+        else (
+	    if (m1 == 0 and m4 == 0 and Minor12 == 0 and Minor21 == 0) then  (return 0)
+            else if (Minor11 == 0 and Minor22 == 0 and m2 == 0 and m3 == 0) then (return 1)
+            else (return-1)
+	)
     )  
     else (error "Ring should be a superRing")
 )
