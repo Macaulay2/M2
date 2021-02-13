@@ -628,18 +628,6 @@ net(TriaSystem) := Net => T -> (
 size(ChordalNet) := N -> 
     for i in N.elimTree.nodes list #nodes(N,i)
 
--- this function should belong to the Graphs package
-writeDotFile (String, Digraph) := (filename, G) -> (
-    fil := openOut filename;
-    fil << "digraph G {" << endl;
-    V := vertexSet G;
-    scan(#V, i -> fil << "\t" | toString i | " [label=\""|toString V_i|"\"];" << endl);
-    A := adjacencyMatrix G;
-    E := flatten for i from 0 to #V - 1 list for j from i+1 to #V - 1 list if A_(i,j) == 1 then {i, j} else continue;
-    scan(E, e -> fil << "\t" | toString e_0 | " -> " | toString e_1 | ";" << endl);
-    fil << "}" << endl << close;
-)
-
 -- display an elimination tree
 displayGraph (String, String, ElimTree) := (dotfilename, jpgfilename, tree) -> (
     writeDotFile(dotfilename, tree);
