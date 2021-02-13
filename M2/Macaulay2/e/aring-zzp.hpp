@@ -163,14 +163,28 @@ class ARingZZp : public RingInterface
     result = log_table[n];
   }
 
+  inline int modulus_add(int a, int b, int p) const
+  {
+    int t = a + b;
+    return (t <= p ? t : t - p);
+  }
+
+  inline int modulus_sub(int a, int b, int p) const
+  {
+    int t = a - b;
+    return (t < 0 ? t + p : t);
+  }
+
   void subtract_multiple(elem &result, elem a, elem b) const
   {
     // we assume: a, b are NONZERO!!
     // result -= a*b
-    int ab = a + b;
-    if (ab > p1) ab -= p1;
-    int n = exp_table[result] - exp_table[ab];
-    if (n < 0) n += p;
+    //int ab = a + b;
+    //if (ab > p1) ab -= p1;
+    int ab = modulus_add(a,b,p1);
+    //int n = exp_table[result] - exp_table[ab];
+    //if (n < 0) n += p;
+    int n = modulus_sub(exp_table[result],exp_table[ab],p);
     result = log_table[n];
   }
 
