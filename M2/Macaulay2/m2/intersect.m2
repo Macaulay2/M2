@@ -29,8 +29,10 @@ eliminationInfo Ring := (cacheValue symbol eliminationInfo) (R -> (
 -- General intersect method
 -----------------------------------------------------------------------------
 
+-- intersect is now declared as a binary associative method in shared.m2
+-* This is the previous implementation:
 intersect List     :=
-intersect Sequence := -* [same as input type] => *- true >> opts -> L -> (
+intersect Sequence := true >> opts -> L -> (
     if not #L > 0 then error "intersect: expected at least one object";
     -- This will be the type of the result.
     type :=
@@ -44,10 +46,13 @@ intersect Sequence := -* [same as input type] => *- true >> opts -> L -> (
     func := lookup(symbol intersect, type);
     if func =!= null then func(opts, L)
     else error("intersect: no method for objects of type " | synonym type))
+*-
 
 -----------------------------------------------------------------------------
 -- Intersection of ideals and modules
 -----------------------------------------------------------------------------
+
+doTrim := (opts, C) -> if opts.MinimalGenerators then trim C else C;
 
 intersectHelper := (L, key, opts) -> (
     -- For now, this is only for intersection of ideals and modules
@@ -55,11 +60,10 @@ intersectHelper := (L, key, opts) -> (
     if not same apply(L, ring) then error "intersect: expected objects in the same ring";
 
     strategy := opts.Strategy;
-    doTrim := if opts.MinimalGenerators then trim else identity;
 
     C := runHooks(key, (opts, L), Strategy => strategy);
 
-    if C =!= null then doTrim C else if strategy === null
+    if C =!= null then doTrim(opts, C) else if strategy === null
     then error("no applicable method for ", toString key)
     else error("assumptions for intersect strategy ", toString strategy, " are not met"))
 
@@ -71,14 +75,19 @@ moduleIntersectOpts := {
     MinimalGenerators => true
     }
 
-intersect Ideal  := Ideal  =>  idealIntersectOpts >> opts -> identity
-intersect Module := Module => moduleIntersectOpts >> opts -> identity
+-- ideally this should be unnecessary, but some code seems to depend on this
+intersect Ideal  := Ideal  =>  idealIntersectOpts >> opts -> I -> doTrim(opts, I)
+intersect Module := Module => moduleIntersectOpts >> opts -> M -> doTrim(opts, M)
 
-Ideal.intersect  =  idealIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, Ideal,  Ideal),  opts)
-Module.intersect = moduleIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, Module, Module), opts)
+intersect(Ideal,  Ideal)  :=  Ideal =>  idealIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, Ideal,  Ideal),  opts)
+intersect(Module, Module) := Module => moduleIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, Module, Module), opts)
 
 -----------------------------------------------------------------------------
 
+-- TODO: the algorithm below seems to be optimized for intersecting all of
+-- the modules at once, but using Binary => true prevents this from being used
+-- is there a way to have the best of both worlds?
+-- Maybe check for (intersect, Module, Module, Module)?
 algorithms#(intersect, Module, Module) = new MutableHashTable from {
     Default => (opts, L) -> (
 	M := L#0;
