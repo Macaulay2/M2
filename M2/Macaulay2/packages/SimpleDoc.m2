@@ -193,8 +193,10 @@ items = (textlines, keylinenum) -> apply(splitByIndent(textlines, false), (s, e)
 	line := getText textlines#s;
 	ps := separate("[[:space:]]*(:|=>)[[:space:]]*", line); -- split by ":" or "=>"
 	if #ps =!= 2 then error("line #", getLinenum textlines#s, ": expected line containing a colon or a double arrow");
-	text := demark(" ", getText \ textlines_{s+1..e});
-	result := if s === e then "" else render(text, getLinenum textlines#s);
+	abbr := separate("[[:space:]]*(--)[[:space:]]*", ps#1); -- split by "--"
+	abbr  = if #abbr < 2 then "" else abbr#1 | "; ";
+	desc := demark(" ", getText \ textlines_{s+1..e});
+	result := render(if s === e then abbr else abbr | desc, getLinenum textlines#s);
 	if ps#1 != "" then result = (
 	    type := value ps#1;
 	    if instance(type, List)   then between_", " {ofClass type, result} else
