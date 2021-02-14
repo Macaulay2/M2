@@ -5,63 +5,22 @@
 #Currently, almost all of these relate to the fact that the mark & sweep process
 #can end up reading uninitialized memory, which valgrind complains about.
 {
-   GC_mark_thread
+   libgc
    Memcheck:Value8
    ...
-   fun:GC_mark_thread
+   obj:*/libgc.so*
 }
 {
-   GC_mark_thread
+   libgc
    Memcheck:Cond
    ...
-   fun:GC_mark_thread
+   obj:*/libgc.so*
 }
 {
-   GC_mark_thread
+   libgc
    Memcheck:Addr8
    ...
-   fun:GC_mark_thread
-}
-{
-   GC_malloc
-   Memcheck:Cond
-   ...
-   fun:GC_malloc*
-}
-{
-   GC_malloc
-   Memcheck:Addr8
-   ...
-   fun:GC_malloc*
-}
-{
-   GC_malloc
-   Memcheck:Value8
-   ...
-   fun:GC_malloc*
-}
-{
-   GC_generic_malloc
-   Memcheck:Cond
-   ...
-   fun:GC_generic_malloc*
-}
-{
-   GC_generic_malloc
-   Memcheck:Addr8
-   ...
-   fun:GC_generic_malloc*
-}
-{
-   GC_generic_malloc
-   Memcheck:Value8
-   ...
-   fun:GC_generic_malloc*
-}
-{
-   GC_add_to_black_list_stack
-   Memcheck:Value8
-   fun:GC_add_to_black_list_stack
+   obj:*/libgc.so*
 }
 
 #This rule is to deal with phantom leaks related to thread local storage
