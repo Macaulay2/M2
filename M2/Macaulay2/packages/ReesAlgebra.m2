@@ -286,7 +286,7 @@ specialFiberIdeal(Module):= o->i->(
      Reesi:= reesIdeal(i, o);     
      S := ring Reesi;
      kk := ultimate(coefficientRing, S);
-     T := kk[gens S];
+     T := kk(monoid [gens S]);
      minimalpres := map(T,S);
      trim minimalpres Reesi
      )
