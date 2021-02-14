@@ -683,7 +683,7 @@ randomComplexMap(Complex, Complex) := ComplexMap => o -> (D,C) -> (
 --------------------------------------------------------------------
 -- tensor products -------------------------------------------------
 --------------------------------------------------------------------
-tensor(ComplexMap, ComplexMap) := ComplexMap => opts -> (f,g) -> (
+tensor(ComplexMap, ComplexMap) := ComplexMap => {} >> opts -> (f,g) -> (
     -- f : C1 --> C2, g : D1 --> D2
     -- f**g : C1**D1 --> C2**D2
     -- (f**g)_i : sum_j(C1_j ** D1_(i-j) --> C2_(j+df) ** D2_(i-j+dg))
@@ -743,11 +743,11 @@ Ring ** ComplexMap := ComplexMap => (R,f) -> f ** R
 RingMap ComplexMap := ComplexMap => (phi,f) ->
     map(phi target f, phi source f, i -> phi f_i)
 
-tensor(RingMap, ComplexMap) := ComplexMap => opts -> (phi, f) -> (
+tensor(RingMap, ComplexMap) := ComplexMap => {} >> opts -> (phi, f) -> (
     if source phi =!= ring f then error "expected the source of the ring map to be the ring of the complex map";
     map(tensor(phi, target f), tensor(phi, source f), i -> tensor(phi, matrix f_i))
     )
-tensor(ComplexMap, RingMap) := ComplexMap => opts -> (f, phi) -> tensor(phi, f)
+tensor(ComplexMap, RingMap) := ComplexMap => {} >> opts -> (f, phi) -> tensor(phi, f)
 
 RingMap ** ComplexMap := ComplexMap => (phi, f) -> tensor(phi, f)
 ComplexMap ** RingMap := ComplexMap => (f, phi) -> tensor(phi, f)

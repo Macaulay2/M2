@@ -11,6 +11,8 @@ decompose = method(Options => true)
 intersect = method(Options => true, Binary => true) -- an associative binary method
 intersection = method(Options => true)
 
+tensor    = method(Options => true, Binary => true) -- tensor is left-associative
+
 truncate = method()
 
 isEmpty = method(TypicalValue => Boolean)
