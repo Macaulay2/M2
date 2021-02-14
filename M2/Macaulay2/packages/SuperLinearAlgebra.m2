@@ -188,81 +188,81 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
     Minor21 := submatrix(SM.supermatrix, {r1..(r1+r2-1)}, {0..(c1-1)});
     Minor12 := submatrix(SM.supermatrix, {0..(r1-1)}, {c1..(c1+c2-1)});
     if isSkewCommutative(R1) == true then (
-	fij := symbol fij;
+        fij := symbol fij;
         count1 :=  symbol count1;
         count1=0;
         count11 := symbol count11;
         count11=0;
         for i from 0 to (r1-1) do 
-	    for j from 0 to (c1-1) do (
-		 fij = Minor11_(i, j);
-                 if fij == 0 then count1 = count1 
-		 else if (parity(fij, R1, a) ==-1) then (count11 = count11 +1) 
-		 else if (parity(fij, R1, a) == 1) then count1 = count1+1
-                 else if (parity(fij, R1, a) == 0) then count1 = count1
-             );
+            for j from 0 to (c1-1) do (
+                fij = Minor11_(i, j);
+                if fij == 0 then count1 = count1 
+                else if (parity(fij, R1, a) ==-1) then (count11 = count11 +1) 
+                else if (parity(fij, R1, a) == 1) then count1 = count1+1
+                else if (parity(fij, R1, a) == 0) then count1 = count1
+            );
         if count11=!=0 then (return-1) 
-	else if count1 == 0 then m1= 0 
-	else m1=1;    
+        else if count1 == 0 then m1= 0 
+        else m1=1;    
         count2 := symbol count2;
         count2 = 0;
         count22 := symbol count22;
         count22 = 0;
         for i from 0 to (r1-1) do 
-	    for j from 0 to (c2-1) do (
-		 fij = Minor12_(i, j);
-                 if fij == 0 then count2 = count2 
-		 else if (parity(fij, R1, a) ==-1) then (count22 = count22+1) 
-		 else if (parity(fij, R1, a) == 1)then count2 = count2+1
-                 else if (parity(fij, R1, a) == 0) then count2 = count2
-	    );
+            for j from 0 to (c2-1) do (
+                fij = Minor12_(i, j);
+                if fij == 0 then count2 = count2 
+                else if (parity(fij, R1, a) ==-1) then (count22 = count22+1) 
+                else if (parity(fij, R1, a) == 1)then count2 = count2+1
+                else if (parity(fij, R1, a) == 0) then count2 = count2
+            );
         if count22=!=0 then (return-1) 
-	else if count2 == 0 then m2=0 
-	else m2=1;
-	count3 := symbol count3;
+        else if count2 == 0 then m2=0 
+        else m2=1;
+        count3 := symbol count3;
         count3 = 0;
         count33 := symbol count33;
         count33 = 0;
         cout33 :=  symbol cout33;
         for i from 0 to (r2-1) do 
-	    for j from 0 to (c1-1) do (
-                 fij = Minor21_(i, j);
-                 if fij == 0 then count3 = count3 
-		 else if (parity(fij, R1, a) ==-1) then (cout33=count33+1)
-		 else if (parity(fij, R1, a) == 1)then count3 = count3+1
-                 else if (parity(fij, R1, a) == 0) then count3 = count3
-	    );
+            for j from 0 to (c1-1) do (
+                fij = Minor21_(i, j);
+                if fij == 0 then count3 = count3 
+                else if (parity(fij, R1, a) ==-1) then (cout33=count33+1)
+                else if (parity(fij, R1, a) == 1)then count3 = count3+1
+                else if (parity(fij, R1, a) == 0) then count3 = count3
+            );
         if count33=!=0 then (return-1) 
-	else if count3 == 0 then m3=0 
-	else m3=1;
+        else if count3 == 0 then m3=0 
+        else m3=1;
         count4 := symbol count4;
         count4 = 0;
         count44 := symbol count44;
         count44 = 0;
         cout44 :=  symbol cout44;
         for i from 0 to (r2-1) do 
-	    for j from 0 to (c2-1) do (
-                 fij = Minor22_(i, j);
-                 if fij == 0 then count4 = count4 
-		 else if (parity(fij, R1, a) ==-1) then (cout44=count44+1) 
-		 else if (parity(fij, R1, a) == 1)then count4 = count4+1
-                 else if (parity(fij, R1, a) == 0) then count4 = count4
-	    );
+            for j from 0 to (c2-1) do (
+                fij = Minor22_(i, j);
+                if fij == 0 then count4 = count4 
+                else if (parity(fij, R1, a) ==-1) then (cout44=count44+1) 
+                else if (parity(fij, R1, a) == 1)then count4 = count4+1
+                else if (parity(fij, R1, a) == 0) then count4 = count4
+            );
         if count44=!=0 then (return-1) 
-	else if count4 == 0 then m4=0 
-	else m4=1;
+        else if count4 == 0 then m4=0 
+        else m4=1;
         R2 := symbol R2;
         R2 = coefficientRing R1;
         if (isSkewCommutative(R2) == true) then (
-	    if (m1 == 0 and m4 == 0 and m2 == 1 and m3 == 1) then (return 0)
+            if (m1 == 0 and m4 == 0 and m2 == 1 and m3 == 1) then (return 0)
             else if (m1 == 1 and m4 == 1 and m2 == 0 and m3 == 0) then (return 1) 
-	    else (return-1)
-	)
+            else (return-1)
+        )
         else (
-	    if (m1 == 0 and m4 == 0 and Minor12 == 0 and Minor21 == 0) then  (return 0)
+            if (m1 == 0 and m4 == 0 and Minor12 == 0 and Minor21 == 0) then  (return 0)
             else if (Minor11 == 0 and Minor22 == 0 and m2 == 0 and m3 == 0) then (return 1)
             else (return-1)
-	)
+        )
     )  
     else (error "Ring should be a superRing")
 )
@@ -313,7 +313,7 @@ superTrace (SuperMatrix, Ring, List)  := (SM, R1, a) -> (
     Minor11 := submatrix(SM.supermatrix, {0..(SM.targetM1-1)}, {0..(SM.sourceM1-1)});
     Minor22 := submatrix(SM.supermatrix, {SM.targetM1..(SM.targetM1+SM.targetM3-1)}, {SM.sourceM1..(SM.sourceM1+SM.sourceM2-1)});
     if (superMatrixParity(SM, R1, a)=!=-1) then (
-	par := symbol par;
+    par := symbol par;
         par = superMatrixParity(SM, R1, a);
         trace Minor11-(-1)^par*trace Minor22
     )
@@ -336,7 +336,7 @@ R2 = QQ[z_0..z_2]
 R = superRing(R1, R2)
 T1 = R[n_0..n_3];
 T2 = R[e_0..e_3];
-T  = superRing(T1, T2)
+T = superRing(T1, T2)
 M1 = matrix{{n_0, n_1}, {n_2, n_3}}
 M2 = matrix{{e_0, e_1}, {n_0*e_0, n_1*e_1}}
 M3 = matrix{{e_3*n_3, e_1}, {e_0, e_2*n_2}}
@@ -440,17 +440,17 @@ beginDocumentation()
 
 doc ///
 Key
-  SuperLinearAlgebra
+    SuperLinearAlgebra
 Headline 
-  Package for super algebra
+    Package for super algebra
 Description
-  Text
-     This Package is to do the computation in superalgebras, or super vector spaces. 
+    Text
+        This Package is to do the computation in superalgebras, or super vector spaces. 
      
-     The computations are taken in a superRing, which is a ring with both symmetric and antisymmetric variables. 
+        The computations are taken in a superRing, which is a ring with both symmetric and antisymmetric variables. 
      
-     To see the definitions and theorems, see Varadarajan, V. S. (2004). "Supersymmetry for Mathematicians:
-     An Introduction" (Vol. 11). American Mathematical Soc.
+        To see the definitions and theorems, see Varadarajan, V. S. (2004). "Supersymmetry for Mathematicians:
+        An Introduction" (Vol. 11). American Mathematical Soc.
      
 Caveat
 SeeAlso
@@ -459,35 +459,35 @@ SeeAlso
 
 doc ///
 Key
-  superRing
-  (superRing, PolynomialRing, PolynomialRing)
+    superRing
+    (superRing, PolynomialRing, PolynomialRing)
 Headline
     Makes a super ring from two polynomial rings.
 Usage
-  R = superRing(R1, R2)
+    R = superRing(R1, R2)
 Inputs
-  R1:PolynomialRing
-  R2:PolynomialRing
+    R1:PolynomialRing
+    R2:PolynomialRing
 Outputs
-  R:QuotientRing
-    which has both invertible and skew symmetric variables, superRing
+    R:QuotientRing
+        which has both invertible and skew symmetric variables, superRing
 Description
-  Text
-    Let $R_1$ and $R_2$ be Two Polynomial rings on different set of variables
-    A superRing is a new polynomial ring with three sets of variables. 
-    One set comes from $R_1$ and the second one is the inverse of it.
+    Text
+        Let $R_1$ and $R_2$ be Two Polynomial rings on different set of variables
+        A superRing is a new polynomial ring with three sets of variables. 
+        One set comes from $R_1$ and the second one is the inverse of it.
     
-    For example, if we have x as a variable in $R_1$, 
-    then there is a new variable, say $inverseVariable_0$ which is the inverse of $x$.
-    The third set of variables comes from $R_2$.
-    We redefine this set to be a set of skew-symmetric variables.
-    So superRing of $R_1$ and $R_2$ is a quotient ring, 
-    which has both invertible and skew symmetric variables.
-    If the coefficient ring is a field, then we get a super algebra.
-  Example
-    R1=QQ[x_1..x_5]
-    R2=QQ[z_1..z_3]
-    superRing(R1, R2)
+        For example, if we have x as a variable in $R_1$, 
+        then there is a new variable, say $inverseVariable_0$ which is the inverse of $x$.
+        The third set of variables comes from $R_2$.
+        We redefine this set to be a set of skew-symmetric variables.
+        So superRing of $R_1$ and $R_2$ is a quotient ring, 
+        which has both invertible and skew symmetric variables.
+        If the coefficient ring is a field, then we get a super algebra.
+    Example
+        R1=QQ[x_1..x_5]
+        R2=QQ[z_1..z_3]
+        superRing(R1, R2)
 Caveat
 SeeAlso
 ///
@@ -495,61 +495,61 @@ SeeAlso
 
 doc ///
 Key 
-  SuperMatrix
-  superMatrixGenerator
-  supermatrix
-  (superMatrixGenerator, Matrix, Matrix, Matrix, Matrix)
-  sourceM1
-  sourceM2
-  targetM1
-  targetM3
+    SuperMatrix
+    superMatrixGenerator
+    supermatrix
+    (superMatrixGenerator, Matrix, Matrix, Matrix, Matrix)
+    sourceM1
+    sourceM2
+    targetM1
+    targetM3
 Headline
     Makes a super matrix from its four blocks.
 Usage
-  G = superMatrixGenerator(M1, M2, M3, M4)
-Inputs
-  M1:Matrix
-  M2:Matrix
-  M3:Matrix
-  M4:Matrix
-Outputs
-  G:SuperMatrix
-Description
-  Text
-   Let $M_1, M_2, M_3, M_4$ be four matrices. 
-   The number of rows in $M_1$ and $M_2$, 
-   and those of $M_3$ and $M_4$ should be equal.
-   Also, the number of columns of $M_1$ and $M_3$, 
-   and those of M_2 and M_4 must be equal.
-   
-   The idea is to define a (super) Matrix, 
-   which can be considered as $p|q\times r|s$ matrix.
-   This super Matrix can be a morphism between super
-   modules $A^{p|q}$ and $A^{r|s}$ over super algebra $A$. 
-
-   The function merges the matrices M_1 and M_2, and also M_3 and M_4. 
-   Finally, it merges two new matrices and 
-   make a new matrix with the first four matrices as
-   the blocks of the new matrix, say $\begin{pmatrix}
-     M1&M2\\
-     M3&M4\end{pmatrix}$.  
-     
-   The key supermatrix shows the result matrix created as above. 
-   
-   The key targetM1 shows the number of first part rows. 
-   
-   The key targetM3 shows the number of the rows of the second part.  
-   
-   The key sourceM1 shows the number of columns in the first part.  
-   
-   The key sourceM2 shows the number of columns in the second part.  
- Example
-    M1 = matrix {{1, 2}, {5, 6}, {9, 10}}
-    M2 = matrix {{3, 4}, {7, 8}, {11, 12}}
-    M3 = matrix {{13, 14}, {17, 18}}
-    M4 = matrix {{15, 16}, {19, 20}}
     G = superMatrixGenerator(M1, M2, M3, M4)
-    G.supermatrix
+Inputs
+    M1:Matrix
+    M2:Matrix
+    M3:Matrix
+    M4:Matrix
+Outputs
+    G:SuperMatrix
+Description
+    Text
+        Let $M_1, M_2, M_3, M_4$ be four matrices. 
+        The number of rows in $M_1$ and $M_2$, 
+        and those of $M_3$ and $M_4$ should be equal.
+        Also, the number of columns of $M_1$ and $M_3$, 
+        and those of M_2 and M_4 must be equal.
+   
+        The idea is to define a (super) Matrix, 
+        which can be considered as $p|q\times r|s$ matrix.
+        This super Matrix can be a morphism between super
+        modules $A^{p|q}$ and $A^{r|s}$ over super algebra $A$. 
+
+        The function merges the matrices M_1 and M_2, and also M_3 and M_4. 
+        Finally, it merges two new matrices and 
+        make a new matrix with the first four matrices as
+        the blocks of the new matrix, say $\begin{pmatrix}
+        M1&M2\\
+        M3&M4\end{pmatrix}$.  
+     
+        The key supermatrix shows the result matrix created as above. 
+   
+       The key targetM1 shows the number of first part rows. 
+   
+       The key targetM3 shows the number of the rows of the second part.  
+   
+       The key sourceM1 shows the number of columns in the first part.  
+   
+       The key sourceM2 shows the number of columns in the second part.  
+    Example
+        M1 = matrix {{1, 2}, {5, 6}, {9, 10}}
+        M2 = matrix {{3, 4}, {7, 8}, {11, 12}}
+        M3 = matrix {{13, 14}, {17, 18}}
+        M4 = matrix {{15, 16}, {19, 20}}
+        G = superMatrixGenerator(M1, M2, M3, M4)
+        G.supermatrix
 Caveat
 SeeAlso
 ///
@@ -557,42 +557,42 @@ SeeAlso
 
 doc ///
 Key 
-  superTrace
-  (superTrace, SuperMatrix, Ring, List)
+    superTrace
+    (superTrace, SuperMatrix, Ring, List)
 Headline
     Super trace of a homogeneous super matrix.
 Usage
-  P = superTrace(SM, R, L)
+    P = superTrace(SM, R, L)
 Inputs
-  SM:SuperMatrix
-  R:Ring
-    superRing
-  L:List
+    SM:SuperMatrix
+    R:Ring
+        superRing
+    L:List
 Outputs
-  P:QuotientRing
+    P:QuotientRing
 Description
-  Text
-    Let $A^{p|q}=Ax_1 \oplus \cdots \oplus Ax_p \oplus Ae_1\oplus \cdots \oplus Ae_q$ be a free module over $A$, 
-    where $x_i$s are even and $e_j$s are odd generators. A (homogeneous) morphism $T:A^{p|q}\rightarrow A^{r|s}$ has a matrix representation. 
-    Denote the matrix by $T$ then we have $T=\begin{pmatrix}
-     T1&T2\\
-     T3&T4\end{pmatrix}$.  
+    Text
+        Let $A^{p|q}=Ax_1 \oplus \cdots \oplus Ax_p \oplus Ae_1\oplus \cdots \oplus Ae_q$ be a free module over $A$, 
+        where $x_i$s are even and $e_j$s are odd generators. A (homogeneous) morphism $T:A^{p|q}\rightarrow A^{r|s}$ has a matrix representation. 
+        Denote the matrix by $T$ then we have $T=\begin{pmatrix}
+         T1&T2\\
+         T3&T4\end{pmatrix}$.  
      
-    The super trace of $T$ is defined by $superTrace(T)= Trace(T_1)-(-1)^{p(T)} Trace(T_4)$.
-    The inputs of this function are a superMatrix, a ring, which should have skew-symmetric variables, and a list, 
-    which is the list of skew-symmetric variables that are used in the superMatrixGenerator. 
-    In case that the superMatrix is homogeneous, the output is the super trace of the superMatrix.
+        The super trace of $T$ is defined by $superTrace(T)= Trace(T_1)-(-1)^{p(T)} Trace(T_4)$.
+        The inputs of this function are a superMatrix, a ring, which should have skew-symmetric variables, and a list, 
+        which is the list of skew-symmetric variables that are used in the superMatrixGenerator. 
+        In case that the superMatrix is homogeneous, the output is the super trace of the superMatrix.
         
- Example
-    R1 = QQ[x_0..x_3];
-    R2 = QQ[z_0..z_2];
-    R = superRing(R1, R2);
-    P1 = matrix{{x_0, x_1}, {x_2, x_3}};
-    P2 = matrix{{0, 0}, {0, 0}};
-    P3 = matrix{{0, 0}, {0, 0}};
-    P4 = matrix{{x_1, x_2}, {x_0, x_1}};
-    SP = superMatrixGenerator(P1, P2, P3, P4);
-    superTrace(SP, R, {z_0, z_1})
+    Example
+        R1 = QQ[x_0..x_3];
+        R2 = QQ[z_0..z_2];
+        R = superRing(R1, R2);
+        P1 = matrix{{x_0, x_1}, {x_2, x_3}};
+        P2 = matrix{{0, 0}, {0, 0}};
+        P3 = matrix{{0, 0}, {0, 0}};
+        P4 = matrix{{x_1, x_2}, {x_0, x_1}};
+        SP = superMatrixGenerator(P1, P2, P3, P4);
+        superTrace(SP, R, {z_0, z_1})
 Caveat
 SeeAlso
 ///
@@ -600,39 +600,39 @@ SeeAlso
 
 doc ///
 Key 
-  berezinian
-  (berezinian, SuperMatrix, Ring)
+    berezinian
+    (berezinian, SuperMatrix, Ring)
 Headline
-  Computes the berezinian of a supermatrix.
+    Computes the berezinian of a supermatrix.
 Usage
-  N = berezinian(G, R)
+    N = berezinian(G, R)
 Inputs
-  G:SuperMatrix
-  R:Ring
+    G:SuperMatrix
+    R:Ring
 Outputs
-  N:Number
+    N:Number
 Description
- Text
-  If in a super Matrix, one of the first or the second diagonal blocks is invertible, 
-  then we can define the berezinian (as a kind of super Determinant).
-  The formula for the berezinian is different base on which block is invertible.
-  But it is shown that the two formulas are equivalent if two blocks are invertible.
-  If $M=\begin{pmatrix}
-     M1&M2\\
-     M3&M4\end{pmatrix}$.  is a super Matrix, and
-  $M_4$ is invertible, then 
-  $Ber(M)= det(M_1-M_2M^{-1}_4M_3) det(M_4)^{-1}$.
+    Text
+        If in a super Matrix, one of the first or the second diagonal blocks is invertible, 
+        then we can define the berezinian (as a kind of super Determinant).
+        The formula for the berezinian is different base on which block is invertible.
+        But it is shown that the two formulas are equivalent if two blocks are invertible.
+        If $M=\begin{pmatrix}
+        M1&M2\\
+        M3&M4\end{pmatrix}$.  is a super Matrix, and
+        $M_4$ is invertible, then 
+        $Ber(M)= det(M_1-M_2M^{-1}_4M_3) det(M_4)^{-1}$.
   
-  If $M_1$ is invertible, then
-  $Ber(M) = det(M_4-M_3M_1^{-1}M_2)^{-1} det(M_1)$.
- Example
-    M1 = matrix{{5, 7}, {1, 2}}
-    M2 = matrix{{1, 2, 3}, {4, 5, 6}}
-    M3 = matrix{{3, 4}, {5, 6}, {7, 8}}
-    M4 = matrix{{2, 3, 11}, {4, 5, 6}, {7, 8, 9}}
-    M5 = sub(M4, QQ)
-    G = superMatrixGenerator(M1, M2, M3, M4)
-    berezinian(G, QQ)
+        If $M_1$ is invertible, then
+        $Ber(M) = det(M_4-M_3M_1^{-1}M_2)^{-1} det(M_1)$.
+    Example
+        M1 = matrix{{5, 7}, {1, 2}}
+        M2 = matrix{{1, 2, 3}, {4, 5, 6}}
+        M3 = matrix{{3, 4}, {5, 6}, {7, 8}}
+        M4 = matrix{{2, 3, 11}, {4, 5, 6}, {7, 8, 9}}
+        M5 = sub(M4, QQ)
+        G = superMatrixGenerator(M1, M2, M3, M4)
+        berezinian(G, QQ)
 Caveat
 SeeAlso
 ///
@@ -640,119 +640,119 @@ SeeAlso
 
 doc ///
 Key 
-  parity
-  (parity, RingElement, Ring, List)
+    parity
+    (parity, RingElement, Ring, List)
 Headline
-  parity of an element of a super ring.
+    parity of an element of a super ring.
 Usage
-  N = parity(f, R, L)
+    N = parity(f, R, L)
 Inputs
-  f:RingElement
-  R:Ring
-   superRing
-  L:List
+    f:RingElement
+    R:Ring
+        superRing
+    L:List
 Outputs
-  N:Number
-    0 for even, 1 for odd and-1 for Nonhomogeneous
+    N:Number
+        0 for even, 1 for odd and-1 for Nonhomogeneous
 Description
- Text
-  Let we have a super algebra (ring), $R=R_0 \oplus R_1$.
-  A homogeneous element of $R$ is an element belongs to $R_0$ or $R_1$.
-  This function has three outputs,-1 for non-homogeneous, 0 for homogeneous and even, and 1 for homogeneous and odd elements.
- Example
-    R1=QQ[x_0..x_4];
-    R2=QQ[e_0, e_1];
-    R= superRing(R1, R2)
-    L={e_0, e_1}
-    f=x_1*x_2*x_3+x_1*e_0+e_1*e_0-4*x_2*e_1*e_0+4
-    parity(f, R, L)
-    g=x_1*x_2*x_3+e_0*e_1+4;
-    parity(g, R, L)
+    Text
+        Let we have a super algebra (ring), $R=R_0 \oplus R_1$.
+        A homogeneous element of $R$ is an element belongs to $R_0$ or $R_1$.
+        This function has three outputs,-1 for non-homogeneous, 0 for homogeneous and even, and 1 for homogeneous and odd elements.
+    Example
+        R1=QQ[x_0..x_4];
+        R2=QQ[e_0, e_1];
+        R= superRing(R1, R2)
+        L={e_0, e_1}
+        f=x_1*x_2*x_3+x_1*e_0+e_1*e_0-4*x_2*e_1*e_0+4
+        parity(f, R, L)
+        g=x_1*x_2*x_3+e_0*e_1+4;
+        parity(g, R, L)
 Caveat
 SeeAlso
-  superMatrixParity
+    superMatrixParity
 ///
 
 doc ///
 Key 
-  inverseSuperMatrix
-  (inverseSuperMatrix, SuperMatrix, Ring) 
+    inverseSuperMatrix
+    (inverseSuperMatrix, SuperMatrix, Ring) 
 Headline
-  The inverse of a super matrix.
+    The inverse of a super matrix.
 Usage
-  N = inverseSuperMatrix(G, R)
+    N = inverseSuperMatrix(G, R)
 Inputs
-  G:SuperMatrix
-  R:Ring
+    G:SuperMatrix
+    R:Ring
 Outputs
-  M:Matrix
+    M:Matrix
 Description
- Text
-  A super Matrix $M={{M1, M2}, {M3, M4}}$ 
-  is invertible, if both the diagonal blocks, $M_1$ and $M_4$ are invertible. 
+    Text
+        A super Matrix $M={{M1, M2}, {M3, M4}}$ 
+        is invertible, if both the diagonal blocks, $M_1$ and $M_4$ are invertible. 
   
-  In this case, the inverse is given by a blocked matrix, 
-  $T=\begin{pmatrix}
-     T1&T2\\
-     T3&T4\end{pmatrix}$, where
-  $T_1=(M_1 − M_2M^{-1}_4 M_3)^{-1}$, 
-  $T_2=−M^{-1}_1 M_2(M_4 − M_3M^{-1}_1 M_2)^{-1}$, 
-  $T_3=−M^{-1}_4 M_3(M_1 − M_2M^{-1}_4 M_3)^{-1}$, and
-  $T_4=(M_4 − M_3M^{-1}_1 M_2)^{-1}$.
- Example
-    M1 = matrix{{5, 7}, {1, 2}};
-    M2 = matrix{{1, 2, 3}, {4, 5, 6}};
-    M3 = matrix{{3, 4}, {5, 6}, {7, 8}};
-    M4 = matrix{{2, 3, 11}, {4, 5, 6}, {7, 8, 9}};
-    G = superMatrixGenerator(M1, M2, M3, M4);
-    inverseSuperMatrix(G, QQ)
+        In this case, the inverse is given by a blocked matrix, 
+        $T=\begin{pmatrix}
+         T1&T2\\
+         T3&T4\end{pmatrix}$, where
+        $T_1=(M_1 − M_2M^{-1}_4 M_3)^{-1}$, 
+        $T_2=−M^{-1}_1 M_2(M_4 − M_3M^{-1}_1 M_2)^{-1}$, 
+        $T_3=−M^{-1}_4 M_3(M_1 − M_2M^{-1}_4 M_3)^{-1}$, and
+        $T_4=(M_4 − M_3M^{-1}_1 M_2)^{-1}$.
+    Example
+        M1 = matrix{{5, 7}, {1, 2}};
+        M2 = matrix{{1, 2, 3}, {4, 5, 6}};
+        M3 = matrix{{3, 4}, {5, 6}, {7, 8}};
+        M4 = matrix{{2, 3, 11}, {4, 5, 6}, {7, 8, 9}};
+        G = superMatrixGenerator(M1, M2, M3, M4);
+        inverseSuperMatrix(G, QQ)
 Caveat
 SeeAlso
 ///
 
 doc ///
 Key 
-  superMatrixParity
-  (superMatrixParity, SuperMatrix, Ring, List) 
+    superMatrixParity
+    (superMatrixParity, SuperMatrix, Ring, List) 
 Headline
-  parity of a super Matrix.
+    parity of a super Matrix.
 Usage
-  N = superMatrixParity(SM, R, L)
+    N = superMatrixParity(SM, R, L)
 Inputs
-  SM:SuperMatrix
-  R:Ring
-    superRing
-  L:List
+    SM:SuperMatrix
+    R:Ring
+        superRing
+    L:List
 Outputs
-  N:Number
-    0 for even, 1 for odd and-1 for Nonhomogeneous
+    N:Number
+        0 for even, 1 for odd and-1 for Nonhomogeneous
 Description
- Text
-  Let $A^{p|q}=Ax_1\oplus \cdots \oplus Ax_p \oplus Ae_1\oplus\cdots\oplus Ae_q$ 
-  be a free module over $A$, where $x_i$s are even and $e_j$s are odd generators. 
-  A morphism $T:A^{p|q}\rightarrow A^{r|s}$ has a matrix representation. 
-  Denote the matrix by $T$ then we have
-  $T=\begin{pmatrix}
-     T1&T2\\
-     T3&T4\end{pmatrix}$. 
+   Text
+        Let $A^{p|q}=Ax_1\oplus \cdots \oplus Ax_p \oplus Ae_1\oplus\cdots\oplus Ae_q$ 
+        be a free module over $A$, where $x_i$s are even and $e_j$s are odd generators. 
+        A morphism $T:A^{p|q}\rightarrow A^{r|s}$ has a matrix representation. 
+        Denote the matrix by $T$ then we have
+        $T=\begin{pmatrix}
+         T1&T2\\
+         T3&T4\end{pmatrix}$. 
      
-  The matrix (morphism) $T$ is said to be even (odd) if the blocks $T_1$ and $T_4$
-  are even, and $T_2$ and $T_3$ are odd ($T_1$ and $T_4$ are odd, and $T_2$ and $T_3$ are even).
-  Note that if $A$ is an algebra, i.e., it doesn't have odd involution, then to 
-  have an even (odd) matrix $T$, we should have $T_3=0$ and $T_2=0$ ($T_1=0$ and $T_4=0$).
- Example
-  R1 = QQ[x_0..x_3];
-  R2 = QQ[z_0..z_2];
-  R = superRing(R1, R2);
-  D1 = matrix{{x_0, x_1}, {x_2, x_3}};
-  D2 = matrix{{z_0, z_1}, {x_0*z_0, x_1*z_1}};
-  D3 = matrix{{z_2*x_3, z_1}, {z_0, z_2*x_2}};
-  D4 = matrix{{x_1, x_3}, {x_0, x_2+x_3}};
-  SM = superMatrixGenerator(D1, D2, D3, D4);
-  superMatrixParity(SM, R, {z_0, z_1, z_2})
+        The matrix (morphism) $T$ is said to be even (odd) if the blocks $T_1$ and $T_4$
+        are even, and $T_2$ and $T_3$ are odd ($T_1$ and $T_4$ are odd, and $T_2$ and $T_3$ are even).
+        Note that if $A$ is an algebra, i.e., it doesn't have odd involution, then to 
+        have an even (odd) matrix $T$, we should have $T_3=0$ and $T_2=0$ ($T_1=0$ and $T_4=0$).
+    Example
+        R1 = QQ[x_0..x_3];
+        R2 = QQ[z_0..z_2];
+        R = superRing(R1, R2);
+        D1 = matrix{{x_0, x_1}, {x_2, x_3}};
+        D2 = matrix{{z_0, z_1}, {x_0*z_0, x_1*z_1}};
+        D3 = matrix{{z_2*x_3, z_1}, {z_0, z_2*x_2}};
+        D4 = matrix{{x_1, x_3}, {x_0, x_2+x_3}};
+        SM = superMatrixGenerator(D1, D2, D3, D4);
+        superMatrixParity(SM, R, {z_0, z_1, z_2})
 Caveat
 SeeAlso
-  parity
+    parity
 ///
 
-end
+end 
