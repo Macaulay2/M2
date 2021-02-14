@@ -111,7 +111,7 @@ parity (RingElement, Ring, List) := (f, R, oddNumberList) -> (
     for i from 0 to (#gens R-1) do (
         for j from 0 to #oddNumberList-1 do (
             if R_(i) == oddNumberList_(j) then (
-                l = append(l, i)
+                l = join(l,{i})
             )
         )
     );
