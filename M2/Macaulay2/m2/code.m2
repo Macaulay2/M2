@@ -163,6 +163,9 @@ methods Thing  := F -> (
     searchAllDictionaries(Type, T -> scan(thingMethods(T, F), key -> found#key = true));
     previousMethodsFound = new NumberedVerticalList from sortByName keys found)
 
+-- this one is here because it needs previousMethodsFound
+options ZZ := i -> options previousMethodsFound#i
+
 -----------------------------------------------------------------------------
 -- hooks
 -----------------------------------------------------------------------------
