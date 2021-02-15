@@ -138,6 +138,17 @@ class ARingZZpFlint : public RingInterface
                          ElementType b) const
   {
     ElementType a1 = nmod_neg(a, mModulus);
+
+    //if (mModulus.norm >= FLINT_BITS/2) /* addmul will fit in a limb */
+    //{
+    //   mp_limb_t ab_hi, ab_lo;
+    //   umul_ppmm(ab_hi, ab_lo, a1, b); // a_hi is not needed in this case
+    //   ab_lo = nmod_add(result, ab_lo, mModulus);
+    //   NMOD_RED(result,ab_lo,mModulus);
+    //}
+    //else // product does not fit in a single limb
+    //#endif
+    
     NMOD_ADDMUL(result, a1, b, mModulus);
   }
 
