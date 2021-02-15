@@ -1,8 +1,8 @@
 R = ZZ/101[x,y]
 
 assert(intersect ideal (-1)_R === ideal 1_R)
-assert(intersect ideal"x2,y"  === ideal"x2,y")
-assert(intersect{ideal"x2,y"} === ideal"x2,y")
+assert(intersect ideal"x2,y"  === ideal"y,x2")
+assert(intersect{ideal"x2,y"} === ideal"y,x2")
 assert(intersect(ideal"x2,y", ideal"x,y2") === ideal"y2,xy,x2")
 assert(intersect{ideal"x2,y", ideal"x,y2"} === ideal"y2,xy,x2")
 assert(intersect(ideal"x2,y", ideal"x,y2", ideal"x,y3") === ideal"xy,x2,y3")

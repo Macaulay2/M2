@@ -88,6 +88,8 @@ BinaryNoOptions := outputs -> (
     -- TODO: this implementation cuts recursion depth by more than 6, do better!
     dispatchBy := if outputs === true then identity else class;
     methodFunction := newmethod1(args -> error noMethod(methodFunction, args, outputs), outputs, MethodFunctionBinary);
+    -- Note: the method on List can be overriden later to implement
+    -- specializations for handling more than two objects at once
     methodFunction List     :=
     methodFunction Sequence := args -> (
 	-- Common code for every associative method without options
@@ -105,6 +107,7 @@ BinaryWithOptions := (opts, outputs) -> (
     else if instance(opts, OptionTable) then ((o, args) -> (f -> (f o) args))
     else error badopts opts;
     -- TODO: this can be simplified when https://github.com/Macaulay2/M2/issues/1878 is fixed
+    functionClosure :=
     methodFunction := opts >> o -> args -> (
 	-- Common code for every associative method with options
 	if not instance(args, VisibleList) then args = 1:args;
@@ -117,8 +120,10 @@ BinaryWithOptions := (opts, outputs) -> (
 	binaryLookup := (x, y) -> binaryCaller'(methodFunction, (methodFunction, dispatchBy x, dispatchBy y), (x, y), outputs, dispatcher(o, (x, y)));
 	foldL(binaryLookup, args#0, drop(args, 1)));
     methodFunction = new MethodFunctionBinary from methodFunction;
-    installMethod(methodFunction, List,     methodFunction);
-    installMethod(methodFunction, Sequence, methodFunction);
+    -- Note: the method on List can be overriden later to implement
+    -- specializations for handling more than two objects at once
+    installMethod(methodFunction, List, opts >> o -> args -> (dispatcher(o, toSequence args)) functionClosure);
+    installMethod(methodFunction, Sequence, functionClosure);
     methodFunction)
 
 -----------------------------------------------------------------------------
@@ -230,7 +235,6 @@ methodOptions MethodFunction := MultipleArgsNoOptionsGetMethodOptions
 methodOptions Command := f -> methodOptions f#0
 
 -- get the options of function, method function, or various other objects
--- TODO: https://github.com/Macaulay2/M2/issues/1881
 options = method(Dispatch => Thing, TypicalValue => OptionTable)
 options Command  := C   -> options C#0
 options Sequence := key -> (
@@ -238,9 +242,13 @@ options Sequence := key -> (
     else error("no method installed for ", toString key))
 
 oftab := new HashTable from {
+    -- MethodFunctionWithOptions
     functionBody(method(Options => {}))                    => f -> notImplemented(),
     functionBody(method(Options => {}, Dispatch => Thing)) => f -> notImplemented(),
+    -- FunctionClosure, MethodFunctionSingle, MethodFunctionBinary
     functionBody(  {} >> identity)                         => f -> first frame f,
+    -- TODO: changing to true fixes https://github.com/Macaulay2/M2/issues/1881
+    -- but introduces a different bug
     functionBody(true >> identity)                         => f -> null,
     }
 
