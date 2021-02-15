@@ -43,6 +43,7 @@ debug Cremona;
 debug SparseResultants;
 
 importFrom("SpecialFanoFourfolds",{"projectivityBetweenRationalNormalCurves","parametrizeFanoFourfold","parametrizeDelPezzoFivefold","parametrizeDelPezzoSixfold","embedDelPezzoSixfoldInG14"});
+importFrom("CoincidentRootLoci", {"projectiveJoin"});
 
 MultiprojectiveVariety = new Type of MutableHashTable;
 
@@ -553,6 +554,8 @@ EmbeddedProjectiveVariety ! := X -> (
 
 dual EmbeddedProjectiveVariety := {} >> o -> X -> projectiveVariety(dualvariety ideal X,MinimalGenerators=>false,Saturate=>false); -- from SparseResultants
 
+EmbeddedProjectiveVariety ++ EmbeddedProjectiveVariety := (X,Y) -> projectiveVariety(projectiveJoin(ideal X,ideal Y),MinimalGenerators=>false,Saturate=>false); -- from CoincidentRootLoci
+
 tangentSpace = method();
 tangentSpace (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := (X,p) -> (
     if not isPoint p then if isPoint X then return tangentSpace(p,X);
@@ -956,6 +959,9 @@ image MultirationalMap := Phi -> (
     return Phi#"image";
 );
 
+RationalMap MultiprojectiveVariety := (Phi,X) -> (multirationalMap Phi) X;
+MultihomogeneousRationalMap MultiprojectiveVariety := (Phi,X) -> (multirationalMap Phi) X;
+
 inverseImageViaMultirationalMapWeak = (Phi,Z) -> (
     if ring ambient target Phi =!= ring ambient Z then error "expected a multi-projective variety in the same ambient of the target of the map";
     -- if not isSubset(Z,target Phi) then error "expected a subvariety of the target of the map";
@@ -1252,6 +1258,9 @@ MultirationalMap | List := (Phi,d) -> (
     Phi|((source Phi) * projectiveVariety ideal random(d,ring ambient source Phi))
 );
 
+RationalMap | MultiprojectiveVariety := (Phi,X) -> (multirationalMap Phi)|X;
+MultihomogeneousRationalMap | MultiprojectiveVariety := (Phi,X) -> (multirationalMap Phi)|X;
+
 MultirationalMap || MultiprojectiveVariety := (Phi,Y) -> (
     if Y === target Phi then return Phi;
     X := Phi^* Y;
@@ -1263,6 +1272,9 @@ MultirationalMap || List := (Phi,d) -> (
     if not(# d == # (target Phi)#"dimAmbientSpaces" and all(d,i->instance(i,ZZ) and i>=0)) then error("expected a list of "|toString(# (target Phi)#"dimAmbientSpaces")|" non-negative integer(s) to indicate the degree of a hypersurface in the target"); 
     Phi||((target Phi) * projectiveVariety ideal random(d,ring ambient target Phi))
 );
+
+RationalMap || MultiprojectiveVariety := (Phi,Y) -> (multirationalMap Phi)||Y;
+MultihomogeneousRationalMap || MultiprojectiveVariety := (Phi,Y) -> (multirationalMap Phi)||Y;
 
 super MultirationalMap := Phi -> multirationalMap(Phi,ambient target Phi);
 
@@ -1862,7 +1874,7 @@ EXAMPLE {
 SeeAlso => {(symbol SPACE,MultirationalMap,MultiprojectiveVariety),(image,RationalMap),(segre,MultirationalMap)}}
 
 document { 
-Key => {(symbol SPACE,MultirationalMap,MultiprojectiveVariety)}, 
+Key => {(symbol SPACE,MultirationalMap,MultiprojectiveVariety),(symbol SPACE,RationalMap,MultiprojectiveVariety)}, 
 Headline => "direct image via a multi-rational map", 
 Usage => "Phi X", 
 Inputs => {MultirationalMap => "Phi", MultiprojectiveVariety => "X" => {"a subvariety of the ",TO2{(source,MultirationalMap),"source"}," of ",TT "Phi"}}, 
@@ -2213,7 +2225,7 @@ EXAMPLE {
 SeeAlso => {(det,MultidimensionalMatrix),(singularLocus,MultiprojectiveVariety)}}
 
 document { 
-Key => {(symbol |,MultirationalMap,MultiprojectiveVariety),(symbol |,MultirationalMap,List)}, 
+Key => {(symbol |,MultirationalMap,MultiprojectiveVariety),(symbol |,RationalMap,MultiprojectiveVariety),(symbol |,MultirationalMap,List)}, 
 Headline => "restriction of a multi-rational map", 
 Usage => "Phi | Z", 
 Inputs => {MultirationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
@@ -2231,7 +2243,7 @@ EXAMPLE {"Phi|{1,1,2};"},
 SeeAlso => {(symbol ||,MultirationalMap,MultiprojectiveVariety),(symbol |,RationalMap,Ideal),(symbol *,MultiprojectiveVariety,MultiprojectiveVariety)}}
 
 document { 
-Key => {(symbol ||,MultirationalMap,MultiprojectiveVariety),(symbol ||,MultirationalMap,List)}, 
+Key => {(symbol ||,MultirationalMap,MultiprojectiveVariety),(symbol ||,RationalMap,MultiprojectiveVariety),(symbol ||,MultirationalMap,List)}, 
 Headline => "restriction of a multi-rational map", 
 Usage => "Phi || Z", 
 Inputs => {MultirationalMap => "Phi" => { TEX///$\Phi:X \dashrightarrow Y$///},
@@ -2597,6 +2609,17 @@ time h = Z ===> projectiveVariety Grass(1,4,K);
 ideal h Z
 show h///,
 SeeAlso => {(parametrize,MultiprojectiveVariety)}}
+
+document { 
+Key => {(symbol ++,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)},
+Headline => "join of projective varieties", 
+Usage => "X ++ Y", 
+Inputs => {"X" => EmbeddedProjectiveVariety,"Y" => EmbeddedProjectiveVariety => {"in the same ambient projective space of ",TEX///$X$///}},
+Outputs => {EmbeddedProjectiveVariety => {"the join of ",TEX///$X$///," and ",TEX///$Y$///,", that is, the closure of the union of lines of the form ",TEX///$\langle p,q\rangle$///,", with ",TEX///$p\in X$///,", ",TEX///$q\in Y$///,", and ",TEX///$p\neq q$///}},
+EXAMPLE {"K = ZZ/333331;", 
+"C = projectiveVariety(1,5,K); -- rational normal quintic curve",
+"L = linearSpan {point ambient C,point ambient C}; -- random line",
+"C ++ L;","oo!","C ++ C;","oo!","(point C) ++ (point C) ++ (point C);"}}
 
 undocumented {
 (expression,MultiprojectiveVariety),

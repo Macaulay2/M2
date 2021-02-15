@@ -8,7 +8,7 @@ newPackage(
     	Headline => "coincident root loci",
         Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
 	Keywords => {"Real Algebraic Geometry", "Interfaces"},
-        PackageExports => {"MultiprojectiveVarieties"},
+        PackageExports => {"Cremona","Resultants"},
         DebuggingMode => false,
         AuxiliaryFiles => true,
         OptionalComponentsPresent => try get "!qepcad -h 2>&1" then true else false,
@@ -31,6 +31,7 @@ export{"apolar",
        "randomInCoisotropic",
        "generic",
        "projectiveJoin",
+       "projectiveTangentSpace",
        "polarDegrees"
 }
 
@@ -417,7 +418,8 @@ CoincidentRootLocus + CoincidentRootLocus := (X,Y) -> ( -- intersection, undocum
    if #E == 1 then first E else E
 );
 
-tangentSpace (CoincidentRootLocus,RingElement) := (X,F) -> (
+projectiveTangentSpace = method()
+projectiveTangentSpace (CoincidentRootLocus,RingElement) := (X,F) -> (
    checkBinaryForm F;
    if first degree F =!= X#"ambient" then error("expected a binary form of degree "|toString(X#"ambient"));
    if coefficientRing ring F =!= coefficientRing X then error("expected a binary form over "|toString(coefficientRing X));
