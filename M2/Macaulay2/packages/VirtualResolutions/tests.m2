@@ -292,3 +292,16 @@ debugLevel=1
   -- in some translation of the positive quadrant:
   N = 2 * regularity K; matrix table(N,N, (y, x) -> hilbertFunction_{N - y - 1, x} K)
 ///
+
+TEST ///
+  (S,E) = productOfProjectiveSpaces {1,2};
+  I = ideal(x_(0,0)+13748*x_(0,1),
+      x_(1,0)^2*x_(1,1)+890*x_(1,0)*x_(1,1)^2-1192*x_(1,1)^3+
+      7949*x_(1,0)^2*x_(1,2)-609*x_(1,0)*x_(1,1)*x_(1,2)-
+      12541*x_(1,1)^2*x_(1,2)+205*x_(1,0)*x_(1,2)^2+3078*x_(1,1)*x_(1,2)^2+11091*x_(1,2)^3,
+      x_(1,0)^3+9088*x_(1,0)*x_(1,1)^2+10840*x_(1,1)^3+4661*x_(1,0)^2*x_(1,2)+
+      3899*x_(1,0)*x_(1,1)*x_(1,2)-5917*x_(1,1)^2*x_(1,2)-7815*x_(1,0)*x_(1,2)^2-
+      2114*x_(1,1)*x_(1,2)^2-3089*x_(1,2)^3);
+  assert(multigradedRegularity(S,   module I) == {{1,5}})
+  assert(multigradedRegularity(S, comodule I) == {{0,4}})
+///
