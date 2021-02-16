@@ -105,6 +105,8 @@ There are unit-tests available within the `Macaulay2/e/unit-tests` and `Macaulay
 - `ctest --rerun-failed -V`: rerun the tests that failed in the last batch and echo the results.
 - `ctest -R check-LocalRings -j4`: run all tests in the LocalRings package, in 4 parallel jobs.
 - `ctest -R check-LocalRings-2 -V`: run the 3rd test in the LocalRings package and echo the result.
+- `ctest -T memcheck -R ARingQQFlint`: run matching tests through Valgrind
+
 
 Note: if the last option does not work, try running `ninja info-packages` and `cmake .` to populate the tests.
 
