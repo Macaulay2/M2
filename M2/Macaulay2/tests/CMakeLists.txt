@@ -29,13 +29,6 @@ endif()
 ## make the stack limit always the same as it would be under MacOS
 #SLIMIT ?= 8192
 
-# TODO: get this to work
-# See https://gitlab.kitware.com/cmake/community/-/wikis/doc/ctest/Testing-With-CTest
-if(MEMDEBUG)
-  find_program(MEMORYCHECK_COMMAND valgrind)
-  set( MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full --show-reachable=yes --track-origins=yes" )
-endif()
-
 ###############################################################################
 ## M2 arguments and commands that will be passed to M2 -e ${STR}
 set(GC_MAXIMUM_HEAP_SIZE 400M CACHE STRING "maximum collected heap size")
