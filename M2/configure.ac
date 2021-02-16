@@ -368,7 +368,8 @@ AC_SUBST(LIBTBB)
       [AC_SEARCH_LIBS(TBB_runtime_interface_version,"tbb",
 	 LIBTBB=$ac_cv_search_TBB_runtime_interface_version
 	 HAVE_LIBTBB=yes,
-	 [AC_MSG_ERROR([tbb not found])])])
+	 [AC_MSG_ERROR([tbb library not found])])],
+       [AC_MSG_ERROR([tbb include file (tbb.h) not found])])
    AC_LANG(C)
 
 # the following line remove -ltbb from LIBS (only thing in LIBS so far).  It is not needed
