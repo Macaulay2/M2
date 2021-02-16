@@ -3,6 +3,7 @@ find_program(CLANG_FORMAT	NAMES clang-format)
 find_program(CPPCHECK		NAMES cppcheck)
 find_program(CPPLINT		NAMES cpplint) # pip install cpplint
 find_program(IWYU		NAMES iwyu) # https://github.com/include-what-you-use/include-what-you-use
+find_program(VALGRIND		NAMES valgrind)
 
 # List of available checks: clang-tidy -checks=* --list-checks
 # TIP: Starting with "-*" means exclude all
@@ -52,3 +53,13 @@ MACRO (_ADD_CLANG_FORMAT _target _c_sources _cxx_sources)
       )
   endif()
 ENDMACRO (_ADD_CLANG_FORMAT)
+
+# use ctest -T memcheck -R unit-tests, for instance, to run tests with Valgrind
+if(VALGRIND)
+  message("## Setting up Valgrind memory checking through CTest (ctest -T memcheck)")
+  set(VALGRIND_COMMAND         "${VALGRIND}")
+  set(VALGRIND_COMMAND_OPTIONS "--trace-children=yes --trace-children-skip=/bin/sh --leak-check=full --error-exitcode=1 --show-reachable=yes --track-origins=yes")
+  set(MEMORYCHECK_COMMAND           "${VALGRIND_COMMAND}")
+  set(MEMORYCHECK_COMMAND_OPTIONS   "${VALGRIND_COMMAND_OPTIONS}")
+  set(MEMORYCHECK_SUPPRESSIONS_FILE "${CMAKE_SOURCE_DIR}/files/M2-suppressions.supp")
+endif()

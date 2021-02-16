@@ -133,11 +133,11 @@ jobs:
         if: matrix.build-system == 'cmake'
         run: |
           cmake -S../.. -B. -GNinja \
-            --debug-trycompile \
             -DBUILD_LIBRARIES="Givaro;FFLAS_FFPACK" \
-            -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_NATIVE=OFF \
+            -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF \
             -DCMAKE_PREFIX_PATH=`brew --prefix` \
-            -DCMAKE_INSTALL_PREFIX=/usr
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            --debug-trycompile
 
       - name: Build libraries using Ninja
         if: matrix.build-system == 'cmake'
