@@ -22,8 +22,9 @@ fixPath = programPath -> (
 --   if MinimumVersion option is not given or the version number can't be
 --   be determined.
 checkProgramPath = (name, cmds, pathToTry, prefix, opts) -> (
-    -- unescape spaces/parentheses for fileExists and fileMode
-    unescapedPathToTry := replace(///\\([ ()])///, ///\1///, pathToTry);
+    -- unescape spaces/parentheses and resolve HOME for fileExists and fileMode
+    unescapedPathToTry := replace(///^\$\{?HOME\}?///, getenv "HOME",
+	replace(///\\([ ()])///, ///\1///, pathToTry));
     found := if all(apply(cmds, cmd -> addPrefix(cmd, prefix)), cmd -> (
 	exe := unescapedPathToTry | first separate(" ", cmd);
 	if not fileExists exe then false else
