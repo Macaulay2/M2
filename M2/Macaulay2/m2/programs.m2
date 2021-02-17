@@ -2,12 +2,14 @@ Program = new Type of HashTable
 ProgramRun = new Type of HashTable
 programPaths = new MutableHashTable
 
--- we expect a trailing slash in the path, but the paths given in the
--- PATH environment variable likely will not have one, so we add one
--- if needed
-addSlash = programPath -> (
-    if last programPath != "/" then return programPath | "/"
-    else return programPath
+fixPath = programPath -> (
+    -- escape any unescaped spaces or parentheses
+    programPath = replace(///(?<!\\)([ ()])///, ///\\\1///, programPath);
+    -- we expect a trailing slash in the path, but the paths given in the
+    -- PATH environment variable likely will not have one, so we add one
+    -- if needed
+    if last programPath != "/" then programPath | "/"
+    else programPath
 )
 
 -- returns (found, thisVersion)
@@ -67,7 +69,7 @@ getProgramPath = (name, cmds, opts) -> (
 	pathsToTry = join(pathsToTry,
 	    apply(separate(":", getenv "PATH"), dir ->
 		if dir == "" then "." else dir));
-    pathsToTry = apply(pathsToTry, addSlash);
+    pathsToTry = fixPath \ pathsToTry;
     prefixes := {(".*", "")} | opts.Prefix;
     errorCode := 1;
     versionFound := "0.0";
