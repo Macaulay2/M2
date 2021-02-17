@@ -18,7 +18,7 @@ fixPath = programPath -> (
 --   1 = could not find program
 --   2 = found program, but too version number too low
 --   3 = found program, but could not determine version number
--- versionNumber is a string containing the version number found, or null
+-- thisVersion is a string containing the version number found, or null
 --   if MinimumVersion option is not given or the version number can't be
 --   be determined.
 checkProgramPath = (name, cmds, pathToTry, prefix, opts) -> (
