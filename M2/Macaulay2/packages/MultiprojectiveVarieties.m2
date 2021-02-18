@@ -12,7 +12,7 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.0", 
-    Date => "February 16, 2021",
+    Date => "February 18, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -42,7 +42,7 @@ export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections",
 debug Cremona;
 debug SparseResultants;
 
-importFrom("SpecialFanoFourfolds",{"projectivityBetweenRationalNormalCurves","parametrizeFanoFourfold","parametrizeDelPezzoFivefold","parametrizeDelPezzoSixfold","embedDelPezzoSixfoldInG14"});
+importFrom("SpecialFanoFourfolds",{"schubertCycle","projectivityBetweenRationalNormalCurves","parametrizeFanoFourfold","parametrizeDelPezzoFivefold","parametrizeDelPezzoSixfold","embedDelPezzoSixfoldInG14"});
 importFrom("CoincidentRootLoci", {"projectiveJoin"});
 
 MultiprojectiveVariety = new Type of MutableHashTable;
@@ -125,8 +125,8 @@ projectiveVariety (List,Ring) := o -> (l,K) -> (
     X := projectiveVariety(ring first first gensRing(K,apply(l,i -> i+1)),MinimalGenerators=>false,Saturate=>false);
     X#"euler" = product apply(l,i -> i+1);
     X#"top" = X;
-    X#"singularLocus" = projectiveVariety(ideal(1_(ring ambient X)),MinimalGenerators=>true,Saturate=>false);
-    X#"expression" = expressionVar(sum l,l);
+    X#"singularLocus" = 0_X;
+    X#"expression" = expression expressionVar(sum l,l);
     return X;
 );
 projectiveVariety (ZZ,Ring) := o -> (l,K) -> projectiveVariety({l},K);
@@ -143,7 +143,7 @@ projectiveVariety (List,List,Ring) := o -> (n,d,K) -> (
     X#"parametrization" = (parametrize source f) * f;
     X#"euler" = product apply(n,i -> i+1);
     X#"top" = X;
-    X#"singularLocus" = projectiveVariety(ideal(1_(ring ambient X)),MinimalGenerators=>true,Saturate=>false);
+    X#"singularLocus" = 0_X;
     return X;
 );
 projectiveVariety (ZZ,ZZ,Ring) := o -> (n,d,K) -> projectiveVariety({n},{d},K);
@@ -169,19 +169,17 @@ isPoint = (cacheValue "isPoint") (X -> (
     dim X == 0 and sort degrees X == sort pairs tally deepSplice apply(n,entries diagonalMatrix toList(#n:1),(i,d) -> i:d)
 ));
 
-isGrass = (cacheValue "isGrass") (X -> (try (k,n) := take(Grass ring X,2) then "GG("|toString(k)|","|toString(n)|")" else false));
+isGrass = (cacheValue "isGrass") (X -> (try (k,n) := take(Grass ring X,2) then (X#"top" = X; X#"singularLocus" = 0_X; return "GG("|toString(k)|","|toString(n)|")") else return false));
 
 expression MultiprojectiveVariety := X -> (
     if X#"expression" =!= null then return X#"expression";
     n := X#"dimAmbientSpaces";
-    if #n == 1 and dim X >= 4 and codim X > 0 and X#"ringVariety" =!= null then if isGrass X =!= false then return X#"expression" = isGrass X;
+    if #n == 1 and dim X >= 4 and codim X > 0 and X#"ringVariety" =!= null then if isGrass X =!= false then return X#"expression" = expression isGrass X;
     if dim X == 0 and codim X > 0 then if isPoint X then return expression("a point in "|expressionVar(sum n,n));
     expression expressionVar(dim X,n)
 );
 
-net MultiprojectiveVariety := X -> (
-   if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else if isPoint X then "point of coordinates "|net coordinates X else "a projective variety"
-);
+net MultiprojectiveVariety := X -> if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else ?X;
 
 MultiprojectiveVariety#{Standard,AfterPrint} = MultiprojectiveVariety#{Standard,AfterNoPrint} = X -> (
   << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "ProjectiveVariety, " << expression X << endl;
@@ -266,12 +264,15 @@ describe MultiprojectiveVariety := X -> (
 
 ? MultiprojectiveVariety := X -> (
     if dim X == -1 or codim X <= 0 then return toString expression X;
+    if isPoint X then return ("point of coordinates "|net coordinates X); 
+    n := X#"dimAmbientSpaces";
+    if #n == 1 and X#"ringVariety" =!= null then (if isGrass X =!= false then return((toString expression X)| " ⊂ " | toString(expression ambient X)));
     degs := degrees ideal X; 
     m := "multi-";
-    if # X#"dimAmbientSpaces" == 1 then m = "";
-    if # degs == 1 then return(toString expression X|" defined by a "|m|"form of "|m|"degree "|toString(unsequence toSequence first degs));
+    if #n == 1 then m = "";
+    if # degs == 1 then return(toString expressionVar(dim X,n)|" defined by a "|m|"form of "|m|"degree "|toString(unsequence toSequence first degs));
     cutOut:=""; if #degs>1 then cutOut = if # unique degs == 1 then " cut out by "|toString(#degs)|" hypersurfaces of "|m|"degree "|toString(unsequence toSequence first degs) else " cut out by "|toString(#degs)|" hypersurfaces of "|m|"degrees "|toStringDegreesVar(X); 
-    (toString expression X)|cutOut
+    (expressionVar(dim X,n))|cutOut
 );
 
 degrees MultiprojectiveVariety := X -> pairs tally degrees ideal X;
@@ -308,12 +309,14 @@ parametrize MultiprojectiveVariety := X -> (
         if codim linearSpan source f > 0 then f = ((parametrize linearSpan source f)||(source f)) * f;
         return (parametrize source f) * f;
     ) else err();
+    if degree X > 1 and dim X >= 4 and isGrass X =!= false and first Grass ring X == 1 then (
+        (S,s) := schubertCycle({2,2},ring X,"standard");
+        return inverse(multirationalMap rationalMap(s S),Verify=>false);
+    );
     Phi := null;
     if degree X == 1 or degree X == 2 then try Phi = multirationalMap parametrize ring X else err();
-    if degree X == 5 and dim X >= 5 and codim X == 3 then (
-        if dim X == 6 then try Phi = multirationalMap parametrizeDelPezzoSixfold(ideal X) else err();
-        if dim X == 5 then try Phi = multirationalMap parametrizeDelPezzoFivefold(ideal X) else err();
-    );
+    if dim X == 6 and degree X == 5 and codim X == 3 then try Phi = multirationalMap parametrizeDelPezzoSixfold(ideal X) else err();
+    if dim X == 5 and degree X == 5 and codim X == 3 then try Phi = multirationalMap parametrizeDelPezzoFivefold(ideal X) else err(); 
     if dim X == 4 and member(degree X,{4,5,12,14,16,18}) then try Phi = multirationalMap parametrizeFanoFourfold ring X else err();
     if Phi === null then err();
     multirationalMap(Phi,X)
@@ -372,9 +375,10 @@ productMem = memoize(L -> (
 productVars = L -> (
     W := productMem L;
     if not (#L > 1 and all(L,X -> hasAttribute(X,ReverseDictionary) or X#"expression" =!= null)) then return W;
-    e := apply(L,X -> if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else X#"expression");
+    e := apply(L,X -> if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else toString X#"expression");
     W#"expression" = e_0;
     for i from 1 to #L-1 do W#"expression" = W#"expression" | " x " | e_i;
+    W#"expression" = expression W#"expression";
     W
 );
 
@@ -721,7 +725,10 @@ expression MultirationalMap := Phi -> (
 );
 
 net MultirationalMap := Phi -> (
-   if hasAttribute(Phi,ReverseDictionary) then toString getAttribute(Phi,ReverseDictionary) else "a multi-rational map"
+   if hasAttribute(Phi,ReverseDictionary) then return toString getAttribute(Phi,ReverseDictionary);
+   X := if hasAttribute(source Phi,ReverseDictionary) then toString getAttribute(source Phi,ReverseDictionary) else toString expression source Phi;
+   Y := if hasAttribute(target Phi,ReverseDictionary) then toString getAttribute(target Phi,ReverseDictionary) else toString expression target Phi;
+   "rational map from " | X | " to " | Y
 );
 
 MultirationalMap#{Standard,AfterPrint} = MultirationalMap#{Standard,AfterNoPrint} = Phi -> (
@@ -2685,7 +2692,7 @@ g V///,
 PARA{"In the next example, ",TEX///$Z\subset\mathbb{P}^9$///," is a random (smooth) del Pezzo sixfold, hence projectively equivalent to ",TEX///$\mathbb{G}(1,4)$///,"."},
 EXAMPLE lines ///Z = projectiveVariety pfaffians(4,matrix pack(5,for i to 24 list random(1,ring projectiveVariety(9,K))));
 ? Z
-G = projectiveVariety Grass(1,4,K);
+G := projectiveVariety Grass(1,4,K);
 time h = Z ===> G;
 h Z
 show h///,
@@ -2772,7 +2779,9 @@ C3 = ideal(x_2^2-x_1*x_3,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2);
 C2 = ideal(x_1^2-x_0*x_2,x_3);
 Phi = last graph multirationalMap(rationalMap C3,rationalMap C2);
 Phi = multirationalMap(Phi,image Phi);
-assert(multidegree(,Phi) == {66, 46, 31, 20} and multidegree Phi == {66, 46, 31, 20})
+-- assert(multidegree(,Phi) == {66, 46, 31, 20}) -- too long time
+assert(multidegree(3,Phi) == 66 and multidegree(2,Phi) == 46);
+assert(multidegree Phi == {66, 46, 31, 20})
 assert(degree(Phi,Strategy=>"random point") == 1 and degree Phi == 1)
 assert(Phi * inverse Phi == 1 and Phi^-1 * Phi == 1)
 assert(toString describe Phi == toString strForTest);
