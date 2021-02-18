@@ -127,9 +127,9 @@ bracket2partition
 
 randomSchubertProblemInstance
 
-LRNumber                    -- Computes the intersection number of a Schubert problem (number of solutions)
+LRnumber                    -- Computes the intersection number of a Schubert problem (number of solutions)
 
-NSC2phc                     -- Converts a Schubert probem from a list of partitions/brackets to the matrix of LRrule.  used in LRNumber
+NSC2phc                     -- Converts a Schubert probem from a list of partitions/brackets to the matrix of LRrule.  used in LRnumber
 
 === Not Exported ===
 

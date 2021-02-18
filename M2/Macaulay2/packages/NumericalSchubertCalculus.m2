@@ -1,6 +1,6 @@
 phcPresent := run ("type phc >/dev/null 2>&1") === 0
 phcVersion := if phcPresent then replace("PHCv([0-9.]+) .*\n","\\1",get "! phc --version")
-phcVersionNeeded := "2.4.77"
+phcVersionNeeded := "2.3.80"
 phcPresentAndModern := phcPresent and match("^[0-9.]+$",phcVersion) and phcVersion >= phcVersionNeeded
 
 newPackage(
@@ -40,6 +40,7 @@ newPackage(
 debug NumericalAlgebraicGeometry
 export { 
    "changeFlags", -- "bigCellLocalCoordinates", 
+   "resetStatistics",
    "printStatistics",
    "setVerboseLevel", 
    "solveSchubertProblem",
@@ -74,7 +75,6 @@ NEWTON'TOLERANCE = 10^-10
 -- 2 = ... + checkerboard steps info
 -- >2 = new experimental stuff kicks in
 DBG = 0
---DBG = 2
 
 ---------------------
 -- setVerboseLevel --
@@ -318,13 +318,14 @@ moveCheckers Array := blackred -> (
 --        function solveSchubertProblem twice, the function 
 --        will report the information of both Tournaments,
 --        to avoid that, you need to export the following:
---            resetStats()
+--            resetStatistics()
 ---------------------------------
-stats = new MutableHashTable;
-resetStats = () -> stats =  new MutableHashTable from 
-flatten flatten (apply(3,i->apply(3,j->{i,j,0}=>0)) | {{1,1,1}=>0, {}=>0}) | 
-{ "tracking time" => 0 }  
-resetStats()
+resetStatistics = () -> (
+    stats =  new MutableHashTable from 
+    flatten flatten (apply(3,i->apply(3,j->{i,j,0}=>0)) | {{1,1,1}=>0, {}=>0}) | 
+    { "tracking time" => 0 };
+    )  
+resetStatistics()
 
 statsIncrementMove = m -> stats#m = stats#m + 1;
 statsIncrementTrackingTime = t -> stats#"tracking time" = stats#"tracking time" + t
@@ -534,10 +535,8 @@ load "NumericalSchubertCalculus/LR-resolveNode.m2"
 ---------------
 solveSchubertProblem = method(Options=>{LinearAlgebra=>true})
 solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
-    -- SchPblm is a an instance of a Schubert problem, which is a list of pairs (c,F) with c a Schubert conditions and F a flag
-    -- Check that it does indeed form a Schubert problem, and convert the consitions to partitions (if they were brackes)
-    SchPblm = ensurePartitions(SchPblm,k,n);
-    -- set aside the first two consitions
+    -- SchPblm is a list of sequences with two entries
+    -- a partition and a flag
     twoconds := take(SchPblm,2);
     remaining'conditions'flags := drop(SchPblm,2);
     -- take the first two conditions

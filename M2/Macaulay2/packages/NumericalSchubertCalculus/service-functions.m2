@@ -8,7 +8,7 @@ export {
     "randomSchubertProblemInstance",
     "NSC2phc", 
     "ensurePartitions",
-    "LRNumber"              
+    "LRnumber"              
     }
 ----------------
 --Functions contained here but not exported:
@@ -29,7 +29,7 @@ export {
 
 
 ----------------------
---    LRNumber     ---
+--    LRnumber     ---
 --
 -- Computes the number of solutions to a Schubert 
 --   problem on a Grassmannian
@@ -44,8 +44,8 @@ export {
 --   Schubert2  uses the SchubertRing command in the Schubert2 intersection theory package
 --   phc        uses PHCPack's implementation of the geometric Littlewood-Richardson rule
 --------------------------------------------------------------------
-LRNumber = method(Options=>{Strategy=>"Schubert2"})
-LRNumber (List,ZZ,ZZ) := o -> (conds,k,n) -> (
+LRnumber = method(Options=>{Strategy=>"Schubert2"})
+LRnumber (List,ZZ,ZZ) := o -> (conds,k,n) -> (
     -- First check if it is a Schubert problem
     checkSchubertProblem(conds,k,n);
        if o.Strategy == "phc" then (

@@ -42,7 +42,7 @@ doc ///
       LRrule uses the geometric Littlewood-Richardson rule to compute a product in the Chow ring of the Grassmannian.  
       This writes a product of brackets as a formal sum of brackets, which represents an intersection of Schubert varieties as a formal sum of Schubert varieties.
       When the input matrix M is a Schubert problem, this gives the number of solutions to that Schubert problem.
-      The command @TO LRNumber@ calls LRrule and extracts the number of solutions.
+      The command @TO LRnumber@ calls LRrule and extracts the number of solutions.
     Example
       R = ZZ;
       n = 7;

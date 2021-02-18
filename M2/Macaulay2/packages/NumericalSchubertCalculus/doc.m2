@@ -14,7 +14,7 @@ document {
 	 --(continues solutions from one instance to another),
 	 TO checkIncidenceSolution, 
 	 --(verifies that a solution satisfies the given incidence conditions).
-	 TO LRNumber,
+	 TO LRnumber,
 	 --(computes the number of solutions to a given Schubert problem).
      },
      HEADER3{"Functions implementing homotopies specific to Schubert calculus:"},
@@ -598,12 +598,12 @@ doc ///
 ///;
 doc ///
    Key 
-      LRNumber
-      (LRNumber,List,ZZ,ZZ)
+      LRnumber
+      (LRnumber,List,ZZ,ZZ)
    Headline
       Returns the number of solutions to the given Schubert problem
    Usage
-      LRNumber(conditions,k,n)
+      LRnumber(conditions,k,n)
    Inputs
       conditions:List
         of Schubert conditions, either partitions or brackets, that constitutes a Schubert problem on the Grassmannian $Gr(k,n)$.
@@ -620,11 +620,11 @@ doc ///
 	 Then it computes the intersection number of the prodiuct of Schubert classes in the cohomology ring of the Grassmannnian
       Example
          -- the problem of 4 lines is given by 4 partitions {1}^4 in Gr(2,4) 
-	 LRNumber({{1},{1},{1},{1}},2,4)
+	 LRnumber({{1},{1},{1},{1}},2,4)
 	 -- the same problem but using brackets instead of partitions
-	 LRNumber({{2,4},{2,4},{2,4},{2,4}},2,4)
+	 LRnumber({{2,4},{2,4},{2,4},{2,4}},2,4)
 	 -- the same problem but using phc implementation of Littlewood-Richardson rule
-	 LRNumber({{1},{1},{1},{1}},2,4,Strategy => "phc")
+	 LRnumber({{1},{1},{1},{1}},2,4,Strategy => "phc")
    Caveat
       This uses the package Schubert2 and the Strategy "phc" requires the string parsing capabilities of Macaulay2 version 1.17 or later
    SeeAlso
@@ -633,11 +633,11 @@ doc ///
 
 doc ///
    Key
-      [LRNumber, Strategy]
+      [LRnumber, Strategy]
    Headline
       strategy for computing the number of solutions to a Schubert problem
    Usage
-      LRNumber(...,Strategy=>S)
+      LRnumber(...,Strategy=>S)
    Inputs
       S:String
         "Schubert2", the default value, or "phc".
@@ -884,8 +884,6 @@ doc ///
    Caveat
       This assumes that GAP runs when you type in the terminal {\tt gap} and that we already know that the Galois group is the full symmetric group, otherwise it will output {\tt false} after {\tt mx} repetitions.
 ///
-*-
-end
 
 -- previous functions
 doc ///
@@ -975,4 +973,27 @@ doc ///
    SeeAlso
       solveSimpleSchubert
       createRandomFlagsForSimpleSchubert
+///
+*-
+
+doc ///
+    Key
+       printStatistics
+       resetStatistics
+    Headline
+       summary statistics (used by developers)
+    Usage
+       printStatistics()
+    Description
+       Example
+	 k = 3;
+	 n = 6;
+	 SchPblm = {
+    	     ({2,1}, random(CC^6,CC^6)),
+    	     ({2,1}, random(CC^6,CC^6)),
+    	     ({2,1}, random(CC^6,CC^6))
+	     };
+    	 resetStatistics()
+	 solveSchubertProblem(SchPblm, k,n)	 
+    	 printStatistics()    
 ///
