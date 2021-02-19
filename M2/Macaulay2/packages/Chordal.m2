@@ -701,9 +701,8 @@ writeDotFile (String,Function,ChordalNet) := (filename, fun, N) -> (
 
 displayDotFile = (dotfilename,jpgfilename) -> (
     dotBinary := ((options Graphs).Configuration)#"DotBinary";
-    jpgViewer := ((options Graphs).Configuration)#"JpgViewer";
     runcmd(dotBinary  | " -Tjpg " | dotfilename | " -o " | jpgfilename);
-    runcmd(jpgViewer  | " " | jpgfilename|" &");
+    show URL("file://" | toAbsolutePath jpgfilename);
 )
 runcmd = cmd -> (
     stderr << "-- running: " << cmd << endl;

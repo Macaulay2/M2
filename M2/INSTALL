@@ -56,20 +56,6 @@ source code:
     git submodule update
 
 ---------
-Programs
----------
-
-Here are programs you may have to install on your system to build Macaulay2.
-
-   program: fakeroot
-    get at: http://ftp.debian.org/debian/pool/main/f/fakeroot
-     notes: You need this only if you intend to make a debian distribution
-            package for Macaulay2.
-
-   program: rpmbuild
-     notes: needed only if you want to make an rpm distribution file
-
----------
 Libraries
 ---------
 

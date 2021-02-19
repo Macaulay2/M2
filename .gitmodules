@@ -24,7 +24,7 @@
 	url = https://github.com/Macaulay2/frobby.git
 [submodule "M2/submodules/fflas-ffpack"]
 	path = M2/submodules/fflas_ffpack
-	url = https://github.com/linbox-team/fflas-ffpack.git
+	url = https://github.com/Macaulay2/fflas-ffpack.git
 [submodule "M2/submodules/givaro"]
 	path = M2/submodules/givaro
 	url = https://github.com/Macaulay2/givaro.git
