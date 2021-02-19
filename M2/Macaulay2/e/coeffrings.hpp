@@ -45,6 +45,18 @@ class CoefficientRingZZp : public our_new_delete
       minus_one = 0;
     else
       minus_one = (p - 1) / 2;
+
+
+#if 0
+    fprintf(stderr, "char %d\n", p);
+    fprintf(stderr, "exp: ");
+    for (int i=0; i<p; i++)
+      fprintf(stderr, "%d ", exp_table[i]);
+    fprintf(stderr, "\nlog: ");
+    for (int i=0; i<p; i++)
+      fprintf(stderr, "%d ", log_table[i]);
+    fprintf(stderr, "\n");
+#endif
   }
 
   void set_from_long(elem &result, long a) const

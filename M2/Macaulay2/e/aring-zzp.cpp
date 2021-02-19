@@ -44,10 +44,10 @@ void ARingZZp::initialize_tables()
 #if 0
     fprintf(stderr, "char %d primitive %d\n", p, prim_root);
     fprintf(stderr, "exp: ");
-    for (i=0; i<p; i++)
+    for (int i=0; i<p; i++)
       fprintf(stderr, "%d ", exp_table[i]);
     fprintf(stderr, "\nlog: ");
-    for (i=0; i<p; i++)
+    for (int i=0; i<p; i++)
       fprintf(stderr, "%d ", log_table[i]);
     fprintf(stderr, "\n");
 #endif
