@@ -15,6 +15,10 @@
 #include <algorithm>                        // for copy
 #include <iostream>                         // for operator<<, basic_ostream
 
+#include <tbb/tick_count.h>                 // for tbb::tick_count
+#include <tbb/enumerable_thread_specific.h> // for tbb::enumerable_thread_specific
+#include <tbb/parallel_sort.h>              // for tbb::parallel_sort
+
 NCF4::NCF4(const FreeAlgebra& A,
            const ConstPolyList& input,
            int hardDegreeLimit,
@@ -23,8 +27,8 @@ NCF4::NCF4(const FreeAlgebra& A,
            )
     : mFreeAlgebra(A),
       mInput(input),
-      mTopComputedDegree(-1),
-      mHardDegreeLimit(hardDegreeLimit),
+      //mTopComputedDegree(-1),            // not used yet.
+      //mHardDegreeLimit(hardDegreeLimit), // not used yet.
       mMonomEq(A.monoid()),
       mMonomHashEqual(A.monoid()),
       mColumnMonomials(10,mMonomHash,mMonomHashEqual),

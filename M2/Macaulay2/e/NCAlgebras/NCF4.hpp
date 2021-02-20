@@ -1,7 +1,11 @@
 #ifndef __nc_f4_hpp__
 #define __nc_f4_hpp__
 
-#include <tbb/tbb.h>                        // for tbb
+#include <tbb/queuing_mutex.h>                // for queuing_mutex
+#include <tbb/null_mutex.h>                   // for null_mutex
+#include <tbb/parallel_do.h>                  // for parallel_do_feeder
+#include <tbb/concurrent_unordered_map.h>     // for concurrent_unordered_map
+//#include <tbb/concurrent_vector.h>          // for concurrent_vector (no longer needed)
 
 #include "NCAlgebras/FreeMonoid.hpp"      // for MonomEq
 #include "MemoryBlock.hpp"                // for MemoryBlock
@@ -21,8 +25,6 @@
 #include <tuple>                       // for tuple
 #include <utility>                     // for pair
 #include <vector>                      // for vector
-
-
 
 class FreeAlgebra;
 union ring_elem;
@@ -104,8 +106,8 @@ private:
   PolyList mGroebner;
 
   bool mIsGraded;
-  int mTopComputedDegree;
-  int mHardDegreeLimit;
+  //int mTopComputedDegree;  // not used yet
+  //int mHardDegreeLimit;    // not used yet
 
   MemoryBlock mMonomialSpace;
   MemoryBlock mPreviousMonomialSpace;
