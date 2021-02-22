@@ -432,7 +432,8 @@ ExternalProject_Add(build-factory
   )
 if(GFTABLESDIR AND NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
   message(STATUS "Copying gftables from ${GFTABLESDIR}/gftables")
-  file(COPY ${GFTABLESDIR}/gftables DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory)
+  file(COPY ${GFTABLESDIR}/gftables
+    DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory FOLLOW_SYMLINK_CHAIN)
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries factory "mp;ntl;flint" FACTORY_FOUND)
 
@@ -1156,7 +1157,7 @@ if(EXISTS ${M2_HOST_PREFIX}/lib)
   file(COPY ${M2_HOST_PREFIX}/lib
     DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2
     FILES_MATCHING PATTERN "*.so*" PATTERN "*.dylib*"
-    PATTERN "pkgconfig" EXCLUDE)
+    PATTERN "pkgconfig" EXCLUDE FOLLOW_SYMLINK_CHAIN)
 endif()
 
 # TODO: strip libraries and binaries
