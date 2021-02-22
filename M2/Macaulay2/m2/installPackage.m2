@@ -529,7 +529,10 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 	    -- use distributed example results
 	    else if pkgopts.UseCachedExampleOutput
 	    and not opts.RerunExamples and fileExists outf' and cmphash(outf', inputhash) then (
-		if fileExists errf then removeFile errf; copyFile(outf', outf))
+		if fileExists errf then removeFile errf;
+		copyFile(outf', outf);
+		verboseLog("using cached " | desc)
+		)
 	    -- run and capture example results
 	    else elapsedTime captureExampleOutput(
 		desc, demark_newline inputs, pkg,
