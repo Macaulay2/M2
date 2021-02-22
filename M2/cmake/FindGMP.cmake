@@ -54,9 +54,26 @@ macro(_gmp_check_version)
         ${GMP_MAJOR_VERSION}.${GMP_MINOR_VERSION}.${GMP_PATCHLEVEL_VERSION})
     endif()
   endforeach()
-
-  set(GMP_VERSION
-    ${GMP_MAJOR_VERSION}.${GMP_MINOR_VERSION}.${GMP_PATCHLEVEL_VERSION})
+  #If a direct search fails, use try_compile.
+  #This is for systems that put multiarch headers in other places.
+  if(NOT GMP_VERSION)
+    try_compile(GMP_TEST_SUCCESS ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_LIST_DIR}/gmp_version.c
+      OUTPUT_VARIABLE _gmp_test_compile_output)
+    string(REGEX MATCH
+      "__GNU_MP_VERSION[ \t]+([0-9]+)" _gmp_major_version_match
+      "${_gmp_test_compile_output}")
+    if(_gmp_major_version_match)
+      set(GMP_MAJOR_VERSION "${CMAKE_MATCH_1}")
+      string(REGEX MATCH "__GNU_MP_VERSION_MINOR[ \t]+([0-9]+)"
+        _gmp_minor_version_match "${_gmp_test_compile_output}")
+      set(GMP_MINOR_VERSION "${CMAKE_MATCH_1}")
+      string(REGEX MATCH "__GNU_MP_VERSION_PATCHLEVEL[ \t]+([0-9]+)"
+        _gmp_patchlevel_version_match "${_gmp_test_compile_output}")
+      set(GMP_PATCHLEVEL_VERSION "${CMAKE_MATCH_1}")
+      set(GMP_VERSION
+        ${GMP_MAJOR_VERSION}.${GMP_MINOR_VERSION}.${GMP_PATCHLEVEL_VERSION})
+    endif()
+  endif()
 
   # Check whether found version exists and exceeds the minimum requirement
   if(NOT GMP_VERSION)
