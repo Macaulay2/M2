@@ -955,7 +955,7 @@ Description
  Text
   Get @ofClass List@ of zeros of a polynomial, baby version of @TO
   rationalPoints@. It uses @TO factor@ over finite fields or {\tt QQ}, and for
-  number fields it depends on the package @TO MinimalPrimes@.
+  number fields it depends on the package @TO "MinimalPrimes"@.
  Example
   QQ[x]; p = (x-2)^2 * (x^2-2) * (x^3-x-1); zeros p
   F = toField(QQ[q]/(q^2-2)); zeros_F p
