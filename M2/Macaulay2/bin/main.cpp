@@ -128,7 +128,25 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
   }
   
   } else {
-    std::cout << "Bye world from process " << world_rank
+    bool done = false;
+    while(not done) {
+      MPI_Status status;
+      // Probe for an incoming message from process zero
+      MPI_Probe(0, 0, MPI_COMM_WORLD, &status);
+      // When probe returns, the status object has the size and other
+      // attributes of the incoming message. Get the message size
+      int size;
+      MPI_Get_count(&status, MPI_CHAR, &size);
+      // Allocate a buffer to hold the incoming numbers
+      char* s = (char*) malloc(sizeof(char) * size);
+      // Now receive the message with the allocated buffer
+      MPI_Recv(s, size, MPI_CHAR, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      std::cout << "-- process " << world_rank << " dynamically received " << size << " characters from process 0:\n"
+		<< s << "\n-- (end of message)\n";
+      if (strcmp(s,"end")==0) done=true;
+      free(s);
+    }
+    std::cout << " -- BYE WORLD from process " << world_rank
 	    << " out of " << world_size << " processes" << std::endl;
     MPI_Finalize();
   } 

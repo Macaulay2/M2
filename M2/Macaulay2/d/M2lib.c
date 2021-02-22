@@ -53,6 +53,24 @@ int MPImyProcessNumber() {
   return world_rank;
 }
 
+// blocking send 
+int MPIsendString(M2_string s, int p) {
+  char *t = M2_tocharstar(s);
+  int ret = MPI_Send(t, strlen(t)+1, MPI_CHAR, p, 0 /*tag*/, MPI_COMM_WORLD);
+  GC_FREE(t); 
+  return ret;
+}
+
+// nonblocking send 
+int MPIsendStringNonblocking(M2_string s, int p) {
+  char *t = M2_tocharstar(s);
+  MPI_Request request;
+  int ret = MPI_Isend(t, strlen(t)+1, MPI_CHAR, p, 0 /*tag*/, MPI_COMM_WORLD, &request);
+  // should remember "request" if e.g. need to check the completion 
+  GC_FREE(t); // is it OK to free? (Should be if MPI still refers to this... but does it?)  
+  return ret;
+}
+
 void clean_up(void) {
   extern void close_all_dbms();
   close_all_dbms();
