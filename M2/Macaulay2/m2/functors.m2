@@ -10,22 +10,30 @@ protect subscript
 protect superscript
 
 -----------------------------------------------------------------------------
--- helpers for functors
+-- Local utilities
 -----------------------------------------------------------------------------
-
--- what does this do?
-args := method()
-args(Thing,        Sequence) := (i,    args) -> prepend(i, args)
-args(Thing, Thing, Sequence) := (i, j, args) -> prepend(i, prepend(j, args))
-args(Thing, Thing, Thing)    :=
-args(Thing, Thing)           := identity
 
 wrongDomain := (G, op, X) -> error("no method for ", toString G, toString op, toString X)
 
-applyFunctor = (key, X) -> (
+-----------------------------------------------------------------------------
+-- helpers for functors
+-----------------------------------------------------------------------------
+
+-- flatten the arguments given to a functor
+functorArgs = method()
+functorArgs(Thing,        Sequence) := (i,    args) -> prepend(i, args)
+functorArgs(Thing, Thing, Sequence) := (i, j, args) -> prepend(i, prepend(j, args))
+functorArgs(Thing, Thing, Thing)    :=
+functorArgs(Thing, Thing)           := identity
+
+-- check if a function can be applied to the inputs
+applyFunctor = (key, G, op, X) -> (
+    if (F := lookup key) =!= null then F X else wrongDomain(G, op, X))
+
+-- TODO: retire this
+applyFunctor' = (key, desc, X) -> (
     if (F := lookup key) =!= null then F X
-    -- TODO: expand this error message
-    else error("no method for functor ", toString key#1, " applied to ", X))
+    else error("no method for ", desc, " applied to ", X))
 
 -----------------------------------------------------------------------------
 -- Functor and ScriptedFunctor type declarations
@@ -48,9 +56,11 @@ ScriptedFunctor _ Thing := (G, i) -> if G#?subscript   then G#subscript i   else
 ScriptedFunctor ^ Thing := (G, i) -> if G#?superscript then G#superscript i else wrongDomain(G, symbol ^, i)
 
 -----------------------------------------------------------------------------
+-- printing
 
-net        Functor := lookup(net, Type)
-toString   Functor := lookup(toString, Type)
+-- TODO: improve expression and mathML of functors
+net        Functor := F -> if F.?net      then F.net      else (lookup(     net, Type)) F
+toString   Functor := F -> if F.?toString then F.toString else (lookup(toString, Type)) F
 expression Functor := F -> new Holder from { F }
 precedence Functor := x -> 70
 
@@ -67,7 +77,7 @@ methodOptions Functor := F -> null
 -----------------------------------------------------------------------------
 
 id = new ScriptedFunctor from {
-    subscript => X -> applyFunctor((id, class X), X),
+    subscript => X -> applyFunctor((id, class X), id, symbol_, X),
     }
 
 -----------------------------------------------------------------------------
@@ -78,24 +88,25 @@ id = new ScriptedFunctor from {
   homology = method(Options => {})
 cohomology = method(Options => {Degree => 0}) -- for local cohomology and sheaf cohomology
 
-  homology(ZZ, Sequence) := opts -> (i, X) ->   homology(prepend(i, X), opts)
-cohomology(ZZ, Sequence) := opts -> (i, X) -> cohomology(prepend(i, X), opts)
+-- TODO: is this actually necessary? functorArgs takes care of HH^i(X, Degree => ...)
+  homology(ZZ, Sequence) := opts -> (i, X) ->   homology prepend(i, X)
+cohomology(ZZ, Sequence) := opts -> (i, X) -> cohomology prepend(i, X)
 
 HH = new ScriptedFunctor from {
     subscript => (
 	i -> new ScriptedFunctor from {
 	    -- HH_i^j X -> cohomology(i, j, X)
-	    superscript => j -> new Functor from { argument => X -> cohomology args(i, j, X) },
+	    superscript => j -> new Functor from { argument => X -> cohomology functorArgs(i, j, X) },
 	    -- HH_i X -> homology(i, X)
-	    argument => X -> homology args(i, X)
+	    argument => X -> homology functorArgs(i, X)
 	    }
 	),
     superscript => (
 	j -> new ScriptedFunctor from {
 	    -- HH^j_i X -> homology(j, i, X)
-	    subscript => i -> new Functor from { argument => X -> homology args(j, i, X) },
+	    subscript => i -> new Functor from { argument => X -> homology functorArgs(j, i, X) },
 	    -- HH^j X -> cohomology(j, X)
-	    argument => X -> cohomology args(j, X)
+	    argument => X -> cohomology functorArgs(j, X)
 	    }
 	),
     -- HH X -> homology X

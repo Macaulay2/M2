@@ -240,8 +240,9 @@ cohomology(ZZ,ProjectiveVariety,CoherentSheaf) := Module => opts -> (i,X,F) -> c
 cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
 
 OO = new ScriptedFunctor from {
-    subscript => X -> applyFunctor((symbol _,     OO, class X), (OO, X)),
-    argument  => X -> applyFunctor((symbol SPACE, OO, class X), (OO, X)),
+    -- TODO: this is a weird setup :/
+    subscript => X -> applyFunctor'((symbol _,     OO, class X), "OO_" | net X, (OO, X)),
+    argument  => X -> applyFunctor'((symbol SPACE, OO, class X), "OO " | net X, (OO, X)),
     }
 OO.texMath = ///{\mathcal O}///
 installMethod(symbol _,OO,Variety,(OO,X) -> sheaf_X ring X)

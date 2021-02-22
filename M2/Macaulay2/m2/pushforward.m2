@@ -242,6 +242,18 @@ kernel Matrix := Module => opts -> (cacheValue symbol kernel) ((m) -> (
 	       subquotient( h, if N.?relations then N.relations))))
 kernel RingElement := Module => options -> (m) -> kernel (matrix {{m}},options)
 
+-----------------------------------------------------------------------------
+-- RingMap_*: direct image functor (pushforward)
+-----------------------------------------------------------------------------
+-- TODO: should RingMap set attribute and print that?
+
+RingMap_* := Functor => f -> new Functor from {
+    argument => X -> pushForward functorArgs(f, X),
+    -- printing methods
+    symbol net     => "pushforward by " | net f,
+    symbol texMath => texMath f | texMath symbol_*,
+    }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
