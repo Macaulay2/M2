@@ -37,16 +37,15 @@ newPackage(
     AuxiliaryFiles => true
     )
 
-export { "MaximalIdeal" }
-
 -- These two are defined in m2/localring.m2
-exportFrom_Core { "LocalRing", "localRing" }
+-- TODO: should we keep MaximalIdeal, or replace with I.max?
+exportFrom_Core { "LocalRing", "localRing", "MaximalIdeal" }
 
 importFrom_Core { "printerr", "raw", "rawLiftLocalMatrix" }
 
 export {
     "liftUp",
-    "presentationComplex",
+    "presentationComplex", -- TODO: what was this for?
     "hilbertSamuelFunction",
     -- Legacy
     "setMaxIdeal",
@@ -56,14 +55,24 @@ export {
     "localModulo",
     "localPrune",
     "localResolution",
-    "residueMap",
-    "maxIdeal"
+    "residueMap", -- not documented
+    "maxIdeal" -- not documented
     }
 
 -- << "--------------------------------------------------------------------------------------" << endl;
 -- << "-- The LocalRings package is experimental, but old methods are still available.     --" << endl;
 -- << "-- See the documentation and comments in the package to learn more.                 --" << endl;
 -- << "--------------------------------------------------------------------------------------" << endl;
+
+PolynomialRing _ Ideal := LocalRing => (R, P) -> ( -- assumes P is prime
+    if ring P =!= R then error "expected a prime ideal in the same ring for localization";
+    localRing(R, P))
+
+PolynomialRing _ RingElement := LocalRing => (R, f) -> (
+    if ring f =!= R then error "expected a ring element in the same ring for localization";
+    error "localizing at a hypersurface is not yet implemented")
+
+isWellDefined LocalRing := R -> isPrime R.MaximalIdeal -- cached in the maximal ideal
 
 --==================================== Basic Operations ====================================--
 -- Note: The following methods are extended to local rings in this package:
