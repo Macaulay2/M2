@@ -14,6 +14,7 @@
 #include "NCAlgebras/OverlapTable.hpp"    // for OverlapTable
 #include "NCAlgebras/WordTable.hpp"       // for Overlap, WordTable
 #include "NCAlgebras/SuffixTree.hpp"      // for experimental suffix tree code
+#include "NCAlgebras/FreeAlgebra.hpp"     // for FreeAlgebra
 #include "VectorArithmetic.hpp"           // for VectorArithmetic, CoeffVector, etc
 #include "Polynomial.hpp"                 // for Monom, ConstPolyList, Poly
 #include "newdelete.hpp"                  // for VECTOR, our_new_delete
@@ -26,7 +27,6 @@
 #include <utility>                     // for pair
 #include <vector>                      // for vector
 
-class FreeAlgebra;
 union ring_elem;
 
 // this class contains an NCGB calculation using the F4 algorithm.
@@ -64,14 +64,12 @@ private:
     PreRowType preRowType;
   };
 
-  // we must derive from our_new_delete since CoeffVector
-  // could point to either a VECTOR or a std::vector, depending on the ring.
-  struct Row : public our_new_delete
+  struct Row
   {
     CoeffVector coeffVector;     // vector of coefficients
     Range<int> columnIndices;    // column indices used in the row.  Valid *only* after labelAndSortF4Matrix, 
                                  // as the indices are not known during creation.
-    Range<Word> columnWords;   // monoms used in the row.  Valid only *before* reduction begins, as reduction
+    Range<Word> columnWords;     // monoms used in the row.  Valid only *before* reduction begins, as reduction
                                  // does not update this field
   };
 
@@ -138,6 +136,7 @@ private:
   bool mIsParallel;
  
   // these are pointers to the MemoryBlocks used in creating the various structures.
+  // only used in parallelBuildF4Matrix, which is currently not used.
   std::vector<MemoryBlock*> mMemoryBlocks;
   std::vector<MemoryBlock*> mPreviousMemoryBlocks;
   tbb::queuing_mutex mColumnMutex;
@@ -150,7 +149,14 @@ public:
        bool isParallel
        );
 
-  ~NCF4() { mMonomialSpace.deallocateAll(); mPreviousMonomialSpace.deallocateAll(); }
+  ~NCF4() {
+    for (auto f : mGroebner) {
+      mFreeAlgebra.clear(*f);
+      delete f;
+    }
+    clearRows(mRows);
+    clearRows(mPreviousRows);
+  };
 
   [[nodiscard]] const FreeAlgebra& freeAlgebra() const { return mFreeAlgebra; }
 
@@ -264,6 +270,8 @@ private:
   // discard const qualifier here again because this creates a monom in mMonomialSpace
   std::pair<bool,int> findPreviousReducerPrefix(const Word& w);
   std::pair<bool,int> findPreviousReducerSuffix(const Word& w);
+
+  void clearRows(RowsVector& rowsVector);
 
   void processPreviousF4Matrix();
 };

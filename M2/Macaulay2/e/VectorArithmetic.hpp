@@ -142,12 +142,20 @@ public:
   // }
   void deallocateCoeffVector(CoeffVectorType& coeffs) const
   {
-    delete coeffVector(coeffs);
+    auto& svec = * coeffVector(coeffs);
+    for (auto& e : svec) {
+      mRing->clear(e);
+    }
+    delete svec;
   }
 
   void deallocateCoeffVector(DenseCoeffVectorType& coeffs) const
   {
-    delete denseCoeffVector(coeffs);
+    auto& dvec = * denseCoeffVector(coeffs);
+    for (auto& e : dvec) {
+      mRing->clear(e);
+    }
+    delete dvec;
   }
   
   ////////////////////////

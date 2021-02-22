@@ -924,12 +924,19 @@ gbTrace = 2
 kk = QQ
 kk = ZZ/32003
 R = kk<|x,y,z,w|>
-I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x}
+I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x};
 -- Should be 10 gens, 108 rows in last matrix, 35, 61 new gb elts
-I = ideal I_*; elapsedTime Igb = NCGB(I, 11, Strategy=> "Naive");
+-- I = ideal I_*; elapsedTime Igb = NCGB(I, 11, Strategy=> "Naive");
+-- we are hemorrhaging memory...
 while (true) do (
-    I = ideal I_*; elapsedTime Igb = NCGB(I, 6, Strategy=> "F4Parallel");
-    assert(#(flatten entries Igb) == 18)
+    I = ideal I_*;
+    elapsedTime Igb = NCGB(I, 10, Strategy=> "F4Parallel");
+    assert(#(flatten entries Igb) == 72);
+    Igb = null;
+    collectGarbage();
+    collectGarbage();
+    collectGarbage();
+    collectGarbage();    
 )
 
 gbTrace = 50; I = ideal I_*; elapsedTime Igb = NCGB(I, 3, Strategy=> "F4Parallel");
@@ -951,7 +958,7 @@ I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy => "F4"); -- (with autored
                                               -- 102s after lazy 2nd criterion change.
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy => "F4Parallel"); -- 61s 
 I = ideal I_*; elapsedTime Igb = NCGB(I, 15, Strategy => "F4"); -- 381 sec (354s after VA changes) 7.37gb
-I = ideal I_*; elapsedTime Igb = NCGB(I, 15, Strategy => "F4Parallel"); -- 220 sec (195s after VA changes) 8.21gb
+I = ideal I_*; elapsedTime Igb = NCGB(I, 15, Strategy => "F4Parallel"); -- 220 sec (195s after VA changes) 8.21gb (121s on x86 M1! 103s native!)
 I = ideal I_*; elapsedTime Igb = NCGB(I, 16, Strategy => "F4"); --
 I = ideal I_*; elapsedTime Igb = NCGB(I, 16, Strategy => "F4Parallel"); -- 
 

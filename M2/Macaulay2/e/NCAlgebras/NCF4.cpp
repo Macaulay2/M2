@@ -163,7 +163,7 @@ void NCF4::processPreviousF4Matrix()
   } 
   
   // copy the finished rows and columns into the holding areas
-  mPreviousRows.clear();
+  clearRows(mPreviousRows);
   mPreviousColumns.clear();
   mPreviousColumnMonomials.clear();
   mPreviousMonomialSpace.deallocateAll();
@@ -1172,6 +1172,13 @@ void NCF4::displayFullF4Matrix(std::ostream& o) const
         }
       o << std::endl;
     }
+}
+
+void NCF4::clearRows(RowsVector& rowsVector)
+{
+  for (auto r : rowsVector)
+    mVectorArithmetic->deallocateCoeffVector(r.coeffVector);
+  rowsVector.clear();
 }
 
 // Local Variables:

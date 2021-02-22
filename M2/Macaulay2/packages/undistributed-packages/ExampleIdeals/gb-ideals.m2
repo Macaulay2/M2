@@ -70,12 +70,14 @@ J1
 
   -- 28 Dec 2020
   debug Core
+  setRandomSeed "342347827"
   kk = ZZp(101, Strategy => "Old")
+  kk = ZZp(101, Strategy => "Aring")
   R1 = kk[a..g, MonomialSize=>8];
   J1 = ideal random(R1^1, R1^{-5,-5,-5,-6});
 
+  gbTrace=2
   elapsedTime gb(J1, Algorithm=>LinearAlgebra); -- 23 sec -- 18 sec MES MBP 1/24/21
-  gbTrace=1
   J1 = ideal J1_*;
   elapsedTime groebnerBasis(J1, Strategy => "F4"); -- 12.5 sec (5.2 sec, using TBB)
   elapsedTime groebnerBasis(J1, Strategy => "F4", "MGBOptions" => {"Threads" => 1}); -- 12.5 sec
@@ -106,15 +108,19 @@ J1
 *-
 ----------------------------------------------
 --what was this one?
+restart
 kk = ZZ/32003
+kk = QQ
+debug Core
+kk = ZZp(32003, Strategy => "Aring")
 R1 = kk[vars(0..39),MonomialSize=>8];
 J1 = ideal"b2de+bd2f+a2dg+abdh+ad2i+b2cj+bc2k+bcdl+a2cm+abcn+ac2o+acdp,
        b2dq+bd2r+a2ds+abdt+ad2u+b2cv+bc2w+bcdx+a2cy+abcz+ac2A+acdB,
        b2dC+bd2D+a2dE+abdF+ad2G+b2cH+bc2I+bcdJ+a2cK+abcL+ac2M+acdN";
 J1
 -*
-  gbTrace=1
-  time gb(J1, Algorithm=>LinearAlgebra); -- 6.78 sec
+  gbTrace=2
+  time gb(J1, Algorithm=>LinearAlgebra); -- 6.78 sec -- uhoh
   time gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- 2.03 sec
   time gb(J1, Algorithm=>Homogeneous2, Strategy=>LongPolynomial); -- 2.3 sec
   time gb(J1, MaxReductionCount=>3000); -- 62.7 sec
