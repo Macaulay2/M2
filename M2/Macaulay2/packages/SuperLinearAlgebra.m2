@@ -13,7 +13,7 @@ newPackage(
         }
     }, 
     Headline => "berezinian and supertrace of a supermatrix", 
-    DebuggingMode => true
+    DebuggingMode => false
 )
 
 --------------------
