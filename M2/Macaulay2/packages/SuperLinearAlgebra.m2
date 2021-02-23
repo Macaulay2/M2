@@ -71,10 +71,8 @@ superMatrixGenerator (Matrix, Matrix, Matrix, Matrix) := (M1, M2, M3, M4) -> (
     nr2 := numgens target M3;
     ns1 := numgens source M1;
     ns2 := numgens source M2;
-    T1 := symbol T1;
-    T2 := symbol T2;
-    T1 = M1 | M2;
-    T2 = M3 | M4;
+    T1 := M1 | M2;
+    T2 := M3 | M4;
     new SuperMatrix from {
         supermatrix => T1 || T2, 
         targetM1 => nr1, 
@@ -104,10 +102,8 @@ assert(G.sourceM2 == 2)
 
 parity = method();
 parity (RingElement, Ring, List) := (f, R, oddNumberList) -> (
-    e := symbol e;
-    e = exponents f;
-    l := symbol l;
-    l = {};
+    e := exponents f;
+    l := {};
     for i from 0 to (#gens R-1) do (
         for j from 0 to #oddNumberList-1 do (
             if R_(i) == oddNumberList_(j) then (
@@ -115,11 +111,8 @@ parity (RingElement, Ring, List) := (f, R, oddNumberList) -> (
             )
         )
     );
-    d := symbol d;
-    countEvenNumber := symbol countEvenNumber; 
-    
-    d = 0; 
-    countEvenNumber = 0;
+    d := 0;
+    countEvenNumber := 0;
     for i from 0 to (#e-1) do (
         if (d%2) == 0 then
              countEvenNumber = countEvenNumber+1;
@@ -168,34 +161,24 @@ assert(parity(1+2.5*ii, R, a) == 0)
 
 superMatrixParity = method();
 superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
-    m1 := symbol m1; m1 = 0;
-    m2 := symbol m2;
-    m2 = 0;
-    m3 := symbol m3;
-    m3 = 0;
-    m4 := symbol m4;
-    m4 = 0;
-    r1 := symbol r1;
-    r1=SM.targetM1;
-    r2 := symbol r2;
-    r2=SM.targetM3;
-    c1 := symbol c1;
-    c1=SM.sourceM1;
-    c2 := symbol c2;
-    c2=SM.sourceM2;
+    m1 := 0;
+    m2 := 0;
+    m3 := 0;
+    m4 := 0;
+    r1 := SM.targetM1;
+    r2 := SM.targetM3;
+    c1 := SM.sourceM1;
+    c2 := SM.sourceM2;
     Minor11 := submatrix(SM.supermatrix, {0..(r1-1)}, {0..(c1-1)});
     Minor22 := submatrix(SM.supermatrix, {r1..(r1+r2-1)}, {c1..(c1+c2-1)});
     Minor21 := submatrix(SM.supermatrix, {r1..(r1+r2-1)}, {0..(c1-1)});
     Minor12 := submatrix(SM.supermatrix, {0..(r1-1)}, {c1..(c1+c2-1)});
     if isSkewCommutative(R1) == true then (
-        fij := symbol fij;
-        count1 :=  symbol count1;
-        count1=0;
-        count11 := symbol count11;
-        count11=0;
+        count1 := 0;
+        count11 := 0;
         for i from 0 to (r1-1) do 
             for j from 0 to (c1-1) do (
-                fij = Minor11_(i, j);
+                fij := Minor11_(i, j);
                 if fij == 0 then count1 = count1 
                 else if (parity(fij, R1, a) == -1) then (count11 = count11+1) 
                 else if (parity(fij, R1, a) == 1) then count1 = count1+1
@@ -204,10 +187,8 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
         if count11=!=0 then (return-1) 
         else if count1 == 0 then m1= 0 
         else m1=1;    
-        count2 := symbol count2;
-        count2 = 0;
-        count22 := symbol count22;
-        count22 = 0;
+        count2 := 0;
+        count22 := 0;
         for i from 0 to (r1-1) do 
             for j from 0 to (c2-1) do (
                 fij = Minor12_(i, j);
@@ -219,40 +200,33 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
         if count22=!=0 then (return-1) 
         else if count2 == 0 then m2=0 
         else m2=1;
-        count3 := symbol count3;
-        count3 = 0;
-        count33 := symbol count33;
-        count33 = 0;
-        cout33 :=  symbol cout33;
+        count3 := 0;
+        count33 := 0;
         for i from 0 to (r2-1) do 
             for j from 0 to (c1-1) do (
                 fij = Minor21_(i, j);
                 if fij == 0 then count3 = count3 
-                else if (parity(fij, R1, a) == -1) then (cout33=count33+1)
+                else if (parity(fij, R1, a) == -1) then (cout33 := count33+1)
                 else if (parity(fij, R1, a) == 1)then count3 = count3+1
                 else if (parity(fij, R1, a) == 0) then count3 = count3
             );
         if count33=!=0 then (return-1) 
         else if count3 == 0 then m3=0 
         else m3=1;
-        count4 := symbol count4;
-        count4 = 0;
-        count44 := symbol count44;
-        count44 = 0;
-        cout44 :=  symbol cout44;
+        count4 := 0;
+        count44 := 0;
         for i from 0 to (r2-1) do 
             for j from 0 to (c2-1) do (
                 fij = Minor22_(i, j);
                 if fij == 0 then count4 = count4 
-                else if (parity(fij, R1, a) == -1) then (cout44=count44+1) 
+                else if (parity(fij, R1, a) == -1) then (cout44 := count44+1) 
                 else if (parity(fij, R1, a) == 1)then count4 = count4+1
                 else if (parity(fij, R1, a) == 0) then count4 = count4
             );
         if count44=!=0 then (return-1) 
         else if count4 == 0 then m4=0 
         else m4=1;
-        R2 := symbol R2;
-        R2 = coefficientRing R1;
+        R2 := coefficientRing R1;
         if (isSkewCommutative(R2) == true) then (
             if (m1 == 0 and m4 == 0 and m2 == 1 and m3 == 1) then (return 0)
             else if (m1 == 1 and m4 == 1 and m2 == 0 and m3 == 0) then (return 1) 
@@ -313,8 +287,7 @@ superTrace (SuperMatrix, Ring, List)  := (SM, R1, a) -> (
     Minor11 := submatrix(SM.supermatrix, {0..(SM.targetM1-1)}, {0..(SM.sourceM1-1)});
     Minor22 := submatrix(SM.supermatrix, {SM.targetM1..(SM.targetM1+SM.targetM3-1)}, {SM.sourceM1..(SM.sourceM1+SM.sourceM2-1)});
     if (superMatrixParity(SM, R1, a)=!=-1) then (
-    par := symbol par;
-        par = superMatrixParity(SM, R1, a);
+        par := superMatrixParity(SM, R1, a);
         trace Minor11-(-1)^par*trace Minor22
     )
     else error "SuperMatrix is not superhomogeneous"
