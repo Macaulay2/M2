@@ -173,12 +173,13 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
     Minor22 := submatrix(SM.supermatrix, {r1..(r1+r2-1)}, {c1..(c1+c2-1)});
     Minor21 := submatrix(SM.supermatrix, {r1..(r1+r2-1)}, {0..(c1-1)});
     Minor12 := submatrix(SM.supermatrix, {0..(r1-1)}, {c1..(c1+c2-1)});
+    fij := symbol fij;
     if isSkewCommutative(R1) == true then (
         count1 := 0;
         count11 := 0;
         for i from 0 to (r1-1) do 
             for j from 0 to (c1-1) do (
-                fij := Minor11_(i, j);
+                fij = Minor11_(i, j);
                 if fij == 0 then count1 = count1 
                 else if (parity(fij, R1, a) == -1) then (count11 = count11+1) 
                 else if (parity(fij, R1, a) == 1) then count1 = count1+1
