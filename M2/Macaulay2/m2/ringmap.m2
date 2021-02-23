@@ -8,28 +8,46 @@ needs "modules2.m2"
 needs "mutablemat.m2"
 
 RingMap = new Type of HashTable
-
 RingMap.synonym = "ring map"
+globalAssignment RingMap
+
 matrix RingMap := opts -> f -> f.matrix
 source RingMap := f -> f.source
 target RingMap := f -> f.target
 raw RingMap := f -> f.RawRingMap
 
-expression RingMap := f -> (expression map) (expression (target f, source f, first entries matrix f))
-toString RingMap := f -> toString expression f
-net RingMap := f -> net expression f
-texMath RingMap := x -> texMath expression x
+-----------------------------------------------------------------------------
+-- printing (compare with Monoid)
 
-describe RingMap := f -> Describe expression f
-toExternalString RingMap := f -> toString describe f
+expressionRingMap := f -> (expression map) (expression(target f, source f, first entries matrix f))
+
+describe   RingMap := f -> Describe expressionRingMap f
+expression RingMap := f -> (
+    if hasAttribute(f, ReverseDictionary)
+    then expression getAttribute(f, ReverseDictionary)
+    else new Parenthesize from { expressionRingMap f })
+
+net      RingMap :=      net @@ expression
+texMath  RingMap :=  texMath @@ expression
+toString RingMap := toString @@ expression
 -- should do something about the degree map here
+toExternalString RingMap := toString @@ describe
 
-degmap0 := n -> ( d := toList ( n : 0 ); e -> d )
+RingMap#{Standard,AfterPrint} =
+RingMap#{Standard,AfterNoPrint} = f -> (
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : "; -- standard template
+    -- TODO: is there an alternative that isn't grayed out as comments by syntax highlighters?
+    << class f << " " << target f << " <--- " << source f;
+    << endl;
+    )
+
+-----------------------------------------------------------------------------
 
 map(RingFamily,Thing,Thing) := RingMap => opts -> (R,S,m) -> map(default R,S,m,opts)
 map(Thing,RingFamily,Thing) := RingMap => opts -> (R,S,m) -> map(R,default S,m,opts)
 
 workable = f -> try (f(); true) else false
+degmap0 := n -> ( d := toList ( n : 0 ); e -> d )
 
 map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
      if not isFreeModule target m or not isFreeModule source m
@@ -135,12 +153,6 @@ map(Ring,Matrix) := RingMap => opts -> (S,m) -> map(ring m,S,m)
 map(Ring,Ring) := RingMap => opts -> (S,R) -> map(S,R,{},opts)
 
 Ring#id = (R) -> map(R,R,vars R)
-
-RingMap#{Standard,AfterPrint} = RingMap#{Standard,AfterNoPrint} = f -> (
-     << endl;				  -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber << " : " << class f;
-     << " " << target f << " <--- " << source f << endl;
-     )
 
 RingMap RingElement := RingElement => fff := (p,m) -> (
      R := source p;
