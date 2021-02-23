@@ -40,6 +40,8 @@ round ZZ := identity
 lift(ZZ,ZZ) := opts -> (i,ZZ) -> i
 promote(ZZ,ZZ) := (i,ZZ) -> i
 ZZ.random = opts -> ZZ -> rawRandomZZ opts.Height
+texMath ZZ := toString
+
 gcd = method(Binary => true)
 gcd List := x -> gcd toSequence x
 installMethod(gcd, () -> 0)

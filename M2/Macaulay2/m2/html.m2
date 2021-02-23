@@ -157,6 +157,7 @@ html TO2  := x -> (
 ----------------------------------------------------------------------------
 
 html Thing := htmlLiteral @@ tex -- by default, we use tex (as opposed to actual html)
+html Nothing := x -> ""
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 html Net := n -> concatenate("<pre style=\"display:inline-table;text-align:left;vertical-align:",

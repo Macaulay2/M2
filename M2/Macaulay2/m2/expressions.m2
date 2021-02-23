@@ -1,15 +1,9 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 -- rewritten by P. Zinn-Justin 2018
 
-needs "files.m2"
-needs "fold.m2"
-needs "hypertext.m2"
 needs "max.m2"
 needs "methods.m2"
 needs "nets.m2"
-needs "remember.m2"
-needs "structure.m2"
-needs "system.m2"
 
 Constant = new Type of BasicList
 globalAssignment Constant
@@ -143,10 +137,6 @@ toString'(Function, Expression) := (fmt,v) -> (
      if # v === 0 then op#EmptyName
      else demark(op#operator,names)
      )
-
---texMath Holder2 := v -> "{" | texMath v#0 | "}"
---html Holder2 := v -> html v#0
---net Holder2 := v -> net v#0
 
 texMath Holder := v -> texMath v#0
 html Holder := v -> html v#0
@@ -578,7 +568,8 @@ toString'(Function, Table) := (fmt,m) -> concatenate(
 
 spacedOps := set { symbol =>, symbol and, symbol or, symbol ++ }
 
-keywordTexMath := new HashTable from { -- both unary and binary keywords
+-- TODO: move this to latex.m2
+keywordTexMath = new HashTable from { -- both unary and binary keywords
     symbol |- => "\\vdash ",
     symbol .. => "\\,{.}{.}\\, ",
     symbol ..< => "\\,{.}{.}{<}\\, ",
@@ -1172,24 +1163,12 @@ texMath SparseMonomialVectorExpression := v -> (
 	  hold concatenate("<",toString i,">"))
      )
 
-texMath VerticalList := s -> concatenate(
-    "\\left\\{\\begin{aligned}",
-    between("\\\\",apply(toList s,x->"&"|texMath x))
-    ,"\\end{aligned}\\right\\}"
-    )
-
-texMath NumberedVerticalList := s -> concatenate(
-    "\\left\\{\\begin{aligned}",
-    between("\\\\",apply(#s,i->i|".\\quad&"|texMath s#i))
-    ,"\\end{aligned}\\right\\}"
-    )
-
 texMath Table := m -> (
     if m#?0 then concatenate(
 	"{\\begin{array}{", #m#0: "c", "}", newline,
 	apply(m, row -> (between("&",apply(row,texMath)), ///\\///|newline)),
 	"\\end{array}}")
-)
+    )
 
 texMath MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
@@ -1233,54 +1212,8 @@ texMath VectorExpression := v -> (
 	)
     )
 
-ctr := 0
-showTex = method()
-showTex Thing := x -> (
-    dir := temporaryFileName();
-    makeDirectory dir;
-    f := dir | "/show";
-    f | ".tex"
-    << ///\documentclass{article}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\begin{document}
-///
-     << tex x <<
-///
-\end{document}
-///
-     << close;
-     if 0 =!= chkrun("set -x ; cd "|dir|"; latex " | f)
-     then error ("latex failed on input file "|f|".tex");
-     if 0 =!= chkrun("(xdvi "|f|".dvi && rm -f "|f|".tex "|f|".dvi "|f|".log "|f|".aux)&")
-     then error ("xdvi failed on input file "|f|".tex");
-     )
-show TEX := showTex
-
 -----------------------------------------------------------------------------
 print = x -> (<< net x << endl;) -- !! one may want to modify this depending on the type of output !!
------------------------------------------------------------------------------
-texMath RR := x -> if not isANumber x then texMath toString x else if isInfinite x then if x>0 then texMath infinity else texMath (-infinity) else "{"|format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,"}\\cdot 10^{",x)|"}"
-texMath ZZ := toString
-tex Thing := x -> concatenate("$",texMath x,"$")
-texMath Thing := x -> texMath net x -- if we're desperate (in particular, for raw objects)
-
-bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
-suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};
-suffixesRegExp := "\\w("|demark("|",suffixes)|")$";
-texVariable := x -> (
-    if x === "" then return "";
-    xx := separate("\\$",x); if #xx > 1 then return concatenate between("{\\char36}",texVariable\xx); -- avoid the use of "$" in tex output
-    if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb "|x#0|"}";
-    if last x === "'" then return texVariable substring(x,0,#x-1) | "'";
-    r := regex(suffixesRegExp,x); if r =!= null then (
-	r = r#1;
-	return "\\"|substring(r,x)|"{"|texVariable substring(x,0,r#0)|"}"
-	);
-    if #x === 1 or regex("[^[:alnum:]]",x) =!= null then x else "\\textit{"|x|"}"
-    )
-texMath Symbol :=  x -> if keywordTexMath#?x then keywordTexMath#x else texVariable toString x
-
 -----------------------------------------------------------------------------
 
 File << Thing := File => (o,x) -> printString(o,net x)
@@ -1367,45 +1300,6 @@ toString Set := toString @@ expression
 net Set := net @@ expression
 texMath Set := x -> texMath expression x
 
--- some texMath that got stranded
-texMath BasicList := s -> concatenate(
-    (opendelim,closedelim) :=
-    if instance(s,Array) then ("[","]")
-    else if instance(s,Sequence) then ("(",")")
-    else if instance(s,AngleBarList) then ("<",">")
-    else ("\\{","\\}");
-    if not instance(s,VisibleList) then texMath class s,
-    "\\left",
-    opendelim,
-    between(",\\,",apply(toList s,texMath)),
-    "\\right",
-    closedelim
-    )
-texMath HashTable := x -> if x.?texMath then x.texMath else
-if hasAttribute(x,ReverseDictionary) then texMath toString getAttribute(x,ReverseDictionary) else
-concatenate flatten (
-    texMath class x,
-    "\\left\\{",
-    if mutable x then if #x>0 then {"\\ldots",texMath(#x),"\\ldots"} else "" else
-    between(",\\,", apply(sortByName pairs x,(k,v) -> texMath k | "\\,\\Rightarrow\\," | texMath v)),
-    "\\right\\}"
-    )
-texMath Function := x -> texMath toString x
-texMath MutableList := x -> concatenate (
-    texMath class x,
-    "\\left\\{",
-    if #x > 0 then "\\ldots "|#x|"\\ldots ",
-    ,"\\right\\}"
-    )
-
--- strings -- uses texLiteral from latex.m2
-texMath String := s -> "\\texttt{" | texLiteral s | "}"
-texMath Net := n -> concatenate(
-    "\\begin{array}{l}",
-    between(///\\/// | newline,apply(unstack n,texMath)),
-    "\\end{array}"
-    )
-
 -- shortening expressions
 Dots = new Type of Symbol
 texMath Dots := x -> "\\" | simpleToString x -- note that \vdots has bad spacing in ordinary LaTeX
@@ -1416,6 +1310,7 @@ vdots=new Dots from symbol vdots
 ldots=new Dots from symbol ldots
 
 shortLength := 8
+-- used in chaincomplexes.m2
 short = method(Dispatch => Thing, TypicalValue => Expression)
 short Thing := short @@ expression
 short Expression := identity
