@@ -676,7 +676,9 @@ AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom
 # The list PROGLIST is the list of programs and libraries for them that are distributed with M2.
 #     Initially, we offer no option for not compiling some of them.
 
-AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack givaro ")
+# AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack givaro ")
+AC_SUBST(SUBLIST, " memtailor mathic fflas_ffpack givaro ")
+
 # The list SUBLIST is the list of submodules that might be used and linked into M2.
 
 # These three lists reflect dependencies, with prerequisites listed first, including the following dependencies:
@@ -1235,15 +1237,15 @@ then AC_LANG(C++)
 fi
 test $BUILD_mathic = yes && BUILTLIBS="-lmathic $BUILTLIBS"
 
-if test $BUILD_mathicgb = no
-then AC_LANG(C++)
-     SAVE_CXXFLAGS="$CXXFLAGS"
-     CXXFLAGS="$CXXFLAGS"
-     AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes)
-     AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes)
-     CXXFLAGS="$SAVE_CXXFLAGS"
-fi
-test $BUILD_mathicgb = yes && BUILTLIBS="-lmathicgb $BUILTLIBS"
+dnl if test $BUILD_mathicgb = no
+dnl then AC_LANG(C++)
+dnl      SAVE_CXXFLAGS="$CXXFLAGS"
+dnl      CXXFLAGS="$CXXFLAGS"
+dnl      AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes)
+dnl      AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes)
+dnl      CXXFLAGS="$SAVE_CXXFLAGS"
+dnl fi
+dnl test $BUILD_mathicgb = yes && BUILTLIBS="-lmathicgb $BUILTLIBS"
 
 if test $BUILD_gtest = no
 then

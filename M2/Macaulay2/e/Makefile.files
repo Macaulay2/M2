@@ -41,6 +41,7 @@ INTERFACE = \
 	mgb-f4/F4MatrixBuilder \
 	mgb-f4/F4MatrixBuilder2 \
 	mgb-f4/F4MatrixProjection \
+	mgb-f4/F4MatrixReducer \
 	mgb-f4/F4ProtoMatrix \
 	mgb-f4/F4Reducer \
 	mgb-f4/Reducer \
@@ -219,7 +220,7 @@ COMMANDS = \
 	matrix-symm \
 	matrix-sort \
 	ring-vecs \
-        res-a2-gb \
+	res-a2-gb \
 	engine \
 	interface/aring \
 	interface/cra \
