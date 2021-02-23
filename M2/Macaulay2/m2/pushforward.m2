@@ -245,13 +245,14 @@ kernel RingElement := Module => options -> (m) -> kernel (matrix {{m}},options)
 -----------------------------------------------------------------------------
 -- RingMap_*: direct image functor (pushforward)
 -----------------------------------------------------------------------------
--- TODO: should RingMap set attribute and print that?
 
 RingMap_* := Functor => f -> new Functor from {
     argument => X -> pushForward functorArgs(f, X),
     -- printing methods
-    symbol net     => "pushforward by " | net f,
+    -- TODO: remove the extra space, and figure out if value can work
+    symbol expression => (expression f) (expression symbol_*),
     symbol texMath => texMath f | texMath symbol_*,
+    symbol net => "pushforward functor " | toString f | toString symbol_*,
     }
 
 -- Local Variables:

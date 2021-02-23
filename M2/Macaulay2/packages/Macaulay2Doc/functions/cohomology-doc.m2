@@ -2,7 +2,6 @@
 --- author(s): Sorin Popescu
 --- notes: 
 
-undocumented {(cohomology,ZZ,Sequence)}
 -*
 -- this is the old version
 document {

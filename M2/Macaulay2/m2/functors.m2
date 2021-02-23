@@ -56,16 +56,18 @@ ScriptedFunctor _ Thing := (G, i) -> if G#?subscript   then G#subscript i   else
 ScriptedFunctor ^ Thing := (G, i) -> if G#?superscript then G#superscript i else wrongDomain(G, symbol ^, i)
 
 -----------------------------------------------------------------------------
--- printing
+-- printing and introspection
 
--- TODO: improve expression and mathML of functors
-net        Functor := F -> if F.?net      then F.net      else (lookup(     net, Type)) F
-toString   Functor := F -> if F.?toString then F.toString else (lookup(toString, Type)) F
-expression Functor := F -> new Holder from { F }
+expression Functor := F -> if F.?expression then F.expression else (lookup(expression, Type)) F
+describe   Functor := F -> if F.?describe   then F.describe   else (lookup(describe,   Type)) F
+net        Functor := F -> if F.?net        then F.net        else (lookup(net,        Type)) F
+toString   Functor := F -> if F.?toString   then F.toString   else (lookup(toString,   Type)) F
+toExternalString Functor := toString @@ describe
 precedence Functor := x -> 70
 
 -- TODO: use codeHelpers to get code HH to work
 -- TODO: get methods OO to work
+-- TODO: improve this for RingMap_*
 methods' := lookup(methods, Symbol)
 methods Functor := F -> (
     if F === HH then join(methods homology, methods cohomology) else methods' F)
@@ -87,10 +89,6 @@ id = new ScriptedFunctor from {
 -- TODO: change to Options => true?
   homology = method(Options => {})
 cohomology = method(Options => {Degree => 0}) -- for local cohomology and sheaf cohomology
-
--- TODO: is this actually necessary? functorArgs takes care of HH^i(X, Degree => ...)
-  homology(ZZ, Sequence) := opts -> (i, X) ->   homology prepend(i, X)
-cohomology(ZZ, Sequence) := opts -> (i, X) -> cohomology prepend(i, X)
 
 HH = new ScriptedFunctor from {
     subscript => (
