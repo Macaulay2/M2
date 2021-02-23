@@ -139,9 +139,9 @@ parity (RingElement, Ring, List) := (f, R, oddNumberList) -> (
     
     if (d%2) == 0 then countEvenNumber = countEvenNumber+1; 
 
-    if (countEvenNumber-1) == #e then 0 
-    else if (countEvenNumber-1) == 0 then 1 
-    else-1
+    if countEvenNumber == #e+1 then 0 
+    else if countEvenNumber == 1 then 1 
+    else -1
 ) 
 
 parity (Number, Ring, List) := (f, R, oddNumberList) -> (
@@ -156,7 +156,7 @@ a = {z_0, z_1} ;
 g = x_1*x_2*x_3+4;
 f = x_1*x_2*x_3+x_1*z_0+z_1*z_0-4*x_2*z_1*z_0+4;
 h = z_0+z_0*x_0+z_1;
-assert(parity(f, R, a) ==-1)
+assert(parity(f, R, a) == -1)
 assert(parity(g, R, a) == 0)
 assert(parity(h, R, a) == 1)
 assert(parity(1+2.5*ii, R, a) == 0)
@@ -197,7 +197,7 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
             for j from 0 to (c1-1) do (
                 fij = Minor11_(i, j);
                 if fij == 0 then count1 = count1 
-                else if (parity(fij, R1, a) ==-1) then (count11 = count11 +1) 
+                else if (parity(fij, R1, a) == -1) then (count11 = count11+1) 
                 else if (parity(fij, R1, a) == 1) then count1 = count1+1
                 else if (parity(fij, R1, a) == 0) then count1 = count1
             );
@@ -212,7 +212,7 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
             for j from 0 to (c2-1) do (
                 fij = Minor12_(i, j);
                 if fij == 0 then count2 = count2 
-                else if (parity(fij, R1, a) ==-1) then (count22 = count22+1) 
+                else if (parity(fij, R1, a) == -1) then (count22 = count22+1) 
                 else if (parity(fij, R1, a) == 1)then count2 = count2+1
                 else if (parity(fij, R1, a) == 0) then count2 = count2
             );
@@ -228,7 +228,7 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
             for j from 0 to (c1-1) do (
                 fij = Minor21_(i, j);
                 if fij == 0 then count3 = count3 
-                else if (parity(fij, R1, a) ==-1) then (cout33=count33+1)
+                else if (parity(fij, R1, a) == -1) then (cout33=count33+1)
                 else if (parity(fij, R1, a) == 1)then count3 = count3+1
                 else if (parity(fij, R1, a) == 0) then count3 = count3
             );
@@ -244,7 +244,7 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
             for j from 0 to (c2-1) do (
                 fij = Minor22_(i, j);
                 if fij == 0 then count4 = count4 
-                else if (parity(fij, R1, a) ==-1) then (cout44=count44+1) 
+                else if (parity(fij, R1, a) == -1) then (cout44=count44+1) 
                 else if (parity(fij, R1, a) == 1)then count4 = count4+1
                 else if (parity(fij, R1, a) == 0) then count4 = count4
             );
@@ -276,7 +276,7 @@ D2 = matrix{{z_0, z_1}, {x_0*z_0, x_1*z_1}};
 D3 = matrix{{z_2*x_3, z_1}, {z_0, z_2*x_2}};
 D4 = matrix{{x_1, x_3}, {x_0, x_2+x_3}};
 SD = superMatrixGenerator(D1, D2, D3, D4);
-assert(superMatrixParity(SD, R, {z_0, z_1, z_2}) ==-1)
+assert(superMatrixParity(SD, R, {z_0, z_1, z_2}) == -1)
 
 P1 = matrix{{0, 0}, {0, 0}};
 P2 = matrix{{x_0, x_1}, {x_2, x_3}};
@@ -301,7 +301,7 @@ E2 = matrix{{e_0, e_1}, {n_0+e_0, n_1*e_1}};
 E3 = matrix{{e_3*n_3, e_1}, {e_0, e_2*n_2}};
 E4 = matrix{{n_1, n_3}, {n_0, n_2+n_3}};
 G = superMatrixGenerator(E1, E2, E3, E4);
-assert(superMatrixParity(G, T, {e_0, e_1, e_2, e_3}) ==-1)
+assert(superMatrixParity(G, T, {e_0, e_1, e_2, e_3}) == -1)
 ///
 
 --------------------
@@ -425,8 +425,8 @@ M33 = sub(M3, QQ);
 P2 = M44-M33*inverse(M11)*M22;
 P1 = M11-M22*inverse(M44)*M33;
 N11 = inverse(P1);
-N12 =-inverse(M44)*M33*inverse(P1);
-N21 =-inverse(M11)*M22*inverse(P2);
+N12 = -inverse(M44)*M33*inverse(P1);
+N21 = -inverse(M11)*M22*inverse(P2);
 N22 = inverse(P2);
 NM1 = N11 | N21;
 NM2 = N12 | N22;
