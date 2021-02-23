@@ -243,7 +243,7 @@ localLengthHook Module := ZZ => opts -> M -> (
 --    if not isFiniteLength M   then return -1;
     if debugLevel >= 1        then  << "isFiniteLength is not implemented" << endl;
     sum for i from 0 to opts.Limit list (
-        if debugLevel >= 1    then  << i << endl;
+        if debugLevel >= 2    then  << "step: " << i << endl;
         if opts.Limit == i    then (<< "maximum limit for computing length is reached" << endl; break);
         if opts.Strategy === Hilbert
         then n := hilbertSamuelFunction(M, i) -- really should be M/mM, but by Nakayama it's the same
@@ -253,6 +253,7 @@ localLengthHook Module := ZZ => opts -> M -> (
             M = m * M;
             n
             );
+        if debugLevel >= 1    then  << "result: " << n << endl;
         if n == 0 then break else n
         )
     )
@@ -439,3 +440,83 @@ beginDocumentation()
 load ("./LocalRings/doc.m2")
 
 end--
+
+--==================================== Under Development ====================================--
+--TODO: implement a prime filtration
+
+--TODO: localRingQuot
+-- Returns the local quotient ring RP/I
+-- TODO should we insert this as a hook in (quotient, Ideal)?
+localRingQuot = (RP,I) -> I.cache.QuotientRing = (
+    if ring I =!= RP then error "expected ideal of the same ring";
+    if I.cache.?QuotientRing then return I.cache.QuotientRing;
+    if I == 0 then return RP;
+    -- TODO eg: ZZ[x,y]/ideal(2)
+    R := RP;
+    m := max RP;
+    -- TODO isWellDefined should do the following:
+    if not isSubset(I, m) then return 0; -- FIXME zero ring, not element
+    while instance(R, LocalRing) do R = last R.baseRings;
+    J := liftUp(I, R);
+    Q := R / J;
+    n := promote(liftUp(m, R), Q);
+    QP := localRing(Q, n)
+    )
+
+LocalRing / Ideal := LocalRing => (RP,I) -> (
+    if ring I === RP then localRingQuot(RP,I) else localRingQuot(RP,promote(I, RP)))
+
+/// -- FIXME -- See examples.m2 Eisenbud 12.2
+  restart
+  needsPackage "LocalRings"
+  R =ZZ/32003[x,y,z,w]
+  P =ideal"x,y,w"    -- z -> unit
+  RP=localRing(R, P)
+  QP=RP/ideal"x"     -- x -> 0
+
+  rawQuotientRing(raw RP, raw generators gb generators ideal x) -- (RP/J)
+  use R
+  Q = R/ideal x
+  rawLocalRing(raw Q, raw gb ideal gens Q) -- (R/I)_Q
+
+  assert(x+y+z === y+z)
+  assert(y/(z+x) + x/z + w/(z+y) === y/z + w/(z+y))
+  assert(ideal"z" === ideal 1_QP)          --FIXME
+  assert(ideal"y":ideal"z,y" === ideal"y") --FIXME
+  assert(ideal"y":ideal"x,y" === ideal 1_QP)
+  assert(ideal"x,y":ideal"x" === ideal 1_QP)
+  assert(generators QP === {y,w})         -- FIXME don't show 0 and z as generators
+
+  use RP
+  QP = RP/ideal"z" -- this should make the whole ring 0 because we're quotienting by a unit, I think?
+  assert(generators QP === {}) -- FIXME should be empty, or only zero
+///
+
+-- TODO: adapt these two examples to local rings
+-- They require local quotient rings
+/// -- from Macaulay2Doc/test/ann.m2
+  S=QQ[x_0..x_4]
+  R=S/(ideal(x_0,x_1)*ideal(x_2,x_3))
+  J=ideal vars R
+  M=R^1/J
+  d=3
+  N=(R^1)/(J^d)
+  assert( annihilator Tor_1(M,N) == annihilator Tor_1(N,M) )
+///
+
+/// -- from Macaulay2Doc/test/ann2.m2
+  S=QQ[x_0..x_3]
+  R=S/ideal(x_0*x_1-x_2*x_3)
+  J=ideal vars R
+  M=R^1/J
+  d=3
+  N=(R^1)/(J^d)
+  assert( annihilator Tor_1(M,N)==  annihilator Tor_1(N,M) )
+///
+
+/// --For another example, we compute the annihilator of an element in a quotient ring
+  R = QQ[a..d];
+  RP = localRing(R, ideal gens R)
+  SP = RP/(a*b,a*c,a*d)
+  ann a
+///

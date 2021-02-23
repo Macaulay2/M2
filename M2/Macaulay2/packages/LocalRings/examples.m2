@@ -19,6 +19,7 @@ Q = radical (primaryDecomposition (I+J))#1
 
 RP = localRing(R, P);
 RQ = localRing(R, Q);
+
 length (RP^1/promote(I+J, RP))
 length (RQ^1/promote(I+J, RQ))
 
@@ -31,7 +32,7 @@ RP = localRing(R, K+ideal(x-1));
 CP = res (R^1/K ** RP)
 CP.dd_1
 factor (entries liftUp CP.dd_1)_0_1
-ideal((x-1)^2+y^2-1)== ideal entries {CP.dd_1}_0_1 -- Indeed, we get back the circle
+ideal((x-1)^2+y^2-1) == ideal entries {CP.dd_1}_0_1 -- Indeed, we get back the circle
 
 -- II. Examples in the paper:
 
@@ -152,9 +153,9 @@ R = QQ[x,y,z]
 I = ideal(x^4 - 5/2*x^2*y^3 - x*z^3 + y^6 - y^2*z^3)
 assert(isPrime I);
 J = ideal jacobian I
-D = (primaryDecomposition J) / radical
--- Which one is the cute self-intersection singularity?
-P = D#1
+L = decompose ideal singularLocus I / radical
+-- This is the cute self-intersection singularity:
+P = L#0
 assert(isPrime P);
 RP = localRing(R, P);
 M = RP^1/promote(J, RP)
@@ -258,10 +259,83 @@ RP = localRing(R, P);
 D' = C ** RP;
 E' = pruneComplex(D', UnitTest => isUnit)
 
+
+-- Wolfram Decker, Computations in Intersection Theory (slides)
+restart
+needsPackage "LocalRings"
+R = ZZ/32003[x,y]
+I = ideal"y2-x3"
+J = ideal"x2-y3" -- transversal cusps
+K = ideal"2y2-x3" -- tangential cusps
+
+RM = localRing(R, ideal gens R)
+
+length (RM^1/promote(I+J, RM)) -- i(V(I),V(J); m) = 4
+length (RM^1/promote(I+K, RM)) -- i(V(I),V(K); m) = 6
+
 ------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------
 
 -- IV. Under development:
+
+-- Spectrahedral Sun
+
+restart
+debugLevel = 1
+needsPackage "LocalRings";
+R = ZZ/32003[x,y,z,w]
+I = ideal"8(-x6-y6-z6+x4y2+x4z2+x2y4+x2z4+y4z2+y2z4-10x2y2z2+3(x4+y4+z4)+2(x2y2+x2z2+y2z2)-3(x2+y2+z2)+1)"
+assert(isPrime I);
+J = ideal jacobian I
+L = decompose ideal singularLocus I
+
+P = L#0
+RP = localRing(R, P);
+M = RP^1/promote(J, RP);
+
+time A = hilbertSamuelFunction(M, 0, 2)
+
+for P in L list (
+    RP = localRing(R, P);
+    M = RP^1/promote(J, RP);
+    length(M, Strategy=>Hilbert)
+    )
+
+
+-- 1806.07408 Ex. 1.4
+restart
+needsPackage "LocalRings"
+R = QQ[x,y,z,w];
+I = ideal"xz-y2,yw-z2,xw-yz"; -- The twisted cubic curve
+J = ideal"xz-y2,z(yw-z2)-w(xw-yz)";
+RP = localRing(R, I)
+
+M = RP^1/promote(J, RP)
+length M -- 2
+
+
+-- TODO Gorenstein Cover of 1-dim Domain
+restart
+needsPackage "LocalRings"
+needsPackage "ReesAlgebra"
+S = ZZ/32003[vars(0..3)]
+I = monomialCurveIdeal(S, {3, 4, 5})
+r = codim I
+SP = localRing(S, ideal gens S)
+IP = promote(I, SP)
+R = S/I
+M = S^1/I
+W = Ext^r(M, S^1)
+f = map(R, S)
+W' = coker f presentation W
+R' = reesAlgebra W'
+describe R'
+(R', phi) = flattenRing R'
+describe R'
+R'' = R'^1 / module promote(ideal "1-x", R')
+R'' = R' / promote(ideal "1-a", R')
+describe R''
+ideal R''
 
 -- TODO Hilbert-Samuel Polynomial
 restart
@@ -294,16 +368,21 @@ for i from 0 to 3 list hilbertSamuelFunction(promote(I, RM), RM^1, i)
 
 -- TODO Smooth curves and differentials!!
 
-
 -- TODO blow-ups and resolution of singularities using reesAlgebra
 restart
 needsPackage "ReesAlgebra"
 needsPackage "LocalRings"
-R = ZZ/32003[x,y,z]
+S = ZZ/32003[x,y,z]
 I = ideal "y2z-x3-x2z"
-Q = reesIdeal I
-describe Q
-QP = localRing(Q, ideal"x,y,z")
+T = S/I
+J = ideal"x,y"
+R' = reesAlgebra J
+(R, phi) = flattenRing R'
+describe R
+decompose ideal R
+-- FIXME
+RP = localRing(R, promote(ideal"x,y,z", R))
+mingens R^1
 
 -- Projective Resolutions of Cohen-Macaulay Algebras
 -- 1981-002.pdf Ex. 4.2

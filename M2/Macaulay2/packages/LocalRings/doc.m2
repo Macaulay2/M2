@@ -44,7 +44,7 @@ Caveat
   Quotients of local rings are not implemented yet. Moreover, certain functions (such as symbol%,
   radical, minimalPrimes, leadingCoefficient) are ambiguous or not yet defined.
 SeeAlso
-  PruneComplex
+  "PruneComplex :: PruneComplex"
 ///
 
 doc ///
