@@ -12,7 +12,7 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.0", 
-    Date => "February 22, 2021",
+    Date => "February 24, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -42,7 +42,7 @@ export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections",
 debug Cremona;
 debug SparseResultants;
 
-importFrom("SpecialFanoFourfolds",{"secantCone","parametrizeFanoFourfold","parametrizeDelPezzoFivefold","parametrizeDelPezzoSixfold"});
+importFrom("SpecialFanoFourfolds",{"parametrizeFanoFourfold","parametrizeDelPezzoFivefold","parametrizeDelPezzoSixfold"});
 
 MultiprojectiveVariety = new Type of MutableHashTable;
 
@@ -353,7 +353,7 @@ parametrize MultiprojectiveVariety := (cacheValue "rationalParametrization") (X 
         (dim X == 8 and dim ambient X == 14 and degree X == 14) or 
         (dim X == 16 and dim ambient X == 26 and degree X == 78)) and
        degrees X == {({2},dim ambient X +1)}
-    then return multirationalMap inverse rationalMap(trim sub((ideal X) + secantCone(ideal X,ideal point linearSpan {point X,point X}),ring X),1);
+    then return multirationalMap inverse rationalMap(trim sub((ideal X) + secantCone(toList coordinates point linearSpan {point X,point X},ideal X),ring X),1);
     -- cubic scrolls (this makes the function "===>" work with del Pezzo fivefolds and del Pezzo sixfolds in every characteristic)
     if codim X == 2 and degree X == 3 and sectionalGenus X == 0 then (
         if dim X == 2 then (

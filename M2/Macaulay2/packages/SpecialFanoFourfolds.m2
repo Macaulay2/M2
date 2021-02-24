@@ -51,6 +51,8 @@ needsPackage("RationalMaps",DebuggingMode=>false); -- for method: inverse2
 needsPackage "Resultants";
 needsPackage "Cremona";
 
+importFrom("Cremona",{"secantCone"})
+
 ------------------------------------------------------------------------
 --------------------------- Cubic fourfolds ----------------------------
 ------------------------------------------------------------------------
@@ -532,7 +534,7 @@ find3Eminus1secantCurveOfDegreeE (Ideal,SpecialCubicFourfold) := o -> (p,X) -> (
    Quartics11secant := {};
    Quintics14secant := {};
    Sectics17secant := {};
-   T := secantCone(S,p);
+   T := secantCone(flatten entries coefficients parametrize p,S);
    try assert(dim T -1 == 1) else error "expected secant cone to be one dimensional";
    degT := degree T;
    V := coneOfLines(image phi,phi p);
@@ -593,27 +595,6 @@ find3Eminus1secantCurveOfDegreeE (Ideal,SpecialCubicFourfold) := o -> (p,X) -> (
    if conics5secant + cubics8secant + quartics11secant + quintics14secant == degE then return ({lines2secant+degT,conics5secant,cubics8secant,quartics11secant,quintics14secant,sectics17secant},Out);
    if o.Verbose then <<"number 17-secant sectics to S passing through p: "<<sectics17secant<<endl;
    return ({lines2secant+degT,conics5secant,cubics8secant,quartics11secant,quintics14secant,sectics17secant},Out);
-);
-
-secantCone = method();
-secantCone (Ideal,Ideal) := (I,p) -> (
-   if ring p =!= ring I then error "expected same ring";
-   x := flatten entries coefficients parametrize p;
-   try assert(#x == numgens ring I and matrix{x} != 0) else error("expected a point of PP^"|toString(numgens ring I -1));
-   PN := ring I;
-   N := numgens PN -1;
-   K := coefficientRing PN;
-   s := local s; t := local t; u := local u; v := local v; 
-   R := K[u,v,s_0..s_N,t_0..t_N,MonomialOrder=>Eliminate (N+3)];
-   S := (map(R,PN,{s_0..s_N})) I;
-   T := (map(R,PN,{t_0..t_N})) I;
-   Inc := ideal(sub(matrix{x},R) - u *  matrix{{s_0..s_N}} - v *  matrix{{t_0..t_N}}) + S + T;
-   z := local z;
-   R = K[u,v,t_0..t_N,z_0..z_N,MonomialOrder=>Eliminate (N+3)];
-   Inc = sub(ideal selectInSubring(1,gens gb Inc),R) + ideal(u * sub(matrix{x},R) + v * matrix{{t_0..t_N}} - matrix{{z_0..z_N}});
-   R = K[z_0..z_N];
-   J := sub(ideal selectInSubring(1,gens gb Inc),R);
-   trim (map(PN,R,vars PN)) J
 );
 
 detectCongruence = method();
@@ -2666,13 +2647,6 @@ Headline => "ambient polynomial ring of the fourfold",
 Usage => "ring X", 
 Inputs => {"X" => SpecialCubicFourfold => {"or ", ofClass SpecialGushelMukaiFourfold}}, 
 Outputs => {Ring => {"the common ambient polynomial ring of the fourfold and of the surface contained in it."}}} 
-
--- document {Key => {secantCone, (secantCone, Ideal, Ideal)}, 
--- Headline => "secant cone of a subvariety with respect a point", 
--- Usage => "secantCone(X,p)", 
--- Inputs => {"X" => Ideal => {"the ideal of an irreducible subvariety of ", TT"PP^n"}, "p" => Ideal => {"the ideal of a point in ", TT"PP^n"}}, 
--- Outputs => {Ideal => {"the ideal of the subscheme of ", TT"PP^n", " consisting of the union of all secant lines to ", TT"X", " passing through ", TT"p"}}, 
--- EXAMPLE {"-- a quintic del Pezzo surface"|newline|"X = image rationalMap((ZZ/33331)[vars(0..2)],{3,4});", "p = point ring X;", "V = secantCone(X,p);", "(codim V,degree V)"}} 
 
 document {Key => {unirationalParametrization, (unirationalParametrization, SpecialCubicFourfold), (unirationalParametrization, SpecialCubicFourfold, Ideal), (unirationalParametrization, SpecialGushelMukaiFourfold)}, 
 Headline => "unirational parametrization", 

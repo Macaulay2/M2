@@ -10,7 +10,7 @@
 newPackage(
        "Cremona",
 	Version => "5.1", 
-        Date => "February 22, 2021",
+        Date => "February 24, 2021",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "rational maps between projective varieties",
 	Keywords => {"Algebraic Geometry"},
@@ -2335,8 +2335,8 @@ harmonicallyConjugate (RingElement,RingElement) := (Q,L) -> (
    (gamma*p_1+beta*p_0)*t_1+(beta*p_1+alpha*p_0)*t_0
 );
 
-secantLine = method()
-secantLine (List,Ideal) := (x,I) -> (
+secantCone = method()
+secantCone (List,Ideal) := (x,I) -> (
    try assert(#x == numgens ring I and matrix{x} != 0) else error("expected coordinate list of a point of PP^"|toString(numgens ring I -1));
    PN := ring I;
    N := numgens PN -1;
@@ -2360,7 +2360,7 @@ abstractRationalMap (Ideal,String) := (X,str) -> (
    if not isHomogeneous X then error "expected a homogeneous ideal";
    if not isField coefficientRing ring X then error "the coefficient ring needs to be a field";
    f := p -> (
-         L := secantLine(p,X);
+         L := secantCone(p,X);
          f := parametrize L;
          assert(numgens source f == 2);
          ab := f^*(L+X);
