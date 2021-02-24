@@ -35,10 +35,10 @@ export {
     
    -- Symbols
     "supermatrix", 
-    "supermatrix_first_block_target", 
-    "supermatrix_second_block_target", 
-    "supermatrix_first_block_source", 
-    "supermatrix_second_block_source"
+    "supermatrixFirstBlockTarget", 
+    "supermatrixSecondBlockTarget", 
+    "supermatrixFirstBlockSource", 
+    "supermatrixSecondBlockSource"
 }
 
 --------------------
@@ -59,7 +59,7 @@ superRing (PolynomialRing, PolynomialRing) := (R1, R2) -> (
 -- SuperMatrix
 --
 -- This a is new mulitivariate Hash table with 5 keys.
--- supermatrix, supermatrix_first_block_target, supermatrix_second_block_target, supermatrix_first_block_source, supermatrix_second_block_source
+-- supermatrix, supermatrixFirstBlockTarget, supermatrixSecondBlockTarget, supermatrixFirstBlockSource, supermatrixSecondBlockSource
 --------------------
 
 SuperMatrix = new Type of MutableHashTable;
@@ -74,10 +74,10 @@ superMatrixGenerator (Matrix, Matrix, Matrix, Matrix) := (M1, M2, M3, M4) -> (
     T2 := M3 | M4;
     new SuperMatrix from {
         supermatrix => T1 || T2, 
-        supermatrix_first_block_target => nr1, 
-        supermatrix_second_block_target => nr2, 
-        supermatrix_first_block_source => ns1, 
-        supermatrix_second_block_source => ns2
+        supermatrixFirstBlockTarget => nr1, 
+        supermatrixSecondBlockTarget => nr2, 
+        supermatrixFirstBlockSource => ns1, 
+        supermatrixSecondBlockSource => ns2
     }
 )
 
@@ -89,10 +89,10 @@ M4 = matrix {{15, 16}, {19, 20}};
 G = superMatrixGenerator(M1, M2, M3, M4);
 G.supermatrix;
 assert(G.supermatrix == matrix {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}, {17, 18, 19, 20}})
-assert(G.supermatrix_first_block_target == 3)
-assert(G.supermatrix_second_block_target == 2)
-assert(G.supermatrix_first_block_source == 2)
-assert(G.supermatrix_second_block_source == 2)
+assert(G.supermatrixFirstBlockTarget == 3)
+assert(G.supermatrixSecondBlockTarget == 2)
+assert(G.supermatrixFirstBlockSource == 2)
+assert(G.supermatrixSecondBlockSource == 2)
 ///
 
 --------------------
@@ -164,10 +164,10 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
     m2 := 0;
     m3 := 0;
     m4 := 0;
-    r1 := SM.supermatrix_first_block_target;
-    r2 := SM.supermatrix_second_block_target;
-    c1 := SM.supermatrix_first_block_source;
-    c2 := SM.supermatrix_second_block_source;
+    r1 := SM.supermatrixFirstBlockTarget;
+    r2 := SM.supermatrixSecondBlockTarget;
+    c1 := SM.supermatrixFirstBlockSource;
+    c2 := SM.supermatrixSecondBlockSource;
     Minor11 := submatrix(SM.supermatrix, {0..(r1-1)}, {0..(c1-1)});
     Minor22 := submatrix(SM.supermatrix, {r1..(r1+r2-1)}, {c1..(c1+c2-1)});
     Minor21 := submatrix(SM.supermatrix, {r1..(r1+r2-1)}, {0..(c1-1)});
@@ -288,8 +288,8 @@ assert(superMatrixParity(G, T, {e_0, e_1, e_2, e_3}) == -1)
  
 superTrace = method ();
 superTrace (SuperMatrix, Ring, List)  := (SM, R1, a) -> (
-    Minor11 := submatrix(SM.supermatrix, {0..(SM.supermatrix_first_block_target-1)}, {0..(SM.supermatrix_first_block_source-1)});
-    Minor22 := submatrix(SM.supermatrix, {SM.supermatrix_first_block_target..(SM.supermatrix_first_block_target+SM.supermatrix_second_block_target-1)}, {SM.supermatrix_first_block_source..(SM.supermatrix_first_block_source+SM.supermatrix_second_block_source-1)});
+    Minor11 := submatrix(SM.supermatrix, {0..(SM.supermatrixFirstBlockTarget-1)}, {0..(SM.supermatrixFirstBlockSource-1)});
+    Minor22 := submatrix(SM.supermatrix, {SM.supermatrixFirstBlockTarget..(SM.supermatrixFirstBlockTarget+SM.supermatrixSecondBlockTarget-1)}, {SM.supermatrixFirstBlockSource..(SM.supermatrixFirstBlockSource+SM.supermatrixSecondBlockSource-1)});
     if (superMatrixParity(SM, R1, a)=!=-1) then (
         par := superMatrixParity(SM, R1, a);
         trace Minor11-(-1)^par*trace Minor22
@@ -329,10 +329,10 @@ assert(superTrace(SM, T, a) == n_0-n_1-n_2)
 
 berezinian = method();
 berezinian (SuperMatrix, Ring) := (SM, R1) -> (
-    Minor11 := submatrix(SM.supermatrix, {0..(SM.supermatrix_first_block_target-1)}, {0..(SM.supermatrix_first_block_source-1)});
-    Minor22 := submatrix(SM.supermatrix, {SM.supermatrix_first_block_target..(SM.supermatrix_first_block_target+SM.supermatrix_second_block_target-1)}, {SM.supermatrix_first_block_source..(SM.supermatrix_first_block_source+SM.supermatrix_second_block_source-1)});
-    Minor12 := submatrix(SM.supermatrix, {SM.supermatrix_first_block_target..(SM.supermatrix_first_block_target+SM.supermatrix_second_block_target-1)}, {0..(SM.supermatrix_first_block_source-1)});
-    Minor21 := submatrix(SM.supermatrix, {0..(SM.supermatrix_first_block_target-1)}, {SM.supermatrix_first_block_source..(SM.supermatrix_first_block_source+SM.supermatrix_second_block_source-1)});
+    Minor11 := submatrix(SM.supermatrix, {0..(SM.supermatrixFirstBlockTarget-1)}, {0..(SM.supermatrixFirstBlockSource-1)});
+    Minor22 := submatrix(SM.supermatrix, {SM.supermatrixFirstBlockTarget..(SM.supermatrixFirstBlockTarget+SM.supermatrixSecondBlockTarget-1)}, {SM.supermatrixFirstBlockSource..(SM.supermatrixFirstBlockSource+SM.supermatrixSecondBlockSource-1)});
+    Minor12 := submatrix(SM.supermatrix, {SM.supermatrixFirstBlockTarget..(SM.supermatrixFirstBlockTarget+SM.supermatrixSecondBlockTarget-1)}, {0..(SM.supermatrixFirstBlockSource-1)});
+    Minor21 := submatrix(SM.supermatrix, {0..(SM.supermatrixFirstBlockTarget-1)}, {SM.supermatrixFirstBlockSource..(SM.supermatrixFirstBlockSource+SM.supermatrixSecondBlockSource-1)});
     SM1 := sub(Minor11, R1);
     SM2 := sub(Minor22, R1);
     Prod1 := Minor22-Minor12*inverse(SM1)*Minor21;
@@ -369,10 +369,10 @@ assert(berezinian(F, QQ) == det(S1)*det(inverse(S6)))
 
 inverseSuperMatrix = method();
 inverseSuperMatrix (SuperMatrix, Ring) := (SM, R1) -> (
-    Minor11 := submatrix(SM.supermatrix, {0..(SM.supermatrix_first_block_target-1)}, {0..(SM.supermatrix_first_block_source-1)});
-    Minor22 := submatrix(SM.supermatrix, {SM.supermatrix_first_block_target..(SM.supermatrix_first_block_target+SM.supermatrix_second_block_target-1)}, {SM.supermatrix_first_block_source..(SM.supermatrix_first_block_source+SM.supermatrix_second_block_source-1)});
-    Minor12 := submatrix(SM.supermatrix, {SM.supermatrix_first_block_target..(SM.supermatrix_first_block_target+SM.supermatrix_second_block_target-1)}, {0..(SM.supermatrix_first_block_source-1)});
-    Minor21 := submatrix(SM.supermatrix, {0..(SM.supermatrix_first_block_target-1)}, {SM.supermatrix_first_block_source..(SM.supermatrix_first_block_source+SM.supermatrix_second_block_source-1)});
+    Minor11 := submatrix(SM.supermatrix, {0..(SM.supermatrixFirstBlockTarget-1)}, {0..(SM.supermatrixFirstBlockSource-1)});
+    Minor22 := submatrix(SM.supermatrix, {SM.supermatrixFirstBlockTarget..(SM.supermatrixFirstBlockTarget+SM.supermatrixSecondBlockTarget-1)}, {SM.supermatrixFirstBlockSource..(SM.supermatrixFirstBlockSource+SM.supermatrixSecondBlockSource-1)});
+    Minor12 := submatrix(SM.supermatrix, {SM.supermatrixFirstBlockTarget..(SM.supermatrixFirstBlockTarget+SM.supermatrixSecondBlockTarget-1)}, {0..(SM.supermatrixFirstBlockSource-1)});
+    Minor21 := submatrix(SM.supermatrix, {0..(SM.supermatrixFirstBlockTarget-1)}, {SM.supermatrixFirstBlockSource..(SM.supermatrixFirstBlockSource+SM.supermatrixSecondBlockSource-1)});
     if numRows Minor11 =!= numColumns Minor11 then error "expected a square matrix";
     if numRows Minor22 =!= numColumns Minor22 then error "expected a square matrix";    
     SM11 := sub(Minor11, R1);
@@ -476,10 +476,10 @@ Key
     superMatrixGenerator
     supermatrix
     (superMatrixGenerator, Matrix, Matrix, Matrix, Matrix)
-    supermatrix_first_block_source
-    supermatrix_second_block_source
-    supermatrix_first_block_target
-    supermatrix_second_block_target
+    supermatrixFirstBlockSource
+    supermatrixSecondBlockSource
+    supermatrixFirstBlockTarget
+    supermatrixSecondBlockTarget
 Headline
     Makes a super matrix from its four blocks.
 Usage
@@ -513,13 +513,13 @@ Description
      
         The key supermatrix shows the result matrix created as above. 
    
-       The key supermatrix_first_block_target shows the number of first part rows. 
+       The key supermatrixFirstBlockTarget shows the number of first part rows. 
    
-       The key supermatrix_second_block_target shows the number of the rows of the second part.  
+       The key supermatrixSecondBlockTarget shows the number of the rows of the second part.  
    
-       The key supermatrix_first_block_source shows the number of columns in the first part.  
+       The key supermatrixFirstBlockSource shows the number of columns in the first part.  
    
-       The key supermatrix_second_block_source shows the number of columns in the second part.  
+       The key supermatrixSecondBlockSource shows the number of columns in the second part.  
     Example
         M1 = matrix {{1, 2}, {5, 6}, {9, 10}}
         M2 = matrix {{3, 4}, {7, 8}, {11, 12}}
