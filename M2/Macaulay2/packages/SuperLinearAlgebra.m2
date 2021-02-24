@@ -180,10 +180,11 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
         for i from 0 to (r1-1) do 
             for j from 0 to (c1-1) do (
                 fij = Minor11_(i, j);
-                if fij == 0 then count1 = count1 
-                else if (parity(fij, R1, a) == -1) then (count11 = count11+1) 
-                else if (parity(fij, R1, a) == 1) then count1 = count1+1
-                else if (parity(fij, R1, a) == 0) then count1 = count1
+                if fij != 0 then (
+                    parityfij = parity(fij, R1, a);
+                    if (parityfij == -1) then (count11 = count11+1) 
+                    else if (parityfij == 1) then count1 = count1+1
+                )
             );
         if count11=!=0 then (return-1) 
         else if count1 == 0 then m1= 0 
@@ -193,10 +194,11 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
         for i from 0 to (r1-1) do 
             for j from 0 to (c2-1) do (
                 fij = Minor12_(i, j);
-                if fij == 0 then count2 = count2 
-                else if (parity(fij, R1, a) == -1) then (count22 = count22+1) 
-                else if (parity(fij, R1, a) == 1)then count2 = count2+1
-                else if (parity(fij, R1, a) == 0) then count2 = count2
+                if fij != 0 then (
+                    parityfij = parity(fij, R1, a); 
+                    if (parityfij == -1) then (count22 = count22+1) 
+                    else if (parityfij == 1) then count2 = count2+1
+                )
             );
         if count22=!=0 then (return-1) 
         else if count2 == 0 then m2=0 
@@ -206,10 +208,11 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
         for i from 0 to (r2-1) do 
             for j from 0 to (c1-1) do (
                 fij = Minor21_(i, j);
-                if fij == 0 then count3 = count3 
-                else if (parity(fij, R1, a) == -1) then (cout33 := count33+1)
-                else if (parity(fij, R1, a) == 1)then count3 = count3+1
-                else if (parity(fij, R1, a) == 0) then count3 = count3
+                if fij != 0 then (
+                    parityfij = parity(fij, R1, a); 
+                    if (parityfij == -1) then (count33 = count33+1)
+                    else if (parityfij == 1) then count3 = count3+1
+                )
             );
         if count33=!=0 then (return-1) 
         else if count3 == 0 then m3=0 
@@ -219,10 +222,11 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
         for i from 0 to (r2-1) do 
             for j from 0 to (c2-1) do (
                 fij = Minor22_(i, j);
-                if fij == 0 then count4 = count4 
-                else if (parity(fij, R1, a) == -1) then (cout44 := count44+1) 
-                else if (parity(fij, R1, a) == 1)then count4 = count4+1
-                else if (parity(fij, R1, a) == 0) then count4 = count4
+                if fij != 0 then (
+                    parityfij = parity(fij, R1, a); 
+                    if (parityfij == -1) then (count44 = count44+1) 
+                    else if (parityfij == 1) then count4 = count4+1
+                )
             );
         if count44=!=0 then (return-1) 
         else if count4 == 0 then m4=0 
