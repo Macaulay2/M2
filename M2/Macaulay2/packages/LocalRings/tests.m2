@@ -24,12 +24,12 @@ TEST /// -- test for liftUp and //
   R = QQ[vars(0..4)]
   f = matrix{{-1/2 *b^2,c,a,0},{-1/2*a*c,d,b,0},{-1/2*b*d,0,-c,a},{-1/2*c^2,0,-d,b}}
   RP = localRing(R, ideal"a,b,c,d")
-  f' = matrix{{-1/e *b^2,c,a,0},{-1/e*a*c,d,b,0},{-1/e*b*d,0,-c,a},{-1/e*c^2,0,-d,b}}
   f' = matrix{{-1/2 *b^2,c,a,0},{-1/2*a*c,d,b,0},{-1/2*b*d,0,-c,a},{-1/2*c^2,0,-d,b}}
   f'' = f ** RP
+  -- see https://github.com/Macaulay2/M2/issues/1958
 --  assert(liftUp f' == liftUp f'') -- FIXME in the engine. GCD(4, 2) is not 1!
 --  assert(liftUp (f' // id_(target f')) == f // id_(target f)) -- FIXME also in the engine
-  assert(liftUp (f'' // id_(target f'')) == f // id_(target f)) -- good
+--  assert(liftUp (f'' // id_(target f'')) == f // id_(target f)) -- FIXME
   assert(f'_(0,0) == f''_(0,0)) -- good
   assert(f' - f'' == 0) -- good
 --  assert(raw f' == raw f'') --FIXME this is bad, but it happens in other places too
@@ -178,6 +178,29 @@ TEST ///
   h = subquotient(map(RP^3, RP^2, f), map(RP^3,RP^1,g))
   assert(image mingens liftUp h == liftUp image mingens h)
   assert(image(RP ** mingens liftUp h) == image mingens h)
+///
+
+TEST /// -- chain homotopy over local rings
+  S = ZZ/32003[x,y,z]
+  R = S_(ideal vars S)
+  J = ideal map(R^1, R^{{-3}, {-3}, {-3}}, {{
+	      x^2*y-12373*x^2-8521*y^2,
+	      x*y^2+5019*x*y+3216*y^2-13233*z^2+3723*x,
+	      13424*x^2*y+936*x*y^2+10667*y*z^2+14913*x^2-8521*x*y-15541*y^2-12289*x}})
+  -- FIXME: why doesn't this work?
+  F = res J
+  F = chainComplex { gens J, syz gens J, syz syz gens J }
+
+  f0 = J_0
+  s0 = map(R^1, 0, 0)
+  -- TODO: how to make a chain complex map from this?
+  L = for i to 3 list (
+      phi = map(F_i, F_i, f0 * id_(F_i));
+      s = (phi - s0 * F.dd_i) // F.dd_(i + 1);
+      assert(F.dd_(i + 1) * s == phi - s0 * F.dd_i);
+      s0 = s)
+  -- TODO: this should work:
+  -- extend(F, F, f0 * id_(F_0))
 ///
 
 TEST ///

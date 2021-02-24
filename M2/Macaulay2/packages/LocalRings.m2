@@ -357,21 +357,25 @@ addHook((trim, Module), Strategy => Local, (opts, M) ->
 --   (Question: if there are multiple units, which one to choose?)
 --   Let's say in the unit u in the column H_j, then we replace F_i by -1/u times the column
 --   [h_(n+1) h_(n+2) ... h_(n+m)]^T, remove the column H_j from H, and move on to F_(i+1).
+--   Additionally, we reduce the columns to zero out the row in which u appeared.
 --   If there aren't any units in the i-th column, we replace F_i by a 0 column and move on to F_(i+1)
 addHook((quotient, Matrix, Matrix), Strategy => Local, (opts, f, g) -> (
     RP := ring f;
     if instance(RP, LocalRing) then (
-        G := syz liftUp(f | g);
+	-- TODO: is there an option for syz to return a column reduced matrix?
+        G := mutableMatrix promote(syz liftUp(f | g), RP);
         mat := for i from 0 to numColumns f - 1 list (
-            col := f_{i};
-            n := scan(numColumns G, j -> if isUnit promote(G_(i,j), RP) then break j);
-            if n === null then matrix map(source g, RP^1, 0) else (
-                col = -submatrix(G,{numColumns f..numRows G-1},{n}) * G_(i,n)^-1;
+            C := f_{i};
+            n := scan(numColumns G, j -> if isUnit G_(i,j) then break j);
+            if n === null then 0_(source g) else (
+		u := -G_(i, n)^-1;
+                C = u * matrix submatrix(G, {numColumns f..numRows G-1}, {n});
+		-- TODO: why doesn't syz return a column reduced G?
+		scan(n+1 .. numColumns G-1, j -> columnAdd(G, j, u * G_(i,j), n));
+		-- TODO: is this step necessary? simplify above and remove this
                 G = submatrix(G, ,{0..n-1, n+1..numColumns G-1});
-                (col ** RP)
-                )
-            );
-        m := if mat === {} then 0_RP else raw matrix{mat};
+                C_0));
+        m := if #mat == 0 then 0_RP else raw matrix mat;
         map(source g, source f, m,
 	    Degree => degree matrix f - degree matrix g)  -- set the degree in the engine instead
         )))
