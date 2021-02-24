@@ -215,8 +215,11 @@ jobs:
              M2/BUILD/build/CMakeFiles/CMakeError.log
              M2/BUILD/build/CMakeFiles/CMakeOutput.log
              M2/BUILD/build/libraries/*/build/config.log
-             # Example errors
+             # package example errors
              M2/BUILD/build/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
+             # package test errors under Ubuntu
+             /tmp/*/*.tmp
+             /tmp/*/*.m2
              # Test errors
              M2/BUILD/build/Macaulay2/tests/*/*.errors
 
