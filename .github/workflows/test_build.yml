@@ -218,8 +218,8 @@ jobs:
              # package example errors
              M2/BUILD/build/usr-dist/common/share/doc/Macaulay2/*/example-output/*.errors
              # package test errors under Ubuntu
-             /tmp/*/*.tmp
-             /tmp/*/*.m2
+             /tmp/M2-*/*.tmp
+             /tmp/M2-*/*.m2
              # Test errors
              M2/BUILD/build/Macaulay2/tests/*/*.errors
 
