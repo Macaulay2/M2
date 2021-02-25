@@ -7,7 +7,7 @@
 #include "Comparer.h"
 
 #include <stdexcept>
-#include <memtailor.h>
+#include "memtailor/memtailor.h"
 
 namespace mathic {
   template<class C, class EE>

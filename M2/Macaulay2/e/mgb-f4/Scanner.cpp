@@ -3,7 +3,7 @@
 #include "stdinc.h"
 #include "Scanner.hpp"
 
-#include <mathic.h>
+#include "mathic/mathic.h"
 #include <limits>
 #include <sstream>
 #include <cstring>

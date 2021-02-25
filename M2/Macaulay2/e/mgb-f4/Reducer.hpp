@@ -4,7 +4,7 @@
 #define MATHICGB_REDUCER_GUARD
 
 #include "PolyRing.hpp"
-#include <memtailor.h>
+#include "memtailor/memtailor.h"
 #include <memory>
 
 MATHICGB_NAMESPACE_BEGIN

@@ -10,7 +10,7 @@
 #include "LogDomain.hpp"
 #include "MathicIO.hpp"
 #include <iostream>
-#include <mathic.h>
+#include "mathic/mathic.h"
 #include <memory>
 #include <vector>
 

@@ -677,7 +677,7 @@ AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom
 #     Initially, we offer no option for not compiling some of them.
 
 # AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack givaro ")
-AC_SUBST(SUBLIST, " memtailor mathic fflas_ffpack givaro ")
+AC_SUBST(SUBLIST, " fflas_ffpack givaro ")
 
 # The list SUBLIST is the list of submodules that might be used and linked into M2.
 
@@ -1217,25 +1217,25 @@ then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
 fi
 
-if test $BUILD_memtailor = no
-then AC_LANG(C++)
-     SAVE_CXXFLAGS="$CXXFLAGS"
-     CXXFLAGS="$CXXFLAGS"
-     AC_SEARCH_LIBS(MEMTAILOR_VERSION_STRING,memtailor,,BUILD_memtailor=yes)
-     AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
-     CXXFLAGS="$SAVE_CXXFLAGS"
-fi
-test $BUILD_memtailor = yes && BUILTLIBS="-lmemtailor $BUILTLIBS"
+dnl if test $BUILD_memtailor = no
+dnl then AC_LANG(C++)
+dnl      SAVE_CXXFLAGS="$CXXFLAGS"
+dnl      CXXFLAGS="$CXXFLAGS"
+dnl      AC_SEARCH_LIBS(MEMTAILOR_VERSION_STRING,memtailor,,BUILD_memtailor=yes)
+dnl      AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
+dnl      CXXFLAGS="$SAVE_CXXFLAGS"
+dnl fi
+dnl test $BUILD_memtailor = yes && BUILTLIBS="-lmemtailor $BUILTLIBS"
 
-if test $BUILD_mathic = no
-then AC_LANG(C++)
-     SAVE_CXXFLAGS="$CXXFLAGS"
-     CXXFLAGS="$CXXFLAGS"
-     AC_SEARCH_LIBS(MATHIC_VERSION_STRING,mathic,,BUILD_mathic=yes)
-     AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
-     CXXFLAGS="$SAVE_CXXFLAGS"
-fi
-test $BUILD_mathic = yes && BUILTLIBS="-lmathic $BUILTLIBS"
+dnl if test $BUILD_mathic = no
+dnl then AC_LANG(C++)
+dnl      SAVE_CXXFLAGS="$CXXFLAGS"
+dnl      CXXFLAGS="$CXXFLAGS"
+dnl      AC_SEARCH_LIBS(MATHIC_VERSION_STRING,mathic,,BUILD_mathic=yes)
+dnl      AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
+dnl      CXXFLAGS="$SAVE_CXXFLAGS"
+dnl fi
+dnl test $BUILD_mathic = yes && BUILTLIBS="-lmathic $BUILTLIBS"
 
 dnl if test $BUILD_mathicgb = no
 dnl then AC_LANG(C++)

@@ -5,7 +5,7 @@
 
 #include "SigPolyBasis.hpp"
 #include "StaticMonoMap.hpp"
-#include <mathic.h>
+#include "mathic/mathic.h"
 
 MATHICGB_NAMESPACE_BEGIN
 

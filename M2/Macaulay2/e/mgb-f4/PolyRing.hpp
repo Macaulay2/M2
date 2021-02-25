@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <string>
 #include <vector>
-#include <memtailor.h>
+#include "memtailor/memtailor.h"
 #include <cstdio>
 #include <cstring>
 #include <limits>

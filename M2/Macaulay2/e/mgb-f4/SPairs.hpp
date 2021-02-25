@@ -5,7 +5,7 @@
 
 #include "PolyBasis.hpp"
 #include <utility>
-#include <mathic.h>
+#include "mathic/mathic.h"
 #include <memory>
 
 MATHICGB_NAMESPACE_BEGIN

@@ -117,7 +117,6 @@ set(CPPONLYFILES
   ntl-internal.cpp
   res-a2-gb.cpp
   ring-vecs.cpp
-
   interface/aring.cpp
   interface/aring.h
   interface/computation.h # no .cpp yet
@@ -150,29 +149,61 @@ set(CPPONLYFILES
   interface/ringelement.h
   interface/ringmap.cpp
   interface/ringmap.h
+  memtailor/Arena.cpp
+  memtailor/Arena.h
+  memtailor/BufferPool.cpp
+  memtailor/BufferPool.h
+  memtailor/MemoryBlocks.cpp
+  memtailor/MemoryBlocks.h
+  mathic/Action.cpp
+  mathic/Action.h
+  mathic/BitTriangle.cpp
+  mathic/BitTriangle.h
+  mathic/BoolParameter.cpp
+  mathic/BoolParameter.h
+  mathic/CliParameter.cpp
+  mathic/CliParameter.h
+  mathic/CliParser.cpp
+  mathic/CliParser.h
+  mathic/ColumnPrinter.cpp
+  mathic/ColumnPrinter.h
+  mathic/DivMask.cpp
+  mathic/DivMask.h
+  mathic/HelpAction.cpp
+  mathic/HelpAction.h
+  mathic/IntegerParameter.cpp
+  mathic/IntegerParameter.h
+  mathic/StringParameter.cpp
+  mathic/StringParameter.h
+  mathic/Timer.cpp
+  mathic/Timer.h
+  mathic/display.cpp
+  mathic/display.h
+  mathic/error.cpp
+  mathic/error.h
   mgb-f4/mathicgb.cpp
   )
 
 # these files all have .hpp and .cpp files
 # MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
-	myalloc
-	matrix-ncbasis
-    	VectorArithmetic
-	M2FreeAlgebraQuotient
-	M2FreeAlgebra
-	NCAlgebras/Word
-	NCAlgebras/NCReduction
-	NCAlgebras/FreeAlgebraQuotient
-	NCAlgebras/FreeAlgebra
-	NCAlgebras/FreeMonoid
-	NCAlgebras/WordTable
-	NCAlgebras/SuffixTree
-	NCAlgebras/NCGroebner
-	NCAlgebras/NCF4
-	NCAlgebras/OverlapTable
-	Polynomial
-	monomial-collection
+  myalloc
+  matrix-ncbasis
+  VectorArithmetic
+  M2FreeAlgebraQuotient
+  M2FreeAlgebra
+  NCAlgebras/Word
+  NCAlgebras/NCReduction
+  NCAlgebras/FreeAlgebraQuotient
+  NCAlgebras/FreeAlgebra
+  NCAlgebras/FreeMonoid
+  NCAlgebras/WordTable
+  NCAlgebras/SuffixTree
+  NCAlgebras/NCGroebner
+  NCAlgebras/NCF4
+  NCAlgebras/OverlapTable
+  Polynomial
+  monomial-collection
   Eschreyer
   GF
   LLL

@@ -4,7 +4,7 @@
 #include "stdinc.h"
 #include "DivMask.h"
 #include "KDEntryArray.h"
-#include <memtailor.h>
+#include "memtailor/memtailor.h"
 #include <ostream>
 
 namespace mathic {

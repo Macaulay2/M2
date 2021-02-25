@@ -16,7 +16,7 @@
 
 #include "stdinc.h"
 
-#include <memtailor.h>
+#include "memtailor/memtailor.h"
 #include <cmath>
 #include <utility>
 #include <string>

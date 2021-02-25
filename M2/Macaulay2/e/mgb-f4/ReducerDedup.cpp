@@ -1,5 +1,5 @@
-#include <memtailor.h>
-#include "memtailor.h"
+#include "memtailor/memtailor.h"
+#include "memtailor/memtailor.h"
 
 // MathicGB copyright 2012 all rights reserved. MathicGB comes with ABSOLUTELY
 // NO WARRANTY and is licensed as GPL v2.0 or later - see LICENSE.txt.
@@ -8,8 +8,8 @@
 
 #include "TypicalReducer.hpp"
 #include "ReducerHelper.hpp"
-#include <memtailor.h>
-#include <mathic.h>
+#include "memtailor/memtailor.h"
+#include "mathic/mathic.h"
 
 MATHICGB_NAMESPACE_BEGIN
 

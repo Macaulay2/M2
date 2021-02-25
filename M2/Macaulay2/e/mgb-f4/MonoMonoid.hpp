@@ -5,10 +5,11 @@
 
 #include "MonoOrder.hpp"
 #include "NonCopyable.hpp"
+#include "memtailor/memtailor.h"
+#include "mathic/mathic.h"
 #include <cstddef>
 #include <vector>
 #include <algorithm>
-#include <memtailor.h>
 #include <type_traits>
 #include <istream>
 #include <utility>
@@ -16,7 +17,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
-#include <mathic.h>
 
 MATHICGB_NAMESPACE_BEGIN
 

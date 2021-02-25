@@ -5,7 +5,7 @@
 
 #include "PolyRing.hpp"
 #include "NonCopyable.hpp"
-#include <mathic.h>
+#include "mathic/mathic.h"
 
 MATHICGB_NAMESPACE_BEGIN
 

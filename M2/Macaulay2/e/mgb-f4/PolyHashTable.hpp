@@ -6,7 +6,7 @@
 #include "PolyRing.hpp"
 #include "Poly.hpp"
 #include <utility>
-#include <memtailor.h>
+#include "memtailor/memtailor.h"
 #include <vector>
 
 MATHICGB_NAMESPACE_BEGIN

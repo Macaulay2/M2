@@ -7,7 +7,7 @@
 #include "PolyBasis.hpp"
 #include "MonoLookup.hpp"
 #include "PolyRing.hpp"
-#include <mathic.h>
+#include "mathic/mathic.h"
 #include <type_traits>
 #include <string>
 #include <vector>

@@ -6,7 +6,7 @@
 #include "Atomic.hpp"
 #include "mtbb.hpp"
 #include "PolyRing.hpp"
-#include <memtailor.h>
+#include "memtailor/memtailor.h"
 #include <limits>
 #include <vector>
 #include <algorithm>

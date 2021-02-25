@@ -5,7 +5,7 @@
 
 #include "Poly.hpp"
 #include "MathicIO.hpp"
-#include <mathic.h>
+#include "mathic/mathic.h"
 #include <limits>
 #include <iostream>
 #include <iomanip>

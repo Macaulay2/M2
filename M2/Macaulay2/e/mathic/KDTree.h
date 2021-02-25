@@ -5,7 +5,7 @@
 #include "DivMask.h"
 #include "BinaryKDTree.h"
 #include "PackedKDTree.h"
-#include <memtailor.h>
+#include "memtailor/memtailor.h"
 #include <list>
 #include <string>
 #include <algorithm>

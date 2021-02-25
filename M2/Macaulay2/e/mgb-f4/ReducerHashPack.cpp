@@ -6,8 +6,8 @@
 #include "TypicalReducer.hpp"
 #include "ReducerHelper.hpp"
 #include "PolyHashTable.hpp"
-#include <mathic.h>
-#include <memtailor.h>
+#include "mathic/mathic.h"
+#include "memtailor/memtailor.h"
 
 MATHICGB_NAMESPACE_BEGIN
 

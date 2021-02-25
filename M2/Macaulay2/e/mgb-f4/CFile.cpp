@@ -3,7 +3,7 @@
 #include "stdinc.h"
 #include "CFile.hpp"
 
-#include <mathic.h>
+#include "mathic/mathic.h"
 #include <sstream>
 
 MATHICGB_NAMESPACE_BEGIN

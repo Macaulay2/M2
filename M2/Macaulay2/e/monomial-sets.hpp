@@ -16,7 +16,7 @@
 // Features of these classes:
 
 
-#include "memtailor.h"
+#include "memtailor/memtailor.h"
 #include <unordered_set>
 #include <unordered_map>
 #include <utility>

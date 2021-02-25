@@ -8,7 +8,7 @@
 #include "ClassicGBAlg.hpp"
 #include "mtbb.hpp"
 #include "LogDomainSet.hpp"
-#include <mathic.h>
+#include "mathic/mathic.h"
 
 #ifndef MATHICGB_ASSERT
 #ifdef MATHICGB_DEBUG

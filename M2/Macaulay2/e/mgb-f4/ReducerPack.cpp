@@ -5,8 +5,8 @@
 
 #include "TypicalReducer.hpp"
 #include "ReducerHelper.hpp"
-#include <memtailor.h>
-#include <mathic.h>
+#include "memtailor/memtailor.h"
+#include "mathic/mathic.h"
 
 MATHICGB_NAMESPACE_BEGIN
 

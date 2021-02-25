@@ -3,7 +3,7 @@
 #include "stdinc.h"
 #include "LogDomainSet.hpp"
 
-#include <mathic.h>
+#include "mathic/mathic.h"
 
 MATHICGB_NAMESPACE_BEGIN
 

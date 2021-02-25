@@ -8,7 +8,7 @@
 #include "SigSPairs.hpp"
 #include "ModuleMonoSet.hpp"
 #include "LogDomain.hpp"
-#include <mathic.h>
+#include "mathic/mathic.h"
 #include <limits>
 
 MATHICGB_DEFINE_LOG_DOMAIN(

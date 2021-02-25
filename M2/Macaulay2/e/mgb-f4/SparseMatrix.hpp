@@ -5,7 +5,7 @@
 
 #include "RawVector.hpp"
 #include "PolyRing.hpp"
-#include <mathic.h>
+#include "mathic/mathic.h"
 #include <vector>
 #include <ostream>
 #include <limits>

@@ -5,7 +5,7 @@
 
 #include "MathicIO.hpp"
 #include "mtbb.hpp"
-#include <mathic.h>
+#include "mathic/mathic.h"
 #include <ostream>
 #include <sstream>
 

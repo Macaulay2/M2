@@ -4,7 +4,7 @@
 #include "LogDomain.hpp"
 
 #include "LogDomainSet.hpp"
-#include <mathic.h>
+#include "mathic/mathic.h"
 #include <iostream>
 
 MATHICGB_NAMESPACE_BEGIN

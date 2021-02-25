@@ -6,8 +6,8 @@
 #include "PolyRing.hpp"
 #include "KoszulQueue.hpp"
 #include "SigSPairQueue.hpp"
-#include <mathic.h>
-#include <memtailor.h>
+#include "mathic/mathic.h"
+#include "memtailor/memtailor.h"
 #include <vector>
 
 MATHICGB_NAMESPACE_BEGIN

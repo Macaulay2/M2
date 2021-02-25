@@ -4,7 +4,8 @@
 #include "stdinc.h"
 #include "DivMask.h"
 #include "Comparer.h"
-#include <memtailor.h>
+
+#include "memtailor/memtailor.h"
 #include <vector>
 #include <string>
 #include <list>

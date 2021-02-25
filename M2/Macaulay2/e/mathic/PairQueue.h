@@ -5,7 +5,7 @@
 
 #include "TourTree.h"
 
-#include <memtailor.h>
+#include "memtailor/memtailor.h"
 #include <limits>
 #include <iterator>
 #include <vector>

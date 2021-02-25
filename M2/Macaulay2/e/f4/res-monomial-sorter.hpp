@@ -8,7 +8,7 @@
 #include "res-moninfo.hpp"
 #include "res-schreyer-order.hpp"
 
-#include "memtailor.h"
+#include "memtailor/memtailor.h"
 #include <vector>
 #include <utility>
 #include <algorithm>

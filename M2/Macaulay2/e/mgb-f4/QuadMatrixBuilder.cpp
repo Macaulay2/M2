@@ -5,7 +5,7 @@
 
 #include "QuadMatrix.hpp"
 #include "ScopeExit.hpp"
-#include <mathic.h>
+#include "mathic/mathic.h"
 #include <sstream>
 
 MATHICGB_NAMESPACE_BEGIN

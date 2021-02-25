@@ -11,7 +11,7 @@
 #include <limits>
 #include <string>
 #include <ostream>
-#include <memtailor.h>
+#include "memtailor/memtailor.h"
 
 MATHICGB_NAMESPACE_BEGIN
 

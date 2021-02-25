@@ -28,10 +28,6 @@ header "
 
    #include <boost/version.hpp>
 
-   #include <memtailor.h>
-   #include <mathic.h>
-   #define MATHICGB_VERSION_STRING \"custom, in M2\"
-
    #include <frobby.h>
    #ifdef HAVE_FROBBY_VERSION
      extern const char* const frobby_version;
@@ -196,9 +192,6 @@ setupconst("version", Expr(toHashTable(Sequence(
 	 #endif
 	 "),
    "boost version" => Ccode(constcharstar,"BOOST_LIB_VERSION"),
-   "memtailor version" => Ccode(constcharstar,"MEMTAILOR_VERSION_STRING"),
-   "mathic version" => Ccode(constcharstar,"MATHIC_VERSION_STRING"),
-   "mathicgb version" => Ccode(constcharstar,"MATHICGB_VERSION_STRING"),
    "factory version" => factoryversion(),
    "readline version" => readlineversion(),
    "mpfr version" => Ccode(constcharstar,"mpfr_version"),

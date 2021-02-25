@@ -3,7 +3,7 @@
 #include "stdinc.h"
 #include "PolyHashTable.hpp"
 
-#include <mathic.h>
+#include "mathic/mathic.h"
 #include <iostream>
 #include <cmath>
 
