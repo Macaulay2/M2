@@ -1,11 +1,15 @@
 use util;
 use struct;
 
+-- defined in M2lib.c
 header "
 extern int MPInumberOfProcesses();
 extern int MPImyProcessNumber();
-extern int MPIsendString();
+extern int MPIsendString(M2_string s, int p);
+extern M2_string MPIreceiveString(int p);
 ";
+
+-- ??? How to check that Expr is empty? 
 export numberOfProcesses(e:Expr):Expr := toExpr(Ccode(int, "MPInumberOfProcesses()"));
 setupfun("numberOfProcesses",numberOfProcesses);
 export myProcessNumber(e:Expr):Expr := toExpr(Ccode(int, "MPImyProcessNumber()"));
@@ -24,3 +28,12 @@ export sendString(e:Expr):Expr := (
     else WrongNumArgs(2)
     );
 setupfun("sendString",sendString);
+
+-- input: p 
+--   receive a string from processor p 
+export receiveString(e:Expr):Expr := ( 
+    when e
+    is p:ZZcell do toExpr(Ccode(string, "MPIreceiveString(", toInt(p), ")"))
+    else WrongArgZZ()
+    );
+setupfun("receiveString",receiveString);

@@ -61,6 +61,24 @@ int MPIsendString(M2_string s, int p) {
   return ret;
 }
 
+// blocking receive
+M2_string MPIreceiveString(int p) {
+  MPI_Status status;
+  // Probe for an incoming message from process zero
+  MPI_Probe(p, 0/*tag*/, MPI_COMM_WORLD, &status);
+  // When probe returns, the status object has the size and other
+  // attributes of the incoming message. Get the message size
+  int size;
+  MPI_Get_count(&status, MPI_CHAR, &size);
+  // Allocate a buffer to hold the incoming numbers
+  char* s = (char*) malloc(sizeof(char) * size);
+  // Now receive the message with the allocated buffer
+  MPI_Recv(s, size, MPI_CHAR, p, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+  M2_string ret = M2_tostring(s);
+  free(s);
+  return ret;
+}
+
 // nonblocking send 
 int MPIsendStringNonblocking(M2_string s, int p) {
   char *t = M2_tocharstar(s);
