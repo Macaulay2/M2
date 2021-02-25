@@ -54,25 +54,18 @@ macro(_gmp_check_version)
         ${GMP_MAJOR_VERSION}.${GMP_MINOR_VERSION}.${GMP_PATCHLEVEL_VERSION})
     endif()
   endforeach()
-  #If a direct search fails, use try_compile.
+  #If a direct search fails, use try_run to read out gmp_version.
   #This is for systems that put multiarch headers in other places.
   if(NOT GMP_VERSION)
-    try_compile(GMP_TEST_SUCCESS ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_LIST_DIR}/gmp_version.c
-      OUTPUT_VARIABLE _gmp_test_compile_output)
-    string(REGEX MATCH
-      "__GNU_MP_VERSION[ \t]+([0-9]+)" _gmp_major_version_match
-      "${_gmp_test_compile_output}")
-    if(_gmp_major_version_match)
-      set(GMP_MAJOR_VERSION "${CMAKE_MATCH_1}")
-      string(REGEX MATCH "__GNU_MP_VERSION_MINOR[ \t]+([0-9]+)"
-        _gmp_minor_version_match "${_gmp_test_compile_output}")
-      set(GMP_MINOR_VERSION "${CMAKE_MATCH_1}")
-      string(REGEX MATCH "__GNU_MP_VERSION_PATCHLEVEL[ \t]+([0-9]+)"
-        _gmp_patchlevel_version_match "${_gmp_test_compile_output}")
-      set(GMP_PATCHLEVEL_VERSION "${CMAKE_MATCH_1}")
-      set(GMP_VERSION
-        ${GMP_MAJOR_VERSION}.${GMP_MINOR_VERSION}.${GMP_PATCHLEVEL_VERSION})
-    endif()
+    file(WRITE ${CMAKE_BINARY_DIR}/gmp_version.c [[
+      #include <stdio.h>
+      #include "gmp.h"
+      int main(){ printf("%s",gmp_version); return 0;}
+      ]])
+    try_run(GMP_TEST_SUCCESS GMP_COMPILE_SUCCESS
+      ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/gmp_version.c
+      LINK_LIBRARIES gmp
+      RUN_OUTPUT_VARIABLE GMP_VERSION)
   endif()
 
   # Check whether found version exists and exceeds the minimum requirement
