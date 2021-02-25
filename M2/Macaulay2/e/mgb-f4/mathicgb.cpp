@@ -893,7 +893,7 @@ namespace {
       MATHICGB_ASSERT(mCallback != 0 || mData == 0);
     }
 
-    const bool isNull() const {return mCallback == 0;}
+    bool isNull() const {return mCallback == 0;}
     Action lastAction() const {return mLastAction;}
 
     bool operator()() {

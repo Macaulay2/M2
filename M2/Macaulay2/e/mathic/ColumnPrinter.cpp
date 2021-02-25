@@ -193,7 +193,7 @@ namespace mathic {
     MATHIC_ASSERT(maxSize == std::string("100.0%").size());
     const auto size = str.size();
     if (size > maxSize)
-      return std::move(str);
+      return str;
     return std::string(maxSize - str.size(), ' ') + std::move(str);
   }
 

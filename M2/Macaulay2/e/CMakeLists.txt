@@ -155,26 +155,12 @@ set(CPPONLYFILES
   memtailor/BufferPool.h
   memtailor/MemoryBlocks.cpp
   memtailor/MemoryBlocks.h
-  mathic/Action.cpp
-  mathic/Action.h
   mathic/BitTriangle.cpp
   mathic/BitTriangle.h
-  mathic/BoolParameter.cpp
-  mathic/BoolParameter.h
-  mathic/CliParameter.cpp
-  mathic/CliParameter.h
-  mathic/CliParser.cpp
-  mathic/CliParser.h
   mathic/ColumnPrinter.cpp
   mathic/ColumnPrinter.h
   mathic/DivMask.cpp
   mathic/DivMask.h
-  mathic/HelpAction.cpp
-  mathic/HelpAction.h
-  mathic/IntegerParameter.cpp
-  mathic/IntegerParameter.h
-  mathic/StringParameter.cpp
-  mathic/StringParameter.h
   mathic/Timer.cpp
   mathic/Timer.h
   mathic/display.cpp

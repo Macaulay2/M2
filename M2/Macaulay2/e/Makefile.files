@@ -216,16 +216,9 @@ COMMANDS = \
 	memtailor/Arena \
 	memtailor/BufferPool \
 	memtailor/MemoryBlocks \
-	mathic/Action \
 	mathic/BitTriangle \
-	mathic/BoolParameter \
-	mathic/CliParameter \
-	mathic/CliParser \
 	mathic/ColumnPrinter \
 	mathic/DivMask \
-	mathic/HelpAction \
-	mathic/IntegerParameter \
-	mathic/StringParameter \
 	mathic/Timer \
 	mathic/display \
 	mathic/error \

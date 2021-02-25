@@ -95,6 +95,7 @@ MATHICGB_NAMESPACE_END
 // when using MYLIB_SCOPE_EXIT without a name parameter. Not very happy about
 // turning off the warning. I wonder if there is a way to avoid the warning in
 // this case without turning it off.
-#pragma warning (disable: 4003)
+// MES: turning this off for now, as it gives warning on clang (unknown pragma ignored).
+// #pragma warning (disable: 4003)
 
 #endif

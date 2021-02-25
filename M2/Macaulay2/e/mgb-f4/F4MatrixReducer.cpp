@@ -314,7 +314,7 @@ namespace {
       if (!zero)
         reduced.rowDone();
     }});
-    return std::move(reduced);
+    return reduced;
   }
 
   SparseMatrix reduceToEchelonFormSparse(
@@ -392,7 +392,7 @@ namespace {
       pivotRowOfCol[pivotCol] = reduced.rowCount();
       rowToReduce.appendTo(reduced);
     }
-    return std::move(reduced);
+    return reduced;
   }
 
   SparseMatrix reduceToEchelonForm(
@@ -546,7 +546,7 @@ namespace {
     for (size_t row = 0; row < rowCount; ++row)
       if (!dense[row].empty())
         dense[row].appendTo(reduced);
-    return std::move(reduced);
+    return reduced;
   }
 }
 
@@ -686,7 +686,7 @@ SparseMatrix reduceToEchelonFormShrawan(
     if (!rowIsZero)
       reduced.rowDone();
   }
-  return std::move(reduced);
+  return reduced;
 }
 
 SparseMatrix reduceToEchelonFormShrawanDelayedModulus(
@@ -723,7 +723,7 @@ SparseMatrix reduceToEchelonFormShrawanDelayedModulus(
     if (!rowIsZero)
       reduced.rowDone();
   }
-  return std::move(reduced);
+  return reduced;
 }
 
 SparseMatrix F4MatrixReducer::reduceToBottomRight(const QuadMatrix& matrix) {

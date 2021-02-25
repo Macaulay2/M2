@@ -515,9 +515,9 @@ namespace mathic {
 
   template<class C>
   PairQueue<C>::PairQueue(const Configuration& conf):
-	mConf(conf),
 	mColumnQueue(QueueConfiguration(mConf)),
-	mColumnCount(0) {
+	mColumnCount(0),
+  	mConf(conf) {
   }
 
   template<class C>
