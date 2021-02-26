@@ -8,7 +8,7 @@ notDone = true
 if myID!=master then while notDone do (
     s := receiveString master;
     << "-- " << myID << " received: " << s << endl;
-    notDone = (s=="end");
+    notDone = (s!="end");
     r := value s;
     << "-- " << myID << " result: " << r << endl;
     sendString(toString r, master)
