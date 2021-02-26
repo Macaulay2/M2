@@ -535,8 +535,10 @@ load "NumericalSchubertCalculus/LR-resolveNode.m2"
 ---------------
 solveSchubertProblem = method(Options=>{LinearAlgebra=>true})
 solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
-    -- SchPblm is a list of sequences with two entries
-    -- a partition and a flag
+    -- SchPblm is a list of sequences with two entries  a condition and a flag
+    -- Check that it does indeed form a Schubert problem, and convert the consitions to partitions (if they were brackes)
+    SchPblm = ensurePartitions(SchPblm,k,n);
+
     twoconds := take(SchPblm,2);
     remaining'conditions'flags := drop(SchPblm,2);
     -- take the first two conditions
