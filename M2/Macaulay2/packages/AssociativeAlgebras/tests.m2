@@ -620,13 +620,13 @@ TEST ///
   elapsedTime NCGB(I, 20); -- best time so far: Map.  5.9 sec, at home it is 4.2 sec (same computer)... 
     -- 27/12/2019, Mike MBP: now 2.7 sec
 
-  elapsedTime NCGB(I, 21); -- 9.8 sec, 6.9 sec at home, same computer, Map.
+  I = ideal I_*; elapsedTime NCGB(I, 21); -- 9.8 sec, 6.9 sec at home, same computer, Map.
     -- 27/12/2019, Mike MBP: 4.4 sec
 
-  elapsedTime NCGB(I, 22); -- 16.23 sec, 11.7 sec at home, same computer, Map.
+  I = ideal I_*; elapsedTime NCGB(I, 22); -- 16.23 sec, 11.7 sec at home, same computer, Map.
     -- 27/12/2019, Mike MBP: 7.3 sec
 
-  elapsedTime NCGB(I, 23); 
+  I = ideal I_*; elapsedTime NCGB(I, 23); 
     -- 27/12/2019, Mike MBP: 12.2 sec
     -- 6/1/2021, Frank MBP: 2.1 sec
   *-

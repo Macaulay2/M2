@@ -647,7 +647,7 @@ void NCF4::processPreRow(PreRow r,
   if (preRowType == PreviousReducerPreRow) delete elem;
 
   // add the processed row to the appropriate list
-  rowsVector.emplace_back(Row {{},coeffs, columnRange, wordRange});
+  rowsVector.emplace_back(Row {coeffs, columnRange, wordRange});
 }
 
 void NCF4::processPreRow(PreRow r,

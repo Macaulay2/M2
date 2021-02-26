@@ -718,6 +718,20 @@ void setDMatFromSparseMatrixGenerator(Gen& G, DMat<RingType>& M)
     }
 }
 
+template<typename RingType, typename Gen>
+void setDMatFromSparseMatrixGeneratorTransposed(Gen& G, DMat<RingType>& M)
+{
+  M.resize(G.numColumns(), G.numRows());
+
+  for (auto i = G.begin(); i != G.end(); ++i)
+    {
+      for (int j=0; j<i.components().size(); ++j)
+      {
+        M.ring().set_from_long(M.entry(i.column(), i.components()[j]), i.coefficients()[j]);
+      }
+    }
+}
+
 
 template<typename Gen>
 int SchreyerFrame::rankUsingSparseMatrix(Gen& D)
@@ -753,14 +767,50 @@ int SchreyerFrame::rankUsingSparseMatrix(Gen& D)
 }
 
 template<typename Gen>
-int SchreyerFrame::rankUsingDenseMatrix(Gen& D)
+int SchreyerFrame::rankUsingDenseMatrix(Gen& D, bool transposed)
 {
   unsigned int charac =
       static_cast<unsigned int>(gausser().get_ring()->characteristic());
   M2::ARingZZpFFPACK R(charac);
   DMat<M2::ARingZZpFFPACK> M(R, 0, 0);
-  setDMatFromSparseMatrixGenerator(D, M);
+  if (!transposed)
+    setDMatFromSparseMatrixGenerator(D, M);
+  else
+    setDMatFromSparseMatrixGeneratorTransposed(D, M);
   auto a = DMatLinAlg<M2::ARingZZpFFPACK>(M);
+  //  std::cout << "---- dense matrix ----" << std::endl;
+  //  displayMat(M);
+  //  std::cout << "----------------------" << std::endl;
+  auto timeA = timer();
+  int rk = static_cast<int>(a.rank());
+  auto timeB = timer();
+  double nsecs = seconds(timeB - timeA);
+
+  timeComputeRanks += nsecs;
+
+  if (M2_gbTrace >= 2)
+    {
+      if (M.numRows() > 0 and M.numColumns() > 0)
+        std::cout << "   dense rank = " << rk
+                  << " time = " << nsecs << " sec"
+                  << std::endl;
+    }
+
+  return rk;
+}
+
+template<typename Gen>
+int SchreyerFrame::rankUsingDenseMatrixFlint(Gen& D, bool transposed)
+{
+  unsigned int charac =
+      static_cast<unsigned int>(gausser().get_ring()->characteristic());
+  M2::ARingZZpFlint R(charac);
+  DMat<M2::ARingZZpFlint> M(R, 0, 0);
+  if (!transposed)
+    setDMatFromSparseMatrixGenerator(D, M);
+  else
+    setDMatFromSparseMatrixGeneratorTransposed(D, M);
+  auto a = DMatLinAlg<M2::ARingZZpFlint>(M);
   //  std::cout << "---- dense matrix ----" << std::endl;
   //  displayMat(M);
   //  std::cout << "----------------------" << std::endl;
@@ -802,7 +852,18 @@ int SchreyerFrame::rank(int slanted_degree, int lev)
   if (frac_nonzero <= .02)
     rkSparse = rankUsingSparseMatrix(D);
   if (frac_nonzero >= .01)
-    rkDense = rankUsingDenseMatrix(D);
+    {
+      rkDense = rankUsingDenseMatrix(D);
+      int rkDense1B = rankUsingDenseMatrix(D, true);
+      int rkDense2 = rankUsingDenseMatrixFlint(D);
+      int rkDense3 = rankUsingDenseMatrixFlint(D, true);
+      if (rkDense != rkDense2 or rkDense != rkDense3 or rkDense != rkDense1B)
+        {
+          std::cout << "ERROR!! dense ranks(" << slanted_degree << "," << lev << ") = " << rkDense
+                    << " and " << rkDense2 << " and " << rkDense3 << " and " << rkDense1B << std::endl;
+        }
+    }
+      
   if (rkSparse >= 0 and rkDense >= 0 and rkSparse != rkDense)
     {
       std::cout << "ERROR!! ranks(" << slanted_degree << "," << lev << ") = " << rkSparse

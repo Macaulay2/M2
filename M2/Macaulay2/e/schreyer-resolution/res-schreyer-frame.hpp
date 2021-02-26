@@ -137,8 +137,10 @@ class SchreyerFrame
   int rankUsingSparseMatrix(Gen& D);
 
   template<typename Gen>
-  int rankUsingDenseMatrix(Gen& D);
-  
+  int rankUsingDenseMatrix(Gen& D, bool transposed=true);
+
+  template<typename Gen>
+  int rankUsingDenseMatrixFlint(Gen& D, bool transposed=true);
   
   bool computeFrame();  // returns true if the whole frame is created.  false if
                         // interrupted.
