@@ -1,11 +1,14 @@
 #include "dpoly.hpp"
-#include <cstdlib>
-#include <cctype>
-#include <sstream>
+
 #include <cassert>
+#include <cctype>
+#include <cstdlib>
+#include <sstream>
+#include <vector>
+
+#include "interface/random.h"
 #include "ZZ.hpp"
 
-#include <vector>
 #define DEBUGGCDno
 
 long gcd_extended(long a, long b, long &u, long &v)
@@ -1362,7 +1365,7 @@ poly DPoly::diff(int level, int whichvar, const poly f)
   return diff_n(level, whichvar, f);
 }
 
-poly DPoly::power_mod(int level, const poly f, mpz_t m, const poly g)
+poly DPoly::power_mod(int level, const poly f, mpz_srcptr m, const poly g)
 // f^m mod g
 {
   // We assume that m > 0. THIS IS NOT CHECKED!!
@@ -1497,7 +1500,7 @@ void DRing::set_from_int(poly &result, mpz_srcptr r)
   result = D.from_long(level, c);
 }
 
-bool DRing::set_from_rational(poly &result, mpq_ptr r)
+bool DRing::set_from_mpq(poly &result, mpq_srcptr r)
 {
   // returns false if r doesn't lift
   mpz_t a;

@@ -312,7 +312,7 @@ verifyParent(MutableHashTable,List) := (father, parent'solutions) -> (
               or (abs(a#i-1) < ERROR'TOLERANCE and parentXlist#i == 1)
               or (parentXlist#i != 0 and parentXlist#i != 1)
 	      )
-	  then error "a solution does not fit the expected pattern (numerical error occured)"         	 
+	  then error "a solution does not fit the expected pattern (numerical error occurred)"         	 
       	 ); -- end scan on #a
      ) -- end of second argument of scan
    ) -- end scan parent'solutions

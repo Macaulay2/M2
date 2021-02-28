@@ -173,7 +173,8 @@ CC // RR := (x,y) -> x // y_CC;
 CC % RR := (x,y) -> x % y_CC;
 
 -- functions
-
+realPart Number := realPart0
+imaginaryPart Number := imaginaryPart0
 conjugate CC := z -> toCC(precision z, realPart z, - imaginaryPart z)
 isConstant Number := i -> true
 

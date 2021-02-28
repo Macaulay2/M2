@@ -1,7 +1,6 @@
 debug needsPackage "SLPexpressions"
 debug needsPackage "NumericalAlgebraicGeometry"
 export {
-    "specializeSystem",
     "selectRandomEdgeAndDirection",
     "selectBestEdgeAndDirection",
     "makeRandomizedSelect",
@@ -17,98 +16,86 @@ export {
     "FilterFailure",
     "Randomizer",
     "Equivalencer",
-    "PartialSolBins"}
+    "PartialSolBins",
+    "FirstDirectedEdge",
+    "completeGraphInit",
+    "completeGraphAugment",
+    "flowerGraphInit",
+    "flowerGraphAugment",
+    "LinearSegment"
+    }
+
+USEtrackHomotopy = false
     
 HomotopyNode = new Type of MutableHashTable 
 HomotopyEdge = new Type of MutableHashTable
 HomotopyGraph = new Type of MutableHashTable
 
-USEtrackHomotopy = false -- determines whether to use trackHomotopy (new engine)
-
 addNode = method()
-addNode (HomotopyGraph, Point, PointArray) := (G, params, partialSols) -> (
+addNode (HomotopyGraph, Point, PointArray) := (HG, params, partialSols) -> (
     N := new HomotopyNode from {
         BasePoint => params,
         PartialSols => partialSols,
-	PartialSolBins => pointArray(G.Equivalencer \ points partialSols),
-        Graph => G,
+	PartialSolBins => pointArray(HG.Equivalencer \ points partialSols),
+        Graph => HG,
+        Position => # HG.Vertices,
 	Edges => new MutableList from {}
     };
-    if (not G.SLP)  then (
-	N.SpecializedSystem = specializeSystem (params, G.Family));
-    G.Vertices = append(G.Vertices, N);
+    if (not HG.SLP)  then (
+	N.SpecializedSystem = specializeSystem (params, HG.Family));
+    HG.Vertices = append(HG.Vertices, N);
     N
 )
-addNode (HomotopyGraph, Matrix, Matrix) := (G, p0, x0) -> addNode(point p0, pointArray {point x0})
-    
+addNode (HomotopyGraph, Matrix, Matrix) := (HG, p0, x0) -> addNode(point p0, pointArray {point x0})
+
+numSols = method()
+numSols HomotopyNode := N -> length N.PartialSols
 
 addEdge = method(Options=>{"random gamma"=>true})
-addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (G,n1,n2) -> (
+addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (HG, n1, n2) -> (
     E := new HomotopyEdge from {
-            Node1 => n1, 
-            Node2 => n2, 
-	    Graph => G,
-            gamma1 => if o#"random gamma" then exp(2 * pi* ii * random RR) else 1, 
-            gamma2 => if o#"random gamma" then exp(2 * pi* ii * random RR) else 1, 
-            Correspondence12 => new MutableHashTable from {}, -- think: the map from labels of points of Node1 to those of Node2
-            Correspondence21 => new MutableHashTable from {}  -- ............................................2.................1
+        Node1 => n1, 
+        Node2 => n2, 
+        Graph => HG,
+        gamma1 => if o#"random gamma" then exp(2 * pi* ii * random RR) else 1, 
+        gamma2 => if o#"random gamma" then exp(2 * pi* ii * random RR) else 1, 
+        Correspondence12 => new MutableHashTable from {}, -- think: the map from labels of points of Node1 to those of Node2
+        Correspondence21 => new MutableHashTable from {}  -- ............................................2.................1
         };
     n1.Edges#(#n1.Edges) = E;
     n2.Edges#(#n2.Edges) = E;
-    G.Edges = append(G.Edges,E);
-    if G.Potential =!= null then (	
-    	E.Potential12 = G.Potential (E, true);
-    	E.Potential21 = G.Potential (E, false);
+    HG.Edges = append(HG.Edges,E);
+    if HG.Potential =!= null then (	
+    	E.Potential12 = HG.Potential (E, true);
+    	E.Potential21 = HG.Potential (E, false);
     	);
-    if G.SLP then (
-	p1 := transpose matrix n1.BasePoint;
-	p2 := transpose matrix n2.BasePoint;
-	if (G.Randomizer =!= null) then (
-	    p1 = G.Randomizer p1;
-	    p2 = G.Randomizer p2;
-	    );
-    	E#"homotopy12" = specialize(G.Family, 
-	    ((E.gamma1)*p1)||
-	    ((E.gamma2)*p2));
-    	E#"homotopy21" = specialize(G.Family, 
-	    ((E.gamma2)*p2)||
-	    ((E.gamma1)*p1));
-		)
+    p1 := transpose matrix n1.BasePoint;
+    p2 := transpose matrix n2.BasePoint;
+    if (HG.Randomizer =!= null) then (
+        p1 = HG.Randomizer p1;
+        p2 = HG.Randomizer p2;
+        );
+    if HG.SLP then (
+        seg := parametricSegmentHomotopy HG.Family;
+        edgeHomotopy := if HG.LinearSegment then seg else (
+            -- create random arc between p1 and p2 in the parameter space
+            c := E.gamma1;
+            t := seg.GateHomotopy#"T";
+            -- next line is a bit inefficient
+            H := sub(seg.GateHomotopy#"H", t=> t* ( (2-4*c) *t + (4*c-1)));
+            gateHomotopy(H, vars HG.Family, t, Parameters => seg.Parameters)
+            );
+    	E#"homotopy12" = specialize(edgeHomotopy, p1||p2);
+    	E#"homotopy21" = specialize(edgeHomotopy, p2||p1);
+        )
     else (
-	    F1 := polySystem(E.gamma1 * n1.SpecializedSystem);
-    	    F2 := polySystem(E.gamma2 * n2.SpecializedSystem);
-	    if USEtrackHomotopy then (
-		if o#"random gamma" then (
-	    	    E#"homotopy12" = segmentHomotopy(F1,F2);
-    	    	    E#"homotopy21" = segmentHomotopy(F2,F1);
-	    	    )
-		else ( -- this is a hack engaged for a more general purpose (e.g., systems which are non-linear in parameter)
-	    	    F := G.Family.PolyMap;
-	    	    (FR, mapFR) := flattenRing ring F;
-            	    FF := mapFR F;
-	    	    t := symbol t;
-	    	    Rt := CC(monoid [gens ring F, t]);
-	    	    t = last gens Rt;
-	    	    F12 := (map(Rt,FR,drop(gens Rt,-1) | ((1-t)*coordinates n1.BasePoint + t*coordinates n2.BasePoint))) FF;   		
-	    	    F21 := sub(F12,t=>1-t);   		
-	    	    XT := getVarGates Rt;
-	    	    X := gateMatrix{drop(XT,-1)};
-	    	    T := last XT; 
-	    	    -- "-- setting up gateHomotopy for an edge...";
-	    	    E#"homotopy12" = gateHomotopy(gateMatrix polySystem F12, X, T, Strategy=>compress);
-	    	    E#"homotopy21" = gateHomotopy(gateMatrix polySystem F21, X, T, Strategy=>compress);
-	    	    )
-    		);
-	    );
-    	    E
-)
-
-removeEdge = method()
-removeEdge(HomotopyGraph, HomotopyEdge) := (G,e) -> (
-    (N1, N2) := (G.Node1, G.Node2);
-    N1.Edges = remove(N1.Edges, e);
-    N2.Edges = remove(N2.Edges, e);
-    G.Edges = remove(G.Edges, e);
+        F1 := polySystem(E.gamma1 * n1.SpecializedSystem);
+        F2 := polySystem(E.gamma2 * n2.SpecializedSystem);
+        if USEtrackHomotopy then (
+            E#"homotopy12" = segmentHomotopy(F1, F2);
+            E#"homotopy21" = segmentHomotopy(F2, F1);
+            );
+        );
     )
 
 addCorrespondence = method()
@@ -121,48 +108,35 @@ addCorrespondence (HomotopyEdge,ZZ,ZZ) := (e,a,b) -> (
 	)
     )
 
-homotopyGraph = method(TypicalValue => HomotopyGraph, Options => {Potential=>null, FilterCondition=>null, Randomizer=>null, Equivalencer=>(x->x)})
+homotopyGraph = method(TypicalValue => HomotopyGraph, 
+    -- all options should be set inside a monodromy call
+    Options => {
+        Potential=>null, 
+        FilterCondition=>null,
+        Randomizer=>null,
+        Equivalencer=>null,
+        Verbose=>null,
+        LinearSegment=>true
+        }
+    )
 installMethod(homotopyGraph, o -> ()-> new HomotopyGraph from {
 	Vertices => new MutableList from {},
 	Edges => new MutableList from {}
 	})
 homotopyGraph System := o -> PF -> (
-    G := homotopyGraph();
-    G.SLP = instance(PF, GateSystem);
-    G.Family = if G.SLP then parametricSegmentHomotopy PF else PF;
-    G.Potential = o.Potential;
-    G.FilterCondition = o.FilterCondition;
-    G.Randomizer = o.Randomizer;
-    G.Equivalencer = o.Equivalencer;
-    G
+    HG := homotopyGraph();
+    HG.SLP = instance(PF, GateSystem);
+    HG.Family = PF,
+    HG.Potential = o.Potential;
+    HG.FilterCondition = o.FilterCondition;
+    HG.Randomizer = o.Randomizer;
+    HG.Equivalencer = o.Equivalencer;
+    HG.Verbose = o.Verbose;
+    HG.LinearSegment = o.LinearSegment;
+    HG
     )
 
-specializeSystem = method()
-specializeSystemInternal := (p, M, R'PR'toPR'X) -> (
-    (R, PR, toPR, X) := R'PR'toPR'X; -- see below for ingredients
-    flatten entries (map(R,PR,X|matrix p)) toPR transpose M
-    )   
-specializeSystem (Point, PolySystem) := (p, F) -> (
-    if not F#?"specialization ingredients" then (
-    	nParameters := numgens coefficientRing ring F;
-    	assert(nParameters == #coordinates p);
-    	(PR,toPR) := flattenRing ring F;
-    	X := drop(gens PR, -nParameters);
-	R := (coefficientRing PR)[X]; 
-    	X = vars R;
-    	F#"specialization ingredients" = (R,PR,toPR,X);
-	);
-    specializeSystemInternal(p, F#PolyMap, F#"specialization ingredients")
-    )
-specializeSystem (Point, Matrix) := (p, M) -> (
-    nParameters := numgens coefficientRing ring M;
-    assert(nParameters == #coordinates p);
-    (PR,toPR) := flattenRing ring M;
-    X := drop(gens PR, -nParameters); 
-    R := (coefficientRing PR)[X];
-    X = vars R;
-    specializeSystemInternal(p,M,(R,PR,toPR,X))
-    )
+
 
 -- returns (head,tail,correspondence,correspondence')
 head'n'tail = (e, from1to2) -> 
@@ -179,7 +153,7 @@ potentialLowerBound = (e,from1to2) -> (
 makeBatchPotential = method()
 makeBatchPotential ZZ := batchSize -> (
     (e,from1to2) -> (
-    	G := e.Graph;
+    	HG := e.Graph;
     	(head,tail,correspondence,correspondence') := head'n'tail(e,from1to2);
     	c := length keys correspondence;
    	a := length head.PartialSols - c; -- known head sols without correspondence
@@ -191,44 +165,62 @@ makeBatchPotential ZZ := batchSize -> (
     ) 
 potentialE = makeBatchPotential 1
 
-selectRandomEdgeAndDirection = G-> (G.Edges#(random (#G.Edges)),random 2 == 0)
-selectBestEdgeAndDirection = G -> (
-    p12 := toList apply(G.Edges, e -> e.Potential12);
-    p21 := toList apply(G.Edges, e -> e.Potential21);
+-- _should not_ be called by a graph initializer
+updateFirstDirectedEdge = HG -> (
+    availableE := select(1, HG.Edges, e -> (
+            (head, tail, correspondence, correspondence') := head'n'tail(e, true);
+            length head.PartialSols > length keys correspondence or length tail.PartialSols > length keys correspondence'
+            )
+        );
+    HG.FirstDirectedEdge = if (#availableE == 0) then null else (
+        e := first availableE;
+        (head, tail, correspondence, correspondence') := head'n'tail(e, true);
+        if (length head.PartialSols > length keys correspondence) then (e, true)
+        else (e, false)
+        );
+    )
+
+-- edge selection routines
+
+selectFirstEdgeAndDirection = HG -> HG.FirstDirectedEdge
+
+selectRandomEdgeAndDirection = HG -> (HG.Edges#(random (#HG.Edges)),random 2 == 0)
+        
+selectBestEdgeAndDirection = HG -> (
+    p12 := toList apply(HG.Edges, e -> e.Potential12);
+    p21 := toList apply(HG.Edges, e -> e.Potential21);
     m12 := max p12;
     m21 := max p21;
---    print (p12,p21);
     if m12 > m21 then (
 	e := positions(p12, m -> m == m12);
-	(G.Edges#(e#(random length e)), true)
+	(HG.Edges#(e#(random length e)), true)
 	)
     else (
 	e = positions(p21, m -> m == m21);
-	(G.Edges#(e#(random length e)), false)
+	(HG.Edges#(e#(random length e)), false)
 	)
     )
 makeRandomizedSelect = method()
 makeRandomizedSelect RR := p -> (
     assert (p<=1 and p>=0);
-    G -> if random RR < p then selectRandomEdgeAndDirection G else selectBestEdgeAndDirection G
+    HG -> if random RR < p then selectRandomEdgeAndDirection HG else selectBestEdgeAndDirection HG
     )
 
 setTrackTime = method()
-setTrackTime (HomotopyGraph, Number) := (G,t) -> G#"track time" = t
+setTrackTime (HomotopyGraph, Number) := (HG,t) -> HG#"track time" = t
  
 getTrackTime = method()
-getTrackTime HomotopyGraph := G -> G#"track time"
+getTrackTime HomotopyGraph := HG -> HG#"track time"
 
--- prototype for edge tracking function
--- assumptions: 
--- 1) member function is working/optimized for PointAray objects 
--- 2) specializeSystem method which converts parametric coefficients to a list of polynomials (inputs to track),
--- 3) positions method defined for pointset object
--- Output: 
+--  Input: HomotopyEdge (e = head--tail)
+--         Boolean (from1to2): if true, track head->tail, else track tail->head
+--         ZZ (BatchSize): bound on number of points to track
+-- Output: the number of _Attempted_ path-tracking tasks
+-- Modifies: e and its HomotopyGraph
 trackEdge = method()
-trackEdge (HomotopyEdge, Boolean) := (e, from1to2) -> trackEdge(e,from1to2,infinity)
+trackEdge (HomotopyEdge, Boolean) := (e, from1to2) -> trackEdge(e, from1to2, infinity)
 trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
-    G := e.Graph;
+    HG := e.Graph;
     homotopy := null;
     if from1to2 then (
 	(head, tail) := (e.Node1, e.Node2);
@@ -254,7 +246,7 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
 	    );
 	t := first t'sols;
 	sols := last t'sols;
-	setTrackTime(G,getTrackTime(G)+t);
+	setTrackTime(HG,getTrackTime(HG)+t);
 	sols
 	)
     else {};
@@ -262,63 +254,108 @@ trackEdge (HomotopyEdge, Boolean, Thing) := (e, from1to2, batchSize) -> (
     scan(#untrackedInds, i->(
 	    a := untrackedInds#i;
 	    s := newSols#i;
-	    if ((G.FilterCondition =!= null) and 
-		(G.FilterCondition(transpose matrix tail.BasePoint, transpose matrix s))) then (
-		<< "a path failed (as flagged by the FilterCondition option)" << endl;
+	    if ((HG.FilterCondition =!= null) and 
+		(HG.FilterCondition(transpose matrix tail.BasePoint, transpose matrix s))) then (
+                if HG.Verbose then << "a path failed (flagged by FilterCondition)" << endl;
 		s.SolutionStatus = FilterFailure;
 	       	correspondence#a = null; -- record failure		  
 		);
 	    if (status s =!= Regular) then (
-		<< "a path failed: status = " << status s << endl;
+		if HG.Verbose then << "a path failed (tracking error) status = " << status s << endl;
 		correspondence#a = null; -- record failure
 		)
 	    else ( 
-		if member(G.Equivalencer s, tail.PartialSolBins) then b:= position(G.Equivalencer s,tail.PartialSolBins) 
+		if member(HG.Equivalencer s, tail.PartialSolBins) then b:= position(HG.Equivalencer s,tail.PartialSolBins) 
 		else (    
 		    s = point {coordinates s}; -- lose the rest of info
 		    appendPoint(tail.PartialSols, s);
-		    appendPoint(tail.PartialSolBins, G.Equivalencer s);
+		    appendPoint(tail.PartialSolBins, HG.Equivalencer s);
 		    b = n;
 		    n = n+1;
 		    );
 		if not addCorrespondence(if from1to2 then (e,a,b) else (e,b,a))
 		then (
-		    print "failure due to correspondence conflict (suggesting paths have jumped)";
+		    if HG.Verbose then << "a path failed (correspondence conflict: suggests paths have jumped)" << endl;
 		    correspondence#a = null -- record failure 
 		    )
 		);
 	    )
 	);
-    if G.Potential =!= null 
+    if HG.Potential =!= null 
     then for e in tail.Edges do (
-    	e.Potential12 = G.Potential (e, true);
-    	e.Potential21 = G.Potential (e, false);
+    	e.Potential12 = HG.Potential (e, true);
+    	e.Potential21 = HG.Potential (e, false);
 	);
-    #untrackedInds
+    ret := #untrackedInds;
+    if (ret == 0 and HG.Verbose) then << "no paths attempted" << endl;
+    updateFirstDirectedEdge HG;
+    ret
     )
 
+-- !!
 saturateEdges = method()
-saturateEdges HomotopyGraph := G -> (
-    apply(G.Edges, e -> trackEdge(e, false));
-    apply(G.Edges, e -> trackEdge(e, true));
+saturateEdges HomotopyGraph := HG -> (
+    apply(HG.Edges, e -> trackEdge(e, false));
+    apply(HG.Edges, e -> trackEdge(e, true));
     )
+
+-- gives HG "complete graph" shape
+completeGraphInit = (HG, p, node1, nnodes, nedges) -> (
+    if HG.Verbose then << "initializing graph" << endl;
+    nextP := (p0 -> point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+    for i from 1 to nnodes-1 do (
+        addNode(HG, nextP p, pointArray {});
+    );
+    for i from 0 to nnodes-1 do (
+        for j from i+1 to nnodes-1 do (
+            apply(nedges, k -> addEdge(HG, HG.Vertices#i, HG.Vertices#j,
+		    "random gamma" => (nedges>1)));
+        );
+    );
+    HG.FirstDirectedEdge = (first HG.Edges, true);
+    )
+
+completeGraphAugment = (HG, p, node1, nStartingEdges, nNewEdges, nNewNodes) -> (
+    nextP := (p0 -> point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+    for i from 1 to nNewNodes do (
+        newNode := addNode(HG, nextP p, pointArray {});
+        for j from 0 to #(HG.Vertices) - 2 do (
+            apply(nStartingEdges, k -> addEdge(HG, newNode, HG.Vertices#j));
+            );
+	);
+	
+	nNodes := #(HG.Vertices);
+	for i from 0 to nNodes-1 do (
+		for j from i+1 to nNodes-1 do (
+			apply(nNewEdges, k -> addEdge(HG, HG.Vertices#i, HG.Vertices#j));
+		);
+	);
+);
+
+-- gives HG a "flower" shape
+flowerGraphInit = (HG, p, node1, nnodes, nedges) -> (
+    if HG.Verbose then << "initializing graph" << endl;
+    nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+    for i from 1 to nnodes do (
+        newNode := addNode(HG,nextP(p), pointArray {});
+        apply(nedges, k -> addEdge(HG, node1, newNode));
+	);
+    HG.FirstDirectedEdge = (first HG.Edges, true);
+    updateFirstDirectedEdge HG;
+
+)
+
+-- static flower augmentation function
+flowerGraphAugment = (HG, p, node1, nStartingEdges, nNewEdges, nNewNodes) -> (
+    nextP := ((p0)->point {apply(#coordinates p0, i->exp(2*pi*ii*random RR))});
+    for i from 1 to nNewNodes do (
+		newNode := addNode(HG,nextP(p), pointArray {});
+		apply(nStartingEdges, k -> addEdge(HG, node1, newNode));
+	);
+	for i from 1 to #(HG.Vertices) - 1 do (
+		apply(nNewEdges, k -> addEdge(HG, HG.Vertices#i, node1));
+	);
+)
 
 
 end
-
-------------------------------------------
-------------------------------------------
--- Documentation
-------------------------------------------
-------------------------------------------
-
-beginDocumentation()
-
-------------------------------------------
--- Data Types
-------------------------------------------
-
-doc ///
-  Key
-    Graphs
-///

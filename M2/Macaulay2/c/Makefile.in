@@ -8,8 +8,7 @@ include ../../include/config.Makefile
 
 # In this directory, we compile "scc1", the D to C translator, which we want to run
 # on the "build" machine, in the sense of autoconf.  So we do not want the cross-compiling compiler:
-CC = @CC_FOR_BUILD@
-LDFLAGS = $(LDFLAGS_FOR_BUILD)
+# CC = @ CC_FOR_BUILD @
 
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -32,14 +31,19 @@ SRCFILES := $(HFILES) $(CNAMES) grammar.y scc-core.h scc-core.c
 CPPFLAGS := -I../../include -I/include -I@srcdir@/../../include -I@srcdir@ $(CPPFLAGS)
 
 # we include -Wno-unknown-attributes because libgc incorrectly assumes that clang 6 accepts __attribute__((__alloc_size__(1))):
-CFLAGS += -Wall -Wno-unknown-attributes -Werror
+CFLAGS += -Wall -Wno-unknown-attributes
+
+ifeq "@DEVELOPMENT@" "yes"
+CFLAGS +=  -Werror
+endif
+
 ifeq "@__INTEL_COMPILER@" "no"
 CFLAGS += -Wimplicit-function-declaration
 endif
 ifeq (@OS@,Linux)
 LDFLAGS += -Wl,-rpath,$(BUILTLIBPATH)/lib
 endif
-LOADLIBES += @GC_LIBS@
+LOADLIBES += -lgc
 
 ############################## compiling
 scc1: $(OFILES) 

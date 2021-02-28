@@ -339,14 +339,14 @@ namespace mixedCells
     return s;
   }
   /**
-     This mehtod transforms the inequalities (rows of the matrix
+     This method transforms the inequalities (rows of the matrix
      [originalL|originalR]) to their normal forms modulo L by reducing
      with the matrix representation of L. Only coordinates with no
      pivots have to be stored. That is, n-d for the left handside, and
      1 for the right hand side. In total d coordinates are removed.
 
      The output is stored in [LeftHandSide|RightHandSide], and these
-     two matrices (/vector) must have been initialiazed to the right
+     two matrices (/vector) must have been initialized to the right
      width, and with a sufficient number of rows before calling.
 
      If the normal form of an inequality turns out to be zero, then it
@@ -380,7 +380,7 @@ namespace mixedCells
     return ret;
   }
   /**
-     This mehtod transforms the inequalities (rows of the matrix
+     This method transforms the inequalities (rows of the matrix
      [sourceL|sourceR]) to their normal forms modulo L by reducing
      with the matrix representation of L. Only coordinates with no pivots have
      to be stored. Therefore, the input has n+1 coordinates for the
@@ -389,7 +389,7 @@ namespace mixedCells
 
      The output is stored in [destinationL|destinationR], but
      starting at row destinationOffset. The two matrices (/vector)
-     must have been initialiazed to the right width, and with a
+     must have been initialized to the right width, and with a
      sufficient number of rows before calling.
 
      If the normal form of an inequality turns out to be zero, then it
@@ -446,7 +446,7 @@ namespace mixedCells
  mutable unsigned char hashTable[256];
 #endif
   /**
-     This mehtod transforms the inequalities (rows of the matrix
+     This method transforms the inequalities (rows of the matrix
      [sourceL|sourceR]) to their normal forms modulo L by reducing
      with the matrix representation of L, under the assumption that
      the equations were already reduced by the first d-1 rows of the
@@ -457,7 +457,7 @@ namespace mixedCells
 
      The output is stored in [destinationL|destinationR], but
      starting at row destinationOffset. The two matrices (/vector)
-     must have been initialiazed to the right width, and with a
+     must have been initialized to the right width, and with a
      sufficient number of rows before calling.
 
      If the normal form of an inequality turns out to be zero, then it

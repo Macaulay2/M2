@@ -20,6 +20,7 @@ newPackage select((
                  Email => "dcook8@nd.edu",
                  HomePage => "http://www.nd.edu/~dcook8"}},
     Headline => "interface to nauty (Graphs fork)",
+    Keywords => {"Graph Theory", "Interfaces"},
     Configuration => {"path" => ""},
     PackageExports => {"Graphs"},
     DebuggingMode => false,
@@ -29,10 +30,9 @@ newPackage select((
 -- Configuration
 -------------------
 
--- Check the ~/.Macaulay2/init-NautyGraphs.m2 file for the absolute path.
--- If it's not there, then use the M2-Programs directory.
-nauty'path = (options NautyGraphs).Configuration#"path";
-if nauty'path == "" then nauty'path = prefixDirectory | currentLayout#"programs";
+-- for backward compatibility
+if not programPaths#?"nauty" and NautyGraphs#Options#Configuration#"path" != ""
+    then programPaths#"nauty" = NautyGraphs#Options#Configuration#"path"
 
 -------------------
 -- Exports
@@ -327,7 +327,7 @@ onlyPlanar (List, Boolean) := List => (L, non) -> (
 )
 onlyPlanar List := List => L -> onlyPlanar(L, false)
 
--- Reorders a bipartite graph so all vertices of each color are continguous.
+-- Reorders a bipartite graph so all vertices of each color are contiguous.
 relabelBipartite = method()
 relabelBipartite List := List => L -> (
     r := callNauty("biplabg -q", L);
@@ -406,6 +406,8 @@ stringToGraph String := Graph => str -> (
 -- Local-Only Code
 -------------------
 
+nauty = null
+
 -- Sends a command and retrieves the results into a list of lines.
 -- If ReadError is set to true and the command is successfully executed,
 -- then the data from stderr is returned (filterGraphs and removeIsomorphs
@@ -413,34 +415,20 @@ stringToGraph String := Graph => str -> (
 protect ReadError;
 callNauty = method(Options => {ReadError => false})
 callNauty (String, List) := List => opts -> (cmdStr, dataList) -> (
+    if nauty === null then
+       nauty = findProgram("nauty", "complg --help",
+	   Prefix => {(".*", "nauty-")}); -- debian/fedora
     infn := temporaryFileName();
     erfn := temporaryFileName();
     -- output the data to a file
     o := openOut infn;
     scan(graphToString \ dataList, d -> o << d << endl);
     close o;
-    -- try to harvest the lines
-    r := lines try get openIn ("!" | nauty'path | cmdStr | " <" | infn | " 2>" | erfn)
-    else (
-        -- nauty errored, harvest the error
-        e := last separate(":", first lines get openIn erfn);
-        removeFile infn;
-        removeFile erfn;
-        -- special cases 
-        if e == " not found" then error("callNauty: nauty could not be found on the path [" | nauty'path | "].");
-        if e == "#q -V] [--keys] [-constraints -v] [ifile [ofile]]" then e = "invalid filter";
-	    error("callNauty: nauty terminated with the error [", e, "].");
-    );
+    exe := first separate(" ", cmdStr);
+    args := replace(exe | " ", "", cmdStr);
+    r := runProgram(nauty, exe, args | " < " | infn);
     removeFile infn;
-    -- If the method wants it, then read the stderr data instead.
-    if opts.ReadError then (
-        r = lines try get openIn erfn else (
-            removeFile erfn;
-            error("callNauty: nauty ran successfully, but no data was written to stderr as expected.  Report this to the package maintainer.");
-        );
-    );
-    removeFile erfn;
-    r
+    if opts.ReadError then lines r#"error" else lines r#"output"
 )
 
 -- Processes an option which should be a Boolean.
@@ -631,7 +619,7 @@ doc ///
             whether the two graphs are isomorphic
     Description
         Text
-            A very efficient method for determing whether two graphs (of the same format) are isomorphic.
+            A very efficient method for determining whether two graphs (of the same format) are isomorphic.
         Example
             G = graph {{1,2},{2,3},{3,4},{4,5},{1,5}};
             H = graph {{1,3},{3,5},{5,2},{2,4},{4,1}};

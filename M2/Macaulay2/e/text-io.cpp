@@ -8,7 +8,7 @@
 int MAX_LINE_LENGTH = 75;
 int emit_line_len = 0;
 
-void bignum_text_out(buffer &o, mpz_t a)
+void bignum_text_out(buffer &o, mpz_srcptr a)
 {
   char s[1000];
   char *str;

@@ -13,6 +13,7 @@
 class RingMap;
 
 namespace M2 {
+
 /**
 \ingroup rings
 */
@@ -25,14 +26,7 @@ class ARingCC : public RingInterface
  public:
   static const RingID ringID = ring_CC;
 
-  struct complex
-  {
-    double re;
-    double im;
-  };
-  typedef complex* complex_struct_ptr;
-
-  typedef complex elem;
+  typedef cc_doubles_struct elem;
   typedef elem ElementType;
   typedef ARingRR RealRingType;
   typedef RealRingType::ElementType RealElementType;
@@ -85,15 +79,14 @@ class ARingCC : public RingInterface
   // Do not take the same element and store it as two different ring_elem's!!
   void to_ring_elem(ring_elem& result, const ElementType& a) const
   {
-    complex* res = getmemstructtype(complex_struct_ptr);
-    init(*res);
-    set(*res, a);
-    result.poly_val = reinterpret_cast<Nterm*>(res);
+    cc_doubles_ptr res = getmemstructtype(cc_doubles_ptr);
+    *res = a;
+    result = ring_elem(res);
   }
 
   void from_ring_elem(ElementType& result, const ring_elem& a) const
   {
-    result = *reinterpret_cast<complex*>(a.poly_val);
+    result = * a.get_cc_doubles();
   }
 
   // 'init', 'init_set' functions
@@ -131,7 +124,7 @@ class ARingCC : public RingInterface
     result.im = 0.0;
   }
 
-  bool set_from_mpq(ElementType& result, mpq_ptr a) const
+  bool set_from_mpq(ElementType& result, mpq_srcptr a) const
   {
     result.re = mpq_get_d(a);
     result.im = 0.0;
@@ -332,7 +325,7 @@ class ARingCC : public RingInterface
     clear(curr_pow);
   }
 
-  void power_mpz(ElementType& result, const ElementType& a, mpz_ptr n) const
+  void power_mpz(ElementType& result, const ElementType& a, mpz_srcptr n) const
   {
     std::pair<bool, int> n1 = RingZZ::get_si(n);
     if (n1.first)
@@ -368,13 +361,8 @@ class ARingCC : public RingInterface
 
   void random(ElementType& result) const  // redo?
   {
-    mpfr_t val;
-    mpfr_init2(val, 53);
-    rawRandomMpfr(val, 53);
-    result.re = mpfr_get_d(val, GMP_RNDN);
-    rawRandomMpfr(val, 53);
-    result.im = mpfr_get_d(val, GMP_RNDN);
-    mpfr_clear(val);
+    result.re = randomDouble();
+    result.im = randomDouble();
   }
 
   void eval(const RingMap* map,
@@ -391,14 +379,14 @@ class ARingCC : public RingInterface
 
   gmp_CC toBigComplex(const ElementType& a) const
   {
-    gmp_CC result = getmemstructtype(gmp_CC);
-    result->re = getmemstructtype(gmp_RR);
-    result->im = getmemstructtype(gmp_RR);
+    gmp_CCmutable result = getmemstructtype(gmp_CCmutable);
+    result->re = getmemstructtype(mpfr_ptr);
+    result->im = getmemstructtype(mpfr_ptr);
     mpfr_init2(result->re, get_precision());
     mpfr_init2(result->im, get_precision());
     mpfr_set_d(result->re, a.re, GMP_RNDN);
     mpfr_set_d(result->im, a.im, GMP_RNDN);
-    return result;
+    return moveTo_gmpCC(result);
   }
 
   void set_from_doubles(ElementType& result, double re, double im) const
@@ -413,7 +401,7 @@ class ARingCC : public RingInterface
     if (mpfr_cmp_d(epsilon, fabs(a.im)) > 0) a.im = 0.0;
   }
 
-  void increase_norm(gmp_RR& norm, const ElementType& a) const
+  void increase_norm(gmp_RRmutable norm, const ElementType& a) const
   {
     double d;
     abs(d, a);

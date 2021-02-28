@@ -6,6 +6,7 @@ newPackage(
 		  Email => "jyu@math.mit.edu", 
 		  HomePage => "http://www.math.mit.edu/~jyu/"}},
     	Headline => "interfacing with polymake",
+	Keywords => {"Interfaces"},
     	DebuggingMode => false
     	)
 
@@ -180,7 +181,7 @@ beginDocumentation()
 document { 
 	Key => Polymake,
 	Headline => "a package for interfacing with polymake",
-	EM "Polymake", " is a package for interfacing wiht polymake, and
+	EM "Polymake", " is a package for interfacing with polymake, and
 	for reading and writing files in polymake's format.",
 	PARA{},
 	"Warning: this package is not complete, and is mostly undocumented, but it is used in ", TO "gfanInterface::gfanInterface", ".

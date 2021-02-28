@@ -1,5 +1,10 @@
 # @configure_input@
 
+# user variables
+
+MORE_SCCFLAGS :=
+SCCFLAGS += $(MORE_SCCFLAGS)
+
 # get rid of some unused implicit rules to make debugging simpler
 %:%,v
 %:RCS/%,v
@@ -58,49 +63,27 @@ all: $(M2_OBJECTS)
 # all: libd.a
 # LIBFILES := $(patsubst M2mem.o,,$(patsubst scclib.o,,$(M2_OBJECTS))) $(patsubst %, %.o, $(M2_DNAMES))
 LIBFILES :=
-# LIBFILES += ../c/scc-core.o 
-# to get scc_core_prepare
-LIBFILES += M2inits.o
+
 # to get getmem
 LIBFILES += M2mem.o 
-# to get initializeGMP_Cwrapper
-LIBFILES += gmp_init.o
 # to get trapchk()
 LIBFILES += debug.o
-LIBFILES += 
 LIBFILES += gmp_aux.o arithmetic.o atomic.o M2.o system.o strings.o varstrin.o errio.o vararray.o ctype.o nets.o varnets.o interrupts.o pthread0.o stdio.o stdiop.o err.o gmp.o
 libd.a: $(LIBFILES) ; ar -r $@ $?
 rm-libd.a:; rm libd.a
 
 clean:: ; rm -f $(M2_MADECFILES)
 xml-c.o: xml-c.h xml-exports.h
-M2lib.o M2inits.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine.o : CPPFLAGS += -I@srcdir@/../e -I../e-includes
-ifeq (@PARI@,yes)
-pari.o: CFLAGS += -Wno-shadow
-pari.o: CPPFLAGS += -DINCLUDE_PARI_H
-pari-c.o: CFLAGS += -Wall -UNDEBUG -Wno-shadow -Wno-error
-version-tmp.cc: pari-c.h
-ifeq "@__INTEL_COMPILER@" "no"
-pari-c.o: CFLAGS += -Wno-unused
-endif
-pari-c.o: ../../include/M2/config.h ../../config.status
-endif
-
-# struct is a synonym for public class...:
-# equality.o version.o engine.o interface.o: CXXFLAGS += -Wno-mismatched-tags
-
-pari-gnump.o: CFLAGS += -Wno-error
+M2lib.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine.o : CPPFLAGS += -I@srcdir@/../e
 
 pthread-tmp.c : SCCFLAGS += -noline
-
-## the problem with this is that it can make "make" think the targets were made:
-# actors4-tmp.c actors5-tmp.c basic-tmp.c interface-tmp.c interface2-tmp.c objects-tmp.c : ../e/engine.h ../e/rand.h
 
 version.o : ../../include/M2/config.h distributed-packages.h
 distributed-packages.h: @srcdir@/../packages/?distributed-packages Makefile
 	echo '#define DISTRIBUTED_PACKAGES "'`cat $<`'"' >$@
+clean::; rm -f distributed-packages.h
 
-# these files depend on USE_MYSQL, which is in config.h:
+# these files depend on WITH_MYSQL, which is in config.h:
 actors4.o actors2.o : ../../include/M2/config.h
 
 ifeq "$(DEPENDS)" "yes"
@@ -111,15 +94,51 @@ endif
 .PHONY : clean all check tags
 
 ifeq "@HAVE_WPARENTHESES_EQUALITY@" "yes"
-DCFLAGS += -Wno-parentheses-equality
+DCFLAGS   += -Wno-parentheses-equality
+DCXXFLAGS += -Wno-parentheses-equality
 endif
 
-DCFLAGS += -Wno-uninitialized -Wno-cast-qual
-M2_CFLAGS += -Wno-uninitialized -Wno-cast-qual
+ifeq "@DEVELOPMENT@" "yes"
+# -- development --
+CFLAGS    += -Werror
+CXXFLAGS  += -Werror
+ifeq "@HAVE_WDISCARDS_QUALIFIERS@" "yes"
+CFLAGS += -Wincompatible-pointer-types-discards-qualifiers
+CXXFLAGS += -Wincompatible-pointer-types-discards-qualifiers
+endif
+ifeq "@HAVE_WSOMETIMES_UNINITIALIZED@" "yes"
+DCFLAGS   += -Wsometimes-uninitialized
+DCXXFLAGS += -Wsometimes-uninitialized
+endif
+# -- development end --
+else
+# -- non-development --
+ifeq "@HAVE_WSOMETIMES_UNINITIALIZED@" "yes"
+DCFLAGS   += -Wno-sometimes-uninitialized
+DCXXFLAGS += -Wno-sometimes-uninitialized
+endif
+# -- non-development end --
+endif
+
+DCFLAGS   += -Wno-unused-value
+DCXXFLAGS += -Wno-unused-value
+
+# scc1 produces switch statements without default cases, because it knows what
+# all the possibilities are, so the compiler may think some cases are not handled.  Hence
+# we may hush some warnings
+
+ifeq "@HAVE_WUNUSED_BUT_SET_VARIABLE@" "yes"
+DCFLAGS   += -Wno-unused-but-set-variable
+DCXXFLAGS += -Wno-unused-but-set-variable
+endif
+
+ifeq "@HAVE_WMAYBE_UNINITIALIZED@" "yes"
+DCFLAGS   += -Wno-maybe-uninitialized
+DCXXFLAGS += -Wno-maybe-uninitialized
+endif
+
 ifeq "@__INTEL_COMPILER@" "no"
-DCFLAGS += -Wno-unused
 CFLAGS += -Wno-unused
-M2_CFLAGS += -Wno-unused
 endif
 
 ifeq "@__INTEL_COMPILER@" "yes"
@@ -131,24 +150,22 @@ endif
 
 .SECONDARY:
 
-M2-factory.o : COMPILE.cc += -Wno-old-style-cast
-
+M2INCLUDES += -I.
 M2INCLUDES += -I@srcdir@
 M2INCLUDES += -I@srcdir@/../e
+M2INCLUDES += -I@srcdir@/../system
+M2INCLUDES += -I@srcdir@/../../include
 
 # these are the files that need to find include files built in the current build directory
-M2inits.o $(M2_LASTCFILES:.c=.o) : CPPFLAGS += -I.
+$(M2_LASTCFILES:.c=.o) : CPPFLAGS += -I.
 
 # to get scc-core.h:
 M2INCLUDES += -I@srcdir@/../c
 
-# we use this to override the regex library in the system
-M2INCLUDES += -I@srcdir@/../regex
-
 # it's important that *our* directories get searched first:
 CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS) $(M2_CPPFLAGS)
 
-CPPFLAGS += -Wno-fatal-errors -Wno-unknown-pragmas
+CPPFLAGS += -Wno-unknown-pragmas
 
 CFLAGS += $(M2_CFLAGS)
 ifeq "@__INTEL_COMPILER@" "no"
@@ -159,6 +176,14 @@ CXXFLAGS += $(M2_CXXFLAGS)
 
 CFLAGS   += -Wreturn-type
 CXXFLAGS += -Wreturn-type
+
+CFLAGS   += -Wunused-function
+CXXFLAGS += -Wunused-function
+
+CFLAGS   += -Wfatal-errors
+CXXFLAGS += -Wfatal-errors
+
+version.o : CXXFLAGS += -Wno-unused-local-typedefs
 
 # the following is included since g++-8 and gcc-8 give many warnings arising from "pragma omp"
 # and apparently it can't be silenced in source code.
@@ -176,33 +201,29 @@ M2lib.o : M2_CFLAGS += -Wno-frame-address
 endif
 
 M2lib.o scclib.o : | interp-exports.h.tmp
-scclib.o : expr-exports.h M2mem.h M2inits.h ../dumpdata/map.h debug.h types.h ../c/compat.h ../e/engine.h ../dumpdata/dumpdata.h
-M2lib.o : types.h ../c/compat.c debug.h M2mem.h ../c/compat.h ../e/engine.h ../dumpdata/dumpdata.h
-gmp_int.o M2lib.o scclib.o gdbm_interface.o gc_cpp.o M2inits.o debug.o : ../../include/M2/config.h
+scclib.o : expr-exports.h M2mem.h debug.h types.h ../c/compat.h ../e/engine.h
+M2lib.o : types.h ../c/compat.c debug.h M2mem.h ../c/compat.h ../e/engine.h
+M2lib.o scclib.o gdbm_interface.o gc_cpp.o debug.o : ../../include/M2/config.h
 M2.o : ../../include/M2/config.h @srcdir@/../c/scc-core.h
-
-all: M2inits1.o
-all: libM2inits2.a
-libM2inits2.a: M2inits2.o
-	:; @AR@ ru $@ $^
-	:; @RANLIB@ $@
 
 clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'
 BSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1"/'
-startup.m2: startup.m2.in ; cd ../.. ; ./config.status Macaulay2/d/startup.m2
-startup.c: startup-header.h startup.m2 @srcdir@/basictests/*.m2 Makefile
+../m2/startup.m2: ../m2/startup.m2.in ; cd ../.. ; ./config.status Macaulay2/m2/startup.m2
+startup.c: startup-header.h ../m2/startup.m2 @srcdir@/../m2/basictests/*.m2 Makefile
 	: making $@
 	@(\
 	 cat @srcdir@/startup-header.h; \
 	 echo 'cached_file startupFile = {' ; \
-	     echo @abs_srcdir@/startup.m2.in | sed $(BSTRING) ; \
+	     echo Macaulay2/Core/startup.m2.in | sed $(BSTRING) ; \
 	     echo  ',' ; \
-	     cat startup.m2 | sed $(SSTRING) ; \
+	     cat ../m2/startup.m2 | sed $(SSTRING) ; \
 	 echo  '};' ; \
 	 echo 'cached_file testStrings[] = {' ; \
-	 for i in @abs_srcdir@/basictests/*.m2 ; \
-	 do echo '{' ; echo $$i | sed $(BSTRING) ; echo  ',' ; cat $$i | sed $(SSTRING) ; echo  '},' ; \
+	 for i in @abs_top_srcdir@/Macaulay2/m2/basictests/*.m2 ; \
+	 do echo '{' ; echo Macaulay2/Core/basictests/`basename $$i` | \
+	     sed $(BSTRING) ; echo  ',' ; cat $$i | sed $(SSTRING) ; \
+	     echo  '},' ; \
 	 done ; \
 	 echo '};' ; \
 	 cat @srcdir@/startup-trailer.h; \
@@ -212,12 +233,12 @@ clean-startup.c:; rm -f startup.c
 cat-startup.c:; cat startup.c
 redo-startup:clean-startup.c startup.c cat-startup.c
 
-all: $(M2_LIBDEPS) M2inits.o
+all: $(M2_LIBDEPS)
 tags: @srcdir@/TAGS
 @srcdir@/TAGS: $(M2_SRCFILES); cd @srcdir@ && @ETAGS@ $(M2_SRCFILES)
 clean-bin:; rm -f *.o *-tmp.c *-tmp.cc *.sig.tmp *-exports.h.tmp
 clean::; rm -f typecode.db *-exports.h *-exports.h.tmp *-tmp.c *-tmp.cc *.log a.out *.o *.sym *.out *.a *.oo *.sig *.sig.tmp *.sg *.dep *.dp *.dep.tmp core gmon.out mapfile restart.tmp TAGS
-distclean: clean; rm -f Makefile startup.m2 @srcdir@/TAGS
+distclean: clean; rm -f Makefile ../m2/startup.m2 @srcdir@/TAGS
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/d/Makefile
 Makefile.files: Makefile.files.in; cd ../..; ./config.status Macaulay2/d/Makefile.files
 clean::; rm -f .gdbinit .gdb-directories
@@ -226,6 +247,6 @@ clean::; rm -f .gdbinit .gdb-directories
 LOADLIBES = -lgc
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/d MORE_SCCFLAGS= "
 # End:
 .NOTPARALLEL:

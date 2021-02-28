@@ -27,7 +27,7 @@ document {
 	 TO bracket2partition,
 	 --(converts a bracket into a partition)
 	 TO partition2bracket
-	 --(converts a parition into a beacket)
+	 --(converts a partition into a bracket)
 	 },
      HEADER3{"Using PHCpack:"},
      "An alternative implementation using PHCpack (download from ",
@@ -433,7 +433,7 @@ doc ///
        l1={2,1}; 
        l2={2,1};
        l3={2,1};
-       stdio<<"Generate flags F: standard flag, oposite flag, and one random"<<endl;
+       stdio<<"Generate flags F: standard flag, opposite flag, and one random"<<endl;
        F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
        stdio<<"Generate a random set of flags G"<<endl;
        G = randomSchubertProblemInstance({l1,l2,l3},k,n)
@@ -672,7 +672,7 @@ doc ///
       Text
          Given a simple Schubert problem $(l,m)$ in $Gr(k,n)$. Fix a 
 	 set of flags $F_1,...,F_d$ and let $S$ be the set of solutions of
-	 the intance of the Schubert problem given by the flags $\{F_i\}$.
+	 the instance of the Schubert problem given by the flags $\{F_i\}$.
 	 We compute a loop in the problem space based on the solution $S$
 	 by deforming one of the flags $F_i$ using Homotopy continuation. 
 	 This  generates a loop in the problem space, which corresponds to 

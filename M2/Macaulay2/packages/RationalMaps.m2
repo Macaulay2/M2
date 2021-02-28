@@ -3,7 +3,7 @@ Version => "0.3", Date => "August 11th, 2019", Authors => {
      {Name => "Karl Schwede",
      Email=> "kschwede@gmail.com",
      HomePage=> "http://www.math.utah.edu/~schwede"
-     }, --Karl Schwede was partially supported by  NSF FRG Grant DMS #1265261/1501115, NSF CAREER Grant DMS #1252860/1501102
+     }, --Karl Schwede was partially supported by  NSF FRG Grant DMS #1265261/1501115, NSF CAREER Grant DMS #1252860/1501102, and NSF grant #1801849
      {Name => "Daniel Smolkin",
      Email=> "smolkin@math.utah.edu",
      HomePage=> "http://www.math.utah.edu/~smolkin"
@@ -15,7 +15,8 @@ Version => "0.3", Date => "August 11th, 2019", Authors => {
      {Name => "C.J. Bott",
      Email => "cjamesbott@gmail.com"}
 }, --this file is in the public domain
-Headline => "rational maps")
+Keywords => {"Commutative Algebra"},
+Headline => "rational maps between varieties", PackageImports => {"FastLinAlg"})
 export{
 	"isBirationalMap",
 	"idealOfImageOfMap",
@@ -47,12 +48,11 @@ export{
     "AssumeDominant" --option to assume's that the map is dominant (ie, don't compute the kernel)
 }
 
-needsPackage("FastLinAlg");
 
-StrategyGRevLexSmallestTerm = new HashTable from {LexLargest=>0, LexSmallestTerm => 0, LexSmallest=>0, GRevLexSmallestTerm => 100, GRevLexSmallest => 0, GRevLexLargest=>0,Random=>0,RandomNonzero=>0};
+StrategyGRevLexSmallestTerm = new HashTable from {LexLargest=>0, LexSmallestTerm => 0, LexSmallest=>0, GRevLexSmallestTerm => 100, GRevLexSmallest => 0, GRevLexLargest=>0,Random=>0,RandomNonzero=>0,Points => 0};
 ----------------------------------------------------------------
 --************************************************************--
--------------------- Function Defitions ------------------------
+-------------------- Function Definitions ----------------------
 --************************************************************--
 ----------------------------------------------------------------
 
@@ -103,7 +103,7 @@ dimImage = method();
 dimImage(Ideal,Ideal,Matrix) := (a,b,f) -> (
         h := map( (ring a)/a, (ring b)/b, f);
         dimImage(h)
-        	-- substract 1 from the dimension of the image since in projective space
+        	-- subtract 1 from the dimension of the image since in projective space
 	);
 
 dimImage(Ideal,Ideal,BasicList) := (a,b,g) -> (
@@ -157,7 +157,7 @@ baseLocusOfMap = method(Options=>{SaturateOutput=>true});
 
 baseLocusOfMap(Matrix) := o->(L1) -> ( --L1 is a row matrix
     if numRows L1 > 1 then error "baseLocsOfMap: Expected a row matrix";
-    if isSameDegree( first entries L1  )==false then error "baseLocsOfMap: Expected a matrix of homogenous elements of the same degree";
+    if isSameDegree( first entries L1  )==false then error "baseLocsOfMap: Expected a matrix of homogeneous elements of the same degree";
 
     M:= gens ker transpose presentation image L1;
     -- this matrix gives all the "equivalent"
@@ -529,7 +529,7 @@ isBirationalOntoImageSimis(RingMap) :=o->(f)->(
 
 
 isBirationalOntoImageRees(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
-    if isSameDegree(bm)==false then error "isBirationalOntoImageRees: Expected a list of homogenous elements of the same degree";
+    if isSameDegree(bm)==false then error "isBirationalOntoImageRees: Expected a list of homogeneous elements of the same degree";
     R:=ring di;
     S:=ring im;
     im1 := im;
@@ -560,7 +560,7 @@ isBirationalOntoImageRees(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
      if (o.Verbose) then print "isBirationalOntoImageRees:  About to compute the Jacobian Dual Matrix,";
       if (o.Verbose) then print "if it is slow, run again and  set Strategy=>HybridStrategy or SimisStrategy.";
     --1/0;
-    barJD:=jacobianDualMatrix(di1,im1,bm1,AssumeDominant=>true);--JacobianDual Matrix is another function in thi package
+    barJD:=jacobianDualMatrix(di1,im1,bm1,AssumeDominant=>true);--JacobianDual Matrix is another function in this package
       nc:=numColumns(transpose barJD);
      nr:=numRows(transpose barJD);
     if (o.Verbose) then print "isBirationalOntoImageRees: computed Jacobian Dual Matrix- barJD";
@@ -604,7 +604,7 @@ isBirationalOntoImageSimis(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
         im1 = idealOfImageOfMap(di, im, bm, QuickRank=>o.QuickRank);
         if (o.Verbose === true) then print "isBirationalOntoImageSimis: Found the image of the map.";
     );
-    if isSameDegree(bm)==false then error "isBirationalOntoImageSimis: Expected a list of homogenous elements of the same degree";
+    if isSameDegree(bm)==false then error "isBirationalOntoImageSimis: Expected a list of homogeneous elements of the same degree";
     R:=ring di;
     K:=coefficientRing R;
     S:=ring im;
@@ -803,7 +803,7 @@ inverseOfMapRees(RingMap) := o->(f)->(
     di := ideal target f;
     im := ideal source f;
     bm := first entries matrix f;
-    if isSameDegree(bm)==false then error "inverseOfMapRees: Expected a list of homogenous elements of the same degree";
+    if isSameDegree(bm)==false then error "inverseOfMapRees: Expected a list of homogeneous elements of the same degree";
     R:=ring di;
     K:=coefficientRing R;
     S:=ring im;
@@ -821,7 +821,7 @@ inverseOfMapRees(RingMap) := o->(f)->(
     --From here the situation is under the assumption that the variety is not contained in any hyperplane.
     r:=numgens ambient Rlin1;
      if (o.Verbose === true) then print "inverseOfMapRees: About to compute the Jacobian Dual Matrix";
-    barJD:=jacobianDualMatrix(di1,im1,bm1,AssumeDominant=>true, Strategy=>o.Strategy);--JacobianDual Matrix is another function in thi package
+    barJD:=jacobianDualMatrix(di1,im1,bm1,AssumeDominant=>true, Strategy=>o.Strategy);--JacobianDual Matrix is another function in this package
      if (o.Verbose === true) then print "inverseOfMapRees: Computed Jacobian Dual Matrix";
     --print "JD computed";
     jdd:=(numgens ambient Rlin1)-1;
@@ -844,7 +844,7 @@ inverseOfMapRees(RingMap) := o->(f)->(
     );
     nonZMinor := null;
     if (o.MinorsCount > 0) then (
-        if (o.Verbose == true) then print ("inverseOfMapRees: Looking for a nonzero minor. \r\n       If this fails, you may increase the attemps with MinorsCount => #");
+        if (o.Verbose == true) then print ("inverseOfMapRees: Looking for a nonzero minor. \r\n       If this fails, you may increase the attempts with MinorsCount => #");
         nonZMinor = getSubmatrixOfRank(jdd, barJD, MaxMinors => o.MinorsCount, Verbose=>o.Verbose);
         --nonZeroMinor(barJD,jdd,o.MinorsCount, Verbose=>o.Verbose);
     );
@@ -891,7 +891,7 @@ inverseOfMapSimis(RingMap) :=o->(f)->(
     di := ideal target f; -- the defining ideal of the source variety
     im := ideal source f; -- the defining ideal of the target variety
     bm := first entries matrix f;     --the list defining the map from the source to target variety
-    if isSameDegree(bm)==false then error "inverseOfMapSimis: Expected a list of homogenous elements of the same degree";
+    if isSameDegree(bm)==false then error "inverseOfMapSimis: Expected a list of homogeneous elements of the same degree";
     R:=ring di;
     K:=coefficientRing R;
     S:=ring im;
@@ -933,7 +933,7 @@ inverseOfMapSimis(RingMap) :=o->(f)->(
     M := null;
     while (flag == false) do (
 --  Jr:= simisAlgebra(di1,bm1,secdeg);
- --THe following is substituing simisAlgebra, we don't call that because we want to save the stored groebner basis
+ --THe following is substituting simisAlgebra, we don't call that because we want to save the stored groebner basis
         if (o.Verbose === true) then print("inverseOfMapSimis:  About to compute partial Groebner basis of rees ideal up to degree " | toString({1, secdeg}) | "." );
         if (secdeg < o.HybridLimit) then (
             M=gb(J,DegreeLimit=>{1,secdeg}); --instead of computing the whole Grob.
@@ -1151,7 +1151,7 @@ isEmbedding(RingMap):= o-> (f1)->(
 --list of elements = bm
 
 jacobianDualMatrix(Ideal,Ideal,BasicList) :=o->(di,im,bm)->(
-    if isSameDegree(bm)==false then error "jacobianDualMatrix: Expected a list of homogenous elements of the same degree";
+    if isSameDegree(bm)==false then error "jacobianDualMatrix: Expected a list of homogeneous elements of the same degree";
     R:=ring di;
     K:=coefficientRing R;
     S:=ring im;
@@ -1238,7 +1238,7 @@ beginDocumentation();
 
 document {
     Key => RationalMaps,
-    Headline => "rational maps",
+    Headline => "rational maps between varieties",
     EM "RationalMaps", " is a package for computing things related to maps between projective varieties.",
     BR{},BR{},
     "It focuses on finding where a birational map is undefined, checking whether a map is a closed embedding, checking birationality and computing inverse maps",
@@ -1529,10 +1529,6 @@ doc ///
 		(isBirationalOntoImage, Ideal, Ideal, BasicList)
 		(isBirationalOntoImage, Ring, Ring, BasicList)
 		(isBirationalOntoImage, RingMap)
-		--[isBirationalOntoImage, AssumeDominant]
-	--	[isBirationalOntoImage,Strategy]
-		--[isBirationalOntoImage,Verbose]
-		--[isBirationalOntoImage,HybridLimit]
         Headline
                 Checks if a map between projective varieties is birational onto its image.
         Usage
@@ -1556,28 +1552,26 @@ doc ///
                 val:Boolean
                         true if the map is birational onto its image, false if otherwise
         Description
-                Text
-                        This checks whether $f : X \to Y$ is birational onto its image.  We do this by computing the image and then calling {\tt isBirationalOntoImage}.  The option {\tt AssumeDominant} being true will cause the function to assume that the kernel of the associated ring map is zero (default value is false).  The source must be a variety, in particular its defining ideals must be prime.  In the following example, the map is not birational, but it is birational onto its image.
-                Example
-                        R=QQ[x,y];
-                        S=QQ[a,b,c,d];
-                        Pi = map(R, S, {x^3, x^2*y, x*y^2, y^3});
-                        isBirationalOntoImage(Pi, Verbose=>false)
-                        isBirationalMap(Pi,  Verbose=>false)
-		Text
-                        Sub-Hankel matrices have homaloidal determinants.
-                Example
-                        R = QQ[z_0..z_6];
-			H=map(R^4,4,(i,j)->R_(i+j));
-                        SH=sub(H,{z_5=>0,z_6=>0})
-			sh=map(R, R, transpose jacobian ideal det SH );
-			isBirationalOntoImage(sh, Verbose=>false)
-			S=QQ[t_0..t_4];
-			li=map(S,R,matrix{{t_0..t_4,0,0}});
-			phi=li*sh;
-			isBirationalOntoImage(phi, HybridLimit=>2)
-
-
+            Text
+                This checks whether $f : X \to Y$ is birational onto its image.  We do this by computing the image and then calling {\tt isBirationalOntoImage}.  The option {\tt AssumeDominant} being true will cause the function to assume that the kernel of the associated ring map is zero (default value is false).  The source must be a variety, in particular its defining ideals must be prime.  In the following example, the map is not birational, but it is birational onto its image.
+            Example
+                R=QQ[x,y];
+                S=QQ[a,b,c,d];
+                Pi = map(R, S, {x^3, x^2*y, x*y^2, y^3});
+                isBirationalOntoImage(Pi, Verbose=>false)
+                isBirationalMap(Pi,  Verbose=>false)
+            Text
+                Sub-Hankel matrices have homaloidal determinants.
+            Example
+                A = QQ[z_0..z_6];
+                H=map(A^4,4,(i,j)->A_(i+j));
+                SH=sub(H,{z_5=>0,z_6=>0})
+                sh=map(A, A, transpose jacobian ideal det SH );
+                isBirationalOntoImage(sh, Verbose=>false)
+                B=QQ[t_0..t_4];
+                li=map(B,A,matrix{{t_0..t_4,0,0}});
+                phi=li*sh;
+                isBirationalOntoImage(phi, HybridLimit=>2)
         SeeAlso
             isBirationalMap
 ///

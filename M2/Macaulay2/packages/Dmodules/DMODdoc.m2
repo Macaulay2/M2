@@ -175,7 +175,7 @@ document {
 	       },
 	  {BOLD "TryGeneric", " -- checks whether the ideal is generic 
 	       and if that is the case uses Alg.5.1.5 
-	       in Saito-Sturmfels-Takayama (1999) otherwise is eqivalent 
+	       in Saito-Sturmfels-Takayama (1999) otherwise is equivalent 
 	       to ", TT "NonGeneric",
      	       },
 	  {BOLD "NonGeneric", 
@@ -1006,11 +1006,11 @@ document {
 
      TT "DlocalizeAll (M, f)", " -- 
      compute the localization of M with respect to f and
-     some auxilary information",
+     some auxiliary information",
      BR{},
      TT "DlocalizeAll (M, f)", " -- 
      compute the localization of D/I with respect to f and some
-     auxilary information",
+     auxiliary information",
      PARA{},
 
 
@@ -1200,7 +1200,7 @@ document {
      Outputs => {
      	  Ideal => {"the restriction ideal of ", EM "M", " w.r.t. the weight vector ", EM "w"}
 	  },
-     "A suplementary function for ", TO "Drestriction", 
+     "A supplementary function for ", TO "Drestriction", 
      " that computes the restriction ideal.",   
      EXAMPLE lines ///
           W = QQ[y,t,Dy,Dt, WeylAlgebra => {y=>Dy, t=>Dt}];
@@ -1426,7 +1426,7 @@ document {
      Outputs => {
      	  Ideal => {"the integration ideal of ", EM "M", " w.r.t. the weight vector ", EM "w"}
 	  },
-     "A suplementary function for ", TO "Dintegration", 
+     "A supplementary function for ", TO "Dintegration", 
      " that computes the integration ideal.",   
      EXAMPLE lines ///
           W = QQ[y,t,Dy,Dt, WeylAlgebra => {y=>Dy, t=>Dt}];
@@ -1831,7 +1831,7 @@ document {
 	  },
      PARA {
 	  "Computes the jumping coefficients and their multiplier ideals in an open interval (a,b). By default a = 0, b = ", TO "analyticSpread", " I. ",
-	  "The options are passed to ", TO "multiplierIDeal",".",
+	  "The options are passed to ", TO "multiplierIdeal",".",
 	  },
      "See ", EM "Berkesch and Leykin", " ``Algorithms for Bernstein-Sato polynomials and multiplier ideals'' for details.",
      EXAMPLE lines ///

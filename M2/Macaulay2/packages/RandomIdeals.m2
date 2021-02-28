@@ -16,6 +16,7 @@ newPackage(
 	    },
     	HomePage => "http://www.msri.org/~de",
     	Headline => "creating random ideals of various sorts",
+	Keywords => {"Examples and Random Objects"},
 	AuxiliaryFiles => false, -- set to true if package comes with auxiliary files,
 	PackageExports =>{"EdgeIdeals", "BinomialEdgeIdeals"},
     	DebuggingMode => false	 -- set to true only during development
@@ -867,7 +868,7 @@ Description
  Text
   Choose a random square-free monomial
   ideal whose generators have the degrees 
-  specified by the list or squence L.
+  specified by the list or sequence L.
  Example
   setRandomSeed(currentTime())
   kk=ZZ/101
@@ -1252,7 +1253,7 @@ Outputs
    monomial ideal with generators of specified degrees
 Description
  Text
-  Choose a random ideal whose generators have the degrees specified by the list or squence L.
+  Choose a random ideal whose generators have the degrees specified by the list or sequence L.
  Example
   kk=ZZ/101
   S=kk[a..e]

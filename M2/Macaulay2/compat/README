@@ -1,4 +1,0 @@
-In this directory is the source code for some routines to replace missing
-system calls under various operating systems.  The routines do nothing, and
-return an error indication.  The intention is to compile them, place them in
-a library, and link against it after linking against the standard C library.

@@ -1,10 +1,7 @@
+-- -*- coding: utf-8 -*-
+
 --TODO: gfan errors printed on screen in:
 -- QQ[x,y,z,w]; I=ideal(x-y,w+y-x); gfanTropicalStartingCone I; tropicalVariety I; tropicalVariety ideal(x);
-
--- comment out this obsolete line:
---   path = prepend ("~/src/M2/Workshop-2018-Leipzig/Tropical/", path)
-
--- -*- coding: utf-8 -*-
 
 newPackage(
 	"gfanInterface",
@@ -15,6 +12,7 @@ newPackage(
 		{Name => "Andrew Hoefel", Email => "andrew.hoefel@gmail.com", HomePage =>"http://www.mast.queensu.ca/~ahhoefel/"},
 	    {Name => "Diane Maclagan (current maintainer)", Email => "D.Maclagan@warwick.ac.uk", HomePage=>"http://homepages.warwick.ac.uk/staff/D.Maclagan/"}},
 	Headline => "interface to Anders Jensen's Gfan software",
+	Keywords => {"Interfaces"},
 	Configuration => {
 		"path" => "",
 		"fig2devpath" => "",
@@ -88,11 +86,16 @@ export {
 	"multiplicitiesReorder"
 }
 
-gfanPath = gfanInterface#Options#Configuration#"path"
-if gfanPath == "" then gfanPath = prefixDirectory | currentLayout#"programs"
-
-fig2devPath = gfanInterface#Options#Configuration#"fig2devpath"
 gfanVerbose = gfanInterface#Options#Configuration#"verbose"
+-- for backward compatibility
+if not programPaths#?"gfan" and gfanInterface#Options#Configuration#"path" != ""
+    then programPaths#"gfan" = gfanInterface#Options#Configuration#"path"
+if not programPaths#?"fig2dev" and gfanInterface#Options#Configuration#"fig2devpath" != ""
+    then programPaths#"fig2dev" = gfanInterface#Options#Configuration#"fig2devpath"
+
+gfanProgram = null
+fig2devProgram = null
+
 gfanKeepFiles = gfanInterface#Options#Configuration#"keepfiles"
 gfanCachePolyhedralOutput = gfanInterface#Options#Configuration#"cachePolyhedralOutput"
 --minmax switch disabled
@@ -340,28 +343,28 @@ gfanParseIdeals String := (s) -> (
 
 gfanParseIdeal = method()
 gfanParseIdeal String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	value concatenate G
 )
 
 gfanParseMarkedIdeal = method()
 gfanParseMarkedIdeal String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	markedPolynomialList transpose apply(gfanParseList(concatenate G), p -> gfanParseMarkedPoly(p))
 )
 
 gfanParseMarkedIdeals = method()
 gfanParseMarkedIdeals String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	apply(gfanParseList(concatenate G), L -> markedPolynomialList transpose apply(L, p -> gfanParseMarkedPoly(p)))
 )
 
 gfanParseMPL = method()
 gfanParseMPL String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	new MarkedPolynomialList from
 		transpose apply(gfanParseList(concatenate G), p -> gfanParseMarkedPoly(p))
@@ -369,7 +372,7 @@ gfanParseMPL String := (s) -> (
 
 gfanParseLMPL = method()
 gfanParseLMPL String := (s) -> (
-	G := separate("]",s);
+	G := separate("\\]",s);
 	G = drop(G,1);
 	apply(gfanParseList(concatenate G), L ->
 		new MarkedPolynomialList from transpose apply(L, p -> gfanParseMarkedPoly(p)))
@@ -515,7 +518,7 @@ gfanParsePolyhedralFan String := o -> s -> (
 		S=fanFromGfan({myrays,mylinspace,mymaximalcones,P#"Dim",P#"Pure",P#"Simplicial",fVector});
 	    );	    
 
-	    --re-writing the  multiplicities according to thw new order of maximal cones 
+	    --re-writing the  multiplicities according to the new order of maximal cones 
 	    if  P#?"Multiplicities" then ( 
 		newMult:=multiplicitiesReorder({rays S,maxCones S,myrays,mymaximalcones,P#"Multiplicities"});
 		S,newMult
@@ -624,7 +627,7 @@ gfanSymbolToString = method()
 gfanSymbolToString Symbol := (X) -> (
 	toString(X) | "\n"
 	--- gfanToExternalString will write the word symbol if X is assigned
-	--- and this is not desireable
+	--- and this is not desirable
 )
 
 gfanIdealToString = method()
@@ -635,7 +638,7 @@ gfanPolynomialListToString = method()
 gfanPolynomialListToString List := (L) ->
 	joinStrings(L/gfanToExternalString, "," | newline, "{", "}" | newline)
 
---Takes a marked polynomial as a pair: {inital term, polynomial}
+--Takes a marked polynomial as a pair: {initial term, polynomial}
 gfanMarkedPolynomialToString = method()
 gfanMarkedPolynomialToString List := (L) -> (
 		out := gfanToExternalString(first L);
@@ -1007,63 +1010,38 @@ toPolymakeFormat(Fan) := (F) ->(
 --------------------------------------------------------
 
 runGfanCommand = (cmd, opts, data) -> (
-	
-	tmpFile := gfanMakeTemporaryFile data;
-	
-	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
-	
-	ex := gfanPath | cmd | args | " < " | tmpFile | " > " | tmpFile | ".out" | " 2> " | tmpFile | ".err";
-
-	if gfanVerbose then << ex << endl;
-	returnvalue := run ex;
-     	if(not returnvalue == 0) then
-	(
---	     << "GFAN returned an error message.\n";
---	     << "COMMAND:" << ex << endl;
---	     << "INPUT:\n";
---	     << get(tmpFile);
---	     << "ERROR:\n";
---	     << get(tmpFile |".err");
-
-	     );
-		out := get(tmpFile | ".out");
-	gfanRemoveTemporaryFile tmpFile;
-	gfanRemoveTemporaryFile(tmpFile | ".out");
-	gfanRemoveTemporaryFile(tmpFile | ".err");
-	outputFileName := null;
-	
-	if gfanKeepFiles then outputFileName = tmpFile|".out";
-	
-	(out, "GfanFileName" => outputFileName)
-	
+	(out, err, fileName) := runGfanCommandCaptureBoth(cmd, opts, data);
+	(out, fileName)
 )
 
 runGfanCommandCaptureBoth = (cmd, opts, data) -> (
+	if gfanProgram === null then
+	    gfanProgram = findProgram("gfan", "gfan --help",
+		Verbose => gfanVerbose);
 	tmpFile := gfanMakeTemporaryFile data;
-	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
-	ex := gfanPath | cmd | args | " < " | tmpFile | " > " | tmpFile | ".out" | " 2> " | tmpFile | ".err";
-	if gfanVerbose then << ex << endl;
-	run ex;
-	out := get(tmpFile | ".out");
-	err := get(tmpFile | ".err");
+
+	args := replace("^gfan ", "", cmd) | concatenate apply(keys opts, key ->
+	    gfanArgumentToString(cmd, key, opts#key));
+	gfanRun := runProgram(gfanProgram, args | " < " | tmpFile,
+	    RaiseError => false, KeepFiles => gfanKeepFiles,
+	    Verbose => gfanVerbose);
 	gfanRemoveTemporaryFile tmpFile;
-	gfanRemoveTemporaryFile(tmpFile | ".out");
-	gfanRemoveTemporaryFile(tmpFile | ".err");
+
+	-- we display our own error message instead of using the runProgram
+	-- default so we can display data
+	if gfanRun#"return value" != 0 then error(
+	    "Gfan returned an error message.\n" |
+	    "COMMAND: " | gfanRun#"command" | "\n" |
+	    "INPUT:\n" | data |
+	    "ERROR:\n" | gfanRun#"error");
+
 	outputFileName := null;
-	if gfanKeepFiles then outputFileName = tmpFile|".out";
-	(out,err, "GfanFileName"=>outputFileName)
+	if gfanKeepFiles then outputFileName = gfanRun#"output file";
+	(gfanRun#"output", gfanRun#"error", "GfanFileName"=>outputFileName)
 )
 
 runGfanCommandCaptureError = (cmd, opts, data) -> (
-	tmpFile := gfanMakeTemporaryFile data;
-	args := concatenate apply(keys opts, key -> gfanArgumentToString(cmd, key, opts#key));
-	ex := gfanPath | cmd | args | " < " | tmpFile | " > " | tmpFile | ".out" | " 2> " | tmpFile | ".err";
-	if gfanVerbose then << ex << endl;
-	run ex;
-	err := get(tmpFile | ".err");
-	gfanRemoveTemporaryFile tmpFile;
-	gfanRemoveTemporaryFile(tmpFile | ".out");
-	gfanRemoveTemporaryFile(tmpFile | ".err");
+	(out, err, fileName) := runGfanCommandCaptureBoth(cmd, opts, data);
 	err
 )
 
@@ -1179,8 +1157,8 @@ argStrs = hashTable {
 -- Used by gfanArgumentToString
 ---------------------------------------------------------
 cmdLineArgs = hashTable {
-	"gfanRender" => { "shiftVariables" },
-	"gfanRenderStaircase" => { "d", "w" },
+	"gfan _render" => { "shiftVariables" },
+	"gfan _renderstaircase" => { "d", "w" },
 	"gfan _fancommonrefinement" => {"i1", "i2"},
 	"gfan _fancommonrefinement --stable" => {"i1", "i2"},
 	"gfan _fanlink" => {"i"},
@@ -1962,6 +1940,13 @@ gfanPolynomialSetUnion (List, MarkedPolynomialList) := opts -> (L,M) -> (
 -- gfan_render
 --------------------------------------------------------
 
+runfig2dev = fileName -> (
+	if fig2devProgram === null then
+		fig2devProgram = findProgram("fig2dev", "fig2dev -V");
+	runProgram(fig2devProgram,
+		"-Lpng " | fileName | ".fig " | fileName | ".png");
+)
+
 gfanRender = method( Options => {
 	"L" => false,
 	"shiftVariables" => 0
@@ -1970,7 +1955,7 @@ gfanRender = method( Options => {
 
 gfanRender (List) := opts -> (L) -> (
 	fileName := temporaryFileName();
-	gfanRender(fileName, List, opts);
+	gfanRender(fileName, L, opts);
 )
 
 gfanRender (String, List) := opts -> (fileName, L) -> (
@@ -1980,13 +1965,9 @@ gfanRender (String, List) := opts -> (fileName, L) -> (
 	figure := openOut(fileName | ".fig");
 	figure << out << close;
 	<< "Figure rendered to " << fileName << ".fig" << endl;
-	if fig2devPath != "" then (
-		run fig2devPath | "fig2dev -Lpng " | fileName  | ".fig " | fileName |".png";
-		<< "Figure converted to png: " << fileName << ".png" << endl;
-		show URL("file://" | fileName | ".png");
-	) else (
-		<< "fig2dev path not set." << endl ;
-	)
+	runfig2dev fileName;
+	<< "Figure converted to png: " << fileName << ".png" << endl;
+	show URL("file://" | fileName | ".png");
 )
 
 
@@ -2016,12 +1997,9 @@ gfanRenderStaircase (String, List) := opts -> (fileName, L) -> (
 	figure := openOut(fileName | ".fig");
 	figure << out << close;
 	<< "Figure rendered to " << fileName << ".fig" << endl;
-
-	if fig2devPath != "" then (
-		run fig2devPath | "fig2dev -Lpng " | fileName  | ".fig " | fileName |".png";
-		<< "Figure converted to png: " << fileName << ".png" << endl;
-		show URL("file://" | fileName | ".png");
-	) else << "fig2dev path not set." << endl ;
+	runfig2dev fileName;
+	<< "Figure converted to png: " << fileName << ".png" << endl;
+	show URL("file://" | fileName | ".png");
 )
 
 --------------------------------------------------------
@@ -2567,9 +2545,12 @@ gfanFunctions = hashTable {
 --	gfanFunctions#fn => apply( lines runGfanCommandCaptureError(gfanFunctions#fn, {"--help"}, {true}, ") , l->PARA {l})
 --)
 --WARNING - the word PARA was deleted from the next function (it used to read "l -> PARA {l})
-gfanHelp = (functionStr) ->
-	apply( lines runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") , l-> {l})
-
+gfanHelp = (functionStr) -> (
+	if gfanProgram === null then gfanProgram = findProgram("gfan",
+	    "gfan --help", RaiseError => false);
+	if gfanProgram === null then {}
+	else apply( lines runGfanCommandCaptureError(functionStr, hashTable {"help" => true}, "") , l-> {l})
+)
 
 
 doc ///
@@ -2610,17 +2591,19 @@ doc ///
 			with @EM "Macaulay2"@ (since version 1.3) and so, it is not necessary to install {\tt gfan}
 			separately.
 
-			The {\tt gfanInterface} package contains the configuration option {\tt "path"} which
-			allows the user to specify which {\tt gfan} executables are used. When the path unspecified,
-			it defaults to an empty string and the binaries provided by Macaulay 2 are used.
+			The user can specify which {\tt gfan} executables are used by setting the appropriate key
+			in the @TO "programPaths"@ hash table.	When the path is unspecified, then the binaries
+			provided by Macaulay2 are used, if present.  If they are not present, then the directories
+			specified in the user's {\tt PATH} environment variable are searched.
 
-			You can change the path, if needed, while loading the package:
+			You can change the path, if needed, by setting the appropriate key in @TO "programPaths"@
+			and loading the package:
 
 		Example
-			loadPackage("gfanInterface", Configuration => { "path" => "/directory/to/gfan/"}, Reload => true)
+			programPaths#"gfan" = "/directory/to/gfan/"
+			loadPackage("gfanInterface", Reload => true)
 
 		Text
-			The path to the executables should end in a slash.
 			To set the path permanently, one needs to change
 			{\tt gfanInterface.m2} either before installing or in the installed copy.
 			You will find the path configuration near the top of the file.
@@ -2650,16 +2633,8 @@ doc ///
 
 		Text
 			Finally, if you want to be able to render Groebner fans and monomial staircases
-			to {\tt .png} files, you should install {\tt fig2dev} and specify its path
-			as follows:
-
-		Example
-			loadPackage("gfanInterface", Configuration => { "fig2devpath" => "/directory/to/fig2dev/"}, Reload => true)
-
-		Text
-			Again, the path should end in a slash.
-
-
+			to {\tt .png} files, you should install {\tt fig2dev}.  If it is installed in a
+			non-standard location, then you may specify its path using @TO "programPaths"@.
 ///
 
 doc ///
@@ -2767,7 +2742,7 @@ doc ///
 			of length two
 	Outputs
 		L:MarkedPolynomialList
-			containg polynomials from the second entry of {\tt P} marked by the first entry of {\tt P}
+			containing polynomials from the second entry of {\tt P} marked by the first entry of {\tt P}
 	Description
 		Text
 			A marked polynomial list is a list of polynomials in which
@@ -3040,7 +3015,7 @@ doc ///
 			This method takes two Fans and finds their common refinement.
 
 			In the following, {\tt F} is the fan with two cones partitions the plane along the line
-			@TEX "$y=x$"@ while {\tt G} has two cones that parition the plane along @TEX "$y = x/2$"@.
+			@TEX "$y=x$"@ while {\tt G} has two cones that partition the plane along @TEX "$y = x/2$"@.
 			The common refinement of these two fans is the fan of the four cones between these two lines.
 		Example
 			QQ[x,y];
@@ -3862,7 +3837,7 @@ doc ///
 
 		Text
 			Caution should be used as this method invokes {\tt use R} which changes the global
-			symbol table. It would be preferrable to use the map command which is built into
+			symbol table. It would be preferable to use the map command which is built into
 			Macaulay 2. A ring map can be applied directly to a marked polynomial list.
 
 		Example
@@ -4254,7 +4229,7 @@ doc ///
 		L:List
 			of polynomials, homogeneous with respect to a positive weight vector
 		I:Ideal
-			homogenous with respect to a positive weight vector
+			homogeneous with respect to a positive weight vector
 	Outputs
 		P:List
 			a pair of @TO MarkedPolynomialList@s

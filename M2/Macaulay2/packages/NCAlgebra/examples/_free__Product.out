@@ -8,7 +8,7 @@ o1 : NCPolynomialRing
 
 i2 : B = skewPolynomialRing(QQ,(-1)_QQ, {a,b,c})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12637-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12637-0/3.ter ... Complete!
+Complete!
 
 o2 = B
 
@@ -16,7 +16,7 @@ o2 : NCQuotientRing
 
 i3 : C = freeProduct(A,B)
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12637-0/5.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12637-0/8.ter ... Complete!
+Complete!
 
 o3 = C
 

@@ -1,7 +1,6 @@
 -- -*- coding: utf-8 -*-
 --		Copyright 1993-2009 by Daniel R. Grayson
 
-
 document {
      Key => "COPYING-GPL-2",
      Headline => "GNU General Public License, version 2",
@@ -23,6 +22,11 @@ document {
 	  SPAN {"See the GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007, available at ", HREF "http://www.gnu.org/licenses/gpl-3.0.txt", "."}
 	  )
      }
+
+-- TODO: combine these two
+document { Key => "copyright",
+     Headline => "a string containing the copyright notice for Macaulay2",
+     EXAMPLE "copyright" }
 
 document {
      Key => "Copyright and license",
@@ -46,7 +50,6 @@ document {
 	  "libraries",
 	  TO "Singular-Factory",
 	  TO "frobby",
-	  TO "pari",
 	  TO "MPIR",
 	  TO "GNU MP",
 	  TO "MPFR",
@@ -57,7 +60,8 @@ document {
 	  TO "FLINT",
 	  TO "givaro",
 	  TO "fflas-ffpack",
-	  -- TO "boost", -- we don't link with boost, but normaliz does
+	  TO "MPSolve",
+	  TO "Boost",
 	  "programs and their libraries",
 	  TO "4ti2",
 	  TO "gfan",
@@ -223,7 +227,7 @@ document {
 	  "Macaulay2 uses the excellent garbage collector GC, version ", version#"gc version", ",
 	  written by Hans-J. Boehm and Alan J. Demers and generously licensed
 	  to the public.  It is available at
-	  ", HREF "http://www.hpl.hp.com/personal/Hans_Boehm/gc/", "."
+	  ", HREF "https://www.hboehm.info/gc/", "."
 	  },
      PARA{
 	  "Some environment variables can be set by the user to tune garbage collector performance:"
@@ -270,25 +274,46 @@ document {
      SeeAlso => { collectGarbage }
      }
 
-document {
-     Key => collectGarbage,
-     Headline => "collect the garbage in memory",
-     Usage => "collectGarbage()",
-     Consequences => {
-	  {"garbage is collected"}
-	  },
-     SeeAlso => "GC garbage collector"
-     }
+doc /// 
+    Key 
+        "MPSolve"
+    Headline 
+        a library for finding roots of univariate polynomials 
+    Description 
+        Text 
+            Starting with version 1.16, Macaulay2 incorporates the
+            MPsolve (version 3) package, available at @HREF
+            "https://numpi.dm.unipi.it/_media/software/mpsolve"@,
+            and originally developed by Dario Bini, Giuseppe
+            Fiorentino, and Leonardo Robol.
+            
+            This library is used by the @TO "roots"@ function, for
+            finding complex roots of a univariate polynomial
+    SeeAlso
+        (roots, RingElement)
+///
 
-document {
-     Key => "pari",
-     PARA {
-	  "Starting with version 1.2, Macaulay2 incorporates ", TT "pari", ", a free library for fast computations in number theory,
-	  available at ", HREF "http://pari.math.u-bordeaux.fr/", ",
-	  originally developed by Henri Cohen and his co-workers at Université Bordeaux I, France.
-	  It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), "."
-	  }
-     }
+doc ///
+  Key
+    "Boost"
+  Headline
+    a collection of C++ source libraries
+  Description
+    Text
+      @HREF {"https://www.boost.org/", "Boost"}@ is a collection of free peer-reviewed and
+      portable C++ libraries suitable for eventual standardization.
+
+      Macaulay2 incorporates the following Boost libraries:
+    Tree
+      @HREF {"https://www.boost.org/doc/libs/release/libs/stacktrace/", "Boost.Stacktrace"}@ (since version 1.16)
+        :used internally for printing stack traces
+      @HREF {"https://www.boost.org/doc/libs/release/libs/regex/", "Boost.Regex"}@ (since version 1.17)
+        :used by the @TO regex@ function, as well as other functions using @TO "regular expressions"@.
+
+    Text
+      Note: the program @TO "normaliz"@ utilizes the
+      @HREF {"https://www.boost.org/doc/libs/release/libs/dynamic_bitset/", "Boost dynamic_bitset class"}@.
+///
 
 document {
      Key => "frobby",
@@ -315,7 +340,7 @@ document {
      UL {
 	  TOH "factor",
 	  TOH "gcd",
-	  TOH "minimalPrimes",
+	  TOH "MinimalPrimes :: minimalPrimes",
 	  TOH "irreducibleCharacteristicSeries"
 	  }
      }
@@ -351,7 +376,8 @@ document {
      early support, encouragement and suggestions.  We also acknowledge an
      intellectual debt to Dave Bayer, who, with Michael Stillman,
      wrote Macaulay, a specialized computer algebra system for algebraic
-     geometry and the predecessor of this program."
+     geometry and the predecessor of this program.",
+     SeeAlso => "authors of Macaulay2 packages"
      }
 
 -* -- Mike wanted this: 
@@ -452,7 +478,7 @@ document {
 	  },
      PARA {
 	  "The hash table ", TO "Layout", " contains the two possible values for ", TO "currentLayout", ";
-	  corresponding to the two possible values for the ", TO "SeparateExec", " option used with ", TO "installPackage", ".
+	  corresponding to the two possible values for the ", TO [installPackage, SeparateExec], " option used with ", TO "installPackage", ".
 	  The hash table ", TT "Layout#2", " is used if architecture dependent files are to be stored in
 	  a directory tree separate from the one used for architecture independent files.  The hash table ", TT "Layout#1", "
 	  is used otherwise."
@@ -518,7 +544,7 @@ document { Key => "frequently encountered problems",
 
 document {
      Key => "specifying typical values",
-     "For the purpose of construction good documentation automatically, it
+     "For the purpose of constructing good documentation automatically, it
      is useful to specify the type of value typically returned by a function
      or method.  For example, the function ", TO "isModule", " returns a boolean
      value, and this is specified when creating the method function with the
@@ -559,8 +585,8 @@ document {
 	  TO "Daniel R. Grayson",
 	  TO "Michael E. Stillman",
      	  "Our co-author for the tutorials, long time supporter and user of Macaulay2, and collaborator on the project since 2007:",
-	  TO "David Eisenbud",
-	  }
+	  TO "David Eisenbud"},
+     SeeAlso => "authors of Macaulay2 packages"
      }
 
 document {
@@ -691,75 +717,6 @@ document {
      }
 
 document {
-     Key => "system facilities",
-     Subnodes => {
-     	  "Loading files:",
-	  TO "autoload",
-	  TO "initialization file",
-	  TO "input",
-	  TO "load",
-	  TO "needs",
-     	  "Echoing characters:",
-	  TO "clearEcho",
-	  TO "setEcho",
-     	  "Dumping and restoring the state of the system:",
-	  TO "dumpdata",
-	  TO "loaddata",
-	  TO "restart",
-	  TO "addStartFunction",
-	  TO "addEndFunction",
-     	  "Interface to the operating system:",
-	  TO "top level loop",
-	  TO "alarm",
-	  TO "currentDirectory",
-	  TO "exec",
-	  TO "exit",
-	  TO "fork",
-	  TO "getenv",
-	  TO "processID",
-	  TO "path",
-	  TO "quit",
-	  TO "run",
-	  TO "sleep",
-	  TO "time",
-	  TO "timing",
-	  TO "wait",
-     	  "Variables with information about the state of the current process:",
-	  TO "commandLine",
-	  TO "environment",
-	  TO "version",
-     	  "Dealing with the garbage collector:",
-	  TO "collectGarbage"
-	  }
-     }
-
-document {
-     Key => "initialization file",
-     "The file ", TT "init.m2", " is loaded automatically when the
-     program is started, if it exists.",
-     PARA{
-	  "On most systems the file is sought in the directory ", TT "$HOME/.Macaulay2/", ",
-	  where ", TT "$HOME", " is replaced by the path to the user's home
-	  directory."
-	  },
-     PARA{
-	  "Under Mac OS X, the file is sought instead in the
-	  directory ", TT "$HOME/Library/Application Support/Macaulay2/", "."
-	  },
-     PARA{
-	  "If the user wants a file called, say, ", TT "start.m2", " in the current
-	  directory to be loaded automatically when the program is started, then the
-	  following line of code can be placed in the file ", TT "init.m2", "."
-	  },
-     PRE {
-	  ///if fileExists "start.m2" then load(currentDirectory()|"start.m2")///
-	  },
-     PARA {
-	  "Warning: former versions of the program would also load a file named ", TT "init.m2", " found in the current directory."
-	  }
-     }
-
-document {
      Key => "combinatorial functions",
      UL {
 	  TO "binomial",
@@ -768,23 +725,6 @@ document {
 	  TO "random",
 	  TO "subsets",
 	  TO "tally"
-	  }
-     }
-
-document {
-     Key => "top level loop",
-     "The top level evaluation loop of the interpreter contains hooks so the user can
-     control how printing of the results of evaluation is done.  If the result is 
-     ", TO "null", " then nothing is printed.  Otherwise, the appropriate method
-     associated with the symbol ", TO "Print", " is applied to perform the printing,
-     unless the printing is to be suppressed, as indicated by a semicolon at the end
-     of the statement, in which case the ", TO "NoPrint", " method is applied.",
-     UL {
-	  TO "AfterEval",
-	  TO "AfterPrint",
-	  TO "AfterNoPrint",
-	  TO "NoPrint",
-	  TO "Print",
 	  }
      }
 

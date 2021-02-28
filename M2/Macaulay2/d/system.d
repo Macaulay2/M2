@@ -15,13 +15,6 @@ header "
  #include <assert.h>
 #endif
 #ifdef HAVE_PTHREAD_H
- #ifdef HAVE_WINSOCK2_H
-  #include <winsock2.h>
-    /* under mingw64 winsock2.h should be included before including windows.h
-	pthread.h includes windows.h
-	 therefore winsock2.h should be included before pthread */
-  #undef ERROR
- #endif
  #include <pthread.h>
 #endif
 #ifdef HAVE_SYS_WAIT_H
@@ -58,7 +51,7 @@ export pow(x:double,y:double) ::= Ccode(double, "pow(", x, ",", y, ")" );
 export abort() ::= Ccode(exits,"abort()");
 export sleep(t:int):int := Ccode(int,"sleep(t)");
 export nanosleep(t:long):int := Ccode(returns,"struct timespec ts_sleep; ts_sleep.tv_sec = ",t,"/1000000000; ts_sleep.tv_nsec=",t,"%1000000000; return nanosleep(&ts_sleep, NULL);");
-export getpid():int := Ccode(int, "getpid()");	-- do it this way because glibc caches the result in memory, and that can interfere with dumpdata
+export getpid():int := Ccode(int, "getpid()");
 export getpgrp():int := Ccode(int, "
      #ifdef HAVE_GETPGRP
       getpgrp()
@@ -150,8 +143,6 @@ import waitNoHang(pid:array(int)):array(int);
 import select(s:array(int)):array(int);
 import hash(x:double):int;
 import getcwd():string;
-import dumpdata(filename:string):int;
-import loaddata(notify:int,filename:string):int;
 import errfmt(filename:string,lineno:int,colno:int,loaddepth:int):string;
 threadLocal export loadDepth := ushort(0);
 import dbmopen(filename:string,write:bool):int;
@@ -184,11 +175,6 @@ import isRegularFile(name:string):int;
 import wordexp(word:string):ArrayStringOrNull;
 import readlink(filename:string):string;
 import realpath(filename:string):(null or string);
-import noErrorMessage:string;
-import regexmatchErrorMessage:string;
-import regexmatch(pattern:string, start:int, range:int, text:string, ignorecase:bool):array(int);
-import regexreplace(pattern:string, replacement: string, text:string, errflag:string, ignorecase:bool):string;
-import regexselect(pattern:string, replacement: string, text:string, errflag:array(string), ignorecase:bool):array(string);
 import readDirectory(name:string):(null or array(string));
 import strncmp(s:string,t:string,n:int):int;
 import history():array(string);

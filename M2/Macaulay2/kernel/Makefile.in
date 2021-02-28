@@ -1,5 +1,5 @@
 VPATH = @srcdir@
-DIRS = bibasis
+DIRS = 
 TARGETS = all clean distclean check
 $(foreach d,$(DIRS),					\
 	$(foreach t, $(TARGETS),			\

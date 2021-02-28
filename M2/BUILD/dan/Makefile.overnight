@@ -1,0 +1,22 @@
+DEBIAN_REVISION=
+
+overnight:
+	git status --untracked-files=no
+	git checkout -- ../../Macaulay2/packages
+	git pull --quiet
+	echo " --- git-description:" ; git describe --long --always --abbrev=40 --tags HEAD development master
+	git submodule sync
+	git submodule update
+	git submodule foreach git clean -xdfq
+	git branch --contains HEAD
+	: "make get-m4 doesn't work under Ubuntu 20.04"
+	: $(MAKE) -C ../.. get-tools
+	$(MAKE) clean-rm-rf
+	$(MAKE) -j8 DEBIAN_REVISION=$(DEBIAN_REVISION)
+	$(MAKE) validate-html
+	date
+
+# Local Variables:
+# mode: makefile-gmake
+# compile-command: "time make -f Makefile.overnight "
+# End:

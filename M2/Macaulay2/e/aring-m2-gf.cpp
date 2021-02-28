@@ -3,11 +3,12 @@
 #include <vector>
 #include <iostream>
 
+#include "interface/random.h"
 #include "relem.hpp"
 #include "polyring.hpp"
 #include "aring-m2-gf.hpp"
 #include "ringmap.hpp"
-
+#include "monoid.hpp"
 #include "interrupted.hpp"
 
 extern "C" void dringelem(const Ring *R, const ring_elem f);
@@ -33,7 +34,7 @@ GaloisFieldTable::GaloisFieldTable(const PolynomialRing &R,
   mMinusOne = (mCharac == 2 ? mOne : mOne / 2);
 
   // Get ready to create mOneTable.
-  std::vector<ring_elem> polys;
+  VECTOR(ring_elem) polys;
   polys.push_back(mOriginalRing.from_long(0));
   polys.push_back(mOriginalRing.copy(mPrimitiveElement));
 
@@ -116,7 +117,11 @@ void GaloisFieldTable::display(std::ostream &o) const
   o << std::endl;
 }
 
-ARingGFM2::ARingGFM2(const PolynomialRing &R, const ring_elem a) : mGF(R, a) {}
+ARingGFM2::ARingGFM2(const PolynomialRing &R, const ring_elem a) : mGF(R, a)
+{
+  // Nothing to do here.
+}
+
 void ARingGFM2::fromSmallIntegerCoefficients(
     ElementType &result,
     const std::vector<long> &poly) const
@@ -195,7 +200,7 @@ void ARingGFM2::elem_text_out(buffer &o,
   mGF.ring().elem_text_out(o, h, p_one, p_plus, p_parens);
   mGF.ring().remove(h);
 }
-};
+}; // namespace M2
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

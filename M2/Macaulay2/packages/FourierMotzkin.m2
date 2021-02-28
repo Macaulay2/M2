@@ -23,6 +23,7 @@ newPackage(
 		  HomePage => "http://www.mast.queensu.ca/~ggsmith",
 		  Email => "ggsmith@mast.queensu.ca"}},
     	Headline => "convex hulls and polar cones",
+	Keywords => {"Convex Geometry"},
     	DebuggingMode => false
     	)
 
@@ -219,7 +220,7 @@ fourierMotzkin (Matrix, Matrix) := Sequence => (Z, H) -> (
 	       A = apply(D#0, e -> primitive e);
 	       V = D#1;
 	       ));
-     -- output formating
+     -- output formatting
      --A = apply(A, e -> primitive e);
      if (A === {}) then A = map(ZZ^d, ZZ^0, 0)
      else A = transpose matrix A;

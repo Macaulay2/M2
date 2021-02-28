@@ -6,6 +6,68 @@
 -- expandWord is based.
 -- run = cmd -> if (pid := fork()) == 0 then exec expandWord cmd else wait pid
 
+sampleInitFile := ///-- This is a sample init.m2 file provided with Macaulay2.
+-- It contains Macaulay2 code and is automatically loaded upon
+-- startup of Macaulay2, unless you use the "-q" option.
+
+-- Uncomment the following line to cause Macaulay2 to load "start.m2" in the current working directory upon startup.
+-- if fileExists "start.m2" then load(currentDirectory()|"start.m2")
+
+-- Uncomment and edit the following lines to add your favorite directories containing Macaulay2
+-- source code files to the load path.  Terminate each directory name with a "/".
+-- (To see your current load path, display the value of the variable "path".)
+-- path = join( { "~/" | "src/singularities/", "/usr/local/src/M2/" }, path )
+
+-- Uncomment the following line if you prefer Macaulay2's larger 2-dimensional display form for matrices.
+-- compactMatrixForm = false
+
+-- Uncomment and edit the following line if you would like to set the variable kk to your favorite field.
+-- kk = ZZ/101
+
+-- Uncomment and edit the following line if you don't need to be informed of the class of a sequence
+-- after it is printed by M2.  This works for other classes, too.
+-- Sequence#{Standard,AfterPrint} = Sequence#{Standard,AfterNoPrint} = identity
+
+-- Uncomment and edit the following line to set a default printwidth for situations where M2 doesn't know the width
+-- of your terminal.
+-- if printWidth == 0 then printWidth = 100
+
+-- Uncomment and edit the following line to preload your favorite package.
+-- needsPackage "StateTables"
+
+///
+
+readmeFile := ///Welcome to Macaulay2!
+
+This directory is used to contain data and code specific to Macaulay2.  For
+example, your initialization file, init.m2, is in this directory, and is
+automatically loaded upon startup of Macaulay2, unless you use the "-q" option.
+You may edit it to meet your needs.
+
+The web browser file "index.html" in this directory contains a list of links to
+the documentation of Macaulay2 and its installed packages and is updated every
+time you start Macaulay2 (unless you use the "-q" option).  To update it
+manually, use "makePackageIndex()".  Point your web browser at that file and
+bookmark it.
+
+You may place Macaulay2 source files in the subdirectory "code/".  It's on
+your "path", so Macaulay2's "load" and "input" commands will automatically look
+there for your files.
+
+You may obtain source code for Macaulay2 packages and install them yourself
+with the function "installPackage".  Behind the scenes, Macaulay2 will use the
+subdirectory "encap/" to house the code for those packages in separate
+subdirectories.  The subdirectory "local/" will hold a single merged directory
+tree for those packages, with symbolic links to the files of the packages.
+
+Good luck!
+
+http://www.math.uiuc.edu/Macaulay2/
+
+Daniel R. Grayson <dan@math.uiuc.edu>,
+Michael R. Stillman <mike@math.cornell.edu>
+///
+
 setUpApplicationDirectory = () -> (
      dir := applicationDirectory();
      makeDirectory(dir);
@@ -141,8 +203,6 @@ locateCorePackageFile = (pkgname,f) -> locatePackageFile(prefixDirectory,current
 
 locateCorePackageFileRelative = (pkgname,f,installPrefix,installTail) -> locatePackageFileRelative(prefixDirectory,currentLayout,pkgname,f,installPrefix,installTail)
 
-locateDocumentationNode = method()
-
 keyExists = (i,fkey) -> (
      if i#?"doc keys" 
      then i#"doc keys"#?fkey
@@ -151,34 +211,6 @@ keyExists = (i,fkey) -> (
 	  r := db#?fkey;
 	  close db;
 	  r))
-
-locateDocumentationNode (String,String) := (pkgname,fkey) -> (
-     i := getPackageInfo pkgname;
-     if i === null or not keyExists(i,fkey) then return null;
-     layout := Layout#(i#"layout index");
-     fn := i#"prefix" | htmlFilename1(fkey,pkgname,layout);
-     if not fileExists fn then error ("internal error: html documentation file does not exist: ",fn);
-     fn)
-
-locateDocumentationNode String := fkey -> (			    -- search packages for one with a documentation node under this formatted key, unless it contains "::"
-     r := regex(" *:: *",fkey);
-     if r === null then (
-	  for prefix in prefixPath
-	  do if installedPackagesByPrefix#?prefix
-	  then (
-	       pkgtable := installedPackagesByPrefix#prefix#"package table";
-	       for pkgname in keys pkgtable do (
-		    q := pkgtable#pkgname;
-		    if keyExists(q,fkey) then (
-			 layout := Layout#(q#"layout index");
-			 fn := prefix | htmlFilename1(fkey,pkgname,layout);
-			 if not fileExists fn then error ("internal error: html documentation file does not exist: ",fn);
-			 return fn))))
-     else (
-	  (off,len) := r#0;
-	  pkgname := substring(0,off,fkey);
-	  fkey = substring(off+len,fkey);
-	  locateDocumentationNode(pkgname,fkey)))
 
 getPackageInfoList = () -> flatten (
      for prefix in prefixPath 

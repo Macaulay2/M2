@@ -15,6 +15,7 @@ newPackage(
 			Email => "bapike@gmail.com",
 			HomePage => "http://www.brianpike.info/"}},
 		Headline => "run Macaulay2 functions outside the current Macaulay2 process",
+		Keywords => {"System"},
 		DebuggingMode => false,
 		Configuration => {"isChild"=>false} 
 	)
@@ -85,7 +86,6 @@ export {
 	"runExternalM2ReturnAnswer",
 	-- Various Options:
 	"M2Location",
-	"KeepFiles",
 	"KeepStatistics",
 	"KeepStatisticsCommand",
 	"PreRunScript"
@@ -259,7 +259,7 @@ Node
 			Many operating systems support limiting the amount of resources
 			(for instance, memory or CPU time) that a given instance of a
 			running program (``process'') may use.
-			Processes that use more than the alloted resource may have requests
+			Processes that use more than the allotted resource may have requests
 			denied (as in the case of memory or disk usage),
 			or may be terminated.
 			In some cases it is useful to apply these limits to Macaulay2.
@@ -334,10 +334,12 @@ Node
 -*
   These are the options to automatically provide when calling the M2 executable.
   We would use --script (=--stop --no-debug --silent -q ), but we do NOT want
-  -q so that our child processes can find installed packages, namely, this package.
+  -q so that our child processes can find installed packages, namely, this package,
+  unless the parent M2 was also called with -q.
 *-
 M2Options:=" --stop --no-debug --silent ";
-
+debug Core
+if noinitfile then M2Options = M2Options | " -q ";
 
 mydoc=concatenate(mydoc,///
 Node
@@ -477,7 +479,6 @@ safelyRemoveFile := (s,f) -> (
 mydoc=concatenate(mydoc,///
 Node
 	Key
-		KeepFiles
 		[runExternalM2,KeepFiles]
 	Headline
 		indicate whether or not temporary files should be saved
@@ -704,7 +705,7 @@ defaultKeepStatsCommand := (f,c) -> (
 	-- Per the standard, time writes usage details to stderr.  Use a
 	-- technique suggested there to separate the usage details from
 	-- the command's output.
-	-- The parantheses are necessary for bash's builtin time command
+	-- The parentheses are necessary for bash's builtin time command
 	return " ("|whichTime|" sh -c '"|c|"') >\""|f|"\" 2>&1";
 );
 
@@ -1058,11 +1059,11 @@ spin = (x,t) -> (
 ////<<endl<<close;
 
 r=runExternalM2(fn,"spin",(5,6),PreRunScript=>"ulimit -t 2");
-assert(not(r#"exit code"===0));
+assert(not(r#"return code"===0));
 assert(r#value===null);
 
 r=runExternalM2(fn,"spin",(5,2),KeepStatistics=>true);
-assert(r#"exit code"===0);
+assert(r#"return code"===0);
 assert(r#value===5);
 assert(instance(r#"statistics",String));
 assert(length(r#"statistics")>0);

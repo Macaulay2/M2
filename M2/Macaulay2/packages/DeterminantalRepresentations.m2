@@ -9,10 +9,25 @@ newPackage("DeterminantalRepresentations",
 		Email => "papridey@berkeley.edu"}
 	},
 	Headline => "determinantal representations",
+	Keywords => {"Representation Theory", "Commutative Algebra"},
 	HomePage => "https://github.com/papridey/DeterminantalRepresentations",
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	DebuggingMode => false,
-        Reload => false
+        Reload => false,
+	Certification => {
+	     "journal name" => "The Journal of Software for Algebra and Geometry",
+	     "journal URI" => "http://j-sag.org/",
+	     "article title" => "Computing symmetric determinantal representations",
+	     "acceptance date" => "5 December 2019",
+	     "published article URI" => "https://msp.org/jsag/2020/10-1/p02.xhtml",
+	     "published article DOI" => "https://doi.org/10.2140/jsag.2020.10.9",
+	     "published code URI" => "https://msp.org/jsag/2020/10-1/jsag-v10-n1-x02-DeterminantalRepresentations.m2",
+	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/....m2",
+	     "release at publication" => "f3c4030a3e66ae51f54ec24a89e1d5b1992a82eb",	    -- git commit number in hex
+	     "version at publication" => "1.3.0",
+	     "volume number" => "10",
+	     "volume URI" => "https://msp.org/jsag/2020/10-1/"
+	     }
 )
 export {
     "detRep",
@@ -506,7 +521,7 @@ doc ///
             are not limited to the scope of determinantal representations). These include:
             creating/testing orthogonal, symmetric, doubly stochastic, unipotent, and 
             positive semidefinite matrices, Hadamard products, Cholesky decomposition, 
-            and converting/rounding matrices from @TO CC@ to @TO RR@/@TO QQ@.
+            and lifting/rounding matrices from @TO CC@ to @TO RR@/@TO QQ@.
             
         Text
             {\bf References}:
@@ -1331,13 +1346,13 @@ assert(all(reps, A -> clean(1e-10, sub(f - det A, RR(monoid[gens S]))) == 0))
 SRR=RR[x1,x2,x3]
 fRR=sub(f, SRR)
 reps = detRep fRR
-assert(all(reps, L -> clean(1e-10, fRR - det L) == 0))
+assert(all(reps, L -> clean(1e-9, fRR - det L) == 0))
 SCC=CC[x1,x2,x3]
 fCC=sub(f, SCC)
 reps = detRep fCC
-assert(all(reps, L -> clean(1e-10, fCC - det L) == 0))
+assert(all(reps, L -> clean(1e-9, fCC - det L) == 0))
 reps = detRep(fCC, HyperbolicPt => matrix{{3_RR},{2},{-7}}) -- representations are not monic
-assert(all(reps, L -> clean(1e-8, fCC - det L) == 0))
+assert(all(reps, L -> clean(1e-5, fCC - det L) == 0))
 ///
 
 TEST /// -- Cubic case: homogeneous, 3 variables

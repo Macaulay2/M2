@@ -1,6 +1,7 @@
 doc ///
 Key
   LocalRings
+   localRing
   (localRing, Ring, Ideal)
 Headline
   Localizing polynomial rings at a prime ideal
@@ -30,7 +31,7 @@ Description
     D = C ** RM;
     E = pruneComplex D
   Text
-    That is to say, the rational quartic curve is not locally Cohen-Macaulay at the origin
+    That is to say, the rational quartic curve is not locally Cohen-Macaulay at the origin.
     Therefore the curve is not Cohen-Macaulay
   Example
     RP = localRing(R, P);
@@ -70,7 +71,7 @@ Outputs
 Description
   Text
     Given an object, for instance an ideal IP, over a local ring (RP, P), this method returns the
-    preimage of that object under the cannonical map R -> RP after clearing denominators of IP.
+    preimage of that object under the canonical map R -> RP after clearing denominators of IP.
 
     For matrices (hence most other objects as well), clearing denominators is performed columnwise.
 
@@ -179,7 +180,7 @@ Description
 Caveat
   Hilbert-Samuel function with respect to a parameter ideal other than the maximal ideal can be slower.
 SeeAlso
-  (length, Module)
+  "Macaulay2Doc :: length(Module)"
 ///
 
 -- See (length, Module) in packages/Macaulay2Doc/functions/degree-doc.m2.

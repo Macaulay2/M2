@@ -576,7 +576,7 @@ ring_elem WeylAlgebra::multinomial(const int *exptop, const int *exp) const
   return result;
 }
 
-ring_elem WeylAlgebra::power(const ring_elem f, mpz_t n) const
+ring_elem WeylAlgebra::power(const ring_elem f, mpz_srcptr n) const
 {
   std::pair<bool, int> n1 = RingZZ::get_si(n);
   if (n1.first)

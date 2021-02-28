@@ -8,6 +8,7 @@ newPackage(
 	      },
      	PackageImports => {"BoijSoederberg"},
    	Headline => "triplets of degree sequences and associated Betti diagrams and cohomology tables",
+	Keywords => {"Commutative Algebra"},
    	DebuggingMode => false
    	)
 export {
@@ -1061,7 +1062,7 @@ document {
 	  "T" => "a homology triplet"
 	  },
      Outputs => {
-	 List => "list of coefficents a_i for Hilbert polynomial"
+	 List => "list of coefficients a_i for Hilbert polynomial"
 	  },
      "The Hilbert polynomial will be written as a linear combination
      of the polynomials a_i binPol(n,i), where ", TO binPol, " is used to compute  these polynomials.",

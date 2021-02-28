@@ -15,6 +15,7 @@ newPackage(
                 HomePage=>"http://www.math.cornell.edu/~mike"
                 }},
         Headline => "simple access to Kreuzer-Skarke database of reflexive polytopes of dimensions 3 and 4",
+	Keywords => {"Convex Geometry"},
         AuxiliaryFiles => true
         )
 
@@ -521,7 +522,7 @@ Description
     elements.
     
     The actual format allowed for matrices is described in @TO "matrixFromString"@.  
-    After calling @TO "kreuzerSkarke"@ to get a list of @TO "KSEntry"@'s, one uses @TO "(matrix, KSEntry)"@
+    After calling @TO "kreuzerSkarke"@ to get a list of @TO "KSEntry"@'s, one uses @TO (matrix, KSEntry)@
     to obtain a matrix .  Then
     use this function to obtain the matrix.
   Example
@@ -683,7 +684,7 @@ doc ///
       Each 4D reflexive polytope in the Kreuzer-Skarke database
       contains summary information about the polytope.
       Here, we explain this information.  A 3D polytope description line
-      is similar, but somehwat simpler.
+      is similar, but somewhat simpler.
       
       We will do this on an example, and see how to
       obtain this information directly.
@@ -728,7 +729,7 @@ doc ///
       needsPackage "Polyhedra";
       P = convexHull A
     Text
-      $P$ is the convex hull of the columns in the $M = {\bf ZZ}^4$ lattice.
+      $P$ is the convex hull of the columns in the $M = \ZZ^4$ lattice.
       $P$ has 10 vertices and 25 lattice points, explaining the part of the line
       "M:25 10".
     Example
@@ -737,7 +738,7 @@ doc ///
       vertices P
       numColumns vertices P
     Text
-      $P_2$ is the polar dual of $P$ in the $N = {\bf ZZ}^4$ lattice.
+      $P_2$ is the polar dual of $P$ in the $N = \ZZ^4$ lattice.
       $P_2$ has 9 vertices and 10 lattice points, explaining the part of the line
       "N:10 9".
     Example

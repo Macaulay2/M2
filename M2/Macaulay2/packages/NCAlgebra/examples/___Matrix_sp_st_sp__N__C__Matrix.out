@@ -2,7 +2,7 @@
 
 i1 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12488-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12488-0/3.ter ... Complete!
+Complete!
 
 o1 = B
 
@@ -10,7 +10,7 @@ o1 : NCQuotientRing
 
 i2 : M = ncMatrix {{x, y, z}}
 
-o2 = | x  y  z |
+o2 = | x y z |
 
 o2 : NCMatrix
 
@@ -22,11 +22,9 @@ o3 : NCRingMap
 
 i4 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
 
-o4 = | x  y  z |
-     |         |
-     | y  z  x |
-     |         |
-     | z  x  y |
+o4 = | x y z |
+     | y z x |
+     | z x y |
 
 o4 : NCMatrix
 
@@ -41,11 +39,9 @@ o5 : Matrix QQ  <--- QQ
 
 i6 : L*N
 
-o6 = |    2x       2y       2z   |
-     |                           |
-     |   2y+x     2z+y     z+2x  |
-     |                           |
-     | 3z+2y+x  2z+y+3x  z+3y+2x |
+o6 = | 2*x       2*y       2*z       |
+     | 2*y+x     2*z+y     z+2*x     |
+     | 3*z+2*y+x 2*z+y+3*x z+3*y+2*x |
 
 o6 : NCMatrix
 

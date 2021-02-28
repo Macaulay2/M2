@@ -3,32 +3,38 @@
 #ifndef _ring_hh_
 #define _ring_hh_
 
-#include "hash.hpp"
-#include "error.h"
-#include "ringelem.hpp"
-#include "monoid.hpp"
-#include "aring.hpp"
-#include "exceptions.hpp"
-///// Ring Hierarchy ///////////////////////////////////
+#include <utility>           // for pair
 
-class RingZZ;
-class RRR;
+#include "aring.hpp"         // for RingID, ring_old
+#include "error.h"           // for ERROR
+#include "exceptions.hpp"    // for engine_error
+#include "hash.hpp"          // for MutableEngineObject
+#include "newdelete.hpp"     // for our_new_delete
+#include "ringelem.hpp"      // for ring_elem, vec, vecterm (ptr only), Nter...
+
+class ARing;
 class CCC;
-class Z_mod;
-class GF;
-class Tower;
+class CoefficientRingR;
 class FractionField;
+class FreeModule;
+class GF;
 class LocalRing;
-class PolynomialRing;
+class Monoid;
+class MutableMatrix;
+class PolyQQ;
 class PolyRing;
 class PolyRingFlat;
-class PolyQQ;
-class SkewPolynomialRing;
-class SchurRing;
+class PolynomialRing;
+class RRR;
+class RingMap;
+class RingZZ;
 class SchurRing2;
+class SchurRing;
 class SchurSnRing;
-class WeylAlgebra;
+class SkewPolynomialRing;
 class SolvableAlgebra;
+class M2FreeAlgebra;
+class M2FreeAlgebraQuotient;
 
 class FreeModule;
 class RingMap;
@@ -38,11 +44,12 @@ class gbvector;
 class buffer;
 
 class SumCollector;
-
-class ARing;
-class MutableMatrix;
-
-class CoefficientRingR;
+class Tower;
+class WeylAlgebra;
+class Z_mod;
+class buffer;
+struct Matrix;
+struct RingElement;
 
 /**
     @ingroup rings
@@ -195,6 +202,11 @@ class Ring : public MutableEngineObject
   virtual const LocalRing *cast_to_LocalRing() const { return 0; }
   virtual LocalRing *cast_to_LocalRing() { return 0; }
 
+  virtual const M2FreeAlgebra *cast_to_M2FreeAlgebra() const { return 0; }
+  virtual M2FreeAlgebra *cast_to_M2FreeAlgebra() { return 0; }
+  virtual const M2FreeAlgebraQuotient *cast_to_M2FreeAlgebraQuotient() const { return 0; }
+  virtual M2FreeAlgebraQuotient *cast_to_M2FreeAlgebraQuotient() { return 0; }
+  
   virtual const SchurRing *cast_to_SchurRing() const { return 0; }
   virtual SchurRing *cast_to_SchurRing() { return 0; }
   virtual const SchurRing2 *cast_to_SchurRing2() const { return 0; }
@@ -278,7 +290,7 @@ class Ring : public MutableEngineObject
 
   // from_rational: if the rational q cannot be placed into this ring, false is
   // returned, and result is not touched.
-  virtual bool from_rational(const mpq_ptr q, ring_elem &result) const = 0;
+  virtual bool from_rational(const mpq_srcptr q, ring_elem &result) const = 0;
 
   // The default version calls from_long(0) and returns false.
   virtual bool from_BigReal(gmp_RR a, ring_elem &result) const;
@@ -339,7 +351,7 @@ class Ring : public MutableEngineObject
   virtual ring_elem subtract(const ring_elem f, const ring_elem g) const = 0;
   virtual ring_elem mult(const ring_elem f, const ring_elem g) const = 0;
 
-  virtual ring_elem power(const ring_elem f, mpz_t n) const;
+  virtual ring_elem power(const ring_elem f, mpz_srcptr n) const;
   virtual ring_elem power(const ring_elem f, int n) const;
   // These two power routines can be used for n >= 0.
 
@@ -427,13 +439,13 @@ class Ring : public MutableEngineObject
       const;  // if the ring is not over RRR or CCC, returns 0.
   virtual ring_elem zeroize_tiny(gmp_RR epsilon, const ring_elem f) const;
   // Default is to return f itself.
-  virtual void increase_maxnorm(gmp_RR norm, const ring_elem f) const;
+  virtual void increase_maxnorm(gmp_RRmutable norm, const ring_elem f) const;
   // If any real number appearing in f has larger absolute value than norm,
   // replace norm.
   // Default for rings not over RRR or CCC is to do nothing.
   vec vec_zeroize_tiny(gmp_RR epsilon, const vec f) const;
   // Default is to return f itself.
-  void vec_increase_maxnorm(gmp_RR norm, const vec f) const;
+  void vec_increase_maxnorm(gmp_RRmutable norm, const vec f) const;
   // If any real number appearing in f has larger absolute value than norm,
   // replace norm.
   // Default for rings not over RRR or CCC is to do nothing.

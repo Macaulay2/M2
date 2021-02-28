@@ -1,0 +1,29 @@
+# Relevant documentation:
+# https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action
+# https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions
+
+name: Package Review Action
+description: 'Run all examples and tests in a package'
+
+inputs:
+  package:
+    description: 'Package name'
+    required: true
+    default: 'FirstPackage'
+outputs:
+  numExampleErrors:
+    description: 'Number of errors occured running examples'
+  numTestErrors:
+    description: 'Number of errors occured running tests'
+runs:
+  using: 'docker'
+  image: 'docker://mahrud/macaulay2:v1.16.0.1'
+  entrypoint: 'M2'
+  args: ["-q", "--stop", "--silent", "--srcdir", "/github/workspace/M2",
+         "-e", "debug Core;
+           pkg = installPackage(\"${{ inputs.package }}\",
+               IgnoreExampleErrors => true, InstallPrefix => \"/github/workspace/\");
+           stderr << \"::set-output name=numExampleErrors::\" << numErrors << endl;
+           check pkg;
+           stderr << \"::set-output name=numTestErrors::\" << numErrors << endl;
+           exit 0"]

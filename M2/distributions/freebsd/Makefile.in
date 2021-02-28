@@ -56,8 +56,10 @@ T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --f
 
 libraries-used : files/bin/M2@EXE@
 	ldd files/bin/M2@EXE@ | sed -e 's/.* => //' -e 's/^	//' -e 's/ .*//' | egrep '^/' >$@ || true
-packages-used : libraries-used
-	cat libraries-used | while read x ; do pkg_info -W "$$x" | sed -e 's=.* was installed by package =='; done >$@
+files-used: Makefile
+	for i in @FILE_PREREQS@ ; do echo $i ; done >$@
+packages-used : libraries-used files-used
+	cat $^ | while read x ; do pkg_info -W "$$x" | sed -e 's=.* was installed by package =='; done >$@
 
 ifeq ($(TIDY),yes)
 maybe-tidy: tidy_after

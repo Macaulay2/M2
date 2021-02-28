@@ -7,12 +7,11 @@ setupconst("VirtualTally",Expr(VirtualTally));
 export Tally := newtypeof(VirtualTally);
 setupconst("Tally",Expr(Tally));
 export Set := newtypeof(Tally);
-one := Expr(ZZcell(toInteger(1)));
 setupconst("Set",Expr(Set));
 makeSet(v:Sequence):Expr := (
      o := newHashTable(Set,nothingClass);
      o.beingInitialized = true;
-     foreach e in v do storeInHashTable(o,e,one);
+     foreach e in v do storeInHashTable(o,e,oneE);
      Expr(sethash(o,false)));
 makeSet(e:Expr):Expr := (
      when e
@@ -39,7 +38,7 @@ addone(i:Expr):Expr := when i is j:ZZcell do Expr(ZZcell(j.v+1)) else i;
 makeTally(v:Sequence):Expr := (
      o := newHashTable(Tally,nothingClass);
      o.beingInitialized = true;
-     foreach e at i in v do modify(o,e,addone,one);
+     foreach e at i in v do modify(o,e,addone,oneE);
      Expr(sethash(o,false)));
 makeTally(e:Expr):Expr := (
      when e

@@ -68,4 +68,5 @@ refineBertini (PolySystem,Point,OptionTable) := List => (F,x,o) -> (
     first bertiniRefineSols(decimals, equations F, {x}) -*toBertiniOptions o*-
     -- bertiniRefineSols may reorder points!!!
     )
- 
+toBertiniOptions'numericalIrreducibleDecomposition = o -> new OptionTable from {Verbose=>false,BertiniInputConfiguration=>{Bertini$RandomSeed=>0}}
+numericalIrreducibleDecompositionBertini = (I,o) -> bertiniPosDimSolve(I_*, toBertiniOptions'numericalIrreducibleDecomposition o)

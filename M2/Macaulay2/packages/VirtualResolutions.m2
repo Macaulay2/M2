@@ -3,16 +3,17 @@
 --           of projective spaces.
 --
 -- PROGRAMMERS : Ayah Almousa, Christine Berkesch, Juliette Bruce,
--- David Eisenbud, Daniel Erman, Michael Loper, Mahrud Sayrafi,
--- Greg Smith.
+--               David Eisenbud, Daniel Erman, Michael Loper,
+--               Mahrud Sayrafi, and Greg Smith.
 --
 -- UPDATE HISTORY : created 14 April 2018 at M2@UW;
 --                  updated 15 April 2019 at IMA Coding Sprint.
+--                  updated 16 April 2020 for JSAG
 ---------------------------------------------------------------------------
 newPackage ("VirtualResolutions",
-    Version => "1.1",
-    Date => "November 13, 2018",
-    Headline => "virtual resolutions on products of projective spaces",
+    Version => "1.3",
+    Date => "November 24, 2020",
+    Headline => "Methods for virtual resolutions on products of projective spaces",
     Authors =>{
         {Name => "Ayah Almousa",       Email => "aka66@cornell.edu",   HomePage => "http://pi.math.cornell.edu/~aalmousa "},
         {Name => "Christine Berkesch", Email => "cberkesc@umn.edu",    HomePage => "http://math.umn.edu/~cberkesc/"},
@@ -21,15 +22,28 @@ newPackage ("VirtualResolutions",
         {Name => "Michael Loper",      Email => "loper012@umn.edu",    HomePage => "http://math.umn.edu/~loper012/"},
         {Name => "Mahrud Sayrafi",     Email => "mahrud@umn.edu",      HomePage => "http://math.umn.edu/~mahrud/"}
         },
-    PackageExports => {
-        "SpaceCurves",
-        "TateOnProducts",
-        "NormalToricVarieties",
-        "Elimination",
-        "Depth"
-        },
-    AuxiliaryFiles => true
+    Keywords => {"Commutative Algebra", "Homological Algebra"},
+    PackageImports => {"Elimination", "Depth", "Saturation", "SpaceCurves"},
+    PackageExports => {"NormalToricVarieties", "TateOnProducts"},
+    AuxiliaryFiles => true,
+    DebuggingMode => false,
+    Certification => {
+	 "journal name" => "The Journal of Software for Algebra and Geometry",
+	 "journal URI" => "http://j-sag.org/",
+	 "article title" => "The virtual resolutions package for Macaulay2",
+	 "acceptance date" => "19 May 2020",
+	 "published article URI" => "https://msp.org/jsag/2020/10-1/p06.xhtml",
+	 "published article DOI" => "10.2140/jsag.2020.10.51",
+	 "published code URI" => "https://msp.org/jsag/2020/10-1/jsag-v10-n1-x06-VirtualResolutions.zip",
+	 "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/VirtualResolutions.m2",
+	 "release at publication" => "28038a52dcc3b0ad7adfd2562a9cd6b6414a6636",
+	 "version at publication" => "1.2",
+	 "volume number" => "10",
+	 "volume URI" => "https://msp.org/jsag/2020/10-1/"
+	 }
     )
+
+importFrom_Core { "printerr", "raw", "rawKernelOfGB" }
 
 export{
     "curveFromP3toP1P2",
@@ -42,6 +56,8 @@ export{
     "randomCurveP1P2",
     "multigradedRegularity",
     -- Options
+    "LowerLimit",
+    "UpperLimit",
     "Attempt",
     "PreserveDegree",
     "GeneralElements"
@@ -53,20 +69,26 @@ export{
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 
+-- Helper for saturation with respect to irrelevant ideal
+ourSaturation = (I,irr) -> saturate(I, decompose irr, Strategy => Eliminate);
 
---------------------------------------------------------------------
---------------------------------------------------------------------
------ Input: (I,irr) = (ideal, ideal)
------ Output: saturation of I with respect to irr.
------ Description: This is the fast saturation from Colon.m2. Since
------ Colon.m2 might change at some point we have created this wrap
------ function to easily implement other saturations that might be
------ created. We hope this is eventually removed.
---------------------------------------------------------------------
---------------------------------------------------------------------
-load("./VirtualResolutions/Colon.m2")
-ourSaturation = (I,irr) -> saturationByElimination(I, decompose irr);
+-- Helper for isVirtual, checks whether a module sheafifies to the zero sheaf
+-- TODO: export this, either here or in NormalToricVarieties. Could be renamed to isFiniteLength
+-- TODO: the "Support" strategy sometimes causes engine error:
+-- terminate called after throwing an instance of 'std::logic_error'
+--   what():  ERROR: Inserted duplicate entry into a KD tree.
+isZeroSheaf = method(TypicalValue => Boolean, Options => { Strategy => null })
+isZeroSheaf(NormalToricVariety, Module) := opts -> (X, M) -> isZeroSheaf(ideal X, M, opts)
+isZeroSheaf(Ideal,              Module) := opts -> (B, M) -> (
+    if opts.Strategy === "Support" then isSupportedInZeroLocus(B, M)
+    else (J := ann M) == 1 or J != 0 and ourSaturation(J, B) == 1)
 
+-- Helper for virtualOfPair
+-- TODO: complete this into the dual of submatrixByDegrees
+submatrixWinnow = (m, alphas) -> (
+    col := positions(degrees source m, deg -> any(alphas, alpha -> all(alpha - deg, x -> x >= 0)));
+    row := positions(degrees target m, deg -> any(alphas, alpha -> all(alpha - deg, x -> x >= 0)));
+    submatrix(m, row, col))
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
@@ -77,25 +99,22 @@ ourSaturation = (I,irr) -> saturationByElimination(I, decompose irr);
 --See Algorithm 3.4 of [BES]
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-virtualOfPair = method(Options => {Strategy => null})
-virtualOfPair (Ideal,  List) := Boolean => opts -> (I, alphas) -> virtualOfPair((ring I)^1/I, alphas)
-virtualOfPair (Module, List) := Boolean => opts -> (M, alphas) -> (
-    if opts.Strategy == null then return virtualOfPair(res M, alphas);
-    if opts.Strategy == UseSyzygies then (
-	if any(alphas, alpha -> #alpha =!= degreeLength ring M) then error "degree has wrong length";
-	m := presentation M;
-	apply(alphas, alpha -> m = submatrixByDegrees(m, (,alpha), (,alpha)));
-	L := {m} | while m != 0 list (
-	    m = syz m; apply(alphas, alpha -> m = submatrixByDegrees(m, (,alpha), (,alpha))); m);
-	chainComplex L
-	)
-    )
-virtualOfPair (ChainComplex, List) := Boolean => opts -> (F, alphas) -> (
+virtualOfPair = method(Options => {LengthLimit => infinity})
+virtualOfPair (Ideal,  List) := ChainComplex => opts -> (I, alphas) -> virtualOfPair(comodule I, alphas, opts)
+virtualOfPair (Module, List) := ChainComplex => opts -> (M, alphas) -> (
+    R := ring M;
+    if M.cache.?resolution then return virtualOfPair(M.cache.resolution, alphas, opts);
+    if any(alphas, alpha -> #alpha =!= degreeLength ring M) then error "degree has wrong length";
+    m := schreyerOrder gens gb presentation M;
+    m = submatrixWinnow(m, alphas);
+    i := 2;
+    L := {m} | while m != 0 and i <= opts.LengthLimit list (
+        i = i + 1; m = map(R, rawKernelOfGB raw m); m = submatrixWinnow(m, alphas));
+    chainComplex L)
+virtualOfPair (ChainComplex, List) := ChainComplex => opts -> (F, alphas) -> (
     if any(alphas, alpha -> #alpha =!= degreeLength ring F) then error "degree has wrong length";
-    L := apply(length F, i -> (
-            m := F.dd_(i+1); apply(alphas, alpha -> m = submatrixByDegrees(m, (,alpha), (,alpha))); m));
-    chainComplex L
-    );
+    L := apply(length F, i -> submatrixWinnow(F.dd_(i+1), alphas));
+    chainComplex L)
 
 
 --------------------------------------------------------------------
@@ -104,7 +123,7 @@ virtualOfPair (ChainComplex, List) := Boolean => opts -> (F, alphas) -> (
 ----- subscheme and irr is the irrelevant ideal
 ----- Output: A virtual resolution of S/J, which is potentially short.
 ----- Description: This function implements Theorem 4.1 of [BES].
------ In particular, it computes a virutal resolution of S/J by
+----- In particular, it computes a virtual resolution of S/J by
 ----- computing a graded minimal free resolution of S/(J\cap B^A).
 ----- By the theorem this might be a short virtual resolution
 --------------------------------------------------------------------
@@ -112,7 +131,7 @@ virtualOfPair (ChainComplex, List) := Boolean => opts -> (F, alphas) -> (
 resolveViaFatPoint = method()
 resolveViaFatPoint(Ideal, Ideal, List) := ChainComplex => (J, irr, A) -> (
     L := decompose irr;
-    if #A != #L then error "intersectionRes: expected exponent vector of the right length.";
+    if #A != #L then error("resolveViaFatPoint: expected exponent vector of length " | toString degreeLength irr);
     -- note: decompose doesn't necessarily return in the right order
     Q := intersect for X in L list (
         D := degree X_0;
@@ -132,46 +151,30 @@ resolveViaFatPoint(Ideal, Ideal, List) := ChainComplex => (J, irr, A) -> (
 -- Note: the Determinatal strategy is based on Theorem 1.3 of [Loper2019].
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-isVirtual = method(Options => {Strategy => null})
-isVirtual (Ideal, ChainComplex) := Boolean => opts -> (irr, C) -> (
+isVirtual = method(TypicalValue => Boolean, Options => {Strategy => null})
+isVirtual(NormalToricVariety, ChainComplex) := opts -> (X,   C) -> isVirtual(ideal X, C)
+isVirtual(Ideal,              ChainComplex) := opts -> (irr, C) -> (
+    S := ring irr;
+    if S =!= ring C then error "isVirtual: expected objects in the same ring";
 -- if strategy "determinantal is selected, the method checks virtuality
 -- via the depth criterion on the saturated ideals of minors
+    debugInfo := if debugLevel < 1 then identity else i -> printerr("isVirtual: the complex is not virtual at homological degree ", toString i);
     if opts.Strategy === "Determinantal" then (
         for i from 1 to length(C) do (
             if rank(source(C.dd_i)) != (rank(C.dd_i) + rank(C.dd_(i+1))) then (
-                if debugLevel >= 1 then print "isVirtual failed at homological degree " | toString i;
-                return false;
-                );
-            );
+                debugInfo i; return false));
         for i from 1 to length(C) do (
             minor := minors(rank(C.dd_i),C.dd_i);
             minorSat := ourSaturation(minor,irr);
-            if depth(minorSat,ring(minorSat)) < i then (
-                if debugLevel >= 1 then print "isVirtual failed at homological degree " | toString i;
-                return false;
-            );
-        );
-    true
-    );
+            if depth(minorSat, S) < i then (
+                debugInfo i; return false));
+    return true);
 -- default strategy is calculating homology and checking homology is
 -- supported on irrelevant ideal
     for i from 1 to length(C) do (
-        annHHi := ann HH_i(C);
-        if annHHi != ideal(sub(1,ring C)) then (
-            if annHHi == 0 or ourSaturation(annHHi,irr) != ideal(sub(1,ring C)) then (
-                if debugLevel >= 1 then print "isVirtual failed at homological degree " | toString i;
-                return false;
-                );
-            );
-        );
-    true
-    )
-
-
-isVirtual (NormalToricVariety, ChainComplex) := Boolean => opts -> (X, C) -> (
-    if ring C != ring X then error "chain complex is not in Cox ring of normal toric variety";
-    isVirtual(ideal X, C)
-    )
+        if not isZeroSheaf(irr, HH_i C) then (
+            debugInfo i; return false));
+    true)
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
@@ -223,7 +226,7 @@ idealSheafGens(ZZ, Ideal, NormalToricVariety) := List => opts -> (n, J, X) -> (
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 randomRationalCurve = method()
-randomRationalCurve (ZZ,ZZ,Ring) := (d,e,F)->(
+randomRationalCurve (ZZ,ZZ,Ring) := Ideal => (d,e,F) -> (
     -- Defines P1
     s := getSymbol "s";
     t := getSymbol "t";
@@ -259,7 +262,7 @@ randomRationalCurve (ZZ,ZZ,Ring) := (d,e,F)->(
 ----- degree (d,e) defined over ZZ/101
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-randomRationalCurve (ZZ,ZZ) := (d,e)->(
+randomRationalCurve (ZZ,ZZ) := Ideal => (d,e) -> (
     randomRationalCurve(d,e,ZZ/101)
     )
 
@@ -274,7 +277,7 @@ randomRationalCurve (ZZ,ZZ) := (d,e)->(
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 randomMonomialCurve = method()
-randomMonomialCurve (ZZ,ZZ,Ring) := (d,e,F)->(
+randomMonomialCurve (ZZ,ZZ,Ring) := Ideal => (d,e,F) -> (
     --- Defines P1
     s := getSymbol "s";
     t := getSymbol "t";
@@ -296,7 +299,7 @@ randomMonomialCurve (ZZ,ZZ,Ring) := (d,e,F)->(
     M2 := matrix {{(uVars#0)^e,(uVars#1)^e,f},{uVars#4,uVars#5,uVars#6}};
     J := minors(2,M1)+minors(2,M2);
     --- Computes saturation and then eliminates producing curve in P1xP2
-    J' := saturate(J,ideal(uVars#0,uVars#1),MinimalGenerators=>false);
+    J' := ourSaturation(J,ideal(uVars#0,uVars#1));
     I := sub(eliminate({uVars#0,uVars#1},J'),S);
     (T, E) := productOfProjectiveSpaces({1, 2},CoefficientField=>F);
     G := map(T,S,(flatten entries vars T));
@@ -310,7 +313,7 @@ randomMonomialCurve (ZZ,ZZ,Ring) := (d,e,F)->(
 ----- of degree (d,e) defined over ZZ/101.
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-randomMonomialCurve (ZZ,ZZ) := (d,e)->(
+randomMonomialCurve (ZZ,ZZ) := Ideal => (d,e) -> (
     randomMonomialCurve(d,e,ZZ/101)
     )
 
@@ -325,10 +328,12 @@ randomMonomialCurve (ZZ,ZZ) := (d,e)->(
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 curveFromP3toP1P2 = method(Options => {PreserveDegree => true})
-curveFromP3toP1P2 (Ideal) := opts -> (J) ->(
+curveFromP3toP1P2 (Ideal) := Ideal => opts -> (J) -> (
     --- Defines P3
-    R := ring J;
+    w := getSymbol "w";
+    R := (coefficientRing ring J) monoid([w_0,w_1,w_2,w_3]);
     rVars := flatten entries vars R;
+    J = sub(J,matrix{{R_0,R_1,R_2,R_3}});
     --- Base locus of projection
     BL1 := ideal(rVars#0,rVars#1);
     BL2 := ideal(rVars#1,rVars#2,rVars#3);
@@ -336,7 +341,7 @@ curveFromP3toP1P2 (Ideal) := opts -> (J) ->(
     --- If PreserveDegree => true checks whether curve intersects base locus;
     --- this ensures the curve has the correct degree and genus.
     if opts.PreserveDegree == true then (
-        if (saturate((J+BL1))==ideal(rVars)) or (saturate((J+BL2))==ideal(rVars)) then error "Given curve intersects places of projection.";
+        if (ourSaturation(J+BL1,ideal(rVars))==ideal(rVars) or ourSaturation(J+BL2,ideal(rVars))==ideal(rVars)) then error "Given curve intersects places of projection.";
         );
     --- Defines P1xP2
     x := getSymbol "x";
@@ -378,12 +383,12 @@ curveFromP3toP1P2 (Ideal) := opts -> (J) ->(
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 randomCurveP1P2 = method(Options => {Attempt => 1000})
-randomCurveP1P2 (ZZ,ZZ,Ring) := opts -> (d,g,F)->(
+randomCurveP1P2 (ZZ,ZZ,Ring) := Ideal => opts -> (d,g,F) -> (
     --- Defines P3
     z := getSymbol "z";
     R := F(monoid[z_0,z_1,z_2,z_3]);
     rVars := flatten entries vars R;
-    --- Base locus of porjection
+    --- Base locus of projection
     BL1 := ideal(rVars#0,rVars#1);
     BL2 := ideal(rVars#1,rVars#2,rVars#3);
     BL := intersect(BL1,BL2);
@@ -393,12 +398,12 @@ randomCurveP1P2 (ZZ,ZZ,Ring) := opts -> (d,g,F)->(
     apply(opts.Attempt,i->(
             C = curve(d,g,R);
             if class(C) === Curve then C = ideal(C);
-            if (saturate(C+BL1)!=ideal(rVars)) and (saturate(C+BL2)!=ideal(rVars)) then break C;
+            if (ourSaturation(C+BL1,ideal(rVars))!=ideal(rVars) and ourSaturation(C+BL2,ideal(rVars))!=ideal(rVars)) then break C;
             )
         );
     --- Checks whether curve in P3 intersects base locus of projection;
     --- this ensures the curve has the correct degree and genus.
-    if (saturate(C+BL1)==ideal(rVars)) or (saturate(C+BL2)==ideal(rVars)) then error "Unable to find curve not intersecting places of projection.";
+    if (ourSaturation(C+BL1,ideal(rVars))==ideal(rVars) or ourSaturation(C+BL2,ideal(rVars))==ideal(rVars)) then error "Unable to find curve not intersecting places of projection.";
     --- Defines P1xP2
     curveFromP3toP1P2(C)
     )
@@ -409,7 +414,7 @@ randomCurveP1P2 (ZZ,ZZ,Ring) := opts -> (d,g,F)->(
 ----- Output: The ideal of a random curve in P1xP2 over ZZ/101
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-randomCurveP1P2 (ZZ,ZZ) := randomCurveP1P2 => opts -> (d,g)->(
+randomCurveP1P2 (ZZ,ZZ) := Ideal => opts -> (d,g) -> (
     randomCurveP1P2(d,g,ZZ/101)
     )
 
@@ -428,13 +433,7 @@ dimVector(Ring) := (S) -> (
     degTally := tally deg;
     apply(rsort unique deg, i->(degTally_i - 1))
     )
-
-dimVector(Thing) := (X) -> (
-    S := ring X;
-    deg := degrees S;
-    degTally := tally deg;
-    apply(rsort unique deg, i->(degTally_i - 1))
-    )
+dimVector NormalToricVariety := X -> dimVector ring X
 
 
 -- Helper function for multigradedRegularity
@@ -446,6 +445,84 @@ multigradedPolynomialRing = n -> (
             apply(#n, j -> if i == j then 1 else 0)));
     ZZ/32003[xx, Degrees=>degs]
     )
+
+gradedPolynomialRing = n -> (
+    y := local y;
+    yy := flatten apply(#n, i -> apply(n_i+1, j -> y_(i,j)));
+    ZZ/32003[yy])
+
+--------------------------------------------------------------------
+-- Multigraded Regularity
+--------------------------------------------------------------------
+
+multigradedRegularity = method(
+    TypicalValue => List,
+    Options => {
+        Strategy   => null,
+        LowerLimit => null,
+        UpperLimit => null
+        }
+    )
+
+-- keys: NormalToricVariety, Ring
+MultigradedRegularityOptions = new SelfInitializingType of BasicList
+MultigradedRegularityOptions.synonym = "multigraded regularity options"
+
+-- keys: LowerLimit, UpperLimit, "HilbertPolynomial", "CohomologyTable"
+MultigradedRegularityComputation = new Type of MutableHashTable
+MultigradedRegularityComputation.synonym = "multigraded regularity computation"
+
+-- preprocessing step
+new MultigradedRegularityComputation from Sequence := (C, L) -> (
+    (X, S, M) := L;
+    container := scan(pairs M.cache, (k, v) -> if instance(k, MultigradedRegularityOptions) then break v);
+    -- TODO: eventually also need to check that X and S are appropriate
+    if container =!= null then return container;
+    -- making local assignments so that productOfProjectiveSpaces does
+    -- not mess with the global ring by grabbing their global symbols.
+    E := local E;
+    x := local x; e := local e;
+    h := local h; k := local k;
+    -- TODO: to simplify this, two things need to happen:
+    --   1. add TateData to the ring of a NormalToricVariety
+    --   2. implement computation of Hilbert polynomial from TateData
+    if instance(X, NormalToricVariety) then (
+        -- go from module over NormalToricVariety to module over productOfProjectiveSpaces
+        -- note: assumes that the NormalToricVariety is a product of toricProjectiveSpaces
+        (S, E) = productOfProjectiveSpaces(dimVector X, CoefficientField => coefficientRing ring X, Variables => {symbol x, symbol e}))
+    else (
+        -- first check whether S is compatible with TateOnProducts
+        (S, E) = if S.?TateData then S.TateData.Rings
+        -- if not, reconstruct the ring to endow it with TateData
+        else productOfProjectiveSpaces(dimVector S, CoefficientField => coefficientRing S, Variables => {symbol x, symbol e});
+        -- go from module over productOfProjectiveSpaces to module over tensor product of toricProjectiveSpaces
+        X = fold(apply(dimVector S, i -> toricProjectiveSpace(i, CoefficientRing => coefficientRing S)), (A,B) -> A**B));
+    S' := ring X;
+    r := degreeLength M;
+    phi := map(S,  ring M, gens S);
+    psi := map(S', ring M, gens S');
+    cacheKey := MultigradedRegularityOptions{ X, S, phi };
+    M.cache#cacheKey = new MultigradedRegularityComputation from {
+        LowerLimit => toList(r :  infinity), -- lower bound of the region checked
+        UpperLimit => toList(r : -infinity), -- upper bound of the region checked
+        "HilbertPolynomial" => hilbertPolynomial(X, psi ** M),
+        Result => null })
+
+isComputationDone = method(TypicalValue => Boolean, Options => true)
+isComputationDone MultigradedRegularityComputation := Boolean => options multigradedRegularity >> opts -> container -> (
+    -- this function determines whether we can use the cached result, or further computation is necessary
+    instance(container.Result, List)
+    and (opts.LowerLimit === null or container.LowerLimit <= opts.LowerLimit)
+    and (opts.UpperLimit === null or container.UpperLimit >= opts.UpperLimit))
+
+cacheHit := type -> if debugLevel > 0 then printerr("Cache hit on a ", synonym type, "! 🎉");
+
+cacheComputation = method(TypicalValue => CacheFunction, Options => true)
+cacheComputation MultigradedRegularityComputation := CacheFunction => options multigradedRegularity >> opts -> container -> new CacheFunction from (
+    -- this function takes advantage of FunctionClosures by modifying the container
+    computation -> (
+        if isComputationDone(opts, container) then ( cacheHit class container; container.Result ) else
+        if (result := computation(opts, container)) =!= null then ( container.Result = result )))
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
@@ -460,51 +537,89 @@ multigradedPolynomialRing = n -> (
 ----- Caveat: This assumes M is B-saturated already i.e. H^0_B(M)=0
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-multigradedRegularity = method()
-multigradedRegularity(Thing,              Ideal)  := List => (T, I)  -> multigradedRegularity(T, comodule I)
-multigradedRegularity(Ring,               Module) := List => (S, M') -> multigradedRegularity(null, S, M')
-multigradedRegularity(NormalToricVariety, Module) := List => (X, M)  -> multigradedRegularity(X, null, M)
--- Note: some hacking is involved to deal with the differences between productOfProjectiveSpaces and toricProjectiveSpaces
-multigradedRegularity(Thing, Thing, Module) := List => (X, S, M) -> (
-    if class X === NormalToricVariety then (
-        -- go from module over NormalToricVariety to module over productOfProjectiveSpaces
-        -- assuming that the NormalToricVariety is a tensor product of toricProjectiveSpaces
-        S = ring X;
-        (S', E') := productOfProjectiveSpaces(dimVector X, CoefficientField => coefficientRing S);
-        M' := coker (map(S', S, gens S'))(presentation M);
-        ) else (
-        -- go from module over productOfProjectiveSpaces to module over tensor product of toricProjectiveSpaces
-        (S', E') = productOfProjectiveSpaces(dimVector S, CoefficientField => coefficientRing S);
-        M' = coker (map(S', S, gens S'))(presentation M);
-        X = fold((A,B) -> A**B, dimVector(S)/(i->toricProjectiveSpace(i, CoefficientRing => coefficientRing S)));
-        M = coker (map(ring X, S, gens ring X))(presentation M);
-        S = ring X;
-        );
-    n := #(degrees S)_0;
+multigradedRegularity(Ring,               Ideal)  := o -> (S, I) -> multigradedRegularityHelper( , S, comodule I, o)
+multigradedRegularity(NormalToricVariety, Ideal)  := o -> (X, I) -> multigradedRegularityHelper(X,  , comodule I, o)
+multigradedRegularity(Ring,               Module) := o -> (S, M) -> multigradedRegularityHelper( , S, M, o)
+multigradedRegularity(NormalToricVariety, Module) := o -> (X, M) -> multigradedRegularityHelper(X,  , M, o)
+
+multigradedRegularityHelper = (X, S, M, opts) -> (
+    strategy := opts.Strategy;
+    -- outsourcing the preprocessing of the input
+    container := new MultigradedRegularityComputation from (X, S, M);
+    -- get the cache key associated to the container, which encapsulates the base variety
+    cacheKey := scan(pairs M.cache, (k, v) -> if instance(k, MultigradedRegularityOptions) then break k);
+    -- Henceforth, X is a normal toric variety, S is a ring with Tate data, and M is an S-module
+    (X, S, M) = (cacheKey#0, cacheKey#1, cacheKey#2 ** M);
+    -- the strategies are stored as hooks under this key
+    key := (multigradedRegularity, NormalToricVariety, Module);
+    -- this function attempts the strategies in reverse order, or only the specified strategy
+    computation := (opts, container) -> runHooks(key, (X, S, M, opts ++ {cache => container}), Strategy => strategy);
+    -- the actual computation of the strategies occurs here
+    C := (cacheComputation(opts, container)) computation;
+    if C =!= null then C else if strategy === null
+    then error("no applicable strategy for ", toString key)
+    else error("assumptions for computing multigraded regularity with strategy ", toString strategy, " are not met"))
+
+multigradedRegularityDefaultStrategy = (X, S, M, opts) -> (
+    -- This is the default strategy, outlined in https://msp.org/jsag/2020/10-1/p06.xhtml
+    -- TODO: check that X and S are indeed a product of projective spaces and its Cox ring, otherwise return null
+    debugInfo := if debugLevel < 1 then identity else printerr;
+    -- retrieve the container, which includes some cached information
+    container := opts.cache;
+    -- For products of projective space, the dimension is the
+    -- number of variables minus the rank of the Picard group
+    d := dim X;
     r := regularity M;
-    H := hilbertPolynomial(X, M);
-    -- We only search in the positive cone and up to the regularity of M
-    L := pairs cohomologyHashTable(M', toList(n:0), toList(n:r));
+    n := degreeLength S; -- rank of the Picard group
+    H := container#"HilbertPolynomial";
+    debugInfo demark_", " {
+        "Pic X = ZZ^" | toString n,
+        "dim X = " | toString d,
+        "reg M = " | toString r,
+        "HP(M) = " | toString H};
+    -- element-wise minimum of the multi-degrees of generators of M
+    degs := apply(n, i -> min(degrees M / (deg -> deg_i)));
+    -- TODO: why is this the right upper bound?
+    high := if opts.UpperLimit =!= null then opts.UpperLimit else apply(n, i -> max({r} | degrees M / (deg -> deg_i)));
+    -- TODO: why is degs - toList(n:d) the right lower bound?
+    -- {0,..,0} is not always the right lower bound, but works for ideals!
+    low  := if opts.LowerLimit =!= null then opts.LowerLimit else toList(n:0); -- degs - toList(n:d);
+    -- kind of a hack to decrease the lower bound when needed
+    if any(n, i -> high#i <= low#i) then low = degs - toList(n:d);
+    --
+    debugInfo("Computing cohomologyHashTable from ", toString low, " to ", toString high);
+    L := pairs cohomologyHashTable(M, low, high);
+    --
     -- Based on findHashTableCorner from TateOnProducts
     P := multigradedPolynomialRing toList(n:0);
+    -- We use this trick 
+    Q := gradedPolynomialRing toList(n:0);
+    phi := map(P, Q, gens P);
     gt := new MutableHashTable;
+    debugInfo("Beginning search in Picard group");
     apply(L, ell -> (
             -- Check that Hilbert function and Hilbert polynomial match
             -- (this imposes a condition on the alternating sum of local cohomology dimensions)
             if hilbertFunction(ell_0_0, M) != (map(QQ, ring H, ell_0_0))(H) then (
-                gt#(ell_0_0) = true;
-                );
+                gt#(ell_0_0) = true);
             -- Check that higher local cohomology vanishes (i.e., H^i_B(M) = 0 for i > 1)
-            if ell_1 != 0 and ell_0_1 > 0 then (
-                gt#(ell_0_0) = true;
-                apply(n, j -> gt#(ell_0_0 + degree P_j) = true);
-                );
+            -- TODO: do I really need to check ell_0_1 > 0?
+            if ell_1 != 0 and ell_0_1 > 0 then
+                scan(flatten entries phi basis(0, ell_0_1, Q),
+                    j -> gt#(ell_0_0 + degree j) = true);
             )
         );
-    low := apply(n, i -> min (L / (ell -> ell_0_0_i - 1)));
-    I := ideal apply(L, ell -> if not gt#?(ell_0_0) then product(n, j -> P_j^(ell_0_0_j - low_j)) else 0);
-    sort apply(flatten entries mingens I, g -> (flatten exponents g) + low)
-    )
+    debugInfo("Calculating minimal generators");
+    I := ideal apply(L, ell ->
+        if all(n, j -> ell_0_0_j >= degs_j)
+        and not gt#?(ell_0_0) then product(n, j -> P_j^(ell_0_0_j - degs_j)) else 0);
+    container.LowerLimit = low;
+    container.UpperLimit = high;
+    container.Result = sort apply(flatten entries mingens I, g -> (flatten exponents g) + degs))
+
+-- The default strategy applies to both modules and ideals in a product of projective spaces,
+-- but by using hooks we allow better strategies to be added later
+addHook((multigradedRegularity, NormalToricVariety, Module), Strategy => Default, multigradedRegularityDefaultStrategy)
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
@@ -522,7 +637,7 @@ multigradedRegularity(Thing, Thing, Module) := List => (X, S, M) -> (
 --TODO: Finish test
 --      Add length limit
 resolveTail = method()
-resolveTail(ChainComplex) := C ->(
+resolveTail(ChainComplex) := ChainComplex => C -> (
     N := max support C;
     M := coker syz C.dd_N;
     -- TODO: add some component of the irrelevant ideal to M here.
@@ -535,7 +650,7 @@ resolveTail(ChainComplex) := C ->(
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
------ Begining of the tests and the documentation
+----- Beginning of the tests and the documentation
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 
@@ -547,7 +662,7 @@ end--
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
------ Begining of the development section
+----- Beginning of the development section
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 
@@ -556,6 +671,6 @@ uninstallPackage "VirtualResolutions"
 restart
 installPackage "VirtualResolutions"
 restart
-needsPackage("VirtualResolutions", FileName => "./VirtualResolutions.m2")
+needsPackage("VirtualResolutions", FileName => "VirtualResolutions.m2")
 elapsedTime check "VirtualResolutions"
 viewHelp "VirtualResolutions"

@@ -7,8 +7,8 @@ use common;
 use hashtables;
 use util;
 use struct;
-header "#include <engine.h>";
 
+header "#include <engine.h>"; -- required for rawBIBasis, rawGbBoolean, NAG routines
 
 -- rawPointArray
 export rawPointArray(e:Expr):Expr := (
@@ -212,7 +212,7 @@ export rawSLEvaluatorSpecialize(e:Expr):Expr := (
 		    	 ")"
 		    	 ))
 	    else  WrongArg(2, "a raw mutable matrix")
-	    else  WrongArg(1, "a raw homtopy")
+	    else  WrongArg(1, "a raw homotopy")
      else WrongNumArgs(2)
      );
 setupfun("rawSLEvaluatorSpecialize",rawSLEvaluatorSpecialize);

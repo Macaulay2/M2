@@ -39,6 +39,12 @@ ResolutionComputation *ResolutionComputation::choose_res(
       ERROR("engine resolution strategies all require a polynomial base ring");
       return nullptr;
     }
+  const Ring* K = P->getCoefficientRing();
+  if (K->get_precision() != 0)
+    {
+      ERROR("free resolutions over polynomial rings with RR or CC coefficients not yet implemented");
+      return nullptr;
+    }
   if (!P->getMonoid()->primary_degrees_of_vars_positive())
     {
       ERROR(

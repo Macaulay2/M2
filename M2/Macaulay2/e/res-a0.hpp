@@ -4,7 +4,6 @@
 #define _res2_hh_
 
 #include "style.hpp"
-#include "array.hpp"
 #include "intarray.hpp"
 #include "matrix.hpp"
 #include "monideal.hpp"
@@ -33,7 +32,7 @@ enum {
 };
 
 const int FLAGS_SORT = 7;     // mask for comparison type
-const int FLAGS_DESCEND = 8;  // first 12 bits are for the two comparsion types
+const int FLAGS_DESCEND = 8;  // first 12 bits are for the two comparison types
 const int FLAGS_REVERSE = 16;
 const int FLAGS_DEGREE = 32;
 const int FLAGS_LEVEL = (1 << 13);  // bit 13
@@ -102,10 +101,10 @@ class res2_comp : public ResolutionComputation
   stash *res2_pair_stash;
   stash *mi_stash;
 
-  array<res2_level *> resn;  // The resolution itself
+  VECTOR(res2_level *) resn;  // The resolution itself
 
   // Degree and length limits, monomial size limit
-  array<res2_pair *> base_components;
+  VECTOR(res2_pair *) base_components;
 
   int lodegree;  // Base degree
   int hidegree;  // Highest (slanted) degree appearing (offset from lodegree).
@@ -272,8 +271,8 @@ class res2_comp : public ResolutionComputation
  private:
   void reduce_minimal(int x,
                       res2term *&f,
-                      array<res2_pair *> &elems,
-                      array<res2term *> &stripped) const;
+                      VECTOR(res2_pair *)& elems,
+                      VECTOR(res2term *)& stripped) const;
 
  public:
   FreeModule *free_of(int i) const;

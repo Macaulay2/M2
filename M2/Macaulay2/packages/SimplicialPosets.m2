@@ -22,6 +22,7 @@ newPackage(
 		    Name => "Nathan Nichols",
 		    Email => "nicho997@umn.edu"}},
         Headline => "Package for constructing Stanley simplicial poset rings.",
+	Keywords => {"Combinatorial Commutative Algebra"},
 	DebuggingMode => false,
 	PackageExports => {
 	    "Posets",
@@ -488,6 +489,7 @@ assert(getFVector(B) == {1,4,6,4,1})
 
 -- stanleyPosetIdeal test
 TEST ///
+needsPackage "EdgeIdeals"
 -- Number of tests
 N = 50;
 -- Erdős–Rényi graph parameters 

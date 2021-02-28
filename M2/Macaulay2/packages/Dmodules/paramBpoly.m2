@@ -149,7 +149,7 @@ lcm := l -> (
 -- I = ideal
 -- list = the list of minimal primes associated to I
 calculateAss := (I) -> (
-     pInfo(2,"calculating minimal primes assosiated to I = " | 
+     pInfo(2,"calculating minimal primes associated to I = " | 
 	  toString I | "...");  
      R := ring I;
      local r;

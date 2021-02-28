@@ -432,7 +432,7 @@ void transpose(const SMat<RT>& A, SMat<RT>& result)
   assert(result.numRows() == A.numColumns());
   assert(result.numColumns() == A.numRows());
   throw exc::engine_error(
-      "'transpose' not writtten for sparse mutable matrices");
+      "'transpose' not written for sparse mutable matrices");
   // TODO: MES: write this!!
 }
 };

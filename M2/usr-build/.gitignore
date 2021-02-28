@@ -5,7 +5,6 @@
 /lib
 /.untarred-*
 /.patched-*
-/.installed-*
 /.configured-*
 /.compiled-*
-/aclocal-path
+/aclocal-path*

@@ -29,7 +29,7 @@ class SkewPolynomialRing : public PolyRing
     return this;
   }
   virtual SkewPolynomialRing *cast_to_SkewPolynomialRing() { return this; }
-  virtual ring_elem power(const ring_elem f, mpz_t n) const;
+  virtual ring_elem power(const ring_elem f, mpz_srcptr n) const;
   virtual ring_elem power(const ring_elem f, int n) const;
 
   // antipode: implements the isomorphism of R and the opposite of R

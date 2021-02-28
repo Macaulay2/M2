@@ -23,6 +23,7 @@ newPackage(
 	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelphi.edu/~bstone/"}
 	     },
     	Headline => "the Quillen-Suslin algorithm for bases of projective modules",
+	Keywords => {"Commutative Algebra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",
@@ -36,6 +37,7 @@ newPackage(
 	     "volume number" => "5",
 	     "volume URI" => "http://j-sag.org/Volume5/"
 	     },
+	PackageImports => {"MinimalPrimes"},
     	DebuggingMode => false
     	)
 
@@ -378,7 +380,7 @@ laurentNormalize(Matrix,RingElement) := (f,var) -> (
      subs1 = matrix{subList};
      invSubs1 = matrix{invSubList};
      f2 = sub(f,subs1); -- Now each term of f2_(0,0) has a unique power of var.
-     minCoeff = (laurentCoeffList(f2_(0,0),var))#0; -- Get the smallest power of var occuring in f2_(0,0) and also its coefficient.
+     minCoeff = (laurentCoeffList(f2_(0,0),var))#0; -- Get the smallest power of var occurring in f2_(0,0) and also its coefficient.
      D = mutableIdentity(ring f,numcols f);
      -- Need numcols f >= 2 here.
      phiD = map(S, ring minCoeff#1); 

@@ -1,5 +1,0 @@
-Are these parentheses redundant???
-
-    i21 : html TEX /// \frac{ 2}{ 3}///
-
-    o21 =  ( 2)/( 3)

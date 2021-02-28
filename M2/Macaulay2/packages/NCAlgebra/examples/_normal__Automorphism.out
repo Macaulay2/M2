@@ -14,7 +14,7 @@ o2 : NCIdeal
 
 i3 : B = A/I
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12500-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12500-0/3.ter ... Complete!
+Complete!
 
 o3 = B
 
@@ -32,7 +32,7 @@ o5 = true
 
 i6 : C = oreExtension(B,sigma,w)
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12500-0/5.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12500-0/8.ter ... Complete!
+Complete!
 
 o6 = C
 
@@ -50,13 +50,13 @@ o8 : NCRingMap
 
 i9 : matrix phi
 
-o9 = | c  a  b  w |
+o9 = | c a b w |
 
 o9 : NCMatrix
 
 i10 : (matrix sigma @@ sigma)
 
-o10 = | c  a  b |
+o10 = | c a b |
 
 o10 : NCMatrix
 

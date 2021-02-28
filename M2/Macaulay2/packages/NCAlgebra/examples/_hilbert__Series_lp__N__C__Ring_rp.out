@@ -31,7 +31,7 @@ o4 : ZZ[T]
 
 i5 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/hq/7lqcg89j1pq8m9vq_333xfwh0000gn/T/M2-65434-0/0.init -on-error exit --silent > /var/folders/hq/7lqcg89j1pq8m9vq_333xfwh0000gn/T/M2-65434-0/3.ter ... Complete!
+Complete!
 
 o5 = B
 
@@ -39,7 +39,7 @@ o5 : NCQuotientRing
 
 i6 : hilbertSeries(B,Order=>10)
 --Calling bergman for HS computation.
---running: bergman -i /var/folders/hq/7lqcg89j1pq8m9vq_333xfwh0000gn/T/M2-65434-0/5.init -on-error exit --silent > /var/folders/hq/7lqcg89j1pq8m9vq_333xfwh0000gn/T/M2-65434-0/10.ter ... Complete!
+Complete!
 
                 2      3      4      5      6      7      8      9      10
 o6 = 1 + 3T + 6T  + 10T  + 15T  + 21T  + 28T  + 36T  + 45T  + 55T  + 66T

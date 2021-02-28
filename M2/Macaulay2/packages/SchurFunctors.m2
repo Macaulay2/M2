@@ -10,6 +10,7 @@ newPackage(
 	       {Name => "Mauricio Velasco"}
 	       },
 	  Headline => "Schur modules and maps between them",
+	  Keywords => {"Homological Algebra", "Representation Theory"},
 	  DebuggingMode => false,
 	  AuxiliaryFiles=>true
      	  )

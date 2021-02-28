@@ -1,5 +1,8 @@
 --		Copyright 2007 by Daniel R. Grayson
 
+-- Default rendering is by concatenation of rendered inputs
+setupRenderer(mathML, concatenate, Hypertext)
+
 moen := name -> concatenate("<mo>&",name,";</mo>")
 nest := (tag,s) -> concatenate("<",tag,">",s,"</",tag,">")
 mo   := s -> nest("mo",s)

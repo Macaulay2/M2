@@ -1,5 +1,6 @@
 /* Copyright 1997 by Daniel R. Grayson */
 
+#include <M2/config.h>
 #ifdef MEMDEBUG
 
 /* note: the debugging facilities in this file partially conflict with
@@ -255,4 +256,4 @@ void* M2_debug_realloc(void *old, size_t size) {
      return new;
      }
 
-#endif
+#endif /* MEMDEBUG */

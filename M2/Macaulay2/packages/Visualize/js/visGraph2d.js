@@ -914,8 +914,29 @@ function exportTikz (event){
 
   var timestamp = makeid();
 
-//  tikzTex =  "\\begin{tikzpicture}\n          % Point set in the form x-coord/y-coord/node ID/node label\n          \\newcommand*\\points{"+points+"}\n          % Edge set in the form Source ID/Target ID\n          \\newcommand*\\edges{"+edges+"}\n          % Scale to make the picture able to be viewed on the page\n          \\newcommand*\\scale{0.02}\n          % Creates nodes\n          \\foreach \\x/\\y/\\z/\\w in \\points {\n          \\node (\\z) at (\\scale*\\x,-\\scale*\\y) [circle,draw] {$\\w$};\n          }\n          % Creates edges\n          \\foreach \\x/\\y in \\edges {\n          \\draw (\\x) -- (\\y);\n          }\n      \\end{tikzpicture}";
-  tikzTex =  "\\begin{tikzpicture}\n         \\newcommand*\\points"+timestamp+"{"+points+"}\n          \\newcommand*\\edges"+timestamp+"{"+edges+"}\n          \\newcommand*\\scale"+timestamp+"{0.02}\n          \\foreach \\x/\\y/\\z/\\w in \\points"+timestamp+" {\n          \\node (\\z) at (\\scale"+timestamp+"*\\x,-\\scale"+timestamp+"*\\y) [circle,draw,inner sep=0pt] {$\\w$};\n          }\n          \\foreach \\x/\\y in \\edges"+timestamp+" {\n          \\draw (\\x) -- (\\y);\n          }\n      \\end{tikzpicture}\n      % \\points"+timestamp+" is point set in the form x-coord/y-coord/node ID/node label\n     % \\edges"+timestamp+" is edge set in the form Source ID/Target ID\n      % \\scale"+timestamp+" makes the picture able to be viewed on the page\n";  
+// tikzTex =  "\\begin{tikzpicture}\n          "+
+//   "% Point set in the form x-coord/y-coord/node ID/node label\n          "+
+//   "\\newcommand*\\points{"+points+"}\n          % Edge set in the form "+
+//   "Source ID/Target ID\n          \\newcommand*\\edges{"+edges+
+//   "}\n          % Scale to make the picture able to be viewed on the "+
+//   "page\n          \\newcommand*\\scale{0.02}\n          "+
+//   "% Creates nodes\n          \\foreach \\x/\\y/\\z/\\w in \\points {\n"+
+//       "\\node (\\z) at (\\scale*\\x,-\\scale*\\y) [circle,draw] {$\\w$};"+
+//   "\n          }\n          % Creates edges\n          "+
+//   "\\foreach \\x/\\y in \\edges {\n          \\draw (\\x) -- (\\y);"+
+//   "\n          }\n      \\end{tikzpicture}";
+  tikzTex =  "\\begin{tikzpicture}\n         \\newcommand*\\points"+timestamp+
+    "{"+points+"}\n          \\newcommand*\\edges"+timestamp+"{"+edges+
+    "}\n          \\newcommand*\\scale"+timestamp+
+    "{0.02}\n          \\foreach \\x/\\y/\\z/\\w in \\points"+timestamp+
+    " {\n          \\node (\\z) at (\\scale"+timestamp+"*\\x,-\\scale"+
+    timestamp+"*\\y) [circle,draw,inner sep=0pt] {$\\w$};\n          }\n"+
+        "\\foreach \\x/\\y in \\edges"+timestamp+" {\n          \\draw (\\x) "+
+    "-- (\\y);\n          }\n      \\end{tikzpicture}\n      % \\points"+
+    timestamp+" is point set in the form x-coord/y-coord/node ID/node "+
+    "label\n     % \\edges"+timestamp+" is edge set in the form Source ID/"+
+    "Target ID\n      % \\scale"+timestamp+" makes the picture able to be "+
+    "viewed on the page\n";
     
   if(!tikzGenerated){
     var tikzDiv = document.createElement("div");
@@ -941,7 +962,7 @@ function exportTikz (event){
     var listGroup = document.getElementById("menuList");
     listGroup.insertBefore(tikzDiv,listGroup.childNodes[14]);
     document.getElementById("copyButton").setAttribute("data-clipboard-target","#tikzTextBox");
-    clipboard = new Clipboard('#copyButton');
+    clipboard = new ClipboardJS('#copyButton');
     clipboard.on('error', function(e) {
         window.alert("Press enter, then CTRL-C or CMD-C to copy")
     });  

@@ -5,6 +5,7 @@ newPackage(
         Authors => {{Name => "Dylan Peifer",
                      Email => "djp282@cornell.edu",
                      HomePage => "https://www.math.cornell.edu/~djp282"}},
+	     Keywords => {"Groebner Basis Algorithms"},
         Headline => "Groebner bases via the Groebner walk"
         )
 

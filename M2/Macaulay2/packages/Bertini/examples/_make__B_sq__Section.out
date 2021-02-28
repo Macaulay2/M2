@@ -1,8 +1,4 @@
--- -*- M2-comint -*- hash: -73199544
---loading configuration for package "FourTiTwo" from file /home/aleykin3/.Macaulay2/init-FourTiTwo.m2
---loading configuration for package "Topcom" from file /home/aleykin3/.Macaulay2/init-Topcom.m2
--- COMPILE TIME: Oct 31 2019, 08:32:16
---loading configuration for package "Bertini" from file /home/aleykin3/.Macaulay2/init-Bertini.m2
+-- -*- M2-comint -*- hash: -524747189
 
 i1 : s=makeB'Section({x,y,z})
 
@@ -80,8 +76,7 @@ o12 : B'Section
 
 i13 : r= affineContainingPoint#B'SectionString
 
-o13 = (1.18921+.849539*ii)*(x-(1)*(1))+(-.542371+.307137*ii)*(y-(1)*(2))+(
-      1.36945+.015633*ii)*(z-(1)*(3))
+o13 = (1.18921+.849539*ii)*(x-(1)*(1))+(-.542371+.307137*ii)*(y-(1)*(2))+(1.36945+.015633*ii)*(z-(1)*(3))
 
 i14 : print r
 (1.18921+.849539*ii)*(x-(1)*(1))+(-.542371+.307137*ii)*(y-(1)*(2))+(1.36945+.015633*ii)*(z-(1)*(3))
@@ -94,17 +89,9 @@ o15 : B'Section
 
 i16 : peek rHomogeSection
 
-o16 = B'Section{B'Homogenization => x+y+z                           
-                B'NumberCoefficients => {.534614-.175945*ii, .426704
-                B'SectionString => (.534614-.175945*ii)*(x-(x+y+z)*(
-      -----------------------------------------------------------------------
-                                                                             
-      -.97539*ii, -.478803+.0416008*ii}
-      1))+(.426704-.97539*ii)*(y-(x+y+z)*(2))+(-.478803+.0416008*ii)*(z-(x+y+
-      -----------------------------------------------------------------------
-             }
-
-      z)*(3))
+o16 = B'Section{B'Homogenization => x+y+z                                                                                                         }
+                B'NumberCoefficients => {.534614-.175945*ii, .426704-.97539*ii, -.478803+.0416008*ii}
+                B'SectionString => (.534614-.175945*ii)*(x-(x+y+z)*(1))+(.426704-.97539*ii)*(y-(x+y+z)*(2))+(-.478803+.0416008*ii)*(z-(x+y+z)*(3))
 
 i17 : print rHomogeSection#B'SectionString
 (.534614-.175945*ii)*(x-(x+y+z)*(1))+(.426704-.97539*ii)*(y-(x+y+z)*(2))+(-.478803+.0416008*ii)*(z-(x+y+z)*(3))
@@ -121,11 +108,7 @@ o19 : B'Section
 
 i20 : makeB'InputFile(storeBM2Files,
         AffVariableGroup=>{x,y},
-        B'Polynomials=>{f,s1})
-
-o20 = /tmp/M2-25956-0/0/input
-
-o20 : File
+        B'Polynomials=>{f,s1});
 
 i21 : runBertini(storeBM2Files)
 

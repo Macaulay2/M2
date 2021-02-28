@@ -1,7 +1,4 @@
--- -*- M2-comint -*- hash: 553821001
---loading configuration for package "FourTiTwo" from file /Users/dan/Library/Application Support/Macaulay2/init-FourTiTwo.m2
---loading configuration for package "Topcom" from file /Users/dan/Library/Application Support/Macaulay2/init-Topcom.m2
---loading configuration for package "Bertini" from file /Users/dan/Library/Application Support/Macaulay2/init-Bertini.m2
+-- -*- M2-comint -*- hash: 683222057
 
 i1 : R=QQ[x,y,c1,c2]
 
@@ -12,11 +9,7 @@ o1 : PolynomialRing
 i2 : makeB'InputFile(storeBM2Files,
               AffVariableGroup=>{{x,y}},
               RandomReal=>{c1,c2},--c1=.1212, c2=.4132 may be written to the input file.
-              B'Polynomials=>{x-c1,y-c2})
-
-o2 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-99362-0/0/input
-
-o2 : File
+              B'Polynomials=>{x-c1,y-c2});
 
 i3 : R=QQ[x,y,c1,c2]
 
@@ -27,10 +20,6 @@ o3 : PolynomialRing
 i4 : makeB'InputFile(storeBM2Files,
               AffVariableGroup=>{{x,y}},
               RandomComplex=>{c1,c2},--c1=.1212+ii*.1344, c2=.4132-ii*.2144 are written to the input file.
-              B'Polynomials=>{x-c1,y-c2})
-
-o4 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-99362-0/0/input
-
-o4 : File
+              B'Polynomials=>{x-c1,y-c2});
 
 i5 : 

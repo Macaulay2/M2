@@ -1,9 +1,10 @@
 // Copyright 2013 Michael E. Stillman
 
 #include "aring-qq-gmp.hpp"
+
+#include "interface/random.h"
 #include "ringmap.hpp"
 
-#include <iostream>
 namespace M2 {
 
 ARingQQGMP::ARingQQGMP()
@@ -19,11 +20,7 @@ void ARingQQGMP::eval(const RingMap* map,
                       int first_var,
                       ring_elem& result) const
 {
-  // note: &f is already a mpq_ptr, so we don't need to copy its value, since
-  // from_rational
-  // doesn't change its first argument.
-  ElementType& g = const_cast<ElementType&>(f);
-  bool ok = map->get_ring()->from_rational(&g, result);
+  bool ok = map->get_ring()->from_rational(&f, result);
   if (!ok)
     {
       // if there is already an error message don't add in another

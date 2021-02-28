@@ -17,9 +17,9 @@ newPackage(
       HomePage => "https://scholar.google.com/citations?user=cFOV7nYAAAAJ&hl=de"}
     },
     Headline => "semidefinite programming",
+    Keywords => {"Real Algebraic Geometry", "Interfaces"},
     Configuration => {"CSDPexec"=>"","MOSEKexec"=>"mosek","SDPAexec"=>"sdpa","DefaultSolver"=>null},
     AuxiliaryFiles => true,
-    PackageImports => {"SimpleDoc"},
     PackageExports => {"NumericalAlgebraicGeometry"}
 )
 
@@ -42,58 +42,86 @@ export {
     "Scaling"
 }
 
-exportMutable {
-    "csdpexec",
-    "sdpaexec",
-    "mosekexec"
-    }
-
 --##########################################################################--
 -- GLOBAL VARIABLES 
 --##########################################################################--
-
--- Solver executables
-makeGlobalPath = (fname) -> (
-    -- Turns a file name into a global path of the file
-    -- Used to find global file names of external solvers
-    tmp := temporaryFileName();
-    r := run( "which '" | fname | "' > " | tmp);
-    if r>0 then return;
-    fname = replace("\n","",get tmp);
-    if first fname != "/" then fname = currentDirectory() | fname;
-    "'" | fname | "'")
 
 -- Choose default solver
 chooseDefaultSolver = execs -> (
     solvers := {"CSDP", "MOSEK", "SDPA"}; --sorted by preference
     found := for i to #solvers-1 list
         if execs#i=!=null then solvers#i else continue;
-    print if #found>0 then "Solvers configured: "|demark(", ",found)
+    if notify then
+      print if #found>0 then "Solvers configured: "|demark(", ",found)
         else "Warning: No external solver was found.";
     found = append(found,"M2");
     defaultSolver = ((options SemidefiniteProgramming).Configuration)#"DefaultSolver";
     if not member(defaultSolver,found) then
         defaultSolver = first found;
-    print("Default solver: " | defaultSolver);
+    if notify then
+      print("Default solver: " | defaultSolver);
     defaultSolver)
 
 -- Change a solver path
 changeSolver = (solver, execpath) -> (
-    if solver == "CSDP" then csdpexec = execpath;
-    if solver == "SDPA" then sdpaexec = execpath;
-    if solver == "mosek" then mosekexec = execpath;
+    execpath = replace(baseFilename execpath | "$", "", execpath);
+    if solver == "CSDP" then (
+	programPaths#"csdp" = execpath;
+	csdpProgram = findCSDP false;
+    );
+    if solver == "SDPA" then (
+	programPaths#"sdpa" = execpath;
+	sdpaProgram = findSDPA false;
+    );
+    if solver == "mosek" then (
+	programPaths#"mosek" = execpath;
+	mosekProgram = findMOSEK false;
+    );
     SemidefiniteProgramming.defaultSolver = chooseDefaultSolver(
-	csdpexec,
-	mosekexec,
-	sdpaexec)
+	csdpProgram,
+	mosekProgram,
+	sdpaProgram)
     )
 
-csdpexec = makeGlobalPath ((options SemidefiniteProgramming).Configuration)#"CSDPexec"
-if csdpexec === null then csdpexec = prefixDirectory | currentLayout#"programs" | "csdp"
+-- for backward compatibility
+scan({"CSDP", "MOSEK", "SDPA"}, solver ->
+    if not programPaths#?(toLower solver) and not member(
+        SemidefiniteProgramming#Options#Configuration#(solver | "exec"),
+        {"", toLower solver}) then programPaths#(toLower solver) =
+            replace(toLower solver | "$", "",
+                SemidefiniteProgramming#Options#Configuration#(solver | "exec"))
+)
 
-mosekexec = makeGlobalPath ((options SemidefiniteProgramming).Configuration)#"MOSEKexec"
-sdpaexec = makeGlobalPath ((options SemidefiniteProgramming).Configuration)#"SDPAexec"
-defaultSolver = chooseDefaultSolver(csdpexec,mosekexec,sdpaexec)
+findCSDP = raiseError -> (
+    fin := temporaryFileName() | ".dat-s";
+    fin <<  ///3 =mdim
+1 =nblocks
+3
+0 0 0
+1 1 1 1 -1
+1 1 1 2 -1.5
+1 1 1 3 -1.5
+1 1 2 3 -.5
+2 1 1 2 -.5
+2 1 1 3 -1.5
+2 1 2 3 -1.5
+2 1 3 3 -1
+3 1 1 3 -.5
+3 1 2 2 1
+/// << close;
+    findProgram("csdp", "csdp " | fin, RaiseError => raiseError))
+
+findMOSEK = raiseError -> findProgram("mosek", "mosek",
+    RaiseError => raiseError)
+
+findSDPA = raiseError -> findProgram("sdpa", "sdpa --version",
+    RaiseError => raiseError)
+
+csdpProgram = findCSDP false
+mosekProgram = findMOSEK false
+sdpaProgram = findSDPA false
+
+defaultSolver = chooseDefaultSolver(csdpProgram, mosekProgram, sdpaProgram)
 
 -- SDP status
 StatusFeas = "SDP solved, primal-dual feasible"
@@ -553,26 +581,26 @@ solveCSDP = method( Options => {Verbosity => 0} )
 solveCSDP(Matrix,Sequence,Matrix) := o -> (C,A,b) -> (
     -- CSDP expects the file fparam to be in the working directory.
     -- That's why we need to change directory before executing csdp.
-    if csdpexec===null then error "csdp executable not found";
+    if csdpProgram === null then csdpProgram = findCSDP true;
     n := numColumns C;
     fin := temporaryFileName() | ".dat-s";
     (dir,fin1) := splitFileName(fin);
     fparam := dir | "param.csdp";
     fout := temporaryFileName();
-    fout2 := temporaryFileName();
     writeSDPA(fin,C,A,b);
     writeCSDPparam(fparam);
     verbose1("Executing CSDP", o);
     verbose1("Input file: " | fin, o);
-    runcmd("cd " | dir | " && " | csdpexec | " " | fin1 | " " | fout | ">" | fout2, o.Verbosity);
+    csdpRun := runProgram(csdpProgram, fin1 | " " | fout,
+	RunDirectory => dir, KeepFiles => true, RaiseError => false);
+    handleErrors(csdpRun#"return value", csdpRun#"error file", o.Verbosity);
     verbose1("Output file: " | fout, o);
+    fout2 := csdpRun#"output file";
     (X,y,Z,sdpstatus) := readCSDP(fout,fout2,n,o.Verbosity);
     y = checkDualSol(C,A,y,Z,o.Verbosity);
     (X,y,Z,sdpstatus))
 
-runcmd = (cmd,Verbosity) -> (
-    tmp := temporaryFileName() | ".err";
-    r := run(cmd | " 2> " | tmp);
+handleErrors = (r, tmp, Verbosity) -> (
     if r == 32512 then error "Executable not found.";
     if r == 11 then error "Segmentation fault.";
     if r>0 then (
@@ -691,14 +719,16 @@ checkDualSol = (C,A,y,Z,Verbosity) -> (
 
 solveSDPA = method( Options => {Verbosity => 0} )
 solveSDPA(Matrix,Sequence,Matrix) := o -> (C,A,b) -> (
-    if sdpaexec===null then error "sdpa executable not found";
+    if sdpaProgram === null then sdpaProgram = findSDPA true;
     n := numColumns C;
     fin := temporaryFileName() | ".dat-s";
     fout := temporaryFileName() ;
     writeSDPA(fin,C,A,b);
     verbose1("Executing SDPA", o);
     verbose1("Input file: " | fin, o);
-    runcmd(sdpaexec | " " | fin | " " | fout | "> /dev/null", Verbosity);
+    sdpaRun := runProgram(sdpaProgram, fin | " " | fout,
+	KeepFiles => true, RaiseError => false);
+    handleErrors(sdpaRun#"return value", sdpaRun#"error file", o.Verbosity);
     verbose1("Output file: " | fout, o);
     (X,y,Z,sdpstatus) := readSDPA(fout,n,o.Verbosity);
     (X,y,Z,sdpstatus))
@@ -752,15 +782,17 @@ readSDPA = (fout,n,Verbosity) -> (
 
 solveMOSEK = method( Options => {Verbosity => 0} )
 solveMOSEK(Matrix,Sequence,Matrix) := o -> (C,A,b) -> (
-    if mosekexec===null then error "mosek executable not found";
+    if mosekProgram === null then mosekProgram = findMOSEK true;
     n := numColumns C;
     fin := temporaryFileName() | ".cbf";
     fout := replace(".cbf",".sol",fin);
-    fout2 := temporaryFileName();
     writeMOSEK(fin,C,A,b);
     verbose1("Executing MOSEK", o);
     verbose1("Input file: " | fin, o);
-    runcmd(mosekexec | " " | fin | ">" | fout2, Verbosity);
+    mosekRun := runProgram(mosekProgram, fin, KeepFiles => true,
+	RaiseError => false);
+    fout2 := mosekRun#"output file";
+    handleErrors(mosekRun#"return value", mosekRun#"error file", o.Verbosity);
     verbose1("Output file: " | fout, o);
     (X,y,Z,sdpstatus) := readMOSEK(fout,fout2,n,o.Verbosity);
     (X,y,Z,sdpstatus))
@@ -863,7 +895,8 @@ readMOSEK = (fout,fout2,n,Verbosity) -> (
 --###################################
 
 --checkOptimize
-checkOptimize = (solver) -> (
+checkOptimize = method( Options => {Verbosity => 0} )
+checkOptimize(String) := o -> (solver) -> (
     tol := .001;
     equal := (y0,y) -> y=!=null and norm(y0-y)<tol*(1+norm(y0));
     checkZ := (C,A,y,Z) -> if y===null then false
@@ -881,7 +914,7 @@ checkOptimize = (solver) -> (
         A = (A1,A2);
         y0 = matrix{{7},{9}};
         b = matrix{{-1},{-1}};
-        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b),y0,Solver=>solver);
+        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b),y0,Solver=>solver,Verbosity=>o.Verbosity);
         yopt = matrix{{2.},{2.}};
         equal(yopt,y)
         );
@@ -893,7 +926,7 @@ checkOptimize = (solver) -> (
         A = (A1,A2);
         b = matrix {{0},{1}};
         y0 = matrix {{0},{-.486952}};
-        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b),y0,Solver=>solver);
+        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b),y0,Solver=>solver,Verbosity=>o.Verbosity);
         yopt = matrix{{1.97619},{.466049}};
         equal(yopt,y)
         );
@@ -904,7 +937,7 @@ checkOptimize = (solver) -> (
         A2 = matrix{{0,0,0,1/2},{0,-1,0,0},{0,0,0,0},{1/2,0,0,0}};
         A = (A1,A2);
         b = matrix{{-1},{0}};
-        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b),Solver=>solver);
+        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b),Solver=>solver,Verbosity=>o.Verbosity);
         yopt = matrix{{0.},{4.}};
         equal(yopt,y)
         );
@@ -914,7 +947,7 @@ checkOptimize = (solver) -> (
         A1 = matrix {{0,0,0,1/2},{0,-1,0,0},{0,0,0,0},{1/2,0,0,0}};
         A = sequence A1;
         b = matrix {{-1}};
-        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b),Solver=>solver);
+        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b),Solver=>solver,Verbosity=>o.Verbosity);
         yopt = 4.;
         equal(yopt,y)
         );
@@ -926,7 +959,7 @@ checkOptimize = (solver) -> (
         A3 = matrix(RR, {{0, 0, 1/2}, {0, -1, 0}, {1/2, 0, 0}});
         A = (A1,A2,A3);
         b = matrix(RR, {{0}, {0}, {0}});
-        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b), Solver=>solver);
+        (X,y,Z,sdpstatus) = optimize(sdp0(C,A,b), Solver=>solver,Verbosity=>o.Verbosity);
         checkZ(C,A,y,Z)
         );
 

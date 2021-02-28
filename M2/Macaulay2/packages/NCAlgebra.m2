@@ -12,6 +12,7 @@ newPackage("NCAlgebra",
 	  {Name => "Courtney Gibbons",
 	   HomePage => "http://people.hamilton.edu/cgibbons/index.html",
 	   Email => "crgibbon@hamilton.edu"}},
+     Keywords => {"Noncommutative Algebra", "Interfaces"},
      AuxiliaryFiles => true,
      CacheExampleOutput => true,
      PackageExports =>{"IntegralClosure"},
@@ -1347,7 +1348,7 @@ getMinMaxDegrees = gensList -> (
 
 runCommand = cmd -> (
    --- comment this line out eventually, or add a verbosity option
-   stderr << "--running: " << cmd << " ... " << flush;
+   -- stderr << "--running: " << cmd << " ... " << flush;
    r := run cmd;
    if r != 0 then (
       << "Failed!" << endl;

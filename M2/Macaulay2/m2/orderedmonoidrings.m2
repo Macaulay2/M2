@@ -33,13 +33,15 @@ isPolynomialRing = method(TypicalValue => Boolean)
 isPolynomialRing Thing := x -> false
 isPolynomialRing PolynomialRing := (R) -> true
 
+isHomogeneous PolynomialRing := R -> true
+
 exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
 
 expression PolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      k := last R.baseRings;
      T := if (options R).Local === true then List else Array;
-     (expression k) (new T from R.generatorExpressions)
+     (expression k) (new T from toSequence runLengthEncode R.generatorExpressions)
      )
 
 describe PolynomialRing := R -> (
@@ -290,7 +292,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    exps = append(exps,1);
 		    );
 	       new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
-	  isPrime RM := f -> (
+	  isPrime RM := {} >> o -> f -> (
 	      v := factor f;
 	      cnt := 0; -- counts number of factors
 	      scan(v, x -> ( if not isUnit(x#0) then cnt=cnt+x#1 ));

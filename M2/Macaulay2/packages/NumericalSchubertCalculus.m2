@@ -1,7 +1,7 @@
 newPackage(
     "NumericalSchubertCalculus",
-    Version => "1.11", 
-    Date => "Nov 2017",
+    Version => "1.16", 
+    Date => "Sep 2020",
     Authors => {
 	{Name => "Anton Leykin", 
 	    Email => "leykin@math.gatech.edu", 
@@ -17,6 +17,7 @@ newPackage(
 		HomePage => "http://www.math.uic.edu/~jan/"}
 	},
     Headline => "numerical methods in Schubert Calculus",
+    Keywords => {"Numerical Algebraic Geometry"},
     PackageImports => {
 	"PHCpack",
 	"NumericalAlgebraicGeometry",
@@ -263,7 +264,7 @@ moveCheckers Array := blackred -> (
      blackup1 := position(blackposition, x-> x == 1+blackposition#blackdown1);
      -- Determine the rows of the pair of black checkers that will be sorted.  They are row r and 
      --    r+1 in the paper with r the critical row of the falling checker.
-     --  n-blackdown1 is one more thatn the number of checkers in the upper right corner 
+     --  n-blackdown1 is one more than the number of checkers in the upper right corner 
      --     (region A in paper)
      --  blackup1 is the number of checkers above and to the left of rising checker (as we are 0-based)
      --  Their sum is one more than the number of checkers above the moving pair = row of rising checker
@@ -693,14 +694,14 @@ solutionToChart(Matrix, Matrix) := (s,MX) -> (
 -- toRawSolutions
 --
 -- Function that takes solutions (in local coordinates) as nxk matrices
--- and writes them into a list of values cooresponding to
+-- and writes them into a list of values corresponding to
 -- the variables in the local coordinates coordX of the 
 -- checkerboard variety 
 --
 -- !! This functions is used to express the solutions from
 -- matrix form to list form when using homotopies !!
 --------------------------
--- Inut:
+-- Input:
 --    coordX -- matrix of 0s,1s, and variables representing
 --              the local coordinates of the checkerboard variety
 --    X -- an nxk matrix that is a solution of the current incidence problem
@@ -839,7 +840,7 @@ columnReduce=method(TypicalValue=> Matrix )
 columnReduce(Matrix,List) := (S,b)->(
     k := numColumns S;
     n := numRows S;
-    -- we use the bracket insted of the partition
+    -- we use the bracket instead of the partition
     -- b := output2bracket (redcheckers);
     -- b := partition2bracket(l,k,n);
     M:= S;

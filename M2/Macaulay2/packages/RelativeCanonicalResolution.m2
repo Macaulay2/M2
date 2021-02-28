@@ -1,14 +1,16 @@
 newPackage(
 	"RelativeCanonicalResolution",
-	Version => "0.2",
-	Date => "Jun 07, 2018",
-	Authors => {{Name => "Christian Bopp",
-			   Email => "bopp@math.uni-sb.de",
-			   HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/75-christian-bopp"},
-			   {Name => "Michael Hoff",
-			   Email => "hahn@math.uni-sb.de",
-			   HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/74-michael-hahn"}},
-	Headline=> "the relative canonical resolution for g-nodal canonical curves with a fixed g^1_k"
+Version => "1.0",
+Date => "June 16, 2020",
+Authors => {{Name => "Christian Bopp",
+		   Email => "bopp@math.uni-sb.de",
+		   HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/75-christian-bopp"},
+		   {Name => "Michael Hoff",
+		   Email => "hahn@math.uni-sb.de",
+		   HomePage => "http://www.math.uni-sb.de/ag-schreyer/index.php/people/researchers/74-michael-hahn"}
+						},
+Headline=> "the relative canonical resolution for g-nodal canonical curves with a fixed g^1_k",
+Keywords => {"Commutative Algebra"}
 	)
    
 export{"getFactors", 
@@ -26,18 +28,18 @@ export{"getFactors",
        "eagonNorthcottType",
 --     liftMonomToENT,
 --     liftPolyToENT,
-       "liftMatrixToENT",
+       "liftMatrixToEN",
        "getScrollDegrees",
        "getCoxDegrees",
        "bettiENtype",
-       "iteratedMC"}
+       "iteratedCone"}
 
        
        
 ---------------------------------------------------------------
 ---------------------------------------------------------------
 -- Part 1
--- some usefull functions which will be needed to construct
+-- some useful functions which will be needed to construct
 -- the canonical model, as well as the model on the scroll
 ---------------------------------------------------------------
 ---------------------------------------------------------------
@@ -81,7 +83,7 @@ undocumented { getCoordinates, (getCoordinates,RingElement) }
 
 
 -- computes the canonical multipliers
--- this function is identic to one from the M2 package "NodalCurves.m2"
+-- this function is identical to one from the M2 package "NodalCurves.m2"
 
 canonicalMultipliers = method()
 canonicalMultipliers (Matrix,Matrix) := (P,Q) -> (
@@ -156,7 +158,7 @@ undocumented { h0ab, (h0ab,ZZ,ZZ,ZZ,ZZ) }
 -- compute a balanced partition (usual n=dim Scroll and m=deg Scroll)
 
 balancedPartition = method()
-balancedPartition (ZZ,ZZ) := (n,m) -> ( -- m items list of lenth n
+balancedPartition (ZZ,ZZ) := (n,m) -> ( -- m items list of length n
       k := m%n;
       r := m//n;
       apply(k,i -> r+1)|apply(n-k,i -> r));
@@ -173,7 +175,7 @@ balancedPartition (ZZ,ZZ) := (n,m) -> ( -- m items list of lenth n
   
  -- computes a g-nodal k-gonal canonical curve canonical curve such that 
  -- the curve automatically lies on a normalized scroll of balanced type   
- -- Input: genus g, gonality k and integer n determing the characteristic p=nexPrime(n)
+ -- Input: genus g, gonality k and integer n determining the characteristic p=nexPrime(n)
  -- Output: canonical curve which lies on a normalized scroll of balanced type 
  
   canCurveWithFixedScroll = method()
@@ -436,8 +438,8 @@ undocumented { liftPolyToENT, (liftPolyToENT,Matrix,List) }
 --       e=partition of the scroll.
 -- Output: induced map between the first modules in the Eagon-Northcott type resolution of these vector bundles.
 
-liftMatrixToENT = method()
-liftMatrixToENT (Matrix,List) := (A,e) -> (
+liftMatrixToEN = method()
+liftMatrixToEN (Matrix,List) := (A,e) -> (
     kk := coefficientRing ring A;
     z := getSymbol"z";
     T2 := kk[flatten apply(#e, j -> apply(e_j+1, i -> z_(j,i)))];
@@ -449,8 +451,8 @@ matrix apply(rank target A, i ->
 -- Input: resX=resolution on the scroll, e=scroll type
 -- Output: the iterated mapping cone
 
-iteratedMC = method()
-iteratedMC (ChainComplex,List) := (resX,e) -> ( 
+iteratedCone = method()
+iteratedCone (ChainComplex,List) := (resX,e) -> ( 
    k := length(e)+1;
    g := sum(e)+k-1;
    kk := coefficientRing ring resX_0;
@@ -473,7 +475,7 @@ iteratedMC (ChainComplex,List) := (resX,e) -> (
                 (directSum Clist)**T2^{1:-(getScrollDegrees(degs_0,e))_0})
 	                );                        
  -- the lift of the first horizontal maps
-   mapA := apply(lresX, i -> sub(liftMatrixToENT(resX.dd_(i+1),e),T2));		  
+   mapA := apply(lresX, i -> sub(liftMatrixToEN(resX.dd_(i+1),e),T2));		  
  -- building the iterate mapping cone:    
    Cone := C_(lresX);
    for i from 1 to lresX do (
@@ -492,12 +494,12 @@ beginDocumentation()
 document { 
   Key => RelativeCanonicalResolution,
   Headline => "construction of relative canonical resolutions and Eagon-Northcott type complexes",
-  "This package provides functions which construct g-nodal canonical curves with a degree k line bundle, which lie on a normalized scroll.
-   It furthermore contains functions which compute the so-called relative canonical resolution. 
-   The construction of such canonical curves is based on the M2-package",  
+  "This package provides functions that construct g-nodal canonical curves with a degree k line bundle, which lie on a normalized scroll.
+   It furthermore contains functions that compute the so-called relative canonical resolution. 
+   The construction of such canonical curves is based on the Macaulay2 package",  
    HREF("https://www.math.uni-sb.de/ag/schreyer/index.php/computeralgebra"," kGonalNodalCurves. "), 
    "This package can be seen as an upgrade to the ", 
-   HREF("https://www.math.uni-sb.de/ag/schreyer/index.php/computeralgebra"," kGonalNodalCurves "),"-package.",
+   HREF("https://www.math.uni-sb.de/ag/schreyer/index.php/computeralgebra"," kGonalNodalCurves ")," package.",
    PARA{},
    "We also provide functions to compute (possibly non-minimal) free resolutions of such curves by an iterated 
    mapping cone construction, as described in Schreyer's article", 
@@ -511,8 +513,8 @@ document {
    PARA{},
    SUBSECTION "Iterated mapping cones and Eagon-Nortcott type complexes",  
    UL{   TO eagonNorthcottType,
-	 TO liftMatrixToENT,
-	 TO iteratedMC
+	 TO liftMatrixToEN,
+	 TO iteratedCone
       },  
   Caveat => {"This package requires Macaulay2 Version 1.11 or newer."} 
    }
@@ -532,7 +534,7 @@ doc ///
     k: ZZ
        the degree of the line bundle on C
     n: ZZ
-       integer defining the charakteristic p (>=n) of the ground field        
+       integer defining the characteristic p ($\ge n$) of the ground field        
   Outputs
     ICan: Ideal
           ideal of the canonical curve        
@@ -540,7 +542,7 @@ doc ///
      Text
        Computes the ideal of a g-nodal canonical curve with a degree k<g line bundle,
         which lies on a normalized scroll. The construction of such curves is based on the 
-	M2-package  @HREF("http://www.math.uni-sb.de/ag/schreyer/index.php/people/researchers/75-christian-bopp","kGonalNodalCurves")@
+	Macaulay2 package  @HREF("http://www.math.uni-sb.de/ag/schreyer/index.php/people/researchers/75-christian-bopp","kGonalNodalCurves")@
 
      Example
          (g,k,n) = (8,5,1000);
@@ -670,8 +672,8 @@ doc ///
   Description
      Text
        Computes the Eagon-Northcott type resolution associated to the matrix Phi defining the scroll
-       and an integer b defining the twist $O_{P(E)}(bR)$. The function works similar to the "Eagon-Northcott"-
-       function by Greg Smith.  
+       and an integer b defining the twist $O_{P(E)}(bR)$. The way the function works is similar to 
+       the way the "Eagon-Northcott" function by Greg Smith works.  
            
      Example
 	R = ZZ/12347[x_0..x_7]
@@ -679,18 +681,18 @@ doc ///
         betti(eagonNorthcottType(Phi,0))
         betti(eagonNorthcottType(Phi,1))
   SeeAlso
-    liftMatrixToENT
-    iteratedMC       
+    liftMatrixToEN
+    iteratedCone       
 ///
 
 doc ///
   Key 
-    liftMatrixToENT
-    (liftMatrixToENT,Matrix,List) 
+    liftMatrixToEN
+    (liftMatrixToEN,Matrix,List) 
   Headline 
     Lifts a matrix between bundles on the scroll to the associated Eagon-Northcott type complexes
   Usage
-    A=liftMatrixToENT(Psi,e)
+    A=liftMatrixToEN(Psi,e)
   Inputs
     Psi: Matrix
           matrix that defines map between vector bundles on the scroll.
@@ -710,22 +712,22 @@ doc ///
 	Ican = canCurveWithFixedScroll(g,k,n);
 	Jcan = curveOnScroll(Ican,g,k);
 	betti(resX = resCurveOnScroll(Jcan,g,2))
-	betti(liftMatrixToENT(resX.dd_1,e))
-	betti(liftMatrixToENT(resX.dd_2,e))
-	betti(liftMatrixToENT(resX.dd_3,e))
+	betti(liftMatrixToEN(resX.dd_1,e))
+	betti(liftMatrixToEN(resX.dd_2,e))
+	betti(liftMatrixToEN(resX.dd_3,e))
   SeeAlso
     eagonNorthcottType
-    iteratedMC     
+    iteratedCone     
 ///
 
 doc ///
   Key 
-    iteratedMC
-    (iteratedMC,ChainComplex,List) 
+    iteratedCone
+    (iteratedCone,ChainComplex,List) 
   Headline 
-    Computes a (possibly non-minimal) resolution of C in PP^{g-1} starting from the relative canonical resolution of C in P(E)
+    Computes a (possibly non-minimal) resolution of C in P^{g-1} starting from the relative canonical resolution of C in P(E)
   Usage
-    resC=iteratedMC(resX,e)
+    resC=iteratedCone(resX,e)
   Inputs
     resX: ChainComplex
           the relative canonical resolution
@@ -738,8 +740,8 @@ doc ///
      Text
        Given the relative canonical resolution of C on a normalized scroll $P(E)$, the function computes
        a (possibly non-minimal) free resolution of C in $P^{g-1}$ by an iterated mapping cone construction.
-       For gonality k=3,4 the iterated mapping cone is always minimal. In these cases "iteratedMC" is much 
-       faster (for $g >9$) than computing the resolution via the "res" command. 
+       For gonality k=3,4 the iterated mapping cone is always minimal. In these cases "iteratedCone" is much 
+       faster (for $g >9$) than computing the resolution via the @TO res@ command. 
            
      Example
 	(g,k,n) = (8,5,1000)
@@ -748,10 +750,10 @@ doc ///
 	betti res(Ican,DegreeLimit=>1)
 	Jcan = curveOnScroll(Ican,g,k);
 	betti(resX = resCurveOnScroll(Jcan,g,2))
-	betti(resC = iteratedMC(resX,e))
+	betti(resC = iteratedCone(resX,e))
   SeeAlso
     eagonNorthcottType
-    liftMatrixToENT      
+    liftMatrixToEN      
 ///
 
 doc ///
@@ -835,8 +837,8 @@ doc ///
 	  A of multipliers          
   Description
      Text
-       This function is identic to the function "canonicalMultipliers" from
-       the M2 package  @ HREF("http://www.math.uni-sb.de/ag/schreyer/home/NodalCurves.m2","NodalCurves") @. 
+       This function is identical to the function "canonicalMultipliers" from
+       the Macaulay2 package  @ HREF("http://www.math.uni-sb.de/ag/schreyer/home/NodalCurves.m2","NodalCurves") @. 
        Given g pairs of points P_i, Q_i, on P^1 
        computes the canonical series of the corresponding nodal curve of 
        genus g and determines the g ratios A_i of the glueing data for the canonical bundle
@@ -867,10 +869,10 @@ doc ///
           the type of the scroll
   Outputs
        ab': List
-	    containg the bidegree in the coxring         
+	    containing the bidegree in the coxring         
   Description
      Text
-       Computes integers a' and b' such that $H^0(O_{P(E)}(aH+bR))$ corresponds to basis($\{a',b'\}$,Rcox), where Rcox is the Cox ring of the scroll $P(E)$.
+       Computes integers a' and b' such that $H^0(O_{P(E)}(aH+bR))$ corresponds to basis($\{a',b'\}$,S), where S is the Cox ring of the scroll $P(E)$.
   SeeAlso
     getScrollDegrees   
 
@@ -898,3 +900,44 @@ doc ///
   SeeAlso
     getCoxDegrees  
 ///
+
+
+TEST ///
+(g,k,n) = (8,5,1000);
+Ican = canCurveWithFixedScroll(g,k,n);
+assert((genus Ican, degree Ican, dim Ican) == (g,2*g-2,2))
+betti res(Ican, DegreeLimit => 1)
+Phi = matrix{{t_0,t_2,t_4,t_6},{t_1,t_3,t_5,t_7}}
+Iscroll = minors(2,Phi);
+assert(Ican + Iscroll == Ican)
+D = Ican + ideal(Phi^{0});
+assert((degree D, dim D) == (k,1))
+///
+
+TEST ///
+(g,k,n) = (8,5,1000)
+e = balancedPartition(k-1,g-k+1)
+assert(e=={1,1,1,1})
+Ican = canCurveWithFixedScroll(g,k,n);
+betti res(Ican,DegreeLimit=>1)
+Jcan = curveOnScroll(Ican,g,k);
+betti(resX = resCurveOnScroll(Jcan,g,2))
+betti(resC = iteratedCone(resX,e))
+assert(rank matrix basis(5,resC_4) == 6)
+///
+
+TEST ///
+R = ZZ/12347[x_0..x_7]
+Phi = matrix{{x_0..x_3},{x_4..x_7}}
+betti(eagonNorthcottType(Phi,0))
+betti(eagonNorthcottType(Phi,1))
+///
+
+end;
+
+---------------------------------------------
+
+restart;
+uninstallPackage"RelativeCanonicalResolution"
+installPackage"RelativeCanonicalResolution"
+check "RelativeCanonicalResolution"

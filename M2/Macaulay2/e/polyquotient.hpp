@@ -3,10 +3,19 @@
 #ifndef _polyquotient_hpp_
 #define _polyquotient_hpp_
 
-#include <iostream>
+#include "engine-includes.hpp"
+
 #include "poly.hpp"
-#include "monideal.hpp"
+#include "polyring.hpp"
 #include "qring.hpp"
+#include "ringelem.hpp"
+
+class FreeModule;
+class GBComputation;
+class Ring;
+class buffer;
+class gbvector;
+struct RingMap;
 
 /**
  * \ingroup polynomialrings
@@ -47,7 +56,7 @@ class PolyRingQuotient : public PolyRingFlat
     normal_form(result);
     return result;
   }
-  virtual bool from_rational(mpq_ptr q, ring_elem &result) const
+  virtual bool from_rational(mpq_srcptr q, ring_elem &result) const
   {
     bool ok = numerR_->from_rational(q, result);
     if (not ok) return false;
@@ -157,7 +166,7 @@ class PolyRingQuotient : public PolyRingFlat
     return result;
   }
 
-  virtual ring_elem power(const ring_elem f, mpz_t n) const;
+  virtual ring_elem power(const ring_elem f, mpz_srcptr n) const;
 
   virtual ring_elem power(const ring_elem f, int n) const;
 

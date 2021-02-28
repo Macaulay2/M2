@@ -1,141 +1,104 @@
 doc ///
 	Key
 	
-	        "Constructing Lie algebras"
-	Headline 
-		An overview of ways to construct Lie algebras and maps
-	SeeAlso
-                lieAlgebra
-		holonomyLie
-		koszulDualLie
-		minmodelLie
-		minPresLie
-		mapLie
-		derLie	
-	        "First LieAlgebra Tutorial"
-		"Second LieAlgebra Tutorial"
-		"Differential LieAlgebra Tutorial"				
-		"Holonomy Lie algebras and Symmetries" 
-		 
+	        "Minimal models, Ext-algebras and Koszul duals"
+	
+	SeeAlso 
+		koszulDual 
+		minimalModel
+		"minimalPresentation(ZZ,LieAlgebra)"
+		extAlgebra
+		"Differential Lie algebra tutorial"				
+		"Holonomy Lie algebras and symmetries"
 	Description
-		Text
-	       	  There are three new Types in this package, @TO LieAlgebra@, @TO MapLie@ 
-		  and @TO DerLie@. All of them have  
-		  @TO MutableHashTable@ as parent. To each Type, there is a general constructor, 
-		  @TO lieAlgebra@, @TO mapLie@ and @TO derLie@, where the first returns a free
-		  Lie algebra. 
-		  Also each element of type @TO LieAlgebra@
-		  is a Type with parent @TO LieElement@. 
-		  There are two general constructions of a new Lie algebra
-		  given two Lie algebras, namely the free product, 
-		  @TO  (symbol *,LieAlgebra,LieAlgebra)@, 
-		  which corresponds to the free product of enveloping algebras, 
-		  and the direct sum (product),
-		  @TO  (symbol **,LieAlgebra,LieAlgebra)@,
-		  which corresponds to the tensor product of enveloping algebras. Other 
-		  constructions of new Lie algebras are
-		Text
-		  @TO diffLieAlgebra@, a differential Lie algebra		  
-		Text
-		  @TO (symbol /,LieAlgebra,List)@, a quotient Lie algebra
-		Text
-		  @TO ambient@, applied to L it gives a free Lie algebra of which L (without differential) is a quotient 		  
-		Text
-		  @TO minmodelLie@, the minimal model		  
-		Text
-		  @TO koszulDualLie@, the Lie algebra whose enveloping algebra 
-		  is the Koszul dual of a quadratic algebra
-		Text
-		  @TO holonomyLie@, the holonomy Lie algebra of a hyperplane arrangement (or matroid)
-		Text
-		  @TO minPresLie@, a minimal presentation
-		   
-		  
-		  
-		Text
-		  In the example below, we first define a Lie algebra L
-		  by the constructor @TO lieAlgebra@. Then @TO minmodelLie@ is used
-		  to construct the Lie algebra M, together with the quasi-isomorphism
-		  f:M->L, which is obtained by use of the key @TO modelmap@. Also,
-		  M itself can be obtained as L.minmodel, if @TO minmodelLie@ 
-		  has been executed. 
-		  Observe that the current Lie algebra is not changed to M. 		 
-		  The differential in M is obtained by use of the function @TO diffLie@. 
-		  Now @TO peekLie@ is used to look at the different hashTables and finally 
-		  @TO extTableLie@ gives the dimensions of Ext_{UL}(QQ,QQ), an 
-		  expected result, since the KoszulDual of UL is QQ[x].
-		  
-		  
-		Example
-		  L = lieAlgebra({a},genSigns=>1)/{a a}
-		  M = minmodelLie 5
-		  f = M.modelmap
-		  L.minmodel		  
-		  useLie M
-		  d = diffLie()
-		  d fr_1
-		  peekLie L
-		  peekLie M
-		  peekLie f
-		  peekLie d		  
-		  useLie L
-		  extTableLie 5
-         	  L1 = koszulDualLie(QQ[x])
-		  peekLie L1
-		  
-		Text
-		  We see that L1 is the same Lie algebra as L, except that the name of 
-		  the generator is different. Also L.compdeg=5 while L1.compdeg=1 which 
-		  means that L has been computed up to degree 5 while L1 has been computed
-		  up to degree 1. 
-		  
-	       
-		  
-		Text
-		  Here is the first found example of a non-Koszul algebra, due to
+	      Text
+	        The Koszul dual of the polynomial ring $\mathbb Q$ [ $x$ ] is the exterior 
+		algebra on one odd generator. This is the enveloping algebra of
+		the free Lie algebra on one odd generator $a$ modulo [$a$,$a$].
+	      Example
+	        R=QQ[x]
+		L=koszulDual R
+		describe L
+	      Text
+	        The Ext-algebra of $L$ is $Ext_{UL}(k,k)$, where $k$ is the 
+		coefficient field of $L$.  
+		It may be obtained using @TO extAlgebra@. 
+		A vector space basis for the 
+		Ext-algebra in positive degrees is obtained using
+		@TO "generators(ExtAlgebra)"@. This basis originates from
+		the Lie generators in the minimal
+		model, @TO minimalModel@, 
+		for which the homological degree have been raised by 1 and
+		the signs changed.
+	      Example
+	        M=minimalModel(4,L)
+		describe M
+		E=extAlgebra(4,L)
+		gE=gens E
+		weight\gE
+		sign\gE
+	      Text
+	        The product in the Ext-algebra, 
+		@TO (symbol SPACE,ExtElement,ExtElement)@, 
+		is derived by the program from the quadratic part 
+		of the differential in the minimal model.
+		The Ext-algebra is a skew-commutative algebra. 
+		In case $L$ is the Koszul dual
+		of a skew-commutative Koszul algebra $R$, 
+		the Ext-algebra of $L$ is equal to $R$.
+	      Example
+		dims(4,E)
+		ext_0 ext_0 ext_0 ext_0
+	      Text
+	          Observe that the first row of the matrix {\tt dims(4,E)} gives
+		  the dimensions of $E$ in degree 1 to 5 and homological degree 1.
+	      Text
+		  Here is the first known example of a non-Koszul algebra, due to
 		  Christer Lech. It is the polynomial algebra in four variables
-		  modulo five general quadratic forms, which may be specialized as follows.
-		  
-		Example
+		  modulo five general quadratic forms, 
+		  which may be specialized as follows.		  
+	      Example
 		  R = QQ[x,y,z,u]
                   I = {x^2,y^2,z^2,u^2,x*y+z*u}
-                  S = R/ideal I
+                  S = R/I
 		  hilbertSeries(S,Order=>4)
-                  L = koszulDualLie(S)
-		  extTableLie 4
-	        Text
-		  Below is an example of the use of "formal" Lie multiplication to compute
-		  the Lie algebra of strictly upper triangular 5x5-matrices by means
-		  of its multiplication table. The relation (e14 e15) is of degree 7
-		  and in order to compute this, the free algebra F below must be 
-		  computed in degree 7, where it is of dimension 7596. To avoid this, the 
-		  relations are not normalized and in this way F need not be computed. The dimensions
-		  of the quotient are then easy to compute and also a minimal presentation. 
-		  The "at sign"
+                  L = koszulDual(S)
+		  E=extAlgebra(4,L)
+	          dims(4,E)
+	      Text
+	          The minimal model may also be used to 
+		  compute a minimal presentation of a Lie algebra, 
+		  see @TO "minimalPresentation(ZZ,LieAlgebra)"@.
+		  Below is an example of computing a minimal presentation of
+		  the Lie algebra of strictly upper triangular 5x5-matrices. The
+		  Lie algebra is presented  by means of the multiplication table of
+		  the natural basis \{$ekn;\ 1\ \le\ k\ <\ n \le\ 5$\}. 
+		  The degree of $ekn$ is $n-k$. 
+		  The relation [ $e14$, $e15$ ] is of degree 7 
+		  in the free Lie algebra $F$ on the 
+		  basis, and the dimension of $F$ in degree 7 is 7596. 
+		  To avoid a computation
+		  of the normal form of [ $e14$, $e15$ ] one uses "formal" operators.
+		  The symbol $\@$
 		  is used as formal Lie multiplication and formal 
 		  multiplication by scalars, ++ is used as
-		  formal addition and / is used as formal subtraction. 
-		  Observe that "at sign" like SPACE  is right associative, 
-		  while / is left associative, so a/b/c means a-b-c and not a-b+c.
+		  formal addition, and / is used as formal subtraction. 
+		  Observe that $\@$, like SPACE, is right associative, 
+		  while / is left associative, so $a/b/c$ means $a-b-c$ and not $a-b+c$.
 		  Here is an example of a formal 
-		  expression, whose normal form is zero. The normal form may be obtained by copying and pasting
-		  the expression or applying normalFormLie.
-		  
-		Example
-		   L=lieAlgebra{a,b,c}
-		   a@b@c/3@a@b@c/2@a@b@c++4@a@b@c
-		   normalFormLie oo
-		   
-		Text
-		   Here is the matrix example. Observe that the quotient algebra is defined by just 
-		   giving the value of F.relsLie. In this way there is no checking done of the correctness 
-		   of the relations. Writing the quotient in the usual way as F/(F.relsLie) 
-		   has however the effect that F.relsLie is computed.
-		   
-		Example
+		  expression, whose normal form is 0. 
+		  The normal form may be obtained by applying @TO normalForm@.		  
+	      Example
+		  L=lieAlgebra{a,b,c}
+		  a@b@c++3@a@c@b++2@c@b@a/2@b@c@a
+		  normalForm oo
+
+	      Text
+		   Here is the computation of the matrix example.
+	      Example
 		   F=lieAlgebra({e12,e23,e34,e45,e13,e24,e35,e14,e25,e15},
-		       genWeights=>{1,1,1,1,2,2,2,3,3,4})
-		   F.relsLie={e12@e34,e12@e45,e23@e45,e12@e13,e12@e35,e12@e14,
+		       Weights => {1,1,1,1,2,2,2,3,3,4})
+		   I={e12@e34,e12@e45,e23@e45,e12@e13,e12@e35,e12@e14,
 	                     e12@e15,e23@e45,e23@e13,e23@e24,e23@e14,e23@e25,
 	                     e23@e15,e34@e24,e34@e35,e34@e14,e34@e25,e34@e15,
                  	     e45@e13,e45@e35,e45@e25,e45@e15,e13@e24,e13@e14,
@@ -146,117 +109,80 @@ doc ///
                              e13@e35/e15, e14@e45/e15,
                              e23@e34/e24, e23@e35/e25,
                              e24@e45/e25, e34@e45/e35}
-		   dimsLie 5
-		   peekLie minPresLie 4
+		   L=F/I
+		   dims(1,5,L)
+		   M=minimalPresentation(4,L)
+		   describe M
 		   
-		
-		Text
-		  The following example shows a way to determine the derivations 
-		  of a Lie algebra studied by David Anick, 
-		  which may be seen as the positive part of the twisted loop
-		  algebra on sl_2. 
-
-		Example
-                   L = lieAlgebra({a,b})/{a a a b,b b b a}
-                   dimsLie 20
-		   
-		Text
-		  The derivations of degree 0 is 2-dimensional and contains the Euler
-		  derivation, which is the identity in degree one.
+	      Text  
+		  Below is a differential Lie algebra, which 
+		  is non-free, and where the 
+		   linear part of the differential is non-zero. 
+ 
 		  
-		Example
-		   deuler = derLie({a,b})
-		   deuler b a b a b a b a
-		   
-		Text
-		  The linear maps from degree 1 to degree 7 is 4-dimensional. Not all
-		  of them define derivations.
+	      Example
+		  F = lieAlgebra({a,b,c,r3,r4,r42},	             
+	             Weights => {{1,0},{1,0},{2,0},{3,1},{4,1},{4,2}},	             
+	             Signs => {0,0,0,1,1,0},
+		     LastWeightHomological => true)
+		  D = differentialLieAlgebra{0_F,0_F,0_F,a c,a a c,r4 - a r3}
+		  L = D/{b c - a c,a b,b r4 - a r4}
+		  M = minimalModel(5,L)
+		  describe M		  
+	         
 		  
-		Example 		  
-		   basisLie 7
-		   da61 = derLie{a b a b a b a,L.zz}
-		   db61 = derLie{L.zz,a b a b a b a}
-		   da62 = derLie{b b a b a b a,L.zz}
-		   db62 = derLie{L.zz,b b a b a b a}
-		   
-		Text
-		   Hence, da61 and db62 are derivations. To determine if a linear
-		   combination of db61 and da62 is a derivation (i.e., maps the
-		   relations in L to zero), we consider
-		   derivations from the free Lie algebra on a,b to L.
-		   
-		Example
-		   M = lieAlgebra({a,b})
-		   f = imapLie(L,M)
-		   useLie L		  
-		   dMb61 = derLie(f,{L.zz,a b a b a b a})
-		   dMa62 = derLie(f,{b b a b a b a,L.zz})
-		   useLie M
-		   dMb61 a a a b
-		   dMa62 a a a b
-		   
-		Text
-		   It follows that the only linear combination of dMb61 and dMa62 
-		   which is zero on (a a a b) is dMb61, but we have seen that db61 is
-		   not a derivation on L. Hence the derivations of degree 6 is 2-dimensional.
-		   Also, da61 + db62 is the inner derivation corresponding to
-		   right multiplication with the basis element of degree 6, (b a b a b a). 
-		   This is seen by using @TO multListLie@ (one could also have used SPACE as
-		   multiplication operator on the lists).
-		   
-		Example
-		   peekLie(da61+db62)
-		   multListLie({a,b},{b a b a b a})
-		   
-		Text
-		   Since the dimension of the Lie algebra in degree 8 is one, the dimension
-		   of the derivations of degree 7 is at most 2.
-		Example		   
-		   useLie L		   
-		   peekLie derLie({b a b a b a b a,L.zz})
-		   peekLie derLie({L.zz,b a b a b a b a})
-		   {a,b} {(basisLie 7)_1}
-		   {a,b} {(basisLie 7)_0}
-		   
-		Text
-		   From the above, it follows that the derivations of degree 7 is 
-		   also 2-dimensional, but all are inner derivations. The conclusion
-		   is that the derivations of L of positive degree modulo the inner 
-		   derivations is 1-dimensional in all even
-		   degrees, and 0 in all odd degrees. 
-		   We may also use @TO (symbol SPACE,DerLie,DerLie)@
-		   to examine the  
-		   structure of this quotient Lie algebra. 
-		   
-		Example
-		   d2 = derLie({a b a,L.zz})
-		   d4 = derLie({a b a b a,L.zz})		   
-		   peekLie d2 d4
+	      Text
+		  The homology in homological degree 0 is concentrated in first degree
+		  1 and 2. In the general case, for a differential Lie algebra $L$,
+		  the function @TO "minimalPresentation(ZZ,LieAlgebra)"@ 
+		  gives a minimal presentation of the Lie algebra $H_0(L)$.
+		  
+	      Example
+	          HL = lieHomology L
+		  dims(5,HL)  
+		  describe minimalPresentation(3,L)
+		  
 		   		   
-	        Text
-		   Define dn (n>=2, n even) as the derivation which maps a 
-		   to (a b a b ... a] of
-		   length n+1 and b to 0. It follows from above that [d2,d4]=d6.
+	      Text
+		  We now 
+		  check that the  homology of the minimal model $M$ is 
+		  the same as for $L$.
+		  
+	      Example 		   
+		  HM = lieHomology M
+		  dims(5,HM)
 		   
-		Example
-		   d6 = derLie({a b a b a b a,L.zz})
-		   peekLie d2 d6
-		   d16 = derLie({a b a b a b a b a b a b a b a b a,L.zz})
-		   peekLie d2 d16
-		   		   
-		Text	   
-		  
-		   It follows that [d2,d6]=2d8 and [d2,d16]=7d18.		   
-		   In fact, this Lie algebra is the infinite 
-		   dimensional filiform Lie algebra, which is  
-		   the Witt algebra in positive degrees (with a degree doubling).
-		 
 		   
+	      Text
+		  The quasi-isomorphism \ $f:\ M\ \to\ L$ from the 
+		  minimal model $M$ of $L$
+		  to $L$ is obtained as {\tt map(M)}. 
+		  If $L$ has no differential, then \ 		   
+		  $f$ \ is surjective, but in general this is
+		  not true as is shown by the example below. 
+		  Another
+		  example is obtained letting $L$ 
+		  be a non-zero Lie algebra
+		  with zero homology, 
+		  see @TO "Differential Lie algebra tutorial"@. 
 		  
+	      Example
+		  f = map M 
+		  dims(5,L)
+		  image f
+		  dims(5,oo)
+		   
+	      Text
+		  We check below that $H(f)$ is iso in degree (5,1).
 		  
-		Text  
-		  See @TO "Holonomy Lie algebras and Symmetries"@ for some examples 
-		  on how to use the constructor @TO holonomyLie@. 
-		  
+              Example
+		  basis(5,1,HL)
+		  basis(5,1,HM)
+		  f\oo
+		    
+	      
 ///
-end
+end		   
+
+		
+		  

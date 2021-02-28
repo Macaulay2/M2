@@ -14,7 +14,7 @@ o2 : NCQuotientRing
 
 i3 : M = ncMatrix {{x, y, z}}
 
-o3 = | x  y  z |
+o3 = | x y z |
 
 o3 : NCMatrix
 
@@ -26,21 +26,17 @@ o4 : NCRingMap
 
 i5 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
 
-o5 = | x  y  z |
-     |         |
-     | y  z  x |
-     |         |
-     | z  x  y |
+o5 = | x y z |
+     | y z x |
+     | z x y |
 
 o5 : NCMatrix
 
 i6 : a*N
 
-o6 = | ax  ay  az |
-     |            |
-     | ay  az  ax |
-     |            |
-     | az  ax  ay |
+o6 = | a*x a*y a*z |
+     | a*y a*z a*x |
+     | a*z a*x a*y |
 
 o6 : NCMatrix
 

@@ -5,6 +5,10 @@ VERSION = 27b11
 PRECONFIGURE = autoreconf -i
 TARFILE = nauty$(VERSION).tar.gz
 TARDIR = nauty$(VERSION)
+
+# --enable-generic disallows -march=native, otherwise it is tested for
+CONFIGOPTIONS = --enable-generic
+
 PROGRAMS = NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg \
 	   directg dreadnaut dretog genbg geng genrang gentourng labelg listg \
 	   multig newedgeg pickg planarg shortg showg

@@ -11,7 +11,7 @@ all: dmg tidy
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 
 # In the following, we have to admit errors saying "is already signed", because some of our binary files have multiple links to them from directories.
-../../$(PKG_DMG) : Makefile always file_preparation library_preparation top-directory-preparation
+../../$(PKG_DMG) : Makefile always check-prerequisites file_preparation library_preparation top-directory-preparation
 	rm -f "$@"
 ifeq ($(SIGN),yes)
 	@for i in files/@package@/@tail_bindir@/* files/@package@/@tail_programsdir@/* files/@package@/@tail_libdir@/*dylib ;			\
@@ -34,6 +34,8 @@ ifeq ($(SIGN),yes)
 	stapler staple "$@"
 endif
 
+check-prerequisites:
+	for i in @FILE_PREREQS@ ; do echo "error: *** files are required (provide --enable-dmg to configure)" >&2 ; exit 1 ; done
 top-directory-preparation:
 	umask 022 ; $(MKDIR_P) files
 	ln -sf /Applications files/.
@@ -54,10 +56,14 @@ file_preparation: always
 #     @loader_path     : relative to the path to the library that wants the library
 #     @rpath           : relative to any path installed on the path with the -rpath option to ld
 # Read about all that with "man dyld".
+
 # We used to remap binaries using the dynamic libraries that are not part of the OS to point to the copy we provide
 # in the disk image file by using "@executable_path", but such binaries are not acceptable to "gatekeeper", which is responsible
 # for deciding whether a program about to run is trusted.  So now we just signal an error, instead.  Normal users don't make disk image
+
 # distributions, so it will only be the Macaulay2 maintainers who have to deal with such errors.  We hope.
+# Meanwhile, there is no good way to tell the linker to ignore dynamic libraries when linking with libraries
+# provided by homebrew, so what I do is 'rm /usr/local/lib/*.dylib'.  Hah!
 library_preparation: file_preparation
 	$(MKDIR_P) files/@package@/@tail_libdir@
 

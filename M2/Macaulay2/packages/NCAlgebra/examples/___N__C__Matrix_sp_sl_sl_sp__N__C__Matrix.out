@@ -2,7 +2,7 @@
 
 i1 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/3.ter ... Complete!
+Complete!
 
 o1 = B
 
@@ -30,7 +30,7 @@ o4 : NCIdeal
 
 i5 : B' = A/J -- Factor of sklyanin
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/5.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/8.ter ... Complete!
+Complete!
 
 o5 = B'
 
@@ -38,7 +38,7 @@ o5 : NCQuotientRing
 
 i6 : k = ncMatrix {{x,y,z}}
 
-o6 = | x  y  z |
+o6 = | x y z |
 
 o6 : NCMatrix
 
@@ -50,44 +50,31 @@ o7 : NCRingMap
 
 i8 : M = BprimeToB rightKernelBergman rightKernelBergman k  -- second syzygy of k over B
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/10.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/13.ter ... Complete!
+Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/14.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/17.ter ... Complete!
+Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/18.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/21.ter ... Complete!
+Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/22.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/25.ter ... Complete!
+Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/26.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/29.ter ... Complete!
+Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/30.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/33.ter ... Complete!
+Complete!
 
-     |               2           |
-o8 = | -z    yz    -y    -yx-2xy |
-     |                           |
-     |                2    2     |
-     |  x  yx+xy  yz+x   -y +3xz |
-     |                           |
-     |                       2   |
-     |  y   -xz    -xy      x    |
-     |                           |
-     |  0   -2y    -2x     -2z   |
+o8 = | -z y*z     -y^2    -y*x-2*x*y |
+     | x  y*x+x*y y*z+x^2 -y^2+3*x*z |
+     | y  -x*z    -x*y    x^2        |
+     | 0  -2*y    -2*x    -2*z       |
 
 o8 : NCMatrix
 
 i9 : gId = g*(ncMatrix applyTable(entries id_(ZZ^4), i -> promote(i,B)))
 
-     |    3             3                                                             |
-o9 = | -2y +2yxz-2xyz+2x            0                   0                   0         |
-     |                                                                                |
-     |                        3             3                                         |
-     |          0          -2y +2yxz-2xyz+2x            0                   0         |
-     |                                                                                |
-     |                                            3             3                     |
-     |          0                   0          -2y +2yxz-2xyz+2x            0         |
-     |                                                                                |
-     |                                                                3             3 |
-     |          0                   0                   0          -2y +2yxz-2xyz+2x  |
+o9 = | -2*y^3+2*y*x*z-2*x*y*z+2*x^3 0                            0                            0                            |
+     | 0                            -2*y^3+2*y*x*z-2*x*y*z+2*x^3 0                            0                            |
+     | 0                            0                            -2*y^3+2*y*x*z-2*x*y*z+2*x^3 0                            |
+     | 0                            0                            0                            -2*y^3+2*y*x*z-2*x*y*z+2*x^3 |
 
 o9 : NCMatrix
 
@@ -95,18 +82,12 @@ i10 : assignDegrees(gId,{2,2,2,3},{5,5,5,6});
 
 i11 : M' = gId // M
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/34.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12537-0/37.ter ... Complete!
+Complete!
 
-      |              2           3 |
-o11 = | -2yx   0  -2y +2xz  yxz+x  |
-      |                            |
-      |                       2    |
-      |  -x    z     -y      y -xz |
-      |                            |
-      |                          2 |
-      |  -y   -x      z      yz-x  |
-      |                            |
-      |   z    y      x        0   |
+o11 = | -2*y*x 0  -2*y^2+2*x*z y*x*z+x^3 |
+      | -x     z  -y           y^2-x*z   |
+      | -y     -x z            y*z-x^2   |
+      | z      y  x            0         |
 
 o11 : NCMatrix
 

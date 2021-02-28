@@ -1,27 +1,32 @@
 document {
      Key => "The Macaulay2 language",
      
-     "The Macaulay2 language is a simple yet powerful interpreted language.  Every object has a type, such as ", TO "Type", ", ", TO "ZZ", "
-     (integer), ", TO "String", ", ", TO "HashTable", ", ", TO "Ring", ", ", TO "Matrix", ", ", TO "Function", ", etc.  User defined variables may
-     hold values of any type.",
+     PARA {
+	  "The Macaulay2 language is a simple yet powerful interpreted language.  Every object has a type, such as ", TO "Type", ", ", TO "ZZ", "
+	  (integer), ", TO "String", ", ", TO "HashTable", ", ", TO "Ring", ", ", TO "Matrix", ", ", TO "Function", ", etc.  User defined variables may
+	  hold values of any type."
+	  },
      
-     PARA{},
+     PARA{
+	  "The Macaulay2 language is based on expressions, which, generally speaking, are used to create new objects from old ones.
+	  Other computer languages have things called statements, but Macaulay2 does not.
+	  Other computer languages use newline characters and even indentation to indicate separate and nesting of statements, but Macaulay2 does not.
+	  Expressions in Macaulay2 include function calls, control structures (e.g., ", TO "for", " and ", TO "while", " loops), function definitions, and
+	  operator expressions.  Every expression returns an object, although the basic object ", TO "null", " is often returned if the expression is being 
+	  used only to produce some side effect."
+	  },
 
-     "Expressions in Macaulay2 include function calls, control structures (e.g., ", TO "for", " and ", TO "while", " loops), function definitions, and
-     operator expressions.  Every expression returns an object, although ", TO "null", " is often returned if the expression is being used only to
-     produce some side effect.",
+     PARA{
+	  "There is special syntax for creating and accessing strings, lists, sequences, and hashtables.  These are the key data types underlying many new
+	  types.  The Macaulay2 engine implements rings, ring elements, and matrices, as instances of low-level types, and various high-level types,
+	  visible to the user, are based on them.  Examples include ", TO "Ring", ", ", TO "RingElement", ", ", TO "Matrix", ", ", TO "Ideal", ", ", 
+	  TO "RingMap", ", ", TO "Module", ", and ", TO "ChainComplex", "."
+	  },
 
-     PARA{},
-
-     "There is special syntax for creating and accessing strings, lists, sequences, and hashtables.  These are the key data types underlying many new
-     types.  The Macaulay2 engine implements rings, ring elements, and matrices, as instances of low-level types, and various high-level types,
-     visible to the user, are based on them.  Examples include ", TO "Ring", ", ", TO "RingElement", ", ", TO "Matrix", ", ", TO "Ideal", ", ", 
-     TO "RingMap", ", ", TO "Module", ", and ", TO "ChainComplex", ".",
-
-     PARA{},
-
-     "The user can create new types of higher level mathematical objects, whose types form a hierarchy that facilitates the installation and use of
-     appropriate methods for computing with them.",
+     PARA{
+	  "The user can create new types of higher level mathematical objects, whose types form a hierarchy that facilitates the installation and use of
+	  appropriate methods for computing with them."
+	  },
 
      Subnodes => {
 	      TO "variables",
@@ -46,6 +51,8 @@ document {
 	      TO "making functions with a variable number of arguments",
 	      TO "making functions with multiple return values",
 	      TO "making new functions with optional arguments",
+	      TO "using hooks",
+	      TO "code",
 	  "classes and types",
 	      TO "what a class is",
 	      TO "installing methods",
@@ -55,6 +62,7 @@ document {
 	      TO "new",
 	      TO "printing and formatting for new classes",
 	      TO "making a new method function",
+	      TO "methods",
 	  "input and output",
 	      TO "printing to the screen",
 	      TO "reading files",
@@ -67,7 +75,8 @@ document {
 	      TO "using sockets",
      	  "packages",
 	      TO "packages",
-	      -- Mike wanted this: TO "a sample package: Quaternions",
+	      TO "creating a package",
+	      TO "writing documentation",
 	  "parallel programming ",
 	      TO "parallel programming with threads and tasks",
      	  "system facilities",
@@ -577,6 +586,172 @@ document {
      in an ", TT "if", " expression.  For a list, see ", TO "Boolean", ".  Boolean
      results may be combined with ", TO "not", ", ", TO "and", ", and ", TO "or", "."
      }
+document {
+     Key => "then",
+     Headline => "condition testing",
+     TT "then", " a keyword used with ", TO "if", ".",
+	EXAMPLE {
+		"if 5 > 4 then 8 else 7"
+		},
+	SeeAlso => {"if", "else"}
+     }
+
+document {
+     Key => "else",
+     Headline => "condition testing",
+     TT "else", " a keyword used with ", TO "if", ".",
+	EXAMPLE {
+		"if 4 > 5 then 8 else 7"
+		},
+	SeeAlso => {"if", "then"}
+     }
+document { Key => "catch",
+     Headline => "catch a thrown exception", SeeAlso => {"throw"},
+     Usage => "catch c",
+     Outputs => {{"the value obtained by evaluating the code ", TT "c", ", or, if a ", TO "throw", " was executed during the evaluation of ", TT "c", ",
+	       the argument given to ", TO "throw", "."}},
+     EXAMPLE lines ///
+          catch scan(0..10, i -> if i == 5 then throw 18 else print i)
+     ///}
+document { Key => "throw",
+     Headline => "throw an exception", SeeAlso => {"catch"},
+     Usage => "throw x", 
+     Consequences => {{"the flow of control is passed to the surrounding ", TO "catch", ", and ", TT "x", " is returned as its value"}},
+     EXAMPLE lines ///
+          catch scan(0..10, i -> if i == 5 then throw 18 else print i)
+     ///}
+document { Key => "continue",
+     Headline => "continue with the next iteration of a loop",
+     Usage => "continue x",
+     Inputs => {"x"},
+     Consequences => {
+	  {"the currently executing ", TT "list", "-clause of a ", TO "for", "-loop or ", TO "while", "-loop is 
+	       finished, and iteration continues with the ", TO "do", "-clause or the next iteration of
+	       the loop, if any.  The value ", TT "x", " is added to the list being accumulated.
+	       If ", TT "x", " is omitted, then no value is added to the list, and the statement may be used in a ", TT "do", "-clause."
+	       },
+	  {"Alternatively, as a debugger command, causes execution to be resumed, starting with the current expression."}
+	  },
+     EXAMPLE lines ///
+          for i from 1 to 4 list (continue 4; print ho) do print hi
+          for i from 1 to 4 list (continue ; 14) do print hi
+          for i from 1 to 4 list 14 do print hi
+	  i = 0 ; while i < 10 do ( i = i+1; if i == 5 then continue ; print i )
+     ///,
+     PARA {
+	  "Here is an example of the use of ", TO "continue", " in the debugger after altering a value so continuation will not cause the
+	  error to recur."
+	  },
+     EXAMPLE lines ///
+     load "Macaulay2Doc/demo1.m2"
+     code g
+     g 2
+     code f
+     x
+     x = 11
+     continue
+     ///
+     }
+document { Key => "when",
+     Headline => "a keyword",
+     "A keyword used in ", TO "for", " loops."
+     }
+document {
+     Key => "if",
+     Headline => "condition testing",
+     TT "if p then x else y", " computes ", TT "p", ", which must yield the value ", TO "true", " 
+     or ", TO "false", ".  If true, then the value of ", TT "x", " is provided,
+     else the value of ", TT "y", " is provided.",
+     PARA{},
+     TT "if p then x", " computes ", TT "p", ", which must yield the value ", TO "true", " 
+     or ", TO "false", ".  If true, then the value of ", TT "x", " is provided,
+     else ", TO "null", " is provided."
+     }
+
+document {
+     Key => "return",
+     Headline => "return from a function",
+     Usage => "return x",
+     Inputs => {
+	  "x" => {"If ", TT "x", " is omitted, then ", TO "null", " is used."} 
+	  },
+     Consequences => {
+	  {"Returns ", TT "x", " as the value of the function currently being evaluated."},
+	  {"Alternatively, as a debugger command, returns ", TT "x", " as the value of the
+	       current expression and stops execution at the next possible point, entering
+	       the debugger again."}
+	  },
+     EXAMPLE {
+	  "f = x -> (
+     if x == 3 then return;
+     if x > 3 then return x^2;
+     5);",
+	  "f 2",
+	  "f 3",
+	  "f 4"
+	  },
+     PARA {
+	  "Here is an example of the use of ", TO "return", " as a debugger command."
+	  },
+     EXAMPLE lines ///
+     load "Macaulay2Doc/demo1.m2"
+     code g
+     g 2
+     code f
+     return 1/11
+     continue
+     ///,
+     SeeAlso => { "break" }
+     }
+
+document {
+     Key => "list",
+     Headline => "loop control",
+     TT "list", " a keyword used with ", TO "while", ", and ", TO "for", "."
+     }
+
+document {
+     Key => "from",
+     Headline => "loop control",
+     TT "from", " a keyword used with ", TO "for", " and ", TO "new", "."
+     }
+
+document {
+     Key => "to",
+     Headline => "loop control",
+     TT "to", " a keyword used with ", TO "for", "."
+     }
+
+document {
+     Key => "do",
+     Headline => "loop control",
+     TT "do", " a keyword used with ", TO "while", ", and ", TO "for", "."
+     }
+
+document {
+     Key => "try",
+     Headline => "catch an error",
+     Usage => "try x then y else z",
+     Inputs => {
+	  "x" => "code",
+	  "y" => "code",
+	  "z" => "code"
+	  },
+     Consequences => {
+	  {"the code ", TT "x", " is run; if no error or ", TO "alarm", " occurs, then the code ", TT "y", " is run; otherwise, the code ", TT "z", " is run"}
+	  },
+     "The return value is the value returned by ", TT "y", " or ", TT "z", ", as the case may be.",
+     PARA{},
+     "The clause '", TT "then y", "' may be omitted, in which case the return value is the value returned by ", TT "x", ", if there is no error or alarm.",
+     PARA{},
+     "The clauses '", TT "then y else z", "' may both be omitted, in which case the return value is the value returned by ", TT "x", ", unless an error or
+     alarm occurs, in which case ", TO "null", " is returned.",
+     PARA{},
+     "The behavior of interrupts (other than alarms) is unaffected.",
+     EXAMPLE "apply(-3..3,i->try 1/i else infinity)",
+     Caveat => "We will change the behavior of this function soon so that it will be possible to catch errors of a particular type.  Meanwhile, users are
+     recommended to use this function sparingly, if at all."
+     }
 
 document {
      Key => "break",
@@ -669,77 +844,73 @@ document { Key => "in",
 
 document { Key => "for",
      Headline => "for loops",
-     Usage => "for i from m to n when p list x do z", 
-     Inputs => { "m" => ZZ, "n" => ZZ },
-     Consequences => { 
-	  {"The variable ", TT "i", " is initialized to ", TT "m", ".  As long as ", TT "i", " is not greater than ", TT "n", ", evaluation of the loop continues.  First ", TT "p", " is evaluated.  
-	       As long as the value of ", TT "p", " is true, evaluation of the loop continues.  Next ", TT "x", " is evaluated and its value is saved, and
-	       ", TT "z", " is evaluated and its value is discarded.  Then ", TT "i", " is incremented by 1, and the loop repeats.  When the value of ", TT "p", " is false,
-	       then the loop terminates, and the list of values of ", TT "x", " is returned as the value of the entire expression."
-	       }},
-     Caveat => {
-     	  "The variable ", TT "i", " is a new local variable whose scope includes only the expressions ", TT "p", ", ", TT "x", ",
-	  and ", TT "y", " in the body of the loop; moreover, new local variables defined inside the body of the loop will not
-	  be visible outside it.  The numbers ", TT "m", " and ", TT "n", " must be small integers that fit into a single word."
-	  },
-     Outputs => {{"the list of values of the clause ", TT "x", ", as desribed above"}},
+     SYNOPSIS (
+     	  Usage => "for i from m to n when p list x do z", 
+     	  Inputs => { "m" => ZZ, "n" => ZZ },
+     	  Outputs => {{"the list of values of the clause ", TT "x", ", as described above"}},
+	  Consequences => { 
+	       {"The numbers ", TT "m", " and ", TT "n", " must be small integers that fit into a single word.
+		 The variable ", TT "i", " is initialized to ", TT "m", ".  
+		 As long as ", TT "i", " is not greater than ", TT "n", ", evaluation of the loop continues.  
+		 First ", TT "p", " is evaluated;
+		 as long as the value of ", TT "p", " is true, evaluation of the loop continues.  
+		 Next ", TT "x", " is evaluated and its value is saved, and ", TT "z", " is evaluated and its value is discarded.  
+		 Then ", TT "i", " is incremented by 1, and the loop repeats. 
+		 When the value of ", TT "p", " is false, then the loop terminates, and the list of values of ", TT "x", " is returned as the value of the entire expression."
+		 }}),
      SYNOPSIS (
 	  Usage => "for i in v when p list x do z",
-	  Inputs => { "v" => BasicList },
+	  Inputs => { "v" => ofClass{BasicList, String} },
 	  Consequences => {{"The variable ", TT "i", " is set to consecutive values of the list ", TT "v", ".  First ", TT "p", " is evaluated.  
 	       As long as the value of ", TT "p", " is true, evaluation of the loop continues.  Next ", TT "x", " is evaluated, and its value is saved.  Then
 	       ", TT "z", " is evaluated and its value is discarded.  Then the loop repeats with the next element of ", TT "v", ".  When the value of ", TT "p", " is false,
 	       then the loop terminates, and the list of values of ", TT "x", " is returned as the value of the entire expression."
 	       }},
 	  ),
+     Caveat => {
+     	  "The variable ", TT "i", " is a new local variable whose scope includes only the expressions ", TT "p", ", ", TT "x", ",
+	  and ", TT "z", " in the body of the loop.  Moreover, new local variables defined inside the body of the loop will not
+	  be visible outside it."
+	  },
      SUBSECTION "examples",
      EXAMPLE lines ///
      	  for i from 1 to 5 when i < 15 list i^2 do print i
      	  for i from 1 to 5 when i^2 < 15 list i^2 do print i
      ///,
+     PARA {
+	  "The expressions in this construction may be arbitrarily complicated.
+	  Here is an example where ", TT "z", " is a sequence of expressions separated by semicolons (see ", TO ";", ")."
+	  },
+     EXAMPLE ///for i from 1 to 3 do (
+     print "The value of i is : ";
+     print i
+     )
+     ///,
      PARA { "The ", TT "do z", " clause may be omitted." },
-     EXAMPLE lines ///
-     	  for i from 1 to 5 when i < 15 list i^2
-     ///,
+     EXAMPLE "for i from 1 to 5 when i < 15 list i^2",
      PARA { "The ", TT "from m", " clause may be omitted, in which case ", TT "i", " starts with ", TT "0", "." },
-     EXAMPLE lines ///
-     	  for i to 5 when i < 15 list i^2
-     ///,
+     EXAMPLE "for i to 5 when i < 15 list i^2",
      PARA { "The ", TT "when p", " clause may be omitted." },
-     EXAMPLE lines ///
-     	  for i to 5 list i^2
-     ///,
+     EXAMPLE "for i to 5 list i^2",
      PARA { "The ", TT "to n", " clause may be omitted." },
-     EXAMPLE lines ///
-     	  for i when i < 15 list i^2
-     ///,
+     EXAMPLE "for i when i < 15 list i^2",
      PARA { "The ", TT "list x", " clause may be omitted." },
-     EXAMPLE lines ///
-     	  for i when i^2 < 15 do print i
-     ///,
+     EXAMPLE "for i when i^2 < 15 do print i",
      PARA { "If ", TO "continue", " is executed by ", TT "x", " then execution of ", TT "x", " is interrupted, no value is added to the list, and iteration of the loop
      	  continues." 
 	  },
-     EXAMPLE lines ///
-         for i from 0 when i < 10 list (if odd i then continue; i^2)
-     ///,
+     EXAMPLE "for i from 0 when i < 10 list (if odd i then continue; i^2)",
      PARA { "If ", TT "continue w", " is executed by ", TT "x", " then execution of ", TT "x", " is interrupted, the value of ", TT "w", " is added to the list, 
      	  and iteration of the loop continues."
 	  },
-     EXAMPLE lines ///
-         for i from 0 when i < 10 list (if odd i then continue 4567; i^2)
-     ///,
+     EXAMPLE "for i from 0 when i < 10 list (if odd i then continue 4567; i^2)",
      PARA { "  If ", TT "break v", " is executed by ", TT "x", ", then the loop is stopped and ", TT "v", " is returned as its value." },
-     EXAMPLE lines ///
-         for i from 0 when i < 10 list (if i== 5 then break i; i^2)
-     ///,
+     EXAMPLE lines "for i from 0 when i < 10 list (if i== 5 then break i; i^2)",
      PARA { "If ", TO "break", " is executed by ", TT "x", ", then the loop is stopped and the list accumulated so far is returned as the value." },
-     EXAMPLE lines ///
-         for i from 0 when i < 10 list (if i== 5 then break; i^2)
-     ///,
-     EXAMPLE lines ///
-          for i in 0..3 list i^2
-     ///
+     EXAMPLE "for i from 0 when i < 10 list (if i== 5 then break; i^2)",
+     EXAMPLE "for i in 0..3 list i^2",
+     PARA { "You may also iterate over strings." },
+     EXAMPLE ///for c in "foo" do print c///
      }
 
 document {
