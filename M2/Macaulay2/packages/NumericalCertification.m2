@@ -459,8 +459,6 @@ Interval/Interval := (i1,i2) -> (
        )
        )
 
-<<<<<<< HEAD
-=======
 -- substitution function. it applies one option to given polynomial.
 -- inputs are polynomial and one option such as x => I
 -- then it shows interval of polynomials obtained by switching x variable into the interval I
@@ -472,7 +470,6 @@ sub(RingElement, StringOption) := (f, o) -> (
     repc := concatenate("(",rep, ")*interval(1,1)");  -- in order to deal with the constant term, multiply the interval '[1,1]' on the whole string
     value repc -- read string
     )
->>>>>>> upstream/master
 
 
 
