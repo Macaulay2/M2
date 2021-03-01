@@ -247,21 +247,15 @@ markedPolynomialList List := L -> (
 	new MarkedPolynomialList from L
 )
 
-expression MarkedPolynomialList := L ->
-	expression apply(transpose L, t -> (
-		m := t#0;
-		f := t#1;
-		out := "(" | toString m | ")";
-		if leadCoefficient(f-m) > 0 then
-			out = out | " +";
-		if f-m != 0 then
-			return out | " " | toString(f-m)
-			else
-			return out;
-		)
-	)
-
+expression MarkedPolynomialList := L -> hold apply(transpose L, t -> (
+    m := t#0;
+    f := t#1;
+    Sum Parenthesize expression m + expression(f-m)
+    ))
 net MarkedPolynomialList := L -> net expression L
+toString MarkedPolynomialList := L -> toString expression L
+texMath MarkedPolynomialList := L -> texMath expression L
+
 
 RingMap MarkedPolynomialList := (F, L) -> L/(a-> a/F)
 
