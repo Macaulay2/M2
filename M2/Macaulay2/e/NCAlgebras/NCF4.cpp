@@ -644,10 +644,15 @@ void NCF4::processPreRow(PreRow r,
   CoeffVector coeffs = mVectorArithmetic->sparseVectorFromContainer(elem->getCoeffVector());
 
   // delete the Poly created for prevReducer case, if necessary.
-  if (preRowType == PreviousReducerPreRow) delete elem;
+  if (preRowType == PreviousReducerPreRow)
+  {
+    Poly f = *elem;
+    mFreeAlgebra.clear(f);
+    delete elem;
+  }
 
   // add the processed row to the appropriate list
-  rowsVector.emplace_back(Row {{},coeffs, columnRange, wordRange});
+  rowsVector.emplace_back(Row {coeffs, columnRange, wordRange});
 }
 
 void NCF4::processPreRow(PreRow r,
