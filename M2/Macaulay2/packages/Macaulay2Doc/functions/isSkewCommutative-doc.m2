@@ -26,7 +26,3 @@ document {
 	  ///,
      SeeAlso => {"exterior algebras"}
      }
-
-TEST "
-assert( ZZ/2 === ZZ/(4,6) )
-"

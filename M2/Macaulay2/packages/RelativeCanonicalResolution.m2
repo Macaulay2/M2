@@ -39,7 +39,7 @@ export{"getFactors",
 ---------------------------------------------------------------
 ---------------------------------------------------------------
 -- Part 1
--- some usefull functions which will be needed to construct
+-- some useful functions which will be needed to construct
 -- the canonical model, as well as the model on the scroll
 ---------------------------------------------------------------
 ---------------------------------------------------------------
@@ -158,7 +158,7 @@ undocumented { h0ab, (h0ab,ZZ,ZZ,ZZ,ZZ) }
 -- compute a balanced partition (usual n=dim Scroll and m=deg Scroll)
 
 balancedPartition = method()
-balancedPartition (ZZ,ZZ) := (n,m) -> ( -- m items list of lenth n
+balancedPartition (ZZ,ZZ) := (n,m) -> ( -- m items list of length n
       k := m%n;
       r := m//n;
       apply(k,i -> r+1)|apply(n-k,i -> r));
@@ -175,7 +175,7 @@ balancedPartition (ZZ,ZZ) := (n,m) -> ( -- m items list of lenth n
   
  -- computes a g-nodal k-gonal canonical curve canonical curve such that 
  -- the curve automatically lies on a normalized scroll of balanced type   
- -- Input: genus g, gonality k and integer n determing the characteristic p=nexPrime(n)
+ -- Input: genus g, gonality k and integer n determining the characteristic p=nexPrime(n)
  -- Output: canonical curve which lies on a normalized scroll of balanced type 
  
   canCurveWithFixedScroll = method()
@@ -869,7 +869,7 @@ doc ///
           the type of the scroll
   Outputs
        ab': List
-	    containg the bidegree in the coxring         
+	    containing the bidegree in the coxring         
   Description
      Text
        Computes integers a' and b' such that $H^0(O_{P(E)}(aH+bR))$ corresponds to basis($\{a',b'\}$,S), where S is the Cox ring of the scroll $P(E)$.

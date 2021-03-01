@@ -23,7 +23,7 @@ class AssociatedPrimes
   MonomialIdeal *ass_primes;  // Assoc. primes of minimal codim, stored
                               // in a monideal, where each monomial
                               // corresponds to a prime monomial ideal
-                              // whose generators are the variables occuring
+                              // whose generators are the variables occurring
                               // in the monomial.
   int minprime_limit;  // -1 means find all.  >= 1 means stop after that number
   int n_minprimes;  // number found so far, during associated_primes computation

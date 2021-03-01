@@ -161,3 +161,53 @@ TEST ///
   J = ideal (d,f)
   assert( saturate(I,J) == R )
 ///
+
+TEST ///
+  -- Example by Brian Harbourne, communicated by Alexandra Seceleanu
+  -- see https://github.com/Macaulay2/M2/issues/779
+  n = 2;
+  K = toField(QQ[t]/(t^2-5));
+  R = K[x_0..x_n];
+  Pts = {
+      {1,1,1},
+      {1,-1,1},
+      {-1,1,1},
+      {-1,-1,1},
+      {2+t,2+t,1},
+      {2+t,-(2+t),1},
+      {-(2+t),2+t,1},
+      {-(2+t),-(2+t),1},
+      {1,2+t,1},
+      {-1,-(2+t),1},
+      {2+t,1,1},
+      {-(2+t),-1,1},
+      {2,1+t,0},
+      {1+t,2,0},
+      {0,1,0},
+      {1,0,0}};
+  I = intersect apply(Pts, s -> (trim minors(2, vars(R) || matrix{s})))
+  assert(degree I == 16)
+  elapsedTime J = saturate((ideal I_*)^3, Strategy => GRevLex); -- ~10s
+  elapsedTime assert(degree J == 96)
+  elapsedTime J = saturate((ideal I_*)^3, Strategy => Eliminate); -- ~7s
+  elapsedTime assert(degree J == 96)
+///
+
+TEST ///
+  -- Example from https://doi.org/10.1093/imrn/rnx329, communicated by Federico Galetto
+  -- see https://github.com/Macaulay2/M2/issues/1791
+  K = toField(QQ[a] / ideal(sum apply(7, i -> a^i)))
+  R = K[x, y, z]
+  f4 = x^3*y + y^3*z + z^3*x
+  H  = jacobian transpose jacobian f4
+  f6 = -1/54 * det H
+  I  = minors(2, jacobian matrix{{f4, f6}})
+  debugLevel = 1
+  for strategy in {-*Iterate,*- Eliminate, GRevLex} do
+  assert(numgens saturate((ideal I_*)^2, Strategy => strategy) == 12)
+  -- FIXME: the Iterate strategy takes 37s and returns the wrong answer
+  -- elapsedTime assert(numgens saturate((ideal I_*)^2, Strategy => Iterate) == 12)
+  needsPackage "SymbolicPowers"
+  -- FIXME: running this line stop the debug info from being printed
+  assert(numgens symbolicPower(I, 2) == 12)
+///

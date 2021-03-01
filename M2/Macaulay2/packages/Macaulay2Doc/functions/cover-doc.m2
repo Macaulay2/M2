@@ -40,17 +40,5 @@ document {
      	  M = image matrix {{2},{0}}
 	  f = coverMap M
 	  isSurjective f
-     ///,
-     TEST ///
-     	  R = ZZ[x]
-     	  M = image map(R^2,,{{2},{0}})
-	  f = coverMap M
-	  assert isSurjective f
-	  assert ( cokernel f == 0 )
-	  -- now check it over ZZ, too!
-     	  M = image matrix {{2},{0}}
-	  f = coverMap M
-	  assert isSurjective f
-	  assert ( cokernel f == 0 )
      ///
      }

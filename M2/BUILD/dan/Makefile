@@ -1,22 +1,19 @@
 # This makefile is the start of a generic makefile that works on all systems
 
 #############################################################################
-# Variables to override on the command line:
-
-# set the compilers to use, and clear any values set by "make", which can be wrong:
-CC  =
-CXX =
-FC  =
-AR  = 
-
+# Variables that could be overridden on the command line or in a makefile that includes this one:
+#  CC
+#  CXX
+#  FC
+#  AR
 # configure script options:
-OPTIONS =
-
+#  OPTIONS
 # libraries to build:
-BUILDLIBS = 
-
+#  BUILDLIBS
 # build directory name suffix
-DIRSUFF =
+#  DIRSUFF
+
+# careful: "make" might set CC incorrectly -- the usual values are CC=cc CXX=g++
 
 #############################################################################
 # Example:

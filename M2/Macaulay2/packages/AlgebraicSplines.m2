@@ -328,7 +328,7 @@ splineMatrix(List,List,List,ZZ) := Matrix => opts -> (V,F,E,r) -> (
 		#F, j-> if (
 		    j === first i) then 1 else if (
 		    j===last i) then -1 else 0));
-	--List of forms definining interior codim one faces (raised to (r+1) power)
+	--List of forms defining interior codim one faces (raised to (r+1) power)
 	flist := formsList(V,E,r,opts);
 	T := diagonalMatrix(flist);
 	splineM := BM|T;
@@ -2286,7 +2286,7 @@ doc ///
 	    describe T --direct sum of two copies of R, one for each face; e_i corresponds to the face F_i    
 	Text
 	    As above, write $e$ for the identity of $R^k$.  Then the generators for $M$ as a sub-ring of $R^k$ are the generators of $M$ as an $R$-module (other than $e$), together with 
-	    the generators $x_0e,x_1e,\ldots,x_ne$.  The source of the map created by ringStructure(M) is a polynomial ring in variables $Y_0,\ldots,Y_n,Y_{n+1},\cdots,Y_m$, where $Y_0,\cdots,Y_n$ corresond to the 
+	    the generators $x_0e,x_1e,\ldots,x_ne$.  The source of the map created by ringStructure(M) is a polynomial ring in variables $Y_0,\ldots,Y_n,Y_{n+1},\cdots,Y_m$, where $Y_0,\cdots,Y_n$ correspond to the 
 	    generators $x_0e,\ldots,x_ne$ and $Y_{n+1},\cdots,Y_m$ correspond to the usual generators of M (except for e, if it happens to be a generator of M).
 	Example
 	    H=source phi;

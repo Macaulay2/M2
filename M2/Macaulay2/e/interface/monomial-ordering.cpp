@@ -1,17 +1,20 @@
+// TODO: there are many duplicate methods in C and C++ style in this file
+
 #include "interface/monomial-ordering.h"
 
 // TODO: remove this when to_string methods are moved together
 #include <stdio.h>
 
-#include "error.h"
+#include <vector>
+#include <string>
+#include <sstream>
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+#include "error.h"
+#include "monordering.hpp" // TODO: where can this go? it only defines one class
 
 static struct mon_part_rec_ *mo_make(enum MonomialOrdering_type type,
                                      int nvars,
-                                     int *wts)
+                                     const int *wts)
 {
   mon_part result;
   result = getmemstructtype(mon_part);
@@ -38,6 +41,334 @@ static MonomialOrdering *make_mon_order(int n)
   for (i = 0; i < n; i++) z->array[i] = NULL;
   return z;
 }
+
+static MonomialOrdering *M2_mo_offset(const MonomialOrdering *mo, int offset)
+{
+  int i, j;
+  MonomialOrdering *result = make_mon_order(mo->len);
+  for (i = 0; i < mo->len; i++)
+    {
+      mon_part p = mo->array[i];
+      if (p->type != MO_WEIGHTS)
+        result->array[i] = mo_make(p->type, p->nvars, p->wts);
+      else
+        {
+          mon_part q = mo_make(MO_WEIGHTS, offset + p->nvars, NULL);
+          q->wts = getmemvectortype(int, q->nvars);
+          for (j = 0; j < offset; j++) q->wts[j] = 0;
+          for (; j < q->nvars; j++) q->wts[j] = p->wts[j - offset];
+        }
+    }
+  return result;
+}
+
+static bool is_good(mon_part p)
+{
+  switch (p->type)
+    {
+      case MO_LEX:
+      case MO_LEX2:
+      case MO_LEX4:
+      case MO_GREVLEX:
+      case MO_GREVLEX2:
+      case MO_GREVLEX4:
+      case MO_GREVLEX_WTS:
+      case MO_GREVLEX2_WTS:
+      case MO_GREVLEX4_WTS:
+      case MO_LAURENT:
+      case MO_NC_LEX:
+      case MO_LAURENT_REVLEX:
+      case MO_REVLEX:
+      case MO_WEIGHTS:
+        return (p->nvars > 0);
+      case MO_POSITION_UP:
+      case MO_POSITION_DOWN:
+        return true;
+    }
+  return false;
+}
+
+MonomialOrdering *MonomialOrderings::Lex(int nvars)
+{
+  return rawLexMonomialOrdering(nvars, 1);
+}
+MonomialOrdering *MonomialOrderings::Lex2(int nvars)
+{
+  return rawLexMonomialOrdering(nvars, 2);
+}
+MonomialOrdering *MonomialOrderings::Lex4(int nvars)
+{
+  return rawLexMonomialOrdering(nvars, 4);
+}
+MonomialOrdering *MonomialOrderings::GRevLex(int nvars)
+{
+  std::vector<int> w;
+  for (int i = 0; i < nvars; i++) w.push_back(1);
+  return GRevLex(w);
+}
+MonomialOrdering *MonomialOrderings::GRevLex2(int nvars)
+{
+  std::vector<int> w;
+  for (int i = 0; i < nvars; i++) w.push_back(1);
+  return GRevLex2(w);
+}
+MonomialOrdering *MonomialOrderings::GRevLex4(int nvars)
+{
+  std::vector<int> w;
+  for (int i = 0; i < nvars; i++) w.push_back(1);
+  return GRevLex4(w);
+}
+MonomialOrdering *MonomialOrderings::GRevLex(const std::vector<int> &wts)
+{
+  return GRevLex(wts, 1);
+}
+MonomialOrdering *MonomialOrderings::GRevLex2(const std::vector<int> &wts)
+{
+  return GRevLex(wts, 2);
+}
+MonomialOrdering *MonomialOrderings::GRevLex4(const std::vector<int> &wts)
+{
+  return GRevLex(wts, 4);
+}
+MonomialOrdering *MonomialOrderings::RevLex(int nvars)
+{
+  return rawRevLexMonomialOrdering(nvars);
+}
+MonomialOrdering *MonomialOrderings::Weights(const std::vector<int> &wts)
+{
+  mon_part p = mo_make(MO_WEIGHTS, wts.size(), wts.data());
+  MonomialOrdering *result = make_mon_order(1);
+  result->array[0] = p;
+  return result;
+}
+MonomialOrdering *MonomialOrderings::GroupLex(int nvars)
+{
+  return rawGroupLexMonomialOrdering(nvars);
+}
+MonomialOrdering *MonomialOrderings::GroupRevLex(int nvars)
+{
+  return rawGroupRevLexMonomialOrdering(nvars);
+}
+MonomialOrdering *MonomialOrderings::PositionUp()
+{
+  return rawPositionMonomialOrdering(true);
+}
+MonomialOrdering *MonomialOrderings::PositionDown()
+{
+  return rawPositionMonomialOrdering(false);
+}
+
+MonomialOrdering *MonomialOrderings::GRevLex(const std::vector<int> &degs,
+                                             int packing)
+{
+  MonomialOrdering *result;
+  mon_part p;
+  enum MonomialOrdering_type typ;
+  const int *wts;
+  bool all_one = true;
+  for (int i = 0; i < degs.size(); i++)
+    if (degs[i] <= 0)
+      {
+        ERROR("grevlex: expected all degrees to be positive");
+        return nullptr;
+      }
+    else if (degs[i] > 1)
+      all_one = false;
+
+  if (all_one)
+    {
+      if (packing == 2)
+        typ = MO_GREVLEX2;
+      else if (packing == 4)
+        typ = MO_GREVLEX4;
+      else
+        typ = MO_GREVLEX;
+      wts = nullptr;
+    }
+  else
+    {
+      if (packing == 2)
+        typ = MO_GREVLEX2_WTS;
+      else if (packing == 4)
+        typ = MO_GREVLEX4_WTS;
+      else
+        typ = MO_GREVLEX_WTS;
+      wts = degs.data();
+    }
+
+  p = mo_make(typ, degs.size(), wts);
+  result = make_mon_order(1);
+  result->array[0] = p;
+  return result;
+}
+
+MonomialOrdering *MonomialOrderings::join(
+    const std::vector<MonomialOrdering *> &M)
+{
+  MonomialOrdering *result;
+  const MonomialOrdering *mo;
+  int i, j, sum, next;
+  int nvars_so_far = 0;
+
+  sum = 0;
+  for (i = 0; i < M.size(); i++)
+    {
+      mo = M[i];
+      for (j = 0; j < mo->len; j++)
+        if (is_good(mo->array[j])) sum++;
+    }
+
+  result = make_mon_order(sum);
+  next = 0;
+  for (i = 0; i < M.size(); i++)
+    {
+      mo = M[i];
+      for (j = 0; j < mo->len; j++)
+        {
+          mon_part p = mo->array[j];
+          if (!is_good(p)) continue;
+          if (p->type != MO_WEIGHTS)
+            nvars_so_far += p->nvars;
+          else
+            {
+              /* Shift the weights over by nvars_so_far */
+              mon_part q = mo_make(MO_WEIGHTS, nvars_so_far + p->nvars, NULL);
+              q->wts = getmemvectortype(int, q->nvars);
+              for (j = 0; j < nvars_so_far; j++) q->wts[j] = 0;
+              for (; j < q->nvars; j++) q->wts[j] = p->wts[j - nvars_so_far];
+              p = q;
+            }
+          result->array[next++] = p;
+        }
+    }
+  return result;
+}
+
+MonomialOrdering *MonomialOrderings::product(
+    const std::vector<MonomialOrdering *> &M)
+{
+  MonomialOrdering *result;
+  int i, j, sum, next, offset;
+  sum = 0;
+  for (i = 0; i < M.size(); i++) sum += M[i]->len;
+
+  result = make_mon_order(sum);
+  next = 0;
+  offset = 0;
+  for (i = 0; i < M.size(); i++)
+    {
+      int nvars = rawNumberOfVariables(M[i]);
+      MonomialOrdering *mo = M2_mo_offset(M[i], offset);
+      for (j = 0; j < mo->len; j++) result->array[next++] = mo->array[j];
+      offset += nvars;
+    }
+  return result;
+}
+
+std::ostringstream &toString(std::ostringstream &o, int len, int *p)
+{
+  o << "{";
+  for (int i = 0; i < len; i++)
+    {
+      if (i > 0) o << ",";
+      o << p[i];
+    }
+  o << "}";
+  return o;
+}
+
+std::ostringstream &ones(std::ostringstream &o, int len)
+{
+  o << "{";
+  for (int i = 0; i < len; i++)
+    {
+      if (i > 0) o << ",";
+      o << 1;
+    }
+  o << "}";
+  return o;
+}
+
+std::string MonomialOrderings::toString(const MonomialOrdering *mo)
+{
+  std::ostringstream o;
+  o << "MonomialOrder => {";
+  for (int i = 0; i < mo->len; i++)
+    {
+      mon_part p = mo->array[i];
+      bool p_ones = false;
+      if (i == 0)
+        o << "\n    ";
+      else
+        o << ",\n    ";
+      switch (p->type)
+        {
+          case MO_LEX:
+            o << "Lex => " << p->nvars;
+            break;
+          case MO_LEX2:
+            o << "LexSmall => " << p->nvars;
+            break;
+          case MO_LEX4:
+            o << "LexTiny => " << p->nvars;
+            break;
+          case MO_GREVLEX:
+            o << "GRevLex => ";
+            p_ones = true;
+            break;
+          case MO_GREVLEX2:
+            o << "GRevLexSmall => ";
+            p_ones = true;
+            break;
+          case MO_GREVLEX4:
+            o << "GRevLexTiny => ";
+            p_ones = true;
+            break;
+          case MO_GREVLEX_WTS:
+            o << "GRevLex => ";
+            break;
+          case MO_GREVLEX2_WTS:
+            o << "GRevLexSmall => ";
+            break;
+          case MO_GREVLEX4_WTS:
+            o << "GRevLexTiny => ";
+            break;
+          case MO_REVLEX:
+            o << "RevLex => " << p->nvars;
+            break;
+          case MO_WEIGHTS:
+            o << "Weights => ";
+            break;
+          case MO_LAURENT:
+            o << "GroupLex => " << p->nvars;
+            break;
+          case MO_LAURENT_REVLEX:
+            o << "GroupRevLex => " << p->nvars;
+            break;
+          case MO_NC_LEX:
+            o << "NCLex => " << p->nvars;
+            break;
+          case MO_POSITION_UP:
+            o << "Position => Up";
+            break;
+          case MO_POSITION_DOWN:
+            o << "Position => Down";
+            break;
+          default:
+            o << "UNKNOWN";
+            break;
+        }
+      if (p->wts != NULL) { ::toString(o, p->nvars, p->wts); }
+      else if (p_ones)
+        {
+          ::ones(o, p->nvars);
+        }
+    }
+  o << "\n    }";
+  return o.str();
+}
+
+///////// Below this is from monordering.h ////////////////
 
 int moIsLex(const MonomialOrdering *mo)
 {
@@ -307,52 +638,6 @@ MonomialOrdering *rawPositionMonomialOrdering(M2_bool up_or_down)
   return result;
 }
 
-static MonomialOrdering *M2_mo_offset(const MonomialOrdering *mo, int offset)
-{
-  int i, j;
-  MonomialOrdering *result = make_mon_order(mo->len);
-  for (i = 0; i < mo->len; i++)
-    {
-      mon_part p = mo->array[i];
-      if (p->type != MO_WEIGHTS)
-        result->array[i] = mo_make(p->type, p->nvars, p->wts);
-      else
-        {
-          mon_part q = mo_make(MO_WEIGHTS, offset + p->nvars, NULL);
-          q->wts = getmemvectortype(int, q->nvars);
-          for (j = 0; j < offset; j++) q->wts[j] = 0;
-          for (; j < q->nvars; j++) q->wts[j] = p->wts[j - offset];
-        }
-    }
-  return result;
-}
-
-static int is_good(mon_part p)
-{
-  switch (p->type)
-    {
-      case MO_LEX:
-      case MO_LEX2:
-      case MO_LEX4:
-      case MO_GREVLEX:
-      case MO_GREVLEX2:
-      case MO_GREVLEX4:
-      case MO_GREVLEX_WTS:
-      case MO_GREVLEX2_WTS:
-      case MO_GREVLEX4_WTS:
-      case MO_LAURENT:
-      case MO_NC_LEX:
-      case MO_LAURENT_REVLEX:
-      case MO_REVLEX:
-      case MO_WEIGHTS:
-        return (p->nvars > 0);
-      case MO_POSITION_UP:
-      case MO_POSITION_DOWN:
-        return 1;
-    }
-  return 0;
-}
-
 MonomialOrdering *rawJoinMonomialOrdering(engine_RawMonomialOrderingArray M)
 {
   MonomialOrdering *result;
@@ -535,7 +820,3 @@ M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo)
   result = M2_join(result, M2_tostring("\n    }"));
   return result;
 }
-
-#if defined(__cplusplus)
-}
-#endif

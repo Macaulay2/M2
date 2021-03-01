@@ -34,7 +34,7 @@ newPackage select((
             {Name => "Caroline Jansen", Email => "cjansen@nd.edu"},
             	{Name => "Amelia Taylor", Email => "originalbrickhouse@gmail.com"},
             {Name => "Augustine O'Keefe", Email => "aokeefe@tulane.edu"},
-            {Name => "Contributers of note: Carlos Amendola, Alex Diaz, Luis David Garcia Puente, Roser Homs Pons, Olga Kuznetsova,  Shaowei Lin, Sonja Mapes, Harshit J Motwani, Mike Stillman, Doug Torrance"}
+            {Name => "Contributors of note: Carlos Amendola, Alex Diaz, Luis David Garcia Puente, Roser Homs Pons, Olga Kuznetsova,  Shaowei Lin, Sonja Mapes, Harshit J Motwani, Mike Stillman, Doug Torrance"}
         },
         Headline => "graphs and directed graphs (digraphs)",
 	Keywords => {"Graph Theory"},
@@ -415,15 +415,29 @@ showTikZ Digraph := opt -> G -> (
      get output
      )
 
+html Digraph := G -> if G.cache#?"svg" then G.cache#"svg" else (
+     dotfilename := temporaryFileName() | ".dot";
+     writeDotFile(dotfilename, G);
+     svgfilename := temporaryFileName() | ".svg";
+     runcmd(graphs'DotBinary  | " -Tsvg " | dotfilename | " -o " | svgfilename);
+     G.cache#"svg" = get svgfilename
+     )
+
 writeDotFile = method()
-writeDotFile (String, Graph) := (filename, G) -> (
+writeDotFile (String, Graph) := (filename, G) ->
+    writeDotFileHelper(filename, G, "graph", "--")
+writeDotFile (String, Digraph) := (filename, G) ->
+    writeDotFileHelper(filename, G, "digraph", "->")
+
+writeDotFileHelper = (filename, G, type, op) -> (
     fil := openOut filename;
-    fil << "graph G {" << endl;
+    fil << type << " G {" << endl;
     V := vertexSet G;
-    scan(#V, i -> fil << "\t" | toString i | " [label=\""|toString V_i|"\"];" << endl);
-    A := adjacencyMatrix G;
-    E := flatten for i from 0 to #V - 1 list for j from i+1 to #V - 1 list if A_(i,j) == 1 or A_(j,i) == 1 then {i, j} else continue;
-    scan(E, e -> fil << "\t" | toString e_0 | " -- " | toString e_1 | ";" << endl);
+    I := hashTable apply(#V, i -> V_i => i);
+    scan(V, v -> fil << "\t" << I#v << " [label=\"" << v << "\"];" << endl);
+    E := toList \ edges G;
+    scan(E, e -> fil << "\t" << I#(e_0) << " " << op << " " << I#(e_1) << ";"
+	<< endl);
     fil << "}" << endl << close;
     )
 
@@ -727,8 +741,9 @@ chromaticNumber = method()
 chromaticNumber Graph := ZZ => G -> (
     if #edges G == 0 and #vertexSet G == 0 then 0
     else if #edges G == 0 and #vertexSet G != 0 then 1
+    else if isBipartite G then 2
     else (
-        chi := 2;
+        chi := 3;
         J := coverIdeal G;
         m := product gens ring J;
         while ((m^(chi - 1) % J^chi) != 0) do chi = chi+ 1;
@@ -1234,7 +1249,8 @@ hasOddHole = method()
 hasOddHole Graph := Boolean => G -> any(ass (coverIdeal G)^2, i -> codim i > 3)
 
 isBipartite = method()
-isBipartite Graph := Boolean => G -> chromaticNumber G <= 2
+isBipartite Graph := Boolean => G ->
+    try bipartiteColoring G then true else false
 
 isCM = method()
 isCM Graph := Boolean => G -> (
@@ -1466,7 +1482,6 @@ bipartiteColoring Graph := List => G -> (
     n := # vertexSet G;
     v := 0;
     if n == 0 then return {{},{}};
-    if not isBipartite G then error "graph must be bipartite";
     D := new MutableList from toList(n: infinity);
     while v != n do (
         uncolored := {position(toList D, i -> i == infinity)};
@@ -1481,7 +1496,8 @@ bipartiteColoring Graph := List => G -> (
                     D#y = 1 + D#x;
                     v = v + 1;
                     uncolored = append(uncolored, y);
-                    );
+                    ) else if (D#x - D#y) % 2 == 0 then
+                        error "graph must be bipartite";
                 );
             );
         );
@@ -1884,7 +1900,7 @@ doc ///
         A:Matrix
     Description
         Text
-            The adjacency matrix is the n by n matrix (where n is the number of vertices in graph/digraph G) with rows and columns indexed by the vertices of G. Entry A_(u,v) is 1 if and only if {u,v} is an edge of G and 0 otherwise. It is easy to observe that if we just use a simple graph G, then its adjacency matrix must be symmetric, but if we us a digraph, then it is not necesarrily symmetric.
+            The adjacency matrix is the n by n matrix (where n is the number of vertices in graph/digraph G) with rows and columns indexed by the vertices of G. Entry A_(u,v) is 1 if and only if {u,v} is an edge of G and 0 otherwise. It is easy to observe that if we just use a simple graph G, then its adjacency matrix must be symmetric, but if we use a digraph, then it is not necessarily symmetric.
         Example
             D = digraph({{1,2},{2,3},{3,4},{4,3}},EntryMode=>"edges");
             adjacencyMatrix D
@@ -2115,11 +2131,62 @@ doc ///
         displayGraph
 ///
 
+-- html
+doc ///
+    Key
+        (html, Digraph)
+    Headline
+        Create an .svg representation of a graph or digraph
+    Usage
+        html G
+    Inputs
+        G:Digraph
+    Description
+        Text
+            Uses graphviz to create an .svg representation of @TT "G"@,
+            which is returned as a string.
+        CannedExample
+            i2 : html completeGraph 2
+            -- running: dot -Tsvg /tmp/M2-2729721-0/0.dot -o /tmp/M2-2729721-0/1.svg
+
+            o2 = <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+                  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+                 <!-- Generated by graphviz version 2.43.0 (0)
+                  -->
+                 <!-- Title: G Pages: 1 -->
+                 <svg width="62pt" height="116pt"
+                  viewBox="0.00 0.00 62.00 116.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 112)">
+                 <title>G</title>
+                 <polygon fill="white" stroke="transparent" points="-4,4 -4,-112 58,-112 58,4 -4,4"/>
+                 <!-- 0 -->
+                 <g id="node1" class="node">
+                 <title>0</title>
+                 <ellipse fill="none" stroke="black" cx="27" cy="-90" rx="27" ry="18"/>
+                 <text text-anchor="middle" x="27" y="-86.3" font-family="Times,serif" font-size="14.00">0</text>
+                 </g>
+                 <!-- 1 -->
+                 <g id="node2" class="node">
+                 <title>1</title>
+                 <ellipse fill="none" stroke="black" cx="27" cy="-18" rx="27" ry="18"/>
+                 <text text-anchor="middle" x="27" y="-14.3" font-family="Times,serif" font-size="14.00">1</text>
+                 </g>
+                 <!-- 0&#45;&#45;1 -->
+                 <g id="edge1" class="edge">
+                 <title>0&#45;&#45;1</title>
+                 <path fill="none" stroke="black" d="M27,-71.7C27,-60.85 27,-46.92 27,-36.1"/>
+                 </g>
+                 </g>
+                 </svg>
+///
+
 -- writeDotFile
 doc ///
     Key
         writeDotFile
         (writeDotFile, String, Graph)
+        (writeDotFile, String, Digraph)
     Headline
         Writes a graph to a dot file with a specified filename
     Usage
@@ -2675,7 +2742,7 @@ doc ///
         G:Graph
     Description
         Text
-            The star graph is a special class of the general windmill graph class, in particular, it is windmill(2,n). A star graph is best visualized having one vertix in the center of a circle of other vertices.  The edge set is formed by connecting this center vertex to each of the outside vertices. The outside vertices are only connected to the center vertex.
+            The star graph is a special class of the general windmill graph class, in particular, it is windmill(2,n). A star graph is best visualized having one vertex in the center of a circle of other vertices.  The edge set is formed by connecting this center vertex to each of the outside vertices. The outside vertices are only connected to the center vertex.
         Example
             starGraph 5
     SeeAlso
@@ -3650,7 +3717,7 @@ doc ///
             the independence complex of G
     Description
         Text
-            The independece complex of a graph G is the set of all the independent sets of G.
+            The independence complex of a graph G is the set of all the independent sets of G.
         Example
             G = graph({{1,2},{2,3},{3,4},{4,5}},EntryMode=>"edges");
             independenceComplex G
@@ -4043,7 +4110,7 @@ doc ///
         L:List
     Description
         Text
-            The spectrum of a graph G is the set of the eigenvalues of the adjacency matrix A corresponding to G. For simple graphs, these eigenvalues are all real since A must be symmetric. The user should be aware that Macauly 2 does not give exact values for these eigenvalues, they are numerical approximations, but it is still a good tool to use to check if two graphs are isomorphic; isomorphic graphs share the same spectrum although the converse is not necesarrily true.
+            The spectrum of a graph G is the set of the eigenvalues of the adjacency matrix A corresponding to G. For simple graphs, these eigenvalues are all real since A must be symmetric. The user should be aware that Macaulay 2 does not give exact values for these eigenvalues, they are numerical approximations, but it is still a good tool to use to check if two graphs are isomorphic; isomorphic graphs share the same spectrum although the converse is not necessarily true.
         Example
             spectrum completeGraph 6
             spectrum graphLibrary "petersen"
@@ -4122,7 +4189,7 @@ doc ///
             whether G or D has an Eulerian trail
     Description
         Text
-            A graph has an Eulerian trail if there is a path in the graph that visits each edge exactly once.  A digraph has a Eulerian trail if tehre is a directed path in the graph that visits each edge exacly once.  An Eulerian trail is also called an Eulerian path.  Unconnected graphs can have a Eulerian trail, but all vertices of degree greater than 0 of a graph (or all vertices of degree greater than 0 in the underlying graph of a digraph) must belong to a single connected component.
+            A graph has an Eulerian trail if there is a path in the graph that visits each edge exactly once.  A digraph has a Eulerian trail if there is a directed path in the graph that visits each edge exactly once.  An Eulerian trail is also called an Eulerian path.  Unconnected graphs can have a Eulerian trail, but all vertices of degree greater than 0 of a graph (or all vertices of degree greater than 0 in the underlying graph of a digraph) must belong to a single connected component.
         Example
             G = cycleGraph 5;
             hasEulerianTrail G
@@ -4327,7 +4394,7 @@ doc ///
             whether G or D is Eulerian
     Description
         Text
-            A graph is Eulerian if it has a path in the graph that visits each vertex exactly once.  A digraph is Eulerian if it has a directed path in the graph that visits each vertex exactly once.  Such a path is called an Eulerian circut.  Unconnected graphs can be Eulerian, but all vertices of degree greater than 0 of a graph (or all vertices of degree greater than 0 in the underlying graph of a digraph) must belong to a single connected component.
+            A graph is Eulerian if it has a path in the graph that visits each vertex exactly once.  A digraph is Eulerian if it has a directed path in the graph that visits each vertex exactly once.  Such a path is called an Eulerian circuit.  Unconnected graphs can be Eulerian, but all vertices of degree greater than 0 of a graph (or all vertices of degree greater than 0 in the underlying graph of a digraph) must belong to a single connected component.
         Example
             bridges = graph ({{0,1},{0,2},{0,3},{1,3},{2,3}}, EntryMode => "edges");
             E = isEulerian bridges
@@ -5195,7 +5262,7 @@ doc ///
         (topSort, Digraph) 
 	(topSort, Digraph, String)
     Headline
-        outputs a hashtable containing orginal digraph, new digraph with vertices topologically sorted and a map from vertices of original digraph to new digraph.
+        outputs a hashtable containing original digraph, new digraph with vertices topologically sorted and a map from vertices of original digraph to new digraph.
     Usage
         topSort(D)
 	topSort(D,S)

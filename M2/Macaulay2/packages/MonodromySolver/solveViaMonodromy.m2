@@ -207,7 +207,7 @@ createSeedPair (System, Point) := o -> (P, x0) -> (
     b := transpose evaluate(GS, point matrix 0_(CC^m), x0);
     scan(m, i -> A = A | transpose evaluate(GS, point I_{i}, x0) - b);
     xp := solve(A, -b, ClosestFit => true);
-    K := numericalKernel(A, 1e-5);
+    K := numericalKernel(A);--, 1e-5);
     xh := K * random(CC^(numcols K), CC^1);
     p0 := point(xh + xp);
     if not areEqual(0, norm evaluate(GS, p0, x0)) then error "linear seeding failed residual check";

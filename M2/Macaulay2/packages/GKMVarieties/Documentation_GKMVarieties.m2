@@ -978,7 +978,7 @@ doc ///
 		flagMap
 		(flagMap, GKMVariety, GKMVariety)
 	Headline
-		creates equivariant maps bewteen generalized flag varieties
+		creates equivariant maps between generalized flag varieties
 	Usage
 		f = flagMap(X,Y)
 	Inputs
@@ -1775,7 +1775,7 @@ doc ///
 		trivialKClass
 		(trivialKClass, GKMVariety)
 	Headline
-		the equivariant K-class of the stucture sheaf
+		the equivariant K-class of the structure sheaf
 	Usage
 		trivialKClass X
 	Inputs
@@ -1850,7 +1850,7 @@ doc ///
 		Text
 			For $A$ an $r\times n$ matrix over a field and $L = \{r_1, \ldots, r_k}$ a list of integers,
 			let $M_i$ be the @TO Matroid@ defined by the columns of the matrix obtained by the first $r_i$ rows of $A$.
-			Theses matroids form a flag matroid $\mathbf M = \{M_1, \ldots, M_k\}$.
+			These matroids form a flag matroid $\mathbf M = \{M_1, \ldots, M_k\}$.
 			This method creates this @TO FlagMatroid@.
 		Example
 			A = random(QQ^2,QQ^4)

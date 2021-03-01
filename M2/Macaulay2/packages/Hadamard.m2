@@ -102,7 +102,7 @@ pointsToMatrix(List):= (PTM) ->( matrix apply(PTM, toList))
 
 hadamardPower = method()
 hadamardPower(Ideal,ZZ):=(I,r)->(
-    if r<1 then error("the second argument should be positve integre >=1");
+    if r<1 then error("the second argument should be positive integer >=1");
    NewI := I;
    for i from 1 to r-1 do NewI = hadProdOfVariety(NewI,I);
    return NewI)
@@ -110,7 +110,7 @@ hadamardPower(Ideal,ZZ):=(I,r)->(
 ---Hadamard powers of sets of points ------------
 
 hadamardPower(List,ZZ):=(L,r)->(
-    if r<1 then error("the second argument should be a positve integre >=1");
+    if r<1 then error("the second argument should be a positive integer >=1");
    NewL := L;
    for i from 1 to r-1 do NewL = hadProdListsOfPoints(NewL,L);
    return toList set NewL)

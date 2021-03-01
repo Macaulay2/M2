@@ -10,3 +10,9 @@ assert( product(3,g) == 24 )
 assert( sum(a,b,h) == 18 )
 assert( product(a,b,h) == 192 )
 
+i = <| x,y,z |>
+assert (#i == 3)
+assert (toString i == "<|x, y, z|>")
+assert (net i == "<|x, y, z|>"^0)
+assert (toList i === {x,y,z})
+assert (class i === AngleBarList)

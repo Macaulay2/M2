@@ -108,7 +108,6 @@ undocumented {
 	  (net, HypertextContainer),
 	  (net, EngineRing),
 	  (net, MapExpression),
-	  (net, MatrixDegreeExpression),
 	  (net, SheafExpression),
 	  (net, VectorExpression)
 	  }

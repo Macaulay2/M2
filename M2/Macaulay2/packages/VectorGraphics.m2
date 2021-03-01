@@ -1,11 +1,11 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "VectorGraphics",
-        Version => "0.92",
+        Version => "0.93",
         Date => "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
-                  HomePage => "http://http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
+                  HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "A package to produce SVG graphics",
 	Keywords => {"Graphics"},
         DebuggingMode => false,
@@ -205,7 +205,7 @@ viewPort1 GraphicsText := g -> (
     r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
     pp := p + vector {
 	if g#?"text-anchor" then (if g#"text-anchor" == "middle" then -0.5*r_0 else if g#"text-anchor" == "end" then -r_0 else 0) else 0,
-	if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then 0.5*r_1 else if g#"dominant-baseline" == "hanging" then -r_1 else 0) else 0
+	if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then -0.5*r_1 else if g#"dominant-baseline" == "hanging" then -r_1 else 0) else 0
 	};
     {pp,pp+r}
     )
@@ -293,7 +293,7 @@ jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
 --jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
 
-updateTransformMatrix := (g,m,p) -> ( -- (object,matrix,persepective matrix)
+updateTransformMatrix := (g,m,p) -> ( -- (object,matrix,perspective matrix)
     g.cache.CurrentMatrix = if g.?Static and g.Static then p else m; -- if static reset to perspective matrix
     if g.?TransformMatrix then g.cache.CurrentMatrix = g.cache.CurrentMatrix*g.TransformMatrix;
     )
@@ -334,7 +334,7 @@ svgLookup := hashTable { -- should be more systematic
 	apply(x, y -> y.cache.SVGElement)
 	),
     symbol TextContent => (x,m) -> x,
-    symbol HtmlContent => (x,m) -> html x
+    symbol HtmlContent => (x,m) -> x
     }
 
 svg3dLookup := hashTable { -- should be more systematic
@@ -381,6 +381,23 @@ globalAssignment GraphicsObject
 toString GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,HashTable)) g
 net GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then net getAttribute(g,ReverseDictionary) else (lookup(net,HashTable)) g
 expression GraphicsObject := hold
+short GraphicsObject := g -> (
+    if g.?SizeX then (
+	if g.?SizeY then (
+	    if g.SizeX<3.2 and g.SizeY<2 then return hold g;
+	    f := min(3.2/g.SizeX,2/g.SizeY);
+	    hold(g++{SizeX=>f*g.SizeX,SizeY=>f*g.SizeY})
+	    )
+	else (
+	    if g.SizeX<3.2 then hold g else hold(g++{SizeX=>3.2})
+	    )
+	) else (
+	if g.?SizeY then (
+	    if g.SizeY<2 then hold g else hold(g++{SizeY=>2})
+	    )
+	else hold(g++{SizeY=>2})
+	)
+    )
 
 distance1 GraphicsPoly := g -> (
     if instance(g,Path) then s := select(g.PathList, x -> instance(x,Vector)) else s = g.Points;
@@ -474,9 +491,9 @@ new SVG from GraphicsObject := (S,g) -> (
     r = { r#0-margin*rr, r#1+margin*rr }; rr = (1+2*margin)*rr;
     --
 --    tag := graphicsId();
+    classTag := "M2Svg";
     ss := SVG {
 	"preserveAspectRatio" => "none",
-	"class" => "M2Svg",
 --	"id" => tag,
 	"style" => concatenate("width:",toString g.cache.SizeX,"em;",
 	    "height:",toString g.cache.SizeY,"em;",
@@ -486,7 +503,11 @@ new SVG from GraphicsObject := (S,g) -> (
 	"viewBox" => concatenate between(" ",toString \ {r#0_0,-r#1_1,r#1_0-r#0_0,r#1_1-r#0_1}),
 	"data-pmatrix" => jsString p
 	};
-    if is3d g then ss = append(ss, "onmousedown" => "gfxMouseDown.call(this,event)");
+    if is3d g then (
+	ss = append(ss, "onmousedown" => "gfxMouseDown.call(this,event)");
+	classTag = classTag | " M2SvgClickable";
+	);
+    ss = append(ss,"class" => classTag);
     if axes =!= null then ss = append(ss, axes);
     if axeslabels =!= null then ss = append(ss, axeslabels);
     ss = append(ss,main);
@@ -995,7 +1016,7 @@ multidoc ///
   Description
    Text
     A 4x4 matrix that is applied to 3d coordinates for perspective.
-    After this tranformation, the coordinates must be up to normalization $(x,y,z,p)$
+    After this transformation, the coordinates must be up to normalization $(x,y,z,p)$
     where $(x,y,z>0)$ are coordinates in the reference frame where the observer is at the origin looking in the $z$ direction,
     and $p$ is the distance from the observer to the screen.
     One can instead provide a real number $p$, which is equivalent to placing the screen
@@ -1056,7 +1077,7 @@ multidoc ///
    An option to make a VectorGraphics object unmoving
   Description
    Text
-    The @ TO {VectorGraphics} @ 3d object is unaffected by matrix tranformations of its ancestors.
+    The @ TO {VectorGraphics} @ 3d object is unaffected by matrix transformations of its ancestors.
  Node
   Key
    linearGradient

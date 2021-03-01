@@ -7,7 +7,7 @@ one way:
                 space requirement is very small (one uint32 for a monomial, with one uint32 for the component, inside a polynomial.
     
     
-a. allow other coefficient rings.  For QQ: allow to use reals, and severl primes, and denominator size?
+a. allow other coefficient rings.  For QQ: allow to use reals, and several primes, and denominator size?
 b. allow reals as input too?
 
 In order to do that:

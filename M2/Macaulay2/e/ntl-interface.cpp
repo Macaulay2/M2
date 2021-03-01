@@ -7,7 +7,7 @@ NTL::mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrix *M)
 {
   // Creates the TRANSPOSE of M
 
-  // We asume or check that the ring is ZZ
+  // We assume or check that the ring is ZZ
 
   //  const SparseMutableMatrix *A = M->cast_to_SparseMutableMatrix();
   const MutableMatrix *A = M;

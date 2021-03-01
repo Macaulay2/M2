@@ -271,10 +271,10 @@ M2_bool rawLLL(MutableMatrix *M,
 /* Given a mutable matrix M over ZZ, and a rational number threshold, 1/4 <
    threshold <= 1, modify M so that the columns form a Lenstra-Lenstra-Lovasz
    basis of the image of (the original) M.  ASSUMPTION: (strategy=0 case)
-   the columns of M are already a a basis for the
-   lattice.  The algorithm used is that in Cohen's book on computational
-   algebraic number theory, BUT: beware of the typos in the algorithm! If there
-   is any error (interupted, M or threshold not the correct kind), then false is
+   the columns of M are already a a basis for the lattice.
+   The algorithm used is that in Cohen's book on computational algebraic
+   number theory, BUT: beware of the typos in the algorithm! If there is any
+   error (interrupted, M or threshold not the correct kind), then false is
    returned, and LLL is set to 0. If M has a column change of basis matrix
    attached, it will be modified accordingly.
 

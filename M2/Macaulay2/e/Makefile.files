@@ -6,7 +6,26 @@
 
 INTERFACE2 = interrupted
 
+#  NCAlgebras/SuffixTree \
+
 INTERFACE = \
+	myalloc \
+	matrix-ncbasis \
+	M2FreeAlgebraQuotient \
+	M2FreeAlgebra \
+	VectorArithmetic \
+	NCAlgebras/Word \
+	NCAlgebras/NCReduction \
+	NCAlgebras/FreeAlgebraQuotient \
+	NCAlgebras/FreeAlgebra \
+	NCAlgebras/FreeMonoid \
+	NCAlgebras/WordTable \
+	NCAlgebras/SuffixTree \
+	NCAlgebras/NCGroebner \
+	NCAlgebras/NCF4 \
+	NCAlgebras/OverlapTable \
+	Polynomial \
+	monomial-collection \
 	eigen \
 	monomial-sets \
 	mutablecomplex \
@@ -92,7 +111,7 @@ INTERFACE = \
 	LLL \
 	fractionfreeLU \
 	ntl-interface \
-        fplll-interface \
+	fplll-interface \
 	mat \
 	dmat \
 	coeffrings \
@@ -187,7 +206,11 @@ COMMANDS = \
 	franzi-gb \
 	franzi-interface
 
-NAMES_H = ringelem \
+NAMES_H = \
+	VectorArithmetic2 \
+	MemoryBlock \
+	NCAlgebras/Range \
+	ringelem \
 	style \
 	hash \
 	index \

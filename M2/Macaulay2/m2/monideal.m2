@@ -128,8 +128,6 @@ isMonomialIdeal Thing := x -> false
 isMonomialIdeal MonomialIdeal := (I) -> true
 isMonomialIdeal Ideal := (I) -> isPolynomialRing ring I and all(first entries generators I, r -> size r === 1 and leadCoefficient r == 1)
 
-hilbertSeries MonomialIdeal := lookup(hilbertSeries,Module)
-
 MonomialIdeal == Ideal := (I,J) -> ideal I == J
 Ideal == MonomialIdeal := (I,J) -> I == ideal J
 

@@ -25,7 +25,7 @@ class ResMonoidDense
 
   int firstvar;  // = 2, if no weight vector, otherwise 2 + nweights
   int nweights;  // number of weight vector values placed.  These should all be
-                 // positve values?
+                 // positive values?
 
   // flattened array 0..nweights of array 0..nvars-1 of longs
   std::vector<int> weight_vectors;

@@ -30,6 +30,8 @@ add_compile_options(
   -Wall -Wextra -Wfatal-errors -Wcast-qual # -Werror
   -Wno-unused-parameter # FIXME: caused by c/chk.c:244:40 and every scc1 generated file
   -Wno-attributes # caused by SIMD unpack functions in fflas-ffpack
+  # caused by unnecessary openmp linker flags due to fflas_ffpack dependency
+  $<$<CXX_COMPILER_ID:AppleClang,Clang>:-Wno-unused-command-line-argument>
   )
 
 ###############################################################################
@@ -44,7 +46,6 @@ add_subdirectory(bin) # combine with engine or interpreter?
 add_subdirectory(m2) # rename to Core?
 add_subdirectory(packages)
 add_subdirectory(editors)
-#add_subdirectory(book) # separate repository?
 
 if(BUILD_TESTING)
   add_subdirectory(tests)

@@ -134,19 +134,3 @@ document {
 	  },
      SeeAlso => {GroebnerBasis, gb,  genericSymmetricMatrix, minors}
      }
-
-TEST "
-R = ZZ/101[a..d,MonomialOrder => Position => Up]
-f = matrix{{a,b},{c,d}}
-h = matrix {{1,0,0},{0,c,d}}
-M = subquotient(h,f)
-assert( mingens M == matrix (R, {{1},{0}}))
-"
-
-TEST "
-R = ZZ/101[a..d,MonomialOrder => Position => Up]
-f = matrix{{a,b},{c,d}}
-h = matrix {{1,0,0},{0,c,d}}
-M = subquotient(h,f)
-assert( generators trim M == matrix (R, {{1},{0}}))
-"

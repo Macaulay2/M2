@@ -20,12 +20,6 @@ lastabout := null
 
 authorDefaults    := new HashTable from { Name => "Anonymous", Email => null, HomePage => null }
 
-noBriefDocThings  := new HashTable from {
-    symbol<  => true,
-    symbol>  => true,
-    symbol== => true
-    }
-
 binary   := set flexibleBinaryOperators
 prefix   := set flexiblePrefixOperators
 postfix  := set flexiblePostfixOperators
@@ -35,7 +29,7 @@ operator := binary + prefix + postfix
 -- Local utilities
 -----------------------------------------------------------------------------
 
--- used by help and viewHelp
+-- used by help, viewHelp, and infoHelp
 seeAbout := (f, i) -> (
     if     lastabout === null then error "no previous 'about' response";
     if not lastabout#?i       then error("previous 'about' response contains no entry numbered ", i);
@@ -59,7 +53,7 @@ optTO := key -> (
 	ref := if match("\\\\", fkey) then concatenate("/// ", fkey, " ///") else format fkey;
 	-- TODO: figure out how to align the lists using padding
 	-- ref = pad(ref, printWidth // 4);
-	(format ptag, fkey, next(), fixup if currentHelpTag === ptag then ref else SPAN {TT ref, " -- see ", TOH{ptag}}))
+	(format ptag, fkey, next(), fixup if currentHelpTag === ptag then TT ref else SPAN {TT ref, " -- see ", TOH{ptag}}))
     -- need an alternative here for secondary tags such as (export,Symbol)
     else (fkey, fkey, next(), TOH{tag}))
 -- this isn't different yet, work on it!
@@ -199,25 +193,17 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
     -- authors
     au := pkg.Options.Authors;
     -- exported symbols
+    -- TODO: this misses exported symbols from Macaulay2Doc; is this intentional?
     e := toSequence pkg#"exported symbols";
     -- functions and commands
     a := select(e, x -> instance(value x, Function) or instance(value x, Command));
     -- types
     b := select(e, x -> instance(value x, Type));
     -- methods
-    m := unique flatten for T in b list (
-	for i in keys value T list (
-	    if (instance(i, Sequence)
-		and #i > 1 and (
-		    instance(i#0, Symbol) and i#1 =!= symbol= or
-		    instance(i#0, Function))
-		and isDocumentableMethod i)       then  i
-	    else
-	    if (instance(i, Keyword) or
-		instance(i, Function) or
-		instance(i, ScriptedFunctor))
-	    and isDocumentableMethod (i, value T) then (i, value T)
-	    else continue));
+    -- TODO: if a package introduces a methods where all components are from
+    -- another package, e.g. (res, List), this code will miss it.
+    -- TODO: should we limit to methods that have individual documentation? Probably not
+    m := unique select(flatten \\ documentableMethods \ value \ toList e, x -> package x === pkg);
     -- symbols
     c := select(e, x -> instance(value x, Symbol));
     -- other things
@@ -302,7 +288,7 @@ getOperator := key -> if operator#?key then (
 	))
 
 -- TODO: expand this
-getTechnical := (S, s) -> DIV ( "class" => "waystouse",
+getTechnical := (S, s) -> DIV nonnull ( "class" => "waystouse",
     SUBSECTION "For the programmer",
     fixup PARA deepSplice {
 	"The object ", TO S, " is ", ofClass class s,
@@ -318,6 +304,10 @@ getTechnical := (S, s) -> DIV ( "class" => "waystouse",
 -----------------------------------------------------------------------------
 
 getOption := (rawdoc, tag) -> if rawdoc =!= null and rawdoc#?tag then rawdoc#tag
+
+headline = method(Dispatch => Thing)
+headline Thing := key -> getOption(fetchRawDocumentationNoLoad makeDocumentTag key, Headline)
+headline DocumentTag := tag -> getOption(fetchRawDocumentation getPrimaryTag tag, Headline)
 
 -- Compare with SYNOPSIS in document.m2
 getSynopsis := (key, tag, rawdoc) -> (
@@ -364,13 +354,10 @@ getDescription := (key, tag, rawdoc) -> (
 -- This is the overall template of a documentation page
 -- for specialized templates, see documentationValue above
 getBody := (key, tag, rawdoc) -> (
-    if tag === null or rawdoc === null
-    then printerr("warning: there is no documentation for ", formatDocumentTag key);
     currentHelpTag = tag;
     result := fixup DIV nonnull splice (
-	HEADER1{ formatDocumentTag key,
-	    if (title    :=    headline key              ) =!= null then " -- ", title },
-	(   if (synopsis := getSynopsis(key, tag, rawdoc)) =!= null then DIV { SUBSECTION "Synopsis", synopsis } ),
+	HEADER1{ formatDocumentTag key, commentize getOption(rawdoc, Headline) },
+	if (synopsis := getSynopsis(key, tag, rawdoc)) =!= null then DIV { SUBSECTION "Synopsis", synopsis },
 	getDescription(key, tag, rawdoc),
 	if instance(key, Array) then getDefaultOptions(key#0, key#1),
 	getOption(rawdoc, Acknowledgement),
@@ -407,6 +394,7 @@ help String := key -> (
 -- Methods
 help Sequence := key -> (
     if key === () then return if inDebugger then debuggerUsageMessage else help "initial help";
+    -- TODO: make this work with hook strategies; e.g. (foo, ZZ, Strategy => Default)
     if lookup key === null then error("expected ", toString key, " to be a method");
     rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
     tag := getOption(rawdoc, symbol DocumentTag);
@@ -426,7 +414,7 @@ help Symbol := key -> (
     getBody(key, tag, rawdoc))
 
 help DocumentTag := tag -> help tag.Key
-help Thing := x -> if hasAttribute(x, ReverseDictionary) then help getAttribute(x, ReverseDictionary) else error "no documentation found"
+help Thing := x -> help makeDocumentTag x
 help List  := l -> DIV between(HR{}, help \ l)
 help ZZ    := i -> seeAbout(help, i)
 
@@ -455,34 +443,67 @@ viewHelp Thing  := key -> (
         else error("missing documentation index: ", frontpage, ". Run makePackageIndex() or start M2 without -q"))
     else viewHelp makeDocumentTag key)
 viewHelp DocumentTag := tag -> (
-    tag = getOption(fetchAnyRawDocumentation tag, symbol DocumentTag);
-    docpage := concatenate htmlFilename tag;
-    if fileExists docpage then show URL { docpage } else show help tag)
+    rawdoc := fetchAnyRawDocumentation tag;
+    if ( tag' := getOption(rawdoc, symbol DocumentTag) ) =!= null
+    and fileExists( docpage := concatenate htmlFilename tag' )
+    then show URL { docpage } else show help tag)
 viewHelp ZZ := i -> seeAbout(viewHelp, i)
 
 viewHelp = new Command from viewHelp
 -- This ensures that "methods viewHelp" and "?viewHelp" work as expected
 setAttribute(viewHelp#0, ReverseDictionary, symbol viewHelp)
 
-infoHelp = key -> (
-    tag := makeDocumentTag(key, Package => null);
-    chkrun ("info " | format infoTagConvert tag);)
+makeInfo := tag -> (
+    infoFile := temporaryDirectory() | toFilename format tag | ".info";
+    infoFile << "\037" << endl <<
+	"Node: Top, Up: (Macaulay2Doc)Top" << endl << endl <<
+	info help tag << endl << close;
+    infoFile
+)
+
+infoHelp = method(Dispatch => Thing)
+infoHelp Thing := key -> (
+    if key === () then infoHelp "Macaulay2Doc"
+    else infoHelp makeDocumentTag key)
+infoHelp DocumentTag := tag -> (
+    rawdoc := fetchAnyRawDocumentation tag;
+    tag' := getOption(rawdoc, symbol DocumentTag);
+    infoTag := if tag' =!= null then infoTagConvert tag' else makeInfo tag;
+    if getenv "INSIDE_EMACS" == "" then chkrun ("info " | format infoTag)
+    -- used by M2-info-help in M2.el
+    else print("-*" | " infoHelp: " | infoTag | " *-")
+)
+infoHelp ZZ := i -> seeAbout(infoHelp, i)
+infoHelp = new Command from infoHelp
+-- This ensures that "methods infoHelp" and "?infoHelp" work as expected
+setAttribute(infoHelp#0, ReverseDictionary, symbol infoHelp)
 
 -----------------------------------------------------------------------------
 -- View brief documentation within Macaulay2 using symbol?
 -----------------------------------------------------------------------------
+-- TODO: should this return a hypertext object instead of printing?
 briefDocumentation = method(Dispatch => Thing)
 briefDocumentation VisibleList := key -> null
 briefDocumentation Thing       := key -> (
-    if noBriefDocThings#?key or not isDocumentableThing key then return;
+    if not isDocumentableThing key
+    then return if hasAttribute(key, ReverseDictionary) then (
+	S := getAttribute(key, ReverseDictionary);
+	-- TODO: use either "formation" to enhance the result
+	-- or enhance "describe" or "getTechnical" using "formation"
+	<< endl << S << " := " << describe key << endl;
+	<< endl << getTechnical(S, key) << endl;);
     rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
+    -- TODO: should it be getGlobalSymbol or getAttribute?
+    symb := getGlobalSymbol toString key;
     tag := getOption(rawdoc, symbol DocumentTag);
-    -- TODO: when is this not null
+    title := getOption(rawdoc, Headline);
     synopsis := getSynopsis(key, tag, rawdoc);
-    if synopsis =!= null then << endl << synopsis << endl
-    else if (title := headline key) =!= null then << endl << key << commentize title << endl;
-    synopsis = documentationValue(getGlobalSymbol toString key, key);
-    if synopsis =!= null then << endl << synopsis << endl;)
+    waystouse := documentationValue(symb, key);
+    technical := getTechnical(symb, key);
+    if title     =!= null then << endl << key << commentize title << endl;
+    if synopsis  =!= null then << endl << synopsis << endl;
+    if waystouse =!= null then << endl << waystouse << endl;
+    if technical =!= null then << endl << technical << endl;)
 
 ? ScriptedFunctor :=
 ? Function :=
@@ -490,6 +511,7 @@ briefDocumentation Thing       := key -> (
 ? Keyword  :=
 ? Package  :=
 ? Symbol   :=
+? Thing    := -- TODO: does this interfere with anything?
 ? Type     := briefDocumentation
 
 -----------------------------------------------------------------------------

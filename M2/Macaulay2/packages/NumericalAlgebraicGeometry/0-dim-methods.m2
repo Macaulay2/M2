@@ -118,7 +118,7 @@ solveSystem PolySystem := List => o -> P -> (
 
 totalDegreeStartSystem = method(TypicalValue => Sequence)
 totalDegreeStartSystem List := Sequence => T -> (
--- contructs a total degree start system and its solutions 
+-- constructs a total degree start system and its solutions 
 -- for the given target system T
 -- IN:  T = list of polynomials 
 -- OUT: (S,solsS}, where 

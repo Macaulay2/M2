@@ -116,7 +116,7 @@ precookPieriHomotopy(Sequence,List,List) := (kn,l,m)->(
      d := (k*(n-k)-sum(l)-sum(m));
      S := FFF[vars(53..d+52)];
      T:= apply(#m, i->n-k+i-m#i);
-     -- P is a list with the indeces where the special flag has ones
+     -- P is a list with the indices where the special flag has ones
      P:=toList(set toList(0..n-1)-T);
      G:=mutableMatrix(S,n-k,n);
      apply(#P, j->G_(j,P#j)=1);

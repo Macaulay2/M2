@@ -74,7 +74,7 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
      
      -- M2 (main code)  --------------------------------------------------------     
      setupStartTime := currentTime();
-     -- threshholds and other tuning parameters (should include most of them as options)
+     -- thresholds and other tuning parameters (should include most of them as options)
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
      theSmallestNumber := 1e-12;
      

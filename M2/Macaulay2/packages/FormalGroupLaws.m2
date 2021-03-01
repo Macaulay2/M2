@@ -316,7 +316,7 @@ universalFGL(ZZ,String,String,String) := (n,s,u,v) ->
 
 --compute logarithm of a formal group law if the coefficient ring is a Q-algebra.
 
---The rest of the file is documention.
+--The rest of the file is documentation.
 
 beginDocumentation()
 

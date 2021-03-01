@@ -383,7 +383,7 @@ singLocus Module := M -> (
      I2 := W.WAtoCA ideal W.dpairVars#1;
      -- do the saturation
      SatI := saturate(I1, I2);
-     -- set up an auxilary ring to perform intersection
+     -- set up an auxiliary ring to perform intersection
      tempCA := (coefficientRing W)(monoid [W.dpairVars#1, W.dpairVars#0, 
           MonomialOrder => Eliminate (#W.dpairInds#1)]);
      newInds := inversePermutation join(W.dpairInds#1, W.dpairInds#0);

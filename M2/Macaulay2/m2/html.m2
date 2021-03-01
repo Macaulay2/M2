@@ -3,6 +3,7 @@
 -- html output
 -----------------------------------------------------------------------------
 
+-- TODO: unify the definition of the tex macros so book/M2book.tex can use them
 KaTeX := () -> (
     katexPath := locateCorePackageFileRelative("Style",
 	layout -> replace("PKG", "Style", layout#"package") | "katex", installPrefix, htmlDirectory);
@@ -13,8 +14,6 @@ KaTeX := () -> (
     <script defer="defer" type="text/javascript">
       var macros = {
           "\\break": "\\\\",
-          "\\R": "\\mathbb{R}",
-          "\\C": "\\mathbb{C}",
           "\\ZZ": "\\mathbb{Z}",
           "\\NN": "\\mathbb{N}",
           "\\QQ": "\\mathbb{Q}",
@@ -26,9 +25,9 @@ KaTeX := () -> (
           { left: "\\[", right: "\\]", display: true},
           { left: "$",   right: "$",   display: false},
           { left: "\\(", right: "\\)", display: false}
-      ];
+      ], ignoredTags = ["tt", "script", "noscript", "style", "textarea", "pre", "code", "option"];
       document.addEventListener("DOMContentLoaded", function() {
-        renderMathInElement(document.body, { delimiters: delimiters, macros: macros, trust: true });
+        renderMathInElement(document.body, { delimiters: delimiters, macros: macros, ignoredTags: ignoredTags, trust: true });
       });
     </script>
     <style type="text/css">.katex { font-size: 1em; }</style>
@@ -129,11 +128,18 @@ html HTML := x -> demark(newline, {
 treatImgSrc := x -> apply(x, y -> if class y === Option and y#0 === "src" then "src" => toURL y#1 else y)
 html IMG := (lookup(html, IMG)) @@ treatImgSrc
 
-fixNewlines := x -> apply(x, y -> if class y === String then replace("\r\n","\n",y) else y)
-html PRE := (lookup(html, PRE)) @@ fixNewlines
+fixNewLines := method()
+fixNewLines Hypertext :=
+fixNewLines Nothing :=
+fixNewLines Option := identity
+fixNewLines Thing := x -> replace("\r\n","\n",toString x)
+-- non HTML types should *not* be KaTeX-ified inside these tags:
+html PRE :=
+html TT :=
+html CODE := (lookup(html, Hypertext)) @@ (x -> apply(x,fixNewLines))
 
-html CDATA   := x -> concatenate("<![CDATA[",x,"]]>")
-html COMMENT := x -> concatenate("<!--",x,"-->")
+html CDATA   := x -> concatenate("<![CDATA[", x ,"]]>", newline)
+html COMMENT := x -> concatenate("<!--", x, "-->", newline)
 
 html HREF := x -> (
      r := concatenate apply(splice if #x > 1 then drop(x, 1) else x, html1);
@@ -161,10 +167,10 @@ html Thing := htmlLiteral @@ tex -- by default, we use tex (as opposed to actual
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 html Net := n -> concatenate("<pre style=\"display:inline-table;text-align:left;vertical-align:",
-    toString(if height n+depth n>0 then 100*(height n-1) else 0), "%\">\n", -- the % is relative to line-height
+    toString(if #n>0 then 100*(height n-1) else 0), "%\">\n", -- the % is relative to line-height
     apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre>")
 html String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x,
-    if #x>0 and last x === "\n" then " " else "", -- fix for html ignoring trailing \n
+    if #x>0 and last x === "\n" then "\n" else "", -- fix for html ignoring trailing \n
     "</pre>")
 html Descent := x -> concatenate("<span style=\"display:inline-table;text-align:left\">\n", apply(sortByName pairs x,
      (k,v) -> (

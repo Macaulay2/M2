@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 1508845116
+-- -*- M2-comint -*- hash: 550263158
 
 i1 : stdio<< "Schubert problem (2,1)^3 in Gr(3,6)"<<endl;
 Schubert problem (2,1)^3 in Gr(3,6)
@@ -11,8 +11,8 @@ i5 : l2={2,1};
 
 i6 : l3={2,1};
 
-i7 : stdio<<"Generate flags F: standard flag, oposite flag, and one random"<<endl;
-Generate flags F: standard flag, oposite flag, and one random
+i7 : stdio<<"Generate flags F: standard flag, opposite flag, and one random"<<endl;
+Generate flags F: standard flag, opposite flag, and one random
 
 i8 : F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
 

@@ -28,6 +28,7 @@ toString BasicList := s -> concatenate(
      "{", between(", ",apply(toList s,toStringn)), "}"
      )
 toString Array := s -> concatenate ( "[", between(", ",toStringn \ toList s), "]" )
+toString AngleBarList := s -> concatenate ( "<|", between(", ",toStringn \ toList s), "|>" )
 toString Sequence := s -> (
      if # s === 1 then concatenate("1 : (",toString s#0,")")
      else concatenate("(",between(",",toStringn \ s),")")
@@ -66,7 +67,9 @@ toString Manipulator := f -> (
 toExternalString String := format
 
 toString Net := x -> demark("\n",unstack x)
-toExternalString Net := x -> concatenate(format toString x, "^", toString(height x - 1))
+toExternalString Net := x -> if height x + depth x == 0 then
+     concatenate("(horizontalJoin())", "^", toString height x) else
+     concatenate(format toString x, "^", toString(height x - 1))
 
 toExternalString MutableHashTable := s -> (
      if hasAttribute(s,ReverseDictionary) then return toString getAttribute(s,ReverseDictionary);
@@ -165,6 +168,10 @@ net Array := x -> horizontalJoin deepSplice (
      "[",
      toSequence between(comma,apply(x,netn)),
      "]")
+net AngleBarList := x -> horizontalJoin deepSplice (
+     "<|",
+     toSequence between(comma,apply(x,netn)),
+     "|>")
 net BasicList := x -> horizontalJoin deepSplice (
       net class x, 
       "{",
@@ -262,7 +269,9 @@ commentize = method(Dispatch => Thing)
 commentize Nothing   := s -> ""
 commentize BasicList := s -> commentize horizontalJoin s
 commentize String    := s -> concatenate(" -- ", between("\n -- ", separate s))
-commentize Net       := S -> stack(commentize \ unstack S)
+commentize Net       := S -> (
+    baseline := height S - if height S == -depth S then 0 else 1;
+    (stack(commentize \ unstack S))^baseline)
 
 printerr = msg -> (stderr << commentize msg << endl;) -- always return null
 warning  = msg -> if debugLevel > 0 then (

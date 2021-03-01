@@ -13,7 +13,7 @@ primaryDecompositionGTZ Ideal := (I) -> (
      -- compute codimension
      -- handle some specific cases
      -- switch to lex order
-     -- compute independent sets, maybe alot of them
+     -- compute independent sets, maybe a lot of them
      primarycomps := {};
      primecomps := {};
      -- loop thru these sets, until ...
