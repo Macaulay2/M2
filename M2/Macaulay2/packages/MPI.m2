@@ -21,5 +21,6 @@ Core functions:
 Perhaps:
 * broadcast a string to all workers
 * "spawn" new workers
+* make workers prepend error messages (or anything that goes to stdin/stderr) with their ID. 
  
 *-

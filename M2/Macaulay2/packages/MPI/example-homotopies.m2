@@ -1,5 +1,5 @@
 -* 
-mpirun -np 4 ./M2 --script MPI/example2.m2
+mpirun -np 4 ./M2 --script MPI/example-homotopies.m2
 *-
 
 debug Core
@@ -8,8 +8,12 @@ myID = myProcessNumber()
 nWorkers = numberOfProcesses() - 1
 
 broadcast = method()
-broadcast String := List => (str) -> (
+broadcast String := List => s -> for i from 1 to nWorkers do (
+    sendString(s,i);
+    receiveString i;
     )
+
+needsPackage "NumericalAlgebraicGeometry"; -- can't do locally???
 if myID!=master then (
     notDone := true;
     while notDone do (
@@ -19,48 +23,26 @@ if myID!=master then (
         r := value s;
         << "-- " << myID << " result: " << r << endl;
         sendString(toString r, master)
-     )) else (
-
-     for i from 1 to nWorkers do (
-         sendString(///needsPackage "NumericalAlgebraicGeometry"///, i);
-         receiveString i;
-         );
-     R = CC[x_1..x_10];
-     S = for i from 1 to 10 list x_i^2-1;
-     T = for i from 1 to 10 list random(2, R) + random(1, R) - 1;
-     
-
-ringStr = "R = CC[x_1..x_10];";
-startSysStr = "S = for i from 1 to 10 list x_i^2-1;";
-actualSysStr = "T = for i from 1 to 10 list random(2, R) + random(1, R) - 1"
-S = {x^2-1,y^2-1};
-T = {x^2+y^2-1, x*y};
-
-
-
-    -- write the code for master below
-    -- broadcast the ring:
-    sendString("R = ZZ/101[a..d];", 1);
-    sendString("R = ZZ/101[a..d];", 2);
-    sendString("R = ZZ/101[a..d];", 3);
-    
-    << "from 1: " << receiveString 1 << endl;
-    << "from 2: " << receiveString 2 << endl;
-    << "from 3: " << receiveString 3 << endl;
-
-    sendString("gens gb ideal random(R^1, R^{-2,-2,-2,-2})", 1);
-    sendString("gens gb ideal random(R^1, R^{-2,-2,-2,-2})", 2);
-    sendString("gens gb ideal random(R^1, R^{-2,-2,-2,-2})", 3);
-    
-    << "from 1: " << receiveString 1 << endl;
-    << "from 2: " << receiveString 2 << endl;
-    << "from 3: " << receiveString 3 << endl;
-
-    sendString("end",1);
-    sendString("end",2);
-    sendString("end",3);
-
-    sleep 1
-    )
+     	)
+    ) else (
+    --broadcast ///needsPackage "NumericalAlgebraicGeometry"///;
+    n = 4;
+    R = CC[x_1..x_n];    
+    broadcast ("n = " | toString n | "; R = CC[x_1..x_n]");
+    T = for i from 1 to n list random(2, R) + random(1, R) - 1;
+    (S,solsS) = totalDegreeStartSystem T;
+    broadcast("S = "|toString S); 
+    broadcast("T = "|toString T); 
+    blockSize = #solsS//nWorkers + 1;
+    for i from 1 to nWorkers do 
+    sendString("coordinates\\track(S,T,"|toString\\coordinates\take(solsS,{(i-1)*blockSize, min(i*blockSize-1,#solsS-1)})|")", i);
+    solsT = flatten for i from 1 to nWorkers list value receiveString i;
+    sleep 1;
+    << "master: received " << # solsT << " solutions" << endl << endl;
+    << netList solsT << endl;
+    sleep 1;
+    broadcast "end";
+    sleep 2;
+    );
 end--
 
