@@ -349,6 +349,7 @@ addHook((trim, Module), Strategy => Local, (opts, M) ->
 -- (symbol//, Matrix, Matrix)
 -- Caution: this method is only correct when f = g * (f//g),
 --          otherwise may not be the correct reduction of f modulo image of g
+-- TODO: implement 'remainder', then improve this
 -- Here is the algorithm:
 --   Given two matrices F = [f1 ... fn], G = [g1 ... gm] with the same target,
 --   we wish to computer F // G such that F = G * (F // G).
@@ -363,17 +364,19 @@ addHook((quotient, Matrix, Matrix), Strategy => Local, (opts, f, g) -> (
     RP := ring f;
     if instance(RP, LocalRing) then (
 	-- TODO: is there an option for syz to return a column reduced matrix?
-        G := mutableMatrix promote(syz liftUp(f | g), RP);
+        -- G := mutableMatrix syz(f | g);
         mat := for i from 0 to numColumns f - 1 list (
             C := f_{i};
-            n := scan(numColumns G, j -> if isUnit G_(i,j) then break j);
+            -- TODO: figure out how to only compute syzygy once
+            G := mutableMatrix syz(f_{i} | g);
+            n := scan(numColumns G, j -> if isUnit G_(0,j) then break j);
             if n === null then 0_(source g) else (
-		u := -G_(i, n)^-1;
-                C = u * matrix submatrix(G, {numColumns f..numRows G-1}, {n});
-		-- TODO: why doesn't syz return a column reduced G?
-		scan(n+1 .. numColumns G-1, j -> columnAdd(G, j, u * G_(i,j), n));
-		-- TODO: is this step necessary? simplify above and remove this
-                G = submatrix(G, ,{0..n-1, n+1..numColumns G-1});
+                u := -G_(0, n)^-1;
+                C = u * matrix submatrix(G, {1..numRows G-1}, {n});
+                -- TODO: why doesn't syz return a column reduced G?
+                -- scan(n+1 .. numColumns G-1, j -> columnAdd(G, j, u * G_(i,j), n));
+                -- TODO: is this step necessary? simplify above and remove this
+                -- G = submatrix(G, ,{0..n-1, n+1..numColumns G-1});
                 C_0));
         m := if #mat == 0 then 0_RP else raw matrix mat;
         map(source g, source f, m,

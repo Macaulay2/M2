@@ -158,7 +158,7 @@ TEST ///
   assert(m1 * m2 == 0)
 ///
 
-TEST ///
+TEST /// -- testing quotient of non-factorable matrices
   R = ZZ/32003[vars(0..4)]
   P = ideal"a,b,c,d";
   RP = localRing(R, P);
@@ -168,7 +168,9 @@ TEST ///
   h = subquotient(f, g)
   assert(image mingens liftUp h == liftUp image mingens h)
   assert(image(RP ** mingens liftUp h) == image mingens h)
-  assert(mingens h == mingens image (f - g * (f // g)))
+  -- f does not factor through g, but we should get an answer so that
+  -- f = g * (f // g) + r where r = remainder(f, g)
+  assert(prune h == prune image (f - g * (f // g)))
   assert(liftUp f // liftUp g - liftUp (f // g) == 0)
 
   f = transpose matrix{{e*a, 0, e*c}, {0, b, 0}}
@@ -187,10 +189,8 @@ TEST /// -- chain homotopy over local rings
 	      x^2*y-12373*x^2-8521*y^2,
 	      x*y^2+5019*x*y+3216*y^2-13233*z^2+3723*x,
 	      13424*x^2*y+936*x*y^2+10667*y*z^2+14913*x^2-8521*x*y-15541*y^2-12289*x}})
-  -- FIXME: why doesn't this work?
-  F = res J
-  F = chainComplex { gens J, syz gens J, syz syz gens J }
 
+  F = chainComplex { gens J, syz gens J, syz syz gens J }
   f0 = J_0
   s0 = map(R^1, 0, 0)
   -- TODO: how to make a chain complex map from this?
@@ -201,6 +201,16 @@ TEST /// -- chain homotopy over local rings
       s0 = s)
   -- TODO: this should work:
   -- extend(F, F, f0 * id_(F_0))
+
+  F = res J
+  f0 = J_0
+  s0 = map(R^1, 0, 0)
+  -- TODO: how to make a chain complex map from this?
+  L = for i to 3 list (
+      phi = map(F_i, F_i, f0 * id_(F_i));
+      s = (phi - s0 * F.dd_i) // F.dd_(i + 1);
+      assert(F.dd_(i + 1) * s == phi - s0 * F.dd_i);
+      s0 = s)
 ///
 
 TEST ///
