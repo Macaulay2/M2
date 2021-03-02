@@ -349,6 +349,7 @@ ring_elem NCF4::getCoeffOfMonom(const Poly& f, const Monom& m) const
   return freeAlgebra().coefficientRing()->zero();
 }
 
+// this function is not used currently
 void NCF4::autoreduceByLastElement()
 {
   if (mGroebner.size() <= 1) return;
@@ -1031,6 +1032,8 @@ void NCF4::reduceF4Matrix()
                 mRows[i-1].columnIndices[0],
                 numCancellations,
                 denseVector);
+
+  mVectorArithmetic->deallocateCoeffVector(denseVector);
 
   //std::cout << "Number of cancellations: " << numCancellations << std::endl;
 }
