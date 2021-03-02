@@ -33,7 +33,6 @@ NCF4::NCF4(const FreeAlgebra& A,
       mMonomHashEqual(A.monoid()),
       mColumnMonomials(10,mMonomHash,mMonomHashEqual),
       mPreviousColumnMonomials(10,mMonomHash,mMonomHashEqual),
-//      mVectorArithmetic(vectorArithmetic(A.coefficientRing())),
       mVectorArithmetic(new VectorArithmetic(A.coefficientRing())),
       mIsParallel(isParallel)
 {
@@ -159,7 +158,7 @@ void NCF4::processPreviousF4Matrix()
     if (mRows[i].columnIndices.size() == 0) continue;
     int newReducerCol = mRows[i].columnIndices[0];
     mColumns[newReducerCol].pivotRow = i;
-    mPreviousColumnMonomials[mColumns[newReducerCol].word].second = i;
+    mColumnMonomials[mColumns[newReducerCol].word].second = i;
   } 
   
   // copy the finished rows and columns into the holding areas
@@ -349,7 +348,7 @@ ring_elem NCF4::getCoeffOfMonom(const Poly& f, const Monom& m) const
   return freeAlgebra().coefficientRing()->zero();
 }
 
-// this function is not used currently
+// this function is not used currently. and is probably leaky as written (see the swap)
 void NCF4::autoreduceByLastElement()
 {
   if (mGroebner.size() <= 1) return;
@@ -373,7 +372,7 @@ void NCF4::matrixReset()
   mOverlapsTodo.clear();
   mColumns.clear();
   mColumnMonomials.clear();
-  mRows.clear();
+  clearRows(mRows);
   mOverlaps.clear();
   mFirstOverlap = 0;
   mMonomialSpace.deallocateAll();
@@ -595,12 +594,13 @@ void NCF4::processPreRow(PreRow r,
   //  an element of the input (if gbIndex < 0 and not prevReducer)
   //  a multiple of a gb element (if gbIndex >= 0 and not prevReducer)
   const Poly* elem;
+  Poly* tempelem;
   if (preRowType == PreviousReducerPreRow)
   {
     // in this case, we construct the poly locally for processing in this
     // function.  We will destroy it at the end, as the new monomials for reduction
     // are created and inserted into mMonomialSpace
-    Poly* tempelem = new Poly;
+    tempelem = new Poly;
     reducedRowToPoly(tempelem,mPreviousRows,mPreviousColumns,gbIndex);
     elem = tempelem;
   }
@@ -642,14 +642,15 @@ void NCF4::processPreRow(PreRow r,
     *nextColWord = w;
     ++nextColWord;
   }
+
+  // this memory is stored in rowsVector and cleaned up later.
   CoeffVector coeffs = mVectorArithmetic->sparseVectorFromContainer(elem->getCoeffVector());
 
   // delete the Poly created for prevReducer case, if necessary.
   if (preRowType == PreviousReducerPreRow)
   {
-    Poly f = *elem;
-    mFreeAlgebra.clear(f);
-    delete elem;
+    mFreeAlgebra.clear(*tempelem);
+    delete tempelem;
   }
 
   // add the processed row to the appropriate list
@@ -848,7 +849,6 @@ void NCF4::labelAndSortF4Matrix()
   else
     std::stable_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
 
-  // rewrite this with lambdas
   auto applyLabelingColumns = [&](const tbb::blocked_range<int>& r) {
     for (auto count = r.begin(); count != r.end(); ++count)
       {
@@ -922,7 +922,6 @@ void NCF4::generalReduceF4Row(int index,
                                                     mRows[pivotrow].coeffVector,
                                                     mRows[pivotrow].columnIndices);
         // last component in the row corresponding to pivotrow
-        
         int last1 = mRows[pivotrow].columnIndices.cend()[-1];
         last = (last1 > last ? last1 : last);
       }
@@ -933,6 +932,9 @@ void NCF4::generalReduceF4Row(int index,
     first = mVectorArithmetic->denseRowNextNonzero(dense, first+1, last);
   } while (first <= last);
 
+  // have to free mRows[index] information because we are about to overwrite it
+  // how can I free mRows[index].columnIndices?  it wasn't the last block allocated...
+  mVectorArithmetic->deallocateCoeffVector(mRows[index].coeffVector);
   mVectorArithmetic->safeDenseRowToSparseRow(dense,
                                              mRows[index].coeffVector,
                                              mRows[index].columnIndices,

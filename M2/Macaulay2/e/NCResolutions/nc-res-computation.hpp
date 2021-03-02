@@ -147,6 +147,8 @@ class ModulePoly
 // degrees rows, levels columns (betti diagram in M2)
 // (entries indicate order of computation)
 
+// entries with the same letter may be computed at the same time
+
 /*
     0     1     2     3        0   1   2    3
 0   a     .     .     .                pb   pc (or *during*)

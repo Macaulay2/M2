@@ -156,6 +156,7 @@ public:
     }
     clearRows(mRows);
     clearRows(mPreviousRows);
+    delete mVectorArithmetic;
   };
 
   [[nodiscard]] const FreeAlgebra& freeAlgebra() const { return mFreeAlgebra; }

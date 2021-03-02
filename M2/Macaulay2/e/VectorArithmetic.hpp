@@ -510,6 +510,10 @@ public:
       }
   }
 
+  ~VectorArithmetic() { 
+    std::visit([&](auto& arg) -> void { delete arg; }, mConcreteVector);
+  }
+
   const Ring* ring() const {
     return std::visit([&](auto& arg) -> const Ring* { return arg->ring(); }, mConcreteVector);
   }
