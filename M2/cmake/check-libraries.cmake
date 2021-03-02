@@ -40,7 +40,16 @@ endif()
 
 find_package(Threads	REQUIRED QUIET)
 find_package(LAPACK	REQUIRED QUIET)
-find_package(Boost	REQUIRED QUIET COMPONENTS regex ${Boost_stacktrace})
+find_package(Boost	REQUIRED QUIET COMPONENTS regex OPTIONAL_COMPONENTS stacktrace_backtrace stacktrace_addr2line)
+if(Boost_STACKTRACE_BACKTRACE_FOUND)
+  set(Boost_stacktrace_lib "Boost::stacktrace_backtrace")
+elseif(Boost_STACKTRACE_ADDR2LINE_FOUND)
+  set(Boost_stacktrace_lib "Boost::stacktrace_addr2line")
+else()
+  #fallback to header only mode
+  set(Boost_stacktrace_header_only YES)
+endif()
+
 find_package(TBB	REQUIRED QUIET) # See FindTBB.cmake
 # TODO: replace gdbm, see https://github.com/Macaulay2/M2/issues/594
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
