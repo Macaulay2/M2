@@ -1005,8 +1005,12 @@ fi
 
 AC_MSG_CHECKING(whether the package gfan is installed)
 if test "`type -t gfan`" = file
-then AC_MSG_RESULT([yes])
-     FILE_PREREQS="$FILE_PREREQS `type -p gfan`"
+then gfan_version=`gfan _version | head -2 | tail -1 | sed 's/gfan//'`
+     AX_COMPARE_VERSION([$gfan_version], [ge], [0.6],
+          [AC_MSG_RESULT([yes])
+           FILE_PREREQS="$FILE_PREREQS `type -p gfan`"],
+          [AC_MSG_RESULT([yes, but < 0.6, will build])
+           BUILD_gfan=yes])
 else AC_MSG_RESULT([no, will build])
      BUILD_gfan=yes
      dnl we'll also build cddlib until gfan can find its files in /usr/include instead of in /usr/include/cdd
