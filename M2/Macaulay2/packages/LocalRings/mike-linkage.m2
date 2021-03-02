@@ -1,4 +1,5 @@
-needsPackage "LocalRings"
+--needsPackage "LocalRings"
+
 
 localTrim = I -> (
     S := ring I;
@@ -23,12 +24,66 @@ pregeneralLink = J -> (
 
 S = ZZ/32003[x,y,z]
 M0 = monomialIdeal(x^3,x^2*y^2,x*y^3,y^4,x^2*y*z,x*y^2*z,z^5)
-
+M0 = monomialIdeal(x^3,x^2*y^2,x*y^3,y^4,x^2*y*z,x*y^2*z,z^5)
 end--
 
+uninstallPackage "LocalRings"
 restart
+needsPackage ("LocalRings", FileName => "../LocalRings.m2")
 load "mike-linkage.m2"
+
 I = generalLink M0;
+I2 = generalLink I;
+res I2
+R = localRing(S,ideal vars S)
+J = sub(I2,R)
+F = res J
+
+f = J_0
+phi= map(R^1, R^1,f)
+debugLevel = 3
+s0 = quotient(phi, F.dd_1, Strategy => Local)
+--s0 = phi//F.dd_1
+f1 = map(F_1,F_1, f*id_(F_1))
+s1 = quotient(f1 - s0*F.dd_1, F.dd_2,  Strategy => Local)
+f1 == F.dd_2*s1 + s0*F.dd_1
+f1 -  (F.dd_2*s1 + s0*F.dd_1)
+f1 -  (s0*F.dd_1)
+
+image f1 == image(F.dd_2*s1 + s0*F.dd_1)
+
+errorDepth = 0
+a = matrix{{x+x^2+x^2*y^3}}
+b = matrix{{x}}
+quotient(b,a)
+
+----simpler failing example 2/26/2021
+restart
+needsPackage ("LocalRings", FileName => "../LocalRings.m2")
+load "mike-linkage.m2"
+peek loadedFiles
+S = ZZ/32003[x,y,z]
+M0 = ideal ((gens ideal(z^2, x^3, y^4, x*y^2,x^2*y))*random(S^5,S^5))
+--M0 = ideal (random(S^1, S^-{3,5})*random(S^3,S^3))
+isHomogeneous M0
+use S
+I = generalLink M0;
+res I
+R = localRing(S,ideal vars S)
+J = sub(I,R)
+F = res J
+F.dd
+f = J_0
+phi= map(R^1, R^1,f)
+s0 = phi//F.dd_1
+f1 = map(F_1,F_1, f*id_(F_1))
+s1 = (f1 - s0*F.dd_1)//F.dd_2
+f1 == F.dd_2*s1 + s0*F.dd_1
+f1 -  (F.dd_2*s1 + s0*F.dd_1)
+
+
+
+
 elapsedTime I = generalLink I;
 elapsedTime (J0,J) = pregeneralLink ideal(I_*);
 numgens J
@@ -234,3 +289,4 @@ quotient(m,id3);
 ==> _[3]=[0,0,x]
  
 -- consider minbase
+
