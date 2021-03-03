@@ -179,7 +179,7 @@ public:
   {
     // Note: this function simply fills in the values coming from '(sparse, comps)'.
     //   Other values are not touched.
-    // In our intended uses, the input `dense` is the vector consisting of all zeros`.
+    // In our intended uses, the input `dense` is the vector consisting of all zeros.
     
     auto& dvec = * denseCoeffVector(dense);
     auto& svec = * coeffVector(sparse);
@@ -202,7 +202,13 @@ public:
     DenseFieldElement a;
     mRing->init_set(a,dvec[comps[0]]);
     for (int i=0; i < comps.size(); ++i)
+    {
+      // are these needed?
+      // mRing->clear(dvec[comps[i]]);
+      // mRing->init(dvec[comps[i]]);
       mRing->subtract_multiple(dvec[comps[i]], a, svec[i]);
+    }
+    mRing->clear(a);
   }
 
   int denseRowNextNonzero(DenseCoeffVectorType& dense,
@@ -326,6 +332,8 @@ public:
     mRing->invert(leadCoeffInv,svec[0]);
 
     for (auto& c : svec) { mRing->mult(c, c, leadCoeffInv); }
+
+    mRing->clear(leadCoeffInv);
   }
 
   template<typename Container>

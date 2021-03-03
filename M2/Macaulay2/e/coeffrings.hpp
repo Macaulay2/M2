@@ -75,6 +75,7 @@ class CoefficientRingZZp : public our_new_delete
   
   int to_int(int f) const { return exp_table[f]; }
   void init(elem &result) const {}
+  void clear(elem &result) const { /* nothing */}
   void init_set(elem &result, elem a) const { result = a; }
   void set_zero(elem &result) const { result = zero; }
   void set(elem &result, elem a) const { result = a; }

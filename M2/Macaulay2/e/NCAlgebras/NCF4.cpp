@@ -373,6 +373,8 @@ void NCF4::matrixReset()
   mColumns.clear();
   mColumnMonomials.clear();
   clearRows(mRows);
+  // we don't have to call clearRows on mOverlaps because the coeff vectors
+  // were moved to mRows first
   mOverlaps.clear();
   mFirstOverlap = 0;
   mMonomialSpace.deallocateAll();
@@ -932,8 +934,8 @@ void NCF4::generalReduceF4Row(int index,
     first = mVectorArithmetic->denseRowNextNonzero(dense, first+1, last);
   } while (first <= last);
 
-  // have to free mRows[index] information because we are about to overwrite it
-  // how can I free mRows[index].columnIndices?  it wasn't the last block allocated...
+  // we have to free mRows[index] information because we are about to overwrite it
+  // how can I free mRows[index].columnIndices?  it wasn't the last block allocated on mMonomialSpace...
   mVectorArithmetic->deallocateCoeffVector(mRows[index].coeffVector);
   mVectorArithmetic->safeDenseRowToSparseRow(dense,
                                              mRows[index].coeffVector,
@@ -1187,7 +1189,10 @@ void NCF4::displayFullF4Matrix(std::ostream& o) const
 void NCF4::clearRows(RowsVector& rowsVector)
 {
   for (auto r : rowsVector)
+  {
+    // the VectorArithmetic object calls clear() on the ring elements in r.coeffVector as well.
     mVectorArithmetic->deallocateCoeffVector(r.coeffVector);
+  }
   rowsVector.clear();
 }
 

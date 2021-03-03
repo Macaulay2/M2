@@ -122,10 +122,8 @@ private:
   ColumnsVector mColumns;
   ColumnsVector mPreviousColumns;
 
-  // these should be std::vectors (or changeable)
   RowsVector mRows;
   RowsVector mPreviousRows;
-
   RowsVector mOverlaps;
 
   int mFirstOverlap; // First non pivot row (and all later ones are also non-pivot rows).
