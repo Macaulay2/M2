@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <cstring>
+#include <limits>
 
 MATHICGB_NAMESPACE_BEGIN
 
