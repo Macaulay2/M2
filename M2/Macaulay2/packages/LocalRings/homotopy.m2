@@ -68,7 +68,7 @@ phi' = map(F', F', L, Degree => 1)
 isCommutative phi'
 errorDepth=2
 -- FIXME
--- isNullHomotopic phi'
+isNullHomotopic phi'
 
 
 end--

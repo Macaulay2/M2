@@ -70,10 +70,13 @@ colReduce(MutableMatrix, ZZ) := Nothing => opts -> (L, n) -> (
 	);
     )
 
-extractLU = (LU, R, C) -> (
+extractLU = (LU, r0, c0) -> (
     RP := ring LU;
-    transpose mutableMatrix apply(C, c -> apply(R, r -> if c <  r then LU_(r, c) else if c == r then 1_RP else 0_RP)),
-    transpose mutableMatrix apply(C, c -> apply(C, r -> if c >= r then LU_(r, c) else 0_RP)))
+    if LU == 0 then return if c0 < r0
+    then (mutableMatrix(id_(RP^c0) || map(RP^(r0 - c0), RP^c0, 0)), mutableMatrix(0 * id_(RP^c0)))
+    else (mutableMatrix(id_(RP^r0)),  mutableMatrix(map(RP^r0, RP^c0, 0)));
+    transpose mutableMatrix apply(c0, c -> apply(r0, r -> if c <  r then LU_(r, c) else if c == r then 1_RP else 0_RP)),
+    transpose mutableMatrix apply(c0, c -> apply(c0, r -> if c >= r then LU_(r, c) else 0_RP)))
 
 end--
 restart

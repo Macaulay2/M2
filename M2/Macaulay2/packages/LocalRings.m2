@@ -372,7 +372,7 @@ addHook((quotient, Matrix, Matrix), Strategy => Local, (opts, f, g) -> (
         n := numColumns h;
         -- Dot product with the denominators of lift
         N := transpose entries fg;
-        for i in 0 ..< r + s do rowMult(h, i, N_i/denominator//lcm);
+        for i in 0 ..< #N do rowMult(h, i, N_i/denominator//lcm);
         -- see test near line 252 of tests.m2; here is a naive sort:
         phi := residueMap RP;
         h0 := mutableMatrix phi matrix h;
