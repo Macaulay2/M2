@@ -74,6 +74,11 @@ PolynomialRing _ RingElement := LocalRing => (R, f) -> (
 
 isWellDefined LocalRing := R -> isPrime R.MaximalIdeal -- cached in the maximal ideal
 
+baseRing LocalRing := Ring => RP -> ( R := RP; while instance(R, LocalRing) do R = last R.baseRings; R )
+
+residueMap = method()
+residueMap LocalRing := RingMap => RP -> map(R := baseRing RP, RP, vars R % RP.MaximalIdeal)
+
 --==================================== Basic Operations ====================================--
 -- Note: The following methods are extended to local rings in this package:
 -- syz                 -> localSyzHook,
@@ -354,24 +359,42 @@ needs "./LocalRings/LU.m2"
 --   compute  h = syz(f | g) = [A || B] so that f*A + g*B = 0 and f = -g*B*A^-1
 --   compute an LU decompostion of h to get [ id || B*A^-1 ] and return -B*A^-1
 -- Note: this is not always possible, in which case f - g * (f // g) will be the remainder
+-- TODO: does this work over a prime ideal?
 addHook((quotient, Matrix, Matrix), Strategy => Local, (opts, f, g) -> (
     RP := ring f;
     if instance(RP, LocalRing) then (
         r := numColumns f;
         s := numColumns g;
+        if debugLevel >= 2 then printerr "beginning syzygy computation";
         -- TODO: why are columns of h sometimes ordered incorrectly?
-        -- see test near line 252 of tests.m2
-        h := mutableMatrix(syz(f | g, SyzygyLimit => r) ** RP);
-        n := numColumns h; -- <= r
+        -- if they were sorted correctly, we would only need r columns here
+        h := mutableMatrix(syz(liftUp(fg := f | g), SyzygyLimit => infinity -* r *- ) ** RP);
+        n := numColumns h;
+        -- Dot product with the denominators of lift
+        N := transpose entries fg;
+        for i in 0 ..< r + s do rowMult(h, i, N_i/denominator//lcm);
+        -- see test near line 252 of tests.m2; here is a naive sort:
+        phi := residueMap RP;
+        h0 := mutableMatrix phi matrix h;
+        c := 0;
+        for i in 0 ..< r + s do (
+            if c == r then break;
+            scan(c ..< n, j -> if isUnit h0_(i, j)
+                then ( columnSwap(h, c, j); columnSwap(h0, c, j); c = c + 1; break )));
+        n = c; -- TODO: is this the correct rank?
         -- initiating LU-decomposition matrices
+        if debugLevel >= 2 then printerr "beginning LU decomposition";
         P := new MutableList from (0 ..< r + s);
         -- TODO: can we do the LU after reducing the top portion to the residue field?
         LU := mutableMatrix map(RP^(r + s), RP^(n + 1), 0);
         for i in 0 ..< n do incrLU(P, LU, h_{i}, i);
-        for i in 0 ..< n do colReduce(LU, i);
-        m := - submatrix(LU, {r ..< r + s}, {0 ..< n});
+        (L, U) := extractLU(LU, r + s, n);
+        for i in 0 ..< n do colReduce(L, i);
+        m := - submatrix(L, {r ..< r + s}, {0 ..< n});
         columnPermute(m, 0, (toList P)_{0 ..< n});
-        map(source g, source f, matrix m | map(RP^s, RP^(max(0, r - n)), 0),
+        -- padding is necessary when image f \nin image g, so we get a remainder
+        m  = matrix m | map(RP^s, RP^(max(0, r - n)), 0);
+        map(source g, source f, m,
             Degree => degree matrix f - degree matrix g)  -- set the degree in the engine instead
         )))
 
@@ -398,8 +421,6 @@ addHook((remainder, Matrix, Matrix), Strategy => Local, (f, g) ->
 --    if instance(RP, LocalRing) then error "remainder over local rings is not implemented"))
 
 --======================================= Experimental =======================================--
-
-baseRing := RP -> ( R := RP; while instance(R, LocalRing) do R = last R.baseRings; R )
 
 -- (symbol:, Thing, Thing)
 -- We rely on the fact that ideal and module quotients commute with localization

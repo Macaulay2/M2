@@ -70,6 +70,11 @@ colReduce(MutableMatrix, ZZ) := Nothing => opts -> (L, n) -> (
 	);
     )
 
+extractLU = (LU, R, C) -> (
+    RP := ring LU;
+    transpose mutableMatrix apply(C, c -> apply(R, r -> if c <  r then LU_(r, c) else if c == r then 1_RP else 0_RP)),
+    transpose mutableMatrix apply(C, c -> apply(C, r -> if c >= r then LU_(r, c) else 0_RP)))
+
 end--
 restart
 needs "LU.m2"
@@ -82,9 +87,7 @@ P = new MutableList from P
 M = mutableMatrix random(kk^3,kk^2)
 LU = mutableMatrix(map(kk^3,kk^3,0))
 elapsedTime for i to n - 1 do incrLU(P, LU, M_{i}, i);
-(L, U) = (
-    transpose mutableMatrix apply(n, c -> apply(numRows LU, r -> if c <  r then LU_(r, c) else if c == r then 1 else 0)),
-    transpose mutableMatrix apply(n, c -> apply(n,          r -> if c >= r then LU_(r, c) else 0)))
+(L, U) = extractLU(LU, numRows LU, n)
 assert(L * U == M)
 
 V = 5*M_{0} + 2 * M_{1}

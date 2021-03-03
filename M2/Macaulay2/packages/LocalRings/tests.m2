@@ -194,7 +194,6 @@ TEST /// -- chain homotopy over local rings
   F = chainComplex { gens J, syz gens J, syz syz gens J }
   f0 = J_0
   s0 = map(R^1, 0, 0)
-  -- TODO: how to make a chain complex map from this?
   L = for i to 3 list (
       phi = map(F_i, F_i, f0 * id_(F_i));
       s = (phi - s0 * F.dd_i) // F.dd_(i + 1);
@@ -202,11 +201,12 @@ TEST /// -- chain homotopy over local rings
       s0 = s)
   -- TODO: this should work:
   -- extend(F, F, f0 * id_(F_0))
+  phi = map(F, F, i -> L#i, Degree => 1)
+  -- TODO: run checks on this
 
   F = res J
   f0 = J_0
   s0 = map(R^1, 0, 0)
-  -- TODO: how to make a chain complex map from this?
   L = for i to 3 list (
       phi = map(F_i, F_i, f0 * id_(F_i));
       s = (phi - s0 * F.dd_i) // F.dd_(i + 1);
