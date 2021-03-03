@@ -170,7 +170,8 @@ TEST /// -- testing quotient of non-factorable matrices
   assert(image(RP ** mingens liftUp h) == image mingens h)
   -- f does not factor through g, but we should get an answer so that
   -- f = g * (f // g) + r where r = remainder(f, g)
-  assert(prune h == prune image (f - g * (f // g)))
+  assert(remainder(f, g) == f - g * (f // g))
+  assert(prune h == prune image remainder(f, g))
   assert(liftUp f // liftUp g - liftUp (f // g) == 0)
 
   f = transpose matrix{{e*a, 0, e*c}, {0, b, 0}}
@@ -246,6 +247,8 @@ TEST /// -- test for // -- TODO add more
   f' = f' ** a
   g = f
   f = f ** a
+  -- here is an interesting example where it seems like
+  -- columns of syz(f | g) are not ordered the natural way
   assert(f === g  * (f//g))
 ///
 

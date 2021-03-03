@@ -119,6 +119,7 @@ liftUp(MutableMatrix, Ring) := (m, R) -> mutableMatrix liftUp(matrix m, R)
 liftUp(RingElement, Ring)   := (r, R) -> (liftUp(matrix {{r}}, R))_(0,0)
 
 -- Computes syzygies of a matrix over local rings
+-- TODO: don't compute too much if certain options are given
 localSyzHook = method(Options => options syz)
 localSyzHook Matrix := Matrix => opts -> m -> (
     RP := ring m;
@@ -135,10 +136,8 @@ localSyzHook Matrix := Matrix => opts -> m -> (
     for i from 0 to numcols m - 1 do
       rowMult(f, i, N_i/denominator//lcm);
     -- TODO make sure other options are treated correctly
-    if opts.SyzygyRows < numrows f then (
-        f = submatrix(f, 0..(opts.SyzygyRows-1),);
-        matrix f
-        )
+    if opts.SyzygyLimit < numcols f then f = submatrix(f, , 0 ..< opts.SyzygyLimit);
+    if opts.SyzygyRows < numrows f then matrix submatrix(f, 0 ..< opts.SyzygyRows, )
     else map(source m, , matrix f)
     )
 
@@ -346,41 +345,34 @@ addHook((trim, Module), Strategy => Local, (opts, M) ->
 	if M.?generators then localMingensHook(opts, image generators M),
 	if M.?relations  then localMingensHook(opts, image relations M)))
 
+needs "./LocalRings/LU.m2"
+
 -- (symbol//, Matrix, Matrix)
--- Caution: this method is only correct when f = g * (f//g),
---          otherwise may not be the correct reduction of f modulo image of g
--- TODO: implement 'remainder', then improve this
 -- Here is the algorithm:
---   Given two matrices F = [f1 ... fn], G = [g1 ... gm] with the same target,
---   we wish to computer F // G such that F = G * (F // G).
---   We compute H = syz(F | G). Each column looks like H_j = [h_1 .. h_n .. h_(n+m)]^T.
---   Now for each column F_i of F, look for a unit in the i-th row of H.
---   (Question: if there are multiple units, which one to choose?)
---   Let's say in the unit u in the column H_j, then we replace F_i by -1/u times the column
---   [h_(n+1) h_(n+2) ... h_(n+m)]^T, remove the column H_j from H, and move on to F_(i+1).
---   Additionally, we reduce the columns to zero out the row in which u appeared.
---   If there aren't any units in the i-th column, we replace F_i by a 0 column and move on to F_(i+1)
+--   given matrices  [f], [g] with the same target
+--   want to compute  f // g such that f = g * (f // g)
+--   compute  h = syz(f | g) = [A || B] so that f*A + g*B = 0 and f = -g*B*A^-1
+--   compute an LU decompostion of h to get [ id || B*A^-1 ] and return -B*A^-1
+-- Note: this is not always possible, in which case f - g * (f // g) will be the remainder
 addHook((quotient, Matrix, Matrix), Strategy => Local, (opts, f, g) -> (
     RP := ring f;
     if instance(RP, LocalRing) then (
-	-- TODO: is there an option for syz to return a column reduced matrix?
-        -- G := mutableMatrix syz(f | g);
-        mat := for i from 0 to numColumns f - 1 list (
-            C := f_{i};
-            -- TODO: figure out how to only compute syzygy once
-            G := mutableMatrix syz(f_{i} | g);
-            n := scan(numColumns G, j -> if isUnit G_(0,j) then break j);
-            if n === null then 0_(source g) else (
-                u := -G_(0, n)^-1;
-                C = u * matrix submatrix(G, {1..numRows G-1}, {n});
-                -- TODO: why doesn't syz return a column reduced G?
-                -- scan(n+1 .. numColumns G-1, j -> columnAdd(G, j, u * G_(i,j), n));
-                -- TODO: is this step necessary? simplify above and remove this
-                -- G = submatrix(G, ,{0..n-1, n+1..numColumns G-1});
-                C_0));
-        m := if #mat == 0 then 0_RP else raw matrix mat;
-        map(source g, source f, m,
-	    Degree => degree matrix f - degree matrix g)  -- set the degree in the engine instead
+        r := numColumns f;
+        s := numColumns g;
+        -- TODO: why are columns of h sometimes ordered incorrectly?
+        -- see test near line 252 of tests.m2
+        h := mutableMatrix(syz(f | g, SyzygyLimit => r) ** RP);
+        n := numColumns h; -- <= r
+        -- initiating LU-decomposition matrices
+        P := new MutableList from (0 ..< r + s);
+        -- TODO: can we do the LU after reducing the top portion to the residue field?
+        LU := mutableMatrix map(RP^(r + s), RP^(n + 1), 0);
+        for i in 0 ..< n do incrLU(P, LU, h_{i}, i);
+        for i in 0 ..< n do colReduce(LU, i);
+        m := - submatrix(LU, {r ..< r + s}, {0 ..< n});
+        columnPermute(m, 0, (toList P)_{0 ..< n});
+        map(source g, source f, matrix m | map(RP^s, RP^(max(0, r - n)), 0),
+            Degree => degree matrix f - degree matrix g)  -- set the degree in the engine instead
         )))
 
 -- inducedMap
@@ -395,10 +387,15 @@ addHook((inducedMap, Module, Module, Matrix), Strategy => Local, (opts, N', M', 
         f' = map(N',M',f',Degree => if opts.Degree === null then degree f else opts.Degree);
 	(f', g, mingens N, mingens M))))
 
--- TODO
-addHook((remainder, Matrix, Matrix), Strategy => Local, (f, g) -> (
-    RP := ring f;
-    if instance(RP, LocalRing) then error "remainder over local rings is not implemented"))
+-- Caution: this is only correct in the sense that f = g * (f // g) + r
+-- but over a local ring, this may not be the correct reduction of f modulo image of g
+addHook((remainder, Matrix, Matrix), Strategy => Local, (f, g) ->
+    if instance(ring f, LocalRing) then f - g * (f // g))
+
+-- TODO: first hookify quotientRemainder
+--addHook((quotientRemainder, Matrix, Matrix), Strategy => Local, (f, g) -> (
+--    RP := ring f;
+--    if instance(RP, LocalRing) then error "remainder over local rings is not implemented"))
 
 --======================================= Experimental =======================================--
 
