@@ -53,7 +53,7 @@ superRing (PolynomialRing, PolynomialRing) := (R1, R2) -> (
  
 --------------------
 -- SuperMatrix
--------------------------------------------
+--------------------
 
 SuperMatrix = new Type of MutableHashTable;
 superMatrixGenerator = method();
@@ -75,6 +75,7 @@ assert(G.supermatrix == matrix {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13
 --------------------
 -- parity  
 -------------------- 
+
 parity = method();
 parity (RingElement, Ring, List) := (f, R, oddNumberList) -> (
     e := exponents f;
@@ -285,13 +286,13 @@ R2 = QQ[z_0..z_2]
 R = superRing(R1, R2)
 T1 = R[n_0..n_3];
 T2 = R[e_0..e_3];
-T = superRing(T1, T2)
-M1 = matrix{{n_0, n_1}, {n_2, n_3}}
-M2 = matrix{{e_0, e_1}, {n_0*e_0, n_1*e_1}}
-M3 = matrix{{e_3*n_3, e_1}, {e_0, e_2*n_2}}
-M4 = matrix{{n_1, n_3}, {n_0, n_2+n_3}}
-SM = superMatrix(M1, M2, M3, M4)
-a = {e_0, e_1, e_2, e_3}
+T = superRing(T1, T2);
+M1 = matrix{{n_0, n_1}, {n_2, n_3}};
+M2 = matrix{{e_0, e_1}, {n_0*e_0, n_1*e_1}};
+M3 = matrix{{e_3*n_3, e_1}, {e_0, e_2*n_2}};
+M4 = matrix{{n_1, n_3}, {n_0, n_2+n_3}};
+SM = superMatrixGenerator(M1, M2, M3, M4);
+a = {e_0, e_1, e_2, e_3};
 assert(superTrace(SM, T, a) == n_0-n_1-n_2)
 ///
 
