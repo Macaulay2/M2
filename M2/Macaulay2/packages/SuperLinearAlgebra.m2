@@ -12,7 +12,7 @@ newPackage(
          HomePage => "https://www.linkedin.com/in/fatemehtarashi/"
         }
     }, 
-    Headline => "berezinian and supertrace of a supermatrix", 
+    Headline => "computations related to supermatrices", 
     DebuggingMode => false
 )
 
@@ -34,11 +34,7 @@ export {
     "superTrace", 
     
    -- Symbols
-    "supermatrix", 
-    "supermatrixFirstBlockTarget", 
-    "supermatrixSecondBlockTarget", 
-    "supermatrixFirstBlockSource", 
-    "supermatrixSecondBlockSource"
+    "supermatrix"
 }
 
 --------------------
@@ -52,32 +48,19 @@ superRing (PolynomialRing, PolynomialRing) := (R1, R2) -> (
     R11 = R11/apply(0..(#gens R1-1), i -> sub(R1_i, R11)*inverseVariable_i-1);
     w := (for i to (#gens R2)-1 list (0))|toList(0..(#gens R2-1));
     R22 := (coefficientRing R2)[R2_0..R2_(#gens R2-1), MonomialOrder=>{Weights => w, Lex}, SkewCommutative=>true];
+    print concatenate {"is a super commutative ring of dimension", toString (#gens R1), "|", toString (#gens R2)};
     R11**R22
 )
  
 --------------------
 -- SuperMatrix
---
--- This a is new mulitivariate Hash table with 5 keys.
--- supermatrix, supermatrixFirstBlockTarget, supermatrixSecondBlockTarget, supermatrixFirstBlockSource, supermatrixSecondBlockSource
---------------------
+-------------------------------------------
 
 SuperMatrix = new Type of MutableHashTable;
-
 superMatrixGenerator = method();
-superMatrixGenerator (Matrix, Matrix, Matrix, Matrix) := (M1, M2, M3, M4) -> (
-    nr1 := numgens target M1;
-    nr2 := numgens target M3;
-    ns1 := numgens source M1;
-    ns2 := numgens source M2;
-    T1 := M1 | M2;
-    T2 := M3 | M4;
+superMatrixGenerator (Matrix, Matrix, Matrix, Matrix) := (M00,M01,M10,M11)-> (
     new SuperMatrix from {
-        supermatrix => T1 || T2, 
-        supermatrixFirstBlockTarget => nr1, 
-        supermatrixSecondBlockTarget => nr2, 
-        supermatrixFirstBlockSource => ns1, 
-        supermatrixSecondBlockSource => ns2
+        supermatrix => matrix{{M00,M01},{M10,M11}}
     }
 )
 
@@ -86,19 +69,13 @@ M1 = matrix {{1, 2}, {5, 6}, {9, 10}};
 M2 = matrix {{3, 4}, {7, 8}, {11, 12}};
 M3 = matrix {{13, 14}, {17, 18}};
 M4 = matrix {{15, 16}, {19, 20}};
-G = superMatrixGenerator(M1, M2, M3, M4);
-G.supermatrix;
+G = superMatrixGenerator(M1,M2,M3,M4)
 assert(G.supermatrix == matrix {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}, {17, 18, 19, 20}})
-assert(G.supermatrixFirstBlockTarget == 3)
-assert(G.supermatrixSecondBlockTarget == 2)
-assert(G.supermatrixFirstBlockSource == 2)
-assert(G.supermatrixSecondBlockSource == 2)
 ///
 
 --------------------
 -- parity  
 -------------------- 
-
 parity = method();
 parity (RingElement, Ring, List) := (f, R, oddNumberList) -> (
     e := exponents f;
@@ -164,27 +141,25 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
     m2 := 0;
     m3 := 0;
     m4 := 0;
-    r1 := SM.supermatrixFirstBlockTarget;
-    r2 := SM.supermatrixSecondBlockTarget;
-    c1 := SM.supermatrixFirstBlockSource;
-    c2 := SM.supermatrixSecondBlockSource;
-    Minor11 := submatrix(SM.supermatrix, {0..(r1-1)}, {0..(c1-1)});
-    Minor22 := submatrix(SM.supermatrix, {r1..(r1+r2-1)}, {c1..(c1+c2-1)});
-    Minor21 := submatrix(SM.supermatrix, {r1..(r1+r2-1)}, {0..(c1-1)});
-    Minor12 := submatrix(SM.supermatrix, {0..(r1-1)}, {c1..(c1+c2-1)});
+    Minor00 := SM.supermatrix^[0]_[0];
+    Minor01 := SM.supermatrix^[0]_[1];
+    Minor10 := SM.supermatrix^[1]_[0];
+    Minor11 := SM.supermatrix^[1]_[1];
+    r1 := numgens target Minor00;
+    r2 := numgens target Minor10;
+    c1 := numgens source Minor00;
+    c2 := numgens source Minor01;
     fij := symbol fij;
-    parityfij := symbol parityfij;
     if isSkewCommutative(R1) == true then (
         count1 := 0;
         count11 := 0;
-        for i from 0 to (r1-1) do 
+        for i from 0 to (r1-1) do
             for j from 0 to (c1-1) do (
-                fij = Minor11_(i, j);
-                if fij != 0 then (
-                    parityfij = parity(fij, R1, a);
-                    if (parityfij == -1) then (count11 = count11+1) 
-                    else if (parityfij == 1) then count1 = count1+1
-                )
+                fij = Minor00_(i, j);
+                if fij == 0 then count1 = count1 
+                else if (parity(fij, R1, a) == -1) then (count11 = count11+1) 
+                else if (parity(fij, R1, a) == 1) then count1 = count1+1
+                else if (parity(fij, R1, a) == 0) then count1 = count1
             );
         if count11=!=0 then (return-1) 
         else if count1 == 0 then m1= 0 
@@ -193,12 +168,11 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
         count22 := 0;
         for i from 0 to (r1-1) do 
             for j from 0 to (c2-1) do (
-                fij = Minor12_(i, j);
-                if fij != 0 then (
-                    parityfij = parity(fij, R1, a); 
-                    if (parityfij == -1) then (count22 = count22+1) 
-                    else if (parityfij == 1) then count2 = count2+1
-                )
+                fij = Minor01_(i, j);
+                if fij == 0 then count2 = count2 
+                else if (parity(fij, R1, a) == -1) then (count22 = count22+1) 
+                else if (parity(fij, R1, a) == 1)then count2 = count2+1
+                else if (parity(fij, R1, a) == 0) then count2 = count2
             );
         if count22=!=0 then (return-1) 
         else if count2 == 0 then m2=0 
@@ -207,12 +181,11 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
         count33 := 0;
         for i from 0 to (r2-1) do 
             for j from 0 to (c1-1) do (
-                fij = Minor21_(i, j);
-                if fij != 0 then (
-                    parityfij = parity(fij, R1, a); 
-                    if (parityfij == -1) then (count33 = count33+1)
-                    else if (parityfij == 1) then count3 = count3+1
-                )
+                fij = Minor10_(i, j);
+                if fij == 0 then count3 = count3 
+                else if (parity(fij, R1, a) == -1) then (cout33 := count33+1)
+                else if (parity(fij, R1, a) == 1)then count3 = count3+1
+                else if (parity(fij, R1, a) == 0) then count3 = count3
             );
         if count33=!=0 then (return-1) 
         else if count3 == 0 then m3=0 
@@ -221,12 +194,11 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
         count44 := 0;
         for i from 0 to (r2-1) do 
             for j from 0 to (c2-1) do (
-                fij = Minor22_(i, j);
-                if fij != 0 then (
-                    parityfij = parity(fij, R1, a); 
-                    if (parityfij == -1) then (count44 = count44+1) 
-                    else if (parityfij == 1) then count4 = count4+1
-                )
+                fij = Minor11_(i, j);
+                if fij == 0 then count4 = count4 
+                else if (parity(fij, R1, a) == -1) then (cout44 := count44+1) 
+                else if (parity(fij, R1, a) == 1)then count4 = count4+1
+                else if (parity(fij, R1, a) == 0) then count4 = count4
             );
         if count44=!=0 then (return-1) 
         else if count4 == 0 then m4=0 
@@ -238,8 +210,8 @@ superMatrixParity(SuperMatrix, Ring, List) := (SM, R1, a) -> (
             else (return-1)
         )
         else (
-            if (m1 == 0 and m4 == 0 and Minor12 == 0 and Minor21 == 0) then  (return 0)
-            else if (Minor11 == 0 and Minor22 == 0 and m2 == 0 and m3 == 0) then (return 1)
+            if (m1 == 0 and m4 == 0 and Minor01 == 0 and Minor10 == 0) then  (return 0)
+            else if (Minor00 == 0 and Minor11 == 0 and m2 == 0 and m3 == 0) then (return 1)
             else (return-1)
         )
     )  
@@ -289,11 +261,11 @@ assert(superMatrixParity(G, T, {e_0, e_1, e_2, e_3}) == -1)
  
 superTrace = method ();
 superTrace (SuperMatrix, Ring, List)  := (SM, R1, a) -> (
-    Minor11 := submatrix(SM.supermatrix, {0..(SM.supermatrixFirstBlockTarget-1)}, {0..(SM.supermatrixFirstBlockSource-1)});
-    Minor22 := submatrix(SM.supermatrix, {SM.supermatrixFirstBlockTarget..(SM.supermatrixFirstBlockTarget+SM.supermatrixSecondBlockTarget-1)}, {SM.supermatrixFirstBlockSource..(SM.supermatrixFirstBlockSource+SM.supermatrixSecondBlockSource-1)});
+    Minor00 := SM.supermatrix^[0]_[0];
+    Minor11 := SM.supermatrix^[1]_[1];
     if (superMatrixParity(SM, R1, a)=!=-1) then (
         par := superMatrixParity(SM, R1, a);
-        trace Minor11-(-1)^par*trace Minor22
+        trace Minor00-(-1)^par*trace Minor11
     )
     else error "SuperMatrix is not superhomogeneous"
 )
@@ -319,7 +291,7 @@ M1 = matrix{{n_0, n_1}, {n_2, n_3}}
 M2 = matrix{{e_0, e_1}, {n_0*e_0, n_1*e_1}}
 M3 = matrix{{e_3*n_3, e_1}, {e_0, e_2*n_2}}
 M4 = matrix{{n_1, n_3}, {n_0, n_2+n_3}}
-SM = superMatrixGenerator(M1, M2, M3, M4)
+SM = superMatrix(M1, M2, M3, M4)
 a = {e_0, e_1, e_2, e_3}
 assert(superTrace(SM, T, a) == n_0-n_1-n_2)
 ///
@@ -330,18 +302,18 @@ assert(superTrace(SM, T, a) == n_0-n_1-n_2)
 
 berezinian = method();
 berezinian (SuperMatrix, Ring) := (SM, R1) -> (
-    Minor11 := submatrix(SM.supermatrix, {0..(SM.supermatrixFirstBlockTarget-1)}, {0..(SM.supermatrixFirstBlockSource-1)});
-    Minor22 := submatrix(SM.supermatrix, {SM.supermatrixFirstBlockTarget..(SM.supermatrixFirstBlockTarget+SM.supermatrixSecondBlockTarget-1)}, {SM.supermatrixFirstBlockSource..(SM.supermatrixFirstBlockSource+SM.supermatrixSecondBlockSource-1)});
-    Minor12 := submatrix(SM.supermatrix, {SM.supermatrixFirstBlockTarget..(SM.supermatrixFirstBlockTarget+SM.supermatrixSecondBlockTarget-1)}, {0..(SM.supermatrixFirstBlockSource-1)});
-    Minor21 := submatrix(SM.supermatrix, {0..(SM.supermatrixFirstBlockTarget-1)}, {SM.supermatrixFirstBlockSource..(SM.supermatrixFirstBlockSource+SM.supermatrixSecondBlockSource-1)});
-    SM1 := sub(Minor11, R1);
-    SM2 := sub(Minor22, R1);
-    Prod1 := Minor22-Minor12*inverse(SM1)*Minor21;
+    Minor00 := SM.supermatrix^[0]_[0];
+    Minor01 := SM.supermatrix^[0]_[1];
+    Minor10 := SM.supermatrix^[1]_[0];
+    Minor11 := SM.supermatrix^[1]_[1];
+    SM1 := sub(Minor00, R1);
+    SM2 := sub(Minor11, R1);
+    Prod1 := Minor11-Minor10*inverse(SM1)*Minor01;
     Prod2 := sub(Prod1, R1);
+    if numRows Minor00 =!= numColumns Minor00 then error "expected a square matrix";
     if numRows Minor11 =!= numColumns Minor11 then error "expected a square matrix";
-    if numRows Minor22 =!= numColumns Minor22 then error "expected a square matrix";
-    if det(Minor22) =!= 0 then det(inverse(SM2))*det(Minor11-Minor21*inverse(SM2)*Minor12)
-    else if (det(Minor11) =!= 0 and det(Minor22-Minor12*inverse(SM1)*Minor21) =!= 0) then det(Minor11)*det(inverse(Prod2))
+    if det(Minor11) =!= 0 then det(inverse(SM2))*det(Minor00-Minor01*inverse(SM2)*Minor10)
+    else if (det(Minor00) =!= 0 and det(Minor11-Minor01*inverse(SM1)*Minor10) =!= 0) then det(Minor00)*det(inverse(Prod2))
     else error "At least one of the diagonal blocks should be invertible"
 )
  
@@ -370,25 +342,23 @@ assert(berezinian(F, QQ) == det(S1)*det(inverse(S6)))
 
 inverseSuperMatrix = method();
 inverseSuperMatrix (SuperMatrix, Ring) := (SM, R1) -> (
-    Minor11 := submatrix(SM.supermatrix, {0..(SM.supermatrixFirstBlockTarget-1)}, {0..(SM.supermatrixFirstBlockSource-1)});
-    Minor22 := submatrix(SM.supermatrix, {SM.supermatrixFirstBlockTarget..(SM.supermatrixFirstBlockTarget+SM.supermatrixSecondBlockTarget-1)}, {SM.supermatrixFirstBlockSource..(SM.supermatrixFirstBlockSource+SM.supermatrixSecondBlockSource-1)});
-    Minor12 := submatrix(SM.supermatrix, {SM.supermatrixFirstBlockTarget..(SM.supermatrixFirstBlockTarget+SM.supermatrixSecondBlockTarget-1)}, {0..(SM.supermatrixFirstBlockSource-1)});
-    Minor21 := submatrix(SM.supermatrix, {0..(SM.supermatrixFirstBlockTarget-1)}, {SM.supermatrixFirstBlockSource..(SM.supermatrixFirstBlockSource+SM.supermatrixSecondBlockSource-1)});
-    if numRows Minor11 =!= numColumns Minor11 then error "expected a square matrix";
-    if numRows Minor22 =!= numColumns Minor22 then error "expected a square matrix";    
+    Minor00 := SM.supermatrix^[0]_[0];
+    Minor01 := SM.supermatrix^[0]_[1];
+    Minor10 := SM.supermatrix^[1]_[0];
+    Minor11 := SM.supermatrix^[1]_[1];
+    if numRows Minor00 =!= numColumns Minor00 then error "expected a square matrix";
+    if numRows Minor11 =!= numColumns Minor11 then error "expected a square matrix";    
+    SM00 := sub(Minor00, R1);
     SM11 := sub(Minor11, R1);
-    SM22 := sub(Minor22, R1);
-    SM12 := sub(Minor12, R1);
-    SM21 := sub(Minor21, R1);
-    Prod1 := SM22-SM12*inverse(SM11)*SM21;
-    Prod2 := SM11-SM21*inverse(SM22)*SM12;
-    Nminor11 := inverse(Prod2);
-    Nminor12 :=-inverse(SM22)*SM12*inverse(Prod2);
-    Nminor21 :=-inverse(SM11)*SM21*inverse(Prod1);
-    Nminor22 := inverse(Prod1);
-    NSM1 := Nminor11 | Nminor21;
-    NSM2 := Nminor12 | Nminor22;
-    if (det(SM11) =!= 0 and det (SM22) =!= 0) then NSM1 || NSM2 else error "The SuperMatrix is not invertible"
+    SM01 := sub(Minor01, R1);
+    SM10 := sub(Minor10, R1);
+    Prod1 := SM11-SM10*inverse(SM00)*SM01;
+    Prod2 := SM00-SM01*inverse(SM11)*SM10;
+    Nminor00 := inverse(Prod2);
+    Nminor01 :=-inverse(SM11)*SM10*inverse(Prod2);
+    Nminor10 :=-inverse(SM00)*SM01*inverse(Prod1);
+    Nminor11 := inverse(Prod1);
+    if (det(SM00) =!= 0 and det (SM11) =!= 0) then matrix{{Nminor00,Nminor10},{Nminor01,Nminor11}} else error "The SuperMatrix is not invertible"
 )
 
 TEST///
@@ -406,10 +376,8 @@ N11 = inverse(P1);
 N12 = -inverse(M44)*M33*inverse(P1);
 N21 = -inverse(M11)*M22*inverse(P2);
 N22 = inverse(P2);
-NM1 = N11 | N21;
-NM2 = N12 | N22;
 G = superMatrixGenerator(M1, M2, M3, M4);
-assert(inverseSuperMatrix(G, QQ) == NM1 || NM2)
+assert(inverseSuperMatrix(G, QQ) == matrix{{N11,N12},{N21,N22}})
 ///
 
 --------------------
@@ -474,13 +442,9 @@ SeeAlso
 doc ///
 Key 
     SuperMatrix
-    superMatrixGenerator
     supermatrix
-    (superMatrixGenerator, Matrix, Matrix, Matrix, Matrix)
-    supermatrixFirstBlockSource
-    supermatrixSecondBlockSource
-    supermatrixFirstBlockTarget
-    supermatrixSecondBlockTarget
+    superMatrixGenerator
+    (superMatrixGenerator , Matrix, Matrix, Matrix, Matrix)
 Headline
     Makes a super matrix from its four blocks.
 Usage
@@ -505,22 +469,12 @@ Description
         This super Matrix can be a morphism between super
         modules $A^{p|q}$ and $A^{r|s}$ over super algebra $A$. 
 
-        The function merges the matrices M_1 and M_2, and also M_3 and M_4. 
-        Finally, it merges two new matrices and 
-        make a new matrix with the first four matrices as
-        the blocks of the new matrix, say $\begin{pmatrix}
+        The function uses four matrices M_1 and M_2, and also M_3 and M_4
+	as four blocks of a new matrix, say $\begin{pmatrix}
         M1&M2\\
         M3&M4\end{pmatrix}$.  
      
-        The key supermatrix shows the result matrix created as above. 
-   
-       The key supermatrixFirstBlockTarget shows the number of first part rows. 
-   
-       The key supermatrixSecondBlockTarget shows the number of the rows of the second part.  
-   
-       The key supermatrixFirstBlockSource shows the number of columns in the first part.  
-   
-       The key supermatrixSecondBlockSource shows the number of columns in the second part.  
+        The key supermatrix shows the result matrix created as above.
     Example
         M1 = matrix {{1, 2}, {5, 6}, {9, 10}}
         M2 = matrix {{3, 4}, {7, 8}, {11, 12}}
@@ -557,7 +511,7 @@ Description
          T3&T4\end{pmatrix}$.  
      
         The super trace of $T$ is defined by $superTrace(T)= Trace(T_1)-(-1)^{p(T)} Trace(T_4)$.
-        The inputs of this function are a superMatrix, a ring, which should have skew-symmetric variables, and a list, 
+        The inputs of this function are a SuperMatrix, a ring, which should have skew-symmetric variables, and a list, 
         which is the list of skew-symmetric variables that are used in the superMatrixGenerator. 
         In case that the superMatrix is homogeneous, the output is the super trace of the superMatrix.
         
@@ -575,7 +529,6 @@ Caveat
 SeeAlso
 ///
 
-
 doc ///
 Key 
     berezinian
@@ -591,6 +544,7 @@ Outputs
     N:Number
 Description
     Text
+        This function works only when the entries of the even blocks are numbers, and those of odd blocks are formed by odd generators.
         If in a super Matrix, one of the first or the second diagonal blocks is invertible, 
         then we can define the berezinian (as a kind of super Determinant).
         The formula for the berezinian is different base on which block is invertible.
@@ -706,6 +660,7 @@ Outputs
         0 for even, 1 for odd and-1 for Nonhomogeneous
 Description
    Text
+        This function works only when the entries of the even blocks are numbers, and those of odd blocks are formed by odd generators.
         Let $A^{p|q}=Ax_1\oplus \cdots \oplus Ax_p \oplus Ae_1\oplus\cdots\oplus Ae_q$ 
         be a free module over $A$, where $x_i$s are even and $e_j$s are odd generators. 
         A morphism $T:A^{p|q}\rightarrow A^{r|s}$ has a matrix representation. 
