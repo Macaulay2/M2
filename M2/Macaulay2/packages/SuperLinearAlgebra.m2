@@ -48,7 +48,6 @@ superRing (PolynomialRing, PolynomialRing) := (R1, R2) -> (
     R11 = R11/apply(0..(#gens R1-1), i -> sub(R1_i, R11)*inverseVariable_i-1);
     w := (for i to (#gens R2)-1 list (0))|toList(0..(#gens R2-1));
     R22 := (coefficientRing R2)[R2_0..R2_(#gens R2-1), MonomialOrder=>{Weights => w, Lex}, SkewCommutative=>true];
-    print concatenate {"is a super commutative ring of dimension", toString (#gens R1), "|", toString (#gens R2)};
     R11**R22
 )
  
