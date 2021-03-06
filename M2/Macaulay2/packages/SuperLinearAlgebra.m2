@@ -377,7 +377,7 @@ N12 = -inverse(M44)*M33*inverse(P1);
 N21 = -inverse(M11)*M22*inverse(P2);
 N22 = inverse(P2);
 G = superMatrixGenerator(M1, M2, M3, M4);
-assert(inverseSuperMatrix(G, QQ) == matrix{{N11,N12},{N21,N22}})
+assert(inverseSuperMatrix(G, QQ) == matrix{{N11,N21},{N12,N22}})
 ///
 
 --------------------
