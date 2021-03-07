@@ -1,4 +1,4 @@
-AC_INIT(Macaulay2, [m4_esyscmd_s([cat VERSION])], Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT([Macaulay2],[m4_esyscmd_s([cat VERSION])],[Macaulay2@math.uiuc.edu],[Macaulay2],[http://macaulay2.com/])
 AC_MSG_NOTICE([configuring Macaulay2 version $PACKAGE_VERSION])
 AC_CONFIG_SRCDIR(INSTALL)
 AC_CONFIG_HEADERS(include/M2/config.h)
@@ -211,7 +211,7 @@ AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
 AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
 
-AC_VALIDATE_CACHED_SYSTEM_TUPLE()
+
 dnl AC_ARG_VAR(CC,C compiler to use)
 dnl AC_ARG_VAR(CXX,C++ compiler to use)
 
@@ -241,10 +241,6 @@ fi
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
-
-AC_MSG_NOTICE([checking for C compiler for build environment...])
-AC_PROG_CC_FOR_BUILD		dnl see config/ax_prog_cc_for_build.m4
-AC_MSG_NOTICE([checking for C compiler for build environment... done])
 
 dnl always compile with "-g", so we can debug even optimized versions
 if test "$GCC" = yes
@@ -343,7 +339,7 @@ dnl 	  esac
 dnl      fi
 dnl fi
 
-AC_HEADER_TIME()
+AC_CHECK_HEADERS_ONCE([sys/time.h])
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h stdint.h inttypes.h elf.h execinfo.h stdlib.h syscall.h sys/types.h sys/stat.h unistd.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
 AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
 dnl winsock2.h should be included before including windows.h
@@ -380,7 +376,6 @@ AC_CHECK_FUNCS([herror error clock_gettime getaddrinfo hstrerror sync getpgrp se
 
 AC_SUBST(HAVE_PERSONALITY,$ac_cv_func_personality)
 
-AC_FUNC_ACCEPT_ARGTYPES()
 AC_DEFINE_UNQUOTED(SOCKLEN_T,[`echo "$ac_cv_func_accept_arg3" | sed 's/ \*$//'`],[socket length type used by accept()])
 
 if test $host_os = mingw32
@@ -741,7 +736,7 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 #############################################################################
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox boost 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
     [for i in $enableval
     do case "$LIBLIST $SUBLIST $PROGLIST" in
 	    *" $i "*) 
@@ -1243,8 +1238,8 @@ if test $BUILD_mathicgb = no
 then AC_LANG(C++)
      SAVE_CXXFLAGS="$CXXFLAGS"
      CXXFLAGS="$CXXFLAGS"
-     AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes)
-     AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes)
+     AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes; AC_MSG_NOTICE(will build mathicgb))
+     AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes; AC_MSG_NOTICE(will build mathicgb))
      CXXFLAGS="$SAVE_CXXFLAGS"
 fi
 test $BUILD_mathicgb = yes && BUILTLIBS="-lmathicgb $BUILTLIBS"
@@ -2071,7 +2066,7 @@ AC_SUBST(pre_programsdir,$pre_libexecdir/Macaulay2/bin)
 AC_SUBST(pre_licensesdir,$pre_libexecdir/Macaulay2/program-licenses)
 AC_SUBST(pre_packagecachecoredir,$pre_libm2dir/cache)
 
-AC_OUTPUT()
+AC_OUTPUT
 
 dnl Local Variables:
 dnl mode: autoconf
