@@ -1515,7 +1515,7 @@ doc ///
      Text
        This method computes the scheme that parametrizes the set of
        line modules over an AS-regular algebra B due to Shelton and Vancliff.
-       More precisely, it computes the image of this scheme under the Plucker
+       More precisely, it computes the image of this scheme under the Plücker
        embedding.
      
        As a first example, we see that the line scheme of the commutative
