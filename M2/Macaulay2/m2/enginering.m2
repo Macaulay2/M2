@@ -244,7 +244,8 @@ toString EngineRing := toString @@ expression
 net EngineRing := net @@ expression
 
 ZZ _ EngineRing := 
-RR _ EngineRing := RingElement => (i,R) -> new R from i_(R.RawRing)
+RR _ EngineRing :=
+RRi _ EngineRing := RingElement => (i,R) -> new R from i_(R.RawRing)
 
 new RingElement from RawRingElement := (R, f) -> (
      -- this might take too much time:

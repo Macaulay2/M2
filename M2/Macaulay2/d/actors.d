@@ -53,7 +53,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	     is y:RRcell do toExpr(x.v + y.v)               -- # typical value: symbol +, RRi, RR, RRi
          is y:RRicell do toExpr(x.v + y.v)              -- # typical value: symbol +, RRi, RRi, RRi
 	     is Error do rhs
-	     else buildErrorPacket(EngineError("addition not implemented")))
+	     else binarymethod(lhs,rhs,PlusS))
      is x:CCcell do (
 	  when rhs
 	  is y:ZZcell do toExpr(x.v + toRR(y.v,precision(x.v.re)))	    -- # typical value: symbol +, CC, ZZ, CC
@@ -180,7 +180,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	       is y:RRcell do toExpr(x.v - y.v) -- # typical value: symbol -, RRi, RR, RRi
            is y:RRicell do toExpr(x.v - y.v) -- # typical value: symbol -, RRi, RRi, RRi
 	       is Error do rhs
-	       else buildErrorPacket(EngineError("subtration not implemented")))
+	       else binarymethod(lhs,rhs,MinusS))
      is x:CCcell do (
 	  when rhs
 	  is y:ZZcell do toExpr(x.v - toRR(y.v,precision(x.v.re)))	    -- # typical value: symbol -, CC, ZZ, CC
@@ -296,7 +296,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	       is y:RRcell do toExpr(x.v * y.v)  -- # typical value: symbol *, RRi, RR, RRi
            is y:RRicell do toExpr(x.v * y.v) -- # typical value: symbol *, RRi, RRi, RRi
 	       is Error do rhs
-	       else buildErrorPacket(EngineError("multiplication not implemented")))
+	       else binarymethod(lhs,rhs,StarS))
     is x:CCcell do (
 	  when rhs
 	  is y:ZZcell do toExpr(x.v * y.v)	    -- # typical value: symbol *, CC, ZZ, CC
@@ -423,7 +423,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
            is y:RRcell do (toExpr(x.v / y.v))    -- # typical value: symbol /, RRi, RR, RRi
            is y:RRicell do (toExpr(x.v / y.v))   -- # typical value: symbol /, RRi, RRi, RRi
 	       is Error do rhs
-	       else buildErrorPacket(EngineError("division not implemented")))
+	       else binarymethod(lhs,rhs,DivideS))
      is x:CCcell do (
 	  when rhs
 	  is y:ZZcell do (					    -- # typical value: symbol /, CC, ZZ, CC

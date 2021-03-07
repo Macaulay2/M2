@@ -110,7 +110,7 @@ class ARingRRi : public RingInterface
 
   void set_var(ElementType &result, int v) const
   {
-    mpfi_set_si(&result, 1);
+    mpfi_set_si(&result, v);
   }
 
   void set_from_mpz(ElementType &result, mpz_srcptr a) const
@@ -129,9 +129,16 @@ class ARingRRi : public RingInterface
     mpfi_set_d(&result, a);
     return true;
   }
+    
   bool set_from_BigReal(ElementType &result, gmp_RR a) const
   {
     mpfi_set_fr(&result, a);
+    return true;
+  }
+    
+  bool set_from_Interval(ElementType &result, gmp_RRi a) const
+  {
+    mpfi_set(&result, a);
     return true;
   }
 
