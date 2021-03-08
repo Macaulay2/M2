@@ -134,7 +134,6 @@ jobs:
         if: matrix.build-system == 'cmake'
         run: |
           cmake -S../.. -B. -GNinja \
-            -DBUILD_LIBRARIES="Givaro;FFLAS_FFPACK" \
             -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF \
             -DCMAKE_PREFIX_PATH=`brew --prefix` \
             -DCMAKE_INSTALL_PREFIX=/usr \
