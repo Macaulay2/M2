@@ -242,32 +242,29 @@ localMinimalPresentationHook Module := Module => opts -> M -> (
 
 --===================== Length and Hilbert-Samuel Polynomial Polynomial =====================--
 
--- Computes the length of an ideal or module over local rings
--- Note: If computing length is slow, try summing hilbertSamuelFunction for short ranges
 -- TODO: check that it's Artinian first
 -- test based on when hilbertSamuelFunction(M, n) == 0?
 -- Maybe http://stacks.math.columbia.edu/tag/00IW ?
+isFiniteLength = x -> (
+    if debugLevel >= 1 then printerr "isFiniteLength is not implemented; assuming the input has finite length"; true)
+
+-- Computes the length of an ideal or module over local rings
+-- Note: If computing length is slow, try summing hilbertSamuelFunction for short ranges
+-- TODO: implement partial caching
 localLengthHook = method(Options => {Strategy => null, Limit => 1000})
 localLengthHook Ideal  := ZZ => opts -> I -> localLengthHook(opts, module I)
 localLengthHook Module := ZZ => opts -> M -> (
-    RP := ring M;
-    m := max RP;
-    if class RP =!= LocalRing then error "expected objects over a local ring";
---    if not isFiniteLength M   then return -1;
-    if debugLevel >= 1        then  << "isFiniteLength is not implemented" << endl;
-    sum for i from 0 to opts.Limit list (
-        if debugLevel >= 2    then  << "step: " << i << endl;
-        if opts.Limit == i    then (<< "maximum limit for computing length is reached" << endl; break);
+    if not isFiniteLength M then return infinity;
+    m := max ring M;
+    sum for i to opts.Limit list (
+	if M == 0 then break;
+        if debugLevel >= 2 then printerr("step ", toString i);
         if opts.Strategy === Hilbert
-        then n := hilbertSamuelFunction(M, i) -- really should be M/mM, but by Nakayama it's the same
+        then hilbertSamuelFunction(M, i) -- really should be M/mM, but by Nakayama it's the same
         else (
-            M = localMinimalPresentationHook(M, PruningMap => false);
-            n = numgens M;
-            M = m * M;
-            n
-            );
-        if debugLevel >= 1    then  << "result: " << n << endl;
-        if n == 0 then break else n
+            N := localMinimalPresentationHook(M, PruningMap => false);
+            if i < opts.Limit then M = m * N;
+            numgens N)
         )
     )
 
@@ -276,6 +273,8 @@ localLengthHook Module := ZZ => opts -> M -> (
 --   If computing at index n is fast but slows down at n+1, try computing at range (n, n+1).
 --   On the other hand, if computing at range (n, n+m) is slow, break up the range.
 -- TODO: implement the fast powering algorithm
+-- TODO: switch the order of the inputs
+-- TODO: implement partial caching
 hilbertSamuelFunction = method()
 hilbertSamuelFunction (Module, ZZ)            := ZZ   => (M, n) -> first hilbertSamuelFunction(M,n,n)
 -- Eisenbud 1995, Chapter 12:
@@ -287,7 +286,7 @@ hilbertSamuelFunction (Module, ZZ, ZZ)        := List => (M, n0, n1) -> (
     m := max RP;
     M = m^n0 * M;
     for i from n0 to n1 list (
-        if debugLevel >= 1 then << i << endl;
+        if debugLevel >= 1 then printerr("computing HSF_", toString i);
         N := localMinimalPresentationHook(M, PruningMap => false);  -- really should be N/mN, but by Nakayama it's the same
         if i < n1 then M = m * N;
         numgens N
@@ -305,7 +304,7 @@ hilbertSamuelFunction (Ideal, Module, ZZ, ZZ) := List => (q, M, n0, n1) -> (
     M = localMinimalPresentationHook(M, PruningMap => false);
     M = q^n0 * M;
     for i from n0 to n1 list (
-        if debugLevel >= 1 then << i << endl;
+        if debugLevel >= 1 then printerr("computing HSF_", toString i);
         N := localMinimalPresentationHook(M, PruningMap => false);  -- really should be N/mN, but by Nakayama it's the same
         if i < n1 then M = q * N;
         localLengthHook (N/(q * N))

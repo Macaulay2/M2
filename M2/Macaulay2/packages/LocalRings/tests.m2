@@ -325,6 +325,9 @@ TEST ///
 TEST /// -- Hilbert-Samuel Function
   R = ZZ/32003[x,y];
   RP = localRing(R, ideal gens R);
+  -- FIXME
+  assert(apply(-3..3, i -> hilbertSamuelFunction(RP^{2},  i)) == apply(-3..3, i -> hilbertFunction_i R^{2}))
+  assert(apply(-3..3, i -> hilbertSamuelFunction(RP^{-2}, i)) == apply(-3..3, i -> hilbertFunction_i R^{-2}))
   N = RP^1
   q = ideal"x2,y3"
   time assert({1,2,3,4,5,6} == hilbertSamuelFunction(N, 0, 5)) -- n+1 -- 0.02 seconds
