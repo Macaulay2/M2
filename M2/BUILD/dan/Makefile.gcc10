@@ -1,0 +1,23 @@
+# Mac OS X with interference from brew
+
+CC  = gcc-10
+CXX = g++-10
+DIRSUFF = -gcc10
+DEBUG = no
+
+# ntl uses std c++ ostream, and we need those routines, but the two compilers
+# come with different std c++ interpretations
+BUILDLIBS += ntl 
+
+CPPFLAGS = -I/usr/local/include
+LDFLAGS  = -L/usr/local/lib
+
+# static libraries in homebrew, such as libmathicgb.a, are compiled with the default C compiler under Mac OS X, and libc++ is needed by them.
+LDFLAGS += -lc++
+
+include Makefile
+
+# Local Variables:
+# mode: Makefile
+# compile-command: "time make -f Makefile.gcc10 "
+# End:

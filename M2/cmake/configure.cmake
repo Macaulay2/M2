@@ -233,15 +233,6 @@ endif()
 # TODO: look into compiler features:
 # https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html
 
-# Flags based on OS
-if(ISSUE MATCHES Ubuntu)
-  # Apparently libboost_stacktrace_backtrace is not reliably available on all platforms.
-  set(Boost_stacktrace stacktrace_backtrace)
-else()
-  # addr2line is more readily available, but does not work well with -fPIE
-  set(Boost_stacktrace stacktrace_addr2line)
-endif()
-
 # Common flags
 # TODO: reduce these if possible
 add_link_options(-L${M2_HOST_PREFIX}/lib)

@@ -1017,7 +1017,11 @@ runGfanCommand = (cmd, opts, data) -> (
 runGfanCommandCaptureBoth = (cmd, opts, data) -> (
 	if gfanProgram === null then
 	    gfanProgram = findProgram("gfan", "gfan --help",
-		Verbose => gfanVerbose);
+		Verbose => gfanVerbose,
+		-- version 0.6 is necessary for gfanMixedVolume
+		-- https://github.com/Macaulay2/M2/issues/1962
+		MinimumVersion => ("0.6",
+		    "gfan _version | head -2 | tail -1 | sed 's/gfan//'"));
 	tmpFile := gfanMakeTemporaryFile data;
 
 	args := replace("^gfan ", "", cmd) | concatenate apply(keys opts, key ->
