@@ -82,27 +82,27 @@ set(HPPONLYFILES
   f4/res-memblock.hpp
   f4/res-monomial-types.hpp
   f4/res-schreyer-order.hpp
-  mgb-f4/Atomic.hpp
-  mgb-f4/PrimeField.hpp
-  mgb-f4/MonoMonoid.hpp
-  mgb-f4/Range.hpp
-  mgb-f4/Poly.hpp
-  mgb-f4/FixedSizeMonomialMap.h
-  mgb-f4/KoszulQueue.hpp
-  mgb-f4/MathicIO.hpp
-  mgb-f4/MonoArena.hpp
-  mgb-f4/MonoOrder.hpp
-  mgb-f4/MonoProcessor.hpp
-  mgb-f4/MonomialMap.hpp
-  mgb-f4/NonCopyable.hpp
-  mgb-f4/RawVector.hpp
-  mgb-f4/ReducerHelper.hpp
-  mgb-f4/ScopeExit.hpp
-  mgb-f4/StaticMonoMap.hpp
-  mgb-f4/Unchar.hpp
-  mgb-f4/mtbb.hpp
-  mgb-f4/stdinc.h
-  mgb-f4/mathicgb.h
+  mathicgb/Atomic.hpp
+  mathicgb/PrimeField.hpp
+  mathicgb/MonoMonoid.hpp
+  mathicgb/Range.hpp
+  mathicgb/Poly.hpp
+  mathicgb/FixedSizeMonomialMap.h
+  mathicgb/KoszulQueue.hpp
+  mathicgb/MathicIO.hpp
+  mathicgb/MonoArena.hpp
+  mathicgb/MonoOrder.hpp
+  mathicgb/MonoProcessor.hpp
+  mathicgb/MonomialMap.hpp
+  mathicgb/NonCopyable.hpp
+  mathicgb/RawVector.hpp
+  mathicgb/ReducerHelper.hpp
+  mathicgb/ScopeExit.hpp
+  mathicgb/StaticMonoMap.hpp
+  mathicgb/Unchar.hpp
+  mathicgb/mtbb.hpp
+  mathicgb/stdinc.h
+  mathicgb/mathicgb.h
   )
 
 # these files have .cpp file, but NOT .hpp file
@@ -167,7 +167,7 @@ set(CPPONLYFILES
   mathic/display.h
   mathic/error.cpp
   mathic/error.h
-  mgb-f4/mathicgb.cpp
+  mathicgb/mathicgb.cpp
   )
 
 # these files all have .hpp and .cpp files
@@ -337,40 +337,40 @@ set(SRCLIST
   f4/res-varpower-monomial
   f4/varpower-monomial
   # local version of mathicgb
-  mgb-f4/CFile
-  mgb-f4/LogDomain
-  mgb-f4/LogDomainSet
-  mgb-f4/PolyRing
-  mgb-f4/Basis
-  mgb-f4/MonoLookup
-  mgb-f4/PolyBasis
-  mgb-f4/SparseMatrix
-  mgb-f4/QuadMatrix
-  mgb-f4/QuadMatrixBuilder
-  mgb-f4/Scanner
-  mgb-f4/ClassicGBAlg
-  mgb-f4/F4MatrixBuilder
-  mgb-f4/F4MatrixBuilder2
-  mgb-f4/F4MatrixProjection
-  mgb-f4/F4MatrixReducer
-  mgb-f4/F4ProtoMatrix
-  mgb-f4/F4Reducer
-  mgb-f4/Reducer
-  mgb-f4/TypicalReducer
-  mgb-f4/ReducerDedup
-  mgb-f4/ReducerHash
-  mgb-f4/ReducerHashPack
-  mgb-f4/ReducerNoDedup
-  mgb-f4/ReducerPack
-  mgb-f4/ReducerPackDedup
-  mgb-f4/ModuleMonoSet
-  mgb-f4/PolyHashTable
-  mgb-f4/SPairs
-  mgb-f4/SigPolyBasis
-  mgb-f4/SigSPairQueue
-  mgb-f4/SigSPairs
-  mgb-f4/SignatureGB
-  mgb-f4/io-util
+  mathicgb/CFile
+  mathicgb/LogDomain
+  mathicgb/LogDomainSet
+  mathicgb/PolyRing
+  mathicgb/Basis
+  mathicgb/MonoLookup
+  mathicgb/PolyBasis
+  mathicgb/SparseMatrix
+  mathicgb/QuadMatrix
+  mathicgb/QuadMatrixBuilder
+  mathicgb/Scanner
+  mathicgb/ClassicGBAlg
+  mathicgb/F4MatrixBuilder
+  mathicgb/F4MatrixBuilder2
+  mathicgb/F4MatrixProjection
+  mathicgb/F4MatrixReducer
+  mathicgb/F4ProtoMatrix
+  mathicgb/F4Reducer
+  mathicgb/Reducer
+  mathicgb/TypicalReducer
+  mathicgb/ReducerDedup
+  mathicgb/ReducerHash
+  mathicgb/ReducerHashPack
+  mathicgb/ReducerNoDedup
+  mathicgb/ReducerPack
+  mathicgb/ReducerPackDedup
+  mathicgb/ModuleMonoSet
+  mathicgb/PolyHashTable
+  mathicgb/SPairs
+  mathicgb/SigPolyBasis
+  mathicgb/SigSPairQueue
+  mathicgb/SigSPairs
+  mathicgb/SignatureGB
+  mathicgb/io-util
   # Boolean Involutive Gröbner Bases
   bibasis/bibasis
   bibasis/allocator
@@ -512,6 +512,33 @@ if(BUILD_TESTING)
 
     unit-tests/fromStream.cpp
     unit-tests/testMain.cpp # not needed, except for GC_INIT
+
+    # memtailor
+    memtailor/unit-tests/ArenaTest.cpp
+    memtailor/unit-tests/BufferPoolTest.cpp
+    memtailor/unit-tests/MemoryBlocksTest.cpp
+
+    # mathic
+    mathic/unit-tests/BitTriangle.cpp
+#    mathic/unit-tests/DivFinder.cpp
+    mathic/unit-tests/HashTable.cpp
+    mathic/unit-tests/PairQueue.cpp
+
+    # mathicgb
+    mathicgb/unit-tests/F4MatrixBuilder.cpp
+    mathicgb/unit-tests/F4MatrixReducer.cpp
+    mathicgb/unit-tests/MathicIO.cpp
+    mathicgb/unit-tests/MonoMonoid.cpp
+    mathicgb/unit-tests/PrimeField.cpp
+    mathicgb/unit-tests/QuadMatrixBuilder.cpp
+    mathicgb/unit-tests/Range.cpp
+    mathicgb/unit-tests/Scanner.cpp
+    mathicgb/unit-tests/SparseMatrix.cpp
+    mathicgb/unit-tests/gb-test.cpp
+    mathicgb/unit-tests/ideals.hpp
+    mathicgb/unit-tests/ideals.cpp
+    mathicgb/unit-tests/mathicgb.cpp
+    mathicgb/unit-tests/poly-test.cpp
     )
 
   if(BDWGC_FOUND)

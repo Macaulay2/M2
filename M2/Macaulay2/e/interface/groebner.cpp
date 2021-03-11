@@ -27,7 +27,7 @@
 #include "interrupted.hpp"
 #include "f4/res-f4-computation.hpp"
 
-#include "mgb-f4/mathicgb.h"
+#include "mathicgb/mathicgb.h"
 #include "matrix-stream.hpp"
 
 class FreeModule;
