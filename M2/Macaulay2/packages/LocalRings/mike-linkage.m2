@@ -32,12 +32,16 @@ restart
 needsPackage ("LocalRings", FileName => "../LocalRings.m2")
 load "mike-linkage.m2"
 
+setRandomSeed 0
 I = generalLink M0;
 I2 = generalLink I;
 res I2
 R = localRing(S,ideal vars S)
 J = sub(I2,R)
-F = res J
+debugLevel = 2
+Jmin = mingens J
+syz Jmin;
+--elapsedTime F = res J
 
 f = J_0
 phi= map(R^1, R^1,f)

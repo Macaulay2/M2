@@ -250,6 +250,8 @@ TEST /// -- test for // -- TODO add more
   -- here is an interesting example where it seems like
   -- columns of syz(f | g) are not ordered the natural way
   assert(f === g  * (f//g))
+syz (f|g)
+leadTerm oo
 ///
 
 TEST ///
