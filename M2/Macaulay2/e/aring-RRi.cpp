@@ -11,7 +11,7 @@ void ARingRRi::elem_text_out(buffer &o,
 {
   mpfi_ptr a = &const_cast<ElementType &>(ap);
   M2_string s1 = (*gmp_tostringRRpointer)(&(a->left));
-  M2_string s2 = (*gmp_tostringRRpointer)(&(a->left));
+  M2_string s2 = (*gmp_tostringRRpointer)(&(a->right));
   bool prepend_plus1 = p_plus && (s1->array[0] != '-');
   bool strip_last1 =
       !p_one && ((s1->len == 1 && s1->array[0] == '1') ||

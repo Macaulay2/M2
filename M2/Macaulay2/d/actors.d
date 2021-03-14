@@ -683,7 +683,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       then toExpr(x.v^y.v)
 	       else buildErrorPacket("negative base not implemented")
 	       )
-      else buildErrorPacket("not implemented"))
+      else binarymethod(lhs,rhs,PowerS))
      is x:CCcell do (
 	  when rhs
 	  is y:ZZcell do toExpr(x.v^y.v)
