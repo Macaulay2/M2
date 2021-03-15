@@ -30,6 +30,12 @@ bool get_from_BigReal(const RT& R, typename RT::ElementType& a, gmp_RR b)
 {
   return false;
 }
+    
+template <typename RT>
+bool get_from_Interval(const RT& R, typename RT::ElementType& a, gmp_RRi b)
+{
+    return false;
+}
 
 template <typename RT>
 bool get_from_BigComplex(const RT& R, typename RT::ElementType& a, gmp_CC b)
@@ -62,6 +68,13 @@ inline bool get_from_BigReal(const ARingRRR& R,
                              gmp_RR b)
 {
   return R.set_from_BigReal(a, b);
+}
+    
+inline bool get_from_BigReal(const ARingRRi& R,
+                             ARingRRi::ElementType& a,
+                             gmp_RR b)
+{
+    return R.set_from_BigReal(a, b);
 }
 
 inline bool get_from_BigReal(const ARingCC& R,
@@ -97,6 +110,13 @@ inline bool get_from_double(const ARingRRR& R,
                             double b)
 {
   return R.set_from_double(a, b);
+}
+    
+inline bool get_from_Interval(const ARingRRi& R,
+                              ARingRRi::ElementType& a,
+                              gmp_RRi b)
+{
+    return R.set_from_Interval(a, b);
 }
 
 inline bool get_from_double(const ARingRR& R, ARingRR::ElementType& a, double b)

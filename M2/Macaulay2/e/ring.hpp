@@ -112,7 +112,7 @@ class Ring : public MutableEngineObject
   virtual bool is_ZZ() const { return false; }
   virtual bool is_QQ() const { return false; }
   virtual bool is_RRR() const { return false; }
-  //virtual bool is_RRi() const { return false; }
+  virtual bool is_RRi() const { return false; }
   virtual bool is_CCC() const { return false; }
   virtual bool is_fraction_field() const { return false; }
   virtual bool is_fraction_poly_ring() const { return false; }
@@ -210,8 +210,8 @@ class Ring : public MutableEngineObject
   virtual const WeylAlgebra *cast_to_WeylAlgebra() const { return 0; }
   virtual RRR *cast_to_RRR() { return 0; }
   virtual const RRR *cast_to_RRR() const { return 0; }
-  //virtual RRi *cast_to_RRi() { return 0; }
-  //virtual const RRi *cast_to_RRi() const { return 0; }
+  virtual RRi *cast_to_RRi() { return 0; }
+  virtual const RRi *cast_to_RRi() const { return 0; }
   virtual CCC *cast_to_CCC() { return 0; }
   virtual const CCC *cast_to_CCC() const { return 0; }
   // Galois Field routines.  These three routines only return non-NULL values
@@ -284,7 +284,7 @@ class Ring : public MutableEngineObject
   // The default version calls from_long(0) and returns false.
   virtual bool from_BigReal(gmp_RR a, ring_elem &result) const;
   // The default version calls from_long(0) and returns false.
- // virtual bool from_Interval(gmp_RRi a, ring_elem &result) const;
+  virtual bool from_Interval(gmp_RRi a, ring_elem &result) const;
   // The default version calls from_long(0) and returns false.
   virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;
   // Returns false if this ring cannot coerce a double to an element in this

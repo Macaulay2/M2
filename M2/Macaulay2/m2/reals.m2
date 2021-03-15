@@ -175,6 +175,9 @@ promote(RR,QQ) := (z,QQ) -> if z === 0. then 0/1 else if isFinite z then (
      (prec,sgn,expt,m,numbits) := partsRR z;
      sgn * m / 2^(numbits - expt)
      ) else error "promote(RR,QQ): non-finite number encountered"
+lift(RRi,QQ) := opts -> (r,QQ) -> lift(midpoint(r),QQ)
+lift(RRi,ZZ) := opts -> (r,ZZ) -> lift(midpoint(r),ZZ)
+promote(RRi,QQ) := (z,QQ) -> promote(midpoint(z),QQ)
 
 ring RR := x -> new RealField of RR' from precision x
 ring RRi := x -> new RealIntervalField of RRi' from precision x
