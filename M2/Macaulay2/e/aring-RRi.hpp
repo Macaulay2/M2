@@ -225,21 +225,50 @@ class ARingRRi : public RingInterface
               mult(result,result,b);
           }
       }
+    else if (n == 1)
+      mpfi_set(&result,&a);
     else if (n == 0)
       mpfi_set_si(&result,0);
     else if (n<0)
-    {
-       // std::cout << "power\n";
         throw 20;
-    }
   }
 
   /* Not entirely sure how to deal with this one. */
    void power_mpz(ElementType &result, const ElementType &a, mpz_srcptr n) const
   {
-    //  std::cout << "power_mpz\n";
-      throw 20;
-    //mpfr_pow_z(&result, &a, n, GMP_RNDN);
+      if (mpz_cmp_si(n,2)>=0)
+      {
+          mpz_ptr r = getmemstructtype(mpz_ptr);
+          mpz_init(r);
+          mpz_fdiv_r_ui(r,n,2);
+          
+          ElementType b;
+          init(b);
+          
+          mpz_ptr m = getmemstructtype(mpz_ptr);
+          mpz_init(m);
+          
+          if (mpz_cmp_si(r,0) == 0)
+          {
+              mpz_cdiv_q_ui(m,n,2);
+              
+              power_mpz(b,a,m);
+              mult(result,b,b);
+          }
+          else
+          {
+              mpz_sub_ui(m,n,1);
+              
+              power_mpz(b,a,m);
+              mult(result,result,b);
+          }
+      }
+      else if (mpz_cmp_si(n,1)==0)
+          mpfi_set(&result,&a);
+      else if (mpz_cmp_si(n,0)==0)
+          mpfi_set_si(&result,0);
+      else if (mpz_cmp_si(n,0)<0)
+          throw 20;
   }
 
   void swap(ElementType &a, ElementType &b) const { mpfi_swap(&a, &b); }
@@ -278,7 +307,6 @@ class ARingRRi : public RingInterface
             int first_var,
             ring_elem &result) const
   {
-     // std::cout << "eval\n";
       throw 20;
    /* if (!map->get_ring()->from_BigReal(&f, result))
       {
@@ -290,14 +318,12 @@ class ARingRRi : public RingInterface
 /* Not ready */
   void zeroize_tiny(gmp_RR epsilon, ElementType &a) const
   {
-    //  std::cout << "zeroize_tiny\n";
       throw 20;
     //if (mpfr_cmpabs(&a, epsilon) < 0) set_zero(a);
   }
     /* Not ready */
   void increase_norm(gmp_RRmutable norm, const ElementType &a) const
   {
-     // std::cout << "increase_norm\n";
       throw 20;
    /* if (mpfr_cmpabs(&a, norm) > 0)
       {
