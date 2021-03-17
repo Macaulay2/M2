@@ -309,12 +309,11 @@ class ARingRRi : public RingInterface
             int first_var,
             ring_elem &result) const
   {
-      throw 20;
-     /* if (!map->get_ring()->from_Interval(&f, result))
+      if (!map->get_ring()->from_Interval(&f, result))
       {
            result = map->get_ring()->from_long(0);
            ERROR("cannot coerce RRi value to ring type");
-      }*/
+      }
   }
 
 /* Not ready */
