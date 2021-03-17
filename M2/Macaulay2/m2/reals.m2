@@ -242,10 +242,9 @@ char InexactField := R -> 0
 
 -- symbolic/numeric constant expressions
 
-pi = new Constant from { symbol pi, pi0 }
-piRRi = new Constant from {symbol piRRi, piRRi0}
-EulerConstant = new Constant from { symbol EulerConstant, mpfrConstantEuler }
-ii = new Constant from { symbol ii, ConstantII }
+pi = new Constant from { symbol pi, pi0, piRRi0 }
+EulerConstant = new Constant from { symbol EulerConstant, mpfrConstantEuler, eRRi0}
+ii = new Constant from { symbol ii, ConstantII}
 
 lngamma = method()
 lngamma ZZ := lngamma QQ := lngamma RR := x -> (
@@ -258,6 +257,8 @@ toString Constant := net Constant := c -> toString c#0
 toExternalString Constant := c -> toString c#0
 numeric Constant := c -> c#1 defaultPrecision
 numeric(ZZ,Constant) := (prec,c) -> c#1 prec
+numericInterval Constant := c -> if #c < 3 then interval(0,-1,Precision=>defaultPrecision) else c#2 defaultPrecision
+numericInterval(ZZ,Constant) := (prec,c) -> if #c < 3 then interval(0,-1,Precision=>prec) else c#2 prec
 exp Constant := c -> exp numeric c
 
 constantTexMath := new HashTable from {

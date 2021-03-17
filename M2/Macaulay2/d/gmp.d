@@ -2154,6 +2154,11 @@ export piRRi(prec:ulong):RRi := (
      z := newRRimutable(prec);
      Ccode( void, "mpfi_const_pi(",  z, ")" );
      moveToRRiandclear(z));
+                                    
+export eRRi(prec:ulong):RRi := (
+     z := newRRimutable(prec);
+     Ccode( void, "mpfi_const_euler(",  z, ")" );
+     moveToRRiandclear(z));
 
 export exp(x:RR):RR := (
      z := newRRmutable(precision0(x));
