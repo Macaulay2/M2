@@ -13,8 +13,8 @@ void ARingRRi::elem_text_out(buffer &o,
   M2_string s1 = (*gmp_tostringRRpointer)(&(a->left));
   M2_string s2 = (*gmp_tostringRRpointer)(&(a->right));
 
+  if(p_plus) o << "+";
   o << "[";
-  if (p_plus) o << "+";
   o.put((char *)s1->array, s1->len);
   o << ",";
   o.put((char *)s2->array, s2->len);

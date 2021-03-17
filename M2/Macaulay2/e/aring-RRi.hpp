@@ -3,6 +3,8 @@
 #ifndef _aring_RRi_hpp_
 #define _aring_RRi_hpp_
 
+#include <iostream>
+
 #include <mpfi.h>
 #include "interface/random.h"
 #include "aring.hpp"
@@ -228,7 +230,7 @@ class ARingRRi : public RingInterface
     else if (n == 1)
       mpfi_set(&result,&a);
     else if (n == 0)
-      mpfi_set_si(&result,0);
+      mpfi_set_si(&result,1);
     else if (n<0)
         throw 20;
   }
@@ -266,7 +268,7 @@ class ARingRRi : public RingInterface
       else if (mpz_cmp_si(n,1)==0)
           mpfi_set(&result,&a);
       else if (mpz_cmp_si(n,0)==0)
-          mpfi_set_si(&result,0);
+          mpfi_set_si(&result,1);
       else if (mpz_cmp_si(n,0)<0)
           throw 20;
   }
@@ -308,10 +310,10 @@ class ARingRRi : public RingInterface
             ring_elem &result) const
   {
       throw 20;
-   /* if (!map->get_ring()->from_BigReal(&f, result))
+     /* if (!map->get_ring()->from_Interval(&f, result))
       {
-        result = map->get_ring()->from_long(0);
-        ERROR("cannot coerce RRi value to ring type");
+           result = map->get_ring()->from_long(0);
+           ERROR("cannot coerce RRi value to ring type");
       }*/
   }
 
