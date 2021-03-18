@@ -408,7 +408,6 @@ reducePoly = p -> (
     R := ring p;
     assert(isPolynomialRing R and #gens R==1 and coefficientRing R===QQ);
     try return polredbest p; -- try use `polredbest` first
-    if VERBOSE then print "-- failed to use polredbest: the minimal polynomial may not be optimal";
     d := (degree p)_0;
     denom := lcm \\ denominator \ last \ listForm p;
     c := leadCoefficient p;
