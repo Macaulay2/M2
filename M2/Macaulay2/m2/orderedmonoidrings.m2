@@ -268,7 +268,21 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		   f=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
 		   c=RM_minexps;
 		   );
-	       (facs,exps) := rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
+	       isNumberField := F -> isField F and instance(baseRing F, QuotientRing) and coefficientRing baseRing F === QQ and numgens baseRing F == 1 and numgens ideal baseRing F == 1; 
+	       (facs,exps) := if isNumberField R then (
+        	   baseR := baseRing R;
+		   RM' := QQ(monoid(generators RM|generators baseR)); -- need to put everyone inside the same ring
+		   f = (map(RM', RM, (generators RM')_{0..<num})) f;
+		   minp := (map(RM', ambient baseR, (generators RM')_{-1})) (ideal baseR)_0;
+		   ((fs,es) -> (for f in fs list raw (map(RM, RM', generators RM|{R_0})) new RM' from f, es)) (
+		       rawFactor(raw f, raw minp)) -- apply rawFactor, but the factors need to be converted back to RM
+	       ) else if instance(R, FractionField) then (
+        	   denom := lcm \\ (t -> denominator t_1) \ listForm f;
+        	   baseRM := (baseRing R)(RM.monoid);
+		   f = (map(baseRM, RM, generators baseRM)) (denom * f);
+		   ((fs,es) -> (for i in (0..<#fs) list raw (((map(RM, baseRM, generators RM)) new baseRM from fs_i) * if i==0 then 1/denom else 1), es)) (
+		       rawFactor raw f) -- similar: convert back to RM, and put denom back into the leadCoefficient
+	       ) else rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
 	       leadCoeff := x->( -- iterated leadCoefficient
 		   R:=ring x;
 		   if class R === PolynomialRing then leadCoeff leadCoefficient x else
