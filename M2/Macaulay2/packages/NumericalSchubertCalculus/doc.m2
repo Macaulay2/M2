@@ -399,7 +399,7 @@ doc ///
 
 
 document{
-    Key => setVerboseLevel,
+    Key => {setVerboseLevel, (setVerboseLevel,ZZ)},
     Headline => "Set different levels of information printed on screen",
     Usage => "setVerboseLevel n",
     Inputs =>{"n" =>{TO "ZZ", " takes values 0,1,2, or greater"}},

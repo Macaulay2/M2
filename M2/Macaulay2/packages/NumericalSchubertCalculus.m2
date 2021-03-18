@@ -105,7 +105,7 @@ installMethod(setDebugOptions, o -> () -> scan(keys o, k->if o#k=!=null then
 load "NumericalSchubertCalculus/PHCpack-LRhomotopies.m2"
 load "NumericalSchubertCalculus/pieri.m2"
 load "NumericalSchubertCalculus/service-functions.m2"
-load "NumericalSchubertCalculus/galois.m2"
+--load "NumericalSchubertCalculus/UnderDevelopment/galois.m2"
 
 --------------------------------------
 -- produces a matrix that parmeterizes
