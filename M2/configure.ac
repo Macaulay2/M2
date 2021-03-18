@@ -1,4 +1,4 @@
-AC_INIT(Macaulay2, [m4_esyscmd_s([cat VERSION])], Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT([Macaulay2],[m4_esyscmd_s([cat VERSION])],[Macaulay2@math.uiuc.edu],[Macaulay2],[http://macaulay2.com/])
 AC_MSG_NOTICE([configuring Macaulay2 version $PACKAGE_VERSION])
 AC_CONFIG_SRCDIR(INSTALL)
 AC_CONFIG_HEADERS(include/M2/config.h)
@@ -160,7 +160,6 @@ AC_CHECK_PROGS(ETAGS,etags ctags,false)
 if test "$ETAGS" = false; then AC_MSG_WARN(without etags no TAGS files will be made); fi
 AC_CHECK_PROGS(LINTIAN,lintian,false)
 AC_CHECK_PROGS(OTOOL,otool,false)
-AC_CHECK_PROGS(FAKEROOT,fakeroot,false)
 AC_CHECK_PROGS(RPMLINT,rpmlint,false)
 AC_CHECK_PROGS(TAR,gtar gnutar tar,false)
 AC_CHECK_PROGS(FIND,gfind find,false)
@@ -212,7 +211,7 @@ AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
 AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
 
-AC_VALIDATE_CACHED_SYSTEM_TUPLE()
+
 dnl AC_ARG_VAR(CC,C compiler to use)
 dnl AC_ARG_VAR(CXX,C++ compiler to use)
 
@@ -242,10 +241,6 @@ fi
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
-
-AC_MSG_NOTICE([checking for C compiler for build environment...])
-AC_PROG_CC_FOR_BUILD		dnl see config/ax_prog_cc_for_build.m4
-AC_MSG_NOTICE([checking for C compiler for build environment... done])
 
 dnl always compile with "-g", so we can debug even optimized versions
 if test "$GCC" = yes
@@ -344,7 +339,7 @@ dnl 	  esac
 dnl      fi
 dnl fi
 
-AC_HEADER_TIME()
+AC_CHECK_HEADERS_ONCE([sys/time.h])
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h stdint.h inttypes.h elf.h execinfo.h stdlib.h syscall.h sys/types.h sys/stat.h unistd.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
 AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
 dnl winsock2.h should be included before including windows.h
@@ -362,14 +357,17 @@ AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 
-dnl AC_SUBST(HAVE_LIBTBB,no)
-dnl AC_SUBST(LIBTBB)
-dnl    AC_LANG(C++)
-dnl    AC_CHECK_HEADER(tbb/tbb.h,
-dnl       [AC_SEARCH_LIBS(TBB_runtime_interface_version,tbb,
-dnl 	 LIBTBB=$ac_cv_search_TBB_runtime_interface_version
-dnl 	 HAVE_LIBTBB=yes)])
-dnl    AC_LANG(C)
+AC_SUBST(HAVE_LIBTBB,no)
+AC_SUBST(LIBTBB)
+   AC_LANG(C++)
+   AC_CHECK_HEADER(tbb/tbb.h,
+      [AC_SEARCH_LIBS(TBB_runtime_interface_version,"tbb",
+	 LIBTBB=$ac_cv_search_TBB_runtime_interface_version
+	 HAVE_LIBTBB=yes,
+	 [AC_MSG_ERROR([tbb library not found])])],
+       [AC_MSG_ERROR([tbb include file (tbb.h) not found])])
+   AC_LANG(C)
+
 # the following line remove -ltbb from LIBS (only thing in LIBS so far).  It is not needed
 # for linking M2-binary.  It is used in mathicgb.
 # LIBS=
@@ -378,7 +376,6 @@ AC_CHECK_FUNCS([herror error clock_gettime getaddrinfo hstrerror sync getpgrp se
 
 AC_SUBST(HAVE_PERSONALITY,$ac_cv_func_personality)
 
-AC_FUNC_ACCEPT_ARGTYPES()
 AC_DEFINE_UNQUOTED(SOCKLEN_T,[`echo "$ac_cv_func_accept_arg3" | sed 's/ \*$//'`],[socket length type used by accept()])
 
 if test $host_os = mingw32
@@ -739,7 +736,7 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 #############################################################################
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox boost 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
     [for i in $enableval
     do case "$LIBLIST $SUBLIST $PROGLIST" in
 	    *" $i "*) 
@@ -1003,8 +1000,12 @@ fi
 
 AC_MSG_CHECKING(whether the package gfan is installed)
 if test "`type -t gfan`" = file
-then AC_MSG_RESULT([yes])
-     FILE_PREREQS="$FILE_PREREQS `type -p gfan`"
+then gfan_version=`gfan _version | head -2 | tail -1 | sed 's/gfan//'`
+     AX_COMPARE_VERSION([$gfan_version], [ge], [0.6],
+          [AC_MSG_RESULT([yes])
+           FILE_PREREQS="$FILE_PREREQS `type -p gfan`"],
+          [AC_MSG_RESULT([yes, but < 0.6, will build])
+           BUILD_gfan=yes])
 else AC_MSG_RESULT([no, will build])
      BUILD_gfan=yes
      dnl we'll also build cddlib until gfan can find its files in /usr/include instead of in /usr/include/cdd
@@ -1237,8 +1238,8 @@ if test $BUILD_mathicgb = no
 then AC_LANG(C++)
      SAVE_CXXFLAGS="$CXXFLAGS"
      CXXFLAGS="$CXXFLAGS"
-     AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes)
-     AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes)
+     AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes; AC_MSG_NOTICE(will build mathicgb))
+     AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes; AC_MSG_NOTICE(will build mathicgb))
      CXXFLAGS="$SAVE_CXXFLAGS"
 fi
 test $BUILD_mathicgb = yes && BUILTLIBS="-lmathicgb $BUILTLIBS"
@@ -1358,7 +1359,7 @@ SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
 then
     AC_MSG_CHECKING([whether factory library is installed])
-    FACTORY_MINVERSION=4.2.0
+    FACTORY_MINVERSION=4.1.0
     if $PKG_CONFIG --exists "factory >= $FACTORY_MINVERSION"
     then
 	FACTORY_NAME=factory
@@ -1909,6 +1910,14 @@ test "$pdfdir"      || AC_SUBST(pdfdir,'${docdir}')
 test "$psdir"       || AC_SUBST(psdir,'${docdir}')
 test "$localedir"   || AC_SUBST(localedir,'${datarootdir}/locale')
 
+AC_ARG_WITH([emacsdir],
+    [AS_HELP_STRING([--with-emacsdir=...],
+        [set installation directory for installing Emacs Lisp files;
+         must begin with ${prefix} or ${exec_prefix}])],
+    [emacsdir=$withval],
+    [emacsdir=${datarootdir}/emacs/site-lisp/macaulay2])
+AC_SUBST(emacsdir)
+
 # Here we normalize all the configure variables so each one begins either with ${prefix} or with ${exec_prefix},
 # so they can be handled more simply in Macaulay2, by a single text replacement.
 save_prefix=$prefix
@@ -1926,7 +1935,8 @@ sysconfdir=/nowhere
 sharedstatedir=/nowhere
 localstatedir=/nowhere
 for i in bindir datadir includedir infodir libdir libexecdir mandir sbindir \
-         psdir pdfdir dvidir htmldir localedir GFTABLESDIR docdir datarootdir
+         psdir pdfdir dvidir htmldir localedir GFTABLESDIR docdir datarootdir \
+         emacsdir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
      "$exec_prefix"|"$exec_prefix"/*)
@@ -1972,6 +1982,7 @@ AC_SUBST(pre_htmldir)
 AC_SUBST(pre_localedir)
 AC_SUBST(pre_docdir)
 AC_SUBST(pre_datarootdir)
+AC_SUBST(pre_emacsdir)
 
 AC_SUBST(tail_bindir)
 AC_SUBST(tail_datadir)
@@ -1991,6 +2002,7 @@ AC_SUBST(tail_htmldir)
 AC_SUBST(tail_localedir)
 AC_SUBST(tail_docdir)
 AC_SUBST(tail_datarootdir)
+AC_SUBST(tail_emacsdir)
 
 AC_SUBST(MACHINE,"$ARCH-$OS-$ISSUE")
 AC_DEFINE_UNQUOTED(MACHINE,"$MACHINE",[complete machine description (to appear in name of tar file)])
@@ -2035,7 +2047,6 @@ AC_MSG_NOTICE([staging area for architecture dependent files: $pre_exec_prefix])
 
 AC_SUBST(packagesdir,$datadir/Macaulay2)
 AC_SUBST(libm2dir,$libdir/Macaulay2)
-AC_SUBST(emacsdir,$datadir/emacs/site-lisp/Macaulay2)
 AC_SUBST(librariesdir,$libm2dir/lib)
 AC_SUBST(programsdir,$libexecdir/Macaulay2/bin)
 AC_SUBST(licensesdir,$libexecdir/Macaulay2/program-licenses)
@@ -2043,7 +2054,6 @@ AC_SUBST(packagecachecoredir,$libm2dir/cache)
 
 AC_SUBST(tail_packagesdir,$tail_datadir/Macaulay2)
 AC_SUBST(tail_libm2dir,$tail_libdir/Macaulay2)
-AC_SUBST(tail_emacsdir,$tail_datadir/emacs/site-lisp/Macaulay2)
 AC_SUBST(tail_librariesdir,$tail_libm2dir/lib)
 AC_SUBST(tail_programsdir,$tail_libexecdir/Macaulay2/bin)
 AC_SUBST(tail_licensesdir,$tail_libexecdir/Macaulay2/program-licenses)
@@ -2051,13 +2061,12 @@ AC_SUBST(tail_packagecachecoredir,$tail_libm2dir/cache)
 
 AC_SUBST(pre_packagesdir,$pre_datadir/Macaulay2)
 AC_SUBST(pre_libm2dir,$pre_libdir/Macaulay2)
-AC_SUBST(pre_emacsdir,$pre_datadir/emacs/site-lisp/Macaulay2)
 AC_SUBST(pre_librariesdir,$pre_libm2dir/lib)
 AC_SUBST(pre_programsdir,$pre_libexecdir/Macaulay2/bin)
 AC_SUBST(pre_licensesdir,$pre_libexecdir/Macaulay2/program-licenses)
 AC_SUBST(pre_packagecachecoredir,$pre_libm2dir/cache)
 
-AC_OUTPUT()
+AC_OUTPUT
 
 dnl Local Variables:
 dnl mode: autoconf

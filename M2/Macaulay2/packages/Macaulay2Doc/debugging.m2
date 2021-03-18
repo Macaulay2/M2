@@ -299,7 +299,7 @@ document {
 	  are write-protected; fortunately, their methods are not, and can be replaced."
 	  },
      EXAMPLE lines ///
-     ker Matrix := on(lookup(ker,Matrix),GenerateAssertions=>true,Name=>"ker");
+     ker Matrix := on(lookup(ker,Matrix),GenerateAssertions=>true,Name=>"ker"); -* no-capture-flag *-
      f = x -> kernel (x|x);
      R = QQ[a..c];
      f vars R
@@ -321,19 +321,16 @@ doc ///
   Description
     Text
       @TT "assert x"@ prints an error message if @TT "x"@ isn't true.
-    CannedExample
-      i1 : assert( (2+2) === 4)
-
-      i2 : assert(rank matrix {{1, 2}, {2, 4}} == 2)
-      stdio:2:1:(3): error: assertion failed
+    Example
+      stopIfError = false;
+      assert( (2+2) === 4)
+      assert(rank matrix {{1, 2}, {2, 4}} == 2)
     Text
       If @TT "x"@ is an @TO Expression@ that evaluates to false, then
       a partially evaluated form is printed with the error message to
       assist in debugging.
-    CannedExample
-      i3 : assert Equation(rank matrix {{1, 2}, {2, 4}}, 2)
-      stdio:3:1:(3): error: assertion failed:
-      1 == 2 is false
+    Example
+      assert Equation(rank matrix {{1, 2}, {2, 4}}, 2)
   SeeAlso
     generateAssertions
 ///

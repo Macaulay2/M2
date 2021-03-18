@@ -402,7 +402,11 @@ export (x:ZZ) ^^ (y:ZZ) : ZZ := (
 base := 10;
 toCstring(x:ZZ) ::= getstr(charstarOrNull(null()), base, x);
 
-export tostring(x:ZZ):string := tostring(toCstring(x));
+export tostring(x:ZZ):string := (
+     cstr := toCstring(x);
+     ret := tostring(cstr);
+     Ccode(void,"mp_free_str(", cstr, ")");
+     ret);
 
 export (x:int) + (y:ZZ) : ZZ := toInteger(x) + y;
 

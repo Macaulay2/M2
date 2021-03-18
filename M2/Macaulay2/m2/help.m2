@@ -443,21 +443,36 @@ viewHelp Thing  := key -> (
         else error("missing documentation index: ", frontpage, ". Run makePackageIndex() or start M2 without -q"))
     else viewHelp makeDocumentTag key)
 viewHelp DocumentTag := tag -> (
-    docpage := concatenate htmlFilename ( tag = getPrimaryTag tag );
-    if fileExists docpage then show URL { docpage } else show help tag)
+    rawdoc := fetchAnyRawDocumentation tag;
+    if ( tag' := getOption(rawdoc, symbol DocumentTag) ) =!= null
+    and fileExists( docpage := concatenate htmlFilename tag' )
+    then show URL { docpage } else show help tag)
 viewHelp ZZ := i -> seeAbout(viewHelp, i)
 
 viewHelp = new Command from viewHelp
 -- This ensures that "methods viewHelp" and "?viewHelp" work as expected
 setAttribute(viewHelp#0, ReverseDictionary, symbol viewHelp)
 
+makeInfo := tag -> (
+    infoFile := temporaryDirectory() | toFilename format tag | ".info";
+    infoFile << "\037" << endl <<
+	"Node: Top, Up: (Macaulay2Doc)Top" << endl << endl <<
+	info help tag << endl << close;
+    infoFile
+)
+
 infoHelp = method(Dispatch => Thing)
 infoHelp Thing := key -> (
-    if key === () then return infoHelp "Macaulay2Doc";
-    tag := infoTagConvert makeDocumentTag(key, Package => null);
-    if getenv "INSIDE_EMACS" == "" then chkrun ("info " | format tag)
+    if key === () then infoHelp "Macaulay2Doc"
+    else infoHelp makeDocumentTag key)
+infoHelp DocumentTag := tag -> (
+    rawdoc := fetchAnyRawDocumentation tag;
+    tag' := getOption(rawdoc, symbol DocumentTag);
+    infoTag := if tag' =!= null then infoTagConvert tag' else makeInfo tag;
+    if getenv "INSIDE_EMACS" == "" then chkrun ("info " | format infoTag)
     -- used by M2-info-help in M2.el
-    else print("-*" | " infoHelp: " | tag | " *-");)
+    else print("-*" | " infoHelp: " | infoTag | " *-")
+)
 infoHelp ZZ := i -> seeAbout(infoHelp, i)
 infoHelp = new Command from infoHelp
 -- This ensures that "methods infoHelp" and "?infoHelp" work as expected

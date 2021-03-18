@@ -650,7 +650,7 @@ isGorenstein( QuotientRing) := R -> (
     (torAlgData R)#"isGorenstein"
     )
 
-isGorenstein( Ideal ) := I -> isCI((ring I)/I)
+isGorenstein( Ideal ) := I -> isGorenstein((ring I)/I)
 
 ----------------------------------------------------------------------------
 -- isGolod

@@ -214,7 +214,14 @@ tim = timing(jacW : comp1); -- recomputes the same GB 150 times in 1.8.  We want
 -- version 1.8: 17.5 seconds
 -- after fix: .166 seconds
 assert Equation(numgens tim#1, 33)
-assert BinaryOperation {symbol <, tim#0, .6 * standardSecond}
+
+-- version 1.17: as much as 2 seconds on Ubuntu armhf/i386 build machines
+-- previous upper bounds of .5 * standardSecond and .6 * standardSecond
+-- occassionally caused build failures, see:
+-- https://github.com/Macaulay2/M2/issues/1804
+-- https://github.com/Macaulay2/M2/pull/1811
+-- https://github.com/Macaulay2/M2/pull/1957
+assert BinaryOperation {symbol <, tim#0, standardSecond}
 
 P=QQ[x,y,z,MonomialOrder=>Lex];
 d=z^4+z^2*x*y^9+z*x^9*y+x^5*y^5;

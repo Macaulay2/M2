@@ -1516,9 +1516,9 @@ doc /// --setDefaultConfiguration
         but its dependencies @TO Graphs@ and @TO MapleInterface@ do.
         For instance, the command 
 
-        {\tt setDefaultConfiguration("Graphs","JpgViewer","open") }
+        @TT "setDefaultConfiguration(\"Graphs\",\"DotBinary\",\"circo\")"@
 
-        sets the default jpg viewer used for visualizing graphs and chordal networks.
+        sets the Graphviz binary used for visualizing graphs and chordal networks.
       Code
       Pre
     Caveat
@@ -1580,12 +1580,7 @@ document { --configuration
     BR{},
 
     EM "Graphs: ",
-    "Visualizing chordal networks requires configuring the jpg viewer and the Graphviz executable. ",
-    "The default jpg viewer is \"display\", which should work on Ubuntu but may not work on OS X. ",
-    "This can be changed as follows:",
-    BR{},
-    TT "setDefaultConfiguration(\"Graphs\",\"JpgViewer\",\"open\")",
-    BR{},
+    "Visualizing chordal networks requires configuring the Graphviz executable. ",
     "The default Graphviz executable \"dot\" should work, but it if not it can be changed with:",
     BR{},
     TT "setDefaultConfiguration(\"Graphs\",\"DotBinary\",\"myexecutable\")",

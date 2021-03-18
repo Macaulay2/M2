@@ -118,7 +118,7 @@ if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       RESULT_VARIABLE GIT_SUBMOD_RESULT)
     if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-      message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+      message(WARNING "git submodule update failed, please checkout submodules manually")
     endif()
   endif()
 endif()
@@ -393,7 +393,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries flint "mp;mpfr;ntl" FLINT_FOUND)
 # https://service.mathematik.uni-kl.de/ftp/pub/Math/Singular/Factory/
 # TODO: what is ftmpl_inst.o?
 ExternalProject_Add(build-factory
-  URL               https://service.mathematik.uni-kl.de/ftp/pub/Math/Factory/factory-4.2.0.tar.gz
+  URL               https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode/factory-4.2.0.tar.gz
   URL_HASH          SHA256=b66c4c78847e24b71386a42ea2fb368b721f5cb03966c8c78801f1677c45e6c0
   PREFIX            libraries/factory
   SOURCE_DIR        libraries/factory/build
@@ -432,7 +432,8 @@ ExternalProject_Add(build-factory
   )
 if(GFTABLESDIR AND NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
   message(STATUS "Copying gftables from ${GFTABLESDIR}/gftables")
-  file(COPY ${GFTABLESDIR}/gftables DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory)
+  file(COPY ${GFTABLESDIR}/gftables
+    DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory FOLLOW_SYMLINK_CHAIN)
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries factory "mp;ntl;flint" FACTORY_FOUND)
 
@@ -577,7 +578,6 @@ _ADD_COMPONENT_DEPENDENCY(libraries givaro mp GIVARO_FOUND)
 # https://linbox-team.github.io/fflas-ffpack/
 # NOTE: fflas_ffpack is just header files, so we don't build it
 # instead we add an extra autotune target for generating fflas-ffpack-thresholds.h
-# TODO: to make sure AppleClang works with OpenMP see: https://github.com/linbox-team/fflas-ffpack/issues/309
 string(REGEX REPLACE
   "./configure$" "${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/autogen.sh" fflas_ffpack_AUTOGEN "${CONFIGURE}")
 set(fflas_ffpack_LICENSEFILES ${CMAKE_SOURCE_DIR}/submodules/fflas_ffpack/COPYING)
@@ -588,7 +588,7 @@ ExternalProject_Add(build-fflas_ffpack
   CONFIGURE_COMMAND ${fflas_ffpack_AUTOGEN} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       # --enable-precompilation # build errors
-                      $<$<BOOL:${WITH_OMP}>:--enable-openmp>
+                      $<$<BOOL:${OpenMP_FOUND}>:--enable-openmp>
                       $<$<NOT:$<BOOL:${BUILD_NATIVE}>>:--without-archnative>
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
@@ -602,6 +602,7 @@ ExternalProject_Add(build-fflas_ffpack
                       RANLIB=${CMAKE_RANLIB}
                       LIBS=${LA_LIBRARIES}
                       CBLAS_LIBS=${LA_LIBRARIES} # see macros/mkl-check.m4
+                      "OMPFLAGS=${OpenMP_CXX_FLAGS} ${OpenMP_CXX_LDLIBS}"
   BUILD_COMMAND     true
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install-data # only headers and fflas-ffpack.pc
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/fflas_ffpack
@@ -728,8 +729,8 @@ ExternalProject_Add(build-mathicgb
                     -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                     -DCMAKE_CXX_FLAGS=${CXXFLAGS}
-                    -Dwith_tbb=${WITH_TBB}
                     -Denable_mgb=ON
+                    -Dwith_tbb=ON
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
@@ -949,8 +950,6 @@ _ADD_COMPONENT_DEPENDENCY(programs nauty "" NAUTY)
 
 # https://www.normaliz.uni-osnabrueck.de/
 # normaliz needs libgmp, libgmpxx, boost and is used by the package Normaliz
-# TODO: what to do when OpenMP is not found
-string(REPLACE " " "%20" normaliz_OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS} ${OpenMP_CXX_LDLIBS}")
 ExternalProject_Add(build-normaliz
   URL               https://github.com/Normaliz/Normaliz/releases/download/v3.8.9/normaliz-3.8.9.tar.gz
   URL_HASH          SHA256=a4c3eda39ffe42120adfd3bda9433b01d9965516e3f98e401b62752a54bee5dd
@@ -974,7 +973,7 @@ ExternalProject_Add(build-normaliz
                       OBJDUMP=${CMAKE_OBJDUMP}
                       STRIP=${CMAKE_STRIP}
                       RANLIB=${CMAKE_RANLIB}
-                      OPENMP_CXXFLAGS=${normaliz_OpenMP_CXX_FLAGS}
+                      "OPENMP_CXXFLAGS=${OpenMP_CXX_FLAGS} ${OpenMP_CXX_LDLIBS}"
             COMMAND patch --fuzz=10 --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/normaliz/patch-libtool
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
   INSTALL_COMMAND   ${CMAKE_STRIP} source/normaliz # TODO: for polymake ${MAKE} -j${PARALLEL_JOBS} install-strip
@@ -1158,7 +1157,7 @@ if(EXISTS ${M2_HOST_PREFIX}/lib)
   file(COPY ${M2_HOST_PREFIX}/lib
     DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2
     FILES_MATCHING PATTERN "*.so*" PATTERN "*.dylib*"
-    PATTERN "pkgconfig" EXCLUDE)
+    PATTERN "pkgconfig" EXCLUDE FOLLOW_SYMLINK_CHAIN)
 endif()
 
 # TODO: strip libraries and binaries

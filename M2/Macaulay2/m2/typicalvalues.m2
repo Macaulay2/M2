@@ -44,6 +44,10 @@ append(BasicList,Thing) := BasicList => append
 prepend(Thing,BasicList) := BasicList => prepend
 apply(BasicList,Function) := BasicList => apply
 apply(BasicList,BasicList,Function) := BasicList => apply
+apply(String,Function) := Sequence => apply
+apply(BasicList,String,Function) := Sequence => apply
+apply(String,BasicList,Function) := Sequence => apply
+apply(String,String,Function) := Sequence => apply
 apply(ZZ,Function) := List => apply
 applyKeys(HashTable,Function) := HashTable => applyKeys
 applyKeys(HashTable,Function,Function) := HashTable => applyKeys
@@ -97,8 +101,8 @@ substring(String,ZZ,ZZ) := String => substring
 substring(ZZ,String) := String => substring
 substring(Sequence,String) := String => substring
 substring(ZZ,ZZ,String) := String => substring
-toList Set := toList BasicList := List => toList
-toSequence BasicList := Sequence => toSequence
+toList Set := toList BasicList := toList String := List => toList
+toSequence BasicList := toSequence String := Sequence => toSequence
 xor(ZZ,ZZ) := ZZ => xor
 ascii String := List => ascii
 ascii List := String => ascii
@@ -121,7 +125,7 @@ read (File,ZZ) := String => read
 read Sequence := String => read
 read String := String => read
 Function Thing := Thing => x -> (dummy x;)
-scan(BasicList,Function) := Nothing => scan
+scan(BasicList,Function) := scan(String,Function) := Nothing => scan
 scan(ZZ,Function) := Nothing => scan
 scanPairs(HashTable,Function) := Nothing => scanPairs
 lines(String,String) := List => lines

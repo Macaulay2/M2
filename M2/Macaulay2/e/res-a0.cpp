@@ -1065,7 +1065,7 @@ int res2_comp::find_divisor(const MonomialIdeal *mi,
                             const int *exp,
                             res2_pair *&result)
 {
-  // Find all the posible matches, use some criterion for finding the best...
+  // Find all the possible matches, use some criterion for finding the best...
   res2_pair *p;
   VECTOR(Bag *) bb;
   mi->find_all_divisors(exp, bb);

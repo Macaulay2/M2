@@ -1554,7 +1554,8 @@ map(e:Expr,f:Expr):Expr := (
 	  if !isInt(i)
 	  then WrongArgSmallInteger()
 	  else map(toInt(i),f))
-     else WrongArg(1,"a list, sequence, or an integer"));
+     is s:stringCell do map(strtoseq(s), f)
+     else WrongArg(1,"a list, sequence, integer, or string"));
 map(e1:Expr,e2:Expr,f:Expr):Expr := (
      when e1
      is a1:Sequence do (
@@ -1571,7 +1572,8 @@ map(e1:Expr,e2:Expr,f:Expr):Expr := (
 	       is v:Sequence do list(b2.Class,v,b2.Mutable)
 	       else nullE		  -- will not happen
 	       )
-	  else WrongArg(2,"a list or sequence"))
+	  is s2:stringCell do map(a1, strtoseq(s2), f)
+	  else WrongArg(2,"a list, sequence, or string"))
      is b1:List do (
 	  when e2
 	  is a2:Sequence do (
@@ -1592,8 +1594,15 @@ map(e1:Expr,e2:Expr,f:Expr):Expr := (
 	       is v:Sequence do list(class,v,mutable)
 	       else nullE		  -- will not happen
 	       )
-	  else WrongArg(2,"a list or sequence"))
-     else WrongArg(1,"a list or sequence"));
+	  is s2:stringCell do map(b1.v, strtoseq(s2), f)
+	  else WrongArg(2,"a list, sequence, or string"))
+     is s1:stringCell do (
+	  when e2
+	  is a2:Sequence do map(strtoseq(s1), a2, f)
+	  is b2:List do map(strtoseq(s1), b2.v, f)
+	  is s2:stringCell do map(strtoseq(s1), strtoseq(s2), f)
+	  else WrongArg(2, "a list, sequence, or string"))
+     else WrongArg(1,"a list, sequence, or string"));
 map(e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 2
@@ -2029,7 +2038,8 @@ scan(e:Expr,f:Expr):Expr := (
 	  if !isInt(i)
 	  then WrongArgSmallInteger(1)
 	  else scan(toInt(i),f))
-     else buildErrorPacket("scan expects a list"));
+     is s:stringCell do scan(strtoseq(s), f)
+     else buildErrorPacket("scan expects a list, sequence, integer, or string"));
 scan(e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 2
@@ -2057,7 +2067,8 @@ toSequence(e:Expr):Expr := (
 	  then Expr(new Sequence len length(b.v) do foreach i in b.v do provide i)
 	  else Expr(b.v)
 	  )
-     else WrongArg("a list or sequence"));
+     is s:stringCell do Expr(strtoseq(s))
+     else WrongArg("a list, sequence, or string"));
 setupfun("toSequence",toSequence);
 
 sequencefun(e:Expr):Expr := (
