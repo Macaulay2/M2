@@ -232,7 +232,7 @@ doc ///
 	    f(t)^3+f(t)+1
 	   
         Text
-       	    The switchFieldMap makes the user defined map compatible with the natural map between the coeffiecient fields.
+	    The switchFieldMap makes the user defined map compatible with the natural map between the coefficient fields.
 	   
     --SeeAlso
     

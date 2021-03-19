@@ -46,7 +46,7 @@ struct hilb_step : public our_new_delete
   ring_elem h0;  // Hilbert function so far computed 'to the left'
   ring_elem h1;
   int first_sum;  // First monomial ideal which corresponds to the 'sum' part
-  VECTOR(MonomialIdeal *) monids;  // The (partitoned) array of monomial ideals
+  VECTOR(MonomialIdeal *) monids;  // The (partitioned) array of monomial ideals
 };
 
 /**
