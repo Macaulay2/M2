@@ -395,7 +395,7 @@ InexactNumber#{Standard,AfterPrint} = x -> (
      )
 
 isReal = method()
-isReal RR := isReal QQ := isReal ZZ := x -> true
+isReal RRi := isReal RR := isReal QQ := isReal ZZ := x -> true
 isReal CC := z -> imaginaryPart z == 0
 
 acosh = method()
