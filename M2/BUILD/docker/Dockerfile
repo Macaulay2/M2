@@ -7,7 +7,7 @@ FROM ubuntu:focal
 # Setting up Macaulay2 repository
 RUN apt-get update && \
     apt-get install -y --no-install-recommends software-properties-common apt-transport-https && \
-    add-apt-repository ppa:profzoom/macaulay2 && add-apt-repository ppa:profzoom/macaulay2 && \
+    add-apt-repository ppa:macaulay2/macaulay2 && add-apt-repository ppa:macaulay2/macaulay2 && \
     apt-get update && apt-get clean
 
 # Install Macaulay2
