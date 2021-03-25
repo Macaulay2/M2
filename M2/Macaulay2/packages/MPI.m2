@@ -24,3 +24,29 @@ Perhaps:
 * make workers prepend error messages (or anything that goes to stdin/stderr) with their ID. 
  
 *-
+
+-*
+Possible use case:
+  bunch of Groebner bases computed, i.e. using different monomial orders.
+  run through all of them, receive from each, the initial monomials, and/or GB elements themselves.
+
+Possible use case:
+  queue of tasks: input, output, status (processor, actual status). (e.g. doRandomBinomialIdealSearch(R, 1000)), tag a task (e.g. an index).
+  list of completed tasks?
+  indicator function: is a worker available? (mutable list of (string sent, or null)) (or three states...)
+    -- once we do receiveString(worker), we set this to null for that worked.
+  freeWorker (returns null if none are free), or block+probe.
+    block until one is free.
+
+  need a loop: task manager which does all the tasks:
+    probe workers (blocks until one is free)
+      if probe tells us we have a result: we store it in the task output, set it to be free
+      if one is free: grab the next task, send it to that worker.
+    
+Compute random binomial ideals, find their betti numbers, and keep only the ones with regularity >= n, some fixed n.
+
+broadcastCode(String);
+-- want to compute r
+  
+for i in mpiNodes do sendMessage("a = {1,2,3}
+*-
