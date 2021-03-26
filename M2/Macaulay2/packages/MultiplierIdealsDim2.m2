@@ -98,7 +98,7 @@ RelativeCanonicalDivisor = (IntersectionMatrix) -> (
   matrix(AuxRelCanDivisor) * transpose(inverse(promote(submatrix(IntersectionMatrix, {0..NumExceptionalDiv - 1}),QQ)))|matrix(mutableMatrix(QQ,1,NumDiv - NumExceptionalDiv))
 )
 
--- Tecnical routine to compute the multiplicity of a jumping number (similar to MultiplicityJN)
+-- Technical routine to compute the multiplicity of a jumping number (similar to MultiplicityJN)
 Multiplicity = (F,IntersectionMatrix,RelCanDivisor,Excess,JumpingNumber) -> (
     MultJN := 0;
     NumDiv := numgens source IntersectionMatrix;
@@ -128,7 +128,7 @@ Multiplicity = (F,IntersectionMatrix,RelCanDivisor,Excess,JumpingNumber) -> (
     return(MultJN + NumDivIntersect / 2,SumExcess,MaxJumpingDivisor)
 )
 
--- Tecnical routine to compute the ideal associated to a jumping number (similar to MultIdeal)
+-- Technical routine to compute the ideal associated to a jumping number (similar to MultIdeal)
 CompIdeal = {MaxIterations => 10000,UnloadingValue => false} >> o -> (JumpingNumber,IntersectionMatrix,F,RelCanDivisor) -> (
    NumDiv := numgens source IntersectionMatrix;
    Divisor := mutableMatrix(ZZ,1,NumDiv);
@@ -257,7 +257,7 @@ Chain = (actp, Combinations, Divisor, IntersectionMatrix, RuptureDivisors,NumDiv
 Combinations 
 )
 
--- Tecnical routine to generate the critical chains
+-- Technical routine to generate the critical chains
 GenChains = (IntersectionMatrix,F,NumDiv) -> (
   NumExceptionalDiv := numgens target IntersectionMatrix;
   Combinations := new MutableList;
@@ -430,7 +430,7 @@ Tucker = {SmallestJN => 0,MaxIterations => 10000,BiggestJN => 2} >> o -> (F,Inte
       );
     ); 
     JN#jj = (AdmissibleChains#jj#0,Candidates);
--- Tecnical part for the output
+-- Technical part for the output
   );
   for i from 0 to #JN - 1 do(
     for j from 0 to #(JN#i#1) - 1 do(

@@ -1020,7 +1020,7 @@ Inputs
  Verbose=>Boolean
   whether to print the polynomials computed that do not split in the
   coefficient field (if {\tt Split} is set to {\tt true}, it will instead print
-  informations when a field extension is performed)
+  information when a field extension is performed)
  Bound=>Number
   over a number field, specify the upper bound of the multiplicative height for
   the points to enumerate
