@@ -465,29 +465,23 @@ getField := (F, p) -> (
     R := F(monoid[getSymbol VARIABLE]); -- F[x]
     x := gens R;
     p = (map(R, ring p, x)) p;
-    F' := null;
+    local F';
     if isPrimeField F then F' = (if ch == 0 then toField(R / reducePoly p)
         else GF(ch^d, Variable=>getSymbol VARIABLE))
     else ( -- case where F itself is already some extension k[y]/minpoly(y)
-        kx := k(monoid[x]); -- k[x]
-        ky := ambient baseRing F; -- k[y]
-        y := gens ky;
         q := minpoly F;
         e := (degree q)_0;
         if ch > 0 then F' = GF(ch^(d*e), Variable=>getSymbol VARIABLE)
         else (
             -- The extension is supposed to have degree d*e over the prime field
             -- We will try to find a primitive element of form x+c*y
-            kxy := k(monoid[x|y]); -- k[x,y]
-            (x, y) = toSequence gens kxy;
-            I := ideal((map(kxy, R, {x,y})) p, (map(kxy, ky, {y})) q);
+            F' = toField first flattenRing(R/ideal p, CoefficientRing=>k);
+            kx := k(monoid[x]); -- k[x]
             c := 1;
-            while true do ( -- try x+y first, then x+2*y, x+3*y, etc.
-                p = (eliminate({y}, (map(kxy, kxy, {x+c*y,y})) I))_0;
-                if ((degree p)_0 == d*e and isPrime p) then (
-                    p = (map(kx, kxy, {kx_0,0})) p;
-                    break;
-                ) else c = c + 1;
+            while true do (
+                p = (kernel map(F', kx, {F'_0+c*F'_1}))_0;
+                if (degree p)_0 == d*e then break
+                else c = c + 1;
             );
             F' = toField(kx / reducePoly p);
         );
@@ -561,32 +555,31 @@ splittingField(RingElement) := opts -> p -> splittingField(coefficientRing ring 
 --
 charpoly = method(Options=>{Variable=>"x"});
 charpoly(Number) := charpoly(RingElement) := opts -> (x) -> (
-    VARIABLE = if opts.Variable === "x" then "x" else toString baseName opts.Variable;
     F := ring x;
     if not isField F then error "the coefficient ring is not a field";
-    S := null;
-    if isPrimeField F then (
-        S = F(monoid[getSymbol VARIABLE]);
-        return S_0 - x;);
-    R := ambient baseRing F; -- k[y]
-    k := coefficientRing R;
-    S = k(monoid[getSymbol VARIABLE]);
-    SR := k(monoid[gens S|gens R]); -- k[x,y]
-    T := (map(SR,R,{SR_1})) minpoly F;
-    A := (map(SR,F,{SR_1})) x;
-    p := (map(S,SR,{S_0,0})) resultant(T, SR_0 - A, SR_1);
-    return p;
+    d := if isPrimeField F then 1 else degree baseRing F;
+    p := minpoly(x, opts);
+    p ^ (d//(degree p)_0)
 );
 -------------------------------------------------------------------------------
 minpoly = method(Options=>{Variable=>"x"});
 minpoly(Number) := minpoly(RingElement) := opts -> (x) -> (
-    p := first first factor charpoly(x, Variable=>opts.Variable);
-    return p // leadCoefficient p;
+    VARIABLE = if opts.Variable === "x" then "x" else toString baseName opts.Variable;
+    F := ring x;
+    if not isField F then error "the coefficient ring is not a field";
+    if isPrimeField F then (
+        S := F(monoid[getSymbol VARIABLE]);
+        S_0 - x
+    ) else (
+        k := coefficientRing baseRing F;
+        p := (kernel map(F, k(monoid[getSymbol VARIABLE]), {x}))_0;
+        p // leadCoefficient p
+    )
 );
 -------------------------------------------------------------------------------
 minpoly(Ring) := opts -> (F) -> (
     if not isField F then error "expect a field";
-    if isPrimeField F then return minpoly(1_F, Variable=>opts.Variable)
+    if isPrimeField F then return minpoly(1_F, opts)
     else return (ideal baseRing F)_0;
 );
 -------------------------------------------------------------------------------
