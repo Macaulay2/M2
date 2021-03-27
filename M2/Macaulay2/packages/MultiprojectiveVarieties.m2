@@ -3169,11 +3169,11 @@ K = ZZ/333331;
 for n from 3 to 5 do for k to n-1 do checkInverseParametrization projectiveVariety(Grass(k,n,K),Saturate=>false);
 checkInverseParametrization projectiveVariety(Grass(2,4,QQ),Saturate=>false);
 projectiveVariety(Grass(2,4,QQ),Saturate=>false) ===> projectiveVariety(Grass(1,4,QQ),Saturate=>false);
-for i in {5,8,14} do checkInverseParametrization baseLocus quadroQuadricCremonaTransformation(i,1,K);
+-- for i in {5,8,14} do checkInverseParametrization baseLocus quadroQuadricCremonaTransformation(i,1,K);
 X = random projectiveVariety Grass(1,4,K);
-checkInverseParametrization X
-checkDegreeParametrization (X * random(1,0_X))
-checkDegreeParametrization ((X * random(1,0_X) ** (point PP_K^2)))
+-- checkInverseParametrization X
+-- checkDegreeParametrization (X * random(1,0_X))
+-- checkDegreeParametrization ((X * random(1,0_X) ** (point PP_K^2)))
 -- checkDegreeParametrization (X * random({{1},{1}},0_X))
 checkDegreeParametrization ((X * random(1,0_X))**(point PP_K^{2,1}))
 Y = random (PP_QQ[2,1])
