@@ -189,6 +189,13 @@ inline bool mypromote(const ARingQQ& R,
   return S.set_from_mpq(fS, &fR);
 }
 inline bool mypromote(const ARingQQ& R,
+                      const ARingRRi& S,
+                      const ARingQQ::ElementType& fR,
+                      ARingRRi::ElementType& fS)
+{
+  return S.set_from_mpq(fS, &fR);
+}
+inline bool mypromote(const ARingQQ& R,
                       const ARingCC& S,
                       const ARingQQ::ElementType& fR,
                       ARingCC::ElementType& fS)
@@ -269,6 +276,31 @@ inline bool mypromote(const ARingRRR& R,
 {
   auto fR1 = const_cast<ARingRRR::ElementType&>(fR);
   S.set_from_BigReal(fS, &fR1);
+  return true;
+}
+/////////////////////////////////////////////////////
+inline bool mypromote(const ARingRRi& R,
+                      const ARingRRi& S,
+                      const ARingRRi::ElementType& fR,
+                      ARingRRi::ElementType& fS)
+{
+  S.set(fS, fR);
+  return true;
+}
+inline bool mypromote(const ARingRR& R,
+                      const ARingRRi& S,
+                      const ARingRR::ElementType& fR,
+                      ARingRRi::ElementType& fS)
+{
+  S.set_from_double(fS, fR);
+  return true;
+}
+inline bool mypromote(const ARingRRR& R,
+                      const ARingRRi& S,
+                      const ARingRRR::ElementType& fR,
+                      ARingRRi::ElementType& fS)
+{
+  S.set_from_BigReal(fS, &fR);
   return true;
 }
 /////////////////////////////////////////////////////
