@@ -50,13 +50,13 @@ jobs:
             cc: gcc-7
           - build-system: cmake
             os: ubuntu-20.04
-            compiler: clang10
-            cxx: clang++-10
-            cc: clang-10
+            compiler: clang-11
+            cxx: clang++-11
+            cc: clang-11
           # This build tests Clang rather than AppleClang (keep)
           - build-system: cmake
             os: macos-10.15
-            compiler: clang10
+            compiler: clang-11
             cxx: clang++
             cc: clang
         exclude:
@@ -88,14 +88,14 @@ jobs:
         run: |
           sudo add-apt-repository -y ppa:macaulay2/macaulay2
           sudo apt-get update
-          sudo apt-get install -y -q --no-install-recommends clang-10 gfortran libtool-bin ninja-build yasm ccache
+          sudo apt-get install -y -q --no-install-recommends clang-11 gfortran libtool-bin ninja-build yasm ccache
           sudo apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-stacktrace-dev \
                   libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libntl-dev gfan \
                   libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
                   libsingular-dev singular-data libmemtailor-dev libmathic-dev libmathicgb-dev libcdd-dev \
-                  cohomcalg topcom 4ti2 normaliz coinor-csdp nauty lrslib w3c-markup-validator libtbb-dev \
-                  libomp5-10 polymake phcpack
+                  cohomcalg topcom 4ti2 normaliz coinor-csdp nauty lrslib polymake phcpack w3c-markup-validator \
+                  libtbb-dev libomp5-11
 
 # ----------------------
 #   Steps common to all build variants
@@ -106,11 +106,15 @@ jobs:
           echo "CC=${{  matrix.cc  }}" >> $GITHUB_ENV
           echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
           if [[ "${{ runner.os }}" == "Linux" ]]
-          then echo "LIBRARY_PATH=`llvm-config-10 --libdir`" >> $GITHUB_ENV
+          then alias llvm-config="llvm-config-11"
                echo "/usr/lib/ccache"                     >> $GITHUB_PATH
           else echo `brew --prefix ccache`/libexec        >> $GITHUB_PATH
                echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
+               echo `brew --prefix llvm`/bin              >> $GITHUB_PATH
+               PATH=`brew --prefix llvm`/bin:$PATH
           fi
+          # Necessary for clang to find the right libomp
+          echo "LIBRARY_PATH=`llvm-config --libdir`" >> $GITHUB_ENV
 
       - uses: actions/cache@v2
         if: matrix.build-system == 'cmake'
@@ -120,10 +124,6 @@ jobs:
             ~/.ccache
             ~/work/M2/M2/M2/BUILD/build/usr-host
           key: build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-${{ hashFiles('**/cmake/*-libraries.cmake', '.github/workflows/test_build.yml') }}
-          # restore-keys: |
-          #   build-cache-${{ runner.os }}-${{ matrix.compiler }}-${{ matrix.build-system }}-
-          #   build-cache-${{ runner.os }}-${{ matrix.compiler }}-
-          #   build-cache-${{ runner.os }}-
 
 
 # ----------------------
@@ -148,7 +148,7 @@ jobs:
         if: matrix.build-system == 'cmake'
         run: |
           cmake --build . --target M2-core M2-emacs install-packages
-          if [[ "${{ runner.os }}" == "Linux" ]] && [[ "${{ matrix.compiler }}" == "clang10" ]]; then
+          if [[ "${{ runner.os }}" == "Linux" ]] && [[ "${{ matrix.compiler }}" == "clang-11" ]]; then
               sudo apt-get install -y -q --no-install-recommends dpkg-dev
               echo "GIT_COMMIT=`git describe --dirty --always --match HEAD`" >> $GITHUB_ENV
               cpack -G DEB
@@ -177,7 +177,7 @@ jobs:
 # ----------------------
 
       - name: Run Tests using CTest
-        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang10'
+        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang-11'
         run: |
           set -xe
           ./M2 -q --check 1 -e 'exit 0'
@@ -223,7 +223,7 @@ jobs:
              M2/BUILD/build/Macaulay2/tests/*/*.errors
 
       - name: Upload Macaulay2 package for Ubuntu (x86_64)
-        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang10' && success()
+        if: matrix.build-system == 'cmake' && runner.os == 'Linux' && matrix.compiler == 'clang-11' && success()
         uses: actions/upload-artifact@v2
         with:
           name: Macaulay2-${{ env.GIT_COMMIT }}-ubuntu-x86_64
