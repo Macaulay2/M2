@@ -233,7 +233,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 		                HREF{cert#"published article URI",  cert#"article title"}, ".",
 		    " That version can be obtained",
 		    " from ",   HREF{cert#"published code URI", "the journal"}, " or",
-		    " from ",   HREF{commit, ("the ", EM "Macaulay2", " source code repository")},
+		    " from ",   HREF{commit, SPAN{"the ", EM "Macaulay2", " source code repository"}},
 		    "."}}
 	    ),
 	DIV {
