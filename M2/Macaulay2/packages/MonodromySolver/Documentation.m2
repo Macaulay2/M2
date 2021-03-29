@@ -1,5 +1,8 @@
 -- undocumented methods and symbols (for each, consider... does it really need to be exported? should it be documented?)
-undocumented {Vertices, (pointArray,List), saturateEdges,  (saturateEdges,HomotopyGraph), (makeRandomizedSelect,RR), (makeBatchPotential,ZZ), (dynamicFlowerSolve,Matrix,Point,List), RandomPointFunction, 
+undocumented {
+    Vertices, 
+    (pointArray,List), 
+    saturateEdges,  (saturateEdges,HomotopyGraph), (makeRandomizedSelect,RR), (makeBatchPotential,ZZ), (dynamicFlowerSolve,Matrix,Point,List), RandomPointFunction, 
      Correspondence21, Edges, Correspondence12, Potential21, Potential12, Family, gamma1, gamma2, Graph, Node1,  Node2, HomotopyEdge, makeRandomizedSelect,
      isAffineLinearFunction, (symbol <<, File, PointArray), (position, Point, PointArray, FunctionClosure), (toExternalString, PointArray), PartialSolBins, LinearSegment, FirstDirectedEdge
      }

@@ -504,6 +504,15 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 	    if not isDirectory exampleDir then makeDirectory exampleDir;
 	    copyFile(outf, outf', Verbose => true)));
 
+    cmphash := (cachef, inputhash) -> (
+	cachehash := gethash cachef;
+	samehash := cachehash === inputhash;
+	if not samehash then verboseLog("warning: cached example file " |
+	    cachef | " does not have expected hash" | newline |
+	    "expected: " | toString inputhash |", actual: " |
+	    toString cachehash);
+	samehash);
+
     usermode := if opts.UserMode === null then not noinitfile else opts.UserMode;
     scan(pairs pkg#"example inputs", (fkey, inputs) -> (
 	    inpf  := inpfn  fkey; -- input file
@@ -515,12 +524,15 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 	    inputhash := hash inputs;
 	    -- use cached example results
 	    if  not opts.RunExamples
-	    or  not opts.RerunExamples and fileExists outf  and gethash outf  === inputhash then (
+	    or  not opts.RerunExamples and fileExists outf  and cmphash(outf, inputhash) then (
 		(possiblyCache(outf, outf', fkey))())
 	    -- use distributed example results
 	    else if pkgopts.UseCachedExampleOutput
-	    and not opts.RerunExamples and fileExists outf' and gethash outf' === inputhash then (
-		if fileExists errf then removeFile errf; copyFile(outf', outf))
+	    and not opts.RerunExamples and fileExists outf' and cmphash(outf', inputhash) then (
+		if fileExists errf then removeFile errf;
+		copyFile(outf', outf);
+		verboseLog("using cached " | desc)
+		)
 	    -- run and capture example results
 	    else elapsedTime captureExampleOutput(
 		desc, demark_newline inputs, pkg,
