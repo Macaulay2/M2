@@ -38,6 +38,7 @@ set(HPPONLYFILES
   MemoryBlock.hpp
   NCAlgebras/Range.hpp
   VectorArithmetic.hpp
+  ARingElem.hpp
   newdelete.hpp
   timing.hpp
   SLP-defs.hpp

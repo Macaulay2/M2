@@ -936,7 +936,6 @@ void NCF4::generalReduceF4Row(int index,
 
   // we have to free mRows[index] information because we are about to overwrite it
   // how can I free mRows[index].columnIndices?  it wasn't the last block allocated on mMonomialSpace...
-  mVectorArithmetic->deallocateCoeffVector(mRows[index].coeffVector);
   mVectorArithmetic->safeDenseRowToSparseRow(dense,
                                              mRows[index].coeffVector,
                                              mRows[index].columnIndices,

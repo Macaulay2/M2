@@ -334,11 +334,12 @@ NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
         tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
 	possField := ZZ/(char ultimate(coefficientRing, ring I));
 	f4ParallelAllowed := (possField === (coefficientRing ring I)) or instance(coefficientRing ring I, GaloisField) or coefficientRing ring I === QQ;
-	if not isHomogeneous I or not f4ParallelAllowed and (strat == "F4Parallel") then (
+	-- commented out for now
+	-- if not isHomogeneous I or not f4ParallelAllowed and (strat == "F4Parallel") then (
 	   -- need to change to Naive algorithm if I is not homogeneous at this point.
-	   << "Warning:  F4 Algorithm not available over current coefficient ring." << endl;
-           if isHomogeneous I then strat = "F4" else strat = "Naive";
-	);
+	--   << "Warning:  F4 Algorithm not available over current coefficient ring." << endl;
+        --   if isHomogeneous I then strat = "F4" else strat = "Naive";
+	--);
 	gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, setNCGBStrategy(strat)));
         I.cache.NCGB = {maxdeg, gbI};
         );
@@ -1692,3 +1693,33 @@ all(15, i -> #(flatten entries ncBasis(i, S)) == binomial(i + 3,3))
 L = lineSchemeFourDim(S,M);
 netList minimalPrimes L
 
+DEVELOPMENT ///
+
+ncEngine Pull Request todo (2/22/2021)
+
+-- Make sure F4 works with new vectorArithmetic
+Faster nonminimal resolution code working with VA
+-- Double check that faster arithmetic is in aring-zzp
+-- Remove vectorArithmetic2
+-- (partly) Find memory leaks in NCF4 code (?)
+Remove gausser files (in both f4 and res-f4) once they are no longer used
+
+Own branch:
+Move mathicgb to M2 repo rather than as a submodule for finer control
+
+Following pull request:
+Associative Algebras:
+	Quotients of quotients
+	basis and gb hooks?
+	think about flattenRing
+	Clean up AssociativeAlgebras code
+	Other QoL improvements (?)
+Rename some vectorArithmetic functions for easier use
+Add delayed modulus vectorArithmetic class?
+
+Future Work:
+NCF4 for inhomogeneous ideals
+Delayed modulus VA class?
+Continue work on resolution code
+Begin work on modules (incl. GBs for modules)
+///

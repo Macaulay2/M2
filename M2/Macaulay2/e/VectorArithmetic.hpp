@@ -13,6 +13,8 @@
 
 #include <tbb/null_mutex.h>
 
+#include "ARingElem.hpp"
+
 class Ring;
 union ring_elem;
 using ComponentIndex = int;
@@ -146,7 +148,7 @@ public:
     for (auto& e : svec) {
       mRing->clear(e);
     }
-    delete svec;
+    delete &svec;
   }
 
   void deallocateCoeffVector(DenseCoeffVectorType& coeffs) const
@@ -155,7 +157,7 @@ public:
     for (auto& e : dvec) {
       mRing->clear(e);
     }
-    delete dvec;
+    delete &dvec;
   }
   
   ////////////////////////
@@ -199,16 +201,9 @@ public:
     auto& dvec = * denseCoeffVector(dense);
     auto& svec = * coeffVector(sparse);
 
-    DenseFieldElement a;
-    mRing->init_set(a,dvec[comps[0]]);
+    ARingElem a(mRing,dvec[comps[0]]);
     for (int i=0; i < comps.size(); ++i)
-    {
-      // are these needed?
-      // mRing->clear(dvec[comps[i]]);
-      // mRing->init(dvec[comps[i]]);
-      mRing->subtract_multiple(dvec[comps[i]], a, svec[i]);
-    }
-    mRing->clear(a);
+      mRing->subtract_multiple(dvec[comps[i]], *a, svec[i]);
   }
 
   int denseRowNextNonzero(DenseCoeffVectorType& dense,
@@ -264,6 +259,7 @@ public:
 	if (not mRing->is_zero(dvec[i])) len++;
 
     comps = monomialSpace.safeAllocateArray<int,LockType>(len,lock);
+    deallocateCoeffVector(sparse);
     sparse = allocateCoeffVector(len);
     auto& svec = * coeffVector(sparse);
 
@@ -271,7 +267,7 @@ public:
     for (int i = first; i >= 0 and i <= last; i++)
       if (not mRing->is_zero(dvec[i]))
 	{
-	  mRing->init_set(svec[next],dvec[i]);
+	  mRing->set(svec[next],dvec[i]);
 	  comps[next] = i;
 	  ++next;
 	  mRing->set_zero(dvec[i]);
@@ -303,7 +299,7 @@ public:
     for (int i = first; i >= 0 and i <= last; i++)
       if (not mRing->is_zero(dvec[i]))
 	{
-	  mRing->init_set(svec[next],dvec[i]);
+	  mRing->set(svec[next],dvec[i]);
 	  comps[next] = i;
 	  ++next;
 	  mRing->set_zero(dvec[i]);
@@ -326,14 +322,11 @@ public:
   {
     auto& svec = * coeffVector(sparse);
 
-    FieldElement leadCoeffInv;
+    ARingElem leadCoeffInv(mRing);
 
-    mRing->init(leadCoeffInv);
-    mRing->invert(leadCoeffInv,svec[0]);
+    mRing->invert(*leadCoeffInv,svec[0]);
 
-    for (auto& c : svec) { mRing->mult(c, c, leadCoeffInv); }
-
-    mRing->clear(leadCoeffInv);
+    for (auto& c : svec) { mRing->mult(c, c, *leadCoeffInv); }
   }
 
   template<typename Container>
@@ -446,6 +439,7 @@ class VectorArithmetic
   using CoeffVectorType = CoeffVector;
   using DenseCoeffVectorType = DenseCoeffVector;
 
+  // does the order of the variant types matter?
   using CVA_Type = std::variant<ConcreteVectorArithmetic<M2::ARingZZpFlint>*,
                                 ConcreteVectorArithmetic<M2::ARingGFFlintBig>*,
                                 ConcreteVectorArithmetic<M2::ARingGFFlint>*,
@@ -556,11 +550,11 @@ public:
 
   /// Deallocate all the coefficients, and the array itself.
   void deallocateCoeffVector(CoeffVectorType& coeffs) const {
-    std::visit([&](auto& arg) { delete arg->coeffVector(coeffs); }, mConcreteVector);
+    std::visit([&](auto& arg) { arg->deallocateCoeffVector(coeffs); }, mConcreteVector);
   }
   
   void deallocateCoeffVector(DenseCoeffVectorType& coeffs) const {
-    std::visit([&](auto& arg) { delete arg->denseCoeffVector(coeffs); }, mConcreteVector);
+    std::visit([&](auto& arg) { arg->deallocateCoeffVector(coeffs); }, mConcreteVector);
   }
 
   ////////////////////////

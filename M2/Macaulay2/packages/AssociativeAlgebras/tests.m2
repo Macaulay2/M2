@@ -652,7 +652,7 @@ TEST ///
   F<x,y,z,w> := FreeAlgebra(kk,4);
   B := [x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x];
   I := ideal<F | B>;
-  time Igb := GroebnerBasis(B,15);
+  time Igb := GroebnerBasis(B,10);
   -- at least 959 secs, d = 15, kk = ZZ/32003, 11gb ram!
   -- 258 secs, d = 14, kk = ZZ/32003 up to 2.7gb ram
   -- 105 secs, d = 12, kk = QQ
@@ -920,23 +920,29 @@ Row 35;3: [1,1] [4,-3429] [6,-3430]
 -- XXX
 restart
 needsPackage "AssociativeAlgebras"
-gbTrace = 2
+debug Core
+--gbTrace = 2
 kk = QQ
 kk = ZZ/32003
+kk = ZZp(32003, Strategy=>"Aring")
 R = kk<|x,y,z,w|>
 I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x};
+elapsedTime Igb = NCGB(I, 8, Strategy=> "F4Parallel");
 -- Should be 10 gens, 108 rows in last matrix, 35, 61 new gb elts
 -- I = ideal I_*; elapsedTime Igb = NCGB(I, 11, Strategy=> "Naive");
--- we are hemorrhaging memory...
+count = 0
 while (true) do (
     I = ideal I_*;
-    elapsedTime Igb = NCGB(I, 10, Strategy=> "F4Parallel");
-    assert(#(flatten entries Igb) == 72);
+    elapsedTime Igb = NCGB(I, 8, Strategy=> "F4Parallel");
+    assert(#(flatten entries Igb) == 42);
     Igb = null;
+    count = count + 1;
+    << "Count: " << count << endl;    
     collectGarbage();
     collectGarbage();
     collectGarbage();
     collectGarbage();    
+    if count >= 2000 then break;
 )
 
 gbTrace = 50; I = ideal I_*; elapsedTime Igb = NCGB(I, 3, Strategy=> "F4Parallel");
@@ -951,7 +957,7 @@ gbTrace = 50; I = ideal I_*; elapsedTime Igb = NCGB(I, 4, Strategy=> "F4Parallel
 I = ideal I_*; elapsedTime Igb = NCGB(I, 11); -- (with autoreduction) 3.5 sec
 I = ideal I_*; elapsedTime Igb = NCGB(I, 12); -- (with autoreduction) 17.7 sec                 --- 8 secs
 I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy => "F4"); 
-I = ideal I_*; elapsedTime Igb = NCGB(I, 12, Strategy => "F4Parallel"); 
+I = ideal I_*; elapsedTime Igb = NCGB(I, 10, Strategy => "F4Parallel"); 
 I = ideal I_*; elapsedTime Igb = NCGB(I, 13, Strategy => "F4"); -- (with autoreduction) 79 sec (153 gens in GB)  --- 29 secs
 I = ideal I_*; elapsedTime Igb = NCGB(I, 13, Strategy => "F4Parallel"); -- 18.84s
 I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy => "F4"); -- (with autoreduction) 352 sec (177 gens in GB) --- 110 secs after previous F4 changes, about 2.5gb
@@ -961,6 +967,91 @@ I = ideal I_*; elapsedTime Igb = NCGB(I, 15, Strategy => "F4"); -- 381 sec (354s
 I = ideal I_*; elapsedTime Igb = NCGB(I, 15, Strategy => "F4Parallel"); -- 220 sec (195s after VA changes) 8.21gb (121s on x86 M1! 103s native!)
 I = ideal I_*; elapsedTime Igb = NCGB(I, 16, Strategy => "F4"); --
 I = ideal I_*; elapsedTime Igb = NCGB(I, 16, Strategy => "F4Parallel"); -- 
+
+-- CRT tests
+restart
+needsPackage "AssociativeAlgebras"
+debug Core
+--gbTrace = 2
+kk = QQ
+S = kk<|x,y,z,w|>
+I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x};
+R = ZZ[]
+RQ = QQ[]
+prod = 1
+d = 10
+
+p = nextPrime (10000000000)
+kk = ZZ/p
+Sp = freeAlgebra(kk,gens S)
+Ip = sub(I,vars Sp)
+Ipgb = NCGB(Ip,d, Strategy => "F4Parallel");
+numTimes = 1
+-- leadTerm broken for matrices with nc entries!
+(mons,coeffs) = coefficients Ipgb;
+MN = sub(coeffs,R);
+prod = prod*p;
+coeffsQ = map(RQ,rawMatrixRatConversion(raw MN, prod, raw RQ));
+coeffsQ' = 0;
+
+while (numTimes == 1 or coeffsQ != coeffsQ') do (
+  numDiffs = #select(flatten entries (coeffsQ - coeffsQ'), f -> f != 0);
+  << "Prime                    : " << p << endl;
+  << "Number of entries changed: " << numDiffs << endl;
+  coeffsQ = coeffsQ';
+  p = nextPrime(p+1);
+  kk = ZZ/p;
+  Sp = freeAlgebra(kk,gens S);
+  Ip = sub(I,vars Sp);
+  elapsedTime Ipgb = NCGB(Ip,d, Strategy => "F4Parallel");
+  (mons',coeffs') = coefficients Ipgb;  -- need to handle when mons are different
+  N = sub(coeffs',R);
+  if (numrows MN != numrows N or numcols MN != numcols N) then (
+    coeffQ' = 0;
+    continue;
+  );
+  numTimes = numTimes + 1;
+  elapsedTime MN = map(R,rawMatrixCRA(raw MN, raw N, prod, p));
+  prod = prod*p;
+  elapsedTime coeffsQ' = map(RQ,rawMatrixRatConversion(raw MN, prod, raw RQ));
+)
+candGB = (sub(mons,vars ring I)) * sub(coeffsQ,QQ);
+
+candGB = Igb;
+compressGBCoeff = compress flatten last coefficients candGB;
+compressGBCoeff = apply(flatten entries compressGBCoeff, c -> lift(c,QQ));
+bigNum = max (compressGBCoeff / numerator)
+bigDen = max (compressGBCoeff / denominator)
+
+restart
+needsPackage "AssociativeAlgebras"
+S = QQ<|x,y,e,f_1..f_4|>
+I = ideal {x*y - y*x, e*x^3, e*y^3}
+Igb = NCGB(I,10)
+fs = drop(flatten entries Igb, 1)
+I2 = ideal {f_1*y, f_3*y, f_4*y, x*y-y*x}
+I2gb = NCGB(I2,10)
+
+--f_1.y |-> e.x^3y ~> e.yx^3 = f_3.1 so the syzygy is f_1.y - f_3.1
+--which one is the lead term? e.x^3y > e.yx^3
+--if there was a tie (which may not happen in the nc case?) go up one step and compare again.
+
+--- FM + MES example 3/15/2021
+restart
+needsPackage "AssociativeAlgebras"
+Q = QQ<|x,y,z,e|>
+I = ideal (x*y+y*x, x*z+z*x, y*z+z*y, e*(x - y), e*z)
+Igb = NCGB(I,10)
+
+restart
+debug Core
+R = ZZ[]
+RQ = QQ[]
+origM = matrix {{4/3,22/7}}
+M = sub(sub(matrix {{35,32}},ZZ/101),R)
+N = sub(sub(matrix {{10669,4575}},ZZ/32003),R)
+MN = map(R,rawMatrixCRA(raw M, raw N, 101, 32003))
+map(RQ,rawMatrixRatConversion(raw MN, 101*32003, raw RQ)) -- cool!
 
 time Igb = NCGB(I, 20, Strategy=>"F4");
 time Igb = NCGB(I, 10, Strategy=>"Naive");
@@ -1667,4 +1758,68 @@ B = threeDimSklyanin(ZZ/32003,{3,5,7},{x,y,z})
 M = coker matrix {{x,y,z}}
 errorDepth = 0
 C = res(M,Strategy=>10)
+///
+
+DEVELOPMENT ///
+restart
+needsPackage "AssociativeAlgebras"
+A = QQ<|a,b,c,e,f_1,f_2|>
+I1 = ideal {a*b - b*a, a*c - c*a, b*c - c*b, e*(a - b), e*c}
+I1gb = NCGB(I1, 10)
+-- ea, ec lead terms
+-- f_1*b <--> e*(a-b)*b - e*(a*b + b*a) = -eb^2 - eba
+-- f_1*c <--> e*(a-b)*c - e*(ac + ca) = -ebc - eca -> ecb - eca -> 0
+-- f_3*b <--> e(ba + b^2)*b - e*b*(ab + ba) = eb^3 - eb^2a
+-- f_3*c <--> e(ba + b^2)*c - e*b*(ac + ca) = eb^2c - ebca ~> ecb^2 + ecba -> ec(b^2+ba) -> 0
+-- must remember when we use module elements in the reduction.
+-- so the fact that f_1*c reduces to 0 gives a syzygy
+-- the corresponding syzygies are:
+-- f_1*c - f_2*(a+b)
+-- f_1*b + f_3
+-- f_3*b + f_4
+-- f_3*c - f_2*(b^2+ba)
+I2 = ideal {a*b + b*a, a*c + c*a, b*c + c*b, e*(a - b), e*c, f_1}
+I2gb = NCGB(I2, 10)
+
+    0     1     2     3        0    1    2    3
+0   a     .     .     .                  pb   pc (or *during*)
+1   .     b     c     d
+2   .     c     d
+3   .     d
+
+-- e's: level 0 (just the basis of the target of the first matrix) -- a
+-- f_1 |-> e*(a-b), f_2 |-> e*c (in degree 1), etc -- (wherever the gens of the gb are)
+--    we are assuming we have a gb of the columns of the input matrix out to a given degree
+-- from this, we can get a gb of the modules in each level (up to the degree that we computed the original gb).
+
+-- g_1 |-> f_1*c - f_2*(a+b) lead term label e.a.c (or (e.a).c)
+-- g_2 |-> f_1*b + f_3
+-- g_3 |-> f_3*b + f_4
+-- g_4 |-> f_3*c - f_2*(b^2+ba)
+
+-- g_2*c <--> (f_1*b + f_3)*c - f_1(bc + cb) = f_1*cb + f_3*c - (f_1*c - f_2(a+b))*b
+--                                           = f_3*c + f_2*(a+b)*b
+--                                           = -f_2*ba + f_2*b^2 + f_3*c
+--                                           = -f_2*ba + f_2*b^2 + f_2*(b^2+ba) = 0
+-- corresponding syzygy: g_2*c - g_1*b + g_4
+
+-- TODO: About to start the programming now.  We will begin by creating the frame (no reductions yet).
+--       Then allow us to view the matrices of the frame in Macaulay2.
+
+restart
+debug needsPackage "AssociativeAlgebras"
+A = QQ<|a,b,c|>
+I = ideal {a*b + b*a, a*c + c*a, b*c + c*b}
+B = A/I
+M = matrix {{a-b,c}}
+d1 = rightKernel(M, DegreeLimit => 10)
+d2 = rightKernel(d1, DegreeLimit => 10)
+d3 = rightKernel(d2, DegreeLimit => 10)
+
+restart
+needsPackage "AssociativeAlgebras"
+A = QQ[e,a,b,c]
+I1 = ideal {e*(a - b), e*c}
+gens gb I1
+e*(a-b)*c - e*c*a = -e*b*c = -e*c*b = 0
 ///
