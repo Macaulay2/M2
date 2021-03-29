@@ -54,9 +54,19 @@ macro(_gmp_check_version)
         ${GMP_MAJOR_VERSION}.${GMP_MINOR_VERSION}.${GMP_PATCHLEVEL_VERSION})
     endif()
   endforeach()
-
-  set(GMP_VERSION
-    ${GMP_MAJOR_VERSION}.${GMP_MINOR_VERSION}.${GMP_PATCHLEVEL_VERSION})
+  #If a direct search fails, use try_run to read out gmp_version.
+  #This is for systems that put multiarch headers in other places.
+  if(NOT GMP_VERSION)
+    file(WRITE ${CMAKE_BINARY_DIR}/gmp_version.c [[
+      #include <stdio.h>
+      #include "gmp.h"
+      int main(){ printf("%s",gmp_version); return 0;}
+      ]])
+    try_run(GMP_TEST_SUCCESS GMP_COMPILE_SUCCESS
+      ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/gmp_version.c
+      LINK_LIBRARIES gmp
+      RUN_OUTPUT_VARIABLE GMP_VERSION)
+  endif()
 
   # Check whether found version exists and exceeds the minimum requirement
   if(NOT GMP_VERSION)

@@ -26,7 +26,6 @@ option(BUILD_NATIVE	"Use native SIMD instructions"		ON)
 option(BUILD_SHARED_LIBS "Build shared libraries"		OFF)
 option(BUILD_DOCS	"Build internal documentation"		OFF)
 option(AUTOTUNE		"Autotune library parameters"		OFF)
-option(WITH_TBB		"Link with the TBB library"		ON)
 option(WITH_OMP		"Link with the OpenMP library"		ON)
 # TODO: parse.d expr.d tokens.d actors4.d actors5.d still need xml
 option(WITH_XML		"Link with the libxml2 library"		ON)
@@ -109,6 +108,7 @@ message("## Configure Macaulay2
      BUILD_TESTING     = ${BUILD_TESTING}
      BUILD_DOCS        = ${BUILD_DOCS}\n
      COVERAGE          = ${COVERAGE}
+     MEMDEBUG          = ${MEMDEBUG}
      PROFILING         = ${PROFILING}\n
      DEVELOPMENT       = ${DEVELOPMENT}
      EXPERIMENT        = ${EXPERIMENT}")
@@ -232,15 +232,6 @@ endif()
 
 # TODO: look into compiler features:
 # https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html
-
-# Flags based on OS
-if(ISSUE MATCHES Ubuntu)
-  # Apparently libboost_stacktrace_backtrace is not reliably available on all platforms.
-  set(Boost_stacktrace stacktrace_backtrace)
-else()
-  # addr2line is more readily available, but does not work well with -fPIE
-  set(Boost_stacktrace stacktrace_addr2line)
-endif()
 
 # Common flags
 # TODO: reduce these if possible
