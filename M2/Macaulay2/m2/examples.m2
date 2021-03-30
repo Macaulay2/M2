@@ -181,7 +181,7 @@ getExampleOutput := (pkg, fkey) -> (
 -- used in installPackage.m2
 -- TODO: store in a database instead
 storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
-    verboseLog("storing example results from output file", minimizeFilename outf);
+    verboseLog("storing example results in ", minimizeFilename outf);
     if fileExists outf then (
 	outstr := reproduciblePaths get outf;
 	outf << outstr << close;

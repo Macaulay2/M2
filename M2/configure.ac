@@ -160,7 +160,6 @@ AC_CHECK_PROGS(ETAGS,etags ctags,false)
 if test "$ETAGS" = false; then AC_MSG_WARN(without etags no TAGS files will be made); fi
 AC_CHECK_PROGS(LINTIAN,lintian,false)
 AC_CHECK_PROGS(OTOOL,otool,false)
-AC_CHECK_PROGS(FAKEROOT,fakeroot,false)
 AC_CHECK_PROGS(RPMLINT,rpmlint,false)
 AC_CHECK_PROGS(TAR,gtar gnutar tar,false)
 AC_CHECK_PROGS(FIND,gfind find,false)
@@ -369,7 +368,8 @@ AC_SUBST(LIBTBB)
       [AC_SEARCH_LIBS(TBB_runtime_interface_version,"tbb",
 	 LIBTBB=$ac_cv_search_TBB_runtime_interface_version
 	 HAVE_LIBTBB=yes,
-	 [AC_MSG_ERROR([tbb not found])])])
+	 [AC_MSG_ERROR([tbb library not found])])],
+       [AC_MSG_ERROR([tbb include file (tbb.h) not found])])
    AC_LANG(C)
 
 # the following line remove -ltbb from LIBS (only thing in LIBS so far).  It is not needed
@@ -1911,6 +1911,14 @@ test "$pdfdir"      || AC_SUBST(pdfdir,'${docdir}')
 test "$psdir"       || AC_SUBST(psdir,'${docdir}')
 test "$localedir"   || AC_SUBST(localedir,'${datarootdir}/locale')
 
+AC_ARG_WITH([emacsdir],
+    [AS_HELP_STRING([--with-emacsdir=...],
+        [set installation directory for installing Emacs Lisp files;
+         must begin with ${prefix} or ${exec_prefix}])],
+    [emacsdir=$withval],
+    [emacsdir=${datarootdir}/emacs/site-lisp/macaulay2])
+AC_SUBST(emacsdir)
+
 # Here we normalize all the configure variables so each one begins either with ${prefix} or with ${exec_prefix},
 # so they can be handled more simply in Macaulay2, by a single text replacement.
 save_prefix=$prefix
@@ -1928,7 +1936,8 @@ sysconfdir=/nowhere
 sharedstatedir=/nowhere
 localstatedir=/nowhere
 for i in bindir datadir includedir infodir libdir libexecdir mandir sbindir \
-         psdir pdfdir dvidir htmldir localedir GFTABLESDIR docdir datarootdir
+         psdir pdfdir dvidir htmldir localedir GFTABLESDIR docdir datarootdir \
+         emacsdir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
      "$exec_prefix"|"$exec_prefix"/*)
@@ -1974,6 +1983,7 @@ AC_SUBST(pre_htmldir)
 AC_SUBST(pre_localedir)
 AC_SUBST(pre_docdir)
 AC_SUBST(pre_datarootdir)
+AC_SUBST(pre_emacsdir)
 
 AC_SUBST(tail_bindir)
 AC_SUBST(tail_datadir)
@@ -1993,6 +2003,7 @@ AC_SUBST(tail_htmldir)
 AC_SUBST(tail_localedir)
 AC_SUBST(tail_docdir)
 AC_SUBST(tail_datarootdir)
+AC_SUBST(tail_emacsdir)
 
 AC_SUBST(MACHINE,"$ARCH-$OS-$ISSUE")
 AC_DEFINE_UNQUOTED(MACHINE,"$MACHINE",[complete machine description (to appear in name of tar file)])
@@ -2037,7 +2048,6 @@ AC_MSG_NOTICE([staging area for architecture dependent files: $pre_exec_prefix])
 
 AC_SUBST(packagesdir,$datadir/Macaulay2)
 AC_SUBST(libm2dir,$libdir/Macaulay2)
-AC_SUBST(emacsdir,$datadir/emacs/site-lisp/macaulay2)
 AC_SUBST(librariesdir,$libm2dir/lib)
 AC_SUBST(programsdir,$libexecdir/Macaulay2/bin)
 AC_SUBST(licensesdir,$libexecdir/Macaulay2/program-licenses)
@@ -2045,7 +2055,6 @@ AC_SUBST(packagecachecoredir,$libm2dir/cache)
 
 AC_SUBST(tail_packagesdir,$tail_datadir/Macaulay2)
 AC_SUBST(tail_libm2dir,$tail_libdir/Macaulay2)
-AC_SUBST(tail_emacsdir,$tail_datadir/emacs/site-lisp/macaulay2)
 AC_SUBST(tail_librariesdir,$tail_libm2dir/lib)
 AC_SUBST(tail_programsdir,$tail_libexecdir/Macaulay2/bin)
 AC_SUBST(tail_licensesdir,$tail_libexecdir/Macaulay2/program-licenses)
@@ -2053,7 +2062,6 @@ AC_SUBST(tail_packagecachecoredir,$tail_libm2dir/cache)
 
 AC_SUBST(pre_packagesdir,$pre_datadir/Macaulay2)
 AC_SUBST(pre_libm2dir,$pre_libdir/Macaulay2)
-AC_SUBST(pre_emacsdir,$pre_datadir/emacs/site-lisp/macaulay2)
 AC_SUBST(pre_librariesdir,$pre_libm2dir/lib)
 AC_SUBST(pre_programsdir,$pre_libexecdir/Macaulay2/bin)
 AC_SUBST(pre_licensesdir,$pre_libexecdir/Macaulay2/program-licenses)

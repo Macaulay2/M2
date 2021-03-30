@@ -86,13 +86,15 @@ export {
 	"multiplicitiesReorder"
 }
 
-fig2devPath = gfanInterface#Options#Configuration#"fig2devpath"
 gfanVerbose = gfanInterface#Options#Configuration#"verbose"
 -- for backward compatibility
 if not programPaths#?"gfan" and gfanInterface#Options#Configuration#"path" != ""
     then programPaths#"gfan" = gfanInterface#Options#Configuration#"path"
+if not programPaths#?"fig2dev" and gfanInterface#Options#Configuration#"fig2devpath" != ""
+    then programPaths#"fig2dev" = gfanInterface#Options#Configuration#"fig2devpath"
 
 gfanProgram = null
+fig2devProgram = null
 
 gfanKeepFiles = gfanInterface#Options#Configuration#"keepfiles"
 gfanCachePolyhedralOutput = gfanInterface#Options#Configuration#"cachePolyhedralOutput"
@@ -1938,6 +1940,13 @@ gfanPolynomialSetUnion (List, MarkedPolynomialList) := opts -> (L,M) -> (
 -- gfan_render
 --------------------------------------------------------
 
+runfig2dev = fileName -> (
+	if fig2devProgram === null then
+		fig2devProgram = findProgram("fig2dev", "fig2dev -V");
+	runProgram(fig2devProgram,
+		"-Lpng " | fileName | ".fig " | fileName | ".png");
+)
+
 gfanRender = method( Options => {
 	"L" => false,
 	"shiftVariables" => 0
@@ -1956,13 +1965,9 @@ gfanRender (String, List) := opts -> (fileName, L) -> (
 	figure := openOut(fileName | ".fig");
 	figure << out << close;
 	<< "Figure rendered to " << fileName << ".fig" << endl;
-	if fig2devPath != "" then (
-		run(fig2devPath | "fig2dev -Lpng " | fileName  | ".fig " | fileName |".png");
-		<< "Figure converted to png: " << fileName << ".png" << endl;
-		show URL("file://" | fileName | ".png");
-	) else (
-		<< "fig2dev path not set." << endl ;
-	)
+	runfig2dev fileName;
+	<< "Figure converted to png: " << fileName << ".png" << endl;
+	show URL("file://" | fileName | ".png");
 )
 
 
@@ -1992,12 +1997,9 @@ gfanRenderStaircase (String, List) := opts -> (fileName, L) -> (
 	figure := openOut(fileName | ".fig");
 	figure << out << close;
 	<< "Figure rendered to " << fileName << ".fig" << endl;
-
-	if fig2devPath != "" then (
-		run(fig2devPath | "fig2dev -Lpng " | fileName  | ".fig " | fileName |".png");
-		<< "Figure converted to png: " << fileName << ".png" << endl;
-		show URL("file://" | fileName | ".png");
-	) else << "fig2dev path not set." << endl ;
+	runfig2dev fileName;
+	<< "Figure converted to png: " << fileName << ".png" << endl;
+	show URL("file://" | fileName | ".png");
 )
 
 --------------------------------------------------------
@@ -2602,7 +2604,6 @@ doc ///
 			loadPackage("gfanInterface", Reload => true)
 
 		Text
-			The path to the executables should end in a slash.
 			To set the path permanently, one needs to change
 			{\tt gfanInterface.m2} either before installing or in the installed copy.
 			You will find the path configuration near the top of the file.
@@ -2632,16 +2633,8 @@ doc ///
 
 		Text
 			Finally, if you want to be able to render Groebner fans and monomial staircases
-			to {\tt .png} files, you should install {\tt fig2dev} and specify its path
-			as follows:
-
-		Example
-			loadPackage("gfanInterface", Configuration => { "fig2devpath" => "/directory/to/fig2dev/"}, Reload => true)
-
-		Text
-			Again, the path should end in a slash.
-
-
+			to {\tt .png} files, you should install {\tt fig2dev}.  If it is installed in a
+			non-standard location, then you may specify its path using @TO "programPaths"@.
 ///
 
 doc ///

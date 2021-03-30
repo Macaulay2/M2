@@ -26,7 +26,6 @@ option(BUILD_NATIVE	"Use native SIMD instructions"		ON)
 option(BUILD_SHARED_LIBS "Build shared libraries"		OFF)
 option(BUILD_DOCS	"Build internal documentation"		OFF)
 option(AUTOTUNE		"Autotune library parameters"		OFF)
-option(WITH_TBB		"Link with the TBB library"		ON)
 option(WITH_OMP		"Link with the OpenMP library"		ON)
 # TODO: parse.d expr.d tokens.d actors4.d actors5.d still need xml
 option(WITH_XML		"Link with the libxml2 library"		ON)
@@ -109,6 +108,7 @@ message("## Configure Macaulay2
      BUILD_TESTING     = ${BUILD_TESTING}
      BUILD_DOCS        = ${BUILD_DOCS}\n
      COVERAGE          = ${COVERAGE}
+     MEMDEBUG          = ${MEMDEBUG}
      PROFILING         = ${PROFILING}\n
      DEVELOPMENT       = ${DEVELOPMENT}
      EXPERIMENT        = ${EXPERIMENT}")
