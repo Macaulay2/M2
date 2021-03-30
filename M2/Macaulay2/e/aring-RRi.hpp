@@ -49,7 +49,7 @@ class ARingRRi : public RingInterface
   bool is_zero(const ElementType &f) const { return mpfr_cmp_si(&(f.left), 0) == 0 and mpfr_cmp_si(&(f.right), 0) == 0; }
   bool is_equal(const ElementType &f, const ElementType &g) const
   {
-    return mpfr_cmp(&(f.left), &(f.right)) == 0 and mpfr_cmp(&(f.left), &(g.left)) == 0 and mpfr_cmp(&(g.left), &(g.right)) == 0;
+    return mpfr_cmp(&(f.left), &(g.left)) == 0 and mpfr_cmp(&(f.right), &(g.right)) == 0;
   }
 
   int compare_elems(const ElementType &f, const ElementType &g) const
