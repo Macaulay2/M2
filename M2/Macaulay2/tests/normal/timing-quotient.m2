@@ -217,7 +217,7 @@ assert Equation(numgens tim#1, 33)
 
 -- version 1.17: as much as 2 seconds on Ubuntu armhf/i386 build machines
 -- previous upper bounds of .5 * standardSecond and .6 * standardSecond
--- occassionally caused build failures, see:
+-- occasionally caused build failures, see:
 -- https://github.com/Macaulay2/M2/issues/1804
 -- https://github.com/Macaulay2/M2/pull/1811
 -- https://github.com/Macaulay2/M2/pull/1957

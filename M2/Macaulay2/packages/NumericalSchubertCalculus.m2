@@ -798,7 +798,7 @@ redCheckersColumnReduce2(Matrix, MutableHashTable) := (X'', father) -> (
      red := delete(NC,last father.Board);
      redSorted := sort red; -- numbers of the rows where red checkers are
      apply(#redSorted, r->( -- column r is to be reduced 
---	 -- find the redcheckers bellow that can see the current redChecker
+--	 -- find the redcheckers below that can see the current redChecker
 --	 witnessReds:=select(drop(red,r), i->i>red#r);
 --	 j:={};
 --         scan(witnessReds, i-> j=append(j,position(redSorted, l-> l==i)));

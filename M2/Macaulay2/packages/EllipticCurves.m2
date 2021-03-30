@@ -623,7 +623,7 @@ document {
     Key => {toShortWForm,(toShortWForm,EllipticCurveW)},
     Inputs => {"E"},
     Usage => "toShortWForm(E)",
-    Headline => "A method to trasform an elliptic curve from Weierstrass form to short Weierstrass form.",
+    Headline => "A method to transform an elliptic curve from Weierstrass form to short Weierstrass form.",
     EXAMPLE {"E=ellCurve({1,2,3,4,6},GF(29))","toShortWForm(E)"}
     }
 document {

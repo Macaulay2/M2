@@ -284,7 +284,7 @@ doc ///
       Text 
          The AssociativeAlgebras package contains a number of methods for studying noncommutative
 	 rings - primarily graded rings. The following three extended examples 
-	 highlight the capabilites of the package. 
+	 highlight the capabilities of the package.
       Text
          Our first example concerns a three-dimensional Sklyanin algebra. This example is
 	 a PI-ring. We define the ring as a quotient of the tensor algebra on three
@@ -1354,7 +1354,7 @@ doc ///
       to computing the ideal of maximal minors of the left quadratic
       matrix corresponding to the generators of the defining ideal of B.
       
-      The point scheme parameterizes the point modules over the algebra B.
+      The point scheme parametrizes the point modules over the algebra B.
       A $B$-point module is a module $M$ that is generated in degree zero
       and whose Hilbert function is one for every nonnegative integer.
       In the commutative case, the point scheme of a graded ring $R$ generated
@@ -1451,7 +1451,7 @@ doc ///
      L : Ideal
    Description
      Text
-       This method computes the scheme that parameterizes the set of
+       This method computes the scheme that parametrizes the set of
        line modules over an AS-regular algebra B due to Shelton and Vancliff.
        More precisely, it computes the image of this scheme under the Plucker
        embedding.
