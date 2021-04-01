@@ -1,19 +1,15 @@
 export {
-    --"skewSchubertVariety", -- for Pieri Homotopies
-    "checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
-    -- "checkSchubertProblem", --(Anton: export or not?) this is only for  Frank's devloping use of Schubert Rings... shouldn't be used by the user
-    "solutionsToAffineCoords", --Temporary! User shouldn't use this function
+    "checkIncidenceSolution", 
+    "solutionsToAffineCoords", 
     "partition2bracket",
     "bracket2partition",
     "randomSchubertProblemInstance",
     "NSC2phc", 
-    -- "ensurePartitions", --(Anton: export or not?)
     "LRnumber"              
     }
 ----------------
 --Functions contained here but not exported:
 ----------------
--- NSC2phc(List, ZZ,ZZ) -- converts numerical Schubert Calculus input (list of partitions/brackets) to phc input
 -- verifyLength(List, ZZ)
 -- partition2bracket(List,ZZ,ZZ)
 -- output2partition(List) --input redcheckers
@@ -226,7 +222,6 @@ printTree MutableHashTable := node ->(
 	print peek node;
 	scan(node.Children, c-> printTree c);
 )
-
 
 
 ----------------------

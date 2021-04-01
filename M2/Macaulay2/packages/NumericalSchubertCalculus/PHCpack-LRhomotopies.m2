@@ -1,7 +1,7 @@
 -- An interface to the Littlewood-Richardson homotopies in PHCpack.
 -- Note that this package needs version 1.8 of PHCpack.m2.
 
-export{"LRrule", "LRtriple", "luckySeed", "higherWorkingPrecision", 
+export{"LRrule", "LRtriple", "RandomSeed", "WorkingPrecision", 
        "parseTriplet", "wrapTriplet", "LRcheater",
        "PieriRootCount", "PieriHomotopies"}
 
@@ -520,7 +520,7 @@ SchubertSystemFromFile(String) := (name) -> (
 );
 
 LRtriple = method(TypicalValue => Sequence,
-  Options => {higherWorkingPrecision => 0, luckySeed => -1});
+  Options => {WorkingPrecision => 0, RandomSeed => -1});
 LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
 --
 -- DESCRIPTION :
@@ -534,14 +534,14 @@ LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
 --             the intersection bracket must be taken;
 --
 -- OPTIONS :
---   The option higherWorkingPrecision allow to set the working precision
+--   The option WorkingPrecision allow to set the working precision
 --   to double double or quad double precision.  The values are
 --   0 : the default working precision is double precision,
 --   1 : double double precision, and
 --   2 : quad double precision.
---   The option luckySeed controls the seed for the random number generator,
+--   The option RandomSeed controls the seed for the random number generator,
 --   which ensures reproducible results, and in case of numerical problems,
---   lucky values which give correct results.
+--   Random values which give correct results.
 -- 
 -- ON RETURN :
 --   (r,f,p,s) a sequence with the result of the Schubert problem:
@@ -551,7 +551,7 @@ LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
 --   p         the polynomial system solved,
 --   s         a string with solutions to the polynomial system.
 --
-   if not member(opt.higherWorkingPrecision,{0,1,2}) then
+   if not member(opt.WorkingPrecision,{0,1,2}) then
      error "The working precision must be set to 0, 1, or 2.";
 
    d := LRruleIn(5,n,m);  -- option 5 of phc -e
@@ -560,11 +560,11 @@ LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
    PHCsessionFile := temporaryFileName() | "PHCses";
    PHCsolutions := temporaryFileName() | "PHCsolutions";
    d = concatenate(d,"\n0\n");  -- solve a generic instance for random flags
-   if opt.higherWorkingPrecision == 0 then
+   if opt.WorkingPrecision == 0 then
    (
      d = concatenate(d,"0\n");  -- standard double precision
    )
-   else if opt.higherWorkingPrecision == 1 then
+   else if opt.WorkingPrecision == 1 then
    (
      d = concatenate(d,"1\n");  -- double double precision
    )
@@ -586,11 +586,11 @@ LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
    dataToFile(d,PHCinputFile);
    stdio << "running phc -e, session output to " << PHCsessionFile << endl;
    stdio << "                writing output to " << PHCoutputFile << endl;
-   if opt.luckySeed == -1 then
+   if opt.RandomSeed == -1 then
      run("phc -e < " | PHCinputFile | " > " | PHCsessionFile)
    else
    (
-     cmdphc := "phc -e -0" | opt.luckySeed | " < " | PHCinputFile; 
+     cmdphc := "phc -e -0" | opt.RandomSeed | " < " | PHCinputFile; 
      cmdphc = cmdphc | " > " | PHCsessionFile;
      stdio << "running " << cmdphc;
      run(cmdphc)
