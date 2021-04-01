@@ -10,6 +10,13 @@ assert(linSpace P == 0)
 M = promote(matrix {{3,4,1}},QQ);
 v = promote(matrix {{10}},QQ);
 assert(hyperplanes P == (M,v) or hyperplanes P == (-M,-v))
+
+Q = convexHull transpose matrix {{1,2,3}}
+C1 = coneFromVData transpose matrix {{1,0,0}}
+C2 = coneFromVData  transpose matrix {{0,1,0},{1,0,0}}
+I = intersection(Q+C1, C2)
+assert(dim I == -1)
+assert(isEmpty I)
 ///
 
 -- Test 1
