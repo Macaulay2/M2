@@ -1,13 +1,13 @@
 export {
     --"skewSchubertVariety", -- for Pieri Homotopies
     "checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
-    "checkSchubertProblem", --this is only for  Frank's devloping use of Schubert Rings... shouldn't be used by the user
+    -- "checkSchubertProblem", --(Anton: export or not?) this is only for  Frank's devloping use of Schubert Rings... shouldn't be used by the user
     "solutionsToAffineCoords", --Temporary! User shouldn't use this function
     "partition2bracket",
     "bracket2partition",
     "randomSchubertProblemInstance",
     "NSC2phc", 
-    "ensurePartitions",
+    -- "ensurePartitions", --(Anton: export or not?)
     "LRnumber"              
     }
 ----------------

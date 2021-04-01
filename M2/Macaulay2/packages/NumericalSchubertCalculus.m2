@@ -25,7 +25,6 @@ newPackage(
 		HomePage => "http://www.math.uic.edu/~jan/"}
 	},
     Headline => "numerical methods in Schubert Calculus",
---    Keywords => {"Numerical Algebraic Geometry"},
     PackageImports => {
 	"PHCpack",
 	"NumericalAlgebraicGeometry",

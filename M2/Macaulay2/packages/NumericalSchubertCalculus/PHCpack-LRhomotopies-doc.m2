@@ -268,6 +268,7 @@ doc ///
   Key
     PieriRootCount
     (PieriRootCount,ZZ,ZZ,ZZ)
+    [PieriRootCount,Verbose]
   Headline
     the number of solutions to a generic Pieri problem
   Usage
@@ -298,6 +299,7 @@ doc ///
   Key
     PieriHomotopies
     (PieriHomotopies,ZZ,ZZ)
+    [PieriHomotopies,Verbose]
   Headline
     runs the Pieri homotopies to solve a general hypersurface problem
   Usage
