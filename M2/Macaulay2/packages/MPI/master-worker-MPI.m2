@@ -1,5 +1,9 @@
 -* 
+Run on 5 "processors":
+
 mpirun -np 5 ./M2 -q --stop --silent MPI/master-worker-MPI.m2
+
+After the example is executed, the MASTER becomes interactive.
 *-
 debug Core
 master = 0
@@ -12,8 +16,9 @@ if myID!=master then while true do (
     r := value s;
     << "-- " << myID << " result: " << r << endl;
     sendString(toString r, master);
+    ) else (
+    addEndFunction(()->(for i from 1 to numberOfWorkers do sendString("exit 0",i); -*sleep 1*-));
     )
-addEndFunction(()->(for i from 1 to numberOfWorkers do sendString("exit 0",i); sleep 1 ));
 
 -- write the code for master below
 for i from 1  to numberOfWorkers do ( 
