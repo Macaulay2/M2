@@ -77,7 +77,7 @@ export {
 --*************************************--
 
 ------------------------------------------------------
--- Substitues a list of points on a list of matrices
+-- Substitutes a list of points on a list of matrices
     -- input -  list of points from sols
     --          matrix whose entries are variables
     --          (expect it to be an inverse of a covariance matrix, Sin)

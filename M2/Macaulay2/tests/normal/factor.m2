@@ -95,3 +95,13 @@ assert(not isPrime (3*x));
 R=QQ[x];
 assert(isPrime (3*x));
 assert(not isPrime (3_R));
+
+-- factoring over (simple) number fields
+F=toField(QQ[i]/(i^2+1));
+R=F[x,y];
+assert(#factor(x^2+y^2)==2);
+
+-- factoring over fraction fields
+F=frac(QQ[a]);
+R=F[x,y];
+assert(#factor(x^2-a^-2*y^2)==3);

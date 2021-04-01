@@ -403,7 +403,7 @@ singLocus Module := M -> (
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- This routine prunes a matrix (whose cokernel represents a module) by
--- computing a GB and removing any column whose leadterm is a constatnt
+-- computing a GB and removing any column whose leadterm is a constant
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- GBprune = method()

@@ -1112,7 +1112,7 @@ solveSystem = method(TypicalValue => List,
   Options => {Verbose => false, numThreads=>0, randomSeed => -1, 
               computingPrecision => 1})
 solveSystem List := List =>  o->system -> (
-  -- IN:  system = list of polynomials with complex coeffiecients, 
+  -- IN:  system = list of polynomials with complex coefficients,
   -- i.e. the system to solved 
   -- OUT: solutions to the system, a list of Points
   -- fixed removing of nonzero slack variables
@@ -1206,7 +1206,7 @@ solveSystem List := List =>  o->system -> (
 
 solveRationalSystem = method(TypicalValue => List, Options => {Verbose => false})
 solveRationalSystem  List :=  o-> system -> (
-  -- IN:  system = list of rational equations with complex coeffiecients, 
+  -- IN:  system = list of rational equations with complex coefficients,
   -- i.e. the system to solved
   -- OUT: solutions to the system, a list of Points
   

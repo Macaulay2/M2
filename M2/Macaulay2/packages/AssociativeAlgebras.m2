@@ -1278,7 +1278,7 @@ rightKernel Matrix := opts -> M -> (
 --- load the tests
 -- 21 Jan 2021: there are two failing tests, which have been modified to not fail:
 -- one is commented out by using FAILINGTEST rather than TEST
--- one is a single line (it has a TODO header on the preceeding line)
+-- one is a single line (it has a TODO header on the preceding line)
 FAILINGTEST = (str) -> null
 load "./AssociativeAlgebras/tests.m2"
 
@@ -1569,7 +1569,7 @@ ncKernel phi
 --- how could we minimize the generators and relations in a systematic way?
 --- I have something like this in NCAlgebra, but not sure if it is the best way.
 --- e.g. note that X_23*X_19 = X_18.  Therefore X_18 is not needed as a generator,
---- so we should replace all occurences of X_18 with X_23*X_19. 
+--- so we should replace all occurrences of X_18 with X_23*X_19.
 --- other examples: X_23*X_14 = X_13, X_23*X_9 = X_8 etc.
 
 --- check that the relations are correct

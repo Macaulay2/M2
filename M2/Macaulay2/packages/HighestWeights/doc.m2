@@ -469,7 +469,7 @@ doc ///
 	       in $R$ are weight vectors for the action of $T$.
 	       
 	       This method can be used to obtain the decomposition into
-	       highest weight reperesentations of various objects over $R$ that
+	       highest weight representations of various objects over $R$ that
 	       carry a compatible $G$-action. These objects can be ideals in $R$,
 	       quotients of $R$ by an ideal, $R$-modules or the terms in a 
 	       complex of free $R$-modules.
