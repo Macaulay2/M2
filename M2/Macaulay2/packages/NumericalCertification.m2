@@ -322,7 +322,7 @@ Interval/Interval := (i1,i2) -> (
 
 -- substitution function. it applies one option to given polynomial.
 -- inputs are polynomial and one option such as x => I
--- then it shows interval of polynomials obtained by switching x variable into the inteval I
+-- then it shows interval of polynomials obtained by switching x variable into the interval I
 sub(RingElement, StringOption) := (f, o) -> (
     xx := toExternalString f;  -- make polynomial into String
     o1 := o #0; -- take the variable 

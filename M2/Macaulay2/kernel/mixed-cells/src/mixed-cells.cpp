@@ -14,7 +14,7 @@ static bool debug;
 static bool useNewAntiCyclingRule=false;
 void outOfRange(int i, int n)
 {
-  cerr<<"Index out of range: index="<<i<<" vector lenght="<<n<<endl;
+  cerr<<"Index out of range: index="<<i<<" vector length="<<n<<endl;
   assert(0);
 }
 
@@ -53,7 +53,7 @@ Future classes:
   TrueGen
     
   TrueInt
-    Arbitrary precission integer.
+    Arbitrary precision integer.
 
 
 

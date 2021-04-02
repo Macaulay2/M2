@@ -44,7 +44,7 @@ char *getmem(size_t n)
   char *p;
   TRAPCHK_SIZE(n);
   enter_getmem();
-  p = GC_MALLOC(n);		/* GC_MALLOC clears its memory, but getmem doesn't guarntee to */
+  p = GC_MALLOC(n);		/* GC_MALLOC clears its memory, but getmem doesn't guarantee to */
   if (p == NULL) outofmem2(n);
 #ifndef NDEBUG
   memset(p,0xbe,n);		/* fill with 0xbebebebe ... */

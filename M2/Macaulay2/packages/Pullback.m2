@@ -102,7 +102,7 @@ pullback(RingMap, RingMap) := o -> (f,g) -> (
     AtoBasRmodMap := null;
     RtoBMap := null;
 	
-    RmodJtoRMap := null; -- ill defined, but it doesnt matter
+    RmodJtoRMap := null; -- ill defined, but it does not matter
     RtoRmodJMap := null;
     RmodJtoBMap :=null;
     RmodJPushFwd := null;	

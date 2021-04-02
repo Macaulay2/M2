@@ -56,8 +56,7 @@ gfdirs = ( if isAbsolutePath currentLayout#"factory gftables"
 	   else {prefixDirectory | currentLayout#"factory gftables"} )
 i := position(gfdirs, gfdir -> fileExists(gfdir | "gftables/961")) -- 961==31^2
 if i === null
-then error ("sample Factory finite field addition table file missing, needed for factorization: ",
-    prefixDirectory, currentLayout#"factory gftables")
+then error ("sample Factory finite field addition table file missing, needed for factorization: ", concatenate between_", " gfdirs)
 setFactoryGFtableDirectory gfdirs_i
 
 irreducibleCharacteristicSeries = method()

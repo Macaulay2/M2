@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"MonodromySolver",
-    	Version => "1.13", 
-    	Date => "June 2020",
+    	Version => "1.14", 
+    	Date => "Nov 2020",
     	Authors => {
 	     {Name => "Timothy Duff", Email => "tduff3@gatech.edu"},
 	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
@@ -20,6 +20,7 @@ newPackage(
   	DebuggingMode => false,		
   	--DebuggingMode => true,		 -- set to true only during development
   	CacheExampleOutput => true
+--        OptionalComponentsPresent => true --  set to true only during development
     	)
 
 
@@ -27,7 +28,7 @@ newPackage(
 -- must be placed in one of the following two lists
 
 export{"Edges", "Graph", "Node1", "Node2", "TargetSolutionCount", "Potential", "Vertices", "PartialSols", "SpecializedSystem", "Potential12",
-     "gamma1", "gamma2", "Correspondence21", "Family", "Potential21", "Correspondence12", "homotopyGraph", "MonodromySolverOptions"}
+     "gamma1", "gamma2", "Correspondence21", "Family", "Potential21", "Correspondence12", "homotopyGraph", "MonodromySolverOptions", "monodromyGroup"}
 
 debug NAGtypes
 debug NumericalAlgebraicGeometry
@@ -36,12 +37,16 @@ needs "./MonodromySolver/Systems.m2"
 needs "./MonodromySolver/PointArray.m2"
 needs "./MonodromySolver/HomotopyGraphTypes.m2"
 needs "./MonodromySolver/solveViaMonodromy.m2"
+needs "./MonodromySolver/galois-group.m2"
 needs "./MonodromySolver/Tests.m2"
 
 
 beginDocumentation()
 needs "./MonodromySolver/Documentation.m2"
 end
+
+restart
+check "MonodromySolver"
 
 uninstallPackage "MonodromySolver"
 restart

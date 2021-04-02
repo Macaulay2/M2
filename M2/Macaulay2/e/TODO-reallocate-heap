@@ -44,7 +44,7 @@ TO DO
 
 previous notes:
     Plan #1:
-    D Langauge: where is the doc for it? (ans: in c/README)
+    D Language: where is the doc for it? (ans: in c/README)
     have types:
       gmpZZ = mpz_ptr_GC
     also:

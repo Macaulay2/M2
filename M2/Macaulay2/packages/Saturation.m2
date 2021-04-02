@@ -150,7 +150,7 @@ Ideal  : RingElement          := Ideal  =>         (I, f) -> quotient(I, f)
 -- TODO: why is this the right thing to do?
 quotient(MonomialIdeal, RingElement) := MonomialIdeal => opts -> (I, f) -> (
     quotient(I, if size f === 1 and leadCoefficient f == 1 then monomialIdeal f else ideal f, opts))
-MonomialIdeal : RingElement          := MonomialIdeal => opts -> (I, f) -> quotient(I, f)
+MonomialIdeal : RingElement          := MonomialIdeal =>         (I, f) -> quotient(I, f)
 
 quotient(Module, Ideal)       := Module => opts -> (M, I) -> quotientHelper(M, I, (quotient, Module, Ideal), opts)
 quotient(Module, Number)      :=
@@ -607,8 +607,6 @@ scan({"Unused", Iterate, Eliminate, GRevLex, Bayer, Linear}, strategy ->
 -- isSupportedInZeroLocus
 --------------------------------------------------------------------
 
--- TODO: either in NormalToricVarieties or VirtualResolutions,
--- implement isZeroSheaf(X, M), isFiniteLength(X, M) based on this
 -- Note: this function isn't cached because the usecase in VirtualResolutions doesn't
 -- require it but it does take advantage of precomputed saturation of the annihilator
 isSupportedInZeroLocus = method()
@@ -751,7 +749,7 @@ ans2 = elapsedTime saturationByGRevLex(saturationByGRevLex(I, B1), B0); -- 22.93
 elapsedTime saturationByGRevLex(I, x_0); -- 9.01s
 elapsedTime saturationByGRevLex(I, x_1); -- 8.77s
 
--- TODO: what a discrepency
+-- TODO: what a discrepancy
 ans3 = elapsedTime saturationByElimination(saturationByElimination(I, B0), B1); -- 49.22s
 ans4 = elapsedTime saturationByElimination(saturationByElimination(I, B1), B0); -- 28.63
 

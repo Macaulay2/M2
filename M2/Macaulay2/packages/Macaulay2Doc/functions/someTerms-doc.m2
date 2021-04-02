@@ -32,10 +32,3 @@ document {
 	  },
      SeeAlso => {monomials, coefficients, terms, leadTerm}
      }
-TEST ///
-R = ZZ[a..d]
-f = (a+b+c)^3
-assert(someTerms(f,0,1) == leadTerm f)
-assert(someTerms(f,-1,1) == c^3)
-assert(someTerms(f,-2,2) == 3*b*c^2 + c^3)
-///

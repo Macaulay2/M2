@@ -139,8 +139,8 @@ int system_strcmp(M2_string s, M2_string t) {
   int slen = s->len, tlen = t->len, i;
   int ret = 0;
   int len = slen < tlen ? slen : tlen;
-  char *sarray = s->array;
-  char *tarray = t->array;
+  unsigned char *sarray = (unsigned char *)s->array;
+  unsigned char *tarray = (unsigned char *)t->array;
   for (i=0; i<len; i++) {
     unsigned char c = sarray[i];
     unsigned char d = tarray[i];
@@ -173,8 +173,8 @@ int system_strnumcmp(M2_string s,M2_string t) {
      int ret = 0;
      int len = slen < tlen ? slen : tlen;
      int innumber = FALSE;
-     char *sarray = s->array;
-     char *tarray = t->array;
+     unsigned char *sarray = (unsigned char *)s->array;
+     unsigned char *tarray = (unsigned char *)t->array;
      for (i=0; i<len; i++) {
 	  unsigned char c = sarray[i];
 	  unsigned char d = tarray[i];
@@ -864,7 +864,7 @@ void system_atend(void (*func)()){
      }
 
 int system_strncmp(M2_string s,M2_string t,int n) {
-  return strncmp(s->array,t->array,n);
+     return strncmp((char *)s->array,(char *)t->array,n);
 }
 
 void do_nothing () { }

@@ -57,6 +57,7 @@ document {
 
 document {
      Key => {Complement, [mingens, Strategy], [trim, Strategy]},
+     Headline => "a Strategy option value",
      "The standard (default) strategy for ", TO "mingens", " or ", TO "trim", " is ", TO "Complement", ", at least in the case where the module (or
      ideal) is homogeneous, and the ring is (quotient ring of) a polynomial ring over a field.  The other strategy, ", TO "Inhomogeneous", ", is experimental."
      }
@@ -133,19 +134,3 @@ document {
 	  },
      SeeAlso => {GroebnerBasis, gb,  genericSymmetricMatrix, minors}
      }
-
-TEST "
-R = ZZ/101[a..d,MonomialOrder => Position => Up]
-f = matrix{{a,b},{c,d}}
-h = matrix {{1,0,0},{0,c,d}}
-M = subquotient(h,f)
-assert( mingens M == matrix (R, {{1},{0}}))
-"
-
-TEST "
-R = ZZ/101[a..d,MonomialOrder => Position => Up]
-f = matrix{{a,b},{c,d}}
-h = matrix {{1,0,0},{0,c,d}}
-M = subquotient(h,f)
-assert( generators trim M == matrix (R, {{1},{0}}))
-"

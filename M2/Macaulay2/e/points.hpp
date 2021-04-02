@@ -6,7 +6,6 @@
 #ifndef _points_hpp_
 #define _points_hpp_
 
-#include "engine.h"
 class Matrix;
 class PolynomialRing;
 

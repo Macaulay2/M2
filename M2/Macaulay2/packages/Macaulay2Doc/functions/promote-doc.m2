@@ -2,6 +2,22 @@
 --- author(s): MES
 --- notes: 
 
+-*
+-- TODO
+promote(Module,type of InexactNumber')
+promote(Module,type of InexactNumber)
+promote(Module,type of Number)
+promote(Module,type of RingElement)
+promote(MutableMatrix,type of InexactNumber')
+promote(MutableMatrix,type of InexactNumber)
+promote(MutableMatrix,type of Number)
+promote(MutableMatrix,type of RingElement)
+promote(Vector,type of InexactNumber')
+promote(Vector,type of InexactNumber)
+promote(Vector,type of Number)
+promote(Vector,type of RingElement)
+*-
+
 undocumented {(promote,CC,CC_*),
      (promote, Matrix, InexactNumber),(promote, Number, InexactNumber),
      (promote, Ideal, Number),
@@ -113,41 +129,3 @@ document {
      SeeAlso => {baseRings, lift, liftable, "substitution and maps between rings",
 	  substitute, (symbol**,Matrix,Ring) }
      }
-
-
-TEST ///
-R = QQ[a..d]
-S = R/(a^2-b^2)
-T = S[x,y,z]
-promote(1/2,S)
-1/2 * 1_S
-I = ideal(a^3,c^3)
--- (I_0) ** T -- doesn't make sense [dan]
-(gens I) ** T
-
-
-R = QQ[a..d]
-f = a^2
-S = R/(a^2-b-1)
-F = map(S,R)
-F (2/3)
-G = map(R,S)
-G (a^2)
-lift(a^2,R)
-promote(2/3,S)
-promote(f,S)
-
-A = QQ[a,b,c]
-B = ZZ
-F = map(A,ZZ)
-F 3
-
--- should we get this to work? (MES, 8/23/06):
-          kk = ZZ/32003;
-	  substitute(matrix{{12/235}},kk)
-	  promote(12/235,kk)
-	  12_kk/235_kk
-	  lift(oo,QQ)
-
-	  
-///

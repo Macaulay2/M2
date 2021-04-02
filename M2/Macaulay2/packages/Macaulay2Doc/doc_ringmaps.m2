@@ -1,3 +1,7 @@
+undocumented {
+     (symbol SPACE, RingMap, Number)
+     }
+
 document {
      Key => (symbol **, RingMap, Module),
      Headline => "tensor product of a module via a ring map",
@@ -341,17 +345,3 @@ document {
 --      option to ", TO "pushForward1", " which specifies the natural elimination
 --      order be used."
 --      }
-
-
-TEST "
-    R = ZZ/101[a,b]
-    S = ZZ/101[a,b,c]
-    M = cokernel matrix{{c^3}}
-    f = map(S,R)
-    assert( R^{0,-1,-2} == pushForward(f,M) )
-"
-
-document {
-     Key => UseHilbertFunction,
-     TT "UseHilbertFunction", " -- an option for ", TO "pushForward", "."
-     }

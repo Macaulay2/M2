@@ -125,6 +125,10 @@ foreach(_d_source IN LISTS DLIST)
   list(APPEND CLIST ${_c_source})
 endforeach()
 
+# To avoid unnecessary recompiling, only version.dd is given GIT_DESCRIPTION
+set_source_files_properties(version-tmp.cc
+  PROPERTIES COMPILE_DEFINITIONS GIT_DESCRIPTION="${GIT_DESCRIPTION}")
+
 ###############################################################################
 ## Compile the interpreter
 

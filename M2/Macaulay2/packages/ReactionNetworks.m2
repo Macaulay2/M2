@@ -545,7 +545,7 @@ laplacian = (Rn, FF) -> (
 	     --Y^{i} = (Y^{i})_{0..Rn.NullIndex -1} | matrix(ring Y, {{tmp}})  | (Y^{i})_{Rn.NullIndex .. s-1};
 	     );
 	);
-    -- step 3 buil support monomials
+    -- step 3 build support monomials
     xx := symbol xx;
     R := K[apply(Rn.Species, s -> xx_(s))];
     x := vars R;

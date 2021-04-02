@@ -1,9 +1,9 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 -- temporary definitions to get error messages to work before methods are working, so we can debug methods
-assert( class between === Symbol )
+assert'( class between === Symbol )
 between = (m,v) -> mingle(v,#v-1:m)			    -- provisional
-assert( class toString === Symbol )
+assert'( class toString === Symbol )
 toString = x -> (					    -- provisional
      if hasAttribute(x,ReverseDictionary) then simpleToString getAttribute(x,ReverseDictionary)
      else if class x === Net then concatenate between("\n",unstack x)
@@ -187,14 +187,13 @@ setupMethods((), {
 	  autoload, relations, cone, standardForm, inverse, numeric, round, degree, multidegree,
 	  presentation, dismiss, precision, 
 	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage,
-	  chi, hasEngineLinearAlgebra, nullSpace,
+	  hasEngineLinearAlgebra, nullSpace,
       isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile
 	  })
 
 use = method(Dispatch => Thing)
 use Thing := identity
 
-decompose = method(Options => true)
 dual = method(Options => true)
 
 default = method()
@@ -315,8 +314,6 @@ cohomology = method( Options => {
 	  Degree => 0		  -- for local cohomology and sheaf cohomology
 	  } )
 homology = method( Options => { } )
-
-mathML = method(Dispatch => Thing, TypicalValue => String)
 
 width File := fileWidth
 height File := fileHeight
@@ -624,6 +621,7 @@ codeHelper#(functionBody (stashValue null) null) = g -> {
 
 html = method(Dispatch => Thing, TypicalValue => String)
 markdown = method(Dispatch => Thing, TypicalValue => String)
+mathML = method(Dispatch => Thing, TypicalValue => String)
 tex = method(Dispatch => Thing, TypicalValue => String)
 texMath = method(Dispatch => Thing, TypicalValue => String)
 info = method(Dispatch => Thing, TypicalValue => String)
@@ -688,6 +686,10 @@ exp RingElement := RingElement => r -> (
 	       if rn == 0 then break e;
 	       e = e + rn;
 	       )))
+
+-- assert
+assert = method()
+assert Thing := x -> assert' x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

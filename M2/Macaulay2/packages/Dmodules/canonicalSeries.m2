@@ -37,7 +37,7 @@ apbFactor(RingElement) := List => (f) -> (
     --The positions of each term in f that corresponds to an element in UabList:
     abPos := apply(UabList,u-> positions(abList,i-> i==u));
     C := flatten entries (coefficients f)#1;
-    --Return list of lists of form {a,b,coeff of p(theta), expts of p(theta)}, corresponding to rearrangment of f:
+    --Return list of lists of form {a,b,coeff of p(theta), expts of p(theta)}, corresponding to rearrangement of f:
     apply(#abPos,l->(
     	{ UabList#l, apply(abPos#l,j->( {C#j, drop(E#j-UabList#l,n)} )) }
     ))

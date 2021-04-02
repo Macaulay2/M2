@@ -7,7 +7,7 @@
 -- Local variables
 -----------------------------------------------------------------------------
 
--- Keep this in sync with the ComputationStatusCode in Macaulay2/e/engine.h
+-- Keep this in sync with the ComputationStatusCode in Macaulay2/e/interface/computation.h
 RawStatusCodes := new HashTable from {
     1 => "need resize",              -- COMP_NEED_RESIZE
     2 => "error",                    -- COMP_ERROR
@@ -29,7 +29,7 @@ RawStatusCodes := new HashTable from {
     18 => "overflowed",              -- COMP_OVERFLOWED
     }
 
--- Keep this in sync with StrategyValues in e/engine.h
+-- Keep this in sync with StrategyValues in e/interface/computation.h
 RawStrategyCodes := new HashTable from {
     LongPolynomial => 1,
     Sort           => 2,
@@ -142,7 +142,7 @@ GroebnerBasisOptions.synonym = "Gröbner basis options"
 -- m:    a Matrix
 -- type: an GroebnerBasisOptions
 -- opts: an OptionTable
--- TOOD: document this
+-- TODO: document this
 new GroebnerBasis from Sequence := (GB, S) -> (
     (m, type, opts) := if #S === 3 then S else error "GroebnerBasis: expected three initial values";
     -- TODO: implement recursive type checking

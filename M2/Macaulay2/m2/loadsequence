@@ -87,6 +87,7 @@ format.m2
 html.m2
 markdown.m2
 latex.m2
+book.m2
 
 varieties.m2
 webapp.m2
@@ -98,5 +99,6 @@ programs.m2
 undoc.m2
 obsolete.m2
 exports.m2
+shared.m2
 typicalvalues.m2
 last.m2

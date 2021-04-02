@@ -3,12 +3,13 @@
 #ifndef _aring_zz_gmp_hpp_
 #define _aring_zz_gmp_hpp_
 
+#include <iosfwd>
+
+#include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-#include <iosfwd>
 #include "exceptions.hpp"
-#include "rand.h"
 #include "ZZ.hpp"
 
 namespace M2 {

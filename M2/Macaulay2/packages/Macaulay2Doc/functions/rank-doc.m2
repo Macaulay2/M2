@@ -3,7 +3,13 @@
 --- notes: 
 
 document { 
-     Key => {rank,(rank,CoherentSheaf),(rank,Matrix),(rank,Module),(rank,GradedModule)},
+     Key => {
+	  rank,
+	 (rank, CoherentSheaf),
+	 (rank, GradedModule),
+	 (rank, Matrix),
+	 (rank, Module),
+	 (rank, MutableMatrix)},
      Headline => "compute the rank",
      Usage => "rank M",
      Inputs => {

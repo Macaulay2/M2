@@ -183,7 +183,7 @@ polarCone(Matrix, Matrix) := (Z, H) -> (
      if A =!= {} then scan(T, t -> (
 	       D := fourierMotzkin'(A, V, t);
 	       A = D#0;          V = D#1;));
-     -- output formating
+     -- output formatting
      A = apply(A, e -> primitive e);
      if A === {} then A = map(ZZ^d, ZZ^0, 0)
      else A = transpose matrix A;

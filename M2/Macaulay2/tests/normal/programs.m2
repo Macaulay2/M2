@@ -4,6 +4,7 @@ name = baseFilename fn
 dir = replace(name | "$", "", fn)
 programPaths#name = dir
 
+fileMode(6*64 + 4*8 + 4, fn)
 program = findProgram(name, name, RaiseError => false)
 assert(program === null)
 
@@ -36,7 +37,10 @@ assert(fileExists(dir | "/foo/bar/baz"))
 program = findProgram("foo", name, AdditionalPaths => {dir})
 assert(program#"path" == dir)
 
-fn << "echo -n 1.0" << close
+
+fn << "echo 1.0" << endl << close
+
+
 program = findProgram(name, name, MinimumVersion => ("0.9", name))
 assert(program#"version" == "1.0")
 program = findProgram(name, name, MinimumVersion => ("1.1", name),

@@ -1,9 +1,4 @@
 undocumented {
-    -- documented in MinimalPrimes
-    decompose,
-    -- documented in Saturation
-    annihilator,
-    saturate,
     -- etc.
     (net, LITERAL),
     (net, LATER),
@@ -62,11 +57,17 @@ undocumented {
     (html, RowExpression),
     (html, Boolean),
     (html, Descent),
+    (html, File),
     (html, Function),
+    (html, GroebnerBasis),
+    (html, IndeterminateNumber),
     (html, Net),
+    (html, Monoid),
+    (html, Package),
     (html, Ring),
     (html, RingFamily),
     (html, Thing),
+    (html, Time),
     (html, Type),
     (info, LITERAL),
     (info, Hypertext),

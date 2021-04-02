@@ -59,6 +59,8 @@ SpecialCubicFourfold = new Type of MutableHashTable;
 
 globalAssignment SpecialCubicFourfold;
 
+SpecialCubicFourfold.synonym = "special cubic fourfold";
+
 specialCubicFourfold = method(TypicalValue => SpecialCubicFourfold, Options => {NumNodes => null, InputCheck => 1, Verbose => true});
 
 specialCubicFourfold (Ideal,Ideal) := o -> (S,X) -> (
@@ -536,7 +538,7 @@ find3Eminus1secantCurveOfDegreeE (Ideal,SpecialCubicFourfold) := o -> (p,X) -> (
    V := coneOfLines(image phi,phi p);
    try assert (dim V -1 == 1) else error "expected cone of lines to be one dimensional";
    degV := degree V;
-   if o.Verbose then <<"number lines containing in Z and passing through the point phi(p): "<<degV<<endl;
+   if o.Verbose then <<"number lines contained in Z and passing through the point phi(p): "<<degV<<endl;
    if o.Verbose then <<"number 2-secant lines to S passing through p: "<<degree T<<endl;
    E := saturate(V,phi T);   
    degE := degree E;
@@ -772,6 +774,8 @@ randomS48 (Ring) := (K) -> (
 SpecialGushelMukaiFourfold = new Type of MutableHashTable;
 
 globalAssignment SpecialGushelMukaiFourfold;
+
+SpecialGushelMukaiFourfold.synonym = "special Gushel-Mukai fourfold";
 
 specialGushelMukaiFourfold = method(TypicalValue => SpecialGushelMukaiFourfold, Options => {InputCheck => 1, Verbose => true});
 
@@ -1183,12 +1187,12 @@ find2Eminus1secantCurveOfDegreeE (Ideal,SpecialGushelMukaiFourfold) := o -> (p,X
    Sectics11secant := {};
    E := coneOfLines(image phi,phi p);
    if dim E -1 == 0 then (
-       if o.Verbose then <<"number lines containing in Z and passing through the point phi(p): "<<0<<endl;
+       if o.Verbose then <<"number lines contained in Z and passing through the point phi(p): "<<0<<endl;
        return ({lines1secant,conics3secant,cubics5secant,quartics7secant,quintics9secant,sectics11secant},{Lines1secant,Conics3secant,Cubics5secant,Quartics7secant,Quintics9secant,Sectics11secant});
    );
    try assert (dim E -1 == 1) else error "expected cone of lines to be one dimensional";
    degE := degree E;
-   if o.Verbose then <<"number lines containing in Z and passing through the point phi(p): "<<degE<<endl;
+   if o.Verbose then <<"number lines contained in Z and passing through the point phi(p): "<<degE<<endl;
    g := rationalMap(phi p);
    E' := g E;
    g' := rationalMap(target g,Grass(0,1,coefficientRing g),{random(1,target g),random(1,target g)});
@@ -1583,7 +1587,7 @@ embedConeOverDelPezzoFourfoldInConeOverG14 (Ideal,Ideal) := (X,p) -> (
    R' := K[y0,gens ambient target j];
    R' = R'/sub(ideal target j,R');
    J := rationalMap(quotient X,R,matrix f2) * rationalMap(R,R',matrix{{first gens R}}|sub(lift(matrix j,ambient source j),R));
-   assert(degreeOfRationalMap J == 1);
+   assert(degreeMap J == 1);
    J
 );
 
@@ -1713,7 +1717,7 @@ schubertCycleInt (VisibleList,ZZ,ZZ,Ring) := o -> (a,k',n',K) -> (
    a = toList a;
    n := n' + 1;
    k := #a;
-   try assert(ring matrix {a} === ZZ and rsort a == a and first a <= n-k and k == k'+1) else error("expected a decreasing sequence of "|toString(k'+1)|" nonnegative integers bounded by "|toString(n'-k'));
+   if not (all(a,j -> instance(j,ZZ)) and rsort a == a and first a <= n-k and k == k'+1) then error("expected a nonincreasing sequence of "|toString(k'+1)|" nonnegative integers bounded by "|toString(n'-k'));
    a = prepend(null,a);
    V := completeFlag Grass(0,n',K,Variable=>o.Variable);
    S := for i from 1 to k list tangentialChowForm(V_(n-k+i-a_i),i-1,k-1,Variable=>o.Variable,SingularLocus=>first V);
@@ -2438,23 +2442,23 @@ PARA {"This package depends on the following other ",EM "Macaulay2"," packages: 
 
 document {Key => {SpecialGushelMukaiFourfold}, 
 Headline => "the class of all special Gushel-Mukai fourfolds", 
-PARA{"An (ordinary) Gushel-Mukai fourfold is the intersection of a smooth del Pezzo fivefold ", TEX///$\mathbb{G}(1,4)\cap\mathbb{P}^8\subset \mathbb{P}^8$///, " with a quadric hypersurface in ", TEX///$\mathbb{P}^8$///, ". A Gushel-Mukai fourfold is said to be ", EM"special", " if it contains a surface whose cohomology class ", EM "does not come", " from the Grassmannian ", TEX///$\mathbb{G}(1,4)$///, ". The special Gushel-Mukai fourfolds are parametrized by a countable union of (not necessarily irreducible) hypersurfaces in the corresponding moduli space, labelled by the integers ", TEX///$d \geq 10$///, " with ", TEX///$d = 0, 2, 4\ ({mod}\ 8)$///, "; the number ",TEX///$d$///," is called the discriminant of the fourfold. For precise definition and results, we refer mainly to the paper ", HREF{"https://arxiv.org/abs/1302.1398", "Special prime Fano fourfolds of degree 10 and index 2"}, ", by O. Debarre, A. Iliev, and L. Manivel."}, 
+PARA{"The general type of Gushel-Mukai fourfold (called ",EM "ordinary",") can be realized as the intersection of a smooth del Pezzo fivefold ", TEX///$\mathbb{G}(1,4)\cap\mathbb{P}^8\subset \mathbb{P}^8$///, " with a quadric hypersurface in ", TEX///$\mathbb{P}^8$///, ". A Gushel-Mukai fourfold is said to be ", EM"special", " if it contains a surface whose cohomology class ", EM "does not come", " from the Grassmannian ", TEX///$\mathbb{G}(1,4)$///, ". The special Gushel-Mukai fourfolds are parametrized by a countable union of (not necessarily irreducible) hypersurfaces in the corresponding moduli space, labelled by the integers ", TEX///$d \geq 10$///, " with ", TEX///$d = 0, 2, 4\ ({mod}\ 8)$///, "; the number ",TEX///$d$///," is called the discriminant of the fourfold. For precise definition and results, we refer mainly to the paper ", HREF{"https://arxiv.org/abs/1302.1398", "Special prime Fano fourfolds of degree 10 and index 2"}, ", by O. Debarre, A. Iliev, and L. Manivel."}, 
 PARA{"An object of the class ", TO SpecialGushelMukaiFourfold, " is basically a couple ", TEX///(S,X)///, ", where ", TEX///$X$///, " is (the ideal of) a Gushel-Mukai fourfold and ", TEX///$S$///, " is (the ideal of) a surface contained in ", TEX///$X$///, ".  The main constructor for the objects of the class is the method ", TO specialGushelMukaiFourfold,", and the discriminant ", TEX///$d$///, " can be calculated by the method ", TO (discriminant,SpecialGushelMukaiFourfold),"."}}  
 
 document {Key => {(discriminant, SpecialCubicFourfold)}, 
 Headline => "discriminant of a special cubic fourfold", 
-Usage => "ideals X", 
+Usage => "discriminant X", 
 Inputs => {"X" => SpecialCubicFourfold}, 
-Outputs => {RingElement => {"an integer, the discriminant of ", TEX///$X$///}}, 
+Outputs => {{ofClass ZZ,", the discriminant of ", TEX///$X$///}}, 
 PARA{"This calculation passes through the determination of the topological Euler characteristic of the surface contained in the fourfold, which is obtained thanks to the methods ", TO EulerCharacteristic, " and ", TO Euler, " (the option ", TT "Algorithm", " allows you to select the method)."}, 
 EXAMPLE {"X = specialCubicFourfold \"quintic del Pezzo surface\";", "time discriminant X"}, 
 SeeAlso => {(discriminant, SpecialGushelMukaiFourfold)}} 
 
 document {Key => {(discriminant, SpecialGushelMukaiFourfold)}, 
 Headline => "discriminant of a special Gushel-Mukai fourfold", 
-Usage => "ideals X", 
+Usage => "discriminant X", 
 Inputs => {"X" => SpecialGushelMukaiFourfold}, 
-Outputs => {RingElement => {"an integer, the discriminant of ", TEX///$X$///}}, 
+Outputs => {{ofClass ZZ,", the discriminant of ", TEX///$X$///}}, 
 PARA{"This method applies a formula given in Section 7 of the paper ", HREF{"https://arxiv.org/abs/1302.1398", "Special prime Fano fourfolds of degree 10 and index 2"}, ", obtaining the data required through the methods ", TO cycleClass, ", ", TO EulerCharacteristic, " and ", TO Euler, " (the option ", TT "Algorithm", " allows you to select the method)."}, 
 EXAMPLE {"X = specialGushelMukaiFourfold \"tau-quadric\";", "time discriminant X"}, 
 SeeAlso => {(discriminant, SpecialCubicFourfold)}} 
@@ -2530,7 +2534,7 @@ Inputs => {"i" => ZZ => {"an integer between 1 and 21"}, "K" => Ring => {"the co
 Outputs => {{"a triple of ideals ", TEX///$(B,V,C)$///, ", which represents a reducible subscheme of ", TEX///$\mathbb{P}^5$///, " as indicated in the paper ", HREF{"https://arxiv.org/abs/2002.07026", "On some families of Gushel-Mukai fourfolds"}, "."}}, 
 EXAMPLE {"(B,V,C) = tables(1,ZZ/33331)", "(?B,?V,?C)", "B + V == C"}, 
 PARA{"The corresponding example of fourfold can be obtained as follows."}, 
-EXAMPLE {"psi = rationalMap(B,max flatten degrees B,Dominant=>2);", "X = specialGushelMukaiFourfold psi V;"}, 
+EXAMPLE {"psi = rationalMap(B,Dominant=>2);", "X = specialGushelMukaiFourfold psi V;"}, 
 PARA{"This is basically the same as doing this:"}, 
 EXAMPLE {"specialGushelMukaiFourfold(\"1\",ZZ/33331);"}} 
 
@@ -2586,7 +2590,7 @@ Usage => "detectCongruence X"|newline|"detectCongruence(X,e)",
 Inputs => {"X" => SpecialCubicFourfold => {"containing a surface ", TEX///$S\subset\mathbb{P}^5$///}, "e" => ZZ => {"a positive integer (optional but recommended)"}}, 
 Outputs => {FunctionClosure => {"which takes the ideal of a (general) point ", TEX///$p\in\mathbb{P}^5$///, " and returns the unique rational curve of degree ", TEX///$e$///, ", ", TEX///$(3e-1)$///, "-secant to ", TEX///$S$///, ", and passing through ", TEX///$p$///, " (an error is thrown if such a curve does not exist or is not unique)"}}, 
 EXAMPLE {"-- A general cubic fourfold of discriminant 26"|newline|"X = specialCubicFourfold(\"Farkas-Verra C26\",ZZ/33331);", "describe X", "time f = detectCongruence X;", "p = point ring X -- random point on P^5", "time C = f p -- 5-secant conic to the surface", "assert(codim C == 4 and degree C == 2 and codim(C+(first ideals X)) == 5 and degree(C+(first ideals X)) == 5 and isSubset(C, p))"}, 
-PARA{"The same method can be also applied to a ", TO SpecialGushelMukaiFourfold, ". In this case it will detect and return a congruence of (2e-1)-secant curves of degree e inside the unique del Pezzo fivefold containing the GM fourfold."}, 
+PARA{"The same method can be also applied to ", ofClass SpecialGushelMukaiFourfold, ". In this case it will detect and return a congruence of (2e-1)-secant curves of degree e inside the unique del Pezzo fivefold containing the GM fourfold."}, 
 EXAMPLE{"-- A general GM fourfold of discriminant 20"|newline|"X = specialGushelMukaiFourfold(\"surface of degree 9 and genus 2\",ZZ/33331);", "describe X", "time f = detectCongruence X;", "Y = source map X; -- del Pezzo fivefold containing X", "p = point Y -- random point on Y", "time C = f p -- 3-secant conic to the surface", "S = sub(first ideals X,Y);", "assert(dim C -1 == 1 and degree C == 2 and dim(C+S)-1 == 0 and degree(C+S) == 3 and isSubset(C, p))"}, 
 SeeAlso => {coneOfLines}} 
 
@@ -2604,7 +2608,7 @@ Headline => "make a special cubic fourfold",
 Usage => "specialCubicFourfold(S,X)"|newline|"specialCubicFourfold(S,X,NumNodes=>n)", 
 Inputs => {"S" => Ideal => {"the ideal of an irreducible surface ", TEX///$S\subset\mathbb{P}^5$///, ", which has as singularities only a finite number ",TEX///$n\geq 0$///," of non-normal nodes (this number ",TEX///$n$///," should be passed with the option ", TT "NumNodes",", otherwise it is obtained using a probabilistic method)"}, "X" => Ideal => {"the ideal of a smooth cubic fourfold ", TEX///$X\subset \mathbb{P}^5$///, " containing the surface ", TEX///$S$///}}, 
 Outputs => {SpecialCubicFourfold => {"the special cubic fourfold corresponding to the pair ", TEX///$(S,X)$///}}, 
-PARA{"In the example below, we define a cubic fourfold containg a rational scroll of degree 7 with 3 nodes."}, 
+PARA{"In the example below, we define a cubic fourfold containing a rational scroll of degree 7 with 3 nodes."}, 
 EXAMPLE {"K = ZZ/33331; ringP5 = K[x_0..x_5];", "idS = ideal(x_0*x_2*x_3-2*x_1*x_2*x_3-x_1*x_3^2-x_2*x_3^2-x_0*x_1*x_4+2*x_1^2*x_4-x_1*x_2*x_4+x_2^2*x_4+2*x_0*x_3*x_4-x_1*x_3*x_4-x_1*x_4^2+x_1*x_3*x_5, x_1^2*x_3-4*x_1*x_2*x_3-x_0*x_3^2-3*x_1*x_3^2-2*x_2*x_3^2+2*x_0^2*x_4-9*x_0*x_1*x_4+11*x_1^2*x_4-x_0*x_2*x_4-2*x_1*x_2*x_4+2*x_2^2*x_4+12*x_0*x_3*x_4-7*x_1*x_3*x_4-4*x_3^2*x_4+x_0*x_4^2-6*x_1*x_4^2+4*x_2*x_4^2-2*x_3*x_4^2-2*x_4^3-x_0*x_1*x_5+x_1^2*x_5+2*x_1*x_2*x_5+3*x_0*x_3*x_5+2*x_1*x_3*x_5-x_3^2*x_5-x_0*x_4*x_5-4*x_1*x_4*x_5+3*x_2*x_4*x_5+2*x_3*x_4*x_5-x_1*x_5^2, x_0*x_1*x_3-7*x_1*x_2*x_3-3*x_0*x_3^2-4*x_1*x_3^2-3*x_2*x_3^2+x_3^3+3*x_0^2*x_4-14*x_0*x_1*x_4+17*x_1^2*x_4-x_0*x_2*x_4-3*x_1*x_2*x_4+3*x_2^2*x_4+19*x_0*x_3*x_4-9*x_1*x_3*x_4-x_2*x_3*x_4-6*x_3^2*x_4+x_0*x_4^2-9*x_1*x_4^2+6*x_2*x_4^2-3*x_3*x_4^2-3*x_4^3-2*x_0*x_1*x_5+2*x_1^2*x_5+4*x_1*x_2*x_5+5*x_0*x_3*x_5+4*x_1*x_3*x_5-2*x_3^2*x_5-2*x_0*x_4*x_5-7*x_1*x_4*x_5+5*x_2*x_4*x_5+3*x_3*x_4*x_5-2*x_1*x_5^2, x_0^2*x_3-12*x_1*x_2*x_3-6*x_0*x_3^2-6*x_1*x_3^2-5*x_2*x_3^2+2*x_3^3+5*x_0^2*x_4-24*x_0*x_1*x_4+29*x_1^2*x_4-x_0*x_2*x_4-5*x_1*x_2*x_4+5*x_2^2*x_4+32*x_0*x_3*x_4-14*x_1*x_3*x_4-2*x_2*x_3*x_4-10*x_3^2*x_4+x_0*x_4^2-15*x_1*x_4^2+10*x_2*x_4^2-5*x_3*x_4^2-5*x_4^3-3*x_0*x_1*x_5+3*x_1^2*x_5+6*x_1*x_2*x_5+8*x_0*x_3*x_5+7*x_1*x_3*x_5-3*x_3^2*x_5-3*x_0*x_4*x_5-11*x_1*x_4*x_5+8*x_2*x_4*x_5+5*x_3*x_4*x_5-3*x_1*x_5^2, x_1*x_2^2+6*x_1*x_2*x_3+2*x_0*x_3^2+3*x_1*x_3^2+2*x_2*x_3^2-x_3^3-3*x_0^2*x_4+12*x_0*x_1*x_4-14*x_1^2*x_4-2*x_2^2*x_4-15*x_0*x_3*x_4+6*x_1*x_3*x_4+x_2*x_3*x_4+5*x_3^2*x_4+x_0*x_4^2+8*x_1*x_4^2-5*x_2*x_4^2+2*x_3*x_4^2+2*x_4^3+x_0*x_1*x_5-2*x_1^2*x_5-4*x_1*x_2*x_5-4*x_0*x_3*x_5-3*x_1*x_3*x_5+2*x_3^2*x_5+2*x_0*x_4*x_5+7*x_1*x_4*x_5-4*x_2*x_4*x_5-2*x_3*x_4*x_5+2*x_1*x_5^2, x_0*x_2^2+10*x_1*x_2*x_3+3*x_0*x_3^2+5*x_1*x_3^2+4*x_2*x_3^2-x_3^3-5*x_0^2*x_4+19*x_0*x_1*x_4-22*x_1^2*x_4-x_0*x_2*x_4+3*x_1*x_2*x_4-4*x_2^2*x_4-24*x_0*x_3*x_4+9*x_1*x_3*x_4+x_2*x_3*x_4+8*x_3^2*x_4+2*x_0*x_4^2+11*x_1*x_4^2-7*x_2*x_4^2+4*x_3*x_4^2+3*x_4^3+2*x_0*x_1*x_5-4*x_1^2*x_5-7*x_1*x_2*x_5-7*x_0*x_3*x_5-5*x_1*x_3*x_5-x_2*x_3*x_5+3*x_3^2*x_5+4*x_0*x_4*x_5+12*x_1*x_4*x_5-7*x_2*x_4*x_5-3*x_3*x_4*x_5+4*x_1*x_5^2, x_1^2*x_2+17*x_1*x_2*x_3+6*x_0*x_3^2+9*x_1*x_3^2+7*x_2*x_3^2-2*x_3^3-9*x_0^2*x_4+36*x_0*x_1*x_4-44*x_1^2*x_4+3*x_0*x_2*x_4+5*x_1*x_2*x_4-7*x_2^2*x_4-47*x_0*x_3*x_4+21*x_1*x_3*x_4+2*x_2*x_3*x_4+16*x_3^2*x_4+24*x_1*x_4^2-16*x_2*x_4^2+7*x_3*x_4^2+7*x_4^3+3*x_0*x_1*x_5-6*x_1^2*x_5-9*x_1*x_2*x_5-12*x_0*x_3*x_5-8*x_1*x_3*x_5+5*x_3^2*x_5+5*x_0*x_4*x_5+19*x_1*x_4*x_5-12*x_2*x_4*x_5-7*x_3*x_4*x_5+5*x_1*x_5^2, x_0*x_1*x_2+29*x_1*x_2*x_3+11*x_0*x_3^2+15*x_1*x_3^2+12*x_2*x_3^2-4*x_3^3-16*x_0^2*x_4+62*x_0*x_1*x_4-74*x_1^2*x_4+5*x_0*x_2*x_4+9*x_1*x_2*x_4-12*x_2^2*x_4-80*x_0*x_3*x_4+35*x_1*x_3*x_4+4*x_2*x_3*x_4+27*x_3^2*x_4+40*x_1*x_4^2-27*x_2*x_4^2+12*x_3*x_4^2+12*x_4^3+5*x_0*x_1*x_5-10*x_1^2*x_5-16*x_1*x_2*x_5-21*x_0*x_3*x_5-14*x_1*x_3*x_5+9*x_3^2*x_5+9*x_0*x_4*x_5+33*x_1*x_4*x_5-21*x_2*x_4*x_5-12*x_3*x_4*x_5+9*x_1*x_5^2, x_0^2*x_2+49*x_1*x_2*x_3+19*x_0*x_3^2+25*x_1*x_3^2+20*x_2*x_3^2-7*x_3^3-28*x_0^2*x_4+106*x_0*x_1*x_4-124*x_1^2*x_4+8*x_0*x_2*x_4+16*x_1*x_2*x_4-20*x_2^2*x_4-134*x_0*x_3*x_4+58*x_1*x_3*x_4+7*x_2*x_3*x_4+45*x_3^2*x_4+66*x_1*x_4^2-45*x_2*x_4^2+20*x_3*x_4^2+20*x_4^3+9*x_0*x_1*x_5-18*x_1^2*x_5-28*x_1*x_2*x_5-37*x_0*x_3*x_5-23*x_1*x_3*x_5+16*x_3^2*x_5+16*x_0*x_4*x_5+57*x_1*x_4*x_5-36*x_2*x_4*x_5-20*x_3*x_4*x_5+16*x_1*x_5^2, x_1^3+47*x_1*x_2*x_3+18*x_0*x_3^2+23*x_1*x_3^2+19*x_2*x_3^2-7*x_3^3-24*x_0^2*x_4+97*x_0*x_1*x_4-117*x_1^2*x_4+8*x_0*x_2*x_4+16*x_1*x_2*x_4-19*x_2^2*x_4-127*x_0*x_3*x_4+54*x_1*x_3*x_4+7*x_2*x_3*x_4+42*x_3^2*x_4-x_0*x_4^2+62*x_1*x_4^2-42*x_2*x_4^2+19*x_3*x_4^2+19*x_4^3+9*x_0*x_1*x_5-16*x_1^2*x_5-25*x_1*x_2*x_5-33*x_0*x_3*x_5-23*x_1*x_3*x_5+14*x_3^2*x_5+14*x_0*x_4*x_5+51*x_1*x_4*x_5-33*x_2*x_4*x_5-19*x_3*x_4*x_5+14*x_1*x_5^2, x_0*x_1^2+79*x_1*x_2*x_3+29*x_0*x_3^2+40*x_1*x_3^2+32*x_2*x_3^2-11*x_3^3-41*x_0^2*x_4+164*x_0*x_1*x_4-196*x_1^2*x_4+14*x_0*x_2*x_4+26*x_1*x_2*x_4-32*x_2^2*x_4-214*x_0*x_3*x_4+92*x_1*x_3*x_4+11*x_2*x_3*x_4+71*x_3^2*x_4-2*x_0*x_4^2+105*x_1*x_4^2-71*x_2*x_4^2+32*x_3*x_4^2+32*x_4^3+14*x_0*x_1*x_5-26*x_1^2*x_5-41*x_1*x_2*x_5-55*x_0*x_3*x_5-38*x_1*x_3*x_5+23*x_3^2*x_5+23*x_0*x_4*x_5+85*x_1*x_4*x_5-55*x_2*x_4*x_5-32*x_3*x_4*x_5+23*x_1*x_5^2, x_0^2*x_1+133*x_1*x_2*x_3+48*x_0*x_3^2+68*x_1*x_3^2+54*x_2*x_3^2-18*x_3^3-70*x_0^2*x_4+278*x_0*x_1*x_4-330*x_1^2*x_4+24*x_0*x_2*x_4+44*x_1*x_2*x_4-54*x_2^2*x_4-361*x_0*x_3*x_4+156*x_1*x_3*x_4+18*x_2*x_3*x_4+120*x_3^2*x_4-4*x_0*x_4^2+177*x_1*x_4^2-120*x_2*x_4^2+54*x_3*x_4^2+54*x_4^3+23*x_0*x_1*x_5-44*x_1^2*x_5-69*x_1*x_2*x_5-93*x_0*x_3*x_5-63*x_1*x_3*x_5+39*x_3^2*x_5+39*x_0*x_4*x_5+144*x_1*x_4*x_5-93*x_2*x_4*x_5-54*x_3*x_4*x_5+39*x_1*x_5^2, x_0^3+224*x_1*x_2*x_3+80*x_0*x_3^2+115*x_1*x_3^2+91*x_2*x_3^2-30*x_3^3-119*x_0^2*x_4+470*x_0*x_1*x_4-555*x_1^2*x_4+41*x_0*x_2*x_4+75*x_1*x_2*x_4-91*x_2^2*x_4-608*x_0*x_3*x_4+263*x_1*x_3*x_4+30*x_2*x_3*x_4+202*x_3^2*x_4-8*x_0*x_4^2+297*x_1*x_4^2-202*x_2*x_4^2+91*x_3*x_4^2+91*x_4^3+39*x_0*x_1*x_5-76*x_1^2*x_5-118*x_1*x_2*x_5-158*x_0*x_3*x_5-105*x_1*x_3*x_5+67*x_3^2*x_5+68*x_0*x_4*x_5+245*x_1*x_4*x_5-158*x_2*x_4*x_5-91*x_3*x_4*x_5+67*x_1*x_5^2);", "idX = ideal(x_1^2*x_3+x_0*x_2*x_3-6*x_1*x_2*x_3-x_0*x_3^2-4*x_1*x_3^2-3*x_2*x_3^2+2*x_0^2*x_4-10*x_0*x_1*x_4+13*x_1^2*x_4-x_0*x_2*x_4-3*x_1*x_2*x_4+3*x_2^2*x_4+14*x_0*x_3*x_4-8*x_1*x_3*x_4-4*x_3^2*x_4+x_0*x_4^2-7*x_1*x_4^2+4*x_2*x_4^2-2*x_3*x_4^2-2*x_4^3-x_0*x_1*x_5+x_1^2*x_5+2*x_1*x_2*x_5+3*x_0*x_3*x_5+3*x_1*x_3*x_5-x_3^2*x_5-x_0*x_4*x_5-4*x_1*x_4*x_5+3*x_2*x_4*x_5+2*x_3*x_4*x_5-x_1*x_5^2);", "time X = specialCubicFourfold(idS,idX,NumNodes=>3);", "time describe X"}} 
 
 document {Key => {(specialCubicFourfold, Ideal), (specialCubicFourfold, String, Ring), (specialCubicFourfold, String)}, 
@@ -2622,7 +2626,7 @@ Usage => "coneOfLines(X,p)",
 Inputs => {"X" => Ideal => {"the ideal of a subvariety of ", TEX///$\mathbb{P}^n$///}, "p" => Ideal => {"the ideal of a point on ", TEX///$X$///}}, 
 Outputs => {Ideal => {"the ideal of the subscheme of ",TEX///$\mathbb{P}^n$///, " consisting of the union of all lines contained in ",TEX///$X$///, " and passing through ",TEX///$p$///}}, 
 PARA{"In the example below we compute the cone of lines passing through the generic point of a smooth del Pezzo fourfold in ",TEX///$\mathbb{P}^7$///, "."}, 
-EXAMPLE {"K := frac(QQ[a,b,c,d,e]); P4 = K[t_0..t_4]; phi = rationalMap(minors(2,matrix{{t_0,t_1,t_2},{t_1,t_2,t_3}}) + t_4,2);", "X = image phi", "p = phi minors(2,(vars K)||(vars P4))", "time V = coneOfLines(X,p)", "? V"}} 
+EXAMPLE {"K := frac(QQ[a,b,c,d,e]); P4 = K[t_0..t_4]; phi = rationalMap(minors(2,matrix{{t_0,t_1,t_2},{t_1,t_2,t_3}}) + t_4);", "X = image phi", "p = phi minors(2,(vars K)||(vars P4))", "time V = coneOfLines(X,p)", "? V"}} 
 
 undocumented {(coneOfLines, Ideal, Ideal, ZZ)} 
 
@@ -2647,20 +2651,20 @@ Outputs => {RationalMap => {"the rational map from ", TEX///$Y$///, " defined by
 document {Key => {ideals, (ideals, SpecialCubicFourfold), (ideals, SpecialGushelMukaiFourfold)}, 
 Headline => "corresponding ideals", 
 Usage => "ideals X", 
-Inputs => {"X" => SpecialCubicFourfold => {"or ", TO SpecialGushelMukaiFourfold}}, 
+Inputs => {"X" => SpecialCubicFourfold => {"or ", ofClass SpecialGushelMukaiFourfold}}, 
 Outputs => {Ideal => {"the ideal of the special surface contained in the fourfold"}, Ideal => {"the ideal of the fourfold ", TT "X"}}, 
 EXAMPLE {"X = specialCubicFourfold \"quintic del Pezzo surface\";", "? first ideals X", "? last ideals X"}} 
 
 document {Key => {(ideal, SpecialCubicFourfold), (ideal, SpecialGushelMukaiFourfold)}, 
 Headline => "ideal of the fourfold", 
 Usage => "ideal X", 
-Inputs => {"X" => SpecialCubicFourfold => {"or ", TO SpecialGushelMukaiFourfold}}, 
+Inputs => {"X" => SpecialCubicFourfold => {"or ", ofClass SpecialGushelMukaiFourfold}}, 
 Outputs => {Ideal => {"the ideal of the fourfold in the ambient polynomial ring"}}} 
 
 document {Key => {(ring, SpecialCubicFourfold), (ring, SpecialGushelMukaiFourfold)}, 
 Headline => "ambient polynomial ring of the fourfold", 
 Usage => "ring X", 
-Inputs => {"X" => SpecialCubicFourfold => {"or ", TO SpecialGushelMukaiFourfold}}, 
+Inputs => {"X" => SpecialCubicFourfold => {"or ", ofClass SpecialGushelMukaiFourfold}}, 
 Outputs => {Ring => {"the common ambient polynomial ring of the fourfold and of the surface contained in it."}}} 
 
 -- document {Key => {secantCone, (secantCone, Ideal, Ideal)}, 
@@ -2673,16 +2677,16 @@ Outputs => {Ring => {"the common ambient polynomial ring of the fourfold and of 
 document {Key => {unirationalParametrization, (unirationalParametrization, SpecialCubicFourfold), (unirationalParametrization, SpecialCubicFourfold, Ideal), (unirationalParametrization, SpecialGushelMukaiFourfold)}, 
 Headline => "unirational parametrization", 
 Usage => "unirationalParametrization X", 
-Inputs => {"X" => SpecialCubicFourfold => {"or ", TO SpecialGushelMukaiFourfold}}, 
+Inputs => {"X" => SpecialCubicFourfold => {"or ", ofClass SpecialGushelMukaiFourfold}}, 
 Outputs => {RationalMap => {"a rational map of degree 2 whose image is ", TT "X"}}, 
 PARA{"The degree of the forms defining the returned map is 10 in the case of cubic fourfolds, and 26 in the case of GM fourfolds."}, 
-EXAMPLE {"K = ZZ/10000019; S = ideal(random(3,Grass(0,5,K)), random(1,Grass(0,5,K)), random(1,Grass(0,5,K)));", "X = specialCubicFourfold S;", "time f = unirationalParametrization X;", "describe f", "image f == ideal X", "degreeOfRationalMap f"}, 
+EXAMPLE {"K = ZZ/10000019; S = ideal(random(3,Grass(0,5,K)), random(1,Grass(0,5,K)), random(1,Grass(0,5,K)));", "X = specialCubicFourfold S;", "time f = unirationalParametrization X;", "describe f", "image f == ideal X", "degreeMap f"}, 
 SeeAlso => {(parametrize, SpecialCubicFourfold)}} 
 
 document {Key => {(parametrize, SpecialCubicFourfold), (parametrize, SpecialGushelMukaiFourfold)}, 
 Headline => "rational parametrization", 
 Usage => "parametrize X", 
-Inputs => {"X" => SpecialCubicFourfold => {"or ", TO SpecialGushelMukaiFourfold}}, 
+Inputs => {"X" => SpecialCubicFourfold => {"or ", ofClass SpecialGushelMukaiFourfold}}, 
 Outputs => {RationalMap => {"a birational map from a rational fourfold to ", TT "X"}}, 
 PARA{"Some special cubic fourfolds and GM fourfolds are known to be rational. In this case, the method tries to obtain a birational map from ", TEX///$\mathbb{P}^4$///, " (or, e.g., from a quadric hypersurface in ", TEX///$\mathbb{P}^5$///, ") to the fourfold."}, 
 EXAMPLE {"X = specialCubicFourfold \"quintic del Pezzo surface\";", "time phi = parametrize X;", "describe phi", "X' = specialGushelMukaiFourfold \"tau-quadric\";", "time phi' = parametrize X';", "describe phi'"}, 
@@ -2701,10 +2705,11 @@ document {Key => {associatedK3surface, (associatedK3surface, SpecialCubicFourfol
 Headline => "associated K3 surface to a rational cubic fourfold", 
 Usage => "associatedK3surface X", 
 Inputs => {"X" => SpecialCubicFourfold => {"containing a surface ", TEX///$S\subset\mathbb{P}^5$///," that admits a congruence of ",TEX///$(3e-1)$///,"-secant curves of degree ",TEX///$e$///}}, 
-Outputs => {{"the dominant ",TO2{RationalMap,"rational map"}," ",TEX///\psi:\mathbb{P}^5 ---> W///," defined by the linear system of hypersurfaces of degree ",TEX///$3e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{Ideal,"ideal"}," of the surface ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\psi$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the ideals of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{RationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to a minimal K3 surface, the associated K3 surface to ",TEX///$X$///,"."}},
+Outputs => {{"the dominant ",TO2{RationalMap,"rational map"}," ",TEX///$\psi:\mathbb{P}^5 \dashrightarrow W$///," defined by the linear system of hypersurfaces of degree ",TEX///$3e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{Ideal,"ideal"}," of the surface ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\psi$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the ideals of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{RationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to a minimal K3 surface, the associated K3 surface to ",TEX///$X$///,"."}},
 PARA {"Thus, the code ",TT "image last associatedK3surface X"," gives the ideal of the (minimal) associated K3 surface to ",TT"X",". For more details and notation, see the paper ",HREF{"https://arxiv.org/abs/1909.01263","Trisecant Flops, their associated K3 surfaces and the rationality of some Fano fourfolds"},"."},
 EXAMPLE {"X = specialCubicFourfold \"quartic scroll\";", "describe X", "time (psi,U,C,f) = associatedK3surface(X,Verbose=>true);", "describe psi", "? U", "? first C", "? image f"},
-PARA {"The same method can be also applied to a ",TO2{SpecialGushelMukaiFourfold, "Gushel-Mukai fourfold"},". In this case the surface is required to admit a congruence of ",TEX///$(2e-1)$///,"-secant curves of degree ",TEX///$e$///," inside the unique del Pezzo fivefold containing the fourfold. For more details, see the paper ",EM "Explicit constructions of K3 surfaces of high genus and unirational Noether–Lefschetz divisors",", by M. Hoff and G. Staglianò."},
+PARA {"The same method can be also applied to ",ofClass SpecialGushelMukaiFourfold,". In this case the surface is required to admit a congruence of ",TEX///$(2e-1)$///,"-secant curves of degree ",TEX///$e$///," inside the unique del Pezzo fivefold containing the fourfold."}, 
+-- PARA{"For more details, see the paper ",EM "Explicit constructions of K3 surfaces of high genus and unirational Noether–Lefschetz divisors",", by M. Hoff and G. Staglianò."},
 EXAMPLE {"X = specialGushelMukaiFourfold \"tau-quadric\";", "describe X", "time (psi,U,C,f) = associatedK3surface X;", "describe psi", "? U", "? first C -- two disjoint lines"},
 SeeAlso => {detectCongruence}} 
 
@@ -2772,13 +2777,13 @@ X = for i from 1 to 21 list (
    A = tables(i,K);
    time specialGushelMukaiFourfold((rationalMap(A_0,max flatten degrees A_0,Dominant=>2)) A_1,InputCheck=>0)
 ); 
-assert(apply(X,w -> time discriminant w) === {10,10,10,10,10,10,12,12,12,16,16,16,18,18,18,18,20,20,24,24,26})
+--commented out for time--assert(apply(X,w -> time discriminant w) === {10,10,10,10,10,10,12,12,12,16,16,16,18,18,18,18,20,20,24,24,26})
 S = apply(X,w -> first ideals w);
 assert(apply(S,s -> degree s) === {2, 4, 14, 5, 9, 1, 3, 7, 1, 10, 10, 14, 12, 8, 9, 11, 9, 7, 10, 4, 12})
 debug SpecialFanoFourfolds
 assert(apply(X,x -> x#"label") === toList(21:null));
-assert(apply(X,x -> recognize x) === toList(1..21));
-assert(apply(X,x -> x#"label") === toList(1..21));
+--commented out for time--assert(apply(X,x -> recognize x) === toList(1..21));
+--commented out for time--assert(apply(X,x -> x#"label") === toList(1..21));
 ///
 
 TEST ///

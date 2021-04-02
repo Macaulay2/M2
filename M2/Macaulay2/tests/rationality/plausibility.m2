@@ -21,7 +21,7 @@ load"ScorzaOcta.m2"
 
 -- a random example
 Clebsch apply(4,i->random(1,R))
--- two times the same linearform should give zero
+-- two times the same linear form should give zero
 Clebsch(apply(2,i->random(1,R))|{x_1,x_1})
 -- 0 (OK)
 
@@ -121,9 +121,9 @@ sub(MQ_{0..6},ZZ/7)
 
 -- the coefficients of R_i*6!
 ScorzaR(8,CD,g,ZZ/7)
--- the first 2 colums are multiplied by 6!/(8 choose 0)=-1 in F_7
--- the next 3 colums are multiplied by 6!/(8 choose 1)=-1 in F_7
--- the last 2 colums are multiplied by 6!/(8 choose 2) and therefore
+-- the first 2 columns are multiplied by 6!/(8 choose 0)=-1 in F_7
+-- the next 3 columns are multiplied by 6!/(8 choose 1)=-1 in F_7
+-- the last 2 columns are multiplied by 6!/(8 choose 2) and therefore
 -- divided by 7. Consequently the reduction mod 7 changes
 
 -- Octa

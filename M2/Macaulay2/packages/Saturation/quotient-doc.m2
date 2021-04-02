@@ -3,6 +3,7 @@ undocumented {
     (quotient, Module, Number), (symbol:, Module, Number)
     }
 
+-- TODO: why does this node show up as an orphan in the table of contents?
 doc ///
 Node
   Key
@@ -87,6 +88,7 @@ Node
     saturate
     symbol:
 
+-- TODO: change to strategy node only for the relevant quotient method keys
 Node
   Key
     [quotient, Strategy]

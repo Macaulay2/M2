@@ -32,7 +32,7 @@ checkpoly = (f)->(
 finishMap = (A,L,xmap) -> (
      -- 2 Arguments:  A matrix and a new mutable list.
      -- Return:       a map from the ring corresponding to 
-     --               entries in the matix to itself given by 
+     --               entries in the matrix to itself given by 
      --               entries in the matrix which have a linear
      --               term that does not occur elsewhere in the 
      --               polynomial. 

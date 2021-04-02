@@ -2,6 +2,13 @@
 --- author(s): M. Stillman
 --- notes: 
 
+-*
+-- TODO
+degree(ChainComplexMap)
+degree(GradedModuleMap)
+degree(Matrix)
+*-
+
 document {
      Key => Parenthesize,
      "This class is used internally to implement the parentheses inserted by ", TO "parts", "."
@@ -150,7 +157,7 @@ document {
 	  as often as possible, then evaluates it at ", TT "T=1", ".
 	  When the module has finite length,                                                           
  	  the result is the Hilbert series evaluated
- 	  at 1, that is the dimension over the ground field, which for a graded (homogenous)
+ 	  at 1, that is the dimension over the ground field, which for a graded (homogeneous)
 	  is the same as the length."
 	  },
      Caveat => {
@@ -221,7 +228,7 @@ document {
 	  List => {"the degree or multidegree of ", TT "f"}
 	  },
      "In Macaulay2, the degree of a polynomial is a list of integers.
-     This is to accomodate polynomial rings having multigradings.  The 
+     This is to accommodate polynomial rings having multigradings.  The 
      usual situation is when the ring has the usual grading: each variable has
      length 1.",
      EXAMPLE {

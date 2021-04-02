@@ -35,7 +35,7 @@ witnessPoints=importMainDataFile(storeBM2Files)
 assert(#witnessPoints==2)
 
 ------
----Bertini has a positive dimensional solve option. When this option is envoked Bertini will not produce files that have coordinates of witness points, or in otherwords we cannot use the importSolutionsFile command to get information from a postive dimensional run.
+---Bertini has a positive dimensional solve option. When this option is envoked Bertini will not produce files that have coordinates of witness points, or in otherwords we cannot use the importSolutionsFile command to get information from a positive dimensional run.
 --For positive dimensional runs we must use the importMainDataFile command. 
 --Positive dimensional runs automatically use regeneration. Unlike the Zero-dimensional regeneration solver singular solutions are classified in the pos dim case.
 

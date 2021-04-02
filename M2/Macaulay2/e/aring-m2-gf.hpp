@@ -3,12 +3,12 @@
 #ifndef _aring_gf_m2_hpp_
 #define _aring_gf_m2_hpp_
 
+#include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-#include <rand.h>
 
-//#include "aring-glue.hpp"
+#include <iostream>
 
 class GF;
 class PolynomialRing;
@@ -74,7 +74,7 @@ class GaloisFieldTable
 class ARingGFM2 : public RingInterface
 {
  public:
-  static const RingID ringID = ring_GF;
+  static const RingID ringID = ring_GFM2;
   typedef int ElementType;
   typedef int elem;
 
@@ -233,13 +233,9 @@ class ARingGFM2 : public RingInterface
 
   void subtract_multiple(elem &result, elem a, elem b) const
   {
-    // result -= a*b
-    assert(a != 0);
-    assert(b != 0);
-
-    int ab = a + b;
-    if (ab > mGF.minusOne()) ab -= mGF.orderMinusOne();
-    subtract(result, ab, result);
+    elem ab;
+    mult(ab, a, b);
+    subtract(result, result, ab);
   }
 
   void mult(elem &result, elem a, elem b) const

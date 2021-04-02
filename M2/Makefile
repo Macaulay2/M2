@@ -213,7 +213,7 @@ grep :
 	@false
 else
 grep :
-	find . \( -name .svn -o -name BUILD -o -name autom4te.cache \) ! -prune -o -type f | xargs grep -nH -e $(SEARCH) || [ $$? = 123 ]
+	find . \( -name .git -o -name BUILD -o -name autom4te.cache \) ! -prune -o -type f | xargs grep -nH -e $(SEARCH) || [ $$? = 123 ]
 endif
 
 announce:
@@ -241,7 +241,8 @@ clean-in-submodules:
 
 # Fetch the M2-emacs submodule
 fetch-M2-emacs: Macaulay2/editors/emacs/M2.el
-Macaulay2/editors/emacs/M2.el:; git submodule update --init Macaulay2/editors/emacs
+Macaulay2/editors/emacs/M2.el:
+	cd .. && git submodule update --init M2/Macaulay2/editors/emacs
 
 # Local Variables:
 # mode: Makefile

@@ -193,7 +193,7 @@ bool solveInvertible(const Mat& A, const Mat& B, Mat& X)
 /// the column profile is computed.
 ///
 /// The return value is an ascending sequence of non-negative integers
-/// with an entry a occuring iff the submatrix of A of the first
+/// with an entry a occurring iff the submatrix of A of the first
 /// (a-1) rows (resp columns) has lower rank than the submatrix of the
 /// first a rows (resp columns).
 ///
@@ -208,7 +208,7 @@ M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile)
 
 /// @brief Set C += A*B
 ///
-/// Throws an exception if not yet implementd for this ring/matrix type.
+/// Throws an exception if not yet implemented for this ring/matrix type.
 /// The sizes of C,A,B must be compatible.  These are checked only via
 /// assertions.
 template <typename Mat>
@@ -221,7 +221,7 @@ void addMultipleTo(Mat& C, const Mat& A, const Mat& B)
 
 /// @brief Set C -= A*B
 ///
-/// Throws an exception if not yet implementd for this ring/matrix type.
+/// Throws an exception if not yet implemented for this ring/matrix type.
 /// The sizes of C,A,B must be compatible.  These are checked only via
 /// assertions.
 template <typename Mat>

@@ -287,6 +287,7 @@ bumpPrecedence();
 bumpPrecedence();
      precBracket := prec;
      export leftbracket := parens("[","]",precBracket, precRightParen, precRightParen);
+     export leftAngleBar := parens("<|","|>",precBracket, precRightParen, precRightParen);
 bumpPrecedence();
      export BackslashBackslashS := makeKeyword(binaryright("\\\\"));
      export StarS := makeKeyword(unarybinaryleft("*"));	    -- also binary

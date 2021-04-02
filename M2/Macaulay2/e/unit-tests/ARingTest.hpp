@@ -1,6 +1,8 @@
 #ifndef __ring_test_hpp__
 #define __ring_test_hpp__
 
+#include "interface/random.h"
+
 const int ntrials = 1000;
 // const int ntrials = 1000000; // not good for the ssd - system swaps
 // memory....

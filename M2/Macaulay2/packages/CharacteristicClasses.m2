@@ -78,7 +78,7 @@ MultiProjCoordRing (List):=(l)->(
     );
 MultiProjCoordRing (Ring, Symbol,List):=(kk,x,l)->(
     if not isField(kk) then(
-	<<"The coefficent ring must be a field, using the defalt feild kk=ZZ/32749"<<endl;
+	<<"The coefficient ring must be a field, using the default field kk=ZZ/32749"<<endl;
 	kk=ZZ/32749;
 	);
     totalDim:=sum(l);
@@ -426,7 +426,7 @@ CSM NormalToricVariety :=opts->TorVar->(
     );
 
 CSM (QuotientRing, NormalToricVariety) :=opts->(A,TorVar)->(
-    --Generators (as a ring) of the quotient ring representation of the chow ring corespond to 
+    --Generators (as a ring) of the quotient ring representation of the Chow ring correspond to 
     --the divisors associated to the rays in the fan Theorem 12.5.3. Cox, Little, Schenck and 
     --comments above
     L:=gens(A);
@@ -1311,7 +1311,7 @@ residualDegs = {CompMethod => ProjectiveDegree} >> opts -> (f, ambientDim, dimen
 	  -- run Bertini
 	  execstr := "cd /tmp ;" | bertini'path | "bertini " | filename | " > " | getFilename();
 	  ret := run(execstr);
-	  if ret =!= 0 then  error("error occured while executing external program Bertini. Make sure that Bertini v1.3 or higher is installed and configured.");
+	  if ret =!= 0 then  error("error occurred while executing external program Bertini. Make sure that Bertini v1.3 or higher is installed and configured.");
 
 	  -- Read output file "regenSummary". Remove the first two lines and the last one. 
 	  -- Furthermore remove the lines corresponding to codimensions less than the codimension of the variety,
@@ -1556,7 +1556,7 @@ output = (segreList,ambientDim,hyperplaneClass) -> (
 
 -*
 MyGb is a wrapper function for the M2 groebner basis command which 
-uses the fastest avalible GB algorithm depending on the users system and on the feild over which they are working
+uses the fastest available GB algorithm depending on the users system and on the field over which they are working
 *-
 
 MyGb =(I,stdgy)->(
@@ -1702,7 +1702,7 @@ doc ///
 	       peek SegHash
 	       s1==SegHash#"Segre"
 	  Text 
-	       In the case where the ambient space is a toric variety which is not a product of projective spaces we must load the NormalToricVarieites pachage and must also input the toric variety. If the toric variety is a product of projective space it is recommended to use the form above rather than inputting the toric variety for efficiency reasons. 
+	       In the case where the ambient space is a toric variety which is not a product of projective spaces we must load the NormalToricVarieties package and must also input the toric variety. If the toric variety is a product of projective space it is recommended to use the form above rather than inputting the toric variety for efficiency reasons. 
 	  Example
 	       needsPackage "NormalToricVarieties"
 	       Rho = {{1,0,0},{0,1,0},{0,0,1},{-1,-1,0},{0,0,-1}}
@@ -1916,7 +1916,7 @@ doc ///
          ClassInToricChowRing
 	 (ClassInToricChowRing,QuotientRing, RingElement)
      Headline
-         Gives the class of a hypersurface in the assocated Chow ring of a toric variety
+         Gives the class of a hypersurface in the associated Chow ring of a toric variety
      Usage 
          ClassInToricChowRing(Ch,f)
      Inputs
@@ -2039,7 +2039,7 @@ Description
 	 W = smoothFanoToricVariety(4,123)
 	 CheckToricVarietyValid(W)
      Text
-         Even if we can not preform computations on subschemes we may still compute the CSM class of the toric variety itself using the @TO CSM@ command.	 
+         Even if we can not perform computations on subschemes we may still compute the CSM class of the toric variety itself using the @TO CSM@ command.	 
      Example
          Ch=ToricChowRing W
          CSM W    
@@ -2089,11 +2089,11 @@ doc ///
 	  M:MutableHashTable
 	    containing known CSM classes of hypersurfaces appearing in the inclusion-exclusion procedure
 	  CompMethod => "ProjectiveDegree"
-	    this is the defult algorithm used for the main computational steps in the computation
+	    this is the default algorithm used for the main computational steps in the computation
 	  CompMethod => "PnResidual"
 	    this algorithm may be used for subschemes of \PP^n only  
 	  Method => "InclusionExclusion"
-	    this is the defualt method and is applicable for all inputs
+	    this is the default method and is applicable for all inputs
 	  Method => "DirectCompleteInt"
 	    this method may provide a performance improvement when the input is a complete intersection, if the input is not a complete intersection a warning will be given and the InclusionExclusion option will be used instead
 	  CheckSmooth => 
@@ -2246,7 +2246,7 @@ Description
 	       csmK= CSM(K)
 	       EulerK==Euler(csmK)	       
 	  Text 
-	       In the case where the ambient space is a toric variety which is not a product of projective spaces we must load the NormalToricVarieites pachage and must also input the toric variety. If the toric variety is a product of projective space it is recommended to use the form above rather than inputting the toric variety for efficiency reasons. 
+	       In the case where the ambient space is a toric variety which is not a product of projective spaces we must load the NormalToricVarieites package and must also input the toric variety. If the toric variety is a product of projective space it is recommended to use the form above rather than inputting the toric variety for efficiency reasons. 
 	  Example
 	       needsPackage "NormalToricVarieties"
 	       Rho = {{1,0,0},{0,1,0},{0,0,1},{-1,-1,0},{0,0,-1}}
@@ -2363,7 +2363,7 @@ doc ///
 	       time CSM(K,CompMethod=>ProjectiveDegree)
 	       time CSM(K,CompMethod=>PnResidual)
 	  Text
-	      The options PnResidual and bertini may only be used for subschemes of a single projective space of fixed dimension. For subschemes of products of projective spaces and for subschemes of toric varieties only the ProjectiveDegree option is avalible and other options will be ignored by the methods @TO Segre@, @TO CSM@, @TO Chern@ and @TO Euler@.
+	      The options PnResidual and bertini may only be used for subschemes of a single projective space of fixed dimension. For subschemes of products of projective spaces and for subschemes of toric varieties only the ProjectiveDegree option is available and other options will be ignored by the methods @TO Segre@, @TO CSM@, @TO Chern@ and @TO Euler@.
 	  Example
 	      R=MultiProjCoordRing({1,2,2})
 	      I=ideal(R_0*R_1*R_3-R_0^2*R_2)
@@ -2396,7 +2396,7 @@ doc ///
 	  HashFormXL
      Description
      	  Text
-	       The option Output is only used by the commands @TO CSM@, @TO Segre@, @TO Chern@ and @TO Euler@ to specify the type of output to be returned to the used. This option will be ignored when used with @TO CompMethod@ PnResidual or bertini. The option will also be ignore when @TO Method@=>DirectCompleteInt is used. The defualt output for all these methods is ChowRingElelment which will return an element of the appropriate Chow ring. All methods also have an option HashForm which returns additional information computed by the methods during their standard operation. 
+	       The option Output is only used by the commands @TO CSM@, @TO Segre@, @TO Chern@ and @TO Euler@ to specify the type of output to be returned to the used. This option will be ignored when used with @TO CompMethod@ PnResidual or bertini. The option will also be ignore when @TO Method@=>DirectCompleteInt is used. The default output for all these methods is ChowRingElelment which will return an element of the appropriate Chow ring. All methods also have an option HashForm which returns additional information computed by the methods during their standard operation. 
 	  Example
 	       R = ZZ/32749[x_0..x_6]
 	       A=ChowRing(R)
@@ -2413,7 +2413,7 @@ doc ///
 	       peek eu
 	       
 	  Text  
-	       The MutableHashTable returned with the option Output=>HashForm contains different information depending on the method with which it is used. Additionally if the option @TO InputIsSmooth@ is used then the hash table returned by the methods Euler and CSM will be the same as that returned by Chern. When using the @TO CSM@  command in the default configurations (that is @TO Method@=>InclusionExclusion, @TO CompMethod@=>ProjectiveDegree) there is the additional option to set Output=>HashFormXL. This returns all the ususal information that Output=>HashForm would for this configuation with the addition of the projective degrees and Segre classes of singularity subschemes generated by the hypersurfaces considered in the inclusion/excluion procedure, that is in finding the CSM class of all hypersurfaces generated by taking a product of some subsets of generators of the input ideal. Note that, since the CSM class of a subscheme equals the CSM class of its reduced scheme, or equailiently for us the CSM class corresponding to an ideal I equals the CSM class of the radical of I, then internally we always work with radical ideals (for efficancy reasons). Hence the projective degrees and Segre classes computed internally will be those of the radical of an ideal defined by a polynomial which is a product of some subset of the generators. We illistrate this with an example below.
+	       The MutableHashTable returned with the option Output=>HashForm contains different information depending on the method with which it is used. Additionally if the option @TO InputIsSmooth@ is used then the hash table returned by the methods Euler and CSM will be the same as that returned by Chern. When using the @TO CSM@  command in the default configurations (that is @TO Method@=>InclusionExclusion, @TO CompMethod@=>ProjectiveDegree) there is the additional option to set Output=>HashFormXL. This returns all the usual information that Output=>HashForm would for this configuration with the addition of the projective degrees and Segre classes of singularity subschemes generated by the hypersurfaces considered in the inclusion/excluion procedure, that is in finding the CSM class of all hypersurfaces generated by taking a product of some subsets of generators of the input ideal. Note that, since the CSM class of a subscheme equals the CSM class of its reduced scheme, or equailiently for us the CSM class corresponding to an ideal I equals the CSM class of the radical of I, then internally we always work with radical ideals (for efficancy reasons). Hence the projective degrees and Segre classes computed internally will be those of the radical of an ideal defined by a polynomial which is a product of some subset of the generators. We illustrate this with an example below.
           Example
 	      csmXLhash=CSM(A,I,Output=>HashFormXL)
 	      peek csmXLhash
@@ -2443,7 +2443,7 @@ doc ///
           InputIsSmooth
      Description
      	  Text
-	       The option InputIsSmooth is only used by the commands @TO CSM@, and @TO Euler@. If the input ideal is known to define a smooth subscheme setting this option to true will speed up computations (it is set to false by defualt).	  
+	       The option InputIsSmooth is only used by the commands @TO CSM@, and @TO Euler@. If the input ideal is known to define a smooth subscheme setting this option to true will speed up computations (it is set to false by default).	  
 	  Example
 	       R = ZZ/32749[x_0..x_4];
 	       I=ideal(random(2,R),random(2,R),random(1,R));

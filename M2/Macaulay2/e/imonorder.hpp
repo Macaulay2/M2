@@ -6,17 +6,7 @@
 /* This is the internal form of the monomial ordering */
 /* Used in monomial encoding/decoding/comparison */
 
-#include "engine-includes.hpp"
-#include "rand.h"
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#else
-#ifdef HAVE_MALLOC_H
-// under minggw32, alloca is declared in malloc.h
-#include <malloc.h>
-#endif
-#endif
-#include "monordering.h"
+#include "interface/monomial-ordering.h"
 
 typedef int *exponents;
 typedef int *monomial;

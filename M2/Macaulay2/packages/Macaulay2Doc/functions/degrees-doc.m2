@@ -2,18 +2,17 @@
 --- author(s): 
 --- notes: 
 
-undocumented {
-     (degrees, QuotientRing)
-     }
 document { Key => degrees,
      Headline => "degrees of generators" }
 document {
-     Key => {(degrees, Ring),
-	  (degrees, GeneralOrderedMonoid),
-	  (degrees, Module),
-	  (degrees, Ideal),
-	  (degrees, CoherentSheaf)
-	  },
+     Key => {
+	 (degrees, Ring),
+     	 (degrees, QuotientRing),
+    	 (degrees, FractionField),
+	 (degrees, GeneralOrderedMonoid),
+	 (degrees, Module),
+	 (degrees, Ideal),
+	 (degrees, CoherentSheaf)},
      Headline => "degrees of generators",
      Usage => "degrees A",
      Inputs => {"A" => {ofClass Ideal, ", ", ofClass Module, ", ", ofClass CoherentSheaf, ", or ", ofClass Monoid }

@@ -492,5 +492,5 @@ doc ///
     Description
       Text
         The package uses these mutable variables to store the paths of the executables.
-	They can be edited by the user.  The prefered way to do this is @TO changeSolver@, though.
+	They can be edited by the user. The preferred way to do this is @TO changeSolver@, though.
 ///

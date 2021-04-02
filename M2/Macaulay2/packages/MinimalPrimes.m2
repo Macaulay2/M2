@@ -67,8 +67,6 @@ newPackage(
 -- .  Document minprimes, something about the strategies
 -- .  Export only the symbols we want
 
-exportFrom_Core { "decompose" }
-
 export { "Hybrid", "minimalPrimes", "minprimes" => "minimalPrimes", "radical", "radicalContainment", "installMinprimes" }
 
 importFrom_Core { "printerr", "raw", "rawCharSeries", "rawGBContains", "rawRadical", "newMonomialIdeal" }
@@ -194,7 +192,7 @@ minimalPrimes = method(
 
 -- returns a list of ideals, the minimal primes of I
 minimalPrimes Ideal := List => opts -> I -> minprimesHelper(I, (minimalPrimes, Ideal), opts)
--- TODO: decompose is declared in m2/factor.m2 as method(Options => true), move it here eventually
+-- decompose is declared in m2/shared.m2 as method(Options => true)
 decompose     Ideal := List => options minimalPrimes >> opts -> I -> minprimesHelper(I, (minimalPrimes, Ideal), opts)
 
 -- keys: none so far
@@ -412,7 +410,7 @@ legacyMinimalPrimes = J -> (
 --   input: KR, a ring of the form kk(t)[u] (t and u sets of variables)
 --          RU, kk[u,t] (with some monomial ordering)
 --   consequence: sets information in KR so that
---     'factors' and 'numerator', 'denominator' work for elemnts of KR
+--     'factors' and 'numerator', 'denominator' work for elements of KR
 --     sets KR.toAmbientField, KR.fromAmbientField
 setAmbientField = method()
 setAmbientField(Ring, Ring) := (KR, RU) -> (
@@ -425,10 +423,11 @@ setAmbientField(Ring, Ring) := (KR, RU) -> (
     )
 
 -- TODO: what does factors f do? is this always correct, or only for the purposes of MinimalPrimes
-mySat = (I, f) -> saturate(I, f, Strategy => Factorization)
+--mySat = (I, f) -> saturate(I, f, Strategy => Factorization)
+mySat = (I, f) -> saturate(I, last \ factors f)
 -- TODO: if this is always correct, move it to Saturation
 -- Note: if it is the default strategy, it can lead to infinite loops
-addHook((saturate, Ideal, RingElement), (opts, I, f) -> saturate(I, last \ factors f, opts), Strategy => Factorization)
+--addHook((saturate, Ideal, RingElement), (opts, I, f) -> saturate(I, last \ factors f, opts), Strategy => Factorization)
 
 -- needs documentation
 factors = method()

@@ -2,6 +2,8 @@
 --- author(s): Gregory G. Smith
 --- notes: 
 
+-- in Classic: (ideal, String)
+
 document { 
      Key => ideal,
      Headline => "make an ideal",

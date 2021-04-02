@@ -222,7 +222,7 @@ Matrix * Vector := Matrix Vector := Vector => (m,v) -> (
 expression Matrix := m -> (
     x := applyTable(entries m, expression);
     d := degrees -* cover *- target m;
-    if not all(d, i -> all(i, j -> j == 0)) then MatrixDegreeExpression {x,d, degrees source m} else MatrixExpression x
+    MatrixExpression if not all(d, i -> all(i, j -> j == 0)) then { x, Degrees=>{d, degrees source m} } else { x }
     )
 
 net Matrix := m -> net expression m
@@ -233,7 +233,7 @@ texMath Matrix := m -> texMath expression m
 describe Matrix := m -> (
     args:=(describe target m,describe source m);
     if m.?RingMap then args=append(args,describe m.RingMap);
-    args=append(args,expression if m == 0 then 0 else entries m);
+    args=append(args, expression if m == 0 then 0 else entries m);
     if not all(degree m,zero) then args=append(args,expression(Degree=>degree m));
     Describe (expression map) args
     )
@@ -653,6 +653,7 @@ inducedMap(Module,Module) := Matrix => o -> (M,N) -> (
      then error "'inducedMap' expected modules with same ambient free module";
      inducedMap(M,N,id_(ambient N),o))
 
+-- TODO: deprecate this in favor of isWellDefined
 inducesWellDefinedMap = method(TypicalValue => Boolean)
 inducesWellDefinedMap(Module,Module,Matrix) := (M,N,f) -> (
      sM := target f;

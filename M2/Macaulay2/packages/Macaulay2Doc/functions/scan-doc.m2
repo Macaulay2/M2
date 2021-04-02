@@ -6,13 +6,14 @@ doc///
   scan
   (scan, BasicList, Function)
   (scan, ZZ, Function)
+  (scan, String, Function)
  Headline
   apply a function to each element in a list or sequence
  Usage
   scan(L, f)
   scan(n, f)
  Inputs
-  L: BasicList
+  L: {BasicList, String}
   n: ZZ
   f: Function
  Description
@@ -21,6 +22,7 @@ doc///
    of the list {\tt L}. The function values are discarded.
   Example
    scan({a, 4, "George", 2^100}, print)
+   scan("foo", print)
   Text
    {\tt scan(n, f)} applies the function {\tt f} to each element 
    of the list 0, 1, ..., n-1
