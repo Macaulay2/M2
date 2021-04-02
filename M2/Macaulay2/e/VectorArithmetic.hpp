@@ -348,7 +348,10 @@ public:
     CoeffVectorType sparse = allocateCoeffVector(c.size());
     auto& svec = * coeffVector(sparse);
     for (auto i = 0; i < c.size(); ++i)
-	mRing->from_ring_elem(svec[i], c[i]);
+    {
+      mRing->init(svec[i]);
+      mRing->from_ring_elem(svec[i], c[i]);
+    }
     return sparse;
   }
 

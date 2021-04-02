@@ -1823,3 +1823,21 @@ I1 = ideal {e*(a - b), e*c}
 gens gb I1
 e*(a-b)*c - e*c*a = -e*b*c = -e*c*b = 0
 ///
+
+DEVELOPMENT ///
+restart
+needsPackage "AssociativeAlgebras"
+n = 5
+indexing = p -> position(subsets(n,2), t -> t == p)
+subsets2 = subsets(n,2)
+subsets3 = subsets(n,3)
+disjSubsets2 = select(subsets(subsets(n,2),2), p -> #( (set p#0) * (set p#1) ) == 0)
+A = QQ <|apply(subsets2, p -> x_(indexing p))|>
+I = ideal (apply(gens A,       x -> x^2) | 
+             apply(subsets3,     p -> x_(indexing {p#0,p#1})*x_(indexing {p#1,p#2}) - x_(indexing {p#1,p#2})*x_(indexing {p#0,p#2}) - x_(indexing {p#0,p#2})*x_(indexing {p#0,p#1})) |
+             apply(subsets3,     p -> x_(indexing {p#1,p#2})*x_(indexing {p#0,p#1}) - x_(indexing {p#0,p#2})*x_(indexing {p#1,p#2}) - x_(indexing {p#0,p#1})*x_(indexing {p#0,p#2})) |
+	     apply(disjSubsets2, p -> x_(indexing {p#0#0,p#0#1})*x_(indexing {p#1#0,p#1#1}) - x_(indexing {p#1#0,p#1#1})*x_(indexing {p#0#0,p#0#1})))
+Igb = NCGB(I, 20);
+B = A/I
+apply(41, i -> numcols ncBasis(i,B))
+///
