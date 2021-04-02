@@ -75,10 +75,56 @@ getGenElts (Ideal, ZZ) := List => opts -> (I, n) -> (
     result
 )
 
--- This is the main method. It computes the multiplicity sequence of an ideal using one of two strategies: either Hilbert functions (default), or general elements.
+-- computes the bigraded associated graded algebra with respect to m and I
+-- TODO: user-specified variable names?
+grGr = method()
+grGr (Ideal, Ideal) := Ring => (m, I) -> (
+    if I.cache#?"gr_mGr_I" then I.cache#"gr_mGr_I" else I.cache#"gr_mGr_I" = (
+        G1 := normalCone(I, Variable => "v");
+        G2 := minimalPresentation normalCone(sub(m, G1), Variable => "u");
+        s := #select(gens G2, g -> toString first baseName g == "u");
+        newRing(G2, Degrees => splice({s : {1,0}} | {#gens G2 - s : {0,1}}))
+    )
+)
+grGr Ideal := Ring => I -> grGr(ideal gens ring I, I)
+
+hilbSequence = method()
+hilbSequence Module := HashTable => M -> (
+    HS := hilbertSeries(M, Reduce => true);
+    q := value numerator HS;
+    coordChange := map(ring q, ring q, matrix{{#gens ring q:1}} - vars ring q);
+    s := first exponents coordChange value denominator HS;
+    b := select(listForm coordChange q, p -> all(#s, i -> p#0#i <= s#i));
+    hashTable apply(b, p -> (s - p#0, p#1))
+)
+hilbSequence Ring := HashTable => R -> hilbSequence R^1
+hilbSequence Ideal := HashTable => I -> hilbSequence comodule I
+
+-- hilbertPolynomial = method(Options => {Projective => false}) -- should be a hook?
+-- hilbertPolynomial Module := RingElement => o -> M -> ( -- TODO: fix
+    -- if not isHomogeneous M then error "expected a (multi-)homogeneous module";
+    -- R := ring M;
+    -- n := degreeLength R;
+    -- if n > 1 then (
+        -- i := getSymbol "i";
+        -- S := QQ(monoid[i_1..i_n]);
+        -- b := hilbSequence M;
+        -- sum(pairs b, p -> p#1*product(#gens S, j -> binomial(S_j+p#0#j, p#0#j)))
+    -- ) else Core$hilbertPolynomial(M, o)
+-- )
+-- hilbertPolynomial Ideal := RingElement => o -> I -> hilbertPolynomial(comodule I, o)
+-- hilbertPolynomial Ring := RingElement => o -> R -> hilbertPolynomial(R^1, o)
+
+-- This is the main method. It computes the multiplicity sequence of an ideal using one of two strategies: either bivariate Hilbert series (default), or general elements.
 multiplicitySequence = method(Options => options getGenElts ++ {Strategy => "grGr"})
+multiplicitySequence Ideal := HashTable => opts -> I -> (
+    hashTable if opts.Strategy =!= "genElts" then (
+        H := hilbSequence grGr I;
+        d := max(keys H /sum);
+        apply(select(keys H, k -> sum k == d), k -> last k => H#k)
+    ) else toList apply(codim I..analyticSpread I, j -> {j, multiplicitySequence(j, I, opts)})
+)
 multiplicitySequence (ZZ, Ideal) := ZZ => opts -> (j, I) -> (
-    -- I = trim I;
     c := codim I;
     l := analyticSpread I;
     if j < c then ( print "Requested index is less than codimension"; return 0; );
@@ -106,51 +152,6 @@ multiplicitySequence (ZZ, Ideal) := ZZ => opts -> (j, I) -> (
         degree(if isHomogeneous J then J else tangentCone J)
     ) else (multiplicitySequence I)#j
 )
--- multiplicitySequence Ideal := Sequence => opts -> I -> hashTable toList apply(codim I..analyticSpread I, j -> {j, multiplicitySequence(j, I, opts)})
-
--- computes the bigraded associated graded algebra with respect to m and I
--- TODO: user-specified variable names?
-grGr = method()
-grGr Ideal := Ring => I -> (
-    if I.cache#?"gr_mGr_I" then I.cache#"gr_mGr_I" else I.cache#"gr_mGr_I" = (
-        G1 := normalCone(I, Variable => "v");
-        G2 := normalCone(sub(ideal gens ring I, G1), Variable => "u");
-        newRing(minimalPresentation G2, Degrees => splice({numgens ring I : {1,0}} | {numgens G1 : {0,1}}))
-    )
-)
-
-hilbSequence = method()
-hilbSequence Module := HashTable => M -> (
-    HS := hilbertSeries(M, Reduce => true);
-    q := value numerator HS;
-    coordChange := map(ring q, ring q, matrix{{#gens ring q:1}} - vars ring q);
-    s := first exponents coordChange value denominator HS;
-    b := select(listForm coordChange q, p -> all(#s, i -> p#0#i <= s#i));
-    hashTable apply(b, p -> (s - p#0, p#1))
-)
-hilbSequence Ring := HashTable => R -> hilbSequence R^1
-hilbSequence Ideal := HashTable => I -> hilbSequence comodule I
-
-multiplicitySequence Ideal := HashTable => opts -> I -> (
-    H := hilbSequence grGr I;
-    d := max(keys H /sum);
-    hashTable apply(select(keys H, k -> sum k == d), k -> last k => H#k)
-)
-
--- hilbertPolynomial = method(Options => {Projective => false}) -- should be a hook?
--- hilbertPolynomial Module := RingElement => o -> M -> ( -- TODO: fix
-    -- if not isHomogeneous M then error "expected a (multi-)homogeneous module";
-    -- R := ring M;
-    -- n := degreeLength R;
-    -- if n > 1 then (
-        -- i := getSymbol "i";
-        -- S := QQ(monoid[i_1..i_n]);
-        -- b := hilbSequence M;
-        -- sum(pairs b, p -> p#1*product(#gens S, j -> binomial(S_j+p#0#j, p#0#j)))
-    -- ) else Core$hilbertPolynomial(M, o)
--- )
--- hilbertPolynomial Ideal := RingElement => o -> I -> hilbertPolynomial(comodule I, o)
--- hilbertPolynomial Ring := RingElement => o -> R -> hilbertPolynomial(R^1, o)
 
 -- Computes the j-multiplicity of an ideal
 jMult = method()
@@ -166,7 +167,7 @@ jMult Ideal := ZZ => I -> (
     N := monoid[Variables=>r, MonomialOrder=>{Weights=>{-1,-1},RevLex},Global=>false];
     -- L := leadTerm gb UI;
     L := tangentCone UI;
-    S := (ZZ/101) N;
+    S := (QQ) N;
     f := map(S,R,vars S);
     C := S/f(L);
     -- dim (R/ ideal(submatrix(M,{0..r-1},)))
@@ -308,7 +309,7 @@ doc ///
         Code
             UL {
                 "[AM97] Achilles-Manaresi, Multiplicities of a bigraded ring and intersection theory. Math. Ann. 309, 573–591 (1997).",
-		"[AR01] Achilles-Rams: Intersection numbers, Segre numbers and generalized Samuel multiplicities. Arch. Math. (Basel) 77, 391–398 (2001)",
+		"[AR01] Achilles-Rams, Intersection numbers, Segre numbers and generalized Samuel multiplicities. Arch. Math. (Basel) 77, 391–398 (2001)",
                 "[JM13] Jeffries-Montaño, The j-multiplicity of monomial ideals, Math. Res. Lett. 20 (2013), no. 4, 729–744.",
 		"[NU10] Nishida-Ulrich, Computing j-multiplicities, J. Pure Appl. Algebra, 214(12) (2010), 2101–2110.",
 		"[PTUV20] Polini-Trung-Ulrich-Validashti, Multiplicity sequence and integral dependence. Math. Ann. 378 (2020), no. 3-4, 951–969.",
@@ -643,6 +644,15 @@ P = NP I
 assert(fVector P == {3,4,1})
 ///
 
+TEST /// -- degenerate cases
+R = QQ[x,y]
+m = ideal "x,y"
+I = ideal "x-1,y"
+assert(pairs multiplicitySequence m == {(2,1)})
+assert(pairs multiplicitySequence ideal "x,y2" == {(2,2)})
+assert(pairs multiplicitySequence (m*I) == {(2,1)})
+///
+
 end--
 
 restart
@@ -813,7 +823,7 @@ R = QQ[x_1..x_9]; M = genericMatrix(R,3,3);
 I = minors(2, M)
 
 -- Ferrers ideals
-(m,n)=(6,6)
+(m,n)=(4,4)
 R = QQ[x_0..x_(n-1),y_0..y_(m-1)]
 I = ideal flatten table(n,m,(i,j)->x_i*y_j)
 J1 = ideal apply(m,k-> sum(min(m-k,n),i->x_i*y_(k+i)));
@@ -861,6 +871,16 @@ M1 = comodule ideal(random({1,2},P),random({2,3},P),random({5,2},P));
 elapsedTime multiHilbertPolynomial M1 -- == 44, ~1.4 seconds
 hilbSequence M1
 -- Note: this has a key {0,3}, while value for key {1,1} is 44
+
+R = QQ[x,y,z]
+m = ideal(x^2+1, y^3+y+1, z)
+I = m^2
+G1 = normalCone(I, Variable => "v")
+G2 = minPres normalCone(sub(m, G1), Variable => "u")
+n1 = #select(gens G2, g -> (bN := baseName g; instance(bN, IndexedVariable) and toString bN#0 == "u"))
+n2 = #select(gens G2, g -> (bN := baseName g; instance(bN, IndexedVariable) and toString bN#0 == "v"))
+G = newRing(G2, Degrees => splice({n1 : {1,0}} | {n2 : {0,1}} | {#gens G2 - n1 - n2 : {0,0}})) -- Heft => {0, 1}, 
+hilbertSeries G -- error: hilbertSeries: ring has no heft vector
 
 ----------
 installPackage"MultiplicitySequence"
