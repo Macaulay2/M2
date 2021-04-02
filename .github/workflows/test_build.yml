@@ -45,11 +45,6 @@ jobs:
         include:
           - build-system: cmake
             os: ubuntu-20.04
-            compiler: gcc7
-            cxx: g++-7
-            cc: gcc-7
-          - build-system: cmake
-            os: ubuntu-20.04
             compiler: clang-11
             cxx: clang++-11
             cc: clang-11
