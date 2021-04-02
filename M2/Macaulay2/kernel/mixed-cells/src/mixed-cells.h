@@ -757,7 +757,7 @@ template <class typ> class Matrix{
 }
 
   /*
-    Returns a matrix with those columns removed, that would not conain a pivot in a row Echelon form.
+    Returns a matrix with those columns removed, that would not contain a pivot in a row Echelon form.
    */
   Matrix reduceDimension()const
   {

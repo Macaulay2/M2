@@ -398,6 +398,30 @@ restart
   print result
 ///
 
+TEST ///
+  debug needsPackage "GenerateD"
+  result = str (genFunctionCall(
+        "rawNCGroebnerBasisTwoSided", 
+        "MatrixOrNull", 
+        ("a"=>"Matrix", "b"=>"int")
+        ))
+
+  result2 = str (genFunctionCall(
+        "rawNCReductionTwoSided", 
+        "MatrixOrNull", 
+        ("a"=>"Matrix", "b"=>"Matrix")
+        ))
+
+  result = str (genFunctionCall(
+        "rawRingM2FreeAlgebraQuotient", 
+        "RingOrNull", 
+        ("a"=>"Matrix", "b"=>"int")
+        ))
+
+  print result
+  print result2
+///
+
 end--
 
 restart
@@ -599,6 +623,9 @@ generate("rawQR", MutableMatrix, MutableMatrix, MutableMatrix, Boolean,
     Returns => PossibleError Boolean)
  -- generate D-functions, and a C header.
  
+generate("rawNCGroebnerTwoSided", Matrix, ,
+    Returns => PossibleError Boolean)
+
 -* Moved from e-includes/doc-generateD on 4/11/2020
 Want to automate the process of writing d functions.
 
@@ -698,3 +725,4 @@ Node
   Code
     return name1->homogenize(name2, name3);
 *-
+

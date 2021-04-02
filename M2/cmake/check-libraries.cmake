@@ -8,7 +8,7 @@
 
 # These are the libraries linked with Macaulay2 in Macaulay2/{e,bin}/CMakeLists.txt
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
-set(LIBRARIES_LIST MPSOLVE MATHICGB MATHIC MEMTAILOR FROBBY FACTORY FLINT NTL MPFR MP BDWGC LAPACK)
+set(LIBRARIES_LIST MPSOLVE MATHICGB MATHIC MEMTAILOR FROBBY FACTORY FLINT NTL MPFR MP BDWGC LAPACK TBB)
 set(LIBRARY_LIST   READLINE HISTORY GDBM ATOMICOPS)
 
 message(CHECK_START " Checking for existing libraries and programs")
@@ -16,16 +16,21 @@ message(CHECK_START " Checking for existing libraries and programs")
 ###############################################################################
 ## Program requirements: (git and bison are checked for elsewhere)
 find_package(PkgConfig	REQUIRED QUIET)
-find_package(Doxygen)
-find_package(Sphinx)
-find_program(MAKE  NAMES make gmake nmake)
+find_program(MAKE  NAMES gmake make)
 find_program(ETAGS NAMES etags)
+
+if(BUILD_DOCS)
+  find_package(Doxygen)
+  find_package(Sphinx)
+endif()
 
 ###############################################################################
 ## Requirement	Debian package	RPM package	Homebrew package
 #   Threads	libc6-dev	glibc-headers	N/A
 #   LAPACK	libopenblas-dev	openblas-devel	N/A (Accelerate)
-#   Boost       libboost-dev    boost-devel     boost
+#   Boost	libboost-dev    boost-devel     boost (Regex and Stacktrace)
+#   TBB 	libtbb-dev	tbb-devel	tbb
+#   OpenMP	libomp-dev	libomp-devel	libomp (Optional)
 #   GDBM	libgdbm-dev	gdbm-devel	gdbm
 #   libatomic_ops libatomic_ops-dev libatomic_ops-devel libatomic_ops
 
@@ -35,18 +40,27 @@ find_program(ETAGS NAMES etags)
 
 find_package(Threads	REQUIRED QUIET)
 find_package(LAPACK	REQUIRED QUIET)
-find_package(Boost	REQUIRED QUIET COMPONENTS regex ${Boost_stacktrace})
+find_package(Boost	REQUIRED QUIET COMPONENTS regex OPTIONAL_COMPONENTS stacktrace_backtrace stacktrace_addr2line)
+if(Boost_STACKTRACE_BACKTRACE_FOUND)
+  set(Boost_stacktrace_lib "Boost::stacktrace_backtrace")
+elseif(Boost_STACKTRACE_ADDR2LINE_FOUND)
+  set(Boost_stacktrace_lib "Boost::stacktrace_addr2line")
+else()
+  #fallback to header only mode
+  set(Boost_stacktrace_header_only YES)
+endif()
+
+find_package(TBB	REQUIRED QUIET) # See FindTBB.cmake
 # TODO: replace gdbm, see https://github.com/Macaulay2/M2/issues/594
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
 # TODO: replace libatomic_ops, see https://github.com/Macaulay2/M2/issues/1113
 find_package(AtomicOps	REQUIRED QUIET) # See FindAtomicOps.cmake
 
-###############################################################################
-## Optional	Debian package	RPM package 	Homebrew package
-#   OpenMP	libomp-dev	libomp-devel	libomp
-#   TBB		libtbb-dev	tbb-devel	tbb
-
-find_package(OpenMP)
+if(WITH_OMP)
+  find_package(OpenMP REQUIRED)
+else()
+  find_package(OpenMP)
+endif()
 foreach(lang IN ITEMS C CXX)
   foreach(_dir IN LISTS OpenMP_${lang}_INCLUDE_DIRS)
     set(OpenMP_${lang}_FLAGS "${OpenMP_${lang}_FLAGS} -I${_dir}")
@@ -58,12 +72,6 @@ foreach(lang IN ITEMS C CXX)
     set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} -L${_libdir} -l${_lib}")
   endforeach()
 endforeach()
-
-if(WITH_TBB)
-  # See FindTBB.cmake
-  find_package(TBB REQUIRED)
-  list(APPEND LIBRARIES_LIST TBB)
-endif()
 
 ###############################################################################
 ## Platform dependent requirements:
@@ -221,7 +229,7 @@ foreach(_library IN LISTS LIBRARY_OPTIONS)
     elseif(BUILD_LIBRARIES MATCHES "(ALL|ON)" OR "${_name}" IN_LIST BUILD_LIBRARIES)
       # exists on the system, but we want to build it
       unset(${_library}_DIR CACHE) # for Eigen3
-      unset(${_name}_FOUND)
+      unset(${_name}_FOUND CACHE)
       unset(${_name}_LIBDIR CACHE)
       unset(${_name}_LIBRARY CACHE)
       unset(${_name}_LIBRARIES CACHE)
@@ -289,7 +297,7 @@ if(CHECK_LIBRARY_COMPATIBILITY)
   endforeach()
 
   check_cxx_source_compiles([[int main(){return 0;}]] LIBRARY_COMPATIBILITY
-    FAIL_REGEX "warning")
+    FAIL_REGEX "conflict")
 
   if(NOT LIBRARY_COMPATIBILITY)
     message(CHECK_FAIL " Detected library incompatibilities; rerun the build-libraries target")
@@ -330,7 +338,7 @@ else()
 endif()
 
 if(FROBBY_FOUND)
-  set(CMAKE_REQUIRED_INCLUDES "${FROBBY_INCLUDE_DIR}")
+  set(CMAKE_REQUIRED_INCLUDES "${FROBBY_INCLUDE_DIR};${MP_INCLUDE_DIRS}")
   # whether frobby has constants::version <0.9.4 or frobby_version >=0.9.4
   # TODO: remove when frobby is updated above 0.9.4 everywhere
   check_cxx_source_compiles([[#include <frobby.h>

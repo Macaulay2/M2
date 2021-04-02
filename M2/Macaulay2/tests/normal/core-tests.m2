@@ -41,13 +41,6 @@
      assert(Ext^1(G,omega) == dual HH^1(G))
      assert(Ext^0(G,omega) == dual HH^2(G))
 
-
-
-R = QQ[vars(0..24)]
-f = () -> (alarm 4; try res coker vars R else "ran out of time")
-time f()
-
-
 --
 fib = memoize( n -> if n <= 1 then 1 else fib(n-1) + fib(n-2) )
 assert ( fib 10 == 89 )

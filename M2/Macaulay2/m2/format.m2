@@ -162,14 +162,15 @@ info HEADER3 := Hop(info,"-")
 net  HR :=
 info HR := x -> concatenate(printWidth:"-")
 
-net  TT :=
-info TT := x -> concatenate toSequence noopts x   -- should just be strings here
+net  PRE  :=
+net   TT  :=
+net CODE  :=
+info TT   :=
+info CODE :=  x -> horizontalJoin apply(noopts x,net)
 
-net  PRE := x -> net concatenate x
-info PRE := x -> wrap(printWidth, "-", net concatenate noopts x)
+info PRE  := x -> wrap(printWidth, "-", concatenate apply(noopts x,toString))
 
-net  CODE :=
-info CODE := x -> stack lines concatenate noopts x
+net TH := Hop(net, "-")
 
 ULop := op -> x -> (
      s := "  * ";
@@ -223,13 +224,13 @@ net TABLE :=  x -> (
      (op,ag) := override(options TABLE, toSequence x);
      save := printWidth;
      printWidth = printWidth - 2;
-     r := netList(Boxes => op#"class" === "examples", toList \ toList ag);
+     r := netList(Boxes => op#"class" === "examples", HorizontalSpace => 2, noopts \ toList \ toList sequence ag);
      printWidth = save;
      r)
 info TABLE := x -> (
      s := printWidth;
      if printWidth > 2 then printWidth = printWidth - 2;
-     ret := netList(Boxes=>true, applyTable(toList \ noopts \\ toList x,info));
+     ret := netList(Boxes=>true, applyTable(noopts \ toList \ noopts \\ toList x,info));
      printWidth = s;
      ret)
 

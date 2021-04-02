@@ -18,8 +18,8 @@
 cmake_minimum_required(VERSION 3.15...3.19)
 cmake_policy(VERSION 3.14)
 
-## Use the C++14 standard
-set(CMAKE_CXX_STANDARD 14)
+## Use the C++17 standard
+set(CMAKE_CXX_STANDARD 17)
 ## Use the C11 (C0X) standard
 set(CMAKE_C_STANDARD 11)
 
@@ -63,8 +63,8 @@ project(Macaulay2
 ###############################################################################
 ## Set path for CMake modules
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-include(CTest) ## CMake module for generating a 'test' target for all unit-tests
 include(prechecks) ## CMake macros for preprocessor checks and linting
+include(CTest)     ## CMake module for generating a 'test' target for all unit-tests
 include(profiling) ## CMake macros for profiling Macaulay2 code
 include(configure) ## CMake script for configuring various variables
 include(check-libraries) ## CMake script for checking which libraries exist and which need to be built

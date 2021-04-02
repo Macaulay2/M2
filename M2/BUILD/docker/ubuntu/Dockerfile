@@ -16,22 +16,25 @@ RUN apt-get update && \
 RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
 
 # Libraries we require
-RUN apt-get install -y libopenblas-dev libxml2-dev libreadline-dev libgdbm-dev libboost-regex-dev libboost-stacktrace-dev && \
-    apt-get clean # libomp-dev libtbb-dev
+RUN apt-get install -y libopenblas-dev libxml2-dev libreadline-dev libgdbm-dev \
+	libboost-regex-dev libboost-stacktrace-dev libomp-dev libtbb-dev && \
+	apt-get clean
 
 # This is a dependency that we should get rid of
 RUN apt-get install -y libatomic-ops-dev && apt-get clean
 
-# Libraries we can build (factory not available on ubuntu)
-RUN apt-get install -y libeigen3-dev  libglpk-dev libgmp3-dev libmpfr-dev \
-      libntl-dev libfrobby-dev libgc-dev && apt-get clean
-
-# FIXME: The base container doesn't have Python, which is needed by MPSolve
-RUN apt-get install -y python && apt-get clean
+# Libraries we can build
+RUN apt-get install -y --no-install-recommends software-properties-common && \
+    add-apt-repository -y ppa:macaulay2/macaulay2 && apt-get update && \
+    apt-get install -y -q --no-install-recommends libeigen3-dev libgc-dev \
+	libglpk-dev libgmp3-dev libmpfr-dev libmps-dev libgtest-dev \
+	libntl-dev libflint-dev libsingular-dev singular-data libfrobby-dev \
+	libmemtailor-dev libmathic-dev libmathicgb-dev && apt-get clean
 
 # Programs we can build
-# TODO: cohomcalg available soon.
-# RUN apt-get install -y --no-install-recommends libcdd-dev 4ti2 gfan polymake normaliz coinor-csdp nauty lrslib && apt-get clean
+RUN apt-get install -y --no-install-recommends libcdd-dev lrslib \
+	4ti2 cohomcalg coinor-csdp gfan nauty normaliz polymake topcom && \
+    apt-get clean
 
 # Optional packages
 RUN apt-get install -y mlocate bash-completion

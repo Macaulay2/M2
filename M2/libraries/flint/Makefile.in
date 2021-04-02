@@ -1,9 +1,9 @@
-LIBNAME = flint2
+# LIBNAME = flint2
 HOMEPAGE = http://flintlib.org
 # git://github.com/wbhart/flint2.git
 URL = http://macaulay2.com/Downloads/OtherSourceCode
-VERSION = 2.7.0
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+VERSION = 2.7.1
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PARALLEL = yes
 
 # Many other tests keep failing, so disable them all:

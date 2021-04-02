@@ -915,7 +915,7 @@ doc /// --chordalElim
 
         {\bf Example 3.1 of [CP'16]}
       Text
-        (chordalElim succeds in computing the elimination ideals)
+        (chordalElim succeeds in computing the elimination ideals)
       Example
         R = QQ[x_0..x_3, MonomialOrder=>Lex];
         I = ideal {x_0^4-1, x_0^2+x_2, x_1^2+x_2, x_2^2+x_3};
@@ -937,7 +937,7 @@ doc /// --chordalElim
       Text
         {\bf Example: } 3-chromatic ideal of the cycle graph
       Text
-        (chordalElim succeds)
+        (chordalElim succeeds)
       Example
         I = chromaticIdeal(QQ, cycleGraph 10, 3);
         N = chordalNet I;
@@ -1516,9 +1516,9 @@ doc /// --setDefaultConfiguration
         but its dependencies @TO Graphs@ and @TO MapleInterface@ do.
         For instance, the command 
 
-        {\tt setDefaultConfiguration("Graphs","JpgViewer","open") }
+        @TT "setDefaultConfiguration(\"Graphs\",\"DotBinary\",\"circo\")"@
 
-        sets the default jpg viewer used for visualizing graphs and chordal networks.
+        sets the Graphviz binary used for visualizing graphs and chordal networks.
       Code
       Pre
     Caveat
@@ -1580,12 +1580,7 @@ document { --configuration
     BR{},
 
     EM "Graphs: ",
-    "Visualizing chordal networks requires configuring the jpg viewer and the Graphviz executable. ",
-    "The default jpg viewer is \"display\", which should work on Ubuntu but may not work on OS X. ",
-    "This can be changed as follows:",
-    BR{},
-    TT "setDefaultConfiguration(\"Graphs\",\"JpgViewer\",\"open\")",
-    BR{},
+    "Visualizing chordal networks requires configuring the Graphviz executable. ",
     "The default Graphviz executable \"dot\" should work, but it if not it can be changed with:",
     BR{},
     TT "setDefaultConfiguration(\"Graphs\",\"DotBinary\",\"myexecutable\")",

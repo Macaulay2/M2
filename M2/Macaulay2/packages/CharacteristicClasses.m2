@@ -828,7 +828,7 @@ SegreMain = (ChRing,I,PDl,alphaANDn)->(
 	for l from n2 to n-1 do(
 	    GList=append(GList,0);
 	    );
-	--the following preforms the aluffi tensor notation comp    
+	--the following performs the Aluffi tensor notation comp
 	--GxOMD:=sum(0..n,i->GList_i//((1+cOMaxDegs)^i));
 	temp3:=1;
 	GxOMD:=0;

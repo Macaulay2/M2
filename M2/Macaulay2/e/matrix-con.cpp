@@ -57,7 +57,7 @@ void MatrixConstructor::set_entry(int r, int c, ring_elem a)
 }
 void MatrixConstructor::set_column(int c, vec v) { entries[c] = v; }
 void MatrixConstructor::compute_column_degrees()
-/* Takes into acount the matrix degree */
+/* Takes into account the matrix degree */
 {
   if (cols_frozen)
     {

@@ -5,6 +5,8 @@
 ## - build and test:  ctest --build-and-test
 ## - rerun matching tests:
 ##     ctest -R schorder --rerun-failed -V
+##
+## See https://gitlab.kitware.com/cmake/community/-/wikis/doc/ctest/Testing-With-CTest
 
 # TODO: some targets have different resource limits
 set(SUBDIRS normal slow gigantic goals quarantine engine threads)
@@ -28,13 +30,6 @@ else()
 endif()
 ## make the stack limit always the same as it would be under MacOS
 #SLIMIT ?= 8192
-
-# TODO: get this to work
-# See https://gitlab.kitware.com/cmake/community/-/wikis/doc/ctest/Testing-With-CTest
-if(MEMDEBUG)
-  find_program(MEMORYCHECK_COMMAND valgrind)
-  set( MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full --show-reachable=yes --track-origins=yes" )
-endif()
 
 ###############################################################################
 ## M2 arguments and commands that will be passed to M2 -e ${STR}
@@ -182,47 +177,3 @@ foreach(CORE_TEST ${CORE_TESTS})
 endforeach()
 
 # TODO: add_subdirectory(rationality)
-
-###############################################################################
-##### STILL PROCESSING
-
-#status: status-files
-#status-files: $(TESTFILES)
-#	@ egrep -n '^--status:' $(TESTFILES) /dev/null || true
-
-#%.out : %.m2
-#	@ echo testing: $<
-#	@ $(LIMIT) \
-#		echo "--*- compilation -*-" >$*.errors; \
-#		if (echo 'input "$<"'; echo 'collectGarbage()'; echo exit 0) | \
-#		   GC_MAXIMUM_HEAP_SIZE=400M time @pre_exec_prefix@/bin/M2 $(ARGS) >>$*.errors 2>&1 ; \
-#		then mv $*.errors $@ ; \
-#		else a=$$?; \
-#		     <$*.errors $(FILTER) ; \
-#		     echo "$*.errors:0: error output left here for the errors above:" >&2 ; \
-#		     egrep -n '^--status:' $< /dev/null || true ; \
-#		     exit $$a ; \
-#		fi
-
-#%.out : %.m2-input
-#	@ echo testing: $<
-#	@ egrep -n '^--status:' $< /dev/null || true
-#	@ $(LIMIT) \
-#		echo "--*- compilation -*-" >$*.errors; \
-#		if GC_MAXIMUM_HEAP_SIZE=400M time @pre_exec_prefix@/bin/M2 $(ARGS) <$< >>$*.errors 2>&1 ; \
-#		then mv $*.errors $@ ; \
-#		else a=$$?; \
-#		     echo "$*.errors:0: error output left here; some errors follow" >&2 ; \
-#		     <$*.errors $(FILTER) ; \
-#		     exit $$a ; \
-#		fi
-
-#review:
-#	@ echo error: `ls *.errors | wc -l` errors occurred
-#	@ echo summary of errors:
-#	@ for i in *.errors ; \
-#	  do echo `basename $$i .errors`.m2: ; \
-#	     <$$i $(FILTER) ; \
-#	  done
-
-#clean:; rm -f *.okay *.out core *.errors

@@ -15,6 +15,7 @@ set(UNDETERMINED
 
 # c files
 # TODO: convert to cpp or simplify if not needed
+# MES TODO:   monordering.c removed this, is that correct?
 set(CFILES
   complex.c
   error.c
@@ -34,6 +35,9 @@ set(HFILES
 
 # these files are include only.
 set(HPPONLYFILES
+  MemoryBlock.hpp
+  NCAlgebras/Range.hpp
+  VectorArithmetic2.hpp
   newdelete.hpp
   timing.hpp
   SLP-defs.hpp
@@ -128,7 +132,25 @@ set(CPPONLYFILES
   )
 
 # these files all have .hpp and .cpp files
+# MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
+	myalloc
+	matrix-ncbasis
+    	VectorArithmetic
+	M2FreeAlgebraQuotient
+	M2FreeAlgebra
+	NCAlgebras/Word
+	NCAlgebras/NCReduction
+	NCAlgebras/FreeAlgebraQuotient
+	NCAlgebras/FreeAlgebra
+	NCAlgebras/FreeMonoid
+	NCAlgebras/WordTable
+	NCAlgebras/SuffixTree
+	NCAlgebras/NCGroebner
+	NCAlgebras/NCF4
+	NCAlgebras/OverlapTable
+	Polynomial
+	monomial-collection
   Eschreyer
   GF
   LLL
@@ -396,6 +418,7 @@ if(BUILD_TESTING)
     unit-tests/ARingCCTest.cpp
     unit-tests/ARingRRRTest.cpp
     unit-tests/ARingCCCTest.cpp
+    unit-tests/NCGroebnerTest.cpp
 
     unit-tests/RingTest.hpp
     unit-tests/RingZZTest.cpp

@@ -755,13 +755,13 @@ vec Ring::vec_divide_by_expvector(const int *exp, const vec v) const
 }
 
 //////////////////////////////////////////////
-//  Homogeniety and the grading //////////////
+//  Homogeneity and the grading //////////////
 //////////////////////////////////////////////
 
 bool Ring::vec_multi_degree(const FreeModule *F, const vec f, int *degf) const
 // Returns true if the element is homogeneous
 // Sets degf to be the highest degree found (actually, the join of the
-//   degree vectors occuring).
+//   degree vectors occurring).
 {
   int *degv;
   degree_monoid()->one(degf);

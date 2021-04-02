@@ -33,6 +33,16 @@ class SchurRing;
 class SchurSnRing;
 class SkewPolynomialRing;
 class SolvableAlgebra;
+class M2FreeAlgebra;
+class M2FreeAlgebraQuotient;
+
+class FreeModule;
+class RingMap;
+
+class gbvectorHeap;
+class gbvector;
+class buffer;
+
 class SumCollector;
 class Tower;
 class WeylAlgebra;
@@ -192,6 +202,11 @@ class Ring : public MutableEngineObject
   virtual const LocalRing *cast_to_LocalRing() const { return 0; }
   virtual LocalRing *cast_to_LocalRing() { return 0; }
 
+  virtual const M2FreeAlgebra *cast_to_M2FreeAlgebra() const { return 0; }
+  virtual M2FreeAlgebra *cast_to_M2FreeAlgebra() { return 0; }
+  virtual const M2FreeAlgebraQuotient *cast_to_M2FreeAlgebraQuotient() const { return 0; }
+  virtual M2FreeAlgebraQuotient *cast_to_M2FreeAlgebraQuotient() { return 0; }
+  
   virtual const SchurRing *cast_to_SchurRing() const { return 0; }
   virtual SchurRing *cast_to_SchurRing() { return 0; }
   virtual const SchurRing2 *cast_to_SchurRing2() const { return 0; }

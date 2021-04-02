@@ -39,7 +39,7 @@ newPackage("Markov",
 export {"makeGraph", "displayGraph", "localMarkovStmts", "globalMarkovStmts", "pairMarkovStmts",
        "markovRing", "marginMap", "hideMap", "markovMatrices", "markovIdeal", "writeDotFile", "removeRedundants", 
        "gaussRing", "gaussMinors", "gaussIdeal", "gaussTrekIdeal", "Graph"}
-exportMutable {"dotBinary","jpgViewer"}
+exportMutable {"dotBinary"}
 
 -------------------------
 -- Graph visualization --
@@ -70,8 +70,6 @@ makeGraph List := (g) -> (
 
 -- dotBinary = "/sw/bin/dot"
 dotBinary = "dot"
--- jpgViewer = "/usr/bin/open"
-jpgViewer = "open"
 
 writeDotFile = method()
 writeDotFile(String,Graph) := (filename,G) -> (
@@ -105,7 +103,7 @@ displayGraph = method()
 displayGraph(String,String,Graph) := (dotfilename,jpgfilename,G) -> (
      writeDotFile(dotfilename,G);
      runcmd(dotBinary | " -Tjpg "|dotfilename | " -o "|jpgfilename);
-     runcmd(jpgViewer | " " | jpgfilename);
+     show URL("file://" | toAbsolutePath jpgfilename);
      )
 displayGraph(String,Graph) := (dotfilename,G) -> (
      jpgfilename := temporaryFileName() | ".jpg";

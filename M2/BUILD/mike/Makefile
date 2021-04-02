@@ -28,6 +28,18 @@ cmake-appleclang:
 		../../../..
 #		-DLINTING=on
 
+cmake-appleclang-tbb:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-appleclang-tbb
+	cd builds.tmp/cmake-appleclang-tbb; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		-DWITH_TBB=on \
+		../../../..
+#		-DLINTING=on
+
 cmake-debug-appleclang:
 	mkdir -p builds.tmp/cmake-debug-appleclang
 	cd builds.tmp/cmake-debug-appleclang; cmake \
@@ -36,6 +48,18 @@ cmake-debug-appleclang:
 		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
 		../../../..
+
+cmake-profile-appleclang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-profile-appleclang
+	cd builds.tmp/cmake-profile-appleclang; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DPROFILING=on \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+#		-DLINTING=on
 
 cmake-latestclang:
 	mkdir -p builds.tmp/cmake-latestclang

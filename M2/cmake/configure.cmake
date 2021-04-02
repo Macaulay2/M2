@@ -26,8 +26,7 @@ option(BUILD_NATIVE	"Use native SIMD instructions"		ON)
 option(BUILD_SHARED_LIBS "Build shared libraries"		OFF)
 option(BUILD_DOCS	"Build internal documentation"		OFF)
 option(AUTOTUNE		"Autotune library parameters"		OFF)
-option(WITH_TBB		"Link with the TBB library"		OFF)
-option(WITH_OMP		"Link with the OpenMP library"		OFF)
+option(WITH_OMP		"Link with the OpenMP library"		ON)
 # TODO: parse.d expr.d tokens.d actors4.d actors5.d still need xml
 option(WITH_XML		"Link with the libxml2 library"		ON)
 # TODO: still not operational
@@ -79,7 +78,24 @@ if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/../.git")
     OUTPUT_VARIABLE   COMMIT_COUNT)
   set(GIT_DESCRIPTION version-${PROJECT_VERSION}-${COMMIT_COUNT}-${GIT_COMMIT})
 else()
-  set(GIT_DESCRIPTION version-${PROJECT_VERSION})
+  message(NOTICE "## Not building from a git repository; submodules may need to be manually populated")
+  set(GIT_DESCRIPTION version-${PROJECT_VERSION} CACHE INTERNAL "state of the repository")
+  file(GLOB _submodules LIST_DIRECTORIES true ${CMAKE_SOURCE_DIR}/submodules/*)
+  foreach(_submodule IN LISTS _submodules)
+    if(IS_DIRECTORY ${_submodule})
+      # CMake doesn't like empty source directories for ExternalProject_Add
+      file(TOUCH ${_submodule}/.nogit)
+    endif()
+  endforeach()
+endif()
+
+## Detect brew prefix
+find_program(BREW NAMES brew)
+if(EXISTS ${BREW})
+  execute_process(
+    COMMAND ${BREW} --prefix
+    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE
+    OUTPUT_VARIABLE HOMEBREW_PREFIX)
 endif()
 
 message("## Configure Macaulay2
@@ -92,6 +108,7 @@ message("## Configure Macaulay2
      BUILD_TESTING     = ${BUILD_TESTING}
      BUILD_DOCS        = ${BUILD_DOCS}\n
      COVERAGE          = ${COVERAGE}
+     MEMDEBUG          = ${MEMDEBUG}
      PROFILING         = ${PROFILING}\n
      DEVELOPMENT       = ${DEVELOPMENT}
      EXPERIMENT        = ${EXPERIMENT}")
@@ -141,13 +158,13 @@ include(GNUInstallDirs)
 # setting architecture dependent paths as in layout.m2.in
 foreach(DIR IN ITEMS BINDIR LIBDIR LIBEXECDIR)
   set(M2_INSTALL_${DIR} ${M2_EXEC_INFIX}/${CMAKE_INSTALL_${DIR}})
-  GNUInstallDirs_get_absolute_install_dir(M2_INSTALL_FULL_${DIR} M2_INSTALL_${DIR})
+  GNUInstallDirs_get_absolute_install_dir(M2_INSTALL_FULL_${DIR} M2_INSTALL_${DIR} ${DIR})
 endforeach()
 
 # setting architecture independent paths as in layout.m2.in
 foreach(DIR IN ITEMS SYSCONFDIR DATAROOTDIR DATADIR INFODIR LOCALEDIR MANDIR DOCDIR INCLUDEDIR)
   set(M2_INSTALL_${DIR} ${M2_DATA_INFIX}/${CMAKE_INSTALL_${DIR}})
-  GNUInstallDirs_get_absolute_install_dir(M2_INSTALL_FULL_${DIR} M2_INSTALL_${DIR})
+  GNUInstallDirs_get_absolute_install_dir(M2_INSTALL_FULL_${DIR} M2_INSTALL_${DIR} ${DIR})
 endforeach()
 
 set(M2_INSTALL_LICENSESDIR ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_LIBEXECDIR}/Macaulay2/program-licenses)
@@ -216,15 +233,6 @@ endif()
 # TODO: look into compiler features:
 # https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html
 
-# Flags based on OS
-if(ISSUE MATCHES Ubuntu)
-  # Apparently libboost_stacktrace_backtrace is not reliably available on all platforms.
-  set(Boost_stacktrace stacktrace_backtrace)
-else()
-  # addr2line is more readily available, but does not work well with -fPIE
-  set(Boost_stacktrace stacktrace_addr2line)
-endif()
-
 # Common flags
 # TODO: reduce these if possible
 add_link_options(-L${M2_HOST_PREFIX}/lib)
@@ -240,7 +248,8 @@ get_property(LINK_OPTIONS    DIRECTORY PROPERTY LINK_OPTIONS)
 
 message("\n## Compiler information
      C                 = ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION} (${CMAKE_C_COMPILER})
-     C++               = ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})\n")
+     C++               = ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} (${CMAKE_CXX_COMPILER})
+     Ccache            = ${CMAKE_C_COMPILER_LAUNCHER}\n")
 
 if(VERBOSE)
   message("## Build flags (excluding standard ${CMAKE_BUILD_TYPE} flags)
