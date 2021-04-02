@@ -93,7 +93,7 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
 	if opts.Verbose then apply(errorList, (j, k) -> (
 		(filename, lineno, teststring) := pkg#"test inputs"#j;
 		stderr << filename << ":" << lineno - 1 << ":1: error:" << endl;
-		printerr get("!tail " | outfile k)));
+		printerr getErrors(outfile k)));
 	error("test(s) #", demark(", ", toString \ first \ errorList), " of package ", toString pkg, " failed.")))
 
 checkAllPackages = () -> (
