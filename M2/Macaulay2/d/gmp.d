@@ -1110,7 +1110,7 @@ export (x:RR) === (y:RR):bool := (			    -- weak equality
 
 export (x:RRi) === (y:RRi):bool := (                -- weak equality
     Ccode( void, "mpfr_clear_flags()" ); -- No equivalent in mpfi
-    leftRR(x) === leftRR(y) && rightRR(x) === rightRR(y) && leftRR(x) === rightRR(x) && !flagged0() -- equality is not defined in mpfi
+    leftRR(x) === leftRR(y) && rightRR(x) === rightRR(y) && !flagged0() -- equality is not defined in mpfi
     );
 
 export strictequality(x:RR,y:RR):bool := (

@@ -214,10 +214,8 @@ binarycomparison(left:Expr,right:Expr):Expr := (
      else buildErrorPacket("expected result of comparison to be one of the following symbols: <, >, ==, incomparable"));
 
 compare(left:Expr,right:Expr):Expr := (
-    if left == right then (when left is x:RRicell do (
-            if widthRR(x.v)>0 then incomparableE
-            else EqualEqualE)
-            else EqualEqualE) else
+    if left == right then EqualEqualE
+    else
      when left
      is x:ZZcell do (
 	  when right
@@ -232,11 +230,11 @@ compare(left:Expr,right:Expr):Expr := (
 	       )
       is y:RRicell do (
 	       if flagged() then incomparableE else
-	       if compare(x.v,leftRR(y.v)) < 0 then LessE
-              else if compare(x.v,leftRR(y.v)) <= 0 then LessEqualE
+	       if (compare(x.v,rightRR(y.v)) == 0) && (compare(x.v,leftRR(y.v)) == 0) then EqualEqualE
+              else if compare(x.v,leftRR(y.v)) < 0 then LessE
               else if compare(x.v,rightRR(y.v)) > 0 then GreaterE
               else if compare(x.v,rightRR(y.v)) >= 0 then GreaterEqualE
-              else if (compare(x.v,rightRR(y.v)) == 0) && (compare(x.v,leftRR(y.v)) == 0) then EqualEqualE
+              else if compare(x.v,leftRR(y.v)) <= 0 then LessEqualE
               else incomparableE
 	       )
 	  is y:CCcell do (
@@ -292,11 +290,11 @@ compare(left:Expr,right:Expr):Expr := (
 	       )
       is y:RRicell do (
 	       if flagged() then incomparableE else
-	       if compare(x.v,leftRR(y.v)) < 0 then LessE
-              else if compare(x.v,leftRR(y.v)) <= 0 then LessEqualE
+	       if (compare(x.v,rightRR(y.v)) == 0) && (compare(x.v,leftRR(y.v)) == 0) then EqualEqualE
+              else if compare(x.v,leftRR(y.v)) < 0 then LessE
               else if compare(x.v,rightRR(y.v)) > 0 then GreaterE
               else if compare(x.v,rightRR(y.v)) >= 0 then GreaterEqualE
-              else if (compare(x.v,rightRR(y.v)) == 0) && (compare(x.v,leftRR(y.v)) == 0) then EqualEqualE
+              else if compare(x.v,leftRR(y.v)) <= 0 then LessEqualE
               else incomparableE
 	       )
 	  is y:CCcell do (
@@ -325,11 +323,11 @@ compare(left:Expr,right:Expr):Expr := (
 	       )
       is y:RRicell do (
 	       if flagged() then incomparableE else
-	       if compare(x.v,leftRR(y.v)) < 0 then LessE
-              else if compare(x.v,leftRR(y.v)) <= 0 then LessEqualE
+	       if (compare(x.v,rightRR(y.v)) == 0) && (compare(x.v,leftRR(y.v)) == 0) then EqualEqualE
+              else if compare(x.v,leftRR(y.v)) < 0 then LessE
               else if compare(x.v,rightRR(y.v)) > 0 then GreaterE
               else if compare(x.v,rightRR(y.v)) >= 0 then GreaterEqualE
-              else if (compare(x.v,rightRR(y.v)) == 0) && (compare(x.v,leftRR(y.v)) == 0) then EqualEqualE
+              else if compare(x.v,leftRR(y.v)) <= 0 then LessEqualE
               else incomparableE
 	       )
 	  is y:CCcell do (
@@ -342,7 +340,7 @@ compare(left:Expr,right:Expr):Expr := (
      is x:RRicell do (
             when right is y:RRicell do (
                 if flagged() then incomparableE
-                else if ((leftRR(x.v) === leftRR(y.v)) && (rightRR(x.v) === rightRR(y.v)) && (widthRR(x.v) === 0)) then EqualEqualE
+                else if ((leftRR(x.v) === leftRR(y.v)) && (rightRR(x.v) === rightRR(y.v))) then EqualEqualE
                 else if compare(rightRR(x.v),leftRR(y.v)) < 0  then LessE
                 else if compare(rightRR(x.v),leftRR(y.v)) <= 0 then LessEqualE
                 else if compare(leftRR(x.v),rightRR(y.v)) > 0 then GreaterE
@@ -351,29 +349,29 @@ compare(left:Expr,right:Expr):Expr := (
                 )
             is y:RRcell do (
 	            if flagged() then incomparableE else
-	            if compare(rightRR(x.v),y.v) < 0 then LessE
-                else if compare(rightRR(x.v),y.v) <= 0 then LessEqualE
+	            if (compare(y.v,rightRR(x.v)) == 0) && (compare(y.v,leftRR(x.v)) == 0) then EqualEqualE
+                else if compare(rightRR(x.v),y.v) < 0 then LessE
                 else if compare(leftRR(x.v),y.v) > 0 then GreaterE
                 else if compare(leftRR(x.v),y.v) >= 0 then GreaterEqualE
-                else if (compare(y.v,rightRR(x.v)) == 0) && (compare(y.v,leftRR(x.v)) == 0) then EqualEqualE
+                else if compare(rightRR(x.v),y.v) <= 0 then LessEqualE
                 else incomparableE
 	            )
             is y:QQcell do (
 	            if flagged() then incomparableE else
-	            if compare(rightRR(x.v),y.v) < 0 then LessE
-                else if compare(rightRR(x.v),y.v) <= 0 then LessEqualE
+	            if (compare(y.v,rightRR(x.v)) == 0) && (compare(y.v,leftRR(x.v)) == 0) then EqualEqualE
+                else if compare(rightRR(x.v),y.v) < 0 then LessE
                 else if compare(leftRR(x.v),y.v) > 0 then GreaterE
                 else if compare(leftRR(x.v),y.v) >= 0 then GreaterEqualE
-                else if (compare(y.v,rightRR(x.v)) == 0) && (compare(y.v,leftRR(x.v)) == 0) then EqualEqualE
+                else if compare(rightRR(x.v),y.v) <= 0 then LessEqualE
                 else incomparableE
 	            )
             is y:ZZcell do (
 	            if flagged() then incomparableE else
-	            if compare(rightRR(x.v),y.v) < 0 then LessE
-                else if compare(rightRR(x.v),y.v) <= 0 then LessEqualE
+	            if (compare(y.v,rightRR(x.v)) == 0) && (compare(y.v,leftRR(x.v)) == 0) then EqualEqualE
+                else if compare(rightRR(x.v),y.v) < 0 then LessE
                 else if compare(leftRR(x.v),y.v) > 0 then GreaterE
                 else if compare(leftRR(x.v),y.v) >= 0 then GreaterEqualE
-                else if (compare(y.v,rightRR(x.v)) == 0) && (compare(y.v,leftRR(x.v)) == 0) then EqualEqualE
+                else if compare(rightRR(x.v),y.v) <= 0 then LessEqualE
                 else incomparableE
 	            )
             is Error do right
@@ -529,7 +527,14 @@ greaterequalfun2(lhs:Code,rhs:Code):Expr := (
      e := compareop(lhs,rhs);
      when e 
      is Error do e
-     else if GreaterS.symbol === e || EqualEqualS.symbol === e || GreaterEqualS.symbol === e then True else False
+     else (
+        L := eval(lhs);
+        when L
+           is x:RRicell do (
+                if leftRR(x.v) === rightRR(x.v) then (
+                    if GreaterS.symbol === e || EqualEqualS.symbol === e || GreaterEqualS.symbol === e then True else False)
+                else if GreaterS.symbol === e || GreaterEqualS.symbol === e then True else False)
+           else if GreaterS.symbol === e || EqualEqualS.symbol === e || GreaterEqualS.symbol === e then True else False)
      );
 setup(GreaterEqualS,greaterequalfun1,greaterequalfun2);
 
@@ -547,7 +552,14 @@ lessequalfun2(lhs:Code,rhs:Code):Expr := (
      e := compareop(lhs,rhs);
      when e 
      is Error do e
-     else if LessS.symbol === e || EqualEqualS.symbol === e || LessEqualS.symbol === e then True else False
+     else (
+        L := eval(lhs);
+        when L
+           is x:RRicell do (
+                if leftRR(x.v) === rightRR(x.v) then (
+                    if LessS.symbol === e || EqualEqualS.symbol === e || LessEqualS.symbol === e then True else False)
+                else if LessS.symbol === e || LessEqualS.symbol === e then True else False)
+           else if LessS.symbol === e || EqualEqualS.symbol === e || LessEqualS.symbol === e then True else False)
      );
 setup(LessEqualS,lessequalfun1,lessequalfun2);
 
