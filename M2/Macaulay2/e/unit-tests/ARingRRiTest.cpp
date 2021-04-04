@@ -27,8 +27,31 @@ TEST(ARingRRi, create)
   EXPECT_EQ(R.characteristic(), 0);
 }
 
-/*
+/*void testPrintRRi(const M2::ARingRRi& R, int ntrials)
+{
+    ARingElementGenerator<M2::ARingRRi> gen(R);
+    M2::ARingRRi::ElementType a, b, c;
+    R.init(a);
+    R.init(b);
+    R.init(c);
+    for (int i = 0; i < ntrials; i++)
+    {
+        // test: (-a) + (a) == 0
+        gen.nextElement(a);
+        mpfr_printf("a=[%.20Rf,%.20Rf]\n",&(a.left),&(a.right));
+        EXPECT_TRUE(true);
+    }
+    R.clear(c);
+    R.clear(b);
+    R.clear(a);
+}
 
+TEST(ARingRRi, printf)
+{
+    M2::ARingRRi R(100);
+    testPrintRRi(R, ntrials);
+}*/
+/*
 void testRingNegateRRi(const M2::ARingRRi& R, int ntrials)
 {
   ARingElementGenerator<M2::ARingRRi> gen(R);

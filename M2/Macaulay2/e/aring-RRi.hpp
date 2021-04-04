@@ -11,6 +11,7 @@
 #include "buffer.hpp"
 #include "ringelem.hpp"
 #include "ringmap.hpp"
+#include "aring-RRR.hpp"
 
 class RRi;
 class RingMap;
@@ -274,6 +275,15 @@ class ARingRRi : public RingInterface
   }
 
   void swap(ElementType &a, ElementType &b) const { mpfi_swap(&a, &b); }
+    
+  void midpoint(ARingRRR::ElementType &a, ElementType &b) const { mpfi_mid(&a,&b); }
+    
+  void diameter(ARingRRR::ElementType &a, ElementType &b) const { mpfi_diam_abs(&a,&b); }
+    
+  void left(ARingRRR::ElementType &a, ElementType &b) const { mpfi_get_left(&a,&b); }
+    
+  void right(ARingRRR::ElementType &a, ElementType &b) const { mpfi_get_right(&a,&b); }
+    
   void elem_text_out(buffer &o,
                      const ElementType &a,
                      bool p_one,
@@ -300,7 +310,14 @@ class ARingRRi : public RingInterface
     /* rewrite this (in rand.cpp or just copy over?) */
   void random(ElementType &result) const  // redo?
   {
-      throw 20;
+      mpfr_t val;
+      mpfr_init2(val, mPrecision);
+      randomMpfr(val);
+      mpfi_set_fr(&result,val);
+      
+      randomMpfr(val);
+      mpfi_put_fr(&result,val);
+      mpfr_clear(val);
   }
 
     /* Needs to be redone. */
