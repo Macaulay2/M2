@@ -874,6 +874,8 @@ bool ConcreteRing<RingType>::lift(const Ring *R,
               return RP::lifter<ARingRR, ARingRR>(R, S, result_gR, gS);
             case M2::ring_RRR:
               return RP::lifter<ARingRR, ARingRRR>(R, S, result_gR, gS);
+            case M2::ring_RRi:
+              return RP::lifter<ARingRR, ARingRRi>(R, S, result_gR, gS);
             case M2::ring_CC:
               return RP::lifter<ARingRR, ARingCC>(R, S, result_gR, gS);
             case M2::ring_CCC:
@@ -888,6 +890,8 @@ bool ConcreteRing<RingType>::lift(const Ring *R,
               return RP::lifter<ARingRRR, ARingRR>(R, S, result_gR, gS);
             case M2::ring_RRR:
               return RP::lifter<ARingRRR, ARingRRR>(R, S, result_gR, gS);
+            case M2::ring_RRi:
+              return RP::lifter<ARingRRR, ARingRRi>(R, S, result_gR, gS);
             case M2::ring_CC:
               return RP::lifter<ARingRRR, ARingCC>(R, S, result_gR, gS);
             case M2::ring_CCC:

@@ -1313,8 +1313,8 @@ toRRi(e:Expr):Expr := (
                	       when s.1 is y:ZZcell do toExpr(toRRi(x.v,y.v))
                                 is y:QQcell do toExpr(toRRi(x.v,y.v))
                                 is y:RRcell do toExpr(toRRi(x.v,y.v))
-                    	        else WrongArg(1,"a pair of integral, rational, or real numbers, with a precision"))
-                       else WrongArg("not implemented"))
+                    	        else WrongArg(1,"a pair of integral, rational, or real numbers"))
+                       else WrongArg(1,"a pair of integral, rational, or real numbers"))
 	    else when s.0 is prec:ZZcell do (
 	           when s.1 is x:ZZcell do (
                        when s.2 is y:ZZcell do toExpr(toRRi(x.v,y.v,toULong(prec.v)))
@@ -1333,7 +1333,7 @@ toRRi(e:Expr):Expr := (
                                 else WrongArg(1,"a pair of integral, rational, or real numbers, with a precision"))
 	       else WrongArg(1,"a pair of integral, rational, or real numbers, with a precision"))
 	    else WrongArg(1,"a pair or triple  of integral, rational, or real numbers"))
-   	 else WrongArg("not implemented yet"));
+   	 else WrongArg(1,"a pair or triple  of integral, rational, or real numbers"));
 setupfun("toRRi",toRRi);
                                                      
 rightRR(e:Expr):Expr := (

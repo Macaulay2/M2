@@ -276,13 +276,13 @@ class ARingRRi : public RingInterface
 
   void swap(ElementType &a, ElementType &b) const { mpfi_swap(&a, &b); }
     
-  void midpoint(ARingRRR::ElementType &a, ElementType &b) const { mpfi_mid(&a,&b); }
+  void midpoint(ARingRRR::ElementType &a, const ElementType &b) const { mpfi_mid(&a,&b); }
     
-  void diameter(ARingRRR::ElementType &a, ElementType &b) const { mpfi_diam_abs(&a,&b); }
+  void diameter(ARingRRR::ElementType &a, const ElementType &b) const { mpfi_diam_abs(&a,&b); }
     
-  void left(ARingRRR::ElementType &a, ElementType &b) const { mpfi_get_left(&a,&b); }
+  void left(ARingRRR::ElementType &a, const ElementType &b) const { mpfi_get_left(&a,&b); }
     
-  void right(ARingRRR::ElementType &a, ElementType &b) const { mpfi_get_right(&a,&b); }
+  void right(ARingRRR::ElementType &a, const ElementType &b) const { mpfi_get_right(&a,&b); }
     
   void elem_text_out(buffer &o,
                      const ElementType &a,
