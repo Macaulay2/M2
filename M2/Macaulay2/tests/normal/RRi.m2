@@ -26,10 +26,10 @@ assert not(I<J or I>J or I==J or I>=J or I<=J)
 assert isSubset(J,I)
 assert (J <= J)
 assert not(I <= I)
-assert not (I==I)
+assert (I==I)
 assert (J==J)
 assert (I===I)
-assert (not(I==interval(1,3)))
+assert (I==interval(1,3))
 assert (0<I)
 assert (I<=interval(3,5))
 assert (J<interval(3,5))
@@ -41,7 +41,7 @@ assert(I*J===J*I)
 K := interval(-2,3)
 assert(not (K*K===K^2))
 assert(diameter sqrt I < 1)
-assert(right sqrt I > sqrt 3) -- this has to do with different rounding (mpfi vs mpfr)
+assert(right sqrt I > sqrt 3) -- this has to do with different rounding directions (mpfi vs mpfr)
 assert(right log exp interval 1 > 1)
 assert(left log exp interval 1 < 1)
 assert (abs(K)===interval(0,3))
@@ -91,3 +91,6 @@ errorDepth = 0
 FF[x]
 -- start with... rawToRRi in d/interface.dd 
 *-
+
+
+
