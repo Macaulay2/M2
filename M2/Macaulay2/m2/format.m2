@@ -121,7 +121,8 @@ scan({net, info},
 	parser' String := identity;
 	parser' COMMENT :=
 	parser' LITERAL :=
-	parser' Option  := x -> ();
+	parser' Option  :=
+	parser' Nothing := x -> ();
 	parser' BR     := x -> ("", BK);
 	-- and rendering for types that inherit from HypertextContainer, but
 	-- have special rendering rules which would lost with toSequence
