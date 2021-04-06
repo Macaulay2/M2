@@ -1880,51 +1880,56 @@ I2gb = NCGB(I2,25,Strategy=>"F4Parallel")
 DEVELOPMENT ///
   restart
   needsPackage "AssociativeAlgebras"
-
   Lambda = (ZZ/11) <|a,b,c|>
   f1 = a*b + 2*b*a + c^2
   f2 = b*c + 2*c*b + a^2
   f3 = c*a + 2*a*c + b^2
   I = ideal (f1,f2,f3)
-  Igb = NCGB(I,8)
+  Igb = elapsedTime NCGB(I,16);  
 
   restart
-  --needsPackage "AssociativeAlgebras"
-  debug needsPackage "NCAlgebra"
-
-  Lambda = (ZZ/11) {c,b,a}
+  debug needsPackage "AssociativeAlgebras"
+  kk = ZZ/11
+  Lambda = kk <|a,b,c|>
   f1fac = {{a,b},{b,2*a},{c,c}}
   f2fac = {{b,c},{c,2*b},{a,a}}
   f3fac = {{c,a},{a,2*c},{b,b}}
   f1 = a*b + 2*b*a + c^2
   f2 = b*c + 2*c*b + a^2
   f3 = c*a + 2*a*c + b^2
-  I = ncIdeal{f1,f2,f3}
+  I = ideal{f1,f2,f3}
+  makeMonic = f -> f*(leadCoefficient f)^(-1)
+
   Idm1 = I
-  makeMonic = f -> f * (leadCoefficient f)^(-1)  
   d = 3
-  N = 8
+  N = 16
   
   elapsedTime for d from 3 to N do (
-     Idm1gb = ncGroebnerBasis(Idm1,InstallGB=>true);
-     tempA = Lambda / Idm1;
+     tempA = freeAlgebraQuotient(Lambda,Idm1,gens Idm1);
      gensTempA = gens tempA;
-     phi = ncMap(Lambda,tempA,gens Lambda);
-     psi = ncMap(tempA,Lambda,gens tempA);
-     Adm1 = flatten entries basis(d-1,tempA);
+     phi = map(Lambda,tempA,gens Lambda);
+     psi = map(tempA,Lambda,gens tempA);
+     Adm1 = flatten entries forceNCBasis(d-1,tempA);
      A1Adm1 = ((gens Lambda) ** (Adm1 / phi)) / product // sort;
-     Acomp = flatten entries basis(d-2,tempA);
+     Acomp = flatten entries forceNCBasis(d-2,tempA);
      Nd = flatten for m in Acomp list (
              {apply(f1fac, p -> {psi p#0, (psi p#1)*m}),
               apply(f2fac, p -> {psi p#0, (psi p#1)*m}),
               apply(f3fac, p -> {psi p#0, (psi p#1)*m})}
           );
-     Ndcoeffs = sparseCoeffs(apply(Nd, p -> apply(p, q -> q / phi // product)) / sum, Monomials=>A1Adm1);
+     Ndcoeffs = last coefficients(matrix {apply(Nd, p -> apply(p, q -> q / phi // product)) / sum}, Monomials=>A1Adm1);
+     Ndcoeffs = sub(Ndcoeffs, kk);
+     --<< "numrows Ndcoeffs: " << numrows Ndcoeffs << endl;
+     --<< "numcols Ndcoeffs: " << numcols Ndcoeffs << endl;
      -- we are currently doing two row reductions:
      -- one to get the (nonreduced) gb
-     downAndBack = flatten entries ((ncMatrix {A1Adm1}) * (mingens image Ndcoeffs)) / psi / phi;
+     Ndgens = flatten entries ((matrix {A1Adm1}) * (mingens image Ndcoeffs));
+     --<< "Ndgens: " << Ndgens << endl;
+     --<< "#Ndgens: " << #Ndgens << endl;
+     downAndBack = Ndgens / psi / phi;
+     --<< "downAndBack: " << downAndBack << endl;
      -- then again to autoreduce wrt old stuff
-     newElts = flatten entries ((ncMatrix {A1Adm1}) * (mingens image sparseCoeffs(downAndBack, Monomials=>A1Adm1))) / makeMonic;
-     Idm1 = Idm1 + ncIdeal newElts;
+     newElts = flatten entries ((matrix {A1Adm1}) * (mingens image sub(last coefficients(matrix {downAndBack}, Monomials=>A1Adm1),kk))) / makeMonic;
+     Idm1 = Idm1 + ideal newElts;     
   )
 ///

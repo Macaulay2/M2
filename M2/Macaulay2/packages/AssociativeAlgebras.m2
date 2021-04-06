@@ -366,13 +366,19 @@ NCReductionTwoSided(RingElement, Matrix) := (F, M) -> (NCReductionTwoSided(matri
 NCReductionTwoSided(RingElement, List) := (F,L) -> NCReductionTwoSided(F, ideal L)
 
 FreeAlgebra / Ideal := FreeAlgebraQuotient => (R,I) -> (
+    freeAlgebraQuotient(R,I,NCGB I)
+)
+
+freeAlgebraQuotient = method()
+freeAlgebraQuotient (FreeAlgebra, Ideal, Matrix) := FreeAlgebraQuotient => (R,I,Igb) -> (
+     -- this function uses the matrix passed in as Igb as the GB
      if ring I =!= R then error "expected ideal of the same ring";
      if I == 0 then return R;
      A := R;
      while class A === QuotientRing do A = last A.baseRings;
      gensI := generators I;
      -- changed default strategy to F4
-     S := new FreeAlgebraQuotient from rawQuotientRing(raw R, raw NCGB I);
+     S := new FreeAlgebraQuotient from rawQuotientRing(raw R, raw Igb);
      S.cache = new CacheTable;
      S.ideal = I;
      S.baseRings = append(R.baseRings,R);
@@ -390,7 +396,8 @@ FreeAlgebra / Ideal := FreeAlgebraQuotient => (R,I) -> (
      expression S := lookup(expression,R);
      S.use = x -> ( -- what is this for??
 	  );
-     S)
+     S
+)
 
 ncBasis = method(Options => {Limit => infinity})
 ncBasis(InfiniteNumber,InfiniteNumber,Ring) := 
@@ -425,6 +432,14 @@ ncBasis(InfiniteNumber,ZZ,Ring) := opts -> (lo,hi,R) -> ncBasis(lo, {hi}, R, opt
 ncBasis(ZZ,InfiniteNumber,Ring) := opts -> (lo,hi,R) -> ncBasis({lo}, hi, R, opts)
 ncBasis Ring := opts -> R -> ncBasis(-infinity, infinity, R, opts)
 
+
+forceNCBasis = method()
+forceNCBasis (ZZ,Ring) := (d,R) -> (
+   gbR := gens ideal R;
+   L := ambient R;
+   result := map(L, rawNCBasis(raw gbR, {d}, {d}, -1));
+   map(L^1,,promote(result,L))
+)
 -------------------------
 
 -- TODO: should make this work in the multigraded situations as well
