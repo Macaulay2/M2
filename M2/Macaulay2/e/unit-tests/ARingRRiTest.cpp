@@ -14,6 +14,31 @@
 // For debugging purposes, use
 //mpfr_printf("a=(%.20Rf,%.20Rf)\n",&(a.left), &(a.right));
 
+bool almostEqual(const M2::ARingRRi& R,
+                 int nbits,
+                 const M2::ARingRRi::ElementType& a,
+                 const M2::ARingRRi::ElementType& b)
+{
+    mpfr_t epsilon;
+    mpfr_init2(epsilon, R.get_precision());
+    mpfr_set_ui_2exp(epsilon, 1, -nbits, GMP_RNDN);
+    
+    mpfr_t c,d;
+    mpfr_init2(c, R.get_precision());
+    mpfr_init2(d, R.get_precision());
+    
+    mpfr_sub(c,&(a.left),&(b.left),GMP_RNDN);
+    mpfr_sub(d,&(a.right),&(b.right),GMP_RNDN);
+    
+    bool retL = mpfr_cmpabs(c, epsilon) < 0,
+         retR = mpfr_cmpabs(d, epsilon) < 0;
+    
+    mpfr_clear(d);
+    mpfr_clear(c);
+    mpfr_clear(epsilon);
+    return retL and retR;
+}
+
 template <>
 void getElement<M2::ARingRRi>(const M2::ARingRRi& R,
                               int index,
@@ -165,16 +190,6 @@ TEST(ARingRRi, axioms)
   R.init(d);
   R.init(e);
     
-  mpfr_t epsilon;
-  mpfr_init2(epsilon, R.get_precision());
-  mpfr_set_ui_2exp(epsilon, 1, -94, GMP_RNDN);
-    
-  mpfr_t f,g;
-  mpfr_init2(f, R.get_precision());
-  mpfr_init2(g, R.get_precision());
-    
-  bool retL,retR;
-    
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
@@ -197,27 +212,14 @@ TEST(ARingRRi, axioms)
       R.add(d, a, e);  // a+(b+c)
       R.add(e, a, b);
       R.add(e, e, c);  // (a+b)+c
-        
-      mpfr_sub(f,&(d.left),&(e.left),GMP_RNDN);
-      mpfr_sub(g,&(d.right),&(e.right),GMP_RNDN);
-        
-      retL = mpfr_cmpabs(f, epsilon) < 0;
-      retR = mpfr_cmpabs(g, epsilon) < 0;
-        
-      EXPECT_TRUE(retL and retR);
+      EXPECT_TRUE(almostEqual(R,-94,d,e));
 
       R.mult(e, b, c);
       R.mult(d, a, e);  // a*(b*c)
       R.mult(e, a, b);
       R.mult(e, e, c);  // (a*b)*c
         
-      mpfr_sub(f,&(d.left),&(e.left),GMP_RNDN);
-      mpfr_sub(g,&(d.right),&(e.right),GMP_RNDN);
-        
-      retL = mpfr_cmpabs(f, epsilon) < 0;
-      retR = mpfr_cmpabs(g, epsilon) < 0;
-        
-      EXPECT_TRUE(retL and retR);
+      EXPECT_TRUE(almostEqual(R,-94,d,e));
 
       // Test distributivity
       // test: a*(b+c) == a*b + a*c
@@ -227,17 +229,8 @@ TEST(ARingRRi, axioms)
       R.mult(c, a, c);
       R.add(e, b, c);  // a*b + a*c
         
-      mpfr_sub(f,&(d.left),&(e.left),GMP_RNDN);
-      mpfr_sub(g,&(d.right),&(e.right),GMP_RNDN);
-        
-      retL = mpfr_cmpabs(f, epsilon) < 0;
-      retR = mpfr_cmpabs(g, epsilon) < 0;
-        
-      EXPECT_TRUE(retL and retR);
+      EXPECT_TRUE(almostEqual(R,-94,d,e));
     }
-  mpfr_clear(epsilon);
-  mpfr_clear(f);
-  mpfr_clear(g);
   R.clear(e);
   R.clear(d);
   R.clear(c);
@@ -256,16 +249,6 @@ TEST(ARingRRi, power_and_invert)
   R.init(d);
   mpz_t gmp1;
   mpz_init(gmp1);
-    
-  mpfr_t epsilon;
-  mpfr_init2(epsilon, R.get_precision());
-  mpfr_set_ui_2exp(epsilon, 1, -94, GMP_RNDN);
-    
-  mpfr_t f,g;
-  mpfr_init2(f, R.get_precision());
-  mpfr_init2(g, R.get_precision());
-    
-  bool retL,retR;
   
   for (int i = 0; i < ntrials; i++)
     {
@@ -281,14 +264,7 @@ TEST(ARingRRi, power_and_invert)
       R.power(c, a, e2);
       R.power(d, a, e1 + e2);
       R.mult(c, b, c);
-      
-      mpfr_sub(f,&(c.left),&(d.left),GMP_RNDN);
-      mpfr_sub(g,&(c.right),&(d.right),GMP_RNDN);
-        
-      retL = mpfr_cmpabs(f, epsilon) < 0;
-      retR = mpfr_cmpabs(g, epsilon) < 0;
-        
-      EXPECT_TRUE(retL and retR);
+      EXPECT_TRUE(almostEqual(R,-94,c,d));
 
       // Make sure that powers via mpz work (at least for small exponents)
       mpz_set_si(gmp1, e1);
