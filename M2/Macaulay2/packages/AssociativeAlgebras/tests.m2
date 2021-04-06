@@ -1827,17 +1827,104 @@ e*(a-b)*c - e*c*a = -e*b*c = -e*c*b = 0
 DEVELOPMENT ///
 restart
 needsPackage "AssociativeAlgebras"
-n = 5
+n = 6
 indexing = p -> position(subsets(n,2), t -> t == p)
 subsets2 = subsets(n,2)
 subsets3 = subsets(n,3)
 disjSubsets2 = select(subsets(subsets(n,2),2), p -> #( (set p#0) * (set p#1) ) == 0)
-A = QQ <|apply(subsets2, p -> x_(indexing p))|>
+A = ZZ/32003 <|apply(subsets2, p -> x_(indexing p))|>
 I = ideal (apply(gens A,       x -> x^2) | 
              apply(subsets3,     p -> x_(indexing {p#0,p#1})*x_(indexing {p#1,p#2}) - x_(indexing {p#1,p#2})*x_(indexing {p#0,p#2}) - x_(indexing {p#0,p#2})*x_(indexing {p#0,p#1})) |
              apply(subsets3,     p -> x_(indexing {p#1,p#2})*x_(indexing {p#0,p#1}) - x_(indexing {p#0,p#2})*x_(indexing {p#1,p#2}) - x_(indexing {p#0,p#1})*x_(indexing {p#0,p#2})) |
 	     apply(disjSubsets2, p -> x_(indexing {p#0#0,p#0#1})*x_(indexing {p#1#0,p#1#1}) - x_(indexing {p#1#0,p#1#1})*x_(indexing {p#0#0,p#0#1})))
-Igb = NCGB(I, 20);
+elapsedTime Igb = NCGB(I, 10); -- crashes (e.g. is killed, out of memory?) on the degree 11 computation.
 B = A/I
-apply(41, i -> numcols ncBasis(i,B))
+elapsedTime apply(13, i -> numcols ncBasis(i,B)) -- correct for E_4
+elapsedTime apply(41, i -> numcols ncBasis(i,B)) -- correct for E_5
+elapsedTime apply(11, i -> numcols ncBasis(i,B)) -- correct for E_6 to degree 10
+sum oo
+///
+
+-- Hilbert series example. Use r >= 11 for  a reasonably long test
+DEVELOPMENT ///
+restart
+needsPackage "AssociativeAlgebras"
+n = 6
+r = 11
+kk = ZZ/32003
+R = kk <|x_1..x_n|>
+I = ideal (ncBasis(2,R) * random(kk^(n^2),kk^r))
+elapsedTime Igb = NCGB(I,8, Strategy=>"F4Parallel");
+(flatten entries Igb) / degree // tally
+///
+
+DEVELOPMENT ///
+restart
+debug needsPackage "AssociativeAlgebras"
+kk = QQ[a_1..a_6]
+-- term order makes a huge difference here
+A = kk<|x_4,x_1,x_2,x_3,ee|>
+-- A = kk{x_1,x_2,x_3,x_4}
+eps = -1_A
+I1 = ideal {x_3^2 - x_1*x_2,
+            x_4^2 - eps*x_2*x_1,    
+	    x_1*x_3 - x_2*x_4,
+	    x_3*x_1 - x_2*x_3,
+	    x_1*x_4 - eps*x_4*x_2,
+	    x_4*x_1 - x_3*x_2}
+I2 = I1 + ideal {ee*x_1, ee*x_3, x_1*ee, x_2*ee, x_3*ee, x_4*ee, ee^2}
+I2gb = NCGB(I2,25,Strategy=>"F4Parallel")
+--- is it possible to get TBB so we can tell boehm about which threads are in use
+///
+
+DEVELOPMENT ///
+  restart
+  needsPackage "AssociativeAlgebras"
+
+  Lambda = (ZZ/11) <|a,b,c|>
+  f1 = a*b + 2*b*a + c^2
+  f2 = b*c + 2*c*b + a^2
+  f3 = c*a + 2*a*c + b^2
+  I = ideal (f1,f2,f3)
+  Igb = NCGB(I,8)
+
+  restart
+  --needsPackage "AssociativeAlgebras"
+  debug needsPackage "NCAlgebra"
+
+  Lambda = (ZZ/11) {c,b,a}
+  f1fac = {{a,b},{b,2*a},{c,c}}
+  f2fac = {{b,c},{c,2*b},{a,a}}
+  f3fac = {{c,a},{a,2*c},{b,b}}
+  f1 = a*b + 2*b*a + c^2
+  f2 = b*c + 2*c*b + a^2
+  f3 = c*a + 2*a*c + b^2
+  I = ncIdeal{f1,f2,f3}
+  Idm1 = I
+  makeMonic = f -> f * (leadCoefficient f)^(-1)  
+  d = 3
+  N = 8
+  
+  elapsedTime for d from 3 to N do (
+     Idm1gb = ncGroebnerBasis(Idm1,InstallGB=>true);
+     tempA = Lambda / Idm1;
+     gensTempA = gens tempA;
+     phi = ncMap(Lambda,tempA,gens Lambda);
+     psi = ncMap(tempA,Lambda,gens tempA);
+     Adm1 = flatten entries basis(d-1,tempA);
+     A1Adm1 = ((gens Lambda) ** (Adm1 / phi)) / product // sort;
+     Acomp = flatten entries basis(d-2,tempA);
+     Nd = flatten for m in Acomp list (
+             {apply(f1fac, p -> {psi p#0, (psi p#1)*m}),
+              apply(f2fac, p -> {psi p#0, (psi p#1)*m}),
+              apply(f3fac, p -> {psi p#0, (psi p#1)*m})}
+          );
+     Ndcoeffs = sparseCoeffs(apply(Nd, p -> apply(p, q -> q / phi // product)) / sum, Monomials=>A1Adm1);
+     -- we are currently doing two row reductions:
+     -- one to get the (nonreduced) gb
+     downAndBack = flatten entries ((ncMatrix {A1Adm1}) * (mingens image Ndcoeffs)) / psi / phi;
+     -- then again to autoreduce wrt old stuff
+     newElts = flatten entries ((ncMatrix {A1Adm1}) * (mingens image sparseCoeffs(downAndBack, Monomials=>A1Adm1))) / makeMonic;
+     Idm1 = Idm1 + ncIdeal newElts;
+  )
 ///

@@ -334,14 +334,13 @@ NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
         tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
 	possField := ZZ/(char ultimate(coefficientRing, ring I));
 	f4ParallelAllowed := (possField === (coefficientRing ring I)) or instance(coefficientRing ring I, GaloisField) or coefficientRing ring I === QQ;
-	-- commented out for now
 	if not isHomogeneous I or not f4ParallelAllowed and (strat == "F4Parallel") then (
 	   -- need to change to Naive algorithm if I is not homogeneous at this point.
 	   << "Warning:  Parallel F4 Algorithm not available over current coefficient ring." << endl;
            if isHomogeneous I then strat = "F4" else strat = "Naive";
 	   << "Converting to " << strat << " algorithm." << endl;
 	);
-	gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, setNCGBStrategy(strat)));
+    	gbI := map(ring I, rawNCGroebnerBasisTwoSided(tobecomputed, maxdeg, setNCGBStrategy(strat)));
         I.cache.NCGB = {maxdeg, gbI};
         );
     I.cache.NCGB#1
