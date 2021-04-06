@@ -7,7 +7,12 @@
 #include <mpfr.h>
 
 #include "aring-RRi.hpp"
+#include "aring-RRR.hpp"
+#include "aring-glue.hpp"
 #include "ARingTest.hpp"
+
+// For debugging purposes, use
+//mpfr_printf("a=(%.20Rf,%.20Rf)\n",&(a.left), &(a.right));
 
 template <>
 void getElement<M2::ARingRRi>(const M2::ARingRRi& R,
@@ -27,58 +32,37 @@ TEST(ARingRRi, create)
   EXPECT_EQ(R.characteristic(), 0);
 }
 
-/*void testPrintRRi(const M2::ARingRRi& R, int ntrials)
+void testRingNegateRRi(const M2::ARingRRi& R, const M2::ARingRRR& S, int ntrials)
 {
     ARingElementGenerator<M2::ARingRRi> gen(R);
     M2::ARingRRi::ElementType a, b, c;
     R.init(a);
     R.init(b);
     R.init(c);
+    
+    M2::ARingRRR::ElementType d;
+    S.init(d);
     for (int i = 0; i < ntrials; i++)
     {
         // test: (-a) + (a) == 0
         gen.nextElement(a);
-        mpfr_printf("a=[%.20Rf,%.20Rf]\n",&(a.left),&(a.right));
-        EXPECT_TRUE(true);
+        R.negate(b,a);
+        R.add(c,a,b);
+        R.midpoint(d,c);
+        EXPECT_TRUE(S.is_zero(d));
     }
+    S.clear(d);
     R.clear(c);
     R.clear(b);
     R.clear(a);
 }
 
-TEST(ARingRRi, printf)
-{
-    M2::ARingRRi R(100);
-    testPrintRRi(R, ntrials);
-}*/
-/*
-void testRingNegateRRi(const M2::ARingRRi& R, int ntrials)
-{
-  ARingElementGenerator<M2::ARingRRi> gen(R);
-  M2::ARingRRi::ElementType a, b, c;
-  R.init(a);
-  R.init(b);
-  R.init(c);
-  for (int i = 0; i < ntrials; i++)
-    {
-      // test: (-a) + (a) == 0
-      gen.nextElement(a);
-      R.negate(b, a);
-      // !!! add midpoints instead
-      R.add(c, a, b);
-      EXPECT_TRUE(R.is_zero(c));
-    }
-  R.clear(c);
-  R.clear(b);
-  R.clear(a);
-}
-
 TEST(ARingRRi, negate)
 {
-  M2::ARingRRi R(100);
-  testRingNegateRRi(R, ntrials);
+    M2::ARingRRi R(100);
+    M2::ARingRRR S(100);
+    testRingNegateRRi(R, S, ntrials);
 }
-
 
 TEST(ARingRRi, add)
 {
@@ -98,7 +82,7 @@ TEST(ARingRRi, add)
       R.add(c, a, b);
       R.negate(d, b);
       R.add(e, c, d);  // should be a
-      EXPECT_TRUE(almostEqual(R, 98, a, e));
+      EXPECT_TRUE(R.is_subset(a,e));
     }
   R.clear(e);
   R.clear(d);
@@ -110,12 +94,16 @@ TEST(ARingRRi, add)
 TEST(ARingRRi, subtract)
 {
   M2::ARingRRi R(100);
+  M2::ARingRRR S(100);
   ARingElementGenerator<M2::ARingRRi> gen(R);
   M2::ARingRRi::ElementType a, b, c, e;
   R.init(a);
   R.init(b);
   R.init(c);
   R.init(e);
+    
+  M2::ARingRRR::ElementType f;
+  S.init(f);
   for (int i = 0; i < ntrials; i++)
     {
       // test: (a-b) + (b) == a
@@ -123,11 +111,13 @@ TEST(ARingRRi, subtract)
       gen.nextElement(b);
       R.subtract(c, a, b);
       R.add(e, c, b);  // should be a
-      EXPECT_TRUE(almostEqual(R, 98, a, e));
+      EXPECT_TRUE(R.is_subset(a,e));
       R.mult(e, a, b);
       R.subtract_multiple(e, a, b);
-      EXPECT_TRUE(R.is_zero(e));
+      R.midpoint(f,e);
+      EXPECT_TRUE(S.is_zero(f));
     }
+  S.clear(f);
   R.clear(e);
   R.clear(c);
   R.clear(b);
@@ -149,12 +139,12 @@ TEST(ARingRRi, multDivide)
       gen.nextElement(a);
       gen.nextElement(b);
       R.mult(c, a, b);
-      if (R.is_zero(b))
-        EXPECT_TRUE(R.is_zero(c));
+      if (R.is_member(0L,b))
+          EXPECT_TRUE(R.is_member(0L,c));
       else
         {
           R.divide(d, c, b);
-          EXPECT_TRUE(almostEqual(R, 94, d, a));
+          EXPECT_TRUE(R.is_subset(a,d));
         }
     }
   R.clear(d);
@@ -166,6 +156,7 @@ TEST(ARingRRi, multDivide)
 TEST(ARingRRi, axioms)
 {
   M2::ARingRRi R(100);
+  M2::ARingRRR S(100);
   ARingElementGenerator<M2::ARingRRi> gen(R);
   M2::ARingRRi::ElementType a, b, c, d, e;
   R.init(a);
@@ -173,6 +164,17 @@ TEST(ARingRRi, axioms)
   R.init(c);
   R.init(d);
   R.init(e);
+    
+  mpfr_t epsilon;
+  mpfr_init2(epsilon, R.get_precision());
+  mpfr_set_ui_2exp(epsilon, 1, -94, GMP_RNDN);
+    
+  mpfr_t f,g;
+  mpfr_init2(f, R.get_precision());
+  mpfr_init2(g, R.get_precision());
+    
+  bool retL,retR;
+    
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
@@ -183,10 +185,10 @@ TEST(ARingRRi, axioms)
       // test: a+b == b+a
       R.add(d, a, b);
       R.add(e, b, a);
-      EXPECT_TRUE(almostEqual(R, 98, d, e));
+      EXPECT_TRUE(R.is_equal(d,e));
       R.mult(d, a, b);
       R.mult(e, b, a);
-      EXPECT_TRUE(almostEqual(R, 98, d, e));
+      EXPECT_TRUE(R.is_equal(d,e));
 
       // Test associativity
       // test: a+(b+c) == (a+b)+c
@@ -195,12 +197,27 @@ TEST(ARingRRi, axioms)
       R.add(d, a, e);  // a+(b+c)
       R.add(e, a, b);
       R.add(e, e, c);  // (a+b)+c
-      EXPECT_TRUE(almostEqual(R, 94, d, e));
+        
+      mpfr_sub(f,&(d.left),&(e.left),GMP_RNDN);
+      mpfr_sub(g,&(d.right),&(e.right),GMP_RNDN);
+        
+      retL = mpfr_cmpabs(f, epsilon) < 0;
+      retR = mpfr_cmpabs(g, epsilon) < 0;
+        
+      EXPECT_TRUE(retL and retR);
+
       R.mult(e, b, c);
       R.mult(d, a, e);  // a*(b*c)
       R.mult(e, a, b);
       R.mult(e, e, c);  // (a*b)*c
-      EXPECT_TRUE(almostEqual(R, 94, d, e));
+        
+      mpfr_sub(f,&(d.left),&(e.left),GMP_RNDN);
+      mpfr_sub(g,&(d.right),&(e.right),GMP_RNDN);
+        
+      retL = mpfr_cmpabs(f, epsilon) < 0;
+      retR = mpfr_cmpabs(g, epsilon) < 0;
+        
+      EXPECT_TRUE(retL and retR);
 
       // Test distributivity
       // test: a*(b+c) == a*b + a*c
@@ -209,8 +226,18 @@ TEST(ARingRRi, axioms)
       R.mult(b, a, b);
       R.mult(c, a, c);
       R.add(e, b, c);  // a*b + a*c
-      EXPECT_TRUE(almostEqual(R, 94, d, e));
+        
+      mpfr_sub(f,&(d.left),&(e.left),GMP_RNDN);
+      mpfr_sub(g,&(d.right),&(e.right),GMP_RNDN);
+        
+      retL = mpfr_cmpabs(f, epsilon) < 0;
+      retR = mpfr_cmpabs(g, epsilon) < 0;
+        
+      EXPECT_TRUE(retL and retR);
     }
+  mpfr_clear(epsilon);
+  mpfr_clear(f);
+  mpfr_clear(g);
   R.clear(e);
   R.clear(d);
   R.clear(c);
@@ -229,6 +256,17 @@ TEST(ARingRRi, power_and_invert)
   R.init(d);
   mpz_t gmp1;
   mpz_init(gmp1);
+    
+  mpfr_t epsilon;
+  mpfr_init2(epsilon, R.get_precision());
+  mpfr_set_ui_2exp(epsilon, 1, -94, GMP_RNDN);
+    
+  mpfr_t f,g;
+  mpfr_init2(f, R.get_precision());
+  mpfr_init2(g, R.get_precision());
+    
+  bool retL,retR;
+  
   for (int i = 0; i < ntrials; i++)
     {
       gen.nextElement(a);
@@ -243,7 +281,14 @@ TEST(ARingRRi, power_and_invert)
       R.power(c, a, e2);
       R.power(d, a, e1 + e2);
       R.mult(c, b, c);
-      EXPECT_TRUE(almostEqual(R, 96, c, d));
+      
+      mpfr_sub(f,&(c.left),&(d.left),GMP_RNDN);
+      mpfr_sub(g,&(c.right),&(d.right),GMP_RNDN);
+        
+      retL = mpfr_cmpabs(f, epsilon) < 0;
+      retR = mpfr_cmpabs(g, epsilon) < 0;
+        
+      EXPECT_TRUE(retL and retR);
 
       // Make sure that powers via mpz work (at least for small exponents)
       mpz_set_si(gmp1, e1);
@@ -256,7 +301,6 @@ TEST(ARingRRi, power_and_invert)
   R.clear(b);
   R.clear(a);
 }
-*/
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "

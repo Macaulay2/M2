@@ -61,6 +61,16 @@ class ARingRRi : public RingInterface
     return 0;
   }
 
+    bool is_empty(const ElementType &f) const { return mpfi_is_empty(&f)>0; }
+    
+    bool is_member(const ARingRRR::ElementType &a, const ElementType &f) const { return mpfi_cmp_fr(&f,&a) == 0; }
+    bool is_member(mpq_srcptr a, const ElementType &f) const { return mpfi_cmp_q(&f,a) == 0; }
+    bool is_member(mpz_srcptr a, const ElementType &f) const { return mpfi_cmp_z(&f,a) == 0; }
+    bool is_member(long a, const ElementType &f) const { return mpfi_cmp_si(&f,a) == 0; }
+    bool is_member(double a, const ElementType &f) const { return mpfi_cmp_d(&f,a) == 0; }
+    
+    bool is_subset(const ElementType &g, const ElementType &f) const { return mpfi_cmp_fr(&f,&(g.left)) == 0 and mpfi_cmp_fr(&f,&(g.right)) == 0; }
+
   ////////////////////////////
   // to/from ringelem ////////
   ////////////////////////////
@@ -225,7 +235,7 @@ class ARingRRi : public RingInterface
               ElementType b;
               init(b);
               power(b,a,n-1);
-              mult(result,result,b);
+              mult(result,a,b);
           }
       }
     else if (n == 1)
@@ -263,7 +273,7 @@ class ARingRRi : public RingInterface
               mpz_sub_ui(m,n,1);
               
               power_mpz(b,a,m);
-              mult(result,result,b);
+              mult(result,a,b);
           }
       }
       else if (mpz_cmp_si(n,1)==0)
