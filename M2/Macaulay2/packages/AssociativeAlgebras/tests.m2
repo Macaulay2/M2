@@ -1878,6 +1878,7 @@ I2gb = NCGB(I2,25,Strategy=>"F4Parallel")
 ///
 
 DEVELOPMENT ///
+-- 3dim sklyanin example
   restart
   needsPackage "AssociativeAlgebras"
   Lambda = (ZZ/11) <|a,b,c|>
@@ -1885,7 +1886,7 @@ DEVELOPMENT ///
   f2 = b*c + 2*c*b + a^2
   f3 = c*a + 2*a*c + b^2
   I = ideal (f1,f2,f3)
-  Igb = elapsedTime NCGB(I,20);  
+  Igb = elapsedTime NCGB(I,19);  
 
   restart
   debug needsPackage "AssociativeAlgebras"
@@ -1902,35 +1903,63 @@ DEVELOPMENT ///
 
   Idm1 = I
   d = 3
-  N = 20
+  N = 19
+  
+  -- all the time consuming work is in reducing x.w where w is a reduced word of degree d-2 or d-1
+  -- and x is a generator.  if we can do this fast, then we are in good shape.
+
+  -- let w be a reduced word.  write w as v.y for a variable y.  can we use the fact that we can save
+  -- how to reduce x.v as a sum to help here?
+  
+  -- A_1 ** A_(d-2) ** A_1 --> A_1 ** A_(d-1) --> A_d
+  -- A_1 ** A_(d-2) ** A_1 --> A_(d-1) ** A_1 --> A_d
   
   elapsedTime for d from 3 to N do (
+     -- define quotient so far for reductions
      tempA = freeAlgebraQuotient(Lambda,Idm1,gens Idm1);
-     gensTempA = gens tempA;
+     -- maps to get back and forth to/from free algebra
      phi = map(Lambda,tempA,gens Lambda);
      psi = map(tempA,Lambda,gens tempA);
+     -- basis of A_(d-1)
      elapsedTime Adm1 = flatten entries forceNCBasis(d-1,tempA);
+     -- Adm1mat = matrix {Adm1};
+     -- basis of A_1 \otimes A_(d-1) considered as words in the tensor algebra
      elapsedTime A1Adm1 = ((gens Lambda) ** (Adm1 / phi)) / product // sort;
+     -- basis of the complementary degree.  In this case, degree d-2 since all relations are quadratic
      elapsedTime Acomp = flatten entries forceNCBasis(d-2,tempA);
-     -- some time is spent here
+     
+     -- lots of time is spent here
+     -- compute the multiplication maps from degree d-2 to d-1 by the variables
+     -- this is a nested hash table
      elapsedTime multMaps = hashTable apply(gens tempA, v -> (
-	     tempMult1 := leftMultiplicationMap(v,d-2,ForceNCBasis=>true);
-	     tempMult2 := flatten entries ((matrix {Adm1}) * tempMult1);
-	     (v,hashTable apply(#Acomp, i -> (Acomp#i,tempMult2#i)))));
+     	     (v,hashTable apply(Acomp, m -> (m,v*m)))));
+     
+     -- use this information to compute a basis of Nd
      elapsedTime Nd = flatten for m in Acomp list (
              {apply(f1fac, p -> {psi p#0, multMaps#(psi p#1)#m}),
               apply(f2fac, p -> {psi p#0, multMaps#(psi p#1)#m}),
               apply(f3fac, p -> {psi p#0, multMaps#(psi p#1)#m})}
           );
+     -- lift this information to the free algebra and take the product, then take
+     -- coefficients of these elements in A_1 \otimes A_(d-1) (thought of as words in Lambda)
      elapsedTime Ndcoeffs = last coefficients(matrix {apply(Nd, p -> apply(p, q -> q / phi // product)) / sum}, Monomials=>A1Adm1);
      Ndcoeffs = sub(Ndcoeffs, kk);
-     -- most time is spent here
+
+     -- basis of A_d (so far, anyway)
      elapsedTime Ad = flatten entries forceNCBasis(d,tempA);
+
+     -- most time is spent here
+     -- matrix representation of the projection map from A_1 \otimes A_(d-1) --> A_d
      elapsedTime projMap = sub(last coefficients(matrix {A1Adm1 / psi}, Monomials => Ad),kk);
+
+     -- matrix representation of the inclusion map from A_d --> A_1 \otimes A_(d-1)
      elapsedTime inclMap = sub(last coefficients(matrix {Ad / phi}, Monomials => A1Adm1),kk);
-     elapsedTime downAndBack = mingens image (inclMap * (mingens image (projMap * Ndcoeffs)));
+     -- project, lift back up and take mingens to autoreduce
+     elapsedTime downAndBack = mingens image (inclMap * projMap * Ndcoeffs);
      
+     -- lift these new elements to the free algebra
      elapsedTime newElts = flatten entries ((matrix {A1Adm1}) * downAndBack);
+     -- enlarge ideal and move on to the next degree
      Idm1 = Idm1 + ideal newElts;
      << "Completed degree " << d << "." << endl;
   )
@@ -1939,6 +1968,7 @@ DEVELOPMENT ///
 ///
 
 DEVELOPMENT ///
+-- 4dim sklyanin example
   restart
   needsPackage "AssociativeAlgebras"
   kk = ZZ/11
@@ -1978,7 +2008,6 @@ DEVELOPMENT ///
   
   elapsedTime for d from 3 to N do (
      tempA = freeAlgebraQuotient(Lambda,Idm1,gens Idm1);
-     gensTempA = gens tempA;
      phi = map(Lambda,tempA,gens Lambda);
      psi = map(tempA,Lambda,gens tempA);
      elapsedTime Adm1 = flatten entries forceNCBasis(d-1,tempA);
