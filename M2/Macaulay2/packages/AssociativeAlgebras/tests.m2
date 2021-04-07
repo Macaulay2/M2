@@ -1885,15 +1885,15 @@ DEVELOPMENT ///
   f2 = b*c + 2*c*b + a^2
   f3 = c*a + 2*a*c + b^2
   I = ideal (f1,f2,f3)
-  Igb = elapsedTime NCGB(I,16);  
+  Igb = elapsedTime NCGB(I,20);  
 
   restart
   debug needsPackage "AssociativeAlgebras"
   kk = ZZ/11
   Lambda = kk <|a,b,c|>
-  f1fac = {{a,b},{b,2*a},{c,c}}
-  f2fac = {{b,c},{c,2*b},{a,a}}
-  f3fac = {{c,a},{a,2*c},{b,b}}
+  f1fac = {{a,b},{2*b,a},{c,c}}
+  f2fac = {{b,c},{2*c,b},{a,a}}
+  f3fac = {{c,a},{2*a,c},{b,b}}
   f1 = a*b + 2*b*a + c^2
   f2 = b*c + 2*c*b + a^2
   f3 = c*a + 2*a*c + b^2
@@ -1902,34 +1902,118 @@ DEVELOPMENT ///
 
   Idm1 = I
   d = 3
-  N = 16
+  N = 20
   
   elapsedTime for d from 3 to N do (
      tempA = freeAlgebraQuotient(Lambda,Idm1,gens Idm1);
      gensTempA = gens tempA;
      phi = map(Lambda,tempA,gens Lambda);
      psi = map(tempA,Lambda,gens tempA);
-     Adm1 = flatten entries forceNCBasis(d-1,tempA);
-     A1Adm1 = ((gens Lambda) ** (Adm1 / phi)) / product // sort;
-     Acomp = flatten entries forceNCBasis(d-2,tempA);
-     Nd = flatten for m in Acomp list (
-             {apply(f1fac, p -> {psi p#0, (psi p#1)*m}),
-              apply(f2fac, p -> {psi p#0, (psi p#1)*m}),
-              apply(f3fac, p -> {psi p#0, (psi p#1)*m})}
+     elapsedTime Adm1 = flatten entries forceNCBasis(d-1,tempA);
+     elapsedTime A1Adm1 = ((gens Lambda) ** (Adm1 / phi)) / product // sort;
+     elapsedTime Acomp = flatten entries forceNCBasis(d-2,tempA);
+     -- some time is spent here
+     elapsedTime multMaps = hashTable apply(gens tempA, v -> (
+	     tempMult1 := leftMultiplicationMap(v,d-2,ForceNCBasis=>true);
+	     tempMult2 := flatten entries ((matrix {Adm1}) * tempMult1);
+	     (v,hashTable apply(#Acomp, i -> (Acomp#i,tempMult2#i)))));
+     elapsedTime Nd = flatten for m in Acomp list (
+             {apply(f1fac, p -> {psi p#0, multMaps#(psi p#1)#m}),
+              apply(f2fac, p -> {psi p#0, multMaps#(psi p#1)#m}),
+              apply(f3fac, p -> {psi p#0, multMaps#(psi p#1)#m})}
           );
-     Ndcoeffs = last coefficients(matrix {apply(Nd, p -> apply(p, q -> q / phi // product)) / sum}, Monomials=>A1Adm1);
+     elapsedTime Ndcoeffs = last coefficients(matrix {apply(Nd, p -> apply(p, q -> q / phi // product)) / sum}, Monomials=>A1Adm1);
      Ndcoeffs = sub(Ndcoeffs, kk);
-     --<< "numrows Ndcoeffs: " << numrows Ndcoeffs << endl;
-     --<< "numcols Ndcoeffs: " << numcols Ndcoeffs << endl;
+     -- most time is spent here
+     elapsedTime Ad = flatten entries forceNCBasis(d,tempA);
+     elapsedTime projMap = sub(last coefficients(matrix {A1Adm1 / psi}, Monomials => Ad),kk);
+     elapsedTime inclMap = sub(last coefficients(matrix {Ad / phi}, Monomials => A1Adm1),kk);
+     elapsedTime downAndBack = mingens image (inclMap * (mingens image (projMap * Ndcoeffs)));
+     
+     elapsedTime newElts = flatten entries ((matrix {A1Adm1}) * downAndBack);
+     Idm1 = Idm1 + ideal newElts;
+     << "Completed degree " << d << "." << endl;
+  )
+
+-- only about 15x slower than engine code at the moment.
+///
+
+DEVELOPMENT ///
+  restart
+  needsPackage "AssociativeAlgebras"
+  kk = ZZ/11
+  Lambda = kk<|x,y,z,w|>
+  f1 = x*y-y*x-7*z*w-7*w*z
+  f2 = 3*x*z-4*y*w-3*z*x-4*w*y
+  f3 = 31*x*w+25*y*z+25*z*y-31*w*x
+  f4 = x*y+y*x-z*w+w*z
+  f5 = x*z+y*w+z*x-w*y
+  f6 = x*w-y*z+z*y+w*x
+
+  I = ideal (f1,f2,f3,f4,f5,f6)
+  Igb = elapsedTime NCGB(I,10);  
+
+  restart
+  debug needsPackage "AssociativeAlgebras"
+  kk = ZZ/11
+  Lambda = kk <|x,y,z,w|>
+  f1fac = {{x,y},{-y,x},{-7*z,w},{-7*w,z}}
+  f2fac = {{3*x,z},{-4*y,w},{-3*z,x},{-4*w,y}}
+  f3fac = {{31*x,w},{25*y,z},{25*z,y},{-31*w,x}}
+  f4fac = {{x,y},{y,x},{-z,w},{w,z}}
+  f5fac = {{x,z},{y,w},{z,x},{-w,y}}
+  f6fac = {{x,w},{-y,z},{z,y},{w,x}}
+  f1 = x*y-y*x-7*z*w-7*w*z
+  f2 = 3*x*z-4*y*w-3*z*x-4*w*y
+  f3 = 31*x*w+25*y*z+25*z*y-31*w*x
+  f4 = x*y+y*x-z*w+w*z
+  f5 = x*z+y*w+z*x-w*y
+  f6 = x*w-y*z+z*y+w*x
+  I = ideal{f1,f2,f3,f4,f5,f6}
+  makeMonic = f -> f*(leadCoefficient f)^(-1)
+
+  Idm1 = I
+  d = 3
+  N = 10
+  
+  elapsedTime for d from 3 to N do (
+     tempA = freeAlgebraQuotient(Lambda,Idm1,gens Idm1);
+     gensTempA = gens tempA;
+     phi = map(Lambda,tempA,gens Lambda);
+     psi = map(tempA,Lambda,gens tempA);
+     elapsedTime Adm1 = flatten entries forceNCBasis(d-1,tempA);
+     elapsedTime A1Adm1 = ((gens Lambda) ** (Adm1 / phi)) / product // sort;
+     elapsedTime Acomp = flatten entries forceNCBasis(d-2,tempA);
+     -- some time is spent here
+     elapsedTime multMaps = hashTable apply(gens tempA, v -> (
+	     tempMult1 := leftMultiplicationMap(v,d-2,ForceNCBasis=>true);
+	     tempMult2 := flatten entries ((matrix {Adm1}) * tempMult1);
+	     (v,hashTable apply(#Acomp, i -> (Acomp#i,tempMult2#i)))));
+     elapsedTime Nd = flatten for m in Acomp list (
+             {apply(f1fac, p -> {psi p#0, multMaps#(psi p#1)#m}),
+              apply(f2fac, p -> {psi p#0, multMaps#(psi p#1)#m}),
+              apply(f3fac, p -> {psi p#0, multMaps#(psi p#1)#m}),
+              apply(f4fac, p -> {psi p#0, multMaps#(psi p#1)#m}),
+              apply(f5fac, p -> {psi p#0, multMaps#(psi p#1)#m}),
+              apply(f6fac, p -> {psi p#0, multMaps#(psi p#1)#m})
+	      }
+          );
+     elapsedTime Ndcoeffs = last coefficients(matrix {apply(Nd, p -> apply(p, q -> q / phi // product)) / sum}, Monomials=>A1Adm1);
+     Ndcoeffs = sub(Ndcoeffs, kk);
      -- we are currently doing two row reductions:
      -- one to get the (nonreduced) gb
-     Ndgens = flatten entries ((matrix {A1Adm1}) * (mingens image Ndcoeffs));
-     --<< "Ndgens: " << Ndgens << endl;
-     --<< "#Ndgens: " << #Ndgens << endl;
-     downAndBack = Ndgens / psi / phi;
-     --<< "downAndBack: " << downAndBack << endl;
-     -- then again to autoreduce wrt old stuff
-     newElts = flatten entries ((matrix {A1Adm1}) * (mingens image sub(last coefficients(matrix {downAndBack}, Monomials=>A1Adm1),kk))) / makeMonic;
-     Idm1 = Idm1 + ideal newElts;     
+
+     -- most time is spent here
+     elapsedTime Ad = flatten entries forceNCBasis(d,tempA);
+     elapsedTime projMap = sub(last coefficients(matrix {A1Adm1 / psi}, Monomials => Ad),kk);
+     elapsedTime inclMap = sub(last coefficients(matrix {Ad / phi}, Monomials => A1Adm1),kk);
+     elapsedTime downAndBack = mingens image (inclMap * (mingens image (projMap * Ndcoeffs)));
+     
+     elapsedTime newElts = flatten entries ((matrix {A1Adm1}) * downAndBack);
+     Idm1 = Idm1 + ideal newElts;
+     << "New" << endl;
   )
+
+-- about 200x slower than engine code at the moment
 ///
+

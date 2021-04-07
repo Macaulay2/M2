@@ -59,6 +59,8 @@ newPackage(
 export {
     "freeAlgebra",
     "ncBasis",
+    "ForceNCBasis",
+    "forceNCBasis",
     "NCGB", -- uugh: change name!
     "NCReductionTwoSided",
     "sequenceToVariableSymbols",
@@ -438,30 +440,30 @@ forceNCBasis (ZZ,Ring) := (d,R) -> (
    gbR := gens ideal R;
    L := ambient R;
    result := map(L, rawNCBasis(raw gbR, {d}, {d}, -1));
-   map(L^1,,promote(result,L))
+   map(R^1,,promote(result,R))
 )
 -------------------------
 
 -- TODO: should make this work in the multigraded situations as well
-leftMultiplicationMap = method()
-leftMultiplicationMap(RingElement,ZZ) := (f,n) -> (
+leftMultiplicationMap = method(Options => {ForceNCBasis=>false})
+leftMultiplicationMap(RingElement,ZZ) := opts -> (f,n) -> (
    B := ring f;
    -- is this what we want in the multigraded case?
    m := sum degree f;
    if m === -infinity then m = 0;
-   nBasis := flatten entries ncBasis(n,B);
-   nmBasis := flatten entries ncBasis(n+m,B);
-   leftMultiplicationMap(f,nBasis,nmBasis)
+   nBasis := if opts#ForceNCBasis then flatten entries forceNCBasis(n,B) else flatten entries ncBasis(n,B);
+   nmBasis := if opts#ForceNCBasis then flatten entries forceNCBasis(n+m,B) else flatten entries ncBasis(n+m,B);
+   leftMultiplicationMap(f,nBasis,nmBasis,opts)
 )
 
-leftMultiplicationMap(RingElement,ZZ,ZZ) := (f,n,m) -> (
+leftMultiplicationMap(RingElement,ZZ,ZZ) := opts -> (f,n,m) -> (
    B := ring f;
-   nBasis := flatten entries ncBasis(n,B);
-   mBasis := flatten entries ncBasis(m,B);
-   leftMultiplicationMap(f,nBasis,mBasis)
+   nBasis := if opts#ForceNCBasis then flatten entries forceNCBasis(n,B) else flatten entries ncBasis(n,B);
+   mBasis := if opts#ForceNCBasis then flatten entries forceNCBasis(m,B) else flatten entries ncBasis(m,B);
+   leftMultiplicationMap(f,nBasis,mBasis,opts)
 )
 
-leftMultiplicationMap(RingElement,List,List) := (f,fromBasis,toBasis) -> (
+leftMultiplicationMap(RingElement,List,List) := opts -> (f,fromBasis,toBasis) -> (
    local retVal;
    A := ring f;
    R := coefficientRing A;
