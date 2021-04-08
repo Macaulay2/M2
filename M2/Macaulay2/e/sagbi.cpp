@@ -294,7 +294,7 @@ Matrix *sagbi::subduct(int numparts, const Matrix *m, const RingMap *phi, GBComp
 // //       if (Pending->lo_degree() < _current_degree)
 // //   _current_degree = Pending->lo_degree();
 // //
-// //       // At this point, the lowest degree occuring in 'Pending' should be
+// //       // At this point, the lowest degree occurring in 'Pending' should be
 // //       // added to the GB.
 // //       append_to_basis(Pending->take_matrix(_current_degree));
 // //

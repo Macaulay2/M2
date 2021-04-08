@@ -105,7 +105,7 @@ Description
      Code
          SUBSECTION "Numerical rank and deflation"
      Text
-     	 Newton method applied to an appoximation of a singular isolated solution still converges, 
+     	 Newton method applied to an approximation of a singular isolated solution still converges, 
 	 but not {\em quadratically}. We detect singularity by looking at the Jacobian.
      Example 
          R = CC[x,y,z];

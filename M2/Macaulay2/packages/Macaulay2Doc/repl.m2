@@ -928,7 +928,7 @@ document { Key => Pseudocode,
      Headline => "the class of pseudocodes",
      "The Macaulay2 interpreter compiles its language into pseudocode, which is evaluated later, step by step.  At each
      step, the evaluator is considering a pseudocode item.  These pseudocode items are normally not available to the user, but
-     the interanl function ", TO "disassemble", " can display their contents, the function ", TO "pseudocode", " can convert
+     the internal function ", TO "disassemble", " can display their contents, the function ", TO "pseudocode", " can convert
      a function closure to pseudocode, the function ", TO "value", " can evaluate it (bindings of values to local symbols
      are enclosed with the pseudocode), the operator ", TO "===", " can be used for equality testing,
      and when the debugger is activated after an error, the variable ", TO "current", " contains the pseudcode step whose execution produced the error.",

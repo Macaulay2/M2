@@ -103,6 +103,31 @@ const Ring /* or null */ *IM2_Ring_solvable_algebra(const Ring *R,
    ordering.
 */
 
+const Ring * /* or null */ rawRingM2FreeAlgebra(const Ring *coefficientRing,
+                                                M2_ArrayString names,
+                                                const Ring *degreeRing,
+                                                M2_arrayint degrees,
+                                                M2_arrayint wtvecs,
+                                                M2_arrayint heftVector);
+/* coefficientRing will be the allowed coefficients of our non-comm polynomials.
+   wtvecs is a flattened array of all of the weight vectors for the monomial
+   order, where contains the first weightvector, then second weightvector, etc.
+*/
+
+/* WIP
+const M2FreeMonoid* rawM2FreeMonoid(M2_ArrayString names,
+                                    const Ring* degreeRing,
+                                    M2_arrayint degrees,
+                                    M2_arrayint wtvecs,
+                                    M2_arrayint heftVector)
+*/
+
+const Ring * /* or null */ rawRingM2FreeAlgebraQuotient(const Matrix *GB,
+                                                        int maxdeg);
+/* Given a non-commutative Groebner basis GB, create the quotient ring of it.
+   maxdeg is either -1 (the GB is complete), or the maximum degree that the GB
+   has been computed to */
+
 const Ring /* or null */ *IM2_Ring_frac(const Ring *R);
 /* drg: connected rawFractionRing*/
 

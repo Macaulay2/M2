@@ -44,7 +44,7 @@ public:
       }
 #if 0    
     buffer o;
-    o << "comnparing: ";
+    o << "comparing: ";
     mMonoid.elem_text_out(o, m+2);
     o << " and ";
     mMonoid.elem_text_out(o, n+2);

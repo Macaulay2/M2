@@ -8,7 +8,7 @@
 // lapack arrays are all arrays of doubles, and are
 // placed in column-major order, as that is what lapack uses.
 // Lapack arrays of complex numbers are done in the same way, except
-// they hace twice the length, and 2 contiguous doubles are used to
+// they have twice the length, and 2 contiguous doubles are used to
 // represent a complex value.
 // These arrays are grabbed via newarray_atomic, or newarray_atomic_clear
 // and should be freed via deletearray.
@@ -861,7 +861,7 @@ bool Lapack::least_squares(const LMatrixRRR *A,
       x->resize(cols, bcols);
       if (rows > cols)
         {
-          // We conly need the first 'cols' rows of copyb
+          // We only need the first 'cols' rows of copyb
           int copyloc = 0;
           for (int j = 0; j < bcols; j++)
             {
@@ -2519,7 +2519,7 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
       x->resize(cols, bcols);
       if (rows > cols)
         {
-          // We conly need the first 'cols' rows of copyb
+          // We only need the first 'cols' rows of copyb
           int copyloc = 0;
           for (int j = 0; j < bcols; j++)
             {

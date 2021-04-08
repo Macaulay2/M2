@@ -66,7 +66,6 @@ undocumented {
 	  (net, Product),
 	  (net, ProjectiveHilbertPolynomial),
 	  (net, QQ),
-	  (net, Parenthesize),
 	  (net, Descent),
 	  (net, CacheFunction),
 	  (net, IndexedVariableTable),
@@ -108,7 +107,6 @@ undocumented {
 	  (net, HypertextContainer),
 	  (net, EngineRing),
 	  (net, MapExpression),
-	  (net, MatrixDegreeExpression),
 	  (net, SheafExpression),
 	  (net, VectorExpression)
 	  }

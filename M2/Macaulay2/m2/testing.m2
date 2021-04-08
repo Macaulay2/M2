@@ -37,10 +37,14 @@ captureTestResult := (desc, teststring, pkg, usermode) -> (
     if match("no-check-flag", teststring) then (
 	checkmsg("skipping", desc);
 	return true);
+    -- TODO: remove this when capture uses ArgQ
+    if usermode === not noinitfile then
     -- try capturing in the same process
     if isCapturable(teststring, pkg, true) then (
 	checkmsg("capturing", desc);
-	(err, output) := capture(teststring, PackageExports => pkg, UserMode => usermode);
+	-- TODO: adjust and pass argumentMode, instead. This can be done earlier, too.
+	-- Note: UserMode option of capture is not related to UserMode option of check
+	(err, output) := capture(teststring, PackageExports => pkg, UserMode => false);
 	if err then printerr "capture failed; retrying ..." else return true);
     -- fallback to using an external process
     checkmsg("running", desc);
@@ -89,7 +93,7 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
 	if opts.Verbose then apply(errorList, (j, k) -> (
 		(filename, lineno, teststring) := pkg#"test inputs"#j;
 		stderr << filename << ":" << lineno - 1 << ":1: error:" << endl;
-		printerr get("!tail " | outfile k)));
+		printerr getErrors(outfile k)));
 	error("test(s) #", demark(", ", toString \ first \ errorList), " of package ", toString pkg, " failed.")))
 
 checkAllPackages = () -> (

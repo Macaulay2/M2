@@ -178,7 +178,7 @@ namespace BIBasis
                 if (!currentMonom)
                 {
                     deletearray(monomVector);
-                    throw std::string("BIBasis::BooleanInvolutiveBasis::FillInitialSet(): got NULL istead of new monom.");
+                    throw std::string("BIBasis::BooleanInvolutiveBasis::FillInitialSet(): got NULL instead of new monom.");
                 }
                 
                 for (typename MonomType::Integer currentVariable = 0; currentVariable < independ; ++currentVariable)

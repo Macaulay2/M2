@@ -13,7 +13,7 @@ document {
 document {
      Key => IndeterminateNumber,
      Headline => "the class of all indeterminate numbers",
-     "Indeterminate numbers result, for exmaple, from multiplying 0 by infinity.
+     "Indeterminate numbers result, for example, from multiplying 0 by infinity.
      There is only one instance of this class."
      }
 
@@ -252,7 +252,7 @@ document {
      Key => Holder,
      Headline => "the class of all holder expressions",
      PARA{},
-     "This type of expresssion is a container for a single, arbitrary, thing that
+     "This type of expression is a container for a single, arbitrary, thing that
      is basic enough that the correct method for printing does not depend
      on its neighbors in the containing expression.  A negative number would
      not be basic enough for this purpose, since as a member of a sum, it would
@@ -360,23 +360,13 @@ document {
      TT "MatrixExpression", " is a type of ", TO "Expression", " representing
      a matrix.",
      PARA{},
-     EXAMPLE ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
-     SeeAlso => {"Table"}
-     }
-
-document {
-     Key => MatrixDegreeExpression,
-     Headline => "the class of all matrix expressions with prescribed degrees",
-     TT "MatrixDegreeExpression", " is a type of ", TO "Expression", " representing
-     a matrix with specified degrees of sources and targets, i.e., a general map between
-     free modules.",
-     PARA{},
      EXAMPLE {
+	 ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
 	 ///R=QQ[x,y];///,
-         ///MatrixDegreeExpression {applyTable({{x^2-y^2,x^3-y^3},{x^2-4*y^2,x^3+y^3}},factor),{{-2},{-3}},{{0},{0}}}///,
-	 ///value oo///,
+         ///MatrixExpression {applyTable({{x^2-y^2,x^3-y^3},{x^2-4*y^2,x^3+y^3}},factor),Degrees=>{{{-2},{-3}},{{0},{0}}}}///,
+	 ///value oo///
 	 },
-     SeeAlso => {"MatrixExpression"}
+     SeeAlso => {"Table"}
      }
 
 document {

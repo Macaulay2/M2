@@ -126,7 +126,7 @@ document {
 --      PARA{},
 --      "The computation is stashed inside the ring map, until the computation has
 --      finished completely.  This means that you may interrupt this command, and 
---      later restart it. You may alo obtain partial results, as follows.",
+--      later restart it. You may also obtain partial results, as follows.",
 --      EXAMPLE lines ///
 -- 	  F = map(S,R,matrix{{s^4, s^3*t, s*t^3, t^4}})
 --       	  pushForward1(F,S^1,DegreeLimit=>8)

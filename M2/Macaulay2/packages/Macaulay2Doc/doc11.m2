@@ -48,13 +48,14 @@ document {
 	Usage => "html x",
 	Inputs => {"x" => {}},
 	Outputs => {String => {}},
-     TT "html x", " converts ", TT "x", " from ", TO "hypertext", " to html format",
-     PARA{},
+     TT "html x", " converts ", TT "x", " to HTML format",
+     PARA{
      "The return value is a string that is suitable for use in an
-     html file, readable by a world wide web client.
-     When no html conversion is available,", TO "tex", "is called.
-     (La)TeX can be rendered in the browser using MathJax or Katex.
-     ",
+     html file, readable by a world wide web client. ",
+     TO "hypertext", " elements are translated into the corresponding HTML elements. ",
+     "When no HTML conversion is available, ", TO "tex", " is called.
+     (La)TeX can be rendered in the browser using MathJax or KaTeX.
+     "},
      SeeAlso => "mathML"
      }
 
@@ -85,7 +86,7 @@ document {
      Outputs => {{ "a list equivalent to ", TT "x", ", in which runs and sequences have been expressed 
 	       symbolically as ", TO2{Expression,"expressions"}}},
      PARA {"The result is useful in printed displays, as a way of making them more compact.  The original list can
-	  be recovered by appying ", TO "value", " to the elements of the result, and then using ", TO "deepSplice", ",
+	  be recovered by applying ", TO "value", " to the elements of the result, and then using ", TO "deepSplice", ",
 	  provided that ", TT "x", " contains no entries that are sequences."},
      EXAMPLE lines ///
      x = {1,2,3,a,b,c,a,b,c,4,4,4,"asdf"};

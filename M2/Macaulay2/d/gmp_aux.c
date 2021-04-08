@@ -1,6 +1,7 @@
 /* some routines to augment the gmp library */
 #include <M2/config.h>
 #include "M2/math-include.h"
+#include <string.h>
 
 int mpz_hash(mpz_srcptr x) {
   int h = 0;
@@ -19,6 +20,12 @@ int mpfr_hash(mpfr_srcptr x) {
   if (0 != mpfr_sgn(x))
     for (i = 0; i<n; i++, h*=3737) h += x->_mpfr_d[i];
   return 777 + h * 3737 + x->_mpfr_exp + 11 * x->_mpfr_sign;
+}
+
+void mp_free_str(char *str){
+    void (*free_function) (void *ptr, size_t size);
+    mp_get_memory_functions(NULL,NULL,&free_function);
+    free_function(str,strlen(str)+1);
 }
 
 /*

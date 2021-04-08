@@ -4,6 +4,7 @@ name = baseFilename fn
 dir = replace(name | "$", "", fn)
 programPaths#name = dir
 
+fileMode(6*64 + 4*8 + 4, fn)
 program = findProgram(name, name, RaiseError => false)
 assert(program === null)
 
@@ -45,3 +46,12 @@ assert(program#"version" == "1.0")
 program = findProgram(name, name, MinimumVersion => ("1.1", name),
     RaiseError => false)
 assert(program === null)
+
+-- https://github.com/Macaulay2/M2/issues/1503
+newdir = dir | "foo (bar) baz"
+makeDirectory newdir
+copyFile(fn, newdir | "/" | name)
+programPaths#name = newdir
+findProgram(name, name)
+programPaths#name = dir | ///foo\ \(bar\)\ baz///
+findProgram(name, name)

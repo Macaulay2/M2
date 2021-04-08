@@ -90,7 +90,7 @@ SE = KK[x,y,z]/(y^2*z - x*(x-z)*(x+3*z))
 -- method we know, which has the additional 
 -- advantage of throwing away all components
 -- not of codimension 1.  That is, we define
--- {\tt purify1S2(I)}, a function that takes an arbitary
+-- {\tt purify1S2(I)}, a function that takes an arbitrary
 -- ideal $I$ in a ring satisfying $S_2$, and returns
 -- the ideal which is the intersection of the
 -- codimension 1 primary components of $I$.

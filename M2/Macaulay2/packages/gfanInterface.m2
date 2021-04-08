@@ -86,13 +86,15 @@ export {
 	"multiplicitiesReorder"
 }
 
-fig2devPath = gfanInterface#Options#Configuration#"fig2devpath"
 gfanVerbose = gfanInterface#Options#Configuration#"verbose"
 -- for backward compatibility
 if not programPaths#?"gfan" and gfanInterface#Options#Configuration#"path" != ""
     then programPaths#"gfan" = gfanInterface#Options#Configuration#"path"
+if not programPaths#?"fig2dev" and gfanInterface#Options#Configuration#"fig2devpath" != ""
+    then programPaths#"fig2dev" = gfanInterface#Options#Configuration#"fig2devpath"
 
 gfanProgram = null
+fig2devProgram = null
 
 gfanKeepFiles = gfanInterface#Options#Configuration#"keepfiles"
 gfanCachePolyhedralOutput = gfanInterface#Options#Configuration#"cachePolyhedralOutput"
@@ -245,21 +247,15 @@ markedPolynomialList List := L -> (
 	new MarkedPolynomialList from L
 )
 
-expression MarkedPolynomialList := L ->
-	expression apply(transpose L, t -> (
-		m := t#0;
-		f := t#1;
-		out := "(" | toString m | ")";
-		if leadCoefficient(f-m) > 0 then
-			out = out | " +";
-		if f-m != 0 then
-			return out | " " | toString(f-m)
-			else
-			return out;
-		)
-	)
-
+expression MarkedPolynomialList := L -> hold apply(transpose L, t -> (
+    m := t#0;
+    f := t#1;
+    Sum Parenthesize expression m + expression(f-m)
+    ))
 net MarkedPolynomialList := L -> net expression L
+toString MarkedPolynomialList := L -> toString expression L
+texMath MarkedPolynomialList := L -> texMath expression L
+
 
 RingMap MarkedPolynomialList := (F, L) -> L/(a-> a/F)
 
@@ -516,7 +512,7 @@ gfanParsePolyhedralFan String := o -> s -> (
 		S=fanFromGfan({myrays,mylinspace,mymaximalcones,P#"Dim",P#"Pure",P#"Simplicial",fVector});
 	    );	    
 
-	    --re-writing the  multiplicities according to thw new order of maximal cones 
+	    --re-writing the  multiplicities according to the new order of maximal cones 
 	    if  P#?"Multiplicities" then ( 
 		newMult:=multiplicitiesReorder({rays S,maxCones S,myrays,mymaximalcones,P#"Multiplicities"});
 		S,newMult
@@ -625,7 +621,7 @@ gfanSymbolToString = method()
 gfanSymbolToString Symbol := (X) -> (
 	toString(X) | "\n"
 	--- gfanToExternalString will write the word symbol if X is assigned
-	--- and this is not desireable
+	--- and this is not desirable
 )
 
 gfanIdealToString = method()
@@ -636,7 +632,7 @@ gfanPolynomialListToString = method()
 gfanPolynomialListToString List := (L) ->
 	joinStrings(L/gfanToExternalString, "," | newline, "{", "}" | newline)
 
---Takes a marked polynomial as a pair: {inital term, polynomial}
+--Takes a marked polynomial as a pair: {initial term, polynomial}
 gfanMarkedPolynomialToString = method()
 gfanMarkedPolynomialToString List := (L) -> (
 		out := gfanToExternalString(first L);
@@ -1015,7 +1011,11 @@ runGfanCommand = (cmd, opts, data) -> (
 runGfanCommandCaptureBoth = (cmd, opts, data) -> (
 	if gfanProgram === null then
 	    gfanProgram = findProgram("gfan", "gfan --help",
-		Verbose => gfanVerbose);
+		Verbose => gfanVerbose,
+		-- version 0.6 is necessary for gfanMixedVolume
+		-- https://github.com/Macaulay2/M2/issues/1962
+		MinimumVersion => ("0.6",
+		    "gfan _version | head -2 | tail -1 | sed 's/gfan//'"));
 	tmpFile := gfanMakeTemporaryFile data;
 
 	args := replace("^gfan ", "", cmd) | concatenate apply(keys opts, key ->
@@ -1938,6 +1938,13 @@ gfanPolynomialSetUnion (List, MarkedPolynomialList) := opts -> (L,M) -> (
 -- gfan_render
 --------------------------------------------------------
 
+runfig2dev = fileName -> (
+	if fig2devProgram === null then
+		fig2devProgram = findProgram("fig2dev", "fig2dev -V");
+	runProgram(fig2devProgram,
+		"-Lpng " | fileName | ".fig " | fileName | ".png");
+)
+
 gfanRender = method( Options => {
 	"L" => false,
 	"shiftVariables" => 0
@@ -1956,13 +1963,9 @@ gfanRender (String, List) := opts -> (fileName, L) -> (
 	figure := openOut(fileName | ".fig");
 	figure << out << close;
 	<< "Figure rendered to " << fileName << ".fig" << endl;
-	if fig2devPath != "" then (
-		run(fig2devPath | "fig2dev -Lpng " | fileName  | ".fig " | fileName |".png");
-		<< "Figure converted to png: " << fileName << ".png" << endl;
-		show URL("file://" | fileName | ".png");
-	) else (
-		<< "fig2dev path not set." << endl ;
-	)
+	runfig2dev fileName;
+	<< "Figure converted to png: " << fileName << ".png" << endl;
+	show URL("file://" | fileName | ".png");
 )
 
 
@@ -1992,12 +1995,9 @@ gfanRenderStaircase (String, List) := opts -> (fileName, L) -> (
 	figure := openOut(fileName | ".fig");
 	figure << out << close;
 	<< "Figure rendered to " << fileName << ".fig" << endl;
-
-	if fig2devPath != "" then (
-		run(fig2devPath | "fig2dev -Lpng " | fileName  | ".fig " | fileName |".png");
-		<< "Figure converted to png: " << fileName << ".png" << endl;
-		show URL("file://" | fileName | ".png");
-	) else << "fig2dev path not set." << endl ;
+	runfig2dev fileName;
+	<< "Figure converted to png: " << fileName << ".png" << endl;
+	show URL("file://" | fileName | ".png");
 )
 
 --------------------------------------------------------
@@ -2602,7 +2602,6 @@ doc ///
 			loadPackage("gfanInterface", Reload => true)
 
 		Text
-			The path to the executables should end in a slash.
 			To set the path permanently, one needs to change
 			{\tt gfanInterface.m2} either before installing or in the installed copy.
 			You will find the path configuration near the top of the file.
@@ -2632,16 +2631,8 @@ doc ///
 
 		Text
 			Finally, if you want to be able to render Groebner fans and monomial staircases
-			to {\tt .png} files, you should install {\tt fig2dev} and specify its path
-			as follows:
-
-		Example
-			loadPackage("gfanInterface", Configuration => { "fig2devpath" => "/directory/to/fig2dev/"}, Reload => true)
-
-		Text
-			Again, the path should end in a slash.
-
-
+			to {\tt .png} files, you should install {\tt fig2dev}.  If it is installed in a
+			non-standard location, then you may specify its path using @TO "programPaths"@.
 ///
 
 doc ///
@@ -2749,7 +2740,7 @@ doc ///
 			of length two
 	Outputs
 		L:MarkedPolynomialList
-			containg polynomials from the second entry of {\tt P} marked by the first entry of {\tt P}
+			containing polynomials from the second entry of {\tt P} marked by the first entry of {\tt P}
 	Description
 		Text
 			A marked polynomial list is a list of polynomials in which
@@ -3022,7 +3013,7 @@ doc ///
 			This method takes two Fans and finds their common refinement.
 
 			In the following, {\tt F} is the fan with two cones partitions the plane along the line
-			@TEX "$y=x$"@ while {\tt G} has two cones that parition the plane along @TEX "$y = x/2$"@.
+			@TEX "$y=x$"@ while {\tt G} has two cones that partition the plane along @TEX "$y = x/2$"@.
 			The common refinement of these two fans is the fan of the four cones between these two lines.
 		Example
 			QQ[x,y];
@@ -3844,7 +3835,7 @@ doc ///
 
 		Text
 			Caution should be used as this method invokes {\tt use R} which changes the global
-			symbol table. It would be preferrable to use the map command which is built into
+			symbol table. It would be preferable to use the map command which is built into
 			Macaulay 2. A ring map can be applied directly to a marked polynomial list.
 
 		Example
@@ -4236,7 +4227,7 @@ doc ///
 		L:List
 			of polynomials, homogeneous with respect to a positive weight vector
 		I:Ideal
-			homogenous with respect to a positive weight vector
+			homogeneous with respect to a positive weight vector
 	Outputs
 		P:List
 			a pair of @TO MarkedPolynomialList@s

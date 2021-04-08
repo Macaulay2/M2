@@ -86,7 +86,7 @@ document {
 	  is computed, so that reduction modulo the Gröbner basis can be used to determine membership in ", TT "M", ".  When relations are present, the
 	  option ", TO "SyzygyRows", " is set to the number of columns of ", TT "generators I", ", so that if ", TT "ChangeMatrix => true", " is used, then 
 	  division by the Gröbner basis can be to express
-	  an element of ", TT "F", " as a linear combination of columns of ", TT "generators I", ", avoiding the computation of the coefficents of the columns
+	  an element of ", TT "F", " as a linear combination of columns of ", TT "generators I", ", avoiding the computation of the coefficients of the columns
 	  of ", TT "relations I", ", leaving all the information that is required to specify an element of ", TT "I", "."
 	  },
      EXAMPLE lines ///
@@ -209,7 +209,7 @@ document {
      PARA{},
      "Indicates that during computation of a Gröbner basis, the reduction
      routine will be replaced by one that will handle long polynomials more
-     efficiently using \"geobuckets\", which accomodate the terms in buckets
+     efficiently using \"geobuckets\", which accommodate the terms in buckets
      of geometrically increasing length.  This method was first used
      successfully by Thomas Yan, graduate student in CS at Cornell.",
      SeeAlso => {[gb,Strategy]}

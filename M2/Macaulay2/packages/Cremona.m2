@@ -9,8 +9,8 @@
 
 newPackage(
        "Cremona",
-	Version => "5.0", 
-        Date => "November 20, 2020",
+	Version => "5.1", 
+        Date => "February 24, 2021",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "rational maps between projective varieties",
 	Keywords => {"Algebraic Geometry"},
@@ -84,12 +84,12 @@ isInverseMap = method(TypicalValue => Boolean);
 projectiveDegrees = method(TypicalValue => List, Options => {MathMode => false, NumDegrees => infinity, BlowUpStrategy => "Eliminate", Verbose => true});
 toMap = method(TypicalValue => RingMap, Options => {Dominant => null});
 approximateInverseMap = method(Options => {MathMode => false, CodimBsInv => null, Verbose => true});
-parametrize = method(TypicalValue => RationalMap);
+parametrize = method();
 specialCremonaTransformation = method(TypicalValue=>RationalMap);
 quadroQuadricCremonaTransformation = method(TypicalValue=>RationalMap);
 specialQuadraticTransformation = method(TypicalValue=>RationalMap);
 specialCubicTransformation = method(TypicalValue=>RationalMap);
-rationalMap = method(TypicalValue => RationalMap, Options => {Dominant => null});
+rationalMap = method(Options => {Dominant => null});
 forceInverseMap = method(TypicalValue => Nothing);
 forceImage = method(TypicalValue => Nothing);
 point = method();
@@ -98,7 +98,7 @@ abstractRationalMap = method();
 isMorphism = method(TypicalValue => Boolean);
 exceptionalLocus = method(TypicalValue => Ideal, Options => {MathMode => false});
 
-rationalMap (RingMap) := o -> (phi) -> ( 
+rationalMap RingMap := o -> ((cacheValue (o.Dominant,"RationalMapAssociatedToRingMap")) (phi -> (
    checkMultihomogeneousRationalMap phi;
    isStandardMap := degrees ambient target phi == toList((numgens ambient target phi):{1});
    if (not isStandardMap) and (o.Dominant =!= "notSimplify") then phi = simplifyMap phi;
@@ -133,7 +133,7 @@ rationalMap (RingMap) := o -> (phi) -> (
            "blowUpIdeal" => null,
            "baseLocus" => null
       };
-);
+)));
 rationalMap (Matrix) := o -> (F) -> rationalMap(toMap(F,Dominant=>null),Dominant=>o.Dominant);
 rationalMap (List) := o -> (F) -> rationalMap(toMap(F,Dominant=>null),Dominant=>o.Dominant);
 rationalMap (Ideal) := o -> (I) -> rationalMap(toMap(I,Dominant=>null),Dominant=>o.Dominant);
@@ -174,8 +174,8 @@ rationalMapInt (MutableHashTable) := o -> (Phi) -> (
 rationalMap (RationalMap) := o -> (Phi) -> rationalMapInt(Phi,Dominant=>o.Dominant);
 rationalMap (MultihomogeneousRationalMap) := o -> (Phi) -> rationalMapInt(Phi,Dominant=>o.Dominant);
 
-super RationalMap := Phi -> rationalMap Phi;
-super MultihomogeneousRationalMap := Phi -> rationalMap Phi;
+super RationalMap := Phi -> if target Phi === ambient target Phi then Phi else rationalMap Phi;
+super MultihomogeneousRationalMap := Phi -> if target Phi === ambient target Phi then Phi else rationalMap Phi;
 
 rationalMap (Ring,Ring,Matrix) := o -> (R,S,F) -> (
      if not (isPolynomialRing ambient S) then error("the ambient rings must be polynomial rings");
@@ -228,8 +228,8 @@ rationalMap (Tally) := o -> (E) -> (
 simplifyMap = method()
 simplifyMap (RingMap) := (phi) -> ( 
    I := multisaturate ideal target phi;
-   -- try assert(isSubset(ideal target phi,I) and isHomogeneous I) else error "internal error encountered";
-   if I =!= ideal target phi then (
+   if I =!= ideal target phi and I != ideal target phi then (
+        <<"--warning: target of ring map changed, its ideal was not multi-saturated"<<endl;
         R := (ambient target phi)/I;
         phi = map(R,source phi,sub(toMatrix phi,R));
    );
@@ -282,7 +282,7 @@ targetProj = memoize ((R,N) -> (
    PN
 ));
 
-toMap Matrix := o -> (F)  -> ( 
+toMap Matrix := o -> ((cacheValue (o.Dominant,"RingMapAssociatedToMatrix")) (F -> ( 
    if class ring F === FractionField then try F = lift((lcm apply(flatten entries F,denominator))*F,ring numerator (1_(ring F)));
    checkLinearSystem0 F;
    K:=coefficientRing ring F; 
@@ -295,16 +295,16 @@ toMap Matrix := o -> (F)  -> (
    else if o.Dominant === infinity or o.Dominant === true
    then map(ring F,PN/(trim kernel phi),F)
    else phi
-);
+)));
 
-toMap List := o -> (F)  -> toMap(matrix{F},Dominant=>o.Dominant);
+toMap List := o -> (F) -> toMap(matrix{F},Dominant=>o.Dominant);
 
-toMap Ideal := o -> (F)  -> (
+toMap Ideal := o -> (F) -> (
    d := max degrees F;
    if unique degrees F == {d} then toMap(gens F,Dominant=>o.Dominant) else toMap(F,d,Dominant=>o.Dominant)
 );
 
-toMap RingMap := o -> (phi)  -> (
+toMap RingMap := o -> (phi) -> (
    phi=phi * map(source phi,ambient source phi);
    if class o.Dominant === ZZ 
    then return map(target phi,(source phi)/(kernel(phi,o.Dominant)),toMatrix phi)
@@ -495,7 +495,10 @@ toString MultihomogeneousRationalMap := (Phi) -> "rationalMap("|toExternalString
 
 imageInt = method()
 imageInt (MutableHashTable) := (Phi) -> (
-   if Phi#"idealImage" === null then setKeyValue(Phi,"idealImage",trim kernel Phi#"map");
+   if Phi#"idealImage" =!= null then return Phi#"idealImage";
+   f := Phi#"map";
+   if all(flatten apply(entries Phi,degree),o -> o <= 0) then f = map(target f,source f,(first gens target f) * toMatrix f);
+   setKeyValue(Phi,"idealImage",trim kernel f);
    return Phi#"idealImage";
 );
 imageInt (MutableHashTable,ZZ) := (Phi,d) -> (
@@ -1230,17 +1233,14 @@ forceInverseMap (RationalMap,RationalMap) := (Phi,Psi) -> (
      if Psi#"inverseRationalMap" === null then setKeyValue(Psi,"inverseRationalMap",Phi);
 );
 
-compose (RingMap,RingMap) := (phi,psi) -> (
-   if source phi =!= target psi then error "rational maps not composable: incompatible target and source";
-   linSys := flatten entries toMatrix (phi*psi);
-   fixComp := try gcd linSys else 1_(target phi);
-   eta := if (max degrees ideal linSys > degree fixComp) then (
-              qr := apply(linSys,g -> quotientRemainder(g,fixComp)); 
-              if # select(qr,g -> last g != 0) > 0 then error "internal error encountered";
-              map(target phi,source psi,apply(qr,first))
-          ) else map(target phi,source psi,linSys);
-   if toMatrix eta == 0 then error "rational maps not composable: their composition would be the empty map";
-   eta
+compose (RingMap,RingMap) := (f,g) -> (
+    if source f =!= target g then error "rational maps not composable: incompatible target and source";
+    L := toMatrix (f * g);
+    if L == 0 then error "rational maps may not be composable: got the empty map by composing chosen representatives";
+    D := try gcd flatten entries compress L else 1_(target f);
+    local Q;
+    M := if D != 0 and D != 1 then apply(flatten entries L,l -> (Q = quotientRemainder(l,D); assert(last Q == 0); first Q)) else flatten entries L;
+    return map(target f,source g,M);
 );
 
 composeInt = method()
@@ -1308,12 +1308,12 @@ mapsInt (MutableHashTable) := (Phi) -> (
                        setKeyValue(Phi,"maps",{Phi#"map"});
                  ) else (
                        setKeyValue(Phi,"maps",{compose(map(source Phi,source Phi,vars source Phi),map Phi)});
-                       if (unique max degrees ideal compress matrix first Phi#"maps" != {0}) then setKeyValue(Phi,"map",first Phi#"maps");
+                       setKeyValue(Phi,"map",first Phi#"maps");
                  );
             ) else (
                  setKeyValue(Phi,"maps",maps Phi#"map");
                  try apply(Phi#"maps",F -> checkMultihomogeneousRationalMap F) else error "internal error encountered";
-                 if (unique max degrees ideal compress matrix first Phi#"maps" != {0}) then setKeyValue(Phi,"map",first Phi#"maps");
+                 setKeyValue(Phi,"map",first Phi#"maps");
             );
    );
    Phi#"maps"
@@ -1468,7 +1468,7 @@ parametrize (Ideal) := (L) -> (
             return f;
            );
     );
-    error "method not available for the given ideal";
+    error "failed to get a parameterization, you can try using the method parametrize(MultiprojectiveVariety) from the package MultiprojectiveVarieties";
 );
 
 parametrize (QuotientRing) := (R) -> (
@@ -1837,6 +1837,7 @@ setKeyValue (MutableHashTable,String,Thing) := (Phi,str,val) -> (
     if str === "idealImage" then (
          if class val =!= Ideal then errorClass();
          if ring val =!= source Phi#"map" then errorClass();
+         if not isHomogeneous val then error "tried to set a nonhomogeneous ideal as image";
          Phi#str = val;
          if Phi#"isDominant" === null then setKeyValue(Phi,"isDominant",val == 0);
          return;
@@ -1912,12 +1913,14 @@ multigens (QuotientRing) := (R) -> (
    apply(multigens ambient R,U -> flatten entries sub(matrix{U},R))
 );
 
-multisaturate = method()
-multisaturate (Ideal) := (I) -> (
-  gg := multigens ring I;
-  for i to #gg -1 do I = saturate(I,ideal(gg_i));
-  return I;
-);
+multisaturate = method();
+multisaturate Ideal := (cacheValue "Multisaturation") (I -> (
+   if I.cache#?"isMultisaturated" and I.cache#"isMultisaturated" then return I;
+   m := multigens ring I;
+   for i to #m -1 do I = saturate(I,ideal(m_i));
+   I.cache#"isMultisaturated" = true;
+   return I;
+));
 
 getMultidegree = method()
 
@@ -1946,7 +1949,7 @@ getMultidegree (RingElement,List) := (mdeg,n) -> first getMultidegree(mdeg,n,0,(
 point (Ideal,Boolean) := (I,b) -> (  -- see also: code(randomKRationalPoint,Ideal)
    R := ring I;
    if not (isPolynomialRing R and isHomogeneous I) then error "expected a homogeneous ideal in a polynomial ring";
-   if degrees R =!= toList((numgens R):{1}) then error "expected a standard graded ring";
+   if degrees R =!= toList((numgens R):{1}) then error "expected a standard graded ring, but you may use the method point(MultiprojectiveVariety) from the package MultiprojectiveVarieties";
    c := codim I; 
    n := numgens R -1;
    if c >= n then error "expected a positive dimensional scheme";
@@ -2332,8 +2335,8 @@ harmonicallyConjugate (RingElement,RingElement) := (Q,L) -> (
    (gamma*p_1+beta*p_0)*t_1+(beta*p_1+alpha*p_0)*t_0
 );
 
-secantLine = method()
-secantLine (List,Ideal) := (x,I) -> (
+secantCone = method()
+secantCone (List,Ideal) := (x,I) -> (
    try assert(#x == numgens ring I and matrix{x} != 0) else error("expected coordinate list of a point of PP^"|toString(numgens ring I -1));
    PN := ring I;
    N := numgens PN -1;
@@ -2357,7 +2360,7 @@ abstractRationalMap (Ideal,String) := (X,str) -> (
    if not isHomogeneous X then error "expected a homogeneous ideal";
    if not isField coefficientRing ring X then error "the coefficient ring needs to be a field";
    f := p -> (
-         L := secantLine(p,X);
+         L := secantCone(p,X);
          f := parametrize L;
          assert(numgens source f == 2);
          ab := f^*(L+X);

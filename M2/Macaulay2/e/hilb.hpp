@@ -15,7 +15,7 @@ class MonomialIdeal;
 
 class partition_table
 // Partition a monomial ideal into several such that
-// the graph of variables occuring in each is connected.
+// the graph of variables occurring in each is connected.
 // Implemented using a union-find algorithm.
 {
   int n_vars;
@@ -46,7 +46,7 @@ struct hilb_step : public our_new_delete
   ring_elem h0;  // Hilbert function so far computed 'to the left'
   ring_elem h1;
   int first_sum;  // First monomial ideal which corresponds to the 'sum' part
-  VECTOR(MonomialIdeal *) monids;  // The (partitoned) array of monomial ideals
+  VECTOR(MonomialIdeal *) monids;  // The (partitioned) array of monomial ideals
 };
 
 /**

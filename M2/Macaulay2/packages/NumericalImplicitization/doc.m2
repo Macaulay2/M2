@@ -785,7 +785,7 @@ doc ///
             $0$; large nonzero values indicate failure (the larger the value, the worse 
             the failure). The default value is $1e-5$.
 
-    	    The option {\tt Threshold} sets the threshold for determing point equality. 
+    	    The option {\tt Threshold} sets the threshold for determining point equality. 
             If this option has value $n$, then two points are considered equal iff their 
             first $n$ significant digits agree (equivalently, in scientific notation, the 
             exponents and first $n$ digits of the mantissa agree). The default value is $5$. 

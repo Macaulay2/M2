@@ -16,8 +16,8 @@ processExamplesStrict = true
 M2outputRE       = "\n+(?=i+[1-9][0-9]* : )"
 M2outputHash     = "-- -*- M2-comint -*- hash: "
 separateM2output = str -> (
-    L := separate(M2outputRE, replace("(\\A\n+|\n+\\Z)", "", str));
-    if match(regexQuote M2outputHash, str) then drop(drop(L, -1), 1) else L)
+    L := separate(M2outputRE, "\n" | replace("\n+\\Z", "", str));
+    if #L<=1 then L else drop(L,1))
 
 trimlines := L -> apply(L, x ->
     if instance(x, String) then (
@@ -49,7 +49,7 @@ EXAMPLE VisibleList := x -> (
 -----------------------------------------------------------------------------
 
 -- TODO: the output format is provisional
--- TODO: does't capture stderr
+-- TODO: doesn't capture stderr
 capture' := capture
 capture = method(Options => { UserMode => true, PackageExports => null })
 capture Net    := opts -> s -> capture(toString s,       opts)
@@ -67,7 +67,7 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     argmode := if 0 < argumentMode & InvertArgs then xor(defaultMode, argumentMode) else argumentMode;
     hasmode := m -> argmode & m == m;
     pushvar(symbol randomSeed, if hasmode ArgNoRandomize then 0 else randomSeed);
-    -- TODO: these two are overriden in interp.dd at the moment
+    -- TODO: these two are overridden in interp.dd at the moment
     --if hasmode ArgStop        then (stopIfError, debuggingMode) = (true, false);
     --if hasmode ArgNoDebug     then debuggingMode = false;
     if hasmode ArgPrintWidth  then printWidth = ArgPrintWidthN;
@@ -115,7 +115,8 @@ isCapturable = (inputs, pkg, isTest) -> (
     inputs = replace("-\\*.*?\\*-", "", inputs);
     -- TODO: remove this when the effects of capture on other packages is reviewed
     (isTest or match({"FirstPackage", "Macaulay2Doc"},            pkg#"pkgname"))
-    and not match({"EngineTests", "ThreadedGB", "RunExternalM2"}, pkg#"pkgname")
+    and not match({"EngineTests", "ThreadedGB", "RunExternalM2", "DiffAlg"}, pkg#"pkgname")
+    and not (match({"Core", "Cremona"}, pkg#"pkgname") and version#"pointer size" == 4)
     -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
     and not match("(gbTrace|NAGtrace)",                       inputs) -- cerr/cout directly from engine isn't captured
     and not match("(notify|stopIfError|debuggingMode)",       inputs) -- stopIfError and debuggingMode may be fixable
@@ -180,7 +181,7 @@ getExampleOutput := (pkg, fkey) -> (
 -- used in installPackage.m2
 -- TODO: store in a database instead
 storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
-    verboseLog("storing example results from output file", minimizeFilename outf);
+    verboseLog("storing example results in ", minimizeFilename outf);
     if fileExists outf then (
 	outstr := reproduciblePaths get outf;
 	outf << outstr << close;

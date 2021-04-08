@@ -344,7 +344,7 @@ o75 : Ideal of S
 
 i76 : phi = map(PP4, S, matrix{{0_PP4, 0_PP4, 0_PP4}} | vars PP4)
 
-o76 = map(PP4,S,{0, 0, 0, a, b, c, d, e})
+o76 = map (PP4, S, {0, 0, 0, a, b, c, d, e})
 
 o76 : RingMap PP4 <--- S
 
@@ -387,7 +387,7 @@ o85 : Ideal of PP5
 
 i86 : projection = map(PP4, PP5, matrix{{a, c, d, c, b, e}})
 
-o86 = map(PP4,PP5,{a, c, d, c, b, e})
+o86 = map (PP4, PP5, {a, c, d, c, b, e})
 
 o86 : RingMap PP4 <--- PP5
 

@@ -10,9 +10,19 @@ Monomial::Monomial()
   // an incorrect state... to be filled in by varpower routines.
 }
 
+  // SIGH... the front end reverses monomials.  For commutative ones, this
+  // is not a problem.  FOr non-commutative ones, one needs to reverse the
+  // varpower pairs before calling this function.
+  // Thus, if we are non-commutative, and
+  //   vp = [7 0 1 2 1 0 2]
+  // then the corresponding monomial is
+  //    a^2ca
+
+Monomial::Monomial(const std::vector<int>& vp) { varpower::copy(vp.data(), val); }
 Monomial::Monomial(int v, int e) { varpower::var(v, e, val); }
 Monomial::Monomial(const int *vp) { varpower::copy(vp, val); }
 Monomial::Monomial(M2_arrayint m) { varpower::from_arrayint(m, val); }
+
 Monomial *Monomial::make(int v, int e)
 {
   Monomial *result = new Monomial(v, e);
@@ -42,6 +52,12 @@ Monomial *Monomial::make(const int *vp)
 {
   Monomial *result = new Monomial(vp);
   if (error()) return 0;
+  return result;
+}
+
+Monomial* Monomial::make(const std::vector<int>& vp)
+{
+  Monomial* result = new Monomial(vp);
   return result;
 }
 
