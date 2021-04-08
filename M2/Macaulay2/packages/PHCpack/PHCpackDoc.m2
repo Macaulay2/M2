@@ -831,7 +831,7 @@ doc ///
       V=numericalIrreducibleDecomposition(system)
       WitSets=V#5; --witness sets are accessed by dimension
       w=first WitSets;
-      w#IsIrreducible  
+      w.cache.IsIrreducible  
     
     Text
     
