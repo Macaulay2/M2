@@ -16,8 +16,8 @@ processExamplesStrict = true
 M2outputRE       = "\n+(?=i+[1-9][0-9]* : )"
 M2outputHash     = "-- -*- M2-comint -*- hash: "
 separateM2output = str -> (
-    L := separate(M2outputRE, replace("(\\A\n+|\n+\\Z)", "", str));
-    if match(regexQuote M2outputHash, str) then drop(drop(L, -1), 1) else L)
+    L := separate(M2outputRE, "\n" | replace("\n+\\Z", "", str));
+    if #L<=1 then L else drop(L,1))
 
 trimlines := L -> apply(L, x ->
     if instance(x, String) then (
