@@ -1130,6 +1130,7 @@ export {
 	"tensor",
 	"tensorAssociativity",
 	"terms",
+	"tests",
 	"tex",
 	"texMath",
 	"then",

@@ -85,6 +85,13 @@ loadTestDir := pkg -> (
     ) else pkg#"test directory loaded" = false;
 )
 
+tests = method()
+tests Package := pkg -> (
+    if not pkg#?"test directory loaded" then loadTestDir pkg;
+    new HashTable from pkg#"test inputs"
+    )
+tests String := pkg -> tests needsPackage(pkg, LoadDocumentation => true)
+
 check = method(Options => {UserMode => null, Verbose => false})
 check String  := opts -> pkg -> check(-1, pkg, opts)
 check Package := opts -> pkg -> check(-1, pkg, opts)
