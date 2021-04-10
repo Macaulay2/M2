@@ -115,11 +115,11 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
 	    desc := "check(" | toString k | ", " | format pkg#"pkgname" | ")";
 	    ret := elapsedTime captureTestResult(desc, teststring, pkg, usermode);
 	    if not ret then (k, temporaryFilenameCounter - 2) else continue);
-    outfile := k -> temporaryDirectory() | toString k | ".tmp";
+    outfile := errfile -> temporaryDirectory() | errfile | ".tmp";
     if #errorList > 0 then (
-	if opts.Verbose then apply(errorList, (j, k) -> (
-		stderr << toString inputs#j << " error:" << endl;
-		printerr getErrors(outfile k)));
+	if opts.Verbose then apply(errorList, (k, errfile) -> (
+		stderr << toString inputs#k << " error:" << endl;
+		printerr getErrors(outfile errfile)));
 	error("test(s) #", demark(", ", toString \ first \ errorList), " of package ", toString pkg, " failed.")))
 
 checkAllPackages = () -> (
