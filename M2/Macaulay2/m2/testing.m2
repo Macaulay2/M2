@@ -106,12 +106,12 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
     use pkg;
     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
     inputs := tests pkg;
-    tests := if n == -1 then toList(0 .. pkg#"test number" - 1) else {n};
-    if #tests == 0 then printerr("warning: ", toString pkg,  " has no tests");
+    testKeys := if n == -1 then toList(0 .. pkg#"test number" - 1) else {n};
+    if #testKeys == 0 then printerr("warning: ", toString pkg,  " has no tests");
     --
     errorList := {};
     (hadError, numErrors) = (false, 0);
-    scan(tests, k -> (
+    scan(testKeys, k -> (
 	    teststring := code inputs#k;
 	    desc := "check(" | toString k | ", " | format pkg#"pkgname" | ")";
 	    ret := elapsedTime captureTestResult(desc, teststring, pkg, usermode);
