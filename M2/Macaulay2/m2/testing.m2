@@ -109,15 +109,13 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
     testKeys := if n == -1 then keys inputs else {n};
     if #testKeys == 0 then printerr("warning: ", toString pkg,  " has no tests");
     --
-    errorList := {};
     (hadError, numErrors) = (false, 0);
-    scan(testKeys, k -> (
+    errorList := for k in testKeys list (
 	    if not inputs#?k then error(pkg, " has no test #", k);
 	    teststring := code inputs#k;
 	    desc := "check(" | toString k | ", " | format pkg#"pkgname" | ")";
 	    ret := elapsedTime captureTestResult(desc, teststring, pkg, usermode);
-	    if not ret then errorList = append(errorList,
-		 (k, temporaryFilenameCounter - 2))));
+	    if not ret then (k, temporaryFilenameCounter - 2) else continue);
     outfile := k -> temporaryDirectory() | toString k | ".tmp";
     if hadError then (
 	if opts.Verbose then apply(errorList, (j, k) -> (
