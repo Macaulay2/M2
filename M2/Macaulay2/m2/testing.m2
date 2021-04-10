@@ -6,6 +6,16 @@ sourceFileStamp = (filename, linenum) -> concatenate(
     "--", toAbsolutePath filename, ":", toString linenum, ": location of test code")
 
 -----------------------------------------------------------------------------
+-- TestInput
+-----------------------------------------------------------------------------
+TestInput = new SelfInitializingType of HashTable
+new TestInput from Sequence := (T, S) -> TestInput {
+    "filename" => S_0,
+    "line number" => S_1,
+    "code" => S_2}
+TestInput.synonym = "test input"
+
+-----------------------------------------------------------------------------
 -- TEST
 -----------------------------------------------------------------------------
 
@@ -13,7 +23,7 @@ TEST = method(Options => {FileName => false})
 TEST List   := opts -> testlist   -> apply(testlist, test -> TEST(test, opts))
 TEST String := opts -> teststring -> (
     n := currentPackage#"test number";
-    currentPackage#"test inputs"#n = if opts.FileName then (
+    currentPackage#"test inputs"#n = new TestInput from if opts.FileName then (
         minimizeFilename teststring, 1,
         concatenate(sourceFileStamp(teststring, 1), newline, get teststring)
         ) else (

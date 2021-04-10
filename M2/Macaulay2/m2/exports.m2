@@ -394,6 +394,7 @@ export {
 	"Task",
 	"TeXmacs",
 	"Test",
+	"TestInput",
 	"Thing",
 	"Time",
 	"Tor",
