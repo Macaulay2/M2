@@ -16,6 +16,9 @@ new TestInput from Sequence := (T, S) -> TestInput {
 TestInput.synonym = "test input"
 
 code TestInput := T -> T#"code"
+locate TestInput := T -> (T#"filename",
+    T#"line number" - depth net code T, 1,
+    T#"line number", 1,,)
 
 -----------------------------------------------------------------------------
 -- TEST
