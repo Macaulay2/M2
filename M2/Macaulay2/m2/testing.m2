@@ -15,6 +15,8 @@ new TestInput from Sequence := (T, S) -> TestInput {
     "code" => S_2}
 TestInput.synonym = "test input"
 
+code TestInput := T -> T#"code"
+
 -----------------------------------------------------------------------------
 -- TEST
 -----------------------------------------------------------------------------
