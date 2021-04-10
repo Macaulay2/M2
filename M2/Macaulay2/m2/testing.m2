@@ -109,7 +109,6 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
     testKeys := if n == -1 then keys inputs else {n};
     if #testKeys == 0 then printerr("warning: ", toString pkg,  " has no tests");
     --
-    (hadError, numErrors) = (false, 0);
     errorList := for k in testKeys list (
 	    if not inputs#?k then error(pkg, " has no test #", k);
 	    teststring := code inputs#k;
@@ -117,7 +116,7 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
 	    ret := elapsedTime captureTestResult(desc, teststring, pkg, usermode);
 	    if not ret then (k, temporaryFilenameCounter - 2) else continue);
     outfile := k -> temporaryDirectory() | toString k | ".tmp";
-    if hadError then (
+    if #errorList > 0 then (
 	if opts.Verbose then apply(errorList, (j, k) -> (
 		stderr << toString inputs#j << " error:" << endl;
 		printerr getErrors(outfile k)));
