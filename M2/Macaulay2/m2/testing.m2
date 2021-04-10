@@ -12,7 +12,7 @@ TestInput = new SelfInitializingType of HashTable
 new TestInput from Sequence := (T, S) -> TestInput {
     "filename" => S_0,
     "line number" => S_1,
-    "code" => S_2}
+    "code" => concatenate(sourceFileStamp(S_0, S_1), newline, S_2)}
 TestInput.synonym = "test input"
 
 code TestInput := T -> T#"code"
@@ -36,12 +36,9 @@ TEST String := opts -> teststring -> (
     n := currentPackage#"test number";
     currentPackage#"test inputs"#n = new TestInput from if opts.FileName then (
         testCode := get teststring;
-        (minimizeFilename teststring, depth net testCode + 1,
-        concatenate(sourceFileStamp(teststring, 1), newline, testCode))
-        ) else (
-        minimizeFilename currentFileName, currentLineNumber(),
-        concatenate(sourceFileStamp(currentFileName, currentLineNumber()),
-            newline, teststring));
+        (minimizeFilename teststring, depth net testCode + 1, testCode)
+        ) else
+        (minimizeFilename currentFileName, currentLineNumber(), teststring);
     currentPackage#"test number" = n + 1;)
 -- TODO: support test titles
 TEST(String, String) := (title, teststring) -> (
