@@ -35,8 +35,9 @@ TEST List   := opts -> testlist   -> apply(testlist, test -> TEST(test, opts))
 TEST String := opts -> teststring -> (
     n := currentPackage#"test number";
     currentPackage#"test inputs"#n = new TestInput from if opts.FileName then (
-        minimizeFilename teststring, 1,
-        concatenate(sourceFileStamp(teststring, 1), newline, get teststring)
+        testCode := get teststring;
+        (minimizeFilename teststring, depth net testCode + 1,
+        concatenate(sourceFileStamp(teststring, 1), newline, testCode))
         ) else (
         minimizeFilename currentFileName, currentLineNumber(),
         concatenate(sourceFileStamp(currentFileName, currentLineNumber()),
