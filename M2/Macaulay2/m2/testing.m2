@@ -112,6 +112,7 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
     errorList := {};
     (hadError, numErrors) = (false, 0);
     scan(testKeys, k -> (
+	    if not inputs#?k then error(pkg, " has no test #", k);
 	    teststring := code inputs#k;
 	    desc := "check(" | toString k | ", " | format pkg#"pkgname" | ")";
 	    ret := elapsedTime captureTestResult(desc, teststring, pkg, usermode);
