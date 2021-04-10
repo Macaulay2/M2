@@ -86,13 +86,13 @@ code ZZ         := i -> code previousMethodsFound#i
 -----------------------------------------------------------------------------
 
 EDITOR := () -> if getenv "EDITOR" != "" then getenv "EDITOR" else "vi"
-editMethod := method(Dispatch => Thing)
+editMethod = method(Dispatch => Thing)
 editMethod String := filename -> (
      editor := EDITOR();
      chkrun concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
 	  editor, " ", filename))
-EDIT := method(Dispatch => Thing)
+EDIT = method(Dispatch => Thing)
 EDIT Nothing := arg -> (stderr << "--warning: source code not available" << endl;)
 EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> (
      editor := EDITOR();

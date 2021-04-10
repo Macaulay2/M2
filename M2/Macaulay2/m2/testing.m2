@@ -24,7 +24,7 @@ toString TestInput := T -> (
     loc#0 | ":" | loc#1 | ":" | loc#2 | "-" | loc#3 | ":" | loc#4 | ":"
     )
 net TestInput := T -> (toString T)^-1
-
+editMethod TestInput := EDIT @@ locate
 
 -----------------------------------------------------------------------------
 -- TEST
