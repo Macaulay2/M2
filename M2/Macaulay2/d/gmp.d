@@ -790,7 +790,7 @@ sign0(x:RRi) ::= 0 != Ccode(int,"mpfi_is_strictly_neg(",x,")");
 export isEmpty(x:RRi):bool := Ccode(bool,"mpfi_is_empty(",x,")");
                                     
 exponent0(x:RR) ::= Ccode(long,"(long)mpfr_get_exp(",x,")"); -- sometimes int, sometimes long, see gmp.h for type mp_exp_t
-exponent0(x:RRi) ::= min(exponent0(rightRR(x)),exponent0(leftRR(x)));
+exponent0(x:RRi) ::= max(exponent0(rightRR(x)),exponent0(leftRR(x)));
 sizeinbase0(x:ZZ,b:int) ::= Ccode( int, "mpz_sizeinbase(",  x, ",", b, ")" );
 
 -- warning: these routines just check the sign bit, and don't verify finiteness!

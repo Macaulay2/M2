@@ -9,7 +9,7 @@ globalAssignment ImmutableType
 -- these types are pre-defined
 
 RR.synonym = "real number"
-RRi.synonym = "real interval number"
+RRi.synonym = "real interval"
 CC.synonym = "complex number"
 RR.texMath = ///{\mathbb R}///
 RRi.texMath = ///{\square\mathbb R}///

@@ -121,6 +121,13 @@ document {
     (symbol *,CC,QQ),
     (symbol *,CC,RR),
     (symbol *,CC,ZZ),
+    (symbol *, QQ, RRi),
+    (symbol *, RR, RRi),
+    (symbol *, RRi, QQ),
+    (symbol *, RRi, RR),
+    (symbol *, RRi, RRi),
+    (symbol *, RRi, ZZ),
+    (symbol *, ZZ, RRi),
     (symbol*,  GradedModuleMap, GradedModuleMap),
     (symbol*,  RingElement, Matrix),
     (symbol*,  Ideal, CoherentSheaf),
@@ -181,6 +188,13 @@ document {
 	  "N = I*M + a*R^2",
 	  "isHomogeneous N"
 	  },
+     HEADER3 "Intervals",
+     PARA { "If one of the factors is an ", TO "RRi", ", the output is an interval containing all poducts of pairs in the factors." },
+    EXAMPLE {
+    "2*interval(1,3)",
+    "interval(1,3)*interval(-1,2)",
+    "interval(-1,1)*interval(-1,1)"
+    },
      SeeAlso =>{ "times", "product"}
      }
 
@@ -765,7 +779,10 @@ document {
 	  (symbol==, Ideal, Ideal), (symbol==, MutableMatrix, MutableMatrix), (symbol ==,Boolean,Boolean),
 	  (symbol ==,CC,CC), (symbol ==,CC,QQ), (symbol ==,CC,RR), (symbol ==,CC,ZZ), (symbol ==,Matrix,Number),
 	  (symbol ==,Number,Matrix), (symbol ==,QQ,CC), (symbol ==,QQ,QQ), (symbol ==,QQ,RR), (symbol ==,RR,CC),
-	  (symbol ==,RR,QQ), (symbol ==,RR,RR), (symbol ==,RR,ZZ), (symbol ==,RingElement,ZZ), (symbol ==,Sequence,Sequence),
+	  (symbol ==,RR,QQ), (symbol ==,RR,RR), (symbol ==,RR,ZZ),
+      (symbol ==,QQ,RRi), (symbol ==,ZZ, RRi), (symbol ==, RR, RRi),
+      (symbol ==,RRi,QQ), (symbol ==,RRi, ZZ), (symbol ==,RRi, RR),
+      (symbol ==,RRi,RRi), (symbol ==,RingElement,ZZ), (symbol ==,Sequence,Sequence),
 	  (symbol ==,String,String), (symbol ==,Symbol,Symbol), (symbol ==,ZZ,CC), (symbol ==,ZZ,RR),
 	  (symbol ==,ZZ,RingElement), (symbol ==,ZZ,ZZ), (symbol==, Module, Module), (symbol==, Vector, Vector),
 	  (symbol==, BettiTally, BettiTally), (symbol==, VisibleList, VisibleList),
@@ -880,6 +897,13 @@ document {
       	  "image matrix {{2,a},{1,5}} == R^2",
       	  "image matrix {{2,a},{0,5}} == R^2"
 	  },
+     HEADER3 "Intervals",
+        PARA { "If either side of the equality is an ", TO "RRi", ", the equality is an equality of sets." },
+    EXAMPLE {
+        "interval(1,3) == interval(1,3)",
+        "interval(1/2) == 1/2",
+        "interval(1/3) == 1/3"
+    },
      PARA{
 	  "It may happen that for certain types of objects, there is no method installed (yet)
 	  for testing mathematical equality, in which case an error message will be

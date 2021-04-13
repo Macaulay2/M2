@@ -110,13 +110,14 @@ document {
      }
 
 document {
-     Key => {log,(log, RR),(log, QQ),(log, ZZ),(log,CC),(log,QQ,CC),(log,RR,CC),(log,ZZ,CC),
+     Key => {log,(log, RR),(log, QQ),(log, ZZ),(log,CC),(log, RRi),(log,QQ,CC),(log,RR,CC),(log,ZZ,CC),
 	  (log, ZZ, ZZ),(log, QQ, ZZ),(log, ZZ, QQ),(log, QQ, QQ),(log, RR, ZZ),
-	  (log, ZZ, RR),(log, QQ, RR),(log, RR, QQ),(log, RR, RR)},
+	  (log, ZZ, RR),(log, QQ, RR),(log, RR, QQ),(log, RR, RR),
+      (log, QQ, RRi), (log, RR, RRi), (log, RRi, QQ), (log, RRi, RR), (log, RRi, RRi), (log, RRi, ZZ),(log, ZZ, RRi)},
      Headline => "logarithm function",
-     Usage => "log x\nlog(b,x)\nlog_b x",
-     Inputs => { "x" => RR, "b" => RR => {"the base for the logarithm"} },
-     Outputs => { { "the logarithm of ", TT "x"} },
+     Usage => "log x\nlog(b,x)\nlog_b x\nlog I\nlog(b,I)\nlog_b I\nlog(J,x)\nlog_J x\nlog(J,I)\nlog_J I",
+Inputs => { "x" => RR, "b" => RR => {"the base for the logarithm"}, "I" => RRi, "J" => RRi => {"an interval of bases for the logarithm"} },
+Outputs => { { "the logarithm of ", TT "x"}, RRi => {"an interval containing the logarithms of points of ", TT "I"}, RRi => {"an interval containing the logarithms for bases in ", TT "J"} },
      EXAMPLE lines ///
 	  log 10
 	  log_2 10
@@ -124,11 +125,13 @@ document {
      ///
      }
 document {
-     Key => {sqrt,(sqrt, CC),(sqrt, QQ),(sqrt, ZZ),(sqrt, RR)},
+     Key => {sqrt,(sqrt, CC),(sqrt, QQ),(sqrt, ZZ),(sqrt, RR), (sqrt, RRi)},
      Headline => "square root function",
-     Usage => "sqrt x",
-     Inputs => { "x" => RR },
-     Outputs => { { "the square root of ", TT "x"} },
+Usage => "sqrt x\nsqrt I",
+     Inputs => { "x" => RR, "I" => RRi },
+     Outputs => { { "the square root of ", TT "x"},
+RRi => { "an interval containing the square roots of the points of ", TT "I" }
+},
      EXAMPLE lines ///
      sqrt 2p200
      sqrt (+ii)

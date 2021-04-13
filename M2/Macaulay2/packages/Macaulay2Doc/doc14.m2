@@ -1,6 +1,6 @@
 --		Copyright 2008 by Daniel R. Grayson
 
-document { Key => {size2, (size2,CC), (size2,RR), (size2,ZZ)},
+document { Key => {size2, (size2,CC), (size2,RR), (size2,ZZ), (size2,RRi)},
      Usage => "size2 x",
      Headline => "number of binary digits to the left of the point",
      Inputs => {"x" => Number},
@@ -59,21 +59,25 @@ document { Key => {commonRing, (commonRing,List)},
      	  ///
      }
 
-document { Key => {log1p,(log1p, QQ),(log1p, ZZ),(log1p, RR)},
-     Usage => "log1p x",
+document { Key => {log1p,(log1p, QQ),(log1p, ZZ),(log1p, RR),(log1p, RRi)},
+     Usage => "log1p x\nlog1p I",
      Headline => "logarithm of 1+x",
-     Inputs => { "x" },
-     Outputs => { RR => { "the logarithm of ", TT "1+x" }},
+     Inputs => { "x", "I" => RRi },
+     Outputs => { RR => { "the logarithm of ", TT "1+x" },
+RRi => { "an interval containing logarithm of 1 plus the points of ", TT "I" }
+},
      EXAMPLE lines ///
 log1p 1p100e-10
 log(1 + 1p100e-10)
      ///
      }
-document { Key => {expm1,(expm1, ZZ),(expm1, RR),(expm1, QQ)},
-     Usage => "expm1 x",
+document { Key => {expm1,(expm1, ZZ),(expm1, RR),(expm1, QQ),(expm1,RRi)},
+     Usage => "expm1 x\nexpm1 I",
      Headline => "exponential minus 1",
-     Inputs => { "x" },
-     Outputs => { RR => { "the quantity ", TT "exp(x)-1" }},
+     Inputs => { "x" , "I"=>RRi},
+     Outputs => { RR => { "the quantity ", TT "exp(x)-1" },
+RRi => { "an interval containing the exponential of the points of ", TT "I", " minus one"}
+},
      EXAMPLE lines ///
      	  expm1 1p100e-10
      	  exp(1p100e-10)-1
@@ -201,11 +205,13 @@ document {
      ///,
      PARA {"See ", wikipedia "Hyperbolic function", "."}
      }
-document { Key => {sec,(sec, ZZ),(sec,CC),(sec, RR),(sec, QQ)},
-     Usage => "sec x",
+document { Key => {sec,(sec, ZZ),(sec,CC),(sec, RR),(sec, QQ),(sec, RRi)},
+     Usage => "sec x\nsec I",
      Headline => "secant",
-     Inputs => { "x" },
-     Outputs => { RR => { "the secant of ", TT "x" }},
+     Inputs => { "x", "I" => RRi },
+     Outputs => { RR => { "the secant of ", TT "x" },
+RRi => { "an interval containing the secants of the points of ", TT "I" }
+},
      EXAMPLE lines ///
      	  sec(pi/3)
      ///,
@@ -233,11 +239,13 @@ document { Key => {cot,(cot, ZZ),(cot, RR),(cot,CC),(cot, QQ)},
      PARA {"See ", wikipedia "Trigonometric function", "."}
 
      }
-document { Key => {sech,(sech,CC),(sech, QQ),(sech, ZZ),(sech, RR)},
-     Usage => "sech x",
+document { Key => {sech,(sech,CC),(sech, QQ),(sech, ZZ),(sech, RR),(sech, RRi)},
+     Usage => "sech x\nsech I",
      Headline => "hyperbolic secant",
-     Inputs => { "x" },
-     Outputs => { RR => { "the hyperbolic secant of ", TT "x" }},
+     Inputs => { "x", "I" => RRi },
+     Outputs => { RR => { "the hyperbolic secant of ", TT "x" },
+     RRi => { "an interval containing the hyerbolic secants of the points of ", TT "I" }
+},
      EXAMPLE lines ///
      	  sech(pi/3)
      ///,
