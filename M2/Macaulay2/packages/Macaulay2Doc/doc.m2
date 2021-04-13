@@ -257,7 +257,15 @@ document {
 	  (symbol +,ZZ,QQ),
 	  (symbol +,ZZ,RR),
 	  (symbol +,ZZ,ZZ),
-	  (symbol +, RingElement, GradedModuleMap),
+      (symbol +, QQ, RRi),
+      (symbol +, RR, RRi),
+      (symbol +, RRi, QQ),
+      (symbol +, RRi, RR),
+      (symbol +, RRi),
+      (symbol +, RRi, RRi),
+      (symbol +, RRi, ZZ),
+      (symbol +, ZZ, RRi),
+      (symbol +, RingElement, GradedModuleMap),
 	  (symbol +, Matrix, Number),
 	  (symbol +, ZZ, ChainComplexMap),
 	  (symbol +, ChainComplexMap, ZZ),
@@ -288,6 +296,13 @@ document {
      	  M = matrix{{1,2,3},{2,3,4},{3,4,6}}
 	  M+1, M+2
      ///,
+    HEADER3 "Intervals",
+    PARA { "If one of the addends is an ", TO "RRi", ", the output is an interval containing all sums of pairs in the addends." },
+    EXAMPLE {
+        "2+interval(1,3)",
+        "interval(1,3)+interval(-1,2)",
+        "interval(-1,1)+interval(-1,1)"
+    },
      SeeAlso =>{ "plus", "sum"}
      }
 
@@ -346,6 +361,14 @@ document {
 	  (symbol -,ZZ,QQ),
 	  (symbol -,ZZ,RR),
 	  (symbol -,ZZ,ZZ),
+      (symbol -, QQ, RRi),
+      (symbol -, RR, RRi),
+      (symbol -, RRi),
+      (symbol -, RRi, QQ),
+      (symbol -, RRi, RR),
+      (symbol -, RRi, RRi),
+      (symbol -, RRi, ZZ),
+      (symbol -, ZZ, RRi),
 	  (symbol -, Matrix, RingElement),
 	  (symbol -, Matrix),
 	  (symbol -, RingElement, Matrix),
@@ -365,6 +388,13 @@ document {
      	  M = matrix{{1,2,3},{2,3,4},{3,4,6}}
 	  M-1, M-2
      ///,
+     HEADER3 "Intervals",
+     PARA { "If one of the inputs is an ", TO "RRi", ", the output is an interval containing all differences of pairs in the inputs." },
+     EXAMPLE {
+          "2-interval(1,3)",
+          "interval(1,3)-interval(-1,2)",
+          "interval(-1,1)-interval(-1,1)"
+     },
      SeeAlso =>{ "difference", "minus"}
      }
 
@@ -398,8 +428,15 @@ document {
 	  (symbol /,ZZ,CC),
 	  (symbol /,ZZ,QQ),
 	  (symbol /,ZZ,RR),
-	  (symbol /,ZZ,ZZ)
-	  },
+	  (symbol /,ZZ,ZZ),
+      (symbol /, QQ, RRi),
+      (symbol /, RR, RRi),
+      (symbol /, RRi, QQ),
+      (symbol /, RRi, RR),
+      (symbol /, RRi, RRi),
+      (symbol /, RRi, ZZ),
+      (symbol /, ZZ, RRi)
+},
      Headline => "a binary operator, usually used for division",
      Usage => "x / y",
      "This operator is currently used in several ways in Macaulay2.",
@@ -413,6 +450,13 @@ document {
      2/3
      2./3
      ///,
+     HEADER3 "Intervals",
+     PARA { "If one of the inputs is an ", TO "RRi", ", the output is an interval containing all quotients of pairs in the inputs." },
+     EXAMPLE {
+         "2/interval(1,3)",
+         "interval(-1,2)/interval(1,3)",
+         "interval(1,2)/interval(1,2)"
+     },
      SeeAlso => { "//"}
      }
 

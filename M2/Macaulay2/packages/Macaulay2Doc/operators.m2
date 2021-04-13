@@ -69,14 +69,16 @@ document {
      }
 
 document {
-     Key => {abs,(abs, RR),(abs, CC),(abs, ZZ),(abs, QQ)},
+     Key => {abs,(abs, RR),(abs, CC),(abs, ZZ),(abs, QQ),(abs, RRi)},
      Headline => "absolute value function",
-	Usage => "abs x",
+	Usage => "abs x\nabs I",
 	Inputs => {
-		"x" => "a number"
+		"x" => "a number",
+        "I" => RRi
 		},
 	Outputs => {
-		{"the absolute value of ", TT "x"}
+		{"the absolute value of ", TT "x"},
+    RRi => {"an interval containing the absolute values of all the point of ", TT "I"}
 		},
      TT "abs x", " computes the absolute value of ", TT "x", ".",
 	EXAMPLE {
@@ -98,11 +100,12 @@ document {
      }
 
 document {
-     Key => {exp,(exp,RR),(exp,CC),(exp,ZZ),(exp,QQ),(exp,Constant)},
+     Key => {exp,(exp,RR),(exp,CC),(exp,ZZ),(exp,QQ),(exp,Constant),(exp,RRi)},
      Headline => "exponential function",
-     Usage => "exp x",
-     Inputs => { "x" => RR },
-     Outputs => { { "the exponential of ", TT "x" } } ,
+     Usage => "exp x\nexp I",
+     Inputs => { "x" => RR ,"I"=>RRi},
+    Outputs => { { "the exponential of ", TT "x" },
+        RRi=>{"an interval containing the exponentials of points of ", TT "I"} } ,
      EXAMPLE lines ///
      exp 1p300
      exp(pi*ii)
