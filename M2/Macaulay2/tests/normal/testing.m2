@@ -10,5 +10,7 @@ assert instance(pkgtest, TestInput)
 assert Equation(locate pkgtest, (testpkg, 3, 1, 4, 1,,))
 assert Equation(toString pkgtest, testpkg | ":3:1-4:1:")
 assert Equation(net pkgtest, (testpkg | ":3:1-4:1:")^-1)
-assert Equation(code pkgtest, "--" | toAbsolutePath testpkg |
+expectedCode =  toAbsolutePath testpkg |
     ":4: location of test code" | newline | "1 + 1 == 2")
+assert Equation(code pkgtest, expectedCode)
+assert Equation(code 0, expectedCode)
