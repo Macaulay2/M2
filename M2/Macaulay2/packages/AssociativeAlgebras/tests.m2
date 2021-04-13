@@ -1886,106 +1886,8 @@ DEVELOPMENT ///
   f2 = b*c + 2*c*b + a^2
   f3 = c*a + 2*a*c + b^2
   I = ideal (f1,f2,f3)
-  Igb = elapsedTime NCGB(I,20);  
-
-  restart
-  debug needsPackage "AssociativeAlgebras"
-  kk = ZZ/11
-  Lambda = kk <|a,b,c|>
-  f1fac = {{a,b},{2*b,a},{c,c}}
-  f2fac = {{b,c},{2*c,b},{a,a}}
-  f3fac = {{c,a},{2*a,c},{b,b}}
-  f1 = a*b + 2*b*a + c^2
-  f2 = b*c + 2*c*b + a^2
-  f3 = c*a + 2*a*c + b^2
-  I = ideal{f1,f2,f3}
-  makeMonic = f -> f*(leadCoefficient f)^(-1)
-
-  Idm1 = I
-  d = 3
-  N = 18
-  
-  -- all the time consuming work is in reducing x.w where w is a reduced word of degree d-2 or d-1
-  -- and x is a generator.  if we can do this fast, then we are in good shape.
-
-  -- let w be a reduced word.  write w as v.y for a variable y.  can we use the fact that we can save
-  -- how to reduce x.v as a sum to help here?
-
-  -- w deg d-1
-  -- x.w = x.w'y = \sum c_i w_i.y
-  
-  -- A_1 ** A_(d-2) ** A_1 --> A_1 ** A_(d-1) --> A_d
-  -- A_1 ** A_(d-2) ** A_1 --> A_(d-1) ** A_1 --> A_d
-  
-  elapsedTime for d from 3 to N do (
-     -- define quotient so far for reductions
-     tempA = freeAlgebraQuotient(Lambda,Idm1,gens Idm1);
-     -- maps to get back and forth to/from free algebra
-     phi = map(Lambda,tempA,gens Lambda);
-     psi = map(tempA,Lambda,gens tempA);
-     -- basis of A_(d-1)
-     elapsedTime Adm1 = flatten entries forceNCBasis(d-1,tempA);
-     -- Adm1mat = matrix {Adm1};
-     -- basis of A_1 \otimes A_(d-1) considered as words in the tensor algebra
-     elapsedTime A1Adm1 = ((gens Lambda) ** (Adm1 / phi)) / product // sort;
-     -- basis of the complementary degree.  In this case, degree d-2 since all relations are quadratic
-     elapsedTime Acomp = flatten entries forceNCBasis(d-2,tempA);
-     
-     -- lots of time is spent here
-     -- compute the multiplication maps from degree d-2 to d-1 by the variables
-     -- this is a nested hash table
-
-     --elapsedTime multMaps = hashTable apply(gens tempA, v -> (
-     --	     (v,hashTable apply(Acomp, m -> (m,v*m)))));
-
-     elapsedTime multMapsTemp = entries ((transpose matrix {Acomp}) * (vars tempA));
-     --elapsedTime multMapsTemp2 = entries ((transpose vars tempA) * (matrix {Acomp}));
-     elapsedTime multMaps = hashTable apply(numgens tempA, v -> (
-     	     (tempA_v,hashTable apply(#Acomp, w -> (Acomp#w,multMapsTemp#w#v)))));
-     
-     -- use this information to compute a basis of Nd
-     -- remember this calculation when it happens below
-     elapsedTime Nd = flatten for m in Acomp list (
-             {apply(f1fac, p -> {psi p#0, multMaps#(psi p#1)#m}),
-              apply(f2fac, p -> {psi p#0, multMaps#(psi p#1)#m}),
-              apply(f3fac, p -> {psi p#0, multMaps#(psi p#1)#m})}
-          );
-     -- lift this information to the free algebra and take the product, then take
-     -- coefficients of these elements in A_1 \otimes A_(d-1) (thought of as words in Lambda)
-     elapsedTime Ndcoeffs = last coefficients(matrix {apply(Nd, p -> apply(p, q -> q / phi // product)) / sum}, Monomials=>A1Adm1);
-     Ndcoeffs = sub(Ndcoeffs, kk);
-
-     -- basis of A_d (so far, anyway)
-     elapsedTime Ad = flatten entries forceNCBasis(d,tempA);
-
-     -- most time is spent here
-     -- matrix representation of the projection map from A_1 \otimes A_(d-1) --> A_d
-     elapsedTime projMap = sub(last coefficients(psi matrix {A1Adm1}, Monomials => Ad),kk);
-
-     -- matrix representation of the inclusion map from A_d --> A_1 \otimes A_(d-1)
-     elapsedTime inclMap = sub(last coefficients(phi matrix {Ad}, Monomials => A1Adm1),kk);
-     -- project, lift back up and take mingens to autoreduce
-     elapsedTime downAndBack = mingens image (inclMap * projMap * Ndcoeffs);
-     
-     -- lift these new elements to the free algebra
-     elapsedTime newElts = flatten entries ((matrix {A1Adm1}) * downAndBack);
-     -- enlarge ideal and move on to the next degree
-     Idm1 = Idm1 + ideal newElts;
-     << "Completed degree " << d << "." << endl;
-  )
--- only about 15x slower than engine code at the moment.
-///
-
-DEVELOPMENT ///
--- 3dim sklyanin example
-  restart
-  needsPackage "AssociativeAlgebras"
-  Lambda = (ZZ/11) <|a,b,c|>
-  f1 = a*b + 2*b*a + c^2
-  f2 = b*c + 2*c*b + a^2
-  f3 = c*a + 2*a*c + b^2
-  I = ideal (f1,f2,f3)
-  Igb = elapsedTime NCGB(I,18);  
+  Igb = elapsedTime NCGB(I,19);  
+  (flatten entries Igb) / degree // tally
 
   restart
   debug needsPackage "AssociativeAlgebras"
@@ -2002,7 +1904,7 @@ DEVELOPMENT ///
 
   Idm1 = I
   d = 3
-  N = 18
+  N = 19
   
   -- all the time consuming work is in reducing x.w where w is a reduced word of degree d-2 or d-1
   -- and x is a generator.  if we can do this fast, then we are in good shape.
@@ -2074,82 +1976,117 @@ DEVELOPMENT ///
      Idm1 = Idm1 + ideal newElts;
      << "Completed degree " << d << "." << endl;
   )
--- only about 15x slower than engine code at the moment.
+-- only about 4x slower than engine code at the moment.
 ///
 
 DEVELOPMENT ///
 -- 4dim sklyanin example
   restart
   needsPackage "AssociativeAlgebras"
-  kk = ZZ/11
-  Lambda = kk<|x,y,z,w|>
+  Lambda = (ZZ/11) <|x,y,z,w|>
   f1 = x*y-y*x-7*z*w-7*w*z
   f2 = 3*x*z-4*y*w-3*z*x-4*w*y
   f3 = 31*x*w+25*y*z+25*z*y-31*w*x
   f4 = x*y+y*x-z*w+w*z
   f5 = x*z+y*w+z*x-w*y
   f6 = x*w-y*z+z*y+w*x
-
   I = ideal (f1,f2,f3,f4,f5,f6)
-  Igb = elapsedTime NCGB(I,10);  
+  Igb = elapsedTime NCGB(I,12);  
+  (flatten entries Igb) / degree // tally
 
   restart
   debug needsPackage "AssociativeAlgebras"
   kk = ZZ/11
   Lambda = kk <|x,y,z,w|>
-  f1fac = {{x,y},{-y,x},{-7*z,w},{-7*w,z}}
-  f2fac = {{3*x,z},{-4*y,w},{-3*z,x},{-4*w,y}}
-  f3fac = {{31*x,w},{25*y,z},{25*z,y},{-31*w,x}}
-  f4fac = {{x,y},{y,x},{-z,w},{w,z}}
-  f5fac = {{x,z},{y,w},{z,x},{-w,y}}
-  f6fac = {{x,w},{-y,z},{z,y},{w,x}}
-  f1 = x*y-y*x-7*z*w-7*w*z
-  f2 = 3*x*z-4*y*w-3*z*x-4*w*y
-  f3 = 31*x*w+25*y*z+25*z*y-31*w*x
-  f4 = x*y+y*x-z*w+w*z
-  f5 = x*z+y*w+z*x-w*y
-  f6 = x*w-y*z+z*y+w*x
-  I = ideal{f1,f2,f3,f4,f5,f6}
+  -- need to interreduce these input polys so the input is a GB so far
+  f1fac = {{x,y},{z,-4*w},{w,-3*z}}
+  f2fac = {{x,z},{z,-3*x},{w,2*y}}
+  f3fac = {{x,w},{z,-5*y},{w,5*x}}
+  f4fac = {{y,x},{z,3*w},{w,4*z}}
+  f5fac = {{y,w},{z,4*x},{w,-3*y}}
+  f6fac = {{y,z},{z,5*y},{w,4*x}}
+  facfs = {f1fac,f2fac,f3fac,f4fac,f5fac,f6fac};
+  I = ideal apply(facfs, facf -> facf / product // sum)
+  
   makeMonic = f -> f*(leadCoefficient f)^(-1)
 
   Idm1 = I
   d = 3
-  N = 10
+  N = 11
+  
+  -- all the time consuming work is in reducing x.w where w is a
+  -- reduced word of degree d-2 or d-1 and x is a generator.  if we
+  -- can do this fast, then we are in good shape.
+
+  -- let w be a reduced word.  write w as v.y for a variable y.  can
+  -- we use the fact that we can save how to reduce x.v as a sum to
+  -- help here?
+
+  -- w deg d-1
+  -- x.w = x.w'y = \sum c_i w_i.y
+  
+  -- A_1 ** A_(d-2) ** A_1 --> A_1 ** A_(d-1) --> A_d
+  -- A_1 ** A_(d-2) ** A_1 --> A_(d-1) ** A_1 --> A_d
   
   elapsedTime for d from 3 to N do (
+     -- define quotient so far for reductions
      tempA = freeAlgebraQuotient(Lambda,Idm1,gens Idm1);
+     -- maps to get back and forth to/from free algebra
      phi = map(Lambda,tempA,gens Lambda);
      psi = map(tempA,Lambda,gens tempA);
+     -- basis of A_(d-1)
      elapsedTime Adm1 = flatten entries forceNCBasis(d-1,tempA);
-     elapsedTime A1Adm1 = ((gens Lambda) ** (Adm1 / phi)) / product // sort;
+
+     -- basis of A_(d-1) \otimes A_1 considered as words in the tensor algebra     
+     elapsedTime Adm11mat = ncMatrixMult(transpose matrix {Adm1 / phi}, vars Lambda);
+     elapsedTime Adm11 = reverse flatten entries Adm11mat;
+
+     -- basis of the complementary degree.  In this case, degree d-2 since all relations are quadratic
      elapsedTime Acomp = flatten entries forceNCBasis(d-2,tempA);
-     -- some time is spent here
-     elapsedTime multMaps = hashTable apply(gens tempA, v -> (
-	     tempMult1 := leftMultiplicationMap(v,d-2,ForceNCBasis=>true);
-	     tempMult2 := flatten entries ((matrix {Adm1}) * tempMult1);
-	     (v,hashTable apply(#Acomp, i -> (Acomp#i,tempMult2#i)))));
-     elapsedTime Nd = flatten for m in Acomp list (
-             {apply(f1fac, p -> {psi p#0, multMaps#(psi p#1)#m}),
-              apply(f2fac, p -> {psi p#0, multMaps#(psi p#1)#m}),
-              apply(f3fac, p -> {psi p#0, multMaps#(psi p#1)#m}),
-              apply(f4fac, p -> {psi p#0, multMaps#(psi p#1)#m}),
-              apply(f5fac, p -> {psi p#0, multMaps#(psi p#1)#m}),
-              apply(f6fac, p -> {psi p#0, multMaps#(psi p#1)#m})
-	      }
-          );
-     elapsedTime Ndcoeffs = last coefficients(matrix {apply(Nd, p -> apply(p, q -> q / phi // product)) / sum}, Monomials=>A1Adm1);
-     Ndcoeffs = sub(Ndcoeffs, kk);
-     -- most time is spent here
-     elapsedTime Ad = flatten entries forceNCBasis(d,tempA);
-     elapsedTime projMap = sub(last coefficients(matrix {A1Adm1 / psi}, Monomials => Ad),kk);
-     elapsedTime inclMap = sub(last coefficients(matrix {Ad / phi}, Monomials => A1Adm1),kk);
-     elapsedTime downAndBack = mingens image (inclMap * (mingens image (projMap * Ndcoeffs)));
      
-     elapsedTime newElts = flatten entries ((matrix {A1Adm1}) * downAndBack);
+     -- lots of time is spent here
+     -- compute the multiplication maps from degree d-2 to d-1 by the variables
+     -- this is a nested hash table
+
+     -- elapsedTime multMapsTemp = entries ((transpose matrix {Acomp}) * (vars tempA));
+     elapsedTime multMapsTemp = entries ncMatrixMult(transpose matrix {Acomp},vars tempA);
+     elapsedTime multMaps = hashTable apply(#Acomp, w -> (
+     	     (Acomp#w,hashTable apply(numgens tempA, v -> (tempA_v,multMapsTemp#w#v)))));
+     
+     -- use this information to compute a basis of Nd
+     elapsedTime Nd = flatten for m in Acomp list (
+             apply(facfs, facf -> apply(facf, p -> {multMaps#m#(psi p#0), psi p#1}))
+          );
+     
+     -- lift this information to the free algebra and take the product, then take
+     -- coefficients of these elements in A_(d-1) \otimes A_1 (thought of as words in Lambda)
+     elapsedTime Ndcoeffs = last coefficients(matrix {apply(Nd, p -> apply(p, q -> q / phi // product)) / sum}, Monomials=>Adm11);
+     Ndcoeffs = sub(Ndcoeffs, kk);
+
+     -- basis of A_d (so far, anyway)
+     elapsedTime Ad = flatten entries forceNCBasis(d,tempA);
+
+     -- most time is spent here
+     -- matrix representation of the projection map from A_(d-1) \otimes A_1 --> A_d
+     -- would like to tell system to only look for suffixes
+
+     -- need to save the calculations of psi Adm11 below in a hash table for next iteration's
+     -- Acomp * (vars tempA) in multMapsTemp
+     elapsedTime projMap = sub(last coefficients(psi matrix {Adm11}, Monomials => Ad),kk);
+
+     -- matrix representation of the inclusion map from A_d --> A_(d-1) \otimes A_1
+     elapsedTime inclMap = sub(last coefficients(phi matrix {Ad}, Monomials => Adm11),kk);
+     -- project, lift back up and take mingens to autoreduce
+     elapsedTime downAndBack = mingens image (inclMap * projMap * Ndcoeffs);
+     
+     -- lift these new elements to the free algebra
+     elapsedTime newElts = flatten entries ((matrix {Adm11}) * downAndBack);
+     -- enlarge ideal and move on to the next degree
      Idm1 = Idm1 + ideal newElts;
-     << "New" << endl;
+     << "Completed degree " << d << "." << endl;
   )
 
--- about 200x slower than engine code at the moment
+-- now about 15x slower than engine code at the moment.
 ///
+
 
