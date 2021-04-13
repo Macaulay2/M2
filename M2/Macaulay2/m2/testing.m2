@@ -102,7 +102,9 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
     --
     use pkg;
     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
+    tmp := previousMethodsFound;
     inputs := tests pkg;
+    previousMethodsFound = tmp;
     testKeys := if n == -1 then keys inputs else {n};
     if #testKeys == 0 then printerr("warning: ", toString pkg,  " has no tests");
     --
