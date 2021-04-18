@@ -34,7 +34,7 @@ TEST = method(Options => {FileName => false})
 TEST List   := opts -> testlist   -> apply(testlist, test -> TEST(test, opts))
 TEST String := opts -> teststring -> (
     n := currentPackage#"test number";
-    currentPackage#"test inputs"#n = new TestInput from if opts.FileName then (
+    currentPackage#"test inputs"#n = TestInput if opts.FileName then (
         testCode := get teststring;
         (minimizeFilename teststring, depth net testCode + 1, testCode)
         ) else
@@ -86,7 +86,7 @@ loadTestDir := pkg -> (
 tests = method()
 tests Package := pkg -> (
     if not pkg#?"test directory loaded" then loadTestDir pkg;
-    new HashTable from pkg#"test inputs"
+    previousMethodsFound = new HashTable from pkg#"test inputs"
     )
 tests String := pkg -> tests needsPackage(pkg, LoadDocumentation => true)
 
@@ -102,7 +102,9 @@ check(ZZ, Package) := opts -> (n, pkg) -> (
     --
     use pkg;
     if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
+    tmp := previousMethodsFound;
     inputs := tests pkg;
+    previousMethodsFound = tmp;
     testKeys := if n == -1 then keys inputs else {n};
     if #testKeys == 0 then printerr("warning: ", toString pkg,  " has no tests");
     --

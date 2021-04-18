@@ -55,8 +55,8 @@ codeFunction := (f,depth) -> (
 			      if instance(val, Function) then codeFunction(val,depth+1) else net val
 			      )))))
 
--- stores previously listed methods or hooks, to be used by (code, ZZ)
-previousMethodsFound := null
+-- stores previously listed methods, hooks, or tests to be used by (code, ZZ)
+previousMethodsFound = null
 
 code = method(Dispatch => Thing)
 code Nothing    := identity

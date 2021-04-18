@@ -35,6 +35,11 @@ doc ///
       locate t
       code t
     Text
+      Passing only the key of the desired test to @TO code@ is
+      supported as well.
+    Example
+      code 0
+    Text
       You may also pass a @TT "TestInput"@ object to @TO edit@ to open the
       code in your favorite editor.
 ///
