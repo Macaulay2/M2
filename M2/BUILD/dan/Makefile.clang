@@ -16,5 +16,5 @@ include Makefile
 
 # Local Variables:
 # mode: Makefile
-# compile-command: "time make -f Makefile.clang"
+# compile-command: "time make -f Makefile.clang "
 # End:
