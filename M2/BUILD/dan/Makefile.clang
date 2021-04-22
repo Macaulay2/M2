@@ -1,5 +1,11 @@
-# ubuntu: install with sudo apt install clang
+# ubuntu: install with `sudo apt install clang`
+# homebrew: install with `brew install llvm`
 
+# this is oriented toward Mac OS X:
+# homebrew populates /usr/local for us:
+PATH := /usr/local/opt/llvm/bin:$(PATH)
+CPPFLAGS := -I/usr/local/opt/llvm/include -I/usr/local/include $(CPPFLAGS)
+LDFLAGS  := -L/usr/local/opt/llvm/lib     -L/usr/local/lib     $(LDFLAGS)
 CC  = clang
 CXX = clang++
 DIRSUFF = -clang
@@ -10,5 +16,5 @@ include Makefile
 
 # Local Variables:
 # mode: Makefile
-# compile-command: "time make -f Makefile.clang"
+# compile-command: "time make -f Makefile.clang "
 # End:

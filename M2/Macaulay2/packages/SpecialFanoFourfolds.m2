@@ -9,12 +9,12 @@
 
 newPackage(
     "SpecialFanoFourfolds",
-    Version => "1.0", 
-    Date => "November 20, 2020",
+    Version => "1.1", 
+    Date => "February 27, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
     Keywords => {"Algebraic Geometry"},
-    PackageImports => {"PrimaryDecomposition"},
+    PackageImports => {"PrimaryDecomposition","MultiprojectiveVarieties"},
     PackageExports => {"Resultants","Cremona"},
     DebuggingMode => false,
     Reload => false
@@ -34,7 +34,6 @@ export{
    "isAdmissible",
    "isAdmissibleGM",
    "detectCongruence",
-   "coneOfLines",
    "ideals",
    "tables",
    "unirationalParametrization",
@@ -47,9 +46,14 @@ export{
 
 needsPackage "IntegralClosure"; -- for method: normalization
 needsPackage "CharacteristicClasses"; -- for method: eulerCharacteristic
-needsPackage("RationalMaps",DebuggingMode=>false); -- for method: inverse2
+needsPackage("RationalMaps",DebuggingMode=>false); -- for method: inverse3
 needsPackage "Resultants";
 needsPackage "Cremona";
+
+importFrom("Cremona",{"secantCone"})
+debug SparseResultants
+debug MultiprojectiveVarieties
+exportFrom(MultiprojectiveVarieties,{"coneOfLines"})
 
 ------------------------------------------------------------------------
 --------------------------- Cubic fourfolds ----------------------------
@@ -178,10 +182,6 @@ specialCubicFourfold (String) := o -> (str) -> specialCubicFourfold(str,ZZ/65521
 
 expression SpecialCubicFourfold := (X) -> expression("Cubic fourfold containing a surface of degree "|toString(X#"surfaceInvariants"_0)|" and sectional genus "|toString(X#"surfaceInvariants"_1));
 
-hasAttribute = value Core#"private dictionary"#"hasAttribute"
-getAttribute = value Core#"private dictionary"#"getAttribute"
-ReverseDictionary = value Core#"private dictionary"#"ReverseDictionary"
-
 net SpecialCubicFourfold := (X) -> (
    if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else "SpecialCubicFourfold"
 );
@@ -273,7 +273,7 @@ fanoMap (SpecialCubicFourfold) := (X) -> (
 parametrize (SpecialCubicFourfold) := (X) -> (
     if X#"parameterization" =!= null then return X#"parameterization";
     Psi := fanoMap X;
-    X#"parameterization" = inverse2(Psi|X#"coordinateRing")
+    X#"parameterization" = inverse3(Psi|X#"coordinateRing")
 );
 
 associatedK3surface = method(Options => {Verbose => false});
@@ -290,7 +290,7 @@ associatedK3surface (SpecialCubicFourfold) := o -> (X) -> (
         U = ideal matrix parametrize X;
         I2 = arandom({3},S);
         if o.Verbose then <<"-- computing the surface U' corresponding to another fourfold X'"<<endl;
-        U2 = ideal inverse2(mu|I2);
+        U2 = ideal inverse3(mu|I2);
         if o.Verbose then <<"-- computing the 5 exceptional lines on U and U'"<<endl;
         exceptionalLines = decompose top trim(U+U2);
         if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree 14"<<endl;
@@ -307,7 +307,7 @@ associatedK3surface (SpecialCubicFourfold) := o -> (X) -> (
         U = trim lift(ideal matrix parametrize X,ambient target mu);
         I2 = arandom({3},S);
         if o.Verbose then <<"-- computing the surface U' corresponding to another fourfold X'"<<endl;
-        U2 = trim lift(ideal matrix inverse2(mu|I2),ambient target mu);
+        U2 = trim lift(ideal matrix inverse3(mu|I2),ambient target mu);
         if o.Verbose then <<"-- computing the exceptional conic on U and U'"<<endl;
         exceptionalConics = {top trim(U+U2)};
         if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree 14"<<endl;
@@ -532,7 +532,7 @@ find3Eminus1secantCurveOfDegreeE (Ideal,SpecialCubicFourfold) := o -> (p,X) -> (
    Quartics11secant := {};
    Quintics14secant := {};
    Sectics17secant := {};
-   T := secantCone(S,p);
+   T := secantCone(flatten entries coefficients parametrize p,S);
    try assert(dim T -1 == 1) else error "expected secant cone to be one dimensional";
    degT := degree T;
    V := coneOfLines(image phi,phi p);
@@ -593,27 +593,6 @@ find3Eminus1secantCurveOfDegreeE (Ideal,SpecialCubicFourfold) := o -> (p,X) -> (
    if conics5secant + cubics8secant + quartics11secant + quintics14secant == degE then return ({lines2secant+degT,conics5secant,cubics8secant,quartics11secant,quintics14secant,sectics17secant},Out);
    if o.Verbose then <<"number 17-secant sectics to S passing through p: "<<sectics17secant<<endl;
    return ({lines2secant+degT,conics5secant,cubics8secant,quartics11secant,quintics14secant,sectics17secant},Out);
-);
-
-secantCone = method();
-secantCone (Ideal,Ideal) := (I,p) -> (
-   if ring p =!= ring I then error "expected same ring";
-   x := flatten entries coefficients parametrize p;
-   try assert(#x == numgens ring I and matrix{x} != 0) else error("expected a point of PP^"|toString(numgens ring I -1));
-   PN := ring I;
-   N := numgens PN -1;
-   K := coefficientRing PN;
-   s := local s; t := local t; u := local u; v := local v; 
-   R := K[u,v,s_0..s_N,t_0..t_N,MonomialOrder=>Eliminate (N+3)];
-   S := (map(R,PN,{s_0..s_N})) I;
-   T := (map(R,PN,{t_0..t_N})) I;
-   Inc := ideal(sub(matrix{x},R) - u *  matrix{{s_0..s_N}} - v *  matrix{{t_0..t_N}}) + S + T;
-   z := local z;
-   R = K[u,v,t_0..t_N,z_0..z_N,MonomialOrder=>Eliminate (N+3)];
-   Inc = sub(ideal selectInSubring(1,gens gb Inc),R) + ideal(u * sub(matrix{x},R) + v * matrix{{t_0..t_N}} - matrix{{z_0..z_N}});
-   R = K[z_0..z_N];
-   J := sub(ideal selectInSubring(1,gens gb Inc),R);
-   trim (map(PN,R,vars PN)) J
 );
 
 detectCongruence = method();
@@ -752,7 +731,7 @@ randomS42data (Ring) := (K) -> (
    --
    try assert(dim T -1 == 2 and codim T == 6 and degree T == 9 and genera T == {0,2,8}) else error "internal error encountered";
    -- 
-   eta := rationalMap(quotient image psi,source psi,gens randomSigma22OnDelPezzoFivefold(image psi,psi point source psi));
+   eta := rationalMap(quotient image psi,source psi,gens ideal SchubertCycle22OnLinearSectionOfG14(Var image psi));
    S42 := eta T;
    --
    try assert(dim S42 -1 == 2 and degree S42 == 9 and genera S42 == {-5, 2, 8} and degrees S42 == toList(9:{3})) else error "internal error encountered";
@@ -763,7 +742,18 @@ randomS42data (Ring) := (K) -> (
 randomS48 = method();
 randomS48 (Ring) := (K) -> (
    (psi,D) := first randomS42data(K);
-   g := rationalMap(target psi,source psi,gens randomSigma31OnDelPezzoFivefold(image psi,psi point source psi));
+   DP5 := image psi;
+   p := psi point source psi;
+   V := coneOfLines(DP5,p);
+   j := parametrize ideal image basis(1,V);
+   V' := j^* V;
+   p' := j^* p;
+   h := (rationalMap p')|V';
+   V'' := image h;
+   e := point V'';
+   P := j trim lift(h^* quotient(coneOfLines(V'',e),e),ambient source h);
+   assert(? P == "plane in PP^8" and isSubset(DP5,P));
+   g := rationalMap(target psi,source psi,gens P);
    (psi * g) D
 );
 
@@ -846,7 +836,7 @@ specialGushelMukaiFourfold (Ideal) := o -> (S) -> (
         return X;
     );
     if r == 6 then (
-        j := embedDelPezzoSixfoldInG14 R;
+        j := toGrass R;
         I' := trim lift(j S,ambient target j);
         L := ideal image basis(1,I');
         if codim L <= 0 then error "expected linear span of the surface to be of dimension at most 8";
@@ -1038,7 +1028,7 @@ fanoMap (SpecialGushelMukaiFourfold) := (X) -> (
 parametrize (SpecialGushelMukaiFourfold) := (X) -> (
     if X#"parameterization" =!= null then return X#"parameterization";
     Psi := fanoMap X;
-    X#"parameterization" = inverse2(Psi|X#"coordinateRing")
+    X#"parameterization" = inverse3(Psi|X#"coordinateRing")
 );
 
 associatedK3surface (SpecialGushelMukaiFourfold) := o -> (X) -> (
@@ -1054,7 +1044,7 @@ associatedK3surface (SpecialGushelMukaiFourfold) := o -> (X) -> (
         U = ideal matrix parametrize X;
         I2 = trim((ideal source mu) + (ideal arandom(2,S)));
         if o.Verbose then <<"-- computing the surface U' corresponding to another fourfold X'"<<endl;
-        U2 = ideal matrix inverse2(mu|I2);
+        U2 = ideal matrix inverse3(mu|I2);
         if o.Verbose then <<"-- computing the two exceptional lines"<<endl;
         P := ideal 1; while dim P != 1 or degree P != 2 do P = plucker(trim(U+U2),1); 
         exceptionalLines := apply(decompose trim lift(P,ambient ring P),l -> sub(plucker sub(l,ring P),vars ring U));
@@ -1071,7 +1061,7 @@ associatedK3surface (SpecialGushelMukaiFourfold) := o -> (X) -> (
         if o.Verbose then <<"-- computing the normalization of U"<<endl;
         normU := normalization(quotient U,Verbose=>false);
         if o.Verbose then <<"-- inverting the normalization of U"<<endl;
-        f = inverse2 normU;
+        f = inverse3 normU;
         return (mu,U,{},f);
     );
     if X#"label" === 17 then (
@@ -1112,7 +1102,7 @@ fromDP5toG14 (SpecialGushelMukaiFourfold) := (X) -> (
        Y := grassmannianHull X;
        local f;
        try (
-          f = embedDelPezzoFivefoldInG14 Y;
+          f = toGrass Y;
           X#"isGushelType" = false;
        ) else try(
             q := trim(Y + minors(3,jacobian Y,Strategy=>Cofactor));
@@ -1134,17 +1124,7 @@ ringDP5 (SpecialGushelMukaiFourfold) := (X) -> (
 );
 
 pointOnDP5 = method();
-pointOnDP5 (Ideal) := (Y) -> (
-   -- if char ring Y > 0 then return point Y;
-   j := parametrize arandom({1,1,1},ring Y);
-   S := trim (map j) Y;
-   T := quotient(arandom({2,2,2},S),S);
-   i := parametrize ideal image basis(1,T);
-   T = trim (map i) T;
-   L := i dualVariety top ideal jacobian dualVariety T;
-   p := saturate(L + S);
-   j p
-);
+pointOnDP5 (Ideal) := (Y) -> ideal pointOnLinearSectionOfG14 Var Y;
 
 toGrass = method(TypicalValue => RationalMap)
 
@@ -1153,14 +1133,21 @@ toGrass (SpecialGushelMukaiFourfold) := (X) -> (
    X#"mapToGrass" = (fromDP5toG14 X)|(X#"coordinateRing")
 );
 
-toGrass (Ideal) := (X) -> (
-   r := dim X -1;
-   if r == 6 and numgens ring X -1 == 9 and degrees X == toList(5:{2}) then return embedDelPezzoSixfoldInG14 X;
-   if r == 5 and numgens ring X -1 == 8 and degrees X == toList(5:{2}) then return embedDelPezzoFivefoldInG14 X;
-   if r == 4 and numgens ring X -1 == 7 and degrees X == toList(5:{2}) then return embedDelPezzoFourfoldInG14 X;
-   if r == 4 and numgens ring X -1 == 8 and degrees X == toList(6:{2}) then return (embedDelPezzoFivefoldInG14(varietyDefinedBylinearSyzygies X))|X;
-   error "expected the ideal of a Gushel-Mukai fourfold, or of a del Pezzo fourfold/fivefold/sixfold";
+toGrass EmbeddedProjectiveVariety := X -> (
+    K := coefficientRing X;
+    Y6 := Var Grass(1,4,K);
+    if dim X == 6 and dim ambient X == 9 and degrees X == {({2},5)} 
+    then return toRationalMap((findIsomorphism(X,Y6,Verify=>true))||Y6);
+    if dim X == 5 and dim ambient X == 8 and degrees X == {({2},5)} 
+    then return toRationalMap(((findIsomorphism(X,Y5 K,Verify=>true))||(Y5 K)) * (mapY5 K));
+    if dim X == 4 and dim ambient X == 7 and degrees X == {({2},5)} 
+    then return toRationalMap(((findIsomorphism(X,Y4 K,Verify=>true))||(Y4 K)) * (mapY4 K));
+    if dim X == 4 and dim ambient X == 8 and degrees X == {({2},6)} 
+    then return toRationalMap((toGrass Var varietyDefinedBylinearSyzygies ideal X)|(Var X));
+    error "expected a Gushel-Mukai fourfold, or of a del Pezzo fourfold/fivefold/sixfold";
 );
+toGrass Ring := R -> toGrass Var R;
+toGrass Ideal := I -> toGrass Var I;
 
 find2Eminus1secantCurveOfDegreeE = method(Options => {Verbose => true})
 find2Eminus1secantCurveOfDegreeE (Ideal,SpecialGushelMukaiFourfold) := o -> (p,X) -> (
@@ -1371,207 +1358,6 @@ unirationalParametrization (SpecialGushelMukaiFourfold) := (X) -> (
    Psi
 );
 
-------------------------------------------------------------------------
----------------------- Parameterizations of G(1,4) ---------------------
-------------------------------------------------------------------------
-
-coneOfLines = method(TypicalValue => Ideal)
-
-coneOfLines (Ideal,Ideal) := (I,p) -> (
-   if not isPolynomialRing ring I then error "expected ideal in a polynomial ring";
-   if not isHomogeneous I then error "expected a homogeneous ideal";
-   if not isField coefficientRing ring I then error "the coefficient ring needs to be a field";
-   if ring p =!= ring I then error "expected same ring";
-   if not(unique degrees p == {{1}} and dim p -1 == 0 and degree p == 1) then error "expected the ideal of a point"; 
-   a := flatten entries coefficients parametrize p;
-   (f,g) := ChangeCoordinates(a,ring I);
-   I = f I;
-   x := gens ring I;
-   if not isSubset(I,ideal submatrix'(matrix{x},{0})) then error "expected a point on the variety"; 
-   S := (coefficientRing ring I)[delete(x_0,x)][x_0];
-   return trim g sub(ideal flatten entries sub(last coefficients(gens sub(I,S)),coefficientRing S),ring I);
-);
-
-coneOfLines (Ideal,Ideal,ZZ) := (I,p,m) -> ( --undocumented
-   if not isPolynomialRing ring I then error "expected ideal in a polynomial ring";
-   if not isHomogeneous I then error "expected a homogeneous ideal";
-   if not numgens I == 1 then error "the first ideal must be principal";
-   d := degree I;
-   if not isField coefficientRing ring I then error "the coefficient ring needs to be a field";
-   if ring p =!= ring I then error "expected same ring";
-   if not(unique degrees p == {{1}} and dim p -1 == 0 and degree p == 1) then error "expected the ideal of a point"; 
-   a := flatten entries coefficients parametrize p;
-   (f,g) := ChangeCoordinates(a,ring I);
-   I = f I;
-   x := gens ring I;
-   if not isSubset(I,ideal submatrix'(matrix{x},{0})) then error "expected a point on the variety"; 
-   S := (coefficientRing ring I)[delete(x_0,x)][x_0];
-   F := (gens sub(I,S))_(0,0);
-   return g sub(ideal apply(apply(toList(d-m+1 .. d),i -> (first gens S)^i),y -> coefficient(y,F)),ring I);
-);
-
-randomSigma22OnDelPezzoFivefold = method();
-randomSigma22OnDelPezzoFivefold (Ideal,Ideal) := (DP5,p) -> (
-   V := coneOfLines(DP5,p);
-   j := parametrize ideal image basis(1,V);
-   V' := j^* V;
-   p' := j^* p;
-   h := (rationalMap p')|V';
-   V'' := image h;
-   L := dualVariety top ideal jacobian dualVariety V'';
-   -- try assert(L == sub(plucker first select(decompose plucker(V'',1,AffineChartGrass=>false),o -> (dim o -1, degree o) == (0,1)),vars ring V'')) else error "internal error encountered";
-   j trim lift(h^* L,ambient source h)
-);
-randomSigma22OnDelPezzoFivefold (Ideal) := (DP5) -> randomSigma22OnDelPezzoFivefold(DP5,pointOnDP5 DP5);
-
-randomSigma31OnDelPezzoFivefold = method(); -- to be implemented if the base field is not finite
-randomSigma31OnDelPezzoFivefold (Ideal,Ideal) := (DP5,p) -> (
-   V := coneOfLines(DP5,p);
-   j := parametrize ideal image basis(1,V);
-   V' := j^* V;
-   p' := j^* p;
-   h := (rationalMap p')|V';
-   V'' := image h;
-   e := point V'';
-   P := j trim lift(h^* quotient(coneOfLines(V'',e),e),ambient source h);
-   assert(? P == "plane in PP^8" and isSubset(DP5,P));
-   P
-);
-randomSigma31OnDelPezzoFivefold (Ideal) := (DP5) -> randomSigma31OnDelPezzoFivefold(DP5,pointOnDP5 DP5);
-
-parametrizeDelPezzoFivefold = method();
-
-parametrizeDelPezzoFivefold (Ideal) := (DP5) -> (
-   if not (isPolynomialRing ring DP5 and isHomogeneous DP5 and degrees DP5 === toList(5:{2}) and numgens ring DP5 == 9 and codim DP5 == 3 and degree DP5 == 5) then error "expected (the ideal of) a del Pezzo fivefold in PP^8"; 
-   P := randomSigma22OnDelPezzoFivefold DP5;   
-   f := inverseMap((rationalMap P)|DP5);
-   (toCoordinateHyperplane ideal image basis(1,saturate ideal f)) * f
-);
-
-parametrizeDelPezzoSixfold = method();
-
-parametrizeDelPezzoSixfold (Ideal) := (G) -> (
-   if not (isPolynomialRing ring G and isHomogeneous G and degrees G === toList(5:{2}) and numgens ring G == 10 and codim G == 3 and degree G == 5) then error "expected (the ideal of) a 6-dimensional subvariety in PP^9, which is projectively equivalent to Grass(1,4)";
-   J := parametrize arandom({1},ring G);
-   P := J randomSigma22OnDelPezzoFivefold(J^* G);   
-   f := inverse2((rationalMap P)|G);
-   f = (toCoordinateHyperplane ideal image basis(1,saturate ideal f)) * f;
-   P5 := (coefficientRing f)[flatten entries submatrix'(vars source f,{6})];
-   j := rationalMap(P5,source f,(vars P5)|matrix{{0}});
-   B := j^* ideal matrix f;
-   M := syz gens B;
-   h := rationalMap {M_(0,0),M_(0,1),M_(1,0),M_(1,1),M_(2,0),M_(2,1)}; 
-   H := rationalMap(source f,source f,transpose((((coefficients h)||matrix{{0,0,0,0,0,0}})|matrix{{0},{0},{0},{0},{0},{0},{1}}) * (transpose vars source f)));
-   f = (inverseMap H) * f;
-   f = rationalMap(Grass(0,6,coefficientRing f,Variable=>source f),source f) * f;
-   -- test:
-   x := gens source f;
-   try assert(saturate ideal matrix f == ideal(x_6,x_3*x_4-x_2*x_5,x_1*x_4-x_0*x_5,x_1*x_2-x_0*x_3)) else error "internal error encountered";
-   --
-   f
-);
-
-parametrizeDelPezzoFourfold = method();
--- Todd's result: a quintic del Pezzo fourfold contains exactly one rho-plane 
--- (Roth, "algebraic varieties with canonical curve section", p. 95)
-parametrizeDelPezzoFourfold (Ideal) := (X) -> (
-   if not (isPolynomialRing ring X and isHomogeneous X and numgens ring X == 8 and dim X == 5 and degree X == 5 and flatten degrees X == {2,2,2,2,2}) then error "expected a del Pezzo fourfold of degree 5";
-   V := plucker(X,2); X' := null;
-   if not(dim V -1 == 1 and degree V == 5 and genera V == {-1,4}) then (
-      <<"-- re-executing plucker(..,2,AffineChartGrass=>true)"<<endl;
-      phi := map(ring X,ring X,for i to 7 list arandom(1,ring X));
-      psi := inverse phi;
-      X' = trim phi X;
-      V = plucker(X',2);
-      if not(dim V -1 == 1 and degree V == 5 and genera V == {-1,4}) then error "error occurred trying to pick rho-plane in del Pezzo fourfold";
-   );
-   lV := trim lift(V,ambient ring V);
-   h := parametrize ideal select(lV_*,g -> degree g == {1});
-   lV' := h^* lV;
-   P := sub(plucker sub(h quotient(lV',top lV'),ring V),vars ring X);
-   if X' =!= null then P = trim psi P;
-   try assert(? P == "plane in PP^7" and isSubset(X,P)) else "error occurred trying to pick rho-plane in del Pezzo fourfold";
-   f := inverseMap rationalMap sub(P,quotient X);
-   (toCoordinateHyperplane ideal image basis(1,saturate ideal matrix f)) * f
-);
-
-extendCubicScroll = method();
-
-extendCubicScroll (Ideal) := (S) -> (
-    try assert(isPolynomialRing ring S and isHomogeneous S and degree S == 3) else error "expected the ideal of a rational normal scroll of degree 3";
-    K := coefficientRing ring S;
-    N := syz gens S;
-    y := local y;
-    R := K[gens ring S,y];
-    M := sub(N,R);
-    M' := matrix for i to 2 list for j to 1 list (M_(i,j) + random(K) * y);
-    Y := trim minors(2,M');
-    j := parametrize ideal y;
-    j = rationalMap(ring S,source j) * j;
-    try assert(j^* Y == S) else error "internal error encountered";
-    (j,Y)
-);
-
-embedDelPezzoSixfoldInG14 = method();
-
-embedDelPezzoSixfoldInG14 (QuotientRing) := (G) -> (
-   G'1'4 := Grass(1,4,coefficientRing ambient G,Variable=>ambient G);
-   if G === G'1'4 then return rationalMap(G,G'1'4,vars ambient G);
-   if G === dualize G'1'4 then return rationalMap(G,G'1'4,dualize vars ambient G'1'4);
-   f := parametrizeDelPezzoSixfold(ideal G);
-   y := gens source f;
-   V := matrix {{-108*y_3*y_4+108*y_2*y_5+24*y_2*y_6-108*y_3*y_6+243*y_4*y_6-36*y_5*y_6+235*y_6^2, 108*y_1*y_4-108*y_0*y_5-24*y_0*y_6+108*y_1*y_6+486*y_4*y_6-108*y_5*y_6+462*y_6^2, -108*y_1*y_2+108*y_0*y_3-243*y_0*y_6+36*y_1*y_6-486*y_2*y_6+108*y_3*y_6-81*y_6^2, 216*y_4*y_6+216*y_6^2, -216*y_2*y_6+72*y_6^2, 216*y_0*y_6+216*y_6^2, 216*y_5*y_6+48*y_6^2, -216*y_3*y_6+486*y_6^2, 216*y_1*y_6+972*y_6^2, 432*y_6^2}};
-   M := matrix apply(entries f,u -> linearCombination(u,V));
-   phi := rationalMap(G'1'4,G,transpose(M * (transpose vars ambient G'1'4)));
-   psi := rationalMap inverse map phi;
-   try assert(isInverseMap(phi,psi)) else error "internal error encountered";
-   psi
-);
-
-embedDelPezzoSixfoldInG14 (Ideal) := (G) -> embedDelPezzoSixfoldInG14(quotient G);
-
-embedDelPezzoFivefoldInG14 = method();
-
-embedDelPezzoFivefoldInG14 (Ideal) := (DP5) -> (
-    f := parametrizeDelPezzoFivefold DP5;
-    S := (parametrize ideal last gens source f)^* ideal matrix f;
-    (j,Y) := extendCubicScroll S;
-    K := coefficientRing f;
-    R := K[gens ring S,last gens source f,last gens ring Y];
-    W := sub(Y,R) + ideal(R_5);
-    W = trim sub(W,vars(K[gens source f,last gens R]));
-    h := rationalMap(source f,ring W,(vars source f)|0);
-    try assert((saturate ideal matrix f) == h^* W) else error "internal error encountered";
-    F := rationalMap(W,2);
-    g := (inverse2 f) * h * F;
-    g = rationalMap inverse map inverse2 rationalMap(g,Dominant=>true);
-    try assert(unique flatten degrees ideal matrix g === {1}) else error "internal error encountered";
-    g = rationalMap(source g,quotient image F,matrix g);
-    g * embedDelPezzoSixfoldInG14(target g)
-);
-
-embedDelPezzoFourfoldInG14 = method();
-
-embedDelPezzoFourfoldInG14 (Ideal) := (DP4) -> (
-    f := parametrizeDelPezzoFourfold(DP4);
-    S := (parametrize ideal last gens source f)^* ideal matrix f;
-    (j,Y) := extendCubicScroll S;
-    K := coefficientRing f;
-    R := K[gens ring S,last gens source f,last gens ring Y];
-    W := sub(Y,R) + ideal(R_4);
-    W = trim sub(W,vars(K[gens source f,last gens R]));
-    h := rationalMap(source f,ring W,(vars source f)|0);
-    try assert((saturate ideal matrix f) == h^* W) else error "internal error encountered";
-    F := rationalMap(W,2);
-    g := (inverse2 f) * h * F;
-    g = rationalMap inverse map inverse2 rationalMap(g,Dominant=>true);
-    try assert(unique flatten degrees ideal matrix g === {1}) else error "internal error encountered";
-    g = rationalMap(source g,quotient image F,matrix g);
-    g = g * embedDelPezzoFivefoldInG14(ideal target g);
-    try assert((toList Grass target g)_{0,1} == {1,4}) else error "internal error encountered";
-    g
-);
-
 embedConeOverDelPezzoFourfoldInConeOverG14 = method();
 
 embedConeOverDelPezzoFourfoldInConeOverG14 (Ideal,Ideal) := (X,p) -> (
@@ -1581,7 +1367,7 @@ embedConeOverDelPezzoFourfoldInConeOverG14 (Ideal,Ideal) := (X,p) -> (
    K := coefficientRing ringP8;
    (f1,f2) := ChangeCoordinates(flatten entries coefficients parametrize p,ringP8);
    ringP7 := K[flatten entries submatrix'(vars ringP8,{0})];
-   j := embedDelPezzoFourfoldInG14(sub(trim f1 X,ringP7));
+   j := toGrass(sub(trim f1 X,ringP7));
    R := ringP8/sub(ideal source j,ringP8);
    y0 := last last Grass target j; y0 = getSymbol(toString(y0)|toString(y0));
    R' := K[y0,gens ambient target j];
@@ -2064,78 +1850,22 @@ fanoFourfold (ZZ,ZZ) := o -> (d,g) -> (
 );
 
 parametrizeFanoFourfold = method(TypicalValue => RationalMap, Options => {Strategy => 1});
-parametrizeFanoFourfold (QuotientRing) := o -> (varX) -> (
-    if not instance(o.Strategy,ZZ) then error "option Strategy expects an integer";
-    X := trim ideal varX;
-    if not (isPolynomialRing ambient varX and isHomogeneous X) then error "expected a quotient of a polynomial ring by a homogeneous ideal";
-    if not isField coefficientRing ambient varX then error "the coefficient ring needs to be a (finite) field";
-    if dim X != 5 then error "expected the coordinate ring of a fourfold";
-    H := select(X_*,x -> degree x == {1});
-    if #H > 0 then (
-        if ideal H == X then return parametrize varX;
-        k := (parametrize ideal H)||varX;
-        -- forceImage(k,ideal 0_(target k));
-        return (parametrizeFanoFourfold(source k,Strategy=>o.Strategy)) * k;
+parametrizeFanoFourfold (QuotientRing) := o -> R -> (
+    X := Var R; X#InverseMethod = inverse3;
+    if dim X != 4 then error "expected the coordinate ring of a fourfold";
+    if degree X == 5 and sectionalGenus X == 1 then (
+        if o.Strategy === 2 then return toRationalMap parametrize X;
+        if o.Strategy =!= 1 then error("the available strategies are:"|newline|"-- 1: projection from the plane spanned by a conic contained in the fourfold"|newline|"-- 2: projection from the unique sigma_(2,2) plane contained in the fourfold (Todd's result)");
+        p := point X;
+        C := line(X,p) + line(X,p);
+        if degree C != 2 then error "something went wrong while finding conic on fourfold";
+        return inverse3 rationalMap(sub(ideal C,R),1);
     );
-    degs := flatten degrees X;
-    m := #degs;
-    n := numgens ring X -1;
-    d := degree X;
-    g := (genera X)_3;
-    local p; local L; local V; local C;
-    if o.Strategy != 1 and not(g == 1 and d == 5 and n == 7 and m == 5) then error "strategy not available";
-    if g == 0 and d == 2 and n == 5 and m == 1 then (
-        return inverse2 rationalMap point varX;
-    ); 
-    if g == 1 and d == 3 and n == 5 and m == 1 then error "cubic fourfolds are not allowed; you may use the function unirationalParametrization";
-    if unique degs != {2} then error "expected an ideal generated by linear and quadratic forms";
-    if g == 1 and d == 4 and n == 6 and m == 2 then (
-        p = point X;
-        L = ideal matrix rationalMap(intersect(p,point coneOfLines(X,p)),1);
-        if not(dim L == 2 and degree L == 1 and isSubset(X,L)) then error "something went wrong while finding line on fourfold";
-        return inverse2 rationalMap sub(L,varX);
-    ); 
-    if g == 1 and d == 5 and n == 7 and m == 5 and o.Strategy == 1 then (
-        p = point X;
-        L = ideal matrix rationalMap(intersect(p,point coneOfLines(X,p)),1);
-        C = intersect(L,ideal matrix rationalMap(intersect(p,point coneOfLines(X,p)),1));
-        if not(dim C == 2 and degree C == 2 and isSubset(X,C)) then error "something went wrong while finding conic on fourfold";
-        return inverse2 rationalMap(sub(C,varX),1);
-    ); 
-    if g == 1 and d == 5 and n == 7 and m == 5 and o.Strategy == 2 then (
-        f := parametrizeDelPezzoFourfold X;
-        return (f * rationalMap(target f,varX)); 
-    );
-    if g == 1 and d == 5 and n == 7 and m == 5 and o.Strategy != 1 and o.Strategy != 2 then error("the available strategies are:"|newline|"-- 1: projection from the plane spanned by a conic contained in the fourfold"|newline|"-- 2: projection from the unique sigma_(2,2) plane contained in the fourfold (Todd's result)");
-    if g == 6 and d == 10 and n == 8 and m == 6 then error "Gushel-Mukai fourfolds are not allowed; you may use the function unirationalParametrization";
-    if g == 7 and d == 12 and n == 9 and m == 10 then (
-        return inverse2 rationalMap sub(embeddedTangentSpace(X,point X),varX);
-    );
-    if g == 8 and d == 14 and n == 10 and m == 15 then (
-        return inverse2 rationalMap(sub(intersect(embeddedTangentSpace(X,point X),point X),varX),1);
-    );
-    if g == 9 and d == 16 and n == 11 and m == 21 then (
-        p = point X;
-        L = ideal matrix rationalMap(intersect(p,point coneOfLines(X,p)),1);
-        if not(dim L == 2 and degree L == 1 and isSubset(X,L)) then error "something went wrong while finding line on fourfold";
-        return inverse2 rationalMap(sub(intersect(embeddedTangentSpace(X,point X),L),varX),1);
-    );
-    if g == 10 and d == 18 and n == 12 and m == 28 then (
-        L = {}; t := 0;
-        while #L == 0 and t <= 4 do (
-            p = point X;
-            V = coneOfLines(X,p);
-            L = select(decompose V,l -> dim l == 2 and degree l == 1);
-            t = t + 1;
-        );
-        if #V == 0 then error "failed to find reducible conic on fourfold of genus 10 (5 attempts performed); try executing again";
-        C = saturate(V,first L);
-        if not(dim C == 2 and degree C == 2 and isSubset(X,C)) then error "something went wrong while finding conic on fourfold";
-        return inverse2 rationalMap(sub(intersect(embeddedTangentSpace(X,point X),C),varX),1);
-    );
-    error("expected the coordinate ring of a prime Fano fourfold of coindex at most 3 having degree d and genus g with (d,g) in "|toString({(2,0),(4,1),(5,1),(12,7),(14,8),(16,9),(18,10)}));
+    if o.Strategy =!= 1 then error "strategy not available";
+    toRationalMap parametrize X
 );
-parametrizeFanoFourfold (Ideal) := o -> (I) -> parametrizeFanoFourfold(quotient I,Strategy=>o.Strategy);
+parametrizeFanoFourfold Ideal := o -> I -> parametrizeFanoFourfold(quotient I,Strategy=>o.Strategy);
+
 ------------------------------------------------------------------------
 ------------------------------------------------------------------------
 ------------------------------------------------------------------------
@@ -2182,14 +1912,19 @@ arandom (VisibleList,QuotientRing) := (l,S) -> (
    sub(arandom(l,R),S)
 );
 
-inverse2 = method();
-inverse2 (RationalMap,ZZ,Boolean) := (psi,minsCount,verbosity) -> (
+inverse3 = method();
+inverse3 RationalMap := psi -> (
     if psi#"inverseRationalMap" =!= null then return psi#"inverseRationalMap";
-    phi := rationalMap inverseOfMap(map psi,CheckBirational=>false,AssumeDominant=>true,MinorsCount=>minsCount,Verbose=>verbosity); 
+    phi := rationalMap inverseOfMap(map psi,CheckBirational=>false,AssumeDominant=>true,MinorsCount=>0,Verbose=>false); 
     forceInverseMap(phi,psi); 
     phi
 );
-inverse2 (RationalMap) := (psi) -> inverse2(psi,0,false);
+inverse3 MultirationalMap := Psi -> (
+    if Psi#"inverse" =!= null then return Psi#"inverse";
+    multirationalMap inverse3 toRationalMap Psi
+);
+inverse3 (RationalMap,Option) := (psi,opt) -> inverse3 psi;
+inverse3 (MultirationalMap,Option) := (Psi,opt) -> inverse3 Psi;
 
 interpoleImage = method(Options => {Verbose => false});
 interpoleImage (RationalMap,Ideal,List,ZZ) := o -> (g,X,D,j) -> (
@@ -2241,15 +1976,6 @@ linearCombination (RingElement,Matrix) := (F,I) -> (
    l
 );
 
-toCoordinateHyperplane = method();
-toCoordinateHyperplane (Ideal) := (H) -> (
-    if not(isPolynomialRing ring H and isHomogeneous H and numgens H == 1 and degree H == 1) then error "internal error encountered";
-    K := coefficientRing ring H;
-    f := inverse(rationalMap transpose(((coefficients parametrize H) | (random(K^(numgens ring H),K^1))) * (transpose vars ring H)),MathMode=>true);
-    try assert(f H == ideal last gens ring H) else error "internal error encountered";
-    inverse f
-);
-
 ChangeCoordinates = method();
 ChangeCoordinates (List,PolynomialRing) := (a,R) -> (
    -- returns a change of coordinates s.t. a=(a_0,...,a_n)-->[1,0,...,0] 
@@ -2271,17 +1997,6 @@ reduceToPrimeCharacteristic (Ideal,ZZ) := (I,p) -> (
    sub(I,vars R)
 );
 reduceToPrimeCharacteristic (Ideal) := (I) -> reduceToPrimeCharacteristic(I,nextPrime random(1000,11000000));
-
-embeddedTangentSpace = method();
-embeddedTangentSpace (Ideal,Ideal) := (I,p) -> (
-   if ring p =!= ring I then error "common ring not found";
-   if not isPolynomialRing ring I then error "expected a polynomial ring";
-   if not (isHomogeneous I and isHomogeneous p) then error "expected homogeneous ideals";
-   if not (unique degrees p == {{1}} and dim p == 1 and degree p == 1) then error "expected second argument to be the ideal of a point";
-   if not isSubset(I,p) then error "expected a point of the variety";
-   subs := apply(gens ring I,flatten entries coefficients parametrize p,(x,s) -> x => s);
-   trim ideal((vars ring I) * sub(jacobian I,subs))
-);
 
 assertSmoothness = method(); -- sufficient conditions for smoothness ('I' is assumed to be equidimensional)
 assertSmoothness (Ideal,ZZ) := (I,c) -> (
@@ -2387,48 +2102,42 @@ imageOfAssociatedMap (MutableHashTable) := (X) -> (
    image f
 );
 
-projectivitySendingRationalNormalCurveToStandardRationalNormalCurve = method();
-projectivitySendingRationalNormalCurveToStandardRationalNormalCurve (Ideal) := (C) -> (
-   if not(isPolynomialRing ring C and isHomogeneous C and dim C == 2) then error "expected the ideal of a rational normal curve";
-   K := coefficientRing ring C;
-   n := numgens ring C -1;
-   H := ideal image basis(1,C);
-   c := codim H;
-   if c > 0 then (
-       x := local x;
-       ringPn := K[x_0..x_n];
-       h := inverse(rationalMap(ringPn,ring H,transpose(((coefficients parametrize H) | (random(K^(n+1),K^c))) * (transpose vars ringPn))),MathMode=>true);
-       C' := h C;
-       ringPm := K[x_0..x_(n-c)];
-       C' = trim sub(C',ringPm);
-       phi' := projectivitySendingRationalNormalCurveToStandardRationalNormalCurve C';
-       phi' = h * rationalMap(ringPn,ring H,sub(matrix phi',ringPn)|submatrix'(vars ringPn,{0.. n-c}));
-       return phi';
-   );
-   d := degree C;
-   f := if d > 1 
-        then rationalMap inverseMap rationalMap trim sub(ideal image basis(1,intersect(for i to d-2 list point C)),quotient C)
-        else parametrize C;
-   g := rationalMap(source f,target f,sub(matrix veronese(1,d,K),vars source f));
-   V := matrix g;
-   M := matrix apply(entries f,u -> linearCombination(u,V));
-   phi := inverse(rationalMap(ring C,ring C,transpose(M * (transpose vars ring C))),MathMode=>true);
-   -- try assert(f * phi == g) else error "internal error encountered";
-   phi
-);
-
 projectivityBetweenRationalNormalCurves = method();
-projectivityBetweenRationalNormalCurves (Ideal,Ideal) := (C1,C2) -> (
-   j1 := projectivitySendingRationalNormalCurveToStandardRationalNormalCurve C1;
-   j2 := projectivitySendingRationalNormalCurveToStandardRationalNormalCurve C2;
-   phi := j1 * (inverse(j2,MathMode=>true));
-   try assert(phi C1 == C2) else error "failed to construct projectivity";
-   phi
-);
+projectivityBetweenRationalNormalCurves (Ideal,Ideal) := (C1,C2) -> toRationalMap findIsomorphism(Var C1,Var C2,Verify=>true);
 
 point (SpecialCubicFourfold) := (X) -> point ideal X;  
 
 point (SpecialGushelMukaiFourfold) := (X) -> trim sub(point ideal X,ringDP5 X);
+
+coneOfLines (Ideal,Ideal) := (I,p) -> ideal coneOfLines(Var I,Var p);
+
+mapY5 = memoize (K -> (
+    X := Var Grass(1,4,K); 
+    h := (parametrize projectiveVariety ideal sum gens ring ambient X)||X;
+    -- assert(dim singularLocus source h == -1);
+    h
+));
+Y5 = K -> source mapY5 K;
+
+mapY4 = memoize (K -> (
+    y := gens ring ambient source mapY5 K;
+    h := (parametrize projectiveVariety ideal(y_0-y_1+y_2-y_3+y_4-y_5+y_6))||(Y5 K);
+    h = h * (mapY5 K);
+    -- assert(dim singularLocus source h == -1);
+    h
+));
+Y4 = K -> source mapY4 K;
+
+toRationalMap = method();
+toRationalMap MultirationalMap := Phi -> (
+    f := rationalMap toRingMap(Phi,ring target Phi);
+    assert(# factor Phi == 1 and instance(f,RationalMap));
+    f
+);
+
+Var = method(Options => {MinimalGenerators => false});
+Var Ideal := o -> I -> projectiveVariety(I,MinimalGenerators=>o.MinimalGenerators,Saturate=>false);
+Var Ring := o -> R -> projectiveVariety(R,MinimalGenerators=>o.MinimalGenerators,Saturate=>false);
 
 ------------------------------------------------------------------------
 ---------------------------- Documentation -----------------------------
@@ -2497,6 +2206,8 @@ Inputs => {"X" => Ideal => {"the ideal of an ordinary Gushel-Mukai fourfold, or 
 Outputs => {RationalMap => {"an embedding of ", TEX///$X$///, " into the Grassmannian ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///, ", Plucker embedded"}}, 
 EXAMPLE {"P8 = ZZ/33331[x_0..x_8];", "X = ideal(x_4*x_6-x_3*x_7+x_1*x_8, x_4*x_5-x_2*x_7+x_0*x_8, x_3*x_5-x_2*x_6+x_0*x_8+x_1*x_8-x_5*x_8, x_1*x_5-x_0*x_6+x_0*x_7+x_1*x_7-x_5*x_7, x_1*x_2-x_0*x_3+x_0*x_4+x_1*x_4-x_2*x_7+x_0*x_8);", "time toGrass X"}, 
 SeeAlso => {(toGrass, SpecialGushelMukaiFourfold)}} 
+
+undocumented {(toGrass,EmbeddedProjectiveVariety)}
 
 document {Key => {cycleClass, (cycleClass, Ideal)}, 
 Headline => "determine the expression of the class of a cycle as a linear combination of Schubert classes", 
@@ -2628,7 +2339,7 @@ Outputs => {Ideal => {"the ideal of the subscheme of ",TEX///$\mathbb{P}^n$///, 
 PARA{"In the example below we compute the cone of lines passing through the generic point of a smooth del Pezzo fourfold in ",TEX///$\mathbb{P}^7$///, "."}, 
 EXAMPLE {"K := frac(QQ[a,b,c,d,e]); P4 = K[t_0..t_4]; phi = rationalMap(minors(2,matrix{{t_0,t_1,t_2},{t_1,t_2,t_3}}) + t_4);", "X = image phi", "p = phi minors(2,(vars K)||(vars P4))", "time V = coneOfLines(X,p)", "? V"}} 
 
-undocumented {(coneOfLines, Ideal, Ideal, ZZ)} 
+undocumented {(coneOfLines, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety)} 
 
 document {Key => {grassmannianHull, (grassmannianHull, SpecialGushelMukaiFourfold)}, 
 Headline => "grassmannian hull of a Gushel-Mukai fourfold", 
@@ -2666,13 +2377,6 @@ Headline => "ambient polynomial ring of the fourfold",
 Usage => "ring X", 
 Inputs => {"X" => SpecialCubicFourfold => {"or ", ofClass SpecialGushelMukaiFourfold}}, 
 Outputs => {Ring => {"the common ambient polynomial ring of the fourfold and of the surface contained in it."}}} 
-
--- document {Key => {secantCone, (secantCone, Ideal, Ideal)}, 
--- Headline => "secant cone of a subvariety with respect a point", 
--- Usage => "secantCone(X,p)", 
--- Inputs => {"X" => Ideal => {"the ideal of an irreducible subvariety of ", TT"PP^n"}, "p" => Ideal => {"the ideal of a point in ", TT"PP^n"}}, 
--- Outputs => {Ideal => {"the ideal of the subscheme of ", TT"PP^n", " consisting of the union of all secant lines to ", TT"X", " passing through ", TT"p"}}, 
--- EXAMPLE {"-- a quintic del Pezzo surface"|newline|"X = image rationalMap((ZZ/33331)[vars(0..2)],{3,4});", "p = point ring X;", "V = secantCone(X,p);", "(codim V,degree V)"}} 
 
 document {Key => {unirationalParametrization, (unirationalParametrization, SpecialCubicFourfold), (unirationalParametrization, SpecialCubicFourfold, Ideal), (unirationalParametrization, SpecialGushelMukaiFourfold)}, 
 Headline => "unirational parametrization", 
@@ -2795,20 +2499,19 @@ associatedK3surface(specialGushelMukaiFourfold "tau-quadric",Verbose=>true);
 ///
 
 TEST ///
-for dgs in {(2,0,1),(3,1,1),(4,1,1),(5,1,1),(5,1,2),(4,3,1),(6,4,1),(8,5,1),(10,6,1),(12,7,1),(14,8,1),(16,9,1),(18,10,1)} do (
-    (d,g,s) = dgs;
-    <<"(d,g) = "<<(d,g)<<", Strategy=>"<<s<<endl;
-    X = fanoFourfold (d,g);
-    assert(dim X == 5 and degree X == d and (genera ideal X)_3 == g);
-    if not ((d,g) == (3,1) or (d,g) == (4,3) or (d,g) == (6,4) or (d,g) == (8,5) or (d,g) == (10,6)) then (
-        time f = parametrizeFanoFourfold(X,Strategy=>s);
+setRandomSeed 0;
+for dg in {(2,0),(3,1),(4,1),(5,1),(4,3),(6,4),(8,5),(10,6),(12,7),(14,8),(16,9),(18,10)} do (
+    <<"(d,g) = "<<dg<<endl;
+    X = fanoFourfold dg;
+    assert(dim X == 5 and degree X == dg_0 and (genera ideal X)_3 == dg_1);
+    if member(dg,{(2,0),(4,1),(5,1),(16,9)}) then (
+        time f = parametrizeFanoFourfold X;
         assert(isPolynomialRing source f and numgens source f == 5);
         assert(target f === X);
-        if s == 2 then inverse f;
         g = f#"inverseRationalMap";
         assert(g =!= null);
         p = point source f;
-        time assert(g f p == p);
+        assert(g f p == p);
     );   
 );
 ///

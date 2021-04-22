@@ -1,18 +1,18 @@
 include ../Makefile
 
 ## Parameters
-TAG = m2-github-actions-ubuntu-20.04-clang-10
+TAG = m2-github-actions-ubuntu-20.04-clang-11
 BUILD_DIR = M2/BUILD/build-actions
-BUILD_OPT = -DBLA_VENDOR=Generic -DBUILD_LIBRARIES="Givaro;FFLAS_FFPACK"
+BUILD_OPT = -DBLA_VENDOR=Generic
 
 ## Script for building Macaulay2
 define M2_BUILD_SCRIPT
 set -xe
 
 export PATH=/usr/lib/ccache:$$PATH
-export CC=`which clang-10`
-export CXX=`which clang++-10`
-export LIBRARY_PATH=`llvm-config-10 --libdir`
+export CC=`which clang-11`
+export CXX=`which clang++-11`
+export LIBRARY_PATH=`llvm-config-11 --libdir`
 
 #make -j -C M2/M2/BUILD/mahrud
 

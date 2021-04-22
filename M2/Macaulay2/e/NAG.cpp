@@ -1170,7 +1170,7 @@ bool solve_via_lapack(int size,
   int info;
 
   int* permutation = newarray_atomic(int, size);
-  complex* At = newarray(complex, size * size);
+  complex* At = newarray_atomic(complex, size * size);
   int i, j;
   for (i = 0; i < size; i++)
     for (j = 0; j < size; j++)  // transpose the matrix: lapack solves A^t x = b
@@ -1463,7 +1463,7 @@ PathTracker /* or null */* PathTracker::make(const Matrix* S,
 
   int n = S->n_cols() + 1;  // equals the number of variables
   p->maxDegreeTo3halves = 0;
-  p->DMforPN = newarray(double, n);
+  p->DMforPN = newarray_atomic(double, n);
   p->DMforPN[n - 1] = 1;
   p->S = S;
   p->slpS = NULL;
@@ -1665,15 +1665,15 @@ int PathTracker::track(const Matrix* start_sols)
         dt_decrease_factor_dbl);
 
   // memory distribution for arrays
-  complex* s_sols = newarray(complex, n * n_sols);
+  complex* s_sols = newarray_atomic(complex, n * n_sols);
   raw_solutions = newarray(Solution, n_sols);
-  complex* x0t0 = newarray(complex, n + 1);
+  complex* x0t0 = newarray_atomic(complex, n + 1);
   complex* x0 = x0t0;
   complex* t0 = x0t0 + n;
-  complex* x1t1 = newarray(complex, n + 1);
+  complex* x1t1 = newarray_atomic(complex, n + 1);
   //  complex* x1 =  x1t1;
   //  complex* t1 = x1t1+n;
-  complex* dxdt = newarray(complex, n + 1);
+  complex* dxdt = newarray_atomic(complex, n + 1);
   complex* dx = dxdt;
   complex* dt = dxdt + n;
   complex* Hxt = newarray_atomic(complex, (n + 1) * n);
@@ -1992,9 +1992,9 @@ Matrix /* or null */* PathTracker::refine(const Matrix* sols,
   n_sols = sols->n_rows();
 
   // memory distribution for arrays
-  complex* s_sols = newarray(complex, n * n_sols);
-  complex* dx = newarray(complex, n);
-  complex* x1t1 = newarray(complex, n + 1);
+  complex* s_sols = newarray_atomic(complex, n * n_sols);
+  complex* dx = newarray_atomic(complex, n);
+  complex* x1t1 = newarray_atomic(complex, n + 1);
   complex* x1 = x1t1;
   complex* t1 = x1t1 + n;
   complex* HxH = newarray_atomic(complex, n * (n + 1));
@@ -2185,8 +2185,8 @@ void PathTracker::text_out(buffer& o) const
 void Solution::make(int m, const complex* s_s)
 {
   this->n = m;
-  x = newarray(complex, m);
-  start_x = newarray(complex, m);
+  x = newarray_atomic(complex, m);
+  start_x = newarray_atomic(complex, m);
   copy_complex_array<ComplexField>(m, s_s, start_x);
 }
 
