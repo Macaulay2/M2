@@ -38,13 +38,12 @@ newPackage(
     )
 debug NumericalAlgebraicGeometry
 export { 
-   "changeFlags", -- "bigCellLocalCoordinates", 
+   "changeFlags",
    "resetStatistics",
    "printStatistics",
    "setVerboseLevel", 
    "solveSchubertProblem",
-   "oneHomotopy"-- symbol?
-   --   changeFlags  -- better name?
+   "OneHomotopy"
    }
 protect Board
 protect IsResolved
@@ -627,7 +626,7 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 	    	print(flgM*newDag.Solutions);
 	    	);
 	    changeFlags(flgM*newDag.Solutions, -- these are matrices in absolute coordinates
-	    	(conds, LocalFlags2, LocalFlags1), oneHomotopy=>false
+	    	(conds, LocalFlags2, LocalFlags1), OneHomotopy=>false
 		)
 	    ) --
 	)
@@ -1001,9 +1000,6 @@ load "NumericalSchubertCalculus/TST/21e3-G36.m2"
 TEST ///
 load "NumericalSchubertCalculus/TST/4LinesOsculating_changeFlags.m2"
 ///
---TEST ///
---load "NumericalSchubertCalculus/TST/changeFlags-4lines-double-point.m2"
---///
 end ---------------------------------------------------------------------
 -- END OF THE PACKAGE
 ---------------------------------------------------------------------------
