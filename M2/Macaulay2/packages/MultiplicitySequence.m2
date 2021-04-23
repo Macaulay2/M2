@@ -1,7 +1,7 @@
 newPackage(
     "MultiplicitySequence",
-    Version => "0.5", 
-    Date => "Nov 24, 2020",
+    Version => "0.6", 
+    Date => "April 22, 2021",
     Authors => {
         {Name => "Justin Chen", 
             Email => "justin.chen@math.gatech.edu"
@@ -30,7 +30,7 @@ newPackage(
 export {
     "grGr",
     "multiplicitySequence",
-    "hilbSequence",
+    "hilbertSequence",
     "getGenElts",
     "minTerms",
     "numCandidates",
@@ -38,7 +38,8 @@ export {
     "monReduction",
     "NP",
     "monAnalyticSpread",
-    "monjMult"
+    "monjMult",
+    "printHilbertSequence"
  }
 
 -- installMinprimes() -- for MinimalPrimes.m2
@@ -88,8 +89,8 @@ grGr (Ideal, Ideal) := Ring => (m, I) -> (
 )
 grGr Ideal := Ring => I -> grGr(ideal gens ring I, I)
 
-hilbSequence = method()
-hilbSequence Module := HashTable => M -> (
+hilbertSequence = method()
+hilbertSequence Module := HashTable => M -> (
     HS := hilbertSeries(M, Reduce => true);
     q := value numerator HS;
     coordChange := map(ring q, ring q, matrix{{#gens ring q:1}} - vars ring q);
@@ -97,8 +98,8 @@ hilbSequence Module := HashTable => M -> (
     b := select(listForm coordChange q, p -> all(#s, i -> p#0#i <= s#i));
     hashTable apply(b, p -> (s - p#0, p#1))
 )
-hilbSequence Ring := HashTable => R -> hilbSequence R^1
-hilbSequence Ideal := HashTable => I -> hilbSequence comodule I
+hilbertSequence Ring := HashTable => R -> hilbertSequence R^1
+hilbertSequence Ideal := HashTable => I -> hilbertSequence comodule I
 
 -- hilbertPolynomial = method(Options => {Projective => false}) -- should be a hook?
 -- hilbertPolynomial Module := RingElement => o -> M -> ( -- TODO: fix
@@ -108,7 +109,7 @@ hilbSequence Ideal := HashTable => I -> hilbSequence comodule I
     -- if n > 1 then (
         -- i := getSymbol "i";
         -- S := QQ(monoid[i_1..i_n]);
-        -- b := hilbSequence M;
+        -- b := hilbertSequence M;
         -- sum(pairs b, p -> p#1*product(#gens S, j -> binomial(S_j+p#0#j, p#0#j)))
     -- ) else Core$hilbertPolynomial(M, o)
 -- )
@@ -119,7 +120,7 @@ hilbSequence Ideal := HashTable => I -> hilbSequence comodule I
 multiplicitySequence = method(Options => options getGenElts ++ {Strategy => "grGr"})
 multiplicitySequence Ideal := HashTable => opts -> I -> (
     hashTable if opts.Strategy =!= "genElts" then (
-        H := hilbSequence grGr I;
+        H := hilbertSequence grGr I;
         d := max(keys H /sum);
         apply(select(keys H, k -> sum k == d), k -> last k => H#k)
     ) else toList apply(codim I..analyticSpread I, j -> {j, multiplicitySequence(j, I, opts)})
@@ -254,6 +255,20 @@ monjMult Ideal := ZZ => I -> (
         );
     );
     sub(monj, ZZ)
+)
+
+-- Displaying Hilbert sequences
+
+printHilbertSequence = method()
+printHilbertSequence HashTable := Net => H -> (
+    d := max(keys H /sum);
+    A := matrix table(d+1, d+1, (i, j) -> if H#?{d-(i+j), j} then H#{d-(i+j), j} else 0);
+    A = matrix{{0..d}} || A;
+    N := net A;
+    s0 := replace("\\|", " ", first unstack N);
+    s := "+" | fold(apply(length s0 - 2, i -> "-"), (a,b) -> a | b);
+    c := stack apply(d+3, i -> (if i < 2 then "" else toString (d-(i-2))) | " ");
+    c | stack({s0, s} | apply(drop(unstack N, 1), t -> replace(" 0", " .", substring(0, #t-1, t))))
 )
 
 --------------------------------------------------------------------------------------------
@@ -411,15 +426,15 @@ doc ///
 
 doc ///
     Key
-        hilbSequence
-        (hilbSequence, Module)
-        (hilbSequence, Ring)
-        (hilbSequence, Ideal)
+        hilbertSequence
+        (hilbertSequence, Module)
+        (hilbertSequence, Ring)
+        (hilbertSequence, Ideal)
 	--TODO maybe better to call it with the full name hilbertSequence
     Headline
         the Hilbert sequence of a multi-graded module
     Usage
-        hilbSequence M
+        hilbertSequence M
     Inputs
         M:Module
             or @TO ideal@
@@ -436,14 +451,14 @@ doc ///
         Example
             R = QQ[a..e, DegreeRank => 5]
             I = monomialIdeal "de,abe,ace,abcd"
-            hilbSequence I
+            hilbertSequence I
         Text
             One can read off the Hilbert polynomial from the Hilbert sequence,
             which can be verified for singly-graded modules:
         Example
             R = QQ[a..e]
             I = monomialIdeal "de,abe,ace,abcd"
-            hilbSequence I
+            hilbertSequence I
             hilbertPolynomial I
     SeeAlso
     	hilbertPolynomial
@@ -869,7 +884,7 @@ needsPackage "CorrespondenceScrolls"
 P = productOfProjectiveSpaces{1,2}
 M1 = comodule ideal(random({1,2},P),random({2,3},P),random({5,2},P));
 elapsedTime multiHilbertPolynomial M1 -- == 44, ~1.4 seconds
-hilbSequence M1
+hilbertSequence M1
 -- Note: this has a key {0,3}, while value for key {1,1} is 44
 
 R = QQ[x,y,z]
