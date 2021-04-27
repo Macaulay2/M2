@@ -49,7 +49,7 @@ document {
 	 },
      "Note that ",TO LRcheater," is similar to ", TO changeFlags,
      HR{},
-     "For example, the Schubert problem (2,1)^3 in Gr(3,6) with respect to random flags has 2 solutions",
+     "For example, the Schubert problem {2,1}$^3$ in $Gr(3,6)$ with respect to random flags has 2 solutions",
      EXAMPLE {
 	 "k = 3; n = 6;",
 	 "SchPblm = {
@@ -66,7 +66,7 @@ document {
 	 HREF{"https://arxiv.org/abs/alg-geom/9706004", "Huber, Sottile, Sturmfels, \"Numerical Schubert calculus\",  J. Symb. Comp., 26 (1998), 767-788."},
 	 HREF{"https://arxiv.org/abs/1001.4125", "Sottile, Vakil, Verschelde, \"Solving Schubert Problems with Littlewood-Richardson Homotopies\", ISSAC 2010, 179-186, ACM, New York, 2010."},
 	 HREF{"https://arxiv.org/abs/0710.4607", "Leykin and Sottile, \"Galois groups of Schubert problems via homotopy computation\",  Math. Comp. 78 (2009), 1749-1765."},
-	 HREF{"https://arxiv.org/abs/1802.00984", "Leykin, Martin del Campo, Sottile, Vakil, Verschelde \"Numerical Schubert Calculus via the Littlewood-Richardson homotopy algorithm\", Math. Comp., to appear. "}
+	 HREF{"https://arxiv.org/abs/1802.00984", "Leykin, Martin del Campo, Sottile, Vakil, Verschelde \"Numerical Schubert Calculus via the Littlewood-Richardson homotopy algorithm\", Math. Comp., 90 (2021), 1407-1433. "}
 	 },
  }
 
@@ -77,7 +77,7 @@ doc ///
       randomSchubertProblemInstance
       (randomSchubertProblemInstance,List,ZZ,ZZ)
    Headline
-      Returns a random instance of a given Schubert problem by computing random matrices representing flags
+      returns a random instance of a given Schubert problem
    Usage
       randomSchubertProblemInstance(conditions,k,n)
    Inputs
@@ -94,13 +94,16 @@ doc ///
          This first verifies that the conditions are either all partitions or all brackets, and that they form a Schubert problem on $Gr(k,n)$.
 	 
 	 Then it creates a list of random square invertible matrices that represent flags for the Schubert problem.
+      Text
+         For instance, consider the problem of four lines, which is given by 4 partitions {1}$^4$ in $Gr(2,4)$
       Example
-         -- the problem of 4 lines is given by 4 partitions {1}^4 in Gr(2,4) 
 	 randomSchubertProblemInstance({{1},{1},{1},{1}},2,4)
-	 -- the same problem but using brackets instead of partitions
+      Text
+	 the same problem but using brackets instead of partitions
+      Example
 	 randomSchubertProblemInstance({{2,4},{2,4},{2,4},{2,4}},2,4)
    Caveat
-      The output consists of random numerical matrices that are assumed invertible. The code does not check for this invertibility condition.
+      The output consists of random numerical matrices that are assumed invertible. The code does not check invertibility.
    SeeAlso
          solveSchubertProblem
 	 partition2bracket
@@ -111,7 +114,7 @@ doc ///
    Key
       [randomSchubertProblemInstance, Strategy]
    Headline
-      Strategy for creating a random matrix representing a random flag
+      strategy for creating a random matrix representing a flag
    Usage
       randomSchubertProblemInstance(...,Strategy=>S)
    Inputs
@@ -128,14 +131,14 @@ doc ///
       solveSchubertProblem
       (solveSchubertProblem,List,ZZ,ZZ)
    Headline
-      uses the Littlewood-Richardson homotopy to solve a Schubert problem
+      uses Littlewood-Richardson homotopy algorithm to solve a Schubert problem
    Usage
       S = solveSchubertProblem(P,k,n)
    Inputs
       P:List
          Schubert problem given as a list of sequences of the 
 	 form ($l,F$) where $l$ is a partition (a list of weakly 
-	 decreasing integers) and $F$ is a flag ($n$ by $n$ matrix) 
+	 decreasing integers) and $F$ is a flag ($n \times n$ matrix) 
       k:ZZ
       n:ZZ
       	 $k$ and $n$ define the Grassmannian $Gr(k,n)$ of $k$-planes in $n$-space
@@ -143,12 +146,12 @@ doc ///
       --   when True, uses Linear Algebra to glue solutions from node to node, otherwise uses parameter homotopies.
    Outputs
       S:List
-         solutions of the Schubert Problem given as $n$ by $k$ matrices
+         solutions of the Schubert Problem given as $n \times k$ matrices
    Description
       Text
       	 Represent a Schubert variety in the Grassmannian $Gr(k,n)$ 
 	 by a condition $c$ either a partition or a bracket (see  @TO partition2bracket@ for details) and a flag $F$ 
-	 (given as an $n$ by $n$ matrix).
+	 (given as an $n \times n$ matrix).
 	 The codimension of the Schubert variety is $|c|$.
 	 A Schubert problem is a list of Schubert varieties, whose codimention
 	 add up to $k(n-k)$, which is the dimension of the Grassmannian.
@@ -160,11 +163,12 @@ doc ///
 	 to the specializations of the geometric Littlewood-Richardson.
 
 	 This algorithm is described in the paper:
- 	 Leykin, Martin del Campo, Sottile, Vakil, Verschelde "Numerical Schubert Calculus via the Littlewood-Richardson homotopy algorithm". https://arxiv.org/abs/1802.00984 
+ 	 Leykin, Martin del Campo, Sottile, Vakil, Verschelde "Numerical Schubert Calculus via the Littlewood-Richardson homotopy algorithm". 
+         Math. Comp., 90 (2021), 1407-1433.  https://arxiv.org/abs/1802.00984.
 
+      Text
+        For instance, consider the Schubert problem {2,1}$^3$ in $Gr(3,6)$, which has two solutions
       Example
-         -- Problem (2,1)^3 = 2 in Gr(3,6)
-       	 -- a problem with 2 solutions
 	 k = 3;
 	 n = 6;
 	 SchPblm = {
@@ -172,8 +176,9 @@ doc ///
     	     ({2,1}, random(CC^6,CC^6)),
     	     ({2,1}, random(CC^6,CC^6))
     	     };
-	 stdio << "Schubert problem {2,1}^3 in Gr(3,6) with respect to random flags"<<endl;
-	 
+      Text
+        Its solutions to an instance given by random flags
+      Example
 	 solveSchubertProblem(SchPblm, k,n)
    Caveat
       The Schubert conditions must be either all partitions or all brackets.
@@ -211,8 +216,8 @@ doc ///
       P:List
          Simple Schubert problem given as a list of sequences of the 
 	 form $(l,F)$ where $l$ is a partition (a list of weakly 
-	 decreasing integers) and $F$ is a flag ($n$ by $n$ matrix).
-         Necessarily, all partitions except possibly the first two are $\{1\}$
+	 decreasing integers) and $F$ is a flag ($n \times n$ matrix).
+         Necessarily, all partitions except possibly the first two are {1}
       k:ZZ
       n:ZZ
          $k$ and $n$ define the Grassmannian $Gr(k,n)$ of $k$-planes in $n$-space
@@ -220,20 +225,19 @@ doc ///
       --   when True, uses Linear Algebra to glue solutions from node to node, otherwise uses parameter homotopies.
    Outputs
       S:List
-         solutions of the simple Schubert Problem given as n by k matrices
+         solutions of the simple Schubert Problem given as $n\times k$ matrices
    Description
       Text
-      	 Represent a Schubert variety in the Grassmannian $Gr(k,n)$ 
-	 by a partition $l$ (a weakly decreasing
-	 list of nonegative integers less than $n-k$) and a flag $F$ 
-	 (given as an $n$ by $n$ matrix).
+      	 a Schubert variety in the Grassmannian $Gr(k,n)$ is represented by a partition $l$ (a weakly decreasing
+	 list of nonegative integers less than $n-k$) and a flag $F$ (given as an $n\times n$ matrix).
 	 A Schubert problem is a list of Schubert varieties 
-	 $(l^1, F^1), \ldots, (l^m, F^m)$ such that 
-	 $|l^1|+|l^2| + \cdots + |l^m| = k(n-k)$, where $|l^i|$ is the 
+	 $(l_1, F_1), \ldots, (l_m, F_m)$ such that 
+	 $|l_1|+|l_2| + \cdots + |l_m| = k(n-k)$, where $|l_i|$ is the 
 	 sum of the entries of $l_i$.
-         -----
+       
 	 
-	 The function solves the Schubert problem by the Pieri homotopy algorithm. 
+	 The function solves a Schubert problem by the Pieri homotopy algorithm. 
+	 It assumes all partitions except possibly the first two are simple (e.g. equal to {1}).
 	 This algorithm uses homotopy continuation to track 
 	 solutions of a simpler problem to a general problem according 
 	 to the specializations of the geometric Pieri rule.
@@ -241,10 +245,11 @@ doc ///
 	 This algorithm is described in the paper:
 	 Huber, Sottile, and Sturmfels, "Numerical Schubert Calculus",  J. Symb. Comp., 26 (1998), 767-788.
 	 
+      Text
+         for instance, the Schubert problem {2,1}$^2$  {1}$^3$ in $Gr(3,6)$ has six solutions.
+	 Consider the following instance given by random flags
       Example
-         -- Problem (2,1)^2 1^3 = 6 in Gr(3,6)
-       	 -- a problem with 2 solutions
-	 k = 3;
+ 	 k = 3;
 	 n = 6;
 	 SchPblm = {
     	     ({2,1}, random(CC^6,CC^6)),
@@ -253,13 +258,15 @@ doc ///
     	     ({1}, random(CC^6,CC^6)),
     	     ({1}, random(CC^6,CC^6))
     	     };
-	 stdio << "Schubert problem {2,1}^2 {1}^3 in Gr(3,6) with respect to random flags"<<endl;
-	 
+      Text
+         Its solutions to this instance 
+      Example
 	 solveSimpleSchubert(SchPblm, k,n)
    Caveat
-      Need to input partitions together with flags. In the future, 
-      there will be an option for generating random flags and just 
-      input the first two partitions.   Also, it will be able to take brackets.
+      Need to input partitions together with flags. 
+--      In the future, 
+--      there will be an option for generating random flags and just 
+--      input the first two partitions.   Also, it will be able to take brackets.
    SeeAlso
          solveSchubertProblem
 ///
@@ -277,7 +284,7 @@ doc ///
          partition representing a Schubert condition
       k:ZZ
       n:ZZ
-         k and n represent the Grassmannian Gr(k,n)
+         $k$ and $n$ represent the Grassmannian $Gr(k,n)$
    Outputs
       b:List
          the corresponding bracket
@@ -318,9 +325,9 @@ doc ///
       l = bracket2partition(b,n)
    Inputs
       b:List
-         of length k, a bracket representing a Schubert condition.
+         of length $k$, a bracket representing a Schubert condition.
       n:ZZ
-         k and n represent the Grassmannian Gr(k,n)
+         $k$ and $n$ represent the Grassmannian $Gr(k,n)$
    Outputs
       l:List
          the corresponding partition 
@@ -365,7 +372,7 @@ doc ///
          of Schubert conditions, either partitions or brackets, that constitutes a Schubert problem on the Grassmannian $Gr(k,n)$
       k:ZZ
       n:ZZ
-         k and n represent the Grassmannian Gr(k,n)
+         $k$ and $n$ represent the Grassmannian $Gr(k,n)$
    Outputs
        :Matrix
          the corresponding Schubert problem in notation for PHCPack implementation of Littlewood-Richardson rule and homotopies.
@@ -400,18 +407,17 @@ doc ///
 
 document{
     Key => {setVerboseLevel, (setVerboseLevel,ZZ)},
-    Headline => "Set different levels of information printed on screen",
+    Headline => "set different levels of information printed on screen",
     Usage => "setVerboseLevel n",
     Inputs =>{"n" =>{TO "ZZ", " takes values 0,1,2, or greater"}},
     Consequences=>{"Prints information on the screen depending on the value of n"},
-    PARA{"The function displays different levels of information visible on
-       the screen:"},
+    PARA{"The function displays different levels of information on the screen:"},
     UL{"0 = no extra information displayed [default]",
        "1 = print the progress information and time the main process",
        "2 = besides the information of level 1, it also displays the checkerboard steps"},
-   EXAMPLE{
-       "-- The problem of 4 lines w.r.t. random flags
-SchPblm = randomSchubertProblemInstance ({{1},{1},{1},{1}},2,4)",
+   PARA{"Consider the problem of four lines with resepct to random flags"},
+    EXAMPLE{
+       "SchPblm = randomSchubertProblemInstance ({{1},{1},{1},{1}},2,4)",
        "setVerboseLevel 0;",
        "S = solveSchubertProblem(SchPblm,2,4)",
        "assert all(S,s->checkIncidenceSolution(s,SchPblm))",
@@ -529,7 +535,7 @@ doc ///
    Key
       [changeFlags, OneHomotopy]
    Headline
-      Strategy for moving solutions to a Schubert problem from one instance to a second instance.
+      strategy for moving solutions to a Schubert problem 
    Usage
       changeFlags(...,OneHomotopy=>T)
    Inputs
@@ -550,18 +556,18 @@ doc ///
    Key
       (changeFlags,Matrix,List,Sequence)
    Headline
-      Recursive call of change flags
+      recursive call of change flags
    Usage
-      changeFlags(MX,SolsF,conds'F'G)
+      changeFlags(MX,SolsF,CFG)
    Inputs
       MX:Matrix
          matrix of local coordinates
       SolsF:List
          solutions with respect to flags F
-      conds'F'G:Sequence
-         a triplet (C,F,G) where C is a list of m Schubert conditions,
-	 F is a list of m flags defining an instance with solution set S,
-	 G is a list of m flags defining an instance that we want to solve.
+      CFG:Sequence
+         a triple {\tt (C,F,G)} where {\tt C} is a list of {\tt m} Schubert conditions,
+	 {\tt F} is a list of {\tt m} flags defining an instance with solution set {\tt sols},
+	 {\tt G} is a list of {\tt m} flags defining the instance whose solutions we want.
    Outputs
       :List
          solutions of the problem C with respect to flags G.
@@ -570,7 +576,7 @@ doc ///
   Key
     OneHomotopy
   Headline
-    Strategy for changing flags.
+    strategy for changing flags.
   Description
     Text
       There are two strategies to change flags: when OneHomotopy is set to true (default) it uses straight
@@ -585,21 +591,21 @@ doc ///
       checkIncidenceSolution
       (checkIncidenceSolution,Matrix, List)
    Headline
-      Check if a solution satisfies the incidence conditions of a Schubert problem
+      check if a solution satisfies an instance of a Schubert problem
    Usage
       checkIncidenceSolution(s, P)
    Inputs
       P:List
-         An incidence of a Schubert problem as a list {($l_1,F_1$),...,($l_m,F_m$)}
+         An instance of a Schubert problem as a list {($l_1,F_1$),...,($l_m,F_m$)}
       s:Matrix
-         A matrix of size $k$ by $n$ representing a solution to the Schubert problem P
+         A matrix of size $n\times k$ representing a solution to the Schubert problem P
    Outputs
       :Boolean
          true if s satisfies all the incidence conditions
    Description
     Text
       For each pair $(l,F)$ in the Schubert problem $P$, where $l$ is a Schubert
-      condition given as a partition, and $F$ is a flag given as an $n$ by $n$ matrix,
+      condition given as a partition, and $F$ is a flag given as an $n \times n$ matrix,
       the function verifies if the matrix $s$ satisfies the incidence conditions imposed
       by $l$ with respect to the flag $F$, for each of the pairs in $P$, by computing
       the corresponding minor conditions.
@@ -612,7 +618,7 @@ doc ///
       LRnumber
       (LRnumber,List,ZZ,ZZ)
    Headline
-      Returns the number of solutions to the given Schubert problem
+      returns the number of solutions to the given Schubert problem
    Usage
       LRnumber(conditions,k,n)
    Inputs
@@ -629,12 +635,17 @@ doc ///
          This first verifies that the conditions are either all partitions or all brackets, and that they form a Schubert problem on $Gr(k,n)$.
 	 
 	 Then it computes the intersection number of the prodiuct of Schubert classes in the cohomology ring of the Grassmannnian
+      Text
+         For instance, the problem of four lines is given by 4 partitions {1}$^4$ in $Gr(2,4)$
       Example
-         -- the problem of 4 lines is given by 4 partitions {1}^4 in Gr(2,4) 
 	 LRnumber({{1},{1},{1},{1}},2,4)
-	 -- the same problem but using brackets instead of partitions
+      Text
+	the same problem but using brackets instead of partitions
+      Example
 	 LRnumber({{2,4},{2,4},{2,4},{2,4}},2,4)
-	 -- the same problem but using phc implementation of Littlewood-Richardson rule
+      Text
+	 the same problem but using phc implementation of Littlewood-Richardson rule
+      Example
 	 LRnumber({{1},{1},{1},{1}},2,4,Strategy => "phc")
    Caveat
       This uses the package Schubert2 and the Strategy "phc" requires the string parsing capabilities of Macaulay2 version 1.17 or later

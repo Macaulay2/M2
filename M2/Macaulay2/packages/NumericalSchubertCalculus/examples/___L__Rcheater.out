@@ -19,7 +19,7 @@ the input data for phc -e :
 0
 0
 0
-/tmp/M2-26019-0/3PHCout
+/tmp/M2-18217-0/3PHCout
 0
 y
 y
@@ -28,10 +28,10 @@ n
 0
 0
 
-writing data to file /tmp/M2-26019-0/2PHCip
-running phc -e, session output to /tmp/M2-26019-0/4PHCses
-                writing output to /tmp/M2-26019-0/3PHCout
-opening output file /tmp/M2-26019-0/5PHCsolutions
+writing data to file /tmp/M2-18217-0/2PHCip
+running phc -e, session output to /tmp/M2-18217-0/4PHCses
+                writing output to /tmp/M2-18217-0/3PHCout
+opening output file /tmp/M2-18217-0/5PHCsolutions
 
 i5 : w := wrapTriplet(t);
 

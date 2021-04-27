@@ -13,18 +13,18 @@ i4 : print LRrule(n,M);
 PHCv2.4.82 released 2020-11-30
 
 
-writing data to file /tmp/M2-24950-0/2PHCinput
-running phc -e, writing output to /tmp/M2-24950-0/3PHCoutput
-opening output file /tmp/M2-24950-0/3PHCoutput
+writing data to file /tmp/M2-17070-0/2PHCinput
+running phc -e, writing output to /tmp/M2-17070-0/3PHCoutput
+opening output file /tmp/M2-17070-0/3PHCoutput
 [ 3 6 7 ]^3*[ 3 5 7 ]^2 = +10[1 2 3]
 
 i5 : LRrule(7, matrix{{2,3,6,7},{1,3,5,7},{1,2,5,7}})
 PHCv2.4.82 released 2020-11-30
 
 
-writing data to file /tmp/M2-24950-0/5PHCinput
-running phc -e, writing output to /tmp/M2-24950-0/6PHCoutput
-opening output file /tmp/M2-24950-0/6PHCoutput
+writing data to file /tmp/M2-17070-0/5PHCinput
+running phc -e, writing output to /tmp/M2-17070-0/6PHCoutput
+opening output file /tmp/M2-17070-0/6PHCoutput
 
 o5 = [ 3 6 7 ]^2*[ 3 5 7 ]*[ 2 5 7 ] = +2[1 2 4]+4[1 2 4]+2[1 2 4]
 

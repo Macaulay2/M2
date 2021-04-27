@@ -23,7 +23,7 @@ doc ///
     LRrule
     (LRrule,ZZ,Matrix)
   Headline
-    uses the geometric Littlewood-Richardson rule to compute the number of solutions to a Schubert problem.
+    computes the product of Schubert classes using geometric Littlewood-Richardson rule
   Usage
     s = LRrule(n,M)
   Inputs
@@ -32,11 +32,11 @@ doc ///
     M:Matrix
       whose rows encode Schubert conditions.
       Each row is a $k+1$-tuple, {m,b}, where $m$ is a nonegative integer and $b$ a bracket (see @TO bracket2partition@ for details).
-      The bracket $b$ represents a Schubert condition and $m$ is its multiplicity in this Schubert intersection problem.
+      The bracket $b$ represents a Schubert condition and $m$ is its multiplicity.
   Outputs
     s:String
       contains an equation, with at the left the
-      product of Schubert conditions  and at the right the result as a formal sum of brackets.
+      product of Schubert conditions and at the right the result as a formal sum of brackets.
   Description
     Text
       LRrule uses the geometric Littlewood-Richardson rule to compute a product in the Chow ring of the Grassmannian.  
@@ -53,16 +53,11 @@ doc ///
       has 10 solution 3-planes.   That is, there are 10 3-planes that satisfy three Schubert conditions given by the bracket {\tt [3, 6, 7]} and
       two conditions given by the bracket {\tt [3, 5, 7]}.
     
-      If the right hand side of the equation returned by LRrule
-      consists of one bracket of consecutive natural numbers starting
-      at 1 (as above), then there are finitely many solutions.
-      Otherwise, the problem may be underdetermined,
-      consider the example:
+      More generally, this computes a product in the Chow ring:
     Example
       LRrule(7, matrix{{2,3,6,7},{1,3,5,7},{1,2,5,7}})
-    Text
-      Littlewood-Richardson homotopies work only for Schubert problems when the sum of the codimensions of the Schubert varieties 
-      equals the dimension of the Grassmannian.
+  Caveat
+      The Littlewood-Richardson homotopy algorithm requires a Schubert problems (sum of codimensions equals the dimension of the Grassmannian).
 ///;
 
 doc ///
@@ -112,7 +107,7 @@ doc ///
     LRtriple
     (LRtriple,ZZ,Matrix)
   Headline
-    runs the Littlewood-Richardson homotopy to solve a generic Schubert problem.
+    uses Littlewood-Richardson homotopy algorithm to solve a Schubert problem
   Usage
     LRtriple(n,M)
     LRtriple(n,M, RandomSeed=>12345)
@@ -138,7 +133,8 @@ doc ///
       Use the method parseTriplet to parse the three strings f, p, and s
       into proper Macaulay2 polynomials, solution lists, and complex matrices.
 
-      The example below computes all 3-planes that satisfy {\tt [2 4 6]^3}.
+      The Schubert problem  {\tt [2 4 6]^3} on $G(3,6)$ has two solutions.
+      This example computes the solutions to an instance given by random flags.
     Example
       R := ZZ; n := 6; m := matrix{{3, 2, 4, 6}};
       result := LRtriple(n,m);
@@ -152,7 +148,7 @@ doc ///
     parseTriplet
     (parseTriplet,String,String,String)
   Headline
-    Parses a flag, system, and solutions (the output from LRtriple) into Macaulay2 objects.
+    Parses the output from LRtriple into Macaulay2 objects.
   Usage
     (R, pols, sols, fixedFlags, movedFlag, solutionPlanes) = parseTriplet(f, p, s)
   Inputs
@@ -178,7 +174,7 @@ doc ///
       list of complex matrices which store the solution planes.
   Description
     Text
-      The parseTriplet allows to process the output of LRtriple.
+      parseTriplet processes the output of LRtriple for other methods in @TO NumericalSchubertCalculus@.
     Example
       (f, p, s) = LRtriple(6,matrix{{3, 2, 4, 6}});
       (R, pols, sols, fixedFlags, movedFlag, solutionPlanes) = parseTriplet(f, p, s)
