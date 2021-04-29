@@ -36,7 +36,7 @@ Possible ways:
   cmpLessThan: monomial comparison call.
 
   Monomial Pool
-  Hash Table of monomials.  Monomial pointers are unqiue.
+  Hash Table of monomials.  Monomial pointers are unique.
     Pointer value could contain space for the ringelem.
   Entry = pointer to [ringelem, monomial pointer]
   
