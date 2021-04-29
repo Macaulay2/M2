@@ -432,7 +432,8 @@ ExternalProject_Add(build-factory
   )
 if(GFTABLESDIR AND NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
   message(STATUS "Copying gftables from ${GFTABLESDIR}/gftables")
-  file(COPY ${GFTABLESDIR}/gftables DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory)
+  file(COPY ${GFTABLESDIR}/gftables
+    DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory FOLLOW_SYMLINK_CHAIN)
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries factory "mp;ntl;flint" FACTORY_FOUND)
 
@@ -728,8 +729,8 @@ ExternalProject_Add(build-mathicgb
                     -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                     -DCMAKE_CXX_FLAGS=${CXXFLAGS}
-                    -Dwith_tbb=${WITH_TBB}
                     -Denable_mgb=ON
+                    -Dwith_tbb=ON
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
@@ -1156,7 +1157,7 @@ if(EXISTS ${M2_HOST_PREFIX}/lib)
   file(COPY ${M2_HOST_PREFIX}/lib
     DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2
     FILES_MATCHING PATTERN "*.so*" PATTERN "*.dylib*"
-    PATTERN "pkgconfig" EXCLUDE)
+    PATTERN "pkgconfig" EXCLUDE FOLLOW_SYMLINK_CHAIN)
 endif()
 
 # TODO: strip libraries and binaries

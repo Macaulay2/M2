@@ -8,7 +8,11 @@ extern stdio0_fileOutputSyncState stdio0_newDefaultFileOutputSyncState();
 };
 
 M2File::M2File(stdio0_fileOutputSyncState fileUnsyncState):
-  currentThreadMode(0),unsyncState(fileUnsyncState),recurseCount(0),exclusiveRecurseCount(0)
+    currentThreadMode(0),
+    unsyncState(fileUnsyncState),
+    exclusiveChangeCondition(PTHREAD_COND_INITIALIZER),
+    recurseCount(0),
+    exclusiveRecurseCount(0)
 {
   clearThread(exclusiveOwner);
 }

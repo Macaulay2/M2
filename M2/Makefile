@@ -17,7 +17,7 @@ LIBTOOL_BABY  = 4
 LIBTOOL_VERSION = $(LIBTOOL_MAJOR).$(LIBTOOL_MINOR).$(LIBTOOL_BABY)
 
 AUTOCONF_MAJOR = 2
-AUTOCONF_MINOR = 68
+AUTOCONF_MINOR = 71
 # version 2.60 was the first one with the macro AC_PROG_MKDIR_P
 # version 2.62 is required by the configure.ac in gc/libatomic_ops
 # version 2.68 is required by mpir 2.6.0
@@ -50,7 +50,7 @@ usr-build/aclocal-path2:; echo export ACLOCAL_PATH:="`usr-build/bin/aclocal --pr
 get-m4:
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=m4 VERSION=1.4.18
 get-autoconf:
-	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=autoconf VERSION=2.69
+	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=autoconf VERSION=2.71
 get-automake:
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=automake VERSION=1.16.1
 get-libtool:
@@ -241,7 +241,8 @@ clean-in-submodules:
 
 # Fetch the M2-emacs submodule
 fetch-M2-emacs: Macaulay2/editors/emacs/M2.el
-Macaulay2/editors/emacs/M2.el:; git submodule update --init Macaulay2/editors/emacs
+Macaulay2/editors/emacs/M2.el:
+	cd .. && git submodule update --init M2/Macaulay2/editors/emacs
 
 # Local Variables:
 # mode: Makefile

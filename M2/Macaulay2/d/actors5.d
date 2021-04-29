@@ -242,7 +242,7 @@ header "
 
 WindowWidth(fd:int):int := Ccode(returns,"
    #ifdef HAVE_SYS_IOCTL_H
-     struct winsize x;
+     struct winsize x = {0};
      ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
      return x.ws_col;
    #else
@@ -251,7 +251,7 @@ WindowWidth(fd:int):int := Ccode(returns,"
 ");
 WindowHeight(fd:int):int := Ccode(returns,"
    #ifdef HAVE_SYS_IOCTL_H
-     struct winsize x;
+     struct winsize x = {0};
      ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
      return x.ws_row;
    #else

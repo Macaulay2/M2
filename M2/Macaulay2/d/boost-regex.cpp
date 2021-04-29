@@ -48,8 +48,8 @@ extern "C" {
 /* returns an array of pairs (s, r), indicating starting point
  * and length of the first match and its capture groups */
 M2_arrayint regex_search(const M2_string pattern,
-                         const size_t start,
-                         const size_t range,
+                         const int start,
+                         const int range,
                          const M2_string text,
                          int regex_flags,
                          int match_flags)

@@ -703,7 +703,7 @@ specificMatroid String := Matroid => name -> (
 	) else if name == "vamos" then (
 		relaxation(specificMatroid "V8+", set{4,5,6,7})
 	) else if name == "pappus" then (
-		matroid(toList(0..8), {{0,1,2},{0,3,7},{0,4,8},{1,3,6},{1,5,8},{2,4,6},{2,5,7},{6,7,8}}/set, EntryMode => "nonbases")
+		matroid(toList(0..8), {{0,1,2},{0,4,6},{0,5,7},{1,3,6},{1,5,8},{2,3,7},{2,4,8},{3,4,5},{6,7,8}}/set, EntryMode => "nonbases")
 	) else if name == "nonpappus" then (
 		relaxation(specificMatroid "pappus", set{6,7,8})
 	) else if name == "AG32" then (

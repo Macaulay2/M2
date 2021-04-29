@@ -196,7 +196,7 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	       then degree m + degree n
 	       else if same dif
 	       then degree m + degree n + dif#0
- 	       else toList (degreeLength R:0)
+ 	       else toList (degreeLength ring m:0)
 	       );
 	  f := m.RawMatrix * n.RawMatrix;
 	  f = rawMatrixRemake2(rawTarget f, rawSource f, deg, f, 0);

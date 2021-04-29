@@ -8,7 +8,7 @@
 
 # These are the libraries linked with Macaulay2 in Macaulay2/{e,bin}/CMakeLists.txt
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
-set(LIBRARIES_LIST MPSOLVE MATHICGB MATHIC MEMTAILOR FROBBY FACTORY FLINT NTL MPFR MP BDWGC LAPACK)
+set(LIBRARIES_LIST MPSOLVE MATHICGB MATHIC MEMTAILOR FROBBY FACTORY FLINT NTL MPFR MP BDWGC LAPACK TBB)
 set(LIBRARY_LIST   READLINE HISTORY GDBM ATOMICOPS)
 
 message(CHECK_START " Checking for existing libraries and programs")
@@ -28,7 +28,9 @@ endif()
 ## Requirement	Debian package	RPM package	Homebrew package
 #   Threads	libc6-dev	glibc-headers	N/A
 #   LAPACK	libopenblas-dev	openblas-devel	N/A (Accelerate)
-#   Boost       libboost-dev    boost-devel     boost
+#   Boost	libboost-dev    boost-devel     boost (Regex and Stacktrace)
+#   TBB 	libtbb-dev	tbb-devel	tbb
+#   OpenMP	libomp-dev	libomp-devel	libomp (Optional)
 #   GDBM	libgdbm-dev	gdbm-devel	gdbm
 #   libatomic_ops libatomic_ops-dev libatomic_ops-devel libatomic_ops
 
@@ -38,16 +40,21 @@ endif()
 
 find_package(Threads	REQUIRED QUIET)
 find_package(LAPACK	REQUIRED QUIET)
-find_package(Boost	REQUIRED QUIET COMPONENTS regex ${Boost_stacktrace})
+find_package(Boost	REQUIRED QUIET COMPONENTS regex OPTIONAL_COMPONENTS stacktrace_backtrace stacktrace_addr2line)
+if(Boost_STACKTRACE_BACKTRACE_FOUND)
+  set(Boost_stacktrace_lib "Boost::stacktrace_backtrace")
+elseif(Boost_STACKTRACE_ADDR2LINE_FOUND)
+  set(Boost_stacktrace_lib "Boost::stacktrace_addr2line")
+else()
+  #fallback to header only mode
+  set(Boost_stacktrace_header_only YES)
+endif()
+
+find_package(TBB	REQUIRED QUIET) # See FindTBB.cmake
 # TODO: replace gdbm, see https://github.com/Macaulay2/M2/issues/594
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
 # TODO: replace libatomic_ops, see https://github.com/Macaulay2/M2/issues/1113
 find_package(AtomicOps	REQUIRED QUIET) # See FindAtomicOps.cmake
-
-###############################################################################
-## Optional	Debian package	RPM package 	Homebrew package
-#   OpenMP	libomp-dev	libomp-devel	libomp
-#   TBB		libtbb-dev	tbb-devel	tbb
 
 if(WITH_OMP)
   find_package(OpenMP REQUIRED)
@@ -65,12 +72,6 @@ foreach(lang IN ITEMS C CXX)
     set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} -L${_libdir} -l${_lib}")
   endforeach()
 endforeach()
-
-if(WITH_TBB)
-  # See FindTBB.cmake
-  find_package(TBB REQUIRED)
-  list(APPEND LIBRARIES_LIST TBB)
-endif()
 
 ###############################################################################
 ## Platform dependent requirements:
