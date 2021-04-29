@@ -76,7 +76,7 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (HG, n1, n2) -> (
         p2 = HG.Randomizer p2;
         );
     if HG.SLP then (
-        seg := parametricSegmentHomotopy HG.Family;
+        seg := HG.Homotopy;
         edgeHomotopy := if HG.LinearSegment then seg else (
             -- create random arc between p1 and p2 in the parameter space
             c := E.gamma1;
@@ -127,6 +127,7 @@ homotopyGraph System := o -> PF -> (
     HG := homotopyGraph();
     HG.SLP = instance(PF, GateSystem);
     HG.Family = PF,
+    HG.Homotopy = parametricSegmentHomotopy PF,
     HG.Potential = o.Potential;
     HG.FilterCondition = o.FilterCondition;
     HG.Randomizer = o.Randomizer;
