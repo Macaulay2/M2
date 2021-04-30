@@ -47,7 +47,7 @@ doc ///
       R = ZZ;
       n = 7;
       M = matrix{{3, 3, 6, 7},{2, 3, 5, 7}};
-      print LRrule(n,M);
+      LRrule(n,M)
     Text
       The output: {\tt [ 3 6 7 ]^3*[ 3 5 7 ]^2 = +10[1 2 3]} means that the Schubert problem {\tt [ 3 6 7 ]^3*[ 3 5 7 ]^2} in multiplicative form 
       has 10 solution 3-planes.   That is, there are 10 3-planes that satisfy three Schubert conditions given by the bracket {\tt [3, 6, 7]} and
@@ -254,7 +254,6 @@ doc ///
   Key
     PieriRootCount
     (PieriRootCount,ZZ,ZZ,ZZ)
-    [PieriRootCount,Verbose]
   Headline
     the number of solutions to a generic Pieri problem
   Usage
@@ -285,7 +284,6 @@ doc ///
   Key
     PieriHomotopies
     (PieriHomotopies,ZZ,ZZ)
-    [PieriHomotopies,Verbose]
   Headline
     runs the Pieri homotopies to solve a general hypersurface problem
   Usage
@@ -320,4 +318,16 @@ doc ///
       out0 = otp_0
       m = in0|out0
       det m
+///;
+
+doc ///
+  Key
+    [PieriRootCount,Verbose]
+    [PieriHomotopies,Verbose]
+    [LRrule,Verbose]
+    [parseTriplet,Verbose]
+    [LRtriple,Verbose]
+    [LRcheater,Verbose]
+  Headline
+    request verbose feedback
 ///;

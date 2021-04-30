@@ -44,22 +44,26 @@ LRnumber = method(Options=>{Strategy=>"Schubert2"})
 LRnumber (List,ZZ,ZZ) := o -> (conds,k,n) -> (
     -- First check if it is a Schubert problem
     checkSchubertProblem(conds,k,n);
-       if o.Strategy == "phc" then (
-           -- obfuscatory snippet of code to call LRrule and parse the output (a string) into a number
-           A := (separate("\\[",(separate("\\+", LRrule(n,NSC2phc(conds,k,n)) ))#1))#0 ;
-           dgt := reverse( apply(ascii(A), i-> i-48 ) );
-           X:={};
-           for i from 0 to #dgt-1 do (X = append(X,10^i*dgt#i) );
-           sum(X) )  else   (
-            -- sets up the cohomology ring of the Grassmannian
-            G := flagBundle({k,n-k});
-            (S,T,U) := schubertRing G;
-            a := 1;
-            -- detects if brackets or partitions
-            if (#conds#0 == k) and (conds#0 == sort unique conds#0) then
-              apply( conds, b -> a = a * (schubertCycle(bracket2partition(b,n),G)) ) else 
-              apply( conds, p -> a = a * (schubertCycle(verifyLength(p,k),G)) );
-            integral a)
+    if o.Strategy === "phc" then (
+	-- obfuscatory snippet of code to call LRrule and parse the output (a string) into a number
+	A := (separate("\\[",(separate("\\+", LRrule(n,NSC2phc(conds,k,n)) ))#1))#0 ;
+	dgt := reverse( apply(ascii(A), i-> i-48 ) );
+	X:={};
+	for i from 0 to #dgt-1 do (X = append(X,10^i*dgt#i) );
+	sum(X) 
+	) 
+    else if o.Strategy === "Schubert2" then (
+	-- sets up the cohomology ring of the Grassmannian
+	G := flagBundle({k,n-k});
+	(S,T,U) := schubertRing G;
+	a := 1;
+	-- detects if brackets or partitions
+	if (#conds#0 == k) and (conds#0 == sort unique conds#0) then
+	apply( conds, b -> a = a * (schubertCycle(bracket2partition(b,n),G)) ) else 
+	apply( conds, p -> a = a * (schubertCycle(verifyLength(p,k),G)) );
+	integral a
+	)
+    else error "unknown Strategy"
 )
 
 -----------------------------------------------------------------------------------------
