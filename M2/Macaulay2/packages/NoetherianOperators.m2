@@ -981,7 +981,8 @@ TEST ///
 debug NoetherianOperators
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
-nops = noetherianOperatorsViaMacaulayMatrix(I) / normalize
+-- TODO nops = noetherianOperatorsViaMacaulayMatrix(I) / normalize
+nops = noetherianOperatorsViaMacaulayMatrix(I)
 correct = {diffOp{1_R => 1}, diffOp{y => 1}, diffOp{y^2 => t, x => 2}, diffOp{y^3 => t, x*y => 6}}
 assert(all(nops, correct, (i,j) -> i == j))
 
@@ -989,7 +990,8 @@ S = QQ[x,y]
 J = ideal(x^3, y^4, x*y^2)
 
 correct = sort {diffOp{1_S => 1},diffOp{x => 1},diffOp{y => 1},diffOp{x^2 => 1},diffOp{x*y => 1},diffOp{y^2 => 1},diffOp{x^2*y => 1},diffOp{y^3 => 1}}
-nops = noetherianOperatorsViaMacaulayMatrix(J) / normalize
+--TODO nops = noetherianOperatorsViaMacaulayMatrix(J) / normalize
+nops = noetherianOperatorsViaMacaulayMatrix(J)
 assert(all(nops, correct, (i,j) -> i == j))
 ///
 
@@ -1073,8 +1075,9 @@ hybridNoetherianOperators (Ideal, Ideal, Matrix) := List => true >> opts -> (I,P
     kP := toField(S/PS);
     RCC := (ring pt) monoid R;
     nopsAtPoint := numNoethOpsAtPoint(sub(I,RCC), pt, opts, DependentSet => depVars / (i->sub(i,RCC)), IntegralStrategy => false);
-    sort flatten for op in nopsAtPoint list (
-        dBasis := sub(matrix{sort keys op / (m -> R_(first exponents m))}, S);
+    -- sort flatten for op in nopsAtPoint list (
+    flatten for op in nopsAtPoint list (
+        dBasis := sub(matrix{flatten entries monomials op / (m -> R_(first exponents m))}, S);
         maxdeg := flatten entries dBasis / sum @@ degree // max;
         K := dBasis;
         for d from 0 to maxdeg - 1 do (
