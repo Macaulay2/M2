@@ -19,7 +19,7 @@ newPackage(
     PackageExports => {"Bertini", "NumericalLinearAlgebra", "NAGtypes"},
     PackageImports => {"Dmodules", "PrimaryDecomposition"},
     AuxiliaryFiles => false,
-    DebuggingMode => false,
+    DebuggingMode => true, --TODO
     Keywords => {"Numerical Algebraic Geometry", "Commutative Algebra"}
 )
 
@@ -945,13 +945,16 @@ macaulayMatrixKernel := true >> opts -> (I, kP) -> (
 
 -- returns a list of Diff ops based on matrices M, dBasis
 matrixToDiffOps = (M, dBasis) -> (
-    if M == 0 then {new ZeroDiffOp from ring M}
-    else transpose entries M / 
-        (c -> apply(flatten entries dBasis, c, identity)) /
-        diffOp //
-        sort
+    R := ring M;
+    S := diffOpRing R;
+    phi := map(S,R, gens S);
+    if M == 0 then 0_S
+    else transpose entries M /
+        (c -> phi dBasis * transpose matrix {c})
+    --TODO sort?
 )
 
+diffOpRing = (cacheValue "DiffOpRing") (R -> R(monoid [gens R / toString / (v -> "d" | v) / value]))
 
 noetherianOperatorsViaMacaulayMatrix = method(Options => true) 
 noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (I, P) -> (
