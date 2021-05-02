@@ -1198,14 +1198,16 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
     opList := new List;
     -- (mon,coef) := coefficients(tmpl);
     S := ring tmpl;
+    SS := coefficientRing S;
+    KK := ultimate(coefficientRing, S);
     interpTol := if not opts.?InterpolationTolerance then defaultT(CC) else opts.InterpolationTolerance;
     sampler := if opts.?Sampler then opts.Sampler else (n,Q) -> first bertiniSample(n, first components bertiniPosDimSolve(Q));
-    nops := keys tmpl / (m -> (
+    nops := flatten entries monomials tmpl / (m -> (
         d := 0;
         result := ("?","?");
         while(not opts.?InterpolationDegreeLimit or d <= opts.InterpolationDegreeLimit) do (
-            numBasis := rsort basis(0, d, S);
-            denBasis := rsort basis(0, d, S, Variables => gens S - set (opts.DependentSet / (x -> sub(x,S))));
+            numBasis := rsort basis(0, d, SS);
+            denBasis := rsort basis(0, d, SS, Variables => gens SS - set (opts.DependentSet / (x -> sub(x,SS))));
             -- generate as many new points and new specialized nops as necessary
             while (neededPoints := numColumns numBasis + numColumns denBasis + 1 - #ptList) > 0 do (
                 if neededPoints > 0 and debugLevel > 0 then 
@@ -1228,17 +1230,18 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
             
             interpPoints := numColumns numBasis + numColumns denBasis + 1;
             liftedCoeffs := take(opList, interpPoints)  /
-                (op -> lift(op#m, ultimate(coefficientRing, ring op)));
+                (op -> lift(coefficient(m, op_(0,0)), ultimate(coefficientRing, ring op)));
             neededPtList := take(ptList, interpPoints);
             try result = rationalInterpolation(neededPtList, liftedCoeffs, numBasis, denBasis, Tolerance => interpTol) then break
                 else d = d+1;
         );
         result = result / (j -> cleanPoly(opts.Tolerance, j));
-        (m => result)
+        -- (m => result)
+        (expression first result) / (expression last result) * (expression m)
     ));
     if debugLevel > 0 then <<"Done interpolating from template "<<tmpl<<endl;
     (ring I).cache#"interp point list" = ptList | oldPtList;
-    new InterpolatedDiffOp from nops
+    sum nops
 )
 
 -- Create new specialized Noeth op at a random point using tmpl as a template
@@ -1246,10 +1249,13 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
 specializedNopsFromTemplate = true >> opts -> (I, pt, tmpl) -> (
     R := ring I;
     R' := ring tmpl;
-    bd := keys tmpl;
-    maxdeg := bd / sum @@ degree // max;
-    bx := basis(0, maxdeg-1, R');
-    M := diff(matrix{bd}, transpose (sub(gens I, R') ** bx));
+    S := coefficientRing R';
+    psi := map(S,R', gens S);
+    --bd := keys tmpl;
+    bd := flatten entries psi monomials tmpl;
+    maxdeg := bd / first @@ degree // max;
+    bx := basis(0, maxdeg-1, S);
+    M := diff(matrix{bd}, transpose (sub(gens I, S) ** bx));
 
     M' := evaluate(M, pt);
     K := numericalKernel(M', Tolerance=>opts.Tolerance);
@@ -1258,8 +1264,7 @@ specializedNopsFromTemplate = true >> opts -> (I, pt, tmpl) -> (
         if debugLevel > 0 then <<"specializedNopsFromTemplate: bad point, trying again"<<endl;
         return null;
     );
-    first matrixToDiffOps(promote(colReduce(K, Tolerance => opts.Tolerance), ring tmpl), matrix{bd})
-
+    first matrixToDiffOps(promote(colReduce(K, Tolerance => opts.Tolerance), S), sub(matrix{bd}, S))
 )
 
 
