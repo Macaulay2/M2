@@ -871,23 +871,43 @@ assert((myKernel M - gens kernel M) == 0)
 noetherianOperators = method(Options => true)
 noetherianOperators (Ideal) := List => true >> opts -> I -> (
     strats := new HashTable from {
+        "Punctual" => noetherianOperatorsPunctual,
         "Hybrid" => hybridNoetherianOperators,
         "MacaulayMatrix" => noetherianOperatorsViaMacaulayMatrix,
-        "PunctualHilbert" => getNoetherianOperatorsHilb,
+        "PunctualHilbert" => noetherianOperatorsPunctual,
     };
-    strat := if opts.?Strategy then opts.Strategy else "PunctualHilbert";
+    strat := if opts.?Strategy then opts.Strategy else "Punctual";
     if strats#?strat then strats#strat(I, opts) 
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
 
 noetherianOperators (Ideal, Ideal) := List => true >> opts -> (I,P) -> (
     strats := new HashTable from {
+        "Punctual" => noetherianOperatorsPunctual,
         "Hybrid" => hybridNoetherianOperators,
         "MacaulayMatrix" => noetherianOperatorsViaMacaulayMatrix,
-        "PunctualHilbert" => getNoetherianOperatorsHilb,
+        "PunctualHilbert" => noetherianOperatorsPunctual,
     };
     strat := if opts.?Strategy then opts.Strategy else "MacaulayMatrix";
     if strats#?strat then strats#strat(I, P, opts) 
+    else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
+)
+
+noetherianOperators (Module) := List => true >> opts -> M -> (
+    strats := new HashTable from {
+        "Punctual" => noetherianOperatorsPunctual
+    };
+    strat := if opts.?Strategy then opts.Strategy else "Punctual";
+    if strats#?strat then strats#strat(M, opts) 
+    else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
+)
+
+noetherianOperators (Module, Ideal) := List => true >> opts -> (M,P) -> (
+    strats := new HashTable from {
+        "Punctual" => noetherianOperatorsPunctual
+    };
+    strat := if opts.?Strategy then opts.Strategy else "Punctual";
+    if strats#?strat then strats#strat(M, P, opts) 
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
 -- End dispatcher method
@@ -1602,7 +1622,28 @@ invSystemFromHilbToNoethOps = true >> opts -> (I, R, S, depVars) -> (
     StoR := map(R, S, apply(#depVars, i -> R_(index depVars#i)));
     matrixToDiffOps(liftColumnsPunctualHilbert(last L, R), StoR first L)
 )
-   
+
+noetherianOperatorsPunctual = method(Options => true)
+noetherianOperatorsPunctual (Ideal, Ideal) := List => true >> opts -> (Q, P) -> (
+    M := module Q;
+    reducedNoetherianOperators(M, super M, P)
+)
+
+noetherianOperatorsPunctual Ideal := List => true >> opts -> Q -> 
+    noetherianOperatorsPunctual(Q, radical Q, opts)
+
+noetherianOperatorsPunctual Module := List => true >> opts -> M -> (
+    assPrimes := ass comodule M;
+    if #assPrimes != 1 then error "expected primary module";
+    P := first assPrimes;
+    reducedNoetherianOperators(M, super M, P)
+)
+
+noetherianOperatorsPunctual (Module, Ideal) := List => true >> opts -> (M, P) -> (
+    assPrimes := ass comodule M;
+    reducedNoetherianOperators(localize(M, P, assPrimes), super M, P)
+)
+
 -- This function can compute the Noetherian operators of a primary ideal Q.
 -- Here we pass first through the punctual Hilbert scheme 
 getNoetherianOperatorsHilb = method(Options => true)
