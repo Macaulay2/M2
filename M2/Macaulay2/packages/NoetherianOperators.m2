@@ -1412,6 +1412,116 @@ modConstant = f -> (
 ------- Noetherian operators code with the use of punctual Hilbert schemes
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
+-- arithmetic multiplicity
+amult = method()
+amult Module := ZZ => M -> (
+    assPrimes := ass(comodule M);
+    sum apply(assPrimes, P -> degree(saturate(M,P)/M)/degree(P))
+)
+amult Ideal := ZZ => I -> amult module I
+
+-- TODO tests
+
+-- Todo: add this to PrimaryDecomposition package?
+-- Module should be given as an image
+-- List L is a list of associated primes
+localize(Module, Ideal, List) := Module => opts -> (M, P, L) -> (
+    if opts.Strategy != 1 then error"not implemented";
+    --- find a separator
+    g := L /
+        (aP -> select(1, aP_*, g -> g % P != 0)) //
+        flatten;
+    if #g == 0 then M else saturate(M, lcm g)
+)
+
+solvePDE = method(Options => {Prefix => "d"})
+solvePDE(Module) := List => opts -> M -> (
+    if not instance(opts.Prefix, String) then error "expected prefix of class String";
+    prefix = opts.Prefix;
+    Pvars := gens R / toString / (i -> prefix | i);
+
+    -- Create a new ring with the above variables if needed, cache it in R
+    R := ring M;
+    if not R.?cache then R.cache = new CacheTable;
+    key := prefix | "-variable ring";
+    if not R.cache#?key then R.cache#key = (coefficientRing R)(monoid [((gens R / toString) | Pvars) / value]);
+
+    assPrimes := ass(comodule M);
+    assPrimes / (P -> (
+        a := localize(M,P,assPrimes);
+        b := saturate(a, P);
+        {P, reducedNoetherianOperators(a,b,P, opts)}
+    ))
+)
+solvePDE(Ideal) := List => opts -> I -> solvePDE (module I, opts)
+
+
+reducedNoetherianOperators = method(Options => true)
+reducedNoetherianOperators (Module, Module, Ideal) := List => opts -> (a,b,P) -> (
+    R := ring P;
+    --if not instance(opts.Prefix, String) then error "expected prefix of class String";
+    --prefix = opts.Prefix;
+    --Pvars := gens R / toString / (i -> prefix | i);
+
+    -- Create a new ring with the above variables if needed, cache it in R
+    -- if not R.?cache then R.cache = new CacheTable;
+    -- key := prefix | "-variable ring";
+    -- if not R.cache#?key then R.cache#key = (coefficientRing R)(monoid [((gens R / toString) | Pvars) / value]);
+    PR := diffOpRing R;
+
+    (depVars,indVars) := getDepIndVars(P, opts);
+    
+    -- indVars := support first independentSets P;
+    -- depVars := gens R - set indVars;
+
+    m := 0;  -- compute the exponent that determines the order of the diff ops
+    while not isSubset(intersect(b, P^m*(super b)), a) do m = m + 1;
+    m = max(0, m-1); -- TODO check!!!
+
+    S := (frac(R/P))(monoid[Variables => #depVars]);
+    depVarImage := apply(depVars, gens S, (x,y) -> sub(x,S) + y);
+    gammaList := apply(depVars, depVarImage, (i,j) -> i => j) | indVars / (x -> x => sub(x,S));
+    gamma := map(S, R, gammaList);
+
+    M := super a;
+    mm := ideal vars S;
+
+    aa := trim(gamma(a) + mm^(m+1) * S^(rank M));
+    bb := trim(gamma(b) + mm^(m+1) * S^(rank M));
+    mons := if #depVars > 0 then basis(0,m,S) else matrix{{1_S}}; -- is this correct? m --> m-1?
+
+    punctualDual := M -> (
+        diffMat := diff(transpose gens M, mons);
+        coe := last coefficients(diffMat);
+        kernel sub(coe, coefficientRing S)
+    );
+    
+    local H;
+    K := if b == M then (
+        H = punctualDual aa;
+        gens trim H
+    ) else (
+        H = punctualDual aa;
+        E := punctualDual bb;
+        gens trim(H / E)
+    );
+
+    -- For each column, find the lcm of denominators
+    lcmList := transpose entries K / (C -> (C / denominator // lcm));
+    -- Multiply each column by the lcm of its generators
+    liftedK := transpose matrix apply(transpose entries K, lcmList, (C, c) -> C / (f -> if c%denominator f != 0 then error"something went horribly wrong" else numerator f * (c // denominator f)));
+
+    Pmap := map(PR, R, gens PR);
+    PK := sub(liftedK, PR);
+    Pbasis :=Pmap if #depVars > 0 then basis(0,m,R^(rank M), Variables => depVars )
+                else basis(0,0, R^(rank M));
+
+    multiplierMatrix := (Pbasis * PK);
+    apply(numColumns multiplierMatrix, i ->mingens image matrix  multiplierMatrix_i)
+) 
+
+
+
 
 --- Computes the join of two ideals
 joinIdeals = method()
