@@ -1122,7 +1122,7 @@ doc ///
   Key
     Homotopy
   Headline
-    a homotopy asbtract type
+    a homotopy abstract type
   Description
     Text
       A type that inherits from this {\bf abstract} type should supply methods for 

@@ -33,7 +33,14 @@ document {
      }
 
 document {
-     Key => "changes made for the next release"
+     Key => "changes made for the next release",
+     UL {
+	 LI { "functionality added:",
+	     UL {
+		 LI {"The function ", TO tests, " has been added, for getting information about a package's tests."},
+		 }
+	     }
+	 }
      }
 
 document {
