@@ -1177,6 +1177,17 @@ doc ///
 ///
 
 
+doc ///
+  Key
+    (texMath, PolySpace)
+    (texMath, WitnessSet)
+    (texMath, PolySystem)
+    (texMath, Point)
+    (texMath, DualSpace)
+  Headline
+    convert to TeX math format
+///
+
 -* doc template
 doc ///
   Key
