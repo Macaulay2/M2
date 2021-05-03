@@ -59,9 +59,12 @@ export {
     "TrustedPoint",
 
     --functions from punctual Hilb approach
-    "getIdealFromNoetherianOperators",
+    -- "getIdealFromNoetherianOperators",
     "joinIdeals",
-    "mapToPunctualHilbertScheme" 
+    "amult",
+    "solvePDE",
+    "diffPrimDec"
+    -- "mapToPunctualHilbertScheme" 
 
 }
 
@@ -1434,10 +1437,9 @@ localize(Module, Ideal, List) := Module => opts -> (M, P, L) -> (
     if #g == 0 then M else saturate(M, lcm g)
 )
 
-solvePDE = method(Options => {Prefix => "d"})
-solvePDE(Module) := List => opts -> M -> (
+solvePDE = method(Options => true)
+solvePDE(Module) := List => true >> opts -> M -> (
     R := ring M;
-    error"dbg";
     -- if not instance(opts.Prefix, String) then error "expected prefix of class String";
     -- prefix = opts.Prefix;
     -- Pvars := gens R / toString / (i -> prefix | i);
@@ -1454,7 +1456,9 @@ solvePDE(Module) := List => opts -> M -> (
         {P, reducedNoetherianOperators(a,b,P, opts)}
     ))
 )
-solvePDE(Ideal) := List => opts -> I -> solvePDE (module I, opts)
+solvePDE(Ideal) := List => true >> opts -> I -> solvePDE (module I, opts)
+
+diffPrimDec = solvePDE
 
 
 reducedNoetherianOperators = method(Options => true)
