@@ -1436,15 +1436,16 @@ localize(Module, Ideal, List) := Module => opts -> (M, P, L) -> (
 
 solvePDE = method(Options => {Prefix => "d"})
 solvePDE(Module) := List => opts -> M -> (
-    if not instance(opts.Prefix, String) then error "expected prefix of class String";
-    prefix = opts.Prefix;
-    Pvars := gens R / toString / (i -> prefix | i);
+    R := ring M;
+    error"dbg";
+    -- if not instance(opts.Prefix, String) then error "expected prefix of class String";
+    -- prefix = opts.Prefix;
+    -- Pvars := gens R / toString / (i -> prefix | i);
 
     -- Create a new ring with the above variables if needed, cache it in R
-    R := ring M;
-    if not R.?cache then R.cache = new CacheTable;
-    key := prefix | "-variable ring";
-    if not R.cache#?key then R.cache#key = (coefficientRing R)(monoid [((gens R / toString) | Pvars) / value]);
+    -- if not R.?cache then R.cache = new CacheTable;
+    -- key := prefix | "-variable ring";
+    -- if not R.cache#?key then R.cache#key = (coefficientRing R)(monoid [((gens R / toString) | Pvars) / value]);
 
     assPrimes := ass(comodule M);
     assPrimes / (P -> (
@@ -1457,7 +1458,7 @@ solvePDE(Ideal) := List => opts -> I -> solvePDE (module I, opts)
 
 
 reducedNoetherianOperators = method(Options => true)
-reducedNoetherianOperators (Module, Module, Ideal) := List => opts -> (a,b,P) -> (
+reducedNoetherianOperators (Module, Module, Ideal) := List => true >> opts -> (a,b,P) -> (
     R := ring P;
     --if not instance(opts.Prefix, String) then error "expected prefix of class String";
     --prefix = opts.Prefix;
