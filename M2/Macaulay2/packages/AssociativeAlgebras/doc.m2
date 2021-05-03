@@ -4,6 +4,7 @@ undocumented {sequenceToVariableSymbols,
 	      isFreeAlgebraOrQuotient,
 	      (isFreeAlgebraOrQuotient, Ring),
 	      (ambient, FreeAlgebra),
+	      (generators, FreeAlgebra),
 	      (net, FreeAlgebra),
 	      (symbol _, FreeAlgebra, ZZ),
 	      (degreesRing, FreeAlgebra),
@@ -680,8 +681,8 @@ doc ///
 doc ///
    Key
       oreExtension
-      (oreExtension,Ring,RingMap,RingMap,RingElement)
-      (oreExtension,Ring,RingMap,RingMap,Symbol)
+      (oreExtension,Ring,RingMap,Derivation,RingElement)
+      (oreExtension,Ring,RingMap,Derivation,Symbol)
       (oreExtension,Ring,RingMap,RingElement)
       (oreExtension,Ring,RingMap,Symbol)
       [oreExtension, Degree]
@@ -692,7 +693,7 @@ doc ///
    Inputs
       A : Ring
       sigma : RingMap
-      delta : RingMap
+      delta : Derivation
       x : RingElement
           or a @ TO Symbol @
    Outputs
@@ -705,6 +706,22 @@ doc ///
          B = skewPolynomialRing(QQ,(-1)_QQ,{x,y,z,w})
 	 sigma = map(B,B,{y,z,w,x})
 	 C = oreExtension(B,sigma,a)
+      Text
+         One may define the Weyl algebra as an Ore extension using
+	 the identity endomorphism and the usual polynomial derivative
+	 as the derivation.
+      Example
+         B = toFreeAlgebraQuotient(QQ[x])
+	 sigma = map(B,B,{x})
+	 delta = derivation(B,{1_B})
+	 C = oreExtension(B,sigma,delta,dx)
+      Text
+         Of course, if one wants to perform extensive calculations with classical Weyl Algebras,
+	 one should use the @ TO WeylAlgebra @ option when creating a polynomial ring.
+      Text
+         In order to get the most out of the AssociativeAlgebras package, rings often need to
+	 be graded.  To obtain such a ring from this construction, the derivation must increase
+	 the degree by one.
    SeeAlso
       oreIdeal
 ///
@@ -712,8 +729,8 @@ doc ///
 doc ///
    Key
       oreIdeal
-      (oreIdeal,Ring,RingMap,RingMap,RingElement)
-      (oreIdeal,Ring,RingMap,RingMap,Symbol)
+      (oreIdeal,Ring,RingMap,Derivation,RingElement)
+      (oreIdeal,Ring,RingMap,Derivation,Symbol)
       (oreIdeal,Ring,RingMap,RingElement)
       (oreIdeal,Ring,RingMap,Symbol)
       [oreIdeal, Degree]
@@ -724,7 +741,7 @@ doc ///
    Inputs
       A : Ring
       sigma : RingMap
-      delta : RingMap
+      delta : Derivation
       x : RingElement
           or a @ TO Symbol @
    Outputs
@@ -1089,6 +1106,51 @@ doc ///
       Example
          maps = I.cache#"EndomorphismRingIdealGens"
 	 assert(maps_0*maps_2 == maps_3)
+///
+
+doc ///
+   Key
+     extAlgebra
+     (extAlgebra,Ring,Symbol)
+     [extAlgebra,DegreeLimit]
+   Headline
+     Compute the Ext algebra of a ring
+   Usage
+     extAlgebra(R,z)
+   Inputs
+     R : Ring
+     z : Symbol
+   Outputs
+     : FreeAlgebraQuotient
+   Description
+      Text
+        This command uses the functions @ TO yonedaMap @ and @ TO yonedaMap' @ to compute a presentation
+	of the Yoneda Ext algebra of the residue field of a commutative graded ring R.  Since this
+	algebra is not finitely generated or finitely presented in general, one may (and should) provide
+        degree bound information as an optional input.	
+      Example
+        R = QQ[x,y]/ideal(x^4,x^3*y,x*y^3)
+        ER = extAlgebra(R,z,DegreeLimit=>(5,10));
+        degrees ER
+        ideal ER
+      Text
+        Notice that the optional argument DegreeLimit is a pair $(m,n)$ where
+	$m$ is the maximum degree of a generator or relation of the Ext algebra,
+	and $n$ is the maximum degree that the Groebner basis of the defining ideal
+	of the Ext algebra is computed.
+      Text
+        The chain maps representing those elements of Ext chosen as generators
+	are stored in the cache of the returned algebra:
+      Example
+      	ER.cache#"extMaps"#(z_4)
+      Text
+        If $R$ is a complete intersection, for any pair of finitely generated modules $M$
+	and $N$ over $R$, the total Ext module $\text{Ext}_R(M,N)$ is a finitely generated
+	module over the central polynomial subalgebra of elements of homological degree two.
+	The existing function @ TO (Ext, Module, Module) @ computes this module structure,
+	but not the algebra structure.  Currently, the method used in this package does not
+	use this functionality, as it is not clear how to extract the algebra structure
+	from the current implementation (but this may change in the future).
 ///
 
 doc ///
@@ -1482,29 +1544,6 @@ doc ///
        netList minimalPrimes L
 ///
 
--*
-
-restart
-needsPackage "AssociativeAlgebras"
-
-doc ///
-   Key
-
-   Headline
-
-   Usage
-
-   Inputs
-
-   Outputs
-
-   Description
-      Text
-
-      Example
-
-///
-
 doc ///
   Key
     freeProduct
@@ -1534,6 +1573,10 @@ doc ///
     (qTensorProduct,Ring,Ring,ZZ)
     (qTensorProduct,Ring,Ring,QQ)
     (qTensorProduct,Ring,Ring,RingElement)
+    (symbol **, FreeAlgebra, FreeAlgebra)
+    (symbol **, FreeAlgebraQuotient, FreeAlgebra)
+    (symbol **, FreeAlgebra, FreeAlgebraQuotient)
+    (symbol **, FreeAlgebraQuotient, FreeAlgebraQuotient)
   Headline
     Define the (q-)commuting tensor product
   Usage
@@ -1558,4 +1601,105 @@ doc ///
        D = A ** B
        ideal D
 ///
+
+doc ///
+   Key
+     rightKernel
+     (rightKernel,Matrix)
+     [rightKernel,DegreeLimit]
+   Headline
+     Right kernel of a matrix
+   Usage
+     K = rightKernel M
+   Inputs
+     M : Matrix
+   Outputs
+     N : Matrix
+   Description
+      Text
+        This function computes a minimal generating set of the kernel
+	(up to a specified degree) of a map defined by the matrix $M$, which must be a homogeneous
+	matrix defined over a noncommutative ring.  At the moment, this is done by computing
+	two Groebner bases; one to compute the kernel, and another to compute the minimal generators
+	of the kernel.
+      Text
+        This (rather slow) way of doing this will be replaced with a version
+	of Anick's resolution for modules that will be implemented in the future.  We offer this version
+	in the meantime, since it is still quite useful for investigations.
+      Example
+        A = fourDimSklyanin(ZZ/32003, {a,b,c,d}, DegreeLimit => 10)
+	k = vars A
+	d1 = rightKernel(k, DegreeLimit => 10)
+	d2 = rightKernel(d1, DegreeLimit => 10)
+	d3 = rightKernel(d2, DegreeLimit => 10)
+	d4 = rightKernel(d3, DegreeLimit => 10)
+      Text
+        As a warning, note that matrix multiplication over noncommutative rings currently takes place in the opposite ring
+	as a result of existing code over the exterior and Weyl algebras.  As a result, one should check computations
+	coming from rightKernel with @TO ncMatrixMult@ until this is fixed.
+      Example
+        d1*d2
+	ncMatrixMult(d1,d2)
+///
+
+doc ///
+   Key
+     Derivation
+     derivation
+     (derivation,FreeAlgebra,List)
+     (derivation,FreeAlgebra,List,RingMap)
+     (derivation,FreeAlgebraQuotient,List)
+     (derivation,FreeAlgebraQuotient,List,RingMap)
+     (symbol SPACE, Derivation, RingElement)
+     (symbol SPACE, Derivation, ZZ)
+   Headline
+     Derivation defined on a noncommutative algebra
+   Usage
+     delta = derivation(A,output,sigma)
+   Inputs
+     A : FreeAlgebra
+	 or a @ TO FreeAlgebraQuotient @.
+     output : List
+     sigma : RingMap
+   Outputs
+     delta : Derivation
+   Description
+      Text
+        This function returns a Derivation object, which may be used to perform computations
+	with (twisted) derivations in a noncommutative algebra.  A linear map $\delta : A \to A$ is called
+	a $\sigma$-derivation provided for all $x,y \in A$, one has $\delta(xy) = \delta(x)y + \sigma(x)\delta(y)$.
+	Such maps are useful in defining many noncommutative algebras, including Ore extensions.
+      Text
+        Below we give a simple example of a twisted derivation that is used to define the subalgebras
+	appearing in Fomin and Procesi's work to describe Fomin-Kirillov algebras.
+      Example
+        A = QQ<|x,y|>
+	sigma = map(A,A,{y,x})
+	delta = derivation(A,{-x*y,y*x},sigma)
+	delta y^2
+///
+
+-*
+
+restart
+needsPackage "AssociativeAlgebras"
+
+doc ///
+   Key
+
+   Headline
+
+   Usage
+
+   Inputs
+
+   Outputs
+
+   Description
+      Text
+
+      Example
+
+///
+
 *-

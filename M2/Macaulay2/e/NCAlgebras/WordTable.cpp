@@ -161,7 +161,7 @@ bool WordTable::isSuffix(Word word,
 bool WordTable::subword(Word word,
                         std::pair<int,int>& output) const
 {
-  int start_index = -1;
+  int start_index = -1;  // return value
   for (auto i = 0; i < mMonomials.size(); ++i)
     {
       if (subwordPosition(mMonomials[i], word, start_index))

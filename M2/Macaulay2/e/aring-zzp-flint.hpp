@@ -139,6 +139,10 @@ class ARingZZpFlint : public RingInterface
   {
     ElementType a1 = nmod_neg(a, mModulus);
 
+    // the code below was an attempt to prevent flint from calling the
+    // version of the general multiply code if the product of the two flint
+    // integers always fits in a single limb.  Speedup was not significant in testing.
+
     //if (mModulus.norm >= FLINT_BITS/2) /* addmul will fit in a limb */
     //{
     //   mp_limb_t ab_hi, ab_lo;
@@ -147,7 +151,6 @@ class ARingZZpFlint : public RingInterface
     //   NMOD_RED(result,ab_lo,mModulus);
     //}
     //else // product does not fit in a single limb
-    //#endif
     
     NMOD_ADDMUL(result, a1, b, mModulus);
   }

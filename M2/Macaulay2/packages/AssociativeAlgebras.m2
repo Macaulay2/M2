@@ -12,6 +12,7 @@ newPackage(
     Headline => "Noncommutative algebra",
     Keywords => {"Noncommutative Algebra"},
     DebuggingMode => true,
+    PackageImports =>{"Complexes"},
     PackageExports =>{"IntegralClosure"},
     AuxiliaryFiles => true
     )
@@ -59,8 +60,6 @@ newPackage(
 export {
     "freeAlgebra",
     "ncBasis",
-    "ForceNCBasis",
-    "forceNCBasis",
     "NCGB", -- uugh: change name!
     "NCReductionTwoSided",
     "sequenceToVariableSymbols",
@@ -73,8 +72,8 @@ export {
     "fourDimSklyanin",
     "oreIdeal",
     "oreExtension",
-    -- "freeProduct", -- not added yet
-    -- "qTensorProduct", -- not added yet
+    "freeProduct", -- not added yet
+    "qTensorProduct", -- not added yet
     "toFreeAlgebraQuotient",
     "toCommRing",
     "isFreeAlgebraOrQuotient",
@@ -84,7 +83,6 @@ export {
     "isLeftRegular",
     "isRightRegular",
     "isCentral",
-    -- "isNormal", -- now bringing this in from IntegralClosure
     "normalAutomorphism",
     "ncHilbertSeries",
     "toRationalFunction",
@@ -92,11 +90,16 @@ export {
     "ncKernel",
     "ncGraphIdeal",
     "endomorphismRingIdeal",
+    "extAlgebra",
     "leftQuadraticMatrix",
     "rightQuadraticMatrix",
     "pointScheme",
     "lineSchemeFourDim",
-    "ncMatrixMult"
+    "ncMatrixMult",
+    "rightKernel",
+    "Derivation",
+    "derivation"
+    -- "forceNCBasis"  -- not exported yet
     }
 
 -- types from Core
@@ -336,8 +339,8 @@ NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
         tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
 	possField := ZZ/(char ultimate(coefficientRing, ring I));
 	f4ParallelAllowed := (possField === (coefficientRing ring I)) or instance(coefficientRing ring I, GaloisField) or coefficientRing ring I === QQ;
-	if not isHomogeneous I or not f4ParallelAllowed and (strat == "F4Parallel") then (
-	   -- need to change to Naive algorithm if I is not homogeneous at this point.
+	if not isHomogeneous I or (not f4ParallelAllowed and (strat == "F4Parallel")) then (
+	   -- need to change to naive algorithm if I is not homogeneous at this point.
 	   << "Warning:  Parallel F4 Algorithm not available over current coefficient ring." << endl;
            if isHomogeneous I then strat = "F4" else strat = "Naive";
 	   << "Converting to " << strat << " algorithm." << endl;
@@ -434,7 +437,6 @@ ncBasis(InfiniteNumber,ZZ,Ring) := opts -> (lo,hi,R) -> ncBasis(lo, {hi}, R, opt
 ncBasis(ZZ,InfiniteNumber,Ring) := opts -> (lo,hi,R) -> ncBasis({lo}, hi, R, opts)
 ncBasis Ring := opts -> R -> ncBasis(-infinity, infinity, R, opts)
 
-
 forceNCBasis = method()
 forceNCBasis (ZZ,Ring) := (d,R) -> (
    gbR := gens ideal R;
@@ -445,25 +447,25 @@ forceNCBasis (ZZ,Ring) := (d,R) -> (
 -------------------------
 
 -- TODO: should make this work in the multigraded situations as well
-leftMultiplicationMap = method(Options => {ForceNCBasis=>false})
-leftMultiplicationMap(RingElement,ZZ) := opts -> (f,n) -> (
+leftMultiplicationMap = method()
+leftMultiplicationMap(RingElement,ZZ) := (f,n) -> (
    B := ring f;
    -- is this what we want in the multigraded case?
    m := sum degree f;
    if m === -infinity then m = 0;
-   nBasis := if opts#ForceNCBasis then flatten entries forceNCBasis(n,B) else flatten entries ncBasis(n,B);
-   nmBasis := if opts#ForceNCBasis then flatten entries forceNCBasis(n+m,B) else flatten entries ncBasis(n+m,B);
-   leftMultiplicationMap(f,nBasis,nmBasis,opts)
+   nBasis := flatten entries ncBasis(n,B);
+   nmBasis := flatten entries ncBasis(n+m,B);
+   leftMultiplicationMap(f,nBasis,nmBasis)
 )
 
-leftMultiplicationMap(RingElement,ZZ,ZZ) := opts -> (f,n,m) -> (
+leftMultiplicationMap(RingElement,ZZ,ZZ) := (f,n,m) -> (
    B := ring f;
-   nBasis := if opts#ForceNCBasis then flatten entries forceNCBasis(n,B) else flatten entries ncBasis(n,B);
-   mBasis := if opts#ForceNCBasis then flatten entries forceNCBasis(m,B) else flatten entries ncBasis(m,B);
-   leftMultiplicationMap(f,nBasis,mBasis,opts)
+   nBasis := flatten entries ncBasis(n,B);
+   mBasis := flatten entries ncBasis(m,B);
+   leftMultiplicationMap(f,nBasis,mBasis)
 )
 
-leftMultiplicationMap(RingElement,List,List) := opts -> (f,fromBasis,toBasis) -> (
+leftMultiplicationMap(RingElement,List,List) := (f,fromBasis,toBasis) -> (
    local retVal;
    A := ring f;
    R := coefficientRing A;
@@ -481,7 +483,7 @@ leftMultiplicationMap(RingElement,List,List) := opts -> (f,fromBasis,toBasis) ->
       retVal
    )
    else (
-      retVal = sub(last coefficients(matrix{apply(fromBasis, g -> f*g)},Monomials=>toBasis), R);
+      retVal = sub(last coefficients(f*(matrix{fromBasis}),Monomials=>toBasis), R);
       retVal
    )
 )
@@ -522,7 +524,7 @@ rightMultiplicationMap(RingElement,List,List) := (f,fromBasis,toBasis) -> (
       retVal
    )
    else (
-      retVal = sub(last coefficients(matrix{apply(fromBasis, g -> g*f)}, Monomials=>toBasis), R);
+      retVal = sub(last coefficients((matrix{fromBasis})*f, Monomials=>toBasis), R);
       retVal
    )
 )
@@ -604,15 +606,19 @@ isNormal RingElement := f -> (
 
 normalElements = method()
 normalElements(FreeAlgebraQuotient, ZZ, Symbol) := Sequence => (R,n,x) -> (
-   -- Inputs: An associate algebra R, a degree n, and two symbols to use for indexed variables.
+   -- Inputs: An associative algebra R, a degree n, and two symbols to use for indexed variables.
    -- Outputs: (1) A list of normal monomials in degree n
    --          (2) the components of the variety of normal elements (excluding the normal monomials) 
    --              expressed as ideals in terms of coefficients of non-normal monomial basis elements
    -- 
    -- The variety also contains information about the normalizing automorphism. This information is not displayed.
    -- The user can obtain the normalizing automorphism of a normal element via the normalAutomorphism function
+
+   -- WARNING: This code currently is only valid for a singly graded algebra generated in degree one.  
+   if degreeLength R != 1 or max flatten degrees R != 1 then error "Requires a singly graded algebra generated in degree one.";
    kk := coefficientRing R;
    fromBasis := flatten entries ncBasis(n,R);
+   -- this line is the suspect line.  in general, one must keep seperate bases for each variable.
    toBasis := flatten entries ncBasis(n+1,R);
    pos := positions(fromBasis,m->isNormal(m));
    normalBasis := apply(pos, i-> fromBasis#i);
@@ -684,6 +690,8 @@ toFreeAlgebraQuotient Ring := FreeAlgebraQuotient => R -> (
    Q := coefficientRing R;
    gensA := new AngleBarList from ((gens R) / baseName | {Degrees=> degrees R});
    A := Q gensA;
+   -- if only one generator and no relations, return the free algebra on one variable
+   if numgens R == 1 and ideal R == 0 then return A;
    phi := map(A,ambient R,gens A);
    skewCommIndices := if R.?SkewCommutative then R.SkewCommutative else {};
    bothExter := (i,j) -> member(i,skewCommIndices) and member(j,skewCommIndices);
@@ -810,11 +818,46 @@ fourDimSklyanin (Ring, List) := opts -> (R, varList) -> (
    fourDimSklyanin(R,{alpha,beta,gamma}, varList, opts)
 )
 
+--- Derivation functionality
+Derivation = new Type of HashTable
+derivation = method()
+derivation (FreeAlgebra, List) :=
+derivation (FreeAlgebraQuotient, List) := (A,output) -> derivation(A,output,map(A,A))
+
+derivation (FreeAlgebra, List, RingMap) :=
+derivation (FreeAlgebraQuotient, List, RingMap) := (A, output, twist) -> (
+   -- currently, no error checking is performed
+   der := new Derivation from {(symbol source) => A,
+                               (symbol matrix) => matrix {output},
+		               (symbol homomorphism) => twist,
+			       (symbol generators) => hashTable apply(numgens A, i -> (A_i,output#i)),
+			       ("imageCache") => new MutableHashTable from {}};                            
+   der
+)
+
+Derivation ZZ := (der,n) -> 0
+
+Derivation RingElement := (der,f) -> (
+   if der#"imageCache"#?f then return der#"imageCache"#f;
+   if der.generators#?f then return der.generators#f;
+   varListF := toVariableList f;
+   factoredTerms := apply(varListF, p -> (p#0, product take(p#1,#(p#1) // 2), product drop(p#1,#(p#1) // 2)));
+   result := sum for term in factoredTerms list (
+      leftMon := term#1;
+      rightMon := term#2;
+      coeff := term#0;
+      monImage := (der leftMon)*rightMon + (der.homomorphism leftMon)*(der rightMon);
+      coeff*monImage
+   );
+   if size f == 1 then der#"imageCache"#f = result;
+   result  
+)
+
 -- This code will be useful once we can handle derivations properly.
 -- as it stands, it will still run but not evaluate the derivation properly.
 oreIdeal = method(Options => {Degree => 1})
-oreIdeal (Ring,RingMap,RingMap,RingElement) := 
-oreIdeal (Ring,RingMap,RingMap,Symbol) := opts -> (B,sigma,delta,X) -> (
+oreIdeal (Ring,RingMap,Derivation,RingElement) := 
+oreIdeal (Ring,RingMap,Derivation,Symbol) := opts -> (B,sigma,delta,X) -> (
    X = baseName X;
    kk := coefficientRing B;
    varsList := ((gens B) / baseName) | {X};
@@ -830,13 +873,13 @@ oreIdeal (Ring,RingMap,RingMap,Symbol) := opts -> (B,sigma,delta,X) -> (
 
 oreIdeal (Ring,RingMap,Symbol) := 
 oreIdeal (Ring,RingMap,RingElement) := opts -> (B,sigma,X) -> (
-   zeroMap := map(B,B,toList ((numgens B):0));
+   zeroMap := derivation(B,toList ((numgens B):0));
    oreIdeal(B,sigma,zeroMap,X,opts)
 )
 
 oreExtension = method(Options => options oreIdeal)
-oreExtension (Ring,RingMap,RingMap,Symbol) := 
-oreExtension (Ring,RingMap,RingMap,RingElement) := opts -> (B,sigma,delta,X) -> (
+oreExtension (Ring,RingMap,Derivation,Symbol) := 
+oreExtension (Ring,RingMap,Derivation,RingElement) := opts -> (B,sigma,delta,X) -> (
    X = baseName X;
    I := oreIdeal(B,sigma,delta,X,opts);
    C := ring I;
@@ -885,27 +928,21 @@ qTensorProduct (Ring, Ring, QQ) :=
 qTensorProduct (Ring, Ring, RingElement) := (A,B,q) -> (
    -- this is the q-commuting tensor product of rings
    F := freeProduct(A,B);
+   C := ambient F;
    R := coefficientRing A;
    q = promote(q,R);
    gensAinF := take(gens F, #gens A);
    gensBinF := drop(gens F, #gens A);   
    -- create the commutation relations among generators of A and B
-   K := flatten apply(gensAinF, g-> apply( gensBinF, h-> h*g-q*g*h));
+   phi := map(C, F, gens C);
+   K := ideal flatten apply(gensAinF, g-> apply( gensBinF, h-> phi (h*g-q*g*h)));
 
-   if class F === FreeAlgebra then F/(ideal K)
-   else (
-      I := gens ideal F;
-      C := ambient F;
-      newI := ideal select( (I | matrix {K}), g -> g!=0);
-      -- can we be clever with not re-computing GB here?
-      C/newI
-   )
+   if class F === FreeAlgebra then F/K else C/(ideal F + K)
 )
 
 quadraticClosure = method()
 -- TODO: do we want to return the commutative version of this?
 --quadraticClosure Ring := B -> quadraticClosure toFreeAlgebraQuotient B
-
 quadraticClosure FreeAlgebra :=
 quadraticClosure FreeAlgebraQuotient := B -> (
    I := ideal B;
@@ -924,7 +961,6 @@ quadraticClosure Ideal := I -> (
 homogDual = method()
 -- TODO: do we want to return the commutative version of this?
 -- homogDual Ring := B -> homogDual toFreeAlgebraQuotient B
-
 homogDual FreeAlgebra :=
 homogDual FreeAlgebraQuotient := B -> (
    I := ideal B;
@@ -978,12 +1014,12 @@ oppositeRing FreeAlgebraQuotient := B -> (
    oppA / oppIdealB
 )
 
--*
--- Make this work eventually
-NCRing ** NCRing := (A,B) -> (
+FreeAlgebra ** FreeAlgebra := 
+FreeAlgebraQuotient ** FreeAlgebra :=
+FreeAlgebra ** FreeAlgebraQuotient := 
+FreeAlgebraQuotient ** FreeAlgebraQuotient := (A,B) -> (
    qTensorProduct(A,B,promote(1,coefficientRing A))
 )
-*-
 
 findRecurrence = method()
 findRecurrence List := as -> (
@@ -1111,6 +1147,8 @@ ncGraphIdeal RingMap := phi -> (
 -------------------------------------------------------
 --- Commands to compute endomorphism ring presentations
 -------------------------------------------------------
+--- This code is not very useful at the moment, since NCGBs with commutative coefficient
+--- rings are not yet implemented
 
 endomorphismRingIdeal = method()
 endomorphismRingIdeal (Module,Symbol) := (M,X) -> (
@@ -1166,8 +1204,115 @@ evaluateAt (List,RingElement) := (mats,f) -> (
 )
 
 -------------------------------------------------------------------------
----- Point and line scheme code (in the sense of Artin-Tate-Van den Bergh
+---- Ext Algebra code (in the non-ci case)
 -------------------------------------------------------------------------
+-- this is a slightly more intelligent version of evaluateAt which remembers intermediate calculations
+evaluateAtMonomial = method()
+evaluateAtMonomial (RingElement, MutableHashTable) := (m, monHash) -> (
+   if monHash#?m then return monHash#m;
+   mVarList := last first toVariableList m;
+   wordLen := #mVarList;
+   leftMon := product take(mVarList,wordLen // 2);
+   rightMon := product drop(mVarList,wordLen // 2);
+   monHash#m = monHash#leftMon * monHash#rightMon;
+   monHash#m
+)
+
+getExtGensAndRels = method(Options => {})
+getExtGensAndRels (Module, ZZ, FreeAlgebra, MutableHashTable) :=
+getExtGensAndRels (Module, ZZ, FreeAlgebraQuotient, MutableHashTable) := opts -> (k, d, B, monHash) -> (
+   -- for each monomial of B in degree d, compute its value as a map from
+   -- a resolution of k to itself.  Then convert all these back to elements of
+   -- ext^d and determine any new generators that are required.  Return
+   -- the elements required as a list of ComplexMaps.
+   basisB := ncBasis(d,B);
+   -- the following line is the main bottleneck in the algorithm:
+   Extd := Ext^d(k,k);
+   R := ring k;
+
+   -- perform a quick check to see if any additional processing is necessary
+   if (numgens Extd == #(flatten entries basisB)) then return ({},{});
+ 
+   -- locate new generators and relations at this point
+   images := matrix {apply(flatten entries basisB, m -> yonedaMap'(evaluateAtMonomial(m,monHash)))};
+   newgens := mingens (Extd/image images);
+   newMaps := if newgens == 0 then {} else (
+      cxLen := length source monHash#(B_0);
+      liftedGens := apply(numcols newgens, i -> map(Extd,R^1,newgens_{i}));
+      apply(liftedGens, liftGen -> yonedaMap(liftGen,LengthLimit => cxLen))
+   );
+   kergens := gens ker sub(matrix entries images,coefficientRing ring images);
+   newrels := flatten entries (basisB * kergens);
+   phi := map(ambient B, B, gens ambient B);
+   (newMaps,newrels / phi)
+)
+
+-- would like to do the following for modules (instead of just the residue field),
+-- but NCGBs with coeffs in a commutative ring are not yet complete (similar to endomorphism rings)
+extAlgebra = method(Options => {DegreeLimit => (5,10)})
+extAlgebra (Ring, Symbol) := opts -> (R, xx) -> (
+   if not isHomogeneous R or not isCommutative R then error "Expected a graded ring as input.";
+   degLimit := first opts#DegreeLimit;
+   gbLimit := last opts#DegreeLimit;
+   if degLimit > gbLimit then
+     error "Expected DegreeLimit <= GBDegreeLimit.";
+   kk := coefficientRing R;
+   if degLimit <= 0 then return kk;
+   
+   -- build the algebra generated in degree 1 first
+   -- this should be the same as the Koszul dual, but we need
+   -- the actual complex maps to compute products later
+   k := coker vars R;
+   Ext1 := basis Ext^1(k,k);
+   degsExt1 := (degrees source Ext1) / (d -> -d);
+   -- I really want this to be bigraded (at least, if R is graded) but ncBasis can't handle multigradings yet.
+   A := freeAlgebra(kk,{xx_1..xx_(#degsExt1), Degrees => apply(degsExt1, d -> {1}) });
+   -- construct the lifts of the maps out to degree relLimit + 2 to see if we can capture
+   -- relations correctly.  This may need to be changed
+   extMaps := new MutableHashTable from apply(numcols Ext1, i -> (A_i,yonedaMap(Ext1_{i},LengthLimit => degLimit))); 
+   basisA2 := ncBasis(2,A);
+   deg2prods := matrix {apply(flatten entries basisA2, m -> yonedaMap'(evaluateAtMonomial(m,extMaps)))};
+
+   I1 := ideal compress (basisA2 * sub(gens ker (deg2prods),kk));
+   I1gb := NCGB(I1,gbLimit);
+   B := freeAlgebraQuotient(A,I1,I1gb);
+   alpha := map(B,A,gens B);
+
+   degsExt := degsExt1;
+   -- update the hashtable
+   extMaps = new MutableHashTable from apply(keys extMaps, m -> (alpha m, extMaps#m));
+  
+   for d from 2 to degLimit do (
+      (newGens,newRels) := getExtGensAndRels(k, d, B, extMaps);
+      -- enlarge ring by new generators
+      -- will have to be more careful with multidegrees here in the future.  This degree
+      -- is just homological degree
+      degsExt = degsExt | apply(newGens, n -> {d});
+      A' := freeAlgebra(kk, {xx_1..xx_(#degsExt), Degrees => degsExt});
+
+      -- enlarge defining ideal by new relations
+      phi := map(A',A,take(gens A', numgens A));
+      psi := map(A',B,take(gens A', numgens B));
+      -- recompute GB and update ring
+      I := ideal B + ideal newRels;
+      I' := phi I;
+      I'gb := NCGB(I',gbLimit);
+      B' := freeAlgebraQuotient(A',I',I'gb);
+      alpha := map(B',B,take(gens B', numgens B));
+      -- update generators hash table with new elements
+      extMaps = new MutableHashTable from apply(keys extMaps, m -> (alpha m, extMaps#m));
+      scan(numgens B', i -> if i >= numgens A then extMaps#(B'_i) = newGens#(numgens B' - i - 1));
+      B = B';
+      A = A';
+   );
+   -- only return the generator maps, not all monomials
+   B.cache#"extMaps" = hashTable apply(gens B, v -> (v,extMaps#v));
+   B
+)
+
+--------------------------------------------------------------------------
+---- Point and line scheme code (in the sense of Artin-Tate-Van den Bergh)
+--------------------------------------------------------------------------
 leftQuadraticMatrix = method()
 leftQuadraticMatrix Ideal := I -> (
    A := ring I;
@@ -1563,7 +1708,7 @@ toRationalFunction(apply(20, i -> numgens source basis(i, R)))
 ///
 
 --- FM: Working on endomorphismRing code.  Basically rewrote what used to be in NCAlgebras
----     the GB for the resulting ideal is wrong since
+---     the GB for the resulting ideal is wrong since we do not yet have GBs of NC algebras defined over commutative rings
 restart
 debug needsPackage "AssociativeAlgebras"
 R = QQ[x,y,z,w]/ideal(x*w - y*z)

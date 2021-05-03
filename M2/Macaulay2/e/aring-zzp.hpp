@@ -179,6 +179,11 @@ class ARingZZp : public RingInterface
   {
     // we assume: a, b are NONZERO!!
     // result -= a*b
+    
+    // the change in code below mimics that of coeffrings.cpp which was 15-20% faster in
+    // testing for some reason (in small characteristics).  The assembly generated is much more
+    // clean than it was previously.
+
     //int ab = a + b;
     //if (ab > p1) ab -= p1;
     int ab = modulus_add(a,b,p1);

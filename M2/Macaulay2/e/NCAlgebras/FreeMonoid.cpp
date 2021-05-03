@@ -118,8 +118,8 @@ int FreeMonoid::compare(const Monom& m1, const Monom& m2) const
   // at this point, the weights are the same.
   // the total length is just mNumWeights + 1 + wordLength, so just
   // compare the total length (i.e. m1[0] and m2[0]
-  if (m1[0] > m2[0]) return GT;
-  if (m1[0] < m2[0]) return LT;
+  if (m1.size() > m2.size()) return GT;
+  if (m1.size() < m2.size()) return LT;
 
   // at this stage, they have the same weights and word length, so use lex order
   for (int j = mNumWeights+1; j < m1.size(); ++j)

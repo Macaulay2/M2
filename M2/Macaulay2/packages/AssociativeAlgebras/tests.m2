@@ -1356,6 +1356,24 @@ assert(support M_{0,1} == {x,y,z})
 assert(support M_{2} == {x,y,z})
 ///
 
+DEVELOPMENT ///
+-- turn this into a test.  Crash using VectorArithmetic when using GCed rings under F4
+restart
+debug needsPackage "AssociativeAlgebras"
+kk = QQ[a]
+A = kk<|x_4,x_1,x_2,x_3,ee|>
+eps = 1_A
+I1 = ideal {x_3^2 - x_1*x_2,
+            x_4^2 - eps*x_2*x_1,    
+	    x_1*x_3 - x_2*x_4,
+	    x_3*x_1 - x_2*x_3,
+	    x_1*x_4 - eps*x_4*x_2,
+	    x_4*x_1 - x_3*x_2}
+--I1gb = NCGB(I1,10)
+I2 = I1 + ideal {ee*(x_4 + 2*x_1 + x_2 + 2*x_3), ee*(-2*x_4 - x_1 + 2*x_2 + x_3), x_1*ee,x_2*ee,x_3*ee,x_4*ee,ee^2}
+I2gb = NCGB(I2,17,Strategy=>"F4") -- crashes (sometimes)
+///
+
 --- (FM) List of bugs found when working on kernel code:
 --- 1. fraction field and ring maps, line 801.  I suspect the constructor for RingMap
 ---    is at fault.
@@ -1825,6 +1843,7 @@ e*(a-b)*c - e*c*a = -e*b*c = -e*c*b = 0
 ///
 
 DEVELOPMENT ///
+-- Examples involving Fomin-Kirillov algebras
 restart
 needsPackage "AssociativeAlgebras"
 n = 6
@@ -1837,15 +1856,56 @@ I = ideal (apply(gens A,       x -> x^2) |
              apply(subsets3,     p -> x_(indexing {p#0,p#1})*x_(indexing {p#1,p#2}) - x_(indexing {p#1,p#2})*x_(indexing {p#0,p#2}) - x_(indexing {p#0,p#2})*x_(indexing {p#0,p#1})) |
              apply(subsets3,     p -> x_(indexing {p#1,p#2})*x_(indexing {p#0,p#1}) - x_(indexing {p#0,p#2})*x_(indexing {p#1,p#2}) - x_(indexing {p#0,p#1})*x_(indexing {p#0,p#2})) |
 	     apply(disjSubsets2, p -> x_(indexing {p#0#0,p#0#1})*x_(indexing {p#1#0,p#1#1}) - x_(indexing {p#1#0,p#1#1})*x_(indexing {p#0#0,p#0#1})))
-elapsedTime Igb = NCGB(I, 10); -- crashes (e.g. is killed, out of memory?) on the degree 11 computation.
+elapsedTime Igb = NCGB(I, 7); -- crashes (e.g. is killed, out of memory?) on the degree 11 computation.
 B = A/I
 elapsedTime apply(13, i -> numcols ncBasis(i,B)) -- correct for E_4
 elapsedTime apply(41, i -> numcols ncBasis(i,B)) -- correct for E_5
-elapsedTime apply(11, i -> numcols ncBasis(i,B)) -- correct for E_6 to degree 10
+elapsedTime apply(7, i -> numcols ncBasis(i,B)) -- correct for E_6 to degree 10
 sum oo
 ///
 
--- Hilbert series example. Use r >= 11 for  a reasonably long test
+DEVELOPMENT ///
+-- Examples involving Fomin-Kirillov algebras
+restart
+debug needsPackage "AssociativeAlgebras"
+n = 6
+-- variables x_1..x_(n-1)
+-- for each 1 \leq i < j \leq n-1
+-- D_{ij}(ab) = D_{ij}(a)b + s_{ij}(a)D(b)
+-- need to implement twisted derivations (either in top level, or in the engine)
+kk = ZZ/32003
+A = kk <| x_1..x_(n-1) |>
+sigmas = hashTable apply(subsets(toList(1..n-1),2), p -> (p,map(A,A,apply(numgens A, i -> if i+1 == p#0 then A_(p#1-1) else if i+1 == p#1 then A_(p#0-1) else A_i))))
+ders = hashTable apply(subsets(toList(1..n-1),2), p -> (p,derivation(A,apply(numgens A, i -> if i+1 == p#0 then -A_(p#0-1)*A_(p#1-1) else if i+1 == p#1 then A_(p#1-1)*A_(p#0-1) else 0),sigmas#p)))
+
+deg = 10;
+degprev = apply(gens A, v -> v^2)
+gensSoFar = degprev
+for i from 3 to deg do (
+   << "Working on degree: " << i << endl;
+   elapsedTime (newmons,newdeg) := coefficients(compress matrix {flatten apply(degprev, f -> apply(values ders, der -> der f))});
+   degprev = flatten entries (newmons * (mingens image sub(newdeg,kk)));
+   gensSoFar = gensSoFar | degprev;
+   -- now remove the polynomial combinations
+   elapsedTime Igb = NCGB(ideal gensSoFar, i);
+   << #gensSoFar << " : " << #(flatten entries Igb) << endl;
+   gensSoFar = flatten entries Igb;
+   degprev = select(gensSoFar, f -> first degree f == i);
+   if degprev == {} then break;
+);
+I = ideal gensSoFar;
+Igb = NCGB(I, 10);
+B = A/I
+C = ZZ[T]
+elapsedTime sum apply(11, i -> (numcols ncBasis(i,B))*T^i)
+F5 = T^28+4*T^27+12*T^26+30*T^25+64*T^24+122*T^23+211*T^22+336*T^21+496*T^20+684*T^19+885*T^18+1078*T^17+1239*T^16+1346*T^15+1384*T^14+1346*T^13+1239*T^12+1078*T^11+885*T^10+684*T^9+496*T^8+336*T^7+211*T^6+122*T^5+64*T^4+30*T^3+12*T^2+4*T+1
+F4 = T^8+3*T^7+6*T^6+9*T^5+10*T^4+9*T^3+6*T^2+3*T+1
+F3 = T^3+2*T^2+2*T+1
+F2 = T+1
+FF = F2*F3*F4*F5
+///
+
+-- Hilbert series example. Use r >= 11 for a reasonably long test
 DEVELOPMENT ///
 restart
 needsPackage "AssociativeAlgebras"
@@ -1859,25 +1919,7 @@ elapsedTime Igb = NCGB(I,8, Strategy=>"F4Parallel");
 ///
 
 DEVELOPMENT ///
-restart
-debug needsPackage "AssociativeAlgebras"
-kk = QQ[a_1..a_6]
--- term order makes a huge difference here
-A = kk<|x_4,x_1,x_2,x_3,ee|>
--- A = kk{x_1,x_2,x_3,x_4}
-eps = -1_A
-I1 = ideal {x_3^2 - x_1*x_2,
-            x_4^2 - eps*x_2*x_1,    
-	    x_1*x_3 - x_2*x_4,
-	    x_3*x_1 - x_2*x_3,
-	    x_1*x_4 - eps*x_4*x_2,
-	    x_4*x_1 - x_3*x_2}
-I2 = I1 + ideal {ee*x_1, ee*x_3, x_1*ee, x_2*ee, x_3*ee, x_4*ee, ee^2}
-I2gb = NCGB(I2,25,Strategy=>"F4Parallel")
---- is it possible to get TBB so we can tell boehm about which threads are in use
-///
-
-DEVELOPMENT ///
+-- this is some top-level code for testing Lundqvist's approach to NCGBs
 -- 3dim sklyanin example
   restart
   needsPackage "AssociativeAlgebras"
@@ -1886,25 +1928,24 @@ DEVELOPMENT ///
   f2 = b*c + 2*c*b + a^2
   f3 = c*a + 2*a*c + b^2
   I = ideal (f1,f2,f3)
-  Igb = elapsedTime NCGB(I,19);  
+  Igb = elapsedTime NCGB(I,24);  
   (flatten entries Igb) / degree // tally
 
   restart
+  gbTrace = 2
   debug needsPackage "AssociativeAlgebras"
   kk = ZZ/11
   Lambda = kk <|a,b,c|>
   f1fac = {{a,b},{b,2*a},{c,c}}
   f2fac = {{b,c},{c,2*b},{a,a}}
   f3fac = {{c,a},{a,2*c},{b,b}}
-  f1 = a*b + 2*b*a + c^2
-  f2 = b*c + 2*c*b + a^2
-  f3 = c*a + 2*a*c + b^2
-  I = ideal{f1,f2,f3}
+  facfs = {f1fac,f2fac,f3fac};
+  I = ideal apply(facfs, facf -> facf / product // sum)
   makeMonic = f -> f*(leadCoefficient f)^(-1)
 
   Idm1 = I
   d = 3
-  N = 19
+  N = 10
   
   -- all the time consuming work is in reducing x.w where w is a reduced word of degree d-2 or d-1
   -- and x is a generator.  if we can do this fast, then we are in good shape.
@@ -1912,74 +1953,83 @@ DEVELOPMENT ///
   -- let w be a reduced word.  write w as v.y for a variable y.  can we use the fact that we can save
   -- how to reduce x.v as a sum to help here?
 
-  -- w deg d-1
-  -- x.w = x.w'y = \sum c_i w_i.y
-  
-  -- A_1 ** A_(d-2) ** A_1 --> A_1 ** A_(d-1) --> A_d
-  -- A_1 ** A_(d-2) ** A_1 --> A_(d-1) ** A_1 --> A_d
-  
+  -- define quotient so far for reductions
+  tempA = freeAlgebraQuotient(Lambda,Idm1,gens Idm1);
   elapsedTime for d from 3 to N do (
-     -- define quotient so far for reductions
-     tempA = freeAlgebraQuotient(Lambda,Idm1,gens Idm1);
      -- maps to get back and forth to/from free algebra
      phi = map(Lambda,tempA,gens Lambda);
      psi = map(tempA,Lambda,gens tempA);
      -- basis of A_(d-1)
      elapsedTime Adm1 = flatten entries forceNCBasis(d-1,tempA);
-     -- Adm1mat = matrix {Adm1};
-     -- basis of A_1 \otimes A_(d-1) considered as words in the tensor algebra
-     --elapsedTime A1Adm1 = ((gens Lambda) ** (Adm1 / phi)) / product // sort;
-     elapsedTime Adm11 = ((Adm1 / phi) ** (gens Lambda)) / product // sort;
+
+     -- basis of A_(d-1) \otimes A_1 considered as words in the tensor algebra     
+     elapsedTime Adm11mat = ncMatrixMult(transpose matrix {Adm1 / phi}, vars Lambda);
+     elapsedTime Adm11 = reverse flatten entries Adm11mat;
+
      -- basis of the complementary degree.  In this case, degree d-2 since all relations are quadratic
      elapsedTime Acomp = flatten entries forceNCBasis(d-2,tempA);
      
      -- lots of time is spent here
      -- compute the multiplication maps from degree d-2 to d-1 by the variables
      -- this is a nested hash table
-
-     --elapsedTime multMaps = hashTable apply(gens tempA, v -> (
-     --	     (v,hashTable apply(Acomp, m -> (m,v*m)))));
-
-     --elapsedTime multMapsTemp = entries ((transpose matrix {Acomp}) * (vars tempA));
-     -- matrix mult is in the opposite ring...
-     elapsedTime multMapsTemp = entries ((transpose vars tempA) * (matrix {Acomp}));
-     elapsedTime multMaps = hashTable apply(#Acomp, w -> (
-     	     (Acomp#w,hashTable apply(numgens tempA, v -> (tempA_v,multMapsTemp#v#w)))));
+     if d == 3 then (
+        elapsedTime multMapsTemp = entries ncMatrixMult(transpose matrix {Acomp},vars tempA);
+        elapsedTime multMaps = hashTable apply(#Acomp, w -> (
+        	     (Acomp#w,hashTable apply(numgens tempA, v -> (tempA_v,multMapsTemp#w#v)))));
+     	-- use this information to compute a basis of Nd
+        elapsedTime Nd = flatten for m in Acomp list (
+             apply(facfs, facf -> apply(facf, p -> {multMaps#m#(psi p#0), psi p#1}))
+        );
+     ) else (
+        elapsedTime multMaps = hashTable apply(Acomp, w -> (
+        	     (w,hashTable apply(gens tempA, v -> (v,forNextDeg#((phi w)*(phi v)))))));
+        elapsedTime Nd = flatten for m in Acomp list (
+             apply(facfs, facf -> apply(facf, p -> {alpha forNextDeg#((phi m)*(p#0)),psi p#1}))
+        );        
+     );
      
-     -- use this information to compute a basis of Nd
-     -- remember this calculation when it happens below
-     elapsedTime Nd = flatten for m in Acomp list (
-             {apply(f1fac, p -> {multMaps#m#(psi p#0), psi p#1}),
-              apply(f2fac, p -> {multMaps#m#(psi p#0), psi p#1}),
-              apply(f3fac, p -> {multMaps#m#(psi p#0), psi p#1})}
-          );
      -- lift this information to the free algebra and take the product, then take
-     -- coefficients of these elements in A_1 \otimes A_(d-1) (thought of as words in Lambda)
-     elapsedTime Ndcoeffs = last coefficients(matrix {apply(Nd, p -> apply(p, q -> q / phi // product)) / sum}, Monomials=>Adm11);
-     Ndcoeffs = sub(Ndcoeffs, kk);
+     -- coefficients of these elements in A_(d-1) \otimes A_1 (thought of as words in Lambda)
+     elapsedTime Ndmat = matrix {apply(Nd, p -> apply(p, q -> q / phi // product)) / sum};
+     elapsedTime Ndcoeffs = sub(last coefficients(Ndmat, Monomials=>Adm11),kk);
 
      -- basis of A_d (so far, anyway)
      elapsedTime Ad = flatten entries forceNCBasis(d,tempA);
 
      -- most time is spent here
-     -- matrix representation of the projection map from A_1 \otimes A_(d-1) --> A_d
-     elapsedTime projMap = sub(last coefficients(psi matrix {Adm11}, Monomials => Ad),kk);
-
-     -- matrix representation of the inclusion map from A_d --> A_1 \otimes A_(d-1)
+     -- matrix representation of the projection map from A_(d-1) \otimes A_1 --> A_d
+     -- would like to tell reduction system to only look for suffixes    
+     elapsedTime imAdm11 = flatten entries psi matrix {Adm11};
+     
+     -- save these calculations for next degree
+     elapsedTime forNextDeg = hashTable apply(#Adm11, i -> (Adm11#i,imAdm11#i));
+     elapsedTime projMap = sub(last coefficients(matrix {imAdm11}, Monomials => Ad),kk);
+     -- matrix representation of the inclusion map from A_d --> A_(d-1) \otimes A_1
      elapsedTime inclMap = sub(last coefficients(phi matrix {Ad}, Monomials => Adm11),kk);
      -- project, lift back up and take mingens to autoreduce
      elapsedTime downAndBack = mingens image (inclMap * projMap * Ndcoeffs);
      
      -- lift these new elements to the free algebra
      elapsedTime newElts = flatten entries ((matrix {Adm11}) * downAndBack);
+
      -- enlarge ideal and move on to the next degree
      Idm1 = Idm1 + ideal newElts;
+     
+     -- update the ring for the new relations
+     prevTempA = tempA;
+     tempA = freeAlgebraQuotient(Lambda,Idm1,gens Idm1);
+
+     -- I don't know how to put an element in a quotient without rewriting at top level
+     -- so I am using this ring map to do the work.
+     alpha = map(tempA,prevTempA,gens tempA); 
+    
      << "Completed degree " << d << "." << endl;
   )
--- only about 4x slower than engine code at the moment.
+-- only about 3.5x slower than engine code at the moment.
 ///
 
 DEVELOPMENT ///
+-- this is some top-level code for testing Lundqvist's approach to NCGBs
 -- 4dim sklyanin example
   restart
   needsPackage "AssociativeAlgebras"
@@ -2012,7 +2062,7 @@ DEVELOPMENT ///
 
   Idm1 = I
   d = 3
-  N = 11
+  N = 12
   
   -- all the time consuming work is in reducing x.w where w is a
   -- reduced word of degree d-2 or d-1 and x is a generator.  if we
@@ -2028,9 +2078,9 @@ DEVELOPMENT ///
   -- A_1 ** A_(d-2) ** A_1 --> A_1 ** A_(d-1) --> A_d
   -- A_1 ** A_(d-2) ** A_1 --> A_(d-1) ** A_1 --> A_d
   
+  -- define quotient so far for reductions
+  tempA = freeAlgebraQuotient(Lambda,Idm1,gens Idm1);
   elapsedTime for d from 3 to N do (
-     -- define quotient so far for reductions
-     tempA = freeAlgebraQuotient(Lambda,Idm1,gens Idm1);
      -- maps to get back and forth to/from free algebra
      phi = map(Lambda,tempA,gens Lambda);
      psi = map(tempA,Lambda,gens tempA);
@@ -2047,16 +2097,21 @@ DEVELOPMENT ///
      -- lots of time is spent here
      -- compute the multiplication maps from degree d-2 to d-1 by the variables
      -- this is a nested hash table
-
-     -- elapsedTime multMapsTemp = entries ((transpose matrix {Acomp}) * (vars tempA));
-     elapsedTime multMapsTemp = entries ncMatrixMult(transpose matrix {Acomp},vars tempA);
-     elapsedTime multMaps = hashTable apply(#Acomp, w -> (
-     	     (Acomp#w,hashTable apply(numgens tempA, v -> (tempA_v,multMapsTemp#w#v)))));
-     
-     -- use this information to compute a basis of Nd
-     elapsedTime Nd = flatten for m in Acomp list (
+     if d == 3 then (
+        elapsedTime multMapsTemp = entries ncMatrixMult(transpose matrix {Acomp},vars tempA);
+        elapsedTime multMaps = hashTable apply(#Acomp, w -> (
+        	     (Acomp#w,hashTable apply(numgens tempA, v -> (tempA_v,multMapsTemp#w#v)))));
+     	-- use this information to compute a basis of Nd
+        elapsedTime Nd = flatten for m in Acomp list (
              apply(facfs, facf -> apply(facf, p -> {multMaps#m#(psi p#0), psi p#1}))
-          );
+        );
+     ) else (
+        elapsedTime multMaps = hashTable apply(Acomp, w -> (
+        	     (w,hashTable apply(gens tempA, v -> (v,forNextDeg#((phi w)*(phi v)))))));
+        elapsedTime Nd = flatten for m in Acomp list (
+             apply(facfs, facf -> apply(facf, p -> {alpha forNextDeg#((phi m)*(p#0)),psi p#1}))
+        );        
+     );
      
      -- lift this information to the free algebra and take the product, then take
      -- coefficients of these elements in A_(d-1) \otimes A_1 (thought of as words in Lambda)
@@ -2072,7 +2127,9 @@ DEVELOPMENT ///
 
      -- need to save the calculations of psi Adm11 below in a hash table for next iteration's
      -- Acomp * (vars tempA) in multMapsTemp
-     elapsedTime projMap = sub(last coefficients(psi matrix {Adm11}, Monomials => Ad),kk);
+     elapsedTime imAdm11 = flatten entries psi matrix {Adm11};
+     elapsedTime forNextDeg = hashTable apply(#Adm11, i -> (Adm11#i,imAdm11#i));
+     elapsedTime projMap = sub(last coefficients(matrix {imAdm11}, Monomials => Ad),kk);
 
      -- matrix representation of the inclusion map from A_d --> A_(d-1) \otimes A_1
      elapsedTime inclMap = sub(last coefficients(phi matrix {Ad}, Monomials => Adm11),kk);
@@ -2081,12 +2138,74 @@ DEVELOPMENT ///
      
      -- lift these new elements to the free algebra
      elapsedTime newElts = flatten entries ((matrix {Adm11}) * downAndBack);
+
      -- enlarge ideal and move on to the next degree
      Idm1 = Idm1 + ideal newElts;
+     
+     -- update the ring for the new relations
+     prevTempA = tempA;
+     tempA = freeAlgebraQuotient(Lambda,Idm1,gens Idm1);
+
+     -- I don't know how to put an element in a quotient without rewriting at top level
+     -- so I am using this ring map to do the work.
+     alpha = map(tempA,prevTempA,gens tempA); 
+    
      << "Completed degree " << d << "." << endl;
   )
 
--- now about 15x slower than engine code at the moment.
+-- now about 16x slower than engine code at the moment.
 ///
 
+DEVELOPMENT ///
+R = QQ[x,y,z]
+f = x^2 - y*z
+g = x*y
+-- A = R/f
+d = 3
+-- C_3^*
+(x ** y - y ** x)*x = x ** xy - y ** x^2 = -y ** yz           ~> -y^2z
+(x ** y - y ** x)*y = x ** y^2 - y ** xy = x ** y^2           ~> 0
+(x ** y - y ** x)*z = x ** yz - y ** xz  = x ** yz - y ** xz  ~> 0
 
+(x ** z - z ** x)*x = x ** xz - z ** x^2 = x ** xz - z ** yz  ~> 0
+(x ** z - z ** x)*y = x ** yz - z ** xy  = x ** yz            ~> 0
+(x ** z - z ** x)*z = x ** z^2 - z ** xz = x ** z^2 - z ** xz ~> 0
+
+(y ** z - z ** y)*x = y ** xz - z ** xy  = y ** xz            ~> 0
+(y ** z - z ** y)*y = y ** yz - z ** y^2 = y ** yz - z ** y^2 ~> 0
+(y ** z - z ** y)*z = y ** z^2 - z ** yz = y ** z^2 - z ** yz ~> 0
+-- N_3^* = 0
+
+R = QQ[x,y,z]
+f = x^2 - y*z
+g = x*y
+-- A = R/f
+d = 3
+-- C_3
+(x ** y - y ** x)*x = x ** oxy - x * xy   = 0
+(x ** y - y ** x)*y = x ** y^2 - y ** xy = x ** y^2           ~> 0
+(x ** y - y ** x)*z = x ** yz - y ** xz  = x ** yz - y ** xz  ~> 0
+
+(x ** z - z ** x)*x = x ** xz - z ** x^2 = x ** xz - z ** yz  ~> 0
+(x ** z - z ** x)*y = x ** yz - z ** xy  = x ** yz            ~> 0
+(x ** z - z ** x)*z = x ** z^2 - z ** xz = x ** z^2 - z ** xz ~> 0
+
+(y ** z - z ** y)*x = y ** xz - z ** xy  = y ** xz            ~> 0
+(y ** z - z ** y)*y = y ** yz - z ** y^2 = y ** yz - z ** y^2 ~> 0
+(y ** z - z ** y)*z = y ** z^2 - z ** yz = y ** z^2 - z ** yz ~> 0
+-- N_3^* = 0
+
+A_3 <--> dim 4
+A_1 ** A_2 <--> dim 3*4 = 12
+
+d = 4
+-- C_d
+(x ** y - y ** x)*x^2 = 0
+(x ** y - y ** x)*xy = x ** xy^2
+(x ** y - y ** x)*y^2 = x ** y^3 - y ** xy^2
+-- N_d = 0
+
+A_1 ** A_3 <--> 4
+C_4 <--> 2
+A_4 <--> 2 diml
+///
