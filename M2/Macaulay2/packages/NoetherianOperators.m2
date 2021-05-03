@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
     "NoetherianOperators",
-    Version => "1.2",
-    Date => "Jan 23, 2020",
+    Version => "2.0",
+    Date => "May TODO, 2021",
     Authors => {
         {Name => "Robert Krone", 
         Email => "krone@math.gatech.edu"},
@@ -19,7 +19,7 @@ newPackage(
     PackageExports => {"Bertini", "NumericalLinearAlgebra", "NAGtypes"},
     PackageImports => {"Dmodules", "PrimaryDecomposition"},
     AuxiliaryFiles => false,
-    DebuggingMode => false,
+    DebuggingMode => true, -- TODO
     Keywords => {"Numerical Algebraic Geometry", "Commutative Algebra"}
 )
 
