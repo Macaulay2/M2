@@ -1439,7 +1439,7 @@ modConstant = f -> (
 amult = method()
 amult Module := ZZ => M -> (
     assPrimes := ass(comodule M);
-    sum apply(assPrimes, P -> degree(saturate(M,P)/M)/degree(P))
+    sum apply(assPrimes, P -> degree(saturate(M,P)/M)//degree(P))
 )
 amult Ideal := ZZ => I -> amult module I
 
