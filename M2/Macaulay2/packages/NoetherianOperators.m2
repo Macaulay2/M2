@@ -680,9 +680,7 @@ isPointEmbeddedInCurve (Point,Ideal) := o-> (p,I) -> (
 DiffOp = new Type of Vector
 DiffOp.synonym = "differential operator"
 
--- new Module of DiffOp from Module := (M,D, m) -> (
---     m
--- )
+diffOpModule = memoize((S, k) -> new Module of DiffOp from S^k)
 
 diffOp = method()
 diffOp Matrix := m -> (
@@ -690,7 +688,7 @@ diffOp Matrix := m -> (
     if S.?cache and S.cache#?"DiffOpRing" then (S = diffOpRing S; m = sub(m,S);)
     else if S =!= diffOpRing coefficientRing S then error"expected ring element in diffOpRing";
     
-    SS := new Module of DiffOp from S^(numRows m);
+    SS := diffOpModule(S, numRows m);
     new SS from vector m
 )
 diffOp RingElement := f -> diffOp matrix f
