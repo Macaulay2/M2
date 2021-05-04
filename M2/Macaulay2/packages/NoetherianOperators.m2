@@ -677,135 +677,174 @@ isPointEmbeddedInCurve (Point,Ideal) := o-> (p,I) -> (
 -- The value of Op is a HashTable, with keys corresponding to partial monomials, 
 --  and values corresponding to coefficients.
 -- Constructors
-DiffOp = new Type of HashTable
+DiffOp = new Type of Vector
 DiffOp.synonym = "differential operator"
-new DiffOp from HashTable := (DD,H) -> (
-    if #set(keys H / ring) > 1 then error"expected all elements in same ring";
-    if not all(keys H, m -> monomials m == m) then error"keys must be pure monomials";
-    R := ring first keys H;
-    applyValues(H, v -> sub(v,R))
-)
-new DiffOp from List := (DD,L) -> new DiffOp from hashTable L
-diffOp = method()
-diffOp HashTable := H -> (
-    if #keys H == 0 then error "expected non-empty hash table";
-    H' := select(H, f -> f!= 0);
-    if #keys H' == 0 then new ZeroDiffOp from ring first keys H
-    else new DiffOp from H'
-)
-diffOp List := L -> diffOp hashTable L
--- Create DiffOp from Weyl algebra element. 
--- Output will be in ring R and R must contain the non
-diffOp (Ring, RingElement) := (R,f) -> diffOp(f,R)
-diffOp (RingElement, Ring) := (f,R) -> (
-    R' := ring f;
-    createDpairs R';
-    (mon,coef) := coefficients(f, Variables => R'.dpairVars#1);
-    -- Create the map from R' to R that maps x => x and dx => x
-    rules := apply(R'.dpairVars#1, R'.dpairVars#0, (dx, x) -> dx => sub(x,R)) | apply(R'.dpairVars#0, x -> x => sub(x,R));
-    liftMap := map(R,R', rules);
-    diffOp apply(flatten entries liftMap(mon), flatten entries liftMap(coef), identity)
-)
-diffOp RingElement := f -> (
-    R' := ring f;
-    if not R'.?cache then R'.cache = new CacheTable;
-    if not R'.cache#?"preWA" then (
-        createDpairs R';
-        R'.cache#"preWA" = (coefficientRing R')(monoid[(R'.dpairVars#0)]);
-    );
-    R := R'.cache#"preWA";
-    diffOp(f, R)
-)
--- matrices with mons and coeffs
-diffOp (List, List) := (mons, coefs) -> (
-    if #mons != #coefs then error"expected same number of monomials and coefficients";
-    diffOp apply(mons,coefs, (m,c) -> m => c)
-)
-diffOp (Matrix, Matrix) := (mons, coefs) -> (
-    diffOp(flatten entries mons, flatten entries coefs)
+
+new Module of DiffOp from Module := (M,D, m) -> (
+    m
 )
 
-
--- Vector space operations
-DiffOp + DiffOp := (D1, D2) -> diffOp merge(D1, D2, (a,b) -> a+b)
-RingElement * DiffOp := (r, D) -> diffOp applyValues(D, x -> r*x)
-Number * DiffOp := (r, D) -> diffOp applyValues(D, x -> r*x)
-DiffOp - DiffOp := (D1, D2) -> D1 + (-1)*D2
-- DiffOp := D -> (-1)*D
--- Application of DiffOp
-DiffOp RingElement := (D, f) -> keys D / (k -> (D)#k * diff(k, f)) // sum
--- Comparison
-DiffOp ? DiffOp := (D1, D2) -> (
-    if instance(D1 - D2, ZeroDiffOp) then return symbol ==;
-    m := max keys(D1 - D2);
-    if not D2#?m then symbol >
-    else if not D1#?m then symbol <
-    else (D1#m) ? (D2#m)
+DiffOp SPACE Matrix := (D,m) -> (
+    if numColumns m != 1 then error"expected column matrix";
+    if numRows m != #(entries D) then error"expected differential operator and column matrix of same length";
+    S := ring D;
+    R := coefficientRing S;
+    try mm := lift(m, R) else error"expected matrix in the coefficient ring of operator";
+    DD := entries D;
+    mm = flatten entries mm;
+    sum(DD, mm, (d,f) -> (
+        (mon,coe) := coefficients d;
+        phi := map(R,S,gens R);
+        lift((diff(phi mon, f) * coe)_(0,0), R)
+    ))
 )
-DiffOp == DiffOp := (D1, D2) -> return (D1 ? D2) === (symbol ==)
--- Printing
--- Takes a monomial and returns an expression with
--- a "d" appended to each variable name
-addDsymbol = x -> (
-    R := ring x;
-    e := first exponents x;
-    product apply(numgens R, i -> (if instance(expression(R_i), Subscript) then new Subscript from {expression("d" | toString (expression (R_i))#0),(expression (R_i))#1} else expression("d" | toString (R_i)))^(expression(e#i)))
-)
-expression DiffOp := D -> 
-    rsort(keys D, MonomialOrder => Lex) / 
-    (k -> (D)#k * if k == 1 then expression(1) else addDsymbol(k)) //
-    sum
-net DiffOp := D -> net expression D
-toString DiffOp := D -> toString expression D
--- other useful functions
-ring DiffOp := D -> ring first keys D
-substitute (DiffOp, Ring) := (D,R) -> applyPairs(D, (k,v) -> sub(k, R) => sub(v,R))
-normalize = method();
-normalize DiffOp := D -> 1/(sub( leadCoefficient D#(first rsort keys D), coefficientRing ring D)) * D
-DiffOp == ZZ := (D, z) -> if z == 0 then false else error"cannot compare DiffOp to nonzero integer"
-ZZ == DiffOp := (z, D) -> D == z
-evaluate (DiffOp, Matrix) := (D,p) -> applyValues(D, v -> promote((evaluate(matrix{{v}}, p))_(0,0), ring D))
-evaluate (DiffOp, Point) := (D,p) -> evaluate(D, matrix p)
-coefficients DiffOp := opts -> D -> (
-    R := ring D;
-    if opts.Variables =!= null then error"option Variables is not yet implemented for (coefficients, DiffOp)";
-    mons := if opts.Monomials === null then keys D
-        else if instance(opts.Monomials, Matrix) then first entries opts.Matrix
-        else if instance(opts.Monomials, List) then opts.Monomials
-        else if instance(opts.Monomials, Sequence) then toList opts.Monomials
-        else error "expected 'Monomials=>'' argument to be a list, sequence, or matrix";
 
-    coefs := mons / (m -> if D#?m then D#m else 0_R);
-    matrix{mons}, transpose matrix{coefs}
-)
-support DiffOp := D -> support matrix {keys D}
-degree DiffOp := D -> keys D / degree // max
+coefficients DiffOp := opts -> d -> coefficients (matrix d, opts)
 
 
--- instances of ZeroDiffOp are differential operators that
--- act as the zero operator. They have exactly one key with value zero
-ZeroDiffOp = new Type of DiffOp
-new ZeroDiffOp from Ring := (DD, R) -> hashTable{1_R => 0_R}
-toExternalString ZeroDiffOp := D -> "new ZeroDiffOp from " | toExternalString(ring D)
-ZeroDiffOp == ZZ := (D, z) -> if z == 0 then true else error"cannot compare DiffOp to nonzero integer"
-ZZ == ZeroDiffOp := (z, D) -> (D == z)
+TEST ///
+R = QQ[x,y]
+S = diffOpRing(R)
+use S
+SS = new Module of DiffOp from S^2
+d = (y^3*dx*dy - x)*SS_0 + dx^2*dy*y * SS_1
+assert(instance(SS_0, DiffOp))
+assert(instance(dx*SS_0 + 3*SS_1, DiffOp))
+assert(instance(d, DiffOp))
 
--- Type used for interpolated differential operators
--- As in DiffOp, each key corresponds to a monomial,
--- but each value is the numerator and denominator of a rational function
-InterpolatedDiffOp = new Type of DiffOp
-new InterpolatedDiffOp from List := (TT, L) -> hashTable L
-new InterpolatedDiffOp from HashTable := (TT, H) -> H
-expression InterpolatedDiffOp := D -> 
-    rsort(keys D, MonomialOrder => Lex) / 
-    (k -> ((expression D#k#0)/(expression D#k#1)) * if k == 1 then expression(1) else addDsymbol(k)) //
-    sum
-net InterpolatedDiffOp := D -> net expression D
-evaluate (InterpolatedDiffOp, Matrix) := (D, p) -> (
-    if any(splice values D, x -> x === "?") then error "cannot evaluate an incomplete interpolated differential operator"
-    else diffOp(applyValues(D, (n,d) -> 
-        promote((evaluate(matrix{{n}},p))_(0,0)/(evaluate(matrix{{d}},p))_(0,0), ring D))))
-evaluate (InterpolatedDiffOp, Point) := (D, p) -> evaluate(D, matrix p)
+m = transpose matrix {{x*y + 5, x^2*y^2}}
+assert(d m == y^3 -x^2*y - 5*x + y*4*y )
+///
+
+
+-- old
+-- new DiffOp from HashTable := (DD,H) -> (
+--     if #set(keys H / ring) > 1 then error"expected all elements in same ring";
+--     if not all(keys H, m -> monomials m == m) then error"keys must be pure monomials";
+--     R := ring first keys H;
+--     applyValues(H, v -> sub(v,R))
+-- )
+-- new DiffOp from List := (DD,L) -> new DiffOp from hashTable L
+-- diffOp = method()
+-- diffOp HashTable := H -> (
+--     if #keys H == 0 then error "expected non-empty hash table";
+--     H' := select(H, f -> f!= 0);
+--     if #keys H' == 0 then new ZeroDiffOp from ring first keys H
+--     else new DiffOp from H'
+-- )
+-- diffOp List := L -> diffOp hashTable L
+-- -- Create DiffOp from Weyl algebra element. 
+-- -- Output will be in ring R and R must contain the non
+-- diffOp (Ring, RingElement) := (R,f) -> diffOp(f,R)
+-- diffOp (RingElement, Ring) := (f,R) -> (
+--     R' := ring f;
+--     createDpairs R';
+--     (mon,coef) := coefficients(f, Variables => R'.dpairVars#1);
+--     -- Create the map from R' to R that maps x => x and dx => x
+--     rules := apply(R'.dpairVars#1, R'.dpairVars#0, (dx, x) -> dx => sub(x,R)) | apply(R'.dpairVars#0, x -> x => sub(x,R));
+--     liftMap := map(R,R', rules);
+--     diffOp apply(flatten entries liftMap(mon), flatten entries liftMap(coef), identity)
+-- )
+-- diffOp RingElement := f -> (
+--     R' := ring f;
+--     if not R'.?cache then R'.cache = new CacheTable;
+--     if not R'.cache#?"preWA" then (
+--         createDpairs R';
+--         R'.cache#"preWA" = (coefficientRing R')(monoid[(R'.dpairVars#0)]);
+--     );
+--     R := R'.cache#"preWA";
+--     diffOp(f, R)
+-- )
+-- -- matrices with mons and coeffs
+-- diffOp (List, List) := (mons, coefs) -> (
+--     if #mons != #coefs then error"expected same number of monomials and coefficients";
+--     diffOp apply(mons,coefs, (m,c) -> m => c)
+-- )
+-- diffOp (Matrix, Matrix) := (mons, coefs) -> (
+--     diffOp(flatten entries mons, flatten entries coefs)
+-- )
+-- 
+-- 
+-- -- Vector space operations
+-- DiffOp + DiffOp := (D1, D2) -> diffOp merge(D1, D2, (a,b) -> a+b)
+-- RingElement * DiffOp := (r, D) -> diffOp applyValues(D, x -> r*x)
+-- Number * DiffOp := (r, D) -> diffOp applyValues(D, x -> r*x)
+-- DiffOp - DiffOp := (D1, D2) -> D1 + (-1)*D2
+-- - DiffOp := D -> (-1)*D
+-- -- Application of DiffOp
+-- DiffOp RingElement := (D, f) -> keys D / (k -> (D)#k * diff(k, f)) // sum
+-- -- Comparison
+-- DiffOp ? DiffOp := (D1, D2) -> (
+--     if instance(D1 - D2, ZeroDiffOp) then return symbol ==;
+--     m := max keys(D1 - D2);
+--     if not D2#?m then symbol >
+--     else if not D1#?m then symbol <
+--     else (D1#m) ? (D2#m)
+-- )
+-- DiffOp == DiffOp := (D1, D2) -> return (D1 ? D2) === (symbol ==)
+-- -- Printing
+-- -- Takes a monomial and returns an expression with
+-- -- a "d" appended to each variable name
+-- addDsymbol = x -> (
+--     R := ring x;
+--     e := first exponents x;
+--     product apply(numgens R, i -> (if instance(expression(R_i), Subscript) then new Subscript from {expression("d" | toString (expression (R_i))#0),(expression (R_i))#1} else expression("d" | toString (R_i)))^(expression(e#i)))
+-- )
+-- expression DiffOp := D -> 
+--     rsort(keys D, MonomialOrder => Lex) / 
+--     (k -> (D)#k * if k == 1 then expression(1) else addDsymbol(k)) //
+--     sum
+-- net DiffOp := D -> net expression D
+-- toString DiffOp := D -> toString expression D
+-- -- other useful functions
+-- ring DiffOp := D -> ring first keys D
+-- substitute (DiffOp, Ring) := (D,R) -> applyPairs(D, (k,v) -> sub(k, R) => sub(v,R))
+-- normalize = method();
+-- normalize DiffOp := D -> 1/(sub( leadCoefficient D#(first rsort keys D), coefficientRing ring D)) * D
+-- DiffOp == ZZ := (D, z) -> if z == 0 then false else error"cannot compare DiffOp to nonzero integer"
+-- ZZ == DiffOp := (z, D) -> D == z
+-- evaluate (DiffOp, Matrix) := (D,p) -> applyValues(D, v -> promote((evaluate(matrix{{v}}, p))_(0,0), ring D))
+-- evaluate (DiffOp, Point) := (D,p) -> evaluate(D, matrix p)
+-- coefficients DiffOp := opts -> D -> (
+--     R := ring D;
+--     if opts.Variables =!= null then error"option Variables is not yet implemented for (coefficients, DiffOp)";
+--     mons := if opts.Monomials === null then keys D
+--         else if instance(opts.Monomials, Matrix) then first entries opts.Matrix
+--         else if instance(opts.Monomials, List) then opts.Monomials
+--         else if instance(opts.Monomials, Sequence) then toList opts.Monomials
+--         else error "expected 'Monomials=>'' argument to be a list, sequence, or matrix";
+-- 
+--     coefs := mons / (m -> if D#?m then D#m else 0_R);
+--     matrix{mons}, transpose matrix{coefs}
+-- )
+-- support DiffOp := D -> support matrix {keys D}
+-- degree DiffOp := D -> keys D / degree // max
+-- 
+-- 
+-- -- instances of ZeroDiffOp are differential operators that
+-- -- act as the zero operator. They have exactly one key with value zero
+-- ZeroDiffOp = new Type of DiffOp
+-- new ZeroDiffOp from Ring := (DD, R) -> hashTable{1_R => 0_R}
+-- toExternalString ZeroDiffOp := D -> "new ZeroDiffOp from " | toExternalString(ring D)
+-- ZeroDiffOp == ZZ := (D, z) -> if z == 0 then true else error"cannot compare DiffOp to nonzero integer"
+-- ZZ == ZeroDiffOp := (z, D) -> (D == z)
+-- 
+-- -- Type used for interpolated differential operators
+-- -- As in DiffOp, each key corresponds to a monomial,
+-- -- but each value is the numerator and denominator of a rational function
+-- InterpolatedDiffOp = new Type of DiffOp
+-- new InterpolatedDiffOp from List := (TT, L) -> hashTable L
+-- new InterpolatedDiffOp from HashTable := (TT, H) -> H
+-- expression InterpolatedDiffOp := D -> 
+--     rsort(keys D, MonomialOrder => Lex) / 
+--     (k -> ((expression D#k#0)/(expression D#k#1)) * if k == 1 then expression(1) else addDsymbol(k)) //
+--     sum
+-- net InterpolatedDiffOp := D -> net expression D
+-- evaluate (InterpolatedDiffOp, Matrix) := (D, p) -> (
+--     if any(splice values D, x -> x === "?") then error "cannot evaluate an incomplete interpolated differential operator"
+--     else diffOp(applyValues(D, (n,d) -> 
+--         promote((evaluate(matrix{{n}},p))_(0,0)/(evaluate(matrix{{d}},p))_(0,0), ring D))))
+-- evaluate (InterpolatedDiffOp, Point) := (D, p) -> evaluate(D, matrix p)
 
 
 TEST ///
@@ -1735,14 +1774,14 @@ assert(Q == I)
 ///
 ----------------------------------------------------------
 
-undocumented {
-    (expression, DiffOp),
-    (expression, InterpolatedDiffOp),
-    (net, DiffOp),
-    (net, InterpolatedDiffOp),
-    (toExternalString, ZeroDiffOp),
-    (toString, DiffOp)
-}
+-- undocumented {
+--     (expression, DiffOp),
+--     (expression, InterpolatedDiffOp),
+--     (net, DiffOp),
+--     (net, InterpolatedDiffOp),
+--     (toExternalString, ZeroDiffOp),
+--     (toString, DiffOp)
+-- }
 
 beginDocumentation()
 refKroneLeykin := "R. Krone and A. Leykin, \"Numerical algorithms for detecting embedded components.\", arXiv:1405.7871"
