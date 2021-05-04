@@ -69,7 +69,6 @@ doc ///
         Text
             Blackbox monodromy solver for a square polynomial system without parameters.
             The example below finds all six intersection of a generic cubic F with its quadratic polar curve P.
-	    Note: this method requires PHCpack.
         Text
     
         Example
@@ -458,7 +457,7 @@ doc ///
         computeMixedVolume
         (computeMixedVolume, List)
     Headline
-        compute mixed volume via PHCpack
+        compute mixed volume via Gfan
     Usage
         d = computeMixedVolume polys
     Inputs
@@ -469,7 +468,7 @@ doc ///
     Description
         Text
             Computes mixed volume of a polynomial system. For generic systems of a given support set, this is the generic
-            root count. Note: This method assumes the user has installed PHCpack.
+            root count.
         Example
 	   setRandomSeed 0;
             R = CC[x,y];
