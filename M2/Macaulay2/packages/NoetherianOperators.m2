@@ -37,10 +37,8 @@ export {
     "ProduceSB",
 
     "DiffOp",
-    "ZeroDiffOp",
-    "InterpolatedDiffOp",
     "diffOp",
-    "normalize",
+    "diffOpRing",
 
     "noetherianOperators",
     "specializedNoetherianOperators",
@@ -91,19 +89,22 @@ protect \ {
 --          behavior is undefined.
 dualSpace (List, Point) := (L, p) -> (
     if #L == 0 then error"expected nonempty list";
-    L' := select(L, op -> not instance(op, ZeroDiffOp));
-    gens := matrix{ L' / (op -> keys op / (k -> op#k * k)) / sum };
-    if #L' == 0 then gens = sub(gens, ring first L);
+    S := ring first L;
+    R := coefficientRing S;
+    L' := select(L, op -> op != 0);
+    gens := (map(R,S, vars R)) matrix{ L' / (op -> matrix op)};
+    if #L' == 0 then gens = sub(gens, R);
     dualSpace(gens, p)
 )
 TEST ///
 R = CC[x,y]
-foo1 = new DiffOp from {x => 12, x^2*y => 3}
-foo2 = new DiffOp from {1_R => 4, x*y => 4}
+S = diffOpRing R
+foo1 = diffOp(12*dx + 3*dx^2*dy)
+foo2 = diffOp(4*dx*dy + 4)
 pt = point{{1_CC,2}}
 a = dualSpace({foo1,foo2}, pt)
 b = dualSpace(matrix{{12*x + 3*x^2*y, 4*x*y + 4}}, pt)
-assert(gens a.Space == gens b.Space)
+assert(gens a.Space - gens b.Space == 0)
 assert(point a == point b)
 ///
 
@@ -706,6 +707,8 @@ DiffOp == DiffOp := (a,b) -> (
     else if ((a ? b) === (symbol ==)) then true
     else false
 )
+DiffOp == ZZ := (d,i) -> matrix d == i
+ZZ == DiffOp := (i,d) -> d == i
 
 
 DiffOp SPACE Matrix := (D,m) -> (
@@ -730,7 +733,7 @@ TEST ///
 R = QQ[x,y]
 S = diffOpRing(R)
 use S
-SS = new Module of DiffOp from S^2
+SS = diffOpModule(S, 2)
 d = (y^3*dx*dy - x)*SS_0 + dx^2*dy*y * SS_1
 assert(instance(SS_0, DiffOp))
 assert(instance(dx*SS_0 + 3*SS_1, DiffOp))
@@ -749,6 +752,35 @@ assert(diffOp (x^2*dx) == x^2*dx*SS_0)
 assert(diffOp(x_R) == x*SS_0)
 assert(diffOp(x_S) == x*SS_0)
 ///
+
+TEST ///
+--DiffOp
+R = QQ[x,y,z]
+foo = diffOp{x => y, y=>2*x}
+bar = diffOp{x^2 => z*x + 3, y => x}
+foobar = diffOp{x => y, y=>3*x, x^2 => z*x + 3}
+foo2 = diffOp{x^2*y => x}
+foo3 = diffOp{1_R => 0}
+assert(foobar == foo + bar)
+assert(foo(x^2) == 2*x*y)
+assert(foo3 - foo == diffOp{x => -y, 1_R => 0, y => -2*x})
+assert(foo2 > foo)
+assert(instance(foo3, ZeroDiffOp))
+assert(try diffOp{x+y => x} then false else true)
+assert(try diffOp{2*y*x^2 => x+z} then false else true)
+assert(foo2 - foo2 == 0)
+assert(not foo == 0)
+needsPackage "Dmodules"
+R' = makeWA(R)
+wa = diffOp(x^2*dx - dx^2 + dy^3 + (x-3)*dx)
+use ring wa
+dop = diffOp({x => x^2+x-3, x^2 => -1, y^3 => 1})
+assert(dop == wa)
+-- InterpolatedDiffOp
+a = new InterpolatedDiffOp from {x => (x^2+y, y^2+x), y^2*x => (z+2, x^2+z^3*x)}
+assert((evaluate(a, point{{1,2,3}}))(x) == 3/5)
+///
+
 
 
 -- old
