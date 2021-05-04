@@ -680,9 +680,35 @@ isPointEmbeddedInCurve (Point,Ideal) := o-> (p,I) -> (
 DiffOp = new Type of Vector
 DiffOp.synonym = "differential operator"
 
-new Module of DiffOp from Module := (M,D, m) -> (
-    m
+-- new Module of DiffOp from Module := (M,D, m) -> (
+--     m
+-- )
+
+diffOp = method()
+diffOp Matrix := m -> (
+    S := ring m;
+    if S.?cache and S.cache#?"DiffOpRing" then (S = diffOpRing S; m = sub(m,S);)
+    else if S =!= diffOpRing coefficientRing S then error"expected ring element in diffOpRing";
+    
+    SS := new Module of DiffOp from S^(numRows m);
+    new SS from vector m
 )
+diffOp RingElement := f -> diffOp matrix f
+
+DiffOp ? DiffOp := (a,b) -> (
+    if #(entries a) != #(entries b) then incomparable
+    else if (class a) != (class b) then incomparable;
+    delta := a - b;
+    i := position(entries delta, j -> j != 0);
+    if instance(i, Nothing) then symbol ==
+    else ((entries a)#i) ? ((entries b)#i)
+)
+DiffOp == DiffOp := (a,b) -> (
+    if ((a ? b) === incomparable) then error("expected comparable differential operators")
+    else if ((a ? b) === (symbol ==)) then true
+    else false
+)
+
 
 DiffOp SPACE Matrix := (D,m) -> (
     if numColumns m != 1 then error"expected column matrix";
@@ -712,8 +738,18 @@ assert(instance(SS_0, DiffOp))
 assert(instance(dx*SS_0 + 3*SS_1, DiffOp))
 assert(instance(d, DiffOp))
 
-m = transpose matrix {{x*y + 5, x^2*y^2}}
+m = matrix transpose {{x*y + 5, x^2*y^2}}
 assert(d m == y^3 -x^2*y - 5*x + y*4*y )
+
+m = matrix transpose{{dx, y*dy*dx+dx^2+dy}}
+a = diffOp m
+b = (dx*SS_0 + (y*dy*dx+dx^2+dy)*SS_1)
+assert(a==b)
+
+SS = new Module of DiffOp from S^1
+assert(diffOp (x^2*dx) == x^2*dx*SS_0)
+assert(diffOp(x_R) == x*SS_0)
+assert(diffOp(x_S) == x*SS_0)
 ///
 
 
