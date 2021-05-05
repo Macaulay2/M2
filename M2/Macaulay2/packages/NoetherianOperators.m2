@@ -37,10 +37,8 @@ export {
     "ProduceSB",
 
     "DiffOp",
-    "ZeroDiffOp",
-    "InterpolatedDiffOp",
     "diffOp",
-    "normalize",
+    "diffOpRing",
 
     "noetherianOperators",
     "specializedNoetherianOperators",
@@ -59,9 +57,12 @@ export {
     "TrustedPoint",
 
     --functions from punctual Hilb approach
-    "getIdealFromNoetherianOperators",
+    -- "getIdealFromNoetherianOperators",
     "joinIdeals",
-    "mapToPunctualHilbertScheme" 
+    "amult",
+    "solvePDE",
+    "diffPrimDec"
+    -- "mapToPunctualHilbertScheme" 
 
 }
 
@@ -88,19 +89,22 @@ protect \ {
 --          behavior is undefined.
 dualSpace (List, Point) := (L, p) -> (
     if #L == 0 then error"expected nonempty list";
-    L' := select(L, op -> not instance(op, ZeroDiffOp));
-    gens := matrix{ L' / (op -> keys op / (k -> op#k * k)) / sum };
-    if #L' == 0 then gens = sub(gens, ring first L);
+    S := ring first L;
+    R := coefficientRing S;
+    L' := select(L, op -> op != 0);
+    gens := (map(R,S, vars R)) matrix{ L' / (op -> matrix op)};
+    if #L' == 0 then gens = sub(gens, R);
     dualSpace(gens, p)
 )
 TEST ///
 R = CC[x,y]
-foo1 = new DiffOp from {x => 12, x^2*y => 3}
-foo2 = new DiffOp from {1_R => 4, x*y => 4}
+S = diffOpRing R
+foo1 = diffOp(12*dx + 3*dx^2*dy)
+foo2 = diffOp(4*dx*dy + 4)
 pt = point{{1_CC,2}}
 a = dualSpace({foo1,foo2}, pt)
 b = dualSpace(matrix{{12*x + 3*x^2*y, 4*x*y + 4}}, pt)
-assert(gens a.Space == gens b.Space)
+assert(gens a.Space - gens b.Space == 0)
 assert(point a == point b)
 ///
 
@@ -674,164 +678,263 @@ isPointEmbeddedInCurve (Point,Ideal) := o-> (p,I) -> (
 -- The value of Op is a HashTable, with keys corresponding to partial monomials, 
 --  and values corresponding to coefficients.
 -- Constructors
-DiffOp = new Type of HashTable
+DiffOp = new Type of Vector
 DiffOp.synonym = "differential operator"
-new DiffOp from HashTable := (DD,H) -> (
-    if #set(keys H / ring) > 1 then error"expected all elements in same ring";
-    if not all(keys H, m -> monomials m == m) then error"keys must be pure monomials";
-    R := ring first keys H;
-    applyValues(H, v -> sub(v,R))
-)
-new DiffOp from List := (DD,L) -> new DiffOp from hashTable L
+
+diffOpRing = (cacheValue "DiffOpRing") (R -> R(monoid [gens R / toString / (v -> "d" | v) / value]))
+diffOpModule = memoize((S, k) -> new Module of DiffOp from S^k)
+
 diffOp = method()
-diffOp HashTable := H -> (
-    if #keys H == 0 then error "expected non-empty hash table";
-    H' := select(H, f -> f!= 0);
-    if #keys H' == 0 then new ZeroDiffOp from ring first keys H
-    else new DiffOp from H'
+diffOp Matrix := m -> (
+    S := ring m;
+    if S.?cache and S.cache#?"DiffOpRing" then (S = diffOpRing S; m = sub(m,S);)
+    else if S =!= diffOpRing coefficientRing S then error"expected ring element in diffOpRing";
+    
+    SS := diffOpModule(S, numRows m);
+    new SS from vector m
 )
-diffOp List := L -> diffOp hashTable L
--- Create DiffOp from Weyl algebra element. 
--- Output will be in ring R and R must contain the non
-diffOp (Ring, RingElement) := (R,f) -> diffOp(f,R)
-diffOp (RingElement, Ring) := (f,R) -> (
-    R' := ring f;
-    createDpairs R';
-    (mon,coef) := coefficients(f, Variables => R'.dpairVars#1);
-    -- Create the map from R' to R that maps x => x and dx => x
-    rules := apply(R'.dpairVars#1, R'.dpairVars#0, (dx, x) -> dx => sub(x,R)) | apply(R'.dpairVars#0, x -> x => sub(x,R));
-    liftMap := map(R,R', rules);
-    diffOp apply(flatten entries liftMap(mon), flatten entries liftMap(coef), identity)
+diffOp RingElement := f -> diffOp matrix f
+
+DiffOp ? DiffOp := (a,b) -> (
+    if #(entries a) != #(entries b) then incomparable
+    else if (class a) != (class b) then incomparable;
+    delta := a - b;
+    i := position(entries delta, j -> j != 0);
+    if instance(i, Nothing) then symbol ==
+    else ((entries a)#i) ? ((entries b)#i)
 )
-diffOp RingElement := f -> (
-    R' := ring f;
-    if not R'.?cache then R'.cache = new CacheTable;
-    if not R'.cache#?"preWA" then (
-        createDpairs R';
-        R'.cache#"preWA" = (coefficientRing R')(monoid[(R'.dpairVars#0)]);
-    );
-    R := R'.cache#"preWA";
-    diffOp(f, R)
+DiffOp == DiffOp := (a,b) -> (
+    if ((a ? b) === incomparable) then error("expected comparable differential operators")
+    else if ((a ? b) === (symbol ==)) then true
+    else false
 )
--- matrices with mons and coeffs
-diffOp (List, List) := (mons, coefs) -> (
-    if #mons != #coefs then error"expected same number of monomials and coefficients";
-    diffOp apply(mons,coefs, (m,c) -> m => c)
+DiffOp == ZZ := (d,i) -> matrix d == i
+ZZ == DiffOp := (i,d) -> d == i
+
+coefficients DiffOp := opts -> d -> coefficients (matrix d, opts)
+-- Operations
+DiffOp + DiffOp := DiffOp => (a,b) -> (
+    A := class a;
+    B := class b;
+    if A === B then diffOp(matrix a+matrix b) 
+    else error"expected pair to have a method for '+'"
 )
-diffOp (Matrix, Matrix) := (mons, coefs) -> (
-    diffOp(flatten entries mons, flatten entries coefs)
+DiffOp - DiffOp := DiffOp => (a,b) -> (
+    A := class a;
+    B := class b;
+    if A === B then diffOp(matrix a-matrix b)
+    else error"expected pair to have a method for '-'"
+)
+--Left action
+RingElement * DiffOp := DiffOp => (r,d) -> (
+    R := class r;
+    S := class d;
+    if member(ring r, (ring d).baseRings) then new S from diffOp(promote(r,ring d)*matrix d)
+    else error"expected pair to have a method for '*'"
+)
+- DiffOp := DiffOp => d -> ((-1)*d)
+-- Application
+DiffOp SPACE Matrix := (D,m) -> (
+    if numColumns m != 1 then error"expected column matrix";
+    if numRows m != #(entries D) then error"expected differential operator and column matrix of same length";
+    S := ring D;
+    R := coefficientRing S;
+    try mm := lift(m, R) else error"expected matrix in the coefficient ring of operator";
+    DD := entries D;
+    mm = flatten entries mm;
+    sum(DD, mm, (d,f) -> (
+        (mon,coe) := coefficients d;
+        phi := map(R,S,gens R);
+        lift((diff(phi mon, f) * coe)_(0,0), R)
+    ))
+)
+DiffOp SPACE RingElement := (D, f) -> D (matrix f)
+
+-- other functions
+normalize = method()
+normalize DiffOp := DiffOp => d -> (
+    R := coefficientRing ring d;
+    KK := coefficientRing R;
+    lt := leadTerm matrix d;
+    lc := last coefficients lt;
+    lt = leadTerm sub(lc, R);
+    lc = (last coefficients lt)_(0,0);
+    (1/sub(lc,KK)) * d
 )
 
+TEST ///
+R = QQ[x,y]
+S = diffOpRing(R)
+use S
+SS = diffOpModule(S, 2)
+d = (y^3*dx*dy - x)*SS_0 + dx^2*dy*y * SS_1
+assert(instance(SS_0, DiffOp))
+assert(instance(dx*SS_0 + 3*SS_1, DiffOp))
+assert(instance(d, DiffOp))
 
--- Vector space operations
-DiffOp + DiffOp := (D1, D2) -> diffOp merge(D1, D2, (a,b) -> a+b)
-RingElement * DiffOp := (r, D) -> diffOp applyValues(D, x -> r*x)
-Number * DiffOp := (r, D) -> diffOp applyValues(D, x -> r*x)
-DiffOp - DiffOp := (D1, D2) -> D1 + (-1)*D2
-- DiffOp := D -> (-1)*D
--- Application of DiffOp
-DiffOp RingElement := (D, f) -> keys D / (k -> (D)#k * diff(k, f)) // sum
--- Comparison
-DiffOp ? DiffOp := (D1, D2) -> (
-    if instance(D1 - D2, ZeroDiffOp) then return symbol ==;
-    m := max keys(D1 - D2);
-    if not D2#?m then symbol >
-    else if not D1#?m then symbol <
-    else (D1#m) ? (D2#m)
-)
-DiffOp == DiffOp := (D1, D2) -> return (D1 ? D2) === (symbol ==)
--- Printing
--- Takes a monomial and returns an expression with
--- a "d" appended to each variable name
-addDsymbol = x -> (
-    R := ring x;
-    e := first exponents x;
-    product apply(numgens R, i -> (if instance(expression(R_i), Subscript) then new Subscript from {expression("d" | toString (expression (R_i))#0),(expression (R_i))#1} else expression("d" | toString (R_i)))^(expression(e#i)))
-)
-expression DiffOp := D -> 
-    rsort(keys D, MonomialOrder => Lex) / 
-    (k -> (D)#k * if k == 1 then expression(1) else addDsymbol(k)) //
-    sum
-net DiffOp := D -> net expression D
-toString DiffOp := D -> toString expression D
--- other useful functions
-ring DiffOp := D -> ring first keys D
-substitute (DiffOp, Ring) := (D,R) -> applyPairs(D, (k,v) -> sub(k, R) => sub(v,R))
-normalize = method();
-normalize DiffOp := D -> 1/(sub( leadCoefficient D#(first rsort keys D), coefficientRing ring D)) * D
-DiffOp == ZZ := (D, z) -> if z == 0 then false else error"cannot compare DiffOp to nonzero integer"
-ZZ == DiffOp := (z, D) -> D == z
-evaluate (DiffOp, Matrix) := (D,p) -> applyValues(D, v -> promote((evaluate(matrix{{v}}, p))_(0,0), ring D))
-evaluate (DiffOp, Point) := (D,p) -> evaluate(D, matrix p)
-coefficients DiffOp := opts -> D -> (
-    R := ring D;
-    if opts.Variables =!= null then error"option Variables is not yet implemented for (coefficients, DiffOp)";
-    mons := if opts.Monomials === null then keys D
-        else if instance(opts.Monomials, Matrix) then first entries opts.Matrix
-        else if instance(opts.Monomials, List) then opts.Monomials
-        else if instance(opts.Monomials, Sequence) then toList opts.Monomials
-        else error "expected 'Monomials=>'' argument to be a list, sequence, or matrix";
+m = matrix transpose {{x*y + 5, x^2*y^2}}
+assert(d m == y^3 -x^2*y - 5*x + y*4*y )
 
-    coefs := mons / (m -> if D#?m then D#m else 0_R);
-    matrix{mons}, transpose matrix{coefs}
-)
-support DiffOp := D -> support matrix {keys D}
-degree DiffOp := D -> keys D / degree // max
+m = matrix transpose{{dx, y*dy*dx+dx^2+dy}}
+a = diffOp m
+b = (dx*SS_0 + (y*dy*dx+dx^2+dy)*SS_1)
+assert(a==b)
 
-
--- instances of ZeroDiffOp are differential operators that
--- act as the zero operator. They have exactly one key with value zero
-ZeroDiffOp = new Type of DiffOp
-new ZeroDiffOp from Ring := (DD, R) -> hashTable{1_R => 0_R}
-toExternalString ZeroDiffOp := D -> "new ZeroDiffOp from " | toExternalString(ring D)
-ZeroDiffOp == ZZ := (D, z) -> if z == 0 then true else error"cannot compare DiffOp to nonzero integer"
-ZZ == ZeroDiffOp := (z, D) -> (D == z)
-
--- Type used for interpolated differential operators
--- As in DiffOp, each key corresponds to a monomial,
--- but each value is the numerator and denominator of a rational function
-InterpolatedDiffOp = new Type of DiffOp
-new InterpolatedDiffOp from List := (TT, L) -> hashTable L
-new InterpolatedDiffOp from HashTable := (TT, H) -> H
-expression InterpolatedDiffOp := D -> 
-    rsort(keys D, MonomialOrder => Lex) / 
-    (k -> ((expression D#k#0)/(expression D#k#1)) * if k == 1 then expression(1) else addDsymbol(k)) //
-    sum
-net InterpolatedDiffOp := D -> net expression D
-evaluate (InterpolatedDiffOp, Matrix) := (D, p) -> (
-    if any(splice values D, x -> x === "?") then error "cannot evaluate an incomplete interpolated differential operator"
-    else diffOp(applyValues(D, (n,d) -> 
-        promote((evaluate(matrix{{n}},p))_(0,0)/(evaluate(matrix{{d}},p))_(0,0), ring D))))
-evaluate (InterpolatedDiffOp, Point) := (D, p) -> evaluate(D, matrix p)
-
+SS = new Module of DiffOp from S^1
+assert(diffOp (x^2*dx) == x^2*dx*SS_0)
+assert(diffOp(x_R) == x*SS_0)
+assert(diffOp(x_S) == x*SS_0)
+///
 
 TEST ///
 --DiffOp
 R = QQ[x,y,z]
-foo = diffOp{x => y, y=>2*x}
-bar = diffOp{x^2 => z*x + 3, y => x}
-foobar = diffOp{x => y, y=>3*x, x^2 => z*x + 3}
-foo2 = diffOp{x^2*y => x}
-foo3 = diffOp{1_R => 0}
+S = diffOpRing R
+foo = diffOp(y*dx + 2*x*dy)
+bar = diffOp((z*x+3)*dx^2 + dy*x)
+foobar = diffOp(dx*y + 3*x*dy + (z*x+3)*dx^2)
+foo2 = diffOp(x*dx^2*dy)
+foo3 = diffOp(0_S)
 assert(foobar == foo + bar)
-assert(foo(x^2) == 2*x*y)
+assert(foo (x^2) == 2*x*y)
 assert(foo3 - foo == diffOp{x => -y, 1_R => 0, y => -2*x})
+assert(foo3 - foo == diffOp(-y*dx - 2*x*dy))
 assert(foo2 > foo)
-assert(instance(foo3, ZeroDiffOp))
-assert(try diffOp{x+y => x} then false else true)
-assert(try diffOp{2*y*x^2 => x+z} then false else true)
+assert(foo3 == 0)
 assert(foo2 - foo2 == 0)
 assert(not foo == 0)
-needsPackage "Dmodules"
-R' = makeWA(R)
-wa = diffOp(x^2*dx - dx^2 + dy^3 + (x-3)*dx)
-use ring wa
-dop = diffOp({x => x^2+x-3, x^2 => -1, y^3 => 1})
-assert(dop == wa)
--- InterpolatedDiffOp
-a = new InterpolatedDiffOp from {x => (x^2+y, y^2+x), y^2*x => (z+2, x^2+z^3*x)}
-assert((evaluate(a, point{{1,2,3}}))(x) == 3/5)
 ///
+
+
+
+-- old
+-- new DiffOp from HashTable := (DD,H) -> (
+--     if #set(keys H / ring) > 1 then error"expected all elements in same ring";
+--     if not all(keys H, m -> monomials m == m) then error"keys must be pure monomials";
+--     R := ring first keys H;
+--     applyValues(H, v -> sub(v,R))
+-- )
+-- new DiffOp from List := (DD,L) -> new DiffOp from hashTable L
+-- diffOp = method()
+-- diffOp HashTable := H -> (
+--     if #keys H == 0 then error "expected non-empty hash table";
+--     H' := select(H, f -> f!= 0);
+--     if #keys H' == 0 then new ZeroDiffOp from ring first keys H
+--     else new DiffOp from H'
+-- )
+-- diffOp List := L -> diffOp hashTable L
+-- -- Create DiffOp from Weyl algebra element. 
+-- -- Output will be in ring R and R must contain the non
+-- diffOp (Ring, RingElement) := (R,f) -> diffOp(f,R)
+-- diffOp (RingElement, Ring) := (f,R) -> (
+--     R' := ring f;
+--     createDpairs R';
+--     (mon,coef) := coefficients(f, Variables => R'.dpairVars#1);
+--     -- Create the map from R' to R that maps x => x and dx => x
+--     rules := apply(R'.dpairVars#1, R'.dpairVars#0, (dx, x) -> dx => sub(x,R)) | apply(R'.dpairVars#0, x -> x => sub(x,R));
+--     liftMap := map(R,R', rules);
+--     diffOp apply(flatten entries liftMap(mon), flatten entries liftMap(coef), identity)
+-- )
+-- diffOp RingElement := f -> (
+--     R' := ring f;
+--     if not R'.?cache then R'.cache = new CacheTable;
+--     if not R'.cache#?"preWA" then (
+--         createDpairs R';
+--         R'.cache#"preWA" = (coefficientRing R')(monoid[(R'.dpairVars#0)]);
+--     );
+--     R := R'.cache#"preWA";
+--     diffOp(f, R)
+-- )
+-- -- matrices with mons and coeffs
+-- diffOp (List, List) := (mons, coefs) -> (
+--     if #mons != #coefs then error"expected same number of monomials and coefficients";
+--     diffOp apply(mons,coefs, (m,c) -> m => c)
+-- )
+-- diffOp (Matrix, Matrix) := (mons, coefs) -> (
+--     diffOp(flatten entries mons, flatten entries coefs)
+-- )
+-- 
+-- 
+-- -- Vector space operations
+-- DiffOp + DiffOp := (D1, D2) -> diffOp merge(D1, D2, (a,b) -> a+b)
+-- RingElement * DiffOp := (r, D) -> diffOp applyValues(D, x -> r*x)
+-- Number * DiffOp := (r, D) -> diffOp applyValues(D, x -> r*x)
+-- DiffOp - DiffOp := (D1, D2) -> D1 + (-1)*D2
+-- - DiffOp := D -> (-1)*D
+-- -- Application of DiffOp
+-- DiffOp RingElement := (D, f) -> keys D / (k -> (D)#k * diff(k, f)) // sum
+-- -- Comparison
+-- DiffOp ? DiffOp := (D1, D2) -> (
+--     if instance(D1 - D2, ZeroDiffOp) then return symbol ==;
+--     m := max keys(D1 - D2);
+--     if not D2#?m then symbol >
+--     else if not D1#?m then symbol <
+--     else (D1#m) ? (D2#m)
+-- )
+-- DiffOp == DiffOp := (D1, D2) -> return (D1 ? D2) === (symbol ==)
+-- -- Printing
+-- -- Takes a monomial and returns an expression with
+-- -- a "d" appended to each variable name
+-- addDsymbol = x -> (
+--     R := ring x;
+--     e := first exponents x;
+--     product apply(numgens R, i -> (if instance(expression(R_i), Subscript) then new Subscript from {expression("d" | toString (expression (R_i))#0),(expression (R_i))#1} else expression("d" | toString (R_i)))^(expression(e#i)))
+-- )
+-- expression DiffOp := D -> 
+--     rsort(keys D, MonomialOrder => Lex) / 
+--     (k -> (D)#k * if k == 1 then expression(1) else addDsymbol(k)) //
+--     sum
+-- net DiffOp := D -> net expression D
+-- toString DiffOp := D -> toString expression D
+-- -- other useful functions
+-- ring DiffOp := D -> ring first keys D
+-- substitute (DiffOp, Ring) := (D,R) -> applyPairs(D, (k,v) -> sub(k, R) => sub(v,R))
+-- normalize = method();
+-- normalize DiffOp := D -> 1/(sub( leadCoefficient D#(first rsort keys D), coefficientRing ring D)) * D
+-- DiffOp == ZZ := (D, z) -> if z == 0 then false else error"cannot compare DiffOp to nonzero integer"
+-- ZZ == DiffOp := (z, D) -> D == z
+-- evaluate (DiffOp, Matrix) := (D,p) -> applyValues(D, v -> promote((evaluate(matrix{{v}}, p))_(0,0), ring D))
+-- evaluate (DiffOp, Point) := (D,p) -> evaluate(D, matrix p)
+-- coefficients DiffOp := opts -> D -> (
+--     R := ring D;
+--     if opts.Variables =!= null then error"option Variables is not yet implemented for (coefficients, DiffOp)";
+--     mons := if opts.Monomials === null then keys D
+--         else if instance(opts.Monomials, Matrix) then first entries opts.Matrix
+--         else if instance(opts.Monomials, List) then opts.Monomials
+--         else if instance(opts.Monomials, Sequence) then toList opts.Monomials
+--         else error "expected 'Monomials=>'' argument to be a list, sequence, or matrix";
+-- 
+--     coefs := mons / (m -> if D#?m then D#m else 0_R);
+--     matrix{mons}, transpose matrix{coefs}
+-- )
+-- support DiffOp := D -> support matrix {keys D}
+-- degree DiffOp := D -> keys D / degree // max
+-- 
+-- 
+-- -- instances of ZeroDiffOp are differential operators that
+-- -- act as the zero operator. They have exactly one key with value zero
+-- ZeroDiffOp = new Type of DiffOp
+-- new ZeroDiffOp from Ring := (DD, R) -> hashTable{1_R => 0_R}
+-- toExternalString ZeroDiffOp := D -> "new ZeroDiffOp from " | toExternalString(ring D)
+-- ZeroDiffOp == ZZ := (D, z) -> if z == 0 then true else error"cannot compare DiffOp to nonzero integer"
+-- ZZ == ZeroDiffOp := (z, D) -> (D == z)
+-- 
+-- -- Type used for interpolated differential operators
+-- -- As in DiffOp, each key corresponds to a monomial,
+-- -- but each value is the numerator and denominator of a rational function
+-- InterpolatedDiffOp = new Type of DiffOp
+-- new InterpolatedDiffOp from List := (TT, L) -> hashTable L
+-- new InterpolatedDiffOp from HashTable := (TT, H) -> H
+-- expression InterpolatedDiffOp := D -> 
+--     rsort(keys D, MonomialOrder => Lex) / 
+--     (k -> ((expression D#k#0)/(expression D#k#1)) * if k == 1 then expression(1) else addDsymbol(k)) //
+--     sum
+-- net InterpolatedDiffOp := D -> net expression D
+-- evaluate (InterpolatedDiffOp, Matrix) := (D, p) -> (
+--     if any(splice values D, x -> x === "?") then error "cannot evaluate an incomplete interpolated differential operator"
+--     else diffOp(applyValues(D, (n,d) -> 
+--         promote((evaluate(matrix{{n}},p))_(0,0)/(evaluate(matrix{{d}},p))_(0,0), ring D))))
+-- evaluate (InterpolatedDiffOp, Point) := (D, p) -> evaluate(D, matrix p)
 
 sanityCheck = (nops, I) -> (
     all(flatten table(nops, I_*, (N,i) -> (N i)%(radical I) == 0), identity)
@@ -868,23 +971,43 @@ assert((myKernel M - gens kernel M) == 0)
 noetherianOperators = method(Options => true)
 noetherianOperators (Ideal) := List => true >> opts -> I -> (
     strats := new HashTable from {
+        "Punctual" => noetherianOperatorsPunctual,
         "Hybrid" => hybridNoetherianOperators,
         "MacaulayMatrix" => noetherianOperatorsViaMacaulayMatrix,
-        "PunctualHilbert" => getNoetherianOperatorsHilb,
+        "PunctualHilbert" => noetherianOperatorsPunctual,
     };
-    strat := if opts.?Strategy then opts.Strategy else "PunctualHilbert";
+    strat := if opts.?Strategy then opts.Strategy else "Punctual";
     if strats#?strat then strats#strat(I, opts) 
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
 
 noetherianOperators (Ideal, Ideal) := List => true >> opts -> (I,P) -> (
     strats := new HashTable from {
+        "Punctual" => noetherianOperatorsPunctual,
         "Hybrid" => hybridNoetherianOperators,
         "MacaulayMatrix" => noetherianOperatorsViaMacaulayMatrix,
-        "PunctualHilbert" => getNoetherianOperatorsHilb,
+        "PunctualHilbert" => noetherianOperatorsPunctual,
     };
     strat := if opts.?Strategy then opts.Strategy else "MacaulayMatrix";
     if strats#?strat then strats#strat(I, P, opts) 
+    else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
+)
+
+noetherianOperators (Module) := List => true >> opts -> M -> (
+    strats := new HashTable from {
+        "Punctual" => noetherianOperatorsPunctual
+    };
+    strat := if opts.?Strategy then opts.Strategy else "Punctual";
+    if strats#?strat then strats#strat(M, opts) 
+    else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
+)
+
+noetherianOperators (Module, Ideal) := List => true >> opts -> (M,P) -> (
+    strats := new HashTable from {
+        "Punctual" => noetherianOperatorsPunctual
+    };
+    strat := if opts.?Strategy then opts.Strategy else "Punctual";
+    if strats#?strat then strats#strat(M, P, opts) 
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
 -- End dispatcher method
@@ -944,14 +1067,17 @@ macaulayMatrixKernel := true >> opts -> (I, kP) -> (
 
 
 -- returns a list of Diff ops based on matrices M, dBasis
+-- currently dBasis must be a row-vector
 matrixToDiffOps = (M, dBasis) -> (
-    if M == 0 then {new ZeroDiffOp from ring M}
-    else transpose entries M / 
-        (c -> apply(flatten entries dBasis, c, identity)) /
+    R := ring M;
+    S := diffOpRing R;
+    phi := map(S,R, gens S);
+    if M == 0 then diffOp(0_S)
+    else transpose entries M /
+        (c -> phi dBasis * transpose matrix {c}) /
         diffOp //
         sort
 )
-
 
 noetherianOperatorsViaMacaulayMatrix = method(Options => true) 
 noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (I, P) -> (
@@ -979,13 +1105,14 @@ debug NoetherianOperators
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 nops = noetherianOperatorsViaMacaulayMatrix(I) / normalize
-correct = {diffOp{1_R => 1}, diffOp{y => 1}, diffOp{y^2 => t, x => 2}, diffOp{y^3 => t, x*y => 6}}
+S = diffOpRing R
+correct = {diffOp(1_S), diffOp(dy), diffOp(t*dy^2+2*dx), diffOp(t*dy^3+6*dx*dy)}
 assert(all(nops, correct, (i,j) -> i == j))
 
-S = QQ[x,y]
+R = QQ[x,y]
 J = ideal(x^3, y^4, x*y^2)
-
-correct = sort {diffOp{1_S => 1},diffOp{x => 1},diffOp{y => 1},diffOp{x^2 => 1},diffOp{x*y => 1},diffOp{y^2 => 1},diffOp{x^2*y => 1},diffOp{y^3 => 1}}
+S = diffOpRing R
+correct = sort {diffOp(1_S),diffOp(dx),diffOp(dy),diffOp(dx^2),diffOp(dx*dy),diffOp(dy^2),diffOp(dx^2*dy),diffOp(dy^3)}
 nops = noetherianOperatorsViaMacaulayMatrix(J) / normalize
 assert(all(nops, correct, (i,j) -> i == j))
 ///
@@ -1056,8 +1183,8 @@ J = ideal(y^2-4*y+4,-x^2+y)
 p = point{{1.41421,2}}
 L = numNoethOpsAtPoint(J,matrix p, DependentSet => {x,y}, Tolerance => 1e-3)
 assert(#L == 2)
-assert(all(values(L#0 - diffOp{1_R => 1}), v -> abs(sub(v,CC)) < 1e-6))
-assert(all(values(normalize(L#1) - normalize(diffOp{x => 1, y => 2*sqrt(2)})), v -> abs(sub(v,CC)) < 1e-3))
+S = diffOpRing R
+assert(all(flatten entries last coefficients(normalize L#1 - normalize(diffOp(dx+2*sqrt(2)*dy))), v -> abs(sub(v,CC)) < 1e-3))
 ///
 
 hybridNoetherianOperators = method(Options => true)
@@ -1070,8 +1197,9 @@ hybridNoetherianOperators (Ideal, Ideal, Matrix) := List => true >> opts -> (I,P
     kP := toField(S/PS);
     RCC := (ring pt) monoid R;
     nopsAtPoint := numNoethOpsAtPoint(sub(I,RCC), pt, opts, DependentSet => depVars / (i->sub(i,RCC)), IntegralStrategy => false);
-    sort flatten for op in nopsAtPoint list (
-        dBasis := sub(matrix{sort keys op / (m -> R_(first exponents m))}, S);
+    -- sort flatten for op in nopsAtPoint list (
+    flatten for op in nopsAtPoint list (
+        dBasis := sub(matrix{flatten entries monomials matrix op / (m -> R_(first exponents m))}, S);
         maxdeg := flatten entries dBasis / sum @@ degree // max;
         K := dBasis;
         for d from 0 to maxdeg - 1 do (
@@ -1170,18 +1298,8 @@ p = point{{0_CC,0, 3}}
 ptList = new MutableHashTable from {i => 0, pts => {4,7,-12} / (i -> point{{0_CC,0,i}})}
 gen = I -> (ptList.i = (ptList.i+1)%3; ptList.pts#(ptList.i))
 sampler = (n,I) -> apply(n, i -> gen(I))
-nnops = numericalNoetherianOperators(I, DependentSet => {x,y}, TrustedPoint => {{0_CC,0,12}}, Sampler => sampler)
-enops = nnops / (op -> evaluate(op, point{{0,0,3_CC}}))
-snops = specializedNoetherianOperators(I, point{{0,0,3_CC}}, DependentSet => {x,y})
-
-S = ring first snops
-
-enops = enops / (op -> 1/lift(op#(first sort keys op), coefficientRing ring op) * op)
-enops = enops / (i -> sub(i, S))
-snops = snops / (op -> 1/lift(op#(first sort keys op), coefficientRing ring op) * op)
-
-assert(all(snops - enops, i -> all(values i, j -> abs(lift(j,coefficientRing ring first snops)) < 1e-6)))
-
+numericalNoetherianOperators(I, DependentSet => {x,y}, TrustedPoint => {{0_CC,0,12}}, Sampler => sampler)
+specializedNoetherianOperators(I, point{{0,0,3_CC}}, DependentSet => {x,y})
 numericalNoetherianOperators(I, DependentSet => {x,y}, TrustedPoint => {{0_CC,0,12}}, Sampler => sampler, InterpolationDegreeLimit => 0)
 ///
 
@@ -1192,14 +1310,16 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
     opList := new List;
     -- (mon,coef) := coefficients(tmpl);
     S := ring tmpl;
+    SS := coefficientRing S;
+    KK := ultimate(coefficientRing, S);
     interpTol := if not opts.?InterpolationTolerance then defaultT(CC) else opts.InterpolationTolerance;
     sampler := if opts.?Sampler then opts.Sampler else (n,Q) -> first bertiniSample(n, first components bertiniPosDimSolve(Q));
-    nops := keys tmpl / (m -> (
+    nops := flatten entries monomials matrix tmpl / (m -> (
         d := 0;
         result := ("?","?");
         while(not opts.?InterpolationDegreeLimit or d <= opts.InterpolationDegreeLimit) do (
-            numBasis := rsort basis(0, d, S);
-            denBasis := rsort basis(0, d, S, Variables => gens S - set (opts.DependentSet / (x -> sub(x,S))));
+            numBasis := rsort basis(0, d, SS);
+            denBasis := rsort basis(0, d, SS, Variables => gens SS - set (opts.DependentSet / (x -> sub(x,SS))));
             -- generate as many new points and new specialized nops as necessary
             while (neededPoints := numColumns numBasis + numColumns denBasis + 1 - #ptList) > 0 do (
                 if neededPoints > 0 and debugLevel > 0 then 
@@ -1222,17 +1342,18 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
             
             interpPoints := numColumns numBasis + numColumns denBasis + 1;
             liftedCoeffs := take(opList, interpPoints)  /
-                (op -> lift(op#m, ultimate(coefficientRing, ring op)));
+                (op -> lift(coefficient(m, first entries op), ultimate(coefficientRing, ring op)));
             neededPtList := take(ptList, interpPoints);
             try result = rationalInterpolation(neededPtList, liftedCoeffs, numBasis, denBasis, Tolerance => interpTol) then break
                 else d = d+1;
         );
         result = result / (j -> cleanPoly(opts.Tolerance, j));
-        (m => result)
+        -- (m => result)
+        (expression first result) / (expression last result) * (expression m)
     ));
     if debugLevel > 0 then <<"Done interpolating from template "<<tmpl<<endl;
     (ring I).cache#"interp point list" = ptList | oldPtList;
-    new InterpolatedDiffOp from nops
+    sum nops
 )
 
 -- Create new specialized Noeth op at a random point using tmpl as a template
@@ -1240,10 +1361,13 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
 specializedNopsFromTemplate = true >> opts -> (I, pt, tmpl) -> (
     R := ring I;
     R' := ring tmpl;
-    bd := keys tmpl;
-    maxdeg := bd / sum @@ degree // max;
-    bx := basis(0, maxdeg-1, R');
-    M := diff(matrix{bd}, transpose (sub(gens I, R') ** bx));
+    S := coefficientRing R';
+    psi := map(S,R', gens S);
+    --bd := keys tmpl;
+    bd := flatten entries psi monomials matrix tmpl;
+    maxdeg := bd / first @@ degree // max;
+    bx := basis(0, maxdeg-1, S);
+    M := diff(matrix{bd}, transpose (sub(gens I, S) ** bx));
 
     M' := evaluate(M, pt);
     K := numericalKernel(M', Tolerance=>opts.Tolerance);
@@ -1252,8 +1376,7 @@ specializedNopsFromTemplate = true >> opts -> (I, pt, tmpl) -> (
         if debugLevel > 0 then <<"specializedNopsFromTemplate: bad point, trying again"<<endl;
         return null;
     );
-    first matrixToDiffOps(promote(colReduce(K, Tolerance => opts.Tolerance), ring tmpl), matrix{bd})
-
+    first matrixToDiffOps(promote(colReduce(K, Tolerance => opts.Tolerance), S), sub(matrix{bd}, S))
 )
 
 
@@ -1269,12 +1392,24 @@ cleanPoly = (tol, x) -> (
 coordinateChangeOps = method()
 coordinateChangeOps(Matrix, DiffOp) := DiffOp => (A, D) -> (
     R := ring D;
+    S := coefficientRing R;
     A' := inverse A;
-    b := pairs D / ((m,c) -> (sub(m, vars R * A'), sub(c, vars R * transpose A)));
-    b / (p -> last p * (first matrixToDiffOps reverse coefficients first p)) // sum
+    (mon, coe) := coefficients D;
+    mm := sub(mon, vars R * A');
+    cc := sub(coe, vars coefficientRing R * transpose A);
+    diffOp(mm*cc)
+
+--    b := coefficients D /
+--        entries /
+--        flatten //
+--        toList //
+--        transpose /
+--        toSequence /
+--        ((m,c) -> (sub(m, vars R * A'), sub(c, vars R * transpose A)));
+--    b / (p -> sub(last p, coefficientRing R) * (first matrixToDiffOps reverse coefficients first p)) // sum
 )
 coordinateChangeOps(Matrix, List) := coordinateChangeOps(RingMap, List) := List => (A, L) -> L/(D -> coordinateChangeOps(A, D))
-coordinateChangeOps(RingMap, DiffOp) := DiffOp => (phi, D) -> coordinateChangeOps(transpose(matrix phi // vars ring D), D)
+coordinateChangeOps(RingMap, DiffOp) := DiffOp => (phi, D) -> coordinateChangeOps(transpose(matrix phi // vars coefficientRing ring D), D)
 
 
 TEST ///
@@ -1401,6 +1536,119 @@ modConstant = f -> (
 ------- Noetherian operators code with the use of punctual Hilbert schemes
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
+-- arithmetic multiplicity
+amult = method()
+amult Module := ZZ => M -> (
+    assPrimes := ass(comodule M);
+    sum apply(assPrimes, P -> degree(saturate(M,P)/M)//degree(P))
+)
+amult Ideal := ZZ => I -> amult module I
+
+-- TODO tests
+
+-- Todo: add this to PrimaryDecomposition package?
+-- Module should be given as an image
+-- List L is a list of associated primes
+localize(Module, Ideal, List) := Module => opts -> (M, P, L) -> (
+    if opts.Strategy != 1 then error"not implemented";
+    --- find a separator
+    g := L /
+        (aP -> select(1, aP_*, g -> g % P != 0)) //
+        flatten;
+    if #g == 0 then M else saturate(M, lcm g)
+)
+
+solvePDE = method(Options => true)
+solvePDE(Module) := List => true >> opts -> M -> (
+    R := ring M;
+    -- if not instance(opts.Prefix, String) then error "expected prefix of class String";
+    -- prefix = opts.Prefix;
+    -- Pvars := gens R / toString / (i -> prefix | i);
+
+    -- Create a new ring with the above variables if needed, cache it in R
+    -- if not R.?cache then R.cache = new CacheTable;
+    -- key := prefix | "-variable ring";
+    -- if not R.cache#?key then R.cache#key = (coefficientRing R)(monoid [((gens R / toString) | Pvars) / value]);
+
+    assPrimes := ass(comodule M);
+    assPrimes / (P -> (
+        a := localize(M,P,assPrimes);
+        b := saturate(a, P);
+        {P, reducedNoetherianOperators(a,b,P, opts)}
+    ))
+)
+solvePDE(Ideal) := List => true >> opts -> I -> solvePDE (module I, opts)
+
+diffPrimDec = solvePDE
+
+
+reducedNoetherianOperators = method(Options => true)
+reducedNoetherianOperators (Module, Module, Ideal) := List => true >> opts -> (a,b,P) -> (
+    R := ring P;
+    --if not instance(opts.Prefix, String) then error "expected prefix of class String";
+    --prefix = opts.Prefix;
+    --Pvars := gens R / toString / (i -> prefix | i);
+
+    -- Create a new ring with the above variables if needed, cache it in R
+    -- if not R.?cache then R.cache = new CacheTable;
+    -- key := prefix | "-variable ring";
+    -- if not R.cache#?key then R.cache#key = (coefficientRing R)(monoid [((gens R / toString) | Pvars) / value]);
+    PR := diffOpRing R;
+
+    (depVars,indVars) := getDepIndVars(P, opts);
+    
+    -- indVars := support first independentSets P;
+    -- depVars := gens R - set indVars;
+
+    m := 0;  -- compute the exponent that determines the order of the diff ops
+    while not isSubset(intersect(b, P^m*(super b)), a) do m = m + 1;
+    m = max(0, m-1); -- TODO check!!!
+
+    S := (frac(R/P))(monoid[Variables => #depVars]);
+    depVarImage := apply(depVars, gens S, (x,y) -> sub(x,S) + y);
+    gammaList := apply(depVars, depVarImage, (i,j) -> i => j) | indVars / (x -> x => sub(x,S));
+    gamma := map(S, R, gammaList);
+
+    M := super a;
+    mm := ideal vars S;
+
+    aa := trim(gamma(a) + mm^(m+1) * S^(rank M));
+    bb := trim(gamma(b) + mm^(m+1) * S^(rank M));
+    mons := if #depVars > 0 then basis(0,m,S) else matrix{{1_S}}; -- is this correct? m --> m-1?
+
+    punctualDual := M -> (
+        diffMat := diff(transpose gens M, mons);
+        coe := last coefficients(diffMat);
+        kernel sub(coe, coefficientRing S)
+    );
+    
+    local H;
+    K := if b == M then (
+        H = punctualDual aa;
+        gens trim H
+    ) else (
+        H = punctualDual aa;
+        E := punctualDual bb;
+        gens trim(H / E)
+    );
+
+    -- For each column, find the lcm of denominators
+    lcmList := transpose entries K / (C -> (C / denominator // lcm));
+    -- Multiply each column by the lcm of its generators
+    liftedK := transpose matrix apply(transpose entries K, lcmList, (C, c) -> C / (f -> if c%denominator f != 0 then error"something went horribly wrong" else numerator f * (c // denominator f)));
+
+    Pmap := map(PR, R, gens PR);
+    PK := sub(liftedK, PR);
+    Pbasis :=Pmap if #depVars > 0 then basis(0,m,R^(rank M), Variables => depVars )
+                else basis(0,0, R^(rank M));
+
+    multiplierMatrix := (Pbasis * PK);
+    apply(numColumns multiplierMatrix, i ->mingens image matrix  multiplierMatrix_i) /
+        diffOp
+) 
+
+
+
 
 --- Computes the join of two ideals
 joinIdeals = method()
@@ -1476,7 +1724,28 @@ invSystemFromHilbToNoethOps = true >> opts -> (I, R, S, depVars) -> (
     StoR := map(R, S, apply(#depVars, i -> R_(index depVars#i)));
     matrixToDiffOps(liftColumnsPunctualHilbert(last L, R), StoR first L)
 )
-   
+
+noetherianOperatorsPunctual = method(Options => true)
+noetherianOperatorsPunctual (Ideal, Ideal) := List => true >> opts -> (Q, P) -> (
+    M := module Q;
+    reducedNoetherianOperators(M, super M, P)
+)
+
+noetherianOperatorsPunctual Ideal := List => true >> opts -> Q -> 
+    noetherianOperatorsPunctual(Q, radical Q, opts)
+
+noetherianOperatorsPunctual Module := List => true >> opts -> M -> (
+    assPrimes := ass comodule M;
+    if #assPrimes != 1 then error "expected primary module";
+    P := first assPrimes;
+    reducedNoetherianOperators(M, super M, P)
+)
+
+noetherianOperatorsPunctual (Module, Ideal) := List => true >> opts -> (M, P) -> (
+    assPrimes := ass comodule M;
+    reducedNoetherianOperators(localize(M, P, assPrimes), super M, P)
+)
+
 -- This function can compute the Noetherian operators of a primary ideal Q.
 -- Here we pass first through the punctual Hilbert scheme 
 getNoetherianOperatorsHilb = method(Options => true)
@@ -1506,11 +1775,9 @@ assert(all(hilb, maca, (i,j) -> i == j))
 ///
 
 -- computes the annihilator ideal of a polynomial F in a polynomial ring 
--- Input: a DiffOp. Output: a zero-dimension ideal that corresponds with the annihilator
+-- Input: a 1x1 matrix. Output: a zero-dimension ideal that corresponds with the annihilator
 polynomialAnn = (F') -> (
-    -- change the DiffOp to a RingElement. This assumes that
-    -- coefficients are in the coefficient ring.
-    F := keys F' / (k -> F'#k * k) // sum;
+    F := F'_(0,0);
     deg := (degree F)_0;
     S := ring F;
     allMons := basis(1, deg + 1, S);
@@ -1533,14 +1800,15 @@ vectorAnn = (V) -> (
 getIdealFromNoetherianOperators = method()
 getIdealFromNoetherianOperators(List, Ideal) := (L, P) -> (
     R := ring P;
-    if ring first L =!= R then error "expected Noetherian operators and prime in same ring";
+    if coefficientRing ring first L =!= R then error "expected Noetherian operators and prime in same ring";
     indVars := support first independentSets P;
     FF := frac(R/P);
     S := FF monoid R;
 
-    mapDiff := map(S,R, vars S);
+    mapDiff := map(S,ring first L, vars S);
     mapCoef := map(coefficientRing S, R);
-    V := L / (op -> applyPairs(op, (a,b) -> (mapDiff a, promote(mapCoef b,S))));
+    V := L / coefficients / ((a,b) -> (mapDiff a * mapCoef sub(b, R)));
+    --V := L / (op -> applyPairs(op, (a,b) -> (mapDiff a, promote(mapCoef lift(b, R),S))));
 
     I := vectorAnn(V);
     R' := R monoid R;
@@ -1566,16 +1834,108 @@ P = radical I
 Q = getIdealFromNoetherianOperators(L,P)
 assert(Q == I)
 ///
+
+--- Implements the inverse procedure of Noetherian operators
+getModuleFromNoetherianOperators = method()
+getModuleFromNoetherianOperators (Ideal, List) := Module => (P,L) -> (
+    R := ring P;
+    FF := frac(R/P);
+    D := ring L_0;
+    S := FF[gens D];
+    W := apply(L, F -> sub(F, S));
+    m := 1 + max apply(W, M -> max(0, max flatten apply(flatten entries M, v -> degree v)));
+    V := mingens vectorSpaceAnn(W);
+    V = sum apply(numcols V, j -> image liftMatrix(matrix{V_j}, R, D));
+    V = trim(V + (sub(P, D) * (super V)) + ((ideal vars D)^m * (super V)));
+    
+    -- some process of idealization of a module
+    T := symbol T;
+    p := rank super V;
+    AA := D[T_1..T_p];
+    BB := coefficientRing(R)[gens AA | gens R, Degrees => toList splice(p:1, (#gens R):0)];
+    X := AA / ideal((vars AA) * (gens V));
+    Q := ker map(X, BB, vars AA | sub(vars R + vars D, AA));
+    
+    U := image sub(last coefficients(sub(super basis(1, Q), R[T_1..T_p])), R);
+    AssU := ass comodule U;
+    localizeModule(U, AssU, P)
+)
+-- helper functions
+liftMatrix = (A, R, D) -> (
+    FF := coefficientRing ring A;
+    (M, C) := coefficients A;
+    M = sub(M, D);
+    nums := apply(entries sub(C, FF), H -> apply(H, h -> lift(numerator h, R)));
+    dens := apply(entries sub(C, FF), H -> apply(H, h -> lift(denominator h, R)));
+    m := lcm flatten dens;
+    H := matrix apply(numrows C, i -> apply(numcols C, j -> (nums_i_j * m) // dens_i_j));          
+    B := M*H;
+    K := apply(flatten entries last coefficients B, v -> sub(v, R));
+    g := gcd apply(flatten apply(K, p -> flatten entries last coefficients p), n -> sub(n, QQ));
+    (1/g) * B
+)
+-- computes the annihilator ideal of a polynomial vector F in a polynomial ring 
+polynomialVectorAnn = (F) -> (
+    p := numrows F;
+    deg := max(0, max flatten apply(flatten entries F, v -> degree v));
+    S := ring F;
+    allMons := basis(0, deg+1, S^p);
+    diffMat := sum apply(p, i -> diff(allMons^{i}, F^{i}));
+    (mons, coeffs) := coefficients diffMat;
+    image mingens image (allMons * mingens ker coeffs)        
+)
+-- computes the annilihator of a vector space V of polynomials
+vectorSpaceAnn = (W) -> (
+    intersect(apply(W / matrix, F -> polynomialVectorAnn(F)))      
+)
+-- This function localizes a module at a prime P
+-- and then it computes the contraction back into the polynomial ring. 
+-- In other words, it computes the interesection of all the primary
+-- components whose corresponding prime ideal is contained in P.
+localizeModule = (U, AssU, P) -> (
+    R := ring P;
+    f := 1_R;
+    for Q in AssU do (
+        g := 1_R;
+        gensQ := flatten entries gens Q;
+        for q in gensQ do 
+        if not isSubset(ideal(q), P) then (
+            g = q;
+            break;
+        );
+        f = f * g;
+    );
+    saturate(U, f)
+)
+
+
+
+TEST ///
+debug NoetherianOperators
+R = QQ[x1,x2,x3,x4]
+U = image matrix{{0, x1},{1,0}}
+nops = noetherianOperators U
+P = first ass comodule U
+M = getModuleFromNoetherianOperators(P,nops)
+assert(M == U)
+use R -- TODO remove this
+U = image matrix{
+    {x1*x3, x1*x2, x1^2*x2 },
+    {x1^2, x2^2, x1^2*x4} }
+dpd = diffPrimDec U
+M = dpd / (L -> getModuleFromNoetherianOperators(first L, last L)) // intersect
+assert(M == U)
+///
 ----------------------------------------------------------
 
-undocumented {
-    (expression, DiffOp),
-    (expression, InterpolatedDiffOp),
-    (net, DiffOp),
-    (net, InterpolatedDiffOp),
-    (toExternalString, ZeroDiffOp),
-    (toString, DiffOp)
-}
+-- undocumented {
+--     (expression, DiffOp),
+--     (expression, InterpolatedDiffOp),
+--     (net, DiffOp),
+--     (net, InterpolatedDiffOp),
+--     (toExternalString, ZeroDiffOp),
+--     (toString, DiffOp)
+-- }
 
 beginDocumentation()
 refKroneLeykin := "R. Krone and A. Leykin, \"Numerical algorithms for detecting embedded components.\", arXiv:1405.7871"
