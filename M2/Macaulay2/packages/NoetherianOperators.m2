@@ -1775,11 +1775,9 @@ assert(all(hilb, maca, (i,j) -> i == j))
 ///
 
 -- computes the annihilator ideal of a polynomial F in a polynomial ring 
--- Input: a DiffOp. Output: a zero-dimension ideal that corresponds with the annihilator
+-- Input: a 1x1 matrix. Output: a zero-dimension ideal that corresponds with the annihilator
 polynomialAnn = (F') -> (
-    -- change the DiffOp to a RingElement. This assumes that
-    -- coefficients are in the coefficient ring.
-    F := keys F' / (k -> F'#k * k) // sum;
+    F := F'_(0,0);
     deg := (degree F)_0;
     S := ring F;
     allMons := basis(1, deg + 1, S);
@@ -1802,14 +1800,15 @@ vectorAnn = (V) -> (
 getIdealFromNoetherianOperators = method()
 getIdealFromNoetherianOperators(List, Ideal) := (L, P) -> (
     R := ring P;
-    if ring first L =!= R then error "expected Noetherian operators and prime in same ring";
+    if coefficientRing ring first L =!= R then error "expected Noetherian operators and prime in same ring";
     indVars := support first independentSets P;
     FF := frac(R/P);
     S := FF monoid R;
 
-    mapDiff := map(S,R, vars S);
+    mapDiff := map(S,ring first L, vars S);
     mapCoef := map(coefficientRing S, R);
-    V := L / (op -> applyPairs(op, (a,b) -> (mapDiff a, promote(mapCoef b,S))));
+    V := L / coefficients / ((a,b) -> (mapDiff a * mapCoef sub(b, R)));
+    --V := L / (op -> applyPairs(op, (a,b) -> (mapDiff a, promote(mapCoef lift(b, R),S))));
 
     I := vectorAnn(V);
     R' := R monoid R;
