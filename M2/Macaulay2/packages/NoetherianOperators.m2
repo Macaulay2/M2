@@ -1834,6 +1834,98 @@ P = radical I
 Q = getIdealFromNoetherianOperators(L,P)
 assert(Q == I)
 ///
+
+--- Implements the inverse procedure of Noetherian operators
+getModuleFromNoetherianOperators = method()
+getModuleFromNoetherianOperators (Ideal, List) := Module => (P,L) -> (
+    R := ring P;
+    FF := frac(R/P);
+    D := ring L_0;
+    S := FF[gens D];
+    W := apply(L, F -> sub(F, S));
+    m := 1 + max apply(W, M -> max(0, max flatten apply(flatten entries M, v -> degree v)));
+    V := mingens vectorSpaceAnn(W);
+    V = sum apply(numcols V, j -> image liftMatrix(matrix{V_j}, R, D));
+    V = trim(V + (sub(P, D) * (super V)) + ((ideal vars D)^m * (super V)));
+    
+    -- some process of idealization of a module
+    T := symbol T;
+    p := rank super V;
+    AA := D[T_1..T_p];
+    BB := coefficientRing(R)[gens AA | gens R, Degrees => toList splice(p:1, (#gens R):0)];
+    X := AA / ideal((vars AA) * (gens V));
+    Q := ker map(X, BB, vars AA | sub(vars R + vars D, AA));
+    
+    U := image sub(last coefficients(sub(super basis(1, Q), R[T_1..T_p])), R);
+    AssU := ass comodule U;
+    localizeModule(U, AssU, P)
+)
+-- helper functions
+liftMatrix = (A, R, D) -> (
+    FF := coefficientRing ring A;
+    (M, C) := coefficients A;
+    M = sub(M, D);
+    nums := apply(entries sub(C, FF), H -> apply(H, h -> lift(numerator h, R)));
+    dens := apply(entries sub(C, FF), H -> apply(H, h -> lift(denominator h, R)));
+    m := lcm flatten dens;
+    H := matrix apply(numrows C, i -> apply(numcols C, j -> (nums_i_j * m) // dens_i_j));          
+    B := M*H;
+    K := apply(flatten entries last coefficients B, v -> sub(v, R));
+    g := gcd apply(flatten apply(K, p -> flatten entries last coefficients p), n -> sub(n, QQ));
+    (1/g) * B
+)
+-- computes the annihilator ideal of a polynomial vector F in a polynomial ring 
+polynomialVectorAnn = (F) -> (
+    p := numrows F;
+    deg := max(0, max flatten apply(flatten entries F, v -> degree v));
+    S := ring F;
+    allMons := basis(0, deg+1, S^p);
+    diffMat := sum apply(p, i -> diff(allMons^{i}, F^{i}));
+    (mons, coeffs) := coefficients diffMat;
+    image mingens image (allMons * mingens ker coeffs)        
+)
+-- computes the annilihator of a vector space V of polynomials
+vectorSpaceAnn = (W) -> (
+    intersect(apply(W / matrix, F -> polynomialVectorAnn(F)))      
+)
+-- This function localizes a module at a prime P
+-- and then it computes the contraction back into the polynomial ring. 
+-- In other words, it computes the interesection of all the primary
+-- components whose corresponding prime ideal is contained in P.
+localizeModule = (U, AssU, P) -> (
+    R := ring P;
+    f := 1_R;
+    for Q in AssU do (
+        g := 1_R;
+        gensQ := flatten entries gens Q;
+        for q in gensQ do 
+        if not isSubset(ideal(q), P) then (
+            g = q;
+            break;
+        );
+        f = f * g;
+    );
+    saturate(U, f)
+)
+
+
+
+TEST ///
+debug NoetherianOperators
+R = QQ[x1,x2,x3,x4]
+U = image matrix{{0, x1},{1,0}}
+nops = noetherianOperators U
+P = first ass comodule U
+M = getModuleFromNoetherianOperators(P,nops)
+assert(M == U)
+use R -- TODO remove this
+U = image matrix{
+    {x1*x3, x1*x2, x1^2*x2 },
+    {x1^2, x2^2, x1^2*x4} }
+dpd = diffPrimDec U
+M = dpd / (L -> getModuleFromNoetherianOperators(first L, last L)) // intersect
+assert(M == U)
+///
 ----------------------------------------------------------
 
 -- undocumented {
