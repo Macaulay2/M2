@@ -60,7 +60,7 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (HG, n1, n2) -> (
         gamma1 => if o#"random gamma" then exp(2 * pi* ii * random RR) else 1, 
         gamma2 => if o#"random gamma" then exp(2 * pi* ii * random RR) else 1, 
         Correspondence12 => new MutableHashTable from {}, -- think: the map from labels of points of Node1 to those of Node2
-        Correspondence21 => new MutableHashTable from {}  -- ............................................2.................1
+        Correspondence21 => new MutableHashTable from {} -- ............................................2.................1
         };
     n1.Edges#(#n1.Edges) = E;
     n2.Edges#(#n2.Edges) = E;
@@ -106,6 +106,12 @@ addCorrespondence (HomotopyEdge,ZZ,ZZ) := (e,a,b) -> (
     	e.Correspondence21#b = a;
 	true
 	)
+    )
+
+betti HomotopyGraph := HG -> (
+    nE := sum(length HG.Edges);
+    nV := length HG.Vertices;
+    nE - nV +1
     )
 
 homotopyGraph = method(TypicalValue => HomotopyGraph, 
