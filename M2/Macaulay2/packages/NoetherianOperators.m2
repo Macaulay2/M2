@@ -681,6 +681,7 @@ isPointEmbeddedInCurve (Point,Ideal) := o-> (p,I) -> (
 DiffOp = new Type of Vector
 DiffOp.synonym = "differential operator"
 
+diffOpRing = (cacheValue "DiffOpRing") (R -> R(monoid [gens R / toString / (v -> "d" | v) / value]))
 diffOpModule = memoize((S, k) -> new Module of DiffOp from S^k)
 
 diffOp = method()
@@ -728,7 +729,7 @@ DiffOp - DiffOp := DiffOp => (a,b) -> (
 RingElement * DiffOp := DiffOp => (r,d) -> (
     R := class r;
     S := class d;
-    if member(ring d, R.baseRings) then new S from diffOp(promote(r,ring d)*matrix d)
+    if member(ring r, (ring d).baseRings) then new S from diffOp(promote(r,ring d)*matrix d)
     else error"expected pair to have a method for '*'"
 )
 - DiffOp := DiffOp => d -> ((-1)*d)
@@ -748,6 +749,18 @@ DiffOp SPACE Matrix := (D,m) -> (
     ))
 )
 DiffOp SPACE RingElement := (D, f) -> D (matrix f)
+
+-- other functions
+normalize = method()
+normalize DiffOp := DiffOp => d -> (
+    R := coefficientRing ring d;
+    KK := coefficientRing R;
+    lt := leadTerm matrix d;
+    lc := last coefficients lt;
+    lt = leadTerm sub(lc, R);
+    lc = (last coefficients lt)_(0,0);
+    (1/sub(lc,KK)) * d
+)
 
 TEST ///
 R = QQ[x,y]
@@ -923,35 +936,6 @@ assert(not foo == 0)
 --         promote((evaluate(matrix{{n}},p))_(0,0)/(evaluate(matrix{{d}},p))_(0,0), ring D))))
 -- evaluate (InterpolatedDiffOp, Point) := (D, p) -> evaluate(D, matrix p)
 
-
-TEST ///
---DiffOp
-R = QQ[x,y,z]
-foo = diffOp{x => y, y=>2*x}
-bar = diffOp{x^2 => z*x + 3, y => x}
-foobar = diffOp{x => y, y=>3*x, x^2 => z*x + 3}
-foo2 = diffOp{x^2*y => x}
-foo3 = diffOp{1_R => 0}
-assert(foobar == foo + bar)
-assert(foo(x^2) == 2*x*y)
-assert(foo3 - foo == diffOp{x => -y, 1_R => 0, y => -2*x})
-assert(foo2 > foo)
-assert(instance(foo3, ZeroDiffOp))
-assert(try diffOp{x+y => x} then false else true)
-assert(try diffOp{2*y*x^2 => x+z} then false else true)
-assert(foo2 - foo2 == 0)
-assert(not foo == 0)
-needsPackage "Dmodules"
-R' = makeWA(R)
-wa = diffOp(x^2*dx - dx^2 + dy^3 + (x-3)*dx)
-use ring wa
-dop = diffOp({x => x^2+x-3, x^2 => -1, y^3 => 1})
-assert(dop == wa)
--- InterpolatedDiffOp
-a = new InterpolatedDiffOp from {x => (x^2+y, y^2+x), y^2*x => (z+2, x^2+z^3*x)}
-assert((evaluate(a, point{{1,2,3}}))(x) == 3/5)
-///
-
 sanityCheck = (nops, I) -> (
     all(flatten table(nops, I_*, (N,i) -> (N i)%(radical I) == 0), identity)
 )
@@ -1083,17 +1067,17 @@ macaulayMatrixKernel := true >> opts -> (I, kP) -> (
 
 
 -- returns a list of Diff ops based on matrices M, dBasis
+-- currently dBasis must be a row-vector
 matrixToDiffOps = (M, dBasis) -> (
     R := ring M;
     S := diffOpRing R;
     phi := map(S,R, gens S);
-    if M == 0 then 0_S
+    if M == 0 then diffOp(0_S)
     else transpose entries M /
-        (c -> phi dBasis * transpose matrix {c})
-    --TODO sort?
+        (c -> phi dBasis * transpose matrix {c}) /
+        diffOp //
+        sort
 )
-
-diffOpRing = (cacheValue "DiffOpRing") (R -> R(monoid [gens R / toString / (v -> "d" | v) / value]))
 
 noetherianOperatorsViaMacaulayMatrix = method(Options => true) 
 noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (I, P) -> (
@@ -1120,17 +1104,16 @@ TEST ///
 debug NoetherianOperators
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
--- TODO nops = noetherianOperatorsViaMacaulayMatrix(I) / normalize
-nops = noetherianOperatorsViaMacaulayMatrix(I)
-correct = {diffOp{1_R => 1}, diffOp{y => 1}, diffOp{y^2 => t, x => 2}, diffOp{y^3 => t, x*y => 6}}
+nops = noetherianOperatorsViaMacaulayMatrix(I) / normalize
+S = diffOpRing R
+correct = {diffOp(1_S), diffOp(dy), diffOp(t*dy^2+2*dx), diffOp(t*dy^3+6*dx*dy)}
 assert(all(nops, correct, (i,j) -> i == j))
 
-S = QQ[x,y]
+R = QQ[x,y]
 J = ideal(x^3, y^4, x*y^2)
-
-correct = sort {diffOp{1_S => 1},diffOp{x => 1},diffOp{y => 1},diffOp{x^2 => 1},diffOp{x*y => 1},diffOp{y^2 => 1},diffOp{x^2*y => 1},diffOp{y^3 => 1}}
---TODO nops = noetherianOperatorsViaMacaulayMatrix(J) / normalize
-nops = noetherianOperatorsViaMacaulayMatrix(J)
+S = diffOpRing R
+correct = sort {diffOp(1_S),diffOp(dx),diffOp(dy),diffOp(dx^2),diffOp(dx*dy),diffOp(dy^2),diffOp(dx^2*dy),diffOp(dy^3)}
+nops = noetherianOperatorsViaMacaulayMatrix(J) / normalize
 assert(all(nops, correct, (i,j) -> i == j))
 ///
 
@@ -1200,8 +1183,8 @@ J = ideal(y^2-4*y+4,-x^2+y)
 p = point{{1.41421,2}}
 L = numNoethOpsAtPoint(J,matrix p, DependentSet => {x,y}, Tolerance => 1e-3)
 assert(#L == 2)
-assert(all(values(L#0 - diffOp{1_R => 1}), v -> abs(sub(v,CC)) < 1e-6))
-assert(all(values(normalize(L#1) - normalize(diffOp{x => 1, y => 2*sqrt(2)})), v -> abs(sub(v,CC)) < 1e-3))
+S = diffOpRing R
+assert(all(flatten entries last coefficients(normalize L#1 - normalize(diffOp(dx+2*sqrt(2)*dy))), v -> abs(sub(v,CC)) < 1e-3))
 ///
 
 hybridNoetherianOperators = method(Options => true)
@@ -1216,7 +1199,7 @@ hybridNoetherianOperators (Ideal, Ideal, Matrix) := List => true >> opts -> (I,P
     nopsAtPoint := numNoethOpsAtPoint(sub(I,RCC), pt, opts, DependentSet => depVars / (i->sub(i,RCC)), IntegralStrategy => false);
     -- sort flatten for op in nopsAtPoint list (
     flatten for op in nopsAtPoint list (
-        dBasis := sub(matrix{flatten entries monomials op / (m -> R_(first exponents m))}, S);
+        dBasis := sub(matrix{flatten entries monomials matrix op / (m -> R_(first exponents m))}, S);
         maxdeg := flatten entries dBasis / sum @@ degree // max;
         K := dBasis;
         for d from 0 to maxdeg - 1 do (
@@ -1315,18 +1298,8 @@ p = point{{0_CC,0, 3}}
 ptList = new MutableHashTable from {i => 0, pts => {4,7,-12} / (i -> point{{0_CC,0,i}})}
 gen = I -> (ptList.i = (ptList.i+1)%3; ptList.pts#(ptList.i))
 sampler = (n,I) -> apply(n, i -> gen(I))
-nnops = numericalNoetherianOperators(I, DependentSet => {x,y}, TrustedPoint => {{0_CC,0,12}}, Sampler => sampler)
-enops = nnops / (op -> evaluate(op, point{{0,0,3_CC}}))
-snops = specializedNoetherianOperators(I, point{{0,0,3_CC}}, DependentSet => {x,y})
-
-S = ring first snops
-
-enops = enops / (op -> 1/lift(op#(first sort keys op), coefficientRing ring op) * op)
-enops = enops / (i -> sub(i, S))
-snops = snops / (op -> 1/lift(op#(first sort keys op), coefficientRing ring op) * op)
-
-assert(all(snops - enops, i -> all(values i, j -> abs(lift(j,coefficientRing ring first snops)) < 1e-6)))
-
+numericalNoetherianOperators(I, DependentSet => {x,y}, TrustedPoint => {{0_CC,0,12}}, Sampler => sampler)
+specializedNoetherianOperators(I, point{{0,0,3_CC}}, DependentSet => {x,y})
 numericalNoetherianOperators(I, DependentSet => {x,y}, TrustedPoint => {{0_CC,0,12}}, Sampler => sampler, InterpolationDegreeLimit => 0)
 ///
 
@@ -1341,7 +1314,7 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
     KK := ultimate(coefficientRing, S);
     interpTol := if not opts.?InterpolationTolerance then defaultT(CC) else opts.InterpolationTolerance;
     sampler := if opts.?Sampler then opts.Sampler else (n,Q) -> first bertiniSample(n, first components bertiniPosDimSolve(Q));
-    nops := flatten entries monomials tmpl / (m -> (
+    nops := flatten entries monomials matrix tmpl / (m -> (
         d := 0;
         result := ("?","?");
         while(not opts.?InterpolationDegreeLimit or d <= opts.InterpolationDegreeLimit) do (
@@ -1369,7 +1342,7 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
             
             interpPoints := numColumns numBasis + numColumns denBasis + 1;
             liftedCoeffs := take(opList, interpPoints)  /
-                (op -> lift(coefficient(m, op_(0,0)), ultimate(coefficientRing, ring op)));
+                (op -> lift(coefficient(m, first entries op), ultimate(coefficientRing, ring op)));
             neededPtList := take(ptList, interpPoints);
             try result = rationalInterpolation(neededPtList, liftedCoeffs, numBasis, denBasis, Tolerance => interpTol) then break
                 else d = d+1;
@@ -1391,7 +1364,7 @@ specializedNopsFromTemplate = true >> opts -> (I, pt, tmpl) -> (
     S := coefficientRing R';
     psi := map(S,R', gens S);
     --bd := keys tmpl;
-    bd := flatten entries psi monomials tmpl;
+    bd := flatten entries psi monomials matrix tmpl;
     maxdeg := bd / first @@ degree // max;
     bx := basis(0, maxdeg-1, S);
     M := diff(matrix{bd}, transpose (sub(gens I, S) ** bx));
@@ -1419,12 +1392,24 @@ cleanPoly = (tol, x) -> (
 coordinateChangeOps = method()
 coordinateChangeOps(Matrix, DiffOp) := DiffOp => (A, D) -> (
     R := ring D;
+    S := coefficientRing R;
     A' := inverse A;
-    b := pairs D / ((m,c) -> (sub(m, vars R * A'), sub(c, vars R * transpose A)));
-    b / (p -> last p * (first matrixToDiffOps reverse coefficients first p)) // sum
+    (mon, coe) := coefficients D;
+    mm := sub(mon, vars R * A');
+    cc := sub(coe, vars coefficientRing R * transpose A);
+    diffOp(mm*cc)
+
+--    b := coefficients D /
+--        entries /
+--        flatten //
+--        toList //
+--        transpose /
+--        toSequence /
+--        ((m,c) -> (sub(m, vars R * A'), sub(c, vars R * transpose A)));
+--    b / (p -> sub(last p, coefficientRing R) * (first matrixToDiffOps reverse coefficients first p)) // sum
 )
 coordinateChangeOps(Matrix, List) := coordinateChangeOps(RingMap, List) := List => (A, L) -> L/(D -> coordinateChangeOps(A, D))
-coordinateChangeOps(RingMap, DiffOp) := DiffOp => (phi, D) -> coordinateChangeOps(transpose(matrix phi // vars ring D), D)
+coordinateChangeOps(RingMap, DiffOp) := DiffOp => (phi, D) -> coordinateChangeOps(transpose(matrix phi // vars coefficientRing ring D), D)
 
 
 TEST ///
@@ -1658,7 +1643,8 @@ reducedNoetherianOperators (Module, Module, Ideal) := List => true >> opts -> (a
                 else basis(0,0, R^(rank M));
 
     multiplierMatrix := (Pbasis * PK);
-    apply(numColumns multiplierMatrix, i ->mingens image matrix  multiplierMatrix_i)
+    apply(numColumns multiplierMatrix, i ->mingens image matrix  multiplierMatrix_i) /
+        diffOp
 ) 
 
 
