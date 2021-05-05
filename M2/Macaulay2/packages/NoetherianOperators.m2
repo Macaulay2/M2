@@ -710,7 +710,29 @@ DiffOp == DiffOp := (a,b) -> (
 DiffOp == ZZ := (d,i) -> matrix d == i
 ZZ == DiffOp := (i,d) -> d == i
 
-
+coefficients DiffOp := opts -> d -> coefficients (matrix d, opts)
+-- Operations
+DiffOp + DiffOp := DiffOp => (a,b) -> (
+    A := class a;
+    B := class b;
+    if A === B then diffOp(matrix a+matrix b) 
+    else error"expected pair to have a method for '+'"
+)
+DiffOp - DiffOp := DiffOp => (a,b) -> (
+    A := class a;
+    B := class b;
+    if A === B then diffOp(matrix a-matrix b)
+    else error"expected pair to have a method for '-'"
+)
+--Left action
+RingElement * DiffOp := DiffOp => (r,d) -> (
+    R := class r;
+    S := class d;
+    if member(ring d, R.baseRings) then new S from diffOp(promote(r,ring d)*matrix d)
+    else error"expected pair to have a method for '*'"
+)
+- DiffOp := DiffOp => d -> ((-1)*d)
+-- Application
 DiffOp SPACE Matrix := (D,m) -> (
     if numColumns m != 1 then error"expected column matrix";
     if numRows m != #(entries D) then error"expected differential operator and column matrix of same length";
@@ -725,9 +747,7 @@ DiffOp SPACE Matrix := (D,m) -> (
         lift((diff(phi mon, f) * coe)_(0,0), R)
     ))
 )
-
-coefficients DiffOp := opts -> d -> coefficients (matrix d, opts)
-
+DiffOp SPACE RingElement := (D, f) -> D (matrix f)
 
 TEST ///
 R = QQ[x,y]
@@ -756,29 +776,20 @@ assert(diffOp(x_S) == x*SS_0)
 TEST ///
 --DiffOp
 R = QQ[x,y,z]
-foo = diffOp{x => y, y=>2*x}
-bar = diffOp{x^2 => z*x + 3, y => x}
-foobar = diffOp{x => y, y=>3*x, x^2 => z*x + 3}
-foo2 = diffOp{x^2*y => x}
-foo3 = diffOp{1_R => 0}
+S = diffOpRing R
+foo = diffOp(y*dx + 2*x*dy)
+bar = diffOp((z*x+3)*dx^2 + dy*x)
+foobar = diffOp(dx*y + 3*x*dy + (z*x+3)*dx^2)
+foo2 = diffOp(x*dx^2*dy)
+foo3 = diffOp(0_S)
 assert(foobar == foo + bar)
-assert(foo(x^2) == 2*x*y)
+assert(foo (x^2) == 2*x*y)
 assert(foo3 - foo == diffOp{x => -y, 1_R => 0, y => -2*x})
+assert(foo3 - foo == diffOp(-y*dx - 2*x*dy))
 assert(foo2 > foo)
-assert(instance(foo3, ZeroDiffOp))
-assert(try diffOp{x+y => x} then false else true)
-assert(try diffOp{2*y*x^2 => x+z} then false else true)
+assert(foo3 == 0)
 assert(foo2 - foo2 == 0)
 assert(not foo == 0)
-needsPackage "Dmodules"
-R' = makeWA(R)
-wa = diffOp(x^2*dx - dx^2 + dy^3 + (x-3)*dx)
-use ring wa
-dop = diffOp({x => x^2+x-3, x^2 => -1, y^3 => 1})
-assert(dop == wa)
--- InterpolatedDiffOp
-a = new InterpolatedDiffOp from {x => (x^2+y, y^2+x), y^2*x => (z+2, x^2+z^3*x)}
-assert((evaluate(a, point{{1,2,3}}))(x) == 3/5)
 ///
 
 
