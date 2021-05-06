@@ -414,6 +414,10 @@ acosh = method()
 acosh Number := z -> log(z+sqrt(z^2-1))
 asinh = method()
 asinh Number := z -> log(z+sqrt(z^2+1))
+atanh = method()
+atanh Number := z -> log((1+z)/(1-z))/2
+acoth = method()
+acoth Number := z -> atanh(1/z)
 acot = method()
 acot Number := z -> atan(1/z)
 

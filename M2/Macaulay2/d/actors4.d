@@ -1332,7 +1332,7 @@ toRRi(e:Expr):Expr := (
                                 is y:RRcell do toExpr(toRRi(x.v,y.v,toULong(prec.v)))
                                 else WrongArg(1,"a pair of integral, rational, or real numbers, with a precision"))
 	       else WrongArg(1,"a pair of integral, rational, or real numbers, with a precision"))
-	    else WrongArg(1,"a pair or triple  of integral, rational, or real numbers"))
+	    else buildErrorPacket(EngineError("The first argument should be an integer")))
    	 else WrongArg(1,"a pair or triple  of integral, rational, or real numbers"));
 setupfun("toRRi",toRRi);
                                                      

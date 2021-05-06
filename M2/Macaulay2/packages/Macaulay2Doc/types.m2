@@ -722,64 +722,38 @@ document {
      SeeAlso => {"ii", toCC, toRR, numeric, precision, format, "printingPrecision", "printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
      }
 
+undocumented {RRi'}
+
 document {
      Key => RRi,
      Headline => "the class of all real intervals",
-     "A real interval is entered as a pair of real numbers to the interval function.  It is stored internally as an arbitrary precision interval using the MPFI library.",
+     "A real interval is entered as a pair of real numbers to the interval function.  It is stored internally as an arbitrary precision interval using the ", TO "MPFI", " library.",
      EXAMPLE "interval(3.1415,3.1416)",
      "The precision is measured in bits, is visible in the ring displayed on
      the second of each pair of output lines, and can be recovered using ", TO "precision", ".",
      EXAMPLE "precision interval(3.1415,3.1416)",
-     "For real numbers, the functions ", TO "class", " and ", TO "ring", " yield different
+     "For real intervals, the functions ", TO "class", " and ", TO "ring", " yield different
      results.  That allows numbers of various precisions
      to be used without creating a new ring for each precision.",
-     EXAMPLE {"class 3.1", "ring 3.1"},
-     "The precision can be specified on input by appending the letter ", TT "p", " and a positive number.",
-     EXAMPLE "3p300",
-     "An optional exponent (for the power of ten to multiply by) can be specified on input
-     by appending the letter ", TT "e", " and a number.",
-     EXAMPLE {"3e3", "-3e-3", "-3p111e-3"},
-     "Numbers that appear alone on an output line are displayed with all their meaningful digits.
-     (Specifying 100 bits of precision yields about 30 decimal digits of precision.)",
-     EXAMPLE {"1/3.","1/3p100", "100 * log(10,2)"},
-     "Numbers displayed inside more complicated objects are printed with the number of digits
-     specified by ", TO "printingPrecision", ".",
-     EXAMPLE {"printingPrecision","{1/3.,1/3p100}"},
-     "The notion of equality tested by ", TO "==", " amounts to equality of the internal binary digits.",
-     EXAMPLE {".5p100 == .5p30", ".2p100 == .2p30"},
-     "The notion of (strict) equality tested by ", TO "===", " also takes the precision into account.",
-     EXAMPLE {".5p100 === .5p30", ".2p100 === .2p30"},
-     "Perhaps surprisingly, the IEEE floating point standard also specifies that every number, including 0,
-     has a sign bit, and strict equality testing takes it into account, as it must do, because some arithmetic
-     and transcendental functions take it into account.",
-     EXAMPLE lines ///
-     0.
-     -0.
-     1/0.
-     1/-0.
-     log 0
-     csc (0.)
-     csc (-0.)
-     ///,
-     "Use ", TO "toExternalString", " to produce something that, when encountered as input, will reproduce
-     exactly what you had before.",
-     EXAMPLE lines ///
-	  x = {1/3.,1/3p100}
-	  x == {.333333, .333333}
-	  y = toExternalString x
-	  x === value y
-     ///,
-     "Transcendental constants and functions are available to high precision, with ", TO "numeric", ".",
-     EXAMPLE lines ///
-	  numeric pi
-	  numeric_200 pi
-	  Gamma oo
-	  ///,
-     SeeAlso => {toRR, numeric, precision, format, "printingPrecision", "printingAccuracy",
-	  "printingLeadLimit", "printingTrailLimit", "printingSeparator",
-	  "maxExponent", "minExponent"
+     EXAMPLE {"class interval(3.1,3.5)", "ring interval(3.1,3.5)"},
+     "The precision can be specified on input by specifying the precision of both input ", TO "RR", " numbers.",
+     "Alternatively, the precision can be specified by including the option ", TT "Precision", ".",
+     EXAMPLE {"interval(2.5p100,3.2p1000)","interval(2.5,3.2,Precision=>200)"},
+     "Intervals can also be created using ", TO (span,Sequence), " to create the smallest interval containing the inputs.",
+     EXAMPLE {"span(2,Precision=>100)","span(2,3,interval(-1.5,-0.5),73)"},
+     "Operations using intervals are computed as sets so that the resulting intervals contain all possible outputs from pairs of points in input intervals.",
+     EXAMPLE {"interval(1,3)+interval(2,4)","interval(-1,1)*interval(2,3)","interval(0,1)-interval(0,1)","interval(1,2)/interval(1,2)"},
+     "The notion of equality tested by ", TO "==", " amounts to checking the equality of the endpoints of intervals.",
+     "The notion of equality tested by ", TO "===", " takes into account the precision of the inputs as well.",
+     EXAMPLE {"interval(1,3) == interval(1,3,Precision=>100)","interval(1,3) === interval(1,3,Precision=>100)","interval(1/3,1,Precision=>100)==interval(1/3,1,Precision=>1000)"},
+     "The notion of inequalities for intervals amounts to testing the inequality for all points in the intervals.  In particular, ",TO "<=", " is not the same as ",TO "<"," or ",TO "==",".",
+    EXAMPLE {"interval(1,2)<=interval(2,3)","interval(1,2)<=interval(1,2)", "interval(1,2)<interval(2,3)","interval(1,2)<interval(3,4)"},
+     "Transcendental functions on intervals produce intervals containing the image of the function on the interval.",
+     EXAMPLE {"exp(interval(2,4))","cos(interval(1,1.3))","sqrt(interval(2))"},
+     "Transcendental functions are available to high precision, with ", TO "numericInterval", ".",
+    EXAMPLE {"numericInterval(100,pi)","numericInterval_200 EulerConstant"},
+    SeeAlso => {toRRi, numericInterval, precision, interval, (span,Sequence), (span,List)}
 	  }
-     }
 
 document {
      Key => OrderedMonoid,

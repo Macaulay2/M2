@@ -16,7 +16,6 @@ interval(Array) := opts -> A -> (
     else if length(A) == 1 then interval(opts,A_0)
     else interval(opts,A_0,A_1))
 
--- Make this a methodfunctionsingle?
 spanRRi = method(Options => {Precision => -1})
 
 for A in {ZZ,QQ,RR} do

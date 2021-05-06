@@ -5,7 +5,7 @@ methodstr := PARA { "This function is a method function, defined in the core so 
 document { Key => decompose,    methodstr, SeeAlso => { "MinimalPrimes::MinimalPrimes" } }
 document { Key => truncate,     methodstr, SeeAlso => { "Truncations::Truncations" } }
 document { Key => chi,          methodstr }
-document { Key => isEmpty,      methodstr, SeeAlso => { "Polyhedra::Polyhedra" } }
+document { Key => isEmpty,      methodstr, SeeAlso => { "Polyhedra::Polyhedra",(isEmpty, RRi)} }
 
 document {
     Key => { intersect, (intersect, List), (intersect, Sequence), intersection },

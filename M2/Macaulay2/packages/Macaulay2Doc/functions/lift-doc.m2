@@ -47,7 +47,10 @@ document {
 	  (symbol ^, RingElement, RingFamily),
 	  (symbol ^, Number, RingFamily),
 	  (symbol ^, Constant, Ring),
-	  (symbol ^, Constant, RingFamily)
+	  (symbol ^, Constant, RingFamily),
+      (lift,Matrix,RRi',QQ),
+      (lift,Matrix,RRi',RR'),
+      (lift,Matrix,RRi',ZZ)
 	  },
      Headline => "lift to another ring",
      Usage => "lift(f,R)",
