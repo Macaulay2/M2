@@ -11,11 +11,6 @@ document {
      Key => End,
      Headline => "module of endomorphisms",
      TT "End M", " -- constructs the module of endomorphisms of ", TT "M", "."}
-document {
-     Key => ModuleMap,
-     Headline => "the class of all maps between modules",
-     "This class is experimental, designed to support graded modules.",
-     SeeAlso => {"Matrix"}}
 
 document {
      Key => (symbol ^, Ring, List),
