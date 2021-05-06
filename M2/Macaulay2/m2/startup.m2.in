@@ -495,7 +495,7 @@ action := hashTable {
 	       )
 	  ),
      "--version" => arg -> ( << version#"VERSION" << newline; exit 0; ),
-     "--webapp" => arg -> ( topLevelMode = global WebApp; )
+     "--webapp" => arg -> ( printWidth=0; topLevelMode = global WebApp; )
      };
 
 valueNotify := arg -> (

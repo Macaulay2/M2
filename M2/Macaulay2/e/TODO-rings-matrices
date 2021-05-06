@@ -36,7 +36,7 @@ Roadmap of to do items, not in order of priority (yet)
   ARingQQFLint
   what else?
 . Remove code in QQ and ZZ, and start using ConcreteRing<ARingZZGMP>, etc.
-. RR, CC, RRR, CCC: write arithemetic routines, and remove other implementations of these.
+. RR, CC, RRR, CCC: write arithmetic routines, and remove other implementations of these.
 . RR..CCC: add in linear algebra and mult routines.
 
 Matrices 

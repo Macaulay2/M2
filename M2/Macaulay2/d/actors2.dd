@@ -62,7 +62,8 @@ toList(e:Expr):Expr := (
 	       	    List(listClass, if b.Mutable then copy(b.v) else b.v,
 		    	 0, false),
 	       	    false)))
-     else WrongArg("list, sequence, or set"));
+     is s:stringCell do list(strtoseq(s))
+     else WrongArg("list, sequence, set, or string"));
 setupfun("toList",toList);
 values(e:Expr):Expr := (
      when e

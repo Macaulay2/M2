@@ -264,7 +264,7 @@ int GBKernelComputation::find_divisor(const MonomialIdeal *this_mi,
                                       const int *exp,
                                       int &result)
 {
-  // Find all the posible matches, use some criterion for finding the best...
+  // Find all the possible matches, use some criterion for finding the best...
   VECTOR(Bag *) bb;
   this_mi->find_all_divisors(exp, bb);
   int ndivisors = bb.size();

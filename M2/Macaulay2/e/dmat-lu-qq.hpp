@@ -199,7 +199,7 @@ class DMatLinAlg<M2::ARingQQ>
   bool inverse(Mat& result_inv)
   {
     FlintQQMat A(mInputMatrix);
-    // This seems like alot of futzing around to get the inverse of a matrix
+    // This seems like a lot of fuzzing around to get the inverse of a matrix
     // over QQ...
     // printf("in dmat-lu-qq inverse\n");
     long nrows = A.numRows();

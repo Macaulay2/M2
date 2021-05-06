@@ -243,11 +243,12 @@ coarseMultigradedRegularity ChainComplex := o-> F -> (
     --we assume F starts in homol degree 0.
     t := degreeLength ring F;
     range := toList(min F..max F-1);
-    degsF := apply(range,i -> degrees (F_i));
-    lowerbounds := flatten flatten apply(range, i->(
-	    apply(degsF_i, d -> apply(LL(i,t), ell -> d-ell))
-	    ));
-    apply(t, i-> max apply(lowerbounds, ell->ell_i))
+    degsF := flatten apply(range,i -> degrees (F_i));
+    --lowerbounds := flatten flatten apply(range, i->(
+    --	  apply(degsF_i, d -> apply(LL(i,t), ell -> d-ell))
+    --	  ));
+    --only changes degsF if t=1
+    apply(t, i-> max apply(degsF, ell->ell_i))
     )
 
 coarseMultigradedRegularity Module := o-> M-> (
@@ -4131,10 +4132,7 @@ doc ///
      degree such that truncate(R,M) has linear resolution
    Description
     Text
-     Uses a free resolution and takes the maximum degree of a term
-     minus the homological position in each component. Then adjusts
-     so that the sum of the degrees is at least the ordinary
-     regularity.
+     Uses a free resolution and takes the maximum degree of the terms.
     Example
      (S,E) = productOfProjectiveSpaces{1,1,2}
      I = ideal(x_(0,0)^2,x_(1,0)^3,x_(2,0)^4)
@@ -4142,8 +4140,9 @@ doc ///
      N = truncate(R,S^1/I);
      betti res N
      netList toList tallyDegrees res N
-   Caveat
-    We haven't yet proven that this is right.
+    Text
+     See the proof of Proposition 2.7 in
+       @ HREF("https://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces")@.
    SeeAlso
     productOfProjectiveSpaces
     tallyDegrees
@@ -5946,22 +5945,22 @@ doc ///
       When n is quite big compared to r, it is not very efficient to deal with Beilinson bundles on P^n since they have 
       huge rank and presentation matrices. In particular, the method directImageComplex becomes slow down.
       
-      The following is an example of direct images of the structure sheaf on a twisted cubic.
+      The following is an example of direct images of the structure sheaf on a rational normal curve of degree $d$.
   Example
-      kk=ZZ/101; d=6;
+      kk=ZZ/101; d=4;
       needsPackage "Resultants";
       vd=veronese(1,d,kk);
       R=target vd; S=source vd;
       
       M=R^{1:-1}; I=ann M; J=ker vd;
       
-      RM=time directImageComplex(I,M,matrix vd);
+      RM=directImageComplex(I,M,matrix vd);
       
       for i from min RM to max RM list (rank RM_i)
   Text
-      RM looks complicated since it is consisted of universal bundles on P^6, which are of high rank.
+      RM looks complicated since it is consisted of universal bundles on $P^4$, which are of high rank.
   Example
-      retTable=time actionOnDirectImage(I,M,matrix vd);
+      retTable=actionOnDirectImage(I,M,matrix vd);
       keys retTable
   Text
       We see that 0 is the only key, in other words, there is no other R^i vd_{*} except i=0.

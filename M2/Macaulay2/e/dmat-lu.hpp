@@ -134,7 +134,7 @@ void DMatLinAlg<RingType>::computeLU()
   auto array = mLU.rowMajorArray();
 
   // The following 3 arrays are used to point to the places we need: A is the location we are working on
-  // B is the part from 'L', C is the part from 'U' (and the orginal matrix)
+  // B is the part from 'L', C is the part from 'U' (and the original matrix)
   auto A = array; // mLU[row, col+1]
   auto B = array; // mLU[row,0]
   auto C = array; // mLU[0,col]

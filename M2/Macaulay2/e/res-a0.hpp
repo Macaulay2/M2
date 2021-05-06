@@ -32,7 +32,7 @@ enum {
 };
 
 const int FLAGS_SORT = 7;     // mask for comparison type
-const int FLAGS_DESCEND = 8;  // first 12 bits are for the two comparsion types
+const int FLAGS_DESCEND = 8;  // first 12 bits are for the two comparison types
 const int FLAGS_REVERSE = 16;
 const int FLAGS_DEGREE = 32;
 const int FLAGS_LEVEL = (1 << 13);  // bit 13

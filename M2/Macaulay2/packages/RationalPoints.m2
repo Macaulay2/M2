@@ -172,7 +172,7 @@ superCombine = (theinfosubi, zips, els) -> (
      case := theinfosubi_1;
      n := theinfosubi_3;
      if case == 1 then return zips;
-     newstuff := toList (set els)^**n;
+     newstuff := apply(toList (set els)^**n, deepSplice);
      if n == 1 and versionTest() then newstuff = apply(newstuff, i -> {i}); --take out in newest version of M2
      return flatten apply(newstuff, k -> apply(zips, l -> apply(scheme, (i,j) -> {k,l}#i#j))); 
      );
@@ -398,6 +398,7 @@ document {
      R = ZZ/13[b,c,d];
      I = ideal (b-b);
      assert(rationalPoints(I,Amount => true) == 2197)     
+     assert(#rationalPoints Grassmannian(1,3,CoefficientRing=>ZZ/2) == 36);
      ///
 endPackage "RationalPoints"
 

@@ -3,10 +3,7 @@
 -----------------------------------------------------------------------------
 -- Matrix
 
-ModuleMap = new Type of HashTable
-ModuleMap.synonym = "module map"
-
-Matrix = new Type of ModuleMap
+Matrix = new Type of HashTable
 Matrix.synonym = "matrix"
 raw Matrix := f -> f.RawMatrix
 ring Matrix := f -> (
@@ -67,7 +64,7 @@ vector Matrix := f -> (
      if not isFreeModule source f or numgens source f =!= 1 then error "expected source to be free with rank 1";
      new target f from {f}
     )
-vector List := v -> vector matrix apply(v, i -> {i});
+vector List := v -> vector matrix apply(splice v, i -> {i});
 
 -----------------------------------------------------------------------------
 

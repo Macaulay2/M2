@@ -40,7 +40,7 @@ newPackage select((
 	Keywords => {"Graph Theory"},
         Configuration => {
             "DotBinary" => "dot",
-            "JpgViewer" => "display"
+            "JpgViewer" => ""
             },
 	PackageImports => { "PrimaryDecomposition" },
         PackageExports => {
@@ -51,7 +51,10 @@ newPackage select((
 
 -- Load configurations
 graphs'DotBinary = if instance((options Graphs).Configuration#"DotBinary", String) then (options Graphs).Configuration#"DotBinary" else "dot";
-graphs'JpgViewer = if instance((options Graphs).Configuration#"JpgViewer", String) then (options Graphs).Configuration#"JpgViewer" else "display";
+
+importFrom_Core {"printerr"}
+if (options Graphs).Configuration#"JpgViewer" != "" then
+    printerr "warning: the \"JpgViewer\" configuration option is deprecated"
 
 -- Exports
 export {
@@ -395,7 +398,7 @@ displayGraph = method()
 displayGraph (String, String, Digraph) := (dotfilename, jpgfilename, G) -> (
      writeDotFile(dotfilename, G);
      runcmd(graphs'DotBinary  | " -Tjpg " | dotfilename | " -o " | jpgfilename);
-     runcmd(graphs'JpgViewer  | " " | jpgfilename|" &");
+     show URL("file://" | toAbsolutePath jpgfilename);
      )
 displayGraph (String, Digraph) := (dotfilename, G) -> (
      jpgfilename := temporaryFileName() | ".jpg";
@@ -415,15 +418,29 @@ showTikZ Digraph := opt -> G -> (
      get output
      )
 
+html Digraph := G -> if G.cache#?"svg" then G.cache#"svg" else (
+     dotfilename := temporaryFileName() | ".dot";
+     writeDotFile(dotfilename, G);
+     svgfilename := temporaryFileName() | ".svg";
+     runcmd(graphs'DotBinary  | " -Tsvg " | dotfilename | " -o " | svgfilename);
+     G.cache#"svg" = get svgfilename
+     )
+
 writeDotFile = method()
-writeDotFile (String, Graph) := (filename, G) -> (
+writeDotFile (String, Graph) := (filename, G) ->
+    writeDotFileHelper(filename, G, "graph", "--")
+writeDotFile (String, Digraph) := (filename, G) ->
+    writeDotFileHelper(filename, G, "digraph", "->")
+
+writeDotFileHelper = (filename, G, type, op) -> (
     fil := openOut filename;
-    fil << "graph G {" << endl;
+    fil << type << " G {" << endl;
     V := vertexSet G;
-    scan(#V, i -> fil << "\t" | toString i | " [label=\""|toString V_i|"\"];" << endl);
-    A := adjacencyMatrix G;
-    E := flatten for i from 0 to #V - 1 list for j from i+1 to #V - 1 list if A_(i,j) == 1 or A_(j,i) == 1 then {i, j} else continue;
-    scan(E, e -> fil << "\t" | toString e_0 | " -- " | toString e_1 | ";" << endl);
+    I := hashTable apply(#V, i -> V_i => i);
+    scan(V, v -> fil << "\t" << I#v << " [label=\"" << v << "\"];" << endl);
+    E := toList \ edges G;
+    scan(E, e -> fil << "\t" << I#(e_0) << " " << op << " " << I#(e_1) << ";"
+	<< endl);
     fil << "}" << endl << close;
     )
 
@@ -727,8 +744,9 @@ chromaticNumber = method()
 chromaticNumber Graph := ZZ => G -> (
     if #edges G == 0 and #vertexSet G == 0 then 0
     else if #edges G == 0 and #vertexSet G != 0 then 1
+    else if isBipartite G then 2
     else (
-        chi := 2;
+        chi := 3;
         J := coverIdeal G;
         m := product gens ring J;
         while ((m^(chi - 1) % J^chi) != 0) do chi = chi+ 1;
@@ -1234,7 +1252,8 @@ hasOddHole = method()
 hasOddHole Graph := Boolean => G -> any(ass (coverIdeal G)^2, i -> codim i > 3)
 
 isBipartite = method()
-isBipartite Graph := Boolean => G -> chromaticNumber G <= 2
+isBipartite Graph := Boolean => G ->
+    try bipartiteColoring G then true else false
 
 isCM = method()
 isCM Graph := Boolean => G -> (
@@ -1466,7 +1485,6 @@ bipartiteColoring Graph := List => G -> (
     n := # vertexSet G;
     v := 0;
     if n == 0 then return {{},{}};
-    if not isBipartite G then error "graph must be bipartite";
     D := new MutableList from toList(n: infinity);
     while v != n do (
         uncolored := {position(toList D, i -> i == infinity)};
@@ -1481,7 +1499,8 @@ bipartiteColoring Graph := List => G -> (
                     D#y = 1 + D#x;
                     v = v + 1;
                     uncolored = append(uncolored, y);
-                    );
+                    ) else if (D#x - D#y) % 2 == 0 then
+                        error "graph must be bipartite";
                 );
             );
         );
@@ -2115,11 +2134,62 @@ doc ///
         displayGraph
 ///
 
+-- html
+doc ///
+    Key
+        (html, Digraph)
+    Headline
+        Create an .svg representation of a graph or digraph
+    Usage
+        html G
+    Inputs
+        G:Digraph
+    Description
+        Text
+            Uses graphviz to create an .svg representation of @TT "G"@,
+            which is returned as a string.
+        CannedExample
+            i2 : html completeGraph 2
+            -- running: dot -Tsvg /tmp/M2-2729721-0/0.dot -o /tmp/M2-2729721-0/1.svg
+
+            o2 = <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+                  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+                 <!-- Generated by graphviz version 2.43.0 (0)
+                  -->
+                 <!-- Title: G Pages: 1 -->
+                 <svg width="62pt" height="116pt"
+                  viewBox="0.00 0.00 62.00 116.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 112)">
+                 <title>G</title>
+                 <polygon fill="white" stroke="transparent" points="-4,4 -4,-112 58,-112 58,4 -4,4"/>
+                 <!-- 0 -->
+                 <g id="node1" class="node">
+                 <title>0</title>
+                 <ellipse fill="none" stroke="black" cx="27" cy="-90" rx="27" ry="18"/>
+                 <text text-anchor="middle" x="27" y="-86.3" font-family="Times,serif" font-size="14.00">0</text>
+                 </g>
+                 <!-- 1 -->
+                 <g id="node2" class="node">
+                 <title>1</title>
+                 <ellipse fill="none" stroke="black" cx="27" cy="-18" rx="27" ry="18"/>
+                 <text text-anchor="middle" x="27" y="-14.3" font-family="Times,serif" font-size="14.00">1</text>
+                 </g>
+                 <!-- 0&#45;&#45;1 -->
+                 <g id="edge1" class="edge">
+                 <title>0&#45;&#45;1</title>
+                 <path fill="none" stroke="black" d="M27,-71.7C27,-60.85 27,-46.92 27,-36.1"/>
+                 </g>
+                 </g>
+                 </svg>
+///
+
 -- writeDotFile
 doc ///
     Key
         writeDotFile
         (writeDotFile, String, Graph)
+        (writeDotFile, String, Digraph)
     Headline
         Writes a graph to a dot file with a specified filename
     Usage

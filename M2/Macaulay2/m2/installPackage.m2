@@ -354,7 +354,8 @@ installInfo := (pkg, installPrefix, installLayout, verboseLog) -> (
 	    if PREV#?tag then infofile << ", Prev: " << infoTagConvert' format PREV#tag;
 	    -- nodes without an Up: link tend to make the emacs info reader unable to construct the table of contents,
 	    -- and the display isn't as nice after that error occurs
-	    infofile << ", Up: " << if UP#?tag then infoTagConvert' format UP#tag else "Top";
+	    infofile << ", Up: " << if UP#?tag then infoTagConvert' format UP#tag else
+		if fkey == infotitle then "(dir)" else "Top";
 	    infofile << endl << endl << info fetchProcessedDocumentation(pkg, fkey) << endl));
     infofile << "\037" << endl << "Tag Table:" << endl;
     scan(values byteOffsets, b -> infofile << b << endl);
@@ -503,6 +504,15 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 	    if not isDirectory exampleDir then makeDirectory exampleDir;
 	    copyFile(outf, outf', Verbose => true)));
 
+    cmphash := (cachef, inputhash) -> (
+	cachehash := gethash cachef;
+	samehash := cachehash === inputhash;
+	if not samehash then verboseLog("warning: cached example file " |
+	    cachef | " does not have expected hash" | newline |
+	    "expected: " | toString inputhash |", actual: " |
+	    toString cachehash);
+	samehash);
+
     usermode := if opts.UserMode === null then not noinitfile else opts.UserMode;
     scan(pairs pkg#"example inputs", (fkey, inputs) -> (
 	    inpf  := inpfn  fkey; -- input file
@@ -514,12 +524,15 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 	    inputhash := hash inputs;
 	    -- use cached example results
 	    if  not opts.RunExamples
-	    or  not opts.RerunExamples and fileExists outf  and gethash outf  === inputhash then (
+	    or  not opts.RerunExamples and fileExists outf  and cmphash(outf, inputhash) then (
 		(possiblyCache(outf, outf', fkey))())
 	    -- use distributed example results
 	    else if pkgopts.UseCachedExampleOutput
-	    and not opts.RerunExamples and fileExists outf' and gethash outf' === inputhash then (
-		if fileExists errf then removeFile errf; copyFile(outf', outf))
+	    and not opts.RerunExamples and fileExists outf' and cmphash(outf', inputhash) then (
+		if fileExists errf then removeFile errf;
+		copyFile(outf', outf);
+		verboseLog("using cached " | desc)
+		)
 	    -- run and capture example results
 	    else elapsedTime captureExampleOutput(
 		desc, demark_newline inputs, pkg,
@@ -535,6 +548,16 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 	scan(readDirectory exampleOutputDir, fn -> (
 		fn = exampleOutputDir | fn;
 		if match("\\.out$", fn) and not exampleOutputFiles#?fn then removeFile fn)));
+    )
+
+getErrors = fn -> (
+    -- show several lines before the error and everything afterward
+    err := get fn;
+    pat := ///(internal error|:[0-9][0-9]*:[0-9][0-9]*:\([0-9][0-9]*\):|/// |
+	///^GC|^0x|^out of mem|non-zero status|^Command terminated|/// |
+	///user.*system.*elapsed|^[0-9]+\.[0-9]+user|SIGSEGV| \*\*\* )///;
+    m := regex(///(.*\n){0,9}.*/// | pat | ///(.*\n)*///, err);
+    if m =!= null then substring(m#0, err) else get("!tail " | fn)
     )
 
 -----------------------------------------------------------------------------
@@ -696,7 +719,7 @@ installPackage Package := opts -> pkg -> (
 	then error("installPackage: ", toString numErrors, " error(s) occurred running examples for package ", pkg#"pkgname",
 	    if opts.Verbose or debugLevel > 0 then ":" | newline | newline |
 	    concatenate apply(select(readDirectory exampleOutputDir, file -> match("\\.errors$", file)), err ->
-		err | newline |	concatenate(width err : "*") | newline | get("!tail " | exampleOutputDir | err)) else "");
+		err | newline |	concatenate(width err : "*") | newline | getErrors(exampleOutputDir | err)) else "");
 
 	-- if no examples were generated, then remove the directory
 	if length readDirectory exampleOutputDir == 2 then removeDirectory exampleOutputDir;
@@ -783,6 +806,7 @@ installPackage Package := opts -> pkg -> (
     if not hadError then (
 	libDir := pkg#"package prefix" | replace("PKG", pkg#"pkgname", installLayout#"packagelib");
 	iname := libDir|".installed";
+	if not fileExists libDir then makeDirectory libDir;
 	iname << close;
 	verboseLog("file created: ", minimizeFilename iname);
 	);

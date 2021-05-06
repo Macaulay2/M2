@@ -58,6 +58,7 @@ union ring_elem
   mpfi_srcptr mpfi_val;
   cc_doubles_srcptr cc_doubles_val;
   cc_srcptr cc_val;
+  const void *mPolyVal;
  public:
   ring_elem() : poly_val(nullptr) {}
   // explicit ring_elem(int a) : int_val(a) {} // really want this version...
@@ -72,6 +73,7 @@ union ring_elem
   explicit ring_elem(cc_srcptr a) : cc_val(a) {}
   explicit ring_elem(cc_doubles_srcptr a) : cc_doubles_val(a) {}
   explicit ring_elem(local_elem* a) : local_val(a) {}
+  explicit ring_elem(const void* a) : mPolyVal(a) {} // non-commutative polynomials
   explicit ring_elem(schur_poly* a) : schur_poly_val(a) {}
 
   //  operator int() const { return int_val; }
@@ -82,6 +84,7 @@ union ring_elem
   long get_long() const { return long_val; }
   double get_double() const { return double_val; }
   mpz_srcptr get_mpz() const { return mpz_val; }
+  const void* get_Poly() const { return mPolyVal; }
   mpq_srcptr get_mpq() const { return mpq_val; }
   mpfr_srcptr get_mpfr() const { return mpfr_val; }
   mpfi_srcptr get_mpfi() const { return mpfi_val; }

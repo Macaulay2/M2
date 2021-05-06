@@ -191,7 +191,7 @@ computeNextLevel():
   set schreyer order for this level.
   
 setSchreyerOrder(lev):
-    schreyerOrder(lev-1) -- should alreday be set?
+    schreyerOrder(lev-1) -- should already be set?
     schreyerOrder(lev).mTieBreaker -- this one is set by this routine
     schreyerOrder(lev).mTotalMonom -- is set earlier: in insertBasic.
 

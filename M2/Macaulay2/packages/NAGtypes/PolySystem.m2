@@ -37,7 +37,7 @@ evaluate (System, Point) := Matrix =>
 -- PolySystem = {
 --   NumberOfVariables => ZZ,
 --   NumberOfPolys => ZZ,
---   PolyMap => Matrix, a column matrix over a polynomial ring (usually with complex coeffiecients),
+--   PolyMap => Matrix, a column matrix over a polynomial ring (usually with complex coefficients),
 --   Jacobian => Matrix, the jacobian of PolyMap
 --   }
 PolySystem.synonym = "polynomial system"

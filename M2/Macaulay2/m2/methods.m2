@@ -477,7 +477,7 @@ scan(flexiblePostfixOperators, op -> (
 	  ))
 
 -----------------------------------------------------------------------------
--- helper functions useable in documentation
+-- helper functions usable in documentation
 -----------------------------------------------------------------------------
 
 foo := method(Options => {})

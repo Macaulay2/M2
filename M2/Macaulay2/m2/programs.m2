@@ -2,12 +2,14 @@ Program = new Type of HashTable
 ProgramRun = new Type of HashTable
 programPaths = new MutableHashTable
 
--- we expect a trailing slash in the path, but the paths given in the
--- PATH environment variable likely will not have one, so we add one
--- if needed
-addSlash = programPath -> (
-    if last programPath != "/" then return programPath | "/"
-    else return programPath
+fixPath = programPath -> (
+    -- escape any unescaped spaces or parentheses
+    programPath = replace(///(?<!\\)([ ()])///, ///\\\1///, programPath);
+    -- we expect a trailing slash in the path, but the paths given in the
+    -- PATH environment variable likely will not have one, so we add one
+    -- if needed
+    if last programPath != "/" then programPath | "/"
+    else programPath
 )
 
 -- returns (found, thisVersion)
@@ -16,12 +18,19 @@ addSlash = programPath -> (
 --   1 = could not find program
 --   2 = found program, but too version number too low
 --   3 = found program, but could not determine version number
--- versionNumber is a string containing the version number found, or null
+-- thisVersion is a string containing the version number found, or null
 --   if MinimumVersion option is not given or the version number can't be
 --   be determined.
 checkProgramPath = (name, cmds, pathToTry, prefix, opts) -> (
-    found := if all(cmds, cmd -> run(pathToTry | addPrefix(cmd, prefix) |
-	" >/dev/null 2>&1") == 0) then 0 else 1;
+    -- unescape spaces/parentheses and resolve HOME for fileExists and fileMode
+    unescapedPathToTry := replace(///^\$\{?HOME\}?///, getenv "HOME",
+	replace(///\\([ ()])///, ///\1///, pathToTry));
+    found := if all(apply(cmds, cmd -> addPrefix(cmd, prefix)), cmd -> (
+	exe := unescapedPathToTry | first separate(" ", cmd);
+	if not fileExists exe then false else
+	-- check executable bit (0111)
+	if fileMode exe & 73 == 0 then false else
+	run(pathToTry | cmd | " > /dev/null 2>&1") == 0)) then 0 else 1;
     msg := "";
     thisVersion := null;
     if found == 0 then (
@@ -67,7 +76,7 @@ getProgramPath = (name, cmds, opts) -> (
 	pathsToTry = join(pathsToTry,
 	    apply(separate(":", getenv "PATH"), dir ->
 		if dir == "" then "." else dir));
-    pathsToTry = apply(pathsToTry, addSlash);
+    pathsToTry = fixPath \ pathsToTry;
     prefixes := {(".*", "")} | opts.Prefix;
     errorCode := 1;
     versionFound := "0.0";
@@ -167,5 +176,6 @@ runProgram(Program, String, String) := opts -> (program, name, args) -> (
     new ProgramRun from result
 )
 
-net Program := program -> program#"name"
+net Program := toString Program := program -> program#"name"
+html Program := html @@ toString
 net ProgramRun := pr -> net pr#"return value"

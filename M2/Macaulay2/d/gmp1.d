@@ -48,13 +48,19 @@ floor(x:double) ::= Ccode(double, "floor(", x, ")" );
 log2ten := log(10.) / log(2.);
 base := 10;
 
-getstr(returnexponent:long, base:int, sigdigs:int, x:RR) ::= tostring(
-     Ccode(charstarOrNull, "(M2_charstarOrNull) mpfr_get_str((char *)0,&", returnexponent, ",",
-	  base, ",(size_t)", sigdigs, ",", x, ",GMP_RNDN)"));
+getstr(returnexponent:long, base:int, sigdigs:int, x:RR) ::= (
+     strptr := Ccode(charstarOrNull, "(M2_charstarOrNull) mpfr_get_str((char *)0,&", returnexponent, ",",
+	  base, ",(size_t)", sigdigs, ",", x, ",GMP_RNDN)");
+     ret := tostring(strptr);
+     Ccode(void, "mpfr_free_str(", strptr, ")");
+     ret);
 
-getstr(returnexponent:long, base:int, sigdigs:int, x:RRi) ::= tostring(
-     Ccode(charstarOrNull, "(M2_charstarOrNull) mpfr_get_str((char *)0,&", returnexponent, ",",
-	  base, ",(size_t)", sigdigs, ",", x, ",GMP_RNDN)"));
+getstr(returnexponent:long, base:int, sigdigs:int, x:RRi) ::= (
+     strptr := Ccode(charstarOrNull, "(M2_charstarOrNull) mpfr_get_str((char *)0,&", returnexponent, ",",
+	  base, ",(size_t)", sigdigs, ",", x, ",GMP_RNDN)");
+     ret := tostring(strptr);
+     Ccode(void, "mpfr_free_str(", strptr, ")");
+     ret);
 
 export format(
      s:int,			  -- number of significant digits (0 means all)

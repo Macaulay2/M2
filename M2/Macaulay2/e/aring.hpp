@@ -34,7 +34,6 @@ enum RingID {
   ring_ZZp,
   ring_ZZpFfpack,
   ring_ZZpFlint,
-  ring_GF,
   ring_GFM2,
   ring_GFGivaro,
   ring_GFFlintBig,
@@ -45,8 +44,7 @@ enum RingID {
   ring_RRR,
   ring_CCC,
   ring_tower_ZZp,
-  ring_old,      ///< refers to all rings which are not ConcreteRing's.
-  ring_top = 17  ///< used to determine the number of ring types
+  ring_old      ///< refers to all rings which are not ConcreteRing's.
 };
 
 /**

@@ -5,10 +5,12 @@
 
 // TODO: fix this
 #  if defined(__cplusplus)
+class Matrix;
 class Monomial;
 class Ring;
 class RingElement;
 #  else
+typedef struct Matrix Matrix;
 typedef struct Monomial Monomial;
 typedef struct Ring Ring;
 typedef struct RingElement RingElement;

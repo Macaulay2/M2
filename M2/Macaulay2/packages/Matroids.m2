@@ -549,8 +549,17 @@ quickIsomorphismTest (Matroid, Matroid) := String => (M, N) -> (
 	if M == N then ( if debugLevel > 0 then print "Matroids are equal"; return "true" );
 	if not(betti ideal M === betti ideal N) then return "false";
 	if min(b, binomial(e, r) - b) <= 1 then ( if debugLevel > 0 then print "At most 1 basis/nonbasis"; return "true" );
-	try ( alarm 2; if not betti res dual ideal M === betti res dual ideal N then return "false" ) else "Could be isomorphic"
-)
+	try (
+	     alarm 2; 
+	     ret := if not betti res dual ideal M === betti res dual ideal N then "false";
+	     alarm 0;
+	     ret
+	     ) 
+	else (
+	     alarm 0;
+	     "Could be isomorphic"
+	     )
+	)
 
 areIsomorphic (Matroid, Matroid) := Boolean => (M, N) -> (
 	testResult := quickIsomorphismTest(M, N);
@@ -694,7 +703,7 @@ specificMatroid String := Matroid => name -> (
 	) else if name == "vamos" then (
 		relaxation(specificMatroid "V8+", set{4,5,6,7})
 	) else if name == "pappus" then (
-		matroid(toList(0..8), {{0,1,2},{0,3,7},{0,4,8},{1,3,6},{1,5,8},{2,4,6},{2,5,7},{6,7,8}}/set, EntryMode => "nonbases")
+		matroid(toList(0..8), {{0,1,2},{0,4,6},{0,5,7},{1,3,6},{1,5,8},{2,3,7},{2,4,8},{3,4,5},{6,7,8}}/set, EntryMode => "nonbases")
 	) else if name == "nonpappus" then (
 		relaxation(specificMatroid "pappus", set{6,7,8})
 	) else if name == "AG32" then (

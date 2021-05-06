@@ -92,6 +92,12 @@ class Monoid : public MutableEngineObject
                         M2_arrayint degs,
                         M2_arrayint hefts);
 
+  static Monoid *create(const MonomialOrdering *mo,
+                        const std::vector<std::string>& names,
+                        const PolynomialRing *DR, /* degree ring */
+                        const std::vector<int>& degs,
+                        const std::vector<int>& hefts);
+  
   ~Monoid();
 
   static void set_trivial_monoid_degree_ring(const PolynomialRing *DR);
@@ -188,6 +194,8 @@ class Monoid : public MutableEngineObject
   }
   int partial_compare(int num, const_monomial m, const_monomial n) const;
   int compare(const_monomial m, int mcomp, const_monomial n, int ncomp) const;
+  bool is_equal(const_monomial m1, const_monomial m2) const { return compare(m1, m2) == EQ; }
+  
   bool divides(const_monomial m, const_monomial n) const;
   void divide(const_monomial m, const_monomial n, monomial result) const;
   void lcm(const_monomial m, const_monomial n, monomial result) const;
@@ -202,6 +210,10 @@ class Monoid : public MutableEngineObject
   void multi_degree(const_monomial m, monomial result) const;
   int primary_degree(const_monomial m) const;
   int degree_weights(const_monomial m, M2_arrayint wts) const;
+
+  template<typename T>
+  T degree_weights(const_monomial m, const std::vector<T>& wts) const;
+  
   int simple_degree(const_monomial m) const;  // simply sum of exponents
   void degree_of_varpower(const_varpower vp, monomial result) const;
 

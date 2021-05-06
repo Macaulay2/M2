@@ -13,13 +13,6 @@ distributions/dmg/Makefile
 distributions/rpm/Makefile
 distributions/rpm/Macaulay2-body.spec
 distributions/rpm/Macaulay2-common-body.spec
-distributions/cygwin/Makefile
-distributions/cygwin/Macaulay2.README
-distributions/cygwin/setup.hint-base
-distributions/cygwin/server/Makefile
-distributions/cygwin/postinstall.sh
-distributions/cygwin/preremove.sh
-distributions/cygwin/server/Macaulay2-icons/setup.hint
 distributions/freebsd/Makefile
 distributions/freebsd/post-install
 distributions/freebsd/post-deinstall

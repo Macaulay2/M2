@@ -20,13 +20,13 @@ makeDirectory String := name -> (			    -- make the whole path, too
 copyFile = method(Options => new OptionTable from { Verbose => false, UpdateOnly => false })
 copyFile(String,String) := opts -> (src,tar) -> (
      if src === tar then (
-     	  if opts.Verbose then stderr << "--skipping: " << src << " the same as " << tar << endl;
+     	  if opts.Verbose then printerr("skipping: " | src | " the same as " | tar);
 	  )
      else if opts.UpdateOnly and fileExists tar and fileTime src <= fileTime tar then (
-     	  if opts.Verbose then stderr << "--skipping: " << src << " not newer than " << tar << endl;
+     	  if opts.Verbose then printerr("skipping: " | src | " not newer than " | tar)
 	  )
      else (
-     	  if opts.Verbose then stderr << "--copying: " << src << " -> " << tar << endl;
+     	  if opts.Verbose then printerr("copying: " | src | " -> " | tar);
      	  tar << get src << close;
      	  fileTime(fileTime src,tar);
      	  fileMode(fileMode src,tar);
@@ -436,7 +436,7 @@ endif
 shellfixes := {
      ("PATH", currentLayout#"bin",""),
      ("MANPATH", currentLayout#"man",":"),
-     ("INFOPATH", currentLayout#"info",""),
+     ("INFOPATH", currentLayout#"info",":"),
      ("LD_LIBRARY_PATH", currentLayout#"lib","")}
 emacsfixes := {
      ("load-path", currentLayout#"emacs", emacstempl),
