@@ -66,7 +66,6 @@ undocumented {
 	  (net, Product),
 	  (net, ProjectiveHilbertPolynomial),
 	  (net, QQ),
-	  (net, Parenthesize),
 	  (net, Descent),
 	  (net, CacheFunction),
 	  (net, IndexedVariableTable),

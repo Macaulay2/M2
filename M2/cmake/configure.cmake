@@ -158,13 +158,13 @@ include(GNUInstallDirs)
 # setting architecture dependent paths as in layout.m2.in
 foreach(DIR IN ITEMS BINDIR LIBDIR LIBEXECDIR)
   set(M2_INSTALL_${DIR} ${M2_EXEC_INFIX}/${CMAKE_INSTALL_${DIR}})
-  GNUInstallDirs_get_absolute_install_dir(M2_INSTALL_FULL_${DIR} M2_INSTALL_${DIR})
+  GNUInstallDirs_get_absolute_install_dir(M2_INSTALL_FULL_${DIR} M2_INSTALL_${DIR} ${DIR})
 endforeach()
 
 # setting architecture independent paths as in layout.m2.in
 foreach(DIR IN ITEMS SYSCONFDIR DATAROOTDIR DATADIR INFODIR LOCALEDIR MANDIR DOCDIR INCLUDEDIR)
   set(M2_INSTALL_${DIR} ${M2_DATA_INFIX}/${CMAKE_INSTALL_${DIR}})
-  GNUInstallDirs_get_absolute_install_dir(M2_INSTALL_FULL_${DIR} M2_INSTALL_${DIR})
+  GNUInstallDirs_get_absolute_install_dir(M2_INSTALL_FULL_${DIR} M2_INSTALL_${DIR} ${DIR})
 endforeach()
 
 set(M2_INSTALL_LICENSESDIR ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_LIBEXECDIR}/Macaulay2/program-licenses)

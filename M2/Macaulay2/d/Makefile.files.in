@@ -209,6 +209,50 @@ interface.o :						\
 	@srcdir@/../e/aring-zzp.hpp			\
 	@srcdir@/../e/memory-status.hpp
 
+engine.o :						\
+	../../include/M2/config.h			\
+	@srcdir@/../../include/M2/math-include.h	\
+	@srcdir@/../e/newdelete.hpp			\
+	@srcdir@/../d/M2mem.h				\
+	@srcdir@/../c/scc-core.h			\
+	@srcdir@/../../include/M2/gc-include.h		\
+	@srcdir@/../c/scc-core.h			\
+	@srcdir@/../d/debug.h				\
+	@srcdir@/../system/supervisorinterface.h	\
+	@srcdir@/../e/error.h				\
+	@srcdir@/../e/exceptions.hpp			\
+	@srcdir@/../e/hash.hpp				\
+	@srcdir@/../e/monomial.hpp			\
+	@srcdir@/../e/engine-includes.hpp		\
+	@srcdir@/../e/monomial.hpp			\
+	@srcdir@/../e/buffer.hpp			\
+	@srcdir@/../e/varpower.hpp			\
+	@srcdir@/../e/intarray.hpp			\
+	@srcdir@/../e/style.hpp				\
+	@srcdir@/../e/mem.hpp				\
+	@srcdir@/../system/mutex.h			\
+	@srcdir@/../e/relem.hpp				\
+	@srcdir@/../e/ring.hpp				\
+	@srcdir@/../e/aring.hpp				\
+	@srcdir@/../e/ringelem.hpp			\
+	@srcdir@/../e/interface/gmp-util.h		\
+	@srcdir@/../e/ZZ.hpp				\
+	@srcdir@/../e/matrix.hpp			\
+	@srcdir@/../e/monoid.hpp			\
+	@srcdir@/../e/imonorder.hpp			\
+	@srcdir@/../e/interface/monomial-ordering.h	\
+	@srcdir@/../e/freemod.hpp			\
+	@srcdir@/../e/schorder.hpp			\
+	@srcdir@/../e/monideal.hpp			\
+	@srcdir@/../e/queue.hpp				\
+	@srcdir@/../e/index.hpp				\
+	@srcdir@/../e/int-bag.hpp			\
+	@srcdir@/../e/polyring.hpp			\
+	@srcdir@/../e/interface/computation.h		\
+	@srcdir@/../e/skew.hpp				\
+	@srcdir@/../e/qring.hpp				\
+	@srcdir@/../e/mat.hpp				
+
 # now assemble the files into various categories:
 M2_DNAMES := $(patsubst %.d, %, $(patsubst %.dd, %, $(M2_DFILES)))
 M2_OBJECTS += $(M2_CFILES:.c=.o)

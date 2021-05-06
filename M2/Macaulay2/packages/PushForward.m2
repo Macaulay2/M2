@@ -46,7 +46,7 @@ pushFwd(RingMap,Module):=o->(f,N)->
      if (o.NoPrune == false) then prune makeModule(N**C,g,matB) else makeModule(N**C,g,matB)
      )
 
-pushFwd(RingMap,ModuleMap):=o->(f,d)->
+pushFwd(RingMap,Matrix):=o->(f,d)->
 (
      A:=source f;
      B:=target f;
@@ -167,7 +167,7 @@ document{
   UL {
        {TO (pushFwd,RingMap)," - for a finite ring map"},
        {TO (pushFwd,RingMap,Module), " - for a module"},
-       {TO (pushFwd,RingMap,ModuleMap), " - for a map of modules"}
+       {TO (pushFwd,RingMap,Matrix), " - for a map of modules"}
      }
   }   
 
@@ -213,7 +213,7 @@ document{
   }
 
 document{
-  Key => (pushFwd,RingMap,ModuleMap),
+  Key => (pushFwd,RingMap,Matrix),
   Headline => "push forward of a map of modules",
   Usage => "pushFwd(f,d)",
   Inputs => { "f", "d" },

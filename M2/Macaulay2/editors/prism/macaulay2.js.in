@@ -1,5 +1,7 @@
+// TODO: where is this used?
 M2symbols=[@M2SYMBOLS@].sort();
 
+Prism.languages.m2 =
 Prism.languages.macaulay2 = {
     'comment': [
 	{
