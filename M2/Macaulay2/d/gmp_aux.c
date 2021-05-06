@@ -33,6 +33,7 @@ int mpfi_hash(mpfi_srcptr x) { // Really not sure if this is doing the right thi
     if (0 != mpfr_sgn(&x->right))
     for (i = 0; i<n_right; i++, h*=3737) h += x->right._mpfr_d[i];
     return 777 + h * 3737 + x->left._mpfr_exp + x->right._mpfr_exp + 11 * x->left._mpfr_sign + 11 * x->right._mpfr_sign;
+}
 
 void mp_free_str(char *str){
     void (*free_function) (void *ptr, size_t size);
