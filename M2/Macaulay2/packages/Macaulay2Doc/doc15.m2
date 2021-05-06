@@ -187,7 +187,22 @@ SeeAlso
     isMember
 ///
 
-undocumented{ span, (span,RRi), (span, QQ), (span, RR), (span, ZZ)}
+undocumented{(span,RRi), (span, QQ), (span, RR), (span, ZZ)}
+
+doc ///
+Key
+    span
+Headline
+    construct smallest interval
+Description
+  Text
+    Returns the smallest interval containing the inputs (which can include intervals).  Typically, the returned interval is not empty.  See @TO (span, Sequence)@ and @TO (span, List)@
+SeeAlso
+    interval
+    (span, Sequence)
+    (span, List)
+    toRRi
+///
 
 doc ///
 Key
