@@ -108,9 +108,9 @@ addCorrespondence (HomotopyEdge,ZZ,ZZ) := (e,a,b) -> (
 	)
     )
 
-betti HomotopyGraph := HG -> (
-    nE := sum(length HG.Edges);
-    nV := length HG.Vertices;
+betti HomotopyGraph := o -> HG -> (
+    nE := # HG.Edges;
+    nV := # HG.Vertices;
     nE - nV +1
     )
 
