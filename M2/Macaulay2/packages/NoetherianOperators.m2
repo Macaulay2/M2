@@ -754,7 +754,7 @@ DiffOp SPACE Matrix := (D,m) -> (
     sum(DD, mm, (d,f) -> (
         (mon,coe) := coefficients d;
         phi := map(R,S,gens R);
-        lift((diff(phi mon, f) * coe)_(0,0), R)
+        (diff(phi mon, f) * lift(matrix entries coe,R))_(0,0) -- `matrix entries (...)` clears the degree data  
     ))
 )
 DiffOp SPACE RingElement := (D, f) -> D (matrix f)
