@@ -1,9 +1,5 @@
 -- -*- coding: utf-8 -*-
 
-i := getSymbol "i"
-QQi := QQ(monoid [i])
-F := toField (QQi / QQi_0^2)
-
 newPackage (
 	"DiffAlg",
 	Version => "1.5",
@@ -22,9 +18,10 @@ newPackage (
 		  Email => "fquallb@dm.uba.ar",
 		  HomePage => ""}
 	},
-	Headline => "Specialized routines for differential forms",
+	Headline => "specialized routines for differential forms",
+	Keywords => {"Commutative Algebra"},
 	Configuration => { 
-		"BaseRing" => F,
+		"BaseRing" => null,
 		"VariableName" => "x",
 		"DiffName" => "d",
 		"FieldName" => "a"
@@ -74,6 +71,9 @@ LL := (options DiffAlg).Configuration#"BaseRing";
 VAR := (options DiffAlg).Configuration#"VariableName";
 VARD := (options DiffAlg).Configuration#"DiffName";
 VARA := (options DiffAlg).Configuration#"FieldName";
+
+QQi := QQ["i"];
+if LL === null then LL = toField (QQi / (QQi_0^2+1))
 
 net DiffAlgElement := Net =>  w -> pretty w#"f"
 toString DiffAlgElement := String => w -> toString w#"f"
@@ -477,7 +477,7 @@ beginDocumentation()
 
 document {
   Key => DiffAlg,
-  Headline => "a differential algebra package",
+  Headline => "differential algebra",
   PARA {TO DiffAlg, " is a differential algebra package. It can compute the usual operations with polynomial differential forms and vector fields. Its main purpose is to associate algebraic objects to differential operators in the exterior algebra of differential forms."},
   PARA {"The simplest way to load the package is with the command:"},
   TT {"loadPackage \"DiffAlg\""},
@@ -660,7 +660,7 @@ document {
 	w = random newForm(2,1,2,"a")
 	singularIdeal(w)
   ///,
-  PARA {"This routine is usefull to obtain the ", TO RingElement, " representing a 0-form"},
+  PARA {"This routine is useful to obtain the ", TO RingElement, " representing a 0-form"},
   EXAMPLE lines ///
 	w = random newForm(2,1,2,"a");
 	r = radial 2;
@@ -894,7 +894,7 @@ document {
   SeeAlso => {genIm},
   PARA {"This routine returns a basis of the kernel of ", TT "expr",", an homogeneous expression linear in ", TT "var","."},
   BR{},
-  PARA {"In the case of a non-homogeneous linear expression, this routine returns a pair having in the first coordinate a basis of the kernel of the associated homogeneous linear expression and in the secod coordinate a particular solution."},
+  PARA {"In the case of a non-homogeneous linear expression, this routine returns a pair having in the first coordinate a basis of the kernel of the associated homogeneous linear expression and in the second coordinate a particular solution."},
   BR{},
   PARA {"In the first example, we compute a basis of projective differential 1-forms in projective 3-space with polynomial coefficients of degree 1. Then, we define a random rational differential form of type ", TT {"(1,1)"}, " and compute its tangent directions using the generic projective form defined before."},
   BR{},

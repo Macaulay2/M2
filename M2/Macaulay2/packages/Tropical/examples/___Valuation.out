@@ -1,0 +1,16 @@
+-- -*- M2-comint -*- hash: 1991115338
+-- polymake not present
+
+i1 : QQ[x,y, z];
+
+i2 : I=ideal(x+y+z);
+
+o2 : Ideal of QQ[x, y, z]
+
+i3 : tropicalVarietyWithVal (I,Valuation=>7)
+sh: Singular: command not found
+
+o3 = You need to install Singular for using tropicalVarietyWithVal
+
+i4 : 
+     

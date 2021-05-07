@@ -1,79 +1,100 @@
-##### WARNING!! ##################################
-# This is not yet functional
-# it is designed for me (MES) to be able to use the CLion IDE
-# and its refactorization tools.  If anyone would like to
-# help get this functional, please contact us!
-#
-# In particular: one currently needs the built include files
-# from our build tree (see CMakeLists.txt in Macaulay2/e)
-##################################################
+###############################################################################
+## CMake is a cross-platform system for generating build environments using
+## native tools such as Make and Ninja or IDEs such as Xcode and Visual Studio.
+##
+## See INSTALL-CMake.md for a comprehensive guide to building M2 using CMake.
+## Take a look at cmake/configure.cmake for a list of options
+## and read cmake/check-libraries.cmake for a list of requirements.
+##
+## Short instructions:
+##  1. cmake -GNinja -S . -B BUILD/cmake
+##  2. cmake --build BUILD/cmake --target build-libraries build-programs
+##  2. cmake --build BUILD/cmake --target M2-engine M2-binary M2-core M2-emacs
+##  2. cmake --build BUILD/cmake --target install-packages check-packages
+##  6. cmake --install BUILD/cmake
+###############################################################################
 
-cmake_minimum_required(VERSION 3.6)
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+## Requires CMake version 3.15 and is tested with 3.19
+cmake_minimum_required(VERSION 3.15...3.19)
+cmake_policy(VERSION 3.14)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+## Use the C++17 standard
+set(CMAKE_CXX_STANDARD 17)
+## Use the C11 (C0X) standard
+set(CMAKE_C_STANDARD 11)
 
-project(macaulay2 VERSION 1.9 LANGUAGES C CXX)
+###############################################################################
+## Set the default build configuration
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
 
-add_subdirectory(Macaulay2/e)
+## Guard against in-source builds
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+  message(FATAL_ERROR "In-source builds are not allowed. Delete CMakeFiles and CMakeCache.txt from the source directory.")
+endif()
+if(EXISTS ${CMAKE_SOURCE_DIR}/include/M2/config.h)
+  message(FATAL_ERROR "In-source build artifacts detected. Run `make clean distclean` from the source directory.")
+endif()
 
-# target_include_directories(m2 PUBLIC
-#     "BUILD/mike/builds.tmp/darwin64-gcc4.9/include"
-#     "BUILD/mike/builds.tmp/darwin64-gcc4.9/Macaulay2/d"
-#     "BUILD/mike/builds.tmp/darwin64-gcc4.9/Macaulay2/e-includes"
-#     include
-#     Macaulay2/e
-#     Macaulay2/c
-#     "${PROJECT_BINARY_DIR}"
-#     )                            
+## Enable support for folders in IDEs
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-# set(E-FILES
-#     Macaulay2/e/comp.cpp
-# )
-# set(SOURCE_FILES
-#     Macaulay2/e/comp.cpp
-#     Macaulay2/e/unit-tests/testMain.cpp
-#     )
+## Enable ccache or distcc acceleration with Makefile and Ninja
+# Note: libraries and programs aren't using ccache this way.
+find_program(CCACHE ccache)
+if(CCACHE)
+  # run ccache -s to get the CCache statistics
+  set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE}")
+  set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE}")
+endif()
 
-# add_library(m2 STATIC ${E-FILES})
-# add_library(m2 STATIC class.cpp)
-# target_link_libraries(m2 STATIC )
+###############################################################################
+## Source of truth for project version
+file(STRINGS VERSION VERSION)
 
+## Set the project name, version, and languages
+project(Macaulay2
+  VERSION	${VERSION}
+  DESCRIPTION	"A software system for algebraic geometry research"
+  HOMEPAGE_URL	http://macaulay2.com # contact: Macaulay2@math.uiuc.edu
+  LANGUAGES	C CXX)
 
+###############################################################################
+## Set path for CMake modules
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+include(prechecks) ## CMake macros for preprocessor checks and linting
+include(CTest)     ## CMake module for generating a 'test' target for all unit-tests
+include(profiling) ## CMake macros for profiling Macaulay2 code
+include(configure) ## CMake script for configuring various variables
+include(check-libraries) ## CMake script for checking which libraries exist and which need to be built
+include(build-libraries) ## CMake script for downloading, building, and installing external libraries
+include(startup) ## CMake script for messy substitutions in Macaulay2/bin/startup.c
 
-# enable_testing()
-# add_executable(macaulay2-test Macaulay2/e/unit-tests/testMain.cpp)
+###############################################################################
+## Configure M2/config.h
+configure_file(include/M2/config.h.cmake include/M2/config.h)
 
-# find_package(GTest REQUIRED)
-# include_directories(${GTEST_INCLUDE_DIRS})
-# target_link_libraries(macaulay2-test ${GTEST_BOTH_LIBRARIES})
-# add_test(AllTestsInFoo macaulay2-test)
+###############################################################################
+## Kick off the Macaulay2 directory
+add_subdirectory(Macaulay2)
 
+###############################################################################
 
-# add_executable(proj-test
-#   ${source_files}
-#   ${test_files}
-#   )
+include(packaging) ## CMake script for making distribution packages for Macaulay2
 
-# set(GTEST_INCLUDE_DIRS
-#   gtest-1.7.0/include
-#   gtest-1.7.0
-#   )
+###############################################################################
+## This section is temporary hacks! Try to reduce or move them elsewhere.
 
-# target_include_directories(proj-test PUBLIC
-#   ${GTEST_INCLUDE_DIRS}
-#   include
-#   )
+set(M2_CONTENT "#!/bin/sh\nexec ${M2_DIST_PREFIX}/${M2_INSTALL_BINDIR}/M2 \"$@\"")
+execute_process(
+  COMMAND ${CMAKE_COMMAND} -E echo "${M2_CONTENT}"
+  OUTPUT_FILE ${CMAKE_BINARY_DIR}/M2)
+execute_process(
+  COMMAND chmod +x ${CMAKE_BINARY_DIR}/M2)
 
-
-# include_directories("${PROJECT_BINARY_DIR}")
-# include_directories(
-#     "BUILD/mike/builds.tmp/darwin64-gcc4.9/include"
-#     "BUILD/mike/builds.tmp/darwin64-gcc4.9/Macaulay2/d"
-#     "BUILD/mike/builds.tmp/darwin64-gcc4.9/Macaulay2/e-includes"
-#     include
-#     Macaulay2/e
-#     Macaulay2/c
-# )
-
+# Hackish way to set topSrcdir in startup.m2
+# FIXME: DELETING THIS CAUSES CONFUSING PATH ERRORS!!!
+file(RELATIVE_PATH LIST_FILE ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_LIST_FILE})
+get_filename_component(RELATIVE_SOURCE_DIR ${LIST_FILE} DIRECTORY)
+file(GENERATE OUTPUT srcdir CONTENT "${RELATIVE_SOURCE_DIR}/\n")

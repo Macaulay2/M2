@@ -56,20 +56,6 @@ source code:
     git submodule update
 
 ---------
-Programs
----------
-
-Here are programs you may have to install on your system to build Macaulay2.
-
-   program: fakeroot
-    get at: http://ftp.debian.org/debian/pool/main/f/fakeroot
-     notes: You need this only if you intend to make a debian distribution
-            package for Macaulay2.
-
-   program: rpmbuild
-     notes: needed only if you want to make an rpm distribution file
-
----------
 Libraries
 ---------
 
@@ -82,28 +68,32 @@ Here are commands that will get you a good development environment under
 various modern operating systems:
 
   Ubuntu and Debian:
-    Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server patch pinentry-curses pkg-config time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator
+    Install packages as root with:
+      apt-get install -y -q sudo 4ti2 autoconf bison curl emacs fflas-ffpack flex g++ gcc gfortran install-info libatomic-ops-dev libboost-dev libboost-regex-dev libboost-stacktrace-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libgivaro-dev libglpk-dev libgmp3-dev libgtest-dev liblapack-dev liblzma-dev libmathic-dev libmathicgb-dev libmemtailor-dev libmpc-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libreadline-dev libsingular-dev libtool libxml2-dev libz-dev lrslib lsb-release make normaliz openssh-server patch pinentry-curses pkg-config singular-data time unzip xbase-clients yasm zlib1g-dev polymake w3c-markup-validator git dpkg-dev gfan libeigen3-dev libtool-bin frobby libfrobby-dev libnauty2-dev libnauty2 nauty nauty-doc coinor-csdp coinor-csdp-doc libflint-dev libtbb-dev
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
-    On all systems, add
+	# note: cohomcalg is available only starting with Ubuntu 19.04 and Debian 10; it's okay to skip it
+        # note: libflint-dev will work starting with Ubuntu 20.10 and Debian 11 (version >= 2.6.0 is required)
+        # note: libmathicgb-dev is missing from Ubuntu 20.04 and Debian 10
+        # note: libmps-dev is available only starting with Ubuntu 21.04 and Debian 11
+        # note: topcom is available only starting with Ubuntu 20.10 and Debian 11
+    On some systems, you may have to add
         FC=gfortran
-      to the environment or to the "configure" command line below.  (The
-      program "make" has a default value of "f77" for "FC", the Fortran
-      compiler, but "f77" isn't available.)
+      to the environment or to the "configure" command line below, if the "make" default fortran
+      compiler "/usr/bin/f77" is not available.
     On a 32-bit system, add
         --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
       to the "configure" command line below.  (The --build option is necessary
       only to enable distribution of the resulting binaries to users of other
       hardware.) 
     (To upgrade to a new release of Ubuntu, if desired, run "update-manager" if
-    you want a GUI, or run "do-release-upgrade" for a command line interface.
+    you want a GUI, or run "do-release-upgrade -d" for a command line interface.
     For Debian, run "apt-get update ; apt-get dist-upgrade".
 
   Raspbian:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients time libtool libmpc-dev yasm
+      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libreadline-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients time libtool libmpc-dev yasm
     On a 32-bit system, add
         --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
       to the "configure" command line below.  (The --build option is necessary
@@ -114,14 +104,31 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo dnf -y install autoconf bison boost-devel cddlib-devel debuginfo-install emacs emacs factory-devel flex flint-devel frobby gc-devel gcc-c++ gdbm-devel git givaro-devel glpk-devel gmp-devel gtest-devel kernel-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel pari-devel patch polymake readline-devel rpm-build rpm-sign rpmdevtools strace time which yasm
+      sudo dnf -y install autoconf bison boost-devel boost-stacktrace cddlib-devel cohomCalg csdp csdp-tools eigen3-devel emacs factory-devel factory-gftables fflas-ffpack-devel flex flint-devel frobby gcc-c++ gc-devel gdbm-devel git givaro-devel glpk-devel gmp-devel gtest gtest-devel kernel-devel lapack-devel libatomic_ops-devel libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel mpsolve nauty ncurses-devel ntl-devel patch pkgconf polymake qd readline-devel rpm-build rpmdevtools rpm-sign strace time which yasm rpmlint
 
-  Scientific linux:
-    Install packages with: (SL 7.x)
-      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time blas blas-devel texinfo
-    Install other software:
-      Download yasm from http://yasm.tortall.net/Download.html and install it in /usr/local, the usual
-        way (untar, configure, make, make install).
+  Red Hat Enterprise Linux 6.7
+    We have found that git 1.7.1 is too old, but have succeeded with these modules:
+	module purge
+	module load -f make/4.3
+	module load -f yasm/1.3.0
+	module load -f automake/1.15
+	module load -f gcc/4.9.0
+	module load -f libtool/2.4.3
+	module load -f autoconf/2.69
+	module load -f git/2.13.4    
+
+  CentOS 8 (covers Red Hat Enterprise Linux):
+    Install packages with:
+       -- from the standard repository:
+       sudo dnf install -y autoconf bison blas boost-devel emacs flex gc gcc-c++ gcc-gfortran gdbm-devel git-all gmp-devel lapack libatomic_ops libmpc libtool libxml2-devel make mpfr-devel ncurses-devel readline-devel redhat-lsb rpm-build rpm-sign time wget xz-devel zlib-devel
+       -- from the PowerTools repository
+       sudo dnf config-manager --set-enabled PowerTools
+       sudo dnf install -y eigen3-devel gtest texinfo yasm
+
+  Scientific Linux:
+    This distribution is obsolete.
+    Install packages with:
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign git-all zlib-devel xz-devel libmpc-devel time blas blas-devel texinfo redhat-lsb wget
     Note: Scientific Linux 7.1 has a modern version of gcc (version 4.8.3).  By contrast,
       Scientific Linux 6.5 has an old version (4.4.7) of gcc that may not work with a
       future version of Macaulay2.  However, one can install newer compilers
@@ -133,10 +140,13 @@ various modern operating systems:
 	  . /opt/rh/devtoolset-2/enable
       to update the environment of your currently running shell.  The latter
       command will also work in your shell initialization file, ".profile".
+      Alternatively, see the instructions at https://www.softwarecollections.org/en/scls/rhscl/devtoolset-8/.
+    Download yasm from http://yasm.tortall.net/Download.html and install it in /usr/local, the usual
+        way (untar, configure, make, make install).
 
   Suse Linux Leap 42.1:
 
-    sudo zypper -n install man man-pages emacs-x11 gcc git screen autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gdbm-devel gmp-devel lapack-devel libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool libatomic_ops-devel libmpir-devel mpfr-devel pari-devel ntl-devel flint-devel glpk-devel cddlib-devel givaro-devel boost-devel rpm-build mpc-devel yasm
+    sudo zypper -n install man man-pages emacs-x11 gcc git screen autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gdbm-devel gmp-devel lapack-devel libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool libatomic_ops-devel libmpir-devel mpfr-devel ntl-devel flint-devel glpk-devel cddlib-devel givaro-devel boost-devel rpm-build mpc-devel yasm
 
     Add
 
@@ -150,27 +160,46 @@ various modern operating systems:
 
       sudo pacman --sync --needed archlinux-keyring
       sudo pacman-key --populate archlinux
-      sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip yasm gtest wget patch
+      sudo pacman --sync --needed autoconf automake bison boost cddlib emacs flex flint gc gcc gcc-fortran gdbm gfan git givaro glpk gmp gtest lapack make mpfr nauty ntl pkg-config readline texinfo time unzip yasm gtest wget patch eigen fflas-ffpack
 
     To upgrade the system:
 
       sudo pacman-key --refresh-keys
       sudo pacman --sync --refresh --sysupgrade
 
+  Gentoo Linux:
+
+    To install generally needed packages, run this command as root:
+
+       emerge --ask -n sudo xauth git emacs
+
+       Note: for emacs, set the USE variables (package.use), so emacs will use X11 when available:
+		app-editors/emacs X
+		app-emacs/emacs-common-gentoo X
+
+    To install packages needed by Macaulay2, run this command:
+
+       emerge --ask -n yasm sys-process/time
+
+    To install packages potentially usable by Macaulay2, run this command:
+
+       emerge --ask -n 4ti2 blas-reference lapack-reference boehm-gc boost cddlib coinor-csdp flint fplll frobby gdbm gfan glpk gmp gtest libatomic_ops lrslib mpc mpfr mpir nauty normaliz ntl topcom
+
+       Note: various variables, licenses, and options will have to be set
+
   Mac OS X:
     The steps described below are combined in the shell script INSTALL.mac, which you could
       simply run instead.
-    To create the directory /usr/include, along with the files in it, one installs the Xcode
-      Command Line Tools using the following command:
-      	 xcode-select --install
-      After upgrading the OS, it may be necessary to install it again: one symptom of
-        forgetting to do this is that /usr/include may be missing.
-      Starting with Mac OS X version 10.14 (Mojave), /usr/include needs to be created with
-        this additional command:
-	   sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
-	An alternative to the command above is to use the finder to navigate to the directory
-	   /Library/Developer/CommandLineTools/Packages
-	and then to "open" the package file to get it installed.
+    Install the Xcode Command Line Tools using the following command.
+          xcode-select --install
+       (Starting with Mac OS X version 10.15 (Catalina), /usr/include does not exist and cannot be
+        made to exist, so our previous instructions for getting it no longer apply and have been removed.)
+       (Mac OS X version 10.14 (Mojave), one must run an additional command:
+	      sudo installer -pkg /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg -target /
+  	    An alternative to the command above is to use the finder to navigate to the directory
+	      /Library/Developer/CommandLineTools/Packages
+	    and then to "open" the package file to get it installed.
+        Note: After upgrading the OS, if /usr/include is again missing, simply repeat.)
     Optionally install a good version of emacs, such as the one available from 
       http://emacsformacosx.com/, which is a native Mac OS X port of emacs. To
       run it from the command line, create an executable shell script called 
@@ -182,10 +211,7 @@ various modern operating systems:
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
 	brew update |cat
-	brew install pkg-config autoconf automake gnu-tar libtool wget yasm make |cat
-	brew install --build-bottle bdw-gc libatomic_ops gdbm glpk boost libmpc libomp xz |cat
-      You may omit the option "--build-bottle" if you will not be distributing your Macaulay2
-      binaries to other people with CPU's that may not have the same capabilities as yours.
+	brew install autoconf automake bdw-gc boost ccache cddlib ctags eigen flint gdbm glpk gmp gnu-tar libatomic_ops libmpc libomp libtool make mpfr mpir ncurses ninja ntl pkg-config tbb wget xz yasm |cat
       
     If you have previously installed homebrew, will be distributing your
       Macaulay2 binaries to other people, and perhaps not used the option
@@ -220,18 +246,6 @@ various modern operating systems:
       options to the 'configure' command line, or arrange for /usr/local/bin to
       occur later in the value of the environment variable PATH than /usr/bin
       does.
-
-  Cygwin 1.7 under Microsoft Windows:
-    Use setup to install these packages:
-	autoconf automake bison emacs-X11 file flex gcc-core gcc-fortran
-	gcc-g++ git libatomic_ops-devel libboost-devel libgc-devel
-	libgdbm-devel libglpk-devel liblapack-devel libmpfr-devel
-	libncurses-devel libreadline-devel libstdc++6-devel libtool
-	libxml2-devel make patchutils pkg-config time unzip wget
-    You may also want these:
-        ctags emacs-el gdb gitk gvim libxml2-doc openssh psmisc vim xauth xconsole
-        xinit xkill xterm
-    After installing xinit, the program "startxwin" can be used to start X Windows.
 
 ----------------------
   Compiling the most recent GNU C compiler
@@ -292,7 +306,7 @@ various modern operating systems:
      Installing multiple software in the same directory, such as in $HOME/local
      (as described above), makes it hard to remove or upgrade packages.  To
      solve that problem, use the program "epkg", available from
-     http://www.encap.org/epkg/.
+     https://github.com/DanGrayson/epkg.
 
 ----------------------
 Choosing a place for the repository
@@ -425,7 +439,7 @@ may add an option to the "make install" line, as follows:
         make install prefix=/foo/bar
 
 To make an encapsulated directory tree or distribution tarball suitable for use
-with the program "epkg" (see http://www.encap.org/epkg/), add the option
+with the program "epkg" (see https://github.com/DanGrayson/epkg), add the option
 
         --enable-encap
 
@@ -512,13 +526,13 @@ we briefly summarize them and the software they depend on:
  	         sudo apt-get install polymake
 
     Bertini needs bertini:
-	    http://www.nd.edu/~sommese/bertini/BertiniSource_v1.4.tar.gz
+	    http://www.nd.edu/~sommese/bertini/
 	which needs gmp and mpfr:
-	    https://gmplib.org/download/gmp/gmp-6.0.0a.tar.xz
-	    http://www.mpfr.org/mpfr-3.1.2/mpfr-3.1.2.tar.xz
+	    https://gmplib.org/
+	    http://www.mpfr.org/
 
     PHCpack needs PHCpack, download the binary:
-	    http://www.math.uic.edu/~jan/x86_64phcv23p.tar.gz
+            http://homepages.math.uic.edu/~jan/download.html
 
     AdjointIdeal ConvexInterface MapleInterface Parametrization need Maple.
 
@@ -550,31 +564,95 @@ in the top level.  This command will install versions of those tools known to
 work with Macaulay2.
 
 ----------------------
-For distributors
+Preparing new releases
 ----------------------
 
-There are some things about a new distribution of Macaulay2 that should be
-checked manually.  Install the distribution on your system as the ultimate user
-will and then try:
+  - starting on the master branch, update the version number to X.Y as explained
+    by the instructions in the file VERSION-README.
 
-  - emacs M2 interaction
+  - switch to the new branch (created in the step above) whose name is of the
+    form "release-X.Y"
 
-    Press f12 and verify that Macaulay2 starts.
+  - in the file Macaulay2/packages/Macaulay2Doc/changes.m2 change the key
+    for the documentation node "changes made for the next release" to
+    "changes, X.Y", and make a new empty node for the key
+    "changes made for the next release"
 
-  - emacs M2 mode
+  - find out how the file Macaulay2/m2/exports.m2 has changed since the
+    previous release (using "git diff"), and make appropriate entries in the
+    file Macaulay2/packages/Macaulay2Doc/changes.m2 to document the new symbols
+    and the deleted symbols.
 
-    Visit the file /tmp/foo.m2 and verify that the buffer is in Macaulay2 mode.
+  - find out how the file Macaulay2/packages/=distributed-packages has changed
+    since the previous release, and make appropriate entries in the file
+    Macaulay2/packages/Macaulay2Doc/changes.m2 to document the new packages.
 
-  - emacs Macaulay2 info documentation
+  - find out which packages have been featured in articles published by the
+    Journal of Software for Algebra and Geometry at https://msp.org/jsag/ since
+    the previous release, and add certification blocks to those packages, using
+    the template in the file Macaulay2/packages/CertificationTemplate .  The
+    git commit number in the certification should point to a version of the
+    package that is identical with the version provided by the journal.  (If
+    necessary, add commits and merge them in to provide one.)  Also, make
+    appropriate entries in the file Macaulay2/packages/Macaulay2Doc/changes.m2
+    to document the newly published and certified packages.
 
-    Start the emacs Info documentation reader with C-h i and verify that menu
-    items are present in the node "(dir)Top" for the various Macaulay2 packages
-    in a section entitled "Macaulay2 and its packages".
+  - refer to https://github.com/Macaulay2/M2/wiki/Internals:-Release-Checklist
+    for other things to do.
 
-  - readline
+  - bring your system up to date before building the release.
 
-    Start M2 in a terminal window and then type the following characters:
-    	  r e s o TAB
-    The partial word should be completed to "resolution".  Then press:
-          C-a
-    Verify that the cursor is now at the beginning of the line.
+  - Under Mac OS X, bring brew and its packages up to date with
+       brew update
+       brew upgrade
+       brew doctor
+    Then hide or delete all the dynamic libraries /usr/local/lib/*.dylib , so
+    we don't link with any of them.  (The "gatekeeper" doesn't like it, and
+    we'd eventually like to pass its scrutiny.  All the programs will continue
+    to work and "brew doctor" won't even complain.)
+
+  - Under Mac OS X, do not install "singular" with "brew" -- otherwise the
+    configure script will detect the presence of the Galois field tables
+    ("gftables") and expect to find them in the same location on the user's
+    machine, and they won't be there.  It should also work to add
+    "--enable-build-libraries=gftables" to the "configure" command line.
+
+----------------------
+Checking new releases and distributions
+----------------------
+
+    There are some things about a new distribution of Macaulay2 that should be
+    checked manually.  Install the distribution on your system as the ultimate
+    user will and then try:
+
+      - emacs M2 interaction: Press f12 and verify that Macaulay2 starts.
+
+      - emacs M2 mode: Visit the file /tmp/foo.m2 and verify that the buffer is
+        in Macaulay2 mode.
+
+      - emacs Macaulay2 info documentation: Start the emacs Info documentation
+	reader with C-h i and verify that menu items are present in the node
+	"(dir)Top" for the various Macaulay2 packages in a section entitled
+	"Macaulay2 and its packages".
+
+      - readline:
+	Start M2 in a terminal window and then type the following characters:
+	      r e s o TAB
+	The partial word should be completed to "resolution".  Then press:
+	      C-a
+	Verify that the cursor is now at the beginning of the line.
+
+----------------------
+Unexpected problems
+----------------------
+
+Suppose you encounter error messages like this one when compiling in libraries/mpir:
+
+       tmp-mul_1.s:94: Error: no such instruction: `mulx (%rsi),%r9,%r8'
+
+Then try adding --build=`./config/config.guess` to the command line of the
+'configure' command.  This will tell mpir to build itself using just machine
+instructions common to all the architectures in the same class as the
+architecture of your machine, instead of optimizing itself for speed according
+to your system.	 Mpir seems overconfident that the assembler on the machine
+knows about all the machine instructions on the machine.

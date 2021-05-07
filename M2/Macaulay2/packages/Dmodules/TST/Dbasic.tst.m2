@@ -72,7 +72,7 @@ assert ( singLocus L == ideal(f) );
 -- Initial ideals and gb's in the same Grobner cone
 A = matrix{{1,1,1},{0,2,7}};
 b = {1,5};
-I = gkz(A,b,Vars=>Local);
+I = gkz(A,b);
 
 -- weight vector of the form (-u,u)
 w1 = {-1,-10,-30,1,10,30};
@@ -103,3 +103,7 @@ I1 = inw(I, w1);
 assert(I1 == substitute(inw(I, w2), ring I1));
 assert(gbw(I, w1) == gbw(I, w2));
 
+-- extract polynomial ring of ordinary variables and, separately, of differentials from Weyl algebras
+D = QQ[u,v,Du,Dv, WeylAlgebra => {u => Du, v => Dv}, Degrees => {2,4,-3,9}];
+assert(describe extractVarsAlgebra D === describe(QQ[u,v, Degrees => {2,4}]));
+assert(describe extractDiffsAlgebra D === describe(QQ[Du,Dv, Degrees => {-3,9}]));

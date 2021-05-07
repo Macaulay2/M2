@@ -187,11 +187,6 @@ EqualEqualfun(lhs:Code,rhs:Code):Expr := (
      	  y := eval(rhs);
 	  when y is Error do y else EqualEqualfun(x,y)));
 setup(EqualEqualS,EqualEqualfun);
-not(z:Expr):Expr := (
-     when z is Error do z 
-     else if z == True then False 
-     else if z == False then True
-     else buildErrorPacket("expected true or false"));
 
 NotEqualfun(lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
@@ -783,10 +778,10 @@ Gamma(e:Expr):Expr := (
      );
 setupfun("Gamma",Gamma);
 export lgamma(x:RR):Expr := (
-     z := newRR(precision(x));
+     z := newRRmutable(precision(x));
      i := 0;
-     Ccode( void, "mpfr_lgamma((__mpfr_struct *)", z, ",&",i,",(__mpfr_struct *)", x, ", GMP_RNDN)" );
-     Expr(Sequence(toExpr(z),toExpr(i))));
+     Ccode( void, "mpfr_lgamma((mpfr_ptr)", z, ",&",i,",(mpfr_srcptr)", x, ", GMP_RNDN)" );
+     Expr(Sequence(toExpr(moveToRR(z)),toExpr(i))));
 lgamma(e:Expr):Expr := (
      when e
      is x:RRcell do lgamma(x.v)				    -- # typical value: lgamma, RR, RR
@@ -1559,7 +1554,8 @@ map(e:Expr,f:Expr):Expr := (
 	  if !isInt(i)
 	  then WrongArgSmallInteger()
 	  else map(toInt(i),f))
-     else WrongArg(1,"a list, sequence, or an integer"));
+     is s:stringCell do map(strtoseq(s), f)
+     else WrongArg(1,"a list, sequence, integer, or string"));
 map(e1:Expr,e2:Expr,f:Expr):Expr := (
      when e1
      is a1:Sequence do (
@@ -1576,7 +1572,8 @@ map(e1:Expr,e2:Expr,f:Expr):Expr := (
 	       is v:Sequence do list(b2.Class,v,b2.Mutable)
 	       else nullE		  -- will not happen
 	       )
-	  else WrongArg(2,"a list or sequence"))
+	  is s2:stringCell do map(a1, strtoseq(s2), f)
+	  else WrongArg(2,"a list, sequence, or string"))
      is b1:List do (
 	  when e2
 	  is a2:Sequence do (
@@ -1597,8 +1594,15 @@ map(e1:Expr,e2:Expr,f:Expr):Expr := (
 	       is v:Sequence do list(class,v,mutable)
 	       else nullE		  -- will not happen
 	       )
-	  else WrongArg(2,"a list or sequence"))
-     else WrongArg(1,"a list or sequence"));
+	  is s2:stringCell do map(b1.v, strtoseq(s2), f)
+	  else WrongArg(2,"a list, sequence, or string"))
+     is s1:stringCell do (
+	  when e2
+	  is a2:Sequence do map(strtoseq(s1), a2, f)
+	  is b2:List do map(strtoseq(s1), b2.v, f)
+	  is s2:stringCell do map(strtoseq(s1), strtoseq(s2), f)
+	  else WrongArg(2, "a list, sequence, or string"))
+     else WrongArg(1,"a list, sequence, or string"));
 map(e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 2
@@ -2034,7 +2038,8 @@ scan(e:Expr,f:Expr):Expr := (
 	  if !isInt(i)
 	  then WrongArgSmallInteger(1)
 	  else scan(toInt(i),f))
-     else buildErrorPacket("scan expects a list"));
+     is s:stringCell do scan(strtoseq(s), f)
+     else buildErrorPacket("scan expects a list, sequence, integer, or string"));
 scan(e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 2
@@ -2062,7 +2067,8 @@ toSequence(e:Expr):Expr := (
 	  then Expr(new Sequence len length(b.v) do foreach i in b.v do provide i)
 	  else Expr(b.v)
 	  )
-     else WrongArg("a list or sequence"));
+     is s:stringCell do Expr(strtoseq(s))
+     else WrongArg("a list, sequence, or string"));
 setupfun("toSequence",toSequence);
 
 sequencefun(e:Expr):Expr := (

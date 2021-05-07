@@ -16,13 +16,13 @@ doc /// --SemidefiniteProgramming
 
         $$max_{y,Z} \, \sum_i b_i y_i \,\,\, s.t. \,\,\, Z = C - \sum_i y_i A_i \, and \, Z \geq 0$$
 
-        We can construct a semidefinite program using the method @TO sdp@, as follows:
+        We can construct a semidefinite program using the method @TO sdp@.
       Example
         P = sdp(matrix{{1,0},{0,2}}, matrix{{0,1},{1,0}}, matrix{{-1}})
       Text
-        The semidefinite program can be solved numerically using the method @TO optimize@:
+        The semidefinite program can be solved numerically using the method @TO optimize@.
       Example
-        (X,y,Z) = optimize P;
+        (X,y,Z,stat) = optimize P;
         (X,y)
       Text
         See @TO Solver@ for a discussion of the available SDP solvers.
@@ -225,8 +225,8 @@ doc /// --optimize
     Headline
         solve a semidefinite program
     Usage
-        (X,y,Z) = optimize P
-        (X,y,Z) = optimize(P,y0)
+        (X,y,Z,stat) = optimize P
+        (X,y,Z,stat) = optimize(P,y0)
     Inputs
         P:SDP
           a semidefinite programming problem
@@ -239,6 +239,8 @@ doc /// --optimize
           an $m\times 1$ matrix, dual variable
         Z:
           an $n\times n$ matrix, dual variable
+        stat:String
+          the status of the SDP solver
     Consequences
     Description
       Text
@@ -248,11 +250,11 @@ doc /// --optimize
         Alternatively, there is rudimentary dual interior point method implemented entirely in Macaulay2 language.
       Example
         P = sdp(matrix{{1,0},{0,2}}, matrix{{0,1},{1,0}}, matrix{{-1}});
-        (X,y,Z) = optimize P;
+        (X,y,Z,stat) = optimize P;
         y
       Text
         {\bf References:}
-        {\it Convex Optimization}, Boyd, Vandenberghe, Cambridge University Press (2004), pp. 618-619, pp. 463-466
+        {\it Convex Optimization}, Boyd, Vandenberghe, Cambridge University Press (2004), pp. 618-619, pp. 463-466.
       Code
       Pre
     Caveat
@@ -372,15 +374,21 @@ doc /// --project2linspace
 --###################################
 -- Symbols
 --###################################
-doc /// -- Verbose
-     Key
-        [optimize,Verbose]
-     Headline
-        non-essential but informative output
-     Description
-        Text
-           Setting this option to true enables additional informative output. The default is @TO false@.
-///
+document { --Verbosity
+    Key => {
+	Verbosity,
+        [optimize,Verbosity],
+        [checkOptimize,Verbosity]
+        },
+    Headline => "control the level of information printed",
+    "This optional argument indicates how much information should be given to the user.  The possible values are:",
+    UL{
+      {"0 (default)", " -- no information is printed."},
+      {"1", " -- minimal information (solver used, input/output files, status of the solver)."},
+      {"2", " -- more detailed information (e.g., progress of the solver)."},
+      },
+    BR{},
+    }
 
 document { --Solver
     Key => {
@@ -388,18 +396,17 @@ document { --Solver
         [optimize,Solver],
         },
     Headline => "picking a semidefinite programming solver",
-    "This package interfaces semidefinite programming solvers in Macaulay2. ",
-    "There is also a rudimentary implementation of such a solver in the Macaulay2 language. ",
-    "It is called the M2 solver but for most applications it will be insufficient. ",
-    "For this reason Macaulay2 also ships the CSDP solver. ",
+    "There are several specialized solvers (or tools) for semidefinite programming. ",
+    "This package interfaces some of these solvers to Macaulay2. ",
+    "In particular, the open source solver CSDP is included with Macaulay2, and is configured as the default. ",
+    "There is also a rudimentary semidefinite programming solver implemented in the Macaulay2 language, but for most applications it will be insufficient. ",
     "The package supports the following solvers: ",
     UL{
       {"\"M2\"", " -- a simple dual interior point method implemented in Macaulay2"},
-       {"\"CSDP\"", " -- this is an open source solver, available at ", TT "https://projects.coin-or.org/Csdp/" },
-       {"\"SDPA\"", " -- this is an open source solver, available at ", TT "http://sdpa.sourceforge.net/" },
-       {"\"MOSEK\"", " -- this is a commercial solver, free for academic use, available at ", TT "https://www.mosek.com/" },
+       {"\"CSDP\"", " -- this is an open source solver, available at ", HREF "https://projects.coin-or.org/Csdp/" },
+       {"\"SDPA\"", " -- this is an open source solver, available at ", HREF "http://sdpa.sourceforge.net/" },
+       {"\"MOSEK\"", " -- this is a commercial solver, free for academic use, available at ", HREF "https://www.mosek.com/" },
       },
-    "The CSDP solver is shipped with Macaulay2 and configured as the default solver. ",
     "In our experience CSDP and MOSEK give the best results. ",
     "An easy way to make an additional solver available to Macaulay2 is to add the executable to the PATH environment variable. ",
     "Another way is to explicitly specify the location of the executable in the package configuration:",
@@ -454,6 +461,7 @@ doc ///
 doc ///
     Key
       checkOptimize
+      (checkOptimize,String)
     Headline
       check an SDP solver
     Usage
@@ -484,5 +492,5 @@ doc ///
     Description
       Text
         The package uses these mutable variables to store the paths of the executables.
-	They can be edited by the user.  The prefered way to do this is @TO changeSolver@, though.
+	They can be edited by the user. The preferred way to do this is @TO changeSolver@, though.
 ///

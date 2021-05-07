@@ -67,23 +67,14 @@ net ChainComplex := C -> (
 	  b := s#-1;
 	  horizontalJoin between(" <-- ", apply(a .. b,i -> stack (net C_i," ",net i)))))
 
-texMathShort := m -> (
-    if m == 0 then return "0";
-    x := entries m;
-    texRow := row -> if #row>8 then { texMath first row, "\\cdots", texMath last row } else texMath\row;
-    x = if #x>10 then ( t:= texRow first x; {t, toList(#t:"\\vphantom{\\Big|}\\vdots"), texRow last x } ) else texRow\x;
-    concatenate(
-	"\\begin{pmatrix}" | newline,
-	between(///\\/// | newline, apply(x, row -> concatenate between("&",row))),
-	"\\end{pmatrix}"
-	      )
-    )
-
 texMath ChainComplex := C -> (
      complete C;
      s := sort spots C;
      if # s === 0 then "0" else
-     concatenate apply(s,i->if i==s#0 then texUnder(texMath C_i,i) else "\\,\\xleftarrow{\\scriptsize " | texMathShort C.dd_i | "}\\," | texUnder(texMath C_i,i) )
+     concatenate apply(s,i->(
+	     if i>s#0 then "\\,\\xleftarrow{" | texMath short C.dd_i | "}\\,",
+	     texUnder(texMath C_i,i)
+	     ))
       )
 
 -----------------------------------------------------------------------------
@@ -292,7 +283,11 @@ ChainComplexMap == ZZ := (f,i) -> (
      if i === 0 then all(spots f, j -> f_j == 0)
      else source f == target f and f == i id_(source f))
 ZZ == ChainComplexMap := (i,f) -> f == i
+
+formation ChainComplexMap := f -> if f.cache.?formation then f.cache.formation
+
 ChainComplexMap ++ ChainComplexMap := ChainComplexMap => (f,g) -> (
+     -- why don't we implement ChainComplexMap.directSum instead?
      if f.degree != g.degree then (
 	  error "expected maps of the same degree";
 	  );
@@ -305,6 +300,7 @@ ChainComplexMap ++ ChainComplexMap := ChainComplexMap => (f,g) -> (
      complete g;
      scan(union(spots f, spots g), i -> h#i = f_i ++ g_i);
      h.cache.components = {f,g};
+     h.cache.formation = BinaryOperation { symbol ++, f, g };
      h)
 
 isHomogeneous ChainComplexMap := f -> (complete f; all(spots f, i -> isHomogeneous f_i))
@@ -548,15 +544,17 @@ chainComplex List := {} >> opts -> maps -> (
 	       ));
      C)
 
+formation ChainComplex := M -> if M.cache.?formation then M.cache.formation
 
 directSum ChainComplex := C -> directSum(1 : C)
 ChainComplex.directSum = args -> (
      C := new ChainComplex;
-     C.cache.components = toList args;
      C.ring = ring args#0;
      scan(args,D -> (complete D; complete D.dd;));
      scan(unique flatten (args/spots), n -> C#n = directSum apply(args, D -> D_n));
      scan(spots C, n -> if C#?(n-1) then C.dd#n = directSum apply(args, D -> D.dd_n));
+     C.cache.components = toList args;
+     C.cache.formation = FunctionApplication { directSum, args };
      C)
 ChainComplex ++ ChainComplex := ChainComplex => (C,D) -> directSum(C,D)
 
@@ -596,12 +594,12 @@ Hom(ChainComplex, Module) := ChainComplex => (C,N) -> (
      D := new ChainComplex;
      D.ring = ring C;
      b := D.dd;
+     scan(spots C, i -> D#-i = Hom(C_i,N));
      scan(spots c, i -> (
 	       j := - i + 1;
 	       f := b#j = (-1)^j * Hom(c_i,N);
 	       D#j = source f;
-	       D#(j-1) = target f;
-	       ));
+	       D#(j-1) = target f));
      D)
 
 Hom(Module, ChainComplex) := ChainComplex => (M,C) -> (
@@ -796,7 +794,9 @@ betti GradedModule := opts -> C -> (
      	  heftfn := heftfun(opts.Weights,heft C);
 	  new BettiTally from flatten apply(
 	       select(pairs C, (i,F) -> class i === ZZ), 
-	       (i,F) -> apply(pairs tally degrees F, (d,n) -> (i,d,heftfn d) => n))))
+	       (i,F) -> (
+		    if not isFreeModule F then error("betti: expected module at spot ", toString i, " in chain complex to be free");
+		    apply(pairs tally degrees F, (d,n) -> (i,d,heftfn d) => n)))))
 
 -----------------------------------------------------------------------------
 MultigradedBettiTally = new Type of BettiTally
@@ -834,7 +834,7 @@ rawMultigradedBettiTally = B -> (
         T = prepend(xAxis, T);
         T = apply(prepend("", yAxis), T, prepend);
         ) else (
-        T = table(toList (0 .. length rows - 1), sort keys H,
+        T = table(max((keys H)/(j -> #H#j)), sort keys H,
             (i,k) -> if i < #H#k then H#k#i else null);
         T = prepend(sort keys H,T);
         );
@@ -898,7 +898,7 @@ hilbertSeries(ZZ,BettiTally) := o -> (n,B) -> (
 -----------------------------------------------------------------------------
 Ring ^ BettiTally := (R,b) -> (
    -- donated by Hans-Christian von Bothmer
-   -- given a betti Table b and a Ring R make a chainComplex -- with zero maps over R  that has betti diagramm b. --
+   -- given a betti Table b and a Ring R make a chainComplex -- with zero maps over R  that has betti diagram b. --
    -- negative entries are ignored
    -- rational entries produce an error
    -- multigraded R's work only if the betti Tally contains degrees of the correct degree length

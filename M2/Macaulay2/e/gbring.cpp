@@ -1,18 +1,19 @@
 #include "gbring.hpp"
-#include "text-io.hpp"
+
+#include <assert.h>
+#include <stdio.h>
+
 #include "ZZ.hpp"
 #include "ZZp.hpp"
-#include "freemod.hpp"
-#include "geovec.hpp"
-#include "frac.hpp"
-#include "polyring.hpp"
-#include "weylalg.hpp"
-#include "skewpoly.hpp"
-#include "solvable.hpp"
-#include "overflow.hpp"
-#include "ntuple.hpp"
-
 #include "aring-glue.hpp"
+#include "coeffrings.hpp"
+#include "freemod.hpp"
+#include "mem.hpp"
+#include "ntuple.hpp"
+#include "ring.hpp"
+#include "schorder.hpp"
+#include "text-io.hpp"
+#include "weylalg.hpp"
 
 #define sizeofgbvector(s, len) \
   (sizeof(*s) - sizeof(s->monom) + (len) * sizeof(s->monom[0]))
@@ -626,8 +627,11 @@ void GBRing::gbvector_add_to_zzp(const FreeModule *F,
           gbvector *tmg = g;
           f = f->next;
           g = g->next;
-          zzp->add(tmf->coeff.int_val, tmf->coeff.int_val, tmg->coeff.int_val);
-          if (zzp->is_zero(tmf->coeff.int_val))
+          CoefficientRingZZp::elem result_coeff;
+          zzp->init(result_coeff);
+          zzp->add(result_coeff, tmf->coeff.get_int(), tmg->coeff.get_int());
+          tmf->coeff = ring_elem(result_coeff);
+          if (zzp->is_zero(tmf->coeff.get_int()))
             {
               gbvector_remove_term(tmf);
             }
@@ -1281,7 +1285,7 @@ void GBRing::divide_coeff_exact_to_ZZ(gbvector *f, gmp_ZZ u) const
   mpz_clear(a);
 }
 
-void GBRing::lower_content_ZZ(gbvector *f, gmp_ZZ content) const
+void GBRing::lower_content_ZZ(gbvector *f, mpz_ptr content) const
 // content should be a positive number.  Modify this value
 // so that new value of content = gcd(old-content, content(f)).
 {

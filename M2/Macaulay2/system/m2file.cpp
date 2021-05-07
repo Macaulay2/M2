@@ -1,14 +1,18 @@
 #include "m2file.hpp"
 #include "pthread-methods.hpp"
-
 #include <iostream>
+
 extern "C"
 {
 extern stdio0_fileOutputSyncState stdio0_newDefaultFileOutputSyncState();
 };
 
 M2File::M2File(stdio0_fileOutputSyncState fileUnsyncState):
-  currentThreadMode(0),unsyncState(fileUnsyncState),recurseCount(0),exclusiveRecurseCount(0)
+    currentThreadMode(0),
+    unsyncState(fileUnsyncState),
+    exclusiveChangeCondition(PTHREAD_COND_INITIALIZER),
+    recurseCount(0),
+    exclusiveRecurseCount(0)
 {
   clearThread(exclusiveOwner);
 }
@@ -16,7 +20,7 @@ M2File::~M2File()
 {
   //for good practice, explicitly delete the filethreadstate if the file is deleted
   //this should be taken care of by GC though.
-    for(std::map<pthread_t,struct M2FileThreadState*>::iterator it = threadStates.begin(); it!=threadStates.end(); ++it)
+  for(gc_map(pthread_t,struct M2FileThreadState*)::iterator it = threadStates.begin(); it!=threadStates.end(); ++it)
     {
       delete it->second;
     }
@@ -146,7 +150,7 @@ extern "C"
       }
   }
 
-  struct M2File* M2File_New(stdio0_fileOutputSyncState fileUnsyncState) { return new M2File(fileUnsyncState); } 
+  struct M2File* M2File_New(stdio0_fileOutputSyncState fileUnsyncState) { return new (GC) M2File(fileUnsyncState); } 
   stdio0_fileOutputSyncState M2File_UnsyncState(M2File* file) { return file->unsyncState; } 
   stdio0_fileOutputSyncState M2File_GetState(struct M2File* file)
   {
@@ -167,7 +171,7 @@ extern "C"
 	pthread_t localId = pthread_self();
 	file->m_MapMutex.lock();
 	//try to find thread id in thread states map
-	std::map<pthread_t, struct M2FileThreadState*>::iterator it = file->threadStates.find(localId);
+	gc_map(pthread_t, struct M2FileThreadState*)::iterator it = file->threadStates.find(localId);
 	stdio0_fileOutputSyncState foss = NULL;
 	if(it!=file->threadStates.end())
 	  {
@@ -179,7 +183,7 @@ extern "C"
 	    //thread has not used this file yet.
 	    //create a new state.
 	    foss = stdio0_newDefaultFileOutputSyncState();
-	    struct M2FileThreadState* state = new M2FileThreadState();
+	    struct M2FileThreadState* state = new (GC) M2FileThreadState();
 	    state->syncState = foss;
 	    file->threadStates[localId]=state;
 	  }
@@ -204,7 +208,7 @@ extern "C"
 	pthread_t localId = pthread_self();
 	file->m_MapMutex.lock();
 	//try to find thread id in thread states map
-	std::map<pthread_t, struct M2FileThreadState*>::iterator it = file->threadStates.find(localId);
+	gc_map(pthread_t, struct M2FileThreadState*)::iterator it = file->threadStates.find(localId);
 	if(it!=file->threadStates.end())
 	  {
 	    //not necessary to do anything here

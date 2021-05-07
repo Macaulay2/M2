@@ -260,7 +260,7 @@ extractPieriInputPlanes := (dim, data) -> (
   result := {};
   for k from 0 to #data-1 do
   (
-    solplane := select("input planes", data#k);
+    solplane := select("INPUT PLANES", data#k);
     if #solplane > 0 then
     (
       subdata := extractSubList(k, dim, data);

@@ -1,100 +1,90 @@
--- Paul Zinn-Justin 2018
+-- Paul Zinn-Justin 2018-2021
 
--- htmlWithTex Thing produces some valid html code with possible TeX code in \( \)
--- topLevelMode=WebApp produces that plus possible pure text coming from the system
--- hence, requires tags to help the browser app distinguish html from text
-(webAppEndTag,            -- closing tag
-    webAppHtmlTag,        -- indicates what follows is HTML
-    webAppOutputTag,      -- it's html but it's output
-    webAppInputTag,       -- it's text but it's input
-    webAppInputContdTag,  -- text, continuation of input
-    webAppTextTag):=      -- other text
-apply((17,18,19,20,28,30),ascii)
+-- topLevelMode=WebApp definitions
+-- tags are required to help the browser app distinguish html from text
+webAppTags := apply((17,18,19,20,28,29,30,(17,36),(36,18)),ascii);
+    (	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
+	webAppEndTag,         -- closing tag ~ </span>
+	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
+	webAppCellEndTag,     -- closing tag for cell ~ </p>
+	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
+	webAppInputContdTag,  -- text, continuation of input
+	webAppUrlTag,         -- used internally to follow URLs
+	webAppTexTag,         -- effectively deprecated, ~ <span class='M2Html'> $
+	webAppTexEndTag       -- effectively deprecated, ~ $ </span>
+	)=webAppTags;
 
-
-htmlWithTexLiteral = s -> replace("\\\\","&bsol;",htmlLiteral s);
-
-texWrap := x -> concatenate("\\(",x,"\\)")
-
-htmlWithTex Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for KaTeX we use tex (as opposed to html)
-
--- text stuff: we use html instead of tex, much faster (and better spacing)
-htmlWithTex Hypertext := html
--- the % is relative to line-height
-htmlWithTex Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:", 
-    toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlWithTexLiteral x | "<br/>"), "</span></pre>")
-htmlWithTex String := x -> concatenate("<pre>", htmlWithTexLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
-htmlWithTex Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
-     (k,v) -> (
-	  if #v === 0
-	  then toString k -- sucks but no choice
-	  else toString k | " : " | htmlWithTex v
-	  ) | "<br/>"), "</pre></span>")
--- some expressions can be htmlWithTex'ed directly w/o reference to texMath
-htmlWithTex RowExpression := x -> concatenate("<span>",apply(toList x, htmlWithTex),"</span>")
-htmlWithTex Holder := x -> htmlWithTex x#0
+webAppTagsRegex := concatenate("[",drop(webAppTags,-2),"]")
 
 -- output routines for WebApp mode
 
-ZZ#{WebApp,InputPrompt} = lineno -> ZZ#{Standard,InputPrompt} lineno | webAppInputTag
+ZZ#{WebApp,InputPrompt} = lineno -> concatenate(
+    webAppCellEndTag, -- close previous cell
+    webAppCellTag,
+    interpreterDepth:"i",
+    toString lineno,
+    " : ",
+    webAppInputTag)
+
 ZZ#{WebApp,InputContinuationPrompt} = lineno -> webAppInputContdTag
 
-Thing#{WebApp,BeforePrint} = identity -- not sure what to put there
+Thing#{WebApp,BeforePrint} = identity
 
 Nothing#{WebApp,Print} = identity
 
 Thing#{WebApp,Print} = x -> (
     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
-    y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
-    << endl << oprompt | webAppOutputTag | y | webAppEndTag << endl;
+    y := html x; -- we compute the html now (in case it produces an error)
+    if class y =!= String then error "invalid html output";
+    << endl << oprompt | webAppHtmlTag | y | webAppEndTag << endl;
     )
 
 InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Print} x )
 
--- afterprint <sigh>
+-- afterprint
 
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
-texAfterPrint :=  y -> (
-    z := texMath if instance(y,Sequence) then RowExpression deepSplice y else y;
-    << endl << on() | " : " | webAppHtmlTag | texWrap z | webAppEndTag << endl;
+htmlAfterPrint :=  x -> (
+    if class x === Sequence then x = RowExpression deepSplice { x };
+    y := html x; -- we compute the html now (in case it produces an error)
+    if class y =!= String then error "invalid html output";
+    << endl << on() | " : " | webAppHtmlTag | y | webAppEndTag << endl;
     )
 
-Thing#{WebApp,AfterPrint} = x -> texAfterPrint class x;
+Thing#{WebApp,AfterPrint} = x -> htmlAfterPrint class x;
 
 Boolean#{WebApp,AfterPrint} = identity
 
-Expression#{WebApp,AfterPrint} = x -> texAfterPrint (Expression," of class ",class x)
+Expression#{WebApp,AfterPrint} = x -> htmlAfterPrint (Expression," of class ",class x)
 
 Describe#{WebApp,AfterPrint} = identity
 
-Ideal#{WebApp,AfterPrint} = Ideal#{WebApp,AfterNoPrint} = (I) -> texAfterPrint (Ideal," of ",ring I)
-MonomialIdeal#{WebApp,AfterPrint} = MonomialIdeal#{WebApp,AfterNoPrint} = (I) -> texAfterPrint (MonomialIdeal," of ",ring I)
+Ideal#{WebApp,AfterPrint} = Ideal#{WebApp,AfterNoPrint} = (I) -> htmlAfterPrint (Ideal," of ",ring I)
+MonomialIdeal#{WebApp,AfterPrint} = MonomialIdeal#{WebApp,AfterNoPrint} = (I) -> htmlAfterPrint (MonomialIdeal," of ",ring I)
 
-InexactNumber#{WebApp,AfterPrint} = x -> texAfterPrint (class x," (of precision ",precision x,")")
+InexactNumber#{WebApp,AfterPrint} = x -> htmlAfterPrint (class x," (of precision ",precision x,")")
 
-Module#{WebApp,AfterPrint} = M -> (
-     n := rank ambient M;
-     texAfterPrint(ring M,"-module",
-     if M.?generators then
-     if M.?relations then (", subquotient of ",ambient M)
-     else (", submodule of ",ambient M)
-     else if M.?relations then (", quotient of ",ambient M) 
-     else if n > 0 then
-	  (", free",
-	  if not all(degrees M, d -> all(d, zero)) 
-	  then (", degrees ",runLengthEncode if degreeLength M === 1 then flatten degrees M else degrees M)
-	  ))
-     )
+Module#{WebApp,AfterPrint} = M -> htmlAfterPrint(
+    ring M,"-module",
+    if M.?generators then
+    if M.?relations then (", subquotient of ",ambient M)
+    else (", submodule of ",ambient M)
+    else if M.?relations then (", quotient of ",ambient M)
+    else if rank ambient M > 0 then
+    (", free",
+	if not all(degrees M, d -> all(d, zero))
+	then (", degrees ",runLengthEncode if degreeLength M === 1 then flatten degrees M else degrees M)
+	)
+    )
 
-
-Matrix#{WebApp,AfterPrint} = Matrix#{WebApp,AfterNoPrint} = f -> texAfterPrint (Matrix, if isFreeModule target f and isFreeModule source f then (" ", new MapExpression from {target f,source f}))
+Matrix#{WebApp,AfterPrint} = Matrix#{WebApp,AfterNoPrint} = f -> htmlAfterPrint (Matrix, if isFreeModule target f and isFreeModule source f then (" ", new MapExpression from {target f,source f}))
 
 Net#{WebApp,AfterPrint} = identity
 
 Nothing#{WebApp,AfterPrint} = identity
 
-RingMap#{WebApp,AfterPrint} = RingMap#{WebApp,AfterNoPrint} = f -> texAfterPrint (class f," ",new MapExpression from {target f,source f})
+RingMap#{WebApp,AfterPrint} = RingMap#{WebApp,AfterNoPrint} = f -> htmlAfterPrint (class f," ",new MapExpression from {target f,source f})
 
 Sequence#{WebApp,AfterPrint} = Sequence#{WebApp,AfterNoPrint} = identity
 
@@ -102,7 +92,7 @@ CoherentSheaf#{WebApp,AfterPrint} = F -> (
      X := variety F;
      M := module F;
      n := rank ambient F;
-     texAfterPrint("coherent sheaf on ",X,
+     htmlAfterPrint("coherent sheaf on ",X,
      if M.?generators then
      if M.?relations then (", subquotient of ", ambient F)
      else (", subsheaf of ", ambient F)
@@ -116,3 +106,21 @@ CoherentSheaf#{WebApp,AfterPrint} = F -> (
  )
 
 ZZ#{WebApp,AfterPrint} = identity
+
+if topLevelMode === WebApp then (
+    compactMatrixForm = false;
+    -- the help hack: if started in WebApp mode, help is compiled in it as well
+    processExamplesLoop ExampleItem := (x->new LITERAL from replace("\\$\\{prefix\\}","usr",x#0)) @@ (lookup(processExamplesLoop,ExampleItem));
+    -- the help hack 2 (incidentally, this regex is safer than in standard mode)
+    M2outputRE      = "(?="|webAppCellTag|")";
+    -- the print hack
+    print = x -> if topLevelMode === WebApp then (
+	y := html x; -- we compute the html now (in case it produces an error)
+	<< webAppHtmlTag | y | webAppEndTag << endl;
+	) else ( << net x << endl; );
+    -- the show hack
+    showURL := lookup(show,URL);
+    show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
+    -- redefine htmlLiteral to exclude codes
+    htmlLiteral = (s -> if s===null then null else replace(webAppTagsRegex,"",s)) @@ htmlLiteral;
+    )

@@ -75,12 +75,12 @@ class ARingGFFlint : public RingInterface
   {
     // we only use this data type for GF's smaller than 32 bits, since
     // this class creates lookup tables that are way too big otherwise.
-    result.int_val = static_cast<int>(a.value);
+    result = ring_elem(static_cast<int>(a.value));
   }
 
   void from_ring_elem(ElementType& result, const ring_elem& a) const
   {
-    result.value = a.int_val;
+    result.value = a.get_int();
   }
 
   bool is_unit(const ElementType& f) const { return not is_zero(f); }
@@ -129,7 +129,7 @@ class ARingGFFlint : public RingInterface
     set_from_long(result, b);
   }
 
-  bool set_from_mpq(ElementType& result, mpq_ptr a) const
+  bool set_from_mpq(ElementType& result, mpq_srcptr a) const
   {
     ElementType n, d;
     init(n);
@@ -229,28 +229,26 @@ class ARingGFFlint : public RingInterface
       fq_zech_pow_ui(&result, &a, n, mContext);
   }
 
-  void power_mpz(ElementType& result, const ElementType& a, mpz_ptr n) const
+  void power_mpz(ElementType& result, const ElementType& a, mpz_srcptr n) const
   {
     if (is_zero(a))
       {
         set_zero(result);
         return;
       }
-    bool neg = false;
+    mpz_t abs_n;
+    mpz_init(abs_n);
+    mpz_abs(abs_n, n);
     if (mpz_sgn(n) < 0)
-      {
-        neg = true;
-        mpz_neg(n, n);
-        invert(result, a);
-      }
+      invert(result, a);
     else
       copy(result, a);
 
     fmpz_t fn;
-    fmpz_init_set_readonly(fn, n);
+    fmpz_init_set_readonly(fn, abs_n);
     fq_zech_pow(&result, &result, fn, mContext);
     fmpz_clear_readonly(fn);
-    if (neg) mpz_neg(n, n);
+    mpz_clear(abs_n);
   }
 
   void swap(ElementType& a, ElementType& b) const

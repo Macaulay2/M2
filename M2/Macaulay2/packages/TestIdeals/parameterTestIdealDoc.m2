@@ -157,7 +157,7 @@ doc ///
             g = x^2 - y^3;
             testModule({1/2, 1/2}, {f, g})
         Text
-            Sometimes it is convenient to specify the ambient canonical module, or the choice of element(s) that detemines the Frobenius trace on the canonical module, across multiple calls of testModule.
+            Sometimes it is convenient to specify the ambient canonical module, or the choice of element(s) that determines the Frobenius trace on the canonical module, across multiple calls of testModule.
 	    This can be done by using the options {\tt CanonicalIdeal} and {\tt GeneratorList}.
         Example
             R = ZZ/5[x,y,z]/(x*y, y*z, z*x);
@@ -215,28 +215,28 @@ doc ///
     Key
         isCohenMacaulay
         (isCohenMacaulay, Ring)
-        [isCohenMacaulay, IsLocal]
+        [isCohenMacaulay, AtOrigin]
     Headline
         whether a ring is Cohen-Macaulay
     Usage
         isCohenMacaulay(R)
     Inputs
         R:Ring
-        IsLocal => Boolean
+        AtOrigin => Boolean
 	    stipulates whether to check if the ring is Cohen-Macaulay only at the origin
     Outputs
         :Boolean
     Description
         Text
             The function {\tt isCohenMacaulay} determines if a ring is Cohen-Macaulay.
-	    If the option {\tt IsLocal} (default value {\tt false}) is set to {\tt true}, {\tt isCohenMacaulay} will simply call the @TO isCM@ function in the {\tt Depth} package, which checks whether the ring is Cohen-Macaulay at the origin; otherwise, {\tt isCohenMacaulay} checks the Cohen-Macaulay property globally, which sometimes is much faster than the local computation.
+	    If the option {\tt AtOrigin} (default value {\tt false}) is set to {\tt true}, {\tt isCohenMacaulay} will simply call the @TO isCM@ function in the {\tt Depth} package, which checks whether the ring is Cohen-Macaulay at the origin; otherwise, {\tt isCohenMacaulay} checks the Cohen-Macaulay property globally, which sometimes is much faster than the local computation.
         Example
             T = ZZ/5[x,y];
             S = ZZ/5[a,b,c,d];
             g = map(T, S, {x^3, x^2*y, x*y^2, y^3});
             R = S/(ker g);
             time isCohenMacaulay(R)
-	    time isCohenMacaulay(R, IsLocal => true)
+	    time isCohenMacaulay(R, AtOrigin => true)
         Example
             R = QQ[x,y,u,v]/(x*u, x*v, y*u, y*v);
             isCohenMacaulay(R)
@@ -252,7 +252,7 @@ doc ///
 
 doc ///
     Key
-        IsLocal
+        AtOrigin
     Headline
         an option used to specify whether to only work locally
     Description
@@ -264,7 +264,7 @@ doc ///
     Key
         isFRational
         (isFRational, Ring)
-        [isFRational, IsLocal]
+        [isFRational, AtOrigin]
         [isFRational, AssumeCM]
         [isFRational, AssumeDomain]
         [isFRational, FrobeniusRootStrategy]
@@ -274,7 +274,7 @@ doc ///
         isFRational(R)
     Inputs
         R:Ring
-        IsLocal => Boolean
+        AtOrigin => Boolean
             specifies that $F$-rationality be checked only at the origin, and that the Cohen-Macaulayness test be done with the {\tt isCM} command, from the {\tt Depth} package
         AssumeCM => Boolean
             assumes the ring is Cohen-Macaulay
@@ -287,7 +287,7 @@ doc ///
     Description
         Text
             The function {\tt isFRational} determines whether a ring is $F$-rational.
-	    If the option {\tt IsLocal} (default value {\tt false}) is set to {\tt true}, it will only check if the ring is $F$-rational at the origin (this can be slower).
+	    If the option {\tt AtOrigin} (default value {\tt false}) is set to {\tt true}, it will only check if the ring is $F$-rational at the origin (this can be slower).
 	    If the option {\tt AssumeCM} (default value {\tt false}) is set to {\tt true}, it will not verify that the ring is Cohen-Macaulay.
         Example
             T = ZZ/5[x,y];

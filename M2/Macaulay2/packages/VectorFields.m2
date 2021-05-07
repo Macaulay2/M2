@@ -15,7 +15,8 @@ newPackage(
 			{Name => "Brian Pike", 
 			Email => "bapike@gmail.com",
 			HomePage => "http://www.brianpike.info/"}},
-		Headline => "a package for computations with vector fields",
+		Headline => "vector fields",
+		Keywords => {"Commutative Algebra"},
 		PackageImports => {"PrimaryDecomposition"},		     
 		DebuggingMode => false 
 	)

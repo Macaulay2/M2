@@ -1,15 +1,17 @@
 newPackage("Matroids",
 	AuxiliaryFiles => true,
-	Version => "0.9.8",
-	Date => "September 28, 2018",
+	Version => "1.2.1",
+	Date => "January 5, 2020",
 	Authors => {{
 		Name => "Justin Chen",
 		Email => "jchen@math.berkeley.edu",
 		HomePage => "https://math.berkeley.edu/~jchen"}},
 	Headline => "a package for computations with matroids",
+	Keywords => {"Matroids"},
 	HomePage => "https://github.com/jchen419/Matroids-M2",
 	PackageExports => {"Graphs", "Posets"},
-     	Certification => {
+	DebuggingMode => false,
+	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",
 	     "article title" => "Matroids: a Macaulay2 package",
@@ -22,9 +24,8 @@ newPackage("Matroids",
 	     "version at publication" => "0.9.7",
 	     "volume number" => "9",
 	     "volume URI" => "https://msp.org/jsag/2019/9-1/"
-	     }
-	)
-
+	}
+)
 export {
 	"Matroid",
 	"matroid",
@@ -48,6 +49,12 @@ export {
 	"contraction",
 	"minor",
 	"hasMinor",
+	"isBinary",
+	"is3Connected",
+	"getSeparation",
+	"seriesConnection",
+	"parallelConnection",
+	"sum2",
 	"relaxation",
 	"representationOf",
 	"quickIsomorphismTest",
@@ -367,6 +374,13 @@ hasMinor (Matroid, Matroid) := Boolean => (M, N) -> (
 	false
 )
 
+isBinary = method()
+isBinary Matroid := Boolean => M -> (
+	I := ideal dual M;
+	if #I_* > #(ideal M)_* then I = ideal M;
+	all(subsets(I_*, 2), s -> (lcm s//gcd s) % I == 0)
+)
+
 Matroid + Matroid := (M, N) -> (
 	(E, B2) := (M_*, bases N);
 	if not(E === N_*) then (
@@ -375,7 +389,7 @@ Matroid + Matroid := (M, N) -> (
 		phi := hashTable apply(#N.groundSet, i -> i => position(E, e -> e === N_i));
 		B2 = bases N/(b -> b/(i -> phi#i));
 	);
-	H := partition(b -> #b, unique flatten table(bases M, B2, (b,c) -> b+c));
+	H := partition(b -> #b, unique flatten table(bases M, B2, plus));
 	matroid(E, H#(max keys H))
 )
 
@@ -384,7 +398,7 @@ Matroid ++ Matroid := (M, N) -> (
 	B := bases N/(b -> b/(i -> i + n));
 	E1 := (M_*)/(e -> (e, 0));
 	E2 := (N_*)/(e -> (e, 1));
-	matroid(E1 | E2, unique flatten table(bases M, B, (b, c) -> b + c))
+	matroid(E1 | E2, unique flatten table(bases M, B, plus))
 )
 
 getComponentsRecursive = method()
@@ -398,6 +412,51 @@ getComponentsRecursive (List, List) := List => (S, C) -> (
 components Matroid := List => M -> (
 	singles := join(loops M, coloops M);
 	join(subsets(singles, 1), getComponentsRecursive(toList(M.groundSet - singles), circuits M))/set/restriction_M
+)
+
+isConnected Matroid := Boolean => M -> (
+     I := ideal dual M;
+	if #I_* > #(ideal M)_* then I = ideal M;
+     all(subsets(gens ring I, 2)/product, p -> any(I_*, g -> g % p == 0) )
+)
+
+is3Connected = method()
+is3Connected Matroid := Boolean => M -> isConnected M and getSeparation(M, 2) === null
+
+getSeparation = method()
+getSeparation (Matroid, ZZ) := Set => (M, k) -> (
+     -- if k < 2 then error "Expected k >= 2 - use components(M) to find 1-separators.";
+     if k > #M_*/2 then ( print "No k-separation exists for size reasons"; return null );
+     if debugLevel > 0 then print "Checking existence of minimal k-separator...";
+     indepCocircs := select(circuits dual M, c -> #c == k and not isDependent(M, c));
+     coindepCircs := select(circuits M, c -> #c == k and not isDependent(dual M, c));
+     for X in indepCocircs | coindepCircs do if rank(M, X) + rank(dual M, X) - k <= k-1 then return X;
+     if debugLevel > 0 then print "Checking existence of nonminimal k-separator...";
+     flatsCoflats := toList(set flats M * set flats dual M);
+     sepCands := reverse sort(select(flatsCoflats, X -> #X > k and #X < #M_* - k), f -> #f);
+     for X in sepCands do if rank(M, X) + rank(dual M, X) - #X <= k-1 then return X;
+     null
+)
+
+seriesConnection = method()
+seriesConnection (Matroid, Matroid) := Matroid => (M, N) -> ( -- assume basepoint of 0
+	if member(0, loops M) then return (M / set{0}) ++ N;
+	if member(0, coloops M) then M ++ (N \ set{0});
+	n := #M_*;
+	D := apply(circuits N, c -> c/(i -> if i > 0 then i = i + n - 1 else 0));
+	C1 := select(circuits M, c -> not member(0, c));
+	D1 := select(D, c -> not member(0, c));
+	(C2, D2) := (circuits M - set C1, D - set D1);
+	matroid(toList(0..n+#N_*-2), C1 | D1 | flatten table(C2, D2, plus), EntryMode => "circuits")
+)
+
+parallelConnection = method()
+parallelConnection (Matroid, Matroid) := Matroid => (M, N) -> dual seriesConnection(dual M, dual N)
+
+sum2 = method()
+sum2 (Matroid, Matroid) := Matroid => (M, N) -> (
+	if member(0, loops M | loops N | coloops M | coloops N) then error "Expected basepoint 0 to not be a coloop in both M and N";
+	seriesConnection(M, N) / set{0}
 )
 
 relaxation = method()
@@ -454,14 +513,18 @@ isomorphism (Matroid, Matroid) := HashTable => (M, N) -> ( -- assumes (M, N) sat
 		c0slice = sliceBySize(C1#0, C1);
 		(last values c0slice)#0
 	); -- creates maximal list of disjoint circuits in M, covering as much of M.groundSet as possible
-	H = apply(coverCircuits, c -> (c, select(D, d -> #d == #c and (pairs sliceBySize(c, C))/last/sizes/tally === (pairs sliceBySize(d, D))/last/sizes/tally))); -- creates list of ordered pairs: first element is member of coverCircuits, second element is list of circuits in N which have the same "intersection size pattern" as the first element
+	 -- creates list of ordered pairs: first element is member of coverCircuits, 
+	 -- second element is list of circuits in N which have the same "intersection size pattern" as the first element
+	H = apply(coverCircuits, c -> (c, select(D, d -> #d == #c and (pairs sliceBySize(c, C))/last/sizes/tally === (pairs sliceBySize(d, D))/last/sizes/tally)));
 	if min sizes(H/last) == 0 then return;
 	candidates = {H};
+	 -- "de-nests" second-element lists of H (i.e. each list member becomes its own item, 
+	 -- but keeping only those which are disjoint from previously matched circuits of N
 	for i to #coverCircuits-1 do (
 		candidates = flatten apply(candidates, cand -> apply(#last(cand#i), j -> (
 			append(cand_{0..<i}, (coverCircuits#i, (last(cand#i))#j)) | apply(cand_{i+1..#coverCircuits-1}, S -> (S#0, select(S#1, s -> #(s*((last(cand#i))#j)) == 0)))
 		)))
-	); -- "de-nests" second-element lists of H (i.e. each list member becomes its own item, but keeping only those which are disjoint from previously matched circuits of N
+	);
 	extraElts = M.groundSet - flatten(coverCircuits/toList);
 	E = flatten(append(coverCircuits, extraElts)/keys/sort);
 	if #extraElts > 0 then candidates = apply(candidates, cand -> cand | {(extraElts, N.groundSet - flatten(cand/last/toList))});
@@ -481,17 +544,26 @@ isomorphism (Matroid, Matroid) := HashTable => (M, N) -> ( -- assumes (M, N) sat
 
 quickIsomorphismTest = method()
 quickIsomorphismTest (Matroid, Matroid) := String => (M, N) -> (
-	(r, b, c, e) := (rank M, #bases M, #circuits M, #M.groundSet);
-	if not (r == rank N and b == #bases N and c == #circuits N and e == #N.groundSet) then return "false";
+	(r, b, e) := (rank M, #bases M, #M.groundSet);
+	if not (r == rank N and b == #bases N and e == #N.groundSet) then return "false";
 	if M == N then ( if debugLevel > 0 then print "Matroids are equal"; return "true" );
-	if min(b, c, binomial(e, r) - b) <= 1 then ( if debugLevel > 0 then print "At most 1 basis/nonbasis/circuit"; return "true" );
-	idealList := (M,N)/(m -> (m, dual m)/ideal);
-	if idealList#0/res/betti === idealList#1/res/betti then "Could be isomorphic" else "false"
-)
+	if not(betti ideal M === betti ideal N) then return "false";
+	if min(b, binomial(e, r) - b) <= 1 then ( if debugLevel > 0 then print "At most 1 basis/nonbasis"; return "true" );
+	try (
+	     alarm 2; 
+	     ret := if not betti res dual ideal M === betti res dual ideal N then "false";
+	     alarm 0;
+	     ret
+	     ) 
+	else (
+	     alarm 0;
+	     "Could be isomorphic"
+	     )
+	)
 
 areIsomorphic (Matroid, Matroid) := Boolean => (M, N) -> (
 	testResult := quickIsomorphismTest(M, N);
-	if testResult == "Could be isomorphic" then not(isomorphism(M, N) === null) else value testResult
+	if member(testResult, {null, "Could be isomorphic"}) then not(isomorphism(M, N) === null) else value testResult
 )
 
 tuttePolynomial Matroid := RingElement => M -> (
@@ -604,7 +676,7 @@ maxWeightBasis (Matroid, List) := Set => (M, w) -> (
 idealChowRing = method()
 idealChowRing Matroid := Ideal => M -> (
 	x := symbol x; -- use symbol rather than getSymbol, in order to work with indices internally
-	F := delete({}, delete(M.groundSet, flats M)/toList);
+	F := delete({}, delete(M.groundSet, flats M)/toList/sort);
 	R := QQ[F/(f -> x_f)];
 	I2 := ideal(select(subsets(F, 2), s -> #unique(s#0 | s#1) > max(#(s#0), #(s#1)))/(p -> x_(p#0)*x_(p#1)));
 	L0 := sum(select(F, f -> member(0, f))/(f -> x_f));
@@ -631,7 +703,7 @@ specificMatroid String := Matroid => name -> (
 	) else if name == "vamos" then (
 		relaxation(specificMatroid "V8+", set{4,5,6,7})
 	) else if name == "pappus" then (
-		matroid(toList(0..8), {{0,1,2},{0,3,7},{0,4,8},{1,3,6},{1,5,8},{2,4,6},{2,5,7},{6,7,8}}/set, EntryMode => "nonbases")
+		matroid(toList(0..8), {{0,1,2},{0,4,6},{0,5,7},{1,3,6},{1,5,8},{2,3,7},{2,4,8},{3,4,5},{6,7,8}}/set, EntryMode => "nonbases")
 	) else if name == "nonpappus" then (
 		relaxation(specificMatroid "pappus", set{6,7,8})
 	) else if name == "AG32" then (
@@ -2084,9 +2156,9 @@ doc ///
 			Many families of matroids can be defined by a 
 			list of forbidden minors: i.e. a matroid M is in the family
 			iff M does not have any of the forbidden minors as a minor. 
-			For instance, a matroid is representable over F_2
-			iff it does not have U_{2,4} as a minor, i.e. U_{2,4} is 
-			the (sole) forbidden minor for binary matroids.
+			For instance, a matroid is representable over F_2 iff it does
+			not have U_{2,4} as a minor, i.e. U_{2,4} is the (sole)
+			forbidden minor for @TO2{isBinary, "binary matroids"}@.
 
 			If a minor is found that is 
 			@TO2{(areIsomorphic, Matroid, Matroid), "isomorphic"}@ 
@@ -2098,6 +2170,47 @@ doc ///
 			time hasMinor(M6, M5)
 	SeeAlso
 		minor
+		isBinary
+///
+
+doc ///
+	Key
+		isBinary
+		(isBinary, Matroid)
+	Headline
+		whether a matroid is representable over F_2
+	Usage
+		isBinary M
+	Inputs
+		M:Matroid
+	Outputs
+		:Boolean
+			whether M is binary
+	Description
+		Text
+			Determines if M is a binary matroid, i.e. is representable
+			over the field $F_2$ of 2 elements.
+			
+			A matroid is representable over F_2 iff it does
+			not have U_{2,4} as a minor. However, this method does
+			not go through @TO hasMinor@, for efficiency reasons:
+			rather it checks whether the symmetric difference of any 2
+			distinct circuits is dependent.
+
+			Note: in general, determining representability is a difficult
+			computational problem. For instance, assuming access to 
+			an independence oracle, it is known that the problem of 
+			determining whether a matroid is binary cannot be solved 
+			in polynomial time.
+			
+		Example
+			M5 = matroid completeGraph 5
+			isBinary M5
+			U48 = uniformMatroid(4, 8)
+			isBinary U48
+	SeeAlso
+		hasMinor
+		representationOf
 ///
 
 doc ///
@@ -2300,6 +2413,123 @@ doc ///
 	SeeAlso
 		circuits
 		(symbol ++, Matroid, Matroid)
+///
+
+doc ///
+	Key
+		(isConnected, Matroid)
+	Headline
+		whether a matroid is connected
+	Usage
+		isConnected M
+	Inputs
+		M:Matroid
+	Outputs
+		:Boolean
+			whether M is connected
+	Description
+		Text
+			A matroid M is called connected if for every pair of distinct 
+			elements f, g in M, there is a circuit containing both of them.
+			This turns out to be equivalent to saying that there does not 
+			exist an element e in M with rank({e}) + rank(M - {e}) = rank(M)
+			(note that <= always holds by submodularity of the rank function).
+			
+			This method checks connectivity using the first definition above.
+			The second definition generalizes to higher connectivity - cf.
+			@TO is3Connected@. In the language of higher connectivity,
+			a matroid is connected (in the sense of the two definitions above)
+			if and only if it is 2-connected, i.e. has no 1-separation.
+			
+			To obtain the connected components of a matroid, use
+			@TO2{(components, Matroid), "components"}@.
+			
+		Example
+			M = matroid graph({{0,1},{0,2},{1,2},{3,4},{4,5}})
+			isConnected M
+			C = components M
+			all(C, isConnected)
+	SeeAlso
+		(components, Matroid)
+		is3Connected
+///
+
+doc ///
+	Key
+		is3Connected
+		(is3Connected, Matroid)
+	Headline
+		whether a matroid is 3-connected
+	Usage
+		is3Connected M
+	Inputs
+		M:Matroid
+	Outputs
+		:Boolean
+			whether M is 3-connected
+	Description
+		Text
+			A matroid M is called m-connected if M has no k-separations for 
+			k < m (see @TO getSeparation@ for the definition of a k-separation). 
+			Thus a matroid is 3-connected if it has no 2-separations
+			(or 1-separations). 
+			
+		Example
+			U1 = uniformMatroid(1, 4)
+			isConnected U1
+			is3Connected U1
+			is3Connected matroid completeMultipartiteGraph {3,3}
+	SeeAlso
+		(isConnected, Matroid)
+		getSeparation
+///
+
+doc ///
+	Key
+		getSeparation
+		(getSeparation, Matroid, ZZ)
+	Headline
+		finds a k-separation of a matroid
+	Usage
+		getSeparation(M, k)
+	Inputs
+		M:Matroid
+		k:ZZ
+	Outputs
+		:Set
+			a k-separation of M, if one exists, or @TO null@ if none exists
+	Description
+		Text
+			For a matroid M on a ground set E, and k >= 1,
+			a (2-)partition (X, E - X) of E(M) is called a k-separation of M if
+			|X| >= k, |E - X| >= k, and rank(X) + rank(E - X) - rank(M) <= k-1.
+			The separation is called minimal if either |X| = k or |E - X| = k.
+			
+			This method computes a k-separation of M, if one exists. 
+			If no k-separation of M exists, then @TO null@ is returned.
+			
+			Efficiency is achieved by using special structure of k-separations:
+			if (X, E - X) is a minimal k-separation (and no m-separation with 
+			m < k exists) with |X| = k, then X is either an independent cocircuit
+			or a coindependent circuit. On the other hand, if (X, E - X) 
+			is a nonminimal separation with |E - X| minimal, then X is both a 
+			flat and a coflat. In particular, if the ranks of all flats have 
+			been previously computed (e.g. via 
+			@TO2{(fVector, Matroid), "fVector"}@), then this method should
+			finish quickly.
+			
+			For k = 1, it is generally more efficient to use 
+			@TO2{(components, Matroid), "components"}@ and 
+			@TO2{(isConnected, Matroid), "isConnected"}@ than this
+			method.
+			
+		Example
+			G = graph({{0,1},{1,2},{2,3},{3,4},{4,5},{5,6},{6,0},{0,2},{0,3},{0,4},{1,3},{3,5},{3,6}})
+			M = matroid G
+			getSeparation(M, 2)
+	SeeAlso
+		(isConnected, Matroid)
+		is3Connected
 ///
 
 doc ///
@@ -3050,7 +3280,8 @@ doc ///
 			This method returns the defining ideal of the Chow ring, 
 			which lives in a polynomial ring with variable indices equal to 
 			the flats of M. To work with these subscripts, use 
-			"last baseName v" to get the index of a variable v, as shown below:
+			"last baseName v" to get the index of a variable v. For more 
+			information, cf. @TO "Working with Chow rings of matroids"@.
 			
 		Example
 			M = matroid completeGraph 4
@@ -3062,6 +3293,7 @@ doc ///
 	SeeAlso
 		latticeOfFlats
 		cogeneratorChowRing
+		"Working with Chow rings of matroids"
 ///
 
 doc ///
@@ -3099,6 +3331,66 @@ doc ///
 			diff(gens((map(T, ring I, gens T)) I), F)
 	SeeAlso
 		latticeOfFlats
+		idealChowRing
+///
+
+doc ///
+	Key
+		"Working with Chow rings of matroids"
+	Description
+		Text
+			This documentation page contains various tips for 
+			effectively working with Chow rings of matroids within
+			this package. We take the graphic matroid of the 
+			complete graph on 4 vertices as the running example:
+			
+		Example
+			M = matroid completeGraph 4
+			I = idealChowRing M;
+		Text
+		
+			As seen from above, the output of @TO idealChowRing@
+			is an @TO Ideal@, rather than a @TO Ring@. One can
+			get the ambient polynomial ring, as well as the associated
+			quotient ring:
+			
+		Example
+			R = ring I
+			S = R/I
+		Text
+		
+			Next, one often wants to access and perform computations
+			with elements in the quotient ring. The variables in the 
+			ambient ring of the ideal of the Chow ring are indexed by 
+			flats of the matroid, which retains useful information but 
+			makes the variables themselves difficult to access. However,
+			as with any ring in Macaulay2, one can always access variables
+			using subscripts:
+			-- using @TO2{(symbol _, Ring, ZZ), "subscripts"}@:
+			
+		Example
+			R_0
+			S_1
+			S_5*S_6
+		Text
+			
+			Notice that elements of $S$ are already rewritten in the 
+			normal form modulo the ideal of the Chow ring. 
+			
+			One can access the flat corresponding to a given variable as follows:
+			
+		Example
+			R_7
+			last baseName R_7
+		Text
+		
+			It is also possible to access variables via their flats by creating an 
+			auxiliary @TO HashTable@:
+			
+		Example
+			chowVars = hashTable apply(#gens R, i -> last baseName R_i => S_i)
+			chowVars#{5} * chowVars#{0,5}
+	SeeAlso
 		idealChowRing
 ///
 
@@ -3305,6 +3597,13 @@ assert(all({F7 + NF, F7 + F7, NF + NF}, M -> M == uniformMatroid(6, 7)))
 ///
 
 TEST ///
+G = graph({{0,1},{1,2},{2,3},{3,4},{4,5},{5,6},{6,0},{0,2},{0,3},{0,4},{1,3},{3,5},{3,6}})
+M = matroid G
+assert(isConnected M)
+assert(not is3Connected M)
+///
+
+TEST ///
 M5 = matroid completeGraph 5
 U24 = uniformMatroid(2, 4)
 M4 = matroid completeGraph 4
@@ -3375,6 +3674,15 @@ M4 = matroid ideal (x_0*x_1*x_2,x_0*x_3*x_4,x_1*x_2*x_3*x_4,x_0*x_1*x_3*x_5,x_0*
 assert(betti res ideal M3 === betti res ideal M4 and betti res dual ideal M3 === betti res dual ideal M4)
 assert(betti res ideal dual M3 === betti res ideal dual M4 and betti res dual ideal dual M3 === betti res dual ideal dual M4)
 assert(areIsomorphic(M3, M4) == false)
+///
+
+TEST ///
+L8 = allMatroids 8;
+(M, N) = (L8#615, L8#616)
+assert(areIsomorphic(M, dual M))
+assert(not areIsomorphic(N, dual N))
+assert(betti res ideal N === betti res ideal dual N)
+assert(betti res dual ideal N === betti res dual ideal dual N)
 ///
 
 TEST ///

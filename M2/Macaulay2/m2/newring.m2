@@ -7,7 +7,7 @@
 nothing := symbol nothing
 newRing = method( Options => applyValues(monoidDefaults, x -> nothing), TypicalValue => Ring )
 newRing PolynomialRing := opts -> (R) -> (
-     opts = new MutableHashTable from select(opts, v -> v =!= nothing);
+     opts = new MutableHashTable from select(new HashTable from opts, v -> v =!= nothing);
      nullify := k -> if not opts#?k then opts#k = monoidDefaults#k;
      if opts.?DegreeRank then (nullify Degrees;    nullify Heft);
      if opts.?Degrees and opts.Degrees =!= {} then (nullify DegreeRank; nullify Heft);

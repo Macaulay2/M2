@@ -1,172 +1,403 @@
-(function ( $ ) {
+/**
+ * BootSideMenu v 1.0
+ * Author: Andrea Lombardo
+ * http://www.lombardoandrea.com
+ * https://github.com/AndreaLombardo/BootSideMenu
+ * */
+(function ($) {
 
-	$.fn.BootSideMenu = function( options ) {
+    $.fn.BootSideMenu = function (userOptions) {
 
-		var oldCode, newCode, side;
+        var initialCode;
+        var newCode;
+        var menu;
+        var prevStatus;
+        var body = {};
 
-		newCode = "";
+        var defaults = {
+            side: "left",
+            duration: 500,
+            remember: true,
+            autoClose: false,
+            pushBody: true,
+            closeOnClick: true,
+            width: "15%",
+            onTogglerClick: function () {
+                //code to be executed when the toggler arrow was clicked
+            },
+            onBeforeOpen: function () {
+                //code to be executed before menu open
+            },
+            onBeforeClose: function () {
+                //code to be executed before menu close
+            },
+            onOpen: function () {
+                //code to be executed after menu open
+            },
+            onClose: function () {
+                //code to be executed after menu close
+            },
+            onStartup: function () {
+                //code to be executed when the plugin is called
+            }
+        };
 
-		var settings = $.extend({
-			side:"left",
-			autoClose:true
-		}, options );
-
-		side = settings.side;
-		autoClose = settings.autoClose;
-
-		this.addClass("container sidebar");
-
-		if(side=="left"){
-			this.addClass("sidebar-left");
-		}else if(side=="right"){
-			this.addClass("sidebar-right");
-		}else{
-			this.addClass("sidebar-left");
-		}
-
-		oldCode = this.html();
-
-		newCode += "<div class=\"row\">\n";
-		newCode += "	<div class=\"col-xs-12 col-sm-12 col-md-12 col-lg1-12\" data-side=\""+side+"\">\n"+ oldCode+" </div>\n";
-		newCode += "</div>";
-		newCode += "<div class=\"toggler\">\n";
-		newCode += "	<span class=\"glyphicon glyphicon-chevron-right\">&nbsp;</span> <span class=\"glyphicon glyphicon-chevron-left\">&nbsp;</span>\n";
-		newCode += "</div>\n";
-
-		this.html(newCode);
-
-		if(autoClose){
-			$(this).find(".toggler").trigger("click");
-		}
-
-	};
-
-	$(document).on('click', '.sidebar .list-group-item', function(){
-		$('.sidebar .list-group-item').each(function(){
-			$(this).removeClass('active');
-		});
-		//$(this).addClass('active');
-	});
+        var options = $.extend({}, defaults, userOptions);
 
 
-	$(document).on('click', '.sidebar .list-group-item', function(event){
-		var idToToggle, this_offset, this_x, this_y, href, side;
-		event.preventDefault();
-		href = $(this).attr('href');
+        body.originalMarginLeft = $("body").css("margin-left");
+        body.originalMarginRight = $("body").css("margin-right");
+        body.width = $("body").width();
 
-		if(href.substr(0,1)=='#'){
+        initialCode = this.html();
 
-			idToToggle = href.substr(1,href.length);
+        newCode = "<div class=\"row\">";
+        newCode += "	<div class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">\n" + initialCode + " </div>";
+        newCode += "</div>";
+        newCode += "<div class=\"toggler\" data-whois=\"toggler\">";
+        newCode += "	<span class=\"glyphicon\">&nbsp;</span>";
+        newCode += "</div>";
 
-			if(searchSubMenu(idToToggle)){
+        this.empty();
+        this.append(newCode);
 
-				this_offset = $(this).offset();
-				side = $(this).parent().parent().attr('data-side');
+        menu = $(this);
 
-				if(side=='left'){
-					this_x = $(this).width() + 10;
-					this_y = this_offset.top +1;
-					$('#'+idToToggle).css('left', this_x);
-					$('#'+idToToggle).css('top', this_y);
-				}else if(side=='right'){
-					this_x = $(this).width()+10;
-					this_y = this_offset.top +1;
-					$('#'+idToToggle).css('right', this_x);
-					$('#'+idToToggle).css('top', this_y);
-				}
+        menu.addClass("container");
+        menu.addClass("sidebar");
+        menu.css("width", options.width);
 
-				$('#'+idToToggle).fadeIn();
+        if (options.side == "left") {
+            menu.addClass("sidebar-left");
+        } else if (options.side == "right") {
+            menu.addClass("sidebar-right");
+        }
 
-			}else{
-				$('.submenu').fadeOut();
-			}
-		}
-	});
+        menu.id = menu.attr("id");
+        menu.cookieName = "bsm2-" + menu.id;
+        menu.toggler = $(menu.children()[1]);
+        menu.originalWidth = menu.width();
+        menu.originalPushBody = options.pushBody;
 
 
-	$(document).on('click','.toggler', function(){
-		var toggler = $(this);
-		var container = toggler.parent();
-		var listaClassi = container[0].classList;
-		var side = getSide(listaClassi);
-		var containerWidth = container.width();
-		var status = container.attr('data-status');
-		if(!status){
-			status = "opened";
-		}
-		doAnimation(container, containerWidth, side, status);
-	});
+        if (options.remember) {
+            prevStatus = readCookie(menu.cookieName);
+        } else {
+            prevStatus = null;
+        }
 
-	/*Cerca un div con classe submenu e id uguale a quello passato*/
-	function searchSubMenu(id){
-		var found = false;
-		$('.submenu').each(function(){
-			var thisId = $(this).attr('id');
-			if(id==thisId){
-				found = true;
-			}
-		});
-		return found;
-	}
+        forSmallBody();
 
-//restituisce il lato del sidebar in base alla classe che trova settata
-function getSide(listaClassi){
-	var side;
-	for(var i = 0; i<listaClassi.length; i++){
-		if(listaClassi[i]=='sidebar-left'){
-			side = "left";
-			break;
-		}else if(listaClassi[i]=='sidebar-right'){
-			side = "right";
-			break;
-		}else{
-			side = null;
-		}
-	}
-	return side;
-}
-//esegue l'animazione
-function doAnimation(container, containerWidth, sidebarSide, sidebarStatus){
-	var toggler = container.children()[1];
-	if(sidebarStatus=="opened"){
-		if(sidebarSide=="left"){
-			container.animate({
-				left:-(containerWidth+2)
-			});
-			toggleArrow(toggler, "left");
-		}else if(sidebarSide=="right"){
-			container.animate({
-				right:- (containerWidth +2)
-			});
-			toggleArrow(toggler, "right");
-		}
-		container.attr('data-status', 'closed');
-	}else{
-		if(sidebarSide=="left"){
-			container.animate({
-				left:0
-			});
-			toggleArrow(toggler, "right");
-		}else if(sidebarSide=="right"){
-			container.animate({
-				right:0
-			});
-			toggleArrow(toggler, "left");
-		}
-		container.attr('data-status', 'opened');
+        switch (prevStatus) {
+            case "opened":
+                startOpened();
+                break;
+            case "closed":
+                startClosed();
+                break;
+            default:
+                startDefault();
+                break;
+        }
 
-	}
+        if (options.onStartup !== undefined) {
+            options.onStartup(menu);
+        }
 
-}
+        //aggiungi icone a tutti i collapse
+        $("[data-toggle=\"collapse\"]", menu).each(function () {
+            var icona = $("<span class=\"glyphicon glyphicon-chevron-right\"></span>");
+            $(this).prepend(icona);
+        });
 
-function toggleArrow(toggler, side){
-	if(side=="left"){
-		$(toggler).children(".glyphicon-chevron-right").css('display', 'block');
-		$(toggler).children(".glyphicon-chevron-left").css('display', 'none');
-	}else if(side=="right"){
-		$(toggler).children(".glyphicon-chevron-left").css('display', 'block');
-		$(toggler).children(".glyphicon-chevron-right").css('display', 'none');
-	}
-}
+        menu.off("click", "[data-whois=toggler]");
+        menu.on("click", "[data-whois=toggler]", function () {
+            toggle();
+            if (options.onTogglerClick !== undefined) {
+                options.onTogglerClick(menu);
+            }
+        });
 
-}( jQuery ));
+        menu.off("click", ".list-group-item");
+        menu.on("click", ".list-group-item", function () {
+            menu.find(".list-group-item").each(function () {
+                $(this).removeClass("active");
+            });
+            $(this).addClass("active");
+            $(".glyphicon", this).toggleClass("glyphicon-chevron-right").toggleClass("glyphicon-chevron-down");
+        });
+
+
+        menu.off("click", "a.list-group-item");
+        menu.on("click", "a.list-group-item", function () {
+            if (options.closeOnClick) {
+                if ($(this).attr("data-toggle") != "collapse") {
+                    closeMenu(true);
+                }
+            }
+        });
+
+
+        function toggle() {
+            if (menu.status == "opened") {
+                closeMenu(true);
+            } else {
+                openMenu(true);
+            }
+        }
+
+        function switchArrow(side) {
+            var span = menu.toggler.find("span.glyphicon");
+            if (side == "left") {
+                span.removeClass("glyphicon-chevron-left").addClass("glyphicon-chevron-right");
+            } else if (side == "right") {
+                span.removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-left");
+            }
+        }
+
+        function startDefault() {
+            if (options.side == "left") {
+                if (options.autoClose) {
+                    menu.status = "closed";
+                    menu.hide().animate({
+                        left: -(menu.width() + 2)
+                    }, 1, function () {
+                        menu.show();
+                        switchArrow("left");
+                    });
+                } else if (!options.autoClose) {
+                    switchArrow("right");
+                    menu.status = "opened";
+                    if (options.pushBody) {
+                        $("body").css("margin-left", menu.width() + 20);
+                    }
+                }
+            } else if (options.side == "right") {
+                if (options.autoClose) {
+                    menu.status = "closed";
+                    menu.hide().animate({
+                        right: -(menu.width() + 2)
+                    }, 1, function () {
+                        menu.show();
+                        switchArrow("right");
+                    });
+                } else {
+                    switchArrow("left");
+                    menu.status = "opened";
+                    if (options.pushBody) {
+                        $("body").css("margin-right", menu.width() + 20);
+                    }
+                }
+            }
+        }
+
+        function startClosed() {
+            if (options.side == "left") {
+                menu.status = "closed";
+                menu.hide().animate({
+                    left: -(menu.width() + 2)
+                }, 1, function () {
+                    menu.show();
+                    switchArrow("left");
+                });
+            } else if (options.side == "right") {
+                menu.status = "closed";
+                menu.hide().animate({
+                    right: -(menu.width() + 2)
+                }, 1, function () {
+                    menu.show();
+                    switchArrow("right");
+                })
+            }
+        }
+
+        function startOpened() {
+            if (options.side == "left") {
+                switchArrow("right");
+                menu.status = "opened";
+                if (options.pushBody) {
+                    $("body").css("margin-left", menu.width() + 20);
+                }
+
+            } else if (options.side == "right") {
+                switchArrow("left");
+                menu.status = "opened";
+                if (options.pushBody) {
+                    $("body").css("margin-right", menu.width() + 20);
+                }
+            }
+        }
+
+        function closeMenu(execFunctions) {
+
+            if (execFunctions) {
+                if (options.onBeforeClose !== undefined) {
+                    options.onBeforeClose(menu);
+                }
+            }
+            if (options.side == "left") {
+
+                if (options.pushBody) {
+                    $("body").animate({marginLeft: body.originalMarginLeft}, {duration: options.duration});
+                }
+
+                menu.animate({
+                    left: -(menu.width() + 2)
+                }, {
+                    duration: options.duration,
+                    done: function () {
+                        switchArrow("left");
+                        menu.status = "closed";
+
+                        if (execFunctions) {
+                            if (options.onClose !== undefined) {
+                                options.onClose(menu);
+                            }
+                        }
+                    }
+                });
+            } else if (options.side == "right") {
+
+                if (options.pushBody) {
+                    $("body").animate({marginRight: body.originalMarginRight}, {duration: options.duration});
+                }
+
+                menu.animate({
+                    right: -(menu.width() + 2)
+                }, {
+                    duration: options.duration,
+                    done: function () {
+                        switchArrow("right");
+                        menu.status = "closed";
+
+                        if (execFunctions) {
+                            if (options.onClose !== undefined) {
+                                options.onClose(menu);
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (options.remember) {
+                storeCookie(menu.cookieName, "closed");
+            }
+
+        }
+
+        function openMenu(execFunctions) {
+
+            if (execFunctions) {
+                if (options.onBeforeOpen !== undefined) {
+                    options.onBeforeOpen(menu);
+                }
+            }
+
+            if (options.side == "left") {
+
+                if (options.pushBody) {
+                    $("body").animate({marginLeft: menu.width() + 20}, {duration: options.duration});
+                }
+
+                menu.animate({
+                    left: 0
+                }, {
+                    duration: options.duration,
+                    done: function () {
+                        switchArrow("right");
+                        menu.status = "opened";
+
+                        if (execFunctions) {
+                            if (options.onOpen !== undefined) {
+                                options.onOpen(menu);
+                            }
+                        }
+                    }
+                });
+            } else if (options.side == "right") {
+
+                if (options.pushBody) {
+                    $("body").animate({marginRight: menu.width() + 20}, {duration: options.duration});
+                }
+
+                menu.animate({
+                    right: 0
+                }, {
+                    duration: options.duration,
+                    done: function () {
+                        switchArrow("left");
+                        menu.status = "opened";
+
+                        if (execFunctions) {
+                            if (options.onOpen !== undefined) {
+                                options.onOpen(menu);
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (options.remember) {
+                storeCookie(menu.cookieName, "opened");
+            }
+        }
+
+
+        function forSmallBody() {
+            var bodyWidth = $("body").width();
+            if (bodyWidth <= 480) {
+                options.pushBody = false;
+                options.closeOnClick = true;
+                menu.css("width", "90%");
+            }
+        }
+
+        function storeCookie(nome, valore) {
+            var d = new Date();
+            d.setTime(d.getTime() + (24 * 60 * 60 * 1000));
+            var expires = "expires=" + d.toUTCString();
+            document.cookie = nome + "=" + valore + "; " + expires + "; path=/";
+        }
+
+        function readCookie(nome) {
+            var name = nome + "=";
+            var ca = document.cookie.split(";");
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == " ")
+                    c = c.substring(1);
+                if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+            }
+            return null;
+        }
+
+
+        function onResize() {
+            menu.width(options.width);
+
+            forSmallBody();
+            if (menu.status == "closed") {
+                startClosed();
+            }
+            if (menu.status == "opened") {
+                startOpened();
+            }
+        }
+
+        var resizeStart;
+        var resizeEnd;
+        var wait = 250;
+        window.addEventListener("resize", function () {
+            resizeStart = new Date().getMilliseconds();
+            resizeEnd = resizeStart + wait;
+            setTimeout(function () {
+                var now = new Date().getMilliseconds();
+                if (now > resizeEnd) {
+                    onResize();
+                }
+            }, wait);
+        }, false);
+
+        return this;
+    }
+}(jQuery));

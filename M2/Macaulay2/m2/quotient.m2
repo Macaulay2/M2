@@ -1,4 +1,5 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+-- Copyright 1993-1999 by Daniel R. Grayson
+-- Copyright 1996 by Michael E. Stillman
 
 -- This definition is used in several places, so it doesn't have
 -- a natural home.  It used to be in methods.m2, but
@@ -6,15 +7,22 @@
 
 assert( class infinity === InfiniteNumber )
 
+-- ideal quotient methods moved to packages/Saturation.m2 in July 2020
 quotient = method(
      Options => {
-	  DegreeLimit => {},
+	  DegreeLimit       => {},
 	  BasisElementLimit => infinity,
-	  PairLimit => infinity,
+	  PairLimit         => infinity,
 	  MinimalGenerators => true,
-	  Strategy => Iterate
+	  Strategy          => null
 	  }
      )
+
+-- moved to packages/Saturation.m2 in July 2020
+saturate = method(Options => options quotient)
+
+-- moved to packages/Saturation.m2 in October 2020
+annihilator = method(Options => {Strategy => null}) -- Intersection or Quotient
 
 gcdCoefficients(ZZ,ZZ) := (a,b) -> (
      m := {a,1,0};
@@ -30,8 +38,6 @@ gcdCoefficients(ZZ,ZZ) := (a,b) -> (
      n);
 
 mod = (i,n) -> i * 1_(ZZ/n)
-
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

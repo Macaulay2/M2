@@ -137,9 +137,9 @@ void RingMap::text_out(buffer &o) const
   o << ")";
 }
 
-ring_elem RingMap::eval_term(const Ring *sourceK,
-                             const ring_elem a,
-                             const int *vp,
+ring_elem RingMap::eval_term(const Ring *sourceK,  // source coeff ring
+                             const ring_elem a,  // coefficient of term
+                             const int *vp, // varpower monomial
                              int first_var,
                              int nvars_in_source) const
 {

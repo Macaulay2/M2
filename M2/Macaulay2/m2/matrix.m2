@@ -196,7 +196,7 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	       then degree m + degree n
 	       else if same dif
 	       then degree m + degree n + dif#0
- 	       else toList (degreeLength R:0)
+ 	       else toList (degreeLength ring m:0)
 	       );
 	  f := m.RawMatrix * n.RawMatrix;
 	  f = rawMatrixRemake2(rawTarget f, rawSource f, deg, f, 0);
@@ -222,17 +222,18 @@ Matrix * Vector := Matrix Vector := Vector => (m,v) -> (
 expression Matrix := m -> (
     x := applyTable(entries m, expression);
     d := degrees -* cover *- target m;
-    if not all(d, i -> all(i, j -> j == 0)) then MatrixDegreeExpression {x,d, degrees source m} else MatrixExpression x
+    MatrixExpression if not all(d, i -> all(i, j -> j == 0)) then { x, Degrees=>{d, degrees source m} } else { x }
     )
 
 net Matrix := m -> net expression m
 toString Matrix := m -> toString expression m
 texMath Matrix := m -> texMath expression m
+--html Matrix := m -> html expression m
 
 describe Matrix := m -> (
     args:=(describe target m,describe source m);
     if m.?RingMap then args=append(args,describe m.RingMap);
-    args=append(args,expression if m == 0 then 0 else entries m);
+    args=append(args, expression if m == 0 then 0 else entries m);
     if not all(degree m,zero) then args=append(args,expression(Degree=>degree m));
     Describe (expression map) args
     )
@@ -260,7 +261,7 @@ ggConcatBlocks = (tar,src,mats) -> (
      f)
 
 sameringMatrices = mats -> (
-     if sameresult(m -> (if m.?RingMap then m.RingMap,ring target m, ring source m), mats)
+     if same apply(mats, m -> (if m.?RingMap then m.RingMap,ring target m, ring source m))
      then mats
      else (
 	  R := try ring sum apply(toList mats, m -> 0_(ring target m)) else error "expected matrices over compatible rings";
@@ -285,6 +286,9 @@ isDirectSum Module := (M) -> M.cache.?components
 components Module := M -> if M.cache.?components then M.cache.components else {M}
 components Matrix := f -> if f.cache.?components then f.cache.components else {f}
 
+formation = method()
+formation Module := M -> if M.cache.?formation then M.cache.formation
+
 directSum Module := M -> Module.directSum (1 : M)
 Module.directSum = args -> (
 	  R := ring args#0;
@@ -304,6 +308,7 @@ Module.directSum = args -> (
 		    directSum apply(args,generators), 
 		    directSum apply(args,relations)));
 	  N.cache.components = toList args;
+	  N.cache.formation = FunctionApplication (directSum, args);
 	  N)
 
 single := v -> (
@@ -320,15 +325,11 @@ indices HashTable := X -> (
 directSum List := args -> directSum toSequence args
 directSum Sequence := args -> (
      if #args === 0 then error "expected more than 0 arguments";
-     y := youngest args;
-     key := (directSum, args);
-     if y =!= null and y#?key then y#key else (
-	  type := single apply(args, class);
-	  meth := lookup(symbol directSum, type);
-	  if meth === null then error "no method for direct sum";
-	  S := meth args;
-	  if y =!= null then y#key = S;
-	  S))
+     type := single apply(args, class);
+     meth := lookup(symbol directSum, type);
+     if meth === null then error "no method for direct sum";
+     S := meth args;
+     S)
 
 -- Number.directSum = v -> directSum apply(v, a -> matrix{{a}})
 
@@ -337,18 +338,18 @@ directSum Option := o -> directSum(1 : o)
 Option.directSum = args -> (
      if #args === 0 then error "expected more than 0 arguments";
      objects := apply(args,last);
-     y := youngest objects;
-     key := (directSum, args);
-     if y =!= null and y#?key then y#key else (
-	  type := single apply(objects, class);
-	  if not type.?directSum then error "no method for direct sum";
-	  X := type.directSum objects;
-	  if y =!= null then y#key = X;
-     	  keys := X.cache.indices = toList args/first;
-     	  ic := X.cache.indexComponents = new HashTable from apply(#keys, i -> keys#i => i);
-	  if X.?source then X.source.cache.indexComponents = ic;
-	  if X.?target then X.target.cache.indexComponents = ic;
-	  X))
+     labels  := toList args/first;
+     type := single apply(objects, class);
+     if not type.?directSum then error "no method for direct sum";
+     M := type.directSum objects;
+     M.cache.indices = labels;
+     ic := M.cache.indexComponents = new HashTable from apply(#labels, i -> labels#i => i);
+     -- now, in case M is a map (i.e., has a source and target), then label the source and target objects of the sum
+     if M.?source and M.?target then (
+	  M.source.cache.indexComponents = M.target.cache.indexComponents = ic; 
+	  M.source.cache.indices = M.target.cache.indices = labels;
+	  );
+     M)
 Matrix ++ Matrix := Matrix => directSum
 Module ++ Module := Module => directSum
 
@@ -623,11 +624,8 @@ inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
      	  if ambient N' =!= ambient N then error "inducedMap: expected new target and target of map provided to be subquotients of same free module";
      	  if ambient M' =!= ambient M then error "inducedMap: expected new source and source of map provided to be subquotients of same free module";
 	  );
-     gbM  := gb(M,ChangeMatrix => true);
-     gbN' := gb(N',ChangeMatrix => true);
-     g := generators N * cover f * (generators M' // gbM);
-     f' := g // gbN';
-     f' = map(N',M',f',Degree => if opts.Degree === null then degree f else opts.Degree);
+     c := runHooks((inducedMap, Module, Module, Matrix), (opts, N', M', f));
+     (f', g, gbN', gbM) := if c =!= null then c else error "inducedMap: no method implemented for this type of input";
      if opts.Verify then (
 	  if relations M % relations M' != 0 then error "inducedMap: expected new source not to have fewer relations";
 	  if relations N % relations N' != 0 then error "inducedMap: expected new target not to have fewer relations";
@@ -640,11 +638,22 @@ inducedMap(Module,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(M,source f, f,o)
 inducedMap(Nothing,Module,Matrix) := o -> (M,N,f) -> inducedMap(target f,N, f,o)
 inducedMap(Nothing,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(target f,source f, f,o)
 
+addHook((inducedMap, Module, Module, Matrix), Strategy => Default, (opts, N', M', f) -> (
+     N := target f;
+     M := source f;
+     gbM  := gb(M,  ChangeMatrix => true);
+     gbN' := gb(N', ChangeMatrix => true);
+     g := generators N * cover f * (generators M' // gbM);
+     f' := g // gbN';
+     f' = map(N',M',f',Degree => if opts.Degree === null then degree f else opts.Degree);
+     (f', g, gbN', gbM)))
+
 inducedMap(Module,Module) := Matrix => o -> (M,N) -> (
      if ambient M != ambient N 
      then error "'inducedMap' expected modules with same ambient free module";
      inducedMap(M,N,id_(ambient N),o))
 
+-- TODO: deprecate this in favor of isWellDefined
 inducesWellDefinedMap = method(TypicalValue => Boolean)
 inducesWellDefinedMap(Module,Module,Matrix) := (M,N,f) -> (
      sM := target f;

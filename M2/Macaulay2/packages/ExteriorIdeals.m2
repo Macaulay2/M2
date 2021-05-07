@@ -5,7 +5,8 @@ newPackage(
         Date => "July 13, 2017",
         Authors => {{Name => "Marilena Crupi", Email => "mcrupi@unime.it", HomePage => "http://www.unime.it/it/persona/marilena-crupi"},
                     {Name => "Luca Amata", Email => "lamata@unime.it"}},
-        Headline => "A Macaulay2 package for manipulating monomial ideals over exterior algebra",
+        Headline => "monomial ideals over exterior algebras",
+	Keywords => {"Commutative Algebra"},
         DebuggingMode => false,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",

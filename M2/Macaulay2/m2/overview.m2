@@ -918,7 +918,7 @@ document { "making generic matrices",
      matrix is one whose entries are independent variables from the ring, subject
      to certain relations.",
      PARA,
-     "We begin by making a ring with enough variables to accomodate all
+     "We begin by making a ring with enough variables to accommodate all
      the examples.",
      EXAMPLE "R = ZZ/101[a..z];",
      "We can make a general generic matrix with ", TO "genericMatrix", ".  We specify

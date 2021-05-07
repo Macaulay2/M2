@@ -7,7 +7,7 @@
 --     	    	    September 2009, October 2009, January 2010
 ---------------------------------------------------------------------------
 newPackage("Polyhedra",
-    Headline => "A package for computations with convex polyhedra",
+    Headline => "convex polyhedra",
     Version => "1.10",
     Date => "November 12, 2018",
     AuxiliaryFiles => true,
@@ -24,6 +24,7 @@ newPackage("Polyhedra",
 	 "volume number" => "1",
 	 "volume URI" => "http://j-sag.org/Volume1/"
 	 },
+    Keywords => {"Convex Geometry"},
     Authors => {
       {
          Name => "René Birkner",
@@ -31,7 +32,7 @@ newPackage("Polyhedra",
         Email => "rbirkner@mi.fu-berlin.de"
         },
      {
-        Name => "Lars Kastner (Maintaining author)",
+        Name => "Lars Kastner", -- Maintaining author
         HomePage => "http://page.mi.fu-berlin.de/lkastner/",
         Email => "k.l@fu-berlin.de"
      }

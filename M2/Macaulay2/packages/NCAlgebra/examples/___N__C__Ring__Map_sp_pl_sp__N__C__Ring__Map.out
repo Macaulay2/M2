@@ -26,7 +26,7 @@ o4 : NCRingMap
 
 i5 : matrix h
 
-o5 = | 4y+3x  3y+4x |
+o5 = | 4*y+3*x 3*y+4*x |
 
 o5 : NCMatrix
 
@@ -38,7 +38,7 @@ o6 : NCRingMap
 
 i7 : matrix k
 
-o7 = | 172y+171x  171y+172x |
+o7 = | 172*y+171*x 171*y+172*x |
 
 o7 : NCMatrix
 

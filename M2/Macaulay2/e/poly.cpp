@@ -79,7 +79,7 @@ void PolyRing::initialize_poly_ring(const Ring *K,
   gb_ring_ = 0;
 
   // A polynomial ring is ALWAYS graded (if the coeff vars, if any,
-  //   all have degree 0, which is hte case with our flattened poly rings
+  //   all have degree 0, which is the case with our flattened poly rings
   this->setIsGraded(true);
 
   exp_size = EXPONENT_BYTE_SIZE(nvars_);
@@ -142,7 +142,7 @@ void PolyRing::text_out(buffer &o) const
 Nterm *PolyRing::new_term() const
 {
   Nterm *result = GETMEM(Nterm *, poly_size_);
-  result->next = NULL;
+  result->next = nullptr;
   result->coeff = 0;  // This value is never used, one hopes...
   // In fact, it gets used in the line below:       K->remove(tmp->coeff);
   // which is called from the line below:           remove(idiotic);
@@ -150,7 +150,7 @@ Nterm *PolyRing::new_term() const
   // part of the union, so on a machine with 4 byte ints and 8 byte pointers,
   // the
   // pointer part is not NULL!
-  result->coeff.poly_val = NULL;  // so I added this line
+  result->coeff.poly_val = nullptr;  // so I added this line
   return result;
 }
 
@@ -187,7 +187,7 @@ ring_elem PolyRing::from_int(mpz_srcptr n) const
   return result;
 }
 
-bool PolyRing::from_rational(mpq_ptr q, ring_elem &result) const
+bool PolyRing::from_rational(mpq_srcptr q, ring_elem &result) const
 {
   ring_elem a;
   bool ok = K_->from_rational(q, a);
@@ -805,35 +805,33 @@ ring_elem PolyRing::mult(const ring_elem f, const ring_elem g) const
   return H.value();
 }
 
-ring_elem PolyRing::power(const ring_elem f0, mpz_t n) const
+ring_elem PolyRing::power(const ring_elem f0, mpz_srcptr n) const
 {
   ring_elem ff, result;
-  bool isinverted = false;
 
   if (mpz_sgn(n) == 0) return from_long(1);
   if (is_zero(f0)) return ZERO_RINGELEM;
 
+  mpz_t abs_n;
+  mpz_init(abs_n);
+  mpz_abs(abs_n, n);
   if (mpz_sgn(n) > 0)
     ff = f0;
   else
-    {
-      isinverted = true;
-      ff = invert(f0);
-      mpz_neg(n, n);
-    }
+    ff = invert(f0);
 
   Nterm *f = ff;
 
   // In this case, the computation may only be formed in two
   // cases: (1) f is a constant, or (2) n is small enough
-  std::pair<bool, int> n1 = RingZZ::get_si(n);
+  std::pair<bool, int> n1 = RingZZ::get_si(abs_n);
   if (n1.first)
     {
       result = power(f, n1.second);
     }
   else if (is_unit(f))  // really want a routine 'is_scalar'...
     {
-      ring_elem a = K_->power(f->coeff, n);
+      ring_elem a = K_->power(f->coeff, abs_n);
       result = make_flat_term(a, f->monom);
     }
   else
@@ -842,7 +840,7 @@ ring_elem PolyRing::power(const ring_elem f0, mpz_t n) const
       result = ZERO_RINGELEM;
     }
 
-  if (isinverted) mpz_neg(n, n);
+  mpz_clear(abs_n);
   return result;
 }
 
@@ -1091,7 +1089,7 @@ ring_elem PolyRing::gcd_extended(const ring_elem f,
       v3 = t3;
     }
 
-  // make 'result' monic. (and divde 'u' by this as well)
+  // make 'result' monic. (and divide 'u' by this as well)
   if (!is_zero(result))
     {
       Nterm *t = result;
@@ -1345,7 +1343,7 @@ ring_elem PolyRing::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
   result->next = NULL;
   return head.next;
 }
-void PolyRing::increase_maxnorm(gmp_RR norm, const ring_elem f) const
+void PolyRing::increase_maxnorm(gmp_RRmutable norm, const ring_elem f) const
 {
   for (Nterm *a = f; a != NULL; a = a->next)
     K_->increase_maxnorm(norm, a->coeff);
@@ -2274,9 +2272,9 @@ vec PolyRing::vec_coefficient_of_var(vec v, int x, int e) const
 vec PolyRing::vec_top_coefficient(const vec v, int &x, int &e) const
 // find the smallest index variable x which occurs in v, and also find e s.t.
 // x^e is
-// the largest power of x occuring in v.  Set x and e accordingly.
+// the largest power of x occurring in v.  Set x and e accordingly.
 // Return the coefficient of x^e.
-// IF v has no variables occuring in it, then set x to be #vars, e to be 0 and
+// IF v has no variables occurring in it, then set x to be #vars, e to be 0 and
 // return v.
 // If v is 0, then set x to -1, e to 0, and v to 0.
 {
@@ -2323,7 +2321,7 @@ void PolyRing::determine_common_denominator_QQ(ring_elem f,
 
   for (Nterm *t = f; t != 0; t = t->next)
     {
-      mpq_ptr a = MPQ_VAL(t->coeff);
+      mpq_srcptr a = MPQ_VAL(t->coeff);
       mpz_lcm(denom_so_far, denom_so_far, mpq_denref(a));
     }
 }
@@ -2425,7 +2423,7 @@ gbvector *PolyRing::translate_gbvector_from_vec_QQ(
       for (Nterm *t = w->coeff; t != 0; t = t->next)
         {
           // make a gbvector node.
-          mpq_ptr b = MPQ_VAL(t->coeff);
+          mpq_srcptr b = MPQ_VAL(t->coeff);
           mpz_mul(a, result_denominator.get_mpz(), mpq_numref(b));
           mpz_divexact(a, a, mpq_denref(b));
           gbvector *g = GR->gbvector_term(

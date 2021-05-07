@@ -271,6 +271,9 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 	       else if i == length(r) then r
 	       else new Sequence len i do foreach x in r do provide x)));
 
+export strtoseq(s:stringCell):Sequence := new Sequence len length(s.v) do
+    foreach c in s.v do provide stringCell(string(c));
+
 evalForCode(c:forCode):Expr := (
      r := if c.listClause == dummyCode then emptySequence else new Sequence len 1 do provide nullE;
      i := 0;				    -- index in r
@@ -285,7 +288,8 @@ evalForCode(c:forCode):Expr := (
 	  when invalue is Error do return invalue
 	  is ww:Sequence do w = ww
 	  is vv:List do w = vv.v
-	  else return printErrorMessageE(c.inClause,"expected a list or sequence");	  
+	  is s:stringCell do w = strtoseq(s)
+	  else return printErrorMessageE(c.inClause,"expected a list, sequence, or string");
 	  )
      else (
 	  if c.fromClause != dummyCode then (
@@ -1237,7 +1241,30 @@ handleError(c:Code,e:Expr):Expr := (
 	       if p != dummyPosition then err.position = p;
 	       e))
      else e);
+
+header "extern void M2_stack_push(char*);";
+header "extern void M2_stack_pop();";
+header "extern void M2_stack_trace();";
+stacktrace(e:Expr):Expr := (
+    Ccode(void,"M2_stack_trace()"); e );
+setupfun("stacktrace",stacktrace);
+
+evalprof(c:Code):Expr;
+evalraw(c:Code):Expr;
 export eval(c:Code):Expr := (
+    if Ccode(bool,"PROFILING == 1")
+    then Ccode(Expr,"evaluate_evalprof(",c,")")
+    else Ccode(Expr,"evaluate_evalraw(",c,")"));
+export evalprof(c:Code):Expr := (
+    when c is f:semiCode do ( -- what makes semiCode special?
+        -- printErrorMessage(codePosition(c),"--evaluating a semiCode");
+        -- TODO: how to get f.name?
+        Ccode(void,"M2_stack_push(",tocharstar(tostring(codePosition(c))),")");
+        e := evalraw(c);
+        Ccode(void,"M2_stack_pop()");
+        e)
+    else evalraw(c));
+export evalraw(c:Code):Expr := (
      -- better would for cancellation requests to set exceptionFlag:
      -- Ccode(void,"pthread_testcancel()");
      e := (
@@ -1397,10 +1424,16 @@ export eval(c:Code):Expr := (
 	       if length(v.z) == 0 then return emptyArray;
 	       r := evalSequence(v.z);
 	       if evalSequenceHadError then evalSequenceErrorMessage else Array(r)
+	       )
+	  is v:angleBarListCode do (
+	       if length(v.t) == 0 then return emptyAngleBarList;
+	       r := evalSequence(v.t);
+	       if evalSequenceHadError then evalSequenceErrorMessage else AngleBarList(r)
 	       ));
      when e is Error do handleError(c,e) else e);
 
 export evalexcept(c:Code):Expr := (
+     -- printErrorMessage(codePosition(c),"--evaluating: "+present(tostring(c)));
      e := eval(c);
      if test(exceptionFlag) then (				    -- compare this code to the code at the top of eval() above
 	  if alarmedFlag then (
@@ -1475,26 +1508,26 @@ breakFun(a:Code):Expr := (
 setupop(breakS,breakFun);
 
 assigntofun(lhs:Code,rhs:Code):Expr := (
-     left := eval(lhs);
-     when left
-     is q:SymbolClosure do (
-	  if q.symbol.Protected then (
-	       buildErrorPacket("assignment to protected variable '" + q.symbol.word.name + "'")
-	       )
-	  else (
-	       value := eval(rhs);
-	       when value is Error do return value else nothing;
-	       enlargeThreadFrame();
-	       q.frame.values.(q.symbol.frameindex) = value;
-	       value))
-     is Error do left
-     else (
-	  method := lookup(Class(left),LeftArrowE); -- method for x <- y is looked up under (symbol <-, class x)
-	  if method == nullE then buildErrorPacket("'<-': no method for object on left")
-	  else (
-	       value := eval(rhs);
-	       when value is Error do return value else nothing;
-	       applyEEE(method,left,value))));
+    left := eval(lhs);
+    when left is Error do return left else (
+	right := eval(rhs);
+	when right is Error do return right else (
+	    when left is s:SymbolClosure do (
+		sym := s.symbol;
+		symbody := Expr(SymbolBody(sym));
+		-- see syms and store in actors5.d
+		if lookup1Q(globalAssignmentHooks, symbody) then (
+		    vals := (if sym.thread then enlargeThreadFrame() else globalFrame).values;
+		    globalAssignment(sym.frameindex, sym, right))
+		else if sym.Protected then buildErrorPacket("assignment to protected variable '" + sym.word.name + "'")
+		else (
+		    enlargeThreadFrame(); -- TODO: what does this do?
+		    s.frame.values.(sym.frameindex) = right;
+		    right))
+	    else (
+		assignmethod := lookup(Class(left), LeftArrowE); -- method for x <- y is looked up under (symbol <-, class x)
+		if assignmethod == nullE then buildErrorPacket("'<-': no method for object on left")
+		else applyEEE(assignmethod, left, right)))));
 setup(LeftArrowS,assigntofun);
 
 idfun(e:Expr):Expr := e;

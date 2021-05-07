@@ -6,9 +6,11 @@ newPackage(
 	  {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de"},
 	  {Name => "Frank Moore", Email => "fmoore@math.unl.edu", HomePage => "http://www.math.unl.edu/~s-wmoore3"},
 	  {Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
-	  {Name => "Greg Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"}
+	  {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"},
+	  {Name => "Lily Silverstein", Email => "lsilverstein@cpp.edu", HomePage => "https://www.cpp.edu/faculty/lsilverstein/"}
 	  },
-     Headline => "Some additional ChainComplex Functions.",
+     Headline => "some additional ChainComplex Functions",
+     Keywords => {"Homological Algebra"},
      DebuggingMode =>false
      )
 
@@ -37,6 +39,7 @@ export "nonzeroMax" -- computes the homological position of the last non-zero mo
 --for debugging purposes -- comment out when done:
 --export "chainComplexData"
 --export "chainComplexFromData"
+export "scarfComplex"
 
 substitute(ChainComplex,Ring):=(C,newRing)->(
    --- this function is just a version of substitute for chain complexes
@@ -267,7 +270,7 @@ chainComplexMap=method(
 )
 chainComplexMap(ChainComplex,ChainComplex,List):= o -> (D,C,maps) -> (
    --- the code commented out should also work, and is in some sense
-   --- more desireable as it uses map in the code.  However, something squirly
+   --- more desirable as it uses map in the code.  However, something squirly
    --- happens in the map code.
    ---    startDeg := min C;
    ---    if (o.InitialDegree != -infinity) then startDeg = o.InitialDegree;
@@ -702,6 +705,42 @@ extendFromMiddle (ChainComplex, ChainComplex, Matrix, ZZ) := (F1, F2, f, i) ->(
     map(F1, F2e, j->
 	    if j< i then map(F1_j, F2e_j,0) else fi_(j-i))
     )
+
+scarfComplex = method()
+scarfComplex(MonomialIdeal) := (I) -> (
+    R := ring I;
+    n := numgens R;
+    gensList := flatten entries gens I;
+    if #gensList == 0 then return chainComplex gens I;
+    allIndices := for i from 1 to min(n+1, #gensList) list subsets(0..(#gensList-1), i);
+    allLcms := apply(allIndices, v -> apply(v, w -> myLcm(gensList_w)));
+    uniqueLcms := keys select(tally flatten allLcms, v -> v == 1);
+    targetSubsets := allIndices_0;
+    targetList := apply(targetSubsets, v -> myLcm(gensList_v));
+    S := {gens I};
+    hdeg := 1;
+    while hdeg < min(n, #gensList) do(
+	hdeg = hdeg + 1;
+	sourceSubsets := select(allIndices_(hdeg-1), v -> member(myLcm(gensList_v), uniqueLcms));
+	sourceList := apply(sourceSubsets, v -> myLcm(gensList_v));
+	getCoeff := (i,j) -> (
+	    if (isSubset(targetSubsets_i,sourceSubsets_j)) then(
+		(-1)^(position(sourceSubsets_j, k -> k == (toList(set sourceSubsets_j - set targetSubsets_i))_0))
+		)
+	    else 0_R
+	    );
+      	myFn := (i,j) -> (
+	    tempElt := sourceList_j / targetList_i;
+	    if (liftable(tempElt,R)) then getCoeff(i,j)*lift(tempElt,R) else 0_R
+	    );
+      	S = append(S, map(R^(-apply(targetList, i -> degree i)), R^(-apply(sourceList, i -> degree i)), myFn));
+	targetSubsets = sourceSubsets;
+	targetList = sourceList;
+	if #targetList == 0 then break;
+	);
+    chainComplex S
+    )
+
 ///
 restart
 uninstallPackage "ChainComplexExtras"
@@ -807,7 +846,6 @@ document {
 		"C = koszulComplex(ideal vars R) ** (R^1/I);",
 		"m = res C;",
 		"isQuasiIsomorphism m",
-		"betti C",
 		"betti source m",
 		"C == target m"
 	     }
@@ -1547,6 +1585,123 @@ doc ///
     chainComplexData
 ///
 *-
+
+doc ///
+   Key
+    scarfComplex
+    (scarfComplex, MonomialIdeal)
+   Headline
+    constructs the algebraic Scarf complex of a monomial ideal
+   Usage
+    C = scarfComplex I
+   Inputs
+    I:MonomialIdeal
+   Outputs
+    C:ChainComplex
+   Description
+    Text
+     The algebraic Scarf complex of a monomial ideal is the sub-chain complex of the 
+     @ TO taylorResolution@ supported on subsets of generators with unique LCMs.
+    Example
+     R = QQ[a,b,c,d,e];
+     I = monomialIdeal(b^4*c^3, a*b^3*c*d^2*e, a*b^2*c^2*d*e^2, a^2*d^3*e^5, b*c^2*d^5*e^4);
+     s = scarfComplex I
+     s.dd
+    Text
+     The Scarf complex of I is always a subcomplex of the minimal free resolution of I, 
+     computed in M2 with the command {\tt res I}. In this first example the Scarf complex
+     is strictly smaller.
+    Example
+     (betti s, betti res I)
+    Text
+     In some cases, such as when I is a generic monomial ideal, the Scarf complex of I     
+     is a minimal free resolution of I. In this case {\tt scarfComplex I} and {\tt res I} will be
+     isomorphic but not necessarily equal.
+    Example 
+     I = monomialIdeal(a^2*b^11*c^7*d*e, a^5*b^10*c^2*d^3*e^2, a^6*b^8*c^11*d^2*e^3, a^3*b^5*c^3*d^5*e^4, a^8*b^2*c*d^4*e^7);
+     isExact(prependZeroMap scarfComplex I)
+     isMinimalChainComplex scarfComplex I
+     betti scarfComplex I == betti res I  
+     scarfComplex I == res I
+    Text 
+     See @TO "chain complexes"@ for an overview of chain complexes in Macaulay2.
+   SeeAlso
+    (resolution, Ideal)
+    taylorResolution
+///
+
+TEST///-- Tests for scarfComplex
+
+-- For each one we:
+-- Check that the ranks are correct 
+-- Check that the maps are defined right so we actually have a chain complex
+-- Check that the twists are correct in each hom degree, by checking that the betti keys are a subset of the MFR's betti keys
+R = QQ[a,b,c,d,e];
+I = monomialIdeal(a^2*b^11*c^7,a^5*b^10*c^2*d^2*e,a^5*b^8*c^4*d*e^2,a^2*b^5*c^4*d^5*e^4,a^8*b^2*d^3*e^7);
+SC1 = scarfComplex(I);
+assert(apply(1 + length SC1, i -> rank SC1_i) == {1, 5, 8, 3})
+assert(isChainComplex SC1)
+assert(isSubset(keys betti SC1, keys betti res I))
+
+I2 = monomialIdeal apply( {{6,2,6,6,0}, {2,4,6,8,0}, {2,13,1,3,1}, {3,4,2,10,1}, {3,11,2,1,3}, {1,3,6,5,5}, {9,3,1,0,7}}, i -> R_i);
+SC2 = scarfComplex(I2);
+assert(apply(1 + length SC2, i -> rank SC2_i) == {1, 7, 17, 15, 4})
+assert(isChainComplex SC2)
+assert(isSubset(keys betti SC2, keys betti res I2))
+
+I3 = monomialIdeal apply( {{4,14,2,0,0}, {3,14,0,2,1}, {0,12,0,4,4}, {3,4,7,0,6}, {2,7,1,4,6}, {0,0,4,9,7}}, i -> R_i);
+SC3 = scarfComplex(I3);
+assert(apply(1 + length SC3, i -> rank SC3_i) == {1, 6, 9, 3})
+assert(isChainComplex SC3)
+assert(isSubset(keys betti SC3, keys betti res I3))
+///
+
+TEST///
+-- The next ideal is strongly generic so the Scarf resolution needs to be a minimal free resolution.
+R = QQ[a,b,c,d,e];
+I = monomialIdeal(a^2*b^11*c^7*d*e, a^5*b^10*c^2*d^3*e^2, a^6*b^8*c^11*d^2*e^3, a^3*b^5*c^3*d^5*e^4, a^8*b^2*c*d^4*e^7);
+SC = scarfComplex(I);
+assert(isExact prependZeroMap SC)
+///
+
+TEST/// --using a multigraded ring
+R = QQ[a,b,c,d,e, Degrees => entries id_(ZZ^5)];
+I = monomialIdeal(a^2*b^11*c^7,a^5*b^10*c^2*d^2*e,a^5*b^8*c^4*d*e^2,a^2*b^5*c^4*d^5*e^4,a^8*b^2*d^3*e^7);
+SC1 = scarfComplex(I);
+assert(apply(1 + length SC1, i -> rank SC1_i) == {1, 5, 8, 3})
+assert(isChainComplex SC1)
+assert(isSubset(keys betti SC1, keys betti res I))
+
+I2 = monomialIdeal apply( {{6,2,6,6,0}, {2,4,6,8,0}, {2,13,1,3,1}, {3,4,2,10,1}, {3,11,2,1,3}, {1,3,6,5,5}, {9,3,1,0,7}}, i -> R_i);
+SC2 = scarfComplex(I2);
+assert(apply(1 + length SC2, i -> rank SC2_i) == {1, 7, 17, 15, 4})
+assert(isChainComplex SC2)
+assert(isSubset(keys betti SC2, keys betti res I2))
+
+I3 = monomialIdeal apply( {{4,14,2,0,0}, {3,14,0,2,1}, {0,12,0,4,4}, {3,4,7,0,6}, {2,7,1,4,6}, {0,0,4,9,7}}, i -> R_i);
+SC3 = scarfComplex(I3);
+assert(apply(1 + length SC3, i -> rank SC3_i) == {1, 6, 9, 3})
+assert(isChainComplex SC3)
+assert(isSubset(keys betti SC3, keys betti res I3))
+
+I = monomialIdeal(a^2*b^11*c^7*d*e, a^5*b^10*c^2*d^3*e^2, a^6*b^8*c^11*d^2*e^3, a^3*b^5*c^3*d^5*e^4, a^8*b^2*c*d^4*e^7);
+mSC = scarfComplex(I);
+assert(betti mSC == betti res I)
+assert(isExact prependZeroMap mSC)
+///
+
+TEST///-- Make sure scarfComplex handles zero ideal the same way res does
+R = QQ[x,y,z];
+K = monomialIdeal (0_R);
+assert (scarfComplex K == res K) 
+///
+
+TEST///-- Make sure scarfComplex handles improper ideal the same way res does
+R = QQ[x,y,z,w];
+L = monomialIdeal (1_R);
+assert (scarfComplex L == res L)
+///
+
 
 TEST///
 C = QQ^10[-1]

@@ -3,7 +3,11 @@
 // Anton Leykin's code in this file is in the public domain.
 
 #include "NAG.hpp"
-#include "matrix-con.hpp"
+
+#include "engine-includes.hpp" // need HAVE_DLFCN_H
+#include <M2/math-include.h>
+
+#include <time.h>
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
 #else
@@ -11,11 +15,15 @@
 #define dlsym(x, y) NULL
 #define dlclose(x) (-1)
 #endif
-#include <time.h>
-#include <exception>
+
+#include "interface/NAG.h"
 #include "lapack.hpp"
+#include "matrix-con.hpp"
+#include "matrix.hpp"
 #include "poly.hpp"
 #include "relem.hpp"
+
+class FreeModule;
 
 // Straight Line Program classes
 
@@ -63,7 +71,7 @@ SLP<Field>::SLP()
 template <class Field>
 SLP<Field>::~SLP()
 {
-  delete nodes;
+  deletearray(nodes);
   if (handle != NULL)
     {
       printf("closing library\n");
@@ -153,7 +161,7 @@ SLP<Field> /* or null */* SLP<Field>::make(const Matrix* m_consts,
 template <class Field>
 void SLP<Field>::make_nodes(element_type*& a, int size)
 {
-  a = newarray_atomic(complex, size);
+  a = newarray_atomic(element_type, size);
 }
 
 template <class Field>
@@ -167,7 +175,7 @@ SLP<Field> /* or null */* SLP<Field>::copy()
   make_nodes(res->nodes, num_consts + num_inputs + num_operations);
   for (int i = 0; i < num_consts; i++) res->nodes[i] = nodes[i];
   res->node_index = node_index;  // points to position in program (rel. to
-                                 // start) of operation correspoding to a node
+                                 // start) of operation corresponding to a node
   res->num_consts = num_consts;
   res->num_inputs = num_inputs;
   res->num_operations = num_operations;
@@ -1162,7 +1170,7 @@ bool solve_via_lapack(int size,
   int info;
 
   int* permutation = newarray_atomic(int, size);
-  complex* At = newarray(complex, size * size);
+  complex* At = newarray_atomic(complex, size * size);
   int i, j;
   for (i = 0; i < size; i++)
     for (j = 0; j < size; j++)  // transpose the matrix: lapack solves A^t x = b
@@ -1455,7 +1463,7 @@ PathTracker /* or null */* PathTracker::make(const Matrix* S,
 
   int n = S->n_cols() + 1;  // equals the number of variables
   p->maxDegreeTo3halves = 0;
-  p->DMforPN = newarray(double, n);
+  p->DMforPN = newarray_atomic(double, n);
   p->DMforPN[n - 1] = 1;
   p->S = S;
   p->slpS = NULL;
@@ -1657,15 +1665,15 @@ int PathTracker::track(const Matrix* start_sols)
         dt_decrease_factor_dbl);
 
   // memory distribution for arrays
-  complex* s_sols = newarray(complex, n * n_sols);
+  complex* s_sols = newarray_atomic(complex, n * n_sols);
   raw_solutions = newarray(Solution, n_sols);
-  complex* x0t0 = newarray(complex, n + 1);
+  complex* x0t0 = newarray_atomic(complex, n + 1);
   complex* x0 = x0t0;
   complex* t0 = x0t0 + n;
-  complex* x1t1 = newarray(complex, n + 1);
+  complex* x1t1 = newarray_atomic(complex, n + 1);
   //  complex* x1 =  x1t1;
   //  complex* t1 = x1t1+n;
-  complex* dxdt = newarray(complex, n + 1);
+  complex* dxdt = newarray_atomic(complex, n + 1);
   complex* dx = dxdt;
   complex* dt = dxdt + n;
   complex* Hxt = newarray_atomic(complex, (n + 1) * n);
@@ -1984,9 +1992,9 @@ Matrix /* or null */* PathTracker::refine(const Matrix* sols,
   n_sols = sols->n_rows();
 
   // memory distribution for arrays
-  complex* s_sols = newarray(complex, n * n_sols);
-  complex* dx = newarray(complex, n);
-  complex* x1t1 = newarray(complex, n + 1);
+  complex* s_sols = newarray_atomic(complex, n * n_sols);
+  complex* dx = newarray_atomic(complex, n);
+  complex* x1t1 = newarray_atomic(complex, n + 1);
   complex* x1 = x1t1;
   complex* t1 = x1t1 + n;
   complex* HxH = newarray_atomic(complex, n * (n + 1));
@@ -2129,19 +2137,19 @@ int PathTracker::getSolutionSteps(int solN)
 gmp_RRorNull PathTracker::getSolutionLastT(int solN)
 {
   if (solN < 0 || solN >= n_sols) return NULL;
-  gmp_RR result = getmemstructtype(gmp_RR);
+  gmp_RRmutable result = getmemstructtype(gmp_RRmutable);
   mpfr_init2(result, C->get_precision());
   mpfr_set_d(result, raw_solutions[solN].t, GMP_RNDN);
-  return result;
+  return moveTo_gmpRR(result);
 }
 
 gmp_RRorNull PathTracker::getSolutionRcond(int solN)
 {
   if (solN < 0 || solN >= n_sols) return NULL;
-  gmp_RR result = getmemstructtype(gmp_RR);
+  gmp_RRmutable result = getmemstructtype(gmp_RRmutable);
   mpfr_init2(result, C->get_precision());
   mpfr_set_d(result, raw_solutions[solN].cond, GMP_RNDN);
-  return result;
+  return moveTo_gmpRR(result);
 }
 
 void PathTracker::text_out(buffer& o) const
@@ -2177,8 +2185,8 @@ void PathTracker::text_out(buffer& o) const
 void Solution::make(int m, const complex* s_s)
 {
   this->n = m;
-  x = newarray(complex, m);
-  start_x = newarray(complex, m);
+  x = newarray_atomic(complex, m);
+  start_x = newarray_atomic(complex, m);
   copy_complex_array<ComplexField>(m, s_s, start_x);
 }
 

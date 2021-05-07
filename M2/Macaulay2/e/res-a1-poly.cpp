@@ -276,7 +276,7 @@ vec res_poly::to_vector(const resterm *f,
   return H.value();
 }
 
-resterm *res_poly::from_vector(const array<res_pair *> &base, const vec v) const
+resterm *res_poly::from_vector(const VECTOR(res_pair *)& base, const vec v) const
 {
   resterm head;
   resterm *result = &head;

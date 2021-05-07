@@ -1,4 +1,12 @@
 TO DO
+29 Nov 2018: checklist to finish before merging into master.
+    1. GF (big-gf-flint): need to copy object to GC memory when we save it.
+    2. PointArray leak.
+    3. NAG memory leaks (could wait until after the merge).
+    4. make sure configure scripts can use built in mpir, flint.
+    5. speed of e.g. gb over QQ or ZZ.
+    6. make sure: all tests and example run correctly.  On multiple machines.
+    7. gmp.d has warning message: remove those.
 24 Oct 2018:
   Check for slow downs vs. 1.12
     bugs/anton/MEMORY-LEAKS/eigen-leaks.m2 (
@@ -36,7 +44,7 @@ TO DO
 
 previous notes:
     Plan #1:
-    D Langauge: where is the doc for it? (ans: in c/README)
+    D Language: where is the doc for it? (ans: in c/README)
     have types:
       gmpZZ = mpz_ptr_GC
     also:

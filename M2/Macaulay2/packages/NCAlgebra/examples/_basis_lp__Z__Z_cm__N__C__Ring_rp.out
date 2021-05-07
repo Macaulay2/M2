@@ -36,7 +36,7 @@ o5 : NCIdeal
 
 i6 : B = A/I
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12160-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12160-0/3.ter ... Complete!
+Complete!
 
 o6 = B
 
@@ -44,8 +44,7 @@ o6 : NCQuotientRing
 
 i7 : bas = basis(4,B)
 
-     |  4   2           3          2 2     2    3   4   3          2            2    3  |
-o7 = | x   x yx  yxyx  x y  xyxy  x y   yxy   xy   y   x z  xyxz  x yz  yxyz  xy z  y z |
+o7 = | x^4 x^2*y*x y*x*y*x x^3*y x*y*x*y x^2*y^2 y*x*y^2 x*y^3 y^4 x^3*z x*y*x*z x^2*y*z y*x*y*z x*y^2*z y^3*z |
 
 o7 : NCMatrix
 

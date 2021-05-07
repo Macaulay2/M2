@@ -1,12 +1,7 @@
 #!/bin/sh -e
 prefix=@prefix@
-DUMPDATA=@DUMPDATA@
 case "$1" in
-    abort-upgrade|configure)
-	if [ "$DUMPDATA" = yes ]
-	then @bindir@/M2@EXE@ --dumpdata
-	fi
-	;;
+    abort-upgrade|configure) ;;
     abort-remove|abort-deconfigure) ;;
     *) echo "postinst called with unknown argument \`$1'" >&2
        exit 1 ;;

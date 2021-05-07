@@ -1,0 +1,34 @@
+#! /bin/bash
+
+mkdir -p overnight-logs
+out=overnight-logs/LOG-`date +%Y%m%d.%H%M`
+
+(
+      echo "-*- mode: compilation; default-directory: \"`pwd`\" -*-"
+      unset PKG_CONFIG_PATH
+      exec 2>&1
+      . ~/.profile
+      ulimit -c unlimited
+      set -xe
+      # export FC=gfortran
+      make -f Makefile.overnight
+   ) >$out
+ret=$?
+
+if [ $ret = 0 ]
+then echo === SUCCESS ===
+     head -20 $out
+     echo ...
+     grep '^\(heads/\|git-description:\)' $out
+     echo ...
+     tail -5 $out
+else echo === FAILURE === see $out ===
+     grep ' \*\*\* \|^[^ ]*: error: \|^[^ ]*:[1-9][0-9]*: undefined reference\|^[^ ]*: (output file) error: \|^error: \|^fatal: \|test .* failed\|^# FAIL:  [1-9]\|^# FAIL: [1-9]\|warning: jobserver unavailable\|heads/\|.*:(.*): undefined reference to \|git-description:' $out
+     echo === FAILURE ===
+fi
+
+date
+
+# Local Variables:
+# compile-command: "./overnight-build"
+# End:

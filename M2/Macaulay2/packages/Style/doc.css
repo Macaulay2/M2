@@ -47,7 +47,7 @@ table.examples {
      border-right-color: #50b0b0;
      border-width: 3px;
      border-spacing: 0px;
-     font-size: 75%;
+     font-size: 100%;		/* formerly was 75% */
      line-height: 110%;		/* 122% seems to be the default, and 100% leaves almost no space between lines */
 }
 table.examples td {

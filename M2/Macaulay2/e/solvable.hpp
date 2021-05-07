@@ -30,7 +30,7 @@ class SolvableAlgebra : public PolyRing
     return this;
   }
   virtual SolvableAlgebra *cast_to_SolvableAlgebra() { return this; }
-  virtual ring_elem power(const ring_elem f, mpz_t n) const;
+  virtual ring_elem power(const ring_elem f, mpz_srcptr n) const;
   virtual ring_elem power(const ring_elem f, int n) const;
 
  public:

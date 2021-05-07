@@ -1,11 +1,13 @@
 // Copyright 2010 Michael E. Stillman
 
 #include "tower.hpp"
+
 #include "dpoly.hpp"
 #include "ring.hpp"
 #include "varpower.hpp"
 #include "ringmap.hpp"
 #include "polyring.hpp"
+#include "monoid.hpp"
 
 Tower::~Tower() {}
 bool Tower::initialize(long charac0,
@@ -110,10 +112,10 @@ ring_elem Tower::from_int(mpz_srcptr n) const
   return TOWER_RINGELEM(f);
 }
 
-bool Tower::from_rational(mpq_ptr q, ring_elem &result) const
+bool Tower::from_rational(mpq_srcptr q, ring_elem &result) const
 {
   poly f;
-  if (not D->set_from_rational(f, q)) return false;
+  if (not D->set_from_mpq(f, q)) return false;
   result = TOWER_RINGELEM(f);
   return true;
 }
@@ -375,7 +377,7 @@ int Tower::extension_degree(int firstvar) const
 }
 
 ring_elem Tower::power_mod(const ring_elem f,
-                           mpz_t n,
+                           mpz_srcptr n,
                            const ring_elem g) const  // f^n mod g
 {
   poly f1 = TOWER_VAL(f);
@@ -500,6 +502,7 @@ ring_elem Tower::translateFromTower(const PolynomialRing *P, ring_elem fT) const
 }
 #endif
 
+extern "C" // TODO: remove when this function is in e/interface
 const RingElement *rawTowerTranslatePoly(const Ring *newRing,
                                          const RingElement *F)
 {

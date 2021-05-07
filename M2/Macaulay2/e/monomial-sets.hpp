@@ -191,7 +191,7 @@ public:
 
   // There are two ways to insert monomials.
   // 1. the monomial was just allocated on monomialMemorySpace().
-  // 2. the momomial exists outside of htis memory block.
+  // 2. the momomial exists outside of this memory block.
   // In the latter case, the monomial will be copied to the block.
   //
   // Another way is to insert a monomial via a transformer function.  TODO.
@@ -249,7 +249,7 @@ public:
 
   // There are two ways to insert monomials.
   // 1. the monomial was just allocated on monomialMemorySpace().
-  // 2. the momomial exists outside of htis memory block.
+  // 2. the momomial exists outside of this memory block.
   // In the latter case, the monomial will be copied to the block.
   //
   // Another way is to insert a monomial via a transformer function.  TODO.

@@ -57,9 +57,6 @@ value
 #ifdef MPWC
 char errfmt  [] = "    File \"%s\"; Line %d # Column %d: %s\n";
 char errfmtnc[] = "    File \"%s\"; Line %d # %s\n";
-#elif defined(_WIN32) && !defined(__CYGWIN32__)
-char errfmt  [] = "%s(%d) : column %d : %s\n";
-char errfmtnc[] = "%s(%d) : %s\n";
 #else
 char errfmt  [] = "%s:%d:%d: %s\n";
 char errfmtnc[] = "%s:%d: %s\n";

@@ -24,19 +24,20 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
 // copy constructor
 template <typename RT>
 SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(const SLEvaluatorConcrete<RT>& a)
-    : mRing(a.ring()), values(a.values.size())
+    : SLEvaluator(a), mRing(a.ring()), values(a.values.size())
 {
   slp = a.slp;
   varsPos = a.varsPos;
   auto i = values.begin();
   auto j = a.values.begin();
   for (; i != values.end(); ++i, ++j) ring().init_set(*i, *j);
+  // std::cout << "SLEvaluatorConcrete: copy constructor for " << this << std::endl;
 }
 
 template <typename RT>
 SLEvaluatorConcrete<RT>::~SLEvaluatorConcrete()
 {
-  //std::cout << "SLEvaluatorConcrete: deleting values" << std::endl;
+  // std::cout << "~SLEvaluatorConcrete: " << this << std::endl
   for (auto& v : values) ring().clear(v);
 }
 
@@ -55,16 +56,17 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
     varsPos.push_back(slp->inputCounter + vPos->array[i]);
   values.resize(slp->inputCounter + slp->mNodes.size());
   for (auto i = values.begin(); i != values.end(); ++i) ring().init(*i);
-  // R = consts->get_ring();
   for (int i = 0; i < cPos->len; i++)
     ring().set(values[slp->inputCounter + cPos->array[i]],
                consts->getMat().entry(0, i));
+  // std::cout << "SLEvaluatorConcrete(MutableMat): " << this << std::endl;
 }
 
 template <typename RT>
 SLEvaluator* SLEvaluatorConcrete<RT>::specialize(
     const MutableMatrix* parameters) const
 {
+  // std::cout << "SLEvaluatorConcrete::specialize:" << this << std::endl;
   auto p = dynamic_cast<const MutableMat<DMat<RT> >*>(parameters);
   if (p == nullptr)
     {
@@ -82,7 +84,7 @@ SLEvaluator* SLEvaluatorConcrete<RT>::specialize(
     ERROR("1-column matrix expected; or #parameters > #vars");
     return nullptr;
   }
-  auto* e = new SLEvaluatorConcrete<RT>(*this);
+  SLEvaluatorConcrete<RT>* e = new SLEvaluatorConcrete<RT>(*this);
   size_t nParams = parameters->n_rows();
   for (int i = 0; i < nParams; ++i)
     ring().set(e->values[varsPos[i]], parameters->getMat().entry(i, 0));
@@ -432,7 +434,7 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
       // dt is an increment for t on the interval [0,1]
       R.set(dt, t_step);
       C.subtract(dc, c_end, c_init);
-      C.abs(abs2dc, dc);  // don't wnat to create new temporary elts: reusing dc
+      C.abs(abs2dc, dc);  // don't want to create new temporary elts: reusing dc
                           // and abs2dc
       R.divide(dt, dt, abs2dc);
 
@@ -761,6 +763,14 @@ template <typename RT, typename Algorithm>
 void HomotopyConcrete<RT, Algorithm>::text_out(buffer& o) const
 {
   o << "HomotopyConcrete<...,...> : track not implemented" << newline;
+}
+template <typename RT>
+HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::HomotopyConcrete(
+    HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::EType& Hx,
+    HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::EType& Hxt,
+    HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::EType& HxH)
+    : mHx(Hx), mHxt(Hxt), mHxH(HxH)
+{
 }
 
 template <typename RT>

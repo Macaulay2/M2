@@ -30,8 +30,8 @@ newPackage(
 -- Contributing Author	     {Name => "Will Smith", Email => "smithw12321@gmail.com"},		
 -- Contributing Author	     {Name => "Julio Urenda", Email => "jcurenda@nmsu.edu"},	     
 	     },
-    	Headline => "Interactive visualization and manipulation of combinatorial objects in a browser",
-    	DebuggingMode => true,
+    	Headline => "interactive visualization and manipulation of combinatorial objects in a browser",
+	Keywords => {"Graphics"},
 	PackageExports => {"Graphs", "Posets", "SimplicialComplexes"},
 	AuxiliaryFiles => true,
 	Configuration => {"DefaultPath" => null } 
@@ -490,7 +490,7 @@ visualize(SimplicialComplex) := commonVisOpts|{VisTemplate => basePath | "Visual
 
 -*
 --input: A parameterized surface in RR^3
---output: The surface in the browswer
+--output: The surface in the browser
 --
 visualize(List) := {VisPath => defaultPath, VisTemplate => basePath | "Visualize/templates/visSurface/Graphulus-Surface.html", Warning => true} >> opts -> P -> (
     local visTemp; local stringList;
@@ -648,7 +648,7 @@ installMethod(closePort, () -> (
 )
 
 -- Input: none
--- Output: Error is user trys to run 'visualize' without first opening a port.
+-- Output: Error is user trying to run 'visualize' without first opening a port.
 --
 openPortTest = method()
 installMethod(openPortTest, () -> (
@@ -674,7 +674,7 @@ server = () -> (
     stderr << "-- Visualizing. Your browser should open automatically." << endl <<  "-- Click 'End Session' in the browser when finished." << endl;
     while true do (
         wait {listener};
-        g := openInOut listener; -- this should be interruptable! (Dan's Comment, not sure what it means)
+        g := openInOut listener; -- this should be interruptible! (Dan's Comment, not sure what it means)
         r := read g;
         if opts.Verbose then stderr << "request: " << stack lines r << endl << endl;
         r = lines r;

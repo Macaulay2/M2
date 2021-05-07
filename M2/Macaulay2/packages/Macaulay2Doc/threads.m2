@@ -29,7 +29,7 @@ Node
     @ TO "allowableThreads" @, and may be examined and changed as follows.
   Example
        allowableThreads
-       allowableThreads = 8
+       allowableThreads = 4
   Text
     To run a function in another thread use @ TO schedule @, as in the
     following example.
@@ -132,7 +132,7 @@ Node
    n
    isReady t
    cancelTask t
-   sleep 1
+   sleep 2
    t
    n
    sleep 1
@@ -157,7 +157,7 @@ Node
  Outputs
   :
    a new task computing the value of the {\tt f(x)}, or, if {\tt x} is not provided, then of {\tt f()}.
-   Alternatively, the task {\tt t}, created previously with @ TO createTask @, is sheduled for execution.
+   Alternatively, the task {\tt t}, created previously with @ TO createTask @, is scheduled for execution.
  Description
   Text
    The computation proceeds in the background, in a thread.  The status of the task can be observed

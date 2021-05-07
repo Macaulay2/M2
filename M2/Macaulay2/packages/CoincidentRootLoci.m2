@@ -1,18 +1,18 @@
 
-if version#"VERSION" < "1.11" then error "this package requires Macaulay2 version 1.11 or newer";
+if version#"VERSION" < "1.15" then error "this package requires Macaulay2 version 1.15 or newer";
 
 newPackage(
        "CoincidentRootLoci",
-	Version => "0.1.1", 
-        Date => "June 1, 2018",
-    	Headline => "A package for computations with coincident root loci",
-        Authors => {{Name => "M. C. Brambilla", Email => "brambilla@dipmat.univpm.it"},
-                    {Name => "G. Staglianò", Email => "giovannistagliano@gmail.com"}},
+	Version => "0.1.3", 
+        Date => "January 30, 2021",
+    	Headline => "coincident root loci",
+        Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
+	Keywords => {"Real Algebraic Geometry", "Interfaces"},
         PackageExports => {"Cremona","Resultants"},
         DebuggingMode => false,
         AuxiliaryFiles => true,
         OptionalComponentsPresent => try get "!qepcad -h 2>&1" then true else false,
-        CacheExampleOutput => true,
+        CacheExampleOutput => false,
         Reload => false
 )
 
@@ -31,7 +31,8 @@ export{"apolar",
        "randomInCoisotropic",
        "generic",
        "projectiveJoin",
-       "tangentSpace"
+       "projectiveTangentSpace",
+       "polarDegrees"
 }
 
 load "./CoincidentRootLoci/equationsCRL.m2";
@@ -48,6 +49,8 @@ KK = QQ;
 CRLOCUS := local CRLOCUS;
 
 CoincidentRootLocus = new Type of MutableHashTable;
+
+CoincidentRootLocus.synonym = "coincident root locus";
 
 coincidentRootLocus = method(TypicalValue => CoincidentRootLocus, Dispatch => Thing, Options => {Variable => VAR});
 
@@ -94,7 +97,7 @@ CRL = coincidentRootLocus;
 
 JoinOfCoincidentRootLoci = new Type of MutableHashTable;
 
-dualOfCoincidentRootLocus = method(TypicalValue => JoinOfCoincidentRootLoci);
+dualOfCoincidentRootLocus = method();
 
 dualOfCoincidentRootLocus (CoincidentRootLocus) := (X) -> ( 
    l := partition X;
@@ -129,7 +132,15 @@ expression JoinOfCoincidentRootLoci := (Z) -> (
 
 net CoincidentRootLocus := (X) -> net expression X;
 
+CoincidentRootLocus#{Standard,AfterPrint} = CoincidentRootLocus#{Standard,AfterNoPrint} = X -> (
+  << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Coincident root locus" << endl;
+);
+
 net JoinOfCoincidentRootLoci := (Z) -> net expression Z;
+
+JoinOfCoincidentRootLoci#{Standard,AfterPrint} = JoinOfCoincidentRootLoci#{Standard,AfterNoPrint} = X -> (
+  << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Join of ", << #(X#"listCRloci") <<" coincident root loci" << endl;
+);
 
 toString CoincidentRootLocus := (X) -> "CRL("|toString partition X|","|toString coefficientRing X|","|"Variable=>"|toString X#"variable"|")"; 
 
@@ -190,7 +201,7 @@ singularLocus (CoincidentRootLocus) := (X) -> ( -- Chipalkatti - On equations de
    X#"singularLocus"
 );
 
-dual (CoincidentRootLocus) := JoinOfCoincidentRootLoci => {} >> o -> X -> (
+dual (CoincidentRootLocus) := {} >> o -> X -> (
    if X#"dual" === null then X#"dual" = dualOfCoincidentRootLocus X;
    X#"dual"
 );
@@ -407,8 +418,8 @@ CoincidentRootLocus + CoincidentRootLocus := (X,Y) -> ( -- intersection, undocum
    if #E == 1 then first E else E
 );
 
-tangentSpace = method() -- undocumented
-tangentSpace (CoincidentRootLocus,RingElement) := (X,F) -> (
+projectiveTangentSpace = method()
+projectiveTangentSpace (CoincidentRootLocus,RingElement) := (X,F) -> (
    checkBinaryForm F;
    if first degree F =!= X#"ambient" then error("expected a binary form of degree "|toString(X#"ambient"));
    if coefficientRing ring F =!= coefficientRing X then error("expected a binary form over "|toString(coefficientRing X));
@@ -416,14 +427,57 @@ tangentSpace (CoincidentRootLocus,RingElement) := (X,F) -> (
    J := sub(jacobian ideal X,apply(gens ring X,switch1 F,(x,s) -> x => s));
    sub(switch2 ideal((vars ring X) * J),vars ring F)
 );
-tangentSpace (Ideal,Ideal) := (I,p) -> (
-   if ring p =!= ring I then error "common ring not found";
-   if not isPolynomialRing ring I then error "expected a polynomial ring";
-   if not (isHomogeneous I and isHomogeneous p) then error "expected homogeneous ideals";
-   if not (dim p == 1 and degree p == 1 and unique degrees p == {{1}}) then error "expected second argument to be the ideal of a point";
-   if not isSubset(I,p) then error "expected a point of the variety";
-   subs := apply(gens ring I,flatten entries coefficients parametrize p,(x,s) -> x => s);
-   trim ideal((vars ring I) * sub(jacobian I,subs))
+
+--================================================================
+--===== Polar degrees of CRL =====================================
+--================================================================
+
+polarDegrees = method();
+polarDegrees (CoincidentRootLocus) := (X) -> (
+   lambda := partition X;
+   n := #lambda;
+   e := n - (X#"multiplicities")_1;
+   -- to be replaced "degree dual CRL" with the explicit Oeding formula
+   P := for j to e list lift((sum(conj(lambda,j),u -> (last u) * degree dual CRL(first u,ZZ/101)))/(n-j+1),ZZ);
+   P | toList(n-e : 0)
+);
+
+conj = method();
+conj (List,ZZ) := (lambda,j) -> (
+   n := #lambda;
+   r := sum lambda;
+   d := n + r - j;
+   D := descendantsPartitions(lambda,j);
+   F := apply(D,a -> (apply(a|toList((n-#a):0),i->i+1),partitionMultiplicity(a,lambda)));
+   select(F,y -> #select(first y,u -> u==1) == 0)
+);
+
+partitionMultiplicity = method()
+partitionMultiplicity (List,List) := (lambda',lambda) -> (
+   try assert(ring matrix {lambda} === ZZ and min lambda > 0 and ring matrix {lambda'} === ZZ and min lambda' > 0) else error "expected lists of positive integers";
+   lambda = rsort lambda;
+   lambda' = rsort lambda';
+   n := #lambda;
+   lambda' = lambda'|toList((n-#lambda'):0);
+   r := sum lambda;
+   r' := sum lambda';
+   j := r-r';
+   J := toList (set {0,1})^**n;
+   for i to n-3 do J = apply(J,splice);
+   J = select(apply(J,toList),a -> sum a == j);
+   A := select(J,a -> rsort(lambda' + a) == lambda);
+   #A
+);
+
+descendantsPartitions = method()
+descendantsPartitions (List,ZZ) := (lambda,j) -> (
+   try assert(ring matrix {lambda} === ZZ and min lambda > 0) else error "expected a list of positive integers";
+   lambda = rsort lambda;
+   n := #lambda;
+   J := toList (set {0,1})^**n;
+   for i to n-3 do J = apply(J,splice);
+   J = select(apply(J,toList),a -> sum a == j);
+   unique apply(J,a -> rsort flatten entries compress matrix{lambda - a})
 );
 
 --================================================================
@@ -646,7 +700,7 @@ isRealRootedViaQEPCAD (RingElement) := o -> (F) -> (
    (dir|"-input") << S << close;
    C := "qepcad +N"|toString(first o.QepcadOptions)|" +L"|toString(last o.QepcadOptions)|" < '"|dir|"-input'";
    if o.Verbose then << "--running " << C << endl;
-   try (Out := get("!"|C); if CLEAR then removeFile(dir|"-input")) else error "error occured while executing QEPCAD. Please make sure that it is installed and configured correctly.";
+   try (Out := get("!"|C); if CLEAR then removeFile(dir|"-input")) else error "error occurred while executing QEPCAD. Please make sure that it is installed and configured correctly.";
    jj := toList first regex("An equivalent quantifier-free formula:"|newline|newline,Out);
    V := substring(Out,sum jj,5);
    if V === "TRUE"|newline then return true else if V === "FALSE" then return false else (
@@ -771,7 +825,7 @@ realroots (RingElement) := o -> (F) -> (
    F = sub(F,vars R);
    f := sub(sub(F,y => 1),K[x]);
    ro := toList(((first degree F) - (first degree f)) : [1.0,0.0]);
-   ro = ro | apply(select(roots f,a -> a == realPart a),r -> [realPart r,1.0]);
+   ro = ro | apply(select(roots f,a -> abs(imaginaryPart a) < 0.0000001),r -> [realPart r,1.0]);
    if o.Verbose then (
       <<"number real roots: "<<#ro<<endl;
       <<"number distinct real roots: "<<#unique ro<<endl;
@@ -866,7 +920,7 @@ joinOfAffineParameterizations (Thing) := o -> U -> (
     trim sub(sub(ideal selectInSubring(1,gens gb(W,SubringLimit=>o.SubringLimit)),K[z_0..z_N]),vars ringPN)
 );
 
-joinOfHooks = method(TypicalValue => JoinOfCoincidentRootLoci, Dispatch => Thing);
+joinOfHooks = method(Dispatch => Thing);
 joinOfHooks (Thing) := U -> (
     U = sequence U;
     r := #U-1;
@@ -1037,5 +1091,6 @@ load "./CoincidentRootLoci/documentation.m2"
 load "./CoincidentRootLoci/tests.m2"
 
 welcome := "CoincidentRootLoci v."|CoincidentRootLoci.Options.Version|" loaded successfully (last updated: "|CoincidentRootLoci.Options.Date|")";
--- if (options CoincidentRootLoci)#OptionalComponentsPresent then <<concatenate(#welcome:"*")<<endl<<welcome<<endl<<concatenate(#welcome:"*")<<endl else <<"--warning: Qepcad required but not present"<<endl;
+if notify then
+  if (options CoincidentRootLoci)#OptionalComponentsPresent then <<concatenate(#welcome:"*")<<endl<<welcome<<endl<<concatenate(#welcome:"*")<<endl else <<"--warning: Qepcad required but not present"<<endl;
 

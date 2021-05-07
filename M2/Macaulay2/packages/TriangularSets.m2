@@ -8,7 +8,8 @@ newPackage(
        Email => "diegcif@mit.edu",
        HomePage => "http://www.mit.edu/~diegcif"}
     },
-    Headline => "A package for triangular decompositions of ideals",
+    Headline => "triangular decompositions of ideals",
+    Keywords => {"Commutative Algebra"},
     AuxiliaryFiles => true,
     PackageImports => {"Binomials","MapleInterface","Elimination"},
     PackageExports => {}
@@ -572,7 +573,7 @@ reduceDecomposition = TT -> (
     return select(TT, T->minl#T);
 )
 
--- minimial elements of a partial order
+-- minimal elements of a partial order
 -- cmp(a,b) = 1 if a>=b
 -- cmp(a,b) = -1 if a<b
 -- cmp(a,b) = 0 if incomparable 

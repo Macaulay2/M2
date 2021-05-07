@@ -19,11 +19,26 @@
 //   [polyring,skew,weyl,solvable]
 //   quotient ideal
 
-#include "ring.hpp"
-#include "skew.hpp"
-// #include "ntuple.hpp"
-#include "coeffrings.hpp"
+#include <M2/math-include.h>
+#include "engine-includes.hpp"
+
 #include <iostream>
+#include <string>
+
+#include "buffer.hpp"
+#include "monoid.hpp"
+#include "newdelete.hpp"
+#include "ringelem.hpp"
+#include "skew.hpp"
+#include "style.hpp"
+
+class CoefficientRingZZp;
+class FreeModule;
+class Ring;
+class SolvableAlgebra;
+class WeylAlgebra;
+class gbvectorHeap;
+class stash;
 
 struct gbvector
 {
@@ -39,10 +54,7 @@ struct POLY
   gbvector *fsyz;
 };
 
-class TermIdeal;
 typedef int *monomial;
-
-class gbvectorHeap;
 
 class GBRing : public our_new_delete
 {
@@ -127,7 +139,7 @@ class GBRing : public our_new_delete
 
   void divide_coeff_exact_to_ZZ(gbvector *f, gmp_ZZ u) const;
 
-  void lower_content_ZZ(gbvector *f, gmp_ZZ content) const;
+  void lower_content_ZZ(gbvector *f, mpz_ptr content) const;
 
   void gbvector_remove_content_ZZ(gbvector *f,
                                   gbvector *fsyz,
@@ -185,7 +197,7 @@ class GBRing : public our_new_delete
 
   size_t exponent_byte_size() const { return exp_size; }
   // use ALLOCATE_EXPONENTS(R->exponent_byte_size())
-  // to allocate on the stack an unitialized exponent vector (#ints = nvars+2)
+  // to allocate on the stack an uninitialized exponent vector (#ints = nvars+2)
   // it will be deallocated at the end of that function
 
   //////////////////////

@@ -63,9 +63,6 @@ dummyDebuggerFun(f:Frame,c:Code):Expr := nullE;
 export debuggerFun := dummyDebuggerFun;
 export handleInterrupts := true;
 (threadLocal export stopIfError := true) = false;
-foreach s in argv do
-  if s === "--stop" then stopIfError = true else
-  if s === "--int" then (handleInterrupts = false; handleInterruptsSetup(handleInterrupts););
 (threadLocal export debuggingMode := false) = true;
 
 export printIfError(e:Expr):void := (

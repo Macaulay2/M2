@@ -5,6 +5,10 @@ VERSION = 27b11
 PRECONFIGURE = autoreconf -i
 TARFILE = nauty$(VERSION).tar.gz
 TARDIR = nauty$(VERSION)
+
+# --enable-generic disallows -march=native, otherwise it is tested for
+CONFIGOPTIONS = --enable-generic
+
 PROGRAMS = NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg \
 	   directg dreadnaut dretog genbg geng genrang gentourng labelg listg \
 	   multig newedgeg pickg planarg shortg showg
@@ -15,6 +19,11 @@ STRIPFILES = NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg 
 	newedgeg pickg planarg ranlabg shortg showg subdivideg watercluster2
 LICENSEFILES = nauty.h
 INSTALLCMD = true
+
+# gcc 8.3 needs more memory
+MLIMIT = 500000
+VLIMIT = 500000
+
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/nauty/Makefile
 # Local Variables:

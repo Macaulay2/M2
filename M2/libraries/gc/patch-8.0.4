@@ -1,0 +1,18 @@
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/gc/tmp/gc-8.0.4/darwin_stop_world.c gc-8.0.4/darwin_stop_world.c
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/gc/tmp/gc-8.0.4/darwin_stop_world.c	2019-03-02 02:54:41.000000000 -0600
++++ gc-8.0.4/darwin_stop_world.c	2019-11-01 11:44:11.000000000 -0500
+@@ -23,6 +23,14 @@
+ 
+ #include <sys/sysctl.h>
+ #include <mach/machine.h>
++
++/* take from <dispatch/object.h> */
++#if __has_include(<sys/qos.h>)
++typedef qos_class_t dispatch_qos_class_t;
++#else
++typedef unsigned int dispatch_qos_class_t;
++#endif
++
+ #include <CoreFoundation/CoreFoundation.h>
+ 
+ /* From "Inside Mac OS X - Mach-O Runtime Architecture" published by Apple

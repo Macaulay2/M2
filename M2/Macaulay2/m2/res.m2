@@ -5,8 +5,11 @@ inf := t -> if t === infinity then -1 else t
 spots := C -> select(keys C, i -> class i === ZZ)
 
 defaultResolutionLength := (R) -> (
-     numgens R + 1 + if ZZ === ultimate(coefficientRing, R) then 1 else 0
-     )
+    A := ultimate(coefficientRing, R);
+    nvars := # generators(R, CoefficientRing => A);
+    nvars + 1 + if A === ZZ then 1 else 0
+    -- numgens R + 1 + if ZZ === ultimate(coefficientRing, R) then 1 else 0
+    )
 
 resolutionLength := (R,opts) -> (
      if opts.LengthLimit == infinity then defaultResolutionLength R else opts.LengthLimit
@@ -128,7 +131,7 @@ resolutionInEngine := opts -> (M) -> (
      if C.?Resolution then (
 	  W = C.Resolution;
 	  if not W.?returnCode 
-	  or RawStatusCodes#(W.returnCode) =!= "done"
+	  or not isComputationDone W.returnCode
 	  or W.length < maxlevel
 	  or W.DegreeLimit < degreelimit
 	  then (
@@ -207,7 +210,7 @@ storefuns#resolution = (M,C) -> M.cache.ManualResolution = C
 
 resolution Module := ChainComplex => o -> (M) -> (
      if M.cache.?ManualResolution then return M.cache.ManualResolution;
-     C := runHooks(Module,symbol resolution,(o,M));
+     C := runHooks((resolution, Module), (o, M));
      if C =!= null then return C;
      R := ring M;
      if isField R then return chainComplex map(minimalPresentation M,R^0,0);
@@ -312,7 +315,7 @@ resolutionNonminimal = (opts,M) -> (
     if C.?Resolution then (
         W = C.Resolution;
         if not W.?returnCode 
-        or RawStatusCodes#(W.returnCode) =!= "done"
+        or not isComputationDone W.returnCode
         or W.length < maxlevel
         or W.DegreeLimit < degreelimit
         then (
@@ -344,7 +347,8 @@ resolutionNonminimal = (opts,M) -> (
                 W.DegreeLimit = degreelimit;
                 )));
     break C)
-addHook(Module, symbol resolution, resolutionNonminimal)
+addHook((resolution, Module), Strategy => FastNonminimal, resolutionNonminimal)
+
 -----------------------------------------------------------------------------
 getpairs := g -> rawGBBetti(raw g,1)
 remaining := g -> rawGBBetti(raw g,2)

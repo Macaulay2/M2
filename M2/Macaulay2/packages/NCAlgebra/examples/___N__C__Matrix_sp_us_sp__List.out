@@ -8,41 +8,30 @@ o1 : NCPolynomialRing
 
 i2 : M = ncMatrix {{a,b,c,d},{b,c,d,a}}
 
-o2 = | a  b  c  d |
-     |            |
-     | b  c  d  a |
+o2 = | a b c d |
+     | b c d a |
 
 o2 : NCMatrix
 
 i3 : N = M || 2*M || -3*M
 
-o3 = |  a    b    c    d  |
-     |                    |
-     |  b    c    d    a  |
-     |                    |
-     |  2a   2b   2c   2d |
-     |                    |
-     |  2b   2c   2d   2a |
-     |                    |
-     | -3a  -3b  -3c  -3d |
-     |                    |
-     | -3b  -3c  -3d  -3a |
+o3 = | a    b    c    d    |
+     | b    c    d    a    |
+     | 2*a  2*b  2*c  2*d  |
+     | 2*b  2*c  2*d  2*a  |
+     | -3*a -3*b -3*c -3*d |
+     | -3*b -3*c -3*d -3*a |
 
 o3 : NCMatrix
 
 i4 : N_{0,2}
 
-o4 = |  a    c  |
-     |          |
-     |  b    d  |
-     |          |
-     |  2a   2c |
-     |          |
-     |  2b   2d |
-     |          |
-     | -3a  -3c |
-     |          |
-     | -3b  -3d |
+o4 = | a    c    |
+     | b    d    |
+     | 2*a  2*c  |
+     | 2*b  2*d  |
+     | -3*a -3*c |
+     | -3*b -3*d |
 
 o4 : NCMatrix
 

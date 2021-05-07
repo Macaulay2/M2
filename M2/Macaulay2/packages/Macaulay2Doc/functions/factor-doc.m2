@@ -35,19 +35,19 @@ document {
 	  exponent is an integer.",
 	  },
      EXAMPLE {
-	  "factor 124744878111332355674003415153753485211381849014286981744945",
-	  "y = (2^15-4)/(2^15-5)",
-      	  "x = factor y",
-      	  "value x"
-	  },
+         "factor 124744878111332355674003415153753485211381849014286981744945",
+         "y = (2^15-4)/(2^15-5)",
+      	 "x = factor y",
+      	 "value x"
+     },
      PARA {
 	  "We may ", TO "peek", " inside ", TT "x", " to a high depth to see
 	  its true structure as ", TO "Expression", "."
 	  },
      EXAMPLE "peek'(100,x)",
      PARA {
-	  "For integers, factorization is done by ", TO "pari", TEX ", and the factors $x$ are actually
-	  just pseudoprimes, as described in the documentation of ", TO "isPseudoprime", "."
+	  "For integers, factorization is done by ", TO "FLINT", TEX ", and the factors $x$ are actually
+	  just probably prime, as described in the documentation of ", TO "isPseudoprime", "."
 	  },
      PARA {
 	  "For multivariate polynomials the

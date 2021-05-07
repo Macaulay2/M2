@@ -51,6 +51,7 @@ solveSystem PolySystem := List => o -> P -> (
      F := equations P; 
      R := ring F#0;
      v := flatten entries vars R;
+     if numgens R == 0 then error "expected at least one variable";
      if numgens R > #F then error "expected a 0-dimensional system";
      if member(o.Software, {M2,M2engine,M2enginePrecookedSLPs}) then ( 
 	  if o.Normalize then F = apply(F,normalize);
@@ -117,7 +118,7 @@ solveSystem PolySystem := List => o -> P -> (
 
 totalDegreeStartSystem = method(TypicalValue => Sequence)
 totalDegreeStartSystem List := Sequence => T -> (
--- contructs a total degree start system and its solutions 
+-- constructs a total degree start system and its solutions 
 -- for the given target system T
 -- IN:  T = list of polynomials 
 -- OUT: (S,solsS}, where 

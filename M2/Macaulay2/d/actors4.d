@@ -3,13 +3,29 @@
 use getline;
 use actors;
 use actors2;
-use version;
 use struct;
 use pthread;
+use regex;
+
+header "// required for toString routines
+#include <engine.h>                         // for IM2_GB_to_string, rawMuta... // TODO: remove this one
+#include <interface/NAG.h>                  // for rawHomotopyToString, rawP...
+#include <interface/freemodule.h>           // for IM2_FreeModule_to_string
+#include <interface/matrix.h>               // for IM2_Matrix_to_string
+#include <interface/monoid.h>               // for IM2_Monoid_to_string
+#include <interface/monomial-ordering.h>    // for IM2_MonomialOrdering_to_s...
+#include <interface/mutable-matrix.h>       // for IM2_MutableMatrix_to_string
+#include <interface/random.h>               // for system_randomint
+#include <interface/ring.h>                 // for IM2_Ring_to_string
+#include <interface/ringelement.h>          // for IM2_RingElement_to_string
+#include <interface/ringmap.h>              // for IM2_RingMap_to_string";
 
 header "
-#include <engine.h>
-";
+#ifndef WITH_PYTHON
+#  define PyObject_Str(o)       0
+#  define PyString_AS_STRING(o) 0
+#  define Py_DECREF(o)          0
+#endif";
 
 internalName(s:string):string := (
      -- was "$" + s in 0.9.2
@@ -24,6 +40,15 @@ sleepfun(e:Expr):Expr := (
 	  else WrongArgSmallInteger(1))
      else WrongArgZZ(1));
 setupfun("sleep",sleepfun);
+
+nanosleepfun(e:Expr):Expr := (
+     when e
+     is i:ZZcell do (
+	  if isLong(i)
+	  then toExpr(nanosleep(toLong(i)))
+	  else WrongArgSmallInteger(1))
+     else WrongArgZZ(1));
+setupfun("nanosleep",nanosleepfun);
 
 forkfun(e:Expr):Expr := (
      when e
@@ -113,18 +138,8 @@ select(n:int,f:Expr):Expr := (
 	  else if y != False then return buildErrorPacket("select: expected predicate to yield true or false");
 	  );
      Expr(list(new Sequence len found do foreach p at i in b do if p then provide toExpr(i))));
-select(pat:string,rep:string,subj:string,ignorecase:bool):Expr := (
-     r := regexselect(pat,rep,subj,foo,ignorecase);
-     if r == foo then return buildErrorPacket("select: "+regexmatchErrorMessage);
-     Expr(list(new Sequence len length(r) do foreach s in r do provide toExpr(s))));
-select(e:Expr,f:Expr,ignorecase:bool):Expr := (
-     when e
-     is pat:stringCell do (
-     	  when f is subj:stringCell
-	  do select(pat.v,"\\0",subj.v,ignorecase) 
-     	  else WrongArgString(2)
-	  )
-     is obj:HashTable do (
+select(e:Expr,f:Expr):Expr := (
+     when e is obj:HashTable do (
 	  if obj.Mutable then return WrongArg(0+1,"an immutable hash table");
 	  u := newHashTable(obj.Class,obj.parent);
 	  u.beingInitialized = true;
@@ -134,7 +149,7 @@ select(e:Expr,f:Expr,ignorecase:bool):Expr := (
 		    newvalue := applyEE(f,p.value);
 		    when newvalue
 		    is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return newvalue
-		    else if newvalue == True 
+		    else if newvalue == True
 		    then (storeInHashTable(u,p.key,p.hash,p.value);)
 	  	    else if newvalue != False then return buildErrorPacket("select: expected predicate to yield true or false");
 		    p = p.next;
@@ -170,14 +185,19 @@ select(n:int,a:Sequence,f:Expr):Expr := (
 	  else b.i = false);
      new Sequence len found do (
 	  foreach p at i in b do if p then provide a.i));
-select(n:Expr,e:Expr,f:Expr,ignorecase:bool):Expr := (
-     when n is pat:stringCell do
-     when e is rep:stringCell do
-     when f is subj:stringCell do select(pat.v,rep.v,subj.v,ignorecase)
-     else WrongArgString(3)
-     else WrongArgString(2)
-     is n:ZZcell do
-     if isInt(n) then
+select(n:Expr,e:Expr,f:Expr,g:Expr,h:Expr):Expr := (
+     when n
+     is regexp:stringCell do (
+	 when e is form:stringCell do
+	 when f is text:stringCell do
+	 when g is regexFlags:ZZcell do if !isInt(regexFlags) then WrongArgSmallInteger(4) else
+	 when h is matchFlags:ZZcell do if !isInt(matchFlags) then WrongArgSmallInteger(5) else (
+	     regexSelect(regexp.v, form.v, text.v, toInt(regexFlags), toInt(matchFlags))) -- see regex.dd
+	 else WrongArgZZ(5)
+	 else WrongArgZZ(4)
+	 else WrongArgString(3)
+	 else WrongArgString(2))
+     is n:ZZcell do if isInt(n) then
      when e
      is obj:HashTable do (
 	  if obj.Mutable then return WrongArg(1+1,"an immutable hash table");
@@ -189,9 +209,9 @@ select(n:Expr,e:Expr,f:Expr,ignorecase:bool):Expr := (
 	       p := bucket;
 	       while nval > 0 && p != p.next do (
 		    newvalue := applyEE(f,p.value);
-		    when newvalue 
+		    when newvalue
 		    is err:Error do if err.message == breakMessage then return if err.value == dummyExpr then nullE else err.value else return newvalue
-		    else if newvalue == True 
+		    else if newvalue == True
 		    then (
 			 storeInHashTable(u,p.key,p.hash,p.value);
 			 nval = nval-1;
@@ -212,15 +232,13 @@ select(n:Expr,e:Expr,f:Expr,ignorecase:bool):Expr := (
      else WrongArg(0+1,"an integer or string")
      else WrongArgZZ(0+1));
 select(e:Expr):Expr := (
-     ignorecase := false;
-     when e is a:Sequence do (
-	  if length(a) == 2
-	  then select(a.0,a.1,ignorecase)
-	  else if length(a) == 3
-	  then select(a.0,a.1,a.2,ignorecase)
-	  else WrongNumArgs(2,3))  -- could change this later
-     else WrongNumArgs(2,3));
-setupfun("select",select);
+     when e is a:Sequence do
+     if length(a) == 2 then select(a.0,a.1) else
+     if length(a) == 3 then select(a.0,a.1,a.2,toExpr(defaultRegexFlags),toExpr(defaultMatchFlags)) else
+     if length(a) == 5 then select(a.0,a.1,a.2,a.3,a.4)
+     else WrongNumArgs(2,5)
+     else WrongNumArgs(2,5));
+setupfun("select", select).Protected = false; -- will be overloaded in m2/lists.m2 and m2/regex.m2
 
 any(f:Expr,n:int):Expr := (
      for i from 0 to n-1 do (
@@ -255,7 +273,7 @@ any(f:Expr,e:Expr):Expr := (
      is a:Sequence do Expr(any(f,a))
      is b:List do Expr(any(f,b.v))
      is i:ZZcell do if isInt(i) then Expr(any(f,toInt(i))) else WrongArgSmallInteger(1)
-     is c:HashTable do 
+     is c:HashTable do
      if c.Mutable then WrongArg(1,"an immutable hash table") else
      Expr(any(f,c))
      else WrongArg("a list or a hash table"));
@@ -334,7 +352,7 @@ ascii(e:Expr):Expr := (
      then toExpr((
 	  v := toIntArray(e);
 	  new string len length(v) do foreach i in v do provide char(i)))
-     else 
+     else
      when e is s:stringCell do list(
 	  new Sequence len length(s.v) do (
 	       foreach c in s.v do provide toExpr(int(uchar(c)))))
@@ -485,7 +503,7 @@ outseq(x:file,y:Sequence):Expr := (
 	       else internalName(y.symbol.word.name);
 	       )
 	  is y:ZZcell do (
-	       if isInt(y) 
+	       if isInt(y)
 	       then for toInt(y) do x << ' '
 	       else return WrongArg(2,"a string, or list or sequence of strings and small integers, or null"))
 	  is w:Sequence do (outseq(x,w);)
@@ -496,9 +514,9 @@ outstringfun(e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  if length(a) == 2 then (
-	       when a.0 
+	       when a.0
 	       is x:file do (
-		    when a.1 
+		    when a.1
 		    is y:stringCell do Expr(x << y.v)
 		    is Nothing do Expr(x)
 		    is y:SymbolClosure do (
@@ -512,7 +530,7 @@ outstringfun(e:Expr):Expr := (
 		    is y:List do outseq(x,y.v)
 		    is n:Net do Expr(x << n)
 		    is y:ZZcell do (
-			 if isInt(y) 
+			 if isInt(y)
 			 then (
 			      for toInt(y) do x << ' ';
 			      Expr(x))
@@ -522,7 +540,7 @@ outstringfun(e:Expr):Expr := (
 	       else WrongArg(1,"a file"))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
-setupfun("printString",outstringfun);			 
+setupfun("printString",outstringfun);
 
 lenseq(y:Sequence):int := (
      l := 0;
@@ -536,7 +554,7 @@ lenseq(y:Sequence):int := (
 	  is Nothing do nothing
 	  is y:SymbolClosure do l = l + length(y.symbol.word.name)
 	  is y:ZZcell do (
-	       if isInt(y) 
+	       if isInt(y)
 	       then (if toInt(y)>0 then l = l + toInt(y);)
 	       else return -1)
 	  is w:Sequence do (
@@ -556,14 +574,14 @@ stringlenfun(e:Expr):Expr := (
      is y:SymbolClosure do toExpr(length(y.symbol.word.name))
      is y:List do (
 	  l := lenseq(y.v);
-	  if l == -1 
+	  if l == -1
 	  then WrongArg(1,"a string, or list or sequence of strings and integers, or null")
 	  else toExpr(l)
 	  )
      is y:ZZcell do e
      is y:Sequence do (
 	  l := lenseq(y);
-	  if l == -1 
+	  if l == -1
 	  then WrongArg(1,"a string, or list or sequence of strings and integers, or null")
 	  else toExpr(l)
 	  )
@@ -583,7 +601,7 @@ stringcat2(a:Sequence,s:string,i:int):int := ( -- returns next available index
      i);
 export stringcatseq(a:Sequence):Expr := (
      l := lenseq(a);
-     if l == -1 
+     if l == -1
      then WrongArg("strings, integers, or symbols")
      else (
 	  s := new string len l do provide ' ';
@@ -597,10 +615,8 @@ stringcatfun(e:Expr):Expr := (
      is y:SymbolClosure do toExpr(y.symbol.word.name)
      is n:ZZcell do (
 	  if isInt(n) then (
-	       m := toInt(n);
-	       if m >= 0 
-	       then toExpr(new string len m do provide ' ')
-	       else buildErrorPacket("encountered negative integer")
+	       m := max(toInt(n), 0);
+	       toExpr(new string len m do provide ' ')
 	       )
 	  else buildErrorPacket("encountered a large integer")
 	  )
@@ -638,7 +654,7 @@ setupfun("mingle", minglefun);
 packlist(v:Sequence,n:int):Expr := (
      d := length(v);
      i := 0;
-     list(new Sequence len (d + n - 1) / n do 
+     list(new Sequence len (d + n - 1) / n do
      	  provide list(
 	       new Sequence len if n < d-i then n else d-i do (
 		    j := i;
@@ -672,10 +688,10 @@ packfun(e:Expr):Expr := (
 	       is x:Sequence do (
 		    when a.1
 		    is n:ZZcell do (
-			 if isInt(n) 
+			 if isInt(n)
 			 then (
 			      nn := toInt(n);
-			      if nn > 0 
+			      if nn > 0
 			      then packlist(x,nn)
 			      else WrongArg(2,"a positive integer"))
 			 else WrongArgSmallInteger(2))
@@ -683,17 +699,17 @@ packfun(e:Expr):Expr := (
 	       is x:List do (
 		    when a.1
 		    is n:ZZcell do (
-			 if isInt(n) 
+			 if isInt(n)
 			 then (
 			      nn := toInt(n);
-			      if nn > 0 
+			      if nn > 0
 			      then packlist(x.v,nn)
 			      else WrongArg(2,"a positive integer"))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
 	       else WrongArg(1,"a list or sequence"))
 	  else WrongNumArgs(2))
-     else WrongNumArgs(2));	  
+     else WrongNumArgs(2));
 setupfun("pack", packfun);
 
 getenvfun(e:Expr):Expr := (
@@ -729,8 +745,8 @@ isReadyFun(e:Expr):Expr := (
      -- # typical value: isReady, Task, Boolean
      is tc:TaskCell do toExpr(taskDone(tc.body.task) && !tc.body.resultRetrieved)
      -- # typical value: isReady, File, Boolean
-     is f:file do toExpr ( 
-	  f.input && !f.eof && ( f.insize > f.inindex || isReady(f.infd) > 0 ) 
+     is f:file do toExpr (
+	  f.input && !f.eof && ( f.insize > f.inindex || isReady(f.infd) > 0 )
 	  ||
 	  f.listener && (
 	       f.connection != -1
@@ -745,14 +761,14 @@ setupfun("isReady",isReadyFun);
 isCanceledFun(e:Expr):Expr := (
      when e
      -- # typical value: isCanceled, Task, Boolean
-     is tc:TaskCell do toExpr(!taskRunning(tc.body.task) && !taskKeepRunning(tc.body.task))  
+     is tc:TaskCell do toExpr(!taskRunning(tc.body.task) && !taskKeepRunning(tc.body.task))
      else WrongArg("a task"));
 setupfun("isCanceled",isCanceledFun);
 
 
 atEOFfun(e:Expr):Expr := (
      when e
-     is f:file do toExpr ( !f.input || f.eof || f.insize == f.inindex && isReady(f.infd) > 0 
+     is f:file do toExpr ( !f.input || f.eof || f.insize == f.inindex && isReady(f.infd) > 0
 	  && 0 == filbuf(f) )
      else WrongArg("a file"));
 setupfun("atEndOfFile",atEOFfun);
@@ -784,8 +800,8 @@ readyOnes(s:Sequence):array(int) := (
      );
 fdlist(s:Sequence):array(int) := (
      new array(int) len length(s) do
-     foreach f in s do 
-     when f is g:file 
+     foreach f in s do
+     when f is g:file
      do provide if g.input then g.infd else if g.listener then g.listenerfd else if g.output then g.outfd else -1
      else nothing
      );
@@ -809,7 +825,7 @@ wait(e:Expr):Expr := (
      is x:ZZcell do (
 	  if isInt(x) then (
 	       ret := wait(toInt(x));
-	       if ret == ERROR 
+	       if ret == ERROR
 	       then buildErrorPacket("wait failed")
 	       else toExpr(ret)
 	       )
@@ -832,10 +848,11 @@ readfun(e:Expr):Expr := (
 	  oldprompt := stdIO.prompt;
 	  stdIO.prompt = readpromptfun;
 	  r := getLine(stdIO);
-	  when r is e:errmsg do buildErrorPacket(e.message)
-	  is s:stringCell do (
-	       stdIO.prompt = oldprompt;
-	       Expr(s)))
+	  stdIO.prompt = oldprompt;
+	  when r
+	  is e:errmsg do buildErrorPacket(e.message)
+	  is s:stringCell do Expr(s)
+	  )
      is s:Sequence do (
 	  if length(s) == 0
 	  then readE(stdIO)
@@ -893,7 +910,7 @@ substrfun(e:Expr):Expr := (
      else if length(args) == 2 then
      when args.0
      is s:stringCell do (
-	  when args.1 
+	  when args.1
 	  is i:ZZcell do if !isInt(i) then WrongArgSmallInteger(2) else toExpr(substr(s.v,toInt(i)))
 	  else WrongArgZZ(2))
      is i:ZZcell do if !isInt(i) then WrongArgSmallInteger(1) else (
@@ -912,84 +929,9 @@ substrfun(e:Expr):Expr := (
      else WrongNumArgs(2,3)
      else WrongNumArgs(2,3));
 setupfun("substring",substrfun);
-     
-linesE(s:string):Expr := (
-     v := lines(s);
-     list(new Sequence len length(v) do foreach t in v do provide toExpr(t)));
-lines(s:string,c:char):Expr := (
-     nlines := 1;
-     i := 0;
-     while true do (
-	  j := index(s,i,c);
-	  if j == -1 then (
-     	       -- if i != length(s) then nlines = nlines + 1;
-	       break;
-	       );
-	  i = j+1;
-	  nlines = nlines + 1;
-	  );
-     i = 0;
-     list(new Sequence len nlines do (
-	       while true do (
-		    j := index(s,i,c);
-		    if j == -1 then (
-			 -- if i != length(s) then provide Expr(substr(s,i));
-			 provide toExpr(substr(s,i));
-			 break;
-			 )
-		    else (
-			 provide toExpr(substr(s,i,j-i));
-			 i = j+1;
-			 )))));
-lines(s:string,c:char,d:char):Expr := (
-     -- nlines := 0;
-     nlines := 1;
-     i := 0;
-     while true do (
-	  j := index(s,i,c,d);
-	  if j == -1 then (
-     	       -- if i != length(s) then nlines = nlines + 1;
-	       break;
-	       );
-	  i = j+2;
-	  nlines = nlines + 1;
-	  );
-     i = 0;
-     list(new Sequence len nlines do (
-	       while true do (
-		    j := index(s,i,c,d);
-	  	    if j == -1 then (
-			 -- if i != length(s) then provide Expr(substr(s,i));
-			 provide toExpr(substr(s,i));
-			 break;
-			 )
-		    else (
-			 provide toExpr(substr(s,i,j-i));
-			 i = j+2;
-			 )))));
-lines(s:string,ch:string):Expr := (
-     if length(ch) == 1 
-     then Expr(lines(s,ch.0))
-     else if length(ch) == 2
-     then Expr(lines(s,ch.0,ch.1))
-     else WrongArg(1,"a string of length 1 or 2")
-     );
-linesfun(e:Expr):Expr := (
-     when e
-     is a:Sequence do
-     if length(a) == 2 then
-     when a.1
-     is s:stringCell do 
-     when a.0 is ch:stringCell do lines(s.v,ch.v)
-     else WrongArgString(1)
-     else WrongArgString(2)
-     else WrongNumArgs(2)
-     is s:stringCell do linesE(s.v)
-     else WrongArgString());
-setupfun("separate",linesfun);
 
 tostring(n:MysqlConnection):string := tostring(Ccode(constcharstarOrNull, "
-     #if USE_MYSQL
+     #if WITH_MYSQL
        mysql_get_host_info(", n, ")
      #else
        \"not present\"
@@ -1001,7 +943,7 @@ tostring(m:MysqlConnectionWrapper):string := (
      );
 
 tostringfun(e:Expr):Expr := (
-     when e 
+     when e
      is i:ZZcell do toExpr(tostring(i.v))
      is x:QQcell do toExpr(tostring(x.v))
      is stringCell do e
@@ -1012,16 +954,16 @@ tostringfun(e:Expr):Expr := (
      is f:Database do toExpr(f.filename)
      is m:MysqlConnectionWrapper do toExpr(tostring(m))
      is res:MysqlResultWrapper do toExpr(
-	  "<<MysqlResult : " 
-	  + tostring(Ccode(int, "\n # if USE_MYSQL \n mysql_num_rows(", res.res, ") \n #else \n 0 \n #endif \n"))
+	  "<<MysqlResult : "
+	  + tostring(Ccode(int, "\n # if WITH_MYSQL \n mysql_num_rows(", res.res, ") \n #else \n 0 \n #endif \n"))
 	  + " by "
-	  + tostring(Ccode(int, "\n # if USE_MYSQL \n mysql_num_fields(", res.res, ") \n #else \n 0 \n #endif \n"))
+	  + tostring(Ccode(int, "\n # if WITH_MYSQL \n mysql_num_fields(", res.res, ") \n #else \n 0 \n #endif \n"))
 	  + ">>")
      is fld:MysqlFieldWrapper do toExpr(
-	  "<<MysqlField : " 
-	  + tostring(Ccode(constcharstarOrNull,"(\n #if USE_MYSQL \n (", fld.fld, ")->name \n #else \n \"\" \n #endif \n )"))
+	  "<<MysqlField : "
+	  + tostring(Ccode(constcharstarOrNull,"(\n #if WITH_MYSQL \n (", fld.fld, ")->name \n #else \n \"\" \n #endif \n )"))
 	  + " : "
-	  + tostring(Ccode(int,"\n # if USE_MYSQL \n (", fld.fld, ")->type \n #else \n 0 \n #endif \n"))
+	  + tostring(Ccode(int,"\n # if WITH_MYSQL \n (", fld.fld, ")->type \n #else \n 0 \n #endif \n"))
 	  + ">>")
      is Net do toExpr("<<net>>")
      is CodeClosure do toExpr("<<pseudocode>>")
@@ -1074,7 +1016,7 @@ tostringfun(e:Expr):Expr := (
      is x:TaskCell do (
 --	  while !isInitialized(x) do nothing;
 	  toExpr(
-	       "<<task, " 
+	       "<<task, "
 	       + (
 		    if x.body.resultRetrieved then "result delivered, task terminated"
 		    else if taskDone(x.body.task) then "result available, task done"
@@ -1119,12 +1061,12 @@ format(e:Expr):Expr := (
 	  is Nothing do nothing else return WrongArgZZ(4);
 	  if n > 5 then when args.4 is p:stringCell do sep = p.v else return WrongArgString(5);
 	  when args.(n-1)
-	  is x:RRcell do toExpr(concatenate(format(s,ac,l,t,sep,x.v))) 
+	  is x:RRcell do toExpr(concatenate(format(s,ac,l,t,sep,x.v)))
 	  is z:CCcell do toExpr(format(s,ac,l,t,sep,false,false,z.v))
 	  else WrongArgRR(n)
 	  )
      else WrongArg("string, or real number, integer, integer, integer, string"));
-setupfun("format",format);
+setupfun("format", format).Protected = false; -- will be overloaded in m2/methods.m2
 
 numfun(e:Expr):Expr := (
      when e
@@ -1221,7 +1163,7 @@ deepsplice(e:Expr):Expr := (
      is args:Sequence do Expr(deepsplice(args))
      is a:List do (
 	  r := deepsplice(a.v);
-	  if r == a.v 
+	  if r == a.v
 	  then (
 	       if a.Mutable
 	       then list(a.Class,copy(r),a.Mutable)
@@ -1234,14 +1176,14 @@ horizontalJoin(s:Sequence):Expr := (
      s = deepsplice(s);
      ln := 0;
      foreach f at i in s do (
-	  when f 
+	  when f
 	  is Nothing do nothing
 	  is Net do (ln = ln + 1;)
 	  is stringCell do (ln = ln + 1;)
 	  else return WrongArg(i+1,"a net, string, or null"));
      v := new array(Net) len ln do (
 	  foreach f in s do (
-	       when f 
+	       when f
 	       is Nothing do nothing
 	       is n:Net do provide n
 	       is s:stringCell do provide toNet(s.v)
@@ -1261,14 +1203,14 @@ stack(s:Sequence):Expr := (
      s = deepsplice(s);
      ln := 0;
      foreach f at i in s do (
-	  when f 
+	  when f
 	  is Nothing do nothing
 	  is Net do (ln = ln + 1;)
 	  is stringCell do (ln = ln + 1;)
 	  else return WrongArg(i+1,"a net, string, or null"));
      v := new array(Net) len ln do (
 	  foreach f in s do (
-	       when f 
+	       when f
 	       is Nothing do nothing
 	       is n:Net do provide n
 	       is s:stringCell do provide toNet(s.v)
@@ -1331,7 +1273,7 @@ toRR(e:Expr):Expr := (
 	  when s.0 is prec:ZZcell do (
 	       if !isULong(prec.v) then WrongArgSmallUInteger(1)
 	       else (
-	       	    when s.1 
+	       	    when s.1
      	       	    is x:ZZcell do toExpr(toRR(x.v,toULong(prec.v)))
 	       	    is x:QQcell do toExpr(toRR(x.v,toULong(prec.v)))
      	       	    is x:RRcell do toExpr(toRR(x.v,toULong(prec.v)))
@@ -1354,7 +1296,7 @@ toCC(e:Expr):Expr := (
 	       when s.0 is prec:ZZcell do (
 		    if !isULong(prec.v) then WrongArgSmallUInteger(1)
 		    else (
-			 when s.1 
+			 when s.1
 			 is x:ZZcell do toExpr(toCC(x.v,toULong(prec.v))) -- # typical value: toCC, ZZ, ZZ, CC
 			 is x:QQcell do toExpr(toCC(x.v,toULong(prec.v))) -- # typical value: toCC, ZZ, QQ, CC
 			 is x:RRcell do toExpr(toCC(x.v,toULong(prec.v))) -- # typical value: toCC, ZZ, RR, CC
@@ -1381,7 +1323,7 @@ toCC(e:Expr):Expr := (
 		    -- # typical value: toCC, ZZ, RR, RR, CC
 		    if !isULong(prec.v) then WrongArgSmallUInteger(1)
 		    else toExpr(CC(
-			      when s.1 
+			      when s.1
 			      is x:QQcell do toRR(x.v,toULong(prec.v))
 			      is x:ZZcell do toRR(x.v,toULong(prec.v))
 			      is x:RRcell do toRR(x.v,toULong(prec.v))
@@ -1404,7 +1346,7 @@ toCC(e:Expr):Expr := (
 setupfun("toCC",toCC);
 
 precision(e:Expr):Expr := (
-     when e 
+     when e
      is x:RRcell do toExpr(precision(x.v))
      is x:CCcell do toExpr(precision(x.v))
      else WrongArgRR());
@@ -1438,6 +1380,7 @@ locate(e:Code):void := (
      is nullCode do nothing
      is v:adjacentCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
      is v:arrayCode do foreach c in v.z do locate(c)
+     is v:angleBarListCode do foreach c in v.t do locate(c)
      is v:Error do lookat(v.position)
      is v:semiCode do foreach c in v.w do locate(c)
      is v:binaryCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
@@ -1526,13 +1469,13 @@ locate(e:Expr):Expr := (
 	  locate(f.model.body);
 	  locate2(f.model.body))
      else WrongArg("a function, symbol, sequence, or null"));
-setupfun("locate",locate);
+setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2
 
 
 powermod(e:Expr):Expr := (
-     when e is s:Sequence do 
+     when e is s:Sequence do
      if length(s) == 3 then
-     when s.0 is base:ZZcell do 
+     when s.0 is base:ZZcell do
      when s.1 is exp:ZZcell do
      when s.2 is mod:ZZcell do
      toExpr(powermod(base.v,exp.v,mod.v))
@@ -1552,7 +1495,7 @@ partsRR(x:Expr):Expr := (
 	  numbits := n * sz;
 	  sgn := toExpr(Ccode(long,"(long)(",xx,")->_mpfr_sign"));
 	  expt := toExpr(Ccode(long,"(long)(",xx,")->_mpfr_exp"));
-	  m := toInteger(0);
+	  m := zeroZZ;
 	  for i from int(n)-1 to 0 by -1 do (
 	       m = (m << sz) + toInteger(Ccode(ulong,"(unsigned long)(",xx,")->_mpfr_d[",i,"]"));
 	       );

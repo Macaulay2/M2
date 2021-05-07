@@ -3,7 +3,8 @@ newPackage("LLLBases",
      Version => "1.1", 
      Date => "July 7, 2005",
      Authors => {{Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}},
-     Headline => "a package for computing Lenstra-Lenstra-Lovasz bases",
+     Headline => "Lenstra-Lenstra-Lovasz bases",
+     Keywords => {"Algebraic Number Theory", "Linear Algebra"},
      DebuggingMode => false
      )
 
@@ -754,9 +755,11 @@ gcdLLL List := options -> (s) -> (
      then bgcdLLL(s,options.Threshold)
      else agcdLLL(s,options.Threshold))
 
-addHook(Module, symbol resolution, (o,M) -> if ring M === ZZ then break chainComplex compress LLL presentation M)
+addHook((resolution, Module), Strategy => symbol LLL,
+    (o,M) -> if ring M === ZZ then chainComplex compress LLL presentation M)
 
-addHook(Module, symbol minimalPresentation, (o,M) -> (
+addHook((minimalPresentation, Module), Strategy => symbol LLL,
+    (o, M) -> (
 	  return null;					    -- this routine isn't correct yet -- it only partially minimizes; we could use this for trim and improve it for this
 	  R := ring M;
 	  if R === ZZ then (
@@ -963,7 +966,7 @@ document {
   	  "RealFP -- double",
   	  "RealQP -- quad_float (quasi quadruple precision)
              useful when roundoff errors can cause problems",
-	  "RealQP1 -- only availabel in the BKZ variant, uses
+	  "RealQP1 -- only available in the BKZ variant, uses
 	     double precision for the search phase of the BKZ
 	     reduction, and quad_float for the orthogonalization",
   	  "RealXD -- xdouble (extended exponent doubles)
@@ -1121,7 +1124,7 @@ document {
      Key => CohenEngine,
      Headline => "use the original Macaulay2 LLL algorithm",
      TT "CohenEngine", " -- a strategy value for ", TO [LLL,Strategy], " used to specify
-     that the all-integer LLL algortithm from H.Cohen's book (with improvements
+     that the all-integer LLL algorithm from H.Cohen's book (with improvements
 	  by Euchner and Schnorr) should be used.  This is basically the same 
      algorithm as ", TT "Strategy=>NTL", ", but is often outperformed by that
      algorithm."
@@ -1130,7 +1133,7 @@ document {
      Key => CohenTopLevel,
      Headline => "use the Macaulay2 language LLL algorithm",
      TT "CohenTopLevel", " -- a strategy value for ", TO [LLL,Strategy], " used to specify
-     that the all-integer LLL algortithm from H.Cohen's book (with improvements
+     that the all-integer LLL algorithm from H.Cohen's book (with improvements
 	  by Euchner and Schnorr) should be used, as coded in the front-end of Macaulay2.  
      This is basically the same 
      algorithm as ", TT "Strategy=>CohenEngine", ", but is written at top level, so that 

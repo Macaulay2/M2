@@ -238,3 +238,31 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-rele
    if(ret<0)ret=-ret;
    assert(ret!=0);
    for(int i=0;i<v.size();i++)ret=gcdGFAN(ret,v[i]);
+diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-llvm-eigen/libraries/gfan/tmp/gfan0.6.2/src/timer.cpp gfan0.6.2/src/timer.cpp
+--- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-llvm-eigen/libraries/gfan/tmp/gfan0.6.2/src/timer.cpp	2017-06-20 16:47:37.000000000 +0200
++++ gfan0.6.2/src/timer.cpp	2019-09-26 14:31:33.000000000 +0200
+@@ -1,10 +1,10 @@
+ #include "timer.h"
+-#include "log.h"
+-
+ #include "iostream"
+ #include <time.h>
+ #include <assert.h>
+ 
++#include "log.h" // include last, because it defines a macro "log2" also defined as a function in math.h
++
+ using namespace std;
+ 
+ Timer* Timer::timers;
+diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-llvm-eigen/libraries/gfan/tmp/gfan0.6.2/src/field_rationals.cpp gfan0.6.2/src/field_rationals.cpp
+--- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-llvm-eigen/libraries/gfan/tmp/gfan0.6.2/src/field_rationals.cpp	2017-06-20 16:47:37.000000000 +0200
++++ gfan0.6.2/src/field_rationals.cpp	2019-09-26 14:32:05.000000000 +0200
+@@ -397,7 +397,7 @@
+ /*FieldRationals::FieldRationals():
+   Field(new FieldRationalsImplementation())
+ {
+-  /*  fprintf(Stderr,"Adding field rationals\n");
++  fprintf(Stderr,"Adding field rationals\n");
+   next=list;
+   list=this;
+   */

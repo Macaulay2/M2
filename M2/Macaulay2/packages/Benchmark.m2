@@ -6,6 +6,7 @@ newPackage (
 	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
 	  },
+     Keywords => {"Miscellaneous"},
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      PackageImports => {"XML"},
      Version => "1.0"
@@ -700,7 +701,7 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- Linux geometry 2.2.0-pre4 #65 Mon Jan 4 20:14:06 CST 1999 i586 unknown
 -- 4.17 seconds, Macaulay 2 version 0.8.50, compiled with gcc 2.8.1
 
------ with SHAREDLIBS, including interpeter but not engine:
+----- with SHAREDLIBS, including interpreter but not engine:
 -- Linux geometry 2.2.0-pre4 #65 Mon Jan 4 20:14:06 CST 1999 i586 unknown
 -- 4.27 seconds, Macaulay 2 version 0.8.50
 
@@ -717,7 +718,7 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- Linux geometry 2.2.2 #77 Wed Feb 24 10:40:05 EST 1999 i586 unknown
 -- 4.38 seconds, Macaulay 2 0.8.53, compiled with gcc 2.91
 
------ with SHAREDLIBS, including engine and interpeter:
+----- with SHAREDLIBS, including engine and interpreter:
 -- Linux geometry 2.2.0-pre4 #65 Mon Jan 4 20:14:06 CST 1999 i586 unknown
 -- 4.81 seconds, Macaulay 2 version 0.8.50
 

@@ -3,8 +3,8 @@
 use evaluate;
 use struct;
 
-export plus0():Expr := Expr(ZZcell(toInteger(0)));
-export times0():Expr := Expr(ZZcell(toInteger(1)));
+export plus0():Expr := zeroE;
+export times0():Expr := oneE;
 export plus1(e:Expr) : Expr := e;
 times1 := plus1;
 
@@ -216,8 +216,6 @@ differencefun(e:Expr):Expr := (
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 setupfun("difference",differencefun);
-one := toInteger(1);
-minusone := toInteger(-1);
 
 export (lhs:Expr) * (rhs:Expr) : Expr := (
      when lhs
@@ -446,20 +444,6 @@ setup(BackslashBackslashS,BackslashBackslashFun);
 
 adjacentFun(lhs:Code,rhs:Code):Expr := eval(Code(adjacentCode(lhs,rhs,codePosition(rhs))));
 setup(AdjacentS,adjacentFun);
-
-doublepower(x:double,n:int):double := (
-     if n == 0 then return 1.0;
-     if n < 0 then (x = 1./x; n = -n;);
-     y := x;
-     z := 1.0;
-     while true do (
-	  if (n & 1) != 0 then z = z * y;
-	  n = n >> 1;
-	  if n == 0 then break;
-	  y = y * y;
-	  );
-     z
-     );
 BinaryPowerMethod(x:Expr,y:Expr):Expr := (
      when y is i0:ZZcell do (
 	  i := i0.v;
@@ -546,7 +530,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 		    then oneE
 		    else minusoneE)
 	       else if isZero(x.v) then buildErrorPacket("division by zero")
-	       else toExpr(newQQCanonical(toInteger(1),x.v^-y.v)))
+	       else toExpr(newQQCanonical(oneZZ,x.v^-y.v)))
 	  is y:QQcell do (
 	       d := denominator(y.v);
 	       if d === 1 then toExpr(x.v^numerator(y.v))

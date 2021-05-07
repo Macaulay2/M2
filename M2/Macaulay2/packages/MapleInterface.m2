@@ -6,7 +6,8 @@ newPackage(
 		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}
                   },
-    	Headline => "Interface to Maple",
+    	Headline => "interface to Maple",
+	Keywords => {"Interfaces"},
     	DebuggingMode => false,
         Configuration => {"MapleCommand"=>"maple"},
 	CacheExampleOutput => true,
@@ -166,7 +167,7 @@ doc ///
 
       If you are using Macaulay 2 in cygwin and the Windows native Maple version
       best put the complete path to the Maple command line
-      executeable, e.g., StringWithMapleCommand could be (depending on the Maple version)
+      executable, e.g., StringWithMapleCommand could be (depending on the Maple version)
       
       "C:/Program Files/Maple 9.5/bin.win/cmaple9.5.exe"
 

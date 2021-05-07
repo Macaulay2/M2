@@ -20,6 +20,8 @@ proxyWSet WSet := W -> (
     proxyWSet(W,coordinateProjection(A,A),slice W)
     )
 
+texMath ProxyWSet := x -> texMath net x
+
 net ProxyWSet := pr -> (
     net "proxyWSet(" | net upWSet pr | ", " | 
     net map pr | ", " | net slicingVariety pr | ")" 
@@ -56,7 +58,6 @@ moveSlicingVariety(ProxyWSet,SlicingVariety) := (pr,S) -> (
     ) 
 
 TEST ///
-restart 
 debug needsPackage "NAGtypes"
 debug needsPackage "NumericalAlgebraicGeometry"
 R = CC[x,y]

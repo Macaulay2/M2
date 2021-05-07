@@ -1,3 +1,5 @@
+# note: the next revision of frobby should come from https://github.com/Macaulay2/frobby
+
 LICENSEFILES = COPYING
 # author: Bjarke Roune <bjarke@cs.au.dk>
 #VERSION = 0.7.7-M2
@@ -14,7 +16,7 @@ URL = http://macaulay2.com/Downloads/OtherSourceCode
 
 BUILDTARGET = library
 BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include	\
-	CFLAGS="$(CFLAGS)"				\
+	CXXFLAGS="$(CXXFLAGS)"				\
 	CXX="$(CXX)"					\
 	LDFLAGS="$(LDFLAGS)"				\
 	CPPFLAGS="$(CPPFLAGS)"				\
@@ -32,6 +34,11 @@ INSTALLCMD = \
 	cp src/frobby.h $(LIBRARIESDIR)/include/frobby.h && \
 	cp src/stdinc.h $(LIBRARIESDIR)/include/stdinc.h
 CHECKTARGET = test
+
+# gcc 8.3 needs more memory
+MLIMIT = 500000
+VLIMIT = 500000
+
 include ../Makefile.library
 
 ifeq (@OS@-@ISSUE@,MicrosoftWindows-Cygwin)

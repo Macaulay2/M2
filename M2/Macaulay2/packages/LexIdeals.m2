@@ -8,7 +8,8 @@ newPackage(
 		     Email => "chris@math.okstate.edu", 
 		     HomePage => "http://www.math.okstate.edu/~chris"}
 	},
-	Headline => "A Macaulay 2 package for manipulating lexicographic-type monomial ideals",
+	Headline => "lexicographic-type monomial ideals",
+	Keywords => {"Commutative Algebra"},
 	DebuggingMode => false
 	)
 

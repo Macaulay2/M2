@@ -5,7 +5,8 @@
              Authors => {{Name => "David Eisenbud", 
                        Email => "de@msri.org", 
                        HomePage => "http://www.msri.org/~de"}},
-             Headline => "Decompose a Sheaf on P1",
+             Headline => "decompose a Sheaf on P1",
+	     Keywords => {"Commutative Algebra"},
              DebuggingMode => false
              )
      export {

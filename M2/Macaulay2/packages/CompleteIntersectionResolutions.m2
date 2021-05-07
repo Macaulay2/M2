@@ -1,11 +1,12 @@
 newPackage(
               "CompleteIntersectionResolutions",
-              Version => "2.1", 
-              Date => "November 16, 2018",
+              Version => "2.2", 
+              Date => "December 16, 2019",
               Authors => {{Name => "David Eisenbud", 
                         Email => "de@msri.org", 
                         HomePage => "http://www.msri.org/~de"}},
               Headline => "Analyzing Resolutions over a Complete Intersection",
+	      Keywords => {"Commutative Algebra"},
 	      PackageImports => {"Truncations"},
 	      PackageExports => {"MCMApproximations","BGG"},
 --note: this package requires  MCMApproximations.m2
@@ -19,6 +20,8 @@ newPackage(
 	   "OutRing",
 	   "oddExtModule",
 	   "ExtModuleData",
+	   "newExt", -- replacement for global Ext
+	   "Lift", -- option for newExt
 	--tools used to construct the "higher matrix factorization"
 	--of a high syzygy or more generally a Maximal Cohen-Macaulay module
 	   "matrixFactorization",
@@ -38,6 +41,7 @@ newPackage(
 	--Routines that make other resolutions
 	   "Shamash",
 	   "EisenbudShamash",
+	   "EisenbudShamashTotal",
 	   "layeredResolution",
 	   "makeFiniteResolution",	   
 	   "makeFiniteResolutionCodim2",	   	   
@@ -81,7 +85,7 @@ newPackage(
 	   "Check", -- optional arg for matrixFactorization
 	   "Layered", -- optional arg for matrixFactorization
 	   "Augmentation", -- optional arg for matrixFactorization
-
+    	   "Grading", --optional arg for EisenbudShamashTotal
   	   "Optimism" -- optional arg for highSyzygy etc	   
 	   }
 
@@ -285,9 +289,6 @@ layeredResolution(Matrix, Module) := opts ->(ff, M) ->(
 --    scan(length L -1, s->assert( HH_(s+1) L == 0));
     (L,aug)
     )
-
-
-
 
 layeredResolution(Matrix, Module, ZZ) := opts -> (ff, M, len) ->(
     --ff is a 1 x c matrix over a Gorenstein ring S and ff' = ff_{0..(c-2)}, ff'' = ff_{c-1}.
@@ -1104,6 +1105,7 @@ expo = method()
 expo(ZZ,ZZ) := (n,d) ->(
      --the next three lines define a function that returns
      --a list of all lists of n non-neg ints adding up to d.
+     if n <= 0 then return {};
      x:=local x;
      T := ZZ/2[x_0..x_(n-1)];
      flatten((flatten entries basis(d, T^1))/exponents)
@@ -1117,6 +1119,7 @@ lessThan = (L1,L2) -> (
     
 
 expo(ZZ,List):= (n,L) ->(
+     if n <= 0 then return {};    
      --returns the list of all elements of expo(n,d) that
      --are <L in the termwise partial order
      d := sum L;
@@ -1124,6 +1127,7 @@ expo(ZZ,List):= (n,L) ->(
      select(LL, M->lessThan(M,L))
      )
 
+-*
 makeHomotopies = method()
 makeHomotopies (Matrix, ChainComplex) := (f,F) ->
      makeHomotopies(f,F, max F)
@@ -1140,6 +1144,8 @@ makeHomotopies(Matrix, ChainComplex, ZZ) := (f,F,d) ->(
      -- and, for each index list I with |I|<=d,
      -- sum s_J s_K = 0, when the sum is over all J+K = I
      S := ring f;
+     if source f == 0 then return hashTable{};
+     if numrows f != 1 then error"expected a 1 x ? matrix";
      flist := flatten entries f;
      lenf := #flist;
      degs := apply(flist, fi -> degree fi); -- list of degrees (each is a list)
@@ -1182,6 +1188,69 @@ makeHomotopies(Matrix, ChainComplex, ZZ) := (f,F,d) ->(
 	     tensorWithComponents( S^{-sum(#k_0,i->(k_0)_i*degs_i)},F_(k_1)), 
 				         H#k)});
      H1)
+*-
+makeHomotopies = method()
+
+makeHomotopies (Matrix, ChainComplex) := (f,F) ->
+     makeHomotopies(f,F, max F)
+
+makeHomotopies(Matrix, ChainComplex, ZZ) := (f,F,d) ->(
+           --given a 1 x lenf matrix f and a chain complex 
+           -- F_min <-...,
+           --the script attempts to make a family of higher homotopies
+           --on F for the elements of f.
+           --The output is a hash table {{J,i}=>s), where     
+           --J is a list of non-negative integers, of length = ncols f
+           --and s is a map F_i->F_(i+2|J|-1) satisfying the conditions
+           --s_0 = differential of F
+           -- s_0s_{i}+s_{i}s_0 = f_i
+           -- and, for each index list I with |I|<=d,
+           -- sum s_J s_K = 0, when the sum is over all J+K = I
+           S := ring f;
+           if source f == 0 then return hashTable{};
+           if numrows f != 1 then error"expected a 1 x ? matrix";
+           flist := flatten entries f;
+           lenf := #flist;
+           degs := apply(flist, fi -> degree fi); -- list of degrees (each is a list)
+           
+
+           minF := min F;
+           maxF := max F;
+           if d>max F then d=maxF;
+
+           e0 := (expo(lenf,0))_0;
+
+           e1 := expo(lenf,1);
+           
+           H := new MutableHashTable;
+           
+           --make the 0  homotopies into F_minF;
+           for i from minF to d+1 do H#{e0,i} = F.dd_i;
+           scan(#flist, j->H#{e1_j,minF-1}= map(F_minF, F_(minF-1), 0));
+
+           --the rest of the first homotopies
+           for i from minF to d do
+                     scan(#flist,
+                     j->H#{e1_j,i}= (-H#{e1_j,i-1}*H#{e0,i}+flist_j*id_(F_i))//H#{e0,i+1}
+                     );
+                 
+           --the higher homotopies
+           for k from 2 to d do(
+                e := expo(lenf,k);
+                apply(e, L ->(
+                  k := sum L;
+                  H#{L,minF-1}= map(F_(minF+2*k-2),F_(minF-1),0);
+                  for i from minF to d-2*k+1 do
+                    H#{L,i} = -sum(expo(lenf,L), 
+                       M->(H#{L-M,i+2*sum(M)-1}*H#{M,i}))//H#{e0,i+2*k-1};
+                  )));
+
+           --correct the degrees, and return a HashTable
+           H1 := hashTable apply(keys H, k->
+           {k, map(F_(k_1+2*sum (k_0)-1), 
+                   tensorWithComponents( S^{-sum(#k_0,i->(k_0)_i*degs_i)},F_(k_1)), 
+                                               H#k)});
+           H1)
 
 makeHomotopies1 = method()
 makeHomotopies1 (Matrix, ChainComplex) := (f,F) ->(
@@ -1868,6 +1937,269 @@ extIsOnePolynomial Module := M ->(
     (H, H == sub(po, {z =>z/2-1/2}))
     )
 
+--make the Eisenbud-Shamash resolution as a Z/2 graded differential
+--module over the polynomial ring.
+
+
+EisenbudShamashTotal = method(Options => {Check =>false,
+	                                   Variables=>getSymbol "s",
+					   Grading =>2}
+	       )
+EisenbudShamashTotal Module := o -> Mbar -> (
+--setup
+Rbar := ring Mbar;
+ff := presentation Rbar;
+c := numcols ff;
+if o.Check == true then (
+assert(codim ideal ff == c)
+);
+
+R := ring ff;
+kk := coefficientRing R;
+n := numgens R;
+bar := map(Rbar,R);
+RM := pushForward(bar, Mbar); -- M as R-module
+RF := res RM;
+if o.Check == true then (
+    assert(isHomogeneous RM and (RF)_(n+1) == 0)
+    );
+H := makeHomotopies(ff, RF);
+H' := hashTable select(pairs H, p-> p_1 !=0);--recall: 
+H = H';
+--H#{J,i}: F_i(-degs_J) -> F_(i+2|J|-1), 
+--where J is a list of c pos ints and
+--degs_J is the sum of the degrees of f_j, j\in J
+--assert(source H#{{0,1},1} == F_1** R^{-2})
+
+--move to a bigraded ring with variables corresponding to the
+--CI operators
+s := o.Variables;
+S := kk[s_0..s_(c-1),gens R, Degrees => 
+	apply(c, i->{-2, -(degree ff_i)_0})|apply(n, i->{0, (degree R_i)_0})];
+RtoS := map(S,R,DegreeMap => i->{0,i_0});
+SF := chainComplex apply(length RF, i->
+    map (
+	S^{{-i,0}}**RtoS (RF_i), 
+	S^{{-i-1,0}}**RtoS RF_(i+1),
+	RtoS (RF.dd_(i+1)),
+	Degree => {-1,0}
+    )
+);
+if o.Check == true then (
+assert(isHomogeneous SF)
+);
+
+--a subroutine
+monomialFromExponent := L -> product apply(#L,i->S_(i)^(L_i)) ;
+
+SH := hashTable apply(pairs H, u->(
+	u_0,map(SF_(u_0_1+2*sum(u_0_0)-1),
+	        SF_(u_0_1),
+--		-1^(sum u_0_0-1)*(monomialFromExponent u_0_0)*RtoS H#(u_0),
+		(monomialFromExponent u_0_0)*RtoS H#(u_0),		
+		Degree => {-1,0})));
+if o.Check == true then (
+assert all(values SH, phi-> isHomogeneous phi)
+);
+
+--Separate the homotopies into subsets:
+--ke_i are keys {J,j} in H
+--corresponding to possible homotopies whose *target* is F_i.
+ke := apply(length SF + 1, i->select(keys SH, k -> (
+	    k_1 === i - 2*sum k_0 + 1 and 
+	      0 <= min (i, k_1) and 
+	      length SF >= max (i,k_1))));
+
+--dualize and separate the free modules of SF into even and odd parts:
+SF0 := directSum apply (select(0..length SF, i->i%2==0), i-> dual SF_i);
+SF1 := directSum apply (select(0..length SF, i->i%2==1), i-> dual SF_i);
+
+p := null;
+--make the  maps 
+evenToOdd := apply((length SF+2)//2, -- 3 in the  example
+    (i-> apply(ke_(2*i), u -> (
+    p = dual map(SF_(2*i), SF_(u_1), SH#{u_0,u_1});
+   SF1_[(u_1-1)//2]*p*SF0^[i]
+    ))));
+if o.Check == true then (
+assert all(flatten evenToOdd, phi -> isHomogeneous phi)
+);
+
+oddToEven := apply((length SF+1)//2,
+    (i-> apply(ke_(2*i+1), u -> ( --the interesting key is {{1,1},1}
+    p = dual map(SF_(2*i+1), SF_(u_1), SH#{u_0,u_1});
+   SF0_[u_1//2]*p*SF1^[i]
+    ))));
+if o.Check == true then assert(
+    all (flatten evenToOdd |flatten oddToEven, phi -> isHomogeneous phi == true)
+    );
+--the following maps would have degree {-1,0}
+--d0 := map(SF1,SF0,sum flatten evenToOdd);
+--d1 := map(SF0,SF1,sum flatten oddToEven);
+
+--fix the degrees to make them {0,0}, keeping SF0 in degree 0:
+d0 := map(S^{{-1,0}}**SF1,SF0,sum flatten evenToOdd, Degree =>{0,0});
+d1 := map(SF0,SF1**S^{{1,0}},sum flatten oddToEven, Degree=>{0,0});
+
+if o.Check == true then(
+    assert (target d1 == source d0);
+    -- and homology(d0**N,d1**N) is the even part of Ext(Mbar,N)
+    assert (target d0 == S^{{-2,0}}**source d1); 
+    -- and S^{{1,0}}**homology(S^{{-2,0}}**d1**N,d0**N) is the odd part.
+    );
+if o.Grading == 2 then return (d0,d1); --Grading => 2 is the default.
+
+--if o.Grading !=2, reduce to singly graded maps
+S1 := kk[gens S, Degrees =>  apply(numcols ff, i->-degree ff_i)|gens R/degree];
+red := map(S1,S,DegreeMap => d->{d_1});
+(red d0, red d1)
+)
+
+///
+--a series of examples we used to test EisenbudShamashTotal
+restart
+loadPackage ("CompleteIntersectionResolutions", Reload=>true)
+kk = ZZ/101
+
+--simple example to get the degrees of Ext right
+
+U = kk[a]
+gg = matrix"a3"
+Ubar = U/ideal gg
+Mbar =  coker vars Ubar
+
+---simplest matrix factorization example in 2 vars
+U = kk[a,b]
+gg = matrix"a2+2ab+3b2"
+Ubar = U/ideal gg
+Mbar =  image vars Ubar
+
+--- simplest example with a higher homotopy (key {{1,1},1})
+U = kk[a,b,c,d]
+gg = matrix"a4,b4"
+Ubar = U/ideal gg
+use Ubar
+Mbar =  coker matrix"ab,b2,bc,bd,cd,"--has a 1,1 homotopy
+
+---complete intersection of two quadrics in PP^3 
+U = kk[a,b,c,d]
+gg = matrix"a2,b2"
+Ubar = U/ideal gg
+use Ubar
+Mbar =  coker matrix"ab,bc,bd,cd"
+
+--more complicated module
+setRandomSeed 0
+U = kk[x_0..x_2]
+I = ideal apply(2, i->x_i^2)
+gg = gens I
+Ubar = U/I
+bar = map(Ubar, U)
+Mbar = prune coker random(Ubar^2, Ubar^{-2,-3})
+newExt(Mbar, coker vars Ubar, Check=>true, Lift =>true)
+--
+(d0,d1)= EisenbudShamashTotal (Mbar, Check=>true, Variables => getSymbol "X", Grading => 1)
+(d0,d1)= EisenbudShamashTotal (Mbar, Check=>true, Grading => 2)
+--(d0,d1)= EisenbudShamashTotal Mbar
+
+S = ring d0
+gens S
+(gens S)/degree
+UtoS = map(S,U,DegreeMap => d ->prepend(0,d))
+
+assert(target d1 == source d0)
+assert(target d0 == S^{{-2,0}}**source d1)
+sg = sum(numcols gg, i->S_i*UtoS gg_i_0)
+assert (0==d1*d0-diagonalMatrix toList(numrows d1:sg) )
+
+Sbar= S/ideal UtoS gg
+UbartoSbar= map(Sbar,Ubar,DegreeMap => d->prepend(0,d))
+kSbar = coker UbartoSbar(vars Ubar)
+bar = map(Sbar,S)
+d1bar = bar d1
+d0bar = bar d0
+
+isHomogeneous(Heven = homology(d0bar**kSbar,d1bar**kSbar))
+isHomogeneous(Hodd = homology(S^{{-2,0}}**d1bar**kSbar,d0bar**kSbar))
+E1 = Sbar^{{1,0}}**prune Hodd
+E0 = prune Heven
+E = Ext(Mbar,coker vars Ubar)
+assert (sort(degrees E0 |degrees E1)==sort degrees E)
+
+isHomogeneous(Heven = homology(d0bar,d1bar))
+isHomogeneous(Hodd = homology(S^{{-2,0}}**d1bar,d0bar))
+E1 = Sbar^{{1,0}}**prune Hodd
+E0 = prune Heven
+E = prune Ext(Mbar,Ubar^1)
+assert (sort(degrees E0 |degrees E1)==sort degrees E)
+
+UbartoSbar = map(Sbar, Ubar, DegreeMap=>d->prepend(0,d))
+SMbar = coker UbartoSbar presentation Mbar
+isHomogeneous(Heven = homology(d0bar**SMbar,d1bar**SMbar))
+isHomogeneous(Hodd = homology(S^{{-2,0}}**d1bar**SMbar,d0bar**SMbar))
+E1 = Sbar^{{1,0}}**prune Hodd
+E0 = prune Heven
+E = prune Ext(Mbar,Mbar)
+assert (sort(degrees E0 |degrees E1)==sort degrees E)
+
+///
+
+///
+uninstallPackage"CompleteIntersectionResolutions"
+restart
+installPackage "CompleteIntersectionResolutions"
+check "CompleteIntersectionResolutions"
+///
+
+
+
+newExt = method(Options => 
+       {Lift => false, 
+	Check => false, 
+	Grading => 2, 
+	Variables=>getSymbol "s"}
+    )
+newExt(Module,Module) :=o -> (Mbar,Nbar)  -> (
+    --check that the circumstances are ok:
+    if not ring Mbar === ring Nbar then error"Expected modules over the same ring";
+    if not (isHomogeneous Mbar and isHomogeneous Nbar) then error"expected homogeneous modules";
+    p := presentation ring Mbar;
+    if not numcols p == codim ideal p then error"Expected modules over a complete intersection";
+
+(d0,d1) := EisenbudShamashTotal (Mbar, 
+    Grading => o.Grading, 
+    Variables =>o.Variables,
+    Check=>o.Check);
+Rbar := ring Mbar;
+R := ring presentation Rbar;
+I := ideal presentation Rbar;
+--now do Ext(Mbar,K) our way:
+S := ring d0;
+RtoS := map(S,R, DegreeMap => d->prepend(0,d));
+Sbar := S/(RtoS I);
+RbartoSbar := map(Sbar,Rbar, DegreeMap => d->prepend(0,d));
+SbarNbar := coker RbartoSbar presentation Nbar;
+E := prune (
+    HH_1 chainComplex {d0**SbarNbar, d1**SbarNbar}++
+    Sbar^{{1,0}}**HH_1 chainComplex {Sbar^{{-2,0}}**d1**SbarNbar, d0**SbarNbar}
+    );
+if o.Check == true then(
+    EE := Ext(Mbar,Nbar);
+    S' := ring EE; -- note that S' is the polynomial ring
+    StoSbar := map(Sbar,S);
+    ES := prune pushForward(StoSbar, E);
+    A := res ES;
+    B := res EE;
+    assert all(length A+1, i-> sort degrees A_i == sort degrees B_i)
+    );
+--and optionally move it back to the polynomial ring
+if o.Lift == true then(
+    StoSbar = map(Sbar,S);
+    ES = prune pushForward(StoSbar, E);
+    return ES;
+    );
+E)
+
 
 -----------------------------
 --------Documentation-----------documentation--DOCUMENT
@@ -1880,10 +2212,13 @@ loadPackage ("CompleteIntersectionResolutions", Reload=>true)
 uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
 viewHelp "CompleteIntersectionResolutions"
+viewHelp EisenbudShamashTotal
 check "CompleteIntersectionResolutions"
 *-
 
 beginDocumentation()
+
+
 
 doc///
 Key
@@ -1933,7 +2268,8 @@ Description
   {TO "evenExtModule"},
   {TO "oddExtModule"},
   {TO "ExtModuleData"},
-  {TO "complexity"}
+  {TO "complexity"},
+  {TO "newExt"}
   }@
  Text
   @SUBSECTION "Representing a module as Ext_R(M,k)"@
@@ -1956,6 +2292,7 @@ Description
   {TO "TateResolution"},
   {TO "Shamash"},
   {TO "EisenbudShamash"},
+  {TO "EisenbudShamashTotal"},
   {TO "layeredResolution"},
   {TO "makeFiniteResolution"},
   {TO "makeFiniteResolutionCodim2"},
@@ -2111,6 +2448,114 @@ Caveat
   even when the ideal of the complete intersection is homogeneous, so our examples
   in the routines for are primarily using complete intersections of equal degree.
   The theory takes place in the local case, however, where this is not a problem.
+///
+
+doc ///
+   Key
+    newExt
+    (newExt,Module,Module)
+    [newExt, Check]
+    [newExt, Lift]
+    [newExt,Grading]
+    [newExt,Variables]
+   Headline
+    Global Ext for modules over a complete Intersection
+   Usage
+    E = newExt(M,N)
+   Inputs
+    M:Module
+     over a complete intersection Rbar
+    N:Module
+     over Rbar
+   Outputs
+    E:Module
+     over a ring S made from ring presentation Rbar with codim Rbar new variables
+   Description
+    Text
+     Let Rbar = R/(f1..fc), a complete intersection of codimension c, and let M,N
+     be Rbar-modules. We assume that the pushForward of M to R has finite free resolution.
+     The script then computes the total Ext(M,N) as a module over
+     S = kk(s_1..s_c,gens R), using EisenbudShamashTotal.
+     
+     If Check => true, then the result is compared with the built-in global Ext written
+     by Avramov and Grayson (but note the difference, explained below).
+     
+     If Lift => false the result is returned over and extension of Rbar; if Lift => true
+     the result is returned over and extension of R.
+     
+     If Grading => 2, the default, then the result is bigraded (this is necessary when
+     Check=>true
+     
+     The default Variables => symbol "s" gives the new variables the name s_i, i=0..c-1.
+     (note that the builtin Ext uses X_1..X_c.
+	 
+     On Some examples newExt is faster than Ext;
+     on others it's slower.
+	 
+     A simple example: if R = k[x_1..x_n] and I is contained in the cube
+     of the maximal ideal, then Ext(k,k) is a free 
+     S/(x_1..x_n) = k[s_0..s_(c-1)]- module with binomial(n,i) generators in degree i
+    Example
+     n = 3;c=2;
+     R = ZZ/101[x_0..x_(n-1)]
+     Rbar = R/(ideal apply(c, i-> R_i^3))
+     Mbar = Nbar = coker vars Rbar
+     E = newExt(Mbar,Nbar)
+     tally degrees E
+     annihilator E
+    Text
+     An example where the built-n global Ext is hard to compare directly
+     with our method of computation: I *guess* that the sign choices in the built-in
+     amount essentially to a change of variable
+     in the new variables, and spoil an easy comparison. 
+     But for example the bi-graded betti numbers are equal.
+     this seems to start with c=3.
+    Example
+     setRandomSeed 0
+     n = 3
+     c = 3
+     kk = ZZ/101
+     R = kk[x_0..x_(n-1)]
+     I = ideal apply(c, i->R_i^2)
+     ff = gens I
+     Rbar = R/I
+     bar = map(Rbar, R)
+     K = coker vars Rbar
+     Mbar = prune coker random(Rbar^2, Rbar^{-2,-2})
+    
+     ES = newExt(Mbar,K,Lift => true)
+     S = ring ES
+    Text
+     compare with the built-in Ext
+    Example
+     EE = Ext(Mbar,K);
+     S' = ring EE -- note that S' is the polynomial ring
+    
+    Text
+     The two verstions of Ext appear to be the same up to change of variables:
+    Example
+     A = res ES
+     B = res EE
+     all(length A+1, i-> sort degrees A_i == sort degrees B_i)
+    Text
+     but they have apparently different annihilators
+    Example
+     ann EE
+     ann ES
+    Text
+     and in fact they are not isomorphic:
+    Example
+     EEtoES = map(ring ES,ring EE, gens ring ES)
+     EE' = coker EEtoES presentation EE
+     H = Hom(EE',ES);
+     Q = positions(degrees target presentation H, i-> i == {0,0})
+     f = sum(Q, p-> random (S^1, S^1)**homomorphism H_{p})
+    Text
+     If EE and ES were isomorphic, we would expect coker f to be 0, and it's not.
+     prune coker f
+   SeeAlso
+    Ext
+    EisenbudShamashTotal
 ///
 
 
@@ -2634,7 +3079,7 @@ Description
   hfModuleAsExt(12,MM,3)
 Caveat
   The elements f_1..f_c must be homogeneous of the same degree.
-  The script could be rewritten to accomodate different degrees,
+  The script could be rewritten to accommodate different degrees,
   but only by going to the local category
 SeeAlso
   ExtModule
@@ -2731,6 +3176,40 @@ doc ///
    SeeAlso
     matrixFactorization
  ///
+doc ///
+   Key 
+    Lift
+   Headline
+    Option for newExt
+   Usage
+    newExt(M,N,Check =>true)
+   Inputs
+    Check:Boolean
+   Description
+    Text
+     Makes newExt perform various checks as it computes.
+   SeeAlso
+    newExt
+ ///
+
+doc ///
+   Key 
+    Grading
+   Headline
+    Option for EisenbudShamashTotal, newExt
+   Usage
+    EisenbudShamashTotal(Mbar,Grading => 2)
+   Inputs
+    Check:ZZ
+   Description
+    Text
+     if Grading =>1, then the output is converted to single-grading, useful in 
+     the package Clifford
+   SeeAlso
+    EisenbudShamashTotal
+    newExt
+ ///
+
 doc ///
    Key 
     Augmentation
@@ -3354,8 +3833,8 @@ Description
   kk=ZZ/101
   S = kk[a,b,c,d]
   M = truncate(3,S^1)
-  betti S2(0,M)
-  betti S2(1,M)
+  betti matrix S2(0,M)
+  betti matrix S2(1,M)
   M = S^1/intersect(ideal"a,b,c", ideal"b,c,d",ideal"c,d,a",ideal"d,a,b")
   prune source S2(0,M)
   prune target S2(0,M)
@@ -3367,7 +3846,6 @@ Description
   N were a sufficiently negative syzygy of M, then the first local cohomology module
   of Ext_R(M,k) would be zero. This is false, as shown by the following example:
  Example
-  needsPackage "CompleteIntersectionResolutions"
   S = ZZ/101[x_0..x_2];
   ff = apply(3, i->x_i^2);
   R = S/ideal ff;
@@ -3386,7 +3864,7 @@ Description
   apply (5, i-> hilbertFunction(i, extra))
 SeeAlso
   "IntegralClosure"
-  "makeS2"
+  "IntegralClosure::makeS2"
   "BGG"
   "cohomology"
   "HH^ZZ SumOfTwists"
@@ -4186,7 +4664,7 @@ doc ///
      M_{(k+4)} --> M_k \otimes \wedge^2(S^c)
      in the stable category of maximal Cohen-Macaulay modules.
     
-     In thw following example, studied in the paper 
+     In the following example, studied in the paper 
      "Tor as a module over an exterior algebra" of
      Eisenbud, Peeva and Schreyer,
      the map is non-trivial...but it is stably trivial.
@@ -4430,7 +4908,7 @@ doc ///
    Description
     Text
      Computes the Hilbert polynomials pe(z), po(z) of evenExtModule and oddExtModule.
-     It returns pe(z/2), and compares to see whethe this is equal to po(z/2-1/2).
+     It returns pe(z/2), and compares to see whether this is equal to po(z/2-1/2).
      Avramov, Seceleanu and Zheng have proven that if the ideal of quadratic leading
      forms of a complete intersection of codimension c generate an ideal of codimension
      at least c-1, then the betti numbers of any module grow, eventually, as a 
@@ -4560,7 +5038,7 @@ doc///
      D = (d,h)
    Description
     Text
-     Constructs the layered resolution with auxilliary maps. 
+     Constructs the layered resolution with auxiliary maps. 
 ///
 *-
      doc ///
@@ -4592,7 +5070,7 @@ doc///
 	  Eisenbud-Shamash resolution.
 	  
 	  The list expo(c, L), on the other hand, may be thought of as the list of divisors
-	  of e^L = e_0^{L_0} ... e_c^{L_c}. This is used in the contruction of the higher
+	  of e^L = e_0^{L_0} ... e_c^{L_c}. This is used in the construction of the higher
 	  homotopies on a complex.
          Example
 	  expo(3,5)
@@ -4602,7 +5080,217 @@ doc///
 	 makeHomotopies
      ///
 
+doc ///
+   Key
+    EisenbudShamashTotal
+    (EisenbudShamashTotal, Module)
+    [EisenbudShamashTotal,Check]    
+    [EisenbudShamashTotal,Variables]    
+    [EisenbudShamashTotal,Grading]    
+   Headline
+    Precursor complex of total Ext
+   Usage
+    (d0,d1) =  EisenbudShamashTotal M
+   Inputs
+    M:Module
+     over a complete intersection
+   Outputs
+    d0:Matrix
+     map of free modules over an enlarged ring
+    d1:Matrix
+     map of free modules over an enlarged ring
+   Description
+    Text
+     Assume that M is defined over a ring of the form
+     Rbar = R/(f_0..f_{c-1}), a complete intersection, and that
+     M has a finite free resolution G over R. In this case M has a 
+     free resolution F over Rbar
+     whose dual, F^* is a finitely generated, Z-graded free module 
+     over a ring Sbar\cong kk[s_0..s_{c-1},gens Rbar], 
+     where the degrees of the s_i are {-2, -degree f_i}.
+     This resolution is is constructed from the
+     dual of G,
+     together with the duals of the higher homotopies on G defined by Eisenbud.
+     
+     The function returns the differentials d0:F^*_{even} \to F^*_{odd} and 
+     d1:F^*_{odd}\to F^*_{even}.
+    
+     The maps d0,d1 form a matrix factorization 
+     of sum(c, i->s_i*f_i). The have the property that for any Rbar module N, 
+     
+     HH_1 chainComplex \{d0**N, d1**N\} = Ext^{even}_{Rbar}(M,N)
+     
+     S^{{1,0}}**HH_1 chainComplex \{S^{{-2,0}}**d1**N, d0**N\} = Ext^{odd}_{Rbar}(M,N)    
+
+     This is encoded in the script newExt
+     
+     Option defaults:
+     Check=>false
+     Variables=>getSymbol "s",
+     Grading =>2}
+     
+     If Grading =>1, then a singly graded result is returned (just forgetting the
+     honological grading.)
+
+    Example
+     n = 3
+     c = 2
+     kk = ZZ/101
+     R = kk[x_0..x_(n-1)]
+     I = ideal(x_0^2, x_2^3)
+     ff = gens I
+     Rbar = R/I
+     bar = map(Rbar, R)
+     Mbar = prune coker random(Rbar^1, Rbar^{-2})
+     (d0,d1) = EisenbudShamashTotal(Mbar,Grading =>1)
+     d0*d1
+     d1*d0
+     S = ring d0
+     phi = map(S,R)
+     IS = phi I
+     Sbar = S/IS
+     SMbar = Sbar**Mbar
+    Text
+     Hom(d0,Sbar) and Hom(d1,Sbar) together form the resolution of Mbar;
+     thus the homology of one composition is 0, while the other is Mbar
+    Example
+     prune HH_1 chainComplex{dual (Sbar**d0), dual(Sbar**d1)} == 0
+     Mbar' = Sbar^1/(Sbar_0, Sbar_1)**SMbar
+     ideal presentation prune HH_1 chainComplex{dual (Sbar**d1), dual(Sbar**d0)} == ideal presentation Mbar'
+   SeeAlso
+    Ext
+    newExt
+    makeHomotopies
+///
+
 ------TESTs------
+TEST///
+--An example where the built-n global Ext is hard to compare directly
+--with our method of computation: I *guess* that the sign choices in the built-in
+--amount essentially to a change of variable
+--in the new variables, an spoil an easy comparison. 
+--But for example the bi-graded betti numbers are equal.
+--this seems to start with c=3.
+
+restart
+loadPackage "CompleteIntersectionResolutions"
+setRandomSeed 0
+n = 3
+c = 3
+kk = ZZ/101
+R = kk[x_0..x_(n-1)]
+I = ideal apply(c, i->R_i^2)
+ff = gens I
+Rbar = R/I
+bar = map(Rbar, R)
+K = coker vars Rbar
+Mbar = prune coker random(Rbar^2, Rbar^{-2,-2})
+
+--now do Ext(Mbar,K) our way:
+ES = newExt(Mbar,K,Lift => true)
+S = ring ES
+
+--compare with the built-in:
+EE = Ext(Mbar,K);
+S' = ring EE -- note that S' is the polynomial ring
+
+--The two verstions of Ext appear to be the same up to change of variables:
+A = res ES
+B = res EE
+assert all(length A+1, i-> sort degrees A_i == sort degrees B_i)
+--but they have apparently different annihilators
+ann EE
+ann ES
+
+--and in fact they are not isomorphic:
+EEtoES = map(ring ES,ring EE, gens ring ES)
+EE' = coker EEtoES presentation EE
+H = Hom(EE',ES);
+Q = positions(degrees target presentation H, i-> i == {0,0})
+f = sum(Q, p-> random (S^1, S^1)**homomorphism H_{p})
+assert (prune coker f != 0)
+Mbar = prune coker random(Rbar^2, Rbar^{-2,-2}) -- this gives trouble
+///
+
+TEST///
+--restart
+--loadPackage "CompleteIntersectionResolutions"
+setRandomSeed 0
+n = 3
+c = 2
+kk = ZZ/101
+R = kk[x_0..x_(n-1)]
+I = ideal apply(c, i->x_i^2)
+ff = gens I
+Rbar = R/I
+bar = map(Rbar, R)
+Mbar = prune coker random(Rbar^2, Rbar^{-2,-3})
+(d0,d1) = EisenbudShamashTotal(Mbar, Check => true)
+S = ring d0
+RtoS = map(S,R)
+SI = RtoS I
+Sbar = S/SI
+RbartoSbar = map(Sbar,Rbar,DegreeMap => d->prepend(0,d)) 
+N = prune coker RbartoSbar presentation Mbar;
+E = prune (
+    HH_1 chainComplex {d0**N, d1**N}++
+    Sbar^{{1,0}}**HH_1 chainComplex {Sbar^{{-2,0}}**d1**N, d0**N}
+    );
+EE = Ext(Mbar,Mbar);
+gens ring E
+EEtoE = map (Sbar, ring EE, gens Sbar)
+assert isHomogeneous EEtoE 
+E' = coker EEtoE presentation EE;
+H = Hom(E,E');
+Q = positions(degrees target presentation H, i-> i == {0,0})
+f = sum(Q, p-> random (Sbar^1, Sbar^1)**homomorphism H_{p})
+assert (prune coker f == 0)
+///
+
+
+TEST///
+---complete intersection of two quadrics in PP^3 
+kk  = ZZ/101
+U = kk[a,b,c,d]
+gg = matrix"a2,b2"
+Ubar = U/ideal gg
+use Ubar
+Mbar =  coker matrix"ab,bc,bd,cd"
+--
+
+(d0,d1)= EisenbudShamashTotal (Mbar, Check=>true, Variables => getSymbol "X", Grading => 1)
+(d0,d1)= EisenbudShamashTotal Mbar
+
+S = ring d0
+UtoS = map(S,U,DegreeMap => d ->{0,d_0})
+
+assert(target d1 == source d0)
+assert(target d0 == S^{{-2,0}}**source d1)
+sg = sum(numcols gg, i->S_i*UtoS gg_i_0)
+assert (0==d1*d0-diagonalMatrix toList(numrows d1:sg) )
+
+Sbar= S/ideal UtoS gg
+UbartoSbar= map(Sbar,Ubar,DegreeMap => d->prepend(0,d))
+kSbar = coker UbartoSbar(vars Ubar)
+bar = map(Sbar,S)
+d1bar = bar d1
+d0bar = bar d0
+
+isHomogeneous(Heven = homology(d0bar**kSbar,d1bar**kSbar))
+isHomogeneous(Hodd = homology(S^{{-2,0}}**d1bar**kSbar,d0bar**kSbar))
+E1 = Sbar^{{1,0}}**prune Hodd
+E0 = prune Heven
+E = Ext(Mbar,coker vars Ubar)
+assert (sort(degrees E0 |degrees E1)==sort degrees E)
+
+isHomogeneous(Heven = homology(d0bar,d1bar))
+isHomogeneous(Hodd = homology(S^{{-2,0}}**d1bar,d0bar))
+E1 = Sbar^{{1,0}}**prune Hodd
+E0 = prune Heven
+E = prune Ext(Mbar,Ubar^1)
+assert (sort(degrees E0 |degrees E1)==sort degrees E)
+///
+
 TEST/// -- tests of the "with components" functions
 S = ZZ/101[a,b]
 M = S^{1,2}
@@ -4628,6 +5316,7 @@ M= S^0
 M'=S^0++S^0
 assert(M**M == tensorWithComponents (M',M'))
 ///
+
 TEST///
 setRandomSeed 0
 R1=ZZ/101[a,b,c]/ideal(a^2,b^2,c^5)
@@ -4642,6 +5331,11 @@ assert(p ===(1/2)*z^2-(1/2)*z+3)
 z = (ring p)_0
 assert(t === false)
 assert(p ===(3*z - 2))
+///
+
+TEST///
+assert (expo(2,4) == {{4, 0}, {3, 1}, {2, 2}, {1, 3}, {0, 4}})
+expo(3,0)
 ///
 
 TEST///
@@ -4936,7 +5630,7 @@ TEST ///--of S2
 S = ZZ/101[a,b,c];
 M = S^1/intersect(ideal"a,b", ideal"b,c",ideal"c,a");
 --assert( (hf(-7..1,coker S2(-5,M))) === (0, 3, 3, 3, 3, 3, 3, 2, 0))
-assert( (betti prune S2(-5,M)) === new BettiTally from {(0,{-6},-6) => 3, (1,{0},0) => 1} )
+assert( (betti prune matrix S2(-5,M)) === new BettiTally from {(0,{-6},-6) => 3, (1,{0},0) => 1} )
 ///
 
 
@@ -5072,10 +5766,32 @@ TEST///
 assert(expo(2,2) == {{2, 0}, {1, 1}, {0, 2}})
 assert(expo(2,{2,1}) == {{0, 0}, {1, 0}, {0, 1}, {2, 0}, {1, 1}})
 ///
+
+///
+--test times of newExt
+restart
+loadPackage "CompleteIntersectionResolutions"
+n= 5
+c=2
+kk=ZZ/101
+R  = kk[x_0..x_(n-1)]
+ff = random(R^1, R^{c:-2})
+I = ideal ff
+Rbar = R/I    
+M = coker random(Rbar^2, Rbar^{4:-1})
+elapsedTime Ext(M,M);
+elapsedTime newExt(M,M);
+--on this example newExt is faster, but on some the comparison goes the other way, too.
+///
+
 end--
 
 restart
+loadPackage"CompleteIntersectionResolutions"
+debug CompleteIntersectionResolutions
 path
+
+restart
 uninstallPackage "CompleteIntersectionResolutions"
 restart
 installPackage "CompleteIntersectionResolutions"
@@ -5086,5 +5802,11 @@ loadPackage("CompleteIntersectionResolutions", Reload =>true)
 
 
 viewHelp CompleteIntersectionResolutions
+
+
+
+
+
+
 
 
