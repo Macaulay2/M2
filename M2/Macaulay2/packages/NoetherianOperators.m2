@@ -2576,6 +2576,42 @@ Description
 ///
 
 
+doc ///
+Key
+    amult
+    (amult, Module)
+    (amult, Ideal)
+Headline
+    Computes the arithmetic multiplicity of a module
+Usage
+    m = amult(M)
+    m = amult(I)
+Inputs
+    M : Module
+        a submodule of a free module
+    I : Ideal
+        an ideal
+Outputs
+    m : ZZ
+        the arithmetic multiplicity of the module or the ideal
+Description
+    Text
+        This method computes the arithmetic multiplicity of a module.
+        Given a submodule $M$ of a free module $F$, one computes the arithmetic multiplicity of $M$ as the sum, along the associated primes of $F/M$, 
+	of the length of the largest submodule of finite length of the quotient $M/F$ localized at the associated prime.
+	The arithmetic multiplicity is a fundamental invariant from a differential point of view as it yields the minimal size of a differential primary decomposition. 
+        For more details reader is referred to the paper    
+        @HREF("https://arxiv.org/abs/2101.03643", "Primary Decomposition with Differential Operators")@. 
+
+    Example
+        R = QQ[x1,x2,x3,x4]
+	U = image matrix{{x1*x2,x2*x3,x3*x4,x4*x1}, {x1^2,x2^2,x3^2,x4^2}}
+	amult U
+	I = ideal( x1^3*x3^2-x2^5, x2^2*x4^3-x3^5, x1^5*x4^2-x2^7, x1^2*x4^5-x3^7 )
+	amult I
+///
+
+
 -------------- Noetherian operators documentation
 
 ------- DiffOp documentation
