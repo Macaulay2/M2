@@ -3708,6 +3708,39 @@ Description
         Q == Q'
 ///
 
+
+doc ///
+Key
+    getModuleFromNoetherianOperators
+    (getModuleFromNoetherianOperators, Ideal, List)
+Headline
+    Computes a primary submodule corresponding to a list of Noetherian operators and a prime ideal
+Usage
+    U = getModuleFromNoetherianOperators(P, L)
+Inputs
+    P : Ideal
+        a prime ideal
+    L : List
+        of @TO2 {DiffOp, "differential operators"}@
+Outputs
+    U : Module
+        the primary submodule corresponding to L and P
+Description
+    Text
+        This method contains an implementation of Algorithm 4.3 in @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@. 
+        Applying this algorithm can be seen as making the backward process of computing a set of Noetherian operators.  
+    	For more details, see Section 4 of @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@.
+        
+    Example
+    	R = QQ[x1,x2,x3,x4]
+    	U = image matrix{{x1*x2,x2*x3,x3*x4,x4*x1}, {x1^2,x2^2,x3^2,x4^2}}
+	dpd = diffPrimDec U
+	M = dpd / (L -> getModuleFromNoetherianOperators(first L, last L)) // intersect
+	M == U
+///
+
+
+
 doc ///
 Key
     coordinateChangeOps
