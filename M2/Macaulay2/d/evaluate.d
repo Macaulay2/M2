@@ -1803,20 +1803,6 @@ combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
 		    );
 	       p = p.next));
      sethash(z,x.Mutable | y.Mutable));
-combine(e:Expr):Expr := (
-     when e
-     is v:Sequence do
-     if length(v) == 5 then 
-     when v.0 is x:HashTable do
-     if x.Mutable then WrongArg(1,"an immutable hash table") else
-     when v.1 is y:HashTable do
-     if y.Mutable then WrongArg(2,"an immutable hash table") else
-     combine(v.2,v.3,v.4,x,y)
-     else WrongArg(1+1,"a hash table")
-     else WrongArg(0+1,"a hash table")
-     else WrongNumArgs(5)
-     else WrongNumArgs(5));
-setupfun("combine",combine);
 
 twistCombine(f:Expr,g:Expr,h:Expr,k:Expr,x:HashTable,y:HashTable):Expr := (
      z := newHashTable(x.Class,x.parent);
@@ -1881,20 +1867,31 @@ twistCombine(f:Expr,g:Expr,h:Expr,k:Expr,x:HashTable,y:HashTable):Expr := (
 		    );
 	       p = p.next));
      sethash(z,x.Mutable | y.Mutable));
-twistCombine(e:Expr):Expr := (
+
+combine(e:Expr):Expr := (
      when e
      is v:Sequence do
-     if length(v) == 6 then 
-     when v.0 is x:HashTable do
-     if x.Mutable then WrongArg(1,"an immutable hash table") else
-     when v.1 is y:HashTable do
-     if y.Mutable then WrongArg(2,"an immutable hash table") else
-     twistCombine(v.2,v.3,v.4,v.5,x,y)
-     else WrongArg(1+1,"a hash table")
-     else WrongArg(0+1,"a hash table")
-     else WrongNumArgs(6)
-     else WrongNumArgs(6));
-setupfun("twistCombine",twistCombine);
+     if length(v) == 5 then (
+        when v.0 is x:HashTable do
+        if x.Mutable then WrongArg(1,"an immutable hash table") else
+        when v.1 is y:HashTable do
+        if y.Mutable then WrongArg(2,"an immutable hash table") else
+        combine(v.2,v.3,v.4,x,y)
+        else WrongArg(1+1,"a hash table")
+        else WrongArg(0+1,"a hash table")
+     )
+     else if length(v) == 6 then (
+        when v.0 is x:HashTable do
+        if x.Mutable then WrongArg(1,"an immutable hash table") else
+        when v.1 is y:HashTable do
+        if y.Mutable then WrongArg(2,"an immutable hash table") else
+        twistCombine(v.2,v.3,v.4,v.5,x,y)
+        else WrongArg(1+1,"a hash table")
+        else WrongArg(0+1,"a hash table")
+     )
+     else WrongNumArgs(5)
+     else WrongNumArgs(5));
+setupfun("combine",combine);
 
 export unarymethod(right:Expr,methodkey:SymbolClosure):Expr := (
      method := lookup(Class(right),Expr(methodkey),methodkey.symbol.hash);
