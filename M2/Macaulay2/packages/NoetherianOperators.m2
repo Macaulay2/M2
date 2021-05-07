@@ -39,6 +39,7 @@ export {
     "DiffOp",
     "diffOp",
     "diffOpRing",
+    "normalize",
 
     "noetherianOperators",
     "specializedNoetherianOperators",
@@ -57,12 +58,13 @@ export {
     "TrustedPoint",
 
     --functions from punctual Hilb approach
-    -- "getIdealFromNoetherianOperators",
+    "getIdealFromNoetherianOperators",
+    "getModuleFromNoetherianOperators",
     "joinIdeals",
+    "mapToPunctualHilbertScheme",
     "amult",
     "solvePDE",
     "diffPrimDec"
-    -- "mapToPunctualHilbertScheme" 
 
 }
 
@@ -729,7 +731,7 @@ DiffOp - DiffOp := DiffOp => (a,b) -> (
 RingElement * DiffOp := DiffOp => (r,d) -> (
     R := class r;
     S := class d;
-    if member(ring r, (ring d).baseRings) then new S from diffOp(promote(r,ring d)*matrix d)
+    if ring r === ring d or member(ring r, (ring d).baseRings) then new S from diffOp(promote(r,ring d)*matrix d)
     else error"expected pair to have a method for '*'"
 )
 - DiffOp := DiffOp => d -> ((-1)*d)
@@ -761,6 +763,15 @@ normalize DiffOp := DiffOp => d -> (
     lc = (last coefficients lt)_(0,0);
     (1/sub(lc,KK)) * d
 )
+evaluate(DiffOp, Matrix) := (D, pt) -> (
+    S := ring D;
+    R := coefficientRing S;
+    (mon, coe) := coefficients D;
+    diffOp (mon * evaluate(sub(coe, R) , pt))
+)
+evaluate(DiffOp, Point) := (D, pt) -> evaluate(D, matrix pt)
+
+
 
 TEST ///
 R = QQ[x,y]
@@ -1066,15 +1077,15 @@ macaulayMatrixKernel := true >> opts -> (I, kP) -> (
 )
 
 
--- returns a list of Diff ops based on matrices M, dBasis
--- currently dBasis must be a row-vector
-matrixToDiffOps = (M, dBasis) -> (
+-- returns a list of Diff ops based on matrices M, db
+-- currently db must be a row-vector
+matrixToDiffOps = (M, db) -> (
     R := ring M;
     S := diffOpRing R;
     phi := map(S,R, gens S);
-    if M == 0 then diffOp(0_S)
+    if M == 0 then {diffOp(0_S)}
     else transpose entries M /
-        (c -> phi dBasis * transpose matrix {c}) /
+        (c -> phi db * transpose matrix {c}) /
         diffOp //
         sort
 )
@@ -1936,6 +1947,17 @@ assert(M == U)
 --     (toExternalString, ZeroDiffOp),
 --     (toString, DiffOp)
 -- }
+undocumented {
+    (symbol +, DiffOp, DiffOp),
+    (symbol -, DiffOp, DiffOp),
+    (symbol *, RingElement, DiffOp),
+    (symbol ?, DiffOp, DiffOp),
+    (symbol ==, DiffOp, DiffOp),
+    (symbol ==, DiffOp, ZZ),
+    (symbol ==, ZZ, DiffOp),
+    (coefficients, DiffOp),
+    (symbol -, DiffOp),
+}
 
 beginDocumentation()
 refKroneLeykin := "R. Krone and A. Leykin, \"Numerical algorithms for detecting embedded components.\", arXiv:1405.7871"
@@ -2556,300 +2578,234 @@ Headline
     differential operator
 Description
     Text
-        A differential operator of the ring $R = \mathbb{K}[x_1,\dots,x_n]$ can be thought of as a polynomial
-        with coefficients in $R$, and monomials in variables $dx_1, \dots, dx_n$, where $dx_i$ corresponds to the
-        partial derivative with respect to $x_i$. These operators form an $R$-vector space, and act naturally on elements of $R$.
+        A differential operator of the ring $R = \mathbb{K}[x_1,\dots,x_n]$ can be thought of as $k$-vectors of polynomials
+        in $S = R[dx_1, \dotsc, dx_n]$, with coefficients in $R$, and monomials in variables $dx_1, \dots, dx_n$, where $dx_i$ corresponds to the
+        partial derivative with respect to $x_i$. Hence a differential operator is an element of the free module $S^k$.
+        These operators form an $R$-vector space, and operate on elements of $R^k$.
+        The result of the operation lies in $R$, and is equal to the sum of the entrywise
+        operations.
+
+        The ring $S$ can be obtained from $R$ using @TO diffOpRing@.
 
     Example
         R = QQ[x,y]
-        D = diffOp {x => x+y, x*y^2 => 3+x}
+        S = diffOpRing R
+        D = diffOp((x+y)*dx + (3+x) * dx*dy^2)
         (x^2+3) * D
         D + D
         D(x^5*y^2)
-    Text
-        Instances of {\tt DiffOp} are @TO2 {HashTable, "hash tables"}@, where keys are differential monomials
-        (represented as monomials in $R$), and values are the corresponding coefficients. A useful shortcut for
-        creating instances of {\tt DiffOp} is to use a @TO WeylAlgebra@.
-
     Example
-        needsPackage "Dmodules"
-        S = makeWA R
-        E = diffOp(y*dx - x*dy^2)
+        D = diffOp(matrix{{x*dx}, {y*dy}})
+        f = matrix{{x^2}, {y^2}}
+        D f
+        
 SeeAlso
-    (diffOp, HashTable)
+    (diffOp, Matrix)
     (diffOp, RingElement)
 ///
 
 doc ///
 Key
-    diffOp
+    diffOpRing
 Headline
-    create a differential operator
-///
-
-doc ///
-Key
-    (diffOp, HashTable)
-    (diffOp, List)
-    (NewFromMethod, DiffOp, HashTable)
-    (NewFromMethod, DiffOp, List)
-Headline
-    create a differential operator
+    create and cache the ring of differential operators
 Usage
-    diffOp H
+    diffOpRing R
 Inputs
-    H:HashTable
-        or a @TO2 {List, "list"}@ of pairs {\tt mon => coef}
+    R:PolynomialRing
+        in $n$ variables
 Outputs
-    :DiffOp
-Description
-    Text
-        The @TO HashTable@ {\tt H} should contain monomials as keys and polynomials as values, all
-        of which should lie in the same ring. The keys represent monomials of each term (in $dx$ variables),
-        and the value represent the coefficient.
-    Example
-        R = QQ[x,y]
-        H = new HashTable from {x^2 => x+y+3, y^2*x^5 => 2*x}
-        D1 = diffOp H
-    Text
-        Alternatively, {\tt diffOp} can also create differential operators from lists of {\tt key => value} pairs
-    Example
-        D2 = diffOp {x^2 => x+y+3, y^2*x^5 => 2*x}
-        D1 == D2
-    Text
-        For a simpler way of creating differential operators, see @TO (diffOp, RingElement)@.
-Caveat
-    The constructors @TO (NewFromMethod, DiffOp, HashTable)@ and @TO (NewFromMethod, DiffOp, List)@ are for internal use only. Use @TO (diffOp, HashTable)@ and @TO (diffOp, List)@ instead.
-
-SeeAlso
-    DiffOp
-    (diffOp, RingElement)
-///
-
-doc ///
-Key
-    (diffOp, Ring, RingElement)
-    (diffOp, RingElement, Ring)
-    (diffOp, RingElement)
-Headline
-    create a differential operator from a Weyl algebra element
-Usage
-    diffOp_R f
-    diffOp(f, R)
-    diffOp f
-Inputs
-    R:Ring
-    f:RingElement
-        of a @TO WeylAlgebra@ of {\tt R}
-Outputs
-    :DiffOp
+    :PolynomialRing
+        in $2n$ variables
 Consequences
     Item
-        if called without a specified ring (i.e. {\tt diffOp f}), creates a new ring by discarding the $dx$-variables and caches it in the Weyl algebra
-    Item
-        if such a ring had been previously cached, the cached ring will be used.
+        the ring is cached in {tt R} under the key {\tt "DiffOpRing"}.
 Description
     Text
-        Creates a differential operator of the ring {\tt R} from an element {\tt f} of a Weyl algebra of {\tt R}
+        Takes a polynomial ring $R = \mathbb{K}[x_1,\dotsc,x_n]$ and creates the ring $S = R[dx_1,\dotsc,dx_n]$.
     Example
-        needsPackage "Dmodules"
-        R = QQ[x,y]
-        S = makeWA R
-        D = diffOp_R(x^2 * dx + y^2 * dy^2*dx)
-        ring D === R
+        R = QQ[x_1..x_3, a,b];
+        S = diffOpRing R;
+        gens S
+        coefficientRing S
     Text
-        The ring does not have to be specified. Note that in this case, the resulting operator will not be a differential
-        operator of {\tt R}, but that of a new ring. This ring is cached, so subsequent calls will result in operators of the same ring.
+        Differential operators of $R$ have entries in $S$.
     Example
-        E = diffOp(x^2* dx)
-        ring E === R
-        F = diffOp(dy^2)
-        ring E === ring F
-SeeAlso
-    DiffOp
-    (diffOp, HashTable)
-
-///
-
-doc ///
-Key
-    (diffOp, Matrix, Matrix)
-    (diffOp, List, List)
-Headline
-    create a differential operator from lists of monomials and coefficients
-Usage
-    diffOp(mons, coefs)
-Inputs
-    mons:Matrix
-        or a @TO "list"@ of differential monomials (in the base ring)
-    coefs:Matrix
-        or a @TO "list"@ of coefficients
-Outputs
-    :DiffOp
-Description
+        ring diffOp(dx_3^2) === S
+        ring diffOp(a_R) === S
     Text
-        Create a differential operator from lists or matrices.
-        Each entry in the monomial list or matrix corresponds to the respective element in the coefficient list or matrix.
+        Subsequent calls to {\tt diffOpRing} will not create new rings
     Example
-        R = QQ[x,y,z];
-        mons = {x^2, y^2*z}
-        coefs = {y^2+2*x, z^4-2*x*y}
-        D = diffOp(mons, coefs)
-    Text
-        This method can be used with @TO (coefficients, DiffOp)@ to select some terms from a differential operator.
-    Example
-        D' = diffOp coefficients(D, Monomials => {x^2})
-SeeAlso
-    DiffOp
-    diffOp
-///
-
-doc ///
-Key
-    (symbol +, DiffOp, DiffOp)
-Headline
-    addition of differential operators
-Usage
-    D + E
-Inputs
-    D:DiffOp
-    E:DiffOp
-Outputs
-    :DiffOp
-Description
-    Text
-        Adds two differential operators. The ring of both operators must match
-    Example
-        R = QQ[x,y];
-        D = diffOp{x => x^2+ y}
-        E = diffOp{x => -y, x^2*y^2 => 2}
-        D + E
-///
-
-doc ///
-Key
-    (symbol -, DiffOp, DiffOp)
-Headline
-    subtraction of differential operators
-Usage
-    D - E
-Inputs
-    D:DiffOp
-    E:DiffOp
-Outputs
-    :DiffOp
-Description
-    Text
-        Subtracts two differential operators. The ring of both operators must match
-    Example
-        R = QQ[x,y];
-        D = diffOp{x => x^2+ y}
-        E = diffOp{x => -y, x^2*y^2 => 2}
-        D - E
-///
-
-
-doc ///
-Key
-    (symbol -, DiffOp)
-Headline
-    negation of differential operators
-Usage
-    - D
-Inputs
-    D:DiffOp
-Outputs
-    :DiffOp
-Description
-    Text
-        Corresponds to $(-1)*D$
-    Example
-        R = QQ[x,y];
-        D = diffOp{x => x^2+ y}
-        - D
-///
-
-doc ///
-Key
-    (symbol *, RingElement, DiffOp)
-    (symbol *, Number, DiffOp)
-Headline
-    scaling of differential operators
-Usage
-    c*D
-Inputs
-    c:RingElement
-        in the same ring as {\tt D}, or a @TO Number@
-
-    D:DiffOp
-Outputs
-    :DiffOp
-Description
-    Text
-        Multiplies every coefficient of {\tt D} by {\tt c}
-    Example
-        R = QQ[x,y];
-        D = diffOp{x => x^2+ y, y^2 => 1}
-        y*D
-        2*D
-///
-
-doc ///
-Key
-    (symbol ?, DiffOp, DiffOp)
-    (symbol ==, DiffOp, DiffOp)
-    (symbol ==, DiffOp, ZZ)
-    (symbol ==, ZZ, DiffOp)
-Headline
-    comparison of differential operators
-Usage
-    D ? E
-    D == E
-    D == 0
-Inputs
-    D:DiffOp
-    E:DiffOp
-Description
-    Text
-        The ordering of DiffOps a product ordering of the undelying ring, where the $dx$ monomoial are compared
-        first, and ties are broken with coefficients.
-    Example
-        R = QQ[x,y, MonomialOrder => Lex]
-        D1 = diffOp{x^2 => y, y => x^2}
-        D2 = diffOp{y => y^2}
-        D3 = diffOp{x^2 => y, y => x^2 + y^2}
-        D1 ? D1
-        D1 ? D2
-        D1 ? D3
-        D1 + D2 == D3
-        D1 + D2 - D3 == 0
-///
-
-doc ///
-Key
-    (ring, DiffOp)
-Headline
-    get the ring associated to a differential operator
-Usage
-    ring D
-Inputs
-    D:DiffOp
-Outputs
-    :Ring
-Description
-    Text
-        Returns the ring in which the coefficients lie
-    Example
-        R = QQ[x]
-        D = diffOp{x => 2*x^2}
-        ring D
+        diffOpRing R === S
 Caveat
-    If the @TO DiffOp@ was created using @TO (diffOp, RingElement)@ (e.g. after running @TO makeWA@),
-    the ring
+    the created ring is {\em not} a Weyl algebra, it is a commutative ring
+
+SeeAlso
+    (diffOp, Matrix)
+    (diffOp, RingElement)
 ///
 
 doc ///
 Key
+    diffOp
+Headline
+    create a differential operator
+///
+
+doc ///
+Key
+    (diffOp, Matrix)
+    (diffOp, RingElement)
+Headline
+    create a differential operator
+Usage
+    diffOp M
+Inputs
+    M:Matrix
+        consisting of a single column, or a @TO RingElement@.
+Outputs
+    :DiffOp
+Description
+    Text
+        Creates a differential operator from a vector of polynomials in $S = \mathbb{K}[x_1,\dotsc,x_n][dx_1,\dotsc,dx_n]$.
+        The ring $S$ is obtained from the ring $R = \mathbb{K}[x_1,\dotsc,x_n]$ by using @TO diffOpRing@.
+    Example
+        R = QQ[x_1,x_2]
+        S = diffOpRing R
+        diffOp matrix {{(x_1 * x_2 + 3)*dx_1*dx_2^2}, {dx_2^2}}
+    Text
+        A @TO RingElement@ can be used instead of a $1 \times 1$ matrix.
+    Example
+        diffOp (x_1^2*dx_1^2)
+SeeAlso
+    DiffOp
+    diffOpRing
+
+///
+
+-- doc ///
+-- Key
+--     (symbol +, DiffOp, DiffOp)
+-- Headline
+--     addition of differential operators
+-- Usage
+--     D + E
+-- Inputs
+--     D:DiffOp
+--     E:DiffOp
+-- Outputs
+--     :DiffOp
+-- Description
+--     Text
+--         Adds two differential operators. The ring of both operators must match
+--     Example
+--         R = QQ[x,y];
+--         D = diffOp{x => x^2+ y}
+--         E = diffOp{x => -y, x^2*y^2 => 2}
+--         D + E
+-- ///
+-- 
+-- doc ///
+-- Key
+--     (symbol -, DiffOp, DiffOp)
+-- Headline
+--     subtraction of differential operators
+-- Usage
+--     D - E
+-- Inputs
+--     D:DiffOp
+--     E:DiffOp
+-- Outputs
+--     :DiffOp
+-- Description
+--     Text
+--         Subtracts two differential operators. The ring of both operators must match
+--     Example
+--         R = QQ[x,y];
+--         D = diffOp{x => x^2+ y}
+--         E = diffOp{x => -y, x^2*y^2 => 2}
+--         D - E
+-- ///
+-- 
+-- 
+-- doc ///
+-- Key
+--     (symbol -, DiffOp)
+-- Headline
+--     negation of differential operators
+-- Usage
+--     - D
+-- Inputs
+--     D:DiffOp
+-- Outputs
+--     :DiffOp
+-- Description
+--     Text
+--         Corresponds to $(-1)*D$
+--     Example
+--         R = QQ[x,y];
+--         D = diffOp{x => x^2+ y}
+--         - D
+-- ///
+-- 
+-- doc ///
+-- Key
+--     (symbol *, RingElement, DiffOp)
+-- Headline
+--     scaling of differential operators
+-- Usage
+--     c*D
+-- Inputs
+--     c:RingElement
+--         in the same ring as {\tt D}, or a @TO Number@
+-- 
+--     D:DiffOp
+-- Outputs
+--     :DiffOp
+-- Description
+--     Text
+--         Multiplies every coefficient of {\tt D} by {\tt c}
+--     Example
+--         R = QQ[x,y];
+--         D = diffOp{x => x^2+ y, y^2 => 1}
+--         y*D
+--         2*D
+-- ///
+-- 
+-- doc ///
+-- Key
+--     (symbol ?, DiffOp, DiffOp)
+--     (symbol ==, DiffOp, DiffOp)
+--     (symbol ==, DiffOp, ZZ)
+--     (symbol ==, ZZ, DiffOp)
+-- Headline
+--     comparison of differential operators
+-- Usage
+--     D ? E
+--     D == E
+--     D == 0
+-- Inputs
+--     D:DiffOp
+--     E:DiffOp
+-- Description
+--     Text
+--         The ordering of DiffOps a product ordering of the undelying ring, where the $dx$ monomoial are compared
+--         first, and ties are broken with coefficients.
+--     Example
+--         R = QQ[x,y, MonomialOrder => Lex]
+--         D1 = diffOp{x^2 => y, y => x^2}
+--         D2 = diffOp{y => y^2}
+--         D3 = diffOp{x^2 => y, y => x^2 + y^2}
+--         D1 ? D1
+--         D1 ? D2
+--         D1 ? D3
+--         D1 + D2 == D3
+--         D1 + D2 - D3 == 0
+-- ///
+
+doc ///
+Key
+    (symbol SPACE, DiffOp, Matrix)
     (symbol SPACE, DiffOp, RingElement)
 Headline
     apply a differential operator
@@ -2857,47 +2813,55 @@ Usage
     D f
 Inputs
     D:DiffOp
-    f:RingElement
-        in the same ring as {\tt D}
+    f:Matrix
+        consisting of one column, with entries in the coefficient ring of {\tt ring D}
 Outputs
     :RingElement
         in the same ring as {\tt f}
 Description
     Text
-        The differential operators of the ring $R = \mathbb{F}[x_1,\dots,x_n]$ act naturally on elements of $R$.
-        The operator $dx_i$ acts as a partial derivarive with respect to $x_i$, and a polynomial acts by multiplication.
+        Let $R = \mathbb{F}[x_1,\dots,x_n]$ and $S = R[dx_1,\dotsc,dx_n]$. The elements of $S$ operate naturally on elements of $R$.
+        The operator $dx_i$ acts as a partial derivarive with respect to $x_i$, i.e. $dx_i \bullet f = \frac{\partial f}{\partial x_i}$,
+        and a polynomial acts by multiplication, i.e. $x_i \bullet f = x_i f$.
+
+        Suppose $D \in S^k$ and $f \in R^k$. Then the operation of $D$ on $f$ is defined as $D\bullet f := \sum_{i=1}^k D_i \bullet f_i \in R$.
     Example
         R = QQ[x,y]
-        dx = diffOp{x^2 => 1}
-        D = diffOp{1_R => x^2 + y^2}
-        dx(x^4 + x^3 + y)
-        D(x^2 - y^2)
+        S = diffOpRing R
+        D = diffOp matrix{{x*dx}, {(y+1)*dx*dy}}
+        f = matrix{{x+y}, {x*y*(y+1)}}
+        D f
+    Text
+        As with @TO (diffOp, Matrix)@, a $1\times 1$ matrix may be replaced by a @TO RingElement@.
+    Example
+        D = diffOp dx^2
+        D(x^3+y*x^2)        
 ///
 
-doc ///
-Key
-    (substitute, DiffOp, Ring)
-Headline
-    change the ring of a differential operator
-Usage
-    substitute(D, R)
-    sub(D, R)
-Inputs
-    D: DiffOp
-    R: Ring
-Outputs
-    :DiffOp
-Description
-    Text
-        Attempts to change the underlying ring of the differential operator by calling @TO substitute@
-        for each monomial and coefficient of {\tt D}
-    Example
-        R = QQ[x,y]
-        D = diffOp{1_R => x^2, x^2 => y^2}
-        S = QQ[x,y,z]
-        DS = sub(D,S)
-        ring DS === S
-///
+-- doc ///
+-- Key
+--     (substitute, DiffOp, Ring)
+-- Headline
+--     change the ring of a differential operator
+-- Usage
+--     substitute(D, R)
+--     sub(D, R)
+-- Inputs
+--     D: DiffOp
+--     R: Ring
+-- Outputs
+--     :DiffOp
+-- Description
+--     Text
+--         Attempts to change the underlying ring of the differential operator by calling @TO substitute@
+--         for each monomial and coefficient of {\tt D}
+--     Example
+--         R = QQ[x,y]
+--         D = diffOp{1_R => x^2, x^2 => y^2}
+--         S = QQ[x,y,z]
+--         DS = sub(D,S)
+--         ring DS === S
+-- ///
 
 
 doc ///
@@ -2905,7 +2869,7 @@ Key
     normalize
     (normalize, DiffOp)
 Headline
-    rescale a differential operator to a canonical form
+    rescale a differential operator
 Usage
     normalize D
 Inputs
@@ -2916,8 +2880,8 @@ Description
     Text
         Rescales a differential operator so that the leading term of the leading coefficient is 1.
     Example
-        R = QQ[x,y,t];
-        D = diffOp{x^2*t => 3*x^3 + 2*y, t^2 => x+y}
+        S = diffOpRing (QQ[x,y,t]);
+        D = diffOp(3*x^3*dx^2*dt + (x+y)*dt^2)
         normalize D
     Text
         This can be useful when computing "canonical" sets of Noetherian operators,
@@ -2925,61 +2889,61 @@ Description
     Example
         I = ideal(x^2,y^2 - x*t);
         nops = noetherianOperators(I, Strategy => "MacaulayMatrix");
-        nops // sort / normalize == {diffOp{1_R => 1}, diffOp{y => 1}, diffOp{y^2 => t, x => 2}, diffOp{y^3 => t, x*y => 6}}
+        nops / normalize == {diffOp 1_S, diffOp dy, diffOp(t*dy^2 + 2*dx), diffOp(t*dy^3 + 6*dx*dy)}
 ///
 
 
-doc ///
-Key
-    ZeroDiffOp
-    (NewFromMethod, ZeroDiffOp, Ring)
-    (symbol ==, ZZ, ZeroDiffOp)
-    (symbol ==, ZeroDiffOp, ZZ)
-Headline
-    the zero differential operator of a ring
-Description
-    Text
-        For internal use. A type of @TO DiffOp@ with a single key {\tt 1} and value 0.
-        Users are not expected to create instances of {\tt ZeroDiffOp}, they are created automatically by @TO diffOp@ when necessary.
-    Example
-        R = QQ[x,y]
-        D = diffOp{x => 0};
-        instance(D, ZeroDiffOp)
-        peek D
-    Text
-        Comparison to the integer 0 works as expected
-    Example
-        E = diffOp{1_R => 0}
-        E == 0
-SeeAlso
-    diffOp
-
-///
-
-doc ///
-Key
-    InterpolatedDiffOp
-    (NewFromMethod, InterpolatedDiffOp, HashTable)
-    (NewFromMethod, InterpolatedDiffOp, List)
-Headline
-    differential operator with interpolated coefficients
-Description
-    Text
-        A type of @TO DiffOp@ returned by interpolation based methods, such as @TO numericalNoetherianOperators@.
-        Because of this, users are not expected to create instances of this type.
-
-        If the interpolation of any coefficient fails, the numerator and denominator will be replaced by the @TO2 {String, "string"}@ {\tt "?"}.
-
-        Assuming the interpolation was successful, the method @TO (evaluate, InterpolatedDiffOp, Point)@ will convert
-        an @TO InterpolatedDiffOp@ to a specialized differential operators of type @TO DiffOp@ by evaluating each numerator and denominator at a point.
-    Example
-        R = CC[x,y]
-        D = new InterpolatedDiffOp from {x => (x+y, pi*ii*x^2*y), y => (x, 1.3_R)}
-        D' = evaluate(D, point{{1.2, 2+ii}})
-SeeAlso
-    (evaluate, InterpolatedDiffOp, Point)
-
-///
+-- doc ///
+-- Key
+--     ZeroDiffOp
+--     (NewFromMethod, ZeroDiffOp, Ring)
+--     (symbol ==, ZZ, ZeroDiffOp)
+--     (symbol ==, ZeroDiffOp, ZZ)
+-- Headline
+--     the zero differential operator of a ring
+-- Description
+--     Text
+--         For internal use. A type of @TO DiffOp@ with a single key {\tt 1} and value 0.
+--         Users are not expected to create instances of {\tt ZeroDiffOp}, they are created automatically by @TO diffOp@ when necessary.
+--     Example
+--         R = QQ[x,y]
+--         D = diffOp{x => 0};
+--         instance(D, ZeroDiffOp)
+--         peek D
+--     Text
+--         Comparison to the integer 0 works as expected
+--     Example
+--         E = diffOp{1_R => 0}
+--         E == 0
+-- SeeAlso
+--     diffOp
+-- 
+-- ///
+-- 
+-- doc ///
+-- Key
+--     InterpolatedDiffOp
+--     (NewFromMethod, InterpolatedDiffOp, HashTable)
+--     (NewFromMethod, InterpolatedDiffOp, List)
+-- Headline
+--     differential operator with interpolated coefficients
+-- Description
+--     Text
+--         A type of @TO DiffOp@ returned by interpolation based methods, such as @TO numericalNoetherianOperators@.
+--         Because of this, users are not expected to create instances of this type.
+-- 
+--         If the interpolation of any coefficient fails, the numerator and denominator will be replaced by the @TO2 {String, "string"}@ {\tt "?"}.
+-- 
+--         Assuming the interpolation was successful, the method @TO (evaluate, InterpolatedDiffOp, Point)@ will convert
+--         an @TO InterpolatedDiffOp@ to a specialized differential operators of type @TO DiffOp@ by evaluating each numerator and denominator at a point.
+--     Example
+--         R = CC[x,y]
+--         D = new InterpolatedDiffOp from {x => (x+y, pi*ii*x^2*y), y => (x, 1.3_R)}
+--         D' = evaluate(D, point{{1.2, 2+ii}})
+-- SeeAlso
+--     (evaluate, InterpolatedDiffOp, Point)
+-- 
+-- ///
 
 
 
@@ -3264,7 +3228,9 @@ Description
         P = radical Q1;
         pt = point{{0,0,2}};
         A = specializedNoetherianOperators(I, pt, DependentSet => {x,y}) / normalize
-        B = noetherianOperators(I, P) / (D -> evaluate(D, pt)) / normalize
+        B = noetherianOperators(I, P) /
+            (D -> evaluate(D,pt)) /
+            normalize
         A == B
     Text
         Over a non-exact field, the output will be non-exact
@@ -3295,7 +3261,7 @@ Inputs
         unmixed
 Outputs
     :List
-        of @TO2 {InterpolatedDiffOp, "interpolated differential operators"}@
+        of @TO2 {Expression, "expressions"}@
 Description
     Text
         The method computes specialized Noetherian operators from many sampled points, and attempts to find fitting rational functions
@@ -3452,8 +3418,6 @@ doc ///
 Key
     (evaluate, DiffOp, Point)
     (evaluate, DiffOp, Matrix)
-    (evaluate, InterpolatedDiffOp, Point)
-    (evaluate, InterpolatedDiffOp, Matrix)
 Headline
     evaluate coefficients of a differential operator
 Usage
@@ -3466,104 +3430,100 @@ Outputs
     :DiffOp
 Description
     Text
-        Evaluates a @TO2 {DiffOp, "differential operator"}@ at a point. This can be used to obtain a set of specialized Noetherian operators.
+        Evaluates the polynomial coefficients of a @TO2 {DiffOp, "differential operator"}@ at a point.
+        This can be used to obtain a set of specialized Noetherian operators.
     Example
         R = QQ[x,y];
-        D = diffOp{x => x, y => y}
+        S = diffOpRing R;
+        D = diffOp(x*dx+y*dy^3)
         evaluate(D, point{{1,2}})
-    Text
-        The method supports @TO2 {InterpolatedDiffOp, "interpolated differential operators"}@ as well, assuming that the denominator does not vanish.
-        The resulting operator is a @TO DiffOp@, not an @TO InterpolatedDiffOp@.
-    Example
-        E = new InterpolatedDiffOp from {x => (x, x^2 + y^2)}
-        evaluate(E, point{{1,2}})
 ///
 
-doc ///
-Key
-    (coefficients, DiffOp)
-Headline
-    coefficients of a differential operator
-Usage
-    (mon, coef) = coefficients D
-Inputs
-    D:DiffOp
-    Variables =>
-        not yet implemented
-    Monomials => List
-        or a @TO Sequence@ or a @TO Matrix@
-Outputs
-    mon:Matrix
-    coef:Matrix
-Description
-    Text
-        Get the differential monomials and their corresponding polynomial coefficients.
-        The monomials are returned as a row matrix in the base ring, and the coefficients are returned as a column matrix.
-    Example
-        R = QQ[x,y];
-        D = diffOp{x => 2*x^2 + 1, x*y => y^2}
-        coefficients D
-    Text
-        Coefficients of given differential monomials can be obtained using the option @TO [coefficients, Monomials]@.
-        The output can be used with @TO (diffOp, Matrix, Matrix)@ to obtain new differential operators.
-    Example
-        coefficients(D, Monomials => {x*y, y^2})
-        diffOp coefficients(D, Monomials => {x*y, y^2})
-SeeAlso
-    coefficients
-    (coefficients, RingElement)
-///
-
-doc ///
-Key
-    (support, DiffOp)
-Headline
-    list of differential variables occurring in a differential operator
-Usage
-    support D
-Inputs
-    D:DiffOp
-Outputs
-    :List
-        of @TO2 {RingElement, "ring elements"}@, the variables occurring in differential monomials of {\tt D}
-Description
-    Text
-        Lists variables occurring in differential monomials with non-zero coefficients.
-        The variables occurring in the polynomial coefficients are ignored.
-        The resulting list will contain @TO2 {RingElement, "ring elements"}@ in the base ring.
-    Example
-        R = QQ[x,y,z];
-        D = diffOp{1_R=> z^2, x^2*y => 2}
-        support D
-///
-
-doc ///
-Key
-    (degree, DiffOp)
-Headline
-    degree of the differential part of a differential operator
-Usage
-    degree D
-Inputs
-    D:DiffOp
-Outputs
-    :List
-        the degree or multidegree of the differential monomials
-Description
-    Text
-        Returns the highest degree of a differential monomial.
-        The degrees of the polynomial coefficient is ignored.
-    Example
-        R = QQ[x,y];
-        D = diffOp{x^2*y^5 => x^100, x*y^3 => y^99}
-        degree D
-    Text
-        To accomodate polynomial rings having multigradings, degrees are lists of integers.
-    Example
-        S = QQ[x,y] ** QQ[a,b];
-        D = diffOp{x*a => a-b+x^2, b*y^2 => 1}
-        degree D
-///
+-- doc ///
+-- Key
+--     (coefficients, DiffOp)
+-- Headline
+--     coefficients of a differential operator
+-- Usage
+--     (mon, coef) = coefficients D
+-- Inputs
+--     D:DiffOp
+--     Variables =>
+--         not yet implemented
+--     Monomials => List
+--         or a @TO Sequence@ or a @TO Matrix@
+-- Outputs
+--     mon:Matrix
+--     coef:Matrix
+-- Description
+--     Text
+--         Get the differential monomials and their corresponding polynomial coefficients.
+--         The monomials are returned as a row matrix in the base ring, and the coefficients are returned as a column matrix.
+--     Example
+--         R = QQ[x,y];
+--         D = diffOp{x => 2*x^2 + 1, x*y => y^2}
+--         coefficients D
+--     Text
+--         Coefficients of given differential monomials can be obtained using the option @TO [coefficients, Monomials]@.
+--         The output can be used with @TO (diffOp, Matrix, Matrix)@ to obtain new differential operators.
+--     Example
+--         coefficients(D, Monomials => {x*y, y^2})
+--         diffOp coefficients(D, Monomials => {x*y, y^2})
+-- SeeAlso
+--     coefficients
+--     (coefficients, RingElement)
+-- ///
+-- 
+-- doc ///
+-- Key
+--     (support, DiffOp)
+-- Headline
+--     list of differential variables occurring in a differential operator
+-- Usage
+--     support D
+-- Inputs
+--     D:DiffOp
+-- Outputs
+--     :List
+--         of @TO2 {RingElement, "ring elements"}@, the variables occurring in differential monomials of {\tt D}
+-- Description
+--     Text
+--         Lists variables occurring in differential monomials with non-zero coefficients.
+--         The variables occurring in the polynomial coefficients are ignored.
+--         The resulting list will contain @TO2 {RingElement, "ring elements"}@ in the base ring.
+--     Example
+--         R = QQ[x,y,z];
+--         D = diffOp{1_R=> z^2, x^2*y => 2}
+--         support D
+-- ///
+-- 
+-- doc ///
+-- Key
+--     (degree, DiffOp)
+-- Headline
+--     degree of the differential part of a differential operator
+-- Usage
+--     degree D
+-- Inputs
+--     D:DiffOp
+-- Outputs
+--     :List
+--         the degree or multidegree of the differential monomials
+-- Description
+--     Text
+--         Returns the highest degree of a differential monomial.
+--         The degrees of the polynomial coefficient is ignored.
+--     Example
+--         R = QQ[x,y];
+--         D = diffOp{x^2*y^5 => x^100, x*y^3 => y^99}
+--         degree D
+--     Text
+--         To accomodate polynomial rings having multigradings, degrees are lists of integers.
+--     Example
+--         S = QQ[x,y] ** QQ[a,b];
+--         D = diffOp{x*a => a-b+x^2, b*y^2 => 1}
+--         degree D
+-- ///
 
 doc ///
 Key
