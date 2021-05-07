@@ -342,10 +342,11 @@ compMax List := L -> (
     )
 compMax(List,List) := (L,M) -> compMax {L,M}
 
-MM = method(Options => {Regularity => false})
+protect Nonlinear
+MM = method(Options => {Nonlinear => false})
 MM(ZZ, List, List) := opts -> (i, range, D) -> (
     n := #D;
-    if opts.Regularity and i != 0
+    if opts.Nonlinear and i != 0
     then MM(i-1, range, D-toList(n:1)) else (
 	low := range_0;
 	high := range_1;
@@ -363,9 +364,7 @@ MM(ZZ, List, List) := opts -> (i, range, D) -> (
 	)
     )
 
---TODO: change so that multigradedRegularity can take 0 module?
-protect Regularity
-bound = method(Options => {Regularity => false})
+bound = method(Options => {Nonlinear => false})
 bound Module := opts -> M -> (
     t := degreeLength ring M;
     if M == 0 then return (t:-infinity);
@@ -375,7 +374,7 @@ bound Module := opts -> M -> (
     lower := low-toList(t:#supportOfTor M);
     st = flatten apply(#st, i -> apply(st_i, ell -> {i,ell}));
     gt := new MutableHashTable from flatten apply(st, ell -> (
-	    xs := MM(ell_0,{lower,high},ell_1,Regularity => opts.Regularity);
+	    xs := MM(ell_0,{lower,high},ell_1,Nonlinear => opts.Nonlinear);
 	    apply(xs, em -> em => false)
 	    ));
     L := toList(low..high);
@@ -386,7 +385,7 @@ linearTruncationsBound = method()
 linearTruncationsBound Module := M -> bound M
 
 regularityBound = method()
-regularityBound Module := M -> bound(M, Regularity => true)
+regularityBound Module := M -> bound(M, Nonlinear => true)
 
 -------------------------
 --functions neither used nor exported
