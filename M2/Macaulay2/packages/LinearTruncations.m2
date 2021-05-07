@@ -912,6 +912,8 @@ Description
     elapsedTime findRegion({{0,0},{4,4}},M,f,Inner=>{{1,2},{3,1}},Outer=>{{1,1}})
 Caveat
   Use the option @TT "Outer"@ with care if @TT "f"@ is not invariant under positive translation.
+Contributors
+  Mahrud Sayrafi contributed to the code for this function.
 SeeAlso
   findMins
   "VirtualResolutions :: multigradedRegularity"
