@@ -180,6 +180,8 @@ TEST ///
             x_(0,0)^3*x_(1,2)+x_(0,1)^3*(x_(1,0)+x_(1,1))), B);
     -- taking the ring of a productOfProjectiveSpaces as input
     elapsedTime assert(multigradedRegularity(S, I) == {{2,2},{4,1},{1,5}}) -- 9 -> 2.43 -> 1.3
+    -- test for weird ring problems
+    -- FIXME: assert(ring x_(0,0) === value getSymbol "S")
 ///
 
 TEST ///
@@ -264,24 +266,25 @@ TEST ///
 TEST /// -- Example 1.4 of BES, also in documentation of multigradedRegularity
 --restart
 debugLevel=1
+  assert(# hooks multigradedRegularity == 2)
   debug needsPackage "VirtualResolutions"
-  hooks multigradedRegularity
   X = toricProjectiveSpace(1)**toricProjectiveSpace(2);
   X = normalToricVarietyWithTateData X
   S = ring X;
   B = ideal X;
-  -- testing the winnowing map and isIsomorphismOfSheaves
   I = saturate(ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3)), B)
-  elapsedTime assert(L = multigradedRegularity(X,        I) == {{2, 2}, {4, 1}, {1, 5}}) -- FIXME: is {2, 1} in regularity?
-  elapsedTime assert(L = multigradedRegularity(S, module I) == {{3, 3}, {4, 2}, {2, 5}}) -- used to be too slow, now 3s
+  elapsedTime assert(multigradedRegularity(S, module I) == {{3, 3}, {4, 2}, {2, 5}}) -- used to be too slow, now 3s
+  elapsedTime assert(multigradedRegularity(X,        I) == {{2, 2}, {4, 1}, {1, 5}})
+  -- demonstration of internal helper tools
   M = comodule ideal I_*; -- maybe in regularity {{3, 1}, {2, 1}}
   plotRegion(regularityBound M, {0,0}, {5,5})
   plotRegion((i,j) -> isQuasiLinear({i,j}, M), {0,0},{5,5})
   plotRegion((i,j) -> isChiH0({i,j}, M, IrrelevantIdeal => B), {0,0},{5,5})
   plotRegion((i,j) -> isVirtualOfPair({i,j}, M, IrrelevantIdeal => B), {0,0},{5,5})
-  plotRegion(L, {0,0},{5,5})
-  -- in two spots, {2,1} and {3,1}, we get a virtual resolution, despite the fact that
-  -- the resolution of the truncation at those degrees, which are not in regularity, is not quasi-linear
+  plotRegion({{2, 2}, {4, 1}, {1, 5}}, {0,0}, {5,5})
+  -- testing the winnowing map and isIsomorphismOfSheaves
+  -- in two spots, {2,1} and {3,1}, we get a virtual resolution, but the resolution of
+  -- the truncation at those degrees, which are not in regularity, is not quasi-linear
   V = virtualOfPair(res M, {{2,1} + {1,2}})
   phi = V.cache.winnowingMap
   -- TODO: test this more
@@ -307,8 +310,34 @@ TEST ///
   assert(multigradedRegularity(S, comodule I) == {{0,4}})
 ///
 
-TEST ///
-  (S,E) = productOfProjectiveSpaces {1,2};
+TEST /// -- test of returning -infinity for irrelevant ideals
+  debug needsPackage "VirtualResolutions"
+  X = toricProjectiveSpace(1)**toricProjectiveSpace(2);
+  X = normalToricVarietyWithTateData X
+  S = ring X;
+  B = ideal X;
   assert(multigradedRegularity(S, S^0) == {{-infinity, -infinity}})
-  -- TODO: add a test of an irrelevant module where regularity is -infinity only in one component
+  --
+  -- The following tests involve intentionally unsaturated ideals, therefore it is not
+  -- guaranteed that multigradedRegularity will give the right answer, but the correct
+  -- answers are provided for future improvement.
+  --
+  -- Test of an irrelevant module where regularity is -infinity only in one component
+  -- here's a simplified version of K from the end of 2 tests ago
+  K = cokernel(map(S^{{-1, -1}}, S^{{-2, -1}, {-2, -1}}, {{x_1, x_0}}))
+  assert(multigradedRegularity(S, K) == {{2, 1}}) -- FIXME: should give {{2, -infinity}}?
+  plotRegion((i,j) -> isQuasiLinear({i,j}, K), {0,0},{3,3})
+  plotRegion((i,j) -> isChiH0({i,j}, K, IrrelevantIdeal => B), {0,0},{3,3})
+  plotRegion((i,j) -> isVirtualOfPair({i,j}, K, IrrelevantIdeal => B), {0,0},{3,3})
+  plotRegion({{2, -infinity}}, {0,0}, {3,3}) -- TODO: why is {1, 1} not in regularity?
+  n = 2 * regularity K; matrix table(n, n, (y, x) -> hilbertFunction_{x, n - y - 1} K)
+  --
+  -- Test of a non-zero module where regularity is -infinity in both components
+  N = K / truncate({0, 2}, K)
+  assert(multigradedRegularity(S, N) == {{1, 2}, {2, 1}}) -- FIXME: should give {{-infinity, 2}, {2, -infinity}}
+  plotRegion((i,j) -> isQuasiLinear({i,j}, N), {0,0},{3,3})
+  plotRegion((i,j) -> isChiH0({i,j}, N, IrrelevantIdeal => B), {0,0},{3,3})
+  plotRegion((i,j) -> isVirtualOfPair({i,j}, N, IrrelevantIdeal => B), {0,0},{3,3})
+  plotRegion({{-infinity, 2}, {2, -infinity}}, {0,0}, {3,3})
+  n = 2 * regularity N; matrix table(n, n, (y, x) -> hilbertFunction_{n - y - 1, x} N)
 ///
