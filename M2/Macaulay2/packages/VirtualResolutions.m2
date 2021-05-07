@@ -96,7 +96,7 @@ isZeroSheaf(Ideal,              Module) := opts -> (B, M) -> (
     else (J := ann M) == 1 or J != 0 and ourSaturation(J, B) == 1)
 
 isIsomorphismOfSheaves = method(TypicalValue => Boolean, Options => options isZeroSheaf)
-isIsomorphismOfSheaves(Ideal, ModuleMap) := opts -> (B, f) -> (
+isIsomorphismOfSheaves(Ideal, Matrix) := opts -> (B, f) -> (
     isZeroSheaf(B, ker f, opts) and isZeroSheaf(B, coker f, opts))
 
 -- Helper for virtualOfPair
@@ -120,7 +120,7 @@ submatrixWinnowMap = (phi, alphas) -> (
 --------------------------------------------------------------------
 protect winnowingMap
 virtualOfPair = method(Options => {LengthLimit => infinity})
--- TODO: return a ModuleMap in the Module case and ChainComplexMap in the ChainComplex case
+-- TODO: return a Matrix in the Module case and ChainComplexMap in the ChainComplex case
 virtualOfPair(Ideal,  List) := ChainComplex => opts -> (I, alphas) -> virtualOfPair(comodule I, alphas, opts)
 virtualOfPair(Module, List) := ChainComplex => opts -> (M, alphas) -> (
     R := ring M;
