@@ -1,12 +1,6 @@
 --------------------------------------------------------------------
--- Faster strategy for ideals using LinearTruncations
+-- Faster strategy using LinearTruncations
 --------------------------------------------------------------------
--- TODO:
---  1. get virtualOfPair to also return a map, and check if it is an isomorphism
---  2. can we increase the lower bound to speed up P3xP3 examples?
-
-needsPackage "LinearTruncations"
-exportFrom_LinearTruncations {"IrrelevantIdeal","isQuasiLinear","regularityBound","findRegion"}
 
 isVirtualOfPair = method(Options => { Strategy => null, IrrelevantIdeal => null })
 isVirtualOfPair(List, Module) := opts -> (d, M) -> (
@@ -69,6 +63,7 @@ multigradedRegularityTruncationStrategy = (X, M, opts) -> (
     high := if opts.UpperLimit =!= null then opts.UpperLimit else apply(n, i -> max({r} | degs / (deg -> deg_i)));
     -- this is just used for shifting the degrees
     low  := mindegs - toList(n:d);
+    debugInfo("Searching for the quasi-linear region from " | toString low | " to " | toString high);
     -- the combinatorial upperbound on regularity from betti numbers
     U0 := regularityBound M;
     if debugLevel > 2 then plotRegion(U0, low, high);
@@ -79,13 +74,13 @@ multigradedRegularityTruncationStrategy = (X, M, opts) -> (
     U0  = findRegion({mindegs, high}, M, isChiH0,       Outer => U0, IrrelevantIdeal => B);
     if debugLevel > 2 then plotRegion(U0, low, high);
     debugInfo("Upper bound from LinearTruncations: " | toString U0);
-
+    -* old code before the conjecture was proved
     debugInfo("Searching from ", toString low, " to ", toString high);
     -- ideal of the upperbound
     U := ideal apply(U0, ell -> P_(ell - low));
     -- ideal of the lowerbound
     -- TODO: get the LowerLimit option to work again
-    -*if opts.LowerLimit =!= null then opts.LowerLimit else*-
+    -- if opts.LowerLimit =!= null then opts.LowerLimit else
     L := trim ideal 0_P;
     -- this will contain the degrees to be checked with cohomologyHashTable
     R := trim ideal 0_P;
@@ -126,14 +121,15 @@ multigradedRegularityTruncationStrategy = (X, M, opts) -> (
     R = U + ideal apply(R, ell -> P_(ell - low));
     -- FIXME: maybe remove this before release?
     if R != U then error concatenate(newline, 10:"💥", "\n💥💥 TELL LCH 💥💥\n", 10:"💥");
+    *-
+    R := ideal apply(U0, ell -> P_(ell - low));
     -- retrieve the container
     container := opts.cache;
     container.LowerLimit = low;
     container.UpperLimit = high;
     container.Result = apply(flatten entries mingens R, g -> (flatten exponents g) + low));
 
--- The default strategy applies to both modules and ideals in a product of projective spaces,
--- but by using hooks we allow better strategies to be added later
-addHook((multigradedRegularity, NormalToricVariety, Module), Strategy => "Truncation", multigradedRegularityTruncationStrategy)
+-- The linear truncation strategy applies to both modules and ideals in a product of projective spaces
+addHook((multigradedRegularity, NormalToricVariety, Module), Strategy => "LinearTruncations", multigradedRegularityTruncationStrategy)
 
 end--

@@ -168,7 +168,7 @@ TEST ///
     S = ring X; B = ideal X;
     I = saturate(ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3)), B);
     -- taking NormalToricVariety as input
-    elapsedTime assert(multigradedRegularity(X, I) == {{2,2},{4,1},{1,5}}) -- 18 -> 8 -> 4
+    elapsedTime assert(multigradedRegularity(X, I) == {{2,2},{4,1},{1,5}}) -- 18 -> 8 -> 4 -> 1.3
     -- taking the ring of NormalToricVariety as input
     elapsedTime assert(multigradedRegularity(S, I) == {{2,2},{4,1},{1,5}}) -- woohoo cache hit!!
 ///
@@ -179,7 +179,7 @@ TEST ///
     I = saturate(ideal(x_(0,0)^2*x_(1,0)^2+x_(0,1)^2*x_(1,1)^2+x_(0,0)*x_(0,1)*x_(1,2)^2,
             x_(0,0)^3*x_(1,2)+x_(0,1)^3*(x_(1,0)+x_(1,1))), B);
     -- taking the ring of a productOfProjectiveSpaces as input
-    elapsedTime assert(multigradedRegularity(S, I) == {{2,2},{4,1},{1,5}}) -- 9 -> 2.43
+    elapsedTime assert(multigradedRegularity(S, I) == {{2,2},{4,1},{1,5}}) -- 9 -> 2.43 -> 1.3
 ///
 
 TEST ///
@@ -201,9 +201,8 @@ TEST /// -- testing picard rank 3
     elapsedTime assert(multigradedRegularity(S, I) == {{0,0,2},{0,1,1},{1,0,1},{1,2,0},{2,1,0},{0,5,0},{5,0,0}}) -- 5.4 -> 8.5 -> 2.7
     end
     -- good benchmark test for isZeroSheaf and isIsomorphismOfSheaves
-    elapsedTime multigradedRegularity(S, module I) -- stuck in cohomologyHashTable
-    -- TODO: reduce the 117 degrees that get "maybe in regularity",
-    -- so that the computation above can actually finish!
+    elapsedTime assert(multigradedRegularity(S, module I) == {{1, 1, 2}, {1, 2, 1}, {2, 1, 1}}) -- ~60
+    -- used to get stuck in cohomologyHashTable with 117 spots to check, now takes 62s
 ///
 
 --TODO
@@ -244,7 +243,7 @@ TEST /// -- example 5.8 of BES
   D = virtualOfPair(comodule I, {{2, 6}})
   assert isVirtual(variety S, D)
   assert(ann HH_0 D == I)
-  elapsedTime assert(multigradedRegularity(S, I) === {{1, 3}, {2, 2}}) -- 6.1s
+  elapsedTime assert(multigradedRegularity(S, I) === {{1, 3}, {2, 2}}) -- 6.1s -> 1s
 ///
 
 TEST ///
@@ -263,7 +262,7 @@ TEST ///
 ///
 
 TEST /// -- Example 1.4 of BES, also in documentation of multigradedRegularity
-restart
+--restart
 debugLevel=1
   debug needsPackage "VirtualResolutions"
   hooks multigradedRegularity
@@ -273,9 +272,8 @@ debugLevel=1
   B = ideal X;
   -- testing the winnowing map and isIsomorphismOfSheaves
   I = saturate(ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3)), B)
-  elapsedTime L = multigradedRegularity(X, I) -- {{2, 1}, {4, 1}, {1, 5}}
-  -- TODO: why is this so slow?
-  --elapsedTime multigradedRegularity(S, module I, LowerLimit => {-3,-3})
+  elapsedTime assert(L = multigradedRegularity(X,        I) == {{2, 2}, {4, 1}, {1, 5}}) -- FIXME: is {2, 1} in regularity?
+  elapsedTime assert(L = multigradedRegularity(S, module I) == {{3, 3}, {4, 2}, {2, 5}}) -- used to be too slow, now 3s
   M = comodule ideal I_*; -- maybe in regularity {{3, 1}, {2, 1}}
   plotRegion(regularityBound M, {0,0}, {5,5})
   plotRegion((i,j) -> isQuasiLinear({i,j}, M), {0,0},{5,5})
@@ -307,4 +305,10 @@ TEST ///
       2114*x_(1,1)*x_(1,2)^2-3089*x_(1,2)^3);
   assert(multigradedRegularity(S,   module I) == {{1,5}})
   assert(multigradedRegularity(S, comodule I) == {{0,4}})
+///
+
+TEST ///
+  (S,E) = productOfProjectiveSpaces {1,2};
+  assert(multigradedRegularity(S, S^0) == {{-infinity, -infinity}})
+  -- TODO: add a test of an irrelevant module where regularity is -infinity only in one component
 ///

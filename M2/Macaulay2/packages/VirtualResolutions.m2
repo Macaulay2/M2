@@ -9,10 +9,16 @@
 -- UPDATE HISTORY : created 14 April 2018 at M2@UW;
 --                  updated 15 April 2019 at IMA Coding Sprint.
 --                  updated 16 April 2020 for JSAG
+--                  updated 17 April 2021 with new regularity algorithm
+-- TODO:
+-- - allow rings that don't come from TateOnProducts or NormalToricVarieties
+-- - fix all weird ring problems
+-- - prune helpers.m2
+-- - new functions? H1?
 ---------------------------------------------------------------------------
 newPackage ("VirtualResolutions",
-    Version => "1.3",
-    Date => "November 24, 2020",
+    Version => "1.4",
+    Date => "May 06, 2021",
     Headline => "Methods for virtual resolutions on products of projective spaces",
     Authors =>{
         {Name => "Ayah Almousa",       Email => "aka66@cornell.edu",   HomePage => "http://pi.math.cornell.edu/~aalmousa "},
@@ -24,7 +30,7 @@ newPackage ("VirtualResolutions",
         },
     Keywords => {"Commutative Algebra", "Homological Algebra"},
     PackageImports => {"Elimination", "Depth", "Saturation", "SpaceCurves"},
-    PackageExports => {"NormalToricVarieties", "TateOnProducts"},
+    PackageExports => {"NormalToricVarieties", "TateOnProducts", "LinearTruncations"},
     AuxiliaryFiles => true,
     DebuggingMode => false,
     Certification => {
@@ -44,6 +50,7 @@ newPackage ("VirtualResolutions",
     )
 
 importFrom_Core { "printerr", "raw", "rawKernelOfGB" }
+importFrom_LinearTruncations { "gradedPolynomialRing" }
 
 export{
     "curveFromP3toP1P2",
@@ -523,8 +530,10 @@ multigradedRegularityHelper = (X, S, M, opts) -> (
     -- go from module over NormalToricVariety to module over productOfProjectiveSpaces
     then X = normalToricVarietyWithTateData X
     -- go from module over productOfProjectiveSpaces to module over tensor product of toricProjectiveSpaces
-    else X = normalToricVarietyFromTateData S;
-    -- this ring will have the appropriate Tate data
+    else X = normalToricVarietyFromTateData S; -- S has the Tate data
+    -- the multigraded regularity of the zero module is -infinity in every component
+    if M == 0 then return {toList((rank picardGroup X):-infinity)};
+    -- store a cached computation object in M
     --   MultigradedRegularityOptions{} => MultigradedRegularityComputation{ LowerLimit, UpperLimit, Result }
     container := new MultigradedRegularityComputation from M;
     -- the strategies are stored as hooks under this key
@@ -578,7 +587,7 @@ multigradedRegularityDefaultStrategy = (X, M, opts) -> (
             -- (this imposes a condition on the alternating sum of local cohomology dimensions)
             if hilbertFunction(ell_0_0, M) != HP(ell_0_0) then gt#(ell_0_0) = true;
             -- Check that higher local cohomology vanishes (i.e., H^i_B(M) = 0 for i > 1)
-            if ell_1 != 0 and ell_0_1 > 0 then scan(LL(ell_0_1, n), j -> gt#(ell_0_0 + j) = true);
+            if ell_1 != 0 and ell_0_1 > 0 then scan(diagonalMultidegrees(ell_0_1, n), j -> gt#(ell_0_0 + j) = true);
             ));
     -- retrieve the container
     container := opts.cache;
@@ -588,11 +597,14 @@ multigradedRegularityDefaultStrategy = (X, M, opts) -> (
     if debugLevel > 0 and n == 2 then plotRegion((i, j) -> not gt#?{i, j}, low, high);
     -- Testing whether a degree is in gt is only conclusive (n:d) above the minimum degree given
     -- to cohomologyHashTable, and findRegion assumes that the region is closed under translation.
-    container.Result = findRegion'({low + toList(n:d), high}, M, (ell, M) -> not gt#?ell))
+    container.Result = findRegion({low + toList(n:d), high}, M, (ell, M) -> not gt#?ell))
 
 -- The default strategy applies to both modules and ideals in a product of projective spaces,
 -- but by using hooks we allow better strategies to be added later
 addHook((multigradedRegularity, NormalToricVariety, Module), Strategy => Default, multigradedRegularityDefaultStrategy)
+
+-- Faster strategy using LinearTruncations
+load "./VirtualResolutions/development.m2"
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
@@ -625,9 +637,6 @@ resolveTail(ChainComplex) := ChainComplex => C -> (
 ----- Beginning of the tests and the documentation
 --------------------------------------------------------------------
 --------------------------------------------------------------------
-
--- works only if LinearTruncations is found
-try load "./VirtualResolutions/development.m2" else printerr "LinearTruncations package was not found"
 
 load "./VirtualResolutions/tests.m2"
 beginDocumentation()
