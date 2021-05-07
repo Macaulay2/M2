@@ -781,6 +781,7 @@ evaluate(DiffOp, Point) := (D, pt) -> evaluate(D, matrix pt)
 
 
 TEST ///
+debug NoetherianOperators
 R = QQ[x,y]
 S = diffOpRing(R)
 use S
@@ -815,7 +816,7 @@ foo2 = diffOp(x*dx^2*dy)
 foo3 = diffOp(0_S)
 assert(foobar == foo + bar)
 assert(foo (x^2) == 2*x*y)
-assert(foo3 - foo == diffOp{x => -y, 1_R => 0, y => -2*x})
+assert(foo3 - foo == diffOp(-y*dx - 2*x*dy))
 assert(foo3 - foo == diffOp(-y*dx - 2*x*dy))
 assert(foo2 > foo)
 assert(foo3 == 0)
@@ -3785,9 +3786,10 @@ I = ideal((x-1)^2,(x-1)*(y+1),(y+1)^3)
 J = ideal((x)^2,(x)*(y),(y)^3)
 Ps = associatedPrimes I
 nopsI = noetherianOperators(I, first Ps)
-assert(#(set nopsI - ({1_R, R_0, R_1, R_1^2} / (x -> diffOp{x=>1}))) == 0)
+S = diffOpRing R
+assert(nopsI == {diffOp(1_S), diffOp dy, diffOp dx, diffOp dy^2})
 nopsJ = noetherianOperators(J, ideal gens R)
-assert(#(set nopsJ - ({1_R, R_0, R_1, R_1^2} / (x -> diffOp{x=>1}))) == 0)
+assert(nopsJ == sort {diffOp(1_S), diffOp dx, diffOp dy, diffOp dy^2})
 ///
 
 
@@ -3808,8 +3810,9 @@ R = CC[x,y,t]
 I = intersect(ideal(x^2-t*y, y^2), ideal(x+y+1))
 pt = point{{0,0,12}}
 l = numNoethOpsAtPoint(I, pt, Tolerance => 1e-6, DependentSet => {x,y})
-dif = l / normalize - {diffOp{1_R => 1}, diffOp{x => 1}, diffOp{x^2 => 1, y => 1/6}, diffOp{x^3 => 1, x*y => 1/2}}
-assert(all(dif, nop -> all(values nop, v -> abs sub(v,CC) < 1e-6)))
+S = diffOpRing R
+dif = l / normalize - {diffOp(1_S), diffOp dx, diffOp(dx^2+(1/6)*dy), diffOp(dx^3 + (1/2)*dx*dy)}
+assert(all(dif, nop -> all(flatten entries last coefficients nop, v -> abs sub(v,CC) < 1e-6)))
 ///
 
 
