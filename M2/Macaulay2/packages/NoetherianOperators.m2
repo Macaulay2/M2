@@ -682,6 +682,13 @@ isPointEmbeddedInCurve (Point,Ideal) := o-> (p,I) -> (
 -- Constructors
 DiffOp = new Type of Vector
 DiffOp.synonym = "differential operator"
+DiffOp#{Standard,AfterPrint} = x -> (
+    << endl;                             -- double space
+    << concatenate(interpreterDepth:"o") << lineNumber;
+    y := class x;
+    << " : DiffOp in " << y;
+    << endl;
+)
 
 diffOpRing = (cacheValue "DiffOpRing") (R -> R(monoid [gens R / toString / (v -> "d" | v) / value]))
 diffOpModule = memoize((S, k) -> new Module of DiffOp from S^k)
