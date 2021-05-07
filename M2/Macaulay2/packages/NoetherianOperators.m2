@@ -92,9 +92,9 @@ dualSpace (List, Point) := (L, p) -> (
     S := ring first L;
     R := coefficientRing S;
     L' := select(L, op -> op != 0);
-    gens := (map(R,S, vars R)) matrix{ L' / (op -> matrix op)};
-    if #L' == 0 then gens = sub(gens, R);
-    dualSpace(gens, p)
+    gens := matrix{ L' / (op -> matrix op)};
+    if #L' == 0 then gens = sub(gens, S);
+    dualSpace((map(R,S, vars R)) gens, p)
 )
 TEST ///
 R = CC[x,y]
