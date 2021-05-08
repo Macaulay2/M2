@@ -198,6 +198,7 @@ void KBasis::basis0_full(int firstvar)
   if (kb_monideal->search_expvector(kb_exp, b)) return;
   insert();
   if (limit == 0) return;
+  if (firstvar >= vars->len) return;
 
   int curr = firstvar;
   do {
@@ -244,6 +245,8 @@ void KBasis::basis0_singly_graded(int firstvar)
       if (limit == 0) return;
     }
   if (hi_degree && kb_exp_weight == kb_target_hi_weight) return;
+
+  if (firstvar >= vars->len) return;
 
   int curr = firstvar;
   do {
