@@ -32,14 +32,15 @@ isChiH0(List, Module) := opts -> (d, M) -> (
     hilbertFunction(d, M) == sub(H, sub(matrix{d}, QQ)))
 
 multigradedRegularityTruncationStrategy = (X, M, opts) -> (
+    S := ring X;
     -- TODO: also check that X and S are indeed a product of
     -- projective spaces and its Cox ring, otherwise return null
     if instance(M, Ideal) then M = comodule M;
+    if ring M =!= S then M = map(S, ring M, gens S) ** M;
     debugInfo := if debugLevel < 1 then identity else printerr;
     -- For products of projective space, the dimension is the
     -- number of variables minus the rank of the Picard group
     d := dim X;
-    S := ring X;
     B := ideal X;
     r := regularity M;
     n := degreeLength S; -- rank of the Picard group
@@ -55,10 +56,6 @@ multigradedRegularityTruncationStrategy = (X, M, opts) -> (
     debugInfo \ {
 	"HP M = " | toString H,
     	"degs = " | toString degs};
-    -- Based on findHashTableCorner from TateOnProducts, P is a multigraded
-    -- polynomial ring with n generators for purposes of degree search
-    -- TODO: use degreesRing instead? But over a field instead of ZZ
-    P := multigradedPolynomialRing toList(n:0);
     -- TODO: why is this the right upper bound?
     high := if opts.UpperLimit =!= null then opts.UpperLimit else apply(n, i -> max({r} | degs / (deg -> deg_i)));
     -- this is just used for shifting the degrees
@@ -76,6 +73,8 @@ multigradedRegularityTruncationStrategy = (X, M, opts) -> (
     debugInfo("Upper bound from LinearTruncations: " | toString U0);
     -* old code before the conjecture was proved
     debugInfo("Searching from ", toString low, " to ", toString high);
+    -- P is a polynomial ring with n generators for purposes of search
+    P := newRing(degreesRing S, Inverses => false, Global => true, MonomialOrder => GRevLex);
     -- ideal of the upperbound
     U := ideal apply(U0, ell -> P_(ell - low));
     -- ideal of the lowerbound
@@ -121,13 +120,14 @@ multigradedRegularityTruncationStrategy = (X, M, opts) -> (
     R = U + ideal apply(R, ell -> P_(ell - low));
     -- FIXME: maybe remove this before release?
     if R != U then error concatenate(newline, 10:"💥", "\n💥💥 TELL LCH 💥💥\n", 10:"💥");
-    *-
     R := ideal apply(U0, ell -> P_(ell - low));
+    container.Result = apply(flatten entries mingens R, g -> (flatten exponents g) + low);
+    *-
     -- retrieve the container
     container := opts.cache;
     container.LowerLimit = low;
     container.UpperLimit = high;
-    container.Result = apply(flatten entries mingens R, g -> (flatten exponents g) + low));
+    container.Result = U0)
 
 -- The linear truncation strategy applies to both modules and ideals in a product of projective spaces
 addHook((multigradedRegularity, NormalToricVariety, Module), Strategy => "LinearTruncations", multigradedRegularityTruncationStrategy)

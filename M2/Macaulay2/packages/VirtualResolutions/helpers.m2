@@ -24,9 +24,9 @@ normalToricVarietyWithTateData = X -> (
     S := ring X;
     if S.?TateData then X else (
 	-- borrowed from productOfProjectiveSpaces in TateOnProducts.m2:288
-	e := getSymbol "e";
-	h := getSymbol "h";
-	k := getSymbol "k";
+	e := local e;
+	h := local h;
+	k := local k;
 	kk := coefficientRing S;
 	degs := degrees S;
 	E := kk[e_0..e_(#degs-1), Degrees => degs, SkewCommutative => true];
@@ -52,5 +52,9 @@ normalToricVarietyFromTateData = S -> (
 -- TODO: change this to support arbitrary variable names
 imbueRingWithTateData = S0 -> (
     if S0.?TateData then return S0;
-    (S, E) := productOfProjectiveSpaces(dimVector S0, CoefficientField => coefficientRing S0);
+    x := local x; e := local e;
+    h := local h; k := local k;
+    (S, E) := productOfProjectiveSpaces(dimVector S0,
+	CoefficientField => coefficientRing S0,
+	CohomologyVariables => {h, k}, Variables => {x, e});
     S.variety = normalToricVarietyFromTateData S; S)

@@ -148,7 +148,7 @@ TEST ///
 -- Test for virtualOfPair
 TEST ///
     X = toricProjectiveSpace(1)**toricProjectiveSpace(1);
-    X = normalToricVarietyWithTateData X;
+    --X = normalToricVarietyWithTateData X;
     S = ring X; B = ideal X;
     J = saturate(intersect(
             ideal(x_1 - 1*x_0, x_3 - 4*x_2),
@@ -164,13 +164,15 @@ TEST ///
 -- Tests for multigradedRegularity
 TEST ///
     X = toricProjectiveSpace(1)**toricProjectiveSpace(2);
-    X = normalToricVarietyWithTateData X;
+    --X = normalToricVarietyWithTateData X;
     S = ring X; B = ideal X;
     I = saturate(ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3)), B);
     -- taking NormalToricVariety as input
     elapsedTime assert(multigradedRegularity(X, I) == {{2,2},{4,1},{1,5}}) -- 18 -> 8 -> 4 -> 1.3
     -- taking the ring of NormalToricVariety as input
     elapsedTime assert(multigradedRegularity(S, I) == {{2,2},{4,1},{1,5}}) -- woohoo cache hit!!
+    -- test for weird ring problems
+    assert(ring x_0 === value getSymbol "S")
 ///
 
 TEST ///
@@ -181,19 +183,21 @@ TEST ///
     -- taking the ring of a productOfProjectiveSpaces as input
     elapsedTime assert(multigradedRegularity(S, I) == {{2,2},{4,1},{1,5}}) -- 9 -> 2.43 -> 1.3
     -- test for weird ring problems
-    -- FIXME: assert(ring x_(0,0) === value getSymbol "S")
+    assert(ring x_(0,0) === value getSymbol "S")
 ///
 
 TEST ///
   debug needsPackage "VirtualResolutions"
   S = QQ[x_(0,0),x_(0,1),x_(1,0),x_(1,1), Degrees => {{1,0},{1,0},{0,1},{0,1}}]
-  S = imbueRingWithTateData S;
+  --S = imbueRingWithTateData S;
   M = cokernel matrix{{x_(1,0)^2*x_(0,1), x_(0,0)^2*x_(1,0)*x_(0,1), x_(0,1)^3*x_(1,1)^2, x_(1,0)*x_(0,1)^3*x_(1,1), x_(0,0)^4*x_(1,0), x_(1,0)*x_(0,1)^5}}
   -- This is an unsaturated input test, where res truncate({3,2}, M) is quasi-linear, but not short
   -- elapsedTime assert(multigradedRegularity(S, M) == {{4,2}}) -- 1
-  I = saturate(ideal relations M, intersect last ringData S)
+  I = saturate(ideal relations M, irrelevantIdeal S) -- intersect last ringData S
   -- taking an arbitrary multigraded ring as input
   elapsedTime assert(multigradedRegularity(S, I) == {{2,0}}) -- < 0.2
+  -- test for weird ring problems
+  assert(ring x_(0,0) === value getSymbol "S")
 ///
 
 TEST /// -- testing picard rank 3
@@ -201,6 +205,8 @@ TEST /// -- testing picard rank 3
     irr = intersect(ideal(x_(0,0), x_(0,1)), ideal(x_(1,0), x_(1,1)), ideal(x_(2,0), x_(2,1), x_(2,2)))
     I = saturate(intersect apply(6,i-> ideal(random({1,0,0},S),random({0,1,0},S), random({0,0,1},S),random({0,0,1},S))), irr);
     elapsedTime assert(multigradedRegularity(S, I) == {{0,0,2},{0,1,1},{1,0,1},{1,2,0},{2,1,0},{0,5,0},{5,0,0}}) -- 5.4 -> 8.5 -> 2.7
+    -- test for weird ring problems
+    assert(ring x_(0,0) === value getSymbol "S")
     end
     -- good benchmark test for isZeroSheaf and isIsomorphismOfSheaves
     elapsedTime assert(multigradedRegularity(S, module I) == {{1, 1, 2}, {1, 2, 1}, {2, 1, 1}}) -- ~60
@@ -251,7 +257,7 @@ TEST /// -- example 5.8 of BES
 TEST ///
   debug needsPackage "VirtualResolutions"
   X = toricProjectiveSpace(1)**toricProjectiveSpace(2);
-  X = normalToricVarietyWithTateData X
+  --X = normalToricVarietyWithTateData X
   S = ring X;
   B = ideal X;
   M = S^{{0,0},-{3,3}}
@@ -269,7 +275,7 @@ debugLevel=1
   assert(# hooks multigradedRegularity == 2)
   debug needsPackage "VirtualResolutions"
   X = toricProjectiveSpace(1)**toricProjectiveSpace(2);
-  X = normalToricVarietyWithTateData X
+  --X = normalToricVarietyWithTateData X
   S = ring X;
   B = ideal X;
   I = saturate(ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3)), B)
@@ -313,7 +319,7 @@ TEST ///
 TEST /// -- test of returning -infinity for irrelevant ideals
   debug needsPackage "VirtualResolutions"
   X = toricProjectiveSpace(1)**toricProjectiveSpace(2);
-  X = normalToricVarietyWithTateData X
+  --X = normalToricVarietyWithTateData X
   S = ring X;
   B = ideal X;
   assert(multigradedRegularity(S, S^0) == {{-infinity, -infinity}})

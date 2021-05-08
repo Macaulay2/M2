@@ -28,7 +28,6 @@ doc ///
 
     Example
      X = toricProjectiveSpace(1)**toricProjectiveSpace(1);
-     X = normalToricVarietyWithTateData X
      S = ring X;
      B = ideal X;
      J = saturate(intersect(
@@ -552,7 +551,6 @@ doc ///
           of [BES20] (see @arXiv "1703.07631"@). We consider the example of a hyperelliptic curve of genus 4 in $\PP^1\times\PP^2$.
         Example
           X = toricProjectiveSpace(1)**toricProjectiveSpace(2)
-          X = normalToricVarietyWithTateData X
           S = ring X; B = ideal X;
           I = ideal(x_0^2*x_2^2+x_1^2*x_3^2+x_0*x_1*x_4^2, x_0^3*x_4+x_1^3*(x_2+x_3))
         Text

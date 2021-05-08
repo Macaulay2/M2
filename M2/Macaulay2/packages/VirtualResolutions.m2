@@ -10,11 +10,6 @@
 --                  updated 15 April 2019 at IMA Coding Sprint.
 --                  updated 16 April 2020 for JSAG
 --                  updated 17 April 2021 with new regularity algorithm
--- TODO:
--- - allow rings that don't come from TateOnProducts or NormalToricVarieties
--- - fix all weird ring problems
--- - prune helpers.m2
--- - new functions? H1?
 ---------------------------------------------------------------------------
 newPackage ("VirtualResolutions",
     Version => "1.4",
@@ -63,9 +58,9 @@ export{
     "randomCurveP1P2",
     "multigradedRegularity",
     -- TODO: should we export these or fix NormalToricVarieties/TateOnProducts?
-    "normalToricVarietyFromTateData",
-    "normalToricVarietyWithTateData",
-    "imbueRingWithTateData",
+    --"normalToricVarietyFromTateData",
+    --"normalToricVarietyWithTateData",
+    --"imbueRingWithTateData",
     -- Options
     "LowerLimit",
     "UpperLimit",
@@ -526,13 +521,14 @@ multigradedRegularity(NormalToricVariety, Module) := o -> (X, M) -> multigradedR
 
 multigradedRegularityHelper = (X, S, M, opts) -> (
     strategy := opts.Strategy;
-    if instance(X, NormalToricVariety)
-    -- go from module over NormalToricVariety to module over productOfProjectiveSpaces
-    then X = normalToricVarietyWithTateData X
-    -- go from module over productOfProjectiveSpaces to module over tensor product of toricProjectiveSpaces
-    else X = normalToricVarietyFromTateData S; -- S has the Tate data
+    -- start from module over Cox ring of a NormalToricVariety and add Tate data
+    if instance(X, NormalToricVariety) then X = normalToricVarietyWithTateData X
+    -- start from module over productOfProjectiveSpaces and get module over Cox ring of a product of toricProjectiveSpaces
+    else if S.?TateData then X = normalToricVarietyFromTateData S
+    -- start from module over multigraded polynomial ring and get module over Cox ring of a product of toricProjectiveSpaces
+    else X = normalToricVarietyFromTateData imbueRingWithTateData S;
     -- the multigraded regularity of the zero module is -infinity in every component
-    if M == 0 then return {toList((rank picardGroup X):-infinity)};
+    if M == 0 then return {toList(degreeLength ring X : -infinity)};
     -- store a cached computation object in M
     --   MultigradedRegularityOptions{} => MultigradedRegularityComputation{ LowerLimit, UpperLimit, Result }
     container := new MultigradedRegularityComputation from M;
@@ -547,14 +543,16 @@ multigradedRegularityHelper = (X, S, M, opts) -> (
     else error("assumptions for computing multigraded regularity with strategy ", toString strategy, " are not met"))
 
 multigradedRegularityDefaultStrategy = (X, M, opts) -> (
-    -- TODO: also check that X and S are indeed a product of projective spaces and its Cox ring, otherwise return null
+    S := ring X;
+    -- TODO: also check that X and S are indeed a product of
+    -- projective spaces and its Cox ring, otherwise return null
     if instance(M, Ideal) then M = comodule M;
+    if ring M =!= S then M = map(S, ring M, gens S) ** M;
     -- This is the default strategy, outlined in https://msp.org/jsag/2020/10-1/p06.xhtml
     debugInfo := if debugLevel < 1 then identity else printerr;
     -- For products of projective space, the dimension is the
     -- number of variables minus the rank of the Picard group
     d := dim X;
-    S := ring X;
     B := ideal X;
     r := regularity M;
     n := degreeLength S; -- rank of the Picard group
