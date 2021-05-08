@@ -31,7 +31,7 @@ isChiH0(List, Module) := opts -> (d, M) -> (
     H := hilbertPolynomial(variety ring opts.IrrelevantIdeal, M);
     hilbertFunction(d, M) == sub(H, sub(matrix{d}, QQ)))
 
-multigradedRegularityTruncationStrategy = (X, M, opts) -> (
+multigradedRegularityTruncationSearchStrategy = (X, M, opts) -> (
     S := ring X;
     -- TODO: also check that X and S are indeed a product of
     -- projective spaces and its Cox ring, otherwise return null
@@ -54,8 +54,8 @@ multigradedRegularityTruncationStrategy = (X, M, opts) -> (
         "mindegs = " | toString mindegs};
     H := hilbertPolynomial(X, M);
     debugInfo \ {
-	"HP M = " | toString H,
-    	"degs = " | toString degs};
+        "HP M = " | toString H,
+        "degs = " | toString degs};
     -- TODO: why is this the right upper bound?
     high := if opts.UpperLimit =!= null then opts.UpperLimit else apply(n, i -> max({r} | degs / (deg -> deg_i)));
     -- this is just used for shifting the degrees
@@ -111,11 +111,11 @@ multigradedRegularityTruncationStrategy = (X, M, opts) -> (
         "R = " | toString R};
     --
     if #R > 0 then (
-    	high' := apply(n, i -> max(R / (deg -> deg_i)));
-    	low'  := apply(n, i -> min(R / (deg -> deg_i)) - d);
-    	debugInfo("Calling the default strategy with adjusted high and low");
+	high' := apply(n, i -> max(R / (deg -> deg_i)));
+	low'  := apply(n, i -> min(R / (deg -> deg_i)) - d);
+	debugInfo("Calling the default strategy with adjusted high and low");
 	-- TODO: clump them together in two regions instead of a huge one instead
-    	R = multigradedRegularityDefaultStrategy(X, M, opts ++ { LowerLimit => low', UpperLimit => high' }));
+	R = multigradedRegularityDefaultStrategy(X, M, opts ++ { LowerLimit => low', UpperLimit => high' }));
     debugInfo("Recalculating minimal generators by adding U");
     R = U + ideal apply(R, ell -> P_(ell - low));
     -- FIXME: maybe remove this before release?
@@ -130,6 +130,6 @@ multigradedRegularityTruncationStrategy = (X, M, opts) -> (
     container.Result = U0)
 
 -- The linear truncation strategy applies to both modules and ideals in a product of projective spaces
-addHook((multigradedRegularity, NormalToricVariety, Module), Strategy => "LinearTruncations", multigradedRegularityTruncationStrategy)
+addHook((multigradedRegularity, NormalToricVariety, Module), Strategy => "TruncationSearch", multigradedRegularityTruncationSearchStrategy)
 
 end--

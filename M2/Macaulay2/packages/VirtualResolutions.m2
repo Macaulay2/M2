@@ -116,6 +116,7 @@ submatrixWinnowMap = (phi, alphas) -> (
 protect winnowingMap
 virtualOfPair = method(Options => {LengthLimit => infinity})
 -- TODO: return a Matrix in the Module case and ChainComplexMap in the ChainComplex case
+-- TODO: document the winnoingMap
 virtualOfPair(Ideal,  List) := ChainComplex => opts -> (I, alphas) -> virtualOfPair(comodule I, alphas, opts)
 virtualOfPair(Module, List) := ChainComplex => opts -> (M, alphas) -> (
     R := ring M;
@@ -542,7 +543,7 @@ multigradedRegularityHelper = (X, S, M, opts) -> (
     then error("no applicable strategy for ", toString key)
     else error("assumptions for computing multigraded regularity with strategy ", toString strategy, " are not met"))
 
-multigradedRegularityDefaultStrategy = (X, M, opts) -> (
+multigradedRegularityCohomologySearchStrategy = (X, M, opts) -> (
     S := ring X;
     -- TODO: also check that X and S are indeed a product of
     -- projective spaces and its Cox ring, otherwise return null
@@ -599,7 +600,7 @@ multigradedRegularityDefaultStrategy = (X, M, opts) -> (
 
 -- The default strategy applies to both modules and ideals in a product of projective spaces,
 -- but by using hooks we allow better strategies to be added later
-addHook((multigradedRegularity, NormalToricVariety, Module), Strategy => Default, multigradedRegularityDefaultStrategy)
+addHook((multigradedRegularity, NormalToricVariety, Module), Strategy => "CohomologySearch", multigradedRegularityCohomologySearchStrategy)
 
 -- Faster strategy using LinearTruncations
 load "./VirtualResolutions/development.m2"
@@ -651,7 +652,7 @@ end--
 restart
 uninstallPackage "VirtualResolutions"
 restart
-installPackage "VirtualResolutions"
+installPackage("VirtualResolutions", FileName => "VirtualResolutions.m2")
 restart
 needsPackage("VirtualResolutions", FileName => "VirtualResolutions.m2")
 elapsedTime check "VirtualResolutions"
