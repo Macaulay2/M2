@@ -476,8 +476,10 @@ doc ///
             via @TO printHilbertSequence@.
     Caveat
         In general, for multi-graded modules it is necessary to saturate 
-        with respect to the irrelevant ideal, cf. page 4 of 
-        @arXiv "1705.00575"@. This is handled by the optional
+        with respect to the irrelevant ideal, cf. page 235 of 
+        Conca-De Negri-Gorla, 
+        "Cartwright–Sturmfels ideals associated to graphs and linear spaces", 2018.
+        This is handled by the optional
         argument @TT "DoSaturate"@, with default value true.
     SeeAlso
     	hilbertPolynomial
