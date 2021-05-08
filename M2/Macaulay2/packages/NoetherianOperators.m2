@@ -31,7 +31,7 @@ export {
     "gCorners",
     "localHilbertRegularity",
     "eliminatingDual",
-    "naturalPairing",
+    "pairingMatrix",
     "orthogonalInSubspace",
     "Rational",
     "ProduceSB",
@@ -159,7 +159,7 @@ initializeDualData (Matrix,Boolean,Number) := opts -> (Igens,syl,t) -> (
     H.hIgens = homogenize(sub(Igens,S), h); 
     T := if syl then S else R;
     H.Seeds = dualSpace(matrix{{1_T}},origin(T));
-    H.BMmatrix = naturalPairing(polySpace if syl then H.hIgens else H.Igens, H.Seeds);
+    H.BMmatrix = pairingMatrix(polySpace if syl then H.hIgens else H.Igens, H.Seeds);
     H.BMmatrix = sub(H.BMmatrix,F);
     H.BMintegrals = gens H.Seeds;
     H.BMcoefs = myKernel(H.BMmatrix, opts, Tolerance=>t);
@@ -347,7 +347,7 @@ BMmatrix = H -> (
 	    E' := matrix {apply(n, k->(
 			subs := matrix{apply(n, l->(if l > k then 0_R else (gens R)#l))};
 			(gens R)#k * sub(bpoly,subs)))};
-	    M' := naturalPairing(polySpace Igens, polySpace E');
+	    M' := pairingMatrix(polySpace Igens, polySpace E');
 	    if not homogeneous then M' = map(R^(s+(numcols Bfull)),R^n,0) || M';
 	    for j from 0 to s-1 do (
 		w := apply(n,k->(bcol_(offset + j*n + k,0)));
@@ -437,22 +437,22 @@ diff (PolySpace, PolySpace) := (S, T) -> (
 
 
 
--- Matrix of inner products
+-- Matrix of natural pairings
 -- PolySpace generators as rows, DualSpace generators as columns
-naturalPairing = method()
-naturalPairing (PolySpace, PolySpace) := (S, T) -> (
+pairingMatrix = method()
+pairingMatrix (PolySpace, PolySpace) := (S, T) -> (
     M := last coefficients(gens S | gens T);
     Svec := submatrix(M,0..dim S-1);
     Tvec := submatrix'(M,0..dim S-1);
     (transpose Svec)*Tvec
     )
-naturalPairing (PolySpace, DualSpace) := (S, L) -> (
+pairingMatrix (PolySpace, DualSpace) := (S, L) -> (
     Sshift := polySpace sub(gens S, matrix{(gens ring L) + coordinates L.BasePoint});
-    naturalPairing(Sshift, L.Space)
+    pairingMatrix(Sshift, L.Space)
     )
-naturalPairing (RingElement, DualSpace) := (f, L) -> naturalPairing(polySpace matrix{{f}}, L)
-naturalPairing (PolySpace, RingElement) := (S, l) -> naturalPairing(S, polySpace matrix{{l}})
-naturalPairing (RingElement, RingElement) := (f, l) -> (
+pairingMatrix (RingElement, DualSpace) := (f, L) -> pairingMatrix(polySpace matrix{{f}}, L)
+pairingMatrix (PolySpace, RingElement) := (S, l) -> pairingMatrix(S, polySpace matrix{{l}})
+pairingMatrix (RingElement, RingElement) := (f, l) -> (
     M := last coefficients(matrix{{f,l}});
     ((transpose M_{0})*M_{1})_(0,0)
     )
@@ -461,7 +461,7 @@ orthogonalInSubspace = method()
 orthogonalInSubspace (DualSpace, PolySpace, Number) := (D,S,t) -> (
     R := ring S;
     F := coefficientRing R;
-    M := sub(naturalPairing(S,D),F);
+    M := sub(pairingMatrix(S,D),F);
     K := myKernel(transpose M,Tolerance=>t);
     polySpace((gens S)*K, Reduced=>false)
     )
@@ -2022,7 +2022,7 @@ doc ///
        		   {TO eliminatingDual},
     		   {TO localHilbertRegularity},
     		   {TO gCorners},
-    		   {TO naturalPairing},
+    		   {TO pairingMatrix},
 	 	   	   {TO isPointEmbedded},
 	 	   	   {TO isPointEmbeddedInCurve},
 	 		   {TO colon},
@@ -2322,16 +2322,16 @@ doc ///
 
 doc ///
      Key
-          naturalPairing
-	  (naturalPairing,PolySpace,DualSpace)
-	  (naturalPairing,PolySpace,PolySpace)
-	  (naturalPairing,RingElement,DualSpace)
-	  (naturalPairing,PolySpace,RingElement)
-	  (naturalPairing,RingElement,RingElement)
+          pairingMatrix
+	  (pairingMatrix,PolySpace,DualSpace)
+	  (pairingMatrix,PolySpace,PolySpace)
+	  (pairingMatrix,RingElement,DualSpace)
+	  (pairingMatrix,PolySpace,RingElement)
+	  (pairingMatrix,RingElement,RingElement)
      Headline
           Applies dual space functionals to polynomials
      Usage
-          M = naturalPairing(S, D)
+          M = pairingMatrix(S, D)
      Inputs
 	  S:PolySpace
 	  D:DualSpace
@@ -2342,7 +2342,7 @@ doc ///
           Text
 	       The dual space represents functionals from the polynomial ring to the base field.
 	       Given a polySpace S with n generators f_1,...,f_n and a dualSpace D with m generators
-	       p_1,...,p_m, {\tt naturalPairing} returns a nxm matrix M over the base field whose entries are p_j(f_i).
+	       p_1,...,p_m, {\tt pairingMatrix} returns a nxm matrix M over the base field whose entries are p_j(f_i).
 	  Text
 	       A dual functional is applied to a polynomial by taking the standard pairing of their coefficient
 	       vectors.  In other words, the functional represented by the monomial a acts on monomials in the
@@ -2351,20 +2351,20 @@ doc ///
 	       R = CC[x,y];
 	       S = polySpace matrix{{x+y,2*x+y^2}};
 	       D = dualSpace(matrix{{1,x,y}}, origin R);
-	       M = naturalPairing(S, D)
+	       M = pairingMatrix(S, D)
 	  Text
-	       @TT "naturalPairing"@ can also be called with one or both inputs @ofClass RingElement@.  If both arguments
+	       @TT "pairingMatrix"@ can also be called with one or both inputs @ofClass RingElement@.  If both arguments
 	       are single elements, the output is also a ring element rather than a matrix.
 	  Example
-	       naturalPairing(S, 1+x)
-	       naturalPairing(x, D)
-	       naturalPairing(x, 1+x)
+	       pairingMatrix(S, 1+x)
+	       pairingMatrix(x, D)
+	       pairingMatrix(x, 1+x)
 ///
 
 TEST ///
 R = CC[x,y]
 S = polySpace(basis(3,R))
-P = naturalPairing(S,S)
+P = pairingMatrix(S,S)
 assert(all((0,0)..(3,3), i->(P_i == if i#0 == i#1 then 1 else 0)))
 ///
 
