@@ -486,7 +486,7 @@ document {
      }
 
 document {
-     Key => {gradedModuleMap,(gradedModuleMap, Sequence), (gradedModuleMap, ModuleMap), (gradedModuleMap, List)},
+     Key => {gradedModuleMap,(gradedModuleMap, Sequence), (gradedModuleMap, Matrix), (gradedModuleMap, List)},
      Headline => "make a map of graded modules",
      Usage => "gradedModuleMap v",
      Inputs => { "v" => List => "a matrix, or a list or sequence of matrices" },
