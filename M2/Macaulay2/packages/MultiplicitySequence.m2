@@ -1,7 +1,7 @@
 newPackage(
     "MultiplicitySequence",
-    Version => "0.6", 
-    Date => "April 22, 2021",
+    Version => "0.7", 
+    Date => "May 8, 2021",
     Authors => {
         {Name => "Justin Chen", 
             Email => "justin.chen@math.gatech.edu"
@@ -34,6 +34,7 @@ export {
     "getGenElts",
     "minTerms",
     "numCandidates",
+    "DoSaturate",
     "jMult",
     "monReduction",
     "NP",
@@ -89,8 +90,12 @@ grGr (Ideal, Ideal) := Ring => (m, I) -> (
 )
 grGr Ideal := Ring => I -> grGr(ideal gens ring I, I)
 
-hilbertSequence = method()
-hilbertSequence Module := HashTable => M -> (
+-- Taken from K3Carpets package
+irrelevantIdeal = R -> intersect apply(unique degrees R, d -> ideal basis(d, R))
+
+hilbertSequence = method(Options => {symbol DoSaturate => true})
+hilbertSequence Module := HashTable => opts -> M -> (
+    if opts.DoSaturate then M = M/saturate(0*M, irrelevantIdeal ring M);
     HS := hilbertSeries(M, Reduce => true);
     q := value numerator HS;
     coordChange := map(ring q, ring q, matrix{{#gens ring q:1}} - vars ring q);
@@ -98,8 +103,8 @@ hilbertSequence Module := HashTable => M -> (
     b := select(listForm coordChange q, p -> all(#s, i -> p#0#i <= s#i));
     hashTable apply(b, p -> (s - p#0, p#1))
 )
-hilbertSequence Ring := HashTable => R -> hilbertSequence R^1
-hilbertSequence Ideal := HashTable => I -> hilbertSequence comodule I
+hilbertSequence Ring := HashTable => opts -> R -> hilbertSequence R^1
+hilbertSequence Ideal := HashTable => opts -> I -> hilbertSequence comodule I
 
 -- hilbertPolynomial = method(Options => {Projective => false}) -- should be a hook?
 -- hilbertPolynomial Module := RingElement => o -> M -> ( -- TODO: fix
@@ -117,10 +122,10 @@ hilbertSequence Ideal := HashTable => I -> hilbertSequence comodule I
 -- hilbertPolynomial Ring := RingElement => o -> R -> hilbertPolynomial(R^1, o)
 
 -- This is the main method. It computes the multiplicity sequence of an ideal using one of two strategies: either bivariate Hilbert series (default), or general elements.
-multiplicitySequence = method(Options => options getGenElts ++ {Strategy => "grGr"})
+multiplicitySequence = method(Options => options getGenElts ++ options hilbertSequence ++ {Strategy => "grGr"})
 multiplicitySequence Ideal := HashTable => opts -> I -> (
     hashTable if opts.Strategy =!= "genElts" then (
-        H := hilbertSequence grGr I;
+        H := hilbertSequence(grGr I, DoSaturate => opts.DoSaturate);
         d := max(keys H /sum);
         apply(select(keys H, k -> sum k == d), k -> last k => H#k)
     ) else toList apply(codim I..analyticSpread I, j -> {j, multiplicitySequence(j, I, opts)})
@@ -336,11 +341,14 @@ doc ///
     Key
         grGr
         (grGr, Ideal)
+        (grGr, Ideal, Ideal)
     Headline
         the bigraded ring Gr_m(Gr_I(R))
     Usage
         grGr(I)
     Inputs
+        m:Ideal
+            (assumed to be the irrelevant ideal of R, if not specified)
         I:Ideal
     Outputs
         :Ring
@@ -411,7 +419,7 @@ doc ///
         Text
             One can specify a particular element in the multiplicity sequence:
         Example
-            multiplicitySequence_2 I
+            multiplicitySequence_1 I
     Caveat
     	There are two conventions in use about the order of the sequence. 
 	The current function follows that of [4] and in this setting 
@@ -430,6 +438,9 @@ doc ///
         (hilbertSequence, Module)
         (hilbertSequence, Ring)
         (hilbertSequence, Ideal)
+        DoSaturate
+        [hilbertSequence, DoSaturate]
+        [multiplicitySequence, DoSaturate]
 	--TODO maybe better to call it with the full name hilbertSequence
     Headline
         the Hilbert sequence of a multi-graded module
@@ -460,8 +471,48 @@ doc ///
             I = monomialIdeal "de,abe,ace,abcd"
             hilbertSequence I
             hilbertPolynomial I
+        Text
+            A convenient expression for the Hilbert sequence is provided 
+            via @TO printHilbertSequence@.
+    Caveat
+        In general, for multi-graded modules it is necessary to saturate 
+        with respect to the irrelevant ideal, cf. page 4 of 
+        @arXiv "1705.00575"@. This is handled by the optional
+        argument @TT "DoSaturate"@, with default value true.
     SeeAlso
     	hilbertPolynomial
+        printHilbertSequence
+///
+
+doc ///
+    Key
+        printHilbertSequence
+        (printHilbertSequence, HashTable)
+    Headline
+        prints the Hilbert sequence as a table
+    Usage
+        printHilbertSequence H
+    Inputs
+        H:HashTable
+            the Hilbert sequence of a module
+    Outputs
+        :Net
+            a table representing H
+    Description
+        Text
+            This function gives a convenient expression of the 
+            Hilbert sequence, particularly in terms of the multiplicity
+            sequence.
+            For instance, if I is an ideal, then the multiplicity sequence of I            
+	    appears as the top row of the table for the Hilbert sequence
+            of @TO2{grGr, "gr_mGr_I"}@.
+        Example
+            R = QQ[x_1..x_9]
+            I = minors(2, genericMatrix(R, 3, 3))
+            multiplicitySequence I
+            printHilbertSequence hilbertSequence grGr I
+    SeeAlso
+    	hilbertSequence
 ///
 
 doc ///
@@ -613,7 +664,8 @@ doc ///
 ///
 
 undocumented {
-    "getGenElts"
+    getGenElts,
+    (getGenElts, Ideal, ZZ)
  }
 
  
@@ -675,6 +727,7 @@ loadPackage ("MultiplicitySequence", Reload=>true)
 installPackage("MultiplicitySequence", RemakeAllDocumentation => true)
 uninstallPackage "MultiplicitySequence"
 check "MultiplicitySequence"
+viewHelp "MultiplicitySequence"
 needsPackage "MinimalPrimes"
 installMinprimes()
 debugLevel = 2
