@@ -451,7 +451,6 @@ if(BUILD_TESTING)
   ## Link with Googletest
   if(GTEST_FOUND)
   target_link_libraries(M2-unit-tests GTest::GTest GTest::Main)
-  target_include_directories(M2-unit-tests PRIVATE ${GTEST_INCLUDE_DIR})
   endif()
 
   target_compile_options(M2-unit-tests PRIVATE

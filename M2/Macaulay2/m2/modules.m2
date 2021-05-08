@@ -3,10 +3,7 @@
 -----------------------------------------------------------------------------
 -- Matrix
 
-ModuleMap = new Type of HashTable
-ModuleMap.synonym = "module map"
-
-Matrix = new Type of ModuleMap
+Matrix = new Type of HashTable
 Matrix.synonym = "matrix"
 raw Matrix := f -> f.RawMatrix
 ring Matrix := f -> (

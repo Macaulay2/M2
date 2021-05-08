@@ -1,6 +1,41 @@
 diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/einsteinium-development/libraries/mpsolve/tmp/mpsolve-3.2.1/configure.ac mpsolve-3.2.1/configure.ac
 --- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/einsteinium-development/libraries/mpsolve/tmp/mpsolve-3.2.1/configure.ac	2020-06-12 01:58:39.000000000 -0400
 +++ mpsolve-3.2.1/configure.ac	2020-06-27 07:55:10.000000000 -0400
+@@ -311,13 +311,13 @@
+     # Add GMP_CFLAGS and GMP_LIBS to CFLAGS and LDFLAGS in case they are set.
+     # This is an easy way for the user to override system libgmp or to provide
+     # its location if it's not installed system-wide. 
+-    AS_IF([test -z $GMP_CFLAGS], [], [
++    AS_IF([test -z "$GMP_CFLAGS"], [], [
+       CFLAGS="$GMP_CFLAGS $CFLAGS"
+     ])
+-    AS_IF([test -z $GMP_LDFLAGS], [], [
++    AS_IF([test -z "$GMP_LDFLAGS"], [], [
+       LDFLAGS="$GMP_LDFLAGS $LDFLAGS"
+     ])
+-    AS_IF([test -z $GMP_LIBS], [], [
++    AS_IF([test -z "$GMP_LIBS"], [], [
+       LDFLAGS="$GMP_LIBS $LDFLAGS"
+     ])
+
+@@ -514,7 +514,7 @@ AS_IF([test x$build_examples == xyes], [
+ 	# of the polish TeX compiler. If both are in path we need to test all the
+ 	# possibilities until we found the _real_ mex compiler. 
+ 	AC_CACHE_CHECK([for a valid mex compiler], [ac_cv_path_MEX], 
+-	AC_PATH_PROGS_FEATURE_CHECK([MEX], [mex], 
++	[AC_PATH_PROGS_FEATURE_CHECK([MEX], [mex], 
+ 	[[
+           mex_is_matlab_output=`$ac_path_MEX -help 2>&1 | grep "MATLAB\|mkoctfile"`
+ 	  mex_is_matlab_retcode=$?
+@@ -524,7 +524,7 @@ AS_IF([test x$build_examples == xyes], [
+             ac_cv_path_MEX=$ac_path_MEX
+ 	    MEX=$ac_path_MEX
+           fi
+-          ]]))
++          ]])])
+ 
+ 	# Set the MEX compiler if that has been found
+ 	MEX=$ac_cv_path_MEX
 @@ -574,7 +574,7 @@
  
  
@@ -48,44 +83,4 @@ diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/einsteinium-gcc9-devel
 -
 -nodist_EXTRA_mpsolve_SOURCES = dummy.cxx
 
---- mpsolve-3.2.1/configure.ac-orig	2020-07-09 02:28:06.018935996 -0500
-+++ mpsolve-3.2.1/configure.ac	2020-07-09 02:28:20.903885679 -0500
-@@ -311,13 +311,13 @@
-     # Add GMP_CFLAGS and GMP_LIBS to CFLAGS and LDFLAGS in case they are set.
-     # This is an easy way for the user to override system libgmp or to provide
-     # its location if it's not installed system-wide. 
--    AS_IF([test -z $GMP_CFLAGS], [], [
-+    AS_IF([test -z "$GMP_CFLAGS"], [], [
-       CFLAGS="$GMP_CFLAGS $CFLAGS"
-     ])
--    AS_IF([test -z $GMP_LDFLAGS], [], [
-+    AS_IF([test -z "$GMP_LDFLAGS"], [], [
-       LDFLAGS="$GMP_LDFLAGS $LDFLAGS"
-     ])
--    AS_IF([test -z $GMP_LIBS], [], [
-+    AS_IF([test -z "$GMP_LIBS"], [], [
-       LDFLAGS="$GMP_LIBS $LDFLAGS"
-     ])
  
-diff --git a/configure.ac b/configure.ac
-index 8f58ea54..532a5fce 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -514,7 +514,7 @@ AS_IF([test x$build_examples == xyes], [
- 	# of the polish TeX compiler. If both are in path we need to test all the
- 	# possibilities until we found the _real_ mex compiler. 
- 	AC_CACHE_CHECK([for a valid mex compiler], [ac_cv_path_MEX], 
--	AC_PATH_PROGS_FEATURE_CHECK([MEX], [mex], 
-+	[AC_PATH_PROGS_FEATURE_CHECK([MEX], [mex], 
- 	[[
-           mex_is_matlab_output=`$ac_path_MEX -help 2>&1 | grep "MATLAB\|mkoctfile"`
- 	  mex_is_matlab_retcode=$?
-@@ -524,7 +524,7 @@ AS_IF([test x$build_examples == xyes], [
-             ac_cv_path_MEX=$ac_path_MEX
- 	    MEX=$ac_path_MEX
-           fi
--          ]]))
-+          ]])])
- 
- 	# Set the MEX compiler if that has been found
- 	MEX=$ac_cv_path_MEX

@@ -180,6 +180,7 @@ html Descent := x -> concatenate("<span style=\"display:inline-table;text-align:
 	  ) | "<br/>"), "</span>")
 html Time := x -> html x#1 | html DIV ("-- ", toString x#0, " seconds")
 -- a few types are just strings
+html Command :=
 html File :=
 html IndeterminateNumber :=
 html GroebnerBasis :=
