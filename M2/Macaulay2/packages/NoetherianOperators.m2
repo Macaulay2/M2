@@ -34,7 +34,7 @@ export {
     "pairingMatrix",
     "orthogonalInSubspace",
     "Rational",
-    "ProduceSB",
+    "StandardBasis",
 
     "DiffOp",
     "diffOp",
@@ -247,7 +247,7 @@ truncate (PolySpace, List, ZZ) := (L,ind,d) -> (
     )
 truncate (DualSpace, List, ZZ) := (L,ind,d) -> dualSpace(truncate(L.Space,ind,d),L.BasePoint)
 
-gCorners = method(TypicalValue => Matrix, Options => {Tolerance => null, ProduceSB => false})
+gCorners = method(TypicalValue => Matrix, Options => {Tolerance => null, StandardBasis => false})
 gCorners (Point,Ideal) := o -> (p,I) -> gCorners(p,gens I,o)
 gCorners (Point,Matrix) := o -> (p,Igens) -> (
     R := ring Igens;
@@ -256,7 +256,7 @@ gCorners (Point,Matrix) := o -> (p,Igens) -> (
 
     ecart := max apply(flatten entries Igens, g->(gDegree g - lDegree g)); --max ecart of generators
     GCs := {}; -- g-corners (as pairs: monomial, degree in homogenization)
-    SBs := {}; -- standard basis elements (if o.ProduceSB)
+    SBs := {}; -- standard basis elements (if o.StandardBasis)
     finalDegree := max(flatten entries Igens / gDegree);
     d := 0;
     dBasis := dBasisReduced := polySpace map(R^1,R^0,0); -- Sylvester truncated dual space
@@ -268,8 +268,8 @@ gCorners (Point,Matrix) := o -> (p,Igens) -> (
 	-- Find new g-corners based on what monomials are missing from dBasis.
 	newGCs := newGCorners(dBasisReduced,GCs,d,ecart);
 	GCs = GCs|newGCs;
-	-- If o.ProduceSB then compute a standard basis element for each new g-corner.
-	if o.ProduceSB and #newGCs > 0 then SBs = SBs|newSBasis(dBasis,newGCs,d,t);
+	-- If o.StandardBasis then compute a standard basis element for each new g-corner.
+	if o.StandardBasis and #newGCs > 0 then SBs = SBs|newSBasis(dBasis,newGCs,d,t);
 	-- Update stopping degree if there were new g-corners found.
 	if #newGCs > 0 then (
 	    topLCMdegree := max apply(subsets(#GCs,2),s->(
@@ -283,7 +283,7 @@ gCorners (Point,Matrix) := o -> (p,Igens) -> (
 	--print(d, finalDegree, dim dBasisReduced, newGCs/first);
 	d = d+1;
 	);
-    GCs = if o.ProduceSB then SBs else GCs/first;
+    GCs = if o.StandardBasis then SBs else GCs/first;
     sbReduce matrix {GCs}
     )
 
@@ -2178,8 +2178,8 @@ doc ///
           gCorners
 	  (gCorners,Point,Ideal)
 	  (gCorners,Point,Matrix)
-	  [gCorners,ProduceSB]
-	  ProduceSB
+	  [gCorners,StandardBasis]
+	  StandardBasis
      Headline
           generators of the initial ideal of a polynomial ideal
      Usage
@@ -2203,16 +2203,16 @@ doc ///
 	       p = point matrix{{1,1}};
 	       gCorners(p, I)
 	  Text
-	       If the optional argument @TT "ProduceSB"@ is set to true, the output is instead a matrix of elements of the ideal
+	       If the optional argument @TT "StandardBasis"@ is set to true, the output is instead a matrix of elements of the ideal
 	       with the point {\tt p} translated to the origin such that the lead terms generate the initial ideal, i.e., a standard basis.
 	       Note that the coordinates of the standard basis elements are translated to be centered at the point p.
 	  Example
-	       S = gCorners(p, I, ProduceSB=>true)
+	       S = gCorners(p, I, StandardBasis=>true)
 	       R = CC[x,y,z];
 	       J = ideal{z*(x*y-4), x-y}
 	       q = point matrix{{1.4142136, 1.4142136, 0}};
 	       gCorners(q, J, Tolerance=>1e-5)
-	       gCorners(q, J, ProduceSB=>true)
+	       gCorners(q, J, StandardBasis=>true)
 ///
 
 TEST ///
@@ -2353,7 +2353,7 @@ doc ///
 	       D = dualSpace(matrix{{1,x,y}}, origin R);
 	       M = pairingMatrix(S, D)
 	  Text
-	       @TT "pairingMatrix"@ can also be called with one or both inputs @ofClass RingElement@.  If both arguments
+	       The function @TT "pairingMatrix"@ can also be called with one or both inputs @ofClass RingElement@.  If both arguments
 	       are single elements, the output is also a ring element rather than a matrix.
 	  Example
 	       pairingMatrix(S, 1+x)
@@ -2389,7 +2389,7 @@ doc ///
           S:PolySpace
      Description
           Text
-	       This functions computes the subspace of polynomial space T which is orthogonal to the dual space (or polynomial space) D.
+	       This functions computes the subspace of the polynomial space T that is orthogonal to the dual space (or polynomial space) D.
 	  Example
 	       R = CC[x,y];
 	       T = polySpace matrix{{1,x,y}};
@@ -2517,7 +2517,7 @@ document {
 	"C"=>{" witness sets representing components of ", TT "Spec(I)", " containing ", TT "P"} 
 	},
     Outputs => { "B"=>Boolean },
-    PARA {"This method runs an embedded component test described in "},
+    PARA {"This method runs an embedded component test described in the following paper. "},
     refKroneLeykin,
     SeeAlso=>{isPointEmbeddedInCurve}
     }
@@ -2533,7 +2533,7 @@ document {
 	"I"
 	},
     Outputs => { "B"=>Boolean },
-    PARA {"This method runs an embedded component test described in "},
+    PARA {"This method runs an embedded component test described in the following paper. "},
     refKroneLeykin,
     SeeAlso=>{isPointEmbeddedInCurve}
     }
@@ -2568,7 +2568,7 @@ Outputs
         the join of the ideals I and J
 Description
     Text
-        This method computes the join of two given ideals.
+        This method computes the join of two ideals.
         The join can be used to describe very interesting types of 
         primary ideals that include the symbolic powers of prime ideals.
         For more details reader is referred to Section 7 of the paper    
@@ -2607,7 +2607,7 @@ Description
         Given a submodule $M$ of a free module $F$, one computes the arithmetic multiplicity of $M$ as the sum, along the associated primes of $F/M$, 
 	of the length of the largest submodule of finite length of the quotient $M/F$ localized at the associated prime.
 	The arithmetic multiplicity is a fundamental invariant from a differential point of view as it yields the minimal size of a differential primary decomposition. 
-        For more details reader is referred to the paper    
+        For more details the reader is referred to the paper    
         @HREF("https://arxiv.org/abs/2101.03643", "Primary Decomposition with Differential Operators")@. 
 
     Example
@@ -3052,7 +3052,7 @@ Outputs
         of @TO2{DiffOp, "differential operators"}@
 Description
     Text
-        Compute a set of Noetherian operators for $P$-primary component of $I$.
+        Compute a set of Noetherian operators for the $P$-primary component of $I$.
     Example
         R = QQ[x,y,t];
         I1 = ideal(x^2, y^2-x*t);
@@ -3068,7 +3068,7 @@ Description
             TO2 {"Strategy => \"Hybrid\"", "\"Hybrid\""},
         }@
     Text
-        If the prime $P$ is known to be a ration point, the optional argument {\tt Rational} can be set to true.  This may offer a speed up in the computation.
+        If the prime $P$ is known to be a rational point, the optional argument {\tt Rational} can be set to true.  This may offer a speed-up in the computation.
 SeeAlso
     noetherianOperators
     (noetherianOperators, Ideal)
@@ -3090,7 +3090,7 @@ Description
         $$
         Q = \{ f \,\in\, R\, \mid\, L_i\, \bullet\, f\, \in P, \ \forall  1 \le i \le m \}.
         $$
-        We say that $\{L_1,\ldots,L_m\}$ is a set Noetherian operators for the primary ideal $Q$.
+        We say that $\{L_1,\ldots,L_m\}$ is a set of Noetherian operators for the primary ideal $Q$.
         In the output of the algorithm we always have that $m$ (the number of Noetherian operators) is equal to the 
         multiplicity of $Q$ over the prime ideal $P$.
 
@@ -3223,9 +3223,9 @@ Outputs
 Description
     Text
         This method maps a P-primary ideal Q into a point in a punctual Hilbert scheme.
-	Let $\mathbb{K}$ be a characteristic zero and a prime ideal $P$ of codimension $c$ in the polynomial ring $R = \mathbb{K}[x_1,\ldots,x_n]$.
+	Let $\mathbb{K}$ be a field of characteristic zero and let $P$ be a prime ideal of codimension $c$ in the polynomial ring $R = \mathbb{K}[x_1,\ldots,x_n]$.
 	We write $\mathbb{F}$ for the field of fractions of the integral domain $R/P$. 
-	To simplify our notation, perhaps after a linear change of coordinates, we assume that $\{ x_{c+1}, \ldots, x_n \}$ is a maximal independent set of variables module $P$.
+	To simplify our notation, perhaps after a linear change of coordinates, we assume that $\{ x_{c+1}, \ldots, x_n \}$ is a maximal independent set of variables modulo $P$.
     	
 	The main purpose of this method is to reduce the study of arbitrary $P$-primary ideals in $R = \mathbb{K}[x_1,\ldots,x_n]$ to a zero-dimensional setting over the function field $\mathbb{F}$.
 	This reduction is made by parametrizing $P$-primary ideals with the punctual Hilbert scheme 
@@ -3269,8 +3269,8 @@ Outputs
 Description
     Text
         Numerically computes evaluations of Noetherian operators. If the point {\tt p} lies on the variety of the
-        minimal prime $P$, the function returns a set of specialized Noetherian operators of the $P$-primary component.
-        The option @TO DependentSet@ is required when dealing with ideals over numerical fields, or when dealing with non-primary ideals
+        minimal prime $P$, the function returns a set of specialized Noetherian operators of the $P$-primary component of $I$.
+        The option @TO DependentSet@ is required when dealing with ideals over numerical fields, or when dealing with non-primary ideals.
     Example
         R = QQ[x,y,t];
         Q1 = ideal(x^2, y^2 + x*t);
@@ -3426,7 +3426,7 @@ Description
 
         The method @TO (rationalInterpolation, List, List, Ring)@ can be used to choose monomial supports automatically.
 Caveat
-    The method uses the first point to remove $0/0$ rational functions. Because of this, the first entry of {\tt val} should be non-zero.
+    The method uses the first point to remove the rational functions whose numerator and denominator would both evaluate to 0 on the point. Because of this, the first entry of {\tt val} should be non-zero.
 SeeAlso
     (rationalInterpolation, List, List, Ring)
 ///
@@ -3452,7 +3452,7 @@ Outputs
         the denominator of the rational function
 Description
     Text
-        Given a set of points $pts = \{p_1,\dots,p_k\}$ and values $vals = \{v_1,\dots,v_k\}$, attempts to find a rational function
+        Given a list of points $pts = \{p_1,\dots,p_k\}$ and values $vals = \{v_1,\dots,v_k\}$, attempts to find a rational function
         $f = g/h$, such that $f(p_i) = v_i$. The method first tries to find polynomials $g,h$ of degree 0;
         if this fails, it tries to find $g,h$ of degree 1 and so on. This procedure stops when there are not
         enough points to compute the next degree, in which case an error will be thrown.
@@ -3633,7 +3633,7 @@ Description
             {TO numericalNoetherianOperators}
         }@
 
-        See the respective documentation nodes for details. If the option {\tt Sampler} is unset,
+        See the respective documentation nodes for details and syntax. If the option {\tt Sampler} is unset,
         the default sampler will use @TO Bertini@.
 SeeAlso
     "Strategy => \"Hybrid\""
