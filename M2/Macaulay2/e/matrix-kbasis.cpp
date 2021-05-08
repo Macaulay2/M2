@@ -195,53 +195,97 @@ void KBasis::basis0_full(int firstvar)
 {
   Bag *b;
 
-  if (system_interrupted()) return;
   if (kb_monideal->search_expvector(kb_exp, b)) return;
-
   insert();
   if (limit == 0) return;
 
-  for (int i = firstvar; i < vars->len; i++)
-    {
-      int v = vars->array[i];
-      kb_exp[v]++;
-      basis0_full(i);
-      kb_exp[v]--;
-      if (limit == 0) return;
-    }
+  int curr = firstvar;
+  do {
+      int vcurr = vars->array[curr];
+      // increase the curr index until we reach a limit
+      do {
+          kb_exp[vcurr]++;
+          kb_exp_weight += var_wts[curr];
+          if (system_interrupted()) return;
+          if (kb_monideal->search_expvector(kb_exp, b)) break;
+          insert();
+          if (limit == 0) return;
+      } while (true);
+
+      // if we are the end, decrease the last entry to 0
+      if (curr == vars->len - 1)
+        {
+          kb_exp_weight -= var_wts[curr] * kb_exp[vars->array[curr]];
+          kb_exp[vars->array[curr]] = 0;
+          do {
+              curr--;
+          } while (curr >= firstvar && kb_exp[vars->array[curr]] == 0);
+        }
+      if (curr < firstvar) break;
+      kb_exp[vars->array[curr]]--;
+      kb_exp_weight -= var_wts[curr];
+      curr++;
+  } while (true);
 }
 
 void KBasis::basis0_singly_graded(int firstvar)
 {
   Bag *b;
-
-  if (system_interrupted()) return;
+  // this bit deals with the all zeros vector
   if (kb_monideal->search_expvector(kb_exp, b)) return;
-
   if (hi_degree && kb_exp_weight > kb_target_hi_weight)
     {
       if (do_truncation) insert();
       return;
     }
-
-  if (lo_degree == 0 || kb_exp_weight >= kb_target_lo_weight) insert();
-
-  if (hi_degree && kb_exp_weight == kb_target_hi_weight) return;
-
-  for (int i = firstvar; i < vars->len; i++)
+  if (lo_degree == 0 || kb_exp_weight >= kb_target_lo_weight)
     {
-      int v = vars->array[i];
-
-      kb_exp[v]++;
-      kb_exp_weight += var_wts[i];
-
-      basis0_singly_graded(i);
-
-      kb_exp[v]--;
-      kb_exp_weight -= var_wts[i];
-
+      insert();
       if (limit == 0) return;
     }
+  if (hi_degree && kb_exp_weight == kb_target_hi_weight) return;
+
+  int curr = firstvar;
+  do {
+      int vcurr = vars->array[curr];
+      // increase the curr index until we reach a limit
+      do {
+          kb_exp[vcurr]++;
+          kb_exp_weight += var_wts[curr];
+          if (system_interrupted()) return;
+          if (kb_monideal->search_expvector(kb_exp, b)) break;
+          if (hi_degree && kb_exp_weight > kb_target_hi_weight)
+            {
+              if (do_truncation)
+                {
+                  insert();
+                  if (limit == 0) return;
+                }
+              break;
+            }
+          if (lo_degree == 0 || kb_exp_weight >= kb_target_lo_weight)
+            {
+              insert();
+              if (limit == 0) return;
+            }
+          if (hi_degree && kb_exp_weight == kb_target_hi_weight) break;
+      } while (true);
+
+      // if we are the end, decrease the last entry to 0
+      if (curr == vars->len - 1)
+        {
+          kb_exp_weight -= var_wts[curr] * kb_exp[vcurr];
+          kb_exp[vcurr] = 0;
+          do {
+              curr--;
+          } while (curr >= firstvar && kb_exp[vars->array[curr]] == 0);
+        }
+      if (curr < firstvar) break;
+      assert(kb_exp[vars->array[curr]] > 0);
+      kb_exp[vars->array[curr]]--;
+      kb_exp_weight -= var_wts[curr];
+      curr++;
+  } while (true);
 }
 
 void KBasis::basis0_multi_graded(int firstvar)
