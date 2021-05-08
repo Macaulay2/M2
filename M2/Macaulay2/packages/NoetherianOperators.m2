@@ -1980,21 +1980,24 @@ doc ///
        Text
 	   The @EM "NoetherianOperators"@ package includes algorithms for computing Noetherian operators and local dual 
 	   spaces of polynomial ideals, and related local combinatorial data about its scheme structure.
+        In addition, the package provides symbolic methods for computing Noetherian operators and Noetherian multipliers of
+        polynomial modules.
     	    	
 	   The problem of characterizing ideal membership with differential conditions was first addressed by 
 	   Gröbner ("Uber eine neue idealtheoretische Grundlegung der algebraischen Geometrie", Math. Ann. 115 (1938), no. 1, 333–358).
-	   Despite this early algebraic interest by Gröbner, a complete description of primary ideals in terms of differential operators was first obtained by analysts in the Fundamental Principle of Ehrenpreis and Palamodov.
-	   At the core of the Fundamental Principle, one has the notion of Noetherian operators to describe a primary ideal. 
+	   Despite this early algebraic interest by Gröbner, a complete description of primary ideals and modules in terms of differential operators was first obtained by analysts in the Fundamental Principle of Ehrenpreis and Palamodov.
+	   At the core of the Fundamental Principle, one has the notion of Noetherian operators to describe a primary module. 
 	   
 	   In case of an ideal supported at one point a set of Noetherian operators forms a Macaulay inverse system that spans the dual space of the ideal. 
 	   These notions relate to the work of 
 	   Macaulay ("The algebraic theory of modular systems", Cambridge Press, (1916)). 
 	    
-	   In this package, we implement several (exact symbolic and approximate numerical) algorithms for the computation of a set of Noetherian operators describing a primary ideal. 
+	   In this package, we implement several (exact symbolic and approximate numerical) algorithms for the computation of sets of Noetherian operators.
     	           	   
            Methods and types for computing and manipulating Noetherian operators:
 
            @UL {
+               {TO DiffOp},
                {TO noetherianOperators, UL {
                  {TO "Strategy => \"PunctualHilbert\""},
                  {TO "Strategy => \"MacaulayMatrix\""},
@@ -2003,9 +2006,11 @@ doc ///
                {TO specializedNoetherianOperators},
                {TO numericalNoetherianOperators},
                {TO getIdealFromNoetherianOperators},
-               {TO DiffOp},
+               {TO getModuleFromNoetherianOperators},
                {TO coordinateChangeOps},
-               {TO noethOpsFromComponents}
+               {TO noethOpsFromComponents},
+               {TO solvePDE},
+               {TO diffPrimDec}
            }@
 
 	   Methods for computing and manipulating local dual spaces:
@@ -2030,8 +2035,8 @@ doc ///
 	   }@
 
 	   For the task of computing Noetherian operators, here we implement the algorithms developed in the papers 
-	   @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@ and  
-	   @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
+	   @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@,  
+	   @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@, and @arXiv("2104.03385", "Primary decomposition of modules: a computational differential approach")@.
            These include both symbolic and numerical algorithms, and a hybrid algorithm, where numerical data is used to
            speed up the symbolic algorithm.
            
