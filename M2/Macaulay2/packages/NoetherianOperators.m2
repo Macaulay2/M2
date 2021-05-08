@@ -2,7 +2,7 @@
 newPackage(
     "NoetherianOperators",
     Version => "2.0",
-    Date => "May TODO, 2021",
+    Date => "May 9, 2021",
     Authors => {
         {Name => "Robert Krone", 
         Email => "krone@math.gatech.edu"},
@@ -824,137 +824,6 @@ assert(foo2 - foo2 == 0)
 assert(not foo == 0)
 ///
 
-
-
--- old
--- new DiffOp from HashTable := (DD,H) -> (
---     if #set(keys H / ring) > 1 then error"expected all elements in same ring";
---     if not all(keys H, m -> monomials m == m) then error"keys must be pure monomials";
---     R := ring first keys H;
---     applyValues(H, v -> sub(v,R))
--- )
--- new DiffOp from List := (DD,L) -> new DiffOp from hashTable L
--- diffOp = method()
--- diffOp HashTable := H -> (
---     if #keys H == 0 then error "expected non-empty hash table";
---     H' := select(H, f -> f!= 0);
---     if #keys H' == 0 then new ZeroDiffOp from ring first keys H
---     else new DiffOp from H'
--- )
--- diffOp List := L -> diffOp hashTable L
--- -- Create DiffOp from Weyl algebra element. 
--- -- Output will be in ring R and R must contain the non
--- diffOp (Ring, RingElement) := (R,f) -> diffOp(f,R)
--- diffOp (RingElement, Ring) := (f,R) -> (
---     R' := ring f;
---     createDpairs R';
---     (mon,coef) := coefficients(f, Variables => R'.dpairVars#1);
---     -- Create the map from R' to R that maps x => x and dx => x
---     rules := apply(R'.dpairVars#1, R'.dpairVars#0, (dx, x) -> dx => sub(x,R)) | apply(R'.dpairVars#0, x -> x => sub(x,R));
---     liftMap := map(R,R', rules);
---     diffOp apply(flatten entries liftMap(mon), flatten entries liftMap(coef), identity)
--- )
--- diffOp RingElement := f -> (
---     R' := ring f;
---     if not R'.?cache then R'.cache = new CacheTable;
---     if not R'.cache#?"preWA" then (
---         createDpairs R';
---         R'.cache#"preWA" = (coefficientRing R')(monoid[(R'.dpairVars#0)]);
---     );
---     R := R'.cache#"preWA";
---     diffOp(f, R)
--- )
--- -- matrices with mons and coeffs
--- diffOp (List, List) := (mons, coefs) -> (
---     if #mons != #coefs then error"expected same number of monomials and coefficients";
---     diffOp apply(mons,coefs, (m,c) -> m => c)
--- )
--- diffOp (Matrix, Matrix) := (mons, coefs) -> (
---     diffOp(flatten entries mons, flatten entries coefs)
--- )
--- 
--- 
--- -- Vector space operations
--- DiffOp + DiffOp := (D1, D2) -> diffOp merge(D1, D2, (a,b) -> a+b)
--- RingElement * DiffOp := (r, D) -> diffOp applyValues(D, x -> r*x)
--- Number * DiffOp := (r, D) -> diffOp applyValues(D, x -> r*x)
--- DiffOp - DiffOp := (D1, D2) -> D1 + (-1)*D2
--- - DiffOp := D -> (-1)*D
--- -- Application of DiffOp
--- DiffOp RingElement := (D, f) -> keys D / (k -> (D)#k * diff(k, f)) // sum
--- -- Comparison
--- DiffOp ? DiffOp := (D1, D2) -> (
---     if instance(D1 - D2, ZeroDiffOp) then return symbol ==;
---     m := max keys(D1 - D2);
---     if not D2#?m then symbol >
---     else if not D1#?m then symbol <
---     else (D1#m) ? (D2#m)
--- )
--- DiffOp == DiffOp := (D1, D2) -> return (D1 ? D2) === (symbol ==)
--- -- Printing
--- -- Takes a monomial and returns an expression with
--- -- a "d" appended to each variable name
--- addDsymbol = x -> (
---     R := ring x;
---     e := first exponents x;
---     product apply(numgens R, i -> (if instance(expression(R_i), Subscript) then new Subscript from {expression("d" | toString (expression (R_i))#0),(expression (R_i))#1} else expression("d" | toString (R_i)))^(expression(e#i)))
--- )
--- expression DiffOp := D -> 
---     rsort(keys D, MonomialOrder => Lex) / 
---     (k -> (D)#k * if k == 1 then expression(1) else addDsymbol(k)) //
---     sum
--- net DiffOp := D -> net expression D
--- toString DiffOp := D -> toString expression D
--- -- other useful functions
--- ring DiffOp := D -> ring first keys D
--- substitute (DiffOp, Ring) := (D,R) -> applyPairs(D, (k,v) -> sub(k, R) => sub(v,R))
--- normalize = method();
--- normalize DiffOp := D -> 1/(sub( leadCoefficient D#(first rsort keys D), coefficientRing ring D)) * D
--- DiffOp == ZZ := (D, z) -> if z == 0 then false else error"cannot compare DiffOp to nonzero integer"
--- ZZ == DiffOp := (z, D) -> D == z
--- evaluate (DiffOp, Matrix) := (D,p) -> applyValues(D, v -> promote((evaluate(matrix{{v}}, p))_(0,0), ring D))
--- evaluate (DiffOp, Point) := (D,p) -> evaluate(D, matrix p)
--- coefficients DiffOp := opts -> D -> (
---     R := ring D;
---     if opts.Variables =!= null then error"option Variables is not yet implemented for (coefficients, DiffOp)";
---     mons := if opts.Monomials === null then keys D
---         else if instance(opts.Monomials, Matrix) then first entries opts.Matrix
---         else if instance(opts.Monomials, List) then opts.Monomials
---         else if instance(opts.Monomials, Sequence) then toList opts.Monomials
---         else error "expected 'Monomials=>'' argument to be a list, sequence, or matrix";
--- 
---     coefs := mons / (m -> if D#?m then D#m else 0_R);
---     matrix{mons}, transpose matrix{coefs}
--- )
--- support DiffOp := D -> support matrix {keys D}
--- degree DiffOp := D -> keys D / degree // max
--- 
--- 
--- -- instances of ZeroDiffOp are differential operators that
--- -- act as the zero operator. They have exactly one key with value zero
--- ZeroDiffOp = new Type of DiffOp
--- new ZeroDiffOp from Ring := (DD, R) -> hashTable{1_R => 0_R}
--- toExternalString ZeroDiffOp := D -> "new ZeroDiffOp from " | toExternalString(ring D)
--- ZeroDiffOp == ZZ := (D, z) -> if z == 0 then true else error"cannot compare DiffOp to nonzero integer"
--- ZZ == ZeroDiffOp := (z, D) -> (D == z)
--- 
--- -- Type used for interpolated differential operators
--- -- As in DiffOp, each key corresponds to a monomial,
--- -- but each value is the numerator and denominator of a rational function
--- InterpolatedDiffOp = new Type of DiffOp
--- new InterpolatedDiffOp from List := (TT, L) -> hashTable L
--- new InterpolatedDiffOp from HashTable := (TT, H) -> H
--- expression InterpolatedDiffOp := D -> 
---     rsort(keys D, MonomialOrder => Lex) / 
---     (k -> ((expression D#k#0)/(expression D#k#1)) * if k == 1 then expression(1) else addDsymbol(k)) //
---     sum
--- net InterpolatedDiffOp := D -> net expression D
--- evaluate (InterpolatedDiffOp, Matrix) := (D, p) -> (
---     if any(splice values D, x -> x === "?") then error "cannot evaluate an incomplete interpolated differential operator"
---     else diffOp(applyValues(D, (n,d) -> 
---         promote((evaluate(matrix{{n}},p))_(0,0)/(evaluate(matrix{{d}},p))_(0,0), ring D))))
--- evaluate (InterpolatedDiffOp, Point) := (D, p) -> evaluate(D, matrix p)
-
 sanityCheck = (nops, I) -> (
     all(flatten table(nops, I_*, (N,i) -> (N i)%(radical I) == 0), identity)
 )
@@ -1276,7 +1145,6 @@ numericalNoetherianOperators(Ideal) := List => true >> opts -> (I) -> (
 
     --here integral strategy must be false to get the same kernel basis as in interpolateFromTemplate
     nopsTemplate := numNoethOpsAtPoint(J, goodPoint, opts, DependentSet => depSet / (i -> sub(i,R)), Tolerance => tol, DegreeLimit => noethDegLim, IntegralStrategy => false);
-    --nopsTemplate := specializedNoetherianOperators(I, goodPoint, opts, DependentSet => depSet, Tolerance => tol, DegreeLimit => noethDegLim);
     if not S.?cache then S.cache = new CacheTable;
     S.cache#"interp point list" = new List;
     nopsTemplate / (tmpl -> interpolateFromTemplate(I, tmpl, opts, Tolerance => tol, Sampler => sampler))
@@ -1327,7 +1195,6 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
     oldPtList := (ring I).cache#"interp point list";
     ptList := new List;
     opList := new List;
-    -- (mon,coef) := coefficients(tmpl);
     S := ring tmpl;
     SS := coefficientRing S;
     KK := ultimate(coefficientRing, S);
@@ -1367,7 +1234,6 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
                 else d = d+1;
         );
         result = result / (j -> cleanPoly(opts.Tolerance, j));
-        -- (m => result)
         (expression first result) / (expression last result) * (expression m)
     ));
     if debugLevel > 0 then <<"Done interpolating from template "<<tmpl<<endl;
@@ -1417,15 +1283,6 @@ coordinateChangeOps(Matrix, DiffOp) := DiffOp => (A, D) -> (
     mm := sub(mon, vars R * A');
     cc := sub(coe, vars coefficientRing R * transpose A);
     diffOp(mm*cc)
-
---    b := coefficients D /
---        entries /
---        flatten //
---        toList //
---        transpose /
---        toSequence /
---        ((m,c) -> (sub(m, vars R * A'), sub(c, vars R * transpose A)));
---    b / (p -> sub(last p, coefficientRing R) * (first matrixToDiffOps reverse coefficients first p)) // sum
 )
 coordinateChangeOps(Matrix, List) := coordinateChangeOps(RingMap, List) := List => (A, L) -> L/(D -> coordinateChangeOps(A, D))
 coordinateChangeOps(RingMap, DiffOp) := DiffOp => (phi, D) -> coordinateChangeOps(transpose(matrix phi // vars coefficientRing ring D), D)
@@ -1563,9 +1420,36 @@ amult Module := ZZ => M -> (
 )
 amult Ideal := ZZ => I -> amult module I
 
--- TODO tests
+TEST ///
+R = QQ[x1,x2,x3,x4]
+U = image matrix{
+    {x1*x3, x1*x2, x1^2*x2 },
+    {x1^2, x2^2, x1^2*x4} }
+assert Equation(amult U, 9)
 
--- Todo: add this to PrimaryDecomposition package?
+R = QQ[x,y]
+U = image matrix{
+    {x+1, y*x, x^2},
+    {y+x, x^2 - y^2, y^2}}
+assert Equation(amult U, 5)
+
+R = QQ[x,y]
+U = image matrix{
+    {x+1, y+2, x-1},
+    {y-1, y-2, x-1}}
+assert Equation(amult U, 1)
+
+R = QQ[x, y]
+U = image matrix{
+    {random(1,R),random(1,R),random(1,R)},
+    {random(1,R),random(1,R),random(1,R)}}
+assert Equation(amult U, 3)
+
+R = QQ[x1,x2,x3,x4];
+I = ideal( x1^3*x3^2-x2^5, x2^2*x4^3-x3^5, x1^5*x4^2-x2^7, x1^2*x4^5-x3^7 );
+assert Equation(amult I, 207)
+///
+
 -- Module should be given as an image
 -- List L is a list of associated primes
 localize(Module, Ideal, List) := Module => opts -> (M, P, L) -> (
@@ -1580,15 +1464,6 @@ localize(Module, Ideal, List) := Module => opts -> (M, P, L) -> (
 solvePDE = method(Options => true)
 solvePDE(Module) := List => true >> opts -> M -> (
     R := ring M;
-    -- if not instance(opts.Prefix, String) then error "expected prefix of class String";
-    -- prefix = opts.Prefix;
-    -- Pvars := gens R / toString / (i -> prefix | i);
-
-    -- Create a new ring with the above variables if needed, cache it in R
-    -- if not R.?cache then R.cache = new CacheTable;
-    -- key := prefix | "-variable ring";
-    -- if not R.cache#?key then R.cache#key = (coefficientRing R)(monoid [((gens R / toString) | Pvars) / value]);
-
     assPrimes := ass(comodule M);
     assPrimes / (P -> (
         a := localize(M,P,assPrimes);
@@ -1605,24 +1480,11 @@ diffPrimDec = solvePDE
 reducedNoetherianOperators = method(Options => true)
 reducedNoetherianOperators (Module, Module, Ideal) := List => true >> opts -> (a,b,P) -> (
     R := ring P;
-    --if not instance(opts.Prefix, String) then error "expected prefix of class String";
-    --prefix = opts.Prefix;
-    --Pvars := gens R / toString / (i -> prefix | i);
-
-    -- Create a new ring with the above variables if needed, cache it in R
-    -- if not R.?cache then R.cache = new CacheTable;
-    -- key := prefix | "-variable ring";
-    -- if not R.cache#?key then R.cache#key = (coefficientRing R)(monoid [((gens R / toString) | Pvars) / value]);
     PR := diffOpRing R;
-
     (depVars,indVars) := getDepIndVars(P, opts);
-    
-    -- indVars := support first independentSets P;
-    -- depVars := gens R - set indVars;
-
     m := 0;  -- compute the exponent that determines the order of the diff ops
     while not isSubset(intersect(b, P^m*(super b)), a) do m = m + 1;
-    m = max(0, m-1); -- TODO check!!!
+    m = max(0, m-1);
 
     S := (frac(R/P))(monoid[Variables => #depVars]);
     depVarImage := apply(depVars, gens S, (x,y) -> sub(x,S) + y);
@@ -1829,7 +1691,6 @@ getIdealFromNoetherianOperators(List, Ideal) := (L, P) -> (
     mapDiff := map(S,ring first L, vars S);
     mapCoef := map(coefficientRing S, R);
     V := L / coefficients / ((a,b) -> (mapDiff a * mapCoef sub(b, R)));
-    --V := L / (op -> applyPairs(op, (a,b) -> (mapDiff a, promote(mapCoef lift(b, R),S))));
 
     I := vectorAnn(V);
     R' := R monoid R;
@@ -1939,7 +1800,7 @@ nops = noetherianOperators U
 P = first ass comodule U
 M = getModuleFromNoetherianOperators(P,nops)
 assert(M == U)
-use R -- TODO remove this
+use R
 U = image matrix{
     {x1*x3, x1*x2, x1^2*x2 },
     {x1^2, x2^2, x1^2*x4} }
@@ -1949,14 +1810,6 @@ assert(M == U)
 ///
 ----------------------------------------------------------
 
--- undocumented {
---     (expression, DiffOp),
---     (expression, InterpolatedDiffOp),
---     (net, DiffOp),
---     (net, InterpolatedDiffOp),
---     (toExternalString, ZeroDiffOp),
---     (toString, DiffOp)
--- }
 undocumented {
     (symbol +, DiffOp, DiffOp),
     (symbol -, DiffOp, DiffOp),
@@ -2218,7 +2071,6 @@ doc ///
 TEST ///
 R = CC[x,y]
 M = matrix {{x^2-x*y^2,x^3}}
---M = matrix {{x*y, y^2}}
 p = point matrix{{0_CC,0_CC}}
 q = point matrix{{0_CC,1_CC}}
 assert(numcols gCorners(p,M) == 2)
@@ -2734,126 +2586,6 @@ SeeAlso
 
 ///
 
--- doc ///
--- Key
---     (symbol +, DiffOp, DiffOp)
--- Headline
---     addition of differential operators
--- Usage
---     D + E
--- Inputs
---     D:DiffOp
---     E:DiffOp
--- Outputs
---     :DiffOp
--- Description
---     Text
---         Adds two differential operators. The ring of both operators must match
---     Example
---         R = QQ[x,y];
---         D = diffOp{x => x^2+ y}
---         E = diffOp{x => -y, x^2*y^2 => 2}
---         D + E
--- ///
--- 
--- doc ///
--- Key
---     (symbol -, DiffOp, DiffOp)
--- Headline
---     subtraction of differential operators
--- Usage
---     D - E
--- Inputs
---     D:DiffOp
---     E:DiffOp
--- Outputs
---     :DiffOp
--- Description
---     Text
---         Subtracts two differential operators. The ring of both operators must match
---     Example
---         R = QQ[x,y];
---         D = diffOp{x => x^2+ y}
---         E = diffOp{x => -y, x^2*y^2 => 2}
---         D - E
--- ///
--- 
--- 
--- doc ///
--- Key
---     (symbol -, DiffOp)
--- Headline
---     negation of differential operators
--- Usage
---     - D
--- Inputs
---     D:DiffOp
--- Outputs
---     :DiffOp
--- Description
---     Text
---         Corresponds to $(-1)*D$
---     Example
---         R = QQ[x,y];
---         D = diffOp{x => x^2+ y}
---         - D
--- ///
--- 
--- doc ///
--- Key
---     (symbol *, RingElement, DiffOp)
--- Headline
---     scaling of differential operators
--- Usage
---     c*D
--- Inputs
---     c:RingElement
---         in the same ring as {\tt D}, or a @TO Number@
--- 
---     D:DiffOp
--- Outputs
---     :DiffOp
--- Description
---     Text
---         Multiplies every coefficient of {\tt D} by {\tt c}
---     Example
---         R = QQ[x,y];
---         D = diffOp{x => x^2+ y, y^2 => 1}
---         y*D
---         2*D
--- ///
--- 
--- doc ///
--- Key
---     (symbol ?, DiffOp, DiffOp)
---     (symbol ==, DiffOp, DiffOp)
---     (symbol ==, DiffOp, ZZ)
---     (symbol ==, ZZ, DiffOp)
--- Headline
---     comparison of differential operators
--- Usage
---     D ? E
---     D == E
---     D == 0
--- Inputs
---     D:DiffOp
---     E:DiffOp
--- Description
---     Text
---         The ordering of DiffOps a product ordering of the undelying ring, where the $dx$ monomoial are compared
---         first, and ties are broken with coefficients.
---     Example
---         R = QQ[x,y, MonomialOrder => Lex]
---         D1 = diffOp{x^2 => y, y => x^2}
---         D2 = diffOp{y => y^2}
---         D3 = diffOp{x^2 => y, y => x^2 + y^2}
---         D1 ? D1
---         D1 ? D2
---         D1 ? D3
---         D1 + D2 == D3
---         D1 + D2 - D3 == 0
--- ///
-
 doc ///
 Key
     (symbol SPACE, DiffOp, Matrix)
@@ -2889,32 +2621,6 @@ Description
         D(x^3+y*x^2)        
 ///
 
--- doc ///
--- Key
---     (substitute, DiffOp, Ring)
--- Headline
---     change the ring of a differential operator
--- Usage
---     substitute(D, R)
---     sub(D, R)
--- Inputs
---     D: DiffOp
---     R: Ring
--- Outputs
---     :DiffOp
--- Description
---     Text
---         Attempts to change the underlying ring of the differential operator by calling @TO substitute@
---         for each monomial and coefficient of {\tt D}
---     Example
---         R = QQ[x,y]
---         D = diffOp{1_R => x^2, x^2 => y^2}
---         S = QQ[x,y,z]
---         DS = sub(D,S)
---         ring DS === S
--- ///
-
-
 doc ///
 Key
     normalize
@@ -2942,61 +2648,6 @@ Description
         nops = noetherianOperators(I, Strategy => "MacaulayMatrix");
         nops / normalize == {diffOp 1_S, diffOp dy, diffOp(t*dy^2 + 2*dx), diffOp(t*dy^3 + 6*dx*dy)}
 ///
-
-
--- doc ///
--- Key
---     ZeroDiffOp
---     (NewFromMethod, ZeroDiffOp, Ring)
---     (symbol ==, ZZ, ZeroDiffOp)
---     (symbol ==, ZeroDiffOp, ZZ)
--- Headline
---     the zero differential operator of a ring
--- Description
---     Text
---         For internal use. A type of @TO DiffOp@ with a single key {\tt 1} and value 0.
---         Users are not expected to create instances of {\tt ZeroDiffOp}, they are created automatically by @TO diffOp@ when necessary.
---     Example
---         R = QQ[x,y]
---         D = diffOp{x => 0};
---         instance(D, ZeroDiffOp)
---         peek D
---     Text
---         Comparison to the integer 0 works as expected
---     Example
---         E = diffOp{1_R => 0}
---         E == 0
--- SeeAlso
---     diffOp
--- 
--- ///
--- 
--- doc ///
--- Key
---     InterpolatedDiffOp
---     (NewFromMethod, InterpolatedDiffOp, HashTable)
---     (NewFromMethod, InterpolatedDiffOp, List)
--- Headline
---     differential operator with interpolated coefficients
--- Description
---     Text
---         A type of @TO DiffOp@ returned by interpolation based methods, such as @TO numericalNoetherianOperators@.
---         Because of this, users are not expected to create instances of this type.
--- 
---         If the interpolation of any coefficient fails, the numerator and denominator will be replaced by the @TO2 {String, "string"}@ {\tt "?"}.
--- 
---         Assuming the interpolation was successful, the method @TO (evaluate, InterpolatedDiffOp, Point)@ will convert
---         an @TO InterpolatedDiffOp@ to a specialized differential operators of type @TO DiffOp@ by evaluating each numerator and denominator at a point.
---     Example
---         R = CC[x,y]
---         D = new InterpolatedDiffOp from {x => (x+y, pi*ii*x^2*y), y => (x, 1.3_R)}
---         D' = evaluate(D, point{{1.2, 2+ii}})
--- SeeAlso
---     (evaluate, InterpolatedDiffOp, Point)
--- 
--- ///
-
-
 
 doc ///
 Key
@@ -3489,92 +3140,6 @@ Description
         D = diffOp(x*dx+y*dy^3)
         evaluate(D, point{{1,2}})
 ///
-
--- doc ///
--- Key
---     (coefficients, DiffOp)
--- Headline
---     coefficients of a differential operator
--- Usage
---     (mon, coef) = coefficients D
--- Inputs
---     D:DiffOp
---     Variables =>
---         not yet implemented
---     Monomials => List
---         or a @TO Sequence@ or a @TO Matrix@
--- Outputs
---     mon:Matrix
---     coef:Matrix
--- Description
---     Text
---         Get the differential monomials and their corresponding polynomial coefficients.
---         The monomials are returned as a row matrix in the base ring, and the coefficients are returned as a column matrix.
---     Example
---         R = QQ[x,y];
---         D = diffOp{x => 2*x^2 + 1, x*y => y^2}
---         coefficients D
---     Text
---         Coefficients of given differential monomials can be obtained using the option @TO [coefficients, Monomials]@.
---         The output can be used with @TO (diffOp, Matrix, Matrix)@ to obtain new differential operators.
---     Example
---         coefficients(D, Monomials => {x*y, y^2})
---         diffOp coefficients(D, Monomials => {x*y, y^2})
--- SeeAlso
---     coefficients
---     (coefficients, RingElement)
--- ///
--- 
--- doc ///
--- Key
---     (support, DiffOp)
--- Headline
---     list of differential variables occurring in a differential operator
--- Usage
---     support D
--- Inputs
---     D:DiffOp
--- Outputs
---     :List
---         of @TO2 {RingElement, "ring elements"}@, the variables occurring in differential monomials of {\tt D}
--- Description
---     Text
---         Lists variables occurring in differential monomials with non-zero coefficients.
---         The variables occurring in the polynomial coefficients are ignored.
---         The resulting list will contain @TO2 {RingElement, "ring elements"}@ in the base ring.
---     Example
---         R = QQ[x,y,z];
---         D = diffOp{1_R=> z^2, x^2*y => 2}
---         support D
--- ///
--- 
--- doc ///
--- Key
---     (degree, DiffOp)
--- Headline
---     degree of the differential part of a differential operator
--- Usage
---     degree D
--- Inputs
---     D:DiffOp
--- Outputs
---     :List
---         the degree or multidegree of the differential monomials
--- Description
---     Text
---         Returns the highest degree of a differential monomial.
---         The degrees of the polynomial coefficient is ignored.
---     Example
---         R = QQ[x,y];
---         D = diffOp{x^2*y^5 => x^100, x*y^3 => y^99}
---         degree D
---     Text
---         To accomodate polynomial rings having multigradings, degrees are lists of integers.
---     Example
---         S = QQ[x,y] ** QQ[a,b];
---         D = diffOp{x*a => a-b+x^2, b*y^2 => 1}
---         degree D
--- ///
 
 doc ///
 Key
