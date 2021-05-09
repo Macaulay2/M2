@@ -17,7 +17,7 @@ newPackage(
     },
     Headline => "numerically compute local dual spaces, Hilbert functions, and Noetherian operators",
     PackageExports => {"Bertini", "NumericalLinearAlgebra", "NAGtypes"},
-    PackageImports => {"Dmodules", "PrimaryDecomposition"},
+    PackageImports => {"PrimaryDecomposition"},
     AuxiliaryFiles => false,
     DebuggingMode => false,
     Keywords => {"Numerical Algebraic Geometry", "Commutative Algebra"}
