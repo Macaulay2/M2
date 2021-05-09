@@ -93,7 +93,7 @@ grGr Ideal := Ring => I -> grGr(ideal gens ring I, I)
 -- Taken from K3Carpets package
 irrelevantIdeal = R -> intersect apply(unique degrees R, d -> ideal basis(d, R))
 
-hilbertSequence = method(Options => {symbol DoSaturate => true})
+hilbertSequence = method(Options => {symbol DoSaturate => false})
 hilbertSequence Module := HashTable => opts -> M -> (
     if opts.DoSaturate then M = M/saturate(0*M, irrelevantIdeal ring M);
     HS := hilbertSeries(M, Reduce => true);
@@ -103,8 +103,8 @@ hilbertSequence Module := HashTable => opts -> M -> (
     b := select(listForm coordChange q, p -> all(#s, i -> p#0#i <= s#i));
     hashTable apply(b, p -> (s - p#0, p#1))
 )
-hilbertSequence Ring := HashTable => opts -> R -> hilbertSequence R^1
-hilbertSequence Ideal := HashTable => opts -> I -> hilbertSequence comodule I
+hilbertSequence Ring := HashTable => opts -> R -> hilbertSequence(R^1, opts)
+hilbertSequence Ideal := HashTable => opts -> I -> hilbertSequence(comodule I, opts)
 
 -- hilbertPolynomial = method(Options => {Projective => false}) -- should be a hook?
 -- hilbertPolynomial Module := RingElement => o -> M -> ( -- TODO: fix
@@ -441,7 +441,6 @@ doc ///
         DoSaturate
         [hilbertSequence, DoSaturate]
         [multiplicitySequence, DoSaturate]
-	--TODO maybe better to call it with the full name hilbertSequence
     Headline
         the Hilbert sequence of a multi-graded module
     Usage
@@ -454,18 +453,19 @@ doc ///
             the Hilbert sequence of M
     Description
         Text
-            Given a multi-graded module M, this function computes 
-	    the coefficients of the multi-graded Hilbert polynomial 
-	    of M in its Macaulay expansion. If the input is an ideal I, 
-            then the Hilbert sequence of {\tt comodule I} is returned.
+            Given an $\NN^p$-graded module M, this function computes 
+	    the coefficients of the pth sum transform of the $\NN^p$-graded 
+            Hilbert function of M in its Macaulay expansion. If the input 
+            is an ideal I, then the Hilbert sequence of {\tt comodule I} is 
+            returned.
             --TODO is the Macaulay expansion defined?
         Example
             R = QQ[a..e, DegreeRank => 5]
             I = monomialIdeal "de,abe,ace,abcd"
             hilbertSequence I
         Text
-            One can read off the Hilbert polynomial from the Hilbert sequence,
-            which can be verified for singly-graded modules:
+            For singly-graded modules, one can read off the Hilbert 
+            polynomial from the Hilbert sequence:
         Example
             R = QQ[a..e]
             I = monomialIdeal "de,abe,ace,abcd"
@@ -475,12 +475,11 @@ doc ///
             A convenient expression for the Hilbert sequence is provided 
             via @TO printHilbertSequence@.
     Caveat
-        In general, for multi-graded modules it is necessary to saturate 
-        with respect to the irrelevant ideal, cf. page 235 of 
-        Conca-De Negri-Gorla, 
-        "Cartwright–Sturmfels ideals associated to graphs and linear spaces", 2018.
-        This is handled by the optional
-        argument @TT "DoSaturate"@, with default value true.
+        In general, to retain a connection to the Hilbert polynomial (as 
+        opposed to the pth sum transform) it is necessary to saturate with 
+        respect to the irrelevant ideal, cf. page 235 of Conca-De Negri-Gorla, 
+        "Cartwright–Sturmfels ideals associated to graphs and linear spaces", 
+        2018. This is handled by the optional argument @TT "DoSaturate"@.
     SeeAlso
     	hilbertPolynomial
         printHilbertSequence
