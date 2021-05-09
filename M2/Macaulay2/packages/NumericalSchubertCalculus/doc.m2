@@ -1,12 +1,21 @@
 document {
      Key => NumericalSchubertCalculus,
      Headline => "Numerical Algorithms for Schubert Calculus",
-     EM "NumericalSchubertCalculus", " is a package that provides implementations of both the Littlewood-Richardson and Pieri homotopy algorithms for solving (instances of) Schubert problems on Grassmannians using numerical homotopy continuation.",
-     PARA{"A(n instance of a) Schubert problem on the Grassmannian ",TEX///$Gr(k,n)$///," is a list of Schubert subvarieties (assumed general) of ",TEX///$Gr(k,n)$///," whose codimensions add up to ",TEX///$k(n-k)$///,", the dimension of the Grassmannian. 
-     A Schubert variety is represented by a pair ",TEX///$(c,F)$///,", where ",TEX///$c$///," is a Schubert condition (represented as a partition or a bracket) and ",TEX///$F$///," is a flag, represented as an invertible ",TEX///$n\times n$///,"-matrix.
-       The Schubert variety for the pair ",TEX///$(c,F)$///," consists of all ",TEX///$k$///,"-planes that satisfy the incidence condition ",TEX///$c$///," imposed by the flag ",TEX///$F$///,". 
-       A Schubert problem is a list of conditions, the sum of whose codimensions is ",TEX///$k(n-k)$///,".  Flags, one for each condition, provide an instance of a given Schubert problem."},   
-     HEADER3 {"General functions include:"},
+     "This package provides implementations of both the Littlewood-Richardson and Pieri homotopy algorithms for solving (instances of) Schubert problems on Grassmannians using numerical homotopy continuation.",
+     PARA{"A ", EM "Schubert problem", " on the Grassmannian ",TEX///$Gr(k,n)$///,
+	 " is a list of Schubert subvarieties (assumed general) of ",TEX///$Gr(k,n)$///," 
+	 whose codimensions add up to ",TEX///$k(n-k)$///,", the dimension of the Grassmannian. 
+     	 A Schubert variety is represented by a pair ",TEX///$(c,F)$///,", where ",
+	 TEX///$c$///," is a ", EM "Schubert condition", " (represented as a partition or a bracket) and ",
+	 TEX///$F$///," is a flag, represented as an invertible ",TEX///$n\times n$///,"-matrix.
+       	 The Schubert variety for the pair ",TEX///$(c,F)$///," consists of all ",
+	 TEX///$k$///,"-planes that satisfy the incidence condition ",TEX///$c$///," imposed by the flag ",TEX///$F$///,"." 
+       	 },
+     PARA{"For a Schubert problem, we may fix one flag for each Schubert condition in the list 
+	 --- i.e., describe an ", EM "instance", " of a given Schubert problem --- and look for the ", EM "solutions", 
+	 " for this instance --- i.e., points in the intersection of the corresponding Schubert varieties. 
+	 The methods of this package find approximations of these points."},   
+     HEADER3 {"General functions:"},
      UL{
         TO randomSchubertProblemInstance, 
 	--(an instance of a Schubert problem with random flags),   
