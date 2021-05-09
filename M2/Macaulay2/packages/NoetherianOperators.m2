@@ -64,7 +64,7 @@ export {
     "mapToPunctualHilbertScheme",
     "amult",
     "solvePDE",
-    "diffPrimDec"
+    "differentialPrimaryDecomposition"
 
 }
 
@@ -890,14 +890,15 @@ noetherianOperators (Module) := List => true >> opts -> M -> (
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
 
-noetherianOperators (Module, Ideal) := List => true >> opts -> (M,P) -> (
-    strats := new HashTable from {
-        "Punctual" => noetherianOperatorsPunctual
-    };
-    strat := if opts.?Strategy then opts.Strategy else "Punctual";
-    if strats#?strat then strats#strat(M, P, opts) 
-    else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
-)
+-- Justin 5/8/21: method for determining multiplicity requires module to be primary, and localize(Module, Prime, List) does not return a primary component if the prime is embedded
+-- noetherianOperators (Module, Ideal) := List => true >> opts -> (M,P) -> (
+    -- strats := new HashTable from {
+        -- "Punctual" => noetherianOperatorsPunctual
+    -- };
+    -- strat := if opts.?Strategy then opts.Strategy else "Punctual";
+    -- if strats#?strat then strats#strat(M, P, opts) 
+    -- else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
+-- )
 -- End dispatcher method
 
 
@@ -1474,8 +1475,10 @@ solvePDE(Module) := List => true >> opts -> M -> (
 solvePDE(Ideal) := List => true >> opts -> I -> solvePDE (module I, opts)
 solvePDE(Matrix) := List => true >> opts -> M -> solvePDE (image M, opts)
 
-diffPrimDec = solvePDE
-
+-- differentialPrimaryDecomposition = solvePDE
+differentialPrimaryDecomposition = method()
+differentialPrimaryDecomposition Module := List => true >> opts -> M -> solvePDE M
+differentialPrimaryDecomposition Ideal := List => true >> opts -> I -> differentialPrimaryDecomposition(module I, opts)
 
 reducedNoetherianOperators = method(Options => true)
 reducedNoetherianOperators (Module, Module, Ideal) := List => true >> opts -> (a,b,P) -> (
@@ -1485,7 +1488,7 @@ reducedNoetherianOperators (Module, Module, Ideal) := List => true >> opts -> (a
     m := 0;  -- compute the exponent that determines the order of the diff ops
     while not isSubset(intersect(b, P^m*(super b)), a) do m = m + 1;
     m = max(0, m-1);
-
+    if debugLevel > 1 then print("Multiplicity is: " | toString m);
     S := (frac(R/P))(monoid[Variables => #depVars]);
     depVarImage := apply(depVars, gens S, (x,y) -> sub(x,S) + y);
     gammaList := apply(depVars, depVarImage, (i,j) -> i => j) | indVars / (x -> x => sub(x,S));
@@ -1624,10 +1627,10 @@ noetherianOperatorsPunctual Module := List => true >> opts -> M -> (
     reducedNoetherianOperators(M, super M, P)
 )
 
-noetherianOperatorsPunctual (Module, Ideal) := List => true >> opts -> (M, P) -> (
-    assPrimes := ass comodule M;
-    reducedNoetherianOperators(localize(M, P, assPrimes), super M, P)
-)
+-- noetherianOperatorsPunctual (Module, Ideal) := List => true >> opts -> (M, P) -> (
+    -- assPrimes := ass comodule M;
+    -- reducedNoetherianOperators(localize(M, P, assPrimes), super M, P)
+-- )
 
 -- This function can compute the Noetherian operators of a primary ideal Q.
 -- Here we pass first through the punctual Hilbert scheme 
@@ -1804,7 +1807,7 @@ use R
 U = image matrix{
     {x1*x3, x1*x2, x1^2*x2 },
     {x1^2, x2^2, x1^2*x4} }
-dpd = diffPrimDec U
+dpd = differentialPrimaryDecomposition U
 M = dpd / (L -> getModuleFromNoetherianOperators(first L, last L)) // intersect
 assert(M == U)
 ///
@@ -1864,7 +1867,7 @@ doc ///
                {TO coordinateChangeOps},
                {TO noethOpsFromComponents},
                {TO solvePDE},
-               {TO diffPrimDec}
+               {TO differentialPrimaryDecomposition}
            }@
 
 	   Methods for computing and manipulating local dual spaces:
@@ -2725,6 +2728,36 @@ SeeAlso
     (noetherianOperators, Ideal)
 ///
 
+doc ///
+Key
+    (noetherianOperators, Module)
+    -- (noetherianOperators, Module, Ideal)
+Headline
+    Noetherian operators of a primary submodule
+Usage
+    noetherianOperators U
+    -- noetherianOperators (U, P)
+Inputs
+    U:Module
+        a primary submodule
+    -- P:ideal
+        -- an associated prime of U
+Outputs
+    :List
+        of @TO2{DiffOp, "differential operators"}@
+Description
+    Text
+        Compute a set of Noetherian operators for the primary submodule U.
+        -- If a prime ideal P is provided, then Noetherian operators for a P-primary 
+        -- component of U are returned.
+        
+        This method contains an implementation of Algorithm 4.1 in @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@. 
+    	For more details, see Section 4 of @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@.
+    Example
+        R = QQ[x_1,x_2,x_3]
+        U = image matrix {{x_1, x_2^2, 0}, {x_3, x_3^2, x_2^2-x_1*x_3}}
+        noetherianOperators U
+///
 
 doc ///
 Key
@@ -3305,7 +3338,7 @@ Description
     Example
     	R = QQ[x1,x2,x3,x4]
     	U = image matrix{{x1*x2,x2*x3,x3*x4,x4*x1}, {x1^2,x2^2,x3^2,x4^2}}
-	dpd = diffPrimDec U
+	dpd = differentialPrimaryDecomposition U
 	M = dpd / (L -> getModuleFromNoetherianOperators(first L, last L)) // intersect
 	M == U
 ///
@@ -3373,16 +3406,60 @@ Description
     Example
         amult U == sum(sols / last / (l -> #l))
     Text
-        Note that the ouput of {\tt solvePDE} can be interpreted as a @TO2 {diffPrimDec, "differential primary decomposition"}@.
+        Note that the output of {\tt solvePDE} can be interpreted as a @TO2 {differentialPrimaryDecomposition, "differential primary decomposition"}@.
 
 References
     @arXiv("2104.10146", "Ait El Manssour, R., Härkönen, M., Sturmfels, B. (2021). Linear PDE with constant coefficients")@
 SeeAlso
-    diffPrimDec
+    differentialPrimaryDecomposition
     (noetherianOperators, Module)
 ///
 
+doc ///
+Key
+    differentialPrimaryDecomposition
+    (differentialPrimaryDecomposition, Module)
+    (differentialPrimaryDecomposition, Ideal)
+Headline
+    compute a differential primary decomposition
+Usage
+    differentialPrimaryDecomposition U
+Inputs
+    U:Module
+        a submodule of a free module, or an @TO2 {Ideal, "ideal"}@
+Outputs
+    :List
+        a minimal differential primary decomposition of U
+Description
+    Text
+        Let $R$ be a polynomial ring over a field $K$.
+        Given a submodule $U$ of an $R$-module $M$, a differential primary decomposition 
+        of $U$ in $M$ is a list of pairs $(p_1, A_1), ..., (p_k, A_k)$ where $p_1, ..., p_k$ are 
+        the associated primes of $M/U$ and $A_i \subseteq \operatorname{Diff}_{R/K}(M, R/p_i)$ 
+        are differential operators satisfying 
+        $$U_p = \bigcap_{p_i \subseteq p} \{ w \in M_p : \delta(w) = 0 \forall \delta \in A_i \}.$$
+        This notion was introduced in [2] (cf. Definition 4.1), in which it was shown that the size of 
+        a differential primary decomposition (which is defined to be $\sum_{i=1}^k |A_i|$) is at 
+        least @TO2{amult, "amult(U)"}@, and moreover differential primary decompositions of
+        size equal to amult(U) exist (and are called minimal).
+        
+        This method contains an implementation of Algorithm 4.6 in [2]. 
+        
+        The following example appears as Example 6.2 in [1]:
 
+    Example
+        R = QQ[x_1,x_2,x_3]
+        U = image matrix {{x_1^2,x_1*x_2,x_1*x_3}, {x_2^2,x_2*x_3,x_3^2}}
+        differentialPrimaryDecomposition U
+
+References
+    [1] @arXiv("2104.03385", "Chen, J., Cid-Ruiz, Y. (2021). Primary decomposition of modules: a computational differential approach")@
+    
+    [2] @arXiv("2101.03643", "Cid-Ruiz, Y., Sturmfels, B. (2021). Primary Decomposition with Differential Operators")@
+SeeAlso
+    solvePDE
+    noetherianOperators
+///
 
 doc ///
 Key
@@ -3551,6 +3628,8 @@ debug loadPackage("NoetherianOperators", Reload => true)
 needsPackage "NumericalAlgebraicGeometry"
 needsPackage "Bertini"
 installPackage("NoetherianOperators", RemakeAllDocumentation => true)
+uninstallPackage "NoetherianOperators"
+viewHelp NoetherianOperators
 --loadPackage "NoetherianOperators"
 R = QQ[x_0..x_5]
 P = minors(2,matrix{{x_0,x_1,x_3,x_4},{x_1,x_2,x_4,x_5}});
