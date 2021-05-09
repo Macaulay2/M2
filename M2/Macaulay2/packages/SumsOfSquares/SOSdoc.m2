@@ -29,7 +29,7 @@ document {
       sol = solveSOS f;
     ///,
     "The return value is an object of type ", TO "SDPResult", " which, in the case of success, contains the sum-of-squares decomposition.",
-    " It can be extracted with ", TO "sosPoly", ".  This returns an object of type ", TO "SOSPoly", 
+    " It can be extracted with ", TO "sosPoly", ".  This returns an object of type ", TO "SOSPoly",
     ", which supports many operations that polynomials support.",
     EXAMPLE lines ///
       s = sosPoly sol
@@ -42,7 +42,7 @@ document {
     HEADER4 "Sums of squares modulo equality constraints",
     "The package supports sum-of-squares ",
     TO2 {"solveSOS(RingElement,Matrix)","problems in quotient rings"},
-    ". This can be useful to prove nonnegativity of a polynomial on a variety.  The following example is 
+    ". This can be useful to prove nonnegativity of a polynomial on a variety.  The following example is
     taken from [P05].  Consider the problem
     of proving that the polynomial ", ITALIC TEX "f = 10-x^2-y", " is nonnegative on the circle defined by ", ITALIC TEX "g = x^2 + y^2 - 1", ". ",
     "To do this we check if ", ITALIC TEX "f", " is a sum of squares in the quotient ring modulo ", ITALIC TEX "g", ". ",
@@ -59,22 +59,22 @@ document {
 
     HEADER4 "Other cool stuff",
     UL {
-	LI {"The package implements Hilbert's algorithm to decompose a nonnegative ternary form into a sum of squares of rational functions: ", TO "sosdecTernary", "."},
-	LI {"Sums of squares problems can be solved parametrically: ", TO "solveSOS", "."},
-	LI {"Optimization over varieties can run using ", TO "lowerBound", "."},
-	},
+    LI {"The package implements Hilbert's algorithm to decompose a nonnegative ternary form into a sum of squares of rational functions: ", TO "sosdecTernary", "."},
+    LI {"Sums of squares problems can be solved parametrically: ", TO "solveSOS", "."},
+    LI {"Optimization over varieties can run using ", TO "lowerBound", "."},
+    },
 
     HEADER4 "On the role of the coefficient field",
     "The ", TT "SumsOfSquares", " package interfaces tries to hide
-    some of the difficulties that arise from using these numerical procedures. ", 
+    some of the difficulties that arise from using these numerical procedures. ",
     "See ", TO "coefficient field", " for more information.",
 
     HEADER4 "Literature",
     UL {
-	LI {"[BPT12] ", EM "Semidefinite Optimization and Convex Algebraic Geometry", " SIAM Textbook, edited by G. Blekherman, P. Parrilo, and R. Thomas, (2012)."},
-	LI {"[P05] ", EM "Exploiting Algebraic Structure in Sum of Squares Programs", " P. Parrilo in ", EM"Positive polynomials in control", " (2005)."},
-	LI {"[PP] ", EM "Computing sum of squares decompositions with rational coefficients", " H. Peyrl and P. Parrilo ", " in Theoretical Computer Science 409 (2008) p. 269–281."},
-	}
+    LI {"[BPT12] ", EM "Semidefinite Optimization and Convex Algebraic Geometry", " SIAM Textbook, edited by G. Blekherman, P. Parrilo, and R. Thomas, (2012)."},
+    LI {"[P05] ", EM "Exploiting Algebraic Structure in Sum of Squares Programs", " P. Parrilo in ", EM"Positive polynomials in control", " (2005)."},
+    LI {"[PP] ", EM "Computing sum of squares decompositions with rational coefficients", " H. Peyrl and P. Parrilo ", " in Theoretical Computer Science 409 (2008) p. 269–281."},
+    }
     }
 
 doc /// --coefficient field
@@ -85,8 +85,8 @@ doc /// --coefficient field
     Description
       Text
         The SumsOfSquares package works with two coefficient rings: the rational numbers $\QQ$ and the real numbers $\RR$.
-        Almost all operations in this package rely on a numerical semidefinite programming @TO Solver@.  
-        When calling such a solver, even if the input was a polynomial with rational coefficients, the result is numerical.  
+        Almost all operations in this package rely on a numerical semidefinite programming @TO Solver@.
+        When calling such a solver, even if the input was a polynomial with rational coefficients, the result is numerical.
         The package makes some effort to round and return a rational result, but this can fail, independent of whether a rational sum-of-squares decomposition exists or not.
         In case of failure, a real result is returned.
         The following example of Scheiderer is a sum of squares, but does not admit any rational decomposition.  Consequently the package must return a real solution.
@@ -136,7 +136,7 @@ doc /// --SOSPoly
         This data type stores polynomials as sums of squares.
         The type is a hash table consisting of the polynomials to be
         squared and summed (the 'generators'), corresponding coefficients,
-        and the base ring.  
+        and the base ring.
         We can construct an object of type SOSPoly from the result of sum-of-squares problem.
         See @TO SDPResult@ for more on this.
       Example
@@ -176,8 +176,8 @@ doc /// --SOSPoly
       Example
         expression s
       Text
-        Objects of type @TO SOSPoly@ support the @TO substitute@ command.  
-        This cannot be used to change the coefficient field, though.  
+        Objects of type @TO SOSPoly@ support the @TO substitute@ command.
+        This cannot be used to change the coefficient field, though.
         See @TO "coefficient field"@ for some of the limitations.
       Example
         S = QQ[x,y,z];
@@ -227,8 +227,8 @@ doc /// --cleanSOS
     Usage
         clean (tol, s)
     Inputs
-	  tol:RR
-	    the tolerance for the coefficients.
+      tol:RR
+        the tolerance for the coefficients.
       s:SOSPoly
     Outputs
         :SOSPoly
@@ -237,7 +237,7 @@ doc /// --cleanSOS
     Description
       Text
         Given a @TO2 {SOSPoly,"sum-of-squares"}@ polynomial with real coefficients in the reals,
-        this method removes the squares with coefficients smaller than the given tolerance.  
+        this method removes the squares with coefficients smaller than the given tolerance.
         It does nothing on inputs with rational coefficients.
       Example
         R = RR[x,y];
@@ -306,7 +306,7 @@ doc /// --sosPoly
     Consequences
     Description
       Text
-        This method creates an object of type @TO SOSPoly@.  
+        This method creates an object of type @TO SOSPoly@.
         Very often this is applied to an object of type @TO SDPResult@, the result of a semidefinite programming computation.
       Example
         R = QQ[x,y];
@@ -350,11 +350,11 @@ doc /// --solveSOS
     Description
       Text
         This method solves sums-of-squares problems.
-        Given a rational (or real) polynomial $f(x)$, it attempts to find a rational (or real) 
+        Given a rational (or real) polynomial $f(x)$, it attempts to find a rational (or real)
         positive semidefinite matrix $Q$ and a vector of monomials $mon$ such that
         $$f(x) = mon' Q mon.$$
         The algorithm first computes a floating point solution,
-        and then tries to obtain an exact solution by rounding the numerical result. 
+        and then tries to obtain an exact solution by rounding the numerical result.
         If the rounding fails, the numerical solution is returned.
       Example
         R = QQ[x,y];
@@ -462,7 +462,7 @@ doc /// --solveSOS (quotient ring)
       Text
         The above ring is not a quotient ring.
         One can construct a new quotient ring and work there.
-        However, this will only work reliably for principal ideals, 
+        However, this will only work reliably for principal ideals,
         as otherwise the Gröbner basis engine might fail due to inexact computations.
       Example
         R' = ring sosPoly s;
@@ -659,7 +659,7 @@ doc /// --recoverSolution
           of monomials
         X:Matrix
           the moment matrix
-	sdpsol:SDPResult
+        sdpsol:SDPResult
     Outputs
         sol:List
           the optimal solution
@@ -799,7 +799,7 @@ doc /// --library
 --     Description
 --       Text
 --         This method creates the kernel and image model of the Gram matrices of a polynomial $f$.
-
+-- 
 --         A Gram matrix representation of $f$ is a symmetric matrix $Q$ such that
 --         $f = mon' Q mon$,
 --         where $mon$ is a vector of monomials.
@@ -809,7 +809,7 @@ doc /// --library
 --         or in kernel form as
 --         $A q = b$
 --         where $q$ is the @TO2 {smat2vec,"vectorization"}@ of $Q$.
-
+-- 
 --         For parametric sum-of-squares problems the image form is
 --         $Q = C - \sum_i y_i A_i - \sum_j p_j B_j$,
 --         where $p_j$ are the parameters,
@@ -891,7 +891,7 @@ doc /// --TraceObj
     Consequences
     Description
       Text
-        Using the trace as the objective function is a heuristic for obtaining sum-of-squares decompositions with small number of squares.  
+        Using the trace as the objective function is a heuristic for obtaining sum-of-squares decompositions with small number of squares.
         Here we repeat Example 5 from [P05] and recover the shorter solution from that paper.
       Example
         R = QQ[x,y]/ideal(x^2 + y^2 - 1);
