@@ -13,9 +13,13 @@ document {
 	a finite collection of cones such that for each cone all its faces are in the fan and for two cones 
 	in the fan the intersection is a face of each.",
 	
-	PARA{}, TT "Polyhedra", " uses the ", TO FourierMotzkin, " package by ", 
-	HREF("http://www.mast.queensu.ca/~ggsmith", "Gregory G. Smith"), ". Each polyhedron or cone is 
-	saved in both descriptions and a fan is saved as the list of its generating cones.",
+	PARA{}, TT "Polyhedra", " uses the ",
+   UL {
+      { TO "FourierMotzkin", " package by ", HREF("http://www.mast.queensu.ca/~ggsmith", "Gregory G. Smith")},
+      { TO "FourTiTwo", " package by ", HREF("http://pi.math.cornell.edu/~mike/", "Michael Stillman"),", ", HREF("http://people.math.gatech.edu/~jyu67/", "Josephine Yu"), ", and ",
+      HREF("http://math.iit.edu/~spetrov1/", "Sonja Petrovic")},
+      { TO "Topcom", " package by ",  HREF("http://pi.math.cornell.edu/~mike/", "Michael Stillman"), "."}
+   },
 	
 	PARA{}, "Here are some examples illustrating the main uses of this package.",
 	UL {
@@ -23,6 +27,9 @@ document {
 	     {TO "Working with cones"},
 	     {TO "Working with fans"}
 	     },
+
+   PARA{}, "Please have a look at ", TO "V- and H-representation", " on
+   conventions used throughout this package before you start.",
 	
 	PARA{}, "For an introduction to polyhedra and cones, we recommend ",
 	HREF("http://www.mi.fu-berlin.de/math/groups/discgeom/ziegler/", "Gunter

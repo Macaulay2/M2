@@ -3,12 +3,12 @@
 #ifndef _aring_gf_m2_hpp_
 #define _aring_gf_m2_hpp_
 
+#include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-#include <rand.h>
 
-//#include "aring-glue.hpp"
+#include <iostream>
 
 class GF;
 class PolynomialRing;
@@ -74,7 +74,7 @@ class GaloisFieldTable
 class ARingGFM2 : public RingInterface
 {
  public:
-  static const RingID ringID = ring_GF;
+  static const RingID ringID = ring_GFM2;
   typedef int ElementType;
   typedef int elem;
 
@@ -124,12 +124,12 @@ class ARingGFM2 : public RingInterface
 
   void to_ring_elem(ring_elem &result, const ElementType &a) const
   {
-    result.int_val = a;
+    result = ring_elem(a);
   }
 
   void from_ring_elem(ElementType &result, const ring_elem &a) const
   {
-    result = a.int_val;
+    result = a.get_int();
   }
 
   bool is_unit(ElementType f) const { return f != 0; }
@@ -163,7 +163,7 @@ class ARingGFM2 : public RingInterface
     result = mGF.fromZZTable(b);
   }
 
-  bool set_from_mpq(elem &result, mpq_ptr a) const
+  bool set_from_mpq(elem &result, mpq_srcptr a) const
   {
     elem n, d;
     set_from_mpz(n, mpq_numref(a));
@@ -233,13 +233,9 @@ class ARingGFM2 : public RingInterface
 
   void subtract_multiple(elem &result, elem a, elem b) const
   {
-    // result -= a*b
-    assert(a != 0);
-    assert(b != 0);
-
-    int ab = a + b;
-    if (ab > mGF.minusOne()) ab -= mGF.orderMinusOne();
-    subtract(result, ab, result);
+    elem ab;
+    mult(ab, a, b);
+    subtract(result, result, ab);
   }
 
   void mult(elem &result, elem a, elem b) const
@@ -279,7 +275,7 @@ class ARingGFM2 : public RingInterface
       result = 0;
   }
 
-  void power_mpz(elem &result, elem a, mpz_ptr n) const
+  void power_mpz(elem &result, elem a, mpz_srcptr n) const
   {
     long n1 = mpz_fdiv_ui(n, mGF.orderMinusOne());
     power(result, a, n1);

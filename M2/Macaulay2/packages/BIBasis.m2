@@ -12,7 +12,9 @@ newPackage(
     Authors => {
         {Name => "Mikhail Zinin", Email => "mzinin@gmail.com"}
     },
-    Headline => "Involutive Pommaret basis in a Boolean ring",
+    Headline => "involutive Pommaret basis in a Boolean ring",
+    Keywords => {"Groebner Basis Algorithms"},
+    PackageImports => {"BooleanGB"},
     DebuggingMode => false
     )
 
@@ -52,8 +54,6 @@ document {
             "Vladimir Gerdt, Mikhail Zinin and Yuri Blinkov. On computation of Boolean involutive bases. Programming and Computer Software, Vol. 36, No. 2, 2010, 117-123."
            }        
          }
-         
-needsPackage "BooleanGB"
 
 document {
         Key => { biBasis, 

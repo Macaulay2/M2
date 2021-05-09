@@ -18,6 +18,8 @@ newPackage ("RandomObjects",
 	      Email    => "schreyer@math.uni-sb.de",
 	      HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}},
         Headline => "a framework for making random objects in algebraic geometry",
+	Keywords => {"Examples and Random Objects"},
+	PackageImports => {"SimpleDoc"},
     	DebuggingMode => false
         )
 
@@ -71,8 +73,8 @@ globalAssignment RandomObject
 -- and that returns "true" under "randomClass.Verification".
 
 -- The method function "random" which is overloaded has some
--- build in options which are catched in "randomopts".
--- All arguments of (random randomObjectClass) are catched
+-- build in options which are caught in "randomopts".
+-- All arguments of (random randomObjectClass) are caught
 -- in "args"
 
 random RandomObject := randomopts -> Object -> args -> (
@@ -116,8 +118,6 @@ random RandomObject := randomopts -> Object -> args -> (
 -- the following function returns a template
 -- for a package that implements the randomObject
 --
-
-needsPackage "SimpleDoc"				    -- to get docTemplate defined
 
 randomObjectTemplate=method()
 randomObjectTemplate(String):=(Object)->(
@@ -181,7 +181,7 @@ Description
    constructions.
 
    A moduli space $M$ of objects is unirational if there exists a dominant rational
-   map $\phi:\mathbb{P}^n --> M$. If the function $\phi$ is explicilty given it can
+   map $\phi:\mathbb{P}^n --> M$. If the function $\phi$ is explicitly given it can
    be translated into a construction function that computes $\phi(P)$ for a given
    $P \in \mathbb{P}^n$.
    If $P$ is chosen randomly (over a finite field $F_q$ or over a subset of $\mathbb{Q}$

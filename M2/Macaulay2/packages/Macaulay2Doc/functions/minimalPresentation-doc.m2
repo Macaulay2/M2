@@ -1,7 +1,7 @@
 --- status: Draft
 --- author(s): Amelia Taylor
 --- notes: This is a new file bringing together both prune and minPres as a 
----        complete minimal presetation collection.  trim is inherently 
+---        complete minimal presentation collection.  trim is inherently 
 ---        different as it minimizes to the extent possible while preserving
 ---        the ambient module.
 

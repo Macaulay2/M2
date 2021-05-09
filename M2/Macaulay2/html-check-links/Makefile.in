@@ -12,7 +12,7 @@ LEX = flex
 LFLAGS += -f -s -i -8 -v
 CFLAGS += -Wall -g
 HSRC := buffer.h html-check-links.h getmem.h grammar.h
-CSRC := html-check-links.c getmem.c buffer.c
+CSRC := html-check-links.c getmem.c
 LSRC := lex.l
 YSRC := grammar.y
 SRC :=  $(YSRC) $(CSRC) $(LSRC) $(HSRC)
@@ -24,7 +24,7 @@ endif
 
 # we don't include @LIBS@ here because including -llapack would make it also
 # necessary to link with the fortran support libraries:
-LOADLIBES += @GC_LIBS@
+LOADLIBES += -lgc
 # we should have added this only after checking for its presence/necessity in configure.ac:
 # LOADLIBES += -ldl
 
@@ -60,7 +60,7 @@ run-html-check-links: html-check-links
 ifneq (,$(findstring w,$(word 1,$(MAKEFLAGS))))
 	@echo "make: Entering directory \`$(NEW)'"
 endif
-	cd $(NEW) && @FIND@ . -name \*.html -o -name \*.xhtml | xargs ls -rt | LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" xargs "$(DIR)"/html-check-links $(CHKARGS)
+	cd $(NEW) && @FIND@ . -name \*.html -o -name \*.xhtml -exec ls -rt {} + | LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" xargs "$(DIR)"/html-check-links $(CHKARGS)
 ifneq (,$(findstring w,$(word 1,$(MAKEFLAGS))))
 	@echo "make: Leaving directory \`$(NEW)'"
 endif

@@ -3,7 +3,7 @@
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
 
-regeneration = method(TypicalValue=>numericalVariety, Options =>{Software=>null, Output=>Singular})
+regeneration = method(TypicalValue=>NumericalVariety, Options =>{Software=>null, Output=>Singular})
 regeneration List := List => o -> F -> (
 -- solves a system of polynomial Equations via regeneration     
 -- IN:  F = list of polynomials
@@ -33,7 +33,7 @@ assert(numericalRank evaluate(jacobian p.SolutionSystem,p) == 2)
 
 -----------------------------------------------------------------------
 -- DECOMPOSITION
-decompose WitnessSet := (W) -> (
+decompose WitnessSet := {} >> unusedOpts -> (W) -> (
      R := ring W;
      n := numgens R;
      k := dim W;
@@ -149,8 +149,6 @@ for i to 5 do (
 
 
 numericalIrreducibleDecompositionM2 = (I,o) -> numericalVariety flatten (components regeneration (I_*,Software=>M2engine) / decompose)
-toBertiniOptions'numericalIrreducibleDecomposition = o -> new OptionTable from {Verbose=>false}
-numericalIrreducibleDecompositionBertini = (I,o) -> bertiniPosDimSolve(I_*, toBertiniOptions'numericalIrreducibleDecomposition o)
 numericalIrreducibleDecomposition = method(Options=>{Software=>null})
 numericalIrreducibleDecomposition Ideal := o -> I -> (
     o = fillInDefaultOptions o;   

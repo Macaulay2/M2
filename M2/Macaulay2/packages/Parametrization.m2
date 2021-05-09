@@ -6,7 +6,8 @@ newPackage(
     	Authors => {{Name => "Janko Boehm", 
 		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}},
-    	Headline => "Rational parametrization of rational plane curves and related computations",
+    	Headline => "rational parametrization of rational plane curves and related computations",
+	Keywords => {"Commutative Algebra"},
     	DebuggingMode => false,
 	CacheExampleOutput => true,
 	AuxiliaryFiles => true,
@@ -821,7 +822,7 @@ l);
 -- modularPower(ZZ,ZZ,ZZ)
 -- compute the modular power
 -- 1st argument a an integer
--- 2st argument b a positive integer
+-- 2nd argument b a positive integer
 -- 3rd argument p a prime
 
 modularPower=method()
@@ -1020,7 +1021,7 @@ ia);
 
 -- modularQuotient(QQ,ZZ)
 -- 1st argument q a rational number
--- 2st argument p an integer
+-- 2nd argument p an integer
 -- compute the modular quotient q mod p
 -- (false if not exists)
 

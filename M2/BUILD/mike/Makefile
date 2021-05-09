@@ -1,224 +1,241 @@
 .PHONY: always
-
 always:
 
-# For icc compiler: set:
-#    CC="icc" CXX="icpc"
+BRANCH := $(shell git branch --contains | grep '^\* ' | sed -e s=^..== -e s=/=.=g )
 
-#		--enable-scscp
+#######################
+## cmake build files ##
+#######################
 
-################
-## cmake CLion #
-################
-cmake-build: always
-	mkdir -p builds.tmp/cmake-darwin64-clang
-	cd builds.tmp/cmake-darwin64-clang; cmake ../../../..
+cmake-make-appleclang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-make-appleclang-$(BRANCH)
+	cd builds.tmp/cmake-make-appleclang-$(BRANCH); cmake \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DCMAKE_INSTALL_PREFIX=`pwd`/installed \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
 
-################
-## mac os x ####
-################
-darwin64-gcc8 : always
-	mkdir -p builds.tmp/darwin64-gcc8
-	cd builds.tmp/darwin64-gcc8; ../../../../configure \
-		CC=gcc-8 CXX=g++-8 \
-		--build=x86_64-apple-darwin \
+cmake-appleclang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-appleclang
+	cd builds.tmp/cmake-appleclang; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+#		-DLINTING=on
+
+cmake-appleclang-tbb:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-appleclang-tbb
+	cd builds.tmp/cmake-appleclang-tbb; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		-DWITH_TBB=on \
+		../../../..
+#		-DLINTING=on
+
+cmake-debug-appleclang:
+	mkdir -p builds.tmp/cmake-debug-appleclang
+	cd builds.tmp/cmake-debug-appleclang; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=Debug \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
+cmake-profile-appleclang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-profile-appleclang
+	cd builds.tmp/cmake-profile-appleclang; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DPROFILING=on \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+#		-DLINTING=on
+
+cmake-latestclang:
+	mkdir -p builds.tmp/cmake-latestclang
+	cd builds.tmp/cmake-latestclang; cmake \
+		-GNinja \
+	    -DCMAKE_C_COMPILER:FILEPATH=/usr/local/opt/llvm/bin/clang \
+		-DCMAKE_CXX_COMPILER:FILEPATH=/usr/local/opt/llvm/bin/clang++ \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
+cmake-debug-latestclang:
+	mkdir -p builds.tmp/cmake-debug-latestclang
+	cd builds.tmp/cmake-debug-latestclang; cmake \
+		-GNinja \
+	    -DCMAKE_C_COMPILER:FILEPATH=/usr/local/opt/llvm/bin/clang \
+		-DCMAKE_CXX_COMPILER:FILEPATH=/usr/local/opt/llvm/bin/clang++ \
+		-DCMAKE_BUILD_TYPE=Debug \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
+cmake-gcc9:
+	mkdir -p builds.tmp/cmake-gcc9
+	cd builds.tmp/cmake-gcc9; cmake \
+		-GNinja \
+	    -DCMAKE_C_COMPILER:FILEPATH=/usr/local/bin/gcc-9 \
+		-DCMAKE_CXX_COMPILER:FILEPATH=/usr/local/bin/g++-9 \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+# running cmake-gcc9 now: 30 May 2020.
+#  build-libraries (with testing off): 22m36s
+#  build-programs (with testing off): 12m19s
+#  cmake -DBUILD_TESTING=on .
+#  M2-core: 2m51s
+#  install-packages: (running)
+#  M2-unit-tests
+#  check-packages
+# ctest
+
+cmake-debug-gcc9:
+	mkdir -p builds.tmp/cmake-debug-gcc9
+	cd builds.tmp/cmake-debug-gcc9; cmake \
+		-GNinja \
+	    -DCMAKE_C_COMPILER:FILEPATH=/usr/local/bin/gcc-9 \
+		-DCMAKE_CXX_COMPILER:FILEPATH=/usr/local/bin/g++-9 \
+		-DCMAKE_BUILD_TYPE=Debug \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
+xcode:
+	mkdir -p builds.tmp/xcode
+	cd builds.tmp/xcode; cmake \
+		-GXcode \
+		../../../..
+
+###########################
+## configure build files ##
+###########################
+
+###########
+## MacOS ##
+###########
+# Some possibly useful configure options
+# 		--build=x86_64-apple-darwin
+#       --enable-build-libraries="flint ntl"
+
+darwin64-appleclang : always
+	mkdir -p builds.tmp/darwin64-appleclang
+	cd builds.tmp/darwin64-appleclang; ../../../../configure \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-download
 
-#		--enable-dmg \
-#		CPPFLAGS="-I/usr/local/opt/readline/include" \
-#		LDFLAGS="-L/usr/local/opt/readline/lib" \
-#		--enable-build-libraries="mpir flint pari ntl"
-#		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include"
-#		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib"
-
-#rewrite this: don't change the compiler this way?
-# Thomas Kahle: I rewrote this to use brew's clang latest
 darwin64-latestclang : always
 	mkdir -p builds.tmp/darwin64-latestclang
 	cd builds.tmp/darwin64-latestclang; ../../../../configure \
 		CC="/usr/local/opt/llvm/bin/clang" \
-	        CXX="/usr/local/opt/llvm/bin/clang++" \
-                LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
-		CPPFLAGS="-I/usr/local/opt/llvm/include" \
-		--build=x86_64-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--disable-strip \
-		--enable-download
-
-darwin64-clang6 : always
-	mkdir -p builds.tmp/darwin64-clang6
-	cd builds.tmp/darwin64-clang6; ../../../../configure \
-		CC="/usr/local/opt/llvm/bin/clang-6" \
-		CXX="/usr/local/opt/llvm/bin/clang++-6" \
-		CPPFLAGS="-I/usr/local/opt/llvm/include" \
+		CXX="/usr/local/opt/llvm/bin/clang++" \
 		LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
-		--build=x86_64-apple-darwin \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-download
 
-# currently fails (21 Oct 2018), since we aren't detecting openmp support in the compiler.
-darwin64-appleclang : always
-	mkdir -p builds.tmp/darwin64-appleclang
-	cd builds.tmp/darwin64-appleclang; ../../../../configure \
-		--build=x86_64-apple-darwin \
+darwin64-gcc9 : always
+	mkdir -p builds.tmp/darwin64-gcc9
+	cd builds.tmp/darwin64-gcc9; ../../../../configure \
+		CC=gcc-9 CXX=g++-9 \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-download
 
-#		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-#		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-#		--enable-build-libraries="mpir flint pari ntl"
-#		--enable-dmg \
-
-darwin64-clang : always
-	mkdir -p builds.tmp/darwin64-clang
-	cd builds.tmp/darwin64-clang; ../../../../configure \
-		CC="clang -m64" CXX="clang++ -m64" \
-		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-		--build=x86_64-apple-darwin \
+debug64-latestclang : always
+	mkdir -p builds.tmp/debug64-latestclang
+	cd builds.tmp/debug64-latestclang; ../../../../configure \
+		CC="/usr/local/opt/llvm/bin/clang" \
+		CXX="/usr/local/opt/llvm/bin/clang++" \
+		LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-download \
-		--enable-dmg \
-		--enable-build-libraries="mpir flint pari ntl"
-
-
-darwin64-gcc6 : always
-	mkdir -p builds.tmp/darwin64-gcc6
-	cd builds.tmp/darwin64-gcc6; ../../../../configure \
-		CC=gcc-6 CXX=g++-6 \
-		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-		--build=x86_64-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--disable-strip \
-		--enable-dmg \
-		--enable-download \
-		--enable-build-libraries="mpir flint pari ntl"
-
-darwin64-gcc5 : always
-	mkdir -p builds.tmp/darwin64-gcc5
-	cd builds.tmp/darwin64-gcc5; ../../../../configure \
-		CC=gcc-5 CXX=g++-5 \
-		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-		--build=x86_64-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--disable-strip \
-		--enable-dmg \
-		--enable-download \
-		--enable-build-libraries="mpir flint pari ntl"
-
-darwin64-gcc4.9 : always
-	mkdir -p builds.tmp/darwin64-gcc4.9
-	cd builds.tmp/darwin64-gcc4.9; ../../../../configure \
-		CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" \
-		--build=x86_64-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--disable-strip \
-		--enable-dmg \
-		--enable-download \
-		--enable-build-libraries="mpir flint pari ntl"
-
-darwin64-clang : always
-	mkdir -p builds.tmp/darwin64-clang
-	cd builds.tmp/darwin64-clang; ../../../../configure \
-		CC="clang -m64" CXX="clang++ -m64" \
-		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-		--build=x86_64-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--disable-strip \
-		--enable-download \
-		--enable-dmg \
-		--enable-build-libraries="mpir flint pari ntl"
-
-darwin64-clang-3.8 : always
-	mkdir -p builds.tmp/darwin64-clang-3.8
-	cd builds.tmp/darwin64-clang-3.8; ../../../../configure \
-		CC="clang-3.8 -m64" CXX="clang++-3.8 -m64" \
-		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-		--build=x86_64-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--disable-strip \
-		--enable-download \
-		--enable-build-libraries="mpir flint pari ntl"
-
-#		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-#		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-
-#  CXX="clang++-3.8 -stdlib=libc++"
-#  CXXFLAGS="$CXXFLAGS -nostdinc++ -I/usr/local/opt/llvm38/lib/llvm-3.8/include/c++/v1"
-#  LDFLAGS="$LDFLAGS -L/usr/local/opt/llvm38/lib/llvm-3.8/lib"
-
-
-darwin64-debug : always
-	mkdir -p builds.tmp/darwin64-debug
-	cd builds.tmp/darwin64-debug; ../../../../configure \
-		CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" \
-		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include -DENGINE_DEBUG_" \
-		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
-		--prefix="`pwd`/installed" \
-		--build=x86_64-apple-darwin \
 		--enable-debug \
-		--disable-optimize \
-		--enable-download \
-		--enable-build-libraries="mpir flint pari ntl"
+		--disable-optimize
 
-darwin64-profile : always
-	mkdir -p builds.tmp/darwin64-profile
-	cd builds.tmp/darwin64-profile; ../../../../configure \
-		CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" \
-		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
-		--build=x86_64-apple-darwin \
+debug64-appleclang : always
+	mkdir -p builds.tmp/debug64-appleclang
+	cd builds.tmp/debug64-appleclang; ../../../../configure \
 		--prefix="`pwd`/installed" \
-		--enable-profile \
 		--disable-strip \
 		--enable-download \
-		--enable-build-libraries="mpir flint pari ntl"
-
-
-darwin64-debug-clang : always
-	mkdir -p builds.tmp/darwin64-debug-clang
-	cd builds.tmp/darwin64-debug-clang; ../../../../configure \
-		CC="clang" CXX="clang++" \
-		--prefix="`pwd`/installed" \
-		--build=x86_64-apple-darwin \
 		--enable-debug \
-		--disable-optimize \
-		--enable-download \
-		--enable-build-libraries="mpir flint pari ntl"
+		--disable-optimize
 
-darwin64-profile-clang : always
-	mkdir -p builds.tmp/darwin64-profile-clang
-	cd builds.tmp/darwin64-profile-clang; ../../../../configure \
-		CC="clang" CXX="clang++" \
-		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+debug64-gcc9 : always
+	mkdir -p builds.tmp/debug64-gcc9
+	cd builds.tmp/debug64-gcc9; ../../../../configure \
+		CC=gcc-9 CXX=g++-9 \
 		--prefix="`pwd`/installed" \
-		--build=x86_64-apple-darwin \
-		--enable-profile \
 		--disable-strip \
 		--enable-download \
-		--enable-build-libraries="mpir flint pari ntl"
+		--enable-debug \
+		--disable-optimize
+
+profile64-latestclang : always
+	mkdir -p builds.tmp/profile64-latestclang
+	cd builds.tmp/profile64-latestclang; ../../../../configure \
+		CC="/usr/local/opt/llvm/bin/clang" \
+		CXX="/usr/local/opt/llvm/bin/clang++" \
+		LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download \
+		--enable-profile
+
+profile64-appleclang : always
+	mkdir -p builds.tmp/profile64-appleclang
+	cd builds.tmp/profile64-appleclang; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download \
+		--enable-profile
+
+profile64-gcc9 : always
+	mkdir -p builds.tmp/profile64-gcc9
+	cd builds.tmp/profile64-gcc9; ../../../../configure \
+		CC=gcc-9 CXX=g++-9 \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download \
+		--enable-profile
 
 ###################
 ## linux ##########
 ###################
+
+linux-opt64-gcc8 : always
+	mkdir -p builds.tmp/opt64-gcc8
+	cd builds.tmp/opt64-gcc8; ../../../../configure \
+		CC=gcc-8 CXX=g++-8 \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
 linux-opt64 : always
 	mkdir -p builds.tmp/opt64
 	cd builds.tmp/opt64; ../../../../configure \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
-		--enable-download \
-		--enable-build-libraries="gc mpir flint pari ntl"
+		--enable-download
 
 linux-debug64 : always
 	mkdir -p builds.tmp/debug64
@@ -228,8 +245,7 @@ linux-debug64 : always
 		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
 		--enable-debug \
 		--disable-optimize \
-		--enable-download \
-		--enable-build-libraries="gc mpir flint pari ntl"
+		--enable-download
 
 linux-profile64 : always
 	mkdir -p builds.tmp/profile64
@@ -237,121 +253,35 @@ linux-profile64 : always
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-profile \
-		--enable-download \
-		--enable-build-libraries="gc mpir flint pari ntl"
-
-linux-opt64-gcc6 : always
-	mkdir -p builds.tmp/opt64-gcc6
-	cd builds.tmp/opt64-gcc6; ../../../../configure \
-		CC="gcc-6 -m64" CXX="g++-6 -m64" \
-		--prefix="`pwd`/installed" \
-		--disable-strip \
-		--enable-download \
-		--enable-build-libraries="gc mpir flint pari ntl"
-
-# make sure that CC and CXX are set in environment variables
-#		CC="gcc -m64" CXX="g++ -m64" \
-
-#		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory frobby pari"
-
-
-#		CC="gcc -m64" CXX="g++ -m64" \
-#		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory frobby pari"
-#       --enable-fplll
-#		--enable-linbox
-# for adding tbb in for mathicgb:
-#		LDFLAGS="-L/usr/local/lib -ltbb"
-
-#               CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib -ltbb" \
-
+		--enable-download
 
 ######## below this line is older ######################
-
-dan-ubuntu64: always
-	mkdir -p dan-ubuntu64
-	cd dan-ubuntu64; ../../../configure \
-		--prefix="`pwd`/sandbox" \
-                --enable-encap \
-	        --enable-download \
-                --disable-common-staging-area \
-                --with-mpir-config-options="ABI=64"
-
-#		CFLAGS="-fno-strict-aliasing" CXXFLAGS="-fno-strict-aliasing" \
-
-#		--enable-python
-# LDFLAGS=-shared-libgcc
-
-# can we compile sage in?
-debug32 : always
-	mkdir -p debug32
-	cd debug32; ../../../configure \
-		--prefix="`pwd`/installed" \
-		--enable-debug \
-		--disable-optimize \
-		--enable-download \
-		LDFLAGS="-L/Users/mike/local/software/sage/sage-3.4/local/lib" \
-		CPPFLAGS="-I/Users/mike/local/software/sage/sage-3.4/local/include" \
-		--enable-python --with-libpython=/Users/mike/local/software/sage/sage-3.4/local/lib/python2.5/config/libpython2.5.a \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby"
-
-# icc versions
-icc-darwin :
-	mkdir -p icc-darwin
-	cd icc-darwin; ../../../configure \
-		--prefix="`pwd`/installed" \
-		--enable-dmg \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  pari"
-
-# These are for use on linux/ubuntu/redhat
-
 opt : always
 	mkdir -p opt
-	cd opt;	../../../configure \
+	cd opt; ../../../configure \
 		--prefix="`pwd`/installed" \
-		--enable-tarfile \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  lapack frobby pari"
-
-opt64-ubuntu : always
-	mkdir -p opt
-	cd opt;	../../../configure \
-		--prefix="`pwd`/installed" \
-                --with-mpir-config-options="ABI=64" \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  lapack frobby pari"
-
-
-  # is this comment for icc?
-  # ntl hangs on ./MakeDesc, so workaround:
-  # cd libraries/ntl/build/ntl-5.5.2/src/
-  # make CFLAGS=-g  ?? Is this needed anymore??
+		--disable-strip \
+		--enable-download
 
 debug : always
 	mkdir -p debug
 	cd debug; ../../../configure \
 		--prefix="`pwd`/installed" \
 		--enable-debug \
+		--disable-strip \
 		--disable-optimize \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  lapack frobby pari"
+		--enable-download
 
 profile : always
 	mkdir -p profile
 	cd profile; ../../../configure \
 		--prefix="`pwd`/installed" \
+		--disable-strip \
 		--enable-profile \
 		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  lapack frobby pari"
 
-profile64-ubuntu : always
-	mkdir -p profile
-	cd profile; ../../../configure \
-		--prefix="`pwd`/installed" \
-		--enable-profile \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  lapack frobby pari"
-
+# the following is no longer possible for me.
+# TODO: work with Dan to fix that.
 upload : always
 	scp darwin64/*.dmg u00.math.uiuc.edu:/home/html/www/Macaulay2/Uploads
 

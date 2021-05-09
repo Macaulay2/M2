@@ -34,9 +34,7 @@ ring_elem ResGausserZZp::to_ring_elem(const Ring* K,
                                       size_t loc) const
 {
   auto& elems = coefficientVector(coeffs);
-  ring_elem result;
-  result.int_val = K->from_long(coeff_to_int(elems[loc]));
-  return result;
+  return K->from_long(coeff_to_int(elems[loc]));
 }
 
 void ResGausserZZp::from_ring_elem(CoefficientVector& result,

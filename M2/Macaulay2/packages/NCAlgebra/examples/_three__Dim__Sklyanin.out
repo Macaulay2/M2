@@ -2,7 +2,7 @@
 
 i1 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12458-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12458-0/3.ter ... Complete!
+Complete!
 
 o1 = B
 
@@ -25,7 +25,7 @@ o2 : NCGroebnerBasis
 
 i3 : C = threeDimSklyanin(QQ,{a,b,c})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12458-0/5.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12458-0/8.ter ... Complete!
+Complete!
 
 o3 = C
 
@@ -68,22 +68,19 @@ o4 : NCGroebnerBasis
 
 i5 : centralElements(B,3)
 
-     |  3          3 |
-o5 = | y -yxz+xyz-x  |
+o5 = | y^3-y*x*z+x*y*z-x^3 |
 
 o5 : NCMatrix
 
 i6 : centralElements(C,3)
 
-     |   1 3  81         729 3 |
-o6 = | - -b +---bac+abc- ---a  |
-     |   2   103         206   |
+o6 = | -1/2*b^3+81/103*b*a*c+a*b*c-729/206*a^3 |
 
 o6 : NCMatrix
 
 i7 : hilbertBergman B
 --Calling bergman for HS computation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12458-0/10.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12458-0/15.ter ... Complete!
+Complete!
 
                 2      3      4      5      6      7      8      9      10
 o7 = 1 + 3T + 6T  + 10T  + 15T  + 21T  + 28T  + 36T  + 45T  + 55T  + 66T
@@ -92,7 +89,7 @@ o7 : ZZ[T]
 
 i8 : hilbertBergman(C,DegreeLimit=>5)
 --Calling bergman for HS computation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12458-0/17.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12458-0/22.ter ... Complete!
+Complete!
 
                 2      3      4      5
 o8 = 1 + 3T + 6T  + 10T  + 15T  + 21T

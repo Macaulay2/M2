@@ -348,7 +348,7 @@ makeit1 := (opts) -> (
      if opts.Global and not opts.Inverses then scan(M.generators, x -> if x <= 1 then error "not all variables are > 1, and Global => true");
      M)
 
-processDegrees := (degs,degrk,nvars) -> (
+processDegrees = (degs,degrk,nvars) -> (
      if not (degrk === null or instance(degrk,ZZ)) then error("DegreeRank => ... : expected an integer or null");
      if degs === null then degs = (
 	  if degrk === null then (
@@ -491,7 +491,7 @@ monoid Array := opts -> args -> (
      else if args =!= () then error "variables provided conflict with Variables option";
      makeMonoid opts)
 
-tensor = method( Options => tensorDefaults)
+tensor = method( Options => tensorDefaults, Dispatch => Thing)
 
 Monoid ** Monoid := Monoid => (M,N) -> tensor(M,N)
 

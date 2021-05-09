@@ -29,19 +29,20 @@ bool RingZZ::initialize_ZZ(const PolynomialRing *deg_ring)
 }
 
 void RingZZ::text_out(buffer &o) const { o << "ZZ"; }
+
 mpz_ptr RingZZ::new_elem() const
 {
   mpz_ptr result = getmemstructtype(mpz_ptr);
   mpz_init(result);
   return result;
 }
-void RingZZ::remove_elem(mpz_ptr f) const {}
+
 unsigned int RingZZ::computeHashValue(const ring_elem a) const
 {
   return computeHashValue_mpz(a.get_mpz());
 }
 
-std::pair<bool, int> RingZZ::get_si(mpz_t n)
+std::pair<bool, int> RingZZ::get_si(mpz_srcptr n)
 {
   if (not mpz_fits_slong_p(n)) return std::make_pair<bool, int>(false, 0);
   long a = mpz_get_si(n);
@@ -50,7 +51,7 @@ std::pair<bool, int> RingZZ::get_si(mpz_t n)
   return std::make_pair<bool, int>(false, 0);
 }
 
-unsigned int RingZZ::mod_ui(mpz_t n, unsigned int p)
+unsigned int RingZZ::mod_ui(mpz_srcptr n, unsigned int p)
 {
   mpz_t ans;
   mpz_init(ans);
@@ -65,7 +66,8 @@ std::pair<bool, long> RingZZ::coerceToLongInteger(ring_elem a) const
                                mpz_get_si(a.get_mpz()));
 }
 
-ring_elem RingZZ::random() const { return rawRandomInteger(0); }
+ring_elem RingZZ::random() const { return ring_elem(rawRandomInteger(0)); }
+
 void RingZZ::elem_text_out(buffer &o,
                            const ring_elem ap,
                            bool p_one,
@@ -102,6 +104,7 @@ ring_elem RingZZ::from_long(long n) const
 {
   mpz_ptr result = new_elem();
   mpz_set_si(result, n);
+  mpz_reallocate_limbs(result);
 
   return ring_elem(result);
 }
@@ -110,11 +113,12 @@ ring_elem RingZZ::from_int(mpz_srcptr n) const
 {
   mpz_ptr result = new_elem();
   mpz_set(result, n);
-
+  mpz_reallocate_limbs(result);
+  
   return ring_elem(result);
 }
 
-bool RingZZ::from_rational(mpq_ptr q, ring_elem &result) const
+bool RingZZ::from_rational(mpq_srcptr q, ring_elem &result) const
 {
   bool ok = mpz_cmp_si(mpq_denref(q), 1) == 0;
   if (not ok) return false;
@@ -172,16 +176,14 @@ ring_elem RingZZ::copy(const ring_elem f) const
 
   mpz_ptr result = new_elem();
   mpz_set(result, a);
+  mpz_reallocate_limbs(result);
+  
   return ring_elem(result);
 }
 
 void RingZZ::remove(ring_elem &f) const
 {
-#if 0
-//   mpz_ptr a = f.get_mpz();
-//   remove_elem(a);
-//   f = MPZ_RINGELEM(NULL);
-#endif
+  // NOTHING
 }
 
 ring_elem RingZZ::preferred_associate(ring_elem f) const
@@ -196,7 +198,7 @@ bool RingZZ::lower_associate_divisor(ring_elem &f, const ring_elem g) const
   // This sets f to either 0, 1 or -1.
   // if f is 0, do f=sign(g), else f=sign(f)
   // return whether f is zero
-  gmp_ZZ result = RingZZ::new_elem();
+  mpz_ptr result = RingZZ::new_elem();
   mpz_srcptr a = f.get_mpz();
   mpz_srcptr b = g.get_mpz();
   int sa = mpz_sgn(a);
@@ -204,6 +206,8 @@ bool RingZZ::lower_associate_divisor(ring_elem &f, const ring_elem g) const
   int s = (sa == 0 ? sb : sa);
 
   mpz_set_si(result, s);
+  mpz_reallocate_limbs(result);  
+
   f = ring_elem(result);
   return !RingZZ::is_zero(f);
 }
@@ -216,10 +220,13 @@ void RingZZ::lower_content(ring_elem &c, ring_elem g) const
       c = g;
       return;
     }
-  gmp_ZZ result = RingZZ::new_elem();
+  mpz_ptr result = RingZZ::new_elem();
   mpz_srcptr a = c.get_mpz();
   mpz_srcptr b = g.get_mpz();
   mpz_gcd(result, a, b);
+  if(mpz_sgn(a) == -1)
+    mpz_neg(result, result);
+  mpz_reallocate_limbs(result);  
   c = ring_elem(result);
 }
 
@@ -227,6 +234,7 @@ ring_elem RingZZ::negate(const ring_elem f) const
 {
   mpz_ptr result = new_elem();
   mpz_neg(result, f.get_mpz());
+  mpz_reallocate_limbs(result);
   return ring_elem(result);
 }
 
@@ -234,6 +242,7 @@ ring_elem RingZZ::add(const ring_elem f, const ring_elem g) const
 {
   mpz_ptr result = new_elem();
   mpz_add(result, f.get_mpz(), g.get_mpz());
+  mpz_reallocate_limbs(result);
   return ring_elem(result);
 }
 
@@ -241,6 +250,7 @@ ring_elem RingZZ::subtract(const ring_elem f, const ring_elem g) const
 {
   mpz_ptr result = new_elem();
   mpz_sub(result, f.get_mpz(), g.get_mpz());
+  mpz_reallocate_limbs(result);
   return ring_elem(result);
 }
 
@@ -248,6 +258,7 @@ ring_elem RingZZ::mult(const ring_elem f, const ring_elem g) const
 {
   mpz_ptr result = new_elem();
   mpz_mul(result, f.get_mpz(), g.get_mpz());
+  mpz_reallocate_limbs(result);
   return ring_elem(result);
 }
 
@@ -255,9 +266,10 @@ ring_elem RingZZ::power(const ring_elem f, int n) const
 {
   mpz_ptr result = new_elem();
   mpz_pow_ui(result, f.get_mpz(), n);
+  mpz_reallocate_limbs(result);
   return ring_elem(result);
 }
-ring_elem RingZZ::power(const ring_elem f, mpz_t n) const
+ring_elem RingZZ::power(const ring_elem f, mpz_srcptr n) const
 {
   std::pair<bool, int> n1 = RingZZ::get_si(n);
   if (n1.first)
@@ -268,16 +280,17 @@ ring_elem RingZZ::power(const ring_elem f, mpz_t n) const
 
 ring_elem RingZZ::invert(const ring_elem f) const
 {
-  if (is_unit(f))
-    return copy(f);
+  if (RingZZ::is_unit(f))
+    return RingZZ::copy(f);
   else
-    return from_long(0);
+    return RingZZ::from_long(0);
 }
 
 ring_elem RingZZ::divide(const ring_elem f, const ring_elem g) const
 {
   mpz_ptr result = new_elem();
   mpz_fdiv_q(result, f.get_mpz(), g.get_mpz());
+  mpz_reallocate_limbs(result);
   return ring_elem(result);
 }
 
@@ -303,6 +316,8 @@ ring_elem RingZZ::remainderAndQuotient(const ring_elem f,
 
   mpz_clear(gg);
   mpz_clear(ghalf);
+  mpz_reallocate_limbs(q);
+  mpz_reallocate_limbs(r);
   quot = ring_elem(q);
   return ring_elem(r);
 }
@@ -327,6 +342,7 @@ ring_elem RingZZ::gcd(const ring_elem f, const ring_elem g) const
 {
   mpz_ptr result = new_elem();
   mpz_gcd(result, f.get_mpz(), g.get_mpz());
+  mpz_reallocate_limbs(result);
   return ring_elem(result);
 }
 
@@ -339,6 +355,9 @@ ring_elem RingZZ::gcd_extended(const ring_elem f,
   mpz_ptr u1 = new_elem();
   mpz_ptr v1 = new_elem();
   mpz_gcdext(result, u1, v1, f.get_mpz(), g.get_mpz());
+  mpz_reallocate_limbs(u1);
+  mpz_reallocate_limbs(v1);
+  mpz_reallocate_limbs(result);
   u = ring_elem(u1);
   v = ring_elem(v1);
   return ring_elem(result);

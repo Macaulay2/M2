@@ -4,13 +4,12 @@
 
 #include "buffer.hpp"
 #include "engine-includes.hpp"
-#include <gmp.h>
 
 extern int i_text_io();
 
 #define wrapping_prefix "   -- "
 
-void bignum_text_out(buffer &o, mpz_t a);
+void bignum_text_out(buffer &o, mpz_srcptr a);
 
 void clear_emit_size();
 void emit_wrapped(const char *s);

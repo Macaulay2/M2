@@ -9,7 +9,7 @@ TEST ///  --- quadro-quadric Cremona transformations
     time psi3=inverseMap(phi3,MathMode=>false)
     time psi4=inverseMap phi4
     time assert (isInverseMap(phi1,psi1) and isInverseMap(phi2,psi2) and isInverseMap(phi3,psi3) and isInverseMap(phi4,psi4))
-    time assert (degreeOfRationalMap(phi1,MathMode=>true) == 1 and degreeOfRationalMap phi2 == 1 and degreeOfRationalMap phi3 == 1 and degreeOfRationalMap phi4 == 1)
+    time assert (degreeMap(phi1,MathMode=>true) == 1 and degreeMap phi2 == 1 and degreeMap phi3 == 1 and degreeMap phi4 == 1)
 ///
 
 TEST ///
@@ -28,15 +28,15 @@ TEST /// -- Hankel matrices
     assert(projectiveDegrees(psi'(2,ZZ/331),MathMode=>true) == {1, 2, 4, 4, 2})   
     assert(projectiveDegrees psi0(2,ZZ/331) ==    {2, 4, 4, 2})
     assert(projectiveDegrees(psi0(2,ZZ/331),MathMode=>true) ==    {2, 4, 4, 2})
-    assert(degreeOfRationalMap phi(2,QQ) == 2)
+    assert(degreeMap phi(2,QQ) == 2)
     assert(projectiveDegrees inverseMap psi'(2,ZZ/101) == reverse {1, 2, 4, 4, 2})
     assert(projectiveDegrees(inverseMap psi'(2,ZZ/5),MathMode=>true) == reverse {1, 2, 4, 4, 2})
     assert(projectiveDegrees phi(3,ZZ/3331)  == {1, 3, 9, 17, 21, 15, 5})   
     assert(projectiveDegrees psi'(3,ZZ/3331) == {1, 3, 9, 17, 21, 15, 5})   
     assert(projectiveDegrees psi0(3,ZZ/3331) ==    {3, 9, 17, 21, 15, 5})
-    assert(degreeOfRationalMap phi(3,ZZ/3331) == 5)
+    assert(degreeMap phi(3,ZZ/3331) == 5)
     assert(projectiveDegrees inverseMap psi'(3,ZZ/3331) == reverse {1, 3, 9, 17, 21, 15, 5})
-    assert(degreeOfRationalMap phi(4,ZZ/431) == 14)
+    assert(degreeMap phi(4,ZZ/431) == 14)
 ///    
 
 TEST ///  -- special map P^8 ---> P^11
@@ -45,7 +45,7 @@ TEST ///  -- special map P^8 ---> P^11
     Z = ideal target Phi;
     time assert(kernel(phi,2) == Z)
     time assert(projectiveDegrees phi == {1, 2, 4, 8, 16, 23, 23, 16, 8})
-    time assert(degreeOfRationalMap phi == 1)
+    time assert(degreeMap phi == 1)
     H=ideal random(1,source phi)
     phi'=map((target phi)/phi(H),target phi) * phi;
     time assert ( kernel(phi',1) == H )
@@ -130,5 +130,69 @@ TEST ///
     P3 = ZZ/41[z_0..z_3];
     phi = toMap minors(3,matrix{{-z_1,z_0,-z_1^2+z_0*z_3},{z_0,z_1,z_0^2-z_1*z_2},{0,z_2,z_0*z_1-z_1*z_3},{0,z_3,-z_0*z_1+z_0*z_2}})
     assert isInverseMap(phi,inverseMap phi)
+///
+
+TEST ///
+  phi = rationalMap map specialCremonaTransformation(3,ZZ/33331);
+  phi' = abstractRationalMap phi;
+  psi' = inverseMap phi'
+  psi = rationalMap psi';
+  assert isInverseMap(phi,psi)
+  Phi' = abstractRationalMap(source phi',target phi',q -> phi' q)
+  assert(phi == rationalMap Phi')
+///
+
+TEST ///
+K = ZZ/33331;
+-- twisted cubic curve
+P3 = K[x_0..x_3];
+C = minors(2,matrix{{x_0,x_1,x_2},{x_1,x_2,x_3}}); 
+f = abstractRationalMap(C,"OADP")
+assert(3 == projectiveDegrees(f,2))
+B = ideal rationalMap f;
+assert(B:C == C)
+-- Scroll surface S(2,2)
+P5 = K[x_0..x_5];
+S = minors(2,matrix{{x_0,x_1,x_3,x_4},{x_1,x_2,x_4,x_5}}); 
+g = abstractRationalMap(S,"OADP")
+assert(3 == projectiveDegrees(g,4))
+-- quintic del Pezzo surface
+D = ideal(x_2*x_4-x_1*x_5,x_0*x_4-x_1*x_5-x_3*x_5+x_4*x_5,x_2*x_3-x_0*x_5,x_1*x_3-x_1*x_5-x_3*x_5+x_4*x_5,x_0*x_1-x_1*x_2-x_0*x_5+x_1*x_5);
+h = abstractRationalMap(D,"OADP")
+assert(5 == projectiveDegrees(h,4))
+///
+
+TEST /// -- bug fixed in inverseMap (25/01/2019)
+   x := local x; P2 := (ZZ/65521)[x_0..x_2];
+   f = rationalMap(P2,{6,1,7});
+   S = image f;
+   p = for i to 2 list random(ZZ/65521);
+   J = sub(transpose jacobian matrix f,{x_0=>p_0,x_1=>p_1,x_2=>p_2});
+   T = image rationalMap(P2,target f,transpose(J*(transpose vars P2)));
+   h = (rationalMap T)|S;
+   assert isDominant(h,MathMode=>true)
+   assert(degreeMap h == 2)
+   assert(try inverseMap h else true)
+   assert(try inverseMap(h,MathMode=>true) else true)
+   assert(degree h == 2)
+///
+
+TEST /// -- graph of inverse map
+P5 := ZZ/100003[x_0..x_5];
+phi = rationalMap(minors(2,matrix{{x_0,x_1,x_2,x_3,x_4},{x_1,x_2,x_3,x_4,x_5}}),Dominant=>2);
+(p1,p2) = graph phi;
+(q1,q2) = graph inverse phi;
+assert(q1 * inverse phi == q2 and q2 * phi == q1 and p1 * phi == p2 and p2 * inverse phi == p1)
+Bl = ideal source q1;
+Bl' = ideal source first graph rationalMap map inverse phi;
+assert(sub(Bl,vars ring Bl') == Bl' and sub(Bl',vars ring Bl) == Bl)
+--
+phi = specialCubicTransformation(2,ZZ/100003);
+(p1,p2) = graph phi;
+(q1,q2) = graph inverse phi;
+assert(q1 * inverse phi == q2 and q2 * phi == q1 and p1 * phi == p2 and p2 * inverse phi == p1)
+Bl = ideal source q1;
+Bl' = ideal source first graph rationalMap map inverse phi;
+assert(sub(Bl,vars ring Bl') == Bl' and sub(Bl',vars ring Bl) == Bl)
 ///
 

@@ -139,7 +139,7 @@ class SchurRing2 : public Ring
   schur_poly *mult_by_coefficient(ring_elem a, const schur_poly *f) const;
   bool get_scalar(const schur_poly *f, ring_elem &result) const;
 
-  size_t size(ring_elem f) const { return f.schur_poly_val->coeffs.size(); }
+  size_t size(ring_elem f) const { return f.get_schur_poly()->coeffs.size(); }
   void dimension(const int *exp, mpz_t result) const;
   ring_elem dimension(const ring_elem f) const;
   // only allowed if nvars >= 0
@@ -159,7 +159,7 @@ class SchurRing2 : public Ring
 
   virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_srcptr n) const;
-  virtual bool from_rational(mpq_ptr q, ring_elem &result) const;
+  virtual bool from_rational(mpq_srcptr q, ring_elem &result) const;
 
   virtual bool promote(const Ring *R,
                        const ring_elem f,

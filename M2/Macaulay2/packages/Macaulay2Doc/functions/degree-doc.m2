@@ -2,6 +2,13 @@
 --- author(s): M. Stillman
 --- notes: 
 
+-*
+-- TODO
+degree(ChainComplexMap)
+degree(GradedModuleMap)
+degree(Matrix)
+*-
+
 document {
      Key => Parenthesize,
      "This class is used internally to implement the parentheses inserted by ", TO "parts", "."
@@ -150,7 +157,7 @@ document {
 	  as often as possible, then evaluates it at ", TT "T=1", ".
 	  When the module has finite length,                                                           
  	  the result is the Hilbert series evaluated
- 	  at 1, that is the dimension over the ground field, which for a graded (homogenous)
+ 	  at 1, that is the dimension over the ground field, which for a graded (homogeneous)
 	  is the same as the length."
 	  },
      Caveat => {
@@ -163,20 +170,34 @@ document {
      SeeAlso => {hilbertPolynomial, isHomogeneous}
      }
 
-document { 
-     Key => (length,Module),
-     Usage => "length M",
-     Inputs => {
-	  "M"
-	  },
-     Outputs => {
-	  ZZ => {"the length of ", TT "M"}
-	  },
-     "We assume that ", TT "M", " is a graded module over a singly graded 
-     polynomal ring or a quotient of a polynomial ring, 
-     over a field ", TT "k", ".  In this case, the length is the same as the degree, 
-     see ", TO (degree,Module), "."
-     }
+doc ///
+Key
+  (length, Module)
+Headline
+  Computes the length of a module
+Usage
+  l = length M
+Inputs
+  M: Module
+Outputs
+  l: ZZ
+    the length of M
+Description
+  Text
+    If M is a graded module over a singly graded polynomal ring or a quotient of a
+    polynomial ring over a field k then length is the same as the degree.
+
+    If M is over a local ring then length is computed by summing the output of
+    the Hilbert-Samuel function until it vanishes. Note that in this case the
+    @TO "LocalRings :: LocalRings"@ package must be loaded first.
+Consequences
+  Item
+    In the local case, the length of the module is stored in M.cache.length.
+Caveat
+  In the local case, the input is assumed to have finite length.
+SeeAlso
+  (degree, Module)
+///
 
 document { 
      Key => (degree,Ring),
@@ -207,7 +228,7 @@ document {
 	  List => {"the degree or multidegree of ", TT "f"}
 	  },
      "In Macaulay2, the degree of a polynomial is a list of integers.
-     This is to accomodate polynomial rings having multigradings.  The 
+     This is to accommodate polynomial rings having multigradings.  The 
      usual situation is when the ring has the usual grading: each variable has
      length 1.",
      EXAMPLE {

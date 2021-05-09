@@ -15,8 +15,7 @@ o2 : A
 
 i3 : mons = monomials f
 
-     |  3   2   2 |
-o3 = | z   y   x  |
+o3 = | z^3 y^2 x^2 |
 
 o3 : NCMatrix
 

@@ -34,6 +34,3 @@ Daniel R. Grayson and Michael E. Stillman.  Based on Groebner bases, it
 provides algorithms for computing homological invariants of rings and
 modules.
 %files
-# Local Variables:
-# compile-command: "make -C $M2BUILDDIR/distributions/rpm "
-# End:

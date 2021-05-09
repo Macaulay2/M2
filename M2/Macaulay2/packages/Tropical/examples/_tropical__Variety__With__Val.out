@@ -1,0 +1,30 @@
+-- -*- M2-comint -*- hash: 845208344
+-- polymake not present
+
+i1 : R = QQ[x,y,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : I = ideal(x+y+z)
+
+o2 = ideal(x + y + z)
+
+o2 : Ideal of R
+
+i3 : tropicalVarietyWithVal(I)
+
+o3 = Can't handle the given valuation. Maybe no valuation given? Then use
+     tropicalVariety
+
+i4 : tropicalVarietyWithVal(I, Valuation=>11)
+sh: Singular: command not found
+
+o4 = You need to install Singular for using tropicalVarietyWithVal
+
+i5 : tropicalVarietyWithVal(I, Valuation=>x)
+
+o5 = We have not implemented Puiseux valuation yet
+
+i6 : 

@@ -9,7 +9,8 @@ newPackage(
 	       {Name => "Anton Leykin"},
 	       {Name => "Mauricio Velasco"}
 	       },
-	  Headline => "computations of Schur modules and maps between them",
+	  Headline => "Schur modules and maps between them",
+	  Keywords => {"Homological Algebra", "Representation Theory"},
 	  DebuggingMode => false,
 	  AuxiliaryFiles=>true
      	  )

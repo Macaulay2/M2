@@ -4,24 +4,11 @@ newPackage ( "Licenses",
      Authors => {{Name => "Daniel R. Grayson", 
 	       Email => "danielrichardgrayson@gmail.com", 
 	       HomePage => "http://dangrayson.com/"}},
-     Headline => "licensing of Macaulay2",
-     DebuggingMode => true
+     Keywords => {"Miscellaneous"},
+     Headline => "licensing of Macaulay2"
      )
 
 export "checkLicense"
-
-needsPackage "SimpleDoc"
-needsPackage "Text"
-
-multidoc ///
-Node
- Key
-   Licenses
- Description
-   Text 
-       This package examines the version number of the various packages compiled
-       with Macaulay2 to determine under which licenses Macaulay2 may be offered.
-///
 
 -- We issue the M2 binary under GPL 3, and libraries licensed under the following licenses
 -- can be linked with our binary:
@@ -40,6 +27,7 @@ licenses = set {
      "LGPL 2.1 or later",
      "LGPL 3 or later",
      "CeCILL-B",
+     "Boost",
      "MIT",
      "public domain",
      "modified BSD",
@@ -127,6 +115,18 @@ licenseInfo = hashTable {
 	      "The MPIR Library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version."
 	      }
         },
+    "mpsolve version" => hashTable {
+        "3.1.8" => VerticalList {
+              "GPL 3",
+              "License: http://www.gnu.org/licenses/gpl.html GPL version 3 or higher"
+            }
+        },
+    "boost version" => hashTable {
+        "1.69" => VerticalList {
+              "Boost",
+              "License: https://www.boost.org/users/license.html Boost Software License"
+            }
+        },
     "mysql version" => hashTable {
         },
     "ntl version" => hashTable {
@@ -134,11 +134,6 @@ licenseInfo = hashTable {
 	      "LGPL 2.1 or later",
 	      "NTL is open-source software distributed under the terms of the GNU Lesser General Public License (LGPL) version 2.1 or later."
 	      }
-        },
-    "pari version" => hashTable {
-	 "2.9.2" => VerticalList {
-	      "GPL 2 or later",
-	      "PARI/GP is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version."     }
         },
     "python version" => hashTable {
         },
@@ -168,6 +163,17 @@ checkLicense = () -> (
 	  ver := version#lib;
 	  (concatenate (lib, " ", ver)) => lic (lib, ver)))
 
+beginDocumentation()
+
+multidoc ///
+Node
+ Key
+   Licenses
+ Description
+   Text 
+       This package examines the version number of the various packages compiled
+       with Macaulay2 to determine under which licenses Macaulay2 may be offered.
+///
 
 -- this test doesn't ever produce an error, and thus the warning is invisible, since it 
 -- normally redirected to a file

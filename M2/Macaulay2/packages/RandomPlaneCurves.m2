@@ -15,8 +15,10 @@ newPackage(
 	      Email => "schreyer@math.uni-sb.de",
 	      HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}
                    },
-    	Headline => "Construction of random plane curves",
+    	Headline => "random plane curves",
+	Keywords => {"Examples and Random Objects"},
 	PackageExports => {"RandomObjects"},
+	PackageImports => {"Truncations"},
     	DebuggingMode => false
         )
 
@@ -32,9 +34,6 @@ export{"distinctPlanePoints",
        "completeLinearSystemOnNodalPlaneCurve",
        "imageUnderRationalMap"
        }
-
-
-needsPackage "RandomObjects"
 
 undocumented {
      constructNodalPlaneCurve,

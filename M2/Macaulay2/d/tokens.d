@@ -63,9 +63,6 @@ dummyDebuggerFun(f:Frame,c:Code):Expr := nullE;
 export debuggerFun := dummyDebuggerFun;
 export handleInterrupts := true;
 (threadLocal export stopIfError := true) = false;
-foreach s in argv do
-  if s === "--stop" then stopIfError = true else
-  if s === "--int" then (handleInterrupts = false; handleInterruptsSetup(handleInterrupts););
 (threadLocal export debuggingMode := false) = true;
 
 export printIfError(e:Expr):void := (
@@ -135,10 +132,10 @@ export unopNameListCell := {f:unop,name:string,next:unopNameListCell};
 export binopNameListCell := {f:binop,name:string,next:binopNameListCell};
 export ternopNameListCell := {f:ternop,name:string,next:ternopNameListCell};
 export multopNameListCell := {f:multop,name:string,next:multopNameListCell};
-export unopNameList := unopNameListCell(dummyUnop,"{*dummy unary operator*}",self);
-export binopNameList := binopNameListCell(dummyBinop,"{*dummy binnary operator*}",self);
-export ternopNameList := ternopNameListCell(dummyTernop,"{*dummy ternary operator*}",self);
-export multopNameList := multopNameListCell(dummyMultop,"{*dummy n-ary operator*}",self);
+export unopNameList := unopNameListCell(dummyUnop,"-*dummy unary operator*-",self);
+export binopNameList := binopNameListCell(dummyBinop,"-*dummy binnary operator*-",self);
+export ternopNameList := ternopNameListCell(dummyTernop,"-*dummy ternary operator*-",self);
+export multopNameList := multopNameListCell(dummyMultop,"-*dummy n-ary operator*-",self);
 export getUnopName(f:unop):string := (
      p := unopNameList;
      while true do (

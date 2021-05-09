@@ -1,5 +1,5 @@
 newPackage("NCAlgebra",
-     Headline => "Data types for Noncommutative algebras",
+     Headline => "data types for noncommutative algebras",
      Version => "1.0",
      Date => "July 2, 2016",
      Authors => {
@@ -12,8 +12,10 @@ newPackage("NCAlgebra",
 	  {Name => "Courtney Gibbons",
 	   HomePage => "http://people.hamilton.edu/cgibbons/index.html",
 	   Email => "crgibbon@hamilton.edu"}},
+     Keywords => {"Noncommutative Algebra", "Interfaces"},
      AuxiliaryFiles => true,
      CacheExampleOutput => true,
+     PackageExports =>{"IntegralClosure"},
      OptionalComponentsPresent => bergmanPresent := run "type bergman >/dev/null 2>&1" === 0
      )
 
@@ -1154,7 +1156,7 @@ sparseCoeffs List := opts -> L -> (
 	coeffs = coeffs | newCoeffs;);
      ); 
   map(R^m , R^l, coeffs)
-{*  d := if all(L, m -> m == 0) then 0 else L#(position(L,m->m!=0));
+-*  d := if all(L, m -> m == 0) then 0 else L#(position(L,m->m!=0));
   if not all(L, m-> (isHomogeneous(m) and (m == 0 or (degree m)==(degree d)))) then 
 	error "Expected homogeneous elements of the same degree.";
   B := (L#0).ring;
@@ -1182,7 +1184,7 @@ sparseCoeffs List := opts -> L -> (
        
 	coeffs = coeffs | newCoeffs;);
      ); 
-   map(R^m , R^l, coeffs)*}
+   map(R^m , R^l, coeffs)*-
 )
 
 monomials NCRingElement := opts -> f -> (
@@ -1346,7 +1348,7 @@ getMinMaxDegrees = gensList -> (
 
 runCommand = cmd -> (
    --- comment this line out eventually, or add a verbosity option
-   stderr << "--running: " << cmd << " ... " << flush;
+   -- stderr << "--running: " << cmd << " ... " << flush;
    r := run cmd;
    if r != 0 then (
       << "Failed!" << endl;

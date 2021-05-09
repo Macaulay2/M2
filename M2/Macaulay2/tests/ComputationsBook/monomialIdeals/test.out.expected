@@ -1,0 +1,805 @@
+
+i1 : setRandomSeed();
+
+i2 : S = QQ[a, b, c, d];
+
+i3 : I = monomialIdeal(a^2, a*b, b^3, a*c)
+
+                     2        3
+o3 = monomialIdeal (a , a*b, b , a*c)
+
+o3 : MonomialIdeal of S
+
+i4 : J = monomialIdeal{a^2, a*b, b^2}
+
+                     2        2
+o4 = monomialIdeal (a , a*b, b )
+
+o4 : MonomialIdeal of S
+
+i5 : monomialIdeal(a^2+a*b, a*b+3, b^2+d)
+
+                     2        2
+o5 = monomialIdeal (a , a*b, b )
+
+o5 : MonomialIdeal of S
+
+i6 : K = ideal(a^2, b^2, a*b+b*c)
+
+             2   2
+o6 = ideal (a , b , a*b + b*c)
+
+o6 : Ideal of S
+
+i7 : monomialIdeal K
+
+                     2        2     2
+o7 = monomialIdeal (a , a*b, b , b*c )
+
+o7 : MonomialIdeal of S
+
+i8 : monomialIdeal gens K
+
+                     2        2
+o8 = monomialIdeal (a , a*b, b )
+
+o8 : MonomialIdeal of S
+
+i9 : isMonomialIdeal K
+
+o9 = false
+
+i10 : isMonomialIdeal ideal(a^5, b^2*c, d^11)
+
+o10 = true
+
+i11 : I+J
+
+                      2        2
+o11 = monomialIdeal (a , a*b, b , a*c)
+
+o11 : MonomialIdeal of S
+
+i12 : fvector = I -> (
+           R := (ring I)/I;
+           d := dim R;
+           N := poincare R;
+           t := first gens ring N;
+           while 0 == substitute(N, t => 1) do N = N // (1-t);
+           h := apply(reverse toList(0..d), i -> N_(t^i));
+           f := j -> sum(0..j+1, i -> binomial(d-i, j+1-i)*h#(d-i));
+           apply(toList(0..d-1), j -> f(j)));
+
+i13 : S = QQ[x_1 .. x_6];
+
+i14 : octahedron = monomialIdeal(x_1*x_2, x_3*x_4, x_5*x_6)
+
+o14 = monomialIdeal (x x , x x , x x )
+                      1 2   3 4   5 6
+
+o14 : MonomialIdeal of S
+
+i15 : fvector octahedron
+
+o15 = {6, 12, 8}
+
+o15 : List
+
+i16 : simplicial2sphere = v -> ( 
+           S := QQ[x_1..x_v]; 
+           if v === 4 then monomialIdeal product gens S 
+           else ( 
+                L := {};
+                scan(1..v-4, i -> L = L | apply(v-i-3, 
+                          j -> x_i*x_(i+j+4))); 
+                scan(2..v-3, i -> L = L | {x_i*x_(i+1)*x_(i+2)}); 
+                monomialIdeal L));
+
+i17 : apply({4,5,6,7,8}, j -> fvector simplicial2sphere(j))
+
+o17 = {{4, 6, 4}, {5, 9, 6}, {6, 12, 8}, {7, 15, 10}, {8, 18, 12}}
+
+o17 : List
+
+i18 : supp = r -> select(gens ring r, e -> r % e == 0);
+
+i19 : monomialDecompose = method();
+
+i20 : monomialDecompose List := L -> (
+           P := select(L, I -> all(first entries gens I, 
+                     r -> #supp(r) < 2) === false);
+           if #P > 0 then (
+                I := first P;
+                m := first select(first entries gens I, 
+                     r -> #supp(r) > 1);
+                E := first exponents m;
+                i := position(E, e -> e =!= 0);
+                r1 := product apply(E_{0..i}, (gens ring I)_{0..i}, 
+                     (j, r) -> r^j);
+                r2 := m // r1;
+                monomialDecompose(delete(I, L) | {I+monomialIdeal(r1),
+                          I+monomialIdeal(r2)}))
+           else L);
+
+i21 : monomialDecompose MonomialIdeal := I -> monomialDecompose {I};
+
+i22 : S = QQ[a,b,c,d];
+
+i23 : I = monomialIdeal(a^3*b, a^3*c, a*b^3, b^3*c, a*c^3, b*c^3)
+
+                      3      3   3    3      3     3
+o23 = monomialIdeal (a b, a*b , a c, b c, a*c , b*c )
+
+o23 : MonomialIdeal of S
+
+i24 : P = monomialDecompose I;
+
+i25 : scan(P, J -> << endl << J << endl);
+
+monomialIdeal (b, c)
+
+monomialIdeal (a, c)
+
+                3   3   3
+monomialIdeal (a , b , c )
+
+monomialIdeal (a, b)
+
+                3      3
+monomialIdeal (a , b, c )
+
+monomialIdeal (a, b)
+
+                   3   3
+monomialIdeal (a, b , c )
+
+i26 : I == intersect(P)
+
+o26 = true
+
+i27 : code(dual, MonomialIdeal, List)
+
+o27 = -- code for method: dual(MonomialIdeal,List)
+      /Users/dan/src/M2/Macaulay2/m2/option.m2:6:20-10:34: --source code:
+        (opts,f) -> args -> (
+             -- Common code for functions created with >> to process options and arguments.
+             uncurry(f, override (opts,args))
+             )
+        )
+      | symbol   class              value                                                   location of symbol
+      | ------   -----              -----                                                   ------------------                              
+      | opts   : OptionTable     -- OptionTable{Strategy => 0}                              /Users/dan/src/M2/Macaulay2/m2/option.m2:6:4-6:7
+      | f      : FunctionClosure -- {*Function[/Users/dan/src/M2/Macaulay2/m2/monideal.m2:. /Users/dan/src/M2/Macaulay2/m2/option.m2:6:9-6:9
+      | -- function f:
+      | /Users/dan/src/M2/Macaulay2/m2/monideal.m2:243:44-250:60: --source code:
+      | dual(MonomialIdeal, List) := alexopts >> o -> (I,a) -> (
+      |      aI := first exponents lcm I;
+      |      if aI =!= a then (
+      |           if #aI =!= #a then error ( "expected list of length ", toString (#aI));
+      |           scan(a, aI, (b,c) -> if b<c then error "exponent vector not large enough" );
+      |           );
+      |      newMonomialIdeal(ring I, rawAlexanderDual(raw I, a, o.Strategy)) -- 0 is the default algorithm
+      |      )
+      | -- option table opts:
+      | OptionTable{Strategy => 0}
+
+i28 : code(primaryDecomposition, MonomialIdeal)
+
+o28 = -- code for method: primaryDecomposition(MonomialIdeal)
+      primaryDecomposition Ideal  := List => opts -> I -> primarydecompHelper(I, (primaryDecomposition, Ideal), opts)
+
+i29 : L = primaryDecomposition I;
+
+i30 : scan(L, J -> << endl << J << endl);
+
+monomialIdeal (a, b)
+
+monomialIdeal (a, c)
+
+monomialIdeal (b, c)
+
+                3   3   3
+monomialIdeal (a , b , c )
+
+i31 : I == intersect L
+
+o31 = true
+
+i32 : treeIdeal = n -> (
+           S = QQ[vars(0..n-1)];
+           L := delete({}, subsets gens S);
+           monomialIdeal apply(L, F -> (product F)^(n - #F +1)));
+
+i33 : apply(2..6, i -> #primaryDecomposition treeIdeal i)
+
+o33 = (1, 1, 1, 1, 1)
+
+o33 : Sequence
+
+i34 : minorsIdeal = (m,n,k) -> (
+           S := QQ[x_1..x_(m*n), MonomialOrder => Lex];
+           I := minors(k, matrix table(m, n, (i,j) -> x_(i*n+n-j)));
+           forceGB gens I;
+           I);
+
+i35 : apply(2..8, i -> time codim monomialIdeal minorsIdeal(i,2*i,2))
+     -- used 0.001977 seconds
+     -- used 0.004674 seconds
+     -- used 0.010817 seconds
+     -- used 0.150144 seconds
+     -- used 0.077651 seconds
+     -- used 0.565484 seconds
+     -- used 2.11014 seconds
+
+o35 = (3, 10, 21, 36, 55, 78, 105)
+
+o35 : Sequence
+
+i36 : x = symbol x;
+
+i37 : stdPairs = I -> (
+           S := ring I;
+           X := gens S;
+           std := {};
+           J := I;
+           while J != S do (
+                w1 := 1_S;
+                F := X;
+                K := J;
+                while K != 0 do (
+                     g1 := (ideal mingens ideal K)_0;
+                     x := first supp g1;
+                     w1 = w1 * g1 // x;
+                     F = delete(x, F);
+                     K = K : monomialIdeal(g1 // x);
+                     L := select(first entries gens K, 
+                          r -> not member(x, supp r));
+                     if #L > 0 then K = monomialIdeal L
+                     else K = monomialIdeal 0_S;);
+                w2 := w1;
+                scan(X, r -> if not member(r, supp w1) or member(r, F)
+                     then w2 = substitute(w2, {r => 1}));
+                P := monomialIdeal select(X, r -> not member(r, F));
+                if (I:(I:P) == P) and (all(std, p -> 
+                          (w2 % (first p) != 0) or not
+                          isSubset(supp(w2 // first p) | F, last p)))
+                then std = std | {{w2, F}};
+                J = J + monomialIdeal(w1););
+           std);
+
+i38 : S = QQ[x,y,z];
+
+i39 : I = monomialIdeal(x*y^3*z, x*y^2*z^2, y^3*z^2, y^2*z^3);
+
+o39 : MonomialIdeal of S
+
+i40 : scan(time stdPairs I, P -> << endl << P << endl);
+     -- used 0.039405 seconds
+
+{y, {x, z}}
+
+{1, {x, z}}
+
+  2 2
+{y z , {}}
+
+{z, {y}}
+
+  2
+{y z, {x}}
+
+{1, {x, y}}
+
+i41 : code(standardPairs, MonomialIdeal, List)
+
+o41 = -- code for method: standardPairs(MonomialIdeal,List)
+      /Users/dan/src/M2/Macaulay2/m2/monideal.m2:269:45-292:6: --source code:
+      standardPairs(MonomialIdeal, List) := (I,D) -> (
+           R := ring I;
+           X := generators R;
+           S := {};
+           k := coefficientRing R;
+           scan(D, L -> ( 
+                     Y := X;
+                     m := vars R;
+                     Lset := set L;
+                     Y = select(Y, r -> not Lset#?r);
+                     m = substitute(m, apply(L, r -> r => 1));
+                     -- using monoid to create ring to avoid 
+                     -- changing global ring.
+                     A := k (monoid [Y]);
+                     phi := map(A, R, substitute(m, A));
+                     J := ideal mingens ideal phi generators I;
+                     Jsat := saturate(J, ideal vars A);
+                     if Jsat != J then (
+                          B := flatten entries super basis (
+                               trim (Jsat / J));
+                          psi := map(R, A, matrix{Y});
+                          S = join(S, apply(B, b -> {psi(b), L}));
+                          )));
+           S)
+
+i42 : time standardPairs I;
+     -- used 0.078395 seconds
+
+i43 : permutohedronIdeal = n -> (
+           S := QQ[X_1..X_n];
+           monomialIdeal terms det matrix table(n ,gens S, 
+                (i,r) -> r^(i+1)));
+
+i44 : L = apply({2,3,4,5}, j -> standardPairs(permutohedronIdeal(j)));
+
+i45 : apply(L, i -> #i)
+
+o45 = {3, 10, 53, 446}
+
+o45 : List
+
+i46 : x = symbol x; z = symbol z;
+
+i48 : toBinomial = (b, S) -> (
+           pos := 1_S;
+           neg := 1_S;
+           scan(#b, i -> if b_i > 0 then pos = pos*S_i^(b_i)
+                         else if b_i < 0 then neg = neg*S_i^(-b_i));
+           pos - neg);
+
+i49 : toricIdeal = (A, omega) -> (
+           n := rank source A;
+           S = QQ[x_1..x_n, Weights => omega, MonomialSize => 16];
+           B := transpose matrix syz A;
+           J := ideal apply(entries B, b -> toBinomial(b, S));
+           scan(gens S, r -> J = saturate(J, r));
+           J);
+
+i50 : IP = (A, omega, beta) -> (
+           std := standardPairs monomialIdeal toricIdeal(A, omega);
+           n := rank source A;
+           alpha := {};
+           Q := first select(1, std, P -> (
+                F := apply(last P, r -> index r);
+                gamma := transpose matrix exponents first P;
+                K := transpose syz (submatrix(A,F) | (A*gamma-beta));
+                X := select(entries K, k -> abs last(k) === 1);
+                scan(X, k -> if all(k, j -> j>=0) or all(k, j -> j<=0)
+                     then alpha = apply(n, j -> if member(j, F) 
+                          then last(k)*k_(position(F, i -> i === j))
+                          else 0));
+                #alpha > 0));
+           if #Q > 0 then (matrix {alpha})+(matrix exponents first Q)
+           else 0);
+
+i51 : A = matrix{{1,1,1,1,1},{1,2,4,5,6}}
+
+o51 = | 1 1 1 1 1 |
+      | 1 2 4 5 6 |
+
+               2        5
+o51 : Matrix ZZ  <--- ZZ
+
+i52 : w1 = {1,1,1,1,1};
+
+i53 : w2 = {2,3,5,7,11};
+
+i54 : b1 = transpose matrix{{3,9}}
+
+o54 = | 3 |
+      | 9 |
+
+               2        1
+o54 : Matrix ZZ  <--- ZZ
+
+i55 : b2 = transpose matrix{{5,16}}
+
+o55 = | 5  |
+      | 16 |
+
+               2        1
+o55 : Matrix ZZ  <--- ZZ
+
+i56 : IP(A, w1, b1)
+
+o56 = | 1 1 0 0 1 |
+
+               1        5
+o56 : Matrix ZZ  <--- ZZ
+
+i57 : IP(A, w2, b1)
+
+o57 = | 1 0 2 0 0 |
+
+               1        5
+o57 : Matrix ZZ  <--- ZZ
+
+i58 : IP(A, w1, b2)
+
+o58 = | 2 1 0 0 2 |
+
+               1        5
+o58 : Matrix ZZ  <--- ZZ
+
+i59 : IP(A, w2, b2)
+
+o59 = | 0 2 3 0 0 |
+
+               1        5
+o59 : Matrix ZZ  <--- ZZ
+
+i60 : S = QQ[a,b,c,d];
+
+i61 : isBorel monomialIdeal(a^2, a*b, b^2)
+
+o61 = true
+
+i62 : isBorel monomialIdeal(a^2, b^2)
+
+o62 = false
+
+i63 : borel monomialIdeal(b*c)
+
+                      2        2
+o63 = monomialIdeal (a , a*b, b , a*c, b*c)
+
+o63 : MonomialIdeal of S
+
+i64 : borel monomialIdeal(a,c^3)
+
+                         3   2      2   3
+o64 = monomialIdeal (a, b , b c, b*c , c )
+
+o64 : MonomialIdeal of S
+
+i65 : gin = method();
+
+i66 : gin Ideal := I -> (
+           S := ring I;
+           StoS := map(S, S, random(S^{0}, S^{numgens S:-1}));
+           monomialIdeal StoS I);
+
+i67 : gin MonomialIdeal := I -> gin ideal I;
+
+i68 : genericForms = (p,q) -> ideal(random(p,S), random(q,S));
+
+i69 : gin genericForms(2,2)
+
+                      2        3
+o69 = monomialIdeal (a , a*b, b )
+
+o69 : MonomialIdeal of S
+
+i70 : gin genericForms(2,3)
+
+                      2     2   4
+o70 = monomialIdeal (a , a*b , b )
+
+o70 : MonomialIdeal of S
+
+i71 : J = ideal(a^2, a*b+b^2, a*c)
+
+              2         2
+o71 = ideal (a , a*b + b , a*c)
+
+o71 : Ideal of S
+
+i72 : ginJ = gin J
+
+                      2        2     2
+o72 = monomialIdeal (a , a*b, b , a*c )
+
+o72 : MonomialIdeal of S
+
+i73 : inJ = monomialIdeal J
+
+                      2        3        2
+o73 = monomialIdeal (a , a*b, b , a*c, b c)
+
+o73 : MonomialIdeal of S
+
+i74 : isBorel inJ and isBorel ginJ
+
+o74 = true
+
+i75 : S = QQ[a,b,c,d, MonomialOrder => Lex];
+
+i76 : gin genericForms(2,2)
+
+                      2        4     2
+o76 = monomialIdeal (a , a*b, b , a*c )
+
+o76 : MonomialIdeal of S
+
+i77 : gin genericForms(2,3)
+
+                      2     2   6       2     6         2       4
+o77 = monomialIdeal (a , a*b , b , a*b*c , a*c , a*b*c*d , a*b*d )
+
+o77 : MonomialIdeal of S
+
+i78 : projection = I -> (
+           S := ring I;
+           n := numgens S;
+           X := gens S;
+           monomialIdeal mingens substitute(ideal I, 
+                {X#(n-2) => 1, X#(n-1) => 1}));
+
+i79 : polarization = I -> (
+           n := numgens ring I;
+           u := apply(numgens I, i -> first exponents I_i);
+           I.cache.lcm = max \ transpose u;
+           Z := flatten apply(n, i -> apply(I.cache.lcm#i, j -> z_{i,j}));
+           R := QQ(monoid[Z]);
+           Z = gens R;
+           p := apply(n, i -> sum((I.cache.lcm)_{0..i-1}));
+           monomialIdeal apply(u, e -> product apply(n, i -> 
+                     product(toList(0..e#i-1), j -> Z#(p#i+j)))));
+
+i80 : distraction = I -> (
+           S := ring I;
+           n := numgens S;
+           X := gens S;
+           J := polarization I;
+           W := flatten apply(n, i -> flatten apply(I.cache.lcm#i, 
+                     j -> X#i));
+           section := map(S, ring J, apply(W, r -> r - 
+                     random(500)*X#(n-2) - random(500)*X#(n-1)));     
+           section ideal J);
+
+i81 : S = QQ[x_0 .. x_4, MonomialOrder => GLex];
+
+i82 : I = monomialIdeal(x_0^2, x_0*x_1^2*x_3, x_1^3*x_4)
+
+                      2     2     3
+o82 = monomialIdeal (x , x x x , x x )
+                      0   0 1 3   1 4
+
+o82 : MonomialIdeal of S
+
+i83 : projection I
+
+                      2     2   3
+o83 = monomialIdeal (x , x x , x )
+                      0   0 1   1
+
+o83 : MonomialIdeal of S
+
+i84 : polarization I
+
+o84 = monomialIdeal (z      z      , z      z      z      z      , z      z      z      z      )
+                      {0, 0} {0, 1}   {0, 0} {1, 0} {1, 1} {3, 0}   {1, 0} {1, 1} {1, 2} {4, 0}
+
+o84 : MonomialIdeal of QQ[z      , z      , z      , z      , z      , z      , z      ]
+                           {0, 0}   {0, 1}   {1, 0}   {1, 1}   {1, 2}   {3, 0}   {4, 0}
+
+i85 : distraction I
+
+              2                             2                      2          2           2                2                               2              3              2                   2              3         2 2         2             2 2              3              2                   2              3              4               3                 2 2                 3              4        3         3            2 2          2              2 2              3               2                   2              3              4               3                 2 2                 3              4
+o85 = ideal (x  - 281x x  - 658x x  + 18870x  + 102007x x  + 81997x , - 162x x x  - 355x x x  + 116154x x x  + 366639x x x x  + 245660x x x  - 20706840x x  - 86836112x x x  - 106699274x x x  - 34723260x x  + 27540x x  + 87404x x x  + 59285x x  - 19746180x x  - 81726348x x x  - 102990913x x x  - 41025220x x  + 3520162800x  + 18220181320x x  + 32640507284x x  + 23721732958x x  + 5798784420x , - 170x x  - 154x x  + 172550x x  + 330050x x x  + 157388x x  - 58052620x x  - 171376684x x x  - 163057048x x x  - 50230488x x  + 6475361200x  + 26001828600x x  + 37553372912x x  + 22982200824x x  + 4970805840x )
+              0       0 3       0 4         3          3 4         4        0 1 3       0 1 4          0 1 3          0 1 3 4          0 1 4            0 3            0 3 4             0 3 4            0 4         1 3         1 3 4         1 4            1 3            1 3 4             1 3 4            1 4              3               3 4               3 4               3 4              4        1 3       1 4          1 3          1 3 4          1 4            1 3             1 3 4             1 3 4            1 4              3               3 4               3 4               3 4              4
+
+o85 : Ideal of S
+
+i86 : m =  matrix table({0,1,2}, {0,1,2}, (i,j) -> (gens S)#(i+j))
+
+o86 = | x_0 x_1 x_2 |
+      | x_1 x_2 x_3 |
+      | x_2 x_3 x_4 |
+
+              3       3
+o86 : Matrix S  <--- S
+
+i87 : rationalQuartic = minors(2, m);
+
+o87 : Ideal of S
+
+i88 : H = hilbertPolynomial(S/rationalQuartic);
+
+i89 : hilbertPolynomial(S/rationalQuartic, Projective => false)
+
+o89 = 4i + 1
+
+o89 : QQ[i]
+
+i90 : L = {monomialIdeal(x_0^2, x_0*x_1, x_0*x_2, x_1^2, x_1*x_2, x_2^2), monomialIdeal(x_0^2, x_0*x_1, x_0*x_2, x_0*x_3, x_1^2, x_1*x_2, x_2^3), monomialIdeal(x_0, x_1^2, x_1*x_2^2, x_1*x_2*x_3, x_2^3), monomialIdeal(x_0, x_1^2, x_1*x_2, x_2^4, x_2^3*x_3), monomialIdeal(x_0, x_1, x_2^5, x_2^4*x_3^3), monomialIdeal(x_0, x_1^2, x_1*x_2, x_1*x_3, x_2^5, x_2^4*x_3^2), monomialIdeal(x_0^2, x_0*x_1, x_0*x_2, x_0*x_3, x_1^2, x_1*x_2, x_1*x_3, x_2^5, x_2^4*x_3), monomialIdeal(x_0, x_1^2, x_1*x_2, x_1*x_3^2, x_2^5, x_2^4*x_3), monomialIdeal(x_0^2, x_0*x_1, x_0*x_2, x_0*x_3, x_1^2, x_1*x_2, x_1*x_3^2, x_2^4), monomialIdeal(x_0, x_1^2, x_1*x_2^2, x_1*x_2*x_3, x_1*x_3^2, x_2^4), monomialIdeal(x_0, x_1^2, x_1*x_2, x_1*x_3^3, x_2^4), monomialIdeal(x_0, x_1, x_2^6, x_2^5*x_3, x_2^4*x_3^2)};
+
+i91 : scan(#L, i -> << endl << i+1 << " : " << L#i << endl);
+
+                    2         2               2
+1 : monomialIdeal (x , x x , x , x x , x x , x )
+                    0   0 1   1   0 2   1 2   2
+
+                    2         2               3
+2 : monomialIdeal (x , x x , x , x x , x x , x , x x )
+                    0   0 1   1   0 2   1 2   2   0 3
+
+                        2     2   3
+3 : monomialIdeal (x , x , x x , x , x x x )
+                    0   1   1 2   2   1 2 3
+
+                        2         4   3
+4 : monomialIdeal (x , x , x x , x , x x )
+                    0   1   1 2   2   2 3
+
+                            5   4 3
+5 : monomialIdeal (x , x , x , x x )
+                    0   1   2   2 3
+
+                        2         5         4 2
+6 : monomialIdeal (x , x , x x , x , x x , x x )
+                    0   1   1 2   2   1 3   2 3
+
+                    2         2               5               4
+7 : monomialIdeal (x , x x , x , x x , x x , x , x x , x x , x x )
+                    0   0 1   1   0 2   1 2   2   0 3   1 3   2 3
+
+                        2         5   4       2
+8 : monomialIdeal (x , x , x x , x , x x , x x )
+                    0   1   1 2   2   2 3   1 3
+
+                    2         2               4           2
+9 : monomialIdeal (x , x x , x , x x , x x , x , x x , x x )
+                    0   0 1   1   0 2   1 2   2   0 3   1 3
+
+                         2     2   4             2
+10 : monomialIdeal (x , x , x x , x , x x x , x x )
+                     0   1   1 2   2   1 2 3   1 3
+
+                         2         4     3
+11 : monomialIdeal (x , x , x x , x , x x )
+                     0   1   1 2   2   1 3
+
+                             6   5     4 2
+12 : monomialIdeal (x , x , x , x x , x x )
+                     0   1   2   2 3   2 3
+
+i92 : all(L, I -> isBorel I and hilbertPolynomial(S/I) == H)
+
+o92 = true
+
+i93 : class1 = projection L#0
+
+                      2         2               2
+o93 = monomialIdeal (x , x x , x , x x , x x , x )
+                      0   0 1   1   0 2   1 2   2
+
+o93 : MonomialIdeal of S
+
+i94 : class2 = projection L#1
+
+                          2         3
+o94 = monomialIdeal (x , x , x x , x )
+                      0   1   1 2   2
+
+o94 : MonomialIdeal of S
+
+i95 : class3 = projection L#4
+
+                              4
+o95 = monomialIdeal (x , x , x )
+                      0   1   2
+
+o95 : MonomialIdeal of S
+
+i96 : all(1..3, i -> projection L#i == class2)
+
+o96 = true
+
+i97 : all(4..11, i -> projection L#i == class3)
+
+o97 = true
+
+i98 : all(L, I -> I == monomialIdeal distraction I)
+
+o98 = true
+
+i99 : all(0..3, i -> projection gin distraction L#i == class3)
+
+o99 = true
+
+i100 : hasChainProperty = I -> (
+            L := ass I;
+            radI := radical I;
+            all(L, P -> radI : (radI : P) == P or (
+                      gensP := first entries gens P;
+                      all(gensP, r -> (
+                                Q := monomialIdeal delete(r, gensP);
+                                I : (I : Q) == Q)))));
+
+i101 : A = matrix{{1,1,1,1,1,1,1}, {2,0,0,0,1,0,0}, {0,2,0,0,0,1,0}, {2,2,0,2,1,1,1}}
+
+o101 = | 1 1 1 1 1 1 1 |
+       | 2 0 0 0 1 0 0 |
+       | 0 2 0 0 0 1 0 |
+       | 2 2 0 2 1 1 1 |
+
+                4        7
+o101 : Matrix ZZ  <--- ZZ
+
+i102 : IA = toricIdeal(A, {1,1,1,1,1,1,1})
+
+                      2          2          2
+o102 = ideal (x x  - x , x x  - x , x x  - x )
+               3 4    7   2 3    6   1 3    5
+
+o102 : Ideal of S
+
+i103 : inIA = monomialIdeal IA
+
+                                           2     2     2
+o103 = monomialIdeal (x x , x x , x x , x x , x x , x x )
+                       1 3   2 3   3 4   2 5   4 5   4 6
+
+o103 : MonomialIdeal of S
+
+i104 : hasChainProperty inIA
+
+o104 = true
+
+i105 : StoS = map(S, S, {x_1, x_2, x_3, x_3 - x_4, x_5, x_6, x_7});
+
+o105 : RingMap S <--- S
+
+i106 : J = StoS IA
+
+               2           2          2          2
+o106 = ideal (x  - x x  - x , x x  - x , x x  - x )
+               3    3 4    7   2 3    6   1 3    5
+
+o106 : Ideal of S
+
+i107 : inJ = monomialIdeal J
+
+                                   2     2     2       2     2       2       2
+o107 = monomialIdeal (x x , x x , x , x x , x x , x x x , x x , x x x , x x x )
+                       1 3   2 3   3   2 5   3 5   1 4 5   3 6   1 4 6   2 4 6
+
+o107 : MonomialIdeal of S
+
+i108 : hasChainProperty inJ
+
+o108 = false
+
+i109 : A = matrix{{2,0,0,1,0,0,2,1,1,3,2,2,2,3,3,3},
+                  {0,2,0,0,1,0,1,2,1,2,3,2,3,2,3,3},
+                  {0,0,2,0,0,1,1,1,2,2,2,3,3,3,2,3}};
+
+                3        16
+o109 : Matrix ZZ  <--- ZZ
+
+i110 : D = A^{0}+A^{1}+A^{2} || A
+
+o110 = | 2 2 2 1 1 1 4 4 4 7 7 7 8 8 8 9 |
+       | 2 0 0 1 0 0 2 1 1 3 2 2 2 3 3 3 |
+       | 0 2 0 0 1 0 1 2 1 2 3 2 3 2 3 3 |
+       | 0 0 2 0 0 1 1 1 2 2 2 3 3 3 2 3 |
+
+                4        16
+o110 : Matrix ZZ  <--- ZZ
+
+i111 : D = entries transpose D;
+
+i112 : S = QQ[vars(0..15), Degrees => D, MonomialSize => 16];
+
+i113 : I = monomialIdeal(d*j, d*k, d*l, d*m, d*n, d*o, d*p, e*j, e*k,
+           e*l, e*m, e*n, e*o, e*p, f*j, f*k, f*l, f*m, f*n, f*o, f*p,
+           g*j, g*k, g*l, g*m, g*n, g*o, g*p, h*j, h*k, h*l, h*m, h*n,
+           h*o, h*p, i*j, i*k, i*l, i*m, i*n, i*o, i*p, g^2, g*h, g*i,
+           h^2, h*i, i^2, j^2, j*k, j*l, j*m, j*n, j*o, j*p, k^2, k*l,
+           k*m, k*n, k*o, k*p, l^2, l*m, l*n, l*o, l*p, m^2, m*n, m*o,
+           m*p, n^2, n*o, n*p, o^2, o*p, p^2, d^2, e^2, f^2, d*h, e*i,
+           f*g, f*d*i, d*e*g, e*f*h, c*d*g, a*e*h, b*f*i, c*e*g, 
+           a*f*h, b*d*i, c*d*e, a*e*f, b*f*d, c*b*d, a*c*e, b*a*f, 
+           c*b*g, a*c*h, b*a*i);
+
+o113 : MonomialIdeal of S
+
+i114 : apply(D, d -> rank source basis(d, (S^1)/ ideal I))
+
+o114 = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+
+o114 : List
+
+i115 : hasChainProperty I
+
+o115 = false
+
+i116 : 

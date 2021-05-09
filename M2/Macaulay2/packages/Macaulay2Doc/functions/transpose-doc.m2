@@ -36,7 +36,7 @@ document {
      }
 
 document { 
-     Key => (transpose,Matrix),
+     Key => {(transpose,Matrix),(transpose,MutableMatrix)},
      Headline => "transpose a matrix",
      Usage => "transpose f",
      Inputs => {

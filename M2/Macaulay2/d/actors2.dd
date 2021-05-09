@@ -62,7 +62,8 @@ toList(e:Expr):Expr := (
 	       	    List(listClass, if b.Mutable then copy(b.v) else b.v,
 		    	 0, false),
 	       	    false)))
-     else WrongArg("list, sequence, or set"));
+     is s:stringCell do list(strtoseq(s))
+     else WrongArg("list, sequence, set, or string"));
 setupfun("toList",toList);
 values(e:Expr):Expr := (
      when e
@@ -272,7 +273,7 @@ makenew(classs:HashTable,parent:HashTable):Expr := (
 	  then Expr(emptySequence)
 	  else Expr(sethash( List(classs,emptySequence,0,false), ancestor(classs,mutableListClass))))
      else if basicType == dictionaryClass then Expr(DictionaryClosure(globalFrame,newGlobalDictionary()))
-     else buildErrorPacket("basic type for 'new' method should have been BasicList or HashTable"));
+     else buildErrorPacket("basic type for 'new' method should have been BasicList, HashTable, or Dictionary"));
 makenew(classs:HashTable):Expr := makenew(classs,nothingClass);
 -----------------------------------------------------------------------------
 
@@ -367,6 +368,8 @@ NewOfFromFun = newoffromfun;
 
 export stdioS  := setupconst("stdio", Expr(stdIO));
 export stderrS := setupconst("stderr",Expr(stdError));
+export setStdIO   (f:file):void := ( stdIO    = f; setGlobalVariable(stdioS,  Expr(stdIO)));
+export setStdError(f:file):void := ( stdError = f; setGlobalVariable(stderrS, Expr(stdError)));
 
 openfilesfun(e:Expr):Expr := (
      n := 0;
@@ -464,7 +467,7 @@ isListener(e:Expr):Expr := (
 setupfun("isListener",isListener);
 
 header "
-    #if USE_MYSQL
+    #if WITH_MYSQL
       #include <mysql/mysql.h>
     #endif
     ";
@@ -475,7 +478,7 @@ close(g:Expr):Expr := (
 	  is null do nothing
 	  is n:MysqlConnection do (
 	       Ccode(void,"
-		    #if USE_MYSQL
+		    #if WITH_MYSQL
 		       mysql_close(",n,")
 		    #endif
 		    ");
@@ -686,7 +689,8 @@ realPart(e:Expr):Expr := (
      is z:CCcell do toExpr(realPart(z.v))
      is QQcell do e
      else WrongArg("a number"));
-setupfun("realPart",realPart);
+setupfun("realPart0",realPart);
+
 imaginaryPart(e:Expr):Expr := (
      when e
      is ZZcell do zeroE
@@ -694,7 +698,7 @@ imaginaryPart(e:Expr):Expr := (
      is z:CCcell do toExpr(imaginaryPart(z.v))
      is QQcell do zeroE
      else WrongArg("a number"));
-setupfun("imaginaryPart",imaginaryPart);
+setupfun("imaginaryPart0",imaginaryPart);
 
 Foo := { foo:void };					    -- make a new type of pointer that's innocuous and unusable
 numfinalizer := 0;

@@ -1,10 +1,10 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"MonodromySolver",
-    	Version => "1.11", 
-    	Date => "Nov 2017",
+    	Version => "1.14", 
+    	Date => "Nov 2020",
     	Authors => {
-	     {Name => "Timothy Duff", Email => "timothy.duff@ncf.edu"},
+	     {Name => "Timothy Duff", Email => "tduff3@gatech.edu"},
 	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
 	     {Name => "Anders Nedergaard Jensen", Email => "jensen@math.au.dk"},
 	     {Name => "Kisun Lee", Email => "klee669@math.gatech.edu"},
@@ -13,12 +13,14 @@ newPackage(
 	     },
     	HomePage => "http://www.math.gatech.edu/~leykin",
     	Headline => "solving polynomial systems via monodromy",
-	PackageImports => {"PHCpack","NAGtypes"},
+	Keywords => {"Numerical Algebraic Geometry"},
+	PackageImports => {"gfanInterface","NAGtypes"},
 	PackageExports => {"NumericalAlgebraicGeometry"},
 	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
   	DebuggingMode => false,		
-  	-- DebuggingMode => true,		 -- set to true only during development
-  	CacheExampleOutput => true
+  	--DebuggingMode => true,		 -- set to true only during development
+  	CacheExampleOutput => false
+--        OptionalComponentsPresent => true --  set to true only during development
     	)
 
 
@@ -26,33 +28,33 @@ newPackage(
 -- must be placed in one of the following two lists
 
 export{"Edges", "Graph", "Node1", "Node2", "TargetSolutionCount", "Potential", "Vertices", "PartialSols", "SpecializedSystem", "Potential12",
-     "gamma1", "gamma2", "Correspondence21", "Family", "Potential21", "Correspondence12", "homotopyGraph", "MonodromySolverOptions"}
+     "gamma1", "gamma2", "Correspondence21", "Family", "Potential21", "Correspondence12", "homotopyGraph", "MonodromySolverOptions", "monodromyGroup"}
 
 debug NAGtypes
 debug NumericalAlgebraicGeometry
 debug Core
+needs "./MonodromySolver/misc.m2"
+needs "./MonodromySolver/Systems.m2"
 needs "./MonodromySolver/PointArray.m2"
 needs "./MonodromySolver/HomotopyGraphTypes.m2"
-needs "./MonodromySolver/random_methods.m2"
 needs "./MonodromySolver/solveViaMonodromy.m2"
+needs "./MonodromySolver/galois-group.m2"
+needs "./MonodromySolver/Tests.m2"
 
 
 beginDocumentation()
-load "MonodromySolver/Documents/DocMonodromysolver.m2"
+needs "./MonodromySolver/Documentation.m2"
 end
 
 restart
-uninstallPackage "MonodromySolver"
-installPackage "MonodromySolver"
-installPackage("MonodromySolver", RemakeAllDocumentation=>true)
 check "MonodromySolver"
-peek MonodromySolver
---help "OnesiteModificationA"
---viewHelp "OnesiteModificationA"
---examples "OnesiteModificationA"
-viewHelp MonodromySolver
-viewHelp potentialE
 
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
--- End:
+uninstallPackage "MonodromySolver"
+restart
+installPackage "MonodromySolver"
+check "MonodromySolver"
+
+uninstallPackage "MonodromySolver"
+restart
+installPackage("MonodromySolver", RemakeAllDocumentation=>true, RerunExamples=>true)
+check "MonodromySolver"

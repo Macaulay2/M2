@@ -48,7 +48,7 @@ Mac: Things are a bit more complicated.  The issue is that CLisp seems to have b
 
 6) Make sure the bergman executable can be run from any command prompt.  One way to do this is to add a symbolic link 
    of the bergman executable script to /usr/local/bin (or any other directory already on your path).  This command
-   may look something like: "ls -s <bergmanroot>/bin/clisp/unix/bergman /usr/local/bin/bergman"
+   may look something like: "ln -s <bergmanroot>/bin/clisp/unix/bergman /usr/local/bin/bergman"
    provided that you followed the steps above to generate the bergman executable.  Note that in the above
    command, the *full* path (from the root directory) to <bergmanroot> must be given.
 

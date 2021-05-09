@@ -74,7 +74,7 @@ expression CoherentSheaf := F -> (
 	    scan(rle,
 		(n,d) -> (
 		    s := new Superscript from {expression OO_X, expression n};
-		    if not all(d, zero) then s = Adjacent {s, if #d === 1 then Parenthesize d#0 else toSequence d};
+		    if not all(d, zero) then s = Adjacent {s, if #d === 1 then Parenthesize unhold expression d#0 else expression toSequence d};
 		    if expr === null then expr = s else expr = expr ++ s;
 		    ));
 	    expr
@@ -120,13 +120,19 @@ Module ~ := sheaf Module := CoherentSheaf => (M) -> sheaf(Proj ring M,M)
 variety = method()
 variety CoherentSheaf := Variety => (F) -> F.variety
 variety SheafOfRings := Variety => O -> O.variety
+-- The following two methods returns either a Variety or 
+-- (from Schubert2) an AbstractVariety, or
+-- (from NormalToricVarieties) a NormalToricVariety
+-- and perhaps other uses later...
+variety Ring := S -> if S.?variety then S.variety else error "no variety associated with ring"
+variety RingElement := f -> variety ring f
+
 ring CoherentSheaf := (F) -> ring F.module
 numgens CoherentSheaf := (F) -> numgens F.module
 module CoherentSheaf := Module => F -> F.module
 module SheafOfRings  := Module => F -> module F.ring
 Ideal * CoherentSheaf := (I,F) -> sheaf(F.variety, I * module F)
 CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.variety, F.module ++ G.module)
-tensor(CoherentSheaf,CoherentSheaf) := CoherentSheaf => options -> (F,G) -> F**G
 CoherentSheaf ** CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.variety, F.module ** G.module)
 CoherentSheaf ZZ := CoherentSheaf => (F,n) -> sheaf(variety F, F.module ** (ring F)^{n})
 SheafOfRings ZZ := CoherentSheaf => (O,n) -> O^1(n)
@@ -392,6 +398,8 @@ sheafExt(ZZ,SheafOfRings,SheafOfRings) := Module => (n,O,R) -> sheafExt^n(O^1,R^
 -----------------------------------------------------------------------------
 
 Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => opts -> (m,F,G') -> (
+     -- depends on truncate methods
+     needsPackage "Truncations";
      G := G'#0;
      e := G'#1#0;
      if variety G =!= variety F
@@ -473,7 +481,7 @@ randomKRationalPoint Ideal := I -> (
      R:=ring I;
      if char R == 0 then error "expected a finite ground field";
      if not class R === PolynomialRing then error "expected an ideal in a polynomial ring";
-     if not isHomogeneous I then error "expected a homogenous ideal";
+     if not isHomogeneous I then error "expected a homogeneous ideal";
      n:=dim I;
      if n<=1 then error "expected a positive dimensional scheme";
      c:=codim I;

@@ -1,12 +1,14 @@
 -- -*- coding: utf-8 -*-
 newPackage("Markov",
      Authors => {
-	  {Name => "Luis Garcia"},
+	  {Name => "Luis Garcia-Puente"},
 	  {Name => "Mike Stillman"}
 	  },
      DebuggingMode => false,
-     Headline => "Markov ideals, arising from Bayesian networks in statistics",
-     Version => "1.2"
+     Keywords => {"Statistics"},
+     Headline => "Markov ideals arising from Bayesian networks in statistics",
+     Version => "1.2",
+     PackageImports => {"Elimination"}
      )
 
 ------------------------------------------
@@ -37,7 +39,7 @@ newPackage("Markov",
 export {"makeGraph", "displayGraph", "localMarkovStmts", "globalMarkovStmts", "pairMarkovStmts",
        "markovRing", "marginMap", "hideMap", "markovMatrices", "markovIdeal", "writeDotFile", "removeRedundants", 
        "gaussRing", "gaussMinors", "gaussIdeal", "gaussTrekIdeal", "Graph"}
-exportMutable {"dotBinary","jpgViewer"}
+exportMutable {"dotBinary"}
 
 -------------------------
 -- Graph visualization --
@@ -68,8 +70,6 @@ makeGraph List := (g) -> (
 
 -- dotBinary = "/sw/bin/dot"
 dotBinary = "dot"
--- jpgViewer = "/usr/bin/open"
-jpgViewer = "open"
 
 writeDotFile = method()
 writeDotFile(String,Graph) := (filename,G) -> (
@@ -103,7 +103,7 @@ displayGraph = method()
 displayGraph(String,String,Graph) := (dotfilename,jpgfilename,G) -> (
      writeDotFile(dotfilename,G);
      runcmd(dotBinary | " -Tjpg "|dotfilename | " -o "|jpgfilename);
-     runcmd(jpgViewer | " " | jpgfilename);
+     show URL("file://" | toAbsolutePath jpgfilename);
      )
 displayGraph(String,Graph) := (dotfilename,G) -> (
      jpgfilename := temporaryFileName() | ".jpg";
@@ -600,7 +600,7 @@ document {
 	  J = gaussIdeal(R,G)
           ///,
      PARA{},
-     "A list of independence statments (as for example returned by globalMarkovStmts)
+     "A list of independence statements (as for example returned by globalMarkovStmts)
      can be provided instead of a graph.",
      PARA{},
      "The ideal corresponding to a conditional independence statement {A,B,C} (where A,B,C,

@@ -1,3 +1,6 @@
+-- this is the OLD way of building SLPs used in the old "track"
+-- "trackHomotopy" relies on SLPexpressions.m2 
+
 ------------ preSLPs ------------------------------------------------------------------------
 -- preSLP = (constants, program, output_description)
 --   constants = list of elements in CC
@@ -711,7 +714,6 @@ inline mul(complex c)
       )
 
 ///
-restart
 loadPackage "NumericalAlgebraicGeometry"; debug NumericalAlgebraicGeometry;
 R = CC[x,y,z]
 g = 3*y^2+(2.1+ii)*x
@@ -882,64 +884,24 @@ toPreSLP (List,List) := (inputs,outputs) -> (
     )  
 
 TEST ///
-needsPackage "SLPexpressions"
+debug needsPackage "NumericalAlgebraicGeometry"
+debug needsPackage "SLPexpressions"
+-- evaluate toPreSLP == compress 
 
---InputGate
 X = inputGate symbol X
 Y = inputGate symbol Y
-
---SumGate and ProductGate
-C = sumGate {X+Y,Y,X}
-D = productGate {X*Y,Y,C}
-h = valueHashTable({X,Y},{1,ii})
-assert (value(D,h) == product{value(X*Y,h),value(Y,h),value(C,h)})
-support (X*X)
-support (D+C)
-
--- one way to handle constants
 E = inputGate 2
+oneGate = inputGate 1
 F = product{E*(X*X+E*Y)+oneGate, oneGate}
-
--- sub
-G = sub(sub(F,X=>X+Y),Y=>X*Y) 
--- sub and compress = evaluate over a ring
+G = (sub(sub(matrix{{F}},X=>X+Y),Y=>X*Y))_(0,0) 
 R = CC[x,y] 
-H = sub(sub(G,X=>E),Y=>inputGate(x+2*y))
-I = compress H 
 
--- DetGate
-J = detGate {{X,C,F},{D,Y,E},{G,F,X}}
-
--- diff
-diff(X,F)
-diff(X,J)
-h = valueHashTable({X,Y},{x,y})
-assert(
-    value(diff(X,J),h) 
-    ==
-    diff(x, det matrix applyTable(J.Inputs, i->value(i,h)))
-    )
-
--- DivideGate
-G/F
-diff(X,X/Y)
-diff(Y,X/Y)
-h = valueHashTable({X,Y},{2,3})
-GY = value(diff(Y,G),h)
-FY = value(diff(Y,F),h)
-assert ( value(compress diff(Y,G/F), h) == (GY*value(F,h) - value(G,h)*FY)/(value(F,h))^2 )
-
-debug SLPexpressions
-debug NumericalAlgebraicGeometry
--- evaluate toPreSLP == compress 
 output = {F, compress diff(X,F), G}
 preSLP = toPreSLP({X,Y},output)
 out'eval = evaluatePreSLP(preSLP, gens R)
-out'comp = matrix{ output/(o->sub(sub(o,X=>inputGate x),Y=>inputGate y))/compress/(g->g.Name) }
+out'comp = matrix applyTable(entries compress sub(matrix{output},{X=>inputGate x,Y=>inputGate y}), g->g.Name)
 assert(out'eval == out'comp)
 printSLP preSLP
-printAsSLP output
+printAsSLP ({X,Y},output)
 ///
-
-
 

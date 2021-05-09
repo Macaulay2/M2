@@ -1,119 +1,148 @@
-
 --------------------------------------------------------------------------------
--- Copyright 2017  Clas L\"ofwall and Samuel Lundqvist
+-- Copyright 2020  Clas L\"ofwall and Samuel Lundqvist
 -- 
 -- You may redistribute this program under the terms of the GNU General Public
 -- License as published by the Free Software Foundation, either version 2 of the
 -- License, or any later version.
 --------------------------------------------------------------------------------
 
--- "
-
 newPackage(
-	"GradedLieAlgebras",
-	Version => "1.0",
-	Date => "March 2017",
-	Authors => {{		  Name => "Clas Löfwall",
-		  Email => "clas.lofwall@gmail.com"},
-	      {		  Name => "Samuel Lundqvist",
-		  Email => "samuel@math.su.se"} 
-	      },
+	"GradedLieAlgebras",  
+	Version => "3.0",
+	Date => "June 2020",
+	Authors => {
+	    {Name => "Clas Löfwall", Email => "clas.lofwall@gmail.com"},
+	    {Name => "Samuel Lundqvist", Email => "samuel@math.su.se"}},
+	Keywords => {"Lie Groups and Lie Algebras"},
 	AuxiliaryFiles => true,
         DebuggingMode => false,
 	Headline => "computations in graded Lie algebras"
-   	)
- 
+   	) 
+  
 export {
-    "annLie",
-    "holonomyLie",
-    "axiomsLie",          
-    "basicExpressionLie",
-    "basicMonomialLie",
-    "basisExtLie",
-    "basisLie", 
-    "boundariesBasisLie", 
-    "centreLie", 
-    "characterLie", 
-    "compdeg",    
-    "computeLie",     
-    "decompidealLie",
-    "deglength",     
-    "degLie",
-    "DerLie", 
-    "derLie",
-    "defLie", 
-    "diffLie",
-    "dimLie", 
-    "dimsLie", 
-    "dimTableLie",
-    "dimtotLie",
-    "divisorLie",
-    "eulerLie", 
-    "evalDerLie",     
-    "evalDiffLie",
-    "evalMapLie",
-    "extAlgLie",      
-    "extAlgMultLie", 
-    "extAlgRing",     
-    "field",     
-    "genDiffs",     
-    "generalExpressionLie",
-    "gensLie", 
-    "genSigns",
-    "genWeights", 
-    "homologyBasisLie",
-    "homologyLie", 
-    "indexFormLie",
-    "idealBasisLie",
-    "idealLie",
-    "imageLie",
-    "imageBasisLie", 
-    "intersectionLie",     
-    "invImageLie", 
-    "invImageBasisLie",
-    "kernelBasisLie", 
-    "kernelLie",
-    "koszulDualLie", 
-    "LieAlgebra", 
+    "boundaries",
+    "center",
+    "computedDegree",
+    "cycles",
+    "differential",
+    "differentialLieAlgebra",
+    "dims",
+    "extAlgebra",
+    "ExtAlgebra",
+    "ExtElement",	          	    	    	    	    	    	    	
+    "Field",
+    "firstDegree",
+    "FGLieIdeal",
+    "FGLieSubAlgebra",
+    "holonomy",
+    "holonomyLocal",
+    "indexForm",
+    "innerDerivation",
+    "koszulDual",
+    "LastWeightHomological",
+    "LieAlgebra",
     "lieAlgebra",
+    "LieAlgebraMap",
+    "lieDerivation",
+    "LieDerivation",
+    "LieElement",
+    "lieHomology",
+    "LieIdeal",
+    "lieIdeal",
     "lieRing",
-    "localLie",  
-    "MapLie",
-    "mapLie",
-    "maplie",
-    "maxDeg",
+    "LieSubSpace",
+    "lieSubSpace",
+    "LieSubAlgebra",
+    "lieSubAlgebra",
+    "listMultiply",
     "mbRing",
-    "minmodel",
-    "minmodelLie", 
-    "minPresLie",
-    "modelmap",
-    "monomialLie",   
-    "multDerLie",
-    "multLie", 
-    "multListLie",
-    "multOnly",   
-    "normalFormLie",
-    "numGen",   
-    "permopLie",
-    "randomLie", 
-    "relsLie", 
-    "signDer", 
-    "signExtLie",
-    "signLie", 
-    "sourceLie", 
-    "subalgBasisLie", 
-    "subalgLie", 
-    "symmCyclePermLie", 
-    "symmPermLie",     
-    "targetLie",
-    "toMonomialLie",
-    "useLie", 
-    "weightDer",  
-    "weightLie", 
-    "whichLie"
-  }
+    "minimalModel",
+    "normalForm",
+    "sign",
+    "Signs",
+    "weight",    
+    "VectorSpace",
+    "zeroDerivation",
+    "zeroIdeal",
+    "zeroMap"
+    }
+
+
+
+
+-- the following built-in functions has a special meaning
+-- in this package:
+
+-- basis, dim, degree, degreeLength, baseName, standardForm, isWellDefined,
+-- coefficients, monomials, use, random, describe, generators,
+-- ideal, image, quotient, isSurjective, map, inverse, sum, intersect,
+-- Ext, numgens, member, kernel, annihilator, Weights, 
+-- diff, max, gb, ambient, source, target, minimalPresentation,
+-- isIsomorphism, trace 
+ 
+
+-- Also, the following symbols are used
+-- /, \,\\, SPACE, +, -, @, ++, *
+
+-- LIE ALGEBRA CONSTRUCTIONS
+-- A free Lie algebra without differential is constructed by lieAlgebra(x) where x is a list 
+-- of names of the generators. Options for weights, signs, 
+-- field may be given and also the option
+-- LastWeightHomological may be set to true if the last weight is considered to be the 
+-- homological degree. A differential Lie algebra 
+-- may be constructed using D=differentialLieAlgebra(x)
+-- where x is a list of homogeneous elememnts in a free Lie algebra L. 
+-- The elements in x must obey some
+-- rules for weight and sign, which is checked by the program. 
+-- The square of the differential might
+-- not be zero. New relations are added to get the 
+-- square of the differential equal to zero. 
+-- The relations are given by D#ideal and may be seen by the user (but not change), 
+-- using describe under the key ideal. The relations may also be obtained as ideal(D).
+-- The ambient Lie algebra
+-- of D is L, the free underlying Lie algebra, it is obtained as ambient(D) or
+-- D#cache.ambient. 
+-- A quotient Lie algebra Q of L may be formed in two ways,
+-- 1. as L/x, where x is a list of homogeneous elements in L or 
+-- 2. as L/I, where I is an ideal of L. 
+-- In case 1, x may not be invariant under the differential. 
+-- As in the construction of differential
+-- Lie algebras, the extra relations are added to (L/x)#ideal 
+-- and they may be seen as above by the user using describe.  
+-- In case 2, if I#?ideal then I is generated by the list I#gens, 
+-- so L/I is defined as L/I#gens.
+-- If not I#?ideal, then there are two cases, either 
+-- 2a. L#ideal is a list or 
+-- 2b L#ideal is an ideal J of class LieIdeal. 
+-- In case 2a,
+-- the ambient of L/I is defined to be L and (L/I)#ideal=I. 
+-- In case 2b, L=M/J and then L/I
+-- is defined as M/inverse(h,I) where h is the natural map M -> L. Also, ambient(L/I)=M. 
+-- It remains to consider case 1. 
+-- Again there are two cases, either 
+-- 1a. L#ideal is a list or 
+-- 1b L#ideal is an ideal J of class LieIdeal. 
+-- In case 1a,
+-- L=M/y as non-differential Lie algebra where M is free and the ambient of L. 
+-- Now L/x is defined as
+-- M/z where z is the union of y and imap(x,M)  where imap(x,M) is a section of the map M->L. 
+-- Also, ambient(L/x)=M. If L has a differential, then x is extended to get invariance under 
+-- the differential.
+-- In case 1b,
+-- then L=M/J, where M#ideal is a list. Now first N is defined as M/imap(x,M). 
+-- Then finally L/x is defined as 
+-- N/image(h,J), where h: M -> N. Also ambient(L/x)=N.
+--
+-- The ambient of Q, which is a quotient of a  differential Lie algebra D by a 
+-- list is F, the free non-differential underlying Lie algebra. 
+-- The elements of Q#ideal belong to ambient(Q)=F.
+-- Also, the elements of Q#diff belong to ambient(Q)=F.
+-- The ambient of Q=L/I where class I=LieIdeal is L, The elements of Q#diff belong to ambient(Q)=L.
+-- The ideal Q#ideal=I is an ideal of L.
+ 
 
 recursionLimit=10000;
+
 
 ----------------------------------------
 --
@@ -122,1508 +151,85 @@ recursionLimit=10000;
 ----------------------------------------
 
 
-LieAlgebra = new Type of MutableHashTable
-MapLie = new Type of MutableHashTable
-DerLie = new Type of MutableHashTable
+LieAlgebra = new Type of HashTable;
+LieElement = new Type of BasicList;
+ExtAlgebra = new Type of MutableHashTable;
+ExtElement = new Type of BasicList;
+LieAlgebraMap =  new Type of HashTable;
+LieDerivation =  new Type of HashTable;
+VectorSpace = new Type of HashTable;
+LieSubSpace = new Type of VectorSpace;
+LieSubAlgebra = new Type of LieSubSpace;
+LieIdeal = new Type of LieSubAlgebra;
+FGLieSubAlgebra = new Type of LieSubAlgebra;
+FGLieIdeal = new Type of LieIdeal;
 
-globalAssignment LieAlgebra
-globalAssignment MapLie
-globalAssignment DerLie
 
-local LL;
 
-----------------------------------------
--- derLie
-----------------------------------------
--- defines a derivation d from M to L, where L is a M-module,
--- by means of f, that is, 
--- d([a,b]) = [d(a),f(b)]+(-1)^(d*a)[f(a),d(b)]. See also
--- mapLie and evalDerLie.
-
-derLie = method(TypicalValue=>DerLie)
-derLie(MapLie,List) := (f,y)->(
-    N:=LL;
-    L:=f.targetLie; 
-    M:=f.sourceLie;
-    d:=new MutableHashTable;  
-    d.sourceLie=M; 
-    d.targetLie=L; d.maplie=f; ok:=true; 
-    if not M.numGen==length y then (ok=false;
-	print(y);print(" has not the right length")) else (
-    	if all(y,z->z==[]) then ( 
-	    d.weightDer=flatten table(1,L.deglength,x->0);
-	    if d.weightDer=={} then d.weightDer={0};
-      	    d.signDer=0) 
-	else (
-     	    i:=position(y,z->not z==[]);
-	    LL=L;
-     	    d.weightDer=weightLie(y_i)-(M.genWeights)_i;
-     	    d.signDer=(signLie(y_i)-(M.genSigns)_i)%2
-    	    ));
-    LL=M; 
-    n:=(d.weightDer)_0+relDegMax(); 
-    if L.compdeg<n then (
-	LL=L;computeLie n);  
-    LL=L;
-    apply(y, x->if not generalExpressionLie x then (
-		    ok=false;
-	      	    print(x);
-	      	    print("is not a general Lie expression")));
-    apply(length y,i->(if not y_i==[] then ( 
-		if not d.weightDer==weightLie(y_i)-(M.genWeights)_i then (
-		    ok=false;	 
-	      	    print(y_i);    
-	      	    print(" has not the right weight"));
-          	if not d.signDer==(signLie(y_i)-(M.genSigns)_i)%2 then (
-		    ok=false; 
-	       	    print(y_i);
-	       	    print(" has not the right sign")))));
-    if ok then (
-	apply(M.numGen,i->d#((M.gensLie)_i)=y_i); 
-	e:=new DerLie from d; 
-	ok=checkder e
-	);
-    if ok then (
-	LL=N; 
-	e)
+debug Core; 
+net LieAlgebra:=L->(
+    if hasAnAttribute L then
+    return toString getAttribute(L,ReverseDictionary);
+    horizontalJoin ( net class L, if #L > 0 then 
+	("{...", toString(#L), "...}") else "{}" )
     );
-
-----------------------------------------
--- lieAlgebra
-----------------------------------------
--- it is required that the last part of the weight is the homological
--- degree, which should be >= 0 and less than the first degree. 
--- The differential reduces the homological
--- degree by 1 (it also changes the "sign"). The other weights are 
--- left unchanged. If no differential is given a homological degree = 0
--- is added to the weight list and the differential is defined to be 0
-
-lieAlgebra = method(TypicalValue => LieAlgebra,Options => 
-    {genWeights => 1, genSigns => 0, field => QQ, genDiffs => {}})
-lieAlgebra(List,List) := opts->(gensLie,relsLie)->(
-    L := new MutableHashTable; 
-    LL=L;
-    L.gensLie=gensLie;
-    L.genWeights=opts.genWeights;
-    L.genSigns=opts.genSigns;
-    L.genDiffs=opts.genDiffs;
-    L#(symbol cache)=new CacheTable;
-    if L.genDiffs=={} then L.cache.diffl=false else L.cache.diffl=true;
-    L.relsLie=relsLie;
-    L.field=opts.field;
-    L.numGen=length L.gensLie;
-    L.compdeg=0;
-    L.cache.maxDeg=5;
-    L.cache.lieRing=L.field[]; 
-    L.cache.mbRing=L.field[];
-    L.cache#(symbol dims)=new MutableHashTable;
-    L.cache#(symbol opL)=new MutableHashTable;
-    L.cache#(symbol bas)=new MutableHashTable;
-    L.cache#(symbol gr)=new MutableHashTable;
-    L.cache#(symbol deglist)=new MutableHashTable;
-    if L.gensLie=={} then doZeroLie();
-    L.cache.bas#0={mb0}; 
-    L.cache.dims#0=1;
-    if L.genSigns===0 then L.genSigns=flatten table(1,L.numGen,x->0);
-    if L.genSigns===1 then L.genSigns=flatten table(1,L.numGen,x->1); 
-    if not L.cache.diffl or (unique L.genDiffs==={[]} and L.genWeights===1) then ( 
-	L.genDiffs=flatten table(1,L.numGen,x->[]);
-    	if not L.genWeights==={} then (
-	    if L.genWeights===1 then ( 
-	    	L.genWeights=flatten table(1,L.numGen,x->{1,0})
-		) else (
-		if class (L.genWeights)_0===ZZ then ( 
-		    L.genWeights=apply(L.genWeights,x->{x,0})
-		    ) else (
-		    L.genWeights=apply(L.genWeights,x->append(x,0))
-		    )
-		)
-	    )
-	); 
-    ok:=true;  
-    if L.cache.diffl and not unique L.genDiffs==={[]} and L.genWeights===1 then (
-    	L.genWeights=flatten table(1,L.numGen,x->{1,0});
-    	);
-    if L.cache.diffl and any(L.genWeights,x->class x===ZZ) then (
-	ok=false;
-        print("there is no homological degree defined")
-	);
-    if ok then ( 
-  	if L.genWeights==={} then L.deglength=0 else L.deglength=length (L.genWeights)_0;
-  	if min(apply(L.genWeights,x->x_0))<1 then (
-	    ok=false;
-            print("the (first) degree of a generator must be at least one")
-	);
-        if L.cache.diffl and any(L.genWeights,x->x_0<=x_(-1)) then (
-	    ok=false;
-            print("the homological degree must be less than the (first) degree")
-	    );
-  	if L.cache.diffl and any(L.genWeights,x->x_(-1)<0) then (
-	    ok=false;
-            print("the homological degree must be non-negative")
-	    );
-  	if not L.numGen==length L.genWeights  then (
-	    ok=false;
-            print("the number of weights must be equal to the number of generators")
-	    );
-  	if not L.numGen==length L.genSigns then (
-	    ok=false;
-            print("the number of signs must be equal to the number of generators")
-	    );
-  	if not L.numGen==length L.genDiffs then (
-	    ok=false;
-            print("the number of differentials must be equal to the number of generators")
-	    );
-  	if length unique apply(L.genWeights,length)>1 then (
-	    ok=false;
-            print("all weights must have the same length")
-	    );
-  	if not all(L.genSigns,x->x===0 or x===1) then (
-	    ok=false;
-            print("all signs must be 0 or 1")
-	    );
- 	);
-    if ok then (
-     	L.cache.lieRing=lieR();
-     	apply(
-       	    join(relsLie,L.genDiffs), 
-            x->if not generalExpressionLie x then (
-		ok=false;
-		print(x);
-		print("is not a general Lie expression"))
-	    );
-     	apply(L.numGen,
-             i->( x:=isubstrel((L.genDiffs)_i); 
-	          if not x==[] then ( 
-		      if class x===Array then (
-			  w:=degiterlie(x); 
-			  s:=sign(x)
-			  ) else (
-			  w=degiterlie((x_1)_0); 
-			  s=sign((x_1)_0)
-			  ); 
-		      unit:=append(flatten table(1,L.deglength -1,x->0),1);
-		      if not (L.genWeights)_i-w==unit then ( 
-			  ok=false;
-	                  print((L.genDiffs)_i);
-	                  print(" has not the right weight")
-		       	  );
-		      if (L.genSigns)_i==s then ( 
-			  ok=false;
-	                  print((L.genDiffs)_i);
-	                  print(" has not the right sign")
-  		         )
-	             )
-	         )
-            )
-       );
-   if ok then ( 
-       M:=new LieAlgebra from L;LL=M; if M.cache.diffl then ( 
-	   n:=max(apply(join(L.genDiffs,relsLie),degLie));
-	   computeLie n; 
-	   ok=checkdiff()
-	   ) 
-        );
-    if ok then M
+debug Core; 
+net LieIdeal:=I->(
+    if hasAnAttribute I then
+    return toString getAttribute(I,ReverseDictionary);
+    "ideal of"|" "|net(I#lieAlgebra)
     );
-
-
-----------------------------------------
--- mapLie
-----------------------------------------
--- The value f is a MutableHashTable defined on M.gensLie, y is a list of 
--- elements in L of degree <= n, written in the same way as relations,
--- and these are the values of f on the generators in M. Also [] is allowed.
--- The values are checked to have the same multidegree as the corresponding
--- generators in M, and the same sign.
- 
- mapLie = method(TypicalValue=>MapLie)
- mapLie(LieAlgebra,LieAlgebra,List) := (L,M,y)->(
-     N:=LL;
-     f:=new MutableHashTable;  
-     f.sourceLie=M; 
-     f.targetLie=L; 
-     if not M.field===L.field then (
-       	 print("The Lie algebras must be defined over the same field")
-       	 ) else ( 
-       	 ok:=true; 
-       	 LL=M; 
-       	 n:=max(0,max(apply(join(M.gensLie,M.genDiffs,M.relsLie),degLie))); 
-       	 LL=L;
-       	 computeLie n; 
-       	 if not M.numGen==length y then (
-	     ok=false;
-	     print(y);
-	     print(" has not the right length")
-	     ) else (
-    	     apply(y, 
-	       	 x-> if not generalExpressionLie x then (
-	    	     ok=false;
-	    	     print(x);
-	    	     print("is not a general Lie expression")
-		     )
-	       	 );	  
-    	     apply(length y,
-	       	 i->if not y_i==[] and not weightLie(y_i)==(M.genWeights)_i then (
-	    	     ok=false;
-	    	     print(y_i);
-	    	     print(" has not the right weight")
-	    	     )
-	       	 );
-    	     apply(length y,
-	       	 i->if not y_i==[] and not signLie(y_i)==(M.genSigns)_i then (
-	    	     ok=false;
-	    	     print(y_i);
-	    	     print(" has not the right sign")
-		     )
-	       	 )
-    	     ); 
-       	 if ok then (
-	     apply(M.numGen, i->f#((M.gensLie)_i)=y_i); 
-	     g:=new MapLie from f; 
-	     ok=checkmap g
-	     ); 
-       	 if ok then (
-	     LL=N;
-	     g
-	     )
-       	 )
-     );
-
-
-----------------------------------------
---
--- EXPORTED FUNCTIONS
---
-----------------------------------------
-
-----------------------------------------
---annLie
-----------------------------------------
-
-annLie=method(TypicalValue=>List)
-annLie(ZZ,ZZ,List) := (s,d,p)->(
-    computeLie(d+s);       
-    if p=={} or unique p=={[]} then basisLie(d) else (
-    	if not all(p,y->generalExpressionLie y) or not unique degLie p == {s} then (
-	    print("the input is not correct") 
-	    ) else (	   
-       	    idefLie idivisorLie(d+s,s,{0_(LL.cache.lieRing)}, apply(p,x->idefinvLie x))
-       	    )    
-   	) 
+debug Core; 
+net FGLieIdeal:=I->(
+    if hasAnAttribute I then
+    return toString getAttribute(I,ReverseDictionary);
+    "finitely generated ideal of"|" "|net(I#lieAlgebra)
     );
-
-
-
-
-----------------------------------------
--- basicExpressionLie
-----------------------------------------
-
-basicExpressionLie = x -> (
-    x===[] or basicMonomialLie x or (
-	class x === List and 
-	generalExpressionLie x and 
-	all(x_1,basicMonomialLie) and
-	all(x_0,y->not y==0) and 
-	not (length x_0==1 and (x_0)_0==1_(LL.field))
-	)	 
-    );
-
-
-----------------------------------------
--- basicMonomialLie
-----------------------------------------	
-basicMonomialLie = x -> monomialLie x and not x===[] and member(x,basisLie degLie x);
-
-
-----------------------------------------
---basisLie   
-----------------------------------------
-   
-basisLie=method(TypicalValue=>List)
-basisLie(ZZ):=(n)->(
-    computeLie n;
-    idefLie ibasisLie n
-    );
-basisLie(ZZ,ZZ):=(n,d)->(
-    computeLie n;
-    select(basisLie(n),x->(weightLie x)_(-1)==d)
-    );
-basisLie(List):=(x)->(
-    computeLie x_0;
-    select(basisLie(x_0),y->weightLie y==x)
-    ); 
- 
- 
-----------------------------------------
---basisExtLie   
-----------------------------------------
-
-basisExtLie=method(TypicalValue=>List)
-basisExtLie(ZZ):=(n)->(
-    minmodelLie n;
-	select(gens LL.cache.extAlgRing,x->idegLie(x)==n)
-    );
-basisExtLie(ZZ,ZZ):=(n,d)->(
-    minmodelLie n;
-	select(basisExtLie(n),x->last degree x==d)
-    );
-basisExtLie(List):=(x)->(
-   minmodelLie x_0;
-	select(basisExtLie(x_0),y->degree y==x)
-    ); 
-
-
-----------------------------------------
---boundariesBasisLie
-----------------------------------------
-
-boundariesBasisLie = method(TypicalValue=>List)
-boundariesBasisLie(ZZ,ZZ) := (n,d)->(
-    computeLie n;
-    idefLie iboundariesLie(n,d)
-    );
-
-
-----------------------------------------
---centreLie
-----------------------------------------
--- gives all the central elements in degree d
-centreLie = method()
-centreLie(ZZ) := (d)->(
-    computeLie(d+genDegMax());
-    if LL.cache.dims#d==0 then {} else (
-	intersectionLie(d,(for i from 1 to genDegMax() list 
-       		annLie(i,d,idefLie (if LL.cache.gr#i==0 then 
-	       		listdeg(i,allgens()) else 
-	       		apply(listdeg(i,allgens()),x->x%(LL.cache.gr#i))))))
-	)
-    );
--- gives all the central elements up to the computed degree minus gendegmax
-centreLie(LieAlgebra):=(L)->(
-    N:=LL;
-    LL=L;
-    out:=flatten (n:=1; while LL.cache.dims#?(n+genDegMax()) list centreLie(n) do n=n+1);
-    LL=N;	 
-    out
-    );
-
-     
-----------------------------------------
---characterLie
-----------------------------------------
-characterLie=method(TypicalValue=>RingElement) 
-characterLie(ZZ,List,List):=(d,x,y)->(
-    if not all(y,z->generalExpressionLie z and degLie z==d) then (
-    	print("the third input is not correct")
-    	) else (
-    	if not length subalgBasisLie(d,y)==length y then print("the third input is not a basis") else (
-	    trace solve(basToMat(d,apply(y,z->idefinvLie z)),basToMat(d,apply(y,z->ipermopLie(x,z))))
-	    )
-    	)
-    );
- 
-      
-----------------------------------------
---computeLie   
-----------------------------------------      
-
-computeLie=method(TypicalValue=>List)
-computeLie(ZZ):=(d)->(
-    if LL.compdeg>=d then idimsLie(d) else if LL.gensLie=={} then (
-        if LL.cache.maxDeg<d then  LL.cache.maxDeg=d+5;
-        LL.compdeg=d; 
-	doZeroLie(); 
-	idimsLie(d)
-	) else (   
-	if LL.cache.maxDeg<d then (
-	    LL.cache.maxDeg=d+5; 
-	    j0:=1; 
-	    LL.cache.lieRing=lieR();
-	   ) else j0=LL.compdeg+1;   		    	     
-       for i from j0 to d  do (   
-	   LL.cache.gr#(i)=ideal {0_(LL.cache.lieRing)}; 
-	   prebasis:={};
-	   rellist:={};
-           for j from 1 to min(i,genDegMax()) do 
-	       prebasis=prebasis|flatten apply(LL.cache.bas#(i-j),y->
-		   apply(gendeg(j),x->op([x],y)));
-           for j from 1 to min(i,relDegMax()) do 
-	       rellist=rellist|flatten apply(LL.cache.bas#(i-j),m->
-		   apply(rel(j),x->
-		       (if class x===Array then op(x,m) else sum(x_0,x_1,(i,j)->i*op(j,m)))));
-	   newrellist:=flatten apply(rel(i),y->
-	       (if class y===Array then relcomm(y) else apply(y_1,z->relcomm(z))));
-    	   rellist=rellist|newrellist;
-	   ch:=char LL.field;
-           badgen:=select(LL.numGen,y->(LL.genWeights_y)_0%ch==0 and (LL.genWeights_y)_0<i);
-           newrellist=flatten apply(badgen,x->
-	       apply(LL.cache.bas#(i-(LL.genWeights_x)_0),m->commrelgen(x,m)));
-           rellist=rellist|newrellist;
-    	   if ch==3 and i%3==0 then rellist=rellist|apply(select(LL.cache.bas#(i//3),z->
-		   isignLie z==1),x->imult(x,imult(x,x)));
-    	   if ch==2 and i%2==0 then rellist=rellist|apply(LL.cache.bas#(i//2),x->imult(x,x));
-	   deglimit:=prepend(i,flatten table(1,LL.deglength-1,x->0));
-    	   if (rellist=={} or ideal rellist==ideal{0_(LL.cache.lieRing)}) then (
-	       gr0:=ideal {0_(LL.cache.lieRing)};
-	       bas0:=prebasis;
-	       ) else (  
-	       ide:=ideal rellist;
-	       gr0=ideal(flatten entries gens gb(ide,DegreeLimit=>deglimit));
-	       grlead:=apply(flatten entries gens gr0, leadMonomial);
-	       bas0=select(prebasis,x->(not member(x,grlead)));
-	       );
-    	   if gr0==0 then newrellist= flatten apply(bas0,m->commrel(m)) else 
-	       newrellist= toList apply(flatten apply(bas0,m->commrel(m)),x->x%gr0);
-    	   if rellist|newrellist == {} then (
-	       LL.cache.gr#(i)=ideal {0_(LL.cache.lieRing)};
-	       LL.cache.bas#(i)=bas0;
-	       LL.cache.deglist#(i)=apply(LL.cache.bas#(i),degree)
-	       ) else (  
-	       newide:=ideal(rellist|newrellist); 
-	       if newide==ideal{0_(LL.cache.lieRing)} then (
-		   LL.cache.gr#(i)=ideal {0_(LL.cache.lieRing)};
-		   LL.cache.bas#(i)=bas0;
-		   LL.cache.deglist#(i)=apply(LL.cache.bas#(i),degree)
-		   ) else (  
-		   LL.cache.gr#(i)=ideal(flatten entries gens gb(newide,DegreeLimit=>deglimit));
-                   grlead=apply(flatten entries gens LL.cache.gr#(i),leadMonomial);
-               	   LL.cache.bas#(i)=select(bas0,x->(not member(x,grlead)));
-		   LL.cache.deglist#(i)=apply(LL.cache.bas#(i),degree)
-	      	   )
-	       );
-       	   LL.cache.dims#i=length (LL.cache.bas#(i)); -- next i
-   	   ); -- end of for loop
-       LL.cache.mbRing=modR(d);LL.compdeg=d; 
-       idimsLie(d)
+debug Core; 
+net LieAlgebraMap:=f->(
+    L:=source f; M:=target f; G:=gens(L);
+    if all(G,z->f#z===0_M) then "0" else (
+       if L===M and all(G,z->f#z===z) then "id_"|net(M) else (
+          if hasAnAttribute f then
+          return toString getAttribute(f,ReverseDictionary);
+          "homomorphism from "|net(source f)|" to "|net(target f)
+           )
        )
-   );
-
-
-----------------------------------------
---decompidealLie
-----------------------------------------
---the kernel of the surjective Lie homomorphism from L'=[L,L]
---to the direct sum of L_i', where L_i are the local Lie
---algebras. The ideal is generated by the elements in degree 3,
---which are linear combinations of [x,y,z], where not all x,y,z
---belongs to the same L_i.
-
-decompidealLie=method(TypicalValue=>List)
-decompidealLie(ZZ) := (d)->(
-    computeLie d;
-    loc:=join apply(toSequence LL.cache.locals,y->isubalgLie(3,apply(y,z->genbas(z))));
-    genide:=select(ibasisLie(3),y->not member(y,loc));
-    idefLie iideal(d,genide)
     );
-
-
-----------------------------------------
--- defLie
-----------------------------------------
-
-defLie = method()
-defLie(List) := (p)->apply(p,x->defLie(x));
-defLie(RingElement):=(p)->( 
-      if not ring p===LL.cache.mbRing then (
-	  print("the wrong mbRing is currently used")
-	  ) else ( 
-	  computeLie(idegLie p); 
-	  mons:=flatten entries monomials p; 
-	  if mons=={} then [] else (  
-	      if p===mons_0 then idefLie(mbToLie p) else (
-		  coef:=apply(mons,x->(p_x));
-		  out:={coef,apply(mons,x->idefLie(mbToLie x))};
-    		  if generalExpressionLie out then out
-		  )
-              )    
-      	  )
-      );
-
-
-----------------------------------------
--- degLie
-----------------------------------------
-
-degLie = method(TypicalValue=>ZZ)
-degLie(Symbol) := degLie (IndexedVariable):= degLie(ZZ):=(g)->(
-    if not member(g,LL.gensLie) then (
-	print(g);
-	print(" is not a generator")
-	) else (
-	po:=position(LL.gensLie,x->x===g);
-	((LL.genWeights)_po)_0)
-    );	   
-degLie(Array):=(x)->sum(x,degLie);	  
-degLie(List):=(x)->if generalExpressionLie x then degLie((x_1)_0) else degList x;
-
-
-----------------------------------------
---derLie
-----------------------------------------
-
-derLie(List):=(y)->derLie(idMapLie(),y);
-
-  
-----------------------------------------
---diffLie
-----------------------------------------
-  
-diffLie=()->iderLie(LL.genDiffs);
-  
-
-----------------------------------------
---dimLie   
-----------------------------------------
- 
-dimLie=method(TypicalValue=>ZZ)
-dimLie(ZZ):=(d)->(
-    computeLie d;
-    LL.cache.dims#d
+debug Core; 
+net LieDerivation:=d->(
+    L:=source d; M:=target d; G:=gens(L);
+    if all(G,z->d#z===0_M) then "0" else (
+       if hasAnAttribute d then
+       return toString getAttribute(d,ReverseDictionary);
+       "derivation from "|net(L)|" to "|net(M)
+       )
     );
-dimLie(ZZ,ZZ):=(n,d)->(
-    computeLie n;
-    length ibasisLie(n,d)
+debug Core;    
+net LieSubSpace:=I->(
+    if hasAnAttribute I then
+    return toString getAttribute(I,ReverseDictionary);
+    "subspace of"|" "|net(I#lieAlgebra)
     );
-dimLie(List):=(x)->(computeLie x_0;
-    length ibasisLie(x)
+debug Core;
+net VectorSpace:=V->(
+    if hasAnAttribute V then
+    return toString getAttribute(V,ReverseDictionary);
+    "homology of "|net(V#lieAlgebra)
     );
-
- 
- ----------------------------------------
---dimsLie   
-----------------------------------------
--- gives the list of dimensions of the Lie algebra when the first
--- degree ranges from 1 to d
-
-dimsLie=method(TypicalValue=>List)
-dimsLie(ZZ):=(d)->(
-    computeLie d;
-    for i from 1 to d list LL.cache.dims#i
+debug Core;
+net FGLieSubAlgebra:=I->(
+   if hasAnAttribute I then
+    return toString getAttribute(I,ReverseDictionary);
+    "finitely generated subalgebra of"|" "|
+    net(I#lieAlgebra)
     );
-
-
-----------------------------------------
---dimTableLie   
-----------------------------------------
--- the matrix of dimensions in first and last degree
--- s=0 gives only dimensions of even elements, s=1 only odd
-
-dimTableLie=method()
-dimTableLie(ZZ):=(n)->(
-    computeLie n;
-    matrix apply(n+1,d->apply(n,j->dimLie(j+1,d)))
-    );
-dimTableLie(ZZ,ZZ):=(n,s)->(
-    computeLie n;
-    matrix apply(n+1,d->apply(n,j->length select(basisLie(j+1,d),y->signLie y==s)))
-    );
-        
-	
-----------------------------------------
---dimtotLie   
-----------------------------------------
-	    
-dimtotLie=method(TypicalValue=>ZZ)
-dimtotLie(ZZ):=(d)->(
-    computeLie d;
-    sum dimsLie(d)
-    );
-
-
-----------------------------------------
---divisorLie
-----------------------------------------
-
-divisorLie=method(TypicalValue=>List)
-divisorLie(ZZ,ZZ,List,List) := (t,s,m,p)->(
-    computeLie t; 
-    d:=t-s; 
-    if m=={} then m={[]};
-    if not all(m,y->generalExpressionLie y) or not unique degLie m == {t} then (
-	print("the third input is not correct")
-	) else (
-	if not all(p,y->generalExpressionLie y) or not unique degLie p == {s} then (
-	    print("the fourth input is not correct")
-	    ) else (
-	    if LL.cache.dims#t==0  or p=={} or unique p=={[]} then basisLie(d) else (        
-		mm:= apply(m,x->idefinvLie x); 
-		pp:=apply(p,x->idefinvLie x);
-		B:=transpose basToMat(t,mm);
-		kerB:=transpose generators kernel(B);
-		idefLie matToBas(d,generators kernel joinvert apply(pp,y->
-			(kerB*basToMat(t,apply(ibasisLie(d),x->imult(y,x))))))
-		)
-	    )
-	)
-    );
-
-  
-----------------------------------------
---eulerLie
-----------------------------------------
-
-eulerLie=method(TypicalValue=>List)
-eulerLie(ZZ):=(n)->(
-    computeLie n;
-    for i from 1 to n list ieuler(i)
-    );
-
-
-----------------------------------------
---evalDerLie
-----------------------------------------
-
-evalDerLie=method()
-evalDerLie(DerLie,Array):=(d,x)->if d#?x then d#x else (
-    N:=LL;
-    LL=d.sourceLie; 
-    n:=(d.weightDer)_0 + degLie x; 
-    LL=d.targetLie; 
-    computeLie n;
-    out:=idefLie ievalDerLie(d,x); 
-    LL=N; 
-    d#x=out
-    );
-evalDerLie(DerLie,List):=(d,x)->(
-    N:=LL;
-    LL=d.sourceLie;
-    n:=(d.weightDer)_0 + degLie x;
-    LL=d.targetLie; 
-    computeLie n;
-    out:=idefLie ievalDerLie(d,x);
-    LL=N;
-    out
-    );
-
-
-
-----------------------------------------
---evalDiffLie
-----------------------------------------
-  
-evalDiffLie=method()
-evalDiffLie(Array):=evalDiffLie(List):=x->(
-    n:=degLie x; 
-    computeLie n;
-    idefLie idiffLie x
-    );
- 
- 
-----------------------------------------
---evalMapLie
-----------------------------------------
-
-evalMapLie=method()
-evalMapLie(MapLie,Array):=(f,x)->if f#?x then f#x else (
-    N:=LL;
-    LL=f.sourceLie; 
-    n:=degLie x; 
-    LL=f.targetLie; 
-    computeLie n;
-    out:=idefLie ievalMapLie(f,x); 
-    LL=N; 
-    f#x=out
-    );
-evalMapLie(MapLie,List):=(f,x)->(
-    N:=LL;
-    LL=f.sourceLie; 
-    n:=degLie x; 
-    LL=f.targetLie;
-    computeLie n;
-    out:=idefLie ievalMapLie(f,x);
-    LL=N;
-    out
-    );
-
-
-----------------------------------------
---extAlgLie
-----------------------------------------
-
-extAlgLie = method(TypicalValue=>Matrix)
-extAlgLie(ZZ) := (n)->(
-    M:=minmodelLie(n);
-    matrix toList apply(
-	1..n,d->toList apply(
-	    1..n,j->length select(M.numGen,y->
-		((M.genWeights_y)_0===j and (M.genWeights_y)_(-1)===d-1))))
-    );
-
-
-----------------------------------------
---extAlgMultLie
-----------------------------------------
-
-extAlgMultLie = method(TypicalValue=>RingElement)
-extAlgMultLie(RingElement, RingElement) := (a,b)->(
-    linext((x,y)->extmonmult(x,y),a,b)
-    );
-		 
-
-----------------------------------------
--- generalExpressionLie
-----------------------------------------
- 
- generalExpressionLie = (x)-> (
-     monomialLie x or 
-     class x===List and 
-     length x==2 and 
-     class x_0===List and 
-     class x_1===List and
-     length x_0==length x_1 and
-     not x_0=={} and
-     all(x_1,y->monomialLie y and not y==[]) and
-     all(x_0,y->y==0 or class(1/(1/y))===LL.field or class y===ZZ or 
-	 class y===ZZ/char LL.field or (
-	     class y===QQ and not mod(denominator y,char LL.field)==0
-	     )
-	 ) and (
-	 ok:=true; 
-	 xx:=isubstrel(x); 
-	 if class xx===List then (
-	     d:=unique apply(xx_1,degiterlie);
-	     s:=unique apply(xx_1,sign);
-	     if length d>1 then (
-		 ok=false;
-		 print("the input is not weight-homogeneous")
-		 );
-	     if length s>1 then (
-		 ok=false;
-		 print("the input is not sign-homogeneous")
-		 )
-	     );
-	 ok
-	 )
-     );        
-
-
-----------------------------------------
---holonomyLie
-----------------------------------------	
-holonomyLie=method(TypicalValue=>LieAlgebra,Options=>{field=>QQ})
-holonomyLie(List):=opts->(x)->( 
-    Generators:=unique join toSequence x; 
-    pairslocal:=y->subsets(y,2); 
-    allpairs:=join apply(toSequence x,pairslocal);
-    if not (unique allpairs===allpairs) then (
-	print("two 2-flats must have at most one element in common")
-	) else (
-	liepairs:=apply(select(subsets(Generators,2),y->not member(y,allpairs)),z->new Array from z);
-	lieideallocal:=y->(apply(drop(y,1),z-> {apply(length y,u->1),apply(y,v->([z,v]))}));
-	L:=ilieAlgebra(5,Generators,join apply(toSequence x,lieideallocal)|liepairs,field=>opts.field);
-      	L.cache.locals=x;
-      	L
-	)
-    );
-
-----------------------------------------
---homologyBasisLie
-----------------------------------------
-
-homologyBasisLie=method(TypicalValue=>List)
-homologyBasisLie(ZZ,ZZ):=(n,j)->(
-    computeLie n;
-    idefLie ihomologyLie(n,j)
-    );
-
-
-----------------------------------------
---homologyLie
-----------------------------------------
-
-homologyLie = method()
-homologyLie(ZZ,ZZ) := (n,d)->(
-    computeLie n;
-    dimLie(n,d)-boundariesDimLie(n,d-1)-boundariesDimLie(n,d)
-    );
-homologyLie(ZZ) := (n)->(
-       computeLie n;
-       matrix apply(n,d->apply(n,j->homologyLie(j+1,d)))
-       );
-
-
-----------------------------------------
---idealBasisLie   
-----------------------------------------
--- gives a basis in first degree/multidegree n for the lie ideal which is 
--- generated by the elements in the list x of GE-elements
--- (which might contain elements of different degrees).
-
-idealBasisLie=method(TypicalValue=>List)
-idealBasisLie(ZZ,List):=(n,x)->(
-    computeLie n;
-    if all(x,y->generalExpressionLie y) then (
-	idefLie iideal(n,apply(x,idefinvLie))
-	) else (
-	print("the input is not correct")
-	)
-    );
-idealBasisLie(List,List):=(y,x)->(
-    select(idealBasisLie(y_0,x),z->weightLie z==y)
-    );
-
-
-----------------------------------------
---idealLie   
-----------------------------------------
-
-idealLie=method()
-idealLie(ZZ,List):=(n,x)->(
-    computeLie n;
-    if all(x,y->generalExpressionLie y) then (
-	apply(n,i->length iideal(i+1,apply(x,idefinvLie)))
-	) else (
-	print("the input is not correct")
-	)
-    );
-idealLie(List,List) := (y,x)->(
-    computeLie y_0;
-    if all(x,y->generalExpressionLie y) then (
-	length iideal(y,apply(x,idefinvLie))
-	) else (
-	print("the input is not correct"))
-    );
-
-
-----------------------------------------
---imageBasisLie
-----------------------------------------   
-
-imageBasisLie=method(TypicalValue=>List)	    
-imageBasisLie(ZZ,MapLie) := (n,f)->(
-    N:=LL;
-    LL=f.targetLie;
-    out:=subalgBasisLie(n,apply(f.sourceLie.gensLie,x->f#x));
-    LL=N;
-    out
-    );
-imageBasisLie(ZZ,ZZ,MapLie) := (n,d,f)->select(imageBasisLie(n,f),x->(weightLie x)_(-1)==d);
-
-----------------------------------------
---imageLie
-----------------------------------------
-
-imageLie = (n,f)->matrix apply(n,d->apply(n,j->iimageLie(j+1,d,f)));
-
-----------------------------------------
---invImageBasisLie
----------------------------------------- 
-
-invImageBasisLie = method()  
-invImageBasisLie(ZZ,MapLie,List) := (n,f,b)->(
-    if b=={} then {} else (
-	N:=LL; 
-	LL=f.targetLie;  
-	if any(b,x->not (weightLie x)_0 == n) then (
-	    print("the weights in the list are not correct"); 0)  else (
-	    computeLie n; 
-	    B:=basToMat(n,apply(b,idefinvLie));
-	    LL=f.sourceLie; 
-	    computeLie n; 
-	    ba:=basisLie(n); 
-	    LL=f.targetLie;
-	    A:=basToMat(n,apply(apply(ba,x->evalMapLie(f,x)),idefinvLie));
-	    C:=invimage(A,B); 
-	    LL=f.sourceLie; 
-	    out:=idefLie matToBas(n,C); 
-	    LL=N; 
-	    out
-	    )
-	)
-    );
-invImageBasisLie(ZZ,DerLie,List) := (n,f,b)->(
-    if b=={} then {} else (  
-	N:=LL; 
-	LL=f.targetLie;  
-	if any(b,x->not (weightLie x)_0 == n) then (
-	    print("the weights in the list are not correct"); 0) else (
-	    computeLie n;
-	    B:=basToMat(n,apply(b,idefinvLie));
-	    LL=f.sourceLie;  
-	    computeLie n;  
-	    ba:=basisLie(n-(f.weightDer)_0); 
-	    LL=f.targetLie;
-	    A:=basToMat(n,apply(apply(ba,x->evalDerLie(f,x)),idefinvLie));
-	    C:=invimage(A,B); 
-	    LL=f.sourceLie; 
-	    out:=idefLie matToBas(n-(f.weightDer)_0,C); 
-	    LL=N; 
-	    out
-	    )
-	)
-    );
-invImageBasisLie(ZZ,ZZ,MapLie,List) := (n,d,f,b)->(
-    if b=={} then {} else ( 
-	N:=LL; 
-	LL=f.targetLie;  
-	if any(b,x->(not (weightLie x)_0 == n or not (weightLie x)_(-1) == d)) then (
-	    print("the weights in the list are not correct"); 
-	    0
-	    ) else (
-	    computeLie n;
-	    B:=basToMat(n,d,apply(b,idefinvLie));
-	    LL=f.sourceLie;  
-	    computeLie n; 
-	    ba:=basisLie(n,d); 
-	    LL=f.targetLie;
-	    A:=basToMat(n,d,apply(apply(ba,x->evalMapLie(f,x)),idefinvLie));
-	    C:=invimage(A,B); 
-	    LL=f.sourceLie; 
-	    out:=idefLie matToBas(n,d,C); 
-	    LL=N; 
-	    out
-	    )
-	)
-    );
-invImageBasisLie(ZZ,ZZ,DerLie,List) := (n,d,f,b)->(
-    if b=={} then {} else (
-	N:=LL; 
-	LL=f.targetLie; 
-	if any(b,x->(not (weightLie x)_0 == n or not (weightLie x)_(-1) == d)) then (
-	    print("the weights in the list are not correct"); 
-	    0
-	    ) else (
-	    computeLie n;
-	    B:=basToMat(n,d,apply(b,idefinvLie));
-	    LL=f.sourceLie;  
-	    computeLie n; 
-	    ba:=basisLie(n-(f.weightDer)_0,d-(f.weightDer)_(-1)); 
-	    LL=f.targetLie;
-	    A:=basToMat(n,d,apply(apply(ba,x->evalDerLie(f,x)),idefinvLie));
-	    C:=invimage(A,B); 
-	    LL=f.sourceLie; 
-	    out:=idefLie matToBas(n-(f.weightDer)_0,d-(f.weightDer)_(-1),C); 
-	    LL=N; 
-	    out
-	    )
-	)	
-    );
-
-
-----------------------------------------
---invImageLie
----------------------------------------- 
-
-invImageLie = method()
-invImageLie(ZZ,MapLie,List) := invImageLie(ZZ,DerLie,List) := (n,f,b)-> 
-        if class invImageBasisLie(n,f,b)===List then length invImageBasisLie(n,f,b);
-invImageLie(ZZ,ZZ,MapLie,List) := invImageLie(ZZ,ZZ,DerLie,List) := (n,d,f,b)->
-        if class invImageBasisLie(n,d,f,b)===List then length invImageBasisLie(n,d,f,b);
-
-
- 
-----------------------------------------
---indexFormLie   
-----------------------------------------
--- is left inverse to "defLie", that is indexFormLie(defLie(x))=x. 
--- It holds that
--- defLie(indexFormLie(x))≈x in the free Lie algebra on 
--- the generators modulo the relations.
--- "indexFormLie" is not "listable", see "indexFormListLie". 
--- Input is a generator or an iterated
--- Lie product, or of the type {{coef}, {lie}}.  
-
-indexFormLie = method(TypicalValue=>RingElement)
-indexFormLie(Symbol) := indexFormLie(IndexedVariable) :=
-indexFormLie(ZZ) := (x)->(
-    if not member(x,LL.gensLie) then (
-	print(x);
-	print(" is not a generator")
-	) else (
-	indexFormLie([x])
-	)
-    );
---elements in ZZ are also valid as generators!                                                    
-indexFormLie(Array) := (x)->(
-    if x==[] then 0_(LL.cache.mbRing) else (
-	computeLie(degLie x);
-	lieToMb ifed isubst x
-	)
-    );
-indexFormLie(List) := (x)->(
-    if generalExpressionLie x then (
-	sum(x_0,x_1,(i,j)->i*indexFormLie(j))
-	) else (
-	indexFormList x
-	)
-    );
-
-
-----------------------------------------
---intersectionLie
-----------------------------------------
--- if m is {}, the output will be the whole space basisLie(d)
-intersectionLie = method(TypicalValue=>List)
-intersectionLie(ZZ,List) := (d,m)->(
-    if m=={} then basisLie d else (
-    	if any(m,x->x=={}) then {} else (
-    	    if not all(flatten m,y->generalExpressionLie y) or 
-	       not skipz unique degLie flatten m == {d} then (
-    		print("the input is not correct")
-    		) else ( computeLie d;
-    		idefLie matToBas(d,generators kernel transpose joinhoriz apply(
-			apply(m,y->apply(y,z->idefinvLie z)),
-			x->(generators kernel transpose basToMat(d,x))))
-    		)
-	    )
-	)
-    );
-
-
-----------------------------------------
---kernelBasisLie
-----------------------------------------
-
-kernelBasisLie = method(TypicalValue=>List)	    	
-kernelBasisLie(ZZ, MapLie) := (n,f)->(
-      N:=LL;
-      LL=f.sourceLie;
-      ba:=basisLie(n);
-      if ba=={} then (LL=N;{}) else (
-      	  LL=f.targetLie;
-	  computeLie n;
- 	  fval:=apply((apply(ba,x->evalMapLie(f,x))),y->idefinvLie y);
-      	  fmat:=basToMat(n,fval); 
-	  LL=f.sourceLie;
-          out:=idefLie matToBas(n,(generators kernel fmat));
-	  LL=N;
-	  out
-	  )
-      );
-kernelBasisLie(ZZ,ZZ,MapLie) := (n,d,f)->(
-      N:=LL;
-      LL=f.sourceLie;
-      out:=select(kernelBasisLie(n,f),x->(weightLie x)_(-1)==d);
-      LL=N;
-      out
-      );
-    
-
-----------------------------------------
---kernelLie
-----------------------------------------    
-       
-kernelLie = (n,f)->matrix apply(n,d->apply(n,j->ikernelLie(j+1,d,f)));
-
-
-----------------------------------------
---koszulDualLie
-----------------------------------------
-
-koszulDualLie=method(TypicalValue=>LieAlgebra)
-koszulDualLie(QuotientRing):=koszulDualLie(PolynomialRing):=(Q)->(
-    R1:=ambient Q; 
-    if Q#?SkewCommutative then S:=Q.SkewCommutative else S={};
-    skewco:=apply(S,i->(gens Q)_i);
-    signlist:=apply(length gens Q,x->if member(x,S) then 1 else 0);
-    R:=coefficientRing Q[gens Q,SkewCommutative=>skewco,Degrees=>apply(gens Q,degree)];
-    fie:=coefficientRing R;
-    I1:=flatten entries gens ideal Q;
-    scalarprod:=(l1,l2)->sum(l1,l2,(i,j)->i*j);
-    explist:=(p)->apply(flatten entries monomials p,m->flatten exponents m);
-    homogen:=(p)->length unique apply(explist p,y->scalarprod(signlist,y)%2)==1;
-    ok:=true;
-    apply(I1,p->(if not homogen p then (ok=false;print(p);print("is not sign-homogeneous"));
-	         if not isHomogeneous Q then (ok=false;print(p);print("is not multi-homogeneous"))));
-    if I1=={} then grI:={} else (
-	I:=ideal apply(I1,x->(map(R,R1))(x));    
-	grI=flatten entries gens gb(I,DegreeLimit=>flatten table(1,degreeLength R,x->2));
-	grI=apply(grI,x->x*(1/(leadCoefficient x)))
-	);
-    lM:=apply(grI,leadMonomial);
-    bM:=select(flatten entries basis(2,R),x->not member(x,lM));
-    -- grI_k = lM_k + \sum a_ki bM_i
-    tolie:=(m)->(
-	po:=positions(flatten exponents m,x->x>0); 
-       	if length po==1 then [ko_(po_0),ko_(po_0)] else 
-     	if not member(po_0,S) and member(po_1,S) then [ko_(po_1),ko_(po_0)] else
-       	[ko_(po_0),ko_(po_1)]);
-    sqco:=(m)->(
-	po:=positions(flatten exponents m,x->x>0); 
-       	if length po==1 then (1/2)_fie else 1_fie);
-    coe:=(k,i)->sqco(lM_k)*(map(fie,R))(((apply(coefficients(
-	    grI_k,Monomials=>{bM_i}),x->flatten entries x))_1)_0);
--- 1/2a_ki alt a_ki depending on lM_k being a square or not
-    co:=(i)->prepend(-sqco(bM_i),apply(length grI,k->coe(k,i)));  
--- {-1 alt -1/2,a_0i,...,a_(r-1)i}
-    relmon:=(i)->prepend(tolie(bM_i),apply(lM,tolie));
-    redrel:=(x)->(
-	out:={skipz x_0,skipZZ apply(1+length grI,
-		i->if (x_0)_i==0 then 0 else (x_1)_i)};
-	if length (out_0)==1 then (out_1)_0 else out);
-    rels:=apply(length bM,i->redrel {co(i),relmon(i)});
--- tolie(bM_i) - \sum a_ki tolie(lM_k)
-   if ok then M:=ilieAlgebra(5,apply(numgens R,i->ko_i),rels,genWeights=>apply(gens R,degree),
-	genSigns=>apply(signlist,x->(x+1)%2),
-	field=>fie);
-    if ok then M
-  ); 
-
-
-----------------------------------------
---localLie
-----------------------------------------
-localLie=method()
-localLie(ZZ) := (i)->(
-    N:=LL;
-    out:=holonomyLie({(LL.cache.locals)_i});
-    LL=N;
-    out
-    );  
-localLie(ZZ,ZZ) := (i,n)->(
-    N:=LL;
-    LL=localLie(i);
-    out:=basisLie n;
-    LL=N;
-    out
-    );
-    
-    
-    
-
-         
-----------------------------------------
---minmodelLie
-----------------------------------------
-
-minmodelLie=method(TypicalValue=>LieAlgebra)
-minmodelLie(ZZ):=(d)->(
-    L:=LL;
-    computeLie d; 
-    if L#?minmodel then (M:=L.minmodel; j:=M.compdeg) else
-    (M=minmodelone(L.cache.maxDeg); j=1); 
-    for n from j+1 to d do M=minmodelstep(n,L.cache.maxDeg,M);
-    LL=M; 
-    computeLie d; 
-    M.modelmap=mapLie(L,M,M.cache.homdefs); 
-    M.targetLie = L; 
-    L.minmodel = M;
-    unit:=append(flatten table(1,M.deglength -1,x->0),1);
-    L.cache.extAlgRing = (L.field)[
-	ext_0..ext_(length M.gensLie - 1),
-	Degrees=>apply(M.genWeights,x->x+unit)];
-    LL=L;
-    M
-    );      
-
-
-----------------------------------------
---minPresLie
----------------------------------------- 
--- gives a minimal presentation of H_0(L) up to first degree n, 
--- the presentation uses the same names for the generators as in L.
-
-minPresLie=method(TypicalValue=>LieAlgebra)
-minPresLie(ZZ):=(n)->(
-    L:=LL;
-    if LL#?minmodel and LL.minmodel.compdeg>=n then M:=LL.minmodel else M=minmodelLie(n);
-    LL=M;
-    po:=positions(M.gensLie,x->(weightLie(x))_(-1)==0);
-    f:=M.modelmap; 
-    g:=(x)->(f#x)_0;
-    Mgens:=apply(po,x->(M.gensLie)_x);
-    Lgens:=apply(Mgens,g);
-    LL=M;
-    Mrels:=select(select(M.genDiffs,x->not x==[]),y->(weightLie(y))_(-1)==0);
-    Lrels:=apply(Mrels,x->(if class x===Array then apply(x,g) else {x_0,apply(x_1,y->apply(y,g))}));
-    MP:=ilieAlgebra(M.cache.maxDeg,Lgens,
-	Lrels,
-	genSigns=>apply(po,x->(M.genSigns)_x),
-	genWeights=>apply(po,x->drop((M.genWeights)_x,-1)),
-	field=>M.field);
-    LL=L;
-    MP
-    );
-
-
-----------------------------------------
--- monomialLie
-----------------------------------------	     
-monomialLie = x -> (
-    class x===Array and all(x,y->member(y,LL.gensLie))
-    );
-
-
-----------------------------------------
---multDerLie
-----------------------------------------
--- gives the Lie-multiplication on DerLie (when M=L)
-
-multDerLie=method(TypicalValue=>DerLie)
-multDerLie(DerLie,DerLie):=(f,g)->(
-    N:=LL;
-    LL=f.targetLie; 
-    n:=(f.weightDer)_0+(g.weightDer)_0+genDegMax();
-    computeLie n;
-    out:=iderLie(apply(LL.gensLie,x->idefLie(evalmultDerLie(f,g,[x]))));
-    out.weightDer=f.weightDer+g.weightDer;
-    out.signDer=(f.signDer+g.signDer)%2;
-    LL=N;
-    out
-    );
-
-
-----------------------------------------
---multLie   
-----------------------------------------
-
-multLie=method()
-multLie(Thing,Thing):=(x,y)->(
-    n:=degLie x+degLie y; 
-    computeLie n;
-    ok:=generalExpressionLie x and generalExpressionLie y; 
-    if ok then idefLie(imult(idefinvLie x,idefinvLie y)) else 
-    print("the input is not correct")
-    );
-
-----------------------------------------
---multListLie   
-----------------------------------------
--- Lie multiplication of (lists of ) GE-elements.  
--- There is an option "multOnly", which, when it comes to lists,
--- only multiplies those pairs (i,j) such that the condition is
--- true (the condition might for instance be a condition on the degrees).
-
-multListLie=method(Options=>{multOnly=>(i,j)->true})
-multListLie(List,List):= o -> (x,y) -> (
-    skipZZ flatten apply(x,z->apply(y,u->if o.multOnly(z,u) then multLie(z,u) else 0))
-    );
-
-
-----------------------------------------
--- normalFormLie
-----------------------------------------
-	
-normalFormLie = x-> (
-    if generalExpressionLie x then (
-	defLie indexFormLie x
-	) else (
-	print("the input is not a general Lie expression")
-	)
-    );
-
-
-----------------------------------------
---permopLie
-----------------------------------------
-
-permopLie=(x,y)->(
-    if not generalExpressionLie y then (
-	print("the second input is not a general Lie expression")
-	) else (
-	if not all(flatten x,z->member(z,LL.gensLie)) or not all(x,z->z==unique z) then (
-	    print("the first input is not a product of cycles") 
-	    ) else (
-	    computeLie(degLie y); 
-	    idefLie(ipermopLie(x,y))
-	    )
-	)
-    );
-
-
-----------------------------------------
---randomLie
-----------------------------------------
-
-randomLie=method(Options => {genWeights => 1, genSigns => 0, field => QQ})
-randomLie(ZZ,List) := opts -> (d, g) -> (
-    N := LL;
-    LL = lieAlgebra(g, {}, genWeights => opts.genWeights, genSigns => opts.genSigns, field => opts.field);
-    computeLie(d);
-    m := dimLie(d);
-    coefs := apply(m,i->random(opts.field));
-    out := {coefs,basisLie d};
-    LL = N;
-    out);
-randomLie(List):= opts -> (dl) -> (
-    m:=dimLie(dl);
-    coefs := apply(m,i->random(LL.field));
-    {coefs,basisLie(dl)}
-    );
-
-
-----------------------------------------
---signLie   
-----------------------------------------
-
-signLie=method(TypicalValue=>ZZ)
-signLie(Symbol):=signLie(IndexedVariable):=
-signLie(ZZ):=(x)->(
-    if not member(x,LL.gensLie) then (
-	print(x);
-	print(" is not a generator")
-	) else (
-	po:=position(LL.gensLie,u->u===x);
-	(LL.genSigns)_po
-	)
-    );
-signLie(Array):=(x)->sum(x,signLie)%2;
-  
-signLie(List):=(x)->if generalExpressionLie x then signLie((x_1)_0) else signList x;
-signLie(RingElement):=x->signLie defLie x;
-   
-   
-----------------------------------------
---signExtLie   
----------------------------------------- 
-   
-signExtLie=method(TypicalValue=>ZZ)
-signExtLie(RingElement):=(x)-> (
-    if not LL.cache#?extAlgRing then print("compute minmodelLie first") else (
-	if not member(x,gens LL.cache.extAlgRing) then (
-	    print(x);
-	    print(" is not a generator in extAlgRing")
-	    ) else (
-	    po:=index(x); 
-	    ((LL.minmodel.genSigns)_po + 1)%2
-	    )
-	)
-    );  
-
-
-----------------------------------------
---subalgBasisLie   
-----------------------------------------
-
-subalgBasisLie=method(TypicalValue=>List)
-subalgBasisLie(ZZ,List) := (n,x)->(
-    computeLie n;
-    if all(x,y->generalExpressionLie y) then (
-	idefLie isubalgLie(n,apply(x,y->idefinvLie y))
-	) else (
-	print("the input is not correct")
-	)
-    );
-subalgBasisLie(List,List):=(y,x)->(
-    select(subalgBasisLie(y_0,x),z->weightLie z==y)
-    );
-
-
-----------------------------------------
---subalgLie   
-----------------------------------------  
-    
-subalgLie=method()
-subalgLie(ZZ,List) := (n,x)->(
-    computeLie n;
-    if all(x,y->generalExpressionLie y) then (
-	apply(n,i->length isubalgLie(i+1,apply(x,y->idefinvLie y)))
-	) else (
-	print("the input is not correct")
-	)
-    );
-subalgLie(List,List) := (y,x)->(
-    length subalgBasisLie(y,x)
-    );
-
-
-----------------------------------------
---symmCyclePermLie
----------------------------------------- 
--- x is a list of  cycles. It is checked that x induces an
--- automorphism on LL
-
-symmCyclePermLie=(x)->(
-    n:=max(genDegMax(),relDegMax());
-    computeLie(n);
-    f:=mapLie(LL,LL,apply(LL.gensLie,y->[opperm(x,y)]))
-    );
-
-
-----------------------------------------
---symmPermLie
-----------------------------------------
--- x is a reordering of L.gensLie. It is checked that x induces an
--- automorphism on LL
- 
-symmPermLie=(x)->(
-    n:=max(genDegMax(),relDegMax());
-    computeLie(n);
-    f:=mapLie(LL,LL,apply(x,y->[y]))
-    );
-
-
-----------------------------------------
--- toMonomialLie
-----------------------------------------
-
-toMonomialLie = method()
-toMonomialLie(Array) := x-> (
-    computeLie(idegg x);
-    idefLie(ifedd(isubstt(x)))
-    );
-toMonomialLie(List) := x-> (
-    computeLie(max(apply(x_1,y->idegg y)));
-    idefLie(sum(x_0,apply(x_1,y->ifedd(isubstt(y))),(i,j)->i*j))
-    ); 
-toMonomialLie(Array,List,List):=(x,G,S)->(
-    if length x==1 then {{1},{x}} else (
-	x1:=if class (drop(x,1))_0===Array then (drop(x,1))_0 else drop(x,1); 
-	x0:=if class (drop(x,-1))_0===Array then (drop(x,-1))_0 else drop(x,-1);
-	leftStandard(x0,toMonomialLie(x1,G,S),G,S)
-	)
-    );
-
-    
-----------------------------------------
--- uselLie
-----------------------------------------
-	
-  useLie=method()
-  useLie(LieAlgebra) := (L)->(
-      use L.cache.mbRing;
-      LL=L
-      );
-
-
-
-----------------------------------------
--- weightLie
-----------------------------------------
-
-weightLie=method(TypicalValue=>List)
-weightLie(Symbol):=
-weightLie(IndexedVariable):=
-weightLie(ZZ):=(g)->(
-    if not member(g,LL.gensLie) then (
-	print(g);
-	print(" is not a generator")
-	) else (
-	po:=position(LL.gensLie,x->x===g);
-	((LL.genWeights)_po)
-	)
-    );
-weightLie(Array):=(x)->(
-    if x==[] then (
-	flatten table(1,degreeLength LL.cache.lieRing,x->0)
-	) else (
-	sum(x,weightLie)
-	)
-    );
-weightLie(List):=(x)->(
-    if generalExpressionLie x then weightLie((x_1)_0) else weightList x
-    );
-
-----------------------------------------
--- whichLie
-----------------------------------------
-	
-whichLie = ()->LL;
- 
- 
-
-
-      
-  
-  
-  
-----------------------------------------
---
--- INTERNAL SYMBOLS AND FUNCTIONS
---
-----------------------------------------
+debug Core;
+net LieSubAlgebra:=I->(
+    if hasAnAttribute I then
+    return toString getAttribute(I,ReverseDictionary);
+     "subalgebra of"|" "|net(I#lieAlgebra)
+     );
 
 ----------------------------------------
 -- SYMBOLS
@@ -1632,923 +238,1025 @@ whichLie = ()->LL;
 
 aR=getSymbol("aR");
 mb0=getSymbol("mb0");
-mb=getSymbol("mb")
-fr=getSymbol("fr");
-ext=getSymbol("ext");
-ko=getSymbol("ko");
-dims=getSymbol("dims");
+mb=getSymbol("mb");
 opL=getSymbol("opL");
-bas=getSymbol("bas");
-gr=getSymbol("gr");
-deglist=getSymbol("deglist");
-locals=getSymbol("locals");
+genslie=getSymbol("genslie");
+localone=getSymbol("localone");
+localtwo=getSymbol("localtwo");
+ko=getSymbol("ko");
+pr=getSymbol("pr");
+fr=getSymbol("fr");
+subAlgebra=getSymbol("subAlgebra");
+subIdeal=getSymbol("subIdeal");
+subSpace=getSymbol("subSpace");
 homdefs=getSymbol("homdefs");
-diffl=getSymbol("diffl");
+ext=getSymbol("ext");
+welldef=getSymbol("welldef");
 
+
+
+
+
+globalAssignment LieAlgebra
+globalAssignment ExtAlgebra
+globalAssignment LieIdeal
+globalAssignment LieAlgebraMap
+globalAssignment LieDerivation
+globalAssignment LieSubAlgebra
+globalAssignment LieSubSpace
+globalAssignment FGLieSubAlgebra
+globalAssignment FGLieIdeal
+globalAssignment VectorSpace
+
+
+lieIdeal=method()
+lieIdeal(List):=(x)->(
+    if x=={} then 
+	error "input may not be the empty set";
+    L:=class x_0;
+    dL:=differential L;
+    if not all(x,y->class y===L) then (
+	 error "the generators do not belong to the same Lie algebra";
+	 ); 
+    J:=new HashTable from {
+	cache => new CacheTable,
+	gens => skipzz(join(x,dL\\x),L), 
+	ideal => true,
+	lieAlgebra => L};
+    new FGLieIdeal from J
+    );
+lieIdeal(LieSubSpace):=(A)->(
+    L:=A#lieAlgebra;
+    J:=new HashTable from {
+	cache => new CacheTable,
+	subIdeal => true,
+	gens => A, 
+	lieAlgebra => L};
+    if instance(A,LieIdeal) then A else if 
+    A#?gens then 
+      if A#gens==={} then 
+      lieIdeal{0_L} else lieIdeal(A#gens) 
+    else
+    new LieIdeal from J
+    );
+lieSubAlgebra=method()
+lieSubAlgebra(List):=(x)->(
+    if x=={} then 
+	error "input may not be the empty set";
+    L:=class x_0;
+    if not all(x,y->class y===L) then (
+	 error "the generators do not belong to the same Lie algebra";
+	 ); 
+    dL:= differential L;
+    J:=new HashTable from {
+	cache => new CacheTable,
+	subAlgebra => true,
+	gens => skipzz(join(x,dL\\x),L),
+	lieAlgebra => L};
+    new FGLieSubAlgebra from J
+    );
+lieSubSpace=method()
+lieSubSpace(List):=(x)->(
+    if x=={} then 
+	error "input may not be the empty set";
+    L:=class x_0;
+    if not all(x,y->class y===L) then (
+	 error "the generators do not belong to the same Lie algebra";
+	 ); 
+    J:=new HashTable from {
+	cache => new CacheTable,
+	subSpace => true,
+	gens => skipzz(x,L),
+	lieAlgebra => L}; 
+    new LieSubSpace from J
+    );
+image(LieAlgebraMap,LieSubSpace):=(f,A)->(
+    L:=target f;
+    if not source f===A#lieAlgebra then
+        error "the map is not defined on the subspace";
+    J:=  new HashTable from {
+	   cache => new CacheTable,
+	   image => {f,A},
+	   lieAlgebra => L};
+    if class A===FGLieSubAlgebra then 
+       new FGLieSubAlgebra from
+         new HashTable from {
+	   cache => new CacheTable,
+	   subAlgebra => true,
+	   gens => skipzz(f\A#gens,L),	   
+	   lieAlgebra => L} else
+     if instance(A,LieSubAlgebra) then
+          new LieSubAlgebra from J else
+     new LieSubSpace from J     
+    );
+	     
+image(LieDerivation,LieSubSpace):=(d,S)->(
+    L:=target d;
+    if not source d===S#lieAlgebra then
+        error "the derivation is not defined on the subspace";
+    del:=differential L;
+    J:=new HashTable from {
+	cache => new CacheTable,
+	image => {d,S},
+	lieAlgebra => L};
+    if (source d===L and d#map===id_L
+	and all(d\d\L#cache.gens,x->x===0_L) and d del===zeroDerivation(L) and
+       instance(S,LieIdeal))  then new LieSubAlgebra from J else	
+       new LieSubSpace from J
+    );
+
+inverse(LieAlgebraMap,LieSubSpace):=(f,S)->(
+    L:=target f;
+    if not L===S#lieAlgebra then
+        error "the map has not values in the subspace";
+    J:=new HashTable from {
+	cache => new CacheTable,
+	inverse => {f,S},
+	lieAlgebra => source f};
+    if instance(S,LieIdeal) then
+    new LieIdeal from J else
+    if instance(S,LieSubAlgebra) then
+    new LieSubAlgebra from J else
+    new LieSubSpace from J
+    );
+inverse(LieDerivation,LieSubSpace):=(d,S)->(
+    Ls:=source d;
+    Lt:=target d;
+    if not Lt===S#lieAlgebra then
+        error "the derivation does not have values in the subspace";
+    J:=new HashTable from {
+	cache => new CacheTable,
+	inverse => {d,S},
+	lieAlgebra => Ls};
+    ds:=differential Ls;
+    dt:=differential Lt;  
+    if instance(S,LieIdeal) and 
+    unique apply(gens Ls,
+	x->d(ds(x))-(-1)^(sign d) dt(d(x)))==={0_Lt} then 
+    new LieSubAlgebra from J else
+    new LieSubSpace from J
+    );
+quotient(LieIdeal,FGLieSubAlgebra):=opts->(I,J)->(
+      L:=I#lieAlgebra;
+      if not L===J#lieAlgebra then 
+        error "the Lie algebras must be the same";
+      S:=new HashTable from {
+	  cache => new CacheTable,
+	  quotient => {I,J},
+	  lieAlgebra => L};
+      new LieSubAlgebra from S
+      ); 
+LieSubSpace+LieSubSpace:=(I,J)->(
+    L:=I#lieAlgebra;
+    if not L===J#lieAlgebra then 
+        error "the Lie algebras must be the same";
+    if I#?ideal and J#?ideal then
+    new FGLieIdeal from new HashTable from {
+	  cache => new CacheTable,
+	  ideal => true,
+	  gens => join(I#gens,J#gens),
+	  lieAlgebra => L} else (
+      U:=new HashTable from {
+	  cache => new CacheTable,
+	  sum => {I,J},
+	  lieAlgebra => L};
+      if instance(I,LieIdeal) and instance(J,LieIdeal) then
+        new LieIdeal from U else
+      if instance(I,LieIdeal) and instance(J,LieSubAlgebra) or 
+       instance(J,LieIdeal) and instance(I,LieSubAlgebra) then
+       new LieSubAlgebra from U else 
+       new LieSubSpace from U
+       )
+    );
+
+
+
+
+LieSubSpace@LieSubSpace:=(S,T)->(
+    L:=S#lieAlgebra;
+    if not L===T#lieAlgebra then 
+        error "the Lie algebras must be the same";
+    U:=new HashTable from {
+	  cache => new CacheTable,
+	  intersect => {S,T},
+	  lieAlgebra => L};
+    if instance(S,LieIdeal) and instance(T,LieIdeal) then
+    new LieIdeal from U else
+    if instance(S,LieSubAlgebra) and instance(T,LieSubAlgebra) then
+    new LieSubAlgebra from U else
+    new LieSubSpace from U 
+    );
+
+	
+
+zeroIdeal=method()
+zeroIdeal(LieAlgebra):=L->(
+    J:=new HashTable from {
+	cache => new CacheTable,
+	ideal => true,
+	gens => {},
+	lieAlgebra => L};
+    new FGLieIdeal from J
+    );
+fullLieIdeal=method()
+fullLieIdeal(LieAlgebra):=L->(
+    J:=new HashTable from {
+	cache => new CacheTable,
+	ideal => true,
+	gens => L#cache.gens,
+	lieAlgebra => L};
+    new FGLieIdeal from J
+    );
+fullLieSubAlgebra=method()
+fullLieSubAlgebra(LieAlgebra):=L->(
+    J:=new HashTable from {
+	cache => new CacheTable,
+	subAlgebra => true,
+	gens => L#cache.gens,
+	lieAlgebra => L};
+    new FGLieSubAlgebra from J
+    );
+
+boundaries=method()
+boundaries(LieAlgebra):=L->(
+    J:=new HashTable from {
+	cache => new CacheTable,
+	homology => true,
+	boundaries => true,
+	lieAlgebra => L};
+    new LieSubAlgebra from J
+    );
+
+cycles=method()
+cycles(LieAlgebra):=L->(
+    J:=new HashTable from {
+	cache => new CacheTable,
+	homology => true,
+	cycles => true,
+	lieAlgebra => L};
+    new LieSubAlgebra from J
+    );
+
+lieHomology=method()
+lieHomology(LieAlgebra):=L->(
+    J:=new HashTable from {
+	cache => new CacheTable,
+	homology => true,
+	lieAlgebra => L};
+    new VectorSpace from J
+    );
+
+extAlgebra = method()
+extAlgebra(ZZ,LieAlgebra):=(n,L)->(
+    if L#cache.?Ext and L#cache.Ext#degree>=n then L#cache.Ext else (
+    M:=minimalModel(n,L);
+    J:=new HashTable of ExtElement from new HashTable from {
+	cache => new CacheTable,
+	homology => true,
+	Ext => true,
+	numgens => M#numgens, 
+	degree => n,
+	lieAlgebra => L};
+    E:=new ExtAlgebra from J;
+    E#cache.gens=apply(M#numgens,i->new E from 
+	         new BasicList from {new BasicList from {1_(L#Field)},
+		new BasicList from {i}});
+    net E:= x->(
+	         		
+		if all(x#0,y->y==0) then out:=toString 0 else 
+		    out=outputext x;
+	        if substring(out,0,1)=== "+" then substring(out,2) else 
+		if substring(out,0,2)=== " +" then substring(out,3) else out
+		);
+    setgen(E);
+    L#cache.Ext=E;
+    E
+    )
+  );
+
+member(LieElement,LieSubSpace):=(x,S)->(
+    n:=ideglie x;
+    if n==0 then true else (
+      B:=basis(n,S);
+      L:=class x;
+      M:=S#lieAlgebra;
+      L===M and length isubSpace(n,append(ifed\B,ifed x),L)==length B
+      )
+    );
+    
+kernel(LieAlgebraMap):=kernel(LieDerivation):=opts->f->inverse(f,zeroIdeal target f);
+
+image(LieAlgebraMap):=f->image(f,fullLieSubAlgebra source f);
+
+image(LieDerivation):= f->image(f,fullLieIdeal source f);
+
+
+annihilator(FGLieSubAlgebra):=opts->(S)->(
+    L:=S#lieAlgebra;
+    quotient(zeroIdeal L,S)
+    );
+
+center=method()
+center(LieAlgebra):=L->(
+    c:=annihilator(fullLieSubAlgebra L);
+    new LieIdeal from c
+    );
+
+    
+basis(ZZ,VectorSpace):=List=>opts->(n,S)->
+    if S#?homology then flatten for j to n-1 list basis(n,j,S) else (
+    L:=S#lieAlgebra;
+    computeLie(n,L);
+    dL:=differential L;
+    if S#?ideal then 
+	if S#cache#?n then out:=S#cache#n else (
+	y:=select(S#gens,x->ideglie x<=n);
+        yy:=ifed\y;	
+	out=apply(iideal(n,yy,S),x->idef(x,L));
+	S#cache#n=out;
+	);
+    if S#?subIdeal then 
+	if S#cache#?n then out=S#cache#n else (
+	A:=S#gens;	
+	out=apply(iideal(n,A,S),x->idef(x,L));
+	S#cache#n=out;
+	);
+    if S#?subAlgebra  then 
+	if S#cache#?n then out=S#cache#n else (
+	y=select(S#gens,x->ideglie x<=n);
+        yy=ifed\y;
+	out=apply(isubalg(n,yy,S),x->idef(x,L));
+	S#cache#n=out;
+	);
+    if S#?subSpace then 
+        if S#cache#?n then out=S#cache#n else (
+	xn:=select(S#gens,y->ideglie y==n);
+	out=apply(isubSpace(n,skipz(ifed\xn),L),y->idef(y,L));
+        S#cache#n=out;
+	);
+    if S#?image then (
+	if S#cache#?n then out=S#cache#n else (
+	f:=(S#image)_0;
+	A=(S#image)_1;
+	if class f===LieAlgebraMap then (	
+	   arg:=basis(n,A);
+	   imf:=f\arg;
+           out=apply(isubSpace(n,ifed\imf,L),y->idef(y,L))
+	   ) else (
+	       arg=basis(n-(f#weight)_0,A);
+	       idi:= skipz(ifed\f\\arg);
+	       out=apply(isubSpace(n,idi,L),y->idef(y,L))
+	       );
+	  S#cache#n=out;
+	  )
+        );
+    if S#?inverse then (
+	if S#cache#?n then out=S#cache#n else ( 
+	f=(S#inverse)_0;
+	A=(S#inverse)_1;
+	T:=target f;
+	M:=source f;
+	if class f===LieAlgebraMap then 
+	  if basis(n,T)=={} then out=S#cache#n=basis(n,M) else (
+	  b:=f\basis(n,M);
+	  An:=ifed\basis(n,A);
+	  if An=={} then An={0_(T#cache.lieRing)}; 
+	  if b=={} then out={} else (
+    	  mat:=invimage(
+		basToMat(n,ifed\b,T),
+		basToMat(n,An,T));
+	  out=apply(matToBas(n,mat,M),x->idef(x,M)));
+          S#cache#n=out;
+	  ) else (
+	    nn:=n+(f#weight)_0;
+	    if basis(nn,T)=={} then out=S#cache#n=basis(n,M) else (
+	    b=f\basis(n,M);	
+	    An=ifed\basis(nn,A);
+	    if An=={} then An={0_(T#cache.lieRing)}; 
+	    if b=={} then out={} else (
+	      mat=invimage(
+		basToMat(nn,ifed\b,T),
+		basToMat(nn,An,T));
+	      out=apply(matToBas(n,mat,M),x->idef(x,M)));
+	      S#cache#n=out;
+	     )
+	    )
+	   )
+	  );
+    if S#?quotient then (
+      if S#cache#?n then out=S#cache#n else (
+	I:=(S#quotient)_0;
+	J:=(S#quotient)_1;
+	if L#cache.basis#n=={} then S#cache#n=out={} else (	   
+	  p:=J#gens;
+	  matlist:=apply(p,y->(
+	      d:=ideglie y;
+	      computeLie(n+d,L);
+	      m:=ifed\basis(n+d,I);
+	      if m==={} then m={0_(L#cache.lieRing)};
+	      if  L#cache.basis#(n+d)=={} then 
+	        matrix table(1,L#cache.dim#n,x->0_(L#Field)) else (
+	          B:=transpose basToMat(n+d,m,L);
+      	          kerB:=transpose generators kernel(B);
+	          kerB*basToMat(n+d,apply(ibasis(n,L),x->imult(ifed y,x,L)),L)
+	          )
+	       )
+	   );
+	   out=apply(matToBas(n,generators kernel joinvert matlist,L),x->idef(x,L));
+	   S#cache#n=out;
+	   )
+         )
+       );
+    if S#?sum then (
+      if S#cache#?n then out=S#cache#n else (
+	I=(S#sum)_0;
+	J=(S#sum)_1;
+	In:=basis(n,I);
+	Jn:=basis(n,J);
+	out=S#cache#n=apply(isubSpace(n,ifed\join(In,Jn),L),x->idef(x,L))
+	)
+      );	 
+    if S#?intersect then (
+      if S#cache#?n then out=S#cache#n else (
+	I=(S#intersect)_0;
+	J=(S#intersect)_1;
+	In=basis(n,I);
+	Jn=basis(n,J);
+	if In=={} or Jn=={} then out={} else (
+	  Imat:=transpose basToMat(n,ifed\In,L);
+	  Jmat:=transpose basToMat(n,ifed\Jn,L);
+	  out=S#cache#n=apply(matToBas(n,
+	    generators kernel transpose(
+		generators kernel Imat|generators kernel Jmat),L),
+	        x->idef(x,L))
+	  )
+        )
+      );
+    out 
+    );
+	
+	   
+basis(ZZ,ZZ,VectorSpace):=List=>opts->(n,j,S)-> (
+    if n<0 or j<0 or j>n then {} else
+    (
+    L:=S#lieAlgebra;
+    computeLie(n,L);
+    dL:=differential L;
+    if S#?homology then (
+	if S#?boundaries then (
+	    if S#cache#?(n,j) then  S#cache#(n,j) else (
+	      if j==n-1 then idi:={} else 
+	        idi=ifed\skipzz(dL\basis(n,j+1,L),L); 
+	        if idi==={} then S#cache#(n,j)={} else 
+	           S#cache#(n,j)=apply(flatten entries gens gb(
+	           ideal idi,DegreeLimit=>
+	           prepend(n,flatten table(1,length((L#Weights)_0)-1,x->0))),
+	           x->idef(x,L))
+                )
+	     ) else 
+        if S#?cycles then (
+	    if S#cache#?(n,j) then  S#cache#(n,j) else (
+              if j==0 then S#cache#(n,0)=basis(n,0,L) else (
+	        ba:=basToMat(n,j-1,ifed\dL\basis(n,j,L),L);
+                if ba==0 then S#cache#(n,j)=basis(n,j,L) else 
+	           S#cache#(n,j)=apply(
+		      skipz matToBas(n,j,matrix gens kernel ba,L),x->idef(x,L))
+        	)
+             )
+	   ) else  (
+	 if S#cache#?(n,j) then  S#cache#(n,j) else (
+	 B:=boundaries(L);
+	 Z:=cycles(L);
+	 Bnj:=ifed\basis(n,j,B);
+	 Znj:=ifed\basis(n,j,Z);
+	 if Bnj=={} then prel:=Znj else (
+            I:=ideal Bnj;
+	    prel=skipz apply(Znj,x->x%I)
+	    );
+	 if prel=={} then {} else 
+            S#cache#(n,j)=apply(
+		flatten entries gens gb(ideal prel,DegreeLimit=>
+	        prepend(n,flatten table(1,L#degreeLength-1,x->1))),x->idef(x,L))
+         )
+       )
+     ) else select(basis(n,S),x->(iweight x)_(-1)==j)
+   )
+ );
+
+    
+basis(List,VectorSpace):=List=>opts->(x,S)->
+    if S#?homology then select(basis(x_0,x_(-1),S),y->iweight(y)==x) else 
+    select(basis(x_0,S),y->iweight(y)==x);
+    
+basis(ZZ,LieAlgebra):=List=>opts->(n,L)->(
+    if n<=0 then {} else (
+      computeLie(n,L);
+      apply(ibasis(n,L),x->idef(x,L))
+      )
+    );
+
+basis(ZZ,ZZ,LieAlgebra):=List=>opts->(n,d,L)->(
+    if n<=0 then {} else (
+      computeLie(n,L);
+      apply(ibasis(n,d,L),x->idef(x,L))
+      )
+    );
+    
+basis(List,LieAlgebra):=List=>opts->(x,L)->
+   select(basis(x_0,x_(-1),L),y->iweight(y)==x);
+   
+   
+basis(ZZ,ExtAlgebra):=List=>opts->(n,E)->
+   flatten for j to n list basis(n,j,E); 
+
+basis(ZZ,ZZ,ExtAlgebra):=List=>opts->(n,j,E)->(
+    if E#cache#?(n,j) then  E#cache#(n,j) else 
+       E#cache#(n,j)=select(E#cache.gens,x->first(weight x)==n and last(weight x)==j)	    
+    );
+    
+basis(List,ExtAlgebra):=List=>opts->(x,E)->
+    select(basis(x_0,x_(-1),E),y->weight y==x);
+    
+ 
+
+
+dim(ZZ,VectorSpace):=(n,S)-> length basis(n,S);
+
+dim(ZZ,LieAlgebra):=(n,L)->length basis(n,L);
+
+dim(ZZ,ExtAlgebra):=(n,E)->length basis(n,E);
+
+dim(ZZ,ZZ,VectorSpace):=(d,n,S)-> length basis(d,n,S);
+
+dim(ZZ,ZZ,LieAlgebra):=(d,n,L)->length basis(d,n,L);
+
+dim(ZZ,ZZ,ExtAlgebra):=(d,n,E)->length basis(d,n,E);
+
+dim(List,VectorSpace):=(x,S)-> length basis(x,S);
+
+dim(List,LieAlgebra):=(x,L)->length basis(x,L);
+
+dim(List,ExtAlgebra):=(x,E)->length basis(x,E);
+
+
+
+
+----------------------------------------
+--eulers, euler
+----------------------------------------
+-- computes the list of eulercharacteristics of 
+-- first degree 1 to n. It is
+-- assumed that the homological degree is less
+-- than the first degree.
+-- Also euler(L) is the Euler derivation on L
+
+
+eulers(ZZ,LieAlgebra):=List=>(n,L)->(
+    computeLie(n,L);
+    for i from 1 to n list sum apply(i,j->(-1)^j*dim(i,j,L))
+    );
+
+euler(LieAlgebra) := LieDerivation=>L->
+    lieDer(apply(gens L,x->(firstDegree x) x),L);
+    
+
+
+
+-------------------------------
+-- baseName
+-------------------------------
+--  this is the extension of the built-in function
+--   baseName to cover the case LieElement, ExtElement, the output
+--   is the symbol name of a generator.
+
+baseName(LieElement):=x->(
+    L:=class x;
+    i:=((x#1)#0)#0;
+    (L#genslie)_i);
+baseName(ExtElement):=x->(
+    E:=class x;
+    i:=(x#1)#0;
+    toString(ext_i)
+    );   
+
+
+---------------------------------------
+-- empty, the empty BasicList
+--------------------------------------
+empty=new BasicList from {};
 
  
 
-----------------------------------------    
--- allgens
----------------------------------------- 
--- gives the list of elements in lieRing corresponding
--- to the generators
-allgens=()->apply(LL.numGen,x->LL.cache.lieRing_x);
+----------------------------------------------------
+-- CONSTRUCTIONS OF LIE ALGEBRAS
+----------------------------------------------------
+
+----------------------------------
+-- LIEALGEBRA
+----------------------------------
+-- construction of a free non-differential Lie algebra
+
+lieAlgebra = method(TypicalValue => LieAlgebra,Options => 
+    {Weights => 1, Signs => 0, Field => QQ,  LastWeightHomological=> false} )
+lieAlgebra(List) := opts->(generators)->(   
+    weights:=opts.Weights;
+    signs:=opts.Signs;        
+    numg:=length generators;
+    diffl:=opts.LastWeightHomological;
+    field:=opts.Field;
+   
+    if generators==={} then L:=zeroLieAlgebra(field) else ( 
+	
+	if signs===0 then signs=flatten table(1,numg,x->0);
+      	if signs===1 then signs=flatten table(1,numg,x->1);
+      	if weights===1 then weights=flatten table(1,numg,x->1); 
+	if not numg==length weights  then 
+            error "the number of weights must be equal to the number of generators";
+	    	     
+      	if class weights_0===ZZ and diffl then (
+            error "there is no homological degree defined";
+	    );
+      	if class (weights)_0===List and not diffl then (
+     	    weights=apply(weights,x->append(x,0));
+	    );
+      	if class (weights)_0===ZZ and not diffl then (
+	    weights=apply(weights,x->{x,0});
+	    );   
+      	if min(apply(weights,x->x_0))<1 then (
+	    error "the (first) degree of a generator must be at least one";
+	    );
+      	
+     	if length unique (length\weights)>1 then (
+            error "all weights must have the same length";
+	    );
+     	if not numg==length signs then (
+            error "the number of signs must be equal to the number of generators";
+	    );
+      	if not all(signs,x->x===0 or x===1) then (
+            error "all signs must be 0 or 1";
+	    );
+      	if diffl and any(weights,x->x_0<=x_(-1)) then (
+            error "the homological (last) degree must be less than the (first) degree";
+	    );
+      	if diffl and any(weights,x->x_(-1)<0) then (
+            error "the homological (last) degree must be non-negative";
+	    );
+      	deglen:=length (weights)_0; 
+       
+        L = new MutableHashTable of LieElement from new HashTable from { 
+	  genslie=>apply(generators,baseName),
+	  Weights=>weights,
+	  Signs=>signs,
+	  Field=>field,
+	  cache=>new CacheTable,
+          ideal=>{},
+	  diff=>{},
+	  numgens=>numg,
+	  degreeLength=>deglen
+	  };
+        L#cache.degree=0;
+        L#cache.max=5;
+        L#cache.mbRing=field[]; 
+        L#cache.dim=new MutableHashTable;
+        L#cache.opL=new MutableHashTable;
+        L#cache.basis=new MutableHashTable;
+        L#cache.gb=new MutableHashTable;
+        L#cache.degrees=new MutableHashTable;
+        L#cache.lieRing=lieR(L);
+        L#cache.basis#0={mb0}; 
+        L#cache.dim#0=1;
+	net L:= x->(
+	         		
+		if x#0===empty then out:=toString 0 else (
+		    if x#0#0==1 and #x#1==1  then 
+                    out=outmon(x#1#0,L) else out=outputrec x;
+		);
+	        if substring(out,0,1)=== "+" then substring(out,2) else 
+		if substring(out,0,2)=== " +" then substring(out,3) else out
+		);
+        M:=new LieAlgebra from L;
+        M#cache.ambient=M;
+        M#cache.gens=apply(M#numgens,i->new M from (
+	    new BasicList from {new BasicList from {1_(M#Field)},
+		new BasicList from {new BasicList from {i}}}));
+       for i from 0 to M#numgens-1 do (M#genslie)_i<-(M#cache.gens)_i;
+       M
+    ));
+
+-------------------------------------
+-- the internal version of lieAlgebra with relations and differential
+-- this version does not set the generators
+-------------------------------------
+    
+
+ilieAlgebra = method(TypicalValue => LieAlgebra,Options => 
+    {Weights => 1, Signs => 0, Field => QQ})
+ilieAlgebra(List,List,List) := opts->(g,r,d)->(
+    weights:=opts.Weights;
+    signs:=opts.Signs;        
+    field:=opts.Field;
+    numg:=length g;
+    deglen:=if weights=={} then 0 else length (weights)_0; 
+    L := new MutableHashTable of LieElement from new HashTable from { 
+	  genslie=>apply(g,baseName),
+	  Weights=>weights,
+	  Signs=>signs,
+	  Field=>field,
+	  cache=>new CacheTable,
+          ideal=>r,
+	  diff=>d,
+	  numgens=>numg,
+	  degreeLength=>deglen};
+    L#cache.degree=0;
+    L#cache.max=5;
+    L#cache.mbRing=field[]; 
+    L#cache.dim=new MutableHashTable;
+    L#cache.opL=new MutableHashTable;
+    L#cache.basis=new MutableHashTable;
+    L#cache.gb=new MutableHashTable;
+    L#cache.degrees=new MutableHashTable;
+    L#cache.lieRing=lieR(L);
+    L#cache.basis#0={mb0}; 
+    L#cache.dim#0=1;
+    net L:= x->(
+	         		
+		if x#0===empty then out:=toString 0 else (
+		    if x#0#0==1 and #x#1==1  then 
+                    out=outmon(x#1#0,L) else out=outputrec x;
+		);
+	        if substring(out,0,1)=== "+" then substring(out,2) else 
+		if substring(out,0,2)=== " +" then substring(out,3) else out
+		);
+    M:=new LieAlgebra from L;
+    M#cache.ambient=if r==={} and d==={} then M else if not d==={} then
+       class(d_0) else class(r_0);
+    M#cache.gens=apply(M#numgens,i->new M from (
+	    new BasicList from {new BasicList from {1_(M#Field)},
+		new BasicList from {new BasicList from {i}}}));
+    M
+    );
+
+-------------------------------------
+-- the internal version of a lieAlgebra modulo an ideal,
+-- this version does not set the generators
+-------------------------------------
+
+ilieAlgebra(LieAlgebra,LieIdeal) := opts->(L,I)->(
+    Q := new MutableHashTable of LieElement from new HashTable from { 
+	  genslie=>L#genslie,
+	  Weights=>L#Weights,
+	  Signs=>L#Signs,
+	  Field=>L#Field,
+	  cache=>new CacheTable,
+          ideal=>I,
+	  diff=>imap(L#diff,L),
+	  numgens=>L#numgens,
+	  degreeLength=>L#degreeLength};
+    Q#cache.degree=0;
+    Q#cache.max=5;
+    Q#cache.mbRing=L#Field[]; 
+    Q#cache.dim=new MutableHashTable;
+    Q#cache.opL=new MutableHashTable;
+    Q#cache.basis=new MutableHashTable;
+    Q#cache.gb=new MutableHashTable;
+    Q#cache.degrees=new MutableHashTable;
+    Q#cache.lieRing=lieR(Q);
+    Q#cache.basis#0={mb0}; 
+    Q#cache.dim#0=1;
+    net Q:= x->(
+	         		
+		if x#0===empty then out:=toString 0 else (
+		    if x#0#0==1 and #x#1==1  then 
+                    out=outmon(x#1#0,Q) else out=outputrec x;
+		);
+	        if substring(out,0,1)=== "+" then substring(out,2) else 
+		if substring(out,0,2)=== " +" then substring(out,3) else out
+		);
+    M:=new LieAlgebra from Q;
+    M#cache.ambient=L;
+    M#cache.gens=apply(M#numgens,i->new M from (
+	    new BasicList from {new BasicList from {1_(M#Field)},
+		new BasicList from {new BasicList from {i}}}));
+    M
+    );
+    
+    
+-----------------------------
+--  Equality of Lie algebras and homomorphisms
+-----------------------------
+
+LieAlgebra==LieAlgebra:=(L,M)->(
+    LA:=ambient L;
+    MA:=ambient M;
+    if class L#ideal===LieIdeal then
+	LA===MA and 
+	class M#ideal===LieIdeal and 
+	L#ideal===M#ideal else 
+          if L#ideal==={} then 
+            L#genslie===M#genslie and 
+	    L#Weights===M#Weights and
+            L#Signs===M#Signs and 
+	    L#Field===M#Field and 
+            M#ideal==={} and 
+	    imap(M#diff,LA)===L#diff else
+              LA==MA and 
+	      class M#ideal===List and 
+	      set skipzz(normalForm\imap(L#ideal,MA),MA)===
+	          set skipzz(normalForm\M#ideal,MA) and
+	      imap(L#diff,MA)===M#diff 	    
+      );
+  
+LieAlgebraMap==LieAlgebraMap:=(f,g)->(
+    source f==source g;
+    target f==target g;
+    imap(f\gens source f,target g)===g\gens source g
+    );
+    
+    
+   
+    
+  
+-----------------------------------
+-- generators
+-----------------------------------
+
+gens(LieAlgebra):=gens(ExtAlgebra):=opts->L->L#cache.gens;
+gens(LieSubSpace):=opts->S->
+      if not S#?gens or not class S#gens===List then 
+             print("the subspace has no generators") else
+      S#gens;
+      
+numgens(LieAlgebra):=L->L#numgens;
+
+degreeLength(LieAlgebra):=L->L#degreeLength;      
+      
+
+----------------------------------
+-- ideal	  
+---------------------------------
+ideal(LieAlgebra):=List=>L->L#ideal;	  
+
+----------------------------------
+-- diff	  
+---------------------------------
+diff(LieAlgebra):=L->L#diff;	    
+	
+-----------------------------------------
+-- ambient L, the free Lie algebra F of which
+-- L is a quotient without differential or L=F/I, 
+-- where I is a Lie ideal in F
+-----------------------------------------
+
+ambient(LieAlgebra):=L->L#cache.ambient; 
+	
 
 
-----------------------------------------    
--- basToMat
 ----------------------------------------
--- a list m of linear combinations of lieRing elements of
--- degree d to a matrix whose columns are the coefficients of the
--- corresponding elements in ibasisLie(d).
-basToMat=method(TypicalValue=>Matrix) 
-basToMat(ZZ,List):=(d,m)->(
-    if m==={}  then matrix {{0_(LL.field)}} else (
-       	if LL.cache.dims#d==0 then matrix table(1,length m,x->0_(LL.field)) else (
-            idm:=entries (basis((LL.field)^(LL.cache.dims#d)));
-            transpose matrix apply(m, x-> if x==0 then 
-	     	flatten table(1,LL.cache.dims#d,x->0_(LL.field)) 
-	     	else sum(
-	            apply(flatten entries (coefficients x)_1,
-		       	x->(map(LL.field,LL.cache.lieRing))(x)), 
-	            apply(flatten entries (coefficients x)_0,
-	               	y->idm_(ind(d,y))),(i,j)->i*j
-	            )
-	    	)
-            )
-    	)
-    ); 
-basToMat(ZZ,ZZ,List):=(d,j,m)->(
-    if m==={} then matrix {{0_(LL.field)}} else (    
-       	if LL.cache.dims#d==0 then matrix table(1,length m,x->0_(LL.field)) else (
-       	    idm:=entries (basis((LL.field)^(dimLie(d,j))));
-       	    transpose matrix apply(m, x->if x==0 then 
-               	flatten table(1,dimLie(d,j),x->0_(LL.field)) 
-	       	else sum(
-		    apply(flatten entries (coefficients x)_1,
-		       	x->(map(LL.field,LL.cache.lieRing))(x)),
-	            apply(flatten entries (coefficients x)_0,
-	               	y->idm_(ind(d,j,y))),(r,s)->r*s
-	            )    
-	    	)
-    	    )
-    	)
-    ); 
+-- Quotient Lie algebra by a list
+-- this function sets the generators for the Lie algebra
+-----------------------------------------
 
+LieAlgebra/List:=(L,x)->(
+   if not all(x,y->class y===L) then (
+	 error "the generators do not belong to the input Lie algebra";
+	 );  
+   A:=L#cache.ambient;
+   I:=L#ideal;
+   xA:=imap(x,A);
+   d:=differential L;
+   if class I===List then (
+       idea:= join(I,xA)|imap(skipzz(d\\x,L),A);
+       out:=ilieAlgebra(L#genslie,idea,L#diff,
+	       Weights=>L#Weights,Signs=>L#Signs,Field=>L#Field);    
+       setgen out;
+       out
+       ) else (
+          if I#?ideal then (
+	      idea=join(I#gens,xA)|imap(skipzz(d\\x,L),A);	     
+              out=ilieAlgebra(L#genslie,idea,L#diff,
+	        Weights=>L#Weights,Signs=>L#Signs,Field=>L#Field);
+	      setgen out;
+	      out
+	      ) else (	                   
+	         B:=lieQuotient(A,xA);
+	         f:=lieMap(B,A);
+	         J:=new LieIdeal from image(f,I);
+	         B/J
+	         )
+	   )    
+    );
 
+-----------------------------------
+-- Quotient by the image of a map or ideal
+-- this function sets the generators for the Lie algebra
+-----------------------------------
+    
+LieAlgebra/LieAlgebraMap:=(L,f)->L/(f\f#source#cache.gens);
 
-
-----------------------------------------    
--- boundariesDimLie
-----------------------------------------
--- returns the dimension only
-boundariesDimLie=(n,d)->length iboundariesLie(n,d); 
-
-
-
-
-
-----------------------------------------    
--- checkmap
-----------------------------------------
--- f:M->L, M and L should be computed to max of genDegMax() and
--- relDegMax() and max of deg(f(x)), x generator in M.
-checkmap=(f)->(
-      L0:=LL;
-      M:=f.sourceLie; 
-      L:=f.targetLie;
-      if L===M and all(length M.gensLie,i->f#((M.gensLie)_i)===[(L.gensLie)_i]) then true else (
-      	  relOK:=skipz apply(M.relsLie,x->ievalMapLie(f,x))=={};
-      	  diffOK:= if M.gensLie=={} then true else 
-          skipz apply(length M.gensLie,
-	      i->ievalMapLie(f,(M.genDiffs)_i)-idiffLie(
-	  	  (LL=L;ievalMapLie(f,[(M.gensLie)_i]))))=={};
-      LL=L0;
-      if not relOK then print("the map is not welldefined");
-      if not diffOK then print("the map does not commute with the differential");
-      relOK and diffOK)
+LieAlgebra/LieIdeal:=(L,I)->(
+    if not I#lieAlgebra===L then (
+       error "the input ideal is not an ideal in the input Lie algebra";
+       );
+    if I#?ideal then L/I#gens else (
+      if class L#ideal===List then ( 
+      Q:=ilieAlgebra(L,I);
+      setgen Q;
+      Q) else (
+        M:=L#cache.ambient;
+        f:=lieMap(L,M);
+	M/inverse(f,I)
+	)      
+     )
   );
 
 
+---------------------------
+-- lieQuotient
+-- internal quotient Lie algebra which does not set the generators
+---------------------------
+lieQuotient=method()
+lieQuotient(LieAlgebra,List):=(L,x)->(
+   A:=L#cache.ambient;
+   I:=L#ideal;
+   xA:=imap(x,A);
+   d:=differential L;
+   if class I===List then (
+       idea:= join(I,xA)|imap(skipzz(d\\x,L),A);
+       ilieAlgebra(L#genslie,idea,L#diff,
+	       Weights=>L#Weights,Signs=>L#Signs,Field=>L#Field)   
+       ) else (
+          if I#?ideal then (
+	      idea=join(I#gens,xA)|imap(skipzz(d\\x,L),A);	     
+              ilieAlgebra(L#genslie,idea,L#diff,
+	        Weights=>L#Weights,Signs=>L#Signs,Field=>L#Field)
+	      ) else (	                   
+	         B:=lieQuotient(A,xA);
+	         f:=lieMap(B,A);
+	         J:=new LieIdeal from image(f,I);
+	         B/J
+	         )
+	   )    
+    );
+lieQuotient(LieAlgebra,LieIdeal):=(L,I)->(
+    if I#?ideal then lieQuotient(L,I#gens) else (
+      if class L#ideal===List then 
+      ilieAlgebra(L,I) else (
+        M:=L#cache.ambient;
+        f:=lieMap(L,M);
+	lieQuotient(M,inverse(f,I))
+	)      
+     )
+  );
 
-----------------------------------------    
--- checkder
-----------------------------------------
--- d:M->L is a derivation, checking that d maps the relations on M to 0.
--- L should be computed to max of (d.weightDer)_0 and relDegMax for M
-checkder=(d)->(
-    che:=unique apply(d.sourceLie.relsLie,x->evalDerLie(d,x)); 
-    ok:= che=={} or che=={[]};
-    if not ok then print("the derivation is not welldefined");
-    ok
-    ); 
 
+-----------------------------------
+-- the zero element in a Lie algebra
+-- or Ext-algebra and the zero Lie algebra 
+------------------------------------
 
-----------------------------------------    
--- checkdiff
-----------------------------------------
--- Controlling that the differential maps the relations to 0 and that
--- the square is 0.
-checkdiff=()->(
-    dz:=skipz apply(LL.relsLie,x->idiffLie(x));
-    d2:=skipz apply(LL.genDiffs,x->idiffLie(x)); 
-    ok:=true; 
-    if not dz=={} then (
-	ok=false; 
-	print("the differential is not welldefined")
-	);
-    if not d2=={} then (
-	ok=false; 
-	print("the square of the differential is not zero")
-	);
-    ok
-    ); 
-
-
-  
-  
-----------------------------------------    
--- commrel and commrelgen
-----------------------------------------  
--- the commutative law on basis elements, used in computeLie
-commrel=(m)->(
-    defm:=idef(m);
-    if length defm==1 then 0_(LL.cache.lieRing) else (
-	x:=first defm;
-	m1:=drop(defm,1); 
-	m+eps([x],m1)*op(m1,LL.cache.lieRing_(x))
-	)
-    ); 
-
-commrelgen=(x,m)->(defm:=idef(m); op([x],m)+eps([x],defm)*op(defm,LL.cache.lieRing_(x)));
-   
-
-----------------------------------------    
--- cyclesLie
-----------------------------------------
--- gives a basis for the cycles of first degree n and
--- homological degree j 
-cyclesLie=(n,j)->(
-    if j==0 then ibasisLie(n,0) else (
-	ba:=basToMat(n,j-1,apply(ibasisLie(n,j),x->idiffLie(x)));
-        if ba==0 then ibasisLie(n,j) else skipz matToBas(n,j,matrix gens kernel ba)
-	)
+ZZ_(LieAlgebra):=LieElement=>(n,L)->(
+    if n==0 then new L from new BasicList from {empty,empty}
+    );
+ZZ_(ExtAlgebra):=ExtElement=>(n,L)->(
+    if n==0 then new L from new BasicList from {empty,empty}
     );
 
-
-----------------------------------------    
--- deflist
-----------------------------------------  
-deflist=(x)->(if x==={} then [] else prepend((last x)%(LL.numGen),deflist(drop (x,-1))));
-
-
-----------------------------------------    
--- degiterLie
-----------------------------------------
--- gives the multidegree of an iterated lie monomial in 
--- digital form ([1,2,0,1])
-
-degiterlie=(x)->sum(x,y->LL.genWeights_y); 
-
-
-----------------------------------------    
--- degList
-----------------------------------------
-degList = x->apply(x,y->if class y===Array then degLie y else 
-    if generalExpressionLie y then degLie((y_1)_0) else (
-	print(y); 
-	print("is not a general Lie expression")
-	)
-    );
-
-
-----------------------------------------    
--- degRel
-----------------------------------------
--- computes the multidegree of a homogeneous relation y 
--- in digital form  	    
-
-degRel=(y)->(if class y===Array then degiterlie(y) else degiterlie((y_1)_0));
-
-
-
-
-----------------------------------------    
--- doZeroLie
-----------------------------------------
--- this sets the keys for the zero Lie algebra, with dims=0 up to maxDeg
-
-doZeroLie=()->(
-    LL.genWeights=LL.genSigns={};
-    for i from 1 to LL.compdeg do (
-	LL.cache.bas#i={};
-	LL.cache.dims#i=0;
-	LL.cache.gr#i=ideal{0_(LL.field)};
-	LL.cache.deglist#i={}
-	)
-    );
-
-
-----------------------------------------    
--- eps
-----------------------------------------
--- the "exchange sign" when x and y are iterated Lie product
--- in digital form
-  
-eps=(x,y)->((-1)^(sign(x)*sign(y)));  
-
-
-----------------------------------------    
--- eval
-----------------------------------------  
--- x is a permutation in the form of a cycle, y is an element
-eval=(x,y)->(if member(y,x) then (
-	i:=position(x,z->z===y); 
-	x_((i+1)%length x)
-	) else y
-    );
-
-
-
-----------------------------------------    
--- evalmultDerLie
-----------------------------------------
-evalmultDerLie=(f,g,x)->idefinvLie(evalDerLie(f,evalDerLie(g,x)))-
-       (-1)^(f.signDer*g.signDer)*idefinvLie(evalDerLie(g,evalDerLie(f,x)));
-     
- 
-----------------------------------------    
--- extmult
-----------------------------------------     
-extmult=(i,j)-> (
-    M:=LL.minmodel; 
-    fi:=(M.gensLie)_i; 
-    fj:=(M.gensLie)_j;
-    si:=(M.genSigns)_i; 
-    sj:=(M.genSigns)_j;
-    co:=apply(M.numGen,k->(
-	    if class (M.genDiffs)_k ===Array then (
-		coes:={1}; 
-		arrs:={(M.genDiffs)_k}
-		) else (
-	    	coes=((M.genDiffs)_k)_0; 
-		arrs=((M.genDiffs)_k)_1
-		);
-	    len:=length coes;
-	    if not (member([fi,fj],arrs) or member([fj,fi],arrs)) then 
-	    0_(LL.cache.extAlgRing) else (
-		if member([fi,fj],arrs) then (
-		    po:=(select(len,x->arrs_x===[fi,fj]))_0;
-		    coes_po*(if i==j then 2 else (-1)^(sj*(si+1)))
-		    ) else (
-		    po=(select(len,x->arrs_x===[fj,fi]))_0;
-		    coes_po*(-1)^(sj+1)
-		    )
-	    	)
-	    )
-    	);
-    sum(co,gens LL.cache.extAlgRing,(r,s)->r*s)
-    );
-
-----------------------------------------    
--- extmonmult
-----------------------------------------
-extmonmult=(a,b)->extmult(index(a),index(b));
-  
-
-
-----------------------------------------    
--- genbas
----------------------------------------- 
--- gives the basis element in lieRing corresponding to the
--- generator z
-genbas=(z)->(
-    i:=position(LL.gensLie,x->(x===z));
-    LL.cache.lieRing_i
-    );
     
 
-----------------------------------------    
--- genDegMax
-----------------------------------------
--- the maximal first degree of the generators 
-
-genDegMax=()->max(0,max apply(LL.genWeights,x->x_0));
-  
-
-----------------------------------------    
--- gendeg
-----------------------------------------   
-
-gendeg=method(TypicalValue=>List)
--- gives the generators in digital form of first degree d
-gendeg(ZZ):=(d)->select(LL.numGen,y->((LL.genWeights_y)_0===d));
--- gives the generators in digital form of multidegree x
-gendeg(List):=(x)->select(LL.numGen,y->(LL.genWeights_y===x));
-
-
-----------------------------------------    
--- ibasisLie
-----------------------------------------  
-ibasisLie=method(TypicalValue=>List)
--- gives the list of basis elements in lieRing of first degree n 
-ibasisLie(ZZ):=(n)->LL.cache.bas#n;
--- gives the list of basis elements in lieRing of first degree n
--- and last degree d 	 
-ibasisLie(ZZ,ZZ):=(n,d)->select(ibasisLie(n),x->last degree x==d);
--- gives the list of basis elements in lieRing of multidegree x    
-ibasisLie(List):=(x)->select(ibasisLie(x_0),y->degree y===x); 
-
-
-----------------------------------------    
--- iboundariesLie
-----------------------------------------
--- gives a basis for the boundaries of first degree n and
--- homological degree d
-
-iboundariesLie=(n,d)->(
-	idi:=skipz apply(ibasisLie(n,d+1),x->idiffLie(x)); 
-	if idi==={} then {} else 
-	    flatten entries gens gb(
-	    ideal idi,DegreeLimit=>
-	    prepend(n,flatten table(1,length((LL.genWeights)_0)-1,x->0)))
-    );
-
-
-----------------------------------------    
--- idef
-----------------------------------------
--- transforms a monomial in a lieRing to an iterated Lie product
--- in digital form 
-
-idef=(m)->deflist monlist m;
-
-
-
-
-----------------------------------------    
--- idefinvLie
-----------------------------------------
--- is left inverse to "idefLie", that is, idefinvLie(idefLie(x))=x,
--- when x is a basis element in lieRing.
--- It holds that idefLie(idefinvLie(x))≈x in the free Lie algebra
--- on the generators modulo the relations.
--- idefinvLie is not "listable". Input is a generator or an iterated
--- Lie product, or of the type {{coef}, {lie}}.  
-idefinvLie=method(TypicalValue=>RingElement)
-idefinvLie(Symbol):=idefinvLie(IndexedVariable):=(x)->idefinvLie([x]);
-idefinvLie(ZZ):=(x)->idefinvLie([x]);
-idefinvLie(Array):=(x)->(
-    if x==[] then 0_(LL.cache.lieRing) else ifed isubst x
-    );
-idefinvLie(List):=(x)->sum(x_0,x_1,(i,j)->i*idefinvLie(j));
-
-
-
-----------------------------------------    
--- idefLie
-----------------------------------------    
--- computes the linear combination of iterated Lie products as 
--- {{coef},{lie}} corresponding to the element p in lieRing, where
--- {lie} is a list of iterated Lie products of generators
--- (generators as given in input, not the digital form). 
--- The value on a basis element is only the iterated Lie product.
--- idefLie is "listable". 
-idefLie=method(TypicalValue=>List)
-idefLie(List):=(p)->apply(p,x->idefLie(x));
-idefLie(RingElement):=(p)-> (  
-    mons:=flatten entries monomials p; 
-    if mons=={} then [] else (  
-	if p===mons_0 then apply(idef(p),y->LL.gensLie_y) else (
-	    coef:=apply(mons,x->(p_x));
-	    {coef,apply(mons,x->apply(idef(x),y->LL.gensLie_y))}
-	    )
-	)
-    );
-    
-  
-----------------------------------------    
--- idegg
-----------------------------------------  
-idegg=method()
-idegg(Array):=(x)->idegg x_0 + idegg x_1;
-idegg(Symbol):=idegg(IndexedVariable):=idegg(ZZ):=(g)-> (
-    if not member(g,LL.gensLie) then (
-	print(g);
-	print(" is not a generator")
-	) else (
-	po:=position(LL.gensLie,x->x===g);
-	((LL.genWeights)_po)_0)
-    );
-
- 
-----------------------------------------    
--- idegLie
-----------------------------------------
-
-idegLie=x->if x==0 then 0 else (degree x)_0;
-
-
-----------------------------------------    
--- iderLie
----------------------------------------- 
-iderLie=y->(
-    d:=new MutableHashTable; 
-    d.sourceLie=LL; 
-    d.targetLie=LL; 
-    apply(LL.numGen, i->d#((LL.gensLie)_i)=y_i); 
-    if all(y,z->z==[]) then ( 
-	d.weightDer=flatten table(1,LL.deglength,x->0);
-	d.signDer=0
-	) else (
-	i:=position(y,z->not z==[]);
-	d.weightDer=weightLie(y_i)-(LL.genWeights)_i;
-	d.signDer=(signLie(y_i)-(LL.genSigns)_i)%2
-	);
-    d.maplie=idMapLie();
-    new DerLie from d
-    );
- 
- 
-----------------------------------------    
--- idiff
-----------------------------------------
--- computation of the differential as a polynomial
--- in liering. Input is a generator in digital form or 
--- an iterated Lie product in digital form.
-idiff=method(TypicalValue=>RingElement)
-idiff(ZZ):=(n)->(
-    gd:=(LL.genDiffs)_n;
-    if gd===[] then 0_(LL.cache.lieRing) else ifed(isubstrel(gd)));
-idiff(Array):=(x)->(
-    if x==[] then 0_(LL.cache.lieRing) else if length x==1 then idiff(x_0) else (
-	x1:=drop(x,1);
-	si:=sign([x_0]);
-	-(-1)^((si+1)*sign(x1))*op(x1,idiff(x_0))+(-1)^(si)*op([x_0],idiff(x1)))
-    );
-
-
-
-----------------------------------------    
--- idiffLie
-----------------------------------------  
--- the differential of a generator, GE-element, or an element 
--- in lieRing. The value is in lieRing.
-idiffLie=method(TypicalValue=>RingElement)
-idiffLie(Symbol):=idiffLie(IndexedVariable):=
-idiffLie(ZZ):=(x)->(
-    po:=position(LL.gensLie,u->u===x);
-    xx:=(LL.genDiffs)_po;if xx===[] then 0_(LL.cache.lieRing) else idefinvLie(xx)
-    );
-idiffLie(Array):=(x)-> (
-    if x==[] then 0_(LL.cache.lieRing) else if length x==1 then idiffLie(x_0) else idiff(isubst x)
-    );
-idiffLie(List):=(x)->sum(x_0,x_1,(i,j)->i*idiffLie(j));
-idiffLie(RingElement):=(x)->(
-    if x==0_(LL.cache.lieRing) then 0_(LL.cache.lieRing) else idiffLie(idefLie(x))
-    );
-
-
-
-----------------------------------------    
--- idimsLie
-----------------------------------------  
-idimsLie=d->for i from 1 to d list LL.cache.dims#i;
-
-
-----------------------------------------    
--- idimtotLie
-----------------------------------------  
-
-idimtotLie=d->sum idimsLie(d);
-
-
-
-----------------------------------------    
--- idivisorLie
-----------------------------------------
--- m is a list of lieRing elements of degree t,
--- p is a list of lieRing elements of degree s, the result 
--- is a basis for those x of degree d=t-s such that x multiplies
--- p to the space generated by m
-idivisorLie=(t,s,m,p)->(
-    d:=t-s; 
-    if LL.cache.dims#t==0 then ibasisLie(d) else (
-      	B:=transpose basToMat(t,m);
-      	kerB:=transpose generators kernel(B);
-      	matToBas(d,generators kernel joinvert apply(p,y->
-		(kerB*basToMat(t,apply(ibasisLie(d),x->imult(y,x))))))
-	)    
-);
-
-
-----------------------------------------    
--- idMapLie
-----------------------------------------
--- the identity map on L
-
-idMapLie=()->mapLie(LL,LL,apply(LL.gensLie,x->[x]));
-
-
-
-----------------------------------------    
--- ieuler
----------------------------------------- 
--- computes the eulercharacteristics of first degree n. It is
--- assumed that the homological degree is at most n-1.
-ieuler=(n)->sum apply(n,j->(-1)^j*dimLie(n,j));
-
-----------------------------------------    
--- ievalDerLie
-----------------------------------------
--- gives the value of the derivation in lieRing
--- on an iteraded Lie product on the generators in d.sourceLie.
-
-ievalDerLie=method()
-ievalDerLie(DerLie,Array):=(d,x)->( 
-    N := LL;
-    LL = d.targetLie; 
-    if x==[] then out:=0_(LL.cache.lieRing) 
-       else if length x==1 then out=idefinvLie d#(x_0) else 
-	out=imult(idefinvLie(d#(x_0)),
-	    ievalMapLie(d.maplie,drop(x,1)))+
-	    (-1)^((LL=d.sourceLie;isignLie(x_0))*(d.signDer))*imult((
-		LL=d.targetLie;
-		idefinvLie(d.maplie#(x_0))),
-	        ievalDerLie(d,drop(x,1)));
-    LL=N;
-    out
-    );
-ievalDerLie(DerLie,List):=(d,x)->sum(x_0,x_1,(j,k)->j*ievalDerLie(d,k));
-    
-----------------------------------------    
--- ievalMapLie
-----------------------------------------
--- gives the value of the Lie homomorphism in lieRing
--- on an iteraded Lie product on the generators in f.sourceLie.
-ievalMapLie=method(TypicalValue=>RingElement)
-ievalMapLie(MapLie,Array):=(f,x)->(
-    N:=LL;
-    LL=f.targetLie;
-    if x==[] then out:=0_(LL.cache.lieRing) 
-        else if length x==1 then out=idefinvLie(f#(x_0)) else (
-	fli:=apply(x,y->idefinvLie(f#y));
-	out=fold(fli,(u,v)->imult(u,v)));
-    LL=N;
-    out
-    );
---gives the value of the Lie homomorphism in lieRing on a GE-element	    
-ievalMapLie(MapLie,List):=(f,x)->sum(x_0,x_1,(j,k)->j*ievalMapLie(f,k));
-
---gives the value of the Lie homomorphism on a linear combination of
---basis elements in f.sourceLie.cache.lieRing. The values are in 
--- f.targetLie.cache.lieRing	    
-ievalMapLie(MapLie,RingElement):=(f,x)->(
-    N:=LL;
-    LL=f.sourceLie;
-    if x==0_(LL.cache.lieRing) then 0_(f.targetLie.cache.lieRing) else (
-	out:=ievalMapLie(f,idefLie(x));
-	LL=N;
-	out
-	)
-    );
-
-
-
-----------------------------------------    
--- ifed
-----------------------------------------
--- transforms an iterated Lie product in digital form of 
--- first degree d to a linear combination
--- of elements in bas#d
--- ifed(idef m)=m if m is a basis element
-ifed=method(TypicalValue=>RingElement)
-ifed(Array):=(x)->(
-    le:=length x; 
-    if le===1 then ( 
-	d:=(degiterlie(x))_0; 
-	if gens LL.cache.gr#(d) == 0 then (
-	    (LL.cache.lieRing)_(x_0) 
-	    ) else (
-	    ((LL.cache.lieRing)_(x_0))%LL.cache.gr#d
-	    )
-	) else  op([x_0],ifed(drop(x,1)))
-    );
--- input is of the form {{coef},{lie}}, where the elements in 
--- lie are iterated Lie products in digital form.   
-ifed(List):=(x)->sum(x_0,x_1,(i,j)->i*ifed(j));
-
-
-
-----------------------------------------    
--- ifedd
-----------------------------------------
--- The following three functions, ifedd, isubstt and idegg are only used in toMonomialLie 
-ifedd=method(TypicalValue=>RingElement)
-ifedd(Array):=(x)->(
-    le:=length x; 
-    if le===1 then ( 
-	d:=(degiterlie(x))_0; 
-	if gens LL.cache.gr#(d) == 0 then (LL.cache.lieRing)_(x_0) else ((LL.cache.lieRing)_(x_0))%LL.cache.gr#d
-	) else (
-	x1:=if class (drop(x,1))_0===Array then (drop(x,1))_0 else drop(x,1); 
-	x0:= if class x_0===Array then x_0 else [x_0];	
-	imult(ifedd(x0),ifedd(x1)))
-    );
-ifedd(List):=(x)->sum(x_0,x_1,(i,j)->i*ifedd(j));
-
-
-
-----------------------------------------    
--- ihomologyLie
-----------------------------------------
--- gives a basis in terms of cycles in lieRing for the
--- homology of first degree n and homological degree j
-
-ihomologyLie=(n,j)->(
-	if iboundariesLie(n,j)=={} then prel:=cyclesLie(n,j) else (
-	    I:=ideal iboundariesLie(n,j);
-	    prel=skipz apply(cyclesLie(n,j),x->x%I));
-	if prel=={} then {} else 
-            flatten entries gens gb(ideal prel,DegreeLimit=>
-	    prepend(n,flatten table(1,length((LL.genWeights)_0)-1,x->1)))
-);
-
-
-
-----------------------------------------    
--- iideal
-----------------------------------------
--- gives a minimal generator set of lieRing elements
--- in first degre n for the lie ideal generated by 
--- lieRing elements in the list y (which may contain
--- elements of different degrees)   
-iideal = method(TypicalValue=>List) 
-iideal(ZZ,List):=(n,y)->(cacheide:=new MutableHashTable;
-    if cacheide#?(n,y) then cacheide#(n,y) else (
-	rs:=listdeg(n,y);
-	for i from 1 to n-1 do 
-	rs=rs|flatten apply(gendeg(n-i),x->apply(iideal(i,y),z->op([x],z))); 
-	rs=skipz rs;
-	if rs==={} then cacheide#(n,y)={} else
-	cacheide#(n,y)=flatten entries gens gb(
-	    ideal rs,DegreeLimit=>
-	    prepend(n,flatten table(1,length((LL.genWeights)_0)-1,x->0)))
-      	)
-    );
--- as above, but with the first degree replaced by the multidegree 
-iideal(List,List):=(d,y)->(select(iideal(d_0,y),z->degree z==d));
-
-
-
-
-
-----------------------------------------    
--- iimageLie
-----------------------------------------
-iimageLie=(n,d,f)->(
-    L:=LL;
-    out:=length select(imageBasisLie(n,f),x->(weightLie(LL=f.targetLie;x))_(-1)==d);
-    LL=L;
-    out
-    );
-
-
-----------------------------------------    
--- ikernelLie
-----------------------------------------  
-ikernelLie = (n,d,f)->(
-    N:=LL;
-    LL=f.sourceLie;
-    out:=length select(kernelBasisLie(n,f),x->(weightLie x)_(-1)==d);
-    LL=N;
-    out
-    );
-
-----------------------------------------
--- ilieAlgebra
-----------------------------------------
--- this is an internal version of lieAlgebra which does not make any checking and has
--- maxDeg as an extra argument
-
-ilieAlgebra = method(TypicalValue => LieAlgebra,Options => 
-    {genWeights => 1, genSigns => 0, field => QQ, genDiffs => {}})
-ilieAlgebra(ZZ,List,List) := opts->(imaxDeg,gensLie,relsLie)->(
-    L := new MutableHashTable; 
-    LL=L;
-    L.gensLie=gensLie;
-    L.genWeights=opts.genWeights;
-    L.genSigns=opts.genSigns;
-    L.genDiffs=opts.genDiffs;
-    L#(symbol cache)=new CacheTable;
-    if L.genDiffs=={} then L.cache.diffl=false else L.cache.diffl=true;
-    L.relsLie=relsLie;
-    L.field=opts.field;
-    L.numGen=length L.gensLie;
-    L.compdeg=0;
-    L.cache.maxDeg=imaxDeg;
-    L.cache.lieRing=L.field[]; 
-    L.cache.mbRing=L.field[];
-    L.cache#(symbol dims)=new MutableHashTable;
-    L.cache#(symbol opL)=new MutableHashTable;
-    L.cache#(symbol bas)=new MutableHashTable;
-    L.cache#(symbol gr)=new MutableHashTable;
-    L.cache#(symbol deglist)=new MutableHashTable;
-    if L.gensLie=={} then doZeroLie();
-    L.cache.bas#0={mb0}; 
-    L.cache.dims#0=1;
-    if not L.cache.diffl then (
-        L.genDiffs=flatten table(1,L.numGen,x->[]);
-	if L.genWeights===1 then L.genWeights=flatten table(1,L.numGen,x->{1,0}) else
-	    L.genWeights=apply(L.genWeights,x->append(x,0))
-	);
-    if L.genSigns===0 then L.genSigns=flatten table(1,L.numGen,x->0);
-    if L.genWeights==={} then L.deglength=0 else L.deglength=length (L.genWeights)_0;
-    L.cache.lieRing=lieR();
+zeroLieAlgebra=(field)->(
+    L:=new MutableHashTable of LieElement from new HashTable from { 
+	  genslie=>{},
+	  Weights=>{},
+	  Signs=>{},
+	  Field=>field,
+	  cache=>new CacheTable,
+          ideal=>{},
+	  diff=>{},
+	  numgens=>0,
+	  degreeLength=>0};
+    L#cache.degree=0; 
+    L#cache.max=5;
+    L#cache.lieRing=field[]; 
+    L#cache.mbRing=field[]; 
+    L#cache.dim=new MutableHashTable;
+    L#cache.basis=new MutableHashTable;
+    L#cache.gb=new MutableHashTable;
+    L#cache.degrees=new MutableHashTable;
+    net L:=x->toString 0;
     M:=new LieAlgebra from L;
-    LL=M;
-    M);
-
-
-
-----------------------------------------    
--- imult
-----------------------------------------
--- the internal Lie product on lieRing
--- OBS: imult removes zeroes, but multListLie does not!
-imult=method(TypicalValue=>RingElement)
-imult(RingElement,RingElement):=(x,y) -> linext((u,v)->imultmon(u,v),x,y);
-imult(List,List):= (x,y)->(skipz flatten apply(x,z->apply(y,u->imult(z,u)))); 
-
-
-----------------------------------------    
--- imultmon
-----------------------------------------  
--- x,y are basis elements in L.cache.lieRing of degree d,e;
--- output is the Lie product, which is a linear combination of 
--- basis elements of degree d+e  
-imultmon=(x,y)->op(idef(x),y);   
-
-
-
-----------------------------------------    
--- ind
-----------------------------------------
--- gives the index of m in ibasisLie(d). m belongs to lieRing
-ind=method(TypicalValue=>ZZ)
-ind(ZZ,RingElement):=(d,m)->position(LL.cache.bas#d,x->x===m);
---gives the index of m in ibasisLie(d,j). m belongs to lieRing
-ind(ZZ,ZZ,RingElement):=(d,j,m)->position(ibasisLie(d,j),x->x===m);
-
-
-
-----------------------------------------    
---indexFormList
-----------------------------------------	  
-indexFormList = x->apply(x,y->if class y===Array then indexFormLie y else 
-    if generalExpressionLie y then sum(y_0,y_1,(i,j)->i*indexFormLie(j)) else (
-	print(y); 
-	print("is not a general Lie expression")
-	)
+    M#cache.ambient=M;
+    M#cache.gens={};
+    M  
     );
 
-
-----------------------------------------    
--- invimage
-----------------------------------------
--- gives a basis, in terms of columns in a matrix, for the space of
--- those x such that Ax is in the column space of B. A and B are matrices
--- of numbers such that BA is defined. Used in invImageLie. See also
--- idivisorLie.
-invimage=(A,B)->generators kernel((transpose generators kernel(transpose B))*A); 
-
-
-----------------------------------------    
--- ipermopLie
-----------------------------------------  
---  y is a GE-element, x is a product of cycles, output
---  is in lieRing
-ipermopLie=(x,y)->if class y===Array then (
-    idefinvLie(opiterlie(x,y))
-    ) else (
-    sum(y_0,y_1,(i,j)->i*idefinvLie(opiterlie(x,j)))
-    );
-
-
-----------------------------------------    
--- iRels
-----------------------------------------
--- transforms the relations to digital form
-
-iRels=()->apply(LL.relsLie,isubstrel);
-
-
-
-----------------------------------------    
--- isignLie
-----------------------------------------  
-isignLie=method(TypicalValue=>ZZ)
--- the sign of a generator 
-isignLie(Symbol):=isignLie(IndexedVariable):=isignLie(ZZ):=(x)->(
-    po:=position(LL.gensLie,u->u===x);
-    (LL.genSigns)_po
-    );
--- the sign of an iterated Lie product
-isignLie(Array):=(x)->sum(x,isignLie)%2;
--- the sign of a general Lie expression      
-isignLie(List):=(x)->isignLie((x_1)_0);
--- the sign of a homogeneous element i lieRing
-isignLie(RingElement):=(x)->(
-    de:=idefLie(x);
-    if class de===Array then isignLie(de) else isignLie((de_1)_0)
-    );
-
-
-----------------------------------------    
--- isubalgLie
-----------------------------------------  
--- gives a basis in lieRing of first degree n for the sub Lie algebra
--- generated of the elements in the list x (which may contain elements 
--- of different degrees).
-isubalgLie=method(TypicalValue=>List)
-isubalgLie(ZZ,List):=(n,x)->(cachesub:=new MutableHashTable;
-    if cachesub#?(n,x) then cachesub#(n,x) else (
-	rs:=listdeg(n,x);
-	for i from 1 to n-1 do rs=rs|imult(listdeg(n-i,x),isubalgLie(i,x));
-	if rs=={} then cachesub#(n,x)={} else (
-	    cachesub#(n,x)=
-	    flatten entries gens gb(ideal rs,DegreeLimit=>
-	 	prepend(n,flatten table(1,length((LL.genWeights)_0)-1,x->0)))
-	    )
-	)
-    );  
--- as above, but with degree replaced by multidegree:
-isubalgLie(List,List):=(y,x)->(
-    select(isubalgLie(y_0,x),z->degree z==y)
-    );
-
-
-----------------------------------------    
--- isubst
-----------------------------------------
--- transforms a Lie monomial to digital form
-
-isubst=(x)->apply(x,y->position(LL.gensLie,u->u===y));
-
-
-----------------------------------------    
--- isubstrel
-----------------------------------------     
--- transforms a non-zero element in genDiffs or relsLie to 
--- digital form
-
-isubstrel=(x)-> if class x===Array then isubst(x) else {x_0,apply(x_1,isubst)};
-
-
-----------------------------------------    
--- isubstt
-----------------------------------------
-isubstt=method(TypicalValue=>RingElement)
-isubstt(Array):=(x)->[isubstt x_0,isubstt x_1];
-isubstt(Symbol):=isubstt(IndexedVariable):=isubstt(ZZ):= (x)->position(LL.gensLie,u->u===x);
-
-
-----------------------------------------    
--- iweightLie
-----------------------------------------
-  iweightLie = x-> if x==0 then flatten table(1,degreeLength ring x,x->0) else degree x;
-
-
-----------------------------------------    
--- joinhoriz
----------------------------------------- 
--- horizontal concatenation of a list of matrices
-joinhoriz=x->(
-    if length x==1 then x_0 else fold((u,v)->u|v,x_0,drop(x,1))
-    );
-
-
-----------------------------------------   
--- joinvert
----------------------------------------- 
--- vertical concatenation of a list of matrices
-joinvert=x->(
-    if length x==1 then x_0 else fold((u,v)->u||v,x_0,drop(x,1))
-    );
-
-
-
-----------------------------------------    
--- leftStandard
-----------------------------------------
-leftStandard = (x,y,G,S) -> (
-    if length x==1 then {y_0,apply(y_1,z->prepend(x_0,z))} else (
-	x1:=if class (drop(x,1))_0===Array then (drop(x,1))_0 else drop(x,1); 
-	x0:=if class (drop(x,-1))_0===Array then (drop(x,-1))_0 else drop(x,-1);
-	y0:=leftStandard(x0,leftStandard(x1,y,G,S),G,S);
-	y1:=leftStandard(x1,leftStandard(x0,y,G,S),G,S);
-	{join(y0_0, -(-1)^(signGenLie(x0,G,S)*signGenLie(x1,G,S))*y1_0),join(y0_1,y1_1)}
+setZeroLie=(L)->(
+    for i from 1 to L#cache.max do (
+	L#cache.basis#i={};
+	for k to i-1 do 
+	   L#cache.basis#(i,k)={};
+	L#cache.dim#i=0;
+	L#cache.gb#i=ideal{0_(L#Field)};
+	L#cache.degrees#i={};
 	)
     );
 
@@ -2558,274 +1266,1355 @@ leftStandard = (x,y,G,S) -> (
 ----------------------------------------
 -- construction of lieRing
 
-lieR=()->(LL.field)[(aR)_0..(aR)_(LL.cache.maxDeg*LL.numGen-1),
-    Degrees=>flatten table(LL.cache.maxDeg,LL.genWeights,(x,y)->y)];
+lieR=(L)->(L#Field)[(aR)_0..(aR)_(L#cache.max*L#numgens-1),
+    Degrees=>flatten table(L#cache.max,L#Weights,(x,y)->y)];
 
+----------------------------------
+-- DIFFERENTIALLIEALGEBRA
+---------------------------------
+--  the input should be a list of LieElements, which are the differentials of 
+--  the generators in a free Lie algebra L, 0_L is used for the zero element. It
+--  is checked by the program that the differential preserves all weights except 
+--  the homological degree which should be lowered by 1
+--  and also it should change the sign. The square of the 
+--  differential need not be zero, the differential of the elements in the list are added
+--  to the relations (this is enough since d^2 is a derivation).
+--  The generators are set by the function
 
-----------------------------------------    
--- lieToMb
-----------------------------------------
--- conversion of a basis element (or a list of basis elements) in lieRing
--- to a linear combination of elements mb_{n,i} (corresponding to the
--- i'th basis element in bas#n) in mbRing.
-lieToMb=method(TypicalValue=>RingElement)
-lieToMb(RingElement):=(p)->(
-    linext(x->lieToMbmon(x),map(LL.cache.mbRing,LL.cache.lieRing),p)
-    );
-lieToMb(List):=(x)->apply(x,y->lieToMb(y));
+differentialLieAlgebra=method(TypicalValue=>LieAlgebra)
+differentialLieAlgebra(List):=(x)->(
+    if x=={} then 
+       error "the input may not be the empty set";
+    L:=class x_0;
+    if unique x==={0_L} and length x==L#numgens then (
+    Q:=ilieAlgebra(L#cache.gens,{},flatten table(1,L#numgens,x->0_L),
+	Weights=>L#Weights,Signs=>L#Signs,
+	Field=>L#Field);
+    setgen Q;
+    Q 
+    ) else (
+    if not L#ideal=={} then (
+	error "the input Lie algebra is not free";
+	);
+     if not all(x,y->class y===L) then (
+	 error "the elements of input do not belong to the input Lie algebra";
+	 );	  
+    if not length x==L#numgens then (
+        error "the number of differentials must be equal to the number of generators";
+	);
+    
+    unit:=append(flatten table(1,L#degreeLength -1,x->0),1);
+    apply(L#numgens,
+	i->(if not x_i===0_L then (
+		w:=iweight(x_i); 
+		s:=isign(x_i);
+		if not (L#Weights)_i-w==unit then (
+		    print(x_i); 
+		    error " has not the right weight"
+		    ); 
+		if (L#Signs)_i==s then (
+		    print(x_i); 
+		    error " has not the right sign"
+		    );
+		)
+	    )
+	);
+    D:=ilieAlgebra(L#cache.gens,{},x,
+	Weights=>L#Weights,Signs=>L#Signs,
+	Field=>L#Field);
+    d:=differential D;
+    rels:=imap(skipzz(d\\imap(x,D),D),L);
+    Q=ilieAlgebra(L#cache.gens,rels,x,
+	Weights=>L#Weights,Signs=>L#Signs,
+	Field=>L#Field);
+    setgen Q;
+    Q
+    )
+  );
 
-
-----------------------------------------    
--- lieToMbmon
----------------------------------------- 
--- gives to a basis element in lieRing the
--- corresponding basis element in mbRing    
-lieToMbmon=(m)->(
-    d:=idegLie m;
-    po:=position(LL.cache.bas#d,x->x===m);
-    (LL.cache.mbRing)_(idimtotLie(d-1)+po)
-    );
-
-
-
-----------------------------------------    
--- linext
-----------------------------------------
--- is the linear extension of f, which is defined on monomials
--- in a polynomial ring, with values in the same polynomial ring.
-linext=method();
-linext(Function,RingElement):=(f,p)->(
-    if p==0 then 0_(ring p) else ( 
-	co:= coefficients p; 
-	mons:=flatten entries first co;
-	coefs:=flatten entries last co;
-	sum(coefs,mons,(i,j)->i*f(j))
-      )
-  ); 
--- If the value is in another polynomial ring, the coefficients need
--- to be mapped to this ring as follows:
-linext(Function,RingMap,RingElement):=(f,g,p)->(
-    if p==0 then g(0_(ring p)) else ( 
-	co:= coefficients p; 
-	mons:=flatten entries first co; 
-	coefs:=flatten entries last co;
-	sum(coefs,mons,(i,j)->g(i)*f(j))
-	)
-    );
--- below the bilinear extension of f, which is defined on pair of
--- monomials in a polynomial ring
-linext(Function,RingElement,RingElement):=(f,p,q)->linext(x->linext(y->f(x,y),q),p);
-
-
-
-----------------------------------------    
--- listdeg
-----------------------------------------
--- selects the elements in a list x of first degree n
-listdeg=(n,x)->(select(x,y->(idegLie y==n)));
-
-
-
-
-
-
-----------------------------------------    
--- matToBas
-----------------------------------------  
-matToBas=method(TypicalValue=>List) 
--- transforms a list m of linear combinations of lieRing elements 
--- in first degree d and last degree j to a matrix
--- whose columns are the coefficients (belong to L.field)
--- of the corresponding lieRing elements in ibasisLie(d,j)
-matToBas(ZZ,Matrix):=(d,A)->(
-    if A==0 then flatten table(1,numgens source A,x->0_(LL.cache.lieRing)) else (
-	apply(entries transpose A,x->sum(x,ibasisLie(d),(i,j)->i*j))
-	)
-    );
--- the number of rows in A equals dimLie(d),
--- the result is a list of linear combination of
--- basis elements in lieRing of first degree d corresponding
--- to the columns in A
-matToBas(ZZ,ZZ,Matrix):=(d,j,A)->(
-    if A==0 then flatten table(1,numgens source A,x->0_(LL.cache.lieRing)) else (
-	apply(entries transpose A,x->sum(x,ibasisLie(d,j),(r,s)->r*s))
-	)
-    );
-
-
-----------------------------------------    
--- mbToLie
-----------------------------------------
--- conversion of an element (or a list of elements) in mbRing 
--- to the corresponding linear combination of elements in bas#d,
--- which is an element in lieRing
-mbToLie=method(TypicalValue=>RingElement)
-mbToLie(RingElement):=(p)->(
-    linext(x->mbToLiemon(x),map(LL.cache.lieRing,LL.cache.mbRing),p)
-    );
-mbToLie(List):=(x)->apply(x,y->mbToLie(y));
-
-
-----------------------------------------    
--- mbToLiemon
----------------------------------------- 
--- gives to a basis element in mbRing the 
--- corresponding basis element in lieRing
-mbToLiemon=(m)->(
-    d:=idegLie m;
-    po:=position(gens LL.cache.mbRing,x->x===m);
-    (LL.cache.bas#d)_(-idimtotLie(d-1)+po)
+--------------------------------
+-- free product of Lie algebras
+--------------------------------
+LieAlgebra*LieAlgebra:=(L1,L2)->(
+    if not L1#Field===L2#Field then (
+	error "The Lie algebras must be defined over the same field";
+	 );
+    if not L1#degreeLength===L2#degreeLength then (
+	error "The degree length of the Lie algebras must be equal";
+	);
+    if class L1#ideal===LieIdeal then 
+       (
+       I1:=L1#ideal;
+       L1=ambient L1;
+       ) else
+       I1=zeroIdeal L1;
+    if class L2#ideal===LieIdeal then 
+       (
+       I2:=L2#ideal;
+       L2=ambient L2;
+       ) else
+       I2=zeroIdeal L2;
+    n1:=L1#numgens;
+    n2:=L2#numgens;
+    F:=ilieAlgebra(apply(n1,x->pr_x)|apply(n2,x->pr_(x+n1)),{},{},
+	   Weights=>join(L1#Weights,L2#Weights),
+	   Signs=>join(L1#Signs,L2#Signs),Field=>L1#Field);
+    ide:=imap(L1#ideal,F)|
+         apply(L2#ideal,x->imap(n1,x,F));
+    Mdiff:=imap(L1#diff,F)|
+        apply(L2#diff,x->imap(n1,x,F));
+    M:=ilieAlgebra(apply(n1,x->pr_x)|apply(n2,x->pr_(x+n1)),ide,Mdiff,
+	   Weights=>join(L1.Weights,L2.Weights),
+	   Signs=>join(L1.Signs,L2.Signs),Field=>L1.Field); 
+    f1:=lieMap(M,L1,imap(L1#cache.gens,M));
+    f2:=lieMap(M,L2,imap(n1,L2#cache.gens,M));
+    I:=lieIdeal(image(f1,I1))+lieIdeal(image(f2,I2));
+    if not (I1===zeroIdeal L1 and I2===zeroIdeal L2) then M=M/I;
+    setgen M;
+    M
     );
 
+ 
 
 
-
-----------------------------------------    
--- minmodelone
-----------------------------------------
---contruction of the model in first degree 1
-minmodelone=(d)->(
-    L:=LL;
-    gens1:=select(LL.gensLie,x->degLie(x)==1);
-    newdiffs:=flatten table(1,length gens1,x->[]); 
-    newgens:=apply(length gens1,x->fr_x); 
-    newweights:=apply(gens1,x->weightLie(x));
-    newsigns:=apply(gens1,x->isignLie(x));
-    M:=ilieAlgebra(d,newgens,{},genWeights=>newweights,
-	genSigns=>newsigns,genDiffs=>newdiffs,field=>LL.field);
-    M.cache.homdefs=apply(gens1,x->[x]);LL=L;M
+------------------------------
+-- direct sum of Lie algebras
+------------------------------
+LieAlgebra++LieAlgebra:=(L1,L2)->(
+    if not L1#Field===L2#Field then (
+	error "The Lie algebras must be defined over the same field";
+	);
+    if not L1#degreeLength===L2#degreeLength then ( 
+	error "The degree length of the Lie algebras must be equal";
+	);
+     if class L1#ideal===LieIdeal then 
+       (
+       I1:=L1#ideal;
+       L1=ambient L1;
+       ) else
+       I1=zeroIdeal L1;
+    if class L2#ideal===LieIdeal then 
+       (
+       I2:=L2#ideal;
+       L2=ambient L2;
+       ) else
+       I2=zeroIdeal L2;
+    n1:=L1#numgens;
+    n2:=L2#numgens;
+    F:=ilieAlgebra(apply(n1,x->pr_x)|apply(n2,x->pr_(x+n1)),{},{},
+	   Weights=>join(L1.Weights,L2#Weights),
+	   Signs=>join(L1#Signs,L2#Signs),Field=>L1#Field);
+    pair:=flatten table(n1,n2,(i,j)->(F#cache.gens)#i@(F#cache.gens)#(n1+j));
+    ide:=imap(L1#ideal,F)|
+         apply(L2#ideal,x->imap(n1,x,F));
+    ide=ide|pair; 
+    Mdiff:=imap(L1#diff,F)|
+        apply(L2#diff,x->imap(n1,x,F));
+    M:=ilieAlgebra(apply(n1,x->pr_x)|apply(n2,x->pr_(x+n1)),ide,Mdiff,
+	   Weights=>join(L1#Weights,L2#Weights),
+	   Signs=>join(L1#Signs,L2#Signs),Field=>L1#Field);
+    f1:=lieMap(M,L1,imap(L1#cache.gens,M));
+    f2:=lieMap(M,L2,imap(n1,L2#cache.gens,M));
+    I:=(new LieIdeal from image(f1,I1)) + new LieIdeal from image(f2,I2);
+    if not (I1===zeroIdeal L1 and I2===zeroIdeal L2) then M=M/I; 
+    setgen M;
+    M
     );
 
 
-----------------------------------------    
--- minmodelstep
-----------------------------------------
--- given that the Lie algebra M is a free minimal model of L up to
--- first degree n-1, the output becomes a free minimal model up to
--- first degree n
-minmodelstep=(n,d,M)->(
-    newgens:=M.gensLie;
-    newsigns:=M.genSigns; 
-    newdiffs:=M.genDiffs; 
-    newweights:=M.genWeights; 
-    L:=LL;
-    -- step 1: H(f) surjective, f: M -> L
-    f:=mapLie(L,M,M.cache.homdefs);
-    LL=M; 
-    computeLie(n); 
-    LL=L; 
-    indechom:=(i)->(
-	dec:=iboundariesLie(n,i); 
-	cyc:=cyclesLie(n,i);
-	LL=M; 
-	cycM:= ihomologyLie(n,i); 
-	dec=join(dec,apply(cycM,x->ievalMapLie(f,x)));
-	LL=L;
-	if dec=={} then cyc else (
-	    prel:= skipz apply(cyc,x->x%ideal dec); 
-	    if prel=={} then {} else skipz flatten entries gens gb(ideal prel,
-		DegreeLimit=>prepend(n,flatten table(1,length(L.genWeights)_0-1,x->1)))
-	  )
+
+
+
+
+
+
+--------------------------------------
+-- MAPS and DERIVATIONS
+--------------------------------------
+
+
+----------------------------------
+-- imap
+----------------------------------
+-- given a Lie element x from any Lie algebra M 
+-- and a Lie algebra L with at least as many generators as M, the output is
+-- the Lie element in L obtained by considering x (as a basicList) as 
+-- an element in L. 
+
+imap=method()
+imap(LieElement,LieAlgebra):=(x,L)->
+      new L from new BasicList from {x#0,x#1};
+     
+imap(List,LieAlgebra):=(x,L)->apply(x,y->imap(y,L));
+
+--------------------------------------
+-- given a number n and given a Lie element x from any Lie algebra M 
+-- and a Lie algebra L with at least n more generators than M, the output is
+-- the Lie element in L obtained by adding n to all 
+-- numbered generators in x (as a basicList). This is used in the free 
+-- product and direct sum.
+
+imap(ZZ,LieElement,LieAlgebra):=(n,x,L)->
+     new L from new BasicList from {x#0,apply(x#1,y->apply(y,z->z+n))};
+     
+imap(ZZ,List,LieAlgebra):=(n,x,L)->apply(x,y->imap(n,y,L));
+     
+
+    
+     
+
+
+
+
+-------------------------------------
+-- map
+-------------------------------------
+-- construction of Lie homomorphisms
+-- of type LieAlgebraMap. The elements of y are the
+-- values in L of the map on the generators of M
+
+
+
+map(LieAlgebra,LieAlgebra,List) := opts->(L,M,y)->(
+     if not M#Field===L#Field then (
+       	 error "The Lie algebras must be defined over the same field";
+	 ); 
+   --  print("you may use isWellDefined to test if the map is well defined 
+--	     up to a certain degree");
+     if not M#numgens==length y then (
+	  error "input does not have the right length";
+	  );
+     if any(y,z->not class z===L) then (
+	  error "input does not belong to the target Lie algebra";
+	  );
+     apply(length y,i->if not y_i===0_L and not iweight(y_i)==(M#Weights)_i then 
+	     error "input does not have the right weights"
+	  );
+     apply(length y,i->if not y_i===0_L and not isign(y_i)==(M#Signs)_i then 
+	     error "input does not have the right signs"
+	  );
+     wd:=(L==M and y===L#cache.gens or all(y,z->z===0_L)) or 
+          (M#ideal==={} and differential L===zeroDerivation L and 
+	      differential M===zeroDerivation M);     
+     h:=new HashTable from 
+	    join(apply(M#numgens, i->(M#cache.gens)_i=>y_i),
+		{source=>M,target=>L,cache => new CacheTable});
+     h#cache.welldef=wd;
+     if not wd then print("warning: the map might not be well defined, 
+	 use isWellDefined"); 
+     new LieAlgebraMap from h         	 
+   );
+
+-- the following version of map is in analogy
+-- with map for rings. The generators in M which are
+-- not generators in L (with the same weight and sign) are sent to zero, the others
+-- are sent to the generator with the same name in L 
+
+map(LieAlgebra,LieAlgebra) := opts->(L,M)->(
+    if not L#Field===M#Field then 
+        error "the Lie algebras must be defined over the same field";
+    F:=M#cache.ambient;
+    G:=L#cache.ambient;
+    wd:=(F==G and 
+	class M#ideal===List and
+        class L#ideal===List and 
+	all(imap(M#ideal,G),x->member(x,L#ideal)) and
+	imap(M#diff,G)===L#diff
+       )  or 
+       L==M or
+       (F==M and differential L===zeroDerivation L) or
+       (G==M and class L#ideal===LieIdeal);
+     xx:=apply(M#genslie,x->
+	         if not member(x,L#genslie) then 0_L 
+	            else (
+	               Li:=position(L#genslie,y->y===x);
+       	               Mi:=position(M#genslie,y->y===x);
+       	               Lx:=(L#cache.gens)_Li;		  
+	               if (not (M#Weights)_Mi==(L#Weights)_Li or
+		          not (M#Signs)_Mi==(L#Signs)_Li) then 0_L else Lx
+	               ) 
+                  );  
+       h:=new HashTable from 
+          join(apply(M#numgens,i->(M#cache.gens)_i=>xx_i),
+	      {source=>M,target=>L,cache=>new CacheTable});
+       h#cache.welldef=wd;
+       if not wd then print("warning: the map might not be well defined, 
+	   use isWellDefined"); 
+       new LieAlgebraMap from h
+    );
+
+map(LieAlgebra):=opts->L->
+    if not L#cache.?map then 
+        error "the input Lie algebra is not a minimal model" else
+	L#cache.map;
+
+map(LieDerivation):=opts->d->d#map;
+
+
+------------------------------------
+-- lieMap 
+------------------------------------
+-- the internal version of map without any checking,
+ 
+lieMap = method(TypicalValue=>LieAlgebraMap) 
+lieMap(LieAlgebra,LieAlgebra,List) := (L,M,y)->(
+      h:=new HashTable from  
+	 join(apply(M#numgens,i->(M#cache.gens)_i=>y_i),
+	     {source=>M,target=>L,cache=>new CacheTable}); 
+      h#cache.welldef=true;
+      new LieAlgebraMap from h
       );
-  newfR:=flatten for i from 0 to n-1 list indechom(i);
-  newf:=apply(newfR,x->idefLie(x));
-  newgens=join(newgens,toList(fr_(length newgens)..fr_(length newgens + length newf - 1)));
-  newsigns=join(newsigns,apply(newfR,x->isignLie(x)));
-  newdiffs=join(newdiffs,flatten table(1,length newf,x->[]));
-  newweights=join(newweights,apply(newfR,x->iweightLie(x)));
-  M1:=ilieAlgebra(d,newgens,{},genSigns=>newsigns,
-      genWeights=>newweights,genDiffs=>newdiffs,field=>L.field);
-  M1.cache.homdefs=join(M.cache.homdefs,newf);
-  -- step 2: H(f) injective
-  f=mapLie(L,M1,M1.cache.homdefs); 
-  LL=M1;
-  computeLie(n); 
-  unit:=append(flatten table(1,M1.deglength -1,x->0),1);
-  hoM:=hoL:=ge:=newbo:=baL:=baM:=baD:=newf={};
-  for i from 0 to n-1 do (    
-      LL=L;
-      r:=homologyLie(n,i); 
-      LL=M1; 
-      s:=homologyLie(n,i);
-      if s > r  then  (    
-	  LL=L;
-	  baD=basToMat(n,i,apply(ibasisLie(n,i+1),x->idiffLie(x)));
-	  -- the matrix for d_L in bas(n,i+1,L) --> bas(n,i,L)
-	  hoM=(LL=M1; ihomologyLie(n,i)); 
-	  -- z_1,...,z_s cycles in M1.cache.lieRing, s>0 
-	  hoLM:=apply(hoM,x->ievalMapLie(f,x));
-	  LL=L;
-	  -- f(z_1),...,f(z_s)
-	  baM=basToMat(n,i,hoLM);
-	  -- the matrix for hoLM in ibasisLie(n,i,L)
-	  if r==0 or skipz hoLM=={} then (
-	      -- directly to the last step, a simple case when fr 
-	      -- kills the basis for hoM and fr --> v_i, where d_L(v_i)=f(z_i): 
-	      len:=length newgens;
-	      newgens=join(newgens,toList(fr_len..fr_(len+s-1)));  
-	      LL=M1;
-	      newsigns=join(newsigns,apply(hoM,x->(isignLie(x)+1)%2));
-	      newdiffs=join(newdiffs,idefLie(hoM));
-	      newweights=join(newweights,apply(hoM,x->degree(x)+unit));
-	      newf=join(newf,(
-		      LL=L; 
-		      if baD==0 then flatten table(1,s,x->[]) else 
-		       apply(flatten entries (
-		               matrix{ibasisLie(n,i+1)}*solve(baD,baM)),
-		           x->idefLie(x)))); 
-	       -- see below	 
-	       ) else (
-	       hoL=(LL=L; ihomologyLie(n,i)); 
-	       -- u_1,...,u_r are cycles in lieRing
-	       baL=basToMat(n,i,hoL);
-	       -- the matrix for hoL in ibasisLie(n,i,L)	    
-	       ge=generators kernel matrix take(
-		   entries solve(if baD==0 then baL else baL|baD,baM),r);
-	       -- (a_1,...,a_s) such that z=\sum(a_i f(z_i)) is a boundary
-	       newbo=flatten entries (matrix{hoM}*ge);
-	       -- list of cycles \sum a_iz_i to be killed
-	       newf=join(newf,(
-		       LL=L; 
-		       if baD==0 then flatten table(1,length newbo,x->[]) else 
-		       apply(
-		           flatten entries (
-		               matrix{ibasisLie(n,i+1)}*solve(baD,baM*ge)),
-		           x->idefLie(x))
-		       )); 
-	       -- list x which will be f:s values on the new generators
-    	       -- summary (commutative diagram): f: fr_i --> x, 
-	       -- d_M1: fr_i --> z, f: z --> v, d_L_ x --> v
-	       len=length newgens;
-	       newgens=join(newgens,apply(length newbo,x->fr_(len+x)));
-	       LL=M1;
-	       newsigns=join(newsigns,apply(newbo,x->(isignLie(x)+1)%2));
-	       newdiffs=join(newdiffs,idefLie(newbo));
-	       newweights=join(newweights,apply(newbo,x->degree(x)+unit));
-	       ) -- this finishes the main case when there are cycles to kill
-	   ) -- next i
-       ); -- end of loop
-   M2:=ilieAlgebra(d,newgens,{},genSigns=>newsigns,
-       genWeights=>newweights,genDiffs=>newdiffs,field=>L.field);
-   M2.cache.homdefs=join(M1.cache.homdefs,newf); 
-   LL=L;
-   M2	
-   ); 
+     
+lieMap(LieAlgebra,LieAlgebra) := (L,M)-> (
+     xx:=apply(M#genslie,x->
+	         if not member(x,L#genslie) then 0_L 
+	            else (
+	               Li:=position(L#genslie,y->y===x);
+       	               Mi:=position(M#genslie,y->y===x);
+       	               Lx:=(L#cache.gens)_Li;		  
+	               if (not (M#Weights)_Mi==(L#Weights)_Li or
+		          not (M#Signs)_Mi==(L#Signs)_Li) then 0_L else Lx
+	               ) 
+                  );  
+       h:=new HashTable from 
+          join(apply(M#numgens,i->(M#cache.gens)_i=>xx_i),
+	      {source=>M,target=>L,cache=>new CacheTable});
+       h#cache.welldef=true;
+       new LieAlgebraMap from h
+     );
+ 
 
+    
+     
+ 
+----------------------------
+-- formal application of a homomorphism 
+-- to a LieElement 
+----------------------------
+
+LieAlgebraMap@LieElement:=(f,x)->(
+     M:=class x;
+     if not f#source===M then error "the map is not defined on input";
+     L:=f#target;
+     if not all(M#cache.gens,x->member(f#x,L#cache.gens) or f#x===0_L) then 
+       (
+       d:=ideglie x;
+       y:=apply(M#numgens,j->
+	        if ((M#Weights)_j)_0>d then 0_L else f#((M#cache.gens)_j)		
+	     );
+       if x#0===empty then 0_L else summplus(x#0,x#1,(i,a)->i@imultindex(y,a,L))
+       ) else (
+     	   zerolist:=select(M#numgens,i->f#((M#cache.gens)_i)===0_L);
+	   indf:=i->position(L#cache.gens,x->x===f#((M#cache.gens)_i));
+	   zerotest:=b->any(b,x->member(x,zerolist));
+	   dropzeroes:=y->if #y#0==0 then y else 
+	       (
+	       rest:=apply(y,z->drop(z,1));
+	       outrest:=dropzeroes rest;
+	       if zerotest y#1#0 then outrest else
+	          new BasicList from {prepend(y#0#0,outrest#0),
+		      prepend(y#1#0,outrest#1)}
+	       );
+	   xx:=dropzeroes x;
+	   new L from new BasicList from {xx#0,apply(xx#1,b->apply(b,indf))}
+           )	   
+    );
+	   
+LieAlgebraMap(LieElement):=(f,x)->(
+    d:=ideglie x;
+    L:=f#target;
+    computeLie(d,L);
+    normalForm(f@x)
+    );
+
+ 
+------------------------------
+-- application of a homomorphism 
+-- to a list
+------------------------------
+LieAlgebraMap\List := (f,y)->apply(y,x->f x);
+
+LieAlgebraMap\\List :=  (f,y)->apply(y,x->f@x);
+
+
+
+
+---------------------------------------
+-- imultindex
+---------------------------------------
+-- it is used in definition of application of maps and derivations, 
+-- y is a list of elements in lieRing, a is
+-- a basic list of numbered generators, the result is the product
+-- of the elements in the list y with indices corresponding to the 
+-- generators in a 
+
+
+imultindex = (y,a,L)->(
+    if y=={} then 0_L else
+    fold(apply(#a,i->y_(a#i)),(u,v)->u@v)
+    );
+
+
+----------------------------------------
+-- the identity map on a Lie algebra
+----------------------------------------
+
+(ScriptedFunctor)_(LieAlgebra):=(f,L)-> 
+    if f===id then (
+	h:=new HashTable from 
+             join(apply(L#numgens,i->(L#cache.gens)_i=>(L#cache.gens)_i),
+	      {source=>L,target=>L,cache=>new CacheTable});
+        h#cache.welldef=true;
+        new LieAlgebraMap from h
+	);
+    
+
+-------------------------------------------
+-- the zero homomorphism
+------------------------------------------
+
+zeroMap=method() 
+zeroMap(LieAlgebra,LieAlgebra):=(L,M)->
+    lieMap(L,M,apply(M#numgens,x->0_L));
+    
+-------------------------------
+-- linear operations on LieAlgebraMap
+-------------------------------
+
+LieAlgebraMap+LieAlgebraMap:=(f,g)->(
+    h:=lieMap(
+       f#target,f#source,apply(f#source#cache.gens,x->f(x)+g(x))
+       );
+    h#cache.welldef=f#cache.welldef and g#cache.welldef;
+    h
+    );
+Number LieAlgebraMap:=(x,f)->(
+    h:=lieMap(
+       f#target,f#source,apply(f#source#cache.gens,y->x f(y))
+       );
+    h#cache.welldef=f#cache.welldef;
+    h
+    );
+RingElement LieAlgebraMap:=(x,f)->(
+    h:=lieMap(
+       f#target,f#source,apply(f#source#cache.gens,y->x f(y))
+       );
+    h#cache.welldef=f#cache.welldef;
+    h
+    );
+-LieAlgebraMap:=y->(-1) y;
+
+LieAlgebraMap-LieAlgebraMap:=(f,g)->f+(-1) g;
+
+-------------------------------
+-- * is used for composition
+-------------------------------
+LieAlgebraMap*LieAlgebraMap:=(f,g)->(
+    h:=lieMap(
+       f#target,g#source,apply(g#source#cache.gens,x->f g x)
+       );
+    h#cache.welldef=f#cache.welldef and g#cache.welldef;
+    h
+    );
+
+    
+ 
+ ----------------------------------------
+-- isWellDefined
+---------------------------------------- 
+-- it is checked if a Lie algebra map or derivation is well defined
+-- up to a certain degree. Sometimes it is possible to get the 
+-- information that the map is well defined for all degrees.
+
+
+isWellDefined(ZZ,LieAlgebraMap) := (n,f)-> (
+  if f#cache.welldef then (print("the map is well defined for all degrees");
+      print("the map commutes with the differential for all degrees");true) else (
+    M:=f#source;
+    L:=f#target;
+    F:=M#cache.ambient;
+    I:=M#ideal;
+    g:=f*lieMap(M,F);
+    if class I===List then (
+	m:= max(0,max(apply(I,ideglie)));
+	reln:=select(I,x->ideglie x<=n);  
+        out:=all(g\reln,x->x===0_L);
+	if out and m<=n then
+	    print("the map is well defined for all degrees");
+	) else   
+	out=(
+	    G:=F#cache.ambient;
+	    h:=g*lieMap(F,G);
+	    reln=select(F#ideal,x->ideglie x<=n); 
+	    all(h\reln,x->x===0_L)
+	  ) 
+          and   
+          skipZZ(dims(1,n,image(g,I)))=={};
+     if not out then print("the map is not well defined");      
+     computeLie(min(n,genDegMax M),L);
+     computeLie(min(n,genDegMax M),M);
+     dL:=differential L;
+     dM:=differential M;
+     gensn:=select(M#cache.gens,x->ideglie x<=n); 
+     if not all(gensn,x->dL(f#x)===f(dM#x)) then (
+     	      print("the map does not commute with the differential");
+	      false) else 
+	         (if n>=genDegMax M then (
+		     if class I===List and m<=n and out then f#cache.welldef=true;
+		     print("the map commutes with the differential for all degrees")); 
+		     out)
+     ) 
+  );
+
+-------------------------------
+-- iswelldef
+-------------------------------
+-- like isWellDefined without printing and without testing that f
+-- commutes with the differential
+
+iswelldef=(n,f)-> (
+    M:=f#source;
+    L:=f#target;
+    F:=M#cache.ambient;
+    I:=M#ideal;
+    g:=f*lieMap(M,F);
+    if class I===List then (
+	m:= max(0,max(apply(I,ideglie)));
+	reln:=select(I,x->ideglie x<=n);  
+        out:=all(g\reln,x->x===0_L);
+	if out and m<=n then f#cache.welldef=true;
+	out
+	) else   
+	  (
+	    G:=F#cache.ambient;
+	    h:=g*lieMap(F,G);
+	    reln=select(F#ideal,x->ideglie x<=n); 
+	    all(h\reln,x->x===0_L)
+	  ) 
+          and   
+          skipZZ(dims(1,n,image(g,I)))=={}
+  );
+-------------------------------
+-- iswelldefdiff
+-------------------------------
+-- like isWellDefined without printing and with testing that f
+-- commutes with the differential
+
+iswelldefdiff=(n,f)-> (
+    M:=f#source;
+    L:=f#target;
+    F:=M#cache.ambient;
+    I:=M#ideal;
+    g:=f*lieMap(M,F);
+    if class I===List then (
+	m:= max(0,max(apply(I,ideglie)));
+	reln:=select(I,x->ideglie x<=n);  
+        out:=all(g\reln,x->x===0_L);
+	) else   
+	  out= (
+	        G:=F#cache.ambient;
+	        h:=g*lieMap(F,G);
+	        reln=select(F#ideal,x->ideglie x<=n); 
+	        all(h\reln,x->x===0_L)
+	       ) 
+               and   
+               skipZZ(dims(1,n,image(g,I)))=={};
+     computeLie(min(n,genDegMax M),L);
+     computeLie(min(n,genDegMax M),M);
+     dL:=differential L;
+     dM:=differential M;
+     gensn:=select(M#cache.gens,x->ideglie x<=n); 
+     out=out and all(gensn,x->dL(f#x)===f(dM#x));
+     if out and n>=genDegMax M and class I===List and 
+       m<=n then wd:=f#cache.welldef=true;
+     out      	      
+  );
+
+isWellDefined(ZZ,LieDerivation) := (n,d)-> (
+    f:=d#map;
+    wd:=iswelldefdiff(n,f);
+    if not wd then (print("the map defining the 
+	    derivation is not well defined");false) else (
+    if d#cache.welldef  then 
+       (print("the derivation is well defined for all degrees");true) else (
+    M:=d#source;
+    L:=d#target;
+    F:=M#cache.ambient;
+    I:=M#ideal;
+    g:=d*lieMap(M,F);
+    if class I===List then (
+	m:= max(0,max(apply(I,ideglie)));
+	reln:=select(I,x->ideglie x<=n);  
+        out:=all(g\reln,x->x===0_L);
+	if out and m<=n then (d#cache.welldef=true;
+	    print("the derivation is well defined for all degrees"));
+	out
+        ) else
+          (
+	    G:=F#cache.ambient;
+	    h:=g*lieMap(F,G);
+	    reln=select(F#ideal,x->ideglie x<=n); 
+	    all(h\reln,x->x===0_L)
+            and   
+            skipZZ(dims(1,n+firstDegree d,image(g,I)))=={}
+	  ) 
+        )
+    )     
+  );
+
+
+
+---------------------------------
+-- isSurjective
+---------------------------------
+-- it is checked if a Lie algebra map is surjective 
+
+isSurjective(LieAlgebraMap):=f->(
+     M:=source f;
+     L:=target f;
+     all(gens L,x->member(x,image f))
+     );
+
+
+
+---------------------------------------------------
+-- DERIVATIONS
+--------------------------------------------------
+
+----------------------------------
+-- LIEDERIVATION
+----------------------------------
+-- construction of a derivation M->L, where
+-- L is an M-module via a map f:M->L. The elements
+-- of y may be formal and hence non-normal and they are
+-- the values in L of the derivation applied to the generators of M 
+ 
+lieDerivation = method(TypicalValue=>LieDerivation)
+lieDerivation(List) := (y)->(
+    if y=={} then 
+       error "input may not be the empty set" else (
+      L:=class y_0;
+      lieDerivation(id_L,y)
+      )
+    );
+lieDerivation(LieAlgebraMap,List) := (f,y)->(
+    L:=f#target; 
+    M:=f#source; 
+    if y=={} and M#cache.gens=={} then zeroder(L,M) else (
+    if not M#numgens==length y then (
+	error "input has not the right length";
+	);
+    if not all(y,z->class z===L) then (
+	error "input does not belong to the right Lie algebra";
+	);   
+    if all(y,z->z===0_L) then ( 
+	dw:=flatten table(1,L#degreeLength,x->0);
+	ds:=0
+	) else (
+	i:=position(y,z->not z===0_L);
+	dw=iweight(y_i)-(M#Weights)_i;
+	ds=(isign(y_i)-(M#Signs)_i)%2
+	);
+    apply(length y,i->(
+	    if not y_i===0_L and not dw==iweight(y_i)-(M#Weights)_i then (
+	    	error "input does not have the right weight";
+		);
+            if not y_i===0_L and not ds==(isign(y_i)-(M#Signs)_i)%2 then (
+		 error "input does not have the right sign";
+		 );
+	     )
+	 );
+    d:=new HashTable from
+       join(apply(M#numgens,i->(M#cache.gens)_i=>y_i),{weight=>dw,sign=>ds,
+	   map=>f,source=>M,target=>L,cache=>new CacheTable});
+    e:=new LieDerivation from d;
+    e#cache.welldef=(M#ideal==={} and f#cache.welldef===true) or e===euler L; 
+    if not d#cache.welldef then
+        print("warning: the derivation might not be well defined, use isWellDefined"); 
+    e
+    ));
+
+------------------------------------
+-- lieDer
+------------------------------------
+-- the internal version of lieDerivation without
+-- any checking
+
+lieDer = method(TypicalValue=>LieDerivation)
+lieDer(List,LieAlgebra) := (y,L)->lieDer(id_L,y);
+lieDer(LieAlgebraMap,List) := (f,y)->(
+    L:=f#target; 
+    M:=f#source;    
+    if all(y,z->z===0_L) then ( 
+	dw:=flatten table(1,L#degreeLength,x->0);
+	ds:=0
+	) else (
+	i:=position(y,z->not z===0_L);
+	dw=iweight(y_i)-(M#Weights)_i;
+	ds=(isign(y_i)-(M#Signs)_i)%2
+	);
+    d:=new HashTable from
+       join(apply(M#numgens,i->(M#cache.gens)_i=>y_i),{weight=>dw,sign=>ds,
+	   map=>f,source=>M,target=>L,cache=>new CacheTable});
+    d#cache.welldef=true;  
+    new LieDerivation from d 
+    );
+
+----------------------------------
+-- DIFFERENTIAL
+------------------------------------
+-- This is the extension of L#diff to a derivation on L 
+
+differential=(L)->
+    if (z:=unique L#diff;z==={} or z==={0_(ambient L)}) then zeroDerivation(L) else (    
+    h:=new HashTable from
+       join(apply(L#numgens, i->(L#cache.gens)_i=>(imap(L#diff,L))_i),
+       {map=>id_L,sign=>1,
+       weight=>append(flatten table(1,L#degreeLength-1,x->0),-1),
+       source=>L,target=>L,cache=>new CacheTable});
+    h#cache.welldef=true;
+    new LieDerivation from h
+    ); 
+
+------------------------------------------
+-- the zero derivation from M to L with the zero
+-- map from M to L as module operation 
+-------------------------------------------
+
+
+zeroder=(L,M)->(
+     h:=new HashTable from
+       join(apply(M#numgens, i->(M#cache.gens)_i=>0_L),
+       {map=>zeroMap(L,M),sign=>0,
+       weight=>flatten table(1,M#degreeLength,x->0),
+       source=>M,target=>L,cache=>new CacheTable});
+     h#cache.welldef=true;
+     new LieDerivation from h
+     );
+ 
+------------------------------------------
+-- the zero derivation from L to L with the identity
+-- map from L to L as module operation 
+-------------------------------------------
+
+  
+zeroDerivation=method() 
+zeroDerivation(LieAlgebra):=(L)->(
+    h:=new HashTable from
+       join(apply(L#numgens, i->(L#cache.gens)_i=>0_L),
+       {map=>id_L,sign=>0,
+       weight=>flatten table(1,L#degreeLength,x->0),
+       source=>L,target=>L,cache=>new CacheTable});
+    h#cache.welldef=true;
+    new LieDerivation from h
+    );
+	
+ 
+----------------------------------------
+-- innerDerivation
+----------------------------------------
+-- this gives for x the inner derivation y->[y,x]
+
+innerDerivation=method(TypicalValue=>LieDerivation)
+innerDerivation(LieElement) := x->(
+    L:=class x;
+    lieDer(apply(L#cache.gens,y->y x),L));
+
+     
+----------------------------
+-- application of a derivation 
+-- to a LieElement without and with normal form  
+----------------------------
+LieDerivation@LieElement := (d,x)->(
+    M:=d#source;
+    if not class x===M then error "the derivation is not defined on input";
+    L:=d#target;
+    f:=d#map;
+    yd:=apply(M#numgens,j->d#((M#cache.gens)_j));
+    yf:= f\\M#cache.gens;
+    -- g below takes a basic list of indices from 0,...,M#numgens and computes the
+    -- value of the derivation on the product of the corresponding
+    -- generators in M 
+    g:=z->if #z==1 then yd_(z#0) else (
+    	yd_(z#0)@imultindex(yf,drop(z,1),L)++
+    	((-1)^(isignlocal(z#0,M)*(d#sign)))@
+	yf_(z#0)@(g drop(z,1))
+        );
+    if x#0===empty then 0_L else summplus(x#0,x#1,(i,z)->i@(g z))
+    );
+
+LieDerivation LieElement := (d,x)->(
+    M:=d#source;
+    if not class x===M then error "the derivation is not defined on input";
+    L:=d#target;
+    f:=d#map;
+    yd:=apply(M#numgens,j->d#((M#cache.gens)_j));
+    yf:= f\\M#cache.gens;
+    -- g below is described above
+    g:=z->if #z==1 then yd_(z#0) else (
+    	(yd_(z#0) imultindex(yf,drop(z,1),L))+
+    	((-1)^(isignlocal(z#0,M)*(d#sign))) (yf_(z#0) (g drop(z,1)))
+        );
+    if x#0===empty then 0_L else summ(x#0,x#1,(i,z)->i (g z))
+    );
+
+
+
+----------------------------
+-- application of a derivation 
+-- to a list, taking normal form or not 
+----------------------------
+
+LieDerivation\List := (d,y)->apply(y,x->d x);
+
+LieDerivation\\List := (d,y)->apply(y,x->d@x);
+
+
+
+
+
+
+
+----------------------------------------
+-- source
+---------------------------------------
+-- the source of a LiealgebraMap or LieDerivation
+
+
+source(LieAlgebraMap) := source(LieDerivation) := f->f#source;
+
+----------------------------------------
+-- target
+---------------------------------------
+-- the target of a LiealgebraMap or LieDerivation
+
+
+target(LieAlgebraMap) := target(LieDerivation) := f->f#target;
+
+
+
+
+-------------------------------
+-- Lie multiplication of ordinary derivations on L
+-------------------------------
+LieDerivation LieDerivation:=(d,e)->(
+    if not (d#source===d#target and d#target===e#source and 
+	e#source===e#target) then (
+    	error "the derivations may not be multiplied";
+	);
+    if not (d#map===id_(d#source) and
+	e#map===id_(e#source)) then (
+    	error "the maps defining the derivations must be the identity";
+	);
+    h:=lieDer(apply(d#source#cache.gens,
+	    x->d(e(x))-(-1)^(d#sign*e#sign) e(d(x))),d#source);
+    h#cache.welldef=(d#cache.welldef and e#cache.welldef);
+    h
+    );
+
+
+-------------------------------
+-- linear operations on LieDerivation
+-------------------------------
+
+LieDerivation+LieDerivation:=(d,e)->(
+    M:=d#source;
+    L:=d#target;
+    if not (M===e#source and L===e#target) then (
+       	error "the derivations may not be added";
+       	);
+    if not d#map===e#map then (
+       	error "the maps defining the derivations must be equal";
+       	);
+    if not d#weight===e#weight and not 
+       all(M#numgens,i->d#((M#cache.gens)_i)===0_L) and not
+       all(M#numgens,i->e#((M#cache.gens)_i)===0_L) then
+       error "the weights of the derivations must be equal";
+    if not d#sign===e#sign and not 
+       all(M#numgens,i->d#((M#cache.gens)_i)===0_L) and not
+       all(M#numgens,i->e#((M#cache.gens)_i)===0_L) then
+       error "the signs of the derivations must be equal";
+    h:=lieDer(d#map,apply(d#source#cache.gens,x->d(x)+e(x)));
+    h#cache.welldef=(d#cache.welldef and e#cache.welldef);
+    h
+    );
+
+LieDerivation-LieDerivation:=(x,y)->x+(-1) y;
+
+-LieDerivation:=y->(-1) y;
+
+Number LieDerivation:=(c,d)->(
+    h:=lieDer(d#map,apply(d#source#cache.gens,x->c d(x)));
+    h#cache.welldef=d#cache.welldef;
+    h
+    );
+    
+
+RingElement LieDerivation:=(c,d)->(
+    h:=lieDer(d#map,apply(d#source#cache.gens,x->c d(x)));
+    h#cache.welldef=d#cache.welldef;
+    h
+    );
+
+--------------------------------
+-- operation as composition of LieAlgebraMap on LieDerivation
+--------------------------------
+LieDerivation*LieAlgebraMap:=(d,g)->(
+    h:=lieDer(d#map*g,apply(g#source#cache.gens,x->d(g(x))));
+    h#cache.welldef=(d#cache.welldef and g#cache.welldef);
+    h
+    );
+
+LieAlgebraMap*LieDerivation:=(g,d)->(
+    h:=lieDer(g*d#map,apply(d#source#cache.gens,x->g(d(x))));
+    h#cache.welldef=(d#cache.welldef and g#cache.welldef);
+    h
+    );
+
+
+-----------------------------------
+-- LIE MULTIPLICATION and EXT MULTIPLICATION
+-- and linear operations
+-----------------------------------
+
+
+
+LieElement LieElement:=(x,y)->(
+     L:=class x;
+     if not class y===L then 
+       error "the arguments do not belong to the same Lie algebra";
+     n:=ideglie x+ideglie y; 
+     computeLie(n,L); 
+     idef(imult(ifed x,ifed y,L),L)
+     );
+LieElement+LieElement:=(x,y)->(
+    L:=class y;
+    if not class x===L then
+      error "the arguments do not belong to the same Lie algebra";
+    if  not x===0_L and not y===0_L and not isign x==isign y then 
+      error "the terms have not equal signs";
+    if  not x===0_L and not y===0_L and not iweight x==iweight y then 
+      error "the terms have not equal weights";
+    computeLie(ideglie y,L);     
+    idef(ifed x+ifed y,L)
+    );
+
+LieElement-LieElement:=(x,y)->x+(-1) y;
+
+-LieElement:=x->(-1) x;
+
+Number LieElement:=(x,y)->(
+    L:=class y;
+    computeLie(ideglie y,L);
+    idef(x*(ifed y),L)
+    );
+RingElement LieElement:=(x,y)->(
+    L:=class y;
+    computeLie(ideglie y,L);
+    idef(x*(ifed y),L)
+    );
+
+-- the following operations  ++ * / @  produce 
+-- LieElement objects which are non-normalized
+
+LieElement++LieElement:=(x,y)->(
+    L:=class x;
+    if not L===class y then
+    error "the arguments do not belong to the same Lie algebra";
+    if  not x===0_L and not y===0_L and not isign x==isign y then 
+      error "the terms have not equal signs";
+    if  not x===0_L and not y===0_L and not iweight x==iweight y then 
+      error "the terms have not equal weights";
+    new L from new BasicList from {join(x#0,y#0),join(x#1,y#1)}
+    );
+Number@LieElement:=(x,y)->(
+    L:=class y;
+    new L from new BasicList from {apply(y#0,z->x*z),y#1});
+
+RingElement@LieElement:=(x,y)->(
+    L:=class y;
+    new L from new BasicList from {apply(y#0,z->x*z),y#1});
+
+LieElement/LieElement:=(x,y)->x++(-1)@y;
+
+LieElement@LieElement:=(x,y)->(
+    L:=class y;
+    if x#0===empty then out:=0_L else
+    summplus(x#0,x#1,(z,u)->z@monmult(u,y))
+    );
+
+----------------------------------------
+-- summplus
+----------------------------------------
+-- this is used above and is a variant of summ with ++ instead of +
+summplus = (x,y,f)->
+   if #x==1 then f((x#0),(y#0)) else 
+   f((x#0),(y#0)) ++ summplus(drop(x,1),drop(y,1),f);
+   
+
+---------------------------
+-- monmult
+---------------------------
+-- this is used in formal Lie multiplication x@y
+
+monmult=method(TypicalValue=>LieElement)
+monmult(ZZ,LieElement):=(x,y)->(
+    L:=class y;
+    new L from new BasicList from {y#0,apply(y#1,z->prepend(x,z))}
+    );
+monmult(BasicList,LieElement):=(x,y)->( 
+    L:=class y;   
+    x0:=first x;
+    x1:=drop(x,1);
+    if #x == 1 then monmult(x0,y) else 
+       monmult(x0,monmult(x1,y))/((eps(x0,x1,L))@monmult(x1,monmult(x0,y)))
+    );
 
 
 ----------------------------------------    
--- modR
+-- imult
 ----------------------------------------
--- creates mbRing when called from computeLie
-modR=method(TypicalValue=>Ring)
-modR(ZZ):=(d)->(
-    mblist:={};
-    degli:={};
-    for i from 1 to d do for j from 0 to LL.cache.dims#i-1 do mblist= append(mblist,(mb)_{i,j});
-    for i from 1 to d do degli=degli|LL.cache.deglist#i;
-    if degli=={} then LL.field else LL.field[mblist,Degrees=>degli]
+-- the internal Lie product on lieRing
+-- OBS: imult, when defined on lists, removes zeroes
+
+imult=method(TypicalValue=>RingElement)
+imult(RingElement,RingElement,LieAlgebra):=(x,y,L) -> 
+    linext((u,v)->imultmon(u,v,L),x,y);
+imult(List,List,LieAlgebra):= (x,y,L)->(
+    skipz flatten apply(x,z->apply(y,u->imult(z,u,L)))
     );
 
+
+----------------------------------------    
+-- imultmon
+----------------------------------------  
+-- x,y are basis elements in L#cache.lieRing of degree d,e;
+-- output is the Lie product, which is a linear combination of 
+-- basis elements of degree d+e 
+ 
+imultmon=(x,y,L)->op(idefmon(x,L),y,L); 
+
+
+----------------------------------------
+--EXT
+----------------------------------------
+
+----------------------------------------    
+-- extmult
+----------------------------------------
+-- multiplication of basis vectors in the Ext-algebra
+     
+extmult=(i,j,L)-> (
+    M:=L#cache.minimalModel;
+    A:=ambient M; 
+    E:=L#cache.Ext;
+    fi:=(M#cache.gens)_i; 
+    fj:=(M#cache.gens)_j;
+    si:=(M#Signs)_i; 
+    sj:=(M#Signs)_j;
+    co:=apply(M#numgens,k->(
+	    coes:=toList ((M#diff)_k)#0; 
+	    mons:=monomials (M#diff)_k;
+	    len:=length coes;
+	    if not (member(imap(fi@fj,A),mons) or member(imap(fj@fi,A),mons)) then 
+	    0_(L#Field) else (
+		if member(imap(fi@fj,A),mons) then (
+		    po:=(select(len,x->mons_x===imap(fi@fj,A)))_0;
+		    coes_po*(if i==j then 2 else (-1)^(sj*(si+1))))
+		else (
+		    po=(select(len,x->mons_x===imap(fj@fi,A)))_0;
+		    coes_po*(-1)^(sj+1)
+	  -- this sign is correct! It makes the ExtAlgebra SkewCommutative
+		    )
+	    	)
+	    )
+    	);
+    nozeroes(co,toList(0..E#numgens-1),E)
+    );
+
+
+nozeroes=(x0,x1,E)->(
+    zpos:=positions(x0,y->y==0);
+    newx0:=new BasicList from select(x0,y->not y==0);
+    del:=apply(zpos,y->x1#y);
+    newx1:=new BasicList from (x1-set del);
+    new E from new BasicList from {newx0,newx1}
+    );
+    
+ExtElement ExtElement:=(x,y)->(
+     E:=class x;
+     L:=E#lieAlgebra;
+     if not class y===E then 
+       error "the arguments do not belong to the same Extalgebra";
+     if x===0_E or y===0_E then 0_E else (
+	 xfir:=new E from apply(x,z->take(z,1));
+	 xrest:= new E from apply(x,z->drop(z,1));
+	 yfir:=new E from apply(y,z->take(z,1));
+	 yrest:= new E from apply(y,z->drop(z,1));	 
+         ((x#0#0*y#0#0) extmult(x#1#0,y#1#0,L))+
+         (xrest yrest)+
+ 	 (xfir yrest)+
+	 (xrest yfir)
+      )
+   );
+ 
+ExtElement+ExtElement:=(x,y)->(
+    E:=class y;
+    if not class x===E then
+      error "the arguments do not belong to the same Extalgebra";
+    if  not x===0_E and not y===0_E and not sign x==sign y then 
+      error "the terms have not equal signs";
+    if  not x===0_E and not y===0_E and not weight x==weight y then 
+      error "the terms have not equal weights";
+    if x===0_E then y else if y===0_E then x else (
+	x10:=x#1#0;
+	y10:=y#1#0;
+	xrest:= new E from apply(x,z->drop(z,1));
+	yrest:= new E from apply(y,z->drop(z,1));
+	if x10==y10 then prepplus((x#0#0+y#0#0) (E#cache.gens)_x10, 
+	   xrest+yrest) else 
+	if x10<y10 then 
+	   prepplus(x#0#0 (E#cache.gens)_x10,(xrest+y)) else	    
+	prepplus(y#0#0 (E#cache.gens)_y10,(x+yrest))
+        )	
+    );
+
+prepplus=(x,y)->(
+    E:=class y;
+    if x===0_E then y else
+    new E from new BasicList from {prepend(x#0#0,y#0),prepend(x#1#0,y#1)}
+    );
+    
+ExtElement-ExtElement:=(x,y)->x+(-1) y;
+
+-ExtElement:=x->(-1) x;
+
+Number ExtElement:=(x,y)->(
+    E:=class y;
+    if x==0 then 0_E else
+    new E from new BasicList from {apply(y#0,z->x*z),y#1}
+    );
+
+RingElement ExtElement:=(x,y)->(
+    E:=class y;
+    if x==0 then 0_E else
+    new E from new BasicList from {apply(y#0,z->x*z),y#1}
+    );
+
+-----------------
+-- listMultiply
+------------------
+-- multiplication of lists of Lie elements or of Ext elements
+
+listMultiply=(x,y)-> apply(x,z->apply(y,u->z u));
+               
+
+
+
+
+-------------------------------------
+--SIGN, WEIGHT and degree
+------------------------------------
+
+----------------------------------------    
+-- eps
+----------------------------------------
+-- the exchange sign when x and y are iterated Lie products (as BasicLists)
+-- in digital form
+  
+eps=(x,y,L)->((-1)^(isignlocal(x,L)*isignlocal(y,L))); 
+
+---------------------------------------
+-- isign
+----------------------------------------
+-- isign is defined on non-zero Lie elements and also on non-zero elements in lieRing
+
+isign=method(TypicalValue=>List)
+isign(LieElement):=x->
+    isignlocal(x#1#0,class x);
+isign(RingElement,LieAlgebra):=(x,L)->
+    isign idef(x,L); 
+
+
+isignlocal=method(TypicalValue=>List)
+isignlocal(ZZ,LieAlgebra):=(g,L)->
+    (L#Signs)_g;
+isignlocal(BasicList,LieAlgebra):=(x,L)->
+    (summ(x,y->isignlocal(y,L)))%2;
+    
+----------------------------------------
+-- SIGN
+---------------------------------------
+-- the sign of a LieElement or 
+-- the sign of a derivation or
+-- the sign of an element 
+-- in the Ext-algebra
+
+
+sign=method()
+sign(LieElement) := (x)->(
+    L:=class x;
+   -- xx:=normalForm(x);
+    if x===0_L then 0 else isign(x)
+    );
+sign(LieDerivation) := d->d#sign;
+sign(ExtElement):=(x)-> (
+    E:=class x;
+    M:=E#lieAlgebra#cache.minimalModel;
+    if x===0_E then 0 else (
+      i:=x#1#0;
+      (sign(M#cache.gens)_i+1)%2
+    )
+  );
+	
+    
+
+----------------------------------------
+-- WEIGHT
+----------------------------------------
+--the weight of a non-normalized LieElement or an element in the Ext-algebra or mbRing
+
+weight=method(TypicalValue=>List)
+weight(LieElement) := (x)->(
+    L:=class x; 
+    if x===0_L then flatten table(1,L#degreeLength,x->0) else
+    iweight(x)
+    );
+weight(LieDerivation) := d->d#weight;
+weight(ExtElement):=(x)-> (
+    E:=class x;
+    L:=E#lieAlgebra;
+    M:=L#cache.minimalModel;
+    unit:=append(flatten table(1,L#degreeLength -1,x->0),1);
+    if x===0_E then flatten table(1,L#degreeLength,x->0) else (
+      i:=x#1#0;
+      weight(M#cache.gens)_i+unit
+    )
+  );
+
+
+---------------------------------------
+-- iweight and iweightlocal
+--------------------------------------
+-- the internal weight of a Lie element
+
+iweight=method(TypicalValue=>List)
+iweight(LieElement):=x->
+    iweightlocal(x#1#0,class x);
+iweight(RingElement) := x -> degree x;
+    
+iweightlocal=method(TypicalValue=>List)
+iweightlocal(ZZ,LieAlgebra):=(g,L)->(L#Weights)_g;
+iweightlocal(BasicList,LieAlgebra):=(x,L)->
+          summ(x,y->iweightlocal(y,L));
+	  
+
+----------------------------------------
+-- firstDegree
+----------------------------------------
+-- the first degree of a homogeneous LieElement or ExtElement or 
+-- the first degree of a derivation  
+
+firstDegree=method()	   
+firstDegree(LieElement):=(x)->(weight(x))_0;
+firstDegree(ExtElement):=(x)->(weight(x))_0;
+firstDegree(LieDerivation):=d->(d#weight)_0; 
+
+----------------------------------------
+-- computedDegree
+----------------------------------------
+-- the degree of computation of a Lie algebra
+-- or an Ext algebra
+-- it also computes the weight of an element in lieRing
+
+computedDegree=method()
+computedDegree(LieAlgebra):=L->L#cache.degree;
+computedDegree(ExtAlgebra):=E->E#degree;
+
+
+----------------------------------------
+-- degreeLength
+----------------------------------------
+-- the length of the weights of the generators in L
+	   
+degreeLength(LieAlgebra):=(L)->L#degreeLength;
+
+   
+
+----------------------------------------
+--ideglie
+----------------------------------------
+-- the internal version of degree of a Lie element
+
+ideglie = x-> if x#1===empty then 0 else (iweight(x))_0;
+
+----------------------------------------    
+-- ideg
+----------------------------------------
+-- the first degree of an element in a ring, the degree is defined as 0 for x=0
+
+ideg=x->if x==0 then 0 else (degree x)_0;
+
+----------------------------------------    
+-- genDegMax
+----------------------------------------
+-- the maximal first degree of the generators
+-- the output is 0 if there are no generators 
+
+genDegMax=(L)->max(0,max apply(L#Weights,x->x_0));
+
+----------------------------------------    
+-- gendeg
+----------------------------------------   
+-- gives the generators in digital form of first degree d
+
+gendeg=(d,L)->select(L#numgens,y->((L#Weights_y)_0===d));
+
+
+----------------------------------------------------------   
+
+---------------------------------------
+-- idef, ifed, INDEXFORM and standardForm
+---------------------------------------
+	   
+	  
+
+----------------------------------------    
+-- ifed
+----------------------------------------
+-- transforms a LieElement (or a Lie monomial as a BasicList) of 
+-- first degree d to a linear combination
+-- of elements in bas#d
+-- ifed(idef m)=m if m is a basis element
+
+ifedlocal=method(TypicalValue=>RingElement)
+ifedlocal(BasicList,LieAlgebra):=(x,L)->(
+    le:=#x; 
+    if le===1 then ( 
+	d:=(iweightlocal(x,L))_0; 
+	if gens L#cache.gb#(d) == 0 then (
+	    (L#cache.lieRing)_(x#0) 
+	    ) else (
+	    ((L#cache.lieRing)_(x#0))%L#cache.gb#d
+	    )
+	) else  op(take(x,1),ifedlocal(drop(x,1),L),L)
+    );   
+ifed=(x)->(
+    L:=class x;
+    if x===0_L then 0_(L#cache.lieRing) else 
+                       summ(x#0,x#1,(i,j)->i*ifedlocal(j,L))
+    );
+
+
+----------------------------------------    
+-- deflist
+----------------------------------------  
+-- when x is the value of monlist y, where y is in lieRing, 
+-- deflist x computes the corresponding iterated 
+-- Lie product of generators (as a BasicList)
+
+deflist=(x,L)->(if x==={} then empty else 
+    prepend((last x)%(L#numgens),deflist(drop (x,-1),L)));
 
 ----------------------------------------    
 -- monlist
@@ -2839,174 +2628,1511 @@ monlist=m->(
     r
     );
 
+----------------------------------------    
+-- idefmon
+----------------------------------------
+-- transforms a monomial in a lieRing to an iterated Lie product
+-- in digital form (as a list) 
+
+idefmon=(m,L)->deflist(monlist m,L);
+
 
 ----------------------------------------    
--- op
+-- idef
+----------------------------------------    
+-- computes the LieElement corresponding to the element p in lieRing  
+
+idef=method()
+idef(RingElement,LieAlgebra):=(p,L)-> (
+     mons:=new BasicList from flatten entries monomials p; 
+    if mons===empty then 0_L else (  
+       if p===mons#0 then new L from new BasicList from
+       {new BasicList from {1_(L#Field)},
+	   new BasicList from {idefmon(p,L)}} else (
+	    coef:=apply(mons,x->(p_x));
+	    new L from {coef,apply(mons,x->idefmon(x,L))}
+	    )
+	));
+
+
 ----------------------------------------
--- computes the operation of an iterated Lie product in digital form
+-- INDEXFORM  
+----------------------------------------
+-- gives the representation of a LieElement in mbRing, 
+-- it is left inverse to standardForm, that is indexForm(standardForm(x,L))=x. 
+-- It holds that
+-- standardForm(indexForm(x),L)≈x in the free Lie algebra on 
+-- the generators modulo the relations.
+
+
+
+indexForm = method()
+indexForm(LieElement) := (x)->(
+    L:=class x;
+    computeLie(ideglie x,L);
+    if x#1===empty then 0_(L#cache.mbRing) else 
+    	summ(x#0,x#1,(i,j)->i*(lieToMb(ifedlocal(j,L),L)))    
+    );
+    
+----------------------------------------    
+-- lieToMb
+----------------------------------------
+-- conversion of a basis element (or a list of basis elements) in lieRing
+-- to a linear combination of elements mb_{n,i} (corresponding to the
+-- i'th basis element in bas#n) in mbRing.
+
+
+lieToMb=(p,L)->
+    linext(x->lieToMbmon(x,L),map(L#cache.mbRing,L#cache.lieRing),p);
+ 
+
+----------------------------------------    
+-- lieToMbmon
+---------------------------------------- 
+-- gives to a basis element in lieRing the
+-- corresponding basis element in mbRing 
+   
+lieToMbmon=(m,L)->(
+    d:=ideg m;
+    po:=position(L#cache.basis#d,x->x===m);
+    (L#cache.mbRing)_(idimtot(d-1,L)+po)
+    );
+
+
+
+----------------------------------------    
+-- mbToLie
+----------------------------------------
+-- conversion of an element (or a list of elements) in mbRing 
+-- to the corresponding linear combination of elements in bas#d,
+-- which is an element in lieRing
+
+mbToLie=(p,L)->
+    linext(x->mbToLiemon(x,L),map(L#cache.lieRing,L#cache.mbRing),p);
+    
+----------------------------------------    
+-- mbToLiemon
+---------------------------------------- 
+-- given a basis element in mbRing this gives the 
+-- corresponding basis element in lieRing
+
+mbToLiemon=(m,L)->(
+    d:=ideg m; 
+    computeLie(d,L);
+    po:=position(gens L#cache.mbRing,x->x===m);
+    (L#cache.basis#d)_(-idimtot(d-1,L)+po)
+    );
+
+----------------------------------------
+-- standardForm
+----------------------------------------
+-- the LieElement corresponding to an element in mbRing
+
+
+standardForm(RingElement,LieAlgebra):=(p,L)->(
+    if not ring p===L#cache.mbRing then 
+       error "the first input does not belong to the right ring" else
+    idef(mbToLie(p,L),L));
+standardForm(List,LieAlgebra):=(x,L)->apply(x,y->standardForm(y,L));
+
+
+----------------------------------------
+-- basToMat, matToBas, invimage and joinvert
+--------------------------------------
+
+
+----------------------------------------    
+-- basToMat
+----------------------------------------
+-- a list m of linear combinations of lieRing elements of
+-- degree d to a matrix whose columns are the coefficients of the
+-- corresponding elements in ibasis(d).
+
+basToMat=method(TypicalValue=>Matrix) 
+basToMat(ZZ,List,LieAlgebra):=(d,m,L)->(
+    dimd:=L#cache.dim#d;
+    if m==={} or dimd==0 then matrix{{0_(L#Field)}} else 
+	(
+            idm:=entries (basis((L#Field)^(L#cache.dim#d)));
+            transpose matrix apply(m, x-> if x==0 then 
+	     	flatten table(1,L#cache.dim#d,x->0_(L#Field)) 
+	     	else sum(
+	            apply(flatten entries (coefficients x)_1,
+		       	x->(map(L#Field,L#cache.lieRing))(x)), 
+	            apply(flatten entries (coefficients x)_0,
+	               	y->idm_(ind(d,y,L))),(i,j)->i*j
+	            )
+	    	)
+            )
+    );
+
+
+-- a list m of linear combinations of lieRing elements of first
+-- degree d and last degree j to a matrix whose columns are the coefficients of the
+-- corresponding elements in ibasis(d,j).
+basToMat(ZZ,ZZ,List,LieAlgebra):=(d,j,m,L)->(
+    if m==={} or L#cache.dim#d==0 then matrix{{0_(L#Field)}} else 
+          (
+       	    idm:=entries (basis((L#Field)^(dim(d,j,L))));
+       	    transpose matrix apply(m, x->if x==0 then 
+               	flatten table(1,dim(d,j,L),x->0_(L#Field)) 
+	       	else sum(
+		    apply(flatten entries (coefficients x)_1,
+		       	x->(map(L#Field,L#cache.lieRing))(x)),
+	            apply(flatten entries (coefficients x)_0,
+	               	y->idm_(ind(d,j,y,L))),(r,s)->r*s
+	            )    
+	    	)
+    	    )
+    ); 
+
+----------------------------------------    
+-- ind, used in basToMat
+----------------------------------------
+-- gives the index of m in ibasis(d), m is a basis element in lieRing
+ind=method(TypicalValue=>ZZ)
+ind(ZZ,RingElement,LieAlgebra):=(d,m,L)->position(L#cache.basis#d,x->x===m);
+--gives the index of m in ibasis(d,j). m belongs to lieRing
+ind(ZZ,ZZ,RingElement,LieAlgebra):=(d,j,m,L)->position(ibasis(d,j,L),x->x===m);
+
+
+
+
+----------------------------------------    
+-- matToBas
+----------------------------------------  
+matToBas=method(TypicalValue=>List) 
+-- the number of rows in A equals dim(d),
+-- the result is a list of linear combination of
+-- basis elements in lieRing of first degree d corresponding
+-- to the columns in A
+matToBas(ZZ,Matrix,LieAlgebra):=(d,A,L)->(
+    if A==0 then flatten table(1,numgens source A,x->0_(L#cache.lieRing)) else (
+	apply(entries transpose A,x->sum(x,ibasis(d,L),(i,j)->i*j))
+	)
+    );
+-- the number of rows in A equals dim(d,j),
+-- the result is a list of linear combination of
+-- basis elements in lieRing of first degree d and last degree j corresponding
+-- to the columns in A
+matToBas(ZZ,ZZ,Matrix,LieAlgebra):=(d,j,A,L)->(
+    if A==0 then flatten table(1,numgens source A,x->0_(L#cache.lieRing)) else (
+	apply(entries transpose A,x->sum(x,ibasis(d,j,L),(r,s)->r*s))
+	)
+    );
+
+----------------------------------------    
+-- invimage
+----------------------------------------
+-- gives a basis, in terms of columns in a matrix, for the space of
+-- those x such that Ax is in the column space of B. A and B are matrices
+-- of numbers with the same number of rows. The number of rows in output
+-- is equal to the number of columns in A. Used in inverseImageLie. See also 
+-- basis for the case inverse
+
+invimage=(A,B)->generators kernel((transpose generators kernel(transpose B))*A); 
+
+
+----------------------------------------   
+-- joinvert
+---------------------------------------- 
+-- vertical concatenation of a list of matrices
+joinvert=x->(
+    if length x==1 then x_0 else fold((u,v)->u||v,x_0,drop(x,1))
+    );
+
+
+
+
+
+
+-----------------------------------------
+--dims, ibasis
+----------------------------------------
+
+
+----------------------------------------    
+-- dims
+----------------------------------------  
+dims=method()
+dims(ZZ,ZZ,LieAlgebra):=(d,n,L)->for i from d to n list length basis(i,L);
+dims(ZZ,VectorSpace):=(n,S)->
+    for i from 1 to n list length basis(i,S);
+dims(ZZ,ZZ,VectorSpace):=(d,n,S)->
+    for i from d to n list length basis(i,S);
+dims(ZZ,VectorSpace):= (n,S)->(
+    L:=S#lieAlgebra;
+    if S#?ideal then (
+      M:=lieQuotient(L,S#gens); 
+      dims(n,L)-dims(n,M)
+      ) else (
+       B:=boundaries L;
+        if n<=0 then 0 else
+        if S#?cycles then 
+	   dims(n,L) - matrix drop(entries(
+	   matrix table(1,n,x->0)||id_(ZZ^n)),-1)*dims(n,B) else
+        if S#?boundaries then 
+	  matrix apply(n,i->apply(n,j->
+	  length basis(j+1,i,S))) else 
+        if S#?homology then 
+	  dims(n,L) - (matrix drop(entries(
+	  matrix table(1,n,x->0)||id_(ZZ^n)),-1)+id_(ZZ^n))*dims(n,B) else
+       matrix apply(n,d->apply(n,j->length basis(j+1,d,S)))
+       )
+    ); 
+dims(ZZ,LieAlgebra):=(n,L)->matrix apply(n,d->
+    apply(n,j->length basis(j+1,d,L)));
+dims(ZZ,ExtAlgebra):=(n,E)-> matrix apply(n,d->
+    apply(n,j->length basis(j+1,d+1,E)));
+dims(ZZ,ZZ,ExtAlgebra):= (d,n,E)->for i from d to n list length basis(i,E);
+
+----------------------------------------    
+-- idims
+----------------------------------------  
+idims=(d,L)->for i from 1 to d list L#cache.dim#i;
+
+----------------------------------------    
+-- idimtot
+----------------------------------------  
+
+idimtot=(d,L)->sum idims(d,L);
+
+----------------------------------------    
+-- ibasis
+----------------------------------------  
+ibasis=method(TypicalValue=>List)
+-- gives the list of basis elements in lieRing of first degree n: 
+ibasis(ZZ,LieAlgebra):=(n,L)->
+     if n<=0 then {} else L#cache.basis#n;
+-- gives the list of basis elements in lieRing of first degree n
+-- and last degree d: 	 
+ibasis(ZZ,ZZ,LieAlgebra):=(n,d,L)->if d>=n or d<0 then {} else L#cache.basis#(n,d);
+-- gives the list of basis elements in lieRing of multidegree x:   
+ibasis(List,LieAlgebra):=(x,L)->select(ibasis(x_0,L),y->degree y===x); 
+
+
+--------------------------------------
+-- iideal, isubalg, isubSpace
+-------------------------------------
+
+----------------------------------------    
+-- iideal
+----------------------------------------
+-- gives a minimal generator set of lieRing elements
+-- in first degre n for the Lie ideal generated by 
+-- lieRing elements in the list y (which may contain
+-- elements of different degrees) or by a Lie subspace.
+-- It is supposed that
+-- a basis is computed for degrees less than n.
+-- The list y contains
+-- the differential of its elements, which are of degree
+-- less than or equal to n. 
+ 
+iideal=method()
+iideal(ZZ,List,LieIdeal):=(n,y,S)->(
+    L:=S#lieAlgebra;
+    rs:=selectdeg(n,y);
+	for i from 1 to n-1 do 
+	rs=rs|flatten apply(gendeg(n-i,L),x->apply(ifed\basis(i,S),
+		z->op(new BasicList from {x},z,L))); 
+    rs=skipz rs;
+    if rs==={} then {} else
+	    flatten entries gens gb(
+	    ideal rs,DegreeLimit=>
+	    prepend(n,flatten table(1,length((L#Weights)_0)-1,x->0)))
+   );
+
+iideal(ZZ,LieSubSpace,LieIdeal):=(n,S,I)->(
+    L:=S#lieAlgebra;
+    dL:=differential L;
+    rs:=ifed\join(basis(n,S),dL\basis(n,S));
+	for i from 1 to n-1 do 
+	rs=rs|flatten apply(gendeg(n-i,L),x->apply(ifed\basis(i,I),
+		z->op(new BasicList from {x},z,L))); 
+    rs=skipz rs;
+    if rs==={} then {} else
+	    flatten entries gens gb(
+	    ideal rs,DegreeLimit=>
+	    prepend(n,flatten table(1,length((L#Weights)_0)-1,x->0)))
+   );
+
+----------------------------------------    
+-- selectdeg, used in iideal
+----------------------------------------
+-- selects the elements of first degree n in a list x of ring elements 
+selectdeg=(n,x)->(select(x,y->(ideg y==n)));
+
+
+----------------------------------------    
+-- isubalg
+----------------------------------------  
+-- gives a basis in lieRing of first degree n for the Lie subalgebra
+-- generated by the elements in the list y (which may contain elements 
+-- of different degrees). It is supposed that
+-- a basis is computed for degrees less than n.
+-- The list y contains
+-- the differential of its elements, which are of degree
+-- less than or equal to n. 
+
+isubalg=method(TypicalValue=>List)
+isubalg(ZZ,List,LieSubSpace):=(n,y,S)->(
+    L:=S#lieAlgebra;        
+    rs:=selectdeg(n,y);
+    for i from 1 to n-1 do rs=rs|imult(selectdeg(n-i,y),ifed\basis(i,S),L);
+    rs=skipz rs;
+    if rs=={} then {} else 	    
+	    flatten entries gens gb(
+	    ideal rs,DegreeLimit=>
+	    prepend(n,flatten table(1,L#degreeLength-1,x->0)))
+    );
+
+--------------------------------------
+-- isubSpace
+-------------------------------------- 
+
+isubSpace=(n,x,L)->
+    if x=={} then {} else
+       flatten entries gens gb(ideal x,DegreeLimit=>
+	    prepend(n,flatten table(1,L#degreeLength-1,y->0)));
+     
+
+
+ 
+
+--------------------------------------------------------
+
+--------------------------------------
+--op and computeLie
+--------------------------------------
+-- op
+-------------------------------------
+-- computes the operation of an iterated Lie product 
+-- (as a list or Basiclist) in digital form
 -- of first degree d on a monomial m in lieRing of degree e.
 -- The result is a polynomial in lieRing which is a linear
 -- combination of basis elements in bas#(d+e) if the degree d+e is
--- computed. Otherwise, the output is a linear combination of "prebasis" 
--- elements and this fact is used in computeLie. 
-op=(x,m)->(
-    if LL.cache.opL#?(x,m) then LL.cache.opL#(x,m) else ( 
-	if m===mb0 then ifed(x) else ( 
-	    if m == 0 then 0_(LL.cache.lieRing) else (
-		d:=idegLie m; 
-		le:=length x; 
-            	d0:= ((LL.genWeights)_(x_0))_0; 
+-- computed. Otherwise, the output is a linear combination of prebasis 
+-- elements and this fact is used in computeLie.
+ 
+op=method()
+op(BasicList,Thing,LieAlgebra):=(x,m,L)->(
+   if L#cache.opL#?(x,m) then L#cache.opL#(x,m) else ( 
+	if m===mb0 then ifedlocal(x,L) else ( 
+	    if m == 0 then 0_(L#cache.lieRing) else (
+		d:=ideg m; 
+		le:=#x; 
+            	d0:= ((L#Weights)_(x#0))_0; 
             	if le==1 then ( 
-		    if (gens LL.cache.gr#(d+d0)) == 0 then 
-                    LL.cache.lieRing_(d*LL.numGen+x_0)*m else 
-                    LL.cache.lieRing_(d*LL.numGen+x_0)*m % LL.cache.gr#(d+d0)
+		    if (gens L#cache.gb#(d+d0)) == 0 then 
+                    L#cache.lieRing_(d*L#numgens+x#0)*m else 
+                    L#cache.lieRing_(d*L#numgens+x#0)*m % L#cache.gb#(d+d0)
               	    ) else (
-		    fir:=first x; secd:=drop(x,1); 
-		    ds:=(degiterlie(secd))_0;
-                    if  (gens LL.cache.gr#(d+ds+d0)) == 0 then ( 
-			(LL.cache.lieRing_((d+ds)*LL.numGen+fir)*op(secd,m)) -
-                   	eps([fir],secd)*linext(i-> op(secd,i), 
-                  	    LL.cache.lieRing_(d*LL.numGen+fir)*m %LL.cache.gr#(d+d0))
+		    fir:=first x;
+		    firr:=take(x,{0,0}); 
+		    secd:=drop(x,1); 
+		    ds:=(iweightlocal(secd,L))_0;
+                    if  (gens L#cache.gb#(d+ds+d0)) == 0 then ( 
+			(L#cache.lieRing_((d+ds)*L#numgens+fir)*op(secd,m,L)) -
+                   	eps(firr,secd,L)*linext(i-> op(secd,i,L), 
+                  	    L#cache.lieRing_(d*L#numgens+fir)*m %L#cache.gb#(d+d0))
                       	) else ( 
-			LL.cache.opL#(x,m)= ((LL.cache.lieRing_((d+ds)*LL.numGen+fir)*op(secd,m)) -
-                            eps([fir],secd)*linext(i-> op(secd,i), 
-                            	LL.cache.lieRing_(d*LL.numGen+fir)*
-                            	m %LL.cache.gr#(d+d0)))%LL.cache.gr#(d+ds+d0)
+			L#cache.opL#(x,m)= 
+		      ((L#cache.lieRing_((d+ds)*L#numgens+fir)*op(secd,m,L)) -
+                            eps(firr,secd,L)*linext(i-> op(secd,i,L), 
+                            	L#cache.lieRing_(d*L#numgens+fir)*
+                            	m %L#cache.gb#(d+d0)))%L#cache.gb#(d+ds+d0)
 		    	)
                	    )
 	       	)
             )
-      	)
-    );
+	 )
+       );
 
-
-----------------------------------------    
--- opiterlie
-----------------------------------------  
--- opiterlie({{3,4},{5,6}},[1,4,2,5])=[1,3,2,6]
--- opiterlie({{1,2,3,4}},[1,2,3,4])=[2,3,4,1]
-opiterlie=(x,y)->(apply(y,z->opperm(x,z)));
-
-
-----------------------------------------    
--- opperm
-----------------------------------------  
--- opperm({{1,3},{2,4},{3,5},{4,6}},5)=1
-opperm=(x,y)->fold(append(x,y),eval);
-
-
-----------------------------------------    
--- rel
 ----------------------------------------
--- gives the relations in digital form of first degree d
+--computeLie   
+----------------------------------------      
 
-rel=(d)->(select(iRels(),y->((degRel(y))_0===d)));
-
-
+computeLie=method(TypicalValue=>List)
+computeLie(ZZ,LieAlgebra):=(d,L)->(
 ----------------------------------------    
--- relcomm
+  -- commrel and commrelgen
+----------------------------------------  
+  -- the commutative law on basis elements
+    commrel:=(m)->(
+      defm:=idefmon(m,L);
+      if #defm==1 then 0_(L#cache.lieRing) else (
+	 x:=first defm;
+	 xx:=take(defm,{0,0});
+ 	 m1:=drop(defm,1); 
+	 m+eps(xx,m1,L)*op(m1,L#cache.lieRing_(x),L)
+	 )
+      ); 
+  -- the commutative law on a generator and a basis element
+    commrelgen:=(x,m)->(
+      defm:=idefmon(m,L);
+      xx:=new BasicList from {x}; 
+      op(xx,m,L)+eps(xx,defm,L)*op(defm,L#cache.lieRing_(x),L)
+      );
+----------------------------------------    
+  -- relcomm
 ----------------------------------------
--- the commutative law on Lie elements in a relation, used in computeLie
-relcomm=(x)->(
-    if length x==1 then 0_(LL.cache.lieRing) else (
-	x1:=first x; 
-	x2:= drop(x,1);
-	ifed(x) + eps([x1],x2)*op(x2,LL.cache.lieRing_(x1))
-	)
-    );
+  -- the commutative law on Lie monomials in a relation, 
+  -- as a BasicList
 
-
+    relcomm:=(x)->(
+      if #x<=1 then 0_(L#cache.lieRing) else (
+	 x1:=first x;
+	 xx1:=take(x,{0,0}); 
+	 x2:= drop(x,1);
+	 ifedlocal(x,L) + eps(xx1,x2,L)*op(x2,L#cache.lieRing_(x1),L)
+	 )
+      );
+  
 ----------------------------------------    
+  -- rel
+----------------------------------------
+  -- gives the relations of first degree d
+
+    rel:=(d)->select(L#ideal,y->ideglie y===d);
+    
+ ----------------------------------------    
 -- relDegMax
 ----------------------------------------
 -- the maximal degree of the relations 
-relDegMax=()->if LL.relsLie==={} then 0 else max apply(iRels(),y->(degRel(y))_0);
 
-
+relDegMax:=(L)->if L#ideal==={} then 0 else max apply(L#ideal,ideglie);
+   
+    
 ----------------------------------------    
--- sign
+  -- modR
 ----------------------------------------
--- gives the sign of an iterated Lie product in 
--- digital form ([1,2,0,1])
-sign=(x)->(sum(x,y->LL.genSigns_y))%2;
+  -- creates mbRing 
+
+modR:=(d)->(
+    mblist:={};
+    degs:={};
+    for i from 1 to d do for j from 0 to L#cache.dim#i-1 do 
+        mblist= append(mblist,(mb)_{i,j});
+    for i from 1 to d do degs=degs|L#cache.degrees#i;
+    if degs=={} then L#Field else L#Field[mblist,Degrees=>degs]
+    );
+
+------------------    
+	
+    if L#cache.degree>=d then idims(d,L) else if L#genslie==={} then (
+        if L#cache.max<d then  L#cache.max=d+5;
+        L#cache.degree=d; 
+	setZeroLie(L); 
+	idims(d,L)
+	) else ( 
+	if not class L#ideal===List then (
+	   M:=L#cache.ambient;  
+	   computeLie(d,M);
+	   j0:=1; 	    
+	   I:=L#ideal;	    
+	   L#cache.max=M#cache.max;	    
+	   L#cache.lieRing=M#cache.lieRing;
+	   for i from j0 to d do (
+	     deglimit:=prepend(i,flatten table(1,L#degreeLength-1,x->0));
+	     basi:=basis(i,I);
+	     if basi=={} then (
+		L#cache.gb#i=M#cache.gb#i;		
+		L#cache.basis#i=M#cache.basis#i;
+		L#cache.degrees#i=M#cache.degrees#i) else (
+	          idea:=M#cache.gb#i+ideal(ifed\basi);
+	 	  gbgens:=flatten entries gens gb(idea,DegreeLimit=>deglimit);
+	          L#cache.gb#i=ideal(gbgens);
+                  grlead:=apply(gbgens,leadMonomial);
+               	  L#cache.basis#i=select(M#cache.basis#i,x->(not member(x,grlead)));
+		  L#cache.degrees#(i)=apply(L#cache.basis#(i),degree) 
+	          );
+	      L#cache.dim#i=length L#cache.basis#(i);
+	      for k to i-1 do 
+	        L#cache.basis#(i,k)=select(L#cache.basis#i,x->last degree x==k))
+	   ) else (		
+	       
+	 if L#cache.max<d then (
+	      L#cache.max=d+5; 
+	      j0=1; 
+	      L#cache.lieRing=lieR(L);
+	      ) else j0=L#cache.degree+1;	    	      		    	     
+         for i from j0 to d  do ( 
+	   deglimit:=prepend(i,flatten table(1,L#degreeLength-1,x->0));  
+	   L#cache.gb#(i)=ideal {0_(L#cache.lieRing)}; 
+	   prebasis:={};
+	   rellist:={};
+           for j from 1 to min(i,genDegMax(L)) do 
+	       prebasis=prebasis|flatten apply(L#cache.basis#(i-j),y->
+		   apply(gendeg(j,L),x->op(new BasicList from {x},y,L)));
+	   if prebasis=={} then (
+	       L#cache.gb#(i)=ideal {0_(L#cache.lieRing)};
+	       L#cache.basis#(i)={};
+	       L#cache.degrees#(i)={}) else (
+           for j from 1 to min(i,relDegMax(L)) do 
+	       rellist=rellist|
+	           flatten apply(L#cache.basis#(i-j),m->
+		   apply(rel(j),x-> 
+		   if x#0===empty then 0_(L#cache.lieRing)  else 
+		      summ(x#0,x#1,(r,s)->r*op(s,m,L))));
+          
+	   newrellist:=flatten apply(rel(i),y->
+	       (toList apply(y#1,z->relcomm(z))));
+    	   rellist=rellist|newrellist;
+	   ch:=char L#Field;
+           badgen:=select(L#numgens,y->(L#Weights_y)_0%ch==0 and 
+	       (L#Weights_y)_0<i);
+           newrellist=flatten apply(badgen,x->
+	       apply(L#cache.basis#(i-(L#Weights_x)_0),m->commrelgen(x,m)));
+           rellist=rellist|newrellist;
+    	   if ch==3 and i%3==0 then rellist=rellist|apply(select(L#cache.basis#(i//3),z->
+		   isign(z,L)==1),x->imult(x,imult(x,x,L),L));
+    	   if ch==2 and i%2==0 then rellist=
+	           rellist|apply(L#cache.basis#(i//2),x->imult(x,x,L));
+    	   if (rellist=={} or ideal rellist==ideal{0_(L#cache.lieRing)}) then (
+	       gr0:=ideal {0_(L#cache.lieRing)};
+	       bas0:=prebasis;
+	       ) else (  
+	       ide:=ideal rellist;
+	       gr0=ideal(flatten entries gens gb(ide,DegreeLimit=>deglimit));
+	       grlead:=apply(flatten entries gens gr0, leadMonomial);
+	       bas0=select(prebasis,x->(not member(x,grlead)));
+	       );
+    	   if gr0==0 then newrellist= flatten apply(bas0,m->commrel(m)) else 
+	       newrellist= toList apply(flatten apply(bas0,m->commrel(m)),x->x%gr0);
+    	   if rellist|newrellist == {} then (
+	       L#cache.gb#(i)=ideal {0_(L#cache.lieRing)};
+	       L#cache.basis#(i)=bas0;
+	       L#cache.degrees#(i)=apply(L#cache.basis#(i),degree)
+	       ) else (  
+	       newide:=ideal(rellist|newrellist); 
+	       if newide==ideal{0_(L#cache.lieRing)} then (
+		   L#cache.gb#(i)=ideal {0_(L#cache.lieRing)};
+		   L#cache.basis#(i)=bas0;
+		   L#cache.degrees#(i)=apply(L#cache.basis#(i),degree)
+		   ) else (  
+		   L#cache.gb#(i)=
+		     ideal(flatten entries gens gb(newide,DegreeLimit=>deglimit));
+                   grlead=apply(flatten entries gens L#cache.gb#(i),leadMonomial);
+               	   L#cache.basis#(i)=select(bas0,x->(not member(x,grlead)));
+		   L#cache.degrees#(i)=apply(L#cache.basis#(i),degree)
+	      	   )	         
+	       ));             
+       	     L#cache.dim#i=length L#cache.basis#(i);
+	     for k to i-1 do 
+	        L#cache.basis#(i,k)=select(L#cache.basis#i,x->last degree x==k) -- next i
+   	 ); -- end of for loop
+      );
+      L#cache.mbRing=modR(d);
+      L#cache.degree=d; 
+      idims(d,L)
+      )
+   );
 
 
+	
 
+-----------------------------------------
+-- koszulDual and holonomy
+----------------------------------------
+
+----------------------------------------	
+-- KOSZULDUAL
+----------------------------------------
+-- the Lie algebra whose envelopping algebra is the Koszul dual
+-- of the input which is a quotient of a polynomial algebra
+-- modulo a quadratic ideal, some of the generators may be
+-- skewcommutative 
+
+koszulDual=method(TypicalValue=>LieAlgebra)
+koszulDual(QuotientRing):=koszulDual(PolynomialRing):=(Q)->(
+    if Q#?SkewCommutative then S:=Q.SkewCommutative else S={};
+    skewco:=apply(S,i->(gens Q)_i);
+    signlist:=apply(length gens Q,x->if member(x,S) then 1 else 0);
+    fie:=coefficientRing Q;
+    R:=fie[gens Q,SkewCommutative=>skewco,Degrees=>apply(gens Q,degree)];    
+    I:=flatten entries presentation Q;
+    R1:=if I=={} then Q else ring I_0;
+    I=apply(I,x->(map(R,R1))(x));
+    scalarprod:=(l1,l2)->sum(l1,l2,(i,j)->i*j);
+    explist:=(p)->apply(flatten entries monomials p,m->flatten exponents m);
+    homogen:=(p)->length unique apply(explist p,y->scalarprod(signlist,y)%2)==1;
+    apply(I,p->if not homogen p then (
+	    print(p); 
+	    error "is not sign-homogeneous"
+	    )
+	);
+    if not isHomogeneous Q then (
+	print(I); 
+	error "is not multi-homogeneous"
+	);
+    if I=={} then grI:={} else (
+        I=ideal I;    
+	grI=flatten entries gens gb(I,DegreeLimit=>flatten table(1,degreeLength R,x->2));
+	grI=apply(grI,x->x*(1/(leadCoefficient x)))
+	);
+    lM:=apply(grI,leadMonomial);
+    bM:=select(flatten entries basis(2,R),x->not member(x,lM));
+    -- grI_k = lM_k + \sum a_ki bM_i
+    M:=ilieAlgebra(apply(numgens R,i->ko_i),{},{},
+	Weights=>apply(apply(gens R,degree),x->append(x,0)),
+	Signs=>apply(signlist,x->(x+1)%2),Field=>fie);
+    tolie:=(m)->(
+	po:=positions(flatten exponents m,x->x>0); 
+       	if length po==1 then (M#cache.gens)_(po_0) (M#cache.gens)_(po_0) else 
+     	   if not member(po_0,S) and member(po_1,S) then 
+	   (M#cache.gens)_(po_1) (M#cache.gens)_(po_0) else
+       	   (M#cache.gens)_(po_0) (M#cache.gens)_(po_1)
+	   );
+    sqco:=(m)->(
+	po:=positions(flatten exponents m,x->x>0); 
+       	if length po==1 then (1/2)_fie else 1_fie
+	);
+    coe:=(k,i)->sqco(lM_k)*(map(fie,R))(((apply(coefficients(
+	    grI_k,Monomials=>{bM_i}),x->flatten entries x))_1)_0);
+-- 1/2a_ki alt a_ki depending on lM_k being a square or not
+
+    co:=(i)->prepend(-sqco(bM_i),apply(length grI,k->coe(k,i))); 
+     -- {-1 alt -1/2,a_0i,...,a_(r-1)i}
+     
+    relmon:=(i)->prepend(tolie(bM_i),apply(lM,tolie));
+    rels:=apply(length bM,i->sum(co(i),relmon(i),(j,k)->j k));
+-- tolie(bM_i) - \sum a_ki tolie(lM_k)
+
+    M/rels
+  ); 
+
+----------------------------------------
+-- HOLONOMY
+----------------------------------------
+-- the holonomy Lie algebra of an arrangement or matroid,
+-- the first list is the list of 1-flats of size at least two,
+-- the second list is the set of 2-flats of size at least three
+	
+holonomy=method(Options=>{Field=>QQ})
+holonomy(List,List):= LieAlgebra=>opts->(x,y)->(
+    xx:=apply(x,z->apply(z,baseName));
+    yy:=apply(y,z->apply(z,baseName));   
+    uu:=xx|yy;
+    xxx:=flatten xx;
+    Generators:=unique (xxx|flatten yy);
+    n:=length Generators; 
+    allpairs:=flatten apply(uu,y->subsets(y,2));
+    if not (unique allpairs===allpairs) then (
+	error "two sets in the second input must have at most one element in common";
+	); 
+    if not (unique xxx===xxx) then (
+	error "the sets in the first input must be disjoint";
+	);
+    M:=ilieAlgebra(Generators,{},{},
+	    Weights=>flatten table(1,n,x->{1,0}),
+	    Signs=>flatten table(1,n,x->0), Field=>opts.Field);
+    trans:=y->(
+	i:=position(Generators,z->z===y);
+	(M#cache.gens)_i
+	);
+    liepairs:=apply(select(subsets(M#genslie,2),
+		y->all(uu,x->not isSubset(y,x))),z->
+	           (trans (z_1)) (trans (z_0)));
+    lieideallocal:=y->apply(drop(y,1),
+		z->summ(y,u-> (trans z) (trans u)));
+    L:=ilieAlgebra(M#cache.gens,flatten apply(yy,lieideallocal)|liepairs,{},
+	        Weights=>flatten table(1,n,x->{1,0}),
+	        Signs=>flatten table(1,n,x->0), Field=>opts.Field);
+    trans=y->(
+	i:=position(Generators,z->z===y);
+	(L#cache.gens)_i
+	);
+    L#cache.localone=apply(xx,z->apply(z,u->trans u));
+    L#cache.localtwo=apply(yy,z->apply(z,u->trans u));
+    setgen L;
+    L
+    );
+
+holonomy(List):=opts->x->holonomy({},x,Field=>opts.Field);
+
+------------------------------------------------
+-- holonomyLocal
+------------------------------------------------
+-- the ith local Lie algebra of a holonomy Lie algebra, 
+-- corresponding to the ith flat in the input where
+-- the 1-flats are counted before the 2-flats
+ 
+holonomyLocal=method()
+holonomyLocal(ZZ,LieAlgebra) := (i,L)->(
+    if not L#cache.?localone then 
+       error "the LieAlgebra must be a holonomy Lie algebra" else 
+       (
+         j:=length L#cache.localone;
+         if i<j then
+           holonomy({(L#cache.localone)_i},{},Field=>L#Field) else
+           holonomy({(L#cache.localtwo)_(i-j)},Field=>L#Field)
+       )
+   );
+   
+----------------------------------------
+-- decompose
+----------------------------------------
+--   for a holonomy Lie algebra L, this is 
+--   the kernel of the surjective Lie homomorphism from L'=[L,L]
+--   to the direct sum of L_i', where L_i are the local Lie
+--   algebras (obtained by localLie(i)). 
+--   The ideal is generated by the elements in degree 3,
+--   which are linear combinations of [x,y,z], where not all x,y,z
+--   belong to the same L_i.
+
+
+decompose(LieAlgebra) := {} >> opts -> (L)->(
+    if not L#cache.?localone then 
+       error "the LieAlgebra must be a holonomy Lie algebra" else (
+       loc:=join (apply(toSequence L#cache.localone,y->basis(3,lieSubAlgebra y))|
+              apply(toSequence L#cache.localtwo,y->basis(3,lieSubAlgebra y)));
+       genide:=select(basis(3,L),y->not member(y,loc));
+       if genide==={} then zeroIdeal L else lieIdeal genide
+       )
+    );
+
+
+----------------------------------------
+-- MINIMALMODEL
+----------------------------------------
+-- the minimal model of a Lie algebra up to degree d
+
+minimalModel=method(TypicalValue=>LieAlgebra)
+minimalModel(ZZ,LieAlgebra):=(d,L)->(
+    computeLie(d,L); 
+    if L#cache.?minimalModel then (
+	M:=L#cache.minimalModel; 
+	j:=M#cache.degree
+	) else (
+	M=minmodelone(L); 
+	j=1
+	); 
+    for n from j+1 to d do M=minmodelstep(n,L,M);
+    computeLie(d,M); 
+    M#cache.map=lieMap(L,M,M#cache.homdefs); 
+    L#cache.minimalModel = M;
+    M
+    );   
+
+
+    
+     
 ----------------------------------------    
--- signGenLie
+-- minmodelone
 ----------------------------------------
-signGenLie = (x,G,S)->(
-    if length x==1 then (po:=position(G,u->u===x_0);S_po) else (
-	x1:=if class (drop(x,1))_0===Array then (drop(x,1))_0 else drop(x,1); 
-	x0:=if class (drop(x,-1))_0===Array then (drop(x,-1))_0 else drop(x,-1);
-	(signGenLie(x1,G,S) + signGenLie(x0,G,S))%2
-	)
+--contruction of the model in first degree 1
+
+minmodelone=(L)->(
+    computeLie(1,L);
+    gens1:=basis(1,L); 
+    newgens:=apply(length gens1,x->fr_x); 
+    newweights:=apply(gens1,x->iweight(x));
+    newsigns:=apply(gens1,x->isign(x));
+    if newgens=={} then M:=zeroLieAlgebra(L#Field) else
+    (
+	F:=ilieAlgebra(newgens,{},{},Weights=>newweights,
+	Signs=>newsigns,Field=>L#Field);
+        M=differentialLieAlgebra flatten table(1,length gens1,x->0_F);
+    );
+    M#cache.homdefs=gens1;
+    M
+    );
+
+----------------------------------------
+-- minmodelstep
+----------------------------------------
+-- given that the Lie algebra M is a free minimal model of L up to
+-- first degree n-1, the output becomes a free minimal model up to
+-- first degree n
+
+minmodelstep=(n,L,M)->(
+    newgens:=M#cache.gens;
+    newsigns:=M#Signs; 
+    newdiffs:=M#diff; 
+    newweights:=M#Weights;
+    dL:=differential L; 
+    HL:=lieHomology(L);
+    B:=boundaries L;
+    HM:=lieHomology(M);
+    
+    -- step 1: H(f) surjective, f: M -> L
+    
+    f:=lieMap(L,M,M#cache.homdefs);
+    computeLie(n,M);  
+    indechom:=(i)->(
+	dec:=ifed\basis(n,i,B); 
+	cycL:=ifed\basis(n,i,HL); 
+	cycM:=basis(n,i,HM); 
+	yL:=f\cycM; 	
+	dec=join(dec,ifed\yL);
+	if dec=={} then cycL else (
+	    prel:= skipz apply(cycL,x->x%ideal dec); 
+	    if prel=={} then {} else skipz flatten entries gens gb(ideal prel,
+		DegreeLimit=>prepend(n,flatten table(1,degreeLength(L)-1,x->1)))
+	  )
+      );
+  newfR:=flatten for i from 0 to n-1 list indechom(i);
+  newf:=apply(newfR,x->idef(x,L));
+  newgens=join(apply(newgens,baseName),
+      toList(fr_(length newgens)..fr_(length newgens + length newf - 1)));
+  newsigns=join(newsigns,apply(newf,x->isign(x)));
+  newweights=join(newweights,apply(newfR,x->degree(x)));
+  F:=ilieAlgebra(newgens,{},{},Signs=>newsigns,
+      Weights=>newweights,Field=>L#Field);
+  newdiffs=join(imap(newdiffs,F),apply(length newf,x->0_F));
+  M1:=ilieAlgebra(newgens,{},newdiffs,Signs=>newsigns,
+      Weights=>newweights,Field=>L#Field);
+  M1#cache.homdefs=join(M#cache.homdefs,newf);
+  
+   -- step 2: H(f) injective
+   
+  f=lieMap(L,M1,M1#cache.homdefs); 
+  computeLie(n,M1); 
+  unit:=append(flatten table(1,M1#degreeLength -1,x->0),1);
+  hoM:=hoL:=ge:=newbo:=baL:=baM:=baD:=newf={};
+  HM1:=lieHomology(M1);
+  for i from 0 to n-1 do (    
+      r:=length basis(n,i,HL); 
+      s:=length basis(n,i,HM1); 
+      if s > r  then  (    
+	  baD=basToMat(n,i,ifed\dL\basis(n,i+1,L),L);
+	  -- the matrix for dL in ibasis(n,i+1,L) --> ibasis(n,i,L)
+	  hoM=basis(n,i,HM1);
+	  -- z_1,...,z_s cycles in M1, s>0
+	  y:=f\hoM;  
+	  hoLM:=ifed\y;
+	  -- f(z_1),...,f(z_s) in L#cache.lieRing
+	  baM=basToMat(n,i,hoLM,L);
+	  -- the matrix for hoLM in ibasis(n,i,L)
+	  if r==0 or skipz hoLM=={} then (
+	      -- directly to the last step, a simple case when fr 
+	      -- kills the basis for hoM and fr --> v_i, where dL(v_i)=f(z_i): 
+	      len:=length newgens;
+	      newgens=join(newgens,toList(fr_len..fr_(len+s-1)));  
+	      newsigns=join(newsigns,apply(hoM,x->(isign(x)+1)%2));
+	      newdiffs=join(newdiffs,hoM);
+	      newweights=join(newweights,apply(hoM,x->weight(x)+unit));
+	      newf=join(newf,(
+		      if baD==0 then flatten table(1,s,x->0_L) else 
+		       apply(flatten entries (
+		               matrix{ibasis(n,i+1,L)}*solve(baD,baM)),x->idef(x,L))
+		           )); 
+	       -- see below	 
+	       ) else (
+	       hoL=ifed\basis(n,i,HL); 
+	       -- u_1,...,u_r are cycles in lieRing
+	       baL=basToMat(n,i,hoL,L);
+	       -- the matrix for hoL in ibasisLie(n,i,L)	    
+	       ge=generators kernel matrix take(
+		   entries solve(if baD==0 then baL else baL|baD,baM),r);
+	       -- (a_1,...,a_s) such that z=\sum(a_i f(z_i)) is a boundary
+	       newbo=flatten entries (matrix{ifed\hoM}*ge);
+	       -- list of cycles \sum a_iz_i to be killed, z_i considered to be in lieRing
+	       newf=join(newf,
+		       if baD==0 then flatten table(1,length newbo,x->0_L) else 
+		           apply(flatten entries (
+		               matrix{ibasis(n,i+1,L)}*solve(baD,baM*ge)),x->idef(x,L)
+		       )); 
+	       -- list x which will be f:s values on the new generators
+    	       -- summary (commutative diagram): f: fr_i --> x, 
+	       -- d_M1: fr_i --> z, f: z --> v, dL x --> v
+	       len=length newgens;
+	       newgens=join(apply(newgens,baseName),apply(length newbo,x->fr_(len+x)));
+	       newsigns=join(newsigns,apply(newbo,x->(isign(x,M1)+1)%2));
+	       newdiffs=join(newdiffs,apply(newbo,x->idef(x,M1)));
+	       newweights=join(newweights,apply(newbo,x->iweight(x)+unit));
+	       ) -- this finishes the main case when there are cycles to kill
+	   ) -- next i
+       ); -- end of loop
+   F2:=ilieAlgebra(newgens,{},{},Signs=>newsigns,
+       Weights=>newweights,Field=>L#Field);
+   newdiffs=imap(newdiffs,F2);
+   M2:=ilieAlgebra(newgens,{},newdiffs,Signs=>newsigns,
+       Weights=>newweights,Field=>L#Field);
+   M2#cache.homdefs=join(M1#cache.homdefs,newf);
+   M2	
+   );
+
+----------------------------------------
+--minimalPresentation
+---------------------------------------- 
+-- gives a minimal presentation of H_0(L) up to first degree n, 
+-- the presentation uses the same names for the generators as in L.
+
+
+minimalPresentation(ZZ,LieAlgebra) := opts->(n,L)->(
+    if L#cache.?minimalModel and L#cache.minimalModel#cache.degree>=n then 
+    M:=L#cache.minimalModel else M=minimalModel(n,L);
+    if M#cache.gens=={} then zeroLieAlgebra(L#Field) else (
+    po:=positions(M#cache.gens,x->(iweight(x))_(-1)==0);
+    f:=M#cache.map; 
+    Mgens:=apply(po,x->(M#cache.gens)_x);
+    Lgens:=f\Mgens;
+    MP:=ilieAlgebra(Lgens,{},{},
+	Signs=>apply(po,x->(M#Signs)_x),
+	Weights=>apply(po,x->(M#Weights)_x),
+	Field=>L#Field);
+    F:=ambient M;
+    Mrels:=imap(select(select(M#diff,x->not x===0_F),y->(iweight(y))_(-1)==0),M);
+    g:=lieMap(MP,L)*f;
+    Q:=ilieAlgebra(Lgens, g\Mrels,{}, Signs=>MP#Signs,
+	Weights=>MP#Weights, Field=>L#Field);
+    setgen Q;   
+    Q
+    )
+  );
+
+---------------------------------------
+-- trace, isIsomorphism
+ --------------------------------------
+ 
+--------------------------------------
+-- trace, (character)
+----------------------------------------
+-- A subspace S
+-- of the Lie algebra is invariant under f
+-- in degree n
+-- output is the trace of f as a map S_n->S_n
+ 
+
+trace(ZZ,LieSubSpace,LieAlgebraMap):=(n,S,f)->(
+       if not iswelldefdiff(n,f) then 
+           error "the map is not well defined";
+       L:=source f;
+       B:=basis(n,S);
+       m1:=basToMat(n,ifed\B,L);
+       m2:=basToMat(n,ifed\f\B,L);
+       if m1==0 then 0_(L#Field) else
+       if rank(m1|m2)>rank m1 then 
+	       error "the second input is not an invariant subspace" else 
+	  trace solve(m1,m2)
+       );
+       
+       
+----------------------------------------
+--isIsomorphism
+---------------------------------------- 
+-- It is checked that f: M -> L is an isomorphismm where M==L 
+
+
+isIsomorphism(LieAlgebraMap):=f->(
+    M:=source f;
+    L:=target f;
+    if not L==M then 
+         error "the source and target of the map should be equal" else (
+      if class M#ideal===LieIdeal then
+            error "it cannot be determined if the map is an isomorphism" else (
+	 F:=M#cache.ambient;
+    	 I:=M#ideal;
+    	 g:=f*lieMap(M,F);
+	 m:=genDegMax M;    	  
+	 computeLie(m,M);
+	 computeLie(m,L);
+         dM:=differential M;
+	 dL:=differential L;
+         all(gens M,x->dL(f#x)===f(dM#x)) and
+         all(gens L,x->member(x,image f)) and 
+	 all(g\I,x->x===0_L)
+	 )
+     )
+ );
+     
+
+-------------------------------------
+
+
+-------------------------------------
+-- coefficients
+--------------------------------------
+-- this gives the list of coefficients and the list of Lie monomials 
+-- of a LieElement. This element may be non-normalized, in case the
+-- input will change to normal form. If one wants to keep the non-normal
+-- expression one has to use the formal Lie operators @,/,++.
+
+coefficients(LieElement):=opts->x->{toList x#0,
+     (L:=class x;
+      toList apply(x#1,y->new L from 
+       	{new BasicList from {1_(L#Field)},new BasicList from {y}}
+       	))};
+
+------------------------------------------
+-- monomials
+------------------------------------------
+-- the list of iterated Lie products in a Lie element.
+-- See coefficients
+
+monomials(LieElement) := opts->x->(coefficients x)_1;
+
+
+
+----------------------------------------
+-- normalForm EXPORTED
+----------------------------------------
+-- gives the normal form of a "formal" LieElement 
+
+normalForm = method()
+normalForm(LieElement):= x -> (
+    L:=class x;
+    computeLie(ideglie x,L);
+    out:=idef(ifed x,L);
+    out
+    );
+   
+
+
+----------------------------------------
+-- RANDOM
+----------------------------------------
+-- gives a random element of degree d in the Lie algebra
+
+
+random(ZZ,LieAlgebra) := random(List,LieAlgebra):= opts->(d,L) -> (
+    m:=dim(d,L);
+    coefs := apply(m,i->random(L#Field));
+    sum(coefs,basis(d,L),(i,j)->i j)
+    );
+random(ZZ,ZZ,LieAlgebra) := opts->(d,n,L) -> (
+    m:=dim(d,n,L);
+    coefs := apply(m,i->random(L#Field));
+    sum(coefs,basis(d,n,L),(i,j)->i j)
     );
 
 
 
 ----------------------------------------    
--- signList
+-- linext
 ----------------------------------------
-signList = x->apply(x,y->if class y===Array then signLie y else 
-    if generalExpressionLie y then signLie((y_1)_0) else (
-	print(y); 
-	print("is not a general Lie expression")
+-- is the linear extension of f, which is defined on monomials
+-- in a polynomial ring, with values in the same polynomial ring.
+
+linext=method();
+linext(Function,RingElement):=(f,p)->(
+    if p==0 then 0_(ring p) else ( 
+	co:= coefficients p; 
+	mons:=flatten entries first co;
+	coefs:=flatten entries last co;
+	sum(coefs,mons,(i,j)->i*f(j))
+      )
+  ); 
+-- If the value is in another polynomial ring, the coefficients need
+-- to be mapped to this ring as follows:
+
+linext(Function,RingMap,RingElement):=(f,g,p)->(
+    if p==0 then g(0_(ring p)) else ( 
+	co:= coefficients p; 
+	mons:=flatten entries first co; 
+	coefs:=flatten entries last co;
+	sum(coefs,mons,(i,j)->g(i)*f(j))
 	)
     );
+-- below is the bilinear extension of f, which is defined on pair of
+-- monomials in a polynomial ring
 
+linext(Function,RingElement,RingElement):=(f,p,q)->
+   linext(x->linext(y->f(x,y),q),p);
 
+--------------------------------
+-- summ, skipz, USE and setgen
+--------------------------------
+
+summ=method()
+summ(BasicList,Function):= (x,f)->
+        if #x==1 then f(x#0) else f(x#0) + summ(drop(x,1),f);
+
+summ(BasicList,BasicList,Function):= (x,y,f)->
+   if #x==1 then f((x#0),(y#0)) else 
+   f((x#0),(y#0)) + summ(drop(x,1),drop(y,1),f);
+   
 
 ----------------------------------------    
 -- skipz
 ----------------------------------------
--- removes zeroes in a list
+-- removes any zeroes in a list of lieRing elements
+
 skipz=x->if length(x)==0 then {} else (
     if x_0==0 then skipz drop(x,1) else prepend (x_0,skipz drop(x,1))
     );
 
+----------------------------------------    
+-- skipzz
+----------------------------------------
+-- removes zeroes in a list of Lie elements 
+
+skipzz=(x,L)->if length(x)==0 then {} else (
+    if x_0===0_L then skipzz(drop(x,1),L) else prepend (x_0,skipzz(drop(x,1),L))
+    );
 
 ----------------------------------------    
 -- skipZZ
 ----------------------------------------
 -- removes O_ZZ in a list
+
 skipZZ=x->if length(x)==0 then {} else (
     if x_0===0 then skipZZ drop(x,1) else prepend (x_0,skipZZ drop(x,1))
     );
 
+  
+----------------------------------------
+-- use 
+----------------------------------------
+-- this sets the generators as elements in the Lie algebra
+	
+use(LieAlgebra) := (L)->(
+     use L#cache.mbRing;
+     if L#cache.?Ext then setgen(L#cache.Ext);
+     setgen(L);
+      );
+--use(ExtAlgebra) := (E)->(
+  --   setgen(E);
+    --  );
 
-----------------------------------------    
--- weightList
-----------------------------------------	  
-weightList = x->apply(x,y->if class y===Array then weightLie y else 
-    if generalExpressionLie y then weightLie((y_1)_0) else
-    (print(y); print("is not a general Lie expression")));
+       
+  
+----------------------------------------
+-- setgen
+----------------------------------------
+-- this sets the value of the generator symbols,
+-- it is used in use
+
+setgen=method()
+setgen(LieAlgebra):=(L)->for i from 0 to L#numgens-1 do 
+               (L#genslie)_i<-(L#cache.gens)_i; 
+setgen(ExtAlgebra):= E-> for i from 0 to E#numgens-1 do 
+               ext_i<-(E#cache.gens)_i;	       
+	       
+	       
 
 
+  
+  
+---------------------------------------
+-- DESCRIBE, output
+
+----------------------------------------
+-- describe
+----------------------------------------
+-- gives printed information about the HaschTable, 
+-- which is somewhat less than what is got from peek 
+-- for LieAlgebras 
+
+
+describe(LieAlgebra) := L -> (
+    "generators => "|net(L#genslie)||
+    "Weights => "|net(L#Weights)||
+    "Signs => "|net(L#Signs)||
+    "ideal => "|net(L#ideal)||
+    "ambient => "|net(L#cache.ambient)|| 
+    "diff => "|net(L#diff)||
+    "Field => "|net(L#Field)||
+    "computedDegree => "|net(L#cache.degree)||   
+    if L#cache.?map then
+    "map => "|describe(L#cache.map) else
+    ""              
+     );
+ 
+describe(ExtAlgebra) := E -> (
+    "generators => "|net(E#cache.generators)||
+    "Weights => "|net(weight\E#cache.generators)||
+    "Signs => "|net(sign\E#cache.generators)||
+    "lieAlgebra => "|net(E#lieAlgebra)||
+    "Field => "|net(E#lieAlgebra#Field)||
+    "computedDegree => "|net(E#degree)                  
+     );
+ 
+describe(LieAlgebraMap) := f-> (
+       L:=f#target;
+       M:=f#source;
+       G:=M#cache.gens;
+	     descrrec(0,M#numgens-1,f,M)||
+	     "source => "|net(f#source)||
+             "target => "|net(f#target)      
+       );
+   
+descrrec=(m,n,f,M)->
+    if m==n then net((M#genslie)_n)|" => "|net(f#((M#cache.gens)_n)) else 
+    net((M#genslie)_m)|" => "|net(f#((M#cache.gens)_m))||
+    descrrec(m+1,n,f,M);
+    
+describe(LieDerivation) := d-> (
+    L:=d#target;
+    G:=d#source#cache.gens;
+    outder(d,G)||
+       "map => "|net(d#map)||
+       "sign => "|net(d#sign)||
+       "weight => "|net(d#weight)||
+       "source => "|net(d#source)||
+       "target => "|net(d#target)
+    );
+
+describe(VectorSpace):=J->(
+    if J#?gens then 
+    (
+      "generators => "|net(J#gens)||
+      "lieAlgebra => "|net(J#lieAlgebra)
+    ) else if J#?inverse then 
+    (
+      i:=J#inverse;
+      "inverse => {"|net(i_0)|", "|net(i_1)|"}"||
+      "lieAlgebra => "|net(J#lieAlgebra)
+    ) else if J#?image then
+    (
+      i=J#image;
+      "image => {"|net(i_0)|", "|net(i_1)|"}"||
+      "lieAlgebra => "|net(J#lieAlgebra)
+    ) else if J#?quotient then
+    (
+      i=J#quotient;
+      "quotient => {"|net(i_0)|", "|net(i_1)|"}"||
+      "lieAlgebra => "|net(J#lieAlgebra)
+    ) else if J#?sum then
+    (
+      i=J#sum;
+      "sum => {"|net(i_0)|", "|net(i_1)|"}"||
+      "lieAlgebra => "|net(J#lieAlgebra)
+    ) else if J#?intersect then
+    (
+      i=J#intersect;
+      "intersect => {"|net(i_0)|", "|net(i_1)|"}"||
+      "lieAlgebra => "|net(J#lieAlgebra)
+    ) else  
+      if J#?boundaries then "boundaries of "|net(J#lieAlgebra) else
+      if J#?cycles then "cycles of "|net(J#lieAlgebra) else
+     "homology of"|" "|net(J#lieAlgebra)
+  );
+
+---------------------------------------
+-- outder
+---------------------------------------
+-- this is used in describe
+
+outder = (d,x) -> (
+       if length x==0 then "" else if length x==1 then 
+       net(x_0)|" => "|net(d#(x_0)) else
+       net(x_0)|" => "|net(d#(x_0))||outder(d,drop(x,1))
+       );
+
+
+
+---------------------------------------
+-- outmon, outputrec, outputext
+---------------------------------------
+-- outmon and outputrec are used in net, which is
+-- given in lieAlgebra
+
+outmon=method()           
+outmon(BasicList,HashTable):=(y,L)->  
+            if #y==1 then toString (L#genslie)_(y#0) else
+	    --baseName L#cache.gens_(y#0) else 
+              "("|outmon(take(y,1),L)|" "|
+	      (z:=drop(y,1);if #z==1 then outmon(z,L)|")" else 
+                  substring(outmon(z,L),1)
+	      );
+outmon(BasicList,ExtAlgebra):=(y,E)->  
+            toString baseName E#cache.gens_(y#0);
+	    
+	  	  
+---------------------------------------
+-- outputrec
+---------------------------------------
+-- if the field is QQ, negative coefficients co are written - |co|, else
+-- the coefficients are written + (co)
+
+outputrec= r->(
+     L:=class r;
+     if r#0===empty then "" else 
+     if L#Field===QQ then (
+        if (r#0)#0==1 then " + "|outmon((r#1)#0,L)|outputrec apply(r,u->drop(u,1)) else
+        if (r#0)#0==-1 then " - "|outmon((r#1)#0,L)|outputrec apply(r,u->drop(u,1)) else 
+        if denominator (r#0)#0===1 then (
+           if (r#0)#0>=0 then 
+           " + "|toString(r#0)#0|" "|outmon((r#1)#0,L)|outputrec apply(r,u->drop(u,1)) else 
+           " - "|toString abs((r#0)#0)|" "|outmon((r#1)#0,L)|outputrec apply(r,u->drop(u,1))
+	   ) else (
+           if (r#0)#0>0 then 
+           " + "|"("|toString(r#0)#0|")"|outmon((r#1)#0,L)|outputrec apply(r,u->drop(u,1)) else 
+           " - "|"("|toString abs((r#0)#0)|")"|outmon((r#1)#0,L)|outputrec apply(r,u->drop(u,1))
+	   )
+       ) else (
+        if (r#0)#0==1 then " + "|outmon((r#1)#0,L)|outputrec apply(r,u->drop(u,1)) else
+        if (r#0)#0==-1 then " - "|outmon((r#1)#0,L)|outputrec apply(r,u->drop(u,1)) else  
+        " + "|"("|toString ((r#0)#0)|")"|outmon((r#1)#0,L)|outputrec apply(r,u->drop(u,1))
+	)
+   );
+
+outputext=r->(
+    if #r#0==0 then "" else (        
+    r1:=outputext(apply(r,y->drop(y,1)));
+    if r#0#0==0 then r1 else
+    if r#0#0==1 then " + "|toString(ext_(r#1#0))|if r1==="" then "" else
+	    r1 else
+    if r#0#0==-1 then " - "|toString(ext_(r#1#0))|if r1==="" then "" else
+	    r1 else
+    if (class r)#lieAlgebra#Field===QQ then
+       if denominator r#0#0===1 then (
+           if r#0#0>0 then 
+           " + "|toString(r#0#0)|toString(ext_(r#1#0))|if r1==="" then "" else
+	    r1 else 
+           " - "|toString abs(r#0#0)|toString(ext_(r#1#0))|if r1==="" then "" else
+	    r1
+	   ) else (
+           if r#0#0>0 then 
+           " + "|"("|toString(r#0#0)|")"|toString(ext_(r#1#0))|
+	       if r1==="" then "" else r1 else 
+           " - "|"("|toString abs(r#0#0)|")"|toString(ext_(r#1#0))|
+	       if r1==="" then "" else r1
+	   ) else
+    "("|toString(r#0#0)|")"|toString(ext_(r#1#0))|if r1==="" then "" else
+	    " + "|r1
+    )
+  );
+
+ 
+undocumented({(net,LieIdeal),(net,FGLieIdeal),(net,FGLieSubAlgebra),(net,LieSubAlgebra),
+	(net,LieSubSpace),(net,VectorSpace),(net,LieAlgebraMap),(net,LieDerivation),
+	(net,LieAlgebra),
+       (baseName,LieElement),(baseName,ExtElement)});
+
+--end  
 --Documentation
 beginDocumentation()
+
 load "./GradedLieAlgebras/doc.m2"
 load "./GradedLieAlgebras/doc2.m2"
 load "./GradedLieAlgebras/tut.m2"
 load "./GradedLieAlgebras/tut2.m2"
-load "./GradedLieAlgebras/symm.m2"
-load "./GradedLieAlgebras/how.m2"
 load "./GradedLieAlgebras/diff.m2"
+load "./GradedLieAlgebras/hom.m2"
+load "./GradedLieAlgebras/symm.m2"
 load "./GradedLieAlgebras/cons.m2"
-
---Asserts
+load "./GradedLieAlgebras/quot.m2"
 load "./GradedLieAlgebras/asserts.m2"
 
 end
 
-uninstallPackage "GradedLieAlgebras"
-exit
-path=append(path,"~/Dropbox/GradedLieAlgebras/")
-installPackage "GradedLieAlgebras"
-viewHelp "GradedLieAlgebras"
- 
 
-loadPackage"GradedLieAlgebras"
+    
+L1=lieAlgebra({a,b},Signs=>{1,0},Weights=>{{2,0},{2,1}},
+       LastWeightHomological=>true)
+       D1=   differentialLieAlgebra{0_L1,a}
+     dims(10, lieHomology(D1))
+	  
+L2=lieAlgebra({a,b},Signs=>{1,0},Weights=>{{2,0},{2,1}},
+    Field=>ZZ/2,LastWeightHomological=>true)
+       D2=   differentialLieAlgebra{0_L2,a}
+       dims(10,lieHomology D2)
+	  
+L3=lieAlgebra({a,b},Signs=>{1,0},Weights=>{{2,0},{2,1}},
+    Field=>ZZ/3,LastWeightHomological=>true)
+       D3=   differentialLieAlgebra{0_L3,a}
+       dims(10,lieHomology D3)
 
 
+OP=lieAlgebra({a,b,c,d,e},Signs=>1,Field=>ZZ/5)/
+{a a,a b,a c,b c-a d,c c+2 b d,c c+2 a e,c d-b e,c e,d e,e e}
+dims(1,35,OP)
+
+
+L4=lieAlgebra({a,b,c},
+  Weights => {2,2,4}, Signs=>{1,1,0})
+Q4=L4/{b c-a c,a a c-2 b b b a}
+dims(1,10,Q4)
+  
+L5=lieAlgebra({a,b})
+Q5=L5/{b b b a,a a a b}
+dims(1,20,Q5)
+L55=lieAlgebra({a,b},Field=>ZZ/5)
+Q55=L55/{b b b a,a a a b}
+dims(1,20,Q55)
+
+
+L6=koszulDual(QQ[x,y,z,u]/{x^2,y^2,z^2,u^2,x*y+z*u})
+E=extAlgebra(4,L6)
+dims(4,oo)
+gens E
+ext_0 ext_1		  
+
+
+L7=lieAlgebra({x,y,z,a,b,c},Weights=>{2,2,2,1,1,1})
+Q7=L7/{x+y+z+a b,x-y+z+a c,x+z+b c,a x+b y+c z}
+minimalPresentation(3,Q7)
+describe oo
+
+
+L8 = lieAlgebra({a,b,c},Weights=>{{1,-1},{1,4},{2,3}},Signs=>{0,1,1})
+describe L8
+
+
+F=lieAlgebra({e12,e23,e34,e45,e13,e24,e35,e14,e25,e15},
+		       Weights=>{1,1,1,1,2,2,2,3,3,4})
+		   ide={e12@e34,e12@e45,e23@e45,e12@e13,e12@e35,e12@e14,
+	                     e12@e15,e23@e45,e23@e13,e23@e24,e23@e14,e23@e25,
+	                     e23@e15,e34@e24,e34@e35,e34@e14,e34@e25,e34@e15,
+                 	     e45@e13,e45@e35,e45@e25,e45@e15,e13@e24,e13@e14,
+	                     e13@e25,e13@e15,e24@e35,e24@e14,e24@e25,e24@e15,
+	                     e35@e14,e35@e25,e35@e15,e14@e25,e14@e15,e25@e15,
+                             e12@e23/e13, e12@e24/e14,
+                             e12@e25/e15, e13@e34/e14,
+                             e13@e35/e15, e14@e45/e15,
+                             e23@e34/e24, e23@e35/e25,
+                             e24@e45/e25, e34@e45/e35};
+			 Q=F/ide
+  dims(1,5,Q)
+  minimalPresentation(4,Q)
+  describe oo
+  			 
+
+F=lieAlgebra({a1,b1,c1,e2,e3,e4,e5,e6,e7},Weights=>
+  {{1,0},{1,0},{1,0},{2,1},{3,2},{4,3},{5,4},{6,5},{7,6}},
+  Signs=>1,LastWeightHomological=>true)
+D=differentialLieAlgebra{0_F,0_F,0_F,a1@b1,c1@e2,e2@e2++a1@e3,
+    c1@e4++e2@e3,b1@e5++e2@e4++e3@e3,
+    a1@e6++e2@e5++e3@e4}  
+Q=D/{a1@c1,b1@e2@e3,e3@e3,e4@e3,e2@e2@e4}
+dims(8,Q) 
+
+L=lieAlgebra({a,b,c,r3,r4,r42},
+         Weights => {{1,0},{1,0},{2,0},{3,1},{4,1},{4,2}},
+         Signs=>{0,0,0,1,1,0},LastWeightHomological=>true)
+D=differentialLieAlgebra{0_L,0_L,0_L,a c,a a c,r4 - a r3}
+Q=D/{b c - a c,a b,b r4 - a r4}
+dQ=differential Q
+Z=cycles Q
+K=kernel dQ
+dims(7,Z)===dims(7,K)
+
+
+L=lieAlgebra({a,b,c2,c3,c5},Signs=>{0,0,1,0,1},
+    Weights=>{{1,0},{1,0},{2,1},{3,2},{5,3}},LastWeightHomological=>true)
+D=differentialLieAlgebra{0_L,0_L,a b,a c2,a b c3} 
+describe D   
+     
+
+     
+H=holonomy{{a1,a2,a3},{a1,a4,a5},{a2,a4,a6},{a3,a5,a6}}
+dec=decompose H
+f1=map(H,H,{a1,a5,a4,a3,a2,a6})
+f2=map(H,H,{a1,a6,a4,a3,a5,a2})
+trace(4,dec,f1)
+trace(4,dec,f2)
+     
+
+ L4 = lieAlgebra({a,b,c},Weights=>{{1,0},{2,1},{3,2}},
+          Signs=>{1,1,1},LastWeightHomological=>true)
+     D4= differentialLieAlgebra({0_L4,a a,a b})      
+Q4=D4/{b b+4 a c}
+R=Q4/{a b b}
+S=R/{a b c}
+f=map(S,R)
+I=kernel f
+T=R/I
+U=T/{b b c c}
+g=map(U,T)
+J=kernel g
+V=T/J
+h=map(T,R)
+X=R/inverse(h,J)
+Y=ambient U
+k=map(Y,R)
+K=new LieIdeal from image(k,I)
+Y/K==U
 

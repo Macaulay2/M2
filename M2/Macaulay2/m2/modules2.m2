@@ -20,7 +20,14 @@ Module + Module := Module => (M,N) -> (
 	  )
      )
 
-tensor(Module, Module) := Module => options -> (M,N) -> M**N
+tensor Sequence := opts -> args -> (
+     -- note: 'tensor (a => ZZ^2, b => ZZ^3, c => ZZ^4)' will not work to label the factors, as "tensor" takes options
+     --       maybe we need another syntax to present the labels
+     f := lookup prepend( tensor, apply(args,class));
+     if f =!= null then (f opts) args 
+     else fold((M,N) -> M**N, args)	  -- tensor product is left-associative
+     )
+
 Module ** Module := Module => (M,N) -> (
      (oM,oN) := (M,N);
      Y := youngest(M.cache.cache,N.cache.cache);
@@ -46,10 +53,25 @@ Module ** Module := Module => (M,N) -> (
 			 if M.?relations then M.relations ** N))
 	       else cokernel map(R, rawModuleTensor( raw M.relations, raw N.relations )));
      Y#(symbol **,oM,oN) = T;
+     -- we do not set T.cache.components, as "components" is for sums, not tensor products
+     T.cache.formation = FunctionApplication (tensor, (M,N));
      T)
 
 Matrix ** Module := Matrix => (f,M) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else  f ** id_M
 Module ** Matrix := Matrix => (M,f) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else id_M ** f
+
+Option ** Option := (x,y) -> (
+     (a,b) := (x#0,y#0);			 -- the labels
+     (M,N) := (x#1,y#1);			 -- the objects (modules, etc.)
+     T := M ** N;
+     labels := T.cache.indices = {a,b};
+     ic := T.cache.indexComponents = new HashTable from {a => 0, b => 1};
+     -- now, in case T is a map (i.e., has a source and target), then label the source and target objects of the tensor product
+     if T.?source and T.?target then (
+	  T.source.cache.indexComponents = T.target.cache.indexComponents = ic; 
+	  T.source.cache.indices = T.target.cache.indices = labels;
+	  );
+     T)
 
 -----------------------------------------------------------------------------
 -- base change
@@ -370,10 +392,14 @@ multidegree Module := M -> (
 multidegree Ring := R -> multidegree R^1
 multidegree Ideal := I -> multidegree cokernel generators I
 
-length Module := M -> (
+length Module := ZZ => (cacheValue symbol length) (M -> (
+    c := runHooks((length, Module), M);
+    if c =!= null then c else error "length: no method implemented for this type of module"))
+
+addHook((length, Module), Strategy => Default, M -> (
      if not isHomogeneous M then notImplemented();
      if dim M > 0 then return infinity;
-     degree M)
+     degree M))
 
 -----------------------------------------------------------------------------
 
@@ -391,15 +417,16 @@ minimalPresentation(Module) := prune(Module) := Module => opts -> (cacheValue (s
 	       return M);
 	  homog := isHomogeneous M;
 	  if debugLevel > 0 and homog then pushvar(symbol flagInhomogeneity,true);
-	  C := runHooks(Module,symbol minimalPresentation,(opts,M));
+	  C := runHooks((minimalPresentation, Module), (opts, M));
 	  if debugLevel > 0 and homog then popvar symbol flagInhomogeneity;
 	  if C =!= null then return C;
 	  error "minimalPresentation: internal error: no method for this type of module"
 	  ))
 
-addHook(Module, symbol minimalPresentation, (opts,M) -> (
+addHook((minimalPresentation, Module), Strategy => Default, (opts, M) -> (
 	  -- we try to handle any module here, without any information about the ring
-	  f := mutableMatrix mingens gb presentation M;
+          g := mingens gb presentation M;
+	  f := mutableMatrix g;
 	  row := 0;
 	  piv := new MutableHashTable;
 	  pivColumns := new MutableHashTable;
@@ -411,7 +438,8 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 			      scan(numColumns f, j -> if j != col then columnAdd(f,j,-f_(row,j),col));
 			      break))));
 	  piv = values piv;
-	  f = matrix f;
+          f = matrix f;
+	  if isHomogeneous M then f = map(target g, source g, f);
 	  rows := first \ piv;
 	  cols := last \ piv;
 	  f = submatrix'(f,rows,cols);
@@ -419,7 +447,7 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 	  N.cache.pruningMap = map(M,N,submatrix'(id_(cover M),rows));
 	  break N))
 
-addHook(Module, symbol minimalPresentation, (opts,M) -> (
+addHook((minimalPresentation, Module), (opts, M) -> (
      	  R := ring M;
 	  if (isAffineRing R and isHomogeneous M) or (R.?SkewCommutative and isAffineRing coefficientRing R and isHomogeneous M) then (
 	       f := presentation M;
@@ -428,7 +456,7 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 	       N.cache.pruningMap = map(M,N,g);
 	       break N)))
 
-addHook(Module, symbol minimalPresentation, (opts,M) -> (
+addHook((minimalPresentation, Module), (opts, M) -> (
      	  R := ring M;
 	  if R === ZZ then (
 	       f := presentation M;
@@ -441,7 +469,7 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 	       N.cache.pruningMap = map(M,N,id_(target ch) // ch);	    -- yuk, taking an inverse here, gb should give inverse change matrices, or the pruning map should go the other way
 	       break N)))
 
-addHook(Module, symbol minimalPresentation, (opts,M) -> (
+addHook((minimalPresentation, Module), (opts, M) -> (
      	  R := ring M;
 	  if instance(R,PolynomialRing) and numgens R === 1 and isField coefficientRing R and not isHomogeneous M then (
 	       f := presentation M;
@@ -509,6 +537,7 @@ Hom(Module, Module) := Module => (M,N) -> (
      H := trim kernel (transpose presentation M ** N);
      H.cache.homomorphism = (f) -> map(N,M,adjoint'(f,M,N), Degree => first degrees source f);
      Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
+     H.cache.formation = FunctionApplication { Hom, (M,N) };
      H)
 
 adjoint' = method()
@@ -606,35 +635,6 @@ Module / Vector := Module => (M,v) -> (
      if class v =!= M 
      then error("expected ", toString v, " to be an element of ", toString M);
      M / image matrix {v})
------------------------------------------------------------------------------
---topComponents Module := M -> (
---     R := ring M;
---     c := codim M; 
---     annihilator minimalPresentation Ext^c(M, R))
---document { topComponents,
---     TT "topComponents M", "produce the annihilator of Ext^c(M, R), where c
---     is the codimension of the support of the module M."
---     }
------------------------------------------------------------------------------
-
-annihilator = method(
-     Options => {
-	  Strategy => Intersection			    -- or Quotient
-	  }
-     )
-
-annihilator Module := Ideal => o -> (M) -> (
-     if isWeylAlgebra ring M then error "no meaning for modules over a Weyl algebra"; 
-     f := presentation M;
-     if o.Strategy === Intersection then (
-	  F := target f;
-	  if numgens F === 0 then ideal 1_(ring F)
-	  else intersect apply(numgens F, i -> ideal modulo(F_{i},f)))
-     else if o.Strategy === Quotient then image f : target f
-     else error "annihilator: expected Strategy option to be Intersection or Quotient")
-
-annihilator Ideal := Ideal => o -> I -> annihilator(module I, o)
-annihilator RingElement := Ideal => o -> f -> annihilator(ideal f, o)
 
 -----------------------------------------------------------------------------
 ZZ _ Module := Vector => (i,M) -> (
@@ -832,17 +832,6 @@ basis(InfiniteNumber,ZZ,Matrix) := opts -> (lo,hi,M) -> basis(lo,{hi},M,opts)
 basis(ZZ,InfiniteNumber,Matrix) := opts -> (lo,hi,M) -> basis({lo},hi,M,opts)
 basis(ZZ,ZZ,Matrix) := opts -> (lo,hi,M) -> basis({lo},{hi},M,opts)
 
------------------------------------------------------------------------------
-truncate = method()
-truncate(List,Module) := Module => (deg,M) -> (
-     if M.?generators then (
-	  b := M.generators * cover basis(deg,deg,cokernel presentation M,Truncate=>true);
-	  if M.?relations then subquotient(b, M.relations)
-	  else image b)
-     else image basis(deg,deg,M,Truncate=>true))
-truncate(List,Ideal) := Ideal => (deg,I) -> ideal truncate(deg,module I)
-truncate(ZZ,Module) := Module => (deg,M) -> truncate({deg},M)
-truncate(ZZ,Ideal) := Ideal => (deg,I) -> truncate({deg},I)
 -----------------------------------------------------------------------------
 isSubset(Module,Module) := (M,N) -> (
      -- here is where we could use gb of a subquotient!

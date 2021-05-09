@@ -1,0 +1,26 @@
+-- -*- M2-comint -*- hash: 1659948913
+
+i1 : CC[x,y]; F = {x^2-1,y^2-1};
+
+i3 : bertiniZeroDimSolve(F,BertiniInputConfiguration=>{RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100})
+
+o3 = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}
+
+o3 : List
+
+i4 : opts = new OptionTable from {BertiniInputConfiguration=>{RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100}}
+
+o4 = OptionTable{BertiniInputConfiguration => {RandomSeed => 0, TrackTolBeforeEG => .000001, FinalTol => 1e-100}}
+
+o4 : OptionTable
+
+i5 : G = {x^2+y^2-1};
+
+i6 : bertiniPosDimSolve(G,opts)
+
+o6 = a numerical variety with components in
+     dim 1:  (dim=1,deg=2)
+
+o6 : NumericalVariety
+
+i7 : 

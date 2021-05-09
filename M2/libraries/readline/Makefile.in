@@ -6,7 +6,7 @@ PATCHES = 001 002 003 004 005 006 007 008
 RELAX = yes
 # URL = ftp://ftp.gnu.org/gnu/readline
 # PATCHURL = $(URL)/readline-$(VERSION)-patches
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 PATCHURL = $(URL)
 
 BUILDTARGET = all -o install-examples
@@ -40,7 +40,7 @@ $(PATCHFILE) :
 ifneq (@WGET@,false)
 	cd $(TARFILE_DIR) && @WGET@ $(PATCHURL)/$(notdir $@)
 else
-	cd $(TARFILE_DIR) && @CURL@ -o $(notdir $@) $(PATCHURL)/$(notdir $@)
+	cd $(TARFILE_DIR) && @CURL@ --location -o $(notdir $@) $(PATCHURL)/$(notdir $@)
 endif
 else
 $(PATCHFILE) :; echo "patch file not available, and downloading not enabled: $@" >&2 ; false

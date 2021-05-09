@@ -1,5 +1,8 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
+-- Avi's tests
+load "gkz.tst.m2"
+
 -- Anton's tests
 load "AnnFs.tst.m2"
 load "b-function.ideal.tst.m2"
@@ -17,3 +20,4 @@ load "DeRham.tst.m2"
 load "DHom.tst.m2"
 load "Ddual.tst.m2"
 load "WeylClosure.tst.m2"
+

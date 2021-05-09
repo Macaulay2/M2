@@ -13,7 +13,6 @@ moveSlicingVariety(MultiAffineWSet,MultiSlicingVariety) := (W,S) -> (
     )
 
 TEST ///
-restart 
 debug needsPackage "NAGtypes"
 debug needsPackage "NumericalAlgebraicGeometry"
 errorDepth = 0

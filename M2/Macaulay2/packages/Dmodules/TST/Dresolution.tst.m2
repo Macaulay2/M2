@@ -20,7 +20,7 @@ assert( Dres (module J) == Dres(module J, w) );
 -- Resolutions in the same res Grobner cone
 A = matrix{{1,1,1},{1,3,6}};
 b = {3,2};
-I = gkz(A,b, Vars=>Local);
+I = gkz(A,b);
 F1 = Dres(I, {-1,-2,-21,1,2,21});
 F2 = Dres(I, {-1,-2,-20,1,2,20});
 assert all(toList(0..length F1), i -> F1.dd#i - F2.dd#i == 0);

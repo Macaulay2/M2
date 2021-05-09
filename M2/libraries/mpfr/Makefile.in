@@ -1,6 +1,6 @@
 #############################################################################
 
-VERSION = 3.1.6
+VERSION = 4.0.2
 LICENSEFILES = README COPYING.LESSER
 TARFILE = $(LIBNAME)-$(VERSION).tar.xz
 TAROPTIONS = --xz
@@ -25,7 +25,7 @@ CONFIGOPTIONS += --disable-thread-safe
 
 RELAX = yes
 # URL = http://www.mpfr.org/mpfr-$(VERSION)
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assert

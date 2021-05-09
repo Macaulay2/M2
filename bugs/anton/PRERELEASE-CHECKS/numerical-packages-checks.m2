@@ -2,6 +2,10 @@
 uninstallAllPackages()
 
 restart
+check "NumericalLinearAlgebra"
+installPackage("NumericalLinearAlgebra", RerunExamples=>true)
+
+restart
 check "NAGtypes"
 installPackage("NAGtypes", RerunExamples=>true)
 
@@ -14,8 +18,8 @@ check "NumericalAlgebraicGeometry"
 installPackage("NumericalAlgebraicGeometry", RerunExamples=>true)
 
 restart
-check "NAGtools"
-installPackage("NAGtools", RerunExamples=>true)
+check "NoetherianOperators"
+installPackage("NoetherianOperators", RerunExamples=>true)
 
 restart
 check "MonodromySolver"
@@ -28,12 +32,11 @@ installPackage("NumericalSchubertCalculus", RerunExamples=>true)
 
 {* check debugging mode, version, date... execute in packages directory
 
-grep -nH -e "DebuggingMode => true" NAGtypes.m2 SLPexpressions.m2 NumericalAlgebraicGeometry.m2 NAGtools.m2 NumericalSchubertCalculus.m2 MonodromySolver.m2
+run ///grep -nH -e "DebuggingMode => true" NAGtypes.m2 SLPexpressions.m2 NumericalAlgebraicGeometry.m2 NAGtools.m2 NumericalSchubertCalculus.m2 MonodromySolver.m2///
 
-grep -nH -e "Version" NAGtypes.m2 SLPexpressions.m2 NumericalAlgebraicGeometry.m2 NAGtools.m2 NumericalSchubertCalculus.m2 MonodromySolver.m2
+run ///grep -nH -e "Version" NAGtypes.m2 SLPexpressions.m2 NumericalAlgebraicGeometry.m2 NAGtools.m2 NumericalSchubertCalculus.m2 MonodromySolver.m2///
 
-grep -nH -e "Date" NAGtypes.m2 SLPexpressions.m2 NumericalAlgebraicGeometry.m2 NAGtools.m2 NumericalSchubertCalculus.m2 MonodromySolver.m2
-
+run ///grep -nH -e "Date" NAGtypes.m2 SLPexpressions.m2 NumericalAlgebraicGeometry.m2 NAGtools.m2 NumericalSchubertCalculus.m2 MonodromySolver.m2///
 *}
 
 {* undocumented 

@@ -1,15 +1,29 @@
+--this file is in the public domain
+
 newPackage( "Divisor",
-Version => "0.2", Date => "May 23rd, 2017", Authors => {
-     {Name => "Karl Schwede",
-     Email=> "kschwede@gmail.com",
-     HomePage=> "http://www.math.utah.edu/~schwede"
-     },
-     {Name=> "Zhaoning Yang",
-     Email=> "zyy5054@gmail.com",
-     HomePage => "http://sites.psu.edu/zhaoningyang"
-     }
-}, --this file is in the public domain
-Headline => "a package for working with Weil divisors", DebuggingMode => true, Reload=>true)
+     Version => "0.3", 
+     Date => "May 30th, 2018",
+     Authors => {
+	  {Name => "Karl Schwede", Email=> "kschwede@gmail.com", HomePage=> "http://www.math.utah.edu/~schwede"},
+     	  {Name=> "Zhaoning Yang", Email=> "zyy5054@gmail.com", HomePage => "http://sites.psu.edu/zhaoningyang"}},
+     Headline => "Weil divisors",
+     Keywords => {"Commutative Algebra"},
+     PackageImports => { "IntegralClosure", "RationalMaps" },
+     Certification => {
+	  "journal name" => "The Journal of Software for Algebra and Geometry",
+	  "journal URI" => "http://j-sag.org/",
+	  "article title" => "Divisor Package for Macaulay2",
+	  "acceptance date" => "31 August 2018",
+	  "published article URI" => "https://msp.org/jsag/2018/8-1/p09.xhtml",
+	  "published article DOI" => "10.2140/jsag.2018.8.87",
+	  "published code URI" => "https://msp.org/jsag/2018/8-1/jsag-v8-n1-x09-Divisor.m2",
+	  "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Divisor.m2",
+	  "release at publication" => "0e40b423ff375d6eb0a98d6fbbe7be8b2db95a98",	    -- git commit number in hex
+	  "version at publication" => "0.3",
+	  "volume number" => "8",
+	  "volume URI" => "https://msp.org/jsag/2018/8-1/"
+	  }
+     )
 export{
     --objects
 	"BasicDivisor",
@@ -24,6 +38,7 @@ export{
 	"getPrimeCount", --added checks
 	"gbs", --added checks
 	"cleanSupport", --added checks 
+	"clearCache", --NEED TO CHECK, NEEDS DOCUMENTATION
 	"getPrimeDivisors", --added checks
      --simple operations
 	"positivePart", --added checks
@@ -36,22 +51,24 @@ export{
     --divisors to modules and functorial properties
 	"pullback", --added checks
 	"findElementOfDegree", --added checks
-	"getLinearDiophantineSolution",		--added checks --has Unsafe option
+	"getLinearDiophantineSolution",		--added checks --has Safe option
 	"canonicalDivisor", --added checks --has IsGraded option
 	"ramificationDivisor", --added checks
     --tests and related constructions
+    --ideal, --cached
+    --OO, --cached
     "isWeilDivisor", --added checks
 	"isEffective", --added checks
-	"isPrincipal", --added checks, has IsGraded option
+	"isPrincipal", --added checks, has IsGraded option, cached
     "isReduced", --added checks
-    "isCartier", --added checks, has IsGraded option
+    "isCartier", --added checks, has IsGraded option, cached
     "isLinearEquivalent", --added checks has IsGraded option
-    "isQCartier", --added checks, has IsGraded option
+    "isQCartier", --added checks, has IsGraded option, cached
     "isQLinearEquivalent", --added checks, has IsGraded option
-    "nonCartierLocus", --added checks, has IsGraded option
-    "isSNC", --added checks, has IsGraded option
+    "nonCartierLocus", --added checks, has IsGraded option, cached
+    "isSNC", --added checks, has IsGraded option, cached
     "isZeroDivisor", --added checks
-    "isVeryAmple", --added checks
+    "isVeryAmple", --added checks, 
     --functions for getting maps to projective space from divisors (graded only)
 	"baseLocus", --added checks
 	"mapToProjectiveSpace", --added checks
@@ -66,11 +83,11 @@ export{
 	"isDomain", --added checks
 	"isSmooth", --added checks, has IsGraded option
     --options
-    "Unsafe", --an option, if set true then the above commands avoid doing any checks
-	"CoeffType", --an option, one can set the coefficient type
-	"AmbRing", --an option, one can specify the ambient ring during divisor construction
+    "Safe", --an option, if set true then the above commands avoid doing any checks
+	"CoefficientType", --an option, one can set the coefficient type
+	"AmbientRing", --an option, one can specify the ambient ring during divisor construction
     "MTries", --an option, used to try to embed a module into a ring as an ideal in a random way
-    
+    --"keyPlus",
 	"KnownCartier", --an option, used to specify that the divisor is known to be Cartier
 	"KnownDomain", --an option, used to specify that the ring is known to be a integral domain
 	"IsGraded", --an option, if you specify it in several arguments it assumes we are working on a projective variety
@@ -81,7 +98,9 @@ export{
 	"IdealStrategy", --a strategy option for dualizing & reflexifying
 	"NoStrategy", -- no strategy specified
 --	"ReturnMap" --an option used to return the map instead of just a module
-	"Section" --an option for specifying a section when find a divisor corresponding to a module
+	"Section", --an option for specifying a section when find a divisor corresponding to a module
+    --hashtable keys
+    "ideals"
 
 }
 
@@ -90,6 +109,20 @@ export{
 --Structure of our divisor objects and their display------------
 --************************************************************--
 ----------------------------------------------------------------
+
+----------------------------------------------------------------
+---The divisor object is a hashtable
+---Some keys are groebner bases of height 1 prime ideals
+-----These evaluate to a list with the coefficient of the ideal.
+-----It is ASSUMED that the only keys which evaluate to basic lists are gbs
+---
+---Another key is the ambient ring
+---
+---Another key is the cache
+-----The cache always has a key (symbol ideals)
+-------This key evaluates to a HashTable, the keys of which are Groebner bases, 
+-------the values are the ideals the user entered
+-----Other common cache values include:
 
 	
 BasicDivisor = new Type of HashTable;
@@ -105,6 +138,7 @@ WeilDivisor = new Type of QWeilDivisor;
 -- 5*Div(x,y) + -2*Div(y,z) of QQ[x,y,z]/(y^2-x*z)
 --*************************************
 
+---TODO: Change if we change internal structure
 net BasicDivisor := t -> (
 	valList := coefficients(t);
 	primeList := primes(t);
@@ -155,27 +189,37 @@ BasicDivisor#{Standard,AfterPrint} = BasicDivisor#{Standard,AfterNoPrint} = (D) 
 
 
 --the following is an internal function for divisors, it's basically the collision function
-pairPlus = (l1, l2) ->( --there can be two kinds of inputs, ordinary divisor pairs and ambient rings, 
+keyPlus = (l1, l2) ->( --there can be two kinds of inputs, ordinary divisor pairs and ambient rings, 
                         --the cache is thrown away
                         --TODO change if we change internal structure
 	if ((instance(l1, BasicList) ) and (instance(l2, BasicList))) then (
-		return {l1#0 + l2#0, l1#1}
+		return {l1#0 + l2#0} --add the coefficients
 	)
 	else if ((instance(l1, Ring) ) and (instance(l2, Ring))) then (
-		return l1
+		return l1 --keep the ring
 	)
 	else if ((instance(l1, CacheTable) ) and (instance(l2, CacheTable) )) then (
-	    return new CacheTable
+	    return mergeDivisorCache(l1, l2);
 	);
 	null
 )
+
+mergeDivisorCache = (c1, c2) -> (--this takes two caches of a divisor, and merges them
+    C1 := new HashTable from c1#(symbol ideals);
+    C2 := new HashTable from c2#(symbol ideals);
+    L := {symbol ideals => new MutableHashTable from merge(C1, C2, (t1, t2) -> t1) };
+--    print L;
+--    1/0;
+    return new CacheTable from L;
+)
+
 
 
 --the following is the basic construction function for the divisor
 --it is passed a list of coefficients and a list of prime height one ideals
 --several options are available
 
-divisor = method(Options => {CoeffType => ZZ, AmbRing => null, Section => null, IsGraded => false});  
+divisor = method(Options => {CoefficientType => ZZ, AmbientRing => null, Section => null, IsGraded => false});  
 
 divisor(BasicList, BasicList) := BasicDivisor => o ->(l1, l2) -> 
 (
@@ -183,18 +227,18 @@ divisor(BasicList, BasicList) := BasicDivisor => o ->(l1, l2) ->
 	coeffList := l1; 					--list of coefficient
 	idealList := l2; 				--list of height one prime ideals	
 	N := #coeffList;
-	RTest := o.AmbRing;
+	RTest := o.AmbientRing;
 	
 	--initial specification of the ambient ring
 	--and some basic checks
 	if (N > 0) then ( --if there are ideals to compare
 		RTest = ring ( idealList#0 );
-		if (( not (o.AmbRing === null)) and (not (RTest === o.AmbRing) ) ) then (
+		if (( not (o.AmbientRing === null)) and (not (RTest === o.AmbientRing) ) ) then (
 			error "divisor: Specified ambient ring does not match the ideals given."; 
 		);
 	)
 	else ( --otherwise use the users ambient ring
-		RTest = o.AmbRing; 
+		RTest = o.AmbientRing; 
 		if (RTest === null) then RTest = ZZ; --or specify ZZ if the user didn't use one
 	);
 	
@@ -210,27 +254,29 @@ divisor(BasicList, BasicList) := BasicDivisor => o ->(l1, l2) ->
 				
 
 
-	divList = toList(apply(0..(N-1), i -> ( (first entries gens (gb idealList#i) ) => {coeffList#i, idealList#i} ) ));
+	divList = toList(apply(0..(N-1), i -> ( (first entries gens (gb idealList#i) ) => {coeffList#i} ) ));
+	divList2 := toList(apply(0..(N-1), i -> ( (first entries gens (gb idealList#i) ) => idealList#i ) ));
+	idealHash := new MutableHashTable from divList2;
 	divList = append(divList, symbol ring => RTest);
-	divList = append(divList, symbol cache => new CacheTable);
-        --		print divList;
+	divList = append(divList, symbol cache => new CacheTable from {symbol ideals => idealHash}); --the list of ideal descriptions is stored in the cache table
+        		--print hashTable(divList);
 		--if we have a common coefficient ring type
 		--TODO change if we change internal structure
-	if (o.CoeffType === ZZ) then 
-		new WeilDivisor from ( hashTable(pairPlus, divList) ) 
-	else if (o.CoeffType === QQ) then
-		new QWeilDivisor from ( hashTable(pairPlus, divList) )  
-	else if (o.CoeffType === RR) then
-		new RWeilDivisor from ( hashTable(pairPlus, divList) )  
+	if (o.CoefficientType === ZZ) then 
+		new WeilDivisor from ( hashTable(keyPlus, divList) ) 
+	else if (o.CoefficientType === QQ) then
+		new QWeilDivisor from ( hashTable(keyPlus, divList) )  
+	else if (o.CoefficientType === RR) then
+		new RWeilDivisor from ( hashTable(keyPlus, divList) )  
 	else 
-		new BasicDivisor from ( hashTable(pairPlus, divList) ) 
+		new BasicDivisor from ( hashTable(keyPlus, divList) ) 
 	
 );
 
 --the user may also pass in a single list consisting of pairs {n, P} where n is a coefficient and P is a height 1 prime ideal
 divisor(BasicList) := BasicDivisor => o ->(myList) -> (
 	myList2 := transpose myList;
-	divisor(myList2#0, myList2#1,  CoeffType=>o.CoeffType, AmbRing=>o.AmbRing)
+	divisor(myList2#0, myList2#1,  CoefficientType=>o.CoefficientType, AmbientRing=>o.AmbientRing)
 );
 
 --gives an effective divisor corresponding to the ideal, i.e. V(I)
@@ -279,13 +325,13 @@ divisor(Ideal) := WeilDivisor => o ->(I1) -> (
 	
 	if (instance(o.Section, RingElement)) then (
 	    --NOTE the flipping of the sign in this case.
-	    D1 := -divisor(L0, L2, AmbRing=>(ring I1), CoeffType=>o.CoeffType);
+	    D1 := -divisor(L0, L2, AmbientRing=>(ring I1), CoefficientType=>o.CoefficientType);
 	    D2 := divisor(o.Section);
 	    D2 + D1
 	)
 	else (
 	    --NOTE the sign is not flipped unlike when Section is specified.
-	    divisor(L0, L2, AmbRing=>(ring I1), CoeffType=>o.CoeffType)
+	    divisor(L0, L2, AmbientRing=>(ring I1), CoefficientType=>o.CoefficientType)
 	)
 );
 
@@ -293,9 +339,9 @@ divisor(Ideal) := WeilDivisor => o ->(I1) -> (
 
 divisor(RingElement) := WeilDivisor => o ->(f1) -> ( 
 	if (instance(ring f1, FractionField) ) then (
-		divisor(ideal(numerator(f1)), CoeffType => o.CoeffType) - divisor(ideal(denominator(f1)), CoeffType => o.CoeffType))
+		divisor(ideal(numerator(f1)), CoefficientType => o.CoefficientType) - divisor(ideal(denominator(f1)), CoefficientType => o.CoefficientType))
 	else (
-		divisor(ideal(f1), CoeffType=>o.CoeffType)
+		divisor(ideal(f1), CoefficientType=>o.CoefficientType)
     )
 );
 
@@ -412,20 +458,26 @@ isWellDefined(BasicDivisor) := Boolean => (D1) -> (
 --************************************************************--
 ----------------------------------------------------------------
 
---Get the list of height one prime ideals of a divisor.
+--Get the list of height one prime ideals of a divisor.  This returns the primes as the user entered them.
 
 primes = method();
 --TODO change if we change internal structure
 primes( BasicDivisor ) := List => ( D ) -> 
 (
 	--we don't want the ambient ring in our prime list do we
-	D1 := select(D, z -> instance(z, BasicList));
-	valList := values D1;
-	if (#valList > 0) then (
-		valList2 := transpose valList;
-		valList2#1
-	)
-	else {}
+	--D1 := select(D, z -> instance(z, BasicList));
+	--Dkeys := keys D;
+	gbKeys := gbs D; --select(keys D, z -> instance(z, GroebnerBasis)); --get the set of keys from the divisor that are Groebner bases
+	return apply(gbKeys, g -> ( if ((D#cache#(symbol ideals))#?g) then ( (D#cache#(symbol ideals))#g ) else (return ideal g)));
+--	D1 := select((D#cache), z->instance(z, BasicList));
+--	valList := values D1;
+--	if (#valList > 0) then (
+--		valList2 := transpose valList;
+--		return valList2#1;
+--	)
+--	else (
+--	    return 
+--	)
 );
 
 --get the number of primes
@@ -434,8 +486,9 @@ getPrimeCount = method();
 
 getPrimeCount( BasicDivisor ) := ZZ => ( D ) -> 
 (
-	D1 := select(D, z -> instance(z, BasicList));
-	#D1
+    gbKeys := gbs(D);
+--	D1 := select(D, z -> instance(z, BasicList));
+	#gbKeys
 );
 
 --we can also get the list of Grobner bases
@@ -443,20 +496,24 @@ getPrimeCount( BasicDivisor ) := ZZ => ( D ) ->
 gbs = method();
 
 gbs(BasicDivisor) := List => (D) -> ( 
-	D1 := select(D, z -> instance(z, BasicList));
-	keys D1 
+--	D1 := select(D, z -> instance(z, BasicList));
+--	keys D1 
+    gbKeys := select(keys D, z->instance(z, BasicList));    
+    gbKeys
 );
 
 --Get the list of coefficients of a divisor
 --TODO change if we change internal structure
 coefficients( BasicDivisor ) := List => o-> ( DD ) -> ( 	
-	D1 := select(DD, z -> instance(z, BasicList));
-	valList := values D1;
-	if (#valList > 0) then (
-		valList2 := transpose valList;
-		valList2#0
-	)
-	else {}
+    gbKeys := gbs(DD);
+    return apply(gbKeys, z -> DD#z#0);
+--	D1 := select(DD, z -> instance(z, BasicList));
+--	valList := values D1;
+--	if (#valList > 0) then (
+--		valList2 := transpose valList;
+--		valList2#0
+--	)
+--	else {}
 );
 
 --Given a divisor D and a irreducible codimensional one subspace C
@@ -497,8 +554,8 @@ coefficient(BasicList, BasicDivisor) := Number => (l1, D) ->
 --TODO change if we change internal structure
 ring(BasicDivisor) := Ring => (D1) ->
 (
-    D1#(symbol ring)
-)
+    return D1#(symbol ring);
+);
 
 --The next function gets a list of prime divisors of a given divisor
 --warning, it accesses the underlying structure of the HashTable, 
@@ -510,7 +567,7 @@ getPrimeDivisors( BasicDivisor ) := List => (D) ->
 	gbList := gbs(D);
 	ambRing := ring D;
 
-	myList := apply(gbList, z -> {z => {1, (D#z)#1}, symbol ring => ambRing, symbol cache => new CacheTable});
+	myList := apply(gbList, z -> {z => {1}, symbol ring => ambRing, symbol cache => new CacheTable from {symbol ideals => new MutableHashTable from {z => ((D#cache)#(symbol ideals))#z }}});
 
 	apply(myList, z -> new WeilDivisor from z)
 );
@@ -525,22 +582,39 @@ getPrimeDivisors( BasicDivisor ) := List => (D) ->
 --cleanSupport simply removes prime divisors with coefficient 0 (it also keeps the flag specifying the ambient ring of course)
 
 cleanSupport = method();
---TODO change if we change internal structure
-cleanSupport( BasicDivisor ) := BasicDivisor => (D)  -> ( select(D, x -> ( if (instance(x, Ring)) then true else if (instance(x, CacheTable)) then true else (x#0 != 0) )) );	
+--TODO change if we change internal structure 
+cleanSupport( BasicDivisor ) := BasicDivisor => (D)  -> ( 
+    cleaned := select(D, x -> ( if (instance(x, Ring)) then true else if (instance(x, CacheTable)) then false else (x#0 != 0) )); --this cleans the divisor itself
+    newCleaned := new (class D) from ((pairs cleaned) | {(symbol cache, new CacheTable from D#cache)});
+        --now to clean the cache
+    scan(keys ((newCleaned#cache)#(symbol ideals)), t -> if (not (newCleaned#?t)) then remove((newCleaned#cache)#(symbol ideals), t) );
+    return newCleaned;
+);	
+
+--clearCache removes all entries in the cache except ideals (in particular, it removes all computed entries)
+
+clearCache = method(); 
+clearCache( BasicDivisor ) := BasicDivisor => (D) -> (
+    --D#cache = new CacheTable from {cache => D#cache#(symbol ideals)}; --doesn't work divisor is immutable hash table derived
+    newCache := new CacheTable from pairs (D#cache);
+    scan(keys newCache, t -> if (not (t === (symbol ideals))) then remove(newCache, t)); --this is a cache with all the computed values removed
+    D1 := new (class D) from (pairs( select(D, t -> not (t === cache))) | {{ symbol cache, newCache}});
+    return D1;
+);
 
 --applyFunctionToDivisorCoefficients applies the function to the coefficients of the divisor
 
-applyToCoefficients = method(Options => {CoeffType => null, Unsafe => true});
+applyToCoefficients = method(Options => {CoefficientType => null, Safe => false});
 --TODO change if we change internal structure
 applyToCoefficients( BasicDivisor, Function) := BasicDivisor => o -> (D, hhh) -> (
 	myClass := class D;
-	if (o.CoeffType === ZZ) then (myClass = WeilDivisor)
-	else if (o.CoeffType === QQ) then (myClass = QWeilDivisor)
-	else if (o.CoeffType === RR) then (myClass = RWeilDivisor);
+	if (o.CoefficientType === ZZ) then (myClass = WeilDivisor)
+	else if (o.CoefficientType === QQ) then (myClass = QWeilDivisor)
+	else if (o.CoefficientType === RR) then (myClass = RWeilDivisor);
 
-	tempDiv := cleanSupport(new myClass from applyValues(D, x -> (if (instance(x, Ring)) then x else if (instance(x, CacheTable)) then new CacheTable else {hhh(x#0), x#1} )) );
-	if (o.Unsafe == false) then (
-		if (not (isWellDefined(tempDiv))) then (error "applyToCoefficients: the ouput of this function is not a valid divisor, did you set the CoeffType option properly?";);
+	tempDiv := cleanSupport(new myClass from applyValues(D, x -> (if (instance(x, Ring)) then x else if (instance(x, CacheTable)) then new CacheTable from {symbol ideals => x#(symbol ideals)} else {hhh(x#0)} )) );
+	if (o.Safe == true) then (
+		if (not (isWellDefined(tempDiv))) then (error "applyToCoefficients: the output of this function is not a valid divisor, did you set the CoefficientType option properly?";);
 	);
 	tempDiv	
 );
@@ -554,7 +628,7 @@ applyToCoefficients( BasicDivisor, Function) := BasicDivisor => o -> (D, hhh) ->
 trim( BasicDivisor ) := BasicDivisor => o -> (DD) -> (
 	myClass := class DD;
     tempDiv := cleanSupport(DD);
-    tempDiv = new myClass from applyValues(tempDiv, x -> (if (instance(x, Ring)) then x else if (instance(x, CacheTable)) then x else {x#0, trim(x#1)} ));
+    scan(keys ((DD#cache)#(symbol ideals)), t -> ((DD#cache)#(symbol ideals)#t = trim(((DD#cache)#(symbol ideals)#t))));
     tempDiv
 );
 
@@ -562,26 +636,34 @@ trim( BasicDivisor ) := BasicDivisor => o -> (DD) -> (
 --from taking ceilings from the given one
 
 
-ceiling( RWeilDivisor ) := WeilDivisor => ( D ) -> ( applyToCoefficients(D, ceiling, CoeffType=>ZZ) );
+ceiling( RWeilDivisor ) := WeilDivisor => ( D ) -> ( applyToCoefficients(D, ceiling, CoefficientType=>ZZ) );
 --new WeilDivisor from applyValues(D, x -> (if (instance(x, Ring)) then x else {ceiling (x#0), x#1} )) );
 
 --Given a rational/real divisor, we return a Weil divisor for which new coefficients are obtained
 --from taking floors from the given one
 
-floor( RWeilDivisor ) := WeilDivisor => ( D ) -> ( applyToCoefficients(D, floor, CoeffType=>ZZ) );
+floor( RWeilDivisor ) := WeilDivisor => ( D ) -> ( applyToCoefficients(D, floor, CoefficientType=>ZZ) );
 
 --Given a divisor D, we want to return positive/negative part of D
 
 positivePart = method();
 --TODO change if we change internal structure
-positivePart( RWeilDivisor ) := RWeilDivisor => (D) -> ( select(D, x -> (if (instance(x, Ring)) then true else if (instance(x, CacheTable)) then false else (x#0) > 0) ) );	
+positivePart( RWeilDivisor ) := RWeilDivisor => (D) -> ( 
+    cacheless := select(D, x -> (if (instance(x, Ring)) then true else if (instance(x, CacheTable)) then false else (x#0) > 0) ); --first make a divisor without its cache
+    L := (pairs cacheless) | {{symbol cache, new CacheTable}};--grab the pairs, and make a clean cache
+    cached := new (class D) from L;
+    (cached#cache)#(symbol ideals) = new MutableHashTable from (D#cache)#(symbol ideals);
+--    1/0;
+    cleanSupport(cached)
+);	
 
 negativePart = method();
 --TODO change if we change internal structure
 negativePart( RWeilDivisor ) := RWeilDivisor => (D) ->
 (
-	E := select(D, x -> (if (instance(x, Ring)) then true else if (instance(x, CacheTable)) then false else ((x#0) < 0)) );
-	applyValues(E, x -> (if (instance(x, Ring)) then x else {(-1) * (x#0), x#1}))
+	-- := select(D, x -> (if (instance(x, Ring)) then true else if (instance(x, CacheTable)) then false else ((x#0) < 0)) );
+--	applyValues(E, x -> (if (instance(x, Ring)) then x else {(-1) * (x#0), x#1}))
+    positivePart(-D)
 );
 
 
@@ -615,7 +697,7 @@ toQWeilDivisor( WeilDivisor ) := QWeilDivisor => (D) ->
 (
 	E := cleanSupport( D );
 	coeffList := apply(coefficients E, x -> (1/1) * x );
-	divisor(coeffList, primes E, AmbRing=>ring(D), CoeffType=>QQ )
+	divisor(coeffList, primes E, AmbientRing=>ring(D), CoefficientType=>QQ )
 );
 
 toQWeilDivisor( QWeilDivisor ) := QWeilDivisor => (D) -> ( D ); --do nothing to an honest Q-divisor
@@ -628,7 +710,7 @@ toRWeilDivisor( WeilDivisor ) := RWeilDivisor => (D) ->
 (
 	E := cleanSupport( D );
 	coeffList := apply(coefficients E, x -> (1.0) * x );
-	divisor(coeffList, primes E, AmbRing=>ring(D), CoeffType=>RR)
+	divisor(coeffList, primes E, AmbientRing=>ring(D), CoefficientType=>RR)
 );
 
 
@@ -639,7 +721,7 @@ toRWeilDivisor( QWeilDivisor ) := RWeilDivisor => (D) ->
 (
 	E := cleanSupport( D );
 	coeffList := apply(coefficients E, x -> (1.0) * x );
-    divisor(coeffList, primes E, AmbRing=>ring(D), CoeffType=>RR)
+    divisor(coeffList, primes E, AmbientRing=>ring(D), CoefficientType=>RR)
 );
 
 toRWeilDivisor( RWeilDivisor ) := RWeilDivisor => (D) -> ( D ); --do nothing to an honest R-divisor
@@ -658,7 +740,7 @@ toWeilDivisor( RWeilDivisor ) := WeilDivisor => ( D ) ->
 	else
 	(
 		coeffList = apply(coefficients D, x -> floor x);
-		divisor(coeffList, primes D, AmbRing=>ring(D))
+		divisor(coeffList, primes D, AmbientRing=>ring(D))
 	)	
 );
 
@@ -672,7 +754,8 @@ toWeilDivisor( RWeilDivisor ) := WeilDivisor => ( D ) ->
 --TODO change if we change internal structure
 Number * BasicDivisor := BasicDivisor=> (n, D) ->
 (
-	cleanSupport( applyValues(D, x -> if (instance(x, Ring)) then x else if (instance(x, CacheTable)) then x else {n * (x#0), x#1}) )
+    D1 := clearCache D;    
+	cleanSupport( applyValues(D1, x -> if (instance(x, Ring)) then x else if (instance(x, CacheTable)) then x else {n * (x#0)}) )
 );	
 
 QQ * WeilDivisor := QWeilDivisor => (r, D) ->
@@ -684,7 +767,8 @@ QQ * WeilDivisor := QWeilDivisor => (r, D) ->
 --TODO change if we change internal structure
 QQ * RWeilDivisor := RWeilDivisor => (r, D) ->
 (
-	cleanSupport( applyValues(D, x -> if (instance(x, Ring)) then x else if (instance(x, CacheTable)) then x else {r * (x#0), x#1}) )
+    D1 := clearCache D;  
+	clearCache(cleanSupport( applyValues(D1, x -> if (instance(x, Ring)) then x else if (instance(x, CacheTable)) then x else {r * (x#0)}) ))
 );
 
 RR * QWeilDivisor := RWeilDivisor => (x, D) ->
@@ -696,7 +780,8 @@ RR * QWeilDivisor := RWeilDivisor => (x, D) ->
 --TODO change if we change internal structure
 RR * RWeilDivisor := RWeilDivisor => (y, D) -> 
 ( 
-	cleanSupport( applyValues(D, x -> if (instance(x, Ring)) then x else if (instance(x, CacheTable)) then x else {y * (x#0), x#1}) ) 
+    D1 := clearCache D;
+	clearCache(cleanSupport( applyValues(D1, x -> if (instance(x, Ring)) then x else if (instance(x, CacheTable)) then x else {y * (x#0)}) ) )
 );
 
 --Addition
@@ -719,7 +804,7 @@ BasicDivisor + BasicDivisor := BasicDivisor => (D, E) ->
 		else if (instance(D, RWeilDivisor)) then myType = class E
 		else if (instance(E, RWeilDivisor)) then myType = class D;
 
-		cleanSupport( new myType from merge(D, E, pairPlus) )
+        cleanSupport( new myType from merge(D, E, keyPlus) )
 	)
 );	
 
@@ -748,6 +833,9 @@ divisorToModule = method ();
 
 divisorToModule( WeilDivisor ) := Module => (D) ->
 (
+    if (D#cache#?divisorToModule == true) then (
+        return D#cache#divisorToModule;
+    );
 	R := ring( D );
 	E := positivePart( D );
 	F := negativePart( D );
@@ -767,7 +855,9 @@ divisorToModule( WeilDivisor ) := Module => (D) ->
 --	prodF = reflexify(prodF); --but when they speed things up it seems like a huge benefit, and when it slows things down it's only ~3 times slower
 	                               --maybe eventually this could be something that is done with multiple threads... (I'm leaving them commented out for now)
 	dual := (prodE*R^1) ** ( Hom(prodF*R^1, R^1) );
-	Hom(dual, R^1)
+	M := Hom(dual, R^1);
+	D#cache#divisorToModule = M;
+	M
 );   
 
 
@@ -791,9 +881,13 @@ installMethod( symbol SPACE, OO, RWeilDivisor, (OO, D1) ->(divisorToModule(D1)) 
 
 
 ideal(WeilDivisor) := Ideal=> (D) -> (
+    if (D#cache#?ideal == true) then (
+        return D#cache#ideal;
+    );    
 	R := ring( D );
 	E := positivePart( D );
 	F := negativePart( D );
+	J := null;
 	E1 := apply(getPrimeCount(E), i -> (  idealPower( (coefficients E)#i,  (primes E)#i) )  ); --this seems to result in a huge speedup
 	F1 := apply(getPrimeCount(F), i -> (  idealPower( (coefficients F)#i,  (primes F)#i) )  );
 	prodE := ideal sub(1, R);
@@ -808,10 +902,14 @@ ideal(WeilDivisor) := Ideal=> (D) -> (
 	);
 	if (#(F1) != 0) then (
 		mydual := (prodF) * ( dualize(prodE) );  
-		dualize(mydual)
+		J = dualize(mydual);
+		D#cache#ideal = J;
+		return J;
 	)
 	else (
-		reflexify(prodE)
+		J = reflexify(prodE);
+		D#cache#ideal = J;
+		return J;
 	)
 );
 
@@ -841,7 +939,7 @@ pullback(RingMap, RWeilDivisor) := BasicDivisor => o->(f, D) ->
 	if ( not (ring D === source f) ) then error "(pullback, WeilDivisor): Expected the Divisor and the source of the map to have the same ambient ring.";
 	
 	if (o.Strategy === Primes) then (--we pull back individual prime ideals
-		E := divisor({}, {}, AmbRing => (target f));
+		E := divisor({}, {}, AmbientRing => (target f));
 		L := coefficients D;
 		PL := primes D;
 		for i when (i < #L ) do
@@ -939,7 +1037,7 @@ findElementOfDegree(BasicList, Ring) := List => (l1, R1) ->  (
 --For the sake of simplicity, our basic list input will be a list of column vectors (which we immediately transpose).
 --***it might be better to use Hermite matrices***
 
-getLinearDiophantineSolution = method(Options => {Unsafe => false});
+getLinearDiophantineSolution = method(Options => {Safe => true});
 
 getLinearDiophantineSolution(BasicList, BasicList) := BasicList => o ->(l1, l2) -> (	--the first entry is the target vector because that is simpler
 	rowList := transpose l2;							--the list of integer rows that forms the integer matrix A
@@ -949,7 +1047,7 @@ getLinearDiophantineSolution(BasicList, BasicList) := BasicList => o ->(l1, l2) 
 	m := #rowList;									--the number of rows of integer matrix A
 	testNumber := 0; 									
 	
-	if (o.Unsafe == false ) then (
+	if (o.Safe == true ) then (
 		--We need to check all vectors have integer entry. And the length of the row list is equal to the length of vector b
 		if( #bEntries != #rowList ) then (
 			error "Number of rows in the matrix should match the length of target vector"
@@ -1007,7 +1105,7 @@ getLinearDiophantineSolution(BasicList, BasicList) := BasicList => o ->(l1, l2) 
 --this solves A*x = l1
 getLinearDiophantineSolution(BasicList, Matrix) := BasicList => o-> (l1, A) -> (
 	L := entries transpose A;
-	getLinearDiophantineSolution(l1, L, Unsafe => o.Unsafe)
+	getLinearDiophantineSolution(l1, L, Safe => o.Safe)
 );
 
 
@@ -1100,7 +1198,7 @@ isEffective(BasicDivisor) :=  Boolean => (D) -> (
 
 --Given a divisor D, we want to know is this divisor is prime or not.
 
-isPrime(BasicDivisor) := (D1) -> (
+isPrime(BasicDivisor) := {} >> o -> (D1) -> (
 	(coefficients (cleanSupport D1) ) == {1} 
 );
 
@@ -1120,6 +1218,11 @@ isPrincipal = method(Options => {IsGraded => false});
 
 isPrincipal( WeilDivisor ):= Boolean => o -> (D) ->
 (
+    if (D#cache#?isPrincipal == true) then (
+        if (D#cache#isPrincipal#0 == o.IsGraded) then (
+            return D#cache#isPrincipal#1;
+        );
+    );
 	M := prune OO(D); 
 	flag := false;
 	if (o.IsGraded == false) then(
@@ -1142,6 +1245,7 @@ isPrincipal( WeilDivisor ):= Boolean => o -> (D) ->
 			flag = (degrees M == {{0}})
 		);
 	);
+	D#cache#isPrincipal = {o.IsGraded, flag};
 	flag
 );	
 
@@ -1151,7 +1255,12 @@ isCartier = method(Options => {IsGraded => false});
 
 isCartier( WeilDivisor ) := Boolean => o -> (D) ->
 ( --we rely on the fact that an ideal corresponds to a Cartier divisor if and only if I*I^{-1} is reflexive
-  --David Eisenbud pointed out another option would be to compute a bunch of minors and see if they generate the unit ideal... I'll try this in some examples and see which is faster
+  --David Eisenbud pointed out another option would be to compute a bunch of minors and see if they generate the unit ideal... I'll try this in some examples and see which is faster (but I haven't done so yet)
+    if ((D#cache#?isCartier == true)) then (
+        if ((D#cache#isCartier)#0 == o.IsGraded) then (
+            return D#cache#isCartier#1;
+        );
+    );
 	flag := false;
 	R := ring( D );
 	if (o.IsGraded == false) then (
@@ -1167,6 +1276,7 @@ isCartier( WeilDivisor ) := Boolean => o -> (D) ->
 		L := saturate(J1, myMax);
 		flag = isSubset(ideal(sub(1, R)), L)
 	);
+	D#cache#isCartier = {o.IsGraded, flag};
 	flag
 );	
 
@@ -1177,6 +1287,11 @@ nonCartierLocus = method(Options => {IsGraded => false});
 --TODO:  Compare this with computing minors of a presentation, I'm not sure if this will be faster or slower, there can be a lot of minors... (David Eisenbud suggested this)
 nonCartierLocus( WeilDivisor ) := Ideal => o -> (D) ->
 (
+    if ((D#cache#?nonCartierLocus) == true) then (
+        if ((D#cache#nonCartierLocus)#0 == o.IsGraded) then (
+            return (D#cache#nonCartierLocus#1);
+        );
+    );
 	R := ring( D );
 	OD := ideal( D ); --I woulder if it would be better to saturate this first in the graded case... (or if we have multiple threads, do it at the same time we do the next command).
 	ODminus:= dualize(OD);
@@ -1186,6 +1301,7 @@ nonCartierLocus( WeilDivisor ) := Ideal => o -> (D) ->
 		if (isHomogeneous(D) == false) then error "nonCartierLocus: Expected argument to be homogeneous if the IsGraded option is set to true.";		
 		J = saturate(J, getIrrelevantIdeal(R));
 	);
+	D#cache#nonCartierLocus = {o.IsGraded, J};
 	J
 );	
 
@@ -1202,7 +1318,7 @@ isLinearEquivalent( WeilDivisor, WeilDivisor ):= Boolean => o->(D, E) ->
 
 isQLinearEquivalent = method(Options => {IsGraded => false});
 
-isQLinearEquivalent( QWeilDivisor, QWeilDivisor ):= Boolean => o->(D1, D2) ->
+isQLinearEquivalent(ZZ, QWeilDivisor, QWeilDivisor ):= Boolean => o->(nn, D1, D2) ->
 (
 	if (not (ring D1 === ring D2) ) then error "isQLinearEquivalent: Expected the two divisors to have the same ambient ring";
 	D1 = toQWeilDivisor(D1);
@@ -1214,7 +1330,16 @@ isQLinearEquivalent( QWeilDivisor, QWeilDivisor ):= Boolean => o->(D1, D2) ->
 	m1 := 1; if (#L1 > 0) then m1 = lcm( toSequence L1  );
 	m2 := 1; if (#L2 > 0) then m2 = lcm( toSequence L2  );
 	m := lcm(m1, m2);
-	isLinearEquivalent( toWeilDivisor( m * D1), toWeilDivisor( m * D2), IsGraded=>o.IsGraded )
+	--first we check whether the two divisors are already linearly equivalent after clearing denominators
+	E1 := toWeilDivisor( m * D1);
+	E2 := toWeilDivisor( m * D2);
+	returnVal := isLinearEquivalent( E1, E2, IsGraded=>o.IsGraded );
+	i := 2;
+	while( (i <= nn) and (returnVal == false)) do(
+	    returnVal = isLinearEquivalent(i*E1, i*E2, IsGraded=>o.IsGraded);
+	    i = i+1;
+	);
+	return returnVal;
 );
 
 
@@ -1225,14 +1350,25 @@ isQCartier = method(Options => {IsGraded => false});
 
 isQCartier( ZZ, WeilDivisor ):= Boolean => o->(n1, D1) -> (
 	if (n1 < 1) then error "isQCartier: Expected the first argument to be a positive integer";
-	M1 := ideal(D1);
-	curModule := M1;
-	S1 := ring M1;
-	minusCurModule := dualize(curModule);
-	tempModule := trim (curModule*minusCurModule);
 	i := 1;
+	if ((D1#cache#?isQCartier) == true) then (
+        if ((D1#cache#isQCartier)#0 == o.IsGraded) then (
+            if ((D1#cache#isQCartier)#1 > 0) then (return ((D1#cache#isQCartier)#1));-- else (i = (D1#cache#isQCartier#2));
+            if ((D1#cache#isQCartier)#2 > n1) then (return 0); --we've already computed this far           
+        );
+    );
+--	M1 := ideal(i*D1);
+--	curModule := M1;
+--	S1 := ring M1;
+--	minusCurModule := dualize(curModule);
+--	tempModule := trim (curModule*minusCurModule);
+    S1 := ring D1;
 	J := 0;
 	if (o.IsGraded==false) then (
+    	M1 := ideal(i*D1);
+	    curModule := M1;
+	    minusCurModule := dualize(curModule);
+    	tempModule := trim (curModule*minusCurModule);
 		flag := isReflexive(tempModule);
 		while ((flag == false) and (i <= n1)) do(
 			curModule = M1*curModule;
@@ -1242,9 +1378,15 @@ isQCartier( ZZ, WeilDivisor ):= Boolean => o->(n1, D1) -> (
 			flag = isReflexive(tempModule);
 			i = i+1;
 		);
-		if (flag == false) then i = 0;
+		if (flag == false) then ( --store what we've done in the cache
+		    D1#cache#isQCartier={o.IsGraded, 0, i}; --we aren't currently using the i value
+		    i = 0;
+		)
+		else (
+		    D1#cache#isQCartier={o.IsGraded, i, i};
+		);
 	)
-	else (
+	else ( --homogeneous case
 		if (isHomogeneous(D1) == false) then error "isQCartier: Expected second argument to be homogeneous if the IsGraded option is set to true.";
 		myMax := getIrrelevantIdeal(S1);
 		J = nonCartierLocus(D1);
@@ -1256,7 +1398,14 @@ isQCartier( ZZ, WeilDivisor ):= Boolean => o->(n1, D1) -> (
 			gflag = isSubset(ideal(sub(1, S1)), L);
 			i = i+1;
 		);
-		if (gflag == false) then i = 0;
+		if (gflag == false) then ( --store what we've done in the cache
+		    D1#cache#isQCartier={o.IsGraded, 0, i};		--we aren't currently using the i value
+		    i = 0;
+		)
+		else (
+		    D1#cache#isQCartier={o.IsGraded, i, i};
+		);
+
 	);
 	i
 );
@@ -1285,6 +1434,11 @@ isHomogeneous (BasicDivisor) := Boolean => (D1) -> (
 isSNC = method(Options => {IsGraded => false});
 
 isSNC(BasicDivisor) := Boolean => o->(D1) -> (
+    if ((D1#cache#?isSNC) == true) then (
+        if ((D1#cache#isSNC)#0 == o.IsGraded) then (
+            return (D1#cache#isSNC#1);
+        );
+    );
 	D1 = cleanSupport(D1);
 	j := 0;
 	R1 := ring(D1);
@@ -1308,7 +1462,7 @@ isSNC(BasicDivisor) := Boolean => o->(D1) -> (
 		);
 		j = j+1
 	);
-	
+	D1#cache#isSNC = {o.IsGraded, flag};
 	flag 
 );
 
@@ -1391,14 +1545,19 @@ baseLocus(WeilDivisor) := Ideal => (D1) -> (
 );
 
 isVeryAmple = method(Options => {Verbose=>false});
-needsPackage "RationalMaps";
 
-isVeryAmple(WeilDivisor) := Boolean => o->(D1) -> (
+isVeryAmple(WeilDivisor) := Boolean => o->(D1) -> (    
+    if (D1#cache#?isVeryAmple == true) then (
+        return D1#cache#isVeryAmple;
+    );    
     mapFromD1 := mapToProjectiveSpace(D1);
     if (#(first entries vars source mapFromD1) == 0) then (
+        D1#cache#isVeryAmple = false;
         false)
     else (
-        isEmbedding(mapFromD1, Verbose=>o.Verbose)
+        flag := isEmbedding(mapFromD1, Verbose=>o.Verbose);
+        D1#cache#isVeryAmple = flag;
+        flag
     )
 );
  	 	
@@ -1786,10 +1945,10 @@ beginDocumentation();
 
 document {
     Key => Divisor,
-    Headline => "a package for computations with divisors",
+    Headline => "divisors",
     EM "Divisor", " is a package for working with (Q/R)-Weil divisors on ", EM "normal", " affine and projective varieties (equivalently, on commutative, normal and graded rings).", 
     BR{},BR{},
-    "The first thing it does is introduce a Type ", TO "WeilDivisor", " which lets the user work with Weil divisors similar to the way one might in algebraic geometry.  We highlight a few important functions below.",
+    "This package introduces a type ", TO "WeilDivisor", " which lets the user work with Weil divisors similar to the way one might in algebraic geometry.  We highlight a few important functions below.",
     BR{},BR{},
     BOLD "Useful functions:",BR{},
     UL {
@@ -1806,7 +1965,7 @@ document {
 	  {TO "embedAsIdeal", " embeds a rank one module as an ideal."},
 	  {TO "reflexify", " computes the reflexification, Hom(Hom(M, R), R) of a module M or ideal."},
 	  {TO "reflexivePower", " computes the reflexification of a power of an ideal quickly."},
-	  {TO "torsionSubmodule", " find the torsion submodule of a given module."},
+	  {TO "torsionSubmodule", " find the torsion submodule of a module."},
 	}, BR{},
 	"We emphasize once more that the functions in this package might produce unexpected results on non-normal rings.",BR{},BR{},
 	BOLD "Acknowledgements:",BR{},BR{},
@@ -1831,7 +1990,7 @@ doc ///
 	 Text
 	  WeilDivisor is a subclass with integer coefficients. 	    
 	 Text
-	  The basic structure is a HashTable.  There is one key which has a value which specifies the ambient ring.  Another key is cache which points to a CacheTable.  The remaining keys are a Groebner basis $L$ for each prime ideal $P$ in the support with corresponding value a list {$n$, $P$} where $n$ is the coefficient of the prime and $P$ is how the user entered the ideal initially (used for display purposes).
+	  The basic structure is a HashTable.  There is one key which has a value which specifies the ambient ring.  Another key is cache which points to a CacheTable.  The remaining keys are a Groebner basis $L$ for each prime ideal $P$ in the support with corresponding value a list with one entry {$n$} where $n$ is the coefficient of the height one prime.  
 	 Example
 	  R = QQ[x,y,z];
 	  D = divisor(x*y^2*z^3)
@@ -1854,29 +2013,29 @@ doc ///
 
 doc ///
 	Key
-	 Unsafe
+	 Safe
 	Headline
 	 an option used to tell functions whether not to do checks.
 	Description
 	 Text
-	  If set to true, then certain functions will perform checks to make sure the user didn't pass soemthing unreasonable.  You can use isWellDefined to ensure that a constructed divisor made up of the right stuff.
+	  If set to {\tt true}, then certain functions will perform checks to make sure the user didn't pass something unreasonable.  You can use {\tt isWellDefined} to ensure that a constructed divisor is constructed correctly.
 	SeeAlso
 	 isWellDefined
 ///
 
 doc ///
 	Key
-	 CoeffType
+	 CoefficientType
 	Headline
 	 an option used to tell divisor construction that a particular type of coefficients are expected.
 	Description
 	 Text
-	  Can be set to ZZ, QQ or RR (or any other Thing) when divisor is called, it checks whether the coefficient list is a list of instances of this type.  If it is set to ZZ, QQ or RR then a WeilDivisor, QWeilDivisor or RWeilDivisor are created.  Default value is ZZ.
+	  Can be set to {\tt ZZ}, {\tt QQ} or {\tt RR} (or any other {\tt Thing}) when divisor is called, it checks whether the coefficient list is a list of instances of this type.  If it is set to {\tt ZZ}, {\tt QQ} or {\tt RR} then a {\tt WeilDivisor}, {\tt QWeilDivisor} or {\tt RWeilDivisor} are created.  Default value is {\tt ZZ}.
 ///
 
 doc ///
 	Key
-	 AmbRing
+	 AmbientRing
 	Headline
 	 an option used to tell divisor construction that a particular ambient ring is expected.
 	Description
@@ -1901,7 +2060,7 @@ doc ///
 	 an option used by numerous functions which tells it to treat the divisors as if we were working on the Proj of the ambient ring.
 	Description
 	 Text
-	  An option used by numerous functions which tells it to treat the divisors as if we were working on the Proj of the ambient ring.  In other words, setting it to true tells the function to ignore behavior at the irrelevant ideal (the ideal generated by vars Ring).  Default value is false.
+	  An option used by numerous functions which tells it to treat the divisors as if we were working on the Proj of the ambient ring.  In other words, setting it to {\tt true} tells the function to ignore behavior at the irrelevant ideal (the ideal generated by vars Ring).  Default value is {\tt false}.
 ///
 
 doc /// 
@@ -1913,15 +2072,19 @@ doc ///
 		(divisor, Module)
 		(divisor, Matrix)
 		(divisor, RingElement)
+		[divisor, CoefficientType]
+		[divisor, AmbientRing]
+		[divisor, Section]
+		[divisor, IsGraded]
      Headline
      	constructor for (Weil/Q/R)-divisors
      Usage
-     	D = divisor(l1, l2)
-     	D = divisor( l3)
-     	D = divisor( I )
-     	D = divisor( f )
-     	D = divisor( M )
-     	D = divisor( Mat )
+     	divisor(l1, l2)
+     	divisor( l3)
+     	divisor( I )
+     	divisor( f )
+     	divisor( M )
+     	divisor( Mat )
      Inputs
       	l1: BasicList
       		which describes the list of coefficients in integers
@@ -1936,9 +2099,19 @@ doc ///
       	M: Module
       		construct a divisor such that O(D) is isomorphic to M
       	Mat: Matrix      	
-      		a matrix, construct an effective divisor such that O(D) is isomorphic to the target of Mat based on the given section
+      		a matrix, construct an effective divisor such that O(D) is isomorphic to the target of Mat based on the section
+      	CoefficientType => ZZ
+      		specify the coefficients of your divisor 
+      	AmbientRing => Ring
+      		specify the ambient ring in the divisor constructor
+      	Section => RingElement
+      		specify a global section of the ideal I used to construct an effective divisor
+      	Section => Matrix
+      	    specify a global section of a module M used to construct an effective divisor
+      	IsGraded => Boolean
+      	    specify a that a divisor constructed from a module should view the module as a graded object
      Outputs
-      	 D: BasicDivisor
+      	 : BasicDivisor
      Description
       Text
 		This is the general function for constructing divisors.  There are many ways to call it.  In our first example, we construct divisors on $A^3$ (which can also be viewed as divisors on $P^2$ since the ideals are homogeneous).  The following creates the same Weil divisor with coefficients 1, 2 and 3 in five different ways.
@@ -1968,13 +2141,13 @@ doc ///
        We can construct a Q-divisor as well.  Here are two ways to do it (we work in $A^2$ this time).
       Example
        R = ZZ/7[x,y];
-       D = divisor({-1/2, 2/1}, {ideal(y^2-x^3), ideal(x)}, CoeffType=>QQ)
+       D = divisor({-1/2, 2/1}, {ideal(y^2-x^3), ideal(x)}, CoefficientType=>QQ)
        D = (-1/2)*divisor(y^2-x^3) + (2/1)*divisor(x)
       Text
        Or an R-divisor.  This time we work in the cone over $P^1 \times P^1$.
       Example
        R = ZZ/11[x,y,u,v]/ideal(x*y-u*v);
-       D = divisor({1.1, -3.14159}, {ideal(x,u), ideal(x, v)}, CoeffType=>RR)
+       D = divisor({1.1, -3.14159}, {ideal(x,u), ideal(x, v)}, CoefficientType=>RR)
        D = 1.1*divisor(ideal(x,u)) - 3.14159*divisor(ideal(x,v))
       Text
        You can also pass it an element of the ring or even the fraction field.  
@@ -1997,83 +2170,8 @@ doc ///
        matr = map(M, R^1, {{1},{0}});
        divisor(matr)
        divisor(M, Section=>matr)
-     SeeAlso
-       [divisor, AmbRing]
-       [divisor, CoeffType]
-       [divisor, IsGraded]
-       [divisor, Section]
-///
-
-doc /// 
-	 Key
-		[divisor, CoeffType]
-     Headline
-     	optional argument to specify the type of coefficients in the divisor constructor
-     Usage
-     	D = divisor(..., CoeffType=>v)
-     Inputs
-      	v: Ring
-      		default is ZZ.  If ZZ, QQ, RR, then the divisor will be a WeilDivisor, QWeilDivisor, or RWeilDivisor. 
-     Outputs
-      	 D: BasicDivisor
-     Description
       Text
-       Use to force the divisor to be a particular class (RWeilDivisor, QWeilDivisor, WeilDivisor) or to specify your own coefficients.
-      Example
-       R = QQ[x,y,z];
-       D = divisor(x, CoeffType=>QQ)
-       D = divisor(y, CoeffType=>RR)
-       D = divisor(z, CoeffType=>ZZ)
-       D = divisor(x+y, CoeffType=>(frac(QQ[s]/(s^2-2))))
-     SeeAlso
-     	divisor
-///
-
-doc /// 
-	 Key
-		[divisor, AmbRing]
-     Headline
-     	optional arguments to specify the ambient ring in the divisor constructor
-     Usage
-     	D = divisor( ..., AmbRing=>R)
-     Inputs
-      	R: Ring
-      	        an option to specify a particular ambient ring
-     Outputs
-      	 D: BasicDivisor
-     Description
-      Text
-       Construct a divisor as a formal sum of height one prime ideals whose coefficients are real numbers
-      Example
-       R = QQ[x,y,z];
-       D = divisor({},{}, AmbRing=>R)
-       D = divisor({}, {})
-     SeeAlso
-     	divisor
-///
-
-doc /// 
-	 Key
-		[divisor, Section]
-     Headline
-     	optional argument to specify a (global) section to unique construct a divisor
-     Usage
-     	D = divisor( I, Section => f )
-     	D = divisor( M, Section=>Mat )
-     Inputs
-        I: Ideal
-                an ideal isomorphic to O(D)
-      	f: RingElement
-      	        a section used to uniquely determine an effective divisor
-      	M: Module
-      	        a module isomorphic to O(D)
-      	Mat: Matrix
-      	        a section used to uniquely determine an effective divisor
-     Outputs
-      	 D: WeilDivisor
-     Description
-      Text
-       If the main argument in the divisor is an Ideal, the {\tt Section=>f} specifies that we should find the unique effective divisor $D$ such that I is isomorphic to $O(D)$ and such that {\tt f} maps to 1 under that isomorphism.
+       One can also obtain the same behavior (as {\tt divisor(Matrix)}) by passing the divisor either an ideal or a module and then specifying a global section of that object (which will produce the corresponding effective divisor).  In particular, if the main argument in the divisor is an Ideal, the option {\tt Section=>f} specifies that we should find the unique effective divisor $D$ such that I is isomorphic to $O(D)$ and such that {\tt f} maps to 1 under that isomorphism.
       Example
        R = QQ[x,y,u,v]/ideal(x*y-u*v)
        D = divisor(ideal(x,u), Section=>x)
@@ -2083,36 +2181,11 @@ doc ///
        If the main argument in the divisor is a module, then the Matrix {\tt Mat} should be a matrix mapping a free module to {\tt M}.  In this case {\tt divisor} constructs the unique effective divisor $D$ such that {\tt M} is isomorphic to $O(D)$ and so that $1$ in the matrix map is mapped to $1$ in $O(D)$.
       Example
        R = QQ[x];
-       D = divisor(R^1, Section=>matrix{{x^2}})
-     SeeAlso
-     	divisor
+       D = divisor(R^1, Section=>matrix{{x^2}})       
 ///
 
-doc /// 
-	 Key
-		[divisor, IsGraded]
-     Headline
-     	optional argument in the divisor constructor to specify that a module $O(D)$ is graded
-     Usage
-     	D = divisor(Module, IsGraded => b)
-     Inputs
-      	b: Boolean
-      	        used to specify whether we view a module as graded
-      	M: Module
-      	        a module to be isomorphic to $O(D)$
-     Outputs
-      	 D: WeilDivisor
-     Description
-      Text
-       Construct a divisor $D$ such that $O(D)$ is isomorphic to {\tt M}.  If {\tt IsGraded} is set to {\tt true}, treat {\tt M} as a graded module and hence the construction will function properly on a projective variety.  Default value is {\tt false}.
-      Example
-       R = QQ[x,y,z];
-       D = divisor(R^{2}, IsGraded=>true)
-       D = divisor(R^{-3}, IsGraded=>true)
-       D = divisor(R^{2}, IsGraded=>false)
-     SeeAlso
-     	divisor
-///
+
+
 
 doc ///
     Key
@@ -2120,20 +2193,20 @@ doc ///
     Headline
         whether a divisor is valid
     Usage
-        b = isWellDefined( D1 )
+        isWellDefined( D1 )
     Inputs
         D1: BasicDivisor
     Outputs
-        b: Boolean
+        : Boolean
     Description
         Text
-            This function tries to verify that this really is a valid divisor.  It checks that the coefficients are from the right ring (in the {\tt WeilDivisor/QWeilDivisor/RWeilDivisor} cases at least).  It also checks to make sure all the ideals are from the same ring, are prime, and have height one.  If debugLevel > 0, the function will print an message explaining why the divisor was not valid.
+            This function tries to verify that this is a valid divisor.  It checks that the coefficients are from the right ring (in the {\tt WeilDivisor/QWeilDivisor/RWeilDivisor} cases at least).  It also checks to make sure all the ideals are from the same ring, are prime, and have height one.  If debugLevel > 0, the function will print an message explaining why the divisor was not valid.
         Example
             debugLevel = 1;
             R = QQ[x,y];
             isWellDefined(divisor({1}, {ideal(x)} ))
             isWellDefined(divisor({1/2}, {ideal(x)} ))
-            isWellDefined(divisor({1/2}, {ideal(x)}, CoeffType=>QQ))
+            isWellDefined(divisor({1/2}, {ideal(x)}, CoefficientType=>QQ))
             isWellDefined(divisor({1}, {ideal(x,y)}))
             isWellDefined(divisor({1}, {ideal(x^2)}))
             S = QQ[a,b];
@@ -2150,14 +2223,14 @@ doc ///
 	Headline
 	 get the list of height-one primes in the support of a divisor
 	Usage
-	 L1 = primes( D1 )
+	 primes( D1 )
 	Inputs
 	 D1: BasicDivisor
 	Outputs
-	 L1: List
+	 : List
 	Description
 	 Text
-	  Returns the list of height-one prime ideals corresponding to the components of a {\tt BasicDivisor}.  Note that if you don't call {\tt cleanSupport}, this can return primes with coefficient equal to zero.
+	  This function returns the list of height-one prime ideals corresponding to the components of a {\tt BasicDivisor}.  Note that if you don't call {\tt cleanSupport}, this can return primes with coefficient equal to zero.
 	 Example
 	  R = QQ[x,y,u,v]/ideal(x*y-u*v);
 	  D = divisor(x)
@@ -2180,14 +2253,14 @@ doc ///
 	Headline
 	 get the number of height-one primes in the support of the divisor
 	Usage
-	 L1 = getPrimeCount( D1 )
+	 getPrimeCount( D1 )
 	Inputs
 	 D1: BasicDivisor
 	Outputs
-	 L1: List
+	 : List
 	Description
 	 Text
-	  Returns the number of height one prime ideals corresponding to the components of a {\tt BasicDivisor}.  Note that if you don't call {\tt cleanSupport}, this can return primes with coefficient equal to zero.
+	  This function returns the number of height one prime ideals corresponding to the components of a {\tt BasicDivisor}.  Note that if you don't call {\tt cleanSupport}, this can return primes with coefficient equal to zero.
 	 Example
 	  R = QQ[x,y,u,v]/ideal(x*y-u*v);
 	  D = divisor(x)
@@ -2212,20 +2285,20 @@ doc ///
 	Headline
 	 get the list of Groebner bases corresponding to the height-one primes in the support of a divisor
 	Usage
-	 L1 = gbs( D1 )
+	 gbs( D1 )
 	Inputs
 	 D1: BasicDivisor
 	Outputs
-	 L1: List
+	 : List
 	Description
 	 Text
-	   Returns the list of Groebner bases associated to the height-one prime ideals corresponding to the components of a {\tt BasicDivisor} (or a {\tt WeilDivisor}, {\tt QWeilDivisor} or {\tt RWeilDivisor}).  Note that this list of Groebner bases is made when the divisor is constructed.
+	   This function returns the list of Groebner bases associated to the height-one prime ideals corresponding to the components of a {\tt BasicDivisor} (or a {\tt WeilDivisor}, {\tt QWeilDivisor} or {\tt RWeilDivisor}).  Note that this list of Groebner bases is made when the divisor is constructed.
 	 Example
 	  R = ZZ/7[x,y,u,v]/ideal(x*y-u*v);
 	  D = divisor(x)
 	  gbs(D)
 	 Text
-	  Note, the Grobner basis can be different than a minimal set of generators the user provides.
+	  Note, the Grobner basis can be different from a minimal set of generators the user provides.
 	 Example
 	  R = ZZ/2[x,y,z]/ideal(z^2+x*y*z+x^2*y+x*y^2);
 	  J = ideal(x+y, x^2+z);
@@ -2243,11 +2316,11 @@ doc ///
 	Headline
 	 get the list of coefficients of a divisor
 	Usage
-	 L1 = coefficients( D1 )
+	 coefficients( D1 )
 	Inputs
 	 D1: BasicDivisor
 	Outputs
-	 L1: List
+	 : List
 	Description
 	 Text
 	  Get the list of coefficients of a {\tt BasicDivisor} (or a {\tt WeilDivisor}, {\tt QWeilDivisor} or {\tt RWeilDivisor}).
@@ -2257,9 +2330,9 @@ doc ///
 	  coefficients(D)
 	  E = divisor(x*u);
 	  coefficients(E)
-	  F = divisor({0, 1/2, -2/3}, {ideal(y, u), ideal(x,u), ideal(x,v)}, CoeffType => QQ)
+	  F = divisor({0, 1/2, -2/3}, {ideal(y, u), ideal(x,u), ideal(x,v)}, CoefficientType => QQ)
 	  coefficients(F)
-	  G = divisor({0.5, -0.667}, {ideal(x,u), ideal(x,v)}, CoeffType => RR)
+	  G = divisor({0.5, -0.667}, {ideal(x,u), ideal(x,v)}, CoefficientType => RR)
 	  coefficients(G)
 	SeeAlso
 	 (coefficient, Ideal, BasicDivisor)
@@ -2274,14 +2347,14 @@ doc ///
   	Headline
    	 removes primes with coefficient zero from a divisor
    	Usage
-   	 E1 = cleanSupport( D1 )
+   	 cleanSupport( D1 )
      	Inputs
       	 D1: BasicDivisor
      	Outputs
-      	 E1: BasicDivisor   
+      	 : BasicDivisor   
      	Description  	
      	 Text
-     	  Returns a divisor where all entries with coefficient zero are removed. 
+     	  This function returns a divisor where all entries with coefficient zero are removed. 
      	 Example
      	  R = QQ[x,y,z];
      	  D = divisor({1,0,-2}, {ideal(x), ideal(y), ideal(z)})
@@ -2290,18 +2363,42 @@ doc ///
 
 doc /// 
 	Key
+	 clearCache
+	 (clearCache, BasicDivisor)
+  	Headline
+   	 creates a new divisor with most entries from the cache removed
+   	Usage
+   	 clearCache( D1 )
+     	Inputs
+      	 D1: BasicDivisor
+     	Outputs
+      	 : BasicDivisor   
+     	Description  	
+     	 Text
+     	  This function returns a divisor where the only entries left in the cache is the key ideals (which points to how the ideals should be displayed to the user).
+     	 Example
+     	  R = QQ[x,y,z];
+     	  D = divisor(x);
+     	  isPrincipal(D)
+     	  peek (D#cache)
+     	  E = clearCache(D);
+     	  peek (E#cache)
+///
+
+doc /// 
+	Key
 	 (trim, BasicDivisor)
   	Headline
    	 trims the ideals displayed to the user and removes primes with coefficient zero
    	Usage
-   	 E1 = trim( D1 )
+   	 trim( D1 )
      	Inputs
       	 D1: BasicDivisor
      	Outputs
-      	 E1: BasicDivisor   
+      	 : BasicDivisor   
      	Description  	
      	 Text
-     	  Returns a divisor where all entries with coefficient zero are removed and where the ideals displayed to the user are trimmed.
+     	  This function returns a divisor where all entries with coefficient zero are removed and where the ideals displayed to the user are trimmed.
      	 Example
      	  R = QQ[x,y,z]/ideal(x*y-z^2);
      	  D = divisor({1,0,-2}, {ideal(x, z), ideal(x-z,y-z), ideal(y+z, z)});
@@ -2315,19 +2412,19 @@ doc ///
 	Key 
 	 (coefficient, Ideal, BasicDivisor)
 	Headline
-	 get the coefficient of a given ideal for a fixed divisor
+	 get the coefficient of an ideal for a fixed divisor
 	Usage
-	 n = coefficient(P, D)
+	 coefficient(P, D)
 	Inputs
 	 P: Ideal
 	    the height one prime ideal that we want to find the coefficient of
 	 D: BasicDivisor
 	    the divisor in question		 
 	Outputs	
-	 n: Number
+	 : Number
 	Description
 	 Text
-	  Returns the coefficient of $D$ along the prime divisor associated to $P$.
+	  This function returns the coefficient of $D$ along the prime divisor associated to $P$.
 	 Example
 	  R = QQ[x,y,u,v]/ideal(x*y-u*v);
 	  D = divisor(x)
@@ -2343,19 +2440,19 @@ doc ///
 	Key 
 	 (coefficient, BasicList, BasicDivisor)
 	Headline
-	 get the coefficient of a given ideal for a fixed divisor
+	 get the coefficient of an ideal for a fixed divisor
 	Usage
-	 n = coefficient(L, D)
+	 coefficient(L, D)
 	Inputs
 	 L: BasicList
 	    the list of elements in a Grobner basis of a height one prime ideal that we want to find the coefficient of
 	 D: BasicDivisor
 	    the divisor in question		 
 	Outputs	
-	 n: Number
+	 : Number
 	Description
 	 Text
-	  Returns the coefficient of $D$ along the prime divisor generated by $L$ assuming $L$ is the ordered list of an element 
+	  This function returns the coefficient of $D$ along the prime divisor generated by $L$ assuming $L$ is the ordered list of an element 
 	 Example
 	  R = QQ[x,y,u,v]/ideal(x*y-u*v);
 	  E = divisor(x*u)
@@ -2374,14 +2471,14 @@ doc ///
 	Headline
 		get the ambient ring of a divisor
 	Usage
-		E1 = ring( D1 )
+		ring( D1 )
 	Inputs
 		D1: BasicDivisor
 	Outputs
-		E1: Ring
+		: Ring
 	Description
 	  Text
-	   Returns the ambient ring of a divisor.
+	   This function returns the ambient ring of a divisor.
 	  Example
 	   R = QQ[x, y, z] / ideal(x * y - z^2 );
 	   D = divisor({1, 2}, {ideal(x, z), ideal(y, z)})
@@ -2396,21 +2493,24 @@ doc ///
 	Headline
 		whether a divisor is very ample.
 	Usage
-		b = isVeryAmple( D1, Verbose=>vb )
+		isVeryAmple( D1 )
 	Inputs
-		D1: WeilDivisor
-		vb: Boolean
+		D1: WeilDivisor		
+		Verbose => Boolean
+		  pass the verbose option to the called isEmbedding method
 	Outputs
-		b: Boolean
+		: Boolean
 	Description
 	  Text
-	   Returns {\tt true} if the divisor is very ample, otherwise it returns {\tt false}.  It works by calling {\tt isEmbedding} from the {\tt RationalMaps} package.  If {\tt Verbose} is set to {\tt true}, it will print {\tt Verbose} output from {\tt isEmbedding}.
+	   This function returns {\tt true} if the divisor is very ample, otherwise it returns {\tt false}.  It works by calling {\tt isEmbedding} from the {\tt RationalMaps} package.  If {\tt Verbose} is set to {\tt true}, it will print {\tt Verbose} output from {\tt isEmbedding}.
 	  Example
 	   R = QQ[x, y, z]/ideal(x^3 + y^3 - z^3);
 	   D = divisor(ideal(x, y-z));
 	   isVeryAmple(D)
 	   isVeryAmple(2*D)
-	   isVeryAmple(3*D)	   
+	   isVeryAmple(3*D)	 
+	  Text
+	   The output value of this function is stored in the divisor's cache.  
 ///
 
 
@@ -2421,14 +2521,14 @@ doc ///
 	Headline
 		get the list of prime divisors of a given divisor
 	Usage
-		L1 = getPrimeDivisors( D1 )
+		getPrimeDivisors( D1 )
 	Inputs
 		D1: BasicDivisor
 	Outputs
-		L1: List
+		: List
 	Description
 	  Text
-	   Returns the list of prime divisors of a given divisor.  The prime divisors are all of the class {\tt WeilDivisor}.  If you do not call {\tt cleanSupport}, you may obtain divisors with zero coefficients.
+	   This function returns the list of prime divisors of a given divisor.  The prime divisors are all of the class {\tt WeilDivisor}.  If you do not call {\tt cleanSupport}, you may obtain divisors with zero coefficients.
 	  Example
 	   R = QQ[x, y, z];
 	   D = divisor({-8, 2, 0}, {ideal(x), ideal(y), ideal(x^2+z)})
@@ -2441,23 +2541,23 @@ doc ///
 		(ceiling, RWeilDivisor)
 		(floor, RWeilDivisor)
 	Headline
-		produce a WeilDivisor whose coefficients are ceilings or floors of the given divisor
+		produce a WeilDivisor whose coefficients are ceilings or floors of the divisor
 	Usage
-		E2 = ceiling( E1 )
-		E2 = floor( E1 )
+		ceiling( E1 )
+		floor( E1 )
 	Inputs
 		E1: RWeilDivisor
 	Outputs
-		E2: WeilDivisor
+		: WeilDivisor
 	Description
 	 Text
 	  Start with a rational or real Weil divisor.  We form a new divisor whose coefficients are obtained by applying the {\tt ceiling} or {\tt floor function} to them.
 	 Example
 	  R = QQ[x, y, z] / ideal(x *y - z^2);
-	  D = divisor({1/2, 4/3}, {ideal(x, z), ideal(y, z)}, CoeffType => QQ)
+	  D = divisor({1/2, 4/3}, {ideal(x, z), ideal(y, z)}, CoefficientType => QQ)
 	  ceiling( D )
 	  floor( D )
-	  E = divisor({0.3, -0.7}, {ideal(x, z), ideal(y,z)}, CoeffType => RR)
+	  E = divisor({0.3, -0.7}, {ideal(x, z), ideal(y,z)}, CoefficientType => RR)
 	  ceiling( E )
 	  floor( E )
 ///
@@ -2469,18 +2569,18 @@ doc ///
 	 negativePart
 	 (negativePart, RWeilDivisor)
 	Headline
-	 get the effective part or anti-effective part of a given divisor
+	 get the effective part or anti-effective part of a divisor
 	Usage
-	 F2 = positivePart( F1 )
-	 F2 = negativePart( F1 )
+	 positivePart( F1 )
+	 negativePart( F1 )
 	Inputs
 	 F1: RWeilDivisor
 	Outputs
-	 F2: RWeilDivisor
+	 : RWeilDivisor
 	  an effective divisor
 	Description
 	 Text
-	  Return the positive part of a divisor
+	  This function returns the positive part of a divisor
 	 Example
 	  R = QQ[x, y, u, v] / ideal(x * y - u * v);
 	  D = divisor({1, -2, 3, -4}, {ideal(x, u), ideal(y, u), ideal(x, v), ideal(y, v)})
@@ -2508,7 +2608,7 @@ doc ///
 	 	: Boolean
 	 Description
 	 	Text
-	 	 Returns true if the two divisors are equal
+	 	 This function returns {\tt true} if the two divisors are equal
 	 	Example 
 	 	 R = QQ[x,y];
 	 	 D = divisor(x*y);
@@ -2517,7 +2617,7 @@ doc ///
 	 	 D == E
 	 	 D == E+F
 	 	Text
-	 	 Here is an example with rational coefficients compared with integer coefficients
+	 	 Here is an example with rational coefficients compared with integer coefficients.
 	 	Example
 	 	 R = QQ[x,y];
 	 	 D = (1/2)*divisor(x)
@@ -2537,12 +2637,11 @@ doc ///
 	 Headline
 	 	create a Q-Weil divisor from a Weil divisor
 	 Usage
-	 	D' = toQWeilDivisor( D )
+	 	toQWeilDivisor( D )
 	 Inputs
-	 	D: WeilDivisor
 	 	D: QWeilDivisor
 	 Outputs
-	 	D': QWeilDivisor
+	 	: QWeilDivisor
 	 Description
 	  Text
 	   Turn a Weil divisor into a Q-divisor (or do nothing to a Q-divisor).
@@ -2566,14 +2665,14 @@ doc ///
 	Headline
 		create a R-divisor from a Q or Weil divisor
 	Usage
-		D2 = toRWeilDivisor( D1 )
-		D2 = toRWeilDivisor( E1 )
+		toRWeilDivisor( D1 )
+		toRWeilDivisor( E1 )
 	Inputs
 		D1: WeilDivisor
 		E1: QWeilDivisor
 		E1: RWeilDivisor
 	Outputs
-		D2: RWeilDivisor
+		: RWeilDivisor
 	Description
 	  Text
 	   Turn a Weil divisor or a Q-divisor into a R-divisor (or do nothing to a R-divisor).
@@ -2596,19 +2695,19 @@ doc ///
 	Headline
 		create a Weil divisor from a Q or R-divisor
 	Usage
-		E2 = toWeilDivisor( E1 )
+		toWeilDivisor( E1 )
 	Inputs
 		E1: RWeilDivisor
 	Outputs
-		E2: WeilDivisor
+		: WeilDivisor
 	Description
 	 Text
 	  Given a divisor with rational or real coefficients, but whose coefficients are actually integers, we first check if all coefficients are integers.
-	  If so we make this divisor to a Weil divisor.  Otherwise, an error is thrown.
+	  If so we make this Weil divisor.  Otherwise, an error is thrown.
 	 Example
 	  R=QQ[x];
-	  D=divisor({3/2}, {ideal(x)}, CoeffType=>QQ)
-	  E=divisor({1.5}, {ideal(x)}, CoeffType=>RR)
+	  D=divisor({3/2}, {ideal(x)}, CoefficientType=>QQ)
+	  E=divisor({1.5}, {ideal(x)}, CoefficientType=>RR)
 	  toWeilDivisor(2*D)
 	  toWeilDivisor(2*E)
 	  isWeilDivisor(D)
@@ -2629,7 +2728,7 @@ doc ///
 		(symbol *, QQ, RWeilDivisor)		
 		(symbol *, RR, RWeilDivisor)			    
 	Headline
-		multiply a divisor a number
+		multiply a divisor by a number
 	Usage
 		n * D
  	Inputs
@@ -2643,8 +2742,8 @@ doc ///
  	 Example
  	  R = QQ[x,y];
  	  D = divisor(x^2*y/(x+y));
- 	  E = divisor({1/2, -5/3}, {ideal(x), ideal(y)}, CoeffType=>QQ)
- 	  F = divisor({1.5, 0, -3.2}, {ideal(x), ideal(y), ideal(x^2-y^3)}, CoeffType=>RR)
+ 	  E = divisor({1/2, -5/3}, {ideal(x), ideal(y)}, CoefficientType=>QQ)
+ 	  F = divisor({1.5, 0, -3.2}, {ideal(x), ideal(y), ideal(x^2-y^3)}, CoefficientType=>RR)
  	  8*D
  	  (-2/3)*D
  	  0.0*D
@@ -2662,14 +2761,14 @@ doc ///
   Headline
     add or subtract two divisors, or negate a divisor
   Usage
-    C = A + B
-    C = A - B
-    C = -A
+    A + B
+    A - B
+    -A
   Inputs
     A:BasicDivisor
     B:BasicDivisor
   Outputs
-    C:BasicDivisor
+    :BasicDivisor
   Description
     Text
       We can add or subtract two divisors:
@@ -2684,8 +2783,8 @@ doc ///
     Example
       R = QQ[x,y];
       D1 = divisor({3, 1}, {ideal(x), ideal(y)})
-      D2 = divisor({3/2, -1}, {ideal(x), ideal(y)}, CoeffType=>QQ)
-      D3 = divisor({1.25}, {ideal(x)}, CoeffType=>RR)
+      D2 = divisor({3/2, -1}, {ideal(x), ideal(y)}, CoefficientType=>QQ)
+      D3 = divisor({1.25}, {ideal(x)}, CoefficientType=>RR)
       D1+D2
       D1+D3
       D2+D3
@@ -2703,16 +2802,16 @@ doc ///
  	Key
  	 (symbol SPACE, OO, RWeilDivisor)
  	Headline
- 	 calculate the corresponding module of a given divisor
+ 	 calculate module corresponding to divisor
  	Usage
- 	 M1 = OO( D1 )
+ 	 OO( D1 )
  	Inputs
  	 D1: RWeilDivisor
  	Outputs
- 	 M1: Module
+ 	 : Module
  	Description
  	 Text
- 	  Get the associated module $O(D)$ of a given Weil Divisor $D$.  In the affine case, $O(D)$ is by definition the set of elements $f$ of the fraction field such that $D + Div(f) \geq 0$.  We represent this as a module.  In the projective case, $O(D)$ is the coherent sheaf of such elements, and hence we represent it as a graded module.  For example, consider the following modules on $P^2$.
+ 	  Get the associated module $O(D)$ of a Weil Divisor $D$.  In the affine case, $O(D)$ is by definition the set of elements $f$ of the fraction field such that $D + Div(f) \geq 0$.  We represent this as a module.  In the projective case, $O(D)$ is the coherent sheaf of such elements, and hence we represent it as a graded module.  For example, consider the following modules on $P^2$.
  	 Example
  	  R = ZZ/7[x,y,z];
  	  D = divisor(x);
@@ -2732,7 +2831,7 @@ doc ///
  	  To get the associated module $O(D)$ for a rational/real divisor $D$, we first obtain a new divisor $D'$ whose coefficients are the floor of the coefficients of $D$, and take $O(D')$ as $O(D)$.
  	 Example
  	  R = QQ[x, y, u, v] / ideal(x * y - u * v);
- 	  D2 = divisor({3/5, -4/7, 9/4, -7/8}, {ideal(x, u), ideal(x, v), ideal(y, u), ideal(y, v)}, CoeffType=>QQ)
+ 	  D2 = divisor({3/5, -4/7, 9/4, -7/8}, {ideal(x, u), ideal(x, v), ideal(y, u), ideal(y, v)}, CoefficientType=>QQ)
  	  OO( D2 )
  	  OO( floor(D2) )
  	 Text
@@ -2742,6 +2841,8 @@ doc ///
  	  D = divisor(x*y/(x+y))
  	  divisor(OO(D))
  	  divisor(OO(D), IsGraded=>true)
+ 	 Text
+ 	  The output value of this function is stored in the divisor's cache. 	  
  	SeeAlso
  	 (ideal, RWeilDivisor)
 ///
@@ -2751,14 +2852,14 @@ doc ///
  	 idealPower
  	 (idealPower, ZZ, Ideal)
  	Headline
- 	 compute the ideal generated by the generators of the given ideal raised to a power
+ 	 compute the ideal generated by the generators of the ideal raised to a power
  	Usage
- 	 J = idealPower(n, I)
+ 	 idealPower(n, I)
  	Inputs
  	 n: ZZ
  	 I: Ideal
  	Outputs
- 	 J: Ideal
+ 	 : Ideal
  	Description
  	 Text
  	  If {\tt I} is generated by $(f1, ..., fk)$ then {\tt idealPower(n, I)} is the ideal generated by $(f1^n, ..., fk^n)$.  This is relevant because {\tt idealPower(n, I)} and {\tt I^n} have the same reflexification, but {\tt idealPower(n, I)} can be much faster to compute with since it has fewer generators typically.
@@ -2777,16 +2878,16 @@ doc ///
  	 (ideal, QWeilDivisor)
  	 (ideal, WeilDivisor)
  	Headline
- 	 calculate the corresponding module of a given divisor and represent it as an ideal
+ 	 calculate the corresponding module of a divisor and represent it as an ideal
  	Usage
- 	 I1 = ideal( D1 )
+ 	 ideal( D1 )
  	Inputs
  	 D1: RWeilDivisor
  	Outputs
- 	 I1: Ideal
+ 	 : Ideal
  	Description
  	 Text
- 	  Get an ideal associated to $O(-D)$ of a given Weil Divisor $D$.  Recall that on an affine scheme, $O(-D)$ is by definition the subset of the fraction field made up of elements such that $Div(f) - D \geq 0$.  If $D$ is effective, this will produce the ideal corresponding to $O(-D)$.  Otherwise, it will produce some ideal isomorphic to a module corresponding to $O(-D)$. 
+ 	  Get an ideal associated to $O(-D)$ of a Weil Divisor $D$.  Recall that on an affine scheme, $O(-D)$ is by definition the subset of the fraction field made up of elements such that $Div(f) - D \geq 0$.  If $D$ is effective, this will produce the ideal corresponding to $O(-D)$.  Otherwise, it will produce some ideal isomorphic to a module corresponding to $O(-D)$. 
  	 Example
  	  R = QQ[x, y, u, v] / ideal(x * y - u * v);
  	  D1 = divisor({1, -2, 3, -4}, {ideal(x, u), ideal(x, v), ideal(y, u), ideal(y, v)})
@@ -2794,7 +2895,7 @@ doc ///
  	  D2 = divisor(ideal(x,u))
  	  ideal(D2)
  	 Text
- 	  Note, if the divisor has non-integer coefficients, they will be ceilinged, since $O(-D) = O({\tt floor}(-D)) = O(-{\tt ceiling}(D))$.
+ 	  Note, if the divisor has non-integer coefficients, their ceilings will be taken, since $O(-D) = O({\tt floor}(-D)) = O(-{\tt ceiling}(D))$.
  	 Example
  	  R = QQ[x,y,z]/(ideal(x^3 + y^3 - z^3));
  	  D1 = 1.3*divisor(ideal(x, y-z))
@@ -2802,6 +2903,8 @@ doc ///
  	  I1 = ideal (ceiling(D1))
  	  I2 = ideal (-ceiling(D1))
  	  reflexify(I1*I2)
+ 	 Text
+ 	  The output value of this function is stored in the divisor's cache.
  	SeeAlso
  	 (symbol SPACE, OO, RWeilDivisor)
 ///
@@ -2811,17 +2914,20 @@ doc ///
 	 mapToProjectiveSpace
 	 (mapToProjectiveSpace, WeilDivisor)
 	 [mapToProjectiveSpace, KnownCartier]
+	 [mapToProjectiveSpace, Variable]
 	Headline
 	 compute the map to projective space associated with the global sections of a Cartier divisor
 	Usage
-	 h = mapToProjectiveSpace( D, KnownCartier=>b, Variable=>s)
+	 mapToProjectiveSpace( D )
 	Inputs
 	 D: WeilDivisor
-	 b: Boolean
-	 s: Symbol
-	 s: String
+	 KnownCartier => Boolean
+	   specify whether the divisor is known to be Cartier
+	 Variable => Symbol
+	 Variable => String
+	   specify the variable to use in the construction of the target projective space 
 	Outputs
-	 h: RingMap
+	 : RingMap
 	Description
 	 Text
 	  Given a Cartier divisor $D$ on a projective variety (represented by a divisor on a normal standard graded ring), this function returns the map to projective space induced by the global sections of $O(D)$.  If {\tt KnownCartier} is set to {\tt false} (default is {\tt true}), the function will also check to make sure the divisor is Cartier away from the irrelevant ideal.
@@ -2829,24 +2935,6 @@ doc ///
 	  R = QQ[x,y,u,v]/ideal(x*y-u*v);
 	  D = divisor( ideal(x, u) )
 	  mapToProjectiveSpace(D)
-	SeeAlso
-	 isCartier
-	 [mapToProjectiveSpace, Variable]
-///
-
-doc ///
-	Key
-	 [mapToProjectiveSpace, Variable]
-	Headline
-	 specify the variable of the target projective space
-	Usage
-	 h = mapToProjectiveSpace( ..., Variable=>s)
-	Inputs
-	 s: Symbol
-	 s: String
-	Outputs
-	 h: RingMap
-	Description
 	 Text
 	  The user may also specify the variable name of the new projective space.
 	 Example 
@@ -2854,7 +2942,7 @@ doc ///
 	  D = divisor(x*y)
 	  mapToProjectiveSpace(D, Variable=>"Z")	  
 	SeeAlso
-	 mapToProjectiveSpace
+	 isCartier
 ///
 
 doc ///
@@ -2894,18 +2982,27 @@ doc ///
 	 reflexify
 	 (reflexify, Ideal)
 	 (reflexify, Module)
+	 [reflexify, Strategy]
+	 [reflexify, ReturnMap]
+	 [reflexify, KnownDomain]
 	Headline
 	 calculate the double dual of an ideal or module Hom(Hom(M, R), R)
 	Usage
-	 I2 = reflexify( I1 )
-	 M2 = reflexify( M1 )
+	 reflexify( I1 )
+	 reflexify( M1 )
 	Inputs
 	 I1: Ideal
 	 M1: Module
 	 b: Boolean
+	 Strategy => Symbol
+	   specify a strategy for reflexify
+	 ReturnMap => Boolean
+	   tell reflexify to return a map from the original module to the reflexification
+	 KnownDomain => Boolean
+	   make reflexify more efficient if the ambient ring is a domain
 	Outputs
-	 I2: Ideal
-	 M2: Module
+	 : Ideal
+	 : Module
 	Description
 	 Text
 	  Get the reflexification or double dual (in the case of a normal ring, S2-ification) of an ideal $I$ or module $M$. Recall the double dual is defined to be $Hom(Hom(M, R), R)$. 
@@ -2927,6 +3024,15 @@ doc ///
 	  prune reflexify(I*R^1)
 	  prune reflexify(I^2*R^1)
 	 Text
+	  There is a canonical map from a module $M$ to its reflexification, $Hom(Hom(M, R), R)$.  If reflexify is passed the option {\tt ReturnMap => true}, then instead of returning a module, reflexify returns that map.  This is not necessary for ideals since an ideal is canonically a subsetset of its reflexification.
+	 Example
+ 	  R = QQ[x,y];
+ 	  m = ideal(x,y);
+ 	  M = m*R^1;
+ 	  f = reflexify( M, ReturnMap => true )
+ 	  source f
+ 	  target f
+	 Text
 	  Generally speaking, it is faster to reflexify ideals as opposed to modules.  Consider the following example of a point on an elliptic curve.
 	 Example
 	   R = QQ[x,y,z]/ideal(-y^2*z +x^3 + x^2*z + x*z^2+z^3);
@@ -2934,37 +3040,14 @@ doc ///
 	   J = I^21;
 	   time reflexify(J);
 	   time reflexify(J*R^1);
-	SeeAlso
-	 [reflexify, ReturnMap]
-	 [reflexify, KnownDomain]
-	 [reflexify, Strategy]
-	 isReflexive
-///
-
-doc ///
-	Key
-	 [reflexify, Strategy]
-	Headline
-	 specify a strategy for the reflexification
-	Usage
-	 I2 = reflexify( I1, Strategy=>s )
-	 M2 = reflexify( M1, Strategy=>s )
-	Inputs
-	 I1: Ideal
-	 M1: Module
-	 s: Symbol
-	Outputs
-	 I2: Ideal
-	 M2: Module
-	Description
 	 Text
-	  There are two strategies for computing a reflexification (at least if the module embeds as an ideal).  
+	  Because of this, there are two strategies for computing a reflexification (at least if the module embeds as an ideal).  
 	 Text
 	  {\tt IdealStrategy}.  In the case that $R$ is a domain, and our module is isomorphic to an ideal $I$, then one can compute the reflexification by computing colons.
 	 Text
 	  {\tt ModuleStrategy}.  This computes the reflexification simply by computing $Hom$ twice.
 	 Text
-	  ModuleStrategy is the default strategy for modules, IdealStrategy is the default Strategy for Ideals.  In our experience, {\tt IdealStrategy} is faster on average.  Note that calling ModuleStrategy for Ideals or IdealStrategy for modules creates overhead which can slow things down substantially (since we must embed various modules as ideals).
+	  {\tt ModuleStrategy} is the default strategy for modules, {\tt IdealStrategy} is the default strategy for ideals.  In our experience, {\tt IdealStrategy} is faster on average.  Note that calling {\tt ModuleStrategy} for ideals or {\tt IdealStrategy} for modules creates overhead which can slow things down substantially (since we must embed various modules as ideals).
 	 Example
 	  R = ZZ/13[x,y,z]/ideal(x^3 + y^3-z^11*x*y);
 	  I = ideal(x-4*y, z);
@@ -2974,7 +3057,7 @@ doc ///
  	  J2 = time reflexify( J, Strategy=>ModuleStrategy )
  	  J1 == J2
  	  time reflexify( M, Strategy=>IdealStrategy );
- 	  time reflexify( M, Strategy=>ModuleStrategy );
+ 	  time reflexify( M, Strategy=>ModuleStrategy );	 
 	 Text
 	  However, sometimes {\tt ModuleStrategy} is faster, especially for Monomial ideals.
 	 Example
@@ -2985,58 +3068,9 @@ doc ///
  	  time reflexify( J, Strategy=>IdealStrategy )
  	  time reflexify( J, Strategy=>ModuleStrategy )
  	  time reflexify( M, Strategy=>IdealStrategy );
- 	  time reflexify( M, Strategy=>ModuleStrategy );
-	SeeAlso
-	 reflexify
-	 IdealStrategy
-	 ModuleStrategy
-	 isReflexive
-///
-
-doc ///
-	Key
-	 [reflexify, ReturnMap]
-	Headline
-	 tell reflexify to return a map from the original module to the reflexification
-	Usage
-	 M2 = reflexify( M1, ReturnMap => b )
-	Inputs
-	 I1: Ideal
-	 M1: Module
-	 b: Boolean
-	Outputs
-	 I2: Ideal
-	 M2: Module
-	Description
+ 	  time reflexify( M, Strategy=>ModuleStrategy );	  
 	 Text
-	  There is a canonical map from a module $M$ to its reflexification, $Hom(Hom(M, R), R)$.  This function returns that map.  This is not necessary for ideals since an ideal is canonically a subsetset of its reflexification.
-	 Example
- 	  R = QQ[x,y];
- 	  m = ideal(x,y);
- 	  M = m*R^1;
- 	  f = reflexify( M, ReturnMap => true )
- 	  source f
- 	  target f
-	SeeAlso
-	 reflexify
-	 isReflexive
-///
-
-doc ///
-	Key
-	 [reflexify, KnownDomain]
-	Headline
-	 changes the strategy of reflexify the case when the ring is a normal domain
-	Usage
-	 I2 = reflexify( I1, KnownDomain=>b)
-	Inputs
-	 I1: Ideal
-	 b: Boolean
-	Outputs
-	 I2: Ideal
-	Description
-	 Text
-	  For ideals, if KnownDomain is false (default value is true), then the function will check whether it is a domain.  If it is a domain (or assumed to be a domain), it will reflexify using a strategy which can speed up computation, if not it will compute using a sometimes slower method which is essentially reflexifying it as a module.  See reflexify for an example of the speed difference for ideals compared to modules.
+	  For ideals, if {\tt KnownDomain} is false (default value is {\tt true}), then the function will check whether it is a domain.  If it is a domain (or assumed to be a domain), it will reflexify using a strategy which can speed up computation, if not it will compute using a sometimes slower method which is essentially reflexifying it as a module. 
 	 Text	 
 	  Consider the following example showing the importance of making the correct assumption about the ring being a domain.
 	 Example
@@ -3050,10 +3084,12 @@ doc ///
 	 Text
 	  In the above, when KnownDomain=>true (an incorrect assumption), this function returns the incorrect answer for $I$.
 	SeeAlso
-	 reflexify
 	 isReflexive
-	 divisor
+	 dualize
 ///
+
+
+
 
 
 doc ///
@@ -3061,22 +3097,26 @@ doc ///
 	 dualize
 	 (dualize, Ideal)
 	 (dualize, Module)
+	 [dualize, KnownDomain]
+	 [dualize, Strategy]
 	Headline
 	 finds an ideal or module isomorphic to Hom(M, R)
 	Usage
-	 I2 = dualize( I1, KnownDomain=>b, Strategy=>c)
-	 M2 = dualize( M1, KnownDomain=>b, Strategy=>c)
+	 dualize( I1 )
+	 dualize( M1 )
 	Inputs
 	 I1: Ideal
 	 M1: Module
-	 b: Boolean
-	 c: Symbol
+	 KnownDomain => Boolean
+	  assume the ambient ring is a domain
+	 Strategy => Symbol
+	  specify the strategy of dualize
 	Outputs
-	 I2: Ideal
-	 M2: Ideal
+	 : Ideal
+	 : Module
 	Description
 	 Text
-	  Find the module/ideal isomorphic to the dual of the module/ideal, in other words it computes $Hom_R(M, R)$.  
+	  This computes $Hom_R(M, R)$.  
 	 Example
 	  R = QQ[x,y,z]/ideal(x^2-y*z);
 	  m = ideal(x,y,z);
@@ -3085,54 +3125,6 @@ doc ///
 	  dualize(I)
 	  dualize(I^2)
 	  dualize(I^3)
-	SeeAlso
-	 reflexify
-///
-
-doc ///
-    Key
-     [dualize, KnownDomain]
-    Headline
-     assume R is a domain when computing Hom(M, R) 
-    Usage
-     I2 = dualize( I1, Strategy=>IdealStrategy, KnownDomain=>b)
-     M2 = dualize( M1, Strategy=>IdealStrategy, KnownDomain=>b)
-    Inputs
-     I1: Ideal
-     M1: Module
-     b: Boolean
-    Outputs
-     I2: Ideal
-     M2: Ideal
-    Description
-     Text
-      {\tt KnownDomain} is an option for {\tt IdealStrategy}.  If it is {\tt false} (default is {\tt true}), then the computer will first check whether the ring is a domain, if it is not then it will revert to {\tt ModuleStrategy}.  If {\tt KnownDomain} is set to {\tt true} for a non-domain, then the function can return an incorrect answer.
-     Example
-      R = QQ[x,y]/ideal(x*y);
-      J = ideal(x,y);
-      dualize(J, KnownDomain=>true)
-      dualize(J, KnownDomain=>false)
-    SeeAlso
-     dualize
-     [dualize, Strategy]
-     reflexify
-///
-
-doc ///
-	Key
-	 [dualize, Strategy]
-	Headline
-	 strategies to compute Hom(M, R)
-	Usage
-	 I2 = dualize( I1, Strategy=>c)
-	 M2 = dualize( M1, Strategy=>c)
-	Inputs
-	 I1: Ideal
-	 c: Symbol
-	Outputs
-	 I2: Ideal
-	 M2: Ideal
-	Description
 	 Text
 	  If {\tt Strategy => IdealStrategy}, then dualize assume the module is isomorphic to an ideal, embeds it as an ideal, and computes the dual by forming a colon.  ModuleStrategy simply computes the Hom.  The default Strategy for modules is ModuleStrategy, and the default Strategy for ideals is IdealStrategy.  This is because there is overhead using the opposite strategy (involving embedding modules as ideals).  Frequently {\tt IdealStrategy} is faster, but not always.	Consider first a D4 singularity in characteristic 2.
 	 Example
@@ -3153,10 +3145,15 @@ doc ///
 	  J = I^15;
 	  time dualize(J, Strategy=>IdealStrategy);
 	  time dualize(J, Strategy=>ModuleStrategy);
+	 Text
+	  {\tt KnownDomain} is an option for {\tt dualize}.  If it is {\tt false} (default is {\tt true}), then the computer will first check whether the ring is a domain, if it is not then it will revert to {\tt ModuleStrategy}.  If {\tt KnownDomain} is set to {\tt true} for a non-domain, then the function can return an incorrect answer.
+	 Example
+	  R = QQ[x,y]/ideal(x*y);
+	  J = ideal(x,y);
+	  dualize(J, KnownDomain=>true)
+	  dualize(J, KnownDomain=>false)       
 	SeeAlso
 	 reflexify
-	 isReflexive
-	 divisor
 ///
 
 
@@ -3164,25 +3161,28 @@ doc ///
 	Key
 	 reflexivePower
 	 (reflexivePower, ZZ, Ideal)
+	 [reflexivePower, Strategy]
 	Headline
 	 computes a reflexive power of an ideal in a normal domain
 	Usage
-	 J = reflexivePower( n, I )
+	 reflexivePower( n, I )
 	Inputs
 	 I: Ideal
 	 n: ZZ
+	 Strategy => Symbol
+	  specify the strategy passed to reflexify
 	Outputs
-	 J: Ideal
+	 : Ideal
 	Description
 	 Text
-	  This function returns the $n$'th reflexive power of $I$.  By definition this is the reflexification of $I^n$, or in other words, $Hom(Hom(I^n, R), R)$. 
+	  This function returns the $n$-th reflexive power of $I$.  By definition this is the reflexification of $I^n$, or in other words, $Hom(Hom(I^n, R), R)$. 
 	 Example
 	  R = QQ[x,y,z]/ideal(x^2-y*z);
 	  J = ideal(x,y);
 	  reflexivePower(5, J)
 	  reflexivePower(6, J)
 	 Text
-	  This function is typically much faster than reflexifying $I^n$ however.  We can obtain this speedup because in a normal domain, the reflexification of $I^n$ is the same as the reflexification of the ideal generated by the $n$th powers of the generators of $I$.  Consider the example of a cone over a point on an elliptic curve.
+	  This function is typically much faster than reflexifying $I^n$ however.  We can obtain this speedup, because in a normal domain, the reflexification of $I^n$ is the same as the reflexification of the ideal generated by the $n$-th powers of the generators of $I$.  Consider the example of a cone over a point on an elliptic curve.
 	 Example
 	  R = QQ[x,y,z]/ideal(-y^2*z +x^3 + x^2*z + x*z^2+z^3);
 	  I = ideal(x-z,y-2*z);
@@ -3190,36 +3190,19 @@ doc ///
 	  I20 = I^20;
 	  time J20b = reflexify(I20);
 	  J20a == J20b
+	 Text
+	  This passes the {\tt Strategy} option to a {\tt reflexify} call.  Valid options are {\tt IdealStrategy} and {\tt ModuleStrategy}.
+	 Example
+	  R = QQ[x,y,z]/ideal(-y^2*z +x^3 + x^2*z + x*z^2+z^3);
+	  I = ideal(x-z,y-2*z);
+	  time J1 = reflexivePower(20, I, Strategy=>IdealStrategy);
+	  time J2 = reflexivePower(20, I, Strategy=>ModuleStrategy);
+	  J1 == J2
 	SeeAlso
 	 reflexify
 	 isReflexive
 ///
 
-doc ///
-    Key	 
-     [reflexivePower, Strategy]
-    Headline
-     an option for reflexive power
-    Usage
-     J = reflexivePower( ..., Strategy=>s )
-    Inputs
-     s: Symbol
-    Outputs
-     J: Ideal
-    Description
-     Text
-      This passes the {\tt Strategy} option to a reflexify call.  Valid options are {\tt IdealStrategy} and {\tt ModuleStrategy}.
-     Example
-      R = QQ[x,y,z]/ideal(-y^2*z +x^3 + x^2*z + x*z^2+z^3);
-      I = ideal(x-z,y-2*z);
-      time J1 = reflexivePower(20, I, Strategy=>IdealStrategy);
-      time J2 = reflexivePower(20, I, Strategy=>ModuleStrategy);
-      J1 == J2
-    SeeAlso
-     reflexivePower
-     reflexify
-     isReflexive
-///
 
 
 doc ///
@@ -3228,12 +3211,13 @@ doc ///
 	 ModuleStrategy
 	 NoStrategy
 	Headline
-	 a valid value for the Strategy option in dualize
+	 a valid value for the Strategy option in dualize or reflexify
 	Description
 	 Text
-	  This is a valid input for the {\tt Strategy} option of dualize.
+	  This is a valid input for the {\tt Strategy} option of dualize or reflexify.
 	SeeAlso
 	 dualize
+	 reflexify
 ///
 
 
@@ -3275,7 +3259,7 @@ doc ///
 	 a value for the option Strategy for the pullback method
 	Description
 	 Text
-	  If Strategy=>Primes then the pullback method will pull back each prime individually.
+	  If {\tt Strategy=>Primes} then the pullback method will pull back each prime individually.
 	SeeAlso
 	 pullback
 	 Sheaves
@@ -3313,14 +3297,14 @@ doc ///
  	Headline
  	  whether a ring is a domain
  	Usage
- 	 b = isDomain(R)
+ 	 isDomain(R)
  	Inputs
  	 R: Ring
  	Outputs
- 	 b: Boolean
+ 	 : Boolean
  	Description
  	 Text
- 	  Returns true if {\tt R} is an integral domain, otherwise it returns {\tt false}.  It simply checks whether the zero ideal is prime.
+ 	  This function returns {\tt true} if {\tt R} is an integral domain, otherwise it returns {\tt false}.  It simply checks whether the zero ideal is prime.
  	 Example
  	  R = QQ[x,y,z]/ideal(x^2-y*z)
 	  isDomain(R)
@@ -3333,19 +3317,25 @@ doc ///
 	 isReflexive
 	 (isReflexive, Ideal)
 	 (isReflexive, Module)
+	 [isReflexive, Strategy]
+	 [isReflexive, KnownDomain]
 	Headline
 	 whether an ideal or module is reflexive
 	Usage
-	 b = isReflexive( I1 )
-	 b = isReflexive( M1 )
+	 isReflexive( I1 )
+	 isReflexive( M1 )
 	Inputs
 	 I1: Ideal
 	 M1: Module
+	 Strategy => Symbol
+	   specify a strategy for the internal call to reflexify
+	 KnownDomain => Boolean
+	   assume the ambient ring is a domain for the internal call to reflexify
 	Outputs
-	 b: Boolean
+	 : Boolean
 	Description
 	 Text
-	  This function returns {\tt true} if the module or ideal is reflexive, otherwise it returns {\tt false}.  In other words this checks if $M \cong Hom(Hom(M, R))$.
+	  This function returns {\tt true} if the module or ideal is reflexive, otherwise it returns {\tt false}.  In other words this checks if $M \cong Hom(Hom(M, R))$.  This function calls {\tt reflexify} and passes the options {\tt Strategy} and {\tt KnownDomain} specified in its call.
 	 Example
 	  R = QQ[x,y,z]/ideal(x^2-y*z);
 	  m = ideal(x,y,z);
@@ -3356,49 +3346,33 @@ doc ///
 	  isReflexive(I*R^1)	  
 	SeeAlso
 	 reflexify
+	 Strategy
+	 KnownDomain
 ///
 
-doc ///
-	Key
-	 [isReflexive, Strategy]
-	 [isReflexive, KnownDomain]
-	Headline
-	 options for isReflexive
-	Usage
-	 b = isReflexive( I1, Strategy=>s, KnownDomain=>b1 )
-	 b = isReflexive( M1, Strategy=>s, KnownDomain=>b1 )
-	Inputs
-	 I1: Ideal
-	 M1: Module
-	 s: Symbol
-	 b1: Boolean
-	Outputs
-	 b: Boolean
-	Description
-	 Text
-	  These options are simply passed through to {\tt reflexify} calls.  Valid options for {\tt Strategy} are {\tt IdealStrategy} and {\tt ModuleStrategy}.
-	SeeAlso
-	 reflexify
-	 [reflexify, Strategy]
-	 [reflexify, KnownDomain]
-///
 
 
 doc ///
  	Key 
  	 torsionSubmodule
  	 (torsionSubmodule, Module)
+ 	 [torsionSubmodule, Strategy]
+ 	 [torsionSubmodule, KnownDomain]
  	Headline
- 	  create the torsion submodule of a given module
+ 	  create the torsion submodule of a module
  	Usage
- 	 M2 = torsionSubmodule( M1 )
+ 	 torsionSubmodule( M1 )
  	Inputs
  	 M1: Module
+ 	 Strategy => Symbol
+	   specify a strategy for the internal call to reflexify
+	 KnownDomain => Boolean
+	   assume the ambient ring is a domain for the internal call to reflexify
  	Outputs
- 	 M2: Module
+ 	 : Module
  	Description
  	 Text
- 	  Finds the torsion submodule of a given module.  It does this by computing the kernel of the map from {\tt M1} to its reflexification.
+ 	  Finds the torsion submodule of a module.  It does this by computing the kernel of the map from {\tt M1} to its reflexification.  The options {\tt Strategy} and {\tt KnownDomain} are passed along when the function {\tt reflexify} is called.
  	 Example
  	  R = QQ[x,y];
  	  m = ideal(x,y);
@@ -3406,29 +3380,6 @@ doc ///
  	  prune torsionSubmodule M
  	SeeAlso
  	 reflexify
-///
-
-doc ///
- 	Key 
- 	 [torsionSubmodule, Strategy]
- 	 [torsionSubmodule, KnownDomain]
- 	Headline
- 	  options for torsion submodule
- 	Usage
- 	 M2 = torsionSubmodule( M1, Strategy=>s, KnownDomain=>b )
- 	Inputs
- 	 M1: Module
- 	 s: Symbol
- 	 b: Boolean
- 	Outputs
- 	 M2: Module
- 	Description
- 	 Text
- 	  These options are simply passed on to reflexify calls.  Valid options for {\tt Strategy} are {\tt IdealStrategy} and {\tt ModuleStrategy}.
- 	SeeAlso
- 	 reflexify
-	 [reflexify, Strategy]
-	 [reflexify, KnownDomain]
 ///
 
 
@@ -3453,10 +3404,19 @@ doc ///
  	Inputs
  	 M: Module
  	 R: Ring
- 	 n: ZZ
+ 	 MTries => ZZ
+ 	   how many times random attempts to embed the module should be attempted if the first attempt fails
+ 	 IsGraded => Boolean
+ 	   specify that the module is graded and instruct the function to return the degree shift of the embedding
+ 	 ReturnMap => Boolean
+ 	   specify that the function should also return a map from the module to R^1, identifying the embedding
+ 	 Section => RingElement
+ 	   used to specify that the function will keep track of a certain element
  	Outputs
  	 I: Ideal
+ 	   the module embedded as an ideal
  	 L: List
+ 	   if IsGraded is true, then this function returns the degree shift of the embedding as a second entry in a list.  Further if ReturnMap is true, then a map from the module to the ring is also returned as another entry in this list.  Finally, if a matrix defining is passed to the function, then the first entry in the list is this ring element. 
  	Description
  	 Text
  	  Tries to embed the module $M$ as an ideal in $R$.  It will make several automatic tries followed by {\tt MTries => n} attempts (the default {\tt n} value is 10).  Parts of this function were based on code originally written in the Macaulay2 Divisor tutorial and also based on code by Mordechai Katzman, see the {\tt canonicalIdeal} function in http://katzman.staff.shef.ac.uk/FSplitting/ParameterTestIdeals.m2
@@ -3479,7 +3439,7 @@ doc ///
  	  M = R^{-3};
  	  embedAsIdeal(M, IsGraded=>true)
  	 Text
- 	  Next consider the {\tt ReturnMap} option.  What this does is also return the map from {\tt M} to {\tt R^1} of which the map is based upon.  Note that if both IsGraded and ReturnMap are enabled, then the map comes after the degree.
+ 	  Next consider the {\tt ReturnMap} option.  What this does is also return the map from {\tt M} to {\tt R^1} of which the map is based upon.  Note that if both {\tt IsGraded} and {\tt ReturnMap} are enabled, then the map comes after the degree.
  	 Example
  	  R = QQ[x,y];
  	  M = ideal(x^2, x*y)*R^1;
@@ -3487,7 +3447,7 @@ doc ///
  	  target L#1
  	  source L#1
  	 Text
- 	  Alternately, instead of passing an Ideal you can pass {\tt embedAsIdeal} a {\tt Matrix}, where the source is a free module of rank one and the target is the module you wish to embed.  (This can also be accomplished by passing the same matrix via the Section option).  In this case, the first output will be a ring element corresponding to the section.
+ 	  Alternately, instead of passing an ideal you can pass {\tt embedAsIdeal} a {\tt Matrix}, where the source is a free module of rank one and the target is the module you wish to embed.  (This can also be accomplished by passing the same matrix via the Section option).  In this case, the first output will be a ring element corresponding to the section.
  	 Example
  	  R = QQ[x,y];
  	  M = (ideal(x^2,x*y))*R^1;
@@ -3504,16 +3464,17 @@ doc ///
     Headline
      pullback a divisor under a ring map
     Usage
-     D2 = pullback(f, D1, Strategy=>b)
+     pullback(f, D1)
     Inputs
      f: RingMap
      D1: RWeilDivisor
-     b: Symbol
+     Strategy => Symbol
+       specify the strategy used by pullback
     Outputs
-     D2: RWeilDivisor
+     : RWeilDivisor
     Description
      Text
-      This function computes the pullback of a divisor under a ring map.  There are two potential strategies, Primes and Sheaves (Primes is the default strategy).  The Primes strategy pulls back each prime individually.  It can be faster but it only works for ring maps that are either finite or flat (unless each prime is also Cartier).  For more general maps, it can give incorrect results.  The other option for Strategy is Sheaves.  .  This can be slower especially for divisors with large coefficients, but it will successfully pull back any Cartier divisor.  Sheaves also requires the divisor passed to be a WeilDivisor.
+      This function computes the pullback of a divisor under a ring map.  There are two potential strategies, {\tt Primes} and {\tt Sheaves} ({\tt Primes} is the default strategy).  The {\tt Primes} strategy pulls back each prime individually.  It can be faster, but it only works for ring maps that are either finite or flat (unless each prime is also Cartier).  For more general maps, it can give incorrect results.  The other option for {\tt Strategy} is {\tt Sheaves}.  This can be slower, especially for divisors with large coefficients, but it will successfully pull back any Cartier divisor.  The option {\tt Sheaves} also requires the divisor passed to be a {\tt WeilDivisor}.
      Example
       R = QQ[x,y,z,w]/ideal(z^2-y*w,y*z-x*w,y^2-x*z);
       T = QQ[a,b];
@@ -3545,17 +3506,17 @@ doc ///
 	Headline
 	 find an element of a specified degree
 	Usage
-	 x = findElementOfDegree( n, R )
-	 x = findElementOfDegree( l, R )
+	 findElementOfDegree( n, R )
+	 findElementOfDegree( l, R )
 	Inputs
 	 R: Ring
 	 n: ZZ
 	 l: BasicList
 	Outputs
-	 x: BasicList
+	 : BasicList
 	Description
 	 Text
-	  Given a singly graded ring and an integer $n$, this function tries to find an element of degree $n$.  If successful, it returns a list with two elements {$a,b$} such that $a/b$ has degree $n$.  If it is impossible, it gives an error.  If instead of an integer, you pass it a basic list corresponding to a multi-degree, it still tries to find $a, b$ in R such that $a/b$ has the given multidegree.  It only works on rings with flattened variables (ie, no Rees algebras for now).
+	  Given a singly graded ring and an integer $n$, this function tries to find an element of degree $n$.  If successful, it returns a list with two elements {$a,b$} such that $a/b$ has degree $n$.  If it is impossible, it gives an error.  If instead of an integer, you pass it a basic list corresponding to a multi-degree, it still tries to find $a, b$ in R such that $a/b$ has the provided multidegree.  It only works on rings with flattened variables (ie, no Rees algebras).
 	  First we do an example without multidegrees.
 	 Example
 	  R = ZZ/7[x,y,Degrees=>{3, 5}];
@@ -3578,18 +3539,20 @@ doc ///
 	 getLinearDiophantineSolution
 	 (getLinearDiophantineSolution, BasicList, BasicList)
 	 (getLinearDiophantineSolution, BasicList, Matrix)
-	 [getLinearDiophantineSolution, Unsafe]
+	 [getLinearDiophantineSolution, Safe]
 	Headline
 	 find a solution of the linear Diophantine equation Ax = b
 	Usage
-	 x = getLinearDiophantineSolution(l, L)
-	 x = getLinearDiophantineSolution(l, A)
+	 getLinearDiophantineSolution(l, L)
+	 getLinearDiophantineSolution(l, A)
 	Inputs
 	 L: BasicList
 	 l: BasicList
 	 A: Matrix
+	 Safe => Boolean
+	   turns on or off routine checks in the function 
 	Outputs
-	 x: List
+	 : List
 	Description
 	 Text
 	  Given a linear Diophantine equation $Ax = b$ (i.e. an integer matrix with target vector also integer), we want to find a solution of this equation.
@@ -3601,11 +3564,11 @@ doc ///
 	   sol = getLinearDiophantineSolution(b, colList )
 	   sum apply(#sol, i->(sol#i)*(colList#i) )
 	 Text
-	  When the context is clear, set the Unsafe option to true in order to avoid routine checks.
+	  When the context is clear, set the {\tt Safe} option to {\tt false} in order to avoid routine checks.
 	 Example
 		A = matrix{ {1, 0, 0, 0, 0}, {0, 2, 0, 0, 0}, {3, 4, 5, 6, 8} }
 	   	b = {1, 2, 3}
-	   	getLinearDiophantineSolution(b, A, Unsafe => true)
+	   	getLinearDiophantineSolution(b, A, Safe => false)
 	SeeAlso
 	 findElementOfDegree
 ///
@@ -3614,22 +3577,24 @@ doc ///
    	Key
    	 applyToCoefficients
    	 (applyToCoefficients, BasicDivisor, Function)
-   	 [applyToCoefficients, CoeffType]
-   	 [applyToCoefficients, Unsafe]
+   	 [applyToCoefficients, CoefficientType]
+   	 [applyToCoefficients, Safe]
    	Headline
    	 apply a function to the coefficients of a divisor
    	Usage
-   	 D = applyToCoefficients(D1, h, CoeffType=>nn, Unsafe=>b)
+   	 applyToCoefficients(D1, h)
    	Inputs
    	 D1: BasicDivisor
    	 h: Function
-   	 nn: Number
-   	 b: Boolean
+   	 CoefficientType => Number
+   	   specifies what the coefficients of the output divisor should be
+   	 Safe => Boolean
+   	   specifies that the system checks whether the output is a valid divisor
    	Outputs
-   	 D: WeilDivisor
+   	 : WeilDivisor
    	Description
    	 Text
-	  applyToCoefficients applies the function {\tt h} to the coefficients of the divisor of {\tt D1}.  Specifying the {\tt CoeffType=>ZZ}, {\tt CoeffType=>QQ}, {\tt CoeffType=>RR}, will force the output divisor to be of a certain form ({\tt WeilDivisor, QWeilDivisor, RWeilDivisor} respectively), otherwise the class of the output {\tt D} is the same as the class of the input {\tt D1} ({\tt WeilDivisor, QWeilDivisor, RWeilDivisor, BasicDivisor}).  If {\tt Unsafe} is set to false (the default is true), then the function will check to make sure the output is really a valid divisor.  
+	  applyToCoefficients applies the function {\tt h} to the coefficients of the divisor of {\tt D1}.  Specifying the {\tt CoefficientType=>ZZ}, {\tt CoefficientType=>QQ}, {\tt CoefficientType=>RR}, will force the returned divisor to be of a certain form ({\tt WeilDivisor, QWeilDivisor, RWeilDivisor} respectively), otherwise the class of the output {\tt D} is the same as the class of the input {\tt D1} ({\tt WeilDivisor, QWeilDivisor, RWeilDivisor, BasicDivisor}).  If {\tt Safe} is set to {\tt true} (the default is {\tt false}), then the function will check to make sure the output is a valid divisor.  
 	 Example
 	  R = QQ[x, y, z];
 	  D = divisor(x*y^2/z)
@@ -3649,12 +3614,13 @@ doc ///
 	Headline
 	 compute a canonical divisor of a ring
 	Usage
-	 D = canonicalDivisor( R, IsGraded=>b )
+	 canonicalDivisor( R )
 	Inputs
 	 R: Ring
-	 b: Boolean
+	 IsGraded => Boolean
+	   specify that the returned canonical divisor should reflect the grading of the ring
 	Outputs
-	 D: WeilDivisor
+	 : WeilDivisor
 	Description
 	 Text
 	  Compute the canonical divisor of a ring (warning, the canonical divisor is not unique, but only unique up to linear equivalence).  If the {\tt IsGraded} option is set to {\tt true} (default {\tt false}), then it will return a canonical divisor for the $Proj$ of $R$, otherwise it will return one for only the $Spec$.  The graded version only works reliably for graded rings over a field (for instance, if you have a Rees algebra you will need to flatten the variables).
@@ -3663,31 +3629,34 @@ doc ///
 	  canonicalDivisor(R)
 	  canonicalDivisor(R, IsGraded=>true)
 	 Text
-	  Note the IsGraded option makes a difference.  Consider now a non-Gorenstein singularity.
+	  Note the {\tt IsGraded} option makes a difference.  Consider now a non-Gorenstein singularity.
 	 Example
 	  R = QQ[a,b,c,d]/ideal(c^2-b*d, b*c-a*d, b^2-a*c);
 	  canonicalDivisor(R)
 	Caveat
 	 Text
-	  This function assumes that the {\tt coefficientRing} of the given ring is a field (or at least Gorenstein).  If the {\tt coefficientRing} is a more general ring, this function will  produce a relative canonical divisor of the given ring over its {\tt coefficientRing}.
+	  This function assumes that the {\tt coefficientRing} of the ambient ring is a field (or at least Gorenstein).  If the {\tt coefficientRing} is a more general ring, this function will  produce a relative canonical divisor of the ring over its {\tt coefficientRing}.
 ///
 
 doc /// 
 	Key
 	 ramificationDivisor
 	 (ramificationDivisor, RingMap)
+	 [ramificationDivisor, IsGraded]
 	Headline
-	 compute the ramification divisor of a finite inclusion of normal domains
+	 compute the ramification divisor of a finite inclusion of normal domains or a blowup over a smooth base
 	Usage
-	 D = ramficationDivisor( f )
+	 ramficationDivisor( f )
 	Inputs
 	 f: RingMap
 	 b: Boolean
+	 IsGraded => Boolean
+	   specify true to compute the relative canonical divisor of blowup over a smooth base
 	Outputs
-	 D: WeilDivisor
+	 : WeilDivisor
 	Description
 	 Text
-	  Compute the ramification divisor corresponding the finite inclusion of normal domains.  If you pass it a non-finite map, it will compute the divisorial part of the locus where the map is not smooth.  If {\tt IsGraded} is set to false (the default value), then the coefficient ring of both the source and target of $f$ must be equal.  
+	  Compute the ramification (relevative canonical) divisor corresponding the finite inclusion of normal domains.  If you pass it a non-finite map, it will compute the divisorial part of the locus where the map is not smooth.  If {\tt IsGraded} is set to {\tt false} (the default value), then the coefficient ring of both the source and target of $f$ must be equal.  
 	 Example
 	  R = QQ[x];
 	  S = QQ[y];
@@ -3709,54 +3678,36 @@ doc ///
 	  S = ZZ/2[x];
 	  f = map(S, R, {x^2*(1+x)});
 	  ramificationDivisor(f)
-	SeeAlso
-	 [ramificationDivisor, IsGraded]
-///
-
-doc /// 
-	Key
-	 [ramificationDivisor, IsGraded]
-	Headline
-	 compute the relative canonical divisor of blowup over a smooth base
-	Usage
-	 D = ramficationDivisor( ..., IsGraded=>b)
-	Inputs
-	 f: RingMap
-	 b: Boolean
-	Outputs
-	 D: WeilDivisor
-	Description
 	 Text
-	  The behavior of {\tt IsGraded=>false} is documented in {\tt ramificationDivisor}.  If the option {\tt IsGraded} is set to true, then the function will assume that the source of {\tt f} is affine, and the target is projective over the source.  In this case, the coefficient ring of the target must be equal to the source ring.  This can be useful when computing things like relative canonical divisors over regular bases (it may not give the expected answer over non-regular bases).  For example, this is useful if you want to compute the relative canonical divisor of a blowup.
+	  If the option {\tt IsGraded} is set to {\tt true}, then the function will assume that the source of {\tt f} is affine, and the target is projective over the source.  In this case, the coefficient ring of the target must be equal to the source ring.  This can be useful when computing things like relative canonical divisors over regular bases (it may not give the expected answer over non-regular bases).  For example, this is useful if you want to compute the relative canonical divisor of a blowup.
 	 Example
 	  R = QQ[x,y];
 	  S = reesAlgebra(ideal(x,y^2));
 	  f = map(S, R);
 	  ramificationDivisor(f,IsGraded=>true)
 	SeeAlso
-	 ramificationDivisor
+	 canonicalDivisor
 ///
-
 
 doc ///
 	Key
 	 isWeilDivisor
 	 (isWeilDivisor, RWeilDivisor)
 	Headline
-		whether a rational/real divisor is a really Weil divisor
+		whether a rational/real divisor is in actuality a Weil divisor
 	Usage
-		b = isWeilDivisor( D2 )
+		isWeilDivisor( D2 )
 	Inputs
 		D2: RWeilDivisor
 	Outputs
-		b: Boolean
+		: Boolean
 	Description
 	 Text
 	  Check if a rational/real divisor is a Weil divisor
 	 Example
 	  R = QQ[x, y, z];
-	  D1 = divisor({1/1, 2/2, -6/3}, {ideal(x), ideal(y), ideal(z)}, CoeffType=>QQ)
-	  D2 = divisor({1/2, 3/4, 5/6}, {ideal(y), ideal(z), ideal(x)}, CoeffType=>QQ)
+	  D1 = divisor({1/1, 2/2, -6/3}, {ideal(x), ideal(y), ideal(z)}, CoefficientType=>QQ)
+	  D2 = divisor({1/2, 3/4, 5/6}, {ideal(y), ideal(z), ideal(x)}, CoefficientType=>QQ)
 	  isWeilDivisor( D1 )
 	  isWeilDivisor( D2 )
 	SeeAlso
@@ -3770,14 +3721,14 @@ doc ///
 	Headline
 		whether a divisor is effective
 	Usage
-		b = isEffective( D1 )
+		isEffective( D1 )
 	Inputs
 		D1: WeilDivisor
 	Outputs
-		b: Boolean
+		: Boolean
 	Description
 	 Text
-	  Returns {\tt true} if the divisor is effective (all coefficients nonnegative), otherwise it returns {\tt false}.
+	  This function returns {\tt true} if the divisor is effective (all coefficients nonnegative), otherwise it returns {\tt false}.
 	 Example
 	  R = ZZ/31[x, y, u, v] / ideal(x * y - u * v);
 	  D1 = divisor({1, -2, 3, -4}, {ideal(x, u), ideal(x, v), ideal(y, u), ideal(y, v)})
@@ -3792,14 +3743,14 @@ doc ///
 	Headline
 	 whether a divisor is prime
 	Usage
-		b = isPrime( D1 )
+		isPrime( D1 )
 	Inputs
 		D1: BasicDivisor
 	Outputs
-		b: Boolean
+		: Boolean
 	Description
 	 Text
-	  Returns {\tt true} if the divisor is prime (with coefficient 1), otherwise it returns {\tt false}.
+	  This function returns {\tt true} if the divisor is prime (with coefficient 1), otherwise it returns {\tt false}.
 	 Example
 	  R = QQ[x, y];
 	  D1 = divisor(x^2 * y)
@@ -3817,14 +3768,14 @@ doc ///
 	Headline
 	 whether a divisor is reduced
 	Usage
-		b = isReduced( D1 )
+		isReduced( D1 )
 	Inputs
 		D1: WeilDivisor
 	Outputs
-		b: Boolean
+		: Boolean
 	Description
 	 Text
-	  Returns {\tt true} if the divisor is reduced (all coefficients equal to 1), otherwise it returns {\tt false}.
+	  This function returns {\tt true} if the divisor is reduced (all coefficients equal to 1), otherwise it returns {\tt false}.
 	 Example
 	  R = QQ[x, y, z];
 	  D1 = divisor(x^2 * y^3 * z)
@@ -3841,27 +3792,29 @@ doc ///
   	Headline
   	 whether a Weil divisor is globally principal
   	Usage
-  	 flag = isPrincipal( D, IsGraded => b )
+  	 isPrincipal( D, IsGraded => b )
   	Inputs
   	 D: WeilDivisor
 	 b: Boolean
   	Outputs
-  	 flag: Boolean
+  	 : Boolean
   	Description
   	 Text
-  	  Returns true if the Weil divisor {\tt D} is principal, otherwise false.  If {\tt IsGraded} is set to true, then this checks whether the divisor corresponds to a principal divisor on the Proj of the ambient ring.  Note that this function may return a false negative if the defining equations of the divisor are not homogeneous (it warns the user if this occurs).
+  	  This function returns {\tt true} if the Weil divisor {\tt D} is principal, otherwise {\tt false}.  If {\tt IsGraded} is set to {\tt true}, then this checks whether the divisor corresponds to a principal divisor on the Proj of the ambient ring.  Note that this function may return a false negative if the defining equations of the divisor are not homogeneous (it warns the user if this occurs).
   	 Example
   	  R = QQ[x, y, z];
   	  D = divisor(x);
   	  isPrincipal(D, IsGraded => true)
   	 Text  
-  	  By default, IsGraded is set to false.  Regardless of the format, the check is done by determining whether or not $O(D)$ is free.  
+  	  By default, {\tt IsGraded} is set to {\tt false}.  Regardless of the format, the check is done by determining whether or not $O(D)$ is free.  
   	 Example
   	  R = QQ[x, y, z]/ideal(x^2 - y*z);
   	  D = divisor(x);
   	  E = divisor(ideal(x,z));
   	  isPrincipal( D )
   	  isPrincipal( E )
+  	 Text
+  	  The output value of this function is stored in the divisor's cache with the value of the last {\tt IsGraded} option.  If you change the {\tt IsGraded} option, the value will be recomputed.
   	SeeAlso
   	 (symbol SPACE, OO, RWeilDivisor)
 ///
@@ -3874,12 +3827,13 @@ doc ///
 	Headline
 	 whether a Weil divisor is Cartier
 	Usage
-	 flag = isCartier( D, IsGraded => b )
+	 isCartier( D )
 	Inputs
 	 D: WeilDivisor
-	 b: Boolean
+	 IsGraded => Boolean
+	   set to true to assume that we are doing this check on a projective variety
 	Outputs
-	 flag: Boolean
+	 : Boolean
 	Description
 	 Text
 	  Check if a Weil divisor is Cartier.  For example, the following divisor is not Cartier
@@ -3909,6 +3863,8 @@ doc ///
 	  R = QQ[x, y, z] / ideal(x * y - z^2);
 	  D = divisor({1, 2}, {ideal(x, z), ideal(y, z)})
 	  isCartier(D, IsGraded => true)
+	 Text	  
+	  The output value of this function is stored in the divisor's cache with the value of the last {\tt IsGraded} option.  If you change the {\tt IsGraded} option, the value will be recomputed.
 	SeeAlso
 	 (symbol SPACE, OO, RWeilDivisor)
 	 isQCartier
@@ -3922,15 +3878,16 @@ doc ///
 	Headline
 	 the non-Cartier locus of a Weil divisor
 	Usage
-	 J = nonCartierLocus( D, IsGraded=>b)
+	 nonCartierLocus( D, IsGraded=>b)
 	Inputs
 	 D: WeilDivisor
-	 b: Boolean
+	 IsGraded => Boolean
+	   specify that we are computing this locus on a projective varietys
 	Outputs
-	 J: Ideal
+	 : Ideal
 	Description
 	 Text
-	  Returns an ideal which vanishes on the locus where {\tt D} is not Cartier.  
+	  This function returns an ideal which vanishes on the locus where {\tt D} is not Cartier.  
 	 Example
 	  R = QQ[x, y, u, v]/ideal(x * y  - u * v);
 	  D = divisor({1, -3, -5, 8}, {ideal(x, u), ideal(y, v), ideal(x, v), ideal(y, u)})
@@ -3941,6 +3898,8 @@ doc ///
 	  R = QQ[x, y, u, v]/ideal(x * y  - u * v);
 	  D = divisor({1, -3, -5, 8}, {ideal(x, u), ideal(y, v), ideal(x, v), ideal(y, u)})
 	  nonCartierLocus( D, IsGraded => true )
+	 Text
+	  The output value of this function is stored in the divisor's cache with the value of the last {\tt IsGraded} option.  If you change the {\tt IsGraded} option, the value will be recomputed.
 	SeeAlso
 	 isCartier
 	 isQCartier
@@ -3954,16 +3913,17 @@ doc ///
  	Headline
  	 whether two Weil divisors are linearly equivalent
  	Usage
- 	 flag = isLinearEquivalent(D1, D2, IsGraded=>b)
+ 	 flag = isLinearEquivalent(D1, D2)
  	Inputs
  	 D1: WeilDivisor
  	 D2: WeilDivisor
- 	 b: Boolean
+ 	 IsGraded => Boolean
+ 	   specify that we are doing this computation on a projective algebraic variety
  	Outputs
  	 flag: Boolean
  	Description
  	 Text
- 	  Given two Weil divisors, this method checks if they are linearly equivalent or not.  
+ 	  Given two Weil divisors, this method checks whether they are linearly equivalent.  
  	 Example
  	  R = QQ[x, y, z]/ ideal(x * y - z^2);
  	  D1 = divisor({3, 8}, {ideal(x, z), ideal(y, z)})
@@ -3990,28 +3950,29 @@ doc ///
  	Headline
  	 whether m times a divisor is Cartier for any m from 1 to a fixed positive integer n1. 
  	Usage
- 	 b = isQCartier(n1, D1, IsGraded=>b)
- 	 b = isQCartier(n1, D2, IsGraded=>b)
+ 	 isQCartier(n1, D1 )
+ 	 isQCartier(n1, D2 )
  	Inputs
  	 D1: WeilDivisor
  	 D2: QWeilDivisor
  	 n1: ZZ
- 	 b: Boolean
+ 	 IsGraded => Boolean
+ 	   specify that we should do this computation on a projective algebraic variety
  	Outputs
  	 b: Boolean
  	Description
  	 Text
- 	  Check whether $m$ times a Weil or Q-divisor $D$ is Cartier for each $m$ from {\tt 1} to a fixed positive integer {\tt n1} (if the divisor is a {\tt QWeilDivisor}, it can search slightly higher than n1).  If {\tt m * D1} is Cartier, it returns m.  If it fails to find an m, it returns 0.  
+ 	  Check whether $m$ times a Weil or Q-divisor $D$ is Cartier for each $m$ from {\tt 1} to a fixed positive integer {\tt n1} (if the divisor is a {\tt QWeilDivisor}, it can search slightly higher than n1).  If {\tt m * D1} is Cartier, it returns {\tt m}.  If it fails to find an {\tt m}, it returns {\tt 0}.  
  	 Example
  	  R = QQ[x, y, z] / ideal(x * y - z^2 );
  	  D1 = divisor({1, 2}, {ideal(x, z), ideal(y, z)})
- 	  D2 = divisor({1/2, 3/4}, {ideal(y, z), ideal(x, z)}, CoeffType => QQ)
+ 	  D2 = divisor({1/2, 3/4}, {ideal(y, z), ideal(x, z)}, CoefficientType => QQ)
  	  isQCartier(10, D1)
  	  isQCartier(10, D2)
  	 Example
  	  R = QQ[x, y, u, v] / ideal(x * y - u * v);
  	  D1 = divisor({1, 2}, {ideal(x, u), ideal(y, v)})
- 	  D2 = divisor({1/2, -3/4}, {ideal(y, u), ideal(x, v)}, CoeffType => QQ)
+ 	  D2 = divisor({1/2, -3/4}, {ideal(y, u), ideal(x, v)}, CoefficientType => QQ)
  	  isQCartier(10, D1)
  	  isQCartier(10, D2)
  	 Text
@@ -4019,9 +3980,11 @@ doc ///
  	 Example
  	  R = QQ[x, y, z] / ideal(x * y - z^2 );
  	  D1 = divisor({1, 2}, {ideal(x, z), ideal(y, z)})
- 	  D2 = divisor({1/2, 3/4}, {ideal(y, z), ideal(x, z)}, CoeffType => QQ)
+ 	  D2 = divisor({1/2, 3/4}, {ideal(y, z), ideal(x, z)}, CoefficientType => QQ)
  	  isQCartier(10, D1, IsGraded => true)
  	  isQCartier(10, D2, IsGraded => true) 
+ 	 Text
+ 	  The output value of this function is stored in the divisor's cache with the value of the last {\tt IsGraded} option.  If you change the {\tt IsGraded} option, the value will be recomputed.
  	SeeAlso
  	 isCartier
 ///
@@ -4029,36 +3992,44 @@ doc ///
 doc ///
    	Key
    	 isQLinearEquivalent
-   	 (isQLinearEquivalent, QWeilDivisor, QWeilDivisor)
+   	 (isQLinearEquivalent, ZZ, QWeilDivisor, QWeilDivisor)
    	 [isQLinearEquivalent, IsGraded]
    	Headline
-   	 whether two rational divisors are linearly equivalent
+   	 whether two Q-divisors are linearly equivalent
    	Usage
-   	 flag = isQLinearEquivalent(D1, D2, IsGraded=>b)
+   	 isQLinearEquivalent(n, D1, D2)
    	Inputs
+   	 n: ZZ
    	 D1: QWeilDivisor
    	 D2: QWeilDivisor
-   	 b: Boolean
+   	 IsGraded => Boolean
+   	   specify that we should do this computation on a projective algebraic variety
    	Outputs
-   	 flag: Boolean
+   	 : Boolean
    	Description
    	 Text
-   	  Given two rational divisors, this method returns {\tt true} if they linearly equivalent after clearing denominators.  Otherwise it returns {\tt false}.  It does not check if a large enough multiple makes them linearly equivalent.
+   	  Given two rational divisors, this method returns {\tt true} if they linearly equivalent after clearing denominators or if some further multiple up to {\tt n} makes them linearly equivalent.  Otherwise it returns {\tt false}.  
    	 Example
    	  R = QQ[x, y, z] / ideal(x * y - z^2);
-   	  D = divisor({1/2, 3/4}, {ideal(x, z), ideal(y, z)}, CoeffType => QQ)
-   	  E = divisor({3/4, 5/2}, {ideal(y, z), ideal(x, z)}, CoeffType => QQ)
-   	  isQLinearEquivalent(D, E)
+   	  D = divisor({1/2, 3/4}, {ideal(x, z), ideal(y, z)}, CoefficientType => QQ)
+   	  E = divisor({3/4, 5/2}, {ideal(y, z), ideal(x, z)}, CoefficientType => QQ)
+   	  isQLinearEquivalent(10, D, E)
    	 Text
-   	  In the above ring, every pair of divisors is Q-linearly equivalent because the Weil divisor class group is isomorphic to Z/2.
+   	  In the above ring, every pair of divisors is Q-linearly equivalent because the Weil divisor class group is isomorphic to Z/2.  However, if we don't set {\tt n} high enough, the function will return {\tt false}.  
+   	 Example
+   	  R = QQ[x,y,z] / ideal(x * y - z^2);
+   	  D = divisor(x);
+   	  E = divisor(ideal(x,z));
+   	  isQLinearEquivalent(1, D, E)
+   	  isQLinearEquivalent(3, D, E) 
    	 Text
    	  If {\tt IsGraded=>true} (the default is {\tt false}), then it treats the divisors as if they are divisors on the $Proj$ of their ambient ring.
    	 Example
    	  R = QQ[x, y, z] / ideal(x * y - z^2);
-   	  D = divisor({1/2, 3/4}, {ideal(x, z), ideal(y, z)}, CoeffType => QQ)
-   	  E = divisor({3/2, -1/4}, {ideal(y, z), ideal(x, z)}, CoeffType => QQ)
-   	  isQLinearEquivalent(D, E, IsGraded => true)
-   	  isQLinearEquivalent(3*D, E, IsGraded => true)
+   	  D = divisor({1/2, 3/4}, {ideal(x, z), ideal(y, z)}, CoefficientType => QQ)
+   	  E = divisor({3/2, -1/4}, {ideal(y, z), ideal(x, z)}, CoefficientType => QQ)
+   	  isQLinearEquivalent(10, D, E, IsGraded => true)
+   	  isQLinearEquivalent(10, 3*D, E, IsGraded => true)
    	 Text
    	SeeAlso
    	 (symbol SPACE, OO, RWeilDivisor)
@@ -4071,14 +4042,14 @@ doc ///
    	Headline
    	 whether the divisor is graded (homogeneous)
    	Usage
-   	 flag = isHomogeneous(D)
+   	 isHomogeneous(D)
    	Inputs
    	 D: BasicDivisor
    	Outputs
-   	 flag: Boolean
+   	 : Boolean
    	Description
    	 Text
-   	  Returns {\tt true} if the divisor is graded (homogeneous), otherwise it returns {\tt false}.
+   	  This function returns {\tt true} if the divisor is graded (homogeneous), otherwise it returns {\tt false}.
    	 Example
    	  R = QQ[x, y, z];
    	  D = divisor({1, 2, 3}, {ideal(x * y - z^2), ideal(y * z - x^2), ideal(x * z - y^2)})
@@ -4089,23 +4060,36 @@ doc ///
    	  isHomogeneous( D )
 ///
 
+doc ///
+    Key
+     ideals
+    Headline
+     a symbol used as a key within the divisor cache
+    Description
+     Text
+      Each divisor has a cache (a {\tt CacheTable}).  One of the keys of this cache is always {\tt (symbol ideals)}.  This points to a {\tt MutableHashTable} whose keys are lists of elements in a Groebner basis and which themselves point to how the ideal should be displayed.  Note the {\tt trim} command trims these ideals.
+    SeeAlso
+     (trim, BasicDivisor)
+///
+
 doc /// 
    	Key
    	 isSmooth
    	 (isSmooth, Ideal)
    	 [isSmooth, IsGraded]
    	Headline
-   	 whether R mod the given ideal is regular
+   	 whether R mod the ideal is smooth
    	Usage
-   	 flag = isSmooth(I, IsGraded=>b)
+   	 isSmooth( I )
    	Inputs
    	 I: Ideal
-   	 b: Boolean
+   	 IsGraded => Boolean
+   	   specify that we should do this computation on a projective algebraic variety
    	Outputs
    	 flag: Boolean
    	Description
    	 Text
-   	  Returns {\tt true} if $R/I$ is regular where $R$ is the ambient ring of $I$, otherwise it sets to {\tt false}.  
+   	  This function returns {\tt true} if $R/I$ is regular where $R$ is the ambient ring of $I$, otherwise it sets to {\tt false}.  
    	 Example
    	  R = QQ[x, y, z];
    	  I = ideal(x * y - z^2 )
@@ -4140,15 +4124,16 @@ doc ///
    	Headline
    	 whether the divisor is simple normal crossings
    	Usage
-   	 flag = isSNC(D, IsGraded=>b)
+   	 isSNC( D )
    	Inputs
    	 D: BasicDivisor
-   	 b: Boolean
+   	 IsGraded => Boolean
+   	   specify that we should do this computation on a projective algebraic variety
    	Outputs
-   	 flag: Boolean
+   	 : Boolean
    	Description
    	 Text
-   	  Returns {\tt true} if the divisor is simple normal crossings, this includes checking that the ambient ring is regular.
+   	  This function returns {\tt true} if the divisor is simple normal crossings, this includes checking that the ambient ring is regular.
    	 Example
    	  R = QQ[x, y, z] / ideal(x * y - z^2 );
    	  D = divisor({1, -2}, {ideal(x, z), ideal(y, z)})
@@ -4162,7 +4147,7 @@ doc ///
    	  D = divisor(x*y*(x+1))
    	  isSNC( D )
    	 Text 
-   	  If {\tt IsGraded} is set to {\tt true} (default {\tt false}), then the divisor is treated as if it is on the $Proj$ of the ambient ring.  In particular, non-SNC behavior at the origin in ignored.  
+   	  If {\tt IsGraded} is set to {\tt true} (default {\tt false}), then the divisor is treated as if it is on the $Proj$ of the ambient ring.  In particular, non-SNC behavior at the origin is ignored.  
    	 Example
    	  R = QQ[x, y, z] / ideal(x * y - z^2 );
    	  D = divisor({1, -2}, {ideal(x, z), ideal(y, z)})
@@ -4175,6 +4160,8 @@ doc ///
    	  R = QQ[x,y,z];
    	  D = divisor(x*y*(x+y))
    	  isSNC( D, IsGraded => true)
+   	 Text 
+   	  The output value of this function is stored in the divisor's cache with the value of the last {\tt IsGraded} option.  If you change the {\tt IsGraded} option, the value will be recomputed.   	  
 ///
 
 doc ///
@@ -4184,14 +4171,14 @@ doc ///
    	Headline
    	 whether the divisor is the zero divisor
    	Usage
-   	 flag = isZeroDiviosr(D)
+   	 isZeroDivisor(D)
    	Inputs
    	 D: BasicDivisor
    	Outputs
-   	 flag: Boolean
+   	 : Boolean
    	Description
    	 Text
-   	  Returns {\tt true} if the divisor is zero, otherwise it returns {\tt false}.
+   	  This function returns {\tt true} if the divisor is zero, otherwise it returns {\tt false}.
    	 Example
    	  R = QQ[x, y, z];
    	  D = divisor({1, 2, -3, 4}, {ideal(x), ideal(y), ideal(z), ideal(y)}); 
@@ -4207,16 +4194,16 @@ doc ///
    	 zeroDivisor
    	 (zeroDivisor, Ring)
    	Headline
-   	 constructs the zero Weil divisor for the given ring
+   	 constructs the zero Weil divisor for the ring
    	Usage
-   	 D = zeroDivisor(R)
+   	 zeroDivisor(R)
    	Inputs
    	 R: Ring
    	Outputs
-   	 D: WeilDivisor
+   	 : WeilDivisor
    	Description
    	 Text
-	  Constructs the zero Weil divisor for the given ring
+	  Constructs the zero Weil divisor for the input ring
 	 Example
 	  R = QQ[x, y, z] / ideal(x * y - z^2);
 	  D = zeroDivisor( R )
@@ -4305,7 +4292,7 @@ assert( isSubset(S1, S2) and isSubset(S2, S1) and (#getPrimeDivisors(zeroDivisor
 TEST /// --check #8 (positivePart, negativePart)
 R = QQ[x,y];
 D = divisor({1, 0, -2}, {ideal(x), ideal(y), ideal(x+y)});
-E = divisor({1/2, 0, -5/3}, {ideal(x^2 - y), ideal(y^2-x^3), ideal(y^2 - x^3 - x)}, CoeffType => QQ);
+E = divisor({1/2, 0, -5/3}, {ideal(x^2 - y), ideal(y^2-x^3), ideal(y^2 - x^3 - x)}, CoefficientType => QQ);
 F = divisor({1, 2}, {ideal(x), ideal(y)});
 assert( (positivePart(D) == divisor({1}, {ideal(x)})) and (negativePart(D) == divisor({2}, {ideal(x+y)})) );
 assert( (positivePart(E) == divisor({1/2}, {ideal(x^2-y)})) and (negativePart(E) == (5/3)*divisor(y^2-x^3-x)) );
@@ -4366,6 +4353,7 @@ E = divisor(y^3-x^2);
 D1 = pullback(h, D, Strategy=>Sheaves);
 E1 = pullback(h, E, Strategy=>Sheaves);
 assert( (isSNC(D1) == true) and (isSNC(E1) == false) and (coefficient(ideal(b), D1) == 3) and (coefficient(ideal(b), E1) == 2) );
+assert( (isSNC(D1) == true) and (isSNC(E1) == false)); --check cache
 ///
 
 TEST /// --check #14, (findElementOfDegree)
@@ -4392,13 +4380,17 @@ assert(entries(A*vector(x)) == b);
 TEST /// --check #16 (canonicalDivisor, isCartier)
 ---check a canonical divisor and verify it is Cartier
 R = QQ[x,y,z]/ideal(x^2-y*z);
-assert(isCartier(canonicalDivisor(R)) == true)
+K = canonicalDivisor(R);
+assert(isCartier(K) == true);
+assert(isCartier(K) == true) --verifying cache
 ///
 
 TEST /// --check #17(canonicalDivisor, isCartier, isQCartier)
 --- check a canonical divisor and verify it is not Cartier
 R = QQ[a,b,c,d]/ideal(c^2-b*d, b*c-a*d, b^2-a*c);
-assert((isCartier(canonicalDivisor(R)) == false) and (isQCartier(10, canonicalDivisor(R)) == 3))
+K = canonicalDivisor(R);
+assert((isCartier(K) == false) and (isQCartier(10, K) == 3));
+assert((isCartier(K) == false) and (isQCartier(10, K) == 3)) --verifying cache
 ///
 
 TEST /// --check #18 ([canonicalDivisor, IsGraded], isLinearEquivalent)
@@ -4415,7 +4407,10 @@ R =  QQ[a,b,c,d,e,f]/ideal(a*d-b*c, a*f-b*e, c*f-d*e);
 K1 = canonicalDivisor(R);
 K2 = canonicalDivisor(R, IsGraded=>true);
 Z = zeroDivisor(R);
-assert( (isQCartier(10, K1) == 0) and (isLinearEquivalent(K1, K2) == true) and (isLinearEquivalent(Z, K1) == false) and (isQCartier(10, K2, IsGraded=>true) == 1) )
+assert( (isQCartier(10, K1) == 0) and (isLinearEquivalent(K1, K2) == true) and (isLinearEquivalent(Z, K1) == false));
+assert( (isQCartier(10, K1) == 0)); --check cache
+assert(isQCartier(10, K2, IsGraded=>true) == 1);
+assert(isQCartier(10, K2, IsGraded=>true) == 1); --check cache
 ///
 
 TEST /// --check #20 (canonicalDivisor), no variable case
@@ -4500,7 +4495,7 @@ assert(isZeroDivisor(divisor(ideal(x,y,z))))
 
 TEST /// --check #29 (isWeilDivisor)
 R = QQ[x,y];
-D = divisor({1/2, 0, -3/2}, {ideal(x), ideal(x+y), ideal(y)}, CoeffType => QQ);
+D = divisor({1/2, 0, -3/2}, {ideal(x), ideal(x+y), ideal(y)}, CoefficientType => QQ);
 assert( (not isWeilDivisor(D)) and (isWeilDivisor(2*D)) )
 ///
 
@@ -4508,12 +4503,12 @@ TEST /// --check #30 (isWellDefined)
 R = ZZ/101[x,y];
 assert( isWellDefined(divisor({1}, {ideal(x)} )) );
 assert( not isWellDefined(divisor({1/2}, {ideal(x)} )) );
-assert( isWellDefined(divisor({1/2}, {ideal(x)}, CoeffType=>QQ)) );
+assert( isWellDefined(divisor({1/2}, {ideal(x)}, CoefficientType=>QQ)) );
 assert( not isWellDefined(divisor({1}, {ideal(x,y)})) );
 assert( not isWellDefined(divisor({1}, {ideal(x^2)})) );
 assert( not isWellDefined(divisor({-1.333}, {ideal(x+y)})) );
-assert( not isWellDefined(divisor({-1.333}, {ideal(x+y)}, CoeffType => QQ)) );
-assert( isWellDefined(divisor({-1.333}, {ideal(x+y)}, CoeffType => RR)) );
+assert( not isWellDefined(divisor({-1.333}, {ideal(x+y)}, CoefficientType => QQ)) );
+assert( isWellDefined(divisor({-1.333}, {ideal(x+y)}, CoefficientType => RR)) );
 assert( isWellDefined(zeroDivisor(R)) );
 assert( isWellDefined(divisor({1, 0}, {ideal(x), ideal(y)})) );
 ///
@@ -4523,8 +4518,12 @@ TEST /// --check #31 (isPrincipal)
 R = ZZ/13[x, y, z]/ideal(x^2 - y*z);
 assert( isPrincipal(zeroDivisor(R)) );
 assert( isPrincipal(divisor({2, 0}, {ideal(x,y), ideal(x,z)})) );
-assert( isPrincipal(2*divisor(ideal(x,y))) );
-assert( not isPrincipal(divisor(ideal(x,y))) );
+D = 2*divisor(ideal(x,y));
+assert( isPrincipal(D) );
+assert( isPrincipal(D) ); --checking the cache
+E = divisor(ideal(x,y));
+assert( not isPrincipal(E) );
+assert( not isPrincipal(E) ); --checking the cache
 ///
 
 TEST /// --check #32 ([isPrincipal, isGraded=>true])
@@ -4532,6 +4531,7 @@ R = ZZ/5[x, y, z]/ideal(y^2*z - x^3 - x*z^2);
 D = divisor(ideal(x-2*z, y)); --a point of order 2 on the elliptic curve
 O = divisor(ideal(x,z));
 assert( not isPrincipal(D, IsGraded=>true) );
+assert( not isPrincipal(D, IsGraded=>true) ); --checking the cache
 assert( not isPrincipal(2*D, IsGraded=>true) );
 assert( isPrincipal(2*D-2*O, IsGraded=>true) );
 ///
@@ -4541,8 +4541,8 @@ R = QQ[x,y,z];
 assert( not isReduced(divisor(x^2)) );
 assert( isReduced(divisor(x*y*(x-y^2))) );
 assert( not isReduced(divisor(x/y)) );
-assert( isReduced(divisor({1/1, 0}, {ideal(x), ideal(y)}, CoeffType=>QQ)) );
-assert( isReduced(divisor({1.0, 2.0/2.0}, {ideal(x), ideal(y)}, CoeffType=>QQ)) );
+assert( isReduced(divisor({1/1, 0}, {ideal(x), ideal(y)}, CoefficientType=>QQ)) );
+assert( isReduced(divisor({1.0, 2.0/2.0}, {ideal(x), ideal(y)}, CoefficientType=>QQ)) );
 assert( isReduced(zeroDivisor(R)) );
 ///
 
@@ -4552,7 +4552,8 @@ TEST /// --check #34 (isCartier)
  M = ideal(x^2,x*y,x*z)*R^1;
  D = divisor(M);
  E = divisor(ideal(x,y));
- assert( (isCartier(D)) and (not isCartier(E)) )
+ assert( (isCartier(D)) and (not isCartier(E)) );
+ assert( (isCartier(D)) and (not isCartier(E)) ) --verifying cache
 ///
 
 --we also do some tests with IsGraded=>true 
@@ -4560,10 +4561,17 @@ TEST /// --check #35 [isCartier, IsGraded=>true]
 ---checking and isCartier in the graded setting
  R = QQ[x,y,z]/ideal(x^2-y*z);
  D = divisor(ideal(x,z));
- assert(isCartier(D, IsGraded=>true) and (not isCartier(D, IsGraded=>false)) and (isQCartier(5, D, IsGraded=>true) == 1) and (isQCartier(5, D, IsGraded=>false) == 2) );
+ assert(isCartier(D, IsGraded=>true) and (not isCartier(D, IsGraded=>false)));
+ assert(isQCartier(5, D, IsGraded=>true) == 1);
+ assert(isQCartier(5, D, IsGraded=>true) == 1); --check cache
+ assert(isQCartier(5, D, IsGraded=>false) == 2);
+ assert(isQCartier(5, D, IsGraded=>false) == 2); --check cache
  S = ZZ/5[x,y,z]/ideal(x^3+y^3-z^3); --elliptic curve
  E = divisor(ideal(x,y-z));
- assert(isCartier(E, IsGraded=>true) and (not isCartier(E)) );
+ assert(isCartier(E, IsGraded=>true));
+ assert(isCartier(E, IsGraded=>true)); --verifying cache
+ assert((not isCartier(E)) );
+ assert((not isCartier(E)) ); --verifying cache
 ///
 
 TEST /// --check #36 [isCartier, IsGraded=>true]
@@ -4629,7 +4637,9 @@ D = divisor(ideal(x-5*z, y-4*z)); --should be a point of order 4
 O = divisor(ideal(z, x)); --point at infinity, cone over has order 3 in divisor class group since inflection point
 assert(isQCartier(20, D-O) == 4); 
 assert(isQCartier(20, D) == 12); --gcd(3,4) = 12
+assert(isQCartier(20, D) == 12); --check cache
 assert(isQCartier(20, D, IsGraded=>true) == 1);
+assert(isQCartier(20, D, IsGraded=>true) == 1); --check cache
 ///
 
 TEST ///--check #43 (isQCartier)
@@ -4637,14 +4647,14 @@ R = ZZ/13[x,y,z]/(z*y^2-x^3-2*x*z^2);
 D = divisor(ideal(x-11*z, y-1*z)); --point such that P-O has order 10
 O = divisor(ideal(x,z)); --point at infinity, order 3
 assert(isQCartier(20, D-O) == 10);
+assert(isQCartier(20, D-O) == 10); --check cache
 ///
 
 TEST ///--check #44 (isQLinearEquivalent)
 R = QQ[x,y,z]/ideal(x*y-z^2);
 D = divisor(ideal(x,z));
-E = 2*D;
-assert(not isQLinearEquivalent(D, zeroDivisor(R)));
-assert(isQLinearEquivalent(E, zeroDivisor(R)));
+assert(not isQLinearEquivalent(1, D, zeroDivisor(R)));
+assert(isQLinearEquivalent(2, D, zeroDivisor(R)));
 ///
 
 
@@ -4653,7 +4663,7 @@ R = ZZ/7[x,y,z];
 Z = zeroDivisor(R);
 D = 1/3*divisor(x^3+y^3+z^3);
 E = divisor(x+y+z);
-assert( (isQLinearEquivalent(D, E, IsGraded=>true) == true) and (isQLinearEquivalent(Z, D, IsGraded=>true) == false) and (isQLinearEquivalent(D, Z, IsGraded=>false) == true) )
+assert( (isQLinearEquivalent(1, D, E, IsGraded=>true) == true) and (isQLinearEquivalent(1, Z, D, IsGraded=>true) == false) and (isQLinearEquivalent(1, D, Z, IsGraded=>false) == true) )
 ///
 
 TEST /// --check #46 (nonCartierLocus)
@@ -4661,7 +4671,10 @@ TEST /// --check #46 (nonCartierLocus)
 R = QQ[x,y,z]/ideal(x^2-y*z);
 m = ideal(x,y,z);
 D = divisor(ideal(x,y));
-assert( (radical(nonCartierLocus(D)) == m) and (nonCartierLocus(D, IsGraded=>true) == ideal(sub(1, R))) );
+assert( (radical(nonCartierLocus(D)) == m));
+assert( (radical(nonCartierLocus(D)) == m)); --checking the cache
+assert( (nonCartierLocus(D, IsGraded=>true) == ideal(sub(1, R))) );
+assert( (nonCartierLocus(D, IsGraded=>true) == ideal(sub(1, R))) ); --checking the cache
 assert( (nonCartierLocus(zeroDivisor(R)) == ideal(sub(1,R))) );
 ///
 
@@ -4671,14 +4684,17 @@ D = divisor(x*y*(x+1)*z*(z-1));
 E = divisor(x*y*z);
 F = divisor(x*y*z*(x+y+z));
 G = divisor(x*y-z^2);
-assert( (isSNC(D) == true) and (isSNC(E) == true) and (isSNC(F) == false) and (isSNC(G) == false) )
+assert( (isSNC(D) == true) and (isSNC(E) == true) and (isSNC(F) == false) and (isSNC(G) == false) );
+assert( (isSNC(D) == true) and (isSNC(E) == true) and (isSNC(F) == false) and (isSNC(G) == false) );--check cache
 ///
 
 TEST /// --check #48 (zeroDivisor, isSNC, isQCartier, mapToProjectiveSpace)
 R = QQ[x,y,z];
 D = 0*divisor(x);
 E = zeroDivisor(R);
-assert( (D == E) and (isCartier(D) == true) and (isQCartier(5, D) == 1) and (dim source mapToProjectiveSpace(D) == 1) and (isFreeModule OO(D) == true) and (isSNC(D) == true) and (D == floor(D)) )
+assert( (D == E) and (isCartier(D) == true) and (isQCartier(5, D) == 1) and (dim source mapToProjectiveSpace(D) == 1) and (isSNC(D) == true) and (D == floor(D)) );
+assert(isFreeModule OO(D) == true);
+assert(isFreeModule OO(D) == true) --verifying the cache
 ///
 
 TEST /// --check #49 (isZeroDivisor)
@@ -4695,7 +4711,12 @@ assert(not isZeroDivisor(-11.111*divisor(z)));
 TEST /// --check #50 (isVeryAmple) checks for very ample divisors #1 (divisors on elliptic curves)
 R = QQ[x,y,z]/ideal(x^3+y^3-z^3);
 D = divisor(ideal(x, y-z));
-assert( (isVeryAmple(0*D) == false) and (isVeryAmple(1*D) == false) and (isVeryAmple(2*D) == false) and (isVeryAmple(3*D) == true) )
+D2 = 2*D;
+D3 = 3*D;
+assert( (isVeryAmple(0*D) == false) and (isVeryAmple(1*D) == false) and (isVeryAmple(D2) == false)); 
+assert (isVeryAmple(D2) == false); --check cache
+assert (isVeryAmple(D3) == true);
+assert (isVeryAmple(D3) == true); --check cache
 ///
 
 
@@ -4703,9 +4724,13 @@ TEST /// --check #51 (isVeryAmple) checks for very ample divisors #2 (divisors o
 R = QQ[x,y,u,v]/ideal(x*y-u*v);
 D = divisor(ideal(x,u));
 E = divisor(ideal(x, v));
-assert( (isVeryAmple(D) == false) and (isVeryAmple(E) == false) and (isVeryAmple(D+E) == true) );
+DE = D+E;
+assert( (isVeryAmple(D) == false) and (isVeryAmple(E) == false) and (isVeryAmple(DE) == true) );
+assert(isVeryAmple(DE) == true); --check cache
 assert(isVeryAmple(zeroDivisor(R)) == false);
-assert(isVeryAmple(-D) == false);
+Dn = -D;
+assert(isVeryAmple(Dn) == false);
+assert(isVeryAmple(Dn) == false); --check cache
 ///
 
 
@@ -4855,8 +4880,20 @@ TEST /// --check #67 (isSNC) (IsGraded=>true)
 R = QQ[x,y,z]/ideal(x^3+y^3-z^3);
 D = divisor(ideal(x, y-z)) + divisor(ideal(y, x-z));
 assert(isSNC(D, IsGraded=>true));
+assert(isSNC(D, IsGraded=>true)); --check cache
 assert(not isSNC(D, IsGraded=>false));
+assert(not isSNC(D, IsGraded=>false)); --check cache
 assert(isSNC(zeroDivisor(R), IsGraded=>true));
+///
+
+TEST /// --check #68 (ideal(Divisor))
+R = ZZ/5[x,y,z]/ideal(x^2-y*z);
+D = divisor(ideal(x,z));
+E = 2*D;
+assert (ideal(D) == ideal(x,z));
+assert (ideal(D) == ideal(x,z));--checking the cache
+assert (ideal(E) == ideal(z));
+assert (ideal(E) == ideal(z));--checking the cache
 ///
 
 end
@@ -4864,6 +4901,26 @@ end
 ---***************************
 ---*******CHANGELOG***********
 ---***************************
+--changes 0.3
+------Addressed referee comments and made other changes
+------  In particular
+------------          AmbRing -> AmbientRing (throughout)
+------------          CoeffType -> CoefficientType (throughout)
+------------          Changed isQLinearEquivalent to take an index for which to check Q-linear equivalence up to.
+------------          Added the ideal names/generators to the cache
+------------          Added nonCartierLocus to the cache and added checking (updated documentation to list this as being cached)
+------------          Added isPrincipal to the cache and added checking (updated documentation to list this as being cached)
+------------          Added ideal(Divisor) to the cache and added checking (updated documentation to list this as being cached)
+------------          Added OO(Divisor) to the cache and added checking (updated documentation to list this as being cached)
+------------          Added isCartier to the cache and added checking (updated documentation to list this as being cached)
+------------          Added isQCartier to the cache and added checking (updated documentation to list this as being cached)
+------------          Added isSNC to the cache and added checking (updated documentation to list this as being cached)
+------------          Added isVeryAmple to the cache and added checking (updated documentation to list this as being cached)
+------------          The Unsafe option has been changed to Safe
+------------          Numerous improvements to the documentation.
+------------          The internal structure of the divisor has changed.
+
+
 --changes 0.2
 ------Addressed referee comments and made other changes
 ------  In particular:

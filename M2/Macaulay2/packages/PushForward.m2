@@ -6,6 +6,7 @@ newPackage(
                   Email => "craicu@nd.edu", 
                   HomePage => "http://www3.nd.edu/~craicu"}},
         Headline => "push forwards of finite ring maps",
+	Keywords => {"Commutative Algebra"},
         DebuggingMode => false
         )
         
@@ -45,7 +46,7 @@ pushFwd(RingMap,Module):=o->(f,N)->
      if (o.NoPrune == false) then prune makeModule(N**C,g,matB) else makeModule(N**C,g,matB)
      )
 
-pushFwd(RingMap,ModuleMap):=o->(f,d)->
+pushFwd(RingMap,Matrix):=o->(f,d)->
 (
      A:=source f;
      B:=target f;
@@ -166,7 +167,7 @@ document{
   UL {
        {TO (pushFwd,RingMap)," - for a finite ring map"},
        {TO (pushFwd,RingMap,Module), " - for a module"},
-       {TO (pushFwd,RingMap,ModuleMap), " - for a map of modules"}
+       {TO (pushFwd,RingMap,Matrix), " - for a map of modules"}
      }
   }   
 
@@ -184,7 +185,10 @@ document{
   A = kk[a,d]
   use R
   F = map(R,A)
-  pushFwd F
+  (M,g,pf) = pushFwd F;
+  M
+  g
+  pf(a*b - c^2)
   ///,
   TEX "In a previous version of this package, the third output was a function which assigned to each element of the target of ", TT "f", " its representation as an element of a free module which surjected onto the pushed forward module."
   }
@@ -209,7 +213,7 @@ document{
   }
 
 document{
-  Key => (pushFwd,RingMap,ModuleMap),
+  Key => (pushFwd,RingMap,Matrix),
   Headline => "push forward of a map of modules",
   Usage => "pushFwd(f,d)",
   Inputs => { "f", "d" },

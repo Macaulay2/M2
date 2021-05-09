@@ -5,12 +5,13 @@ newPackage(
     	Authors => { -- This Package was originally written by D. Eisenbud, F. Schreyer, and M. Stillman. 
 	             -- Various revisions and updates were made by C. Gibbons and B. Stone.
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
-	     {Name => "Frank Schreyer", Email => "schreyer@math.uni-sb.de"},
+	     {Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de"},
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"},
 	     {Name => "Courtney Gibbons", Email => "crgibbon@hamilton.edu", HomePage => "http://people.hamilton.edu/cgibbons/"},
 	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelphi.edu/~bstone/"}
 	     }, 
     	Headline => "betti diagram operations useful for investigating the Boij-Soederberg conjectures",
+	Keywords => {"Commutative Algebra"},
     	DebuggingMode => false
     	)
 
@@ -454,7 +455,7 @@ makeCI List := degs ->  (
 
 ---- helper method, not for export ----
 --  input:  BettiTally of a Cohen-Macaulay Module
--- output:  List, differnce of degree sequence in decomposeDegreesHK
+-- output:  List, difference of degree sequence in decomposeDegreesHK
 degreeDiff = method();
 degreeDiff BettiTally := B -> (
      local D; 
@@ -614,8 +615,8 @@ decomposeBetti BettiTally := o -> B -> (
 --if the decomposition fails. Returns a list of the components as a list of pairs,
 --each a rational coefficient followed by a hash table representing a pure betti diagram,
 --if it succeeds.
-decompose BettiTally := B-> (
-    	decomposeBetti B
+decompose BettiTally := options decomposeBetti >> opts -> B -> (
+    	decomposeBetti(B, opts)
      )
  
 
@@ -1168,7 +1169,7 @@ supportFunctional=method()
 
 supportFunctional(ChainComplex, ChainComplex):=(E,F)->(
      --E should be a chain complex starting in degree 0 and going to negative degrees.
-     --F should be a chain complex starting in a postive degree and going to degree 0
+     --F should be a chain complex starting in a positive degree and going to degree 0
      -- the code is meant to execute 
      --\langle E, \beta\rangle = \sum_{j\leq i}(-1)^{i-j}\sum_k\beta_{i,k}h_{-k}(H^j(E)),
      --
@@ -1565,7 +1566,7 @@ document {
 	  "B"
 	  },
      Outputs => {
-	  List => "of lowest degree shifts occuring in B"
+	  List => "of lowest degree shifts occurring in B"
 	  },
      EXAMPLE lines ///
      	  R = ZZ/101[a..e];
@@ -1584,7 +1585,7 @@ document {
 	  "B"
 	  },
      Outputs => {
-	  List => "of highest degree shifts occuring in B"
+	  List => "of highest degree shifts occurring in B"
 	  },
      EXAMPLE lines ///
      	  R = ZZ/101[a..e];
@@ -1822,7 +1823,7 @@ document {
 
 document { 
      Key => decomposeDegrees,
-     Headline => "Find the degree sequences of pure diagrams occuring in a Boij-Soederberg decomposition of B",
+     Headline => "Find the degree sequences of pure diagrams occurring in a Boij-Soederberg decomposition of B",
      Usage => "decomposeDegrees B",
      Inputs => {
 	  "B" => "not necessarily Cohen-Macaulay"
@@ -2154,7 +2155,7 @@ document {
      another weakly decreasing sequence of integers corresponding to a partition M, a number i such that
      H^i(E)=S_M(V) and the rank of this module.",
      PARA{},
-     "The function bott(L,u,v) on a list of weaking decreasing integers L and integers u,v will compute 
+     "The function bott(L,u,v) on a list of weakly decreasing integers L and integers u,v will compute 
      our entire cohomology table for our Schur Functor between degrees u and v.",
      }
 

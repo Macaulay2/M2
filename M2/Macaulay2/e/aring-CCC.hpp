@@ -26,13 +26,7 @@ class ARingCCC : public RingInterface
  public:
   static const RingID ringID = ring_CCC;
 
-  struct mpfc_struct
-  {
-    __mpfr_struct re;
-    __mpfr_struct im;
-  };
-  typedef mpfc_struct* mpfc_ptr;
-  typedef mpfc_struct elem;  // ??? staighten this out!!!
+  typedef cc_struct elem;  // ??? staighten this out!!!
   typedef elem ElementType;
   typedef ARingRRR RealRingType;
   typedef RealRingType::ElementType RealElementType;
@@ -81,21 +75,19 @@ class ARingCCC : public RingInterface
   ////////////////////////////
   // to/from ringelem ////////
   ////////////////////////////
-  // These simply repackage the element as either a ringelem or an
-  // 'ElementType'.
-  // No reinitialization is done.
-  // Do not take the same element and store it as two different ring_elem's!!
   void to_ring_elem(ring_elem& result, const ElementType& a) const
   {
-    mpfc_ptr res = getmemstructtype(mpfc_ptr);
+    cc_ptr res = getmemstructtype(cc_ptr);
     init(*res);
     set(*res, a);
-    result = MPF_RINGELEM(res);
+    mpfr_reallocate_limbs(&res->re);
+    mpfr_reallocate_limbs(&res->im);
+    result = ring_elem(res);
   }
 
   void from_ring_elem(ElementType& result, const ring_elem& a) const
   {
-    set(result, *reinterpret_cast<mpfc_ptr>(a.poly_val));
+    set(result, *a.get_cc());
   }
 
   // 'init', 'init_set' functions
@@ -145,7 +137,7 @@ class ARingCCC : public RingInterface
     mpfr_set_si(&result.im, 0, GMP_RNDN);
   }
 
-  bool set_from_mpq(ElementType& result, mpq_ptr a) const
+  bool set_from_mpq(ElementType& result, mpq_srcptr a) const
   {
     mpfr_set_q(&result.re, a, GMP_RNDN);
     mpfr_set_si(&result.im, 0, GMP_RNDN);
@@ -174,6 +166,12 @@ class ARingCCC : public RingInterface
   {
     mpfr_set_d(&result.re, re, GMP_RNDN);
     mpfr_set_d(&result.im, im, GMP_RNDN);
+    return true;
+  }
+  bool set_from_complex_mpfr(ElementType& result, mpfr_srcptr re, const mpfr_srcptr im) const
+  {
+    mpfr_set(&result.re, re, GMP_RNDN);
+    mpfr_set(&result.im, im, GMP_RNDN);
     return true;
   }
 
@@ -442,7 +440,7 @@ class ARingCCC : public RingInterface
     clear(curr_pow);
   }
 
-  void power_mpz(ElementType& result, const ElementType& a, mpz_ptr n) const
+  void power_mpz(ElementType& result, const ElementType& a, mpz_srcptr n) const
   {
     std::pair<bool, int> n1 = RingZZ::get_si(n);
     if (n1.first)
@@ -482,8 +480,8 @@ class ARingCCC : public RingInterface
 
   void random(ElementType& result) const  // redo?
   {
-    rawRandomMpfr(&result.re, get_precision());
-    rawRandomMpfr(&result.im, get_precision());
+    randomMpfr(&result.re);
+    randomMpfr(&result.im);
   }
 
   void eval(const RingMap* map,
@@ -503,14 +501,14 @@ class ARingCCC : public RingInterface
 
   gmp_CC toBigComplex(const ElementType& a) const
   {
-    gmp_CC result = getmemstructtype(gmp_CC);
-    result->re = getmemstructtype(gmp_RR);
-    result->im = getmemstructtype(gmp_RR);
+    gmp_CCmutable result = getmemstructtype(gmp_CCmutable);
+    result->re = getmemstructtype(gmp_RRmutable);
+    result->im = getmemstructtype(gmp_RRmutable);
     mpfr_init2(result->re, get_precision());
     mpfr_init2(result->im, get_precision());
     mpfr_set(result->re, &a.re, GMP_RNDN);
     mpfr_set(result->im, &a.im, GMP_RNDN);
-    return result;
+    return moveTo_gmpCC(result);
   }
 
   bool set_from_RRR(ElementType& result, const ARingRRR::ElementType& a) const
@@ -553,7 +551,7 @@ class ARingCCC : public RingInterface
     mRRR.zeroize_tiny(epsilon, a.re);
     mRRR.zeroize_tiny(epsilon, a.im);
   }
-  void increase_norm(gmp_RR& norm, const ElementType& a) const
+  void increase_norm(gmp_RRmutable norm, const ElementType& a) const
   {
     ARingRRR::ElementType n;
     mRRR.init(n);

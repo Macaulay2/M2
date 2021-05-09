@@ -4,8 +4,6 @@
 
 recursionLimit = 300
 
-protect Example
-
 degreesRing 0;
 
 setIOUnSynchronized()					    -- try to avoid deadlocks when running examples
@@ -13,12 +11,6 @@ setIOUnSynchronized()					    -- try to avoid deadlocks when running examples
 (addStartFunction if member("--no-randomize",commandLine) 
    then (() -> setRandomSeed 0)
    else (() -> setRandomSeed((currentTime() << 16) + processID())))
-
-addStartFunction(
-     () -> (
-	  path = prepend("./",path); -- now we search also the user's current directory, since our files have already been loaded
-	  path = unique apply( path, minimizeFilename);	    -- beautify
-	  ))
 
 addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
 addEndFunction(() -> path = {})
@@ -35,19 +27,27 @@ QQ.Wrap = x -> wr("=",x)
 ignoreP := set { "Core", "Classic", "Parsing", "SimpleDoc" }
 mentionQ := p -> not ignoreP#?(toString p)
 
+Core#"pre-installed packages" = lines get (currentFileDirectory | "installedpackages")
+
 addStartFunction(
      () -> (
 	  if class value getGlobalSymbol "User" =!= Package then (
      	       dismiss "User";
-	       newPackage("User", DebuggingMode => true, Reload => true);
-	       -- debug:
-	       -- protect User#"private dictionary";
+	       newPackage("User",
+		   Headline       => "default package for interpreter interactions",
+		   DebuggingMode  => true,
+		   PackageImports => if member("--no-preload", commandLine) then {} else Core#"pre-installed packages");
+	       path = prepend("./",path); -- now we search also the user's current directory, since our files have already been loaded
+	       path = unique apply( path, minimizeFilename);	    -- beautify
 	       allowLocalCreation User#"private dictionary";
 	       );
 	  if not nobanner then (
 	       if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
-	       hd := "with packages: ";
-	       stderr << hd << wrap(printWidth-#hd, concatenate between_", " sort apply(select(loadedPackages,mentionQ),toString)) << endl;
+	       relevant := select(loadedPackages,mentionQ);
+	       if #relevant > 0 then (
+	       	    hd := "with packages: ";
+	       	    stderr << hd << wrap(printWidth-#hd, concatenate between_", " sort apply(relevant,toString)) << endl;
+		    );
 	       if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush;
 	       );
 	  )
@@ -77,30 +77,15 @@ addStartFunction( () -> if not noinitfile then (
 		    ));
 	  ))
 
-addStartFunction( () -> if dumpdataFile =!= null and fileExists dumpdataFile then (
-	  dumptime := fileTime dumpdataFile;
-	  newfiles := select(values loadedFiles, fn -> dumptime < fileTime fn);
-	  if #newfiles == 0 then return;
-	  stderr << "--warning: old dumpdata file: " << dumpdataFile << endl;
-	  stderr << "--         the following source files are newer:" << endl;
-	  scan(sort newfiles, fn -> stderr << "--         " << fn << endl)))
-addStartFunction( () -> if version#"gc version" < "7.0" then error "expected libgc version 7.0 or larger; perhaps our sharable library is not being found" )
+addStartFunction( () -> if version#"gc version" < "7.0" then error "expected libgc version 7.0 or larger; perhaps our shareable library is not being found" )
 unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
 noinitfile' := noinitfile
-Core#"pre-installed packages" = lines get (currentFileDirectory | "installedpackages")
-Core#"base packages" = {}				    -- these will be kept visible while other packages are loaded
 Function.GlobalReleaseHook = (X,x) -> (
      if dictionary X =!= User#"private dictionary" then warningMessage(X," redefined");
-     if hasAttribute(x,ReverseDictionary) then removeAttribute(x,ReverseDictionary);
+     if hasAttribute(x,ReverseDictionary) and getAttribute(x,ReverseDictionary) === X then removeAttribute(x,ReverseDictionary);
      )
 waterMark = serialNumber symbol waterMark      -- used by Serialization package
 endPackage "Core" -- after this point, private global symbols, such as noinitfile, are no longer visible, and public symbols have been exported
-
-if not member("--no-preload",commandLine) then (
-     scan(Core#"pre-installed packages",	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
-	  needsPackage);
-     Core#"base packages" = join(Core#"pre-installed packages",Core#"base packages");
-     )
 
 if not noinitfile' then path = join(userpath',path)
 if #OutputDictionary > 0 then error("symbols entered into OutputDictionary during startup phase: ",toString keys OutputDictionary)

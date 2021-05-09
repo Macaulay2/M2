@@ -17,7 +17,7 @@
 --
 --  You should have received a copy of the GNU General Public License along
 --  with this program; if not, write to the Free Software Foundation, Inc.,
---  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+--  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 --
 -- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -29,8 +29,9 @@ newPackage(
 		  Name => "Thomas Kahle",
 		  Email => "thomas.kahle@jpberlin.de",
 		  HomePage => "http://www.thomas-kahle.de"}},
-    	Headline => "Specialized routines for binomial ideals",
-	PackageImports => {"FourTiTwo", "Cyclotomic"},
+    	Headline => "specialized routines for binomial ideals",
+	Keywords => {"Commutative Algebra"},
+	PackageImports => {"FourTiTwo", "Cyclotomic", "LLLBases", "MinimalPrimes", "Elimination"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	     "journal URI" => "http://j-sag.org/",
@@ -38,8 +39,8 @@ newPackage(
 	     "acceptance date" => "2012-02-06",
 	     "published article URI" => "http://j-sag.org/Volume4/jsag-1-2012.pdf",
 	     "published code URI" => "http://j-sag.org/Volume4/Binomials.m2",
-	     "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/Binomials.m2",
-	     "release at publication" => 14467,
+	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Binomials.m2",
+	     "release at publication" => "6c927c4f11724e29840c889e5ac7a426b17685ab",
 	     "version at publication" => "1.0",
 	     "volume number" => "4",
 	     "volume URI" => "http://j-sag.org/Volume4/"
@@ -75,7 +76,7 @@ export {
      "BPD",
      "BCD",
      "BUD",
-     -- auxillary functions:
+     -- auxiliary functions:
      "partialCharacter",
      "idealFromCharacter",  -- should be renamed to ideal once M2 supports this
      "randomBinomialIdeal",
@@ -290,7 +291,7 @@ randomBinomialIdeal = (R,numge,maxdeg, maxwidth, homog) -> (
      -- Generate 'random' ideals for testing purposes. The distribution is completely heuristic and designed to serve
      -- internal purposes 
      -- Inputs: a ring R, the number of generators numgen, the maximal degree of each variable maxded,
-     -- the maximal number of variables appearing in binomial, wether the output should be homogeneous
+     -- the maximal number of variables appearing in binomial, whether the output should be homogeneous
      
      -- Caveat: The result might simply be not homogeneous or of the given degree 
      -- due to deps between the random generators     
@@ -506,7 +507,7 @@ binomialRadical = I -> (
 	  return cellularBinomialRadical (I,CellVariables=>cv)
 	  );
      -- In the general case
-     print "Input not cellular, computing minimial primes ...";
+     print "Input not cellular, computing minimal primes ...";
      mp := binomialMinimalPrimes I;
      ideal mingens intersect mp)
 
@@ -622,7 +623,7 @@ binomialIsPrime Ideal := Ideal => o -> I -> (
      -- Output: true if the ideal is a prime ideal, false otherwise
      
      -- test for cellularity:
-     -- if cellular variables are given then we belive that I is cellular
+     -- if cellular variables are given then we believe that I is cellular
      cv := null;
      if o#CellVariables === null then (
 	  cv = isCellular (I, ReturnCellVars=>true);
@@ -819,7 +820,7 @@ cellularBinomialAssociatedPrimes Ideal := Ideal => o -> I -> (
 	       primes = primes | sat;
 	       )
 	  );
-     -- We need to remove duplicate elements and join all associated primes in an apropriate new ring that contains all
+     -- We need to remove duplicate elements and join all associated primes in an appropriate new ring that contains all
      -- their coefficients.
      primes = joinCyclotomic primes;
      M := sub (ideal ncv, ring primes#0);
@@ -930,7 +931,7 @@ cellularEmbeddedLatticeWitnesses Ideal := Ideal => o -> I -> (
 minimalPrimaryComponent = method (Options => {CellVariables => null})
 minimalPrimaryComponent Ideal := Ideal => o -> I -> (
      -- Input a cellular binomial ideal whose radical is prime.
-     -- Ouptut, generators for Hull(I)
+     -- Output, generators for Hull(I)
 
      cv := cellVars(I, CellVariables=>o#CellVariables);
      if cv === false then error "Input to minimalPrimaryComponent was not cellular!";
@@ -1245,7 +1246,7 @@ SolveMore = (binom,psol) -> (
 		if not zeroflag then q = sum q;
 		);
 
-       	   -- now everthing is set for the Rooter:
+       	   -- now everything is set for the Rooter:
        	   roots = roots | Rooter (n,q);
        	   extensions := for r in roots list (
 	    	for i in 0..#onesol-1 list if i==ind then r else onesol#i
@@ -1302,7 +1303,7 @@ binomialSolve = I -> (
 
 cellularBinomialExponentSolve = (I,cv) -> (
      -- Solves a zero dimensional cellular unital binomial ideal
-     -- by constructing the apropriate cyclotomic field
+     -- by constructing the appropriate cyclotomic field
      
      -- Input: a unital zero-dim'l binomial ideal and its list of
      -- cell variables
@@ -1326,7 +1327,7 @@ cellularBinomialExponentSolve = (I,cv) -> (
 
      -- For each variable we check if it is a nilpotent variable, i.e.
      -- each solution of the ideal has coordinate zero there
-     -- We alse check how often we have to duplicate each solution in the
+     -- We also check how often we have to duplicate each solution in the
      -- end to account for monomials of higher order 
      dupnum := 1;     
      psols := {};
@@ -1622,7 +1623,7 @@ document {
      Outputs => {
           {"the list of points in the zero locus of I in QQ[ww]"} },
      "The solutions of a set of unital binomial equations exist in a cyclotomic field. This function
-     will compute the variety of a unital binomial ideal and construct an apropriate cyclotomic 
+     will compute the variety of a unital binomial ideal and construct an appropriate cyclotomic 
      field containing the entire variety (as a subset of the algebraic closure of QQ).",
      EXAMPLE {
 	  "R = QQ[x,y,z,w]",
@@ -1694,7 +1695,7 @@ document {
      Usage => "latticeBasisIdeal (R,L)",
      Inputs => {
           "R" => {"a ring"},
-	  "L" => {"an interger matrix whose columns span the lattice."}},
+	  "L" => {"an integer matrix whose columns span the lattice."}},
      Outputs => {
           {"The unital lattice basis ideal in R, defined by L"} },
      "This function is only a very simple wrapper around ", TO makeBinomial,
@@ -1910,7 +1911,7 @@ document {
      "In ", TO Binomials , " the partial character of a cellular binomial ideal is represented 
      as an object of class ", TO PartialCharacter,".  It contains the following three data:",
      UL { {"J -- the cellular variables"},
-	  {"L -- a matrix whose colmns are generators for the lattice"},
+	  {"L -- a matrix whose columns are generators for the lattice"},
 	  {"c -- the list of values the character takes on the generators"}}}
 
 ----- TESTS -----

@@ -1,5 +1,8 @@
 --		Copyright 2007 by Daniel R. Grayson
 
+-- Default rendering is by concatenation of rendered inputs
+setupRenderer(mathML, concatenate, Hypertext)
+
 moen := name -> concatenate("<mo>&",name,";</mo>")
 nest := (tag,s) -> concatenate("<",tag,">",s,"</",tag,">")
 mo   := s -> nest("mo",s)
@@ -54,7 +57,7 @@ mathML FunctionApplication := m -> (
      then concatenate (mfun, bigParenthesize margs)
      else concatenate (bigParenthesize mfun, bigParenthesize margs)
      )
-mathML MatrixExpression := x -> concatenate( "<mrow><mo>(</mo>", mtableML x, "<mo>)</mo></mrow>", newline )
+mathML MatrixExpression := x -> concatenate( "<mrow><mo>(</mo>", mtableML x#0, "<mo>)</mo></mrow>", newline )
 mathML Minus := v -> concatenate( "<mo>-</mo>", mathML v#0)
 mathML Divide := x -> concatenate("<mfrac>", mathML x#0, mathML x#1, "</mfrac>")
 mathML OneExpression := x -> "<mn>1</mn>"
@@ -153,7 +156,7 @@ mathML CacheFunction := f -> mathML "-*a cache function*-"
 mathML CoherentSheaf :=
 mathML Ideal :=
 mathML ImmutableType :=
-mathML ModuleMap :=
+mathML Matrix :=
 mathML MonoidElement :=
 mathML MutableMatrix :=
 mathML OptionTable :=

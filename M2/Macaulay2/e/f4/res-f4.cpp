@@ -16,7 +16,8 @@
 #include <algorithm>
 #include "../timing.hpp"
 
-
+#if 0
+// This is test code which should be removed, or placed elsewhere!
 #include <thread>
 #include "../../system/supervisor.hpp"
 #include "../../system/supervisorinterface.h"
@@ -46,6 +47,7 @@ void testTasks()
   waitOnTask(t2);
   std::cout << val[0] << " " << val[1] << std::endl;
 }
+#endif
 
 F4Res::F4Res(SchreyerFrame& res)
     : mFrame(res),

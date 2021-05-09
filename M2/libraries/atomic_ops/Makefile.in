@@ -1,7 +1,7 @@
 GITURL = https://github.com/ivmai/libatomic_ops
 HOMEPAGE = $(GITURL)
 URL = http://www.hboehm.info/gc/gc_source
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 7.6.2
 TARFILE = libatomic_ops-$(VERSION).tar.gz
 TARDIR = libatomic_ops-$(VERSION)

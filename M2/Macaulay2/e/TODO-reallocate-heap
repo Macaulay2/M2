@@ -1,0 +1,116 @@
+TO DO
+29 Nov 2018: checklist to finish before merging into master.
+    1. GF (big-gf-flint): need to copy object to GC memory when we save it.
+    2. PointArray leak.
+    3. NAG memory leaks (could wait until after the merge).
+    4. make sure configure scripts can use built in mpir, flint.
+    5. speed of e.g. gb over QQ or ZZ.
+    6. make sure: all tests and example run correctly.  On multiple machines.
+    7. gmp.d has warning message: remove those.
+24 Oct 2018:
+  Check for slow downs vs. 1.12
+    bugs/anton/MEMORY-LEAKS/eigen-leaks.m2 (
+    					  k takes twice longer than before
+					  i 
+    					  )
+    
+  Check NumericalAG integrity
+  Fix geals in bugs/anton/MEMORY-LEAKS/gb-leaks.m2 
+
+22 Aug 2018:
+  Todo to get code not leaking ZZ, QQ, RRR's
+  make tests for these.
+  try to make tests that exhibit crashing behavior too
+  make sure all gmp_ZZ, gmp_RR, gmp_QQ returned to the front end, are in gc land.
+  lower_associate_divisor: change interface, DON'T change a ring_elem...
+  lower_content: change interface.
+  make sure all elements in ring_elem are in gc land.
+    make sure all ring_elem's are reachable from gc land.
+      (this is probably OK, except possibly for recent changes to ZZ, ...)
+  dmat: these contain values from aring-zz, ..., and sometimes also ring_elem's.
+    so: make MutableMatrix both a gc allocated type (which it is now), and finalize it.
+  smat: probably the same
+    in any case this is an important, but different project.
+  ZZ.cpp: 
+    returned ring_elem's need to have limbs in gc land.
+  aring-zz, aring-qq, aring-RRR
+    make sure transfer to and from ring_elem is copy only.
+    Need to deal with potential aliasing? I think not, with the MutableMatrix being on malloc side of the barrier.
+  aring-zz-flint: we might be able to use this, if we wish.
+  the interface for ring_elem's might need to be changed in the aring* functions:
+  where are aring-... types used?  dmat, smat, but what about in RingElement?
+    audit for leaks, aliasing (e.g. in aring-zz, add(a,b,c), calling mpz_add: either all of a,b,c are in malloc land to start, or ALL need to be converted to malloc land
+        problem: if b and c are in gc land, and a == b, then mpz_add will possibly do a realloc, with disastrous results.
+
+previous notes:
+    Plan #1:
+    D Language: where is the doc for it? (ans: in c/README)
+    have types:
+      gmpZZ = mpz_ptr_GC
+    also:
+      gmpZZmutable = mpz_struct_t * (i.e. not const).  Question: is this GC allocated? Ans: NO.
+    in e/gmp-functions.hpp, .cpp file too
+
+    mpz_to_GC(mpz_srcptr) --> gmpZZ (which is an mpz_srcptr, but totally allocated with GC_MALLOC).
+    void mpz_from_GC(mpz_ptr, gmpZZ) -- copy gmpZZ limbs to malloc memory into the mpz_ptr.
+      same as mpz_init_set(mpz_ptr, gmpZZ)
+
+    d:
+        do not change to gmp allocation functions
+
+    gmp.d:
+      for each operation that creates a new gmpZZ:
+        mpz_t tmp;
+        mpz_init(tmp);
+        /* operation, e.g. mpz_add(tmp, a, b) */
+        result = mpz_to_GC(tmp);
+        mpz_clear(tmp);
+        return result;
+      or:
+        mpz_t tmp;
+        mpz_init(tmp);
+        /* operation, e.g. mpz_add(tmp, a, b) */
+        return mpz_move_to_GC(tmp) -- this function does the allocation, and copy, and clears tmp at the end.
+    e dir: aring-zz-gmp.hpp, cpp:
+      have to do similar.  Need to deal with potential aliasing.
+    e dir: ZZ.hpp, cpp:
+      why are there two such ZZ files?
+
+    Next: do the same for mpq.
+
+    Next: do similar for mpfr.
+    
+    The plan:
+
+  1. Make it so that we can link with gmp/mpir, flint, mpfr, without modification.
+    This just means that when we use mpz fcns, etc that we then copy the results into gc memory, OR
+      that we will have that space freed by usual new/delete methods in c++.
+  2. Possibly allow the engine to be gc free, except for objects going to the front end.
+    This would require what?
+    - ring_elem changes?
+    - RingElement changes?
+    - PolynomialRing class changes
+      includes: functions which work on terms, not on ring_elem's.
+      and then wrapper functions for the ring functions needed.
+      
+      the real problem: ring_elem's are treated as garbage collected, and pointers are freely copied.
+      how to solve this?
+        one, zeroV, minusoneV: need to not return already constructed elements
+        quotient elements: ? these are being used as is.
+        poly functions: don't lose ring_elem constants, or have 2 that are the same.
+        
+      RawRingElement:
+        This is a front end notion.  
+        Option 1: creating one copies data to GC storage.
+        Option 2: we finalize all such objects.
+        
+      one proposal:
+        RingElement: low cost engine object.
+        RawRingElement: front end object: copied memory (in mpz, mpq, mpfr, poly cases, and any other which requires mem allocs).
+          need: mpzToGCobject, ringelemToGC, polyToGC, ...
+        preferably: a RawRingElement can behave like a const RingElement type too...
+        
+        
+notes:
+  lower_content, lower_associate_divisor: modify a ring_elem in place.  Bad!
+    they should return their results.

@@ -93,7 +93,7 @@ document {
 --      }
 
 document { 
-     Key => (hilbertSeries,Ideal),
+     Key => {(hilbertSeries, Ideal)},
      Headline => "compute the Hilbert series of the quotient of the ambient ring by the ideal",
      Usage => "hilbertSeries I",
      Inputs => {
@@ -221,16 +221,6 @@ document {
      heft R
      ///,
      }
-
-TEST ///
-R = ZZ/101[x,y]
-M = R^1/x
-T = degreesRing R
-t = T_0
-assert( hilbertSeries (M, Order => 5) == t^4+t^3+t^2+t+1 )
-assert( hilbertSeries (M, Order => 4) == t^3+t^2+t+1 )
-assert( hilbertSeries (M, Order => 7) == t^6+t^5+t^4+t^3+t^2+t+1 )
-///
 
 document {
      Key => [hilbertSeries,Reduce],

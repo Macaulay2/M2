@@ -5,6 +5,7 @@
 #ifndef _slp_imp_hpp_
 #define _slp_imp_hpp_
 
+#include <cstdlib>
 #include "timing.hpp"
 
 // SLEvaluator
@@ -16,25 +17,28 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
     const MutableMat<SMat<RT> >* consts /* DMat<RT>& DMat_consts */)
     : mRing(consts->getMat().ring())
 {
-  ERROR("not implemented");
+  std::cerr << "SLEvaluatorConcrete constructor not defined for sparse matrices\n";  
+  abort();
 }
 
 // copy constructor
 template <typename RT>
 SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(const SLEvaluatorConcrete<RT>& a)
-    : mRing(a.ring()), values(a.values.size())
+    : SLEvaluator(a), mRing(a.ring()), values(a.values.size())
 {
   slp = a.slp;
   varsPos = a.varsPos;
   auto i = values.begin();
   auto j = a.values.begin();
   for (; i != values.end(); ++i, ++j) ring().init_set(*i, *j);
+  // std::cout << "SLEvaluatorConcrete: copy constructor for " << this << std::endl;
 }
 
 template <typename RT>
 SLEvaluatorConcrete<RT>::~SLEvaluatorConcrete()
 {
-  for (auto v : values) ring().clear(v);
+  // std::cout << "~SLEvaluatorConcrete: " << this << std::endl
+  for (auto& v : values) ring().clear(v);
 }
 
 template <typename RT>
@@ -45,8 +49,6 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
     const MutableMat<DMat<RT> >* consts /* DMat<RT>& DMat_consts */)
     : mRing(consts->getMat().ring())
 {
-  if (consts->n_rows() != 1 || consts->n_cols() != cPos->len)
-    ERROR("1-row matrix expected; or numbers of constants don't match");
   slp = SLP;
   // for(int i=0; i<cPos->len; i++)
   //  constsPos.push_back(slp->inputCounter+cPos->array[i]);
@@ -54,16 +56,17 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
     varsPos.push_back(slp->inputCounter + vPos->array[i]);
   values.resize(slp->inputCounter + slp->mNodes.size());
   for (auto i = values.begin(); i != values.end(); ++i) ring().init(*i);
-  // R = consts->get_ring();
   for (int i = 0; i < cPos->len; i++)
     ring().set(values[slp->inputCounter + cPos->array[i]],
                consts->getMat().entry(0, i));
+  // std::cout << "SLEvaluatorConcrete(MutableMat): " << this << std::endl;
 }
 
 template <typename RT>
 SLEvaluator* SLEvaluatorConcrete<RT>::specialize(
     const MutableMatrix* parameters) const
 {
+  // std::cout << "SLEvaluatorConcrete::specialize:" << this << std::endl;
   auto p = dynamic_cast<const MutableMat<DMat<RT> >*>(parameters);
   if (p == nullptr)
     {
@@ -77,9 +80,11 @@ template <typename RT>
 SLEvaluator* SLEvaluatorConcrete<RT>::specialize(
     const MutableMat<DMat<RT> >* parameters) const
 {
-  if (parameters->n_cols() != 1 || parameters->n_rows() > varsPos.size())
+  if (parameters->n_cols() != 1 || parameters->n_rows() > varsPos.size()) {
     ERROR("1-column matrix expected; or #parameters > #vars");
-  auto* e = new SLEvaluatorConcrete<RT>(*this);
+    return nullptr;
+  }
+  SLEvaluatorConcrete<RT>* e = new SLEvaluatorConcrete<RT>(*this);
   size_t nParams = parameters->n_rows();
   for (int i = 0; i < nParams; ++i)
     ring().set(e->values[varsPos[i]], parameters->getMat().entry(i, 0));
@@ -120,7 +125,8 @@ void SLEvaluatorConcrete<RT>::computeNextNode()
         ring().divide(v, v, *(vIt + (*inputPositionsIt++)));
         break;
       default:
-        ERROR("unknown node type");
+        std::cerr << "unknown node type\n";
+        abort();
     }
 }
 
@@ -428,7 +434,7 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
       // dt is an increment for t on the interval [0,1]
       R.set(dt, t_step);
       C.subtract(dc, c_end, c_init);
-      C.abs(abs2dc, dc);  // don't wnat to create new temporary elts: reusing dc
+      C.abs(abs2dc, dc);  // don't want to create new temporary elts: reusing dc
                           // and abs2dc
       R.divide(dt, dt, abs2dc);
 
@@ -650,16 +656,22 @@ bool HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::track(
 //   ||J^{-1}|| should be multiplied by a factor
 //   reflecting an estimate on the error of evaluation of J
 #define PRECISION_SAFETY_BITS 10
-              int more_bits = int(log2(fabs(R.coerceToDouble(dx_norm2)))) -
-                              1;  // subtract 1 for using squares under "log".
-                                  // TODO: should this be divide by 2??
-              int precision_needed =
-                  PRECISION_SAFETY_BITS + tolerance_bits + more_bits;
-              if (R.get_precision() < precision_needed)
-                status = INCREASE_PRECISION;
+              int more_bits = int(log2(fabs(R.coerceToDouble(dx_norm2)))) / 2;
+              int precision_needed = PRECISION_SAFETY_BITS + tolerance_bits + more_bits;
+              if (precision_needed<53) precision_needed = 53;
+              if (M2_numericalAlgebraicGeometryTrace > 3)
+                std::cout << "precision needed = " << precision_needed << " = " 
+                          << PRECISION_SAFETY_BITS << "(safety) + " 
+                          << tolerance_bits << "(tolerance) + "
+                          << more_bits << "(additional)\n"
+                          << "current precision = " << R.get_precision() << std::endl;
+              if (R.get_precision() < precision_needed) 
+                 status = INCREASE_PRECISION;
               else if (R.get_precision() != 53 and
                        R.get_precision() > 2 * precision_needed)
                 status = DECREASE_PRECISION;
+              if (M2_numericalAlgebraicGeometryTrace > 3)
+                std::cout << "status = " << status << std::endl;
             };
 
           // infinity/origin checks
@@ -751,6 +763,14 @@ template <typename RT, typename Algorithm>
 void HomotopyConcrete<RT, Algorithm>::text_out(buffer& o) const
 {
   o << "HomotopyConcrete<...,...> : track not implemented" << newline;
+}
+template <typename RT>
+HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::HomotopyConcrete(
+    HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::EType& Hx,
+    HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::EType& Hxt,
+    HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::EType& HxH)
+    : mHx(Hx), mHxt(Hxt), mHxH(HxH)
+{
 }
 
 template <typename RT>

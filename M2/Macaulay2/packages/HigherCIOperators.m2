@@ -5,8 +5,10 @@ newPackage(
         Authors => {{Name => "David Eisenbud", 
                   Email => "de@msri.org",
                   HomePage => "http://www.msri.org/~de/"}},
-        Headline => "Higer CI operators",
+        Headline => "higher CI operators",
+	Keywords => {"Commutative Algebra"},
         DebuggingMode => false,
+     	PackageImports => { "CompleteIntersectionResolutions" },
 	PackageExports =>{"MCMApproximations"}
         )
 
@@ -18,7 +20,6 @@ export {"exteriorMultiplication",
 	"trueKoszul"
        }
 --notify = true
-needsPackage "CompleteIntersectionResolutions"
 
 trueKoszul=method()
 trueKoszul Matrix := ff -> (
@@ -391,7 +392,7 @@ doc ///
      S-free resolution of M. The resulting resolution has the
      structure of a module over the exterior algebra.
      
-     This construction is in somes sense dual to the Shamash
+     This construction is in some sense dual to the Shamash
      construction of an R-free resolution from an S-free resolution,
      that uses higher homotopies and
      yields a resolution that is a module over the 

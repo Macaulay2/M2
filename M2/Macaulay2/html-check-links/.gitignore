@@ -4,6 +4,3 @@
 /grammar.tab.h
 /html-check-links
 /run-overflow-test
-/e-includes/geogbvec.hpp
-/e-includes/geores.hpp
-/e-includes/statuscodes.h

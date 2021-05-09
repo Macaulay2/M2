@@ -3,8 +3,9 @@
 #ifndef _gbweight_hpp_
 #define _gbweight_hpp_
 
-#include "engine.h"
+#include "ringelem.hpp" // TODO: needed for M2_arrayint
 #include "newdelete.hpp"
+
 class GBRing;
 class gbvector;
 

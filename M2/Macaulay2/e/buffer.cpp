@@ -51,6 +51,13 @@ void buffer::put(long n)
   put(s, strlen(s));
 }
 
+void buffer::put(double n)
+{
+  char s[100];
+  sprintf(s, "%lf", n);
+  put(s, strlen(s));
+}
+
 void buffer::put(long n, int width)
 {
   char s[100];

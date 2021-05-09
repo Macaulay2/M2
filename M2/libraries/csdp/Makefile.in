@@ -2,18 +2,26 @@ CSDP_VERSION = 6.2.0
 LIBNAME = Csdp
 VERSION = $(CSDP_VERSION)
 PATCHFILE = @abs_srcdir@/patch-$(CSDP_VERSION)
-URL = http://www.coin-or.org/download/source/Csdp
-#URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+#URL = http://www.coin-or.org/download/source/Csdp
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 TARFILE = Csdp-$(VERSION).tgz
 
 CONFIGURECMD = true
-BUILDOPTIONS = CC="$(CC) $(OPENMP_CXXFLAGS)" CXX="$(CXX) $(OPENMP_CXXFLAGS)" LDFLAGS="$(LDFLAGS) $(OPENMP_CXXFLAGS)" LDLIBS="$(LDLIBS)" #PREFIX=/nowhere
-#INSTALLOPTIONS = PREFIX=$(LIBRARIESDIR)
-#CHECKTARGET = .
+BUILDOPTIONS  = CC="$(CC) $(OPENMP_CXXFLAGS)"
+BUILDOPTIONS += CXX="$(CXX) $(OPENMP_CXXFLAGS)"
+BUILDOPTIONS += LDFLAGS="$(LDFLAGS) $(OPENMP_CXXFLAGS)"
+BUILDOPTIONS += LDLIBS="$(LDLIBS) @OPENMP_LIBS@"
+BUILDOPTIONS += LIBS="-L../lib -lsdp @LINALGLIBS@ @FCLIBS@ -lm"
 
-LICENSEFILES = LICENSE
+#INSTALLOPTIONS = PREFIX=$(LIBRARIESDIR)
+
+# the test uses too much memory, leading to "libgomp: Thread creation failed: Resource temporarily unavailable", so we disable it
+#CHECKTARGET = unitTest
+CHECKTARGET = .
+
+LICENSEFILES = LICENSE README
 PROGRAMS = solver/csdp
-STRIPFILES = $(PROGRAMS)
+STRIPFILES = $(PROGRAMS) theta/complement theta/graphtoprob theta/rand_graph theta/theta
 
 #$(info BUILDOPTIONS is $(BUILDOPTIONS))
 

@@ -48,7 +48,6 @@ Node
     "Ideas for future development"
     :methods not involving something exported by this package:
     (symbol _, OO, RingElement)
-    (variety, RingElement)
     (symbol SPACE,OO,RingElement)
 --------
 Node
@@ -1408,7 +1407,7 @@ Node
     exceptionalDivisor X
   Inputs
     X:AbstractVariety
-     a blowup, built using @ TO blowup @@
+     a blowup, built using @ TO blowup @
   Outputs
     :AbstractSheaf
       the exceptional divisor on X, expressed as a line bundle
@@ -2207,25 +2206,6 @@ Node
    ch F
 --------
 Node
- Key
-  (variety,RingElement)
- Headline
-  get the variety of a cycle class
- Usage
-  variety c
- Inputs
-  c:
-   contained in the intersection ring of an abstract variety $X$, say
- Outputs
-  :
-    $X$
- Description
-  Example
-   X = abstractProjectiveSpace' 4
-   h
-   variety h
---------
-Node
   Key
    (symbol _,OO,AbstractVariety)
   Headline
@@ -2336,25 +2316,6 @@ Node
    Example
     X = abstractProjectiveSpace 4
     tangentBundle X
-    variety oo
---------
-Node
-  Key
-   (variety,Ring)
-  Headline
-   the variety of an intersection ring
-  Usage
-   variety A
-  Inputs
-   A:
-    the intersection ring of a variety $X$, say
-  Outputs
-   :
-    $X$, the variety of {\tt A}
-  Description
-   Example
-    X = abstractProjectiveSpace 1
-    intersectionRing X
     variety oo
 --------
 Node

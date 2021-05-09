@@ -2,7 +2,7 @@
 
 i1 : B = skewPolynomialRing(QQ,(-1)_QQ, {a,b,c})
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12587-0/0.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12587-0/3.ter ... Complete!
+Complete!
 
 o1 = B
 
@@ -10,13 +10,13 @@ o1 : NCQuotientRing
 
 i2 : envelopingAlgebra(B,v)
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12587-0/5.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12587-0/8.ter ... Complete!
+Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12587-0/10.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12587-0/13.ter ... Complete!
+Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12587-0/15.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12587-0/18.ter ... Complete!
+Complete!
 --Calling Bergman for NCGB calculation.
---running: bergman -i /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12587-0/20.init -on-error exit --silent > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-12587-0/23.ter ... Complete!
+Complete!
 
 o2 = QQ{a, b, c, v , v , v } / {ba+ab, ca+ac, cb+bc, v v +v v , v v +v v , v v +v v , v a-av , v a-av , v a-av , v b-bv } + More...
                   0   1   2                           1 0  0 1   2 0  0 2   2 1  1 2   0    0   1    1   2    2   0    0

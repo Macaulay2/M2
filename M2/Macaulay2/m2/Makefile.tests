@@ -5,20 +5,9 @@ include ../../../include/config.Makefile
 
 .PHONY : all
 
-ifeq "@DUMPDATA@" "yes"
-ARGS := -q -e 'path=join(path,{"../","$(srcdir)/"})' -e 'errorDepth = 0' --silent
-all: ../../cache/@DUMPDATAFILE@
-else
-ifeq "@CC@" "cl"
-## work around weirdness in the Microsoft runtime startup - it eliminates backslashes
-## and does strange things to quotation marks.
-ARGS := -q --silent -e 'path=join(path,{\"../\",\"$(srcdir)/\"})' -e 'errorDepth = 0'
-else
 ARGS := -q --silent \
 		-e 'path=join({"../../m2/","$(srcdir)/../m2/","$(srcdir)/../packages/"})' \
 		-e 'errorDepth = 0'
-endif
-endif
 
 %.okay : %.m2
 	@ echo testing $<
@@ -29,10 +18,6 @@ TESTFILES := $(wildcard *.m2)
 TESTRESULTS := $(patsubst %.m2, %.okay, $(TESTFILES))
 
 all: $(TESTRESULTS)
-
-ifneq "@DUMPDATA@" "no"
-$(TESTRESULTS) : ../../cache/@DUMPDATAFILE@
-endif
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -8,6 +8,22 @@
 
 #include <M2/gc-include.h>
 #include <gc/gc_allocator.h>
+#include <vector>
+
+/**
+  @brief a version of the STL vector, which allocates its backing memory with gc.
+
+  This should be used instead of std::vector<T> in the following instances:
+  (1) T contains (or is a pointer to) memory allocated with GC, and
+  (2a) The object containing the vector is in GC collected memory
+      that is, it is in a struct or class inheriting from our_new_delete, or gc_cleanup,
+  or
+  (2b) The vector is in local memory, and has not been allocated on the heap.
+
+  It is a (probably hard to detect) error if exactly (1) or (2a) holds.
+  In that case, redesign your class!
+ */
+#define VECTOR(T) std::vector<T, gc_allocator<T>>
 
 // these replace all uses of the construction "new T[n]" (unless constructors
 // have to be run!):
@@ -96,6 +112,7 @@ struct our_new_delete
     TRAPCHK(obj);
   }
 
+  
 #if !defined(__GNUC__) || defined(__INTEL_COMPILER)
 // see Scott Meyers, Effective C++, item 14!  This avoids something really bad
 // in the c++ standard.
@@ -110,6 +127,29 @@ struct our_new_delete
 #endif
 #endif
 };
+
+
+class our_gc_cleanup: virtual public gc
+{
+public:
+  our_gc_cleanup();
+  virtual ~our_gc_cleanup()
+  {
+    GC_REGISTER_FINALIZER_IGNORE_SELF(this, 0, 0, 0, 0);
+  }
+};
+
+static inline void cleanup(void* obj, void* displ)
+{
+  ((our_gc_cleanup*) ((char*) obj))->~our_gc_cleanup();
+}
+
+inline our_gc_cleanup::our_gc_cleanup()
+{
+  void* this_ptr = (void*)this;
+  GC_REGISTER_FINALIZER_IGNORE_SELF(this_ptr, (GC_finalization_proc) cleanup,
+                                    0, 0, 0);
+}
 
 // struct gc_malloc_alloc {
 //   static void* allocate(size_t n) { void* p = GC_MALLOC(n); if (p == NULL)

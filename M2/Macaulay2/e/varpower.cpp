@@ -301,7 +301,7 @@ void varpower::power(const int *a, int n, intarray &result)
 }
 
 bool varpower::divides(const int *b, const int *a)
-// (Note the switch in order of paramters.  Does b divide a?
+// (Note the switch in order of parameters.  Does b divide a?
 {
   index_varpower i = a;
   index_varpower j = b;

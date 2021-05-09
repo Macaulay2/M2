@@ -1,27 +1,37 @@
+# LIBNAME = flint2
 HOMEPAGE = http://flintlib.org
-#URL = http://flintlib.org
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-VERSION = 2.5.2
+# git://github.com/wbhart/flint2.git
+URL = http://macaulay2.com/Downloads/OtherSourceCode
+VERSION = 2.7.1
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PARALLEL = yes
-# The patch file disables some tests that need too much memory, but
-# many other tests keep failing, so disable them all:
+
+# Many other tests keep failing, so disable them all:
 CHECKTARGET = .
 
-LICENSEFILES = flint.h gpl-2.0.txt
+LICENSEFILES = flint.h LICENSE
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assert
 CFLAGS += -O0 -fno-unroll-loops 
 endif
 CFLAGS += -std=c90 -pedantic-errors
 # the flint configure script does not accept CPPFLAGS
-CONFIGURECMD =  LIB_DIRS=$(LIBRARIESDIR)/lib ./configure  --with-gc --with-blas --disable-tls \
+# CONFIGURECMD =  LIB_DIRS=$(LIBRARIESDIR)/lib ./configure  --with-gc --with-blas --disable-tls
+CONFIGURECMD =  LIB_DIRS=$(LIBRARIESDIR)/lib ./configure --without-blas --disable-tls \
 			--prefix='$(PREFIX)' --disable-shared CC='$(CC)' \
-			CFLAGS='$(CFLAGS) $(CPPFLAGS)' \
-			--with-gmp=$(LIBRARIESDIR) \
-			--with-mpfr=$(LIBRARIESDIR)
-# The with-gmp and with-mpfr options above are barely used by the configure script: the directory given should contain a subdirectory "lib"; that's all.
+			CFLAGS='$(CFLAGS) $(CPPFLAGS)'
+
+ifneq ($(VERBOSE),)
+BUILDOPTIONS += AT= QUIET_CC= QUIET_CXX= QUIET_AR=
+endif
+
 include ../Makefile.library
+
+# I can't figure out how to get flint compiled with mpir instead of gmp, so we adopt an artifice:
+ifeq (@USING_MPIR@,1)
+CPPFLAGS := -I@abs_top_srcdir@/include/M2/gmp-to-mpir $(CPPFLAGS)
+endif
+
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/flint/Makefile
 # Local Variables:
 # mode: makefile-gmake

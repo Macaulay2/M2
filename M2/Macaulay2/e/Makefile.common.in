@@ -28,10 +28,12 @@ COMPILE.cpp = $(COMPILE.cc)
 	$(HIDE)$(COMPILE.c) $(OUTPUT_OPTION) $<
 
 %.o : %.cpp
+#	$(WHY)
 	$(SHOW)"CXX $*.cpp"
 	$(HIDE)$(COMPILE.cpp) $< $(OUTPUT_OPTION)
 
 %.o : %.cc
+#	$(WHY)
 	$(SHOW)"CXX $*.cc"
 	$(HIDE)$(COMPILE.cc) $< $(OUTPUT_OPTION)
 
@@ -52,6 +54,7 @@ COMPILE.cpp = $(COMPILE.cc)
 	$(HIDE)$(COMPILE.cc) -E -dD $< $(OUTPUT_OPTION)
 
 %.o : %.c
+#	$(WHY)
 	$(SHOW)"CC $*.c"
 	$(HIDE)$(COMPILE.c) $< $(OUTPUT_OPTION)
 
@@ -60,13 +63,15 @@ COMPILE.cpp = $(COMPILE.cc)
 	$(HIDE)$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 
 %.dep: %.cpp
+#	$(WHY)
 	$(SHOW)"MKDEP $*.cpp"
 	$(HIDE)$(MKDIR_P) `dirname "$@"`
-	$(HIDE)@CXX@ -MM -MP $(CPPFLAGS) $(CXXFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's=\($*\)\.o[ :]*=\1.o $@ : =' >$@ && rm $*-tmp.dep
+	$(HIDE)@CXX@ -MT $@ -MT $*.o -MM -MP $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) $(MORE_OPTIONS) $< >$*.dep
 
 %.dep: %.c
+#	$(WHY)
 	$(SHOW)"MKDEP $*.c"
-	$(HIDE)@CC@  -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's=\($*\)\.o[ :]*=\1.o $@ : =' >$@ && rm $*-tmp.dep
+	$(HIDE)@CC@  -MT $@ -MT $*.o -MM -MP $(CFLAGS)   $(CPPFLAGS) $(TARGET_ARCH) $(MORE_OPTIONS) $< >$*.dep
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e DEPENDS=no initialize && make -C $M2BUILDDIR/Macaulay2/e Makefile.common "

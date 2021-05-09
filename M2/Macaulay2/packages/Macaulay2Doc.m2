@@ -11,11 +11,10 @@ newPackage ("Macaulay2Doc",
 	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
 	  },
+     Keywords => {"Documentation"},
+     PackageExports => Core#"pre-installed packages",
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION")
-
-if not member("Macaulay2Doc",Core#"base packages") 
-then Core#"base packages" = prepend("Macaulay2Doc",Core#"base packages")
 
 scan(pairs Core#"raw documentation", (k,v) -> (
 	  remove(Core#"raw documentation", k);

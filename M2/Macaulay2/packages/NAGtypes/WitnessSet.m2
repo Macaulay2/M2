@@ -16,6 +16,7 @@
 --                            (e.g., [1,2,3] corresponds to x+2y+3=1)  
 --     }
 WitnessSet.synonym = "witness set"
+texMath WitnessSet := x -> texMath net x
 net WitnessSet := W -> (
     if hasAnAttribute W then (
 	if hasAttribute(W,PrintNet) then return getAttribute(W,PrintNet);
@@ -176,7 +177,8 @@ numericalAffineSpace PolynomialRing := R -> (
     b := random(C^n,C^1);
     numericalVariety {witnessSet(ideal R, A|(-b), {point entries transpose solve(A,b)})}
     )
-projectiveNumericalVariety = method(TypicalValue=>ProjectiveNumericalVariety)
+-- ProjectiveNumericalVariety is not a type!
+projectiveNumericalVariety = method( -* TypicalValue=>ProjectiveNumericalVariety *- )
 projectiveNumericalVariety List := Ws -> new ProjectiveNumericalVariety from numericalVariety Ws
 
 check NumericalVariety := o-> V -> (

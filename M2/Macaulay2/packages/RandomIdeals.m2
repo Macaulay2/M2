@@ -15,7 +15,8 @@ newPackage(
 		Email => "jkelleyy@gmail.com"}
 	    },
     	HomePage => "http://www.msri.org/~de",
-    	Headline => "a package for creating random ideals of various sorts",
+    	Headline => "creating random ideals of various sorts",
+	Keywords => {"Examples and Random Objects"},
 	AuxiliaryFiles => false, -- set to true if package comes with auxiliary files,
 	PackageExports =>{"EdgeIdeals", "BinomialEdgeIdeals"},
     	DebuggingMode => false	 -- set to true only during development
@@ -867,7 +868,7 @@ Description
  Text
   Choose a random square-free monomial
   ideal whose generators have the degrees 
-  specified by the list or squence L.
+  specified by the list or sequence L.
  Example
   setRandomSeed(currentTime())
   kk=ZZ/101
@@ -1252,7 +1253,7 @@ Outputs
    monomial ideal with generators of specified degrees
 Description
  Text
-  Choose a random ideal whose generators have the degrees specified by the list or squence L.
+  Choose a random ideal whose generators have the degrees specified by the list or sequence L.
  Example
   kk=ZZ/101
   S=kk[a..e]
@@ -1468,9 +1469,9 @@ S=ZZ/101[a..e]
 setRandomSeed 123456
 assert (randomMonomial(7,S)==a*b^3*c^3)
 setRandomSeed 123456
-assert(randomMonomialIdeal({3,4,5}, S)==ideal(a^2*d,a^2*c^2,b^2*c*d^2))
+assert(randomMonomialIdeal({3,4,5}, S)==ideal(d*e^2,a*b*d^2,b*c^3*e))
 setRandomSeed 123456
-assert(randomSquareFreeMonomialIdeal({6,4,4},S)==ideal(a*b*c*e,b*c*d*e))
+assert(randomSquareFreeMonomialIdeal({6,4,4},S)==ideal(a*b*c*e,a*c*d*e))
 setRandomSeed 123456
 assert(ideal(8*a^2+5*a*b+4*b^2+35*b*c+3*b*d+36*b*e,29*a^2+22*a*b+32*b^2-44*b*c-6*b*d+40*b*e) == randomIdeal({2,2},matrix{{a^2,b}}))
 setRandomSeed 123456

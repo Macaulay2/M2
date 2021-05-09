@@ -198,7 +198,7 @@ export emptySequence := Sequence();
 export emptySequenceE := Expr(emptySequence);
 
 export dummySymbol := Symbol(
-     Word("{*dummy symbol*}",TCnone,0,newParseinfo()),dummySymbolHash,dummyPosition,
+     Word("-*dummy symbol*-",TCnone,0,newParseinfo()),dummySymbolHash,dummyPosition,
      dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
      Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,
      false,						    -- not protected, so we can use it in parallelAssignmentFun
@@ -212,7 +212,7 @@ export dummyCode := Code(nullCode());
 export NullCode := Code(nullCode());
 export dummyCodeClosure := CodeClosure(dummyFrame,dummyCode);
 export dummyToken   := Token(
-     Word("{*dummy token*}",TCnone,0,newParseinfo()),
+     Word("-*dummy token*-",TCnone,0,newParseinfo()),
      dummyPosition.filename,
      dummyPosition.line,
      dummyPosition.column,
@@ -221,7 +221,7 @@ export dummyToken   := Token(
 
 export parseWORD    := newParseinfo();			    -- parsing functions filled in later
 
-export dummyWord    := Word("{*dummy word*}",TCnone,0,newParseinfo());
+export dummyWord    := Word("-*dummy word*-",TCnone,0,newParseinfo());
 
 export dummyTree    := ParseTree(dummy(dummyPosition));
 
@@ -326,10 +326,11 @@ export rawSLProgramClass := newtypeof(rawObjectClass);    -- RawSLProgram
 export rawPointArrayClass := newtypeof(rawObjectClass);    -- RawPointArray
 -- NAG end
 export rawMutableComplexClass := newtypeof(rawObjectClass);	    -- RawMutableComplex
+export angleBarListClass := newtypeof(visibleListClass);
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 
---Error Handleing 
+--Error Handling 
 export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,nullE,false,dummyFrame));
 export buildErrorPacketErrno(msg:string,errnum:int):Expr := buildErrorPacket( msg + ": " + strerror(errnum) );
 

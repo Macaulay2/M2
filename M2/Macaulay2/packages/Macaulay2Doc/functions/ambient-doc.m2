@@ -1,6 +1,15 @@
 --- status: DRAFT
 --- author(s): MES
 --- notes: what should 'ambient Ring' do??
+---        what about 'ambient Ideal'? ideal 1_R seems suitable (Mahrud)
+
+-*
+-- TODO
+ambient(AffineVariety)
+ambient(CoherentSheaf)
+ambient(GradedModule)
+ambient(ProjectiveVariety)
+*-
 
 document { 
      Key => ambient,

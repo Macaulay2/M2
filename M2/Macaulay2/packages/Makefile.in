@@ -12,15 +12,17 @@ PACKAGES = $(ALL_PACKAGES)
 # packages under development that should be checked but not installed:
 DEVEL = EngineTests
 
+MakeDocumentation ?= true
 RemakeAllDocumentation ?= false
 IgnoreExampleErrors ?= false
 CheckDocumentation ?= true
-Verbose ?= false
+Verbose := $(if $(VERBOSE),true,false)
 RerunExamples ?= false
 debugLevel ?= 0
-errorDepth ?= 3
+errorDepth ?= 0
 
-ARGS := RemakeAllDocumentation => $(RemakeAllDocumentation),	\
+ARGS := MakeDocumentation => $(MakeDocumentation),		\
+	RemakeAllDocumentation => $(RemakeAllDocumentation),	\
 	IgnoreExampleErrors => $(IgnoreExampleErrors),		\
 	RerunExamples => $(RerunExamples),			\
 	CheckDocumentation => $(CheckDocumentation),		\
@@ -40,9 +42,7 @@ $(foreach i,\
 	$(sort $(ALL_PACKAGES) $(DEVEL)),\
 	$(eval check::check-$i)\
 	$(eval check-$i:; \
-		if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 >/dev/null ;\
-		then @pre_bindir@/M2 -q $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true,DebuggingMode=>true); check($i,UserMode=>false); exit 0" ;\
-		fi ))
+		@pre_bindir@/M2 -q --no-preload $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true,DebuggingMode=>true); check($i,UserMode=>false,Verbose=>$(Verbose)); exit 0" ))
 info-dir: @pre_infodir@/dir
 @pre_infodir@/dir:|@pre_infodir@
 	@INSTALL_DATA@ @abs_top_srcdir@/files/info-dir-template $@
@@ -63,13 +63,14 @@ uninstall-package-$1:
 all-$1: @pre_libm2dir@/$1/.installed
 unmark-packages: unmark-$1
 unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
-@pre_libm2dir@/$1/.installed : $1.m2 $$(wildcard @srcdir@/$1/* @srcdir@/$1/*/*) | info-dir
+@pre_libm2dir@/$1/.installed : $1.m2 $$(shell if [ -d @srcdir@/$1 ] ; then find @srcdir@/$1 -type f ; fi) | info-dir
 	: installing package $1
 	$$(WHY)
 	$(MKDIR_P) $1-temporary
 	@echo "make: Entering directory \`$(shell pwd)/$1-temporary'"
 	cd $1-temporary && @pre_bindir@/M2 $(M2DIRS) \
 	    -q $(STOP) \
+	    --no-preload \
 	    -e errorDepth=$(errorDepth) \
 	    -e debugLevel=$(debugLevel) \
 	    $(EARGS) \
@@ -77,7 +78,8 @@ unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
 	@echo "make: Leaving directory \`$(shell pwd)/$1-temporary'"
 	ls -l $1-temporary
 	rm -rf $1-temporary
-	install-info --info-dir=@pre_infodir@ @pre_infodir@/$1.info
+	if [ -e @pre_infodir@/$1.info ]; then \
+		install-info --info-dir=@pre_infodir@ @pre_infodir@/$1.info; fi
 	@ [ "${IgnoreExampleErrors}" = true -o -f $$@ ] || (echo error: file $$@ not made by installPackage >&2; false)
 check-info::@pre_infodir@/$1.info.errors
 @pre_infodir@/$1.info.errors: @pre_infodir@/$1.info
@@ -91,20 +93,19 @@ $(foreach i, $(PACKAGES), $(eval all: unmark-$i))
 endif
 $(foreach i, $(PACKAGES), $(eval all: all-$i) $(eval install: install-$i))
 
-# make packages Style and Macaulay2Doc get installed before the others:
+# make packages Style, FirstPackage, and Macaulay2Doc get installed
+# before the others:
 $(foreach i, $(patsubst Style,,$(ALL_PACKAGES)), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Style/.installed))
-$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Macaulay2Doc/.installed))
+$(foreach i, $(patsubst FirstPackage,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/FirstPackage/.installed))
+$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst FirstPackage,,$(patsubst Style,,$(ALL_PACKAGES)))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Macaulay2Doc/.installed))
 
 # the Info-validate function doesn't work well enough to be useful:
 # check::check-info
 
 clean::; rm -rf tmp
-clean::; $(MAKE) -C ComputationsBook $@
 big-check:
-check::; $(MAKE) -C ComputationsBook check
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
 distclean:clean
-	$(MAKE) -C ComputationsBook $@
 	rm -f Makefile
 
 ## here is the list of other files to install along with Macaulay2

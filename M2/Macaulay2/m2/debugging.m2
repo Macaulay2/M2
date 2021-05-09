@@ -134,8 +134,8 @@ show1(Sequence,Function) := show1(List,Function) := (types,pfun) -> (
 	       or pfun === class and v === Type
 	       then world
 	       else install pfun v);
-	  if hasAttribute(v,PrintNet) then v = getAttribute(v,PrintNet) else
-	  if hasAttribute(v,PrintNames) then v = getAttribute(v,PrintNames) else
+--	  if hasAttribute(v,PrintNet) then v = getAttribute(v,PrintNet) else
+--	  if hasAttribute(v,PrintNames) then v = getAttribute(v,PrintNames) else
 	  if hasAttribute(v,ReverseDictionary) then v = getAttribute(v,ReverseDictionary);
 	  if w#?v then w#v else w#v = new Descent
 	  );
@@ -186,7 +186,7 @@ localSymbols Type := X -> select2(X,localSymbols ())
 
 robust := y -> silentRobustNet(55,4,3,y)
 abbreviate := x -> (
-     if instance(x, Function) and match("^--Function.*--$", toString x) then "..."
+     if instance(x, Function) and match("^-\\*Function.*\\*-$", toString x) then "..."
      else robust x)
 listSymbols = method()
 listSymbols Dictionary := d -> listSymbols values d

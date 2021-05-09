@@ -1,18 +1,77 @@
-diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/Makefile frobby_v0.9.0/Makefile
---- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/Makefile	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/Makefile	2013-05-10 14:30:25.599394200 -0500
-@@ -70,8 +70,8 @@
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/Makefile frobby_v0.9.0/Makefile
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/Makefile	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/Makefile	2019-07-11 12:34:20.000000000 -0400
+@@ -70,8 +70,7 @@
    BIN_INSTALL_DIR = "/usr/local/bin/"
  endif
  
 -cflags = $(CFLAGS) $(CPPFLAGS) -Wall -ansi -pedantic -I $(GMP_INC_DIR)	\
 -         -Wno-uninitialized -Wno-unused-parameter
-+cflags = $(CFLAGS) $(CPPFLAGS) -Wall -I $(GMP_INC_DIR)	\
-+         -Wno-uninitialized -Wno-unused-parameter -std=c++11
++cxxflags = $(CXXFLAGS) $(CPPFLAGS) -I $(GMP_INC_DIR) -Wno-uninitialized -Wno-unused-parameter
  program = frobby
  library = libfrobby.a
  benchArgs = $(FROBBYARGS)
-@@ -217,6 +217,7 @@
+@@ -81,31 +80,31 @@
+ endif
+ 
+ ifndef ldflags
+-  ldflags = $(cflags) $(LDFLAGS) -lgmpxx -lgmp
++  ldflags = $(LDFLAGS) -lgmpxx -lgmp
+ endif
+ 
+ MATCH=false
+ ifeq ($(MODE), release)
+   outdir = bin/release/
+-  cflags += -O2
++  cxxflags += -O2
+   MATCH=true
+ endif
+ ifeq ($(MODE), debug)
+   rawSources := $(rawSources) $(rawTests)
+   outdir = bin/debug/
+-  cflags += -g -D DEBUG -fno-inline -Werror -Wextra -Wno-uninitialized \
++  cxxflags += -g -D DEBUG -fno-inline -Werror -Wextra -Wno-uninitialized \
+             -Wno-unused-parameter
+   MATCH=true
+ endif
+ ifeq ($(MODE), shared)
+   outdir = bin/shared/
+-  cflags += -O2 -fPIC
++  cxxflags += -O2 -fPIC
+   library = libfrobby.so
+   MATCH=true
+ endif
+ ifeq ($(MODE), profile)
+   outdir = bin/profile/
+-  cflags += -g -pg -O2 -D PROFILE
++  cxxflags += -g -pg -O2 -D PROFILE
+   ldflags += -pg
+   MATCH=true
+   benchArgs = _profile $(FROBBYARGS)
+@@ -113,14 +112,14 @@
+ ifeq ($(MODE), analysis)
+   rawSources := $(rawSources) $(rawTests)
+   outdir = bin/analysis/
+-  cflags += -Wextra -fsyntax-only -O1 -Wfloat-equal -Wundef				\
+-  -Wno-endif-labels -Wshadow -Wlarger-than-1000 -Wpointer-arith			\
+-  -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wsign-compare	\
+-  -Waggregate-return -Wmissing-noreturn -Wmissing-format-attribute		\
+-  -Wno-multichar -Wno-deprecated-declarations -Wpacked					\
+-  -Wno-redundant-decls -Wunreachable-code -Winline						\
+-  -Wno-invalid-offsetof -Winvalid-pch -Wlong-long						\
+-  -Wdisabled-optimization -D DEBUG -Werror
++  cxxflags += -Wextra -fsyntax-only -O1 -Wfloat-equal -Wundef			\
++      -Wno-endif-labels -Wshadow -Wlarger-than-1000 -Wpointer-arith		\
++      -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wsign-compare	\
++      -Waggregate-return -Wmissing-noreturn -Wmissing-format-attribute		\
++      -Wno-multichar -Wno-deprecated-declarations -Wpacked			\
++      -Wno-redundant-decls -Wunreachable-code -Winline				\
++      -Wno-invalid-offsetof -Winvalid-pch -Wlong-long				\
++      -Wdisabled-optimization -D DEBUG -Werror
+   MATCH=true
+ endif
+ 
+@@ -217,6 +216,7 @@
  	  $(patsubst $(outdir)main.o,,$(objs))
  else
  	ar crs bin/$(library) $(patsubst $(outdir)main.o,,$(objs))
@@ -20,9 +79,20 @@ diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp
  endif
  
  # Compile and output object files.
-diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.cpp frobby_v0.9.0/src/FrobbyStringStream.cpp
---- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.cpp	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/src/FrobbyStringStream.cpp	2013-05-10 11:42:01.840492200 -0500
+@@ -224,8 +224,8 @@
+ # to allow dependency analysis to work.
+ $(outdir)%.o: src/%.cpp
+ 	@mkdir -p $(dir $@)
+-	$(CXX) ${cflags} -c $< -o $@
+-	$(CXX) $(cflags) -MM -c $< > $(@:.o=.d).tmp
++	$(CXX) ${cxxflags} -c $< -o $@
++	$(CXX) $(cxxflags) -MM -c $< > $(@:.o=.d).tmp
+ # using /usr/bin/env echo to get the non-built-in echo on OS X, since
+ # the built-in one does not understand the parameter -n.
+ 	@/usr/bin/env echo -n "$(dir $@)" > $(@:.o=.d)
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.cpp frobby_v0.9.0/src/FrobbyStringStream.cpp
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.cpp	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/FrobbyStringStream.cpp	2019-06-23 09:36:38.000000000 -0400
 @@ -41,6 +41,11 @@
    return *this;
  }
@@ -35,9 +105,9 @@ diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp
  FrobbyStringStream& FrobbyStringStream::operator<<(unsigned long integer) {
    appendIntegerToString(_str, integer);
    return *this;
-diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.h frobby_v0.9.0/src/FrobbyStringStream.h
---- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.h	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/src/FrobbyStringStream.h	2013-05-10 11:42:01.843492400 -0500
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.h frobby_v0.9.0/src/FrobbyStringStream.h
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.h	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/FrobbyStringStream.h	2019-06-23 09:36:38.000000000 -0400
 @@ -25,6 +25,7 @@
   used for operations that need to be efficient. */
  class FrobbyStringStream {
@@ -46,125 +116,9 @@ diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp
    FrobbyStringStream& operator<<(unsigned long integer);
    FrobbyStringStream& operator<<(unsigned int integer);
    FrobbyStringStream& operator<<(const mpz_class& integer);
-diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/Term.h frobby_v0.9.0/src/Term.h
---- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/Term.h	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/src/Term.h	2013-05-10 11:42:01.846492600 -0500
-@@ -99,6 +99,10 @@
-     ASSERT(offset < _varCount);
-     return _exponents[offset];
-   }
-+  Exponent operator[](unsigned long long offset) const {
-+    ASSERT(offset < _varCount);
-+    return _exponents[offset];
-+  }
- 
-   Exponent& operator[](int offset) {
-     ASSERT(0 <= offset);
-@@ -113,6 +117,10 @@
-     ASSERT(offset < _varCount);
-     return _exponents[offset];
-   }
-+  Exponent& operator[](unsigned long long offset) {
-+    ASSERT(offset < _varCount);
-+    return _exponents[offset];
-+  }
- 
-   bool operator==(const Term& term) const {
-     ASSERT(_varCount == term._varCount);
-diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp frobby_v0.9.0/src/main.cpp
---- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/src/main.cpp	2013-05-10 11:42:01.819491000 -0500
-@@ -24,6 +24,7 @@
- 
- #include <ctime>
- #include <cstdlib>
-+#include <unistd.h>
- 
- /** This function runs the Frobby console interface. the ::main
-     function calls this function after having set up DEBUG-specific
-diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp frobby_v0.9.0/src/randomDataGenerators.cpp
---- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/src/randomDataGenerators.cpp	2013-05-10 11:42:01.822491200 -0500
-@@ -25,6 +25,7 @@
- 
- #include <limits>
- #include <ctime>
-+#include <unistd.h>
- 
- void generateLinkedListIdeal(BigIdeal& ideal, size_t variableCount) {
-   VarNames names(variableCount);
-diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/messages/runtest frobby_v0.9.0/test/messages/runtest
---- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/messages/runtest	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/test/messages/runtest	2013-05-10 11:42:01.825491400 -0500
-@@ -9,7 +9,7 @@
- action="$1"
- shift
- 
--tmpFile="/tmp/errorTestHelperTmp"
-+tmpFile="./errorTestHelperTmp"
- echo "$1" > $tmpFile
- shift
- 
-diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test frobby_v0.9.0/test/testScripts/run_euler_test
---- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test	2011-09-23 15:09:13.000000000 -0500
-+++ frobby_v0.9.0/test/testScripts/run_euler_test	2013-05-10 11:42:01.829491600 -0500
-@@ -3,9 +3,9 @@
- frobby=../../bin/frobby
- testhelper=../testScripts/testhelper
- test="$1"
--tmpFile=/tmp/frobbyEulerRadicalTmp
--tmpFileInverted=/tmp/frobbyEulerRadicalInvertedTmp
--tmpFileTransposed=/tmp/frobbyEulerRadicalTransposedTmp
-+tmpFile=./frobbyEulerRadicalTmp
-+tmpFileInverted=./frobbyEulerRadicalInvertedTmp
-+tmpFileTransposed=./frobbyEulerRadicalTransposedTmp
- genPivots="rarevar popvar maxsupp minsupp any random rarest raremax"
- stdPivots="popvar rarevar popgcd any random"
- shift
-diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/testhelper frobby_v0.9.0/test/testScripts/testhelper
---- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/testhelper	2011-09-23 15:09:13.000000000 -0500
-+++ frobby_v0.9.0/test/testScripts/testhelper	2013-05-10 11:42:01.833491800 -0500
-@@ -57,10 +57,10 @@
- 
- origParams="$*" # used for debug output below
- origFrobby="../../bin/frobby"
--origFrobbyOut="/tmp/frobbyTestScriptTemporary_standardOutput"
--origFrobbyErr="/tmp/frobbyTestScriptTemporary_standardError"
--frobbyChangedErr="/tmp/frobbyTestScriptTemporary_standardErrorChanged"
--frobbyChangedInput="/tmp/frobbyTestScriptTemporary_standardInput"
-+origFrobbyOut="./frobbyTestScriptTemporary_standardOutput"
-+origFrobbyErr="./frobbyTestScriptTemporary_standardError"
-+frobbyChangedErr="./frobbyTestScriptTemporary_standardErrorChanged"
-+frobbyChangedInput="./frobbyTestScriptTemporary_standardInput"
- 
- frobby="$origFrobby"
- frobbyOut="$origFrobbyOut"
-diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/StatisticsStrategy.cpp frobby_v0.9.0/src/StatisticsStrategy.cpp
---- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/StatisticsStrategy.cpp	2011-09-23 16:09:12.000000000 -0400
-+++ frobby_v0.9.0/src/StatisticsStrategy.cpp	2013-05-18 17:22:09.000000000 -0400
-@@ -140,7 +140,7 @@
-   if (_nodeCount == 0)
-     return 0.0;
-   else {
--    mpz_class q = mpq_class(_subGenSum) / _nodeCount;
-+    mpq_class q = mpq_class(_subGenSum) / _nodeCount;
-     return q.get_d();
-   }
- }
-diff -ur /home/dan/src/M2/M2/BUILD/dan/builds.tmp/ubuntu64.production/libraries/frobby/tmp/frobby_v0.9.0/test/internal/runtests frobby_v0.9.0/test/internal/runtests
---- /home/dan/src/M2/M2/BUILD/dan/builds.tmp/ubuntu64.production/libraries/frobby/tmp/frobby_v0.9.0/test/internal/runtests	2011-09-23 13:09:12.000000000 -0700
-+++ frobby_v0.9.0/test/internal/runtests	2014-07-30 10:46:31.033944047 -0700
-@@ -7,6 +7,6 @@
- fi
- 
- $frobby test 2> /dev/null > /dev/null
--if [ $? == 0 ]; then exit 0; fi
-+if [ $? = 0 ]; then exit 0; fi
- echo "*** Internal test failed, rerunning tests with output ***"
- $frobby test
-diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64/libraries/frobby/tmp/frobby_v0.9.0/src/HashMap.h frobby_v0.9.0/src/HashMap.h
---- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64/libraries/frobby/tmp/frobby_v0.9.0/src/HashMap.h	2011-09-23 16:09:12.000000000 -0400
-+++ frobby_v0.9.0/src/HashMap.h	2015-06-06 12:56:15.000000000 -0400
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/HashMap.h frobby_v0.9.0/src/HashMap.h
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/HashMap.h	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/HashMap.h	2019-06-23 09:36:39.000000000 -0400
 @@ -35,10 +35,16 @@
  class FrobbyHash {};
  
@@ -194,20 +148,46 @@ diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64/libraries/frobby/t
  // *********************************************************
  #ifdef _MSC_VER // Only Microsoft C++ defines this macro
  #include <hash_map>
-diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/opt64-clang-full/libraries/frobby/tmp/frobby_v0.9.0/src/stdinc.h frobby_v0.9.0/src/stdinc.h
---- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/opt64-clang-full/libraries/frobby/tmp/frobby_v0.9.0/src/stdinc.h	2011-09-23 16:09:12.000000000 -0400
-+++ frobby_v0.9.0/src/stdinc.h	2015-06-02 21:27:34.000000000 -0400
-@@ -29,6 +29,7 @@
- // Some versions of GMP do not define gmp_fprintf unless cstdio is
- // included first, so we have to include it here.
- #include <cstdio>
-+#include <cstddef>
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/StatisticsStrategy.cpp frobby_v0.9.0/src/StatisticsStrategy.cpp
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/StatisticsStrategy.cpp	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/StatisticsStrategy.cpp	2019-06-23 09:36:39.000000000 -0400
+@@ -140,7 +140,7 @@
+   if (_nodeCount == 0)
+     return 0.0;
+   else {
+-    mpz_class q = mpq_class(_subGenSum) / _nodeCount;
++    mpq_class q = mpq_class(_subGenSum) / _nodeCount;
+     return q.get_d();
+   }
+ }
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/Term.h frobby_v0.9.0/src/Term.h
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/Term.h	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/Term.h	2019-06-23 09:36:38.000000000 -0400
+@@ -99,6 +99,10 @@
+     ASSERT(offset < _varCount);
+     return _exponents[offset];
+   }
++  Exponent operator[](unsigned long long offset) const {
++    ASSERT(offset < _varCount);
++    return _exponents[offset];
++  }
  
- #include <gmp.h>
- #include <gmpxx.h>
-diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64/libraries/frobby/tmp/frobby_v0.9.0/src/VarNames.h frobby_v0.9.0/src/VarNames.h
---- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64/libraries/frobby/tmp/frobby_v0.9.0/src/VarNames.h	2011-09-23 16:09:12.000000000 -0400
-+++ frobby_v0.9.0/src/VarNames.h	2015-06-06 12:36:28.000000000 -0400
+   Exponent& operator[](int offset) {
+     ASSERT(0 <= offset);
+@@ -113,6 +117,10 @@
+     ASSERT(offset < _varCount);
+     return _exponents[offset];
+   }
++  Exponent& operator[](unsigned long long offset) {
++    ASSERT(offset < _varCount);
++    return _exponents[offset];
++  }
+ 
+   bool operator==(const Term& term) const {
+     ASSERT(_varCount == term._varCount);
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/VarNames.h frobby_v0.9.0/src/VarNames.h
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/VarNames.h	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/VarNames.h	2019-06-23 09:36:39.000000000 -0400
 @@ -21,7 +21,7 @@
  
  #include <vector>
@@ -227,3 +207,93 @@ diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64/libraries/frobby/t
    VarNameMap _nameToIndex;
    vector<const string*> _indexToName;
  };
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp frobby_v0.9.0/src/main.cpp
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/main.cpp	2019-06-23 09:36:38.000000000 -0400
+@@ -24,6 +24,7 @@
+ 
+ #include <ctime>
+ #include <cstdlib>
++#include <unistd.h>
+ 
+ /** This function runs the Frobby console interface. the ::main
+     function calls this function after having set up DEBUG-specific
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp frobby_v0.9.0/src/randomDataGenerators.cpp
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/randomDataGenerators.cpp	2019-06-23 09:36:38.000000000 -0400
+@@ -25,6 +25,7 @@
+ 
+ #include <limits>
+ #include <ctime>
++#include <unistd.h>
+ 
+ void generateLinkedListIdeal(BigIdeal& ideal, size_t variableCount) {
+   VarNames names(variableCount);
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/stdinc.h frobby_v0.9.0/src/stdinc.h
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/stdinc.h	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/stdinc.h	2019-06-23 09:36:39.000000000 -0400
+@@ -29,6 +29,7 @@
+ // Some versions of GMP do not define gmp_fprintf unless cstdio is
+ // included first, so we have to include it here.
+ #include <cstdio>
++#include <cstddef>
+ 
+ #include <gmp.h>
+ #include <gmpxx.h>
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/test/internal/runtests frobby_v0.9.0/test/internal/runtests
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/test/internal/runtests	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/test/internal/runtests	2019-06-23 09:36:39.000000000 -0400
+@@ -7,6 +7,6 @@
+ fi
+ 
+ $frobby test 2> /dev/null > /dev/null
+-if [ $? == 0 ]; then exit 0; fi
++if [ $? = 0 ]; then exit 0; fi
+ echo "*** Internal test failed, rerunning tests with output ***"
+ $frobby test
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/test/messages/runtest frobby_v0.9.0/test/messages/runtest
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/test/messages/runtest	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/test/messages/runtest	2019-06-23 09:36:38.000000000 -0400
+@@ -9,7 +9,7 @@
+ action="$1"
+ shift
+ 
+-tmpFile="/tmp/errorTestHelperTmp"
++tmpFile="./errorTestHelperTmp"
+ echo "$1" > $tmpFile
+ shift
+ 
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test frobby_v0.9.0/test/testScripts/run_euler_test
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test	2011-09-23 16:09:13.000000000 -0400
++++ frobby_v0.9.0/test/testScripts/run_euler_test	2019-06-23 09:36:38.000000000 -0400
+@@ -3,9 +3,9 @@
+ frobby=../../bin/frobby
+ testhelper=../testScripts/testhelper
+ test="$1"
+-tmpFile=/tmp/frobbyEulerRadicalTmp
+-tmpFileInverted=/tmp/frobbyEulerRadicalInvertedTmp
+-tmpFileTransposed=/tmp/frobbyEulerRadicalTransposedTmp
++tmpFile=./frobbyEulerRadicalTmp
++tmpFileInverted=./frobbyEulerRadicalInvertedTmp
++tmpFileTransposed=./frobbyEulerRadicalTransposedTmp
+ genPivots="rarevar popvar maxsupp minsupp any random rarest raremax"
+ stdPivots="popvar rarevar popgcd any random"
+ shift
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/testhelper frobby_v0.9.0/test/testScripts/testhelper
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/testhelper	2011-09-23 16:09:13.000000000 -0400
++++ frobby_v0.9.0/test/testScripts/testhelper	2019-06-23 09:36:39.000000000 -0400
+@@ -57,10 +57,10 @@
+ 
+ origParams="$*" # used for debug output below
+ origFrobby="../../bin/frobby"
+-origFrobbyOut="/tmp/frobbyTestScriptTemporary_standardOutput"
+-origFrobbyErr="/tmp/frobbyTestScriptTemporary_standardError"
+-frobbyChangedErr="/tmp/frobbyTestScriptTemporary_standardErrorChanged"
+-frobbyChangedInput="/tmp/frobbyTestScriptTemporary_standardInput"
++origFrobbyOut="./frobbyTestScriptTemporary_standardOutput"
++origFrobbyErr="./frobbyTestScriptTemporary_standardError"
++frobbyChangedErr="./frobbyTestScriptTemporary_standardErrorChanged"
++frobbyChangedInput="./frobbyTestScriptTemporary_standardInput"
+ 
+ frobby="$origFrobby"
+ frobbyOut="$origFrobbyOut"d

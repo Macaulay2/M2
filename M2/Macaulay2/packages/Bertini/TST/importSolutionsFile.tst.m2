@@ -1,4 +1,4 @@
-needsPackage "Bertini"
+loadPackage( "Bertini",Reload=>true)
 
 makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y},B'Polynomials=>{"x^2-2","y^2+x+1"})
 runBertini(storeBM2Files)
@@ -46,7 +46,7 @@ assert( abs( abs(sings_0_0)-0)<1e-10)
 
 ----We want to make sure we have lots of precision. 
 makeB'InputFile(storeBM2Files,AffVariableGroup=>{x},B'Polynomials=>{"(x^2-2)"},
-    B'Configs=>{{FINALTOL,1e-300}})
+    BertiniInputConfiguration=>{FinalTol=>1e-300})
 runBertini(storeBM2Files)
 printingPrecision =256 
 rawSolutions=importSolutionsFile(storeBM2Files,
@@ -54,3 +54,4 @@ rawSolutions=importSolutionsFile(storeBM2Files,
     M2Precision=>256)
 assert((#(toString rawSolutions_0_0)>50)===true)
 assert((#toExternalString rawSolutions_0>100)===true)
+

@@ -80,7 +80,7 @@ class SchurRing : public PolyRing
                                  const ring_elem c,
                                  const int *m) const;
 
-  ring_elem power(const ring_elem f, mpz_t n) const;
+  ring_elem power(const ring_elem f, mpz_srcptr n) const;
   ring_elem power(const ring_elem f, int n) const;
 };
 

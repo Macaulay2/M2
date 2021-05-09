@@ -4,11 +4,10 @@
 # run make -C ../..
 # reconfigure in the build directory
 HOMEPAGE = http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
-URL = http://cgm.cs.mcgill.ca/~avis/C/lrslib/archive
-#URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-#VERSION = 042c
-#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-VERSION = 062
+# URL = http://cgm.cs.mcgill.ca/~avis/C/lrslib/archive
+URL = http://macaulay2.com/Downloads/OtherSourceCode
+VERSION = 071a
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARFILE = lrslib-$(VERSION).tar.gz
 #PROGRAMS = lrs redund lra1 redund1 nash setupnash setupnash2 fourier buffer 2nash
 PROGRAMS = lrs #redund lrs1 redund1 setnash setnash2 2nash
@@ -16,7 +15,7 @@ STRIPFILES = $(PROGRAMS)
 LICENSEFILES = COPYING
 CONFIGURECMD = true
 BUILDTARGET = lrs
-BUILDOPTIONS = LDFLAGS="$(LDFLAGS)" LIBDIR="$(BUILTLIBPATH)/lib" CPPFLAGS="$(CPPFLAGS)" CC="$(CC)" TARGET_ARCH=$(TARGET_ARCH) RANLIB=true
+BUILDOPTIONS = LDFLAGS="$(LDFLAGS)" CPPFLAGS="$(CPPFLAGS)" CC="$(CC)" TARGET_ARCH=$(TARGET_ARCH) RANLIB=true LIBDIR="$(BUILTLIBPATH)/lib" INCLUDEDIR="$(BUILTLIBPATH)/include"
 INSTALLCMD = true
 CHECKCMD = true
 include ../Makefile.library

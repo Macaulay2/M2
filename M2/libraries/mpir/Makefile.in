@@ -9,8 +9,10 @@ TARFILE = $(LIBNAME)-$(VERSION).tar.bz2
 PRECONFIGURE = autoconf
 
 # URL = http://www.mpir.org
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+URL = http://macaulay2.com/Downloads/OtherSourceCode
+
+# do not need this patch with "vanilla gmp" code.
+#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 # increase the limit, because two of the tests run by mpir's "make check" will
 # not run in just 400000:
@@ -53,7 +55,6 @@ endif
 ifeq (@OS@-@ISSUE@,MicrosoftWindows-Cygwin)
 LDFLAGS += -Wl,--enable-auto-import
 endif
-CONFIGOPTIONS += @MPIR_CONFIG_OPTIONS@
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/mpir/Makefile
 
 test test.o : LOADLIBES += -lmpir

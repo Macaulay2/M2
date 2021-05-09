@@ -50,6 +50,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 --      solsS = list of solutions to S
 -- OUT: solsT = list of target solutions corresponding to solsS
 track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
+     if #solsS == 0 then return solsS;    
      o = fillInDefaultOptions o;
      HISTORY := DBG>1 or member(o.Predictor, {Multistep,Secant});
      n := T.NumberOfPolys; 
@@ -73,7 +74,7 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
      
      -- M2 (main code)  --------------------------------------------------------     
      setupStartTime := currentTime();
-     -- threshholds and other tuning parameters (should include most of them as options)
+     -- thresholds and other tuning parameters (should include most of them as options)
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
      theSmallestNumber := 1e-12;
      
@@ -634,6 +635,8 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 
 debug Core -------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------------
+-- trackHomotopyM2engine SUBROUTINES
 trackHomotopyM2engine = (H, inp, 
 	out, statusOut,
 	tStep, tStepMin, 
@@ -641,7 +644,7 @@ trackHomotopyM2engine = (H, inp,
 	InfinityThreshold,
 	checkPrecision
 	) -> (
-    if numVars H != numrows inp - 1 -- one input is t-value 
+    if numVariables H != numrows inp - 1 -- one input is t-value 
     then error "the number of variables does not match the number of inputs"; 
     K := ring inp;
     if K =!= ring out then error "inp and out have to have the same ring";
@@ -699,6 +702,7 @@ lowerPrecision = new HashTable from {
     100 => 53,
     53 => null
     }
+
 trackHomotopy = method(TypicalValue => List, Options =>{
 	  Field => null,
 	  Software => null, 
@@ -718,19 +722,23 @@ trackHomotopy = method(TypicalValue => List, Options =>{
 	  EndZoneFactor => null, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
 	  InfinityThreshold => null -- used to tell if the path is diverging
 	  } )
-trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
+  
+  
+trackHomotopy(Matrix,List) := List => o -> (H,solsS) -> (
+    F := gateMatrix polySystem H;
+    XT := getVarGates ring H;
+    X := drop(XT,-1);
+    T := last XT;
+    trackHomotopy(gateHomotopy(F, gateMatrix{X}, T), solsS, o)
+    )
+ 
+trackHomotopy(Sequence,List) :=
+trackHomotopy(Homotopy,List) := List => o -> (H,solsS) -> (
 -- tracks homotopy H starting with solutions solsS 
 -- IN:  H = either a column vector of polynomials in CC[x1,...,xn,t]  -- the last variable is assumed to be the _continuation parameter_
 --          or an SLP representing one -- !!! at this point it is preSLP
 --      solsS = list of one-column matrices over CC
 -- OUT: solsT = list of target solutions corresponding to solsS
-     if instance(H,Matrix) then (
-	 F := gateMatrix polySystem H;
-	 XT := getVarGates ring H;
-	 X := drop(XT,-1);
-	 T := last XT;
-	 H = gateHomotopy(F, gateMatrix{X}, T); 
-	 );
      if #solsS === 0 then return {};
      o = fillInDefaultOptions o;
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
@@ -1102,26 +1110,24 @@ mesTracker(Homotopy, MutableMatrix) := o -> (H, inp) -> (
     )
 
 TEST ///
-restart
 setRandomSeed 0
 debug needsPackage "NumericalAlgebraicGeometry"
-NAGtrace 2
+NAGtrace 1
 n = 2; d = 2;
 R=QQ[x_0..x_(n-1)]
-eps = 1/10^20
+eps = 1/10^14
 T = apply(n, i->if i==0 then x_i^d-eps^d else (x_i-i)^d-eps^(d-1)*x_i)
 (S,solsS) = totalDegreeStartSystem T
 H = segmentHomotopy(S,T,gamma=>1+pi*ii)
 sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 53,CorrectorTolerance=>1e-15,Precision=>infinity,EndZoneFactor=>0)
 peek sols 
-assert((first sols).NumberOfSteps == 101)
+assert all(sols, s->status s === Regular and s.NumberOfSteps > 100)
 
-sols = trackHomotopy(H,solsS, CorrectorTolerance=>1e-15,Precision=>53,EndZoneFactor=>0)
+sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 53,CorrectorTolerance=>1e-15,Precision=>53,EndZoneFactor=>0)
 peek sols 
+assert all(sols, s->status s === MinStepFailure)
 
-sols = trackHomotopy(H,solsS, CorrectorTolerance=>1e-15,Precision=>100,EndZoneFactor=>0)
+sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 100,CorrectorTolerance=>1e-15,Precision=>100,EndZoneFactor=>0)
 peek sols 
-
-sols = trackHomotopy(H,solsS, CorrectorTolerance=>1e-15,Precision=>1000,EndZoneFactor=>0)
-peek sols 
+assert all(sols, s->status s === Regular)
 ///

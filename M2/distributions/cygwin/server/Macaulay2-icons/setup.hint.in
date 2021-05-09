@@ -1,7 +1,0 @@
-# -*- sh -*-
-# this file is part of the Macaulay2-icons cygwin package
-sdesc: "the icons for Macaulay2"
-ldesc: "This package sets up the start menu entries and desktop icons for
-Macaulay2.  It depends on the latest version of Macaulay2."
-category: Math
-requires: Macaulay2

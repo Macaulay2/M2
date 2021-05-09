@@ -1,164 +1,153 @@
 doc ///
-	Key
-		"Differential Lie algebras Tutorial"
-	Headline 
-		A tutorial for differential Lie algebras
+
+     	Key
+	    	"Differential Lie algebra tutorial"
+	
 	SeeAlso
-                 "First LieAlgebra Tutorial"
-		 "Second LieAlgebra Tutorial"		 
-		 "Constructing Lie algebras"
-		 "How to write Lie elements" 
-		 "Symmetries"   
+	         
+		 "First Lie algebra tutorial"
+		 "Second Lie algebra tutorial"
+		 "Holonomy Lie algebras and symmetries"
+		 "Minimal models, Ext-algebras and Koszul duals"	
+	
 	Description
 		Text
-		  See @TO "Second LieAlgebra Tutorial"@ on 
-		  how to use the option @TO genDiffs@.
-		  
-    	    	Example		 
-		  L=lieAlgebra({a,b,c},{[a,a],[b,b]},genSigns=>1,
-		      genWeights=>{{1,0},{1,0},{2,1}},genDiffs=>{[],[],[a,b]})
-		  		 
+		        A differential Lie algebra is defined by first 
+			using the constructor @TO lieAlgebra@ with the 
+			option @TO [lieAlgebra,LastWeightHomological]@ set to {\tt true} 
+			to define a free Lie algebra $F$. Hereby, 
+			the last weight is 
+			the homological degree, and it must be non-negative and
+			less than the first degree. Next define the differential 
+			Lie algebra $D$ using  
+			@TO differentialLieAlgebra@
+			with input the list of differentials of the generators with 
+			values in $F$.
+			The differential should preserve 
+			all weights except the homological
+			degree, which is lowered by 1,
+			and it also changes the sign. 
+			All this is checked to be true when
+			@TO differentialLieAlgebra@ 
+			is executed.
+			The value zero for a generator is 
+			given as $0_F$, which has any
+			weight and sign (see however @TO weight@ and @TO sign@).
+			The program adds (non-normalized) 
+			relations to the Lie algebra to get
+			the square of the differential
+			to be 0.  		
+			
+		Example
+		        F1 = lieAlgebra({a,b,c},Weights => {{1,0},{2,1},{3,2}},
+			     Signs => {1,1,1},LastWeightHomological => true)
+			D1=differentialLieAlgebra{0_F1,a a,a b}
+			describe D1
+			F2 = lieAlgebra({a,b,c2,c3,c4},Signs => {0,0,1,0,1},
+                             Weights => {{1,0},{1,0},{2,1},{3,2},{5,3}},
+		             LastWeightHomological => true)
+	                D2=differentialLieAlgebra{0_F2,0_F2,a b,a c2,a b c3}
+		        describe D2
+			
+					       
 		Text
-		  The dimensions of the homology can be obtained using @TO homologyLie@. A
-		  basis for the homology and the boundaries 
-		  in a certain first and homological degree is 
-		  obtained by @TO homologyBasisLie@ and @TO boundariesBasisLie@.
+		        There is a unique extension to a derivation $d$ on the free Lie
+			algebra $F$ given the values of $d$ on the generators. This map
+			induces a derivation with square zero on the differential 
+			Lie algebra $D$ (which might have some relations).  
+			The differential is obtained using 
+			@TO differential@ applied to $D$. 
+			The value of the differential $d$ applied to 
+			an arbitrary Lie element $x$ in $D$ is obtained as $d(x)$.       
+						
+			
+    	    	Example		 
+		        d2 = differential D2
+		        x = a c3 + b c3 + (1/2) c2 c2		
+		        d2 x
+			
+		Text	      
+		  It is possible to define quotients of a differential Lie
+		  algebra in the same way as for ordinary Lie algebras. The program 
+		  adds (non-normalized) relations to obtain that the ideal is
+		  invariant under the differential.
 		  
 		Example
-		  homologyLie 5
-		  boundariesBasisLie(4,1)		  
-		  invImageBasisLie(4,1,diffLie(),oo)
-		  evalDiffLie[c,c]
-		  homologyBasisLie(4,1)
+		  F3 = lieAlgebra({a,b,c},Signs => 1,
+		         Weights => {{1,0},{1,0},{2,1}},
+		         LastWeightHomological => true)
+		  D3 = differentialLieAlgebra{0_F3,0_F3,a b}
+		  L3 = D3/{b c,c c}
+		  describe L3
+		  		 
+		Text
+		  The homology as a vector space can be obtained using 
+		  @TO lieHomology@. Bases and dimensions in different degrees
+		  are obtained using @TO "basis(ZZ,ZZ,VectorSpace)"@ and 
+		  @TO "dims(ZZ,VectorSpace)"@. The output of the latter is
+		  a matrix consisting of dimensions of the vector space 
+		  for different first degrees and last
+		  degrees. The basis elements for the homology are represented
+		  as cycles in the Lie algebra. 
+		  The set of boundaries and the set of cycles
+		  are subalgebras of the Lie algebra, and they are obtained using
+		  @TO boundaries@ and @TO cycles@, and bases and dimensions 
+		  of them are 
+		  obtained in the same way as for homology.
+		  
+		  
+		  
+		Example
+		  use D3
+		  L4 = D3/{a a,b b}	          	 
+		  H4 = lieHomology L4
+		  B4 = boundaries L4
+		  C4 = cycles L4
+		  dims(5,H4)
+		  basis(4,1,H4)
+		  basis(4,1,B4)
+
+		Text
+		  It follows from the result above that a basis for the 
+		  cycles of weight (4,1) is
+		  \{{\tt b a c, a b c}\}. 
+		  
+		Example
+		  basis(4,1,C4)
 		  
 		Text
-		  It follows from above that a basis for the cycles of weight (4,1) is
-		  \{[b,a,c],[a,b,c]\}. In degree (3,1) there are 
+		  The product of a cycle and a boundary is a boundary: 
+		  
+		Example
+		  (b a c) (b a c + (a b c))
+		  member(oo,B4)
+		  
+		Text
+		  In weight (3,1) there are 
 		  two independent cycles and no boundaries:
 		  
 		Example		  
-		  homologyBasisLie(3,1)
-		  boundariesBasisLie(3,1)
-		  
+		  basis(3,1,H4)
+		  basis(3,1,B4) 
+
 		Text		
-	          In degree (5,1) all elements are boundaries, so 
-		  homologyLie(5,1)=0 (which was obtained above). In degree (5,2) there are no cycles.
+	          In weight (5,1) all elements are boundaries, so the 
+		  homology is 0, which is seen in the table above. 
+		  In weight (5,2) there are no cycles.
 		  
 		Example		  
-		  boundariesBasisLie(5,1)
-		  basisLie(5,1)
-		  homologyLie(5,1)
-		  basisLie(5,2)
-		  evalDiffLie([c,a,c])
-		  evalDiffLie([c,b,c])
-		  homologyLie(5,2)
-		  boundariesBasisLie(5,2)
+		  basis(5,1,B4)
+		  basis(5,1,L4)
+		  d4 = differential L4
+		  b52 = basis(5,2,L4)
+		  d4\b52		
+		  basis(5,2,C4)
 		  
-		Text
-		  Here is an example with zero homology and hence also its minimal model, 
-		  see @TO minmodelLie@,
-		  is the zero Lie algebra.
-		  
-		Example
-		  L1=lieAlgebra({a,b},{},genSigns=>{0,1},genWeights=>{{2,0},{2,1}},
-		      genDiffs=>{[],[a]})		  
-		  homologyLie 12
-		  M1=minmodelLie 12
-		  peek oo
-		  whichLie()
-		  useLie M1
-		  homologyLie 12
-		  peek  M1.modelmap
-		  
-		Text
-		  The above result is true in characteristic zero and false in 
-		  positive characteristic.
-		  
-		Example
-		  L3=lieAlgebra({a,b},{},genSigns=>{1,0},genWeights=>{{2,0},{2,1}},
-		      genDiffs=>{[],[a]},field=>ZZ/3)		 
-		  homologyLie 12
-		  homologyBasisLie(6,1)
-		  homologyBasisLie(6,2)
-		  
-	        Text
-		  In characteristic different from two, the differential of
-		  [b,b,a] is 3/2[b,a,a] and [b,a,a] is a cycle, which explains the result
-		  above (in characteristic 2, [b,a] is a cycle which is not a boundary).
-		  
-		Text  
-		  Below is a differential Lie algebra which is non-free and where the 
-		  differential has a linear part.  
-		  
-	        Example
-		  L=lieAlgebra({a,b,c,r3,r4,r42},
-	             {{{1,-1},{[b,c],[a,c]}},[a,b],{{1,-1},{[b,r4],[a,r4]}}},
-	             genWeights => {{1,0},{1,0},{2,0},{3,1},{4,1},{4,2}},
-	             genDiffs=>{[],[],[],[a,c],[a,a,c],{{1,-1},{[r4],[a,r3]}}},
-	             genSigns=>{0,0,0,1,1,0}) 
-	          homologyLie 5
-		  
-		Text
-		  The homology in homological degree zero is concentrated in degree
-		  1 and 2. The function @TO minPresLie@ gives a minimal presentation
-		  of the Lie algebra H_0 (and L is still the current Lie algebra). 
-		  
-		Example  
-		   minPresLie 3
-		   peek oo
-		   whichLie()
-		   
-		Text
-		  We now compute the minimal model of L and check that its homology is 
-		  the same as for L.
-		  
-		Example 
-		   M=minmodelLie 5
-		   useLie M
-		   homologyLie 5
-		   peek M
-		   
-		Text
-		  The quasi-isomorphism is obtained as f=M.modelmap. In homological
-		  degree zero, 
-		  f is surjective, but in general in higher homological degrees, it is 
-		  not so as in this example, see below. 
-		  
-		Example
-		   f=M.modelmap 
-		   peek f
-		   useLie L
-		   dimTableLie 5
-		   imageLie(5,f)
-		   
-		Text
-		  We check below that H(f) is iso in degree (5,1).
-		  
-		Example
-		   homologyBasisLie(5,1)
-		   useLie M
-		   homologyBasisLie(5,1)
-		   evalMapLie(f,oo_0)
-		   
-		Text
-		  The generators of M yield basis elements 
-		  for the cohomology Ext_{UL}(k,k) (with a shift in the homological
-		      degree , k=L.field). 
-		  Its dimensions may be obtained using
-		  @TO extAlgLie@ (observe that the first row gives 
-		      Ext_{UL}(k,k) in degree 1 to 5 and homological degree 1 ).
-		  
-		Example
-		   extAlgLie 5
-		   M.genWeights
-		   
-		  
-		   
-		   
-		 
-		  
-		  
+		
 ///
-end
+end		   
 
-		 
+
+		   
+		  
+		   

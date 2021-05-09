@@ -1,0 +1,17 @@
+set -e
+ls -l $1
+mkdir tmp
+cd tmp
+ar x ../$1
+tar xzf data.tar.gz
+for i in usr/bin/M2-binary usr/libexec/Macaulay2/bin/*
+do if file $i | grep -q "not stripped"
+   then (set -x ; strip $i)
+   fi
+done
+tar czf data.tar.gz usr
+ar rc ../$1.tmp debian-binary control.tar.gz data.tar.gz
+cd ..
+rm -rf tmp
+mv $1.tmp $1
+ls -l $1

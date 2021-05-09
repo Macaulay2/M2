@@ -7,8 +7,8 @@ newPackage(
                  HomePage => "http://www.dms.auburn.edu/~leonada"}},
     Headline => 
     "An implementation of the Qth-Power algorithm for computing integral closures",
-    DebuggingMode => true,
-    Reload => true
+    Keywords => {"Commutative Algebra"},
+    PackageImports => {"IntegralClosure"}
 )
 ------------------------------------------------------------------------
 export{"qthConductor", 

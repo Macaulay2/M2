@@ -6,22 +6,32 @@
 #define _slp_defs_hpp_
 
 // SLP
+class SLProgram;
+
+class M2SLProgram : public MutableEngineObject
+{
+  std::unique_ptr<SLProgram> mSLProgram;
+public:
+  M2SLProgram(SLProgram* pa) : mSLProgram(pa) {}
+
+  SLProgram& value() { return *mSLProgram; }
+};
+
 class SLProgram
 {
-  //  friend class SLEvaluator;
  public:
   enum GATE_TYPE { Copy, MCopy, Sum, Product, MSum, MProduct, Det, Divide };
   typedef int GATE_SIZE;
   typedef int GATE_POSITION;  // gate position is RELATIVE (exception: ABSOLUTE
-                              // for output)
+                              // for mOutputPositions)
   std::vector<GATE_TYPE> mNodes;      // nodes types
   std::vector<GATE_SIZE> mNumInputs;  // corresponding nodes sizes
   std::vector<GATE_POSITION>
-      mInputPositions; /* which nodes does input come from?
-                          !!! this vector could be longer than mNodes !!!
-                          !!! since there could be several inputs per node !!!
-                          (nonnegative = node position,
-                          negative = var or const) */
+  mInputPositions; /* which nodes does input come from?
+                      !!! this vector could be longer than mNodes !!!
+                      !!! since there could be several inputs per node !!!
+                      (nonnegative = node position,
+                      negative = var or const) */
   std::vector<GATE_POSITION> mOutputPositions; /* which nodes are outputs
                                                   (nonnegative = node position,
                                                   negative = var or const) */
@@ -34,6 +44,8 @@ class SLProgram
   // GATE_POSITION addMCopy(GATE_POSITION p, GATE_SIZE s);
   // GATE_POSITION addSum(GATE_POSITION a, GATE_POSITION b);
   // GATE_POSITION addProduct(GATE_POSITION a, GATE_POSITION b);
+  
+  // !!! replace M2_arrayint with std::vector (M2_arrayint pertains to front end) 
   GATE_POSITION addInput() { return -(++inputCounter); }
   GATE_POSITION addMSum(const M2_arrayint);
   GATE_POSITION addMProduct(const M2_arrayint);
@@ -44,6 +56,16 @@ class SLProgram
 };
 
 class Homotopy;
+
+// needs a finalizer???
+class M2Homotopy : public MutableEngineObject
+{
+  std::unique_ptr<Homotopy> mHomotopy;
+public:
+  M2Homotopy(Homotopy* pa) : mHomotopy(pa) {}
+
+  Homotopy& value() { return *mHomotopy; }
+};
 
 class TrivialHomotopyAlgorithm
 {
@@ -81,6 +103,18 @@ struct HomotopyAlgorithm<M2::ARingRRR> {
 };
 */
 
+class SLEvaluator;
+
+class M2SLEvaluator : public MutableEngineObject
+{
+  SLEvaluator* mSLEvaluator; //!!! this is a hack to avoid memory corruption, it results in a memory leak
+  // std::unique_ptr<SLEvaluator> mSLEvaluator;
+public:
+  M2SLEvaluator(SLEvaluator* pa) : mSLEvaluator(pa) {}
+
+  SLEvaluator& value() { return *mSLEvaluator; }
+};
+
 class SLEvaluator
 {
  public:
@@ -93,11 +127,9 @@ class SLEvaluator
 
  protected:
   int ap(int rp) { return rp + slp->inputCounter; }  // absolute position
-  SLProgram* slp;
-  //  std::vector<SLProgram::GATE_POSITION> constsPos; // absolute position of
-  //  consts in mValues (slp.inputCounter + rel position)
-  std::vector<SLProgram::GATE_POSITION>
-      varsPos;  // the rest of inputs with neg rel position
+
+  SLProgram* slp; //!!! can we make it a reference???
+  std::vector<SLProgram::GATE_POSITION> varsPos;  // the rest of inputs with neg rel position
   std::vector<SLProgram::GATE_TYPE>::iterator nIt;  // slp nodes
   std::vector<SLProgram::GATE_SIZE>::iterator numInputsIt;
   std::vector<SLProgram::GATE_POSITION>::iterator inputPositionsIt;
@@ -129,10 +161,8 @@ class SLEvaluatorConcrete : public SLEvaluator
   Homotopy* createHomotopy(SLEvaluator* Hxt, SLEvaluator* HxH);
 
  private:
-  // typedef ring_elem ElementType;
   typedef typename RT::ElementType ElementType;
-  void computeNextNode();
-  // const Ring* R;
+  void computeNextNode();  // !!! should this and vIt be here???
   const RT& mRing;
   std::vector<ElementType>
       values; /* should be a vector of values
@@ -141,9 +171,10 @@ class SLEvaluatorConcrete : public SLEvaluator
   typename std::vector<ElementType>::iterator vIt;  // values
 };
 
-class Homotopy
+class Homotopy : public MutableEngineObject
 {
  public:
+  virtual ~Homotopy() {}
   virtual bool track(const MutableMatrix* inputs,
                      MutableMatrix* outputs,
                      MutableMatrix* output_extras,
@@ -197,10 +228,7 @@ class HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm> : public Homotopy
 {
  public:
   typedef SLEvaluatorConcrete<RT> EType;
-  HomotopyConcrete(EType& Hx, EType& Hxt, EType& HxH)
-      : mHx(Hx), mHxt(Hxt), mHxH(HxH)
-  {
-  }
+  HomotopyConcrete(EType& Hx, EType& Hxt, EType& HxH);
   /* columns of inputs are initial solutions (last coordinate is the initial
      value of continuation parameter t,
      outputs have the same shape as inputs (last coordinate of outputs is set to

@@ -158,32 +158,28 @@ inline bool mypromote(const ARingQQ& R,
                       const ARingQQ::ElementType& fR,
                       ARingRR::ElementType& fS)
 {
-  mpq_ptr f = const_cast<mpq_ptr>(&fR);
-  return S.set_from_mpq(fS, f);
+  return S.set_from_mpq(fS, &fR);
 }
 inline bool mypromote(const ARingQQ& R,
                       const ARingRRR& S,
                       const ARingQQ::ElementType& fR,
                       ARingRRR::ElementType& fS)
 {
-  mpq_ptr f = const_cast<mpq_ptr>(&fR);
-  return S.set_from_mpq(fS, f);
+  return S.set_from_mpq(fS, &fR);
 }
 inline bool mypromote(const ARingQQ& R,
                       const ARingCC& S,
                       const ARingQQ::ElementType& fR,
                       ARingCC::ElementType& fS)
 {
-  mpq_ptr f = const_cast<mpq_ptr>(&fR);
-  return S.set_from_mpq(fS, f);
+  return S.set_from_mpq(fS, &fR);
 }
 inline bool mypromote(const ARingQQ& R,
                       const ARingCCC& S,
                       const ARingQQ::ElementType& fR,
                       ARingCCC::ElementType& fS)
 {
-  mpq_ptr f = const_cast<mpq_ptr>(&fR);
-  return S.set_from_mpq(fS, f);
+  return S.set_from_mpq(fS, &fR);
 }
 /////////////////////////////////////////////////////
 inline bool mypromote(const ARingRR& R,
@@ -420,7 +416,7 @@ inline bool mylift(const ARingCC& R,
 // CCC --> CC  Use lift.
 
 // RRR --> RR (truncate)
-// RR --> RRR (make new precison)
+// RR --> RRR (make new precision)
 // RRR --> RRR (change precision)
 // RR --> CC (imag part = 0)
 // RRR --> CC (RRR --> RR, and imag part = 0)

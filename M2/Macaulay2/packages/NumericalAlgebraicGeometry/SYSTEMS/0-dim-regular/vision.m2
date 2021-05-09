@@ -49,9 +49,11 @@ PS = polySystem (ideal {P1_(0,0),P1_(0,1),P1_(2,2)} + ideal P2)
 debug NumericalAlgebraicGeometry
 PS.NumberOfVariables = 8 -- hack!!!
 -- squarePS = squareUp PS 
-makeGateMatrix(PS,Parameters=>drop(gens R1,8));  
-PH = parametricSegmentHomotopy PS
-printAsSLP PH.GateHomotopy#"Hx" 
+gPS = gateSystem(PS,drop(gens R1,8));  
+PH = parametricSegmentHomotopy gPS
+--makeGateMatrix(PS,Parameters=>drop(gens R1,8));  
+--PH = parametricSegmentHomotopy PS
+printAsSLP(PH.GateHomotopy#"X"|matrix{{PH.GateHomotopy#"T"}},PH.GateHomotopy#"Hx")
 
 -- start solutions
 BC = matrix{flatten flatten(B/entries) | flatten flatten(C/entries)}

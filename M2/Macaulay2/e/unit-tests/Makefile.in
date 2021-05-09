@@ -10,17 +10,13 @@ export LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 
 CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
      -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)/include \
-	 -I../../e-includes -I@srcdir@/../../d -I../../d \
+	 -I@srcdir@/../../d -I../../d \
 	 -I@srcdir@/../../c #-Wno-unused-local-typedefs # ffpack has some of these.
 
 CXXFLAGS += -Wno-sign-conversion #-Wno-unused-local-typedefs -coverage
 
-# removed from CPPFLAGS for tests:
-#    -I../../d -I@srcdir@/../../c \
-#    -I../../e-includes
-
 # note: on some machines, gcc can't find -lstdc++
-LOADLIBES += @BUILTLIBS@ @LIBS@ -lmathicgb -lmathic -lmemtailor @FCLIBS@
+LOADLIBES += @BUILTLIBS@ @LIBS@ -lmathicgb -lmathic -lmemtailor @FCLIBS@ -pthread
 #LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr -lflint -lntl -pthread -framework vecLib # -lgivaro -llinbox
 
 # do not link with gtest -- it's supposed to get compiled in via #include:
@@ -34,9 +30,9 @@ all: $(UNITTEST_OBJECT_FILES) $(E_OBJECT_FILES)
 	echo @LIBS@
 
 # disabling a test temporarily, because it doesn't compile
-check:
-	@ echo "makefile: *** Warning : skipping temporarily disabled test in e/unit-test"
-# check: runtests
+#check:
+#	@ echo "makefile: Warning : skipping temporarily disabled test in e/unit-test"
+check: runtests
 
 fullCheck: $(UNITTEST_TARGET)
 	valgrind --track-origins=yes ./$(UNITTEST_TARGET)
@@ -50,8 +46,14 @@ runtests: $(UNITTEST_TARGET)
 ARingRRRTest :  gtest-include.o ARingRRRTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
-ARingGFTest :  gtest-include.o ARingGFTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
+ARingGFTest :  gtest-include.o ARingGFTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES) ../../system/supervisor.o
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
+
+NCGroebnerTest :  gtest-include.o NCGroebnerTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES) ../../system/supervisor.o
+	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
+
+runNCGroebnerTest : NCGroebnerTest
+	time ./NCGroebnerTest
 
 ARingRRRZZpTest :  gtest-include.o  \
     ARingZZpTest.o  \

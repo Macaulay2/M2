@@ -15,9 +15,9 @@ b fatal
 b ERROR
 b outofmem
 b abort
-b _ntl_abort
-b GC_err_puts
-set args -q --no-randomize --no-time
+b __assert_fail
+catch signal SIGABRT
+set args -q --no-randomize --no-time --no-threads
 handle SIGPWR nostop noprint
 handle SIGXCPU nostop noprint
 set unwindonsignal on

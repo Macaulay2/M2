@@ -9,7 +9,9 @@ newPackage(
 		HomePage => "http://www.math.uni-bielefeld.de/~bcalmes/"},
                 {Name => "Viktor Petrov"}
 		},
-	Headline => "Package to deal with commutative formal group laws",
+	Headline => "commutative formal group laws",
+	Keywords => {"Group Theory"},
+	PackageImports => {"Truncations"},
 	DebuggingMode => false)
 
 -- Put here the name of functions that should be visible to users
@@ -314,7 +316,7 @@ universalFGL(ZZ,String,String,String) := (n,s,u,v) ->
 
 --compute logarithm of a formal group law if the coefficient ring is a Q-algebra.
 
---The rest of the file is documention.
+--The rest of the file is documentation.
 
 beginDocumentation()
 

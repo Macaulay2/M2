@@ -1,5 +1,5 @@
 # URL = ftp://ftp.gnu.org/gnu/libtool
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 2.4.2
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared

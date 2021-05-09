@@ -17,8 +17,9 @@ newPackage(
 		   Email => "mike@math.cornell.edu", 
 		   HomePage => "http://www.math.cornell.edu/~mike"} 
 		},
-        Headline => "Obtaining the non-minimal strands of a non-minimal resolution of a homogeneous module",
-        DebuggingMode => true
+	Keywords => {"Homological Algebra", "Commutative Algebra"},
+     	PackageImports => { "SVDComplexes" },
+        Headline => "non-minimal strands of a non-minimal resolution of a homogeneous module"
         )
 
 export {
@@ -39,7 +40,6 @@ export {
 }
 
 debug Core
-needsPackage "SVDComplexes"
 
 -*
 -- The following shuold be where?
@@ -346,7 +346,7 @@ doc ///
        a chain complex over {\tt kk}, consisting of the submatrices of {\tt C} of degree {\tt deg}
    Description
     Text
-      Warning! This function is very rough currently.  It workes if one uses it in the intended manner,
+      Warning! This function is very rough currently.  It works if one uses it in the intended manner,
       as in the example below.  But it should be much more general, handling other rings with grace,
       and also it should handle arbitrary (graded) chain complexes.
     Example
@@ -404,7 +404,7 @@ doc ///
       the list of chain complex over {\tt kk}, which for each degree degree {\tt deg}, consisting of the submatrices of {\tt C} of degree {\tt deg}
    Description
     Text
-      Warning! This function is very rough currently.  It workes if one uses it in the intended manner,
+      Warning! This function is very rough currently.  It works if one uses it in the intended manner,
       as in the example below.  But it should be much more general, handling other rings with grace,
       and also it should handle arbitrary (graded) chain complexes.
     Example
@@ -443,7 +443,7 @@ doc ///
        the betti table of the minimal resolution using SVD of complexes and the numerical data
    Description
     Text
-      Warning! This function is very rough currently.  It workes if one uses it in the intended manner,
+      Warning! This function is very rough currently.  It works if one uses it in the intended manner,
       as in the example below.  But it should be much more general, handling other rings with grace,
       and also it should handle arbitrary (graded) chain complexes.
     Example

@@ -19,8 +19,8 @@
 ---------------------------------------------------------------------------
 newPackage(
 	"ReesAlgebra",
-    	Version => "2.2", 
-    	Date => "November 2017",
+    	Version => "2.3", 
+    	Date => "November 2019",
     	Authors => {{
 		  Name => "David Eisenbud",
 		  Email => "de@msri.org"},
@@ -30,8 +30,8 @@ newPackage(
 	      Email => "sorin@math.sunysb.edu"},
 	     {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
     	DebuggingMode => false,
-	Reload =>true,
     	Headline => "Rees algebras",
+	Keywords => {"Commutative Algebra"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry",
 	     "journal URI" => "http://j-sag.org/",
@@ -75,13 +75,13 @@ export{
   "whichGm",
   "Tries",
   "jacobianDual",
-  "Jacobian",
   "symmetricAlgebraIdeal",
   "expectedReesIdeal",
   "PlaneCurveSingularities",
   --synonyms
   "associatedGradedRing" => "normalCone",
-  "reesAlgebraIdeal" => "reesIdeal"
+  "reesAlgebraIdeal" => "reesIdeal",
+  "Trim" -- option in reesIdeal
   }
 
 
@@ -122,36 +122,40 @@ reesIdeal = method(
 	  PairLimit => infinity,
 	  MinimalGenerators => true,
 	  Strategy => null,
-	  Variable => "w"
+	  Variable => "w",
+	  Trim => true
 	  }
       )
 
 --the following uses a versal embedding
 reesIdeal(Module) := Ideal => o -> M -> (
-     P := presentation minimalPresentation M;
+     if o.Trim == true then P := presentation minimalPresentation M else P = presentation M;
      UE := transpose syz transpose P;
      symmetricKernel(UE,Variable => fixupw o.Variable)
      )
 
 --in the case of ideals we don't need a versal embedding; any embedding in the ring will do.
 reesIdeal(Ideal) := Ideal => o-> (J) -> (
-     symmetricKernel(mingens J, Variable => fixupw o.Variable)
+    if o.Trim == true then J' := mingens J else J' = gens J;
+     symmetricKernel(J', Variable => fixupw o.Variable)
      )
 
 -- the following method, usually faster,
 -- needs a user-provided non-zerodivisor a such that M[a^{-1}] is of linear type.
 
 reesIdeal(Module,RingElement) := Ideal => o-> (I,I0) ->(
-    I' := trim I;
+    if o.Trim == true then I' := trim I else I' = I;
     K' := if o.Jacobian == true then expectedReesIdeal I' else(
     K' = symmetricAlgebraIdeal I';
     R := ring K';
     IR := substitute(I0, R);
-    trim saturate(K',IR))
+    trim saturate(K',IR)
+    )
     )
 
 reesIdeal(Ideal, RingElement) := Ideal => o -> (I,a) -> (
-     reesIdeal(module trim I, a)
+     if o.Trim == true then I' := trim I else I' = I;
+     reesIdeal(module I', a, Trim => o.Trim)
      )
 
 reesAlgebra = method (TypicalValue=>Ring,
@@ -266,7 +270,8 @@ specialFiberIdeal=method(TypicalValue=>Ideal,
 	  MinimalGenerators => true,
 	  Strategy => null,
 	  Variable => "w",
-	  Jacobian =>false
+	  Jacobian =>false,
+	  Trim => true
 	  }
       )
 specialFiberIdeal(Ideal):= o-> I ->(
@@ -281,7 +286,7 @@ specialFiberIdeal(Module):= o->i->(
      Reesi:= reesIdeal(i, o);     
      S := ring Reesi;
      kk := ultimate(coefficientRing, S);
-     T := kk[gens S];
+     T := kk(monoid [gens S]);
      minimalpres := map(T,S);
      trim minimalpres Reesi
      )
@@ -314,7 +319,8 @@ specialFiber=method(TypicalValue=>Ring,
 	  MinimalGenerators => true,
 	  Strategy => null,
 	  Variable => "w",
-	  Jacobian => false
+	  Jacobian => false,
+	  Trim => true
 	  }
       )
 
@@ -760,10 +766,7 @@ doc ///
     reesIdeal
 ///
 
-{*
-viewHelp symmetricAlgebra
-*}
-
+-- viewHelp symmetricAlgebra
 
 doc ///
   Key
@@ -833,12 +836,15 @@ doc ///
 
 doc ///
   Key
-    Jacobian  
-    [reesAlgebra, Jacobian]    
+    Trim  
   Headline
-    Choose whether to use the Jacobian dual in the computation
+    Choose whether to trim (or find minimal generators) for the ideal or module.
   Usage
-    reesIdeal(..., Jacobian => true)
+    reesIdeal(..., Trim => true)
+  Description
+   Text
+    Note that when Trim=>true, the generators used will be the ones (and in the order) M2 likes,
+    possibly not the original ones.
   SeeAlso
    reesIdeal
    reesAlgebra
@@ -1020,10 +1026,11 @@ doc ///
   Key
     reesIdeal
     (reesIdeal,Ideal)
-    (reesIdeal, Module)
+    (reesIdeal,Module)
     (reesIdeal,Ideal, RingElement)
     (reesIdeal,Module, RingElement)
     [reesIdeal,Jacobian]
+    [reesIdeal,Trim]    
   Headline
     Compute the defining ideal of the Rees Algebra
   Usage
@@ -1113,19 +1120,18 @@ doc ///
     (reesAlgebra, Module)
     (reesAlgebra,Ideal, RingElement)
     (reesAlgebra,Module, RingElement)
-    
   Headline
     Compute the defining ideal of the Rees Algebra
   Usage
-    reesAlgebra M
-    reesAlgebra(M,f)
+    A = reesAlgebra M
+    A = reesAlgebra(M,f)
   Inputs
     M:Module
       or @ofClass Ideal@ of a quotient polynomial ring $R$
     f:RingElement
       any non-zerodivisor in ideal or the first Fitting ideal of the module.  Optional
   Outputs
-    :Ring
+    A:Ring
       defining the Rees algebra of M
   Description
     Text
@@ -1323,6 +1329,8 @@ doc ///
     (specialFiberIdeal, Ideal)
     (specialFiberIdeal, Module, RingElement)
     (specialFiberIdeal, Ideal, RingElement)
+    [specialFiberIdeal, Jacobian]
+    [specialFiberIdeal, Trim]
   Headline
      Special fiber of a blowup     
   Usage
@@ -1346,6 +1354,9 @@ doc ///
 
      The name derives from the fact that $Proj(T/mm*T)$ is the special fiber of
      the blowup of $Spec R$ along the subscheme defined by $I$.
+     
+     With the default Trim => true, the computation begins by computing minimal generators,
+     which may result in a change of generators of M
    Example
      R=QQ[a..h]
      M=matrix{{a,b,c,d},{e,f,g,h}}
@@ -1382,6 +1393,7 @@ doc ///
     (specialFiber, Module, RingElement)
     (specialFiber, Ideal, RingElement)
     [specialFiber, Jacobian]
+    [specialFiber, Trim]    
   Headline
      Special fiber of a blowup     
   Usage
@@ -1409,6 +1421,9 @@ doc ///
      
      The name derives from the fact that $Proj(T/mm*T)$ is the special fiber of
      the blowup of $Spec R$ along the subscheme defined by $I$.
+
+     With the default Trim => true, the computation begins by computing minimal generators,
+     which may result in a change of generators of M
    Example
      R=QQ[a..h]
      M=matrix{{a,b,c,d},{e,f,g,h}}
@@ -1691,7 +1706,7 @@ doc ///
       the function @TO isReduction@. It returns the smallest integer $k$ such that
       $JI^k = I^{k+1}$.
       
-      For further informaion, see the book:
+      For further information, see the book:
       Huneke, Craig; Swanson, Irena: Integral closure of ideals, rings, and modules, 
       London Mathematical Society Lecture Note Series, 336. Cambridge University Press, 
       Cambridge, 2006.
@@ -2282,7 +2297,7 @@ doc ///
     Example
      divisors = primaryDecomposition totalTransform
      strictTransform = divisors_0
-     exeptional = divisors_1
+     exceptional = divisors_1
      divisors/(i-> degree i/degree radical i)
     Text
      That is, the exceptional component occurs with multiplicity 2 (in general we'd 
@@ -2607,7 +2622,7 @@ TEST///
 kk = ZZ/101
 S = kk[x,y]
 I = ideal"x2y";J=ideal"xy2"
-assert(intersectInP(I,J) == {{2, ideal x}, {5, ideal (y, x)}, {2, ideal y}})
+assert(intersectInP(I,J) == {{5, ideal (y, x)}, {2, ideal y}, {2, ideal x}})
 I = ideal"y-x2";J=ideal y
 assert(intersectInP(I,J) == {{2, ideal (y, x)}})
 ///

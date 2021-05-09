@@ -54,7 +54,3 @@ doc///
   take
   "lists and sequences"
 ///
-
-TEST ///
-     assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
-///

@@ -3,7 +3,7 @@
 # svn://linalg.org/fflas-ffpack/
 # This link is broken: http://linalg.org/projects/fflas-ffpack
 # http://linalg.org/
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 2.2.2
 PRECONFIGURE = autoreconf -vif
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
@@ -24,7 +24,7 @@ LICENSEFILES = COPYING
 # INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/include/fflas-ffpack && \
 # 		@INSTALL_DATA@ include/config-blas.h $(LIBRARIESDIR)/include/. && \
 # 		@INSTALL_DATA@ include/fflas-ffpack/*.{h,inl} $(LIBRARIESDIR)/include/fflas-ffpack/.
-CONFIGOPTIONS += LIBS="@LINALGLIBS@ @FCLIBS_STATIC@ @FCLIBS_DYNAMIC@"
+CONFIGOPTIONS += LIBS="@LINALGLIBS@ @FCLIBS@"
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/fflas_ffpack/Makefile
 # Local Variables:

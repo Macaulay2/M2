@@ -271,7 +271,6 @@ doc ///
     constructs an embedding of a polynomial system
   Usage
     constructEmbedding(f,k)
-    constructEmbedding(f,k,Verbose=>true)
   Inputs
     f:List
       of polynomials
@@ -504,7 +503,7 @@ doc ///
     isWitnessSetMember(...,Verbose=>Boolean)
   Description
     Text
-       Use {\tt Verbose=>true} for additional output which includes the 
+       Use {\tt Verbose=>true} for additional output, which includes the 
        input and solution file names used by {\tt phc}.  
 
     Example
@@ -513,7 +512,6 @@ doc ///
       V = numericalIrreducibleDecomposition (system);
       W = first V#4;
       isWitnessSetMember(W, point{{0,0,0,0,0,0}})      
-      isWitnessSetMember(W, point{{0,0,0,0,0,0}},Verbose=>true)      
 ///;
 
 -----------------
@@ -628,7 +626,7 @@ doc ///
     flag to switch to double double or quad double precision
   Description
     Text
-      By default, all computations occur in hardward double precision.
+      By default, all computations occur in hardware double precision.
       While this precision could be large enough to obtain accurate
       results, for larger problems, one may need to increase the
       precision to double double or to quad double precision.
@@ -864,12 +862,11 @@ doc ///
     refines solutions of a system by increasing working precision
   Usage
     newSols = refineSolutions(f,sols,dp)
-    newSols = refineSolutions(f,sols,dp,Verbose=>true)
   Inputs
     f:List
       a system of polynomials
     sols:List
-      solutions of the sytem f, each of type @TO Point@ 
+      solutions of the system f, each of type @TO Point@ 
       (from a previous calculation)
     dp:ZZ
       the number of decimal places in working precision
@@ -883,7 +880,7 @@ doc ///
     Item
       invokes the command {\tt phc -v} (with option 3),
     Item 
-      stores phc output in a termporary file,
+      stores phc output in a temporary file,
     Item 
       parses and prints the refined solutions.
   Description
@@ -1003,7 +1000,6 @@ doc ///
     a numerical blackbox solver
   Usage
     solveSystem(S)
-    solveSystem(S,Verbose=>true)
     solveSystem(S,numThreads=>4)
     solveSystem(S,computingPrecision=>2)
     solveSystem(S,randomSeed=>12345)

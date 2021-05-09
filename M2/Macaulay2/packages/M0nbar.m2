@@ -5,12 +5,12 @@ newPackage(
      Authors => {
 	  {Name => "Han-Bom Moon",
 	   Email => "hmoon8@fordham.edu"},
-          {Name=> "David Swinarski", 
+          {Name=> "Dave Swinarski", 
 	   Email=> "dswinarski@fordham.edu",
 	   HomePage=>"http://faculty.fordham.edu/dswinarski"}
 	  },
-     Headline => "calculations for divisors and F-curves on the moduli space of stable n-pointed genus zero curves",
-     DebuggingMode => true
+     Keywords => {"Commutative Algebra"},
+     Headline => "calculations for divisors and F-curves on the moduli space of stable n-pointed genus zero curves"
      )
 export {"CurveClassRepresentativeM0nbar",
 	"DivisorClassRepresentativeM0nbar",

@@ -196,7 +196,6 @@ sample WitnessSet := o -> W -> (
 random WitnessSet := o -> W -> sample W
 
 TEST ///
-restart 
 debug needsPackage "NumericalAlgebraicGeometry"
 R = CC[x,y,z]
 W1 = new WitnessSet from {

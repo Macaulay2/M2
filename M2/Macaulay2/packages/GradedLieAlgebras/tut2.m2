@@ -1,175 +1,208 @@
 
 doc ///
 	Key
-		"Second LieAlgebra Tutorial"
-	Headline 
-		Second tutorial of the package GradedLieAlgebras
+		"Second Lie algebra tutorial"
+
 	Description
 		Text
 	       	        In this second tutorial, we continue the introduction on how to use 
 			the package 
-			@TO GradedLieAlgebras@.	
+			GradedLieAlgebras.	
 			
 	        Text	
 			By default, the scalars are assumed to be rational numbers,
 			but it is also possible to define the coefficient field with
-			the option @TO field@, which is one out of four options that can
+			the option @TO Field@, which is one out of four options that can
 			be used in the constructor @TO lieAlgebra@.
 			
+			
+			
 		Example
-		        F=frac(ZZ/7[x])
-		    	L = lieAlgebra({a_1,a_2,a_3}, 
-			    {{{3,5*x},{[a_1,a_2,a_3],[a_2,a_1,a_3]}},
-				[a_3,a_2,a_3,a_1]}, field => F)	
+		        F = frac(ZZ/7[x])
+		    	L = lieAlgebra({a_1,a_2,a_3},Field => F)/ 
+			     {3 a_1 a_2 a_3+(5*x) a_2 a_1 a_3,
+			      a_3 a_2 a_3 a_1}	
 			
     	    	Text	
 			The example above specifies the Lie algebra over the fraction
-			field of ZZ/7[x] on 
-			three generators a_1,a_2,a_3, modulo the ideal generated
-			by 3[a_1,[a_2,a_3]] + 5x[a_2,[a_1,a_3]] and [a_3,[a_2,[a_3,a_1]]].
+			field of $\mathbb Z/7$ [ $x$ ] on 
+			three generators $a_1, a_2, a_3$, modulo the ideal generated
+			by $3$ [$a_1$, [ $a_2$, $a_3$ ]] + $5x$ [ $a_2$, [ $a_1$, $a_3$ ]] and 
+			[$a_3$, [ $a_2$, [ $a_3$, $a_1$ ]]].
 			As input coefficients one may always use 
 			an integer or a quotient of integers 
-			with non-zero denominator in the field. 
+			with non-zero denominator in the field.
+			
+		
+	    
 			
 		Text
  			To specify weights of the generators, 
-			use the option @TO genWeights@.
+			use the option @TO [lieAlgebra,Weights]@.
 		        The weights are lists of integers of the same
-			length, where the first degree is positive, also just called
-			the degree, see @TO degLie@. The degree is input for the 
-			function @TO computeLie@. 
-			The last degree is the homological degree, which is non-negative
+			length, where the first degree is positive, 
+			also just called
+			the degree, see @TO "firstDegree(LieElement)"@. 
+			The degree is the two first inputs for the 
+			function @TO "dims(ZZ,ZZ,LieAlgebra)"@. 
+			If the option @TO [lieAlgebra,LastWeightHomological]@ 
+			is {\tt true}, 
+			then
+			the last degree is the homological degree, 
+			which is non-negative
 			and less than the first degree.
-			If the user does not specify a differential, 
-			the program defines the homological degree to be zero and adds a last 
-                        degree 0 to the existing degrees.
-			Use @TO weightLie@ to compute the weight of an arbitrary expression,
-			see @TO "How to write Lie elements"@.
+			If the option @TO [lieAlgebra,LastWeightHomological]@ 
+			is {\tt false}, 
+			which
+			is the default value, then 	
+			the program defines the homological degree to be zero, and adds a last 
+                        component 0 to the existing degrees. In this case the weights
+			can also be given as a list of positive integers that will be the
+			degrees. See @TO "Differential Lie algebra tutorial"@ 
+			how to define a differential.				       
+			Use @TO weight@ to compute the weight of an arbitrary 
+			homogeneous Lie expression.
+			
 			 
 		Example
-		        L1 = lieAlgebra({a,b,c},{},genWeights=>{{1,-1},{1,4},{2,3}})
-			weightLie b
-			ex={{1,1/3},{[a,b],[c]}}
-			weightLie ex
-			degLie ex
-		
-			
+		        L = lieAlgebra({a,b,c},Weights => {{1,-1},{1,4},{2,3}})
+			weight b
+			ex = a b+(1/3) c
+			weight ex
+			firstDegree ex		      
+			L1 = lieAlgebra({a,b,c},Weights => {1,1,2})
+			describe L1
+						
 		Text
-		        To specify signs of the generators, use the option @TO genSigns@.
+		        To specify signs of the generators, use the option 
+			@TO [lieAlgebra,Signs]@.
 			The sign of a generator is either 0 (even) or 1 (odd). By default,
 			the sign of all generators are 0. Writing the option as
-			"genSigns => 1"
-			defines the sign of all the generators to be 1.  
+			"Signs => 1"
+			defines the signs of all the generators to be 1.  
 			The signs affect the axioms of a Lie superalgebra, 
-			see @TO axiomsLie@. Use @TO signLie@ to 
-			compute the sign of an arbitrary expression,
-			see @TO "How to write Lie elements"@ for the use of
-			 @TO mbRing@, @TO indexFormLie@ and @TO defLie@.
+			see @TO LieAlgebra@. 
+			Use @TO sign@ to 
+			compute the sign of an arbitrary homogeneous Lie expression.
+		
 			  
 		Example	
-		        L2 = lieAlgebra({a,b,c},{},genWeights=>{{1,-1},{1,4},{2,3}},
-			    genSigns=>{0,1,1})	       
-			signLie ex
-			computeLie 3
-			S=L2.cache.mbRing			
-			indexFormLie ex
-			signLie mb_{3,1}			   
-			
+		        L = lieAlgebra({a,b,c},Weights => {{1,-1},{1,4},{2,3}},
+			      Signs=>{0,1,1})
+			ex = a b+(1/3) c	       
+			sign ex			
 			          
 		Text	
-			The relations may contain a linear part. 
-			Use @TO minPresLie@ to get a minimal presentation.	
-			In order to use a
-			relation which contains Lie products, which are 
-			not of the form @TO monomialLie@, 
-			use @TO toMonomialLie@. Use @TO peek@ to get
+			For each finitely presented
+			Lie algebra $L$, {\tt ambient(L)} 
+			represents a free Lie algebra $M$ such
+			that $L$ (without differential) is a quotient of $M$, 
+			see also
+			@TO "Quotient Lie algebras and subspaces"@. 
+			Moreover, the relations belong to $M$, 
+			even if $L$ is defined as a quotient 
+			in two or more steps from $M$. This is 
+		        somewhat different from 
+			the situation for rings.
+			
+
+                Example
+		        M = lieAlgebra{a,b,c}
+                        L = M/{a b}
+                        a c
+                        Q = L/{a c}
+                        ideal(Q)
+                        oo_1 
+			ambient Q
+		       
+		Text 	
+		        The relations may have a non-zero linear part. 
+			Use @TO "minimalPresentation(ZZ,LieAlgebra)"@ 
+			to get a minimal presentation.	
+			Use @TO "describe(LieAlgebra)"@ to get
 			information about the Lie algebra. This contains the value of
-			the four options and also the keys 
-			@TO compdeg@, @TO deglength@,  @TO gensLie@, 
-			@TO numGen@ and @TO relsLie@. In L.cache there
-			is more information about L collected during a computation, which
-			is not visible for the user, except @TO maxDeg@, 
-			@TO lieRing@ and @TO mbRing@.
-					
-		Example
-		        rel=toMonomialLie([[a,b],a],{a,b},{1,0})
-			L3=lieAlgebra({a,b,c},{{{-1,1},{[c],[a,a]}},rel},
-			    genWeights=>{1,1,2},genSigns=>{1,0,0})
-			computeLie 4
-			peek L3
-			M=minPresLie 4
-			peek M  
+			the three options @TO [lieAlgebra,Weights]@, @TO [lieAlgebra,Signs]@,
+			@TO [lieAlgebra,Field]@, and also the values 
+		        @TO "generators(LieAlgebra)"@, @TO "ideal(LieAlgebra)"@, 
+			@TO "ambient(LieAlgebra)"@, @TO "diff(LieAlgebra)"@ and 
+			@TO "computedDegree(LieAlgebra)"@  
 			
+		Example		       
+			F = lieAlgebra({a,b,c},Weights => {1,1,2},
+			      Signs=>{1,0,0})
+			L = F/{-c+a a,(a b) a}
+			dims(1,4,L)
+			describe L
+			M = minimalPresentation(4,L)
+			describe M
+			  
+			       			     	     	       	    	
 		Text
-		        Observe that the output of @TO toMonomialLie@ may not be a 
-			@TO basicExpressionLie@ in the free Lie algebra. In fact, we may
-			use @TO normalFormLie@, see @TO "How to write Lie elements"@, to 
-			reduce the expression rel as follows.
-			
-		Example
-		        L=lieAlgebra({a,b},{},genSigns=>{1,0})
-			normalFormLie rel
-			
-		Text
-		        This explains why the relation in the minimal presentation M
-			above has
-			changed from rel to [b,a,a].
-			     	     	   
-    	    	Text
-		        The differential of the generators is defined by the option
-			@TO genDiffs@. The expressions used should be 
-			@TO generalExpressionLie@, see @TO "How to write Lie elements"@.
-			The differential preserves all weights except the last homological
-			degree which is lowered by 1
-			and it changes the sign. 
-			Also the square of the differential
-			is zero. All this is checked when lieAlgebra is executed. 
-			Use @TO evalDiffLie@ to compute the value of the differential of 
-			an arbitrary expression.  
-			The 
-			differential is a derivation and may also be constructed using the 
-			constructor @TO derLie@, see @TO "Constructing Lie algebras"@.     
-			
-		Example
-		        L4 = lieAlgebra({a,b,c},{},genWeights=>{{1,0},{2,1},{3,2}},
-			    genSigns=>{1,1,1},genDiffs=>{[],[],[a,b]})
-			peek L4
-			{{1,1/3},{[a,b,b],[a,a,c]}}		
-			evalDiffLie oo
-		
-			
-		Text
-		       The key @TO maxDeg@ in L.cache is by default 5.
-		       If computeLie n is executed 
-		       for n>L.cache.maxDeg, then the program changes the key to n+5. 
-		       The value of maxDeg defines the internal representation of 
-		       Lie elements in
-		       the polynomial ring "L.cache.lieRing", which cannot be used
-		       by the user but can be looked upon
-		       by writing "L.cache.lieRing". The Lie monomials are represented as
-		       commutative monomials in this ring. 
+		       In {\tt L#cache} there
+		       is more information about $L$ collected 
+		       during a computation. Some parts
+		       of the information are visible to the user, e.g., 
+		       @TO lieRing@ and @TO mbRing@.
+		       The ring {\tt L#cache.lieRing} is the internal polynomial ring 
+		       representation of 
+    		       Lie elements. The Lie monomials are represented as
+    		       commutative monomials in this ring. 
+		       The program produces internally an 
+		       ideal of relations and a basis, 
+		       which may be seen as {\tt L#cache.gb} and
+		       {\tt L#cache.basis}. 
+		       The number of generators in @TO lieRing@
+    		       is the number of generators in the 
+		       Lie algebra times the internal counter
+    		       {\tt L#cache.max}, which initially 
+		       is set to $5$, and is changed to $n+5$ if the computation of $L$
+    		       is performed up to degree $n$ with $n\ >$ {\tt L#cache.max}. 
 		       
 		Example
-		       L5=lieAlgebra({a,b},{[a,a,a,b],[b,b,b,a]})
-		       computeLie 4
-		       peek L5.cache
-		       L5.cache.lieRing		      
-		       computeLie 6
-		       L5.cache.maxDeg
-		       L5.cache.lieRing
+		       L = lieAlgebra{a,b}/{a a a b,b b b a}
+		       dims(1,4,L)
+		       peek L#cache
+		       L#cache.basis#4
+		       basis(4,L)
+		       L#cache.gb#4
+		       a b b a	      
+	 	       dims(1,6,L)
+		       peek L#cache
+		       
+		Text
+		       The ring {\tt L#cache.mbRing} is used to get an output of
+		       Lie elements with indexed basis elements,
+		       which sometimes is better to use than the 
+		       iterated Lie products of generators, especially in 
+		       high degrees. Use @TO indexForm@ to get the 
+		       output in @TO mbRing@ and 
+		       @TO "standardForm(RingElement,LieAlgebra)"@ to get back 
+		       the standard output. The ring @TO mbRing@ is very
+		       large; it has as many generators as the total 
+		       dimension of the computed Lie algebra. 
+		       For this reason, you should give the ring a name
+		       to avoid
+		       a large output.
+		       
+		       
+		Example
+		       L = lieAlgebra{a,b,c}
+		       x = (a b c a) (b c) 
+		       Q = L#cache.mbRing
+		       numgens Q
+		       indexForm x
+		       standardForm(oo,L)
+		        
+		        
+		       
 		
-	        Text
-		    	The interested reader may continue to read about the 
-			functions @TO idealLie@, @TO subalgLie@,
-			@TO divisorLie@, @TO invImageLie@, @TO intersectionLie@, @TO annLie@, 
-			and @TO centreLie@.  
+		
+	        
 						   		        				
         SeeAlso		    		        
-		        "First LieAlgebra Tutorial"
-		        "Differential Lie algebras Tutorial"
-		        "How to write Lie elements"
-		        "Constructing Lie algebras"
-		        "Symmetries"
+		        "First Lie algebra tutorial"
+		        "Differential Lie algebra tutorial"		        
+		        "Holonomy Lie algebras and symmetries"
 		   			       
 		      
 

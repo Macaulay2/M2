@@ -12,7 +12,7 @@ newPackage(
 		        HomePage => "" }
             },
         Headline => "a test suite for the Macaulay2 engine",
-        DebuggingMode => true, 
+	Keywords => {"Miscellaneous"},
         AuxiliaryFiles=> true
         )
 

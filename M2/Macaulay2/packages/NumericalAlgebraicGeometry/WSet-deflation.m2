@@ -1,7 +1,7 @@
 
 
 
-{*
+-*
 deflate(WSet, Point) := o -> (W,P) -> deflate(W,jacobianRank(polySystem W,P),{P},o)
 deflate(WSet, ZZ) := o -> (W,r) -> deflate(W,r,points W,o)
 deflate(WSet, ZZ, List) := o -> (W,r,pts) -> (
@@ -18,7 +18,7 @@ deflate(ProxyWSet, Point) := o -> (W,P) -> (
     D := deflate(proxyWSet W,P,o);
     proxyWSet(upWSet D,compose(map W, map D),slicingVariety W)
     )
-*}
+*-
 
 --deflationSequence = method()
 --deflationSequence (WSet,P) 
@@ -56,7 +56,6 @@ deflatedWSet(Ideal,Ideal,ZZ,List) := (F,S,m,pts) -> (
     )
 
 TEST ///
-restart
 debug needsPackage "NumericalAlgebraicGeometry"
 CC[x_0..x_3]
 A = matrix{{x_0,x_1,x_2},{x_1,x_2,x_3},{x_2,x_3,0}}

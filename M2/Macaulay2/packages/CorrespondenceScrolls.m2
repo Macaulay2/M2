@@ -10,8 +10,8 @@ viewHelp CorrespondenceScrolls
 
 newPackage(
 	"CorrespondenceScrolls",
-    	Version => "0.5", 
-    	Date => "April 23, 2018",
+    	Version => "0.6", 
+    	Date => "April 23, 2018, updated June 27, 2020",
     	Authors => {{Name => "David Eisenbud", 
 		  Email => "de@msri.org", 
 		  HomePage => "http://www.msri.org/~de"},
@@ -21,7 +21,9 @@ newPackage(
 	          {Name =>"Alessio Sammartano",
 		   -- Email => "",
 		   HomePage => ""}},
-    	Headline => "CorrespondenceScrolls"
+    	Headline => "correspondence scrolls",
+	Keywords => {"Commutative Algebra"},
+	PackageImports => { "Elimination" }
 	)
 
 export {    
@@ -138,7 +140,7 @@ minimalBetti oo
 *-
 
 -*
----possible rewrite for speed, currently imcomplete.
+---possible rewrite for speed, currently incomplete.
 Scrolls := apply(#scroll, i->hankelMatrix(T, y_(i,0), 2, scroll_i));
 J0 := sum(#scroll, i->minors(2, Scrolls_i));
 --
@@ -272,11 +274,12 @@ u := unique ((gens R)/degree);
 n := #u;
 nums := apply(u, i-> #select(gens R, x -> degree x == i));
 --form the hilbert polynomials of the factor rings
+a := local a;
 polys1 := apply(n, j-> (
-  hilbertPolynomial(ZZ/2[vars(0..nums_j-1)], 
+  hilbertPolynomial(ZZ/2[a_0 .. a_(nums_j-1)], 
       Projective => false)));
 --move them to the Cox ring
-cox := QQ[s_0..s_(n-1)];
+cox := QQ(monoid [s_0..s_(n-1)]);
 polys := apply(n, j->
 	  (map(cox, ring polys1_j, {cox_j})) polys1_j);
 M1 := coker leadTerm gb presentation M;
@@ -284,12 +287,18 @@ F := res M1;
 pd := length F;
 Fdeglists := apply(1+pd, i->degrees F_i);
 Fpolys := apply (1+pd, i -> 
-    product(Fdeglists_i, L-> 
+    sum(Fdeglists_i, L-> 
 	product(n, j -> 
 	    sub(polys_j,{cox_j=>cox_j-L_j}))));
 sum(1+pd, i-> (-1)^i*Fpolys_i)
 )
+///
+S = productOfProjectiveSpaces{1,2}
+I = ideal(x_(0,0),x_(1,0));
+M = S^1/I;
+g = multiHilbertPolynomial(M);
 
+///
 correspondencePolynomial = method(Options => {VariableName => "s"})
 correspondencePolynomial(Module,List) := o-> (M,B)->(
     s := getSymbol o.VariableName;
@@ -441,7 +450,7 @@ doc ///
      irrel = irrelevantIdeal ST;
     Text
      Here the irrelevant ideal is the 
-     intersection of the 4 ideals of coordinats
+     intersection of the 4 ideals of coordinates
      (P^2 and the three copies of P^1).
      Next, define the pairs of sections on the curve 
      giving the three projections:
@@ -625,7 +634,7 @@ doc ///
     Multi-graded Hilbert polynomial for a product of projective spaces
    Usage
     H = multiHilbertPolynomial M
-    H = multiHilbertPolynomial (M, VariableName => "h")
+    H = multiHilbertPolynomial (M, VariableName => "s")
    Inputs
     M:Module
      multigraded over a polynomial ring
@@ -639,14 +648,14 @@ doc ///
      P = kk[x_{0,0}..x_{0,a_0}..x_{n-1,0}..x_{n-1,a_{n-1}}]
      graded with degree x_{i,j} = e_i, the i-th unit vector.
      If M = P^{m} is free, then the Hilbert polynomial is the 
-     product of the shifted binomiral coefficients 
+     product of the shifted binomial coefficients 
      binomial(a_i+m_i+t,a_i).
      In general,
      the routine computes a free resolution of the coker of
      the initial matrix of a presentation matrix, and then
      makes an alternating sum of the Hilbert polynomials of the
      free modules in the resolution. The polynomial returned
-     has variables h_i (the default) or name_i if
+     has variables s_i (the default) or name_i if
      VariableName => "name" is given.
     Example
      P = productOfProjectiveSpaces{1,2}
@@ -694,7 +703,9 @@ doc ///
    SeeAlso
     multiHilbertPolynomial
 ///
-
+-*
+ loadPackage("CorrespondenceScrolls", Reload => true)
+ *-
 doc ///
    Key
     carpet
@@ -941,3 +952,4 @@ S = ZZ/101[a,b,c]
 betti res (ideal random(S^1, S^{2:-3}), DegreeLimit => -1)
 minimalBetti (ideal random(P^1, P^{2:{-3,-3}}), DegreeLimit => {-1,-1})
 viewHelp DegreeLimit
+

@@ -1,5 +1,4 @@
--- -*- M2-comint -*- {* hash: -180762816 *}
---loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
+-- -*- M2-comint -*- hash: -180762816
 
 i1 : R = CC[x,y,z];
 
@@ -19,7 +18,7 @@ o4 : List
 
 i5 : bertiniComponentMemberTest(pts, NV)
 
-o5 = {{[dim=1,deg=1]}}
+o5 = {{(dim=1,deg=1)}}
 
 o5 : List
 

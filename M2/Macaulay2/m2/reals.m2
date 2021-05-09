@@ -173,7 +173,8 @@ CC // RR := (x,y) -> x // y_CC;
 CC % RR := (x,y) -> x % y_CC;
 
 -- functions
-
+realPart Number := realPart0
+imaginaryPart Number := imaginaryPart0
 conjugate CC := z -> toCC(precision z, realPart z, - imaginaryPart z)
 isConstant Number := i -> true
 
@@ -262,7 +263,11 @@ Constant == InexactNumber := (c,x) -> numeric(precision x,c) == x
 RingElement == Constant :=
 InexactNumber == Constant := (x,c) -> x == numeric(precision x,c)
 
-Constant _ Ring := (c,R) -> (numeric c)_R
+Constant _ Ring := (c,R) -> (
+     prec := precision R;
+     if prec === infinity
+     then error "cannot promote constant to a ring with exact arithmetic"
+     else (numeric (prec, c))_R)
 Constant _ InexactFieldFamily := (x,RR) -> x_(default RR)
 
 Constant + Number := (c,x) -> numeric c + x

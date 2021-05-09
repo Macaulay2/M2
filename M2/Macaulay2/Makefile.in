@@ -3,13 +3,7 @@
 VPATH = @srcdir@
 include ../include/config.Makefile
 all: @pre_docdir@/COPYING-GPL-2 @pre_docdir@/COPYING-GPL-3 @pre_docdir@/README @pre_docdir@/LAYOUT
-SUBDIRS = compat util probe regex c
-ifeq "@DUMPDATA@" "yes"
-SUBDIRS += dumpdata
-endif
-SUBDIRS += e-includes d e system kernel bin m2 man packages emacs html-check-links tests
-SUBDIRS += book
-SUBDIRS += packages/Macaulay2Doc/test
+SUBDIRS = util c d e system bin m2 man packages editors html-check-links tests
 
 define do-in-subdirs
 $(foreach d,$(SUBDIRS),
