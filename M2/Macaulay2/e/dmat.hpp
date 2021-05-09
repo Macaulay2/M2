@@ -88,7 +88,7 @@ class DMat
       mArray = nullptr;
     else
       {
-        mArray = static_cast<ElementType*>(GC_MALLOC_UNCOLLECTABLE(sizeof(ElementType) * len));
+        mArray = newarray(ElementType,len);
         //        mArray = new ElementType[len];
         for (size_t i = 0; i < len; i++)
           {
@@ -105,7 +105,7 @@ class DMat
       mArray = nullptr;
     else
       {
-        mArray = static_cast<ElementType*>(GC_MALLOC_UNCOLLECTABLE(sizeof(ElementType) * len));
+        mArray = newarray(ElementType,len);
         //        mArray = new ElementType[len];
         for (size_t i = 0; i < len; i++)
           ring().init_set(mArray[i], M.array()[i]);

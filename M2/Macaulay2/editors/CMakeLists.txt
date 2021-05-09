@@ -16,6 +16,7 @@ set(M2_ARGS --script)
 set(GRAMMAR_FILES
   atom/macaulay2.cson
   prism/macaulay2.js
+  pygments/macaulay2.py
 #  rouge/macaulay2.rb
   vim/m2.vim.syntax
   vim/m2.vim.dict

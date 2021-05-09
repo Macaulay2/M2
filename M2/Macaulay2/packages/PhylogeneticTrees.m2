@@ -730,7 +730,7 @@ doc///
 	        Text
 		       Computes the invariants of a group-based phylogenetic
 	               tree model by computing the transpose of the matrix
-	               that encondes the monomial map and the using the function toricMarkov of the
+	               that encodes the monomial map and the using the function toricMarkov of the
 	               4ti2 package.	
 		Example
 		       T = leafTree(4, {{0,1}})

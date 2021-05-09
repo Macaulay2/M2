@@ -403,7 +403,7 @@ suffixTreeLeftOverlaps (SuffixTree, List) := (tree, s) -> (
 )
 
 --- the right overlaps function is not necessary since
---- it is combined with the insertion algoritm.
+--- it is combined with the insertion algorithm.
 --- if we need to search for right overlaps without insertion
 --- then we will implement this as well.
 

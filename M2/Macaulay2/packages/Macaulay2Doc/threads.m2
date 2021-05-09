@@ -132,7 +132,7 @@ Node
    n
    isReady t
    cancelTask t
-   sleep 1
+   sleep 2
    t
    n
    sleep 1

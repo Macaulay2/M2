@@ -7,6 +7,7 @@
 --  - Emacs
 --  - Atom & Linguist: https://github.com/Macaulay2/language-macaulay2
 --  - Rouge
+--  - Pygments
 
 -------------------------------------------------------------------------------
 -- TODO: Move these two elsewhere:
@@ -121,6 +122,17 @@ symbolsForRouge = template -> (
     output = replace("@M2STRINGS@",               STRINGS,    output);
     output)
 
+pygmentsformat = symlist -> demark("," | newline | "    ", format \ symlist)
+symbolsForPygments = template -> (
+    output := concatenate("# ", banner, newline, newline, template);
+    output = replace("@M2VERSION@",   version#"VERSION",        output);
+    output = replace("@M2KEYWORDS@",  pygmentsformat KEYWORDS,  output);
+    output = replace("@M2DATATYPES@", pygmentsformat DATATYPES, output);
+    output = replace("@M2FUNCTIONS@", pygmentsformat FUNCTIONS, output);
+    output = replace("@M2CONSTANTS@", pygmentsformat CONSTANTS, output);
+    output = replace("@M2STRINGS@",                  STRINGS,   output);
+    output)
+
 -------------------------------------------------------------------------------
 -- Generate syntax files from templates in the same directory
 
@@ -148,6 +160,9 @@ generateGrammar("vim/m2.vim.dict", symbolsForVim); -- TODO: is this necessary?
 
 -- Rouge: Write macaulay2.rb
 --generateGrammar("rouge/macaulay2.rb", symbolsForRouge);
+
+-- Pygments: Write macaulay2.py
+generateGrammar("pygments/macaulay2.py", symbolsForPygments)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs M2-symbols "

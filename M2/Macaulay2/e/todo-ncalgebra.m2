@@ -19,7 +19,7 @@
 Notes:
   . The MemoryBlock code is mainly used in NCReduction, F4 code currently.
 
-havn't done (so far!):
+haven't done (so far!):
   . GB's over quotients
   . GB's over ZZ
   . GB's over commutative poly rings.
