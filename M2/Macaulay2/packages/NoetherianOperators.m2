@@ -19,7 +19,7 @@ newPackage(
     PackageExports => {"Bertini", "NumericalLinearAlgebra", "NAGtypes"},
     PackageImports => {"Dmodules", "PrimaryDecomposition"},
     AuxiliaryFiles => false,
-    DebuggingMode => true, -- TODO
+    DebuggingMode => false,
     Keywords => {"Numerical Algebraic Geometry", "Commutative Algebra"}
 )
 
@@ -859,22 +859,20 @@ assert((myKernel M - gens kernel M) == 0)
 noetherianOperators = method(Options => true)
 noetherianOperators (Ideal) := List => true >> opts -> I -> (
     strats := new HashTable from {
-        "Punctual" => noetherianOperatorsPunctual,
+        "PunctualHilbert" => noetherianOperatorsPunctual,
         "Hybrid" => hybridNoetherianOperators,
         "MacaulayMatrix" => noetherianOperatorsViaMacaulayMatrix,
-        "PunctualHilbert" => noetherianOperatorsPunctual,
     };
-    strat := if opts.?Strategy then opts.Strategy else "Punctual";
+    strat := if opts.?Strategy then opts.Strategy else "PunctualHilbert";
     if strats#?strat then strats#strat(I, opts) 
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
 
 noetherianOperators (Ideal, Ideal) := List => true >> opts -> (I,P) -> (
     strats := new HashTable from {
-        "Punctual" => noetherianOperatorsPunctual,
+        "PunctualHilbert" => noetherianOperatorsPunctual,
         "Hybrid" => hybridNoetherianOperators,
         "MacaulayMatrix" => noetherianOperatorsViaMacaulayMatrix,
-        "PunctualHilbert" => noetherianOperatorsPunctual,
     };
     strat := if opts.?Strategy then opts.Strategy else "MacaulayMatrix";
     if strats#?strat then strats#strat(I, P, opts) 
@@ -883,9 +881,9 @@ noetherianOperators (Ideal, Ideal) := List => true >> opts -> (I,P) -> (
 
 noetherianOperators (Module) := List => true >> opts -> M -> (
     strats := new HashTable from {
-        "Punctual" => noetherianOperatorsPunctual
+        "PunctualQuot" => noetherianOperatorsPunctual
     };
-    strat := if opts.?Strategy then opts.Strategy else "Punctual";
+    strat := if opts.?Strategy then opts.Strategy else "PunctualQuot";
     if strats#?strat then strats#strat(M, opts) 
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
@@ -3361,7 +3359,7 @@ Outputs
 Description
     Text
         A homogeneous system of $l$ linear partial differential equations for a function $\psi \colon \RR^n \to \CC^k$
-        is encoded by a $(k \times l)$ matrix with entries in a polynomial ring. For example, if $n=4, k=2, l=3$, the PDE
+        is encoded by a $(k \times l)$ matrix with entries in a polynomial ring. For example, if $n=4, k=2, l=3$, the PDE system
         $$
             \frac{\partial^2 \psi_1}{\partial z_1 \partial z_3}  
             +  \frac{\partial^2 \psi_2}{\partial z_1^2} = 
@@ -3370,7 +3368,7 @@ Description
             \frac{\partial^3 \psi_1}{\partial z_1^2 \partial z_2} +
             \frac{\partial^3 \psi_2}{\partial z_1^2 \partial z_4} =0
         $$
-        are encoded by the matrix
+        is encoded by the matrix
         $$
             M = \begin{bmatrix}
                 \partial_{1} \partial_{3} &  \partial_{1} \partial_{2} &  \partial_{1}^2 \partial_{2}\\
@@ -3386,6 +3384,7 @@ Description
         where $\mu_{i,j}$ are complex valued measures.
 
         The function {\tt solvePDE} computes the algebraic varieties $V_i$ and {\em Noetherian multipliers} $B_{i,j}(\mathbf x, \mathbf z)$.
+        The input is either a matrix $M$ or a module $U$, where the $\partial_i$ is replaced by $x_i$.
         The output is a list of $s$ pairs. For the $i$th pair, the first entry is the prime ideal of $V_i$.
         The second entry is the list $B_{i,1}, \dotsc, B_{i,m_j}$ of vectors of polynomials in $2n$ variables, where the symbol $\mathbf{z}$ is replaced by the symbol $\mathbf{\mathtt{d}x}$.
 
@@ -3402,7 +3401,7 @@ Description
             \phi(\mathbb z) = \int_{V(x_3,x_1)} \begin{bmatrix} z_1 x_2 \\ -1 \end{bmatrix} e^{x_1 z_1 + x_2 z_2 + x_3 z_3 + x_4 z_4} \, d\mu(x_1,x_2,x_3,x_4)
         $$
 
-        We note that the total number of Noetherian multipliers is equal to the arithmetic multiplicity of the module $U$.
+        The total number of Noetherian multipliers is equal to the arithmetic multiplicity of the module $U$.
     Example
         amult U == sum(sols / last / (l -> #l))
     Text
@@ -3437,7 +3436,7 @@ Description
         of $U$ in $M$ is a list of pairs $(p_1, A_1), ..., (p_k, A_k)$ where $p_1, ..., p_k$ are 
         the associated primes of $M/U$ and $A_i \subseteq \operatorname{Diff}_{R/K}(M, R/p_i)$ 
         are differential operators satisfying 
-        $$U_p = \bigcap_{p_i \subseteq p} \{ w \in M_p : \delta(w) = 0 \forall \delta \in A_i \}.$$
+        $$U_p = \bigcap_{p_i \subseteq p} \{ w \in M_p : \delta(w) = 0 , \ \forall \delta \in A_i \}.$$
         This notion was introduced in [2] (cf. Definition 4.1), in which it was shown that the size of 
         a differential primary decomposition (which is defined to be $\sum_{i=1}^k |A_i|$) is at 
         least @TO2{amult, "amult(U)"}@, and moreover differential primary decompositions of
