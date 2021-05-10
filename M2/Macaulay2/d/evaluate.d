@@ -1889,8 +1889,8 @@ combine(e:Expr):Expr := (
         else WrongArg(1+1,"a hash table")
         else WrongArg(0+1,"a hash table")
      )
-     else WrongNumArgs(5)
-     else WrongNumArgs(5));
+     else WrongNumArgs(5,6)
+     else WrongNumArgs(5,6));
 setupfun("combine",combine);
 
 export unarymethod(right:Expr,methodkey:SymbolClosure):Expr := (
