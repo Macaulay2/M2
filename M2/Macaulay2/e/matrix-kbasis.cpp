@@ -70,9 +70,14 @@ class KBasis
                   // 0-diml module is asked for
 
   void insert();
-  void basis0_full(int firstvar);
-  void basis0_singly_graded(int firstvar);
-  void basis0_multi_graded(int firstvar);
+  bool try_insert_full();
+  bool try_insert_sg();
+  bool try_insert_mg();
+  bool backtrack(int &curr);
+  bool backtrack_mg(int &curr);
+  void basis0_full();
+  void basis0_singly_graded();
+  void basis0_multi_graded();
 
   KBasis(const Matrix *bottom,
          const int *lo_degree,
@@ -191,149 +196,151 @@ void KBasis::insert()
   if (limit > 0) limit--;
 }
 
-void KBasis::basis0_full(int firstvar)
+inline bool KBasis::backtrack(int &curr)
+{
+  // if we are the end, decrease the last entry to 0
+  if (curr == vars->len - 1)
+    {
+      kb_exp_weight -= var_wts[curr] * kb_exp[vars->array[curr]];
+      kb_exp[vars->array[curr]] = 0;
+      do {
+          curr--;
+      } while (curr >= 0 && kb_exp[vars->array[curr]] == 0);
+    }
+  if (curr < 0) return false;
+  kb_exp[vars->array[curr]]--;
+  kb_exp_weight -= var_wts[curr];
+  curr++;
+  return true;
+}
+
+inline bool KBasis::try_insert_full()
 {
   Bag *b;
-
-  if (kb_monideal->search_expvector(kb_exp, b)) return;
+  if (kb_monideal->search_expvector(kb_exp, b)) return false;
   insert();
-  if (limit == 0) return;
-  if (firstvar >= vars->len) return;
+  return true;
+}
 
-  int curr = firstvar;
+void KBasis::basis0_full()
+{
+  // insert the all zeros vector
+  if (!try_insert_full()) return;
+  if (vars->len == 0) return;
+
+  int curr = 0;
   do {
       int vcurr = vars->array[curr];
       // increase the curr index until we reach a limit
       do {
+          if (limit == 0 || system_interrupted()) return;
           kb_exp[vcurr]++;
           kb_exp_weight += var_wts[curr];
-          if (system_interrupted()) return;
-          if (kb_monideal->search_expvector(kb_exp, b)) break;
-          insert();
-          if (limit == 0) return;
-      } while (true);
-
-      // if we are the end, decrease the last entry to 0
-      if (curr == vars->len - 1)
-        {
-          kb_exp_weight -= var_wts[curr] * kb_exp[vars->array[curr]];
-          kb_exp[vars->array[curr]] = 0;
-          do {
-              curr--;
-          } while (curr >= firstvar && kb_exp[vars->array[curr]] == 0);
-        }
-      if (curr < firstvar) break;
-      kb_exp[vars->array[curr]]--;
-      kb_exp_weight -= var_wts[curr];
-      curr++;
-  } while (true);
+      } while (try_insert_full());
+  } while (backtrack(curr));
 }
 
-void KBasis::basis0_singly_graded(int firstvar)
+inline bool KBasis::try_insert_sg()
 {
   Bag *b;
-  // this bit deals with the all zeros vector
-  if (kb_monideal->search_expvector(kb_exp, b)) return;
+  if (kb_monideal->search_expvector(kb_exp, b)) return false;
   if (hi_degree && kb_exp_weight > kb_target_hi_weight)
     {
       if (do_truncation) insert();
-      return;
+      return false;
     }
-  if (lo_degree == 0 || kb_exp_weight >= kb_target_lo_weight)
-    {
-      insert();
-      if (limit == 0) return;
-    }
-  if (hi_degree && kb_exp_weight == kb_target_hi_weight) return;
+  if (!lo_degree || kb_exp_weight >= kb_target_lo_weight) insert();
+  if (hi_degree && kb_exp_weight == kb_target_hi_weight) return false;
+  return true;
+}
 
-  if (firstvar >= vars->len) return;
-
-  int curr = firstvar;
+void KBasis::basis0_singly_graded()
+{
+  // insert the all zeros vector
+  if (!try_insert_sg()) return;
+  if (vars->len == 0) return;
+  int curr = 0;
   do {
       int vcurr = vars->array[curr];
       // increase the curr index until we reach a limit
       do {
+          if (limit == 0 || system_interrupted()) return;
           kb_exp[vcurr]++;
           kb_exp_weight += var_wts[curr];
-          if (system_interrupted()) return;
-          if (kb_monideal->search_expvector(kb_exp, b)) break;
-          if (hi_degree && kb_exp_weight > kb_target_hi_weight)
-            {
-              if (do_truncation)
-                {
-                  insert();
-                  if (limit == 0) return;
-                }
-              break;
-            }
-          if (lo_degree == 0 || kb_exp_weight >= kb_target_lo_weight)
-            {
-              insert();
-              if (limit == 0) return;
-            }
-          if (hi_degree && kb_exp_weight == kb_target_hi_weight) break;
-      } while (true);
-
-      // if we are the end, decrease the last entry to 0
-      if (curr == vars->len - 1)
-        {
-          kb_exp_weight -= var_wts[curr] * kb_exp[vcurr];
-          kb_exp[vcurr] = 0;
-          do {
-              curr--;
-          } while (curr >= firstvar && kb_exp[vars->array[curr]] == 0);
-        }
-      if (curr < firstvar) break;
-      assert(kb_exp[vars->array[curr]] > 0);
-      kb_exp[vars->array[curr]]--;
-      kb_exp_weight -= var_wts[curr];
-      curr++;
-  } while (true);
+      } while (try_insert_sg());
+  } while (backtrack(curr));
 }
 
-void KBasis::basis0_multi_graded(int firstvar)
+inline bool KBasis::backtrack_mg(int &curr)
+{
+  int vcurr = -1;
+  // if we are the end, decrease the last entry to 0
+  if (curr == vars->len - 1)
+    {
+      vcurr = vars->array[curr];
+      kb_exp_weight -= var_wts[curr] * kb_exp[vcurr];
+      ntuple::multpower(heft_vector->len,
+                        kb_exp_multidegree,
+                        var_degs + (heft_vector->len * vcurr),
+                        -kb_exp[vcurr],
+                        kb_exp_multidegree);
+      kb_exp[vcurr] = 0;
+      do {
+          curr--;
+      } while (curr >= 0 && kb_exp[vars->array[curr]] == 0);
+    }
+  if (curr < 0) return false;
+  vcurr = vars->array[curr];
+  kb_exp[vcurr]--;
+  kb_exp_weight -= var_wts[curr];
+  ntuple::divide(heft_vector->len,
+                 kb_exp_multidegree,
+                 var_degs + (heft_vector->len * vcurr),
+                 kb_exp_multidegree);
+  curr++;
+  return true;
+}
+
+inline bool KBasis::try_insert_mg()
 {
   Bag *b;
-
-  if (system_interrupted()) return;
-  if (kb_monideal->search_expvector(kb_exp, b)) return;
-
+  if (kb_monideal->search_expvector(kb_exp, b)) return false;
   if (kb_exp_weight > kb_target_lo_weight)
     {
       if (do_truncation) insert();
-      return;
+      return false;
     }
-
   if (kb_exp_weight == kb_target_lo_weight)
     {
       if (EQ == ntuple::lex_compare(heft_vector->len,
                                     kb_target_multidegree,
                                     kb_exp_multidegree))
         insert();
-      return;
+      return false;
     }
+  return true;
+}
 
-  for (int i = firstvar; i < vars->len; i++)
-    {
-      int v = vars->array[i];
+void KBasis::basis0_multi_graded()
+{
+  // insert the all zeros vector
+  if (!try_insert_mg()) return;
+  if (vars->len == 0) return;
 
-      kb_exp[v]++;
-      kb_exp_weight += var_wts[i];
-      ntuple::mult(heft_vector->len,
-                   kb_exp_multidegree,
-                   var_degs + (heft_vector->len * v),
-                   kb_exp_multidegree);
-
-      basis0_multi_graded(i);
-
-      kb_exp[v]--;
-      kb_exp_weight -= var_wts[i];
-      ntuple::divide(heft_vector->len,
-                     kb_exp_multidegree,
-                     var_degs + (heft_vector->len * v),
-                     kb_exp_multidegree);
-      if (limit == 0) return;
-    }
+  int curr = 0;
+  do {
+      int vcurr = vars->array[curr];
+      // increase the curr index until we reach a limit
+      do {
+          if (limit == 0 || system_interrupted()) return;
+          kb_exp[vcurr]++;
+          kb_exp_weight += var_wts[curr];
+          ntuple::mult(heft_vector->len,
+                       kb_exp_multidegree,
+                       var_degs + (heft_vector->len * vcurr),
+                       kb_exp_multidegree);
+      } while (try_insert_mg());
+  } while (backtrack_mg(curr));
 }
 
 static bool all_have_pure_powers(const MonomialIdeal *M, M2_arrayint vars)
@@ -395,13 +402,13 @@ void KBasis::compute()
       switch (computation_type)
         {
           case KB_FULL:
-            basis0_full(0);
+            basis0_full();
             break;
           case KB_SINGLE:
-            basis0_singly_graded(0);
+            basis0_singly_graded();
             break;
           case KB_MULTI:
-            basis0_multi_graded(0);
+            basis0_multi_graded();
             break;
         }
     }
