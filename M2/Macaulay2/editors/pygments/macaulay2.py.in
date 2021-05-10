@@ -1,0 +1,37 @@
+from pygments.lexer import RegexLexer, words
+from pygments.token import Comment, Keyword, Name, String, Text
+
+M2KEYWORDS = (
+    @M2KEYWORDS@
+    )
+
+M2DATATYPES = (
+    @M2DATATYPES@
+    )
+
+M2FUNCTIONS = (
+    @M2FUNCTIONS@
+    )
+
+M2CONSTANTS = (
+    @M2CONSTANTS@
+    )
+
+class Macaulay2Lexer(RegexLexer):
+    name = 'Macaulay2'
+    aliases = ['macaulay2']
+    filenames = ['*.m2']
+
+    tokens = {
+        'root': [
+            (r'--.*$', Comment.Single),
+            (r'-\*[\w\W]*?\*-', Comment.Multiline),
+            (r'".*?"', String),
+            (r'///[\w\W]*?///', String),
+            (words(M2KEYWORDS, prefix=r'\b', suffix=r'\b'), Keyword),
+            (words(M2DATATYPES, prefix=r'\b', suffix=r'\b'), Name.Builtin),
+            (words(M2FUNCTIONS, prefix=r'\b', suffix=r'\b'), Name.Function),
+            (words(M2CONSTANTS, prefix=r'\b', suffix=r'\b'), Name.Constant),
+            (r'.', Text)
+        ]
+    }
