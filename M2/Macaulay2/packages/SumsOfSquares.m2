@@ -1394,32 +1394,38 @@ TEST ///--makeMultiples
 --9
 TEST ///--recoverSolution
     debug needsPackage "SumsOfSquares"
-    equal = (a,b) -> norm(a-b) < HighPrecision;
+    equal = (sol,xx,vv) ->
+        all(xx, vv, (x,v) -> norm(v-sub(x,sol)) < HighPrecision);
     R = RR[x,y];
     mon = matrix {{1},{x},{y}};
     X = matrix(RR, {{1,0,1},{0,0,0},{1,0,1}} );
     sol = recoverSolution(mon,X);
-    assert(#sol==2 and equal(last\sol,{0,1}))
+    assert(equal(sol,{x,y},{0,1}))
 
     X = matrix(RR, {{1,0,-1},{0,0,0},{-1,0,1}} );
     sol = recoverSolution(mon,X);
-    assert(#sol==2 and equal(last\sol,{0,-1}))
+    assert(equal(sol,{x,y},{0,-1}))
 
     mon = matrix {{1},{x}};
     X = matrix(RR, {{1,1},{1,1}} );
     sol = recoverSolution(mon,X);
-    assert(#sol==1 and equal(last\sol,{1}))
+    assert(equal(sol,{x},{1}))
 
     mon = matrix {{1},{y}};
     X = matrix(RR, {{1,-1},{-1,1}} );
     sol = recoverSolution(mon,X);
-    assert(#sol==1 and equal(last\sol,{-1}))
+    assert(equal(sol,{y},{-1}))
 
     mon = matrix {{x},{y}};
     s = sqrt 2;
     X = matrix(RR, {{2,-s},{-s,1}} );
     sol = recoverSolution(mon,X);
-    assert(#sol==2 and ( equal(last\sol,{s,-1}) or equal(last\sol,{-s,1}) ))
+    assert(equal(sol,{x,y},{s,-1}) or equal(sol,{x,y},{-s,1}))
+
+    mon = matrix {{1},{y},{x*y}};
+    X = matrix(RR, {{1,-1,-1},{-1,1,1},{-1,1,1}} );
+    sol = recoverSolution(mon,X);
+    assert(equal(sol,{y},{-1}))
 ///
 
 --10
