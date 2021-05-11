@@ -17,21 +17,22 @@ doc ///
         solve polynomial systems via homotopy continuation and monodromy
     Description
         Text
-	    This package provides randomized numerical methods for finding complex solutions to systems of polynomial equations.
-            The main methods implemented in this package find solutions to polynomial systems of equations over the 
-            complex numbers. As described in @HREF("https://arxiv.org/abs/1609.08722","\"Solving polynomial systems
-            via homotopy continuation and monodromy\" (2016)")@, these methods pair numerical homotopy continuation with the 
-            transitive monodromy action of a suitable covering map.
-        Text
-	    It includes several blackbox functions based on these methods.
+	    This packages provides randomized methods for numerically solving polynomial systems of equations that occur in parametric families, by exploiting the transitive action of an associated monodromy group.
+            The package implements the graph-based framework described in the third reference below.
+	    There are three main functions that may be used to solve a system of a family of systems:
         Code
                 UL {
 		    TO solveFamily,
-                   TO sparseMonodromySolve,
-                   TO monodromySolve
-                      } 
+                    TO sparseMonodromySolve,
+                    TO monodromySolve
+		    } 
         Text
-            @TO solveFamily@ is blackbox solver that can work with @TO SLPexpressions@ or the @TO PolySystem@ type. Here is an example illustrating how to solve a parametric family for specific parameter values.
+            @TO monodromySolve@ is the core function, whose input may be @ofClass PolySystem@ or $ofClass GateSystem$.
+	    As an additional input, a seed pair consisting of initial parameter and solution values may be provided.
+	    @TO solveFamily@ is a wrapper function that returns specific solutions and parameter values.
+	    @TO sparseMonodromySolve@ is a blackbox solver for systems without parameters, that calls the core functio
+	    These functions have many options in common, which are summarized in @TO MonodromySolverOptions@.
+	    Here is an example illustrating how to solve a parametric family for specific parameter values.
         Example
             setRandomSeed 0;
             declareVariable \ {A,B,C,D,X,Y};
@@ -39,16 +40,22 @@ doc ///
             p0 = point{{1,1,1,1}};
             sols = solveFamily(p0, F, NumberOfNodes=>3);
             for i from 0 to 3 list norm(evaluate(F, p0, sols#i))
-	Text
-	    @TO monodromySolve@ is the core function called by @TO solveFamily@. Its default setting are less conservative and may be faster at the expense of reliability: see @TO MonodromySolverOptions@. For non-parametric systems, the solver @TO sparseMonodromySolve@ essentially calls @TO solveFamily @ assuming the genericity conditions of the Bernstein-Kurhnirenko theorem are satisfied.
         Text
             Each solver works by assembling randomly generated systems within a @TO HomotopyGraph@ and tracking paths between
             them. They are also equipped with a number of options, which may be useful for speeding up computation or 
             increasing the probability of success.
         Text
-            In the example above, the underlying graph is "seeded" automatically. The current seeding implementation will fail,
-            for instance, in cases where there are equations without parameters. In such a case, the user may find a seed pair
-            themselves (see @TO (monodromySolve, System, Point, List) @ for an example.)
+            In the example above, the system is linear in parameters, allowing for the seed pair to be computed automatically. 
+	    The current seeding implementation will report failure in other cases.
+	    Depending on the problem of interest, there may still be a natural way to generate the seed pair, as in @TO (monodromySolve, System, Point, List) @.
+	Text
+            Some references for numerical monodromy methods:
+    	    
+	    Sommese, Andrew J., Jan Verschelde, and Charles W. Wampler. "Numerical decomposition of the solution sets of polynomial systems into irreducible components." {\it SIAM Journal on Numerical Analysis} 38.6 (2001): 2022-2046.
+	    
+	    del Campo, Abraham Martin, and Jose Israel Rodriguez. "Critical points via monodromy and local methods." {\it Journal of Symbolic Computation} 79 (2017): 559-574.
+	    
+	    Duff, Timothy, Cvetelina Hill, Anders Jensen, Kisun Lee, Anton Leykin, and Jeff Sommars. "Solving polynomial systems via homotopy continuation and monodromy." {\it IMA Journal of Numerical Analysis} 39.3 (2019): 1421-1446.
     ///
 
 doc ///
@@ -69,7 +76,6 @@ doc ///
         Text
             Blackbox monodromy solver for a square polynomial system without parameters.
             The example below finds all six intersection of a generic cubic F with its quadratic polar curve P.
-	    Note: this method requires PHCpack.
         Text
     
         Example
@@ -311,6 +317,7 @@ doc ///
         [monodromySolve,NumberOfRepeats]
         [solveFamily,NumberOfRepeats]
         [sparseMonodromySolve,NumberOfRepeats]
+	PointArrayTol
         Potential
         [monodromySolve,Potential]
         [solveFamily,Potential]
@@ -357,19 +364,22 @@ doc ///
                     }},
                 "BatchSize: maximum number of solutions tracked across an edge",
                 "EdgesSaturated: fills correspondence tables after stopping criteria satisfied",
+		"Equivalencer: a numeric function of solutions (default (x -> x) that divides partial solutions into equivalence classes",
+		"FilterCondition: boolean function (default (p, x) -> false)) that evaluates true when we don't want to collect x (useful when x is an extraneous solution produced by path-jumping)",
                 {"GraphInitFunction: the underlying graph topology, see ", TO completeGraphInit, " and ", TO flowerGraphInit},
                 "NumberOfEdges: number of edges in underlying graph",
                 "NumberOfNodes: number of nodes in underlying graph",
                 "NumberOfRepeats: argument for StoppingCriterion",
+		{"PointArrayTol: tolerance used for comparing elements contained in", ofClass PointArray},
                 {"Potential: a function that assigns a number to each edge in each iteration, indicating its
                 potential for producing new solutions. Current supported potential functions are ", TO potentialE , " and ", 
                 TO potentialLowerBound},
+	        "Randomizer: a function of the parameters that randomizes the homotopies' endpoints. Defaults to the", TO gamma," trick when linear in parameters, otherwise no randomization (p -> p)",
                 {"SelectEdgeAndDirection: accepts either ", TO selectBestEdgeAndDirection, " or ",
                  TO selectRandomEdgeAndDirection, ". The former also requires setting a potential. Default is an internal function that selects the first available edge." },
                 "StoppingCriterion: eg. stop if no progress has been made",
                 "TargetSolutionCount: expected/desired number of solutions (overrides StoppingCriterion)",
-                "Verbose: reports progress in each iteration",
-                "experimental options: Equivalencer, FilterCondition, Randomizer."
+                "Verbose: reports progress in each iteration"
                 }
     ///
 
@@ -458,7 +468,7 @@ doc ///
         computeMixedVolume
         (computeMixedVolume, List)
     Headline
-        compute mixed volume via PHCpack
+        compute mixed volume via Gfan
     Usage
         d = computeMixedVolume polys
     Inputs
@@ -468,8 +478,8 @@ doc ///
         d:ZZ
     Description
         Text
-            Computes mixed volume of a polynomial system. For generic systems of a given support set, this is the generic
-            root count. Note: This method assumes the user has installed PHCpack.
+            Computes mixed volume of a polynomial system using the package {TO gfanInterface}. For generic systems of a given support set, this is the generic
+            root count.
         Example
 	   setRandomSeed 0;
             R = CC[x,y];

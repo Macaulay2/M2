@@ -282,7 +282,7 @@ compute#Fan#polytopal Fan := F -> (
          j -> (
             v := corrList#j#1;
             hyperplanesTmpnew := map(ZZ^n,ZZ^m,0);
-            -- Scanning trough the top cones containing the active codim2 cone and order them in a circle by their 
+            -- Scanning through the top cones containing the active codim2 cone and order them in a circle by their
             -- connecting edges
             v = apply(v, e -> L#e);
             C := v#0;

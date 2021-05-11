@@ -16,7 +16,7 @@ newPackage(
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
-    PackageImports => {"PrimaryDecomposition", "Cremona","SparseResultants"},
+    PackageImports => {"PrimaryDecomposition"},
     PackageExports => {"Cremona","SparseResultants"},
     DebuggingMode => false,
     Reload => false
@@ -141,33 +141,58 @@ projectiveVariety (List,List,Ring) := o -> (n,d,K) -> (
 projectiveVariety (ZZ,ZZ,Ring) := o -> (n,d,K) -> projectiveVariety({n},{d},K);
 
 ----------------------------------
-PP = new (new Type of MutableHashTable) from {symbol ring => null};
-net class PP := P -> "Coefficient Ring: "|toString(P.ring)||///PP^n -> n-dimensional projective space///||///PP^{n1,n2,...} -> product of projective spaces: PP^n1 x PP^n2 x ...///||///PP^(n,d) -> d-uple embedding of PP^n: v_d(PP^n)///||///PP^({n1,n2,...},{d1,d2,...}) -> Segre-Veronese variety: v_d1(PP^n1) x v_d2(PP^n2) x ...///||///PP[a1,a2,...] -> rational normal scroll: P(O(a1))+P(O(a2))+...///||///PP([a1,a2,...],k) -> k-th secant variety of PP[a1,a2,...]///||///(PP([a1,a2,...],k)).matrix -> the matrix from which PP([a1,a2,...],k) is constructed///;
-(class PP)#{Standard,AfterPrint} = (class PP)#{Standard,AfterNoPrint} = identity;
-(class PP) _ Ring := memoize((P,K) -> (
-    if not isField K then error "expected a field"; 
-    if P =!= PP then error "object not valid"; 
-    if P.ring === null then P.ring = K;
-    new (class PP) from {symbol ring => K}));
-(class PP) Ring := (P,K) -> (if not isField K then error "expected a field"; if P =!= PP then error "object not valid"; P.ring = K; P);
-ring (class PP) := P -> (if P.ring === null then error "coefficient ring required: you may set a ring K as default coefficient ring using PP(K)"; return P.ring);
-(class PP) ^ List := (P,l) -> projectiveVariety(l,ring P);
-(class PP) ^ ZZ := (P,l) -> projectiveVariety(l,ring P);
-(class PP) ^ Sequence := (P,l) -> projectiveVariety(l_0,l_1,ring P);
-(class PP) Sequence := (P,d) -> ( -- see p.167 de [Hubert Flenner, Liam O’Carroll, Wolfgang Vogel]
-    if not(#d == 2 and instance(first d,Array) and # first d > 0 and all(first d,i -> instance(i,ZZ)) and instance(last d,ZZ)) then error "expected an array of integers and an integer";
-    k := last d;
-    d = toList first d;
+higherSecantVarietyToRationalNormalScroll = method(); -- see p. 167 de [Hubert Flenner, Liam O’Carroll, Wolfgang Vogel]
+higherSecantVarietyToRationalNormalScroll (Array,ZZ,Ring) := (d,k,K) -> (
+    if not (#d > 0 and all(d,i -> instance(i,ZZ))) then error "expected an array of integers";
+    d = toList d;
     N := sum d + #d -1;
-    if k <= 0 or min d < 0 then return 0_(P^N);
-    if k+1 > sum(#d,s -> d_s-k+1) then return P^N;
-    t := gensRing(ring P,apply(d,i -> i+1));
-    M := sub(fold((x,y)->x|y,apply(#d,s -> matrix for i to k list for j to d_s-k list t_s_(i+j))),vars ring P^N);
+    if k <= 0 or min d < 0 then return 0_(projectiveVariety(N,K));
+    if k+1 > sum(#d,s -> d_s-k+1) then return projectiveVariety(N,K);
+    t := gensRing(K,apply(d,i -> i+1));
+    M := sub(fold((x,y)->x|y,apply(#d,s -> matrix for i to k list for j to d_s-k list t_s_(i+j))),vars ring projectiveVariety(N,K));
     X := projectiveVariety(ideal apply(subsets(numColumns M,k+1),m -> det submatrix(M,m)),MinimalGenerators=>false,Saturate=>false);
     X#(symbol matrix) = M;
     X
 );
-(class PP) Array := (P,d) -> P (d,1);
+PP = new ScriptedFunctor from {
+    symbol ring => null,
+    argument => (
+        A -> (
+            if instance(A,Ring) then (if not isField A then error "expected a field" else (PP.ring = A; <<"-- the ring "<<toString(PP.ring)<<" is set to be the default coefficient ring; now PP may be used as an abbreviation for PP_"<<toString(PP.ring)<<endl; return PP));
+            if PP.ring === null then error "coefficient ring required: you may set a ring K as default coefficient ring using PP(K)";
+            return PP_(PP.ring) A;  
+        )
+    ),
+    superscript => (
+        B -> (
+            if PP.ring === null then error "coefficient ring required: you may set a ring K as default coefficient ring using PP(K)";
+            return PP_(PP.ring)^B;
+        )
+    ),
+    subscript => (
+        K -> (
+            if not (instance(K,Ring) and isField K) then error "expected a field";
+            if PP.ring === null then PP.ring = K;
+            errStr := toString(///These are some ways of using PP:///||///PP^n -> n-dimensional projective space///||///PP^{n1,n2,...} -> product of projective spaces: PP^n1 x PP^n2 x ...///||///PP^(n,d) -> d-uple embedding of PP^n: v_d(PP^n)///||///PP^({n1,n2,...},{d1,d2,...}) -> Segre-Veronese variety: v_d1(PP^n1) x v_d2(PP^n2) x ...///||///PP[a1,a2,...] -> rational normal scroll: P(O(a1))+P(O(a2))+...///||///PP([a1,a2,...],k) -> k-th secant variety of PP[a1,a2,...]///||///(PP([a1,a2,...],k)).matrix -> the matrix from which PP([a1,a2,...],k) is constructed///);
+            new ScriptedFunctor from {
+                superscript => (
+                    l -> (
+                        if instance(l,List) or instance(l,ZZ) then projectiveVariety(l,K)
+                        else if instance(l,Sequence) and #l==2 then projectiveVariety(l_0,l_1,K)
+                        else error errStr
+                    )
+                ),
+                argument => (
+                    d -> (
+                        if instance(d,Array) then higherSecantVarietyToRationalNormalScroll(d,1,K)
+                        else if instance(d,Sequence) and #d==2 then higherSecantVarietyToRationalNormalScroll(d_0,d_1,K)
+                        else error errStr
+                    )
+                )
+            }
+        )
+    )
+};
 ----------------------------------
 
 isPoint = (cacheValue "isPoint") (X -> (
@@ -511,47 +536,46 @@ ZZ * MultiprojectiveVariety := (n,X) -> (
 );
 
 MultiprojectiveVariety + MultiprojectiveVariety := (X,Y) -> (
-    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
+    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient multi-projective space";
     projectiveVariety(intersect(ideal X,ideal Y),MinimalGenerators=>true,Saturate=>false)
 );
 
 ⋃ = method();
 ⋃ List := L -> (
     if not(#L>0 and all(L,X -> instance(X,MultiprojectiveVariety))) then error "expected a list of multi-projective varieties"; 
-    if # unique apply(L,ambient) > 1 then error "expected varieties in the same ambient";
+    if # unique apply(L,ambient) > 1 then error "expected varieties in the same ambient multi-projective space";
     projectiveVariety(intersect apply(L,ideal),MinimalGenerators=>true,Saturate=>false)   
 );
 
 MultiprojectiveVariety \ MultiprojectiveVariety := (X,Y) -> (
-    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
+    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient multi-projective space";
     projectiveVariety(quotient(ideal X,ideal Y,MinimalGenerators=>true),MinimalGenerators=>false,Saturate=>false)
 );
 
 MultiprojectiveVariety \\ MultiprojectiveVariety := (X,Y) -> (
-    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
+    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient multi-projective space";
     projectiveVariety(saturate(ideal X,ideal Y,MinimalGenerators=>true),MinimalGenerators=>false,Saturate=>false)
 );
 
 MultiprojectiveVariety * MultiprojectiveVariety := (X,Y) -> (
-    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
+    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient multi-projective space";
     projectiveVariety(ideal X + ideal Y,MinimalGenerators=>true,Saturate=>true)
 );
 
 ⋂ = method();
 ⋂ List := L -> (
     if not(#L>0 and all(L,X -> instance(X,MultiprojectiveVariety))) then error "expected a list of multi-projective varieties"; 
-    if # unique apply(L,ambient) > 1 then error "expected varieties in the same ambient";
+    if # unique apply(L,ambient) > 1 then error "expected varieties in the same ambient multi-projective space";
     projectiveVariety(sum apply(L,ideal),MinimalGenerators=>true,Saturate=>true)   
 );
 
 isSubset (MultiprojectiveVariety,MultiprojectiveVariety) := (X,Y) -> (
-    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
+    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient multi-projective space";
     if X === Y then return true;
     isSubset(ideal Y,ideal X)
 );
 
-fiberProductInt = method();
-fiberProductInt (MutableHashTable,MutableHashTable) := (phi,psi) -> (
+fiberProductInt = (phi,psi) -> (
     if target phi =!= target psi then error "expected two morphisms with the same target";
     if not isMorphism phi then <<"--warning: the first map is not a morphism"<<endl;
     if not isMorphism psi then <<"--warning: the second map is not a morphism"<<endl;
@@ -714,7 +738,7 @@ dual EmbeddedProjectiveVariety := {} >> o -> X -> (
 );
 
 EmbeddedProjectiveVariety ++ EmbeddedProjectiveVariety := (X,Y) -> (
-    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
+    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient projective space";
     K := coefficientRing X;
     n := dim ambient X;
     (t,x,y,z) := (local t,local x,local y,local z);
@@ -971,12 +995,14 @@ strongCheck MultirationalMap := Phi -> (
     check Phi
 );
 
-check MultirationalMap := o -> Phi -> (
+isWellDefined MultirationalMap := Phi -> (
     L := apply(factor Phi,super);
     P := apply(projections target Phi,L,(p,f) -> if target p === target f then p else rationalMap(source p,target f,matrix p,Dominant=>"notSimplify"));
-    for i to #L -1 do if not isSubset(image P_i,image L_i) then error "the target variety is not compatible with the maps";
-    Phi
+    for i to #L -1 do if not isSubset(image P_i,image L_i) then return false;
+    return true;
 );
+
+check MultirationalMap := o -> Phi -> if isWellDefined Phi then return Phi else error "the target variety is not compatible with the maps";
 
 checkRepresentatives = method();
 checkRepresentatives MultirationalMap := Phi -> (
@@ -1120,7 +1146,7 @@ MultirationalMap ^ ZZ := (Phi,j) -> (
 
 MultirationalMap MultiprojectiveVariety := (Phi,Z) -> (
     if Phi.cache#?("directImage",Z) then return Phi.cache#("directImage",Z);
-    if ring ambient source Phi =!= ring ambient Z then error "expected a multi-projective variety in the same ambient of the source of the map";
+    if ring ambient source Phi =!= ring ambient Z then error "expected a multi-projective variety in the same ambient multi-projective space of the source of the map";
     if not isSubset(Z,source Phi) then error "expected a subvariety of the source of the map";
     F := apply(factor Phi,f -> lift(matrix f,ring ambient source Phi));
     s := # F;
@@ -1151,7 +1177,7 @@ MultihomogeneousRationalMap MultiprojectiveVariety := (Phi,X) -> (multirationalM
 
 inverseImageViaMultirationalMapWeak = (Phi,Z) -> (
     if Phi.cache#?("inverseImage",Z) then return Phi.cache#("inverseImage",Z);
-    if ring ambient target Phi =!= ring ambient Z then error "expected a multi-projective variety in the same ambient of the target of the map";
+    if ring ambient target Phi =!= ring ambient Z then error "expected a multi-projective variety in the same ambient multi-projective space of the target of the map";
     -- if not isSubset(Z,target Phi) then error "expected a subvariety of the target of the map";
     F := apply(factor Phi,f -> ideal matrix f);
     g := toRingMap(Phi,ring target Phi);
@@ -1164,7 +1190,7 @@ MultirationalMap ^* := (Phi) -> MultiprojectiveVariety := (Z) -> inverseImageVia
 
 MultirationalMap ^^ MultiprojectiveVariety := (Phi,Z) -> (
     -- A fast inverse image but to be used only when Phi is a linear embedding (intended for internal use only)
-    if ring ambient target Phi =!= ring ambient Z then error "expected a projective variety in the same ambient of the target of the map";
+    if ring ambient target Phi =!= ring ambient Z then error "expected a projective variety in the same ambient projective space of the target of the map";
     g := toRingMap(Phi,ring target Phi);
     if not(# (source Phi)#"dimAmbientSpaces" == 1 and # (target Phi)#"dimAmbientSpaces" == 1 and 
            ambient source Phi == source Phi and first max degrees ideal toMatrix g == 1) 
@@ -1612,7 +1638,7 @@ beginDocumentation()
 
 document {Key => {MultiprojectiveVarieties}, 
 Headline => "Multi-projective varieties and multi-rational maps",
-PARA{"This is package for handling multi-projective varieties, that is, closed subvarieties of products of projective spaces, and rational maps between them. This extends the package ",TO Cremona,", which treats ",TO2{RationalMap,"rational maps"}," from multi-projective varieties to ",EM"standard"," projective varieties, ",TEX///$X\subseteq \mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}\dashrightarrow Y\subseteq\mathbb{P}^N$///,"."},References => {"ArXiv preprint: ",HREF{"https://arxiv.org/abs/2101.04503","Computations with rational maps between multi-projective varieties"},"."},
+PARA{"This is a package for handling multi-projective varieties, that is, closed subvarieties of products of projective spaces, and rational maps between them. This extends the package ",TO Cremona,", which treats ",TO2{RationalMap,"rational maps"}," from multi-projective varieties to ",EM"standard"," projective varieties, ",TEX///$X\subseteq \mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}\dashrightarrow Y\subseteq\mathbb{P}^N$///,"."},References => {"ArXiv preprint: ",HREF{"https://arxiv.org/abs/2101.04503","Computations with rational maps between multi-projective varieties"},"."},
 Subnodes => {TO MultiprojectiveVariety,TO MultirationalMap}}
 
 document {Key => {MultiprojectiveVariety}, 
@@ -1745,7 +1771,7 @@ Outputs => {{"the list of the projections ", TEX///$X\to \mathbb{P}^{k_i}$///,",
 EXAMPLE {"X = projectiveVariety(ZZ/101[x_0..x_3]) ** projectiveVariety(ZZ/101[y_0..y_2]);","projections X"}} 
 
 document {Key => {(ambient,MultiprojectiveVariety)}, 
-Headline => "the ambient of the variety", 
+Headline => "the ambient multi-projective space of the variety", 
 Usage => "ambient X", 
 Inputs => {"X" => MultiprojectiveVariety}, 
 Outputs => { MultiprojectiveVariety => {"the product of the projective spaces where ", TEX///$X$///," is embedded"}}, 
@@ -1807,7 +1833,11 @@ Inputs => {
 MultiprojectiveVariety => "X",
 MultiprojectiveVariety => "Y"}, 
 Outputs => { 
-Boolean => {"whether ",TT"X"," is contained in ",TT"Y"}}}
+Boolean => {"whether ",TT"X"," is contained in ",TT"Y"}},
+EXAMPLE lines ///Y = PP_(ZZ/33331)^(2,2);
+X = point Y;
+isSubset(X,Y)
+isSubset(Y,X)///}
 
 document {Key => {(symbol **,MultiprojectiveVariety,MultiprojectiveVariety)}, 
 Headline => "product of two multi-projective varieties", 
@@ -1961,7 +1991,7 @@ Headline => "topological Euler characteristic of a (smooth) multi-projective var
 Usage => "euler X
 euler(X,Verify=>b)", 
 Inputs => { 
-MultiprojectiveVariety => "X" => {"which has to be smooth, and ",TT"b"," is a ",TO2{Boolean,"boolean value"},", that is, ",TT"true"," or ",TT"false"," (the default value is ",TT"true",")"}}, 
+MultiprojectiveVariety => "X" => {"which is assumed to be smooth, and ",TT"b"," is a ",TO2{Boolean,"boolean value"},", that is, ",TT"true"," or ",TT"false"," (the default value is ",TT"true",")"}}, 
 Outputs => { 
 ZZ => {"the topological Euler characteristics of the variety ",TT"X",", generally calculated as ",TO EulerCharacteristic,TT"(ideal X,MathMode=>b)"}},
 EXAMPLE {
@@ -1974,7 +2004,7 @@ SeeAlso => {EulerCharacteristic,(euler,ProjectiveVariety)}}
 document {Key => {MultirationalMap}, 
 Headline => "the class of all multi-rational maps", 
 PARA {"A ",EM"multi-rational map"," is a rational map between ",TO2{MultiprojectiveVariety,"multi-projective varieties"},", ",TEX///$$\Phi:X\subseteq \mathbb{P}^{r_1}\times\mathbb{P}^{r_2}\times\cdots\times\mathbb{P}^{r_n}\dashrightarrow Y \subseteq \mathbb{P}^{s_1}\times\mathbb{P}^{s_2}\times\cdots\times\mathbb{P}^{s_m} .$$///,"Thus, it can be represented by an ",TO2{List,"ordered list"}," of ",TO2{RationalMap,"rational maps"},TEX///$$\Phi_i = (\Phi:X\dashrightarrow Y)\circ(pr_i:Y\to Y_i\subseteq\mathbb{P}^{s_i}) ,$$///,"for ",TEX///$i=1,\ldots,m$///,". The maps ",TEX///$\Phi_i:X\dashrightarrow Y_i\subseteq\mathbb{P}^{s_i}$///,", since the target ",TEX///$Y_i$///," is a standard projective variety, are implemented with the class ",TO RationalMap," (more properly, when ",TEX///$n>1$///," the class of such maps is called ",TT "MultihomogeneousRationalMap","). Recall that the main constructor for the class ",TO RationalMap," (as well as for the class ", TT"MultihomogeneousRationalMap",") is the method ",TO rationalMap,"."},
-PARA {"The constructor for the class of multi-rational maps is ",TO multirationalMap,", which can still be called ",TO2{(rationalMap,List,MultiprojectiveVariety),"rationalMap"},". It takes as input the list of maps ",TEX///$\{\Phi_1:X\dashrightarrow Y_1,\ldots,\Phi_m:X\dashrightarrow Y_m\}$///,", together with the variety ",TEX///$Y$///,", and returns the map ",TEX///$\Phi:X\dashrightarrow Y$///,"."},
+PARA {"The constructor for the class of multi-rational maps is ",TO multirationalMap,", which can often be abbreviated to ",TO2{(rationalMap,List,MultiprojectiveVariety),"rationalMap"}," (see also ",TO "shortcuts","). It takes as input the list of maps ",TEX///$\{\Phi_1:X\dashrightarrow Y_1,\ldots,\Phi_m:X\dashrightarrow Y_m\}$///,", together with the variety ",TEX///$Y$///,", and returns the map ",TEX///$\Phi:X\dashrightarrow Y$///,"."},
 Subnodes => {TO multirationalMap,TO (rationalMap,List,MultiprojectiveVariety)}}
 
 document { 
@@ -2029,7 +2059,26 @@ EXAMPLE {
 "p = point Y;",
 "Eta = rationalMap({f},p);",
 "stopIfError = false;",
-"check Eta"}}
+"check Eta"},
+SeeAlso => (isWellDefined,MultirationalMap)}
+
+document { 
+Key => {(isWellDefined,MultirationalMap)}, 
+Headline => "whether a multi-rational map is well-defined", 
+Usage => "isWellDefined Phi", 
+Inputs => {MultirationalMap}, 
+Outputs => {Boolean => {"whether ",TT"Phi"," is a well-defined map"}},
+EXAMPLE {
+"f = rationalMap ideal PP_(ZZ/65521)^(1,4);",
+"Phi = rationalMap {f}",
+"isWellDefined Phi",
+"Y = image Phi",
+"Psi = rationalMap({f},Y)",
+"isWellDefined Psi",
+"p = point Y;",
+"Eta = rationalMap({f},p);",
+"isWellDefined Eta"},
+SeeAlso => (check,MultirationalMap)}
 
 document { 
 Key => {(target,MultirationalMap)}, 
@@ -2059,6 +2108,12 @@ Headline => "the list of rational maps defining a multi-rational map",
 Usage => "factor Phi", 
 Inputs => {MultirationalMap => "Phi"}, 
 Outputs => {{"the ",TO2{List,"list"}," of ",TO2{RationalMap,"rational maps"}," defining ",TT"Phi"}},
+EXAMPLE lines ///ZZ/33331[t_0..t_2,u_0..u_1,Degrees=>{3:{1,0},2:{0,1}}];
+f0 = rationalMap {t_0,t_1,t_2}
+f1 = rationalMap {u_0,u_1}
+f2 = rationalMap {t_0*u_1,t_1*u_0}
+Phi = rationalMap {f0,f1,f2};
+assert(factor Phi === {f0,f1,f2})///,
 SeeAlso => {(target,MultirationalMap),(source,MultirationalMap)}}
 
 document { 
@@ -2074,7 +2129,7 @@ Key => {(image,MultirationalMap)},
 Headline => "image of a multi-rational map", 
 Usage => "image Phi", 
 Inputs => {MultirationalMap => "Phi"}, 
-Outputs => {MultiprojectiveVariety => {"the image of ",TT"Phi"}},
+Outputs => {MultiprojectiveVariety => {"the (closure of the) image of ",TT"Phi"}},
 PARA{"Note that, instead, the ",TO2{(image,RationalMap),"image"}," of a standard ",TO2{RationalMap,"rational map"}," is the defining ideal of the image (this is done mainly for efficiency reasons)."},
 EXAMPLE {
 "ZZ/65521[x_0..x_4];",
@@ -2113,7 +2168,7 @@ Usage => "Phi^** Y
 Phi^* Y", 
 Inputs => { 
 MultirationalMap => "Phi",
-MultiprojectiveVariety => "Y" => {"a subvariety of the ambient of the ",TO2{(target,MultirationalMap),"target"}," of ",TT "Phi"}}, 
+MultiprojectiveVariety => "Y" => {"a subvariety of the ambient multi-projective space of the ",TO2{(target,MultirationalMap),"target"}," of ",TT "Phi"}}, 
 Outputs => { 
 MultiprojectiveVariety => {"the (closure of the) inverse image of ", TT"Y", " via ",TT"Phi"}},
 EXAMPLE {
@@ -2274,6 +2329,7 @@ EXAMPLE {
 "time degree(Phi,Strategy=>\"random point\")",
 "time degree(Phi,Strategy=>\"0-th projective degree\")",
 "time degree Phi"},
+PARA{"Note, as in the example above, that calculation times may vary depending on the strategy used."},
 SeeAlso => {(degree,MultirationalMap),(degreeMap,RationalMap),(multidegree,ZZ,MultirationalMap),(point,MultiprojectiveVariety),(symbol ^*,MultirationalMap)}}
 
 document { 
@@ -2420,6 +2476,13 @@ Headline => "the base locus of a multi-rational map",
 Usage => "baseLocus Phi", 
 Inputs => {MultirationalMap => "Phi"}, 
 Outputs => {MultiprojectiveVariety => {"the base locus of ",TT"Phi",", that is, the locus where it is not defined"}},
+EXAMPLE lines ///t = gens ring PP_(ZZ/33331)^5;
+Phi = rationalMap {rationalMap {t_0,t_1,t_2},rationalMap {t_3,t_4,t_5}};
+X = baseLocus Phi;
+describe X
+Psi = inverse(Phi|random(3,baseLocus Phi));
+Y = baseLocus Psi;
+describe Y///,
 SeeAlso => {(isMorphism,MultirationalMap),(ideal,RationalMap)}}
 
 document { 
@@ -2549,7 +2612,7 @@ SeeAlso => {(random,MultiprojectiveVariety)}}
 
 document { 
 Key => {(random,MultiprojectiveVariety)}, 
-Headline => "apply a random automorphism of the ambient", 
+Headline => "apply a random automorphism of the ambient multi-projective space", 
 Usage => "random X", 
 Inputs => {MultiprojectiveVariety => "X" => {"a subvariety of ",TEX///$\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_n}$///}}, 
 Outputs => {MultiprojectiveVariety => {"the image of ",TEX///$X$///," under the action of a random element of ",TEX///$\mathrm{Aut}(\mathbb{P}^{k_1})\times\cdots\times\mathrm{Aut}(\mathbb{P}^{k_n})$///}},
@@ -2563,7 +2626,7 @@ SeeAlso => {(random,List,MultiprojectiveVariety),(permute,MultiprojectiveVariety
 
 document { 
 Key => {(permute,MultiprojectiveVariety,List)}, 
-Headline => "permute the dimensions of the ambient space", 
+Headline => "permute the factors of the ambient multi-projective space", 
 Usage => "permute(X,s)", 
 Inputs => {"X" => MultiprojectiveVariety => {"a subvariety of ",TEX///$\mathbb{P}^{k_0}\times\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_{n}}$///},
 "s" => List => {"a permutation of the set ",TEX///$\{0,1,\ldots,n\}$///}},
@@ -2579,7 +2642,7 @@ SeeAlso => {(permute,MultidimensionalMatrix,List)}}
 
 document { 
 Key => {(shape,MultiprojectiveVariety)}, 
-Headline => "shape of the ambient of a multi-projective variety", 
+Headline => "shape of the ambient multi-projective space of a multi-projective variety", 
 Usage => "shape X", 
 Inputs => {"M" => MultiprojectiveVariety => {"a subvariety of ",TEX///$\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_{n}}$///}},
 Outputs => {List => {"the list of integers ",TEX///$\{k_1, \ldots, k_n\}$///}},
@@ -2744,10 +2807,10 @@ EXAMPLE {
 
 document { 
 Key => {(dual,EmbeddedProjectiveVariety)},
-Headline => "the projectively dual variety to an embedded projective variety", 
+Headline => "the variety projectively dual to an embedded projective variety", 
 Usage => "dual X", 
 Inputs => {"X" => EmbeddedProjectiveVariety},
-Outputs => {EmbeddedProjectiveVariety => {"the dual variety to ",TEX///$X$///}},
+Outputs => {EmbeddedProjectiveVariety => {"which is projectively dual to ",TEX///$X$///}},
 EXAMPLE {"X = PP_QQ^(2,2);","X' = dual X;", "describe X'","assert(dual X' == X)"},
 SeeAlso => {dualVariety,tangentSpace}}
 

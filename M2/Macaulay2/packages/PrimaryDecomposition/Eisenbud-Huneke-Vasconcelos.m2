@@ -198,7 +198,7 @@ bracketPower = (I, n) -> ideal apply(I_*, f -> f^n)
 getEmbeddedComponent = method(Options => { Strategy => null })
 getEmbeddedComponent (Module, Ideal, Function) := o -> (M, p, checkFunction) -> (
      foundValidComponent := false;
-     j := max(2, ceiling(max((ann M)_*/degree/sum) / min(p_*/degree/sum)));
+     j := if ann M == 0 then 2 else max(2, ceiling(max((ann M)_*/degree/sum) / min(p_*/degree/sum)));
      while not foundValidComponent do (
           if debugLevel > 0 then printerr("Trying bracket power " | toString(j) | " for candidate embedded component...");
           N := bracketPower(p, j)*M;

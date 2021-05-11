@@ -1,4 +1,6 @@
 -- -*- M2-comint -*- hash: 285553619
+Hello world from process 0 out of 1 processes
+-- COMPILE TIME: Feb 24 2021, 10:08:22
 
 i1 : R = CC[x,y];
 
@@ -27,3 +29,4 @@ i5 : isCoordinateZero(fSols_0,1,1.0e-10)
 o5 = true
 
 i6 : 
+Bye world from process 0 out of 1 processes
