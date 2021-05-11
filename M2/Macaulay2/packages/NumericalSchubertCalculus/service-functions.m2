@@ -1,10 +1,11 @@
 export {
-    --"skewSchubertVariety", -- for Pieri Homotopies
-    "checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
-    "solutionsToAffineCoords", --Temporary! User shouldn't use this function
+    "checkIncidenceSolution", 
+    "solutionsToAffineCoords", 
     "partition2bracket",
     "bracket2partition",
-    "randomSchubertProblemInstance"
+    "randomSchubertProblemInstance",
+    "NSC2phc", 
+    "LRnumber"              
     }
 ----------------
 --Functions contained here but not exported:
@@ -19,14 +20,132 @@ export {
 -- moveFlags2Flags (List, List) --input two list of flags (F's, G's)
 -- MovingFlag'at'Root ZZ
 -- notAboveLambda(List,ZZ,ZZ) -- input(lambda, k,n)
--- checkSchubertProblem(conds,k,n)  
--- verifyInput
+-- checkSchubertProblem(List,ZZ,ZZ) - (conds,k,n)  checks that conds forms a Schubert problem
+-- verifyInput(List,ZZ,ZZ)
+
+
+----------------------
+--    LRnumber     ---
+--
+-- Computes the number of solutions to a Schubert 
+--   problem on a Grassmannian
+----------------------
+-- Input: 
+--    conds - list of partitions or brackets
+--    k,n   - integers that indicate the Grassmannian G(k,n)
+-- Output:
+--    number of solutions to given Schubert problem
+--------------------------------------------------------------------
+-- Strategy for computing this intersection number
+--   Schubert2  uses the SchubertRing command in the Schubert2 intersection theory package
+--   phc        uses PHCPack's implementation of the geometric Littlewood-Richardson rule
+--------------------------------------------------------------------
+LRnumber = method(Options=>{Strategy=>"Schubert2"})
+LRnumber (List,ZZ,ZZ) := o -> (conds,k,n) -> (
+    -- First check if it is a Schubert problem
+    checkSchubertProblem(conds,k,n);
+    if o.Strategy === "phc" then (
+	-- obfuscatory snippet of code to call LRrule and parse the output (a string) into a number
+	A := (separate("\\[",(separate("\\+", LRrule(n,NSC2phc(conds,k,n)) ))#1))#0 ;
+	dgt := reverse( apply(ascii(A), i-> i-48 ) );
+	X:={};
+	for i from 0 to #dgt-1 do (X = append(X,10^i*dgt#i) );
+	sum(X) 
+	) 
+    else if o.Strategy === "Schubert2" then (
+	-- sets up the cohomology ring of the Grassmannian
+	G := flagBundle({k,n-k});
+	(S,T,U) := schubertRing G;
+	a := 1;
+	-- detects if brackets or partitions
+	if (#conds#0 == k) and (conds#0 == sort unique conds#0) then
+	apply( conds, b -> a = a * (schubertCycle(bracket2partition(b,n),G)) ) else 
+	apply( conds, p -> a = a * (schubertCycle(verifyLength(p,k),G)) );
+	integral a
+	)
+    else error "unknown Strategy"
+)
+
+-----------------------------------------------------------------------------------------
+-- ensurePartitions  
+--
+-- checks that the input (Instance, k, n) is correct; it forms an instance of 
+--  a Schubert problem on a Grassmannian, and then returns the Schubert problem, replacing
+--  partitions by brackets, if necessary.
+-----------------------------------------------------
+-- Kludge alert:  if the tolerance for a determinant to be zero, ERROR'TOLERANCE, has not been set, it sets
+--   it to 0.001
+-----------------------------------------------------------------------------------------
+-- Input:
+-- Instance  - a list of pairs (c,F), where c is a Schubert condition (partition or bracket) and F a flag
+-- k, n      - integers that indicate the Grassmannian G(k,n)
+-----------------------------------------------------------------------------------------
+-- The purpose of this routine is both to check that the input to solveSchubertProblem and solveSimpleSchubert 
+--  does indeed consist of an instance of a Schubert problem, and to allow the conditions to be 
+--  brackets as well as partitions.
+-----------------------------------------------------------------------------------------
+
+ensurePartitions= method()
+ensurePartitions(List,ZZ,ZZ) :=  (conds'flags, k,n) ->(
+    conds := conds'flags/first; -- list of schubert conditions
+    flags := conds'flags/last; -- list of flags
+    --- check if these conditions impose a 0-dimensional Schubert Problem
+    checkSchubertProblem(conds,k,n);
+    --- Verify that the flags are square matrices of full rank
+    if instance(ERROR'TOLERANCE ,Symbol) then (ERROR'TOLERANCE=0.001);
+    scan(flags, F->(
+	    if not instance(F,Matrix) or numColumns F != numRows F or abs(det F) < ERROR'TOLERANCE  then error(toString F|" should be an invertible square matrix of size "| toString n)	    
+	    ));
+    --- Finally, it checks if the conditions are brackets and transforms them into partitions before exporting the instance
+    if (#conds_0  == k and conds_0 == sort unique conds_0) then (  --- conds_0, hence conds are barckets
+    	   conds = conds/(i-> bracket2partition(i,n));              -- Transform them into partitions
+	);
+    apply(#conds, i-> (conds_i, flags_i))
+    )
+------------------------------------------------------------------------------------
+
+------------------------------------------
+--  NSC2phc
+-- converts from numerical Schubert Calculus data for a Schubert problem
+--  (partitions or brackets) to input for PHCPack's data (matrix of multiplcities and brackets)
+------------------------------------------
+-- Input: 
+--    conds - list of partitions or brackets 
+--    k,n   - integers that indicate the Grassmannian G(k,n)
+-- Output:
+--    matrix with ewach row an integer vector with first entry a multiplicity
+--     and remaining entries constituting a bracket
+------------------------------------------
+-- First checks if it is a Schubert problem, then
+--  converts to brackets (if needed) and then
+--  to the phc input matrix format
+------------------------------------------
+
+------------------------------------------
+NSC2phc = method ()
+NSC2phc (List,ZZ,ZZ) := (conds,k,n) -> (
+    -- First check if it is a Schubert problem
+    checkSchubertProblem(conds,k,n);
+    -- if partitions, convert to a list of brackets 
+    if (#conds#0 != k) or (conds#0 != sort unique conds#0) then
+       conds = apply(conds, p -> partition2bracket(p,k,n));
+
+    -- convert list of brackets to matrix with each row {m, b}, where
+    --  m is the multiplicity of the bracket b (which is opened in this row)
+    mults := new MutableHashTable;
+    scan((unique conds), b -> mults#b = 0 );
+    scan(conds, b -> mults#b=mults#b+1);
+    matrix(apply((unique conds), b -> prepend( mults#b,b) ))
+)
+--------------------------
+
+
 
 ---------------------
 --   verifyLength  --
 --
 -- makes sure a partition l of k parts
--- has length k and it add zeroes at the
+-- has length k and add zeroes at the
 -- end if not
 --
 verifyLength = method(TypicalValue => List)
@@ -107,7 +226,6 @@ printTree MutableHashTable := node ->(
 	print peek node;
 	scan(node.Children, c-> printTree c);
 )
-
 
 
 ----------------------
@@ -411,7 +529,8 @@ notAboveLambda = method()
 notAboveLambda(List,ZZ,ZZ) := (lambda,k,n) ->(
   -- We Assume that lambda is not the zero partition {0,0,...,0}
   -- k-#lambda is how many zeroes we have
-  L':=unique(lambda);
+  -- 0 is not a corner, so it needs to be deleted from L'
+  L':=unique(delete(0,lambda));
   pos'corners:= apply(L', l->position(lambda, i->i==l, Reverse=>true));
   maxElements:=apply(pos'corners, i->(  --the maximal elements of the ordered set notAbove
 	  toList(i:(n-k))|toList(k-i:lambda_i-1)
@@ -499,13 +618,13 @@ skewSchubertVariety(Sequence,List,List) := o->(kn,l,m)->(
 --------------------------------------------------------------------
 checkSchubertProblem = method()
 checkSchubertProblem (List,ZZ,ZZ) := (conds,k,n) -> (
-    -- detect if conds are partitions or brackets and transforms them in partitions if not
+    -- detect if conds are partitions or brackets and transforms them to partitions if not
     areAllBrackets:=apply(conds, c->(
 	    if #c == k and c == sort unique c then true else false
 	    ));
     if #unique(areAllBrackets) > 1 then (
-	   error "verify your conditions: some seemed partitions some brackets"
-    	)else if areAllBrackets_0 == true then(
+	   error "verify your conditions: some seemed to be partitions some to be brackets"
+    	) else if areAllBrackets_0 == true then(
 	   conds = conds/(i-> bracket2partition(i,n)); -- we transform them into partitions
 	);
     --------------
@@ -576,7 +695,7 @@ verifyInput(List,ZZ,ZZ) := (conds'flags, k,n) ->(
     checkSchubertProblem(conds,k,n);
     --- Verify that the flags are square matrices of full rank
     scan(flags, F->(
-	    if not instance(F,Matrix) or numColumns F != numRows F or det F < ERROR'TOLERANCE  then error(toString F|" should be an invertible square matrix of size "| toString n)	    
+	    if not instance(F,Matrix) or numColumns F != numRows F or abs(det F) < ERROR'TOLERANCE  then error(toString F|" should be an invertible square matrix of size "| toString n)	    
 	    ));
     apply(#conds, i-> (conds_i, flags_i))
     )

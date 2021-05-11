@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 52239588
+-- -*- M2-comint -*- hash: 1309898240
 -- COMPILE TIME: May  9 2021, 16:10:46
 
 i1 : k = 3;
@@ -11,9 +11,11 @@ i3 : SchPblm = {
          ({2,1}, random(CC^6,CC^6))
          };
 
-i4 : solveSchubertProblem(SchPblm, k,n)
+i4 : resetStatistics()
 
-o4 = {| -.973546-.443329ii  -.193482-.957391ii -.460977-.267623ii  |, |
+i5 : solveSchubertProblem(SchPblm, k,n)
+
+o5 = {| -.973546-.443329ii  -.193482-.957391ii -.460977-.267623ii  |, |
       | .153343-.291038ii   .339479-1.30008ii  -.577303-.171329ii  |  |
       | .326239-.770744ii   .120186-1.46205ii  -.0769985-.323186ii |  |
       | -.451322-.514227ii  -.144874-.987789ii -.589493-.209825ii  |  |
@@ -27,6 +29,20 @@ o4 = {| -.973546-.443329ii  -.193482-.957391ii -.460977-.267623ii  |, |
      -3.91243-.845457ii -.528411-.900447ii -.187047+.545512ii |
      -4.19554+1.93172ii -1.11528-.480829ii .19859+1.24706ii   |
 
-o4 : List
+o5 : List
 
-i5 : 
+i6 : printStatistics()
+# moves of type {} = 2
+# moves of type {0, 0, 0} = 3
+# moves of type {0, 1, 0} = 2
+# moves of type {0, 2, 0} = 10
+# moves of type {1, 0, 0} = 1
+# moves of type {1, 1, 0} = 3
+# moves of type {1, 1, 1} = 3
+# moves of type {1, 2, 0} = 6
+# moves of type {2, 0, 0} = 3
+# moves of type {2, 1, 0} = 1
+# moves of type {2, 2, 0} = 12
+tracking time = .117665
+
+i7 : 
