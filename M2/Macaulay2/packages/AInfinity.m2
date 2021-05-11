@@ -1102,6 +1102,8 @@ SeeAlso
  aInfinity
 References
  Jesse Burke, Higher Homotopies and Golod Rings. arXiv:1508.03782v2, October 2015.
+Caveat
+ Requires standard graded ring, module. Something to fix in a future version
 ///
 
 doc ///
@@ -1168,6 +1170,8 @@ Subnodes
  picture
  displayBlocks
  extractBlocks
+Caveat
+ Requires standard graded ring, module. Something to fix in a future version
 ///
 doc ///
 Key
@@ -1581,15 +1585,6 @@ assert(F.dd^2 == 0)
 assert all(length F - 1, i-> prune HH_(i+1)F == 0)
 ///
 
-TEST///
--- inhomogeneous case:
-kk = ZZ/32003
-S = kk[x,y]
-R = S/ideal(x^2+x^3+y^5)
-setMaxIdeal ideal vars R
-aInfinity R
-
-///
 end--
 
 ///
