@@ -706,7 +706,7 @@ document {
     "Gets a random point on a component represented numerically.", 
     EXAMPLE lines ///
 R = CC[x,y,z]
-W = new WitnessSet from { Equations => ideal {x^2+y^2+z^2-1, z^2}, Slice => matrix "1,0,0,0", Points => {{{0,1,0_CC}},{{0,-1,0_CC}}}/point } 
+W = witnessSet(ideal {x^2+y^2+z^2-1, z^2}, matrix "1,0,0,0", {{{0,1,0_CC}},{{0,-1,0_CC}}}/point ) 
 P := sample(W, Tolerance=>1e-15)   
 isOn(P,W)
     ///,
