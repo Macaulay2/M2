@@ -15,6 +15,7 @@ doc ///
                 TO (map, Complex, Complex, HashTable),
                 TO (map, Complex, Complex, ZZ),
                 TO (map, Complex, Complex, Function),
+                TO (map, Complex, Complex, List),
                 TO (map, Complex, Complex, ComplexMap),
                 TO (id, Complex),
                 TO "differential of a chain complex",
@@ -28,7 +29,8 @@ doc ///
                 TO (resolutionMap, Complex),
                 TO (homology, ComplexMap),
                 TO (augmentationMap, Complex),
-                TO (extend, Complex, Complex, Matrix)
+                TO (extend, Complex, Complex, Matrix),
+                TO (nullHomotopy, ComplexMap)
            }@
     	Text
     	    @SUBSECTION "Canonical maps between complexes"@
@@ -101,6 +103,7 @@ doc ///
                 TO (isQuasiIsomorphism, ComplexMap),
                 TO (liftMapAlongQuasiIsomorphism, ComplexMap, ComplexMap),
                 TO (connectingMap, ComplexMap, ComplexMap),
+                TO (longExactSequence, ComplexMap, ComplexMap),
                 TO (horseshoeResolution, Complex)
             }@
     SeeAlso
@@ -118,13 +121,15 @@ doc ///
     the class of all maps between chain complexes
   Description
     Text
-      A map of chain complexes $f : C \rightarrow D$ of degree $d$ is a
-      sequence of maps $f_i : C_i \rightarrow D_{d+i}$.  
+      @LITERAL ////<script type="text/javascript"> macros["\\Hom"] = "\\operatorname{Hom}" </script>////@
+
+      A map of chain complexes $f \colon C \rightarrow D$ of degree $d$ is a
+      sequence of maps $f_i \colon C_i \rightarrow D_{d+i}$.  
       No relationship between the maps $f_i$ and 
       and the differentials of either $C$ or $D$ is assumed.
       
       The set of all maps from $C$ to $D$ form
-      the complex $Hom(C,D)$ where $Hom(C,D)_d$ consists of the
+      the complex $\Hom(C,D)$ where $\Hom(C,D)_d$ consists of the
       maps of degree $d$.
 
       The usual algebraic operations are available: addition,
@@ -716,6 +721,95 @@ doc ///
     SeeAlso
         (symbol_, Complex, ZZ)
         (concentration, ComplexMap)
+///
+
+doc ///
+    Key
+        (isHomogeneous, ComplexMap)
+    Headline
+         whether a map of complexes is homogeneous
+    Usage
+         isHomogeneous f
+    Inputs
+         f:ComplexMap
+    Outputs
+         :Boolean
+             that is true when $f_i$ is homogeneous, for all $i$
+    Description
+        Text
+            A map of complexes $f \colon C \to D$ is homogeneous
+            (graded) if its underlying ring is graded, and all the
+            component maps $f_i \colon C_i \to D_{d+i}$ are graded of
+            degree zero, where $f$ has degree $d$.
+        Example
+            S = ZZ/101[a,b,c,d];
+            I = minors(2, matrix{{a,b,c},{b,c,d}})
+            C = freeResolution (S^1/I)
+            assert isHomogeneous dd^C
+            f = randomComplexMap(C, C, Degree => -1)
+            assert isHomogeneous f
+            f = randomComplexMap(C, C, InternalDegree => 2)
+            assert isHomogeneous f
+        Text
+            A map of chain complexes may be homogeneous even if the
+            source or the target is not homogeneous.
+        Example
+            phi = map(S, S, {1,b,c,d})
+            D = phi C
+            dd^D
+            assert not isHomogeneous dd^D
+            g = randomComplexMap(D, D, InternalDegree => 1)
+            assert isHomogeneous g
+    SeeAlso
+        "Basic invariants and properties"
+        isHomogeneous
+        (isHomogeneous, ComplexMap)
+        (randomComplexMap, Complex, Complex)
+///
+
+doc ///
+    Key
+        (components, ComplexMap)
+    Headline
+        list the components of a direct sum
+    Usage
+        components f
+    Inputs
+        f:ComplexMap
+    Outputs
+        :List
+            the component maps of a direct sum of maps of complexes
+    Description
+        Text
+            A map of complexes stores its component maps.
+        Example
+            S = ZZ/101[a,b,c];
+            C = freeResolution coker vars S
+            g1 = id_C
+            g2 = randomComplexMap(C[1], C[2], Boundary => true)
+            f = g1 ++ g2
+            assert isWellDefined f
+            L = components f
+            L_0 === g1
+            L_1 === g2
+            indices f
+            f' = (greg => g1) ++ (mike => g2)
+            components f'
+            indices f'
+        Text
+            The names of the components are called indices, and are
+            used to access the relevant inclusion and projection maps.
+        Example
+            f'_[mike]
+            f'^[greg]
+            f^[0]
+            f_[0]
+    SeeAlso
+        (directSum, ComplexMap)
+        (components, Complex)
+        indices
+        (symbol_, ComplexMap, Array)
+        (symbol^, ComplexMap, Array)
 ///
 
 doc ///
@@ -2217,10 +2311,10 @@ doc ///
     :Complex
   Description
     Text
-      Given a morphism $f : B \to C$, the mapping cone is the complex
-      whose $i$-th term is $B_{i-1} \oplus\ C_i$, and whose $i$-th 
+      Given a morphism $f \colon B \to C$, the mapping cone is the complex
+      whose $i$-th term is $B_{i-1} \oplus C_i$, and whose $i$-th 
       differential is given by
-      {\tt matrix\{\{-dd^{B[-1]}, 0\}, \{f[-1], dd^C\}\}}.
+      \[ \begin{bmatrix} -\operatorname{dd}^{B[-1]} & 0 \\ f[-1] & \operatorname{dd}^C \end{bmatrix}. \]
     Text
       A map between modules induces a map between their free resolutions,
       and we compute the associated mapping cone.
@@ -2237,7 +2331,7 @@ doc ///
     Text
       The mapping cone fits into a canonical short exact
       sequence of chain complexes:
-      $$0 \to C \to cone(f) \to B[-1] \to 0.$$
+      $$0 \to C \to \operatorname{cone}(f) \to B[-1] \to 0.$$
     Example
       g = canonicalMap(Cf,C)
       h = canonicalMap(B[-1],Cf)
@@ -2276,7 +2370,6 @@ doc ///
       J = ideal dd^Cf'_1
       freeResolution J
       assert(degree J == 6)
-  Caveat
   SeeAlso
     "Making chain complexes"
     "Making maps between chain complexes"
@@ -2570,6 +2663,7 @@ doc ///
 doc ///
     Key
         (tensorCommutativity, Complex, Complex)
+        tensorCommutativity
     Headline
         make the canonical isomorphism arising from commutativity
     Usage
@@ -2718,5 +2812,939 @@ doc ///
         "Working with Tor"
         (tensorCommutativity, Complex, Complex)
         (tensorAssociativity, Module, Module, Module)
+///
+
+doc ///
+    Key
+        (isShortExactSequence, ComplexMap, ComplexMap)
+    Headline
+        whether a pair of complex maps forms a short exact sequence
+    Usage
+        isShortExactSequence(g, f)
+    Inputs
+        f:ComplexMap
+        g:ComplexMap
+    Outputs
+        :Boolean
+            that is @TO true@ if these form a short exact sequence
+    Description
+        Text
+            A short exact sequence of complexes 
+            \[ 0 \to B \xrightarrow{f} C \xrightarrow{g} D \to 0\]
+            consists of two morphisms of complexes
+            $f \colon B \to C$ and $g \colon C \to D$ such that
+            $g f = 0$, $\operatorname{image} f = \operatorname{ker} g$, 
+            $\operatorname{ker} f = 0$, and $\operatorname{coker} g = 0$.
+        Text
+            From a complex morphism $h \colon B \to C$, one obtains a
+            short exact sequence
+            \[ 0 \to \operatorname{image} h \to C \to \operatorname{coker} h \to 0. \]
+        Example
+            R = ZZ/101[a,b,c];
+            B = freeResolution coker matrix{{a^2*b, a*b*c, c^3}}
+            C = freeResolution coker vars R
+            h = randomComplexMap(C, B, Cycle => true)
+            f = canonicalMap(C, image h)
+            g = canonicalMap(coker h, C)
+            assert isShortExactSequence(g,f)
+        Text
+            A short exact sequence of modules gives rise to a short
+            exact sequence of complexes.  These complexes arise
+            as free resolutions of the modules.
+        Example
+            I = ideal(a^3, b^3, c^3)
+            J = I + ideal(a*b*c)
+            K = I : ideal(a*b*c)
+            SES = complex{
+                map(comodule J, comodule I, 1),
+                map(comodule I, (comodule K) ** R^{-3}, {{a*b*c}})
+                }
+            assert isWellDefined SES
+            assert isShortExactSequence(dd^SES_1, dd^SES_2)
+            (g,f) = horseshoeResolution SES
+            assert isShortExactSequence(g,f)
+    SeeAlso
+        "Basic invariants and properties"
+        (isShortExactSequence, Complex)
+        canonicalMap
+        (cone, ComplexMap)
+        (horseshoeResolution, Complex)
+        (longExactSequence, ComplexMap, ComplexMap)
+///
+
+doc ///
+    Key
+        (isShortExactSequence, Matrix, Matrix)
+    Headline
+        whether a pair of matrices forms a short exact sequence
+    Usage
+        isShortExactSequence(g, f)
+    Inputs
+        f:Matrix
+        g:Matrix
+    Outputs
+        :Boolean
+            that is @TO true@ if these form a short exact sequence
+    Description
+        Text
+            A short exact sequence of modules
+            \[ 0 \to L \xrightarrow{f} M \xrightarrow{g} N \to 0\]
+            consists of two homomorphisms of modules
+            $f \colon L \to M$ and $g \colon M \to N$ such that
+            $g f = 0$, $\operatorname{image} f = \operatorname{ker} g$, 
+            $\operatorname{ker} f = 0$, and $\operatorname{coker} g = 0$.
+        Text
+            From a homomorphism $h \colon M \to N$, one obtains a
+            short exact sequence
+            \[ 0 \to \operatorname{image} h \to N \to \operatorname{coker} h \to 0. \]
+        Example
+            R = ZZ/101[a,b,c];
+            h = random(R^3, R^{4:-1})
+            f = inducedMap(target h, image h)
+            g = inducedMap(cokernel h, target h)
+            assert isShortExactSequence(g,f)
+        Text
+            Ideal quotients also give rise to short exact sequences.
+        Example
+            I = ideal(a^3, b^3, c^3)
+            J = I + ideal(a*b*c)
+            K = I : ideal(a*b*c)
+            g = map(comodule J, comodule I, 1)
+            f = map(comodule I, (comodule K) ** R^{-3}, {{a*b*c}})
+            assert isShortExactSequence(g,f)
+    SeeAlso
+        "Basic invariants and properties"
+        (isShortExactSequence, Complex)
+        (isShortExactSequence, ComplexMap, ComplexMap)
+///
+
+doc ///
+    Key
+        (isShortExactSequence, Complex)
+        isShortExactSequence
+    Headline
+        whether a chain complex is a short exact sequence
+    Usage
+        isShortExactSequence C
+    Inputs
+        C:Complex
+    Outputs
+        :Boolean
+            that is @TO true@ if $C$ is a short exact sequence
+    Description
+        Text
+            A short exact sequence of modules is a complex
+            \[ 0 \to L \xrightarrow{f} M \xrightarrow{g} N \to 0\]
+            consisting of two homomorphisms of modules
+            $f \colon L \to M$ and $g \colon M \to N$ such that
+            $g f = 0$, $\operatorname{image} f = \operatorname{ker} g$, 
+            $\operatorname{ker} f = 0$, and $\operatorname{coker} g = 0$.
+        Text
+            From a homomorphism $h \colon M \to N$, one obtains a
+            short exact sequence
+            \[ 0 \to \operatorname{image} h \to N \to \operatorname{coker} h \to 0. \]
+        Example
+            R = ZZ/101[a,b,c];
+            h = random(R^3, R^{4:-1})
+            f = inducedMap(target h, image h)
+            g = inducedMap(cokernel h, target h)
+            C = complex {g, f}
+            isWellDefined C
+            assert isShortExactSequence C
+            assert isShortExactSequence(C[10])
+            assert not isShortExactSequence(C ++ C[6])
+            D = complex(R^1, Base=>4) ++ complex(R^1, Base=>2)
+            assert not isShortExactSequence D
+    SeeAlso
+        "Basic invariants and properties"
+        (isShortExactSequence, Matrix, Matrix)
+        (isShortExactSequence, ComplexMap, ComplexMap)
+///
+
+doc ///
+    Key
+        (isQuasiIsomorphism, ComplexMap)
+        [isQuasiIsomorphism, Concentration]
+    Headline
+         whether a map of complexes is a quasi-isomorphism
+    Usage
+         isQuasiIsomorphism f
+    Inputs
+         f:ComplexMap
+         Concentration => Sequence
+             restricts attention to the induced maps indexed
+             by elements in the given interval 
+    Outputs
+         :Boolean
+             that is true when $f$ is a morphism of complexes
+             such that the induced maps on homology are all
+             isomorphisms
+    Description
+        Text
+            The @TO2((cone, ComplexMap), "cone")@ of a 
+            map $f \colon C \to D$ is acyclic
+            exactly when $f$ is a quasi-isomorphism.
+        Example
+            S = ZZ/32003[x,y,z];
+            C = freeResolution coker vars S
+            f = augmentationMap C
+            assert isQuasiIsomorphism f
+            assert(0 == prune HH cone f)
+            assert isIsomorphism HH_0 f
+            assert isIsomorphism HH_1 f
+        Text
+            XXX TODO. Free resolutions of complexes produce quasi 
+            isomorphisms. (use example to doc of (resolution, Complex)).
+        Example
+            D = complex{random(S^2, S^{-3,-3,-4})}
+            prune HH D
+    SeeAlso
+        "Basic invariants and properties"
+        (cone, ComplexMap)
+        liftMapAlongQuasiIsomorphism
+///
+
+doc ///
+    Key
+        (isNullHomotopyOf, ComplexMap, ComplexMap)
+        isNullHomotopyOf
+    Headline
+        whether the first map of chain complexes is a null homotopy for the second
+    Usage
+        isNullHomotopyOf(h, f)
+    Inputs
+        h:ComplexMap
+        f:ComplexMap
+    Outputs
+        :Boolean
+            that is true when $h$ is a null homotopy of $f$
+    Description
+        Text
+            A map of chain complexes $f \colon C \to D$ is
+            null-homopic if there exists a map of chain
+            complexes $h : C \to D$ of degree $\deg(f)+1$,
+            such that we have the equality 
+            \[ f = \operatorname{dd}^D h 
+              + (-1)^{\deg(f)} h \operatorname{dd}^C.
+            \]
+        Text
+            As a first example, we construct a map of chain complexes
+            in which the null homotopy is given by the identity.
+        Example
+            R = ZZ/101[x,y,z];
+            M = cokernel matrix{{x,y,z^2}, {y^2,z,x^2}}
+            C = complex {id_M}
+            h = map(C, C, i -> if i == 0 then id_M, Degree => 1)
+            isWellDefined h
+            assert isNullHomotopyOf(h, id_C)
+            assert isNullHomotopic id_C
+        Text
+            A random map of chain complexes, arising as a boundary
+            in the associated Hom complex, is automatically
+            null homotopic.  We use the method @TO nullHomotopy@
+            to construct a witness and verify it is a null homotopy.
+        Example
+            C = (freeResolution M) ** R^1/ideal(x^3, z^3-x)
+            f = randomComplexMap(C, C[1], Boundary => true)
+            assert isNullHomotopic f
+            h = nullHomotopy f
+            assert isNullHomotopyOf(h, f)
+        Text
+            By assigning @TO "debugLevel"@ a positive value,
+            this method provides some information about the nature
+            of the failure to be a null homotopy.
+        Example
+            g1 = randomComplexMap(C, C[1], Degree => 1)
+            g2 = randomComplexMap(C, C[1], Degree => -1)
+            debugLevel = 1
+            assert not isNullHomotopyOf(g1, f)
+            assert not isNullHomotopyOf(g2, f)
+    SeeAlso
+        "Basic invariants and properties"
+        (isNullHomotopic, ComplexMap)
+        (nullHomotopy, ComplexMap)
+        randomComplexMap
+        (Hom, Complex, Complex)
+///
+
+doc ///
+    Key
+        (isNullHomotopic, ComplexMap)
+        isNullHomotopic
+    Headline
+        whether a map of complexes is null-homotopic
+    Usage
+        isNullHomotopic f
+    Inputs
+        f:ComplexMap
+    Outputs
+        :Boolean
+            that is true when $f$ is null-homotopic
+    Description
+        Text
+            A map of chain complexes $f \colon C \to D$ is
+            null-homopic if there exists a map of chain
+            complexes $h : C \to D$ of degree $\deg(f)+1$,
+            such that we have the equality 
+            \[ f = \operatorname{dd}^D h 
+              + (-1)^{\deg(f)} h \operatorname{dd}^C.
+            \]
+        Text
+            As a first example, we construct a map of chain complexes
+            in which the null homotopy is given by the identity.
+        Example
+            R = ZZ/101[x,y,z];
+            M = cokernel matrix{{x,y,z^2}, {y^2,z,x^2}}
+            C = complex {id_M}
+            assert isNullHomotopic id_C
+            h = nullHomotopy id_C
+            assert(h_0 == id_M)
+            assert isNullHomotopyOf(h, id_C)
+        Text
+            A random map of chain complexes, arising as a boundary
+            in the associated Hom complex, is automatically
+            null homotopic.
+        Example
+            C = (freeResolution M) ** R^1/ideal(x^3, z^3-x)
+            f = randomComplexMap(C, C[1], Boundary => true)
+            assert isNullHomotopic f
+            h = nullHomotopy f
+            assert isNullHomotopyOf(h, f)
+            g = randomComplexMap(C, C[1])
+            assert not isNullHomotopic g
+        Text
+            This procedure also works for complex maps
+            whose degree is non-zero.
+        Example
+            f = randomComplexMap(C, C[2], Boundary => true, Degree => 1)
+            assert isNullHomotopic f
+            h = nullHomotopy f
+            assert isNullHomotopyOf(h, f)
+    SeeAlso
+        "Basic invariants and properties"
+        (isNullHomotopyOf, ComplexMap, ComplexMap)
+        (nullHomotopy, ComplexMap)
+        randomComplexMap
+        (Hom, Complex, Complex)
+///
+
+doc ///
+    Key
+        (nullHomotopy, ComplexMap)
+        nullHomotopy
+    Headline
+        a map which is a candidate for being a null homotopy
+    Usage
+        h = nullHomotopy f
+    Inputs
+        f:ComplexMap
+    Outputs
+        h:ComplexMap
+    Description
+        Text
+            A map of chain complexes $f \colon C \to D$ is
+            null-homopic if there exists a map of chain
+            complexes $h : C \to D$ of degree $\deg(f)+1$,
+            such that we have the equality 
+            \[ f = \operatorname{dd}^D h 
+              + (-1)^{\deg(f)} h \operatorname{dd}^C.
+            \]
+            Given $f$, this method returns a map $h$ of chain complexes
+            that will be a null-homotopy if one exists.
+        Text
+            As a first example, we construct a map of chain complexes
+            in which the null homotopy is given by the identity.
+        Example
+            R = ZZ/101[x,y,z];
+            M = cokernel matrix{{x,y,z^2}, {y^2,z,x^2}}
+            C = complex {id_M}
+            assert isNullHomotopic id_C
+            h = nullHomotopy id_C
+            assert(h_0 == id_M)
+            assert isNullHomotopyOf(h, id_C)
+        Text
+            A random map of chain complexes, arising as a boundary
+            in the associated Hom complex, is automatically
+            null homotopic.
+        Example
+            C = (freeResolution M) ** R^1/ideal(x^3, z^3-x)
+            f = randomComplexMap(C, C[1], Boundary => true)
+            assert isNullHomotopic f
+            h = nullHomotopy f
+            assert isNullHomotopyOf(h, f)
+        Text
+            When a map of chain complexes is not null-homotopic,
+            this method nevertheless returns a map $h$ of
+            chain complexes, having the correct source, target
+            and degree, but cannot be a null homotopy.
+        Example
+            g = randomComplexMap(C, C[1])
+            assert not isNullHomotopic g
+            h' = nullHomotopy g
+            assert isWellDefined h'
+            assert(degree h' === degree g + 1)
+            assert not isNullHomotopyOf(h', g)
+        Text
+            For developers: when the source of $f$ is a free complex,
+            a procedure, that is often faster, is attempted.  In the
+            general case this method uses the Hom complex.
+    Caveat
+        The output is only a null homotopy when one exists.
+    SeeAlso
+        "Making maps between chain complexes"
+        (isNullHomotopic, ComplexMap)
+        (isNullHomotopyOf, ComplexMap, ComplexMap)
+        randomComplexMap
+        (Hom, Complex, Complex)
+///
+
+doc ///
+    Key
+        (extend, Complex, Complex, Matrix, Sequence)
+        (extend, Complex, Complex, Matrix)
+    Headline
+        extend a map of modules to a map of chain complexes
+    Usage
+        g = extend(D, C, f, p)
+        g = extend(D, C, f)
+    Inputs
+        C:Complex
+        D:Complex
+        f:Matrix
+        p:Sequence
+            consisting of a pair of integers $(j,i)$, such that the
+            matrix $f$ defines a map from $C_i$ to $D_j$; the default 
+            value is $i = j = 0$
+        Verify => Boolean
+            currently, this option is ignored
+    Outputs
+        :ComplexMap
+    Description
+        Text
+            Let $C$ be a chain complex such that each term is a free
+            module.  Let $D$ be a chain
+            complex which is exact at the $k$-th term for all $k > j$.
+            Given a map of modules $f \colon C_i \to D_j$ such that
+            the image of $f \circ \operatorname{dd}^C_{i+1}$ is
+            contained in the image of $\operatorname{dd}^D_{j+1}$,
+            this method constructs a morphism of chain complexes $g
+            \colon C \to D$ of degree $j-i$ such that $g_i = f$.
+
+            $\phantom{WWWW}
+            \begin{array}{cccccc}
+            0 & \!\!\leftarrow\!\! & C_{i} & \!\!\leftarrow\!\! & C_{i+1} & \!\!\leftarrow\!\! & C_{i+2} & \dotsb \\
+              &            & \downarrow \, {\scriptstyle f} & & \downarrow \, {\scriptstyle g_{i+1}} && \downarrow \, {\scriptstyle g_{i+2}} \\
+            0 & \!\!\leftarrow\!\! & D_{j} & \!\!\leftarrow\!\! & D_{j+1} &  \!\!\leftarrow\!\! & D_{j+2} & \dotsb \\
+            \end{array}
+            $
+        Text
+            A map between modules extends to a map between their free resolutions.
+        Example
+            S = ZZ/101[a..d];
+            I = ideal(a*b*c, b*c*d, a*d^2)
+            C = S^{{-3}} ** freeResolution (I:a*c*d)
+            D = freeResolution I
+            f = map(D_0, C_0, matrix{{a*c*d}})
+            g = extend(D, C, f)
+            assert isWellDefined g
+            assert isComplexMorphism g
+            assert(g_0 == f)
+            E = cone g
+            dd^E
+        Text
+            Extension of maps to complexes is also useful in 
+            constructing a free resolution of a linked ideal.
+        Example
+            I = monomialCurveIdeal(S, {1,2,3})
+            K = ideal(I_1^2, I_2^2)
+            FI = freeResolution I
+            FK = freeResolution K
+            f = map(FI_0, FK_0, 1)
+            g = extend(FI, FK, f)
+            assert isWellDefined g
+            assert isComplexMorphism g
+            assert(g_0 == f)
+            C = cone (dual g)[- codim K]
+            dd^C
+            dd^(minimize C)
+            assert(ideal relations HH_0 C == K:I)
+        Text
+            Inspired by a @TO yonedaMap@ computation, we extend a map
+            of modules to a map between free resolutions having
+            homological degree $-1$.
+        Example
+            f = map(FK_0, FI_1, matrix {{a*c^2-a*b*d, -b*c^2+a*c*d, -c^3+a*d^2}}, Degree => 1)
+            assert isHomogeneous f
+            assert isWellDefined f
+            g = extend(FK, FI, f, (0,1))
+            assert isWellDefined g
+            assert isCommutative g
+            assert(degree g === -1)
+            assert isHomogeneous g
+    SeeAlso
+        "Making maps between chain complexes"
+        (cone, ComplexMap)
+        (isComplexMorphism, ComplexMap)
+        (minimize, Complex)
+///
+
+doc ///
+    Key
+        (liftMapAlongQuasiIsomorphism, ComplexMap, ComplexMap)
+        liftMapAlongQuasiIsomorphism
+        (symbol//, ComplexMap, ComplexMap)
+        (quotient, ComplexMap, ComplexMap)
+    Headline
+        lift a map of chain complexes along a quasi-isomorphism
+    Usage
+        f' = liftMapAlongQuasiIsomorphism(f, g)
+        f' = f // g
+    Inputs
+        f:ComplexMap
+            where each term in the source of $f$ is a free module
+        g:ComplexMap
+            a quasi-isomorphism having the same target as $f$
+    Outputs
+        f':ComplexMap
+            a map from the source of $f$ to the source of $g$
+    Consequences
+        Item
+            the homotopy relating $f$ and $g \circ f'$ is
+            available as {\tt homotopyMap f'}.
+    Description
+        Text
+            Let $f \colon P \to C$ be a morphism of chain 
+            complexes, where each term in $P$ is a free module.
+            Given a quasi-isomorphism $g \colon B \to C$,
+            this method produces a morphism $f' \colon P \to B$
+            such that there exists a map $h \colon P \to C$
+            of chain complexes having degree $1$
+            satisfying
+
+            $f - g \circ f' = h \circ \operatorname{dd}^P +
+             \operatorname{dd}^C \circ h$.
+             
+        Text
+            Given a morphism between complexes, we can construct 
+            the corresponding map 
+            between their
+            free resolutions using this method.
+            
+            To be more precise, 
+            given a morphism $\phi \colon B \to C$ of complexes,
+            let $\alpha \colon P \to B$ and 
+            $\beta \colon F \to C$ denote the free resolutions
+            of the source and target complexes.
+            Lifting the composite map $\phi \circ \alpha$ along the
+            quasi-isomorphism $\beta$ gives a commutative diagram
+            $\phantom{WWWW}
+            \begin{array}{ccc}
+            P & \!\!\rightarrow\!\! & F \\
+            \downarrow \, {\scriptstyle \alpha} & & \downarrow \, {\scriptstyle \beta} \\
+            B & \xrightarrow{\phi} & C
+            \end{array}
+            $
+        Example
+            S = ZZ/101[a,b,c,d];
+            J = ideal(a*b, a*d, b*c);
+            I = J + ideal(c^3);
+            C = prune Hom(S^{2} ** freeResolution I, S^1/I)
+            D = prune Hom(freeResolution J, S^1/J)
+            r = randomComplexMap(D,C,Cycle=>true)
+            f = r * resolutionMap C
+            g = resolutionMap D
+            assert isQuasiIsomorphism g
+            f' = liftMapAlongQuasiIsomorphism(f, g)
+            assert(f' == f//g)
+            assert isWellDefined f'
+            assert isComplexMorphism f'
+            h = homotopyMap f'
+            isNullHomotopyOf(h, g * (f//g) - f)
+        Text
+            TODO: XXX start here. Do triangles, invert interesting quasi-isomorphism.
+            isSemiFree, and add in an example or 2.  Include
+            finding an inverse for a quasi-isomorphism.
+            We need some kind of better example here.
+    Caveat
+        The following three assumptions are not checked:
+        $f$ is a morphism, the source of $f$ is semifree,
+        and $g$ is a quasi-isomorphism.
+    SeeAlso
+        "Towards computing in the derived category"
+        isQuasiIsomorphism
+        isComplexMorphism
+///
+
+doc ///
+    Key
+        (connectingMap, ComplexMap, ComplexMap)
+        connectingMap
+        [connectingMap, Concentration]
+    Headline
+        construct the connecting homomorphism on homology
+    Usage
+        connectingMap(g, f)
+    Inputs
+        f:ComplexMap
+            an injective morphism $f \colon A \to B$
+        g:ComplexMap
+            a surjective morphism $g \colon B \to C$ 
+            whose kernel is the same as the image of $f$
+    Outputs
+        h:ComplexMap
+            a complex morphism
+            whose source is the homology of $C$ and whose target
+            is the homology of $A$, shifted by $-1$
+    Description
+        Text
+            Give a short exact sequence of chain complexes
+
+            $\phantom{WWWW}
+            0 \leftarrow C \xleftarrow{g} B \xleftarrow{f} A \leftarrow 0,
+            $
+            
+            this function returns the unique morphism $h \colon H(C) \to H(A)[-1]$ of complexes
+            that naturally fits into the long exact sequence
+
+            $\phantom{WWWW}
+            \dotsb \leftarrow H(C)[-1] \xleftarrow{H(g)[-1]} H(B)[-1] \xleftarrow{H(f)[-1]} H(A)[-1] \xleftarrow{h} H(C) \xleftarrow{H(g)} H(B) \xleftarrow{H(f)} H(A) \leftarrow \dotsb.
+            $
+            
+            $\phantom{WWWW}$
+            
+        Text
+            As a first example, consider a free resolution $F$ of $S/I$.
+            Applying the Hom functor $\operatorname{Hom}(F, -)$ to a short exact sequence of modules
+
+            $\phantom{WWWW}
+            0 \leftarrow S/h \leftarrow S \xleftarrow{h} S(- \deg h) \leftarrow 0
+            $
+
+            gives rise to a short exact sequence of complexes.  The corresponding long exact sequence in homology
+            has the form
+
+            $\phantom{WWWW}
+            \dotsb \leftarrow \operatorname{Ext}^{d+1}(S/I, S(-\deg h))
+            \xleftarrow{\delta} 
+            \operatorname{Ext}^d(S/I, S/h)
+            \leftarrow \operatorname{Ext}^d(S/I, S)
+            \leftarrow \operatorname{Ext}^d(S/I, S(-\deg h))
+            \leftarrow \dotsb.
+            $
+        Example
+            S = ZZ/101[a..d, Degrees=>{2:{1,0},2:{0,1}}];
+            h = a*c^2 + a*c*d + b*d^2;
+            I = (ideal(a,b) * ideal(c,d))^[2]
+            F = freeResolution comodule I;
+            g = Hom(F, map(S^1/h, S^1, 1))
+            f = Hom(F, map(S^1, S^{-degree h}, {{h}}))
+            assert isWellDefined g
+            assert isWellDefined f
+            assert isShortExactSequence(g, f)
+            delta = connectingMap(g, f)
+            assert isWellDefined delta
+            assert(degree delta == 0)            
+            assert(source delta_(-1) == Ext^1(comodule I, S^1/h))
+            assert(target delta_(-1) == Ext^2(comodule I, S^{{-1,-2}}))
+            L = longExactSequence(g,f)
+            assert isWellDefined L
+            assert(HH L == 0)
+            assert(dd^L_-9 === delta_-3)
+            assert(dd^L_-8 === HH_-3 g)
+            assert(dd^L_-7 === HH_-3 f)
+            assert(dd^L_-6 === delta_-2)
+            assert(dd^L_-5 === HH_-2 g)
+            assert(dd^L_-4 === HH_-2 f)
+            assert(dd^L_-3 === delta_-1)
+        Text
+            Applying the Hom functor $\operatorname{Hom}(-, S)$ to the horseshoe resolution of
+            a short exact sequence of modules
+
+            $\phantom{WWWW}
+            0 \leftarrow S/(I+J) \leftarrow S/I \oplus S/J  \leftarrow S/I \cap J \leftarrow 0
+            $
+
+            gives rise to a short exact sequence of complexes.  The corresponding long exact sequence in homology
+            has the form
+
+            $\phantom{WWWW}
+            \dotsb \leftarrow \operatorname{Ext}^{d+1}(S/(I+J), S)
+            \xleftarrow{\delta} 
+            \operatorname{Ext}^d(S/I \cap J, S)
+            \leftarrow \operatorname{Ext}^d(S/I \oplus S/J, S)
+            \leftarrow \operatorname{Ext}^d(S/(I+J), S)
+            \leftarrow \dotsb.
+            $
+        Example
+            S = ZZ/101[a..d];
+            I = ideal(c^3-b*d^2, b*c-a*d)
+            J = ideal(a*c^2-b^2*d, b^3-a^2*c)
+            ses = complex{
+                map(S^1/(I+J), S^1/I ++ S^1/J, {{1,1}}),
+                map(S^1/I ++ S^1/J, S^1/intersect(I,J), {{1},{-1}})
+                }
+            assert isWellDefined ses
+            assert(HH ses == 0)
+            (g,f) = horseshoeResolution ses
+            assert isShortExactSequence(g,f)
+            (Hf, Hg) = (Hom(f, S), Hom(g, S));
+            assert isShortExactSequence(Hf, Hg)
+            delta = connectingMap(Hf, Hg)
+            assert isWellDefined delta
+            assert isComplexMorphism delta
+            assert(source delta_-2 == Ext^2(comodule intersect(I,J), S))
+            assert(target delta_-2 == Ext^3(comodule (I+J), S))
+            L = longExactSequence(Hf, Hg)
+            assert isWellDefined L
+            assert(HH L == 0)
+            assert(dd^L_-6 === delta_-3)
+            assert(dd^L_-5 === HH_-3 Hf)
+            assert(dd^L_-4 === HH_-3 Hg)
+            assert(dd^L_-3 === delta_-2)
+            assert(dd^L_-2 === HH_-2 Hf)
+            assert(dd^L_-1 === HH_-2 Hg)
+            assert(dd^L_0 === delta_-1)
+    SeeAlso
+        "Towards computing in the derived category"
+        (longExactSequence, ComplexMap, ComplexMap)
+///
+
+doc ///
+    Key
+        (longExactSequence, ComplexMap, ComplexMap)
+        longExactSequence
+        [(longExactSequence, ComplexMap, ComplexMap), Concentration]
+    Headline
+        make the long exact sequence in homology
+    Usage
+        L = longExactSequence(g, f)
+    Inputs
+        f:ComplexMap
+        g:ComplexMap
+        Concentration => Sequence
+            this optional argument is not yet implemented
+    Outputs
+        L:Complex
+    Description
+        Text
+            Every short exact sequence of complexes
+
+            $\phantom{WWWW}
+            0 \leftarrow C \xleftarrow{g} B  \xleftarrow{f} A \leftarrow 0
+            $
+
+            gives rise to a long exact sequence $L$ in homology having
+            the form
+
+            $\phantom{WWWW}
+            \dotsb \leftarrow H_{i-1}(C) 
+            \xleftarrow{H_{i-1}(g)} 
+            H_{i-1}(B)
+            \xleftarrow{H_{i-1}(f)}
+            H_{i-1}(A)
+            \xleftarrow{\delta_i}
+            H_{i}(C) 
+            \xleftarrow{H_{i}(g)} 
+            H_{i}(B)
+            \xleftarrow{H_{i}(f)}
+            H_{i}(A)
+            \leftarrow \dotsb.
+            $
+            
+            This method returns the complex $L$ such that, for all integers $i$, we have
+            $L_{3i} = H_i(C)$, $L_{3i+1} = H_i(B)$, and $L_{3i+2} = H_i(A)$.
+            The differentials $\operatorname{dd}^L_{3i}$ are the connecting 
+            homomorphisms $\delta_i \colon H_i(C) \to H_{i-1}(A)$.  Moreover, we have
+            $\operatorname{dd}^L_{3i+1} = H_{i}(g)$ and 
+            $\operatorname{dd}^L_{3i+2} = H_{i}(f)$.
+        Text
+            For example, consider a free resolution $F$ of $S/I$.
+            Applying the Hom functor $\operatorname{Hom}(F, -)$ to a short exact sequence of modules
+
+            $\phantom{WWWW}
+            0 \leftarrow S/h \leftarrow S \xleftarrow{h} S(- \deg h) \leftarrow 0
+            $
+
+            gives rise to a short exact sequence of complexes.  The corresponding long exact sequence $L$ in homology
+            has the form
+
+            $\phantom{WWWW}
+            \dotsb \leftarrow \operatorname{Ext}^{d+1}(S/I, S(-\deg h))
+            \xleftarrow{\delta} 
+            \operatorname{Ext}^d(S/I, S/h)
+            \leftarrow \operatorname{Ext}^d(S/I, S)
+            \leftarrow \operatorname{Ext}^d(S/I, S(-\deg h))
+            \leftarrow \dotsb.
+            $
+        Example
+            S = ZZ/101[a..d, Degrees=>{2:{1,0},2:{0,1}}];
+            h = a*c^2 + a*c*d + b*d^2;
+            I = (ideal(a,b) * ideal(c,d))^[2]
+            F = freeResolution comodule I;
+            g = Hom(F, map(S^1/h, S^1, 1))
+            f = Hom(F, map(S^1, S^{-degree h}, {{h}}))
+            assert isWellDefined g
+            assert isWellDefined f
+            assert isShortExactSequence(g, f)
+            L = longExactSequence(g,f)
+            assert isWellDefined L
+            assert(HH L == 0)
+        Text
+            We verify that the indexing on $L$ in this example matches
+            the description above.
+        Example
+            delta = connectingMap(g, f);
+            assert(dd^L_-9 === delta_-3)
+            assert(dd^L_-8 === HH_-3 g)
+            assert(dd^L_-7 === HH_-3 f)
+            assert(dd^L_-6 === delta_-2)
+            assert(dd^L_-5 === HH_-2 g)
+            assert(dd^L_-4 === HH_-2 f)
+            assert(dd^L_-3 === delta_-1)
+    SeeAlso
+        "Towards computing in the derived category"
+        connectingMap
+        isShortExactSequence
+        homology
+///
+
+doc ///
+    Key
+        (connectingExtMap, Module, Matrix, Matrix)
+        (connectingExtMap, Matrix, Matrix, Module)
+        connectingExtMap
+        [connectingExtMap, Concentration]
+    Headline
+        makes the connecting maps in Ext
+    Usage
+        connectingExtMap(M, g, f)
+        connectingExtMap(g, f, M)
+    Inputs
+        M:Module
+            over a ring $S$
+        f:Matrix
+            over a ring $S$ defining an injective map $f \colon A \to B$
+        g:Matrix
+            over a ring $S$ defining a surjective map $g \colon B \to C$
+            such that the image of $f$ equals the kernel of $g$
+        Concentration => Sequence
+            not yet implemented
+    Outputs
+        :ComplexMap
+    Description
+        Text
+            Since Ext is a bifunctor, there are two different connecting maps.
+            The first comes from applying the covariant functor
+            $\operatorname{Hom}_S(M, -)$ to a short exact sequence of modules.  The
+            second comes from applying the contravariant functor
+            $\operatorname{Hom}_S(-, M)$ to a short exact sequence of modules.
+            
+            More explicitly, given the short exact sequence
+
+            $\phantom{WWWW}
+            0 \leftarrow C \xleftarrow{g} B  \xleftarrow{f} A \leftarrow 0,
+            $
+            
+            the $(-i)$-th connecting homomorphism is, in the first case, 
+            a map $\operatorname{Ext}_S^i(M, C) \to \operatorname{Ext}_S^{i+1}(M, A)$
+            and, in the second case,  
+            a map $\operatorname{Ext}_S^i(A, M) \to \operatorname{Ext}_S^{i+1}(C, M)$.  Observe that 
+            the connecting homomorphism is indexed homologically, whereas
+            Ext modules are indexed cohomologically, explaining the
+            different signs for the index $i$.
+        Text
+            As a first example,
+            applying the functor $\operatorname{Hom}(S/I, -)$ to a short exact sequence of modules
+
+            $\phantom{WWWW}
+            0 \leftarrow S/h \leftarrow S \xleftarrow{h} S(- \deg h) \leftarrow 0
+            $
+
+            gives rise to the long exact sequence in Ext modules having the form
+
+            $\phantom{WWWW}
+            \dotsb \leftarrow \operatorname{Ext}^{i+1}(S/I, S(-\deg h))
+            \xleftarrow{\delta_{-i}} 
+            \operatorname{Ext}^i(S/I, S/h)
+            \leftarrow \operatorname{Ext}^i(S/I, S)
+            \leftarrow \operatorname{Ext}^i(S/I, S(-\deg h))
+            \leftarrow \dotsb.
+            $
+        Example
+            S = ZZ/101[a..d, Degrees=>{2:{1,0},2:{0,1}}];
+            h = a*c^2 + a*c*d + b*d^2;
+            I = (ideal(a,b) * ideal(c,d))^[2]
+            g = map(S^1/h, S^1, 1)
+            f = map(S^1, S^{-degree h}, {{h}})
+            assert isShortExactSequence(g,f)
+            delta = connectingExtMap(S^1/I, g, f)
+            assert isWellDefined delta
+            assert(degree delta == 0)            
+            assert(source delta_(-1) == Ext^1(comodule I, S^1/h))
+            assert(target delta_(-1) == Ext^2(comodule I, S^{{-1,-2}}))
+        Text
+            As a second example, 
+            applying the functor $\operatorname{Hom}(-, S)$ to the
+            short exact sequence of modules
+
+            $\phantom{WWWW}
+            0 \leftarrow S/(I+J) \leftarrow S/I \oplus S/J  \leftarrow S/I \cap J \leftarrow 0
+            $
+
+            gives rise to the long exact sequence of Ext modules
+            having the form
+
+            $\phantom{WWWW}
+            \dotsb \leftarrow \operatorname{Ext}^{i+1}(S/(I+J), S)
+            \xleftarrow{\delta_{-i}} 
+            \operatorname{Ext}^i(S/I \cap J, S)
+            \leftarrow \operatorname{Ext}^i(S/I \oplus S/J, S)
+            \leftarrow \operatorname{Ext}^i(S/(I+J), S)
+            \leftarrow \dotsb.
+            $
+        Example
+            S = ZZ/101[a..d];
+            I = ideal(c^3-b*d^2, b*c-a*d)
+            J = ideal(a*c^2-b^2*d, b^3-a^2*c)
+            g = map(S^1/(I+J), S^1/I ++ S^1/J, {{1,1}})
+            f = map(S^1/I ++ S^1/J, S^1/intersect(I,J), {{1},{-1}})
+            assert isShortExactSequence(g,f)
+            delta = connectingExtMap(g, f, S^1)
+            assert isWellDefined delta
+            assert(source delta_-2 == Ext^2(comodule intersect(I,J), S))
+            assert(target delta_-2 == Ext^3(comodule (I+J), S))
+    SeeAlso
+        "Working with Ext"
+        connectingMap
+        isShortExactSequence
+        longExactSequence
+        Ext
+///
+
+
+///
+    Key
+    Headline
+    Usage
+    Inputs
+    Outputs
+    Description
+        Text
+        Example
+    Caveat
+    SeeAlso
+///
+
+
+///
+        Text
+            XXX as a next example, we show a non-zero connecting homomorphism 
+            in a Tor long exact sequence. (in connectingMap doc node)
+        Text
+            TODO: connectingExtMap(i, M, ses in N's), (ses in M's, N),
+            TODO: connectingTorMap(i, M, ses in N's), (M, ses in N's)
+            TODO: example: functoriality of LES, connecting map.
+            TODO: given a map M --> M', ses in N's, ==> get complex map between LES's.
+            TODO: email from Janina Letz on March 23, 2021, has some bugs in Complexes...
 ///
 
