@@ -1,7 +1,7 @@
 newPackage(
     "MonomialOrbits",
     Version => "1.0", 
-    Date => "18 December 2020, rev 7 May 2021",
+    Date => "18 December 2020, rev 10 May 2021",
     Authors => {{Name => "David Eisenbud", 
             Email => "de@msri.org", 
             HomePage => "http://www.msri.org/~de"},
@@ -44,6 +44,7 @@ monomialsInDegree = (d, R, type) -> (
     else 
         error "expected MonomialType to be either \"All\" or \"SquareFree\""
     )
+
 orbitRepresentatives = method(Options=>{MonomialType => "All"})
 
 orbitRepresentatives(Ring, VisibleList) := List => o -> (R, degs) -> (
@@ -52,7 +53,7 @@ orbitRepresentatives(Ring, VisibleList) := List => o -> (R, degs) -> (
 orbitRepresentatives(Ring, Ideal, VisibleList) := List => o -> (R, I, degs) -> (
 
     if not isMonomialIdeal I then error"orbitRepresentatives:arg 1 is not a monomial ideal";
-    result := monomialIdeal I;
+    result := {monomialIdeal I};
 
     G := permutations R;
     rawMonsMat := matrix{{}};
@@ -65,7 +66,6 @@ orbitRepresentatives(Ring, Ideal, VisibleList) := List => o -> (R, I, degs) -> (
         );
     result
     )
-
 
 orbitRepresentatives(Ring, Ideal, Ideal, ZZ) := List => o -> (R, I, startmons, numelts) -> (
          
@@ -83,17 +83,17 @@ orbitRepresentatives(Ring, Ideal, Ideal, ZZ) := List => o -> (R, I, startmons, n
     if numelts < 0 then(
 	    L := flatten entries start;
     	    sL := subsets(L, #L+numelts)/monomialIdeal;
-    	    return normalForms(apply(sL, ell -> ell + I), G)
-    ) else
-
-    result := {I};
-    mons := flatten entries sort(start,
+    	    result := normalForms(apply(sL, ell -> ell + I), G)
+    ) else (
+        result = {I};
+        mons := flatten entries sort(start,
                     DegreeOrder => Ascending, MonomialOrder => Descending);
-    apply(numelts, i-> (
-        result = normalForms(sumMonomials(result, mons), G)
-        ));
+        apply(numelts, i-> (
+           result = normalForms(sumMonomials(result, mons), G)
+           ));
     result
-    )
+    ))
+
 
 hilbertRepresentatives = method(Options=>{MonomialType => "All"})
 hilbertRepresentatives(Ring, VisibleList) := List => o -> (R, h) -> (
@@ -245,9 +245,9 @@ doc ///
 	    when numelts < 0, then the ideals formed are I+J minus 
 	    a certain number of monomials.
 	numelts:ZZ
-	    If numelts >0 then each monomial ideal produced is
-	    I+ numelts elements of J; if numelts < 0 then 
-	    each monomial ideal produced is I+J minus |numelts| elements of J.
+	    If numelts $\geq 0$ then each monomial ideal produced is
+	    I+(numelts elements of J); if numelts $< 0$ then 
+	    each monomial ideal produced is I+J minus (|numelts| elements of J).
         MonomialType => String
             (either {\tt "All"} or {\tt "SquareFree"}).  For {\tt "All"}, 
             all monomials are
@@ -455,6 +455,15 @@ assert({monomialIdeal (a, b)} ==
        orbitRepresentatives(S, monomialIdeal S_0, mm, 1))
 assert(orbitRepresentatives(S, monomialIdeal S_0, mm^2, 2) ==
        {monomialIdeal(a,b^2,b*c), monomialIdeal(a,b^2,c^2), monomialIdeal(a,b^2,c*d), monomialIdeal(a,b*c,b*d)})
+///
+
+TEST///
+S = ZZ/101[x_1..x_4]
+I0 = ideal x_1^2
+mm = ideal vars S
+mm2 = mm^2
+assert(all(apply(2, e -> orbitRepresentatives(S,I0,toList(e: 2))),L -> class L === List))
+assert(class orbitRepresentatives(S,I0,{}) === List)
 ///
 
 end---------------------------------------------------------------------
