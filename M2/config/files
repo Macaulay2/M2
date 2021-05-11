@@ -36,6 +36,7 @@ libraries/gdbm/Makefile
 libraries/flint/Makefile
 libraries/gmp/Makefile
 libraries/mpfr/Makefile
+libraries/mpfi/Makefile
 libraries/mpir/Makefile
 libraries/gtest/Makefile
 libraries/4ti2/Makefile

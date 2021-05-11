@@ -88,9 +88,11 @@ if(NOT MPFR_VERSION_OK)
       )
   endif()
 
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(MPFR DEFAULT_MSG MPFR_INCLUDE_DIRS MPFR_LIBRARIES MPFR_VERSION_OK)
+  string(REGEX REPLACE "/include(/${CMAKE_LIBRARY_ARCHITECTURE}$)?" "" MPFR_ROOT "${MPFR_INCLUDE_DIRS}")
 
-  mark_as_advanced(MPFR_INCLUDE_DIRS MPFR_LIBRARIES)
+  include(FindPackageHandleStandardArgs)
+  find_package_handle_standard_args(MPFR DEFAULT_MSG MPFR_ROOT MPFR_INCLUDE_DIRS MPFR_LIBRARIES MPFR_VERSION_OK)
+
+  mark_as_advanced(MPFR_ROOT MPFR_INCLUDE_DIRS MPFR_LIBRARIES)
 
 endif()

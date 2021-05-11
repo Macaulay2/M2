@@ -9,8 +9,10 @@ globalAssignment ImmutableType
 -- these types are pre-defined
 
 RR.synonym = "real number"
+RRi.synonym = "real interval"
 CC.synonym = "complex number"
 RR.texMath = ///{\mathbb R}///
+RRi.texMath = ///{\square\mathbb R}///
 CC.texMath = ///{\mathbb C}///
 Number.synonym = "number"
 InexactFieldFamily.synonym = "inexact field family"
@@ -29,23 +31,30 @@ InexactField.synonym = "inexact field"
 raw InexactField := R -> R.RawRing
 
 RR.InexactField = RealField    = new Type of InexactField   ; RealField.synonym = "real field"
+RRi.InexactField = RealIntervalField    = new Type of InexactField   ; RealIntervalField.synonym = "real interval field"
 CC.InexactField = ComplexField = new Type of InexactField; ComplexField.synonym = "complex field"
 
 Nothing' = Nothing					    -- maybe we'll want to rename it later...
 RingFamily_* := RR -> RR#(symbol _*)
+RingFamily_* := RRi -> RRi#(symbol _*)
 RingFamily_* = (RR,e) -> RR#(symbol _*) = e
+RingFamily_* = (RRi,e) -> RRi#(symbol _*) = e
 InexactNumber' = new Type of Nothing'
 RR_* = RR' = new Type of InexactNumber'
+RRi_* = RRi' = new Type of InexactNumber'
 CC_* = CC' = new Type of InexactNumber'
 
 setAttribute(CC',PrintNet,"CC" | "*"^-1)
 setAttribute(RR',PrintNet,"RR" | "*"^-1)
+setAttribute(RRi',PrintNet,"RRi" | "*"^-1)
 setAttribute(CC',PrintNames,"CC_*")
 setAttribute(RR',PrintNames,"RR_*")
+setAttribute(RRi',PrintNames,"RRi_*")
 setAttribute(InexactNumber',PrintNet,"InexactNumber" | "*"^-1)
 
 protect back
 RR'.back = RR
+RRi'.back = RRi
 CC'.back = CC
 new RealField of Nothing' from ZZ := memoize (
      (RealField,Nothing',prec) -> newClass(RealField,Nothing',
@@ -65,6 +74,15 @@ new ComplexField of Nothing' from ZZ := memoize(
 	       symbol baseRings => {ZZ,QQ,RR},
 	       symbol RawRing => rawCC prec
 	       }))
+new RealIntervalField of Nothing' from ZZ := memoize (
+     (RealIntervalField,Nothing',prec) -> newClass(RealIntervalField,Nothing',
+	  hashTable {
+	       symbol precision => prec,
+	       symbol Engine => true,
+	       symbol baseRings => {ZZ,QQ},
+	       symbol isBasic => true,
+	       symbol RawRing => rawRRi prec
+	       }))
 precision InexactField := R -> R.precision
 InexactFieldFamily _ ZZ := (T,prec) -> new T.InexactField of T#(symbol _*) from prec -- oops...
 default InexactFieldFamily := R -> R_defaultPrecision
@@ -74,6 +92,7 @@ default InexactFieldFamily := R -> R_defaultPrecision
 Number _ InexactFieldFamily := (x,RR) -> x_(default RR)
 
 promote(RawRingElement,RR') := (x,R) -> new RR from x
+promote(RawRingElement,RRi') := (x,R) -> new RRi from x
 promote(RawRingElement,CC') := (x,R) -> new CC from x
 promote(RawRingElement,Number) := (x,R) -> new R from x
 promote(RawRingElement,RingElement) := (x,R) -> new R from x
@@ -85,6 +104,10 @@ promote(ZZ,CC') :=
 promote(QQ,CC') := 
 promote(RR,CC') := 
 promote(CC,CC') := (i,K) -> toCC(K.precision,i)
+promote(ZZ,RRi') :=
+promote(QQ,RRi') :=
+promote(RR,RRi') := (i,K) -> toRRi(K.precision,i,i)
+promote(RRi,RRi') := (i,K) -> toRRi(K.precision,left(i),right(i))
 lift(Number,InexactNumber) := opts -> (x,RR) -> lift(x,default RR,opts)
 
 liftable(Number,InexactNumber) := (x,RR) -> liftable(x,default RR)
@@ -94,6 +117,12 @@ lift(CC,RR'):= opts -> (z,RR) -> (
      else if opts.Verify then error "lift: complex number is not real"
      )
 
+liftable(RRi,RR) := (z,RR) -> diameter(z) == 0
+lift(RRi,RR') := opts -> (r,RR) -> (
+     if diameter(r) == 0 then lift(midpoint(r),RR)
+     else if opts.Verify then error "lift: interval has positive diameter"
+)
+
 -- lift and promote to and from other rings
 
 numeric VisibleList := x -> apply(x,numeric)
@@ -101,7 +130,9 @@ numeric(ZZ,VisibleList) := (prec,x) -> apply(x, t -> numeric(prec,t))
 numeric Number := x -> numeric(defaultPrecision, x)
 numeric CC := identity
 numeric RR := identity
+numeric RRi := identity
 numeric(ZZ,Number) := toRR
+numeric(ZZ,RRi) := (prec,x) -> toRRi(prec,left(x),right(x))
 numeric(ZZ,CC) := toCC
 infty := prec -> 1/toRR(prec,0)
 numeric InfiniteNumber := infinity -> infinity#0 * infty defaultPrecision
@@ -110,6 +141,10 @@ numeric(ZZ, InfiniteNumber) := (prec,infinity) -> infinity#0 * infty prec
 ZZ _ RealField :=
 QQ _ RealField :=
 RR _ RealField := (x,R) -> toRR(R.precision,x)
+ZZ _ RealIntervalField :=
+QQ _ RealIntervalField :=
+RR _ RealIntervalField := (x,R) -> toRRi(R.precision,x,x)
+RRi _ RealIntervalField := (x,R) -> toRRi(R.precision,left(x),right(x))
 ZZ _ ComplexField :=
 QQ _ ComplexField :=
 RR _ ComplexField :=
@@ -145,11 +180,23 @@ promote(RR,QQ) := (z,QQ) -> if z === 0. then 0/1 else if isFinite z then (
      (prec,sgn,expt,m,numbits) := partsRR z;
      sgn * m / 2^(numbits - expt)
      ) else error "promote(RR,QQ): non-finite number encountered"
+liftable(RRi,QQ) := (z,RR) -> diameter(z) == 0
+liftable(RRi,ZZ) := (z,RR) -> diameter(z) == 0
+lift(RRi,QQ) := opts -> (r,QQ) -> (
+     if diameter(r) == 0 then lift(midpoint(r),QQ)
+     else if opts.Verify then error "lift: interval has positive diameter"
+)
+lift(RRi,ZZ) := opts -> (r,ZZ) -> (
+     if diameter(r) == 0 then lift(midpoint(r),ZZ)
+     else if opts.Verify then error "lift: interval has positive diameter"
+)
 
 ring RR := x -> new RealField of RR' from precision x
+ring RRi := x -> new RealIntervalField of RRi' from precision x
 ring CC := x -> new ComplexField of CC' from precision x
 
 new RR from RawRingElement := (RRR,x) -> ( assert( RRR === RR ); rawToRR x)
+new RRi from RawRingElement := (RRRi,x) -> ( assert( RRRi === RRi ); rawToRRi x)
 new CC from RawRingElement := (CCC,x) -> ( assert( CCC === CC ); rawToCC x)
 
 -- arithmetic operations
@@ -192,7 +239,7 @@ random RingFamily := opts -> R -> random(default R,opts)
 
 -- algebraic operations and functions
 
-RR.isBasic = CC.isBasic = true
+RR.isBasic = CC.isBasic = RRi.isBasic = true
 
 InexactFieldFamily Array := (T,X) -> (default T) X
 Thing ** InexactFieldFamily := (X,T) -> X ** default T
@@ -207,9 +254,9 @@ char InexactField := R -> 0
 
 -- symbolic/numeric constant expressions
 
-pi = new Constant from { symbol pi, pi0 }
-EulerConstant = new Constant from { symbol EulerConstant, mpfrConstantEuler }
-ii = new Constant from { symbol ii, ConstantII }
+pi = new Constant from { symbol pi, pi0, piRRi0 }
+EulerConstant = new Constant from { symbol EulerConstant, mpfrConstantEuler, eRRi0}
+ii = new Constant from { symbol ii, ConstantII}
 
 lngamma = method()
 lngamma ZZ := lngamma QQ := lngamma RR := x -> (
@@ -222,6 +269,8 @@ toString Constant := net Constant := c -> toString c#0
 toExternalString Constant := c -> toString c#0
 numeric Constant := c -> c#1 defaultPrecision
 numeric(ZZ,Constant) := (prec,c) -> c#1 prec
+numericInterval Constant := c -> if #c < 3 then interval(0,-1,Precision=>defaultPrecision) else c#2 defaultPrecision
+numericInterval(ZZ,Constant) := (prec,c) -> if #c < 3 then interval(0,-1,Precision=>prec) else c#2 prec
 exp Constant := c -> exp numeric c
 
 constantTexMath := new HashTable from {
@@ -296,9 +345,11 @@ Constant ! := c -> (numeric c)!
 -- printing
 
 toString RealField := R -> concatenate("RR_",toString R.precision)
+toString RealIntervalField := R -> concatenate("RRi_",toString R.precision)
 toString ComplexField := R -> concatenate("CC_",toString R.precision)
 
 expression RealField := R -> new Subscript from {symbol RR, R.precision}
+expression RealIntervalField := R -> new Subscript from {symbol RRi, R.precision}
 expression ComplexField := R -> new Subscript from {symbol CC, R.precision}
 expression RR := x -> (
      if x < 0 
@@ -356,13 +407,17 @@ InexactNumber#{Standard,AfterPrint} = x -> (
      )
 
 isReal = method()
-isReal RR := isReal QQ := isReal ZZ := x -> true
+isReal RRi := isReal RR := isReal QQ := isReal ZZ := x -> true
 isReal CC := z -> imaginaryPart z == 0
 
 acosh = method()
 acosh Number := z -> log(z+sqrt(z^2-1))
 asinh = method()
 asinh Number := z -> log(z+sqrt(z^2+1))
+atanh = method()
+atanh Number := z -> log((1+z)/(1-z))/2
+acoth = method()
+acoth Number := z -> atanh(1/z)
 acot = method()
 acot Number := z -> atan(1/z)
 

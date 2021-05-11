@@ -20,6 +20,7 @@ setupconst("ZZ",Expr(ZZClass));
 setupconst("QQ",Expr(QQClass));
 setupconst("RingFamily",Expr(ringFamilyClass));
 setupconst("InexactFieldFamily",Expr(inexactNumberTypeClass));
+setupconst("RRi",Expr(RRiClass));
 setupconst("RR",Expr(RRClass));
 setupconst("CC",Expr(CCClass));
 setupconst("RingElement",Expr(ringElementClass));
@@ -139,6 +140,7 @@ export Class(e:Expr):HashTable := (
      is CompiledFunctionClosure do compiledFunctionClosureClass
      is s:SymbolClosure do if s.symbol.word.parse == parseWORD then symbolClass else keywordClass
      is SymbolBody do symbolBodyClass
+     is RRicell do RRiClass
      is RRcell do RRClass
      is CCcell do CCClass
      is RawComputationCell do rawComputationClass
