@@ -1,0 +1,5 @@
+# Notes on NC Resolutions
+
+## Classes needed
+
+ - NCResolutionComputation (inherit from ResolutionComputation)

@@ -13,7 +13,7 @@
 #include "gbweight.hpp"
 #include "reducedgb.hpp"
 
-#include "f4/monsort.hpp"
+#include "monsort.hpp"
 
 #include "interrupted.hpp"
 

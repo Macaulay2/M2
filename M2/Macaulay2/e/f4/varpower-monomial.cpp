@@ -1,11 +1,8 @@
 /* Copyright 2006 by Michael E. Stillman */
 
-#include "varpower-monomial.hpp"
-
-/* The following are also in ../style.hpp */
-#define LT (-1)
-#define EQ 0
-#define GT 1
+#include "f4/varpower-monomial.hpp"
+#include "engine-exports.h"  // for M2_arrayint_struct, M2_arrayint
+#include "style.hpp"
 
 varpower_word varpower_monomials::simple_degree(const_varpower_monomial m)
 {

@@ -48,6 +48,7 @@ matrix1.m2
 mutablemat.m2
 localring.m2
 quotring.m2
+freealgebras.m2
 multilin.m2
 flint.m2
 genmat.m2

@@ -77,6 +77,7 @@ class ARingGFM2 : public RingInterface
   static const RingID ringID = ring_GFM2;
   typedef int ElementType;
   typedef int elem;
+  typedef std::vector<elem> ElementContainerType;
 
   /// a is a polynomial in a ring R = ZZ/p[x]/(f(x))
   /// where

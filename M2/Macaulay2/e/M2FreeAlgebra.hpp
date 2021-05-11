@@ -47,6 +47,11 @@ public:
   virtual ring_elem from_coefficient(const ring_elem a) const = 0;
 
   virtual ring_elem makeTerm(const ring_elem a, const int* monom) const = 0;
+
+  // casting functions
+  virtual const M2FreeAlgebraOrQuotient * cast_to_M2FreeAlgebraOrQuotient()  const { return this; }
+  virtual       M2FreeAlgebraOrQuotient * cast_to_M2FreeAlgebraOrQuotient()        { return this; }
+
 };
 
 class M2FreeAlgebra : public M2FreeAlgebraOrQuotient
@@ -169,7 +174,7 @@ public:
 };
 
 PolyList copyPolyVector(const M2FreeAlgebraOrQuotient* A,
-                        const ConstPolyList& polys);
+                        const PolyList& polys);
   
 #endif
 
