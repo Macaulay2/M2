@@ -1393,6 +1393,7 @@ TEST ///--makeMultiples
 
 --9
 TEST ///--recoverSolution
+    debug needsPackage "SumsOfSquares"
     equal = (a,b) -> norm(a-b) < HighPrecision;
     R = RR[x,y];
     mon = matrix {{1},{x},{y}};
