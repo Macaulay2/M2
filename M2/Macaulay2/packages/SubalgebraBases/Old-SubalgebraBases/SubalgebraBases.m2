@@ -12,10 +12,10 @@ newPackage(
 
 export {"subalgebraBasis", "sagbi" => "subalgebraBasis", "PrintLevel"}
 
-load "SubalgebraBases/sagbi-common.m2"
-load "SubalgebraBases/sagbitop.m2"
-load "SubalgebraBases/sagbieng.m2"
-load "SubalgebraBases/sagbi-tests.m2"
+needs "./SubalgebraBases/sagbi-common.m2"
+needs "./SubalgebraBases/sagbitop.m2"
+needs "./SubalgebraBases/sagbieng.m2"
+needs "./SubalgebraBases/sagbi-tests.m2"
 
 beginDocumentation()
 
