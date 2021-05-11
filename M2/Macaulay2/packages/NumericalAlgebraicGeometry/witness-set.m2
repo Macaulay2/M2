@@ -10,8 +10,8 @@ export {
     "removeRedundantComponents"
     }
 
-polySystem WitnessSet := W->if W.?SolutionSystem then W.SolutionSystem else 
-    W.SolutionSystem = polySystem(
+polySystem WitnessSet := W->if W.cache.?SolutionSystem then W.cache.SolutionSystem else 
+    W.cache.SolutionSystem = polySystem(
     	n := #equations W;
     	R := ring W;
     	m := codim W;
@@ -21,9 +21,8 @@ polySystem WitnessSet := W->if W.?SolutionSystem then W.SolutionSystem else
 	    )
     	)
 
-check WitnessSet := o -> W -> for p in W.Points do --!!!
-if residual(polySystem(equations polySystem W | slice W), p) > 1000*DEFAULT.Tolerance then error "check failed" 
-
+check WitnessSet := o -> W -> for p in W.Points do 
+if residual(polySystem(equations polySystem W | slice W), p) > 1000*DEFAULT.Tolerance then error "check failed" --!!!
 
 randomSlice = method()
 randomSlice (ZZ,ZZ,Ring) := (d,n,C) -> (randomUnitaryMatrix n)^(toList(0..d-1)) | random(C^d,C^1)   
@@ -38,7 +37,7 @@ isOn = method(Options=>{Tolerance=>null,Software=>null})
 isOn (Point,WitnessSet) := o -> (p, W) -> (
     o = fillInDefaultOptions o;
     if # coordinates p != numgens ring W 
-    then if W.?ProjectionDimension then isOn(p,W,W.ProjectionDimension,o) 
+    then if W.cache.?ProjectionDimension then isOn(p,W,W.ProjectionDimension,o) 
     else error "numbers of coordinates mismatch";
     --if o.Software === BERTINI then bertiniComponentMemberTest(numericalWariety {W},{p})
     --else 
@@ -163,14 +162,8 @@ moveSlice (WitnessSet, List) := List => o -> (W,S') -> (
      o = fillInDefaultOptions o;
      if #S' < dim W
      then error "dimension of new slicing plane is too high";
-     R := ring W;
-
      w' := movePoints(W, slice W, S', W.Points, o);
-
-     W' := new WitnessSet from W;
-     W'.Slice = sliceEquationsToMatrix ideal S';
-     W'.Points = w';
-     W'
+     witnessSet(W.Equations, sliceEquationsToMatrix ideal S', w')
      )
 
 moveSlice (WitnessSet, Matrix) := WitnessSet => o->(W,S) -> (
@@ -190,7 +183,7 @@ sample WitnessSet := o -> W -> (
     W' := moveSlice(W, randomSlice(dim W, numgens ring W, coefficientRing ring W));
     p := W'.Points # (random(#W'.Points));
     if not p.?ErrorBoundEstimate or p.ErrorBoundEstimate > o.Tolerance then p = refine(p,ErrorTolerance=>o.Tolerance); 
-    if W.?ProjectionDimension then project(p, W.ProjectionDimension)
+    if W.cache.?ProjectionDimension then project(p, W.cache.ProjectionDimension)
     else p 
     )
 random WitnessSet := o -> W -> sample W
@@ -198,29 +191,30 @@ random WitnessSet := o -> W -> sample W
 TEST ///
 debug needsPackage "NumericalAlgebraicGeometry"
 R = CC[x,y,z]
-W1 = new WitnessSet from {
-     Equations=>ideal {x^2+y^2+z^2-1},
-     Slice=>matrix "1,0,0,0;0,1,0,0",
-     Points=>{{{0,0,1}},{{0,0,-1}}}/point
-     } 
+W1 = witnessSet(
+     ideal {x^2+y^2+z^2-1},
+     matrix "1,0,0,0;0,1,0,0",
+     {{{0,0,1}},{{0,0,-1}}}/point
+     )
 sliceEquations (W1#Slice,R)
 W2 = moveSlice(W1, matrix "0,1,0,0;0,0,1,0")
 assert areEqual(sortSolutions points W2, {point{{ -1,0,0}},point{{1,0,0}}})
 for i to 5 do assert isOn(random W1,W1)
 
-W3 = new WitnessSet from {
-     Equations => ideal {x^2+y^2+z^2-1, z},
-     Slice => matrix "1,0,0,0",
-     Points => {{{0,1,0}},{{0,-1,0}}}/point,
-     ProjectionDimension => 2 -- project onto xy-plane
-     } 
+W3 = witnessSet(
+     ideal {x^2+y^2+z^2-1, z},
+     matrix "1,0,0,0",
+     {{{0,1,0}},{{0,-1,0}}}/point
+     )
+W3.cache.ProjectionDimension = 2 -- project onto xy-plane
+
 for i to 5 do assert isOn(random W3,W3,2)
 
-W4 = new WitnessSet from {
-     Equations => ideal {x^2+y^2+z^2-1, z^2},
-     Slice => matrix "1,0,0,0",
-     Points => {{{0,1,0_CC}},{{0,-1,0_CC}}}/point
-     } 
+W4 = witnessSet(
+     ideal {x^2+y^2+z^2-1, z^2},
+     matrix "1,0,0,0",
+     {{{0,1,0_CC}},{{0,-1,0_CC}}}/point
+     ) 
 F = polySystem(equations W4 | slice W4)
 scan(W4.Points, P->deflateInPlace(P,F))
 for i to 5 do assert isOn(random W4,W4)

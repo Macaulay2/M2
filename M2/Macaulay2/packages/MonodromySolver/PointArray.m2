@@ -25,12 +25,12 @@ Searching the array is likely to be O(log n), which is achieved via std::map.
 *-
 
 debug Core
-PointArrayTolerance = 1e-4
 
--- needsPackage "NAGtypes"
+PointArrayTolerance = 1e-12
+
 PointArray = new Type of MutableHashTable
-pointArray = method()
-pointArray List := B -> (
+pointArray = method(Options=>{})
+pointArray List := o -> B -> (
     A := new PointArray from {};
     A#"raw" = null;
     appendPoints(A,B);

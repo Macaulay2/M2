@@ -25,12 +25,15 @@ export {
     "AugmentNodeCount",
     "EdgesSaturated",
     "sparseMonodromySolve",
-    "solveFamily"}
+    "solveFamily",
+    "PointArrayTol"
+    }
 
 --0) global variables, overrides, & uncategorized service functions
  
 -- Option table that gives defaults for exported functions
 MonodromyOptions = {
+    	PointArrayTol => 1e-4,
 	TargetSolutionCount => null,
 	SelectEdgeAndDirection => selectFirstEdgeAndDirection,
 	StoppingCriterion => null,
@@ -338,6 +341,7 @@ staticMonodromySolve (System, Point, List) := o -> (PS, p0, sols0) -> (
     node1 := addNode(HG, p0, PA);
     setTrackTime(HG, 0);    
     if #sols0 < 1 then error "at least one solution expected";    
+    PointArrayTolerance = o.PointArrayTol; -- global variable!!!
     o.GraphInitFunction(HG, p0, node1, o.NumberOfNodes, o.NumberOfEdges);
     --Needs to return HG for use by dynamicMonodromySolve
     coreMonodromySolve(HG, node1, new OptionTable from (new HashTable from mutableOptions))

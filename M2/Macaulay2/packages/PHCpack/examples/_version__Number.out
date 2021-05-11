@@ -1,4 +1,6 @@
 -- -*- M2-comint -*- hash: -211311793
+Hello world from process 0 out of 1 processes
+-- COMPILE TIME: Feb 24 2021, 10:08:22
 
 i1 : v = versionNumber(null)
 
@@ -13,3 +15,4 @@ i3 : print v_1
 2020-06-12
 
 i4 : 
+Bye world from process 0 out of 1 processes
