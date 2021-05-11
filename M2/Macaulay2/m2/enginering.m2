@@ -299,6 +299,7 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      if not factoryGood R then error "not implemented yet: fraction fields of polynomial rings over rings other than ZZ, QQ, or a finite field";
      R.frac = F := new FractionField from rawFractionRing R.RawRing;
      F.frac = F;
+     F.isCommutative = true;
      F.baseRings = append(R.baseRings,R);
      commonEngineRingInitializations F;
      factor F := options -> f -> factor numerator f / factor denominator f;
