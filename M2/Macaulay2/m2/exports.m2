@@ -260,7 +260,6 @@ export {
 	"MinimumVersion",
 	"Minus",
 	"Module",
-	"ModuleMap",
 	"Monoid",
 	"MonoidElement",
 	"Monomial",

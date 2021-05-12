@@ -390,7 +390,7 @@ localCohomRegular(List,Ideal,Module) := (l, I, M) -> (
 -- (more precisely, M and <target f> should have the same ambient module)
 ------------------------------------------------------------------------------
 preimage = method();
-preimage (Module, ModuleMap) := (M, f) -> (
+preimage (Module, Matrix) := (M, f) -> (
      T := target f;
      g := map(T/M, T);
      kernel (g*f)

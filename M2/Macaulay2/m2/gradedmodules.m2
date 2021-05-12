@@ -357,7 +357,7 @@ gradedModuleMap Sequence := gradedModuleMap List := GradedModuleMap => maps -> (
      f.target = gradedModule(target \ maps);
      f.degree = 0;
      f)
-gradedModuleMap ModuleMap := GradedModuleMap => M -> gradedModuleMap (1:M)
+gradedModuleMap Matrix := GradedModuleMap => M -> gradedModuleMap (1:M)
 
 single := (v) -> (
      if not same v 
