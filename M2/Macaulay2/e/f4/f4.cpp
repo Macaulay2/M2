@@ -449,7 +449,7 @@ void F4GB::make_matrix()
 ///////////////////////////////////////////////////
 // Gaussian elimination ///////////////////////////
 ///////////////////////////////////////////////////
-CoeffVector F4GB::get_coeffs_array(row_elem &r)
+const CoeffVector& F4GB::get_coeffs_array(row_elem &r)
 {
   // If r.coeffs is set, returns that, otherwise returns the coeffs array from
   // the generator or GB element.  The resulting value should not be modified.
@@ -656,7 +656,7 @@ void F4GB::insert_gb_element(row_elem &r)
   // original array
   // Here we copy it over.
 
-  CoeffVector v = (r.coeffs.isNull() ? r.coeffs : mVectorArithmetic->copyCoeffVector(get_coeffs_array(r)));
+  CoeffVector v = (r.coeffs.isNull() ? mVectorArithmetic->copyCoeffVector(get_coeffs_array(r)) : r.coeffs);
   result->f.coeffs.swap(v);
   result->f.monoms = Mem->allocate_monomial_array(nlongs);
 
@@ -684,11 +684,10 @@ void F4GB::insert_gb_element(row_elem &r)
       hilbert->addMonomial(exp, x + 1);
       deletearray(exp);
     }
-
   // now insert the lead monomial into the lookup table
   varpower_monomial vp = newarray_atomic(varpower_word, 2 * M->n_vars() + 1);
   M->to_varpower_monomial(result->f.monoms, vp);
-  lookup->insert_minimal_vp(M->get_component(result->f.monoms), vp, which);
+  lookup->insert_minimal_vp(M->get_component(result->f.monoms), vp, which); // crash here
   deleteitem(vp);
   // now go forth and find those new pairs
   S->find_new_pairs(is_ideal);

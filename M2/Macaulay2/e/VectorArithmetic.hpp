@@ -27,9 +27,11 @@ class CoeffVector : public our_new_delete
   // disallow copy...
  public:
   CoeffVector() : mValue(nullptr) {}
+  //CoeffVector(CoeffVector &b) { mValue = nullptr; std::swap(mValue,b.mValue); }
+  //CoeffVector(const CoeffVector &) = delete;
   bool isNull() const { return mValue == nullptr; }
   void swap(CoeffVector& b) { std::swap(mValue, b.mValue); }
-  void* getValue() { return mValue; }
+  void* getValue() const { return mValue; }
   void setValue(void* newValue) { mValue = newValue; }
  private:
   void* mValue;
@@ -40,9 +42,10 @@ class DenseCoeffVector : public our_new_delete
   // disallow copy...
  public:
   DenseCoeffVector() : mValue(nullptr) {}
+  //DenseCoeffVector(DenseCoeffVector &) = delete;
   bool isNull() const { return mValue == nullptr; }
   void swap(DenseCoeffVector& b) { std::swap(mValue, b.mValue); }
-  void* getValue() { return mValue; }
+  void* getValue() const { return mValue; }
   void setValue(void* newValue) { mValue = newValue; }
  private:
   void* mValue;
@@ -69,12 +72,12 @@ public:
   const Ring* mOriginalRing;
   const RingType* mRing;
 
-  CoeffVectorContainer* coeffVector(CoeffVectorType f) const
+  CoeffVectorContainer* coeffVector(const CoeffVectorType& f) const
   {
     return reinterpret_cast<CoeffVectorContainer*>(f.getValue());
   }
 
-  DenseCoeffVectorContainer* denseCoeffVector(DenseCoeffVectorType f) const
+  DenseCoeffVectorContainer* denseCoeffVector(const DenseCoeffVectorType& f) const
   {
     return reinterpret_cast<DenseCoeffVectorContainer*>(f.getValue());
   }
