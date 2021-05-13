@@ -1803,8 +1803,8 @@ combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
 		    );
 	       p = p.next));
      sethash(z,x.Mutable | y.Mutable));
-
-twistCombine(f:Expr,g:Expr,h:Expr,k:Expr,x:HashTable,y:HashTable):Expr := (
+                                
+twistCombine(f:Expr,tw:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
      z := newHashTable(x.Class,x.parent);
      z.beingInitialized = true;
      foreach pp in x.table do (
@@ -1819,13 +1819,13 @@ twistCombine(f:Expr,g:Expr,h:Expr,k:Expr,x:HashTable,y:HashTable):Expr := (
 			      if err.message != continueMessage then return pqkey;
 			      )
 			 else (
-			      pqvalue := applyEEE(h,p.value,q.value);
+			      pqvalue := applyEEE(g,p.value,q.value);
 			      when pqvalue
 			      is err:Error do (
 				   if err.message != continueMessage then return pqvalue else nothing;
 				   )
 			      else (
-				   pqtwist := applyEEE(g,p.key,q.key);
+				   pqtwist := applyEEE(tw,p.key,q.key);
 				   when pqtwist
 				   is err:Error do (
 			              if err.message != continueMessage then return pqtwist else nothing;
@@ -1835,7 +1835,7 @@ twistCombine(f:Expr,g:Expr,h:Expr,k:Expr,x:HashTable,y:HashTable):Expr := (
 				      previous := lookup1(z,pqkey,pqhash);
 				      if previous == notfoundE
 				      then (
-					  tot := applyEEE(h,pqtwist,pqvalue);
+					  tot := applyEEE(g,pqtwist,pqvalue);
 					  when tot
 					  is err:Error do (
 					      if err.message != continueMessage then return tot else nothing;
@@ -1846,13 +1846,13 @@ twistCombine(f:Expr,g:Expr,h:Expr,k:Expr,x:HashTable,y:HashTable):Expr := (
 					  )
 				      )
 				      else (
-					  tot2 := applyEEE(h,pqtwist,pqvalue);
+					  tot2 := applyEEE(g,pqtwist,pqvalue);
 					  when tot2
 					  is err:Error do (
 					      if err.message != continueMessage then return tot2 else nothing;
 					  )
 				          else (
-					     t :=  applyEEE(k,previous,tot2);
+					     t :=  applyEEE(h,previous,tot2);
 					     when t is err:Error do (
 					         if err.message == continueMessage
 					         then remove(z,pqkey)
