@@ -839,7 +839,7 @@ factorWitnessSet (WitnessSet ) := o->  w -> (
     name = PHCinputFile | "_f" | toString(count+1);
   );
   stdio << "found " << count << " irreducible factors " << endl;
-  for ws in result do ws#IsIrreducible=true;
+  for ws in result do ws.cache.IsIrreducible=true;
   return numericalVariety(toList(result));
 )
 
@@ -2119,7 +2119,7 @@ system = (sub(ideal rationalSystem, CC[var1]))_*
 V = numericalIrreducibleDecomposition system
 WitSets = V#5;
 w = first WitSets
-w#IsIrreducible
+w.cache.IsIrreducible
 
 R = ring rationalSystem_0
 PD = primaryDecomposition ideal rationalSystem

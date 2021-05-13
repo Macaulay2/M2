@@ -292,6 +292,36 @@ ExternalProject_Add(build-mpfr
 set(MPFR_INCLUDE_DIR ${MPFR_INCLUDE_DIRS}) # TODO: make this unnecessary in d/CMakeLists.txt
 _ADD_COMPONENT_DEPENDENCY(libraries mpfr mp MPFR_FOUND)
 
+# http://perso.ens-lyon.fr/nathalie.revol/software.html
+ExternalProject_Add(build-mpfi
+  URL               https://gforge.inria.fr/frs/download.php/file/38111/mpfi-1.5.4.tgz
+  URL_HASH          SHA256=3b3938595d720af17973deaf727cfc0dd41c8b16c20adc103a970f4a43ae3a56
+  PREFIX            libraries/mpfi
+  SOURCE_DIR        libraries/mpfi/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND autoreconf -vif
+            COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
+                      --with-gmp=${MP_ROOT}
+                      --with-mpfr=${MPFR_ROOT}
+                      ${shared_setting}
+                      ${assert_setting}
+                      CC=${CMAKE_C_COMPILER}
+                      CFLAGS=${CFLAGS}
+                      CPPFLAGS=${CPPFLAGS}
+                      LDFLAGS=${LDFLAGS}
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} all
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install-strip
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/mpfi
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING COPYING.LESSER ${M2_INSTALL_LICENSESDIR}/mpfi
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} -C tests check
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
+  )
+_ADD_COMPONENT_DEPENDENCY(libraries mpfi "mp;mpfr" MPFI_FOUND)
+
 
 # http://shoup.net/ntl
 ExternalProject_Add(build-ntl

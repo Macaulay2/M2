@@ -1,7 +1,7 @@
 newPackage(
     "SemidefiniteProgramming",
-    Version => "0.2",
-    Date => "November 2018",
+    Version => "0.3",
+    Date => "May 2021",
     Authors => {
      {Name => "Diego Cifuentes",
       Email => "diegcif@mit.edu",
@@ -43,7 +43,7 @@ export {
 }
 
 --##########################################################################--
--- GLOBAL VARIABLES 
+-- GLOBAL VARIABLES
 --##########################################################################--
 
 -- Choose default solver
@@ -52,35 +52,35 @@ chooseDefaultSolver = execs -> (
     found := for i to #solvers-1 list
         if execs#i=!=null then solvers#i else continue;
     if notify then
-      print if #found>0 then "Solvers configured: "|demark(", ",found)
-        else "Warning: No external solver was found.";
+        print if #found>0 then "Solvers configured: "|demark(", ",found)
+            else "Warning: No external solver was found.";
     found = append(found,"M2");
     defaultSolver = ((options SemidefiniteProgramming).Configuration)#"DefaultSolver";
     if not member(defaultSolver,found) then
         defaultSolver = first found;
     if notify then
-      print("Default solver: " | defaultSolver);
+        print("Default solver: " | defaultSolver);
     defaultSolver)
 
 -- Change a solver path
 changeSolver = (solver, execpath) -> (
     execpath = replace(baseFilename execpath | "$", "", execpath);
     if solver == "CSDP" then (
-	programPaths#"csdp" = execpath;
-	csdpProgram = findCSDP false;
-    );
+        programPaths#"csdp" = execpath;
+        csdpProgram = findCSDP false;
+        );
     if solver == "SDPA" then (
-	programPaths#"sdpa" = execpath;
-	sdpaProgram = findSDPA false;
-    );
+        programPaths#"sdpa" = execpath;
+        sdpaProgram = findSDPA false;
+        );
     if solver == "mosek" then (
-	programPaths#"mosek" = execpath;
-	mosekProgram = findMOSEK false;
-    );
+        programPaths#"mosek" = execpath;
+        mosekProgram = findMOSEK false;
+        );
     SemidefiniteProgramming.defaultSolver = chooseDefaultSolver(
-	csdpProgram,
-	mosekProgram,
-	sdpaProgram)
+        csdpProgram,
+        mosekProgram,
+        sdpaProgram)
     )
 
 -- for backward compatibility
@@ -109,7 +109,8 @@ findCSDP = raiseError -> (
 3 1 1 3 -.5
 3 1 2 2 1
 /// << close;
-    findProgram("csdp", "csdp " | fin, RaiseError => raiseError))
+    findProgram("csdp", "csdp " | fin, RaiseError => raiseError)
+    )
 
 findMOSEK = raiseError -> findProgram("mosek", "mosek",
     RaiseError => raiseError)
@@ -162,13 +163,13 @@ sdp0 = (C,A,b) -> new SDP from { "C" => C, "A" => A, "b" => b }
 sdp(List,Matrix,RingElement) := (X,M,objFun) -> (
     n := numrows M;
     if n!=numcols M then error "Matrix must be square";
-    coeff := (x,f) -> ( 
+    coeff := (x,f) -> (
         if f==0 then return f;
-        if x!=1 and degree(x,f)>1 then 
+        if x!=1 and degree(x,f)>1 then
             error "Entries must be affine functions";
         coefficient(x,f) );
     e := 1_(ring M);
-    A := for x in {e}|X list 
+    A := for x in {e}|X list
         matrix for i to n-1 list for j to n-1 list -coeff(x,M_(i,j));
     b := matrix for x in X list {-coeff(x,objFun)};
     sdp(-A#0,toSequence drop(A,1),b))
@@ -199,7 +200,7 @@ isExactField = kk -> (
 -- rounds real number to rational
 roundQQ = method()
 roundQQ(ZZ,RR) := (d,x) -> round(x*2^d)/2^d
-roundQQ(ZZ,Matrix) := (d,X) -> 
+roundQQ(ZZ,Matrix) := (d,X) ->
      matrix(QQ, applyTable (entries X, roundQQ_d ));
 
 --###################################
@@ -213,7 +214,7 @@ smat2vec = method( Options => {Scaling => 1} )
 smat2vec(List) := o -> A -> (
     n := #A;
     v := for i to n-1 list
-        for j from i to n-1 list 
+        for j from i to n-1 list
             if i==j then A#i#j else o.Scaling*A#i#j;
     flatten v)
 smat2vec(Matrix) := o -> A -> matrix(ring A, apply(smat2vec(entries A,o), a->{a}))
@@ -226,8 +227,8 @@ vec2smat(List) := o -> v -> (
     ct := -1;
     L := for i to n-1 list (toList(i:0) |
         for j from i to n-1 list (ct = ct+1; ct));
-    A := table(toList(0..n-1), toList(0..n-1), (i,j) -> 
-        if i==j then v_(L#i#j) 
+    A := table(toList(0..n-1), toList(0..n-1), (i,j) ->
+        if i==j then v_(L#i#j)
         else if i<j then v_(L#i#j)/(o.Scaling)
         else v_(L#j#i)/(o.Scaling) );
     A)
@@ -280,7 +281,7 @@ LDLdecomposition = (A) -> (
             );
 
         -- Schur complement
-        for i from k+1 to n-1 do 
+        for i from k+1 to n-1 do
             v#i = Ah#(i,k);
         for i from k+1 to n-1 do(
             Ah#(i,k) = v#i/a;
@@ -413,7 +414,7 @@ findNonZeroSolution = (C,A,b,o,y,Z,ntries,Verbosity) -> (
     iszero := a -> norm a < MedPrecision;
     for i to ntries-1 do(
         if #badCoords==m then break;
-        b' := map(RR^m,RR^1, (j,l) -> 
+        b' := map(RR^m,RR^1, (j,l) ->
             if member(j,badCoords) then 0 else random(RR)-.5 );
         (X',y',Z',sdpstatus') := optimize(sdp0(C,A,b'),o);
         if Z'=!=null and not iszero Z' then return (y',Z');
@@ -491,7 +492,7 @@ simpleSDP = {Verbosity => 0} >> o -> (C,A,b) -> (
         y =  zeros(R,#A,1) || matrix{{lambda*1.1}};
         obj :=  zeros(R,#A,1) || matrix{{1_R}};
         (Xnull,y,Z,sdpstatus) = simpleSDP2(C,append(A,id_(R^n)), obj, y, false, true, Verbosity=>o.Verbosity);
-        if y===null then 
+        if y===null then
             return (Xnull,,,StatusFailed);
         y = transpose matrix {take (flatten entries y,numRows y - 1)};
         );
@@ -533,7 +534,7 @@ simpleSDP2 = {Verbosity => 0} >> o -> (C,A,mb,y,checktrivial,UntilObjNegative) -
                 return (Xnull,,,StatusFailed) );
             -- compute gradient:
             g := map(R^m,R^1,(i,j) -> b_(i,0)/mu + trace(Sinv*A_i));
-            
+
             -- compute damped Newton step:
             dy := -solve(H,g,ClosestFit=>true);
             alpha := backtrack(S, -sum for i to m-1 list matrix(dy_(i,0) * entries A_i), o.Verbosity);
@@ -541,7 +542,7 @@ simpleSDP2 = {Verbosity => 0} >> o -> (C,A,mb,y,checktrivial,UntilObjNegative) -
             y = y + transpose matrix {alpha* (flatten entries dy)};
             lambda := (transpose dy*H*dy)_(0,0);
             obj := transpose b * y;
-            
+
             -- print some information:
             verbose2(iter | ":  " | net obj | "    " | net lambda | "    " | net mu | "    " | net alpha, o);
 
@@ -551,7 +552,7 @@ simpleSDP2 = {Verbosity => 0} >> o -> (C,A,mb,y,checktrivial,UntilObjNegative) -
                 break);
             if UntilObjNegative and (obj_(0,0) < 0) then break;
             if lambda < 0.4 then break;
-            ); 
+            );
         );
     Z := C - sum(for i to #A-1 list y_(i,0) * A_i);
     (Xnull,y,Z,StatusDFeas))
@@ -561,8 +562,8 @@ backtrack = (S0, dS, Verbosity) -> (
      alpha := 1_R;
      BacktrackIterMAX := 100;
      S :=  matrix( alpha * entries dS) + S0;
-     
-     cnt := 1;     
+
+     cnt := 1;
      while min eigenvalues(S,Hermitian=>true) <= 0 do (
       cnt = cnt + 1;
       alpha = alpha / sqrt(2_R);
@@ -592,7 +593,7 @@ solveCSDP(Matrix,Sequence,Matrix) := o -> (C,A,b) -> (
     verbose1("Executing CSDP", o);
     verbose1("Input file: " | fin, o);
     csdpRun := runProgram(csdpProgram, fin1 | " " | fout,
-	RunDirectory => dir, KeepFiles => true, RaiseError => false);
+        RunDirectory => dir, KeepFiles => true, RaiseError => false);
     handleErrors(csdpRun#"return value", csdpRun#"error file", o.Verbosity);
     verbose1("Output file: " | fout, o);
     fout2 := csdpRun#"output file";
@@ -633,7 +634,7 @@ writeSDPA = (fin,C,A,b) -> (
                     s = s | pref | i+1 | " " | j+1 | " " | formatD a_(i,j) | "\n";
         return s;
         );
-    f << "*SDPA file generated by SemidefiniteProgramming.m2" << endl;    
+    f << "*SDPA file generated by SemidefiniteProgramming.m2" << endl;
     f << m << " =mdim" << endl;
     f << "1 =nblocks" << endl;
     f << n << endl;
@@ -690,7 +691,7 @@ readCSDP = (fout,fout2,n,Verbosity) -> (
     if #s==0 then( return (,,,StatusFailed) );
     s = first s;
     verbose2(text,Verbosity);
-    if match("SDP solved",s) then 
+    if match("SDP solved",s) then
         sdpstatus = StatusFeas
     else if match("primal infeasible",s) then(
         sdpstatus = StatusPInfeas;
@@ -698,7 +699,7 @@ readCSDP = (fout,fout2,n,Verbosity) -> (
     else if match("dual infeasible",s) then (
         sdpstatus = StatusDInfeas;
         y=null;Z=null; )
-    else 
+    else
         sdpstatus = StatusUnknown | s;
     (X,y,Z,sdpstatus))
 
@@ -727,7 +728,7 @@ solveSDPA(Matrix,Sequence,Matrix) := o -> (C,A,b) -> (
     verbose1("Executing SDPA", o);
     verbose1("Input file: " | fin, o);
     sdpaRun := runProgram(sdpaProgram, fin | " " | fout,
-	KeepFiles => true, RaiseError => false);
+        KeepFiles => true, RaiseError => false);
     handleErrors(sdpaRun#"return value", sdpaRun#"error file", o.Verbosity);
     verbose1("Output file: " | fout, o);
     (X,y,Z,sdpstatus) := readSDPA(fout,n,o.Verbosity);
@@ -738,7 +739,7 @@ readSDPA = (fout,n,Verbosity) -> (
         l = replace("([{} +])","",l);
         for s in separate(",",l) list if s=="" then continue else value s
     );
-    readMatrix := ll -> 
+    readMatrix := ll ->
         matrix(RR, for l in ll list readVec l);
     text := get fout;
     L := lines text;
@@ -746,22 +747,22 @@ readSDPA = (fout,n,Verbosity) -> (
     local sdpstatus;
     y := null; X := null; Z := null;
     i := position(L, l -> match("xVec =",l));
-    if i=!=null then 
+    if i=!=null then
         y = transpose matrix(RR, {readVec L#(i+1)});
     i = position(L, l -> match("xMat =",l));
-    if i=!=null then 
+    if i=!=null then
         Z = matrix(RR, for j to n-1 list readVec L#(i+j+2));
     i = position(L, l -> match("yMat =",l));
-    if i=!=null then 
+    if i=!=null then
         X = matrix(RR, for j to n-1 list readVec L#(i+j+2));
     --READ STATUS
     verbose2(text,Verbosity);
     s := first select(L, l -> match("phase.value",l));
-    if match("pdOPT|pdFEAS",s) then 
+    if match("pdOPT|pdFEAS",s) then
         sdpstatus = StatusFeas
-    else if match("dFEAS",s) then 
+    else if match("dFEAS",s) then
         sdpstatus = StatusPFeas
-    else if match("pFEAS",s) then 
+    else if match("pFEAS",s) then
         sdpstatus = StatusDFeas
     else if match("dUNBD|pINF_dFEAS",s)  then(
         sdpstatus = StatusDInfeas;
@@ -790,7 +791,7 @@ solveMOSEK(Matrix,Sequence,Matrix) := o -> (C,A,b) -> (
     verbose1("Executing MOSEK", o);
     verbose1("Input file: " | fin, o);
     mosekRun := runProgram(mosekProgram, fin, KeepFiles => true,
-	RaiseError => false);
+        RaiseError => false);
     fout2 := mosekRun#"output file";
     handleErrors(mosekRun#"return value", mosekRun#"error file", o.Verbosity);
     verbose1("Output file: " | fout, o);
@@ -815,7 +816,7 @@ writeMOSEK = (fin,C,A,b) -> (
         );
     nlines := str -> #select("^",str)-1;
     -- header
-    f << "# CBF file generated by SemidefiniteProgramming.m2" << endl;    
+    f << "# CBF file generated by SemidefiniteProgramming.m2" << endl;
     f << "VER" << endl << version << endl;
     f << "OBJSENSE" << endl << "MIN" << endl;
     f << "PSDVAR" << endl << 1 << endl << n << endl;
@@ -827,7 +828,7 @@ writeMOSEK = (fin,C,A,b) -> (
     f << nlines Cstr << endl << Cstr;
     -- constraints
     f << "FCOORD" << endl;
-    Astr := concatenate for i to m-1 list 
+    Astr := concatenate for i to m-1 list
         smat2str(A#i, i|" 0 ");
     f << nlines Astr << endl << Astr;
     -- constants
@@ -862,7 +863,7 @@ readMOSEK = (fout,fout2,n,Verbosity) -> (
         Xh#(2*s+1) = (j,i)=>Xij;
         Zh#(2*s) = (i,j)=>Zij;
         Zh#(2*s+1) = (j,i)=>Zij
-	);
+    );
     X := map(RR^n,RR^n,toList Xh);
     Z := map(RR^n,RR^n,toList Zh);
     -- READ STATUS
@@ -870,7 +871,7 @@ readMOSEK = (fout,fout2,n,Verbosity) -> (
     s := select(L, l -> match("PROBLEM STATUS",l));
     if #s==0 then return (,,,StatusFailed);
     s = first s;
-    if match("PRIMAL_AND_DUAL_FEASIBLE",s) then 
+    if match("PRIMAL_AND_DUAL_FEASIBLE",s) then
         sdpstatus = StatusFeas
     else if match("PRIMAL_FEASIBLE",s) then
         sdpstatus = StatusPFeas
@@ -885,7 +886,7 @@ readMOSEK = (fout,fout2,n,Verbosity) -> (
     else if match("DUAL_INFEASIBLE",s) then (
         sdpstatus = StatusDInfeas;
         y=null;Z=null; )
-    else 
+    else
         sdpstatus = StatusUnknown | s;
     (X,y,Z,sdpstatus))
 
@@ -901,7 +902,7 @@ checkOptimize(String) := o -> (solver) -> (
     equal := (y0,y) -> y=!=null and norm(y0-y)<tol*(1+norm(y0));
     checkZ := (C,A,y,Z) -> if y===null then false
         else ( yA := sum for i to #A-1 list y_(i,0)*A_i; norm(Z-C+yA)<MedPrecision );
-    local C; local b; local A; local A1; local A2; local A3; 
+    local C; local b; local A; local A1; local A2; local A3;
     local y0; local y; local X; local Z; local yopt; local sdpstatus;
 
     t0:= (
@@ -979,7 +980,7 @@ TEST /// --sdp construction
     M = matrix {{1,u,3-v},{u,5,w},{3-v,w,9+u}};
     objFun = u+v+w;
     P = sdp({u,v,w}, M, objFun);
-    A=P#"A"; b=P#"b"; C=P#"C"; 
+    A=P#"A"; b=P#"b"; C=P#"C";
     assert( #A == 3 )
     assert( A#0 == -matrix(QQ,{{0,1,0},{1,0,0},{0,0,1}}) )
     assert( b == -matrix(QQ,{{1},{1},{1}}) )
@@ -998,20 +999,20 @@ TEST /// --smat2vec
 TEST /// --PSDdecomposition
     debug needsPackage "SemidefiniteProgramming"
     equal = (f1,f2) -> norm(f1-f2) < HighPrecision;
-    
+
     A = matrix(QQ, {{5,3,5},{3,2,4},{5,4,10}})
     (L,D,P) = PSDdecomposition A
     assert(L=!=null and L*D*transpose L == transpose P * A * P)
     (L,D,P) = PSDdecomposition promote(A,RR)
     assert(L=!=null and equal(L*D*transpose L, transpose P * A * P))
-    
+
     V = random(QQ^12,QQ^8)
-    A = V * transpose V 
+    A = V * transpose V
     (L,D,P) = PSDdecomposition(A)
     assert(L=!=null and L*D*transpose L == transpose P * A * P)
 
     V = random(RR^12,RR^8)
-    A = V * transpose V 
+    A = V * transpose V
     (L,D,P) = PSDdecomposition(A)
     assert(L=!=null and equal(L*D*transpose L, transpose P * A * P))
 

@@ -3,8 +3,8 @@
 
 newPackage select((
      "NumericalAlgebraicGeometry",
-     Version => "1.14",
-     Date => "Aug 2019",
+     Version => "1.17",
+     Date => "Mar 2021",
      Headline => "numerical algebraic geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -17,7 +17,7 @@ newPackage select((
      PackageExports => {"NAGtypes",
 	 "NumericalLinearAlgebra",
 	 "SLPexpressions"},
-     PackageImports => {"PHCpack","Bertini","Truncations"},
+     PackageImports => {"PHCpack","Bertini"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      --DebuggingMode => true,

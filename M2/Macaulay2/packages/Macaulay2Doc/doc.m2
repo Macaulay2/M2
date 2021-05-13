@@ -121,6 +121,13 @@ document {
     (symbol *,CC,QQ),
     (symbol *,CC,RR),
     (symbol *,CC,ZZ),
+    (symbol *, QQ, RRi),
+    (symbol *, RR, RRi),
+    (symbol *, RRi, QQ),
+    (symbol *, RRi, RR),
+    (symbol *, RRi, RRi),
+    (symbol *, RRi, ZZ),
+    (symbol *, ZZ, RRi),
     (symbol*,  GradedModuleMap, GradedModuleMap),
     (symbol*,  RingElement, Matrix),
     (symbol*,  Ideal, CoherentSheaf),
@@ -181,6 +188,13 @@ document {
 	  "N = I*M + a*R^2",
 	  "isHomogeneous N"
 	  },
+     HEADER3 "Intervals",
+     PARA { "If one of the factors is an ", TO "RRi", ", the output is an interval containing all poducts of pairs in the factors." },
+    EXAMPLE {
+    "2*interval(1,3)",
+    "interval(1,3)*interval(-1,2)",
+    "interval(-1,1)*interval(-1,1)"
+    },
      SeeAlso =>{ "times", "product"}
      }
 
@@ -243,7 +257,15 @@ document {
 	  (symbol +,ZZ,QQ),
 	  (symbol +,ZZ,RR),
 	  (symbol +,ZZ,ZZ),
-	  (symbol +, RingElement, GradedModuleMap),
+      (symbol +, QQ, RRi),
+      (symbol +, RR, RRi),
+      (symbol +, RRi, QQ),
+      (symbol +, RRi, RR),
+      (symbol +, RRi),
+      (symbol +, RRi, RRi),
+      (symbol +, RRi, ZZ),
+      (symbol +, ZZ, RRi),
+      (symbol +, RingElement, GradedModuleMap),
 	  (symbol +, Matrix, Number),
 	  (symbol +, ZZ, ChainComplexMap),
 	  (symbol +, ChainComplexMap, ZZ),
@@ -274,6 +296,13 @@ document {
      	  M = matrix{{1,2,3},{2,3,4},{3,4,6}}
 	  M+1, M+2
      ///,
+    HEADER3 "Intervals",
+    PARA { "If one of the addends is an ", TO "RRi", ", the output is an interval containing all sums of pairs in the addends." },
+    EXAMPLE {
+        "2+interval(1,3)",
+        "interval(1,3)+interval(-1,2)",
+        "interval(-1,1)+interval(-1,1)"
+    },
      SeeAlso =>{ "plus", "sum"}
      }
 
@@ -332,6 +361,14 @@ document {
 	  (symbol -,ZZ,QQ),
 	  (symbol -,ZZ,RR),
 	  (symbol -,ZZ,ZZ),
+      (symbol -, QQ, RRi),
+      (symbol -, RR, RRi),
+      (symbol -, RRi),
+      (symbol -, RRi, QQ),
+      (symbol -, RRi, RR),
+      (symbol -, RRi, RRi),
+      (symbol -, RRi, ZZ),
+      (symbol -, ZZ, RRi),
 	  (symbol -, Matrix, RingElement),
 	  (symbol -, Matrix),
 	  (symbol -, RingElement, Matrix),
@@ -351,6 +388,13 @@ document {
      	  M = matrix{{1,2,3},{2,3,4},{3,4,6}}
 	  M-1, M-2
      ///,
+     HEADER3 "Intervals",
+     PARA { "If one of the inputs is an ", TO "RRi", ", the output is an interval containing all differences of pairs in the inputs." },
+     EXAMPLE {
+          "2-interval(1,3)",
+          "interval(1,3)-interval(-1,2)",
+          "interval(-1,1)-interval(-1,1)"
+     },
      SeeAlso =>{ "difference", "minus"}
      }
 
@@ -384,8 +428,15 @@ document {
 	  (symbol /,ZZ,CC),
 	  (symbol /,ZZ,QQ),
 	  (symbol /,ZZ,RR),
-	  (symbol /,ZZ,ZZ)
-	  },
+	  (symbol /,ZZ,ZZ),
+      (symbol /, QQ, RRi),
+      (symbol /, RR, RRi),
+      (symbol /, RRi, QQ),
+      (symbol /, RRi, RR),
+      (symbol /, RRi, RRi),
+      (symbol /, RRi, ZZ),
+      (symbol /, ZZ, RRi)
+},
      Headline => "a binary operator, usually used for division",
      Usage => "x / y",
      "This operator is currently used in several ways in Macaulay2.",
@@ -399,6 +450,13 @@ document {
      2/3
      2./3
      ///,
+     HEADER3 "Intervals",
+     PARA { "If one of the inputs is an ", TO "RRi", ", the output is an interval containing all quotients of pairs in the inputs." },
+     EXAMPLE {
+         "2/interval(1,3)",
+         "interval(-1,2)/interval(1,3)",
+         "interval(1,2)/interval(1,2)"
+     },
      SeeAlso => { "//"}
      }
 
@@ -765,7 +823,10 @@ document {
 	  (symbol==, Ideal, Ideal), (symbol==, MutableMatrix, MutableMatrix), (symbol ==,Boolean,Boolean),
 	  (symbol ==,CC,CC), (symbol ==,CC,QQ), (symbol ==,CC,RR), (symbol ==,CC,ZZ), (symbol ==,Matrix,Number),
 	  (symbol ==,Number,Matrix), (symbol ==,QQ,CC), (symbol ==,QQ,QQ), (symbol ==,QQ,RR), (symbol ==,RR,CC),
-	  (symbol ==,RR,QQ), (symbol ==,RR,RR), (symbol ==,RR,ZZ), (symbol ==,RingElement,ZZ), (symbol ==,Sequence,Sequence),
+	  (symbol ==,RR,QQ), (symbol ==,RR,RR), (symbol ==,RR,ZZ),
+      (symbol ==,QQ,RRi), (symbol ==,ZZ, RRi), (symbol ==, RR, RRi),
+      (symbol ==,RRi,QQ), (symbol ==,RRi, ZZ), (symbol ==,RRi, RR),
+      (symbol ==,RRi,RRi), (symbol ==,RingElement,ZZ), (symbol ==,Sequence,Sequence),
 	  (symbol ==,String,String), (symbol ==,Symbol,Symbol), (symbol ==,ZZ,CC), (symbol ==,ZZ,RR),
 	  (symbol ==,ZZ,RingElement), (symbol ==,ZZ,ZZ), (symbol==, Module, Module), (symbol==, Vector, Vector),
 	  (symbol==, BettiTally, BettiTally), (symbol==, VisibleList, VisibleList),
@@ -880,6 +941,13 @@ document {
       	  "image matrix {{2,a},{1,5}} == R^2",
       	  "image matrix {{2,a},{0,5}} == R^2"
 	  },
+     HEADER3 "Intervals",
+        PARA { "If either side of the equality is an ", TO "RRi", ", the equality is an equality of sets." },
+    EXAMPLE {
+        "interval(1,3) == interval(1,3)",
+        "interval(1/2) == 1/2",
+        "interval(1/3) == 1/3"
+    },
      PARA{
 	  "It may happen that for certain types of objects, there is no method installed (yet)
 	  for testing mathematical equality, in which case an error message will be

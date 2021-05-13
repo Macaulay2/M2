@@ -34,7 +34,7 @@ FreeMonoid::FreeMonoid(
     mNumWeights(wtvecs.size() / variableNames.size())
 {
   auto ndegrees = degreeMonoid().n_vars();
-  auto nvars = variableNames.size();
+  [[maybe_unused]] auto nvars = variableNames.size();
   assert(nvars * ndegrees == mDegrees.size());
 
   for (const int* i = mDegrees.data(); i != mDegrees.data() + mDegrees.size(); i += ndegrees)
@@ -90,7 +90,7 @@ void FreeMonoid::mult(const Monom& m1, const Monom& m2, MonomialInserter& result
 void FreeMonoid::mult3(const Monom& m1, const Monom& m2, const Monom& m3, MonomialInserter& result) const
 {
   int sz = m1[0] + wordLength(m2) + wordLength(m3);
-  result.push_back(m1[0] + wordLength(m2) + wordLength(m3));
+  result.push_back(sz);
   for (int i=1; i<=mNumWeights; ++i)
     result.push_back(m1[i] + m2[i] + m3[i]);
   result.insert(result.end(),m1.begin()+mNumWeights+1,m1.end());
@@ -118,8 +118,8 @@ int FreeMonoid::compare(const Monom& m1, const Monom& m2) const
   // at this point, the weights are the same.
   // the total length is just mNumWeights + 1 + wordLength, so just
   // compare the total length (i.e. m1[0] and m2[0]
-  if (m1[0] > m2[0]) return GT;
-  if (m1[0] < m2[0]) return LT;
+  if (m1.size() > m2.size()) return GT;
+  if (m1.size() < m2.size()) return LT;
 
   // at this stage, they have the same weights and word length, so use lex order
   for (int j = mNumWeights+1; j < m1.size(); ++j)

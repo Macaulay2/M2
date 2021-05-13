@@ -270,7 +270,7 @@ getOperator := key -> if operator#?key then (
     fixup DIV (
 	if binary#?key then {
 	    PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". ",
-		"The user may install ", TO "Macaulay2Doc :: binary methods", "for handling such expressions with code such as"},
+		"The user may install ", TO "Macaulay2Doc :: binary methods", " for handling such expressions with code such as"},
 	    PRE if key === symbol SPACE
 	    then "         X Y := (x,y) -> ..."
 	    else "         X "|op|" Y := (x,y) -> ...",

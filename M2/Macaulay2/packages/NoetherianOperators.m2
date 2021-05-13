@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
     "NoetherianOperators",
-    Version => "1.1",
-    Date => "Dec 22, 2020",
+    Version => "2.0",
+    Date => "May 9, 2021",
     Authors => {
         {Name => "Robert Krone", 
         Email => "krone@math.gatech.edu"},
@@ -17,7 +17,7 @@ newPackage(
     },
     Headline => "numerically compute local dual spaces, Hilbert functions, and Noetherian operators",
     PackageExports => {"Bertini", "NumericalLinearAlgebra", "NAGtypes"},
-    PackageImports => {"Dmodules", "PrimaryDecomposition"},
+    PackageImports => {"PrimaryDecomposition"},
     AuxiliaryFiles => false,
     DebuggingMode => false,
     Keywords => {"Numerical Algebraic Geometry", "Commutative Algebra"}
@@ -31,15 +31,14 @@ export {
     "gCorners",
     "localHilbertRegularity",
     "eliminatingDual",
-    "innerProduct",
+    "pairingMatrix",
     "orthogonalInSubspace",
     "Rational",
-    "ProduceSB",
+    "StandardBasis",
 
     "DiffOp",
-    "ZeroDiffOp",
-    "InterpolatedDiffOp",
     "diffOp",
+    "diffOpRing",
     "normalize",
 
     "noetherianOperators",
@@ -60,8 +59,12 @@ export {
 
     --functions from punctual Hilb approach
     "getIdealFromNoetherianOperators",
+    "getModuleFromNoetherianOperators",
     "joinIdeals",
-    "mapToPunctualHilbertScheme" 
+    "mapToPunctualHilbertScheme",
+    "amult",
+    "solvePDE",
+    "differentialPrimaryDecomposition"
 
 }
 
@@ -88,19 +91,22 @@ protect \ {
 --          behavior is undefined.
 dualSpace (List, Point) := (L, p) -> (
     if #L == 0 then error"expected nonempty list";
-    L' := select(L, op -> not instance(op, ZeroDiffOp));
-    gens := matrix{ L' / (op -> keys op / (k -> op#k * k)) / sum };
-    if #L' == 0 then gens = sub(gens, ring first L);
-    dualSpace(gens, p)
+    S := ring first L;
+    R := coefficientRing S;
+    L' := select(L, op -> op != 0);
+    gens := matrix{ L' / (op -> matrix op)};
+    if #L' == 0 then gens = sub(gens, S);
+    dualSpace((map(R,S, vars R)) gens, p)
 )
 TEST ///
 R = CC[x,y]
-foo1 = new DiffOp from {x => 12, x^2*y => 3}
-foo2 = new DiffOp from {1_R => 4, x*y => 4}
+S = diffOpRing R
+foo1 = diffOp(12*dx + 3*dx^2*dy)
+foo2 = diffOp(4*dx*dy + 4)
 pt = point{{1_CC,2}}
 a = dualSpace({foo1,foo2}, pt)
 b = dualSpace(matrix{{12*x + 3*x^2*y, 4*x*y + 4}}, pt)
-assert(gens a.Space == gens b.Space)
+assert(gens a.Space - gens b.Space == 0)
 assert(point a == point b)
 ///
 
@@ -153,7 +159,7 @@ initializeDualData (Matrix,Boolean,Number) := opts -> (Igens,syl,t) -> (
     H.hIgens = homogenize(sub(Igens,S), h); 
     T := if syl then S else R;
     H.Seeds = dualSpace(matrix{{1_T}},origin(T));
-    H.BMmatrix = innerProduct(polySpace if syl then H.hIgens else H.Igens, H.Seeds);
+    H.BMmatrix = pairingMatrix(polySpace if syl then H.hIgens else H.Igens, H.Seeds);
     H.BMmatrix = sub(H.BMmatrix,F);
     H.BMintegrals = gens H.Seeds;
     H.BMcoefs = myKernel(H.BMmatrix, opts, Tolerance=>t);
@@ -241,7 +247,7 @@ truncate (PolySpace, List, ZZ) := (L,ind,d) -> (
     )
 truncate (DualSpace, List, ZZ) := (L,ind,d) -> dualSpace(truncate(L.Space,ind,d),L.BasePoint)
 
-gCorners = method(TypicalValue => Matrix, Options => {Tolerance => null, ProduceSB => false})
+gCorners = method(TypicalValue => Matrix, Options => {Tolerance => null, StandardBasis => false})
 gCorners (Point,Ideal) := o -> (p,I) -> gCorners(p,gens I,o)
 gCorners (Point,Matrix) := o -> (p,Igens) -> (
     R := ring Igens;
@@ -250,7 +256,7 @@ gCorners (Point,Matrix) := o -> (p,Igens) -> (
 
     ecart := max apply(flatten entries Igens, g->(gDegree g - lDegree g)); --max ecart of generators
     GCs := {}; -- g-corners (as pairs: monomial, degree in homogenization)
-    SBs := {}; -- standard basis elements (if o.ProduceSB)
+    SBs := {}; -- standard basis elements (if o.StandardBasis)
     finalDegree := max(flatten entries Igens / gDegree);
     d := 0;
     dBasis := dBasisReduced := polySpace map(R^1,R^0,0); -- Sylvester truncated dual space
@@ -262,8 +268,8 @@ gCorners (Point,Matrix) := o -> (p,Igens) -> (
 	-- Find new g-corners based on what monomials are missing from dBasis.
 	newGCs := newGCorners(dBasisReduced,GCs,d,ecart);
 	GCs = GCs|newGCs;
-	-- If o.ProduceSB then compute a standard basis element for each new g-corner.
-	if o.ProduceSB and #newGCs > 0 then SBs = SBs|newSBasis(dBasis,newGCs,d,t);
+	-- If o.StandardBasis then compute a standard basis element for each new g-corner.
+	if o.StandardBasis and #newGCs > 0 then SBs = SBs|newSBasis(dBasis,newGCs,d,t);
 	-- Update stopping degree if there were new g-corners found.
 	if #newGCs > 0 then (
 	    topLCMdegree := max apply(subsets(#GCs,2),s->(
@@ -277,7 +283,7 @@ gCorners (Point,Matrix) := o -> (p,Igens) -> (
 	--print(d, finalDegree, dim dBasisReduced, newGCs/first);
 	d = d+1;
 	);
-    GCs = if o.ProduceSB then SBs else GCs/first;
+    GCs = if o.StandardBasis then SBs else GCs/first;
     sbReduce matrix {GCs}
     )
 
@@ -288,7 +294,7 @@ mylcm = L -> (
     )
 
 -- computes s-corners from the g-corners
--- i.e. the maximal monomials not in the ideal generated by the g-corners
+-- i.e., the maximal monomials not in the ideal generated by the g-corners
 socles = method(TypicalValue => Matrix)
 socles MonomialIdeal := I -> mingens((I : ideal gens ring I)/I)
 socles Matrix := M -> socles monomialIdeal M
@@ -341,7 +347,7 @@ BMmatrix = H -> (
 	    E' := matrix {apply(n, k->(
 			subs := matrix{apply(n, l->(if l > k then 0_R else (gens R)#l))};
 			(gens R)#k * sub(bpoly,subs)))};
-	    M' := innerProduct(polySpace Igens, polySpace E');
+	    M' := pairingMatrix(polySpace Igens, polySpace E');
 	    if not homogeneous then M' = map(R^(s+(numcols Bfull)),R^n,0) || M';
 	    for j from 0 to s-1 do (
 		w := apply(n,k->(bcol_(offset + j*n + k,0)));
@@ -431,22 +437,22 @@ diff (PolySpace, PolySpace) := (S, T) -> (
 
 
 
--- Matrix of inner products
+-- Matrix of natural pairings
 -- PolySpace generators as rows, DualSpace generators as columns
-innerProduct = method()
-innerProduct (PolySpace, PolySpace) := (S, T) -> (
+pairingMatrix = method()
+pairingMatrix (PolySpace, PolySpace) := (S, T) -> (
     M := last coefficients(gens S | gens T);
     Svec := submatrix(M,0..dim S-1);
     Tvec := submatrix'(M,0..dim S-1);
     (transpose Svec)*Tvec
     )
-innerProduct (PolySpace, DualSpace) := (S, L) -> (
+pairingMatrix (PolySpace, DualSpace) := (S, L) -> (
     Sshift := polySpace sub(gens S, matrix{(gens ring L) + coordinates L.BasePoint});
-    innerProduct(Sshift, L.Space)
+    pairingMatrix(Sshift, L.Space)
     )
-innerProduct (RingElement, DualSpace) := (f, L) -> innerProduct(polySpace matrix{{f}}, L)
-innerProduct (PolySpace, RingElement) := (S, l) -> innerProduct(S, polySpace matrix{{l}})
-innerProduct (RingElement, RingElement) := (f, l) -> (
+pairingMatrix (RingElement, DualSpace) := (f, L) -> pairingMatrix(polySpace matrix{{f}}, L)
+pairingMatrix (PolySpace, RingElement) := (S, l) -> pairingMatrix(S, polySpace matrix{{l}})
+pairingMatrix (RingElement, RingElement) := (f, l) -> (
     M := last coefficients(matrix{{f,l}});
     ((transpose M_{0})*M_{1})_(0,0)
     )
@@ -455,7 +461,7 @@ orthogonalInSubspace = method()
 orthogonalInSubspace (DualSpace, PolySpace, Number) := (D,S,t) -> (
     R := ring S;
     F := coefficientRing R;
-    M := sub(innerProduct(S,D),F);
+    M := sub(pairingMatrix(S,D),F);
     K := myKernel(transpose M,Tolerance=>t);
     polySpace((gens S)*K, Reduced=>false)
     )
@@ -674,142 +680,148 @@ isPointEmbeddedInCurve (Point,Ideal) := o-> (p,I) -> (
 -- The value of Op is a HashTable, with keys corresponding to partial monomials, 
 --  and values corresponding to coefficients.
 -- Constructors
-DiffOp = new Type of HashTable
+DiffOp = new Type of Vector
 DiffOp.synonym = "differential operator"
-new DiffOp from HashTable := (DD,H) -> (
-    if #set(keys H / ring) > 1 then error"expected all elements in same ring";
-    if not all(keys H, m -> monomials m == m) then error"keys must be pure monomials";
-    R := ring first keys H;
-    applyValues(H, v -> sub(v,R))
+DiffOp#{Standard,AfterPrint} = x -> (
+    << endl;                             -- double space
+    << concatenate(interpreterDepth:"o") << lineNumber;
+    y := class x;
+    << " : DiffOp in " << y;
+    << endl;
 )
-new DiffOp from List := (DD,L) -> new DiffOp from hashTable L
+
+diffOpRing = (cacheValue "DiffOpRing") (R -> R(monoid [gens R / toString / (v -> "d" | v) / value]))
+diffOpModule = memoize((S, k) -> new Module of DiffOp from S^k)
+
 diffOp = method()
-diffOp HashTable := H -> (
-    if #keys H == 0 then error "expected non-empty hash table";
-    H' := select(H, f -> f!= 0);
-    if #keys H' == 0 then new ZeroDiffOp from ring first keys H
-    else new DiffOp from H'
+diffOp Matrix := m -> (
+    S := ring m;
+    if S.?cache and S.cache#?"DiffOpRing" then (S = diffOpRing S; m = sub(m,S);)
+    else if S =!= diffOpRing coefficientRing S then error"expected ring element in diffOpRing";
+    
+    SS := diffOpModule(S, numRows m);
+    new SS from vector m
 )
-diffOp List := L -> diffOp hashTable L
--- Create DiffOp from Weyl algebra element. 
--- Output will be in ring R and R must contain the non
-diffOp (Ring, RingElement) := (R,f) -> diffOp(f,R)
-diffOp (RingElement, Ring) := (f,R) -> (
-    R' := ring f;
-    createDpairs R';
-    (mon,coef) := coefficients(f, Variables => R'.dpairVars#1);
-    -- Create the map from R' to R that maps x => x and dx => x
-    rules := apply(R'.dpairVars#1, R'.dpairVars#0, (dx, x) -> dx => sub(x,R)) | apply(R'.dpairVars#0, x -> x => sub(x,R));
-    liftMap := map(R,R', rules);
-    diffOp apply(flatten entries liftMap(mon), flatten entries liftMap(coef), identity)
+diffOp RingElement := f -> diffOp matrix f
+
+DiffOp ? DiffOp := (a,b) -> (
+    if #(entries a) != #(entries b) then incomparable
+    else if (class a) != (class b) then incomparable;
+    delta := a - b;
+    i := position(entries delta, j -> j != 0);
+    if instance(i, Nothing) then symbol ==
+    else ((entries a)#i) ? ((entries b)#i)
 )
-diffOp RingElement := f -> (
-    R' := ring f;
-    if not R'.?cache then R'.cache = new CacheTable;
-    if not R'.cache#?"preWA" then (
-        createDpairs R';
-        R'.cache#"preWA" = (coefficientRing R')(monoid[(R'.dpairVars#0)]);
-    );
-    R := R'.cache#"preWA";
-    diffOp(f, R)
+DiffOp == DiffOp := (a,b) -> (
+    if ((a ? b) === incomparable) then error("expected comparable differential operators")
+    else if ((a ? b) === (symbol ==)) then true
+    else false
 )
+DiffOp == ZZ := (d,i) -> matrix d == i
+ZZ == DiffOp := (i,d) -> d == i
 
-
-
--- Vector space operations
-DiffOp + DiffOp := (D1, D2) -> diffOp merge(D1, D2, (a,b) -> a+b)
-RingElement * DiffOp := (r, D) -> diffOp applyValues(D, x -> r*x)
-Number * DiffOp := (r, D) -> diffOp applyValues(D, x -> r*x)
-DiffOp - DiffOp := (D1, D2) -> D1 + (-1)*D2
-- DiffOp := D -> (-1)*D
--- Application of DiffOp
-DiffOp RingElement := (D, f) -> keys D / (k -> (D)#k * diff(k, f)) // sum
--- Comparison
-DiffOp ? DiffOp := (D1, D2) -> (
-    if instance(D1 - D2, ZeroDiffOp) then return symbol ==;
-    m := max keys(D1 - D2);
-    if not D2#?m then symbol >
-    else if not D1#?m then symbol <
-    else (D1#m) ? (D2#m)
+coefficients DiffOp := opts -> d -> coefficients (matrix d, opts)
+-- Operations
+DiffOp + DiffOp := DiffOp => (a,b) -> (
+    A := class a;
+    B := class b;
+    if A === B then diffOp(matrix a+matrix b) 
+    else error"expected pair to have a method for '+'"
 )
-DiffOp == DiffOp := (D1, D2) -> return (D1 ? D2) === (symbol ==)
--- Printing
--- Takes a monomial and returns an expression with
--- a "d" appended to each variable name
-addDsymbol = x -> (
-    R := ring x;
-    e := first exponents x;
-    product apply(numgens R, i -> (expression("d" | toString R_i))^(expression(e#i)))
+DiffOp - DiffOp := DiffOp => (a,b) -> (
+    A := class a;
+    B := class b;
+    if A === B then diffOp(matrix a-matrix b)
+    else error"expected pair to have a method for '-'"
 )
-expression DiffOp := D -> 
-    rsort(keys D, MonomialOrder => Lex) / 
-    (k -> (D)#k * if k == 1 then expression(1) else addDsymbol(k)) //
-    sum
-net DiffOp := D -> net expression D
-toString DiffOp := D -> toString expression D
--- other useful functions
-ring DiffOp := D -> ring first keys D
-substitute (DiffOp, Ring) := (D,R) -> applyPairs(D, (k,v) -> sub(k, R) => sub(v,R))
-normalize = method();
-normalize DiffOp := D -> 1/(sub( leadCoefficient D#(first rsort keys D), coefficientRing ring D)) * D
-DiffOp == ZZ := (D, z) -> if z == 0 then false else error"cannot compare DiffOp to nonzero integer"
-ZZ == DiffOp := (z, D) -> D == z
-evaluate (DiffOp, Matrix) := (D,p) -> applyValues(D, v -> promote((evaluate(matrix{{v}}, p))_(0,0), ring D))
-evaluate (DiffOp, Point) := (D,p) -> evaluate(D, matrix p)
+--Left action
+RingElement * DiffOp := DiffOp => (r,d) -> (
+    R := class r;
+    S := class d;
+    if ring r === ring d or member(ring r, (ring d).baseRings) then new S from diffOp(promote(r,ring d)*matrix d)
+    else error"expected pair to have a method for '*'"
+)
+- DiffOp := DiffOp => d -> ((-1)*d)
+-- Application
+DiffOp SPACE Matrix := (D,m) -> (
+    if numColumns m != 1 then error"expected column matrix";
+    if numRows m != #(entries D) then error"expected differential operator and column matrix of same length";
+    S := ring D;
+    R := coefficientRing S;
+    try mm := lift(m, R) else error"expected matrix in the coefficient ring of operator";
+    DD := entries D;
+    mm = flatten entries mm;
+    sum(DD, mm, (d,f) -> (
+        (mon,coe) := coefficients d;
+        phi := map(R,S,gens R);
+        (diff(phi mon, f) * lift(matrix entries coe,R))_(0,0) -- `matrix entries (...)` clears the degree data  
+    ))
+)
+DiffOp SPACE RingElement := (D, f) -> D (matrix f)
+
+-- other functions
+normalize = method()
+normalize DiffOp := DiffOp => d -> (
+    R := coefficientRing ring d;
+    KK := coefficientRing R;
+    lt := leadTerm matrix d;
+    lc := last coefficients lt;
+    lt = leadTerm sub(lc, R);
+    lc = (last coefficients lt)_(0,0);
+    (1/sub(lc,KK)) * d
+)
+evaluate(DiffOp, Matrix) := (D, pt) -> (
+    S := ring D;
+    R := coefficientRing S;
+    (mon, coe) := coefficients D;
+    diffOp (mon * evaluate(sub(coe, R) , pt))
+)
+evaluate(DiffOp, Point) := (D, pt) -> evaluate(D, matrix pt)
 
 
--- instances of ZeroDiffOp are differential operators that
--- act as the zero operator. They have exactly one key with value zero
-ZeroDiffOp = new Type of DiffOp
-new ZeroDiffOp from Ring := (DD, R) -> hashTable{1_R => 0_R}
-toExternalString ZeroDiffOp := D -> "new ZeroDiffOp from " | toExternalString(ring D)
-ZeroDiffOp == ZZ := (D, z) -> if z == 0 then true else error"cannot compare DiffOp to nonzero integer"
-ZZ == ZeroDiffOp := (z, D) -> (D == z)
 
--- Type used for interpolated differential operators
--- As in DiffOp, each key corresponds to a monomial,
--- but each value is the numerator and denominator of a rational function
-InterpolatedDiffOp = new Type of DiffOp
-new InterpolatedDiffOp from List := (TT, L) -> hashTable L
-new InterpolatedDiffOp from HashTable := (TT, H) -> H
-expression InterpolatedDiffOp := D -> 
-    rsort(keys D, MonomialOrder => Lex) / 
-    (k -> ((expression D#k#0)/(expression D#k#1)) * if k == 1 then expression(1) else addDsymbol(k)) //
-    sum
-net InterpolatedDiffOp := D -> net expression D
-evaluate (InterpolatedDiffOp, Matrix) := (D, p) -> (
-    if any(splice values D, x -> x === "?") then error "cannot evaluate an incomplete interpolated differential operator"
-    else diffOp(applyValues(D, (n,d) -> 
-        promote((evaluate(matrix{{n}},p))_(0,0)/(evaluate(matrix{{d}},p))_(0,0), ring D))))
-evaluate (InterpolatedDiffOp, Point) := (D, p) -> evaluate(D, matrix p)
+TEST ///
+debug NoetherianOperators
+R = QQ[x,y]
+S = diffOpRing(R)
+use S
+SS = diffOpModule(S, 2)
+d = (y^3*dx*dy - x)*SS_0 + dx^2*dy*y * SS_1
+assert(instance(SS_0, DiffOp))
+assert(instance(dx*SS_0 + 3*SS_1, DiffOp))
+assert(instance(d, DiffOp))
 
+m = matrix transpose {{x*y + 5, x^2*y^2}}
+assert(d m == y^3 -x^2*y - 5*x + y*4*y )
+
+m = matrix transpose{{dx, y*dy*dx+dx^2+dy}}
+a = diffOp m
+b = (dx*SS_0 + (y*dy*dx+dx^2+dy)*SS_1)
+assert(a==b)
+
+SS = new Module of DiffOp from S^1
+assert(diffOp (x^2*dx) == x^2*dx*SS_0)
+assert(diffOp(x_R) == x*SS_0)
+assert(diffOp(x_S) == x*SS_0)
+///
 
 TEST ///
 --DiffOp
 R = QQ[x,y,z]
-foo = diffOp{x => y, y=>2*x}
-bar = diffOp{x^2 => z*x + 3, y => x}
-foobar = diffOp{x => y, y=>3*x, x^2 => z*x + 3}
-foo2 = diffOp{x^2*y => x}
-foo3 = diffOp{1_R => 0}
+S = diffOpRing R
+foo = diffOp(y*dx + 2*x*dy)
+bar = diffOp((z*x+3)*dx^2 + dy*x)
+foobar = diffOp(dx*y + 3*x*dy + (z*x+3)*dx^2)
+foo2 = diffOp(x*dx^2*dy)
+foo3 = diffOp(0_S)
 assert(foobar == foo + bar)
-assert(foo(x^2) == 2*x*y)
-assert(foo3 - foo == diffOp{x => -y, 1_R => 0, y => -2*x})
+assert(foo (x^2) == 2*x*y)
+assert(foo3 - foo == diffOp(-y*dx - 2*x*dy))
+assert(foo3 - foo == diffOp(-y*dx - 2*x*dy))
 assert(foo2 > foo)
-assert(instance(foo3, ZeroDiffOp))
-assert(try diffOp{x+y => x} then false else true)
-assert(try diffOp{2*y*x^2 => x+z} then false else true)
+assert(foo3 == 0)
 assert(foo2 - foo2 == 0)
 assert(not foo == 0)
-needsPackage "Dmodules"
-R' = makeWA(R)
-wa = diffOp(x^2*dx - dx^2 + dy^3 + (x-3)*dx)
-use ring wa
-dop = diffOp({x => x^2+x-3, x^2 => -1, y^3 => 1})
-assert(dop == wa)
--- InterpolatedDiffOp
-a = new InterpolatedDiffOp from {x => (x^2+y, y^2+x), y^2*x => (z+2, x^2+z^3*x)}
-assert((evaluate(a, point{{1,2,3}}))(x) == 3/5)
 ///
 
 sanityCheck = (nops, I) -> (
@@ -847,9 +859,9 @@ assert((myKernel M - gens kernel M) == 0)
 noetherianOperators = method(Options => true)
 noetherianOperators (Ideal) := List => true >> opts -> I -> (
     strats := new HashTable from {
+        "PunctualHilbert" => noetherianOperatorsPunctual,
         "Hybrid" => hybridNoetherianOperators,
         "MacaulayMatrix" => noetherianOperatorsViaMacaulayMatrix,
-        "PunctualHilbert" => getNoetherianOperatorsHilb,
     };
     strat := if opts.?Strategy then opts.Strategy else "PunctualHilbert";
     if strats#?strat then strats#strat(I, opts) 
@@ -858,14 +870,33 @@ noetherianOperators (Ideal) := List => true >> opts -> I -> (
 
 noetherianOperators (Ideal, Ideal) := List => true >> opts -> (I,P) -> (
     strats := new HashTable from {
+        "PunctualHilbert" => noetherianOperatorsPunctual,
         "Hybrid" => hybridNoetherianOperators,
         "MacaulayMatrix" => noetherianOperatorsViaMacaulayMatrix,
-        "PunctualHilbert" => getNoetherianOperatorsHilb,
     };
     strat := if opts.?Strategy then opts.Strategy else "MacaulayMatrix";
     if strats#?strat then strats#strat(I, P, opts) 
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
+
+noetherianOperators (Module) := List => true >> opts -> M -> (
+    strats := new HashTable from {
+        "PunctualQuot" => noetherianOperatorsPunctual
+    };
+    strat := if opts.?Strategy then opts.Strategy else "PunctualQuot";
+    if strats#?strat then strats#strat(M, opts) 
+    else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
+)
+
+-- Justin 5/8/21: method for determining multiplicity requires module to be primary, and localize(Module, Prime, List) does not return a primary component if the prime is embedded
+-- noetherianOperators (Module, Ideal) := List => true >> opts -> (M,P) -> (
+    -- strats := new HashTable from {
+        -- "Punctual" => noetherianOperatorsPunctual
+    -- };
+    -- strat := if opts.?Strategy then opts.Strategy else "Punctual";
+    -- if strats#?strat then strats#strat(M, P, opts) 
+    -- else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
+-- )
 -- End dispatcher method
 
 
@@ -875,6 +906,7 @@ macaulayMatrixKernel := true >> opts -> (I, kP) -> (
     if debugLevel > 1 then <<opts<<endl;
     tol := if not opts.?Tolerance then getTolerance(S,opts) else opts.Tolerance;
     degLim := if not opts.?DegreeLimit then -1 else opts.DegreeLimit;
+    if instance(degLim, InfiniteNumber) then degLim = -1;
     rat := if not opts.?Rational then false else opts.Rational;
     kerStrat := if not opts.?KernelStrategy then "Default" else opts.KernelStrategy;
     useBM := if not opts.?IntegralStrategy then null else opts.IntegralStrategy;
@@ -921,20 +953,24 @@ macaulayMatrixKernel := true >> opts -> (I, kP) -> (
 )
 
 
--- returns a list of Diff ops based on matrices M, dBasis
-matrixToDiffOps = (M, dBasis) -> (
-    if M == 0 then {new ZeroDiffOp from ring M}
-    else transpose entries M / 
-        (c -> apply(flatten entries dBasis, c, identity)) /
+-- returns a list of Diff ops based on matrices M, db
+-- currently db must be a row-vector
+matrixToDiffOps = (M, db) -> (
+    R := ring M;
+    S := diffOpRing R;
+    phi := map(S,R, gens S);
+    if M == 0 then {diffOp(0_S)}
+    else transpose entries M /
+        (c -> phi db * transpose matrix {c}) /
         diffOp //
         sort
 )
-
 
 noetherianOperatorsViaMacaulayMatrix = method(Options => true) 
 noetherianOperatorsViaMacaulayMatrix (Ideal, Ideal) := List => true >> opts -> (I, P) -> (
     R := ring I;
     m := if opts.?DegreeLimit then opts.DegreeLimit else -1;
+    if instance(m, InfiniteNumber) then m = -1;
     rat := if opts.?Rational then opts.Rational else false;
 
     t := getTolerance(R,opts);
@@ -956,13 +992,14 @@ debug NoetherianOperators
 R = QQ[x,y,t]
 I = ideal(x^2, y^2 - t*x)
 nops = noetherianOperatorsViaMacaulayMatrix(I) / normalize
-correct = {diffOp{1_R => 1}, diffOp{y => 1}, diffOp{y^2 => t, x => 2}, diffOp{y^3 => t, x*y => 6}}
+S = diffOpRing R
+correct = {diffOp(1_S), diffOp(dy), diffOp(t*dy^2+2*dx), diffOp(t*dy^3+6*dx*dy)}
 assert(all(nops, correct, (i,j) -> i == j))
 
-S = QQ[x,y]
+R = QQ[x,y]
 J = ideal(x^3, y^4, x*y^2)
-
-correct = sort {diffOp{1_S => 1},diffOp{x => 1},diffOp{y => 1},diffOp{x^2 => 1},diffOp{x*y => 1},diffOp{y^2 => 1},diffOp{x^2*y => 1},diffOp{y^3 => 1}}
+S = diffOpRing R
+correct = sort {diffOp(1_S),diffOp(dx),diffOp(dy),diffOp(dx^2),diffOp(dx*dy),diffOp(dy^2),diffOp(dx^2*dy),diffOp(dy^3)}
 nops = noetherianOperatorsViaMacaulayMatrix(J) / normalize
 assert(all(nops, correct, (i,j) -> i == j))
 ///
@@ -1033,8 +1070,8 @@ J = ideal(y^2-4*y+4,-x^2+y)
 p = point{{1.41421,2}}
 L = numNoethOpsAtPoint(J,matrix p, DependentSet => {x,y}, Tolerance => 1e-3)
 assert(#L == 2)
-assert(all(values(L#0 - diffOp{1_R => 1}), v -> abs(sub(v,CC)) < 1e-6))
-assert(all(values(normalize(L#1) - normalize(diffOp{x => 1, y => 2*sqrt(2)})), v -> abs(sub(v,CC)) < 1e-3))
+S = diffOpRing R
+assert(all(flatten entries last coefficients(normalize L#1 - normalize(diffOp(dx+2*sqrt(2)*dy))), v -> abs(sub(v,CC)) < 1e-3))
 ///
 
 hybridNoetherianOperators = method(Options => true)
@@ -1046,18 +1083,21 @@ hybridNoetherianOperators (Ideal, Ideal, Matrix) := List => true >> opts -> (I,P
     IS := sub(I,S);
     kP := toField(S/PS);
     RCC := (ring pt) monoid R;
-    nopsAtPoint := numNoethOpsAtPoint(sub(I,RCC), pt, opts, DependentSet => depVars / (i->sub(i,RCC)));
-    sort flatten for op in nopsAtPoint list (
-        dBasis := sub(matrix{keys op / (m -> R_(first exponents m))}, S);
+    nopsAtPoint := numNoethOpsAtPoint(sub(I,RCC), pt, opts, DependentSet => depVars / (i->sub(i,RCC)), IntegralStrategy => false);
+    -- sort flatten for op in nopsAtPoint list (
+    flatten for op in nopsAtPoint list (
+        dBasis := sub(matrix{flatten entries monomials matrix op / (m -> R_(first exponents m))}, S);
         maxdeg := flatten entries dBasis / sum @@ degree // max;
         K := dBasis;
         for d from 0 to maxdeg - 1 do (
             if debugLevel >= 1 then <<"hybridNoetherianOperators: trying degree "<<d<<" multiples of generators"<<endl;
             G := transpose (gens IS ** basis(0,d,S));
             M := sub(diff(dBasis, G), kP);
+            if debugLevel >= 1 then <<"computing kernel of a " << numColumns M << " x " << numRows M <<endl;
             K = myKernel(M, KernelStrategy => if opts.?KernelStrategy then opts.KernelStrategy else "Default");
             if numColumns K == 1 then break;
         );
+        if debugLevel >= 1 then <<"clearing denominators"<<endl;
         -- Clear denominators and return a DiffOp
         first matrixToDiffOps(liftColumns(lift(K, S), R), sub(dBasis, R))
     )
@@ -1102,9 +1142,8 @@ numericalNoetherianOperators(Ideal) := List => true >> opts -> (I) -> (
     R := (ultimate(coefficientRing, ring matrix goodPoint)) monoid S;
     J := sub(I,R);
 
-
-
-    nopsTemplate := numNoethOpsAtPoint(J, goodPoint, opts, DependentSet => depSet / (i -> sub(i,R)), Tolerance => tol, DegreeLimit => noethDegLim);
+    --here integral strategy must be false to get the same kernel basis as in interpolateFromTemplate
+    nopsTemplate := numNoethOpsAtPoint(J, goodPoint, opts, DependentSet => depSet / (i -> sub(i,R)), Tolerance => tol, DegreeLimit => noethDegLim, IntegralStrategy => false);
     if not S.?cache then S.cache = new CacheTable;
     S.cache#"interp point list" = new List;
     nopsTemplate / (tmpl -> interpolateFromTemplate(I, tmpl, opts, Tolerance => tol, Sampler => sampler))
@@ -1116,14 +1155,14 @@ specializedNoetherianOperators(Ideal, Matrix) := List => true >> opts -> (I,pt) 
     S := ring I;
     if precision ring pt == infinity and precision S == infinity then (
         depVars := if opts.?DependentSet then opts.DependentSet 
-            else if isPrimary I then getDepIndVars(I, opts)
+            else if isPrimary I then first getDepIndVars(I, opts)
             else error"expected option DependentSet";
         numNoethOpsAtPoint(I, pt, opts, DependentSet => depVars)
     )
     else if coefficientRing S === QQ then (
         T := (ultimate(coefficientRing, ring pt)) monoid S;
         depVars = if opts.?DependentSet then opts.DependentSet 
-            else if isPrimary I then getDepIndVars(I, opts)
+            else if isPrimary I then first getDepIndVars(I, opts)
             else error"expected option DependentSet";
         numNoethOpsAtPoint(sub(I,T), pt, opts, DependentSet => depVars / (x -> sub(x, T)))
     )
@@ -1145,18 +1184,8 @@ p = point{{0_CC,0, 3}}
 ptList = new MutableHashTable from {i => 0, pts => {4,7,-12} / (i -> point{{0_CC,0,i}})}
 gen = I -> (ptList.i = (ptList.i+1)%3; ptList.pts#(ptList.i))
 sampler = (n,I) -> apply(n, i -> gen(I))
-nnops = numericalNoetherianOperators(I, DependentSet => {x,y}, TrustedPoint => {{0_CC,0,12}}, Sampler => sampler)
-enops = nnops / (op -> evaluate(op, point{{0,0,3_CC}}))
-snops = specializedNoetherianOperators(I, point{{0,0,3_CC}}, DependentSet => {x,y})
-
-S = ring first snops
-
-enops = enops / (op -> 1/lift(op#(first sort keys op), coefficientRing ring op) * op)
-enops = enops / (i -> sub(i, S))
-snops = snops / (op -> 1/lift(op#(first sort keys op), coefficientRing ring op) * op)
-
-assert(all(snops - enops, i -> all(values i, j -> abs(lift(j,coefficientRing ring first snops)) < 1e-6)))
-
+numericalNoetherianOperators(I, DependentSet => {x,y}, TrustedPoint => {{0_CC,0,12}}, Sampler => sampler)
+specializedNoetherianOperators(I, point{{0,0,3_CC}}, DependentSet => {x,y})
 numericalNoetherianOperators(I, DependentSet => {x,y}, TrustedPoint => {{0_CC,0,12}}, Sampler => sampler, InterpolationDegreeLimit => 0)
 ///
 
@@ -1165,16 +1194,17 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
     oldPtList := (ring I).cache#"interp point list";
     ptList := new List;
     opList := new List;
-    -- (mon,coef) := coefficients(tmpl);
     S := ring tmpl;
+    SS := coefficientRing S;
+    KK := ultimate(coefficientRing, S);
     interpTol := if not opts.?InterpolationTolerance then defaultT(CC) else opts.InterpolationTolerance;
     sampler := if opts.?Sampler then opts.Sampler else (n,Q) -> first bertiniSample(n, first components bertiniPosDimSolve(Q));
-    nops := keys tmpl / (m -> (
+    nops := flatten entries monomials matrix tmpl / (m -> (
         d := 0;
         result := ("?","?");
         while(not opts.?InterpolationDegreeLimit or d <= opts.InterpolationDegreeLimit) do (
-            numBasis := rsort basis(0, d, S);
-            denBasis := rsort basis(0, d, S, Variables => gens S - set (opts.DependentSet / (x -> sub(x,S))));
+            numBasis := rsort basis(0, d, SS);
+            denBasis := rsort basis(0, d, SS, Variables => gens SS - set (opts.DependentSet / (x -> sub(x,SS))));
             -- generate as many new points and new specialized nops as necessary
             while (neededPoints := numColumns numBasis + numColumns denBasis + 1 - #ptList) > 0 do (
                 if neededPoints > 0 and debugLevel > 0 then 
@@ -1189,23 +1219,25 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
                     nop := specializedNopsFromTemplate(I, p, tmpl, opts, Tolerance => opts.Tolerance);
                     if nop === null then continue else {nop, p}
                 );
-                opList = opList | first transpose nopList;
-                ptList = ptList | last transpose nopList;
+                if #nopList > 0 then (
+                    opList = opList | first transpose nopList;
+                    ptList = ptList | last transpose nopList;
+                );
             );
             
             interpPoints := numColumns numBasis + numColumns denBasis + 1;
             liftedCoeffs := take(opList, interpPoints)  /
-                (op -> lift(op#m, ultimate(coefficientRing, ring op)));
+                (op -> lift(coefficient(m, first entries op), ultimate(coefficientRing, ring op)));
             neededPtList := take(ptList, interpPoints);
             try result = rationalInterpolation(neededPtList, liftedCoeffs, numBasis, denBasis, Tolerance => interpTol) then break
                 else d = d+1;
         );
         result = result / (j -> cleanPoly(opts.Tolerance, j));
-        (m => result)
+        (expression first result) / (expression last result) * (expression m)
     ));
     if debugLevel > 0 then <<"Done interpolating from template "<<tmpl<<endl;
     (ring I).cache#"interp point list" = ptList | oldPtList;
-    new InterpolatedDiffOp from nops
+    sum nops
 )
 
 -- Create new specialized Noeth op at a random point using tmpl as a template
@@ -1213,10 +1245,13 @@ interpolateFromTemplate = true >> opts -> (I, tmpl) -> (
 specializedNopsFromTemplate = true >> opts -> (I, pt, tmpl) -> (
     R := ring I;
     R' := ring tmpl;
-    bd := keys tmpl;
-    maxdeg := bd / sum @@ degree // max;
-    bx := basis(0, maxdeg-1, R');
-    M := diff(matrix{bd}, transpose (sub(gens I, R') ** bx));
+    S := coefficientRing R';
+    psi := map(S,R', gens S);
+    --bd := keys tmpl;
+    bd := flatten entries psi monomials matrix tmpl;
+    maxdeg := bd / first @@ degree // max;
+    bx := basis(0, maxdeg-1, S);
+    M := diff(matrix{bd}, transpose (sub(gens I, S) ** bx));
 
     M' := evaluate(M, pt);
     K := numericalKernel(M', Tolerance=>opts.Tolerance);
@@ -1225,8 +1260,7 @@ specializedNopsFromTemplate = true >> opts -> (I, pt, tmpl) -> (
         if debugLevel > 0 then <<"specializedNopsFromTemplate: bad point, trying again"<<endl;
         return null;
     );
-    first matrixToDiffOps(promote(colReduce(K, Tolerance => opts.Tolerance), ring tmpl), matrix{bd})
-
+    first matrixToDiffOps(promote(colReduce(K, Tolerance => opts.Tolerance), S), sub(matrix{bd}, S))
 )
 
 
@@ -1242,12 +1276,15 @@ cleanPoly = (tol, x) -> (
 coordinateChangeOps = method()
 coordinateChangeOps(Matrix, DiffOp) := DiffOp => (A, D) -> (
     R := ring D;
+    S := coefficientRing R;
     A' := inverse A;
-    b := pairs D / ((m,c) -> (sub(m, vars R * A'), sub(c, vars R * transpose A)));
-    b / (p -> last p * (first matrixToDiffOps reverse coefficients first p)) // sum
+    (mon, coe) := coefficients D;
+    mm := sub(mon, vars R * A');
+    cc := sub(coe, vars coefficientRing R * transpose A);
+    diffOp(mm*cc)
 )
 coordinateChangeOps(Matrix, List) := coordinateChangeOps(RingMap, List) := List => (A, L) -> L/(D -> coordinateChangeOps(A, D))
-coordinateChangeOps(RingMap, DiffOp) := DiffOp => (phi, D) -> coordinateChangeOps(transpose(matrix phi // vars ring D), D)
+coordinateChangeOps(RingMap, DiffOp) := DiffOp => (phi, D) -> coordinateChangeOps(transpose(matrix phi // vars coefficientRing ring D), D)
 
 
 TEST ///
@@ -1374,11 +1411,133 @@ modConstant = f -> (
 ------- Noetherian operators code with the use of punctual Hilbert schemes
 --------------------------------------------------------------------------
 --------------------------------------------------------------------------
+-- arithmetic multiplicity
+amult = method()
+amult Module := ZZ => M -> (
+    assPrimes := ass(comodule M);
+    sum apply(assPrimes, P -> degree(saturate(M,P)/M)//degree(P))
+)
+amult Ideal := ZZ => I -> amult module I
+
+TEST ///
+R = QQ[x1,x2,x3,x4]
+U = image matrix{
+    {x1*x3, x1*x2, x1^2*x2 },
+    {x1^2, x2^2, x1^2*x4} }
+assert Equation(amult U, 9)
+
+R = QQ[x,y]
+U = image matrix{
+    {x+1, y*x, x^2},
+    {y+x, x^2 - y^2, y^2}}
+assert Equation(amult U, 5)
+
+R = QQ[x,y]
+U = image matrix{
+    {x+1, y+2, x-1},
+    {y-1, y-2, x-1}}
+assert Equation(amult U, 1)
+
+R = QQ[x, y]
+U = image matrix{
+    {random(1,R),random(1,R),random(1,R)},
+    {random(1,R),random(1,R),random(1,R)}}
+assert Equation(amult U, 3)
+
+R = QQ[x1,x2,x3,x4];
+I = ideal( x1^3*x3^2-x2^5, x2^2*x4^3-x3^5, x1^5*x4^2-x2^7, x1^2*x4^5-x3^7 );
+assert Equation(amult I, 207)
+///
+
+-- Module should be given as an image
+-- List L is a list of associated primes
+localize(Module, Ideal, List) := Module => opts -> (M, P, L) -> (
+    if opts.Strategy != 1 then error"not implemented";
+    --- find a separator
+    g := L /
+        (aP -> select(1, aP_*, g -> g % P != 0)) //
+        flatten;
+    if #g == 0 then M else saturate(M, lcm g)
+)
+
+solvePDE = method(Options => true)
+solvePDE(Module) := List => true >> opts -> M -> (
+    R := ring M;
+    assPrimes := ass(comodule M);
+    assPrimes / (P -> (
+        a := localize(M,P,assPrimes);
+        b := saturate(a, P);
+        {P, reducedNoetherianOperators(a,b,P, opts)}
+    ))
+)
+solvePDE(Ideal) := List => true >> opts -> I -> solvePDE (module I, opts)
+solvePDE(Matrix) := List => true >> opts -> M -> solvePDE (image M, opts)
+
+-- differentialPrimaryDecomposition = solvePDE
+differentialPrimaryDecomposition = method()
+differentialPrimaryDecomposition Module := List => true >> opts -> M -> solvePDE M
+differentialPrimaryDecomposition Ideal := List => true >> opts -> I -> differentialPrimaryDecomposition(module I, opts)
+
+reducedNoetherianOperators = method(Options => true)
+reducedNoetherianOperators (Module, Module, Ideal) := List => true >> opts -> (a,b,P) -> (
+    R := ring P;
+    PR := diffOpRing R;
+    (depVars,indVars) := getDepIndVars(P, opts);
+    m := 0;  -- compute the exponent that determines the order of the diff ops
+    while not isSubset(intersect(b, P^m*(super b)), a) do m = m + 1;
+    m = max(0, m-1);
+    if debugLevel > 1 then print("Multiplicity is: " | toString m);
+    S := (frac(R/P))(monoid[Variables => #depVars]);
+    depVarImage := apply(depVars, gens S, (x,y) -> sub(x,S) + y);
+    gammaList := apply(depVars, depVarImage, (i,j) -> i => j) | indVars / (x -> x => sub(x,S));
+    gamma := map(S, R, gammaList);
+
+    M := super a;
+    mm := ideal vars S;
+
+    aa := trim(gamma(a) + mm^(m+1) * S^(rank M));
+    bb := trim(gamma(b) + mm^(m+1) * S^(rank M));
+    mons := if #depVars > 0 then basis(0,m,S) else matrix{{1_S}}; -- is this correct? m --> m-1?
+
+    punctualDual := M -> (
+        diffMat := diff(transpose gens M, mons);
+        coe := last coefficients(diffMat);
+        kernel sub(coe, coefficientRing S)
+    );
+    
+    local H;
+    K := if b == M then (
+        H = punctualDual aa;
+        gens trim H
+    ) else (
+        H = punctualDual aa;
+        E := punctualDual bb;
+        gens trim(H / E)
+    );
+
+    -- For each column, find the lcm of denominators
+    lcmList := transpose entries K / (C -> (C / denominator // lcm));
+    -- Multiply each column by the lcm of its generators
+    liftedK := transpose matrix apply(transpose entries K, lcmList, (C, c) -> C / (f -> if c%denominator f != 0 then error"something went horribly wrong" else numerator f * (c // denominator f)));
+
+    Pmap := map(PR, R, gens PR);
+    PK := sub(liftedK, PR);
+    Pbasis :=Pmap if #depVars > 0 then basis(0,m,R^(rank M), Variables => depVars )
+                else basis(0,0, R^(rank M));
+
+    multiplierMatrix := (Pbasis * PK);
+    apply(numColumns multiplierMatrix, i ->mingens image matrix  multiplierMatrix_i) /
+        diffOp
+) 
+
+
+
 
 --- Computes the join of two ideals
 joinIdeals = method()
 joinIdeals(Ideal,Ideal) := (I, J) -> (
-    v := symbol v; 
+    if ring J =!= ring I then error"expected ideals in the same ring";
+    v := symbol v;
     w := symbol w;
     R := ring I;
     n := numgens R;
@@ -1449,7 +1608,28 @@ invSystemFromHilbToNoethOps = true >> opts -> (I, R, S, depVars) -> (
     StoR := map(R, S, apply(#depVars, i -> R_(index depVars#i)));
     matrixToDiffOps(liftColumnsPunctualHilbert(last L, R), StoR first L)
 )
-   
+
+noetherianOperatorsPunctual = method(Options => true)
+noetherianOperatorsPunctual (Ideal, Ideal) := List => true >> opts -> (Q, P) -> (
+    M := module Q;
+    reducedNoetherianOperators(M, super M, P)
+)
+
+noetherianOperatorsPunctual Ideal := List => true >> opts -> Q -> 
+    noetherianOperatorsPunctual(Q, radical Q, opts)
+
+noetherianOperatorsPunctual Module := List => true >> opts -> M -> (
+    assPrimes := ass comodule M;
+    if #assPrimes != 1 then error "expected primary module";
+    P := first assPrimes;
+    reducedNoetherianOperators(M, super M, P)
+)
+
+-- noetherianOperatorsPunctual (Module, Ideal) := List => true >> opts -> (M, P) -> (
+    -- assPrimes := ass comodule M;
+    -- reducedNoetherianOperators(localize(M, P, assPrimes), super M, P)
+-- )
+
 -- This function can compute the Noetherian operators of a primary ideal Q.
 -- Here we pass first through the punctual Hilbert scheme 
 getNoetherianOperatorsHilb = method(Options => true)
@@ -1479,11 +1659,9 @@ assert(all(hilb, maca, (i,j) -> i == j))
 ///
 
 -- computes the annihilator ideal of a polynomial F in a polynomial ring 
--- Input: a DiffOp. Output: a zero-dimension ideal that corresponds with the annihilator
+-- Input: a 1x1 matrix. Output: a zero-dimension ideal that corresponds with the annihilator
 polynomialAnn = (F') -> (
-    -- change the DiffOp to a RingElement. This assumes that
-    -- coefficients are in the coefficient ring.
-    F := keys F' / (k -> F'#k * k) // sum;
+    F := F'_(0,0);
     deg := (degree F)_0;
     S := ring F;
     allMons := basis(1, deg + 1, S);
@@ -1506,14 +1684,14 @@ vectorAnn = (V) -> (
 getIdealFromNoetherianOperators = method()
 getIdealFromNoetherianOperators(List, Ideal) := (L, P) -> (
     R := ring P;
-    if ring first L =!= R then error "expected Noetherian operators and prime in same ring";
+    if coefficientRing ring first L =!= R then error "expected Noetherian operators and prime in same ring";
     indVars := support first independentSets P;
     FF := frac(R/P);
     S := FF monoid R;
 
-    mapDiff := map(S,R, vars S);
+    mapDiff := map(S,ring first L, vars S);
     mapCoef := map(coefficientRing S, R);
-    V := L / (op -> applyPairs(op, (a,b) -> (mapDiff a, promote(mapCoef b,S))));
+    V := L / coefficients / ((a,b) -> (mapDiff a * mapCoef sub(b, R)));
 
     I := vectorAnn(V);
     R' := R monoid R;
@@ -1539,15 +1717,110 @@ P = radical I
 Q = getIdealFromNoetherianOperators(L,P)
 assert(Q == I)
 ///
+
+--- Implements the inverse procedure of Noetherian operators
+getModuleFromNoetherianOperators = method()
+getModuleFromNoetherianOperators (Ideal, List) := Module => (P,L) -> (
+    R := ring P;
+    FF := frac(R/P);
+    D := ring L_0;
+    S := FF[gens D];
+    W := apply(L, F -> sub(F, S));
+    m := 1 + max apply(W, M -> max(0, max flatten apply(flatten entries M, v -> degree v)));
+    V := mingens vectorSpaceAnn(W);
+    V = sum apply(numcols V, j -> image liftMatrix(matrix{V_j}, R, D));
+    V = trim(V + (sub(P, D) * (super V)) + ((ideal vars D)^m * (super V)));
+    
+    -- some process of idealization of a module
+    T := symbol T;
+    p := rank super V;
+    AA := D[T_1..T_p];
+    BB := coefficientRing(R)[gens AA | gens R, Degrees => toList splice(p:1, (#gens R):0)];
+    X := AA / ideal((vars AA) * (gens V));
+    Q := ker map(X, BB, vars AA | sub(vars R + vars D, AA));
+    
+    U := image sub(last coefficients(sub(super basis(1, Q), R[T_1..T_p])), R);
+    AssU := ass comodule U;
+    localizeModule(U, AssU, P)
+)
+-- helper functions
+liftMatrix = (A, R, D) -> (
+    FF := coefficientRing ring A;
+    (M, C) := coefficients A;
+    M = sub(M, D);
+    nums := apply(entries sub(C, FF), H -> apply(H, h -> lift(numerator h, R)));
+    dens := apply(entries sub(C, FF), H -> apply(H, h -> lift(denominator h, R)));
+    m := lcm flatten dens;
+    H := matrix apply(numrows C, i -> apply(numcols C, j -> (nums_i_j * m) // dens_i_j));          
+    B := M*H;
+    K := apply(flatten entries last coefficients B, v -> sub(v, R));
+    g := gcd apply(flatten apply(K, p -> flatten entries last coefficients p), n -> sub(n, QQ));
+    (1/g) * B
+)
+-- computes the annihilator ideal of a polynomial vector F in a polynomial ring 
+polynomialVectorAnn = (F) -> (
+    p := numrows F;
+    deg := max(0, max flatten apply(flatten entries F, v -> degree v));
+    S := ring F;
+    allMons := basis(0, deg+1, S^p);
+    diffMat := sum apply(p, i -> diff(allMons^{i}, F^{i}));
+    (mons, coeffs) := coefficients diffMat;
+    image mingens image (allMons * mingens ker coeffs)        
+)
+-- computes the annilihator of a vector space V of polynomials
+vectorSpaceAnn = (W) -> (
+    intersect(apply(W / matrix, F -> polynomialVectorAnn(F)))      
+)
+-- This function localizes a module at a prime P
+-- and then it computes the contraction back into the polynomial ring. 
+-- In other words, it computes the interesection of all the primary
+-- components whose corresponding prime ideal is contained in P.
+localizeModule = (U, AssU, P) -> (
+    R := ring P;
+    f := 1_R;
+    for Q in AssU do (
+        g := 1_R;
+        gensQ := flatten entries gens Q;
+        for q in gensQ do 
+        if not isSubset(ideal(q), P) then (
+            g = q;
+            break;
+        );
+        f = f * g;
+    );
+    saturate(U, f)
+)
+
+
+
+TEST ///
+debug NoetherianOperators
+R = QQ[x1,x2,x3,x4]
+U = image matrix{{0, x1},{1,0}}
+nops = noetherianOperators U
+P = first ass comodule U
+M = getModuleFromNoetherianOperators(P,nops)
+assert(M == U)
+use R
+U = image matrix{
+    {x1*x3, x1*x2, x1^2*x2 },
+    {x1^2, x2^2, x1^2*x4} }
+dpd = differentialPrimaryDecomposition U
+M = dpd / (L -> getModuleFromNoetherianOperators(first L, last L)) // intersect
+assert(M == U)
+///
 ----------------------------------------------------------
 
 undocumented {
-    (expression, DiffOp),
-    (expression, InterpolatedDiffOp),
-    (net, DiffOp),
-    (net, InterpolatedDiffOp),
-    (toExternalString, ZeroDiffOp),
-    (toString, DiffOp)
+    (symbol +, DiffOp, DiffOp),
+    (symbol -, DiffOp, DiffOp),
+    (symbol *, RingElement, DiffOp),
+    (symbol ?, DiffOp, DiffOp),
+    (symbol ==, DiffOp, DiffOp),
+    (symbol ==, DiffOp, ZZ),
+    (symbol ==, ZZ, DiffOp),
+    (coefficients, DiffOp),
+    (symbol -, DiffOp),
 }
 
 beginDocumentation()
@@ -1562,21 +1835,24 @@ doc ///
        Text
 	   The @EM "NoetherianOperators"@ package includes algorithms for computing Noetherian operators and local dual 
 	   spaces of polynomial ideals, and related local combinatorial data about its scheme structure.
+        In addition, the package provides symbolic methods for computing Noetherian operators and Noetherian multipliers of
+        polynomial modules.
     	    	
 	   The problem of characterizing ideal membership with differential conditions was first addressed by 
 	   Gröbner ("Uber eine neue idealtheoretische Grundlegung der algebraischen Geometrie", Math. Ann. 115 (1938), no. 1, 333–358).
-	   Despite this early algebraic interest by Gröbner, a complete description of primary ideals in terms of differential operators was first obtained by analysts in the Fundamental Principle of Ehrenpreis and Palamodov.
-	   At the core of the Fundamental Principle, one has the notion of Noetherian operators to describe a primary ideal. 
+	   Despite this early algebraic interest by Gröbner, a complete description of primary ideals and modules in terms of differential operators was first obtained by analysts in the Fundamental Principle of Ehrenpreis and Palamodov.
+	   At the core of the Fundamental Principle, one has the notion of Noetherian operators to describe a primary module. 
 	   
 	   In case of an ideal supported at one point a set of Noetherian operators forms a Macaulay inverse system that spans the dual space of the ideal. 
 	   These notions relate to the work of 
 	   Macaulay ("The algebraic theory of modular systems", Cambridge Press, (1916)). 
 	    
-	   In this package, we implement several (exact symbolic and approximate numerical) algorithms for the computation of a set of Noetherian operators describing a primary ideal. 
+	   In this package, we implement several (exact symbolic and approximate numerical) algorithms for the computation of sets of Noetherian operators.
     	           	   
            Methods and types for computing and manipulating Noetherian operators:
 
            @UL {
+               {TO DiffOp},
                {TO noetherianOperators, UL {
                  {TO "Strategy => \"PunctualHilbert\""},
                  {TO "Strategy => \"MacaulayMatrix\""},
@@ -1585,9 +1861,11 @@ doc ///
                {TO specializedNoetherianOperators},
                {TO numericalNoetherianOperators},
                {TO getIdealFromNoetherianOperators},
-               {TO DiffOp},
+               {TO getModuleFromNoetherianOperators},
                {TO coordinateChangeOps},
-               {TO noethOpsFromComponents}
+               {TO noethOpsFromComponents},
+               {TO solvePDE},
+               {TO differentialPrimaryDecomposition}
            }@
 
 	   Methods for computing and manipulating local dual spaces:
@@ -1598,7 +1876,7 @@ doc ///
        		   {TO eliminatingDual},
     		   {TO localHilbertRegularity},
     		   {TO gCorners},
-    		   {TO innerProduct},
+    		   {TO pairingMatrix},
 	 	   	   {TO isPointEmbedded},
 	 	   	   {TO isPointEmbeddedInCurve},
 	 		   {TO colon},
@@ -1612,8 +1890,8 @@ doc ///
 	   }@
 
 	   For the task of computing Noetherian operators, here we implement the algorithms developed in the papers 
-	   @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@ and  
-	   @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
+	   @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@,  
+	   @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@, and @arXiv("2104.03385", "Primary decomposition of modules: a computational differential approach")@.
            These include both symbolic and numerical algorithms, and a hybrid algorithm, where numerical data is used to
            speed up the symbolic algorithm.
            
@@ -1640,15 +1918,15 @@ Usage
     S = truncatedDual(p, I, d)
 Inputs
     p:Point
-        or a row @TO Matrix@
+        or a one-row @TO2 {Matrix, "matrix"}@
     I:Ideal
-        or a row @TO Matrix@ of generators
+        or a one-row @TO2 {Matrix, "matrix"}@ of generators
     d:ZZ
 Outputs
     S:DualSpace
 Description
     Text
-        Computes a basis for the local dual space of a polynomial ideal localized at point p, truncated at degree d.
+        This functions computes a basis for the local dual space of a polynomial ideal localized at point p, truncated at degree d.
         Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
         They are really elements of the dual ring.
     Example
@@ -1696,14 +1974,14 @@ Usage
     S = zeroDimensionalDual(p, I)
 Inputs
     p:Point
-        or a row @TO Matrix@
+        or a one-row @TO2 {Matrix,"matrix"}@
     I:Ideal
-        or a row @TO Matrix@ of generators
+        or a one-row @TO2 {Matrix, "matrix"}@ of generators
 Outputs
     S:DualSpace
 Description
     Text
-        Computes a reduced basis of the dual space of a zero-dimensional ideal.  It does not check if the ideal is
+        This function computes a reduced basis of the dual space of a zero-dimensional ideal.  It does not check if the ideal is
         zero-dimensional and if not then termination will fail.
         Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
         They are really elements of the dual ring.
@@ -1754,8 +2032,8 @@ doc ///
           gCorners
 	  (gCorners,Point,Ideal)
 	  (gCorners,Point,Matrix)
-	  [gCorners,ProduceSB]
-	  ProduceSB
+	  [gCorners,StandardBasis]
+	  StandardBasis
      Headline
           generators of the initial ideal of a polynomial ideal
      Usage
@@ -1763,14 +2041,15 @@ doc ///
      Inputs
      	  p:Point
 	  I:Ideal
-              or a one-row @TO Matrix@ of generators
+              or a one-row @TO2 {Matrix, "matrix"}@ of generators
      Outputs
           G:Matrix
 	       generators of the initial ideal in a one-row matrix
      Description
           Text
-	       Computes the generators of the initial ideal of an ideal, with respect to a local order.  The ring of the
-	       ideal should be given a (global) monomial order and the local order will be taken to be the reverse order.
+	       This method computes the generators of the initial ideal of an ideal, with respect to a local order. 
+           These are precisely the monomials in the corners of the staircase diagram of the initial ideal.
+           The ring of the ideal should be given a (global) monomial order and the local order will be taken to be the reverse order.
 	       The point p is moved to the origin, so the monomial generators represent terms of the Taylor expansion at p.
 	  Example
 	       R = CC[x,y];
@@ -1778,22 +2057,21 @@ doc ///
 	       p = point matrix{{1,1}};
 	       gCorners(p, I)
 	  Text
-	       If the optional argument @TT "ProduceSB"@ is set to true, the output is instead a matrix of elements of the ideal
-	       with the p translated to the origin such that the lead terms generate the initial ideal, i.e. a standard basis.
+	       If the optional argument @TT "StandardBasis"@ is set to true, the output is instead a matrix of elements of the ideal
+	       with the point {\tt p} translated to the origin such that the lead terms generate the initial ideal, i.e., a standard basis.
 	       Note that the coordinates of the standard basis elements are translated to be centered at the point p.
 	  Example
-	       S = gCorners(p, I, ProduceSB=>true)
+	       S = gCorners(p, I, StandardBasis=>true)
 	       R = CC[x,y,z];
 	       J = ideal{z*(x*y-4), x-y}
 	       q = point matrix{{1.4142136, 1.4142136, 0}};
 	       gCorners(q, J, Tolerance=>1e-5)
-	       gCorners(q, J, ProduceSB=>true)
+	       gCorners(q, J, StandardBasis=>true)
 ///
 
 TEST ///
 R = CC[x,y]
 M = matrix {{x^2-x*y^2,x^3}}
---M = matrix {{x*y, y^2}}
 p = point matrix{{0_CC,0_CC}}
 q = point matrix{{0_CC,1_CC}}
 assert(numcols gCorners(p,M) == 2)
@@ -1828,12 +2106,12 @@ doc ///
      Inputs
           p:Point
 	  I:Ideal
-              or a one-row @TO Matrix@ of generators
+              or a one-row @TO2 {Matrix, "matrix"}@ of generators
      Outputs
           d:ZZ
      Description
           Text
-	       The gCorners of the ideal are computed in order to find the Hilbert polynomial, which is
+	       The @TO gCorners@ of the ideal are computed in order to find the Hilbert polynomial, which is
 	       compared to the Hilbert function to find the degree of regularity, which is the degree at
 	       which the two become equal.
 	  Example
@@ -1865,7 +2143,7 @@ doc ///
      Inputs
      	  p:Point
 	  I:Ideal
-              or a one-row @TO Matrix@ of generators
+              or a one-row @TO2 {Matrix, "matrix"}@ of generators
 	  v:List
 	       a list of the integers designating which variables to bound
 	  d:ZZ
@@ -1874,7 +2152,7 @@ doc ///
           S:DualSpace
      Description
           Text
-	       Given a list of variable indices, compute the a basis for all dual elements
+	       Given a list of variable indices, this method computes a basis for all dual elements
 	       orthogonal to I which have total degree in the variables on the list bounded by d.
 	  Example
 	       R = CC[x,y];
@@ -1897,16 +2175,16 @@ doc ///
 
 doc ///
      Key
-          innerProduct
-	  (innerProduct,PolySpace,DualSpace)
-	  (innerProduct,PolySpace,PolySpace)
-	  (innerProduct,RingElement,DualSpace)
-	  (innerProduct,PolySpace,RingElement)
-	  (innerProduct,RingElement,RingElement)
+          pairingMatrix
+	  (pairingMatrix,PolySpace,DualSpace)
+	  (pairingMatrix,PolySpace,PolySpace)
+	  (pairingMatrix,RingElement,DualSpace)
+	  (pairingMatrix,PolySpace,RingElement)
+	  (pairingMatrix,RingElement,RingElement)
      Headline
           Applies dual space functionals to polynomials
      Usage
-          M = innerProduct(S, D)
+          M = pairingMatrix(S, D)
      Inputs
 	  S:PolySpace
 	  D:DualSpace
@@ -1917,29 +2195,29 @@ doc ///
           Text
 	       The dual space represents functionals from the polynomial ring to the base field.
 	       Given a polySpace S with n generators f_1,...,f_n and a dualSpace D with m generators
-	       p_1,...,p_m, innerProduct returns a nxm matrix M over the base field whose entries are p_j(f_i).
+	       p_1,...,p_m, {\tt pairingMatrix} returns a nxm matrix M over the base field whose entries are p_j(f_i).
 	  Text
-	       A dual functional is applied to a polynomial by taking the standard inner product of their coefficient
+	       A dual functional is applied to a polynomial by taking the standard pairing of their coefficient
 	       vectors.  In other words, the functional represented by the monomial a acts on monomials in the
 	       polynomial ring as a(a) = 1 and a(b) = 0 for all other monomials b.
 	  Example
 	       R = CC[x,y];
 	       S = polySpace matrix{{x+y,2*x+y^2}};
 	       D = dualSpace(matrix{{1,x,y}}, origin R);
-	       M = innerProduct(S, D)
+	       M = pairingMatrix(S, D)
 	  Text
-	       @TT "innerProduct"@ can also be called with one or both inputs @ofClass RingElement@.  If both arguments
+	       The function @TT "pairingMatrix"@ can also be called with one or both inputs @ofClass RingElement@.  If both arguments
 	       are single elements, the output is also a ring element rather than a matrix.
 	  Example
-	       innerProduct(S, 1+x)
-	       innerProduct(x, D)
-	       innerProduct(x, 1+x)
+	       pairingMatrix(S, 1+x)
+	       pairingMatrix(x, D)
+	       pairingMatrix(x, 1+x)
 ///
 
 TEST ///
 R = CC[x,y]
 S = polySpace(basis(3,R))
-P = innerProduct(S,S)
+P = pairingMatrix(S,S)
 assert(all((0,0)..(3,3), i->(P_i == if i#0 == i#1 then 1 else 0)))
 ///
 
@@ -1964,7 +2242,7 @@ doc ///
           S:PolySpace
      Description
           Text
-	       Computes the subspace of polynomial space T which is orthogonal to the dual space (or polynomial space) D.
+	       This functions computes the subspace of the polynomial space T that is orthogonal to the dual space (or polynomial space) D.
 	  Example
 	       R = CC[x,y];
 	       T = polySpace matrix{{1,x,y}};
@@ -1988,7 +2266,7 @@ doc ///
           S:DualSpace
      Description
           Text
-	       Truncates a dual space or polynomial space T so that the total degree of all terms does not exceed d.
+	       This method truncates a dual space or polynomial space T so that the total degree of all terms does not exceed d.
 	  Example
 	       R = CC[x,y];
 	       I = ideal {x-y};
@@ -2015,7 +2293,7 @@ doc ///
           S:DualSpace
      Description
           Text
-	       Truncates a dual space or polynomial space T, so that the total degree of the specified variables is bounded by d.
+	       This method truncates a dual space or polynomial space T, so that the total degree of the specified variables is bounded by d.
 	  Example
 	       R = CC[x,y];
 	       I = ideal {x,y};
@@ -2035,7 +2313,7 @@ doc ///
 	  K = hilbertFunction(D,S)
      Inputs
      	  d:
-		an integer, or a @TO List@ of arguments
+		an integer, or a @TO2 {List, "list"}@ of arguments
 	  S:DualSpace
 		a dual space
      Outputs
@@ -2047,7 +2325,7 @@ doc ///
 	      of dimensions
      Description
           Text
-	      counts the dimension of the dual space in each degree.  A single degree can be
+	      This function counts the dimension of the dual space in each degree.  A single degree can be
 	      specified, or a list of degrees.  If no degree is specified, then a Tally
 	      is returned pairing each degree with its dimension.
 	  Example
@@ -2092,7 +2370,7 @@ document {
 	"C"=>{" witness sets representing components of ", TT "Spec(I)", " containing ", TT "P"} 
 	},
     Outputs => { "B"=>Boolean },
-    PARA {"Runs an embedded component test described in "},
+    PARA {"This method runs an embedded component test described in the following paper. "},
     refKroneLeykin,
     SeeAlso=>{isPointEmbeddedInCurve}
     }
@@ -2108,7 +2386,7 @@ document {
 	"I"
 	},
     Outputs => { "B"=>Boolean },
-    PARA {"Runs an embedded component test described in "},
+    PARA {"This method runs an embedded component test described in the following paper. "},
     refKroneLeykin,
     SeeAlso=>{isPointEmbeddedInCurve}
     }
@@ -2119,7 +2397,7 @@ document {
     Usage => "Dg = colon(D,g)\nDJ = colon(D,J)",
     Inputs => { "D"=>DualSpace, "g"=>RingElement, "J"=>Ideal },
     Outputs => { "Dg, DJ"=>DualSpace },
-    "Computes (a part of) the dual space of the dual. See",
+    "This computes (a part of) the dual space of the dual. See",
     PARA { refKroneLeykin },
     "for a description."
     }
@@ -2143,7 +2421,7 @@ Outputs
         the join of the ideals I and J
 Description
     Text
-        This method computes the join of two given ideals.
+        This method computes the join of two ideals.
         The join can be used to describe very interesting types of 
         primary ideals that include the symbolic powers of prime ideals.
         For more details reader is referred to Section 7 of the paper    
@@ -2159,6 +2437,41 @@ Description
 ///
 
 
+doc ///
+Key
+    amult
+    (amult, Module)
+    (amult, Ideal)
+Headline
+    Computes the arithmetic multiplicity of a module
+Usage
+    m = amult(M)
+    m = amult(I)
+Inputs
+    M : Module
+        a submodule of a free module
+    I : Ideal
+        an ideal
+Outputs
+    m : ZZ
+        the arithmetic multiplicity of the module or the ideal
+Description
+    Text
+        Given a submodule $M$ of a free module $F$, one computes the arithmetic multiplicity of $M$ as the sum, along the associated primes of $F/M$, 
+	of the length of the largest submodule of finite length of the quotient $M/F$ localized at the associated prime.
+	The arithmetic multiplicity is a fundamental invariant from a differential point of view as it yields the minimal size of a differential primary decomposition. 
+        For more details the reader is referred to the paper    
+        @HREF("https://arxiv.org/abs/2101.03643", "Primary Decomposition with Differential Operators")@. 
+
+    Example
+        R = QQ[x1,x2,x3,x4]
+	U = image matrix{{x1*x2,x2*x3,x3*x4,x4*x1}, {x1^2,x2^2,x3^2,x4^2}}
+	amult U
+	I = ideal( x1^3*x3^2-x2^5, x2^2*x4^3-x3^5, x1^5*x4^2-x2^7, x1^2*x4^5-x3^7 )
+	amult I
+///
+
+
 -------------- Noetherian operators documentation
 
 ------- DiffOp documentation
@@ -2169,27 +2482,70 @@ Headline
     differential operator
 Description
     Text
-        A differential operator of the ring $R = \mathbb{K}[x_1,\dots,x_n]$ can be thought of as a polynomial
-        with coefficients in $R$, and monomials in variables $dx_1, \dots, dx_n$, where $dx_i$ corresponds to the
-        partial derivative with respect to $x_i$. These operators form an $R$-vector space, and act naturally on elements of $R$.
+        A differential operator on the ring $R = \mathbb{K}[x_1,\dots,x_n]$ can be thought of as $k$-vectors of polynomials
+        in $S = R[dx_1, \dotsc, dx_n]$, with coefficients in $R$, and monomials in variables $dx_1, \dots, dx_n$, where $dx_i$ corresponds to the
+        partial derivative with respect to $x_i$. Hence a differential operator is an element of the free module $S^k$.
+        These operators form an $R$-vector space, and operate on elements of $R^k$.
+        The result of the operation lies in $R$, and is equal to the sum of the entrywise
+        operations.
+
+        The ring $S$ can be obtained from $R$ using @TO diffOpRing@.
 
     Example
         R = QQ[x,y]
-        D = diffOp {x => x+y, x*y^2 => 3+x}
+        S = diffOpRing R
+        D = diffOp((x+y)*dx + (3+x) * dx*dy^2)
         (x^2+3) * D
         D + D
         D(x^5*y^2)
-    Text
-        Instances of {\tt DiffOp} are @TO2 {HashTable, "hash tables"}@, where keys are differential monomials
-        (represented as monomials in $R$), and values are the corresponding coefficients. A useful shortcut for
-        creating instances of {\tt DiffOp} is to use a @TO WeylAlgebra@.
-
     Example
-        needsPackage "Dmodules"
-        S = makeWA R
-        E = diffOp(y*dx - x*dy^2)
+        D = diffOp(matrix{{x*dx}, {y*dy}})
+        f = matrix{{x^2}, {y^2}}
+        D f
+        
 SeeAlso
-    (diffOp, HashTable)
+    (diffOp, Matrix)
+    (diffOp, RingElement)
+///
+
+doc ///
+Key
+    diffOpRing
+Headline
+    create and cache the ring of differential operators
+Usage
+    diffOpRing R
+Inputs
+    R:PolynomialRing
+        in $n$ variables
+Outputs
+    :PolynomialRing
+        in $2n$ variables
+Consequences
+    Item
+        the ring is cached in {tt R} under the key {\tt "DiffOpRing"}.
+Description
+    Text
+        Takes a polynomial ring $R = \mathbb{K}[x_1,\dotsc,x_n]$ and creates the ring $S = R[dx_1,\dotsc,dx_n]$.
+    Example
+        R = QQ[x_1..x_3, a,b];
+        S = diffOpRing R;
+        gens S
+        coefficientRing S
+    Text
+        Differential operators on $R$ have entries in $S$.
+    Example
+        ring diffOp(dx_3^2) === S
+        ring diffOp(a_R) === S
+    Text
+        Subsequent calls to {\tt diffOpRing} will not create new rings
+    Example
+        diffOpRing R === S
+Caveat
+    the created ring is {\em not} a Weyl algebra, it is a commutative ring
+
+SeeAlso
+    (diffOp, Matrix)
     (diffOp, RingElement)
 ///
 
@@ -2202,234 +2558,38 @@ Headline
 
 doc ///
 Key
-    (diffOp, HashTable)
-    (diffOp, List)
-    (NewFromMethod, DiffOp, HashTable)
-    (NewFromMethod, DiffOp, List)
+    (diffOp, Matrix)
+    (diffOp, RingElement)
 Headline
     create a differential operator
 Usage
-    diffOp H
+    diffOp M
 Inputs
-    H:HashTable
-        or a @TO2 {List, "list"}@ of pairs {\tt mon => coef}
+    M:Matrix
+        consisting of a single column, or a @TO2 {RingElement, "ring element"}@.
 Outputs
     :DiffOp
 Description
     Text
-        The @TO HashTable@ {\tt H} should contain monomials as keys and polynomials as values, all
-        of which should lie in the same ring. The keys represent monomials of each term (in $dx$ variables),
-        and the value represent the coefficient.
+        Creates a differential operator from a vector of polynomials in $S = \mathbb{K}[x_1,\dotsc,x_n][dx_1,\dotsc,dx_n]$.
+        The ring $S$ is obtained from the ring $R = \mathbb{K}[x_1,\dotsc,x_n]$ by using @TO diffOpRing@.
     Example
-        R = QQ[x,y]
-        H = new HashTable from {x^2 => x+y+3, y^2*x^5 => 2*x}
-        D1 = diffOp H
+        R = QQ[x_1,x_2]
+        S = diffOpRing R
+        diffOp matrix {{(x_1 * x_2 + 3)*dx_1*dx_2^2}, {dx_2^2}}
     Text
-        Alternatively, {\tt diffOp} can also create differential operators from lists of {\tt key => value} pairs
+        A @TO2 {RingElement, "ring element"}@ can be used instead of a $1 \times 1$ matrix.
     Example
-        D2 = diffOp {x^2 => x+y+3, y^2*x^5 => 2*x}
-        D1 == D2
-    Text
-        For a simpler way of creating differential operators, see @TO (diffOp, RingElement)@.
-Caveat
-    The constructors @TO (NewFromMethod, DiffOp, HashTable)@ and @TO (NewFromMethod, DiffOp, List)@ are for internal use only. Use @TO (diffOp, HashTable)@ and @TO (diffOp, List)@ instead.
-
+        diffOp (x_1^2*dx_1^2)
 SeeAlso
     DiffOp
-    (diffOp, RingElement)
-///
-
-doc ///
-Key
-    (diffOp, Ring, RingElement)
-    (diffOp, RingElement, Ring)
-    (diffOp, RingElement)
-Headline
-    create a differential operator from a Weyl algebra element
-Usage
-    diffOp_R f
-    diffOp(f, R)
-    diffOp f
-Inputs
-    R:Ring
-    f:RingElement
-        of a @TO WeylAlgebra@ of {\tt R}
-Outputs
-    :DiffOp
-Consequences
-    Item
-        if called without a specified ring (i.e. {\tt diffOp f}), creates a new ring by discarding the $dx$-variables and caches it in the Weyl algebra
-    Item
-        if such a ring had been previously cached, the cached ring will be used.
-Description
-    Text
-        Creates a differential operator of the ring {\tt R} from an element {\tt f} of a Weyl algebra of {\tt R}
-    Example
-        needsPackage "Dmodules"
-        R = QQ[x,y]
-        S = makeWA R
-        D = diffOp_R(x^2 * dx + y^2 * dy^2*dx)
-        ring D === R
-    Text
-        The ring does not have to be specified. Note that in this case, the resulting operator will not be a differential
-        operator of {\tt R}, but that of a new ring. This ring is cached, so subsequent calls will result in operators of the same ring.
-    Example
-        E = diffOp(x^2* dx)
-        ring E === R
-        F = diffOp(dy^2)
-        ring E === ring F
-SeeAlso
-    DiffOp
-    (diffOp, HashTable)
+    diffOpRing
 
 ///
 
 doc ///
 Key
-    (symbol +, DiffOp, DiffOp)
-Headline
-    addition of differential operators
-Usage
-    D + E
-Inputs
-    D:DiffOp
-    E:DiffOp
-Outputs
-    :DiffOp
-Description
-    Text
-        Adds two differential operators. The ring of both operators must match
-    Example
-        R = QQ[x,y];
-        D = diffOp{x => x^2+ y}
-        E = diffOp{x => -y, x^2*y^2 => 2}
-        D + E
-///
-
-doc ///
-Key
-    (symbol -, DiffOp, DiffOp)
-Headline
-    subtraction of differential operators
-Usage
-    D - E
-Inputs
-    D:DiffOp
-    E:DiffOp
-Outputs
-    :DiffOp
-Description
-    Text
-        Subtracts two differential operators. The ring of both operators must match
-    Example
-        R = QQ[x,y];
-        D = diffOp{x => x^2+ y}
-        E = diffOp{x => -y, x^2*y^2 => 2}
-        D - E
-///
-
-
-doc ///
-Key
-    (symbol -, DiffOp)
-Headline
-    negation of differential operators
-Usage
-    - D
-Inputs
-    D:DiffOp
-Outputs
-    :DiffOp
-Description
-    Text
-        Corresponds to $(-1)*D$
-    Example
-        R = QQ[x,y];
-        D = diffOp{x => x^2+ y}
-        - D
-///
-
-doc ///
-Key
-    (symbol *, RingElement, DiffOp)
-    (symbol *, Number, DiffOp)
-Headline
-    scaling of differential operators
-Usage
-    c*D
-Inputs
-    c:RingElement
-        in the same ring as {\tt D}, or a @TO Number@
-
-    D:DiffOp
-Outputs
-    :DiffOp
-Description
-    Text
-        Multiplies every coefficient of {\tt D} by {\tt c}
-    Example
-        R = QQ[x,y];
-        D = diffOp{x => x^2+ y, y^2 => 1}
-        y*D
-        2*D
-///
-
-doc ///
-Key
-    (symbol ?, DiffOp, DiffOp)
-    (symbol ==, DiffOp, DiffOp)
-    (symbol ==, DiffOp, ZZ)
-    (symbol ==, ZZ, DiffOp)
-Headline
-    comparison of differential operators
-Usage
-    D ? E
-    D == E
-    D == 0
-Inputs
-    D:DiffOp
-    E:DiffOp
-Description
-    Text
-        The ordering of DiffOps a product ordering of the undelying ring, where the $dx$ monomoial are compared
-        first, and ties are broken with coefficients.
-    Example
-        R = QQ[x,y, MonomialOrder => Lex]
-        D1 = diffOp{x^2 => y, y => x^2}
-        D2 = diffOp{y => y^2}
-        D3 = diffOp{x^2 => y, y => x^2 + y^2}
-        D1 ? D1
-        D1 ? D2
-        D1 ? D3
-        D1 + D2 == D3
-        D1 + D2 - D3 == 0
-///
-
-doc ///
-Key
-    (ring, DiffOp)
-Headline
-    get the ring associated to a differential operator
-Usage
-    ring D
-Inputs
-    D:DiffOp
-Outputs
-    :Ring
-Description
-    Text
-        Returns the ring in which the coefficients lie
-    Example
-        R = QQ[x]
-        D = diffOp{x => 2*x^2}
-        ring D
-Caveat
-    If the @TO DiffOp@ was created using @TO (diffOp, RingElement)@ (e.g. after running @TO makeWA@),
-    the ring
-///
-
-doc ///
-Key
+    (symbol SPACE, DiffOp, Matrix)
     (symbol SPACE, DiffOp, RingElement)
 Headline
     apply a differential operator
@@ -2437,55 +2597,37 @@ Usage
     D f
 Inputs
     D:DiffOp
-    f:RingElement
-        in the same ring as {\tt D}
+    f:Matrix
+        consisting of one column, with entries in the coefficient ring of {\tt ring D}, or a @TO2 {RingElement, "ring element"}@.
 Outputs
     :RingElement
         in the same ring as {\tt f}
 Description
     Text
-        The differential operators of the ring $R = \mathbb{F}[x_1,\dots,x_n]$ act naturally on elements of $R$.
-        The operator $dx_i$ acts as a partial derivarive with respect to $x_i$, and a polynomial acts by multiplication.
+        Let $R = \mathbb{F}[x_1,\dots,x_n]$ and $S = R[dx_1,\dotsc,dx_n]$. The elements of $S$ operate naturally on elements of $R$.
+        The operator $dx_i$ acts as a partial derivarive with respect to $x_i$, i.e., $dx_i \bullet f = \frac{\partial f}{\partial x_i}$,
+        and a polynomial acts by multiplication, i.e., $x_i \bullet f = x_i f$.
+
+        Suppose $D \in S^k$ and $f \in R^k$. Then the operation of $D$ on $f$ is defined as $D\bullet f := \sum_{i=1}^k D_i \bullet f_i \in R$.
     Example
         R = QQ[x,y]
-        dx = diffOp{x^2 => 1}
-        D = diffOp{1_R => x^2 + y^2}
-        dx(x^4 + x^3 + y)
-        D(x^2 - y^2)
-///
-
-doc ///
-Key
-    (substitute, DiffOp, Ring)
-Headline
-    change the ring of a differential operator
-Usage
-    substitute(D, R)
-    sub(D, R)
-Inputs
-    D: DiffOp
-    R: Ring
-Outputs
-    :DiffOp
-Description
+        S = diffOpRing R
+        D = diffOp matrix{{x*dx}, {(y+1)*dx*dy}}
+        f = matrix{{x+y}, {x*y*(y+1)}}
+        D f
     Text
-        Attempts to change the underlying ring of the differential operator by calling @TO substitute@
-        for each monomial and coefficient of {\tt D}
+        As with @TO (diffOp, Matrix)@, a $1\times 1$ matrix may be replaced by a @TO2 {RingElement, "ring element"}@.
     Example
-        R = QQ[x,y]
-        D = diffOp{1_R => x^2, x^2 => y^2}
-        S = QQ[x,y,z]
-        DS = sub(D,S)
-        ring DS === S
+        D = diffOp dx^2
+        D(x^3+y*x^2)        
 ///
-
 
 doc ///
 Key
     normalize
     (normalize, DiffOp)
 Headline
-    rescale a differential operator to a canonical form
+    rescale a differential operator
 Usage
     normalize D
 Inputs
@@ -2496,8 +2638,8 @@ Description
     Text
         Rescales a differential operator so that the leading term of the leading coefficient is 1.
     Example
-        R = QQ[x,y,t];
-        D = diffOp{x^2*t => 3*x^3 + 2*y, t^2 => x+y}
+        S = diffOpRing (QQ[x,y,t]);
+        D = diffOp(3*x^3*dx^2*dt + (x+y)*dt^2)
         normalize D
     Text
         This can be useful when computing "canonical" sets of Noetherian operators,
@@ -2505,63 +2647,8 @@ Description
     Example
         I = ideal(x^2,y^2 - x*t);
         nops = noetherianOperators(I, Strategy => "MacaulayMatrix");
-        nops // sort / normalize == {diffOp{1_R => 1}, diffOp{y => 1}, diffOp{y^2 => t, x => 2}, diffOp{y^3 => t, x*y => 6}}
+        nops / normalize == {diffOp 1_S, diffOp dy, diffOp(t*dy^2 + 2*dx), diffOp(t*dy^3 + 6*dx*dy)}
 ///
-
-
-doc ///
-Key
-    ZeroDiffOp
-    (NewFromMethod, ZeroDiffOp, Ring)
-    (symbol ==, ZZ, ZeroDiffOp)
-    (symbol ==, ZeroDiffOp, ZZ)
-Headline
-    the zero differential operator of a ring
-Description
-    Text
-        For internal use. A type of @TO DiffOp@ with a single key {\tt 1} and value 0.
-        Users are not expected to create instances of {\tt ZeroDiffOp}, they are created automatically by @TO diffOp@ when necessary.
-    Example
-        R = QQ[x,y]
-        D = diffOp{x => 0};
-        instance(D, ZeroDiffOp)
-        peek D
-    Text
-        Comparison to the integer 0 works as expected
-    Example
-        E = diffOp{1_R => 0}
-        E == 0
-SeeAlso
-    diffOp
-
-///
-
-doc ///
-Key
-    InterpolatedDiffOp
-    (NewFromMethod, InterpolatedDiffOp, HashTable)
-    (NewFromMethod, InterpolatedDiffOp, List)
-Headline
-    differential operator with interpolated coefficients
-Description
-    Text
-        A type of @TO DiffOp@ returned by interpolation based methods, such as @TO numericalNoetherianOperators@.
-        Because of this, users are not expected to create instances of this type.
-
-        If the interpolation of any coefficient fails, the numerator and denominator will be replaced by the @TO2 {String, "string"}@ {\tt "?"}.
-
-        Assuming the interpolation was successful, the method @TO (evaluate, InterpolatedDiffOp, Point)@ will convert
-        an @TO InterpolatedDiffOp@ to a specialized differential operators of type @TO DiffOp@ by evaluating each numerator and denominator at a point.
-    Example
-        R = CC[x,y]
-        D = new InterpolatedDiffOp from {x => (x+y, pi*ii*x^2*y), y => (x, 1.3_R)}
-        D' = evaluate(D, point{{1.2, 2+ii}})
-SeeAlso
-    (evaluate, InterpolatedDiffOp, Point)
-
-///
-
-
 
 doc ///
 Key
@@ -2617,7 +2704,7 @@ Outputs
         of @TO2{DiffOp, "differential operators"}@
 Description
     Text
-        Compute a set of Noetherian operators for $P$-primary component of $I$.
+        Compute a set of Noetherian operators for the $P$-primary component of $I$.
     Example
         R = QQ[x,y,t];
         I1 = ideal(x^2, y^2-x*t);
@@ -2633,12 +2720,42 @@ Description
             TO2 {"Strategy => \"Hybrid\"", "\"Hybrid\""},
         }@
     Text
-        If the prime $P$ is known to be a ration point, the optional argument {\tt Rational} can be set to true.  This may offer a speed up in the computation.
+        If the prime $P$ is known to be a rational point, the optional argument {\tt Rational} can be set to true.  This may offer a speed-up in the computation.
 SeeAlso
     noetherianOperators
     (noetherianOperators, Ideal)
 ///
 
+doc ///
+Key
+    (noetherianOperators, Module)
+    -- (noetherianOperators, Module, Ideal)
+Headline
+    Noetherian operators of a primary submodule
+Usage
+    noetherianOperators U
+    -- noetherianOperators (U, P)
+Inputs
+    U:Module
+        a primary submodule
+    -- P:ideal
+        -- an associated prime of U
+Outputs
+    :List
+        of @TO2{DiffOp, "differential operators"}@
+Description
+    Text
+        Compute a set of Noetherian operators for the primary submodule U.
+        -- If a prime ideal P is provided, then Noetherian operators for a P-primary 
+        -- component of U are returned.
+        
+        This method contains an implementation of Algorithm 4.1 in @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@. 
+    	For more details, see Section 4 of @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@.
+    Example
+        R = QQ[x_1,x_2,x_3]
+        U = image matrix {{x_1, x_2^2, 0}, {x_3, x_3^2, x_2^2-x_1*x_3}}
+        noetherianOperators U
+///
 
 doc ///
 Key
@@ -2653,9 +2770,9 @@ Description
         When this method is applied we obtain a finite list of 
         differential operators $L_1,\ldots,L_m \in D$ such that 
         $$
-        Q = \{ f \,\in\, R\, \mid\, L_i\, \bullet\, f\, \in P \, \forall  1 \le i \le m \}.
+        Q = \{ f \,\in\, R\, \mid\, L_i\, \bullet\, f\, \in P, \ \forall  1 \le i \le m \}.
         $$
-        We say that $\{L_1,\ldots,L_m\}$ is a set Noetherian operators for the primary ideal $Q$.
+        We say that $\{L_1,\ldots,L_m\}$ is a set of Noetherian operators for the primary ideal $Q$.
         In the output of the algorithm we always have that $m$ (the number of Noetherian operators) is equal to the 
         multiplicity of $Q$ over the prime ideal $P$.
 
@@ -2788,9 +2905,9 @@ Outputs
 Description
     Text
         This method maps a P-primary ideal Q into a point in a punctual Hilbert scheme.
-	Let $\mathbb{K}$ be a characteristic zero and a prime ideal $P$ of codimension $c$ in the polynomial ring $R = \mathbb{K}[x_1,\ldots,x_n]$.
+	Let $\mathbb{K}$ be a field of characteristic zero and let $P$ be a prime ideal of codimension $c$ in the polynomial ring $R = \mathbb{K}[x_1,\ldots,x_n]$.
 	We write $\mathbb{F}$ for the field of fractions of the integral domain $R/P$. 
-	To simplify our notation, perhaps after a linear change of coordinates, we assume that $\{ x_{c+1}, \ldots, x_n \}$ is a maximal independent set of variables module $P$.
+	To simplify our notation, perhaps after a linear change of coordinates, we assume that $\{ x_{c+1}, \ldots, x_n \}$ is a maximal independent set of variables modulo $P$.
     	
 	The main purpose of this method is to reduce the study of arbitrary $P$-primary ideals in $R = \mathbb{K}[x_1,\ldots,x_n]$ to a zero-dimensional setting over the function field $\mathbb{F}$.
 	This reduction is made by parametrizing $P$-primary ideals with the punctual Hilbert scheme 
@@ -2827,15 +2944,15 @@ Inputs
     I:Ideal
         unmixed
     pt:Point
-        or a row @TO2 {Matrix, "matrix"}@
+        or a one-row @TO2 {Matrix, "matrix"}@
 Outputs
     :List
         of @TO2 {DiffOp, "differential operators"}@
 Description
     Text
         Numerically computes evaluations of Noetherian operators. If the point {\tt p} lies on the variety of the
-        minimal prime $P$, the function returns a set of specialized Noetherian operators of the $P$-primary component.
-        The option @TO DependentSet@ is required when dealing with ideals over numerical fields, or when dealing with non-primary ideals
+        minimal prime $P$, the function returns a set of specialized Noetherian operators of the $P$-primary component of $I$.
+        The option @TO DependentSet@ is required when dealing with ideals over numerical fields, or when dealing with non-primary ideals.
     Example
         R = QQ[x,y,t];
         Q1 = ideal(x^2, y^2 + x*t);
@@ -2844,7 +2961,9 @@ Description
         P = radical Q1;
         pt = point{{0,0,2}};
         A = specializedNoetherianOperators(I, pt, DependentSet => {x,y}) / normalize
-        B = noetherianOperators(I, P) / (D -> evaluate(D, pt)) / normalize
+        B = noetherianOperators(I, P) /
+            (D -> evaluate(D,pt)) /
+            normalize
         A == B
     Text
         Over a non-exact field, the output will be non-exact
@@ -2875,7 +2994,7 @@ Inputs
         unmixed
 Outputs
     :List
-        of @TO2 {InterpolatedDiffOp, "interpolated differential operators"}@
+        of @TO2 {Expression, "expressions"}@
 Description
     Text
         The method computes specialized Noetherian operators from many sampled points, and attempts to find fitting rational functions
@@ -2901,12 +3020,12 @@ Description
         @TO DependentSet@ is required. The following are supported:
         
 
-        {\tt TrustedPoint =>} a @TO Point@. The function does not compute specialized Noetherian operators from scratch for each point.
+        {\tt TrustedPoint =>} a @TO2 {Point, "point"}@. The function does not compute specialized Noetherian operators from scratch for each point.
         Instead, it computes it for a "trusted" point on the variety, and uses the obtained Noetherian operators
         as a template for the rest of the computation. If {\tt TrustedPoint} is unset, the first point returned by the sampler
         will be used as the trusted point.
 
-        {\tt NoetherianDegreeLimit =>} a non-negative @TO2 {ZZ, "integer"}@. Limits the degrees of the Noetherian operators (with respect to the $dx$ variables).
+        {\tt NoetherianDegreeLimit =>} a non-negative @TO2 {ZZ, "integer"}@. Limits the degrees of the Noetherian operators (with respect to the variables $dx_i$).
             If unset, will compute the full Noetherian operators of the "trusted" point. Can introduce speedups when the maxmial degree of the Noetherian operators
             is known in advance.
 
@@ -2956,15 +3075,15 @@ Usage
     (n,d) = rationalInterpolation(pts, vals, numDenBasis)
 Inputs
     pts:List
-        of row matrices corresponding to points at which the rational function was evaluated
+        of one-row matrices corresponding to points at which the rational function was evaluated
     vals:List
         of @TO2 {Number, "numbers"}@ corresponding to evaluations of the rational function
     numBasis:Matrix
-        a row of monomials, the monomial support of the numerator
+        a one-row @TO2 {Matrix,"matrix"}@ of monomials, the monomial support of the numerator
     denBasis:Matrix
-        a row of monomials, the monomial support of the numerator
+        a one-row @TO2 {Matrix,"matrix"}@ of monomials, the monomial support of the numerator
     numDenBasis:Matrix
-        a row of monomials, the monomial support of both the numerator and denominator
+        a one-row @TO2 {Matrix,"matrix"}@ of monomials, the monomial supports of both the numerator and denominator
     Tolerance => RR
         default value {\tt 1e-6}
 Outputs
@@ -2989,7 +3108,7 @@ Description
 
         The method @TO (rationalInterpolation, List, List, Ring)@ can be used to choose monomial supports automatically.
 Caveat
-    The method uses the first point to remove $0/0$ rational functions. Because of this, the first entry of {\tt val} should be non-zero.
+    The method uses the first point to remove the rational functions whose numerator and denominator would both evaluate to 0 on the point. Because of this, the first entry of {\tt val} should be non-zero.
 SeeAlso
     (rationalInterpolation, List, List, Ring)
 ///
@@ -3003,7 +3122,7 @@ Usage
     (n,d) = rationalInterpolation(pts, vals, R)
 Inputs
     pts:List
-        of row matrices corresponding to points at which the rational function was evaluated
+        of one-row matrices corresponding to points at which the rational function was evaluated
     vals:List
         of @TO2 {Number, "numbers"}@ corresponding to evaluations of the rational function
     R:Ring
@@ -3015,7 +3134,7 @@ Outputs
         the denominator of the rational function
 Description
     Text
-        Given a set of points $pts = \{p_1,\dots,p_k\}$ and values $vals = \{v_1,\dots,v_k\}$, attempts to find a rational function
+        Given a list of points $pts = \{p_1,\dots,p_k\}$ and values $vals = \{v_1,\dots,v_k\}$, attempts to find a rational function
         $f = g/h$, such that $f(p_i) = v_i$. The method first tries to find polynomials $g,h$ of degree 0;
         if this fails, it tries to find $g,h$ of degree 1 and so on. This procedure stops when there are not
         enough points to compute the next degree, in which case an error will be thrown.
@@ -3032,8 +3151,6 @@ doc ///
 Key
     (evaluate, DiffOp, Point)
     (evaluate, DiffOp, Matrix)
-    (evaluate, InterpolatedDiffOp, Point)
-    (evaluate, InterpolatedDiffOp, Matrix)
 Headline
     evaluate coefficients of a differential operator
 Usage
@@ -3041,22 +3158,18 @@ Usage
 Inputs
     D:DiffOp
     p:Point
-        or a row @TO2 {Matrix, "matrix"}@
+        or a one-row @TO2 {Matrix, "matrix"}@
 Outputs
     :DiffOp
 Description
     Text
-        Evaluates a @TO2 {DiffOp, "differential operator"}@ at a point. This can be used to obtain a set of specialized Noetherian operators.
+        Evaluates the polynomial coefficients of a @TO2 {DiffOp, "differential operator"}@ at a point.
+        This can be used to obtain a set of specialized Noetherian operators.
     Example
         R = QQ[x,y];
-        D = diffOp{x => x, y => y}
+        S = diffOpRing R;
+        D = diffOp(x*dx+y*dy^3)
         evaluate(D, point{{1,2}})
-    Text
-        The method supports @TO2 {InterpolatedDiffOp, "interpolated differential operators"}@ as well, assuming that the denominator does not vanish.
-        The resulting operator is a @TO DiffOp@, not an @TO InterpolatedDiffOp@.
-    Example
-        E = new InterpolatedDiffOp from {x => (x, x^2 + y^2)}
-        evaluate(E, point{{1,2}})
 ///
 
 doc ///
@@ -3116,7 +3229,7 @@ Description
             {TO numericalNoetherianOperators}
         }@
 
-        See the respective documentation nodes for details. If the option {\tt Sampler} is unset,
+        See the respective documentation nodes for details and syntax. If the option {\tt Sampler} is unset,
         the default sampler will use @TO Bertini@.
 SeeAlso
     "Strategy => \"Hybrid\""
@@ -3143,19 +3256,18 @@ Outputs
 Description
     Text
         This method contains an implementation of Algorithm 3.9 in @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@. 
-        Applying this algorithm can be seen as making the backward process of computing a set of Noetherian operators.  
+        This method can be seen as the reverse operation of computing a set of Noetherian operators for a primary ideal.      
+
 
         Let $R$ be a polynomial ring $R = K[x_1,\ldots,x_n]$ over a field $K$ of characteristic zero. 
         Consider the Weyl algebra $D = R<dx_1,\ldots,dx_n>$ and a list of differential operators $L = \{L_1,\ldots,L_m\} \,\subset\, D$.
         Denote by $\mathcal{E} \,\subset\, D$ the $R$-bisubmodule of $D$ that is generated by $L_1,\ldots,L_m$.
         For a given prime ideal $P \,\subset\, R$, this method computes the $P$-primary ideal given as 
         $$
-        Q = \{ f \,\in\, R\, \mid\, \delta\, \bullet\, f\, \in P \, \forall  \delta \in \mathcal{E} \}.
+        Q = \{ f \,\in\, R\, \mid\, \delta\, \bullet\, f\, \in P, \ \forall  \delta \in \mathcal{E} \}.
         $$      
 
-        This method can be seen as the reverse operation of computing a set of Noetherian operators for a primary ideal.      
-
-        Next, we provide several examples to show the interplay between computing a set of Noetherian operators and then getting the back the original ideal.
+        Next, we provide several examples to show the interplay between computing a set of Noetherian operators and then recovering the original ideal.
 
         The first example shows an ideal that can be described with two different sets of Noetherian operators (this example appeared in Example 7.8 of @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@).
     Example
@@ -3178,7 +3290,7 @@ Description
         Q' = getIdealFromNoetherianOperators(L, P);
         Q == Q'  
     Text
-        The next example was given by Palamodov to show that there exists primary ideals that cannot be described by using differential operators with constant coefficients.       
+        The next example was given by Palamodov to show that there exist primary ideals that cannot be described by using differential operators with constant coefficients.       
     Example
         R = QQ[x_1, x_2, x_3]
         Q = ideal(x_1^2, x_2^2, x_1-x_2*x_3)
@@ -3198,6 +3310,156 @@ Description
         Q == Q'
 ///
 
+
+doc ///
+Key
+    getModuleFromNoetherianOperators
+    (getModuleFromNoetherianOperators, Ideal, List)
+Headline
+    Computes a primary submodule corresponding to a list of Noetherian operators and a prime ideal
+Usage
+    U = getModuleFromNoetherianOperators(P, L)
+Inputs
+    P : Ideal
+        a prime ideal
+    L : List
+        of @TO2 {DiffOp, "differential operators"}@
+Outputs
+    U : Module
+        the primary submodule corresponding to L and P
+Description
+    Text
+        This method contains an implementation of Algorithm 4.3 in @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@. 
+        This method can be seen as the reverse operation of computing a set of Noetherian operators for a primary module.
+    	For more details, see Section 4 of @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@.
+        
+    Example
+    	R = QQ[x1,x2,x3,x4]
+    	U = image matrix{{x1*x2,x2*x3,x3*x4,x4*x1}, {x1^2,x2^2,x3^2,x4^2}}
+	dpd = differentialPrimaryDecomposition U
+	M = dpd / (L -> getModuleFromNoetherianOperators(first L, last L)) // intersect
+	M == U
+///
+
+doc ///
+Key
+    (solvePDE, Module)
+    (solvePDE, Matrix)
+    (solvePDE, Ideal)
+    solvePDE
+Headline
+    solve linear systems of PDE with constant coefficients
+Usage
+    solvePDE U
+Inputs
+    U:Module
+        a submodule of a free module, or a @TO2 {Matrix, "matrix"}@, or an @TO2 {Ideal, "ideal"}@
+Outputs
+    :List
+Description
+    Text
+        A homogeneous system of $l$ linear partial differential equations for a function $\psi \colon \RR^n \to \CC^k$
+        is encoded by a $(k \times l)$ matrix with entries in a polynomial ring. For example, if $n=4, k=2, l=3$, the PDE system
+        $$
+            \frac{\partial^2 \psi_1}{\partial z_1 \partial z_3}  
+            +  \frac{\partial^2 \psi_2}{\partial z_1^2} = 
+            \frac{\partial^2 \psi_1}{\partial z_1 \partial z_2} +   \frac{\partial^2 \psi_2}{\partial z_2^2} 
+            = 
+            \frac{\partial^3 \psi_1}{\partial z_1^2 \partial z_2} +
+            \frac{\partial^3 \psi_2}{\partial z_1^2 \partial z_4} =0
+        $$
+        is encoded by the matrix
+        $$
+            M = \begin{bmatrix}
+                \partial_{1} \partial_{3} &  \partial_{1} \partial_{2} &  \partial_{1}^2 \partial_{2}\\
+                \partial_{1}^2 & \partial_{2}^2 & \partial_{1}^2 \partial_{4}
+            \end{bmatrix},
+        $$
+        or more precisely, by the submodule $U$ of $(K[\partial_1,\partial_2,\partial_3,\partial_4])^2$ generated by the columns of $M$.
+
+        By the Ehrenpreis-Palamodov fundamental principle, solutions to such PDE are of the form
+        $$
+            \phi(\mathbf z) = \sum_{i = 1}^s \sum_{j=1}^{m_i} \int_{V_i} B_{i,j}(\mathbf{x}, \mathbf{z}) e^{\mathbf{x}^t \mathbf{z}} \mu_{i,j}(\mathbb{x})
+        $$
+        where $\mu_{i,j}$ are complex valued measures.
+
+        The function {\tt solvePDE} computes the algebraic varieties $V_i$ and {\em Noetherian multipliers} $B_{i,j}(\mathbf x, \mathbf z)$.
+        The input is either a matrix $M$ or a module $U$, where the $\partial_i$ is replaced by $x_i$.
+        The output is a list of $s$ pairs. For the $i$th pair, the first entry is the prime ideal of $V_i$.
+        The second entry is the list $B_{i,1}, \dotsc, B_{i,m_j}$ of vectors of polynomials in $2n$ variables, where the symbol $\mathbf{z}$ is replaced by the symbol $\mathbf{\mathtt{d}x}$.
+
+    Example
+        R = QQ[x_1..x_4]
+        M = matrix{{x_1*x_3, x_1*x_2, x_1^2*x_2}, {x_1^2, x_2^2, x_1^2*x_4}}
+        U = image M
+        sols = solvePDE M
+        netList sols
+
+    Text
+        This output reveals that the general solution to the example system above consists of nine summands, one of which is
+        $$
+            \phi(\mathbb z) = \int_{V(x_3,x_1)} \begin{bmatrix} z_1 x_2 \\ -1 \end{bmatrix} e^{x_1 z_1 + x_2 z_2 + x_3 z_3 + x_4 z_4} \, d\mu(x_1,x_2,x_3,x_4)
+        $$
+
+        The total number of Noetherian multipliers is equal to the arithmetic multiplicity of the module $U$.
+    Example
+        amult U == sum(sols / last / (l -> #l))
+    Text
+        Note that the output of {\tt solvePDE} can be interpreted as a @TO2 {differentialPrimaryDecomposition, "differential primary decomposition"}@.
+
+References
+    @arXiv("2104.10146", "Ait El Manssour, R., Härkönen, M., Sturmfels, B. (2021). Linear PDE with constant coefficients")@
+SeeAlso
+    differentialPrimaryDecomposition
+    (noetherianOperators, Module)
+///
+
+doc ///
+Key
+    differentialPrimaryDecomposition
+    (differentialPrimaryDecomposition, Module)
+    (differentialPrimaryDecomposition, Ideal)
+Headline
+    compute a differential primary decomposition
+Usage
+    differentialPrimaryDecomposition U
+Inputs
+    U:Module
+        a submodule of a free module, or an @TO2 {Ideal, "ideal"}@
+Outputs
+    :List
+        a minimal differential primary decomposition of U
+Description
+    Text
+        Let $R$ be a polynomial ring over a field $K$.
+        Given a submodule $U$ of an $R$-module $M$, a differential primary decomposition 
+        of $U$ in $M$ is a list of pairs $(p_1, A_1), ..., (p_k, A_k)$ where $p_1, ..., p_k$ are 
+        the associated primes of $M/U$ and $A_i \subseteq \operatorname{Diff}_{R/K}(M, R/p_i)$ 
+        are differential operators satisfying 
+        $$U_p = \bigcap_{p_i \subseteq p} \{ w \in M_p : \delta(w) = 0 , \ \forall \delta \in A_i \}.$$
+        This notion was introduced in [2] (cf. Definition 4.1), in which it was shown that the size of 
+        a differential primary decomposition (which is defined to be $\sum_{i=1}^k |A_i|$) is at 
+        least @TO2{amult, "amult(U)"}@, and moreover differential primary decompositions of
+        size equal to amult(U) exist (and are called minimal).
+        
+        This method contains an implementation of Algorithm 4.6 in [2]. 
+        
+        The following example appears as Example 6.2 in [1]:
+
+    Example
+        R = QQ[x_1,x_2,x_3]
+        U = image matrix {{x_1^2,x_1*x_2,x_1*x_3}, {x_2^2,x_2*x_3,x_3^2}}
+        differentialPrimaryDecomposition U
+
+References
+    [1] @arXiv("2104.03385", "Chen, J., Cid-Ruiz, Y. (2021). Primary decomposition of modules: a computational differential approach")@
+    
+    [2] @arXiv("2101.03643", "Cid-Ruiz, Y., Sturmfels, B. (2021). Primary Decomposition with Differential Operators")@
+SeeAlso
+    solvePDE
+    noetherianOperators
+///
+
 doc ///
 Key
     coordinateChangeOps
@@ -3212,10 +3474,10 @@ Usage
     coordinateChangeOps(phi, L)
 Inputs
     phi:Matrix
-        or @TO RingMap@
+        or a @TO2 {RingMap, "ring map"}@
     D:DiffOp
     L:List
-        of @TO DiffOp@s
+        of @TO2 {DiffOp, "differential operators"}@
 Outputs
     :DiffOp
         (resp. a list of differential operators)
@@ -3256,7 +3518,7 @@ Inputs
         N is a set of Noetherian operators for the P-primary component of I
 Outputs
     :List
-        of @TO DiffOp@s
+        of @TO2 {DiffOp, "differential operators"}@
 Description
     Text
         Let $I$ be an unmixed ideal in a polynomial ring $R = K[x_1, ..., x_n]$, with primary 
@@ -3312,9 +3574,10 @@ I = ideal((x-1)^2,(x-1)*(y+1),(y+1)^3)
 J = ideal((x)^2,(x)*(y),(y)^3)
 Ps = associatedPrimes I
 nopsI = noetherianOperators(I, first Ps)
-assert(#(set nopsI - ({1_R, R_0, R_1, R_1^2} / (x -> diffOp{x=>1}))) == 0)
+S = diffOpRing R
+assert(nopsI == {diffOp(1_S), diffOp dy, diffOp dx, diffOp dy^2})
 nopsJ = noetherianOperators(J, ideal gens R)
-assert(#(set nopsJ - ({1_R, R_0, R_1, R_1^2} / (x -> diffOp{x=>1}))) == 0)
+assert(nopsJ == sort {diffOp(1_S), diffOp dx, diffOp dy, diffOp dy^2})
 ///
 
 
@@ -3335,8 +3598,9 @@ R = CC[x,y,t]
 I = intersect(ideal(x^2-t*y, y^2), ideal(x+y+1))
 pt = point{{0,0,12}}
 l = numNoethOpsAtPoint(I, pt, Tolerance => 1e-6, DependentSet => {x,y})
-dif = l / normalize - {diffOp{1_R => 1}, diffOp{x => 1}, diffOp{x^2 => 1, y => 1/6}, diffOp{x^3 => 1, x*y => 1/2}}
-assert(all(dif, nop -> all(values nop, v -> abs sub(v,CC) < 1e-6)))
+S = diffOpRing R
+dif = l / normalize - {diffOp(1_S), diffOp dx, diffOp(dx^2+(1/6)*dy), diffOp(dx^3 + (1/2)*dx*dy)}
+assert(all(dif, nop -> all(flatten entries last coefficients nop, v -> abs sub(v,CC) < 1e-6)))
 ///
 
 
@@ -3363,6 +3627,8 @@ debug loadPackage("NoetherianOperators", Reload => true)
 needsPackage "NumericalAlgebraicGeometry"
 needsPackage "Bertini"
 installPackage("NoetherianOperators", RemakeAllDocumentation => true)
+uninstallPackage "NoetherianOperators"
+viewHelp NoetherianOperators
 --loadPackage "NoetherianOperators"
 R = QQ[x_0..x_5]
 P = minors(2,matrix{{x_0,x_1,x_3,x_4},{x_1,x_2,x_4,x_5}});

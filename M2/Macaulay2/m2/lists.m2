@@ -96,6 +96,8 @@ all(BasicList,BasicList,Function) := (x,y,p) -> not any(apply(x,y,identity), ij 
 --same(BasicList, Function) := (L, f) -> #L <= 1 or (t := f L#0; not any(L, l -> t =!= f l))
 same = L -> #L <= 1 or (t := L#0; not any(L, l -> t =!= l))
 
+uniform = L -> same apply(L, class)
+
 member(Thing,VisibleList) := Boolean => (c,x) -> any(x, i -> c===i)
 
 sum List := x -> plus toSequence x

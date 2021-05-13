@@ -1,7 +1,7 @@
 -- An interface to the Littlewood-Richardson homotopies in PHCpack.
 -- Note that this package needs version 1.8 of PHCpack.m2.
 
-export{"LRrule", "LRtriple", "luckySeed", "higherWorkingPrecision", 
+export{"LRrule", "LRtriple", "RandomSeed", "WorkingPrecision", 
        "parseTriplet", "wrapTriplet", "LRcheater",
        "PieriRootCount", "PieriHomotopies"}
 
@@ -323,8 +323,8 @@ extractDimensions := (data) -> (
 
 -- end of the helper functions section
  
-LRruleIn = method();
-LRruleIn(ZZ,ZZ,Matrix) := (a,n,m) -> (
+LRruleIn = method(Options=>{Verbose=>false});
+LRruleIn(ZZ,ZZ,Matrix) := o -> (a,n,m) -> (
 -- 
 -- DESCRIPTION :
 --   Prepares the input for phc -e option #4 to resolve a Schubert
@@ -343,7 +343,7 @@ LRruleIn(ZZ,ZZ,Matrix) := (a,n,m) -> (
 --   result    a string with input for phc -e, i.e.: if s is place
 --             in the file "input" then phc -e < input will work.
 --
-   versionPHC := versionNumber(, Verbose=>true);
+   versionPHC := versionNumber(, o);
    result := "";
    if #versionPHC#0 > 0 then
    (
@@ -411,8 +411,8 @@ tailLine(String, ZZ) := (name, k) -> (
    result
 );
 
-LRrule = method();
-LRrule(ZZ,Matrix) := (n,m) -> (
+LRrule = method(Options=>{Verbose=>false});
+LRrule(ZZ,Matrix) := o -> (n,m) -> (
 -- 
 -- DESCRIPTION :
 --   Returns the intersection condition and its result.
@@ -431,19 +431,19 @@ LRrule(ZZ,Matrix) := (n,m) -> (
    -- stdio << "the input data for phc -e : " << endl <<  d;
    PHCinputFile := temporaryFileName() | "PHCinput";
    PHCoutputFile := temporaryFileName() | "PHCoutput";
-   stdio << endl << "writing data to file " << PHCinputFile << endl;
+   if o.Verbose then stdio << endl << "writing data to file " << PHCinputFile << endl;
    dataToFile(d,PHCinputFile);
-   stdio << "running phc -e, writing output to " << PHCoutputFile << endl;
+   if o.Verbose then stdio << "running phc -e, writing output to " << PHCoutputFile << endl;
    run("phc -e < " | PHCinputFile | " > " | PHCoutputFile);
-   stdio << "opening output file " << PHCoutputFile << endl;
+   if o.Verbose then stdio << "opening output file " << PHCoutputFile << endl;
    outcome := lastLine(PHCoutputFile);
    s := substring(4,#d-5,d);
    s = concatenate(s,outcome);
    s
 );
 
-ringFromString = method();
-ringFromString(String) := (p) -> (
+ringFromString = method(Options=>{Verbose=>false});
+ringFromString String := o -> p -> (
 --
 -- DESCRIPTION :
 --   Given in p a polynomial system in PHCpack format,
@@ -453,9 +453,9 @@ ringFromString(String) := (p) -> (
    PHCinpFile := temporaryFileName() | "PHCinp";
    PHCoutFile := temporaryFileName() | "PHCout";
    PHCsesFile := temporaryFileName() | "PHCses";
-   stdio << endl << "writing data to file " << PHCinpFile << endl;
+   if o.Verbose then stdio << endl << "writing data to file " << PHCinpFile << endl;
    dataToFile(p,PHCinpFile);
-   stdio << "running phc -o, writing output to " << PHCoutFile << endl;
+   if o.Verbose then stdio << "running phc -o, writing output to " << PHCoutFile << endl;
    run("phc -o " | PHCinpFile | " " | PHCoutFile | " > " | PHCsesFile);
    s := get PHCoutFile;
    -- stdio << "the string of symbols :" << s;
@@ -469,8 +469,8 @@ ringFromString(String) := (p) -> (
    CC_53[v]
 );
 
-systemFromString = method();
-systemFromString (String, Ring) := (p, R) -> (
+systemFromString = method(Options=>{Verbose=>false});
+systemFromString (String, Ring) := o -> (p, R) -> (
 --
 -- DESCRIPTION :
 --   Given in the string p a polynomial system in PHCpack format
@@ -479,7 +479,7 @@ systemFromString (String, Ring) := (p, R) -> (
 --   a proper polynomial system in Macaulay2.   
 --
    PHCinpFile := temporaryFileName() | "PHCipt";
-   stdio << endl << "writing data to file " << PHCinpFile << endl;
+   if o.Verbose then stdio << endl << "writing data to file " << PHCinpFile << endl;
    dataToFile(p,PHCinpFile);
    use R;
    return systemFromFile(PHCinpFile);
@@ -520,7 +520,7 @@ SchubertSystemFromFile(String) := (name) -> (
 );
 
 LRtriple = method(TypicalValue => Sequence,
-  Options => {higherWorkingPrecision => 0, luckySeed => -1});
+  Options => {WorkingPrecision => 0, RandomSeed => -1, Verbose=>false});
 LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
 --
 -- DESCRIPTION :
@@ -534,14 +534,14 @@ LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
 --             the intersection bracket must be taken;
 --
 -- OPTIONS :
---   The option higherWorkingPrecision allow to set the working precision
+--   The option WorkingPrecision allow to set the working precision
 --   to double double or quad double precision.  The values are
 --   0 : the default working precision is double precision,
 --   1 : double double precision, and
 --   2 : quad double precision.
---   The option luckySeed controls the seed for the random number generator,
+--   The option RandomSeed controls the seed for the random number generator,
 --   which ensures reproducible results, and in case of numerical problems,
---   lucky values which give correct results.
+--   Random values which give correct results.
 -- 
 -- ON RETURN :
 --   (r,f,p,s) a sequence with the result of the Schubert problem:
@@ -551,7 +551,7 @@ LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
 --   p         the polynomial system solved,
 --   s         a string with solutions to the polynomial system.
 --
-   if not member(opt.higherWorkingPrecision,{0,1,2}) then
+   if not member(opt.WorkingPrecision,{0,1,2}) then
      error "The working precision must be set to 0, 1, or 2.";
 
    d := LRruleIn(5,n,m);  -- option 5 of phc -e
@@ -560,11 +560,11 @@ LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
    PHCsessionFile := temporaryFileName() | "PHCses";
    PHCsolutions := temporaryFileName() | "PHCsolutions";
    d = concatenate(d,"\n0\n");  -- solve a generic instance for random flags
-   if opt.higherWorkingPrecision == 0 then
+   if opt.WorkingPrecision == 0 then
    (
      d = concatenate(d,"0\n");  -- standard double precision
    )
-   else if opt.higherWorkingPrecision == 1 then
+   else if opt.WorkingPrecision == 1 then
    (
      d = concatenate(d,"1\n");  -- double double precision
    )
@@ -578,24 +578,25 @@ LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
    d = concatenate(d,"y\n");  -- use an efficient problem formulation
    d = concatenate(d,"y\n");  -- square the overdetermined homotopies
    d = concatenate(d,"0\n");  -- no multitasking
+   d = concatenate(d,"n\n");  -- no new path trackers (yet)
    d = concatenate(d,"0\n");  -- do not change default continuation parameters
    d = concatenate(d,"0\n");  -- no intermediate output during continuation
-   stdio << "the input data for phc -e : " << endl <<  d;
-   stdio << endl << "writing data to file " << PHCinputFile << endl;
+   if opt.Verbose then stdio << "the input data for phc -e : " << endl <<  d;
+   if opt.Verbose then stdio << endl << "writing data to file " << PHCinputFile << endl;
    dataToFile(d,PHCinputFile);
-   stdio << "running phc -e, session output to " << PHCsessionFile << endl;
-   stdio << "                writing output to " << PHCoutputFile << endl;
-   if opt.luckySeed == -1 then
+   if opt.Verbose then stdio << "running phc -e, session output to " << PHCsessionFile << endl;
+   if opt.Verbose then stdio << "                writing output to " << PHCoutputFile << endl;
+   if opt.RandomSeed == -1 then
      run("phc -e < " | PHCinputFile | " > " | PHCsessionFile)
    else
    (
-     cmdphc := "phc -e -0" | opt.luckySeed | " < " | PHCinputFile; 
+     cmdphc := "phc -e -0" | opt.RandomSeed | " < " | PHCinputFile; 
      cmdphc = cmdphc | " > " | PHCsessionFile;
-     stdio << "running " << cmdphc;
+     if opt.Verbose then stdio << "running " << cmdphc;
      run(cmdphc)
    );
    run("phc -z " | PHCoutputFile | " " | PHCsolutions);
-   stdio << "opening output file " << PHCsolutions << endl;
+   if opt.Verbose then stdio << "opening output file " << PHCsolutions << endl;
   -- stdio << endl << "extracting fixed flags, polynomial system, solutions";
   -- stdio << endl;
    fps := SchubertSystemFromFile(PHCoutputFile);
@@ -603,8 +604,8 @@ LRtriple(ZZ,Matrix) := opt -> (n,m) -> (
    result
 );
 
-parseTriplet = method();
-parseTriplet(String,String,String) := (f,p,s) -> (
+parseTriplet = method(Options=>{Verbose=>false});
+parseTriplet(String,String,String) := opt -> (f,p,s) -> (
 --
 -- DESCRIPTION :
 --   Returns the polynomial ring of the variables, the polynomial system,
@@ -617,15 +618,15 @@ parseTriplet(String,String,String) := (f,p,s) -> (
    sdata := concatenate("THE SOLUTIONS :\n", s);
    PHCiptsolsFile := temporaryFileName() | "PHCsols";
    PHCoptsolsFile := temporaryFileName() | "PHCsols";
-   stdio << "writing solutions to " << PHCiptsolsFile;
+   if opt.Verbose then stdio << "writing solutions to " << PHCiptsolsFile;
    dataToFile(sdata,PHCiptsolsFile);
-   stdio << "running phc -z ..." << endl;
+   if opt.Verbose then stdio << "running phc -z ..." << endl;
    run(PHCexe|" -z " | PHCiptsolsFile | " "| PHCoptsolsFile);
    sols := parseSolutions(PHCoptsolsFile, R);
    linesf := lines f;
    (dim, nbr) := extractDimensions(linesf);
-   stdio << "the dimension : " << dim << endl; 
-   stdio << "the number of flags : " << nbr << endl; 
+   if opt.Verbose then stdio << "the dimension : " << dim << endl; 
+   if opt.Verbose then stdio << "the number of flags : " << nbr << endl; 
    fixedFlags := extractFixedFlags(dim, nbr, linesf);
    movedFlag := extractMovedFlag(dim, linesf);
    solutionPlanes := extractSolutionPlanes(dim, linesf);
@@ -646,8 +647,8 @@ wrapTriplet(String,String,String) := (f,p,s) -> (
    result
 );
 
-cheaterInputFile = method();
-cheaterInputFile(String) := (data) -> (
+cheaterInputFile = method(Options=>{Verbose=>false});
+cheaterInputFile String := opt -> data -> (
 --
 -- DESCRIPTION :
 --   Generates a file name and writes the data in the string to it.
@@ -660,15 +661,15 @@ cheaterInputFile(String) := (data) -> (
 --   name      name of the file that contains the data.
 --
    name := temporaryFileName() | "PHCcheaterInput";
-   stdio << "writing start data to " << name << endl;
+   if opt.Verbose then stdio << "writing start data to " << name << endl;
    file := openOut name;
    file << data << endl;
    close file;
    name
 );
 
-LRcheater = method();
-LRcheater(ZZ,Matrix,String) := (n,m,w) -> (
+LRcheater = method(Options=>{Verbose=>true});
+LRcheater(ZZ,Matrix,String) := opt -> (n,m,w) -> (
 --
 -- DESCRIPTION :
 --   Runs a cheater's homotopy from a generic instance of a Schubert
@@ -695,10 +696,10 @@ LRcheater(ZZ,Matrix,String) := (n,m,w) -> (
    d = concatenate(d,"y\n");    -- generate real flags
    d = concatenate(d,PHCoutputCheater,"\n");
    -- stdio << "the input data for phc -e : " << endl <<  d;
-   stdio << endl << "writing data to file " << PHCinputSession << endl;
+   if opt.Verbose then stdio << endl << "writing data to file " << PHCinputSession << endl;
    dataToFile(d,PHCinputSession);
-   stdio << "running phc -e, session output to " << PHCsessionCheater << endl;
-   stdio << "                writing output to " << PHCoutputCheater << endl;
+   if opt.Verbose then stdio << "running phc -e, session output to " << PHCsessionCheater << endl;
+   if opt.Verbose then stdio << "                writing output to " << PHCoutputCheater << endl;
    run("phc -e < " | PHCinputSession | " > " | PHCsessionCheater);
    -- run("phc -z " | PHCoutputCheater | " " | PHCsolutionsCheater);
    -- stdio << "opening output file " << PHCsolutionsCheater << endl;

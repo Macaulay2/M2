@@ -242,6 +242,19 @@ bool PolyRing::from_BigReal(gmp_RR z, ring_elem &result) const
   result = fromCoefficient(a);
   return true;
 }
+
+bool PolyRing::from_Interval(gmp_RRi z, ring_elem &result) const
+{
+    ring_elem a;
+    if (!K_->from_Interval(z, a))
+      {
+        result = ZERO_RINGELEM;
+        return false;
+      }
+    result = fromCoefficient(a);
+    return true;
+}
+
 bool PolyRing::from_double(double z, ring_elem &result) const
 {
   ring_elem a;

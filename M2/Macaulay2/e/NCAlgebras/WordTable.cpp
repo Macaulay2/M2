@@ -161,7 +161,7 @@ bool WordTable::isSuffix(Word word,
 bool WordTable::subword(Word word,
                         std::pair<int,int>& output) const
 {
-  int start_index = -1;
+  int start_index = -1;  // return value
   for (auto i = 0; i < mMonomials.size(); ++i)
     {
       if (subwordPosition(mMonomials[i], word, start_index))
@@ -244,7 +244,6 @@ void WordTable::leftOverlaps(std::vector<Overlap>& newLeftOverlaps) const
       for (auto j : overlap_indices)
         newLeftOverlaps.push_back(std::make_tuple(i, j, word_index,true));
     }
-
   // triples will be <dict word index, index into dict word where suffix starts, word_index>.
 }
 

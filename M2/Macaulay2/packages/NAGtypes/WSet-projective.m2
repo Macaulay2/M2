@@ -16,13 +16,15 @@ net PWSet := PW -> "[dim="| dim PW | " deg="| degree PW |" in " | net ambient PW
 makePWSet = method(TypicalValue=>PWSet, 
     Options=>{Tolerance=>0.000001} -- used to determine whether the point is "at infinity": see toChart
     )
-makePWSet (PolySystem,SlicingVariety,List) := o -> (F,S,pts) ->
+makePWSet (PolySystem,SlicingVariety,List) := o -> (F,S,pts) -> 
   new PWSet from {
       "equations" => F,
       "slice" => S,
       Points => pts,
-      "charts" => {},
-      Tolerance => o.Tolerance
+      cache => new CacheTable from {
+	  "charts" => {},
+      	  Tolerance => o.Tolerance
+    	  }
       }
 
 dim PWSet := PW -> codim slicingVariety PW 
@@ -33,13 +35,13 @@ points PWSet := PW -> PW.Points
 slicingVariety PWSet := PW -> PW#"slice"
 
 addChart = method()
-addChart (PWSet, List, RingElement) := (PW,pts,H) -> PW#"charts" = PW#"charts" | {
+addChart (PWSet, List, RingElement) := (PW,pts,H) -> PW.cache#"charts" = PW.cache#"charts" | {
     (witnessSet(PW#"equations", polySystem (map slicingVariety PW || matrix{{H-1}}), pts), H)
     }  
 
 addPointsToChart = method()
 addPointsToChart (PWSet, List, RingElement) := (PW,pts,H) -> (
-    charts := PW#"charts";
+    charts := PW.cache#"charts";
     c := position(charts,WH->last WH==H); 
     if c === null then error "unknown chart";
     W := first charts#c; 
@@ -47,10 +49,9 @@ addPointsToChart (PWSet, List, RingElement) := (PW,pts,H) -> (
     W.Points = W.Points | pts;
     )  
 
-toChart = method()
 toChart(PWSet,Point,RingElement) := (PW,p,H) -> (
     a := sub(H,matrix p);
-    if abs a < PW.Tolerance then infinity else point{ apply(coordinates p,x->x/a) }
+    if abs a < PW.cache#Tolerance then infinity else point{ apply(coordinates p,x->x/a) }
     )  
 
 -- OUT: list of "affine" points 
@@ -65,7 +66,7 @@ moveSlicingVariety(PWSet,SlicingVariety) := (PW,S) -> (
     PW' := makePWSet(PW#"equations", S, {});
     H' := random(1, ring ambient S);
     addChart(PW',toChart(PW',H'),H'); 
-    for WH in PW#"charts" do (
+    for WH in PW.cache#"charts" do (
 	(W,H) := WH;
 	W' := moveSlicingVariety(W,slicingVariety(ambient W, rationalMap transpose matrix{drop(slice W,-1)|{H'-1}}));
 	addPointsToChart(PW',points W',H');

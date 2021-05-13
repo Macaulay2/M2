@@ -54,6 +54,9 @@ const Ring /* or null */ *rawGaloisField(const RingElement *f);
    However, currently, not all of this is checked...
 */
 
+const Ring /* or null */ *IM2_Ring_RRi(unsigned long prec);
+/* drg: connected rawRRi */
+
 const Ring /* or null */ *IM2_Ring_RRR(unsigned long prec);
 /* drg: connected rawRRR */
 

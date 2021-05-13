@@ -193,14 +193,14 @@ associatedPrimes Module := List => opts -> M -> assassinsHelper(M, (associatedPr
 assassinsHelper = (A, key, opts) -> (
     -- TODO: are there any instant checks to do?
     -- TODO: any better way to do this?
-    S := first flattenRing ring presentation ring A;
+    -- S := first flattenRing ring presentation ring A;
 
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
 
-    codimLimit := min(opts.CodimensionLimit, dim S);
-    doLimit := L -> select(L, P -> codim(P, Generic => true) <= codimLimit);
-    opts = opts ++ { CodimensionLimit => codimLimit };
+    codimLimit := opts.CodimensionLimit; -- min(opts.CodimensionLimit, dim S);
+    doLimit := if codimLimit == infinity then identity else L -> select(L, P -> codim(P, Generic => true) <= codimLimit);
+    -- opts = opts ++ { CodimensionLimit => codimLimit };
 
     -- this logic determines what strategies will be used
     computation := (opts, container) -> runHooks(key,
@@ -286,9 +286,10 @@ algorithms#(associatedPrimes, Module) = new MutableHashTable from {
 	c := codim M;
 	d := dim S;
 	C := null; -- will be a resolution of M
-	k := opts.CodimensionLimit;
+	k := opts.CodimensionLimit + d - dim ring M0; -- !!
+        -- if debugLevel > 0 then print(opts.CodimensionLimit, k);
 	comp := opts.cache;
-	p := comp.CodimensionLimit;
+	p := comp.CodimensionLimit + d - dim ring M0; -- !!
 	L := comp.Result;
 	for i in max(p + 1, c) .. min(d, k) do (
 	    if debugLevel > 0 then printerr("Extracting associated primes of codim " | toString i);
@@ -412,7 +413,7 @@ algorithms#(primaryDecomposition, Module) = new MutableHashTable from {
 	--   associated prime => respective primary component
 	comp := opts.cache;
 	-- the list of associated primes, either from cache or computed
-	AP := associatedPrimes(M, CodimensionLimit => dim S);
+	AP := associatedPrimes M; --, CodimensionLimit => dim S);
 	-- check whether all components are found
 	if #values(comp.Result) != #AP then (
 	    -- hash table of embeddings among associated primes

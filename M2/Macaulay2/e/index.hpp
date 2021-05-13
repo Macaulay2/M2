@@ -13,10 +13,8 @@ class Index
  public:
   Index() : ind(nullptr), collection(nullptr) {}
   Index(void *i, const T *c) : ind(i), collection(c) {}
-
   Index(const Index<T> &i) = default; 
   Index<T>& operator=(const Index<T> &i) = default;
-
   Index<T> operator++()
   {
     ind = collection->next(ind);

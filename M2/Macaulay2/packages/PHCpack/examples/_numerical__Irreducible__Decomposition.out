@@ -1,4 +1,6 @@
--- -*- M2-comint -*- hash: 522064869
+-- -*- M2-comint -*- hash: -1215191058
+Hello world from process 0 out of 1 processes
+-- COMPILE TIME: Feb 24 2021, 10:08:22
 
 i1 : R=CC[x11,x22,x21,x12,x23,x13,x14,x24];
 
@@ -15,7 +17,7 @@ i4 : WitSets=V#5; --witness sets are accessed by dimension
 
 i5 : w=first WitSets;
 
-i6 : w#IsIrreducible
+i6 : w.cache.IsIrreducible
 
 o6 = true
 
@@ -25,17 +27,18 @@ i8 : system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14};
 
 i9 : PD=primaryDecomposition(ideal(system))
 
-o9 = {ideal (x23*x14 - x13*x24, x21*x14 - x11*x24, x22*x14 - x12*x24, x12*x23
+o9 = {ideal (x13, x23, x11*x22 - x21*x12), ideal (x12, x22, x23*x14 -
      ------------------------------------------------------------------------
-     - x22*x13, x11*x23 - x21*x13, x11*x22 - x21*x12), ideal (x12, x22,
+     x13*x24), ideal (x23*x14 - x13*x24, x21*x14 - x11*x24, x22*x14 -
      ------------------------------------------------------------------------
-     x23*x14 - x13*x24), ideal (x13, x23, x11*x22 - x21*x12)}
+     x12*x24, x12*x23 - x22*x13, x11*x23 - x21*x13, x11*x22 - x21*x12)}
 
 o9 : List
 
 i10 : for i from 0 to 2 do print ("dim =" | dim PD_i | "  " | "degree=" | degree PD_i)
+dim =5  degree=2
+dim =5  degree=2
 dim =5  degree=4
-dim =5  degree=2
-dim =5  degree=2
 
 i11 : 
+Bye world from process 0 out of 1 processes

@@ -42,9 +42,9 @@ scan( {ZZ,QQ}, K -> (
 	  ))
 
 scan((
-	  (ZZ, { QQ, RR', CC' }),
-	  (QQ, { RR', CC' }),
-	  (RR',{ RR', CC' }),
+	  (ZZ, { QQ, RR', CC', RRi' }),
+	  (QQ, { RR', CC', RRi' }),
+	  (RR',{ RR', CC', RRi' }),
 	  (CC', { CC' })
 	  ), 
      (K,Ls) -> scan(Ls, L -> (

@@ -216,7 +216,7 @@ resolution Module := ChainComplex => o -> (M) -> (
      if isField R then return chainComplex map(minimalPresentation M,R^0,0);
      k := ultimate(coefficientRing, R);
      oR := options R;
-     if engineReady M and (options R).Heft =!= null
+     if (engineReady M and (options R).Heft =!= null) or instance(R, FreeAlgebraQuotient)
      then (resolutionInEngine default(o,if o.FastNonminimal then Strategy4 else if isQuotientRing R or isSkewCommutative R then Strategy2 else Strategy1))(M)
      else if k === ZZ then (resolutionBySyzygies o)(M)
      else if not isHomogeneous M and isCommutative R and degreeLength R === 1 then (resolutionByHomogenization o)(M)

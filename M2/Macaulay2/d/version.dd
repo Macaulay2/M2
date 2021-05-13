@@ -28,6 +28,9 @@ header "
 
    #include <boost/version.hpp>
 
+//   #include <mpfr.h>
+//   #include <mpfi.h>
+
    #include <memtailor.h>
    #include <mathic.h>
    #include <mathicgb.h>
@@ -201,7 +204,8 @@ setupconst("version", Expr(toHashTable(Sequence(
    "mathicgb version" => Ccode(constcharstar,"MATHICGB_VERSION_STRING"),
    "factory version" => factoryversion(),
    "readline version" => readlineversion(),
-   "mpfr version" => Ccode(constcharstar,"mpfr_version"),
+   "mpfr version" => Ccode(constcharstar,"MPFR_VERSION_STRING"),
+   "mpfi version" => Ccode(constcharstar,"MPFI_VERSION_STRING"),
    "M2 suffix" => Ccode(constcharstar,"M2SUFFIX"),
    "executable extension" => Ccode(constcharstar,"EXEEXT"),
    "M2 name" => Ccode(constcharstar," \"M2\" M2SUFFIX EXEEXT "),

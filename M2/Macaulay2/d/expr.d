@@ -327,6 +327,7 @@ export rawPointArrayClass := newtypeof(rawObjectClass);    -- RawPointArray
 -- NAG end
 export rawMutableComplexClass := newtypeof(rawObjectClass);	    -- RawMutableComplex
 export angleBarListClass := newtypeof(visibleListClass);
+export RRiClass := newbignumbertype();
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 
