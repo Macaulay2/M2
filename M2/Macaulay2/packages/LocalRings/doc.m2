@@ -1,8 +1,6 @@
 doc ///
 Key
   LocalRings
-   localRing
-  (localRing, Ring, Ideal)
 Headline
   Localizing polynomial rings at a prime ideal
 Description
@@ -44,7 +42,22 @@ Caveat
   Quotients of local rings are not implemented yet. Moreover, certain functions (such as symbol%,
   radical, minimalPrimes, leadingCoefficient) are ambiguous or not yet defined.
 SeeAlso
-  PruneComplex
+  "PruneComplex :: PruneComplex"
+///
+
+doc ///
+Key
+  LocalRing
+Headline
+  the class of all local rings
+///
+
+doc ///
+Key
+   localRing
+  (localRing, Ring, Ideal)
+Headline
+  constructor for local rings
 ///
 
 doc ///

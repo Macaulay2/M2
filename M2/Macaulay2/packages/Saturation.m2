@@ -4,6 +4,8 @@
 -- UPDATE HISTORY : created 14 April 2018 at M2@UW;
 --                  updated November 2020
 --
+-- ISSUE TRACKER : https://github.com/orgs/Macaulay2/projects/3
+--
 -- TODO : 1. why are there shadowed symbols?
 --        2. any strategies to incorporate from Shimoyama-Yokoyama.m2
 --           or greedySat in GTZ.m2 or getSaturation in newGTZ.m2
