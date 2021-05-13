@@ -62,7 +62,7 @@ TEST /// -- test for syz, liftUp, **, modulo, inducedMap
   A' = A ** RP
   B = modulo(f, g)
   C = subquotient(f', g')
-  C' = C ** RP
+  C' = C ** RP -- FIXME: is there a way to do this without minimizing?
   D = subquotient(f, g)
   -- image
   assert(image A == liftUp image B)
@@ -81,7 +81,7 @@ TEST /// -- test for syz, liftUp, **, modulo, inducedMap
   assert(trim coker A == liftUp trim coker B)
   assert(trim coker A' == trim coker B)
   assert(trim C == liftUp trim D)
---  assert(trim C' == trim D) -- FIXME: why does this fail?
+--  assert(trim C' == trim D) -- FIXME: Module ** LocalRing minimizes
   -- cover
   assert(cover coker A == liftUp cover coker B)
   assert(cover coker A' == cover coker B)
@@ -97,7 +97,7 @@ TEST /// -- test for syz, liftUp, **, modulo, inducedMap
   assert(ambient image A == liftUp ambient image B)
   assert(ambient image A' == ambient image B)
   assert(ambient C == liftUp ambient D)
---  assert(ambient C' == ambient D) -- FIXME: why does this fail?
+--  assert(ambient C' == ambient D) -- FIXME: Module ** LocalRing minimizes
 -- TODO:
   -- mingens
   -- minimalPresentation: how to make this work?
@@ -250,8 +250,9 @@ TEST /// -- test for // -- TODO add more
   -- here is an interesting example where it seems like
   -- columns of syz(f | g) are not ordered the natural way
   assert(f === g  * (f//g))
-syz (f|g)
-leadTerm oo
+  -- TODO: is there a way to force syz to put the columns with units first?
+  syz (f|g)
+  leadTerm oo
 ///
 
 TEST ///
@@ -326,8 +327,8 @@ TEST /// -- Hilbert-Samuel Function
   R = ZZ/32003[x,y];
   RP = localRing(R, ideal gens R);
   -- FIXME
-  assert(apply(-3..3, i -> hilbertSamuelFunction(RP^{2},  i)) == apply(-3..3, i -> hilbertFunction_i R^{2}))
-  assert(apply(-3..3, i -> hilbertSamuelFunction(RP^{-2}, i)) == apply(-3..3, i -> hilbertFunction_i R^{-2}))
+  --assert(apply(-3..3, i -> hilbertSamuelFunction(RP^{2},  i)) == apply(-3..3, i -> hilbertFunction_i R^{2}))
+  --assert(apply(-3..3, i -> hilbertSamuelFunction(RP^{-2}, i)) == apply(-3..3, i -> hilbertFunction_i R^{-2}))
   N = RP^1
   q = ideal"x2,y3"
   time assert({1,2,3,4,5,6} == hilbertSamuelFunction(N, 0, 5)) -- n+1 -- 0.02 seconds
@@ -457,6 +458,7 @@ TEST /// -- I:J -> I
   mingens I
   J = promote(I, RP)
   mingens J
+  -- TODO: fix in MinimalPrimes
 --  radical J
 --  minimalPrimes J
   assert(J : ideal"y2z-xu2" == 1)

@@ -10,6 +10,7 @@
 --
 -- UPDATE HISTORY : created 1 July 2008;
 -- 	     	    updated 4 January 2017; last update 25 October 2017.
+-- 	     	    updated 12 May 2021
 --
 -- ISSUE TRACKER : https://github.com/orgs/Macaulay2/projects/5
 --

@@ -27,7 +27,7 @@ importFrom_Core {
     "rawFraction", "rawNumerator", "rawDenominator", "rawIsLocalUnit", "rawLocalRing" }
 
 -- defined in m2/localring.m2
-LocalRing = new Type of EngineRing
+--LocalRing = new Type of EngineRing
 LocalRing.synonym = "local ring"
 LocalRing#{Standard,AfterPrint} = RP -> (
      << endl << concatenate(interpreterDepth:"o") << lineNumber << " : "; -- standard template

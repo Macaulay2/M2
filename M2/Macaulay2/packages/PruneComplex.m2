@@ -24,7 +24,7 @@ newPackage(
     )
 
 importFrom_Core {
-    "LocalRing", "localRing",
+    "LocalRing",
     "raw", "printerr",
     "rawDeleteColumns",
     "rawDeleteRows",
