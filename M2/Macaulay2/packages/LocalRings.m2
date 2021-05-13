@@ -11,6 +11,8 @@
 -- UPDATE HISTORY : created 1 July 2008;
 -- 	     	    updated 4 January 2017; last update 25 October 2017.
 --
+-- ISSUE TRACKER : https://github.com/orgs/Macaulay2/projects/5
+--
 -- TODO : 1. Hilbert-Samuel Polynomial
 --        2. Implement a prime filtration
 --        3. Define a variety over an open cover:
@@ -18,35 +20,36 @@
 -- Store L = {R_(x_0),...,R_(x_n)}
 -- along with generators of C_(x_0),...,C_(x_n)
 -- and gluing maps from C_(x_i) <-- C_(x_j)
---        4. make remainder and % work with local rings
---        5. remove LocalRing from modules2.m2, matrix.m2,
---           and move the contents of m2/localring.m2 here
+--        4. make quotientRemainder and % work with local rings
 ---------------------------------------------------------------------------
 newPackage(
     "LocalRings",
-    Version => "2.0",
-    Date => "January 14, 2017",
+    Version => "2.1",
+    Date => "May 08, 2021",
     Authors => {
-        {Name => "Mahrud Sayrafi", Email => "mahrud@berkeley.edu",   HomePage => "http://ocf.berkeley.edu/~mahrud/"},
+        {Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud/"},
         {Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"},
         {Name => "David Eisenbud", Email => "de@msri.org",           HomePage => "http://www.msri.org/~de/"}
         },
-    Headline => "operations over a local ring (R, P)",
+    Headline => "operations over a local ring R_p",
     Keywords => {"Commutative Algebra"},
     PackageExports => {"PruneComplex", "Saturation"},
     AuxiliaryFiles => true
     )
 
--- These two are defined in m2/localring.m2
--- TODO: should we keep MaximalIdeal, or replace with I.max?
-exportFrom_Core { "LocalRing", "localRing", "MaximalIdeal" }
+importFrom_Core { "ContainmentHooks", "ReduceHooks", "printerr",
+    "raw", "rawLiftLocalMatrix", "rawMatrixRemake2", "rawSource" }
 
-importFrom_Core { "printerr", "raw", "rawLiftLocalMatrix" }
+-- see m2/localring.m2
+exportFrom_Core { "LocalRing" }
 
 export {
+    "localRing",
     "liftUp",
     "presentationComplex", -- TODO: what was this for?
     "hilbertSamuelFunction",
+    -- TODO: should we keep MaximalIdeal, or replace with I.max?
+    "MaximalIdeal",
     -- Legacy
     "setMaxIdeal",
     "localComplement",
@@ -64,6 +67,13 @@ export {
 -- << "-- See the documentation and comments in the package to learn more.                 --" << endl;
 -- << "--------------------------------------------------------------------------------------" << endl;
 
+--===================================== LocalRing type =====================================--
+
+-- used to be in the Core
+load "./LocalRings/localring.m2"
+
+--=================================== Basic Constructors ===================================--
+
 PolynomialRing _ Ideal := LocalRing => (R, P) -> ( -- assumes P is prime
     if ring P =!= R then error "expected a prime ideal in the same ring for localization";
     localRing(R, P))
@@ -75,9 +85,6 @@ PolynomialRing _ RingElement := LocalRing => (R, f) -> (
 isWellDefined LocalRing := R -> isPrime R.MaximalIdeal -- cached in the maximal ideal
 
 baseRing LocalRing := Ring => RP -> ( R := RP; while instance(R, LocalRing) do R = last R.baseRings; R )
-
-residueMap = method()
-residueMap LocalRing := RingMap => RP -> map(R := baseRing RP, RP, vars R % RP.MaximalIdeal)
 
 --==================================== Basic Operations ====================================--
 -- Note: The following methods are extended to local rings in this package:
@@ -349,7 +356,7 @@ addHook((trim, Module), Strategy => Local, (opts, M) ->
 	if M.?generators then localMingensHook(opts, image generators M),
 	if M.?relations  then localMingensHook(opts, image relations M)))
 
-needs "./LocalRings/LU.m2"
+load "./LocalRings/LU.m2"
 
 -- (symbol//, Matrix, Matrix)
 -- Here is the algorithm:
@@ -373,8 +380,7 @@ addHook((quotient, Matrix, Matrix), Strategy => Local, (opts, f, g) -> (
         N := transpose entries fg;
         for i in 0 ..< #N do rowMult(h, i, N_i/denominator//lcm);
         -- see test near line 252 of tests.m2; here is a naive sort:
-        phi := residueMap RP;
-        h0 := mutableMatrix phi matrix h;
+        h0 := mutableMatrix RP.residueMap matrix h;
         c := 0;
         for i in 0 ..< r + s do (
             if c == r then break;
@@ -418,6 +424,29 @@ addHook((remainder, Matrix, Matrix), Strategy => Local, (f, g) ->
 --addHook((quotientRemainder, Matrix, Matrix), Strategy => Local, (f, g) -> (
 --    RP := ring f;
 --    if instance(RP, LocalRing) then error "remainder over local rings is not implemented"))
+
+-- TODO: probably can do better here
+-- see issub in m2/modules2.m2
+addHook(ContainmentHooks, Strategy => Local, (f, g) -> (
+    RP := ring f;
+    if not instance(RP, LocalRing) then return null;
+    all(numColumns f, i -> (
+	    L := flatten entries syz(liftUp(f_{i} | g), SyzygyRows => 1);
+	    any(L, u -> isUnit promote(u, RP))))
+    ))
+
+-- Warning: does not return a normal form over local rings
+-- see reduce in m2/matrix.m2
+addHook(ReduceHooks, Strategy => Local, (tar, rawF) -> (
+    RP := ring tar;
+    if not instance(RP, LocalRing) then return null;
+    f := map(RP, rawF);
+    g := presentation tar;
+    m := apply(numColumns f, i -> (
+	    L := flatten entries syz(liftUp(f_{i} | g), SyzygyRows => 1);
+	    if any(L, u -> isUnit promote(u, RP)) then map(tar, RP^1, 0) else f_{i}));
+    rawMatrixRemake2(raw cover tar, rawSource rawF, degree rawF, raw matrix{m}, 0)
+    ))
 
 --======================================= Experimental =======================================--
 

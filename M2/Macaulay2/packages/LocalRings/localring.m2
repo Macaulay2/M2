@@ -21,9 +21,12 @@
 --        Legacy code from 2008 is stored in packages/LocalRings/legacy.m2 and is still loaded.
 ---------------------------------------------------------------------------
 
--- exported in LocalRings.m2
-protect MaximalIdeal
+importFrom_Core {
+    "getAttribute", "hasAttribute", "ReverseDictionary", "indexStrings", "indexSymbols",
+    "generatorExpressions", "generatorSymbols", "commonEngineRingInitializations",
+    "rawFraction", "rawNumerator", "rawDenominator", "rawIsLocalUnit", "rawLocalRing" }
 
+-- defined in m2/localring.m2
 LocalRing = new Type of EngineRing
 LocalRing.synonym = "local ring"
 LocalRing#{Standard,AfterPrint} = RP -> (
@@ -32,8 +35,7 @@ LocalRing#{Standard,AfterPrint} = RP -> (
      )
 
 localRing = method(TypicalValue => LocalRing)
-      localRing LocalRing := identity
-       describe LocalRing := RP -> Describe (expression localRing) (expression ring RP.MaximalIdeal, expression max RP)
+       describe LocalRing := RP -> Describe (expression localRing) (expression last RP.baseRings, expression RP.MaximalIdeal)
      expression LocalRing := RP -> if hasAttribute(RP, ReverseDictionary) then expression getAttribute(RP, ReverseDictionary) else describe RP
 toExternalString LocalRing:= RP -> toString describe RP
 coefficientRing LocalRing := RP -> coefficientRing ring RP.MaximalIdeal
@@ -53,8 +55,10 @@ coefficientRing LocalRing := RP -> coefficientRing ring RP.MaximalIdeal
             max LocalRing := RP -> promote(RP.MaximalIdeal, RP)
        Ideal ** LocalRing := Ideal => (I, RP) -> ideal(generators I ** RP)
 
-localRing(Ring, Ideal) := (R, P) ->
-    if R#?(localRing, P) then R#(localRing, P) else error "No method found"
+-- TODO: use hooks?
+--localRing(LocalRing, Ideal) := (R, P) -> (...)
+localRing(Ring, Ideal) := (R, P) -> (
+    if R#?(localRing, P) then R#(localRing, P) else error "No method found")
 localRing(EngineRing, Ideal) := (R, P) ->
     if isField R then R else if R#?(localRing,P) then R#(localRing,P) else (
         if ring P =!= R then error "expected ideal of the same ring";
@@ -64,6 +68,7 @@ localRing(EngineRing, Ideal) := (R, P) ->
         RP.localRing    = RP;
         RP.MaximalIdeal =  P;
         commonEngineRingInitializations RP;
+	RP.residueMap   = map(R, RP, vars R % P);
          expression RP := r -> expression numerator r / expression denominator r;
            toString RP := r -> toString expression r;
            baseName RP := r -> if denominator r == 1 then baseName numerator r
@@ -89,6 +94,3 @@ localRing(EngineRing, Ideal) := (R, P) ->
         if R.?indexStrings then RP.indexStrings = applyValues(R.indexStrings, r -> promote(r,RP));
         RP
         )
-
---##################### Documentation & Tests ########################--
--- See LocalRings/doc.m2

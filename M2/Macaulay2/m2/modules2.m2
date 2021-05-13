@@ -316,20 +316,15 @@ hilbertPolynomial Ring := ProjectiveHilbertPolynomial => options -> (R) -> hilbe
 Ideal * Ring := Ideal => (I,S) -> if ring I === S then I else ideal(I.generators ** S)
 Ring * Ideal := Ideal => (S,I) -> if ring I === S then I else ideal(I.generators ** S)
 
+-- the key for issub hooks under GlobalHookStore
+protect ContainmentHooks
 issub := (f, g) -> (
-    RP := ring f;
-    if ring g =!= RP then error "expected objects of the same ring";
-    if instance(RP, LocalRing) then (
-        for i from 0 to numColumns f - 1 do (
-            LocalRings := needsPackage "LocalRings";
-            liftUp := value LocalRings.Dictionary#"liftUp";
-            L := flatten entries syz(liftUp(f_{i} | g), SyzygyRows => 1);
-            if not any(L, u -> isUnit promote(u, RP)) then return false;
-            );
-        true
-        )
-    else -1 === rawGBContains(raw gb g, raw f)    -- we can do better in the homogeneous case!
-    )
+    if (R := ring f) =!= ring g then error "isSubset: expected objects of the same ring";
+    if (c := runHooks(ContainmentHooks, (f, g))) =!= null then c
+    else error "isSubset: no strategy implemented for this type of ring")
+
+-- TODO: we can do better in the homogeneous case!
+addHook(ContainmentHooks, Strategy => Inhomogeneous, (f, g) -> -1 === rawGBContains(raw gb g, raw f))
 
 ZZ == Ideal := (n,I) -> I == n
 Ideal == ZZ := (I,n) -> (
