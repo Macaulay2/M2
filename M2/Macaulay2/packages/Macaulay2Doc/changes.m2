@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.18",
 	  TO "changes, 1.17",
 	  TO "changes, 1.16",
 	  TO "changes, 1.15",
@@ -33,16 +34,63 @@ document {
      }
 
 document {
-     Key => "changes made for the next release",
+     Key => "changes made for the next release"
+     }
+
+document {
+     Key => "changes, 1.18",
      UL {
+     	 LI { "packages that have been published and certified:",
+     	       UL {
+     	       	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+	       	    LI { star, " ", TO "PhylogeneticTrees::PhylogeneticTrees", ", a package by Nathaniel Bushek, Ruth Davidson, Elizabeth Gross, Pamela Harris, Robert Krone, Colby Long, AJ Stewart, Robert Walker, and Robert Walker for invariants for group-based phylogenetic models, has been published." },
+		    LI { star, " ", TO "GradedLieAlgebras::GradedLieAlgebras", ", a package by Clas Löfwall and Samuel Lundqvist for computations in graded Lie algebras, has been published." },
+	       	    LI { star, " ", TO "RelativeCanonicalResolution::RelativeCanonicalResolution", TEX ", a package by Christian Bopp and Michael Hoff for computation of the relative canonical resolution for g-nodal canonical curves with a fixed $g^1_k$, has been published." },
+		    LI { star, " ", TO "FrobeniusThresholds::FrobeniusThresholds", ", a package by Juliette Bruce, Daniel Hernández, Karl Schwede, Dan Smolkin, Pedro Teixeira, and Emily Witt, for calculations of F-thresholds, has been published." }
+		    }
+	       },
+	 LI { "new packages:",
+	      UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "AssociativeAlgebras::AssociativeAlgebras", ", a package by Frank Moore and Mike Stillman for noncommutative algebra, has been added." },
+		    LI { TO "RationalPoints2::RationalPoints2", ", a package by Jieao Song for finding rational points on a variety, has been added." },
+		    LI { TO "SuperLinearAlgebra::SuperLinearAlgebra", ", a package by Fereshteh Bahadorykhalily and Fatemeh Tarashi Kashani for computing with supermatrices, has been added." },
+		    LI { TO "SubalgebraBases::SubalgebraBases", ", a package by Michael Burr, Oliver Clarke, Timothy Duff, Jackson Leaman, Nathan Nichols, Elise Walker, Mike Stillman, and Harrison Tsai, for computing canonical subalgebra bases, has been added." },
+		    LI { TO "AInfinity::AInfinity", ", a package by David Eisenbud and Mike Stillman for A-infinity structures on free resolutions, has been added." },
+		    LI { TO "LinearTruncations::LinearTruncations", ", a package by Lauren Cranton Heller, David Eisenbud, and Navid Nemati for finding multigraded truncations that give linear resolutions, has been added." }
+		    }
+	       },
 	 LI { "functionality added:",
 	     UL {
 		 LI {"The function ", TO tests, " has been added, for getting information about a package's tests."},
+		 LI {"The symbol ", TO "BlockMatrix", " has been added."},
+		 LI {"The symbol ", TO "CompactMatrix", " has been added."},
+		 LI {"The symbol ", TO Iterate, " has been added."},
+		 LI {"The function ", TO left, " has been added."},
+		 LI {"The function ", TO midpoint, " has been added."},
+		 LI {"The inexact field family ", TO RRi, " has been added."},
+		 LI {"The function ", TO right, " has been added."},
+		 LI {"The type ", TO TestInput, " has been added."},
+		 LI {"The function ", TO diameter, " has been added."},
+		 LI {"The function ", TO decompose, " has been added."},
+		 LI {"The function ", TO intersection, " has been added."},
+		 LI {"The function ", TO interval, " has been added."},
+		 LI {"The function ", TO isEmpty, " has been added."},
+		 LI {"The function ", TO isMember, " has been added."},
+		 LI {"The function ", TO numericInterval, " has been added."},
+		 LI {"The function ", TO tests, " has been added."},
+		 LI {"The function ", TO toRRi, " has been added."}
 		 }
+	     },
+	LI { "functionality removed",
+	     UL {
+		  LI {"The type ", TT "MatrixDegreeExpression", " has been removed."},
+		  LI {"The type ", TT "ModuleMap", " has been removed."}
+		  }
 	     }
 	 }
      }
-
+     
 document {
      Key => "changes, 1.17",
      UL {
