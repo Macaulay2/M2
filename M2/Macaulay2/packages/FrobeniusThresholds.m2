@@ -1,6 +1,6 @@
 newPackage( "FrobeniusThresholds",
-Version => "2.0",
-Date => "June 5th, 2019",
+Version => "2.1",
+Date => "June 15th, 2020",
 Authors => {
      {Name => "Juliette Bruce",
      Email => "juliette.bruce@math.wisc.edu",
@@ -47,7 +47,7 @@ export{
     "isFJumpingExponent",
     "isFPT",
     "isSimpleNormalCrossing",
-    "nu",
+    "frobeniusNu",
     "ReturnList",
     "Search",
     "StandardPower",
