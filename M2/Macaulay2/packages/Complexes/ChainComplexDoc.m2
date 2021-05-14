@@ -203,13 +203,13 @@ doc ///
         Text
     	    @UL {
                 TO (Tor, ZZ, Module, Module),
-                TO "(Tor, ZZ, Module, Matrix) -- not yet implemented",
-                TO "(Tor, ZZ, Matrix, Module) -- not yet implemented",
+                TO "(Tor, ZZ, Module, Matrix), not yet implemented",
+                TO "(Tor, ZZ, Matrix, Module), not yet implemented",
                 TO (tensor, Complex, Complex),
                 TO (tensor, ComplexMap, ComplexMap),
                 TO (tensorCommutativity, Complex, Complex),
                 TO (tensorAssociativity, Complex, Complex, Complex),
-                TO "symmetry of Tor -- not yet implemented"
+                TO "symmetry of Tor, not yet implemented"
             }@
     SeeAlso
         "Making chain complexes"
