@@ -2244,9 +2244,9 @@ assert(C == D)
 TEST ///
 S = leafTree(4, {{0,1}})
 R = qRing(S, JCmodel)
-P = qRing(4, JCmodel)
 assert(dim R == 64)
 assert((vars R)_(0,0) == q_(0,0,0,0))
+P = qRing(4, JCmodel)
 assert(dim P == 64)
 assert((vars P)_(0,0) == q_(0,0,0,0))
 ///
