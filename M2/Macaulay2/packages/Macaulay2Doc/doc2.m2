@@ -257,13 +257,17 @@ document {
 document {
      Key => combine,
      Headline => "combine hash tables",
-     Usage => "z = combine(x,y,f,g,h)",
+     Usage => "z = combine(x,y,f,g,h) or z=combine(x,y,f,t,g,h)",
      Inputs => {
 	  "x" => "a hash table",
 	  "y" => {"a hash table of the same class as ", TT "x"},
 	  "f" => { "a function of two variables to be used for combining a key
 	       of ", TT "x", " with a key of ", TT "y", " to make a new key
 	       for ", TT "z", "." },
+	  "t" => { "a function combining two keys and returning a value, twisting
+	       the value returned by ", TT "g", " based on which keys were used. This argument
+	       may be omitted, in which case the ", TT "t(p,q)", " term in the output
+	       below is omitted."},
 	  "g" => { "a function of two variables to be used for combining a value
 	       of ", TT "x", " with a value of ", TT "y", " to make a new value
 	       for ", TT "z", "." },
@@ -271,13 +275,12 @@ document {
 	       values returned by ", TT "g", " when the corresponding keys
 	       returned by ", TT "f", " turn out to be equal.  Its first argument
 	       will be the value accumulated so far, and its second argument will
-	       be a value just provided by ", TT "g", "."
-	       }
+	       be a value just provided by ", TT "g", "."}
 	  },
      Outputs => {
 	  "z" => {
 	       "a new hash table, of the same class as ", TT "x", " and ", TT "y", ",
-	       containing the pair ", TT "f(p,q) => g(b,c)", "
+	       containing the pair ", TT "f(p,q) => g(t(p,q),g(b,c))", "
 	       whenever ", TT "x", " contains the pair ", TT "p => b", "
 	       and ", TT "y", " contains the pair ", TT "q => c", ",
 	       except that ", TT "h", " is used to combine values when two keys
@@ -296,7 +299,7 @@ document {
      "The function ", TT "h", " should be an associative function, for otherwise 
      the result may depend on internal details about the implementation of hash 
      tables that affect the order in which entries are encountered.  If ", TT "f", ",
-     ", TT "g", ", and ", TT "h", " are commutative functions as well, then the 
+     ", TT "t", " (if present), ", TT "g", ", and ", TT "h", " are commutative functions as well, then the 
      result ", TT "z", " is a commutative function of ", TT "x", " and ", TT "y", ".",
      PARA{},
      "The result is mutable if and only if ", TT "x", " or ", TT "y", " is.",
@@ -312,6 +315,17 @@ document {
 	  Poly * Poly := (p,q) -> combine(p,q,concatenate,times,plus);
 	  p*p
      ///,
+     "One may also use this function for multiplying divided powers in a similar manner:",
+     PRE "     combine(x, y, monomialTimes, divPowCoeff, coeffTimes, coeffPlus)",
+     "For example:",
+     EXAMPLE lines ///
+     	  DivPowPoly = new Type of HashTable
+	  divPowCoeff = (i,j) -> binomial(i+j,i)
+     	  p = new DivPowPoly from { 0 => 1, 1 => 1 }
+	  DivPowPoly * DivPowPoly := (p,q) -> combine(p,q,plus,divPowCoeff,times,plus);
+	  p*p
+     ///,
+     PARA{},
      SeeAlso => {merge}
      }
 
