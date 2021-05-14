@@ -155,8 +155,9 @@ html TO2  := x -> (
     fkey := format tag;
     -- TODO: add this to htmlLiteral?
     name := if match("^ +$", x#1) then #x#1 : "&nbsp;&nbsp;" else x#1;
-    if isUndocumented tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
-    if isMissingDoc   tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
+    if isUndocumented tag or isMissingDoc tag then concatenate(
+	html TT name, " (missing documentation)",
+	html COMMENT("tag: ", toString tag.Key)) else
     concatenate(html ANCHOR{"title" => htmlLiteral headline tag, "href"  => toURL htmlFilename tag, name}))
 
 ----------------------------------------------------------------------------
