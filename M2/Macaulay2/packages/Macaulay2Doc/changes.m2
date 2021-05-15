@@ -60,26 +60,18 @@ document {
 		    LI { TO "LinearTruncations::LinearTruncations", ", a package by Lauren Cranton Heller, David Eisenbud, and Navid Nemati for finding multigraded truncations that give linear resolutions, has been added." }
 		    }
 	       },
+	 LI { "improved packages:",
+	      UL {
+		   LI { "The package ", TO "NumericalSchubertCalculus::NumericalSchubertCalculus", " has been improved:
+			several functions and options were added for user convenience.
+			Output formats, verbosity, and documentation were greatly improved." }
+		   }
+	      },
 	 LI { "functionality added:",
 	     UL {
-		 LI {"The function ", TO tests, " has been added, for getting information about a package's tests."},
-		 LI {"The symbol ", TO "BlockMatrix", " has been added."},
-		 LI {"The symbol ", TO "CompactMatrix", " has been added."},
-		 LI {"The symbol ", TO Iterate, " has been added."},
-		 LI {"The function ", TO left, " has been added."},
-		 LI {"The function ", TO midpoint, " has been added."},
-		 LI {"The inexact field family ", TO RRi, " has been added."},
-		 LI {"The function ", TO right, " has been added."},
-		 LI {"The type ", TO TestInput, " has been added."},
-		 LI {"The function ", TO diameter, " has been added."},
-		 LI {"The function ", TO decompose, " has been added."},
-		 LI {"The function ", TO intersection, " has been added."},
-		 LI {"The function ", TO interval, " has been added."},
-		 LI {"The function ", TO isEmpty, " has been added."},
-		 LI {"The function ", TO isMember, " has been added."},
-		 LI {"The function ", TO numericInterval, " has been added."},
-		 LI {"The function ", TO tests, " has been added."},
-		 LI {"The function ", TO toRRi, " has been added."}
+		 LI {"A new type of real number, ", TO RRi, " based on interval arithmetic has been added, based on the library ", TT "mpfi", ", thanks
+		      to Michael Burr, with help from Anton Leykin."},
+		 LI {"The function ", TO tests, " has been added, for getting information about a package's tests."}
 		 }
 	     },
 	LI { "functionality removed",
