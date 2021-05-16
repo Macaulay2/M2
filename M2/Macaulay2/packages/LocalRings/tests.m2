@@ -53,10 +53,9 @@ TEST /// -- test for syz, liftUp, **, modulo, inducedMap
   assert(f' == liftUp f)
   assert(g' == liftUp g)
   -- inducedMap
-  -- TODO: enable verify when remainder is implemented
-  assert(inducedMap(coker f, target f, Verify => false) * f == 0)
-  assert(kernel(inducedMap(coker f, target f, Verify => false)) == image f)
-  assert(kernel(inducedMap(coker g, target g, Verify => false) * f) == image modulo (f, g))
+  assert(inducedMap(coker f, target f) * f == 0)
+  assert(kernel(inducedMap(coker f, target f)) == image f)
+  assert(kernel(inducedMap(coker g, target g) * f) == image modulo (f, g))
   -- modulo
   A = modulo(f', g')
   A' = A ** RP

@@ -21,7 +21,9 @@
 -- Store L = {R_(x_0),...,R_(x_n)}
 -- along with generators of C_(x_0),...,C_(x_n)
 -- and gluing maps from C_(x_i) <-- C_(x_j)
---        4. make quotientRemainder and % work with local rings
+--        4. hookify quotientRemainder and add hook for local rings
+--        5. add hooks for radical, minimalPrimes, associatedPrimes, etc.
+--        6. what does flattenRing mean over a local ring?
 ---------------------------------------------------------------------------
 newPackage(
     "LocalRings",
@@ -49,8 +51,6 @@ export {
     "liftUp",
     "presentationComplex", -- TODO: what was this for?
     "hilbertSamuelFunction",
-    -- TODO: should we keep MaximalIdeal, or replace with I.max?
-    "MaximalIdeal",
     -- Legacy
     "setMaxIdeal",
     "localComplement",
@@ -83,7 +83,7 @@ PolynomialRing _ RingElement := LocalRing => (R, f) -> (
     if ring f =!= R then error "expected a ring element in the same ring for localization";
     error "localizing at a hypersurface is not yet implemented")
 
-isWellDefined LocalRing := R -> isPrime R.MaximalIdeal -- cached in the maximal ideal
+isWellDefined LocalRing := R -> isPrime R.maxIdeal -- cached in the maximal ideal
 
 baseRing LocalRing := Ring => RP -> ( R := RP; while instance(R, LocalRing) do R = last R.baseRings; R )
 
@@ -95,13 +95,14 @@ baseRing LocalRing := Ring => RP -> ( R := RP; while instance(R, LocalRing) do R
 -- length              -> localLengthHook,
 -- trim
 -- resolution
--- symbol// (quotient)
+-- (quotient, Matrix, Matrix)
 -- inducedMap
--- symbol:             -> localQuotient -- Note: quotient does not work as a synonym of symbol:
+-- (remainder, Matrix, Matrix)
+-- isSubset
+-- quotient            -> localQuotient -- Note: quotient does not work as a synonym of symbol:
 -- saturate            -> localSaturate
 -- annihilator
--- Note: various elementary operations are defined in m2/localring.m2.
--- Note: isSubset symbol== are fixed in m2/modules2.m2 and reduce is fixed in m2/matrix.m2.
+-- Note: various elementary operations are defined in LocalRings/localring.m2.
 -- Note: map, modulo, subquotient, kernel, cokernel, image, homology, Hom, Ext, Tor, and many
 --       other methods that rely only on the methods above work for local rings automatically.
 -- Note: certain methods, such as symbol%, radical, minimalPrimes, etc. are not yet implemented.
@@ -347,7 +348,6 @@ addHook((minimalPresentation, Module), Strategy => Local, (opts, M) ->
     if instance(ring M, LocalRing) then localMinimalPresentationHook(opts,M))
 
 -- length
--- this method doesn't have hooks so we redefine it to allow runHooks
 addHook((length, Module), Strategy => Local, M ->
     if instance(ring M, LocalRing) then localLengthHook M)
 
@@ -405,7 +405,6 @@ addHook((quotient, Matrix, Matrix), Strategy => Local, (opts, f, g) -> (
         )))
 
 -- inducedMap
--- FIXME: Verify must be set to false because % doesn't work over local rings
 addHook((inducedMap, Module, Module, Matrix), Strategy => Local, (opts, N', M', f) -> (
     RP := ring f;
     if instance(RP, LocalRing) then (

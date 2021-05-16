@@ -31,29 +31,28 @@ importFrom_Core {
 LocalRing.synonym = "local ring"
 LocalRing#{Standard,AfterPrint} = RP -> (
      << endl << concatenate(interpreterDepth:"o") << lineNumber << " : "; -- standard template
-     << "LocalRing, maximal " << RP.MaximalIdeal << endl;
+     << "LocalRing, maximal " << RP.maxIdeal << endl;
      )
 
 localRing = method(TypicalValue => LocalRing)
-       describe LocalRing := RP -> Describe (expression localRing) (expression last RP.baseRings, expression RP.MaximalIdeal)
+       describe LocalRing := RP -> Describe (expression localRing) (expression last RP.baseRings, expression RP.maxIdeal)
      expression LocalRing := RP -> if hasAttribute(RP, ReverseDictionary) then expression getAttribute(RP, ReverseDictionary) else describe RP
 toExternalString LocalRing:= RP -> toString describe RP
-coefficientRing LocalRing := RP -> coefficientRing ring RP.MaximalIdeal
-  isWellDefined LocalRing := RP -> isPrime RP.MaximalIdeal
-  isCommutative LocalRing := RP -> isCommutative ring RP.MaximalIdeal -- FIXME make sure this is correct
-   degreeLength LocalRing := RP -> degreeLength ring RP.MaximalIdeal
+coefficientRing LocalRing := RP -> coefficientRing ring RP.maxIdeal
+  isWellDefined LocalRing := RP -> isPrime RP.maxIdeal
+  isCommutative LocalRing := RP -> isCommutative ring RP.maxIdeal -- FIXME make sure this is correct
+   degreeLength LocalRing := RP -> degreeLength ring RP.maxIdeal
    presentation LocalRing := RP -> map(RP^1, RP^0, 0)
-     generators LocalRing := opts -> RP -> (if opts.CoefficientRing === ring RP.MaximalIdeal
-                                            then generators(ring RP.MaximalIdeal) / (r -> promote(r, RP))
-				            else generators(ring RP.MaximalIdeal, opts) / (r -> promote(r, RP)))
-      precision LocalRing := RP -> precision ring RP.MaximalIdeal
-        degrees LocalRing := RP -> degrees ring RP.MaximalIdeal
-        numgens LocalRing := RP -> numgens ring RP.MaximalIdeal
-           frac LocalRing := RP -> frac ring RP.MaximalIdeal
-           char LocalRing := RP -> char ring RP.MaximalIdeal
-            dim LocalRing := RP -> codim RP.MaximalIdeal
-            max LocalRing := RP -> promote(RP.MaximalIdeal, RP)
-       Ideal ** LocalRing := Ideal => (I, RP) -> ideal(generators I ** RP)
+     generators LocalRing := opts -> RP -> (if opts.CoefficientRing === ring RP.maxIdeal
+                                            then generators(ring RP.maxIdeal) / (r -> promote(r, RP))
+				            else generators(ring RP.maxIdeal, opts) / (r -> promote(r, RP)))
+      precision LocalRing := RP -> precision ring RP.maxIdeal
+        degrees LocalRing := RP -> degrees ring RP.maxIdeal
+        numgens LocalRing := RP -> numgens ring RP.maxIdeal
+           frac LocalRing := RP -> frac ring RP.maxIdeal
+           char LocalRing := RP -> char ring RP.maxIdeal
+            dim LocalRing := RP -> codim RP.maxIdeal
+            max LocalRing := RP -> promote(RP.maxIdeal, RP)
 
 -- TODO: use hooks?
 --localRing(LocalRing, Ideal) := (R, P) -> (...)
@@ -66,9 +65,9 @@ localRing(EngineRing, Ideal) := (R, P) ->
         RP.baseRings = append(R.baseRings, R);
         R#(localRing,P) = RP;
         RP.localRing    = RP;
-        RP.MaximalIdeal =  P;
+        RP.maxIdeal     =  P;
         commonEngineRingInitializations RP;
-	RP.residueMap   = map(R, RP, vars R % P);
+	RP.residueMap   = map(frac(R/P), RP, vars R % P);
          expression RP := r -> expression numerator r / expression denominator r;
            toString RP := r -> toString expression r;
            baseName RP := r -> if denominator r == 1 then baseName numerator r
