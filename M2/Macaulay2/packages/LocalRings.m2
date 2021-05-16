@@ -21,7 +21,7 @@
 -- Store L = {R_(x_0),...,R_(x_n)}
 -- along with generators of C_(x_0),...,C_(x_n)
 -- and gluing maps from C_(x_i) <-- C_(x_j)
---        4. make quotientRemainder and % work with local rings
+--        4. hookify quotientRemainder and add hook for local rings
 --        5. add hooks for radical, minimalPrimes, associatedPrimes, etc.
 --        6. what does flattenRing mean over a local ring?
 ---------------------------------------------------------------------------

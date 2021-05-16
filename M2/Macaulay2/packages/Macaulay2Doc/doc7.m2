@@ -704,7 +704,7 @@ document {
      Key => {(symbol **, Module, Ring),
 	  (symbol **, Ring, Module),
           (symbol **, Ideal, Ring),
-          (symbol **, Ring, Ideal)}
+          (symbol **, Ring, Ideal)},
      Headline => "tensor product",
      Usage => "M ** R\nR ** M",
      Inputs => {
