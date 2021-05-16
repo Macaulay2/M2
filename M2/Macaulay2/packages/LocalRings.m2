@@ -405,7 +405,6 @@ addHook((quotient, Matrix, Matrix), Strategy => Local, (opts, f, g) -> (
         )))
 
 -- inducedMap
--- FIXME: Verify must be set to false because % doesn't work over local rings
 addHook((inducedMap, Module, Module, Matrix), Strategy => Local, (opts, N', M', f) -> (
     RP := ring f;
     if instance(RP, LocalRing) then (
