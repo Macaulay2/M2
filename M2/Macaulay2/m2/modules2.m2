@@ -97,6 +97,10 @@ Ring ** Matrix := Matrix => (R,f) -> (
      else map( target f ** R, source f ** R, promote(cover f, R), Degree => first promote({degree f}, A, R) )
      )
 
+Ideal ** Ring := Ideal => (I, R) -> R ** I
+
+Ring ** Ideal := Ideal => (R, I) -> ideal(generators I ** R)
+
 -----------------------------------------------------------------------------       
 poincare Module := (cacheValue symbol poincare) (
      M -> (
