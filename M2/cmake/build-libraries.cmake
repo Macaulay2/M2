@@ -28,6 +28,9 @@ add_custom_target(clean-stamps
 
 # Preprocessor flags
 set(CPPFLAGS "$ENV{CPPFLAGS}")
+foreach(FLAG ${COMPILE_DEFINITIONS})
+  set(CPPFLAGS "-D${FLAG} ${CPPFLAGS}")
+endforeach()
 
 # General compile flags
 string(REPLACE ";" " " COMPILEFLAGS "${COMPILE_OPTIONS}")
