@@ -1,25 +1,5 @@
 -- Copyright 1999-2009 by Anton Leykin and Harrison Tsai
 
-TEST /// input "Dmodules/TST/gkz.tst.m2" ///
-TEST /// input "Dmodules/TST/AnnFs.tst.m2" ///
-TEST /// input "Dmodules/TST/DHom.tst.m2" ///
-TEST /// input "Dmodules/TST/Dbasic.tst.m2" ///
-TEST /// input "Dmodules/TST/Ddual.tst.m2" ///
-TEST /// input "Dmodules/TST/DeRham.tst.m2" ///
-TEST /// input "Dmodules/TST/Dlocalize.tst.m2" ///
-TEST /// input "Dmodules/TST/Dresolution.tst.m2" ///
-TEST /// input "Dmodules/TST/Drestriction.tst.m2" ///
-TEST /// input "Dmodules/TST/WeylClosure.tst.m2" ///
-TEST /// input "Dmodules/TST/b-function.ideal.tst.m2" ///
-TEST /// input "Dmodules/TST/b-function.module.tst.m2" ///
-TEST /// input "Dmodules/TST/localCohom.tst.m2" ///
-TEST /// input "Dmodules/TST/makeCyclic.tst.m2" ///
-TEST /// input "Dmodules/TST/paramBpoly.tst.m2" ///
-TEST /// input "Dmodules/TST/stafford.tst.m2" ///
-TEST /// input "Dmodules/TST/CC.tst.m2" ///
-TEST /// input "Dmodules/TST/localBFunction.tst.m2" ///
-TEST /// input "Dmodules/TST/multiplierIdeals.tst.m2" ///
-
 load "Dmodules/DOC/tutorial.m2" -- basic tutorial
 load "Dmodules/DOC/Dbasic.m2"   -- basic commands
 load "Dmodules/DOC/Dsystems.m2" -- some examples of D-modules
@@ -109,6 +89,16 @@ document {
 	  TO {"lct", "-- log canonical threshold"},
 	  {TO "multiplierIdeal", ", ", TO "isInMultiplierIdeal", ", ", TO "jumpingCoefficients", " -- multiplier ideals"},
 	  TO "hasRationalSing"
+	  },
+
+     HEADER3 "Canonical Series:",
+     UL{
+	  TO {"distraction", "--  the image in the thetaRing of a torus-fixed ideal in a Weyl algebra"},
+	  TO {"genToDistractionGens", " -- the image in the thetaRing of a torus-fixed element in a Weyl algebra"},
+	  TO {"cssExpts", " -- the exponents of the canonical series solutions of I"},
+	  TO {"cssExptsMult", " -- the exponents of the canonical series solutions of I with multiplicities"},
+	  TO {"isTorusFixed", " -- checks if an ideal in a Weyl algebra is torus-fixed"},
+	  TO {"Canonical Series Tutorial", "-- find series solutions of regular systems"}
 	  },
 
      HEADER3 "Programming aids:",
@@ -810,7 +800,7 @@ document {
      Key => {RatExt, (RatExt,Module), (RatExt,ZZ,Ideal,RingElement), (RatExt,ZZ,Ideal), 
 	  (RatExt,Ideal,RingElement), (RatExt,Ideal),(RatExt,ZZ,Module,RingElement), 
 	  (RatExt,ZZ,Module), (RatExt,Module,RingElement)},
-     Headline => "Ext(holonomic D-module, polynomial ring localized at the sigular locus)",
+     Headline => "Ext(holonomic D-module, polynomial ring localized at the singular locus)",
      Usage => "RatExt M, RatExt I; RatExt(M,f), RatExt(I,f);
                RatExt(i,M), RatExt(i,I); RatExt(i,M,f), RatExt(i,I,f)",
      Inputs => {
@@ -1589,7 +1579,7 @@ document {
 ----------------------------------------------------------------------------
 document {
      Key => {Dprune, (Dprune, Matrix), (Dprune, Module)},
-     Headline => "prunes a matrix over a Weyl algebra",
+     Headline => "prunes a D-module",
      Usage => "Dprune M",
      Inputs => {
 	  "M" => {ofClass Matrix, " or ", ofClass Module} 
@@ -1597,20 +1587,22 @@ document {
      Outputs => {
 	  {ofClass Matrix, " or ", ofClass Module, " of the same type as ", TT "M"} 
 	  },
-     -- "description",
-     -- EXAMPLE lines ///
-     --   	  XXXXXXXXXXXXXXX  
-     -- 	  ///,
+     "Finds another (possibly smaller) representation of a D-module. 
+     If given a matrix, prunes its cokernel; the result is a matrix whose cokernel is isomorphic.",
+     EXAMPLE lines ///
+     	 W = makeWA(QQ[x,y])
+	 M = matrix{{x,dx},{1,1}} 
+	 Dprune M
+	 Dprune coker M
+     	 M = matrix{{x,dx},{x,y}}
+	 Dprune M
+      	 ///,
      -- Caveat => {},
-     -- SeeAlso => {}
+     SeeAlso => {pruneCechComplexCC}
      }
 document {
-     Key => [Dprune,optGB],
-     Headline => "indicates whether Grobner basis should be computed"
-     }
-document {
-     Key => optGB,
-     Headline => "indicates whether Grobner basis should be computed"
+     Key => { [Dprune,optGB], optGB },
+     Headline => "indicates whether a Grobner basis should be computed"
      }
 document {
      Key => {

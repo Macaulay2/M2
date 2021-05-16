@@ -216,4 +216,14 @@ populateCechComplexCC(Ideal,List) := (I,cc) -> (
      	       )); 
      return B
 )
---END
+
+
+
+TEST ///
+------------------------------------
+-- Brianson-Maisonobe-Merle formula
+S = QQ[x,y,z,a,b,c]
+cc = BMM({ideal S=>1},x^3+y^3+z^3)
+assert(cc === {ideal S=>1, ideal(x^3+y^3+z^3)=>1, ideal(z,y,x)=>4})
+///
+

@@ -116,8 +116,8 @@ doc ///
    Description
     Text
       The Fourier transform is the automorphism of the Weyl algebra
-      which sends @EM {"x",SUB "i"}@ to @EM {"D", SUB "i"}@
-      and @EM  {"D", SUB "i"}@ to @EM {"-x",SUB "i"}@.
+      which sends @EM {"x",SUB "i"}@ to @EM {"-D", SUB "i"}@
+      and @EM  {"D", SUB "i"}@ to @EM {"x",SUB "i"}@.
     Example
       makeWA(QQ[x,y])
       L = x^2*dy + y*dy^2 + 3*dx^5*dy

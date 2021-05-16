@@ -63,7 +63,7 @@ doc ///
      use D4
      A = matrix{{1,1,1,1},{0,1,3,4}}
      b = {1,2}
-     H = sub(gkz(A,b), vars D4) -- change this when GKZ is modified
+     H = gkz(A,b, D4)
 
     Text
      Holonomic D-ideals are analogous to zero-dimensional ideals in polynomial rings (see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Section 1.4]).

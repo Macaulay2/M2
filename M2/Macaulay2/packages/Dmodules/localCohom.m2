@@ -1,6 +1,5 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
-local localCohomUli
 local localCohomOT
 local localCohomILOaku
 local computeLocalCohomOT
@@ -25,7 +24,7 @@ localCohom = method(Options => {Strategy => Walther, LocStrategy => null})
 ----------------------------------------------------------------------------------------
 
 localCohom(      Ideal) := HashTable => o ->    I  -> localCohom(toList (0..numgens I), I, o)
-localCohom(ZZ,   Ideal) := HashTable => o -> (n,I) -> localCohom({n}, I, o)
+localCohom(ZZ,   Ideal) := HashTable => o -> (n,I) -> (localCohom({n}, I, o))#n
 localCohom(List, Ideal) := HashTable => o -> (l,I) -> (
      -- Promote I to the Weyl algebra if it is not already there
      if #(ring I).monoid.Options.WeylAlgebra == 0
@@ -56,8 +55,6 @@ localCohomUli = (l, I) -> (
 	       Ftheta := product(theta, i->f#i);
 	       J#theta = AnnFs(Ftheta);
 	       bF#theta = globalBFunction(Ftheta);
-	       pInfo(666, {"theta = ", theta, " F = ", Ftheta});
-	       pInfo(666, {"AnnFs = ", J#theta, " bF = ", bF#theta}); 
 	       ));
      
      -- Step 2.
@@ -72,7 +69,7 @@ localCohomUli = (l, I) -> (
 	       ));
      
      -- Step 3.
-     -- Compute the Chech complex 
+     -- Compute the Cech complex 
      C := new MutableList from toList ((r+1):());
      M := new MutableList from toList (r:());
      pInfo(1, "Constructing Cech complex...");
@@ -97,13 +94,12 @@ localCohomUli = (l, I) -> (
      -- Step 4.
      -- Compute the homology of the complex
      pInfo(1, "Computing cohomology...");	  
-     ret := new HashTable from (
-     	  (if member(0, l) then {0 => kernel M#0} else {})
-     	  | 
-     	  ( delete(r,delete(0,l)) / (k -> k => homology(M#k, M#(k-1))) )  
-     	  |
-     	  (if member(r, l) then {r => cokernel M#(r-1)} else {})
-     	  );
+     ret := new HashTable from apply(l, k -> k=> 
+	 if k<0 or k>r then W^0
+	 else if k==0 then kernel M#0 
+	 else if k==r then cokernel M#(r-1)
+	 else homology(M#k, M#(k-1))
+	 );
      ret
      );
 
@@ -220,13 +216,12 @@ localCohomILOaku(List, Ideal, Module) := (l, I, M) -> (
      -- Step 4.
      -- Compute the homology of the complex
      pInfo(1, "Computing cohomology...");	  
-     ret := new HashTable from (
-     	  (if member(0, l) then {0 => kernel MM#0} else {})
-     	  | 
-     	  ( delete(r,delete(0,l)) / (k -> k => homology(MM#k, MM#(k-1))) )  
-     	  |
-     	  (if member(r, l) then {r => cokernel MM#(r-1)} else {})
-     	  );
+     ret := new HashTable from apply(l, k -> k=> 
+	 if k<0 or k>r then W^0
+	 else if k==0 then kernel MM#0 
+	 else if k==r then cokernel MM#(r-1)
+	 else homology(MM#k, MM#(k-1))
+	 );
      ret
      );
 
@@ -296,13 +291,12 @@ localCohomILOTW(List, Ideal, Module) := (l, I, M) -> (
      -- Step 4.
      -- Compute the homology of the complex
      pInfo(1, "Computing cohomology...");	  
-     ret := new HashTable from (
-     	  (if member(0, l) then {0 => kernel MM#0} else {})
-     	  | 
-     	  ( delete(r,delete(0,l)) / (k -> k => homology(MM#k, MM#(k-1))) )  
-     	  |
-     	  (if member(r, l) then {r => cokernel MM#(r-1)} else {})
-     	  );
+    ret := new HashTable from apply(l, k -> k=> 
+	 if k<0 or k>r then W^0
+	 else if k==0 then kernel MM#0 
+	 else if k==r then cokernel MM#(r-1)
+	 else homology(MM#k, MM#(k-1))
+	 );
      ret
      );
 
@@ -335,7 +329,7 @@ localCohomRegular(List,Ideal,Module) := (l, I, M) -> (
 	       ));
      L#{} = new HashTable from {LocModule => M, Generator => Power(1_(ring M), 0)};
      
-     -- Compute the Chech complex 
+     -- Compute the Cech complex 
      pInfo(1, "Constructing Cech complex...");
      C := new MutableList from toList ((r+1):());
      MM := new MutableList from toList (r:());
@@ -371,13 +365,12 @@ localCohomRegular(List,Ideal,Module) := (l, I, M) -> (
      -- Step 4.
      -- Compute the homology of the complex
      pInfo(1, "Computing cohomology...");	  
-     ret := new HashTable from (
-     	  (if member(0, l) then {0 => kernel MM#0} else {})
-     	  | 
-     	  ( delete(r,delete(0,l)) / (k -> k => homology(MM#k, MM#(k-1))) )  
-     	  |
-     	  (if member(r, l) then {r => cokernel MM#(r-1)} else {})
-     	  );
+     ret := new HashTable from apply(l, k -> k=> 
+	 if k<0 or k>r then W^0
+	 else if k==0 then kernel MM#0 
+	 else if k==r then cokernel MM#(r-1)
+	 else homology(MM#k, MM#(k-1))
+	 );
      ret
      );
 ---------------------------------------------------------------------------------
@@ -418,16 +411,13 @@ localCohomOT(Ideal, Ideal) := (I, J) -> (
      if not J.?quotient then J.quotient = (ring J)^1/J;
      localCohomOT(I, J.quotient)
      )
-localCohomOT(Ideal, Module) := (I, M) -> (
-     computeLocalCohomOT(I, M, 0, numgens I)
-     )
+localCohomOT(Ideal, Module) := (I, M) -> computeLocalCohomOT(I, M, 0, numgens I)
 
 localCohomOT(List, Ideal, Module) := (l, I, M) -> (
      locOut := computeLocalCohomOT(I, M, min l, max l);
      locOut = hashTable apply(keys locOut, 
 	  i -> if member(i, l) then i => locOut#i);
      locOut)
-
 
 computeLocalCohomOT = (I, M, n0, n1) -> (
      -- error checking to be added
@@ -477,16 +467,60 @@ computeLocalCohomOT = (I, M, n0, n1) -> (
      LN2 := twistMap(WtoLCW N);
      KN := LN1 | LN2;
      KN = map(LCW^(numgens target KN), LCW^(numgens source KN), KN);
-     restrictOut := computeRestriction(cokernel KN, w, n0-1, n1+1, 
+     restrictOut := computeRestriction(cokernel KN, w, d-n1-1, d-n0+1, 
 	  {HomologyModules, ResToOrigRing}, hashTable{Strategy => Schreyer});
      
      -- stash the homology groups
 
-     locOut := hashTable apply(toList(0..d), i -> (-i+d) => 
+     locOut := hashTable apply(toList((d-n1)..(d-n0)), i -> (-i+d) => 
 	  LCWtoW ** (restrictOut#ResToOrigRing ** restrictOut#HomologyModules#i));
-     
      locOut
      )
 
 
 
+TEST///
+W = QQ[x, dx, y, dy, z, dz, WeylAlgebra=>{x=>dx, y=>dy, z=>dz}]
+I = ideal (x*(y-z), x*y*z)
+J = ideal (dx, dy, dz)
+
+time h = localCohom I
+time h = localCohom (I, W^1/J, Strategy=>Walther)
+time h = localCohom (I, Strategy=>Walther, LocStrategy=>OaTaWa)
+time h = localCohom (I, Strategy=>Walther, LocStrategy=>Oaku)
+time h = localCohom (I, Strategy=>OaTa)
+pruneLocalCohom h
+---------------------------------------------------------------
+W = QQ[x, dx, y, dy, WeylAlgebra=>{x=>dx, y=>dy}];
+I = ideal (x^2+y^2, x*y);
+J = ideal (dx, dy);
+K = ideal(x^3,y^3);
+
+time h = localCohom I
+time h = localCohom (I, W^1/J, Strategy=>Walther)
+time h = localCohom (I, Strategy=>Walther, LocStrategy=>OTW)
+time h = localCohom (I, Strategy=>Walther, LocStrategy=>Oaku)
+time h = localCohom (I, Strategy=>OaTa)
+pruneLocalCohom h
+
+m = ideal(x,y);
+L = pruneLocalCohom localCohom(m);
+assert (rank L#0 == 0);
+assert (rank L#1 == 0);
+assert (rank L#2 == 1);
+Mat = Dprune localCohom(2,I);
+assert (sub((minimalPrimes charIdeal Mat)_0,W)==ideal(x,y));
+L' = localCohom (m, W^1/K, Strategy=>OaTa);
+assert (L'#0==W^1/ideal(x^3,y^3));
+
+---------------------------------------------------------------
+x = symbol x; dx = symbol dx; 
+W = QQ[x, dx, WeylAlgebra=>{x=>dx}]
+I = ideal {x, x^2, x^2+x, x^3, x^4+2*x}
+M = W^1 / ideal dx 
+time h = localCohom (I, M, Strategy=>Walther, LocStrategy=>Oaku)
+time h' = localCohom (ideal x)  
+h = pruneLocalCohom h
+h' = pruneLocalCohom h'
+assert all(keys h, i-> not h'#?i or h'#i == h#i)
+///
