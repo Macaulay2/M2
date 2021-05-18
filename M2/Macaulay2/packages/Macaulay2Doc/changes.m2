@@ -43,7 +43,7 @@ document {
      	 LI { "packages that have been published and certified:",
      	       UL {
      	       	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
-	       	    LI { star, " ", TO "PhylogeneticTrees::PhylogeneticTrees", ", a package by Nathaniel Bushek, Ruth Davidson, Elizabeth Gross, Pamela Harris, Robert Krone, Colby Long, AJ Stewart, Robert Walker, and Robert Walker for invariants for group-based phylogenetic models, has been published." },
+	       	    LI { star, " ", TO "PhylogeneticTrees::PhylogeneticTrees", ", a package by Nathaniel Bushek, Ruth Davidson, Elizabeth Gross, Pamela Harris, Robert Krone, Colby Long, AJ Stewart, and Robert Walker for invariants for group-based phylogenetic models, has been published." },
 		    LI { star, " ", TO "GradedLieAlgebras::GradedLieAlgebras", ", a package by Clas Löfwall and Samuel Lundqvist for computations in graded Lie algebras, has been published." },
 	       	    LI { star, " ", TO "RelativeCanonicalResolution::RelativeCanonicalResolution", TEX ", a package by Christian Bopp and Michael Hoff for computation of the relative canonical resolution for g-nodal canonical curves with a fixed $g^1_k$, has been published." },
 		    LI { star, " ", TO "FrobeniusThresholds::FrobeniusThresholds", ", a package by Juliette Bruce, Daniel Hernández, Karl Schwede, Dan Smolkin, Pedro Teixeira, and Emily Witt, for calculations of F-thresholds, has been published." }
@@ -64,14 +64,23 @@ document {
 	      UL {
 		   LI { "The package ", TO "NumericalSchubertCalculus::NumericalSchubertCalculus", " has been improved:
 			several functions and options were added for user convenience.
-			Output formats, verbosity, and documentation were greatly improved." }
+			Output formats, verbosity, and documentation were greatly improved." 
+			},
+		   LI { "The package ", TO "VirtualResolutions::VirtualResolutions", " has been improved: a new strategy
+			using a significantly faster algorithm has been added for the ", TO "VirtualResolutions::multigradedRegularity", " function."
+		   	},
+		   LI { "The package ", TO "NoetherianOperators::NoetherianOperators", " has been improved: the ", TO "NoetherianOperators::DiffOp", " type has
+			 been reworked, and support for Noetherian operators and differential primary decompositions of modules has been added."
+			 }
 		   }
 	      },
 	 LI { "functionality added:",
 	     UL {
 		 LI {"A new type of real number, ", TO RRi, " based on interval arithmetic has been added, based on the library ", TT "mpfi", ", thanks
 		      to Michael Burr, with help from Anton Leykin."},
-		 LI {"The function ", TO tests, " has been added, for getting information about a package's tests."}
+		 LI {"The function ", TO tests, " has been added, for getting information about a package's tests."},
+		 LI {"A new type of list, ", TO AngleBarList, ", has been added, for use in forming free associative algebras.
+		      An instance can be created with the notation ", TT "<|x,y,z|>", "." }
 		 }
 	     },
 	LI { "functionality removed",
