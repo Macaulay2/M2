@@ -71,7 +71,16 @@ document {
 		   	},
 		   LI { "The package ", TO "NoetherianOperators::NoetherianOperators", " has been improved: the ", TO "NoetherianOperators::DiffOp", " type has
 			 been reworked, and support for Noetherian operators and differential primary decompositions of modules has been added."
-			 }
+			 },
+		   LI { "Several packages (",
+		       TO "Chordal::Chordal", ", ",
+		       TO "Graphs::Graphs", ", ",
+		       TO "Markov::Markov", ", and ",
+		       TO "Posets::Posets",
+		       ") that generate and display visualizations of mathematical objects using external image viewers ",
+		       "have been modified so that they no longer require package-specific configuration of these viewers.  ",
+		       "Instead, ", TO "show", " is used, which opens the images using the system default viewer (using ",
+		       TT "open", " on macOS and ", TT "xdg-open", " on Linux)."}
 		   }
 	      },
 	 LI { "functionality added:",
