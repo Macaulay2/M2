@@ -92,7 +92,10 @@ document {
 		      An instance can be created with the notation ", TT "<|x,y,z|>", "." },
 	         LI {"The function ", TO assert, " now accepts an ", TO Expression, " object as its argument.
 		     This provides more useful error messages for debugging, because they will contain the expression in
-		     unevaluated form, which might be something like ", TT "d == 3", "."}
+		     unevaluated form, which might be something like ", TT "d == 3", "."},
+		 LI {"In the function ", TO "MonomialOrbits::orbitRepresentatives", " in the package ", TO "MonomialOrbits::MonomialOrbits", ",
+		      it is now possible to specify a subset of monomials from which the monomials that represent orbits are chosen, or from 
+		      which the monomials that represent orbits are removed."}
 		 }
 	     },
 	LI { "functionality removed",
