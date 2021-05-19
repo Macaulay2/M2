@@ -26,8 +26,8 @@ of the License, or any later version.
 
 newPackage select((
     "Graphs",
-        Version => "0.3.3",
-        Date => "21. August 2020",
+        Version => "0.3.4",
+        Date => "May 15, 2021",
         Authors => {
             {Name => "Jack Burkart", Email => "jburkar1@nd.edu"},
             {Name => "David Cook II", Email => "dwcook@eiu.edu", HomePage => "http://ux1.eiu.edu/~dwcook/"},
