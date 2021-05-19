@@ -90,8 +90,9 @@ document {
 		 LI {"The function ", TO tests, " has been added, for getting information about a package's tests."},
 		 LI {"A new type of list, ", TO AngleBarList, ", has been added, for use in forming free associative algebras.
 		      An instance can be created with the notation ", TT "<|x,y,z|>", "." },
-	         LI {"The function ", TO assert, " now accepts an ", TO Expression, " object as its argument.  ",
-		     "This may provide more useful error messages for debugging."}
+	         LI {"The function ", TO assert, " now accepts an ", TO Expression, " object as its argument.
+		     This provides more useful error messages for debugging, because they will contain the expression in
+		     unevaluated form, which might be something like ", TT "d == 3", "."}
 		 }
 	     },
 	LI { "functionality removed",
