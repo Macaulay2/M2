@@ -27,8 +27,7 @@ newPackage(
             {Name => "We thank the following contributors from the 2020 Macaulay2 workshops at Cleveland State University and University of Warwick: Aaron Dall, Alessio D'Alì, Alicia Tocino, Ayah Almousa, Dharm Veer, Dipak Kumar Pradhan, Emil Sköldberg, Eriola Hoxhaj, Kriti Goel, Liđan Edin, Peter Phelan, Ritika Nair, Ilir Dema"}
 	    },
     	Headline => "Canonical subalgebra bases (aka SAGBI/Khovanskii bases)",
-	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
-  	DebuggingMode => true -- set to true only during development
+	AuxiliaryFiles => true -- set to true if package comes with auxiliary files
     	)
 exportMutable {}
 

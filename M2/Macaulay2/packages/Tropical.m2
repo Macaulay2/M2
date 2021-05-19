@@ -24,7 +24,6 @@ newPackage(
 	},
     	OptionalComponentsPresent => true,
         PackageExports => {"gfanInterface","EliminationMatrices","Matroids","Polyhedra"},
-	DebuggingMode => true,
 	AuxiliaryFiles => true,
 --	AuxiliaryFiles => false,
 	CacheExampleOutput => true

@@ -20,8 +20,7 @@ newPackage(
                 HomePage => "http://pi.math.cornell.edu/~mike"}
             },
         Headline => "push forwards of finite ring maps",
-        Keywords => {"Commutative Algebra"},
-        DebuggingMode => true
+        Keywords => {"Commutative Algebra"}
         )
         
 -- note, this version has a slight change added by Karl Schwede.  It has an option to turn off the prune calls.

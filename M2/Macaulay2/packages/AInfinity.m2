@@ -9,8 +9,7 @@ newPackage(
                   Email => "mike@math.cornell.edu", 
                   HomePage => "http://pi.math.cornell.edu/~mike"}},
 	PackageExports => {"Complexes", "DGAlgebras","PushForward","LocalRings"},
-        Headline => "AInfinity structures on free resolutions",
-        DebuggingMode => true
+        Headline => "AInfinity structures on free resolutions"
 	)
 
 export {
