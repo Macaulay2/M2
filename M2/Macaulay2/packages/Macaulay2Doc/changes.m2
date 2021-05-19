@@ -89,7 +89,9 @@ document {
 		      to Michael Burr, with help from Anton Leykin."},
 		 LI {"The function ", TO tests, " has been added, for getting information about a package's tests."},
 		 LI {"A new type of list, ", TO AngleBarList, ", has been added, for use in forming free associative algebras.
-		      An instance can be created with the notation ", TT "<|x,y,z|>", "." }
+		      An instance can be created with the notation ", TT "<|x,y,z|>", "." },
+	         LI {"The function ", TO assert, " now accepts an ", TO Expression, " object as its argument.  ",
+		     "This may provide more useful error messages for debugging."}
 		 }
 	     },
 	LI { "functionality removed",
