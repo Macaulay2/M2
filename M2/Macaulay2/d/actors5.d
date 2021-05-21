@@ -1643,7 +1643,10 @@ topLevelModeS := dummySymbol;
 initialRandomSeed := zeroZZ;
 initialRandomHeight := toInteger(10);
 
-setupvar("maxAllowableThreads",toExpr(Ccode( int, " getMaxAllowableThreads() " )));
+maxAllowableThreadsS := setupvar("maxAllowableThreads",toExpr(0)); -- the value returned by getMaxAllowableThreads may not be initialized yet
+export setMaxAllowableThreads():void := (
+     setGlobalVariable(maxAllowableThreadsS, toExpr(Ccode(int, "getMaxAllowableThreads()")));
+     );
 
 syms := SymbolSequence(
      (  backtraceS = setupvar("backtrace",toExpr(backtrace));  backtraceS  ),
