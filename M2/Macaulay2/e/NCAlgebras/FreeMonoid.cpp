@@ -10,8 +10,6 @@
 #include <ostream>                     // for string, operator<<, ostream
 #include <utility>                     // for pair
 
-#include <tbb/tbb.h>                   // for locks
-
 size_t FreeMonoidLogger::mCompares = 0;
 
 std::ostream& operator<<(std::ostream& o, FreeMonoidLogger a)
