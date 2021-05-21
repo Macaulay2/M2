@@ -656,8 +656,18 @@ void F4GB::insert_gb_element(row_elem &r)
   // original array
   // Here we copy it over.
 
-  CoeffVector v = (r.coeffs.isNull() ? mVectorArithmetic->copyCoeffVector(get_coeffs_array(r)) : r.coeffs);
-  result->f.coeffs.swap(v);
+  //  const CoeffVector& v = (not r.coeffs.isNull() ? r.coeffs : mVectorArithmetic->copyCoeffVector(get_coeffs_array(r)));
+  //  result->f.coeffs.swap(v);
+  if (r.coeffs.isNull())
+    {
+      // this means the actual coeff vector is coming from a GB element.  Copy it into result->f.coeffs
+      CoeffVector v { mVectorArithmetic->copyCoeffVector(get_coeffs_array(r)) };
+      result->f.coeffs.swap(v);
+    }
+  else
+    {
+      result->f.coeffs.swap(r.coeffs);
+    }
   result->f.monoms = Mem->allocate_monomial_array(nlongs);
 
   monomial_word *nextmonom = result->f.monoms;
