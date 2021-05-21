@@ -15,7 +15,7 @@ newPackage(
         {Name => "Anton Leykin",
         Email => "anton.leykin@gmail.com"}
     },
-    Headline => "numerically compute local dual spaces, Hilbert functions, and Noetherian operators",
+    Headline => "algorithms for computing local dual spaces and sets of Noetherian operators",
     PackageExports => {"Bertini", "NumericalLinearAlgebra", "NAGtypes"},
     PackageImports => {"PrimaryDecomposition"},
     AuxiliaryFiles => false,
