@@ -11,7 +11,6 @@ newPackage(
         },
     Headline => "Noncommutative algebra",
     Keywords => {"Noncommutative Algebra"},
-    DebuggingMode => true,
     PackageImports =>{"Complexes"},
     PackageExports =>{"IntegralClosure"},
     AuxiliaryFiles => true

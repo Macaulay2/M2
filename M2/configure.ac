@@ -664,7 +664,7 @@ AC_SUBST(BUILTLIBS)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " atomic_ops gc gdbm gmp mpir mpfr readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll linbox gtest ")
+AC_SUBST(LIBLIST, " atomic_ops gc gdbm gmp mpir mpfr mpfi readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll linbox gtest ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
@@ -710,6 +710,7 @@ AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack givaro ")
 #    mpir and mpfr are used by fplll
 #    flint depends on gmp (or mpir) and mpfr
 #    frobby depends on gmp
+#    mpfi needs mpfr
 
 AC_SUBST(FILE_PREREQS)
 # This is the list of files found in the system that we need to be there for the user who
@@ -736,7 +737,7 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 #############################################################################
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr mpfi readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
     [for i in $enableval
     do case "$LIBLIST $SUBLIST $PROGLIST" in
 	    *" $i "*) 
@@ -861,6 +862,17 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      then SEARCH_LIBRARIES(mpfr_digamma,"/usr/lib/libmpfr.a" "/usr/local/lib/libmpfr.a",,
 				        [AC_MSG_ERROR([libmpfr.a not found])])
      else AC_SEARCH_LIBS(mpfr_digamma,"mpfr",,[AC_MSG_ERROR([libmpfr not found])])
+     fi
+fi
+
+AC_LANG(C)
+AC_CHECK_HEADER(mpfi.h,,BUILD_mpfi=yes)
+if test $BUILD_mpfi = yes
+then BUILTLIBS="-lmpfi $BUILTLIBS"
+else if test $SHARED = no -a $TRY_STATIC = yes
+     then SEARCH_LIBRARIES(mpfi_set_prec,"/usr/lib/libmpfi.a" "/usr/local/lib/libmpfi.a",,
+				        [AC_MSG_ERROR([libmpfi.a not found])])
+     else AC_SEARCH_LIBS(mpfi_set_prec,"mpfi",,[AC_MSG_ERROR([libmpfi not found])])
      fi
 fi
 
@@ -1047,32 +1059,34 @@ else AC_MSG_RESULT([no, will build])
      BUILD_normaliz=yes
 fi
 
-dnl debian/fedora: nauty-
-AC_MSG_CHECKING(whether the package nauty is installed)
-FOUND_nauty=no
-for nauty_prefix in "" "nauty-"
-do
-    if test "`type -t ${nauty_prefix}complg`" = file
-    then
-dnl check if #1408 is a problem
-	if ${nauty_prefix}biplabg < /dev/null 2>/dev/null
-	then
-	    AC_MSG_RESULT([yes, using prefix "$nauty_prefix"])
-	    FILE_PREREQS="$FILE_PREREQS `type -p ${nauty_prefix}complg`"
-	    FOUND_nauty=yes
-	    break
-	else
-	    FOUND_nauty=bad
-	fi
-    fi
-done
-if test $FOUND_nauty != yes
-then
-    if test $FOUND_nauty = bad
-    then AC_MSG_RESULT([yes, but ${nauty_prefix}biplabg raises an error, will build])
-    else AC_MSG_RESULT([no, will build])
-    fi
-    BUILD_nauty=yes
+if test "$BUILD_nauty" = no
+then dnl debian/fedora: nauty-
+     AC_MSG_CHECKING(whether the package nauty is installed)
+     FOUND_nauty=no
+     for nauty_prefix in "" "nauty-"
+     do
+	 if test "`type -t ${nauty_prefix}complg`" = file
+	 then
+     dnl check if #1408 is a problem
+	     if ${nauty_prefix}biplabg < /dev/null 2>/dev/null
+	     then
+		 AC_MSG_RESULT([yes, using prefix "$nauty_prefix"])
+		 FILE_PREREQS="$FILE_PREREQS `type -p ${nauty_prefix}complg`"
+		 FOUND_nauty=yes
+		 break
+	     else
+		 FOUND_nauty=bad
+	     fi
+	 fi
+     done
+     if test $FOUND_nauty != yes
+     then
+	 if test $FOUND_nauty = bad
+	 then AC_MSG_RESULT([yes, but ${nauty_prefix}biplabg raises an error, will build])
+	 else AC_MSG_RESULT([no, will build])
+	 fi
+	 BUILD_nauty=yes
+     fi
 fi
 
 dnl debian: topcom-

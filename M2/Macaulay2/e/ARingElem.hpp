@@ -55,7 +55,8 @@ public:
   }
   ARingElem operator-() const
   {
-    assert(mRing == g.mRing);
+    // "g" is undefined, so I've commented this out:
+    // assert(mRing == g.mRing);
     ARingElem result(mRing);
     mRing->negate(*result, mElement);
     return result;
@@ -70,7 +71,8 @@ public:
   // also add operator *= and += etc
   ARingElem operator^(int n)
   {
-    assert(mRing == g.mRing);
+    // "g" is undefined, so I've commented this out:
+    // assert(mRing == g.mRing);
     ARingElem result(mRing);
     mRing->power(*result, mElement, n);
     return result;

@@ -238,6 +238,7 @@ void LocalRing::lift_up(const Ring *R, const Matrix *m, Matrix *&result) const
           b = RingElement::make_raw(mRing, f->denom);
           d = rawGCDRingElement(a, b, NULL, false);
 #if 0 // FIXME: GCD(8,2)=1 apparently ...
+          // see https://github.com/Macaulay2/M2/issues/1958
           drelem(a);
           std::cout<<" ";
           drelem(b);
