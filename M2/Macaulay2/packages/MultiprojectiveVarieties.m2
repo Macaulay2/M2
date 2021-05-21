@@ -863,6 +863,20 @@ findIsomorphism (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (X
 EmbeddedProjectiveVariety ===> EmbeddedProjectiveVariety := (X,Y) -> findIsomorphism(X,Y,Verify=>true);
 
 
+InclusionOfVarieties = new Type of List;
+
+globalAssignment InclusionOfVarieties;
+
+InclusionOfVarieties.synonym = "inclusion of projective varieties";
+
+MultiprojectiveVariety _ MultiprojectiveVariety := (X,Y) -> (
+    if not isSubset(X,Y) then error "the inclusion of the varieties is not satisfied";
+    new InclusionOfVarieties from {X,Y}
+);
+
+ideal InclusionOfVarieties := Z -> trim sub(ideal Z#0,ring Z#1);
+
+
 MultirationalMap = new Type of MutableHashTable;
 
 globalAssignment MultirationalMap;
@@ -964,6 +978,8 @@ rationalMap List := o -> L -> ( -- this redefines a method in Cremona.m2
     if instance(o.Dominant,MultiprojectiveVariety) then return check multirationalMap(Phi,o.Dominant);
     error "invalid value for option Dominant";
 );
+
+rationalMap MultirationalMap := o -> Phi -> rationalMap(factor super Phi,Dominant=>o.Dominant);
 
 multirationalMap RationalMap := phi -> multirationalMap {phi};
 multirationalMap(RationalMap,RationalMap) := (phi1,phi2) -> multirationalMap {phi1,phi2};
@@ -1616,6 +1632,11 @@ rationalMap (MultiprojectiveVariety,List) := o -> (X,l) -> multirationalMap rati
 rationalMap (MultiprojectiveVariety,ZZ) := o -> (X,a) -> multirationalMap rationalMap(ideal X,a,Dominant=>o.Dominant);
 rationalMap (MultiprojectiveVariety,ZZ,ZZ) := o -> (X,a,b) -> multirationalMap rationalMap(ideal X,a,b,Dominant=>o.Dominant);
 
+rationalMap InclusionOfVarieties := o -> X -> multirationalMap rationalMap(ideal X,Dominant=>o.Dominant);
+rationalMap (InclusionOfVarieties,List) := o -> (X,l) -> multirationalMap rationalMap(ideal X,l,Dominant=>o.Dominant);
+rationalMap (InclusionOfVarieties,ZZ) := o -> (X,a) -> multirationalMap rationalMap(ideal X,a,Dominant=>o.Dominant);
+rationalMap (InclusionOfVarieties,ZZ,ZZ) := o -> (X,a,b) -> multirationalMap rationalMap(ideal X,a,b,Dominant=>o.Dominant);
+
 clean MultirationalMap := Phi -> multirationalMap(apply(factor Phi,clean),target Phi);
 clean RationalMap := phi -> rationalMap(map phi,Dominant=>"notSimplify");
 clean MultihomogeneousRationalMap := phi -> rationalMap(map phi,Dominant=>"notSimplify");
@@ -2034,7 +2055,7 @@ SeeAlso => {(rationalMap,List,MultiprojectiveVariety),(graph,MultirationalMap),(
 Caveat => {"Be careful when you pass the target ",TT"Y"," as input, because it must be compatible with the maps but for efficiency reasons a full check is not done automatically. See ",TO (check,MultirationalMap),"."}}
 
 document { 
-Key => {(rationalMap,List,MultiprojectiveVariety)}, 
+Key => {(rationalMap,List,MultiprojectiveVariety),(rationalMap,MultirationalMap)}, 
 Headline => "the multi-rational map defined by a list of rational maps", 
 Usage => "rationalMap Phi
 rationalMap(Phi,Y)", 
@@ -2790,6 +2811,11 @@ EXAMPLE {
 "assert(phi <==> multirationalMap {rationalMap(ideal X,a)})",
 "phi = rationalMap(X,a,b);",
 "assert(phi <==> multirationalMap {rationalMap(ideal X,a,b)})"},
+PARA{"If you want to consider ",TEX///$X$///," as a subvariety of another multi-projective variety ",TEX///$Y$///,", you may use the command ",TT///X_Y///,". For instance, ",TT///rationalMap(X_Y,a)///," returns the rational map from ",TEX///$Y$///," defined by a basis of the linear system ",TEX///$|H^0(Y,\mathcal{I}_{X\subseteq Y}(a))|$///,"."},
+EXAMPLE {
+"Y = random(3,X);",
+"rationalMap(X_Y,a);",
+"rationalMap X_Y;"},
 SeeAlso => {(rationalMap,Ideal),(rationalMap,Ideal,ZZ),(rationalMap,Ideal,ZZ,ZZ),(symbol <==>,MultirationalMap,MultirationalMap)}}
 
 document {
@@ -2922,6 +2948,7 @@ undocumented {
 (euler,MultiprojectiveVariety,Option),
 (singularLocus,EmbeddedProjectiveVariety,Option),
 (symbol *,ZZ,MultiprojectiveVariety), -- hidden to the user, since it returns non-reduced varieties
+(symbol _,MultiprojectiveVariety,MultiprojectiveVariety), -- this returns a new type which is too rudimentary yet
 (expression,MultirationalMap),
 (net,MultirationalMap),
 (toString,MultirationalMap),
