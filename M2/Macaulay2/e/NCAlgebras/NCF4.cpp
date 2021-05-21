@@ -332,7 +332,7 @@ void NCF4::reducedRowToPoly(Poly* result,
   
   //mVectorArithmetic->appendSparseVectorToContainer(rows[i].first,resultCoeffInserter);
   using ContainerType = decltype(resultCoeffInserter);
-  mVectorArithmetic->appendSparseVectorToContainer<ContainerType>(rows[i].coeffVector,resultCoeffInserter);
+  mVectorArithmetic->appendToContainer<ContainerType>(rows[i].coeffVector,resultCoeffInserter);
   
   for (const auto& col : rows[i].columnIndices)
     freeAlgebra().monoid().monomInsertFromWord(resultMonomInserter,cols[col].word);
@@ -646,7 +646,7 @@ void NCF4::processPreRow(PreRow r,
   }
 
   // this memory is stored in rowsVector and cleaned up later.
-  CoeffVector coeffs = mVectorArithmetic->sparseVectorFromContainer(elem->getCoeffVector());
+  ElementArray coeffs = mVectorArithmetic->elementArrayFromContainer(elem->getElementArray());
 
   // delete the Poly created for prevReducer case, if necessary.
   if (preRowType == PreviousReducerPreRow)
@@ -900,7 +900,7 @@ void NCF4::generalReduceF4Row(int index,
                               int first,
                               int firstcol,
                               long& numCancellations,
-                              DenseCoeffVector& dense,
+                              ElementArray& dense,
                               bool updateColumnIndex,
                               LockType& lock)
 {
@@ -911,16 +911,16 @@ void NCF4::generalReduceF4Row(int index,
 
   int last = mRows[index].columnIndices[sz-1];
 
-  mVectorArithmetic->sparseRowToDenseRow(dense,
-                                         mRows[index].coeffVector,
-                                         mRows[index].columnIndices);
+  mVectorArithmetic->fillDenseArray(dense,
+                                  mRows[index].coeffVector,
+                                  mRows[index].columnIndices);
 
   do {
     int pivotrow = mColumns[first].pivotRow;
     if (pivotrow >= 0)
       {
         numCancellations++;
-        mVectorArithmetic->denseRowCancelFromSparse(dense,
+        mVectorArithmetic->denseCancelFromSparse(dense,
                                                     mRows[pivotrow].coeffVector,
                                                     mRows[pivotrow].columnIndices);
         // last component in the row corresponding to pivotrow
@@ -931,12 +931,12 @@ void NCF4::generalReduceF4Row(int index,
       {
         firstcol = first;
       }
-    first = mVectorArithmetic->denseRowNextNonzero(dense, first+1, last);
+    first = mVectorArithmetic->denseNextNonzero(dense, first+1, last);
   } while (first <= last);
 
   // we have to free mRows[index] information because we are about to overwrite it
   // how can I free mRows[index].columnIndices?  it wasn't the last block allocated on mMonomialSpace...
-  mVectorArithmetic->safeDenseRowToSparseRow(dense,
+  mVectorArithmetic->safeDenseToSparse(dense,
                                              mRows[index].coeffVector,
                                              mRows[index].columnIndices,
                                              firstcol,
@@ -945,7 +945,7 @@ void NCF4::generalReduceF4Row(int index,
                                              lock);
   if (mVectorArithmetic->size(mRows[index].coeffVector) > 0)
     {
-      mVectorArithmetic->sparseRowMakeMonic(mRows[index].coeffVector);
+      mVectorArithmetic->makeMonic(mRows[index].coeffVector);
       // don't do this in the parallel version
       if (updateColumnIndex) mColumns[firstcol].pivotRow = index;
     }
@@ -954,14 +954,14 @@ void NCF4::generalReduceF4Row(int index,
 void NCF4::parallelReduceF4Matrix()
 {
   long numCancellations = 0;
-  using threadLocalDense_t = tbb::enumerable_thread_specific<DenseCoeffVector>;
+  using threadLocalDense_t = tbb::enumerable_thread_specific<ElementArray>;
   using threadLocalLong_t = tbb::enumerable_thread_specific<long>;
 
   // create a dense array for each thread
   threadLocalDense_t threadLocalDense([&]() { 
-    return mVectorArithmetic->allocateDenseCoeffVector(mColumnMonomials.size());
+    return mVectorArithmetic->allocateElementArray(mColumnMonomials.size());
   });
-  auto denseVector = mVectorArithmetic->allocateDenseCoeffVector(mColumnMonomials.size());
+  auto denseVector = mVectorArithmetic->allocateElementArray(mColumnMonomials.size());
   
   threadLocalLong_t numCancellationsLocal;
   
@@ -1007,9 +1007,9 @@ void NCF4::parallelReduceF4Matrix()
                 denseVector);
 
   for (auto tlDense : threadLocalDense)
-    mVectorArithmetic->deallocateCoeffVector(tlDense);
+    mVectorArithmetic->deallocateElementArray(tlDense);
 
-  mVectorArithmetic->deallocateCoeffVector(denseVector);
+  mVectorArithmetic->deallocateElementArray(denseVector);
   // std::cout << "Number of cancellations: " << numCancellations << std::endl;
   // std::cout << "Number of threads used: " << numThreads << std::endl;
 }
@@ -1018,7 +1018,7 @@ void NCF4::reduceF4Matrix()
 {
   long numCancellations = 0;
 
-  auto denseVector = mVectorArithmetic->allocateDenseCoeffVector(mColumnMonomials.size());
+  auto denseVector = mVectorArithmetic->allocateElementArray(mColumnMonomials.size());
 
   // reduce each overlap row by mRows.
   for (auto i = mFirstOverlap; i < mRows.size(); ++i)
@@ -1036,7 +1036,7 @@ void NCF4::reduceF4Matrix()
                 numCancellations,
                 denseVector);
 
-  mVectorArithmetic->deallocateCoeffVector(denseVector);
+  mVectorArithmetic->deallocateElementArray(denseVector);
 
   //std::cout << "Number of cancellations: " << numCancellations << std::endl;
 }
@@ -1130,7 +1130,7 @@ void NCF4::displayF4Matrix(std::ostream& o) const
       for (auto i=0; i < mVectorArithmetic->size(mRows[count].coeffVector); ++i)
         {
           buffer b;
-          kk->elem_text_out(b, mVectorArithmetic->ringElemFromSparseVector(mRows[count].coeffVector,i));
+          kk->elem_text_out(b, mVectorArithmetic->ringElemFromElementArray(mRows[count].coeffVector,i));
           o << "[" << mRows[count].columnIndices[i] << "," << b.str() << "] ";
         }
       o << std::endl;
@@ -1176,7 +1176,7 @@ void NCF4::displayFullF4Matrix(std::ostream& o) const
           else
             {
               buffer b;
-              kk->elem_text_out(b,mVectorArithmetic->ringElemFromSparseVector(mRows[count].coeffVector,count2));
+              kk->elem_text_out(b,mVectorArithmetic->ringElemFromElementArray(mRows[count].coeffVector,count2));
               o << " " << b.str() << " ";
               count2++;
             }
@@ -1190,7 +1190,7 @@ void NCF4::clearRows(RowsVector& rowsVector)
   for (auto r : rowsVector)
   {
     // the VectorArithmetic object calls clear() on the ring elements in r.coeffVector as well.
-    mVectorArithmetic->deallocateCoeffVector(r.coeffVector);
+    mVectorArithmetic->deallocateElementArray(r.coeffVector);
   }
   rowsVector.clear();
 }

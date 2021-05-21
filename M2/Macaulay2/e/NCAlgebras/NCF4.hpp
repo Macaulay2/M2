@@ -15,7 +15,7 @@
 #include "NCAlgebras/WordTable.hpp"       // for Overlap, WordTable
 #include "NCAlgebras/SuffixTree.hpp"      // for experimental suffix tree code
 #include "NCAlgebras/FreeAlgebra.hpp"     // for FreeAlgebra
-#include "VectorArithmetic.hpp"           // for VectorArithmetic, CoeffVector, etc
+#include "VectorArithmetic.hpp"           // for VectorArithmetic, ElementArray, etc
 #include "Polynomial.hpp"                 // for Monom, ConstPolyList, Poly
 #include "newdelete.hpp"                  // for VECTOR, our_new_delete
 
@@ -66,7 +66,7 @@ private:
 
   struct Row
   {
-    CoeffVector coeffVector;     // vector of coefficients
+    ElementArray coeffVector;     // vector of coefficients
     Range<int> columnIndices;    // column indices used in the row.  Valid *only* after labelAndSortF4Matrix, 
                                  // as the indices are not known during creation.
     Range<Word> columnWords;     // monoms used in the row.  Valid only *before* reduction begins, as reduction
@@ -228,7 +228,7 @@ private:
                           int first,
                           int firstcol,
                           long &numCancellations,
-                          DenseCoeffVector& dense,
+                          ElementArray& dense,
                           bool updateColumnIndex,
                           LockType& lock);
 
@@ -236,7 +236,7 @@ private:
                    int first,
                    int firstcol,
                    long &numCancellations,
-                   DenseCoeffVector& dense)
+                   ElementArray& dense)
   {
     tbb::null_mutex noLock;
     generalReduceF4Row<tbb::null_mutex>(index,
@@ -252,7 +252,7 @@ private:
                            int first,
                            int firstcol,
                            long &numCancellations,
-                           DenseCoeffVector& dense,
+                           ElementArray& dense,
                            tbb::queuing_mutex& lock)
   {
     generalReduceF4Row<tbb::queuing_mutex>(index,

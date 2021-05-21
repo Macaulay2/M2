@@ -51,7 +51,7 @@ void F4toM2Interface::from_M2_vec(const VectorArithmetic* VA,
       nextmonom += MI->monomial_size(nextmonom);
       n++;
     }
-  result.coeffs = VA->sparseVectorFromContainer(relem_array);
+  result.coeffs = VA->elementArrayFromContainer(relem_array);
   delete [] exp;
   delete [] lexp;
 }
@@ -122,7 +122,7 @@ vec F4toM2Interface::to_M2_vec(const VectorArithmetic* VA,
       w = w + MI->monomial_size(w);
       for (int a = 0; a < M->n_vars(); a++) exp[a] = static_cast<int>(lexp[a]);
       M->from_expvector(exp, m1);
-      ring_elem a = VA->ringElemFromSparseVector(f.coeffs, i);
+      ring_elem a = VA->ringElemFromElementArray(f.coeffs, i);
       Nterm *g = R->make_flat_term(a, m1);
       g->next = nullptr;
       if (last[comp] == 0)
@@ -174,7 +174,7 @@ MutableMatrix *F4toM2Interface::to_M2_MutableMatrix(const VectorArithmetic* VA,
   for (int r = 0; r < nrows; r++)
     {
       row_elem &row = mat->rows[r];
-      const CoeffVector* coeffs;
+      const ElementArray* coeffs;
       if (row.coeffs.isNull())
         {
           if (row.monom == nullptr)
@@ -189,7 +189,7 @@ MutableMatrix *F4toM2Interface::to_M2_MutableMatrix(const VectorArithmetic* VA,
       for (int i = 0; i < row.len; i++)
         {
           int c = row.comps[i];
-          ring_elem a = VA->ringElemFromSparseVector(* coeffs, i);
+          ring_elem a = VA->ringElemFromElementArray(* coeffs, i);
           M->set_entry(r, c, a);
         }
     }
