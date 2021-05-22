@@ -1,6 +1,11 @@
+phcPresent := run ("type phc >/dev/null 2>&1") === 0
+phcVersion := if phcPresent then replace("PHCv([0-9.]+) .*\n","\\1",get "! phc --version")
+phcVersionNeeded := "2.3.80"
+phcPresentAndModern := phcPresent and match("^[0-9.]+$",phcVersion) and phcVersion >= phcVersionNeeded
+
 newPackage(
     "NumericalSchubertCalculus",
-    Version => "1.16", 
+    Version => "1.17", 
     Date => "Sep 2020",
     Authors => {
 	{Name => "Anton Leykin", 
@@ -12,29 +17,33 @@ newPackage(
 	{Name => "Frank Sottile", 
 	    Email => "sottile@math.tamu.edu", 
 	    HomePage => "http://www.math.tamu.edu/~sottile"},
+	{Name => "Ravi Vakil",
+		Email => "vakil@math.stanford.edu",
+		HomePage => "http://math.stanford.edu/~vakil"},
 	{Name => "Jan Verschelde",
 		Email => "jan@math.uic.edu",
 		HomePage => "http://www.math.uic.edu/~jan/"}
 	},
     Headline => "numerical methods in Schubert Calculus",
-    Keywords => {"Numerical Algebraic Geometry"},
     PackageImports => {
 	"PHCpack",
 	"NumericalAlgebraicGeometry",
-	"MonodromySolver"
+	"MonodromySolver",
+        "Schubert2"
 	},
     AuxiliaryFiles => true,
     CacheExampleOutput => true,
+    OptionalComponentsPresent => phcPresentAndModern,
     DebuggingMode => false
     )
 debug NumericalAlgebraicGeometry
 export { 
-   "changeFlags", -- "bigCellLocalCoordinates", 
+   "changeFlags",
+   "resetStatistics",
    "printStatistics",
    "setVerboseLevel", 
    "solveSchubertProblem",
-   "oneHomotopy"-- symbol?
-   --   changeFlags  -- better name?
+   "OneHomotopy"
    }
 protect Board
 protect IsResolved
@@ -94,7 +103,7 @@ installMethod(setDebugOptions, o -> () -> scan(keys o, k->if o#k=!=null then
 load "NumericalSchubertCalculus/PHCpack-LRhomotopies.m2"
 load "NumericalSchubertCalculus/pieri.m2"
 load "NumericalSchubertCalculus/service-functions.m2"
-load "NumericalSchubertCalculus/galois.m2"
+--load "NumericalSchubertCalculus/UnderDevelopment/galois.m2"
 
 --------------------------------------
 -- produces a matrix that parmeterizes
@@ -307,13 +316,14 @@ moveCheckers Array := blackred -> (
 --        function solveSchubertProblem twice, the function 
 --        will report the information of both Tournaments,
 --        to avoid that, you need to export the following:
---            resetStats()
+--            resetStatistics()
 ---------------------------------
-stats = new MutableHashTable;
-resetStats = () -> stats =  new MutableHashTable from 
-flatten flatten (apply(3,i->apply(3,j->{i,j,0}=>0)) | {{1,1,1}=>0, {}=>0}) | 
-{ "tracking time" => 0 }  
-resetStats()
+resetStatistics = () -> (
+    stats =  new MutableHashTable from 
+    flatten flatten (apply(3,i->apply(3,j->{i,j,0}=>0)) | {{1,1,1}=>0, {}=>0}) | 
+    { "tracking time" => 0 };
+    )  
+resetStatistics()
 
 statsIncrementMove = m -> stats#m = stats#m + 1;
 statsIncrementTrackingTime = t -> stats#"tracking time" = stats#"tracking time" + t
@@ -523,8 +533,10 @@ load "NumericalSchubertCalculus/LR-resolveNode.m2"
 ---------------
 solveSchubertProblem = method(Options=>{LinearAlgebra=>true})
 solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
-    -- SchPblm is a list of sequences with two entries
-    -- a partition and a flag
+    -- SchPblm is a list of sequences with two entries  a condition and a flag
+    -- Check that it does indeed form a Schubert problem, and convert the consitions to partitions (if they were brackes)
+    SchPblm = ensurePartitions(SchPblm,k,n);
+
     twoconds := take(SchPblm,2);
     remaining'conditions'flags := drop(SchPblm,2);
     -- take the first two conditions
@@ -614,7 +626,7 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 	    	print(flgM*newDag.Solutions);
 	    	);
 	    changeFlags(flgM*newDag.Solutions, -- these are matrices in absolute coordinates
-	    	(conds, LocalFlags2, LocalFlags1), oneHomotopy=>false
+	    	(conds, LocalFlags2, LocalFlags1), OneHomotopy=>false
 		)
 	    ) --
 	)
@@ -988,9 +1000,6 @@ load "NumericalSchubertCalculus/TST/21e3-G36.m2"
 TEST ///
 load "NumericalSchubertCalculus/TST/4LinesOsculating_changeFlags.m2"
 ///
---TEST ///
---load "NumericalSchubertCalculus/TST/changeFlags-4lines-double-point.m2"
---///
 end ---------------------------------------------------------------------
 -- END OF THE PACKAGE
 ---------------------------------------------------------------------------

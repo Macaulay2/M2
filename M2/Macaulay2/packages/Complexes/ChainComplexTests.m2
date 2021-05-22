@@ -1271,17 +1271,15 @@ TEST ///
 
   g = randomComplexMap(D,C,Cycle=>true)
   g' = liftMapAlongQuasiIsomorphism(g * fC, fD)
-  g'.cache.homotopy
+  h = homotopyMap g'
   assert not isQuasiIsomorphism g
   assert isWellDefined g'
   assert isCommutative g'
   assert(degree g' == 0)
   assert(g * fC == fD * g')
-  h = g'.cache.homotopy
   assert isWellDefined h
   assert(degree h == 1)
   assert isNullHomotopyOf(h, g*fC-fD*g')
-    -- warning: since h is 0 here, we could still be off by a sign.
 
   -- test #3
   C1 = C ** S^{-1}
@@ -1315,7 +1313,7 @@ TEST ///
   assert isWellDefined g'
   assert isComplexMorphism g'
   assert(g * fC1 == fD * g')
-  h = g'.cache.homotopy
+  h = homotopyMap g'
   assert isWellDefined h
   assert(degree h == 1)
   assert isNullHomotopyOf(h, g*fC1-fD*g')
@@ -1916,7 +1914,7 @@ TEST ///
   assert try (C1 ++ C1[3] ++ (complex (S/I))[6]; false) else true  -- gives error message as desired.
   assert isWellDefined (C1 ++ C1[3] ++ (complex (S^1/I))[6])
   assert isComplexMorphism extend(D,C,map(D_0,C_0,1))
-  F = extend(D[4],C[4],map(S^1,S^1,1))
+  F = extend(D[4],C[4],map(S^1,S^1,1), (-4,-4))
   assert isComplexMorphism F
   assert isWellDefined F
   F = extend(D,C,map(D_0,C_0,1))
@@ -1938,7 +1936,7 @@ TEST ///
   C = freeResolution comodule I
   D = freeResolution comodule J
   assert isComplexMorphism extend(D,C,map(D_0,C_0,1))
-  assert isComplexMorphism extend(D[4],C[4],map(S^1,S^1,1))
+  assert isComplexMorphism extend(D[4], C[4], map(S^1,S^1,1), (-4,-4))
   F = extend(D,C,map(D_0,C_0,1))
   assert not isHomogeneous F  
   assert not isHomogeneous source F
@@ -2223,3 +2221,33 @@ TEST ///
   assert isComplexMorphism f5
 ///
 
+TEST ///
+-*
+restart
+needsPackage "Complexes"
+*-
+  R = QQ[x];
+  X = complex(R^1);
+  assert(naiveTruncation(X,-3,-1) == 0)
+///
+
+TEST ///
+-*
+restart
+needsPackage "Complexes"
+*-
+  R = QQ[x];
+  X = complex(R^1) ++ complex(R^1)[-2]
+  resolution X
+///
+
+TEST ///
+-*
+restart
+needsPackage "Complexes"
+*-
+  R = QQ[x];
+  X = complex({map(R^1,R^2,matrix{{1_R,1_R}})})
+  resolution X
+  resolution(minimize X)
+///

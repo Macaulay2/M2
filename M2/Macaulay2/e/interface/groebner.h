@@ -10,7 +10,6 @@
 // TODO: fix this
 #  if defined(__cplusplus)
 class Computation;
-class EngineComputation;
 class FreeModule;
 class Matrix;
 class Ring;
@@ -20,7 +19,6 @@ class MutableMatrix;
 class RingMap;
 #  else
 typedef struct Computation Computation;
-typedef struct EngineComputation EngineComputation;
 typedef struct FreeModule FreeModule;
 typedef struct Matrix Matrix;
 typedef struct MonomialOrdering MonomialOrdering;
@@ -29,8 +27,6 @@ typedef struct Ring Ring;
 typedef struct RingElement RingElement;
 typedef struct RingMap RingMap;
 #  endif
-
-typedef EngineComputation EngineComputationOrNull;
 
 /**
    Groebner computations interface routines
@@ -49,106 +45,6 @@ M2_arrayint rawMinimalBetti(Computation *G,
                             M2_arrayint slanted_degree_limit,
                             M2_arrayint length_limit);
 /* connected: rawMinimalBetti */
-
-////////////////////////////////////
-// new GB computations /////////////
-////////////////////////////////////
-EngineComputationOrNull *rawGB(const Matrix *m,
-                               M2_bool collect_syz,
-                               int n_rows_to_keep,
-                               M2_arrayint gb_weights,
-                               M2_bool use_max_degree,
-                               int max_degree,
-                               int algorithm,
-                               int strategy,
-                               int max_reduction_count);
-/* drg: connected rawGB */
-
-EngineComputationOrNull *rawGBSetHilbertFunction(EngineComputation *C,
-                                                 const RingElement *h);
-
-void rawComputationSetStop(EngineComputation *G,
-                           M2_bool always_stop,
-                           M2_arrayint degree_limit,
-                           int basis_element_limit,
-                           int syzygy_limit,
-                           int pair_limit,
-                           int codim_limit,
-                           int subring_limit,
-                           M2_bool just_min_gens,
-                           M2_arrayint length_limit);
-/* LongPolynomial, Sort, Primary, Inhomogeneous, Homogeneous */
-/* Res: SortStrategy, 0, 1, 2, 3 ?? */
-
-EngineComputationOrNull *rawStartEngineComputation(EngineComputation *C);
-/* start or continue the computation */
-
-enum ComputationStatusCode rawEngineStatus1(EngineComputation *C);
-
-long rawEngineStatus2(EngineComputation *C);
-
-void rawShowEngineComputation(const EngineComputation *C);
-
-const Matrix /* or null */ *rawEngineGBGetMatrix(EngineComputation *C);
-/* Get the minimal, auto-reduced GB of a GB computation.
-   Each call to this will produce a different raw matrix */
-
-const Matrix /* or null */ *rawEngineGBMinimalGenerators(EngineComputation *C);
-/* Yields a matrix whose columns form a minimal generating set
-   for the ideal or submodule, as computed so far.  In the
-   inhomogeneous case, this yields a generating set which is
-   sometimes smaller than the entire Groebner basis. */
-
-const Matrix /* or null */ *rawEngineGBChangeOfBasis(EngineComputation *C);
-/* Yields the change of basis matrix from the Groebner basis to
-   the original generators, at least if n_rows_to_keep was set
-   when creating the GB computation.  This matrix, after the
-   computation has run to completion, should satisfy:
-   (original matrix) = (GB matrix) * (change of basis matrix). */
-
-const Matrix /* or null */ *rawEngineGBGetLeadTerms(EngineComputation *C,
-                                                    int nparts);
-
-const Matrix /* or null */ *rawEngineGBGetParallelLeadTerms(
-    EngineComputation *C,
-    M2_arrayint w);
-
-const Matrix /* or null */ *rawEngineGBSyzygies(EngineComputation *C);
-/* Yields a matrix containing the syzygies computed so far
-   via the GB computation C, assuming that 'collect_syz' was
-   set when the computation was created.  If 'n_rows_to_keep' was
-   set to a non-negative integer, then only that many rows of each
-   syzygy are kept. */
-
-const Matrix /* or null */ *rawEngineGBMatrixRemainder(EngineComputation *C,
-                                                       const Matrix *m);
-
-void rawEngineGBMatrixDivMod(EngineComputation *C,
-                             const Matrix *m,
-                             const Matrix /* or null */ **result_remainder,
-                             const Matrix /* or null */ **result_quotient);
-
-int rawEngineGBMatrixContains(EngineComputation *C, const Matrix *m);
-
-EngineComputationOrNull *rawEngineGBDeclared(
-    const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
-    const Matrix *gb,
-    const Matrix *change, /* same number of columns as 'gb', if not 0 */
-    const Matrix *syz);   /* possibly 0 too, otherwise same rows as change */
-
-EngineComputationOrNull *rawMarkedEngineGB(
-    const Matrix *leadterms,
-    const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
-    const Matrix *gb,
-    const Matrix *change, /* same number of columns as 'gb', if not 0 */
-    const Matrix *syz);   /* possibly 0 too, otherwise same rows as change */
-
-EngineComputationOrNull *rawEngineGroebnerWalk(const Matrix *gb,
-                                               const MonomialOrdering *order1);
-
-M2_string rawEngineComputationToString(EngineComputation *C);
-
-unsigned long rawEngineComputationHash(const Computation *C);
 
 const RingElement /* or null */ *IM2_Matrix_Hilbert(const Matrix *M);
 /* This routine computes the numerator of the Hilbert series

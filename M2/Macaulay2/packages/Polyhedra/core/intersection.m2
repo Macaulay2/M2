@@ -1,6 +1,8 @@
+-- PURPOSE : Computing a polyhedron as the intersection of affine half-spaces and hyperplanes
+
 --   INPUT : '(P1,P2)',  two polyhedra 
 --  OUTPUT : 'P', the polyhedron that is the intersection of both
-intersection(Polyhedron,Polyhedron) := (P1,P2) -> (
+intersection(Polyhedron,Polyhedron) := {} >> o -> (P1,P2) -> (
 	-- Checking if P1 and P2 lie in the same space
 	if ambDim(P1) =!= ambDim(P2) then error("Polyhedra must lie in the same ambient space");
    C1 := getProperty(P1, underlyingCone);
@@ -15,7 +17,7 @@ intersection(Polyhedron,Polyhedron) := (P1,P2) -> (
 
 --   INPUT : '(C1,C2)',  two Cones
 --  OUTPUT : 'C', the Cone that is the intersection of both
-intersection(Cone,Cone) := (C1,C2) -> (
+intersection(Cone,Cone) := {} >> o -> (C1,C2) -> (
 	-- Checking if C1 and C2 lie in the same space
 	if ambDim(C1) =!= ambDim(C2) then error("Cones must lie in the same ambient space");
 	M := halfspaces C1 || halfspaces C2;
@@ -26,19 +28,19 @@ intersection(Cone,Cone) := (C1,C2) -> (
    
 --   INPUT : '(C,P)',  a Cone and a Polyhedron
 --  OUTPUT : 'Q', the Polyhedron that is the intersection of both
-intersection(Cone,Polyhedron) := (C,P) -> intersection(polyhedron C, P)
+intersection(Cone,Polyhedron) := {} >> o -> (C,P) -> intersection(polyhedron C, P)
 
 
 
 --   INPUT : '(P,C)',  a Polyhedron and a Cone
 --  OUTPUT : 'Q', the Polyhedron that is the intersection of both
-intersection(Polyhedron,Cone) := (P,C) -> intersection(C,P)
+intersection(Polyhedron,Cone) := {} >> o -> (P,C) -> intersection(C,P)
 
 
 --   INPUT : 'L',   a list of Cones, Polyhedra, other Lists and Sequences of matrices
 --           Will just turn everything in the list into Polyhedra and then intersect this.
 --           Works recursive.
-intersection List := L -> (
+intersection List := {} >> o -> L -> (
    L = apply(L, 
       l -> (
          if instance(l, List) or instance(l, Sequence) then intersection l

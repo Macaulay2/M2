@@ -54,7 +54,7 @@ public:
   void computeInhomogeneous(int softDegreeLimit);
   void computeHomogeneous(int softDegreeLimit);
   
-  const ConstPolyList& currentValue() const;
+  const PolyList& currentValue() const;
 
   // old version of reduction code
   auto twoSidedReductionOld(const FreeAlgebra& A,

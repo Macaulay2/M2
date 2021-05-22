@@ -8,7 +8,7 @@ Node
   Description
     Text
       Here is a list of the packages that are distributed with Macaulay2.
-      The ones that have been refereed are marked with a star.
+      The ones that have been refereed and published are marked with a star.
     Code
       star := IMG {"src" => replace("PKG", "Style", currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"};
       categories := new MutableHashTable from {};

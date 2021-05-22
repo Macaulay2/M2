@@ -6,7 +6,7 @@ doc ///
     Description
         Text
             An option for the function @TO fpt@ specifying bounds for the $F$-pure threshold.
-            Takes on lists consisting of two numbers, namely a lower and an upper bound for the $F$-pure threshold being computed.
+            {\tt Bounds} accepts lists consisting of two numbers, namely a lower and an upper bound for the $F$-pure threshold being computed.
             This useful feature allows the user to refine bounds obtained in previous computations, as illustrated below.
         Example
             R = ZZ/5[x,y];
@@ -39,13 +39,13 @@ doc ///
         FrobeniusRootStrategy => Symbol
             passed to computations in the @TO TestIdeals@ package
         AtOrigin => Boolean
-            tells the function whether to only consider the behavior at the origin
+            tells the function whether to consider only the behavior at the origin
         MaxCartierIndex => ZZ
             sets the maximum $\mathbb{Q}$-Gorenstein index to search for
         QGorensteinIndex => ZZ
             specifies the $\mathbb{Q}$-Gorenstein index of the ring
         Verbose => Boolean
-            toggles verbose output
+            whether the output is to be verbose
     Outputs
         :ZZ
             namely {\tt -1}, {\tt 1}, or {\tt 0}, according as {\tt t} is less than, greater than, or equal to the $F$-pure threshold of {\tt f}
@@ -68,7 +68,7 @@ doc ///
              compareFPT(1/2, x)
              compareFPT(13/25, x)
         Text
-           Consider a Veronese subring (which is étale in codimension 1),
+           Consider a Veronese subring (whose inclusion in the ambient polynomial ring is étale in codimension 1),
             so the $F$-pure threshold of the given polynomial (in this case 19/125) should be independent of which ring we are in.
         Example
             T = ZZ/5[a,b];
@@ -109,12 +109,12 @@ doc ///
     Key
         ContainmentTest
     Headline
-        an option for the function nu specifying the type of containment of powers of ideals to test
+        an option for the function frobeniusNu specifying the type of containment of powers of ideals to test
     Description
         Text
-            An option for the function @TO nu@ specifying which type of containment test to apply.
+            An option for the function @TO frobeniusNu@ specifying which type of containment test to apply.
             The valid values are {\tt StandardPower}, {\tt FrobeniusRoot}, {\tt GlobalFrobeniusRoot}, {\tt FrobeniusPower}, and {\tt null}.
-            When the option @TO AtOrigin@ is set to {\tt true}, the default value for {\tt ContainmentTest}, {\tt null}, is replaced with {\tt FrobeniusRoot} when the second argument passed to @TO nu@ is a ring element, and {\tt StandardPower} when that argument is an ideal.
+            When the option @TO AtOrigin@ is set to {\tt true}, the default value for {\tt ContainmentTest}, {\tt null}, is replaced with {\tt FrobeniusRoot} when the second argument passed to @TO frobeniusNu@ is a ring element, and {\tt StandardPower} when that argument is an ideal.
             When @TO AtOrigin@ is set to {\tt false}, the value {\tt GlobalFrobeniusRoot} is used.
 ///
 
@@ -203,7 +203,7 @@ doc ///
         Example
             fpt({x, y, x + y, x + 3*y}, {2, 6, 9, 10}) == oo
         Text
-            When no special algorithm is available or {\tt UseSpecialAlgorithms} is set to {\tt false}, {\tt fpt} computes $\nu$ = @TO nu@{\tt (e,f)}, where $e$ is the value of the option {\tt DepthOfSearch}, which conservatively defaults to {\tt 1}.
+            When no special algorithm is available or {\tt UseSpecialAlgorithms} is set to {\tt false}, {\tt fpt} computes $\nu$ = @TO frobeniusNu@{\tt (e,f)}, where $e$ is the value of the option {\tt DepthOfSearch}, which conservatively defaults to {\tt 1}.
             At this point, we know that the $F$-pure threshold of $f$ lies in the closed interval [$\nu/(p^e-1),(\nu+1)/p^e$], and the subroutine {\tt guessFPT} is called to make some "educated guesses" in an attempt to find the $F$-pure threshold, or at least narrow down the above interval.
             The number of "guesses" is controlled by the option {\tt Attempts}, which conservatively defaults to {\tt 3}.
             If {\tt Attempts} is set to {\tt 0}, {\tt guessFPT} is bypassed.
@@ -275,7 +275,7 @@ doc ///
     SeeAlso
         compareFPT
         isFPT
-        nu
+        frobeniusNu
 ///
 
 doc ///
@@ -288,7 +288,7 @@ doc ///
             A valid value for the option @TO ContainmentTest@ specifying that Frobenius powers be used when verifying containments of powers of ideals.
     SeeAlso
         ContainmentTest
-        nu
+        frobeniusNu
 ///
 
 doc ///
@@ -301,7 +301,7 @@ doc ///
             A valid value for the option @TO ContainmentTest@ specifying that Frobenius roots be used when verifying containments of powers of ideals.
     SeeAlso
         ContainmentTest
-        nu
+        frobeniusNu
 ///
 
 doc ///
@@ -312,10 +312,10 @@ doc ///
     Description
         Text
             A valid value for the option @TO ContainmentTest@ specifying that Frobenius roots be used, and not localized, when verifying containments of powers of ideals.
-            This is turned on by default if {\tt AtOrigin} is set to {\tt false} in @TO nu@.
+            This is turned on by default if {\tt AtOrigin} is set to {\tt false} in @TO frobeniusNu@.
     SeeAlso
         ContainmentTest
-        nu
+        frobeniusNu
 ///
 
 doc ///
@@ -325,7 +325,7 @@ doc ///
         an option for the function fpt to specify the criterion used for selecting numbers to check
     Description
         Text
-            In the computation of the $F$-pure threshold of a polynomial $f$, in nontrivial cases and when no special algorithm is used, the function @TO fpt@ uses @TO nu@ to find a closed interval [$A$, $B$] that contains the $F$-pure threshold of $f$.
+            In the computation of the $F$-pure threshold of a polynomial $f$, in nontrivial cases and when no special algorithm is used, the function @TO fpt@ uses @TO frobeniusNu@ to find a closed interval [$A$, $B$] that contains the $F$-pure threshold of $f$.
             The subroutine {\tt guessFPT} is then called, to first check whether one of the endpoints $B$ or $A$ is the $F$-pure threshold, and then to select rational numbers in the interval, and check how they are positioned in relation to the $F$-pure threshold, using the function @TO compareFPT@.
             The option {\tt GuessStrategy} controls how this selection of numbers is done.
 
@@ -390,13 +390,13 @@ doc ///
         FrobeniusRootStrategy => Symbol
             passed to computations in the @TO TestIdeals@ package
         AtOrigin => Boolean
-            tells the function whether to only consider the behavior at the origin
+            tells the function whether to consider only the behavior at the origin
         MaxCartierIndex => ZZ
             sets the maximum $\mathbb{Q}$-Gorenstein index to search for
         QGorensteinIndex => ZZ
             specifies the $\mathbb{Q}$-Gorenstein index of the ring
         Verbose => Boolean
-            toggles verbose output
+            whether the output is to be verbose
     Outputs
         :Boolean
             reporting whether {\tt t} is an $F$-jumping exponent of {\tt f}
@@ -470,13 +470,13 @@ doc ///
         FrobeniusRootStrategy => Symbol
             passed to computations in the @TO TestIdeals@ package
         AtOrigin => Boolean
-            tells the function whether to only consider the behavior at the origin
+            tells the function whether to consider only the behavior at the origin
         MaxCartierIndex => ZZ
             sets the maximum $\mathbb{Q}$-Gorenstein index to search for
         QGorensteinIndex => ZZ
             specifies the $\mathbb{Q}$-Gorenstein index of the ring
         Verbose => Boolean
-            toggles verbose output
+            whether the output is to be verbose
     Outputs
         :Boolean
             reporting whether {\tt t} is the $F$-pure threshold of {\tt f}
@@ -524,24 +524,24 @@ doc ///
 
 doc ///
     Key
-        nu
-        (nu, ZZ, Ideal, Ideal)
-        (nu, ZZ, Ideal)
-        (nu, ZZ, RingElement, Ideal)
-        (nu, ZZ, RingElement)
-        [nu, ContainmentTest]
-        [nu, AtOrigin]
-        [nu, ReturnList]
-        [nu, Search]
-        [nu, UseSpecialAlgorithms]
-        [nu, Verbose]
+        frobeniusNu
+        (frobeniusNu, ZZ, Ideal, Ideal)
+        (frobeniusNu, ZZ, Ideal)
+        (frobeniusNu, ZZ, RingElement, Ideal)
+        (frobeniusNu, ZZ, RingElement)
+        [frobeniusNu, ContainmentTest]
+        [frobeniusNu, AtOrigin]
+        [frobeniusNu, ReturnList]
+        [frobeniusNu, Search]
+        [frobeniusNu, UseSpecialAlgorithms]
+        [frobeniusNu, Verbose]
     Headline
         computes the largest power of an ideal not contained in a specified Frobenius power
     Usage
-        nu(e, I, J)
-        nu(e, I)
-        nu(e, f, J)
-        nu(e, f)
+        frobeniusNu(e, I, J)
+        frobeniusNu(e, I)
+        frobeniusNu(e, f, J)
+        frobeniusNu(e, f)
     Inputs
         e:ZZ
             the order of the Frobenius power to consider
@@ -573,32 +573,32 @@ doc ///
     Description
         Text
             Consider an element $f$ of a polynomial ring $R$ over a finite field of characteristic $p$, and an ideal $J$ of this ring.
-            If $f$ is contained in the radical of $J$, then the command {\tt nu(e,f,J)} outputs the maximal exponent $n$ such that $f^{ n}$ is not contained in the $p^e$-th Frobenius power of $J$.
-            More generally, if $I$ is an ideal contained in the radical of $J$, then {\tt nu(e,I,J)} outputs the maximal integer exponent $n$ such that $I^n$ is not contained in the $p^e$-th Frobenius power of $J$.
+            If $f$ is contained in the radical of $J$, then the command {\tt frobeniusNu(e,f,J)} outputs the maximal exponent $n$ such that $f^{ n}$ is not contained in the $p^e$-th Frobenius power of $J$.
+            More generally, if $I$ is an ideal contained in the radical of $J$, then {\tt frobeniusNu(e,I,J)} outputs the maximal integer exponent $n$ such that $I^n$ is not contained in the $p^e$-th Frobenius power of $J$.
 
             These numbers are denoted $\nu_f^J(p^e)$ and $\nu_I^J(p^e)$, respectively, in the literature, and were originally defined in the paper {\it $F$-thresholds and Bernstein-Sato Polynomials}, by Mustaţă, Takagi, and Watanabe.
         Example
             R = ZZ/11[x,y];
             I = ideal(x^2 + y^3, x*y);
             J = ideal(x^2, y^3);
-            nu(1, I, J)
+            frobeniusNu(1, I, J)
             f = x*y*(x^2 + y^2);
-            nu(3, f, J)
+            frobeniusNu(3, f, J)
         Text
-            If $f$ or $I$ is zero, then {\tt nu} returns {\tt 0}; if $f$ or $I$ is not contained in the radical of $J$, {\tt nu} returns infinity.
+            If $f$ or $I$ is zero, then {\tt frobeniusNu} returns {\tt 0}; if $f$ or $I$ is not contained in the radical of $J$, {\tt frobeniusNu} returns infinity.
         Example
-            nu(1, 0_R, J)
-            nu(1, 1_R, J)
+            frobeniusNu(1, 0_R, J)
+            frobeniusNu(1, 1_R, J)
         Text
             When the third argument is omitted, the ideal $J$ is assumed to be the homogeneous maximal ideal of $R$.
         Example
             R = ZZ/17[x,y,z];
             f = x^3 + y^4 + z^5;
-            nu(2, f)
-            nu(2, f, ideal(x, y, z))
+            frobeniusNu(2, f)
+            frobeniusNu(2, f, ideal(x, y, z))
         Text
             It is well known that if $q=p^e$ for some nonnegative integer $e$, then $\nu_I^J(qp) = \nu_I^J(q) p + L$, where the error term $L$ is nonnegative, and can be explicitly bounded from above in terms of $p$ and the number of generators of $I$ and $J$ (e.g., $L$ is at most $p-1$ when $I$ is principal).
-            This implies that when searching for {\tt nu(e,I,J)}, it is always safe to start at $p$ times {\tt nu(e-1,I,J)}, and one need not search too far past this number, and suggests that the most efficient way to compute {\tt nu(e,I,J)} is to compute, successively, {\tt nu(i,I,J)}, for {\tt i = 0,\ldots,e}.
+            This implies that when searching for {\tt frobeniusNu(e,I,J)}, it is always safe to start at $p$ times {\tt frobeniusNu(e-1,I,J)}, and one need not search too far past this number, and suggests that the most efficient way to compute {\tt frobeniusNu(e,I,J)} is to compute, successively, {\tt frobeniusNu(i,I,J)}, for {\tt i = 0,\ldots,e}.
             This is indeed how the computation is done in most cases.
 
             If $M$ is the homogeneous maximal ideal of $R$ and $f$ is an element of $R$, the numbers $\nu_f^M(p^e)$ determine and are determined by the $F$-pure threshold of $f$ at the origin.
@@ -608,15 +608,15 @@ doc ///
         Example
             R = ZZ/17[x,y,z];
             f = x^3 + y^4 + z^5; -- a diagonal polynomial
-            time nu(3, f)
-            time nu(3, f, UseSpecialAlgorithms => false)
+            time frobeniusNu(3, f)
+            time frobeniusNu(3, f, UseSpecialAlgorithms => false)
         Text
             The valid values for the option {\tt ContainmentTest} are {\tt FrobeniusPower}, {\tt FrobeniusRoot}, and {\tt StandardPower}.
-            The default value of this option depends on what is passed to {\tt nu}.
-            Indeed, by default, {\tt ContainmentTest} is set to {\tt FrobeniusRoot} if {\tt nu} is passed a ring element $f$, and is set to {\tt StandardPower} if {\tt nu} is passed an ideal $I$.
+            The default value of this option depends on what is passed to {\tt frobeniusNu}.
+            Indeed, by default, {\tt ContainmentTest} is set to {\tt FrobeniusRoot} if {\tt frobeniusNu} is passed a ring element $f$, and is set to {\tt StandardPower} if {\tt frobeniusNu} is passed an ideal $I$.
             We describe the consequences of setting {\tt ContainmentTest} to each of these values below.
 
-            First, if {\tt ContainmentTest} is set to {\tt StandardPower}, then the ideal containments checked when computing {\tt nu(e,I,J)} are verified directly.
+            First, if {\tt ContainmentTest} is set to {\tt StandardPower}, then the ideal containments checked when computing {\tt frobeniusNu(e,I,J)} are verified directly.
             That is, the standard power $I^n$ is first computed, and a check is then run to see if it is contained in the $p^e$-th Frobenius power of $J$.
 
             Alternately, if {\tt ContainmentTest} is set to {\tt FrobeniusRoot}, then the ideal containments are verified using Frobenius Roots.
@@ -625,46 +625,46 @@ doc ///
         Example
             R = ZZ/5[x,y,z];
             f = x^3 + y^3 + z^3 + x*y*z;
-            time nu(4, f) -- ContainmentTest is set to FrobeniusRoot, by default
-            time nu(4, f, ContainmentTest => StandardPower)
+            time frobeniusNu(4, f) -- ContainmentTest is set to FrobeniusRoot, by default
+            time frobeniusNu(4, f, ContainmentTest => StandardPower)
         Text
-            Finally, when {\tt ContainmentTest} is set to {\tt FrobeniusPower}, then instead of producing the invariant $\nu_I^J(p^e)$ as defined above, {\tt nu} instead outputs the maximal integer $n$ such that the $n$^{th} (generalized) Frobenius power of $I$ is not contained in the $p^e$-th Frobenius power of $J$.
+            Finally, when {\tt ContainmentTest} is set to {\tt FrobeniusPower}, then instead of producing the invariant $\nu_I^J(p^e)$ as defined above, {\tt frobeniusNu} instead outputs the maximal integer $n$ such that the $n$^{th} (generalized) Frobenius power of $I$ is not contained in the $p^e$-th Frobenius power of $J$.
             Here, the $n$^{th} Frobenius power of $I$, when $n$ is a nonnegative integer, is as defined in the paper {\it Frobenius Powers} by Hernández, Teixeira, and Witt, which can be computed with the function @TO frobeniusPower@, from the @TO TestIdeals@ package.
-            In particular, {\tt nu(e,I,J)} and {\tt nu(e,I,J,ContainmentTest=>FrobeniusPower)} need not agree.
+            In particular, {\tt frobeniusNu(e,I,J)} and {\tt frobeniusNu(e,I,J,ContainmentTest=>FrobeniusPower)} need not agree.
             However, they will agree when $I$ is a principal ideal.
         Example
             R = ZZ/3[x,y];
             M = ideal(x, y);
-            nu(3, M^5)
-            nu(3, M^5, ContainmentTest => FrobeniusPower)
+            frobeniusNu(3, M^5)
+            frobeniusNu(3, M^5, ContainmentTest => FrobeniusPower)
         Text
-            The function {\tt nu} works by searching through the list of potential integers $n$ and checking containments of $I^n$ in the specified Frobenius power of $J$.
+            The function {\tt frobeniusNu} works by searching through the list of potential integers $n$ and checking containments of $I^n$ in the specified Frobenius power of $J$.
             The way this search is approached is specified by the option {\tt Search}, which can be set to {\tt Binary} (the default value) or {\tt Linear}.
         Example
             R = ZZ/5[x,y,z];
             f = x^2*y^4 + y^2*z^7 + z^2*x^8;
-            time nu(5, f) -- uses binary search (default)
-            time nu(5, f, Search => Linear)
+            time frobeniusNu(5, f) -- uses binary search (default)
+            time frobeniusNu(5, f, Search => Linear)
             M = ideal(x, y, z);
-            time nu(2, M, M^2) -- uses binary search (default)
-            time nu(2, M, M^2, Search => Linear) -- but linear search gets luckier
+            time frobeniusNu(2, M, M^2) -- uses binary search (default)
+            time frobeniusNu(2, M, M^2, Search => Linear) -- but linear search gets luckier
         Text
-            The option {\tt AtOrigin} (default value {\tt true}) can be turned off to tell {\tt nu} to effectively do the computation over all possible maximal ideals $J$ and take the minimum.
+            The option {\tt AtOrigin} (default value {\tt true}) can be turned off to tell {\tt frobeniusNu} to effectively do the computation over all possible maximal ideals $J$ and take the minimum.
         Example
             R = ZZ/7[x,y];
             f = (x - 1)^3 - (y - 2)^2;
-            nu(1, f)
-            nu(1, f, AtOrigin => false)
+            frobeniusNu(1, f)
+            frobeniusNu(1, f, AtOrigin => false)
         Text
             The option {\tt ReturnList} (default value {\tt false}) can be used to request that the output be not only $\nu_I^J(p^e)$, but a list containing $\nu_I^J(p^i)$, for $i=0,\ldots,e$.
         Example
             R = ZZ/5[x,y,z];
             f = x^2*y^4 + y^2*z^7 + z^2*x^8;
-            nu(5, f, ReturnList => true)
+            frobeniusNu(5, f, ReturnList => true)
         Text
             Alternatively, the option {\tt Verbose} (default value {\tt false}) can be used to request that the values $\nu_I^J(p^i)$ ($i=0,\ldots,e$) be printed as they are computed, to monitor the progress of the computation.
         Example
-            nu(5, f, Verbose => true)
+            frobeniusNu(5, f, Verbose => true)
     SeeAlso
             fpt
 ///
@@ -673,10 +673,10 @@ doc ///
     Key
         ReturnList
     Headline
-        an option for the function nu to return a list of successive nu values
+        an option for the function frobeniusNu to return a list of successive nu values
     Description
         Text
-            An option for the function @TO nu@ specifying whether to return all nu values up to the given order.
+            An option for the function @TO frobeniusNu@ specifying whether to return all nu values up to the given order.
             Takes on {\tt Boolean} values; default value is {\tt false}.
 ///
 
@@ -684,10 +684,10 @@ doc ///
     Key
         Search
     Headline
-        an option for the function nu to specify the search method for testing containments of powers of ideals
+        an option for the function frobeniusNu to specify the search method for testing containments of powers of ideals
     Description
         Text
-            An option for the function @TO nu@ that specifies the search algorithm to be used.
+            An option for the function @TO frobeniusNu@ that specifies the search algorithm to be used.
             Valid values are {\tt Binary} and {\tt Linear}; default value is {\tt Binary}.
 ///
 
@@ -701,20 +701,20 @@ doc ///
             A valid value for the option @TO ContainmentTest@, specifying that when verifying containments of powers of ideals, to check whether the standard power of an ideal is contained in the Frobenius power of another ideal.
     SeeAlso
         ContainmentTest
-        nu
+        frobeniusNu
 ///
 
 doc ///
     Key
         UseSpecialAlgorithms
     Headline
-        an option for the functions fpt and nu to use special algorithms to speed up computations
+        an option for the functions fpt and frobeniusNu to use special algorithms to speed up computations
     Description
         Text
-            An option for the functions @TO fpt@ and @TO nu@.
+            An option for the functions @TO fpt@ and @TO frobeniusNu@.
             Takes on {\tt Boolean} values; default value is {\tt true}, in both functions.
 
             If this option is set to {\tt true} in @TO fpt@, that function checks whether the input is a diagonal polynomial, a binomial, a product of factors in simple normal crossing, or a form in two variables, in which case specialized algorithms or formulas are used.
 
-            If set to {\tt true} in @TO nu@, that function checks whether the input is one of the above special types of polynomials, in which case it computes the $F$-pure threshold of the polynomial, and uses the $F$-pure threshold to compute the nu invariant.
+            If set to {\tt true} in @TO frobeniusNu@, that function checks whether the input is one of the above special types of polynomials, in which case it computes the $F$-pure threshold of the polynomial, and uses the $F$-pure threshold to compute the nu invariant.
 ///

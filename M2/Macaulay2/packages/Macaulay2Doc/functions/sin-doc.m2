@@ -3,15 +3,17 @@
 --- notes: Is the comment about being used as an example still relevant?
 
 document { 
-     Key => {sin,(sin,CC),(sin,ZZ),(sin,RR),(sin, QQ)},
+     Key => {sin,(sin,CC),(sin,ZZ),(sin,RR),(sin, QQ),(sin, RRi)},
      -- this node is used as an example in the documentation node Inputs and Outputs.
      Headline => "compute the sine",
-     Usage => "sin x",
+     Usage => "sin x\nsin I",
      Inputs => { 
-	  "x" => RR
+	  "x" => RR,
+      "I" => RRi,
 	  },
      Outputs => { 
-	  RR =>  {"the sine of ", TT "x", "" }
+	  RR =>  {"the sine of ", TT "x", "" },
+      RRi => { "an interval containing the sines of the points of ", TT "I" }
 	  },
      EXAMPLE {
 		"sin (pi/2)"

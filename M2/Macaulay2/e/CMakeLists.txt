@@ -37,7 +37,8 @@ set(HFILES
 set(HPPONLYFILES
   MemoryBlock.hpp
   NCAlgebras/Range.hpp
-  VectorArithmetic2.hpp
+  VectorArithmetic.hpp
+  ARingElem.hpp
   newdelete.hpp
   timing.hpp
   SLP-defs.hpp
@@ -76,12 +77,12 @@ set(HPPONLYFILES
   ringelem.hpp
   schur-poly-heap.hpp
   smat.hpp
-  stdinc-m2.hpp
   style.hpp
-  f4/moninfo2.hpp
-  f4/res-memblock.hpp
-  f4/res-monomial-types.hpp
-  f4/res-schreyer-order.hpp
+  f4/f4-types.hpp
+  f4/memblock.hpp
+  schreyer-resolution/res-memblock.hpp
+  schreyer-resolution/res-monomial-types.hpp
+  schreyer-resolution/res-schreyer-order.hpp
   )
 
 # these files have .cpp file, but NOT .hpp file
@@ -134,23 +135,23 @@ set(CPPONLYFILES
 # these files all have .hpp and .cpp files
 # MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
-	myalloc
-	matrix-ncbasis
-    	VectorArithmetic
-	M2FreeAlgebraQuotient
-	M2FreeAlgebra
-	NCAlgebras/Word
-	NCAlgebras/NCReduction
-	NCAlgebras/FreeAlgebraQuotient
-	NCAlgebras/FreeAlgebra
-	NCAlgebras/FreeMonoid
-	NCAlgebras/WordTable
-	NCAlgebras/SuffixTree
-	NCAlgebras/NCGroebner
-	NCAlgebras/NCF4
-	NCAlgebras/OverlapTable
-	Polynomial
-	monomial-collection
+  myalloc
+  matrix-ncbasis
+  M2FreeAlgebraQuotient
+  M2FreeAlgebra
+  NCAlgebras/Word
+  NCAlgebras/NCReduction
+  NCAlgebras/FreeAlgebraQuotient
+  NCAlgebras/FreeAlgebra
+  NCAlgebras/FreeMonoid
+  NCAlgebras/WordTable
+  NCAlgebras/SuffixTree
+  NCAlgebras/NCGroebner
+  NCAlgebras/NCF4
+  NCAlgebras/OverlapTable
+  NCResolutions/nc-res-computation
+  Polynomial
+  monomial-collection
   Eschreyer
   GF
   LLL
@@ -158,6 +159,7 @@ set(SRCLIST
   SLP
   ZZ
   ZZp
+  aring-RRi
   aring-CC
   aring-CCC
   aring-RR
@@ -226,6 +228,7 @@ set(SRCLIST
   monoid
   monomial-sets
   monomial
+  monsort
   montable
   montableZZ
   mutablecomplex
@@ -271,32 +274,29 @@ set(SRCLIST
   f4/f4-mem
   f4/f4-monlookup
   f4/f4-spairs
-  f4/f4-syz
-  f4/f4-types
   f4/f4
   f4/gausser
   f4/hilb-fcn
-  f4/memblock
   f4/monhashtable
   f4/moninfo
-  f4/monsort
   f4/ntuple-monomial
-  f4/res-f4-computation
-  f4/res-f4-m2-interface
-  f4/res-f4-monlookup
-  f4/res-f4
-  f4/res-gausser-QQ-hybrid
-  f4/res-gausser-QQ
-  f4/res-gausser-ZZp
-  f4/res-gausser
-  f4/res-moninfo-dense
-  f4/res-moninfo-sparse
-  f4/res-moninfo
-  f4/res-monomial-sorter
-  f4/res-poly-ring
-  f4/res-schreyer-frame
-  f4/res-varpower-monomial
   f4/varpower-monomial
+  # Schreyer resolution a la Linear algebra (F4 Faugere style)
+  schreyer-resolution/res-f4-computation
+  schreyer-resolution/res-f4-m2-interface
+  schreyer-resolution/res-f4-monlookup
+  schreyer-resolution/res-f4
+  schreyer-resolution/res-gausser-QQ-hybrid
+  schreyer-resolution/res-gausser-QQ
+  schreyer-resolution/res-gausser-ZZp
+  schreyer-resolution/res-gausser
+  schreyer-resolution/res-moninfo-dense
+  schreyer-resolution/res-moninfo-sparse
+  schreyer-resolution/res-moninfo
+  schreyer-resolution/res-monomial-sorter
+  schreyer-resolution/res-poly-ring
+  schreyer-resolution/res-schreyer-frame
+  schreyer-resolution/res-varpower-monomial
   # Boolean Involutive Gröbner Bases
   bibasis/bibasis
   bibasis/allocator

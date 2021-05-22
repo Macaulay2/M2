@@ -1,4 +1,6 @@
 -- -*- M2-comint -*- hash: -1285962778
+Hello world from process 0 out of 1 processes
+-- COMPILE TIME: Feb 24 2021, 10:08:22
 
 i1 : R = CC[x,y,z];
 
@@ -28,3 +30,4 @@ o8 = {x^2-y+(-.97755+.210704*ii)*ss1+(.380139-.924929*ii)*zz1,
      +(.547606+.836736*ii)*ss1+(-.663772-.747935*ii)*zz1-.205377-.978683*ii}
 
 i9 : 
+Bye world from process 0 out of 1 processes

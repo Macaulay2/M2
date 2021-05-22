@@ -64,26 +64,14 @@ numeric(ZZ, Matrix) := (prec,f) -> (
      )
 numeric Matrix := f -> numeric(defaultPrecision,f)
 
--- Warning: does not return a normal form over local rings
+-- the key for reduce hooks under GlobalHookStore
+protect ReduceHooks
 reduce = (tar,rawF) -> (
     if isFreeModule tar then return rawF;
-    RP := ring tar;
-    G := presentation tar;
-    if instance(RP, LocalRing) then (
-        F := map(RP, rawF);
-        cols := for i from 0 to numColumns F - 1 list F_{i};
-        mat  := for col in cols list (
-            LocalRings := needsPackage "LocalRings";
-            liftUp := value LocalRings.Dictionary#"liftUp";
-            L := flatten entries syz(liftUp(col | G), SyzygyRows => 1);
-            if any(L, u -> isUnit promote(u, RP))
-              then map(tar, RP^1, 0)
-              else col
-              );
-        rawMatrixRemake2(raw cover tar, rawSource rawF, degree rawF, raw matrix{mat}, 0)
-        )
-    else rawF % raw gb G)
-protect symbol reduce					    -- we won't export this
+    if (C := runHooks(ReduceHooks, (tar, rawF))) =!= null then C
+    else error "reduce: no strategy implemented for this type of ring")
+
+addHook(ReduceHooks, Strategy => Default, (tar, rawF) -> rawF % raw gb presentation tar)
 
 Matrix * Number := Matrix * ZZ := (m,i) -> i * m
 Number * Matrix := (r,m) -> (

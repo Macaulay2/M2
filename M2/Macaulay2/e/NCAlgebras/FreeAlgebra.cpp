@@ -740,7 +740,7 @@ ring_elem FreeAlgebra::eval(const RingMap *map,
 
   // plan: do it as in polyring:
   //  cast f to a Poly
-  //  loop throug the terms of f
+  //  loop through the terms of f
   //    for each term: call map->eval_term, need varpower monomial here.
   //    add to a heap object
   // return value of the heap object

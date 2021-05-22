@@ -5,12 +5,13 @@
 
 newPackage(
 	"gfanInterface",
-	Version => "0.4",
-	Date => "Aug 2012 (updated by Josephine Yu)",
+	Version => "0.5",
+	Date => "May 15, 2021",
 	Authors => {
 		{Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => ""},
 		{Name => "Andrew Hoefel", Email => "andrew.hoefel@gmail.com", HomePage =>"http://www.mast.queensu.ca/~ahhoefel/"},
-	    {Name => "Diane Maclagan (current maintainer)", Email => "D.Maclagan@warwick.ac.uk", HomePage=>"http://homepages.warwick.ac.uk/staff/D.Maclagan/"}},
+	    {Name => "Diane Maclagan (current maintainer)", Email => "D.Maclagan@warwick.ac.uk", HomePage=>"http://homepages.warwick.ac.uk/staff/D.Maclagan/"},
+	    {Name => "Josephine Yu", Email => "jyu@math.gatech.edu", HomePage => "http://people.math.gatech.edu/~jyu67/"}},
 	Headline => "interface to Anders Jensen's Gfan software",
 	Keywords => {"Interfaces"},
 	Configuration => {
