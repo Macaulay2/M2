@@ -22,40 +22,45 @@ fixPath = programPath -> (
 --   if MinimumVersion option is not given or the version number can't be
 --   be determined.
 checkProgramPath = (name, cmds, pathToTry, prefix, opts) -> (
+    verboseLog := if opts.Verbose then printerr else identity;
     -- unescape spaces/parentheses and resolve HOME for fileExists and fileMode
     unescapedPathToTry := replace(///^\$\{?HOME\}?///, getenv "HOME",
 	replace(///\\([ ()])///, ///\1///, pathToTry));
     found := if all(apply(cmds, cmd -> addPrefix(cmd, prefix)), cmd -> (
 	exe := unescapedPathToTry | first separate(" ", cmd);
-	if not fileExists exe then false else
+	if not fileExists exe then (
+	    verboseLog(exe, " does not exist"); false) else
 	-- check executable bit (0111)
-	if fileMode exe & 73 == 0 then false else
-	run(pathToTry | cmd | " > /dev/null 2>&1") == 0)) then 0 else 1;
-    msg := "";
+	if fileMode exe & 73 == 0 then (
+	    verboseLog(exe, " exists but is not executable"); false) else (
+	    verboseLog(exe, " exists and is executable");
+	    verboseLog("running ", format(pathToTry | cmd), ":");
+	    ret := run(pathToTry | cmd |
+		if opts.Verbose then "" else " > /dev/null 2>&1" );
+	    verboseLog("return value: " | ret);
+	    ret == 0))) then 0 else 1;
     thisVersion := null;
     if found == 0 then (
-	if opts.MinimumVersion === null then msg = "    found"
-	else (
+	if opts.MinimumVersion =!= null then (
 	    thisVersion = replace("(^\\s+)|(\\s+$)", "", get("!" | pathToTry |
 		addPrefix(opts.MinimumVersion_1, prefix)));
 	    if not match(///^\d[\-+\.:\~\da-zA-Z]*$///, thisVersion) then (
-		msg = "    found version \"" | thisVersion |
-		    "\", but this does not appear to be a valid version number";
+		verboseLog("found version ", format thisVersion,
+		    " but this does not appear to be a valid version number");
 		found = 3;
 		thisVersion = null;
 	    ) else (
 		if thisVersion >= opts.MinimumVersion_0 then
-		    msg = "    found version " | thisVersion |
-			" >= " | opts.MinimumVersion_0
+		    verboseLog("found version ", thisVersion,
+			" >= ", opts.MinimumVersion_0)
 		else (
-		    msg = "    found, but version " | thisVersion | " < " |
-			opts.MinimumVersion_0;
+		    verboseLog("found, but version ", thisVersion, " < ",
+			opts.MinimumVersion_0);
 		    found = 2;
 		)
 	    )
 	)
-    ) else msg = "    not found";
-    if opts.Verbose == true then print(msg);
+    );
     (found, thisVersion)
 )
 
@@ -81,12 +86,7 @@ getProgramPath = (name, cmds, opts) -> (
     errorCode := 1;
     versionFound := "0.0";
     result := scan(pathsToTry, pathToTry -> (
-	if opts.Verbose == true then
-	    print("checking for " | name | " in " | pathToTry | "...");
 	prefix := scan(prefixes, prefix -> (
-	    if opts.Verbose == true and #prefixes > 1 then
-		print("  trying prefix \"" | prefix_1 |
-		    "\" for executables matching \"" | prefix_0 | "\"...");
 	    result := checkProgramPath(name, cmds, pathToTry, prefix, opts);
 	    if result_0 == 0 then (
 		errorCode = 0;
