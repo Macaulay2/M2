@@ -27,10 +27,15 @@ checkProgramPath = (name, cmds, pathToTry, prefix, opts) -> (
 	replace(///\\([ ()])///, ///\1///, pathToTry));
     found := if all(apply(cmds, cmd -> addPrefix(cmd, prefix)), cmd -> (
 	exe := unescapedPathToTry | first separate(" ", cmd);
-	if not fileExists exe then false else
+	if not fileExists exe then (
+	    printerr(exe, " does not exist"); false) else
 	-- check executable bit (0111)
-	if fileMode exe & 73 == 0 then false else
-	run(pathToTry | cmd | " > /dev/null 2>&1") == 0)) then 0 else 1;
+	if fileMode exe & 73 == 0 then (
+	    printerr(exe, " exists but is not executable"); false) else (
+	    printerr(exe, " exists and is executable. running ...");
+	    ret := run(pathToTry | cmd);
+	    printerr("return value: " | ret);
+	    ret == 0))) then 0 else 1;
     msg := "";
     thisVersion := null;
     if found == 0 then (
