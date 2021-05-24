@@ -617,7 +617,7 @@ normalElements(FreeAlgebraQuotient, ZZ, Symbol) := Sequence => (R,n,x) -> (
    if degreeLength R != 1 or max flatten degrees R != 1 then error "Requires a singly graded algebra generated in degree one.";
    kk := coefficientRing R;
    fromBasis := flatten entries ncBasis(n,R);
-   -- this line is the suspect line.  in general, one must keep seperate bases for each variable.
+   -- this line is the suspect line. In general, one must keep separate bases for each variable.
    toBasis := flatten entries ncBasis(n+1,R);
    pos := positions(fromBasis,m->isNormal(m));
    normalBasis := apply(pos, i-> fromBasis#i);
