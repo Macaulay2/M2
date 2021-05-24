@@ -3309,18 +3309,18 @@ checkInverseParametrization = X -> (
     p := point source f;
     assert((f#"inverse") f p == p);
 );
-X = projectiveVariety(fanoFourfold (12,7),Saturate=>false);
+X = fanoFourfold (12,7);
 X#InverseMethod = inverse3;
 checkInverseParametrization X
--- X = projectiveVariety(fanoFourfold (14,8),Saturate=>false);
+-- X = fanoFourfold (14,8);
 -- X#InverseMethod = inverse3;
 -- time checkInverseParametrization X
 setRandomSeed 0;
-X = projectiveVariety(fanoFourfold (16,9),Saturate=>false);
+X = fanoFourfold (16,9);
 X#InverseMethod = inverse3;
 time checkInverseParametrization X
 -- setRandomSeed 11111;
--- X = projectiveVariety(fanoFourfold (18,10),Saturate=>false);
+-- X = fanoFourfold (18,10);
 -- X#InverseMethod = inverse3;
 -- time checkInverseParametrization X
 ///
