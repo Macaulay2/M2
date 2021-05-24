@@ -364,7 +364,7 @@ load "./LocalRings/LU.m2"
 --   given matrices  [f], [g] with the same target
 --   want to compute  f // g such that f = g * (f // g)
 --   compute  h = syz(f | g) = [A || B] so that f*A + g*B = 0 and f = -g*B*A^-1
---   compute an LU decompostion of h to get [ id || B*A^-1 ] and return -B*A^-1
+--   compute an LU decomposition of h to get [ id || B*A^-1 ] and return -B*A^-1
 -- Note: this is not always possible, in which case f - g * (f // g) will be the remainder
 -- TODO: does this work over a prime ideal?
 addHook((quotient, Matrix, Matrix), Strategy => Local, (opts, f, g) -> (

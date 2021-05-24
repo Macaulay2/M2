@@ -737,7 +737,7 @@ document {
      Key  =>  {UnloadingValue,
 	  [Unloading,UnloadingValue]},
      Headline  =>  "Show the maximum of the unloaded values",
-     "Default value false, whether to show the maximum exces in the unloading procedure.",
+     "Default value false, whether to show the maximum excess in the unloading procedure.",
 }
 
 
