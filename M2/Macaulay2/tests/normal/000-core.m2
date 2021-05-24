@@ -1081,13 +1081,6 @@ assert( P == poincare prune W )
 
 
 --
-    R = ZZ/101[a,b]
-    S = ZZ/101[a,b,c]
-    M = cokernel matrix{{c^3}}
-    f = map(S,R)
-    assert( R^{0,-1,-2} == pushForward(f,M) )
-
---
 R = QQ[a..d, MonomialOrder => GRevLex]
 a*c + b^2 + a*c^3
 R = QQ[a..d, MonomialOrder => {GRevLex=>2, GRevLex=>2}]
@@ -1396,21 +1389,6 @@ f = (a+b+c)^3
 assert(someTerms(f,0,1) == leadTerm f)
 assert(someTerms(f,-1,1) == c^3)
 assert(someTerms(f,-2,2) == 3*b*c^2 + c^3)
-
-
---
-  P3 = ZZ/32003[a..i];
-  M = comodule monomialCurveIdeal(P3,{1,3,8,9,12,13,17,21})
-  P2 = ZZ/32003[a,b,c,d,e,f];
-  F = map(P3,P2,random(P3^1, P3^{-1,-1,-1,-1,-1,-1}))
-time   N = pushForward(F,M);
-  P2 = ZZ/32003[a,b,c,d,e,f];
-  F = map(P3,P2,random(P3^1, P3^{-1,-1,-1,-1,-1,-1}))
-time   N = pushForward(F,M);
-  hilbertPolynomial M
-  hilbertPolynomial N
-  ann N
-
 
 
 --
