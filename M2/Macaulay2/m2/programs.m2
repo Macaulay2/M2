@@ -74,6 +74,17 @@ findProgram = method(TypicalValue => Program,
 findProgram(String, String) := opts -> (name, cmd) ->
     findProgram(name, {cmd}, opts)
 findProgram(String, List) := opts -> (name, cmds) -> (
+    if not (instance(opts.Prefix, List) and
+	all(opts.Prefix, x -> instance(x, Sequence)) and
+	all(opts.Prefix, x -> class \ x === (String, String))) then
+	error "expected Prefix to be a list of sequences of two strings";
+    if not (instance(opts.AdditionalPaths, List) and
+	all(opts.AdditionalPaths, x -> instance(x, String))) then
+	error "expected AdditionalPaths to be a list of strings";
+    if opts.MinimumVersion =!= null and not(
+	instance(opts.MinimumVersion, Sequence) and
+	class \ opts.MinimumVersion === (String, String)) then
+	error "expected MinimumVersion to be a sequence of two strings";
     pathsToTry := {};
     -- try user-configured path first
     if programPaths#?name then
