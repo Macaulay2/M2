@@ -392,15 +392,6 @@ options Function := OptionTable => f -> (
 
 options Command := OptionTable => f -> options f#0
 
-computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
-     if not M#?Name or not goodEnough(M#Name#0,options) 
-     then (
-	  ret := computeIt(M,options);
-	  M#Name = {options,ret};
-	  ret)
-     else M#Name#1
-     )
-
 toExternalString Option := z -> concatenate splice (
      if precedence z > precedence z#0 then ("(",toExternalString z#0,")") else toExternalString z#0,
      " => ",
