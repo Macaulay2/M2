@@ -27,13 +27,19 @@ add_custom_target(clean-stamps
 ## Set the default compile and link flags for external projects
 
 # Preprocessor flags
-string(REPLACE ";" " " CPPFLAGS "$ENV{CPPFLAGS} ${COMPILE_OPTIONS}")
+set(CPPFLAGS "$ENV{CPPFLAGS}")
+foreach(FLAG ${COMPILE_DEFINITIONS})
+  set(CPPFLAGS "-D${FLAG} ${CPPFLAGS}")
+endforeach()
+
+# General compile flags
+string(REPLACE ";" " " COMPILEFLAGS "${COMPILE_OPTIONS}")
 
 # C compiler flags
-set(CFLAGS   "${CPPFLAGS} -w -Wimplicit -Werror")
+set(CFLAGS   "${COMPILEFLAGS} -w -Wimplicit -Werror")
 
 # C++ compiler flags
-set(CXXFLAGS "${CPPFLAGS} -std=gnu++11 -w -Wno-mismatched-tags -Wno-deprecated-register")
+set(CXXFLAGS "${COMPILEFLAGS} -std=gnu++11 -w -Wno-mismatched-tags -Wno-deprecated-register")
 
 # Linker flags
 string(REPLACE ";" " " LDFLAGS "${LINK_OPTIONS}")

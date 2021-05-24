@@ -174,7 +174,6 @@ MutableMatrix *F4toM2Interface::to_M2_MutableMatrix(const VectorArithmetic* VA,
   for (int r = 0; r < nrows; r++)
     {
       row_elem &row = mat->rows[r];
-      ring_elem *rowelems = newarray(ring_elem, row.len);
       const CoeffVector* coeffs;
       if (row.coeffs.isNull())
         {
