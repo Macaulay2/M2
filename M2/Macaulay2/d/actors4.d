@@ -1352,7 +1352,7 @@ widthRR(e:Expr):Expr := (
      when e
         is x:RRicell do toExpr(widthRR(x.v))
         else WrongArg("expected an interval"));
-setupfun("diameter",widthRR);
+setupfun("diameter",widthRR).Protected = false;
                                                      
 midpointRR(e:Expr):Expr := (
      when e
