@@ -3480,7 +3480,7 @@ doc ///
             G = graph({1,2,3,4},{{2,3},{3,4}});
             d = distance(G, 1, 4)
     SeeAlso
-        diameter
+        (diameter, Graph)
         distanceMatrix
 ///
 
@@ -3507,7 +3507,7 @@ doc ///
             G = digraph({1,2,3,4},{{2,3},{3,4}},EntryMode=>"edges");
             d = distanceMatrix G
     SeeAlso
-        diameter
+        (diameter, Graph)
         distance
 ///
 
@@ -4856,7 +4856,7 @@ doc ///
             graphPower(G,2)
     SeeAlso
         distance
-        diameter
+        (diameter, Graph)
 ///
 
 --strongProuduct
