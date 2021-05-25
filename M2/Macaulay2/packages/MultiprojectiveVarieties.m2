@@ -965,6 +965,8 @@ rationalMap List := o -> L -> ( -- this redefines a method in Cremona.m2
     error "invalid value for option Dominant";
 );
 
+rationalMap MultirationalMap := o -> Phi -> rationalMap(factor super Phi,Dominant=>o.Dominant);
+
 multirationalMap RationalMap := phi -> multirationalMap {phi};
 multirationalMap(RationalMap,RationalMap) := (phi1,phi2) -> multirationalMap {phi1,phi2};
 multirationalMap MultihomogeneousRationalMap := phi -> multirationalMap {phi};
@@ -1511,6 +1513,10 @@ MultihomogeneousRationalMap || MultiprojectiveVariety := (Phi,Y) -> (multiration
 
 super MultirationalMap := Phi -> multirationalMap(Phi,ambient target Phi);
 
+trim RationalMap := o -> Phi -> rationalMap(gens trim image matrix Phi,Dominant=>"notSimplify");
+trim MultihomogeneousRationalMap := o -> Phi -> rationalMap(gens trim image matrix Phi,Dominant=>"notSimplify");
+trim MultirationalMap := o -> Phi -> multirationalMap apply(factor Phi,trim);
+
 MultirationalMap | MultirationalMap := (Phi,Psi) -> (
     if source Phi =!= source Psi then error "expected multi-rational maps with the same source";
     multirationalMap((factor Phi)|(factor Psi),(target Phi) ** (target Psi))
@@ -1615,6 +1621,17 @@ rationalMap MultiprojectiveVariety := o -> X -> multirationalMap rationalMap(ide
 rationalMap (MultiprojectiveVariety,List) := o -> (X,l) -> multirationalMap rationalMap(ideal X,l,Dominant=>o.Dominant);
 rationalMap (MultiprojectiveVariety,ZZ) := o -> (X,a) -> multirationalMap rationalMap(ideal X,a,Dominant=>o.Dominant);
 rationalMap (MultiprojectiveVariety,ZZ,ZZ) := o -> (X,a,b) -> multirationalMap rationalMap(ideal X,a,b,Dominant=>o.Dominant);
+
+PairOfVarieties = new Type of List;
+MultiprojectiveVariety _ MultiprojectiveVariety := (X,Y) -> (
+    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient multi-projective space";
+    new PairOfVarieties from {X,Y}
+);
+ideal PairOfVarieties := Z -> trim sub(ideal Z#0,ring Z#1);
+rationalMap PairOfVarieties := o -> X -> multirationalMap rationalMap(ideal X,Dominant=>o.Dominant);
+rationalMap (PairOfVarieties,List) := o -> (X,l) -> multirationalMap rationalMap(ideal X,l,Dominant=>o.Dominant);
+rationalMap (PairOfVarieties,ZZ) := o -> (X,a) -> multirationalMap rationalMap(ideal X,a,Dominant=>o.Dominant);
+rationalMap (PairOfVarieties,ZZ,ZZ) := o -> (X,a,b) -> multirationalMap rationalMap(ideal X,a,b,Dominant=>o.Dominant);
 
 clean MultirationalMap := Phi -> multirationalMap(apply(factor Phi,clean),target Phi);
 clean RationalMap := phi -> rationalMap(map phi,Dominant=>"notSimplify");
@@ -2034,7 +2051,7 @@ SeeAlso => {(rationalMap,List,MultiprojectiveVariety),(graph,MultirationalMap),(
 Caveat => {"Be careful when you pass the target ",TT"Y"," as input, because it must be compatible with the maps but for efficiency reasons a full check is not done automatically. See ",TO (check,MultirationalMap),"."}}
 
 document { 
-Key => {(rationalMap,List,MultiprojectiveVariety)}, 
+Key => {(rationalMap,List,MultiprojectiveVariety),(rationalMap,MultirationalMap)}, 
 Headline => "the multi-rational map defined by a list of rational maps", 
 Usage => "rationalMap Phi
 rationalMap(Phi,Y)", 
@@ -2590,6 +2607,25 @@ EXAMPLE {
 SeeAlso => {(target,MultirationalMap),(ambient,MultiprojectiveVariety),(super,RationalMap)}}
 
 document { 
+Key => {(trim,MultirationalMap),(trim,RationalMap)}, 
+Headline => "trim the target of a multi-rational map", 
+Usage => "trim Phi", 
+Inputs => {MultirationalMap => "Phi" => {"from ",ofClass MultiprojectiveVariety," ",TEX///$X$///," to ",TEX///$\mathbb{P}^{k_1}\times\cdots\times\mathbb{P}^{k_n}$///}}, 
+Outputs => {MultirationalMap => {"from ",TEX///$X$///," to ",TEX///$\mathbb{P}^{s_1}\times\cdots\times\mathbb{P}^{s_n}$///,", with ",TEX///$s_i\leq k_i$///,", which is isomorphic to the original map, but whose image is not contained in any hypersurface of multidegree ",TEX///$(d_1,\ldots,d_n)$///," with ",TEX///$\sum_{i=1}^n d_i = 1$///}},
+EXAMPLE {
+"K = ZZ/33331; C = PP_K^(1,4); -- rational normal quartic curve",
+"Phi = rationalMap C; -- map defined by the quadrics through C",
+"Q = random(2,C); -- random quadric hypersurface through C",
+"Phi = Phi|Q;",
+"image Phi",
+"Psi = trim Phi;",
+"image Psi",
+"Phi || Phi || Psi;",
+"image oo",
+"trim (Phi || Phi || Psi);",
+"image oo"}}
+
+document { 
 Key => {(random,List,MultiprojectiveVariety),(random,ZZ,MultiprojectiveVariety)}, 
 Headline => "get a random hypersurface of given multi-degree containing a multi-projective variety", 
 Usage => "random(d,X)", 
@@ -2790,6 +2826,11 @@ EXAMPLE {
 "assert(phi <==> multirationalMap {rationalMap(ideal X,a)})",
 "phi = rationalMap(X,a,b);",
 "assert(phi <==> multirationalMap {rationalMap(ideal X,a,b)})"},
+PARA{"If you want to consider ",TEX///$X$///," as a subvariety of another multi-projective variety ",TEX///$Y$///,", you may use the command ",TT///X_Y///,". For instance, ",TT///rationalMap(X_Y,a)///," returns the rational map from ",TEX///$Y$///," defined by a basis of the linear system ",TEX///$|H^0(Y,\mathcal{I}_{X\subseteq Y}(a))|$///," (basically, this is equivalent to ",TT"trim((rationalMap(X,a))|Y)",")."},
+EXAMPLE {
+"Y = random(3,X);",
+"rationalMap(X_Y,a);",
+"rationalMap X_Y;"},
 SeeAlso => {(rationalMap,Ideal),(rationalMap,Ideal,ZZ),(rationalMap,Ideal,ZZ,ZZ),(symbol <==>,MultirationalMap,MultirationalMap)}}
 
 document {
@@ -2922,6 +2963,7 @@ undocumented {
 (euler,MultiprojectiveVariety,Option),
 (singularLocus,EmbeddedProjectiveVariety,Option),
 (symbol *,ZZ,MultiprojectiveVariety), -- hidden to the user, since it returns non-reduced varieties
+(symbol _,MultiprojectiveVariety,MultiprojectiveVariety), -- this returns a new type which is too rudimentary yet
 (expression,MultirationalMap),
 (net,MultirationalMap),
 (toString,MultirationalMap),
@@ -3267,18 +3309,18 @@ checkInverseParametrization = X -> (
     p := point source f;
     assert((f#"inverse") f p == p);
 );
-X = projectiveVariety(fanoFourfold (12,7),Saturate=>false);
+X = fanoFourfold (12,7);
 X#InverseMethod = inverse3;
 checkInverseParametrization X
--- X = projectiveVariety(fanoFourfold (14,8),Saturate=>false);
+-- X = fanoFourfold (14,8);
 -- X#InverseMethod = inverse3;
 -- time checkInverseParametrization X
 setRandomSeed 0;
-X = projectiveVariety(fanoFourfold (16,9),Saturate=>false);
+X = fanoFourfold (16,9);
 X#InverseMethod = inverse3;
 time checkInverseParametrization X
 -- setRandomSeed 11111;
--- X = projectiveVariety(fanoFourfold (18,10),Saturate=>false);
+-- X = fanoFourfold (18,10);
 -- X#InverseMethod = inverse3;
 -- time checkInverseParametrization X
 ///
