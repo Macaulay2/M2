@@ -2427,7 +2427,6 @@ TEST /// -- Test 5 -- rational and unirational parametrizations
 X = specialCubicFourfold image multirationalMap rationalMap(ring PP_(ZZ/333331)^2,{3,4});
 time h = parametrize X;
 assert(degree(h,Strategy=>"random point") == 1 and target h === X and ambient source h == source h and h#"inverse" =!= null);
-detectCongruence X;
 time f = unirationalParametrization X;
 assert(# factor f == 1 and target f === X and unique degrees ideal matrix first factor f == {{10}});
 assert isSubset(f point source f,X);
@@ -2435,7 +2434,6 @@ assert isSubset(f point source f,X);
 Y = specialGushelMukaiFourfold S;
 time g = parametrize Y;
 assert(degree(g,Strategy=>"random point") == 1 and target g === Y and dim ambient source g == 5 and dim source g == 4 and g#"inverse" =!= null);
-detectCongruence Y;
 -- time g = unirationalParametrization Y;
 -- assert(# factor g == 1 and target g === Y and unique degrees ideal matrix first factor g == {{26}})
 -- assert isSubset(g point source g,Y)
@@ -2457,5 +2455,15 @@ use ring S;
 assert(f S == ideal(x_(3,4,5),x_(2,4,5),x_(1,4,5),x_(0,4,5),x_(2,3,5),x_(1,3,5),x_(0,3,5),x_(1,2,5),x_(0,2,5),x_(0,1,5),x_(2,3,4),x_(1,3,4),x_(0,3,4),x_(1,2,4),x_(1,2,3)));
 ///
 
-
+TEST /// -- Test 8 -- detectCongruence
+X = specialCubicFourfold("quintic del Pezzo surface",ZZ/33331);
+detectCongruence X;
+use Grass(1,4,ZZ/33331);
+S31 = ideal(p_(3,4),p_(2,4),p_(1,4),p_(0,4),p_(2,3),p_(1,3),p_(1,2));
+Y = specialGushelMukaiFourfold(S31,InputCheck=>0);
+assert(not Y.cache#?"label"); Y.cache#"label" = 6;
+detectCongruence Y;
+-- Y = specialGushelMukaiFourfold("18",ZZ/3331);
+-- detectCongruence Y;
+///
 
