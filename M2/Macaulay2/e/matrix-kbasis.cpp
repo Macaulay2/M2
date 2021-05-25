@@ -22,13 +22,14 @@ class KBasis
   const Matrix *bottom_matrix;
   M2_arrayint heft_vector;  // length is D->n_vars(), or less.
   // Dot product with a degree of a variable
-  // in 'vars' will give a positive value.
+  // in 'vars' will give a non-negative value.
 
   int *var_degs;
   int *var_wts;  // var_wts[i] is the (heft_vector . deg(vars->array[i] th
                  // variable))
   M2_arrayint vars;
   bool do_truncation;
+  bool weight_has_zeros;
   int limit;  // if >= 0, then stop after that number.
 
   const int *lo_degree;  // if non-null, the lowest degree to collect, of length
@@ -112,6 +113,7 @@ KBasis::KBasis(const Matrix *bottom,
       heft_vector(heft_vector0),
       vars(vars0),
       do_truncation(do_truncation0),
+      weight_has_zeros(false),
       limit(limit0),
       lo_degree(lo_degree0),
       hi_degree(hi_degree0),
@@ -134,7 +136,7 @@ KBasis::KBasis(const Matrix *bottom,
       computation_type = KB_MULTI;
     }
 
-  // Compute the (positive) weights of each of the variables in 'vars'.
+  // Compute the (non-negative) weights of each of the variables in 'vars'.
 
   var_wts = newarray_atomic(int, vars->len);
   var_degs = newarray_atomic(int, vars->len * heft_vector->len);
@@ -146,6 +148,7 @@ KBasis::KBasis(const Matrix *bottom,
       int v = vars->array[i];
       D->to_expvector(M->degree_of_var(v), exp);
       var_wts[i] = ntuple::weight(heft_vector->len, exp, heft_vector);
+      if (var_wts[i] == 0) weight_has_zeros = true;
       ntuple::copy(heft_vector->len, exp, var_degs + next);
     }
   freemem(exp);
@@ -250,7 +253,6 @@ inline bool KBasis::try_insert_sg()
       return false;
     }
   if (!lo_degree || kb_exp_weight >= kb_target_lo_weight) insert();
-  if (hi_degree && kb_exp_weight == kb_target_hi_weight) return false;
   return true;
 }
 
@@ -316,7 +318,6 @@ inline bool KBasis::try_insert_mg()
                                     kb_target_multidegree,
                                     kb_exp_multidegree))
         insert();
-      return false;
     }
   return true;
 }
@@ -369,6 +370,22 @@ void KBasis::compute()
 // If 'd' is not NULL, it is an element of the degree monoid.
 {
   if (limit == 0) return;
+  M2_arrayint zero_vars = NULL;
+  if (weight_has_zeros)
+    {
+      zero_vars = getmematomicarraytype(M2_arrayint, vars->len);
+      int j = 0;
+      for (int i = 0; i < vars->len; i++)
+        {
+          if (var_wts[i] == 0)
+            {
+              zero_vars->array[j] = i;
+              j++;
+            }
+        }
+      zero_vars->len = j;
+    }
+
   for (int i = 0; i < bottom_matrix->n_rows(); i++)
     {
       if (system_interrupted()) return;
@@ -389,6 +406,20 @@ void KBasis::compute()
             {
               kb_error = true;
               ERROR("module given is not finite over the base");
+              freemem(zero_vars);
+              return;
+            }
+        }
+      else if (zero_vars)
+        {
+          // if we have any variables with zero degrees, then kb_monideal needs
+          // to be 0-dimensional in those variables.
+          if (!all_have_pure_powers(kb_monideal, zero_vars))
+            {
+              kb_error = true;
+              ERROR(
+                  "module given is not finite over the zero-degree variables");
+              freemem(zero_vars);
               return;
             }
         }
@@ -412,6 +443,7 @@ void KBasis::compute()
             break;
         }
     }
+  freemem(zero_vars);
 }
 
 Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
@@ -484,18 +516,17 @@ Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
 
   KBasis KB(bottom, lo, hi, heft, vars, do_truncation, limit);
 
-  // If either a low degree, or high degree is given, then we require a positive
-  // heft vector:
+  // If either a low degree, or high degree is given, then we require a
+  // non-negative heft vector:
   if (lo || hi)
     for (int i = 0; i < vars->len; i++)
-      if (KB.var_wts[i] <= 0)
+      if (KB.var_wts[i] < 0)
         {
           ERROR(
-              "basis: computation requires a heft form positive on the degrees "
-              "of the variables");
+              "basis: computation requires a heft form non-negative on the "
+              "degrees of the variables");
           return 0;
         }
-
   // This next line will happen if both lo,hi degrees are given, and they are
   // different.  This can only be the singly generated case, and in that case
   // the degrees are in the wrong order, so return with 0 basis.

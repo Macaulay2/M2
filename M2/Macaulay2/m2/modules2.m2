@@ -758,7 +758,7 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
 
      pres := generators gb presentation M;
 
-     M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heftvec, varlist, opts.Truncate, opts.Limit) };
+     M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heftvec, var, opts.Truncate, opts.Limit) };
      f := value log;
      S := opts.SourceRing;
      off := splice opts.Degree;
