@@ -3432,7 +3432,6 @@ doc ///
 --diameter
 doc ///
     Key
-        diameter
         (diameter, Graph)
     Headline
         Computes the diameter of a graph
