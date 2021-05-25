@@ -2439,15 +2439,21 @@ assert(degree(g,Strategy=>"random point") == 1 and target g === Y and dim ambien
 -- assert isSubset(g point source g,Y)
 ///
 
-TEST /// -- Test 6 -- associated K3 surfaces
+TEST /// -- Test 6 (1/3) -- associated K3 surfaces
 f = last associatedK3surface(specialCubicFourfold "quartic scroll",Verbose=>true);
 assert(f#"image" =!= null and dim image f == 2 and degree image f == 14 and dim target f == 8)
+///
+
+TEST /// -- Test 7 (2/3) -- associated K3 surfaces
 g = last associatedK3surface(specialCubicFourfold "quintic del Pezzo surface",Verbose=>true);
 assert(g#"image" =!= null and dim image g == 2 and degree image g == 14 and dim target g == 8)
+///
+
+TEST /// -- Test 8 (3/3) -- associated K3 surfaces
 associatedK3surface(specialGushelMukaiFourfold "tau-quadric",Verbose=>true);
 ///
 
-TEST /// -- Test 7 -- simple tests on schubertCycle
+TEST /// -- Test 9 -- simple tests on schubertCycle
 (S,f) = schubertCycle({2,2},Grass(1,4,ZZ/33331,Variable=>"x"),"standard");
 assert(f S == tangentialChowForm(ideal((Grass(0,4,ZZ/33331,Variable=>"x"))_3,(Grass(0,4,ZZ/33331,Variable=>"x"))_4),1,1));
 (S,f) = schubertCycle({3,2,1},Grass(2,5,ZZ/33331,Variable=>"x"),"standard");
@@ -2455,9 +2461,12 @@ use ring S;
 assert(f S == ideal(x_(3,4,5),x_(2,4,5),x_(1,4,5),x_(0,4,5),x_(2,3,5),x_(1,3,5),x_(0,3,5),x_(1,2,5),x_(0,2,5),x_(0,1,5),x_(2,3,4),x_(1,3,4),x_(0,3,4),x_(1,2,4),x_(1,2,3)));
 ///
 
-TEST /// -- Test 8 -- detectCongruence
+TEST /// -- Test 10 (1/2) -- detectCongruence
 X = specialCubicFourfold("quintic del Pezzo surface",ZZ/33331);
 detectCongruence X;
+///
+
+TEST /// -- Test 11 (2/2) -- detectCongruence
 use Grass(1,4,ZZ/33331);
 S31 = ideal(p_(3,4),p_(2,4),p_(1,4),p_(0,4),p_(2,3),p_(1,3),p_(1,2));
 Y = specialGushelMukaiFourfold(S31,InputCheck=>0);
