@@ -144,7 +144,6 @@ export {
     "DFS",
     "descendants",
     "descendents",
-    "diameter",
     "distance",
     "distanceMatrix",
     "eccentricity",
@@ -897,7 +896,6 @@ descendants = method()
 descendants (Digraph, Thing) := Set => (D,v) -> set flatten breadthFirstSearch(D, v)
 descendents = descendants
 
-diameter = method()
 diameter Graph := ZZ => G -> (
     allEntries := flatten entries distanceMatrix G;
     if member(-1, allEntries) then infinity else max allEntries
