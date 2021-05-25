@@ -1,4 +1,7 @@
 --		Copyright 2000 by Daniel R. Grayson
+
+needs "reals.m2"
+
 TeXmacsBegin = "\2"
 TeXmacsEnd   = "\5"
 fix := s -> replace("\2|\5","\33\\0",s)

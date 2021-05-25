@@ -1,5 +1,8 @@
 --		Copyright 2007 by Daniel R. Grayson
 
+needs "varieties.m2"
+needs "format.m2"
+
 -- Default rendering is by concatenation of rendered inputs
 setupRenderer(mathML, concatenate, Hypertext)
 

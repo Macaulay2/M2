@@ -1,5 +1,10 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
+needs "integers.m2"
+needs "lists.m2"
+needs "matrix1.m2"
+needs "structure.m2" -- for position
+
 monic := t -> (
      c := leadCoefficient t;
      c' := 1 // c;

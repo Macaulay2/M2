@@ -1,4 +1,7 @@
 -- TODO: parallelize testing
+-- TODO: merge with capture.m2?
+
+needs "files.m2"
 
 -- TODO: get rid of these
 (hadError, numErrors) = (false, 0);

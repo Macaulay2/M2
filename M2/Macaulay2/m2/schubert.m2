@@ -1,5 +1,7 @@
 -- Bernd Sturmfels and Josephine Yu  
 
+needs "matrix1.m2"
+
 --signOfPermu := P -> (
 --     sign := 1;
 --     scan(#P-1, a->

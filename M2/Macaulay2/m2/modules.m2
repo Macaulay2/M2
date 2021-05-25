@@ -1,5 +1,8 @@
  --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "reals.m2" -- for inexact number
+needs "ofcm.m2"  -- for degreesMonoid
+
 -----------------------------------------------------------------------------
 -- Matrix
 

@@ -1,5 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "methods.m2"
+
 printpass := ID -> x -> (stderr << ID << ": " << x << endl; x)
 fold3 := (f,x,v) -> (scan(v, y -> x = f(x,y)); x)
 fold2 := (f,v) -> fold3(f,v#0,drop(v,1))

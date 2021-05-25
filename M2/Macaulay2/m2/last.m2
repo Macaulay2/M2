@@ -2,6 +2,14 @@
 
 -- this file should be mentioned *last* in dumpseq
 
+needs "engine.m2"
+needs "methods.m2"
+needs "nets.m2"
+needs "orderedmonoidrings.m2" -- for degreesRing
+needs "packages.m2"
+needs "robust.m2"
+needs "varieties.m2"
+
 recursionLimit = 300
 
 degreesRing 0;

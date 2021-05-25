@@ -1,5 +1,7 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
+needs "methods.m2"
+
 -- This version of 'run' doesn't handle pipes or redirection, of course
 -- but it's an advantage to have this facility without depending on an outside shell.
 -- We comment it out because some systems don't have wordexp() in libc, upon which 

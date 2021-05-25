@@ -1,6 +1,13 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 -- TODO: eventually we won't be able to keep all packages open, anyway, since 256 can be our limit on open file descriptors
 
+needs "files.m2"
+needs "fold.m2"
+needs "lists.m2"
+needs "methods.m2"
+needs "regex.m2"
+needs "system.m2"
+
 loadedPackages = {}
 
 rawKey   = "raw documentation"

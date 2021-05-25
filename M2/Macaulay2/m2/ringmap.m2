@@ -1,5 +1,12 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
+-- TODO: needs "newring.m2" for flattenRing
+needs "galois.m2"
+needs "matrix1.m2"
+needs "modules.m2"
+needs "modules2.m2"
+needs "mutablemat.m2"
+
 RingMap = new Type of HashTable
 
 RingMap.synonym = "ring map"

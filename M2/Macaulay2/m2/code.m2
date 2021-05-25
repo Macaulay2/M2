@@ -1,5 +1,11 @@
 --		Copyright 1993-1999, 2008 by Daniel R. Grayson
 
+-- TODO: needs "document.m2" for formatDocumentTag, but this casues a loop
+needs "gateway.m2"
+needs "lists.m2"
+needs "methods.m2"
+needs "nets.m2"
+
 -----------------------------------------------------------------------------
 -- code
 -----------------------------------------------------------------------------
@@ -118,6 +124,7 @@ edit = Command editMethod
 -----------------------------------------------------------------------------
 -- methods
 -----------------------------------------------------------------------------
+-- TODO: https://github.com/Macaulay2/M2/issues/1331
 
 searchAllDictionaries := (T, f) -> (
     seen := new MutableHashTable;

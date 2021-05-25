@@ -3,6 +3,11 @@
 -- html output
 -----------------------------------------------------------------------------
 
+needs "debugging.m2" -- for Descent
+needs "format.m2"
+needs "gb.m2" -- for for GroebnerBasis
+needs "packages.m2" -- for Package
+
 -- TODO: unify the definition of the tex macros so book/M2book.tex can use them
 KaTeX := () -> (
     katexPath := locateCorePackageFileRelative("Style",
