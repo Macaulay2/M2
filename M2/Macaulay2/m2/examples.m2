@@ -115,7 +115,7 @@ isCapturable = (inputs, pkg, isTest) -> (
     inputs = replace("-\\*.*?\\*-", "", inputs);
     -- TODO: remove this when the effects of capture on other packages is reviewed
     (isTest or match({"FirstPackage", "Macaulay2Doc"},            pkg#"pkgname"))
-    and not match({"MultiprojectiveVarieties", "EngineTests", "ThreadedGB", "RunExternalM2", "DiffAlg"}, pkg#"pkgname")
+    and not match({"MultiprojectiveVarieties", "EngineTests", "ThreadedGB", "RunExternalM2", "DiffAlg", "SpecialFanoFourfolds"}, pkg#"pkgname")
     and not (match({"Core", "Cremona"}, pkg#"pkgname") and version#"pointer size" == 4)
     -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
     and not match("(gbTrace|NAGtrace)",                       inputs) -- cerr/cout directly from engine isn't captured
