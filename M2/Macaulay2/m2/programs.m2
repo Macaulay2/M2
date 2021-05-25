@@ -14,55 +14,77 @@ fixPath = programPath -> (
 
 -- returns (found, thisVersion)
 -- found is an integer:
---   0 = successfully found program
---   1 = could not find program
---   2 = found program, but too version number too low
---   3 = found program, but could not determine version number
+foundProgram              := 0
+didNotFindProgram         := 1
+foundProgramButOldVersion := 2
+foundProgramButBadVersion := 3
 -- thisVersion is a string containing the version number found, or null
 --   if MinimumVersion option is not given or the version number can't be
 --   be determined.
-checkProgramPath = (name, cmds, pathToTry, prefix, opts) -> (
+checkProgramPath = (cmds, pathToTry, prefix, opts) -> (
+    verboseLog := if opts.Verbose then printerr else identity;
     -- unescape spaces/parentheses and resolve HOME for fileExists and fileMode
     unescapedPathToTry := replace(///^\$\{?HOME\}?///, getenv "HOME",
 	replace(///\\([ ()])///, ///\1///, pathToTry));
     found := if all(apply(cmds, cmd -> addPrefix(cmd, prefix)), cmd -> (
 	exe := unescapedPathToTry | first separate(" ", cmd);
-	if not fileExists exe then false else
+	if not fileExists exe then (
+	    verboseLog(exe, " does not exist"); false) else
 	-- check executable bit (0111)
-	if fileMode exe & 73 == 0 then false else
-	run(pathToTry | cmd | " > /dev/null 2>&1") == 0)) then 0 else 1;
-    msg := "";
+	if fileMode exe & 73 == 0 then (
+	    verboseLog(exe, " exists but is not executable"); false) else (
+	    verboseLog(exe, " exists and is executable");
+	    verboseLog("running ", format(pathToTry | cmd), ":");
+	    ret := run(pathToTry | cmd |
+		if opts.Verbose then "" else " > /dev/null 2>&1" );
+	    verboseLog("return value: " | ret);
+	    ret == 0))) then foundProgram else didNotFindProgram;
     thisVersion := null;
-    if found == 0 then (
-	if opts.MinimumVersion === null then msg = "    found"
-	else (
-	    thisVersion = replace("(^\\s+)|(\\s+$)", "", get("!" | pathToTry |
+    if found == foundProgram and opts.MinimumVersion =!= null then (
+	thisVersion = replace("(^\\s+)|(\\s+$)", "", get("!" | pathToTry |
 		addPrefix(opts.MinimumVersion_1, prefix)));
-	    if not match(///^\d[\-+\.:\~\da-zA-Z]*$///, thisVersion) then (
-		msg = "    found version \"" | thisVersion |
-		    "\", but this does not appear to be a valid version number";
-		found = 3;
-		thisVersion = null;
-	    ) else (
-		if thisVersion >= opts.MinimumVersion_0 then
-		    msg = "    found version " | thisVersion |
-			" >= " | opts.MinimumVersion_0
-		else (
-		    msg = "    found, but version " | thisVersion | " < " |
-			opts.MinimumVersion_0;
-		    found = 2;
-		)
-	    )
+	if not match(///^\d[\-+\.:\~\da-zA-Z]*$///, thisVersion) then (
+	    verboseLog("found version ", format thisVersion,
+		" but this does not appear to be a valid version number");
+	    found = foundProgramButBadVersion;
+	    thisVersion = null;
+	) else if thisVersion >= opts.MinimumVersion_0 then
+	    verboseLog("found version ", thisVersion, " >= ",
+		opts.MinimumVersion_0)
+	else (
+	    verboseLog("found, but version ", thisVersion, " < ",
+		opts.MinimumVersion_0);
+	    found = foundProgramButOldVersion;
 	)
-    ) else msg = "    not found";
-    if opts.Verbose == true then print(msg);
+    );
     (found, thisVersion)
 )
 
 addPrefix = (cmd, prefix) ->
     if match(prefix_0, first separate(" ", cmd)) then prefix_1 | cmd else cmd
 
-getProgramPath = (name, cmds, opts) -> (
+findProgram = method(TypicalValue => Program,
+    Options => {
+	RaiseError => true,
+	Verbose => false,
+	Prefix => {},
+	AdditionalPaths => {},
+	MinimumVersion => null
+    })
+findProgram(String, String) := opts -> (name, cmd) ->
+    findProgram(name, {cmd}, opts)
+findProgram(String, List) := opts -> (name, cmds) -> (
+    if not (instance(opts.Prefix, List) and
+	all(opts.Prefix, x -> instance(x, Sequence)) and
+	all(opts.Prefix, x -> class \ x === (String, String))) then
+	error "expected Prefix to be a list of sequences of two strings";
+    if not (instance(opts.AdditionalPaths, List) and
+	all(opts.AdditionalPaths, x -> instance(x, String))) then
+	error "expected AdditionalPaths to be a list of strings";
+    if opts.MinimumVersion =!= null and not(
+	instance(opts.MinimumVersion, Sequence) and
+	class \ opts.MinimumVersion === (String, String)) then
+	error "expected MinimumVersion to be a sequence of two strings";
     pathsToTry := {};
     -- try user-configured path first
     if programPaths#?name then
@@ -78,60 +100,28 @@ getProgramPath = (name, cmds, opts) -> (
 		if dir == "" then "." else dir));
     pathsToTry = fixPath \ pathsToTry;
     prefixes := {(".*", "")} | opts.Prefix;
-    errorCode := 1;
+    errorCode := didNotFindProgram;
     versionFound := "0.0";
-    result := scan(pathsToTry, pathToTry -> (
-	if opts.Verbose == true then
-	    print("checking for " | name | " in " | pathToTry | "...");
-	prefix := scan(prefixes, prefix -> (
-	    if opts.Verbose == true and #prefixes > 1 then
-		print("  trying prefix \"" | prefix_1 |
-		    "\" for executables matching \"" | prefix_0 | "\"...");
-	    result := checkProgramPath(name, cmds, pathToTry, prefix, opts);
-	    if result_0 == 0 then (
-		errorCode = 0;
-		versionFound = result_1;
-		break prefix
-	    ) else if result_0 == 2 and result_1 > versionFound then (
-		errorCode = 2;
-		versionFound = result_1;
-	    ) else if result_0 == 3 then errorCode = 3;
-	));
-	if errorCode == 0 then
-	    break (errorCode, pathToTry, prefix, versionFound)
-    ));
-    if result =!= null then result else (errorCode, null, null, versionFound)
-)
-
-findProgram = method(TypicalValue => Program,
-    Options => {
-	RaiseError => true,
-	Verbose => false,
-	Prefix => {},
-	AdditionalPaths => {},
-	MinimumVersion => null
-    })
-findProgram(String, String) := opts -> (name, cmd) ->
-    findProgram(name, {cmd}, opts)
-findProgram(String, List) := opts -> (name, cmds) -> (
-    programInfo := getProgramPath(name, cmds, opts);
-    if programInfo_0 != 0 then
-	if opts.RaiseError then (
-	    msg := "";
-	    if programInfo_0 == 1 then
-		msg = "could not find " | name
-	    else if programInfo_0 == 2 then
-		msg = "found " | name | ", but version (" | programInfo_3 |
-		    ") is too low"
-	    else if programInfo_0 == 3 then
-		msg = "found " | name | ", but could not determine version";
-	    error(msg)
-	) else return null;
-    new Program from {"name" => name, "path" => programInfo_1,
-	"prefix" => programInfo_2} |
-	if opts.MinimumVersion =!= null then {"version" => programInfo_3}
-	else {}
-)
+    for pathToTry in pathsToTry do for prefix in prefixes do (
+	(found, thisVersion) := checkProgramPath(cmds, pathToTry, prefix, opts);
+	if found == foundProgram then return new Program from {
+	    "name" => name,
+	    "path" => pathToTry,
+	    "prefix" => prefix } | if opts.MinimumVersion =!= null then {
+	    "version" => thisVersion} else {} else
+	if found != didNotFindProgram then (
+	    errorCode = found;
+	    if found == foundProgramButOldVersion and
+		thisVersion > versionFound then versionFound = thisVersion
+	    )
+	);
+    if opts.RaiseError then error(
+	if errorCode == didNotFindProgram then "could not find " | name else
+	if errorCode == foundProgramButOldVersion then "found " | name |
+	    ", but version (" | versionFound | ") is too low" else
+	if errorCode == foundProgramButBadVersion then "found " | name |
+	    ", but could not determine version" else "unknown error");
+    )
 
 runProgram = method(TypicalValue => ProgramRun,
     Options => {
