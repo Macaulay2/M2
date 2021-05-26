@@ -883,7 +883,7 @@ describe SpecialGushelMukaiFourfold := X -> (
     descr = descr|newline|"containing a surface in PP^8 of degree "|toString(d)|" and sectional genus "|toString(g)|newline;
     descr = descr|(if # unique degs == 1 then "cut out by "|toString(#degs)|" hypersurfaces of degree "|toString(first degs) else "cut out by "|toString(#degs)|" hypersurfaces of degrees "|toString(toSequence degs));
     descr = descr|newline|"and with class in G(1,4) given by "|toString(cS);
-    if dim singLocus grassmannianHull X > 0 then descr = descr|newline|"Type: Gushel (not ordinary)" else descr = descr|newline|"Type: ordinary";
+    if dim singLocus grassmannianHull X >= 0 then descr = descr|newline|"Type: Gushel (not ordinary)" else descr = descr|newline|"Type: ordinary";
     if instance(recognize X,ZZ) then descr = descr|newline|"(case "|toString(recognize X)|" of Table 1 in "|"arXiv:2002.07026"|")";
     net expression descr
 );
@@ -1075,7 +1075,7 @@ toGrass SpecialGushelMukaiFourfold := (cacheValue "toGrass") (X -> ( -- for bett
     Y := grassmannianHull X;
     psi := toGrass Y;
     if dim singLocus Y == -1 then return psi|X;
-    psi * rationalMap(ring target psi,Grass(1,4,coefficientRing X),submatrix'(vars ring ambient target psi,{0}))
+    (psi|X) * rationalMap(ring target psi,Grass(1,4,coefficientRing X),submatrix'(vars ring ambient target psi,{0}))
 ));
 
 find2Eminus1secantCurveOfDegreeE = method(Options => {Verbose => true})
@@ -1905,7 +1905,7 @@ varietyDefinedBylinearSyzygies EmbeddedProjectiveVariety := (cacheValue "variety
 
 toGushel = method();
 toGushel SpecialGushelMukaiFourfold := X -> (
-    if dim singLocus grassmannianHull X > 0 then return X;
+    if dim singLocus grassmannianHull X >= 0 then return X;
     j := toRationalMap toGrass X;
     Y := local Y;
     i := rationalMap(target j,(coefficientRing X)[Y,gens ambient target j],0|vars target j);
