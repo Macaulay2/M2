@@ -1,16 +1,10 @@
 -- TODO: parallelize testing
 -- TODO: merge with capture.m2?
 
-needs "files.m2"
+needs "system.m2"
 
 -- TODO: get rid of these
 (hadError, numErrors) = (false, 0);
-
--- also used in expressions.m2, code.m2, and help.m2
-chkrun = cmd -> if (ret := run cmd) =!= 2 then ret else (
-    -- On Mac OS and Linux, 2 = 130-128 indicates shell is terminated by Ctrl-C
-    -- See https://tldp.org/LDP/abs/html/exitcodes.html
-    endl(stderr); error("run: subprocess interrupted"); )
 
 --test limits
 utest := opt -> (

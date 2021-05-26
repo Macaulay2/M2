@@ -90,18 +90,18 @@ code ZZ         := i -> code previousMethodsFound#i
 -----------------------------------------------------------------------------
 -- edit
 -----------------------------------------------------------------------------
+-- TODO: update this
 
-EDITOR := () -> if getenv "EDITOR" != "" then getenv "EDITOR" else "vi"
 editMethod = method(Dispatch => Thing)
 editMethod String := filename -> (
-     editor := EDITOR();
+     editor := getViewer("EDITOR", "emacs");
      chkrun concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
 	  editor, " ", filename))
 EDIT = method(Dispatch => Thing)
 EDIT Nothing := arg -> (stderr << "--warning: source code not available" << endl;)
 EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> (
-     editor := EDITOR();
+     editor := getViewer("EDITOR", "emacs");
      if 0 != chkrun concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
 	  editor,
@@ -109,16 +109,17 @@ EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> (
 	  " ",
 	  filename
 	  ) then error "command returned error code")) x
-editMethod Function := args -> EDIT locate args
 editMethod Command := c -> editMethod c#0
+editMethod Function := args -> EDIT locate args
 editMethod Sequence := args -> (
-     editor := EDITOR();
+     editor := getViewer("EDITOR", "emacs");
      if args === () 
      then chkrun concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
 	  editor)
      else EDIT locate args
      )
+editMethod ZZ := i -> editMethod previousMethodsFound#i
 edit = Command editMethod
 
 -----------------------------------------------------------------------------
@@ -151,6 +152,7 @@ sequenceMethods := (T, F, tallyF) -> nonnull apply(pairs T, (key, func) -> if in
     if instance(key, Sequence)        and tallyF <= tally         key     then  key)
 
 methods = method(Dispatch => Thing, TypicalValue => NumberedVerticalList)
+methods Manipulator := M -> methods class M
 methods Command  := c -> methods c#0
 methods Type     := F -> methods sequence F
 methods Sequence := F -> (

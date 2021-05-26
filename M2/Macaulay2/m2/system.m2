@@ -1,12 +1,42 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
 needs "methods.m2"
+needs "remember.m2"
 
 -- This version of 'run' doesn't handle pipes or redirection, of course
 -- but it's an advantage to have this facility without depending on an outside shell.
 -- We comment it out because some systems don't have wordexp() in libc, upon which 
 -- expandWord is based.
 -- run = cmd -> if (pid := fork()) == 0 then exec expandWord cmd else wait pid
+
+-- TODO: why doesn't run always do this?
+-- also used in expressions.m2, code.m2, and help.m2
+chkrun = cmd -> if (ret := run cmd) =!= 2 then ret else (
+    -- On Mac OS and Linux, 2 = 130-128 indicates shell is terminated by Ctrl-C
+    -- See https://tldp.org/LDP/abs/html/exitcodes.html
+    endl(stderr); error("run: subprocess interrupted"); )
+
+new Command from String   := Command => (command, cmdname) -> command {x ->
+    if x === ()
+    then chkrun cmdname
+    else chkrun(cmdname | " " | toString x)}
+
+-- whether fn exists on the path and is executable
+-- TODO: check executable bit
+runnable = fn -> (
+    if fn == "" then return false;
+    if isFixedExecPath fn then fileExists fn
+    else 0 < # select(1, apply(separate(":", getenv "PATH"), p -> p|"/"|fn), fileExists))
+
+-- used to get preferred web browser or editor application
+-- TODO: cache this value or allow setting default in init.m2?
+getViewer = (var, backup) -> (
+    if runnable (env := getenv var) then env -- compatibility
+    else if version#"operating system" === "Darwin" and runnable "open" then "open" -- Apple varieties
+    else if runnable "xdg-open" then "xdg-open" -- most Linux distributions
+    else if runnable backup then backup -- default backup
+    else error("neither open nor xdg-open is found and ", var, " is not set"))
+getViewer = memoize getViewer
 
 sampleInitFile := ///-- This is a sample init.m2 file provided with Macaulay2.
 -- It contains Macaulay2 code and is automatically loaded upon

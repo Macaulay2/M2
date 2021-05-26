@@ -11,6 +11,7 @@
  * pager
  *-
 
+needs "system.m2" -- for chkrun
 needs "document.m2"
 needs "installPackage.m2" -- TODO: can this be removed?
 
