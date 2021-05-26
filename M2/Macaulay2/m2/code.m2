@@ -165,6 +165,7 @@ methods Thing  := F -> (
 
 -- this one is here because it needs previousMethodsFound
 options ZZ := i -> options previousMethodsFound#i
+locate  ZZ := i -> locate  previousMethodsFound#i
 
 -----------------------------------------------------------------------------
 -- hooks

@@ -646,6 +646,7 @@ locate Function   := Sequence => x -> locate' x
 locate Pseudocode := Sequence => x -> locate' x
 locate Sequence   := Sequence => x -> locate' x
 locate Symbol     := Sequence => x -> locate' x
+locate List       := List     => x -> apply(x, locate)
 protect symbol locate
 
 -- baseName
