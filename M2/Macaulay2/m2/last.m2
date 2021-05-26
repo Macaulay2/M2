@@ -23,8 +23,6 @@ QQ.Wrap = x -> wr("=",x)
 ignoreP := set { "Core", "Classic", "Parsing", "SimpleDoc" }
 mentionQ := p -> not ignoreP#?(toString p)
 
-Core#"pre-installed packages" = lines get (currentFileDirectory | "installedpackages")
-
 addStartFunction(
      () -> (
 	  if class value getGlobalSymbol "User" =!= Package then (

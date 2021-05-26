@@ -87,18 +87,6 @@ isPackageLoaded := pkgname -> PackageDictionary#?pkgname and instance(value Pack
 checkPackageName = title -> (
     if not match("^[[:alnum:]]+$", title) then error("package title not alphanumeric: ", format title))
 
------------------------------------------------------------------------------
--- gdbm functions
------------------------------------------------------------------------------
-
--- gdbm makes architecture dependent files, so we try to distinguish them, in case
--- they get mixed.  Yes, that's in addition to installing them in directories that
--- are specified to be suitable for machine dependent data.
-databaseSuffix := "-" | version#"endianness" | "-" | version#"pointer size" | ".db"
-
-databaseDirectory = (layout, pre, pkg) -> pre | replace("PKG", pkg, layout#"packagecache")
-databaseFilename  = (layout, pre, pkg) -> databaseDirectory(layout, pre, pkg) | "rawdocumentation" | databaseSuffix
-
 closePackage = pkg -> if pkg#?rawKeyDB then (db -> if isOpen db then close db) pkg#rawKeyDB
 
 -----------------------------------------------------------------------------
@@ -352,8 +340,7 @@ newPackage String := opts -> pkgname -> (
 	if fileExists rawdbname then (
 	    newpkg#rawKeyDB = rawdb := openDatabase rawdbname;
 	    addEndFunction(() -> if isOpen rawdb then close rawdb))
-	else if notify then printerr("database not present: ", minimizeFilename rawdbname);
-	newpkg#topFileName = packagePrefix | replace("PKG", pkgname, currentLayout#"packagehtml") | topFileName)
+	else if notify then printerr("database not present: ", minimizeFilename rawdbname))
     else if notify then printerr("package prefix null, not opening database for package ", format pkgname);
     --
     pkgsym := (
@@ -441,6 +428,7 @@ newPackage("Core",
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION",
      Headline => "A computer algebra system designed to support algebraic geometry")
+Core#"pre-installed packages" = lines get (currentFileDirectory | "installedpackages")
 
 endPackage = method()
 endPackage String := title -> (

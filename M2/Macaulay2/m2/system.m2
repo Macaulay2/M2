@@ -124,9 +124,10 @@ addLayout = (prefix,i) -> (
 layoutToIndex := layout -> if layout === Layout#1 then 1 else if layout === Layout#2 then 2 else error "nonstandard layout detected"
 
 addLayout(prefixDirectory, layoutToIndex currentLayout)	   -- detected in startup.m2.in
-							      -- it's layout 1 when running from an installed M2, almost certainly
-							      -- it's layout 2 when running from a Macaulay2 build directory while compiling from source code
+-- it's layout 1 when running from an installed M2, almost certainly
+-- it's layout 2 when running from a Macaulay2 build directory while compiling from source code
 
+-- TODO should this be called here?
 addLayout(applicationDirectory()|"local/", 1) -- the user's application directory always uses layout 1
 
 detectCurrentLayout = prefix -> (
@@ -141,26 +142,32 @@ detectCurrentLayout = prefix -> (
      then addLayout(prefix,2)
      else null)
 
-searchPrefixPath = f -> (
-     -- I'm not sure we should retain this function.
-     assert instance (f, Function);
-     -- Here f is a function from layout tables to file paths, so we make no assumption about how the paths in one layout table differ from those in the other.
-     -- We search the prefixPath for an entry where the appropriate file path leads to an existing file.
-     -- The idea is that the documentation of a package may result in links to the html documentation pages of any package installed already on the prefixPath.
-     fl := (,f Layout#1,f Layout#2);
-     found := for pre in prefixPath do (
-	  i := detectCurrentLayout pre;
-	  if i === null then continue;
-	  if fileExists (pre|fl#i) then break pre|fl#i;
-	  );
-     if found =!= null then (
-	  if debugLevel > 5 then stderr << "--file found in " << found << endl;
-	  found)
-     else (
-     	  if debugLevel > 5 then stderr << "--file not found in prefixPath = " << stack prefixPath << endl;
-	  ))
+searchPrefixPath = mapper -> (
+    assert instance (mapper, Function);
+    -- Here mapper is a function from layout tables to file paths,
+    -- such as  searchPrefixPath(layout -> layout#"bin" | "M2"),
+    -- so we make no assumption about how the paths in one layout
+    -- table differ from those in the other.
+    -- Search prefixPath and the appropriate layout for an existing file:
+    scan(prefixPath, prefix ->
+	if (i := detectCurrentLayout prefix) =!= null
+	then if fileExists(file := prefix | mapper Layout#i)
+	then break file))
 
-getDBkeys = dbfn -> (
+-----------------------------------------------------------------------------
+-- Package database record keeping
+-----------------------------------------------------------------------------
+-- TODO: move elsewhere?
+
+-- { prefix => { "package table" => { pkgname => < result of makePackageInfo > } } } *-
+installedPackagesByPrefix = new MutableHashTable
+
+allPackages = () -> (
+    unique sort flatten for prefix in
+    keys installedPackagesByPrefix list
+    keys installedPackagesByPrefix#prefix#"package table")
+
+getDBkeys := dbfn -> (
      dbkeys := new MutableHashTable;
      db := openDatabase dbfn;
      for key in keys db do dbkeys#key = 1;
@@ -168,24 +175,17 @@ getDBkeys = dbfn -> (
      dbkeys)
 
 makePackageInfo := (pkgname,prefix,dbfn,layoutIndex) -> (
-     new MutableHashTable from {
-	  "doc db file name" => dbfn,
-	  "doc db file time" => fileTime dbfn, -- if this package is reinstalled, we can tell by checking this time stamp (unless the package takes less than a second to install, which is unlikely)
-	  -- "doc keys" => getDBkeys dbfn, -- do this lazily, getting it later, when needed for "about"
-	  "prefix" => prefix,
-     	  "layout index" => layoutIndex,
-	  "name" => pkgname
-	  })
-
-fetchDocKeys = i -> (
-     if i#?"doc keys"
-     then i#"doc keys"
-     else i#"doc keys" = getDBkeys i#"doc db file name"
-     )
-
-installedPackagesByPrefix = new MutableHashTable
-
-allPackages = () -> unique sort flatten for prefix in keys installedPackagesByPrefix list keys installedPackagesByPrefix#prefix#"package table"
+    new MutableHashTable from {
+	"name"             => pkgname,
+	"prefix"           => prefix,
+	"layout index"     => layoutIndex,
+	"doc db file name" => dbfn,
+	-- if this package is reinstalled, we can tell by checking this time stamp
+	-- (unless the package takes less than a second to install, which is unlikely)
+	"doc db file time" => fileTime dbfn,
+	-- do this lazily, getting it later, when needed for "about"
+	"doc keys"         => memoize(() -> keys getDBkeys dbfn),
+	})
 
 getPackageInfo = pkgname ->				    -- returns null if the package is not installed
      for prefix in prefixPath 
@@ -229,6 +229,7 @@ keyExists = (i,fkey) -> (
 	  close db;
 	  r))
 
+-- TODO: make unique, prioritizing most recent time stamp
 getPackageInfoList = () -> flatten (
      for prefix in prefixPath 
      list if installedPackagesByPrefix#?prefix
@@ -283,6 +284,18 @@ tallyInstalledPackages = () -> for prefix in prefixPath do (
 		    );
 	       if q#"doc db file time" === fileTime dbfn then continue; -- not changed
 	       p#pkgname = makePackageInfo(pkgname,prefix,dbfn,currentLayoutIndex);)))     
+
+-----------------------------------------------------------------------------
+-- gdbm functions
+-----------------------------------------------------------------------------
+
+-- gdbm makes architecture dependent files, so we try to distinguish them, in case
+-- they get mixed.  Yes, that's in addition to installing them in directories that
+-- are specified to be suitable for machine dependent data.
+databaseSuffix := "-" | version#"endianness" | "-" | version#"pointer size" | ".db"
+
+databaseDirectory = (layout, pre, pkg) -> pre | replace("PKG", pkg, layout#"packagecache")
+databaseFilename  = (layout, pre, pkg) -> databaseDirectory(layout, pre, pkg) | "rawdocumentation" | databaseSuffix
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

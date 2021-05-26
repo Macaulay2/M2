@@ -29,8 +29,9 @@ installPrefix   = applicationDirectory() | "local/"  -- default the installation
 installLayout   = Layout#2			     -- the layout of the installPrefix, global for communication to document.m2
 htmlDirectory   = ""	      -- relative path to the html directory, depends on the package
 
-indexFileName  := "master.html"   -- file name for master index of topics in a package
-tocFileName    := "toc.html"      -- file name for the table of contents of a package
+  topFileName   = "index.html"	-- top node's filename, constant
+indexFileName  := "master.html"	-- file name for master index of topics in a package
+  tocFileName  := "toc.html"	-- file name for the table of contents of a package
 
 -----------------------------------------------------------------------------
 -- Local utilities
