@@ -7,6 +7,9 @@ We have three main branches on github:
    pre-master  -- development is manually merged into this branch occasionally, triggering builds
    master      -- pre-master is manually merged into this branch after builds succeed there.  Daily builds occcur here.
 
+The development branch will always be ahead of the pre-master branch, and the pre-master branch will always be ahead of
+the master branch, so the merges above are all done by fast-fowarding.
+
 Near release time we have a release branch, with name of the form release-X.Y-branch, which is occasionally merged into development.
 
 The convention for version numbers of Macaulay2 is this:
