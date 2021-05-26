@@ -1339,31 +1339,31 @@ setupfun("toRRi",toRRi);
 rightRR(e:Expr):Expr := (
      when e
         is x:RRicell do toExpr(rightRR(x.v))
-        else WrongArg("expected an interval"));
+        else WrongArg("an interval"));
 setupfun("right",rightRR);
                                                      
 leftRR(e:Expr):Expr := (
      when e
         is x:RRicell do toExpr(leftRR(x.v))
-        else WrongArg("expected an interval"));
+        else WrongArg("an interval"));
 setupfun("left",leftRR);
                                                      
 widthRR(e:Expr):Expr := (
      when e
         is x:RRicell do toExpr(widthRR(x.v))
-        else WrongArg("expected an interval"));
-setupfun("diameter",widthRR);
+        else WrongArg("an interval"));
+setupfun("diameter",widthRR).Protected = false;
                                                      
 midpointRR(e:Expr):Expr := (
      when e
         is x:RRicell do toExpr(midpointRR(x.v))
-        else WrongArg("expected an interval"));
+        else WrongArg("an interval"));
 setupfun("midpoint",midpointRR);
                                                      
 isEmptyRRi(e:Expr):Expr := (
      when e
         is x:RRicell do toExpr(isEmpty(x.v))
-        else WrongArg("expected an interval"));
+        else WrongArg("an interval"));
 setupfun("isEmptyRRi",isEmptyRRi);
                                                      
 subsetRRi(e:Expr):Expr := (
