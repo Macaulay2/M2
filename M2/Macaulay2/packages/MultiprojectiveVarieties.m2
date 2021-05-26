@@ -12,7 +12,7 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.0", 
-    Date => "February 27, 2021",
+    Date => "May 26, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -737,6 +737,16 @@ dual EmbeddedProjectiveVariety := {} >> o -> X -> (
     return projectiveVariety(dualvariety ideal X,MinimalGenerators=>false,Saturate=>false); -- from SparseResultants
 );
 
+conormalVariety EmbeddedProjectiveVariety := o -> X -> ( 
+    S := o.SingularLocus;
+    if instance(S,EmbeddedProjectiveVariety) then S = ideal S;
+    if S === null and X.cache#?"singularLocus" then S = ideal singularLocus X;
+    idW := conormalVariety(ideal X,Variable=>o.Variable,Strategy=>o.Strategy,SingularLocus=>S);
+    W := projectiveVariety(idW,MinimalGenerators=>true,Saturate=>false);
+    W#"projections" = apply(projections W,f -> rationalMap((map f) * (map rationalMap(target f,ring ambient X)),Dominant=>"notSimplify"));
+    return W;
+);
+
 EmbeddedProjectiveVariety ++ EmbeddedProjectiveVariety := (X,Y) -> (
     if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient projective space";
     K := coefficientRing X;
@@ -861,6 +871,45 @@ findIsomorphism (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (X
 );
 
 EmbeddedProjectiveVariety ===> EmbeddedProjectiveVariety := (X,Y) -> findIsomorphism(X,Y,Verify=>true);
+
+EmbeddedProjectiveSubvariety = new Type of EmbeddedProjectiveVariety;
+
+ambientVariety = method();
+ambientVariety EmbeddedProjectiveSubvariety := X -> X#"ambientVariety";
+
+EmbeddedProjectiveSubvariety#{Standard,AfterPrint} = EmbeddedProjectiveSubvariety#{Standard,AfterNoPrint} = X -> (
+    Y := ambientVariety X;
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "ProjectiveVariety, " << "subvariety of codimension " << dim Y - dim X << " in " << expression Y << endl;
+);
+
+makeSubvariety = method(TypicalValue => EmbeddedProjectiveSubvariety, Options => {Verify => true});
+makeSubvariety (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (X,Y) -> (
+    if o.Verify then if not isSubset(X,Y) then error "the first variety must be a subvariety of the second one";
+    expression Y; -- this is useful when Y is a Grassmannian
+    Z := new EmbeddedProjectiveSubvariety from X;
+    Z#"ambientVariety" = Y;
+    return Z;
+);
+makeSubvariety Ideal := o -> I -> (
+    Y := projectiveVariety(ring I,MinimalGenerators=>false,Saturate=>false);
+    X := projectiveVariety(lift(I,ambient ring I),MinimalGenerators=>true,Saturate=>false);
+    makeSubvariety(X,Y,Verify=>false)
+);
+makeSubvariety RingElement := o -> F -> makeSubvariety ideal F;
+
+tangentialChowForm (EmbeddedProjectiveVariety,ZZ,ZZ) := o -> (X,s,l) -> (
+    S := o.SingularLocus;
+    if instance(S,EmbeddedProjectiveVariety) then S = ideal S;
+    if S === null and X.cache#?"singularLocus" then S = ideal singularLocus X;
+    makeSubvariety tangentialChowForm(ideal X,s,l,Variable=>o.Variable,Duality=>o.Duality,AffineChartGrass=>o.AffineChartGrass,AssumeOrdinary=>o.AssumeOrdinary,AffineChartProj=>o.AffineChartProj,SingularLocus=>S) 
+);
+tangentialChowForm (EmbeddedProjectiveVariety,ZZ) := o -> (X,s) -> tangentialChowForm(X,s,codim X -1 + s,Variable=>o.Variable,Duality=>o.Duality,AffineChartGrass=>o.AffineChartGrass,AssumeOrdinary=>o.AssumeOrdinary,AffineChartProj=>o.AffineChartProj,SingularLocus=>o.SingularLocus);
+chowForm EmbeddedProjectiveVariety := o -> X -> tangentialChowForm(X,0,Variable=>o.Variable,Duality=>o.Duality,AffineChartGrass=>o.AffineChartGrass,AffineChartProj=>o.AffineChartProj);
+
+Grass EmbeddedProjectiveSubvariety := o -> X -> (
+    if isGrass ambientVariety X === false then error "expected a subvariety of some Grassmannian";
+    ambientVariety X 
+);
 
 
 MultirationalMap = new Type of MutableHashTable;
@@ -1455,7 +1504,7 @@ inverse2 (MultirationalMap,Option) := (Phi,opt) -> (
     Psi := inverse(Phi',Verify=>false);
     err := "not able to get an inverse map by using dedicated algorithm for the multi-linear type case; try using the general function inverse";
     b := last toList opt;
-    if b === true or b == -1 then (
+    if b === true or b === -1 then (
         if b === true then (
             try checkRepresentatives Psi else error(err|"(*)");
             if not(Phi * Psi == 1 and Psi * Phi == 1) then error(err|"()");
@@ -2853,7 +2902,7 @@ Usage => "dual X",
 Inputs => {"X" => EmbeddedProjectiveVariety},
 Outputs => {EmbeddedProjectiveVariety => {"which is projectively dual to ",TEX///$X$///}},
 EXAMPLE {"X = PP_QQ^(2,2);","X' = dual X;", "describe X'","assert(dual X' == X)"},
-SeeAlso => {dualVariety,tangentSpace}}
+SeeAlso => {(conormalVariety,EmbeddedProjectiveVariety),dualVariety,tangentSpace}}
 
 document { 
 Key => {linearlyNormalEmbedding,(linearlyNormalEmbedding,EmbeddedProjectiveVariety)},
@@ -2954,6 +3003,42 @@ EXAMPLE {"K = ZZ/333331;",
 "L = linearSpan {point ambient C,point ambient C}; -- random line",
 "C ++ L","C ++ C","(point C) ++ (point C) ++ (point C)"}}
 
+typValTanForm := typicalValues#tangentialChowForm;
+typicalValues#tangentialChowForm = EmbeddedProjectiveVariety;
+document { 
+Key => {(tangentialChowForm,EmbeddedProjectiveVariety,ZZ)},
+Headline => "higher Chow forms of a projective variety", 
+Usage => "tangentialChowForm(X,s)", 
+Inputs => {"X" => EmbeddedProjectiveVariety, "s" => ZZ},
+Outputs => {EmbeddedProjectiveVariety => {"the subvariety of the appropriate Grassmannian defined by ",TO tangentialChowForm,TT"(",TO2{(ideal,MultiprojectiveVariety),"ideal"}," ",TT"X,s)"}},
+EXAMPLE {"X = PP_(ZZ/65521)[2,1];", "tangentialChowForm(X,1)", "Grass oo"},
+SeeAlso => {(chowForm,EmbeddedProjectiveVariety)}}
+typicalValues#tangentialChowForm = typValTanForm;
+
+typValChowForm := typicalValues#chowForm;
+typicalValues#chowForm = EmbeddedProjectiveVariety;
+document { 
+Key => {(chowForm,EmbeddedProjectiveVariety)},
+Headline => "chow forms of a projective variety", 
+Usage => "chowForm X", 
+Inputs => {"X" => EmbeddedProjectiveVariety},
+Outputs => {EmbeddedProjectiveVariety => {"the subvariety of the appropriate Grassmannian defined by ",TO chowForm,TT" ",TO2{(ideal,MultiprojectiveVariety),"ideal"}," ",TT"X"}},
+EXAMPLE {"X = PP_(ZZ/65521)[2,1];", "chowForm X", "Grass oo"},
+SeeAlso => {(tangentialChowForm,EmbeddedProjectiveVariety,ZZ)}}
+typicalValues#chowForm = typValChowForm;
+
+typValConVar := typicalValues#conormalVariety;
+typicalValues#conormalVariety = MultiprojectiveVariety;
+document { 
+Key => {(conormalVariety,EmbeddedProjectiveVariety)},
+Headline => "the conormal variety of a projective variety", 
+Usage => "conormalVariety X", 
+Inputs => {"X" => EmbeddedProjectiveVariety},
+Outputs => {MultiprojectiveVariety => {"the conormal variety of ",TEX///$X$///}},
+EXAMPLE {"X = PP_QQ^(2,2);", "C = conormalVariety X;", "p2 = multirationalMap last projections C;", "image p2 == dual X"},
+SeeAlso => {(dual,EmbeddedProjectiveVariety)}}
+typicalValues#conormalVariety = typValConVar;
+
 undocumented {
 (expression,MultiprojectiveVariety),
 (net,MultiprojectiveVariety),
@@ -2964,6 +3049,7 @@ undocumented {
 (singularLocus,EmbeddedProjectiveVariety,Option),
 (symbol *,ZZ,MultiprojectiveVariety), -- hidden to the user, since it returns non-reduced varieties
 (symbol _,MultiprojectiveVariety,MultiprojectiveVariety), -- this returns a new type which is too rudimentary yet
+(tangentialChowForm,EmbeddedProjectiveVariety,ZZ,ZZ),
 (expression,MultirationalMap),
 (net,MultirationalMap),
 (toString,MultirationalMap),
@@ -3324,4 +3410,19 @@ time checkInverseParametrization X
 -- X#InverseMethod = inverse3;
 -- time checkInverseParametrization X
 ///
+
+TEST /// -- conormalVariety
+K = ZZ/333331;
+V = PP_K^(2,2);
+W = conormalVariety V;
+V' = dual V;
+W' = conormalVariety V';
+assert(V == image multirationalMap first projections W);
+assert(V' == image multirationalMap last projections W);
+assert(V' == image multirationalMap first projections W');
+assert(V == image multirationalMap last projections W');
+j := check multirationalMap(permute(W,{1,0}),W');
+assert(isIsomorphism j);
+///
+
 
