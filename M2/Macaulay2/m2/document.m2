@@ -763,9 +763,6 @@ tutorial = x -> (
 	  identity);
      x )
 
--- TODO: make this TT toString X
-synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
-
 findSynonyms = method()
 findSynonyms Symbol := x -> (
     result := {};

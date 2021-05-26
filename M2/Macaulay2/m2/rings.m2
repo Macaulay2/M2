@@ -2,6 +2,12 @@
 
 needs "methods.m2"
 
+-----------------------------------------------------------------------------
+-- Ring
+-----------------------------------------------------------------------------
+
+Ring.synonym = "ring"
+
 Ring == ZZ := (R,i) -> (
      if i === 0 then 1_R == 0
      else error "comparison of ring with nonzero integer encountered"

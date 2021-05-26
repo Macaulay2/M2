@@ -3,6 +3,13 @@
 needs "expressions.m2"
 needs "integers.m2"
 
+-----------------------------------------------------------------------------
+-- QQ
+-----------------------------------------------------------------------------
+
+QQ.synonym = "rational number"
+QQ.texMath = ///{\mathbb Q}///
+
 QQ.RawRing = rawQQ()
 QQ.isBasic = true
 -- from raw QQ to toplevel QQ

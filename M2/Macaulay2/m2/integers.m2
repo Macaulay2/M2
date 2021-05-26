@@ -2,11 +2,24 @@
 
 needs "rings.m2"
 
+-----------------------------------------------------------------------------
+-- Number
+-----------------------------------------------------------------------------
+
 isHomogeneous Number := x -> true
 ring Number := class
 degree Number := i -> {}
 conjugate Number := identity
 toExternalString Number := simpleToString
+floor Number := x -> floor0(x)
+ceiling Number := x -> - floor(-x)
+
+-----------------------------------------------------------------------------
+-- ZZ
+-----------------------------------------------------------------------------
+
+ZZ.synonym = "integer"
+ZZ.texMath = ///{\mathbb Z}///
 
 ZZ.RawRing = rawZZ()
 protect isBasic
@@ -58,10 +71,6 @@ random(ZZ,ZZ) := ZZ => opts -> (min,max) -> (
      if min > max then error "random: empty range";
      min + rawRandomZZ(max-min+1)
      )
-floor = method()
-floor Number := x -> floor0(x)
-ceiling = method()
-ceiling Number := x -> - floor(-x)
 isUnit ZZ := x -> x == 1 or x == -1
 
 ZZ & ZZ := ZZ => lookup(symbol &, ZZ, ZZ)

@@ -1,6 +1,8 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-Net.synonym = "net"
+-- TODO: make this TT toString X later?
+synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
+
 Time.synonym = "timing result"
 Boolean.synonym = "Boolean value"
 MutableHashTable.synonym = "mutable hash table"
@@ -13,27 +15,15 @@ CompiledFunctionClosure.synonym = "compiled function closure"
 FunctionBody.synonym = "function body"
 SymbolBody.synonym = "symbol body"
 CompiledFunctionBody.synonym = "compiled function body"
-Sequence.synonym = "sequence"
-VisibleList.synonym = "visible list"
 Database.synonym = "database"
 Thing.synonym = "thing"
 Type.synonym = "type"
 String.synonym = "string"
-BasicList.synonym = "basic list"
-List.synonym = "list"
-MutableList.synonym = "mutable list"
 File.synonym = "file"
-Array.synonym = "array"
-AngleBarList.synonym = "angle bar list"
 Symbol.synonym = "symbol"
 Keyword.synonym = "keyword"
 Dictionary.synonym = "dictionary"
 -- Pseudocode.synonym = "pseudocode" -- "a pseudocode" doesn't sound so great
-ZZ.synonym = "integer"
-ZZ.texMath = ///{\mathbb Z}///
-QQ.synonym = "rational number"
-QQ.texMath = ///{\mathbb Q}///
-Ring.synonym = "ring"
 Task.synonym = "task"
 
 -----------------------------------------------------------------------------

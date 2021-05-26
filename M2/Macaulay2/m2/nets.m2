@@ -5,6 +5,8 @@ needs "methods.m2"
 
 -- nets
 
+Net.synonym = "net"
+
 Net#{Standard,AfterPrint} = identity
 
 toString MutableHashTable := s -> (
