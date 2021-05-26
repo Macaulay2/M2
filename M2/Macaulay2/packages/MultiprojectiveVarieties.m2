@@ -1504,7 +1504,7 @@ inverse2 (MultirationalMap,Option) := (Phi,opt) -> (
     Psi := inverse(Phi',Verify=>false);
     err := "not able to get an inverse map by using dedicated algorithm for the multi-linear type case; try using the general function inverse";
     b := last toList opt;
-    if b === true or b == -1 then (
+    if b === true or b === -1 then (
         if b === true then (
             try checkRepresentatives Psi else error(err|"(*)");
             if not(Phi * Psi == 1 and Psi * Phi == 1) then error(err|"()");
