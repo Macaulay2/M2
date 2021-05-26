@@ -1,17 +1,6 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
--- temporary definitions to get error messages to work before methods are working, so we can debug methods
-assert'( class between === Symbol )
-between = (m,v) -> mingle(v,#v-1:m)			    -- provisional
-assert'( class toString === Symbol )
-toString = x -> (					    -- provisional
-     if hasAttribute(x,ReverseDictionary) then simpleToString getAttribute(x,ReverseDictionary)
-     else if class x === Net then concatenate between("\n",unstack x)
-     else simpleToString x
-     )
-silentRobustString = (wid,sec,y) -> simpleToString y
-silentRobustNetWithClass = silentRobustNet = (wid,ht,sec,y) -> simpleToString y
---
+needs "option.m2"
 
 MethodFunction = new Type of CompiledFunctionClosure
 MethodFunctionSingle = new Type of CompiledFunctionClosure

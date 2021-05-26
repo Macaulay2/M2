@@ -9,6 +9,22 @@ or class oooo =!= Symbol then error "Core cannot be reloaded"
 if class RawMutableMatrix =!= Type then error "where is RawMutableMatrix?"
 
 -----------------------------------------------------------------------------
+-- Temporary definitions to get error messages working early
+-----------------------------------------------------------------------------
+
+assert'( class between === Symbol )
+between = (m, v) -> mingle(v, (#v - 1):m)
+
+assert'( class toString === Symbol )
+toString = x -> (
+    if hasAttribute(x, ReverseDictionary) then simpleToString getAttribute(x, ReverseDictionary) else
+    if class x === Net then concatenate between("\n", unstack x) else simpleToString x)
+
+silentRobustNetWithClass =
+silentRobustNet    = (wid, ht, sec, y) -> simpleToString y
+silentRobustString = (wid,     sec, y) -> simpleToString y
+
+-----------------------------------------------------------------------------
 -- Core utilities
 -----------------------------------------------------------------------------
 

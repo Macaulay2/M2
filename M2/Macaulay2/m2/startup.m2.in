@@ -136,10 +136,6 @@ if firstTime then (
 	  l := separate x;
 	  if l#-1 === "" then drop(l,-1) else l);
 
-     isFixedExecPath = filename -> (
-	  -- this is the way execvp(3) decides whether to search the path for an executable
-	  match("/", filename)
-	  );
      re := "/";						    -- /foo/bar
      if version#"operating system" === "MicrosoftWindows" 
      then re = re | "|.:/";				    -- "C:/FOO/BAR"
@@ -150,6 +146,8 @@ if firstTime then (
      re = re | "|\\./";					    -- ./foo/bar
      re = re | "|\\.\\./";				    -- ../foo/bar
      isStablePathRegexp   := "^(" | re | ")";               -- whether we should search only in the current directory (or current file directory)
+     -- whether to search the path for an executable, based on execvp(3)
+     isFixedExecPath = filename -> match("/", filename);
      isAbsolutePath = filename -> match(isAbsolutePathRegexp, filename);
      isStablePath = filename -> match(isStablePathRegexp, filename);
      concatPath = (dir, name) -> if isAbsolutePath name then name else concatenate(
@@ -342,7 +340,7 @@ initcurrentlayout := () -> (
      then (
 	  prefixDirectory = prefixDirectory2;
 	  currentLayout = currentLayout2;
-	  );
+	  prefixPath = { prefixDirectory });
      usrDist := "usr-dist/";
      topBuilddir = (
 	  if issuffix(usrDist,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#usrDist)
@@ -356,6 +354,7 @@ initcurrentlayout := () -> (
      )
 
 prefixDirectory = null					    -- prefix directory, after installation, e.g., "/usr/local/"
+prefixPath = {}
 
 fullCopyright := false
 matchpart := (pat,i,s) -> substring_((regex(pat, s))#i) s
@@ -512,7 +511,7 @@ initialPath := {}
 
 action2 := hashTable {
      "--srcdir" => arg -> if phase == 2 then (
-	  if not match("/$",arg) then arg = arg|"/";
+	  concatPath(arg, "");
 	  srcdirs = append(srcdirs,arg);
 	  initialPath = join(initialPath,select({arg|"Macaulay2/m2/",arg|"Macaulay2/packages/"},isDirectory));
 	  ),
@@ -521,9 +520,7 @@ action2 := hashTable {
      "--print-width" => arg -> if phase == 3 then printWidth = value' arg,
      "--debug" => arg -> debugWarningHashcode = value' arg,
      "--prefix" => arg -> if phase == 1 or phase == 3 then (
-	  if not match("/$",arg) then arg = arg | "/";
-	  prefixDirectory = arg;
-	  ),
+	  prefixPath = { prefixDirectory = concatPath(arg, "") }),
      "--check" => arg -> if arg != "1" and arg != "2" and arg != "3" then
 	       error ("--check ",arg,": expected 1, 2, or 3")
 	  else if phase == 1 and arg == "1" then
