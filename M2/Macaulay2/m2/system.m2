@@ -79,7 +79,9 @@ setUpApplicationDirectory = () -> (
      f("README", readmeFile);
      )
 
-topFileName = "index.html"				    -- top node's file name, constant
+-----------------------------------------------------------------------------
+-- exit, restart
+-----------------------------------------------------------------------------
 
 restart = Command ( 
      () -> (
@@ -90,10 +92,25 @@ restart = Command (
 	  )
      )
 
-setRandomSeed = method()
-installMethod(setRandomSeed, () -> rawRandomInitialize())
+exitMethod = method(Dispatch => Thing)
+exitMethod ZZ := i -> exit i
+exitMethod Sequence := x -> exit 0
+quit = Command (() -> exit 0)
+erase symbol exit
+exit = Command exitMethod
+
+-----------------------------------------------------------------------------
+-- setRandomSeed
+-----------------------------------------------------------------------------
+
+setRandomSeed = method(Dispatch => Thing)
 setRandomSeed ZZ := seed -> randomSeed = seed		    -- magic assignment, calls rawSetRandomSeed internally
 setRandomSeed String := seed -> setRandomSeed fold((i,j) -> 101*i + j, 0, ascii seed)
+setRandomSeed Sequence := seed -> if seed === () then rawRandomInitialize() else setRandomSeed hash seed
+
+-----------------------------------------------------------------------------
+-- Layouts
+-----------------------------------------------------------------------------
 
 currentLayoutTable := new MutableHashTable
 

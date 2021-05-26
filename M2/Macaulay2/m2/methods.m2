@@ -400,13 +400,6 @@ computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
      else M#Name#1
      )
 
-exitMethod = method(Dispatch => Thing)
-exitMethod ZZ := i -> exit i
-exitMethod Sequence := x -> exit 0
-quit = Command (() -> exit 0)
-erase symbol exit
-exit = Command exitMethod
-
 toExternalString Option := z -> concatenate splice (
      if precedence z > precedence z#0 then ("(",toExternalString z#0,")") else toExternalString z#0,
      " => ",
