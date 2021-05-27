@@ -132,7 +132,7 @@ jobs:
         run: |
           cmake -S../.. -B. -GNinja \
             -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF \
-            -DCMAKE_PREFIX_PATH=`brew --prefix` \
+            -DCMAKE_PREFIX_PATH="`brew --prefix`;`brew --prefix tbb@2020_u3`" \
             -DCMAKE_INSTALL_PREFIX=/usr \
             --debug-trycompile
 
@@ -160,8 +160,8 @@ jobs:
         run: |
           make -C ../.. get-libtool get-automake get-autoconf
           make -C ../.. all
-          export CPPFLAGS=-I`brew --prefix`/include
-          export  LDFLAGS=-L`brew --prefix`/lib
+          export CPPFLAGS="-I`brew --prefix`/include -I`brew --prefix tbb@2020_u3`/include"
+          export  LDFLAGS="-L`brew --prefix`/lib     -L`brew --prefix tbb@2020_u3`/lib"
           ../../configure --enable-download
 
       - name: Build Macaulay2 using Make
