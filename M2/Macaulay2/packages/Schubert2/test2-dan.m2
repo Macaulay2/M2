@@ -167,3 +167,16 @@ transpose leadTerm gens gb I
 --       |                       |
 --       |           x           |
 --       |            1          |
+
+
+-- test that github issue #2051 remains fixed
+m=3
+k=3
+n=5
+Gr=flagBundle({k,n-k})
+B=bundles Gr
+F=(dual det first B)^m
+toBlow=sectionZeroLocus(F)
+bl=blowup (toBlow.StructureMap)
+for i from 0 to dim first bl list chi(exteriorPower(i,cotangentBundle(first bl)))
+assert Equation{{1, -2, 4, -4, 4, -2, 1}, oo}

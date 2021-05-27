@@ -61,6 +61,7 @@ SeeAlso
 doc ///
 Key
     diameter
+    (diameter, RRi)
 Headline
     diameter of an interval
 Usage

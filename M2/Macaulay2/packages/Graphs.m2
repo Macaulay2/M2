@@ -144,7 +144,6 @@ export {
     "DFS",
     "descendants",
     "descendents",
-    "diameter",
     "distance",
     "distanceMatrix",
     "eccentricity",
@@ -897,7 +896,6 @@ descendants = method()
 descendants (Digraph, Thing) := Set => (D,v) -> set flatten breadthFirstSearch(D, v)
 descendents = descendants
 
-diameter = method()
 diameter Graph := ZZ => G -> (
     allEntries := flatten entries distanceMatrix G;
     if member(-1, allEntries) then infinity else max allEntries
@@ -3434,7 +3432,6 @@ doc ///
 --diameter
 doc ///
     Key
-        diameter
         (diameter, Graph)
     Headline
         Computes the diameter of a graph
@@ -3483,7 +3480,7 @@ doc ///
             G = graph({1,2,3,4},{{2,3},{3,4}});
             d = distance(G, 1, 4)
     SeeAlso
-        diameter
+        (diameter, Graph)
         distanceMatrix
 ///
 
@@ -3510,7 +3507,7 @@ doc ///
             G = digraph({1,2,3,4},{{2,3},{3,4}},EntryMode=>"edges");
             d = distanceMatrix G
     SeeAlso
-        diameter
+        (diameter, Graph)
         distance
 ///
 
@@ -4859,7 +4856,7 @@ doc ///
             graphPower(G,2)
     SeeAlso
         distance
-        diameter
+        (diameter, Graph)
 ///
 
 --strongProuduct
