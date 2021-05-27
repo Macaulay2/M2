@@ -9,8 +9,8 @@
 
 newPackage(
     "SpecialFanoFourfolds",
-    Version => "2.0", 
-    Date => "May 26, 2021",
+    Version => "2.1", 
+    Date => "May 27, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
     Keywords => {"Algebraic Geometry"},
