@@ -854,7 +854,10 @@ specialGushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
         X.cache#"label" = 17;
         return X;     
     );
-    if #str >= 1 and #str <= 2 then try return GMtables(value str,K,);
+    if #str >= 1 and #str <= 2 then (
+        Vstr := value str;
+        if instance(Vstr,ZZ) and Vstr >= 1 and Vstr <= 21 then return fourfoldFromTriple(Vstr,GMtables(Vstr,K),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+    );
     error "not valid string, permitted strings are: \"sigma-plane\", \"rho-plane\", \"tau-quadric\", \"cubic scroll\", \"quintic del Pezzo surface\", \"K3 surface of degree 14\", \"surface of degree 9 and genus 2\", \"1\",...,\"21\"";
 );
 
@@ -1654,9 +1657,10 @@ GMtables ZZ := (i) -> (
     GMtables i
 ); 
 
-fourfoldFromTriple = (i,E) -> (
-    psi := rationalMap(E_0,max flatten degrees E_0,Dominant=>2);
-    X := specialGushelMukaiFourfold(psi E_1);
+fourfoldFromTriple = method(Options => {InputCheck => 1, Verbose => true});
+fourfoldFromTriple (ZZ,VisibleList) := o -> (i,E) -> (
+    psi := rationalMap(E_0,Dominant=>2);
+    X := specialGushelMukaiFourfold(psi E_1,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
     X.cache#"label" = i;
     return X;
 );
@@ -2446,7 +2450,6 @@ X = for i from 1 to 21 list (
 ); 
 S = apply(X,x -> surface x);
 assert(apply(X,x -> degree surface x) === {2, 4, 14, 5, 9, 1, 3, 7, 1, 10, 10, 14, 12, 8, 9, 11, 9, 7, 10, 4, 12});
-debug MultiprojectiveVarieties;
 assert(apply(X,x-> sectionalGenus surface x) == {0, 0, 8, 1, 3, 0, 0, 2, 0, 4, 3, 8, 5, 2, 3, 5, 2, 0, 3, 0, 5});
 assert(last cycleClass X_18 == (6,4) and discriminant X_18 == 24);
 assert(last cycleClass X_7 == (4,3) and discriminant X_7 == 12);
