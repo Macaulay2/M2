@@ -135,7 +135,7 @@ find_package(MPFR	4.0.1)
 find_package(MPFI	1.5.1)
 find_package(NTL       10.5.0)
 find_package(Flint	2.6.0)
-find_package(Factory	4.1.0)
+find_package(Factory	4.2.0)
 find_package(MPSolve	3.2.0)
 # TODO: add minimum version checks
 find_package(Frobby	0.9.0)
