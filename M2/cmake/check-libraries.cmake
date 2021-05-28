@@ -331,11 +331,6 @@ if(FACTORY_FOUND)
   # whether factory was built with --enable-streamio
   check_cxx_source_compiles([[#include <factory/factory.h>
     int main(){Variable x; x = Variable(); std::cout << x;return 0;}]] FACTORY_STREAMIO)
-  # whether Prem() from factory is public
-  # TODO: revert cb64eb37 once factory is updated above 4.0.3 everywhere
-  # see https://github.com/Macaulay2/M2/pull/1538#discussion_r537901750
-  check_cxx_source_compiles([[#include <factory/factory.h>
-    int main(){CanonicalForm p,q; Prem(p,q);return 0;}]] HAVE_FACTORY_PREM)
 else()
   unset(FACTORY_STREAMIO CACHE)
 endif()
