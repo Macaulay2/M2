@@ -11,8 +11,8 @@ if version#"VERSION" < "1.17" then error "this package requires Macaulay2 versio
 
 newPackage(
     "MultiprojectiveVarieties",
-    Version => "2.0", 
-    Date => "May 26, 2021",
+    Version => "2.1", 
+    Date => "May 27, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -35,7 +35,7 @@ if Cremona.Options.Version < "5.1" then (
 if SparseResultants.Options.Version < "1.1" then error "your version of the SparseResultants package is outdated (required version 1.1 or newer); you can download the latest version from https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages";
 
 export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct", 
-       "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan", "tangentSpace",
+       "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan", "tangentSpace", "sectionalGenus",
        "MultirationalMap", "multirationalMap", "baseLocus", "degreeSequence", "inverse2",
        "∏","⋂","⋃","PP"}
 
@@ -327,8 +327,14 @@ top MultiprojectiveVariety := (cacheValue "top") (X -> (
 
 decompose MultiprojectiveVariety := {} >> o -> X -> apply(decompose ideal X,D -> projectiveVariety(D,MinimalGenerators=>true,Saturate=>false));
 
+support MultiprojectiveVariety := X -> (
+    I := radical ideal X;
+    if I === ideal X then return X;
+    projectiveVariety(I,Saturate=>false)
+);
+
 MultiprojectiveVariety == MultiprojectiveVariety := (X,Y) -> (
-    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient";
+    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient space";
     if X === Y or ideal X === ideal Y then return true;
     if dim X != dim Y then return false;
     ideal X == ideal Y
@@ -2943,6 +2949,15 @@ EXAMPLE {"X = PP_(ZZ/333331)^(3,2);",
 "tangentSpace(X,p)"},
 SeeAlso => {(singularLocus,MultiprojectiveVariety),(dual,EmbeddedProjectiveVariety),(point,MultiprojectiveVariety)}}
 
+document {Key => {sectionalGenus,(sectionalGenus,EmbeddedProjectiveVariety)},
+Headline => "the sectional genus of an embedded projective variety", 
+Usage => "sectionalGenus X", 
+Inputs => {"X" => EmbeddedProjectiveVariety => {"a positive dimensional variety"}},
+Outputs => {ZZ => {"the sectional arithmetic genus of ",TT"X"}},
+EXAMPLE {"X = PP_QQ^(3,2);",
+"sectionalGenus X"},
+SeeAlso => (genera,ProjectiveVariety)}
+
 document {Key => {(decompose,MultiprojectiveVariety)}, 
 Headline => "irreducible components of a variety", 
 Usage => "decompose X", 
@@ -3045,6 +3060,7 @@ undocumented {
 (toString,MultiprojectiveVariety),
 (point,MultiprojectiveVariety,Boolean), -- Intended for internal use only
 (top,MultiprojectiveVariety), -- The user should think that varieties are at least equidimensional 
+(support,MultiprojectiveVariety),
 (euler,MultiprojectiveVariety,Option),
 (singularLocus,EmbeddedProjectiveVariety,Option),
 (symbol *,ZZ,MultiprojectiveVariety), -- hidden to the user, since it returns non-reduced varieties
