@@ -152,6 +152,7 @@ document {
     (symbol*,  RingElement, RingElement),
     (symbol*,  Thing, List),
     (symbol*,  ZZ, ProjectiveHilbertPolynomial),
+    (symbol*,  ProjectiveHilbertPolynomial, ZZ),
     (symbol*,  RingElement, Vector)
 	  },
      Headline => "a binary operator, usually used for multiplication",
@@ -225,6 +226,8 @@ document {
 	  (symbol +, ChainComplexMap, ChainComplexMap),
 	  (symbol +, Number, InfiniteNumber),
 	  (symbol +, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
+	  (symbol +, ZZ, ProjectiveHilbertPolynomial),
+	  (symbol +, ProjectiveHilbertPolynomial, ZZ),
 	  (symbol +, MonomialIdeal, MonomialIdeal),
 	  (symbol +,CC),
 	  (symbol +,CC,CC),
@@ -311,6 +314,8 @@ document {
 	  (symbol -, ChainComplexMap, ChainComplexMap),
 	  (symbol -, Minus),
 	  (symbol -, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
+	  (symbol -, ProjectiveHilbertPolynomial, ZZ),
+	  (symbol -, ZZ, ProjectiveHilbertPolynomial),
 	  (symbol -, Number, InfiniteNumber),
 	  (symbol -, RingElement, GradedModuleMap),
 	  (symbol -, GradedModuleMap),
@@ -814,6 +819,7 @@ document {
 document {
      Key => { symbol ==,
 	  (symbol==, Matrix, Matrix), (symbol==, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
+	  (symbol==, ZZ, ProjectiveHilbertPolynomial), (symbol==, ProjectiveHilbertPolynomial, ZZ),
 	  (symbol==, ChainComplex, ChainComplex), (symbol==, RingElement, RingElement), (symbol==, GradedModuleMap, GradedModuleMap),
 	  (symbol==, Ideal, Ideal), (symbol==, MutableMatrix, MutableMatrix), (symbol ==,Boolean,Boolean),
 	  (symbol ==,CC,CC), (symbol ==,CC,QQ), (symbol ==,CC,RR), (symbol ==,CC,ZZ), (symbol ==,Matrix,Number),
