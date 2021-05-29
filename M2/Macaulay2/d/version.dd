@@ -55,7 +55,17 @@ header "
    #undef ASSERT
    #include <givaro/givinit.h>
    #include <givaro/givconfig.h>
-   Givaro::GivaroMain givaroMain;";
+   Givaro::GivaroMain givaroMain;
+
+   /* TODO - fix conditionals once TBB 2021 support is added (#2105) */
+   #if 1 /* TBB 2020 */
+     #include <tbb/tbb_stddef.h>
+     #define TBB_VERSION_STRING \\
+       (stringize(TBB_VERSION_MAJOR) \".\" stringize(TBB_VERSION_MINOR))
+   #else /* TBB 2021 */
+     #include <tbb/version.h>
+   #endif
+   ";
 
 header "
 #pragma GCC diagnostic push
@@ -199,6 +209,7 @@ setupconst("version", Expr(toHashTable(Sequence(
    "readline version" => readlineversion(),
    "mpfr version" => Ccode(constcharstar,"MPFR_VERSION_STRING"),
    "mpfi version" => Ccode(constcharstar,"MPFI_VERSION_STRING"),
+   "tbb version" => Ccode(constcharstar,"TBB_VERSION_STRING"),
    "M2 suffix" => Ccode(constcharstar,"M2SUFFIX"),
    "executable extension" => Ccode(constcharstar,"EXEEXT"),
    "M2 name" => Ccode(constcharstar," \"M2\" M2SUFFIX EXEEXT "),
