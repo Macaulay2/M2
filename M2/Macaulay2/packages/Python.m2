@@ -2,8 +2,9 @@
 this does not work uless M2 is compiled --with-python
 *-
 
-newPackage "Python"
-
+newPackage("Python",
+    Headline => "interface to Python"
+    )
 try exportFrom_Core {
      "runSimpleString", "PythonObject", "runPythonString", "sysGetObject", "objectType", "initspam"
      } then print " -- success: python is present" else (
