@@ -755,10 +755,12 @@ basis(List,List,Module) := opts -> (lo,hi,M) -> (
      (varlist, heftvec) := if #lo == 0 and #hi == 0
                         then (var, () ) 
 			else findHeftandVars(R, var, max(#hi,#lo));
-
+    varlist' := if #lo == degreeLength R
+                then var --full degree, use all variables regardless of if they are degree 0
+                else varlist; --partial degree, use only variables of non-zero degree in the appropriate entries
      pres := generators gb presentation M;
 
-     M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heftvec, var, opts.Truncate, opts.Limit) };
+     M.cache#"rawBasis log" = log := FunctionApplication { rawBasis, (raw pres, lo, hi, heftvec, varlist', opts.Truncate, opts.Limit) };
      f := value log;
      S := opts.SourceRing;
      off := splice opts.Degree;
