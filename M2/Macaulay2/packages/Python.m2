@@ -5,14 +5,14 @@ this does not work uless M2 is compiled --with-python
 newPackage "Python"
 
 try exportFrom_Core {
-     "runSimpleString", "PythonObject", "runString", "sysGetObject", "objectType", "initspam"
+     "runSimpleString", "PythonObject", "runPythonString", "sysGetObject", "objectType", "initspam"
      } then print "-- success: python is present" else error "specify --with-python in `configure` options and recompile M2"
 
 export { "pythonHelp", "context", "rs", "Preprocessor" }
 
 exportMutable { "val", "eval", "valuestring", "stmt", "expr", "dict", "symbols", "stmtexpr" }
 
-pythonHelp = Command (() -> runString ///help()///)
+pythonHelp = Command (() -> runPythonString ///help()///)
 
 PythonObject#{Standard,AfterPrint} = x -> (
      << endl;
@@ -24,7 +24,7 @@ PythonObject#{Standard,AfterPrint} = x -> (
 rs = s -> ( 
      s = concatenate s;
      if debugLevel > 0 then stderr << "--python command: " << s << endl; 
-     runString s);
+     runPythonString s);
 
 numContexts = 0
 nextContext = method()
@@ -57,7 +57,7 @@ context String := opts -> init -> (
      else (
 	  s -> (
 	       evalstring("tmp = ",opts.Preprocessor,"(",format s,")");
-	       if debugLevel > 0 then stderr << "--intermediate value: tmp = " << format toString runString access "tmp" << endl;
+	       if debugLevel > 0 then stderr << "--intermediate value: tmp = " << format toString runPythonString access "tmp" << endl;
 	       eval access "tmp";
 	       null)
 	  );
@@ -66,7 +66,7 @@ context String := opts -> init -> (
 	  stmt s;
 	  val "temp");
      stmtexpr := s -> if match(";$",s) then stmt s else expr s;
-     symbols := () -> runString concatenate("__builtins__[",format dict,"].keys()");
+     symbols := () -> runPythonString concatenate("__builtins__[",format dict,"].keys()");
      use new Context from {
 	  global dict => dict,
 	  global val => val,
