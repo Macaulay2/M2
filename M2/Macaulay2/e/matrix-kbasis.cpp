@@ -283,7 +283,7 @@ inline bool KBasis::backtrack_mg(int &curr)
       kb_exp_weight -= var_wts[curr] * kb_exp[vcurr];
       ntuple::multpower(heft_vector->len,
                         kb_exp_multidegree,
-                        var_degs + (heft_vector->len * vcurr),
+                        var_degs + (heft_vector->len * curr),
                         -kb_exp[vcurr],
                         kb_exp_multidegree);
       kb_exp[vcurr] = 0;
@@ -297,7 +297,7 @@ inline bool KBasis::backtrack_mg(int &curr)
   kb_exp_weight -= var_wts[curr];
   ntuple::divide(heft_vector->len,
                  kb_exp_multidegree,
-                 var_degs + (heft_vector->len * vcurr),
+                 var_degs + (heft_vector->len * curr),
                  kb_exp_multidegree);
   curr++;
   return true;
@@ -338,7 +338,7 @@ void KBasis::basis0_multi_graded()
           kb_exp_weight += var_wts[curr];
           ntuple::mult(heft_vector->len,
                        kb_exp_multidegree,
-                       var_degs + (heft_vector->len * vcurr),
+                       var_degs + (heft_vector->len * curr),
                        kb_exp_multidegree);
       } while (try_insert_mg());
   } while (backtrack_mg(curr));
