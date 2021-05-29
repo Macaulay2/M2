@@ -92,6 +92,23 @@ void python_initspam() {
   Py_INCREF(SpamError);
   PyModule_AddObject(m, "error", SpamError);
 }
+
+PyObject *python_NumberAdd(PyObject *o1, PyObject *o2) {
+	return PyNumber_Add(o1, o2);
+}
+
+PyObject *python_NumberSubtract(PyObject *o1, PyObject *o2) {
+	return PyNumber_Subtract(o1, o2);
+}
+
+PyObject *python_NumberMultiply(PyObject *o1, PyObject *o2) {
+	return PyNumber_Multiply(o1, o2);
+}
+
+PyObject *python_NumberTrueDivide(PyObject *o1, PyObject *o2) {
+	return PyNumber_TrueDivide(o1, o2);
+}
+
 #if 0
 Local Variables:
 compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d python-c.o "

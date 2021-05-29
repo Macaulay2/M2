@@ -8,6 +8,13 @@ try exportFrom_Core {
      "runSimpleString", "PythonObject", "runPythonString", "sysGetObject", "objectType", "initspam"
      } then print "-- success: python is present" else error "specify --with-python in `configure` options and recompile M2"
 
+importFrom_Core {
+    "pythonNumberAdd",
+    "pythonNumberSubtract",
+    "pythonNumberMultiply",
+    "pythonNumberTrueDivide"
+}
+
 export { "pythonHelp", "context", "rs", "Preprocessor" }
 
 exportMutable { "val", "eval", "valuestring", "stmt", "expr", "dict", "symbols", "stmtexpr" }
@@ -78,6 +85,12 @@ context String := opts -> init -> (
 	  global symbols => symbols
 	  })
 Context String := (c,s) -> c.stmtexpr s
+
+PythonObject + PythonObject := (x, y) -> pythonNumberAdd(x, y)
+PythonObject - PythonObject := (x, y) -> pythonNumberSubtract(x, y)
+PythonObject * PythonObject := (x, y) -> pythonNumberMultiply(x, y)
+PythonObject / PythonObject := (x, y) -> pythonNumberTrueDivide(x, y)
+
 end --------------------------------------------------------
 
 
