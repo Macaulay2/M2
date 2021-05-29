@@ -23,7 +23,7 @@ header "// required for toString routines
 header "
 #ifndef WITH_PYTHON
 #  define PyObject_Str(o)       0
-#  define PyBytes_AS_STRING(o)  0
+#  define PyUnicode_AsUTF8(o)   0
 #  define Py_DECREF(o)          0
 #else
 #  include <Python.h>
@@ -1012,7 +1012,7 @@ tostringfun(e:Expr):Expr := (
      is po:pythonObjectCell do (
 	  -- Expr("<<a python object>>")
 	  str := Ccode(pythonObject,"PyObject_Str(",po.v,")");
-	  r := toExpr(tostring(Ccode(constcharstarOrNull,"PyBytes_AS_STRING(",str,")")));
+	  r := toExpr(tostring(Ccode(constcharstarOrNull,"PyUnicode_AsUTF8(",str,")")));
 	  Ccode(void,"Py_DECREF(",str,")");
 	  r)
      is x:xmlNodeCell do toExpr(toString(x.v))
