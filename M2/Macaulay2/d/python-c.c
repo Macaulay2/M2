@@ -49,8 +49,8 @@ PyObject *python_RunString(M2_string s) {
 }
 
 int python_Main() {
-  static char pn[3] = "M2";
-  static char *argv[2] = {pn,NULL};
+  static wchar_t pn[3] = L"M2";
+  static wchar_t *argv[2] = {pn,NULL};
   static int argc = 1;
   return Py_Main(argc,argv);
 }
@@ -80,10 +80,13 @@ static PyMethodDef SpamMethods[] = {
   {"system",  spam_system, METH_VARARGS, "Execute a shell command."},
   {NULL, NULL, 0, NULL}
 };
+static struct PyModuleDef moduledef = {
+  PyModuleDef_HEAD_INIT, "spam", NULL, -1, SpamMethods, NULL, NULL, NULL, NULL}
+;
 void python_initspam() {
   static char name[] = "spam.error";
   PyObject *m;
-  m = Py_InitModule("spam", SpamMethods);
+  m = PyModule_Create(&moduledef);
   if (m == NULL) return;
   SpamError = PyErr_NewException(name, NULL, NULL);
   Py_INCREF(SpamError);

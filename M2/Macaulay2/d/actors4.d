@@ -25,6 +25,8 @@ header "
 #  define PyObject_Str(o)       0
 #  define PyString_AS_STRING(o) 0
 #  define Py_DECREF(o)          0
+#else
+#  include <Python.h>
 #endif";
 
 internalName(s:string):string := (
@@ -1010,7 +1012,7 @@ tostringfun(e:Expr):Expr := (
      is po:pythonObjectCell do (
 	  -- Expr("<<a python object>>")
 	  str := Ccode(pythonObject,"PyObject_Str(",po.v,")");
-	  r := toExpr(tostring(Ccode(constcharstarOrNull,"PyString_AS_STRING(",str,")")));
+	  r := toExpr(tostring(Ccode(constcharstarOrNull,"PyBytes_AS_STRING(",str,")")));
 	  Ccode(void,"Py_DECREF(",str,")");
 	  r)
      is x:xmlNodeCell do toExpr(toString(x.v))
