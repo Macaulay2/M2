@@ -3,14 +3,16 @@
 --- notes: 
 
 document { 
-     Key => {tan,(tan,CC),(tan,RR), (tan,ZZ),(tan, QQ)},
+     Key => {tan,(tan,CC),(tan,RR), (tan,ZZ),(tan, QQ),(tan,RRi)},
      Headline => "compute the tangent",
-     Usage => "tan x",
+Usage => "tan x\ntan I",
      Inputs => { 
-	  "x" => RR 
+	  "x" => RR,
+      "I" => RRi
 	  },
      Outputs => { 
-	  RR => { "the tangent of ", TT "x" } 
+	  RR => { "the tangent of ", TT "x" },
+      RRi => { "an interval containing the tangents of the points of ", TT "I" }
 	  },
      EXAMPLE {
 	  "tan 1"

@@ -28,6 +28,9 @@ header "
 
    #include <boost/version.hpp>
 
+//   #include <mpfr.h>
+//   #include <mpfi.h>
+
    #include <frobby.h>
    #ifdef HAVE_FROBBY_VERSION
      extern const char* const frobby_version;
@@ -194,7 +197,8 @@ setupconst("version", Expr(toHashTable(Sequence(
    "boost version" => Ccode(constcharstar,"BOOST_LIB_VERSION"),
    "factory version" => factoryversion(),
    "readline version" => readlineversion(),
-   "mpfr version" => Ccode(constcharstar,"mpfr_version"),
+   "mpfr version" => Ccode(constcharstar,"MPFR_VERSION_STRING"),
+   "mpfi version" => Ccode(constcharstar,"MPFI_VERSION_STRING"),
    "M2 suffix" => Ccode(constcharstar,"M2SUFFIX"),
    "executable extension" => Ccode(constcharstar,"EXEEXT"),
    "M2 name" => Ccode(constcharstar," \"M2\" M2SUFFIX EXEEXT "),

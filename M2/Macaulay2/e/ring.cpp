@@ -228,6 +228,13 @@ bool Ring::from_BigReal(gmp_RR z, ring_elem &result) const
   result = from_long(0);
   return false;
 }
+
+bool Ring::from_Interval(gmp_RRi z, ring_elem &result) const
+{
+   result = from_long(0);
+   return false;
+}
+
 bool Ring::from_double(double a, ring_elem &result) const
 {
   result = from_long(0);

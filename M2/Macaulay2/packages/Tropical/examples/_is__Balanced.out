@@ -1,8 +1,9 @@
--- -*- M2-comint -*- hash: 519585892
+-- -*- M2-comint -*- hash: -599996858
+-- polymake not present
 
 i1 : QQ[x,y,z]
 
-o1 = QQ[x, y, z]
+o1 = QQ[x..z]
 
 o1 : PolynomialRing
 
@@ -12,16 +13,24 @@ o2 = V
 
 o2 : TropicalCycle
 
-i3 : F = fan {posHull matrix {{1},{0},{0}}, posHull matrix {{0},{1},{0}}, posHull matrix {{0},{0},{1}}, posHull matrix {{-1},{-1},{-1}}}
+i3 : isBalanced V
 
-o3 = F
+o3 = true
 
-o3 : Fan
+i4 : F = fan {posHull matrix {{1},{0},{0}}, posHull matrix {{0},{1},{0}}, posHull matrix {{0},{0},{1}}, posHull matrix {{-1},{-1},{-1}}}
 
-i4 : mult = {1,2,-3,1}
+o4 = F
 
-o4 = {1, 2, -3, 1}
+o4 : Fan
 
-o4 : List
+i5 : mult = {1,2,-3,1}
 
-i5 : 
+o5 = {1, 2, -3, 1}
+
+o5 : List
+
+i6 : isBalanced (tropicalCycle(F, mult))
+
+o6 = false
+
+i7 : 

@@ -22,14 +22,20 @@ export {"doc", "multidoc", "packageTemplate", -- functions
     "docTemplate", "docExample", "testExample", "simpleDocFrob" -- templates and examples
     }
 
+importFrom_Core { "currentDocumentTag" }
+
 -- The class of processed documentation nodes
 Node = new IntermediateMarkUpType of Hypertext
 Node.synonym = "processed documentation node"
+
+topLinenum = 0 -- for debugging
 
 -- Primary functions
 doc = method()
 doc String := str -> (
     docstring := if fileExists str then get str else str;
+    -- hopefully the "doc" line, but may be off by one
+    topLinenum = if fileExists str then 0 else currentLineNumber() - #lines docstring - 2;
     parsed := toDoc(NodeFunctions, docstring);
     document \ (
 	if all(parsed, elt -> instance(elt, Node)) then apply(parsed, node -> toList node)
@@ -55,7 +61,7 @@ toDoc = (functionTable, text) -> (
 applySplit = (functionTable, textlines) -> apply(splitByIndent(textlines, false), (s, e) -> (
 	key := getText textlines#s;
 	if not functionTable#?key then error(
-	    "unrecognized keyword, line ", toString getLinenum textlines#s, " of string: ", format key, "; ",
+	    "unrecognized keyword on line #", getLinenum textlines#s, ": ", format key, "; ",
 	    "expected: ", demark_", " sort keys functionTable);
 	functionTable#key(textlines_{s+1..e}, getLinenum textlines#s)))
 
@@ -113,7 +119,7 @@ ConsequencesFuntions = new HashTable from {
 -- We use these access functions uniformly:
 getText = textline -> textline#0
 getIndent = textline -> textline#1
-getLinenum = textline -> textline#2
+getLinenum = textline -> topLinenum + textline#2
 getNonempty = textlines -> select(getText \ textlines, text -> 0 < length text)
 -- We use this creation function:
 makeTextline = (line, linenum) -> (
@@ -152,7 +158,7 @@ render = (text, keylinenum) -> (
 	-- No @ were found
 	if offset == tail then (if m#1#1 == 0 then continue else continue pre);
 	-- An unmatched @ was found
-	if m#4#0 == tail then error("unmatched @ near line ", toString keylinenum, ":\n\t", substring(m#3, text));
+	if m#4#0 == tail then error("unmatched @ near line #", keylinenum, ":\n\t", substring(m#3, text));
 	-- A pair of @ were found
 	block := concatenate("(", replace(///\\@///, "@", substring(m#3, text)), ")"); offset = m#4#0 + 1;
 	if m#1#1 == 0 then continue safevalue block else continue (pre, safevalue block));
@@ -171,24 +177,26 @@ markup = (textlines, keylinenum) -> (
 
 singleString = (key, textlines, keylinenum) -> (
      if #textlines == 0 then
-       error("line ", toString keylinenum, " of string: expected single indented line after ", toString key)
+       error("line #", keylinenum, ": expected single indented line after ", toString key)
      else if #textlines > 1 and 0 < #getNonempty drop(textlines, 1) then
-       error("line ", toString getLinenum textlines#1, " of string: expected single indented line after ", toString key);
+       error("line #", getLinenum textlines#1, ": expected single indented line after ", toString key);
      getText textlines#0)
 
 -- originally written by Andrew Hoefel
 multiString = (key, textlines, keylinenum) -> (
      if #textlines == 0 then
-       error("line ", toString keylinenum, " of string: expected at least one indented line after ", toString key);
+       error("line #", keylinenum, ": expected at least one indented line after ", toString key);
      concatenate between(newline, getText \ textlines))
 
 -- used for inputs, outputs, and options
 items = (textlines, keylinenum) -> apply(splitByIndent(textlines, false), (s, e) -> (
 	line := getText textlines#s;
 	ps := separate("[[:space:]]*(:|=>)[[:space:]]*", line); -- split by ":" or "=>"
-	if #ps =!= 2 then error("line ", toString getLinenum textlines#s, " of string: expected line containing a colon or a double arrow");
-	text := demark(" ", getText \ textlines_{s+1..e});
-	result := if s === e then "" else render(text, getLinenum textlines#s);
+	if #ps =!= 2 then error("line #", getLinenum textlines#s, ": expected line containing a colon or a double arrow");
+	abbr := separate("[[:space:]]*(--)[[:space:]]*", ps#1); -- split by "--"
+	abbr  = if #abbr < 2 then "" else abbr#1 | "; ";
+	desc := demark(" ", getText \ textlines_{s+1..e});
+	result := render(if s === e then abbr else abbr | desc, getLinenum textlines#s);
 	if ps#1 != "" then result = (
 	    type := value ps#1;
 	    if instance(type, List)   then between_", " {ofClass type, result} else
@@ -235,8 +243,8 @@ reassemble = (indent, textlines) -> concatenate between(newline,
 
 getKeys = (textlines, keylinenum) -> (
     keyList := apply(getNonempty textlines, value);
-    if #keyList == 0 then error("Key (line ", toString keylinenum, " of string): expected at least one key");
-    Core#"private dictionary"#"currentDocumentTag" <- makeDocumentTag(keyList#0, Package => currentPackage); -- for debugging purposes
+    if #keyList == 0 then error("line #", keylinenum, ": expected at least one key");
+    currentDocumentTag = makeDocumentTag(keyList#0, Package => currentPackage); -- for debugging purposes
     keyList)
 
 getCode = (textlines, keylinenum) -> (
@@ -252,7 +260,7 @@ getExample = (textlines, keylinenum, canned) -> (
 nodeCheck = (processed, keylinenum) -> (
     -- TODO: add more checks
     if any(processed, i -> member(first i, {Inputs, Outputs})) and not any(processed, i -> first i === Usage)
-    then error("line ", toString keylinenum, " of documentation string: Inputs or Outputs specified, but Usage not provided")
+    then error("line #", keylinenum, ": Inputs or Outputs specified, but Usage not provided")
     -- TODO: attempt to fix some of the errors
     else processed)
 

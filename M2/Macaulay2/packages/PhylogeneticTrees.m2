@@ -1,17 +1,18 @@
+-- -*- utf-8 -*-
 newPackage(
      "PhylogeneticTrees",
-     Version => "1.0",
-     Date => "October 12, 2016",
+     Version => "2.0",
+     Date => "November 15, 2019",
      Headline => "invariants for group-based phylogenetic models",
      --HomePage => "",
      Authors => {
-	  {Name => "Hector Banos", Email => "hdbanoscervantes@alaksa.edu"},
-	  {Name => "Nathaniel Bushek", Email => "nbushek@alaska.edu"},
+	  {Name => "Hector Baños", Email => "hbanos@gatech.edu"},
+	  {Name => "Nathaniel Bushek", Email => "nbushek@css.edu"},
 	  {Name => "Ruth Davidson", Email => "ruth.davidson.math@gmail.com"},
-	  {Name => "Elizabeth Gross", Email => "elizabeth.gross@sjsu.edu"},
+	  {Name => "Elizabeth Gross", Email => "egross@hawaii.edu"},
 	  {Name => "Pamela Harris", Email => "peh2@williams.edu"},
 	  {Name => "Robert Krone", Email => "rckrone@gmail.com"},
-	  {Name => "Colby Long", Email => "celong2@ncsu.edu"},
+	  {Name => "Colby Long", Email => "clong@wooster.edu"},
 	  {Name => "AJ Stewart", Email => "stewaral@seattleu.edu"},
 	  {Name => "Robert Walker", Email => "robmarsw@umich.edu"}
 	  },
@@ -22,6 +23,20 @@ newPackage(
      PackageExports => {
 	  "Graphs",
 	  "Posets"
+	  },
+     Certification => {
+	  "journal name" => "The Journal of Software for Algebra and Geometry",
+	  "journal URI" => "http://j-sag.org/",
+	  "article title" => "Phylogenetic trees",
+	  "acceptance date" => "8 August 2020",
+	  "published article URI" => "https://msp.org/jsag/2021/11-1/p01.xhtml",
+          "published article DOI" => "10.2140/jsag.2021.11.1",
+	  "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x01-PhylogeneticTrees.m2",
+     	  "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/PhylogeneticTrees.m2",
+	  "release at publication" => "abdf0903e7ffc31568c0cc4beb181368d943cb8d",	    -- git commit number in hex
+	  "version at publication" => "2.0",
+	  "volume number" => "11",
+	  "volume URI" => "https://msp.org/jsag/2021/11-1/"
 	  }
      )
 
@@ -42,9 +57,8 @@ export {
     "CFNmodel", "JCmodel", "K2Pmodel", "K3Pmodel",
     "leafColorings",
     "model",
---    "edges",
---    "vertices",
---    "leaves",
+    "buckets",
+    "group",
     "LeafTree",
     "leafTree",
     "internalEdges",
@@ -53,15 +67,23 @@ export {
     "vertexCut",
     "edgeContract",
     "QRing",
-    "fourierToProbability"
+    "fourierToProbability",
+    "labeledTrees",
+    "labeledBinaryTrees",
+    "rootedTrees",
+    "rootedBinaryTrees",
+    "unlabeledTrees",
+    "isIsomorphic"
     }
-protect \ {Group, Automorphisms, AList}
+protect \ {Group, Automorphisms, AList, Buckets}
 --------------------------------------------------------------------
 
 Model = new Type of HashTable
 LeafTree = new Type of List
 group = method()
 group(Model) := M -> M.Group
+buckets = method()
+buckets(Model) := M -> M.Buckets
 aList = (M,g) -> M.AList#g
 
 model = method()
@@ -72,6 +94,7 @@ model(List,List,List) := (G,buckets,auts) -> (
 	g => apply(buckets, b->if member(g,b) then 1 else 0));
     new Model from hashTable {
 	Group => G,
+	Buckets => buckets,
 	Automorphisms => modelAuts,
 	AList => AL
 	}
@@ -108,40 +131,50 @@ K2Pmodel = model(ZZ2ZZ2, {{F00}, {F01}, {F10,F11}}, {
 K3Pmodel = model(ZZ2ZZ2, {{F00}, {F01}, {F10}, {F11}}, {})
 
 
-qRing = method()
-qRing(LeafTree,Model) := (T,M) -> qRing(#(leaves T),M)
-qRing(ZZ,Model) := (n,M) -> (
+qRing = method(Options=>{Variable=>null})
+qRing(LeafTree,Model) := opts -> (T,M) -> qRing(#(leaves T),M,opts)
+qRing(ZZ,Model) := opts -> (n,M) -> (
     qList := leafColorings(n,M);
-    qRingFromList(qList,M)
+    q := opts.Variable;
+    if q === null then q = getSymbol "q";
+    qRingFromList(qList,M,q)
     )
-qRingFromList = (qList,M) -> (
+qRingFromList = (qList,M,q) -> (
     G := group M;
     Ghash := hashTable apply(#G,i->(G#i=>i));
-    q := symbol q;
-    QQ[apply(qList, qcolors -> (qindex := apply(qcolors, c->Ghash#c); q_qindex))]
+    QQ(monoid[apply(qList, qcolors -> (qindex := apply(qcolors, c->Ghash#c); q_qindex))])
     )
 
-pRing = method()
-pRing(LeafTree,Model) := (T,M) -> pRing(#(leaves T),M)
-pRing(ZZ,Model) := (n,M) -> (
+pRing = method(Options=>{Variable=>null})
+pRing(LeafTree,Model) := opts -> (T,M) -> pRing(#(leaves T),M,opts)
+pRing(ZZ,Model) := opts -> (n,M) -> (
     G := group M;
     pList := (n:0)..(n:#G-1);
-    p := symbol p;
-    QQ[apply(pList, pindex->p_pindex)]
+    p := opts.Variable;
+    if p === null then p = getSymbol "p";
+    QQ(monoid[apply(pList, pindex->p_pindex)])
     )
 
 fourierToProbability = method()
 fourierToProbability(Ring,Ring,ZZ,Model) := (S,R,n,M)  -> (
-    G := group M;
+    if not member(M, set{CFNmodel, JCmodel, K2Pmodel, K3Pmodel}) then
+        error "model must be CFNmodel, JCmodel, K2Pmodel, or K3Pmodel";
+    K := keys M;
+    G := M#(K_1);
     qList := leafColorings(n,M);
     Ghash := hashTable apply(#G,i->(G#i=>i));
     varIndex := apply(qList, qcolors -> apply(qcolors, c->Ghash#c));
     L := (n:0)..(n:#G-1);
+    Char := matrix{
+	{1,1,1,1},
+	{1,-1,1,-1},
+	{1,1,-1,-1},
+	{1,-1,-1,1}};
     SubVars := for vi in varIndex list (
-	(1/#G)*sum for i to #L-1 list (
-	    s := sum(n, j->vi#j*(L#i)#j);
-	    if even s then S_i else -S_i
-	    )
+	 sum for i to #L-1 list (
+	   s := product(n, j->(Char_(vi#j, (L#i)#j)));
+	   if s>0 then S_i else -S_i
+	   )
 	);
     map(S,R,matrix{SubVars})
     )
@@ -175,7 +208,7 @@ leafColorings(ZZ,Model) := (n,M) -> (
 	)
     )
 
---List all friendly edge colorings of a tree
+--List all consistent edge colorings of a tree
 edgeColorings = (T,M) -> (
     L := leavesList T;
     Lhash := hashTable apply(#L, i->L#i=>i);
@@ -272,25 +305,18 @@ randomElement = L -> (
 --Auxilary functions for phyloToricFP
 ----------------------
 
---A function that takes an invariant on a small tree and extends it in all possible ways to a big tree
---P is graph splitting e.g. a list of trees (#P is length of P)
---Temps is list of ``templates" meaning invariants on small trees
---They are called them templates because they are hard to encode in a way that makes sense in MaCaulay2.
---cem is map between pieces of the small tree and the big tree
---binom is a template so list three things (color indices=subscripts like 000, 001)
---binom#2 is a permutation-how to connect the colors in first monomial with second, make stuff match, use extensions both sides to stay in kernel.
---j%n is j mod n: which one I'm dealing with after the flattening
---permuteColoring uses a group automorphism
+--A function that takes an invariant on a small tree and extends it in all possible ways to a big tree.
+--P is a graph splitting: the list of connected components after deleting the vertex or edge we are focused on.
+--Temps is list of "templates" meaning invariants on small trees
 fillTemplates = (T,M,S,P,temps,newl,rand) -> (
     G := group M;
-    FCs := edgeColorings(T,M); --friendly colorings
-    qhash := hashTable apply(#FCs, i->FCs#i => S_i); --maps from friendly edge colorings to variables in the ring
-    gensList := {};
+    FCs := edgeColorings(T,M); --consistent colorings
+    qhash := hashTable apply(#FCs, i->FCs#i => S_i); --maps from consistent edge colorings to variables in the ring
     n := #P;
     cem := compositeEdgeMap(T,P,newl);
     PFCs := apply(P, U->partitionedFCs(U,M,set{newl})); --a List of HashTables of colorings of the graph pieces
     --print PFCs;
-    for binom in temps do (
+    flatten for binom in temps list (
 	fbinom0 := flatten binom#0; --flat list of color indices for first monomial of a claw tree invariant
 	fbinom1 := flatten binom#1; --same for second monomial
 	PFCLists := apply(#fbinom0, j->(PFCs#(j%n))#(G#(fbinom0#j))); --for each entry of fbinom0(itself a list), the list of all coloring extensions
@@ -313,9 +339,8 @@ fillTemplates = (T,M,S,P,temps,newl,rand) -> (
 	    --print(monom#0,monom#1);
 	    monom#0 - monom#1
 	    );
-	gensList = gensList|ultimate(flatten,newGens);
-	);
-    gensList
+	ultimate(flatten,newGens)
+	)
     )
 
 
@@ -373,7 +398,8 @@ clawInvariants = (k,M) -> (
 	{{{0,2,2},{0,3,3},{1,0,1},{1,1,0}},{{0,0,0},{0,1,1},{1,2,3},{1,3,2}},{0,7,11,3,10,8,6,1,5,9,4,2}}};
 
     qList := leafColorings(k,M);
-    R := qRingFromList(qList,M);
+    q := getSymbol "q";
+    R := qRingFromList(qList,M,q);
     Igens := flatten entries gens phyloToric42(k,{},M,QRing=>R);
     Igens = select(Igens, f-> 1 < first degree f);
     for f in Igens list binomialTemplate(f,k,M)
@@ -475,12 +501,66 @@ graph(LeafTree) := opts -> T -> (
     newLabels := for v in vertexSet G list (
 	children := select(elements neighbors(G,v), w -> #w > #v);
 	children = apply(children, w -> (leaves T) - w);
-	if #v > 0 then {v}|children else children
+	if #v > 0 then set({v}|children) else set children
 	);
     graph(newLabels, adjacencyMatrix G)
     )
 
+digraph(LeafTree,List) := opts -> (T,L) -> digraph(T,set L)
+digraph(LeafTree,Set) := opts -> (T,u) -> (
+    E := apply(edges T, e->if any(elements u, f->isSubset(e,f)) then (leaves T) - e else e);
+    E = E|{set{}};
+    P := poset(E,isSubset);
+    G := graph coveringRelations P;
+    dirE := {};
+    newLabels := for v in vertexSet G list (
+	children := select(elements neighbors(G,v), w -> #w > #v);
+	dirE = dirE|apply(children, w->{v,w});
+	children = apply(children, w -> (leaves T) - w);
+	if #v > 0 then set({v}|children) else set children
+	);
+    D := digraph(vertices G, dirE);
+    digraph(newLabels, adjacencyMatrix D)
+    )
+
+
 Set == Set := (s,t) -> s === t
+
+LeafTree == LeafTree := (S,T) -> (
+    if leaves S != leaves T then return false;
+    l := first leavesList S;
+    ES := set apply(edges S, e->orientEdge(S,e,l));
+    ET := set apply(edges T, e->orientEdge(T,e,l));
+    ES == ET
+    )
+
+AHU := (G,v) -> (
+    chil := children(G,v);
+    chilAHU := flatten sort apply(elements chil, w->AHU(G,w));
+    {1}|chilAHU|{0}
+    )
+
+isIsomorphicRooted = method()
+isIsomorphicRooted(LeafTree,List,LeafTree,List) := (T1,v1,T2,v2) -> (
+    isIsomorphicRooted(T1,set v1,T2,set v2)
+    )
+isIsomorphicRooted(LeafTree,Set,LeafTree,Set) := (T1,v1,T2,v2) -> (
+    G1 := digraph(T1,v1);
+    G2 := digraph(T2,v2);
+    AHU(G1,v1) == AHU(G2,v2)
+    )
+
+isIsomorphic = method()
+isIsomorphic(LeafTree,LeafTree) := (T1,T2) -> (
+    if #(leaves T1) != #(leaves T2) or #(edges T1) != #(edges T2) then return false;
+    C1 := center graph T1;
+    C2 := center graph T2;
+    if #C1 != #C2 then return false;
+    for v1 in C1 do for v2 in C2 do (
+	if isIsomorphicRooted(T1,v1,T2,v2) then return true;
+	);
+    false
+    )
 
 --splits tree T at edge e into a list of two trees
 edgeCut = method()
@@ -522,8 +602,98 @@ vertexCut(LeafTree,Set,Thing,Thing) := (T,e,l,newl) -> (
 edgeContract = method()
 edgeContract(LeafTree,List) := (T,e) -> edgeContract(T,set e)
 edgeContract(LeafTree,Set) := (T,e) -> (
-    E := select(edges T, f->(f != e and (leaves T) - f != e));
-    leafTree(leavesList T, E)
+    L := leaves T;
+    E := select(edges T, f->(f != e and L - f != e));
+    if #e == #L-1 then L = e;
+    if #e == 1 then L = L - e;
+    leafTree(toList L, E)
+    )
+
+labeledTrees = method()
+labeledTrees(ZZ) := n -> (
+    f := L -> (
+        P := setPartitions L;
+        select(P, p -> #p > 1)
+        );
+    L := toList (1..n-1);
+    apply(buildBranches(L,f), T -> leafTree(n,T))
+    )
+
+labeledBinaryTrees = method()
+labeledBinaryTrees(ZZ) := n -> (
+    f := L -> for s in subsets drop(L,1) list (
+        if #s == 0 then continue;
+        {s, toList (set L - set s)}
+        );
+    L := toList (1..n-1);
+    apply(buildBranches(L,f), T -> leafTree(n,T))
+    )
+
+rootedTrees = method()
+rootedTrees(ZZ) := n -> (
+    f := L -> for p in partitions(#L) list (
+        if #p == 1 then continue;
+        k := 0;
+        for s in p list (
+           k = k+s;
+           take(L,{k-s,k-1})
+           )
+        );
+    L := toList (1..n-1);
+    apply(buildBranches(L,f), T -> leafTree(n,T))
+    )
+
+rootedBinaryTrees = method()
+rootedBinaryTrees(ZZ) := n -> (
+    f := L -> for i from 1 to (#L)//2 list {take(L,i), take(L,i-#L)};
+    L := toList (1..n-1);
+    apply(buildBranches(L,f), T -> leafTree(n,T))
+    )
+
+unlabeledTrees = method()
+unlabeledTrees(ZZ) := n -> (
+    rooted := rootedTrees n;
+    trees := new MutableList;
+    for T in rooted do (
+	if not any(trees, S->isIsomorphic(S,T)) then trees#(#trees) = T
+	);
+    toList trees
+    )
+
+--lists all partitions of a set or list of distinct elements
+setPartitions = method()
+setPartitions(Set) := S -> setPartitions(toList S)
+setPartitions(List) := L -> (
+    Lhash := new HashTable from apply(#L, i->(L#i => i));
+    pList := toList (#L : 0);
+    sps := {{L}};
+    i := #L-1;
+    while i > 0 do (
+        if any(i, j -> pList#j >= pList#i) then (
+            pList = take(pList, i)|{pList#i + 1}|toList(#L-i-1:0);
+            part := values partition(l->pList#(Lhash#l), L);
+            sps = append(sps, part);
+            i = #L-1;
+            )
+        else i = i-1;
+        );
+    sps
+    )
+
+--recursive function for building rooted trees.
+--takes a leaf set L and function f that lists how leaves can be 
+--partitioned at a node, and lists all possible edge sets.
+buildBranches = (L,f) -> (
+    Trees := for p in f(L) list (
+        p = select(p, s -> #s > 1);
+        newTrees := {p};
+        for E in p do (
+            branches := buildBranches(E,f);
+            newTrees = flatten apply(newTrees, T->apply(branches, B->T|B));
+            );
+        newTrees
+        );
+    flatten Trees
     )
 
 --------------------------
@@ -557,7 +727,7 @@ joinIdeal(List) := opts -> L -> (
     Js := apply(n, i->sub(L#i,(vars T)_(toList(i*k..(i+1)*k-1))));
     J := sum(Js) + ideal Jlinears;
     d := opts.DegreeLimit;
-    GB := gb(J, DegreeLimit=>join(d,d));
+    GB := gb(J, DegreeLimit=>join((n+1):d));
     J = selectInSubring(1,gens GB);
     ideal sub(J,matrix{toList (n*k:0_R)}|(vars R))
     )
@@ -613,7 +783,7 @@ doc///
     Key
 	PhylogeneticTrees
     Headline
-        A package to compute phylogenetic invariants associated to group-based models
+        a package to compute phylogenetic invariants associated to group-based models
     Description
         Text
 	    {\em PhylogeneticTrees} is a package for phylogenetic algebraic geometry. This 
@@ -630,7 +800,7 @@ doc///
 	    a generating set for ideals of phylogenetic invariants. The first  method calls 
 	    @TO FourTiTwo@ to compute the generating set of the toric ideal. The second 
 	    implements a theoretical construction for inductively determining the ideal of 
-	    phylogenetic invariants for any k-valent tree from the k-leaf claw tree as 
+	    phylogenetic invariants for any $k$-valent tree from the $k$-leaf claw tree as 
 	    described in Theorem 24 of [3].
             
 	    This package also handles the joins and secants of these ideals by implementing 
@@ -660,37 +830,31 @@ doc///
 		(phyloToricFP,ZZ,List,Model)
 		(phyloToricFP,LeafTree,Model)
 	Headline
-		Compute the invariants of a group-based phylogenetic tree model using the toric fiber product structure
+		compute the invariants of a group-based phylogenetic model with toric fiber products
 	Usage
-		I = phyloToricFP(T,M)
-		I = phyloToricFP(n,E,M)
+		phyloToricFP(T,M)
+		phyloToricFP(n,E,M)
 	Inputs
 	        T:LeafTree
-		        A tree
 		n:ZZ
-			The number of leaves
+			the number of leaves
 		E:LeafTree
-			The internal edges of the tree, given by one part of the bipartition on leaves
+			the internal edges of the tree, given by one part of the bipartition on leaves
 		M:Model
-                        The model (CNFmodel, JCmodel, etc)
 	Outputs
-		I:Ideal
-		        The ideal of the generators computed
+		:Ideal
 	Description
 	        Text
         		This function computes the invariants of a group-based phylogenetic
-	        	tree model based on theorem 24 of the paper Toric Ideals of
+	        	tree model based on Theorem 24 of the paper Toric Ideals of
 		        Phylogenetic Invariants by Sturmfels and Sullivant.
 			
 			Invariants are formed in three different ways.  The linear and
 			quadratic invariants are computed as in @TO phyloToricLinears@ and 
 			@TO phyloToricQuads@ respectively.  Finally higher degree invariants
-			are built using a fiber product construction from the invariants of
+			are built using a toric fiber product construction from the invariants of
 			claw trees.
 			
-			In particular, the neighborhood of any internal vertex of a tree is
-			a claw tree.  The invariants on this claw tree tree subgraph are extended
-			to invariants on the entire graph in various ways.
 		Example
 		        T = leafTree(4, {{0,1}})    
 	        	phyloToricFP(T, CFNmodel)
@@ -707,31 +871,28 @@ doc///
 		(phyloToric42,Graph,Model)
 		(phyloToric42,LeafTree,Model)
 	Headline
-		Compute the invariants of a group-based phylogenetic tree model using  the 4ti2 package.
+		compute the invariants of a group-based phylogenetic model with 4ti2
 	Usage
-		I = phyloToric42(n,E,M)
-		I = phyloToric42(G,M)
-		I = phyloToric42(T,M)
+		phyloToric42(n,E,M)
+		phyloToric42(G,M)
+		phyloToric42(T,M)
 	Inputs
 	        T:LeafTree
-		        A tree
 		n:ZZ
-			The number of leaves
+			the number of leaves
 		E:LeafTree
-			The internal edges of the tree, given by one part of the bipartition on leaves
+			the internal edges of the tree, given by one part of the bipartition on leaves
 		G:Graph
-			A tree
+			a tree
 		M:Model
-                        The model (CNFmodel, JCmodel, etc)
 	Outputs
-		I:Ideal
-		       The ideal of the generators computed
+		:Ideal
 	Description
 	        Text
-		       Computes the invariants of a group-based phylogenetic
+		       This function computes the invariants of a group-based phylogenetic
 	               tree model by computing the transpose of the matrix
-	               that encodes the monomial map and the using the function toricMarkov of the
-	               4ti2 package.	
+	               that encodes the defining monomial map and then using the function toricMarkov of the
+	               @TO FourTiTwo@ package.	
 		Example
 		       T = leafTree(4, {{0,1}})
 	               phyloToric42(T, CFNmodel)
@@ -748,22 +909,20 @@ doc///
 	(phyloToricLinears,ZZ,List,Model)
 	[phyloToricLinears,Random]
     Headline
-        Compute the linear invariants of a group-based phylogenetic tree model
+        compute the linear invariants of a group-based phylogenetic model
     Usage
-	L = phyloToricLinears(T,M)
-	L = phyloToricLinears(n,E,M)
+	phyloToricLinears(T,M)
+	phyloToricLinears(n,E,M)
     Inputs
 	T:LeafTree
-	    A tree
         n:ZZ
-	    The number of leaves
-	E:LeafTree
-	    The internal edges of the tree, given by one part of the bipartition on leaves
+	    the number of leaves
+	E:List
+	    the internal edges of the tree, given by one part of the bipartition on leaves
 	M:Model
-	    The model (CNFmodel, JCmodel, etc)
     Outputs
-	L:List
-	    A generating set of the linear invariants
+	:List
+	    a generating set of the linear invariants
     Description
         Text
 	    For models such as Jukes-Cantor (@TO "JCmodel"@) and Kimura 2-parameter (@TO "K2Pmodel"@),
@@ -795,29 +954,27 @@ doc///
 	(phyloToricQuads,ZZ,List,Model)
 	[phyloToricQuads,Random]
     Headline
-        Compute the quadratic invariants of a group-based phylogenetic tree model
+        compute the quadratic invariants of a group-based phylogenetic model
     Usage
-	L = phyloToricQuads(T,M)
-	L = phyloToricQuads(n,E,M)
+	phyloToricQuads(T,M)
+	phyloToricQuads(n,E,M)
     Inputs
 	T:LeafTree
-	    A tree
         n:ZZ
-	    The number of leaves
-	E:LeafTree
-	    The internal edges of the tree, given by one part of the bipartition on leaves
+	    the number of leaves
+	E:List
+	    the internal edges of the tree, given by one part of the bipartition on leaves
 	M:Model
-	    The model (CNFmodel, JCmodel, etc)
     Outputs
-	L:List
-	    A generating set of the quadratic invariants
+	:List
+	    a generating set of the quadratic invariants
     Description
         Text
 	    The quadratic invariants are also referred to as the edge invariants of the model.
 	    
-	    Each Fourier coordinate corresponds to a friendly coloring of the edges of tree $T$.
-	    For any given internal edge $e$ of $T$, the friendly colorings can be obtained by
-	    coloring two smaller graphs and gluing them along $e$.  This corresponds to a fiber
+	    Each Fourier coordinate corresponds to a consistent coloring of the edges of tree {\tt T}.
+	    For any given internal edge {\tt e} of {\tt T}, the consistent colorings can be obtained by
+	    coloring two smaller graphs and gluing them along {\tt e}.  This corresponds to a fiber
 	    product on the corresponding toric varieties. The quadratic invariants naturally
 	    arise from this process by gluing a pair of colorings of one small graph to a pair of
 	    colorings of the other small graph in two different ways.
@@ -842,22 +999,20 @@ doc///
 		(phyloToricRandom,ZZ,List,Model)
 		(phyloToricRandom,LeafTree,Model)
 	Headline
-		Compute a random invariant of a group-based phylogenetic tree model using the toric fiber product structure
+		compute a random invariant of a group-based phylogenetic model
 	Usage
-		f = phyloToricRandom(T,M)
-		f = phyloToricRandom(n,E,M)
+		phyloToricRandom(T,M)
+		phyloToricRandom(n,E,M)
 	Inputs
 	        T:LeafTree
-		        A tree
 		n:ZZ
-			The number of leaves
+			the number of leaves
 		E:LeafTree
-			The internal edges of the tree, given by one part of the bipartition on leaves
+			the internal edges of the tree, given by one part of the bipartition on leaves
 		M:Model
-                        The model (CNFmodel, JCmodel, etc)
 	Outputs
-		f:RingElement
-		        A randomly selected binomial invariant
+		:RingElement
+		        a randomly selected binomial invariant
 	Description
 	        Text
         		This function computes a random invariant of a group-based phylogenetic
@@ -888,25 +1043,23 @@ doc///
 		(phyloToricAMatrix,Graph,Model)
 		(phyloToricAMatrix,ZZ,List,Model)
 	Headline
-		Constructs the A matrix whose columns parametrize the toric variety of the tree T with n leaves
+		construct the design matrix of a group-based phylogenetic model
 	Usage
-		A = phyloToricAMatrix(T,M)
-		A = phyloToricAmatrix(G,M)
-		A = phyloToricAMatrix(n,E,M)
+		phyloToricAMatrix(T,M)
+		phyloToricAmatrix(G,M)
+		phyloToricAMatrix(n,E,M)
 	Inputs
 	        T:LeafTree
-		        A tree
 		G:Graph
-		        A tree
+		        a tree
 		n:ZZ
-			The number of leaves
+			the number of leaves
 		E:List
-			The internal edges of the tree, given by the half the partition on leaves
+			the internal edges of the tree, given by the half the partition on leaves
 		M:Model
-		        The model (CNFmodel, JCmodel, etc)
 	Outputs
-		A:Matrix
-		        The matrix whose columns parametrize the toric variety
+		:Matrix
+		        whose columns parametrize the toric variety
 	Description
 
 
@@ -922,31 +1075,31 @@ doc///
 	qRing
 	(qRing,ZZ,Model)
 	(qRing,LeafTree,Model)
+	[qRing,Variable]
     Headline
-	Constructs the ring of Fourier coordinates
+	construct the ring of Fourier coordinates
     Usage
-	S = qRing(T,M)
-	S = qRing(n,M)
+	qRing(T,M)
+	qRing(n,M)
     Inputs
 	T:LeafTree
-	    A tree
 	n:ZZ
-	    The number of leaves
+	    the number of leaves
 	M:Model
-	    The model (CNFmodel, JCmodel, etc)
     Outputs
-	S:Ring
-	    The ring of Fourier coordinates
+	:Ring
+	    of Fourier coordinates
     Description
 	Text
-	    The Fourier coordinates for a phylogenetic tree model have one coordinate for each "friendly coloring"
-	    of the tree $T$.  A friendly coloring is an assignment of one of the group elements of the model $M$ to each of
-	    the leaves of $T$ such that the sum of all the group elements assigned is 0.
+	    The Fourier coordinates for a phylogenetic tree model have one coordinate for each consistent coloring
+	    of the tree {\tt T}.  A consistent coloring is an assignment of one of the group elements of the model {\tt M} to each of
+	    the leaves of {\tt T} such that the sum of all the group elements assigned is $0$.
 
-	    Each variable of the ring is indexed by a sequence representing a friendly coloring, with each element of the group
-	    represented by an integer between 0 and n-1 where n is the order of the group.
+	    Each variable of the ring is indexed by a sequence representing a consistent coloring with each element of the group
+	    represented by an integer between $0$ and $m-1$ where $m$ is the order of the group.
 	    
-	    The variables use symbol {\tt q}.
+	    A variable name for the ring can be passed using the optional argument {\tt Variable}.
+	    Otherwise the symbol {\tt q} is used.
 	Example
 	    qRing(4,CFNmodel)
 	    qRing(3,JCmodel)
@@ -962,25 +1115,23 @@ doc///
 	(leafColorings,ZZ,Model)
 	(leafColorings,LeafTree,Model)
     Headline
-	lists the friendly colorings of a tree
+	list the consistent colorings of a tree
     Usage
-	L = leafColorings(T,M)
-	L = leafColorings(n,M)
+	leafColorings(T,M)
+	leafColorings(n,M)
     Inputs
 	T:LeafTree
-	    A tree
 	n:ZZ
-	    The number of leaves
+	    the number of leaves
 	M:Model
-	    The model (CNFmodel, JCmodel, etc)
     Outputs
-	L:List
-	    The friendly colorings of the tree
+	:List
+	    the consistent colorings of the tree
     Description
 	Text
-	    {\tt leafColorings} outputs a list of all "friendly colorings" of the leaves of tree $T$.
+	    This function outputs a list of all consistent colorings of the leaves of tree {\tt T}.
 	    That is all sequences $(g_1,\ldots,g_n)$ such that $g_1+\cdots +g_n = 0$ where each $g_i$ is an
-	    element of the group associated to the model $M$, and $n$ is the number of leaves of the tree.
+	    element of the group associated to the model {\tt M}, and {\tt n} is the number of leaves of the tree.
 
 	    These correspond the set of subscripts of the variables in the ring output by @TO qRing@,
 	    and appear in the same order.
@@ -997,28 +1148,28 @@ doc///
 	pRing
 	(pRing,ZZ,Model)
 	(pRing,LeafTree,Model)
+	[pRing,Variable]
     Headline
-	Constructs the ring of probability coordinates
+	construct the ring of probability coordinates
     Usage
-	S = pRing(T,M)
-	S = pRing(n,M)
+	pRing(T,M)
+	pRing(n,M)
     Inputs
 	T:LeafTree
-	    A tree
 	n:ZZ
-	    The number of leaves
+	    the number of leaves
 	M:Model
-	    The model (CNFmodel, JCmodel, etc)
     Outputs
-	S:Ring
-	    The ring of probability coordinates
+	:Ring
+	    of probability coordinates
     Description
 	Text
 	    The probability coordinates for a phylogenetic tree model have one coordinate for each possible outcome of
 	    the model. A possible outcome is any labeling of the leaves of the tree by elements of the group $G$ of the
 	    model. Thus the number of coordinates is $|G|^n$ where $n$ is the number of leaves.
 	    
-	    The variables use symbol {\tt p}.
+	    A variable name for the ring can be passed using the optional argument {\tt Variable}.
+	    Otherwise the symbol {\tt p} is used.
 	Example
 	    pRing(4,CFNmodel)
 	    pRing(3,JCmodel)
@@ -1036,11 +1187,11 @@ doc///
 	[phyloToricQuads,QRing]
 	[phyloToricRandom,QRing]
     Headline
-        Optional argument to specify Fourier coordinate ring
+        optional argument to specify Fourier coordinate ring
     Description
 	Text
 	    For any of the functions that produce phylogenetic invariants in the ring of Fourier coordinates,
-	    the Ring can be specified with this optional argument. If {\tt null} is passed then a new ring
+	    the ring can be specified with this optional argument. If {\tt null} is passed then a new ring
 	    of Fourier coordinates will be created.
 	    
 	    The ring passed can be any polynomial ring with sufficiently many variables. The sufficient number
@@ -1059,26 +1210,27 @@ doc///
         fourierToProbability
 	(fourierToProbability,Ring,Ring,ZZ,Model)
     Headline
-        Map from Fourier coordinates to probablity coordinates
+        map from Fourier coordinates to probablity coordinates
     Usage
-        g = fourierToProbability(S,R,n,M)
+        fourierToProbability(S,R,n,M)
     Inputs
         S:Ring
-	   The ring of probability coordinates
+	   of probability coordinates
 	R:Ring
-	   The ring of Fourier coordinates
+	   of Fourier coordinates
 	n:ZZ
-	   The number of leaves
+	   the number of leaves
 	M:Model
-	   The model (CNFmodel, JCmodel, etc)
     Outputs
-        N:RingMap
-	    The map from Fourier coordinates to probablity coordinates
+        :RingMap
+	    from Fourier coordinates to probablity coordinates
     Description
         Text
-	    Creates a ring map from the ring of Fourier coordinates to the ring of probability coordinates.
+	    This function creates a ring map from the ring of Fourier coordinates to the ring of probability coordinates,
+	    for the four predefined models, @TO "CFNmodel"@, @TO "JCmodel"@, @TO "K2Pmodel"@ or @TO "K3Pmodel"@.  It will not work with
+	    user-defined models.
 	    The ring of probability coordinates must have at least $|G|^n$ variables where $G$ is the group
-	    associated to the model. The ring of Fourier coordinates must have at least $|G|^(n-1)$ variables.
+	    associated to the model. The ring of Fourier coordinates must have at least $|G|^{(n-1)}$ variables.
 	    
 	    
         Example
@@ -1098,7 +1250,7 @@ doc///
     Key
 	"CFNmodel"
     Headline
-	The model corresponding to the Cavender-Farris-Neyman model or binary Jukes Cantor
+	the model corresponding to the Cavender-Farris-Neyman model or binary Jukes Cantor
     Description
 	Text
 	    The Cavender-Farris-Neyman (CFN) Model is a Markov model of base substitution. It also known as the binary Jukes-Cantor model.
@@ -1108,8 +1260,6 @@ doc///
             The transition matrix has the form
             $$\begin{pmatrix} \alpha&\beta\\
                               \beta&\alpha \end{pmatrix}$$
-	--Example
-            --
     SeeAlso
         Model
 	"JCmodel"
@@ -1122,7 +1272,7 @@ doc///
     Key
 	"JCmodel"
     Headline
-	The model corresponding to the Jukes Cantor model
+	the model corresponding to the Jukes Cantor model
     Description
 	Text    
 	    The Jukes-Cantor (JK) Model is a Markov model of base substitution. 
@@ -1135,9 +1285,6 @@ doc///
                               \beta&\alpha&\beta&\beta\\
                               \beta&\beta&\alpha&\beta\\
                               \beta&\beta&\beta&\alpha \end{pmatrix}$$ 
-	--Example
-            --
-
     SeeAlso
         Model
 	"CFNmodel"
@@ -1150,22 +1297,19 @@ doc///
     Key
 	"K2Pmodel"
     Headline
-	The model corresponding to the Kimura 2-parameter model
+	the model corresponding to the Kimura 2-parameter model
     Description
         Text
 	    The Kimura 2-parameter (K2P) Model is a Markov model of base substitution. It assumes the root distribution vectors describe
 	    all bases occurring uniformly in the ancestral sequence. It allows different probabilities of transitions and transversions.
 	    This means that the rate of base changes A-C and A-T are the same (transversions), and the rate of
-	    base change A-G can differ (transitions).
+	    base change A-G can differ from the other two (transitions).
 
             The transition matrix has the form
             $$\begin{pmatrix} \alpha&\gamma&\beta&\beta\\ 
                               \gamma&\alpha&\beta&\beta\\
                               \beta&\beta&\alpha&\gamma\\
                               \beta&\beta&\gamma&\alpha \end{pmatrix}$$ 
-	--Example
-            --
-
     SeeAlso
         Model
 	"CFNmodel"
@@ -1178,7 +1322,7 @@ doc///
     Key
 	"K3Pmodel"
     Headline
-	The model corresponding to the Kimura 3-parameter model
+	the model corresponding to the Kimura 3-parameter model
     Description
         Text
 	    The Kimura 3-parameter (K3P) Model is a Markov model of base substitution. 
@@ -1191,9 +1335,6 @@ doc///
                               \gamma&\alpha&\delta&\beta\\
                               \beta&\delta&\alpha&\gamma\\
                               \delta&\beta&\gamma&\alpha \end{pmatrix}$$ 
-	--Example
-            --
-
     SeeAlso
         Model
 	"CFNmodel"
@@ -1210,26 +1351,26 @@ doc///
 	(secant,Ideal,ZZ)
 	[secant,DegreeLimit]
     Headline
-	Computes the secant of an ideal
+	compute the secant of an ideal
     Usage
-	J = secant(I,n)
+	secant(I,n)
     Inputs
 	I:Ideal
-	    An ideal of a ring R
 	k:ZZ
-	    Order of the secant
+	    order of the secant
     Outputs
-	J:Ideal
-	    The {\tt k}th secant of {\tt I}
+	:Ideal
+	    the {\tt k}th secant of {\tt I}
     Description
 	Text
-	    Computes the $k$th secant of $I$ by constructing the abstract secant and then projecting with elimination.
-
-	    Setting $k$ to 1 gives the dimension of the ideal, while 2 is the usual secant, and higher
+	    This function computes the {\tt k}th secant of {\tt I} by constructing the abstract secant and then projecting with elimination.
+	    
+	    Here the {\tt k}th secant means the join of {\tt k} copies of {\tt I}.
+	    Setting {\tt k} to 1 gives the dimension of the ideal, while 2 is the usual secant, and higher
 	    values correspond to higher order secants.
 
-	    Setting the optional argument @TO DegreeLimit@ to $\{d\}$ will produce only the generators
-	    of the secant ideal up to degree $d$.
+	    Setting the optional argument @TO DegreeLimit@ to {\tt \{d\} } will produce only the generators
+	    of the secant ideal up to degree {\tt d}.
 
 	    This method is general and will work for arbitrary polynomial ideals, not just phylogenetic ideals.
 	Example
@@ -1248,26 +1389,24 @@ doc///
 	(joinIdeal,List)
 	[joinIdeal,DegreeLimit]
     Headline
-	Computes the join of several ideals
+	compute the join of several ideals
     Usage
-	K = joinIdeal(I,J)
-	K = joinIdeal L
+	joinIdeal(I,J)
+	joinIdeal L
     Inputs
 	I:Ideal
-	    An ideal of a ring R
 	J:Ideal
-	    Another ideal of R
 	L:List
-	    A list of ideals in the same ring
+	    of ideals in the same ring
     Outputs
-	K:Ideal
-	    The join of the input ideals
+	:Ideal
+	    the join of the input ideals
     Description
 	Text
-	    Computes the join by constructing the abstract join and then projecting with elimination.
+	    This function computes the ideal of the join by constructing the abstract join and then projecting with elimination.
 
-	    Setting the optional argument @TO DegreeLimit@ to $\{d\}$ will produce only the generators
-	    of the secant ideal up to degree $d$.
+	    Setting the optional argument @TO DegreeLimit@ to {\tt \{d\} } will produce only the generators
+	    of the join ideal up to degree {\tt d}.
 
 	    This method is general and will work for arbitrary polynomial ideals, not just phylogenetic ideals.
 	Example
@@ -1287,25 +1426,26 @@ doc///
     Headline
         dimension of a secant of a toric variety
     Usage
-	d = toricSecantDim(A,k)
+	toricSecantDim(A,k)
     Inputs
 	A:Matrix
-	    The A-matrix of a toric variety
+	    the A-matrix of a toric variety
 	k:ZZ
-	    Order of the secant
+	    order of the secant
     Outputs
-	d:ZZ
-	    The dimension of the {\tt k}th secant of variety defined by matrix {\tt A}
+	:ZZ
+	    the dimension of the {\tt k}th secant of variety defined by matrix {\tt A}
     Description
         Text
-	    A randomized algorithm for computing the affine dimension of a secant of a toric variety,
+	    A randomized algorithm for computing the affine dimension of a secant of a toric variety
 	    using Terracini's Lemma.
 
-	    Setting $k$ to 1 gives the dimension of the toric variety, while 2 is the usual secant, and higher
+	    Here the {\tt k}th secant means the join of {\tt k} copies of {\tt I}.
+	    Setting {\tt k} to 1 gives the dimension of the ideal, while 2 is the usual secant, and higher
 	    values correspond to higher order secants.
 
-	    The matrix $A$ defines a parameterization of the variety.  $k$ vectors of parameter values
-	    are chosen at random from a large finite field.  The dimension of the sum of the tangent spaces
+	    The matrix {\tt A} defines a parameterization of the variety.  The algorithm chooses {\tt k}
+	    vectors of parameter values at random from a large finite field.  The dimension of the sum of the tangent spaces
 	    at those points is computed.
 
 	    This algorithm is much much faster than computing the secant variety.
@@ -1327,26 +1467,26 @@ doc///
 	(toricJoinDim,Matrix,Matrix)
 	(toricJoinDim,List)
     Headline
-        Dimension of a join of toric varieties
+        dimension of a join of toric varieties
     Usage
-	d = toricJoinDim(A,B)
-	d = toricJoinDim L
+	toricJoinDim(A,B)
+	toricJoinDim L
     Inputs
 	A:Matrix
-	    The A-matrix of a toric variety
+	    the A-matrix of a toric variety
 	B:Matrix
-	    The A-matrix of a toric variety
+	    the A-matrix of a toric variety
 	L:List
-	    A list of A-matrices of toric varieties
+	    of A-matrices of toric varieties
     Outputs
-	d:ZZ
-	    The dimension of the join of the toric varieties defined by the matrices
+	:ZZ
+	    the dimension of the join of the toric varieties defined by the matrices
     Description
         Text
-	    A randomized algorithm for computing the affine dimension of a join of toric varieties,
+	    A randomized algorithm for computing the affine dimension of a join of toric varieties
 	    using Terracini's Lemma.
 
-	    Each input matrix defines a parameterization of the variety.  For each, a vector of parameter values
+	    Each input matrix defines a parameterization of the variety.  For each variety, a vector of parameter values
 	    is chosen at random from a large finite field.  The dimension of the sum of the tangent spaces
 	    at those points is computed.
 
@@ -1370,25 +1510,25 @@ doc///
     Key
         Model
     Headline
-	A group-based model
+	a group-based model
     Description
         Text
-	    A phylogenetic tree model on tree $T$ has outcomes which are described by assigning each leaf of the tree
+	    A phylogenetic tree model on tree $T$ has outcomes that are described by assigning each leaf of the tree
 	    any label from a particular set (typically the label set is the set of DNA bases, \{A,T,C,G\}).
 	    The probability of a certain assignment of labels depends on transition probabilities between each ordered pair of labels.
 	    These transition probabilities are the parameters of the model.
 
-	    In a group based model, the label set is a group $G$ (typically $mathbb{Z}/2$ or $(\mathbb{Z}/2)^2$), and the transition
-	    probability for pair $(g,h)$ depends only on $h-g$. This reduces the number of parameters from $|G|^2$ to $|G|$.
-	    Depending on the model, some of the parameters for different group elements are identified to further restrict the model.
+	    In a group based model, the label set is a group $G$ (typically $\mathbb{Z}/2$ or $(\mathbb{Z}/2)^2$), and the transition
+	    probability for a pair $(g,h)$ depends only on $h-g$. This reduces the number of parameters from $|G|^2$ to $|G|$.
+	    Depending on the model, further identifications of parameters are imposed.
 
-            An object of class @TO Model@ stores the necessary information about a group-based model required to
+            An object of class @TO Model@ stores the information about a group-based model required to
 	    compute phylogenetic invariants.
-	    This information includes the elements of the group, how those elements are paritioned, and a set of
+	    This information includes the elements of the group, how those elements are partitioned, and a set of
 	    automorphisms of the group that preserve the partitions.
 
-	    There are four built in models which are Cavender-Farris-Neyman or binary model (@TO "CFNmodel"@), 
-	    Jukes-Cantor model (@TO "JCmodel"@), Kimura 2-parameter model (@TO "K2Pmodel"@), 
+	    There are four built-in models: Cavender-Farris-Neyman or binary model (@TO "CFNmodel"@); 
+	    Jukes-Cantor model (@TO "JCmodel"@); Kimura 2-parameter model (@TO "K2Pmodel"@); 
 	    and Kimura 3-parameter model (@TO "K3Pmodel"@).  Other models can be constructed with @TO model@.
         Example
 	    M = CFNmodel
@@ -1405,40 +1545,94 @@ doc///
         model
 	(model,List,List,List)
     Headline
-        Construct a Model
+        construct a Model
     Usage
-	T = leafTree(G,B,aut)
+	model(G,B,aut)
     Inputs
         G:List
-	    The group elements
+	    the group elements
 	B:List
-	    A list of lists of which group elements have identified parameters
+	    of lists of which group elements have identified parameters
 	aut:List
-	    A list of pairs, assigning pairs of identified group elements to automorphisms of the group that switch the pair
+	    of pairs, assigning pairs of identified group elements to automorphisms of the group that switch the pair
+    Outputs
+        :Model
     Description
         Text
-            The elements of $G$ must have an addition operation.  The usual choices for $G$ are the list of elements of
+            The elements of {\tt G} must have an addition operation meaning that if two elements $g, h \in {\tt G$}, then $g+h$ must work.  The usual choices for {\tt G} are the list of elements of
 	    $\mathbb{Z}/2$ or $(\mathbb{Z}/2)^2$.
 	Example
 	    (a,b) = (0_(ZZ/2),1_(ZZ/2))
 	    G = {{a,a}, {a,b}, {b,a}, {b,b}}
 	Text
-	    The elements of $B$ are lists of the elements of $G$ with the same parameter value.
+	    The elements of {\tt B} are lists of the elements of {\tt G} with the same parameter value.
 
-	    In the following example, the first two elements of $G$ receive distinct parameters, while the last two share a parameter.
+	    In the following example, the first two elements of {\tt G} receive distinct parameters, while the last two share a parameter.
 	    This is precisely the Kimura 2-parameter model.
         Example
             B = {{G#0}, {G#1}, {G#2,G#3}}
 	Text
-	    Finally for every ordered pair of group elements sharing a parameter, {\tt aut} must provide an automorphism of the group
+	    Finally, for every ordered pair of group elements sharing a parameter, {\tt aut} must provide an automorphism of the group
 	    that switches those two group elements.  In {\tt aut} all of the group elements are identified by their index in $G$,
 	    and an automorphism is given by a list of permuted index values.
 
-	    In our example, the pairs requiring an automorphism are (2,3) and (3,2).
+	    In our example, the pairs requiring an automorphism are {\tt \{2,3\}} and {\tt \{3,2\}}.
 	Example
             aut = {({2,3}, {0,1,3,2}),
 		   ({3,2}, {0,1,3,2})}
 	    model(G,B,aut)
+    SeeAlso
+	Model
+///
+-------------------------------
+-- group
+doc///
+    Key
+        group
+	(group,Model)
+    Headline
+        the group of a Model
+    Usage
+	group M
+    Inputs
+        M:Model
+    Outputs
+        :List
+	    of group elements
+    Description
+        Text
+            Every group-based phyogenetic model has a finite group associated to it.  This function
+	    returns the group, represented as a list of elements.
+	Example
+	    M = K3Pmodel
+	    G = group M
+    SeeAlso
+	Model
+///
+-------------------------------
+-- buckets
+doc///
+    Key
+        buckets
+	(buckets,Model)
+    Headline
+        the equivalence classes of group elements of a Model
+    Usage
+	buckets M
+    Inputs
+        M:Model
+    Outputs
+        :List
+	    of lists of group elements
+    Description
+        Text
+            Every group-based phyogenetic model has a finite group {\tt G} associated to it.  Parameters
+	    for the model are assigned to equivalence classes of group elements, which are orbits
+	    of some subgroup of the automorphism group of {\tt G}.  This function returns the equivalence
+	    classes as a list of list of group elements.
+	Example
+	    M = K2Pmodel
+	    B = buckets M
     SeeAlso
 	Model
 ///
@@ -1453,38 +1647,40 @@ doc///
 	(leafTree,List,List)
 	(leafTree,Graph)
     Headline
-        Construct a LeafTree
+        construct a LeafTree
     Usage
-        T = leafTree(n,E)
-	T = leafTree(L,E)
-	T = leafTree(G)
+        leafTree(n,E)
+	leafTree(L,E)
+	leafTree(G)
     Inputs
         n:ZZ
-	    The number of leaves
+	    the number of leaves
 	L:List
-	    A list of leaves
+	    of leaves
 	E:List
-	    A list of lists or sets specifying the internal edges
+	    of lists or sets specifying the internal edges
 	G:Graph
-	    A tree
+	    a tree
+    Outputs
+        :LeafTree
     Description
         Text
-            A @TO LeafTree@ is specified by listing its leaves, and for each internal edge, 
+            An object of class @TO LeafTree@ is specified by listing its leaves, and for each internal edge, 
 	    the partition the edge induces on the set of leaves.
-	    $L$ is the set of leaves, or if an integer $n$ is input then the leaves will be be named 0,...,n-1.
-	    $E$ is a list with one entry for each internal edge.
-	    Each entry is a partition specified as a List or Set of the leaves in one side of the partition.
+	    {\tt L} is the set of leaves, or if an integer {\tt n} is input then the leaves will be be named $0,\ldots,n-1$.
+	    {\tt E} is a list with one entry for each internal edge.
+	    Each entry is a partition specified as a list or set of the leaves in one side of the partition.
 	    Thus each edge can be specified in two possible ways.
 
-	    A LeafTree can also be constructed from a @TO Graph@ provided the graph has no cycles.
+	    An object of class @TO LeafTree@ can also be constructed from a @TO Graph@ provided the graph has no cycles.
 
-	    Here we construct the quartet tree which is the tree with 4 leaves and one internal edge.
+	    Here we construct the quartet tree, which is the tree with 4 leaves and one internal edge.
         Example
             T = leafTree({a,b,c,d},{{a,b}})
 	    leaves T
 	    edges T
 	Text
-	    Here is a tree with 5 leaves given as a Graph.
+	    Here is a tree with 5 leaves given as a @TO Graph@.
 	Example
             G = graph{{a,b},{c,b},{b,d},{d,e},{d,f},{f,g},{f,h}}
      	    T = leafTree G
@@ -1496,13 +1692,16 @@ doc///
 doc///
     Key
         LeafTree
+	(symbol ==,LeafTree,LeafTree)
     Headline
-	A tree described in terms of its leaves
+	a tree described in terms of its leaves
     Description
         Text
-            A tree can be described in terms of its leaves by specifying a leaf set,
+            A tree can be described in terms of its leaves by specifying a leaf set
 	    and specifying the edges as partitions of the leaf set.
 	    This leaf centric description is particularly useful for phylogenetic trees.
+	    
+	    The main constructor method is @TO leafTree@.
         Example
             T = leafTree({a,b,c,d},{{a,b}})
 	    leaves T
@@ -1518,18 +1717,17 @@ doc///
     Key
 	(edges,LeafTree)
     Headline
-        List the edges of a tree
+        list the edges of a tree
     Usage
-        E = edges T
+        edges T
     Inputs
         T:LeafTree
-	    A tree
     Outputs
-        E:List
-	    The edges of {\tt T}
+        :List
+	    the edges of {\tt T}
     Description
         Text
-	    This function lists all edges of a tree.  Each entry of the list is a Set of the leaves on one side of the edge.
+	    This function lists all edges of a tree.  Each entry of the list is a @TO Set@ of the leaves on one side of the edge.
         Example
 	    T = leafTree(5,{{0,1}});
 	    leaves T
@@ -1544,19 +1742,18 @@ doc///
         internalEdges
 	(internalEdges,LeafTree)
     Headline
-        Lists the internal edges of a tree
+        list the internal edges of a tree
     Usage
-        E = internalEdges T
+        internalEdges T
     Inputs
         T:LeafTree
-	    A tree
     Outputs
-        E:List
-	    The internal edges of {\tt T}
+        :List
+	    the internal edges of {\tt T}
     Description
         Text
             An internal edge of a tree is an edge that is not incident to a leaf.
-	    This function lists such edges. Each entry of the list is a Set of the leaves on one side of the edge.
+	    This function lists such edges. Each entry of the list is @ofClass Set@ of the leaves on one side of the edge.
         Example
             G = graph {{0,4},{1,4},{4,5},{5,2},{5,3}};
 	    T = leafTree G;
@@ -1570,25 +1767,24 @@ doc///
     Key
 	(vertices,LeafTree)
     Headline
-        List the vertices of a tree
+        list the vertices of a tree
     Usage
-        V = vertices T
+        vertices T
     Inputs
         T:LeafTree
-	    A tree
     Outputs
-        V:List
-	    The vertices of {\tt T}
+        :List
+	    the vertices of {\tt T}
     Description
         Text
 	    This function lists all vertices of a tree.  Each vertex is specified by the partition of the set of leaves
-	    formed by removing the vertex.  Each partition is given as a List of Sets.
+	    formed by removing the vertex.  Each partition is given as a list of sets.
         Example
 	    T = leafTree(4,{{0,1}});
 	    vertices T
 	    #(vertices T)
     Caveat
-        The leaves of {\tt T} in the output of {\tt vertices} have a different representation than in the output of @TO (leaves,LeafTree)@.
+        The leaves of {\tt T} in the output of {\tt vertices} have a different representation from the one in the output of @TO (leaves,LeafTree)@.
     SeeAlso
         internalVertices
 	(leaves,LeafTree)
@@ -1600,20 +1796,19 @@ doc///
         internalVertices
 	(internalVertices,LeafTree)
     Headline
-        List the internal vertices of a tree
+        list the internal vertices of a tree
     Usage
-        V = internalVertices T
+        internalVertices T
     Inputs
         T:LeafTree
-	    A tree
     Outputs
-        V:List
-	    The internal vertices of {\tt T}
+        :List
+	    the internal vertices of {\tt T}
     Description
         Text
             An internal vertex of a tree is a vertex that is not a leaf, meaning it has degree at least 2.
 	    This function lists such vertices. Each vertex is specified by the partition of the set of leaves
-	    formed by removing the vertex.  Each partition is given as a List of Sets.
+	    formed by removing the vertex.  Each partition is given as a list of sets.
         Example
 	    T = leafTree(4,{{0,1}});
 	    internalVertices T
@@ -1627,26 +1822,50 @@ doc///
     Key
 	(leaves,LeafTree)
     Headline
-        List the leaves of a tree
+        list the leaves of a tree
     Usage
-        L = leaves T
+        leaves T
     Inputs
         T:LeafTree
-	    A tree
     Outputs
-        L:Set
-	    The leaves of {\tt T}
+        :Set
+	    the leaves of {\tt T}
     Description
         Text
-	    Outputs the leaves of the tree as a Set.
+	    This function outputs the leaves of the tree as an object of class @TO Set@.
         Example
 	    T = leafTree(4,{{0,1}});
 	    vertices T
 	    #(vertices T)
     Caveat
-        The leaves have a different representation than in the output of @TO (vertices,LeafTree)@.
+        The leaves have a different representation from the one in the output of @TO (vertices,LeafTree)@.
     SeeAlso
         (vertices,LeafTree)
+///
+-------------------------------
+-- isIsomorphic
+doc///
+    Key
+        isIsomorphic
+	(isIsomorphic,LeafTree,LeafTree)
+    Headline
+        check isomorphism of two tree
+    Usage
+        isIsomorphic(T,U)
+    Inputs
+        T:LeafTree
+	U:LeafTree
+    Outputs
+        :Boolean
+	    if U and T are isomorphic
+    Description
+        Text
+	    This function checks if two objects of class @TO LeafTree@ are isomorphic to each other as unlabeled graphs.
+	    This is in contrast to equality of two objects of class @TO LeafTree@, which also checks whether they have the same leaf labeling.
+        Example
+	    T = leafTree(4,{{0,1}});
+	    U = leafTree(4,{{1,2}});
+	    isIsomorphic(T,U)
 ///
 -------------------------------
 -- edgeCut
@@ -1656,30 +1875,29 @@ doc///
 	(edgeCut,LeafTree,List,Thing)
 	(edgeCut,LeafTree,Set,Thing)
     Headline
-        Breaks up a tree at an edge
+        break up a tree at an edge
     Usage
-        P = edgeCut(T,e,newl)
-	P = edgeCut(T,E,newl)
+        edgeCut(T,e,newl)
+	edgeCut(T,E,newl)
     Inputs
         T:LeafTree
-	    A tree
 	e:Set
-	    An edge specified by the set of leaves on one side of it
+	    an edge specified by the set of leaves on one side of it
 	E:List
-	    An edge specified by a list of the leaves on one side of it
+	    an edge specified by a list of the leaves on one side of it
 	newl:Thing
-	    The label for a new leaf
+	    the label for a new leaf
     Outputs
-        P:List
-	    A list of two @TO LeafTree@s that are subtrees of {\tt T}
+        :List
+	    of two @TO LeafTree@s that are subtrees of {\tt T}
     Description
         Text
-	    The function outputs the two subtrees of $T$ obtained by deleting edge $e$ from $T$ and then re-adding the edge
-	    to each of the two resulting subtrees. Both subtrees share a copy of the edge $e$
-	    and the newly labeled leaf adjacent to $e$. Other than this overlap, they are disjoint.
+	    This function outputs the two subtrees of {\tt T} obtained by deleting edge {\tt e} from {\tt T} and then re-adding the edge
+	    to each of the two resulting subtrees. Both subtrees share a copy of the edge {\tt e}
+	    and the newly labeled leaf adjacent to {\tt e}. Other than this overlap, they are disjoint.
 
-	    Each subtree in $P$ may have at most one leaf that was not a leaf of $T$, and therefore previously unlabeled.
-	    This leaf label is determined by the user and input as newl.
+	    Each subtree in {\tt P} may have at most one leaf that was not a leaf of {\tt T}, and therefore previously unlabeled.
+	    The label for this new leaf is input as {\tt newl}.
         Example
 	    T = leafTree(4,{{0,1}})
 	    P = edgeCut(T, set {0,1}, 4);
@@ -1696,36 +1914,36 @@ doc///
 	(vertexCut,LeafTree,List,Thing,Thing)
 	(vertexCut,LeafTree,Set,Thing,Thing)
     Headline
-        Breaks up a tree at a vertex
+        break up a tree at a vertex
     Usage
-        P = vertexCut(T,e,l,newl)
-	P = vertexCut(T,E,l,newl)
+        vertexCut(T,e,l,newl)
+	vertexCut(T,E,l,newl)
     Inputs
         T:LeafTree
-	    A tree
 	e:Set
-	    An edge specified by the set of leaves on one side of it
+	    an edge specified by the set of leaves on one side of it
 	E:List
-	    An edge specified by a list of the leaves on one side of it
+	    an edge specified by a list of the leaves on one side of it
 	l:Thing
-	    A leaf of the tree
+	    a leaf of the tree
 	newl:Thing
-	    The label for a new leaf
+	    the label for a new leaf
     Outputs
-        P:List
-	    A list of @TO LeafTree@s that are subtrees of {\tt T}
+        :List
+	    of @TO LeafTree@s that are subtrees of {\tt T}
     Description
         Text
-	    Vertices of a LeafTree do not have explicit names.  Therefore a vertex $v$ is specified by naming an edge $e$
-	    incident to $v$, and leaf $l$ on the opposite side of the edge as $v$.
+	    Vertices of a tree of class @TO LeafTree@ do not have explicit names.  Therefore a vertex {\tt v} is specified by naming an edge {\tt e}
+	    incident to {\tt v}, and leaf {\tt l} on the opposite side of the edge as {\tt v}.
 
-	    The function outputs the subtrees of $T$ obtained by deleting the vertex $v$ from $T$
-	    and then re-adding $v$ to each of the resulting subtrees as a new leaf.
+	    The function outputs the subtrees of {\tt T} obtained by deleting the vertex {\tt v} from {\tt T}
+	    and then re-adding {\tt v} to each of the resulting subtrees as a new leaf.
 	    The new leaf on each subtree is adjacent to the edge previously adjacent 
-	    to $v$ on $T$. Each subtree has a copy of the vertex labeled newl, but their edge sets are disjoint.
+	    to {\tt v} on {\tt T}. Each subtree has a copy of the vertex labeled {\tt newl}, but their edge sets form a partition
+	    of the edge set of {\tt T}.
 
-	    Each subtree in $P$ may have at most one leaf that was not a leaf of $T$, and therefore previously unlabeled.
-	    This leaf label is determined by the user and input as newl.
+	    Each subtree in {\tt P} has one leaf that was not a leaf of {\tt T}, and therefore previously unlabeled.
+	    The label for this new leaf is input as {\tt newl}.
         Example
 	    T = leafTree(4,{{0,1}})
 	    P = vertexCut(T, set {0,1}, 0, 4);
@@ -1743,26 +1961,179 @@ doc///
 	(edgeContract,LeafTree,List)
 	(edgeContract,LeafTree,Set)
     Headline
-        Contracts an edge of a tree
+        contract an edge of a tree
     Usage
-        U = edgeContract(T,e)
-	U = edgeContract(T,E)
+        edgeContract(T,e)
+	edgeContract(T,E)
     Inputs
         T:LeafTree
-	    A tree
 	e:Set
-	    An edge specified by the set of leaves on one side of it
+	    an edge specified by the set of leaves on one side of it
 	E:List
-	    An edge specified by a list of the leaves on one side of it
+	    an edge specified by a list of the leaves on one side of it
     Outputs
-        U:LeafTree
-	    The tree obtained from {\tt T} by contracting the specified edge
+        :LeafTree
+	    obtained from {\tt T} by contracting the specified edge
     Description
         Text
-	    This function produces a new LeafTree obtained by contracting the edge $e$ of tree $T$.
+	    This function produces a new object of class @TO LeafTree@ obtained by contracting the edge {\tt e} of tree {\tt T}.
         Example
 	    T = leafTree(4,{{0,1}})
 	    edgeContract(T, set {0,1})
+///
+-------------------------------
+-- labeledTrees
+doc///
+    Key
+	labeledTrees
+	(labeledTrees,ZZ)
+    Headline
+        enumerate all labeled trees
+    Usage
+	labeledTrees n
+    Inputs
+        n:ZZ
+	    the number of leaves
+    Outputs
+        :List
+	    of all trees with {\tt n} leaves
+    Description
+        Text
+	    This function enumerates all possible homeomorphically-reduced trees 
+	    (no degree-2 vertices) with {\tt n} leaves labeled by $0,\ldots, n-1$, 
+	    including all possible labelings.  The trees are represented as objects of class @TO LeafTree@.
+        Example
+	    L = labeledTrees 4
+    SeeAlso
+        labeledBinaryTrees
+        rootedTrees
+        rootedBinaryTrees
+	unlabeledTrees
+///
+-------------------------------
+-- labeledBinaryTrees
+doc///
+    Key
+	labeledBinaryTrees
+	(labeledBinaryTrees,ZZ)
+    Headline
+        enumerate all binary labeled trees
+    Usage
+	labeledTrees n
+    Inputs
+        n:ZZ
+	    the number of leaves
+    Outputs
+        :List
+	    of all binary trees with {\tt n} leaves
+    Description
+        Text
+	    This function enumerates all possible binary trees with {\tt n} leaves 
+	    labeled by $0,\ldots, n-1$, including all possible labelings.  
+	    The trees are represented as an object of class @TO LeafTree@.
+        Example
+	    L = labeledBinaryTrees 4
+    SeeAlso
+        labeledTrees
+        rootedTrees
+        rootedBinaryTrees
+	unlabeledTrees
+///
+-------------------------------
+-- rootedTrees
+doc///
+    Key
+	rootedTrees
+	(rootedTrees,ZZ)
+    Headline
+        enumerate all rooted trees
+    Usage
+	rootedTrees n
+    Inputs
+        n:ZZ
+	    the number of leaves
+    Outputs
+        :List
+	    of all rooted trees with $n$ leaves
+    Description
+        Text
+	    This function enumerates all possible homeomorphically-reduced trees 
+	    (no degree-2 vertices) with a distinguished root and {\tt n-1} unlabeled leaves.  
+	    Each tree is an object of class @TO LeafTree@.  For the purposes of representation, 
+	    the root is named {\tt 0} and the unlabeled leaves are named $1,\ldots,n-1$.  
+	    In other words each class of unlabeled rooted tree is represented once by a particular 
+	    labeling of that tree.
+        Example
+	    L = rootedTrees 4
+    SeeAlso
+        labeledTrees
+        labeledBinaryTrees
+        rootedBinaryTrees
+	unlabeledTrees
+///
+-------------------------------
+-- rootedBinaryTrees
+doc///
+    Key
+	rootedBinaryTrees
+	(rootedBinaryTrees,ZZ)
+    Headline
+        enumerate all rooted binary trees
+    Usage
+	rootedBinaryTrees n
+    Inputs
+        n:ZZ
+	    the number of leaves
+    Outputs
+        :List
+	    of all rooted binary @TO LeafTree@s with {\tt n} leaves
+    Description
+        Text
+	    This function enumerates all possible binary trees with a distinguished root 
+	    and {\tt n-1} unlabeled leaves. Each tree is an object of class @TO LeafTree@.  
+	    For the purposes of representation, the root is named $0$ and the unlabeled leaves 
+	    are named $1,\ldots,n-1$.  In other words each class of unlabeled rooted tree is 
+	    represented once by a particular labeling of that tree.
+        Example
+	    L = rootedBinaryTrees 5
+    SeeAlso
+        labeledTrees
+        labeledBinaryTrees
+        rootedTrees
+	unlabeledTrees
+///
+-------------------------------
+-- unlabeledTrees
+doc///
+    Key
+	unlabeledTrees
+	(unlabeledTrees,ZZ)
+    Headline
+        enumerate all unlabeled trees
+    Usage
+	unlabeledTrees n
+    Inputs
+        n:ZZ
+	    the number of leaves
+    Outputs
+        :List
+	    of all binary unlabeled trees with {\tt n} leaves
+    Description
+        Text
+	    This function enumerates all possible binary trees with {\tt n} unlabeled leaves.
+	    Each tree is an object of class @TO LeafTree@.
+	    Each class of unlabeled tree is represented by a particular labeling of that tree.
+	    Some duplicates may appear in the list, but each equivalence class is guaranteed to
+	    appear at least once.
+        Example
+	    L = unlabeledTrees 5
+    Caveat
+        For {\tt n} larger than 5, some equivalence classes of trees may appear more than once.
+    SeeAlso
+        labeledTrees
+        labeledBinaryTrees
+        rootedTrees
+	rootedBinaryTrees
 ///
 -------------------------------
 -- graph
@@ -1770,24 +2141,54 @@ doc///
     Key
 	(graph,LeafTree)
     Headline
-        Converts a LeafTree to Graph
+        convert a LeafTree to Graph
     Usage
-        G = graph T
+        graph T
     Inputs
         T:LeafTree
     Outputs
-        G:Graph
-	
+        :Graph
     Description
         Text
-	    This converts a LeafTree representation of a tree into a @TO Graph@.
+	    This converts a @TO LeafTree@ representation of a tree into a @TO Graph@.
 
 	    The internal vertices of a LeafTree are not named, so each vertex is specified by the partition of the set of leaves
-	    formed by removing the vertex.  Each partition is given as a List of Sets.
+	    formed by removing the vertex.  Each partition is given as a @TO List@ of @TO Set@s.
         Example
 	    T = leafTree(4,{{0,1}})
 	    G = graph T
 	    adjacencyMatrix G
+///
+-------------------------------
+-- digraph
+doc///
+    Key
+	(digraph,LeafTree,List)
+	(digraph,LeafTree,Set)
+    Headline
+        convert a LeafTree to a Digraph
+    Usage
+        digraph(T,r)
+    Inputs
+        T:LeafTree
+	r:List
+	    representing a vertex
+    Outputs
+        :Digraph
+    Description
+        Text
+	    A rooted tree can be represented by an object of class @TO LeafTree@ and a choice of vertex to be the root.
+	    This function converts such a representation of a rooted tree into an object of class @TO Digraph@ with
+	    edges oriented away from the root.
+
+	    The internal vertices of an object of class @TO LeafTree@ are not named, so each vertex is specified by the partition of the set of leaves
+	    formed by removing the vertex.  Each partition is given as a list of sets.  This is also how the root vertex should
+	    be passed to the function.
+        Example
+	    T = leafTree(4,{{0,1}})
+	    r = {set{0,1}, set{2}, set{3}}
+	    D = digraph(T,r)
+	    adjacencyMatrix D
 ///
 
 -----------------------------------------------------------
@@ -1851,14 +2252,16 @@ assert(C == D)
 ///
 
 --Here we give a small test that qRing produces a polynomial ring 
---in the correct number of variables. 
+--in the correct number of variables and that the elements are as expected
 
 TEST ///
 S = leafTree(4, {{0,1}})
 R = qRing(S, JCmodel)
-P = qRing(4, JCmodel)
 assert(dim R == 64)
+assert((vars R)_(0,0) == q_(0,0,0,0))
+P = qRing(4, JCmodel)
 assert(dim P == 64)
+assert((vars P)_(0,0) == q_(0,0,0,0))
 ///
 
 
@@ -2005,13 +2408,13 @@ T = leafTree(6, {{}})
 internalEdges(S)
 internalEdges(T)
 IVS= internalVertices(S)
-IVSs = set for x in IVS list set x
+IVSs = set IVS
 A = set {set {set {0, 1, 2, 3}, set {4}, set {5}}, set {set {0, 1, 2}, set {3},
 	 set {4, 5}}, set {set {0, 1}, set {2}, set {3, 4, 5}}, set {set {0},
       set {1}, set {2, 3, 4, 5}}}
 assert( IVSs == A)
 IVT = internalVertices(T)
-IVTs = set for x in IVT list set x
+IVTs = set IVT
 B = set{set{ set{0}, set {1}, set {2}, set {3}, set {4}, set {5}}}
 assert( IVTs == B)
 ///

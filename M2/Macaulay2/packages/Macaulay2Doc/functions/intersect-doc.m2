@@ -6,17 +6,12 @@
 doc ///
 Node
   Key
-    intersect
-  Headline
-    compute an intersection
-Node
-  Key
-    (intersect, List)
-    (intersect, Sequence)
-    (intersect, Ideal)
-    (intersect, Module)
-    [intersect, Strategy]
-    [intersect, MinimalGenerators]
+     (intersect, Ideal)
+    [(intersect, Ideal),  Strategy]
+    [(intersect, Ideal),  MinimalGenerators]
+     (intersect, Module)
+    [(intersect, Module), Strategy]
+    [(intersect, Module), MinimalGenerators]
   Headline
     compute an intersection of ideals or modules
   Usage

@@ -1,7 +1,7 @@
 newPackage(
     "MonomialOrbits",
-    Version => "0.9", 
-    Date => "18 December 2020",
+    Version => "1.0", 
+    Date => "18 December 2020, rev 10 May 2021",
     Authors => {{Name => "David Eisenbud", 
             Email => "de@msri.org", 
             HomePage => "http://www.msri.org/~de"},
@@ -9,13 +9,15 @@ newPackage(
             Email => "mike@math.cornell.edu", 
             HomePage => "http://pi.math.cornell.edu/~mike"}},
     Headline => "Orbit representatives of monomial ideals",
-    PackageExports =>{"Truncations"}, -- for 'truncate'
-    DebuggingMode => true
+    Keywords => {"Combinatorial Commutative Algebra"},
+    PackageImports =>{"Truncations"}, -- for 'truncate'
+    DebuggingMode => false
     )
 
 export {
     "orbitRepresentatives",
     "hilbertRepresentatives",
+    --options
     "MonomialType"
     }
 
@@ -42,26 +44,18 @@ monomialsInDegree = (d, R, type) -> (
     else 
         error "expected MonomialType to be either \"All\" or \"SquareFree\""
     )
+
 orbitRepresentatives = method(Options=>{MonomialType => "All"})
 
 orbitRepresentatives(Ring, VisibleList) := List => o -> (R, degs) -> (
-    G := permutations R;
-    result := {monomialIdeal 0_R};
-    rawMonsMat := matrix{{}};
-    mons := {};
-    for d in degs do (
-        rawMonsMat = if o.MonomialType === "SquareFree" then squareFree(d,R)
-                     else basis(d,R);
-        mons = flatten entries sort(rawMonsMat, 
-                     DegreeOrder => Ascending, MonomialOrder => Descending);
-        result = normalForms(sumMonomials(result, mons), G)
-        );
-    result
-    )
+    orbitRepresentatives(R, monomialIdeal 0_R, degs, o))
 
-orbitRepresentatives(Ring, MonomialIdeal, VisibleList) := List => o -> (R, I, degs) -> (
+orbitRepresentatives(Ring, Ideal, VisibleList) := List => o -> (R, I, degs) -> (
+
+    if not isMonomialIdeal I then error"orbitRepresentatives:arg 1 is not a monomial ideal";
+    result := {monomialIdeal I};
+
     G := permutations R;
-    result := {I};
     rawMonsMat := matrix{{}};
     mons := {};
     for d in degs do (
@@ -72,6 +66,34 @@ orbitRepresentatives(Ring, MonomialIdeal, VisibleList) := List => o -> (R, I, de
         );
     result
     )
+
+orbitRepresentatives(Ring, Ideal, Ideal, ZZ) := List => o -> (R, I, startmons, numelts) -> (
+         
+    --take or subtract numelts elements from startmons mod I, plus I.
+
+    if not isMonomialIdeal I then error"orbitRepresentatives:arg 1 is not a monomial ideal";
+    I = monomialIdeal I;
+
+    if not isMonomialIdeal startmons then error"orbitRepresentatives:arg 2 is not a monomial ideal";
+    startmons = monomialIdeal startmons;
+
+    G := permutations R;
+    start := compress ((gens startmons) % I);
+
+    if numelts < 0 then(
+	    L := flatten entries start;
+    	    sL := subsets(L, #L+numelts)/monomialIdeal;
+    	    result := normalForms(apply(sL, ell -> ell + I), G)
+    ) else (
+        result = {I};
+        mons := flatten entries sort(start,
+                    DegreeOrder => Ascending, MonomialOrder => Descending);
+        apply(numelts, i-> (
+           result = normalForms(sumMonomials(result, mons), G)
+           ));
+    result
+    ))
+
 
 hilbertRepresentatives = method(Options=>{MonomialType => "All"})
 hilbertRepresentatives(Ring, VisibleList) := List => o -> (R, h) -> (
@@ -182,37 +204,50 @@ doc ///
             permutations of the variables of $S$.
             
             The type of the ideals may be defined either by the number
-            of minimal generators of each degree, in @TO
+            of minimal generators of each degree, or by
+	    the set of monomials from which to choose 
+	    or by the set of monomials from which to
+	    subtract in @TO
             orbitRepresentatives @ or by the Hilbert function, in @TO
             hilbertRepresentatives@.  If the option {\tt MonomialType
             => "SquareFree"} is given, then only square-free monomial
             ideals are considered.
     Subnodes                                         
-        :Enumerating monomial ideals with given generator degrees
+        :Enumerating monomial ideals with given generator degrees or number of elements
             @TO orbitRepresentatives@
         :Enumerating monomial ideals with given Hilbert function
             @TO hilbertRepresentatives@
-        :Options limiting the type of ideals generated
-            @TO MonomialType@
+        :Options limiting the type of ideals generated and whether to add or subtract monomials
+            @TO MonomialType@ 
 ///
 
 doc ///
     Key
         orbitRepresentatives
         (orbitRepresentatives, Ring, VisibleList)
-        (orbitRepresentatives, Ring, MonomialIdeal, VisibleList)
+        (orbitRepresentatives, Ring, Ideal, VisibleList)
+        (orbitRepresentatives, Ring, Ideal, Ideal, ZZ)	
         [orbitRepresentatives, MonomialType]    
     Headline
         find representatives of monomial ideals under permutations of variables
     Usage
         L = orbitRepresentatives(R, degs)
         L = orbitRepresentatives(R, I, degs)
+	L = orbitRepresentatives(R, I, J, numelts)
     Inputs
         R:PolynomialRing
         degs:List 
             or @ofClass Sequence@, of the degrees of the generators
         I:Ideal
-            The starting ideal; all the ideals returned will contain this one. 
+            The starting ideal; all the ideals returned will contain this one.
+	J:Ideal
+	    A monomial ideal containing monomials from which to add to I;
+	    when numelts < 0, then the ideals formed are I+J minus 
+	    a certain number of monomials.
+	numelts:ZZ
+	    If numelts $\geq 0$ then each monomial ideal produced is
+	    I+(numelts elements of J); if numelts $< 0$ then 
+	    each monomial ideal produced is I+J minus (|numelts| elements of J).
         MonomialType => String
             (either {\tt "All"} or {\tt "SquareFree"}).  For {\tt "All"}, 
             all monomials are
@@ -266,6 +301,18 @@ doc ///
         Example
             S = ZZ/101[a,b];
             L = orbitRepresentatives(S,(2,2,2,2))
+	Text
+	    It is possible to give a starting monomial ideal, and add
+	    a given number of its generators.
+	Example
+            L = orbitRepresentatives(S,monomialIdeal a^3, (ideal(a,b))^3, 2)
+	Text
+	    If the number given is negative, then all but that number
+	    of elements of the starting monomial ideal in arg 2 are taken. The 
+	    starting monomial ideal is reduced mod the ideal in arg 1 before
+	    the process begins
+	Example
+	    L = orbitRepresentatives(S,monomialIdeal a^3, (ideal(a,b))^3, -2)
     SeeAlso
         hilbertRepresentatives
         MonomialType
@@ -362,7 +409,8 @@ TEST///
   I = monomialIdeal"a3,b3,c3"
   assert(#orbitRepresentatives(S,{3,3,3}) == 25)
   assert(#orbitRepresentatives(S,I,{3}) == 2)
-
+  assert(#orbitRepresentatives(S,monomialIdeal 0_S, (monomialIdeal vars S)^3, 3) == 25)
+  assert(#orbitRepresentatives(S,I, (monomialIdeal vars S)^3, 1) == 2)
   R = ZZ/101[a..f]
   assert(
       orbitRepresentatives(R,{4,5}, MonomialType => "SquareFree") 
@@ -391,6 +439,32 @@ TEST///
   S = ZZ/101[a,b,c,d]
   assert(# permutations S == 24)
 ///
+///
+restart
+debug loadPackage("MonomialOrbits", Reload=>true)
+///
+
+TEST///   
+S = ZZ/101[a..d]
+mm = monomialIdeal gens S
+assert ({monomialIdeal (a, b, c)} ==
+     orbitRepresentatives(S, monomialIdeal S_0, mm, -1))
+assert(orbitRepresentatives(S, monomialIdeal S_0, mm^2, -1) == 
+         {monomialIdeal(a,b^2,b*c,c^2,b*d,c*d), monomialIdeal(a,b^2,b*c,c^2,b*d,d^2)})
+assert({monomialIdeal (a, b)} == 
+       orbitRepresentatives(S, monomialIdeal S_0, mm, 1))
+assert(orbitRepresentatives(S, monomialIdeal S_0, mm^2, 2) ==
+       {monomialIdeal(a,b^2,b*c), monomialIdeal(a,b^2,c^2), monomialIdeal(a,b^2,c*d), monomialIdeal(a,b*c,b*d)})
+///
+
+TEST///
+S = ZZ/101[x_1..x_4]
+I0 = ideal x_1^2
+mm = ideal vars S
+mm2 = mm^2
+assert(all(apply(2, e -> orbitRepresentatives(S,I0,toList(e: 2))),L -> class L === List))
+assert(class orbitRepresentatives(S,I0,{}) === List)
+///
 
 end---------------------------------------------------------------------
 
@@ -403,4 +477,3 @@ end---------------------------------------------------------------------
   check "MonomialOrbits"
   viewHelp MonomialOrbits
 ///
-

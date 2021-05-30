@@ -1,4 +1,6 @@
 -- -*- M2-comint -*- hash: 1886230761
+Hello world from process 0 out of 1 processes
+-- COMPILE TIME: Feb 24 2021, 10:08:22
 
 i1 : QQ[x,y,z];
 
@@ -20,8 +22,8 @@ o6 = {y-x^2, z-x^3, -w_0^(-1)+z*w_0^(-1)+y*w_0^(-1)+x*w_0^(-1), w_0-x}
 
 i7 : ring ideal convertedSys
 
-o7 = QQ {x, y, z, w }
-                   0
+o7 = QQ {x..z, w }
+                0
 
 o7 : PolynomialRing
 
@@ -53,3 +55,4 @@ o12 = z  + x
 o12 : P
 
 i13 : 
+Bye world from process 0 out of 1 processes

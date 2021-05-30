@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
      "NAGtypes",
-     Version => "1.16",
-     Date => "Dec 2020",
+     Version => "1.17",
+     Date => "Jan 2021",
      Headline => "types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -308,7 +308,9 @@ assert areEqual(sortSolutions {p,p2,p3}, {p3,p,p2})
 load "./NAGtypes/PolyDualSpaces.m2"
 load "./NAGtypes/WSet-ambient.m2"
 load "./NAGtypes/WSet-proxy.m2"
-load "./NAGtypes/WSet-projective.m2"
+
+toChart = method()
+-- load "./NAGtypes/WSet-projective.m2" -- convert to HashTable
 load "./NAGtypes/WSet-multiaffine.m2"
  
 -- DOCUMENTATION ------------------------------------------------------

@@ -15,6 +15,10 @@
 #include <algorithm>                        // for copy
 #include <iostream>                         // for operator<<, basic_ostream
 
+#include <tbb/tick_count.h>                 // for tbb::tick_count
+#include <tbb/enumerable_thread_specific.h> // for tbb::enumerable_thread_specific
+#include <tbb/parallel_sort.h>              // for tbb::parallel_sort
+
 NCF4::NCF4(const FreeAlgebra& A,
            const ConstPolyList& input,
            int hardDegreeLimit,
@@ -23,14 +27,13 @@ NCF4::NCF4(const FreeAlgebra& A,
            )
     : mFreeAlgebra(A),
       mInput(input),
-      mTopComputedDegree(-1),
-      mHardDegreeLimit(hardDegreeLimit),
+      //mTopComputedDegree(-1),            // not used yet.
+      //mHardDegreeLimit(hardDegreeLimit), // not used yet.
       mMonomEq(A.monoid()),
       mMonomHashEqual(A.monoid()),
       mColumnMonomials(10,mMonomHash,mMonomHashEqual),
       mPreviousColumnMonomials(10,mMonomHash,mMonomHashEqual),
-//      mVectorArithmetic(vectorArithmetic(A.coefficientRing())),
-      mVectorArithmetic(new VectorArithmetic2(A.coefficientRing())),
+      mVectorArithmetic(new VectorArithmetic(A.coefficientRing())),
       mIsParallel(isParallel)
 {
   if (M2_gbTrace >= 1)
@@ -155,11 +158,11 @@ void NCF4::processPreviousF4Matrix()
     if (mRows[i].columnIndices.size() == 0) continue;
     int newReducerCol = mRows[i].columnIndices[0];
     mColumns[newReducerCol].pivotRow = i;
-    mPreviousColumnMonomials[mColumns[newReducerCol].word].second = i;
+    mColumnMonomials[mColumns[newReducerCol].word].second = i;
   } 
   
   // copy the finished rows and columns into the holding areas
-  mPreviousRows.clear();
+  clearRows(mPreviousRows);
   mPreviousColumns.clear();
   mPreviousColumnMonomials.clear();
   mPreviousMonomialSpace.deallocateAll();
@@ -335,7 +338,7 @@ void NCF4::reducedRowToPoly(Poly* result,
     freeAlgebra().monoid().monomInsertFromWord(resultMonomInserter,cols[col].word);
 }
 
-ring_elem NCF4::getCoeffOfMonom(const Poly& f, const Monom& m)
+ring_elem NCF4::getCoeffOfMonom(const Poly& f, const Monom& m) const
 {
   for (auto t = f.cbegin(); t != f.cend(); ++t)
   {
@@ -345,6 +348,7 @@ ring_elem NCF4::getCoeffOfMonom(const Poly& f, const Monom& m)
   return freeAlgebra().coefficientRing()->zero();
 }
 
+// this function is not used currently. and is probably leaky as written (see the swap)
 void NCF4::autoreduceByLastElement()
 {
   if (mGroebner.size() <= 1) return;
@@ -368,7 +372,9 @@ void NCF4::matrixReset()
   mOverlapsTodo.clear();
   mColumns.clear();
   mColumnMonomials.clear();
-  mRows.clear();
+  clearRows(mRows);
+  // we don't have to call clearRows on mOverlaps because the coeff vectors
+  // were moved to mRows first
   mOverlaps.clear();
   mFirstOverlap = 0;
   mMonomialSpace.deallocateAll();
@@ -590,12 +596,13 @@ void NCF4::processPreRow(PreRow r,
   //  an element of the input (if gbIndex < 0 and not prevReducer)
   //  a multiple of a gb element (if gbIndex >= 0 and not prevReducer)
   const Poly* elem;
+  Poly* tempelem;
   if (preRowType == PreviousReducerPreRow)
   {
     // in this case, we construct the poly locally for processing in this
     // function.  We will destroy it at the end, as the new monomials for reduction
     // are created and inserted into mMonomialSpace
-    Poly* tempelem = new Poly;
+    tempelem = new Poly;
     reducedRowToPoly(tempelem,mPreviousRows,mPreviousColumns,gbIndex);
     elem = tempelem;
   }
@@ -618,12 +625,12 @@ void NCF4::processPreRow(PreRow r,
   //          and place this monomial into mColumns.
   //          and search for divisor for it.
   //        
-  int nterms = elem->numTerms();
+  int numTerms = elem->numTerms();
 
-  auto wordRange = memoryBlock.allocateArray<Word>(nterms);
-  auto columnRange = memoryBlock.allocateArray<int>(nterms);
-  // int* componentAlloc = (int*)mMemoryPool.malloc(nterms*sizeof(int));
-  // Range<int> componentRange(componentAlloc,componentAlloc + nterms);
+  auto wordRange = memoryBlock.allocateArray<Word>(numTerms);
+  auto columnRange = memoryBlock.allocateArray<int>(numTerms);
+  // int* componentAlloc = (int*)mMemoryPool.malloc(numTerms*sizeof(int));
+  // Range<int> componentRange(componentAlloc,componentAlloc + numTerms);
   // for (auto& i : componentRange) i = 0;
 
   Word* nextColWord = wordRange.first;
@@ -637,10 +644,16 @@ void NCF4::processPreRow(PreRow r,
     *nextColWord = w;
     ++nextColWord;
   }
+
+  // this memory is stored in rowsVector and cleaned up later.
   CoeffVector coeffs = mVectorArithmetic->sparseVectorFromContainer(elem->getCoeffVector());
 
   // delete the Poly created for prevReducer case, if necessary.
-  if (preRowType == PreviousReducerPreRow) delete elem;
+  if (preRowType == PreviousReducerPreRow)
+  {
+    mFreeAlgebra.clear(*tempelem);
+    delete tempelem;
+  }
 
   // add the processed row to the appropriate list
   rowsVector.emplace_back(Row {coeffs, columnRange, wordRange});
@@ -833,40 +846,49 @@ void NCF4::labelAndSortF4Matrix()
   MonomSort<std::vector<Word>> monomialSorter(&freeAlgebra().monoid(),&tempWords);
   // stable sort was here before, but this sort is based on a total ordering
   // with no ties so we can use an unstable (and hence parallel!) sort.
-  tbb::parallel_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
-  
+  if (mIsParallel)
+    tbb::parallel_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
+  else
+    std::stable_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
+
+  auto applyLabelingColumns = [&](const tbb::blocked_range<int>& r) {
+    for (auto count = r.begin(); count != r.end(); ++count)
+      {
+        auto& val = mColumnMonomials[tempWords[columnIndices[count]]];
+        val.first = count;
+        mColumns[count].word = tempWords[columnIndices[count]];
+        mColumns[count].pivotRow = -1;
+      }
+    };
+
   // apply the sorted labeling to the columns
   mColumns.resize(sz);
-  tbb::parallel_for(tbb::blocked_range<int>{0,(int)sz},
-         [&](const tbb::blocked_range<int>& r)
-         {
-           for (auto count = r.begin(); count != r.end(); ++count)
-             {
-               auto& val = mColumnMonomials[tempWords[columnIndices[count]]];
-               val.first = count;
-               mColumns[count].word = tempWords[columnIndices[count]];
-               mColumns[count].pivotRow = -1;
-             }
-         });
+  if (mIsParallel)
+    tbb::parallel_for(tbb::blocked_range<int>{0,(int)sz}, applyLabelingColumns);
+  else
+    applyLabelingColumns(tbb::blocked_range<int>{0,(int)sz});
+
+  auto applyLabelingRows = [&](const tbb::blocked_range<int>& r) {
+    for (auto i = r.begin(); i != r.end(); ++i)
+      {
+        auto& comps = mRows[i].columnIndices;
+        auto& words = mRows[i].columnWords;
+        // sets the pivot row in the column if this is a reducer row
+        if (i < mFirstOverlap)
+          {
+            mColumns[mColumnMonomials[words[0]].first].pivotRow = i;
+            mColumnMonomials[words[0]].second = i;
+          }
+        for (int j = 0; j < words.size(); ++j)
+          comps[j] = mColumnMonomials[words[j]].first;
+      }
+    };
 
   // now fix the column labels in the rows and set pivot rows in columns
-  tbb::parallel_for(tbb::blocked_range<int>{0,(int)mRows.size()},
-        [&](const tbb::blocked_range<int>& r)
-        {
-          for (auto i = r.begin(); i != r.end(); ++i)
-          {
-            auto& comps = mRows[i].columnIndices;
-            auto& words = mRows[i].columnWords;
-            // sets the pivot row in the column if this is a reducer row
-            if (i < mFirstOverlap)
-            {
-              mColumns[mColumnMonomials[words[0]].first].pivotRow = i;
-              mColumnMonomials[words[0]].second = i;
-            }
-            for (int j = 0; j < words.size(); ++j)
-              comps[j] = mColumnMonomials[words[j]].first;
-          }
-        });
+  if (mIsParallel)
+    tbb::parallel_for(tbb::blocked_range<int>{0,(int)mRows.size()},applyLabelingRows);
+  else
+    applyLabelingRows(tbb::blocked_range<int>{0,(int)mRows.size()});
 }
 
 // both reduceF4Row and parallelReduceF4Row call this function
@@ -892,6 +914,7 @@ void NCF4::generalReduceF4Row(int index,
   mVectorArithmetic->sparseRowToDenseRow(dense,
                                          mRows[index].coeffVector,
                                          mRows[index].columnIndices);
+
   do {
     int pivotrow = mColumns[first].pivotRow;
     if (pivotrow >= 0)
@@ -910,7 +933,9 @@ void NCF4::generalReduceF4Row(int index,
       }
     first = mVectorArithmetic->denseRowNextNonzero(dense, first+1, last);
   } while (first <= last);
-  
+
+  // we have to free mRows[index] information because we are about to overwrite it
+  // how can I free mRows[index].columnIndices?  it wasn't the last block allocated on mMonomialSpace...
   mVectorArithmetic->safeDenseRowToSparseRow(dense,
                                              mRows[index].coeffVector,
                                              mRows[index].columnIndices,
@@ -965,18 +990,19 @@ void NCF4::parallelReduceF4Matrix()
   }
 
   // sequentially perform one more pass to reduce the spair rows down 
-  for (int i = mFirstOverlap; i < mRows.size(); ++i)
+  for (auto i = mFirstOverlap; i < mRows.size(); ++i)
     reduceF4Row(i,
                 mRows[i].columnIndices[0],
                 -1,
                 numCancellations,
                 denseVector);
 
-  // interreduce the matrix with respect to these overlaps.  This needs to be sequential.
-  for (int i = mRows.size()-1; i >= mFirstOverlap; --i)
-    reduceF4Row(i,
-                mRows[i].columnIndices[1],
-                mRows[i].columnIndices[0],
+  // interreduce the matrix with respect to these overlaps.
+  // This needs to be sequential as well
+  for (auto i = mRows.size(); i > mFirstOverlap; --i)
+    reduceF4Row(i-1,
+                mRows[i-1].columnIndices[1],
+                mRows[i-1].columnIndices[0],
                 numCancellations,
                 denseVector);
 
@@ -995,7 +1021,7 @@ void NCF4::reduceF4Matrix()
   auto denseVector = mVectorArithmetic->allocateDenseCoeffVector(mColumnMonomials.size());
 
   // reduce each overlap row by mRows.
-  for (int i = mFirstOverlap; i < mRows.size(); ++i)
+  for (auto i = mFirstOverlap; i < mRows.size(); ++i)
     reduceF4Row(i,
                 mRows[i].columnIndices[0],
                 -1,
@@ -1003,12 +1029,14 @@ void NCF4::reduceF4Matrix()
                 denseVector);
 
   // interreduce the matrix with respect to these overlaps.
-  for (int i = mRows.size()-1; i >= mFirstOverlap; --i)
-    reduceF4Row(i,
-                mRows[i].columnIndices[1],
-                mRows[i].columnIndices[0],
+  for (auto i = mRows.size(); i > mFirstOverlap; --i)
+    reduceF4Row(i-1,
+                mRows[i-1].columnIndices[1],
+                mRows[i-1].columnIndices[0],
                 numCancellations,
                 denseVector);
+
+  mVectorArithmetic->deallocateCoeffVector(denseVector);
 
   //std::cout << "Number of cancellations: " << numCancellations << std::endl;
 }
@@ -1032,7 +1060,7 @@ void NCF4::displayF4MatrixSize(std::ostream & o) const
   //     o << "mReducersTodo size: " << mReducersTodo.size() << std::endl;
   //     exit(1);
   //   }
-  for (long i = 0; i < mRows.size(); ++i)
+  for (auto i = 0; i < mRows.size(); ++i)
   {
     if (i < mFirstOverlap) 
        numReducerEntries += mVectorArithmetic->size(mRows[i].coeffVector);
@@ -1079,7 +1107,7 @@ void NCF4::displayF4Matrix(std::ostream& o) const
   //     exit(1);
   //   }
   const Ring* kk = freeAlgebra().coefficientRing();
-  for (int count = 0; count < mRows.size(); ++count)
+  for (auto count = 0; count < mRows.size(); ++count)
     {
       // PreRow pr = mReducersTodo[count];
       // o << count << " ("<< std::get<0>(pr) << ", "
@@ -1099,7 +1127,7 @@ void NCF4::displayF4Matrix(std::ostream& o) const
           o << "***ERROR*** expected coefficient array and components array to have the same length" << std::endl;
           exit(1);
         }
-      for (int i=0; i < mVectorArithmetic->size(mRows[count].coeffVector); ++i)
+      for (auto i=0; i < mVectorArithmetic->size(mRows[count].coeffVector); ++i)
         {
           buffer b;
           kk->elem_text_out(b, mVectorArithmetic->ringElemFromSparseVector(mRows[count].coeffVector,i));
@@ -1131,14 +1159,14 @@ void NCF4::displayFullF4Matrix(std::ostream& o) const
       exit(1);
     }
   const Ring* kk = freeAlgebra().coefficientRing();
-  for (int count = 0; count < mRows.size(); ++count)
+  for (auto count = 0; count < mRows.size(); ++count)
     {
       PreRow pr = mReducersTodo[count];
       o << count << " ("<< pr.left << ", "
         << pr.preRowIndex << ", "
         << pr.right << ")";
-      int count2 = 0;
-      for (int i=0; i < mColumnMonomials.size(); i++)
+      size_t count2 = 0;
+      for (auto i=0; i < mColumnMonomials.size(); i++)
         {
           if (count2 == mVectorArithmetic->size(mRows[count].coeffVector) or 
               mRows[count].columnIndices[count2] != i)
@@ -1155,6 +1183,16 @@ void NCF4::displayFullF4Matrix(std::ostream& o) const
         }
       o << std::endl;
     }
+}
+
+void NCF4::clearRows(RowsVector& rowsVector)
+{
+  for (auto r : rowsVector)
+  {
+    // the VectorArithmetic object calls clear() on the ring elements in r.coeffVector as well.
+    mVectorArithmetic->deallocateCoeffVector(r.coeffVector);
+  }
+  rowsVector.clear();
 }
 
 // Local Variables:

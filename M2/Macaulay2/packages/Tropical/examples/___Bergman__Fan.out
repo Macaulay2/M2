@@ -1,0 +1,32 @@
+-- -*- M2-comint -*- hash: -1587567648
+-- polymake not present
+
+i1 : M=uniformMatroid(2,3);
+
+i2 : T=BergmanFan(M);
+
+i3 : rays T
+
+o3 = | 0 0  0 |
+     | 1 -1 0 |
+     | 0 -1 1 |
+
+              3        3
+o3 : Matrix ZZ  <--- ZZ
+
+i4 : maxCones T
+
+o4 = {{2}, {0}, {1}}
+
+o4 : List
+
+i5 : linealitySpace T
+
+o5 = | 1 |
+     | 1 |
+     | 1 |
+
+              3        1
+o5 : Matrix ZZ  <--- ZZ
+
+i6 : 

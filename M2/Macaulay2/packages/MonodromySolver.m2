@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"MonodromySolver",
-    	Version => "1.14", 
-    	Date => "Nov 2020",
+    	Version => "1.15", 
+    	Date => "May 2021",
     	Authors => {
 	     {Name => "Timothy Duff", Email => "tduff3@gatech.edu"},
 	     {Name => "Cvetelina Hill", Email => "cvetelina.hill@math.gatech.edu"},
@@ -57,4 +57,5 @@ check "MonodromySolver"
 uninstallPackage "MonodromySolver"
 restart
 installPackage("MonodromySolver", RemakeAllDocumentation=>true, RerunExamples=>true)
+viewHelp MonodromySolver
 check "MonodromySolver"

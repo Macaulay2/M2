@@ -72,6 +72,35 @@ inline void mpfr_reallocate_limbs (mpfr_ptr _z)
   _z->_mpfr_exp = tmp._mpfr_exp;
   _z->_mpfr_d = p;
 }
+    
+inline void mpfi_reallocate_limbs (mpfi_ptr _z)
+{
+    mpfr_reallocate_limbs(&(_z->left));
+    mpfr_reallocate_limbs(&(_z->right));
+    
+  /*__mpfi_struct tmp;
+  tmp = *_z;
+ 
+  // left
+  int limb_size = (_z->left._mpfr_prec - 1) / GMP_NUMB_BITS + 1;
+  mp_limb_t *p = (mp_limb_t*) GC_MALLOC(limb_size * sizeof(mp_limb_t));
+  memcpy(p, _z->left._mpfr_d, limb_size * sizeof(mp_limb_t));
+  mpfr_clear(&(_z->left));
+  _z->left._mpfr_prec = tmp.left._mpfr_prec;
+  _z->left._mpfr_sign = tmp.left._mpfr_sign;
+  _z->left._mpfr_exp = tmp.left._mpfr_exp;
+  _z->left._mpfr_d = p;
+ 
+  // right
+  limb_size = (_z->right._mpfr_prec - 1) / GMP_NUMB_BITS + 1;
+  p = (mp_limb_t*) GC_MALLOC(limb_size * sizeof(mp_limb_t));
+  memcpy(p, _z->right._mpfr_d, limb_size * sizeof(mp_limb_t));
+  mpfr_clear(&(_z->right));
+  _z->right._mpfr_prec = tmp.right._mpfr_prec;
+  _z->right._mpfr_sign = tmp.right._mpfr_sign;
+  _z->right._mpfr_exp = tmp.right._mpfr_exp;
+  _z->right._mpfr_d = p;*/
+}
 
   typedef struct {
     mpfr_srcptr re;
@@ -89,6 +118,13 @@ inline void mpfr_reallocate_limbs (mpfr_ptr _z)
   inline mpfr_srcptr moveTo_gmpRR (mpfr_ptr _z)
   {
     mpfr_reallocate_limbs(_z);
+    return _z;
+  }
+    
+  inline mpfi_srcptr moveTo_gmpRRi (mpfi_ptr _z)
+  {
+    mpfr_reallocate_limbs(&(_z->left));
+    mpfr_reallocate_limbs(&(_z->right));
     return _z;
   }
   

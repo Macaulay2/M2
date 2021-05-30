@@ -146,7 +146,7 @@ doc /// --smat2vec
         (vec2smat,Matrix)
         (vec2smat,List)
         Scaling
-     	[smat2vec,Scaling]
+        [smat2vec,Scaling]
     Headline
         vectorization of a symmetric matrix
     Usage
@@ -329,7 +329,7 @@ doc /// --refine
     Description
       Text
         This function uses Newton's method to improve the precision of an optimal primal/dual pair.
-        The refined solution has relative error bounded by min(@TO ErrorTolerance@,2(-@TO Bits@)). 
+        The refined solution has relative error bounded by min(@TO ErrorTolerance@,2(-@TO Bits@)).
         The number of iterations made is at most @TO Iterations@.
       Example
         P = sdp(matrix{{1,0},{0,2}}, matrix{{0,1},{1,0}}, matrix{{-1}});
@@ -376,7 +376,7 @@ doc /// --project2linspace
 --###################################
 document { --Verbosity
     Key => {
-	Verbosity,
+        Verbosity,
         [optimize,Verbosity],
         [checkOptimize,Verbosity]
         },
@@ -443,13 +443,13 @@ doc ///
     Usage
       changeSolver (solver, path)
     Inputs
-        Solver:String
-	  the name of the solver to configure: CSDP, MOSEK, or SDPA
-	path:String
-	  the full path to the executable of the solver
+      Solver:String
+        the name of the solver to configure: CSDP, MOSEK, or SDPA
+      path:String
+        the full path to the executable of the solver
     Description
       Text
-        The path can be specified as an absolute or relative path of the executable and must include the name of the executable.        
+        The path can be specified as an absolute or relative path of the executable and must include the name of the executable.
       Example
         changeSolver ("CSDP", "/path/to/csdp")
     Caveat
@@ -468,7 +468,7 @@ doc ///
       checkOptimize (solver)
     Inputs
       solver:String
-	    the name of the solver to configure: CSDP, MOSEK, M2, or SDPA
+        the name of the solver to configure: CSDP, MOSEK, M2, or SDPA
     Outputs
       :List
         indicating whether the solver passed each of the tests
@@ -492,5 +492,5 @@ doc ///
     Description
       Text
         The package uses these mutable variables to store the paths of the executables.
-	They can be edited by the user. The preferred way to do this is @TO changeSolver@, though.
+        They can be edited by the user.  The prefered way to do this is @TO changeSolver@, though.
 ///

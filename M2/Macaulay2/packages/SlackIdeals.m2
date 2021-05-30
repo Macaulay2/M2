@@ -306,7 +306,7 @@ getFacetBases List := (List, List) => opts -> V -> (
 slackFromPlucker = method(Options => {Object =>  "polytope"}) 
 slackFromPlucker (List, List) := Matrix => opts -> (V, B) -> (
     -- INPUT: list of coordinates V for polytope vertices, cone generators, or matroid vectors; a set B of hyperplane spanning set indices
-    -- OUTPUT: slack matrix filled with Plucker coordinates
+    -- OUTPUT: slack matrix filled with Plücker coordinates
     -- CAVEAT: does not check if B actually spans for given V, does not check orientation of simplices in B
     v := #V;
     X := matrix for p in V list join({1}, p);
@@ -322,13 +322,13 @@ slackFromPlucker (List, List) := Matrix => opts -> (V, B) -> (
     if #(B_0) != d then (
 		error "Please give a realization in the correct dimension"
 	);
-    -- get matrix of Plucker index sets
+    -- get matrix of Plücker index sets
     M := for i from 0 to v-1 list for b in B list join(b, {i});
     matrix apply(M, r -> apply(r, e -> det(submatrix(X, e, ))))
 )
 slackFromPlucker List := Matrix => opts -> V -> (
     -- INPUT: list of coordinates V for polytope vertices, cone generators, or matroid vectors
-    -- OUTPUT: slack matrix filled with Plucker coordinates
+    -- OUTPUT: slack matrix filled with Plücker coordinates
     (newV, B) := getFacetBases(V, Object => opts.Object);
 	if opts.Object == "polytope" or opts.Object == "cone" then (
 		<< "\nInput has been reorderd to" << endl << newV << endl;
@@ -337,14 +337,14 @@ slackFromPlucker List := Matrix => opts -> V -> (
 )
 slackFromPlucker Polyhedron := Matrix => opts -> P -> (
 	-- INPUT: polytope P
-	-- OUTPUT: slack matrix filled with Plucker coordinates
+	-- OUTPUT: slack matrix filled with Plücker coordinates
 	V := Polyhedra$vertices P;
 	(newV, B) := getFacetBases P;
 	slackFromPlucker(entries transpose V, B, Object => "polytope")
 )
 slackFromPlucker Matroid := Matrix => opts -> M -> (
 	-- INPUT: matroid M
-	-- OUTPUT: slack matrix filled with Plucker coordinates
+	-- OUTPUT: slack matrix filled with Plücker coordinates
 	v := #(M_*);
 	X := M_0;
 	for i from 1 to v-1 do X = X | M_i;
@@ -353,7 +353,7 @@ slackFromPlucker Matroid := Matrix => opts -> M -> (
 	if #(B_0) != d then (
 		error "Please give a realization in the correct dimension"
 	);
-	-- get matrix of Plucker index sets
+	-- get matrix of Plücker index sets
 	N := for i from 0 to v-1 list for b in B list join(b, {i});
 	matrix apply(N, r -> apply(r, e -> det(submatrix(X, , e))))
 )
@@ -374,20 +374,20 @@ sgn = (I, J) -> (
 slackFromGalePlucker = method()
 slackFromGalePlucker (List, List) := Matrix => (B, G) -> (
     -- INPUT: a set B of hyperplane spanning set indices; list of Gale vectors G 
-    -- OUTPUT: slack matrix filled with Plucker coordinates
+    -- OUTPUT: slack matrix filled with Plücker coordinates
     -- CAVEAT: does not check if B actually spans for given V, does not check orientation of simplices in B\
 	-- CAVEAT: make sure elements of G are listed in the order correspondong to indices in B 
     v := #G;
     d := v-1-#(G_0);
     if #(B_0) != d then error "Dimensions do not match.";
-    -- get matrix of Plucker index sets and sign of the permutation that puts them in the order  
+    -- get matrix of Plücker index sets and sign of the permutation that puts them in the order
     M := for i from 0 to v-1 list for b in B list {sgn(toList(set(0..v-1)-join(b, {i})), join(b, {i}))*sgn(b, {i}), sort(toList(set(0..v-1) - join(b, {i})))};
     -- account for the fact that [v]-J is incorrect size if J contains repeats
     matrix apply(M, r->apply(r, e -> if #e_1 != v-d-1 then 0 else (e_0)*det(submatrix(matrix G, e_1, ))))
 )    
 slackFromGalePlucker (List, Matrix) := Matrix => (B, MG) -> (
     -- INPUT: a set B of hyperplane spanning set indices; matrix of Gale vectors MG
-    -- OUTPUT: slack matrix filled with Plucker coordinates
+    -- OUTPUT: slack matrix filled with Plücker coordinates
     -- CAVEAT: does not check if B actually spans for given V, does not check orientation of simplices in B
     if (numgens source MG)>(numgens target MG) then (
 		slackFromGalePlucker(B, entries transpose MG)
@@ -606,7 +606,7 @@ symbolicSlackMatrix Cone := Matrix => opts -> C -> (
 symbolicSlackOfPlucker = method(Options => {Object => "polytope", CoefficientRing => QQ})
 symbolicSlackOfPlucker (ZZ, List) := Matrix => opts -> (v, B) -> (
     -- INPUT: number v of polytope vertices, cone generators, or matroid vectors; a set B of hyperplane spanning set indices
-    -- OUTPUT: slack matrix filled with Plucker variables
+    -- OUTPUT: slack matrix filled with Plücker variables
     -- CAVEAT: does not adjust for simplex orientation in B
     d := #(B_0);
     F := opts.CoefficientRing;
@@ -617,13 +617,13 @@ symbolicSlackOfPlucker (ZZ, List) := Matrix => opts -> (v, B) -> (
 )
 symbolicSlackOfPlucker (List, List) := Matrix => opts -> (V, B) -> (
     -- INPUT: list of coordinates V for polytope vertices, cone generators, or matroid vectors; a set B of hyperplane spanning set indices
-    -- OUTPUT: slack matrix filled with Plucker variables
+    -- OUTPUT: slack matrix filled with Plücker variables
     -- CAVEAT: does not check if B makes sense for given V
     symbolicSlackOfPlucker(#V, B, CoefficientRing => opts.CoefficientRing)
 )
 symbolicSlackOfPlucker List := Matrix => opts -> V -> (
     -- INPUT: list of coordinates V for polytope vertices, cone generators, or matroid vectors
-    -- OUTPUT: slack matrix filled with Plucker variables
+    -- OUTPUT: slack matrix filled with Plücker variables
     (newV, B) := getFacetBases(V, Object => opts.Object);
 	if opts.Object == "polytope" or opts.Object == "cone" then (
 		<< "\nInput has been reorderd to" << endl << newV << endl;
@@ -632,13 +632,13 @@ symbolicSlackOfPlucker List := Matrix => opts -> V -> (
 )
 symbolicSlackOfPlucker (Matrix, List) := Matrix => opts -> (S, B) -> (
     -- INPUT: (symbolic) slack matrix S; a set B of hyperplane spanning set indices
-    -- OUTPUT: slack matrix filled with Plucker variables
+    -- OUTPUT: slack matrix filled with Plücker variables
     -- CAVEAT: does not check if B makes sense for given S
     symbolicSlackOfPlucker(numgens target S, B, CoefficientRing => opts.CoefficientRing)
 )
 symbolicSlackOfPlucker Matrix := Matrix => opts -> S -> (
     -- INPUT: slack matrix S
-    -- OUTPUT: slack matrix filled with Plucker variables
+    -- OUTPUT: slack matrix filled with Plücker variables
 	if instance(ring S, PolynomialRing) and (flatten entries S != flatten entries substitute(S, coefficientRing ring S)) then (
 		error "Please give an actual slack matrix or a list of facet bases"
 	);
@@ -647,13 +647,13 @@ symbolicSlackOfPlucker Matrix := Matrix => opts -> S -> (
 )
 symbolicSlackOfPlucker Polyhedron := Matrix => opts -> P -> (
     -- INPUT: polytope P
-    -- OUTPUT: slack matrix filled with Plucker variables
+    -- OUTPUT: slack matrix filled with Plücker variables
 	(newV,B) := getFacetBases P;
 	symbolicSlackOfPlucker(nVertices P, B, CoefficientRing => opts.CoefficientRing)
 )
 symbolicSlackOfPlucker Matroid := Matrix => opts -> M -> (
     -- INPUT: polytope P
-    -- OUTPUT: slack matrix filled with Plucker variables
+    -- OUTPUT: slack matrix filled with Plücker variables
 	(newV,B) := getFacetBases M;
 	symbolicSlackOfPlucker(#(M_*), B, CoefficientRing => opts.CoefficientRing)
 )
@@ -1042,7 +1042,7 @@ slackToPluckerMatrix = (H, n, d, R) -> (
     -- OUTPUT: the substitution matrix M_H
     cols := subsets(H, d);
     rows := sort(toList(set(0..n-1)-H));
-    -- Plucker variable p_({r}|c) has to be retrieved as the generator of R having gets the
+    -- Plücker variable p_({r}|c) has to be retrieved as the generator of R having gets the
     -- index given by the position of {r}|c in the list of subsets of {0..n-1} of size d+1
     for r in rows list for c in cols list sgn({r}, c)*R_(position(subsets(toList(0..n-1), d+1), J -> (J==sort(join({r}, c)))))
 )
@@ -1604,7 +1604,7 @@ doc ///
 	(slackFromPlucker, Polyhedron)
 	(slackFromPlucker, Matroid)
     Headline
-        fill the slack matrix of a given polytope, cone or matroid with Plucker coordinates
+        fill the slack matrix of a given polytope, cone or matroid with Plücker coordinates
     Usage
     	fillPl = slackFromPlucker(V, B)
 	fillPl = slackFromPlucker V
@@ -1621,11 +1621,11 @@ doc ///
 	    a matroid
     Outputs
     	fillPl:Matrix
-		slack matrix filled with Plucker coordinates
+		slack matrix filled with Plücker coordinates
     Description
     	Text
 	    Given a slack matrix or a list of vertices of d-polytope or a rank d+1 matroid, or (d+1)-cone generators,
-	    it fills the corresponding slack matrix with Plucker coordinates.
+	    it fills the corresponding slack matrix with Plücker coordinates.
 	Example
 	    V = {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {1, 0, 1}, {1, 1, 0}};
 	    B = {{1, 2, 4}, {0, 2, 3}, {0, 1, 4}, {3, 4, 5}, {0, 1, 2}};
@@ -1645,7 +1645,7 @@ doc ///
 	(slackFromGalePlucker, List, List)
 	(slackFromGalePlucker, List, Matrix)
     Headline
-	fill the slack matrix with Plucker coordinates of the Gale transform
+	fill the slack matrix with Plücker coordinates of the Gale transform
     Usage
     	fillPl = slackFromGalePlucker(B, G)
 	fillPl = slackFromGalePlucker(B, MG)
@@ -1658,11 +1658,11 @@ doc ///
 	    matrix of Gale vectors of a polytope
     Outputs
     	fillPl:Matrix
-		slack matrix filled with Plucker coordinates
+		slack matrix filled with Plücker coordinates
     Description
         Text
 	    Given a set of vectors of a Gale transform or a matrix whose columns form a Gale transform of a polytope,
-	    it fills the slack matrix of the polytope with Plucker coordinates of the Gale transform.
+	    it fills the slack matrix of the polytope with Plücker coordinates of the Gale transform.
 	Example
 	    G = {{0, 1}, {1, 0}, {-1, -1}, {0, -1}, {-1, 0}, {1, 1}};
 	    B = {{1, 2, 4}, {0, 2, 3}, {0, 1, 4}, {3, 4, 5}, {0, 1, 2}};
@@ -1812,7 +1812,7 @@ doc ///
 	(symbolicSlackOfPlucker, Polyhedron)
 	(symbolicSlackOfPlucker, Matroid)
     Headline
-        fill the slack matrix with Plucker variables
+        fill the slack matrix with Plücker variables
     Usage
     	fillPl = symbolicSlackOfPlucker(v, B)
 	fillPl = symbolicSlackOfPlucker(V, B)
@@ -1836,12 +1836,12 @@ doc ///
 	    a matroid
     Outputs
     	fillPl:Matrix
-		slack matrix filled with Plucker variables
+		slack matrix filled with Plücker variables
     Description
     	Text
 	    Given the number of polytope vertices, cone generators, or matroid vectors, or a set of polytope vertices,
 	    cone generators, or matroid vectors, or a slack matrix and a set of set of hyperplane spanning set indices,
-	    it fills the slack matrix with Plucker variables.
+	    it fills the slack matrix with Plücker variables.
 	Example
 	    v = 6;
 	    B = {{1, 2, 4}, {0, 2, 3}, {0, 1, 4}, {3, 4, 5}, {0, 1, 2}};
@@ -2124,11 +2124,11 @@ doc ///
 	    a list of points of a representation of a matroid
     Outputs
     	U:Ideal
-	    the universal realization ideal in Pluecker and slack variables
+	    the universal realization ideal in Plücker and slack variables
     Description
     	Text
 	    The universal realization ideal defines a variety containing points (p, S) which
-	    are pairs of a Pluecker vector and a slack matrix coming from the same realization
+	    are pairs of a Plücker vector and a slack matrix coming from the same realization
 	    of the matroid. 
 	Example
 	    M = matroid({0, 1, 2, 3, 4, 5}, {{1, 2, 3}, {0, 2, 4}, {0, 3, 5}, {1, 4, 5}}, EntryMode => "nonbases");

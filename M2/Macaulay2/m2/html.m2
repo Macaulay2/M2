@@ -139,7 +139,9 @@ html TT :=
 html CODE := (lookup(html, Hypertext)) @@ (x -> apply(x,fixNewLines))
 
 html CDATA   := x -> concatenate("<![CDATA[", x ,"]]>", newline)
-html COMMENT := x -> concatenate("<!--", x, "-->", newline)
+html COMMENT := x -> if match("--", concatenate x) then
+    error ///html comments cannot contain "--"/// else
+    concatenate("<!--", x, "-->", newline)
 
 html HREF := x -> (
      r := concatenate apply(splice if #x > 1 then drop(x, 1) else x, html1);
@@ -155,8 +157,9 @@ html TO2  := x -> (
     fkey := format tag;
     -- TODO: add this to htmlLiteral?
     name := if match("^ +$", x#1) then #x#1 : "&nbsp;&nbsp;" else x#1;
-    if isUndocumented tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
-    if isMissingDoc   tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
+    if isUndocumented tag or isMissingDoc tag then concatenate(
+	html TT name, " (missing documentation)",
+	html COMMENT("tag: ", toString tag.Key)) else
     concatenate(html ANCHOR{"title" => htmlLiteral headline tag, "href"  => toURL htmlFilename tag, name}))
 
 ----------------------------------------------------------------------------

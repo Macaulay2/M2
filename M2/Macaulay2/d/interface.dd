@@ -683,6 +683,12 @@ export rawConwayPolynomial(e:Expr):Expr := (
     );
 setupfun("rawConwayPolynomial",rawConwayPolynomial);
 
+export rawRRi(e:Expr):Expr := (
+     when e is prec:ZZcell do if !isInt(prec) then WrongArgSmallInteger(1)
+     else toExpr(Ccode(RawRingOrNull, "IM2_Ring_RRi(",toInt(prec),")" ))
+     else WrongArgZZ(1));
+setupfun("rawRRi",rawRRi);
+
 export rawRR(e:Expr):Expr := (
      when e is prec:ZZcell do if !isInt(prec) then WrongArgSmallInteger(1)
      else toExpr(Ccode(RawRingOrNull, "IM2_Ring_RRR(",toInt(prec),")" ))
@@ -1142,6 +1148,7 @@ export rawFromNumber(e:Expr):Expr := (
      is x:QQcell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_rational(", R.p,",", x.v, ")"))
      is x:RRcell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_BigReal(",R.p,",",x.v,")"))
      is x:CCcell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_BigComplex(",R.p,",",x.v,")"))
+     is x:RRicell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_Interval(",R.p,",",x.v,")"))
      else WrongArg(2,"an integer, real number, or complex number")
      else WrongArg(1,"a raw ring")
      else WrongNumArgs(2)
@@ -1248,6 +1255,13 @@ export rawToRR(e:Expr):Expr := (
      is x:RawRingElementCell do toExpr(Ccode(RRorNull, "IM2_RingElement_to_BigReal(",x.p, ")" ))
      else WrongArg("a raw ring element"));
 setupfun("rawToRR",rawToRR);
+
+export rawToRRi(e:Expr):Expr := (
+      when e
+      is x:RawRingElementCell do toExpr(Ccode(RRiorNull, "IM2_RingElement_to_Interval(",x.p, ")" ))
+      else
+    WrongArg("a raw ring element"));
+setupfun("rawToRRi",rawToRRi);
 
 export rawToCC(e:Expr):Expr := (
      when e
@@ -4407,6 +4421,20 @@ pi0(e:Expr):Expr := (
      else toExpr(pi(toULong(prec)))
      else WrongArgZZ(1));
 setupfun("pi0",pi0);
+
+piRRi0(e:Expr):Expr := (
+     when e is prec:ZZcell do
+     if !isULong(prec) then WrongArgSmallUInteger(1)
+     else toExpr(piRRi(toULong(prec)))
+     else WrongArgZZ(1));
+setupfun("piRRi0",piRRi0);
+
+eRRi0(e:Expr):Expr := (
+     when e is prec:ZZcell do
+     if !isULong(prec) then WrongArgSmallUInteger(1)
+     else toExpr(eRRi(toULong(prec)))
+     else WrongArgZZ(1));
+setupfun("eRRi0",eRRi0);
 
 mpfrConstantEuler(e:Expr):Expr := (
      when e is prec:ZZcell do if !isULong(prec) then WrongArgSmallUInteger(1) else (
