@@ -87,6 +87,10 @@ precision InexactField := R -> R.precision
 InexactFieldFamily _ ZZ := (T,prec) -> new T.InexactField of T#(symbol _*) from prec -- oops...
 default InexactFieldFamily := R -> R_defaultPrecision
 
+diameter' = diameter
+diameter = method()
+diameter RRi := diameter'
+
 -- lift and promote between real or complex rings
 
 Number _ InexactFieldFamily := (x,RR) -> x_(default RR)

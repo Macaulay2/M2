@@ -70,7 +70,7 @@ doc ///
      result:Matrix
    Description
      Text
-        Returns a generating set for the original @TO "Subring"@.  The ouptut is slightly different, depending on the state of @TT "S"@.
+        Returns a generating set for the original @TO "Subring"@.  The output is slightly different, depending on the state of @TT "S"@.
 
 
         @UL {

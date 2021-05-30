@@ -1002,7 +1002,7 @@ document {
     Usage => "tangentialChowForm(I,s)",
     Inputs => { "I" => Ideal => {"a homogeneous ideal defining a projective variety ",TEX///$X=V(I)\subset\mathbb{P}^n$///,", say of dimension ", TEX///$k$///},
                 "s" => ZZ }, 
-    Outputs => {RingElement => {"or an ", TO2{Ideal,"ideal"}, " (if there is more than one generator) in the coordinate ring of the Grassmannian ",TEX///$\mathbb{G}(n-k-1+s,\mathbb{P}^n)$///," in the Plucker embedding, representing the higher associated subvariety ",TEX///$Z_s(X)$///}}, 
+    Outputs => {RingElement => {"or an ", TO2{Ideal,"ideal"}, " (if there is more than one generator) in the coordinate ring of the Grassmannian ",TEX///$\mathbb{G}(n-k-1+s,\mathbb{P}^n)$///," in the Plücker embedding, representing the higher associated subvariety ",TEX///$Z_s(X)$///}},
     PARA{"For a projective variety ",TEX///$X\subset\mathbb{P}^n$///," of dimension ",TEX///$k$///, ", the ",TEX///$s$///,"-th associated subvariety ",TEX///$Z_s(X)\subset\mathbb{G}(n-k-1+s,\mathbb{P}^n)$///, " (also called tangential Chow form) is defined to be the closure of the set of ", TEX///$(n-k-1+s)$///, "-dimensional subspaces ",TEX///$L\subset \mathbb{P}^n$///, " such that ", TEX///$L\cap X\neq\emptyset$///, " and ",TEX///$dim(L\cap T_x(X))\geq s$///, " for some smooth point ",TEX///$x\in L\cap X$///, ", where ",TEX///$T_x(X)$///, " denotes the embedded tangent space to ", TEX///$X$///, " at ",TEX///$x$///,". In particular, ", TEX///$Z_0(X)\subset\mathbb{G}(n-k-1,\mathbb{P}^n)$///, " is defined by the Chow form of ", TEX///$X$///, ", while ",TEX///$Z_k(X)\subset\mathbb{G}(n-1,\mathbb{P}^n)$///, " is identified to the dual variety ", TEX///$X^{*}\subset{\mathbb{P}^n}^{*}=\mathbb{G}(0,{\mathbb{P}^n}^{*})$///, " via the duality of Grassmannians ", TEX///$\mathbb{G}(0,{\mathbb{P}^n}^{*})=\mathbb{G}(n-1,\mathbb{P}^n)$///,". For details we refer to the third chapter of ", HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"},", by Israel M. Gelfand, Mikhail M. Kapranov and Andrei V. Zelevinsky. "},
     PARA{"The algorithm used are standard, based on projections of suitable incidence varieties. Here are some of the options available that could speed up the computation."},    
     PARA{TT "Duality"," Taking into account the duality of Grassmannians, one can perform the computation in ", TEX///$\mathbb{G}(k-s,n)$///, " and then passing to ", TEX///$\mathbb{G}(n-k-1+s,n)$///, ". This is done by default when it seems advantageous."},   
@@ -1031,7 +1031,7 @@ document {
     Headline => "Chow form of a projective variety", 
     Usage => "chowForm I", 
     Inputs => { "I" => Ideal => {"a homogeneous ideal defining a projective variety ",TEX///$X=V(I)\subset\mathbb{P}^n$///}}, 
-    Outputs => {RingElement => {"the Chow form of ",TEX///$X$///," in the coordinate ring of the Grassmannian ",TEX///$\mathbb{G}(n-dim(X)-1,\mathbb{P}^n)$///," in the Plucker embedding"}},
+    Outputs => {RingElement => {"the Chow form of ",TEX///$X$///," in the coordinate ring of the Grassmannian ",TEX///$\mathbb{G}(n-dim(X)-1,\mathbb{P}^n)$///," in the Plücker embedding"}},
     PARA{"This is the same as ",TT "tangentialChowForm(I,0)", ", see ",TO "tangentialChowForm",". Below, we compute the Chow form of the Veronese surface and then we compare it with the resultant of three ternary quadrics."},
     EXAMPLE {
          "-- Veronese surface in P^5
@@ -1055,7 +1055,7 @@ document {
     Headline => "Hurwitz form of a projective variety", 
     Usage => "hurwitzForm I", 
     Inputs => { "I" => Ideal => {"a homogeneous ideal defining a non-linear projective variety ",TEX///$X=V(I)\subset\mathbb{P}^n$///}}, 
-    Outputs => {RingElement => {"the Hurwitz form of ",TEX///$X$///," in the coordinate ring of the Grassmannian ",TEX///$\mathbb{G}(n-dim(X),\mathbb{P}^n)$///," in the Plucker embedding"}},
+    Outputs => {RingElement => {"the Hurwitz form of ",TEX///$X$///," in the coordinate ring of the Grassmannian ",TEX///$\mathbb{G}(n-dim(X),\mathbb{P}^n)$///," in the Plücker embedding"}},
     PARA{"This is the same as ",TT "tangentialChowForm(I,1)", ", see ",TO "tangentialChowForm","."},
     EXAMPLE {
          "Q = ideal random(2,Grass(0,4))",
@@ -1139,7 +1139,7 @@ document {
 }
 document { 
     Key => {fromPluckerToStiefel,(fromPluckerToStiefel,RingElement),(fromPluckerToStiefel,Matrix),(fromPluckerToStiefel,Ideal)}, 
-    Headline => "convert from Plucker coordinates to Stiefel coordinates", 
+    Headline => "convert from Plücker coordinates to Stiefel coordinates",
     Usage => "fromPluckerToStiefel f", 
     Inputs => { "f" => RingElement => {" or a ",TO2{Matrix,"matrix"}, ", or an ",TO2{Ideal,"ideal"},", in the coordinate ring of a Grassmannian ",TEX///$\mathbb{G}(k,n)$///}}, 
     Outputs => {{"the representation of ",TT"f"," in the Stiefel coordinates of ",TEX///$\mathbb{G}(k,n)$///," (or in the affine coordinates if an affine chart is given with ",TO"AffineChartGrass",")"}},
@@ -1199,9 +1199,9 @@ document {
 } 
 document {
     Key => {Duality, [tangentialChowForm,Duality],[chowForm,Duality],[cayleyTrick,Duality],[hurwitzForm,Duality],[isInCoisotropic,Duality]},
-    Headline => "whether to use dual Plucker coordinates", 
+    Headline => "whether to use dual Plücker coordinates",
     Usage => "Duality => true/false",
-    "This is a option typically used to specify whether to perform internal computations using the dual Plucker coordinates.",
+    "This is a option typically used to specify whether to perform internal computations using the dual Plücker coordinates.",
     SeeAlso => {chowForm,hurwitzForm,tangentialChowForm}
 } 
 document {
@@ -1292,11 +1292,11 @@ document {
 }
 document { 
     Key => {plucker,(plucker,Ideal),(plucker,Ideal,ZZ)}, 
-    Headline => "get the Plucker coordinates of a linear subspace", 
+    Headline => "get the Plücker coordinates of a linear subspace",
     Usage => "plucker L
               plucker p", 
     Inputs => {"L" => Ideal => {"the ideal of a ",TEX///$k$///,"-dimensional linear subspace ",TEX///$V(L)\subset\mathbb{P}^n$///},
-               "p" => Ideal => {"the ideal of the corresponding point of ",TEX///V(L)///," in the Grassmannian ",TEX///$\mathbb{G}(k,\mathbb{P}^n)$///," (embedded via the Plucker embedding)"}}, 
+               "p" => Ideal => {"the ideal of the corresponding point of ",TEX///V(L)///," in the Grassmannian ",TEX///$\mathbb{G}(k,\mathbb{P}^n)$///," (embedded via the Plücker embedding)"}},
     Outputs => {Ideal => {TT"p"," if the input is ",TT"L",", and ",TT"L"," if the input is ",TT"p"}},
     EXAMPLE {
          "P4 = Grass(0,4,ZZ/33331,Variable=>x); G'1'4 = Grass(1,4,ZZ/33331,Variable=>x);",

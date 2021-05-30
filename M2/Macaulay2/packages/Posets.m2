@@ -3715,7 +3715,7 @@ doc ///
         plueckerPoset
         (plueckerPoset,ZZ)
     Headline
-        computes a poset associated to the Pluecker relations
+        computes a poset associated to the Plücker relations
     Usage
         P = plueckerPoset n
     Inputs
@@ -3725,10 +3725,10 @@ doc ///
         P:Poset
     Description
         Text
-            The ideal of Pluecker relations has a quadratic Groebner
+            The ideal of Plücker relations has a quadratic Groebner
             basis.  Under a suitable term order, the incomparable pairs
             of the poset $P$ generate the initial ideal of the ideal of
-            Pluecker relations.
+            Plücker relations.
 
             Given two subsets $S$ and $T$ of ${0,\ldots,n-1}$, we partially
             order $S \leq T$ if $\#S \geq \#T$ and $S_i \leq T_i$ for all

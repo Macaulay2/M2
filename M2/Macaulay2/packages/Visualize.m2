@@ -525,75 +525,30 @@ visualize(List) := {VisPath => defaultPath, VisTemplate => basePath | "Visualize
 --        current files and cannot be undone.
 copyJS = method(Options => {Warning => true})
 copyJS(String) := opts -> dst -> (
-    local jsdir; local ans; local quest;
-    local cssdir; local fontdir; local imagedir;
-    local JS; local CSS; local FONT; local IMAGE;
-        
-    JS = "";
-    CSS = "";
-    FONT = "";
-    IMAGE = "";
-            
-    -- get list of filenames in js/
-    jsdir = delete("..",delete(".",
-	    readDirectory(basePath|"Visualize/js/")
-	    ));
+    if not match("/$", dst) then dst = dst | "/";
+    if not fileExists dst then makeDirectory dst;
 
-    -- get list of filenames in css/
-    cssdir = delete("..",delete(".",
-	    readDirectory(basePath|"Visualize/css/")
-	    ));
+    dirs := {"js", "css", "fonts", "images"};
+    existingDirs := select(dirs, dir -> fileExists concatenate(dst, dir));
 
-    -- get list of filenames in fonts/
-    fontdir = delete("..",delete(".",
-	    readDirectory(basePath|"Visualize/fonts/")
-	    ));
-
-    -- get list of filenames in images/    
-    imagedir = delete("..",delete(".",
-	    readDirectory(basePath|"Visualize/images/")
-	    ));
-
-    if opts.Warning == true
-    then (
-	scan(jsdir, j -> if fileExists(concatenate(dst,"js/",j)) then (JS = "js/"; break)); -- Tests existence of js files
-	scan(cssdir, j -> if fileExists(concatenate(dst,"css/",j)) then (CSS = "css/"; break)); -- Tests existence of css files
-	scan(fontdir, j -> if fileExists(concatenate(dst,"fonts/",j)) then (FONT ="fonts/"; break)); -- Tests existence of font files
-	scan(imagedir, j -> if fileExists(concatenate(dst,"images/",j)) then (IMAGE ="images/"; break)); -- Tests existence of images files
-	
-	-- test to see if files exist in target
-	if (
-	    JS == "js/"
-	    or CSS == "css/"
-	    or FONT == "fonts/"
-	    or IMAGE == "images/"
-	    )
-	then (
-		quest = concatenate(
-		    " -- Note: You can suppress this message with the 'Warning => false' option.\n",
-		    " -- The following folders on the path ",dst," have some files that will be overwritten: ",
-		    JS, ", ",
-		    CSS, ", ",
-		    FONT, ", ",
-		    IMAGE,". \n",
-		    " -- This action cannot be undone. \n"
-		    );
-		print quest;
-		ans = read " Would you like to continue? (y or n):  ";
-		while (ans != "y" and ans != "n") do (
-		    ans = read " Would you like to continue? (y or n):  ";
-		    );
-		if ans == "n" then (
-		    error "Process was aborted.";
-		    );
-		);
+    if #existingDirs > 0 and opts.Warning == true then (
+	print concatenate(
+	    " -- Note: You can suppress this message with the 'Warning => false' option.\n",
+	    " -- The following folders on the path ",dst," have some files that will be overwritten: ",
+	    demark(", ", existingDirs), newline,
+	    " -- This action cannot be undone.", newline);
+	ans := read " Would you like to continue? (y or n):  ";
+	while (ans != "y" and ans != "n") do (
+	    ans = read " Would you like to continue? (y or n):  ";
+	    );
+	if ans == "n" then (
+	    error "Process was aborted.";
+	    );
 	);
-    
-    copyDirectory(basePath|"Visualize/js/",dst|"js/");
-    copyDirectory(basePath|"Visualize/css/",dst|"css/");
-    copyDirectory(basePath|"Visualize/fonts/",dst|"fonts/");
-    copyDirectory(basePath|"Visualize/images/",dst|"images/");
-    
+
+    for dir in existingDirs do removeFile concatenate(dst, dir);
+    for dir in dirs do symlinkFile(basePath | "Visualize/" | dir, dst | dir);
+
     return "Created directories at "|dst;
 )
 

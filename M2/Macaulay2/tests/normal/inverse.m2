@@ -54,7 +54,6 @@ F * F^-1 == 1.
   assert(td * td^-1 == 1)
 
   (F, rf) = flattenRing E
-  see ideal gens gb ideal F
   td1 = rf td
   assert(td1^-1 * td1 == 1)
   assert(td1^-1 == rf td^-1)
