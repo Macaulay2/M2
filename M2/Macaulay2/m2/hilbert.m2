@@ -86,37 +86,41 @@ dim Module := M -> if (c := codim M) === infinity then -1 else dim ring M - c
 
 degree Ring   := R -> degree module R
 degree Ideal  := I -> degree comodule I
-degree Module := (
-    () -> (
-	-- constants:
-	local ZZ1;
-	local T;
-	local h;
-	local ev;
-	M -> (
-	    if ZZ1 === null then (
-		ZZ1 = degreesRing 1;
-		T = ZZ1_0;
-		h = 1 - T;
-		);
-	    if (hft := heft M) === null then error "degree: no heft vector defined";
-	    hn := poincare M;
-	    n := degreeLength M;
-	    if n === 0 then return lift(hn,ZZ);		    -- assert( hd == 1 );
-	    to1 := map(ZZ1,ring hn,apply(hft,i->T^i));	    -- this assigns a privileged role to the heft vector, which we need to investigate
-	    hn = to1 hn;
-	    if hn == 0 then return 0;
-	    while hn % h == 0 do hn = hn // h;
-	    if ev === null then ev = map(ZZ,ZZ1,{1}); -- ring maps are defined only later
-	    ev hn)))()
+degree Module := M -> (
+    computation := (cacheValue symbol degree) (M -> runHooks((degree, Module), M));
+    if (d := computation M) =!= null then return d;
+    error("no applicable strategy for computing degree of modules over ", toString ring M))
+
+addHook((degree, Module), Strategy => Default, M -> (
+	R := ring M;
+	if (hft := heft R) === null then error "degree: no heft vector defined";
+	T := degreesRing 1;
+	A := degreesRing R;
+	n := degreeLength R;
+	hn := poincare M;
+	if n === 0 then return lift(hn, ZZ);
+	-- this assigns a privileged role to the heft vector, which we need to investigate
+	to1 := map(T, A, apply(hft, i -> T_{i}));
+	hn = to1 hn;
+	if hn == 0 then return 0;
+	h := 1 - T_0;
+	while hn % h == 0 do hn = hn // h;
+	ev := map(ZZ, T, {1});
+	ev hn))
 
 multidegree Ring   := R -> multidegree module R
 multidegree Ideal  := I -> multidegree comodule I
 multidegree Module := M -> (
+    computation := (cacheValue symbol multidegree) (M -> runHooks((multidegree, Module), M));
+    if (d := computation M) =!= null then return d;
+    error("no applicable strategy for computing multidegree of modules over ", toString ring M))
+
+addHook((multidegree, Module), Strategy => Default, M -> (
     A := degreesRing M;
     if (c := codim M) === infinity then return 0_A;
     onem := map(A, A, apply(generators A, t -> 1 - t));
     part(c, numgens A:1, onem numerator poincare M))
+    )
 
 length Module := ZZ => M -> (
     computation := (cacheValue symbol length) (M -> runHooks((length, Module), M));
