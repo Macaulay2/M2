@@ -70,3 +70,11 @@ scan(3, n -> (
 		    r := numgens source basis(e,M);
 		    s := substitute(h, { i => e/1 });
 		    assert( r == s)))))))
+
+--
+importFrom_Core {"truncateSeries"}
+R = QQ[x,y, DegreeRank => 2]
+assert(truncateSeries(5, {1,1}, Divide{1_R,Product{Power{1-x,1}}}) == x^4+x^3+x^2+x+1)
+assert(truncateSeries(5, {1,1}, Divide{1_R,Product{Power{1+x,1}}}) == x^4-x^3+x^2-x+1)
+assert(truncateSeries(5, {1,1}, Divide{1_R,Product{Power{1+x,1},Power{1-x,1}}}) == x^4+x^2+1)
+assert(truncateSeries(3, {1,1}, Divide{1_R,Product{Power{1+x,1},Power{1-y,1}}}) == x^2-x*y+y^2-x+y+1)

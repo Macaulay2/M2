@@ -1,8 +1,5 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
--- TODO:
--- - simplify how caching in hilbertSeries works
-
 needs "max.m2" -- infinity
 needs "modules2.m2"
 
@@ -27,6 +24,22 @@ recipN := (n, wts, f) -> (
 	  g = g + tr(g * (1 - tr(g * tr f)));
 	  );
      if m === n then g else part(, n-1, wts, g))
+
+-- truncate f * g^e
+truncatePower := (f, g, e, tr) -> fold(0..e-1, f, (i, r) -> tr(r * g))
+
+-- truncate a power series element f given as an expression of type
+-- Divide{RingElement, Product{Power{1-T_i, ZZ}, ...}}.
+truncateSeries = (n, wts, f) -> (
+    if n === infinity then return f;
+    tr := h -> part(, n-1, wts, h);
+    if not instance(f, Divide) then return tr f;
+    num := tr numerator f;
+    if num == 0 then return 0_(ring num);
+    den := denominator f; -- a Product of Power expressions
+    (lo, hi) := weightRange(wts, num);
+    fold(toList den, num,
+	(pow, r) -> truncatePower(r, recipN(n-lo, wts, pow#0), pow#1, tr)))
 
 -----------------------------------------------------------------------------
 -- helpers for hilbert methods
@@ -279,49 +292,50 @@ hilbertSeries PolynomialRing := opts -> R -> hilbertSeries(module R, opts)
 
 hilbertSeries Ideal  := opts -> I -> hilbertSeries(comodule I, opts)
 hilbertSeries Module := opts -> M -> (
-    -- some examples compute degrees of inhomogeneous modules,
-    -- so we can't refuse to compute when the module is not homogeneous.
-    -- is it guaranteed to work in some sense?
-    -- if not isHomogeneous M then error "expected a homogeneous module";
-    A := ring M;
-    if heft A === null then error "hilbertSeries: ring has no heft vector";
+    R := ring M;
+    hft := heft R;
+    if hft === null then error "hilbertSeries: ring has no heft vector";
     ord := opts.Order;
     -- using cached result
     if ord === infinity then (
 	if opts.Reduce then (
 	    if M.cache#?reducedKey then return M.cache#reducedKey;
-	    if M.cache#?exactKey   then return(M.cache#reducedKey = reduceHilbert M.cache#exactKey);
-	    )
+	    if M.cache#?exactKey   then return(M.cache#reducedKey = reduceHilbert M.cache#exactKey))
 	else if M.cache#?exactKey  then return M.cache#exactKey)
     else if instance(ord, ZZ) then (
 	if M.cache#?approxKey then (
 	    (ord2, ser) := M.cache#approxKey;
 	    if ord == ord2 then return ser else
-	    if ord  < ord2 then return part(, ord-1, heft M, ser)))
+	    if ord  < ord2 then return part(, ord-1, hft, ser));
+	if M.cache#?exactKey or M.cache#?reducedKey then (
+	    if not M.cache#?reducedKey then M.cache#reducedKey = reduceHilbert M.cache#exactKey;
+	    return last(M.cache#approxKey = (ord, truncateSeries(ord, hft, M.cache#reducedKey))))
+	    )
     else error "hilbertSeries: option Order expected infinity or an integer";
     -- computing the hilbert series
-    T := degreesRing A;
-    if ord === infinity then (
+    ser = runHooks((hilbertSeries, Module), (opts, M));
+    if ser === null   then error("no applicable strategy for computing Hilbert series over ", toString R);
+    -- returning the appropriate format
+    if ord < infinity then last M.cache#approxKey else
+    if opts.Reduce    then M.cache#reducedKey else M.cache#exactKey)
+
+addHook((hilbertSeries, Module), Strategy => Default, (opts, M) -> (
+    -- some examples compute degrees of inhomogeneous modules,
+    -- so we can't refuse to compute when the module is not homogeneous.
+    -- is it guaranteed to work in some sense?
+    -- if not isHomogeneous M then error "expected a homogeneous module";
+	R := ring M;
+	T := degreesRing R;
+	hft := heft R;
+	ord := opts.Order;
 	num := poincare M; -- 'poincare' treats monomial ideals correctly (as the corresponding quotient module)
-	deg := tally degrees A.FlatMonoid;
+	deg := tally degrees R.FlatMonoid;
 	den := Product apply(sort apply(pairs deg, (i, e) -> {1 - T_i, e}), t -> Power t);
-	ser = M.cache#exactKey = Divide {num, den};
-	if opts.Reduce then M.cache#reducedKey = reduceHilbert ser else ser)
-    else (
-	h := hilbertSeries(M, Reduce => true);
-	s := (
-	    num = numerator h;
-	    if num == 0 then 0_T else (
-		wts := heft ring M;
-		(lo, hi) := weightRange(wts, num);
-		if ord <= lo then 0_T else (
-		    num = part(, ord-1, wts, num);
-		    scan(denominator h, denom -> (
-			    rec := recipN(ord - lo, wts, denom#0);
-			    scan(denom#1, i -> num = part(, ord-1, wts, num * rec))));
-		    num)));
-	M.cache#approxKey = (ord, s);
-	s))
+	M.cache#exactKey = ser := Divide {num, den};
+	if ord < infinity or opts.Reduce then
+	M.cache#reducedKey = reduceHilbert ser;
+	if ord < infinity then
+	M.cache#approxKey = (ord, truncateSeries(ord, hft, ser)) else ser))
 
 hilbertSeries ProjectiveHilbertPolynomial := opts -> P -> (
     d := max keys P;
