@@ -539,17 +539,6 @@ case $COMPRESS in
     *) AC_MSG_ERROR(unrecognized option for enable-compress) ;;
 esac
 
-AC_SUBST(CYGWIN,no)
-AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin), CYGWIN=$enableval)
-if test "$CYGWIN" = yes 
-then if test "$OPTIMIZE" = no
-     then AC_MSG_ERROR([--disable-optimize and --enable-cygwin both specified])
-     fi
-     if test "$DEBUG$" = yes
-     then AC_MSG_ERROR([--enable-cygwin and --enable-debug both specified])
-     fi
-fi
-
 AC_SUBST(GIT_DESCRIPTION)
 # TODO: currently finds the last commit that changed the VERSION file
 # but ideally it should get the last release commit instead
@@ -1889,8 +1878,6 @@ fi
 test "$prefix" || prefix=/usr/local
 
 # for some distributions, we know what the prefix should be:
-test "$CYGWIN"  = yes && test "$prefix" != /usr && 
-     AC_MSG_ERROR(--enable-cygwin specified and --prefix not set to /usr)
 test "$DEB"     = yes && test "$prefix" != /usr && 
      AC_MSG_ERROR(--enable-deb specified and --prefix not set to /usr)
 test "$RPM"     = yes && test "$prefix" != /usr && 
