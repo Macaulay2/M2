@@ -460,7 +460,7 @@ export HashTable := {+
      mutex:ThreadRWLockPtr
      };
 
---This unfortunately needs to be here as it references Hash Table which needs expr.  
+--This unfortunately needs to be here as it references HashTable which needs expr.
 
 export m2cfile := Pointer "struct M2File*";	
 
