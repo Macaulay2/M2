@@ -6,7 +6,6 @@
 #include "NCAlgebras/NCGroebner.hpp"   // for tryOutMathicCode
 #include "NCAlgebras/Word.hpp"         // for Word
 #include "myalloc.hpp"                 // for StatsAllocator
-#include "stdinc-m2.hpp"               // for make_unique
 #include "ring.hpp"                    // for Ring
 #include "style.hpp"                   // for EQ, LT, GT
 
@@ -36,7 +35,7 @@ Possible ways:
   cmpLessThan: monomial comparison call.
 
   Monomial Pool
-  Hash Table of monomials.  Monomial pointers are unqiue.
+  Hash Table of monomials.  Monomial pointers are unique.
     Pointer value could contain space for the ringelem.
   Entry = pointer to [ringelem, monomial pointer]
   
@@ -116,14 +115,14 @@ std::unique_ptr<mathic::Geobucket<OurQueueConfiguration>> makeQueue()
 {
   OurQueueConfiguration C;
   
-  return make_unique<mathic::Geobucket<OurQueueConfiguration>>(C);
+  return std::make_unique<mathic::Geobucket<OurQueueConfiguration>>(C);
 }
 
 std::unique_ptr<mathic::Geobucket<OurQueueConfiguration1>> makeQueue1()
 {
   OurQueueConfiguration1 C;
   
-  return make_unique<mathic::Geobucket<OurQueueConfiguration1>>(C);
+  return std::make_unique<mathic::Geobucket<OurQueueConfiguration1>>(C);
 }
 
 class TrivialPolynomialHeap : public PolynomialHeap
@@ -631,7 +630,7 @@ public:
     return true;
   }
   
-  std::pair<Monom, ring_elem> viewLeadTerm() override
+  Entry viewLeadTerm() override
   {
     return * (mMap.begin());
   }
@@ -664,7 +663,8 @@ public:
 private:
   FreeAlgebra mRing;
   MonomEq mMonomEq;
-  std::map<Monom, ring_elem, MonomEq, StatsAllocator<ConstEntry>> mMap;
+  //std::map<Monom, ring_elem, MonomEq, StatsAllocator<ConstEntry>> mMap;
+  std::map<Monom, ring_elem, MonomEq, gc_allocator<ConstEntry>> mMap;
   MemoryBlock mMonomialSpace;
 };
 
@@ -1055,6 +1055,7 @@ std::string getHeapName(HeapType type)
     return "NaiveTourTree";
   case HeapType::NaiveHeap:
     return "NaiveHeap";
+  default: return "Map"; // see above.
     //  case HeapType::HashedGeobucket:
     //    return "HashedGeobucket";
   };
@@ -1065,21 +1066,21 @@ makePolynomialHeap(HeapType type, const FreeAlgebra& F)
 {
   switch (type) {
     //  case HeapType::HashedGeobucket:
-    //    return make_unique<HashedPolynomialHeap<mathic::Geobucket>>(F);
+    //    return std::make_unique<HashedPolynomialHeap<mathic::Geobucket>>(F);
   case HeapType::Map:
-    return make_unique<MapPolynomialHeap>(F);
+    return std::make_unique<MapPolynomialHeap>(F);
   case HeapType::PriorityQueue:
-    return make_unique<PriorityQueuePolynomialHeap>(F);
+    return std::make_unique<PriorityQueuePolynomialHeap>(F);
   case HeapType::Trivial:
-    return make_unique<TrivialPolynomialHeap>(F);
+    return std::make_unique<TrivialPolynomialHeap>(F);
   case HeapType::NaiveDedupGeobucket:
-    return make_unique<NaiveDedupPolynomialHeap<mathic::Geobucket>>(F);
+    return std::make_unique<NaiveDedupPolynomialHeap<mathic::Geobucket>>(F);
   case HeapType::NaiveGeobucket:
-    return make_unique<NaivePolynomialHeap<mathic::Geobucket>>(F);
+    return std::make_unique<NaivePolynomialHeap<mathic::Geobucket>>(F);
   case HeapType::NaiveTourTree:
-    return make_unique<NaivePolynomialHeap<mathic::TourTree>>(F);
+    return std::make_unique<NaivePolynomialHeap<mathic::TourTree>>(F);
   case HeapType::NaiveHeap:
-    return make_unique<NaivePolynomialHeap<mathic::Heap>>(F);
+    return std::make_unique<NaivePolynomialHeap<mathic::Heap>>(F);
   };
   return nullptr;
 }

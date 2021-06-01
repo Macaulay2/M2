@@ -7,6 +7,7 @@
 // Contains functions which are "ring translational" //
 ///////////////////////////////////////////////////////
 
+#include "aring-RRi.hpp"
 #include "aring-RR.hpp"
 #include "aring-CC.hpp"
 #include "aring-RRR.hpp"
@@ -28,6 +29,12 @@ template <typename RT>
 bool get_from_BigReal(const RT& R, typename RT::ElementType& a, gmp_RR b)
 {
   return false;
+}
+    
+template <typename RT>
+bool get_from_Interval(const RT& R, typename RT::ElementType& a, gmp_RRi b)
+{
+    return false;
 }
 
 template <typename RT>
@@ -61,6 +68,13 @@ inline bool get_from_BigReal(const ARingRRR& R,
                              gmp_RR b)
 {
   return R.set_from_BigReal(a, b);
+}
+    
+inline bool get_from_BigReal(const ARingRRi& R,
+                             ARingRRi::ElementType& a,
+                             gmp_RR b)
+{
+    return R.set_from_BigReal(a, b);
 }
 
 inline bool get_from_BigReal(const ARingCC& R,
@@ -96,6 +110,13 @@ inline bool get_from_double(const ARingRRR& R,
                             double b)
 {
   return R.set_from_double(a, b);
+}
+    
+inline bool get_from_Interval(const ARingRRi& R,
+                              ARingRRi::ElementType& a,
+                              gmp_RRi b)
+{
+    return R.set_from_Interval(a, b);
 }
 
 inline bool get_from_double(const ARingRR& R, ARingRR::ElementType& a, double b)
@@ -164,6 +185,13 @@ inline bool mypromote(const ARingQQ& R,
                       const ARingRRR& S,
                       const ARingQQ::ElementType& fR,
                       ARingRRR::ElementType& fS)
+{
+  return S.set_from_mpq(fS, &fR);
+}
+inline bool mypromote(const ARingQQ& R,
+                      const ARingRRi& S,
+                      const ARingQQ::ElementType& fR,
+                      ARingRRi::ElementType& fS)
 {
   return S.set_from_mpq(fS, &fR);
 }
@@ -248,6 +276,31 @@ inline bool mypromote(const ARingRRR& R,
 {
   auto fR1 = const_cast<ARingRRR::ElementType&>(fR);
   S.set_from_BigReal(fS, &fR1);
+  return true;
+}
+/////////////////////////////////////////////////////
+inline bool mypromote(const ARingRRi& R,
+                      const ARingRRi& S,
+                      const ARingRRi::ElementType& fR,
+                      ARingRRi::ElementType& fS)
+{
+  S.set(fS, fR);
+  return true;
+}
+inline bool mypromote(const ARingRR& R,
+                      const ARingRRi& S,
+                      const ARingRR::ElementType& fR,
+                      ARingRRi::ElementType& fS)
+{
+  S.set_from_double(fS, fR);
+  return true;
+}
+inline bool mypromote(const ARingRRR& R,
+                      const ARingRRi& S,
+                      const ARingRRR::ElementType& fR,
+                      ARingRRi::ElementType& fS)
+{
+  S.set_from_BigReal(fS, &fR);
   return true;
 }
 /////////////////////////////////////////////////////
@@ -387,6 +440,53 @@ inline bool mylift(const ARingCC& R,
 {
   R.set(result_gR, gS);
   return true;
+}
+    
+/////////////////////////////////////////////////////
+    
+inline bool mylift(const ARingRR& R,
+                    const ARingRRi& S,
+                    ARingRR::ElementType& result_gR,
+                    const ARingRRi::ElementType& gS)
+{
+    ARingRRR T(S.get_precision());
+    ARingRRR::ElementType gT;
+    T.init(gT);
+    auto gS1 = const_cast<ARingRRi::ElementType&>(gS);
+    S.midpoint(gT,gS1);
+    bool liftstep = mylift(R,T,result_gR,gT);
+    S.diameter(gT,gS1);
+    return liftstep && T.is_zero(gT);
+}
+    
+inline bool mylift(const ARingRRR& R,
+                    const ARingRRi& S,
+                    ARingRRR::ElementType& result_gR,
+                    const ARingRRi::ElementType& gS)
+{
+    ARingRRR T(S.get_precision());
+    ARingRRR::ElementType gT;
+    T.init(gT);
+    auto gS1 = const_cast<ARingRRi::ElementType&>(gS);
+    S.midpoint(gT,gS1);
+    bool liftstep = mylift(R,T,result_gR,gT);
+    S.diameter(gT,gS1);
+    return liftstep && T.is_zero(gT);
+}
+    
+inline bool mylift(const ARingQQ& R,
+                    const ARingRRi& S,
+                    ARingQQ::ElementType& result_gR,
+                    const ARingRRi::ElementType& gS)
+{
+    ARingRRR T(S.get_precision());
+    ARingRRR::ElementType gT;
+    T.init(gT);
+    auto gS1 = const_cast<ARingRRi::ElementType&>(gS);
+    S.midpoint(gT,gS1);
+    bool liftstep = mylift(R,T,result_gR,gT);
+    S.diameter(gT,gS1);
+    return liftstep && T.is_zero(gT);
 }
 
 // ZZ/p --> ZZ/p. 9 versions NONE OF THESE.

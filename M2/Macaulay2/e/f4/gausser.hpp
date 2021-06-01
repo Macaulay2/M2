@@ -1,12 +1,14 @@
 #ifndef __gausser_h_
 #define __gausser_h_
 
-#include "../ring.hpp"
-#include "../ZZp.hpp"
-#include "../coeffrings.hpp"
+#include "coeffrings.hpp"  // for CoefficientRingZZp
+#include "newdelete.hpp"   // for our_new_delete
 
-typedef void *F4CoefficientArray;
 class F4Mem;
+class Ring;
+class Z_mod;
+union ring_elem;
+typedef void *F4CoefficientArray;
 
 struct dense_row : public our_new_delete
 {
@@ -87,10 +89,6 @@ class Gausser : public our_new_delete
                                int last) const;
 
   void sparse_row_make_monic(int len, F4CoefficientArray sparse) const;
-  int coeff_to_int(int f) const  // anton
-  {
-    return Kp->to_int(f);
-  }
 
   mutable long n_dense_row_cancel;
   mutable long n_subtract_multiple;

@@ -13,7 +13,6 @@ INTERFACE = \
 	matrix-ncbasis \
 	M2FreeAlgebraQuotient \
 	M2FreeAlgebra \
-	VectorArithmetic \
 	NCAlgebras/Word \
 	NCAlgebras/NCReduction \
 	NCAlgebras/FreeAlgebraQuotient \
@@ -24,6 +23,7 @@ INTERFACE = \
 	NCAlgebras/NCGroebner \
 	NCAlgebras/NCF4 \
 	NCAlgebras/OverlapTable \
+	NCResolutions/nc-res-computation \
 	Polynomial \
 	monomial-collection \
 	eigen \
@@ -38,32 +38,30 @@ INTERFACE = \
 	bibasis/monomDRL \
 	bibasis/monomLex \
 	bibasis/settings-manager \
-	f4/res-monomial-sorter \
-	f4/res-varpower-monomial \
-	f4/res-f4-monlookup \
-	f4/res-moninfo-dense \
-	f4/res-moninfo-sparse \
-	f4/res-moninfo \
-	f4/res-poly-ring \
-	f4/res-f4-m2-interface \
-	f4/res-schreyer-frame \
-	f4/res-f4 \
-	f4/res-f4-computation \
-	f4/res-gausser \
-	f4/res-gausser-ZZp \
-	f4/res-gausser-QQ \
-	f4/res-gausser-QQ-hybrid \
+	schreyer-resolution/res-monomial-sorter \
+	schreyer-resolution/res-varpower-monomial \
+	schreyer-resolution/res-f4-monlookup \
+	schreyer-resolution/res-moninfo-dense \
+	schreyer-resolution/res-moninfo-sparse \
+	schreyer-resolution/res-moninfo \
+	schreyer-resolution/res-poly-ring \
+	schreyer-resolution/res-f4-m2-interface \
+	schreyer-resolution/res-schreyer-frame \
+	schreyer-resolution/res-f4 \
+	schreyer-resolution/res-f4-computation \
+	schreyer-resolution/res-gausser \
+	schreyer-resolution/res-gausser-ZZp \
+	schreyer-resolution/res-gausser-QQ \
+	schreyer-resolution/res-gausser-QQ-hybrid \
 	f4/f4 \
-	f4/f4-syz \
 	f4/f4-mem \
 	f4/f4-monlookup \
-	f4/f4-types \
 	f4/f4-computation \
 	f4/f4-spairs \
 	f4/f4-m2-interface \
 	f4/hilb-fcn \
 	f4/monhashtable \
-	f4/monsort \
+	monsort \
 	f4/moninfo \
 	f4/ntuple-monomial \
 	f4/varpower-monomial \
@@ -81,6 +79,7 @@ INTERFACE = \
 	aring-zz-flint \
 	aring-qq-flint \
 	aring-zzp-flint \
+	aring-RRi \
 	aring-RR \
 	aring-CC \
 	aring-RRR \
@@ -207,7 +206,10 @@ COMMANDS = \
 	franzi-interface
 
 NAMES_H = \
-	VectorArithmetic2 \
+	f4/f4-types \
+	f4/memblock \
+	VectorArithmetic \
+	ARingElem \
 	MemoryBlock \
 	NCAlgebras/Range \
 	ringelem \

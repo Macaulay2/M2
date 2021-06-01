@@ -31,6 +31,10 @@ TEST ///
   assert isPrime I
   assert(minimalPrimes I == {ideal(0_R)})
   assert(all(minimalPrimes I, f -> class f === MonomialIdeal))
+  
+  M = comodule ideal(0_R)
+  assert(associatedPrimes M == {ideal(0_R)})
+  assert(primaryDecomposition M == {0})
 ///
 
 TEST get(currentFileDirectory | "associatedPrimes-test.m2")
@@ -245,6 +249,17 @@ TEST /// -- modules over iterated quotient rings
   assert(#associatedPrimes N == 2)
   elapsedTime comps = primaryDecomposition N
   assert(intersect comps == 0 and all(comps, isPrimary_N))
+///
+
+TEST /// -- modules over quotient rings, II
+R = QQ[x,y,z]/(x^2 - y*z)
+P = ideal(x, z)
+associatedPrimes comodule P^2
+M = comodule P^2
+associatedPrimes(M, CodimensionLimit => 2)
+assert(associatedPrimes(M, CodimensionLimit => 2) == {P, ideal gens R})
+elapsedTime comps = primaryDecomposition M
+assert(intersect comps == 0 and all(comps, isPrimary_M))
 ///
 
 TEST /// -- multiply embedded prime

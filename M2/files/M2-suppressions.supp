@@ -22,6 +22,28 @@
    ...
    obj:*/libgc.so*
 }
+{
+   libgc
+   Memcheck:Param
+   mmap(length)
+   ...
+   obj:*/libgc.so*
+}
+{
+   libgc
+   Memcheck:Param
+   mmap(start)
+   ...
+   obj:*/libgc.so*
+}
+{
+   libgc
+   Memcheck:Param
+   mprotect(len)
+   ...
+   obj:*/libgc.so*
+}
+
 
 #This rule is to deal with phantom leaks related to thread local storage
 #These are probably all safe (they are only "possible" leaks)

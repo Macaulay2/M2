@@ -124,7 +124,7 @@ document {
 	"file."},
     EXAMPLE lines ///
 	programPaths#"gfan" = "/path/to/gfan/"
-	gfan = findProgram("gfan", "gfan --help", Verbose => true)///,
+	gfan = findProgram("gfan", "gfan _version --help", Verbose => true)///,
     PARA {"One program that is shipped with a variety of prefixes in ",
 	"different distributions and for which the ", TT "Prefix",
 	" option is useful is TOPCOM:"},
@@ -138,7 +138,7 @@ document {
 	"trailing whitespace.  Piping with standard UNIX utilities such as ",
 	TT "sed", ", ", TT "head", ", ", TT "tail", ", ", TT "cut", ", and ",
 	TT "tr", " may be useful."},
-    EXAMPLE {///findProgram("gfan", "gfan --help", Verbose => true,
+    EXAMPLE {///findProgram("gfan", "gfan _version --help", Verbose => true,
   MinimumVersion => ("0.5",
     "gfan _version | head -2 | tail -1 | sed 's/gfan//'"))
     ///},

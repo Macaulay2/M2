@@ -5,12 +5,13 @@
 
 newPackage(
 	"gfanInterface",
-	Version => "0.4",
-	Date => "Aug 2012 (updated by Josephine Yu)",
+	Version => "0.5",
+	Date => "May 15, 2021",
 	Authors => {
 		{Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => ""},
 		{Name => "Andrew Hoefel", Email => "andrew.hoefel@gmail.com", HomePage =>"http://www.mast.queensu.ca/~ahhoefel/"},
-	    {Name => "Diane Maclagan (current maintainer)", Email => "D.Maclagan@warwick.ac.uk", HomePage=>"http://homepages.warwick.ac.uk/staff/D.Maclagan/"}},
+	    {Name => "Diane Maclagan (current maintainer)", Email => "D.Maclagan@warwick.ac.uk", HomePage=>"http://homepages.warwick.ac.uk/staff/D.Maclagan/"},
+	    {Name => "Josephine Yu", Email => "jyu@math.gatech.edu", HomePage => "http://people.math.gatech.edu/~jyu67/"}},
 	Headline => "interface to Anders Jensen's Gfan software",
 	Keywords => {"Interfaces"},
 	Configuration => {
@@ -247,21 +248,15 @@ markedPolynomialList List := L -> (
 	new MarkedPolynomialList from L
 )
 
-expression MarkedPolynomialList := L ->
-	expression apply(transpose L, t -> (
-		m := t#0;
-		f := t#1;
-		out := "(" | toString m | ")";
-		if leadCoefficient(f-m) > 0 then
-			out = out | " +";
-		if f-m != 0 then
-			return out | " " | toString(f-m)
-			else
-			return out;
-		)
-	)
-
+expression MarkedPolynomialList := L -> hold apply(transpose L, t -> (
+    m := t#0;
+    f := t#1;
+    Sum Parenthesize expression m + expression(f-m)
+    ))
 net MarkedPolynomialList := L -> net expression L
+toString MarkedPolynomialList := L -> toString expression L
+texMath MarkedPolynomialList := L -> texMath expression L
+
 
 RingMap MarkedPolynomialList := (F, L) -> L/(a-> a/F)
 
@@ -1017,7 +1012,11 @@ runGfanCommand = (cmd, opts, data) -> (
 runGfanCommandCaptureBoth = (cmd, opts, data) -> (
 	if gfanProgram === null then
 	    gfanProgram = findProgram("gfan", "gfan --help",
-		Verbose => gfanVerbose);
+		Verbose => gfanVerbose,
+		-- version 0.6 is necessary for gfanMixedVolume
+		-- https://github.com/Macaulay2/M2/issues/1962
+		MinimumVersion => ("0.6",
+		    "gfan _version | head -2 | tail -1 | sed 's/gfan//'"));
 	tmpFile := gfanMakeTemporaryFile data;
 
 	args := replace("^gfan ", "", cmd) | concatenate apply(keys opts, key ->

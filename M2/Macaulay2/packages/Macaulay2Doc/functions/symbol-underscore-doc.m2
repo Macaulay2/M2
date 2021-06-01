@@ -2,6 +2,7 @@ undocumented {
      (symbol _, ZZ, EngineRing),
      (symbol _, EngineRing, ZZ),
      (symbol _, RR, EngineRing),
+     (symbol _, RRi, EngineRing),
      (symbol _, ZZ, Monoid),
      (symbol _, Monoid, ZZ),
      (symbol _, Symbol, GeneralOrderedMonoid),

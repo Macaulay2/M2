@@ -599,6 +599,7 @@ export process():void := (
      stdError.outisatty = 0 != isatty(2) ;
      setstopIfError(false);				    -- this is usually true after loaddata(), we want to reset it
      sethandleInterrupts(true);				    -- could be overridden in startup.m2
+     setMaxAllowableThreads();
      -- setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
      everytimeRun();
      -- we don't know the right directory; calls commandInterpreter and eventually returns:

@@ -158,13 +158,13 @@ include(GNUInstallDirs)
 # setting architecture dependent paths as in layout.m2.in
 foreach(DIR IN ITEMS BINDIR LIBDIR LIBEXECDIR)
   set(M2_INSTALL_${DIR} ${M2_EXEC_INFIX}/${CMAKE_INSTALL_${DIR}})
-  GNUInstallDirs_get_absolute_install_dir(M2_INSTALL_FULL_${DIR} M2_INSTALL_${DIR})
+  GNUInstallDirs_get_absolute_install_dir(M2_INSTALL_FULL_${DIR} M2_INSTALL_${DIR} ${DIR})
 endforeach()
 
 # setting architecture independent paths as in layout.m2.in
 foreach(DIR IN ITEMS SYSCONFDIR DATAROOTDIR DATADIR INFODIR LOCALEDIR MANDIR DOCDIR INCLUDEDIR)
   set(M2_INSTALL_${DIR} ${M2_DATA_INFIX}/${CMAKE_INSTALL_${DIR}})
-  GNUInstallDirs_get_absolute_install_dir(M2_INSTALL_FULL_${DIR} M2_INSTALL_${DIR})
+  GNUInstallDirs_get_absolute_install_dir(M2_INSTALL_FULL_${DIR} M2_INSTALL_${DIR} ${DIR})
 endforeach()
 
 set(M2_INSTALL_LICENSESDIR ${M2_DIST_PREFIX}/${M2_EXEC_INFIX}/${CMAKE_INSTALL_LIBEXECDIR}/Macaulay2/program-licenses)
@@ -195,10 +195,11 @@ endif()
 
 # Flags based on options
 if(MEMDEBUG)
-  add_compile_options(-DMEMDEBUG)
+  add_compile_definitions(MEMDEBUG)
 endif()
 if(PROFILING)
-  add_compile_options(-pg -DPROFILING)
+  add_compile_definitions(PROFILING)
+  add_compile_options(-pg)
   add_link_options(-pg)
 endif()
 
@@ -206,9 +207,11 @@ endif()
 # Note: certain flags are initialized by CMake based on the compiler and build type.
 if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging
   # INIT: -g
-  add_compile_options(-O0 -DGC_DEBUG -DMEMT_DEBUG -DMATHIC_DEBUG -DMATHICGB_DEBUG)
+  add_compile_definitions(GC_DEBUG MEMT_DEBUG MATHIC_DEBUG MATHICGB_DEBUG)
+  add_compile_options(-O0)
 else()
-  add_compile_options(-DNDEBUG -DOM_NDEBUG -DSING_NDEBUG -Wuninitialized)
+  add_compile_definitions(NDEBUG OM_NDEBUG SING_NDEBUG)
+  add_compile_options(-Wuninitialized)
 endif()
 if(CMAKE_BUILD_TYPE MATCHES "MinSizeRel")
   # INIT: -Os
@@ -233,15 +236,6 @@ endif()
 # TODO: look into compiler features:
 # https://cmake.org/cmake/help/latest/prop_gbl/CMAKE_CXX_KNOWN_FEATURES.html
 
-# Flags based on OS
-if(ISSUE MATCHES Ubuntu)
-  # Apparently libboost_stacktrace_backtrace is not reliably available on all platforms.
-  set(Boost_stacktrace stacktrace_backtrace)
-else()
-  # addr2line is more readily available, but does not work well with -fPIE
-  set(Boost_stacktrace stacktrace_addr2line)
-endif()
-
 # Common flags
 # TODO: reduce these if possible
 add_link_options(-L${M2_HOST_PREFIX}/lib)
@@ -252,6 +246,7 @@ add_compile_options(
   )
 
 # Querying the options so we can print them
+get_property(COMPILE_DEFINITIONS DIRECTORY PROPERTY COMPILE_DEFINITIONS)
 get_property(COMPILE_OPTIONS DIRECTORY PROPERTY COMPILE_OPTIONS)
 get_property(LINK_OPTIONS    DIRECTORY PROPERTY LINK_OPTIONS)
 
@@ -262,6 +257,7 @@ message("\n## Compiler information
 
 if(VERBOSE)
   message("## Build flags (excluding standard ${CMAKE_BUILD_TYPE} flags)
+     Compiler preprocessor options = ${COMPILE_DEFINITIONS}
      Compiler flags    = ${COMPILE_OPTIONS}
      Linker flags      = ${LINK_OPTIONS}\n")
   message("## CMake path variables

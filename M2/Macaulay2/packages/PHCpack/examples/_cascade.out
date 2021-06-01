@@ -1,4 +1,6 @@
 -- -*- M2-comint -*- hash: -2131607528
+Hello world from process 0 out of 1 processes
+-- COMPILE TIME: Feb 24 2021, 10:08:22
 
 i1 : R = CC[x,y,z];
 
@@ -18,14 +20,11 @@ o4 : WitnessSet
 
 i5 : W#Equations
 
-o5 = ideal ((- .380139 + .924929*ii)zz1 + (.547606 + .836736*ii)zz2 - x*z -
-     ------------------------------------------------------------------------
-     y*z, (.45571 - .890128*ii)zz1 + (- .663772 - .747935*ii)zz2 - x*z + y*z,
-     ------------------------------------------------------------------------
-     - zz1 + (.537862 + .843033*ii)zz2)
+o5 = {-2} | (-.380139+.924929ii)zz1+(.547606+.836736ii)zz2-xz-yz |
+     {-2} | (.45571-.890128ii)zz1+(-.663772-.747935ii)zz2-xz+yz  |
+     {-1} | -zz1+(.537862+.843033ii)zz2                          |
 
-o5 : Ideal of CC  {x, y, z, zz1, zz2}
-                53
+o5 : PolySystem
 
 i6 : W#Points
 
@@ -46,3 +45,4 @@ o7 : Matrix CC    <--- CC
               53         53
 
 i8 : 
+Bye world from process 0 out of 1 processes

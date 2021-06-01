@@ -34,6 +34,7 @@ class ARingZZpFlint : public RingInterface
   static const RingID ringID = ring_ZZpFlint;
   typedef mp_limb_t ElementType;  // most of the time an unsigned long.
   typedef ElementType elem;
+  typedef std::vector<elem> ElementContainerType;
 
   ARingZZpFlint(size_t prime);
 
@@ -137,6 +138,20 @@ class ARingZZpFlint : public RingInterface
                          ElementType b) const
   {
     ElementType a1 = nmod_neg(a, mModulus);
+
+    // the code below was an attempt to prevent flint from calling the
+    // version of the general multiply code if the product of the two flint
+    // integers always fits in a single limb.  Speedup was not significant in testing.
+
+    //if (mModulus.norm >= FLINT_BITS/2) /* addmul will fit in a limb */
+    //{
+    //   mp_limb_t ab_hi, ab_lo;
+    //   umul_ppmm(ab_hi, ab_lo, a1, b); // a_hi is not needed in this case
+    //   ab_lo = nmod_add(result, ab_lo, mModulus);
+    //   NMOD_RED(result,ab_lo,mModulus);
+    //}
+    //else // product does not fit in a single limb
+    
     NMOD_ADDMUL(result, a1, b, mModulus);
   }
 

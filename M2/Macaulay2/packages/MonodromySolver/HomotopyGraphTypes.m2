@@ -60,7 +60,7 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (HG, n1, n2) -> (
         gamma1 => if o#"random gamma" then exp(2 * pi* ii * random RR) else 1, 
         gamma2 => if o#"random gamma" then exp(2 * pi* ii * random RR) else 1, 
         Correspondence12 => new MutableHashTable from {}, -- think: the map from labels of points of Node1 to those of Node2
-        Correspondence21 => new MutableHashTable from {}  -- ............................................2.................1
+        Correspondence21 => new MutableHashTable from {} -- ............................................2.................1
         };
     n1.Edges#(#n1.Edges) = E;
     n2.Edges#(#n2.Edges) = E;
@@ -76,7 +76,7 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (HG, n1, n2) -> (
         p2 = HG.Randomizer p2;
         );
     if HG.SLP then (
-        seg := parametricSegmentHomotopy HG.Family;
+        seg := HG.Homotopy;
         edgeHomotopy := if HG.LinearSegment then seg else (
             -- create random arc between p1 and p2 in the parameter space
             c := E.gamma1;
@@ -108,6 +108,12 @@ addCorrespondence (HomotopyEdge,ZZ,ZZ) := (e,a,b) -> (
 	)
     )
 
+betti HomotopyGraph := o -> HG -> (
+    nE := # HG.Edges;
+    nV := # HG.Vertices;
+    nE - nV +1
+    )
+
 homotopyGraph = method(TypicalValue => HomotopyGraph, 
     -- all options should be set inside a monodromy call
     Options => {
@@ -127,6 +133,7 @@ homotopyGraph System := o -> PF -> (
     HG := homotopyGraph();
     HG.SLP = instance(PF, GateSystem);
     HG.Family = PF,
+    if HG.SLP then HG.Homotopy = parametricSegmentHomotopy PF,
     HG.Potential = o.Potential;
     HG.FilterCondition = o.FilterCondition;
     HG.Randomizer = o.Randomizer;

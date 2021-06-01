@@ -3,20 +3,19 @@ simpleDocFrob(ZZ, Matrix) := o -> (n, M) -> directSum(n:M)
 
 docExample = "doc ///
   Key
-    simpleDocFrob
-    (simpleDocFrob,ZZ,Matrix)
+     simpleDocFrob
+    (simpleDocFrob, ZZ, Matrix)
     [simpleDocFrob, Limit]
   Headline
     a sample documentation node
   Usage
     x = simpleDocFrob(n,M)
   Inputs
-    n:ZZ
-      positive
-    M:Matrix
-      which is square
-    Limit=>ZZ
-      sometimes useful
+    n:ZZ         -- positive
+    M:Matrix     -- which is square
+    Limit => ZZ  -- as an @TO Option@
+     multiline descriptions
+     are sometimes useful
   Outputs
     x:Matrix
       A block diagonal matrix with {\\tt n}

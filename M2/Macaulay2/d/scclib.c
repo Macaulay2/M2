@@ -699,7 +699,7 @@ char *name;
 int system_acceptBlocking(int so) {
 #ifdef HAVE_ACCEPT
   struct sockaddr_in addr;
-  SOCKLEN_T addrlen = sizeof addr;
+  socklen_t addrlen = sizeof addr;
 #ifdef HAVE_FCNTL
   fcntl(so,F_SETFL,0);
 #endif

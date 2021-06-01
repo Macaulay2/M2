@@ -74,6 +74,14 @@ const RingElement *IM2_RingElement_from_BigReal(const Ring *R, gmp_RR z)
   return 0;
 }
 
+const RingElement *IM2_RingElement_from_Interval(const Ring *R, gmp_RRi z)
+{
+   ring_elem f;
+   if (R->from_Interval(z, f)) return RingElement::make_raw(R, f);
+   ERROR("cannot create element of this ring from an element of RRi");
+   return 0;
+}
+
 gmp_ZZorNull IM2_RingElement_to_Integer(const RingElement *a)
 /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
    Otherwise, NULL is returned, and an error is given */
@@ -133,6 +141,32 @@ gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
       default:
         ERROR("expected an element of RRR");
         return nullptr;
+    }
+}
+
+gmp_RRiorNull IM2_RingElement_to_Interval(const RingElement *a)
+{
+    const Ring *R = a->get_ring();
+    gmp_RRimutable result;
+    const M2::ConcreteRing<M2::ARingRRi> *R1;
+          
+    switch (R->ringID())
+    {
+       case M2::ring_RR:
+          result = getmemstructtype(gmp_RRimutable);
+          mpfi_init2(result, 53);
+          mpfi_set_d(result, a->get_value().get_double());
+          return moveTo_gmpRRi(result);
+       case M2::ring_RRi:
+          R1 =
+          dynamic_cast<const M2::ConcreteRing<M2::ARingRRi> *>(a->get_ring());
+          result = getmemstructtype(gmp_RRimutable);
+          mpfi_init2(result, R1->get_precision());
+          mpfi_set(result, a->get_value().get_mpfi());
+          return moveTo_gmpRRi(result);
+       default:
+          ERROR("expected an element of RRi");
+          return nullptr;
     }
 }
 

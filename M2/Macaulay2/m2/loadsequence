@@ -2,6 +2,7 @@ command.m2
 classes.m2
 option.m2
 methods.m2
+shared.m2
 autoload.m2
 system.m2
 regex.m2
@@ -35,6 +36,7 @@ engine.m2
 enginering.m2
 rationals.m2
 reals.m2
+intervals.m2
 quotient.m2
 powers.m2
 orderedmonoidrings.m2
@@ -48,6 +50,7 @@ matrix1.m2
 mutablemat.m2
 localring.m2
 quotring.m2
+freealgebras.m2
 multilin.m2
 flint.m2
 genmat.m2
@@ -99,6 +102,5 @@ programs.m2
 undoc.m2
 obsolete.m2
 exports.m2
-shared.m2
 typicalvalues.m2
 last.m2

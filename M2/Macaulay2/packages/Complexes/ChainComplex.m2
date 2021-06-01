@@ -286,10 +286,6 @@ Symbol ^ Complex := ComplexMap => (sym, C) -> (
     if sym === dd then C.dd
     else error "expected symbol to be 'dd'"
     )
-Symbol _ Complex := ComplexMap => (sym, C) -> sym^C
-
-
--- XXX
 
 isFree = method()
 isFree Complex := Boolean => C -> (
@@ -609,7 +605,8 @@ naiveTruncation(Complex,Sequence) := Complex => (C,loHi) -> (
     lo = max(lo,loC);
     hi = min(hi,hiC);
     if lo === loC and hi === hiC then C
-    else if lo >= hi then complex(C_lo, Base=>lo) -- note: if lo > hi, this is the zero complex.
+    else if lo === hi then complex(C_lo, Base=>lo)
+    else if lo > hi then complex (ring C)^0
     else complex(hashTable for i from lo+1 to hi list i => dd^C_i, Base=>lo)
     )
 naiveTruncation(Complex,ZZ,ZZ) := 
@@ -898,9 +895,17 @@ resolutionMap Complex := ComplexMap => opts -> C -> (
             -- how to implement length limit here.  What does length limit mean?
             while (
                 g = nextLambda f;
-                g =!= null and len <= lengthlimit
+                (len <= hi - lo or g =!= null) and len <= lengthlimit
                 ) do (
-                f = g;
+                if g === null then (
+                    -- if g is null but the complex C has terms in position >= lo+len 
+                    -- then we modify the source to increase the concentration of the source of f (i.e. add zero module at position lo+len
+                    src := source f;
+                    src.concentration = (lo-1, lo + len);
+                    f = map(C, src, f);
+                    )
+                else
+                    f = g;
                 len = len+1;
                 );
             -- the following line removes a 0 in the lo-1 spot, which is a byproduct
@@ -1071,7 +1076,7 @@ yonedaMap Matrix := ComplexMap => opts -> f -> (
     -- the " + degree f" is needed because of the behavior of homomorphism:
     -- that function appears to ignore the degree of the incoming map.
     g0 := map(FN_0, FM_d, g, Degree => degree f + degree g);
-    extend(FN, FM, g0, -d)
+    extend(FN, FM, g0, (0,d))
     )
 
 yonedaMap' = method(Options => {LengthLimit => infinity})
@@ -1123,4 +1128,21 @@ yonedaProduct(Module, Module) := Matrix => (E,F) -> (
           yonedaProduct(E_{i}, F_{j})
           );
     map(EF, E ** F, matrix {elems})
+    )
+
+koszulComplex = method(Options => true)
+koszulComplex Matrix := Complex => {Concentration => null} >> opts -> f -> (
+    if numrows f =!= 1 then error "expected a matrix with one row";
+    (lo, hi) := if opts.Concentration === null then (0, numcols f) else opts.Concentration;
+    if lo < 0 then lo = 0;
+    if hi > numcols f then hi = numcols f;
+    if lo === hi then 
+        complex(target koszul(lo+1, f), Base => lo)
+    else (
+        complex(for i from lo+1 to hi list koszul(i, f), Base => lo)
+        )
+    )
+koszulComplex List := Complex => {Concentration => null} >> opts -> L -> (
+    if #L === 0 then error "expected a non-empty list";
+    koszulComplex(matrix{L}, opts)
     )

@@ -26,7 +26,6 @@ isFace(Polyhedron,Polyhedron) := (P,Q) -> (
 -- PURPOSE : Tests if a Polyhedron is empty
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : 'true' or 'false'
-isEmpty = method(TypicalValue => Boolean)
 isEmpty Polyhedron := P -> getProperty(P, empty)
 
 

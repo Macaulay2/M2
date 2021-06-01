@@ -26,8 +26,8 @@ class DMatConstIterator
 
   void operator++() { mCurrent += mStride; }
   const ElementType& operator*() { return *mCurrent; }
-  bool operator==(DMatConstIterator& i) const { return (&(*i) == mCurrent); }
-  bool operator!=(DMatConstIterator& i) const { return (&(*i) != mCurrent); }
+  bool operator==(const DMatConstIterator& i) const { return (&(*i.mCurrent) == mCurrent); }
+  bool operator!=(const DMatConstIterator& i) const { return (&(*i.mCurrent) != mCurrent); }
  private:
   const ElementType* mCurrent;
   size_t mStride;
@@ -88,7 +88,7 @@ class DMat
       mArray = nullptr;
     else
       {
-        mArray = static_cast<ElementType*>(GC_MALLOC_UNCOLLECTABLE(sizeof(ElementType) * len));
+        mArray = newarray(ElementType,len);
         //        mArray = new ElementType[len];
         for (size_t i = 0; i < len; i++)
           {
@@ -105,7 +105,7 @@ class DMat
       mArray = nullptr;
     else
       {
-        mArray = static_cast<ElementType*>(GC_MALLOC_UNCOLLECTABLE(sizeof(ElementType) * len));
+        mArray = newarray(ElementType,len);
         //        mArray = new ElementType[len];
         for (size_t i = 0; i < len; i++)
           ring().init_set(mArray[i], M.array()[i]);

@@ -33,7 +33,7 @@ assert areEqual(sortSolutions rsols, {{0,1},{1,0}})
 V = numericalIrreducibleDecomposition ideal T
 assert(dim V == 0 and degree V == 4)
 V = numericalIrreducibleDecomposition ideal (x^6-y^2)
-assert all(components V, W->W.IsIrreducible===true)
+assert all(components V, W->W.cache.IsIrreducible===true)
 
 -- parameterHomotopy
 R=CC[u1,u2,u3,x,y]

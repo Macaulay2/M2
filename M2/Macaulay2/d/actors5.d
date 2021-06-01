@@ -242,7 +242,7 @@ header "
 
 WindowWidth(fd:int):int := Ccode(returns,"
    #ifdef HAVE_SYS_IOCTL_H
-     struct winsize x;
+     struct winsize x = {0};
      ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
      return x.ws_col;
    #else
@@ -251,7 +251,7 @@ WindowWidth(fd:int):int := Ccode(returns,"
 ");
 WindowHeight(fd:int):int := Ccode(returns,"
    #ifdef HAVE_SYS_IOCTL_H
-     struct winsize x;
+     struct winsize x = {0};
      ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
      return x.ws_row;
    #else
@@ -1643,7 +1643,10 @@ topLevelModeS := dummySymbol;
 initialRandomSeed := zeroZZ;
 initialRandomHeight := toInteger(10);
 
-setupvar("maxAllowableThreads",toExpr(Ccode( int, " getMaxAllowableThreads() " )));
+maxAllowableThreadsS := setupvar("maxAllowableThreads",toExpr(0)); -- the value returned by getMaxAllowableThreads may not be initialized yet
+export setMaxAllowableThreads():void := (
+     setGlobalVariable(maxAllowableThreadsS, toExpr(Ccode(int, "getMaxAllowableThreads()")));
+     );
 
 syms := SymbolSequence(
      (  backtraceS = setupvar("backtrace",toExpr(backtrace));  backtraceS  ),
@@ -1922,6 +1925,7 @@ setupfun("dumpNodes",dumpNodes);
 toExternalString(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(toExternalString(x.v))
+     is x:RRicell do toExpr(toExternalString(x.v))
      is x:CCcell do toExpr(toExternalString(x.v))
      else WrongArg("a real or complex number")
      );

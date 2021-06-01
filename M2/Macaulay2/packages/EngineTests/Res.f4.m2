@@ -200,7 +200,7 @@ TEST ///
   -- test that inhomogeneous input either works, or doesn't crash the system
   -- inhomogeneous input.  For now, disallow...
   -- We never get to our code if the module is inhomogeneous.
-  -- Instead, the front end homogenizes the inout, calls this, and then dehomogenizes later.
+  -- Instead, the front end homogenizes the input, calls this, and then dehomogenizes later.
   S = ZZ/101[a..d]
   I = ideal(a*b-a-1, b^3-c*d-3)
   time res I
@@ -539,8 +539,6 @@ TEST ///
   R = ZZ/101[a..d]
   I = ideal random(R^1, R^{-2,-3,-4})
   P = gens gb syz gens I
-  -- TODO: get this to work, then remove 'try' line after that.
-  -- minimalBetti coker P -- FAILS
   betti res(coker P,  FastNonminimal => true)
   minimalBetti coker P
   
