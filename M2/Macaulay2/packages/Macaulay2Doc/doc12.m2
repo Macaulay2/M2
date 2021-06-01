@@ -514,6 +514,30 @@ document {
      "The return value is ", TO "null", "."
      }
 
+doc ///
+  Key
+    printerr
+  Headline
+    print something to stderr
+  Usage
+    printerr x
+  Inputs
+    x:{String,Net,BasicList}
+  Description
+    Text
+      Print @TT "x"@, each line prepended with @TT "--"@, to @TO
+      stderr@.  This is useful for displaying warning messages and
+      verbose logs.
+    Example
+      printerr "Hello, world!"
+      printerr("foo" || "bar")
+    Text
+      If @TT "x"@ is @ofClass BasicList@, then its elements are first
+      joined with @TO horizontalJoin@.
+    Example
+      printerr("foo", "bar")
+///
+
 document {
      Key => hold,
      Headline => "hold something in a holder expression",
