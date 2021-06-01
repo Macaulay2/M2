@@ -1,6 +1,7 @@
 --		Copyright 1994-2006,2010 by Daniel R. Grayson
 
 export nothing := void();
+export size_t := integerType "size_t";
 export uchar := integerType "unsigned char";
 export short := integerType "short";
 export ushort := integerType "unsigned short";
