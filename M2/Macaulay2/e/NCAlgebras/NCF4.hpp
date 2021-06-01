@@ -3,7 +3,8 @@
 
 #include <tbb/queuing_mutex.h>                // for queuing_mutex
 #include <tbb/null_mutex.h>                   // for null_mutex
-#include <tbb/parallel_do.h>                  // for parallel_do_feeder
+//#include <tbb/parallel_do.h>                  // for parallel_do_feeder
+#include <tbb/parallel_for_each.h>            // for parallel_for_each and its feeder
 #include <tbb/concurrent_unordered_map.h>     // for concurrent_unordered_map
 //#include <tbb/concurrent_vector.h>          // for concurrent_vector (no longer needed)
 
@@ -87,7 +88,9 @@ private:
   using RowsVector = std::vector<Row,gc_allocator<Row>>;
   //using RowsVector = tbb::concurrent_vector<Row>;
 
-  using PreRowFeeder = tbb::parallel_do_feeder<PreRow>;
+  //using PreRowFeeder = tbb::parallel_do_feeder<PreRow>;
+  using PreRowFeeder = tbb::feeder<PreRow>;
+
   // The pair in this unordered_map is (i,j) where:
   //    i is the column number
   //    j is the row that reduces it

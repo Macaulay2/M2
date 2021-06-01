@@ -529,7 +529,7 @@ void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
   // can't do this loop as a range-based for loop since we are adding to it
   // during the for loop
   // process each element in mReducersTodo
-  tbb::parallel_do(mReducersTodo.begin(), mReducersTodo.end(),
+  tbb::parallel_for_each(mReducersTodo.begin(), mReducersTodo.end(),
       [&](const PreRow& prerow, PreRowFeeder& feeder)
       {
         auto& data = threadData.local();
@@ -558,7 +558,7 @@ void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
   for (auto over : mOverlapsTodo)
     processPreRow(over,mOverlaps);  // this often adds new elements to mReducersTodo
 
-  // this must be a parallel_do
+  // this must (eventually) be a parallel_for_each
   // can't do this loop as a range-based for loop since we are adding
   // to mReducersTodo during the for loop
   for (int i=numReducersAtFirst ; i < mReducersTodo.size(); ++i)
