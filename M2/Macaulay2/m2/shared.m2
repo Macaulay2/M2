@@ -13,7 +13,7 @@ intersection = method(Options => true)
 
 tensor    = method(Options => true, Binary => true) -- tensor is left-associative
 
-truncate = method()
+truncate = method(Options => true)
 
 isEmpty = method(TypicalValue => Boolean)
 

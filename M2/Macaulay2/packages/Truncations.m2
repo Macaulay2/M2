@@ -172,40 +172,46 @@ truncation1 = (deg, M) -> (
 -- truncate
 --------------------------------------------------------------------
 
+truncateModuleOpts := {
+    MinimalGenerators => true -- whether to trim the output
+    }
+
 truncate(ZZ, Ring)   :=
 truncate(ZZ, Ideal)  :=
 truncate(ZZ, Matrix) :=
-truncate(ZZ, Module) := (d, m) -> truncate({d}, m)
+truncate(ZZ, Module) := truncateModuleOpts >> opts -> (d, m) -> truncate({d}, m, opts)
 
-truncate(List, Ring) := Ideal => (degs, R) -> (
+truncate(List, Ring) := Ideal => truncateModuleOpts >> opts -> (degs, R) -> (
     -- truncate the graded ring R in degrees >= d, for d in degs
     if not truncateImplemented R then error "cannot use truncate with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
-    trim if degreeLength R === 1 and any(degrees R, d -> d =!= {0})
+    doTrim := if opts.MinimalGenerators then trim else identity;
+    doTrim if degreeLength R === 1 and any(degrees R, d -> d =!= {0})
     then ideal truncation1(min degs, R^1)
     else ideal gens truncationMonomials(degs, R))
 
-truncate(List, Ideal)  := Ideal  => (degs, I) -> ideal truncate(degs, module I)
-truncate(List, Module) := Module => (degs, M) -> (
+truncate(List, Ideal)  := Ideal  => truncateModuleOpts >> opts -> (degs, I) -> ideal truncate(degs, module I, opts)
+truncate(List, Module) := Module => truncateModuleOpts >> opts -> (degs, M) -> (
     if M == 0 then return M;
     if not truncateImplemented(R := ring M) then error "cannot use truncate with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
-    trim if degreeLength R === 1 and any(degrees R, d -> d =!= {0})
+    doTrim := if opts.MinimalGenerators then trim else identity;
+    doTrim if degreeLength R === 1 and any(degrees R, d -> d =!= {0})
     then truncation1(min degs, M)
     else if isFreeModule M then (
         image map(M, , directSum for a in degrees M list
             gens truncationMonomials(for d in degs list (d - a), R)))
     else (
-        image map(M, , gens truncate(degs, target presentation M)))
+        image map(M, , gens truncate(degs, target presentation M, opts)))
     )
 
-truncate(List, Matrix) := Matrix => (degs, f) -> (
+truncate(List, Matrix) := Matrix => truncateModuleOpts >> opts -> (degs, f) -> (
     if not truncateImplemented(R := ring f) then error "cannot use truncate with this ring type";
     -- TODO: is this required?
     --if not isFreeModule source f or not isFreeModule target f then error "expected a map of free modules";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
-    F := truncate(degs, source f);
-    G := truncate(degs, target f);
+    F := truncate(degs, source f, opts);
+    G := truncate(degs, target f, opts);
     map(G, F, (f * gens F) // gens G))
 
 --------------------------------------------------------------------
