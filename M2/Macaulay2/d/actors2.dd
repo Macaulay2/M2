@@ -666,24 +666,6 @@ unSingleton(e:Expr):Expr := (
      else e);
 setupfun("unsequence",unSingleton);
 
-cpuTime(e:Expr):Expr := (
-     when e
-     is s:Sequence do if length(s) == 0 then toExpr(cpuTime())
-     else WrongNumArgs(0)
-     else WrongNumArgs(0));
-setupfun("cpuTime",cpuTime);
-
--- TODO: should "timing" return thread and gc times like "time"?
--- (moved to actors5.d for gc time)
-timefun(a:Code):Expr := (
-     v := cpuTime();
-     ret := eval(a);
-     x := cpuTime();
-     when ret
-     is Error do ret
-     else list(timeClass,Sequence(toExpr(x-v),ret)));
-setupop(timingS,timefun);
-
 exponent(e:Expr):Expr := (
      when e
      is x:ZZcell do toExpr(exponent(x.v))	      -- # typical value: size2, ZZ, ZZ
