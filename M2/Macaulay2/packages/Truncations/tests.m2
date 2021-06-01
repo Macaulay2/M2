@@ -287,6 +287,37 @@ TEST /// -- cf. Maclagan-Smith 2004, Example 5.2
   assert(image basis'({-1, 2}, M) == image(map(S^1, S^{6:{1,-2}}, {{x_1*x_2*x_3, x_0*x_1*x_3, x_1^2*x_2^3, x_0*x_1^2*x_2^2, x_0^2*x_1^2*x_2, x_0^3*x_1^2}})))
 ///
 
+TEST /// -- ideal of 10 points on Hirzebruch surface of type 3
+  needsPackage "NormalToricVarieties"
+  X = hirzebruchSurface 3
+  S = ring X; B = ideal X;
+
+  I0 = ideal {
+      x_0^5*x_1+3*x_0^4*x_1*x_2+x_0^3*x_1*x_2^2+8*x_0^2*x_1*x_2^3+2*x_0*x_1*x_2^4+5*x_1*x_2^5+2*x_0^2*x_3+7*x_0*x_2*x_3+8*x_2^2*x_3,
+      2*x_0^4*x_1^2*x_2^2+14*x_0^3*x_1^2*x_2^3+8*x_0^2*x_1^2*x_2^4+9*x_0*x_1^2*x_2^5-x_1^2*x_2^6+4*x_0^3*x_1*x_3+12*x_0^2*x_1*x_2*x_3};
+  M0 = comodule I0;
+  assert(hilbertPolynomial(X, M0) == 10)
+
+  -- testing different ways to truncate M0
+  needsPackage "LinearTruncations"
+  d = {2, 2}
+  M1 = (truncate(d, S^1) / truncate(d, module I0)); -- the definition
+  M2 = (truncate(d, S^1) / truncate(d, I0)); -- good, but M/I != M/IM
+  M3 = (truncate(d, S^1) / module I0); -- good, but truncate(d, I) != intersect(I, truncate(d, S))
+  M4 =  truncate(d, M0);
+
+  -- all 4 are isomorphic as sheaves
+  assert(unique last degrees relations M1 == {{2,2}})
+  assert(unique last degrees relations M2 == {{4,4}})
+  assert(unique last degrees relations M3 == {{2,1},{0,2}})
+  assert(M4 == M1) -- good, fixed in v1.0
+
+  -- truncating a chain complex
+  C = res M0
+  D = chainComplex apply(1 .. length C, i -> truncate(d, C.dd_i));
+  assert(HH_0 D == M4 and HH_1 D == 0 and HH_2 D == 0) -- good, fixed in v1.0
+///
+
 end--
 
 restart
