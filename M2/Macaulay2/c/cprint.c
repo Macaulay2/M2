@@ -461,7 +461,7 @@ static void cprintdefine(node t,bool definitions) {
 	       threadLocalDeclarationFlag = 1;
 	       cprint(t);
 	       threadLocalDeclarationFlag = 0;	      
-	       put("_id;\n");
+	       put("_id");
 //	       put("__thread ");
           }
      if (flags & const_F) put("const ");
