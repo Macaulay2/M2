@@ -1,0 +1,78 @@
+-- TODO: get core time: number of cpu clock ticks spent in the core/libraries
+-- TODO: define time and elapsedTime in the top level instead, and print in the AfterPrint
+-- TODO: auto-calibrate spin based on the wall time
+
+use arithmetic; -- for types
+use binding;    -- for symbols
+use evaluate;   -- for eval
+use expr;       -- for timeClass
+use struct;     -- for Sequence
+use system;     -- for cpuTime
+use stdio;      -- for tostringRR
+use actors5;    -- for gcTime
+
+declarations "#include <chrono>";
+
+-- The typedef from this type declaration is put into the include file chrono-exports.h,
+-- so that means we can write "use chrono;" only in a *.dd file, not in a *.d file.
+-- That's why we are renaming interp.d to interp.dd.  Eventually all *.d files should
+-- be renamed.
+Chrono := Type "std::chrono::steady_clock::time_point" ;
+
+-----------------------------------------------------------------------------
+-- Top level timing functions
+-----------------------------------------------------------------------------
+
+cpuTime(e:Expr):Expr := (
+    when e is s:Sequence do
+    if length(s) == 0 then toExpr(cpuTime())
+    else WrongNumArgs(0)
+    else WrongNumArgs(0));
+setupfun("cpuTime", cpuTime);
+
+cpuTimer(c:Code):Sequence := (
+    T0 := cpuTime();
+    ret := eval(c);
+    T1 := cpuTime();
+    Sequence(toExpr(T1 - T0), ret));
+
+wallTimer(c:Code):Sequence := (
+    T0 := Ccode(Chrono, "std::chrono::steady_clock::now()");
+    ret := eval(c);
+    T1 := Ccode(Chrono, "std::chrono::steady_clock::now()");
+    dT := double(Ccode(uint64_t, "(", T1, " - ", T0, ").count()"));
+    dT  = dT/1000000000.;
+    Sequence(toExpr(dT), ret));
+
+showtimefun(a:Code):Expr := (
+    cpuStart := cpuTime();
+    threadStart := threadTime();
+    gcStart := gcTime();
+    ret := eval(a);
+    cpuEnd := cpuTime();
+    threadEnd := threadTime();
+    gcEnd := gcTime();
+    stdError << " -- used "
+	<<    cpuEnd -    cpuStart << "s (cpu); "
+	<< threadEnd - threadStart << "s (thread); "
+	<<     gcEnd -     gcStart << "s (gc)" << endl;
+    ret);
+setupop(timeS,showtimefun);
+
+-- TODO: should "timing" return thread and gc times like "time"?
+timingfun(c:Code):Expr := (
+    s := cpuTimer(c);
+    when s.1 is Error do s.1 else list(timeClass, s));
+setupop(timingS, timingfun);
+
+elapsedTimefun(c:Code):Expr := (
+    s := wallTimer(c);
+    when s.0 is dT:RRcell do (
+	stdError << " -- " << tostringRR(dT.v) << "s elapsed" << endl;)
+    else nothing; s.1);
+setupop(elapsedTimeS,elapsedTimefun);
+
+elapsedTimingfun(c:Code):Expr := (
+    s := wallTimer(c);
+    when s.1 is Error do s.1 else list(timeClass, s));
+setupop(elapsedTimingS,elapsedTimingfun);
