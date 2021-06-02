@@ -672,6 +672,7 @@ gbA::spairs::iterator gbA::choose_pair(gbA::spairs::iterator first,
   return first; /* MES: really do something here... */
 }
 
+namespace {
 struct spair_sorter
     : public std::binary_function<gbA::spair *, gbA::spair *, bool>
 {
@@ -699,6 +700,7 @@ struct spair_sorter
     return result;
   }
 };
+}; // unnamed namespace
 
 class SPolySorter
 {
