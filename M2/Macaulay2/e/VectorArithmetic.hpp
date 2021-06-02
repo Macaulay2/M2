@@ -11,7 +11,7 @@
 
 #include "f4/f4-mem.hpp"         // for F4Mem
 
-#include <tbb/null_mutex.h>
+#include "m2tbb.hpp"
 
 #include "ARingElem.hpp"
 
@@ -230,8 +230,8 @@ public:
                            int last,
                            MemoryBlock& monomialSpace) const
   { 
-    tbb::null_mutex noLock;
-    safeDenseRowToSparseRow<tbb::null_mutex>(dense,
+    m2tbb::null_mutex noLock;
+    safeDenseRowToSparseRow<m2tbb::null_mutex>(dense,
 					     sparse,
 					     comps,
 					     first,
