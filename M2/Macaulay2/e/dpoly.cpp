@@ -77,12 +77,12 @@ void ZZp_RANDOM(long charac, long &result)
   result = rawRandomInt(static_cast<int32_t>(charac));
 }
 
-void DPoly::initialize(long p, int nvars0, const_poly *ext0)
+void DPoly::initialize(long p, int nvars0, const TowerPolynomial* ext0)
 {
   charac = p;
   nvars = nvars0;
   nlevels = nvars0;
-  extensions = newarray(poly, nlevels);
+  extensions = newarray(TowerPolynomial, nlevels);
   if (ext0 == 0)
     for (int i = 0; i < nlevels; i++) extensions[i] = 0;
   else
@@ -92,7 +92,7 @@ void DPoly::initialize(long p, int nvars0, const_poly *ext0)
         down_level(i, nlevels - 1, extensions[i]);
       }
 }
-DPoly::DPoly(long p, int nvars0, const_poly *ext0)
+DPoly::DPoly(long p, int nvars0, const TowerPolynomial* ext0)
 {
   initialize(p, nvars0, ext0);
 }
@@ -101,12 +101,12 @@ int DPoly::degree_of_extension(int level)
 {
   // if negative, then that variable is transcendental over lower vars
   if (level < 0 || level >= nlevels) return -1;
-  poly f = extensions[level];
+  TowerPolynomial f = extensions[level];
   if (f == 0) return -1;
   return f->deg;
 }
 
-bool DPoly::down_level(int newlevel, int oldlevel, poly &f)
+bool DPoly::down_level(int newlevel, int oldlevel, TowerPolynomial& f)
 {
   if (f == 0) return true;
   for (int i = oldlevel; i > newlevel; i--)
@@ -116,7 +116,7 @@ bool DPoly::down_level(int newlevel, int oldlevel, poly &f)
           dealloc_poly(f);
           return false;
         }
-      poly g = f->arr.polys[0];
+      TowerPolynomial g = f->arr.polys[0];
       f->arr.polys[0] = 0;
       dealloc_poly(f);
       f = g;
@@ -124,7 +124,7 @@ bool DPoly::down_level(int newlevel, int oldlevel, poly &f)
   return true;
 }
 
-static int n_nonzero_terms(int level, const_poly f)
+static int n_nonzero_terms(int level, const TowerPolynomial f)
 {
   if (f == 0) return 0;
   int nterms = 0;
@@ -143,7 +143,7 @@ static int n_nonzero_terms(int level, const_poly f)
 
 void DPoly::elem_text_out(buffer &o,
                           int level,
-                          const poly f,
+                          const TowerPolynomial f,
                           bool p_one,
                           bool p_plus,
                           bool p_parens,
@@ -230,7 +230,7 @@ void DPoly::extensions_text_out(buffer &o, M2_ArrayString names) const
     }
 }
 
-void DPoly::increase_size_0(int newdeg, poly &f)
+void DPoly::increase_size_0(int newdeg, TowerPolynomial& f)
 {
   assert(f != 0);
   if (f->len <= newdeg)
@@ -246,13 +246,13 @@ void DPoly::increase_size_0(int newdeg, poly &f)
     }
 }
 
-void DPoly::increase_size_n(int newdeg, poly &f)
+void DPoly::increase_size_n(int newdeg, TowerPolynomial& f)
 {
   assert(f != 0);
   if (f->len <= newdeg)
     {
-      poly *newelems = newarray(poly, newdeg + 1);
-      poly *fp = f->arr.polys;
+      TowerPolynomial *newelems = newarray(TowerPolynomial, newdeg + 1);
+      TowerPolynomial *fp = f->arr.polys;
       for (int i = 0; i <= f->deg; i++) newelems[i] = fp[i];
       for (int i = f->deg + 1; i < newdeg + 1; i++) newelems[i] = 0;
       deletearray(fp);
@@ -262,11 +262,11 @@ void DPoly::increase_size_n(int newdeg, poly &f)
     }
 }
 
-poly DPoly::alloc_poly_n(int deg, poly *elems)
+TowerPolynomial DPoly::alloc_poly_n(int deg, TowerPolynomial *elems)
 // if elems == 0, then set all coeffs to 0.
 {
-  poly result = new poly_struct;
-  result->arr.polys = newarray(poly, deg + 1);
+  TowerPolynomial result = new TowerPolynomialStruct;
+  result->arr.polys = newarray(TowerPolynomial, deg + 1);
   result->deg = deg;
   result->len = deg + 1;
   if (elems == 0)
@@ -276,9 +276,9 @@ poly DPoly::alloc_poly_n(int deg, poly *elems)
   return result;
 }
 
-poly DPoly::alloc_poly_0(int deg, long *elems)
+TowerPolynomial DPoly::alloc_poly_0(int deg, long *elems)
 {
-  poly result = new poly_struct;
+  TowerPolynomial result = new TowerPolynomialStruct;
   result->arr.ints = newarray_atomic(long, deg + 1);
   result->deg = deg;
   result->len = deg + 1;
@@ -289,7 +289,7 @@ poly DPoly::alloc_poly_0(int deg, long *elems)
   return result;
 }
 
-void DPoly::dealloc_poly(poly &f)
+void DPoly::dealloc_poly(TowerPolynomial &f)
 // only f is freed, not any pointers in the array of f
 {
   if (f == 0) return;
@@ -298,11 +298,11 @@ void DPoly::dealloc_poly(poly &f)
   f = 0;
 }
 
-poly DPoly::read_poly_n(char *&str, int level)
+TowerPolynomial DPoly::read_poly_n(char *&str, int level)
 {
   int len = 0;
-  poly *elems = newarray(poly, 100);
-  poly this_elem = 0;
+  TowerPolynomial *elems = newarray(TowerPolynomial, 100);
+  TowerPolynomial this_elem = 0;
   if (*str != '[')
     {
       fprintf(stderr, "expected '[', got %s\n", str);
@@ -333,12 +333,12 @@ poly DPoly::read_poly_n(char *&str, int level)
     }
   // the only way to get here is if *str == ']'.  Eat that char.
   str++;
-  poly result = DPoly::alloc_poly_n(len - 1, elems);
+  TowerPolynomial result = DPoly::alloc_poly_n(len - 1, elems);
   deletearray(elems);
   return result;
 }
 
-poly DPoly::read_poly_0(char *&str)
+TowerPolynomial DPoly::read_poly_0(char *&str)
 {
   int len = 0;
   long *elems = newarray_atomic(long, 100);
@@ -375,18 +375,18 @@ poly DPoly::read_poly_0(char *&str)
     }
   // the only way to get here is if *str == ']'.  Eat that char.
   str++;
-  poly result = DPoly::alloc_poly_0(len - 1, elems);
+  TowerPolynomial result = DPoly::alloc_poly_0(len - 1, elems);
   deletearray(elems);
   return result;
 }
 
-poly DPoly::read_poly(char *&str, int level)
+TowerPolynomial DPoly::read_poly(char *&str, int level)
 {
   if (level > 0) return read_poly_n(str, level);
   return read_poly_0(str);
 }
 
-std::ostream &DPoly::append_to_stream(std::ostream &o, int level, const poly f)
+std::ostream &DPoly::append_to_stream(std::ostream &o, int level, const TowerPolynomial f)
 {
   if (f == 0)
     o << "0";
@@ -403,7 +403,7 @@ std::ostream &DPoly::append_to_stream(std::ostream &o, int level, const poly f)
     }
   else
     {
-      poly *p = f->arr.polys;
+      TowerPolynomial *p = f->arr.polys;
       o << "[";
       for (int i = 0; i <= f->deg; i++)
         {
@@ -414,7 +414,7 @@ std::ostream &DPoly::append_to_stream(std::ostream &o, int level, const poly f)
     }
   return o;
 }
-char *DPoly::to_string(int level, const poly f)
+char *DPoly::to_string(int level, const TowerPolynomial f)
 {
   std::ostringstream o;
   append_to_stream(o, level, f);
@@ -425,7 +425,7 @@ char *DPoly::to_string(int level, const poly f)
   return result;  
 }
 
-void DPoly::display_poly(FILE *fil, int level, const poly f)
+void DPoly::display_poly(FILE *fil, int level, const TowerPolynomial f)
 {
   if (f == 0)
     fprintf(fil, "0");
@@ -443,7 +443,7 @@ void DPoly::display_poly(FILE *fil, int level, const poly f)
     }
   else
     {
-      poly *p = f->arr.polys;
+      TowerPolynomial *p = f->arr.polys;
       // fprintf(fil, "[(%ld)", f->deg);
       fprintf(fil, "[");
       for (int i = 0; i <= f->deg; i++)
@@ -455,8 +455,8 @@ void DPoly::display_poly(FILE *fil, int level, const poly f)
     }
 }
 
-void dpoly(int level, const poly f) { DPoly::display_poly(stdout, level, f); }
-bool DPoly::is_equal(int level, const poly f, const poly g)
+void dpoly(int level, const TowerPolynomial f) { DPoly::display_poly(stdout, level, f); }
+bool DPoly::is_equal(int level, const TowerPolynomial f, const TowerPolynomial g)
 {
   if (f == 0)
     {
@@ -473,17 +473,17 @@ bool DPoly::is_equal(int level, const poly f, const poly g)
       return true;
     }
   // level > 0
-  poly *fp = f->arr.polys;
-  poly *gp = g->arr.polys;
+  TowerPolynomial *fp = f->arr.polys;
+  TowerPolynomial *gp = g->arr.polys;
   for (int i = 0; i <= f->deg; i++)
     if (!is_equal(level - 1, fp[i], gp[i])) return false;
   return true;
 }
 
-poly DPoly::copy(int level, const_poly f)
+TowerPolynomial DPoly::copy(int level, const TowerPolynomial f)
 {
   if (f == 0) return 0;
-  poly result;
+  TowerPolynomial result;
   if (level == 0)
     {
       result = alloc_poly_0(f->deg);
@@ -498,66 +498,66 @@ poly DPoly::copy(int level, const_poly f)
   return result;
 }
 
-poly DPoly::from_long(int level, long c)
+TowerPolynomial DPoly::from_long(int level, long c)
 {
   if (c == 0) return 0;
-  poly result = alloc_poly_0(0);
+  TowerPolynomial result = alloc_poly_0(0);
   result->arr.ints[0] = c;
   for (int i = 1; i <= level; i++)
     {
-      poly a = result;
+      TowerPolynomial a = result;
       result = alloc_poly_n(0);
       result->arr.polys[0] = a;
     }
   return result;
 }
 
-poly DPoly::var(int level, int v)
+TowerPolynomial DPoly::var(int level, int v)
 // make the variable v (but at level 'level')
 {
   if (v > level) return 0;
   int which = (v == 0 ? 1 : 0);
-  poly result =
+  TowerPolynomial result =
       alloc_poly_0(which);  // TODO: check that this initializes elements to 0
   result->arr.ints[which] = 1;
   for (int i = 1; i <= level; i++)
     {
       which = (i == v ? 1 : 0);
-      poly a = result;
+      TowerPolynomial a = result;
       result = alloc_poly_n(which);
       result->arr.polys[which] = a;
     }
   return result;
 }
 
-poly DPoly::random_0(int deg)
+TowerPolynomial DPoly::random_0(int deg)
 {
   if (deg < 0) deg = 3;  // Take a random element of degree 0.
-  poly f = alloc_poly_0(deg);
+  TowerPolynomial f = alloc_poly_0(deg);
   for (int i = 0; i <= deg; i++) ZZp_RANDOM(charac, f->arr.ints[i]);
   reset_degree_0(f);  // possibly modifies f, if it is zero.
   return f;
 }
-poly DPoly::random_n(int level, int deg)
+TowerPolynomial DPoly::random_n(int level, int deg)
 {
   if (deg < 0) deg = 3;  // Take a random element of degree 0.
-  poly f = alloc_poly_n(deg);
+  TowerPolynomial f = alloc_poly_n(deg);
   for (int i = 0; i <= deg; i++) f->arr.polys[i] = random(level - 1);
   reset_degree_n(level, f);  // possibly modifies f, if it is zero.
   return f;
 }
-poly DPoly::random(int level, int deg)
+TowerPolynomial DPoly::random(int level, int deg)
 {
   if (deg < 0) deg = 0;  // Take a random element of degree 0.
   if (level == 0) return random_0(deg);
   return random_n(level, deg);
 }
-poly DPoly::random(int level)
+TowerPolynomial DPoly::random(int level)
 {
   return random(level, degree_of_extension(level));
 }
 
-int DPoly::compare(int level, poly f, poly g)
+int DPoly::compare(int level, TowerPolynomial f, TowerPolynomial g)
 // returns -1 if f < g, 0 if f == g, and 1 if f > g
 // order used: first degree, then compare elements 0..charac-1
 // 0 is the lowest
@@ -592,7 +592,7 @@ int DPoly::compare(int level, poly f, poly g)
   return 0;
 }
 
-bool DPoly::is_one(int level, poly f)
+bool DPoly::is_one(int level, TowerPolynomial f)
 {
   if (f == 0) return false;
   if (f->deg != 0) return false;
@@ -601,7 +601,7 @@ bool DPoly::is_one(int level, poly f)
   else
     return is_one(level - 1, f->arr.polys[0]);
 }
-void DPoly::negate_in_place(int level, poly &f)
+void DPoly::negate_in_place(int level, TowerPolynomial &f)
 {
   if (f == 0) return;
   if (level == 0)
@@ -614,13 +614,13 @@ void DPoly::negate_in_place(int level, poly &f)
   else
     {
       int deg = f->deg;
-      poly *p = f->arr.polys;
+      TowerPolynomial *p = f->arr.polys;
       for (int i = 0; i <= deg; i++)
         if (p[i] != 0) negate_in_place(level - 1, p[i]);
     }
 }
 
-void DPoly::reset_degree_0(poly &f)
+void DPoly::reset_degree_0(TowerPolynomial &f)
 {
   int fdeg = f->deg;
   for (int j = fdeg; j >= 0; --j)
@@ -632,7 +632,7 @@ void DPoly::reset_degree_0(poly &f)
   // at this point, everything is 0!
   dealloc_poly(f);  // sets f to 0
 }
-void DPoly::reset_degree_n(int level, poly &f)
+void DPoly::reset_degree_n(int level, TowerPolynomial &f)
 {
   int fdeg = f->deg;
   for (int j = fdeg; j >= 0; --j)
@@ -645,7 +645,7 @@ void DPoly::reset_degree_n(int level, poly &f)
   dealloc_poly(f);  // sets f to 0
 }
 
-void DPoly::add_term(int level, poly &result, long coeff, exponents exp) const
+void DPoly::add_term(int level, TowerPolynomial &result, long coeff, exponents exp) const
 {
   // modifies result.
   // exp is an array [0..level-1] of exponent values for each variable
@@ -666,7 +666,7 @@ void DPoly::add_term(int level, poly &result, long coeff, exponents exp) const
     add_term(level - 1, result->arr.polys[e], coeff, exp + 1);
 }
 
-void DPoly::add_in_place_0(poly &f, const poly g)
+void DPoly::add_in_place_0(TowerPolynomial &f, const TowerPolynomial g)
 {
   int i;
   if (g == 0) return;
@@ -687,7 +687,7 @@ void DPoly::add_in_place_0(poly &f, const poly g)
     reset_degree_0(f);
 }
 
-void DPoly::add_in_place_n(int level, poly &f, const poly g)
+void DPoly::add_in_place_n(int level, TowerPolynomial &f, const TowerPolynomial g)
 {
   int i;
   if (g == 0) return;
@@ -718,7 +718,7 @@ void DPoly::add_in_place_n(int level, poly &f, const poly g)
     }
 }
 
-void DPoly::add_in_place(int level, poly &f, const poly g)
+void DPoly::add_in_place(int level, TowerPolynomial &f, const TowerPolynomial g)
 {
   if (level == 0)
     add_in_place_0(f, g);
@@ -726,7 +726,7 @@ void DPoly::add_in_place(int level, poly &f, const poly g)
     add_in_place_n(level, f, g);
 }
 
-void DPoly::subtract_in_place_0(poly &f, const poly g)
+void DPoly::subtract_in_place_0(TowerPolynomial &f, const TowerPolynomial g)
 {
   int i;
   if (g == 0) return;
@@ -758,7 +758,7 @@ void DPoly::subtract_in_place_0(poly &f, const poly g)
     }
 }
 
-void DPoly::subtract_in_place_n(int level, poly &f, const poly g)
+void DPoly::subtract_in_place_n(int level, TowerPolynomial &f, const TowerPolynomial g)
 {
   int i;
   if (g == 0) return;
@@ -790,7 +790,7 @@ void DPoly::subtract_in_place_n(int level, poly &f, const poly g)
     }
 }
 
-void DPoly::subtract_in_place(int level, poly &f, const poly g)
+void DPoly::subtract_in_place(int level, TowerPolynomial &f, const TowerPolynomial g)
 {
   if (level == 0)
     subtract_in_place_0(f, g);
@@ -798,10 +798,10 @@ void DPoly::subtract_in_place(int level, poly &f, const poly g)
     subtract_in_place_n(level, f, g);
 }
 
-poly DPoly::mult_0(const poly f, const poly g, bool reduce_by_extension)
+TowerPolynomial DPoly::mult_0(const TowerPolynomial f, const TowerPolynomial g, bool reduce_by_extension)
 {
   if (f == 0 || g == 0) return 0;
-  poly result = alloc_poly_0(f->deg + g->deg);
+  TowerPolynomial result = alloc_poly_0(f->deg + g->deg);
 
   for (int i = 0; i <= f->deg; i++)
     {
@@ -814,22 +814,22 @@ poly DPoly::mult_0(const poly f, const poly g, bool reduce_by_extension)
     remainder(0, result, extensions[0]);
   return result;
 }
-poly DPoly::mult_n(int level,
-                   const poly f,
-                   const poly g,
+TowerPolynomial DPoly::mult_n(int level,
+                   const TowerPolynomial f,
+                   const TowerPolynomial g,
                    bool reduce_by_extension)
 {
   if (f == 0 || g == 0) return 0;
-  poly result = alloc_poly_n(f->deg + g->deg);
+  TowerPolynomial result = alloc_poly_n(f->deg + g->deg);
 
   for (int i = 0; i <= f->deg; i++)
     {
-      poly a = f->arr.polys[i];
+      TowerPolynomial a = f->arr.polys[i];
       if (a != 0)
         for (int j = 0; j <= g->deg; j++)
           {
-            poly b = g->arr.polys[j];
-            poly c = mult(level - 1, a, b, true);
+            TowerPolynomial b = g->arr.polys[j];
+            TowerPolynomial c = mult(level - 1, a, b, true);
             if (c != 0)
               {
                 add_in_place(level - 1, result->arr.polys[i + j], c);
@@ -842,23 +842,23 @@ poly DPoly::mult_n(int level,
     remainder(level, result, extensions[level]);
   return result;
 }
-poly DPoly::mult(int level,
-                 const poly f,
-                 const poly g,
+TowerPolynomial DPoly::mult(int level,
+                 const TowerPolynomial f,
+                 const TowerPolynomial g,
                  bool reduce_by_extension)
 {
   if (level == 0) return mult_0(f, g, reduce_by_extension);
   return mult_n(level, f, g, reduce_by_extension);
 }
 
-poly DPoly::invert(int level, const poly a)
+TowerPolynomial DPoly::invert(int level, const TowerPolynomial a)
 {
   // plan: compute the extended gcd of a and extensions[level]
   //   as univariate polynomials (at level 'level').
   // either return 0, if the gcd returned was not 1, or return
   // result_u.
-  poly u, v;
-  poly g = gcd_coefficients(level, a, extensions[level], u, v);
+  TowerPolynomial u, v;
+  TowerPolynomial g = gcd_coefficients(level, a, extensions[level], u, v);
   if (!is_one(level, g))
     {
       dealloc_poly(u);
@@ -868,7 +868,7 @@ poly DPoly::invert(int level, const poly a)
   return u;
 }
 
-void DPoly::mult_by_coeff_0(poly &f, long b)
+void DPoly::mult_by_coeff_0(TowerPolynomial &f, long b)
 {
   if (f == 0) return;
   long *p = f->arr.ints;
@@ -882,10 +882,10 @@ void DPoly::mult_by_coeff_0(poly &f, long b)
         p++;
       }
 }
-void DPoly::mult_by_coeff_n(int level, poly &f, poly b)
+void DPoly::mult_by_coeff_n(int level, TowerPolynomial &f, TowerPolynomial b)
 {
   if (f == 0) return;
-  poly *p = f->arr.polys;
+  TowerPolynomial *p = f->arr.polys;
   long deg = f->deg;
   if (b == 0)
     {
@@ -898,7 +898,7 @@ void DPoly::mult_by_coeff_n(int level, poly &f, poly b)
         p++;
       }
 }
-void DPoly::make_monic_0(poly &f, long &result_multiplier)
+void DPoly::make_monic_0(TowerPolynomial &f, long &result_multiplier)
 {
   if (f == 0) return;
   long *p = f->arr.ints;
@@ -908,17 +908,17 @@ void DPoly::make_monic_0(poly &f, long &result_multiplier)
   mult_by_coeff_0(f, b);
   result_multiplier = b;
 }
-void DPoly::make_monic_n(int level, poly &f, poly &result_multiplier)
+void DPoly::make_monic_n(int level, TowerPolynomial &f, TowerPolynomial &result_multiplier)
 {
   if (f == 0) return;
-  poly *p = f->arr.polys;
-  poly a = p[f->deg];
-  poly b = invert(level - 1, a);
+  TowerPolynomial *p = f->arr.polys;
+  TowerPolynomial a = p[f->deg];
+  TowerPolynomial b = invert(level - 1, a);
   mult_by_coeff_n(level, f, b);
   result_multiplier = b;
 }
 
-void DPoly::make_monic(int level, poly &f)
+void DPoly::make_monic(int level, TowerPolynomial &f)
 {
   if (f == 0) return;
   if (level == 0)
@@ -928,13 +928,13 @@ void DPoly::make_monic(int level, poly &f)
     }
   else
     {
-      poly not_used;
+      TowerPolynomial not_used;
       make_monic_n(level, f, not_used);
       dealloc_poly(not_used);
     }
 }
 
-bool DPoly::make_monic3(int level, poly &u1, poly &u2, poly &u3)
+bool DPoly::make_monic3(int level, TowerPolynomial &u1, TowerPolynomial &u2, TowerPolynomial &u3)
 // let c be the inverse of the lead coefficient of u3.
 // return false if this lead coeff is not invertible
 // else return true
@@ -952,7 +952,7 @@ bool DPoly::make_monic3(int level, poly &u1, poly &u2, poly &u3)
     }
   else
     {
-      poly c = 0;
+      TowerPolynomial c = 0;
       make_monic_n(level, u3, c);
       if (c == 0) return false;
       mult_by_coeff_n(level, u1, c);
@@ -962,7 +962,7 @@ bool DPoly::make_monic3(int level, poly &u1, poly &u2, poly &u3)
   return true;
 }
 
-poly DPoly::division_in_place_monic(int level, poly &f, const poly g)
+TowerPolynomial DPoly::division_in_place_monic(int level, TowerPolynomial &f, const TowerPolynomial g)
 {
   // ASSUMPTION: g is MONIC, non-zero
   if (f == 0) return 0;
@@ -971,7 +971,7 @@ poly DPoly::division_in_place_monic(int level, poly &f, const poly g)
       return 0;
     }
   int shift = f->deg - g->deg;
-  poly quot = alloc_poly_n(shift);
+  TowerPolynomial quot = alloc_poly_n(shift);
 
   if (level == 0)
     {
@@ -992,17 +992,17 @@ poly DPoly::division_in_place_monic(int level, poly &f, const poly g)
     }
   else
     {
-      poly *p = f->arr.polys;
-      poly *q = g->arr.polys;
+      TowerPolynomial *p = f->arr.polys;
+      TowerPolynomial *q = g->arr.polys;
       for (int d = f->deg; shift >= 0; d--, shift--)
         {
-          poly a = p[d];
+          TowerPolynomial a = p[d];
           if (a != 0)
             {
               quot->arr.polys[shift] = copy(level - 1, a);
               for (int j = 0; j <= g->deg; j++)
                 {
-                  poly b = mult(level - 1, a, q[j], true);
+                  TowerPolynomial b = mult(level - 1, a, q[j], true);
                   subtract_in_place(level - 1, p[j + shift], b);
                 }
             }
@@ -1012,9 +1012,9 @@ poly DPoly::division_in_place_monic(int level, poly &f, const poly g)
   return quot;
 }
 bool DPoly::division_in_place(int level,
-                              poly &f,
-                              const poly g,
-                              poly &result_quot)
+                              TowerPolynomial &f,
+                              const TowerPolynomial g,
+                              TowerPolynomial &result_quot)
 // returns false if the lead coeff is not invertible
 {
   assert(g != 0);
@@ -1055,10 +1055,10 @@ bool DPoly::division_in_place(int level,
   else
     {
       // TODO: this code seems completely wrong!??!!
-      poly *p = f->arr.polys;
-      poly *q = g->arr.polys;
-      poly leadcoeff = q[g->deg];
-      poly invlead;
+      TowerPolynomial *p = f->arr.polys;
+      TowerPolynomial *q = g->arr.polys;
+      TowerPolynomial leadcoeff = q[g->deg];
+      TowerPolynomial invlead;
       if (is_one(level - 1, leadcoeff))
         invlead = leadcoeff;
       else
@@ -1068,10 +1068,10 @@ bool DPoly::division_in_place(int level,
         }
       for (int d = f->deg; shift >= 0; d--, shift--)
         {
-          poly a = p[d];
+          TowerPolynomial a = p[d];
           if (a != 0)
             {
-              poly b = mult(level - 1, invlead, a, true);
+              TowerPolynomial b = mult(level - 1, invlead, a, true);
               result_quot->arr.polys[shift] = copy(level - 1, b);
               for (int j = 0; j <= g->deg; j++)
                 {
@@ -1085,40 +1085,40 @@ bool DPoly::division_in_place(int level,
     }
 }
 
-void DPoly::remainder(int level, poly &f, const poly g)
+void DPoly::remainder(int level, TowerPolynomial &f, const TowerPolynomial g)
 {
   if (g == 0) return;
-  poly quot = 0;
+  TowerPolynomial quot = 0;
   division_in_place(level, f, g, quot);
   dealloc_poly(quot);
 }
 
-void DPoly::pseudo_remainder(int level, poly &f, const poly g)
+void DPoly::pseudo_remainder(int level, TowerPolynomial &f, const TowerPolynomial g)
 {
   if (g == 0) return;
   // TODO: write
 }
-poly DPoly::pseudo_division(int level, poly &f, const poly g)
+TowerPolynomial DPoly::pseudo_division(int level, TowerPolynomial &f, const TowerPolynomial g)
 {
   if (g == 0) return 0;
   // TODO: write
   return 0;
 }
-poly DPoly::resultant(int level, poly f, poly g)
+TowerPolynomial DPoly::resultant(int level, TowerPolynomial f, TowerPolynomial g)
 {
   // TODO: write
   return 0;
 }
-static void swap_poly(poly &f, poly &g)
+static void swap_poly(TowerPolynomial &f, TowerPolynomial &g)
 {
-  poly a = f;
+  TowerPolynomial a = f;
   f = g;
   g = a;
 }
-poly DPoly::gcd(int level, const poly f, const poly g)
+TowerPolynomial DPoly::gcd(int level, const TowerPolynomial f, const TowerPolynomial g)
 {
-  poly F = copy(level, f);
-  poly G = copy(level, g);
+  TowerPolynomial F = copy(level, f);
+  TowerPolynomial G = copy(level, g);
   if (G == 0)
     {
       G = F;
@@ -1148,17 +1148,17 @@ poly DPoly::gcd(int level, const poly f, const poly g)
     }
 }
 
-poly DPoly::gcd_coefficients(int level,
-                             const poly f,
-                             const poly g,
-                             poly &result_u,
-                             poly &result_v)
+TowerPolynomial DPoly::gcd_coefficients(int level,
+                             const TowerPolynomial f,
+                             const TowerPolynomial g,
+                             TowerPolynomial &result_u,
+                             TowerPolynomial &result_v)
 {
   // Assumption:
   //  f and g are non-zero
-  poly v1, v2, v3;
-  poly u1, u2, u3;
-  poly q = 0;
+  TowerPolynomial v1, v2, v3;
+  TowerPolynomial u1, u2, u3;
+  TowerPolynomial q = 0;
 
   v1 = 0;
   v2 = from_long(level, 1);
@@ -1223,8 +1223,8 @@ poly DPoly::gcd_coefficients(int level,
 #endif
 
       negate_in_place(level, q);
-      poly a = mult(level, q, v1, false);
-      poly b = mult(level, q, v2, false);
+      TowerPolynomial a = mult(level, q, v1, false);
+      TowerPolynomial b = mult(level, q, v2, false);
       add_in_place(level, u1, a);
       add_in_place(level, u2, b);
 
@@ -1263,7 +1263,7 @@ poly DPoly::gcd_coefficients(int level,
   return u3;
 }
 
-int DPoly::degree(int level, int whichvar, const poly f) const
+int DPoly::degree(int level, int whichvar, const TowerPolynomial f) const
 {
   if (f == 0) return -1;
   if (whichvar == 0) return f->deg;
@@ -1271,7 +1271,7 @@ int DPoly::degree(int level, int whichvar, const poly f) const
   int deg = -1;
   for (int i = 0; i <= f->deg; i++)
     {
-      poly g = f->arr.polys[i];
+      TowerPolynomial g = f->arr.polys[i];
       if (g != 0)
         {
           int d = degree(level - 1, whichvar - 1, g);
@@ -1281,9 +1281,9 @@ int DPoly::degree(int level, int whichvar, const poly f) const
   return deg;
 }
 
-poly DPoly::mult_by_int_0(long a, const poly f)
+TowerPolynomial DPoly::mult_by_int_0(long a, const TowerPolynomial f)
 {
-  poly result = alloc_poly_0(f->deg);
+  TowerPolynomial result = alloc_poly_0(f->deg);
   for (int i = 0; i <= f->deg; i++)
     {
       long c = f->arr.ints[i];
@@ -1296,29 +1296,29 @@ poly DPoly::mult_by_int_0(long a, const poly f)
   reset_degree_0(result);
   return result;
 }
-poly DPoly::mult_by_int_n(int level, long a, const poly f)
+TowerPolynomial DPoly::mult_by_int_n(int level, long a, const TowerPolynomial f)
 {
-  poly result = alloc_poly_n(f->deg);
+  TowerPolynomial result = alloc_poly_n(f->deg);
   for (int i = 0; i <= f->deg; i++)
     {
-      poly c = f->arr.polys[i];
+      TowerPolynomial c = f->arr.polys[i];
       if (c != 0) result->arr.polys[i] = mult_by_int(level - 1, a, c);
     }
   reset_degree_n(level, result);
   return result;
 }
 
-poly DPoly::mult_by_int(int level, long a, const poly f)
+TowerPolynomial DPoly::mult_by_int(int level, long a, const TowerPolynomial f)
 {
   if (f == 0) return 0;
   if (level == 0) return mult_by_int_0(a, f);
   return mult_by_int_n(level, a, f);
 }
 
-poly DPoly::diff_0(const poly f)
+TowerPolynomial DPoly::diff_0(const TowerPolynomial f)
 {
   if (f == 0 || f->deg == 0) return 0;
-  poly result = alloc_poly_0(f->deg - 1);
+  TowerPolynomial result = alloc_poly_0(f->deg - 1);
   for (int i = 1; i <= f->deg; i++)
     {
       long c = f->arr.ints[i];
@@ -1332,15 +1332,15 @@ poly DPoly::diff_0(const poly f)
   return result;
 }
 
-poly DPoly::diff_n(int level, int whichvar, const poly f)
+TowerPolynomial DPoly::diff_n(int level, int whichvar, const TowerPolynomial f)
 {
-  poly result;
+  TowerPolynomial result;
   if (whichvar == 0)
     {
       result = alloc_poly_0(f->deg - 1);
       for (int i = 1; i <= f->deg; i++)
         {
-          poly c = f->arr.polys[i];
+          TowerPolynomial c = f->arr.polys[i];
           if (c != 0) result->arr.polys[i - 1] = mult_by_int(level - 1, i, c);
         }
     }
@@ -1349,7 +1349,7 @@ poly DPoly::diff_n(int level, int whichvar, const poly f)
       result = alloc_poly_0(f->deg);
       for (int i = 0; i <= f->deg; i++)
         {
-          poly c = f->arr.polys[i];
+          TowerPolynomial c = f->arr.polys[i];
           if (c != 0) result->arr.polys[i] = diff(level - 1, whichvar - 1, c);
         }
     }
@@ -1357,22 +1357,22 @@ poly DPoly::diff_n(int level, int whichvar, const poly f)
   return result;
 }
 
-poly DPoly::diff(int level, int whichvar, const poly f)
+TowerPolynomial DPoly::diff(int level, int whichvar, const TowerPolynomial f)
 {
   if (f == 0) return 0;
   if (level == 0) return diff_0(f);
   return diff_n(level, whichvar, f);
 }
 
-poly DPoly::power_mod(int level, const poly f, mpz_srcptr m, const poly g)
+TowerPolynomial DPoly::power_mod(int level, const TowerPolynomial f, mpz_srcptr m, const TowerPolynomial g)
 // f^m mod g
 {
   // We assume that m > 0. THIS IS NOT CHECKED!!
   mpz_t n;
   mpz_init_set(n, m);
-  poly prod = from_long(level, 1);
-  poly base = copy(level, f);
-  poly tmp;
+  TowerPolynomial prod = from_long(level, 1);
+  TowerPolynomial base = copy(level, f);
+  TowerPolynomial tmp;
 
   for (;;)
     {
@@ -1410,10 +1410,10 @@ poly DPoly::power_mod(int level, const poly f, mpz_srcptr m, const poly g)
     }
 }
 
-poly DPoly::lowerP(int level, const poly f)
+TowerPolynomial DPoly::lowerP(int level, const TowerPolynomial f)
 {
   int i, j;
-  poly result;
+  TowerPolynomial result;
   if (f == 0) return 0;
   int charac_as_int = static_cast<int>(charac);
   int newdeg = f->deg / charac_as_int;  // should be exact...
@@ -1436,8 +1436,8 @@ poly DPoly::lowerP(int level, const poly f)
         {
           // need p-th roots of the coefficients.  So we take p^(n-1)
           // power (if coefficients are in field of size p^n)
-          poly a = f->arr.polys[j];
-          poly b = power_mod(level - 1, a, order, extensions[level - 1]);
+          TowerPolynomial a = f->arr.polys[j];
+          TowerPolynomial b = power_mod(level - 1, a, order, extensions[level - 1]);
           result->arr.polys[i] = b;
         }
       mpz_clear(order);
@@ -1445,7 +1445,7 @@ poly DPoly::lowerP(int level, const poly f)
   return result;
 }
 
-int DPoly::index_of_var(int level, const poly f) const
+int DPoly::index_of_var(int level, const TowerPolynomial f) const
 {
   if (f == 0 or level < 0 or f->deg >= 2) return -1;
   if (level == 0)
@@ -1467,7 +1467,7 @@ int DPoly::index_of_var(int level, const poly f) const
 }
 
 void DPoly::degrees_of_vars(int level,
-                            const poly f,
+                            const TowerPolynomial f,
                             std::vector<int> &result_maxdegs) const
 {
   // Set the values of result_maxdegs at indices: 0..level
@@ -1478,17 +1478,17 @@ void DPoly::degrees_of_vars(int level,
       degrees_of_vars(level - 1, f->arr.polys[i], result_maxdegs);
 }
 
-DRing::DRing(long charac, int nvars, const_poly *exts)
+DRing::DRing(long charac, int nvars, const TowerPolynomial *exts)
     : level(nvars - 1), D(charac, nvars, exts), P(charac)
 {
 }
 
-DRing *DRing::create(long p, int nvars0, const_poly *ext0)
+DRing *DRing::create(long p, int nvars0, const TowerPolynomial *ext0)
 {
   return new DRing(p, nvars0, ext0);
 }
 
-void DRing::set_from_int(poly &result, mpz_srcptr r)
+void DRing::set_from_int(TowerPolynomial &result, mpz_srcptr r)
 {
   mpz_t a;
   mpz_init(a);
@@ -1499,7 +1499,7 @@ void DRing::set_from_int(poly &result, mpz_srcptr r)
   result = D.from_long(level, c);
 }
 
-bool DRing::set_from_mpq(poly &result, mpq_srcptr r)
+bool DRing::set_from_mpq(TowerPolynomial &result, mpq_srcptr r)
 {
   // returns false if r doesn't lift
   mpz_t a;
@@ -1536,7 +1536,7 @@ int DRing::extension_degree(int firstvar)  // returns -1 if infinite
 }
 
 void DRing::elem_text_out(buffer &o,
-                          const poly f,
+                          const TowerPolynomial f,
                           bool p_one,
                           bool p_plus,
                           bool p_parens,
@@ -1553,7 +1553,7 @@ void DRing::add_term(elem &result, long coeff, exponents exp) const
   D.add_term(level, result, c, exp);
 }
 
-void DPolyTraverser::traverse(const_poly f)
+void DPolyTraverser::traverse(const TowerPolynomial f)
 {
   exponents exp = new int[D->nvars];
   for (size_t i = 0; i < D->nvars; i++) exp[i] = 0;
@@ -1563,7 +1563,7 @@ void DPolyTraverser::traverse(const_poly f)
   delete[] exp;
 }
 
-bool DPolyTraverser::traverse1(int level, const_poly f, exponents exp)
+bool DPolyTraverser::traverse1(int level, const TowerPolynomial f, exponents exp)
 {
   if (level == 0)
     {
@@ -1578,7 +1578,7 @@ bool DPolyTraverser::traverse1(int level, const_poly f, exponents exp)
     }
   else
     {
-      poly *cfs = f->arr.polys;
+      TowerPolynomial *cfs = f->arr.polys;
       for (int i = f->deg; i >= 0; --i)
         if (cfs[i] != 0)
           {

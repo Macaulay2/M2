@@ -29,7 +29,7 @@
 #include "schreyer-resolution/res-memblock.hpp"        // for MemoryBlock
 #include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
 #include "schreyer-resolution/res-monomial-types.hpp"  // for component_index
-#include "schreyer-resolution/res-poly-ring.hpp"       // for ResPolyRing, poly
+#include "schreyer-resolution/res-poly-ring.hpp"       // for ResPolyRing, ResPolynomial
 #include "schreyer-resolution/res-schreyer-order.hpp"  // for ResSchreyerOrder
 
 #include <utility>                                     // for pair
@@ -52,7 +52,7 @@ struct FrameElement
   int mDegree;             // actual degree, not slanted degree
   component_index mBegin;  // points into next level's elements
   component_index mEnd;
-  poly mSyzygy;
+  ResPolynomial mSyzygy;
   FrameElement() {}
   FrameElement(res_packed_monomial monom)
       : mMonom(monom), mDegree(0), mBegin(-1), mEnd(-1)
@@ -107,7 +107,7 @@ class SchreyerFrame
 
   bool insertLevelOne(res_packed_monomial monom,
                       int degree,
-                      poly& syzygy);  // grabs syzygy
+                      ResPolynomial& syzygy);  // grabs syzygy
   // insertLevelOne: insert element.  If the elements are not in order, then
   // false is returned.
 
