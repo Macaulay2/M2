@@ -37,7 +37,7 @@ document {
 	  Schubert,
 	  [Schubert,CoefficientRing],
 	  [Schubert,Variable]},
-     Headline => "find the Pluecker ideal of a Schubert variety",
+     Headline => "find the Plücker ideal of a Schubert variety",
      Usage => "Schubert(k,n,sigma)",
      Inputs => { 
 	  "k", 

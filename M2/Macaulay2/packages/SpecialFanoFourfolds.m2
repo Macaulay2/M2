@@ -9,8 +9,8 @@
 
 newPackage(
     "SpecialFanoFourfolds",
-    Version => "2.0", 
-    Date => "May 26, 2021",
+    Version => "2.1", 
+    Date => "May 27, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -854,7 +854,10 @@ specialGushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
         X.cache#"label" = 17;
         return X;     
     );
-    if #str >= 1 and #str <= 2 then try return GMtables(value str,K,);
+    if #str >= 1 and #str <= 2 then (
+        Vstr := value str;
+        if instance(Vstr,ZZ) and Vstr >= 1 and Vstr <= 21 then return fourfoldFromTriple(Vstr,GMtables(Vstr,K),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+    );
     error "not valid string, permitted strings are: \"sigma-plane\", \"rho-plane\", \"tau-quadric\", \"cubic scroll\", \"quintic del Pezzo surface\", \"K3 surface of degree 14\", \"surface of degree 9 and genus 2\", \"1\",...,\"21\"";
 );
 
@@ -883,7 +886,7 @@ describe SpecialGushelMukaiFourfold := X -> (
     descr = descr|newline|"containing a surface in PP^8 of degree "|toString(d)|" and sectional genus "|toString(g)|newline;
     descr = descr|(if # unique degs == 1 then "cut out by "|toString(#degs)|" hypersurfaces of degree "|toString(first degs) else "cut out by "|toString(#degs)|" hypersurfaces of degrees "|toString(toSequence degs));
     descr = descr|newline|"and with class in G(1,4) given by "|toString(cS);
-    if dim singLocus grassmannianHull X > 0 then descr = descr|newline|"Type: Gushel (not ordinary)" else descr = descr|newline|"Type: ordinary";
+    if dim singLocus grassmannianHull X >= 0 then descr = descr|newline|"Type: Gushel (not ordinary)" else descr = descr|newline|"Type: ordinary";
     if instance(recognize X,ZZ) then descr = descr|newline|"(case "|toString(recognize X)|" of Table 1 in "|"arXiv:2002.07026"|")";
     net expression descr
 );
@@ -1075,7 +1078,7 @@ toGrass SpecialGushelMukaiFourfold := (cacheValue "toGrass") (X -> ( -- for bett
     Y := grassmannianHull X;
     psi := toGrass Y;
     if dim singLocus Y == -1 then return psi|X;
-    psi * rationalMap(ring target psi,Grass(1,4,coefficientRing X),submatrix'(vars ring ambient target psi,{0}))
+    (psi|X) * rationalMap(ring target psi,Grass(1,4,coefficientRing X),submatrix'(vars ring ambient target psi,{0}))
 ));
 
 find2Eminus1secantCurveOfDegreeE = method(Options => {Verbose => true})
@@ -1654,9 +1657,10 @@ GMtables ZZ := (i) -> (
     GMtables i
 ); 
 
-fourfoldFromTriple = (i,E) -> (
-    psi := rationalMap(E_0,max flatten degrees E_0,Dominant=>2);
-    X := specialGushelMukaiFourfold(psi E_1);
+fourfoldFromTriple = method(Options => {InputCheck => 1, Verbose => true});
+fourfoldFromTriple (ZZ,VisibleList) := o -> (i,E) -> (
+    psi := rationalMap(E_0,Dominant=>2);
+    X := specialGushelMukaiFourfold(psi E_1,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
     X.cache#"label" = i;
     return X;
 );
@@ -1905,7 +1909,7 @@ varietyDefinedBylinearSyzygies EmbeddedProjectiveVariety := (cacheValue "variety
 
 toGushel = method();
 toGushel SpecialGushelMukaiFourfold := X -> (
-    if dim singLocus grassmannianHull X > 0 then return X;
+    if dim singLocus grassmannianHull X >= 0 then return X;
     j := toRationalMap toGrass X;
     Y := local Y;
     i := rationalMap(target j,(coefficientRing X)[Y,gens ambient target j],0|vars target j);
@@ -2049,7 +2053,7 @@ document {Key => {toGrass, (toGrass, SpecialGushelMukaiFourfold)},
 Headline => "Gushel morphism from a GM fourfold to Grass(1,4)", 
 Usage => "toGrass X", 
 Inputs => {"X" => SpecialGushelMukaiFourfold}, 
-Outputs => {MultirationalMap => {"a linear morphism from ", TEX///$X$///, " into the Grassmannian ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///, ", Plucker embedded, which is an embedding when ",TEX///$X$///," is of ordinary type"}}, 
+Outputs => {MultirationalMap => {"a linear morphism from ", TEX///$X$///, " into the Grassmannian ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///, ", Plücker embedded, which is an embedding when ",TEX///$X$///," is of ordinary type"}},
 EXAMPLE {"x = gens ring PP_(ZZ/33331)^8;", "X = specialGushelMukaiFourfold(ideal(x_6-x_7, x_5, x_3-x_4, x_1, x_0-x_4, x_2*x_7-x_4*x_8), ideal(x_4*x_6-x_3*x_7+x_1*x_8, x_4*x_5-x_2*x_7+x_0*x_8, x_3*x_5-x_2*x_6+x_0*x_8+x_1*x_8-x_5*x_8, x_1*x_5-x_0*x_6+x_0*x_7+x_1*x_7-x_5*x_7, x_1*x_2-x_0*x_3+x_0*x_4+x_1*x_4-x_2*x_7+x_0*x_8, x_0^2+x_0*x_1+x_1^2+x_0*x_2+2*x_0*x_3+x_1*x_3+x_2*x_3+x_3^2-x_0*x_4-x_1*x_4-2*x_2*x_4-x_3*x_4-2*x_4^2+x_0*x_5+x_2*x_5+x_5^2+2*x_0*x_6+x_1*x_6+2*x_2*x_6+x_3*x_6+x_5*x_6+x_6^2-3*x_4*x_7+2*x_5*x_7-x_7^2+x_1*x_8+x_3*x_8-3*x_4*x_8+2*x_5*x_8+x_6*x_8-x_7*x_8));", "time toGrass X", "show oo"}, 
 SeeAlso => {(toGrass, EmbeddedProjectiveVariety), (symbol ===>, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety)}} 
 
@@ -2057,7 +2061,7 @@ document {Key => {(toGrass, EmbeddedProjectiveVariety)},
 Headline => "embedding of an ordinary Gushel-Mukai fourfold or a del Pezzo variety into Grass(1,4)", 
 Usage => "toGrass X", 
 Inputs => {"X" => EmbeddedProjectiveVariety => {"an ordinary Gushel-Mukai fourfold, or a del Pezzo variety of dimension at least 4 (e.g., a sixfold projectively equivalent to ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///,")"}}, 
-Outputs => {MultirationalMap => {"an embedding of ", TEX///$X$///, " into the Grassmannian ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///, ", Plucker embedded"}}, 
+Outputs => {MultirationalMap => {"an embedding of ", TEX///$X$///, " into the Grassmannian ", TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9$///, ", Plücker embedded"}},
 EXAMPLE {"x = gens ring PP_(ZZ/33331)^8;", "X = projectiveVariety ideal(x_4*x_6-x_3*x_7+x_1*x_8, x_4*x_5-x_2*x_7+x_0*x_8, x_3*x_5-x_2*x_6+x_0*x_8+x_1*x_8-x_5*x_8, x_1*x_5-x_0*x_6+x_0*x_7+x_1*x_7-x_5*x_7, x_1*x_2-x_0*x_3+x_0*x_4+x_1*x_4-x_2*x_7+x_0*x_8);", "time toGrass X", "show oo"}, 
 SeeAlso => {(toGrass,SpecialGushelMukaiFourfold), (symbol ===>, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety)}}
 
@@ -2446,7 +2450,6 @@ X = for i from 1 to 21 list (
 ); 
 S = apply(X,x -> surface x);
 assert(apply(X,x -> degree surface x) === {2, 4, 14, 5, 9, 1, 3, 7, 1, 10, 10, 14, 12, 8, 9, 11, 9, 7, 10, 4, 12});
-debug MultiprojectiveVarieties;
 assert(apply(X,x-> sectionalGenus surface x) == {0, 0, 8, 1, 3, 0, 0, 2, 0, 4, 3, 8, 5, 2, 3, 5, 2, 0, 3, 0, 5});
 assert(last cycleClass X_18 == (6,4) and discriminant X_18 == 24);
 assert(last cycleClass X_7 == (4,3) and discriminant X_7 == 12);

@@ -3,7 +3,7 @@ include ../include/config.Makefile
 VPATH = @srcdir@
 all:
 .PHONY: all
-$(foreach d,top tar deb freebsd rpm dmg cygwin,	\
+$(foreach d,top tar deb freebsd rpm dmg,	\
 	$(eval .PHONY: all-in-$d)		\
 	$(eval all-in-$d:; + $(MAKE) -C $d all))
 ifeq "@M2TARFILE@" "yes"
@@ -23,11 +23,8 @@ endif
 ifeq "@DMG@" "yes"
 all: all-in-dmg
 endif
-ifeq "@CYGWIN@" "yes"
-all: all-in-cygwin
-endif
 $(foreach t,clean distclean,						\
-   $(foreach d,dmg rpm deb freebsd cygwin tar top install, $(eval	\
+   $(foreach d,dmg rpm deb freebsd tar top install, $(eval	\
       .PHONY: $t $t-in-$d						\
 						          )$(eval	\
       $t: $t-in-$d							\
