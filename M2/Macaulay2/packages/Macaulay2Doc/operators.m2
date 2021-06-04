@@ -223,6 +223,7 @@ document {
 	  TO "not",
 	  TO "and",
 	  TO "or",
+	  TO "xor",
 	  TO "if"
 	  }
      }
@@ -245,7 +246,7 @@ document {
      is true.",
      PARA{},
      "If ", TT "t", " is true, then the code in ", TT "u", " is not evaluated.",
-     SeeAlso =>{ "and", "not" }
+     SeeAlso =>{ "and", "not", "xor" }
      }
 
 document {
@@ -255,5 +256,24 @@ document {
      is true.",
      PARA{},
      "If ", TT "t", " is false, then the code in ", TT "u", " is not evaluated.",
-     SeeAlso =>{ "or", "not" }
+     SeeAlso =>{ "or", "not", "xor" }
      }
+
+doc ///
+  Key
+    symbol xor
+    (symbol xor, Boolean, Boolean)
+  Headline
+    exclusive disjunction
+  Usage
+    t xor u
+  Inputs
+    t:Boolean
+    u:Boolean
+  Outputs
+    :Boolean
+      equivalent to @TT "t and not u or not t and u"@
+  SeeAlso
+    symbol and
+    symbol or
+///
