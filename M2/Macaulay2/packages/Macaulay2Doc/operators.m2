@@ -200,15 +200,15 @@ doc ///
 ///
 
 document {
-     Key => {xor, (xor,ZZ,ZZ)},
+     Key => {symbol ^^, (symbol ^^,ZZ,ZZ)},
      Headline => "logical exclusive-or",
-     Usage => "xor(m,n)",
+     Usage => "m ^^ n",
      Inputs => { "m", "n"},
      Outputs => {
 	  ZZ => {"the bitwise logical exclusive-or of
 	       the integers ", TT "m", " and ", TT "n"}
 	  },
-     EXAMPLE "xor(10,12)",
+     EXAMPLE "10 ^^ 12",
      SeeAlso => { (symbol|,ZZ,ZZ), (symbol&,ZZ,ZZ) }
      }
 
