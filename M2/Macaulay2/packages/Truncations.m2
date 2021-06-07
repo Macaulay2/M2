@@ -6,15 +6,20 @@
 --
 -- TODO :
 -- 1. improve speed and caching
+-- 2. flattenRing should keep track of the Nef cone
+-- 3. turn into hook strategies
+-- 4. remove [basis, Truncate], call rawBasis in truncation0
+-- 5. finish basis'
 ---------------------------------------------------------------------------
 newPackage(
     "Truncations",
-    Version => "0.7",
-    Date => "31 Dec 2018",
+    Version => "1.0",
+    Date => "22 May 2021",
     Headline => "truncation of a module",
     Authors => {
         { Name => "David Eisenbud", Email => "de@msri.org",           HomePage => "https://www.msri.org/~de" },
-        { Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "https://www.math.cornell.edu/~mike" }
+        { Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "https://www.math.cornell.edu/~mike" },
+        { Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud" }
         },
     Keywords => { "Commutative Algebra" },
     PackageImports => { "Polyhedra", "NormalToricVarieties" },
