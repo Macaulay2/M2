@@ -318,6 +318,32 @@ TEST /// -- ideal of 10 points on Hirzebruch surface of type 3
   assert(HH_0 D == M4 and HH_1 D == 0 and HH_2 D == 0) -- good, fixed in v1.0
 ///
 
+TEST /// -- test of truncationPolyhedron with Nef option
+  debug needsPackage "Truncations"
+  needsPackage "NormalToricVarieties"
+  dP6 = smoothFanoToricVariety(2, 4)
+  S = ring dP6; B = ideal dP6;
+  N = nefGenerators dP6
+
+  A = transpose matrix degrees S -- generates the effective cone
+  P = truncationPolyhedron(A, {0,0,0,0}, Nef => nefCone dP6)
+  Q = truncationPolyhedron(A, {0,0,0,0})
+  assert(#hilbertBasis cone P == 13)
+  assert(#hilbertBasis cone Q == 10)
+
+  -- testing twists not in the Nef cone, fixed in v1.0
+  d = {0,0,1,0}; assert(truncate({0,0,0,0}, S^{-d}) == image(map(S^{-d}, S^{{0, 0, -1, -1}, {-1, 0, 0, 0}}, {{x_4, x_2}})))
+  d = {0,0,0,1}; assert(truncate({0,0,0,0}, S^{-d}) == image(map(S^{-d}, S^{{0, -1, 0, 0}, {0, 0, -1, -1}}, {{x_5, x_3}})))
+
+  -- truncating a chain complex
+  d = {0,2,0,2}
+  M0 = coker map(S^1, S^{{0, 0, -1, -1}, {0, -2, 0, -2}}, {{3*x_0*x_1+2*x_3*x_4,x_1^2*x_2^2*x_4^2+2*x_1*x_2*x_4^3*x_5+2*x_4^4*x_5^2}})
+  M1 = truncate(d, M0)
+  assert(hilbertPolynomial(dP6, M0) == 2)
+  C = res M0; D = chainComplex apply(1 .. length C, i -> truncate(d, C.dd_i));
+  assert(HH_0 D == M1 and HH_1 D == 0 and HH_2 D == 0) -- good, fixed in v1.0
+///
+
 end--
 
 restart
