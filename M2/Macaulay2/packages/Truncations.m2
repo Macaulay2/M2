@@ -201,14 +201,15 @@ truncate(List, Module) := Module => truncateModuleOpts >> opts -> (degs, M) -> (
     else if isFreeModule M then (
         image map(M, , directSum for a in degrees M list
             gens truncationMonomials(for d in degs list (d - a), R)))
-    else (
+    else if M.?generators and not M.?relations then (
         image map(M, , gens truncate(degs, target presentation M, opts)))
+    else subquotient(
+        gens truncate(degs, image generators M, MinimalGenerators => false),
+        gens truncate(degs, image  relations M, MinimalGenerators => false))
     )
 
 truncate(List, Matrix) := Matrix => truncateModuleOpts >> opts -> (degs, f) -> (
     if not truncateImplemented(R := ring f) then error "cannot use truncate with this ring type";
-    -- TODO: is this required?
-    --if not isFreeModule source f or not isFreeModule target f then error "expected a map of free modules";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
     F := truncate(degs, source f, opts);
     G := truncate(degs, target f, opts);
