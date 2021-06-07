@@ -7,31 +7,80 @@
 -- 1. support truncation on Cox ring of a toric variety
 ---------------------------------------------------------------------------
 newPackage(
-        "Truncations",
-        Version => "0.7", 
-        Date => "31 Dec 2018",
-        Authors => {
-            {
-                Name => "David Eisenbud", 
-                Email => "de@msri.org", 
-                HomePage => "http://www.msri.org/~de"},
-            {
-                Name => "Mike Stillman", 
-                Email => "mike@math.cornell.edu", 
-                HomePage=>"http://www.math.cornell.edu/~mike"}
-            },
-        Headline => "truncation of a module",
-	Keywords => {"Commutative Algebra"},
-        PackageImports => {"Polyhedra"}
-        )
+    "Truncations",
+    Version => "0.7",
+    Date => "31 Dec 2018",
+    Headline => "truncation of a module",
+    Authors => {
+        { Name => "David Eisenbud", Email => "de@msri.org",           HomePage => "https://www.msri.org/~de" },
+        { Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "https://www.math.cornell.edu/~mike" }
+        },
+    Keywords => { "Commutative Algebra" },
+    PackageImports => { "Polyhedra" },
+    AuxiliaryFiles => true,
+    DebuggingMode => true
+    )
 
--- we install methods on "truncate", from the Core
+-- "truncate" is exported by Core
 
 protect Exterior
 
+--------------------------------------------------------------------
+-- Helpers
+--------------------------------------------------------------------
+
+-- whether truncation is implemented for this ring type.
+truncateImplemented = method()
+truncateImplemented Ring := Boolean => R -> (
+    (R1, phi1) := flattenRing R;
+    A := ambient R1;
+    isAffineRing A
+    or
+    isPolynomialRing A and isAffineRing coefficientRing A and A.?SkewCommutative
+    or
+    isPolynomialRing A and ZZ === coefficientRing A
+    or
+    ZZ === A
+    )
+
+-- checkOrMakeDegreeList: takes a degree, and degree rank:ZZ.
+-- output: a list of lists of degrees, all of the correct length (degree rank).
+--  if it cannot translate the degree(s), an error is issued.
+-- in the following list: n represents an integer, and d represents a list of integers.
+-- n --> {{n}}  (if degree rank is 1)
+-- {n0,...,ns} --> {{n0,...,ns}} (if the length is degree rank).
+-- {d0,...,ds} --> {d0,...,ds} (no change, assuming length of each di is the degree rank).
+-- an error is provided in any other case.
+checkOrMakeDegreeList = method()
+checkOrMakeDegreeList(ZZ, ZZ) := (d,degrank) -> (
+    if degrank =!= 1 then
+        error("expected degree to be of length "|degrank) ;
+    {{d}}
+    )
+checkOrMakeDegreeList(List, ZZ) := (L, degrank) -> (
+    if #L === 0 then error "expected non empty list of degrees";
+    if all(L, d -> instance(d, ZZ)) then (
+        if #L =!= degrank then error("expected a degree of length "|degrank);
+        {L}
+        )
+    else (
+        -- all elements of L should be a list of list of integers,
+        -- all the same length, and L will be returned.
+        if any(L, deg -> not instance(deg, BasicList)
+                         or not all(deg, d -> instance(d,ZZ))
+                         or #deg =!= degrank)
+        then error("expected a list of lists of integers, each of length "|degrank);
+        L
+        )
+    )
+
+--------------------------------------------------------------------
+-- Polyhedral algorithms
+--------------------------------------------------------------------
+
 truncationPolyhedron = method(Options=>{Exterior => {}})
-  -- Exterior should be a list of variable indices which are skew commutative.
-  -- i.e. have max degree 1.
+-- Exterior should be a list of variable indices which are skew commutative.
+-- i.e. have max degree 1.
 truncationPolyhedron(Matrix, List) := Polyhedron => opts -> (A, b) -> (
     truncationPolyhedron(A, transpose matrix{b}, opts)
     )
@@ -71,51 +120,9 @@ basisPolyhedron(Matrix,Matrix) := (A,b) -> (
     polyhedronFromHData(-I, -z, A, b)
     )
 
-
--- checkOrMakeDegreeList: takes a degree, and degree rank:ZZ.
--- output: a list of lists of degrees, all of the correct length (degree rank).
---  if it cannot translate the degree(s), an error is issued.
--- in the following list: n represents an integer, and d represents a list of integers.
--- n --> {{n}}  (if degree rank is 1)
--- {n0,...,ns} --> {{n0,...,ns}} (if the length is degree rank).
--- {d0,...,ds} --> {d0,...,ds} (no change, assuming length of each di is the degree rank).
--- an error is provided in any other case.
-checkOrMakeDegreeList = method()
-checkOrMakeDegreeList(ZZ, ZZ) := (d,degrank) -> (
-    if degrank =!= 1 then
-        error("expected degree to be of length "|degrank) ;
-    {{d}}
-    )
-checkOrMakeDegreeList(List, ZZ) := (L, degrank) -> (
-    if #L === 0 then error "expected non empty list of degrees";
-    if all(L, d -> instance(d, ZZ)) then (
-        if #L =!= degrank then error("expected a degree of length "|degrank);
-        {L}
-        )
-    else (
-        -- all elements of L should be a list of list of integers,
-        -- all the same length, and L will be returned.
-        if any(L, deg -> not instance(deg, BasicList) 
-                         or not all(deg, d -> instance(d,ZZ)) 
-                         or #deg =!= degrank)
-          then error("expected a list of lists of integers, each of length "|degrank);
-        L
-        )
-    )
-
--- whether truncation is implemented for this ring type.
-truncateImplemented = method()
-truncateImplemented Ring := Boolean => R -> (
-    (R1, phi1) := flattenRing R;
-    A := ambient R1;
-    isAffineRing A 
-    or
-    isPolynomialRing A and isAffineRing coefficientRing A and A.?SkewCommutative
-    or
-    isPolynomialRing A and ZZ === coefficientRing A
-    or
-    ZZ === A
-    )
+--------------------------------------------------------------------
+-- Algorithms for truncations of a polynomial ring
+--------------------------------------------------------------------
 
 truncationMonomials = method()
 truncationMonomials(List, Ring) := (degs, R) -> (
@@ -153,7 +160,7 @@ truncation0 = (deg, M) -> (
         if M.?relations then subquotient(b, M.relations)
         else image b)
     else image basis(deg,deg,M,Truncate=>true)
-    )    
+    )
 
 truncation1 = (deg, M) -> (
     -- WARNING: only valid for degree length = 1.
@@ -162,7 +169,7 @@ truncation1 = (deg, M) -> (
     -- returns a submodule of M
     R := ring M;
     (R1, phi1) := flattenRing R;
-    if R1 === R then 
+    if R1 === R then
         truncation0(deg, M)
     else (
         gensM1 := if not M.?generators then null else phi1 M.generators;
@@ -177,13 +184,17 @@ truncation1 = (deg, M) -> (
         )
     )
 
+--------------------------------------------------------------------
+-- truncate
+--------------------------------------------------------------------
+
 -- truncate the graded ring A in degrees >= d, for d in degs
 truncate(List, Ring) := Module => (degs, R) -> (
     if not truncateImplemented R then error "cannot use truncate with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
     if degreeLength R === 1 and any(degrees R, d -> d =!= {0}) then
         ideal truncation1(min degs, R^1)
-    else 
+    else
         ideal gens truncationMonomials(degs,R)
     )
 
@@ -194,7 +205,7 @@ truncate(List, Module) := Module => (degs, M) -> (
     if degreeLength R === 1 and any(degrees R, d -> d =!= {0}) then
         truncation1(min degs, M)
     else if isFreeModule M then (
-        image map(M,,directSum for a in degrees M list 
+        image map(M,,directSum for a in degrees M list
             gens truncationMonomials(for d in degs list(d-a),R))
         )
     else (
