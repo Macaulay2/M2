@@ -1,4 +1,3 @@
-TEST ///
   -- test the following:
   --  gradings:
   --    standard grading
@@ -23,14 +22,19 @@ TEST ///
   --    truncate(D, image module)
   --    truncate(D, subquotient module)
   --    truncate(D, Matrix)
-///
 
-TEST /// -- Singly generated case
+TEST /// -- standard grading
   R = QQ[a..d]
   I = ideal(b*c-a*d,b^2-a*c,d^10)
   assert(truncate(2,I) == I)
   assert(truncate(3,I) == intersect((ideal vars R)^3, I))
 
+  R = ZZ[a,b,c]
+  I = ideal(15*a,21*b,19*c)
+  assert(trim truncate(2, I) == ideal(19*c^2,b*c,a*c,21*b^2,3*a*b,15*a^2))
+///
+
+TEST /// -- ZZ^1 grading
   R = ZZ/101[a..d, Degrees => {1,2,3,4}]
   assert(truncate(2, R^1) == image matrix {{a^2, a*b, a*c, a*d, b, c, d}})
   assert(truncate(4, ideal"a3,b3") == ideal(a^4,a^3*b,a^3*c,a^3*d,b^3))
@@ -38,45 +42,22 @@ TEST /// -- Singly generated case
   R = QQ[a..d, Degrees => {3,4,7,9}]
   I = ideal(a^3,b^4,c^6)
   assert(truncate(12, I) == ideal(a^4,a^3*b,a^3*c,a^3*d,b^4,c^6))
-
-  R = ZZ[a,b,c]
-  I = ideal(15*a,21*b,19*c)
-  assert(trim truncate(2, I) == ideal(19*c^2,b*c,a*c,21*b^2,3*a*b,15*a^2))
 ///
 
-TEST ///
+TEST /// -- ZZ^r grading
   A = ZZ/101[a..d, Degrees => {4:0}]
   assert(truncate(2, A) == image matrix{{0_A}})
 
   B = ZZ/101[a,b,c,d,e, Degrees=>{3:{1,0}, 2:{0,1}}]
   assert(truncate({1,2}, B) == ideal{c*e^2, b*e^2, a*e^2, c*d*e, b*d*e, a*d*e, c*d^2, b*d^2, a*d^2})
-///
 
-TEST ///
-  R = ZZ/101[x_0,x_1,y_0,y_1,y_2,Degrees=>{2:{1,1,0},3:{1,0,1}}];
+  R = ZZ/101[x_0,x_1,y_0,y_1,y_2, Degrees => {2:{1,1,0}, 3:{1,0,1}}];
   I = ideal random(R^1,R^{6:{-6,-2,-4},4:{-6,-3,-3}});
   J = truncate({6,2,3},I);
   assert(J == I)
 ///
 
-TEST ///
-  E = ZZ/101[a..f, SkewCommutative => {0,2,4}, Degrees => {2:{3,1},2:{4,-2},2:{1,3}}]
-  elapsedTime truncate({7,1},E)
-
-  debug needsPackage "Truncations"
-  elapsedTime numgens truncationMonomials({7,1},E) == 28
-
-  A = transpose matrix degrees E
-  P = truncationPolyhedron(A,{7,1}, Exterior => (options E).SkewCommutative)
-  P1 = truncationPolyhedron(A,{7,1})
-
-  needsPackage "Polyhedra"
-  elapsedTime halfspaces P
-  elapsedTime # hilbertBasis cone P == 1321
-  elapsedTime # hilbertBasis cone P1 == 1851
-///
-
-TEST /// -- of checkOrMakeDegreeList
+TEST /// -- test of checkOrMakeDegreeList
   debug needsPackage "Truncations"
   assert(checkOrMakeDegreeList(3, 1) == {{3}})
   assert(checkOrMakeDegreeList({3}, 1) == {{3}})
@@ -88,7 +69,7 @@ TEST /// -- of checkOrMakeDegreeList
   assert try checkOrMakeDegreeList({{1,0},{3,-5},3}, 2) else true
 ///
 
-TEST /// -- of truncateImplemented
+TEST /// -- test of truncateImplemented
   debug needsPackage "Truncations"
   assert truncateImplemented(ZZ/101[a..d])
   assert truncateImplemented(ZZ/101[a..d, Degrees => {1,1,-1,-1}])
@@ -132,22 +113,33 @@ TEST /// -- of truncateImplemented
   assert truncateImplemented(E1[x,y, SkewCommutative => true])
 ///
 
-TEST ///
+TEST /// -- test of truncationPolyhedron with Exterior option
+  needsPackage "Polyhedra"
   debug needsPackage "Truncations"
-  S = ZZ/101[a,b,c, Degrees =>{5,6,7}]
-  truncationMonomials({10}, S)
-  assert(truncationMonomials({{9},{11}}, S) == truncationMonomials({9},S))
+  E = ZZ/101[a..f, SkewCommutative => {0,2,4}, Degrees => {2:{3,1},2:{4,-2},2:{1,3}}]
+  A = transpose matrix degrees E
+  P = truncationPolyhedron(A, {7,1}, Exterior => (options E).SkewCommutative)
+  Q = truncationPolyhedron(A, {7,1})
+  assert(#hilbertBasis cone P == 1321)
+  assert(#hilbertBasis cone Q == 1851)
+  assert(numgens truncationMonomials({7,1}, E) == 28)
+///
 
-  E = ZZ/101[a, b, c, SkewCommutative=>true]
-  truncationMonomials({2}, E)
+TEST /// -- test of truncationMonomials
+  debug needsPackage "Truncations"
 
-  E = ZZ/101[a,b,c, SkewCommutative=>{0,1}]
-  truncationMonomials({2}, E) -- FAILS: needs a monomial ideal
+  S = ZZ/101[a,b,c, Degrees => {5,6,7}]
+  assert(truncationMonomials({10}, S) == ideal"a2,ab,ac,b2,bc,c2")
+  assert(truncationMonomials({12}, S) == ideal"a3,a2b,b2,ac,bc,c2")
 
-  use S
-  assert(truncationMonomials({12},S) == ideal"a3,a2b,b2,ac,bc,c2")
   R = S/(a*c-2*b^2)
-  assert(truncationMonomials({12},R) == ideal"a3,a2b,ac,bc,c2")
+  assert(truncationMonomials({12}, R) == ideal"a3,a2b,ac,bc,c2")
+
+  E = ZZ/101[a,b,c, SkewCommutative => true]
+  assert(truncationMonomials({2}, E) == ideal"bc,ac,ab")
+
+  E = ZZ/101[a,b,c, SkewCommutative => {0,1}]
+  assert(truncationMonomials({2}, E) == ideal"c2,bc,ac,ab")
 ///
 
 TEST /// -- test of truncations in singly graded poly ring case
@@ -201,8 +193,8 @@ TEST /// -- test of truncations in singly graded poly ring case
   assert(G == source truncate(-2, presentation M))
 ///
 
-TEST ///
-  S = ZZ/101[a,b, Degrees =>{{0,1},{1,0}}]
+TEST /// -- test of truncations in multigraded poly ring case
+  S = ZZ/101[a,b, Degrees => {{0,1},{1,0}}]
   M = S^{-{5,2}, -{2,3}}
   D = {4,3}
   assert(truncate(D,S) == image matrix{{a^3*b^4}})
@@ -210,23 +202,15 @@ TEST ///
 
   E = {{4,3},{3,4}}
   assert(truncate(E,S) == image matrix{{a^3*b^4, a^4*b^3}})
-
-  assert(truncate(D, M) == image map(M,, matrix {{a, 0}, {0, b^2}}))
+  assert(truncate(D,M) == image map(M,, matrix {{a, 0}, {0, b^2}}))
 ///
 
 TEST ///
-  S = ZZ/101[a,b,c,d,e,Degrees=>{3,4,5,6,7}]
-
-  assert(
-      sort gens truncate({8},S)
-      ==
-      sort gens ideal(a*c,b^2,a*d,b*c,a^3,a*e,b*d,c^2,a^2*b,b*e,c*d,c*e,d^2,d*e,e^2)
-      )
-
-  truncate({8},S^{-4})
-  truncate({8},S^{3})
-  truncate({8},S^{-4,-5,-3})
-  truncate(8,S^{-4,-5,-3})
+  S = ZZ/101[a,b,c,d,e, Degrees => {3,4,5,6,7}]
+  assert(truncate({8},S) == ideal(a*c,b^2,a*d,b*c,a^3,a*e,b*d,c^2,a^2*b,b*e,c*d,c*e,d^2,d*e,e^2))
+  assert(truncate({8},S^{-4}) == image map(S^{-4}, S^{-8, -9, 2:-10, -11}, {{b, c, d, a^2, e}}))
+  assert(truncate({8},S^{3}) == image map(S^{3}, S^{4:-8, 6:-9, 6:-10, 3:-11, -12},
+	  {{b*e, c*d, a^2*c, a*b^2, c*e, d^2, a^2*d, a*b*c, b^3, a^4, d*e, a^2*e, a*b*d, a*c^2, b^2*c, a^3*b, e^2, b^2*d, b*c^2, c^3}}))
   phi = random(S^{-1,-2,-3}, S^{-1,-2,-3,-4,-8})
   psi = truncate({8}, phi)
   assert(isHomogeneous psi)
@@ -237,17 +221,14 @@ TEST ///
   D = {d,reverse d}
 
   kk = ZZ/101
-  R = kk[a,b,c,Degrees =>{2:{3,4},{7,5}}]
-  truncate({5,6},R)
-  truncate({6,5},R)
-
-  J1 = truncate(D, R)
-  J1 = truncate(D, R^1)
-  truncate(D, ideal(a,b,c))
+  R = kk[a,b,c, Degrees => {2:{3,4},{7,5}}]
+  assert(truncate(d,R) == ideal"b2,ab,a2,bc,ac,c2")
+  assert(truncate(reverse d,R) == ideal"b2,ab,a2,c")
+  assert(truncate(D,R) == truncate(D, ideal(a,b,c)))
+  assert(truncate(D,R^1) == module truncate(D, ideal(a,b,c)))
 
   A = R/(a^2-b^2, c^3)
-  truncate(D, A)
-  truncate(d, R)
+  assert(truncate(D, A) == ideal"b2,ab,c")
   M = module ideal(a,b,c)
   truncate(d, ideal(a,b,c))
   truncate(D, ideal(a,b,c))
