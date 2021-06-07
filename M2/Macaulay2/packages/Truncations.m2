@@ -2,6 +2,7 @@
 -- PURPOSE : Computation of truncations M_{>=d} for modules
 --
 -- UPDATE HISTORY : created Oct 2018
+--                  updated Jun 2021
 --
 -- TODO :
 -- 1. support truncation on Cox ring of a toric variety
@@ -29,96 +30,81 @@ protect Exterior
 -- Helpers
 --------------------------------------------------------------------
 
--- whether truncation is implemented for this ring type.
+-- check whether truncation is implemented for this ring type.
 truncateImplemented = method()
 truncateImplemented Ring := Boolean => R -> (
-    (R1, phi1) := flattenRing R;
-    A := ambient R1;
-    isAffineRing A
-    or
-    isPolynomialRing A and isAffineRing coefficientRing A and A.?SkewCommutative
-    or
-    isPolynomialRing A and ZZ === coefficientRing A
-    or
-    ZZ === A
+    ZZ === (A := ambient first flattenRing R)
+    or isAffineRing A
+    or isPolynomialRing A and isAffineRing coefficientRing A and A.?SkewCommutative
+    or isPolynomialRing A and ZZ === coefficientRing A
     )
 
--- checkOrMakeDegreeList: takes a degree, and degree rank:ZZ.
--- output: a list of lists of degrees, all of the correct length (degree rank).
---  if it cannot translate the degree(s), an error is issued.
--- in the following list: n represents an integer, and d represents a list of integers.
--- n --> {{n}}  (if degree rank is 1)
--- {n0,...,ns} --> {{n0,...,ns}} (if the length is degree rank).
--- {d0,...,ds} --> {d0,...,ds} (no change, assuming length of each di is the degree rank).
--- an error is provided in any other case.
+-- checkOrMakeDegreeList: takes a degree, and degree rank:ZZ
+-- output: a list of degrees, all of the correct length (degree rank), otherwise an error
+-- in the following n represents an integer, and d represents a list of integers:
+--  n          --> {{n}}          if degree rank is 1
+-- {n0,...,ns} --> {{n0,...,ns}}  if length is the degree rank
+-- {d0,...,ds} --> { d0,...,ds }  if length of each di is the degree rank
 checkOrMakeDegreeList = method()
-checkOrMakeDegreeList(ZZ, ZZ) := (d,degrank) -> (
-    if degrank =!= 1 then
-        error("expected degree to be of length "|degrank) ;
-    {{d}}
-    )
+checkOrMakeDegreeList(ZZ,   ZZ) := (n, degrank) -> (
+    if degrank === 1 then {{n}} else error("expected a degree of length " | degrank))
 checkOrMakeDegreeList(List, ZZ) := (L, degrank) -> (
-    if #L === 0 then error "expected non empty list of degrees";
-    if all(L, d -> instance(d, ZZ)) then (
-        if #L =!= degrank then error("expected a degree of length "|degrank);
-        {L}
-        )
-    else (
-        -- all elements of L should be a list of list of integers,
-        -- all the same length, and L will be returned.
-        if any(L, deg -> not instance(deg, BasicList)
-                         or not all(deg, d -> instance(d,ZZ))
-                         or #deg =!= degrank)
-        then error("expected a list of lists of integers, each of length "|degrank);
-        L
-        )
+    if #L === 0 then error "expected nonempty list of degrees";
+    if all(L, d -> instance(d, ZZ))
+    then if #L === degrank then {L} else error("expected a multidegree of length " | degrank)
+    else ( -- If L is a list of lists of integers, all the same length, L will be returned.
+        if all(L, deg -> instance(deg, VisibleList) and #deg === degrank and all(deg, d -> instance(d, ZZ)))
+        then L else error("expected a list of multidegrees, each of length " | degrank))
     )
 
 --------------------------------------------------------------------
 -- Polyhedral algorithms
 --------------------------------------------------------------------
 
-truncationPolyhedron = method(Options=>{Exterior => {}})
--- Exterior should be a list of variable indices which are skew commutative.
--- i.e. have max degree 1.
-truncationPolyhedron(Matrix, List) := Polyhedron => opts -> (A, b) -> (
-    truncationPolyhedron(A, transpose matrix{b}, opts)
-    )
+-- If columns of A span the effective cone of a simplicial toric variety X
+-- (e.g. when columns are the degrees of the variables of the Cox ring S)
+-- and b is an element of the Picard group of X (e.g. a multidegree in S)
+-- then truncationPolyhedron returns a polyhedron in the lattice of
+-- exponent vectors of monomials of S whose degree is in b + nef cone of X
+-- FIXME: currently only correct if the nef cone is the positive quadrant
+truncationPolyhedron = method(Options => { Exterior => {} })
+-- Exterior should be a list of variable indices which are skew commutative; i.e. have max degree 1.
+truncationPolyhedron(Matrix, List)   := Polyhedron => opts -> (A, b) -> truncationPolyhedron(A, transpose matrix {b}, opts)
 truncationPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
     -- assumption: A is m x n. b is m x 1.
-    -- returns the polyhedron {Ax >= b, x >=0}
+    -- returns the polyhedron {Ax >= b, x_i >= 0}
+    -- TODO: why is it better to be over QQ?
     if ring A === ZZ then A = A ** QQ;
     if ring A =!= QQ then error "expected matrix over ZZ or QQ";
+    -- added to ensure x_i >= 0
     I := id_(source A);
     z := map(source A, QQ^1, 0);
+    -- data for the polyhedron inequalities
     hdataLHS := -(A || I);
     hdataRHS := -(b || z);
+    -- added to ensure e <= ...? TODO
     if #opts.Exterior > 0 then (
-        -- also need to add in the conditions that each variable in the list is <= 1.
-        ones := matrix toList(#opts.Exterior : {1_QQ});
+        -- also need to add in the conditions that each variable in the list has degree <= 1.
         hdataLHS = hdataLHS || (I ^ (opts.Exterior));
-        hdataRHS = hdataRHS || ones;
-        --polyhedronFromHData(-(A || I) || I, -(b || z) || ones)
+        hdataRHS = hdataRHS || matrix toList(#opts.Exterior : {1_QQ});
         );
-    polyhedronFromHData(hdataLHS, hdataRHS)
-    )
+    -- this is where we assume the nef cone is the positive quadrant
+    polyhedronFromHData(hdataLHS, hdataRHS))
 
--- basisPolyhedron: this function is not used nor tested here.  It can be used for a
--- perhaps better implementation of 'basis'.
--- BUT: it should have exterior variables added too...
+-- basisPolyhedron: this function is not used nor tested here.
+-- It can be used for a perhaps better implementation of 'basis'.
+-- TODO: it should have exterior variables added too... what would this mean?
 basisPolyhedron = method()
-basisPolyhedron(Matrix,List) := (A,b) -> (
-    basisPolyhedron(A, transpose matrix{b})
-    )
-basisPolyhedron(Matrix,Matrix) := (A,b) -> (
+basisPolyhedron(Matrix, List)   := (A, b) -> basisPolyhedron(A, transpose matrix {b})
+basisPolyhedron(Matrix, Matrix) := (A, b) -> (
     -- assumption: A is m x n. b is m x 1.
-    -- returns the polyhedron {Ax = b, x >=0}
+    -- returns the polyhedron {Ax = b, x_i >= 0}
     if ring A === ZZ then A = A ** QQ;
     if ring A =!= QQ then error "expected matrix over ZZ or QQ";
+    -- added to ensure x_i >= 0
     I := id_(source A);
     z := map(source A, QQ^1, 0);
-    polyhedronFromHData(-I, -z, A, b)
-    )
+    polyhedronFromHData(-I, -z, A, b))
 
 --------------------------------------------------------------------
 -- Algorithms for truncations of a polynomial ring
@@ -126,114 +112,101 @@ basisPolyhedron(Matrix,Matrix) := (A,b) -> (
 
 truncationMonomials = method()
 truncationMonomials(List, Ring) := (degs, R) -> (
+    -- valid for total coordinate ring of any simplicial toric variety
+    -- where the nef cone is the positive quadrant, or any polynomial
+    -- ring with skew commutating variables.
     degs = checkOrMakeDegreeList(degs, degreeLength R);
-    if #degs > 1 then
-        return trim sum for d in degs list truncationMonomials(d, R);
+    -- we could call findMins on degs, but only with respect to the Nef cone
+    if #degs > 1 then return sum for d in degs list truncationMonomials(d, R);
     d := degs#0;
-    if not R#?(symbol truncate, d) then R#(symbol truncate, d) = (
-      (R1, phi1) := flattenRing R;
-      A := transpose matrix degrees R1;
-      P := truncationPolyhedron(A,transpose matrix{d}, Exterior => (options R1).SkewCommutative);
-      C := cone P;
-      H := hilbertBasis C;
-      H = for h in H list flatten entries h;
-      J := ideal leadTerm ideal R1;
-      ambR := ring J;
-      --conegens := rsort for h in H list if h#0 === 0 then ambR_(drop(h,1)) else continue;
-      --print matrix {conegens};
-      mongens := for h in H list if h#0 === 1 then ambR_(drop(h,1)) else continue;
-      result := mingens ideal (matrix(ambR, {mongens}) % J);
-      if R1 =!= ambR then result = result ** R1;
-      if R =!= R1 then result = phi1^-1 result;
-      ideal result
-      );
-    R#(symbol truncate, d)
-    )
+    if  R#?(symbol truncate, d)
+    then R#(symbol truncate, d)
+    else R#(symbol truncate, d) = (
+        (R1, phi1) := flattenRing R;
+        -- generates the effective cone
+        A := transpose matrix degrees R1;
+        P := truncationPolyhedron(A, transpose matrix{d}, Exterior => (options R1).SkewCommutative);
+        H := hilbertBasis cone P;
+        H = for h in H list flatten entries h;
+        J := ideal leadTerm ideal R1;
+        ambR := ring J;
+        -- generates the Nef cone
+        --nefgens := for h in H list if h#0 === 0 then ambR_(drop(h, 1)) else continue;
+        mongens := for h in H list if h#0 === 1 then ambR_(drop(h, 1)) else continue;
+        result := mingens ideal (matrix(ambR, {mongens}) % J);
+        if R1 =!= ambR then result = result ** R1;
+        if R =!= R1 then result = phi1^-1 result;
+        ideal result))
 
 truncation0 = (deg, M) -> (
-    -- WARNING: only valid for degree length = 1.
+    -- WARNING: valid for a polynomial ring with degree length = 1.
+    -- uses the engine routines for basis with Truncate => true
     -- deg: a List of integers
     -- M: Module
     -- returns a submodule of M
-    trim if M.?generators then (
-        b := M.generators * cover basis(deg,deg,cokernel presentation M,Truncate=>true);
-        if M.?relations then subquotient(b, M.relations)
-        else image b)
-    else image basis(deg,deg,M,Truncate=>true)
-    )
+    if M.?generators then (
+        F := cover basis(deg, deg, cokernel presentation M, Truncate => true);
+        subquotient(M.generators * F, if M.?relations then M.relations))
+    else image basis(deg, deg, M, Truncate => true))
 
 truncation1 = (deg, M) -> (
-    -- WARNING: only valid for degree length = 1.
+    -- WARNING: valid for towers of rings with degree length = 1.
+    -- uses the engine routines for basis with Truncate => true
     -- deg: a List of integers
     -- M: Module
     -- returns a submodule of M
     R := ring M;
     (R1, phi1) := flattenRing R;
-    if R1 === R then
-        truncation0(deg, M)
-    else (
-        gensM1 := if not M.?generators then null else phi1 M.generators;
-        relnsM1 := if not M.?relations then null else phi1 M.relations;
-        M1 := if gensM1 === null and relnsM1 === null then phi1 M
-              else subquotient(gensM1, relnsM1);
-        result1 := truncation0(deg, M1);
-        gensM := if not result1.?generators then null else phi1^-1 result1.generators;
-        relnsM := if not result1.?relations then null else phi1^-1 result1.relations;
-        if gensM === null and relnsM === null then phi1^-1 result1
-              else subquotient(gensM, relnsM)
-        )
-    )
+    if R1 === R then return truncation0(deg, M);
+    -- why not just do phi1? or M ** phi1?
+    M1 := if isFreeModule M then phi1 M else subquotient(
+        if M.?generators then phi1 M.generators,
+        if M.?relations  then phi1 M.relations);
+    result1 := truncation0(deg, M1);
+    gensM := if not result1.?generators then null else phi1^-1 result1.generators;
+    relnsM := if not result1.?relations then null else phi1^-1 result1.relations;
+    if gensM === null and relnsM === null then phi1^-1 result1
+    else subquotient(gensM, relnsM))
 
 --------------------------------------------------------------------
 -- truncate
 --------------------------------------------------------------------
 
--- truncate the graded ring A in degrees >= d, for d in degs
-truncate(List, Ring) := Module => (degs, R) -> (
-    if not truncateImplemented R then error "cannot use truncate with this ring type";
-    degs = checkOrMakeDegreeList(degs, degreeLength R);
-    if degreeLength R === 1 and any(degrees R, d -> d =!= {0}) then
-        ideal truncation1(min degs, R^1)
-    else
-        ideal gens truncationMonomials(degs,R)
-    )
-
-truncate(List, Module) := Module => (degs, M) -> (
-    R := ring M;
-    if not truncateImplemented R then error "cannot use truncate with this ring type";
-    degs = checkOrMakeDegreeList(degs, degreeLength R);
-    if degreeLength R === 1 and any(degrees R, d -> d =!= {0}) then
-        truncation1(min degs, M)
-    else if isFreeModule M then (
-        image map(M,,directSum for a in degrees M list
-            gens truncationMonomials(for d in degs list(d-a),R))
-        )
-    else (
-        p := presentation M;
-        phi := map(M,,gens truncate(degs, target p));
-        trim image phi
-        )
-    )
-
-truncate(List, Matrix) := Matrix => (degs, phi) -> (
-    -- this is the case when source and target of phi are free modules...
-    R := ring phi;
-    if not truncateImplemented R then error "cannot use truncate with this ring type";
-    degs = checkOrMakeDegreeList(degs, degreeLength R);
-    F := truncate(degs, source phi);
-    G := truncate(degs, target phi);
-    f := gens F;
-    g := gens G;
-    map(G,F,(phi * f) // g)
-    )
-
-truncate(List, Ideal) := (degs, I) -> ideal truncate(degs, module I)
-
-truncate(ZZ, Ring) :=
-truncate(ZZ, Module) :=
-truncate(ZZ, Ideal) :=
+truncate(ZZ, Ring)   :=
+truncate(ZZ, Ideal)  :=
 truncate(ZZ, Matrix) :=
-  (d, R) -> truncate({d}, R)
+truncate(ZZ, Module) := (d, m) -> truncate({d}, m)
+
+truncate(List, Ring) := Ideal => (degs, R) -> (
+    -- truncate the graded ring R in degrees >= d, for d in degs
+    if not truncateImplemented R then error "cannot use truncate with this ring type";
+    degs = checkOrMakeDegreeList(degs, degreeLength R);
+    trim if degreeLength R === 1 and any(degrees R, d -> d =!= {0})
+    then ideal truncation1(min degs, R^1)
+    else ideal gens truncationMonomials(degs, R))
+
+truncate(List, Ideal)  := Ideal  => (degs, I) -> ideal truncate(degs, module I)
+truncate(List, Module) := Module => (degs, M) -> (
+    if M == 0 then return M;
+    if not truncateImplemented(R := ring M) then error "cannot use truncate with this ring type";
+    degs = checkOrMakeDegreeList(degs, degreeLength R);
+    trim if degreeLength R === 1 and any(degrees R, d -> d =!= {0})
+    then truncation1(min degs, M)
+    else if isFreeModule M then (
+        image map(M, , directSum for a in degrees M list
+            gens truncationMonomials(for d in degs list (d - a), R)))
+    else (
+        image map(M, , gens truncate(degs, target presentation M)))
+    )
+
+truncate(List, Matrix) := Matrix => (degs, f) -> (
+    if not truncateImplemented(R := ring f) then error "cannot use truncate with this ring type";
+    -- TODO: is this required?
+    --if not isFreeModule source f or not isFreeModule target f then error "expected a map of free modules";
+    degs = checkOrMakeDegreeList(degs, degreeLength R);
+    F := truncate(degs, source f);
+    G := truncate(degs, target f);
+    map(G, F, (f * gens F) // gens G))
 
 --------------------------------------------------------------------
 ----- Tests section
