@@ -60,7 +60,7 @@ checkOrMakeDegreeList(List, ZZ) := (L, degrank) -> (
     then if #L === degrank then {L} else error("expected a multidegree of length " | degrank)
     else ( -- If L is a list of lists of integers, all the same length, L will be returned.
         if all(L, deg -> instance(deg, VisibleList) and #deg === degrank and all(deg, d -> instance(d, ZZ)))
-        then L else error("expected a list of multidegrees, each of length " | degrank))
+        then sort L else error("expected a list of multidegrees, each of length " | degrank))
     )
 
 -- Helpers for toric varieties
@@ -146,9 +146,10 @@ truncationMonomials = method()
 truncationMonomials(List, Ring) := (degs, R) -> (
     -- valid for total coordinate ring of any simplicial toric variety
     -- or any polynomial ring with skew commutating variables.
-    degs = checkOrMakeDegreeList(degs, degreeLength R);
+    -- assume checkOrMakeDegreeList has already been called on degs
     -- we could call findMins on degs, but only with respect to the Nef cone
-    if #degs > 1 then return sum for d in degs list truncationMonomials(d, R);
+    -- TODO: either figure out a way to use cached results or do this in parallel
+    if #degs > 1 then return sum for d in degs list truncationMonomials({d}, R);
     d := degs#0;
     if  R#?(symbol truncate, d)
     then R#(symbol truncate, d)
@@ -260,8 +261,7 @@ basisMonomials = method()
 basisMonomials(List, Ring) := (degs, R) -> (
     -- valid for total coordinate ring of any simplicial toric variety
     -- or any polynomial ring with skew commutating variables.
-    degs = checkOrMakeDegreeList(degs, degreeLength R);
-    if #degs > 1 then return sum for d in degs list basisMonomials(d, R);
+    if #degs > 1 then return sum for d in degs list basisMonomials({d}, R);
     d := degs#0;
     if  R#?(symbol basis', d)
     then R#(symbol basis', d)

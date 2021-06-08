@@ -122,7 +122,7 @@ TEST /// -- test of truncationPolyhedron with Exterior option
   Q = truncationPolyhedron(A, {7,1})
   assert(#hilbertBasis cone P == 1321)
   assert(#hilbertBasis cone Q == 1851)
-  assert(numgens truncationMonomials({7,1}, E) == 28)
+  assert(numgens truncationMonomials({{7,1}}, E) == 28)
 ///
 
 TEST /// -- test of basisPolyhedron with Exterior option
@@ -134,7 +134,7 @@ TEST /// -- test of basisPolyhedron with Exterior option
   Q = basisPolyhedron(A, transpose matrix{{10,0}})
   assert(#hilbertBasis cone P == 262)
   assert(#hilbertBasis cone Q == 290)
-  assert(numgens basisMonomials({10,0}, E) == 4)
+  assert(numgens basisMonomials({{10,0}}, E) == 4)
 
   -- test for degree zero variables
   -- TODO: expand on this
@@ -142,7 +142,7 @@ TEST /// -- test of basisPolyhedron with Exterior option
   A = transpose matrix degrees R
   d = {1,1,0}
   P = basisPolyhedron(A, transpose matrix{d})
-  assert(numgens basisMonomials(d, R) == 2)
+  assert(numgens basisMonomials({d}, R) == 2)
   rays P -- P is infinite due to z_0
 ///
 
@@ -150,17 +150,17 @@ TEST /// -- test of truncationMonomials
   debug needsPackage "Truncations"
 
   S = ZZ/101[a,b,c, Degrees => {5,6,7}]
-  assert(truncationMonomials({10}, S) == ideal"a2,ab,ac,b2,bc,c2")
-  assert(truncationMonomials({12}, S) == ideal"a3,a2b,b2,ac,bc,c2")
+  assert(truncationMonomials({{10}}, S) == ideal"a2,ab,ac,b2,bc,c2")
+  assert(truncationMonomials({{12}}, S) == ideal"a3,a2b,b2,ac,bc,c2")
 
   R = S/(a*c-2*b^2)
-  assert(truncationMonomials({12}, R) == ideal"a3,a2b,ac,bc,c2")
+  assert(truncationMonomials({{12}}, R) == ideal"a3,a2b,ac,bc,c2")
 
   E = ZZ/101[a,b,c, SkewCommutative => true]
-  assert(truncationMonomials({2}, E) == ideal"bc,ac,ab")
+  assert(truncationMonomials({{2}}, E) == ideal"bc,ac,ab")
 
   E = ZZ/101[a,b,c, SkewCommutative => {0,1}]
-  assert(truncationMonomials({2}, E) == ideal"c2,bc,ac,ab")
+  assert(truncationMonomials({{2}}, E) == ideal"c2,bc,ac,ab")
 ///
 
 TEST /// -- test of truncations in singly graded poly ring case
