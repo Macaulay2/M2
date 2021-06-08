@@ -274,6 +274,19 @@ TEST /// -- Toric variety tests
   rays C2
 ///
 
+TEST /// -- cf. Maclagan-Smith 2004, Example 5.2
+  debug needsPackage "Truncations"
+  needsPackage "NormalToricVarieties"
+  X = hirzebruchSurface 2
+  S = ring X
+  e = x_0^3*x_1^2
+  M = truncate({1,1}, module S)
+  assert(unique degrees M == {{1,1}})
+  assert(degree e == {-1, 2})
+  assert isSubset(e * S^1, M)
+  assert(image basis'({-1, 2}, M) == image(map(S^1, S^{6:{1,-2}}, {{x_1*x_2*x_3, x_0*x_1*x_3, x_1^2*x_2^3, x_0*x_1^2*x_2^2, x_0^2*x_1^2*x_2, x_0^3*x_1^2}})))
+///
+
 end--
 
 restart
