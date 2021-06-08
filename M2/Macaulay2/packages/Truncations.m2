@@ -244,6 +244,53 @@ truncate(List, Matrix) := Matrix => truncateModuleOpts >> opts -> (degs, f) -> (
     map(G, F, (f * gens F) // gens G))
 
 --------------------------------------------------------------------
+-- basis using basisPolyhedron (experimental)
+--------------------------------------------------------------------
+-- c.f https://github.com/Macaulay2/M2/pull/2056
+-- add as a strategy to basis
+-- add partial multidegree support
+-- ensure the output is a module over the degree 0 of R
+
+basisMonomials = method()
+basisMonomials(List, Ring) := (degs, R) -> (
+    -- valid for total coordinate ring of any simplicial toric variety
+    -- or any polynomial ring with skew commutating variables.
+    degs = checkOrMakeDegreeList(degs, degreeLength R);
+    if #degs > 1 then return sum for d in degs list basisMonomials(d, R);
+    d := degs#0;
+    if  R#?(symbol basis', d)
+    then R#(symbol basis', d)
+    else R#(symbol basis', d) = (
+        (R1, phi1) := flattenRing R;
+        -- generates the effective cone
+        A := effGenerators R1;
+        P := basisPolyhedron(A, transpose matrix{d}, Exterior => (options R1).SkewCommutative);
+        H := hilbertBasis cone P;
+        H = for h in H list flatten entries h;
+        J := ideal leadTerm ideal R1;
+        ambR := ring J;
+        -- generates the degree zero part of the basis
+        --zerogens := for h in H list if h#0 === 0 then ambR_(drop(h, 1)) else continue;
+        mongens := for h in H list if h#0 === 1 then ambR_(drop(h, 1)) else continue;
+        result := mingens ideal (matrix(ambR, {mongens}) % J);
+        if R1 =!= ambR then result = result ** R1;
+        if R =!= R1 then result = phi1^-1 result;
+        ideal result))
+
+basis' = method(Options => options basis)
+basis'(List, Module) := Matrix => opts -> (degs, M) -> (
+    if M == 0 then return M;
+    if not truncateImplemented(R := ring M) then error "cannot use basis' with this ring type";
+    degs = checkOrMakeDegreeList(degs, degreeLength R);
+    if #degs > 1 then error "basis with multiple degrees not yet implemented";
+    if degreeLength R === 1 and #degs <= 1
+    then basis(degs, M, opts)
+    else if isFreeModule M then (
+        map(M, , directSum for a in degrees M list
+            gens basisMonomials(for d in degs list (d - a), R)))
+    else map(M, , basis'(degs, target presentation M, opts)))
+
+--------------------------------------------------------------------
 ----- Tests section
 --------------------------------------------------------------------
 
