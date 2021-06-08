@@ -125,6 +125,27 @@ TEST /// -- test of truncationPolyhedron with Exterior option
   assert(numgens truncationMonomials({7,1}, E) == 28)
 ///
 
+TEST /// -- test of basisPolyhedron with Exterior option
+  needsPackage "Polyhedra"
+  debug needsPackage "Truncations"
+  E = ZZ/101[a..f, SkewCommutative => {0,2,4}, Degrees => {2:{3,1},2:{4,-2},2:{1,3}}]
+  A = transpose matrix degrees E
+  P = basisPolyhedron(A, transpose matrix{{10,0}}, Exterior => {0,2,4})
+  Q = basisPolyhedron(A, transpose matrix{{10,0}})
+  assert(#hilbertBasis cone P == 262)
+  assert(#hilbertBasis cone Q == 290)
+  assert(numgens basisMonomials({10,0}, E) == 4)
+
+  -- test for degree zero variables
+  -- TODO: expand on this
+  R = ZZ/101[x_0,x_1,y_0,y_1,y_2,z_0, Degrees => {2:{1,1,0},3:{1,0,1},{0,0,0}}];
+  A = transpose matrix degrees R
+  d = {1,1,0}
+  P = basisPolyhedron(A, transpose matrix{d})
+  assert(numgens basisMonomials(d, R) == 2)
+  rays P -- P is infinite due to z_0
+///
+
 TEST /// -- test of truncationMonomials
   debug needsPackage "Truncations"
 
