@@ -159,7 +159,7 @@ int F4GB::mult_monomials(packed_monomial m, packed_monomial n)
 
 void F4GB::load_gen(int which)
 {
-  poly &g = gens[which]->f;
+  GBF4Polynomial &g = gens[which]->f;
 
   row_elem r{};
   r.monom = nullptr;  // This says that this element corresponds to a generator
@@ -181,7 +181,7 @@ void F4GB::load_gen(int which)
 
 void F4GB::load_row(packed_monomial monom, int which)
 {
-  poly &g = gb[which]->f;
+  GBF4Polynomial &g = gb[which]->f;
 
   row_elem r{};
   r.monom = monom;

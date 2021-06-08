@@ -17,11 +17,11 @@ class Monoid;
 class SkewMultiplication;
 struct ResSchreyerOrder;
 
-class poly
+class ResPolynomial
 {
   friend class ResPolyRing;
-  friend class poly_constructor;
-  friend class poly_iter;
+  friend class ResPolynomialConstructor;
+  friend class ResPolynomialIterator;
 
  public:
   static long npoly_destructor;
@@ -33,17 +33,17 @@ class poly
   //  std::unique_ptr<res_monomial_word[]> monoms;
 
  public:
-  poly() : len(0), coeffs() {}
-  ~poly()
+  ResPolynomial() : len(0), coeffs() {}
+  ~ResPolynomial()
   {
     if (!coeffs.isNull()) npoly_destructor++;
     //    std::cout << "Calling ~poly()" << std::endl << std::flush;
   }
 
-  poly(const poly& other) = default;
-  poly(poly&& other) = default;
-  poly& operator=(const poly& other) = default;
-  poly& operator=(poly&& other) = default;
+  ResPolynomial(const ResPolynomial& other) = default;
+  ResPolynomial(ResPolynomial&& other) = default;
+  ResPolynomial& operator=(const ResPolynomial& other) = default;
+  ResPolynomial& operator=(ResPolynomial&& other) = default;
 };
 
 class ResPolyRing : public our_new_delete
@@ -66,7 +66,7 @@ class ResPolyRing : public our_new_delete
   const Monoid& originalMonoid() const { return *mOriginalMonoid; }
   bool isSkewCommutative() const { return mSkew != nullptr; }
   const SkewMultiplication* skewInfo() const { return mSkew; }
-  void memUsage(const poly& f,
+  void memUsage(const ResPolynomial& f,
                 long& nterms,
                 long& bytes_used,
                 long& bytes_alloc) const;
@@ -78,7 +78,7 @@ class ResPolyRing : public our_new_delete
   const SkewMultiplication* mSkew;
 };
 
-class poly_constructor
+class ResPolynomialConstructor
 {
  private:
   std::vector<res_packed_monomial> monoms;
@@ -90,12 +90,12 @@ class poly_constructor
   static long ncalls;
   static long ncalls_fromarray;
 
-  poly_constructor(const ResPolyRing& R) : mRing(R)
+  ResPolynomialConstructor(const ResPolyRing& R) : mRing(R)
   {
     coeffs = R.resGausser().allocateCoefficientVector();
   }
 
-  ~poly_constructor() { mRing.resGausser().deallocate(coeffs); }
+  ~ResPolynomialConstructor() { mRing.resGausser().deallocate(coeffs); }
   void appendMonicTerm(res_packed_monomial monom)
   {
     monoms.push_back(monom);  // a pointer
@@ -108,7 +108,7 @@ class poly_constructor
   }
 
   CoefficientVector& coefficientInserter() { return coeffs; }
-  void setPoly(poly& result)
+  void setPoly(ResPolynomial& result)
   {
     ncalls++;
     result.len = static_cast<int>(mRing.resGausser().size(coeffs));
@@ -124,7 +124,7 @@ class poly_constructor
       }
   }
 
-  static void setPolyFromArrays(poly& result,
+  static void setPolyFromArrays(ResPolynomial& result,
                                 int len,
                                 CoefficientVector& coeffs,
                                 std::vector<res_monomial_word>& monoms)
@@ -136,23 +136,23 @@ class poly_constructor
   }
 };
 
-class poly_iter
+class ResPolynomialIterator
 {
   const ResPolyRing& mRing;
-  const poly& elem;
+  const ResPolynomial& elem;
   long coeff_index;
   long monom_index;
 
  public:
-  friend bool operator==(const poly_iter& a, const poly_iter& b);
-  friend bool operator!=(const poly_iter& a, const poly_iter& b);
+  friend bool operator==(const ResPolynomialIterator& a, const ResPolynomialIterator& b);
+  friend bool operator!=(const ResPolynomialIterator& a, const ResPolynomialIterator& b);
 
-  poly_iter(const ResPolyRing& R, const poly& elem0)
+  ResPolynomialIterator(const ResPolyRing& R, const ResPolynomial& elem0)
       : mRing(R), elem(elem0), coeff_index(0), monom_index(0)
   {
   }
 
-  poly_iter(const ResPolyRing& R, const poly& elem0, int)  // end
+  ResPolynomialIterator(const ResPolyRing& R, const ResPolynomial& elem0, int)  // end
       : mRing(R),
         elem(elem0),
         coeff_index(elem.len),
@@ -174,20 +174,20 @@ class poly_iter
   }
 };
 
-inline bool operator==(const poly_iter& a, const poly_iter& b)
+inline bool operator==(const ResPolynomialIterator& a, const ResPolynomialIterator& b)
 {
   return a.coeff_index == b.coeff_index;
 }
-inline bool operator!=(const poly_iter& a, const poly_iter& b)
+inline bool operator!=(const ResPolynomialIterator& a, const ResPolynomialIterator& b)
 {
   return a.coeff_index != b.coeff_index;
 }
 
-inline void display_poly(std::ostream& o, const ResPolyRing& R, const poly& f)
+inline void display_poly(std::ostream& o, const ResPolyRing& R, const ResPolynomial& f)
 {
-  auto end = poly_iter(R, f, 1);  // end
+  auto end = ResPolynomialIterator(R, f, 1);  // end
   int i = 0;
-  for (auto it = poly_iter(R, f); it != end; ++it, ++i)
+  for (auto it = ResPolynomialIterator(R, f); it != end; ++it, ++i)
     {
       R.resGausser().out(o, f.coeffs, i);
       res_const_packed_monomial mon = it.monomial();
@@ -195,7 +195,7 @@ inline void display_poly(std::ostream& o, const ResPolyRing& R, const poly& f)
     }
 }
 
-bool check_poly(const ResPolyRing& R, const poly& f, const ResSchreyerOrder& O);
+bool check_poly(const ResPolyRing& R, const ResPolynomial& f, const ResSchreyerOrder& O);
 #endif
 
 // Local Variables:
