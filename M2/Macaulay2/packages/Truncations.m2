@@ -5,7 +5,7 @@
 --                  updated Jun 2021
 --
 -- TODO :
--- 1. support truncation on Cox ring of a toric variety
+-- 1. improve speed and caching
 ---------------------------------------------------------------------------
 newPackage(
     "Truncations",
@@ -17,7 +17,7 @@ newPackage(
         { Name => "Mike Stillman",  Email => "mike@math.cornell.edu", HomePage => "https://www.math.cornell.edu/~mike" }
         },
     Keywords => { "Commutative Algebra" },
-    PackageImports => { "Polyhedra" },
+    PackageImports => { "Polyhedra", "NormalToricVarieties" },
     AuxiliaryFiles => true,
     DebuggingMode => true
     )
@@ -25,6 +25,7 @@ newPackage(
 -- "truncate" is exported by Core
 
 protect Exterior
+protect Nef
 
 --------------------------------------------------------------------
 -- Helpers
@@ -66,13 +67,13 @@ checkOrMakeDegreeList(List, ZZ) := (L, degrank) -> (
 -- and b is an element of the Picard group of X (e.g. a multidegree in S)
 -- then truncationPolyhedron returns a polyhedron in the lattice of
 -- exponent vectors of monomials of S whose degree is in b + nef cone of X
--- FIXME: currently only correct if the nef cone is the positive quadrant
-truncationPolyhedron = method(Options => { Exterior => {} })
+truncationPolyhedron = method(Options => { Exterior => {}, Nef => null })
 -- Exterior should be a list of variable indices which are skew commutative; i.e. have max degree 1.
 truncationPolyhedron(Matrix, List)   := Polyhedron => opts -> (A, b) -> truncationPolyhedron(A, transpose matrix {b}, opts)
 truncationPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
     -- assumption: A is m x n. b is m x 1.
     -- returns the polyhedron {Ax >= b, x_i >= 0}
+    -- or if Nef is present   {Ax - b in Nef cone, x_i >= 0}
     -- TODO: why is it better to be over QQ?
     if ring A === ZZ then A = A ** QQ;
     if ring A =!= QQ then error "expected matrix over ZZ or QQ";
@@ -82,14 +83,19 @@ truncationPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
     -- data for the polyhedron inequalities
     hdataLHS := -(A || I);
     hdataRHS := -(b || z);
-    -- added to ensure e <= ...? TODO
+    -- added to ensure x_i <= 1 for skew commutating variables
     if #opts.Exterior > 0 then (
         -- also need to add in the conditions that each variable in the list has degree <= 1.
         hdataLHS = hdataLHS || (I ^ (opts.Exterior));
         hdataRHS = hdataRHS || matrix toList(#opts.Exterior : {1_QQ});
         );
-    -- this is where we assume the nef cone is the positive quadrant
-    polyhedronFromHData(hdataLHS, hdataRHS))
+    -- this is correct when the Nef cone equals the positive quadrant
+    P := polyhedronFromHData(hdataLHS, hdataRHS);
+    if opts.Nef === null then return P;
+    -- otherwise, intersect with the preimage of the Nef cone
+    v := map(target A, QQ^1, 0);
+    N := convexHull(v, opts.Nef);
+    intersection(P, affinePreimage(A, N, -b)))
 
 -- basisPolyhedron: this function is not used nor tested here.
 -- It can be used for a perhaps better implementation of 'basis'.
@@ -113,8 +119,7 @@ basisPolyhedron(Matrix, Matrix) := (A, b) -> (
 truncationMonomials = method()
 truncationMonomials(List, Ring) := (degs, R) -> (
     -- valid for total coordinate ring of any simplicial toric variety
-    -- where the nef cone is the positive quadrant, or any polynomial
-    -- ring with skew commutating variables.
+    -- or any polynomial ring with skew commutating variables.
     degs = checkOrMakeDegreeList(degs, degreeLength R);
     -- we could call findMins on degs, but only with respect to the Nef cone
     if #degs > 1 then return sum for d in degs list truncationMonomials(d, R);
@@ -125,7 +130,9 @@ truncationMonomials(List, Ring) := (degs, R) -> (
         (R1, phi1) := flattenRing R;
         -- generates the effective cone
         A := transpose matrix degrees R1;
-        P := truncationPolyhedron(A, transpose matrix{d}, Exterior => (options R1).SkewCommutative);
+        P := truncationPolyhedron(A, transpose matrix{d},
+            Exterior => (options R1).SkewCommutative,
+            Nef => if R.?variety and instance(R.variety, NormalToricVariety) then nefGenerators R.variety);
         H := hilbertBasis cone P;
         H = for h in H list flatten entries h;
         J := ideal leadTerm ideal R1;
