@@ -8,6 +8,7 @@
   --    exterior algebra
   --    quotient of a poly ring
   --    quotient of an exterior algebra
+  --    Cox ring of a toric variety
   --    Weyl algebra (?? probably not: what does this mean)
   --  coeff rings:
   --    a basic field
@@ -117,7 +118,7 @@ TEST /// -- test of truncationPolyhedron with Exterior option
   needsPackage "Polyhedra"
   debug needsPackage "Truncations"
   E = ZZ/101[a..f, SkewCommutative => {0,2,4}, Degrees => {2:{3,1},2:{4,-2},2:{1,3}}]
-  A = transpose matrix degrees E
+  A = effGenerators E
   P = truncationPolyhedron(A, {7,1}, Exterior => (options E).SkewCommutative)
   Q = truncationPolyhedron(A, {7,1})
   assert(#hilbertBasis cone P == 1321)
@@ -129,7 +130,7 @@ TEST /// -- test of basisPolyhedron with Exterior option
   needsPackage "Polyhedra"
   debug needsPackage "Truncations"
   E = ZZ/101[a..f, SkewCommutative => {0,2,4}, Degrees => {2:{3,1},2:{4,-2},2:{1,3}}]
-  A = transpose matrix degrees E
+  A = effGenerators E
   P = basisPolyhedron(A, transpose matrix{{10,0}}, Exterior => {0,2,4})
   Q = basisPolyhedron(A, transpose matrix{{10,0}})
   assert(#hilbertBasis cone P == 262)
@@ -140,7 +141,7 @@ TEST /// -- test of basisPolyhedron with Exterior option
   -- test for degree zero variables
   -- TODO: expand on this
   R = ZZ/101[x_0,x_1,y_0,y_1,y_2,z_0, Degrees => {2:{1,1,0},3:{1,0,1},{0,0,0}}];
-  A = transpose matrix degrees R
+  A = effGenerators R
   d = {1,1,0}
   P = basisPolyhedron(A, transpose matrix{d})
   assert(numcols basisMonomials(d, R) == 2)
@@ -262,15 +263,14 @@ TEST ///
 ///
 
 TEST /// -- Toric variety tests
+  debug needsPackage "Truncations"
   needsPackage "NormalToricVarieties"
   V = smoothFanoToricVariety(3,5)
-  rays V
-  max V
   S = ring V
-  A = transpose matrix degrees S
-  truncate({1,1,1}, S)
-  basis({1,1,1}, S)
-  C = posHull A
+  A = effGenerators S
+  assert(truncate({1,1,1}, S) == ideal basis({1,1,1}, S))
+  -- TODO: finish this test
+   C = posHull A
   C2 = dualCone C
   rays C2
 ///
@@ -280,12 +280,12 @@ TEST /// -- cf. Maclagan-Smith 2004, Example 5.2
   needsPackage "NormalToricVarieties"
   X = hirzebruchSurface 2
   S = ring X
-  e = x_0^3*x_1^2
+  e = S_0^3*S_1^2
   M = truncate({1,1}, module S)
   assert(unique degrees M == {{1,1}})
   assert(degree e == {-1, 2})
   assert isSubset(e * S^1, M)
-  assert(image basis'({-1, 2}, M) == image(map(S^1, S^{6:{1,-2}}, {{x_1*x_2*x_3, x_0*x_1*x_3, x_1^2*x_2^3, x_0*x_1^2*x_2^2, x_0^2*x_1^2*x_2, x_0^3*x_1^2}})))
+  assert(image basis'({-1, 2}, M) == image(map(S^1, S^{6:{1,-2}}, {{S_1*S_2*S_3, S_0*S_1*S_3, S_1^2*S_2^3, S_0*S_1^2*S_2^2, S_0^2*S_1^2*S_2, S_0^3*S_1^2}})))
   end--
   -- the tests below pass only for effective truncation
   -- or M-S truncation without truncating the relations
@@ -299,7 +299,6 @@ TEST /// -- cf. Maclagan-Smith 2004, Example 5.2
   C = res M
   D = chainComplex apply(1 .. length C, i -> truncate({0,0}, C.dd_i));
   assert(HH_0 D == M and HH_1 D == 0 and HH_2 D == 0) -- good, fixed in v1.0
->>>>>>> c375961bae... wip: nef or eff?
 ///
 
 TEST /// -- ideal of 10 points on Hirzebruch surface of type 3
@@ -308,8 +307,8 @@ TEST /// -- ideal of 10 points on Hirzebruch surface of type 3
   S = ring X; B = ideal X;
 
   I0 = ideal {
-      x_0^5*x_1+3*x_0^4*x_1*x_2+x_0^3*x_1*x_2^2+8*x_0^2*x_1*x_2^3+2*x_0*x_1*x_2^4+5*x_1*x_2^5+2*x_0^2*x_3+7*x_0*x_2*x_3+8*x_2^2*x_3,
-      2*x_0^4*x_1^2*x_2^2+14*x_0^3*x_1^2*x_2^3+8*x_0^2*x_1^2*x_2^4+9*x_0*x_1^2*x_2^5-x_1^2*x_2^6+4*x_0^3*x_1*x_3+12*x_0^2*x_1*x_2*x_3};
+      S_0^5*S_1+3*S_0^4*S_1*S_2+S_0^3*S_1*S_2^2+8*S_0^2*S_1*S_2^3+2*S_0*S_1*S_2^4+5*S_1*S_2^5+2*S_0^2*S_3+7*S_0*S_2*S_3+8*S_2^2*S_3,
+      2*S_0^4*S_1^2*S_2^2+14*S_0^3*S_1^2*S_2^3+8*S_0^2*S_1^2*S_2^4+9*S_0*S_1^2*S_2^5-S_1^2*S_2^6+4*S_0^3*S_1*S_3+12*S_0^2*S_1*S_2*S_3};
   M0 = comodule I0;
   assert(hilbertPolynomial(X, M0) == 10)
 
@@ -340,19 +339,19 @@ TEST /// -- test of truncationPolyhedron with Nef option
   S = ring dP6; B = ideal dP6;
   N = nefGenerators dP6
 
-  A = transpose matrix degrees S -- generates the effective cone
+  A = effGenerators S -- generates the effective cone
   P = truncationPolyhedron(A, {0,0,0,0}, Nef => nefCone dP6)
   Q = truncationPolyhedron(A, {0,0,0,0})
   assert(#hilbertBasis cone P == 13)
   assert(#hilbertBasis cone Q == 10)
 
   -- testing twists not in the Nef cone, fixed in v1.0
-  d = {0,0,1,0}; assert(truncate({0,0,0,0}, S^{-d}) == image(map(S^{-d}, S^{{0, 0, -1, -1}, {-1, 0, 0, 0}}, {{x_4, x_2}})))
-  d = {0,0,0,1}; assert(truncate({0,0,0,0}, S^{-d}) == image(map(S^{-d}, S^{{0, -1, 0, 0}, {0, 0, -1, -1}}, {{x_5, x_3}})))
+  d = {0,0,1,0}; assert(truncate({0,0,0,0}, S^{-d}) == image(map(S^{-d}, S^{{0, 0, -1, -1}, {-1, 0, 0, 0}}, {{S_4, S_2}})))
+  d = {0,0,0,1}; assert(truncate({0,0,0,0}, S^{-d}) == image(map(S^{-d}, S^{{0, -1, 0, 0}, {0, 0, -1, -1}}, {{S_5, S_3}})))
 
   -- truncating a chain complex
   d = {0,2,0,2}
-  M0 = coker map(S^1, S^{{0, 0, -1, -1}, {0, -2, 0, -2}}, {{3*x_0*x_1+2*x_3*x_4,x_1^2*x_2^2*x_4^2+2*x_1*x_2*x_4^3*x_5+2*x_4^4*x_5^2}})
+  M0 = coker map(S^1, S^{{0, 0, -1, -1}, {0, -2, 0, -2}}, {{3*S_0*S_1+2*S_3*S_4,S_1^2*S_2^2*S_4^2+2*S_1*S_2*S_4^3*S_5+2*S_4^4*S_5^2}})
   M1 = truncate(d, M0)
   assert(hilbertPolynomial(dP6, M0) == 2)
   C = res M0; D = chainComplex apply(1 .. length C, i -> truncate(d, C.dd_i));
