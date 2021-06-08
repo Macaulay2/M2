@@ -978,6 +978,7 @@ export {
 	"presentation",
 	"pretty",
 	"print",
+	"printerr",
 	"printString",
 	"printingTimeLimit",
 	"processID",
