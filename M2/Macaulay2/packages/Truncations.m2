@@ -58,6 +58,23 @@ checkOrMakeDegreeList(List, ZZ) := (L, degrank) -> (
         then L else error("expected a list of multidegrees, each of length " | degrank))
     )
 
+-- Helpers for toric varieties
+
+-- Generators of effective cone
+effGenerators = method()
+effGenerators Ring := (cacheValue symbol effGenerators) (R -> transpose matrix degrees R)
+effGenerators NormalToricVariety := X -> effGenerators ring X
+
+-- Nef cone of X as a polyhedral object
+nefCone = method()
+nefCone NormalToricVariety := (cacheValue symbol nefCone) (X -> convexHull(matrix{0_(picardGroup X)}, nefGenerators X))
+nefCone Ring := R -> if R.?variety and instance(R.variety, NormalToricVariety) then nefCone R.variety
+
+-- Effective cone of X as a polyhedral object
+effCone = method()
+effCone NormalToricVariety := (cacheValue symbol effCone) (X -> convexHull(matrix{0_(picardGroup X)}, effGenerators X))
+effCone Ring := R -> if R.?variety and instance(R.variety, NormalToricVariety) then effCone R.variety
+
 --------------------------------------------------------------------
 -- Polyhedral algorithms
 --------------------------------------------------------------------
@@ -91,11 +108,9 @@ truncationPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
         );
     -- this is correct when the Nef cone equals the positive quadrant
     P := polyhedronFromHData(hdataLHS, hdataRHS);
-    if opts.Nef === null then return P;
+    if opts.Nef === null or rays opts.Nef == id_(target A) then return P;
     -- otherwise, intersect with the preimage of the Nef cone
-    v := map(target A, QQ^1, 0);
-    N := convexHull(v, opts.Nef);
-    intersection(P, affinePreimage(A, N, -b)))
+    intersection(P, affinePreimage(A, opts.Nef, -b)))
 
 -- basisPolyhedron: this function is not used nor tested here.
 -- It can be used for a perhaps better implementation of 'basis'.
@@ -129,10 +144,10 @@ truncationMonomials(List, Ring) := (degs, R) -> (
     else R#(symbol truncate, d) = (
         (R1, phi1) := flattenRing R;
         -- generates the effective cone
-        A := transpose matrix degrees R1;
+        A := effGenerators R1;
         P := truncationPolyhedron(A, transpose matrix{d},
             Exterior => (options R1).SkewCommutative,
-            Nef => if R.?variety and instance(R.variety, NormalToricVariety) then nefGenerators R.variety);
+            Nef => nefCone R1);
         H := hilbertBasis cone P;
         H = for h in H list flatten entries h;
         J := ideal leadTerm ideal R1;
