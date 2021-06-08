@@ -473,6 +473,7 @@ binaryOperatorFunctions := new HashTable from {
      symbol != => ((x,y) -> x != y),
      symbol and => ((x,y) -> x and y),
      symbol or => ((x,y) -> x or y),
+     symbol xor => ((x,y) -> x xor y),
      symbol ^** => ((x,y) -> x^**y),
      symbol === => ((x,y) -> x === y),
      symbol =!= => ((x,y) -> x =!= y),
@@ -484,7 +485,7 @@ binaryOperatorFunctions := new HashTable from {
 
 expressionBinaryOperators =
 {symbol and, symbol <==, symbol ^**, symbol ^, symbol ==>, symbol _,
-    symbol ==, symbol ++, symbol <===, symbol <==>, symbol or,
+    symbol ==, symbol ++, symbol <===, symbol <==>, symbol or, symbol xor,
     symbol %, symbol SPACE, symbol &, symbol *, symbol +,
     symbol -, symbol |-, symbol :, symbol !=, symbol |, symbol ..<,
     symbol @@, symbol @, symbol **, symbol .., symbol ^^,
@@ -566,7 +567,7 @@ toString'(Function, Table) := (fmt,m) -> concatenate(
      "}" )
 -----------------------------------------------------------------------------
 
-spacedOps := set { symbol =>, symbol and, symbol or, symbol ++ }
+spacedOps := set { symbol =>, symbol and, symbol or, symbol xor, symbol ++ }
 
 keywordTexMath := new HashTable from { -- both unary and binary keywords
     symbol |- => "\\vdash ",

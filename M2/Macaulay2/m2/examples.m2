@@ -64,7 +64,7 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     -* see run.m2 for details of defaultMode, argumentMode, etc. *-
     -- TODO: somehow use SetUlimit, GCMAXHEAP, GCSTATS, GCVERBOSE,
     --       ArgInt, ArgQ, ArgNoReadline, ArgNoSetup, and ArgNoThreads
-    argmode := if 0 < argumentMode & InvertArgs then xor(defaultMode, argumentMode) else argumentMode;
+    argmode := if 0 < argumentMode & InvertArgs then defaultMode ^^ argumentMode else argumentMode;
     hasmode := m -> argmode & m == m;
     pushvar(symbol randomSeed, if hasmode ArgNoRandomize then 0 else randomSeed);
     -- TODO: these two are overridden in interp.dd at the moment
