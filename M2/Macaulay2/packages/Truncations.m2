@@ -112,12 +112,12 @@ truncationPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
     -- otherwise, intersect with the preimage of the Nef cone
     intersection(P, affinePreimage(A, opts.Nef, -b)))
 
--- basisPolyhedron: this function is not used nor tested here.
--- It can be used for a perhaps better implementation of 'basis'.
--- TODO: it should have exterior variables added too... what would this mean?
-basisPolyhedron = method()
-basisPolyhedron(Matrix, List)   := (A, b) -> basisPolyhedron(A, transpose matrix {b})
-basisPolyhedron(Matrix, Matrix) := (A, b) -> (
+-- Assume the same conditions as above,
+-- then basisPolyhedron returns a polyhedron in the lattice of
+-- exponent vectors of monomials of S whose degree is exactly b
+basisPolyhedron = method(Options => { Exterior => {} })
+basisPolyhedron(Matrix, List)   := Polyhedron => opts -> (A, b) -> basisPolyhedron(A, transpose matrix {b}, opts)
+basisPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
     -- assumption: A is m x n. b is m x 1.
     -- returns the polyhedron {Ax = b, x_i >= 0}
     if ring A === ZZ then A = A ** QQ;
@@ -125,6 +125,12 @@ basisPolyhedron(Matrix, Matrix) := (A, b) -> (
     -- added to ensure x_i >= 0
     I := id_(source A);
     z := map(source A, QQ^1, 0);
+    -- added to ensure x_i <= 1 for skew commutating variables
+    if #opts.Exterior > 0 then (
+        -- also need to add in the conditions that each variable in the list has degree <= 1.
+        I = I || (-I ^ (opts.Exterior));
+        z = z || matrix toList(#opts.Exterior : {-1_QQ});
+        );
     polyhedronFromHData(-I, -z, A, b))
 
 --------------------------------------------------------------------
