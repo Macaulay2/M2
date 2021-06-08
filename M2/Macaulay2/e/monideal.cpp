@@ -4,6 +4,9 @@
 #include "monoid.hpp"
 #include "text-io.hpp"
 
+#include "debug.hpp"
+#include <iostream>
+
 unsigned int MonomialIdeal::computeHashValue() const
 {
   // Incorporate the length and the first 5 elements
@@ -535,7 +538,7 @@ int MonomialIdeal::debug_check(Nmi_node *const p,
 
 void MonomialIdeal::debug_check() const
 {
-  if (count == 0)
+  if (count <= 1)
     {
       assert(mi == NULL);
       return;
@@ -566,6 +569,18 @@ void MonomialIdeal::text_out(buffer &o) const
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   assert(P != 0);
   const Monoid *M = P->getMonoid();
+  if (length_of() == 0)
+    {
+      o << "0";
+      return;
+    }
+  if (is_one())
+    {
+      if (length_of() != 1)
+        std::cout << "bad news: count is not 1, but ideal is 1..." << std::endl;
+      o << "1";
+      return;
+    }
   int *m = M->make_one();
   for (Index<MonomialIdeal> j = last(); j.valid(); j--)
     {
@@ -694,6 +709,7 @@ MonomialIdeal *MonomialIdeal::operator-(const MonomialIdeal &J) const
 MonomialIdeal *MonomialIdeal::quotient(const int *m) const
 // Compute (this : m), where m is a varpower monomial.
 {
+  std::cout << "calling quotient of single element" << std::endl;
   queue<Bag *> new_elems;
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
     {
@@ -707,6 +723,14 @@ MonomialIdeal *MonomialIdeal::quotient(const int *m) const
 
 MonomialIdeal *MonomialIdeal::quotient(const MonomialIdeal &J) const
 {
+  std::cout << "--calling quotient -- I = ";
+  dmonideal(const_cast<MonomialIdeal*>(this));
+  std::cout << std::endl << "  -- J = ";
+  dmonideal(const_cast<MonomialIdeal*>(&J));
+  std::cout << std::endl << "  -- I:J = ";
+  debug_check();
+  J.debug_check();
+  
   MonomialIdeal *result = new MonomialIdeal(get_ring());
   Bag *b = new Bag();
   varpower::one(b->monom());
@@ -714,11 +738,15 @@ MonomialIdeal *MonomialIdeal::quotient(const MonomialIdeal &J) const
   for (Index<MonomialIdeal> i = J.first(); i.valid(); i++)
     {
       MonomialIdeal *result1 = quotient(operator[](i)->monom().raw());
+      result1->debug_check();
       MonomialIdeal *next_result = result->intersect(*result1);
+      next_result->debug_check();
       delete result1;
       delete result;
       result = next_result;
     }
+  dmonideal(result);
+  std::cout << "----" << std::endl;
   GC_reachable_here(&J);
   return result;
 }
@@ -773,6 +801,7 @@ MonomialIdeal *MonomialIdeal::alexander_dual(const M2_arrayint a) const
 
 MonomialIdeal *MonomialIdeal::erase(const int *m) const
 {
+  debug_check();
   queue<Bag *> new_elems;
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
     {
@@ -781,11 +810,21 @@ MonomialIdeal *MonomialIdeal::erase(const int *m) const
       new_elems.insert(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
+  result->debug_check();
   return result;
 }
 
+
 MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
 {
+  std::cout << "--calling sat -- I = ";
+  dmonideal(const_cast<MonomialIdeal*>(this));
+  std::cout << std::endl << "  -- J = ";
+  dmonideal(const_cast<MonomialIdeal*>(&J));
+  std::cout << std::endl << "  -- sat(I,J) = ";
+  debug_check();
+  J.debug_check();
+  
   MonomialIdeal *result = new MonomialIdeal(get_ring());
   Bag *b = new Bag();
   varpower::one(b->monom());
@@ -793,11 +832,15 @@ MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
   for (Index<MonomialIdeal> i = J.first(); i.valid(); i++)
     {
       MonomialIdeal *result1 = erase(operator[](i)->monom().raw());
+      result1->debug_check();
       MonomialIdeal *next_result = result->intersect(*result1);
+      next_result->debug_check();
       delete result1;
       delete result;
       result = next_result;
     }
+  dmonideal(result);
+  std::cout << "----" << std::endl;
   GC_reachable_here(&J);
   return result;
 }
@@ -814,6 +857,34 @@ MonomialIdeal *MonomialIdeal::radical() const
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
   return result;
 }
+
+#if 0
+MonomialIdeal NEW_radical(const MonomialIdeal& M) const
+{
+  std::vector<SparseMonomial> elems;
+  std::vector<int> sparseMonomialSpace; // this doesn't work...
+  for (auto a : M)
+    // a is a std::pair<SparseMonomial, int> unowned pointer to the monomial, and its index.
+    {
+      SparseMonomial m = a.first.radical(sparseMonomialSpace);
+      elems.push_back(m);
+    }
+  return MonomialIdeal(elems); // This copies the monomials into space owned my the MonomialIdeal?
+}
+  
+  queue<Bag *> new_elems;
+  
+  for (auto i = cbegin(); i != cend(); ++i)
+  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
+    {
+      Bag *b = new Bag(operator[](i)->basis_elem());
+      varpower::radical(operator[](i)->monom().raw(), b->monom());
+      new_elems.insert(b);
+    }
+  MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
+  return result;
+}
+#endif
 
 static void borel1(queue<Bag *> &result, int *m, int loc, int nvars)
 {
