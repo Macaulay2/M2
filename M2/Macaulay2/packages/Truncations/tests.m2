@@ -122,7 +122,7 @@ TEST /// -- test of truncationPolyhedron with Exterior option
   Q = truncationPolyhedron(A, {7,1})
   assert(#hilbertBasis cone P == 1321)
   assert(#hilbertBasis cone Q == 1851)
-  assert(numgens truncationMonomials({{7,1}}, E) == 28)
+  assert(numcols truncationMonomials({7,1}, E) == 28)
 ///
 
 TEST /// -- test of basisPolyhedron with Exterior option
@@ -134,7 +134,8 @@ TEST /// -- test of basisPolyhedron with Exterior option
   Q = basisPolyhedron(A, transpose matrix{{10,0}})
   assert(#hilbertBasis cone P == 262)
   assert(#hilbertBasis cone Q == 290)
-  assert(numgens basisMonomials({{10,0}}, E) == 4)
+  assert(numcols basisMonomials({10,0}, E) == 4)
+  assert(basis'({{10,0},{5,1}}, module E) == gens gb(basis({5,1}, module E) | basis({10,0}, module E)))
 
   -- test for degree zero variables
   -- TODO: expand on this
@@ -142,7 +143,7 @@ TEST /// -- test of basisPolyhedron with Exterior option
   A = transpose matrix degrees R
   d = {1,1,0}
   P = basisPolyhedron(A, transpose matrix{d})
-  assert(numgens basisMonomials({d}, R) == 2)
+  assert(numcols basisMonomials(d, R) == 2)
   rays P -- P is infinite due to z_0
 ///
 
@@ -150,17 +151,17 @@ TEST /// -- test of truncationMonomials
   debug needsPackage "Truncations"
 
   S = ZZ/101[a,b,c, Degrees => {5,6,7}]
-  assert(truncationMonomials({{10}}, S) == ideal"a2,ab,ac,b2,bc,c2")
-  assert(truncationMonomials({{12}}, S) == ideal"a3,a2b,b2,ac,bc,c2")
+  assert(truncationMonomials({10}, S) == matrix"a2,ab,ac,b2,bc,c2")
+  assert(truncationMonomials({12}, S) == matrix"ac,b2,bc,c2,a3,a2b")
 
   R = S/(a*c-2*b^2)
-  assert(truncationMonomials({{12}}, R) == ideal"a3,a2b,ac,bc,c2")
+  assert(truncationMonomials({12}, R) == matrix"ac,bc,c2,a3,a2b")
 
   E = ZZ/101[a,b,c, SkewCommutative => true]
-  assert(truncationMonomials({{2}}, E) == ideal"bc,ac,ab")
+  assert(truncationMonomials({2}, E) == matrix"bc,ac,ab")
 
   E = ZZ/101[a,b,c, SkewCommutative => {0,1}]
-  assert(truncationMonomials({{2}}, E) == ideal"c2,bc,ac,ab")
+  assert(truncationMonomials({2}, E) == matrix"c2,bc,ac,ab")
 ///
 
 TEST /// -- test of truncations in singly graded poly ring case
@@ -348,3 +349,12 @@ end--
 
 restart
 check "Truncations"
+
+restart
+S = ZZ/32003[x_0,x_1,y_0,y_1,z_0..z_2, Degrees => {2:{1,0,0},2:{0,1,0},3:{0,0,1}}]
+debug needsPackage "Truncations"
+
+d = 11*{1,1,1}
+elapsedTime truncate(d, S^1); -- 22s
+elapsedTime basis'(d, S^1); -- 0.11s, GOOD
+elapsedTime basis'(d, S^1); -- 0.06s, GOOD

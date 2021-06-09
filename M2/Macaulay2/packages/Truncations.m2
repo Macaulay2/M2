@@ -27,7 +27,7 @@ newPackage(
     DebuggingMode => true
     )
 
-importFrom_Core {"concatCols"}
+importFrom_Core {"concatCols", "raw", "rawSelectByDegrees"}
 
 -- "truncate" is exported by Core
 
@@ -262,6 +262,13 @@ basisMonomials(List, Ring) := (d, R) -> (
     -- or any polynomial ring, quotient ring, or exterior algebra.
     if  R#?(symbol basis', d)
     then R#(symbol basis', d)
+    else if R#?(symbol truncate, d)
+    then R#(symbol basis', d) = (
+        -- opportunistically use cached truncation results
+        -- TODO: is this always correct? with negative degrees?
+        truncgens := R#(symbol truncate, d);
+        psrc := rawSelectByDegrees(raw source truncgens, d, d);
+        submatrix(truncgens, , psrc))
     else R#(symbol basis', d) = (
         (R1, phi1) := flattenRing R;
         -- generates the effective cone
