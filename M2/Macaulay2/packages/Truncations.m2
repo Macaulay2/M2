@@ -27,6 +27,8 @@ newPackage(
     DebuggingMode => true
     )
 
+importFrom_Core {"concatCols"}
+
 -- "truncate" is exported by Core
 
 protect Exterior
@@ -143,14 +145,16 @@ basisPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
 --------------------------------------------------------------------
 
 truncationMonomials = method()
-truncationMonomials(List, Ring) := (degs, R) -> (
-    -- valid for total coordinate ring of any simplicial toric variety
-    -- or any polynomial ring with skew commutating variables.
+truncationMonomials(List, Module) := (degs, F) -> (
+    -- inputs: a list of multidegrees, a free module
     -- assume checkOrMakeDegreeList has already been called on degs
-    -- we could call findMins on degs, but only with respect to the Nef cone
+    -- TODO: call findMins on degs, but with respect to the Nef cone!
     -- TODO: either figure out a way to use cached results or do this in parallel
-    if #degs > 1 then return sum for d in degs list truncationMonomials({d}, R);
-    d := degs#0;
+    R := ring F; directSum apply(degrees F, a -> concatCols apply(degs, d -> truncationMonomials(d - a, R))))
+truncationMonomials(List, Ring) := (d, R) -> (
+    -- inputs: a single multidegree, a graded ring
+    -- valid for total coordinate ring of any simplicial toric variety
+    -- or any polynomial ring, quotient ring, or exterior algebra.
     if  R#?(symbol truncate, d)
     then R#(symbol truncate, d)
     else R#(symbol truncate, d) = (
@@ -160,17 +164,17 @@ truncationMonomials(List, Ring) := (degs, R) -> (
         P := truncationPolyhedron(A, transpose matrix{d},
             Exterior => (options R1).SkewCommutative,
             Nef => nefCone R1);
-        H := hilbertBasis cone P;
+        H := hilbertBasis cone P; -- ~50% of computation
         H = for h in H list flatten entries h;
-        J := ideal leadTerm ideal R1;
+        J := leadTerm ideal R1;
         ambR := ring J;
         -- generates the Nef cone
-        --nefgens := for h in H list if h#0 === 0 then ambR_(drop(h, 1)) else continue;
-        mongens := for h in H list if h#0 === 1 then ambR_(drop(h, 1)) else continue;
-        result := mingens ideal (matrix(ambR, {mongens}) % J);
+        --nefgens := matrix(ambR, { for h in H list if h#0 === 0 then ambR_(drop(h, 1)) else continue });
+        mongens := matrix(ambR, { for h in H list if h#0 === 1 then ambR_(drop(h, 1)) else continue });
+        result := mingens ideal(mongens % J);
         if R1 =!= ambR then result = result ** R1;
         if R =!= R1 then result = phi1^-1 result;
-        ideal result))
+        result))
 
 truncation0 = (deg, M) -> (
     -- WARNING: valid for a polynomial ring with degree length = 1.
@@ -215,15 +219,7 @@ truncate(ZZ, Ideal)  :=
 truncate(ZZ, Matrix) :=
 truncate(ZZ, Module) := truncateModuleOpts >> opts -> (d, m) -> truncate({d}, m, opts)
 
-truncate(List, Ring) := Ideal => truncateModuleOpts >> opts -> (degs, R) -> (
-    -- truncate the graded ring R in degrees >= d, for d in degs
-    if not truncateImplemented R then error "cannot use truncate with this ring type";
-    degs = checkOrMakeDegreeList(degs, degreeLength R);
-    doTrim := if opts.MinimalGenerators then trim else identity;
-    doTrim if degreeLength R === 1 and any(degrees R, d -> d =!= {0})
-    then ideal truncation1(min degs, R^1)
-    else ideal gens truncationMonomials(degs, R))
-
+truncate(List, Ring)   := Ideal  => truncateModuleOpts >> opts -> (degs, R) -> ideal truncate(degs, module R, opts)
 truncate(List, Ideal)  := Ideal  => truncateModuleOpts >> opts -> (degs, I) -> ideal truncate(degs, module I, opts)
 truncate(List, Module) := Module => truncateModuleOpts >> opts -> (degs, M) -> (
     if M == 0 then return M;
@@ -232,19 +228,16 @@ truncate(List, Module) := Module => truncateModuleOpts >> opts -> (degs, M) -> (
     doTrim := if opts.MinimalGenerators then trim else identity;
     doTrim if degreeLength R === 1 and any(degrees R, d -> d =!= {0})
     then truncation1(min degs, M)
-    else if isFreeModule M then (
-        image map(M, , directSum for a in degrees M list
-            gens truncationMonomials(for d in degs list (d - a), R)))
+    else if isFreeModule M then return ( -- NOTE: skip trimming
+        image map(M, , truncationMonomials(degs, M)))
     else if M.?generators and not M.?relations then (
-        image map(M, , gens truncate(degs, target presentation M, opts)))
+        image map(M, , gens truncate(degs, target presentation M, MinimalGenerators => false)))
     else subquotient(
         gens truncate(degs, image generators M, MinimalGenerators => false),
         gens truncate(degs, image  relations M, MinimalGenerators => false))
     )
 
 truncate(List, Matrix) := Matrix => truncateModuleOpts >> opts -> (degs, f) -> (
-    if not truncateImplemented(R := ring f) then error "cannot use truncate with this ring type";
-    degs = checkOrMakeDegreeList(degs, degreeLength R);
     F := truncate(degs, source f, opts);
     G := truncate(degs, target f, opts);
     map(G, F, (f * gens F) // gens G))
@@ -258,41 +251,42 @@ truncate(List, Matrix) := Matrix => truncateModuleOpts >> opts -> (degs, f) -> (
 -- ensure the output is a module over the degree 0 of R
 
 basisMonomials = method()
-basisMonomials(List, Ring) := (degs, R) -> (
+basisMonomials(List, Module) := (degs, F) -> (
+    -- inputs: a list of multidegrees, a free module
+    -- assume checkOrMakeDegreeList has already been called on degs
+    -- TODO: either figure out a way to use cached results or do this in parallel
+    R := ring F; directSum apply(degrees F, a -> concatCols apply(degs, d -> basisMonomials(d - a, R))))
+basisMonomials(List, Ring) := (d, R) -> (
+    -- inputs: a single multidegree, a graded ring
     -- valid for total coordinate ring of any simplicial toric variety
-    -- or any polynomial ring with skew commutating variables.
-    if #degs > 1 then return sum for d in degs list basisMonomials({d}, R);
-    d := degs#0;
+    -- or any polynomial ring, quotient ring, or exterior algebra.
     if  R#?(symbol basis', d)
     then R#(symbol basis', d)
     else R#(symbol basis', d) = (
         (R1, phi1) := flattenRing R;
         -- generates the effective cone
         A := effGenerators R1;
-        P := basisPolyhedron(A, transpose matrix{d}, Exterior => (options R1).SkewCommutative);
-        H := hilbertBasis cone P;
+        P := basisPolyhedron(A, transpose matrix{d},
+            Exterior => (options R1).SkewCommutative);
+        H := hilbertBasis cone P; -- ~40% of computation
         H = for h in H list flatten entries h;
-        J := ideal leadTerm ideal R1;
+        J := leadTerm ideal R1;
         ambR := ring J;
         -- generates the degree zero part of the basis
-        --zerogens := for h in H list if h#0 === 0 then ambR_(drop(h, 1)) else continue;
-        mongens := for h in H list if h#0 === 1 then ambR_(drop(h, 1)) else continue;
-        result := mingens ideal (matrix(ambR, {mongens}) % J);
+        --zerogens := matrix(ambR, { for h in H list if h#0 === 0 then ambR_(drop(h, 1)) else continue });
+        mongens := matrix(ambR, { for h in H list if h#0 === 1 then ambR_(drop(h, 1)) else continue });
+        result := mingens ideal(mongens % J); -- ~40% of computation
         if R1 =!= ambR then result = result ** R1;
         if R =!= R1 then result = phi1^-1 result;
-        ideal result))
+        result))
 
 basis' = method(Options => options basis)
 basis'(List, Module) := Matrix => opts -> (degs, M) -> (
     if M == 0 then return M;
     if not truncateImplemented(R := ring M) then error "cannot use basis' with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
-    if #degs > 1 then error "basis with multiple degrees not yet implemented";
-    if degreeLength R === 1 and #degs <= 1
-    then basis(degs, M, opts)
-    else if isFreeModule M then (
-        map(M, , directSum for a in degrees M list
-            gens basisMonomials(for d in degs list (d - a), R)))
+    if isFreeModule M
+    then map(M, , basisMonomials(degs, M))
     else map(M, , basis'(degs, target presentation M, opts)))
 
 --------------------------------------------------------------------
