@@ -348,7 +348,47 @@ TEST /// -- test of truncationPolyhedron with Nef option
 end--
 
 restart
-check "Truncations"
+time check "Truncations" -- 9s -> 7s
+
+-- benchmarking tests
+restart
+needsPackage "Truncations"
+S = ZZ/32003[x_0,x_1,y_0,y_1,z_0..z_2, Degrees => {2:{1,0,0},2:{0,1,0},3:{0,0,1}}]
+
+n = 11 -- 78 twists
+elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 10s -> 7.3s
+elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 2.8s -> 0.2s, GOOD
+elapsedTime truncate(compositions(3, n), S); -- (28.8 ->) 7.8s -> 5.6s -> 0.19s GOOD
+elapsedTime truncate(compositions(3, n), S); -- (16.8 ->) 7.7s -> 5.4s -> 0.18s GOOD
+elapsedTime truncate(compositions(3, n), S^3, MinimalGenerators => false); -- 8.5s -> 0.6s, GOOD
+elapsedTime truncate(compositions(3, n), S^3, MinimalGenerators => false); -- 6.6s -> 0.5s GOOD
+
+elapsedTime truncate(compositions(3, n), S^3); -- (67s ->) 61s -> 72s -> 7.3s
+elapsedTime truncate(compositions(3, n), S^3); -- (54s ->) 60s -> 60s -> 0.4s GOOD
+
+n = 15 -- 136 twists
+elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 31s
+elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 0.8s GOOD
+elapsedTime truncate(compositions(3, n), S); -- (?? ->) >3min -> 0.8s GOOD
+elapsedTime truncate(compositions(3, n), S); -- (?? ->) >3min -> 0.7s GOOD
+elapsedTime truncate(compositions(3, n), S^3, MinimalGenerators => false); -- 2.1s
+elapsedTime truncate(compositions(3, n), S^3, MinimalGenerators => false); -- 1.8s GOOD
+elapsedTime truncate(compositions(3, n), S^3); -- (?? ->) 1.8s GOOD
+elapsedTime truncate(compositions(3, n), S^3); -- (?? ->) 1.7s GOOD
+
+restart
+S = ZZ/32003[x_0,x_1,y_0,y_1,z_0..z_2, Degrees => {2:{1,0,0},2:{0,1,0},3:{0,0,1}}]
+debug needsPackage "Truncations"
+
+d = 11*{1,1,1}
+elapsedTime basis'(d, S^1); -- 7.8s, slower than basis
+elapsedTime basis'(d, S^1); -- 0.1s
+elapsedTime basis'(d, S^3); -- 0.2s
+elapsedTime basis'(d, S^3); -- 0.2s, faster than basis
+
+-- for comparison:
+elapsedTime basis(d, module S); -- 0.4s
+elapsedTime basis(d, S^3); -- 1.2s
 
 restart
 S = ZZ/32003[x_0,x_1,y_0,y_1,z_0..z_2, Degrees => {2:{1,0,0},2:{0,1,0},3:{0,0,1}}]
