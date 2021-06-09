@@ -1228,7 +1228,11 @@ inline bool eigenvaluesHermitian(const DMatRRR& A, DMatRRR& eigenvals)
 
 inline bool eigenvalues(const DMatRRR& A, DMatCCC& eigenvals)
 {
+#if 1
+  return EigenM2::eigenvalues(&A, &eigenvals);
+#else  
   return Lapack::eigenvalues(&A, &eigenvals);
+#endif
 }
 
 inline bool eigenvectorsHermitian(const DMatRRR& A,
@@ -1295,7 +1299,11 @@ inline bool eigenvaluesHermitian(const DMatCCC& A, DMatRRR& eigenvals)
 
 inline bool eigenvalues(const DMatCCC& A, DMatCCC& eigenvals)
 {
+#if 1
+  return EigenM2::eigenvalues(&A, &eigenvals);
+#else  
   return Lapack::eigenvalues(&A, &eigenvals);
+#endif
 }
 
 inline bool eigenvectorsHermitian(const DMatCCC& A,

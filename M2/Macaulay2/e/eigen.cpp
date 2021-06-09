@@ -108,6 +108,29 @@ bool SVD(const LMatrixCCC *A,
   Real::set_default_prec(old_prec);
   return true;
 }
+
+bool eigenvalues(const DMatRRR *A, DMatCCC *eigenvals) {
+
+}
+
+bool eigenvalues(const DMatCCC *A, DMatCCC *eigenvals) {
+  auto old_prec = Real::get_default_prec(); 
+  Real::set_default_prec(A->ring().get_precision());
+
+  MatrixXmpCC AXmp(A->numRows(), A->numColumns());
+  fill_to_MatrixXmp(*A, AXmp);
+
+  Eigen::ComplexEigenSolver<MatrixXmpCC> ces(AXmp,false/*no eigenvectors*/);
+  ces.eigenvalues();//!!! How to process this???
+  
+  fill_from_MatrixXmp(svd.matrixU(), *U);
+  fill_from_MatrixXmp(svd.matrixV().adjoint(), *VT);
+  fill_from_MatrixXmp(svd.singularValues(), *Sigma);
+
+  Real::set_default_prec(old_prec);
+  return true;
+}
+
 } // end of namespace Eigen 
 
 /*
