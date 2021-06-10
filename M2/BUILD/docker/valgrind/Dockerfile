@@ -46,7 +46,7 @@ RUN apt-get install -y libgivaro-dev fflas-ffpack
 RUN apt-get install -y libmpfi-dev
 
 # Optional packages
-RUN apt-get install -y mlocate bash-completion
+RUN apt-get install -y mlocate bash-completion valgrind
 
 # Add non-root user for building and running Macaulay2
 RUN useradd -G sudo -g root -u 1000 -m macaulay && echo "macaulay ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
