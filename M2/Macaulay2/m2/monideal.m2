@@ -1,5 +1,6 @@
 -- Copyright 1995-2002 by Michael Stillman
 
+needs "basis.m2"
 needs "integers.m2" -- for lcm
 needs "matrix1.m2"
 needs "quotring.m2"
