@@ -7,7 +7,7 @@
    the License, or any later version.
 *-
 
-if version#"VERSION" < "1.17" then error "this package requires Macaulay2 version 1.17 or newer";
+if version#"VERSION" < "1.18" then error "this package requires Macaulay2 version 1.18 or newer";
 
 newPackage(
     "MultiprojectiveVarieties",
