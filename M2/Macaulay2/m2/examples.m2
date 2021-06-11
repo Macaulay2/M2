@@ -198,7 +198,8 @@ captureExampleOutput = (desc, inputs, pkg, inf, outf, errf, data, inputhash, cha
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
 	(err, output) := capture(inputs, UserMode => false, PackageExports => pkg);
 	if err then printerr "capture failed; retrying ..."
-	else return outf << M2outputHash << inputhash << endl << output << close);
+	else (outf << M2outputHash << inputhash << endl << output << close;
+	    return true));
     -- fallback to using an external process
     stderr << commentize pad("making " | desc, 72) << flush;
     inf << replace("-\\* no-capture-flag \\*-", "", inputs) << endl << close;
