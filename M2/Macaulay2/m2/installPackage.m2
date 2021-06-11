@@ -534,12 +534,11 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 		verboseLog("using cached " | desc)
 		)
 	    -- run and capture example results
-	    else elapsedTime captureExampleOutput(
+	    else if elapsedTime captureExampleOutput(
 		desc, demark_newline inputs, pkg,
-		possiblyCache(outf, outf', fkey),
 		inpf, outf, errf, data,
 		inputhash, changeFunc fkey,
-		usermode);
+		usermode) then (possiblyCache(outf, outf', fkey))();
 	    storeExampleOutput(pkg, fkey, outf, verboseLog)));
 
     -- check for obsolete example output files and remove them
