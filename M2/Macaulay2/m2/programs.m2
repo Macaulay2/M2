@@ -30,8 +30,8 @@ checkProgramPath = (cmds, pathToTry, prefix, opts) -> (
 	exe := unescapedPathToTry | first separate(" ", cmd);
 	if not fileExists exe then (
 	    verboseLog(exe, " does not exist"); false) else
-	-- check executable bit (0111)
-	if fileMode exe & 73 == 0 then (
+	-- check executable bit
+	if fileMode exe & 0o111 == 0 then (
 	    verboseLog(exe, " exists but is not executable"); false) else (
 	    verboseLog(exe, " exists and is executable");
 	    verboseLog("running ", format(pathToTry | cmd), ":");

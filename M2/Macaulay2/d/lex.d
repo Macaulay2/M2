@@ -150,6 +150,8 @@ getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
      s := takestring(tokenbuf);
      Word(s,TCstring,0,parseWORD));
 
+isbindigit(c:int):bool := c == int('0') || c == int('1');
+isoctdigit(c:int):bool := c >= int('0') && c <= int('7');
 ishexdigit(c:int):bool := (
      c >= int('0') && c <= int('9') ||
      c >= int('a') && c <= int('f') ||
@@ -323,6 +325,29 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       tokenbuf << char(getc(file));
 	       while isalnum(peek(file)) do tokenbuf << char(getc(file));
 	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
+	  else if ch == int('0') && (
+	      peek(file,1) == int('b') || peek(file,1) == int('B') ||
+	      peek(file,1) == int('o') || peek(file,1) == int('O') ||
+	      peek(file,1) == int('x') || peek(file,1) == int('X')) then (
+	       typecode := TCint;
+	       tokenbuf << char(getc(file));
+	       c := peek(file);
+	       if c == int('b') || c == int('B') then (
+		    tokenbuf << char(getc(file));
+		    while isbindigit(peek(file)) do
+			 tokenbuf << char(getc(file)))
+	       else if c == int('o') || c == int('O') then (
+		    tokenbuf << char(getc(file));
+		    while isoctdigit(peek(file)) do
+			 tokenbuf << char(getc(file)))
+	       else if c == int('x') || c == int('X') then (
+		    tokenbuf << char(getc(file));
+		    while ishexdigit(peek(file)) do
+			 tokenbuf << char(getc(file)));
+	       c = peek(file);
+	       if isalpha(c) then printWarningMessage(position(file),"character '"+char(c)+"' immediately following number");
+	       s := takestring(tokenbuf);
+	       return Token(Word(s,typecode,0, parseWORD),file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline)) 
 	  else if isdigit(ch) || ch==int('.') && isdigit(peek(file,1)) then (
 	       typecode := TCint;
 	       while isdigit(peek(file)) do (
