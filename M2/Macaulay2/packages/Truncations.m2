@@ -300,18 +300,21 @@ truncate(InfiniteNumber, InfiniteNumber, Matrix) := lookup(truncate, List, List,
 -- add partial multidegree support
 -- ensure the output is a module over the degree 0 of R
 
-basisMonomials = method()
-basisMonomials(List, Module) := (degs, F) -> (
+basisMonomials = method(Options => {"partial degrees" => null})
+basisMonomials(List, Module) := opts -> (degs, F) -> (
     -- inputs: a list of multidegrees, a free module
     -- assume checkOrMakeDegreeList has already been called on degs
     -- TODO: either figure out a way to use cached results or do this in parallel
-    R := ring F; directSum apply(degrees F, a -> concatCols apply(degs, d -> basisMonomials(d - a, R))))
-basisMonomials(List, Ring) := (d, R) -> R#(symbol basis', d) ??= (
+    R := ring F; directSum apply(degrees F, a -> concatCols apply(degs, d -> basisMonomials(d - a, R, opts))))
+basisMonomials(List, Ring) := opts -> (d, R) -> (
     -- inputs: a single multidegree, a graded ring
     -- valid for total coordinate ring of any simplicial toric variety
     -- or any polynomial ring, quotient ring, or exterior algebra.
-    -- TODO: we should accept _any_ cached truncation as a hint
-    if R#?(symbol truncate, d, null) then (
+    partialdegs := opts#"partial degrees";
+    if  R#?(symbol basis', d) and partialdegs === null
+    then R#(symbol basis', d)
+    else if R#?(symbol truncate, d) and partialdegs === null
+    then R#(symbol basis', d) = (
         -- opportunistically use cached truncation results
         -- TODO: is this always correct? with negative degrees?
         truncgens := R#(symbol truncate, d, null);
@@ -321,11 +324,18 @@ basisMonomials(List, Ring) := (d, R) -> R#(symbol basis', d) ??= (
         (R1, phi1) := flattenRing R;
         -- generates the effective cone
         A := effGenerators R1;
+        -- TODO: would be better if basisPolyhedron could also account for torsion
         F := freeComponents target A;
         b := transpose matrix{d_F};
-        -- TODO: would be better if basisPolyhedron could account for torsion
+	-- select partial degree rows
+	if instance(partialdegs, List) then (
+	    varlist := select(#gens R1, i -> not member(i, partialdegs));
+	    A = A^varlist;
+	    d = d^varlist;
+	    );
         P := basisPolyhedron(A^F, b,
             Exterior => (options R1).SkewCommutative);
+        if isCompact P and volume P === 0 then return map(R^1, R^0, 0);
         H := entries map(ZZ, rawHilbertBasis raw transpose rays cone P); -- ~40% of computation
         J := leadTerm ideal R1;
         ambR := ring J;
@@ -339,13 +349,13 @@ basisMonomials(List, Ring) := (d, R) -> R#(symbol basis', d) ??= (
         submatrix(result, , psrc)))
 
 -- FIXME: when M has relations, it should be pruned
-basis' = method(Options => options basis)
+basis' = method(Options => options basis ++ {"partial degrees" => null})
 basis'(List, Module) := Matrix => opts -> (degs, M) -> (
     if M == 0 then return M;
     if not truncateImplemented(R := ring M) then error "cannot use basis' with this ring type";
     degs = checkOrMakeDegreeList(degs, degreeLength R);
     if isFreeModule M
-    then map(M, , basisMonomials(degs, M))
+    then map(M, , basisMonomials(degs, M, "partial degrees" => opts#"partial degrees"))
     else map(M, , basis'(degs, target presentation M, opts)))
 
 --------------------------------------------------------------------
