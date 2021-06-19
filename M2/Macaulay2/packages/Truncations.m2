@@ -113,6 +113,12 @@ truncationPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
         hdataLHS = hdataLHS || (I ^ (opts.Exterior));
         hdataRHS = hdataRHS || matrix toList(#opts.Exterior : {1_QQ});
         );
+    return if opts.Nef === null or rays opts.Nef == id_(target A)
+    -- this is correct when the Nef cone equals the positive quadrant
+    then polyhedronFromHData(hdataLHS, hdataRHS)
+    -- otherwise, compute the preimage of the Nef cone
+    else affinePreimage(-hdataLHS, opts.Nef * convexHull(z, I), hdataRHS);
+    --
     -- this is correct when the Nef cone equals the positive quadrant
     P := polyhedronFromHData(hdataLHS, hdataRHS);
     if opts.Nef === null or rays opts.Nef == id_(target A) then return P;
@@ -163,7 +169,7 @@ truncationMonomials(List, Ring) := (d, R) -> (
         A := effGenerators R1;
         P := truncationPolyhedron(A, transpose matrix{d},
             Exterior => (options R1).SkewCommutative,
-            Nef => nefCone R1);
+            Nef => nefCone R1); -- changing to effCone gives an alternative result
         H := hilbertBasis cone P; -- ~50% of computation
         H = for h in H list flatten entries h;
         J := leadTerm ideal R1;
@@ -287,6 +293,7 @@ basisMonomials(List, Ring) := (d, R) -> (
         if R =!= R1 then result = phi1^-1 result;
         result))
 
+-- FIXME: when M has relations, it should be pruned
 basis' = method(Options => options basis)
 basis'(List, Module) := Matrix => opts -> (degs, M) -> (
     if M == 0 then return M;

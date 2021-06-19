@@ -286,6 +286,20 @@ TEST /// -- cf. Maclagan-Smith 2004, Example 5.2
   assert(degree e == {-1, 2})
   assert isSubset(e * S^1, M)
   assert(image basis'({-1, 2}, M) == image(map(S^1, S^{6:{1,-2}}, {{x_1*x_2*x_3, x_0*x_1*x_3, x_1^2*x_2^3, x_0*x_1^2*x_2^2, x_0^2*x_1^2*x_2, x_0^3*x_1^2}})))
+  end--
+  -- the tests below pass only for effective truncation
+  -- or M-S truncation without truncating the relations
+  -- otherwise they won't, which is counter intuitive, but it is correct
+  I = ideal S_1
+  M = truncate({0,0}, comodule I)
+  assert isSubset(M, comodule I)
+  assert(basis(first degrees I, M) == 0)
+  assert(basis'(degrees I, M) == 0)
+  -- truncating a chain complex
+  C = res M
+  D = chainComplex apply(1 .. length C, i -> truncate({0,0}, C.dd_i));
+  assert(HH_0 D == M and HH_1 D == 0 and HH_2 D == 0) -- good, fixed in v1.0
+>>>>>>> c375961bae... wip: nef or eff?
 ///
 
 TEST /// -- ideal of 10 points on Hirzebruch surface of type 3
