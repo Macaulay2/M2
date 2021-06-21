@@ -613,7 +613,7 @@ doc ///
 
    The default value of ScipPrintLevel is 0. To load the package with a different
    default value for ScipPrintLevel, imitate the following example.
-  CannedExample
+  Example
    i1: loadPackage("MonomialIntegerPrograms", Configuration => {"CustomScipPrintLevel" => "2"});
    --loading configuration for package "MonomialIntegerPrograms" from file <foo>
    Using default executable name "scip".
