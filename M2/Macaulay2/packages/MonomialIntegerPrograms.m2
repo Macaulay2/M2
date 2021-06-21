@@ -27,6 +27,8 @@ newPackage (
       "CustomPath" => "",
       "CustomScipPrintLevel" => ""
       },
+  AuxiliaryFiles => true,
+  CacheExampleOutput => true,
   PackageImports => {"LexIdeals","MinimalPrimes"},
   OptionalComponentsPresent => scipPresent := run "type scip >/dev/null 2>&1" === 0,
   DebuggingMode => false
@@ -138,9 +140,8 @@ installMethod(loadBuiltinCodimAndDegree, () -> (
   codim MonomialIdeal := oldCodim;
   degree MonomialIdeal := oldDegree;
 ));
-loadSCIPCodimAndDegree();
 
-
+if scipPresent then loadSCIPCodimAndDegree();
 --------------------------
 -- betti tables with HF --
 --------------------------
