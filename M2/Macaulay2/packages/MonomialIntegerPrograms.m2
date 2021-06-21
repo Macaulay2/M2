@@ -824,130 +824,55 @@ doc ///
   Text
    For example, count the monomial ideals in $\mathbb{Q}[x,y,z]$, generated in degrees up to 5, whose Hilbert
    function begins with $\{1, 3, 6, 5, 4, 4\}$:
-  CannedExample
-   i1 : R = QQ[x,y,z]; L = {1, 3, 6, 5, 4, 4};
+  Example
+   R = QQ[x,y,z]; L = {1, 3, 6, 5, 4, 4};
 
-   i3 : M = monomialIdealsWithHilbertFunction(L, R);
+   M = monomialIdealsWithHilbertFunction(L, R); #M
 
-   i4 : #M
-
-   o4 = 306
-
-   i5 : netList take(M, 5)
-
-        +-------------------------------------------------+
-        |                2      2   2      2     2        |
-   o5 = |monomialIdeal (x y, x*y , x z, x*z , y*z )       |
-        +-------------------------------------------------+
-        |                2      2   2      2     2        |
-        |monomialIdeal (x y, x*y , y z, x*z , y*z )       |
-        +-------------------------------------------------+
-        |                2      2          3      2     2 |
-        |monomialIdeal (x y, x*y , x*y*z, y z, x*z , y*z )|
-        +-------------------------------------------------+
-        |                2      2            2     2   4  |
-        |monomialIdeal (x y, x*y , x*y*z, x*z , y*z , z ) |
-        +-------------------------------------------------+
-        |                2      2     2     2   3         |
-        |monomialIdeal (x y, x*y , x*z , y*z , z )        |
-        +-------------------------------------------------+
+   netList take(M, 5)
   Text
    By default, the degrees of generators are bounded by the length of $L$. A lower bound can be set
    manually with the BoundGenerators option.
-  CannedExample
-   i6 : M2 = monomialIdealsWithHilbertFunction(L, R, BoundGenerators => 3);
-
-   i7 : #M2
-
-   o7 = 57
-
-   i8 : netList take(M2, 5)
-
-        +----------------------------------------+
-        |                3     2   3          2  |
-   o8 = |monomialIdeal (x , x*y , y , x*y*z, y z)|
-        +----------------------------------------+
-        |                3   2    3          2   |
-        |monomialIdeal (x , x y, y , x*y*z, y z) |
-        +----------------------------------------+
-        |                3     2   3   2         |
-        |monomialIdeal (x , x*y , y , x z, x*y*z)|
-        +----------------------------------------+
-        |                3   2    3   2          |
-        |monomialIdeal (x , x y, y , x z, x*y*z) |
-        +----------------------------------------+
-        |                3     2   3   2    2    |
-        |monomialIdeal (x , x*y , y , x z, y z)  |
-        +----------------------------------------+
+  Example
+   M = monomialIdealsWithHilbertFunction(L, R, BoundGenerators => 3); #M
+   netList take(M, 5)
   Text 
    There is also an option to enumerate squarefree monomial ideals only.
-  CannedExample
-   i9 : S = QQ[a..f]
+  Example
+   S = QQ[a..f]
+   
+   I = monomialIdealsWithHilbertFunction({1, 6, 19, 45, 84}, S, SquareFree => true); #I
 
-   o9 = S
-
-   o9 : PolynomialRing
-
-   i10 : I = monomialIdealsWithHilbertFunction({1, 6, 19, 45, 86}, S, SquareFree => true);
-
-   i11 : #I
-
-   o11 = 900
-
-   i12 : first random I
-
-   o12 = monomialIdeal (a*d, c*d, a*b*c*e, a*b*e*f, a*c*e*f, b*c*e*f)
-
-   o12 : MonomialIdeal of S
+   first random I
   Text
    To specify the total number of minimal generators, use FirstBetti.
-  CannedExample
-   i13 : #monomialIdealsWithHilbertFunction({1, 3, 6, 5, 4, 4}, R, FirstBetti => 5)
+  Example
+   #monomialIdealsWithHilbertFunction({1, 3, 6, 5, 4, 4}, R, FirstBetti => 5)
 
-   o13 = 57
-
-   i14 : #monomialIdealsWithHilbertFunction({1, 3, 6, 5, 4, 4}, R, FirstBetti => 6)
-
-   o14 = 174
+   #monomialIdealsWithHilbertFunction({1, 3, 6, 5, 4, 4}, R, FirstBetti => 6)
   Text
    Alternatively, specify the number of minimal generators in each degree using GradedBettis. The
    length of the list of graded (first) Betti numbers should match the length of the partial
    Hilbert function.
-  CannedExample
-   i15 : #monomialIdealsWithHilbertFunction({1, 3, 4, 2, 1}, R, GradedBettis => {0, 0, 2, 2, 1})
-
-   o15 = 30
+  Example
+   #monomialIdealsWithHilbertFunction({1, 3, 4, 2, 1}, R, GradedBettis => {0, 0, 2, 2, 1})
   Text
    Notice that the GradedBettis option totally constrains the degrees of generators already, so do 
    not use it with the BoundGenerators option.
-  CannedExample
-   i16 : #monomialIdealsWithHilbertFunction({1, 3, 4, 2, 1}, R, GradedBettis => {0, 0, 2, 3, 0})
 
-   o16 = 39
-  Text
    You can combine BoundGenerators with FirstBetti, however, since FirstBetti does not constrain degrees.
-  CannedExample
-   i17 : #monomialIdealsWithHilbertFunction({1, 3, 6, 7, 6, 5, 4, 4, 4}, R, FirstBetti => 6, BoundGenerators => 5)
+  Example
+   #monomialIdealsWithHilbertFunction({1, 3, 6, 7, 6, 5, 4, 4, 4}, R, FirstBetti => 6, BoundGenerators => 5)
 
-   o17 = 654
-
-   i18 : #monomialIdealsWithHilbertFunction({1, 3, 6, 7, 6, 5, 4, 4, 4}, R, FirstBetti => 6, BoundGenerators => 6)
-
-   o18 = 2337
+   #monomialIdealsWithHilbertFunction({1, 3, 6, 7, 6, 5, 4, 4, 4}, R, FirstBetti => 6, BoundGenerators => 4)
   Text
    The SquareFree option can be used with any of the other options.
-  CannedExample
-   i19 : #monomialIdealsWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, FirstBetti => 5)
+  Example
+   #monomialIdealsWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, FirstBetti => 5)
 
-   o19 = 240
+   #monomialIdealsWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, BoundGenerators => 3)
 
-   i20 : #monomialIdealsWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, FirstBetti => 6, BoundGenerators => 3)
-
-   o20 = 60
-
-   i21 : #monomialIdealsWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, GradedBettis => {0, 2, 3, 1, 0})
-
-   o21 = 60
+   #monomialIdealsWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, GradedBettis => {0, 2, 3, 1, 0})
  SeeAlso
   bettiTablesWithHilbertFunction
   hilbertFunct
