@@ -614,21 +614,11 @@ doc ///
    The default value of ScipPrintLevel is 0. To load the package with a different
    default value for ScipPrintLevel, imitate the following example.
   Example
-   i1: loadPackage("MonomialIntegerPrograms", Configuration => {"CustomScipPrintLevel" => "2"});
-   --loading configuration for package "MonomialIntegerPrograms" from file <foo>
-   Using default executable name "scip".
-   To change this, load package using CustomPath option.
-
-   o1 = MonomialIntegerPrograms
-
-   o1 : Package
-
-   i2 : ScipPrintLevel
-
-   o2 = 2
+   loadPackage("MonomialIntegerPrograms", Configuration => {"CustomScipPrintLevel" => "2"}, Reload => true);
   Text
    Replace "2" above  with any custom choice. Note that the string "2" is used, not an integer.
-   
+   You may or may not have to include the "Reload => true" option depending on if the package is already loaded.
+      
    
    {\bf Why am I getting warnings/why does the solver report infeasibility for
    the degree count?}
@@ -933,7 +923,7 @@ doc ///
    
    bettiTablesWithHilbertFunction(L, R, FirstBetti => 5) --only returns tables whose first total betti number is 5
    
-   bettiTablesWithHilbertFunction(L, R, GradedBetties => {0, 0, 2, 2, 1}) --only returns tables whose first graded betti numbers match a given sequence
+   bettiTablesWithHilbertFunction(L, R, GradedBettis => {0, 0, 2, 2, 1}) --only returns tables whose first graded betti numbers match a given sequence
    
    --constrain the degrees of ideal generators
    --can be used with either false or true Count option
