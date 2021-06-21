@@ -2,6 +2,7 @@
 -- Methods for processing and accessing examples from the documentation
 -----------------------------------------------------------------------------
 -* Exported:
+ * EXAMPLE
  * capture
  * examples
  *-
@@ -12,34 +13,121 @@ processExamplesStrict = true
 -- local utilities
 -----------------------------------------------------------------------------
 
-M2outputRE      := "(\n+)i+[1-9][0-9]* : "
-M2outputREindex := 1
-
+M2outputRE       = "\n+(?=i+[1-9][0-9]* : )"
+M2outputHash     = "-- -*- M2-comint -*- hash: "
 separateM2output = str -> (
-    m := regex("^i1 : ", str);
-    if m#?0 then str = substring(m#0#0, str);
-    -- TODO: do this with regex instead
-    while str#?-1 and str#-1 == "\n" do str = substring(0, #str - 1, str);
-    separate(M2outputRE, M2outputREindex, str))
+    L := separate(M2outputRE, "\n" | replace("\n+\\Z", "", str));
+    if #L<=1 then L else drop(L,1))
+
+trimlines := L -> apply(L, x ->
+    if instance(x, String) then (
+	s := lines x;
+	r := if s#?0 then demark_newline prepend(replace("^[[:space:]]+", "", s#0), drop(s, 1)) else x;
+	if #r > 0 then r)
+    else x)
+
+-----------------------------------------------------------------------------
+-- EXAMPLE
+-----------------------------------------------------------------------------
+
+makeExampleItem = method()
+-- TODO: can this be handled with a NewFromMethod?
+makeExampleItem PRE    := p -> flatten apply(toList p, s -> PRE \ separateM2output s)
+makeExampleItem String := s -> ExampleItem s
+
+-- allows canned examples with EXAMPLE PRE "..."
+EXAMPLE = method(Dispatch => Thing)
+EXAMPLE PRE         :=
+EXAMPLE String      := x -> EXAMPLE {x}
+EXAMPLE VisibleList := x -> (
+    L := flatten \\ makeExampleItem \ nonnull trimlines toList x;
+    if #L == 0 then error "EXAMPLE: empty list of examples encountered";
+    TABLE flatten {"class" => "examples", apply(L, item -> TR TD item)})
 
 -----------------------------------------------------------------------------
 -- capture
 -----------------------------------------------------------------------------
 
 -- TODO: the output format is provisional
--- TODO: does't capture stderr
+-- TODO: doesn't capture stderr
 capture' := capture
-capture = method()
-capture Net    := s -> capture toString s
-capture List   := s -> capture demark_newline s
---capture String := s -> capture' s -- output is (Boolean, String) => (Err?, Output)
+capture = method(Options => { UserMode => true, PackageExports => null })
+capture Net    := opts -> s -> capture(toString s,       opts)
+capture List   := opts -> s -> capture(demark_newline s, opts)
 -- TODO: do this in interp.dd instead
-capture String := s -> (
-    pushvar(symbol interpreterDepth, 1);
+-- TODO: alternatively, change the setup to do this in a clean thread
+capture String := opts -> s -> if opts.UserMode then capture' s else (
+    -- output is (Boolean, String) => (Err?, Output)
+    -- TODO: this should eventually be unnecessary
+    oldMutableVars := new MutableHashTable;
+    scan(flatten apply(loadedPackages, pkg -> pkg#"exported mutable symbols"), symb -> oldMutableVars#symb = value symb);
+    -* see run.m2 for details of defaultMode, argumentMode, etc. *-
+    -- TODO: somehow use SetUlimit, GCMAXHEAP, GCSTATS, GCVERBOSE,
+    --       ArgInt, ArgQ, ArgNoReadline, ArgNoSetup, and ArgNoThreads
+    argmode := if 0 < argumentMode & InvertArgs then xor(defaultMode, argumentMode) else argumentMode;
+    hasmode := m -> argmode & m == m;
+    pushvar(symbol randomSeed, if hasmode ArgNoRandomize then 0 else randomSeed);
+    -- TODO: these two are overridden in interp.dd at the moment
+    --if hasmode ArgStop        then (stopIfError, debuggingMode) = (true, false);
+    --if hasmode ArgNoDebug     then debuggingMode = false;
+    if hasmode ArgPrintWidth  then printWidth = ArgPrintWidthN;
+    if hasmode ArgNoBacktrace then backtrace = false;
+    if hasmode ArgNotify      then notify = true;
+
+    oldPrivateDictionary := User#"private dictionary";
+    User#"private dictionary" = new Dictionary;
+    -- FIXME: why does OutputDictionary lose its Attribute if it isn't saved this way?
+    pushvar(symbol OutputDictionary, new Dictionary);
+    dictionaryPath = {
+	Core.Dictionary,
+	OutputDictionary,
+	PackageDictionary};
+    if not hasmode ArgNoPreload then
+    scan(Core#"pre-installed packages", needsPackage);
+    needsPackage \ toString \ flatten { if opts.PackageExports === null then currentPackage else opts.PackageExports };
+    -- TODO: is this still necessary? If so, add a test in tests/normal/capture.m2
+    -- dictionaryPath = prepend(oldPrivateDictionary,      dictionaryPath); -- this is necessary mainly due to T from degreesMonoid
+    dictionaryPath = prepend(User#"private dictionary", dictionaryPath); -- this is necessary mainly due to indeterminates.m2
+    currentPackage = User;
+
     ret := capture' s;
-    popvar symbol interpreterDepth;
+    collectGarbage();
+
+    scan(value \ values User#"private dictionary", v ->
+	if hasAttribute(v, ReverseDictionary) then removeAttribute(v, ReverseDictionary));
+    User#"private dictionary" = oldPrivateDictionary;
+    popvar symbol OutputDictionary;
+    -- TODO: this should eventually be unnecessary
+    scan(keys oldMutableVars, symb -> symb <- oldMutableVars#symb);
+    popvar symbol randomSeed;
     ret)
 protect symbol capture
+
+-- returns false if the inputs or the package are not known to behave well with capture
+-- this is also used in testing.m2, where isTest is set to true.
+isCapturable = (inputs, pkg, isTest) -> (
+    -- argumentMode is mainly used by ctest to select M2 subprocess arguments,
+    -- or whether capture should be avoided; see packages/CMakeLists.txt
+    -- alternatively, no-capture-flag can be used with an example or test
+    if argumentMode & NoCapture =!= 0 or match("no-capture-flag", inputs) then return false;
+    -- strip commented segments first
+    inputs = replace("--.*$", "",       inputs);
+    inputs = replace("-\\*.*?\\*-", "", inputs);
+    -- TODO: remove this when the effects of capture on other packages is reviewed
+    (isTest or match({"FirstPackage", "Macaulay2Doc"},            pkg#"pkgname"))
+    and not match({"MultiprojectiveVarieties", "EngineTests", "ThreadedGB", "RunExternalM2", "DiffAlg", "SpecialFanoFourfolds"}, pkg#"pkgname")
+    and not (match({"Core", "Cremona"}, pkg#"pkgname") and version#"pointer size" == 4)
+    -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
+    and not match("(gbTrace|NAGtrace)",                       inputs) -- cerr/cout directly from engine isn't captured
+    and not match("(notify|stopIfError|debuggingMode)",       inputs) -- stopIfError and debuggingMode may be fixable
+    and not match("(alarm|exec|exit|quit|restart|run)\\b",    inputs) -- these commands interrupt the interpreter
+    and not match("(capture|read|input|load|needs)\\b",       inputs) -- these commands hide undesirable functions
+    and not match("([Cc]ommand|fork|schedule|thread|Task)",   inputs) -- remove when threads work more predictably
+    and not match("(temporaryFileName)",                      inputs) -- this is sometimes bug prone
+    and not match("(addHook|export|newPackage)",              inputs) -- these commands have permanent effects
+    and not match("(installMethod|installAssignmentMethod)",  inputs) -- same as above
+    and not match("(Global.*Hook|add.*Function|Echo|Print)",  inputs) -- same as above
+    )
 
 -----------------------------------------------------------------------------
 -- extract examples
@@ -87,34 +175,43 @@ getExampleOutput := (pkg, fkey) -> (
     output := if fileExists filename
     then ( verboseLog("info: reading cached example results from ", filename); get filename )
     else if width (ex := examples fkey) =!= 0
-    then ( verboseLog("info: capturing example results on-demand"); last capture ex );
-    pkg#"example results"#fkey = if output === null then {} else drop(separateM2output output, -1))
+    then ( verboseLog("info: capturing example results on-demand"); last capture(ex, UserMode => false, PackageExports => pkg) );
+    pkg#"example results"#fkey = if output === null then {} else separateM2output output)
 
 -- used in installPackage.m2
 -- TODO: store in a database instead
 storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
+    verboseLog("storing example results in ", minimizeFilename outf);
     if fileExists outf then (
 	outstr := reproduciblePaths get outf;
 	outf << outstr << close;
-	pkg#"example results"#fkey = drop(separateM2output outstr, -1))
+	pkg#"example results"#fkey = separateM2output outstr)
     else verboseLog("warning: missing file ", outf));
 
 -- used in installPackage.m2
-captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash, changeFunc, usermode, verboseLog) -> (
-    desc := "example results for " | fkey;
---    printerr("capturing ", desc);
---    (err, output) := evaluateWithPackage(pkg, inputs, capture);
---    if not err then ( outf << "-- -*- M2-comint -*- hash: " << inputhash << endl << output << close ) else
-    (
-	data := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
-	inf << inputs << endl << close;
-	if runFile(inf, inputhash, outf, errf, desc, pkg, changeFunc fkey, usermode, data)
-	then ( removeFile inf; cacheFunc fkey )))
+-- TODO: reduce the inputs to this function
+captureExampleOutput = (desc, inputs, pkg, cacheFunc, inf, outf, errf, data, inputhash, changeFunc, usermode) -> (
+    stdio << flush; -- just in case previous timing information hasn't been flushed yet
+    -- try capturing in the same process
+    if isCapturable(inputs, pkg, false) then (
+	desc = concatenate(desc, 62 - #desc);
+	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
+	(err, output) := capture(inputs, UserMode => false, PackageExports => pkg);
+	if err then printerr "capture failed; retrying ..."
+	else return outf << M2outputHash << inputhash << endl << output << close);
+    -- fallback to using an external process
+    stderr << commentize pad("making " | desc, 72) << flush;
+    inf << replace("-\\* no-capture-flag \\*-", "", inputs) << endl << close;
+    if runFile(inf, inputhash, outf, errf, pkg, changeFunc, usermode, data)
+    then ( removeFile inf; cacheFunc() ))
 
 -----------------------------------------------------------------------------
 -- process examples
 -----------------------------------------------------------------------------
 -- TODO: make this reentrant
+-- TODO: avoid the issue of extra indented lines being skipped in SimpleDoc
+-- a hacky fix is dumping any remaining example results along with the last example
+-- a better fix probably requires rethinking the ExampleItem mechanism
 
 local currentExampleKey
 local currentExampleCounter
@@ -134,8 +231,7 @@ processExamplesLoop ExampleItem := x -> (
     currentExampleCounter = currentExampleCounter + 1;
     result)
 
-processExamples = (pkgname, fkey, docBody) -> (
-    pkg := getpkg pkgname;
+processExamples = (pkg, fkey, docBody) -> (
     currentExampleKey = fkey;
     currentExampleCounter = 0;
     currentExampleResults = getExampleOutput(pkg, fkey);

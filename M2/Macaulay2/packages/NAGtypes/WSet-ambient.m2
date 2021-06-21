@@ -2,6 +2,7 @@
 
 -- AFFINE
 AffineSpace = new Type of Ambient
+texMath AffineSpace := x -> texMath net x
 net AffineSpace := A -> net "A^" | net dim A
 affineSpace = method()
 affineSpace Ring :=  R -> new AffineSpace from { 

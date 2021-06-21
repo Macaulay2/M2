@@ -23,7 +23,7 @@ function gfxInitData(el) {
 }
 
 // auto-rotation button
-function gfxToggleRotation(event) {
+window.gfxToggleRotation = function(event) {
     //    this.blur();
     //    var svgel=document.getElementById(svgid);
     //    if (!svgel) return;
@@ -58,7 +58,7 @@ function gfxToggleRotation(event) {
 var mouseDown=false;
 
 // mouse handling
-function gfxMouseDown(event) {
+window.gfxMouseDown = function (event) {
     if (!this.gfxdata) gfxInitData(this);
     if (!this.onmouseup) gfxInitMouse(this); // weak
     mouseDown=true;
@@ -149,14 +149,13 @@ function gfxRecompute(el) {
 	for (var j=0; j<el.gfxdata.coords.length; j++) {
 	    if (el.gfxdata.coords[j] instanceof Float32Array) {
 		var u=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.coords[j]);
-		if (u[3]<=0) flag=true; else {
-		    var v=[u[0]/u[3],u[1]/u[3]];
+		if (u[2]/u[3]<=0) flag=true; else {
+		    var v=[u[0]*u[3]/u[2],-u[1]*u[3]/u[2]];
 		    coords.push(u);
 		    s+=v[0]+" "+v[1]+" ";
-		    distance+=u[2]; // not homogenous?
+		    distance+=u[2]/u[3];
 		}
 	    }
-	    else s+=el.gfxdata.coords[j]+" ";
 	}
 	if (flag) el.style.display="none"; else {
 	    el.style.display="";
@@ -165,19 +164,25 @@ function gfxRecompute(el) {
 	    // recompute distance as average of distances of vertices
 	    el.gfxdata.distance=distance/coords.length;
 	    if (coords.length>2) {
-		var det = coords[0][2]*coords[1][1]*coords[2][0]-coords[0][1]*coords[1][2]*coords[2][0]-coords[0][2]*coords[1][0]*coords[2][1]+coords[0][0]*coords[1][2]*coords[2][1]+coords[0][1]*coords[1][0]*coords[2][2]-coords[0][0]*coords[1][1]*coords[2][2]; // TODO optimize
-		// visibility
-		if (el.gfxdata.onesided) {
-		    if (det<0) { el.style.visibility="hidden"; return; } else el.style.visibility="visible";
+		var u=[],v=[];
+		for (var i=0; i<3; i++) {
+		    u.push(coords[1][i]/coords[1][3]-coords[0][i]/coords[0][3]);
+		    v.push(coords[2][i]/coords[2][3]-coords[0][i]/coords[0][3]);
 		}
+		var w=[u[1]*v[2]-v[1]*u[2],u[2]*v[0]-v[2]*u[0],u[0]*v[1]-v[0]*u[1]];
+		// visibility
+		if (w[2]<0) {
+		    if (el.gfxdata.onesided)
+			el.style.visibility="hidden"; return;
+		}
+		else
+		    w=[-w[0],-w[1],-w[2]];
+		el.style.visibility="visible";
 		// lighting
 		var lightname = el.getAttribute("filter");
 		if (lightname) {
 		    lightname=lightname.substring(5,lightname.length-1); // eww. what is correct way??
 		    var lightel=document.getElementById(lightname);
-		    var u=[coords[1][0]-coords[0][0],coords[1][1]-coords[0][1],coords[1][2]-coords[0][2]];
-		    var v=[coords[2][0]-coords[0][0],coords[2][1]-coords[0][1],coords[2][2]-coords[0][2]];
-		    var w=[u[1]*v[2]-v[1]*u[2],u[2]*v[0]-v[2]*u[0],u[0]*v[1]-v[0]*u[1]];
 		    var w2=w[0]*w[0]+w[1]*w[1]+w[2]*w[2];
 		    for (var j=0; j<lightel.children.length; j++)
 			if (lightel.children[j].tagName == "feSpecularLighting") {
@@ -186,17 +191,18 @@ function gfxRecompute(el) {
 			    //var origin=document.getElementById(lightel2.gfxdata.origin);
 			    var origin=lightel2.gfxdata.origin; // eval acts as getElementById
 			    if (!origin.gfxdata.pcenter) gfxRecompute(origin); // hopefully won't create infinite loops
-			    var light = new Float32Array(origin.gfxdata.pcenter); // phew
-			    var sp = w[0]*(light[0]-coords[0][0])+w[1]*(light[1]-coords[0][1])+w[2]*(light[2]-coords[0][2]);
+			    var light0 = new Float32Array(origin.gfxdata.pcenter); // phew
+			    var light=[];
+			    for (var i=0; i<3; i++)
+				light.push(light0[i]/light0[3]);
+			    var sp = w[0]*(light[0]-coords[0][0]/coords[0][3])+w[1]*(light[1]-coords[0][1]/coords[0][3])+w[2]*(light[2]-coords[0][2]/coords[0][3]);
 			    var c = 2*sp/w2;
-			    var p = light[2]/light[3]; // eww
 			    for (var i=0; i<3; i++) light[i]-=c*w[i];
-			    if (det<0) sp=-sp;
 			    if (sp<0) lightel.children[j].setAttribute("lighting-color","#000000"); else {
 				lightel.children[j].setAttribute("lighting-color",origin.style.fill);
-				lightel2.setAttribute("x",light[0]*p/light[2]);
-				lightel2.setAttribute("y",light[1]*p/light[2]);
-				lightel2.setAttribute("z",sp/Math.sqrt(w2));
+				lightel2.setAttribute("x",light[0]*light0[3]/light[2]);
+				lightel2.setAttribute("y",-light[1]*light0[3]/light[2]);
+				lightel2.setAttribute("z",4*origin.gfxdata.r/light[2]);
 			    }
 			}
 		}
@@ -206,11 +212,13 @@ function gfxRecompute(el) {
     else if (el.tagName=="line") {
 	var u1=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.point1);
 	var u2=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.point2);
-	if ((u1[3]<=0)||(u2[3]<=0)) el.style.display="none"; else {
+	var sc1 = u1[3]/u1[2];
+	var sc2 = u2[3]/u2[2];
+	if ((sc1<=0)||(sc2<=0)) el.style.display="none"; else {
 	    el.style.display="";
-	    var v1=[u1[0]/u1[3],u1[1]/u1[3]];
-	    var v2=[u2[0]/u2[3],u2[1]/u2[3]];
-	    el.gfxdata.distance=0.5*(u1[2]+u2[2]);
+	    var v1=[u1[0]*sc1,-u1[1]*sc1];
+	    var v2=[u2[0]*sc2,-u2[1]*sc2];
+	    el.gfxdata.distance=0.5*(u1[2]/u1[3]+u2[2]/u2[3]);
 	    el.setAttribute("x1",v1[0]);
 	    el.setAttribute("y1",v1[1]);
 	    el.setAttribute("x2",v2[0]);
@@ -220,31 +228,33 @@ function gfxRecompute(el) {
     else if ((el.tagName=="text")||(el.tagName=="foreignObject")) {
 	if (!el.gfxdata.fontsize) el.gfxdata.fontsize=14;
 	var u=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.point);
-	if (u[3]<=0) el.style.display="none"; else {
+	var sc = u[3]/u[2];
+	if (sc<=0) el.style.display="none"; else {
 	    el.style.display="";
-	    var v=[u[0]/u[3],u[1]/u[3]];
-	    el.gfxdata.distance=u[2];
+	    var v=[u[0]*sc,-u[1]*sc];
+	    el.gfxdata.distance=u[2]/u[3];
 	    el.setAttribute("x",v[0]);
 	    el.setAttribute("y",v[1]);
 	    // rescale font size
-	    el.style.fontSize = el.gfxdata.fontsize/u[3]+"px"; // chrome doesn't mind absence of units but firefox does
+	    el.style.fontSize = el.gfxdata.fontsize*sc+"px"; // chrome doesn't mind absence of units but firefox does
 	}
     }
     else if ((el.tagName=="circle")||(el.tagName=="ellipse")) {
 	var u=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.center);
 	el.gfxdata.pcenter = u; // in case someone needs it ... (light)
-	if (u[3]<=0) el.style.display="none"; else {
+	var sc=u[3]/u[2];
+	if (sc<=0) el.style.display="none"; else {
 	    el.style.display="";
-	    var v=[u[0]/u[3],u[1]/u[3]];
-	    el.gfxdata.distance=u[2];
+	    var v=[u[0]*sc,-u[1]*sc];
+	    el.gfxdata.distance=u[2]/u[3];
 	    el.setAttribute("cx",v[0]);
 	    el.setAttribute("cy",v[1]);
 	    // also, rescale radius
 	    if (el.tagName=="circle")
-		el.setAttribute("r", el.gfxdata.r/u[3]);
+		el.setAttribute("r", el.gfxdata.r*sc);
 	    else {
-		el.setAttribute("rx", el.gfxdata.rx/u[3]);
-		el.setAttribute("ry", el.gfxdata.ry/u[3]);
+		el.setAttribute("rx", el.gfxdata.rx*sc);
+		el.setAttribute("ry", el.gfxdata.ry*sc);
 	    }
 	}
     }
@@ -278,12 +288,14 @@ function gfxReorder(el) {
 
 function checkData(el) {
     var mat = el.gfxdata.cmatrix.inverse();
+    var sc = el.gfxdata.cmatrix.e(3,3); // not quite right but close enough TODO better
+    var z = sc;
     if ((el.tagName=="polyline")||(el.tagName=="polygon")) {
 	if (!el.gfxdata.coords) {
 	    var pts = el.points;
 	    el.gfxdata.coords = [];
 	    for (var i=0; i<pts.length; i++)
-		el.gfxdata.coords.push(mat.vectmultiply(vector([pts[i].x,pts[i].y,0,1])));
+		el.gfxdata.coords.push(mat.vectmultiply(vector([pts[i].x,-pts[i].y,z,sc])));
 	}
     }
     else if (el.tagName=="path") {
@@ -293,38 +305,38 @@ function checkData(el) {
 	    for (var i=0; i<path.length; i++)
 		if ( path[i] >= "A" && path[i] <= "Z" ) el.gfxdata.coords.push(path[i]);
 	    else {
-		el.gfxdata.coords.push(mat.vectmultiply(vector([+path[i],+path[i+1],0,1])));
+		el.gfxdata.coords.push(mat.vectmultiply(vector([+path[i],-path[i+1],z,sc])));
 		i++;
 	    }
 	}
     }
     else if (el.tagName=="line") {
 	if (!el.gfxdata.point1 || !el.gfxdata.point2) {
-	    el.gfxdata.point1=mat.vectmultiply(vector([el.x1.baseVal.value,el.y1.baseVal.value,0,1]));
-	    el.gfxdata.point2=mat.vectmultiply(vector([el.x2.baseVal.value,el.y2.baseVal.value,0,1]));
+	    el.gfxdata.point1=mat.vectmultiply(vector([el.x1.baseVal.value,-el.y1.baseVal.value,z,sc]));
+	    el.gfxdata.point2=mat.vectmultiply(vector([el.x2.baseVal.value,-el.y2.baseVal.value,z,sc]));
 	}
     }
     else if (el.tagName=="text") {
 	if (!el.gfxdata.point) {
-	    el.gfxdata.point=mat.vectmultiply(vector([el.x.baseVal[0].value,el.y.baseVal[0].value,0,1])); // weird
+	    el.gfxdata.point=mat.vectmultiply(vector([el.x.baseVal[0].value,-el.y.baseVal[0].value,z,sc])); // weird
 	    el.gfxdata.fontsize=el.style.fontSize.substring(0,el.style.fontSize.length-2);
 	}
     }
     else if (el.tagName=="foreignObject") {
 	if (!el.gfxdata.point) {
-	    el.gfxdata.point=mat.vectmultiply(vector([el.x.baseVal.value,el.y.baseVal.value,0,1]));
+	    el.gfxdata.point=mat.vectmultiply(vector([el.x.baseVal.value,-el.y.baseVal.value,z,sc]));
 	    el.gfxdata.fontsize=el.style.fontSize.substring(0,el.style.fontSize.length-2);
 	}
     }
     else if (el.tagName=="circle") {
 	if (!el.gfxdata.center) {
-	    el.gfxdata.center=mat.vectmultiply(vector([el.cx.baseVal.value,el.cy.baseVal.value,0,1]));
+	    el.gfxdata.center=mat.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,z,sc]));
 	    el.gfxdata.r=el.r.baseVal.value;
 	}
     }
     else if (el.tagName=="ellipse") {
 	if (!el.gfxdata.center) {
-	    el.gfxdata.center=mat.vectmultiply(vector([el.cx.baseVal.value,el.cy.baseVal.value,0,1]));
+	    el.gfxdata.center=mat.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,z,sc]));
 	    el.gfxdata.rx=el.rx.baseVal.value;
 	    el.gfxdata.ry=el.ry.baseVal.value;
 	}
@@ -456,10 +468,47 @@ class Matrix extends Float32Array {
 
     inverse() // size 4 only!
     {
-	var A2323 = this[10] * this[15] - this[11] * this[14], A1323 = this[9] * this[15] - this[11] * this[13], A1223 = this[9] * this[14] - this[10] * this[13], A0323 = this[8] * this[15] - this[11] * this[12], A0223 = this[8] * this[14] - this[10] * this[12], A0123 = this[8] * this[13] - this[9] * this[12], A2313 = this[6] * this[15] - this[7] * this[14], A1313 = this[5] * this[15] - this[7] * this[13], A1213 = this[5] * this[14] - this[6] * this[13], A2312 = this[6] * this[11] - this[7] * this[10], A1312 = this[5] * this[11] - this[7] * this[9], A1212 = this[5] * this[10] - this[6] * this[9], A0313 = this[4] * this[15] - this[7] * this[12], A0213 = this[4] * this[14] - this[6] * this[12], A0312 = this[4] * this[11] - this[7] * this[8], A0212 = this[4] * this[10] - this[6] * this[8], A0113 = this[4] * this[13] - this[5] * this[12], A0112 = this[4] * this[9] - this[5] * this[8];
-	var det = this[0] * ( this[5] * A2323 - this[6] * A1323 + this[7] * A1223 ) - this[1] * ( this[4] * A2323 - this[6] * A0323 + this[7] * A0223 ) + this[2] * ( this[4] * A1323 - this[5] * A0323 + this[7] * A0123 ) - this[3] * ( this[4] * A1223 - this[5] * A0223 + this[6] * A0123 );
+	var A2323 = this[10] * this[15] - this[11] * this[14],
+	    A1323 = this[9] * this[15] - this[11] * this[13],
+	    A1223 = this[9] * this[14] - this[10] * this[13],
+	    A0323 = this[8] * this[15] - this[11] * this[12],
+	    A0223 = this[8] * this[14] - this[10] * this[12],
+	    A0123 = this[8] * this[13] - this[9] * this[12],
+	    A2313 = this[6] * this[15] - this[7] * this[14],
+	    A1313 = this[5] * this[15] - this[7] * this[13],
+	    A1213 = this[5] * this[14] - this[6] * this[13],
+	    A2312 = this[6] * this[11] - this[7] * this[10],
+	    A1312 = this[5] * this[11] - this[7] * this[9],
+	    A1212 = this[5] * this[10] - this[6] * this[9],
+	    A0313 = this[4] * this[15] - this[7] * this[12],
+	    A0213 = this[4] * this[14] - this[6] * this[12],
+	    A0312 = this[4] * this[11] - this[7] * this[8],
+	    A0212 = this[4] * this[10] - this[6] * this[8],
+	    A0113 = this[4] * this[13] - this[5] * this[12],
+	    A0112 = this[4] * this[9] - this[5] * this[8];
+	var det =
+	    this[0] * ( this[5] * A2323 - this[6] * A1323 + this[7] * A1223 )
+	    - this[1] * ( this[4] * A2323 - this[6] * A0323 + this[7] * A0223 )
+	    + this[2] * ( this[4] * A1323 - this[5] * A0323 + this[7] * A0123 )
+	    - this[3] * ( this[4] * A1223 - this[5] * A0223 + this[6] * A0123 );
 	det = 1 / det;
-	return new Matrix( [ det *   ( this[5] * A2323 - this[6] * A1323 + this[7] * A1223 ), det * - ( this[1] * A2323 - this[2] * A1323 + this[3] * A1223 ), det *   ( this[1] * A2313 - this[2] * A1313 + this[3] * A1213 ), det * - ( this[1] * A2312 - this[2] * A1312 + this[3] * A1212 ), det * - ( this[4] * A2323 - this[6] * A0323 + this[7] * A0223 ), det *   ( this[0] * A2323 - this[2] * A0323 + this[3] * A0223 ), det * - ( this[0] * A2313 - this[2] * A0313 + this[3] * A0213 ), det *   ( this[0] * A2312 - this[2] * A0312 + this[3] * A0212 ), det *   ( this[4] * A1323 - this[5] * A0323 + this[7] * A0123 ), det * - ( this[0] * A1323 - this[1] * A0323 + this[3] * A0123 ), det *   ( this[0] * A1313 - this[1] * A0313 + this[3] * A0113 ), det * - ( this[0] * A1312 - this[1] * A0312 + this[3] * A0112 ), det * - ( this[4] * A1223 - this[5] * A0223 + this[6] * A0123 ), det *   ( this[0] * A1223 - this[1] * A0223 + this[2] * A0123 ), det * - ( this[0] * A1213 - this[1] * A0213 + this[2] * A0113 ), det *   ( this[0] * A1212 - this[1] * A0212 + this[2] * A0112 ) ] );
+	return new Matrix(
+	    [ det *   ( this[5] * A2323 - this[6] * A1323 + this[7] * A1223 ),
+	      det * - ( this[1] * A2323 - this[2] * A1323 + this[3] * A1223 ),
+	      det *   ( this[1] * A2313 - this[2] * A1313 + this[3] * A1213 ),
+	      det * - ( this[1] * A2312 - this[2] * A1312 + this[3] * A1212 ),
+	      det * - ( this[4] * A2323 - this[6] * A0323 + this[7] * A0223 ),
+	      det *   ( this[0] * A2323 - this[2] * A0323 + this[3] * A0223 ),
+	      det * - ( this[0] * A2313 - this[2] * A0313 + this[3] * A0213 ),
+	      det *   ( this[0] * A2312 - this[2] * A0312 + this[3] * A0212 ),
+	      det *   ( this[4] * A1323 - this[5] * A0323 + this[7] * A0123 ),
+	      det * - ( this[0] * A1323 - this[1] * A0323 + this[3] * A0123 ),
+	      det *   ( this[0] * A1313 - this[1] * A0313 + this[3] * A0113 ),
+	      det * - ( this[0] * A1312 - this[1] * A0312 + this[3] * A0112 ),
+	      det * - ( this[4] * A1223 - this[5] * A0223 + this[6] * A0123 ),
+	      det *   ( this[0] * A1223 - this[1] * A0223 + this[2] * A0123 ),
+	      det * - ( this[0] * A1213 - this[1] * A0213 + this[2] * A0113 ),
+	      det *   ( this[0] * A1212 - this[1] * A0212 + this[2] * A0112 ) ] );
     }
 
     transpose()

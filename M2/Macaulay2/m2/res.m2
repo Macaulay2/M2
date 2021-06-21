@@ -131,7 +131,7 @@ resolutionInEngine := opts -> (M) -> (
      if C.?Resolution then (
 	  W = C.Resolution;
 	  if not W.?returnCode 
-	  or RawStatusCodes#(W.returnCode) =!= "done"
+	  or not isComputationDone W.returnCode
 	  or W.length < maxlevel
 	  or W.DegreeLimit < degreelimit
 	  then (
@@ -210,13 +210,13 @@ storefuns#resolution = (M,C) -> M.cache.ManualResolution = C
 
 resolution Module := ChainComplex => o -> (M) -> (
      if M.cache.?ManualResolution then return M.cache.ManualResolution;
-     C := runHooks(Module,symbol resolution,(o,M));
+     C := runHooks((resolution, Module), (o, M));
      if C =!= null then return C;
      R := ring M;
      if isField R then return chainComplex map(minimalPresentation M,R^0,0);
      k := ultimate(coefficientRing, R);
      oR := options R;
-     if engineReady M and (options R).Heft =!= null
+     if (engineReady M and (options R).Heft =!= null) or instance(R, FreeAlgebraQuotient)
      then (resolutionInEngine default(o,if o.FastNonminimal then Strategy4 else if isQuotientRing R or isSkewCommutative R then Strategy2 else Strategy1))(M)
      else if k === ZZ then (resolutionBySyzygies o)(M)
      else if not isHomogeneous M and isCommutative R and degreeLength R === 1 then (resolutionByHomogenization o)(M)
@@ -315,7 +315,7 @@ resolutionNonminimal = (opts,M) -> (
     if C.?Resolution then (
         W = C.Resolution;
         if not W.?returnCode 
-        or RawStatusCodes#(W.returnCode) =!= "done"
+        or not isComputationDone W.returnCode
         or W.length < maxlevel
         or W.DegreeLimit < degreelimit
         then (
@@ -347,7 +347,8 @@ resolutionNonminimal = (opts,M) -> (
                 W.DegreeLimit = degreelimit;
                 )));
     break C)
-addHook(Module, symbol resolution, resolutionNonminimal)
+addHook((resolution, Module), Strategy => FastNonminimal, resolutionNonminimal)
+
 -----------------------------------------------------------------------------
 getpairs := g -> rawGBBetti(raw g,1)
 remaining := g -> rawGBBetti(raw g,2)

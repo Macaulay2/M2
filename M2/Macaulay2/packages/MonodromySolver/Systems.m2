@@ -40,6 +40,18 @@ specializeSystem (Point, GateSystem) := (p, GS) -> (
     gateSystem(vars GS, pGateMatrix)
     )
 
+--  IN: System F(x; p) w/ variables x, parameters p
+-- OUT: list of polynomials in the ring FF[p][x]
+expand = method()
+expand (Thing, System) := (FF, sys) -> (
+    (n, m) := (numVariables sys, numParameters sys);
+    flatGS := flatten sys;
+    R := FF(monoid[vars(1..n+m)]);
+    polys := flatten entries evaluate(flatGS, vars R);
+    S := FF[take(gens R, {n, n+m-1})][take(gens R, {0, n-1})];
+    polys/(p -> sub(p, S))
+    )
+
 -- needed to override "not implemented error" for (evaluate, PolySystem, Point, Point)
 evaluate (PolySystem, Point, Point) := (PS, p0, x0) -> evaluate(polySystem specializeSystem(p0, PS), x0)
 
@@ -60,6 +72,7 @@ Some may find a better home in other packages (eg. (extra)NAGtypes, SLPexpressio
 
 -- make all parameters new variables
 flatten GateSystem := GS -> gateSystem(parameters GS | vars GS, gateMatrix GS)
+flatten PolySystem := PS -> sub(PS, first flattenRing ring PS)
 
 -- syntactic sugar for creating instances of GateSystem
 gateSystem (BasicList, BasicList, GateMatrix) := (P, X, F) -> (
@@ -74,3 +87,18 @@ vars IndexedVariable := x -> declareVariable x
 vars Symbol := x -> declareVariable x
 vars InputGate := x -> x
 InputGate .. InputGate := (A, B) -> value \ (A.Name .. B.Name)
+
+
+-- routines for mixed volume computation (via gfan)
+computeMixedVolume = method()
+computeMixedVolume List := polys -> value gfanMixedVolume(
+    polynomialsWithSameSupportsAndRationalCoefficients polys
+    )
+computeMixedVolume System := sys -> (
+    m := numParameters sys;
+    specGS := specializeSystem(
+	point{for i from 1 to m list randomRationalNumber()},
+    	expand(CC_53, sys) -- unclear what the ground field of a GateSystem should be
+	);	    
+    computeMixedVolume specGS
+    )

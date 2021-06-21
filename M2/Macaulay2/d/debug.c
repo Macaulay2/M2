@@ -10,6 +10,7 @@
 
 #include "debug.h"
 #include <mpfr.h>
+#include <mpfi.h>
 #include <string.h>
 
 void *trapaddr = (void *)1;

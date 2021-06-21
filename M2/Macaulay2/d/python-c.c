@@ -49,8 +49,8 @@ PyObject *python_RunString(M2_string s) {
 }
 
 int python_Main() {
-  static char pn[3] = "M2";
-  static char *argv[2] = {pn,NULL};
+  static wchar_t pn[3] = L"M2";
+  static wchar_t *argv[2] = {pn,NULL};
   static int argc = 1;
   return Py_Main(argc,argv);
 }
@@ -80,15 +80,35 @@ static PyMethodDef SpamMethods[] = {
   {"system",  spam_system, METH_VARARGS, "Execute a shell command."},
   {NULL, NULL, 0, NULL}
 };
+static struct PyModuleDef moduledef = {
+  PyModuleDef_HEAD_INIT, "spam", NULL, -1, SpamMethods, NULL, NULL, NULL, NULL}
+;
 void python_initspam() {
   static char name[] = "spam.error";
   PyObject *m;
-  m = Py_InitModule("spam", SpamMethods);
+  m = PyModule_Create(&moduledef);
   if (m == NULL) return;
   SpamError = PyErr_NewException(name, NULL, NULL);
   Py_INCREF(SpamError);
   PyModule_AddObject(m, "error", SpamError);
 }
+
+PyObject *python_NumberAdd(PyObject *o1, PyObject *o2) {
+	return PyNumber_Add(o1, o2);
+}
+
+PyObject *python_NumberSubtract(PyObject *o1, PyObject *o2) {
+	return PyNumber_Subtract(o1, o2);
+}
+
+PyObject *python_NumberMultiply(PyObject *o1, PyObject *o2) {
+	return PyNumber_Multiply(o1, o2);
+}
+
+PyObject *python_NumberTrueDivide(PyObject *o1, PyObject *o2) {
+	return PyNumber_TrueDivide(o1, o2);
+}
+
 #if 0
 Local Variables:
 compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d python-c.o "

@@ -152,7 +152,7 @@ computeLocalization = (M, f, output, options) -> (
        	nW := numgens W;
        	createDpairs W;
        	n := #W.dpairVars#0;
-       	-- create the auxilary ring D_n<a,Da> 
+       	-- create the auxiliary ring D_n<a,Da> 
        	a := symbol a;
        	Da := symbol Da;
        	LW := (coefficientRing W)(monoid [(entries vars W)#0, a, Da,

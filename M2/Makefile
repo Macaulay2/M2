@@ -36,7 +36,7 @@ check-make:
 	@ echo GNU make version okay
 
 make-configure : check-autoconf configure
-configure: configure.ac config/files config/*.m4; autoconf
+configure: configure.ac VERSION config/files config/*.m4; autoconf
 
 get-tools: usr-build/aclocal-path get-m4 get-autoconf get-automake get-libtool usr-build/aclocal-path2 which-tools
 which-tools:
@@ -50,7 +50,7 @@ usr-build/aclocal-path2:; echo export ACLOCAL_PATH:="`usr-build/bin/aclocal --pr
 get-m4:
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=m4 VERSION=1.4.18
 get-autoconf:
-	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=autoconf VERSION=2.69
+	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=autoconf VERSION=2.71
 get-automake:
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=automake VERSION=1.16.1
 get-libtool:
@@ -213,7 +213,7 @@ grep :
 	@false
 else
 grep :
-	find . \( -name .svn -o -name BUILD -o -name autom4te.cache \) ! -prune -o -type f | xargs grep -nH -e $(SEARCH) || [ $$? = 123 ]
+	find . \( -name .git -o -name BUILD -o -name autom4te.cache \) ! -prune -o -type f | xargs grep -nH -e $(SEARCH) || [ $$? = 123 ]
 endif
 
 announce:
@@ -241,7 +241,8 @@ clean-in-submodules:
 
 # Fetch the M2-emacs submodule
 fetch-M2-emacs: Macaulay2/editors/emacs/M2.el
-Macaulay2/editors/emacs/M2.el:; git submodule update --init Macaulay2/editors/emacs
+Macaulay2/editors/emacs/M2.el:
+	cd .. && git submodule update --init M2/Macaulay2/editors/emacs
 
 # Local Variables:
 # mode: Makefile

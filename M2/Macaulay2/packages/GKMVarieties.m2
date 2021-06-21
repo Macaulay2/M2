@@ -23,7 +23,7 @@ newPackage("GKMVarieties",
 	HomePage => "https://github.com/chrisweur/GKMVarieties",
 	PackageExports => {"Graphs", "Matroids", "NormalToricVarieties"},
 	AuxiliaryFiles => true,
-	--Keywords => {"Equivariant Cohomology", "Toric Geometry", "Flag Varieties", "Matroids"},
+	Keywords => {"Equivariant Cohomology", "Toric Geometry", "Flag Varieties", "Matroids"},
 	DebuggingMode => false
 )
 export {

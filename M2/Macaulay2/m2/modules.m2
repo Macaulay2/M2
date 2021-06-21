@@ -3,10 +3,7 @@
 -----------------------------------------------------------------------------
 -- Matrix
 
-ModuleMap = new Type of HashTable
-ModuleMap.synonym = "module map"
-
-Matrix = new Type of ModuleMap
+Matrix = new Type of HashTable
 Matrix.synonym = "matrix"
 raw Matrix := f -> f.RawMatrix
 ring Matrix := f -> (
@@ -45,9 +42,9 @@ scan( {ZZ,QQ}, K -> (
 	  ))
 
 scan((
-	  (ZZ, { QQ, RR', CC' }),
-	  (QQ, { RR', CC' }),
-	  (RR',{ RR', CC' }),
+	  (ZZ, { QQ, RR', CC', RRi' }),
+	  (QQ, { RR', CC', RRi' }),
+	  (RR',{ RR', CC', RRi' }),
 	  (CC', { CC' })
 	  ), 
      (K,Ls) -> scan(Ls, L -> (
@@ -67,7 +64,7 @@ vector Matrix := f -> (
      if not isFreeModule source f or numgens source f =!= 1 then error "expected source to be free with rank 1";
      new target f from {f}
     )
-vector List := v -> vector matrix apply(v, i -> {i});
+vector List := v -> vector matrix apply(splice v, i -> {i});
 
 -----------------------------------------------------------------------------
 
@@ -81,7 +78,7 @@ net Vector := v -> net expression v
 toExternalString Vector :=
 toString Vector := v -> toString expression v
 texMath Vector := v -> texMath expression v
-html Vector := v -> html expression v
+--html Vector := v -> html expression v
 ring Vector := v -> ring class v
 module Vector := v -> target v#0
 leadTerm Vector := v -> new class v from leadTerm v#0

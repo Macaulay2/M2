@@ -1,17 +1,15 @@
-// (c) 1994-2006  Michael E. Stillman
+// (c) 1994-2021  Michael E. Stillman
 
 #ifndef _f4monlookup_h_
 #define _f4monlookup_h_
 
-#include <vector>
-
-#include <mem.hpp>
-#include <style.hpp>
-#include "varpower-monomial.hpp"
-#include "ntuple-monomial.hpp"
-#include "moninfo.hpp"
+#include "f4/moninfo.hpp"            // for MonomialInfo (ptr only), const_p...
+#include "f4/ntuple-monomial.hpp"    // for const_ntuple_monomial, ntuple_word
+#include "f4/varpower-monomial.hpp"  // for const_varpower_monomial, varpowe...
+#include "newdelete.hpp"             // for VECTOR, our_new_delete
 
 class buffer;
+class stash;
 
 template <typename Key>
 class F4MonomialLookupTableT : public our_new_delete

@@ -1,18 +1,21 @@
 // Copyright 2011 Michael E. Stillman
 
-// Routines for Chinese remaindering and rational reconstruction
-
 #ifndef _cra_hpp_
 #define _cra_hpp_
 
-#include "engine.h"
-// engine.h defines rawRingElementCRA, rawMatrixCRA
+#include <M2/math-include.h>
+
+#include "ringelem.hpp"  // for ring_elem, vec
+
+class Matrix;
+class PolyRing;
+class RingElement;
 
 // !!!! we need the balanced residue class in chinese remainder !!!
 
-#include "matrix.hpp"
-#include "matrix-con.hpp"
-
+/**
+   Routines for Chinese remaindering and rational reconstruction
+*/
 class ChineseRemainder
 {
  public:
@@ -87,3 +90,7 @@ class ChineseRemainder
 };
 
 #endif
+
+// Local Variables:
+// indent-tabs-mode: nil
+// End:

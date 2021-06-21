@@ -8,6 +8,7 @@ Benchmark
 Text
 SimpleDoc
 PackageTemplate
+Saturation
 PrimaryDecomposition
 FourierMotzkin
 Dmodules
@@ -108,7 +109,6 @@ Book3264Examples
 Divisor
 EllipticCurves
 HighestWeights
-NumericalHilbert
 MinimalPrimes
 Bertini
 TorAlgebra
@@ -190,6 +190,7 @@ SegreClasses
 SemidefiniteProgramming
 SumsOfSquares
 MultiGradedRationalMap
+AssociativeAlgebras
 VirtualResolutions
 Quasidegrees
 DiffAlg
@@ -209,3 +210,21 @@ ThreadedGB
 VectorGraphics
 GKMVarieties
 MonomialIntegerPrograms
+NoetherianOperators
+Hadamard
+StatGraphs
+GraphicalModelsMLE
+EigenSolver
+MultiplicitySequence
+ResolutionsOfStanleyReisnerRings
+NumericalLinearAlgebra
+ResLengthThree
+MonomialOrbits
+MultiprojectiveVarieties
+RationalPoints2
+SuperLinearAlgebra
+SubalgebraBases
+AInfinity
+LinearTruncations
+Python
+>>>>>>> e202a19c605bc14338147549942ae73286291939

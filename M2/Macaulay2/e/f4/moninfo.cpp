@@ -1,10 +1,11 @@
-// Copyright 2005  Michael E. Stillman
+// Copyright 2005-2021  Michael E. Stillman
 
-#include "../newdelete.hpp"
-#include "moninfo.hpp"
-#include "monordering.h"
-#include <cstdio>
-#include <cstdlib>
+#include "f4/moninfo.hpp"
+#include "interface/monomial-ordering.h"  // for moGetWeightValues, moIsGRevLex
+#include "newdelete.hpp"                  // for deletearray, newarray_atomic
+
+#include <cstdio>                         // for fprintf, stderr, stdout
+#include <cstdlib>                        // for rand
 
 MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
 {

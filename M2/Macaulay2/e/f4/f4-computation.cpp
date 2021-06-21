@@ -1,17 +1,26 @@
 // Copyright 2005 Michael E. Stillman.
 
-#include <M2/config.h>
-#include "../comp-gb.hpp"
-#include "../ZZp.hpp"
-#include "../polyring.hpp"
-#include "../coeffrings.hpp"
-#include "../matrix.hpp"
-#include "../matrix-con.hpp"
+#include "f4/f4-computation.hpp"
 
-#include "f4-computation.hpp"
-#include "f4-m2-interface.hpp"
-#include "f4.hpp"
-#include "moninfo.hpp"
+#include "buffer.hpp"              // for buffer
+#include "error.h"                 // for ERROR
+#include "f4/f4-m2-interface.hpp"  // for F4toM2Interface
+#include "f4/f4-mem.hpp"           // for F4Mem
+#include "f4/f4-types.hpp"         // for gb_array, gbelem
+#include "f4/f4.hpp"               // for F4GB
+#include "f4/moninfo.hpp"          // for MonomialInfo
+#include "matrix-con.hpp"          // for MatrixConstructor
+#include "matrix.hpp"              // for Matrix
+#include "mem.hpp"                 // for stash
+#include "monoid.hpp"              // for Monoid
+#include "polyring.hpp"            // for PolynomialRing
+#include "ring.hpp"                // for Ring
+#include "ringelem.hpp"            // for vec
+#include "text-io.hpp"             // for emit
+#include "VectorArithmetic.hpp"    // for VectorArithmetic, CoeffVector
+
+class Computation;
+class RingElement;
 
 GBComputation *createF4GB(const Matrix *m,
                           M2_bool collect_syz,
@@ -24,17 +33,11 @@ GBComputation *createF4GB(const Matrix *m,
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
   const Ring *K = R->getCoefficients();
   F4Mem *Mem = new F4Mem;
-  Gausser *KK = Gausser::newGausser(K, Mem);
-  if (KK == 0)
-    {
-      ERROR(
-          "cannot use Algorithm => LinearAlgebra with this type of coefficient "
-          "ring");
-      return NULL;
-    }
+  auto vectorArithmetic = new VectorArithmetic(K);
+  // TODO: code here used to detect whether R, K is a valid ring here
 
   GBComputation *G;
-  G = new F4Computation(KK,
+  G = new F4Computation(vectorArithmetic,
                         Mem,
                         m,
                         collect_syz,
@@ -46,7 +49,7 @@ GBComputation *createF4GB(const Matrix *m,
   return G;
 }
 
-F4Computation::F4Computation(Gausser *K0,
+F4Computation::F4Computation(const VectorArithmetic* VA,
                              F4Mem *Mem0,
                              const Matrix *m,
                              M2_bool collect_syz,
@@ -55,50 +58,52 @@ F4Computation::F4Computation(Gausser *K0,
                              int strategy,
                              M2_bool use_max_degree,
                              int max_degree)
+  : mFreeModule(m->rows()),
+    mVectorArithmetic(VA),
+    mMemoryBlock(Mem0)
 {
-  // Note: the F4Mem which K0 uses should be Mem.
-  KK = K0;
-  originalR = m->get_ring()->cast_to_PolynomialRing();
-  F = m->rows();
-  MI = new MonomialInfo(originalR->n_vars(),
-                        originalR->getMonoid()->getMonomialOrdering());
-  Mem = Mem0;
+  // Note: the F4Mem which K0 uses should be mMemoryBlock. ??TODO: no longer valid, still containing useful info?
+  mOriginalRing = m->get_ring()->cast_to_PolynomialRing();
+  mMonoid = new MonomialInfo(mOriginalRing->n_vars(),
+                        mOriginalRing->getMonoid()->getMonomialOrdering());
 
-  f4 = new F4GB(KK,
-                Mem0,
-                MI,
-                m->rows(),
-                collect_syz,
-                n_rows_to_keep,
-                gb_weights,
-                strategy,
-                use_max_degree,
-                max_degree);
 
-  F4toM2Interface::from_M2_matrix(KK, MI, m, gb_weights, f4->get_generators());
-  f4->new_generators(0, m->n_cols() - 1);
+  mF4GB = new F4GB(mVectorArithmetic,
+                   Mem0,
+                   mMonoid,
+                   m->rows(),
+                   collect_syz,
+                   n_rows_to_keep,
+                   gb_weights,
+                   strategy,
+                   use_max_degree,
+                   max_degree);
+
+  F4toM2Interface::from_M2_matrix(mVectorArithmetic, mMonoid, m, gb_weights, mF4GB->get_generators());
+  mF4GB->new_generators(0, m->n_cols() - 1);
 }
 
-F4Computation::~F4Computation() { delete Mem; }
+F4Computation::~F4Computation() { delete mMemoryBlock; }
 /*************************
  ** Top level interface **
  *************************/
 
-void F4Computation::start_computation() { f4->start_computation(stop_); }
+void F4Computation::start_computation() { mF4GB->start_computation(stop_); }
 Computation /* or null */ *F4Computation::set_hilbert_function(
     const RingElement *hf)
 {
-  f4->set_hilbert_function(hf);
+  mF4GB->set_hilbert_function(hf);
   return this;
 }
 
 const Matrix /* or null */ *F4Computation::get_gb()
 {
-  const gb_array &gb = f4->get_gb();
-  MatrixConstructor result(F, 0);
+  const gb_array &gb = mF4GB->get_gb();
+  MatrixConstructor result(mFreeModule, 0);
   for (int i = 0; i < gb.size(); i++)
     {
-      vec v = F4toM2Interface::to_M2_vec(KK, MI, gb[i]->f, F);
+      vec v = F4toM2Interface::to_M2_vec(
+          mVectorArithmetic, mMonoid, gb[i]->f, mFreeModule);
       result.append(v);
     }
   return result.to_matrix();
@@ -112,10 +117,10 @@ const Matrix /* or null */ *F4Computation::get_mingens()
 //        i != gb.end();
 //        i++)
 //     if ((*i)->minlevel == ELEM_POSSIBLE_MINGEN)
-//       mat.append(originalR->translate_gbvector_to_vec(_F, (*i)->g.f));
+//       mat.append(mOriginalRing->translate_gbvector_to_vec(_F, (*i)->g.f));
 //   return mat.to_matrix();
 #endif
-  return 0;
+  return nullptr;
 }
 
 const Matrix /* or null */ *F4Computation::get_change() { return 0; }
@@ -123,7 +128,7 @@ const Matrix /* or null */ *F4Computation::get_syzygies() { return 0; }
 const Matrix /* or null */ *F4Computation::get_initial(int nparts) { return 0; }
 const Matrix /* or null */ *F4Computation::matrix_remainder(const Matrix *m)
 {
-  return 0;
+  return nullptr;
 }
 
 M2_bool F4Computation::matrix_lift(
@@ -131,8 +136,8 @@ M2_bool F4Computation::matrix_lift(
     const Matrix /* or null */ **result_remainder,
     const Matrix /* or null */ **result_quotient)
 {
-  *result_remainder = 0;
-  *result_quotient = 0;
+  *result_remainder = nullptr;
+  *result_quotient = nullptr;
   ERROR("rawGBMatrixLift not implemented for LinearAlgebra GB's yets");
   return false;
 }
@@ -155,6 +160,7 @@ void F4Computation::text_out(buffer &o) const
 /* This displays statistical information, and depends on the
    M2_gbTrace value */
 {
+  // TODO: what to display?
 }
 
 void F4Computation::show() const  // debug display
@@ -163,7 +169,7 @@ void F4Computation::show() const  // debug display
   stash::stats(o);
   emit(o.str());
 
-  Mem->show();
+  mMemoryBlock->show();
   // f4->show();
 }
 

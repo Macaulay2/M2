@@ -9,7 +9,7 @@
 #include "types.h"
 #include "debug.h"
 
-#include "engine.h" /* to get IM2_initialize() : */
+#include <engine.h> /* to get IM2_initialize() : */
 #include "supervisorinterface.h"
 
 #include <gdbm.h>
@@ -72,7 +72,10 @@ int main(/* const */ int argc, /* const */ char *argv[], /* const */ char *env[]
   system_cpuTime_init();
 
 #ifdef WITH_PYTHON
-  Py_SetProgramName(argv[0]);
+  wchar_t *program;
+
+  program = Py_DecodeLocale(argv[0], NULL);
+  Py_SetProgramName(program);
   Py_Initialize();
 #endif
 

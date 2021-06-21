@@ -40,6 +40,7 @@ namespace M2 {
 };
 
 #else
+#define bool_constant givaro_bool_constant
 #include <givaro/gfq.h>
 #include <givaro/givpower.h>
 #include <givaro/givtimer.h>
@@ -49,7 +50,7 @@ namespace M2 {
 #include <givaro/givintnumtheo.h>
 #include <givaro/givpower.h>
 #include <givaro/givpoly1padic.h>
-
+#undef bool_constant
 #include <type_traits>
 
 namespace M2 {
@@ -70,6 +71,7 @@ class ARingGFGivaro : public RingInterface
   typedef M2::ARingGFGivaro ring_type;
   using GivaroRandIter = FieldType::RandIter;
   typedef ElementType elem;
+  typedef std::vector<elem> ElementContainerType;
 
   typedef FieldType::Residu_t UTT;  ///< types depends on FieldType definition!
   // typedef Signed_Trait<FieldType::Residu_t>::signed_type  STT;///< types

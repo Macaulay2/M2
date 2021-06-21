@@ -18,21 +18,21 @@ class Tower;
 class DPolyTraverser;
 typedef int *exponents;  // used only in add_term
 
-typedef struct poly_struct *poly;
-typedef const struct poly_struct *const_poly;
+typedef struct TowerPolynomialStruct *TowerPolynomial;
+//typedef const struct TowerPolynomialStruct *const_poly;
 
 /**
  * \ingroup polynomialrings
  */
 
-struct poly_struct : public our_new_delete
+struct TowerPolynomialStruct : public our_new_delete
 {
   int deg;
   int len;
   union
   {
     long *ints;   // array of integers.  at level == 0
-    poly *polys;  // array of more ptrs to poly structs, at level > 0
+    TowerPolynomial *polys;  // array of more ptrs to poly structs, at level > 0
   } arr;
 };
 
@@ -44,81 +44,81 @@ class DPoly
   friend class DPolyTraverser;
   int nvars;
   int nlevels;  // #vars is nlevels+1
-  poly *extensions;
+  TowerPolynomial *extensions;
   long charac;
 
  private:
-  void initialize(long p, int nvars0, const_poly *ext0);
+  void initialize(long p, int nvars0, const TowerPolynomial* ext0);
 
-  void reset_degree_0(poly &f);             // possibly sets f to 0
-  void reset_degree_n(int level, poly &f);  // ditto
+  void reset_degree_0(TowerPolynomial &f);             // possibly sets f to 0
+  void reset_degree_n(int level, TowerPolynomial &f);  // ditto
 
-  void mult_by_coeff_0(poly &f, long b);
-  void mult_by_coeff_n(int level, poly &f, poly b);
+  void mult_by_coeff_0(TowerPolynomial &f, long b);
+  void mult_by_coeff_n(int level, TowerPolynomial &f, TowerPolynomial b);
   // f *= b.  b should have level 'level-1'.
 
-  void make_monic_0(poly &f, long &result_multiplier);
-  void make_monic_n(int level, poly &f, poly &result_multiplier);
+  void make_monic_0(TowerPolynomial &f, long &result_multiplier);
+  void make_monic_n(int level, TowerPolynomial &f, TowerPolynomial &result_multiplier);
 
-  bool make_monic3(int level, poly &u1, poly &u2, poly &u3);
+  bool make_monic3(int level, TowerPolynomial &u1, TowerPolynomial &u2, TowerPolynomial &u3);
 
-  static poly read_poly_0(char *&str);
-  static poly read_poly_n(char *&str, int level);
+  static TowerPolynomial read_poly_0(char *&str);
+  static TowerPolynomial read_poly_n(char *&str, int level);
 
-  void add_in_place_0(poly &f, const poly g);
-  void add_in_place_n(int level, poly &f, const poly g);
+  void add_in_place_0(TowerPolynomial &f, const TowerPolynomial g);
+  void add_in_place_n(int level, TowerPolynomial &f, const TowerPolynomial g);
 
-  void subtract_in_place_0(poly &f, const poly g);
-  void subtract_in_place_n(int level, poly &f, const poly g);
+  void subtract_in_place_0(TowerPolynomial &f, const TowerPolynomial g);
+  void subtract_in_place_n(int level, TowerPolynomial &f, const TowerPolynomial g);
 
-  poly mult_0(const poly f, const poly g, bool reduce_by_extension);
-  poly mult_n(int level, const poly f, const poly g, bool reduce_by_extension);
+  TowerPolynomial mult_0(const TowerPolynomial f, const TowerPolynomial g, bool reduce_by_extension);
+  TowerPolynomial mult_n(int level, const TowerPolynomial f, const TowerPolynomial g, bool reduce_by_extension);
 
-  poly random_0(int deg);
-  poly random_n(int level, int deg);
+  TowerPolynomial random_0(int deg);
+  TowerPolynomial random_n(int level, int deg);
 
-  poly diff_0(const poly f);
-  poly diff_n(int level, int whichvar, const poly f);
+  TowerPolynomial diff_0(const TowerPolynomial f);
+  TowerPolynomial diff_n(int level, int whichvar, const TowerPolynomial f);
 
-  poly mult_by_int_0(long c, const poly f);
-  poly mult_by_int_n(int level, long c, const poly f);
+  TowerPolynomial mult_by_int_0(long c, const TowerPolynomial f);
+  TowerPolynomial mult_by_int_n(int level, long c, const TowerPolynomial f);
 
  public:
   int degree_of_extension(int level);  // if negative, then that variable is
                                        // transcendental over lower vars
-  bool down_level(int newlevel, int oldlevel, poly &f);
+  bool down_level(int newlevel, int oldlevel, TowerPolynomial &f);
 
-  static void increase_size_0(int newdeg, poly &f);
-  static void increase_size_n(int newdeg, poly &f);
-  static poly alloc_poly_n(int deg, poly *elems = 0);
-  static poly alloc_poly_0(int deg, long *elems = 0);
-  static void dealloc_poly(poly &f);
+  static void increase_size_0(int newdeg, TowerPolynomial &f);
+  static void increase_size_n(int newdeg, TowerPolynomial &f);
+  static TowerPolynomial alloc_poly_n(int deg, TowerPolynomial *elems = 0);
+  static TowerPolynomial alloc_poly_0(int deg, long *elems = 0);
+  static void dealloc_poly(TowerPolynomial &f);
 
-  static void display_poly(FILE *fil, int level, const poly f);
-  static poly read_poly(char *&str, int level);
+  static void display_poly(FILE *fil, int level, const TowerPolynomial f);
+  static TowerPolynomial read_poly(char *&str, int level);
   static std::ostream &append_to_stream(std::ostream &o,
                                         int level,
-                                        const poly f);
-  static char *to_string(int level, const poly f);
+                                        const TowerPolynomial f);
+  static char *to_string(int level, const TowerPolynomial f);
 
-  static bool is_equal(int level, const poly f, const poly g);
-  static poly copy(int level, const_poly f);
+  static bool is_equal(int level, const TowerPolynomial f, const TowerPolynomial g);
+  static TowerPolynomial copy(int level, const TowerPolynomial f);
 
-  static poly from_long(int level, long c);  // c should be reduced mod p
+  static TowerPolynomial from_long(int level, long c);  // c should be reduced mod p
 
-  static bool is_zero(poly f) { return f == 0; }
-  void remove(int level, poly &f);
+  static bool is_zero(TowerPolynomial f) { return f == 0; }
+  void remove(int level, TowerPolynomial &f);
 
-  int compare(int level, const poly f, const poly g);  // this is a total order
+  int compare(int level, const TowerPolynomial f, const TowerPolynomial g);  // this is a total order
 
-  poly random(int level, int deg);
-  poly random(int level);  // obtains a random element, using only variables
+  TowerPolynomial random(int level, int deg);
+  TowerPolynomial random(int level);  // obtains a random element, using only variables
                            // which are algebraic over the base
 
-  poly var(int level, int v);  // make the variable v (but at level 'level')
+  TowerPolynomial var(int level, int v);  // make the variable v (but at level 'level')
 
   void add_term(int level,
-                poly &result,
+                TowerPolynomial &result,
                 long coeff,
                 exponents exp) const;  // modifies result.
   // exp is an array [0..level-1] of exponent values for each variable
@@ -126,37 +126,37 @@ class DPoly
   // the outer variable is at index 0.
   // coeff is an already normalized coefficient.
 
-  void negate_in_place(int level, poly &f);
-  void add_in_place(int level, poly &f, const poly g);
-  void subtract_in_place(int level, poly &f, const poly g);
-  poly mult_by_int(int level, long c, const poly f);
-  poly mult(int level, const poly f, const poly g, bool reduce_by_extension);
-  void remainder(int level, poly &f, const poly g);
-  poly division_in_place_monic(int level, poly &f, const poly g);
-  bool division_in_place(int level, poly &f, const poly g, poly &result_quot);
+  void negate_in_place(int level, TowerPolynomial &f);
+  void add_in_place(int level, TowerPolynomial &f, const TowerPolynomial g);
+  void subtract_in_place(int level, TowerPolynomial &f, const TowerPolynomial g);
+  TowerPolynomial mult_by_int(int level, long c, const TowerPolynomial f);
+  TowerPolynomial mult(int level, const TowerPolynomial f, const TowerPolynomial g, bool reduce_by_extension);
+  void remainder(int level, TowerPolynomial &f, const TowerPolynomial g);
+  TowerPolynomial division_in_place_monic(int level, TowerPolynomial &f, const TowerPolynomial g);
+  bool division_in_place(int level, TowerPolynomial &f, const TowerPolynomial g, TowerPolynomial &result_quot);
 
-  void pseudo_remainder(int level, poly &f, const poly g);
-  poly pseudo_division(int level, poly &f, const poly g);
+  void pseudo_remainder(int level, TowerPolynomial &f, const TowerPolynomial g);
+  TowerPolynomial pseudo_division(int level, TowerPolynomial &f, const TowerPolynomial g);
 
-  poly gcd(int level, const poly f, const poly g);
-  poly gcd_coefficients(int level,
-                        const poly f,
-                        const poly g,
-                        poly &result_u,
-                        poly &result_v);
-  poly resultant(int level, poly f, poly g);
+  TowerPolynomial gcd(int level, const TowerPolynomial f, const TowerPolynomial g);
+  TowerPolynomial gcd_coefficients(int level,
+                        const TowerPolynomial f,
+                        const TowerPolynomial g,
+                        TowerPolynomial &result_u,
+                        TowerPolynomial &result_v);
+  TowerPolynomial resultant(int level, TowerPolynomial f, TowerPolynomial g);
 
-  void make_monic(int level, poly &f);
-  poly invert(int level, const poly a);
+  void make_monic(int level, TowerPolynomial &f);
+  TowerPolynomial invert(int level, const TowerPolynomial a);
 
   void normal_form(int level,
-                   poly &f);  // hmmm, I need to think this one through...
+                   TowerPolynomial &f);  // hmmm, I need to think this one through...
 
-  void subtract_multiple_to(int level, poly &f, long a, int i, poly g);
+  void subtract_multiple_to(int level, TowerPolynomial &f, long a, int i, TowerPolynomial g);
 
   void elem_text_out(buffer &o,
                      int level,
-                     const poly f,
+                     const TowerPolynomial f,
                      bool p_one,
                      bool p_plus,
                      bool p_parens,
@@ -164,20 +164,20 @@ class DPoly
 
   void extensions_text_out(buffer &o, M2_ArrayString names) const;
 
-  int degree(int level, int var, const poly f) const;
-  poly diff(int level, int var, const poly f);
-  poly power_mod(int level, const poly f, mpz_srcptr n, const poly g);  // f^n mod g
-  poly lowerP(int level, const poly f);
+  int degree(int level, int var, const TowerPolynomial f) const;
+  TowerPolynomial diff(int level, int var, const TowerPolynomial f);
+  TowerPolynomial power_mod(int level, const TowerPolynomial f, mpz_srcptr n, const TowerPolynomial g);  // f^n mod g
+  TowerPolynomial lowerP(int level, const TowerPolynomial f);
 
-  static bool is_one(int level, const poly f);
-  int index_of_var(int level, const poly f) const;
+  static bool is_one(int level, const TowerPolynomial f);
+  int index_of_var(int level, const TowerPolynomial f) const;
   void degrees_of_vars(int level,
-                       const poly f,
+                       const TowerPolynomial f,
                        std::vector<int> &result_max_degs) const;
 
   // DPoly management
   ~DPoly() {}
-  DPoly(long p, int nvars0, const_poly *extensions = 0);
+  DPoly(long p, int nvars0, const TowerPolynomial* extensions = 0);
 };
 
 /**
@@ -189,14 +189,14 @@ class DRing : public our_new_delete
   mutable DPoly D;
   long P;
 
-  DRing(long charac, int nvars, const_poly *exts);
+  DRing(long charac, int nvars, const TowerPolynomial *exts);
 
  public:
   typedef Tower ring_type;
-  typedef poly elem;
+  typedef TowerPolynomial elem;
 
   DPoly *getDPoly() const { return &D; }
-  static DRing *create(long p, int nvars0, const_poly *ext0);
+  static DRing *create(long p, int nvars0, const TowerPolynomial *ext0);
   // ext0 should be an array of poly's of level 'nvars0'? 0..nvars0-1
 
   void init_set(elem &result, elem a) const { result = a; }
@@ -226,7 +226,7 @@ class DRing : public our_new_delete
       result = a;
     else
       {
-        poly a1 = D.copy(level, a);
+        TowerPolynomial a1 = D.copy(level, a);
         D.add_in_place(level, a1, b);
         result = a1;
       }
@@ -234,7 +234,7 @@ class DRing : public our_new_delete
 
   void subtract(elem &result, elem a, elem b) const
   {
-    poly a1 = D.copy(level, a);
+    TowerPolynomial a1 = D.copy(level, a);
     D.subtract_in_place(level, a1, b);
     result = a1;
   }
@@ -279,13 +279,13 @@ class DRing : public our_new_delete
 
   void to_ring_elem(ring_elem &result, const elem a) const
   {
-    poly h = D.copy(level, a);
+    TowerPolynomial h = D.copy(level, a);
     result = TOWER_RINGELEM(h);
   }
 
   void from_ring_elem(elem &result, const ring_elem &a) const
   {
-    poly a1 = TOWER_VAL(a);
+    TowerPolynomial a1 = reinterpret_cast<TowerPolynomial>(a.poly_val);
     result = D.copy(level, a1);
   }
 
@@ -296,46 +296,46 @@ class DRing : public our_new_delete
     b = tmp;
   }
 
-  bool is_one(const poly f) { return D.is_one(level, f); }
-  bool is_equal(const poly f, const poly g) { return D.is_equal(level, f, g); }
-  bool compare(const poly f, const poly g) { return D.compare(level, f, g); }
-  bool is_unit(const poly g);  // what does this really do?
+  bool is_one(const TowerPolynomial f) { return D.is_one(level, f); }
+  bool is_equal(const TowerPolynomial f, const TowerPolynomial g) { return D.is_equal(level, f, g); }
+  bool compare(const TowerPolynomial f, const TowerPolynomial g) { return D.compare(level, f, g); }
+  bool is_unit(const TowerPolynomial g);  // what does this really do?
 
-  void set_var(poly &result, int n)
+  void set_var(TowerPolynomial &result, int n)
   {
     // n from 0..nvars-1, sets result to 0 f n is out of range
     result = D.var(level, n);
   }
 
-  void set_from_long(poly &result, long r)
+  void set_from_long(TowerPolynomial &result, long r)
   {
     r = r % P;
     if (r < 0) r += P;
     result = D.from_long(level, r);
   }
 
-  void set_from_int(poly &result, mpz_srcptr r);  // written
+  void set_from_int(TowerPolynomial &result, mpz_srcptr r);  // written
 
-  bool set_from_mpq(poly &result, mpq_srcptr r);  // written
+  bool set_from_mpq(TowerPolynomial &result, mpq_srcptr r);  // written
 
-  void set_random(poly &result) { result = D.random(level); }
+  void set_random(TowerPolynomial &result) { result = D.random(level); }
   void elem_text_out(buffer &o,
-                     const poly f,
+                     const TowerPolynomial f,
                      bool p_one,
                      bool p_plus,
                      bool p_parens,
                      M2_ArrayString names) const;
 
-  void gcd(poly &result, const poly f, const poly g)
+  void gcd(TowerPolynomial &result, const TowerPolynomial f, const TowerPolynomial g)
   {
     result = D.gcd(level, f, g);
   }
 
-  void gcd_coefficients(poly &result_gcd,
-                        poly &result_u,
-                        poly &result_v,
-                        const poly f,
-                        const poly g)
+  void gcd_coefficients(TowerPolynomial &result_gcd,
+                        TowerPolynomial &result_u,
+                        TowerPolynomial &result_v,
+                        const TowerPolynomial f,
+                        const TowerPolynomial g)
   {
     result_gcd = D.gcd_coefficients(level, f, g, result_u, result_v);
   }
@@ -345,19 +345,19 @@ class DRing : public our_new_delete
     D.extensions_text_out(o, names);
   }
 
-  int degree(int var, const poly f) const { return D.degree(level, var, f); }
-  void diff(int var, poly &result, const poly f) const
+  int degree(int var, const TowerPolynomial f) const { return D.degree(level, var, f); }
+  void diff(int var, TowerPolynomial &result, const TowerPolynomial f) const
   {
     result = D.diff(level, var, f);
   }
   int extension_degree(int firstvar);  // returns -1 if infinite
-  void power_mod(poly &result, const poly f, mpz_srcptr n, const poly g) const
+  void power_mod(TowerPolynomial &result, const TowerPolynomial f, mpz_srcptr n, const TowerPolynomial g) const
   {
     result = D.power_mod(level, f, n, g);
   }  // f^n mod g
-  void lowerP(poly &result, const poly f) { result = D.lowerP(level, f); }
-  int index_of_var(const poly f) const { return D.index_of_var(level, f); }
-  void degrees_of_vars(const poly f, std::vector<int> &result) const
+  void lowerP(TowerPolynomial &result, const TowerPolynomial f) { result = D.lowerP(level, f); }
+  int index_of_var(const TowerPolynomial f) const { return D.index_of_var(level, f); }
+  void degrees_of_vars(const TowerPolynomial f, std::vector<int> &result) const
   {
     result.resize(level + 1);
     for (size_t i = 0; i <= level; i++) result[i] = 0;
@@ -372,7 +372,7 @@ class DPolyTraverser : public our_new_delete
 {
   const DPoly *D;
 
-  bool traverse1(int level, const_poly g, exponents exp);
+  bool traverse1(int level, const TowerPolynomial g, exponents exp);
 
  protected:
   virtual bool viewTerm(long coeff, const exponents exp) = 0;
@@ -380,7 +380,7 @@ class DPolyTraverser : public our_new_delete
  public:
   DPolyTraverser(const DRing *D0) : D(D0->getDPoly()) {}
   virtual ~DPolyTraverser() {}
-  void traverse(const_poly f);
+  void traverse(const TowerPolynomial f);
 };
 
 // Format for polynomials in a file:

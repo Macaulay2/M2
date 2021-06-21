@@ -101,12 +101,11 @@ M2_DFILES += interp.dd
 
 # should automate these dependencies
 actors5.o : @srcdir@/startup-header.h
-actors5.o basic.o :				\
-	@srcdir@/../e/engine.h			\
-	@srcdir@/../e/rand.h			\
-	@srcdir@/../e/newdelete.hpp		\
-	@srcdir@/../d/M2mem.h			\
-	@srcdir@/../d/debug.h			\
+actors5.o basic.o : \
+	@srcdir@/../e/engine.h \
+	@srcdir@/../e/newdelete.hpp \
+	@srcdir@/../d/M2mem.h \
+	@srcdir@/../d/debug.h \
 	../../include/M2/config.h
 
 interface2.o :						\
@@ -119,8 +118,7 @@ interface2.o :						\
 	@srcdir@/../e/engine.h				\
 	@srcdir@/../e/engine-includes.hpp		\
 	@srcdir@/../d/M2mem.h				\
-	@srcdir@/../d/debug.h				\
-	@srcdir@/../e/rand.h
+	@srcdir@/../d/debug.h
 
 interface.o :						\
 	../../include/M2/config.h			\
@@ -132,16 +130,13 @@ interface.o :						\
 	@srcdir@/../system/supervisorinterface.h	\
 	@srcdir@/../e/engine.h				\
 	@srcdir@/../e/engine-includes.hpp		\
-	@srcdir@/../e/rand.h				\
 	@srcdir@/../e/ZZp.hpp				\
 	@srcdir@/../e/ring.hpp				\
 	@srcdir@/../e/hash.hpp				\
 	@srcdir@/../e/newdelete.hpp			\
 	@srcdir@/../e/error.h				\
 	@srcdir@/../e/ringelem.hpp			\
-	@srcdir@/../e/gmp-util.h			\
 	@srcdir@/../e/monoid.hpp			\
-	@srcdir@/../e/monordering.h			\
 	@srcdir@/../e/intarray.hpp			\
 	@srcdir@/../e/style.hpp				\
 	@srcdir@/../e/buffer.hpp			\
@@ -173,7 +168,6 @@ interface.o :						\
 	@srcdir@/../e/aring-qq-flint.hpp		\
 	@srcdir@/../e/aring-qq-gmp.hpp			\
 	@srcdir@/../e/aring-m2-gf.hpp			\
-	@srcdir@/../e/rand.h				\
 	@srcdir@/../e/aring-gf-givaro.hpp		\
 	@srcdir@/../e/polyring.hpp			\
 	@srcdir@/../e/skew.hpp				\
@@ -214,6 +208,50 @@ interface.o :						\
 	@srcdir@/../e/timing.hpp			\
 	@srcdir@/../e/aring-zzp.hpp			\
 	@srcdir@/../e/memory-status.hpp
+
+engine.o :						\
+	../../include/M2/config.h			\
+	@srcdir@/../../include/M2/math-include.h	\
+	@srcdir@/../e/newdelete.hpp			\
+	@srcdir@/../d/M2mem.h				\
+	@srcdir@/../c/scc-core.h			\
+	@srcdir@/../../include/M2/gc-include.h		\
+	@srcdir@/../c/scc-core.h			\
+	@srcdir@/../d/debug.h				\
+	@srcdir@/../system/supervisorinterface.h	\
+	@srcdir@/../e/error.h				\
+	@srcdir@/../e/exceptions.hpp			\
+	@srcdir@/../e/hash.hpp				\
+	@srcdir@/../e/monomial.hpp			\
+	@srcdir@/../e/engine-includes.hpp		\
+	@srcdir@/../e/monomial.hpp			\
+	@srcdir@/../e/buffer.hpp			\
+	@srcdir@/../e/varpower.hpp			\
+	@srcdir@/../e/intarray.hpp			\
+	@srcdir@/../e/style.hpp				\
+	@srcdir@/../e/mem.hpp				\
+	@srcdir@/../system/mutex.h			\
+	@srcdir@/../e/relem.hpp				\
+	@srcdir@/../e/ring.hpp				\
+	@srcdir@/../e/aring.hpp				\
+	@srcdir@/../e/ringelem.hpp			\
+	@srcdir@/../e/interface/gmp-util.h		\
+	@srcdir@/../e/ZZ.hpp				\
+	@srcdir@/../e/matrix.hpp			\
+	@srcdir@/../e/monoid.hpp			\
+	@srcdir@/../e/imonorder.hpp			\
+	@srcdir@/../e/interface/monomial-ordering.h	\
+	@srcdir@/../e/freemod.hpp			\
+	@srcdir@/../e/schorder.hpp			\
+	@srcdir@/../e/monideal.hpp			\
+	@srcdir@/../e/queue.hpp				\
+	@srcdir@/../e/index.hpp				\
+	@srcdir@/../e/int-bag.hpp			\
+	@srcdir@/../e/polyring.hpp			\
+	@srcdir@/../e/interface/computation.h		\
+	@srcdir@/../e/skew.hpp				\
+	@srcdir@/../e/qring.hpp				\
+	@srcdir@/../e/mat.hpp				
 
 # now assemble the files into various categories:
 M2_DNAMES := $(patsubst %.d, %, $(patsubst %.dd, %, $(M2_DFILES)))

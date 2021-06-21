@@ -3079,7 +3079,7 @@ Description
   hfModuleAsExt(12,MM,3)
 Caveat
   The elements f_1..f_c must be homogeneous of the same degree.
-  The script could be rewritten to accomodate different degrees,
+  The script could be rewritten to accommodate different degrees,
   but only by going to the local category
 SeeAlso
   ExtModule
@@ -4664,7 +4664,7 @@ doc ///
      M_{(k+4)} --> M_k \otimes \wedge^2(S^c)
      in the stable category of maximal Cohen-Macaulay modules.
     
-     In thw following example, studied in the paper 
+     In the following example, studied in the paper 
      "Tor as a module over an exterior algebra" of
      Eisenbud, Peeva and Schreyer,
      the map is non-trivial...but it is stably trivial.
@@ -4908,7 +4908,7 @@ doc ///
    Description
     Text
      Computes the Hilbert polynomials pe(z), po(z) of evenExtModule and oddExtModule.
-     It returns pe(z/2), and compares to see whethe this is equal to po(z/2-1/2).
+     It returns pe(z/2), and compares to see whether this is equal to po(z/2-1/2).
      Avramov, Seceleanu and Zheng have proven that if the ideal of quadratic leading
      forms of a complete intersection of codimension c generate an ideal of codimension
      at least c-1, then the betti numbers of any module grow, eventually, as a 
@@ -5038,7 +5038,7 @@ doc///
      D = (d,h)
    Description
     Text
-     Constructs the layered resolution with auxilliary maps. 
+     Constructs the layered resolution with auxiliary maps. 
 ///
 *-
      doc ///
@@ -5070,7 +5070,7 @@ doc///
 	  Eisenbud-Shamash resolution.
 	  
 	  The list expo(c, L), on the other hand, may be thought of as the list of divisors
-	  of e^L = e_0^{L_0} ... e_c^{L_c}. This is used in the contruction of the higher
+	  of e^L = e_0^{L_0} ... e_c^{L_c}. This is used in the construction of the higher
 	  homotopies on a complex.
          Example
 	  expo(3,5)
@@ -5167,7 +5167,7 @@ doc ///
 TEST///
 --An example where the built-n global Ext is hard to compare directly
 --with our method of computation: I *guess* that the sign choices in the built-in
---amount essentiall to a change of variable
+--amount essentially to a change of variable
 --in the new variables, an spoil an easy comparison. 
 --But for example the bi-graded betti numbers are equal.
 --this seems to start with c=3.

@@ -480,7 +480,6 @@ generator Module := RingElement => (M) -> (
      if n == 1 then return M_0;
      error "expected ideal to have a single generator")
 
-mingens Ideal := Matrix => options -> (I) -> mingens(module I,options)
 Ideal / Ideal := Module => (I,J) -> module I / module J
 Module / Ideal := Module => (M,J) -> M / (J * M)
 
@@ -497,7 +496,6 @@ Ideal + Ideal := Ideal => ((I,J) -> ideal (generators I | generators J)) @@ tosa
 Ideal + RingElement := Ideal + Number := ((I,r) -> I + ideal r) @@ tosamering
 RingElement + Ideal := Number + Ideal := ((r,I) -> ideal r + I) @@ tosamering
 degree Ideal := I -> degree cokernel generators I
-trim Ideal := Ideal => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
 Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
 Matrix % Ideal := Matrix => ((f,I) -> 
      if numRows f === 1

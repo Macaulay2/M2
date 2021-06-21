@@ -573,7 +573,7 @@ reduceDecomposition = TT -> (
     return select(TT, T->minl#T);
 )
 
--- minimial elements of a partial order
+-- minimal elements of a partial order
 -- cmp(a,b) = 1 if a>=b
 -- cmp(a,b) = -1 if a<b
 -- cmp(a,b) = 0 if incomparable 

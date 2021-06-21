@@ -2,7 +2,7 @@
 use actors;
 use actors2;
 
-header "#include \"../e/engine.h\"";
+header "#include <interface/random.h>";
 
 getParsing(e:Expr):Expr := (
      when e
@@ -242,7 +242,7 @@ header "
 
 WindowWidth(fd:int):int := Ccode(returns,"
    #ifdef HAVE_SYS_IOCTL_H
-     struct winsize x;
+     struct winsize x = {0};
      ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
      return x.ws_col;
    #else
@@ -251,7 +251,7 @@ WindowWidth(fd:int):int := Ccode(returns,"
 ");
 WindowHeight(fd:int):int := Ccode(returns,"
    #ifdef HAVE_SYS_IOCTL_H
-     struct winsize x;
+     struct winsize x = {0};
      ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
      return x.ws_row;
    #else
@@ -1565,17 +1565,17 @@ dictionaryPath(e:Expr):Expr := (
      is t:List do (					    -- set the current globalDictionary list
 	  s := t.v;
 	  n := length(s);
-	  if n == 0 then return WrongArg("expected a nonempty list of dictionaries");
+	  if n == 0 then return WrongArg("a nonempty list of dictionaries");
           sawUnprotected := false;
 	  foreach x in s do 
 	  when x is dc:DictionaryClosure do (
 	       d := dc.dictionary;
 	       if !d.Protected then sawUnprotected = true;
-	       if d.frameID != 0 || d.transient then return WrongArg("expected a list of global dictionaries")
+	       if d.frameID != 0 || d.transient then return WrongArg("a list of global dictionaries")
 	       )
-	  else return WrongArg("expected a list of dictionaries");
-	  for i from 0 to n-2 do for j from i+1 to n-1 do if s.i == s.j then return WrongArg("expected a list of dictionaries with no duplicate entries");
-          if !sawUnprotected then return WrongArg("expected a list of dictionaries, not all protected");
+	  else return WrongArg("a list of dictionaries");
+	  for i from 0 to n-2 do for j from i+1 to n-1 do if s.i == s.j then return WrongArg("a list of dictionaries with no duplicate entries");
+          if !sawUnprotected then return WrongArg("a list of dictionaries, not all protected");
      	  a := new array(Dictionary) len n do foreach x in s do when x is d:DictionaryClosure do provide d.dictionary else nothing;
      	  a.(n-1).outerDictionary = a.(n-1);
      	  for i from 0 to n-2 do a.i.outerDictionary = a.(i+1);
@@ -1643,7 +1643,10 @@ topLevelModeS := dummySymbol;
 initialRandomSeed := zeroZZ;
 initialRandomHeight := toInteger(10);
 
-setupvar("maxAllowableThreads",toExpr(Ccode( int, " getMaxAllowableThreads() " )));
+maxAllowableThreadsS := setupvar("maxAllowableThreads",toExpr(0)); -- the value returned by getMaxAllowableThreads may not be initialized yet
+export setMaxAllowableThreads():void := (
+     setGlobalVariable(maxAllowableThreadsS, toExpr(Ccode(int, "getMaxAllowableThreads()")));
+     );
 
 syms := SymbolSequence(
      (  backtraceS = setupvar("backtrace",toExpr(backtrace));  backtraceS  ),
@@ -1922,6 +1925,7 @@ setupfun("dumpNodes",dumpNodes);
 toExternalString(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(toExternalString(x.v))
+     is x:RRicell do toExpr(toExternalString(x.v))
      is x:CCcell do toExpr(toExternalString(x.v))
      else WrongArg("a real or complex number")
      );

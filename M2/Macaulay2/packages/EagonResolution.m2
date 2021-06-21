@@ -9,7 +9,7 @@ newPackage(
                   Email => "mike@math.cornell.edu", 
                   HomePage => "http://pi.math.cornell.edu/~mike"}},
         Headline => "Compute the Eagon Resolution of the residue field",
-	Keywords => {"CommutativeAlgebra"},
+	Keywords => {"Commutative Algebra"},
         DebuggingMode => false
         )
 
@@ -612,7 +612,7 @@ Description
    
    K_1 = S^n -> K_0 = S -> k.
    
-   Let F be the mimimal S-free resolution of R.
+   Let F be the minimal S-free resolution of R.
    by the right-exactness of the tensor product, the complex
    
    R**K_1 -> R**K_0 -> k 
@@ -748,7 +748,7 @@ doc///
      and caches them in a HashTable of class EagonData in of R.cache.EagonData. 
      (The command eagon(R,-1) removes this.) 
      
-     Folowing
+     Following
      Gulliksen-Levin we think of Y^n_* as the n-th column, and Y^*_i as the i-th row. The columns
      Y^n are not acyclic.
      The i-th row is a resolution of the i-th module of boundaries in the Koszul complex K

@@ -20,13 +20,13 @@ makeDirectory String := name -> (			    -- make the whole path, too
 copyFile = method(Options => new OptionTable from { Verbose => false, UpdateOnly => false })
 copyFile(String,String) := opts -> (src,tar) -> (
      if src === tar then (
-     	  if opts.Verbose then stderr << "--skipping: " << src << " the same as " << tar << endl;
+     	  if opts.Verbose then printerr("skipping: " | src | " the same as " | tar);
 	  )
      else if opts.UpdateOnly and fileExists tar and fileTime src <= fileTime tar then (
-     	  if opts.Verbose then stderr << "--skipping: " << src << " not newer than " << tar << endl;
+     	  if opts.Verbose then printerr("skipping: " | src | " not newer than " | tar)
 	  )
      else (
-     	  if opts.Verbose then stderr << "--copying: " << src << " -> " << tar << endl;
+     	  if opts.Verbose then printerr("copying: " | src | " -> " | tar);
      	  tar << get src << close;
      	  fileTime(fileTime src,tar);
      	  fileMode(fileMode src,tar);
@@ -266,7 +266,7 @@ tt#":" = "_co"			    -- has a meaning for gnu make and in URLs
 tt#";" = "_se"			    -- has a meaning for gnu make and in URLs
 tt#"?" = "_qu"				      -- has a meaning in URLs and sh
 tt#"\""= "_dq"					 -- " has a meaning for xargs
-tt#"\\"= "_bs"			  -- can't occur in a file name: MSDOS and sh
+tt#"\\"= "_bs"			 -- can't occur in a file name: MS-DOS and sh
 tt#"_" = "_us"					      -- our escape character
 
 -- some OSes are case insensitive:
@@ -395,6 +395,10 @@ dotemacsFix0 = ///
 ; want to use your f12 key for something else.  However, this action
 ; will be undone the next time you run setup() or setupEmacs().
 (global-set-key [ f12 ] 'M2)
+
+; Prevent Emacs from inserting a superfluous "See" or "see" in front
+; of the hyperlinks when reading documentation in Info mode.
+(setq Info-hide-note-references 'hide)
 ///
 
 emacsHeader := ";-*-emacs-lisp-*-\n"
@@ -432,7 +436,7 @@ endif
 shellfixes := {
      ("PATH", currentLayout#"bin",""),
      ("MANPATH", currentLayout#"man",":"),
-     ("INFOPATH", currentLayout#"info",""),
+     ("INFOPATH", currentLayout#"info",":"),
      ("LD_LIBRARY_PATH", currentLayout#"lib","")}
 emacsfixes := {
      ("load-path", currentLayout#"emacs", emacstempl),

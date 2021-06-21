@@ -25,12 +25,15 @@ export {
     "AugmentNodeCount",
     "EdgesSaturated",
     "sparseMonodromySolve",
-    "solveFamily"}
+    "solveFamily",
+    "PointArrayTol"
+    }
 
 --0) global variables, overrides, & uncategorized service functions
  
 -- Option table that gives defaults for exported functions
 MonodromyOptions = {
+    	PointArrayTol => 1e-4,
 	TargetSolutionCount => null,
 	SelectEdgeAndDirection => selectFirstEdgeAndDirection,
 	StoppingCriterion => null,
@@ -66,16 +69,8 @@ random Type := o -> R -> (
     else (old'random'Type o) R
     ) 
 
--- compute MV for parameter-less system via PHCPACK (toRingXphc currently assumes coeffField is Complex)
-computeMixedVolume = method()
-computeMixedVolume List := polys -> mixedVolume(toRingXphc polys,StartSystem => false)
-computeMixedVolume PolySystem := PS -> mixedVolume equations PS
-computeMixedVolume GateSystem := GS -> (
-    assert numParameters GS == 0;
-    monR := monoid [Variables => numVariables GS];
-    R := CC monR;
-    computeMixedVolume evaluate(GS, vars R)
-    )
+
+
 
 -- in: options for an exported method (or dynamicMonodromySolve)
 -- out: options that get used for staticMonodromySolve
@@ -207,7 +202,7 @@ createSeedPair (System, Point) := o -> (P, x0) -> (
     b := transpose evaluate(GS, point matrix 0_(CC^m), x0);
     scan(m, i -> A = A | transpose evaluate(GS, point I_{i}, x0) - b);
     xp := solve(A, -b, ClosestFit => true);
-    K := numericalKernel(A, 1e-5);
+    K := numericalKernel(A, Tolerance => 1e-5);
     xh := K * random(CC^(numcols K), CC^1);
     p0 := point(xh + xp);
     if not areEqual(0, norm evaluate(GS, p0, x0)) then error "linear seeding failed residual check";
@@ -257,7 +252,7 @@ solveFamily (Point, System) := o -> (p1, P) -> (
         );
     specMat := matrix p0 | matrix p1;
     H01 := specialize(parametricSegmentHomotopy GS, transpose specMat); -- this is annoying to have to do
-    (p1, pointArray trackHomotopy(H01, points sols0))
+    pointArray trackHomotopy(H01, points sols0)
     )
 
 monodromySolve = method(Options=>MonodromyOptions)
@@ -346,6 +341,7 @@ staticMonodromySolve (System, Point, List) := o -> (PS, p0, sols0) -> (
     node1 := addNode(HG, p0, PA);
     setTrackTime(HG, 0);    
     if #sols0 < 1 then error "at least one solution expected";    
+    PointArrayTolerance = o.PointArrayTol; -- global variable!!!
     o.GraphInitFunction(HG, p0, node1, o.NumberOfNodes, o.NumberOfEdges);
     --Needs to return HG for use by dynamicMonodromySolve
     coreMonodromySolve(HG, node1, new OptionTable from (new HashTable from mutableOptions))

@@ -1,7 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-indeterminates =  new MutableHashTable
-
 varIndices := new MutableHashTable
 
 varName := i -> (
@@ -12,11 +10,9 @@ varName := i -> (
      else "x" | toString(i-52))
 
 vars ZZ := i -> (
-     if indeterminates#?i then indeterminates#i else (
-	  x := getSymbol varName i;
-	  indeterminates#i = x;
-	  varIndices#x = i;
-	  x))
+    x := getSymbol varName i;
+    varIndices#x = i;
+    x)
 
 vars List := vars Sequence := args -> apply(flatten splice args, j -> vars j)
 

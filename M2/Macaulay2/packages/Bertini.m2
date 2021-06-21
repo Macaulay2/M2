@@ -253,7 +253,7 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --%%-- We set AffVariableGroup and HomVariableGroup. If the user does not specify these groups then AffVariableGroup is taken to be the generators of the ring the first element of myPol.
   myAVG:= o.AffVariableGroup;
   myHVG:= o.HomVariableGroup;
---%%-- If the user does not specifiy variable groups then myAVG is set to the generators of the ring of the first polynomial.
+--%%-- If the user does not specify variable groups then myAVG is set to the generators of the ring of the first polynomial.
   if myAVG==={} and myHVG==={}
   then (
     if not member (class first myPol,{String,B'Section,B'Slice,Product,Symbol})
@@ -327,10 +327,10 @@ bertiniSample = method(TypicalValue => List, Options=>{Verbose=>false,
 bertiniSample (ZZ, WitnessSet) := o -> (n, W) -> (
   --W is a witness set
   -- n is the number of points to sample
-  L := {runType=>3,dimen=>dim W, compnum => W.ComponentNumber,numpts => n, WitnessData=>W.WitnessDataFileName};
+  L := {runType=>3,dimen=>dim W, compnum => W.cache.ComponentNumber,numpts => n, WitnessData=>W.cache.WitnessDataFileName};
   o2 := new OptionTable from L;
   o3 := o ++ o2 ;
-  bertiniSolve(flatten entries gens (W.Equations),o3)
+  bertiniSolve(equations W,o3)
   )
 
 
@@ -705,7 +705,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
       f << endl << "END;" << endl << endl;
       close f;
 
-      --Now we build auxilary files for various sorts of runs:
+      --Now we build auxiliary files for various sorts of runs:
 
       if member(o.runType,{1,6}) then ( -- writing out start file in the case of a param run
 	  f = openOut (dir|"/start"); -- the only name for Bertini's start solutions file
@@ -1102,14 +1102,13 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
   	    N = map(CC^0,CC^numVars,0); -- this is a dummy, will grab slice data later
   	    ws = if o.IsProjective===1 then ( 
 		W := projectiveWitnessSet(ideal F, N -* fake affine chart *-, N, ptsInWS); 
-		W.AffineChart = null; -- !!! this is a hack
 		W
 		) else witnessSet(ideal F, N, ptsInWS);
-	    ws.IsIrreducible = true;
+	    ws.cache.IsIrreducible = true;
 	    --turn these points into a witness set
 	    -- ws = witnessSet(ideal F,N, ptsInWS); --turn these points into a witness set
-            ws.ComponentNumber=j;
-	    ws.WitnessDataFileName=dir|"/witness_data";
+            ws.cache.ComponentNumber=j;
+	    ws.cache.WitnessDataFileName=dir|"/witness_data";
 	    wList = join(wList, {ws}); --add witness set to list
 	    listOfCodims = join(listOfCodims, {codimen});
 	    );
@@ -1124,7 +1123,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
     --number of random numbers we want to skip next
     l = drop(l,numRands+1);   -- includes blank line after rands
     -- next we have the same number of integers
-    --(degrees needed ot keep homogenization right)
+    --(degrees needed to keep homogenization right)
     l = drop(l,numRands);
     -- next we have an integer and a list of row vectors
     --(the number of which is the initial integer).  Again related to
@@ -1166,7 +1165,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
     -- a subsequent codim 2 set would have a
     -- 1x4 matrix of slice data consists of the second (not first)
     -- line of the codim 1 slice data.
-    for codimNum from 0 to length listOfCodims - 1 do (
+    wList = for codimNum from 0 to length listOfCodims - 1 list (
 	--We store the cols of M needed for this particular codimNum in coeffList,
 	--then turn it into a matrix and store it the witness set.
 	colsToSkip = listOfCodims#codimNum - listOfCodims#0;
@@ -1175,9 +1174,12 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
 	-- rearrange columns so slice from NAGtypes
 	--returns the correct linear functional
 	firstCol:=N_{0};
-	N=(submatrix'(N, ,{0})|firstCol);
-	(wList#codimNum).Slice = N;
-        );
+	N=submatrix'(N, ,{0})|firstCol;
+	W := wList#codimNum;
+	W' := witnessSet(W.Equations, N, W.Points);
+        for k in keys W.cache do W'.cache#k = W.cache#k;
+	W' 
+	);
     nv = numericalVariety wList;
     nv.WitnessDataFileName=dir|"/witness_data";
     nv.Equations=F;
@@ -1256,7 +1258,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
 	    --grabs witness sets in this component
            possWitSets := NV#(numVars-coDims_j_0);
 	   --select witness sets with positive result
-	   witSets := select(possWitSets, k->member(k.ComponentNumber, compNums));
+	   witSets := select(possWitSets, k->member(k.cache.ComponentNumber, compNums));
     	   witSets'forOnePoint = witSets'forOnePoint | witSets;
 	   testVector=drop(testVector, coDims_j_1);
 	   );
@@ -2554,7 +2556,7 @@ doc ///
       @HREF"http://bertini.nd.edu/"@. {\tt Bertini} is under ongoing development by
       D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
-      The user may place the executable program {\tt bertini} in the executation path.
+      The user may place the executable program {\tt bertini} in the execution path.
       Alternatively, the path to the executable needs to be specified, for instance,
     Example
       needsPackage("Bertini", Configuration=>{"BERTINIexecutable"=>"/folder/subfolder/bertini"})
@@ -2979,7 +2981,7 @@ doc ///
     Text
       This function writes a Bertini input file.
       The user can specify CONFIGS for the file using the BertiniInputConfiguration option.
-      The user should specify variable groups with the AffVariableGroup (affine variable group) option or HomVariableGroup (homogenous variable group) option.
+      The user should specify variable groups with the AffVariableGroup (affine variable group) option or HomVariableGroup (homogeneous variable group) option.
       The user should specify the polynomial system they want to solve with the  B'Polynomials option or B'Functions option.
       If B'Polynomials is not used then the user should use the  NamePolynomials option.
     Example
@@ -3144,7 +3146,7 @@ doc ///
      After running makeMembershipFile Bertini produces an incidence_matrix file.
      The incidence_matrix says which points belong to which components.
      Our incidence matrix is flattened to a list.
-     The number of elemenets in theIM is equal to the number of points in the solutions file.
+     The number of elements in theIM is equal to the number of points in the solutions file.
      Each element of theIM is a list of sequences of 2 elements (codim,component Number).
      Note that we follow the Bertini convention and switch from (dimension,component number) indexing to (codimension,component number) indexing.
    Text

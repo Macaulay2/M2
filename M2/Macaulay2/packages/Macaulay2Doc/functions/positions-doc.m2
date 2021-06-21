@@ -5,6 +5,7 @@ doc///
  Key
   positions
   (positions, VisibleList, Function)
+  (positions, MutableList, Function)
  Headline
   which elements of a list satisfy a condition
  Usage

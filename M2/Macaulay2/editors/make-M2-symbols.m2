@@ -7,6 +7,7 @@
 --  - Emacs
 --  - Atom & Linguist: https://github.com/Macaulay2/language-macaulay2
 --  - Rouge
+--  - Pygments
 
 -------------------------------------------------------------------------------
 -- TODO: Move these two elsewhere:
@@ -22,7 +23,7 @@ isAlphaNumeric := s -> match("^[[:alnum:]]+$", s)
 isType     := is Type
 isKeyword  := is Keyword
 isFunction := is Function
-isConst    := (name, symb) -> (isAlpha name
+isConst    := (name, symb) -> (isAlphaNumeric name
     and not (isFunction or isType or isKeyword) (name, symb)
     and (symb === symbol null or value symb =!= null))
 
@@ -56,11 +57,9 @@ KEYWORDS  = first \ select(symbols, isKeyword)
 DATATYPES = first \ select(symbols, isType)
 FUNCTIONS = first \ select(symbols, isFunction)
 CONSTANTS = first \ select(symbols, isConst)
-CONSTANTS = CONSTANTS | {"Node", "Item", "Example", "CannedExample", "Pre", "Code"} -- SimpleDoc words
--- TODO: get this to work
---DOCWORDS  = format "doc ///\\\\(/?/?[^/]\\\\|\\\\(//\\\\)*////[^/]\\\\)*\\\\(//\\\\)*///"
+CONSTANTS = CONSTANTS | {"Node", "Item", "Example", "CannedExample", "Pre", "Code", "Tree", "Synopsis"} -- SimpleDoc words
+CONSTANTS = sort CONSTANTS
 STRINGS   = format "///\\\\(/?/?[^/]\\\\|\\\\(//\\\\)*////[^/]\\\\)*\\\\(//\\\\)*///"
-
 
 -------------------------------------------------------------------------------
 -- Substitute symbols, keywords, types, functions, and constants
@@ -87,7 +86,6 @@ symbolsForEmacs = template -> (
     output = replace("@M2DATATYPES@", demark(" ", format \ DATATYPES), output);
     output = replace("@M2FUNCTIONS@", demark(" ", format \ FUNCTIONS), output);
     output = replace("@M2CONSTANTS@", demark(" ", format \ CONSTANTS), output);
---    output = replace("@M2DOCWORDS@",  demark(" ", format \ DOCWORDS),  output);
     output = replace("@M2STRINGS@",                        STRINGS,    output);
     output)
 
@@ -124,6 +122,17 @@ symbolsForRouge = template -> (
     output = replace("@M2STRINGS@",               STRINGS,    output);
     output)
 
+pygmentsformat = symlist -> demark("," | newline | "    ", format \ symlist)
+symbolsForPygments = template -> (
+    output := concatenate("# ", banner, newline, newline, template);
+    output = replace("@M2VERSION@",   version#"VERSION",        output);
+    output = replace("@M2KEYWORDS@",  pygmentsformat KEYWORDS,  output);
+    output = replace("@M2DATATYPES@", pygmentsformat DATATYPES, output);
+    output = replace("@M2FUNCTIONS@", pygmentsformat FUNCTIONS, output);
+    output = replace("@M2CONSTANTS@", pygmentsformat CONSTANTS, output);
+    output = replace("@M2STRINGS@",                  STRINGS,   output);
+    output)
+
 -------------------------------------------------------------------------------
 -- Generate syntax files from templates in the same directory
 
@@ -151,6 +160,9 @@ generateGrammar("vim/m2.vim.dict", symbolsForVim); -- TODO: is this necessary?
 
 -- Rouge: Write macaulay2.rb
 --generateGrammar("rouge/macaulay2.rb", symbolsForRouge);
+
+-- Pygments: Write macaulay2.py
+generateGrammar("pygments/macaulay2.py", symbolsForPygments)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs M2-symbols "

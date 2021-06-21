@@ -1,11 +1,11 @@
--- -*- M2-comint -*- hash: 598874853
+-- -*- M2-comint -*- hash: 1595612603
 -- polymake not present
 
 i1 : QQ[x,y];
 
 i2 : I=ideal(x+y+1);
 
-o2 : Ideal of QQ[x, y]
+o2 : Ideal of QQ[x..y]
 
 i3 : T=tropicalVariety(I);
 
@@ -30,7 +30,7 @@ o6 = 0
               2
 o6 : Matrix ZZ  <--- 0
 
-i7 : fVector fan T
+i7 : Polyhedra$fVector fan T
 
 o7 = {1, 3}
 
@@ -48,7 +48,7 @@ i10 : I = ideal(w+x+y+z)
 
 o10 = ideal(x + y + z + w)
 
-o10 : Ideal of QQ[x, y, z, w]
+o10 : Ideal of QQ[x..z, w]
 
 i11 : T = tropicalVariety(I, IsHomogeneous=>true, Symmetry=>{{1,0,2,3},{2,1,0,3},{3,1,2,0}})
 
@@ -74,7 +74,7 @@ o13 : List
 
 i14 : I=intersect(ideal(x+y+z+w),ideal(x-y,y-z));
 
-o14 : Ideal of QQ[x, y, z, w]
+o14 : Ideal of QQ[x..z, w]
 
 i15 : T= tropicalVariety(I,Prime=>false);
 
@@ -116,7 +116,7 @@ i20 : QQ[x,y,z,w];
 
 i21 : I=intersect(ideal(x+y+z+1),ideal(x^2-y*z));
 
-o21 : Ideal of QQ[x, y, z, w]
+o21 : Ideal of QQ[x..z, w]
 
 i22 : T= tropicalVariety(I,Prime=>false,ComputeMultiplicities=>false);
 

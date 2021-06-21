@@ -15,11 +15,11 @@ set(UNDETERMINED
 
 # c files
 # TODO: convert to cpp or simplify if not needed
+# MES TODO:   monordering.c removed this, is that correct?
 set(CFILES
   complex.c
   error.c
   exptable.c
-  monordering.c
   table.c
   )
 # h files
@@ -27,10 +27,7 @@ set(HFILES
   complex.h
   error.h
   exptable.h
-  monordering.h
-  rand.h
   table.h
-  gmp-util.h
   engine.h
   defgroups.h
   mpreal.h
@@ -38,6 +35,10 @@ set(HFILES
 
 # these files are include only.
 set(HPPONLYFILES
+  MemoryBlock.hpp
+  NCAlgebras/Range.hpp
+  VectorArithmetic.hpp
+  ARingElem.hpp
   newdelete.hpp
   timing.hpp
   SLP-defs.hpp
@@ -76,19 +77,17 @@ set(HPPONLYFILES
   ringelem.hpp
   schur-poly-heap.hpp
   smat.hpp
-  stdinc-m2.hpp
-  stop.hpp
   style.hpp
-  f4/moninfo2.hpp
-  f4/res-memblock.hpp
-  f4/res-monomial-types.hpp
-  f4/res-schreyer-order.hpp
+  f4/f4-types.hpp
+  f4/memblock.hpp
+  schreyer-resolution/res-memblock.hpp
+  schreyer-resolution/res-monomial-types.hpp
+  schreyer-resolution/res-schreyer-order.hpp
   )
 
 # these files have .cpp file, but NOT .hpp file
 set(CPPONLYFILES
-  engine.cpp
-  flint.cpp
+  engine.cpp # TODO: find a new home for the contents
   franzi-gb.cpp
   franzi-interface.cpp
   matrix-kbasis.cpp
@@ -96,31 +95,71 @@ set(CPPONLYFILES
   matrix-symm.cpp
   ntl-debugio.cpp
   ntl-internal.cpp
-  rand.cpp
   res-a2-gb.cpp
   ring-vecs.cpp
-  x-aring.cpp
-  x-factor.cpp
-  x-factor.hpp
-  x-free.cpp
-  x-gb.cpp
-  x-mat.cpp
-  x-monideal.cpp
-  x-monoid.cpp
-  x-mutablemat.cpp
-  x-relem.cpp
-  x-ringmap.cpp
+
+  interface/aring.cpp
+  interface/aring.h
+  interface/computation.h # no .cpp yet
+  interface/cra.cpp
+  interface/cra.h
+  interface/factory.cpp
+  interface/factory.h
+  interface/flint.cpp
+  interface/flint.h
+  interface/freemodule.cpp # TODO: .h
+  interface/gmp-util.h # only has inline definitions
+  interface/groebner.cpp
+  interface/groebner.h
+  interface/matrix.cpp
+  interface/matrix.h
+  interface/monoid.cpp
+  interface/monoid.h
+  interface/monomial-ideal.cpp
+  interface/monomial-ideal.h
+  interface/monomial-ordering.cpp
+  interface/monomial-ordering.h
+  interface/mutable-matrix.cpp
+  interface/mutable-matrix.h
+  interface/polyroots.cpp # the declarations are in factory.h
+  interface/random.cpp
+  interface/random.h
+  interface/ring.cpp
+  interface/ring.h
+  interface/ringelement.cpp
+  interface/ringelement.h
+  interface/ringmap.cpp
+  interface/ringmap.h
   )
 
 # these files all have .hpp and .cpp files
+# MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
+  myalloc
+  matrix-ncbasis
+  M2FreeAlgebraQuotient
+  M2FreeAlgebra
+  NCAlgebras/Word
+  NCAlgebras/NCReduction
+  NCAlgebras/FreeAlgebraQuotient
+  NCAlgebras/FreeAlgebra
+  NCAlgebras/FreeMonoid
+  NCAlgebras/WordTable
+  NCAlgebras/SuffixTree
+  NCAlgebras/NCGroebner
+  NCAlgebras/NCF4
+  NCAlgebras/OverlapTable
+  NCResolutions/nc-res-computation
+  Polynomial
+  monomial-collection
   Eschreyer
   GF
   LLL
-  NAG
+  NAG # TODO: move raw* functions to e/interface
   SLP
   ZZ
   ZZp
+  aring-RRi
   aring-CC
   aring-CCC
   aring-RR
@@ -189,6 +228,7 @@ set(SRCLIST
   monoid
   monomial-sets
   monomial
+  monsort
   montable
   montableZZ
   mutablecomplex
@@ -199,7 +239,6 @@ set(SRCLIST
   poly
   polyquotient
   polyring
-  polyroots
   qring
   reader
   reducedgb-ZZ
@@ -225,7 +264,7 @@ set(SRCLIST
   solvable
   spair
   text-io
-  tower
+  tower # TODO: move rawTowerTranslatePoly to e/interface
   util
   varpower
   weylalg
@@ -235,32 +274,29 @@ set(SRCLIST
   f4/f4-mem
   f4/f4-monlookup
   f4/f4-spairs
-  f4/f4-syz
-  f4/f4-types
   f4/f4
   f4/gausser
   f4/hilb-fcn
-  f4/memblock
   f4/monhashtable
   f4/moninfo
-  f4/monsort
   f4/ntuple-monomial
-  f4/res-f4-computation
-  f4/res-f4-m2-interface
-  f4/res-f4-monlookup
-  f4/res-f4
-  f4/res-gausser-QQ-hybrid
-  f4/res-gausser-QQ
-  f4/res-gausser-ZZp
-  f4/res-gausser
-  f4/res-moninfo-dense
-  f4/res-moninfo-sparse
-  f4/res-moninfo
-  f4/res-monomial-sorter
-  f4/res-poly-ring
-  f4/res-schreyer-frame
-  f4/res-varpower-monomial
   f4/varpower-monomial
+  # Schreyer resolution a la Linear algebra (F4 Faugere style)
+  schreyer-resolution/res-f4-computation
+  schreyer-resolution/res-f4-m2-interface
+  schreyer-resolution/res-f4-monlookup
+  schreyer-resolution/res-f4
+  schreyer-resolution/res-gausser-QQ-hybrid
+  schreyer-resolution/res-gausser-QQ
+  schreyer-resolution/res-gausser-ZZp
+  schreyer-resolution/res-gausser
+  schreyer-resolution/res-moninfo-dense
+  schreyer-resolution/res-moninfo-sparse
+  schreyer-resolution/res-moninfo
+  schreyer-resolution/res-monomial-sorter
+  schreyer-resolution/res-poly-ring
+  schreyer-resolution/res-schreyer-frame
+  schreyer-resolution/res-varpower-monomial
   # Boolean Involutive Gröbner Bases
   bibasis/bibasis
   bibasis/allocator
@@ -382,6 +418,7 @@ if(BUILD_TESTING)
     unit-tests/ARingCCTest.cpp
     unit-tests/ARingRRRTest.cpp
     unit-tests/ARingCCCTest.cpp
+    unit-tests/NCGroebnerTest.cpp
 
     unit-tests/RingTest.hpp
     unit-tests/RingZZTest.cpp
@@ -414,7 +451,6 @@ if(BUILD_TESTING)
   ## Link with Googletest
   if(GTEST_FOUND)
   target_link_libraries(M2-unit-tests GTest::GTest GTest::Main)
-  target_include_directories(M2-unit-tests PRIVATE ${GTEST_INCLUDE_DIR})
   endif()
 
   target_compile_options(M2-unit-tests PRIVATE

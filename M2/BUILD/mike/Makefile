@@ -26,6 +26,19 @@ cmake-appleclang:
 		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
 		../../../..
+#		-DLINTING=on
+
+cmake-appleclang-tbb:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-appleclang-tbb
+	cd builds.tmp/cmake-appleclang-tbb; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		-DWITH_TBB=on \
+		../../../..
+#		-DLINTING=on
 
 cmake-debug-appleclang:
 	mkdir -p builds.tmp/cmake-debug-appleclang
@@ -36,9 +49,21 @@ cmake-debug-appleclang:
 		-DBUILD_DOCS=on \
 		../../../..
 
+cmake-profile-appleclang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-profile-appleclang
+	cd builds.tmp/cmake-profile-appleclang; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DPROFILING=on \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+#		-DLINTING=on
+
 cmake-latestclang:
 	mkdir -p builds.tmp/cmake-latestclang
-	cd builds.tmp/cmake-latestclang; cmake \
+	cd builds.tmp/cmake-latestclang; LIBRARY_PATH=`/usr/local/opt/llvm/bin/llvm-config --libdir` cmake \
 		-GNinja \
 	    -DCMAKE_C_COMPILER:FILEPATH=/usr/local/opt/llvm/bin/clang \
 		-DCMAKE_CXX_COMPILER:FILEPATH=/usr/local/opt/llvm/bin/clang++ \
@@ -68,6 +93,18 @@ cmake-gcc9:
 		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
 		../../../..
+
+ubuntu-cmake-gcc:
+	mkdir -p builds.tmp/ubuntu-cmake-gcc
+	cd builds.tmp/ubuntu-cmake-gcc; cmake \
+		-GNinja \
+	    -DCMAKE_C_COMPILER:FILEPATH=gcc \
+		-DCMAKE_CXX_COMPILER:FILEPATH=g++ \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
 # running cmake-gcc9 now: 30 May 2020.
 #  build-libraries (with testing off): 22m36s
 #  build-programs (with testing off): 12m19s
@@ -128,6 +165,14 @@ darwin64-gcc9 : always
 	mkdir -p builds.tmp/darwin64-gcc9
 	cd builds.tmp/darwin64-gcc9; ../../../../configure \
 		CC=gcc-9 CXX=g++-9 \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+darwin64-gcc10 : always
+	mkdir -p builds.tmp/darwin64-gcc9
+	cd builds.tmp/darwin64-gcc9; ../../../../configure \
+		CC=gcc-10 CXX=g++-10 \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-download

@@ -33,13 +33,15 @@ isPolynomialRing = method(TypicalValue => Boolean)
 isPolynomialRing Thing := x -> false
 isPolynomialRing PolynomialRing := (R) -> true
 
+isHomogeneous PolynomialRing := R -> true
+
 exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
 
 expression PolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      k := last R.baseRings;
      T := if (options R).Local === true then List else Array;
-     (expression k) (new T from R.generatorExpressions)
+     (expression k) (new T from toSequence runLengthEncode R.generatorExpressions)
      )
 
 describe PolynomialRing := R -> (
@@ -266,7 +268,19 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		   f=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
 		   c=RM_minexps;
 		   );
-	       (facs,exps) := rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
+	       isSimpleNumberField := F -> isField F and instance(baseRing F, QuotientRing) and coefficientRing baseRing F === QQ and numgens baseRing F == 1 and numgens ideal baseRing F == 1; 
+	       (facs,exps) := if isSimpleNumberField R then (
+		   (RM', toRM') := flattenRing(RM, CoefficientRing=>QQ);
+		   minp := (ideal RM')_0;
+		   ((fs,es) -> (for f in fs list raw (map(RM, RM', generators RM|{R_0})) new RM' from f, es)) (
+		       rawFactor(raw toRM' f, raw minp)) -- apply rawFactor, but the factors need to be converted back to RM
+	       ) else if instance(R, FractionField) then (
+        	   denom := lcm \\ (t -> denominator t_1) \ listForm f;
+        	   baseRM := (baseRing R)(RM.monoid);
+		   f = (map(baseRM, RM, generators baseRM)) (denom * f);
+		   ((fs,es) -> (for i in (0..<#fs) list raw (((map(RM, baseRM, generators RM)) new baseRM from fs_i) * if i==0 then 1/denom else 1), es)) (
+		       rawFactor raw f) -- similar: convert back to RM, and put denom back into the leadCoefficient
+	       ) else rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
 	       leadCoeff := x->( -- iterated leadCoefficient
 		   R:=ring x;
 		   if class R === PolynomialRing then leadCoeff leadCoefficient x else
@@ -290,7 +304,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    exps = append(exps,1);
 		    );
 	       new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
-	  isPrime RM := f -> (
+	  isPrime RM := {} >> o -> f -> (
 	      v := factor f;
 	      cnt := 0; -- counts number of factors
 	      scan(v, x -> ( if not isUnit(x#0) then cnt=cnt+x#1 ));

@@ -1,6 +1,6 @@
 --		Copyright 2008 by Daniel R. Grayson
 
-document { Key => {size2, (size2,CC), (size2,RR), (size2,ZZ)},
+document { Key => {size2, (size2,CC), (size2,RR), (size2,ZZ), (size2,RRi)},
      Usage => "size2 x",
      Headline => "number of binary digits to the left of the point",
      Inputs => {"x" => Number},
@@ -17,7 +17,7 @@ document { Key => {size2, (size2,CC), (size2,RR), (size2,ZZ)},
      size2 (1/0.-1/0.)
      ///}
 
-document { Key => {isReal,(isReal,CC),(isReal,QQ),(isReal,RR),(isReal,ZZ)},
+document { Key => {isReal,(isReal,CC),(isReal,QQ),(isReal,RR),(isReal,ZZ),(isReal, RRi)},
      Usage => "isReal x",
      Headline => "whether a number is real",
      Inputs => { "x" => Number },
@@ -59,21 +59,25 @@ document { Key => {commonRing, (commonRing,List)},
      	  ///
      }
 
-document { Key => {log1p,(log1p, QQ),(log1p, ZZ),(log1p, RR)},
-     Usage => "log1p x",
+document { Key => {log1p,(log1p, QQ),(log1p, ZZ),(log1p, RR),(log1p, RRi)},
+     Usage => "log1p x\nlog1p I",
      Headline => "logarithm of 1+x",
-     Inputs => { "x" },
-     Outputs => { RR => { "the logarithm of ", TT "1+x" }},
+     Inputs => { "x", "I" => RRi },
+     Outputs => { RR => { "the logarithm of ", TT "1+x" },
+RRi => { "an interval containing logarithm of 1 plus the points of ", TT "I" }
+},
      EXAMPLE lines ///
 log1p 1p100e-10
 log(1 + 1p100e-10)
      ///
      }
-document { Key => {expm1,(expm1, ZZ),(expm1, RR),(expm1, QQ)},
-     Usage => "expm1 x",
+document { Key => {expm1,(expm1, ZZ),(expm1, RR),(expm1, QQ),(expm1,RRi)},
+     Usage => "expm1 x\nexpm1 I",
      Headline => "exponential minus 1",
-     Inputs => { "x" },
-     Outputs => { RR => { "the quantity ", TT "exp(x)-1" }},
+     Inputs => { "x" , "I"=>RRi},
+     Outputs => { RR => { "the quantity ", TT "exp(x)-1" },
+RRi => { "an interval containing the exponential of the points of ", TT "I", " minus one"}
+},
      EXAMPLE lines ///
      	  expm1 1p100e-10
      	  exp(1p100e-10)-1
@@ -143,11 +147,12 @@ document { Key => {erfc,(erfc, QQ),(erfc, ZZ),(erfc, RR)},
      }
 document { 
      --- author(s): L. Gold, Dan Grayson
-     Key => {acos,(acos,ZZ), (acos,RR),(acos,CC),(acos, QQ)},
+     Key => {acos,(acos,ZZ), (acos,RR),(acos,CC),(acos, QQ),(acos, RRi)},
      Headline => "arccosine", 
-     Usage => "acos x",
-     Inputs => { "x" },
-     Outputs => { Number => { "the arccosine (in radians) of ", TT "x"} },
+     Usage => "acos x\nacos I",
+     Inputs => { "x", "I" => RRi },
+     Outputs => { Number => { "the arccosine (in radians) of ", TT "x"},
+                  RRi => { "an interval containing the arccosines of the points of ", TT "I" }},
      EXAMPLE lines ///
      acos 0.5
      ///,
@@ -155,12 +160,13 @@ document {
      }     
 document { 
      --- author(s): L. Gold, Dan Grayson
-     Key => {asin,(asin,ZZ),(asin,RR),(asin,CC),(asin, QQ)},
+     Key => {asin,(asin,ZZ),(asin,RR),(asin,CC),(asin, QQ),(asin, RRi)},
      Headline => "arcsine",
-     Usage => "asin x",
-     Inputs => { "x" },
+     Usage => "asin x\nasin I",
+     Inputs => { "x", "I" => RRi },
      Outputs => {
-	  Number => {"the arcsine (in radians) of ", TT "x"}
+	  Number => {"the arcsine (in radians) of ", TT "x"},
+      RRi => { "an interval containing the arcsines of the points of ", TT "I" }
 	  },
      EXAMPLE {
 	  "asin 1"
@@ -169,11 +175,12 @@ document {
      }
 document { 
      --- author(s): L. Gold
-     Key => {cosh, (cosh,ZZ),(cosh,RR),(cosh, QQ),(cosh,CC)},
+     Key => {cosh, (cosh,ZZ),(cosh,RR),(cosh, QQ),(cosh,CC),(cosh,RRi)},
      Headline => "compute the hyperbolic cosine",
-     Usage => "cosh x",
-     Inputs => { "x" },
-     Outputs => { Number => { "the hyperbolic cosine of ", TT "x" } },
+     Usage => "cosh x\ncosh I",
+     Inputs => { "x", "I"=>RRi},
+     Outputs => { Number => { "the hyperbolic cosine of ", TT "x" },
+         RRi => { "an interval containing the hyerbolic cosines of the points of ", TT "I" } },
      EXAMPLE lines ///
      cosh .2
      ///,
@@ -201,63 +208,75 @@ document {
      ///,
      PARA {"See ", wikipedia "Hyperbolic function", "."}
      }
-document { Key => {sec,(sec, ZZ),(sec,CC),(sec, RR),(sec, QQ)},
-     Usage => "sec x",
+document { Key => {sec,(sec, ZZ),(sec,CC),(sec, RR),(sec, QQ),(sec, RRi)},
+     Usage => "sec x\nsec I",
      Headline => "secant",
-     Inputs => { "x" },
-     Outputs => { RR => { "the secant of ", TT "x" }},
+     Inputs => { "x", "I" => RRi },
+     Outputs => { RR => { "the secant of ", TT "x" },
+RRi => { "an interval containing the secants of the points of ", TT "I" }
+},
      EXAMPLE lines ///
      	  sec(pi/3)
      ///,
      PARA {"See ", wikipedia "Trigonometric function", "."}
      }
-document { Key => {csc,(csc,CC),(csc, QQ),(csc, ZZ),(csc, RR)},
-     Usage => "csc x",
+document { Key => {csc,(csc,CC),(csc, QQ),(csc, ZZ),(csc, RR),(csc,RRi)},
+     Usage => "csc x\ncsc I",
      Headline => "cosecant",
-     Inputs => { "x" },
-     Outputs => { RR => { "the cosecant of ", TT "x" }},
+     Inputs => { "x","I"=>RRi },
+     Outputs => { RR => { "the cosecant of ", TT "x" },
+        RRi => { "an interval containing the cosecants of the points of ", TT "I" }
+},
      EXAMPLE lines ///
      	  csc(pi/3)
      ///,
      PARA {"See ", wikipedia "Trigonometric function", "."}
 
      }
-document { Key => {cot,(cot, ZZ),(cot, RR),(cot,CC),(cot, QQ)},
-     Usage => "cot x",
+document { Key => {cot,(cot, ZZ),(cot, RR),(cot,CC),(cot, QQ),(cot,RRi)},
+     Usage => "cot x\ncot I",
      Headline => "cotangent",
-     Inputs => { "x" },
-     Outputs => { RR => { "the cotangent of ", TT "x" }},
+     Inputs => { "x", "I"=>RRi },
+     Outputs => { RR => { "the cotangent of ", TT "x" },
+            RRi => { "an interval containing the cotangents of points of ", TT "I"}
+    },
      EXAMPLE lines ///
      	  cot(pi/3)
      ///,
      PARA {"See ", wikipedia "Trigonometric function", "."}
 
      }
-document { Key => {sech,(sech,CC),(sech, QQ),(sech, ZZ),(sech, RR)},
-     Usage => "sech x",
+document { Key => {sech,(sech,CC),(sech, QQ),(sech, ZZ),(sech, RR),(sech, RRi)},
+     Usage => "sech x\nsech I",
      Headline => "hyperbolic secant",
-     Inputs => { "x" },
-     Outputs => { RR => { "the hyperbolic secant of ", TT "x" }},
+     Inputs => { "x", "I" => RRi },
+     Outputs => { RR => { "the hyperbolic secant of ", TT "x" },
+     RRi => { "an interval containing the hyerbolic secants of the points of ", TT "I" }
+},
      EXAMPLE lines ///
      	  sech(pi/3)
      ///,
      PARA {"See ", wikipedia "Hyperbolic function", "."}
      }
-document { Key => {csch,(csch,CC),(csch, ZZ),(csch, RR),(csch, QQ)},
-     Usage => "csch x",
+document { Key => {csch,(csch,CC),(csch, ZZ),(csch, RR),(csch, QQ),(csch,RRi)},
+     Usage => "csch x\ncsch I",
      Headline => "hyperbolic cosecant",
-     Inputs => { "x" },
-     Outputs => { RR => { "the hyperbolic cosecant of ", TT "x" }},
+     Inputs => { "x", "I"=>RRi },
+     Outputs => { RR => { "the hyperbolic cosecant of ", TT "x" },
+        RRi => { "an interval containing the hyperbolic cosecants of the points of ", TT "I" }
+    },
      EXAMPLE lines ///
      	  csch(pi/3)
      ///,
      PARA {"See ", wikipedia "Hyperbolic function", "."}
      }
-document { Key => {coth,(coth,CC),(coth, QQ),(coth, ZZ),(coth, RR)},
-     Usage => "coth x",
+document { Key => {coth,(coth,CC),(coth, QQ),(coth, ZZ),(coth, RR),(coth,RRi)},
+     Usage => "coth x\ncoth I",
      Headline => "hyperbolic cotangent",
-     Inputs => { "x" },
-     Outputs => { RR => { "the hyperbolic cotangent of ", TT "x" }},
+     Inputs => { "x","I"=>RRi},
+     Outputs => { RR => { "the hyperbolic cotangent of ", TT "x" },
+        RRi => { "an interval containing the hyperbolic cotangents of the points of ", TT "I" }
+        },
      EXAMPLE lines ///
      	  coth(pi/3)
      ///,
@@ -370,33 +389,6 @@ document {
      SeeAlso => { "defaultPrecision" }
      }
 
-document {
-     Headline => "fill a mutable matrix with random numbers",
-     Key => {fillMatrix,(fillMatrix, MutableMatrix),(fillMatrix, MutableMatrix, ZZ),
-	  [fillMatrix, Height],[fillMatrix,Density],[fillMatrix,UpperTriangular]},
-     Usage => "fillMatrix M\nfillMatrix(M,n)",
-     BaseFunction => fillMatrix,
-     Inputs => {
-	  "M"=>MutableMatrix,
-	  "n" => ZZ => {"if specified, the maximum number of entries to replace"},
-	  Density => RR => {"the fraction of entries of ", TT "M", " to be replaced, if ", TT "n", " is
-	       not specified"},
-	  UpperTriangular => Boolean => "whether to fill entries only above the diagonal",
-	  Height => ZZ => "a bound on the absolute values of the generated random numbers"
-	  },
-     Outputs => {"M"},
-     Consequences => {{ "some entries of M are replaced with randomly generated numbers, whose
-	       size depends on the value of the option ", TT "Height" }},
-     EXAMPLE lines ///
-	  printingPrecision = 2
-	  fillMatrix(mutableMatrix(RR,5,10))
-	  fillMatrix(mutableMatrix(ZZ,5,10),UpperTriangular=>true)
-	  fillMatrix(mutableMatrix(QQ,5,10),Density=>.2,Height=>1000)
-	  fillMatrix(mutableMatrix(ZZ,5,10),25,Height=>1000)
-	  ///,
-     SeeAlso => {setRandomSeed, random, mutableMatrix}
-     }
-
 document { 
      Key => {norm,
 	  (norm, InfiniteNumber, Matrix),(norm, Matrix),(norm, RR, Matrix),(norm, InfiniteNumber, RingElement),(norm, MutableMatrix),
@@ -473,12 +465,6 @@ document { Key => {isInfinite, (isInfinite,Number)},
      isInfinite nan
      ///,
      SeeAlso => {isFinite, isANumber}
-     }
-
-document {
-     Key => associatedPrimes,
-     Headline => "find the associated primes of an ideal",
-     SeeAlso => { "PrimaryDecomposition :: PrimaryDecomposition"}     
      }
 
 document {
@@ -566,6 +552,7 @@ document {
 
 document {
      Key => {(quotientRemainder,RingElement,RingElement),
+	  (quotientRemainder,InexactNumber,RingElement), (quotientRemainder,RingElement,InexactNumber),
 	  (quotientRemainder,Number,RingElement), (quotientRemainder,RingElement,Number)},
      Headline => "quotient and remainder",
      Usage => "(q,r) = quotientRemainder(f,g)",
@@ -694,94 +681,6 @@ document { Key => (symbol ||,GradedModuleMap,GradedModuleMap),
      ///
      }
 
-for n in {BasisElementLimit, PairLimit, DegreeLimit} do document {
-     Key => [quotient,n],
-     PARA {
-     	  "The value for this optional argument is passed through to ", TO gb, " when
-     	  one of the following methods is used: ", TO (quotient,Ideal,Ideal), ", ", TO (quotient,Ideal,RingElement), ",
-     	  ", TO (quotient,Module,Ideal), ", ", TO (quotient,Module,Module), ", and ", TO (quotient,Module,RingElement), "."
-	  }
-     }
-
-for n in {BasisElementLimit,PairLimit} do document {
-     Key => [saturate,n],
-     PARA {
-     	  "The value for this optional argument is passed through to ", TO gb, " when
-     	  one of the following methods is used: ", TO (saturate,Ideal), ", ", TO (saturate,Ideal,Ideal), ",
-     	  ", TO (saturate,Ideal,RingElement), "."
-	  }
-     }
-
-document {
-     Key => [associatedPrimes,Strategy],
-     "The strategy option value is currently not considered while computing associated primes",
-     PARA{},
-     "There are three methods for 
-     computing associated primes in Macaulay2: If the ideal is a monomial ideal, use code that 
-     Greg Smith and Serkan Hosten wrote.  If a primary decomposition has already been found, use the
-     stashed associated primes found.  If neither of these is the case, then use Ext 
-     modules to find the associated primes (this is ", TT "Strategy=>1", ")",
-     PARA{},
-     "In order to use the monomial ideal algorithm, it is necessary
-     to make ", TT "I", " into a monomial ideal.",
-     EXAMPLE lines ///
-         S = QQ[a,b,c,d,e];
-     	 I1 = ideal(a,b,c);
-	 I2 = ideal(a,b,d);
-	 I3 = ideal(a,e);
-	 P = I1*I2*I3
-	 L1 = associatedPrimes P
-	 L2 = apply(associatedPrimes monomialIdeal P, J -> ideal J)
-	 M1 = set apply(L1, I -> sort flatten entries gens I)
-	 M2 = set apply(L2, I -> sort flatten entries gens I)
-	 assert(M1 === M2)
-     ///,
-     "The method using Ext modules comes from     
-     Eisenbud-Huneke-Vasconcelos, Invent. Math 110 (1992) 207-235."
-     }
-
-document {
-     Key => "rootPath",
-     Usage => "rootPath",
-     Outputs => {
-	  String => "the path, as seen by external programs, to the root of the file system seen by Macaulay2"
-	  },
-     PARA {
-	  "This string may be concatenated with an absolute path to get one understandable by external programs.
-	  Currently, this makes a difference only under Microsoft Windows with Cygwin, but there it's crucial
-	  for those external programs that are not part of Cygwin.  Fortunately, programs compiled under Cygwin
-	  know were to look for files whose paths start with something like ", TT "C:/", ", so it is safe
-	  always to concatenate with the value of ", TO "rootPath", ", even when it is unknown whether the
-	  external program has been compiled under Cygwin."
-	  },
-     EXAMPLE lines ///
-     fn = temporaryFileName()
-     rootPath | fn
-     ///,
-     SeeAlso => {"rootURI"}
-     }
-
-document {
-     Key => "rootURI",
-     Usage => "rootURI",
-     Outputs => {
-	  String => "the path, as seen by an external browser, to the root of the file system seen by Macaulay2"
-	  },
-     PARA {
-	  "This string may be concatenated with an absolute path to get one understandable by an external browser.
-	  Currently, this makes a difference only under Microsoft Windows with Cygwin, but there it's crucial
-	  for those external programs that are not part of Cygwin.  Fortunately, programs compiled under Cygwin
-	  know were to look for files whose paths start with something like ", TT "C:/", ", so it is safe
-	  always to concatenate with the value of ", TO "rootPath", ", even when it is unknown whether the
-	  external program has been compiled under Cygwin."
-	  },
-     EXAMPLE lines ///
-     fn = temporaryFileName()
-     rootURI | fn
-     ///,
-     SeeAlso => {"rootPath"}
-     }
-
 doc ///
    Key
      groebnerBasis
@@ -845,7 +744,7 @@ doc ///
       gbI = ideal groebnerBasis(I, Strategy=>"F4");
       netList gbI_*
    Caveat
-     (1) The MGB and F4 options are experimental, work only over a finite field of char < 2^{32}, not over
+     (1) The MGB and F4 options are experimental, work only over a finite field of char $< 2^{32}$, not over
      quotient rings, and not over exterior or Weyl algebras.  However, these versions can be much
      faster when they apply. (2) The experimental versions do not stash their results into the ideal
      or module. (3) The experimental version only works for ideals currently.

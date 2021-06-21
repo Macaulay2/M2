@@ -8,7 +8,9 @@ newPackage(
 		  Email => "mike@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/~mike/"}},
     	Headline => "examples of ideals",
-     	PackageImports => { "Markov" },
+     	PackageImports => { 
+            "GraphicalModels" 
+            },
     	DebuggingMode => false
     	)
 
@@ -281,15 +283,21 @@ PellikaanJaworski = (kk,m) -> (
     R := kk[vars(0..m-1)];
     PJ(R,m))
 
-bayes = (Glist,d) -> (
-     R := markovRing d;
-     G := makeGraph Glist;
-     S := globalMarkovStmts G;
-     J := markovIdeal(R,S);
-     F := marginMap(1,R);
-     J = F J;
-     ideal mingens J
-     )
+bayes = method()
+bayes(List, Sequence) := Ideal => (Glist, d) -> (
+    -- Note: this now uses GraphicalModels, not Markov.
+    -- example: Glist is {{}, {}, {1}, {3}, {1,4}}
+    --   represents a directed graph on 1..5
+    -- example: d is (2,2,2,2,2) (length is #vertices in digraph of Glist
+    R := markovRing d;
+    Glist = for i from 0 to #Glist-1 list {i+1, Glist#i};
+    G := digraph Glist;
+    S := globalMarkov G;
+    J := conditionalIndependenceIdeal(R,S);
+    F := marginMap(1,R);
+    J = F J;
+    ideal mingens J
+    )
 
 Fabrice24 = (kk) -> (
   (x1, x2, x3, y1, y2, y3, z1, z2, z3) := ("x1", "x2", "x3", "y1", "y2", "y3", "z1", "z2", "z3")/getSymbol;
@@ -582,10 +590,38 @@ doc ///
      getExampleFile
 ///
 
-end
+end--------------------------------------------------
 
 restart
 
+debug needsPackage "ExampleIdeals"
+E = examplesBayes();
+elapsedTime for k in keys E do (
+    I = example(E, k);
+    elapsedTime c := codim I;
+    << E#k#0 << " has codim "  << c << endl;
+    )
+
+box E
+example(E, 5)
+
+fil = openOut "markovIdeals";
+for k in keys E do (
+    J = example(E, k);
+    fil << show(E, k) << endl;
+    for f in J_* do fil << f << endl;
+    )
+close fil
+
+fil = openOut "graphModelsIdeals";
+for k in keys E do (
+    J = example(E, k);
+    fil << show(E, k) << endl;
+    for f in J_* do fil << f << endl;
+    )
+close fil
+
+I2 = example(E, 5);
 ------------------------------------
 -- examples for the singular code --
 ------------------------------------

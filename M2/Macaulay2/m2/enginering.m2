@@ -244,7 +244,8 @@ toString EngineRing := toString @@ expression
 net EngineRing := net @@ expression
 
 ZZ _ EngineRing := 
-RR _ EngineRing := RingElement => (i,R) -> new R from i_(R.RawRing)
+RR _ EngineRing :=
+RRi _ EngineRing := RingElement => (i,R) -> new R from i_(R.RawRing)
 
 new RingElement from RawRingElement := (R, f) -> (
      -- this might take too much time:
@@ -282,7 +283,6 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
      toExternalString FractionField := F -> toString describe F
 
 -- freduce := (f) -> (numerator f)/(denominator f)
-isHomogeneous EngineRing := R -> isHomogeneous 0_R
 
 factoryAlmostGood = R -> (
      k := coefficientRing R;
@@ -300,7 +300,9 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      if not factoryGood R then error "not implemented yet: fraction fields of polynomial rings over rings other than ZZ, QQ, or a finite field";
      R.frac = F := new FractionField from rawFractionRing R.RawRing;
      F.frac = F;
+     F.isCommutative = true;
      F.baseRings = append(R.baseRings,R);
+     F.isHomogeneous = isHomogeneous R and all (degrees R, deg -> all (deg, i -> i === 0));
      commonEngineRingInitializations F;
      factor F := options -> f -> factor numerator f / factor denominator f;
      toString F := x -> toString expression x;
@@ -411,7 +413,7 @@ EngineRing _ ZZ := (R,i) -> (
 
 size RingElement := f -> rawTermCount(numgens ring f, raw f)
 
-isHomogeneous RingElement := f -> rawIsHomogeneous raw f
+isHomogeneous RingElement := f -> isHomogeneous ring f and rawIsHomogeneous raw f
 
 + RingElement := identity
 - RingElement := RingElement => x -> new ring x from -raw x

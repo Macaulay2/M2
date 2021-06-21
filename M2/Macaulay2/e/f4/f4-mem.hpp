@@ -3,8 +3,8 @@
 #ifndef __f4mem_h_
 #define __f4mem_h_
 
-#include "../newdelete.hpp"
-#include "moninfo.hpp"  // only for monomial_word
+#include "newdelete.hpp"
+#include "f4/moninfo.hpp"  // only for monomial_word
 
 typedef int *f4vec;
 

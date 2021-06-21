@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 export {"fglm"}
 
-debug Core
+importFrom_Core { "RawMutableMatrix", "raw", "rawLUincremental", "rawTriangularSolve" }
 
 -------------------------------------------------------------------------------
 --- top level functions
@@ -155,7 +155,7 @@ backSub(MutableMatrix, MutableMatrix, ZZ) := RawMutableMatrix => opts -> (U, x, 
     )
 
 -*
-backSub(MutableMatrix, MutableMatrix, ZZ) := (U, x, n) -> (
+backSub(MutableMatrix, MutableMatrix, ZZ) := Nothing => (U, x, n) -> opts -> (
     for i from 1 to n do (
 	x_(n-i, 0) = U_(n-i, n) / U_(n-i,n-i);
 	columnAdd(U, n, -x_(n-i, 0), n-i);
@@ -186,7 +186,7 @@ forwardSub(MutableMatrix, MutableMatrix, ZZ) := RawMutableMatrix => opts -> (L, 
 -*
 forwardSub(MutableMatrix, MutableMatrix, ZZ) := Nothing => opts -> (L, x, n) -> (
     for i to n - 1 do (
-	if opts.Strategy == "incremental" then x_(i, 0) = L_(i, n) else x_(i, 0) = L_(i, n) / L_(i,i);
+	x_(i, 0) = if opts.Strategy === "incremental" then L_(i, n) else L_(i, n) / L_(i,i);
 	columnAdd(L, n, -x_(i, 0), i);
 	);
     )

@@ -29,7 +29,6 @@ undocumented {
      (mathML, LITERAL),
      (mathML, MatrixExpression),
      (mathML, Minus),
-     (mathML, ModuleMap),
      (mathML, Monoid),
      (mathML, MonoidElement),
      (mathML, MutableHashTable),

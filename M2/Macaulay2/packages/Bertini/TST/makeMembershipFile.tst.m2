@@ -1,7 +1,7 @@
 loadPackage("Bertini",Reload=>true)
 
 
----Given a set of sample solutions or a solutions file AND a witness data file (this is created after performing a Bertini postive dimensional run) we can do a component membership test.
+---Given a set of sample solutions or a solutions file AND a witness data file (this is created after performing a Bertini positive dimensional run) we can do a component membership test.
 --A component membership test is tracktype 3.
 
     makeB'InputFile(storeBM2Files,
@@ -24,7 +24,7 @@ assert({(2,0)}==theIM_0)
 assert((2,0)==theIM_0_0)
 
 --Our incidence matrix is flattened to a list.
---The number of elemenets in theIM is equal to the number of points in the solutions file.
+--The number of elements in theIM is equal to the number of points in the solutions file.
 --Each element of theIM is a list of sequences of 2 elements (codim,component Number).
 --Note that we follow the Bertini convention and switch from (dimension,component number) indexing to (codimension,component number) indexing.
 

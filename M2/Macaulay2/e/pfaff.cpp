@@ -1,7 +1,7 @@
 // Copyright 1996 Michael E. Stillman.
 
-#include "comb.hpp"
 #include "pfaff.hpp"
+#include "comb.hpp"
 #include "interrupted.hpp"
 
 PfaffianComputation::PfaffianComputation(const Matrix *M0, int p0)

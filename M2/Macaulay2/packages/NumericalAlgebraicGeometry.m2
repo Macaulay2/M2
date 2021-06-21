@@ -3,8 +3,8 @@
 
 newPackage select((
      "NumericalAlgebraicGeometry",
-     Version => "1.14",
-     Date => "Aug 2019",
+     Version => "1.17",
+     Date => "Mar 2021",
      Headline => "numerical algebraic geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -14,8 +14,10 @@ newPackage select((
 	  },
      Keywords => {"Numerical Algebraic Geometry"},
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
-     PackageExports => {"NAGtypes","NumericalHilbert","SLPexpressions","LLLBases"},
-     PackageImports => {"PHCpack","Bertini","Truncations"},
+     PackageExports => {"NAGtypes",
+	 "NumericalLinearAlgebra",
+	 "SLPexpressions"},
+     PackageImports => {"PHCpack","Bertini"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      --DebuggingMode => true,
@@ -49,7 +51,8 @@ export {
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","Certified",
      "EndZoneFactor", "maxCorrSteps", "InfinityThreshold", 
-     "Normalize", "Projectivize",
+     -- "Normalize", -- exported by NumericalLA 
+     "Projectivize",
      "AffinePatches", "DynamicPatch",
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
      "NoOutput",
@@ -415,8 +418,6 @@ load "./NumericalAlgebraicGeometry/decomposition.m2"
 load "./NumericalAlgebraicGeometry/positive-dim-methods.m2"
 load "./NumericalAlgebraicGeometry/deflation.m2"
 load "./NumericalAlgebraicGeometry/SLP.m2"
-load "./NumericalAlgebraicGeometry/npd.m2"
-load "./NumericalAlgebraicGeometry/polynomial-space.m2"
 
 load "./NumericalAlgebraicGeometry/WSet-deflation.m2"
 
@@ -428,7 +429,7 @@ makeHom4psInput (Ring, List) := (R, T) -> (
 --      T = polynomials of target system (in R)
 -- OUT: (name, perm), where
 --      name = input filename   
---      perm = hashtable of order of appearences of variables in the input
+--      perm = hashtable of order of appearances of variables in the input
   filename := temporaryFileName() | "input"; 
   s := "{\n";
   scan(T, p -> s = s | replace("ii", "I", toString p) | ";\n");
@@ -493,9 +494,6 @@ selectUnique List := o -> sols ->(
 NAGtrace = method()
 NAGtrace ZZ := l -> (numericalAlgebraicGeometryTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
 
--- conjugate all entries of the matrix (should be a part of M2!!!)
-conjugate Matrix := M -> matrix(entries M / (row->row/conjugate))
- 
 -- normalized condition number of F at x
 conditionNumber = method()
 conditionNumber Matrix := M -> (s := first SVD M; if min s == 0 then infinity else max s / min s)

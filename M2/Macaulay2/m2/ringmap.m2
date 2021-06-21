@@ -10,10 +10,7 @@ raw RingMap := f -> f.RawRingMap
 
 expression RingMap := f -> (expression map) (expression (target f, source f, first entries matrix f))
 toString RingMap := f -> toString expression f
---net RingMap := f -> net expression f -- can't do that because of annoying spacing issue
-net RingMap := f -> horizontalJoin(
-     "map(", net target f, ",", net source f, ",", net first entries matrix f, ")"
-     )
+net RingMap := f -> net expression f
 texMath RingMap := x -> texMath expression x
 
 describe RingMap := f -> Describe expression f

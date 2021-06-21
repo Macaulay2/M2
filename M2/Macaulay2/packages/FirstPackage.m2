@@ -6,7 +6,7 @@ newPackage(
     Authors => {
 	{Name => "Jane Doe", Email => "doe@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~doe/"}},
     Headline => "an example Macaulay2 package",
-    Keywords => {"Miscellaneous"},
+    Keywords => {"Documentation"},
     DebuggingMode => false
     )
 

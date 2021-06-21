@@ -1,9 +1,9 @@
 /* Copyright 2020 by Mahrud Sayrafi */
 
-#include "strings-exports.h"
-
-#include <boost/regex.hpp>
 #include <iostream>
+#include <sstream>
+#include "strings-exports.h"
+#include <boost/regex.hpp>
 
 #define DEBUG_REGEX 0
 
@@ -48,8 +48,8 @@ extern "C" {
 /* returns an array of pairs (s, r), indicating starting point
  * and length of the first match and its capture groups */
 M2_arrayint regex_search(const M2_string pattern,
-                         const size_t start,
-                         const size_t range,
+                         const int start,
+                         const int range,
                          const M2_string text,
                          int regex_flags,
                          int match_flags)
@@ -178,12 +178,12 @@ M2_ArrayString regex_separate(const M2_string pattern,
   std::cerr << "string:\t" << M2_tocharstar(text) << std::endl;
 #endif
 
-  /* adjusting the default match flags for separate to avoid infinite loops */
-  match_flags = match_flags | boost::match_not_null;
-
   std::string str;
   std::vector<std::string> strings;
   std::vector<char*> cstrings;
+
+  auto head = start;
+  auto step = 0;
 
   while (start < text->len)
     {
@@ -192,18 +192,27 @@ M2_ArrayString regex_separate(const M2_string pattern,
       if (match->len == 0) break;
 
       auto pair = match->array;
-      auto part = M2_substr(text, start, pair[0] - start);
+      auto part = M2_substr(text, head, pair[0] - head);
 
-      str = M2_tocharstar(part);
-      strings.push_back(str);
+      /* avoid infinite loops by stepping at least once */
+      step = (pair[0] + pair[1] > start) ? 0 : 1;
 
-      range = start + range - pair[0] - pair[1];
-      start = pair[0] + pair[1];
+      if (pair[0] - head > 0 or step == 0)
+	{
+	  str = M2_tocharstar(part);
+	  strings.push_back(str);
+	}
+
+      head = pair[0] + pair[1];
+      range = start + range - head - step;
+      start = head + step;
+
+      step = pair[1] > 0 ? 0 : 1;
     }
 
-  if (start <= text->len)
+  if (text->len - head > 0 or step == 0)
     {
-      str = M2_tocharstar(M2_substr(text, start, text->len - start));
+      str = M2_tocharstar(M2_substr(text, head, text->len - head));
       strings.push_back(str);
     }
 

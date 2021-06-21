@@ -376,7 +376,7 @@ doc ///
 	       there is a basis of homogeneous weight vectors $\{e_i''\}$ 
 	       of $E$, with $v_i$ the weight of $e_i''$.
 	       Notice that the change of basis from $\{e_i\}$ to $\{e_i''\}$ is
-	       not retuned.
+	       not returned.
 	       
 	       This method implements an algorithm introduced in 
 	       @HREF("http://dx.doi.org/10.1016/j.jsc.2015.05.004","Galetto - Propagating 
@@ -469,7 +469,7 @@ doc ///
 	       in $R$ are weight vectors for the action of $T$.
 	       
 	       This method can be used to obtain the decomposition into
-	       highest weight reperesentations of various objects over $R$ that
+	       highest weight representations of various objects over $R$ that
 	       carry a compatible $G$-action. These objects can be ideals in $R$,
 	       quotients of $R$ by an ideal, $R$-modules or the terms in a 
 	       complex of free $R$-modules.

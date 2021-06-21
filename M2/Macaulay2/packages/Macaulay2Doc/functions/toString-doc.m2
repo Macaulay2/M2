@@ -36,6 +36,7 @@ undocumented {
 (toString,MutableList),
 (toString,Option),
 (toString,Function),
+(toString,FunctionBody),
 (toString,Symbol),
 (toString,Hypertext),
 (toString,Net),

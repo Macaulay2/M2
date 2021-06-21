@@ -1,29 +1,22 @@
-export {
-    "tests"
-    }
-    
 debug Core -- for ZZp
-
-tests = {
-    "testDeterminant",
-    "testInverse",
-    "testMult",
-    "testRank",
-    "testNullspace",
-    "testSolve",
-    "testRankProfile",
-    "testLUBoundaryCases",
-    "testMutableMatrices"
-    --"testLU"
-    --"testRREF"
-    }
-
 
 TEST ///
   debug Core
-  time runTests(fields, tests, set {
-          ("QQ", "testLUBoundaryCases")
-          })
+  time runTests(fields,  {
+	  "testDeterminant",
+	  "testInverse",
+	  "testMult",
+	  "testRank",
+	  "testNullspace",
+	  "testSolve",
+	  "testRankProfile",
+	  "testLUBoundaryCases",
+	  "testMutableMatrices"
+	  --"testLU"
+	  --"testRREF"
+	  }, set {
+	  ("QQ", "testLUBoundaryCases")
+	  })
 ///
 
 ///
@@ -83,7 +76,7 @@ end--
 
 debug Core
 
--- QQFlint: testrank:  takes alot of time, why?
+-- QQFlint: testrank:  takes a lot of time, why?
 --    testNullspace: bus error!
 -- ZZ: determinant: fails
 -- ZZpFlint: 

@@ -16,7 +16,7 @@
 #include "gbweight.hpp"
 #include "reducedgb.hpp"
 
-#include "f4/monsort.hpp"
+#include "monsort.hpp"
 
 #include "interrupted.hpp"
 
@@ -567,6 +567,7 @@ gbB::spairs::iterator gbB::choose_pair(gbB::spairs::iterator first,
   return first; /* MES: really do something here... */
 }
 
+namespace {
 struct spair_sorter
     : public std::binary_function<gbB::spair *, gbB::spair *, bool>
 {
@@ -594,6 +595,7 @@ struct spair_sorter
     return result;
   }
 };
+}; // unnamed namespace
 
 class SPolySorterB
 {

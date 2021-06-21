@@ -3,12 +3,13 @@
 --- notes: 
 
 document { 
-     Key => {cos, (cos,ZZ), (cos,CC),(cos,RR),(cos, QQ)},
+     Key => {cos, (cos,ZZ), (cos,CC),(cos,RR),(cos, QQ),(cos, RRi)},
      Headline => "compute the cosine",
-     Usage => "cos x",
-     Inputs => { "x" => RR },
+     Usage => "cos x\ncos I",
+     Inputs => { "x" => RR,"I"=>RRi},
      Outputs => { 
-	  RR => { "the cosine of ", TT "x", "" } 
+	  RR => { "the cosine of ", TT "x"},
+      RRi => { "an interval containing the cosines of points of ", TT "I"}
 	  },
      EXAMPLE {
 	  "cos 2"

@@ -839,7 +839,7 @@ factorWitnessSet (WitnessSet ) := o->  w -> (
     name = PHCinputFile | "_f" | toString(count+1);
   );
   stdio << "found " << count << " irreducible factors " << endl;
-  for ws in result do ws#IsIrreducible=true;
+  for ws in result do ws.cache.IsIrreducible=true;
   return numericalVariety(toList(result));
 )
 
@@ -1112,7 +1112,7 @@ solveSystem = method(TypicalValue => List,
   Options => {Verbose => false, numThreads=>0, randomSeed => -1, 
               computingPrecision => 1})
 solveSystem List := List =>  o->system -> (
-  -- IN:  system = list of polynomials with complex coeffiecients, 
+  -- IN:  system = list of polynomials with complex coefficients,
   -- i.e. the system to solved 
   -- OUT: solutions to the system, a list of Points
   -- fixed removing of nonzero slack variables
@@ -1206,7 +1206,7 @@ solveSystem List := List =>  o->system -> (
 
 solveRationalSystem = method(TypicalValue => List, Options => {Verbose => false})
 solveRationalSystem  List :=  o-> system -> (
-  -- IN:  system = list of rational equations with complex coeffiecients, 
+  -- IN:  system = list of rational equations with complex coefficients,
   -- i.e. the system to solved
   -- OUT: solutions to the system, a list of Points
   
@@ -1338,7 +1338,7 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
   -- IN: T, target system to be solved;
   --     S, start system with solutions in Ssols;
   --     Ssols, solutions at the start of the paths.
-  -- OPT INTPUTS: gamma, constant for gamma trick
+  -- OPT INPUTS: gamma, constant for gamma trick
   --     tDegree, degree of continuation parameter      
   -- OUT: Tsols, solutions at the end of the paths.
   
@@ -1476,7 +1476,7 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
     ));
     totalN := #result;
     scan(result, s->(
-      if s#1#"mult">1 then error "mutiple root encountered";
+      if s#1#"mult">1 then error "multiple root encountered";
       if s#1#"mult"<0 then error "negative mutiplicity";
     ));			 
     result = select(result, 
@@ -2119,7 +2119,7 @@ system = (sub(ideal rationalSystem, CC[var1]))_*
 V = numericalIrreducibleDecomposition system
 WitSets = V#5;
 w = first WitSets
-w#IsIrreducible
+w.cache.IsIrreducible
 
 R = ring rationalSystem_0
 PD = primaryDecomposition ideal rationalSystem

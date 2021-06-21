@@ -16,7 +16,21 @@ newPackage(
 	Keywords => {"Lie Groups and Lie Algebras"},
 	AuxiliaryFiles => true,
         DebuggingMode => false,
-	Headline => "computations in graded Lie algebras"
+	Headline => "computations in graded Lie algebras",
+	Certification => {
+	     "journal name" => "The Journal of Software for Algebra and Geometry",
+	     "journal URI" => "http://j-sag.org/",
+	     "article title" => "Software for doing computations in graded Lie algebras",
+	     "acceptance date" => "28 August 2020",
+	     "published article URI" => "https://msp.org/jsag/2021/11-1/p02.xhtml",
+             "published article DOI" => "10.2140/jsag.2021.11.9",
+	     "published code URI" => "",
+     	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/GradedLieAlgebras.m2",
+	     "release at publication" => "f0a30a45ffbd70f81cc7b5dece281162b4919fdf",	    -- git commit number in hex
+	     "version at publication" => "3.0",
+	     "volume number" => "11",
+	     "volume URI" => "https://msp.org/jsag/2021/11-1/"
+	     }
    	) 
   
 export {
@@ -3381,7 +3395,7 @@ holonomyLocal(ZZ,LieAlgebra) := (i,L)->(
 --   belong to the same L_i.
 
 
-decompose(LieAlgebra) := (L)->(
+decompose(LieAlgebra) := {} >> opts -> (L)->(
     if not L#cache.?localone then 
        error "the LieAlgebra must be a holonomy Lie algebra" else (
        loc:=join (apply(toSequence L#cache.localone,y->basis(3,lieSubAlgebra y))|
@@ -3644,7 +3658,7 @@ isIsomorphism(LieAlgebraMap):=f->(
 -------------------------------------
 -- coefficients
 --------------------------------------
--- this gives the list of coeffients and the list of Lie monomials 
+-- this gives the list of coefficients and the list of Lie monomials 
 -- of a LieElement. This element may be non-normalized, in case the
 -- input will change to normal form. If one wants to keep the non-normal
 -- expression one has to use the formal Lie operators @,/,++.

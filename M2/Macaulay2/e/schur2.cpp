@@ -8,6 +8,7 @@
 #include "relem.hpp"
 #include "monomial.hpp"
 #include "ringmap.hpp"
+#include "monoid.hpp"
 
 const int SCHUR_MAX_WT = 100;
 const int LARGE_NUMBER = 32000;

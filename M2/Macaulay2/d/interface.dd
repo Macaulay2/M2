@@ -7,29 +7,39 @@ use common;
 use hashtables;
 use struct;
 
-header "
-  #include <engine.h>
-  #include <ZZp.hpp>
-  #include <monomial.hpp>
-  #include <exceptions.hpp>
-  #include <relem.hpp>
-  #include <aring-glue.hpp>
-  #include <aring-zzp.hpp>
+header "// TODO: break apart this file so each piece includes only one:
+#include <interface/aring.h>
+#include <interface/cra.h>
+#include <interface/factory.h>
+#include <interface/flint.h>
+#include <interface/freemodule.h>
+#include <interface/groebner.h>
+#include <interface/matrix.h>
+#include <interface/monoid.h>
+#include <interface/monomial-ideal.h>
+#include <interface/monomial-ordering.h>
+#include <interface/mutable-matrix.h>
+#include <interface/random.h>
+#include <interface/ring.h>
+#include <interface/ringelement.h>
+#include <interface/ringmap.h>";
 
-  #include <stdexcept>
-  void test_catch0() { 
-       throw (std::runtime_error(\"test\")); 
-       }
-  int test_catch() {
-       try { test_catch0(); } catch (const std::runtime_error& x) { return 1; }
-       return 0;
-       }
-  
-  ";
+header "// TODO: remove the following headers
+#include <engine.h>                         // for IM2_Computation_set_stop
+#include <error.h>                          // for ERROR
+#include <ZZp.hpp>                          // for Z_mod
+#include <exceptions.hpp>                   // for engine_error, CATCH, TRY
+#include <monomial.hpp>                     // for Monomial
+#include <relem.hpp>                        // for RingElement";
 
 -- debugging:
 export engineMemory(e:Expr):Expr := toExpr(Ccode(string, "engineMemory()"));
 setupfun("engineMemory", engineMemory);
+
+-- testing C++ exceptions
+header "#include <stdexcept>
+void test_catch0() { throw (std::runtime_error(\"test\")); }
+int test_catch() { try { test_catch0(); } catch (const std::runtime_error& x) { return 1; } return 0; }";
 
 export testCatch(e:Expr):Expr := toExpr(Ccode(bool,"0 != test_catch()"));
 setupfun("testCatch",testCatch);
@@ -673,6 +683,12 @@ export rawConwayPolynomial(e:Expr):Expr := (
     );
 setupfun("rawConwayPolynomial",rawConwayPolynomial);
 
+export rawRRi(e:Expr):Expr := (
+     when e is prec:ZZcell do if !isInt(prec) then WrongArgSmallInteger(1)
+     else toExpr(Ccode(RawRingOrNull, "IM2_Ring_RRi(",toInt(prec),")" ))
+     else WrongArgZZ(1));
+setupfun("rawRRi",rawRRi);
+
 export rawRR(e:Expr):Expr := (
      when e is prec:ZZcell do if !isInt(prec) then WrongArgSmallInteger(1)
      else toExpr(Ccode(RawRingOrNull, "IM2_Ring_RRR(",toInt(prec),")" ))
@@ -759,6 +775,80 @@ export rawSolvableAlgebra(e:Expr):Expr := (
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("rawSolvableAlgebra",rawSolvableAlgebra);
+
+export rawNCFreeAlgebra(e:Expr):Expr := (
+     when e is a:Sequence do 
+     if length(a) == 6 then 
+     when a.0 is R:RawRingCell do
+     when a.2 is degR:RawRingCell do
+     if isSequenceOfStrings(a.1) then 
+     if isSequenceOfSmallIntegers(a.3) then (
+     if isSequenceOfSmallIntegers(a.4) then (
+     if isSequenceOfSmallIntegers(a.5) then (	  
+	     names := getSequenceOfStrings(a.1);
+         toExpr(Ccode(RawRingOrNull, "rawRingM2FreeAlgebra(", R.p, ",",
+ 	       names, ",",
+           degR.p, ",",
+           getSequenceOfSmallIntegers(a.3), ",",
+           getSequenceOfSmallIntegers(a.4), ",",
+           getSequenceOfSmallIntegers(a.5),
+ 	       ")" ))
+     ) else WrongArg(6,"a sequence of small integers") 
+     ) else WrongArg(5,"a sequence of small integers") 
+     ) else WrongArg(4,"a sequence of small integers")
+     else WrongArg(2,"a sequence of strings to be used as names")
+     else WrongArg(3,"a raw ring")
+     else WrongArg(1,"a raw ring")
+     else WrongNumArgs(6)
+     else WrongNumArgs(6));
+setupfun("rawNCFreeAlgebra",rawNCFreeAlgebra);
+
+export rawRingM2FreeAlgebraQuotient(e:Expr):Expr := (
+    when e is s:Sequence do (
+    	if length(s) == 2 then (
+    	    when s.0 is wa:RawMatrixCell do (
+		a := wa.p;
+    	    	when s.1 is wb:ZZcell do (
+    		    if isInt(wb) then (
+		    	b := toInt(wb);
+    		    	toExpr(Ccode(RawRingOrNull,
+    			       "rawRingM2FreeAlgebraQuotient(", a, ",", b, ")"))
+    		    ) 
+	            else WrongArgSmallInteger(1)
+		)
+	        else WrongArgZZ(1)
+    	    )
+	    else WrongArg(0,"a raw matrix")
+	)
+        else WrongNumArgs(2)
+    )
+    else WrongNumArgs(2)
+);
+setupfun("rawRingM2FreeAlgebraQuotient",rawRingM2FreeAlgebraQuotient);
+
+export rawNCBasis(e:Expr):Expr := (
+     when e is s:Sequence do (
+     when s.0 is M:RawMatrixCell do (
+     if isSequenceOfSmallIntegers(s.1) then (
+     if isSequenceOfSmallIntegers(s.2) then (
+     when s.3 is wb:ZZcell do (
+     if isInt(wb) then (b := toInt(wb); 
+             toExpr(Ccode(RawMatrixOrNull,
+	             "rawNCBasis(",
+	             M.p, ",",
+	             getSequenceOfSmallIntegers(s.1), ",", -- lo_degree
+	             getSequenceOfSmallIntegers(s.2), ",", -- hi_degree
+	             b,                                    -- limit
+		     ")"
+	             ))
+     ) else WrongArgSmallInteger(4)
+     ) else WrongArgZZ(4)
+     ) else WrongArg(3,"a sequence of small integers")
+     ) else WrongArg(2,"a sequence of small integers")
+     ) else WrongArgMatrix(1)
+     ) else WrongNumArgs(3)
+     );
+setupfun("rawNCBasis",rawNCBasis);
 
 export rawLocalRing(e:Expr):Expr := (			    -- localization at a prime ideal
   when e is s:Sequence do (
@@ -1058,6 +1148,7 @@ export rawFromNumber(e:Expr):Expr := (
      is x:QQcell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_rational(", R.p,",", x.v, ")"))
      is x:RRcell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_BigReal(",R.p,",",x.v,")"))
      is x:CCcell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_BigComplex(",R.p,",",x.v,")"))
+     is x:RRicell do toExpr(Ccode(RawRingElementOrNull, "IM2_RingElement_from_Interval(",R.p,",",x.v,")"))
      else WrongArg(2,"an integer, real number, or complex number")
      else WrongArg(1,"a raw ring")
      else WrongNumArgs(2)
@@ -1164,6 +1255,13 @@ export rawToRR(e:Expr):Expr := (
      is x:RawRingElementCell do toExpr(Ccode(RRorNull, "IM2_RingElement_to_BigReal(",x.p, ")" ))
      else WrongArg("a raw ring element"));
 setupfun("rawToRR",rawToRR);
+
+export rawToRRi(e:Expr):Expr := (
+      when e
+      is x:RawRingElementCell do toExpr(Ccode(RRiorNull, "IM2_RingElement_to_Interval(",x.p, ")" ))
+      else
+    WrongArg("a raw ring element"));
+setupfun("rawToRRi",rawToRRi);
 
 export rawToCC(e:Expr):Expr := (
      when e
@@ -3891,6 +3989,45 @@ export rawGBBetti(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawGBBetti", rawGBBetti);
 
+export rawNCGroebnerBasisTwoSided(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 3 then (
+  when s.0 is wa:RawMatrixCell do (a := wa.p;
+  when s.1 is wb:ZZcell do (
+  if isInt(wb) then (b := toInt(wb);
+  when s.2 is wstrat:ZZcell do (
+  if isInt(wstrat) then (strat := toInt(wstrat);
+    toExpr(Ccode(RawMatrixOrNull,
+      "rawNCGroebnerBasisTwoSided(",
+        a, ",", b, ",", strat,
+      ")"
+    ))
+  ) else WrongArgSmallInteger(2)
+  ) else WrongArgZZ(2)
+  ) else WrongArgSmallInteger(1)
+  ) else WrongArgZZ(1)
+  ) else WrongArg(0,"a raw matrix")
+  ) else WrongNumArgs(3)
+  ) else WrongNumArgs(3)
+  );
+setupfun("rawNCGroebnerBasisTwoSided",rawNCGroebnerBasisTwoSided);
+
+export rawNCReductionTwoSided(e:Expr):Expr := (
+  when e is s:Sequence do (
+  if length(s) == 2 then (
+  when s.0 is wa:RawMatrixCell do (a := wa.p;
+  when s.1 is wb:RawMatrixCell do (b := wb.p;
+    toExpr(Ccode(RawMatrixOrNull,
+      "rawNCReductionTwoSided(",
+        a, ",", b, 
+      ")"
+    ))
+  ) else WrongArg(1,"a raw matrix")
+  ) else WrongArg(0,"a raw matrix")
+  ) else WrongNumArgs(2)
+  ) else WrongNumArgs(2)
+  );
+setupfun("rawNCReductionTwoSided",rawNCReductionTwoSided);
 -----------------------------------------------------------------------------
 -- LU
 -----------------------------------------------------------------------------
@@ -4284,6 +4421,20 @@ pi0(e:Expr):Expr := (
      else toExpr(pi(toULong(prec)))
      else WrongArgZZ(1));
 setupfun("pi0",pi0);
+
+piRRi0(e:Expr):Expr := (
+     when e is prec:ZZcell do
+     if !isULong(prec) then WrongArgSmallUInteger(1)
+     else toExpr(piRRi(toULong(prec)))
+     else WrongArgZZ(1));
+setupfun("piRRi0",piRRi0);
+
+eRRi0(e:Expr):Expr := (
+     when e is prec:ZZcell do
+     if !isULong(prec) then WrongArgSmallUInteger(1)
+     else toExpr(eRRi(toULong(prec)))
+     else WrongArgZZ(1));
+setupfun("eRRi0",eRRi0);
 
 mpfrConstantEuler(e:Expr):Expr := (
      when e is prec:ZZcell do if !isULong(prec) then WrongArgSmallUInteger(1) else (

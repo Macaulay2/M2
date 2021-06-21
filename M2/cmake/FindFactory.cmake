@@ -35,7 +35,7 @@ macro(_Factory_check_version)
   # Query Factory_VERSION
   file(READ "${FACTORYCONF_INCLUDE_DIR}/factory/factoryconf.h" _factory_version_header)
 
-  string(REGEX MATCH "define[ \t]+FACTORYVERSION[ \t]+\"([0-9]+)\.([0-9]+)\.([0-9]+)\""
+  string(REGEX MATCH "define[ \t]+PACKAGE_VERSION[ \t]+\"([0-9]+)\.([0-9]+)\.([0-9]+)\""
     _factory_version_match "${_factory_version_header}")
   set(FACTORY_MAJOR_VERSION "${CMAKE_MATCH_1}")
   set(FACTORY_MINOR_VERSION "${CMAKE_MATCH_2}")

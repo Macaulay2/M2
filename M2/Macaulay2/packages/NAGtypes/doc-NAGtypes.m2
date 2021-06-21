@@ -44,7 +44,7 @@ document {
 	  MaxPrecision, WindingNumber, DeflationNumber
 	  },
      Headline => "a type used to store a point in complex space",
-     "This type is used to store a solution to a polynomial system obtained by such fuctions as ", 
+     "This type is used to store a solution to a polynomial system obtained by such functions as ", 
      TO "NumericalAlgebraicGeometry::solveSystem", ", ", TO "NumericalAlgebraicGeometry::track",
      ". The following methods can be used to access a ", 
      TO "Point", ":",
@@ -91,7 +91,7 @@ document {
 	  {TO ErrorBoundEstimate, " -- an estimate of the distance from the approximation to the actual solution"},
 	  {TO MaxPrecision, " -- max precision used during the homotopy tracking"}, 
 	  {TO Multiplicity, " -- the multiplicity of an isolated solution"}, 
-	  {TO WindingNumber, " -- the winding numeber of a singular solution determined in the end-games"}, 
+	  {TO WindingNumber, " -- the winding number of a singular solution determined in the end-games"}, 
 	  {TO DeflationNumber, " -- number of first-order deflations in the regularization of a singular solution"},
 	  {TT "Tracker", " -- reserved for developers"}
 	  },
@@ -149,14 +149,16 @@ sortSolutions s
 	SeeAlso => {"NumericalAlgebraicGeometry::solveSystem", "NumericalAlgebraicGeometry::track", "areEqual"}
 	}
 
-document { Key => {Tolerance, 
+document { Key => {
 	[sortSolutions,Tolerance], 
 	[areEqual,Tolerance], 
 	[isGEQ,Tolerance], 
 	[isRealPoint,Tolerance], 
 	[realPoints,Tolerance], 
 	[solutionsWithMultiplicity,Tolerance],
-	[differencePointSet,Tolerance], [unionPointSet,Tolerance]
+	[reduceSpace,Tolerance],
+	[differencePointSet,Tolerance], 
+	[unionPointSet,Tolerance]
 	},
      Headline => "the tolerance of a numerical computation" 
      }
@@ -347,7 +349,7 @@ toAffineChart(2,{1,2,0,4,5,6})
 document {
     Key => {PolySystem, 
 	(ideal,PolySystem), (isHomogeneous,PolySystem), (jacobian,PolySystem), (net,PolySystem),
-	(ring,PolySystem), (equations,PolySystem), (parameters,PolySystem),
+	(ring,PolySystem), (equations,PolySystem), parameters, (parameters,PolySystem),
 	(numVariables,PolySystem), (numFunctions,PolySystem),(numParameters,PolySystem),
 	NumberOfPolys, NumberOfVariables, PolyMap, ContinuationParameter, 
 	SpecializationRing
@@ -578,7 +580,7 @@ document {
 	  {TT "Equations", " -- ", ofClass Ideal},
 	  {TT "Slice", " -- ", ofClass List, " or ", ofClass Matrix},
 	  {TT "Points", "--  a list of ", TO2(Point, "points")},
-	  {TT "IsIrreducible", " -- takes values ", TO "null", "(not determined), ", TO "true", ", or ", TO "false"}
+	  {TT "cache.IsIrreducible", " -- takes values ", TO "null", "(not determined), ", TO "true", ", or ", TO "false"}
 	  },
      "Optional keys:",
      UL {
@@ -928,6 +930,52 @@ doc ///
 
 doc ///
   Key
+    (areEqual,PolySpace,PolySpace)
+  Headline
+    approximate equality of subspaces spanned by polynomials
+  Usage
+    b = areEqual(A,B)
+  Inputs 
+    A:PolySpace
+    B:PolySpace
+  Outputs
+    b:Boolean
+  Description
+    Text    
+      Two spaces are approximately equal if 
+      the @TO numericalImage@ of their union of their generators 
+      has the same dimension as both of them. 
+    Example
+      R = CC[x,y];	
+      b = areEqual(polySpace matrix{{y^2,x^2+x*y}}, polySpace matrix{{x^2+x*y+y^2,y^2+0.00000001}})
+/// 
+
+doc ///
+  Key
+    (areEqual,DualSpace,DualSpace)
+  Headline
+    approximate equality of dual spaces
+  Usage
+    b = areEqual(A,B)
+  Inputs 
+    A:DualSpace
+    B:DualSpace
+  Outputs
+    b:Boolean
+  Description
+    Text    
+      Two dual spaces are approximately equal if 
+      the have (approximately) the same base @TO (point,DualSpace)@ 
+      and the linear spaces spanned by the differential operators are equal approximately.
+    Example
+      R = CC[x,y];
+      A = dualSpace(matrix{{y^2,x^2+x*y}},point{{1,1}})	
+      B = dualSpace(matrix{{x^2+x*y+y^2,y^2+0.00000001}},point{{1,1+0.00000001}})
+      b = areEqual(A,B)
+/// 
+
+doc ///
+  Key
     System
     numVariables
     (numVariables,System)
@@ -959,10 +1007,121 @@ doc ///
 ///
 
 doc ///
+     Key
+          addition
+	  (addition,PolySpace,PolySpace)
+	  [addition,Tolerance]
+     Headline
+          Union of polynomial spaces
+     Usage
+          S = addition(T, U)
+     Inputs
+	  T:PolySpace
+	  U:PolySpace
+     Outputs
+          S:PolySpace
+     Description
+          Text
+	       Finds the union of two polynomial spaces.
+///
+
+doc ///
+     Key
+	  (intersection,PolySpace,PolySpace)
+	  [(intersection,PolySpace,PolySpace),Tolerance]
+     Headline
+          Intersection of polynomial spaces
+     Usage
+          S = intersection(T, U)
+     Inputs
+	  T:PolySpace
+	  U:PolySpace
+     Outputs
+          S:PolySpace
+     Description
+          Text
+	       Finds the intersection of two polynomial spaces.
+///
+
+
+doc ///
+     Key
+          reduceSpace
+	  (reduceSpace,DualSpace)
+	  (reduceSpace,PolySpace)
+	  [reduceSpace,Monomials]
+     Headline
+          reduce the generators of a space
+     Usage
+          S = reduceSpace T
+     Inputs
+     	  T:DualSpace
+	       or @ofClass PolySpace@
+     Outputs
+          S:DualSpace
+	       or @ofClass PolySpace@
+     Description
+          Text
+	       Reduces the generators of a DualSpace or PolySpace so that the new generators are linearly independent, and each has
+	       a distinct lead monomial.  This is achieved by Gaussian reduction.
+	  Example
+	       R = CC[x,y];
+	       T = polySpace matrix{{x,y,x-y+1e-10}}
+	       S = reduceSpace T
+	       S = reduceSpace(T, Tolerance=>1e-12)
+///
+
+doc ///
+     Key
+          isContained
+	  (isContained,PolySpace,PolySpace)
+	  (isContained,DualSpace,DualSpace)
+	  [isContained,Tolerance]
+     Headline
+          Is one space contained in the other
+     Usage
+          b = isContained(S, T)
+	  b = isContained(D, E)
+     Inputs
+	  S:PolySpace
+	  T:PolySpace
+	  D:DualSpace
+	  E:DualSpace
+     Outputs
+          b:Boolean
+	       whether S is contained in T (or D in E).
+     Description
+          Text
+	       Determines numerically whether the first polynomial space is contained in the second.
+///
+
+doc ///
+    Key
+    	(random,PolySpace)
+    	(random,DualSpace)
+    	(random,ZZ,PolySpace)
+    	(random,ZZ,DualSpace)
+    Headline
+        random element of a subspace
+    Usage
+        f = random S
+	f = random(d,S)
+    Inputs
+        S:{PolySpace,DualSpace}
+    Outputs
+    	f:RingElement
+    Description
+    	Text
+	    Provides a random element of a (finite dimensional) @TO PolySpace@ or @TO DualSpace@ 
+	    (of the given degree/order {\tt d}).  	
+///
+
+--- HOMOTOPY ---------------------------------
+doc ///
   Key
     Homotopy
   Headline
-    a homotopy asbtract type
+    a homotopy abstract type
   Description
     Text
       A type that inherits from this {\bf abstract} type should supply methods for 
@@ -1017,6 +1176,17 @@ doc ///
 ///
 
 
+doc ///
+  Key
+    (texMath, PolySpace)
+    (texMath, WitnessSet)
+    (texMath, PolySystem)
+    (texMath, Point)
+    (texMath, DualSpace)
+  Headline
+    convert to TeX math format
+///
+
 -* doc template
 doc ///
   Key
@@ -1027,7 +1197,7 @@ doc ///
     D = ...
   Inputs 
     M:[Type]
-      [optional decription]
+      [optional description]
     p:[Type]
   Outputs
     D:[Type]

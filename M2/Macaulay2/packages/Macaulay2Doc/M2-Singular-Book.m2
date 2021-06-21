@@ -88,7 +88,7 @@ document {
      Key => "Singular Book 1.1.8",
      Headline => "computation in fields",
      SUBSECTION "Computation over ZZ and QQ",
-     "In Macaulay2, Integers are arbitary precision.  The ring of integers is denoted ZZ.",
+     "In Macaulay2, Integers are arbitrary precision.  The ring of integers is denoted ZZ.",
      EXAMPLE {
 	  "123456789^5",
 	  "matrix{{123456789^5}}",
@@ -298,7 +298,7 @@ document {
 document {
      Key => "Singular Book 1.3.15",
      Headline => "computing with radicals",
-     "Compute the radical of an ideal with ", TO radical, ".",
+     "Compute the radical of an ideal with ", TO "MinimalPrimes::radical", ".",
      EXAMPLE {
 	  "R = QQ[x,y,z];",
 	  "radical ideal(z^4+2*z^2+1)",

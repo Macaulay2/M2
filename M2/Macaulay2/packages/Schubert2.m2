@@ -1164,7 +1164,7 @@ blowup(AbstractVarietyMap) :=
      Ytilde.TangentBundle = abstractSheaf(Ytilde,
 	  Rank => dim Y,
 	  ChernClass => promote(chern(tangentBundle Y), D) + jLower (chern(g^* tangentBundle X) * alpha),
-          ChernCharacter => ch tangentBundle Y - jLower(ch(dual first bundles PN) * (todd OO(-x))^-1));
+          ChernCharacter => ch tangentBundle Y - jLower(ch dual first bundles PN * todd (- OO(-x))));
      -- to pull back a class from the blowup to PN we take E_i to -x*alphas#i; this corresponds to
      -- the fact that pushing forward and then pulling back a class on PN is the same as multiplying by x = c_1(O(1))
      jUpper := map(C, D, (for i from 0 to n-1 list -x * alphas#i) | flatten entries promote(iuppermatrix,C));

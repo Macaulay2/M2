@@ -1,0 +1,57 @@
+#This is a suppressions file for Macaulay2 running under valgrind.
+#You might need to install debugging symbols for libgc for this to work effectively
+
+
+#Currently, almost all of these relate to the fact that the mark & sweep process
+#can end up reading uninitialized memory, which valgrind complains about.
+{
+   libgc
+   Memcheck:Value8
+   ...
+   obj:*/libgc.so*
+}
+{
+   libgc
+   Memcheck:Cond
+   ...
+   obj:*/libgc.so*
+}
+{
+   libgc
+   Memcheck:Addr8
+   ...
+   obj:*/libgc.so*
+}
+{
+   libgc
+   Memcheck:Param
+   mmap(length)
+   ...
+   obj:*/libgc.so*
+}
+{
+   libgc
+   Memcheck:Param
+   mmap(start)
+   ...
+   obj:*/libgc.so*
+}
+{
+   libgc
+   Memcheck:Param
+   mprotect(len)
+   ...
+   obj:*/libgc.so*
+}
+
+
+#This rule is to deal with phantom leaks related to thread local storage
+#These are probably all safe (they are only "possible" leaks)
+{
+   pthread_create
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   ...
+   fun:pthread_create*
+}

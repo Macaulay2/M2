@@ -34,18 +34,17 @@ enum RingID {
   ring_ZZp,
   ring_ZZpFfpack,
   ring_ZZpFlint,
-  ring_GF,
   ring_GFM2,
   ring_GFGivaro,
   ring_GFFlintBig,
   ring_GFFlintZech,
+  ring_RRi,
   ring_RR,
   ring_CC,
   ring_RRR,
   ring_CCC,
   ring_tower_ZZp,
-  ring_old,      ///< refers to all rings which are not ConcreteRing's.
-  ring_top = 16  ///< used to determine the number of ring types
+  ring_old      ///< refers to all rings which are not ConcreteRing's.
 };
 
 /**
@@ -64,6 +63,7 @@ class DummyRing : public RingInterface
   typedef long ElementType;
 
   typedef ElementType elem;
+  typedef std::vector<elem> ElementContainerType;
 
   int characteristic() const { return 0; }
   unsigned int computeHashValue(const elem &a) const

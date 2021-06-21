@@ -139,8 +139,8 @@ int system_strcmp(M2_string s, M2_string t) {
   int slen = s->len, tlen = t->len, i;
   int ret = 0;
   int len = slen < tlen ? slen : tlen;
-  char *sarray = s->array;
-  char *tarray = t->array;
+  unsigned char *sarray = (unsigned char *)s->array;
+  unsigned char *tarray = (unsigned char *)t->array;
   for (i=0; i<len; i++) {
     unsigned char c = sarray[i];
     unsigned char d = tarray[i];
@@ -173,8 +173,8 @@ int system_strnumcmp(M2_string s,M2_string t) {
      int ret = 0;
      int len = slen < tlen ? slen : tlen;
      int innumber = FALSE;
-     char *sarray = s->array;
-     char *tarray = t->array;
+     unsigned char *sarray = (unsigned char *)s->array;
+     unsigned char *tarray = (unsigned char *)t->array;
      for (i=0; i<len; i++) {
 	  unsigned char c = sarray[i];
 	  unsigned char d = tarray[i];
@@ -343,7 +343,7 @@ M2_string system_realpath(M2_string filename) {
   char *fn = M2_tocharstar(filename);
   char buf[PATH_MAX+1];
   char *r = realpath(*fn ? fn : ".",buf);
-  if (isDirectory(r)) strcat(r,"/");
+  if (isDirectory(r) && r[1] != 0) strcat(r,"/");
   GC_FREE(fn);
   return r == NULL ? NULL : M2_tostring(buf);
  #else
@@ -699,7 +699,7 @@ char *name;
 int system_acceptBlocking(int so) {
 #ifdef HAVE_ACCEPT
   struct sockaddr_in addr;
-  SOCKLEN_T addrlen = sizeof addr;
+  socklen_t addrlen = sizeof addr;
 #ifdef HAVE_FCNTL
   fcntl(so,F_SETFL,0);
 #endif
@@ -864,7 +864,7 @@ void system_atend(void (*func)()){
      }
 
 int system_strncmp(M2_string s,M2_string t,int n) {
-  return strncmp(s->array,t->array,n);
+     return strncmp((char *)s->array,(char *)t->array,n);
 }
 
 void do_nothing () { }

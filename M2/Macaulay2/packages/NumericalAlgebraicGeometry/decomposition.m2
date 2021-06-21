@@ -33,7 +33,7 @@ assert(numericalRank evaluate(jacobian p.SolutionSystem,p) == 2)
 
 -----------------------------------------------------------------------
 -- DECOMPOSITION
-decompose WitnessSet := (W) -> (
+decompose WitnessSet := {} >> unusedOpts -> (W) -> (
      R := ring W;
      n := numgens R;
      k := dim W;
@@ -78,15 +78,15 @@ decompose WitnessSet := (W) -> (
 	  );
      incomplete := select(new List from cs, c->#c!=0);
      if #incomplete>0 then print "-- decompose: some witness points were not classified";
-     irred := apply(i'cs, c->new WitnessSet from {Equations=>W.Equations, Slice=>W.Slice, Points=>(W.Points)_c});
-     scan(irred, c->c.IsIrreducible = true);
+     irred := apply(i'cs, c->witnessSet(W.Equations, W.Slice, (W.Points)_c));
+     scan(irred, c->c.cache.IsIrreducible = true);
      irred | if #incomplete == 0 then {} 
              else {
-		 new WitnessSet from {
-		     Equations=>W.Equations, 
-		     Slice=>W.Slice, 
-		     Points=>(W.Points)_(flatten(incomplete))
-		     }
+		 witnessSet(
+		     W.Equations, 
+		     W.Slice, 
+		     (W.Points)_(flatten(incomplete))
+		     )
 		 }
      ) 
 

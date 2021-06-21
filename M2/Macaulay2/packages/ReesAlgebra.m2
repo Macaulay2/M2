@@ -75,7 +75,6 @@ export{
   "whichGm",
   "Tries",
   "jacobianDual",
-  "Jacobian",
   "symmetricAlgebraIdeal",
   "expectedReesIdeal",
   "PlaneCurveSingularities",
@@ -287,7 +286,7 @@ specialFiberIdeal(Module):= o->i->(
      Reesi:= reesIdeal(i, o);     
      S := ring Reesi;
      kk := ultimate(coefficientRing, S);
-     T := kk[gens S];
+     T := kk(monoid [gens S]);
      minimalpres := map(T,S);
      trim minimalpres Reesi
      )
@@ -834,21 +833,6 @@ doc ///
      versalEmbedding
 ///
 
-
-doc ///
-  Key
-    Jacobian  
-  Headline
-    Choose whether to use the Jacobian dual in the computation
-  Usage
-    reesIdeal(..., Jacobian => true)
-  SeeAlso
-   reesIdeal
-   reesAlgebra
-   specialFiberIdeal
-   specialFiber
-   expectedReesIdeal
-///
 
 doc ///
   Key
@@ -1722,7 +1706,7 @@ doc ///
       the function @TO isReduction@. It returns the smallest integer $k$ such that
       $JI^k = I^{k+1}$.
       
-      For further informaion, see the book:
+      For further information, see the book:
       Huneke, Craig; Swanson, Irena: Integral closure of ideals, rings, and modules, 
       London Mathematical Society Lecture Note Series, 336. Cambridge University Press, 
       Cambridge, 2006.
@@ -2304,16 +2288,16 @@ doc ///
      ideal to understand what's going on.
     Example
      irrelB = ideal(B_0,B_1)
-     intersection = saturate(D_0+D_1, irrelB)
-     codim intersection
-     degree intersection
+     doublePoint = saturate(D_0+D_1, irrelB)
+     codim doublePoint
+     degree doublePoint
     Text
      We can see the multiplicities of these components by comparing their degrees to the
      degrees of the reduced components
     Example
      divisors = primaryDecomposition totalTransform
      strictTransform = divisors_0
-     exeptional = divisors_1
+     exceptional = divisors_1
      divisors/(i-> degree i/degree radical i)
     Text
      That is, the exceptional component occurs with multiplicity 2 (in general we'd 
@@ -2638,7 +2622,7 @@ TEST///
 kk = ZZ/101
 S = kk[x,y]
 I = ideal"x2y";J=ideal"xy2"
-assert(intersectInP(I,J) == {{2, ideal x}, {5, ideal (y, x)}, {2, ideal y}})
+assert(intersectInP(I,J) == {{5, ideal (y, x)}, {2, ideal y}, {2, ideal x}})
 I = ideal"y-x2";J=ideal y
 assert(intersectInP(I,J) == {{2, ideal (y, x)}})
 ///

@@ -243,11 +243,12 @@ coarseMultigradedRegularity ChainComplex := o-> F -> (
     --we assume F starts in homol degree 0.
     t := degreeLength ring F;
     range := toList(min F..max F-1);
-    degsF := apply(range,i -> degrees (F_i));
-    lowerbounds := flatten flatten apply(range, i->(
-	    apply(degsF_i, d -> apply(LL(i,t), ell -> d-ell))
-	    ));
-    apply(t, i-> max apply(lowerbounds, ell->ell_i))
+    degsF := flatten apply(range,i -> degrees (F_i));
+    --lowerbounds := flatten flatten apply(range, i->(
+    --	  apply(degsF_i, d -> apply(LL(i,t), ell -> d-ell))
+    --	  ));
+    --only changes degsF if t=1
+    apply(t, i-> max apply(degsF, ell->ell_i))
     )
 
 coarseMultigradedRegularity Module := o-> M-> (
@@ -641,7 +642,7 @@ cornerComplex(ChainComplex,List) := (C,c) ->(
 
 cornerComplex1=method()
 cornerComplex1(ChainComplex,List) := (C,c) -> (
-    -- addded this line to make the function  work for the zero complex
+    -- added this line to make the function  work for the zero complex
     if C==0 then return C;
     --
     t:= numFactors ring C; -- list from 0 to the number of factors -1.
@@ -815,7 +816,7 @@ firstQuadrantComplex(ChainComplex,List) := (C,c) -> (
 firstQuadrantComplex1=method()
 firstQuadrantComplex1(ChainComplex,List) := (C,c) -> (
     -- c index of upper corner of the complementary last quadrant
-    -- addded this line to make the function  work for the zero complex
+    -- added this line to make the function  work for the zero complex
     if C==0 then return C;
     --
     s:=min C;
@@ -862,7 +863,7 @@ lastQuadrantComplex(ChainComplex,List) := (C,c) -> (
 lastQuadrantComplex1=method()
 lastQuadrantComplex1(ChainComplex,List) := (C,c) -> (
      -- c index of the upper corner of the last quadrant
-     -- addded this line to make the function  work for the zero complex
+     -- added this line to make the function  work for the zero complex
     if C==0 then return C;
     --
     s:=min C;
@@ -874,7 +875,7 @@ lastQuadrantComplex1(ChainComplex,List) := (C,c) -> (
 
 cornerMap=method()
 cornerMap(ChainComplex,List,ZZ) := (C,c,d) -> (
-    -- addded this line to make the function  work for the zero complex
+    -- added this line to make the function  work for the zero complex
     if C==0 then return C;
     --
     E := ring C;
@@ -1059,7 +1060,7 @@ chainComplexMap=method(
 )
 chainComplexMap(ChainComplex,ChainComplex,List):= o -> (D,C,maps) -> (
    --- the code commented out should also work, and is in some sense
-   --- more desireable as it uses map in the code.  However, something squirly
+   --- more desirable as it uses map in the code.  However, something squirly
    --- happens in the map code.
    ---    startDeg := min C;
    ---    if (o.InitialDegree != -infinity) then startDeg = o.InitialDegree;
@@ -3180,7 +3181,7 @@ isLinearizable=method()
 isLinearizable(Matrix):=M->(
     -- Input : M, a matrix presenting a graded module homomorphism
     -- If the original matrix and its linearized matrix induces the same Hilbert series
-    -- then this method retunrs true.
+    -- then this method returns true.
     
     R:=ring M;
     n:=(# gens R)-1;
@@ -4131,10 +4132,7 @@ doc ///
      degree such that truncate(R,M) has linear resolution
    Description
     Text
-     Uses a free resolution and takes the maximum degree of a term
-     minus the homological position in each component. Then adjusts
-     so that the sum of the degrees is at least the ordinary
-     regularity.
+     Uses a free resolution and takes the maximum degree of the terms.
     Example
      (S,E) = productOfProjectiveSpaces{1,1,2}
      I = ideal(x_(0,0)^2,x_(1,0)^3,x_(2,0)^4)
@@ -4142,8 +4140,9 @@ doc ///
      N = truncate(R,S^1/I);
      betti res N
      netList toList tallyDegrees res N
-   Caveat
-    We haven't yet proven that this is right.
+    Text
+     See the proof of Proposition 2.7 in
+       @ HREF("https://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces")@.
    SeeAlso
     productOfProjectiveSpaces
     tallyDegrees
@@ -4184,7 +4183,7 @@ doc ///
       The degrees of the variables for the i-th projective space are indexed
       x_(i,0),..,x_(i,n_i-1), and have degree (0..0,1,0,..0) with a 1 in the i-th place.
       The script also caches some values in S.TateData and
-      E.TateData, so that S and E can subsequently find eachother
+      E.TateData, so that S and E can subsequently find each other
       and also their cohomology ring.
      Example
         (S,E)=productOfProjectiveSpaces{1,2}
@@ -5013,7 +5012,7 @@ doc ///
         We compute the strand of T as defined in @
         HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @
 	Theorem 0.4. If T is (part of) the Tate resolution of a sheaf $F$, then the I-strand of $T$ through $c$
-	correponds to the Tate resolution $R{\pi_J}_*(F(c))$ where $J =\{0,\ldots,t-1\} - I$ is the complement and $\pi_J: \mathbb PP \to \prod_{j \in J} \mathbb P^{n_j}$
+	corresponds to the Tate resolution $R{\pi_J}_*(F(c))$ where $J =\{0,\ldots,t-1\} - I$ is the complement and $\pi_J: \mathbb PP \to \prod_{j \in J} \mathbb P^{n_j}$
 	denotes the projection.
      Example
         n={1,1};
@@ -5170,7 +5169,7 @@ doc ///
 	T=tateResolution( S^{{1,1}},low, high);
 	cohomologyMatrix(T,low,high)
      Text
-        The complex contains some trailing terms and superflous terms in a wider range, which can be removed
+        The complex contains some trailing terms and superfluous terms in a wider range, which can be removed
 	using trivial homological truncation.
      Example
 	cohomologyMatrix(T,2*low,2*high)
@@ -5395,7 +5394,7 @@ doc ///
        form U(W) with W a complex with terms in the
        Beilinson range only. The function computes with the algorithm (not!) described in section 4 of
        @ HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @
-       computes part of a suitable choosen corner complex of the Tate resolution T(F).
+       computes part of a suitable chosen corner complex of the Tate resolution T(F).
 
      Example
         n={1,1};
@@ -5447,7 +5446,7 @@ doc ///
        This function is the first step in our computation of the algorithm
         (not!) described in section 4 of
        @ HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @
-       that computes part of a suitable choosen corner complex of the Tate resolution T(F).
+       that computes part of a suitable chosen corner complex of the Tate resolution T(F).
      Example
         n={1,1};
         (S,E) = productOfProjectiveSpaces n;
@@ -5511,7 +5510,7 @@ doc ///
        @ HREF("http://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces") @.
 
        In the function we compute from a complex of free E-modules the corresponding complex of graded S-modules, whose
-       sheafifications are the corresponding sheaves. The corresponding graded S-module are choosen as quotients of
+       sheafifications are the corresponding sheaves. The corresponding graded S-module are chosen as quotients of
        free S-modules in case of the default option BundleType=>PrunedQuotient, or as submodules of free S-modules.
        The true Beilinson functor is obtained by the sheafication of resulting the complex.
 
@@ -5946,22 +5945,22 @@ doc ///
       When n is quite big compared to r, it is not very efficient to deal with Beilinson bundles on P^n since they have 
       huge rank and presentation matrices. In particular, the method directImageComplex becomes slow down.
       
-      The following is an example of direct images of the structure sheaf on a twisted cubic.
+      The following is an example of direct images of the structure sheaf on a rational normal curve of degree $d$.
   Example
-      kk=ZZ/101; d=6;
+      kk=ZZ/101; d=4;
       needsPackage "Resultants";
       vd=veronese(1,d,kk);
       R=target vd; S=source vd;
       
       M=R^{1:-1}; I=ann M; J=ker vd;
       
-      RM=time directImageComplex(I,M,matrix vd);
+      RM=directImageComplex(I,M,matrix vd);
       
       for i from min RM to max RM list (rank RM_i)
   Text
-      RM looks complicated since it is consisted of universal bundles on P^6, which are of high rank.
+      RM looks complicated since it is consisted of universal bundles on $P^4$, which are of high rank.
   Example
-      retTable=time actionOnDirectImage(I,M,matrix vd);
+      retTable=actionOnDirectImage(I,M,matrix vd);
       keys retTable
   Text
       We see that 0 is the only key, in other words, there is no other R^i vd_{*} except i=0.

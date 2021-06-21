@@ -9,11 +9,11 @@ TEST ///
 ZZ/47[x,y];
 f= x^7*y^2 + x^5*y^6;
 assert(fpt(f)==3/16)
-assert(nu(1,f)==8)
-assert(nu(2,f)==414)
-assert(nu(3,f)==19466)
-assert(nu(3,f, UseSpecialAlgorithms => false)==19466)
-assert(nu(3,f, UseSpecialAlgorithms => false, Search=>Linear)==19466)
+assert(frobeniusNu(1,f)==8)
+assert(frobeniusNu(2,f)==414)
+assert(frobeniusNu(3,f)==19466)
+assert(frobeniusNu(3,f, UseSpecialAlgorithms => false)==19466)
+assert(frobeniusNu(3,f, UseSpecialAlgorithms => false, Search=>Linear)==19466)
 ///
 
 --binomial test 2
@@ -21,22 +21,22 @@ TEST ///
 ZZ/43[x,y];
 f= x^7*y^2 + x^5*y^6;
 assert(fpt(f)==8/43)
-assert(nu(1,f)==7)
-assert(nu(2,f)==343)
-assert(nu(3,f)==14791)
-assert(nu(3,f, UseSpecialAlgorithms => false)==14791)
-assert(nu(3,f, UseSpecialAlgorithms => false, Search=>Linear)==14791)
+assert(frobeniusNu(1,f)==7)
+assert(frobeniusNu(2,f)==343)
+assert(frobeniusNu(3,f)==14791)
+assert(frobeniusNu(3,f, UseSpecialAlgorithms => false)==14791)
+assert(frobeniusNu(3,f, UseSpecialAlgorithms => false, Search=>Linear)==14791)
 ///
 
 --binomial test 3
 TEST ///
 ZZ/37[x,y];
 f= x^7*y^2 + x^5*y^6;
-assert(nu(1,f)==6)
-assert(nu(2,f)==256)
-assert(nu(3,f)==9494)
-assert(nu(3,f, UseSpecialAlgorithms => false)==9494)
-assert(nu(3,f, UseSpecialAlgorithms => false, Search=>Linear)==9494)
+assert(frobeniusNu(1,f)==6)
+assert(frobeniusNu(2,f)==256)
+assert(frobeniusNu(3,f)==9494)
+assert(frobeniusNu(3,f, UseSpecialAlgorithms => false)==9494)
+assert(frobeniusNu(3,f, UseSpecialAlgorithms => false, Search=>Linear)==9494)
 ///
 
 -- tests for fpt computations that call special algorithms
@@ -111,10 +111,10 @@ TEST ///
 ZZ/5[x,y];
 M=ideal(x,y);
 D=ideal(x^3,y^3);
-assert(nu(1,M^3,M, ContainmentTest => FrobeniusPower)== 2)
-assert(nu(2,M^3,M, ContainmentTest => FrobeniusPower) == 14)
-assert(nu(1,D,M, ContainmentTest => FrobeniusPower) == 2)
-assert(nu(2,D,M, ContainmentTest => FrobeniusPower) == 14)
+assert(frobeniusNu(1,M^3,M, ContainmentTest => FrobeniusPower)== 2)
+assert(frobeniusNu(2,M^3,M, ContainmentTest => FrobeniusPower) == 14)
+assert(frobeniusNu(1,D,M, ContainmentTest => FrobeniusPower) == 2)
+assert(frobeniusNu(2,D,M, ContainmentTest => FrobeniusPower) == 14)
 ///
 
 TEST ///
@@ -124,29 +124,29 @@ D=ideal(x^4,y^4);
 I=ideal(x^2,y);
 f=x^4+y^4; -- generic element of D
 g=x^4+x^3*y+x^2*y^2+x*y^3+y^4; -- generic element of M^4
-assert(nu(1,M^4,I,ContainmentTest => FrobeniusPower)==4 )
-assert(nu(2,M^4,I, ContainmentTest => FrobeniusPower)== 34)
-assert(nu(1,D,I, ContainmentTest => FrobeniusPower)== 4)
-assert(nu(2,D,I, ContainmentTest => FrobeniusPower)== 34)
-assert(nu(1,f,I)==4)
-assert(nu(2,f,I)==34)
-assert(nu(1,g,I)==4)
-assert(nu(2,g,I)==34)
+assert(frobeniusNu(1,M^4,I,ContainmentTest => FrobeniusPower)==4 )
+assert(frobeniusNu(2,M^4,I, ContainmentTest => FrobeniusPower)== 34)
+assert(frobeniusNu(1,D,I, ContainmentTest => FrobeniusPower)== 4)
+assert(frobeniusNu(2,D,I, ContainmentTest => FrobeniusPower)== 34)
+assert(frobeniusNu(1,f,I)==4)
+assert(frobeniusNu(2,f,I)==34)
+assert(frobeniusNu(1,g,I)==4)
+assert(frobeniusNu(2,g,I)==34)
 ///
 
 --Here, we test F-pure threshold approximation computations for polynomials
 TEST ///
 ZZ/5[x,y,z];
 f = 2*x^7*y^3*z^8+2*x^4*z^9+2*x*y^7*z^4;
-assert( nu(6,f) == 2968 )
-assert( nu(6,f,Search => Linear) == 2968 )
-assert( nu(6,f,ReturnList => true) == {0, 0, 4, 23, 118, 593, 2968} )
+assert( frobeniusNu(6,f) == 2968 )
+assert( frobeniusNu(6,f,Search => Linear) == 2968 )
+assert( frobeniusNu(6,f,ReturnList => true) == {0, 0, 4, 23, 118, 593, 2968} )
 ///
 
 TEST ///
 ZZ/17[x,y,z,w];
 F = -5*x*y^4*z^3-2*x^4*z^3*w+6*y*z^3*w^4+7*z*w^3-6*w^2;
-assert( nu(2,F) == 220 )
+assert( frobeniusNu(2,F) == 220 )
 ///
 
 
@@ -155,9 +155,9 @@ TEST ///
 ZZ/5[x,y,z];
 I=ideal(x+y^2,y+z^2,z+x^2);
 J=ideal(x^3,y^3,z^3);
-time assert( nu(1,I,J,ContainmentTest => FrobeniusRoot) == 42 )
-time assert( nu(1,I,J, ContainmentTest => FrobeniusPower) == 30 )
-time assert( nu(1,I,J,ContainmentTest=> FrobeniusPower,ReturnList => true) == {6, 30} )
+time assert( frobeniusNu(1,I,J,ContainmentTest => FrobeniusRoot) == 42 )
+time assert( frobeniusNu(1,I,J, ContainmentTest => FrobeniusPower) == 30 )
+time assert( frobeniusNu(1,I,J,ContainmentTest=> FrobeniusPower,ReturnList => true) == {6, 30} )
 ///
 
 TEST ///
@@ -344,22 +344,22 @@ assert(fpt(f) == 1/3);
 assert(fpt(f, DepthOfSearch=>3, UseSpecialAlgorithms=>false) == 1/3);
 ///
 
-TEST /// --AtOrigin vs not AtOrigin for nu
+TEST /// --AtOrigin vs not AtOrigin for frobeniusNu
 R = ZZ/5[x,y];
 f = y^2-x^3;
 g = (y-1)^2-(x-1)^3;
-assert(nu(1,f) == nu(1,g, AtOrigin => false));
-assert(nu(2,f) == nu(2,g, AtOrigin => false));
-assert(nu(1,g) == infinity);
+assert(frobeniusNu(1,f) == frobeniusNu(1,g, AtOrigin => false));
+assert(frobeniusNu(2,f) == frobeniusNu(2,g, AtOrigin => false));
+assert(frobeniusNu(1,g) == infinity);
 ///
 
-TEST /// --AtOrigin vs not AtOrigin for nu, in more variables!
+TEST /// --AtOrigin vs not AtOrigin for frobeniusNu, in more variables!
 R = ZZ/5[x,y,u,v];
 f = x^2*y-u*v^3;
 g = (x-1)^2*(y-4)-(u-2)*(v-3)^3;
-assert(nu(1,f) == nu(1,g, AtOrigin => false));
-assert(nu(2,f) == nu(2,g, AtOrigin => false));
-assert(nu(1,g) == infinity);
+assert(frobeniusNu(1,f) == frobeniusNu(1,g, AtOrigin => false));
+assert(frobeniusNu(2,f) == frobeniusNu(2,g, AtOrigin => false));
+assert(frobeniusNu(1,g) == infinity);
 ///
 
 TEST /// --AtOrigin vs not AtOrigin for fpt
