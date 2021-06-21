@@ -30,6 +30,7 @@ newPackage (
   PackageImports => {"LexIdeals"},
   AuxiliaryFiles => true,
   CacheExampleOutput => true,
+  OptionalComponentsPresent => scipPresent := run "type scip >/dev/null 2>&1" === 0,
   DebuggingMode => false
 )
 
