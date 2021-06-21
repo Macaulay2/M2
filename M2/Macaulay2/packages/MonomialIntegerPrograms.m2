@@ -27,7 +27,7 @@ newPackage (
       "CustomPath" => "",
       "CustomScipPrintLevel" => ""
       },
-  PackageImports => {"LexIdeals"},
+  PackageImports => {"LexIdeals","MinimalPrimes"},
   AuxiliaryFiles => true,
   CacheExampleOutput => true,
   OptionalComponentsPresent => scipPresent := run "type scip >/dev/null 2>&1" === 0,
@@ -1378,7 +1378,7 @@ doc ///
   @TT"KnownDim"@ is correct. Providing the wrong dimension will 
   result in an incorrect answer or an error.
  SeeAlso
-  (topComponents, Ideal)
+  "PrimaryDecomposition::topComponents(Ideal)"
   degreeIP
   MonomialIntegerPrograms
   symbol ScipPrintLevel
