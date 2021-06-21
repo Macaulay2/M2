@@ -64,6 +64,9 @@ isUnit ZZ := x -> x == 1 or x == -1
 
 ZZ & ZZ := ZZ => lookup(symbol &, ZZ, ZZ)
 
+ZZ ^^ ZZ := bitxorfun
+Boolean xor Boolean := (x, y) -> x and not y or not x and y
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

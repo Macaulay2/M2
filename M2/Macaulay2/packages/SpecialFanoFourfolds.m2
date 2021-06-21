@@ -9,8 +9,8 @@
 
 newPackage(
     "SpecialFanoFourfolds",
-    Version => "2.1", 
-    Date => "May 27, 2021",
+    Version => "2.2", 
+    Date => "June 9, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -19,6 +19,16 @@ newPackage(
     DebuggingMode => false,
     Reload => false
 )
+
+if MultiprojectiveVarieties.Options.Version < "2.2" then (
+    <<endl<<"Your version of the MultiprojectiveVarieties package is outdated (required version 2.2 or newer);"<<endl;
+    <<"you can manually download the latest version from"<<endl;
+    <<"https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages."<<endl;
+    <<"To automatically download the latest version of MultiprojectiveVarieties in your current directory,"<<endl;
+    <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
+    <<///run "curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2";///<<endl<<endl<<"***"<<endl;
+    error "required MultiprojectiveVarieties package version 2.2 or newer";
+);
 
 export{
    "SpecialGushelMukaiFourfold",
@@ -72,25 +82,25 @@ specialCubicFourfold (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o 
     i := o.InputCheck;
     if not (instance(i,ZZ) and i >= -1) then error("option InputCheck expects a nonnegative integer:"|newline|"0: no check is done about the smoothness of the fourfold and of the (normalization of the) surface"|newline|"1: just the smoothness of the fourfold is checked"|newline|"2: the smoothness of the fourfold and of a general hyperplane section of the surface are checked"|newline|"3: as above and furthermore the smoothness of the normalization of the surface is checked");
     if i >= 0 then if not isSubset(S,X) then error "the given surface is not contained in the cubic fourfold";
-    if i >= 1 then if not assertSmoothness X then error "expected a smooth cubic fourfold";
+    if i >= 1 then if not isSmooth X then error "expected a smooth cubic fourfold";
     n := o.NumNodes;
     if n === null then n = numberNodes(S,Verbose=>o.Verbose);
     if not(instance(n,ZZ) and n >= 0) then error "option NumNodes expects a nonnegative integer or null";
     if S.cache#?"FiniteNumberOfNodes" then if n =!= S.cache#"FiniteNumberOfNodes" then error "the number of nodes is wrong";
     if i == 2 or (i >= 3 and n > 0) then (
-        if not assertSmoothness(S * random(1,0_S)) then error "expected a surface with at most a finite number of nodes";
+        if not isSmooth(S * random(1,0_S)) then error "expected a surface with at most a finite number of nodes";
         if o.Verbose then <<"-- smoothness in codimension 1 of the surface verified"<<endl;
     );
     q := null;
     if i >= 3 then (
         if n > 0 then (
             q = normalization(S,Verbose=>o.Verbose);
-            if not assertSmoothness(Var source q) then error "expected a surface with smooth normalization";
+            if not isSmooth(Var source q) then error "expected a surface with smooth normalization";
             if o.Verbose then <<"-- smoothness of the normalization of the surface verified (assuming equidimensionality)"<<endl;
             if n != numberNodes(S,Verbose=>o.Verbose) then error "the number of nodes is wrong";
             if o.Verbose then <<"-- number of nodes (partially) verified"<<endl;
         ) else (
-            if not assertSmoothness S then error "expected a smooth surface (NumNodes=>0)";
+            if not isSmooth S then error "expected a smooth surface (NumNodes=>0)";
             if o.Verbose then <<"-- smoothness of the surface verified (assuming equidimensionality)"<<endl;
         );
     );
@@ -162,7 +172,18 @@ specialCubicFourfold (String,Ring) := o -> (str,K) -> (
        X.cache#"label" = "C48";
        return X;
    );
-   error "not valid string, permitted strings are: \"quintic del Pezzo surface\", \"quartic scroll\", \"Farkas-Verra C26\", \"one-nodal septic del Pezzo surface\", \"C38\", \"C42\", \"C48\"";
+   if str === "C32" then (
+        X = specialCubicFourfold(Var image rationalMap(ring PP_K^2,{9,1,4,6}),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X.cache#"label" = "C32";
+        return X;
+   );
+   if str === "C44" then ( -- Enriques surface (see e.g. https://arxiv.org/pdf/1210.1903.pdf, p. 7)
+        J := Var ideal jacobian ideal discriminant first genericPolynomials({2,-1,-1,-1},K);
+        X = specialCubicFourfold((parametrize random({{1},{1},{1},{1}},0_J))^* J,NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X.cache#"label" = "C44";
+        return X;
+   );
+   error "not valid string, permitted strings are: \"quintic del Pezzo surface\", \"quartic scroll\", \"Farkas-Verra C26\", \"one-nodal septic del Pezzo surface\", \"C32\", \"C38\", \"C42\", \"C44\", \"C48\"";
 );
 
 specialCubicFourfold String := o -> str -> specialCubicFourfold(str,ZZ/65521,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
@@ -202,10 +223,13 @@ recognize SpecialCubicFourfold := (cacheValue "label") (X -> (
     degs := flatten degrees ideal S;
     if (d == 14 and e == 7 and n == 0 and invS === (5,1,1) and degs == toList(5:2)) then return "quinticDelPezzoSurface";
     if (d == 14 and e == 4 and n == 0 and invS === (4,0,1) and degs == toList(6:2)) then return "quarticScrollSurface";
+    if (d == 32 and e == 14 and n == 0 and invS === (10,6,1) and degs == toList(10:3)) then return "C32";
     if (d == 38 and e == 13 and n == 0 and invS === (10,6,1) and degs == toList(10:3)) then return "C38Coble";
+    if (d == 44 and e == 12 and n == 0 and invS === (10,6,1) and degs == toList(10:3)) then return "C44";
     if (d == 26 and e == -14 and n == 3 and invS === (7,0,-2) and degs == toList(13:3)) then return "FarkasVerra";
     if (d == 26 and e == -1 and n == 1 and invS === (7,1,0) and degs == toList(14:3)) then return "oneNodalSepticDelPezzoSurfaceC26";
     if (d == 42 and e == -23 and n == 5 and invS === (9,2,-4) and degs == toList(9:3)) then return "C42";
+    if (d == 48 and e == -29 and n == 6 and invS === (9,2,-5) and degs == {2,3,3,3,3}) then return "C48";
     "NotRecognized"
 ));
 
@@ -739,6 +763,17 @@ randomS48 Ring := K -> (
     (psi * g) D
 );
 
+clean SpecialCubicFourfold := X -> (
+    K := coefficientRing X;
+    x := local x; 
+    R := K[x_0..x_5];
+    idS := sub(ideal surface X,vars R);
+    idX := sub(ideal X,vars R);
+    specialCubicFourfold(idS,idX,InputCheck=>0,NumNodes=>numberNodes surface X)
+);
+
+random SpecialCubicFourfold := o -> X -> specialCubicFourfold(surface X,InputCheck=>-1);
+
 ------------------------------------------------------------------------
 --------------------------- GM fourfolds -------------------------------
 ------------------------------------------------------------------------
@@ -758,9 +793,9 @@ specialGushelMukaiFourfold (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)
     i := o.InputCheck;
     if not(instance(i,ZZ) and i >= -1) then error("option InputCheck expects a nonnegative integer:"|newline|"0: no check is done about the smoothness of the fourfold and of the surface"|newline|"1: just the smoothness of the fourfold is checked"|newline|"2: both the smoothness of the fourfold and the smoothness of the surface are checked");
     if i >= 0 then if not isSubset(S,X) then error "the given surface is not contained in the fourfold";
-    if i >= 1 then if not assertSmoothness X then error "expected a smooth GM fourfold";
+    if i >= 1 then if not isSmooth X then error "expected a smooth GM fourfold";
     if i >= 2 then (
-        if not assertSmoothness S then error "expected a smooth surface";
+        if not isSmooth S then error "expected a smooth surface";
         if o.Verbose then <<"-- smoothness of the surface verified (assuming equidimensionality)"<<endl;
     );
     if i >= 4 then (
@@ -858,7 +893,19 @@ specialGushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
         Vstr := value str;
         if instance(Vstr,ZZ) and Vstr >= 1 and Vstr <= 21 then return fourfoldFromTriple(Vstr,GMtables(Vstr,K),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
     );
-    error "not valid string, permitted strings are: \"sigma-plane\", \"rho-plane\", \"tau-quadric\", \"cubic scroll\", \"quintic del Pezzo surface\", \"K3 surface of degree 14\", \"surface of degree 9 and genus 2\", \"1\",...,\"21\"";
+    if str === "nodal D26''" then (
+        X = specialGushelMukaiFourfold(last exampleD26''data K,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        (surface X).cache#"FiniteNumberOfNodes" = 1;
+        X.cache#"label" = "mukai26''";
+        return X;
+    );
+    if str === "nodal D44" then (
+        X = specialGushelMukaiFourfold(last exampleD44data K,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        (surface X).cache#"FiniteNumberOfNodes" = 1;
+        X.cache#"label" = "nodal D44";
+        return X;
+    );
+    error "not valid string, permitted strings are: \"sigma-plane\", \"rho-plane\", \"tau-quadric\", \"cubic scroll\", \"quintic del Pezzo surface\", \"K3 surface of degree 14\", \"surface of degree 9 and genus 2\", \"1\",...,\"21\", \"nodal D26''\", \"nodal D44\"";
 );
 
 specialGushelMukaiFourfold String := o -> str -> specialGushelMukaiFourfold(str,ZZ/65521,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
@@ -873,6 +920,7 @@ describe SpecialGushelMukaiFourfold := X -> (
     degs := flatten degrees ideal S;
     (cS,ab) := cycleClass X;
     (a,b) := ab;
+    recognize X;
     discrX := discriminant X;
     descr:="Special Gushel-Mukai fourfold of discriminant "|toString(discrX);
     if discrX % 8 == 2 then (
@@ -883,11 +931,17 @@ describe SpecialGushelMukaiFourfold := X -> (
                 descr = descr|"('')" 
             else error "internal error encountered"
     );
-    descr = descr|newline|"containing a surface in PP^8 of degree "|toString(d)|" and sectional genus "|toString(g)|newline;
+    descr = descr|newline|"containing a ";
+    n := if S.cache#?"FiniteNumberOfNodes" then numberNodes S else -1;
+    if n > 0 then descr = descr|toString(n)|"-nodal " else if n == 0 then descr = descr|"smooth ";
+    descr = descr|"surface in PP^8 of degree "|toString(d)|" and sectional genus "|toString(g)|newline;
     descr = descr|(if # unique degs == 1 then "cut out by "|toString(#degs)|" hypersurfaces of degree "|toString(first degs) else "cut out by "|toString(#degs)|" hypersurfaces of degrees "|toString(toSequence degs));
     descr = descr|newline|"and with class in G(1,4) given by "|toString(cS);
     if dim singLocus grassmannianHull X >= 0 then descr = descr|newline|"Type: Gushel (not ordinary)" else descr = descr|newline|"Type: ordinary";
-    if instance(recognize X,ZZ) then descr = descr|newline|"(case "|toString(recognize X)|" of Table 1 in "|"arXiv:2002.07026"|")";
+    if instance(recognize X,ZZ) then descr = descr|newline|"(case "|toString(recognize X)|" of Table 1 in arXiv:2002.07026)";
+    if recognize X === "gushel26''" and dim singLocus grassmannianHull X >= 0 then descr = descr|newline|"(case considered in Section 1 of arXiv:2003.07809)";
+    if recognize X === "mukai26''" and dim singLocus grassmannianHull X >= 0 then descr = descr|newline|"(case considered in Section 2 of arXiv:2003.07809)";
+    if recognize X === "mukai26''" and dim singLocus grassmannianHull X == -1 then descr = descr|newline|"(case considered in Section 3 of arXiv:2003.07809)";
     net expression descr
 );
 
@@ -935,6 +989,7 @@ recognize SpecialGushelMukaiFourfold := (cacheValue "label") (X -> (
     if (d == 26 and e == 12 and a == 7 and b == 5 and invS == (12,5,1) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then return 21;
     --
     if (d == 26 and e == 25 and a == 11 and b == 6 and invS == (17,11,2) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then return "gushel26''";
+    if ((d == 18 or d == 26) and e == 3 and a == 7 and b == 4 and invS == (11,3,0) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then if numberNodes(S,Verbose=>false) == 1 and discriminant X == 26 then return "mukai26''";
     "NotRecognized"
 ));
 
@@ -1288,6 +1343,21 @@ unirationalParametrization SpecialGushelMukaiFourfold := (cacheValue "unirationa
     Psi
 ));
 
+clean SpecialGushelMukaiFourfold := X -> (
+    K := coefficientRing X;
+    x := local x; 
+    R := K[x_0..x_8];
+    idS := sub(ideal surface X,vars R);
+    idX := sub(ideal X,vars R);
+    specialGushelMukaiFourfold(idS,idX,InputCheck=>0)
+);
+
+random SpecialGushelMukaiFourfold := o -> X -> (
+    X' := specialGushelMukaiFourfold(surface X,random(2,surface X) * grassmannianHull X,InputCheck=>-1);
+    X'.cache#"varietyDefinedBylinearSyzygies" = grassmannianHull X;
+    return X';
+);
+
 ------------------------------------------------------------------------
 --------------------------- Discriminants ------------------------------
 ------------------------------------------------------------------------
@@ -1334,9 +1404,10 @@ discriminant SpecialGushelMukaiFourfold := o -> X -> (
     KS2 := 12*chiOS-chiS; 
     KSHS := 2*g-2-degS; 
     (a,b) := last cycleClass X;
-    S2 := 3*a + 4*b + 2*KSHS + 2*KS2 - 12*chiOS;
+    n := if S.cache#?"FiniteNumberOfNodes" or S.cache#?"singularLocus" or S.cache#?"nonSaturatedSingularLocus" or (S.cache#?"fitVariety" and (S.cache#"fitVariety").cache#?"nonSaturatedSingularLocus") then numberNodes S else 0;
+    S2 := 3*a + 4*b + 2*KSHS + 2*KS2 - 12*chiOS + 2*n;
     d := 4*S2 - 2*(b^2+(a-b)^2);
-    X.cache#"discriminantFourfold" = (S2,d);
+    if S.cache#?"FiniteNumberOfNodes" then X.cache#"discriminantFourfold" = (S2,d);
     d
 );
 
@@ -1676,6 +1747,38 @@ GMtables (ZZ,Nothing) := (i,nu) -> (
 );
 
 ------------------------------------------------------------------------
+---------------- arXiv:2003.07809 --------------------------------------
+------------------------------------------------------------------------
+
+exampleD26''data = K -> (
+    q := apply(8,i -> point PP_K^2);
+    f := rationalMap(2*q_0+q_1+q_2+q_3+q_4+q_5,4);
+    f = f * rationalMap point linearSpan {f point source f,f point source f};
+    C := random(3,⋃ q);
+    g := f|C;
+    D := image g;
+    pr := inverse parametrize linearSpan D;
+    g = g * pr;
+    j := toRationalMap inverse rationalMap((linearSpan {g q_6,g q_7})_(image g),Dominant=>true);
+    B := image((rationalMap lift(matrix j,ambient source j)) * inverse pr);
+    V := image f;
+    if not(D == B * V and dim B == 2 and dim V == 2 and dim D == 1 and degree B == 3 and degree V == 7 and degree D == 5 and sectionalGenus B == 0 and sectionalGenus V == 2 and sectionalGenus D == 1) then error "something went wrong";
+    psi := rationalMap(B,Dominant=>true);
+    (B,V,D,psi,(toRationalMap psi) ideal V)
+);
+
+exampleD44data = K -> (
+    b := rationalMap(point PP_K^2,2) << PP_K^5;
+    v := rationalMap{veronese(2,2,K)};
+    V := image v;
+    B := ((b random(1,0_(source b))) ===> (v random(1,0_(source v)))) image b;
+    C := B * V;
+    if not(dim B == 2 and dim V == 2 and dim C == 1 and degree B == 3 and degree V == 4 and degree C == 2 and sectionalGenus B == 0 and sectionalGenus V == 0 and sectionalGenus C == 0) then error "something went wrong";
+    psi := rationalMap(B,Dominant=>true);
+    (B,V,C,psi,(toRationalMap psi) ideal V)
+);
+
+------------------------------------------------------------------------
 ---------------------- Prime Fano fourfolds ----------------------------
 ------------------------------------------------------------------------
 
@@ -1865,29 +1968,42 @@ linearCombination (RingElement,Matrix) := (F,I) -> (
     l
 );
 
-assertSmoothness = method(); -- sufficient conditions for smoothness ('X' is assumed to be equidimensional)
-assertSmoothness EmbeddedProjectiveVariety := X -> (
+isSmooth = method(TypicalValue => Boolean); -- sufficient conditions for smoothness ('Y' is assumed to be equidimensional)
+isSmooth EmbeddedProjectiveVariety := (cacheValue "isSmooth") (Y -> (
+    if Y.cache#?"singularLocus" or Y.cache#?"nonSaturatedSingularLocus" then return (dim singLocus Y == -1);
+    X := fitVariety Y;
+    isXsm := dim singLocus X == -1;
+    if isXsm then Y.cache#"singularLocus" = 0_Y;
+    isXsm
+));
+
+numberNodes = method(Options => {Verbose => true});
+numberNodes EmbeddedProjectiveVariety := o -> Y -> (
+    if Y.cache#?"FiniteNumberOfNodes" then return Y.cache#"FiniteNumberOfNodes";  
+    X := if not(Y.cache#?"singularLocus" or Y.cache#?"nonSaturatedSingularLocus") then fitVariety Y else Y;
+    if dim singLocus X >= 1 then error "expected at most a finite number of nodes";
+    n := if dim singLocus X == -1 then 0 else (
+             if (singLocus X).cache#?"Support" then 
+                 degree support singLocus X
+             else
+                 degree support (rationalMap random({{1},{1}},0_X)) singLocus X
+             );
+    if o.Verbose then <<"-- calculated number of nodes (got "<< n <<" nodes)"<<endl;
+    Y.cache#"FiniteNumberOfNodes" = n
+);
+
+fitVariety = method();
+fitVariety EmbeddedProjectiveVariety := (cacheValue "fitVariety") (X -> (
     if coefficientRing X === QQ then X = X ** (ZZ/nextPrime random(1000,11000000));
     if codim linearSpan X > 0 then X = (parametrize linearSpan X)^^ X;
     n := dim ambient X; k := dim X;
-    if k > 0 and 2*k+1 < n then ( 
+    if k > 0 and k <= 2 and 2*k+1 < n then (
         pr := rationalMap linearSpan apply(n-(2*k+1),i -> point X);
         if dim target pr != 2*k+1 then error "internal error encountered";
         X = pr X;
     );
-    dim singLocus X == -1
-);
-
-numberNodes = method(Options => {Verbose => true});
-numberNodes EmbeddedProjectiveVariety := o -> X -> (
-    if X.cache#?"FiniteNumberOfNodes" then return X.cache#"FiniteNumberOfNodes";
-    if coefficientRing X === QQ then return X.cache#"FiniteNumberOfNodes" = numberNodes(X ** (ZZ/nextPrime random(1000,11000000)),Verbose=>o.Verbose);
-    if codim linearSpan X > 0 then return X.cache#"FiniteNumberOfNodes" = numberNodes((parametrize linearSpan X)^^ X,Verbose=>o.Verbose);
-    if dim singLocus X >= 1 then error "expected at most a finite number of nodes";
-    n := if dim singLocus X == -1 then 0 else dimdegree radical ideal (rationalMap random({{1},{1}},0_X)) singLocus X;
-    if o.Verbose then <<"-- calculated number of nodes (got "<< n <<" nodes)"<<endl;
-    X.cache#"FiniteNumberOfNodes" = n
-);
+    return X;
+));
 
 normalization = method(Options => {Verbose => true});
 normalization EmbeddedProjectiveVariety := o -> X -> (
@@ -1954,13 +2070,6 @@ mapY4 = memoize (K -> (
     h
 ));
 Y4 = K -> source mapY4 K;
-
-toRationalMap = method();
-toRationalMap MultirationalMap := Phi -> (
-    f := rationalMap toRingMap(Phi,ring target Phi);
-    assert(# factor Phi == 1 and instance(f,RationalMap));
-    f
-);
 
 singLocus = method(); 
 singLocus EmbeddedProjectiveVariety := X -> singularLocus(X,Saturate=>false);
@@ -2342,6 +2451,28 @@ Outputs => {EmbeddedProjectiveVariety => {"a random prime Fano fourfold of coind
 EXAMPLE {"X = fanoFourfold(4,1);", "describe X", "parametrize X"}, 
 SeeAlso => {parametrizeFanoFourfold}}
 
+document { 
+Key => {(clean,SpecialCubicFourfold)}, 
+Headline => "clean the internal information of a cubic fourfold", 
+Usage => "clean X", 
+Inputs => {"X" => SpecialCubicFourfold}, 
+Outputs => {SpecialCubicFourfold => {"which is mathematically identical to ",TT"X",", but new to the system"}},
+PARA{"This function is only useful for testing."},
+EXAMPLE {"X = specialCubicFourfold \"quartic scroll\"", "X' = clean X", "X === X'"},
+SeeAlso => {(clean,SpecialGushelMukaiFourfold)}}
+
+document { 
+Key => {(clean,SpecialGushelMukaiFourfold)}, 
+Headline => "clean the internal information of a GM fourfold", 
+Usage => "clean X", 
+Inputs => {"X" => SpecialGushelMukaiFourfold}, 
+Outputs => {SpecialGushelMukaiFourfold => {"which is mathematically identical to ",TT"X",", but new to the system"}},
+PARA{"This function is only useful for testing."},
+EXAMPLE {"X = specialGushelMukaiFourfold \"cubic scroll\"", "X' = clean X", "X === X'"},
+SeeAlso => {(clean,SpecialCubicFourfold)}}
+
+undocumented {(random,SpecialCubicFourfold),(random,SpecialGushelMukaiFourfold)}
+
 ------------------------------------------------------------------------
 ------------------------------- Tests ----------------------------------
 ------------------------------------------------------------------------
@@ -2524,5 +2655,24 @@ assert(not Y.cache#?"label"); Y.cache#"label" = 6;
 detectCongruence Y;
 -- Y = specialGushelMukaiFourfold("18",ZZ/3331);
 -- detectCongruence Y;
+///
+
+TEST /// -- Test 12 (1/2) -- GM fourfolds containing nodal surfaces
+debug SpecialFanoFourfolds;
+K = ZZ/65521;
+(B,V,C,psi,idS) = exampleD44data K;
+X = specialGushelMukaiFourfold(idS,InputCheck=>0);
+assert(discriminant X == 36);
+assert(numberNodes surface X == 1);
+X' = random X;
+assert(surface X === surface X' and grassmannianHull X === grassmannianHull X' and isSubset(surface X',X') and dim(X*X') == 3);
+assert(discriminant X' == 44 and discriminant X == 44);
+///
+
+TEST /// -- Test 13 (2/2) -- GM fourfolds containing nodal surfaces
+X = specialGushelMukaiFourfold("nodal D26''",ZZ/33331,InputCheck=>0);
+assert(discriminant X == 26 and last cycleClass X == (7,4) and degree surface X == 11 and sectionalGenus surface X == 3);
+Y = specialGushelMukaiFourfold("nodal D44",ZZ/33331,InputCheck=>0);
+assert(discriminant Y == 44 and last cycleClass Y == (6,3) and degree surface Y == 9 and sectionalGenus surface Y == 1);
 ///
 

@@ -89,7 +89,7 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      makeDirectory rundir;
      -* The bits in the binary representation of argmode determine arguments to add.
         If InvertArgs is set, argumentMode modifies the defaultMode rather than overriding them. *-
-     argmode := if 0 < argumentMode & InvertArgs then xor(defaultMode, argumentMode) else argumentMode;
+     argmode := if 0 < argumentMode & InvertArgs then defaultMode ^^ argumentMode else argumentMode;
      -* returns (" "|arg) if all bits in m are set in argmode *-
      readmode := (m, arg) -> if argmode & m == m then " " | arg else "";
      cmd := readmode(SetUlimit, ulimit);

@@ -64,7 +64,7 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     -* see run.m2 for details of defaultMode, argumentMode, etc. *-
     -- TODO: somehow use SetUlimit, GCMAXHEAP, GCSTATS, GCVERBOSE,
     --       ArgInt, ArgQ, ArgNoReadline, ArgNoSetup, and ArgNoThreads
-    argmode := if 0 < argumentMode & InvertArgs then xor(defaultMode, argumentMode) else argumentMode;
+    argmode := if 0 < argumentMode & InvertArgs then defaultMode ^^ argumentMode else argumentMode;
     hasmode := m -> argmode & m == m;
     pushvar(symbol randomSeed, if hasmode ArgNoRandomize then 0 else randomSeed);
     -- TODO: these two are overridden in interp.dd at the moment
@@ -190,7 +190,7 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
 
 -- used in installPackage.m2
 -- TODO: reduce the inputs to this function
-captureExampleOutput = (desc, inputs, pkg, cacheFunc, inf, outf, errf, data, inputhash, changeFunc, usermode) -> (
+captureExampleOutput = (desc, inputs, pkg, inf, outf, errf, data, inputhash, changeFunc, usermode) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
     -- try capturing in the same process
     if isCapturable(inputs, pkg, false) then (
@@ -198,12 +198,14 @@ captureExampleOutput = (desc, inputs, pkg, cacheFunc, inf, outf, errf, data, inp
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
 	(err, output) := capture(inputs, UserMode => false, PackageExports => pkg);
 	if err then printerr "capture failed; retrying ..."
-	else return outf << M2outputHash << inputhash << endl << output << close);
+	else (outf << M2outputHash << inputhash << endl << output << close;
+	    return true));
     -- fallback to using an external process
     stderr << commentize pad("making " | desc, 72) << flush;
     inf << replace("-\\* no-capture-flag \\*-", "", inputs) << endl << close;
-    if runFile(inf, inputhash, outf, errf, pkg, changeFunc, usermode, data)
-    then ( removeFile inf; cacheFunc() ))
+    r := runFile(inf, inputhash, outf, errf, pkg, changeFunc, usermode, data);
+    if r then removeFile inf;
+    r)
 
 -----------------------------------------------------------------------------
 -- process examples

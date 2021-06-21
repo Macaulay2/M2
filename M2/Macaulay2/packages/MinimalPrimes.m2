@@ -69,7 +69,7 @@ newPackage(
 
 export { "Hybrid", "minimalPrimes", "minprimes" => "minimalPrimes", "radical", "radicalContainment", "installMinprimes" }
 
-importFrom_Core { "printerr", "raw", "rawCharSeries", "rawGBContains", "rawRadical", "newMonomialIdeal" }
+importFrom_Core { "raw", "rawCharSeries", "rawGBContains", "rawRadical", "newMonomialIdeal" }
 
 -*------------------------------------------------------------------
 -- Can we use these as keys to a ring's HashTable without exporting them?
