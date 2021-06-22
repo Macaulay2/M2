@@ -1,5 +1,7 @@
 --		Copyright 2005, 2008 by Daniel R. Grayson and Michael E. Stillman
 
+needs "matrix.m2"
+
 MutableMatrix = new Type of HashTable
 MutableMatrix.synonym = "mutable matrix"
 raw MutableMatrix := m -> m.RawMutableMatrix

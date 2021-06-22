@@ -1,5 +1,8 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "methods.m2"
+needs "remember.m2"
+
 binomial(ZZ,ZZ) := ZZ => memoize (
      (n,i) -> (
 	  if i < 0 then 0

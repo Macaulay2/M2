@@ -7,29 +7,37 @@
 interpreterDepth = loadDepth = errorDepth = 0
 debuggingMode = true
 stopIfError = false
+notify = false
 debugWarningHashcode = null
 gotarg := arg -> any(commandLine, s -> s === arg)
+randomSeed = -- initializing this here so the startup is reproducible
+if gotarg "--no-randomize" then 0 else (currentTime() << 16) + processID()
+if gotarg "--notify" then notify = true
 if gotarg "--stop" then stopIfError = true
 if gotarg "--int"  then handleInterrupts = false
 
 firstTime := class PackageDictionary === Symbol
 
 if firstTime then (
-     -- we do this bit *before* "debug Core", so that Core (the symbol, not the package), which may not be there yet, ends up in the right dictionary
-     assert' = x -> (
-	  if class x =!= Boolean then error "assert: expected true or false";
-	  if not x then error "assertion failed");
-     PackageDictionary = new Dictionary;
-     dictionaryPath = append(dictionaryPath,PackageDictionary);
-     assert'( not isGlobalSymbol "Core" );
-     PackageDictionary#("Package$Core") = getGlobalSymbol(PackageDictionary,"Core");
-     ) 
+    -- we do this bit *before* "debug Core", so that Core (the symbol, not the package),
+    -- which may not be there yet, ends up in the right dictionary
+    match = x -> null =!= regex x;
+    assert' = x -> (
+	if class x =!= Boolean then error "assert: expected true or false";
+	if not x then error "assertion failed");
+    printerr = msg -> endl(printString(stderr, concatenate(loadDepth, "-- ", msg)));
+    value = value'; -- TODO: is there a different way to get --no-core to work?
+    --
+    PackageDictionary = new Dictionary;
+    dictionaryPath = append(dictionaryPath, PackageDictionary);
+    assert'( not isGlobalSymbol "Core" );
+    PackageDictionary#("Package$Core") = getGlobalSymbol(PackageDictionary, "Core");
+    )
 -- we can't make this an else-clause, because then "Core" will be in the wrong dictionary
 disassemble ( () -> debug Core )
 if not firstTime then debug Core -- we need access to the private symbols (we remove the Core private dictionary later.)
 
 toString := value' getGlobalSymbol if firstTime then "simpleToString" else "toString"
-match := X -> null =!= regex X
 
 local exe
 local topBuilddir
@@ -37,22 +45,29 @@ local topBuilddir
 -- this next bit has to be *parsed* after the "debug" above, to prevent the symbols from being added to the User dictionary
 if firstTime then (
      -- all global definitions here are set to read-only
+     if notify then printerr("loading startup.m2 for the first time");
 
      filesLoaded = new MutableHashTable;
      loadedFiles = new MutableHashTable;
-     notify = false;
      nobanner = false;
      texmacsmode = false;
      restarting = false;
      restarted = false;
      srcdirs = {};
 
-     markLoaded = (fullfilename,origfilename,notify,filetime) -> ( 
-	  fullfilename = minimizeFilename fullfilename;
-	  filesLoaded#origfilename = (fullfilename,filetime); 
-	  loadedFiles##loadedFiles = realpath toAbsolutePath fullfilename; 
-	  if notify then stderr << "--loaded " << fullfilename << endl;
-	  );
+     markLoaded = (filename, filepath, filetime, notify) -> (
+	 filepath = minimizeFilename filepath;
+	 filesLoaded#filename = (filepath, filetime);
+	 loadedFiles##loadedFiles = realpath toAbsolutePath filepath;
+	 if notify then printerr("loaded ", filepath));
+     tryLoad = (filename, filepath, loadfun, notify) -> if fileExists filepath then (
+	 filetime := fileTime filepath;
+	 if notify then printerr("loading ", filename);
+	 ret := loadfun filepath;
+	 markLoaded(filename, filepath, filetime, notify);
+	 (true, ret)) else (false, null);
+     trySimpleLoad := (filename, filepath) -> first tryLoad(filename, filepath, simpleLoad, notify);
+
      normalPrompts = () -> (
 	  lastprompt := "";
 	  ZZ#{Standard,InputPrompt} = lineno -> concatenate(newline, lastprompt = concatenate(interpreterDepth:"i", toString lineno, " : "));
@@ -123,10 +138,6 @@ if firstTime then (
 	  l := separate x;
 	  if l#-1 === "" then drop(l,-1) else l);
 
-     isFixedExecPath = filename -> (
-	  -- this is the way execvp(3) decides whether to search the path for an executable
-	  match("/", filename)
-	  );
      re := "/";						    -- /foo/bar
      if version#"operating system" === "MicrosoftWindows" 
      then re = re | "|.:/";				    -- "C:/FOO/BAR"
@@ -137,9 +148,12 @@ if firstTime then (
      re = re | "|\\./";					    -- ./foo/bar
      re = re | "|\\.\\./";				    -- ../foo/bar
      isStablePathRegexp   := "^(" | re | ")";               -- whether we should search only in the current directory (or current file directory)
+     -- whether to search the path for an executable, based on execvp(3)
+     isFixedExecPath = filename -> match("/", filename);
      isAbsolutePath = filename -> match(isAbsolutePathRegexp, filename);
      isStablePath = filename -> match(isStablePathRegexp, filename);
-     concatPath = (a,b) -> if isAbsolutePath b then b else a|b;
+     concatPath = (dir, name) -> if isAbsolutePath name then name else concatenate(
+	 dir, if not match("/$", dir) then "/", name);
 
      toAbsolutePath = pth -> if pth =!= "stdio" and not isAbsolutePath pth then "/" | relativizeFilename("/", pth) else pth;
 
@@ -312,7 +326,7 @@ initcurrentlayout := () -> (
 	  );
      prefixDirectory = if currentLayout =!= null then realpath substring(bindir,0,#bindir-#currentLayout#"bin");
      -- we use "realpath" to produce real paths, because Cygwin-style symbolic links are not understood by native Windows applications
-     if notify then stderr << "--prefixDirectory = " << prefixDirectory << endl;
+     if notify then printerr("prefixDirectory = ", prefixDirectory);
      if readlink exe =!= null then (
 	  exe2 := concatPath(realpath dir exe, readlink exe);
 	  bindir2 := dir exe2 | "/";
@@ -328,25 +342,26 @@ initcurrentlayout := () -> (
      then (
 	  prefixDirectory = prefixDirectory2;
 	  currentLayout = currentLayout2;
-	  );
+	  prefixPath = { prefixDirectory });
      usrDist := "usr-dist/";
      topBuilddir = (
 	  if issuffix(usrDist,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#usrDist)
 	  else
 	  if issuffix(usrDist,prefixDirectory2) then substring(prefixDirectory2,0,#prefixDirectory2-#usrDist));
-     if notify then stderr << "--topBuilddir = " << topBuilddir << endl;
+     if notify then printerr("topBuilddir     = ", topBuilddir);
      topSrcdir = if topBuilddir =!= null and fileExists(topBuilddir|"srcdir") then (
 	  sdir := first lines get(topBuilddir|"srcdir");
 	  minimizeFilename concatPath(topBuilddir,sdir));
-     if notify then stderr << "--topSrcdir = " << topSrcdir << endl;
+     if notify then printerr("topSrcdir       = ", topSrcdir);
      )
 
 prefixDirectory = null					    -- prefix directory, after installation, e.g., "/usr/local/"
+prefixPath = {}
 
 fullCopyright := false
 matchpart := (pat,i,s) -> substring_((regex(pat, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
-nosetup := false
+nocore = false
 noinitfile = false
 interpreter := commandInterpreter
 
@@ -366,16 +381,7 @@ pathsearch := e -> (
 	  );
      e)
 
-phase := 1
-
-silence := arg -> null
-notyeterr := arg -> error("command line option ", arg, " not re-implemented yet")
-notyet := arg -> if phase == 1 then (
-     << "warning: command line option " << arg << " not re-implemented yet" << newline << flush;
-     )
-obsolete := arg -> error ("warning: command line option ", arg, " is obsolete")
 progname := notdir commandLine#0
-
 usage := arg -> (
      << "usage:"             << newline
      << "    " << progname << " [option ...] [file ...]" << newline
@@ -400,12 +406,12 @@ usage := arg -> (
      << "    --texmacs          TeXmacs session mode" << newline
      << "    --version          print version number and exit" << newline
      << "    --webapp           WebApp session mode" << newline
-     << "    --no-threads       don't start any additional threads (or tasks)" << newline
+     << "    --no-core          don't load the Core" << newline
      << "    --no-preload       don't load the preloaded packages" << newline;
      << "    --no-prompts       print no input prompts" << newline;
      << "    --no-randomize     don't set the random number seed based on the date" << newline
      << "    --no-readline      don't use readline" << newline;
-     << "    --no-setup         don't try to load setup.m2" << newline
+     << "    --no-threads       don't start any additional threads (or tasks)" << newline
      << "    --no-time          arrange for the current time to be always 0" << newline;
      << "    --no-tty           do not treat stdin and stdout as tty's" << newline
      << "    --no-tvalues       do not load tvalues.m2" << newline
@@ -427,12 +433,6 @@ usage := arg -> (
      << "    GC_NPROCS                 (gc: number of threads to use, linux)" << newline
      ;)
 
-tryLoad := (ofn,fn) -> if fileExists fn then (
-     filetime := fileTime fn;
-     r := simpleLoad fn;
-     markLoaded(fn,ofn,notify,filetime);
-     true) else false
-
 showMaps := () -> (
      if version#"operating system" === "SunOS" then (
 	  stack lines get ("!/usr/bin/pmap "|processID())
@@ -443,8 +443,12 @@ showMaps := () -> (
      else "memory maps not available"
      )
 
+phase := 1
 
-argno := 1
+obsolete :=  arg     -> (stderr << "error: command line option " << arg << " is obsolete."                        << endl << endl; usage(); exit 1)
+replaced := (arg, x) -> (stderr << "error: command line option " << arg << " has been replaced with " << x << "." << endl << endl; usage(); exit 1)
+notyeterr := arg     -> (stderr << "error: command line option " << arg << " has not been re-implemented yet.";   << endl << endl; usage(); exit 1)
+notyet := arg -> if phase == 1 then (stderr << "warning: command line option " << arg << " has not been re-implemented yet." << endl << flush)
 
 action := hashTable {
      "-h" => arg -> (usage(); exit 0),
@@ -465,7 +469,8 @@ action := hashTable {
      "--no-preload" => arg -> arg,
      "--no-prompts" => arg -> if phase == 3 then noPrompts(),
      "--no-readline" => arg -> arg,			    -- handled in d/stdio.d
-     "--no-setup" => arg -> if phase == 1 then nosetup = true,
+     "--no-setup"        => arg -> replaced(arg, "--no-core"),
+     "--no-core"         => arg -> if phase == 1 then nocore = true,
      "--notify" => arg -> if phase <= 2 then notify = true,
      "--no-tty" => arg -> arg,			    -- handled in d/stdio.d
      "--no-tvalues" => arg -> arg,		    -- handled in m2/typicalvalues.m2
@@ -498,15 +503,17 @@ action := hashTable {
      "--webapp" => arg -> ( printWidth=0; topLevelMode = global WebApp; )
      };
 
+argno := 1
+
 valueNotify := arg -> (
-     if notify then stderr << "--evaluating command line argument " << argno << ": " << format arg << endl;
+     if notify then printerr("evaluating command line argument ", toString argno, ": ", format arg);
      value' arg)
 
 initialPath := {}
 
 action2 := hashTable {
      "--srcdir" => arg -> if phase == 2 then (
-	  if not match("/$",arg) then arg = arg|"/";
+	  concatPath(arg, "");
 	  srcdirs = append(srcdirs,arg);
 	  initialPath = join(initialPath,select({arg|"Macaulay2/m2/",arg|"Macaulay2/packages/"},isDirectory));
 	  ),
@@ -515,13 +522,12 @@ action2 := hashTable {
      "--print-width" => arg -> if phase == 3 then printWidth = value' arg,
      "--debug" => arg -> debugWarningHashcode = value' arg,
      "--prefix" => arg -> if phase == 1 or phase == 3 then (
-	  if not match("/$",arg) then arg = arg | "/";
-	  prefixDirectory = arg;
-	  ),
+	  prefixPath = { prefixDirectory = concatPath(arg, "") }),
      "--check" => arg -> if arg != "1" and arg != "2" and arg != "3" then
 	       error ("--check ",arg,": expected 1, 2, or 3")
 	  else if phase == 1 and arg == "1" then
 	       runBasicTests()
+	  -- FIXME: doesn't work with --no-core
 	  else if phase == 4 and arg == "2" then (
 	       argumentMode = defaultMode - SetCaptureErr - SetUlimit -
 		    if noinitfile then 0 else ArgQ;
@@ -551,7 +557,7 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 	       if instance(value' global load, Function) then load arg else simpleLoad arg;
 	       exit 0))
      else (
-	  if notify then stderr << "--phase " << phase << endl;
+	  if notify then printerr("phase ", toString phase);
 	  while argno < #commandLine do (
 	       arg = commandLine#argno;
 	       if action#?arg then action#arg arg
@@ -589,27 +595,7 @@ exe = minimizeFilename (
      else pathsearch commandLine#0)
 if not isAbsolutePath exe then exe = currentDirectory() | exe ;
 exe = concatenate(realpath dir exe, base exe)
-if notify then stderr << "--executable = " << exe << endl
-
-describePath := () -> (
-     if #path == 0 then stderr << "--file search path empty" << endl
-     else (
-	  stderr << "--file search path directories:" << endl;
-	  for d in path do (
-	       stderr << "--    " << d << endl;
-	       );
-	  );
-     )
-
-loadSetup := () -> (
-     if notify then describePath();
-     for d in path do (
-	  fn := minimizeFilename(d|"setup.m2");
-	  if tryLoad("setup.m2", fn) then return;
-	  );
-     if not notify then describePath();
-     error "can't load setup.m2"
-     )
+if notify then printerr("executable = ", exe)
 
 if firstTime and not nobanner then (
      if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
@@ -624,20 +610,24 @@ initcurrentlayout()
 if firstTime and fileExists(prefixDirectory | currentLayout#"program licenses") then
 copyright = copyright | newline | "For licenses see " | prefixDirectory | currentLayout#"program licenses"
 
-path = (x -> select(x, i -> i =!= null)) deepSplice {
-	  if prefixDirectory =!= null then (
-	       if topBuilddir =!= null then (
-		    if topSrcdir =!= null then (
-		    	 topSrcdir|"Macaulay2/m2/",
-		    	 topSrcdir|"Macaulay2/packages/"
-			 ),
-		    topBuilddir|"Macaulay2/m2/"
-		    -- topBuilddir|"Macaulay2/packages/"
-		    ),
-	       prefixDirectory | replace("PKG", "Core", currentLayout#"package"),
-	       prefixDirectory | currentLayout#"packages"
-	       )
-	  }
+path = {}
+pkgpath = {}
+corepath = {}
+userpath = {
+    applicationDirectory() | "code/",
+    applicationDirectory() | "local/" | Layout#1#"packages"
+    }
+
+if prefixDirectory =!= null then (
+    if topBuilddir =!= null then (
+	if topSrcdir =!= null then (
+	    pkgpath  = append(pkgpath,  topSrcdir | "Macaulay2/packages/");
+	    corepath = append(corepath, topSrcdir | "Macaulay2/m2/"));
+	corepath = append(corepath, topBuilddir | "Macaulay2/m2/"));
+    pkgpath  = append(pkgpath,  prefixDirectory | currentLayout#"packages");
+    corepath = append(corepath, prefixDirectory | replace("PKG", "Core", currentLayout#"package")))
+
+path = join(corepath, pkgpath)
 
 if firstTime then normalPrompts()
 
@@ -647,25 +637,29 @@ processCommandLineOptions 2				    -- just for path to core files and packages
 
 path = join(initialPath, path)
 
-(loadDepth = 1; if firstTime and not nosetup then loadSetup(); loadDepth = 0)
+-- a local way to use private global symbols after endPackage is called on Core
+core := nm -> value if nocore then getGlobalSymbol nm else Core#"private dictionary"#nm
 
--- remove the Core private dictionary -- it was added by "debug" above
--- and install a local way to use private global symbols
-local core
-if not nosetup then (
-     dictionaryPath = select(dictionaryPath, d -> d =!= Core#"private dictionary");
-     core = nm -> value Core#"private dictionary"#nm;
-     ) else (
-     core = nm -> value getGlobalSymbol nm
-     )
+describePath = path -> (
+    if #path == 0 then printerr "file search path empty" else (
+	printerr "file search path directories:";
+	for d in path do printerr("   ", d)));
+
+loadCore = path -> (
+    if notify then describePath path;
+    if not any(path, prefix -> trySimpleLoad("Core.m2", minimizeFilename(prefix | "Core.m2"))) then (
+	if not notify then describePath path;
+	error "Core.m2 was not found on path"));
+
+-- Here the Core is loaded
+(loadDepth = 1; if firstTime and not nocore then loadCore path; loadDepth = 0)
 
 (loadDepth = 3; processCommandLineOptions 3; loadDepth = 0)
 (core "runStartFunctions")()
 
 if class Core =!= Symbol and not core "noinitfile" then (
-     -- the location of init.m2 is documented in the node "initialization file"
-     tryLoad ("init.m2", applicationDirectory() | "init.m2");
-     );
+    -- the location of init.m2 is documented in the node "initialization file"
+    trySimpleLoad("init.m2", applicationDirectory() | "init.m2"));
 
 loadDepth = 0;
 ( loadDepth = 3;

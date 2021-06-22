@@ -1,5 +1,12 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
+-- TODO: needs "newring.m2" for flattenRing
+needs "galois.m2"
+needs "matrix1.m2"
+needs "modules.m2"
+needs "modules2.m2"
+needs "mutablemat.m2"
+
 RingMap = new Type of HashTable
 
 RingMap.synonym = "ring map"
@@ -267,7 +274,7 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
 	       k = F.baseRings#(numsame-1);
 	       (R',p) := flattenRing(R, CoefficientRing => k);
 	       (F',r) := flattenRing(F, CoefficientRing => k);
-	       if R' === R and F' === F then error "kernel Ringmap: not implemented yet";
+	       if R' === R and F' === F then error "kernel RingMap: not implemented yet";
 	       p^-1 kernel (r * f * p^-1))))
 
 coimage RingMap := QuotientRing => f -> f.source / kernel f

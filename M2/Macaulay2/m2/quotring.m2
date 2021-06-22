@@ -1,5 +1,8 @@
 --		Copyright 1996-2006 by Daniel R. Grayson and Michael E. Stillman
 
+needs "enginering.m2"
+needs "matrix1.m2"
+
 QuotientRing = new Type of EngineRing
 QuotientRing.synonym = "quotient ring"
 ideal QuotientRing := R -> R.ideal

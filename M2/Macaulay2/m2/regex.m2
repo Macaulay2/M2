@@ -3,6 +3,8 @@
 -- See RegexFlags defined in Macaulay2/d/regex.dd for a list of available flags.
 -- More flags can be added there.
 
+needs "methods.m2"
+
 regexSpecialChars = concatenate(
     "([", apply({"\\", "^", "$", ".", "|", "?", "*", "+", "(", ")", "[", "]", "{", "}"}, c -> "\\" | c), "])")
 

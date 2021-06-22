@@ -1,3 +1,5 @@
+needs "set.m2"
+
 protect qname 						    -- an internal key
 
 -- from xhtml-math11-f.dtd:

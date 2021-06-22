@@ -11,10 +11,7 @@ clean:
 	rm -f gmon.out $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) gc_tested gc_test
 	rm -rf *.dSYM
 ../bin/linkexec : linkexec ; cp -a $< $@
-ifeq "@OS@" "Windows-95-98-NT"
-all: ../setup.exe
-../setup.exe : setup; cp setup.exe ..
-endif
+
 distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/util/Makefile
 # gc_test

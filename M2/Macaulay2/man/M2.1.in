@@ -40,8 +40,8 @@ print no input prompts
 \fB\-\-no\-readline\fR
 don't use readline
 .TP
-\fB\-\-no\-setup\fR
-don't try to load setup.m2
+\fB\-\-no\-core\fR
+don't load the Core
 .TP
 \fB\-\-no\-threads\fR
 don't start any additional threads (or tasks)
@@ -77,9 +77,6 @@ evaluate expression '...' before initialization
 .TP
 \fB\-e '...'\fR
 evaluate expression '...' after initialization
-.TP
-\fB\-x\fR
-example prompts, don't use readline
 
 .\" .SH "DESCRIPTION"
 .\" .SH "OPTIONS"

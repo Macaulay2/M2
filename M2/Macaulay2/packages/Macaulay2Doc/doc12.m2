@@ -281,8 +281,6 @@ document {
      there is just one instance, an expression representing the number 1."
      }
 
-undocumented {(value, RingElement),(value, Nothing), (value, IndexedVariableTable)}
-
 document {
      Key => {Expression, (value,Expression)} | flatten apply(toList value Core#"private dictionary"#"expressionBinaryOperators",
 	 op -> {(op,Expression,Expression),(op,Expression,Thing),(op,Thing,Expression),(op,Expression,Holder),(op,Holder,Expression),(op,Holder,Holder)}),

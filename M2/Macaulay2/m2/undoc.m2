@@ -1,3 +1,5 @@
+-- TODO: put each call to undocumented next to the method
+
 undocumented {
     -- etc.
     (net, LITERAL),

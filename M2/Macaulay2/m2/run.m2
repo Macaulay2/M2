@@ -1,4 +1,7 @@
 -- TODO: parallelize testing
+-- TODO: merge with capture.m2?
+
+needs "system.m2"
 
 -- TODO: get rid of these
 (hadError, numErrors) = (false, 0);
@@ -46,7 +49,7 @@ ArgNoDebug     = 1 <<  3 -* add --no-debug *-
 ArgNoPreload   = 1 <<  4 -* add --no-preload *-
 ArgNoRandomize = 1 <<  5 -* add --no-randomize *-
 ArgNoReadline  = 1 <<  6 -* add --no-readline *-
-ArgNoSetup     = 1 <<  7 -* add --no-setup *-
+ArgNoCore      = 1 <<  7 -* add --no-core *-
 ArgNoThreads   = 1 <<  8 -* add --no-threads *-
 ArgNoTTY       = 1 <<  9 -* add --no-tty *-
 ArgNoTValues   = 1 << 10 -* add --no-tvalues *-
@@ -107,7 +110,7 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      cmd = cmd | readmode(ArgNoPreload,   "--no-preload");
      cmd = cmd | readmode(ArgNoRandomize, "--no-randomize");
      cmd = cmd | readmode(ArgNoReadline,  "--no-readline");
-     cmd = cmd | readmode(ArgNoSetup,     "--no-setup");
+     cmd = cmd | readmode(ArgNoCore,      "--no-core");
      cmd = cmd | readmode(ArgNoThreads,   "--no-threads");
      cmd = cmd | readmode(ArgNoTTY,       "--no-tty");
      cmd = cmd | readmode(ArgNoTValues,   "--no-tvalues");

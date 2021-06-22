@@ -1,5 +1,7 @@
 --		Copyright 1993-2008 by Daniel R. Grayson
 
+needs "enginering.m2"
+
 -- ImmutableType
 
 ImmutableType = new Type of HashTable
@@ -383,6 +385,15 @@ net CC := z -> simpleToString z
 toExternalString RR := toExternalString0
 toExternalString CC := toExternalString0
 texMath CC := x -> texMath expression x
+texMath RR := x -> (
+    if not isANumber x then texMath toString x else
+    if    isInfinite x then texMath(if x > 0 then infinity else -infinity)
+    else "{" | format(
+	printingPrecision,
+	printingAccuracy,
+	printingLeadLimit,
+	printingTrailLimit,
+	"}\\cdot 10^{", x ) | "}")
 withFullPrecision = f -> (
      prec := printingPrecision;
      acc := printingAccuracy;

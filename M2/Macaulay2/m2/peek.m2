@@ -1,5 +1,9 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "expressions.m2" -- for precedence
+needs "hypertext.m2"
+needs "methods.m2"
+
 peek' = method(TypicalValue => Net)
 
 peek'(ZZ,ZZ) := (depth,n) -> toString n

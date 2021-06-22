@@ -1,5 +1,10 @@
 --		Copyright 2009 by Daniel R. Grayson
 
+needs "code.m2"
+needs "indeterminates.m2"
+needs "ofcm.m2"
+needs "variables.m2"
+
 -- this code should go after the last method installed for baseName
 scan(join(apply(methods baseName,last),{MonoidElement}), X -> if X =!= Symbol and X =!= IndexedVariable and not ancestor(Expression,X) then (
 	  err1 := lookup(symbol .., Thing, Thing);

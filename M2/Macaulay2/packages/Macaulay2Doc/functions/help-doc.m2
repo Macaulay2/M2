@@ -77,15 +77,12 @@ doc ///
       a descriptor for a documentation node (see below for examples)
   Consequences
     Item
-      The given documentation page is displayed in your default web browser, as determined
-      by either @TT "open"@ on macOS or @TT "xdg-open"@ on Linux distributions.
-      As backup for when neither @TT "open"@ nor @TT "xdg-open"@ is available,
-      the environmental variable @TT "WWWBROWSER"@ or @TT "firefox"@ is used.
-
-     If no argument is given to @TT "viewHelp"@ then the top page of your local html
-     documentation is displayed.
+      The given documentation page is displayed using the function @TO show@
+      which opens the page in the default web browser.
   Description
     Text
+      If no argument is given to @TT "viewHelp"@ then the top page of your local html documentation is displayed.
+
       Some example uses:
 
       @UL {

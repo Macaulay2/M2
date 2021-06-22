@@ -12,6 +12,10 @@
   MarkUpType, and therefore need to be rendered.
 *-
 
+needs "document.m2"
+needs "hypertext.m2"
+needs "nets.m2"
+
 -----------------------------------------------------------------------------
 -- Common utilities for formatting documentation nodes
 -----------------------------------------------------------------------------

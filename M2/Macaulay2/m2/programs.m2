@@ -1,3 +1,5 @@
+needs "methods.m2"
+
 Program = new Type of HashTable
 ProgramRun = new Type of HashTable
 programPaths = new MutableHashTable

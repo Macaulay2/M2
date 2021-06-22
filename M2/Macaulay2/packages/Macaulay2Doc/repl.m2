@@ -66,6 +66,8 @@ document {
      "We intend to add parsing precedences to this table and eliminate ", TO "seeParsing", "."
      }
 
+undocumented {(value, RingElement), (value, Nothing), (value, IndexedVariableTable)}
+
 document {
      Key => value,
      Headline => "evaluate"
@@ -609,24 +611,6 @@ document {
      three lines above.",
      SeeAlso => { "oo", "ooo" }
      }
-
-document {
-     Key => {locate,(locate, Pseudocode), (locate, Function), (locate, Sequence), (locate, Symbol), (locate, Nothing)},
-     Headline => "locate source code",
-     TT "locate f", " -- for a symbol interpreted function ", TT "f", "
-     returns a sequence ", TT "(n,i,c,j,d,k,e)", " describing the location of
-     the definition in the source code.  The name of the source file
-     is ", TT "n", " and the code is occupies line ", TT "i", " column ", TT "c", "
-     through line ", TT "j", " column ", TT "d", ", with the central point of interest
-     located at line ", TT "k", " column ", TT "e", ".  If the function ", TT "f", " is compiled,
-     then the location is not available, and ", TO "null", " is returned.",
-     PARA{},
-     "If ", TT "f", " is a sequence, then ", TO "lookup", " is applied
-     first, and then the location of the resulting function is provided.",
-     PARA{},
-     "If ", TT "f", " is ", TO "null", ", then ", TO "null", " is returned."
-     }
-
 
 -- document {
 --      Key => precedence,

@@ -1,5 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "methods.m2"
+
 printpass := ID -> x -> (stderr << ID << ": " << x << endl; x)
 fold3 := (f,x,v) -> (scan(v, y -> x = f(x,y)); x)
 fold2 := (f,v) -> fold3(f,v#0,drop(v,1))
@@ -7,7 +9,7 @@ mergeopts := x -> fold2((a,b) -> merge(a,b,last), x)
 makeDir := name -> if name != "" and (not fileExists name or not isDirectory (name | "/.")) then mkdir name
 
 searchPath = method()
-searchPath(List,String) := List => (pth,fn) -> select(pth, dir -> fileExists(dir|"/"|fn))
+searchPath(List,String) := List => (pth,fn) -> searchPath'(pth,fn)
 searchPath(String) := List => (fn) -> searchPath(path,fn)
 
 makeDirectory = method()

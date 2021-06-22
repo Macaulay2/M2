@@ -1,5 +1,7 @@
 -- Copyright 1994 by Daniel R. Grayson
 
+needs "methods.m2"
+
 VirtualTally.synonym = "virtual tally"
 Tally.synonym = "tally"
 Set.synonym = "set"

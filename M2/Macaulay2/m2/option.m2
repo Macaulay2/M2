@@ -1,14 +1,15 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "classes.m2" -- for codeHelper
+
 Option.synonym = "option"
 OptionTable.synonym = "option table"
 
-new OptionTable from List := (OptionTable,opts) -> (
-     scan(opts, opt -> (
-	       if opt === null then error "null entry encountered in option list";
-	       if not (instance(opt#0,Symbol) or instance(opt#0,String) or instance(opt#0,Type))
-	       then error ("option name ",toString opt#0," should be a symbol, a string, or a type")));
-     hashTable opts)
+all' := (L, p) -> not any(L, x -> not p x)
+
+new OptionTable from List := (OptionTable, opts) -> (
+    if all'(opts, opt -> opt === null or any({Symbol, String, Type}, T -> instance(opt#0, T)))
+    then new HashTable from opts else error("expected option key to be a symbol, a string, or a type"))
 
 installMethod(symbol >>, OptionTable, Function, Function => 
   (opts,f) -> args -> (

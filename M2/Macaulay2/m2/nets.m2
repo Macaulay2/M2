@@ -1,6 +1,11 @@
 --		Copyright 1996-2000 by Daniel R. Grayson
 
+needs "set.m2" -- for demark
+needs "methods.m2"
+
 -- nets
+
+Net.synonym = "net"
 
 Net#{Standard,AfterPrint} = identity
 
@@ -218,6 +223,15 @@ netList = method(Options => {
 	  })
 
 maxN := x -> if #x === 0 then 0 else max x
+
+spaces = n -> concatenate n
+dashes = n -> concatenate(n:"-")
+
+centerString = (wid, s) -> (
+    n := width s;
+    if n === wid then s else (
+	w := (wid-n+1)//2;
+	horizontalJoin(spaces w,s,spaces(wid-w-n))))
 
 alignmentFunctions := new HashTable from {
      Left => (wid,n) -> n | horizontalJoin(wid - width n : " "^(- depth n)),

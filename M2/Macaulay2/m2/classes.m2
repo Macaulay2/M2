@@ -1,6 +1,8 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-Net.synonym = "net"
+-- TODO: make this TT toString X later?
+synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
+
 Time.synonym = "timing result"
 Boolean.synonym = "Boolean value"
 MutableHashTable.synonym = "mutable hash table"
@@ -13,28 +15,52 @@ CompiledFunctionClosure.synonym = "compiled function closure"
 FunctionBody.synonym = "function body"
 SymbolBody.synonym = "symbol body"
 CompiledFunctionBody.synonym = "compiled function body"
-Sequence.synonym = "sequence"
-VisibleList.synonym = "visible list"
 Database.synonym = "database"
 Thing.synonym = "thing"
 Type.synonym = "type"
 String.synonym = "string"
-BasicList.synonym = "basic list"
-List.synonym = "list"
-MutableList.synonym = "mutable list"
 File.synonym = "file"
-Array.synonym = "array"
-AngleBarList.synonym = "angle bar list"
 Symbol.synonym = "symbol"
 Keyword.synonym = "keyword"
 Dictionary.synonym = "dictionary"
 -- Pseudocode.synonym = "pseudocode" -- "a pseudocode" doesn't sound so great
-ZZ.synonym = "integer"
-ZZ.texMath = ///{\mathbb Z}///
-QQ.synonym = "rational number"
-QQ.texMath = ///{\mathbb Q}///
-Ring.synonym = "ring"
 Task.synonym = "task"
+
+-----------------------------------------------------------------------------
+-- SelfInitializingType
+-----------------------------------------------------------------------------
+
+SelfInitializingType = new Type of Type
+SelfInitializingType.synonym = "self initializing type"
+
+SelfInitializingType Thing         := (T, z) -> new T from z
+SelfInitializingType      \\ Thing := (T, z) -> T z
+Thing      // SelfInitializingType := (z, T) -> T z
+SelfInitializingType \ VisibleList := (T, z) -> (i -> T i) \ z
+       List / SelfInitializingType := -- override List / Thing
+VisibleList / SelfInitializingType := (z, T) -> z / (i -> T i)
+
+-----------------------------------------------------------------------------
+-- Bags
+-----------------------------------------------------------------------------
+
+Bag = new SelfInitializingType of MutableList
+Bag.synonym = "bag"
+Bag ? Bag := (x,y) -> incomparable -- so we can sort with them
+
+-----------------------------------------------------------------------------
+-- Commands
+-----------------------------------------------------------------------------
+
+Command = new SelfInitializingType of BasicList
+Command.synonym = "command"
+globalAssignment Command
+
+new Command from Function := Command => (command, f) -> command {f}
+-- new Command from String is defined in system.m2
+
+Command#AfterEval = x -> Thing#AfterEval x#0 ()
+Command Thing := (x,y) -> x#0 y
 
 -- Now some extra stuff:
 
@@ -52,9 +78,12 @@ VisibleList /  Function := VisibleList => (v,f) -> apply(v,f)
      String /  Function := Sequence    => (s,f) -> apply(s,f)
       Thing // Command  := 
       Thing // Function := VisibleList => (v,f) -> f v
------------------------------------------------------------------------------
 
--- miscellaneous stuff:
+-----------------------------------------------------------------------------
+-- Syntactic sugar for function composition and uncurrying the first argument
+-----------------------------------------------------------------------------
+-- TODO: does this belong in classes.m2?
+-- TODO: Function ^ Thing: https://github.com/Macaulay2/M2/issues/1630#issuecomment-735361979
 
 codeHelper = new MutableHashTable
 
@@ -69,6 +98,13 @@ codeHelper#(functionBody(identity _ null)) = h -> {
      ("-- function f:", value' (first localDictionaries h)#"f"),
      ("-- value of x:", value' (first localDictionaries h)#"x")
      }
+
+-----------------------------------------------------------------------------
+-- miscellaneous stuff:
+
+sortBy = f -> v -> last @@ last \ sort \\ (i -> (f i, new Bag from {i})) \ v
+sortByName = x -> (sortBy toString) x
+sortByHash = sortBy hash
 
 -----------------------------------------------------------------------------
 

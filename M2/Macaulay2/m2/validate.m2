@@ -1,6 +1,10 @@
 --		Copyright 2006 by Daniel R. Grayson
 -- validate and fix Hypertext objects
 
+needs "content.m2"
+needs "hypertext.m2"
+needs "methods.m2"
+
 -- TODO: make this local
 currentHelpTag = null
 

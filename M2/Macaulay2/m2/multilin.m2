@@ -1,5 +1,7 @@
 --		Copyright 1995-2002,2010 by Daniel R. Grayson and Michael Stillman
 
+needs "matrix1.m2"
+
 symmetricPower(ZZ, Matrix) := Matrix => (i,m) -> map(ring m, rawSymmetricPower(i, raw m))
 
 getMinorsStrategy := (R,options) -> (

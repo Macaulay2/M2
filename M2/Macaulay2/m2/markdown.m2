@@ -16,6 +16,8 @@ markdown HEAD := x -> concatenate("---\n",
 markdown BODY := x -> concatenate(shorten apply(x, markdown))
 *-
 
+needs "format.m2"
+
 -----------------------------------------------------------------------------
 -- Local utilities
 -----------------------------------------------------------------------------

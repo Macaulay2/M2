@@ -607,7 +607,9 @@ document {
      global symbols for keys that appear to be storing references to
      methods.  Types that don't appear as values of global variables will
      not be examined, so perhaps not all methods will be found.",
-     SeeAlso => {(code, List)}
+     SeeAlso => {
+	 (options, ZZ), (code, ZZ), (code, List)
+	 }
      }
 
 document { Key => "backtrace",

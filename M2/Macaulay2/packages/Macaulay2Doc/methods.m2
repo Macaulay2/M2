@@ -178,30 +178,6 @@ document {
      "Intended for internal use only."
      }
 document {
-    Key => options,
-    Headline => "get options",
-    SeeAlso => {Option}
-    }
-document {
-     Key => Option,
-     Headline => "the class of all pairs x => y",
-     PARA{},
-     "Such pairs are used as optional arguments for functions.  There
-     is also a way to make new hash tables with ", TO "new", " by
-     providing a list of option pairs.",
-     PARA{},
-     EXAMPLE {
-	  "a => 5",
-	  "peek (a => 5)",
-	  "new HashTable from {a => 5, b => 7}",
-	  },
-     PARA{},
-     "These pairs are implemented as lists, so that if ", TT "z", " is ", TT "x => y", ", then
-     ", TT "x", " is ", TT "z#0", " and ", TT "y", " is ", TT "z#1", ".",
-     PARA{},
-     SeeAlso => { "=>", options }
-     }
-document {
      Key => (NewFromMethod, HashTable, List),
      Headline => "make a hash table from a list",
      TT "new HashTable from x", " -- produce a new hash table from a
@@ -280,21 +256,6 @@ document {
      "This information is used only to build documentation automatically.",
      EXAMPLE "typicalValues#isRing",
      SeeAlso => { "specifying typical values" }
-     }
-document {
-     Key => {(options, Function),(options, Command),(options, Sequence)},
-     Headline => "get optional arguments and default values for a function that accepts them",
-     Usage => "options f",
-     Inputs => { "f" },
-     Outputs => {
-	  { "a hash table whose keys are the names of the optional arguments accepted by
-	       the function ", TT "f", " and whose values are the corresponding default values;
-	       or ", TO "true", ", if the function accepts all option names and provides no default values" }
-	  },
-     EXAMPLE {
-	  "options res",
-	  "options codim"
-	  }
      }
 
 document {

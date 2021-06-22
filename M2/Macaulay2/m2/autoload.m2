@@ -1,5 +1,8 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "methods.m2"
+
+autoload = method()
 autoload(Symbol,String) := (sym,filename) -> (
      if value sym =!= sym then error ("symbol ", toString sym, " already has a value");
      sym <- f := x -> (

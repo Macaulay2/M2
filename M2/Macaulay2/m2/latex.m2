@@ -5,6 +5,9 @@
 -- TODO: eye-friendly block indentation
 -----------------------------------------------------------------------------
 
+needs "format.m2"
+needs "html.m2"
+
 newpara := "\n\\par "
 maximumCodeWidth := 60 -- see also booktex.m2, an old file that sets the same variable
 
@@ -68,6 +71,56 @@ sectionType = sectionNumber -> (
     "\\subsubsubsubsubparagraph");
 
 -----------------------------------------------------------------------------
+
+bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
+-- TODO: expand and document this behavior
+suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};
+suffixesRegExp := "\\w("|demark("|",suffixes)|")$";
+texVariable := x -> (
+    if x === "" then return "";
+    xx := separate("\\$", x); if #xx > 1 then return demark("{\\char36}", texVariable \ xx); -- avoid the use of "$" in tex output
+    if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb " | x#0 | "}";
+    if last x === "'" then return texVariable substring(x, 0, #x-1) | "'";
+    if (r := regex(suffixesRegExp, x)) =!= null then return (
+	r = r#1; "\\" | substring(r, x) | "{" | texVariable substring(x, 0, r#0) | "}");
+    if #x === 1 or regex("[^[:alnum:]]", x) =!= null then x else "\\textit{" | x | "}")
+texMath Symbol := x -> if keywordTexMath#?x then keywordTexMath#x else texVariable toString x
+
+-----------------------------------------------------------------------------
+
+tex     Nothing :=
+texMath Nothing := x -> ""
+
+tex     Thing := x -> concatenate("$", texMath x, "$")
+texMath Thing := x -> texMath net x -- if we're desperate (in particular, for raw objects)
+
+tex     String := texLiteral
+texMath String := s -> "\\texttt{" | texLiteral s | "}"
+
+texMath Net := n -> concatenate(
+    "\\begin{array}{l}", demark("\\\\\n", apply(unstack n, texMath)), "\\end{array}")
+
+texMath VerticalList := s -> concatenate(
+    "\\left\\{\\begin{aligned}", demark("\\\\", apply(toList s, x -> "&" | texMath x)), "\\end{aligned}\\right\\}")
+
+texMath NumberedVerticalList := s -> concatenate(
+    "\\left\\{\\begin{aligned}", demark("\\\\", apply(#s, i -> i | ".\\quad&" | texMath s#i)), "\\end{aligned}\\right\\}")
+
+texMathVisibleList := (op, L, delim, cl) -> concatenate("\\left", op, demark_delim apply(toList L, texMath), "\\right", cl)
+texMath AngleBarList := L -> texMathVisibleList("<", L, ",\\,", ">")
+texMath Array        := L -> texMathVisibleList("[", L, ",\\,", "]")
+texMath Sequence     := L -> texMathVisibleList("(", L, ",\\,", ")")
+texMath VisibleList  := L -> texMathVisibleList("\\{", L, ",\\,", "\\}")
+texMath BasicList    := L -> concatenate(texMath class L, texMathVisibleList("\\{", L, ",\\,", "\\}"))
+texMath MutableList  := L -> concatenate(texMath class L, "\\left\\{", if #L > 0 then "\\ldots "|#L|"\\ldots", "\\right\\}")
+
+texMath HashTable := H -> if H.?texMath then H.texMath else (
+    if hasAttribute(H, ReverseDictionary) then texMath toString getAttribute(H, ReverseDictionary) else
+    if mutable H then      (lookup(texMath, MutableList)) H
+    else texMath class H | (lookup(texMath, List)) apply(sortByName pairs H, (k, v) -> k => v))
+
+texMath Function := f -> texMath toString f
+
 --     \rm     Roman
 --     \sf     sans-serif
 --     \tt     typewriter
@@ -101,8 +154,6 @@ tex HEADER5 := x -> concatenate (
 tex HEADER6 := x -> concatenate (
     newpara, "\\medskip\\noindent\\begingroup\\normal\\bf\n",
     apply(toList noopts x, tex), "\\endgroup", newpara, "\\smallskip%\n")
-
-tex String := texLiteral
 
 tex COMMENT := x -> newline | concatenate apply(lines concatenate x,line -> "% " | line | newline)
 tex IMG     :=
@@ -163,6 +214,26 @@ tex TO2  := x -> ( tag := x#0; text := x#1; tex TT text )
 tex HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral toURL first x, "\">}", tex last x, "\\special{html:</a>}")
 
 tex MENU := x -> tex drop(redoMENU x, 1)
+
+-----------------------------------------------------------------------------
+-- Viewing TeX
+-----------------------------------------------------------------------------
+
+-- TODO: incorporate this with packages/Style/M2book.tex.in
+TeXclass := "\\documentclass{article}"
+TeXpackages := {"amsmath", "amssymb"}
+TeXtemplate := src -> concatenate( TeXclass,                newline,
+    apply(TeXpackages, pkg -> "\\usepackage{" | pkg | "}"), newline,
+    "\\begin{document}", newline, src, newline, "\\end{document}" )
+
+showTex =
+show TEX := x -> (
+    fn := "show";
+    makeDirectory(dir := temporaryFileName() | "/");
+    dir | fn | ".tex" << TeXtemplate tex x << close;
+    if 0 =!= chkrun concatenate("set -x ; cd ", dir, "; pdflatex -interaction=batchmode " , fn)
+    then error("pdflatex failed on input file ", dir, fn, ".tex");
+    show new URL from concatenate(rootURI, dir, fn, ".pdf"))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
