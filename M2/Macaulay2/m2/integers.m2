@@ -1,10 +1,25 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "rings.m2"
+
+-----------------------------------------------------------------------------
+-- Number
+-----------------------------------------------------------------------------
+
 isHomogeneous Number := x -> true
 ring Number := class
 degree Number := i -> {}
 conjugate Number := identity
 toExternalString Number := simpleToString
+floor Number := x -> floor0(x)
+ceiling Number := x -> - floor(-x)
+
+-----------------------------------------------------------------------------
+-- ZZ
+-----------------------------------------------------------------------------
+
+ZZ.synonym = "integer"
+ZZ.texMath = ///{\mathbb Z}///
 
 ZZ.RawRing = rawZZ()
 protect isBasic
@@ -25,6 +40,8 @@ round ZZ := identity
 lift(ZZ,ZZ) := opts -> (i,ZZ) -> i
 promote(ZZ,ZZ) := (i,ZZ) -> i
 ZZ.random = opts -> ZZ -> rawRandomZZ opts.Height
+texMath ZZ := toString
+
 gcd = method(Binary => true)
 gcd List := x -> gcd toSequence x
 installMethod(gcd, () -> 0)
@@ -56,10 +73,6 @@ random(ZZ,ZZ) := ZZ => opts -> (min,max) -> (
      if min > max then error "random: empty range";
      min + rawRandomZZ(max-min+1)
      )
-floor = method()
-floor Number := x -> floor0(x)
-ceiling = method()
-ceiling Number := x -> - floor(-x)
 isUnit ZZ := x -> x == 1 or x == -1
 
 ZZ & ZZ := ZZ => lookup(symbol &, ZZ, ZZ)

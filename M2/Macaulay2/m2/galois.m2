@@ -1,5 +1,9 @@
 --		Copyright 1996-2002 by Daniel R. Grayson
 
+needs "enginering.m2"
+needs "quotring.m2"
+needs "orderedmonoidrings.m2"
+
 GaloisField = new Type of EngineRing
 GaloisField.synonym = "Galois field"
 

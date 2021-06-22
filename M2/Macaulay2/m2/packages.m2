@@ -1,6 +1,13 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 -- TODO: eventually we won't be able to keep all packages open, anyway, since 256 can be our limit on open file descriptors
 
+needs "files.m2"
+needs "fold.m2"
+needs "lists.m2"
+needs "methods.m2"
+needs "regex.m2"
+needs "system.m2"
+
 loadedPackages = {}
 
 rawKey   = "raw documentation"
@@ -86,18 +93,6 @@ isPackageLoaded := pkgname -> PackageDictionary#?pkgname and instance(value Pack
 -- TODO: make this local
 checkPackageName = title -> (
     if not match("^[[:alnum:]]+$", title) then error("package title not alphanumeric: ", format title))
-
------------------------------------------------------------------------------
--- gdbm functions
------------------------------------------------------------------------------
-
--- gdbm makes architecture dependent files, so we try to distinguish them, in case
--- they get mixed.  Yes, that's in addition to installing them in directories that
--- are specified to be suitable for machine dependent data.
-databaseSuffix := "-" | version#"endianness" | "-" | version#"pointer size" | ".db"
-
-databaseDirectory = (layout, pre, pkg) -> pre | replace("PKG", pkg, layout#"packagecache")
-databaseFilename  = (layout, pre, pkg) -> databaseDirectory(layout, pre, pkg) | "rawdocumentation" | databaseSuffix
 
 closePackage = pkg -> if pkg#?rawKeyDB then (db -> if isOpen db then close db) pkg#rawKeyDB
 
@@ -316,6 +311,7 @@ newPackage String := opts -> pkgname -> (
 	    m = regex("(/|^)" | Layout#1#"packages" | "$", currentFileDirectory);
 	    -- this can be useful when running from the source tree, but this is a kludge
 	    if m#?1 then substring(currentFileDirectory, 0, m#1#0 + m#1#1) else prefixDirectory));
+    packageLayout := detectCurrentLayout packagePrefix;
     --
     newpkg := new Package from nonnull {
 	"pkgname"                  => pkgname,
@@ -346,26 +342,13 @@ newPackage String := opts -> pkgname -> (
 	"package prefix"           => packagePrefix
 	};
     --
-    if packagePrefix =!= null then (
-	rawdbname := databaseFilename(Layout#(detectCurrentLayout packagePrefix), packagePrefix, pkgname);
+    if packageLayout =!= null then (
+	rawdbname := databaseFilename(Layout#packageLayout, packagePrefix, pkgname);
 	if fileExists rawdbname then (
 	    newpkg#rawKeyDB = rawdb := openDatabase rawdbname;
 	    addEndFunction(() -> if isOpen rawdb then close rawdb))
-	else if notify then stderr << "--database not present: " << rawdbname << endl;
-	newpkg#topFileName = packagePrefix | replace("PKG", newpkg#"pkgname", currentLayout#"packagehtml") | topFileName)
-    else if notify then stderr << "--package prefix null, not opening database for package " << newpkg << endl;
-    --
-    addStartFunction(() ->
-	if not ( newpkg#?rawKeyDB and isOpen newpkg#rawKeyDB ) and prefixDirectory =!= null
-	then (
-	    dbname := databaseFilename (currentLayout, prefixDirectory, pkgname); -- what if there is more than one prefix directory?
-	    if fileExists dbname then (
-		db := newpkg#rawKeyDB = openDatabase dbname;
-		if notify then stderr << "--opened database: " << rawdbname << endl;
-		addEndFunction(() -> if isOpen db then close db))
-	    else (
-		if notify then stderr << "--database not present: " << rawdbname << endl;
-		)));
+	else if notify then printerr("database not present: ", minimizeFilename rawdbname))
+    else if notify then printerr("package prefix null, not opening database for package ", format pkgname);
     --
     pkgsym := (
 	if PackageDictionary#?pkgname then getGlobalSymbol(PackageDictionary, pkgname)
@@ -440,6 +423,7 @@ exportFrom(Package, List) := (P, x) -> export \\ toString \ importFrom(P, x)
 
 ---------------------------------------------------------------------
 -- Here is where Core officially becomes a package
+-- TODO: is this line necessary? when does it ever run?
 addStartFunction( () -> if prefixDirectory =!= null then Core#"package prefix" = prefixDirectory )
 newPackage("Core",
      Authors => {
@@ -451,6 +435,7 @@ newPackage("Core",
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION",
      Headline => "A computer algebra system designed to support algebraic geometry")
+Core#"pre-installed packages" = lines get (currentFileDirectory | "installedpackages")
 
 endPackage = method()
 endPackage String := title -> (
@@ -462,10 +447,8 @@ endPackage String := title -> (
 	       protect s;
 	       ---if value s =!= s and not hasAttribute(value s, ReverseDictionary) then setAttribute((value s), ReverseDictionary, s)
 	       ));
-     if true or pkg =!= Core then (			    -- protect it later
-	  protect pkg#"private dictionary";
-	  protect exportDict;
-	  );
+     protect exportDict;
+     protect pkg#"private dictionary";
      if pkg#"pkgname" === "Core" then (
 	  loadedPackages = {pkg};
 	  dictionaryPath = {Core.Dictionary, OutputDictionary, PackageDictionary};
@@ -483,7 +466,7 @@ endPackage String := title -> (
      remove(pkg, "previous currentPackage");
      debuggingMode = pkg#"old debuggingMode"; remove(pkg, "old debuggingMode");
      checkShadow();
-     if notify then stderr << "--package \"" << pkg << "\" loaded" << endl;
+     if notify then printerr("package ", format title, " loaded");
      if pkg.?loadDepth then (
 	  loadDepth = pkg.loadDepth;
 	  remove(pkg, loadDepth);

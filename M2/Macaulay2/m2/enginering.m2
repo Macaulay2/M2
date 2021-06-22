@@ -1,5 +1,10 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
+-- TODO: some functions seems to depend on other files
+needs "expressions.m2"
+needs "remember.m2"
+needs "rings.m2"
+
 RingElement.synonym = "ring element"
 value RingElement := identity
 raw RingElement := f -> f#0
