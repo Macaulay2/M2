@@ -53,7 +53,8 @@ polymakeCommand = (options Tropical)#Configuration#"polymakeCommand"
 polymakeOK = polymakeCommand != ""
 
 --Do we want to keep this?
-if polymakeOK then << "-- polymake is installed\n" else << "-- polymake not present\n";
+verboseLog = if debugLevel > 0 then printerr else identity
+if polymakeOK then verboseLog "polymake is installed" else verboseLog "polymake not present";
 
 
 ------------------------------------------------------------------------------
