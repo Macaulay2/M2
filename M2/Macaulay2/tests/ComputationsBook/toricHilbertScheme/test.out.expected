@@ -615,10 +615,10 @@ o87 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/toricHilbertSchem
            while n > 0 do (n = n-1; g = gcd(g, L#n););
            if g === 1 then L else apply(L, i -> i // g));
 
-i88 : code toZZ
+i88 : code(toZZ,List)
 
-o88 = /home/dan/src/M2/1.2/Macaulay2/packages/ComputationsBook/toricHilbertScheme/polarCone.m2:28:12-32:33: --source code:
-      toZZ = (L) -> (
+o88 = -- code for method: toZZ(List)
+      toZZ List := (L) -> (
            d := apply(L, e -> denominator e);
            R := ring d#0;             l := 1_R;
            scan(d, i -> (l = (l*i // gcd(l,i))));    

@@ -364,12 +364,14 @@ document {
      SeeAlso => {CoherentSheaf, cohomology}
      }
 
-document { Key => toRR,
+document {
+    Key => {toRR, (toRR, RR), (toRR, ZZ), (toRR, QQ), (toRR, RRi),
+	(toRR, ZZ, RR), (toRR, ZZ, ZZ), (toRR, ZZ, QQ), (toRR, ZZ, RRi)},
      Headline => "convert to high-precision real number",
      Usage => "toRR(prec,x)",
      Inputs => {
 	  "prec" => ZZ => {"the number of bits of precision desired"},
-	  "x" => {ofClass{RR,ZZ,QQ}}
+	  "x" => {ofClass{RR,ZZ,QQ,RRi}}
 	  },
      Outputs => {RR => {"the result of converting ", TT "x", " to a high-precision real number"}},
      EXAMPLE lines ///

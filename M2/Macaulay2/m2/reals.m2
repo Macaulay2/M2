@@ -95,6 +95,11 @@ diameter RRi := diameter'
 
 Number _ InexactFieldFamily := (x,RR) -> x_(default RR)
 
+toRR' = toRR
+toRR = method()
+toRR(ZZ) := toRR(QQ) := toRR(RR) := toRR(RRi) :=
+toRR(ZZ, ZZ) := toRR(ZZ, QQ) := toRR(ZZ, RR) := toRR(ZZ, RRi) := toRR'
+
 promote(RawRingElement,RR') := (x,R) -> new RR from x
 promote(RawRingElement,RRi') := (x,R) -> new RRi from x
 promote(RawRingElement,CC') := (x,R) -> new CC from x

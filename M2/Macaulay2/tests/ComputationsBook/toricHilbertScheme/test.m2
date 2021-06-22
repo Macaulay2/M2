@@ -235,7 +235,7 @@ Aff = apply(1..22, v -> (
                        ideal gens gb (FF K)));
 scan(Aff, i -> print toString i);
 code primitive
-code toZZ
+code(toZZ,List)
 code rotateMatrix
 code isRedundant
 code fourierMotzkin'

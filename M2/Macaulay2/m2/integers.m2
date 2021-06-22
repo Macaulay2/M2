@@ -67,6 +67,9 @@ ZZ & ZZ := ZZ => lookup(symbol &, ZZ, ZZ)
 ZZ ^^ ZZ := bitxorfun
 Boolean xor Boolean := (x, y) -> x and not y or not x and y
 
+toZZ = method()
+toZZ Number:= toZZ RingElement := x -> lift(x, ZZ)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

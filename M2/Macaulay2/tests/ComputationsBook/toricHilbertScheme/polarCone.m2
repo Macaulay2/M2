@@ -25,7 +25,7 @@ primitive = (L) -> (
 -- RECEIVES : 'L' : a list of 'QQ'. 
 -- RETURNS  : a list of integers.
 ------------------------------------------------------------
-toZZ = (L) -> (
+toZZ List := (L) -> (
      d := apply(L, e -> denominator e);
      R := ring d#0;             l := 1_R;
      scan(d, i -> (l = (l*i // gcd(l,i))));    

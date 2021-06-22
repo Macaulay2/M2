@@ -207,7 +207,6 @@ primitive List := List => L -> (
 
 
 -- Converts a list of 'QQ' to 'ZZ' by multiplying by a common denominator
-toZZ = method();
 toZZ List := List => L -> (
    -- finding common denominator
    d := apply(L, e -> denominator e);
