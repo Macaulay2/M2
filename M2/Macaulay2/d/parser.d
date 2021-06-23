@@ -48,7 +48,8 @@ export hexvalue   (c:int ):int  := hexvalue(char(c));
 export parseInt(s:string):ZZ := (
      i := zeroZZ;
      n := length(s);
-     if s.0 == '0' && (s.1  == 'b' || s.1 == 'B') then
+     if n == 1 then i = toInteger(s.0 - '0')
+     else if s.0 == '0' && (s.1  == 'b' || s.1 == 'B') then
      	  for j from 2 to n - 1 do i = 2 * i + (s.j - '0')
      else if s.0 == '0' && (s.1 == 'o' || s.1 == 'O') then
      	  for j from 2 to n - 1 do i = 8 * i + (s.j - '0')
