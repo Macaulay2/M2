@@ -327,21 +327,25 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else if isdigit(ch) || ch==int('.') && isdigit(peek(file,1)) then (
 	       typecode := TCint;
+	       decimal := true;
 	       if ch == int('0') then (
 		    tokenbuf << char(getc(file));
 		    c := peek(file);
 		    if (c == int('b') || c == int('B')) &&
 			isbindigit(peek(file,1)) then (
+			 decimal = false;
 			 tokenbuf << char(getc(file));
 			 while isbindigit(peek(file)) do
 			      tokenbuf << char(getc(file)))
 		    else if (c == int('o') || c == int('O')) &&
 			     isoctdigit(peek(file,1)) then (
+			 decimal = false;
 			 tokenbuf << char(getc(file));
 			 while isoctdigit(peek(file)) do
 			      tokenbuf << char(getc(file)))
 		    else if (c == int('x') || c == int('X')) &&
 			     ishexdigit(peek(file,1)) then (
+			 decimal = false;
 			 tokenbuf << char(getc(file));
 			 while ishexdigit(peek(file)) do
 			      tokenbuf << char(getc(file)))
@@ -351,7 +355,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       else while isdigit(peek(file)) do
 		    tokenbuf << char(getc(file));
 	       c := peek(file);
-	       if c == int('.') && peek(file,1) != int('.') || c == int('p') || c == int('e')
+	       if decimal && (c == int('.') && peek(file,1) != int('.') || c == int('p') || c == int('e'))
 	       then (
 		    typecode = TCRR;
 		    if c == int('.') then (
