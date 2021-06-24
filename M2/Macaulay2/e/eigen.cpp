@@ -10,6 +10,7 @@
 #undef mpfr
 
 #include <Eigen/SVD>
+#include <Eigen/Eigenvalues>
 #include "eigen.hpp"
 
 using Real = eigen_mpfr::mpreal;
@@ -109,11 +110,21 @@ bool SVD(const LMatrixCCC *A,
   return true;
 }
 
-bool eigenvalues(const DMatRRR *A, DMatCCC *eigenvals) {
+bool eigenvalues(const LMatrixRRR *A, LMatrixCCC *eigenvals) {
+  auto old_prec = Real::get_default_prec(); 
+  Real::set_default_prec(A->ring().get_precision());
 
+  MatrixXmp AXmp(A->numRows(), A->numColumns());
+  fill_to_MatrixXmp(*A, AXmp);
+
+  Eigen::EigenSolver<MatrixXmp> es(AXmp,false/*no eigenvectors*/);
+  fill_from_MatrixXmp(es.eigenvalues(), *eigenvals);
+
+  Real::set_default_prec(old_prec);
+  return true;
 }
 
-bool eigenvalues(const DMatCCC *A, DMatCCC *eigenvals) {
+bool eigenvalues(const LMatrixCCC *A, LMatrixCCC *eigenvals) {
   auto old_prec = Real::get_default_prec(); 
   Real::set_default_prec(A->ring().get_precision());
 
@@ -121,17 +132,14 @@ bool eigenvalues(const DMatCCC *A, DMatCCC *eigenvals) {
   fill_to_MatrixXmp(*A, AXmp);
 
   Eigen::ComplexEigenSolver<MatrixXmpCC> ces(AXmp,false/*no eigenvectors*/);
-  ces.eigenvalues();//!!! How to process this???
-  
-  fill_from_MatrixXmp(svd.matrixU(), *U);
-  fill_from_MatrixXmp(svd.matrixV().adjoint(), *VT);
-  fill_from_MatrixXmp(svd.singularValues(), *Sigma);
+  // ces.eigenvalues();//!!! How to process this???
+  fill_from_MatrixXmp(ces.eigenvalues(), *eigenvals);
 
   Real::set_default_prec(old_prec);
   return true;
 }
 
-} // end of namespace Eigen 
+} // end of namespace EigenM2 
 
 /*
 // Local Variables:

@@ -16,8 +16,8 @@ namespace EigenM2 {
            LMatrixRRR *Sigma,
            LMatrixCCC *U,
            LMatrixCCC *VT);
-  bool eigenvalues(const DMatRRR *A, DMatCCC *eigenvals);
-  bool eigenvalues(const DMatCCC *A, DMatCCC *eigenvals);
+  bool eigenvalues(const LMatrixRRR *A, LMatrixCCC *eigenvals);
+  bool eigenvalues(const LMatrixCCC *A, LMatrixCCC *eigenvals);
 }
 
 #endif
