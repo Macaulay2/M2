@@ -6,6 +6,11 @@
 -- TODO: make orphan overview nodes subnodes of the top node
 -- TODO: not reentrant yet, see resetCounters
 
+needs "document.m2"
+needs "hypertext.m2"
+needs "packages.m2"
+needs "validate.m2"
+
 -----------------------------------------------------------------------------
 -- Generate the html documentation
 -----------------------------------------------------------------------------
@@ -29,8 +34,9 @@ installPrefix   = applicationDirectory() | "local/"  -- default the installation
 installLayout   = Layout#2			     -- the layout of the installPrefix, global for communication to document.m2
 htmlDirectory   = ""	      -- relative path to the html directory, depends on the package
 
-indexFileName  := "master.html"   -- file name for master index of topics in a package
-tocFileName    := "toc.html"      -- file name for the table of contents of a package
+  topFileName   = "index.html"	-- top node's filename, constant
+indexFileName  := "master.html"	-- file name for master index of topics in a package
+  tocFileName  := "toc.html"	-- file name for the table of contents of a package
 
 -----------------------------------------------------------------------------
 -- Local utilities
@@ -534,12 +540,11 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 		verboseLog("using cached " | desc)
 		)
 	    -- run and capture example results
-	    else elapsedTime captureExampleOutput(
+	    else if elapsedTime captureExampleOutput(
 		desc, demark_newline inputs, pkg,
-		possiblyCache(outf, outf', fkey),
 		inpf, outf, errf, data,
 		inputhash, changeFunc fkey,
-		usermode);
+		usermode) then (possiblyCache(outf, outf', fkey))();
 	    storeExampleOutput(pkg, fkey, outf, verboseLog)));
 
     -- check for obsolete example output files and remove them

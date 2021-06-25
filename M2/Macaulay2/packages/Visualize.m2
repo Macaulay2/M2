@@ -546,8 +546,13 @@ copyJS(String) := opts -> dst -> (
 	    );
 	);
 
-    for dir in existingDirs do removeFile concatenate(dst, dir);
-    for dir in dirs do symlinkFile(basePath | "Visualize/" | dir, dst | dir);
+    for dir in dirs do (
+	makeDirectory(dst | dir);
+	for file in readDirectory(basePath | "Visualize/" | dir) do (
+	    if not member(file, {".", ".."}) then (
+		copyFile(realpath(basePath | "Visualize/" | dir | "/" | file),
+		    dst | dir | "/" | file)))
+    );
 
     return "Created directories at "|dst;
 )

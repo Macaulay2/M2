@@ -1,5 +1,7 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 
+needs "modules.m2" -- for Matrix
+
 getIndex := (R,x) -> (
      M := try monoid R else error "expected a polynomial ring or quotient of one";
      if class x =!= R then error "expected an element of the ring";

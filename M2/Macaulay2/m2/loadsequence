@@ -1,4 +1,4 @@
-command.m2
+run.m2
 classes.m2
 option.m2
 methods.m2
@@ -6,7 +6,6 @@ shared.m2
 autoload.m2
 system.m2
 regex.m2
-run.m2
 
 profile.m2
 debugging.m2
@@ -19,6 +18,7 @@ max.m2
 structure.m2
 combinatorics.m2
 lists.m2
+tables.m2
 
 nets.m2
 robust.m2
@@ -28,6 +28,7 @@ validate.m2
 expressions.m2
 peek.m2
 printing.m2
+http.m2
 
 gateway.m2
 rings.m2
@@ -43,7 +44,8 @@ orderedmonoidrings.m2
 variables.m2
 indeterminates.m2
 ofcm.m2
-tables.m2
+dotdot.m2
+
 modules.m2
 matrix.m2
 matrix1.m2
@@ -53,7 +55,6 @@ quotring.m2
 freealgebras.m2
 multilin.m2
 flint.m2
-genmat.m2
 modules2.m2
 gb.m2
 matrix2.m2
@@ -70,13 +71,11 @@ monideal.m2
 intersect.m2
 factor.m2
 integrate.m2
-http.m2
 minPres.m2
 monomcurve.m2
 fano.m2
 schubert.m2
 code.m2
-dotdot.m2
 local.m2
 
 packages.m2
@@ -89,13 +88,13 @@ help.m2
 format.m2
 html.m2
 markdown.m2
+mathml.m2
 latex.m2
 book.m2
 
 varieties.m2
 webapp.m2
 jupyter.m2
-mathml.m2
 texmacs.m2
 pretty.m2
 programs.m2

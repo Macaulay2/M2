@@ -1,6 +1,7 @@
 emacs/M2-emacs-hlp.txt
 emacs/M2-emacs.m2
 emacs/M2-symbols.el
+prism/macaulay2.js
 pygments/macaulay2.py
 rouge/macaulay2.rb
 atom/macaulay2.cson

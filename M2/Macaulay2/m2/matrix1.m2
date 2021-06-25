@@ -1,5 +1,9 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "matrix.m2"
+needs "modules.m2"
+needs "quotient.m2"
+
 plurals := hashTable { "matrix" => "matrices" }
 pluralize := s -> if plurals#?s then plurals#s else s|"s"
 pluralsynonym := T -> try pluralize T.synonym else "objects of class "|toString T;

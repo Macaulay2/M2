@@ -746,6 +746,8 @@ logorfun(lhs:Code,rhs:Code):Expr := (
 		    else binarymethod(left,right,orS)))
 	  else binarymethod(left,rhs,orS)));
 setup(orS,logorfun);
+logxorfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,xorS);
+setup(xorS,logxorfun);
 BarBarF(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BarBarS);
 setup(BarBarS,BarBarF);
 logandfun(lhs:Code,rhs:Code):Expr := (
