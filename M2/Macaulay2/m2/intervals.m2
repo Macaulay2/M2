@@ -1,3 +1,7 @@
+needs "methods.m2"
+needs "shared.m2"
+needs "reals.m2"
+
 interval = method(Options => {Precision => -1})
 
 for A in {ZZ,QQ,RR} do

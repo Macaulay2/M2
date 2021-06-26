@@ -1,5 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "remember.m2" -- for memoize
+
 subsets(ZZ,ZZ) := List => (n,j) -> (
      if n < 0 then error "expected a nonnegative number";
      if j < 0 then return {};

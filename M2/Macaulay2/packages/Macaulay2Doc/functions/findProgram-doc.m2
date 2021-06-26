@@ -123,7 +123,7 @@ document {
 	"file, then ", TT "name", " should coincide with the name of this ",
 	"file."},
     EXAMPLE lines ///
-	programPaths#"gfan" = "/path/to/gfan/"
+	programPaths#"gfan" = "/path/to/gfan/" -* no-capture-flag *-
 	gfan = findProgram("gfan", "gfan _version --help", Verbose => true)///,
     PARA {"One program that is shipped with a variety of prefixes in ",
 	"different distributions and for which the ", TT "Prefix",

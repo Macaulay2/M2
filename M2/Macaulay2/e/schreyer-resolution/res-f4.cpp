@@ -258,8 +258,8 @@ void F4Res::loadRow(Row& r)
       return;
     }
   auto& p = thiselement.mSyzygy;
-  auto end = poly_iter(mRing, p, 1);
-  auto i = poly_iter(mRing, p);
+  auto end = ResPolynomialIterator(mRing, p, 1);
+  auto i = ResPolynomialIterator(mRing, p);
   for (; i != end; ++i)
     {
       ComponentIndex val =
@@ -498,7 +498,7 @@ void F4Res::gaussReduce()
       // Reduce spair #i
       // fill in dense row with this element.
 
-      poly_constructor result(mRing);
+      ResPolynomialConstructor result(mRing);
 
       Row& r = mSPairs[i];  // row to be reduced.
       long comp = mSPairComponents[i];

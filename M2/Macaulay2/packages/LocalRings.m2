@@ -40,7 +40,7 @@ newPackage(
     AuxiliaryFiles => true
     )
 
-importFrom_Core { "ContainmentHooks", "ReduceHooks", "printerr",
+importFrom_Core { "ContainmentHooks", "ReduceHooks",
     "raw", "rawLiftLocalMatrix", "rawMatrixRemake2", "rawSource" }
 
 -- see m2/localring.m2

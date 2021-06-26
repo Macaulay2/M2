@@ -4,6 +4,9 @@
 -- TODO: add intersection with a ring, via selectInSubring
 -- TODO: how to cache partial computation?
 
+needs "matrix1.m2"
+needs "shared.m2"
+
 -- This is a map from method keys to strategy hash tables
 algorithms := new MutableHashTable from {}
 

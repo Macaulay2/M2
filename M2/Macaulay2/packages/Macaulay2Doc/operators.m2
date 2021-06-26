@@ -200,15 +200,15 @@ doc ///
 ///
 
 document {
-     Key => {xor, (xor,ZZ,ZZ)},
+     Key => {symbol ^^, (symbol ^^,ZZ,ZZ)},
      Headline => "logical exclusive-or",
-     Usage => "xor(m,n)",
+     Usage => "m ^^ n",
      Inputs => { "m", "n"},
      Outputs => {
 	  ZZ => {"the bitwise logical exclusive-or of
 	       the integers ", TT "m", " and ", TT "n"}
 	  },
-     EXAMPLE "xor(10,12)",
+     EXAMPLE "10 ^^ 12",
      SeeAlso => { (symbol|,ZZ,ZZ), (symbol&,ZZ,ZZ) }
      }
 
@@ -223,6 +223,7 @@ document {
 	  TO "not",
 	  TO "and",
 	  TO "or",
+	  TO "xor",
 	  TO "if"
 	  }
      }
@@ -245,7 +246,7 @@ document {
      is true.",
      PARA{},
      "If ", TT "t", " is true, then the code in ", TT "u", " is not evaluated.",
-     SeeAlso =>{ "and", "not" }
+     SeeAlso =>{ "and", "not", "xor" }
      }
 
 document {
@@ -255,5 +256,24 @@ document {
      is true.",
      PARA{},
      "If ", TT "t", " is false, then the code in ", TT "u", " is not evaluated.",
-     SeeAlso =>{ "or", "not" }
+     SeeAlso =>{ "or", "not", "xor" }
      }
+
+doc ///
+  Key
+    symbol xor
+    (symbol xor, Boolean, Boolean)
+  Headline
+    exclusive disjunction
+  Usage
+    t xor u
+  Inputs
+    t:Boolean
+    u:Boolean
+  Outputs
+    :Boolean
+      equivalent to @TT "t and not u or not t and u"@
+  SeeAlso
+    symbol and
+    symbol or
+///

@@ -1,17 +1,6 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
--- temporary definitions to get error messages to work before methods are working, so we can debug methods
-assert'( class between === Symbol )
-between = (m,v) -> mingle(v,#v-1:m)			    -- provisional
-assert'( class toString === Symbol )
-toString = x -> (					    -- provisional
-     if hasAttribute(x,ReverseDictionary) then simpleToString getAttribute(x,ReverseDictionary)
-     else if class x === Net then concatenate between("\n",unstack x)
-     else simpleToString x
-     )
-silentRobustString = (wid,sec,y) -> simpleToString y
-silentRobustNetWithClass = silentRobustNet = (wid,ht,sec,y) -> simpleToString y
---
+needs "option.m2"
 
 MethodFunction = new Type of CompiledFunctionClosure
 MethodFunctionSingle = new Type of CompiledFunctionClosure
@@ -184,7 +173,7 @@ setupMethods((), {
 	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw, exp,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, assign, numgens, realPart, imaginaryPart, conjugate,
-	  autoload, relations, cone, standardForm, inverse, numeric, numericInterval, round, degree, multidegree,
+	  relations, cone, standardForm, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,
 	  presentation, dismiss, precision, 
 	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage,
 	  hasEngineLinearAlgebra, nullSpace,
@@ -411,13 +400,6 @@ computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
      else M#Name#1
      )
 
-exitMethod = method(Dispatch => Thing)
-exitMethod ZZ := i -> exit i
-exitMethod Sequence := x -> exit 0
-quit = Command (() -> exit 0)
-erase symbol exit
-exit = Command exitMethod
-
 toExternalString Option := z -> concatenate splice (
      if precedence z > precedence z#0 then ("(",toExternalString z#0,")") else toExternalString z#0,
      " => ",
@@ -463,6 +445,13 @@ installAssignmentMethod(Symbol,HashTable,Function) := (op,Y,f) -> (
      if numparms f =!= 2 and numparms f =!= -1 then error "expected assignment method to be a function of 2 arguments";
      installMethod((op,symbol =),Y,f))
 
+binaryOperators   = join(fixedBinaryOperators,    flexibleBinaryOperators)
+prefixOperators   = join(fixedPrefixOperators,    flexiblePrefixOperators)
+postfixOperators  = join(fixedPostfixOperators,   flexiblePostfixOperators)
+flexibleOperators = join(flexibleBinaryOperators, flexiblePrefixOperators, flexiblePostfixOperators)
+fixedOperators    = join(fixedBinaryOperators,    fixedPrefixOperators,    fixedPostfixOperators)
+allOperators      = join(fixedOperators, flexibleOperators)
+
 scan(flexibleBinaryOperators, op -> (
 	  installAssignmentMethod(op, Type, Type, (X,Y,am) -> installAssignmentMethod(op, X, Y, am));
 	  undocumented' ((op, symbol =), Type, Type);
@@ -502,6 +491,7 @@ dispatcherFunctions = join (dispatcherFunctions, {
 -- also see hooks in code.m2
 -- TODO: get this to work with lookup and flagLookup
 -- TODO: get this to work on HashTables
+-- TODO: get this to work with codeHelper
 
 protect symbol Hooks
 protect symbol HookAlgorithms
@@ -656,6 +646,7 @@ locate Function   := Sequence => x -> locate' x
 locate Pseudocode := Sequence => x -> locate' x
 locate Sequence   := Sequence => x -> locate' x
 locate Symbol     := Sequence => x -> locate' x
+locate List       := List     => x -> apply(x, locate)
 protect symbol locate
 
 -- baseName

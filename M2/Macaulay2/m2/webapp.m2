@@ -1,5 +1,10 @@
 -- Paul Zinn-Justin 2018-2021
 
+needs "expressions.m2"
+needs "matrix1.m2"
+needs "monideal.m2"
+needs "varieties.m2"
+
 -- topLevelMode=WebApp definitions
 -- tags are required to help the browser app distinguish html from text
 webAppTags := apply((17,18,19,20,28,29,30,(17,36),(36,18)),ascii);

@@ -1,5 +1,9 @@
 --		Copyright 2007 by Daniel R. Grayson
 
+needs "varieties.m2" -- TODO: remove this dependency
+needs "format.m2"
+needs "html.m2" -- for htmlLiteral
+
 -- Default rendering is by concatenation of rendered inputs
 setupRenderer(mathML, concatenate, Hypertext)
 
@@ -27,7 +31,6 @@ mathML String := x -> (
      then mathML net x
      else concatenate("<mtext>",replace(" ", "&nbsp;", htmlLiteral x),"</mtext>")
      )
-mathML Nothing := texMath Nothing := tex Nothing := html Nothing := x -> ""
 mathML Symbol := x -> concatenate("<mi>",toString x,"</mi>")
 mathML InfiniteNumber := i -> if i === infinity then "<mrow><mi>&infin;</mi></mrow>" else "<mo>-</mo><mi>&infin;</mi>"
 mathML Array := s -> concatenate ( "<mrow><mo>[</mo><mrow>", between("<mo>,</mo>",mathML \ toList s), "</mrow><mo>]</mo></mrow>" )
@@ -179,6 +182,7 @@ mathML Thing := x -> (
      if hasAttribute(x,ReverseDictionary) then mathML return mathML getAttribute(x,ReverseDictionary);
      y := expression x;
      if instance(y,Holder) and y#0 === x then mathML toString x else mathML y)
+mathML Nothing := x -> ""
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

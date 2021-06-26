@@ -209,6 +209,7 @@ PencilsOfQuadrics
 ThreadedGB
 VectorGraphics
 GKMVarieties
+MonomialIntegerPrograms
 NoetherianOperators
 Hadamard
 StatGraphs
@@ -225,3 +226,4 @@ SuperLinearAlgebra
 SubalgebraBases
 AInfinity
 LinearTruncations
+Python

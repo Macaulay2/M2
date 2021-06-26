@@ -1,5 +1,7 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "methods.m2"
+
 table = (rows,cols,f) -> apply(rows,i->apply(cols,j->f(i,j)))
 
 applyTable = (m,f) -> apply(m, v -> apply(v,f))
