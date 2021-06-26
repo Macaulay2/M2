@@ -1,4 +1,4 @@
-// (c) 1994  Michael E. Stillman
+// Copyright 1994-2021  Michael E. Stillman
 #ifndef _monideal_hh_
 #define _monideal_hh_
 
@@ -8,6 +8,19 @@
 #include "int-bag.hpp"
 #include "ring.hpp"
 #include "polyring.hpp"
+
+#if 0
+SparseMonomial: pointer to an array of ints.  First is the length.  [len, v1, e1, v2, e2, ..., vr, er]
+  len == 2r+1,
+  in comm case: v1 < v2 < ...< vr;
+  SparseMonomial::Iterator: i.var, i.exponent, or *i = <i.var, i.exponent>
+    for (auto a : monom) // a is a std::pair.
+  allocation: std::vector<int>, preallocated Range, MemoryBlock.
+  AllocatedSparseMonomial(sizinginfo)
+  LCM(a, b, allocatedspace) --> returns a SparseMonomial.
+
+
+#endif
 
 class MinimalPrimes;
 

@@ -17,7 +17,8 @@ class varpower
   static int compare(const int *a, const int *b);
   // return EQ, LT, or GT for a == b, a < b, or a > b.
 
-  // [len, v1, e1, ..., vn, en], where len=n
+  // [len, v1, e1, ..., vn, en], where len = 2n+1,
+  // and in the commutative setting, v1 > v2 > ... > vn >= 0
 public:
   varpower() {}
   ~varpower() {}

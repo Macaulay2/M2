@@ -615,6 +615,7 @@ MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
   // The idea: take the elements of 'this'
   //   for each: if the element is in J, then keep it directly.
   //      otherwie compute the lcm's.
+  std::cout << "monideal: calling intersect" << std::endl;
   queue<Bag *> new_elems;
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
     {
@@ -642,6 +643,7 @@ MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
 MonomialIdeal *MonomialIdeal::intersect(const int *m) const
 // Compute (this : m), where m is a varpower monomial.
 {
+  std::cout << "monideal: calling intersect with one element" << std::endl;
   queue<Bag *> new_elems;
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
     {
@@ -655,6 +657,7 @@ MonomialIdeal *MonomialIdeal::intersect(const int *m) const
 
 MonomialIdeal *MonomialIdeal::operator*(const MonomialIdeal &J) const
 {
+  std::cout << "monideal: calling *" << std::endl;
   queue<Bag *> new_elems;
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
     for (Index<MonomialIdeal> j = J.first(); j.valid(); j++)
@@ -672,6 +675,7 @@ MonomialIdeal *MonomialIdeal::operator*(const MonomialIdeal &J) const
 
 MonomialIdeal *MonomialIdeal::operator+(const MonomialIdeal &J) const
 {
+  std::cout << "monideal: calling +" << std::endl;
   queue<Bag *> new_elems;
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
     {
@@ -692,6 +696,7 @@ MonomialIdeal *MonomialIdeal::operator-(const MonomialIdeal &J) const
 // Create the monomial ideal consisting of those elements of 'this'
 // that are not in 'J'.  The baggage is left the same.
 {
+  std::cout << "monideal: calling -" << std::endl;
   MonomialIdeal *result = new MonomialIdeal(get_ring());
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
     {
@@ -757,6 +762,7 @@ static MonomialIdeal *varpower_monideal(const PolynomialRing *R,
 {
   // If m is a varpower monomial, xi1^a1 ... xin^an, create the monomial ideal
   // (xi1^(top[i1]+1-a1), ..., xin^(top[in]+1-an))
+  std::cout << "monideal: calling varpower_monideal" << std::endl;
   MonomialIdeal *result = new MonomialIdeal(R);
   for (index_varpower i = vp; i.valid(); ++i)
     {
@@ -801,6 +807,7 @@ MonomialIdeal *MonomialIdeal::alexander_dual(const M2_arrayint a) const
 
 MonomialIdeal *MonomialIdeal::erase(const int *m) const
 {
+  std::cout << "monideal: calling erase" << std::endl;
   debug_check();
   queue<Bag *> new_elems;
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
@@ -847,6 +854,10 @@ MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
 
 MonomialIdeal *MonomialIdeal::radical() const
 {
+  std::cout << "monideal: calling radical on ";
+  dmonideal(const_cast<MonomialIdeal*>(this));
+  std::cout << std::endl << "  -- radical(I) = ";
+  
   queue<Bag *> new_elems;
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
     {
@@ -855,6 +866,8 @@ MonomialIdeal *MonomialIdeal::radical() const
       new_elems.insert(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
+  dmonideal(result);
+  std::cout << "----" << std::endl;
   return result;
 }
 
