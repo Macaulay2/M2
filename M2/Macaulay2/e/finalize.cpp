@@ -12,6 +12,10 @@
 
 #include <M2/gc-include.h>
 
+#ifdef MEMDEBUG
+#include "memdebug.h"
+#endif
+
 static volatile AO_t monideals_nfinalized = 0;
 static volatile AO_t monideals_nremoved = 0;
 
@@ -136,6 +140,9 @@ void intern_SchreyerOrder(SchreyerOrder *G)
 
 extern "C" void remove_MutableMatrix(void *p, void *cd)
 {
+#ifdef MEMDEBUG
+  p = M2_debug_to_inner(p);
+#endif
   MutableMatrix *G = static_cast<MutableMatrix *>(p);
   AO_t nremoved = AO_fetch_and_add1(&mutablematrices_nremoved);
   if (M2_gbTrace >= 3)
@@ -145,7 +152,11 @@ extern "C" void remove_MutableMatrix(void *p, void *cd)
 MutableMatrix *internMutableMatrix(MutableMatrix *G)
 {
   if (G == 0) return 0;
-  GC_REGISTER_FINALIZER(G, remove_MutableMatrix, 0, 0, 0);
+#ifdef MEMDEBUG
+  GC_REGISTER_FINALIZER(M2_debug_to_outer(G), remove_MutableMatrix, 0, 0, 0);
+#else
+  GC_REGISTER_FINALIZER(G,                    remove_MutableMatrix, 0, 0, 0);
+#endif
   AO_t nfinalized = AO_fetch_and_add1(&mutablematrices_nfinalized);
   if (M2_gbTrace >= 3)
     fprintf(stderr,

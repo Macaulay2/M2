@@ -133,14 +133,14 @@ size_t M2_debug_size(void *p) {
      return f->size;
 }
 
-void* M2_debug_malloc(size_t size) {
+void *M2_debug_malloc(size_t size) {
      struct FRONT *f;
      char *p;
      struct REAR *r;
      int i;
      int INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
      f = (struct FRONT *)GC_malloc( sizeof(struct FRONT) + sizeof(int)*INTS_BODY + sizeof(struct REAR) );
-     if (f == NULL) outofmem();
+     if (f == NULL) outofmem2(size);
      p = (char *)f + sizeof(struct FRONT);
      r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
@@ -161,7 +161,7 @@ void* M2_debug_malloc_uncollectable(size_t size) {
      f = (struct FRONT *)GC_malloc_uncollectable(
 	  sizeof(struct FRONT) + sizeof(int)*INTS_BODY + sizeof(struct REAR)
 	  );
-     if (f == NULL) outofmem();
+     if (f == NULL) outofmem2(size);
      p = (char *)f + sizeof(struct FRONT);
      r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
@@ -180,7 +180,7 @@ void* M2_debug_malloc_atomic(size_t size) {
      int i;
      int INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
      f = (struct FRONT *)GC_malloc_atomic( sizeof(struct FRONT) + sizeof(int)*INTS_BODY + sizeof(struct REAR) );
-     if (f == NULL) outofmem();
+     if (f == NULL) outofmem2(size);
      p = (void *)f + sizeof(struct FRONT);
      r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
@@ -199,7 +199,7 @@ void* M2_debug_malloc_atomic_uncollectable(size_t size) {
      int i;
      int INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
      f = (struct FRONT *)GC_malloc_atomic_uncollectable( sizeof(struct FRONT) + sizeof(int)*INTS_BODY + sizeof(struct REAR) );
-     if (f == NULL) outofmem();
+     if (f == NULL) outofmem2(size);
      p = (void *)f + sizeof(struct FRONT);
      r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
@@ -214,7 +214,34 @@ void* M2_debug_malloc_atomic_uncollectable(size_t size) {
 static void volatile smashed(void) {
      fprintf(stderr,"smashed object found\n");
      trap();
-     _exit(1);
+     abort();
+     }
+
+void *M2_debug_to_outer(void *p) {
+     struct FRONT *f = (struct FRONT *)(p - sizeof(struct FRONT));
+     if (f->fence[0] != FRONT_FENCE) smashed();
+     return f;
+     }
+
+void *M2_debug_to_inner(void *q) {
+     struct FRONT *f = (struct FRONT *)q;
+     if (f->fence[0] != FRONT_FENCE) smashed();
+     return f + sizeof(struct FRONT);
+     }
+
+void M2_debug_info(void *p) {
+     struct FRONT *f;
+     struct REAR *r;
+     int INTS_BODY, i, smashed = 0;
+     size_t size;
+     if (p == NULL) return;
+     f = (struct FRONT *)(p - sizeof(struct FRONT));
+     size = f->size;
+     INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
+     r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
+     for (i=0; i<FENCE_INTS; i++) if (f->fence[i] != FRONT_FENCE) smashed = 1;
+     for (i=0; i<FENCE_INTS; i++) if (r->fence[i] != REAR_FENCE ) smashed = 1;
+     fprintf(stderr,"addr %p, length %lu%s\n",p,size,smashed ? ", smashed" : "");
      }
 
 void M2_debug_free(void *p) {
@@ -251,7 +278,7 @@ void M2_debug_free(void *p) {
 void* M2_debug_realloc(void *old, size_t size) {
      void *new = M2_debug_malloc(size);
      size_t oldsize = M2_debug_size(old);
-     if (new == NULL) outofmem();
+     if (new == NULL) outofmem2(size);
      memcpy(new,old,size < oldsize ? size : oldsize);
      return new;
      }

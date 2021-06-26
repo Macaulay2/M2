@@ -423,6 +423,7 @@ gbA::spair *gbA::spair_node()
 {
   spair *result = reinterpret_cast<spair *>(spair_stash->new_elem());
   result->next = 0;
+  result->lead_of_spoly = 0;
   return result;
 }
 

@@ -97,7 +97,9 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      readmode := (m, arg) -> if argmode & m == m then " " | arg else "";
      cmd := readmode(SetUlimit, ulimit);
      cmd = cmd | " cd " | rundir | ";";
-     cmd = cmd | readmode(GCMAXHEAP,      "GC_MAXIMUM_HEAP_SIZE=400M");
+     cmd = cmd | readmode(GCMAXHEAP,      if match("--enable-debug", version#"configure arguments")
+	       	    	      	   	  then "GC_MAXIMUM_HEAP_SIZE=800M"
+	       	    	      	   	  else "GC_MAXIMUM_HEAP_SIZE=400M");
      cmd = cmd | readmode(GCSTATS,        "GC_PRINT_STATS=1");
      cmd = cmd | readmode(GCVERBOSE,      "GC_PRINT_VERBOSE_STATS=1");
      cmd = cmd | " " | format toAbsolutePath commandLine#0;

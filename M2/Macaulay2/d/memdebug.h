@@ -3,7 +3,6 @@
 #ifndef MEMDEBUG_H
 #define MEMDEBUG_H
 #ifdef MEMDEBUG
-#warning : using memdebug.h debugging code
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -14,6 +13,8 @@ extern "C" {
     void* M2_debug_malloc_atomic_uncollectable(size_t size);
     void* M2_debug_realloc(void *,size_t size);
     void* M2_debug_malloc_uncollectable(size_t size);
+    void *M2_debug_to_outer(void *p);
+    void *M2_debug_to_inner(void *f);
 
 #if defined(__cplusplus)
 }

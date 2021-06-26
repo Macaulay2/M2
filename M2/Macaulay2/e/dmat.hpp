@@ -116,7 +116,7 @@ class DMat
     size_t len = mNumRows * mNumColumns;
     for (size_t i = 0; i < len; i++) ring().clear(mArray[i]);
     //    if (mArray != 0) delete[] mArray;
-    if (mArray != nullptr) GC_FREE(mArray);
+    if (mArray != nullptr) freemem(mArray);
   }
 
   // swap the actual matrices of 'this' and 'M'.

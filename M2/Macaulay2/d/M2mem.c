@@ -4,6 +4,10 @@
 #include "M2mem.h"
 #include "debug.h"
 
+#ifdef MEMDEBUG
+#include <memdebug.h>
+#endif
+
 #ifndef NDEBUG
 #include <M2/config.h>
 #define __thread
@@ -44,7 +48,11 @@ char *getmem(size_t n)
   char *p;
   TRAPCHK_SIZE(n);
   enter_getmem();
+#ifdef MEMDEBUG
+  p = M2_debug_malloc(n);
+#else
   p = GC_MALLOC(n);		/* GC_MALLOC clears its memory, but getmem doesn't guarantee to */
+#endif
   if (p == NULL) outofmem2(n);
 #ifndef NDEBUG
   memset(p,0xbe,n);		/* fill with 0xbebebebe ... */
@@ -58,21 +66,33 @@ void freememlen(void *s, size_t old) {
 #    ifndef NDEBUG
      trapchk(s);
 #    endif
+#ifdef MEMDEBUG
+     M2_debug_free(s);
+#else     
      GC_FREE(s);
+#endif
 }
 
 void freemem(void *s) {
 #    ifndef NDEBUG
      trapchk(s);
 #    endif
+#ifdef MEMDEBUG
+     M2_debug_free(s);
+#else     
      GC_FREE(s);
+#endif
 }
 
 char *getmem_clear(size_t n)
 {
   char *p;
   enter_getmem();
-  p = GC_MALLOC(n);
+#ifdef MEMDEBUG
+  p = M2_debug_malloc(n);
+#else
+  p = GC_MALLOC(n);		/* GC_MALLOC clears its memory, but getmem doesn't guarantee to */
+#endif
   if (p == NULL) outofmem2(n);
   #if 0
   /* 
@@ -92,7 +112,11 @@ char *getmem_atomic(size_t n)
 {
   char *p;
   enter_getmem();
+#ifdef MEMDEBUG
+  p = M2_debug_malloc_atomic(n);
+#else  
   p = GC_MALLOC_ATOMIC(n);
+#endif
   if (p == NULL) outofmem2(n);
 #ifndef NDEBUG
   memset(p,0xac,n);		/* fill with 0xacacacac ... */
@@ -120,7 +144,11 @@ char *getmem_atomic_clear(size_t n)
 {
   char *p;
   enter_getmem();
+#ifdef MEMDEBUG
+  p = M2_debug_malloc_atomic(n);
+#else  
   p = GC_MALLOC_ATOMIC(n);
+#endif
   if (p == NULL) outofmem2(n);
   memset(p,0,n);
 #ifndef NDEBUG
@@ -157,7 +185,11 @@ char *getmoremem1 (char *s, size_t new) {
 char *getmoremem_atomic (char *s, size_t old, size_t new) {
      void *p;
      enter_getmem();
+#ifdef MEMDEBUG
+     p = M2_debug_malloc_atomic(new);
+#else  
      p = GC_MALLOC_ATOMIC(new);
+#endif
      size_t min = old<new ? old : new;
      if (p == NULL) outofmem2(new);
      memcpy(p, s, min);

@@ -10,6 +10,10 @@
 #include <gc/gc_allocator.h>
 #include <vector>
 
+#ifdef MEMDEBUG
+#include <memdebug.h>
+#endif
+
 /**
   @brief a version of the STL vector, which allocates its backing memory with gc.
 
@@ -37,16 +41,16 @@
 // except it doesn't delete the individual elements for you, if they happen to
 // be pointers
 #ifndef NDEBUG
-#define deletearray(x) (trapchk(x), GC_FREE(x))
+#define deletearray(x) (trapchk(x), freemem(x))
 #else
-#define deletearray(x) GC_FREE(x)
+#define deletearray(x) freemem(x)
 #endif
 // this replaces all uses of the construction "delete x" (unless a destructor
 // has to be run!):
 #ifndef NDEBUG
-#define deleteitem(x) (TRAPCHK(x), GC_FREE(x))
+#define deleteitem(x) (TRAPCHK(x), freemem(x))
 #else
-#define deleteitem(x) GC_FREE(x)
+#define deleteitem(x) freemem(x)
 #endif
 
 // this replaces all uses of the construction "new T[n]", with T containing NO
@@ -69,7 +73,7 @@ struct our_new_delete
   static inline void *operator new(size_t size)
   {
     TRAPCHK_SIZE(size);
-    void *p = GC_MALLOC(size);
+    void *p = getmem(size);
     if (p == NULL) outofmem2(size);
     TRAPCHK(p);
     return p;
@@ -77,7 +81,7 @@ struct our_new_delete
   static inline void *operator new[](size_t size)
   {
     TRAPCHK_SIZE(size);
-    void *p = GC_MALLOC(size);
+    void *p = getmem(size);
     if (p == NULL) outofmem2(size);
     TRAPCHK(p);
     return p;
@@ -86,12 +90,12 @@ struct our_new_delete
   static inline void operator delete(void *obj)
   {
     TRAPCHK(obj);
-    if (obj != NULL) GC_FREE(obj);
+    if (obj != NULL) freemem(obj);
   }
   static inline void operator delete[](void *obj)
   {
     TRAPCHK(obj);
-    if (obj != NULL) GC_FREE(obj);
+    if (obj != NULL) freemem(obj);
   }
 
   static inline void *operator new(size_t size, void *existing_memory)
@@ -135,30 +139,31 @@ public:
   our_gc_cleanup();
   virtual ~our_gc_cleanup()
   {
-    GC_REGISTER_FINALIZER_IGNORE_SELF(this, 0, 0, 0, 0);
+#ifdef MEMDEBUG
+    GC_REGISTER_FINALIZER_IGNORE_SELF(M2_debug_to_outer((void*)this), 0, 0, 0, 0);
+#else
+    GC_REGISTER_FINALIZER_IGNORE_SELF(this,                           0, 0, 0, 0);
+#endif
   }
 };
 
 static inline void cleanup(void* obj, void* displ)
 {
+#ifdef MEMDEBUG
+  obj = M2_debug_to_inner(obj);
+#endif
   ((our_gc_cleanup*) ((char*) obj))->~our_gc_cleanup();
 }
 
 inline our_gc_cleanup::our_gc_cleanup()
 {
   void* this_ptr = (void*)this;
-  GC_REGISTER_FINALIZER_IGNORE_SELF(this_ptr, (GC_finalization_proc) cleanup,
-                                    0, 0, 0);
+#ifdef MEMDEBUG
+  GC_REGISTER_FINALIZER_IGNORE_SELF(M2_debug_to_outer((void *)this_ptr), (GC_finalization_proc) cleanup, 0, 0, 0);
+#else
+  GC_REGISTER_FINALIZER_IGNORE_SELF(this_ptr,                            (GC_finalization_proc) cleanup, 0, 0, 0);
+#endif
 }
-
-// struct gc_malloc_alloc {
-//   static void* allocate(size_t n) { void* p = GC_MALLOC(n); if (p == NULL)
-//   outofmem2(n); return p; }
-//   static void deallocate(void* p, size_t /* n */) { GC_FREE(p); }
-//   static void* reallocate(void* p, size_t /* old size */, size_t newsize) {
-//   void* r = GC_REALLOC(p, newsize); if (NULL == r) outofmem2(newsize); return
-//   r; }
-// };
 
 #endif
 
