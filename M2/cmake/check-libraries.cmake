@@ -9,8 +9,7 @@
 # These are the libraries linked with Macaulay2 in Macaulay2/{e,bin}/CMakeLists.txt
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
 
-set(LIBRARIES_LIST MPSOLVE MATHICGB MATHIC MEMTAILOR FROBBY FACTORY FLINT NTL MPFI MPFR MP BDWGC LAPACK)
-set(LIBRARIES_LIST MPSOLVE MATHICGB MATHIC MEMTAILOR FROBBY FACTORY FLINT NTL MPFI MPFR MP BDWGC LAPACK TBB)
+set(LIBRARIES_LIST MPSOLVE FROBBY FACTORY FLINT NTL MPFI MPFR MP BDWGC LAPACK TBB)
 set(LIBRARY_LIST   READLINE HISTORY GDBM ATOMICOPS)
 
 message(CHECK_START " Checking for existing libraries and programs")
@@ -122,9 +121,6 @@ endforeach()
 #   cddlib	Double Description Method of Motzkin	(needs gmp)
 #   mpsolve	Multiprecision Polynomial SOLVEr	(needs gmp, mpfr)
 #   googletest	C++ unit-testing library
-#   memtailor	special purpose memory allocators	(needs googletest + thread)
-#   mathic	symbolic algebra data structures	(needs memtailor  + thread)
-#   mathicgb	signature Groebner bases library	(needs mathic     + thread, tbb)
 #   glpk	GNU Linear Programming Kit              (needs gmp)
 #   givaro	prime field and algebraic computations	(needs gmp)
 #  fflas_ffpack	Finite Field Linear Algebra Routines	(needs gmp, givaro + LAPACK)
@@ -141,9 +137,6 @@ find_package(MPSolve	3.2.0)
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 0.94m?
 find_package(GTest	1.10)
-find_package(Memtailor	1.0.0)
-find_package(Mathic	1.0.0)
-find_package(Mathicgb	1.0.0)
 find_package(GLPK      4.59.0)
 
 pkg_search_module(FFLAS_FFPACK	IMPORTED_TARGET	fflas-ffpack>=2.4.3)
@@ -152,7 +145,7 @@ pkg_search_module(GIVARO	IMPORTED_TARGET	givaro>=4.1.1)
 
 set(LIBRARY_OPTIONS
   Eigen3 BDWGC MPIR MPFR MPFI NTL Flint Factory Frobby cddlib MPSolve
-  GTest Memtailor Mathic Mathicgb GLPK Givaro FFLAS_FFPACK)
+  GTest GLPK Givaro FFLAS_FFPACK)
 
 ###############################################################################
 ## Optional libraries:

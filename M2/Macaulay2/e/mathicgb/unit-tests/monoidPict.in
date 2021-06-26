@@ -1,0 +1,29 @@
+# See pict.in for what pict files do.
+# This file is for getting a good set of test instantiations of MonoMonoid.
+# See the test file MonoMonoid.cpp.
+#
+# To generate a set of test configurations, do
+#
+#   pict monoidPict.in /e:monoidPict.seed > monoidPict.out
+#
+# Then reformat the output and put it into MonoMonoid.cpp as the set
+# of PolyRing configurations to use.
+
+##############################################################
+# This is the PICT model specifying all parameters and their values
+#
+Exponent: int8, int16, int32
+HasComponent: 0,1
+StoreHash: 0,1
+StoreOrder: 0,1
+
+##############################################################
+# PICT submodels go here.
+#
+
+# we are not currently using PICT submodels
+
+##############################################################
+# This is the set of PICT constraints that rule out some combinations
+# of parameter values.
+#
