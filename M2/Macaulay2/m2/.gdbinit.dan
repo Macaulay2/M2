@@ -1,8 +1,6 @@
 # -*- sh -*-
 echo -- loading .gdbinit\n
-# when debugging, gdb sets a trap in the memory space of ld.so, so its checksum will always change
-# so we send a message to the loaddata routine to ignore that
-set environment LOADDATA_IGNORE_CHECKSUMS yes
+set print thread-events off
 set auto-load safe-path /
 source .gdb-directories
 source .gdb-files
