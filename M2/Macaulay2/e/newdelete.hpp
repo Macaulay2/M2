@@ -32,11 +32,8 @@
 // these replace all uses of the construction "new T[n]" (unless constructors
 // have to be run!):
 #define newarray(T, len) reinterpret_cast<T *>(getmem((len) * sizeof(T)))
-#define newarray_clear(T, len) \
-  reinterpret_cast<T *>(getmem_clear((len) * sizeof(T)))
 // this replaces all uses of the construction "new T":
 #define newitem(T) reinterpret_cast<T *>(getmem(sizeof(T)))
-#define newitem_clear(T) reinterpret_cast<T *>(getmem_clear(sizeof(T)))
 // this replaces all uses of the construction "delete [] x",
 // except it doesn't delete the individual elements for you, if they happen to
 // be pointers
@@ -57,8 +54,6 @@
 // pointers
 #define newarray_atomic(T, len) \
   reinterpret_cast<T *>(getmem_atomic((len) * sizeof(T)))
-#define newarray_atomic_clear(T, len) \
-  reinterpret_cast<T *>(getmem_atomic_clear((len) * sizeof(T)))
 // this replaces all uses of the construction "new T":
 #define newitem_atomic(T) reinterpret_cast<T *>(getmem_atomic(sizeof(T)))
 
@@ -133,7 +128,7 @@ struct our_new_delete
 };
 
 
-class our_gc_cleanup: virtual public gc
+class our_gc_cleanup: public our_new_delete
 {
 public:
   our_gc_cleanup();
@@ -152,16 +147,15 @@ static inline void cleanup(void* obj, void* displ)
 #ifdef MEMDEBUG
   obj = M2_debug_to_inner(obj);
 #endif
-  ((our_gc_cleanup*) ((char*) obj))->~our_gc_cleanup();
+  ((our_gc_cleanup*) obj) -> ~our_gc_cleanup();
 }
 
 inline our_gc_cleanup::our_gc_cleanup()
 {
-  void* this_ptr = (void*)this;
 #ifdef MEMDEBUG
-  GC_REGISTER_FINALIZER_IGNORE_SELF(M2_debug_to_outer((void *)this_ptr), (GC_finalization_proc) cleanup, 0, 0, 0);
+  GC_REGISTER_FINALIZER_IGNORE_SELF(M2_debug_to_outer(this), (GC_finalization_proc) cleanup, 0, 0, 0);
 #else
-  GC_REGISTER_FINALIZER_IGNORE_SELF(this_ptr,                            (GC_finalization_proc) cleanup, 0, 0, 0);
+  GC_REGISTER_FINALIZER_IGNORE_SELF(this,                    (GC_finalization_proc) cleanup, 0, 0, 0);
 #endif
 }
 

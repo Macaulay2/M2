@@ -5,9 +5,9 @@ MatrixStream::MatrixStream(const FreeModule* F)
 {
   mPolyRing = F->get_ring()->cast_to_PolyRing();
   assert(mPolyRing != 0);
-  mCurrentExponents = newarray_clear(Exponent, mPolyRing->n_vars());
-  mCurrentColumn = newarray_clear(Nterm*, F->rank());
-  mLastTerms = newarray_clear(Nterm*, F->rank());
+  mCurrentExponents = newarray(Exponent, mPolyRing->n_vars());
+  mCurrentColumn = newarray(Nterm*, F->rank());
+  mLastTerms = newarray(Nterm*, F->rank());
 }
 
 MatrixStream::~MatrixStream()

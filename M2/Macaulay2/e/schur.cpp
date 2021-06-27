@@ -80,7 +80,7 @@ bool SchurRing::initialize_schur()
   _SMfinalwt = 0;
   _SMresult = 0;
 
-  _SMtab.p = newarray_atomic_clear(int, nvars_ + 1);
+  _SMtab.p = newarray_atomic(int, nvars_ + 1);
   return true;
 }
 

@@ -186,7 +186,7 @@
         size_t x_cols = (right_side ? b_cols : a_rows);
         //NOTUSED? size_t n_eqns = (right_side ? b_cols : b_rows);
     
-        ElementType *ffpackX = newarray_clear(ElementType, x_rows * x_cols);
+        ElementType *ffpackX = newarray(ElementType, x_rows * x_cols);
     
         int info; // >0 if the system is inconsistent, ==0 means success
     

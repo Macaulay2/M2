@@ -51,11 +51,10 @@ char *getmem(size_t n)
 #ifdef MEMDEBUG
   p = M2_debug_malloc(n);
 #else
-  p = GC_MALLOC(n);		/* GC_MALLOC clears its memory, but getmem doesn't guarantee to */
+  p = GC_MALLOC(n);		/* GC_MALLOC clears its memory; we preserve that */
 #endif
   if (p == NULL) outofmem2(n);
 #ifndef NDEBUG
-  memset(p,0xbe,n);		/* fill with 0xbebebebe ... */
   trapchk(p);
 #endif
   exit_getmem();
@@ -84,30 +83,6 @@ void freemem(void *s) {
 #endif
 }
 
-char *getmem_clear(size_t n)
-{
-  char *p;
-  enter_getmem();
-#ifdef MEMDEBUG
-  p = M2_debug_malloc(n);
-#else
-  p = GC_MALLOC(n);		/* GC_MALLOC clears its memory, but getmem doesn't guarantee to */
-#endif
-  if (p == NULL) outofmem2(n);
-  #if 0
-  /* 
-     note: GC_MALLOC clears memory before returning.
-     If you switch to another memory allocator, you must clear it explicitly with this:
-  */
-  memset(p,0,n);
-  #endif
-  #ifndef NDEBUG
-  trapchk(p);
-  #endif
-  exit_getmem();
-  return p;
-}
-
 char *getmem_atomic(size_t n)
 {
   char *p;
@@ -118,10 +93,6 @@ char *getmem_atomic(size_t n)
   p = GC_MALLOC_ATOMIC(n);
 #endif
   if (p == NULL) outofmem2(n);
-#ifndef NDEBUG
-  memset(p,0xac,n);		/* fill with 0xacacacac ... */
-  trapchk(p);
-#endif
   exit_getmem();
   return p;
 }
@@ -132,28 +103,6 @@ char *getmem_malloc(size_t n)
   enter_getmem();
   p = malloc(n);
   if (p == NULL) outofmem2(n);
-#ifndef NDEBUG
-  memset(p,0xca,n);		/* fill with 0xcacacaca */
-  trapchk(p);
-#endif
-  exit_getmem();
-  return p;
-}
-
-char *getmem_atomic_clear(size_t n)
-{
-  char *p;
-  enter_getmem();
-#ifdef MEMDEBUG
-  p = M2_debug_malloc_atomic(n);
-#else  
-  p = GC_MALLOC_ATOMIC(n);
-#endif
-  if (p == NULL) outofmem2(n);
-  memset(p,0,n);
-#ifndef NDEBUG
-  trapchk(p);
-#endif
   exit_getmem();
   return p;
 }
@@ -195,10 +144,6 @@ char *getmoremem_atomic (char *s, size_t old, size_t new) {
      memcpy(p, s, min);
      GC_FREE(s);
 #    ifndef NDEBUG
-     {
-       int excess = new - min;
-       if (excess > 0) memset((char *)p+min,0xbe,excess); /* fill with 0xbebebebe */
-     }
      trapchk(p);
 #    endif
      exit_getmem();

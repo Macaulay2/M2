@@ -33,7 +33,7 @@ T *Table_new(int hint,
   for (i = 1; primes[i] < hint; i++)
     ;
   table =
-      (T *)ALLOC(sizeof(*table) + primes[i - 1] * sizeof(table->buckets[0]));
+      (T *)getmem(sizeof(*table) + primes[i - 1] * sizeof(table->buckets[0]));
   table->size = primes[i - 1];
   table->cmp = cmp ? cmp : cmpatom;
   table->hash = hash ? hash : hashatom;
@@ -131,7 +131,7 @@ const void **Table_toArray(T *table, void *end)
   const void **array;
   struct binding *p;
   assert(table);
-  array = (const void **)ALLOC((2 * table->length + 1) * sizeof(*array));
+  array = (const void **)getmem((2 * table->length + 1) * sizeof(*array));
   for (i = 0; i < table->size; i++)
     for (p = table->buckets[i]; p; p = p->link)
       {

@@ -10,7 +10,7 @@ SkewMultiplication::SkewMultiplication()
 SkewMultiplication::SkewMultiplication(int nvars, int nskew, int *skew_list)
     : _n_vars(nvars), _n_skew(nskew), _skew_list(skew_list), _skew_exp(0)
 {
-  _skew_exp = newarray_atomic_clear(bool, nvars);
+  _skew_exp = newarray_atomic(bool, nvars);
   for (int v = 0; v < nskew; v++) _skew_exp[skew_list[v]] = true;
 
   skew_byte_size = EXPONENT_BYTE_SIZE(nskew);

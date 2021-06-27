@@ -128,7 +128,7 @@ namespace BIBasis
                  currentMonom; 
                  currentMonom = currentMonom->Next)
             {
-                exponents currentExponent = newarray_atomic_clear(int, MonomType::GetDimIndepend());
+                exponents currentExponent = newarray_atomic(int, MonomType::GetDimIndepend());
                 typename std::set<typename MonomType::Integer> variablesSet = currentMonom->GetVariablesSet();
                 
                 for (typename std::set<typename MonomType::Integer>::const_iterator currentVariable = variablesSet.begin();

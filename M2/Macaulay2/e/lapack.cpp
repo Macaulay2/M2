@@ -10,7 +10,7 @@
 // Lapack arrays of complex numbers are done in the same way, except
 // they have twice the length, and 2 contiguous doubles are used to
 // represent a complex value.
-// These arrays are grabbed via newarray_atomic, or newarray_atomic_clear
+// These arrays are grabbed via newarray_atomic,
 // and should be freed via deletearray.
 
 typedef double *LapackDoubles;
@@ -824,7 +824,7 @@ bool Lapack::least_squares(const LMatrixRRR *A,
     {
       // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at
       // the bottom
-      double *copyb2 = newarray_atomic_clear(double, cols *bcols);
+      double *copyb2 = newarray_atomic(double, cols *bcols);
       int bloc = 0;
       int copyloc = 0;
       for (int j = 0; j < bcols; j++)
@@ -923,7 +923,7 @@ bool Lapack::least_squares_deficient(const LMatrixRRR *A,
     {
       // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at
       // the bottom
-      double *copyb2 = newarray_atomic_clear(double, cols *bcols);
+      double *copyb2 = newarray_atomic(double, cols *bcols);
       int bloc = 0;
       int copyloc = 0;
       for (int j = 0; j < bcols; j++)
@@ -1577,7 +1577,7 @@ bool Lapack::least_squares(const LMatrixCCC *A,
     {
       // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at
       // the bottom
-      double *copyb2 = newarray_atomic_clear(double, 2 * cols * bcols);
+      double *copyb2 = newarray_atomic(double, 2 * cols * bcols);
       int bloc = 0;
       int copyloc = 0;
       for (int j = 0; j < bcols; j++)
@@ -1677,7 +1677,7 @@ bool Lapack::least_squares_deficient(const LMatrixCCC *A,
     {
       // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at
       // the bottom
-      double *copyb2 = newarray_atomic_clear(double, 2 * cols * bcols);
+      double *copyb2 = newarray_atomic(double, 2 * cols * bcols);
       int bloc = 0;
       int copyloc = 0;
       for (int j = 0; j < bcols; j++)
@@ -2482,7 +2482,7 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
     {
       // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at
       // the bottom
-      double *copyb2 = newarray_atomic_clear(double, cols *bcols);
+      double *copyb2 = newarray_atomic(double, cols *bcols);
       int bloc = 0;
       int copyloc = 0;
       for (int j = 0; j < bcols; j++)
@@ -2581,7 +2581,7 @@ bool Lapack::least_squares_deficient(const LMatrixRR *A,
     {
       // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at
       // the bottom
-      double *copyb2 = newarray_atomic_clear(double, cols *bcols);
+      double *copyb2 = newarray_atomic(double, cols *bcols);
       int bloc = 0;
       int copyloc = 0;
       for (int j = 0; j < bcols; j++)
@@ -3455,7 +3455,7 @@ bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
     {
       // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at
       // the bottom
-      double *copyb2 = newarray_atomic_clear(double, 2 * cols * bcols);
+      double *copyb2 = newarray_atomic(double, 2 * cols * bcols);
       int bloc = 0;
       int copyloc = 0;
       for (int j = 0; j < bcols; j++)
@@ -3555,7 +3555,7 @@ bool Lapack::least_squares_deficient(const LMatrixCC *A,
     {
       // Make 'b' (copyb) into a cols x bcols matrix, by adding a zero block at
       // the bottom
-      double *copyb2 = newarray_atomic_clear(double, 2 * cols * bcols);
+      double *copyb2 = newarray_atomic(double, 2 * cols * bcols);
       int bloc = 0;
       int copyloc = 0;
       for (int j = 0; j < bcols; j++)
