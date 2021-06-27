@@ -95,11 +95,13 @@ findProgram(String, List) := opts -> (name, cmds) -> (
     pathsToTry = append(pathsToTry, prefixDirectory | currentLayout#"programs");
     -- any additional paths specified by the caller
     pathsToTry = pathsToTry | opts.AdditionalPaths;
-    -- finally, try PATH
+    -- try PATH
     if getenv "PATH" != "" then
 	pathsToTry = join(pathsToTry,
 	    apply(separate(":", getenv "PATH"), dir ->
 		if dir == "" then "." else dir));
+    -- try directory containing M2-binary
+    pathsToTry = append(pathsToTry, bindir);
     pathsToTry = fixPath \ pathsToTry;
     prefixes := {(".*", "")} | opts.Prefix;
     errorCode := didNotFindProgram;
