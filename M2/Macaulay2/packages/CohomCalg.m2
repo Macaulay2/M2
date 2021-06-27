@@ -13,7 +13,7 @@ newPackage(
         PackageExports => {"NormalToricVarieties"},
         Configuration => {
             "executable" => "",
-            "silent" => "false"
+            "silent" => "true"
             }
         )
 
