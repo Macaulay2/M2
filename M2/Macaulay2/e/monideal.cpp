@@ -1,4 +1,4 @@
-// (c) 1994 Michael E. Stillman
+// Copyright 1994-2021 Michael E. Stillman
 
 #include "monideal.hpp"
 #include "monoid.hpp"
@@ -34,9 +34,9 @@ Nmi_node *MonomialIdeal::new_mi_node(int v, int e, Nmi_node *d)
   Nmi_node *p = reinterpret_cast<Nmi_node *>(mi_stash->new_elem());
   p->var = v;
   p->exp = e;
-  p->left = NULL;
-  p->right = NULL;
-  p->header = NULL;
+  p->left = nullptr;
+  p->right = nullptr;
+  p->header = nullptr;
   p->tag = Nmi_node::node;
   p->val.down = d;
   return p;
@@ -47,9 +47,9 @@ Nmi_node *MonomialIdeal::new_mi_node(int v, int e, Bag *b)
   Nmi_node *p = reinterpret_cast<Nmi_node *>(mi_stash->new_elem());
   p->var = v;
   p->exp = e;
-  p->left = NULL;
-  p->right = NULL;
-  p->header = NULL;
+  p->left = nullptr;
+  p->right = nullptr;
+  p->header = nullptr;
   p->tag = Nmi_node::leaf;
   p->val.bag = b;
   return p;
@@ -57,7 +57,7 @@ Nmi_node *MonomialIdeal::new_mi_node(int v, int e, Bag *b)
 
 void MonomialIdeal::delete_mi_node(Nmi_node *p)
 {
-  if (p == 0) return;
+  if (p == nullptr) return;
   if (p->right != p->header) delete_mi_node(p->right);
   if (p->tag == Nmi_node::node)
     {
@@ -69,9 +69,9 @@ void MonomialIdeal::delete_mi_node(Nmi_node *p)
 }
 
 MonomialIdeal::MonomialIdeal(const PolynomialRing *RR, stash *mi_stash0)
-    : R(RR), mi(0), count(0), mi_stash(mi_stash0)
+    : R(RR), mi(nullptr), count(0), mi_stash(mi_stash0)
 {
-  if (mi_stash == 0)
+  if (mi_stash == nullptr)
     {
       count = 1;
       mi_stash = new stash("mi_node", sizeof(Nmi_node));
@@ -82,9 +82,9 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
                              queue<Bag *> &elems,
                              queue<Bag *> &rejects,
                              stash *mi_stash0)
-    : R(R0), mi(0), count(0), mi_stash(mi_stash0)
+    : R(R0), mi(nullptr), count(0), mi_stash(mi_stash0)
 {
-  if (mi_stash == 0)
+  if (mi_stash == nullptr)
     {
       count = 1;
       mi_stash = new stash("mi_node", sizeof(Nmi_node));
@@ -95,14 +95,14 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
     {
       int d = varpower::simple_degree(b->monom().raw());
       if (d >= bins.size())
-        for (int i = bins.size(); i <= d; i++) bins.push_back(NULL);
-      if (bins[d] == NULL) bins[d] = new queue<Bag *>;
+        for (int i = bins.size(); i <= d; i++) bins.push_back(nullptr);
+      if (bins[d] == nullptr) bins[d] = new queue<Bag *>;
       bins[d]->insert(b);
     }
   int n = get_ring()->n_vars();
   int *exp = newarray_atomic(int, n);
   for (int i = 0; i < bins.size(); i++)
-    if (bins[i] != NULL)
+    if (bins[i] != nullptr)
       {
         while (bins[i]->remove(b))
           {
@@ -120,9 +120,9 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
 MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
                              queue<Bag *> &elems,
                              stash *mi_stash0)
-    : R(R0), mi(0), count(0), mi_stash(mi_stash0)
+    : R(R0), mi(nullptr), count(0), mi_stash(mi_stash0)
 {
-  if (mi_stash == 0)
+  if (mi_stash == nullptr)
     {
       count = 1;
       mi_stash = new stash("mi_node", sizeof(Nmi_node));
@@ -133,12 +133,12 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
     {
       int d = varpower::simple_degree(b->monom().raw());
       if (d >= bins.size())
-        for (int i = bins.size(); i <= d; i++) bins.push_back(NULL);
-      if (bins[d] == NULL) bins[d] = new queue<Bag *>;
+        for (int i = bins.size(); i <= d; i++) bins.push_back(nullptr);
+      if (bins[d] == nullptr) bins[d] = new queue<Bag *>;
       bins[d]->insert(b);
     }
   for (int i = 0; i < bins.size(); i++)
-    if (bins[i] != NULL)
+    if (bins[i] != nullptr)
       {
         while (bins[i]->remove(b)) insert(b);
         delete bins[i];
@@ -183,7 +183,7 @@ bool MonomialIdeal::is_equal(const MonomialIdeal &mi0) const
 
 int MonomialIdeal::search_expvector(const int *exp, Bag *&b) const
 {
-  if (mi == NULL) return 0;
+  if (mi == nullptr) return 0;
 
   Nmi_node *p = mi;
 
@@ -193,13 +193,13 @@ int MonomialIdeal::search_expvector(const int *exp, Bag *&b) const
 
       if (p == p->header)
         {
-          if ((p = p->down()) == NULL) return 0;
+          if ((p = p->down()) == nullptr) return 0;
           continue;
         }
 
       if (p->exp > exp[p->var])
         {
-          if ((p = p->header->down()) == NULL) return 0;
+          if ((p = p->header->down()) == nullptr) return 0;
           continue;
         }
 
@@ -216,7 +216,7 @@ int MonomialIdeal::search_expvector(const int *exp, Bag *&b) const
 void MonomialIdeal::find_all_divisors(const int *exp, VECTOR(Bag *)& b) const
 {
   b.clear();
-  if (mi == NULL) return;
+  if (mi == nullptr) return;
 
   Nmi_node *p = mi;
 
@@ -226,13 +226,13 @@ void MonomialIdeal::find_all_divisors(const int *exp, VECTOR(Bag *)& b) const
 
       if (p == p->header)
         {
-          if ((p = p->down()) == NULL) return;
+          if ((p = p->down()) == nullptr) return;
           continue;
         }
 
       if (p->exp > exp[p->var])
         {
-          if ((p = p->header->down()) == NULL) return;
+          if ((p = p->header->down()) == nullptr) return;
           continue;
         }
 
@@ -256,7 +256,7 @@ int MonomialIdeal::search(const int *m, Bag *&b) const
 
 Nmi_node *MonomialIdeal::next(Nmi_node *p) const
 {
-  while (p != NULL)
+  while (p != nullptr)
     {
       p = p->left;
       if (p->tag == Nmi_node::leaf)
@@ -264,7 +264,7 @@ Nmi_node *MonomialIdeal::next(Nmi_node *p) const
       else
         p = p->down();
     }
-  return NULL;
+  return nullptr;
 }
 
 void *MonomialIdeal::next(void *p) const
@@ -274,7 +274,7 @@ void *MonomialIdeal::next(void *p) const
 
 Nmi_node *MonomialIdeal::prev(Nmi_node *p) const
 {
-  while (p != NULL)
+  while (p != nullptr)
     {
       p = p->right;
       if (p->tag == Nmi_node::leaf)
@@ -282,7 +282,7 @@ Nmi_node *MonomialIdeal::prev(Nmi_node *p) const
       else
         p = p->down();
     }
-  return NULL;
+  return nullptr;
 }
 
 void *MonomialIdeal::prev(void *p) const
@@ -292,7 +292,7 @@ void *MonomialIdeal::prev(void *p) const
 
 void MonomialIdeal::insert1(Nmi_node *&top, Bag *b)
 {
-  Nmi_node **p = &top, *up = NULL;
+  Nmi_node **p = &top, *up = nullptr;
   int one_element = 1;
 
   for (index_varpower i = b->monom().raw(); i.valid();)
@@ -301,7 +301,7 @@ void MonomialIdeal::insert1(Nmi_node *&top, Bag *b)
       int insert_var = i.var();
       int insert_exp;
 
-      if (*p == NULL)
+      if (*p == nullptr)
         {
           // make a new header node
           *p = new_mi_node(insert_var, 0, up);
@@ -340,7 +340,7 @@ void MonomialIdeal::insert1(Nmi_node *&top, Bag *b)
           if (i.valid())
             {
               insert_node = new_mi_node(
-                  insert_var, insert_exp, reinterpret_cast<Nmi_node *>(NULL));
+                insert_var, insert_exp, static_cast<Nmi_node*>(nullptr));
               q->insert_to_left(insert_node);
               q = insert_node;
             }
@@ -358,7 +358,7 @@ void MonomialIdeal::insert1(Nmi_node *&top, Bag *b)
   if (one_element)
     {
       // insert a header node and a var/exp = 0/0 leaf
-      top = new_mi_node(0, 0, reinterpret_cast<Nmi_node *>(NULL));
+      top = new_mi_node(0, 0, static_cast<Nmi_node *>(nullptr));
       Nmi_node *leaf_node = new_mi_node(0, 0, b);
       top->left = top->right = leaf_node;
       top->header = leaf_node->header = leaf_node->left = leaf_node->right =
@@ -368,24 +368,24 @@ void MonomialIdeal::insert1(Nmi_node *&top, Bag *b)
 
 void MonomialIdeal::remove1(Nmi_node *p)
 {
-  assert(p != NULL);
+  assert(p != nullptr);
   assert(p->tag == Nmi_node::leaf);
-  p->baggage() = NULL;
+  p->baggage() = nullptr;
   count -= 2;
 
-  for (; p != NULL;)
+  for (; p != nullptr;)
     {
       p->left->right = p->right;
       p->right->left = p->left;
       Nmi_node *q = p->header;
-      p->left = p->right = NULL;
+      p->left = p->right = nullptr;
       delete_mi_node(p);
 
       if (q->right == q->header)  // only the header is left, so delete it
         {
           p = q->down();
-          q->down() = NULL;
-          if (p != NULL) p->down() = NULL;
+          q->down() = nullptr;
+          if (p != nullptr) p->down() = nullptr;
           delete_mi_node(q);
           continue;
         }
@@ -399,7 +399,7 @@ void MonomialIdeal::remove1(Nmi_node *p)
         {
           // set parent of q to be a leaf with baggage of q->left
           // since this is a leaf, dad should be non null
-          assert(dad != NULL);
+          assert(dad != nullptr);
           dad->tag = Nmi_node::leaf;
           dad->baggage() = q->left->baggage();
         }
@@ -407,23 +407,23 @@ void MonomialIdeal::remove1(Nmi_node *p)
         {
           // set parent of q to be node pointing to q->left->down
           q->left->down()->down() = dad;
-          if (dad != NULL)
+          if (dad != nullptr)
             dad->down() = q->left->down();
           else
             mi = q->left->down();
-          q->left->down() = NULL;
+          q->left->down() = nullptr;
         }
-      q->down() = NULL;
+      q->down() = nullptr;
       delete_mi_node(q);  // Deletes both nodes q, q->left.
       return;
     }
-  if (p == NULL) mi = NULL;
+  if (p == nullptr) mi = nullptr;
 }
 
 int MonomialIdeal::remove(Bag *&b)
 {
   Nmi_node *p = reinterpret_cast<Nmi_node *>(next(mi));
-  if (p == NULL) return 0;
+  if (p == nullptr) return 0;
   b = p->baggage();
   remove1(p);
   return 1;
@@ -438,8 +438,8 @@ void MonomialIdeal::do_node(Nmi_node *p, int indent, int disp) const
 {
   buffer o;
   int i;
-  assert(p->left != NULL);
-  assert(p->right != NULL);
+  assert(p->left != nullptr);
+  assert(p->right != nullptr);
   assert(p->left->right == p);
   assert(p->right->left == p);
   if (disp)
@@ -484,7 +484,7 @@ void MonomialIdeal::debug_out(int disp) const
   nnodes = 0;
   nleaves = 0;
   ndepth = 0;
-  if (mi != NULL) do_tree(mi, 0, 0, disp);
+  if (mi != nullptr) do_tree(mi, 0, 0, disp);
   buffer o;
   o << "list nodes     = " << nlists << newline;
   o << "internal nodes = " << nnodes << newline;
@@ -503,21 +503,21 @@ int MonomialIdeal::debug_check(Nmi_node *const p,
 {
   Nmi_node *q;
   // First check the node 'p' itself
-  assert(p != NULL);
+  assert(p != nullptr);
   assert(p->var >= 0);
-  if (up != NULL) assert(p->var < up->var);
+  if (up != nullptr) assert(p->var < up->var);
   assert(p->header == p);
   assert(p->tag == Nmi_node::node);
   assert(p->down() == up);
-  assert(p->left != NULL);
-  assert(p->right != NULL);
+  assert(p->left != nullptr);
+  assert(p->right != nullptr);
 
   // Now loop through each element in left/right chain, checking that
   // v, e, left, right values are consistent.
   for (q = p->left; q != p; q = q->left)
     {
-      assert(q->left != NULL);
-      assert(q->right != NULL);
+      assert(q->left != nullptr);
+      assert(q->right != nullptr);
       assert(q->header == p);
       assert(q->right->left == q);
       assert(q->left->right == q);
@@ -540,11 +540,11 @@ void MonomialIdeal::debug_check() const
 {
   if (count <= 1)
     {
-      assert(mi == NULL);
+      assert(mi == nullptr);
       return;
     }
-  assert(mi != NULL);
-  assert(debug_check(mi, NULL) == count / 2);
+  assert(mi != nullptr);
+  assert(debug_check(mi, nullptr) == count / 2);
 }
 
 int MonomialIdeal::insert(Bag *b)
@@ -567,7 +567,7 @@ int MonomialIdeal::insert(Bag *b)
 void MonomialIdeal::text_out(buffer &o) const
 {
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  assert(P != 0);
+  assert(P != nullptr);
   const Monoid *M = P->getMonoid();
   if (length_of() == 0)
     {
