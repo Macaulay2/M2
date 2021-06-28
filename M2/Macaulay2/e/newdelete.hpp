@@ -95,10 +95,13 @@ struct our_new_delete
 
   static inline void *operator new(size_t size, void *existing_memory)
   {
+    memset(existing_memory,0,size);
     return existing_memory;
   }
+
   static inline void *operator new[](size_t size, void *existing_memory)
   {
+    memset(existing_memory,0,size);
     return existing_memory;
   }
 
@@ -134,6 +137,7 @@ public:
   our_gc_cleanup();
   virtual ~our_gc_cleanup()
   {
+  if (0 == GC_base(this)) return; // Non-heap object.
 #ifdef MEMDEBUG
     GC_REGISTER_FINALIZER_IGNORE_SELF(M2_debug_to_outer((void*)this), 0, 0, 0, 0);
 #else
@@ -152,6 +156,7 @@ static inline void cleanup(void* obj, void* displ)
 
 inline our_gc_cleanup::our_gc_cleanup()
 {
+  if (0 == GC_base(this)) return; // Non-heap object.
 #ifdef MEMDEBUG
   GC_REGISTER_FINALIZER_IGNORE_SELF(M2_debug_to_outer(this), (GC_finalization_proc) cleanup, 0, 0, 0);
 #else

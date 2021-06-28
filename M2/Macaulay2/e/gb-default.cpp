@@ -107,6 +107,9 @@ void gbA::initialize(const Matrix *m,
   // 10 is best so far (125.33 sec, 527 MB virtual).
   // 50 is faster/smaller than 100, and 1000 was awful, on 3-andersbuch
 
+  ringtable = nullptr;
+  ringtableZZ = nullptr;
+
   max_reduction_count = max_reduction_count0;
 
   const PolynomialRing *origR = m->get_ring()->cast_to_PolynomialRing();

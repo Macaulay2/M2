@@ -145,7 +145,7 @@ void *M2_debug_malloc(size_t size) {
      r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
      for (i=0; i<FENCE_INTS; i++) f->fence[i] = FRONT_FENCE;
-     /* for (i=0; i<INTS_BODY; i++) ((int *)p)[i] = BODY_PART; */
+     for (i=0; i<INTS_BODY; i++) ((int *)p)[i] = BODY_PART;
      for (i=0; i<FENCE_INTS; i++) r->fence[i] = REAR_FENCE;
      f->trapcount = r->trapcount = trapcount+1;
      trapchk(p);			/* trapchk increments trapcount before possibly calling trap() -- set your breakpoint in trap() */
@@ -166,7 +166,7 @@ void* M2_debug_malloc_uncollectable(size_t size) {
      r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
      for (i=0; i<FENCE_INTS; i++) f->fence[i] = FRONT_FENCE;
-     /* for (i=0; i<INTS_BODY; i++) ((int *)p)[i] = BODY_PART; */
+     for (i=0; i<INTS_BODY; i++) ((int *)p)[i] = BODY_PART;
      for (i=0; i<FENCE_INTS; i++) r->fence[i] = REAR_FENCE;
      f->trapcount = r->trapcount = trapcount+1;
      trapchk(p);
@@ -185,7 +185,7 @@ void* M2_debug_malloc_atomic(size_t size) {
      r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
      for (i=0; i<FENCE_INTS; i++) f->fence[i] = FRONT_FENCE;
-     /* for (i=0; i<INTS_BODY; i++) ((int *)p)[i] = BODY_PART; */
+     for (i=0; i<INTS_BODY; i++) ((int *)p)[i] = BODY_PART;
      for (i=0; i<FENCE_INTS; i++) r->fence[i] = REAR_FENCE;
      f->trapcount = r->trapcount = trapcount+1;
      trapchk(p);
@@ -204,29 +204,29 @@ void* M2_debug_malloc_atomic_uncollectable(size_t size) {
      r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
      for (i=0; i<FENCE_INTS; i++) f->fence[i] = FRONT_FENCE;
-     /* for (i=0; i<INTS_BODY; i++) ((int *)p)[i] = BODY_PART; */
+     for (i=0; i<INTS_BODY; i++) ((int *)p)[i] = BODY_PART;
      for (i=0; i<FENCE_INTS; i++) r->fence[i] = REAR_FENCE;
      f->trapcount = r->trapcount = trapcount+1;
      trapchk(p);
      return p;
      }
 
-static void volatile smashed(void) {
-     fprintf(stderr,"-- *** memdebug -- smashed object found, aborting\n");
+static void volatile smashed(void *p) {
+     fprintf(stderr,"-- *** memdebug -- smashed object found, %p, aborting\n",p);
      trap();
      abort();
      }
 
 void *M2_debug_to_outer(void *p) {
      struct FRONT *f = p - sizeof(struct FRONT);
-     if (f->fence[0] != FRONT_FENCE) smashed();
+     if (f->fence[0] != FRONT_FENCE) smashed(p);
      return f;
      }
 
 
 void *M2_debug_to_inner(void *q) {
      struct FRONT *f = q;
-     if (f->fence[0] != FRONT_FENCE) smashed();
+     if (f->fence[0] != FRONT_FENCE) smashed(q);
      return (void *)f + sizeof(struct FRONT);
      }
 
@@ -256,9 +256,9 @@ void M2_debug_free(void *p) {
      INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
      r = p + sizeof(int)*INTS_BODY;
      _trapcount = f->trapcount;
-     if (r->trapcount != _trapcount || r->size != size) smashed();
-     for (i=0; i<FENCE_INTS; i++) if (f->fence[i] != FRONT_FENCE) smashed();
-     for (i=0; i<FENCE_INTS; i++) if (r->fence[i] != REAR_FENCE ) smashed();
+     if (r->trapcount != _trapcount || r->size != size) smashed(p);
+     for (i=0; i<FENCE_INTS; i++) if (f->fence[i] != FRONT_FENCE) smashed(p);
+     for (i=0; i<FENCE_INTS; i++) if (r->fence[i] != REAR_FENCE ) smashed(p);
      if (_trapcount == trapset) trap();
      trapchk(p);
      for (i=0; i<FENCE_INTS; i++) f->fence[i] = FRONT_FENCE_GONE;
