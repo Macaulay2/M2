@@ -150,14 +150,22 @@ basisPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
 -- Algorithms for truncations of a polynomial ring
 --------------------------------------------------------------------
 
-truncationMonomials = method()
-truncationMonomials(List, Module) := (degs, F) -> (
-    -- inputs: a list of multidegrees, a free module
+truncationMonomials = method(Options => { Exterior => {}, Nef => null })
+truncationMonomials(List, Module) := opts -> (degs, F) -> (
+    -- inputs: a list of multidegrees, a free module F = sum_i R(-a_i)
     -- assume checkOrMakeDegreeList has already been called on degs
+    (R1, phi1) := flattenRing (R := ring F);
+    ext := if opts.Exterior =!= null then opts.Exterior else (options R1).SkewCommutative;
+    nef := if opts.Nef      =!= null then opts.Nef      else  nefCone R1; -- changing to effCone gives an alternative result
     -- TODO: call findMins on degs, but with respect to the Nef cone!
+    -- checks to see if twist S(-a) needs to be truncated
+    isInNef := if nef === null then a -> any(degs, d -> d << a) else (
+	truncationCone := nef + convexHull matrix transpose degs;
+	a -> contains(truncationCone, convexHull matrix transpose{a}));
     -- TODO: either figure out a way to use cached results or do this in parallel
-    R := ring F; directSum apply(degrees F, a -> concatCols apply(degs, d -> truncationMonomials(d - a, R))))
-truncationMonomials(List, Ring) := (d, R) -> (
+    directSum apply(degrees F, a -> if isInNef a then gens R^{a} else concatCols(
+	     apply(degs, d -> truncationMonomials(d - a, R, Exterior => ext, Nef => nef)))))
+truncationMonomials(List, Ring) := opts -> (d, R) -> (
     -- inputs: a single multidegree, a graded ring
     -- valid for total coordinate ring of any simplicial toric variety
     -- or any polynomial ring, quotient ring, or exterior algebra.
@@ -167,9 +175,7 @@ truncationMonomials(List, Ring) := (d, R) -> (
         (R1, phi1) := flattenRing R;
         -- generates the effective cone
         A := effGenerators R1;
-        P := truncationPolyhedron(A, transpose matrix{d},
-            Exterior => (options R1).SkewCommutative,
-            Nef => nefCone R1); -- changing to effCone gives an alternative result
+        P := truncationPolyhedron(A, transpose matrix{d}, opts);
         H := hilbertBasis cone P; -- ~50% of computation
         H = for h in H list flatten entries h;
         J := leadTerm ideal R1;
@@ -236,8 +242,8 @@ truncate(List, Module) := Module => truncateModuleOpts >> opts -> (degs, M) -> (
     then truncation1(min degs, M)
     else if isFreeModule M then return ( -- NOTE: skip trimming
         image map(M, , truncationMonomials(degs, M)))
-    else if M.?generators and not M.?relations then (
-        image map(M, , gens truncate(degs, target presentation M, MinimalGenerators => false)))
+    else if not M.?relations then (
+        image map(M, , truncationMonomials(degs, cover M)))
     else subquotient(
         gens truncate(degs, image generators M, MinimalGenerators => false),
         gens truncate(degs, image  relations M, MinimalGenerators => false))

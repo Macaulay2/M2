@@ -362,7 +362,7 @@ TEST /// -- test of truncationPolyhedron with Nef option
 end--
 
 restart
-time check "Truncations" -- 9s -> 7s
+time check "Truncations" -- 9s -> 7s -> 5.4s
 
 -- benchmarking tests
 restart
@@ -381,7 +381,7 @@ elapsedTime truncate(compositions(3, n), S^3); -- (67s ->) 61s -> 72s -> 7.3s
 elapsedTime truncate(compositions(3, n), S^3); -- (54s ->) 60s -> 60s -> 0.4s GOOD
 
 n = 15 -- 136 twists
-elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 31s
+elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 31s -> 23.8s
 elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 0.8s GOOD
 elapsedTime truncate(compositions(3, n), S); -- (?? ->) >3min -> 0.8s GOOD
 elapsedTime truncate(compositions(3, n), S); -- (?? ->) >3min -> 0.7s GOOD
@@ -389,6 +389,30 @@ elapsedTime truncate(compositions(3, n), S^3, MinimalGenerators => false); -- 2.
 elapsedTime truncate(compositions(3, n), S^3, MinimalGenerators => false); -- 1.8s GOOD
 elapsedTime truncate(compositions(3, n), S^3); -- (?? ->) 1.8s GOOD
 elapsedTime truncate(compositions(3, n), S^3); -- (?? ->) 1.7s GOOD
+
+restart
+debug needsPackage "Truncations"
+S = ZZ/32003[x_0,x_1,y_0,y_1,z_0..z_2, Degrees => {2:{1,0,0},2:{0,1,0},3:{0,0,1}}]
+
+(l, m, n) = (1, 3, 5)
+elapsedTime M = S^3 / truncate(compositions(3, n), S^3); -- 0.9s
+elapsedTime truncate(compositions(3, m), M, MinimalGenerators => false); -- 7.7s -> 1.2s
+elapsedTime truncate(compositions(3, m), M, MinimalGenerators => false); -- 5.5s -> 0.04s
+elapsedTime truncate(compositions(3, m), M); -- 7.0s -> 1.13s
+elapsedTime truncate(compositions(3, m), M); -- 7.1s -> 0.10s
+
+elapsedTime M = truncate(compositions(3, l), S^3) / truncate(compositions(3, n), S^3);
+elapsedTime truncate(compositions(3, m), M); -- 4.6s -> 1.6s
+elapsedTime truncate(compositions(3, m), M); -- 0.1s -> 0.16s
+
+-- Note: this is the only case that is slower compared with v1.0,
+-- but the previous output wasn't incorrect in the faster cases!
+(l, m, n) = (1, 5, 3)
+elapsedTime M = truncate(compositions(3, l), S^3) / truncate(compositions(3, n), S^3);
+elapsedTime truncate(compositions(3, m), M, MinimalGenerators => false); -- 4.6s TODO!
+elapsedTime truncate(compositions(3, m), M, MinimalGenerators => false); -- 1.5s cache!
+elapsedTime truncate(compositions(3, m), M); -- 4.7s TODO!
+elapsedTime truncate(compositions(3, m), M); -- 4.75 cache!
 
 restart
 S = ZZ/32003[x_0,x_1,y_0,y_1,z_0..z_2, Degrees => {2:{1,0,0},2:{0,1,0},3:{0,0,1}}]
