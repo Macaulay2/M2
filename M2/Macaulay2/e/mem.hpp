@@ -91,7 +91,7 @@ class stash : public our_new_delete
 inline void *stash::new_elem()
 // Allocate space for an object from this stash.
 {
-  return newarray(char, element_size);
+  return newarray_clear(char, element_size);
   acquireSpinLock(&list_spinlock);
   n_allocs++;
   n_inuse++;
@@ -100,7 +100,7 @@ inline void *stash::new_elem()
     {
       if (n_per_slab == 0)
         {
-          void *result = newarray(char, element_size);
+          void *result = newarray_clear(char, element_size);
           // allocated_amount += element_size;
           releaseSpinLock(&list_spinlock);
           return result;

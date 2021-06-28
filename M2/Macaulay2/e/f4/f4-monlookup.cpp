@@ -71,7 +71,7 @@ F4MonomialLookupTableT<Key>::F4MonomialLookupTableT(int nvars, stash *mi_stash0)
     }
 
   size_of_exp = nvars;
-  exp0 = newarray_atomic(ntuple_word, size_of_exp);
+  exp0 = newarray_atomic_clear(ntuple_word, size_of_exp);
 }
 
 template <typename Key>
@@ -249,7 +249,7 @@ void F4MonomialLookupTableT<Key>::update_exponent_vector(
       else
         size_of_exp *= 2;
 
-      exp0 = newarray_atomic(ntuple_word, size_of_exp);
+      exp0 = newarray_atomic_clear(ntuple_word, size_of_exp);
     }
 
   int nparts = static_cast<int>(*m++);

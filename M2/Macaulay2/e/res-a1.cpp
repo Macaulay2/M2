@@ -1613,7 +1613,7 @@ void res_comp::skeleton_stats(const VECTOR(res_pair *)& reslevel)
   int level;
   int maxlevel = reslevel.size() - 1;
   int maxdegree = skeleton_maxdegree(reslevel);  // max slanted degree
-  int *bettis = newarray_atomic(int, (maxlevel + 1) * (maxdegree + 1));
+  int *bettis = newarray_atomic_clear(int, (maxlevel + 1) * (maxdegree + 1));
   for (level = 0; level < reslevel.size(); level++)
     {
       for (res_pair *p = reslevel[level]; p != NULL; p = p->next)

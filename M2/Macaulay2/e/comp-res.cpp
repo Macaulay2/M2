@@ -149,7 +149,7 @@ ResolutionComputation *ResolutionComputation::choose_res(
 void ResolutionComputation::betti_init(int lo, int hi, int len, int *&bettis)
 {
   int z = (hi - lo + 1) * (len + 1);
-  bettis = newarray_atomic(int, z);
+  bettis = newarray_atomic_clear(int, z);
 }
 
 M2_arrayint ResolutionComputation::betti_make(int lo,

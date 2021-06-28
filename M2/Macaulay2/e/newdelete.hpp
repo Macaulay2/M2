@@ -32,8 +32,11 @@
 // these replace all uses of the construction "new T[n]" (unless constructors
 // have to be run!):
 #define newarray(T, len) reinterpret_cast<T *>(getmem((len) * sizeof(T)))
+#define newarray_clear(T, len) \
+  reinterpret_cast<T *>(getmem_clear((len) * sizeof(T)))
 // this replaces all uses of the construction "new T":
 #define newitem(T) reinterpret_cast<T *>(getmem(sizeof(T)))
+#define newitem_clear(T) reinterpret_cast<T *>(getmem_clear(sizeof(T)))
 // this replaces all uses of the construction "delete [] x",
 // except it doesn't delete the individual elements for you, if they happen to
 // be pointers
@@ -54,6 +57,8 @@
 // pointers
 #define newarray_atomic(T, len) \
   reinterpret_cast<T *>(getmem_atomic((len) * sizeof(T)))
+#define newarray_atomic_clear(T, len) \
+  reinterpret_cast<T *>(getmem_atomic_clear((len) * sizeof(T)))
 // this replaces all uses of the construction "new T":
 #define newitem_atomic(T) reinterpret_cast<T *>(getmem_atomic(sizeof(T)))
 

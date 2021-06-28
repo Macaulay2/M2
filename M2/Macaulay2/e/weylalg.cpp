@@ -405,7 +405,7 @@ ring_elem WeylAlgebra::mult_by_term(const ring_elem f,
 // Computes c*m*f
 {
   int *top_derivative = newarray_atomic(int, _nderivatives);
-  int *current_derivative = newarray_atomic(int, _nderivatives);
+  int *current_derivative = newarray_atomic_clear(int, _nderivatives);
   int *expf = newarray_atomic(int, nvars_);
   polyheap result(this);
 
@@ -460,7 +460,7 @@ gbvector *WeylAlgebra::gbvector_weyl_diff(
 
   int i;
   int *exp = newarray_atomic(int, _nderivatives);
-  int *deriv_exp = newarray_atomic(int, nvars_);
+  int *deriv_exp = newarray_atomic_clear(int, nvars_);
   int *result_exp = newarray_atomic(int, nvars_);
   if (_homogeneous_weyl_algebra)
     {
@@ -529,7 +529,7 @@ gbvector *WeylAlgebra::gbvector_mult_by_term(
 // Computes c*m*f*e_comp  (where components of f and e_comp add).
 {
   int *top_derivative = newarray_atomic(int, _nderivatives);
-  int *current_derivative = newarray_atomic(int, _nderivatives);
+  int *current_derivative = newarray_atomic_clear(int, _nderivatives);
   int *expf = newarray_atomic(int, nvars_);
 
   GBRing *GR = result.get_gb_ring();

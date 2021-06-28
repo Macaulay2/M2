@@ -305,7 +305,7 @@ class MatElementaryOps<DMat<RT> >
           }
         done[j] = false;
       }
-    ElementType* tmp = newarray(ElementType, mat.numColumns());
+    ElementType* tmp = newarray_clear(ElementType, mat.numColumns());
     for (size_t c = 0; c < mat.numColumns(); c++) mat.ring().init(tmp[c]);
     size_t next = 0;
 
@@ -365,7 +365,7 @@ class MatElementaryOps<DMat<RT> >
           }
         done[j] = false;
       }
-    ElementType* tmp = newarray(ElementType, mat.numRows());
+    ElementType* tmp = newarray_clear(ElementType, mat.numRows());
     for (size_t r = 0; r < mat.numRows(); r++) mat.ring().init(tmp[r]);
     size_t next = 0;
 

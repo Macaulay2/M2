@@ -167,7 +167,7 @@ static int popular_var(const MonomialIdeal &I,
   int nvars = I.topvar() + 1;
   for (k = 0; k < nvars; k++) pure[k] = -1;
 
-  int *hits = newarray_atomic(int, nvars);
+  int *hits = newarray_atomic_clear(int, nvars);
   int *minnonzero = newarray_atomic(int, nvars);
   for (k = 0; k < nvars; k++) hits[k] = 0;
   for (k = 0; k < nvars; k++) minnonzero[k] = MAX_EXP;

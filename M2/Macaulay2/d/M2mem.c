@@ -83,6 +83,21 @@ void freemem(void *s) {
 #endif
 }
 
+char *getmem_clear(size_t n)
+{
+  char *p;
+  enter_getmem();
+  p = GC_MALLOC(n);
+  if (p == NULL) outofmem2(n);
+  /* note: GC_MALLOC clears memory before returning.
+     If you switch to another memory allocator, you must clear it explicitly here */
+  #ifndef NDEBUG
+  trapchk(p);
+  #endif
+  exit_getmem();
+  return p;
+}
+
 char *getmem_atomic(size_t n)
 {
   char *p;
@@ -93,6 +108,10 @@ char *getmem_atomic(size_t n)
   p = GC_MALLOC_ATOMIC(n);
 #endif
   if (p == NULL) outofmem2(n);
+#ifndef NDEBUG
+  memset(p,0xac,n);		/* fill with 0xacacacac ... */
+  trapchk(p);
+#endif
   exit_getmem();
   return p;
 }
@@ -103,6 +122,25 @@ char *getmem_malloc(size_t n)
   enter_getmem();
   p = malloc(n);
   if (p == NULL) outofmem2(n);
+#ifndef NDEBUG
+  memset(p,0xca,n);		/* fill with 0xcacacaca */
+  trapchk(p);
+#endif
+  exit_getmem();
+  return p;
+}
+
+char *getmem_atomic_clear(size_t n)
+{
+  char *p;
+  enter_getmem();
+  p = GC_MALLOC_ATOMIC(n);
+  if (p == NULL) outofmem2(n);
+  /* note: GC_MALLOC clears memory before returning.
+     If you switch to another memory allocator, you must clear it explicitly here */
+#ifndef NDEBUG
+  trapchk(p);
+#endif
   exit_getmem();
   return p;
 }

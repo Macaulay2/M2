@@ -72,7 +72,7 @@ ResF4MonomialLookupTableT<Key>::ResF4MonomialLookupTableT(int nvars,
     }
 
   size_of_exp = nvars;
-  exp0 = newarray_atomic(ntuple_word, size_of_exp);
+  exp0 = newarray_atomic_clear(ntuple_word, size_of_exp);
 }
 
 template <typename Key>
@@ -251,7 +251,7 @@ void ResF4MonomialLookupTableT<Key>::update_exponent_vector(
       else
         size_of_exp *= 2;
 
-      exp0 = newarray_atomic(ntuple_word, size_of_exp);
+      exp0 = newarray_atomic_clear(ntuple_word, size_of_exp);
     }
 
   int nparts = static_cast<int>(*m++);
