@@ -84,14 +84,144 @@ gbA *gbA::create(const Matrix *m,
       return nullptr;
     }
 
-  gbA *result = new gbA;
-  result->initialize(m,
+  gbA *result = new gbA(m,
                      collect_syz,
                      n_rows_to_keep,
                      gb_weights,
                      strategy,
                      max_reduction_count);
   return result;
+}
+
+gbA::gbA(const Matrix *m,
+         int csyz,
+         int nsyz,
+         M2_arrayint gb_weights,
+         int strat,
+         int max_reduction_count0)
+  : spair_stash(new stash("gbA spairs", sizeof(spair))),
+    gbelem_stash(new stash("gbA elems", sizeof(gbelem))),
+    exp_size(0), // set below
+    lcm_stash(nullptr), // set below
+    // Data
+    originalR(m->get_ring()->cast_to_PolynomialRing()), // This must not be nullptr
+    R(originalR->get_gb_ring()),
+    weightInfo_(new GBWeight(m->rows(), gb_weights)),
+    gb_weights(weightInfo_->get_weights()),
+    // Ring information
+    _F(m->rows()),
+    _Fsyz(nullptr), // set below
+    _nvars(R->get_flattened_monoid()->n_vars()),
+    _coeff_type(originalR->coefficient_type()),
+    n_fraction_vars(originalR->n_fraction_vars()),
+    is_local_gb(originalR->getMonoid()->numNonTermOrderVariables() > 0),
+    // gb
+    // forwardingZZ
+    minimal_gb(nullptr), // set below
+    minimal_gb_valid(true), // At end of constructor, this is true
+    ringtable(nullptr),  // Set below.  At most one of ringtable, ringtableZZ  will be non-NULL.
+    ringtableZZ(nullptr),
+    lookup(nullptr), // Set below.  At most one of lookup, lookupZZ  will be non-NULL.
+    lookupZZ(nullptr),
+    S(new SPairSet),
+    // _syz
+    _strategy(strat),
+    n_rows_per_syz((nsyz < 0 || nsyz > m->n_cols()) ? m->n_cols() : nsyz),
+    _collect_syz(csyz),
+    _is_ideal(_F->rank() == 1 && csyz == 0 && not R->is_weyl_algebra()),
+    first_gb_element(0), // changes below for quotient rings
+      /* First index past the skew variable squares, quotient
+         elements, in the vector gb */
+    first_in_degree(0), // set below
+      /* for the current 'sugar' degree, this is the first GB
+         element inserted for this degree */
+    complete_thru_this_degree(_F->lowest_primary_degree() - 1), /* Used in reporting status to the user */
+
+    /* state machine */
+    state(STATE_NEWDEGREE), // will be changed if hilb fcn is used
+    this_degree(complete_thru_this_degree),
+    npairs(0), // in this_degree
+    np_i(0),
+    ar_i(0),
+    ar_j(0),
+    n_gb(0),
+
+    /* stats */
+    stats_ngcd1(0),
+    stats_nreductions(0),
+    stats_ntail(0),
+    stats_ngb(0),
+    stats_npairs(0),
+    stats_nretired(0),
+
+    /* for ending conditions */
+    n_syz(0),
+    n_pairs_computed(0),
+    n_gens_left(0),
+    n_subring(0),
+
+    // Hilbert function information.
+    use_hilb(false),
+    hilb_new_elems(false),   // True if any new elements since HF was last computed
+    hilb_n_in_degree(0),  // The number of new elements that we expect to find
+                          // in this degree.
+    n_saved_hilb(0),
+    hf_orig(nullptr),  // The Hilbert function that we are given at the beginning
+    hf_diff(nullptr),  // The difference between hf_orig and the computed hilb fcn
+
+    // Reduction count: used to defer spairs which are likely to reduce to 0
+    max_reduction_count(max_reduction_count0),
+
+    // Stashing previous divisors;
+    divisor_previous(-1),
+    divisor_previous_comp(-1)
+{
+  exp_size = EXPONENT_BYTE_SIZE(R->n_vars() + 2);
+  lcm_stash = new stash("gbA lead monoms", exp_size);
+
+  _Fsyz = m->cols()->sub_space(n_rows_per_syz);
+  set_status(COMP_NOT_STARTED);
+
+  if (over_ZZ())
+    lookupZZ = MonomialTableZZ::make(R->n_vars());
+  else
+    {
+      lookup = MonomialTable::make(R->n_vars());
+    }
+
+  minimal_gb = ReducedGB::create(originalR, _F, _Fsyz);
+
+  if (originalR->is_quotient_ring())
+    {
+      ringtable = originalR->get_quotient_MonomialTable();
+      ringtableZZ = originalR->get_quotient_MonomialTableZZ();
+
+      first_gb_element = originalR->n_quotients();
+      for (int i = 0; i < first_gb_element; i++)
+        {
+          gbvector *f = const_cast<gbvector *>(originalR->quotient_gbvector(i));
+          gbelem *g = gbelem_ring_make(f);
+          gb.push_back(g);
+          forwardingZZ.push_back(-1);
+        }
+    }
+
+  for (int i = 0; i < m->n_cols(); i++)
+    {
+      ring_elem denom;
+      gbvector *f = originalR->translate_gbvector_from_vec(_F, (*m)[i], denom);
+      spair *p = new_gen(i, f, denom);
+      if (p != NULL)
+        {
+          spair_set_insert(p);
+        }
+    }
+
+  state = STATE_NEWDEGREE;  // will be changed if hilb fcn is used
+  np_i = first_gb_element;
+  ar_i = first_gb_element;
+  ar_j = ar_i + 1;
+  n_gb = first_gb_element;
 }
 
 void gbA::initialize(const Matrix *m,

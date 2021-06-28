@@ -25,6 +25,8 @@ endif
 TAGS tags: @srcdir@/TAGS
 @srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c \
 	@srcdir@/NCAlgebras/*.hpp @srcdir@/NCAlgebras/*.cpp \
+	@srcdir@/interface/*.h @srcdir@/interface/*.cpp \
+	@srcdir@/schreyer-resolution/*.hpp @srcdir@/schreyer-resolution/*.cpp \
 	@srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
 	@srcdir@/bibasis/*.hpp @srcdir@/bibasis/*.cpp \
 	@srcdir@/unit-tests/*.cpp

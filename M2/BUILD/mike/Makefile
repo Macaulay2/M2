@@ -197,6 +197,7 @@ debug64-appleclang : always
 		--disable-strip \
 		--enable-download \
 		--enable-debug \
+		--enable-memdebug \
 		--disable-optimize
 
 debug64-gcc9 : always
