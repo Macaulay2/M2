@@ -316,7 +316,7 @@ dir  := s -> ( m := regex(".*/",s); if m === null or 0 === #m then "./" else sub
 base := s -> ( m := regex(".*/",s); if m === null or 0 === #m then s    else substring(m#0#1,      s))
 initcurrentlayout := () -> (
      issuffix := (s,t) -> t =!= null and s === substring(t,-#s);
-     bindir := dir exe | "/";
+     bindir = dir exe | "/";
      currentLayout = (					    -- see also currentLayoutTable
 	  if issuffix(Layout#2#"bin","/"|bindir) then Layout#2 else
 	  if issuffix(Layout#1#"bin","/"|bindir) then Layout#1
