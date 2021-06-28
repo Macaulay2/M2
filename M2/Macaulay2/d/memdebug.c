@@ -212,7 +212,12 @@ void* M2_debug_malloc_atomic_uncollectable(size_t size) {
      }
 
 static void volatile smashed(void *p) {
-     fprintf(stderr,"-- *** memdebug -- smashed object found, %p, aborting\n",p);
+     if (0 == GC_base(p)) {
+	  fprintf(stderr,"-- *** memdebug -- non-heap object encountered, %p, aborting\n",p);
+	  }
+     else {
+	  fprintf(stderr,"-- *** memdebug -- smashed object found, %p, aborting\n",p);
+	  }
      trap();
      abort();
      }

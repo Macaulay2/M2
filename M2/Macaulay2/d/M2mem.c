@@ -87,10 +87,18 @@ char *getmem_clear(size_t n)
 {
   char *p;
   enter_getmem();
+#ifdef MEMDEBUG
+  p = M2_debug_malloc(n);
+#else
   p = GC_MALLOC(n);
+#endif
   if (p == NULL) outofmem2(n);
+#ifdef MEMDEBUG
+  memset(p,0,n);
+#else
   /* note: GC_MALLOC clears memory before returning.
      If you switch to another memory allocator, you must clear it explicitly here */
+#endif
   #ifndef NDEBUG
   trapchk(p);
   #endif
@@ -134,10 +142,18 @@ char *getmem_atomic_clear(size_t n)
 {
   char *p;
   enter_getmem();
+#ifdef MEMDEBUG
+  p = M2_debug_malloc_atomic(n);
+#else  
   p = GC_MALLOC_ATOMIC(n);
+#endif
   if (p == NULL) outofmem2(n);
+#ifdef MEMDEBUG
+  memset(p,0,n);
+#else
   /* note: GC_MALLOC clears memory before returning.
      If you switch to another memory allocator, you must clear it explicitly here */
+#endif
 #ifndef NDEBUG
   trapchk(p);
 #endif
