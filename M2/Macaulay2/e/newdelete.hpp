@@ -12,6 +12,7 @@
 
 #ifdef MEMDEBUG
 #include <memdebug.h>
+#include <M2mem.h>
 #endif
 
 /**
