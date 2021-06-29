@@ -19,7 +19,7 @@ void bignum_text_out(buffer &o, mpz_srcptr a)
   str = mpz_get_str(allocstr, 10, a);
   o << str;
 
-  if (size > 1000) deletearray(allocstr);
+  if (size > 1000) freemem(allocstr);
 }
 
 void clear_emit_size() { emit_line_len = 0; }

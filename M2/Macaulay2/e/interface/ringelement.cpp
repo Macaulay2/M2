@@ -595,7 +595,7 @@ engine_RawRingElementArray rawGetParts(const M2_arrayint wts,
       result->len = static_cast<int>(relems_len);
       for (int i = 0; i < result->len; i++)
         result->array[i] = RingElement::make_raw(P, relems[i]);
-      deletearray(relems);
+      freemem(relems);
       return result;
   } catch (const exc::engine_error& e)
     {

@@ -55,6 +55,7 @@ char *getmem(size_t n)
 #endif
   if (p == NULL) outofmem2(n);
 #ifndef NDEBUG
+  memset(p,0xbe,n);		/* fill with 0xbebebebe ... */
   trapchk(p);
 #endif
   exit_getmem();
@@ -198,6 +199,10 @@ char *getmoremem_atomic (char *s, size_t old, size_t new) {
      memcpy(p, s, min);
      GC_FREE(s);
 #    ifndef NDEBUG
+     {
+       int excess = new - min;
+       if (excess > 0) memset((char *)p+min,0xbe,excess); /* fill with 0xbebebebe */
+     }
      trapchk(p);
 #    endif
      exit_getmem();

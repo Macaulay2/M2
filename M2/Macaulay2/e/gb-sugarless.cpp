@@ -138,7 +138,7 @@ void GBinhom_comp::remove_pair(s_pair *&p)
   p->second = NULL;
   p->next = NULL;
   M->remove(p->lcm);
-  deleteitem(p);
+  freemem(p);
   p = NULL;
 }
 
@@ -310,7 +310,7 @@ void GBinhom_comp::find_pairs(gb_elem *p)
           s_pair *q2 = new_var_pair(p, find_pairs_lcm);
           elems.insert(new Bag(q2, vplcm));
         }
-      deletearray(find_pairs_exp);
+      freemem(find_pairs_exp);
     }
 
 // Add in syzygies arising from a base ring
@@ -353,7 +353,7 @@ void GBinhom_comp::find_pairs(gb_elem *p)
     {
       s_pair *q2 = reinterpret_cast<s_pair *>(b->basis_ptr());
       remove_pair(q2);
-      deleteitem(b);
+      freemem(b);
     }
 
   s_pair head;
@@ -432,10 +432,10 @@ void GBinhom_comp::find_pairs(gb_elem *p)
     }
 
   // Remove the local variables
-  deletearray(find_pairs_lcm);
-  deletearray(pi);
-  deletearray(pj);
-  deletearray(pij);
+  freemem(find_pairs_lcm);
+  freemem(pi);
+  freemem(pj);
+  freemem(pij);
   M->remove(find_pairs_mon);
   M->remove(f_m);
   M->remove(f_m2);
@@ -511,7 +511,7 @@ int GBinhom_comp::gb_reduce(gbvector *&f, gbvector *&fsyz)
     }
 
   f = head.next;
-  deletearray(div_totalexp);
+  freemem(div_totalexp);
   return 1;
 }
 
@@ -577,7 +577,7 @@ int GBinhom_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
   f = head.next;
 
   fsyz = fsyzb.value();
-  deletearray(div_totalexp);
+  freemem(div_totalexp);
   return 1;
 }
 

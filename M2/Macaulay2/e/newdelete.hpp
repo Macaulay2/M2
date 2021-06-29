@@ -37,21 +37,6 @@
 // this replaces all uses of the construction "new T":
 #define newitem(T) reinterpret_cast<T *>(getmem(sizeof(T)))
 #define newitem_clear(T) reinterpret_cast<T *>(getmem_clear(sizeof(T)))
-// this replaces all uses of the construction "delete [] x",
-// except it doesn't delete the individual elements for you, if they happen to
-// be pointers
-#ifndef NDEBUG
-#define deletearray(x) (trapchk(x), freemem(x))
-#else
-#define deletearray(x) freemem(x)
-#endif
-// this replaces all uses of the construction "delete x" (unless a destructor
-// has to be run!):
-#ifndef NDEBUG
-#define deleteitem(x) (TRAPCHK(x), freemem(x))
-#else
-#define deleteitem(x) freemem(x)
-#endif
 
 // this replaces all uses of the construction "new T[n]", with T containing NO
 // pointers
@@ -100,13 +85,10 @@ struct our_new_delete
 
   static inline void *operator new(size_t size, void *existing_memory)
   {
-    memset(existing_memory,0,size);
     return existing_memory;
   }
-
   static inline void *operator new[](size_t size, void *existing_memory)
   {
-    memset(existing_memory,0,size);
     return existing_memory;
   }
 

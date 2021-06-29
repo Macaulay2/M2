@@ -41,7 +41,7 @@ exponents GBRing::exponents_make()
   return e;
 }
 
-void GBRing::exponents_delete(exponents e) { deletearray(e); }
+void GBRing::exponents_delete(exponents e) { freemem(e); }
 ////////////////////////////////////////////////////////////////
 GBRing::~GBRing()
 {

@@ -82,7 +82,7 @@ QRingInfo_field::QRingInfo_field(const PolyRing *ambientR,
           exp = newarray_atomic(int, R->n_vars());
         }
     }
-  deletearray(exp);
+  freemem(exp);
 }
 
 QRingInfo_field_basic::QRingInfo_field_basic(const PolyRing *ambientR,
@@ -344,7 +344,7 @@ QRingInfo_ZZ::QRingInfo_ZZ(const PolyRing *ambientR,
             }
         }
     }
-  deletearray(exp);
+  freemem(exp);
 }
 
 bool QRingInfo_ZZ::reduce_lead_term_ZZ(Nterm *&f, const Nterm *g) const

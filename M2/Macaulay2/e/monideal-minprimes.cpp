@@ -19,8 +19,8 @@ MinimalPrimes::MinimalPrimes(const MonomialIdeal *const &I)
 MinimalPrimes::~MinimalPrimes()
 {
   for (int i = 0; i <= nvars + 1; i++)
-    if (exps[i] != 0) deletearray(exps[i]);
-  deletearray(exps);
+    if (exps[i] != 0) freemem(exps[i]);
+  freemem(exps);
   delete primes;
   delete mi;
 }
@@ -199,8 +199,8 @@ MonomialIdeal *MinimalPrimes::alg1_min_primes(int maxcodim, int count)
 
   alg1_min_prime_generator(monoms, -1);
 
-  deletearray(monoms);
-  deletearray(exp);
+  freemem(monoms);
+  freemem(exp);
 
   buffer o;
   o << "number of tentative minprimes is " << Q.length();

@@ -493,7 +493,7 @@ monomial Monoid::make_one() const
 void Monoid::remove(monomial d) const
 {
 #if 0
-//   deletearray(d);
+//   freemem(d);
 #endif
 }
 
