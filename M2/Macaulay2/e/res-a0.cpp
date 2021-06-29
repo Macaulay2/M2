@@ -187,7 +187,7 @@ enum ComputationStatusCode res2_comp::do_pairs_by_level(int level)
           res2term *g = &head;
           for (f = p->syz; f != NULL; f = f->next)
             {
-              if (f->comp->mi->length() > 0)
+              if (f->comp->mi->size() > 0)
                 {
                   g->next = R->new_term(K->copy(f->coeff), f->monom, f->comp);
                   g = g->next;
@@ -952,7 +952,6 @@ void res2_comp::new_pairs(res2_pair *p)
 // Create and insert all of the pairs which will have lead term 'p'.
 // This also places 'p' into the appropriate monomial ideal
 {
-  Index<MonomialIdeal> j;
   queue<Bag *> elems;
   intarray vp;  // This is 'p'.
   intarray thisvp;
@@ -996,14 +995,14 @@ void res2_comp::new_pairs(res2_pair *p)
   if (P->is_quotient_ring())
     {
       const MonomialIdeal *Rideal = P->get_quotient_monomials();
-      for (j = Rideal->first(); j.valid(); j++)
+      for (Bag& a : *Rideal)
         {
           // Compute (P->quotient_ideal->monom : p->monom)
           // and place this into a varpower and Bag, placing
           // that into 'elems'
           thisvp.shrink(0);
-          varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
-          if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
+          varpower::quotient(a.monom().raw(), vp.raw(), thisvp);
+          if (varpower::is_equal(a.monom().raw(), thisvp.raw()))
             continue;
           Bag *b = new Bag(static_cast<void *>(0), thisvp);
           elems.insert(b);
@@ -1014,10 +1013,10 @@ void res2_comp::new_pairs(res2_pair *p)
   // The baggage of each of these is their corresponding res2_pair
 
   MonomialIdeal *mi_orig = p->syz->comp->mi;
-  for (j = mi_orig->first(); j.valid(); j++)
+  for (Bag& a : *mi_orig)
     {
-      Bag *b = new Bag((*mi_orig)[j]->basis_ptr());
-      varpower::quotient((*mi_orig)[j]->monom().raw(), vp.raw(), b->monom());
+      Bag *b = new Bag(a.basis_ptr());
+      varpower::quotient(a.monom().raw(), vp.raw(), b->monom());
       elems.insert(b);
     }
 
@@ -1035,10 +1034,10 @@ void res2_comp::new_pairs(res2_pair *p)
   if (M2_gbTrace >= 11) mi.debug_out(1);
 
   int *m = M->make_one();
-  for (j = mi.first(); j.valid(); j++)
+  for (Bag& a : mi)
     {
-      res2_pair *second = reinterpret_cast<res2_pair *>(mi[j]->basis_ptr());
-      M->from_varpower(mi[j]->monom().raw(), m);
+      res2_pair *second = reinterpret_cast<res2_pair *>(a.basis_ptr());
+      M->from_varpower(a.monom().raw(), m);
       M->mult(m, p->syz->monom, m);
 
       res2_pair *q = new_res2_pair(p, second, m);
@@ -1073,15 +1072,15 @@ int res2_comp::find_divisor(const MonomialIdeal *mi,
   result = reinterpret_cast<res2_pair *>((bb[0]->basis_ptr()));
   // Now search through, and find the best one.  If only one, just return it.
   if (M2_gbTrace >= 5)
-    if (mi->length() > 1)
+    if (mi->size() > 1)
       {
         buffer o;
-        o << ":" << mi->length() << "." << bb.size() << ":";
+        o << ":" << mi->size() << "." << bb.size() << ":";
         emit(o.str());
       }
   if (bb.size() == 1)
     {
-      if (mi->length() == 1)
+      if (mi->size() == 1)
         n_ones++;
       else
         n_unique++;
@@ -1971,7 +1970,7 @@ void res2_comp::text_out(buffer &o, const res2_pair *p) const
 #if 0
 //   if (p->mi_exists)
 #endif
-  o << "[mi: " << p->mi->length() << "]";
+  o << "[mi: " << p->mi->size() << "]";
 #if 0
 //   else
 //     {

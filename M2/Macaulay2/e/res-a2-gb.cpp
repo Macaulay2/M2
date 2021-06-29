@@ -198,7 +198,6 @@ void gb2_comp::find_pairs(gb_elem *p)
 // Returns a list of new s_pair's.
 {
   queue<Bag *> elems;
-  Index<MonomialIdeal> j;
   intarray vplcm;
   int *find_pairs_m = M->make_one();
   int *f_m = M->make_one();
@@ -244,15 +243,15 @@ void gb2_comp::find_pairs(gb_elem *p)
 
   // Add in syzygies arising as s-pairs
   MonomialIdeal *mi1 = monideals[p->f->comp]->mi;
-  for (Index<MonomialIdeal> i = mi1->first(); i.valid(); i++)
+  for (Bag& a : *mi1)
     {
-      M->from_varpower((*mi1)[i]->monom().raw(), find_pairs_m);
+      M->from_varpower(a.monom().raw(), find_pairs_m);
       M->lcm(find_pairs_m, f_m, find_pairs_lcm);
       vplcm.shrink(0);
       M->to_varpower(find_pairs_lcm, vplcm);
       s_pair *q =
           new_s_pair(p,
-                     reinterpret_cast<gb_elem *>((*mi1)[i]->basis_ptr()),
+                     reinterpret_cast<gb_elem *>(a.basis_ptr()),
                      find_pairs_lcm);
       elems.insert(new Bag(q, vplcm));
     }
@@ -276,10 +275,10 @@ void gb2_comp::find_pairs(gb_elem *p)
     }
 
   int is_ideal2 = (F->rank() == 1 && orig_syz == 0);
-  for (j = mi->first(); j.valid(); j++)
+  for (Bag& a : *mi)
     {
       n_pairs++;
-      s_pair *q = reinterpret_cast<s_pair *>((*mi)[j]->basis_ptr());
+      s_pair *q = reinterpret_cast<s_pair *>(a.basis_ptr());
       if (is_ideal2 && q->syz_type == SPAIR_PAIR)
         {
           // MES: the following line is suspect, for Schreyer orders

@@ -281,11 +281,11 @@ const Matrix /* or null */ *Matrix::make(const MonomialIdeal *mi)
   const Monoid *M = P->getMonoid();
   int *mon = M->make_one();
 
-  MatrixConstructor mat(P->make_FreeModule(1), mi->length());
+  MatrixConstructor mat(P->make_FreeModule(1), mi->size());
   int next = 0;
-  for (Index<MonomialIdeal> i = mi->last(); i.valid(); i--)
+  for (auto i = mi->begin(); i != mi->end(); ++i)  // TODO MES: should go from last() via --i to end()...
     {
-      M->from_varpower((*mi)[i]->monom().raw(), mon);
+      M->from_varpower(i->monom().raw(), mon);
       ring_elem f =
           P->make_flat_term(P->getCoefficientRing()->from_long(1), mon);
       mat.set_entry(0, next++, f);

@@ -82,7 +82,6 @@ set(HPPONLYFILES
   geopoly.hpp
   geovec.hpp
   hash.hpp
-  index.hpp
   mat-arith.hpp
   mat-elem-ops.hpp
   mat-linalg.hpp

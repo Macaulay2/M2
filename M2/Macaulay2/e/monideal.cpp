@@ -9,15 +9,15 @@
 
 unsigned int MonomialIdeal::computeHashValue() const
 {
-  // Incorporate the length and the first 5 elements
-  unsigned int hashval = length();
+  // Incorporate the size and the first 5 elements
+  unsigned int hashval = size();
   int count = 0;
-  Index<MonomialIdeal> i = first();
-  while (i.valid() and count < 5)
+  for (Bag& b : *this)
+    //  for (Iterator i = begin(); i != end(); ++i)
     {
-      const int *m = operator[](i)->monom().raw();
+      if (count >= 5) break;
+      const int *m = b.monom().raw();
       hashval = 4436435 * hashval + varpower::computeHashValue(m);
-      i++;
       count++;
     }
   return hashval;
@@ -158,21 +158,22 @@ const int *MonomialIdeal::second_elem() const
 MonomialIdeal *MonomialIdeal::copy() const
 {
   MonomialIdeal *result = new MonomialIdeal(get_ring());
-  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
-    result->insert_minimal(new Bag(*(operator[](i))));
+  for (auto& b : *this)
+    result->insert_minimal(new Bag(b));
   return result;
 }
 
 bool MonomialIdeal::is_equal(const MonomialIdeal &mi0) const
 {
   if (this == &mi0) return true;
-  if (length() != mi0.length()) return false;
-  Index<MonomialIdeal> i = first();
-  Index<MonomialIdeal> j = mi0.first();
-  while (i.valid())
+  if (size() != mi0.size()) return false;
+  Iterator i = begin();
+  Iterator j = mi0.begin();
+  Iterator sentinel = end();
+  while (i != sentinel)
     {
-      const int *m = operator[](i)->monom().raw();
-      const int *n = mi0[j]->monom().raw();
+      const int *m = (*i).monom().raw();
+      const int *n = (*i).monom().raw();
       if (!varpower::is_equal(m, n)) return false;
       i++;
       j++;
@@ -569,46 +570,29 @@ void MonomialIdeal::text_out(buffer &o) const
   const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   assert(P != nullptr);
   const Monoid *M = P->getMonoid();
-  if (length_of() == 0)
+  if (size() == 0)
     {
       o << "0";
       return;
     }
   if (is_one())
     {
-      if (length_of() != 1)
+      if (size() != 1)
         std::cout << "bad news: count is not 1, but ideal is 1..." << std::endl;
       o << "1";
       return;
     }
   int *m = M->make_one();
-  for (Index<MonomialIdeal> j = last(); j.valid(); j--)
+  for (Bag& j : *this)
     {
-      const int *n = operator[](j)->monom().raw();
+      const int *n = j.monom().raw();
       M->from_varpower(n, m);
       M->elem_text_out(o, m);
-      if (M2_gbTrace > 0) o << '(' << operator[](j)->basis_elem() << ")";
+      if (M2_gbTrace > 0) o << '(' << j.basis_elem() << ")";
       o << ' ';
     }
   M->remove(m);
 }
-
-// Original intersect code, pre 1/2/2006.  We wish to speed this up
-//   for large monomial ideals.
-// MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
-// {
-//   queue<Bag *> new_elems;
-//   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
-//     for (Index<MonomialIdeal> j = J.first(); j.valid(); j++)
-//       {
-//      Bag *b = new Bag(operator[](i)->basis_elem());
-//      varpower::lcm(operator[](i)->monom().raw(),
-//                    J[j]->monom().raw(), b->monom());
-//      new_elems.insert(b);
-//       }
-//   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
-//   return result;
-// }
 
 MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
 {
@@ -617,22 +601,21 @@ MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
   //      otherwie compute the lcm's.
   std::cout << "monideal: calling intersect" << std::endl;
   queue<Bag *> new_elems;
-  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
+  for (Bag& a : *this)
     {
       Bag *c;
-      if (J.search(operator[](i)->monom().raw(), c))
+      if (J.search(a.monom().raw(), c))
         {
-          Bag *b = new Bag(operator[](i));
-          new_elems.insert(b);
+          new_elems.insert(new Bag(a));
         }
       else
-        for (Index<MonomialIdeal> j = J.first(); j.valid(); j++)
+        for (Bag& b : J)
           {
-            Bag *b = new Bag(operator[](i)->basis_elem());
-            varpower::lcm(operator[](i)->monom().raw(),
-                          J[j]->monom().raw(),
-                          b->monom());
-            new_elems.insert(b);
+            Bag *new_elem = new Bag(a.basis_elem());
+            varpower::lcm(a.monom().raw(),
+                          b.monom().raw(),
+                          new_elem->monom());
+            new_elems.insert(new_elem);
           }
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
@@ -645,10 +628,10 @@ MonomialIdeal *MonomialIdeal::intersect(const int *m) const
 {
   std::cout << "monideal: calling intersect with one element" << std::endl;
   queue<Bag *> new_elems;
-  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
+  for (Bag& a : *this)
     {
-      Bag *b = new Bag(operator[](i)->basis_elem());
-      varpower::lcm(operator[](i)->monom().raw(), m, b->monom());
+      Bag *b = new Bag(a.basis_elem());
+      varpower::lcm(a.monom().raw(), m, b->monom());
       new_elems.insert(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
@@ -659,15 +642,16 @@ MonomialIdeal *MonomialIdeal::operator*(const MonomialIdeal &J) const
 {
   std::cout << "monideal: calling *" << std::endl;
   queue<Bag *> new_elems;
-  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
-    for (Index<MonomialIdeal> j = J.first(); j.valid(); j++)
+  for (Bag& a : *this)
+    for (Bag& b : J)
       {
-        Bag *b = new Bag(operator[](i)->basis_elem());
-        varpower::mult(operator[](i)->monom().raw(),
-                       J[j]->monom().raw(),
-                       b->monom());
-        new_elems.insert(b);
+        Bag *c = new Bag(a.basis_elem());
+        varpower::mult(a.monom().raw(),
+                       b.monom().raw(),
+                       c->monom());
+        new_elems.insert(c);
       }
+         
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
   GC_reachable_here(&J);
   return result;
@@ -677,15 +661,13 @@ MonomialIdeal *MonomialIdeal::operator+(const MonomialIdeal &J) const
 {
   std::cout << "monideal: calling +" << std::endl;
   queue<Bag *> new_elems;
-  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
+  for (Bag& a : *this)
     {
-      Bag *b = new Bag(operator[](i));
-      new_elems.insert(b);
+      new_elems.insert(new Bag(a));
     }
-  for (Index<MonomialIdeal> j = J.first(); j.valid(); j++)
+  for (Bag& a : J)
     {
-      Bag *b = new Bag(J[j]);
-      new_elems.insert(b);
+      new_elems.insert(new Bag(a));
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
   GC_reachable_here(&J);
@@ -698,13 +680,12 @@ MonomialIdeal *MonomialIdeal::operator-(const MonomialIdeal &J) const
 {
   std::cout << "monideal: calling -" << std::endl;
   MonomialIdeal *result = new MonomialIdeal(get_ring());
-  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
+  for (Bag& a : *this)
     {
       Bag *c;
-      if (!J.search(operator[](i)->monom().raw(), c))
+      if (!J.search(a.monom().raw(), c))
         {
-          Bag *b = new Bag(operator[](i));
-          result->insert_minimal(b);
+          result->insert_minimal(new Bag(a));
         }
     }
   GC_reachable_here(&J);
@@ -716,10 +697,10 @@ MonomialIdeal *MonomialIdeal::quotient(const int *m) const
 {
   std::cout << "calling quotient of single element" << std::endl;
   queue<Bag *> new_elems;
-  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
+  for (Bag& a : *this)
     {
-      Bag *b = new Bag(operator[](i)->basis_elem());
-      varpower::quotient(operator[](i)->monom().raw(), m, b->monom());
+      Bag *b = new Bag(a.basis_elem());
+      varpower::quotient(a.monom().raw(), m, b->monom());
       new_elems.insert(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
@@ -740,9 +721,9 @@ MonomialIdeal *MonomialIdeal::quotient(const MonomialIdeal &J) const
   Bag *b = new Bag();
   varpower::one(b->monom());
   result->insert(b);
-  for (Index<MonomialIdeal> i = J.first(); i.valid(); i++)
+  for (Bag& a : J)
     {
-      MonomialIdeal *result1 = quotient(operator[](i)->monom().raw());
+      MonomialIdeal *result1 = quotient(a.monom().raw());
       result1->debug_check();
       MonomialIdeal *next_result = result->intersect(*result1);
       next_result->debug_check();
@@ -779,10 +760,12 @@ M2_arrayint MonomialIdeal::lcm() const
   M2_arrayint result = M2_makearrayint(get_ring()->n_vars());
   for (int i = 0; i < result->len; i++) result->array[i] = 0;
 
-  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
-    for (index_varpower j = operator[](i)->monom().raw(); j.valid(); ++j)
-      if (result->array[j.var()] < j.exponent())
-        result->array[j.var()] = j.exponent();
+  for (Bag& a : *this)
+    {
+      for (index_varpower j = a.monom().raw(); j.valid(); ++j)
+        if (result->array[j.var()] < j.exponent())
+          result->array[j.var()] = j.exponent();
+    }
   return result;
 }
 
@@ -793,10 +776,10 @@ MonomialIdeal *MonomialIdeal::alexander_dual(const M2_arrayint a) const
   Bag *b = new Bag();
   varpower::one(b->monom());
   result->insert(b);
-  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
+  for (Bag& b : *this)
     {
       MonomialIdeal *I1 =
-          varpower_monideal(get_ring(), a, operator[](i)->monom().raw());
+          varpower_monideal(get_ring(), a, b.monom().raw());
       MonomialIdeal *next_result = result->intersect(*I1);
       delete I1;
       delete result;
@@ -810,10 +793,10 @@ MonomialIdeal *MonomialIdeal::erase(const int *m) const
   std::cout << "monideal: calling erase" << std::endl;
   debug_check();
   queue<Bag *> new_elems;
-  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
+  for (Bag& a : *this)
     {
-      Bag *b = new Bag(operator[](i)->basis_elem());
-      varpower::erase(operator[](i)->monom().raw(), m, b->monom());
+      Bag *b = new Bag(a.basis_elem());
+      varpower::erase(a.monom().raw(), m, b->monom());
       new_elems.insert(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
@@ -836,9 +819,9 @@ MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
   Bag *b = new Bag();
   varpower::one(b->monom());
   result->insert(b);
-  for (Index<MonomialIdeal> i = J.first(); i.valid(); i++)
+  for (Bag& a : J)
     {
-      MonomialIdeal *result1 = erase(operator[](i)->monom().raw());
+      MonomialIdeal *result1 = erase(a.monom().raw());
       result1->debug_check();
       MonomialIdeal *next_result = result->intersect(*result1);
       next_result->debug_check();
@@ -859,10 +842,10 @@ MonomialIdeal *MonomialIdeal::radical() const
   std::cout << std::endl << "  -- radical(I) = ";
   
   queue<Bag *> new_elems;
-  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
+  for (Bag& a : *this)
     {
-      Bag *b = new Bag(operator[](i)->basis_elem());
-      varpower::radical(operator[](i)->monom().raw(), b->monom());
+      Bag *b = new Bag(a.basis_elem());
+      varpower::radical(a.monom().raw(), b->monom());
       new_elems.insert(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
@@ -870,34 +853,6 @@ MonomialIdeal *MonomialIdeal::radical() const
   std::cout << "----" << std::endl;
   return result;
 }
-
-#if 0
-MonomialIdeal NEW_radical(const MonomialIdeal& M) const
-{
-  std::vector<SparseMonomial> elems;
-  std::vector<int> sparseMonomialSpace; // this doesn't work...
-  for (auto a : M)
-    // a is a std::pair<SparseMonomial, int> unowned pointer to the monomial, and its index.
-    {
-      SparseMonomial m = a.first.radical(sparseMonomialSpace);
-      elems.push_back(m);
-    }
-  return MonomialIdeal(elems); // This copies the monomials into space owned my the MonomialIdeal?
-}
-  
-  queue<Bag *> new_elems;
-  
-  for (auto i = cbegin(); i != cend(); ++i)
-  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
-    {
-      Bag *b = new Bag(operator[](i)->basis_elem());
-      varpower::radical(operator[](i)->monom().raw(), b->monom());
-      new_elems.insert(b);
-    }
-  MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
-  return result;
-}
-#endif
 
 static void borel1(queue<Bag *> &result, int *m, int loc, int nvars)
 {
@@ -926,10 +881,9 @@ MonomialIdeal *MonomialIdeal::borel() const
 {
   queue<Bag *> new_elems;
   int *bexp = newarray_atomic(int, get_ring()->n_vars());
-  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
+  for (Bag& b : *this)
     {
-      Bag *b = operator[](i);
-      varpower::to_ntuple(get_ring()->n_vars(), b->monom().raw(), bexp);
+      varpower::to_ntuple(get_ring()->n_vars(), b.monom().raw(), bexp);
       borel1(new_elems, bexp, get_ring()->n_vars() - 1, get_ring()->n_vars());
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
@@ -940,11 +894,10 @@ MonomialIdeal *MonomialIdeal::borel() const
 bool MonomialIdeal::is_borel() const
 {
   int *bexp = newarray_atomic(int, get_ring()->n_vars());
-  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
+  for (Bag& b : *this)
     {
-      Bag *b = operator[](i);
       Bag *c;
-      varpower::to_ntuple(get_ring()->n_vars(), b->monom().raw(), bexp);
+      varpower::to_ntuple(get_ring()->n_vars(), b.monom().raw(), bexp);
       for (int j = get_ring()->n_vars() - 1; j >= 1; j--)
         if (bexp[j] > 0)
           {
@@ -962,7 +915,7 @@ bool MonomialIdeal::is_borel() const
 
 bool MonomialIdeal::is_one() const
 {
-  if (length() != 1) return false;
+  if (size() != 1) return false;
   Nmi_node *p = mi->left;
   if (p->var != 0 || p->exp != 0 || p->tag != Nmi_node::leaf) return false;
   return true;
@@ -973,20 +926,13 @@ int MonomialIdeal::n_pure_powers() const
 {
   int npure = 0;
   int v, e;
-  for (Index<MonomialIdeal> i = first(); i.valid(); i++)
+  for (Bag& b : *this)
     {
-      int *m = operator[](i)->monom().raw();
+      int *m = b.monom().raw();
       if (varpower::is_pure_power(m, v, e)) npure++;
     }
   return npure;
 }
-
-// Other routines to add:
-//   primary_decomposition(J)
-//   partition(J)
-
-//   linear versions of: quotient, ...
-//   Hilbert series
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

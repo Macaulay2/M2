@@ -106,9 +106,9 @@ void partition_table::partition(MonomialIdeal *&I,
   int k;
   reset(I->topvar() + 1);
   // Create the sets
-  for (Index<MonomialIdeal> i = I->first(); i.valid(); i++)
+  for (Bag& a : *I)
     if (n_sets > 1)
-      merge_in((*I)[i]->monom().raw());
+      merge_in(a.monom().raw());
     else
       break;
 
@@ -174,9 +174,9 @@ static int popular_var(const MonomialIdeal &I,
 
   non_pure_power = NULL;
 
-  for (Index<MonomialIdeal> i = I.first(); i.valid(); i++)
+  for (Bag& a : I)
     {
-      const int *m = I[i]->monom().raw();
+      const int *m = a.monom().raw();
       index_varpower j = m;
       assert(j.valid());  // The monomial cannot be '1'.
       ++j;
@@ -237,7 +237,7 @@ static int find_pivot(const MonomialIdeal &I,
 
   // For now, let's just take this variable, if there is more than one
   // non pure power.
-  if (npure >= I.length() - 1)
+  if (npure >= I.size() - 1)
     {
       assert(vp != NULL);
       varpower::copy(vp, m);
@@ -259,15 +259,15 @@ static void iquotient_and_sum(MonomialIdeal &I,
   Bag *bmin = new Bag();
   varpower::copy(m, bmin->monom());
   sum->insert_minimal(bmin);
-  for (Index<MonomialIdeal> i = I.first(); i.valid(); i++)
+  for (Bag& a : I)
     {
       Bag *b = new Bag();
-      varpower::quotient(I[i]->monom().raw(), m, b->monom());
-      if (varpower::divides(m, I[i]->monom().raw()))
+      varpower::quotient(a.monom().raw(), m, b->monom());
+      if (varpower::divides(m, a.monom().raw()))
         quot->insert_minimal(b);
       else
         {
-          sum->insert_minimal(new Bag(0, I[i]->monom()));
+          sum->insert_minimal(new Bag(0, a.monom()));
           int d = varpower::simple_degree(b->monom().raw());
           if (d >= bins.size())
             for (int j = bins.size(); j <= d; j++)
@@ -509,7 +509,7 @@ void hilb_comp::do_ideal(MonomialIdeal *I)
   nideal++;
   ring_elem F = R->from_long(1);
   ring_elem G;
-  int len = I->length();
+  int len = I->size();
   if (len <= 2)
     {
       // len==1: set F to be 1 - t^(deg m), where m = this one element

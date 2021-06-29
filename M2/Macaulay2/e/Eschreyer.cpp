@@ -155,7 +155,6 @@ void GBKernelComputation::new_pairs(int i)
 // Create and insert all of the pairs which will have lead term 'gb[i]'.
 // This also places 'in(gb[i])' into the appropriate monomial ideal
 {
-  Index<MonomialIdeal> j;
   queue<Bag *> elems;
   intarray vp;  // This is 'p'.
   intarray thisvp;
@@ -194,14 +193,14 @@ void GBKernelComputation::new_pairs(int i)
   if (R->is_quotient_ring())
     {
       const MonomialIdeal *Rideal = R->get_quotient_monomials();
-      for (j = Rideal->first(); j.valid(); j++)
+      for (Bag& a : *Rideal)
         {
           // Compute (P->quotient_ideal->monom : p->monom)
           // and place this into a varpower and Bag, placing
           // that into 'elems'
           thisvp.shrink(0);
-          varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
-          if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
+          varpower::quotient(a.monom().raw(), vp.raw(), thisvp);
+          if (varpower::is_equal(a.monom().raw(), thisvp.raw()))
             continue;
           Bag *b = new Bag(static_cast<void *>(0), thisvp);
           elems.insert(b);
@@ -212,10 +211,10 @@ void GBKernelComputation::new_pairs(int i)
   // The baggage of each of these is their corresponding res2_pair
 
   MonomialIdeal *mi_orig = mi[gb[i]->comp - 1];
-  for (j = mi_orig->first(); j.valid(); j++)
+  for (Bag& a : *mi_orig)
     {
       Bag *b = new Bag();
-      varpower::quotient((*mi_orig)[j]->monom().raw(), vp.raw(), b->monom());
+      varpower::quotient(a.monom().raw(), vp.raw(), b->monom());
       elems.insert(b);
     }
 
@@ -231,9 +230,9 @@ void GBKernelComputation::new_pairs(int i)
   while (rejects.remove(b)) freemem(b);
 
   int *m = M->make_one();
-  for (j = new_mi->first(); j.valid(); j++)
+  for (Bag& a : *new_mi)
     {
-      M->from_varpower((*new_mi)[j]->monom().raw(), m);
+      M->from_varpower(a.monom().raw(), m);
       M->mult(m, gb[i]->monom, m);
 
       gbvector *q = make_syz_term(
@@ -272,15 +271,15 @@ int GBKernelComputation::find_divisor(const MonomialIdeal *this_mi,
   result = bb[0]->basis_elem();
   // Now search through, and find the best one.  If only one, just return it.
   if (M2_gbTrace >= 5)
-    if (this_mi->length() > 1)
+    if (this_mi->size() > 1)
       {
         buffer o;
-        o << ":" << this_mi->length() << "." << ndivisors << ":";
+        o << ":" << this_mi->size() << "." << ndivisors << ":";
         emit(o.str());
       }
   if (ndivisors == 1)
     {
-      if (this_mi->length() == 1)
+      if (this_mi->size() == 1)
         n_ones++;
       else
         n_unique++;

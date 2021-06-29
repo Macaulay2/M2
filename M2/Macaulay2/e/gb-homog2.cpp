@@ -266,7 +266,6 @@ void GB_comp::find_pairs(gb_elem *p)
 // Returns a list of new s_pair's.
 {
   queue<Bag *> elems;
-  Index<MonomialIdeal> j;
   intarray vplcm;
   int *find_pairs_m = _M->make_one();
   int *f_m = _M->make_one();
@@ -310,15 +309,15 @@ void GB_comp::find_pairs(gb_elem *p)
     }
   // Add in syzygies arising as s-pairs
   MonomialIdeal *mi1 = _monideals[p->f->comp]->mi;
-  for (Index<MonomialIdeal> i = mi1->first(); i.valid(); i++)
+  for (Bag& a : *mi1)
     {
-      _M->from_varpower((*mi1)[i]->monom().raw(), find_pairs_m);
+      _M->from_varpower(a.monom().raw(), find_pairs_m);
       _M->lcm(find_pairs_m, f_m, find_pairs_lcm);
       vplcm.shrink(0);
       _M->to_varpower(find_pairs_lcm, vplcm);
       s_pair *q =
           new_s_pair(p,
-                     reinterpret_cast<gb_elem *>((*mi1)[i]->basis_ptr()),
+                     reinterpret_cast<gb_elem *>(a.basis_ptr()),
                      find_pairs_lcm);
       elems.insert(new Bag(q, vplcm));
     }
@@ -340,9 +339,9 @@ void GB_comp::find_pairs(gb_elem *p)
       remove_pair(q);
       delete b;
     }
-  for (j = mi.first(); j.valid(); j++)
+  for (Bag& a : mi)
     {
-      s_pair *q = reinterpret_cast<s_pair *>(mi[j]->basis_ptr());
+      s_pair *q = reinterpret_cast<s_pair *>(a.basis_ptr());
       if (_is_ideal && q->syz_type == SPAIR_PAIR)
         {
           _M->gcd(q->first->f->monom, q->second->f->monom, find_pairs_m);

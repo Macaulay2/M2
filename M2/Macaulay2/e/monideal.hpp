@@ -3,7 +3,6 @@
 #define _monideal_hh_
 
 #include "queue.hpp"
-#include "index.hpp"
 #include "varpower.hpp"
 #include "int-bag.hpp"
 #include "ring.hpp"
@@ -22,15 +21,13 @@ SparseMonomial: pointer to an array of ints.  First is the length.  [len, v1, e1
 
 #endif
 
-class MinimalPrimes;
-
 class Nmi_node : public our_new_delete  // monomial ideal internal node ///
 {
   friend class MonomialIdeal;
   friend class AssociatedPrimes;
   friend class MinimalPrimes;
 
- protected:
+private:
   int var;
   int exp;
   Nmi_node *left;
@@ -101,7 +98,6 @@ class MonomialIdeal : public EngineObject
  public:
   MonomialIdeal(const PolynomialRing *RR, stash *mi_stash = 0);
   virtual ~MonomialIdeal() { remove_MonomialIdeal(); }
-  int length_of() const { return count / 2; }
   MonomialIdeal(const PolynomialRing *R,
                 queue<Bag *> &elems,
                 stash *mi_stash = 0);
@@ -117,7 +113,7 @@ class MonomialIdeal : public EngineObject
   const int *second_elem() const;  // returns varpower
 
   // Informational
-  int length() const { return count / 2; }
+  int size() const { return count / 2; }
   int topvar() const { return (mi == NULL ? -1 : mi->var); }
   void text_out(buffer &o) const;
 
@@ -154,10 +150,47 @@ class MonomialIdeal : public EngineObject
   void find_all_divisors(const int *exp, VECTOR(Bag *)& b) const;
   // Search. Return a list of all elements which divide 'exp'.
 
-  Bag *operator[](Index<MonomialIdeal> i) const;
-  Index<MonomialIdeal> first() const;
-  Index<MonomialIdeal> last() const;
+  class Iterator {
+  private:
+    const MonomialIdeal& mMonomialTable;
+    Nmi_node* mPointer;
+  public:
+    using iterator_category = std::forward_iterator_tag;
+    using difference_type   = std::ptrdiff_t;
+    using value_type        = Bag;
+    using pointer           = Bag*;  // or also value_type*
+    using reference         = Bag&;  // or also value_type&
 
+    Iterator(const MonomialIdeal& MI)
+      : mMonomialTable(MI),
+        mPointer(MI.first_node())
+    {
+    }
+
+    // Start at the end.
+    Iterator(const MonomialIdeal& MI, int)
+      : mMonomialTable(MI),
+        mPointer(nullptr)
+    {
+    }
+    
+    reference operator*() const { return * mPointer->val.bag; }
+    pointer operator->() { return mPointer->val.bag; }
+
+    // Prefix increment, decrement
+    Iterator& operator++() { mPointer = mMonomialTable.next(mPointer); return *this; }
+    Iterator& operator--() { mPointer = mMonomialTable.prev(mPointer); return *this; }
+    
+    // Postfix increment, decrement
+    Iterator operator++(int) { Iterator tmp = *this; ++(*this); return tmp; }
+    Iterator operator--(int) { Iterator tmp = *this; --(*this); return tmp; }
+
+    friend bool operator== (const Iterator& a, const Iterator& b) { return a.mPointer == b.mPointer; };
+    friend bool operator!= (const Iterator& a, const Iterator& b) { return a.mPointer != b.mPointer; };
+  };
+
+  Iterator begin() const { return Iterator(*this); }
+  Iterator end() const { return Iterator(*this, 1); }
   void *next(void *p) const;
   void *prev(void *p) const;
   int valid(void *p) const { return (p != NULL); }
@@ -217,23 +250,8 @@ inline void MonomialIdeal::insert_minimal(Bag *b)
   count += 2;
 }
 
-inline Bag *MonomialIdeal::operator[](Index<MonomialIdeal> i) const
-{
-  Nmi_node *p = reinterpret_cast<Nmi_node *>(i.val());
-  return p->baggage();
-}
-
 inline Nmi_node *MonomialIdeal::first_node() const { return next(mi); }
 inline Nmi_node *MonomialIdeal::last_node() const { return prev(mi); }
-inline Index<MonomialIdeal> MonomialIdeal::first() const
-{
-  return Index<MonomialIdeal>(next(reinterpret_cast<void *>(mi)), this);
-}
-
-inline Index<MonomialIdeal> MonomialIdeal::last() const
-{
-  return Index<MonomialIdeal>(prev(reinterpret_cast<void *>(mi)), this);
-}
 
 #endif
 

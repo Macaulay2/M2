@@ -278,7 +278,6 @@ void GBinhom_comp::find_pairs(gb_elem *p)
 // Returns a list of new s_pair's.
 {
   queue<Bag *> elems;
-  Index<MonomialIdeal> j;
   intarray vplcm;
   s_pair *q;
   int nvars = M->n_vars();
@@ -359,9 +358,10 @@ void GBinhom_comp::find_pairs(gb_elem *p)
   s_pair head;
   s_pair *nextsame = &head;
   int len = 0;
-  for (j = mi.first(); j.valid(); j++)
+
+  for (Bag& a : mi)
     {
-      q = reinterpret_cast<s_pair *>(mi[j]->basis_ptr());
+      q = reinterpret_cast<s_pair *>(a.basis_ptr());
       nextsame->next = q;
       nextsame = q;
       len++;
