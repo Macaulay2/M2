@@ -79,7 +79,7 @@ class DMat
   typedef DMatIterator<ACoeffRing> Iterator;
   typedef DMatConstIterator<ACoeffRing> ConstIterator;
 
-  DMat() : mRing(0), mNumRows(0), mNumColumns(0), mArray(nullptr) {}
+  DMat() : mRing(nullptr), mNumRows(0), mNumColumns(0), mArray(nullptr) {}
   DMat(const ACoeffRing& R, size_t nrows, size_t ncols)
       : mRing(&R), mNumRows(nrows), mNumColumns(ncols)
   {

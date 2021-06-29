@@ -360,6 +360,13 @@ class gbA : public GBComputation
   // Used when replacing GB element with one with smaller coeff
   void remainder_non_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom);
 
+  gbA(const Matrix *m,
+      int csyz,
+      int nsyz,
+      M2_arrayint gb_weights,
+      int strat,
+      int max_reduction_count0);
+  
  public:
   //////////////////////////
   // Computation routines //
