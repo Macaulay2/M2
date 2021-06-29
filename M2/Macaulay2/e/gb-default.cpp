@@ -84,7 +84,8 @@ gbA *gbA::create(const Matrix *m,
       return nullptr;
     }
 
-  gbA *result = new gbA(m,
+  gbA *result = new gbA;
+  result->initialize(m,
                      collect_syz,
                      n_rows_to_keep,
                      gb_weights,
@@ -93,6 +94,7 @@ gbA *gbA::create(const Matrix *m,
   return result;
 }
 
+#if 0
 gbA::gbA(const Matrix *m,
          int csyz,
          int nsyz,
@@ -223,6 +225,7 @@ gbA::gbA(const Matrix *m,
   ar_j = ar_i + 1;
   n_gb = first_gb_element;
 }
+#endif
 
 void gbA::initialize(const Matrix *m,
                      int csyz,
@@ -239,7 +242,8 @@ void gbA::initialize(const Matrix *m,
 
   ringtable = nullptr;
   ringtableZZ = nullptr;
-
+  first_gb_element = 0;
+  
   max_reduction_count = max_reduction_count0;
 
   const PolynomialRing *origR = m->get_ring()->cast_to_PolynomialRing();
@@ -287,8 +291,8 @@ void gbA::initialize(const Matrix *m,
   hilb_new_elems = false;
   hilb_n_in_degree = 0;
   n_saved_hilb = 0;
-  hf_orig = 0;
-  hf_diff = 0;
+  hf_orig = nullptr;
+  hf_diff = nullptr;
 
   this_degree = _F->lowest_primary_degree() - 1;
   npairs = 0;
