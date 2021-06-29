@@ -149,12 +149,7 @@ char *getmem_atomic_clear(size_t n)
   p = GC_MALLOC_ATOMIC(n);
 #endif
   if (p == NULL) outofmem2(n);
-#ifdef MEMDEBUG
-  memset(p,0,n);
-#else
-  /* note: GC_MALLOC clears memory before returning.
-     If you switch to another memory allocator, you must clear it explicitly here */
-#endif
+  memset(p,0,n);		/* GC_MALLOC_ATOMIC does not clear memory */
 #ifndef NDEBUG
   trapchk(p);
 #endif
