@@ -712,68 +712,68 @@ endif()
 
 
 # https://github.com/Macaulay2/memtailor
-# ExternalProject_Add(build-memtailor
-#   PREFIX            libraries/memtailor
-#   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/memtailor
-#   BINARY_DIR        libraries/memtailor/build
-#   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
-#                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
-#                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-#                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-#                     -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
-#                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-#                     -DCMAKE_CXX_FLAGS=${CXXFLAGS}
-#   EXCLUDE_FROM_ALL  ON
-#   TEST_EXCLUDE_FROM_MAIN ON
-#   STEP_TARGETS      install test
-#   )
-# _ADD_COMPONENT_DEPENDENCY(libraries memtailor googletest MEMTAILOR_FOUND)
+ExternalProject_Add(build-memtailor
+  PREFIX            libraries/memtailor
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/memtailor
+  BINARY_DIR        libraries/memtailor/build
+  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+                    -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
+                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                    -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
+                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                    -DCMAKE_CXX_FLAGS=${CXXFLAGS}
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
+  )
+#_ADD_COMPONENT_DEPENDENCY(libraries memtailor googletest MEMTAILOR_FOUND)
 
 
 # https://github.com/Macaulay2/mathic
-# ExternalProject_Add(build-mathic
-#   PREFIX            libraries/mathic
-#   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/mathic
-#   BINARY_DIR        libraries/mathic/build
-#   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
-#                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
-#                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
-#                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-#                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-#                     -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
-#                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-#                     -DCMAKE_CXX_FLAGS=${CXXFLAGS}
-#   EXCLUDE_FROM_ALL  ON
-#   TEST_EXCLUDE_FROM_MAIN ON
-#   STEP_TARGETS      install test
-#   )
-# _ADD_COMPONENT_DEPENDENCY(libraries mathic memtailor MATHIC_FOUND)
+ExternalProject_Add(build-mathic
+  PREFIX            libraries/mathic
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/mathic
+  BINARY_DIR        libraries/mathic/build
+  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+                    -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
+                    -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
+                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                    -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
+                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                    -DCMAKE_CXX_FLAGS=${CXXFLAGS}
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
+  )
+#_ADD_COMPONENT_DEPENDENCY(libraries mathic memtailor MATHIC_FOUND)
 
 
 # https://github.com/Macaulay2/mathicgb
 # TODO: g++ warning: tbb.h contains deprecated functionality.
 # https://www.threadingbuildingblocks.org/docs/help/reference/appendices/deprecated_features.html
-# ExternalProject_Add(build-mathicgb
-#   PREFIX            libraries/mathicgb
-#   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/mathicgb
-#   BINARY_DIR        libraries/mathicgb/build
-#   CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
-#                     -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
-#                     -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
-#                     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-#                     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-#                     -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
-#                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-#                     -DCMAKE_CXX_FLAGS=${CXXFLAGS}
-#                     -Denable_mgb=ON
-#                     -Dwith_tbb=ON
-#   EXCLUDE_FROM_ALL  ON
-#   TEST_EXCLUDE_FROM_MAIN ON
-#   STEP_TARGETS      install test
-#   )
-# if(EXISTS ${M2_HOST_PREFIX}/bin/mgb)
-#   execute_process(COMMAND mv ${M2_HOST_PREFIX}/bin/mgb ${M2_INSTALL_PROGRAMSDIR}/)
-# endif()
+ExternalProject_Add(build-mathicgb
+  PREFIX            libraries/mathicgb
+  SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/mathicgb
+  BINARY_DIR        libraries/mathicgb/build
+  CMAKE_ARGS        -DCMAKE_INSTALL_PREFIX=${M2_HOST_PREFIX}
+                    -DCMAKE_SYSTEM_PREFIX_PATH=${M2_HOST_PREFIX}
+                    -DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/cmake
+                    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                    -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
+                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                    -DCMAKE_CXX_FLAGS=${CXXFLAGS}
+                    -Denable_mgb=ON
+                    -Dwith_tbb=ON
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
+  )
+if(EXISTS ${M2_HOST_PREFIX}/bin/mgb)
+  execute_process(COMMAND mv ${M2_HOST_PREFIX}/bin/mgb ${M2_INSTALL_PROGRAMSDIR}/)
+endif()
 #_ADD_COMPONENT_DEPENDENCY(libraries mathicgb mathic MATHICGB_FOUND)
 
 
