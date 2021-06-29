@@ -29,7 +29,7 @@ threadLocal HashCounter := ( threadCounter = threadCounter + 1; 1000000 + 3 + (t
 export nextHash():int := (
      HashCounter = HashCounter + 1;
      if HashCounter < 0 -- check for integer overflow
-     then Ccode(void, " fprintf(stderr, \"hash code serial number counter overflow (too many mutable objects created)\"); abort(); ");
+     then Ccode(void, " fprintf(stderr, \" *** hash code serial number counter overflow (too many mutable objects created)\\n\"); abort(); ");
      HashCounter);
 
 export NULL ::= null();
