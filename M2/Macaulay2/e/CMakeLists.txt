@@ -90,7 +90,6 @@ set(HPPONLYFILES
   mutablemat-imp.hpp
   mutablemat.hpp
   newdelete.hpp
-  queue.hpp
   res-a0-pair.hpp
   ringelem.hpp
   schur-poly-heap.hpp
@@ -220,7 +219,6 @@ set(SRCLIST
   gb-default
   gb-homog2
   gb-sugarless
-  gb-test1
   gb-toric
   gb-walk
   gbring
@@ -386,7 +384,7 @@ target_compile_options(M2-engine PRIVATE
   $<$<COMPILE_LANG_AND_ID:CXX,GNU>:
   -Wno-deprecated-copy -Wno-unknown-pragmas # caused by Givaro and fflas_ffpack
   -Wno-ignored-qualifiers # FIXME: caused by bibasis/tset.hpp:44:9
-  -Wno-implicit-fallthrough # FIXME: caused by gb-default.cpp, gb-test1.cpp, gb-walk.cpp, hermite.cpp, etc.
+  -Wno-implicit-fallthrough # FIXME: caused by gb-default.cpp, gb-walk.cpp, hermite.cpp, etc.
   >
 
   # Intel TODO: -diag-disable 981,869,383,2259,444 -debug -Wimplicit-function-declaration

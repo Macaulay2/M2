@@ -3,7 +3,6 @@
 #include "comp-gb.hpp"
 
 #include "gb-homog2.hpp"
-#include "gb-test1.hpp"
 #include "gb-sugarless.hpp"
 #include "gb-toric.hpp"
 #include "gauss.hpp"
@@ -110,15 +109,8 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
                                          max_degree);
         break;
       case 8:
-        result = gbB::create(m,
-                             collect_syz,
-                             n_rows_to_keep,
-                             gb_weights,
-                             strategy,
-                             use_max_degree,
-                             max_degree,
-                             max_reduction_count);
-        break;
+        ERROR("Algorithm => Test has been removed from M2");
+        return nullptr;
       default:
         result = gbA::create(m,
                              collect_syz,
