@@ -25,7 +25,6 @@ endif()
 set(UNDETERMINED
   dmat-ffpack.cpp
   franzi-brp-test.cpp
-  gb-trace.hpp
   overflow-test.cpp
   test.dd
   aring-wrap # both cpp and hpp
