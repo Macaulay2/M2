@@ -6,6 +6,7 @@
 
 #include "debug.hpp"
 #include <iostream>
+#include <algorithm>
 
 unsigned int MonomialIdeal::computeHashValue() const
 {
@@ -13,7 +14,6 @@ unsigned int MonomialIdeal::computeHashValue() const
   unsigned int hashval = size();
   int count = 0;
   for (Bag& b : *this)
-    //  for (Iterator i = begin(); i != end(); ++i)
     {
       if (count >= 5) break;
       const int *m = b.monom().raw();
@@ -78,9 +78,10 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *RR, stash *mi_stash0)
     }
 }
 
+
 MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
-                             queue<Bag *> &elems,
-                             queue<Bag *> &rejects,
+                             VECTOR(Bag *) &elems, // we now own these elements
+                             VECTOR(Bag *) &rejects, // except for the ones we place into here
                              stash *mi_stash0)
     : R(R0), mi(nullptr), count(0), mi_stash(mi_stash0)
 {
@@ -89,36 +90,35 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
       count = 1;
       mi_stash = new stash("mi_node", sizeof(Nmi_node));
     }
-  VECTOR(queue<Bag *> *) bins;
-  Bag *b, *b1;
-  while (elems.remove(b))
+
+  // create a vector of <simple degree, index> for each element of 'elems'.
+  // sort them in increasing simple degree.
+  // then loop through, adding them in.  This will insure that we only add in
+  // minimal generators.
+
+  std::vector<std::pair<int, int>> degs_and_indices;
+  int count = 0;
+  for (auto& b : elems)
     {
-      int d = varpower::simple_degree(b->monom().raw());
-      if (d >= bins.size())
-        for (int i = bins.size(); i <= d; i++) bins.push_back(nullptr);
-      if (bins[d] == nullptr) bins[d] = new queue<Bag *>;
-      bins[d]->insert(b);
+      int deg = varpower::simple_degree(b->monom().raw());
+      degs_and_indices.push_back(std::make_pair(deg, count));
+      ++count;
     }
-  int n = get_ring()->n_vars();
-  int *exp = newarray_atomic(int, n);
-  for (int i = 0; i < bins.size(); i++)
-    if (bins[i] != nullptr)
-      {
-        while (bins[i]->remove(b))
-          {
-            const int *mon = b->monom().raw();
-            varpower::to_ntuple(n, mon, exp);
-            if (search_expvector(exp, b1))
-              rejects.insert(b);
-            else
-              insert_minimal(b);
-          }
-        delete bins[i];
-      }
+  std::stable_sort(degs_and_indices.begin(), degs_and_indices.end());
+
+  for (auto p : degs_and_indices)
+    {
+      Bag* b = elems[p.second];
+      Bag* b1; // not used here...
+      if (search(b->monom().raw(), b1))
+        rejects.push_back(b);
+      else
+        insert_minimal(b);
+    }
 }
 
 MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
-                             queue<Bag *> &elems,
+                             VECTOR(Bag *) &elems, // we now own these elements
                              stash *mi_stash0)
     : R(R0), mi(nullptr), count(0), mi_stash(mi_stash0)
 {
@@ -127,22 +127,31 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
       count = 1;
       mi_stash = new stash("mi_node", sizeof(Nmi_node));
     }
-  VECTOR(queue<Bag *> *) bins;
-  Bag *b;
-  while (elems.remove(b))
+
+  // create a vector of <simple degree, index> for each element of 'elems'.
+  // sort them in increasing simple degree.
+  // then loop through, adding them in.  This will insure that we only add in
+  // minimal generators.
+
+  std::vector<std::pair<int, int>> degs_and_indices;
+  int count = 0;
+  for (auto& b : elems)
     {
-      int d = varpower::simple_degree(b->monom().raw());
-      if (d >= bins.size())
-        for (int i = bins.size(); i <= d; i++) bins.push_back(nullptr);
-      if (bins[d] == nullptr) bins[d] = new queue<Bag *>;
-      bins[d]->insert(b);
+      int deg = varpower::simple_degree(b->monom().raw());
+      degs_and_indices.push_back(std::make_pair(deg, count));
+      ++count;
     }
-  for (int i = 0; i < bins.size(); i++)
-    if (bins[i] != nullptr)
-      {
-        while (bins[i]->remove(b)) insert(b);
-        delete bins[i];
-      }
+  std::stable_sort(degs_and_indices.begin(), degs_and_indices.end());
+
+  for (auto p : degs_and_indices)
+    {
+      Bag* b = elems[p.second];
+      Bag* b1; // not used here...
+      if (search(b->monom().raw(), b1))
+        delete b;
+      else
+        insert_minimal(b);
+    }
 }
 
 const int *MonomialIdeal::first_elem() const
@@ -600,13 +609,13 @@ MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
   //   for each: if the element is in J, then keep it directly.
   //      otherwie compute the lcm's.
   std::cout << "monideal: calling intersect" << std::endl;
-  queue<Bag *> new_elems;
+  VECTOR(Bag*) new_elems;
   for (Bag& a : *this)
     {
       Bag *c;
       if (J.search(a.monom().raw(), c))
         {
-          new_elems.insert(new Bag(a));
+          new_elems.push_back(new Bag(a));
         }
       else
         for (Bag& b : J)
@@ -615,7 +624,7 @@ MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
             varpower::lcm(a.monom().raw(),
                           b.monom().raw(),
                           new_elem->monom());
-            new_elems.insert(new_elem);
+            new_elems.push_back(new_elem);
           }
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
@@ -627,12 +636,12 @@ MonomialIdeal *MonomialIdeal::intersect(const int *m) const
 // Compute (this : m), where m is a varpower monomial.
 {
   std::cout << "monideal: calling intersect with one element" << std::endl;
-  queue<Bag *> new_elems;
+  VECTOR(Bag*) new_elems;
   for (Bag& a : *this)
     {
       Bag *b = new Bag(a.basis_elem());
       varpower::lcm(a.monom().raw(), m, b->monom());
-      new_elems.insert(b);
+      new_elems.push_back(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
   return result;
@@ -641,7 +650,7 @@ MonomialIdeal *MonomialIdeal::intersect(const int *m) const
 MonomialIdeal *MonomialIdeal::operator*(const MonomialIdeal &J) const
 {
   std::cout << "monideal: calling *" << std::endl;
-  queue<Bag *> new_elems;
+  VECTOR(Bag*) new_elems;
   for (Bag& a : *this)
     for (Bag& b : J)
       {
@@ -649,7 +658,7 @@ MonomialIdeal *MonomialIdeal::operator*(const MonomialIdeal &J) const
         varpower::mult(a.monom().raw(),
                        b.monom().raw(),
                        c->monom());
-        new_elems.insert(c);
+        new_elems.push_back(c);
       }
          
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
@@ -660,14 +669,14 @@ MonomialIdeal *MonomialIdeal::operator*(const MonomialIdeal &J) const
 MonomialIdeal *MonomialIdeal::operator+(const MonomialIdeal &J) const
 {
   std::cout << "monideal: calling +" << std::endl;
-  queue<Bag *> new_elems;
+  VECTOR(Bag*) new_elems;
   for (Bag& a : *this)
     {
-      new_elems.insert(new Bag(a));
+      new_elems.push_back(new Bag(a));
     }
   for (Bag& a : J)
     {
-      new_elems.insert(new Bag(a));
+      new_elems.push_back(new Bag(a));
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
   GC_reachable_here(&J);
@@ -696,12 +705,12 @@ MonomialIdeal *MonomialIdeal::quotient(const int *m) const
 // Compute (this : m), where m is a varpower monomial.
 {
   std::cout << "calling quotient of single element" << std::endl;
-  queue<Bag *> new_elems;
+  VECTOR(Bag*) new_elems;
   for (Bag& a : *this)
     {
       Bag *b = new Bag(a.basis_elem());
       varpower::quotient(a.monom().raw(), m, b->monom());
-      new_elems.insert(b);
+      new_elems.push_back(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
   return result;
@@ -792,12 +801,12 @@ MonomialIdeal *MonomialIdeal::erase(const int *m) const
 {
   std::cout << "monideal: calling erase" << std::endl;
   debug_check();
-  queue<Bag *> new_elems;
+  VECTOR(Bag*) new_elems;
   for (Bag& a : *this)
     {
       Bag *b = new Bag(a.basis_elem());
       varpower::erase(a.monom().raw(), m, b->monom());
-      new_elems.insert(b);
+      new_elems.push_back(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
   result->debug_check();
@@ -841,12 +850,12 @@ MonomialIdeal *MonomialIdeal::radical() const
   dmonideal(const_cast<MonomialIdeal*>(this));
   std::cout << std::endl << "  -- radical(I) = ";
   
-  queue<Bag *> new_elems;
+  VECTOR(Bag*) new_elems;
   for (Bag& a : *this)
     {
       Bag *b = new Bag(a.basis_elem());
       varpower::radical(a.monom().raw(), b->monom());
-      new_elems.insert(b);
+      new_elems.push_back(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
   dmonideal(result);
@@ -854,13 +863,13 @@ MonomialIdeal *MonomialIdeal::radical() const
   return result;
 }
 
-static void borel1(queue<Bag *> &result, int *m, int loc, int nvars)
+static void borel1(VECTOR(Bag *) &result, int *m, int loc, int nvars)
 {
   if (loc == 0)
     {
       Bag *b = new Bag();
       varpower::from_ntuple(nvars, m, b->monom());
-      result.insert(b);
+      result.push_back(b);
     }
   else
     {
@@ -879,7 +888,7 @@ static void borel1(queue<Bag *> &result, int *m, int loc, int nvars)
 MonomialIdeal *MonomialIdeal::borel() const
 // Return the smallest borel monomial ideal containing 'this'.
 {
-  queue<Bag *> new_elems;
+  VECTOR(Bag *) new_elems;
   int *bexp = newarray_atomic(int, get_ring()->n_vars());
   for (Bag& b : *this)
     {

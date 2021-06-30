@@ -952,7 +952,7 @@ void res2_comp::new_pairs(res2_pair *p)
 // Create and insert all of the pairs which will have lead term 'p'.
 // This also places 'p' into the appropriate monomial ideal
 {
-  queue<Bag *> elems;
+  VECTOR(Bag *) elems;
   intarray vp;  // This is 'p'.
   intarray thisvp;
 
@@ -984,7 +984,7 @@ void res2_comp::new_pairs(res2_pair *p)
               thisvp.shrink(0);
               varpower::var(w, 1, thisvp);
               Bag *b = new Bag(static_cast<void *>(0), thisvp);
-              elems.insert(b);
+              elems.push_back(b);
             }
         }
       freemem(exp);
@@ -1005,7 +1005,7 @@ void res2_comp::new_pairs(res2_pair *p)
           if (varpower::is_equal(a.monom().raw(), thisvp.raw()))
             continue;
           Bag *b = new Bag(static_cast<void *>(0), thisvp);
-          elems.insert(b);
+          elems.push_back(b);
         }
     }
 
@@ -1017,7 +1017,7 @@ void res2_comp::new_pairs(res2_pair *p)
     {
       Bag *b = new Bag(a.basis_ptr());
       varpower::quotient(a.monom().raw(), vp.raw(), b->monom());
-      elems.insert(b);
+      elems.push_back(b);
     }
 
   // Make this monomial ideal, and then run through each minimal generator
@@ -1026,10 +1026,7 @@ void res2_comp::new_pairs(res2_pair *p)
 
   mi_orig->insert_minimal(new Bag(p, vp));
 
-  queue<Bag *> rejects;
-  Bag *b;
-  MonomialIdeal mi(P, elems, rejects);
-  while (rejects.remove(b)) delete b;
+  MonomialIdeal mi(P, elems);
 
   if (M2_gbTrace >= 11) mi.debug_out(1);
 

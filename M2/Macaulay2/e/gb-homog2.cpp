@@ -265,7 +265,7 @@ void GB_comp::find_pairs(gb_elem *p)
 // (includes cases m * lead(p) = 0).
 // Returns a list of new s_pair's.
 {
-  queue<Bag *> elems;
+  VECTOR(Bag *) elems;
   intarray vplcm;
   int *find_pairs_m = _M->make_one();
   int *f_m = _M->make_one();
@@ -289,7 +289,7 @@ void GB_comp::find_pairs(gb_elem *p)
           vplcm.shrink(0);
           _M->to_varpower(find_pairs_lcm, vplcm);
           s_pair *q = new_var_pair(p, find_pairs_lcm);
-          elems.insert(new Bag(q, vplcm));
+          elems.push_back(new Bag(q, vplcm));
         }
     }
 
@@ -304,7 +304,7 @@ void GB_comp::find_pairs(gb_elem *p)
           vplcm.shrink(0);
           _M->to_varpower(find_pairs_lcm, vplcm);
           s_pair *q = new_ring_pair(p, find_pairs_lcm);
-          elems.insert(new Bag(q, vplcm));
+          elems.push_back(new Bag(q, vplcm));
         }
     }
   // Add in syzygies arising as s-pairs
@@ -319,7 +319,7 @@ void GB_comp::find_pairs(gb_elem *p)
           new_s_pair(p,
                      reinterpret_cast<gb_elem *>(a.basis_ptr()),
                      find_pairs_lcm);
-      elems.insert(new Bag(q, vplcm));
+      elems.push_back(new Bag(q, vplcm));
     }
 
   // Add 'p' to the correct monideal
@@ -330,10 +330,10 @@ void GB_comp::find_pairs(gb_elem *p)
   // Now minimalize these elements, and insert them into
   // the proper degree.
 
-  queue<Bag *> rejects;
+  VECTOR(Bag *) rejects;
   Bag *b;
   MonomialIdeal mi(originalR, elems, rejects);
-  while (rejects.remove(b))
+  for (auto& b : rejects)
     {
       s_pair *q = reinterpret_cast<s_pair *>(b->basis_ptr());
       remove_pair(q);

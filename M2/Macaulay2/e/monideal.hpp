@@ -2,7 +2,6 @@
 #ifndef _monideal_hh_
 #define _monideal_hh_
 
-#include "queue.hpp"
 #include "varpower.hpp"
 #include "int-bag.hpp"
 #include "ring.hpp"
@@ -98,14 +97,16 @@ class MonomialIdeal : public EngineObject
  public:
   MonomialIdeal(const PolynomialRing *RR, stash *mi_stash = 0);
   virtual ~MonomialIdeal() { remove_MonomialIdeal(); }
-  MonomialIdeal(const PolynomialRing *R,
-                queue<Bag *> &elems,
-                stash *mi_stash = 0);
-  MonomialIdeal(const PolynomialRing *R,
-                queue<Bag *> &elems,
-                queue<Bag *> &rejects,
-                stash *mi_stash = 0);
 
+  MonomialIdeal(const PolynomialRing *R0,
+                VECTOR(Bag *) &elems, // we now own these elements
+                VECTOR(Bag *) &rejects, // except for the ones we place into here
+                stash *mi_stash0 = nullptr);
+
+  MonomialIdeal(const PolynomialRing *R0,
+                VECTOR(Bag *) &elems, // we now own these elements, and will free those not needed
+                stash *mi_stash0 = nullptr);
+  
   MonomialIdeal *copy() const;
 
   void remove_MonomialIdeal();     // frees all of the internal things
@@ -131,7 +132,7 @@ class MonomialIdeal : public EngineObject
 
   int insert(Bag *b);
 
-  void insert_w_deletions(Bag *b, queue<Bag *> &deletions);
+  void insert_w_deletions(Bag *b, VECTOR(Bag *) &deletions);
   // Insert 'm', removing any monomials divisible by 'm', and
   // returning their baggage in a list of moninfo *'s.
 
@@ -161,6 +162,7 @@ class MonomialIdeal : public EngineObject
     using pointer           = Bag*;  // or also value_type*
     using reference         = Bag&;  // or also value_type&
 
+    
     Iterator(const MonomialIdeal& MI)
       : mMonomialTable(MI),
         mPointer(MI.first_node())
@@ -171,6 +173,13 @@ class MonomialIdeal : public EngineObject
     Iterator(const MonomialIdeal& MI, int)
       : mMonomialTable(MI),
         mPointer(nullptr)
+    {
+    }
+
+    // Internal use: used to start at the end.
+    Iterator(const MonomialIdeal& MI, Nmi_node* p)
+      : mMonomialTable(MI),
+        mPointer(p)
     {
     }
     
@@ -190,6 +199,7 @@ class MonomialIdeal : public EngineObject
   };
 
   Iterator begin() const { return Iterator(*this); }
+  Iterator beginAtLast() const { return Iterator(*this, last_node()); }
   Iterator end() const { return Iterator(*this, 1); }
   void *next(void *p) const;
   void *prev(void *p) const;

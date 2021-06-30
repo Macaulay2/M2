@@ -155,7 +155,7 @@ void GBKernelComputation::new_pairs(int i)
 // Create and insert all of the pairs which will have lead term 'gb[i]'.
 // This also places 'in(gb[i])' into the appropriate monomial ideal
 {
-  queue<Bag *> elems;
+  VECTOR(Bag *) elems;
   intarray vp;  // This is 'p'.
   intarray thisvp;
 
@@ -182,7 +182,7 @@ void GBKernelComputation::new_pairs(int i)
             thisvp.shrink(0);
             varpower::var(w, 1, thisvp);
             Bag *b = new Bag(static_cast<void *>(0), thisvp);
-            elems.insert(b);
+            elems.push_back(b);
           }
 
       freemem(find_pairs_exp);
@@ -203,7 +203,7 @@ void GBKernelComputation::new_pairs(int i)
           if (varpower::is_equal(a.monom().raw(), thisvp.raw()))
             continue;
           Bag *b = new Bag(static_cast<void *>(0), thisvp);
-          elems.insert(b);
+          elems.push_back(b);
         }
     }
 
@@ -215,7 +215,7 @@ void GBKernelComputation::new_pairs(int i)
     {
       Bag *b = new Bag();
       varpower::quotient(a.monom().raw(), vp.raw(), b->monom());
-      elems.insert(b);
+      elems.push_back(b);
     }
 
   // Make this monomial ideal, and then run through each minimal generator
@@ -224,10 +224,7 @@ void GBKernelComputation::new_pairs(int i)
 
   mi_orig->insert_minimal(new Bag(i, vp));
 
-  queue<Bag *> rejects;
-  Bag *b;
-  MonomialIdeal *new_mi = new MonomialIdeal(R, elems, rejects);
-  while (rejects.remove(b)) freemem(b);
+  MonomialIdeal *new_mi = new MonomialIdeal(R, elems);
 
   int *m = M->make_one();
   for (Bag& a : *new_mi)

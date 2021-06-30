@@ -54,6 +54,17 @@
 #define GETMEM(T, size) reinterpret_cast<T>(getmem(size))
 #define GETMEM_ATOMIC(T, size) reinterpret_cast<T>(getmem_atomic(size))
 
+/// ARRAY_ON_STACK
+// This allocates POD objects onto the stack.  They are then removed automatically
+// when exiting the enclosing function.  This does NOT zero the corresponding memory.
+// Example uses:
+//    int* exp = ARRAY_ON_STACK(int, n);
+//    auto exp =  ARRAY_ON_STACK(int, n);
+// In gcc or clang, we could instead use:
+//    int[n] exp;
+// But that doesn't appear to be standard c++...
+#define ARRAY_ON_STACK(type, nelems) static_cast<type*>(alloca(nelems * sizeof(type)))
+
 struct our_new_delete
 {
   static inline void *operator new(size_t size)

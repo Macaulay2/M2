@@ -9,7 +9,6 @@
 #define _monideal_minprimes_h_
 
 #include "monideal.hpp"
-#include "queue.hpp"
 
 class MinimalPrimes
 // A class which enables one to compute the codimension and
@@ -22,7 +21,7 @@ class MinimalPrimes
   MonomialIdeal *mi;  // A radical monomial ideal
 
   MonomialIdeal *primes;
-  queue<Bag *> Q;   // Each monomial corresponds to a potential prime monomial
+  VECTOR(Bag *) Q;   // Each monomial corresponds to a potential prime monomial
                     // ideal: a monomial is the product of the gens of
                     // the prime ideal.
   int codim_limit;  // only consider monomial primes of codim <= this number.

@@ -283,7 +283,7 @@ const Matrix /* or null */ *Matrix::make(const MonomialIdeal *mi)
 
   MatrixConstructor mat(P->make_FreeModule(1), mi->size());
   int next = 0;
-  for (auto i = mi->begin(); i != mi->end(); ++i)  // TODO MES: should go from last() via --i to end()...
+  for (auto i = mi->beginAtLast(); i != mi->end(); --i)  // TODO MES: should go from last() via --i to end()...
     {
       M->from_varpower(i->monom().raw(), mon);
       ring_elem f =
@@ -1088,7 +1088,7 @@ static MonomialIdeal *makemonideal(const Matrix *A)
       return nullptr;
     }
   const Monoid *M = P->getMonoid();
-  queue<Bag *> new_elems;
+  VECTOR(Bag *) new_elems;
 
   for (int i = 0; i < A->n_cols(); i++)
     {
@@ -1096,7 +1096,7 @@ static MonomialIdeal *makemonideal(const Matrix *A)
       if (v == nullptr) continue;
       Bag *b = new Bag(i);
       M->to_varpower(P->lead_flat_monomial(v->coeff), b->monom());
-      new_elems.insert(b);
+      new_elems.push_back(b);
     }
 
   MonomialIdeal *result = new MonomialIdeal(P, new_elems);
@@ -1893,7 +1893,7 @@ MonomialIdeal *Matrix::make_monideal(
   bool coeffsZZ = (P->coefficient_type() == Ring::COEFF_ZZ &&
                    use_only_monomials_with_unit_coeffs);
   const Monoid *M = P->getMonoid();
-  queue<Bag *> new_elems;
+  VECTOR(Bag *) new_elems;
   for (int i = 0; i < n_cols(); i++)
     {
       vec v = elem(i);
@@ -1904,7 +1904,7 @@ MonomialIdeal *Matrix::make_monideal(
         continue;
       Bag *b = new Bag(i);
       M->to_varpower(P->lead_flat_monomial(w->coeff), b->monom());
-      new_elems.insert(b);
+      new_elems.push_back(b);
     }
 
   // If the base ring is a quotient ring, include these lead monomials.
@@ -1914,7 +1914,7 @@ MonomialIdeal *Matrix::make_monideal(
       if (coeffsZZ && !globalZZ->is_unit(f->coeff)) continue;
       Bag *b = new Bag(-1);
       M->to_varpower(f->monom, b->monom());
-      new_elems.insert(b);
+      new_elems.push_back(b);
     }
 
   // If the base ring has skew commuting variables, include their squares
@@ -1925,7 +1925,7 @@ MonomialIdeal *Matrix::make_monideal(
           {
             Bag *b = new Bag(-1);
             varpower::var(i, 2, b->monom());
-            new_elems.insert(b);
+            new_elems.push_back(b);
           }
     }
 

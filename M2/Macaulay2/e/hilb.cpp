@@ -253,7 +253,7 @@ static void iquotient_and_sum(MonomialIdeal &I,
                               MonomialIdeal *&sum,
                               stash *mi_stash)
 {
-  VECTOR(queue<Bag *> *) bins;
+  VECTOR(Bag *) elems;
   sum = new MonomialIdeal(I.get_ring(), mi_stash);
   quot = new MonomialIdeal(I.get_ring(), mi_stash);
   Bag *bmin = new Bag();
@@ -268,27 +268,30 @@ static void iquotient_and_sum(MonomialIdeal &I,
       else
         {
           sum->insert_minimal(new Bag(0, a.monom()));
-          int d = varpower::simple_degree(b->monom().raw());
-          if (d >= bins.size())
-            for (int j = bins.size(); j <= d; j++)
-              // bins.append((queue<Bag *> *)NULL);
-              bins.push_back(NULL);
-          if (bins[d] == NULL)  //(queue<Bag *> *)NULL)
-            bins[d] = new queue<Bag *>;
-          bins[d]->insert(b);
+          elems.push_back(b);
         }
     }
 
-  // Now insert the elements in the queue.
-  // MES: is it worth looping through each degree, first checking
-  // divisibility, and after that, insert_minimal of the ones that survive?
-  Bag *b;
-  for (int j = 0; j < bins.size(); j++)
-    if (bins[j] != NULL)
-      {
-        while (bins[j]->remove(b)) quot->insert(b);
-        delete bins[j];
-      }
+  // Now we sort items in 'elems' so that we can insert as min gens into 'quot'
+  std::vector<std::pair<int, int>> degs_and_indices;
+  int count = 0;
+  for (auto& b : elems)
+    {
+      int deg = varpower::simple_degree(b->monom().raw());
+      degs_and_indices.push_back(std::make_pair(deg, count));
+      ++count;
+    }
+  std::stable_sort(degs_and_indices.begin(), degs_and_indices.end());
+
+  for (auto p : degs_and_indices)
+    {
+      Bag* b = elems[p.second];
+      Bag* b1; // not used here...
+      if (quot->search(b->monom().raw(), b1))
+        delete b;
+      else
+        quot->insert_minimal(b);
+    }
 }
 
 void hilb_comp::next_monideal()

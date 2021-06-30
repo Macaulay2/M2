@@ -104,7 +104,7 @@ void MinimalPrimes::alg1_grab_prime(int depth)
     else
       exp2[i] = 0;
   varpower::from_ntuple(nvars, exp2, b->monom());
-  Q.insert(b);
+  Q.push_back(b);
 }
 
 void MinimalPrimes::alg1_min_prime_generator(int *which, int depth)
@@ -203,7 +203,7 @@ MonomialIdeal *MinimalPrimes::alg1_min_primes(int maxcodim, int count)
   freemem(exp);
 
   buffer o;
-  o << "number of tentative minprimes is " << Q.length();
+  o << "number of tentative minprimes is " << Q.size();
 
   MonomialIdeal *result = new MonomialIdeal(mi->get_ring(), Q);
 

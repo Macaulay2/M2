@@ -216,7 +216,6 @@ NAMES_H = \
 	ringelem \
 	style \
 	hash \
-	index \
 	res-a0-pair
 
 C_FILES = error table exptable complex
