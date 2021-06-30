@@ -26,8 +26,8 @@ void tableau2::initialize(int nvars, int maxwt0)
 void tableau2::resize(int max_wt)
 {
   if (max_wt <= SCHUR_MAX_WT) return;
-  deletearray(xloc);
-  deletearray(yloc);
+  freemem(xloc);
+  freemem(yloc);
   maxwt = max_wt;
   wt = max_wt;
   xloc = newarray_atomic(int, maxwt + 1);

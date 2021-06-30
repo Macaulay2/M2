@@ -8,8 +8,7 @@ PRE.cc   = $(COMPILE.cc) -E
 
 include @srcdir@/Makefile.files
 include Makefile.common
-
-CPPFLAGS := -I@srcdir@ $(CPPFLAGS) -I../d -I@srcdir@/../c -Wno-fatal-errors -Wno-unused-variable
+CPPFLAGS := -I@srcdir@ $(CPPFLAGS) -I../d -I@srcdir@/../c -I@srcdir@/../d -Wno-fatal-errors -Wno-unused-variable
 CXXFLAGS += -Wno-unknown-pragmas -std=gnu++17
 
 DOXYGEN_CONF_DIR :=$(SRCDIR)/doxygen-settings
@@ -26,6 +25,8 @@ endif
 TAGS tags: @srcdir@/TAGS
 @srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c \
 	@srcdir@/NCAlgebras/*.hpp @srcdir@/NCAlgebras/*.cpp \
+	@srcdir@/interface/*.h @srcdir@/interface/*.cpp \
+	@srcdir@/schreyer-resolution/*.hpp @srcdir@/schreyer-resolution/*.cpp \
 	@srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
 	@srcdir@/bibasis/*.hpp @srcdir@/bibasis/*.cpp \
 	@srcdir@/unit-tests/*.cpp
@@ -47,7 +48,7 @@ run-overflow-test : overflow-test Makefile
 	./overflow-test add   || if [ $$? = 1 ] ; then exit 1 ; else echo OVERFLOW TEST SUCCEEDED ; fi
 	touch $@
 clean :: ; rm -f run-overflow-test
-overflow-test : overflow.o ../d/debug.o
+overflow-test : overflow.o ../d/debug.o ../d/M2mem.o ../d/memdebug.o
 clean :: ; rm -f overflow-test
 
 #all:; $(MAKE) -C f4

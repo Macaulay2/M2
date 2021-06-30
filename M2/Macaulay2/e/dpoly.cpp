@@ -239,7 +239,7 @@ void DPoly::increase_size_0(int newdeg, TowerPolynomial& f)
       long *fp = f->arr.ints;
       for (int i = 0; i <= f->deg; i++) newelems[i] = fp[i];
       for (int i = f->deg + 1; i < newdeg + 1; i++) newelems[i] = 0;
-      deletearray(fp);
+      freemem(fp);
       f->arr.ints = newelems;
       f->len = newdeg + 1;
       f->deg = newdeg;
@@ -255,7 +255,7 @@ void DPoly::increase_size_n(int newdeg, TowerPolynomial& f)
       TowerPolynomial *fp = f->arr.polys;
       for (int i = 0; i <= f->deg; i++) newelems[i] = fp[i];
       for (int i = f->deg + 1; i < newdeg + 1; i++) newelems[i] = 0;
-      deletearray(fp);
+      freemem(fp);
       f->arr.polys = newelems;
       f->len = newdeg + 1;
       f->deg = newdeg;
@@ -293,7 +293,7 @@ void DPoly::dealloc_poly(TowerPolynomial &f)
 // only f is freed, not any pointers in the array of f
 {
   if (f == 0) return;
-  deletearray(f->arr.polys);
+  freemem(f->arr.polys);
   delete f;
   f = 0;
 }
@@ -334,7 +334,7 @@ TowerPolynomial DPoly::read_poly_n(char *&str, int level)
   // the only way to get here is if *str == ']'.  Eat that char.
   str++;
   TowerPolynomial result = DPoly::alloc_poly_n(len - 1, elems);
-  deletearray(elems);
+  freemem(elems);
   return result;
 }
 
@@ -376,7 +376,7 @@ TowerPolynomial DPoly::read_poly_0(char *&str)
   // the only way to get here is if *str == ']'.  Eat that char.
   str++;
   TowerPolynomial result = DPoly::alloc_poly_0(len - 1, elems);
-  deletearray(elems);
+  freemem(elems);
   return result;
 }
 

@@ -150,7 +150,7 @@ void res_comp::remove_res_degree(res_degree *p)
       p->first = tmp->next;
       remove_res_pair(tmp);
     }
-  deleteitem(p);
+  freemem(p);
 }
 
 void res_comp::remove_res_level(res_level *lev)
@@ -162,7 +162,7 @@ void res_comp::remove_res_level(res_level *lev)
       res_degree *mypairs = lev->bin[i];
       remove_res_degree(mypairs);
     }
-  deleteitem(lev);
+  freemem(lev);
 }
 
 //////////////////////////////////////////////
@@ -646,7 +646,7 @@ void res_comp::new_pairs(res_pair *p)
               elems.insert(b);
             }
         }
-      deletearray(exp);
+      freemem(exp);
     }
 
   // Second, add in syzygies arising from the base ring, if any
@@ -1216,7 +1216,7 @@ M2_arrayint res_comp::get_betti(int type) const
       }
 
   M2_arrayint result = betti_make(lo, hi, len, bettis);
-  deletearray(bettis);
+  freemem(bettis);
   return result;
 }
 
@@ -1533,7 +1533,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
               elems.insert(b);
             }
         }
-      deletearray(exp);
+      freemem(exp);
     }
 
   // Second, add in syzygies arising from the base ring, if any
@@ -1642,7 +1642,7 @@ void res_comp::skeleton_stats(const VECTOR(res_pair *)& reslevel)
       betti->array[next++] = bettis[level + (maxlevel + 1) * d];
 
   betti_display(o, betti);
-  deletearray(bettis);
+  freemem(bettis);
 
   for (level = 0; level <= maxlevel; level++)
     {

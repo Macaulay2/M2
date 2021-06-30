@@ -469,8 +469,8 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
     }
 
   delete[] exp;
-  deletearray(comps);
-  deletearray(last);
+  freemem(comps);
+  freemem(last);
   return result;
 }
 

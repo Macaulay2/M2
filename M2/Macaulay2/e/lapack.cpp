@@ -11,7 +11,7 @@
 // they have twice the length, and 2 contiguous doubles are used to
 // represent a complex value.
 // These arrays are grabbed via newarray_atomic, or newarray_atomic_clear
-// and should be freed via deletearray.
+// and should be freed via freemem.
 
 typedef double *LapackDoubles;
 
@@ -299,8 +299,8 @@ M2_arrayintOrNull Lapack::LU(const LMatrixRRR *A, LMatrixRRR *L, LMatrixRRR *U)
       result->array[i] = tmp;
     }
 
-  deletearray(copyA);
-  deletearray(perm);
+  freemem(copyA);
+  freemem(perm);
 
   if (info < 0)
     {
@@ -429,9 +429,9 @@ bool Lapack::eigenvalues(const LMatrixRRR *A, LMatrixCCC *eigvals)
         eigvals->ring().set_from_doubles(elems[i], real[i], imag[i]);
     }
 
-  deletearray(copyA);
-  deletearray(real);
-  deletearray(imag);
+  freemem(copyA);
+  freemem(real);
+  freemem(imag);
   return ret;
 }
 
@@ -526,11 +526,11 @@ bool Lapack::eigenvectors(const LMatrixRRR *A,
         }
     }
 
-  deletearray(copyA);
-  deletearray(workspace);
-  deletearray(real);
-  deletearray(imag);
-  deletearray(eigen);
+  freemem(copyA);
+  freemem(workspace);
+  freemem(real);
+  freemem(imag);
+  freemem(eigen);
   return ret;
 }
 
@@ -580,9 +580,9 @@ bool Lapack::eigenvalues_symmetric(const LMatrixRRR *A, LMatrixRRR *eigvals)
       fill_from_lapack_array(evals, *eigvals);
     }
 
-  deletearray(workspace);
-  deletearray(copyA);
-  deletearray(evals);
+  freemem(workspace);
+  freemem(copyA);
+  freemem(evals);
 
   return ret;
 }
@@ -638,9 +638,9 @@ bool Lapack::eigenvectors_symmetric(const LMatrixRRR *A,
       fill_from_lapack_array(evals, *eigvals);
     }
 
-  deletearray(workspace);
-  deletearray(evecs);
-  deletearray(evals);
+  freemem(workspace);
+  freemem(evecs);
+  freemem(evals);
 
   return ret;
 }
@@ -707,11 +707,11 @@ bool Lapack::SVD(const LMatrixRRR *A,
       fill_from_lapack_array(sigma, *Sigma);
     }
 
-  deletearray(workspace);
-  deletearray(copyA);
-  deletearray(u);
-  deletearray(vt);
-  deletearray(sigma);
+  freemem(workspace);
+  freemem(copyA);
+  freemem(u);
+  freemem(vt);
+  freemem(sigma);
 
   return ret;
 }
@@ -779,12 +779,12 @@ bool Lapack::SVD_divide_conquer(const LMatrixRRR *A,
       fill_from_lapack_array(sigma, *Sigma);
     }
 
-  deletearray(workspace);
-  deletearray(iworkspace);
-  deletearray(copyA);
-  deletearray(u);
-  deletearray(vt);
-  deletearray(sigma);
+  freemem(workspace);
+  freemem(iworkspace);
+  freemem(copyA);
+  freemem(u);
+  freemem(vt);
+  freemem(sigma);
 
   return ret;
 }
@@ -835,7 +835,7 @@ bool Lapack::least_squares(const LMatrixRRR *A,
               copyb2[copyloc++] = copyb[bloc++];
             }
         }
-      deletearray(copyb);
+      freemem(copyb);
       copyb = copyb2;
     }
 
@@ -879,9 +879,9 @@ bool Lapack::least_squares(const LMatrixRRR *A,
         }
     }
 
-  deletearray(copyA);
-  deletearray(copyb);
-  deletearray(workspace);
+  freemem(copyA);
+  freemem(copyb);
+  freemem(workspace);
 
   return ret;
 }
@@ -934,7 +934,7 @@ bool Lapack::least_squares_deficient(const LMatrixRRR *A,
               copyb2[copyloc++] = copyb[bloc++];
             }
         }
-      deletearray(copyb);
+      freemem(copyb);
       copyb = copyb2;
     }
 
@@ -979,10 +979,10 @@ bool Lapack::least_squares_deficient(const LMatrixRRR *A,
         }
     }
 
-  deletearray(copyA);
-  deletearray(copyb);
-  deletearray(workspace);
-  deletearray(sing);
+  freemem(copyA);
+  freemem(copyb);
+  freemem(workspace);
+  freemem(sing);
 
   return ret;
 }
@@ -1014,7 +1014,7 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCCC *A, LMatrixCCC *L, LMatrixCCC *U)
   if (info < 0)
     {
       ERROR("argument passed to zgetrf had an illegal value");
-      deletearray(result);
+      freemem(result);
       result = NULL;
     }
   else
@@ -1047,8 +1047,8 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCCC *A, LMatrixCCC *L, LMatrixCCC *U)
 #endif
     }
 
-  deletearray(perm);
-  deletearray(copyA);
+  freemem(perm);
+  freemem(copyA);
 
   return result;
 }
@@ -1117,9 +1117,9 @@ bool Lapack::solve(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC *x)
       fill_from_lapack_array(copyb, *x);
     }
 
-  deletearray(permutation);
-  deletearray(copyA);
-  deletearray(copyb);
+  freemem(permutation);
+  freemem(copyA);
+  freemem(copyb);
 
   return ret;
 }
@@ -1181,10 +1181,10 @@ bool Lapack::eigenvalues(const LMatrixCCC *A, LMatrixCCC *eigvals)
       fill_from_lapack_array(evals, *eigvals);
     }
 
-  deletearray(copyA);
-  deletearray(evals);
-  deletearray(workspace);
-  deletearray(rwork);
+  freemem(copyA);
+  freemem(evals);
+  freemem(workspace);
+  freemem(rwork);
 
   return ret;
 }
@@ -1253,11 +1253,11 @@ bool Lapack::eigenvectors(const LMatrixCCC *A,
       fill_from_lapack_array(evecs, *eigvecs);
     }
 
-  deletearray(copyA);
-  deletearray(evals);
-  deletearray(evecs);
-  deletearray(workspace);
-  deletearray(rwork);
+  freemem(copyA);
+  freemem(evals);
+  freemem(evecs);
+  freemem(workspace);
+  freemem(rwork);
 
   return ret;
 }
@@ -1316,10 +1316,10 @@ bool Lapack::eigenvalues_hermitian(const LMatrixCCC *A, LMatrixRRR *eigvals)
       fill_from_lapack_array(evals, *eigvals);
     }
 
-  deletearray(copyA);
-  deletearray(evals);
-  deletearray(workspace);
-  deletearray(rwork);
+  freemem(copyA);
+  freemem(evals);
+  freemem(workspace);
+  freemem(rwork);
 
   return ret;
 }
@@ -1383,10 +1383,10 @@ bool Lapack::eigenvectors_hermitian(const LMatrixCCC *A,
       fill_from_lapack_array(evecs, *eigvecs);
     }
 
-  deletearray(evals);
-  deletearray(evecs);
-  deletearray(workspace);
-  deletearray(rwork);
+  freemem(evals);
+  freemem(evecs);
+  freemem(workspace);
+  freemem(rwork);
 
   return ret;
 }
@@ -1455,12 +1455,12 @@ bool Lapack::SVD(const LMatrixCCC *A,
       fill_from_lapack_array(sigma, *Sigma);
     }
 
-  deletearray(workspace);
-  deletearray(rwork);
-  deletearray(copyA);
-  deletearray(u);
-  deletearray(vt);
-  deletearray(sigma);
+  freemem(workspace);
+  freemem(rwork);
+  freemem(copyA);
+  freemem(u);
+  freemem(vt);
+  freemem(sigma);
 
   return ret;
 }
@@ -1531,13 +1531,13 @@ bool Lapack::SVD_divide_conquer(const LMatrixCCC *A,
       fill_from_lapack_array(sigma, *Sigma);
     }
 
-  deletearray(workspace);
-  deletearray(iworkspace);
-  deletearray(rwork);
-  deletearray(copyA);
-  deletearray(u);
-  deletearray(vt);
-  deletearray(sigma);
+  freemem(workspace);
+  freemem(iworkspace);
+  freemem(rwork);
+  freemem(copyA);
+  freemem(u);
+  freemem(vt);
+  freemem(sigma);
 
   return ret;
 }
@@ -1588,7 +1588,7 @@ bool Lapack::least_squares(const LMatrixCCC *A,
               copyb2[copyloc++] = copyb[bloc++];
             }
         }
-      deletearray(copyb);
+      freemem(copyb);
       copyb = copyb2;
     }
 
@@ -1633,9 +1633,9 @@ bool Lapack::least_squares(const LMatrixCCC *A,
         }
     }
 
-  deletearray(copyA);
-  deletearray(copyb);
-  deletearray(workspace);
+  freemem(copyA);
+  freemem(copyb);
+  freemem(workspace);
 
   return ret;
 }
@@ -1688,7 +1688,7 @@ bool Lapack::least_squares_deficient(const LMatrixCCC *A,
               copyb2[copyloc++] = copyb[bloc++];
             }
         }
-      deletearray(copyb);
+      freemem(copyb);
       copyb = copyb2;
     }
 
@@ -1736,11 +1736,11 @@ bool Lapack::least_squares_deficient(const LMatrixCCC *A,
         }
     }
 
-  deletearray(copyA);
-  deletearray(copyb);
-  deletearray(workspace);
-  deletearray(sing);
-  deletearray(rwork);
+  freemem(copyA);
+  freemem(copyb);
+  freemem(workspace);
+  freemem(sing);
+  freemem(rwork);
 
   return ret;
 }
@@ -1956,8 +1956,8 @@ M2_arrayintOrNull Lapack::LU(const LMatrixRR *A, LMatrixRR *L, LMatrixRR *U)
       result->array[i] = tmp;
     }
 
-  deletearray(copyA);
-  deletearray(perm);
+  freemem(copyA);
+  freemem(perm);
 
   if (info < 0)
     {
@@ -2086,9 +2086,9 @@ bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
         eigvals->ring().set_from_doubles(elems[i], real[i], imag[i]);
     }
 
-  deletearray(copyA);
-  deletearray(real);
-  deletearray(imag);
+  freemem(copyA);
+  freemem(real);
+  freemem(imag);
   return ret;
 }
 
@@ -2186,11 +2186,11 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
         }
     }
 
-  deletearray(copyA);
-  deletearray(workspace);
-  deletearray(real);
-  deletearray(imag);
-  deletearray(eigen);
+  freemem(copyA);
+  freemem(workspace);
+  freemem(real);
+  freemem(imag);
+  freemem(eigen);
   return ret;
 }
 
@@ -2240,9 +2240,9 @@ bool Lapack::eigenvalues_symmetric(const LMatrixRR *A, LMatrixRR *eigvals)
       fill_from_lapack_array(evals, *eigvals);
     }
 
-  deletearray(workspace);
-  deletearray(copyA);
-  deletearray(evals);
+  freemem(workspace);
+  freemem(copyA);
+  freemem(evals);
 
   return ret;
 }
@@ -2298,9 +2298,9 @@ bool Lapack::eigenvectors_symmetric(const LMatrixRR *A,
       fill_from_lapack_array(evals, *eigvals);
     }
 
-  deletearray(workspace);
-  deletearray(evecs);
-  deletearray(evals);
+  freemem(workspace);
+  freemem(evecs);
+  freemem(evals);
 
   return ret;
 }
@@ -2367,11 +2367,11 @@ bool Lapack::SVD(const LMatrixRR *A,
       fill_from_lapack_array(sigma, *Sigma);
     }
 
-  deletearray(workspace);
-  deletearray(copyA);
-  deletearray(u);
-  deletearray(vt);
-  deletearray(sigma);
+  freemem(workspace);
+  freemem(copyA);
+  freemem(u);
+  freemem(vt);
+  freemem(sigma);
 
   return ret;
 }
@@ -2439,12 +2439,12 @@ bool Lapack::SVD_divide_conquer(const LMatrixRR *A,
       fill_from_lapack_array(sigma, *Sigma);
     }
 
-  deletearray(workspace);
-  deletearray(iworkspace);
-  deletearray(copyA);
-  deletearray(u);
-  deletearray(vt);
-  deletearray(sigma);
+  freemem(workspace);
+  freemem(iworkspace);
+  freemem(copyA);
+  freemem(u);
+  freemem(vt);
+  freemem(sigma);
 
   return ret;
 }
@@ -2493,7 +2493,7 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
               copyb2[copyloc++] = copyb[bloc++];
             }
         }
-      deletearray(copyb);
+      freemem(copyb);
       copyb = copyb2;
     }
 
@@ -2537,9 +2537,9 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
         }
     }
 
-  deletearray(copyA);
-  deletearray(copyb);
-  deletearray(workspace);
+  freemem(copyA);
+  freemem(copyb);
+  freemem(workspace);
 
   return ret;
 }
@@ -2592,7 +2592,7 @@ bool Lapack::least_squares_deficient(const LMatrixRR *A,
               copyb2[copyloc++] = copyb[bloc++];
             }
         }
-      deletearray(copyb);
+      freemem(copyb);
       copyb = copyb2;
     }
 
@@ -2637,10 +2637,10 @@ bool Lapack::least_squares_deficient(const LMatrixRR *A,
         }
     }
 
-  deletearray(copyA);
-  deletearray(copyb);
-  deletearray(workspace);
-  deletearray(sing);
+  freemem(copyA);
+  freemem(copyb);
+  freemem(workspace);
+  freemem(sing);
 
   return ret;
 }
@@ -2752,8 +2752,8 @@ bool Lapack::QR(const LMatrixRR *A, LMatrixRR *Q, LMatrixRR *R, bool return_QR)
     }
 
   delete[] workspace;
-  deletearray(copyA);
-  deletearray(tau);
+  freemem(copyA);
+  freemem(tau);
   return ret;
 }
 
@@ -2863,7 +2863,7 @@ bool Lapack::QR(const LMatrixCC *A, LMatrixCC *Q, LMatrixCC *R, bool return_QR)
 
   delete[] workspace;
   delete[] tau;
-  deletearray(copyA);
+  freemem(copyA);
   return ret;
 }
 
@@ -2894,7 +2894,7 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCC *A, LMatrixCC *L, LMatrixCC *U)
   if (info < 0)
     {
       ERROR("argument passed to zgetrf had an illegal value");
-      deletearray(result);
+      freemem(result);
       result = NULL;
     }
   else
@@ -2927,8 +2927,8 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCC *A, LMatrixCC *L, LMatrixCC *U)
 #endif
     }
 
-  deletearray(perm);
-  deletearray(copyA);
+  freemem(perm);
+  freemem(copyA);
 
   return result;
 }
@@ -2997,9 +2997,9 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
       fill_from_lapack_array(copyb, *x);
     }
 
-  deletearray(permutation);
-  deletearray(copyA);
-  deletearray(copyb);
+  freemem(permutation);
+  freemem(copyA);
+  freemem(copyb);
 
   return ret;
 }
@@ -3061,10 +3061,10 @@ bool Lapack::eigenvalues(const LMatrixCC *A, LMatrixCC *eigvals)
       fill_from_lapack_array(evals, *eigvals);
     }
 
-  deletearray(copyA);
-  deletearray(evals);
-  deletearray(workspace);
-  deletearray(rwork);
+  freemem(copyA);
+  freemem(evals);
+  freemem(workspace);
+  freemem(rwork);
 
   return ret;
 }
@@ -3133,11 +3133,11 @@ bool Lapack::eigenvectors(const LMatrixCC *A,
       fill_from_lapack_array(evecs, *eigvecs);
     }
 
-  deletearray(copyA);
-  deletearray(evals);
-  deletearray(evecs);
-  deletearray(workspace);
-  deletearray(rwork);
+  freemem(copyA);
+  freemem(evals);
+  freemem(evecs);
+  freemem(workspace);
+  freemem(rwork);
 
   return ret;
 }
@@ -3196,10 +3196,10 @@ bool Lapack::eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigvals)
       fill_from_lapack_array(evals, *eigvals);
     }
 
-  deletearray(copyA);
-  deletearray(evals);
-  deletearray(workspace);
-  deletearray(rwork);
+  freemem(copyA);
+  freemem(evals);
+  freemem(workspace);
+  freemem(rwork);
 
   return ret;
 }
@@ -3263,10 +3263,10 @@ bool Lapack::eigenvectors_hermitian(const LMatrixCC *A,
       fill_from_lapack_array(evecs, *eigvecs);
     }
 
-  deletearray(evals);
-  deletearray(evecs);
-  deletearray(workspace);
-  deletearray(rwork);
+  freemem(evals);
+  freemem(evecs);
+  freemem(workspace);
+  freemem(rwork);
 
   return ret;
 }
@@ -3335,12 +3335,12 @@ bool Lapack::SVD(const LMatrixCC *A,
       fill_from_lapack_array(sigma, *Sigma);
     }
 
-  deletearray(workspace);
-  deletearray(rwork);
-  deletearray(copyA);
-  deletearray(u);
-  deletearray(vt);
-  deletearray(sigma);
+  freemem(workspace);
+  freemem(rwork);
+  freemem(copyA);
+  freemem(u);
+  freemem(vt);
+  freemem(sigma);
 
   return ret;
 }
@@ -3411,13 +3411,13 @@ bool Lapack::SVD_divide_conquer(const LMatrixCC *A,
       fill_from_lapack_array(sigma, *Sigma);
     }
 
-  deletearray(workspace);
-  deletearray(iworkspace);
-  deletearray(rwork);
-  deletearray(copyA);
-  deletearray(u);
-  deletearray(vt);
-  deletearray(sigma);
+  freemem(workspace);
+  freemem(iworkspace);
+  freemem(rwork);
+  freemem(copyA);
+  freemem(u);
+  freemem(vt);
+  freemem(sigma);
 
   return ret;
 }
@@ -3466,7 +3466,7 @@ bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
               copyb2[copyloc++] = copyb[bloc++];
             }
         }
-      deletearray(copyb);
+      freemem(copyb);
       copyb = copyb2;
     }
 
@@ -3511,9 +3511,9 @@ bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
         }
     }
 
-  deletearray(copyA);
-  deletearray(copyb);
-  deletearray(workspace);
+  freemem(copyA);
+  freemem(copyb);
+  freemem(workspace);
 
   return ret;
 }
@@ -3566,7 +3566,7 @@ bool Lapack::least_squares_deficient(const LMatrixCC *A,
               copyb2[copyloc++] = copyb[bloc++];
             }
         }
-      deletearray(copyb);
+      freemem(copyb);
       copyb = copyb2;
     }
 
@@ -3614,11 +3614,11 @@ bool Lapack::least_squares_deficient(const LMatrixCC *A,
         }
     }
 
-  deletearray(copyA);
-  deletearray(copyb);
-  deletearray(workspace);
-  deletearray(sing);
-  deletearray(rwork);
+  freemem(copyA);
+  freemem(copyb);
+  freemem(workspace);
+  freemem(sing);
+  freemem(rwork);
 
   return ret;
 }

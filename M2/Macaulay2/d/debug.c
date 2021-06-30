@@ -38,12 +38,6 @@ int badBlock() {
      abort();
 }
 
-#if 0
-/* GC_check_annotated_obj is no longer globally defined */
-extern unsigned int GC_debug_header_size;
-extern void *GC_check_annotated_obj(void *); /* returns NULL or pointer to clobbered debug header location */
-#endif
-
 #endif /* NDEBUG */
 
 /*

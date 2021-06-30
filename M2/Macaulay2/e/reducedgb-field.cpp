@@ -35,7 +35,7 @@ ReducedGB_Field::ReducedGB_Field(GBRing *R0,
                                  const PolynomialRing *originalR0,
                                  const FreeModule *F0,
                                  const FreeModule *Fsyz0)
-    : ReducedGB(R0, originalR0, F0, Fsyz0), T(0)
+  : ReducedGB(R0, originalR0, F0, Fsyz0), T(nullptr), Rideal(nullptr)
 {
   T = MonomialTable::make(R0->n_vars());
   if (originalR->is_quotient_ring())

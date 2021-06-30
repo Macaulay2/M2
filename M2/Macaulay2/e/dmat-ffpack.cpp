@@ -30,7 +30,7 @@
         }*/
     
         size_t result = FFPACK::Rank(ring().field(), n_cols(), n_rows(),  N,  n_rows() );
-        deletearray(N);
+        freemem(N);
         return result;
     }
 #endif
@@ -46,7 +46,7 @@
         /// @note 1. matrix data (N) is modified by FFPACK
         /// @note 2. FFPACK expects row-wise stored matrices while dmat stores them column-wise => switch n_rows and n_cols -parameters!
         size_t result = FFPACK::Rank(mat.ring().field(), mat.n_cols(), mat.n_rows(),  N,  mat.n_rows());
-        deletearray(N);
+        freemem(N);
         return result;
     }
 
@@ -62,7 +62,7 @@
         /// @note 1. matrix data (N) is modified by FFPACK
         /// @note 2. FFPACK expects row-wise stored matrices while dmat stores them column-wise => switch n_rows and n_cols -parameters!
         result = FFPACK::Det(mat.ring().field(), mat.n_cols(), mat.n_rows(),  N,  mat.n_rows());
-        deletearray(N);
+        freemem(N);
     }
 
     template<typename CoeffRing>
@@ -77,7 +77,7 @@
         int nullspacedim;
         FFPACK::Invert2(mat.ring().field(), n, N, n, inverse.get_array(), n, nullspacedim);
     
-        deletearray(N);
+        freemem(N);
         return true;
     }
 
@@ -155,7 +155,7 @@
           profile->array[i] = static_cast<int>(prof[i]);
     
         delete [] prof;
-        deletearray(N);
+        freemem(N);
 
         return profile;
     }
