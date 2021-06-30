@@ -1223,14 +1223,18 @@ inline void increase_norm(gmp_RRmutable norm, const DMatCC& mat)
 
 inline bool eigenvaluesHermitian(const DMatRRR& A, DMatRRR& eigenvals)
 {
+#if 1
+  return EigenM2::eigenvalues_hermitian(&A, &eigenvals);
+#else
   return Lapack::eigenvalues_symmetric(&A, &eigenvals);
+#endif
 }
 
 inline bool eigenvalues(const DMatRRR& A, DMatCCC& eigenvals)
 {
 #if 1
   return EigenM2::eigenvalues(&A, &eigenvals);
-#else  
+#else
   return Lapack::eigenvalues(&A, &eigenvals);
 #endif
 }
@@ -1239,14 +1243,22 @@ inline bool eigenvectorsHermitian(const DMatRRR& A,
                                   DMatRRR& eigenvals,
                                   DMatRRR& eigenvecs)
 {
+#if 1
+  return EigenM2::eigenvectors_hermitian(&A, &eigenvals, &eigenvecs);
+#else
   return Lapack::eigenvectors_symmetric(&A, &eigenvals, &eigenvecs);
+#endif
 }
 
 inline bool eigenvectors(const DMatRRR& A,
                          DMatCCC& eigenvals,
                          DMatCCC& eigenvecs)
 {
+#if 1
+  return EigenM2::eigenvectors(&A, &eigenvals, &eigenvecs);
+#else
   return Lapack::eigenvectors(&A, &eigenvals, &eigenvecs);
+#endif
 }
 
 inline bool leastSquares(const DMatRRR& A,
@@ -1267,6 +1279,7 @@ inline bool SVD(const DMatRRR& A,
                 DMatRRR& Vt,
                 int strategy)
 {
+  if (strategy == 1) return EigenM2::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
   return EigenM2::SVD(&A, &Sigma, &U, &Vt);
 #if 0  
   if (strategy == 1) return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
@@ -1294,7 +1307,11 @@ inline void increase_norm(gmp_RRmutable norm, const DMatRRR& mat)
 
 inline bool eigenvaluesHermitian(const DMatCCC& A, DMatRRR& eigenvals)
 {
+#if 1
+  return EigenM2::eigenvalues_hermitian(&A, &eigenvals);
+#else
   return Lapack::eigenvalues_hermitian(&A, &eigenvals);
+#endif
 }
 
 inline bool eigenvalues(const DMatCCC& A, DMatCCC& eigenvals)
@@ -1310,14 +1327,22 @@ inline bool eigenvectorsHermitian(const DMatCCC& A,
                                   DMatRRR& eigenvals,
                                   DMatCCC& eigenvecs)
 {
+#if 1
+  return EigenM2::eigenvectors_hermitian(&A, &eigenvals, &eigenvecs);
+#else
   return Lapack::eigenvectors_hermitian(&A, &eigenvals, &eigenvecs);
+#endif
 }
 
 inline bool eigenvectors(const DMatCCC& A,
                          DMatCCC& eigenvals,
                          DMatCCC& eigenvecs)
 {
+#if 1
+  return EigenM2::eigenvectors(&A, &eigenvals, &eigenvecs);
+#else
   return Lapack::eigenvectors(&A, &eigenvals, &eigenvecs);
+#endif
 }
 
 inline bool leastSquares(const DMatCCC& A,
@@ -1337,6 +1362,7 @@ inline bool SVD(const DMatCCC& A,
                 DMatCCC& Vt,
                 int strategy)
 {
+  if (strategy == 1) return EigenM2::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
   return EigenM2::SVD(&A, &Sigma, &U, &Vt);
 #if 0
   if (strategy == 1) return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);

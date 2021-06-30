@@ -110,6 +110,50 @@ bool SVD(const LMatrixCCC *A,
   return true;
 }
 
+bool SVD_divide_conquer(const LMatrixRRR *A,
+         LMatrixRRR *Sigma,
+         LMatrixRRR *U,
+         LMatrixRRR *VT
+         )
+{
+  auto old_prec = Real::get_default_prec(); 
+  Real::set_default_prec(A->ring().get_precision());
+
+  MatrixXmp AXmp(A->numRows(), A->numColumns());
+  fill_to_MatrixXmp(*A, AXmp);
+
+  Eigen::BDCSVD<MatrixXmp> svd(AXmp, Eigen::ComputeThinU | Eigen::ComputeThinV);
+  
+  fill_from_MatrixXmp(svd.matrixU(), *U);
+  fill_from_MatrixXmp(svd.matrixV().adjoint(), *VT);
+  fill_from_MatrixXmp(svd.singularValues(), *Sigma);
+
+  Real::set_default_prec(old_prec);
+  return true;
+}
+
+bool SVD_divide_conquer(const LMatrixCCC *A,
+         LMatrixRRR *Sigma,
+         LMatrixCCC *U,
+         LMatrixCCC *VT
+         )
+{
+  auto old_prec = Real::get_default_prec(); 
+  Real::set_default_prec(A->ring().get_precision());
+
+  MatrixXmpCC AXmp(A->numRows(), A->numColumns());
+  fill_to_MatrixXmp(*A, AXmp);
+
+  Eigen::BDCSVD<MatrixXmpCC> svd(AXmp, Eigen::ComputeThinU | Eigen::ComputeThinV);
+  
+  fill_from_MatrixXmp(svd.matrixU(), *U);
+  fill_from_MatrixXmp(svd.matrixV().adjoint(), *VT);
+  fill_from_MatrixXmp(svd.singularValues(), *Sigma);
+
+  Real::set_default_prec(old_prec);
+  return true;
+}
+
 bool eigenvalues(const LMatrixRRR *A, LMatrixCCC *eigenvals) {
   auto old_prec = Real::get_default_prec(); 
   Real::set_default_prec(A->ring().get_precision());
@@ -131,9 +175,96 @@ bool eigenvalues(const LMatrixCCC *A, LMatrixCCC *eigenvals) {
   MatrixXmpCC AXmp(A->numRows(), A->numColumns());
   fill_to_MatrixXmp(*A, AXmp);
 
-  Eigen::ComplexEigenSolver<MatrixXmpCC> ces(AXmp,false/*no eigenvectors*/);
-  // ces.eigenvalues();//!!! How to process this???
+  Eigen::ComplexEigenSolver<MatrixXmpCC> ces(AXmp, false/*no eigenvectors*/);
   fill_from_MatrixXmp(ces.eigenvalues(), *eigenvals);
+
+  Real::set_default_prec(old_prec);
+  return true;
+}
+
+bool eigenvalues_hermitian(const LMatrixRRR *A, LMatrixRRR *eigenvals) {
+  auto old_prec = Real::get_default_prec(); 
+  Real::set_default_prec(A->ring().get_precision());
+
+  MatrixXmp AXmp(A->numRows(), A->numColumns());
+  fill_to_MatrixXmp(*A, AXmp);
+
+  Eigen::SelfAdjointEigenSolver<MatrixXmp> es(AXmp, false);
+  fill_from_MatrixXmp(es.eigenvalues(), *eigenvals);
+
+  Real::set_default_prec(old_prec);
+  return true;
+}
+
+bool eigenvalues_hermitian(const LMatrixCCC *A, LMatrixRRR *eigenvals) {
+  auto old_prec = Real::get_default_prec(); 
+  Real::set_default_prec(A->ring().get_precision());
+
+  MatrixXmpCC AXmp(A->numRows(), A->numColumns());
+  fill_to_MatrixXmp(*A, AXmp);
+
+  Eigen::SelfAdjointEigenSolver<MatrixXmp> es(AXmp, false);
+  fill_from_MatrixXmp(es.eigenvalues(), *eigenvals);
+
+  Real::set_default_prec(old_prec);
+  return true;
+}
+
+bool eigenvectors(const LMatrixRRR *A, LMatrixCCC *eigenvals, LMatrixCCC *eigenvecs) {
+  auto old_prec = Real::get_default_prec(); 
+  Real::set_default_prec(A->ring().get_precision());
+
+  MatrixXmp AXmp(A->numRows(), A->numColumns());
+  fill_to_MatrixXmp(*A, AXmp);
+
+  Eigen::EigenSolver<MatrixXmp> es(AXmp);
+  fill_from_MatrixXmp(es.eigenvalues(), *eigenvals);
+  fill_from_MatrixXmp(es.eigenvectors(), *eigenvecs);
+
+  Real::set_default_prec(old_prec);
+  return true;
+}
+
+bool eigenvectors(const LMatrixCCC *A, LMatrixCCC *eigenvals, LMatrixCCC *eigenvecs) {
+  auto old_prec = Real::get_default_prec(); 
+  Real::set_default_prec(A->ring().get_precision());
+
+  MatrixXmpCC AXmp(A->numRows(), A->numColumns());
+  fill_to_MatrixXmp(*A, AXmp);
+
+  Eigen::ComplexEigenSolver<MatrixXmpCC> ces(AXmp);
+  fill_from_MatrixXmp(ces.eigenvalues(), *eigenvals);
+  fill_from_MatrixXmp(ces.eigenvectors(), *eigenvecs);
+
+  Real::set_default_prec(old_prec);
+  return true;
+}
+
+bool eigenvectors_hermitian(const LMatrixRRR *A, LMatrixRRR *eigenvals, LMatrixRRR *eigenvecs) {
+  auto old_prec = Real::get_default_prec(); 
+  Real::set_default_prec(A->ring().get_precision());
+
+  MatrixXmp AXmp(A->numRows(), A->numColumns());
+  fill_to_MatrixXmp(*A, AXmp);
+
+  Eigen::SelfAdjointEigenSolver<MatrixXmp> es(AXmp);
+  fill_from_MatrixXmp(es.eigenvalues(), *eigenvals);
+  fill_from_MatrixXmp(es.eigenvectors(), *eigenvecs);
+
+  Real::set_default_prec(old_prec);
+  return true;
+}
+
+bool eigenvectors_hermitian(const LMatrixCCC *A, LMatrixRRR *eigenvals, LMatrixCCC *eigenvecs) {
+  auto old_prec = Real::get_default_prec(); 
+  Real::set_default_prec(A->ring().get_precision());
+
+  MatrixXmpCC AXmp(A->numRows(), A->numColumns());
+  fill_to_MatrixXmp(*A, AXmp);
+
+  Eigen::SelfAdjointEigenSolver<MatrixXmp> es(AXmp);
+  fill_from_MatrixXmp(es.eigenvalues(), *eigenvals);
+  fill_from_MatrixXmp(es.eigenvectors(), *eigenvecs);
 
   Real::set_default_prec(old_prec);
   return true;
