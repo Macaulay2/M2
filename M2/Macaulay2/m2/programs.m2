@@ -141,6 +141,7 @@ runProgram(Program, String, String) := opts -> (program, name, args) -> (
 	    makeDirectory opts.RunDirectory;
 	"cd " | opts.RunDirectory | " && " ) else "";
     cmd = cmd | program#"path" | addPrefix(name, program#"prefix") | " " | args;
+    if match("\\|", cmd) then cmd = "{ " | cmd | ";}";
     returnValue := run (cmd | " > " | outFile | " 2> " | errFile);
     message := "running: " | cmd | "\n";
     output := get outFile;
