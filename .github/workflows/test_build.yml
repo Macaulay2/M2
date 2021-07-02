@@ -182,6 +182,7 @@ jobs:
           ./M2 -q --check 3 -e 'exit 0'
           cmake --build . --target M2-tests
           cmake --build . --target M2-unit-tests
+          cmake --build . --target memtailor-unit-tests mathic-unit-tests mathicgb-unit-tests
           ctest -j1 --output-on-failure -R "unit-tests"
           ctest -j4 --output-on-failure -R "ComputationsBook"
           # TODO: add Macaulay2/tests/engine when https://github.com/Macaulay2/M2/issues/1213 is fixed

@@ -8,7 +8,7 @@
 
 #include "monoid.hpp"
 #include "ntuple.hpp"
-#include "memtailor/memtailor.h"
+#include "memtailor.h"
 #include "text-io.hpp"
 
 #include <iostream>
