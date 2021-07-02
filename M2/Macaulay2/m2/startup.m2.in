@@ -506,14 +506,8 @@ valueNotify := arg -> (
      if notify then printerr("evaluating command line argument ", toString argno, ": ", format arg);
      value' arg)
 
-initialPath := {}
-
 action2 := hashTable {
-     "--srcdir" => arg -> if phase == 2 then (
-	  concatPath(arg, "");
-	  srcdirs = append(srcdirs,arg);
-	  initialPath = join(initialPath,select({arg|"Macaulay2/m2/",arg|"Macaulay2/packages/"},isDirectory));
-	  ),
+     "--srcdir" => arg -> if phase == 2 then srcdirs = append(srcdirs, arg),
      "-E" => arg -> if phase == 3 then valueNotify arg,
      "-e" => arg -> if phase == 4 then valueNotify arg,
      "--print-width" => arg -> if phase == 3 then printWidth = value' arg,
@@ -624,15 +618,16 @@ if prefixDirectory =!= null then (
     pkgpath  = append(pkgpath,  prefixDirectory | currentLayout#"packages");
     corepath = append(corepath, prefixDirectory | replace("PKG", "Core", currentLayout#"package")))
 
-path = join(corepath, pkgpath)
-
 if firstTime then normalPrompts()
 
 printWidth = fileWidth stdio
 
 processCommandLineOptions 2				    -- just for path to core files and packages
 
-path = join(initialPath, path)
+-- add source directories to the path, in the appropriate order
+corepath = join(apply(srcdirs, dir -> concatPath(dir, "Macaulay2/m2/")),      corepath)
+pkgpath =  join(apply(srcdirs, dir -> concatPath(dir, "Macaulay2/packages/")), pkgpath)
+path = select(join(corepath, pkgpath, path), isDirectory)
 
 -- a local way to use private global symbols after endPackage is called on Core
 core := nm -> value if nocore then getGlobalSymbol nm else Core#"private dictionary"#nm
