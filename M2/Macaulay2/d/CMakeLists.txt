@@ -84,7 +84,7 @@ set(DLIST
   actors6.dd
   threads.dd
   python.d	# removed unless WITH_PYTHON
-  interface.dd interface2.d
+  interface.dd interface2.d mpi.d
   texmacs.d
   interp.dd	# this one is last, because it contains the top level interpreter
   version.dd
