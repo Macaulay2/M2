@@ -1623,18 +1623,18 @@ document {
 
 document { 
     Key => {(rank,MultidimensionalMatrix)}, 
-    Headline => "border rank of a multidimensional matrix", 
+    Headline => "about the border rank of a multidimensional matrix", 
     Usage => "rank M", 
     Inputs => {"M" => MultidimensionalMatrix},
-    Outputs => {ZZ => {"a lower bound for the border rank of ",TT"M",", which is calculated as the maximum rank of all the ",TO flattening," of ",TT"M"}},
+    Outputs => {ZZ => {"a lower bound for the (border) rank of ",TT"M",", which is calculated as the maximum rank of all the ",TO2{flattening,"flattenings"}," of ",TT"M"}},
+    PARA{"In some cases, we know that the returned integer ",TT"r = rank M"," is exactly the border rank of ",TT"M",". For instance, this is the case if ",TT"r<3"," by a result of ",HREF{"https://arxiv.org/abs/1011.5867v2","C. Raicu"},". In general, however, we obtain only a lower bound and it is not known how to calculate this rank exactly without resorting to elimination."},
     EXAMPLE {
         "M = randomMultidimensionalMatrix(2,4,3,2,MaximalRank=>2)",
         "rank M",
         "M' = randomMultidimensionalMatrix(2,4,2,1,3,CoefficientRing=>ZZ/65521,MaximalRank=>4)",
         "rank M'"
      },
-     SeeAlso => {flattening,randomMultidimensionalMatrix},
-     Caveat => {"So far it is not known how to calculate this rank exactly."}
+     SeeAlso => {flattening,randomMultidimensionalMatrix}
 }
 
 -- Tests -- 
