@@ -216,6 +216,7 @@ StatGraphs
 GraphicalModelsMLE
 EigenSolver
 MultiplicitySequence
+Factor
 ResolutionsOfStanleyReisnerRings
 NumericalLinearAlgebra
 ResLengthThree
