@@ -173,7 +173,7 @@ document {
 	 	   LI { TO "NoetherianOperators::NoetherianOperators", ", a package by Robert Krone, Justin Chen, Marc Harkonen, Yairon Cid-Ruiz, and Anton Leykin, for numerically computing local dual spaces, Hilbert functions, and Noetherian operators, has been added.
 			(The package ", TT "NumericalHilbert", " has been absorbed into this new package." },
 	 	   LI { TO "NumericalLinearAlgebra::NumericalLinearAlgebra", ", a package by Robert Krone, Marc Harkonen, and Anton Leykin for numerically compute local dual spaces and Hilbert functions, has been added." },
-	 	   LI { TO "RandomRationalPoints::RandomRationalPoints", ", a package by Sankhaneel Bisui, Thai Nguyen, Karl Schwede, Sarasij Maitra, and Zhan Jiang, for computing a random point in a given variety over a finite field, has been added." },
+	 	   LI { TO "RandomPoints::RandomPoints", ", previously called RandomRationalPoints a package by Sankhaneel Bisui, Thai Nguyen, Karl Schwede, Sarasij Maitra, and Zhan Jiang, for computing a random point in a given variety over a finite field, has been added." },
 	 	   LI { TO "ResLengthThree::ResLengthThree", ", a package by Lars Winther Christensen, Luigi Ferraro, Francesca Gandini, Frank Moore, and Oana Veliche, for multiplication in free resolutions of length three, has been added." },
 	 	   LI { TO "ResolutionsOfStanleyReisnerRings::ResolutionsOfStanleyReisnerRings", ", a package by Ashleigh Adams for comparing resolutions of Stanley-Reisner rings and computing various systems of parameters, has been added." },
 		   LI { TO "Saturation :: Saturation", ", a package by Justin Chen, Mahrud Sayrafi, and Mike Stillman for computations involving quotients,
@@ -342,7 +342,7 @@ document {
 		    -- LI { TO "::", ", a package by ... for ..., has been added." },
 		    LI { TO "VirtualResolutions::VirtualResolutions", ", a package by Ayah Almousa, Christine Berkesch, Juliette Bruce, David Eisenbud, Michael Loper, and Mahrud Sayrafi, for virtual resolutions on products of projective spaces, has been added.
 			 (Actually, it was added in 1.14, but we forgot to say that in ", TO "changes, 1.14", "." },
-		    LI { TO "FastLinAlg::FastLinAlg", ", a package by Boyana Martinova, Marcus Robinson, Karl Schwede, and Yuhui (Wei) Yao, for faster linear algebra operations, has been added." },
+		    LI { TO "FastMinors::FastMinors", ", previously called FastLinAlg, a package by Boyana Martinova, Marcus Robinson, Karl Schwede, and Yuhui (Wei) Yao, for faster linear algebra operations, has been added." },
 		    LI { TO "FrobeniusThresholds::FrobeniusThresholds", ", a package by Juliette Bruce, Daniel Hernández, Karl Schwede, Dan Smolkin, Pedro Teixeira, and Emily Witt, for calculations of F-thresholds, has been added." },
 		    LI { "The package ", TT "SOS", " has been renamed to ", TO "SumsOfSquares::SumsOfSquares", "." },
 		    LI { TO "SpechtModule::SpechtModule", ", a package by Jonathan Niño for efficient computation of invariants for permutation groups, has been added." },
