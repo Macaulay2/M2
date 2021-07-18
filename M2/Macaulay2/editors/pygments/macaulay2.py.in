@@ -36,9 +36,9 @@ class Macaulay2Lexer(RegexLexer):
     tokens = {
         'root': [
             (r'--.*$', Comment.Single),
-            (r'-\*[\w\W]*?\*-', Comment.Multiline),
-            (r'".*?"', String),
-            (r'///[\w\W]*?///', String),
+            (r'-\*[\w\W]*\*-', Comment.Multiline),
+            (r'".*"', String),
+            (r'///[\w\W]*///', String),
             (words(M2KEYWORDS, prefix=r'\b', suffix=r'\b'), Keyword),
             (words(M2DATATYPES, prefix=r'\b', suffix=r'\b'), Name.Builtin),
             (words(M2FUNCTIONS, prefix=r'\b', suffix=r'\b'), Name.Function),
