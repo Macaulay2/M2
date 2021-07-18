@@ -1,5 +1,5 @@
-newPackage( "FastLinAlg",
-Version => "1.0", Date => "September 11th, 2020", Authors => {
+newPackage( "FastMinors",
+Version => "1.1", Date => "March 12th, 2021", Authors => {
     {Name => "Boyana Martinova",
     Email=> "u1056124@utah.edu"
     },
@@ -15,8 +15,7 @@ Version => "1.0", Date => "September 11th, 2020", Authors => {
     Email=> "yuhuiyao4ever@gmail.com"
     }
 }, --this file is in the public domain
-Keywords => {"Linear Algebra"},
-Headline => "faster linear algebra operations", PackageExports => {"RandomRationalPoints"}, PackageImports => {"RandomRationalPoints"}, DebuggingMode => false, Reload=>false)
+Headline => "faster linear algebra operations", PackageExports => {"RandomPoints"}, PackageImports => {"RandomPoints"}, DebuggingMode => false, Reload=>false)
 export{
 --  "selectSmallestTerms",
   "chooseSubmatrixSmallestDegree", --there are checks
@@ -67,7 +66,7 @@ export{
   "StrategyPoints",
   "StrategyCurrent",  
   "SPairsFunction",
-  "PointOptions", --options to be based to the RandomRationaPoints package
+  "PointOptions", --options to be based to the RandomPoints package
   "UseOnlyFastCodim"
 }
 
@@ -123,18 +122,15 @@ StrategyRandom = new HashTable from {LexLargest=>0, LexSmallestTerm => 0, LexSma
 
 StrategyPoints = new HashTable from {LexLargest=>0, LexSmallestTerm => 0, LexSmallest=>0, GRevLexSmallestTerm=>0, GRevLexSmallest=>0, GRevLexLargest=>0,Random=>0, RandomNonzero=>0, Points => 100};
 
-optPoints = new HashTable from {
+optPoints := {
     Strategy=>Default, 
-    Homogeneous => false,  
-    MaxCoordinatesToReplace => 1, 
-    MaxCoordinatesToTrivialize => infinity,
-    Replacement => Binomial,
-    Codimension => null,
-    IntersectionAttempts => 20,
-    ProjectionAttempts => 0,
-    ExtendField => true,
-    PointCheckAttempts => 100,
+    Homogeneous => true,  
+    Replacement => Binomial,    
+    ExtendField => false,
+    PointCheckAttempts => 0,
+    DecompositionStrategy => Decompose,
     NumThreadsToUse => 1,
+    DimensionFunction => dim,
     Verbose => false
 };
 
@@ -527,7 +523,7 @@ randomMinPosition(List) := o -> (L1) -> (
     return ((newList2#j)#2);
 );
 
---the following command chooses n1 *random* minimum element of a list
+--the following command chooses n1 *random* minumum element of a list
 randomMinPositions = method(Options=>{});
 randomMinPositions(ZZ, List) := o -> (n1, L1) -> (
     newList := apply(#L1, i -> {L1#i, random((#L1)^2), i});
@@ -777,7 +773,7 @@ internalChooseMinor(ZZ, Ideal, Matrix, Matrix) := opts -> (minorSize, I1, nonzer
             submatrixS1 = chooseRandomSubmatrix(minorSize, M1); 
         )
         else (
-            if (opts.Verbose) or debugLevel > 0 then print "internalChooseMinor: Choosing Points";            
+            if (opts.Verbose) or debugLevel > 0 then print "internalChooseMinor: Choosing Points";                        
             try (o = findANonZeroMinor(minorSize, M1, I1, new OptionTable from opts.PointOptions);) then submatrixS1 = {o#2, o#1} else ( submatrixS1 = chooseRandomSubmatrix(minorSize, M1); if (opts.Verbose) or debugLevel > 0 then print "internalChooseMinor: failed to find a point"; );
         );
     );
@@ -1026,9 +1022,9 @@ isCodimAtLeast(ZZ, Ideal) := opts -> (n1, I1) -> (
     monIdeal := null;
     if (#first entries gens I2 > 0) then (
         monIdeal = monomialIdeal(apply(first entries gens I2, t->leadTerm t));
-        if (opts.Verbose or debugLevel > 0) then print concatenate("isCodimAtLeast: Computing codim of monomials based on ideal generators.");
+        if (opts.Verbose or debugLevel > 2) then print concatenate("isCodimAtLeast: Computing codim of monomials based on ideal generators.");
         if (codim monIdeal - dAmb >= n1) then return true;
-        if (opts.Verbose or debugLevel > 0) then print concatenate("isCodimAtLeast: Didn't work, going to find the partial Groebner basis.");
+        if (opts.Verbose or debugLevel > 2) then print concatenate("isCodimAtLeast: Didn't work, going to find the partial Groebner basis.");
     );
     --now we set stuff up for the loop if that doesn't work.  
     vCount := # first entries vars S1;
@@ -1042,12 +1038,12 @@ isCodimAtLeast(ZZ, Ideal) := opts -> (n1, I1) -> (
     while (i < opts.PairLimit) do(
         curLimit = opts.SPairsFunction(i);
 --        curLimit = apply(baseDeg, tt -> (opts.SPairsFunction)(tt,i));
-        if (opts.Verbose or debugLevel > 0) then print concatenate("isCodimAtLeast: about to compute gb PairLimit => ", toString curLimit);
+        if (opts.Verbose or debugLevel > 2) then print concatenate("isCodimAtLeast: about to compute gb PairLimit => ", toString curLimit);
         myGB = gb(I2, PairLimit=>curLimit);
         gensList = first entries leadTerm gb(I2, PairLimit=>curLimit);    
         if (#gensList > 0) then (
             monIdeal = monomialIdeal(first entries leadTerm myGB);
-            if (opts.Verbose or debugLevel > 0) then print concatenate("isCodimAtLeast: computed gb, now computing codim ");
+            if (opts.Verbose or debugLevel > 2) then print concatenate("isCodimAtLeast: computed gb, now computing codim ");
             if (codim monIdeal - dAmb >= n1) then return true;
         );
         if (isGBDone(myGB)) then i = opts.PairLimit;
@@ -1304,11 +1300,11 @@ recursiveMinorsTable = (n, M1) -> (
 beginDocumentation();
 
 document {
-    Key => FastLinAlg,
-    Headline => "faster linear algebra in certain cases",
-    EM "FastLinAlg", " is a for computing (applications of) function field linear algebra more quickly in certain settings.",
+    Key => FastMinors,
+    Headline => "faster linear algebra, especially for computation of minors",
+    EM "FastMinors", " is a for computing relevant minors (determinants of submatrices) of matrices over function fields quickly",
     BR{},BR{},
-    "This package is still experimental.  It provides functionality for doing certain linear algebra operations in function fields quickly.  There is some multithreaded capability which is disabled by default.",
+    "This package provides functionality for doing certain linear algebra operations in function fields quickly.  There is some multithreaded capability which is disabled by default.",
     BR{},BR{},
     BOLD "Useful functions:",BR{},
     UL {
@@ -1322,7 +1318,7 @@ document {
     "Many of these functions have extensive options for fine tuning their behavior, for instance by controlling how submatrices are chosen.  See the documentation for ", TO "StrategyDefault",
 	BR{},BR{},
 	BOLD "Acknowledgements:",BR{},BR{},
-	"The authors would like to thank David Eisenbud, Eloisa Grifo, and Srikanth Iyengar for useful conversations and comments on the development of this package.", BR{},
+	"The authors would like to thank the anonymous referee, David Eisenbud, Eloisa Grifo, and Srikanth Iyengar for useful conversations and comments on the development of this package.", BR{},
     BR{},
     "Boyana Martinova received funding from the University of Utah Mathematics Department REU program and from the ACCESS program at the University of Utah, while developing this package.",
     BR{},
@@ -1358,7 +1354,7 @@ doc ///
             This returns an ideal generated by approximately {\tt count} minors of size {\tt minorSize} the matrix M.  
         Example
             R = QQ[x, y, z];
-            M = matrix{{x,y,0}, {y,z,0}, {0,0,0}}, 
+            M = matrix{{x,y,0}, {y,z,0}, {0,0,0}}
             chooseGoodMinors(1, 2, M, Strategy=>StrategyDefaultNonRandom)
         Text
             The ideal {\tt I} is used in the {\tt Points} portion of the {\tt Strategy}.  Only points where that ideal vanishes will be considered.
@@ -1524,10 +1520,10 @@ doc ///
         [projDim, PointOptions]
         [regularInCodimension, PointOptions]
     Headline
-        options to pass to functions in the package RandomRationalPoints
+        options to pass to functions in the package RandomPoints
     Description
         Text
-            {\tt PointOptions} is an option in various functions in this package, which can store options to be passed to the function {\tt findANonZeroMinor} in {\tt RandomRationalPoints}.  
+            {\tt PointOptions} is an option in various functions in this package, which can store options to be passed to the function {\tt findANonZeroMinor} in {\tt RandomPoints}.  
         Example
             (options regularInCodimension)#PointOptions
             options findANonZeroMinor
@@ -1640,10 +1636,42 @@ doc ///
 
 
 document {
-    Key => {[regularInCodimension, Strategy], GRevLexLargest, GRevLexSmallest, GRevLexSmallestTerm, LexLargest, LexSmallest, LexSmallestTerm, Random, RandomNonzero, Points, [chooseGoodMinors, Strategy], [getSubmatrixOfRank, Strategy],  [isRankAtLeast, Strategy], [projDim, Strategy], "StrategyCurrent", "StrategyDefault", "StrategyDefaultNonRandom", "StrategyLexSmallest", "StrategyGRevLexSmallest", "StrategyRandom", "StrategyPoints", "StrategyDefaultWithPoints"},
+    Key => {"StrategyDefault", [regularInCodimension, Strategy], GRevLexLargest, GRevLexSmallest, GRevLexSmallestTerm, LexLargest, LexSmallest, LexSmallestTerm, Random, RandomNonzero, Points, [chooseGoodMinors, Strategy], [getSubmatrixOfRank, Strategy],  [isRankAtLeast, Strategy], [projDim, Strategy], "StrategyCurrent",  "StrategyDefaultNonRandom", "StrategyLexSmallest", "StrategyGRevLexSmallest", "StrategyRandom", "StrategyPoints", "StrategyDefaultWithPoints"},
     Headline => "strategies for choosing submatrices",
-    "Many of the core functions of this package allow the user to fine tune the strategy of how submatrices are selected.  Different strategies yield markedly different performance or results on these examples.
-    These are controlled by specifying a ", TT " Strategy => ", " option, pointing to a ", TT " HashTable", ".  This HashTable should have the following keys.",
+    "Many of the core functions of this package allow the user to fine tune the strategy of how submatrices are selected.  Different strategies yield markedly different performance or results on various examples.
+    These are controlled by specifying a ", TT " Strategy => ", " option, pointing to a ", TT " HashTable", 
+    "Before describing this ", TT "HashTable", " we beging by roughly outlining the different options.",
+    UL {
+        { BOLD "Heuristic submatrix selection:", " In this case, a submatrix is chosen via a greedy algorithm, looking for a submatrix with smallest (or largest) degree with respect to a random monomial order." }, 
+        { BOLD "Submatrix selection via rational and geometric points:", " Here a rational or geometric point is found where a given ideal vanishes.  That point is plugged into the matrix and a submatrix of full rank is identified.   This approach currently only works over a finite field and is accomplished with the help of the package ", TO RandomPoints, "."},
+        { BOLD "Random submatrix selection:", " This either chooses a completely random submatrix, or a submatrix which has no zero columsn or rows."},
+    },
+    "There we highlight five important pre-programmed strategies provided to the user.",
+    UL {
+        {TT "StrategyDefault", ": this uses a mix of heuristics and random submatrices."},
+        {TT "StrategyRandom", ": this uses purely random submatrices."},
+        {TT "StrategyDefaultNonRandom", ": this uses a mix of heuristics but no random submatrices."},
+        {TT "StrategyPoints", ": this only uses rational / geometric points to find submatrices."},
+        {TT "StrategyDefaultWithPoints", ": this uses a mix of heuristics and submatrices chosen with rational and geometric points."},        
+    },
+    "Below the details of how these strategies are constructed will be detailed.  But first, we provide an example showing that these strategies can perform quite differently.  The following is the cone over the product of two elliptic curves.  We verify that this ring is regular in codimension 1 using different strategies.  Essentially, minors are computed until it is verified that the ring is regular in codimension 1.",
+    EXAMPLE {
+        "T=ZZ/7[a..i]/ideal(f*h-e*i,c*h-b*i,f*g-d*i,e*g-d*h,c*g-a*i,b*g-a*h,c*e-b*f,c*d-a*f,b*d-a*e,g^3-h^2*i-g*i^2,d*g^2-e*h*i-d*i^2,a*g^2-b*h*i-a*i^2,d^2*g-e^2*i-d*f*i,a*d*g-b*e*i-a*f*i,a^2*g-b^2*i-a*c*i,d^3-e^2*f-d*f^2,a*d^2-b*e*f-a*f^2,a^2*d-b^2*f-a*c*f,c^3+f^3-i^3,b*c^2+e*f^2-h*i^2,a*c^2+d*f^2-g*i^2,b^2*c+e^2*f-h^2*i,a*b*c+d*e*f-g*h*i,a^2*c+d^2*f-g^2*i,b^3+e^3-h^3,a*b^2+d*e^2-g*h^2,a^2*b+d^2*e-g^2*h,a^3+e^2*f+d*f^2-h^2*i-g*i^2);",         
+        "elapsedTime regularInCodimension(1, T, Strategy=>StrategyDefault)",
+    },
+    "In this particular example, on one machine, we list average time to completion of each of the above strategies after 100 runs.",
+    UL {
+         {TT "StrategyDefault", ": 1.65 seconds"},
+        {TT "StrategyRandom", ": 8.32 seconds"},
+        {TT "StrategyDefaultNonRandom", ": 0.99 seconds"},
+        {TT "StrategyPoints", ": 3.27 seconds"},
+        {TT "StrategyDefaultWithPoints", ": 3.37"}, 
+    },
+    "Roughly speaking, heuristics tend to provide more information than random submatrices and so they work much faster since they consider far fewer submatrices.  Frequently also, computing random or rational points does have advantages as typically fewer still minors are needed (hence if computing minors is slow ", TT "StrategyPoints",  " is a good choice).  However, sometimes that non-trivial point computation will become stuck (in the above example, the median time for ", TT "StrategyPoints", " and ", TT "StrategyDefaultWithPoints", " was close to 1.5 seconds, but a couple runs in each case were orders of magnitude slower).",
+    BR{}, BR{},    
+    {BOLD "Custom Strategies"}, BR{},
+    "The user can create their own strategies as well, as we now explain.  In particular, the user can even customize the heuristics used.  
+    To custom strategy is specified by a ", TT "HashTable", " which must have the following keys.",
     UL {
         {TT "GRevLexLargest", ": try to find submatrices where each row and column has a large entry with respect to a random ", TT "GRevLex", "order."},
         {TT "GRevLexSmallest", ": try to find submatrices where each row and column has a small entry with respect to a random ", TT "GRevLex", "order."},
@@ -1653,21 +1681,25 @@ document {
         {TT "LexSmallestTerm", ": find submatrices where each row and column has an entry with a small term with respect to a random ", TT "Lex", "order."},
         {TT "Random", ": find random submatrices "},
         {TT "RandomNonzero", ": find random submatrices that have nonzero rows and columns"},
-        {TT "Points", ": find submatrices that are not singular at the given ideal by finding a point where that ideal vanishes, and evaluating the matrix at that point (via the package ", TO RandomRationalPoints, ").  If working over a characteristic zero field, this will select random submatrices."}
+        {TT "Points", ": find submatrices that are not singular at the given ideal by finding a point where that ideal vanishes, and evaluating the matrix at that point (via the package ", TO RandomPoints, ").  If working over a characteristic zero field, this will select random submatrices."}
     },
-    "Each such key should point to an integer.",
+    "For example:", 
+    EXAMPLE {
+        "peek StrategyDefault",
+    },    
+    "Each such key should point to an integer.  The larger the integer, the more likely that such a minor will be chosen.  ",
 	BR{},BR{},
     "Functions such as ", TO chooseGoodMinors, " will select a number of random submatrices based on the values of those keys.  For example, if ",
     TT "LexSmallest", " and ", TT "LexLargest", " are set to ", TT "50", " approximately the submatrics will be smallest with respect to ", TT "Lex",
     " and the other half will be largest with respect to ", TT "Lex.", "The values do not need to add up to 100.",
     BR{},BR{},
-    "These functions all work by finding the optimal entry with respect to the given strategy, removing that row and column, and then choosing the next optimal entry.  ",
+    "The heuristic functions all work by finding the optimal entry with respect to the given strategy, removing that row and column, and then choosing the next optimal entry.  ",
     "This is done until a submatrix of the desired size has been found.",
     BR{},BR{},
     "In some functions, the ", TT "GRevLex", " versions of this strategy will modify the working matrix in a loop, repeatedly lowering/raising the degree of elements",
     "so as to ensure that different choices are made.",
     BR{},BR{},
-    "This package comes with several default strategies exported to the user.",
+    "We briefly summarize the Strategies provided to the user by default (some of which we have seen in action above)",
     UL {
         {TT "StrategyDefault", ": 16% of the matrices are ", TT "LexSmallest", ", ", TT "LexSmallestTerm", ", ", TT "GRevLexSmallest", ", ", TT "GRevLexLargest", ", ", TT "Random", ", and ", TT "RandomNonZero",  " each"},
         {TT "StrategyDefaultNonRandom", ": 25% of the matrices are ", TT "LexSmallest", ", ", TT "LexSmallestTerm", ", ", TT "GRevLexSmallest", " and, ", TT "GRevLexLargest", " each"},
@@ -1978,7 +2010,7 @@ TEST/// --check #4 (regularInCodimension)
 T = (ZZ/101)[YY_1, YY_2, YY_3, YY_4, YY_5];
 J = ideal(YY_2*YY_3+3*YY_3^2+43*YY_1*YY_4+YY_3*YY_4-43*YY_2*YY_5+50*YY_3*YY_5,YY_2^2-18*YY_3^2+YY_1*YY_4-18*YY_2*YY_4-39*YY_3*YY_4-YY_1*YY_5+8*YY_2*YY_5-47*YY_3*YY_5,YY_1^2+16*YY_1*YY_2-3*YY_1*YY_3-32*YY_3^2+23*YY_1*YY_4-42*YY_2*YY_4-43*YY_3*YY_4+19*YY_1*YY_5+20*YY_2*YY_5-34*YY_3*YY_5,YY_3^3+16*YY_1*YY_2*YY_4+8*YY_1*YY_3*YY_4-36*YY_3^2*YY_4-YY_1*YY_4^2-47*YY_3*YY_4^2+45*YY_1*YY_3*YY_5-31*YY_3^2*YY_5+7*YY_1*YY_4*YY_5+16*YY_2*YY_4*YY_5+37*YY_3*YY_4*YY_5-16*YY_1*YY_5^2+36*YY_2*YY_5^2+15*YY_3*YY_5^2,YY_1*YY_3^2-48*YY_1*YY_2*YY_4+21*YY_1*YY_3*YY_4-45*YY_3^2*YY_4+47*YY_1*YY_4^2+10*YY_2*YY_4^2-47*YY_3*YY_4^2+13*YY_4^3-25*YY_1*YY_2*YY_5-33*YY_1*YY_3*YY_5+45*YY_3^2*YY_5+24*YY_1*YY_4*YY_5-36*YY_2*YY_4*YY_5-41*YY_3*YY_4*YY_5+26*YY_4^2*YY_5-27*YY_1*YY_5^2+30*YY_2*YY_5^2-13*YY_3*YY_5^2-24*YY_4*YY_5^2-17*YY_5^3);
 assert(regularInCodimension(1, T/J)===true);
---we should change these a bit
+--we shoudl change these a bit
 --assert(regularInCodimension(1, T/J, LexSmallest=>0, Random=>0)===true);
 -- note: if we set LexLargest=>0 running just on LexSmallest then regularInCodimension returns null
 -- same happens for all =>0, GRevLexSmallest=> nonzero

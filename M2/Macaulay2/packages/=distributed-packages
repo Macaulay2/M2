@@ -136,8 +136,8 @@ Visualize
 EquivariantGB
 ExampleSystems
 RationalMaps
-FastLinAlg
-RandomRationalPoints
+FastMinors
+RandomPoints
 SwitchingFields
 SpectralSequences
 SectionRing
