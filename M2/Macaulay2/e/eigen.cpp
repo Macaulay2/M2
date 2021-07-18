@@ -53,15 +53,15 @@ void fill_from_MatrixXmp(const MatrixXmpCC& orig, LMatrixCCC& result)
   for (int r=0; r<numrows; r++)
     for (int c=0; c<numcols; c++)
       result.ring().set_from_complex_mpfr(result.entry(r,c),
-                                          orig(r,c).real().mpfr_srcptr(),
-                                          orig(r,c).imag().mpfr_srcptr());
+      orig(r,c).real().mpfr_srcptr(),
+      orig(r,c).imag().mpfr_srcptr());
 }
 
 bool SVD(const LMatrixRRR *A,
-         LMatrixRRR *Sigma,
-         LMatrixRRR *U,
-         LMatrixRRR *VT
-         )
+  LMatrixRRR *Sigma,
+  LMatrixRRR *U,
+  LMatrixRRR *VT
+)
 {
   auto old_prec = Real::get_default_prec(); 
   Real::set_default_prec(A->ring().get_precision());
@@ -71,7 +71,7 @@ bool SVD(const LMatrixRRR *A,
   // Transform matrices back.
 
   MatrixXmp AXmp(A->numRows(), A->numColumns());
-    
+  
   fill_to_MatrixXmp(*A, AXmp);
 
   Eigen::JacobiSVD<MatrixXmp> svd(AXmp, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -89,10 +89,10 @@ bool SVD(const LMatrixRRR *A,
 }
 
 bool SVD(const LMatrixCCC *A,
-         LMatrixRRR *Sigma,
-         LMatrixCCC *U,
-         LMatrixCCC *VT
-         )
+  LMatrixRRR *Sigma,
+  LMatrixCCC *U,
+  LMatrixCCC *VT
+)
 {
   auto old_prec = Real::get_default_prec(); 
   Real::set_default_prec(A->ring().get_precision());
@@ -111,10 +111,10 @@ bool SVD(const LMatrixCCC *A,
 }
 
 bool SVD_divide_conquer(const LMatrixRRR *A,
-         LMatrixRRR *Sigma,
-         LMatrixRRR *U,
-         LMatrixRRR *VT
-         )
+  LMatrixRRR *Sigma,
+  LMatrixRRR *U,
+  LMatrixRRR *VT
+)
 {
   auto old_prec = Real::get_default_prec(); 
   Real::set_default_prec(A->ring().get_precision());
@@ -133,10 +133,10 @@ bool SVD_divide_conquer(const LMatrixRRR *A,
 }
 
 bool SVD_divide_conquer(const LMatrixCCC *A,
-         LMatrixRRR *Sigma,
-         LMatrixCCC *U,
-         LMatrixCCC *VT
-         )
+  LMatrixRRR *Sigma,
+  LMatrixCCC *U,
+  LMatrixCCC *VT
+)
 {
   auto old_prec = Real::get_default_prec(); 
   Real::set_default_prec(A->ring().get_precision());
@@ -265,6 +265,48 @@ bool eigenvectors_hermitian(const LMatrixCCC *A, LMatrixRRR *eigenvals, LMatrixC
   Eigen::SelfAdjointEigenSolver<MatrixXmp> es(AXmp);
   fill_from_MatrixXmp(es.eigenvalues(), *eigenvals);
   fill_from_MatrixXmp(es.eigenvectors(), *eigenvecs);
+
+  Real::set_default_prec(old_prec);
+  return true;
+}
+
+bool least_squares(const LMatrixRRR *A,
+  const LMatrixRRR *B,
+  LMatrixRRR *X
+)
+{
+  auto old_prec = Real::get_default_prec(); 
+  Real::set_default_prec(A->ring().get_precision());
+
+  MatrixXmp AXmp(A->numRows(), A->numColumns());
+  fill_to_MatrixXmp(*A, AXmp);
+  MatrixXmp BXmp(B->numRows(), B->numColumns());
+  fill_to_MatrixXmp(*B, BXmp);
+
+  Eigen::BDCSVD<MatrixXmp> svd(AXmp, Eigen::ComputeThinU | Eigen::ComputeThinV);
+  
+  fill_from_MatrixXmp(svd.solve(BXmp), *X);
+
+  Real::set_default_prec(old_prec);
+  return true;
+}
+
+bool least_squares(const LMatrixCCC *A,
+  const LMatrixCCC *B,
+  LMatrixCCC *X
+)
+{
+  auto old_prec = Real::get_default_prec(); 
+  Real::set_default_prec(A->ring().get_precision());
+
+  MatrixXmpCC AXmp(A->numRows(), A->numColumns());
+  fill_to_MatrixXmp(*A, AXmp);
+  MatrixXmpCC BXmp(B->numRows(), B->numColumns());
+  fill_to_MatrixXmp(*B, BXmp);
+
+  Eigen::BDCSVD<MatrixXmpCC> svd(AXmp, Eigen::ComputeThinU | Eigen::ComputeThinV);
+  
+  fill_from_MatrixXmp(svd.solve(BXmp), *X);
 
   Real::set_default_prec(old_prec);
   return true;
