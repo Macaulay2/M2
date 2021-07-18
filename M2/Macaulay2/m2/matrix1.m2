@@ -377,7 +377,8 @@ subquotient(Module,Matrix,Nothing) := (F,g,r) -> (
      subquotient(g,r))
 subquotient(Module,Nothing,Nothing) := (F,g,r) -> F
 
-Matrix ** Matrix := Matrix => ((f,g) -> (
+Matrix ** Matrix := Matrix => (A, B) -> tensor(A, B)
+tensor(Matrix, Matrix) := Matrix => {} >> opts -> ((f, g) -> (
      samering(target f,target g);
      samering(source f,source g);
      R := ring target f;

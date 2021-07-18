@@ -729,7 +729,7 @@ compositions(ZZ,ZZ,ZZ) := (nparts, k, maxelem) -> (
 
 
 
-tensor(Ring, List) := o -> (R,L) -> (
+tensor(Ring, List) := {} >> o -> (R,L) -> (
     --note that A**B**C**..**D = (((A**B)**C)**..**D) = tensor(R,{A..D}).
     --The order matters for chain complexes; maybe not for modules.
     --

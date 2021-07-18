@@ -2048,9 +2048,9 @@ document {
 		    TO [symmetricAlgebra,DegreeLift],
 		    TO [symmetricAlgebra,DegreeMap],
 		    TO [symmetricAlgebra,Join],
-		    TO [tensor,DegreeLift],
-		    TO [tensor,DegreeMap],
-		    TO [tensor,Join],
+		    TO [(tensor, Monoid, Monoid),DegreeLift],
+		    TO [(tensor, Monoid, Monoid),DegreeMap],
+		    TO [(tensor, Monoid, Monoid),Join],
 		    }
 	       },
 	  LI { "functionality removed or changed:",

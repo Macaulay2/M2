@@ -29,25 +29,23 @@ eliminationInfo Ring := (cacheValue symbol eliminationInfo) (R -> (
 -- General intersect method
 -----------------------------------------------------------------------------
 
-intersect List     :=
-intersect Sequence := -* [same as input type] => *- true >> opts -> L -> (
-    if not #L > 0 then error "intersect: expected at least one object";
+-- intersect is now declared as a binary associative method in shared.m2,
+-- so the methods (intersect, Sequence) and (intersect, List) are pre-installed.
+-- Here, we override (intersect, List) with a specialized method for handling a uniform list.
+-- As a backup, at the end the List is converted to a Sequence.
+intersect List := true >> opts -> L -> (
     -- This will be the type of the result.
-    type :=
-    -- TODO: simplify this by either removing MonomialIdeal from top level
-    -- or write a function to find a common category for a list of objects
-    if all(L, l -> instance(l, Ideal))  then class L#0 else -- either Ideal or MonomialIdeal
-    if uniform toList L                 then class L#0
-    else error "intersect: expected objects of the same type";
-    -- In a sense, the method is installed on the output type, not the input types
-    -- e.g. Module.intersect
-    func := lookup(symbol intersect, type);
-    if func =!= null then func(opts, L)
-    else error("intersect: no method for objects of type " | synonym type))
+    type := if uniform toList L then class L#0;
+    -- We look for the specialized function based on the output type
+    -- rather than the input types; e.g. Module.intersect
+    func := if type =!= null then lookup(symbol intersect, type);
+    if func =!= null then func(opts, L) else intersect(opts, toSequence L))
 
 -----------------------------------------------------------------------------
 -- Intersection of ideals and modules
 -----------------------------------------------------------------------------
+
+doTrim := (opts, C) -> if opts.MinimalGenerators then trim C else C;
 
 intersectHelper := (L, key, opts) -> (
     -- For now, this is only for intersection of ideals and modules
@@ -55,11 +53,10 @@ intersectHelper := (L, key, opts) -> (
     if not same apply(L, ring) then error "intersect: expected objects in the same ring";
 
     strategy := opts.Strategy;
-    doTrim := if opts.MinimalGenerators then trim else identity;
 
     C := runHooks(key, (opts, L), Strategy => strategy);
 
-    if C =!= null then doTrim C else if strategy === null
+    if C =!= null then doTrim(opts, C) else if strategy === null
     then error("no applicable method for ", toString key)
     else error("assumptions for intersect strategy ", toString strategy, " are not met"))
 
@@ -71,14 +68,28 @@ moduleIntersectOpts := {
     MinimalGenerators => true
     }
 
-intersect Ideal  := Ideal  =>  idealIntersectOpts >> opts -> identity
-intersect Module := Module => moduleIntersectOpts >> opts -> identity
+-- ideally this should be unnecessary, but some code seems to depend on this
+intersect Ideal  := Ideal  =>  idealIntersectOpts >> opts -> I -> doTrim(opts, I)
+intersect Module := Module => moduleIntersectOpts >> opts -> M -> doTrim(opts, M)
 
+-- intersect is a MethodFunctionBinary, so arbitrary lists
+-- or sequences are handles associatively from left, that is:
+--   installing a method (intersect, T, T) => T enables intersect(T, T, ...)
+--   installing a method (intersect, S, T) => T enables intersect(S, T, T, ...)
+--   installing a method (intersect, S, S) => S enables intersect(S, S, T, T, ...)
+--   installing a method (intersect, T, S) => S enables intersect(S, T, S, T, ...)
+intersect(Ideal,  Ideal)  :=  Ideal =>  idealIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, Ideal,  Ideal),  opts)
+intersect(Module, Module) := Module => moduleIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, Module, Module), opts)
+
+-- Specializations for intersecting many objects at once, e.g. Modules,
+-- can be installed on (intersect, List), which calls T.intersect
 Ideal.intersect  =  idealIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, Ideal,  Ideal),  opts)
 Module.intersect = moduleIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, Module, Module), opts)
 
 -----------------------------------------------------------------------------
 
+-- The algorithm below is optimized for intersecting all modules at once,
+-- but since intersect is a MethodFunctionBinary, it is only used by (intersect, List)
 algorithms#(intersect, Module, Module) = new MutableHashTable from {
     Default => (opts, L) -> (
 	M := L#0;

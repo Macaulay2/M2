@@ -1,6 +1,6 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
--- TODO: seems to need ofcm.m2 for monoid
+-- TODO: seems to need ofcm.m2 for monoid and tensor
 -- TODO: seems to need quotring.m2 for isQuotientOf
 needs "methods.m2"
 needs "enginering.m2"

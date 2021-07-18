@@ -178,7 +178,6 @@ tensorProduct Sequence := args -> (
     S := meth args;
     if y =!= null then y#key = S;
     S))
-tensor(Matrix, Matrix) := Matrix => options -> (f,g) -> f**g;
 
 LabeledModule.tensorProduct = T -> (
   L := toList T;
@@ -194,7 +193,7 @@ LabeledModule.tensorProduct = T -> (
       symbol basisList => productList apply(L, l -> basisList l),
       symbol cache => new CacheTable}))
 LabeledModule ** LabeledModule := tensorProduct
-tensor(LabeledModule, LabeledModule) := LabeledModule => o -> (F,E) -> F ** E
+tensor(LabeledModule, LabeledModule) := LabeledModule => {} >> o -> (F,E) -> F ** E
 
 LabeledModuleMap = new Type of HashTable
 LabeledModuleMap.synonym = "map of labeled modules"
@@ -249,8 +248,8 @@ LabeledModule#id = E -> map(E,E,1)
 LabeledModuleMap * LabeledModuleMap := LabeledModuleMap => (f,g) -> 
 map(target f, source g, matrix f * matrix g)
 
-tensor(LabeledModuleMap,LabeledModuleMap) := LabeledModuleMap => o -> (m,n) -> 
-map((target m)**(target n), (source m)**(source n), (matrix m)**(matrix n))
+tensor(LabeledModuleMap, LabeledModuleMap) := LabeledModuleMap => {} >> o -> (m, n) -> (
+    map((target m)**(target n), (source m)**(source n), (matrix m)**(matrix n)))
 LabeledModuleMap ** LabeledModuleMap := LabeledModuleMap => (f,g) -> tensor(f,g)
 
 LabeledModuleMap.tensorProduct = T -> fold(tensor, T)

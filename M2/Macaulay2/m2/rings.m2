@@ -13,6 +13,8 @@ Ring == ZZ := (R,i) -> (
      else error "comparison of ring with nonzero integer encountered"
      )
 
+options Ring := x -> null
+
 use Ring := x -> ( if x.?use then x.use x; x)
 
 ZZ == Ring := (i,R) -> R == i

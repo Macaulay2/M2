@@ -661,35 +661,6 @@ assert( toString tally {1,1,1,2,1,3,2} === "new Tally from {1 => 4, 2 => 2, 3 =>
 assert( tally {1,1,1,2,1,3,2} === new Tally from {(1,4),(2,2),(3,1)} )
 
 
-
---
-assert( toString Tor == "Tor" )
-
-
---
-R = ZZ/101[x,y]
-assert(
-     intersect(image matrix {{1},{x}}, image matrix {{x}, {x^2}})
-     == image matrix {{x}, {x^2}}
-     )
-assert(
-     intersect(image matrix {{1},{x}}, image matrix {{x}, {x^3}}) ==  0
-     )
-assert( intersect( ideal(x^2,y), ideal (x,y^2)) == ideal (y^2, x^2, x*y) )
-
-
---
-R = ZZ/101[a..d]
-assert(
-     intersect(
-	  subquotient(matrix {{a}},matrix {{d}}),
-	  subquotient(matrix {{b}},matrix{{d}})
-	  )
-     ==
-     subquotient(matrix {{a*b}},matrix {{d}})
-     )
-
-
 --
 R = ZZ/101[a..c]
 I = image vars R
