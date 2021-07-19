@@ -1266,10 +1266,14 @@ inline bool leastSquares(const DMatRRR& A,
                          DMatRRR& X,
                          bool assume_full_rank)
 {
+#if 1
+  return EigenM2::least_squares(&A, &B, &X);
+#else
   if (assume_full_rank)
     return Lapack::least_squares(&A, &B, &X);
   else
     return Lapack::least_squares_deficient(&A, &B, &X);
+#endif
 }
 
 
@@ -1281,10 +1285,10 @@ inline bool SVD(const DMatRRR& A,
 {
   if (strategy == 1) return EigenM2::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
   return EigenM2::SVD(&A, &Sigma, &U, &Vt);
-#if 0  
+#if 0
   if (strategy == 1) return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
   return Lapack::SVD(&A, &Sigma, &U, &Vt);
-#endif  
+#endif
 }
 
 inline void clean(gmp_RR epsilon, DMatRRR& mat)
@@ -1350,10 +1354,14 @@ inline bool leastSquares(const DMatCCC& A,
                          DMatCCC& X,
                          bool assume_full_rank)
 {
+#if 1
+  return EigenM2::least_squares(&A, &B, &X);
+#else
   if (assume_full_rank)
     return Lapack::least_squares(&A, &B, &X);
   else
     return Lapack::least_squares_deficient(&A, &B, &X);
+#endif
 }
 
 inline bool SVD(const DMatCCC& A,
