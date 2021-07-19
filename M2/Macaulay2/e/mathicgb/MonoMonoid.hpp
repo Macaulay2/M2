@@ -573,7 +573,8 @@ public:
     // for unaligned access. Performance seems to be no worse than for using
     // 32 bit integers directly.
 
-    if (sizeof(Exponent) != 4 || (!StoreHash && !StoreOrder))
+    if (sizeof(Exponent) != 4 || (!StoreHash && !StoreOrder) ||
+        __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
       return isProductOf(a, b, ab);
 
     uint64 orOfXor = 0;
@@ -602,7 +603,8 @@ public:
     ConstMonoRef a1b,
     ConstMonoRef a2b
   ) const {
-    if (sizeof(Exponent) != 4 || (!StoreHash && !StoreOrder))
+    if (sizeof(Exponent) != 4 || (!StoreHash && !StoreOrder) ||
+        __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
       return (isProductOf(a1, b, a1b) && isProductOf(a2, b, a2b));
 
     uint64 orOfXor = 0;
