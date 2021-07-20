@@ -497,8 +497,13 @@ new SVG from GraphicsObject := (S,g) -> (
 --	"id" => tag,
 	"style" => concatenate("width:",toString g.cache.SizeX,"em;",
 	    "height:",toString g.cache.SizeY,"em;",
-	    "stroke-linejoin:round;",
-	    if not g#?"stroke-width" then "stroke-width:1%", -- define a default stroke-width
+	    if not g#?"stroke-linejoin" then "stroke-linejoin:round;",
+	    if not g#?"stroke" then "stroke:black;",
+	    if not g#?"stroke-opacity" then "stroke-opacity:1;",
+	    if not g#?"fill" then "fill:none;",
+	    if not g#?"fill-opacity" then "fill-opacity:1;",
+	    if not g#?"vertical-align" then "vertical-align:middle;",
+	    if not g#?"stroke-width" then "stroke-width:1%;", -- define a default stroke-width
 	),
 	"viewBox" => concatenate between(" ",toString \ {r#0_0,-r#1_1,r#1_0-r#0_0,r#1_1-r#0_1}),
 	"data-pmatrix" => jsString p
@@ -1164,7 +1169,7 @@ multidoc ///
   Key
    GraphicsType
   Headline
-   A particular type of type used by VectorGraphics, similar to @ TO{SelfInitializingType}.
+   A particular type of type used by VectorGraphics, similar to SelfInitializingType.
 ///
 undocumented { -- there's an annoying conflict with NAG for Point, Points
     Contents, TextContent, HtmlContent, SVGElement, Point, Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY,
