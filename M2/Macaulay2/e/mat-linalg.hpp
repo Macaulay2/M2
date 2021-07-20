@@ -3,6 +3,8 @@
 #ifndef _mat_linalg_hpp_
 #define _mat_linalg_hpp_
 
+#define NO_LAPACK
+
 /**
  * \ingroup matrices
  */
@@ -1117,10 +1119,16 @@ inline bool leastSquares(const DMatRR& A,
                          DMatRR& X,
                          bool assume_full_rank)
 {
+#ifndef NO_LAPACK
   if (assume_full_rank)
     return Lapack::least_squares(&A, &B, &X);
   else
     return Lapack::least_squares_deficient(&A, &B, &X);
+#else
+  // place eigen code here
+  throw exc::engine_error( "not implemented!!!");
+  return false; // indicates error
+#endif
 }
 
 inline bool SVD(const DMatRR& A,
