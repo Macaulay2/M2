@@ -73,7 +73,7 @@ intersect Ideal  := Ideal  =>  idealIntersectOpts >> opts -> I -> doTrim(opts, I
 intersect Module := Module => moduleIntersectOpts >> opts -> M -> doTrim(opts, M)
 
 -- intersect is a MethodFunctionBinary, so arbitrary lists
--- or sequences are handles associatively from left, that is:
+-- or sequences are handled associatively from left, that is:
 --   installing a method (intersect, T, T) => T enables intersect(T, T, ...)
 --   installing a method (intersect, S, T) => T enables intersect(S, T, T, ...)
 --   installing a method (intersect, S, S) => S enables intersect(S, S, T, T, ...)

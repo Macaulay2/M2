@@ -1,4 +1,3 @@
-
 --		Copyright 1993-2002 by Daniel R. Grayson
 -*
   Methods are the most common type of dynamic dispatch, along with Hooks.
@@ -31,7 +30,7 @@ noMethod       = (M, args, outputs) -> toString stack join( {line0 M},
 	i -> printarg(toString (i+1), args#i, if outputs#?i then outputs#i else false))
     else {   printarg(" ",            args,   false) }) -- TODO: do better here, in what way?
 
--- TODO: what does this for exactly?
+-- TODO: what is this for exactly?
 badClass := (meth,i,args) -> (
      if i == -1 then error(silentRobustString(45,3,meth),": expected an output class, but got: ", silentRobustString(45,3,args))
      else error(silentRobustString(45,3,meth),": expected argument ",toString (i+1)," to be a type, but it was: ", silentRobustString(45,3,args#i)))
@@ -70,9 +69,9 @@ notImplemented = x -> error concatenate between(" ", splice {x, "not implemented
 
 -----------------------------------------------------------------------------
 
--- see fold.m2
+-- see fold.m2, where this is turned into a method
 -- TODO: add Left associative vs Right associative methods
-foldL := (f, x, L) -> (scan(L, y -> x = f(x, y)); x)
+foldL = (f, x, L) -> (scan(L, y -> x = f(x, y)); x)
 
 -- TODO: combine these, if it doesn't hurt recursion limits
 -- Common code for methods without options

@@ -141,7 +141,6 @@ Node
   Key
     (tensor, RingMap, Matrix)
     (tensor, RingMap, Module)
-    (tensor, Ring, RingMap)
     (symbol**, RingMap, Matrix)
     (symbol**, RingMap, Module)
   Headline
@@ -165,12 +164,6 @@ Node
       m = matrix{{a,b,c,d}}
       F ** m
       F ** image m
-    Text
-      Optionally, in order to mimic natural mathematical notation $S \otimes_R M$,
-      the codomain $S$ can be given as the first argument.
-    Example
-      tensor(S, F, m)
-      tensor(S, F, image m)
   SeeAlso
     (symbol SPACE, RingMap, Module)
     (symbol SPACE, RingMap, Module)
