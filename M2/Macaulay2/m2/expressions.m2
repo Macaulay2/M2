@@ -533,21 +533,21 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
 matrixOpts := x -> ( -- helper function
-    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null,mutable=>false};
+    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null,MutableMatrix=>false};
     (opts,x) = override(opts,toSequence x);
     if class x === Sequence then x = toList x else if #x === 0 or class x#0 =!= List then x = { x }; -- for backwards compatibility
     (opts,x)
     )
 expressionValue MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
-    m = (if opts#mutable then mutableMatrix else matrix) applyTable(m,expressionValue);
+    m = (if opts#MutableMatrix then mutableMatrix else matrix) applyTable(m,expressionValue);
     if opts.Degrees === null then m else (
     R := ring m;
     map(R^(-opts.Degrees#0),R^(-opts.Degrees#1),entries m)
     ))
 toString'(Function, MatrixExpression) := (fmt,x) -> concatenate(
     (opts,m) := matrixOpts x;
-    if opts#mutable then "mutableMatrix {" else "matrix {",
+    if opts#MutableMatrix then "mutableMatrix {" else "matrix {",
     between(", ",apply(m,row->("{", between(", ",apply(row,fmt)), "}"))),
     "}" )
 -----------------------------------------------------------------------------

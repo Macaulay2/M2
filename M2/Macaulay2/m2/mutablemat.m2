@@ -13,7 +13,7 @@ entries MutableMatrix := m -> (
      applyTable(entries raw m, r -> promote(r,R)))
 toString MutableMatrix := m -> "mutableMatrix " | toString entries m
 precision MutableMatrix := precision @@ ring
-expression MutableMatrix := m -> MatrixExpression {applyTable(entries m, expression), mutable => true}
+expression MutableMatrix := m -> MatrixExpression {applyTable(entries m, expression), MutableMatrix => true}
 texMath MutableMatrix := m -> texMath expression m
 net MutableMatrix := m -> net expression m
 
