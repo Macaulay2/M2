@@ -661,114 +661,18 @@ Node
 	characters, we work over the cyclotomic field obtained by
 	adjoining a primitive 7th root of unity to $\mathbb{Q}$.
 	(This example was precompiled by the package author.)
-    CannedExample
-	i1 : kk=toField(QQ[a]/ideal(sum apply(7,i->a^i)))
-
-	o1 = kk
-
-	o1 : PolynomialRing
-	i2 : R=kk[x,y,z]
-
-	o2 = R
-
-	o2 : PolynomialRing
-	i3 : f4=x^3*y+y^3*z+z^3*x
-
-	      3     3       3
-	o3 = x y + y z + x*z
-
-	o3 : R
-	i4 : H=jacobian transpose jacobian f4
-
-	o4 = {-3} | 6xy 3x2 3z2 |
-	     {-3} | 3x2 6yz 3y2 |
-	     {-3} | 3z2 3y2 6xz |
-
-		     3       3
-	o4 : Matrix R  <--- R
-	i5 : f6=-1/54*det(H)
-
-		5    5      2 2 2      5
-	o5 = x*y  + x z - 5x y z  + y*z
-
-	o5 : R
-	i6 : I=minors(2,jacobian matrix{{f4,f6}})
-
-		       3 5     7      7       4 2 2        4 3     2   5    8    7   
-	o6 = ideal (14x y  - 5x z - 3y z - 35x y z  + 35x*y z  - 7x y*z  + z , 3x y -
-	     ------------------------------------------------------------------------
-	      8      4 3        5 2      5 3      2 2 4       7   8       7     5 2 
-	     y  - 35x y z + 7x*y z  - 14x z  + 35x y z  + 5y*z , x  - 5x*y  - 7x y z
-	     ------------------------------------------------------------------------
-		  2 4 2      3   4      3 5       7
-	     - 35x y z  + 35x y*z  + 14y z  - 3x*z )
-
-	o6 : Ideal of R
-	i7 : RI=res I
-
-	      1      3      2
-	o7 = R  <-- R  <-- R  <-- 0
-
-	     0      1      2      3
-
-	o7 : ChainComplex
-	i8 : betti RI
-
-		    0 1 2
-	o8 = total: 1 3 2
-		 0: 1 . .
-		 1: . . .
-		 2: . . .
-		 3: . . .
-		 4: . . .
-		 5: . . .
-		 6: . . .
-		 7: . 3 .
-		 8: . . .
-		 9: . . 1
-		10: . . .
-		11: . . 1
-
-	o8 : BettiTally
-	i9 : I2=I^2;
-
-	o9 : Ideal of R
-	i10 : RI2=res I2
-
-	       1      6      6      1
-	o10 = R  <-- R  <-- R  <-- R  <-- 0
-
-	      0      1      2      3      4
-
-	o10 : ChainComplex
-	i11 : betti RI2
-
-		     0 1 2 3
-	o11 = total: 1 6 6 1
-		  0: 1 . . .
-		  1: . . . .
-		  2: . . . .
-		  3: . . . .
-		  4: . . . .
-		  5: . . . .
-		  6: . . . .
-		  7: . . . .
-		  8: . . . .
-		  9: . . . .
-		 10: . . . .
-		 11: . . . .
-		 12: . . . .
-		 13: . . . .
-		 14: . . . .
-		 15: . 6 . .
-		 16: . . . .
-		 17: . . 3 .
-		 18: . . . .
-		 19: . . 3 .
-		 20: . . . .
-		 21: . . . 1
-
-	o11 : BettiTally
+    Example
+    	kk=toField(QQ[a]/ideal(sum apply(7,i->a^i)))
+	R=kk[x,y,z]
+	f4=x^3*y+y^3*z+z^3*x
+	H=jacobian transpose jacobian f4
+	f6=-1/54*det(H)
+	I=minors(2,jacobian matrix{{f4,f6}})
+	RI=res I
+	betti RI
+	I2=I^2;
+	RI2=res I2
+	betti RI2
     Text
 	The unique simple group of order 168 acts as described
 	in §2.2 of @HREF("https://doi.org/10.1093/imrn/rnx329",
@@ -782,86 +686,24 @@ Node
 	The action of the group on the resolution of
 	both ideals is described in the second proof of
 	Proposition 8.1.
-    CannedExample
-	i12 : g=matrix{{a^4,0,0},{0,a^2,0},{0,0,a}}
-
-	o12 = | a4 0  0 |
-	      | 0  a2 0 |
-	      | 0  0  a |
-
-		       3        3
-	o12 : Matrix kk  <--- kk
-	i13 : h=matrix{{0,1,0},{0,0,1},{1,0,0}}
-
-	o13 = | 0 1 0 |
-	      | 0 0 1 |
-	      | 1 0 0 |
-
-		       3        3
-	o13 : Matrix ZZ  <--- ZZ
-	i14 : i=(2*a^4+2*a^2+2*a+1)/7 * matrix{
-		  {a-a^6,a^2-a^5,a^4-a^3},
-		  {a^2-a^5,a^4-a^3,a-a^6},
-		  {a^4-a^3,a-a^6,a^2-a^5}
-		  }
-
-	o14 = | 3/7a5+1/7a4+1/7a3+3/7a2-1/7  -1/7a5+2/7a4+2/7a3-1/7a2-2/7
-	      | -1/7a5+2/7a4+2/7a3-1/7a2-2/7 -2/7a5-3/7a4-3/7a3-2/7a2-4/7
-	      | -2/7a5-3/7a4-3/7a3-2/7a2-4/7 3/7a5+1/7a4+1/7a3+3/7a2-1/7 
-	      -----------------------------------------------------------------------
-	      -2/7a5-3/7a4-3/7a3-2/7a2-4/7 |
-	      3/7a5+1/7a4+1/7a3+3/7a2-1/7  |
-	      -1/7a5+2/7a4+2/7a3-1/7a2-2/7 |
-
-		       3        3
-	o14 : Matrix kk  <--- kk
-	i15 : j=-1/(2*a^4+2*a^2+2*a+1) * matrix{
-		  {a^5-a^4,1-a^5,1-a^3},
-		  {1-a^5,a^6-a^2,1-a^6},
-		  {1-a^3,1-a^6,a^3-a}
-		  }
-
-	o15 = | -1/7a5-1/7a4+2/7a2-2/7a+2/7      1/7a5+4/7a4+2/7a3+2/7a2+4/7a+1/7
-	      | 1/7a5+4/7a4+2/7a3+2/7a2+4/7a+1/7 1/7a5-1/7a4+1/7a3+3/7a+3/7      
-	      | -2/7a5-1/7a3+2/7a2+2/7a-1/7      1/7a5+3/7a4-1/7a3+3/7a2+1/7a    
-	      -----------------------------------------------------------------------
-	      -2/7a5-1/7a3+2/7a2+2/7a-1/7  |
-	      1/7a5+3/7a4-1/7a3+3/7a2+1/7a |
-	      2/7a4-1/7a3-2/7a2-1/7a+2/7   |
-
-		       3        3
-	o15 : Matrix kk  <--- kk
-	i16 : G={id_(R^3),i,h,j,g,inverse g};
-	i17 : A1=action(RI,G,Sub=>false)
-
-	o17 = ChainComplex with 6 actors
-
-	o17 : ActionOnComplex
-	i18 : A2=action(RI2,G,Sub=>false)
-
-	o18 = ChainComplex with 6 actors
-
-	o18 : ActionOnComplex
-	i19 : character A1
-
-	o19 = HashTable{0 => GradedCharacter{{0} => Character{1, 1, 1, 1, 1, 1}}                           }
-									    4    2         4    2
-			1 => GradedCharacter{{8} => Character{3, -1, 0, 1, a  + a  + a, - a  - a  - a - 1}}
-			2 => GradedCharacter{{11} => Character{1, 1, 1, 1, 1, 1}}
-					     {13} => Character{1, 1, 1, 1, 1, 1}
-
-	o19 : HashTable
-	i20 : character A2
-
-	o20 = HashTable{0 => GradedCharacter{{0} => Character{1, 1, 1, 1, 1, 1}}                            }
-			1 => GradedCharacter{{16} => Character{6, 2, 0, 0, -1, -1}}
-									     4    2         4    2
-			2 => GradedCharacter{{19} => Character{3, -1, 0, 1, a  + a  + a, - a  - a  - a - 1}}
-									     4    2         4    2
-					     {21} => Character{3, -1, 0, 1, a  + a  + a, - a  - a  - a - 1}
-			3 => GradedCharacter{{24} => Character{1, 1, 1, 1, 1, 1}}
-
-	o20 : HashTable    	
+    Example
+	g=matrix{{a^4,0,0},{0,a^2,0},{0,0,a}}
+	h=matrix{{0,1,0},{0,0,1},{1,0,0}}
+	i=(2*a^4+2*a^2+2*a+1)/7 * matrix{
+    	    {a-a^6,a^2-a^5,a^4-a^3},
+    	    {a^2-a^5,a^4-a^3,a-a^6},
+    	    {a^4-a^3,a-a^6,a^2-a^5}
+    	    }
+	j=-1/(2*a^4+2*a^2+2*a+1) * matrix{
+    	    {a^5-a^4,1-a^5,1-a^3},
+    	    {1-a^5,a^6-a^2,1-a^6},
+    	    {1-a^3,1-a^6,a^3-a}
+    	    }
+	G={id_(R^3),i,h,j,g,inverse g};
+	A1=action(RI,G,Sub=>false)
+	A2=action(RI2,G,Sub=>false)
+	elapsedTime character A1
+	elapsedTime character A2
     Text
 	The character of the resolution of the ideal shows the
 	free module in homological degree two is a direct sum
@@ -879,26 +721,12 @@ Node
 	24 (by local duality); in
 	particular, it is a trivial representation. We can verify
 	this directly.
-    CannedExample
-    	i21 : needsPackage "SymbolicPowers"
-    	
-	o21 = SymbolicPowers
-    	
-	o21 : Package
-	i22 : Is2 = symbolicPower(I,2);
-    	
-	o22 : Ideal of R
-	i23 : M = Is2 / I2;
-	i24 : B = action(M,G,Sub=>false)
-    	
-	o24 = Module with 6 actors
-    	
-	o24 : ActionOnGradedModule
-	i25 : character(B,21)
-    	
-	o25 = GradedCharacter{{21} => Character{1, 1, 1, 1, 1, 1}}
-    	
-	o25 : GradedCharacter
+    Example
+	needsPackage "SymbolicPowers"
+	Is2 = symbolicPower(I,2);
+	M = Is2 / I2;
+	B = action(M,G,Sub=>false)
+	elapsedTime character(B,21)
 
 
 Node
