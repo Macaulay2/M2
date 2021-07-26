@@ -11,8 +11,8 @@ if version#"VERSION" < "1.18" then error "this package requires Macaulay2 versio
 
 newPackage(
     "MultiprojectiveVarieties",
-    Version => "2.2", 
-    Date => "June 9, 2021",
+    Version => "2.3", 
+    Date => "July 26, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -865,7 +865,11 @@ findIsomorphism (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (X
     if dim X == 0 then return verify sendFewPoints(X,Y);
     if linearSpan X != ambient X then (
         pLX := parametrize linearSpan X; X' := pLX^^ X;
+        if X.cache#?"rationalParametrization" and (not X'.cache#?"rationalParametrization") 
+        then X'.cache#"rationalParametrization" = check rationalMap((parametrize X) * inverse(pLX,Verify=>true),X');
         pLY := parametrize linearSpan Y; Y' := pLY^^ Y;
+        if Y.cache#?"rationalParametrization" and (not Y'.cache#?"rationalParametrization") 
+        then Y'.cache#"rationalParametrization" = check rationalMap((parametrize Y) * inverse(pLY,Verify=>true),Y');
         phi := inverse(pLX,Verify=>false) * findIsomorphism(X',Y',Verify=>false) * pLY;
         L := flatten entries gens ideal linearSpan X;
         Phi := rationalMap(ring ambient X,ring ambient Y,
