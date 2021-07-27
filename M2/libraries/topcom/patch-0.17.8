@@ -110,28 +110,3 @@ diff -ur /home/ls/M2/M2/libraries/topcom/tmp/topcom-0.17.8/configure.ac topcom-0
  dnl Checks for header files.
  AC_HEADER_STDC
 
-diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/einsteinium-development/libraries/topcom/tmp/topcom-0.17.8/external/Makefile topcom-0.17.8/external/Makefile
---- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/einsteinium-development/libraries/topcom/tmp/topcom-0.17.8/external/Makefile	2016-07-08 06:46:02.000000000 -0400
-+++ topcom-0.17.8/external/Makefile	2021-07-27 09:46:36.000000000 -0400
-@@ -11,7 +11,7 @@
- CDD_NAME     = cddlib
- 
- GMP_INCLUDES = include/gmp.h
--CDD_INCLUDES = include/cdd.h  include/cddmp.h  include/cddtypes.h  include/setoper.h
-+CDD_INCLUDES = include/cddlib/cdd.h  include/cddlib/cddmp.h  include/cddlib/cddtypes.h  include/cddlib/setoper.h
- 
- GMP_LIBS     = lib/libgmp.a
- CDD_LIBS     = lib/libcddgmp.a
-
-diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/einsteinium-development/libraries/topcom/tmp/topcom-0.17.8/lib-src-reg/LPinterface.hh topcom-0.17.8/lib-src-reg/LPinterface.hh
---- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/einsteinium-development/libraries/topcom/tmp/topcom-0.17.8/lib-src-reg/LPinterface.hh	2015-12-07 04:01:50.000000000 -0500
-+++ topcom-0.17.8/lib-src-reg/LPinterface.hh	2021-07-27 09:45:50.000000000 -0400
-@@ -9,7 +9,7 @@
- #ifndef LPINTERFACE_HH
- #define LPINTERFACE_HH
- 
--#include "setoper.h"
-+#include "cddlib/setoper.h"
- #include "Rational.h"
- 
- // the following preprocessor magic is necessary because the word `Rational'
