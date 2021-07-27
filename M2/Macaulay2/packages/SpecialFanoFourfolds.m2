@@ -10,7 +10,7 @@
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.3", 
-    Date => "July 26, 2021",
+    Date => "July 27, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -232,6 +232,11 @@ recognize SpecialCubicFourfold := (cacheValue "label") (X -> (
     if (d == 48 and e == -29 and n == 6 and invS === (9,2,-5) and degs == {2,3,3,3,3}) then return "C48";
     "NotRecognized"
 ));
+
+SpecialCubicFourfold ** Ring := (X,K) -> (
+    if not isField K then error "expected a field";
+    specialCubicFourfold((surface X) ** K,(projectiveVariety ring X) ** K,NumNodes=>numberNodes(surface X),InputCheck=>0)
+);
 
 fanoMap = method();
 
@@ -992,6 +997,13 @@ recognize SpecialGushelMukaiFourfold := (cacheValue "label") (X -> (
     if ((d == 18 or d == 26) and e == 3 and a == 7 and b == 4 and invS == (11,3,0) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then if numberNodes(S,Verbose=>false) == 1 and discriminant X == 26 then return "mukai26''";
     "NotRecognized"
 ));
+
+SpecialGushelMukaiFourfold ** Ring := (X,K) -> (
+    if not isField K then error "expected a field";
+    S := (surface X) ** K;
+    if (surface X).cache#?"FiniteNumberOfNodes" and (not S.cache#?"FiniteNumberOfNodes") then S.cache#"FiniteNumberOfNodes" = (surface X).cache#"FiniteNumberOfNodes";
+    specialGushelMukaiFourfold(S,(projectiveVariety ring X) ** K,InputCheck=>0)
+);
 
 fanoMap SpecialGushelMukaiFourfold := (cacheValue "fanoMap") (X -> (
     recognize X;
@@ -1810,6 +1822,41 @@ GMtables ZZ := o -> i -> (
     GMtables i
 ); 
 
+GMtables (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (B,V,C) -> (
+    if not ((dim B == 2 or dim B == 3) and degree B == dim B + 1 and dim V == 2 and dim C == 1 and ring ambient C === ring ambient V and ring ambient C === ring ambient B) then error "invalid input for GMtables";
+    psi := rationalMap(ideal B,Dominant=>2);
+    if o.Verify then <<"-- constructing random GM fourfold from the triple..."<<endl;
+    X := specialGushelMukaiFourfold(psi ideal V,InputCheck=>(if o.Verify then 10 else 0),Verbose=>true);
+    if o.Verify then <<"-- GM fourfold correctly constructed."<<endl;
+    if not o.Verify then return X;
+    <<"-- recognizing fourfold..."<<endl;
+    i := recognize X;
+    if not (instance(i,ZZ) and i >= 1 and i <= 21) then error "something went wrong";
+    <<"-- done (got case "<<i<<" of Table 1)"<<endl;
+    <<"-- calculating discriminant..."<<endl;
+    describe X;
+    (a,b) := last cycleClass X;
+    d := discriminant X;
+    D := toString d;
+    if d % 8 == 2 then (
+        if even(a+b) and odd(b) then D = D|"(')"
+        else 
+            if odd(a+b) and even(b) then D = D|"('')"
+            else error "internal error encountered"
+    );
+    <<"-- done (got "<<D<<")"<<endl;
+    <<"-- running parameterCount..."<<endl;
+    (c,h) := parameterCount(X,Verbose=>true);
+    <<"-- parameterCount successfully terminated (got: "<<(c,h)<<")"<<endl;
+    S := surface X;
+    T := "Case "|toString(i)|"/21 of Table 1 in arXiv:2002.07026:"|newline|"deg(S) = "|toString(degree S)|", g(S) = "|toString(sectionalGenus S);
+    T = T|", K_S^2 = "|toString(12*(eulerHilbertPol S) - (eulerCharacteristic S));
+    T = T|", class in G(1,4) = "|toString(first cycleClass X)|","|newline|"codim in M_4 = "|toString(c)|", discriminant = "|D;
+    T = T|","|newline|"h^0(I_{S,Y}(2)) = "|toString(h_0)|", h^0(N_{S,Y}) = "|toString(h_1)|", h^0(N_{S,X}) = "|toString(h_2);
+    << endl << "-- *** --" << endl << T << endl << "-- *** --"<<endl;
+    return X;
+);
+
 fourfoldFromTriple = method(Options => {InputCheck => 1, Verbose => true});
 fourfoldFromTriple (ZZ,VisibleList) := o -> (i,E) -> (
     psi := rationalMap(ideal E_0,Dominant=>2);
@@ -1817,10 +1864,6 @@ fourfoldFromTriple (ZZ,VisibleList) := o -> (i,E) -> (
     X.cache#"label" = i;
     return X;
 );
-
-GMtables (ZZ,Ring,Nothing) := o -> (i,K,nu) -> fourfoldFromTriple(i,GMtables(i,K,Verify=>o.Verify));
-
-GMtables (ZZ,Nothing) := o -> (i,nu) -> fourfoldFromTriple(i,GMtables(i,Verify=>o.Verify));
 
 ------------------------------------------------------------------------
 ---------------- arXiv:2003.07809 --------------------------------------
@@ -2289,7 +2332,7 @@ Inputs => {"phi" => RationalMap => {"an automorphism of ", TEX///$\mathbb{P}^n$/
 Outputs => {RationalMap => {"the induced automorphism of ", TO Grass, TEX///$(k,n)$///}}, 
 EXAMPLE {"K = ZZ/33331;", "phi = rationalMap apply(5, i -> random(1,ring PP_K^4))", "rationalMap(phi,Grass(1,4,K))"}} 
 
-document {Key => {GMtables, (GMtables, ZZ, Ring), (GMtables, ZZ), (GMtables, ZZ, Ring, Nothing), (GMtables, ZZ, Nothing), [GMtables, Verify]}, 
+document {Key => {GMtables, (GMtables, ZZ, Ring), (GMtables, ZZ), [GMtables, Verify]}, 
 Headline => "make examples of reducible subschemes of P^5", 
 Usage => "GMtables(i,K)", 
 Inputs => {"i" => ZZ => {"an integer between 1 and 21"}, "K" => Ring => {"the coefficient ring"}}, 
@@ -2301,7 +2344,7 @@ PARA{"This is basically the same as doing this:"},
 EXAMPLE {"specialGushelMukaiFourfold(\"1\",ZZ/33331);"},
 SeeAlso => (specialGushelMukaiFourfold,String,Ring)} 
 
-undocumented {(GMtables, Ring, String)}; 
+undocumented {(GMtables, Ring, String), (GMtables,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)}; 
 
 document {Key => {parameterCount, (parameterCount, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (parameterCount, Ideal, Ideal), [parameterCount, Verbose]}, 
 Headline => "count of parameters",
@@ -2547,7 +2590,7 @@ PARA{"This function is only useful for testing."},
 EXAMPLE {"X = specialGushelMukaiFourfold \"cubic scroll\"", "X' = clean X", "X === X'"},
 SeeAlso => {(clean,SpecialCubicFourfold)}}
 
-undocumented {(random,SpecialCubicFourfold),(random,SpecialGushelMukaiFourfold)}
+undocumented {(random,SpecialCubicFourfold),(random,SpecialGushelMukaiFourfold),(symbol **,SpecialCubicFourfold,Ring),(symbol **,SpecialGushelMukaiFourfold,Ring)}
 
 ------------------------------------------------------------------------
 ------------------------------- Tests ----------------------------------
