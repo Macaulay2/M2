@@ -901,9 +901,26 @@ if test $BUILD_givaro = yes
 then BUILTLIBS="-lgivaro $BUILTLIBS"
 fi
 
+# We add these directories to the end, so the user can override this by setting CPPFLAGS.
+# /cddlib/ is more modern than /cdd/
+if test -d /usr/local/include/cddlib 
+then CPPFLAGS="$CPPFLAGS -I/usr/local/include/cddlib"
+fi
+if test -d /usr/local/include/cdd 
+then CPPFLAGS="$CPPFLAGS -I/usr/local/include/cdd"
+fi
+if test -d /usr/include/cddlib 
+then CPPFLAGS="$CPPFLAGS -I/usr/include/cddlib"
+fi
+if test -d /usr/include/cdd 
+then CPPFLAGS="$CPPFLAGS -I/usr/include/cdd"
+fi
 AC_LANG(C)
-AC_CHECK_HEADER(cddlib/setoper.h,,[ AC_MSG_RESULT([[cddlib not found, will build]])
-			        BUILD_cddlib=yes])
+AC_CHECK_HEADER(cdd.h,,[ AC_MSG_RESULT([[cddlib not found, will build]])
+			     BUILD_cddlib=yes],
+		       [
+		          #include <setoper.h>
+		       ])
 if test $BUILD_cddlib = yes
 then BUILTLIBS="-lcdd $BUILTLIBS"
 else if test $SHARED = no -a $TRY_STATIC = yes
