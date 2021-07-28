@@ -4,7 +4,7 @@ i1 : QQ[x,y,z];
 
 i2 : I=ideal(x^2-y^2);
 
-o2 : Ideal of QQ[x, y, z]
+o2 : Ideal of QQ[x..z]
 
 i3 : isPrime I
 

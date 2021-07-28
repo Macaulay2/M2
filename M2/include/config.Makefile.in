@@ -126,8 +126,6 @@ M2_BOTH += -Wno-parentheses
 M2_BOTH += -Wno-sign-compare 
 endif
 
-M2_BOTH += -fno-stack-protector
-
 ifeq "@OPTIMIZE@" "yes"
 # gcc 3.3.2 doesn't accept this:
 # M2_BOTH += -Werror=uninitialized
