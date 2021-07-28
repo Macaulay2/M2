@@ -34,10 +34,16 @@ ifeq ($(MACOSX),yes)
 #    o8 = /usr/local/Cellar/singular/4.1.3p2_2/share/factory/
 BUILDLIBS += gftables nauty factory csdp 4ti2 gfan normaliz topcom
 
+# we need an old version of tbb
 # brew install tbb@2020
 LDFLAGS  += "-L/usr/local/opt/tbb@2020/lib"
 CPPFLAGS += "-I/usr/local/opt/tbb@2020/include"
 
+endif
+
+ifeq ($(DEBIAN),yes)
+# cohomcalg, as provided in a debian package, has a bug.  See https://github.com/Macaulay2/M2/issues/2158
+BUILDLIBS += cohomcalg
 endif
 
 DIRECTORY ?= $(shell hostname)$(DIRSUFF)

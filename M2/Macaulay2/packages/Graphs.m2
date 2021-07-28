@@ -52,7 +52,6 @@ newPackage select((
 -- Load configurations
 graphs'DotBinary = if instance((options Graphs).Configuration#"DotBinary", String) then (options Graphs).Configuration#"DotBinary" else "dot";
 
-importFrom_Core {"printerr"}
 if (options Graphs).Configuration#"JpgViewer" != "" then
     printerr "warning: the \"JpgViewer\" configuration option is deprecated"
 

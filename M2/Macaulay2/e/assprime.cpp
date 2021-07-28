@@ -26,8 +26,8 @@ AssociatedPrimes::AssociatedPrimes(const MonomialIdeal *const &I, int cod)
 AssociatedPrimes::~AssociatedPrimes()
 {
   for (int i = 0; i <= nvars + 1; i++)
-    if (exps[i] != 0) deletearray(exps[i]);
-  deletearray(exps);
+    if (exps[i] != 0) freemem(exps[i]);
+  freemem(exps);
 }
 
 int AssociatedPrimes::codimension()

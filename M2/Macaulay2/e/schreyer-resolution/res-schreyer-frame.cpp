@@ -195,10 +195,10 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
       std::cout << "displaying stats" << std::endl;
       showMemoryUsage();
       monoid().show();
-      std::cout << "total setPoly: " << poly_constructor::ncalls << std::endl;
+      std::cout << "total setPoly: " << ResPolynomialConstructor::ncalls << std::endl;
       std::cout << "total setPolyFromArray: "
-                << poly_constructor::ncalls_fromarray << std::endl;
-      std::cout << "total ~poly: " << poly::npoly_destructor << std::endl;
+                << ResPolynomialConstructor::ncalls_fromarray << std::endl;
+      std::cout << "total ~ResPolynomial: " << ResPolynomial::npoly_destructor << std::endl;
 
       std::cout << "total time for make matrix: " << timeMakeMatrix
                 << std::endl;
@@ -590,7 +590,7 @@ void SchreyerFrame::insertLevelZero(res_packed_monomial monom,
 }
 bool SchreyerFrame::insertLevelOne(res_packed_monomial monom,
                                    int deg,
-                                   poly& syzygy)
+                                   ResPolynomial& syzygy)
 {
   insertBasic(1, monom, deg);  // deg is the actual degree of this element.
   component_index comp = monoid().get_component(monom);

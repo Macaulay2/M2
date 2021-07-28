@@ -15,7 +15,7 @@ MarkedGB *MarkedGB::create(const PolynomialRing *originalR0,
 MarkedGB::~MarkedGB()
 {
   delete T;
-  deletearray(leadterms);
+  freemem(leadterms);
 }
 
 void MarkedGB::set_gb(VECTOR(POLY) & polys0) {}

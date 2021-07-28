@@ -1,3 +1,5 @@
+needs "methods.m2"
+
 Program = new Type of HashTable
 ProgramRun = new Type of HashTable
 programPaths = new MutableHashTable
@@ -30,8 +32,8 @@ checkProgramPath = (cmds, pathToTry, prefix, opts) -> (
 	exe := unescapedPathToTry | first separate(" ", cmd);
 	if not fileExists exe then (
 	    verboseLog(exe, " does not exist"); false) else
-	-- check executable bit (0111)
-	if fileMode exe & 73 == 0 then (
+	-- check executable bit
+	if fileMode exe & 0o111 == 0 then (
 	    verboseLog(exe, " exists but is not executable"); false) else (
 	    verboseLog(exe, " exists and is executable");
 	    verboseLog("running ", format(pathToTry | cmd), ":");
@@ -85,20 +87,18 @@ findProgram(String, List) := opts -> (name, cmds) -> (
 	instance(opts.MinimumVersion, Sequence) and
 	class \ opts.MinimumVersion === (String, String)) then
 	error "expected MinimumVersion to be a sequence of two strings";
-    pathsToTry := {};
-    -- try user-configured path first
-    if programPaths#?name then
-	pathsToTry = append(pathsToTry, programPaths#name);
-    -- now try M2-installed path
-    pathsToTry = append(pathsToTry, prefixDirectory | currentLayout#"programs");
-    -- any additional paths specified by the caller
-    pathsToTry = pathsToTry | opts.AdditionalPaths;
-    -- finally, try PATH
-    if getenv "PATH" != "" then
-	pathsToTry = join(pathsToTry,
-	    apply(separate(":", getenv "PATH"), dir ->
-		if dir == "" then "." else dir));
-    pathsToTry = fixPath \ pathsToTry;
+    pathsToTry := fixPath \ join(
+	-- try user-configured path first
+	if programPaths#?name then {programPaths#name} else {},
+	-- now try M2-installed path
+	{prefixDirectory | currentLayout#"programs"},
+	-- any additional paths specified by the caller
+	opts.AdditionalPaths,
+	-- try PATH
+	if getenv "PATH" == "" then {} else apply(separate(":", getenv "PATH"),
+	    dir -> if dir == "" then "." else dir),
+	-- try directory containing M2-binary
+	{bindir});
     prefixes := {(".*", "")} | opts.Prefix;
     errorCode := didNotFindProgram;
     versionFound := "0.0";
@@ -141,6 +141,7 @@ runProgram(Program, String, String) := opts -> (program, name, args) -> (
 	    makeDirectory opts.RunDirectory;
 	"cd " | opts.RunDirectory | " && " ) else "";
     cmd = cmd | program#"path" | addPrefix(name, program#"prefix") | " " | args;
+    if match("\\|", cmd) then cmd = "{ " | cmd | ";}";
     returnValue := run (cmd | " > " | outFile | " 2> " | errFile);
     message := "running: " | cmd | "\n";
     output := get outFile;

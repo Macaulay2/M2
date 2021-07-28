@@ -136,8 +136,8 @@ Visualize
 EquivariantGB
 ExampleSystems
 RationalMaps
-FastLinAlg
-RandomRationalPoints
+FastMinors
+RandomPoints
 SwitchingFields
 SpectralSequences
 SectionRing
@@ -209,6 +209,7 @@ PencilsOfQuadrics
 ThreadedGB
 VectorGraphics
 GKMVarieties
+MonomialIntegerPrograms
 NoetherianOperators
 Hadamard
 StatGraphs
@@ -227,3 +228,5 @@ AInfinity
 LinearTruncations
 ThinSincereQuivers
 Python
+BettiCharacters
+Jets

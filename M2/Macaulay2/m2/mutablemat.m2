@@ -1,5 +1,7 @@
 --		Copyright 2005, 2008 by Daniel R. Grayson and Michael E. Stillman
 
+needs "matrix.m2"
+
 MutableMatrix = new Type of HashTable
 MutableMatrix.synonym = "mutable matrix"
 raw MutableMatrix := m -> m.RawMutableMatrix
@@ -11,7 +13,7 @@ entries MutableMatrix := m -> (
      applyTable(entries raw m, r -> promote(r,R)))
 toString MutableMatrix := m -> "mutableMatrix " | toString entries m
 precision MutableMatrix := precision @@ ring
-expression MutableMatrix := m -> MatrixExpression applyTable(entries m, expression)
+expression MutableMatrix := m -> MatrixExpression {applyTable(entries m, expression), MutableMatrix => true}
 texMath MutableMatrix := m -> texMath expression m
 net MutableMatrix := m -> net expression m
 

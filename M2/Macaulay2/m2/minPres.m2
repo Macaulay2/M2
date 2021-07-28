@@ -1,5 +1,7 @@
 -- This file written by Amelia Taylor <ataylor@stolaf.edu>
 
+needs "matrix1.m2"
+
 ----- This file was last updated on June 22, 2006
 
 --------------------------------------------------------------

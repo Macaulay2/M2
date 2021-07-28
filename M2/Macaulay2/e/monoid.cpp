@@ -29,13 +29,14 @@ void Monoid::set_trivial_monoid_degree_ring(const PolynomialRing *DR)
 
 Monoid::Monoid()
     : nvars_(0),
-      varnames_(0),
-      degvals_(0),
-      heftvals_(0),
-      degree_ring_(0),    // will be set later
-      degree_monoid_(0),  // will be set later
-      mo_(0),
-      monorder_(0),
+      varnames_(nullptr),
+      degvals_(nullptr),
+      heftvals_(nullptr),
+      heft_degree_of_var_(nullptr),
+      degree_ring_(nullptr),    // will be set later
+      degree_monoid_(nullptr),  // will be set later
+      mo_(nullptr),
+      monorder_(nullptr),
       overflow(0),
       exp_size(0),
       monomial_size_(0),
@@ -44,7 +45,8 @@ Monoid::Monoid()
       n_before_component_(0),
       n_after_component_(0),
       component_up_(true),
-      local_vars(0)
+      local_vars(nullptr),
+      first_weights_slot_(-1)
 {
 }
 
@@ -102,9 +104,22 @@ Monoid::Monoid(const MonomialOrdering *mo,
       varnames_(names),
       degvals_(degs),
       heftvals_(hefts),
+      heft_degree_of_var_(nullptr), // set below, except in the trivial case.
       degree_ring_(deg_ring),
       degree_monoid_(deg_ring->getMonoid()),
-      mo_(mo)
+      mo_(mo),
+      monorder_(nullptr), // set below
+      overflow(0),
+      exp_size(0), // set below
+      monomial_size_(0), // set below
+      monomial_bound_(0),
+      n_invertible_vars_(0), // set below
+      n_before_component_(0), // set below
+      n_after_component_(0), // set below
+      component_up_(true), // set below
+      local_vars(nullptr), // set below
+      first_weights_slot_(-1) // set below
+      // nslots: set below
 {
   monorder_ = monomialOrderMake(mo);
 
@@ -398,23 +413,6 @@ void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
       }
 }
 
-#if 0
-// mult is called:
-//   respoly2.cpp
-//   res2.cpp
-//   res.cpp
-//   respoly.cpp
-//   schorder.cpp
-//   freemod.cpp
-//   gbring.cpp
-//   matrix.cpp
-//   polyring.cpp
-//   ringmap.cpp
-//   skewpoly.cpp
-//   weylalg.cpp
-//   mat-kbasis.cpp
-//   freemod2.cpp
-#endif
 int Monoid::num_parts() const { return monorder_->nblocks; }
 int Monoid::n_slots(int nparts) const
 {
@@ -495,7 +493,7 @@ monomial Monoid::make_one() const
 void Monoid::remove(monomial d) const
 {
 #if 0
-//   deletearray(d);
+//   freemem(d);
 #endif
 }
 

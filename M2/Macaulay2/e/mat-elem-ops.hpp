@@ -300,7 +300,7 @@ class MatElementaryOps<DMat<RT> >
         if (!done[j])
           {
             ERROR("expected permutation");
-            deletearray(done);
+            freemem(done);
             return false;
           }
         done[j] = false;
@@ -342,8 +342,8 @@ class MatElementaryOps<DMat<RT> >
           }
       }
     for (size_t c = 0; c < mat.numColumns(); c++) mat.ring().clear(tmp[c]);
-    deletearray(tmp);
-    deletearray(done);
+    freemem(tmp);
+    freemem(done);
     return true;
   }
 
@@ -360,7 +360,7 @@ class MatElementaryOps<DMat<RT> >
         if (!done[j])
           {
             ERROR("expected permutation");
-            deletearray(done);
+            freemem(done);
             return false;
           }
         done[j] = false;
@@ -403,8 +403,8 @@ class MatElementaryOps<DMat<RT> >
           }
       }
     for (size_t r = 0; r < mat.numRows(); r++) mat.ring().clear(tmp[r]);
-    deletearray(tmp);
-    deletearray(done);
+    freemem(tmp);
+    freemem(done);
     return true;
   }
 

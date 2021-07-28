@@ -1,5 +1,10 @@
 -- Copyright 1995-2002 by Michael Stillman
 
+needs "integers.m2" -- for lcm
+needs "matrix1.m2"
+needs "quotring.m2"
+needs "res.m2"
+
 MonomialIdeal = new Type of Ideal
 MonomialIdeal.synonym = "monomial ideal"
 monomialIdeal = method(TypicalValue => MonomialIdeal,Dispatch => Thing)

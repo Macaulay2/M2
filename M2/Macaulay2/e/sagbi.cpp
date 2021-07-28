@@ -229,7 +229,7 @@ Matrix *sagbi::subduct(int numparts, const Matrix *m, const RingMap *phi, GBComp
 // //
 // //   // Extend the binomial ring
 // //
-// //   deleteitem(oldRS);
+// //   freemem(oldRS);
 // //
 // //   // Add the (xi - in(fi)) into this binomial comp.
 // // }

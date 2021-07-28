@@ -1,4 +1,7 @@
 -- TODO: parallelize testing
+-- TODO: merge with capture.m2?
+
+needs "system.m2"
 
 -- TODO: get rid of these
 (hadError, numErrors) = (false, 0);
@@ -46,7 +49,7 @@ ArgNoDebug     = 1 <<  3 -* add --no-debug *-
 ArgNoPreload   = 1 <<  4 -* add --no-preload *-
 ArgNoRandomize = 1 <<  5 -* add --no-randomize *-
 ArgNoReadline  = 1 <<  6 -* add --no-readline *-
-ArgNoSetup     = 1 <<  7 -* add --no-setup *-
+ArgNoCore      = 1 <<  7 -* add --no-core *-
 ArgNoThreads   = 1 <<  8 -* add --no-threads *-
 ArgNoTTY       = 1 <<  9 -* add --no-tty *-
 ArgNoTValues   = 1 << 10 -* add --no-tvalues *-
@@ -89,15 +92,17 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      makeDirectory rundir;
      -* The bits in the binary representation of argmode determine arguments to add.
         If InvertArgs is set, argumentMode modifies the defaultMode rather than overriding them. *-
-     argmode := if 0 < argumentMode & InvertArgs then xor(defaultMode, argumentMode) else argumentMode;
+     argmode := if 0 < argumentMode & InvertArgs then defaultMode ^^ argumentMode else argumentMode;
      -* returns (" "|arg) if all bits in m are set in argmode *-
      readmode := (m, arg) -> if argmode & m == m then " " | arg else "";
      cmd := readmode(SetUlimit, ulimit);
      cmd = cmd | " cd " | rundir | ";";
-     cmd = cmd | readmode(GCMAXHEAP,      "GC_MAXIMUM_HEAP_SIZE=400M");
+     cmd = cmd | readmode(GCMAXHEAP,      if match("--enable-debug", version#"configure arguments")
+	       	    	      	   	  then "GC_MAXIMUM_HEAP_SIZE=800M"
+	       	    	      	   	  else "GC_MAXIMUM_HEAP_SIZE=400M");
      cmd = cmd | readmode(GCSTATS,        "GC_PRINT_STATS=1");
      cmd = cmd | readmode(GCVERBOSE,      "GC_PRINT_VERBOSE_STATS=1");
-     cmd = cmd | " " | format toAbsolutePath commandLine#0;
+     cmd = cmd | " " | format(bindir | "M2-binary");
      if argmode =!= defaultMode or not usermode then
      cmd = cmd | readmode(ArgQ,           "-q");
      cmd = cmd | readmode(ArgInt,         "--int");
@@ -107,7 +112,7 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      cmd = cmd | readmode(ArgNoPreload,   "--no-preload");
      cmd = cmd | readmode(ArgNoRandomize, "--no-randomize");
      cmd = cmd | readmode(ArgNoReadline,  "--no-readline");
-     cmd = cmd | readmode(ArgNoSetup,     "--no-setup");
+     cmd = cmd | readmode(ArgNoCore,      "--no-core");
      cmd = cmd | readmode(ArgNoThreads,   "--no-threads");
      cmd = cmd | readmode(ArgNoTTY,       "--no-tty");
      cmd = cmd | readmode(ArgNoTValues,   "--no-tvalues");

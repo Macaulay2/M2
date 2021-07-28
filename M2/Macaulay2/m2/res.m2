@@ -1,5 +1,7 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 
+needs "chaincomplexes.m2"
+
 inf := t -> if t === infinity then -1 else t
 
 spots := C -> select(keys C, i -> class i === ZZ)

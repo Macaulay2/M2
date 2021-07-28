@@ -95,7 +95,7 @@ void gb2_comp::remove_pair(s_pair *&p)
   p->second = NULL;
   p->next = NULL;
   M->remove(p->lcm);
-  deleteitem(p);
+  freemem(p);
   p = NULL;
 }
 
@@ -224,7 +224,7 @@ void gb2_comp::find_pairs(gb_elem *p)
           s_pair *q = new_ring_pair(p, find_pairs_lcm);
           elems.insert(new Bag(q, vplcm));
         }
-      deletearray(find_pairs_exp);
+      freemem(find_pairs_exp);
     }
 
   // Add in syzygies arising from a base ring
@@ -307,7 +307,7 @@ void gb2_comp::find_pairs(gb_elem *p)
   // Remove the local variables
   M->remove(find_pairs_m);
   M->remove(f_m);
-  deletearray(find_pairs_lcm);
+  freemem(find_pairs_lcm);
 }
 
 void gb2_comp::compute_s_pair(s_pair *p)
@@ -393,7 +393,7 @@ void gb2_comp::gb_reduce(gbvector *&f, gbvector *&fsyz)
       emit_wrapped(o.str());
     }
   f = head.next;
-  deletearray(div_totalexp);
+  freemem(div_totalexp);
 }
 
 void gb2_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
@@ -455,7 +455,7 @@ void gb2_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
   f = head.next;
 
   fsyz = fsyzb.value();
-  deletearray(div_totalexp);
+  freemem(div_totalexp);
 }
 
 void gb2_comp::reduce(gbvector *&f, gbvector *&fsyz) { gb_reduce(f, fsyz); }

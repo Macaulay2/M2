@@ -51,7 +51,6 @@ newPackage select((
 posets'Precompute = if instance((options Posets).Configuration#"DefaultPrecompute", Boolean) then (options Posets).Configuration#"DefaultPrecompute" else true;
 posets'SuppressLabels = if instance((options Posets).Configuration#"DefaultSuppressLabels", Boolean) then (options Posets).Configuration#"DefaultSuppressLabels" else true;
 
-importFrom_Core {"printerr"}
 if (options Posets).Configuration#"DefaultPDFViewer" != "" then
     printerr "warning: the \"DefaultPDFViewer\" configuration option is deprecated"
 

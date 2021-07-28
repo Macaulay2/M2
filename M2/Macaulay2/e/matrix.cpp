@@ -472,7 +472,7 @@ Matrix /* or null */ *Matrix::sub_matrix(M2_arrayint r, M2_arrayint c) const
       for (; v != NULL; v = v->next)
         if (trans[v->comp] != -1) mat.set_entry(trans[v->comp], i, v->coeff);
     }
-  deletearray(trans);
+  freemem(trans);
   return mat.to_matrix();
 }
 
@@ -664,7 +664,7 @@ Matrix *Matrix::module_tensor(const Matrix *m) const
   FreeModule *G = rows()->tensor(m->cols());
   FreeModule *G1 = m->rows()->tensor(cols());
   G->direct_sum_to(G1);
-  deleteitem(G1);
+  freemem(G1);
 
   MatrixConstructor mat(F, G, nullptr);
 
@@ -779,8 +779,8 @@ Matrix *Matrix::diff(const Matrix *m, int use_coef) const
   const FreeModule *G = G1->tensor(m->cols());
   int *deg = degree_monoid()->make_one();
   degree_monoid()->divide(m->degree_shift(), degree_shift(), deg);
-  deleteitem(F1);
-  deleteitem(G1);
+  freemem(F1);
+  freemem(G1);
 
   MatrixConstructor mat(F, G, deg);
   degree_monoid()->remove(deg);
@@ -836,7 +836,7 @@ Matrix *Matrix::lead_term(int nparts) const
 //       if (rsyz != NULL) Rsyz->remove(rsyz);
 //     }
 //   for (x=0; x<n_cols(); x++)
-//     deleteitem(mis[x]);
+//     freemem(mis[x]);
 // }
 #endif
 
@@ -901,8 +901,8 @@ out:
     int next = 0;
     for (int i = 0; i < n; i++)
       if (exp[i] > 0) result->array[next++] = i;
-    deletearray(exp);
-    deletearray(exp2);
+    freemem(exp);
+    freemem(exp2);
     return result;
   }
 
@@ -937,8 +937,8 @@ out:
     int next = 0;
     for (int i = 0; i < n; i++)
       if (exp[i] > 0) result->array[next++] = i;
-    //deletearray(exp);
-    //deletearray(exp2);
+    //freemem(exp);
+    //freemem(exp2);
     return result;    
   }
 
@@ -1176,9 +1176,9 @@ Matrix /* or null */ *Matrix::koszul_monomials(int nskew,
             }
         }
     }
-  deletearray(aexp);
-  deletearray(bexp);
-  deletearray(result_exp);
+  freemem(aexp);
+  freemem(bexp);
+  freemem(result_exp);
   return mat.to_matrix();
 }
 
@@ -1223,9 +1223,9 @@ Matrix /* or null */ *Matrix::koszul(const Matrix *r, const Matrix *c)
             }
         }
     }
-  deletearray(aexp);
-  deletearray(bexp);
-  deletearray(result_exp);
+  freemem(aexp);
+  freemem(bexp);
+  freemem(result_exp);
   return mat.to_matrix();
 }
 
@@ -1387,8 +1387,8 @@ Matrix *Matrix::compress() const
 //   newf->next = NULL;
 //   f = head.next;
 //
-//   deletearray(exp);
-//   deletearray(scratch_exp);
+//   freemem(exp);
+//   freemem(scratch_exp);
 //   return result;
 // }
 #endif
@@ -1733,7 +1733,7 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
     }
 
   // Remove the garbage memory
-  deletearray(exp);
+  freemem(exp);
   M->remove(mon);
   exponent_table_free(&E);
 
@@ -1800,8 +1800,8 @@ static vec coeffs_of_vec(exponent_table *E,
             }
         }
     }
-  deletearray(exp);
-  deletearray(scratch_exp);
+  freemem(exp);
+  freemem(scratch_exp);
   M->remove(mon);
   P->vec_sort(result);
   return result;
@@ -1971,7 +1971,7 @@ int Matrix::dimension1() const
         }
       for (i = 0; i < n_rows(); i++)
         if (dims[i] > result) result = dims[i];
-      deletearray(dims);
+      freemem(dims);
       return result;
     }
 }

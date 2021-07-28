@@ -1,5 +1,10 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
+needs "gb.m2"
+-- TODO: needs "genmat.m2" but would introduce a cycle
+needs "matrix1.m2"
+needs "quotring.m2"
+
 pivots = method()
 
 pivots Matrix := (p) -> (			    -- I wish this could be in the engine
@@ -348,17 +353,16 @@ addHook((quotient, Matrix, Matrix), Strategy => Default, (opts, f, g) -> (
 	  Degree => degree f' - degree g'  -- set the degree in the engine instead
 	  )))
 
-RingElement // Matrix      := (r,f) -> (r * id_(target f)) // f
-Matrix      \\ RingElement := (f,r) -> r // f
+Number // Matrix :=
+RingElement // Matrix := (r,f) -> (r * id_(target f)) // f
+Matrix \\ Number :=
+Matrix \\ RingElement := (f,r) -> r // f
 
-Number // Matrix := (r,f) -> matrix{{promote(r,ring f)}} // f
-Matrix \\ Number := (f,r) -> r // f
-
-Matrix      // RingElement := (f,r) -> f // (r * id_(target f))
+Matrix // Number :=
+Matrix // RingElement := (f,r) -> f // (r * id_(target f))
+Number \\ Matrix :=
 RingElement \\ Matrix      := (r,f) -> f // r
 
-Matrix // Number := (f,r) -> f // promote(r,ring f)
-Number \\ Matrix := (r,f) -> f // r
 
 remainder'(Matrix,Matrix) := Matrix => (f,g) -> (
      if not isFreeModule source f or not isFreeModule source g

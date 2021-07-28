@@ -246,7 +246,7 @@ int MonomialIdeal::search(const int *m, Bag *&b) const
   int *exp = newarray_atomic(int, get_ring()->n_vars());
   varpower::to_ntuple(get_ring()->n_vars(), m, exp);
   int result = search_expvector(exp, b);
-  deletearray(exp);
+  freemem(exp);
   return result;
 }
 
@@ -842,7 +842,7 @@ MonomialIdeal *MonomialIdeal::borel() const
       borel1(new_elems, bexp, get_ring()->n_vars() - 1, get_ring()->n_vars());
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
-  deletearray(bexp);
+  freemem(bexp);
   return result;
 }
 
@@ -865,7 +865,7 @@ bool MonomialIdeal::is_borel() const
             if (!isthere) return 0;
           }
     }
-  deletearray(bexp);
+  freemem(bexp);
   return 1;
 }
 

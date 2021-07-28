@@ -70,8 +70,8 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
 
   intern_SchreyerOrder(result);
   M->remove(base);
-  deletearray(tiebreaks);
-  deletearray(ties);
+  freemem(tiebreaks);
+  freemem(ties);
   return result;
 }
 
@@ -123,8 +123,8 @@ SchreyerOrder *SchreyerOrder::create(const GBMatrix *m)
 
   intern_SchreyerOrder(result);
   M->remove(base);
-  deletearray(tiebreaks);
-  deletearray(ties);
+  freemem(tiebreaks);
+  freemem(ties);
   return result;
 }
 
@@ -173,7 +173,7 @@ SchreyerOrder *SchreyerOrder::sub_space(M2_arrayint a) const
     else
       {
         ERROR("schreyer order subspace: index out of bounds");
-        deleteitem(result);
+        freemem(result);
         return NULL;
       }
   return result;

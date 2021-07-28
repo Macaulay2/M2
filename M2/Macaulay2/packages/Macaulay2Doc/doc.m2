@@ -213,12 +213,7 @@ document {
      	       integers ", TT "m", " and ", TT "n", " by logical 'and'."}
 	  },
      EXAMPLE "(2^15 + 2^13 + 2^42) & (2^15 + 2^23 + 2^42) == 2^15 + 2^42",
-     SeeAlso => {(symbol |,ZZ,ZZ),xor}
-     }
-
-document {
-     Key => symbol ^^,
-     Headline => "a binary operator"
+     SeeAlso => {(symbol |,ZZ,ZZ),(symbol ^^,ZZ,ZZ)}
      }
 
 undocumented {
@@ -656,7 +651,7 @@ document {
      	       integers ", TT "m", " and ", TT "n", " by logical 'or'."}
 	  },
      EXAMPLE "2^42 | 2^15 == 2^42 + 2^15",
-     SeeAlso => {(symbol &,ZZ,ZZ),xor}
+     SeeAlso => {(symbol &,ZZ,ZZ),(symbol ^^,ZZ,ZZ)}
      }
 
 document {

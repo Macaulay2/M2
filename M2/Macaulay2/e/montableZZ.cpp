@@ -595,7 +595,7 @@ void MonomialTableZZ::find_weak_generators(int nvars,
   fprintf(stderr, "\n\n");
 #endif
   /* We could return T if that is desired */
-  //  deleteitem(T);
+  //  freemem(T);
 }
 
 void MonomialTableZZ::find_strong_generators(int nvars,
@@ -633,7 +633,7 @@ void MonomialTableZZ::find_strong_generators(int nvars,
         T->insert(coeffs[*j], exps[*j], comps[*j], *j);
       }
   /* We could return T if that is desired */
-  //  deleteitem(T);
+  //  freemem(T);
 }
 
 void MonomialTableZZ::show_mon_term(FILE *fil, mon_term *t) const
