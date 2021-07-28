@@ -901,26 +901,32 @@ if test $BUILD_givaro = yes
 then BUILTLIBS="-lgivaro $BUILTLIBS"
 fi
 
+# We add these directories to the end, so the user can override this by setting CPPFLAGS.
+# /cddlib/ is more modern than /cdd/
+if test -d /usr/local/include/cddlib 
+then CPPFLAGS="$CPPFLAGS -I/usr/local/include/cddlib"
+fi
+if test -d /usr/local/include/cdd 
+then CPPFLAGS="$CPPFLAGS -I/usr/local/include/cdd"
+fi
+if test -d /usr/include/cddlib 
+then CPPFLAGS="$CPPFLAGS -I/usr/include/cddlib"
+fi
+if test -d /usr/include/cdd 
+then CPPFLAGS="$CPPFLAGS -I/usr/include/cdd"
+fi
 AC_LANG(C)
-SAVE=$CPPFLAGS
-dnl topcom includes "setoper.h" -- no prefix
-dnl We try 3 different filenames to thwart the caching of results:
-AC_CHECK_HEADER(cdd.h,,[
-  dnl for Ubuntu
-  CPPFLAGS="$SAVE -I/usr/include/cdd"
-  AC_CHECK_HEADER(cddmp.h,,[
-    dnl for Fedora
-    CPPFLAGS="$SAVE -I/usr/include/cddlib"
-    AC_CHECK_HEADER(setoper.h,,CPPFLAGS=$SAVE
-			        AC_MSG_RESULT([[cddlib not found, will build]])
-			        BUILD_cddlib=yes)])],
-    [#include <setoper.h>])
+AC_CHECK_HEADER(cdd.h,,[ AC_MSG_RESULT([[cddlib not found, will build]])
+			     BUILD_cddlib=yes],
+		       [
+		          #include <setoper.h>
+		       ])
 if test $BUILD_cddlib = yes
 then BUILTLIBS="-lcdd $BUILTLIBS"
 else if test $SHARED = no -a $TRY_STATIC = yes
      then SEARCH_LIBRARIES(dd_Equal,"/usr/lib/libcdd.a" "/usr/local/lib/libcdd.a",,
-				    [AC_MSG_ERROR([libcdd.a not found])])
-     else AC_SEARCH_LIBS(dd_Equal,"cdd",,[AC_MSG_ERROR([libcdd not found])])
+				    [AC_MSG_ERROR([cdd.h found but libcdd.a not found])])
+     else AC_SEARCH_LIBS(dd_Equal,"cdd",,[AC_MSG_ERROR([cdd.h found but libcdd not found])])
      fi
 fi
 

@@ -1,6 +1,4 @@
 -- -*- M2-comint -*- hash: -2099623032
-Hello world from process 0 out of 1 processes
--- COMPILE TIME: Feb 24 2021, 10:08:22
 
 i1 : R = CC[x,y]; S = {x^2 - 1/3, x*y - 1}; ourRoots = solveSystem(S);
 
@@ -29,4 +27,3 @@ o7 = 1.73205080756887735414922460641658082304678611432812598193257967
 o7 : CC (of precision 213)
 
 i8 : 
-Bye world from process 0 out of 1 processes
