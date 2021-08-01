@@ -295,8 +295,12 @@ ExternalProject_Add(build-mpfr
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
+if(NOT MPFR_ROOT)
+  set(MPFR_ROOT ${M2_HOST_PREFIX})
+endif()
 set(MPFR_INCLUDE_DIR ${MPFR_INCLUDE_DIRS}) # TODO: make this unnecessary in d/CMakeLists.txt
 _ADD_COMPONENT_DEPENDENCY(libraries mpfr mp MPFR_FOUND)
+
 
 # http://perso.ens-lyon.fr/nathalie.revol/software.html
 ExternalProject_Add(build-mpfi
