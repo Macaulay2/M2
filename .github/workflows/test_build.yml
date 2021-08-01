@@ -92,7 +92,7 @@ jobs:
                   libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
                   libsingular-dev singular-data libmemtailor-dev libmathic-dev libmathicgb-dev libcdd-dev \
                   cohomcalg topcom 4ti2 normaliz coinor-csdp nauty lrslib polymake phcpack w3c-markup-validator \
-                  libtbb-dev # libomp5-12
+                  libtbb-dev qepcad # libomp5-12
 
 # ----------------------
 #   Steps common to all build variants

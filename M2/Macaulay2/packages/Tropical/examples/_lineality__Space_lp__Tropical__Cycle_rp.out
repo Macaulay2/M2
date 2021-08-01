@@ -4,7 +4,7 @@ i1 : QQ[x,y,z];
 
 i2 : I=ideal(x-y);
 
-o2 : Ideal of QQ[x, y, z]
+o2 : Ideal of QQ[x..z]
 
 i3 : T=tropicalVariety I;
 

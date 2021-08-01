@@ -24,7 +24,8 @@ newPackage(
      	     {Name => "Brett Barwick", Email => "bbarwick@uscupstate.edu", HomePage => "http://faculty.uscupstate.edu/bbarwick/"},	     
 	     {Name => "Thomas Enkosky", Email => "tomenk@bu.edu", HomePage => "http://math.bu.edu/people/tomenk/"},	     
 	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelpi.edu/~bstone/"},
-	     {Name => "Jim Vallandingham", Email => "vlandham@gmail.com", HomePage => "http://vallandingham.me/"}
+	     {Name => "Jim Vallandingham", Email => "vlandham@gmail.com", HomePage => "http://vallandingham.me/"},
+	     {Name => "Doug Torrance", Email => "dtorrance@piedmont.edu", HomePage => "https://webwork.piedmont.edu/~dtorrance"}
 -- Contributing Author	     {Name => "Ata Firat Pir", Email => "atafirat@math.tamu.edu"},	     
 -- Contributing Author	     {Name => "Elliot Korte", Email => "ek2872@bard.edu"},	     
 -- Contributing Author	     {Name => "Will Smith", Email => "smithw12321@gmail.com"},		

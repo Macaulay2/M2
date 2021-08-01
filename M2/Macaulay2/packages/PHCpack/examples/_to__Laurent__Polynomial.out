@@ -1,6 +1,4 @@
 -- -*- M2-comint -*- hash: 1886230761
-Hello world from process 0 out of 1 processes
--- COMPILE TIME: Feb 24 2021, 10:08:22
 
 i1 : QQ[x,y,z];
 
@@ -55,4 +53,3 @@ o12 = z  + x
 o12 : P
 
 i13 : 
-Bye world from process 0 out of 1 processes

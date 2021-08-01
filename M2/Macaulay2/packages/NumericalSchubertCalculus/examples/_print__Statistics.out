@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- hash: 1309898240
--- COMPILE TIME: May  9 2021, 16:10:46
 
 i1 : k = 3;
 
@@ -43,6 +42,6 @@ i6 : printStatistics()
 # moves of type {2, 0, 0} = 3
 # moves of type {2, 1, 0} = 1
 # moves of type {2, 2, 0} = 12
-tracking time = .117665
+tracking time = .0911713
 
 i7 : 
