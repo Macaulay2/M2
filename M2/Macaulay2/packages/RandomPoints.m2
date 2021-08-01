@@ -1,8 +1,8 @@
 
 newPackage(
         "RandomPoints",
-    	Version => "1.5",
-    	Date => "July 2nd, 2021",
+    	Version => "1.5.2",
+    	Date => "July 30th, 2021",
     	Authors => {
 	     {Name => "Sankhaneel Bisui", Email => "sbisu@tulane.edu", HomePage=>"https://sites.google.com/view/sankhaneelbisui/home"},
          {Name => "Zhan Jiang", Email => "zoeng@umich.edu", HomePage => "http://www-personal.umich.edu/~zoeng/"},
@@ -465,6 +465,7 @@ getRandomLinearForms(Ring, List) := opts -> (R1, L1) ->(
 randomPointViaDefaultStrategy = method(Options => optRandomPoints);
 randomPointViaDefaultStrategy(ZZ, Ideal) := List => opts -> (n1, I1) -> (
     local fieldSize;
+    tempPtsList := {};
     runDecomp := true;
     runMult1 := false;
     runMult2 := true;
@@ -522,7 +523,7 @@ randomPointViaDefaultStrategy(ZZ, Ideal) := List => opts -> (n1, I1) -> (
 
     if (runDecomp) then (
         if (opts.Verbose) or (debugLevel > 0) then print "randomPointViaDefaultStrategy(step 1a): attempting linear intersection with monomials.";
-        pointsList = pointsList | linearIntersectionNew(n1 - #pointsList, I1, 
+        tempPtsList = linearIntersectionNew(n1 - #pointsList, I1, 
             Homogeneous => opts.Homogeneous,          
             Replacement => Monomial,        
             ExtendField => opts.ExtendField,
@@ -530,6 +531,8 @@ randomPointViaDefaultStrategy(ZZ, Ideal) := List => opts -> (n1, I1) -> (
             DecompositionStrategy => Decompose,        
             DimensionFunction => opts.DimensionFunction,
             Verbose => false);
+        if (tempPtsList === null) then return {}; --this returned there are no points at all
+        pointsList = pointsList | tempPtsList;
         if (#pointsList >= n1) then(
             if (opts.Verbose) or (debugLevel > 0) then print "randomPointViaDefaultStrategy(step 1a):success";
             return pointsList;   
@@ -565,14 +568,16 @@ randomPointViaDefaultStrategy(ZZ, Ideal) := List => opts -> (n1, I1) -> (
     
     if (runDecomp) then (
         if (opts.Verbose) or (debugLevel > 0) then print "randomPointViaDefaultStrategy(step 2a): attempting linear intersection with monomials + binomials.";
-        pointsList = pointsList | linearIntersectionNew(n1 - #pointsList, I1, 
+        tempPtsList = linearIntersectionNew(n1 - #pointsList, I1, 
             Homogeneous => opts.Homogeneous,          
-            Replacement => {0,0,d1Half, d1Half2, 0,0},        
+            Replacement => {0,d1Half, 0, d1Half2, 0,0},        
             ExtendField => opts.ExtendField,
             PointCheckAttempts => 5*(n1 - #pointsList),
             DecompositionStrategy => Decompose,        
             DimensionFunction => opts.DimensionFunction,
             Verbose => false);
+        if (tempPtsList === null) then return {}; --this returned there are no points at all
+        pointsList = pointsList | tempPtsList;
         if (#pointsList >= n1) then return pointsList;     
     );
 
@@ -599,11 +604,12 @@ randomPointViaDefaultStrategy(ZZ, Ideal) := List => opts -> (n1, I1) -> (
             DecompositionStrategy => MultiplicationTable,        
             DimensionFunction => opts.DimensionFunction,
             Verbose => false);
+        if (#pointsList >= n1) then return pointsList;
     );
     
     if (runDecomp) then (
         if (opts.Verbose) or (debugLevel > 0) then print "randomPointViaDefaultStrategy(step 3a): attempting linear intersection with binomials.";
-        pointsList = pointsList | linearIntersectionNew(n1 - #pointsList, I1, 
+        tempPtsList =  linearIntersectionNew(n1 - #pointsList, I1, 
             Homogeneous => opts.Homogeneous,          
             Replacement => Binomial,        
             ExtendField => opts.ExtendField,
@@ -611,6 +617,8 @@ randomPointViaDefaultStrategy(ZZ, Ideal) := List => opts -> (n1, I1) -> (
             DecompositionStrategy => Decompose,        
             DimensionFunction => opts.DimensionFunction,
             Verbose => false);
+        if (tempPtsList === null) then return {}; --this returned there are no points at all
+        pointsList = pointsList | tempPtsList;
         if (#pointsList >= n1) then return pointsList;
     );
 
@@ -624,12 +632,12 @@ randomPointViaDefaultStrategy(ZZ, Ideal) := List => opts -> (n1, I1) -> (
             DecompositionStrategy => MultiplicationTable,        
             DimensionFunction => opts.DimensionFunction,
             Verbose => false);
-    );
-    if (#pointsList >= n1) then return pointsList;
+        if (#pointsList >= n1) then return pointsList;
+    );    
 
     if (runDecomp) then (
         if (opts.Verbose) or (debugLevel > 0) then print "randomPointViaDefaultStrategy(step 4): attempting linear intersection with triinomials.";
-        pointsList = pointsList | linearIntersectionNew(n1 - #pointsList, I1, 
+        tempPtsList =  linearIntersectionNew(n1 - #pointsList, I1, 
             Homogeneous => opts.Homogeneous,          
             Replacement => Trinomial,        
             ExtendField => opts.ExtendField,
@@ -637,6 +645,8 @@ randomPointViaDefaultStrategy(ZZ, Ideal) := List => opts -> (n1, I1) -> (
             DecompositionStrategy => Decompose,        
             DimensionFunction => opts.DimensionFunction,
             Verbose => false);
+        if (tempPtsList === null) then return {}; --this returned there are no points at all
+        pointsList = pointsList | tempPtsList;
         if (#pointsList >= n1) then return pointsList;
     );
     
@@ -650,11 +660,12 @@ randomPointViaDefaultStrategy(ZZ, Ideal) := List => opts -> (n1, I1) -> (
             DecompositionStrategy => MultiplicationTable,        
             DimensionFunction => opts.DimensionFunction,
             Verbose => false);
+        if (#pointsList >= n1) then return pointsList;
     );
 
     if (runDecomp) then (
         if (opts.Verbose) or (debugLevel > 0) then print "randomPointViaDefaultStrategy(step 5a): attempting linear intersection with full.";
-        pointsList = pointsList | linearIntersectionNew(n1 - #pointsList, I1, 
+        tempPtsList = linearIntersectionNew(n1 - #pointsList, I1, 
             Homogeneous => opts.Homogeneous,          
             Replacement => Full,        
             ExtendField => opts.ExtendField,
@@ -662,6 +673,8 @@ randomPointViaDefaultStrategy(ZZ, Ideal) := List => opts -> (n1, I1) -> (
             DecompositionStrategy => Decompose,        
             DimensionFunction => opts.DimensionFunction,
             Verbose => false);
+        if (tempPtsList === null) then return {}; --this returned there are no points at all
+        pointsList = pointsList | tempPtsList;
         if (#pointsList >= n1) then return pointsList;
     );
 
@@ -688,6 +701,7 @@ linearIntersectionNew(ZZ, Ideal) := opts -> (n1, I1) -> (
     --this code is for the non-homogeneous case
     --the idea in this code is simple.  Extend the field.  Intersect with binomials.  
     --Then find the point, either by decompose or with a multiplication table
+    --If this finds no points on a zero dimensional scheme, it returns null (and not just the empty scheme)
     local J2;
     local I3;
     local myDeg;
@@ -784,11 +798,11 @@ linearIntersectionNew(ZZ, Ideal) := opts -> (n1, I1) -> (
     else (
         L2 = apply(checks, t-> getRandomLinearForms(S2, {0,max(0, i-t),0,min(t, i), 0,0}, Homogeneous=>homogFlag, Verify=>true)); --a list of linear forms, some monomial, some binomial
     ); --now we have picked the linear forms, we begin our loop
-    while (i >= 0) do (
+    while (i >= 0) do ( --i loops over dimension
         if opts.Verbose or debugLevel > 0 then print("linearIntersectionNew: Trying intersection with a linear space of dimension " | toString(dim S2 - i));        
         J2 = apply(L2, l -> ideal(l) + I2);
         k = checks-1; --this should change to start at checks-1 and loop backwards
-        while (k >= 0) and (#returnPointsList < n1) do (
+        while (k >= 0) and (#returnPointsList < n1) do ( --this loops over the linear spaces we are working with
             if opts.Verbose or debugLevel > 0 then print("linearIntersectionNew: trying linear intersection #" | toString(k));
             workingIdeal = J2#k;
             
@@ -821,11 +835,11 @@ linearIntersectionNew(ZZ, Ideal) := opts -> (n1, I1) -> (
                     if opts.Verbose or debugLevel > 0 then print("linearIntersectionNew: We found " | toString(#ptList) | " points.");
                     j=0;
                     sortedPtList = sort apply(#ptList, t -> {0, degree (ptList#t), t});                    
-                    while (j < #ptList) and (#returnPointsList < n1) and (sortedPtList#j#0 == 0) do (
+                    while (j < #ptList) and (#returnPointsList < n1) and (sortedPtList#j#0 == 0) do ( --loops over the points we decomposed
                         myDeg = sortedPtList#j#1;                
                         if opts.Verbose or debugLevel > 0 then print("linearIntersectionNew: Looking at a point of degree " | toString(myDeg));
                         if (myDeg == 1) then (
-                            finalPoint = idealToPoint(ptList#(sortedPtList#j#2));                    
+                            finalPoint = idealToPoint(ptList#(sortedPtList#j#2));                                                
                             if (verifyPoint(finalPoint, I2, opts)) then returnPointsList = append(returnPointsList, finalPoint);
                         )
                         else if (opts.ExtendField) and (not (null === conwayPolynomial(pp, d*myDeg)))  then (
@@ -849,6 +863,10 @@ linearIntersectionNew(ZZ, Ideal) := opts -> (n1, I1) -> (
                         );
                         j = j+1;
                     );                                                                                   
+                    if (i == 0) and (#returnPointsList == 0) then (
+                        if (debugLevel > 0) or (opts.Verbose) then print "linearIntersectionNew: this is a <= 0 dimensional variety with no points.";
+                        return null;
+                    );
                 )
                 else if homogFlag and (fastDim1(workingIdeal) == true) then (--we should use MultiplicationTable to do the factoring
                     newPts = multiplicationTableInternal(n1 - #returnPointsList, I2, workingIdeal, sub(ideal(L2#k), S2), ExtendField => opts.ExtendField, Verbose=>opts.Verbose);
@@ -1399,7 +1417,7 @@ isGBDone := (myGB) -> (
 );
 isCodimAtLeast = method(Options => {
     Verbose => false,
-    PairLimit => 100
+    PairLimit => 200
     --DegreeFunction => ( (t,i) -> ceiling((i+1)*t))
 });
 
@@ -1453,7 +1471,7 @@ isCodimAtLeast(ZZ, Ideal) := opts -> (n1, I1) -> (
 
 isDimAtMost = method(Options => {
     Verbose => false,
-    PairLimit => 100
+    PairLimit => 200
     --DegreeFunction => ( (t,i) -> ceiling((i+1)*t))    
 });
 
@@ -2246,3 +2264,14 @@ check RandomPoints
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=RandomPoints pre-install"
 -- End:
+
+--
+--Version notes
+--**Version 1.5
+------Renamed to RandomPoints
+------Added dimViaBezout
+------Improved speed of finding points
+------Removed options related to generic projection (since its performance is relatively lower now)
+------Other minor speed increases
+--**Version 1.5.1
+------Improved randomRationalPoint to identify no rational points on zero dimension schemes more quickly.
