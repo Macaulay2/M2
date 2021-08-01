@@ -66,7 +66,7 @@ VARIABLE = "a";
 pow = (n, lst) -> (
     if n < 0 then error "power of a list is not defined for n negative";
     result := {{}};
-    for i in (0..<n) do result = flatten \ (result ** lst);
+    for i in (0..<n) do result = toList \ flatten \ (result ** lst);
     return result;
 );
 -------------------------------------------------------------------------------
