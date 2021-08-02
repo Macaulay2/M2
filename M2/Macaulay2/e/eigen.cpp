@@ -179,7 +179,7 @@ bool eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigenvals) {
   MatrixXmpCC AXmp(A->numRows(), A->numColumns());
   fill_to_MatrixXmp(*A, AXmp);
 
-  Eigen::SelfAdjointEigenSolver<MatrixXmpRR> es(AXmp, false);
+  Eigen::SelfAdjointEigenSolver<MatrixXmpCC> es(AXmp, false);
   fill_from_MatrixXmp(es.eigenvalues(), *eigenvals);
 
   return true;
@@ -222,7 +222,7 @@ bool eigenvectors_hermitian(const LMatrixCC *A, LMatrixRR *eigenvals, LMatrixCC 
   MatrixXmpCC AXmp(A->numRows(), A->numColumns());
   fill_to_MatrixXmp(*A, AXmp);
 
-  Eigen::SelfAdjointEigenSolver<MatrixXmpRR> es(AXmp);
+  Eigen::SelfAdjointEigenSolver<MatrixXmpCC> es(AXmp);
   fill_from_MatrixXmp(es.eigenvalues(), *eigenvals);
   fill_from_MatrixXmp(es.eigenvectors(), *eigenvecs);
 
