@@ -443,7 +443,7 @@ bool eigenvalues_hermitian(const LMatrixCCC *A, LMatrixRRR *eigenvals) {
   MatrixXmpCCC AXmp(A->numRows(), A->numColumns());
   fill_to_MatrixXmp(*A, AXmp);
 
-  Eigen::SelfAdjointEigenSolver<MatrixXmpRRR> es(AXmp, false);
+  Eigen::SelfAdjointEigenSolver<MatrixXmpCCC> es(AXmp, false);
   fill_from_MatrixXmp(es.eigenvalues(), *eigenvals);
 
   Real::set_default_prec(old_prec);
@@ -502,7 +502,7 @@ bool eigenvectors_hermitian(const LMatrixCCC *A, LMatrixRRR *eigenvals, LMatrixC
   MatrixXmpCCC AXmp(A->numRows(), A->numColumns());
   fill_to_MatrixXmp(*A, AXmp);
 
-  Eigen::SelfAdjointEigenSolver<MatrixXmpRRR> es(AXmp);
+  Eigen::SelfAdjointEigenSolver<MatrixXmpCCC> es(AXmp);
   fill_from_MatrixXmp(es.eigenvalues(), *eigenvals);
   fill_from_MatrixXmp(es.eigenvectors(), *eigenvecs);
 
