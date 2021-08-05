@@ -3,7 +3,7 @@
 #ifndef _mat_linalg_hpp_
 #define _mat_linalg_hpp_
 
-//~ #define NO_LAPACK
+#define NO_LAPACK
 
 /**
  * \ingroup matrices
