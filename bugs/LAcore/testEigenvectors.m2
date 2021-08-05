@@ -24,12 +24,30 @@ testEigenvalues(10,CC_100, false)
 testEigenvalues(10,CC_100, true)
  -- 0.0049021 seconds elapsed
     -- 1.9713247129867907428533091422e-20
+testEigenvalues(10,CC_500, false)
+ -- 0.0409078 seconds elapsed
+    -- 1.39280593400981052652588339458119110841201051959083300602716189728569671590177320071601097969295165428154501503806003629832488221985523415157968449864e-141
+testEigenvalues(10,CC_500, true)
+ -- 0.0047787 seconds elapsed
+    -- 2.37314453273467319706200409330257482872831526251611480857988430382101293847622376528786753379038840631218259974238291004495278506765850906844924935543e-140
 testEigenvalues(100,CC_100, false)
  -- 20.5304 seconds elapsed
     -- 1.62365166256065346336123686143e155
 testEigenvalues(100,CC_100, true)
  -- 1.11957 seconds elapsed
     -- 6.14419188544453999204646582443e170
+testEigenvalues(100,CC_53, false)
+ -- 0.0777056 seconds elapsed
+    -- infinity
+testEigenvalues(100,CC_53, true)
+ -- 0.0155782 seconds elapsed
+    -- infinity
+testEigenvalues(500,CC_53, false)
+ -- 1.16855 seconds elapsed
+    -- 0
+testEigenvalues(500,CC_53, true)
+ -- 0.0769585 seconds elapsed
+    -- 0
     
 testEigenvectors(10,CC_100, false)
  -- 0.0397692 seconds elapsed
@@ -56,4 +74,3 @@ testEigenvectors(500,CC_53, false)
  testEigenvectors(500,CC_53, true)
  -- LAPACK: 0.711708 seconds elapsed
     -- 29.4428352754329
- 
