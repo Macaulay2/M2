@@ -357,7 +357,7 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 	       while s'status === Processing and 1-t0 > theSmallestNumber do (
 		    if 1-t0<=o.EndZoneFactor+theSmallestNumber and not endZone then (
 			 endZone = true;
-			 -- to do: see if this path coinsides with any other path
+			 -- to do: see if this path coincides with any other path
 			 );
 		    if DBG > 4 then << "--- current t = " << t0 << endl;
                     -- monitor numerical stability: perhaps change patches if not stable ???
@@ -935,7 +935,7 @@ trackHomotopy(Homotopy,List) := List => o -> (H,solsS) -> (
 	       while s'status === Processing and 1-t0 > theSmallestNumber do (
 		    if 1-t0<=o.EndZoneFactor+theSmallestNumber and not endZone then (
 			 endZone = true;
-			 -- to do: see if this path coinsides with any other path
+			 -- to do: see if this path coincides with any other path
 			 );
 		    if DBG > 4 then << "--- current t = " << t0 << "; precision = " << precision ring x0 << endl;
              
