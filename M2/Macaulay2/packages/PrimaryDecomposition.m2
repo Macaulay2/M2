@@ -270,7 +270,7 @@ ass0 = I -> (
 --------------------------------------------------------------------
 
 algorithms#(associatedPrimes, Module) = new MutableHashTable from {
-    "Default" => (opts, M0) -> (
+    Default => (opts, M0) -> (
 	-- modified code in ass1 for modules, based on EHV
 	-- returns a MutableList
 	(M, fback) := flattenRingMap M0;
@@ -305,7 +305,7 @@ algorithms#(associatedPrimes, Module) = new MutableHashTable from {
     }
 
 -- Installing hooks for (associatedPrimes, Module)
-scan({"Default"}, strategy ->
+scan({Default}, strategy ->
     addHook(key := (associatedPrimes, Module), algorithms#key#strategy, Strategy => strategy))
 
 --------------------------------------------------------------------

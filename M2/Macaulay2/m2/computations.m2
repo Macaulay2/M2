@@ -115,7 +115,7 @@ cacheComputation Computation := CacheFunction => true >> opts -> container -> ne
 -----------------------------------------------------------------------------
 
 -- toggle printing debug information or collecting data about cache hits
-debug  Computation :=      C -> ComputationDebugLevel#(hash C) = 1 - ComputationDebugLevel#(hash C)
+debug  Computation :=      C -> ComputationDebugLevel#(hash C) = ComputationDebugLevel#(hash C) ^^ 1
 -- print the status of the computation, or cache hit statistics
 status Computation := o -> C -> ComputationCacheStats#(hash C)
 
@@ -124,16 +124,5 @@ cacheHit = method()
 cacheHit Computation := ZZ => C -> if debugLevel > 0 then (
     if not ComputationDebugLevel#?(T := hash C)
     then ComputationDebugLevel#T = ComputationCacheStats#T = 0;
-    if ComputationDebugLevel#T > 0 then printerr("Cache hit on a ", synonym class C, "! 🎉");
+    if ComputationDebugLevel#T & 1 > 0 then printerr("Cache hit on a ", synonym class C, "!");
     ComputationCacheStats#T = ComputationCacheStats#T + 1)
-
--*
--- Here's an obsolete function with a similar objective and rough
--- ideal that used to be in methods.m2, but never caught on:
-computeAndCache := (M, opts, name, goodEnough, computeIt) -> (
-    if M#?name and goodEnough(M#name#0, opts)
-    then M#name#1 else (
-	ret := computeIt(M, opts);
-	M#name = {opts, ret};
-	ret)
-*-
