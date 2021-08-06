@@ -26,6 +26,40 @@ INTERFACE = \
 	NCResolutions/nc-res-computation \
 	Polynomial \
 	monomial-collection \
+	mathicgb/CFile \
+	mathicgb/LogDomain \
+	mathicgb/LogDomainSet \
+	mathicgb/PolyRing \
+	mathicgb/Basis \
+	mathicgb/MonoLookup \
+	mathicgb/PolyBasis \
+	mathicgb/SparseMatrix \
+	mathicgb/QuadMatrix \
+	mathicgb/QuadMatrixBuilder \
+	mathicgb/Scanner \
+	mathicgb/ClassicGBAlg \
+	mathicgb/F4MatrixBuilder \
+	mathicgb/F4MatrixBuilder2 \
+	mathicgb/F4MatrixProjection \
+	mathicgb/F4MatrixReducer \
+	mathicgb/F4ProtoMatrix \
+	mathicgb/F4Reducer \
+	mathicgb/Reducer \
+	mathicgb/TypicalReducer \
+	mathicgb/ReducerDedup \
+	mathicgb/ReducerHash \
+	mathicgb/ReducerHashPack \
+	mathicgb/ReducerNoDedup \
+	mathicgb/ReducerPack \
+	mathicgb/ReducerPackDedup \
+	mathicgb/ModuleMonoSet \
+	mathicgb/PolyHashTable \
+	mathicgb/SPairs \
+	mathicgb/SigPolyBasis \
+	mathicgb/SigSPairQueue \
+	mathicgb/SigSPairs \
+	mathicgb/SignatureGB \
+	mathicgb/io-util \
 	eigen \
 	monomial-sets \
 	mutablecomplex \
@@ -178,13 +212,23 @@ INTERFACE = \
 	weylalg
 
 COMMANDS = \
+	memtailor/Arena \
+	memtailor/BufferPool \
+	memtailor/MemoryBlocks \
+	mathic/BitTriangle \
+	mathic/ColumnPrinter \
+	mathic/DivMask \
+	mathic/Timer \
+	mathic/display \
+	mathic/error \
+	mathicgb/mathicgb \
 	ntl-internal \
 	ntl-debugio \
 	matrix-kbasis \
 	matrix-symm \
 	matrix-sort \
 	ring-vecs \
-        res-a2-gb \
+	res-a2-gb \
 	engine \
 	interface/aring \
 	interface/cra \
@@ -206,6 +250,26 @@ COMMANDS = \
 	franzi-interface
 
 NAMES_H = \
+	mathicgb/Atomic \
+	mathicgb/PrimeField \
+	mathicgb/MonoMonoid \
+	mathicgb/Range \
+	mathicgb/Poly \
+	mathicgb/FixedSizeMonomialMap \
+	mathicgb/KoszulQueue \
+	mathicgb/MathicIO \
+	mathicgb/MonoArena \
+	mathicgb/MonoOrder \
+	mathicgb/MonoProcessor \
+	mathicgb/MonomialMap \
+	mathicgb/NonCopyable \
+	mathicgb/RawVector \
+	mathicgb/ReducerHelper \
+	mathicgb/ScopeExit \
+	mathicgb/StaticMonoMap \
+	mathicgb/Unchar \
+	mathicgb/mtbb \
+	mathicgb/stdinc \
 	f4/f4-types \
 	f4/memblock \
 	VectorArithmetic \

@@ -90,6 +90,7 @@ loadTestDir := pkg -> (
 tests = method()
 tests Package := pkg -> (
     if not pkg#?"test directory loaded" then loadTestDir pkg;
+    if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
     previousMethodsFound = new HashTable from pkg#"test inputs"
     )
 tests String := pkg -> tests needsPackage(pkg, LoadDocumentation => true)
@@ -106,7 +107,6 @@ check(List, Package) := opts -> (L, pkg) -> (
     usermode := if opts.UserMode === null then not noinitfile else opts.UserMode;
     --
     use pkg;
-    if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
     tmp := previousMethodsFound;
     inputs := tests pkg;
     previousMethodsFound = tmp;

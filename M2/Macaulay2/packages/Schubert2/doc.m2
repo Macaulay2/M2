@@ -3188,7 +3188,7 @@ Node
       (S,Q) = bundles X
       L = exteriorPower(2,dual S)
       P = flagBundle({5,1}) --Grothendieck-style PP^5
-      f = map(P,X,L) -- Plucker embedding of GG(1,3) in PP^5
+      f = map(P,X,L) -- Plücker embedding of GG(1,3) in PP^5
       H = last bundles P
       f^* (chern(1,H)) -- hyperplane section, should be sigma_1
       f_* chern(0,S) --expect 2 times hyperplane class since GG(1,3) has degree 2

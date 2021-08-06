@@ -297,7 +297,7 @@ class MyIdealConsumer : public Frobby::IdealConsumer, our_new_delete
   }
   ~MyIdealConsumer()
   {
-    deletearray(exp);
+    freemem(exp);
     J = 0;
   }
   virtual void consume(mpz_ptr *exponentVector)
@@ -344,7 +344,7 @@ static MonomialIdeal *FrobbyAlexanderDual(const MonomialIdeal *I,
   // Now create the consumer object, and call Frobby
   MyIdealConsumer M(I->get_ring(), nv);
   Frobby::alexanderDual(F, topvec, M);
-  deletearray(exp);
+  freemem(exp);
   // Extract the answer as a MonomialIdeal
   return M.result();
 }
@@ -376,7 +376,7 @@ static MonomialIdeal *wrapperFrobbyAlexanderDual(const MonomialIdeal *I,
   if (topvec != 0)
     {
       for (int i = 0; i < top->len; i++) mpz_clear(topvec[i]);
-      deletearray(topvec);
+      freemem(topvec);
     }
 
   return result;

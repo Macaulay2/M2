@@ -64,7 +64,7 @@ ARingGFFlint::~ARingGFFlint()
   fq_zech_ctx_clear(mContext);
   fq_nmod_ctx_clear(mBigContext);
   mPrimitiveElement = 0;
-  deletearray(mPPowers);
+  freemem(mPPowers);
   flint_randclear(mRandomState);
 
   if (mGeneratorComputed) fq_zech_clear(&mCachedGenerator, mContext);

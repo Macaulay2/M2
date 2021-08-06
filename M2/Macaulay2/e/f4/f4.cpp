@@ -159,7 +159,7 @@ int F4GB::mult_monomials(packed_monomial m, packed_monomial n)
 
 void F4GB::load_gen(int which)
 {
-  poly &g = gens[which]->f;
+  GBF4Polynomial &g = gens[which]->f;
 
   row_elem r{};
   r.monom = nullptr;  // This says that this element corresponds to a generator
@@ -181,7 +181,7 @@ void F4GB::load_gen(int which)
 
 void F4GB::load_row(packed_monomial monom, int which)
 {
-  poly &g = gb[which]->f;
+  GBF4Polynomial &g = gb[which]->f;
 
   row_elem r{};
   r.monom = monom;
@@ -449,7 +449,7 @@ void F4GB::make_matrix()
 ///////////////////////////////////////////////////
 // Gaussian elimination ///////////////////////////
 ///////////////////////////////////////////////////
-CoeffVector F4GB::get_coeffs_array(row_elem &r)
+const CoeffVector& F4GB::get_coeffs_array(row_elem &r)
 {
   // If r.coeffs is set, returns that, otherwise returns the coeffs array from
   // the generator or GB element.  The resulting value should not be modified.
@@ -656,8 +656,18 @@ void F4GB::insert_gb_element(row_elem &r)
   // original array
   // Here we copy it over.
 
-  CoeffVector v = (r.coeffs.isNull() ? r.coeffs : mVectorArithmetic->copyCoeffVector(get_coeffs_array(r)));
-  result->f.coeffs.swap(v);
+  //  const CoeffVector& v = (not r.coeffs.isNull() ? r.coeffs : mVectorArithmetic->copyCoeffVector(get_coeffs_array(r)));
+  //  result->f.coeffs.swap(v);
+  if (r.coeffs.isNull())
+    {
+      // this means the actual coeff vector is coming from a GB element.  Copy it into result->f.coeffs
+      CoeffVector v { mVectorArithmetic->copyCoeffVector(get_coeffs_array(r)) };
+      result->f.coeffs.swap(v);
+    }
+  else
+    {
+      result->f.coeffs.swap(r.coeffs);
+    }
   result->f.monoms = Mem->allocate_monomial_array(nlongs);
 
   monomial_word *nextmonom = result->f.monoms;
@@ -682,14 +692,14 @@ void F4GB::insert_gb_element(row_elem &r)
       int *exp = newarray_atomic(int, M->n_vars());
       M->to_intstar_vector(result->f.monoms, exp, x);
       hilbert->addMonomial(exp, x + 1);
-      deletearray(exp);
+      freemem(exp);
     }
 
   // now insert the lead monomial into the lookup table
   varpower_monomial vp = newarray_atomic(varpower_word, 2 * M->n_vars() + 1);
   M->to_varpower_monomial(result->f.monoms, vp);
   lookup->insert_minimal_vp(M->get_component(result->f.monoms), vp, which);
-  deleteitem(vp);
+  freemem(vp);
   // now go forth and find those new pairs
   S->find_new_pairs(is_ideal);
 }

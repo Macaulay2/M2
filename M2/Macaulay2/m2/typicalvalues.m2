@@ -106,7 +106,6 @@ substring(Sequence,String) := String => substring
 substring(ZZ,ZZ,String) := String => substring
 toList Set := toList BasicList := toList String := List => toList
 toSequence BasicList := toSequence String := Sequence => toSequence
-xor(ZZ,ZZ) := ZZ => xor
 ascii String := List => ascii
 ascii List := String => ascii
 remove(HashTable,Thing) := Nothing => remove

@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- hash: 1595612603
--- polymake not present
 
 i1 : QQ[x,y];
 

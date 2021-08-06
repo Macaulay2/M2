@@ -570,7 +570,7 @@ void res2_comp::remove_res2_pair(res2_pair *p)
   if (p == NULL) return;
   R->remove(p->syz);
   delete p->mi;
-  deleteitem(p);
+  freemem(p);
 }
 
 void res2_comp::remove_res2_level(res2_level *lev)
@@ -582,7 +582,7 @@ void res2_comp::remove_res2_level(res2_level *lev)
       lev->pairs = p->next;
       remove_res2_pair(p);
     }
-  deleteitem(lev);
+  freemem(lev);
 }
 
 res2_comp::~res2_comp()
@@ -988,7 +988,7 @@ void res2_comp::new_pairs(res2_pair *p)
               elems.insert(b);
             }
         }
-      deletearray(exp);
+      freemem(exp);
     }
 
   // Second, add in syzygies arising from the base ring, if any
@@ -1643,7 +1643,7 @@ void res2_comp::do_auto_reductions(res2_pair *p, auto_reduce_node *au)
       o << newline << "    result = ";
       R->elem_text_out(a->p->syz);
       o << newline;
-      deleteitem(a);
+      freemem(a);
     }
   emit(o.str());
 }
@@ -1852,7 +1852,7 @@ M2_arrayint res2_comp::betti_remaining() const
         }
     }
   M2_arrayint result = betti_make(lo, hi, len, bettis);
-  deletearray(bettis);
+  freemem(bettis);
   return result;
 }
 
@@ -1874,7 +1874,7 @@ M2_arrayint res2_comp::betti_minimal() const
         }
     }
   M2_arrayint result = betti_make(lo, hi, len, bettis);
-  deletearray(bettis);
+  freemem(bettis);
   return result;
 }
 
@@ -1894,7 +1894,7 @@ M2_arrayint res2_comp::betti_nmonoms() const
         }
     }
   M2_arrayint result = betti_make(lo, hi, len, bettis);
-  deletearray(bettis);
+  freemem(bettis);
   return result;
 }
 

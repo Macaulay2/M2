@@ -1486,7 +1486,7 @@ doc ///
      {\tt StartWithOneMinor} tells the algorithm to not compute the entire Jacobian ideal, 
      just find one element in it.  This is often a bad choice, unless the ideal is large
      enough that one can't compute the Jacobian ideal.  In the future, we plan on using
-     the @TO "FastLinAlg::FastLinAlg"@ package to compute part of the Jacobian ideal.
+     the @TO "FastMinors::FastMinors"@ package to compute part of the Jacobian ideal.
      
      {\tt SimplifyFractions} changes the fractions to hopefully be simpler.  Sometimes it
      succeeds, yet sometimes it makes the fractions worse.  This is because of the manner
@@ -3572,7 +3572,7 @@ ConductorElement??
 
 correctness; makeS2; 
 use Normaliz where possible?; 
-FastLinAlg?
+FastMinors?
 *-
 
 --- Should Singh/Swanson be an option to integralClosure or its own

@@ -69,7 +69,7 @@ class F4Vec
     int s = alloc_stash(a);
     ndeallocs[s]++;
     current[s]--;
-    deletearray(a - 1);
+    freemem(a - 1);
     a = 0;
   }
 
@@ -143,7 +143,7 @@ class F4Mem : public our_new_delete
     monom_dealloc++;
     monom_freed += len;
     monom_current -= len;
-    deletearray(a);
+    freemem(a);
     a = 0;
   }
 

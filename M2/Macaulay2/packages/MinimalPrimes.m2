@@ -69,7 +69,7 @@ newPackage(
 
 export { "Hybrid", "minimalPrimes", "minprimes" => "minimalPrimes", "radical", "radicalContainment", "installMinprimes" }
 
-importFrom_Core { "printerr", "raw", "rawCharSeries", "rawGBContains", "rawRadical", "newMonomialIdeal" }
+importFrom_Core { "raw", "rawCharSeries", "rawGBContains", "rawRadical", "newMonomialIdeal" }
 importFrom_Core { "isComputationDone", "cacheComputation", "fetchComputation", "updateComputation", "cacheHit", "Context", "Computation" }
 
 -*------------------------------------------------------------------

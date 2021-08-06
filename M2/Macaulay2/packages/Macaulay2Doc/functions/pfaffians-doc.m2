@@ -21,7 +21,7 @@ document {
       	  "pfaffians(2,M)",
       	  "pfaffians(4,M)"
 	  },
-     "The Pluecker embedding of ", TT "Gr(2,6)", " and its secant variety:",  
+     "The Plücker embedding of ", TT "Gr(2,6)", " and its secant variety:",
      EXAMPLE {
 	  "S = QQ[y_0..y_14];",
 	  "M = genericSkewMatrix(S,y_0,6)",

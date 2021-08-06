@@ -54,7 +54,7 @@ export {
 -- TODO: this is only declared there for technical reasons
 exportFrom_MinimalPrimes { "removeLowestDimension" }
 
-importFrom_Core { "printerr", "raw", "rawIndices", "rawGBContains", "rawRemoveScalarMultiples" }
+importFrom_Core { "raw", "rawIndices", "rawGBContains", "rawRemoveScalarMultiples" }
 importFrom_Core { "isComputationDone", "cacheComputation", "fetchComputation", "updateComputation", "cacheHit", "Context", "Computation" }
 
 algorithms = new MutableHashTable from {}

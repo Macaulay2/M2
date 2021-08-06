@@ -136,10 +136,10 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   M2_arrayint pos = leadterms->sort(1 /* ascending degree */,
                                     -1 /* descending monomial order */);
 
-  std::vector<poly> input_polys;
+  std::vector<ResPolynomial> input_polys;
   for (int i = 0; i < groebnerBasisMatrix->n_cols(); i++)
     {
-      poly f;
+      ResPolynomial f;
       ResF4toM2Interface::from_M2_vec(*R, F, groebnerBasisMatrix->elem(i), f);
       input_polys.emplace_back(std::move(f));
     }
@@ -151,7 +151,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
       for (int i = 0; i < pos->len; i++)
         {
           int loc = pos->array[i];
-          poly& f = input_polys[loc];
+          ResPolynomial& f = input_polys[loc];
           if (f.len == 0) continue;
           if (MI->get_component(f.monoms.data()) != j) continue;
           res_packed_monomial elem =

@@ -32,7 +32,7 @@ export { "isSupportedInZeroLocus" }
 
 exportFrom_Core { "saturate", "annihilator" }
 
-importFrom_Core { "nonnull", "printerr", "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "eliminationInfo" }
+importFrom_Core { "nonnull", "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "eliminationInfo" }
 importFrom_Core { "isComputationDone", "cacheComputation", "fetchComputation", "cacheHit", "Context", "Computation" }
 
 -- TODO: where should these be placed?

@@ -184,12 +184,12 @@ for b in flatten entries basis RY do (
 ----------
 TEST ///
 --Test 1 for map(FlagBundle,AbstractVariety,AbstractSheaf):
---the Plucker embedding of GG(1,3) in PP^5
+--the Plücker embedding of GG(1,3) in PP^5
 X = flagBundle({2,2})
 (S,Q) = X.Bundles
 L = exteriorPower(2,dual S)
 P = flagBundle({1,5})
-f = map(P,X,L) -- Plucker embedding of GG(1,3) in PP^5
+f = map(P,X,L) -- Plücker embedding of GG(1,3) in PP^5
 H = first bundles P --O(-1)
 assert(f^* (chern(1,H)) == -chern(1,Q)) -- neg hyperplane section, should be -sigma_1
 assert(f_* chern(0,S) == -2*chern(1,H)) --expect 2 times hyperplane class since GG(1,3) has degree 2
@@ -197,7 +197,7 @@ assert(f_* chern(0,S) == -2*chern(1,H)) --expect 2 times hyperplane class since 
 
 TEST ///
 --Test 2 for map(FlagBundle,AbstractVariety,AbstractSheaf):
---the Plucker embedding of GG(1,4) in PP^9
+--the Plücker embedding of GG(1,4) in PP^9
 X = flagBundle({2,3})
 (S,Q) = X.Bundles
 L = exteriorPower(2,dual S)

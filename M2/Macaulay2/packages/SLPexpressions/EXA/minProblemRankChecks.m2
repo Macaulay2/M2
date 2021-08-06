@@ -15,7 +15,7 @@ evaluate (GateMatrix, Matrix) := (G, x) -> (
 -- 2x2 determinant
 det2 = M -> M_(0,0)*M_(1,1)-M_(1,0)*M_(0,1)
 
--- plucker vector for a 3*2 matrix
+-- Plücker vector for a 3*2 matrix
 pl3 = M -> matrix{{det2 M^{1,2},det2 M^{2,0},det2 M^{0,1}}}
 
 installedGates = {}

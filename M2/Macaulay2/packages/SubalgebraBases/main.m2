@@ -150,9 +150,10 @@ sagbi(SAGBIBasis) := o -> S -> (
     	if o.PrintLevel > 0 then (
     	    print("-- Computing the kernel of the substitution homomorphism to the initial algebra...");
 	    );
-    sagbiGB = gb(compTable#"presentation"#"syzygyIdeal", DegreeLimit => compTable#"stoppingData"#"degree");
+        sagbiGB = gb(compTable#"presentation"#"syzygyIdeal", DegreeLimit => compTable#"stoppingData"#"degree");
 	zeroGens = submatByDegree(mingens ideal selectInSubring(1, gens sagbiGB), compTable#"stoppingData"#"degree");
 	syzygyPairs = compTable#"presentation"#"substitution"(zeroGens);
+	terminationCondition1 = rawStatus1 raw sagbiGB == 6;
 
 	-- Have we previously found any syzygies of degree currDegree?
         if compTable#"pending"#?(compTable#"stoppingData"#"degree") then (
@@ -198,7 +199,6 @@ sagbi(SAGBIBasis) := o -> S -> (
         ) else (
 
         terminationCondition0 = #(compTable#"pending") == 0;
-        terminationCondition1 = rawStatus1 raw sagbiGB == 6;
         terminationCondition2 = compTable#"stoppingData"#"degree" > max flatten (degrees compTable#"subringGenerators")_1;
 
         if o.PrintLevel > 0 then(

@@ -1,0 +1,58 @@
+# The purpose of this file is to generate a set of test configurations
+# where every pair of parameter values is present at least once. See
+# the Wikipedia page on all pairs testing:
+#
+#  http://en.wikipedia.org/wiki/All-pairs_testing
+#
+# This file is an input file for the Microsoft testing tool PICT.
+# The tool is available at
+#
+#   http://download.microsoft.com/download/f/5/5/f55484df-8494-48fa-8dbd-8c6f76cc014b/pict33.msi 
+#
+# You will need to run this program on Windows. It is a closed source
+# utility. There are open sources alternatives but they are not as good.
+#
+# To update the test in gb-test.cpp, do
+#
+#   pict pict.in > pict.out
+#
+# Then place the entire contents of pict.out (including newlines) into
+# the string allPairsTest in gb-test.cpp.
+
+##############################################################
+# This is the PICT model specifying all parameters and their values
+#
+spairQueue: 0,1,2,3
+reducerType: 7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26
+divLookup: 1, 2, 3, 4
+monTable: 1, 2, 3, 4
+buchberger: 0, 1
+postponeKoszul: 0, 1
+useBaseDivisors: 0, 1
+autoTailReduce: 0,1
+autoTopReduce: 0,1
+preferSparseReducers: 0,1
+useSingularCriterionEarly: 0, 1
+sPairGroupSize: 0, 1, 2, 10, 100
+threadCount: 1, 2, 8
+
+##############################################################
+# PICT submodels go here.
+#
+
+# we are not currently using PICT submodels
+
+##############################################################
+# This is the set of PICT constraints that rule out some combinations
+# of parameter values.
+#
+IF [buchberger] = 0 THEN
+  [autoTopReduce] = 0 AND
+  [autoTailReduce] = 0 AND
+  [reducerType] <> 25 AND
+  [reducerType] <> 26;
+
+IF [buchberger] = 1 THEN
+  [postponeKoszul] = 0 AND
+  [useBaseDivisors] = 0 AND
+  [usesingularCriterionEarly] = 0;

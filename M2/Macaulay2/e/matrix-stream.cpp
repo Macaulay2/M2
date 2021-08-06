@@ -12,9 +12,9 @@ MatrixStream::MatrixStream(const FreeModule* F)
 
 MatrixStream::~MatrixStream()
 {
-  deletearray(mCurrentExponents);
-  deletearray(mCurrentColumn);
-  deletearray(mLastTerms);
+  freemem(mCurrentExponents);
+  freemem(mCurrentColumn);
+  freemem(mLastTerms);
 }
 
 void MatrixStream::idealBegin(size_t polyCount)

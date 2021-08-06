@@ -38,7 +38,7 @@ void GaussElimComputation::insert(gm_elem *p)
           syz_list.push_back(p->fsyz);
           n_syz++;
         }
-      deleteitem(p);
+      freemem(p);
     }
   else
     {
@@ -106,7 +106,7 @@ void GaussElimComputation::remove_gm_elem(gm_elem *&p)
     {
       R->remove_vec(p->f);
       R->remove_vec(p->fsyz);
-      deleteitem(p);
+      freemem(p);
       p = NULL;
     }
 }

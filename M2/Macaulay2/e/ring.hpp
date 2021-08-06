@@ -95,7 +95,19 @@ class Ring : public MutableEngineObject
   void initialize_ring(long charac,
                        const PolynomialRing *DR = 0,
                        const M2_arrayint heft_vec = 0);
-  Ring() : heft_vector(0) {}
+  Ring()
+    : mCharacteristic(0),
+      degree_ring(nullptr),
+      heft_vector(nullptr),
+      AR(nullptr),
+      cR(nullptr),
+      _non_unit(),
+      _isfield(0),
+      zeroV(),
+      oneV(),
+      minus_oneV()
+  {
+  }
  public:
   virtual ~Ring();
 

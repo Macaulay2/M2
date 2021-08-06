@@ -1,6 +1,4 @@
 -- -*- M2-comint -*- hash: -607525885
-Hello world from process 0 out of 1 processes
--- COMPILE TIME: Feb 24 2021, 10:08:22
 
 i1 : R = QQ[x,y,z];
 
@@ -24,4 +22,3 @@ o4 = Point{ConditionNumber => 4.87567                }
            SolutionStatus => Regular
 
 i5 : 
-Bye world from process 0 out of 1 processes

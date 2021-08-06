@@ -199,7 +199,7 @@ makePresRing(Subring) := opts -> subR -> (
     subR#"presentation"
 );
 
--- f % Subring is never going to be an element of the subalgebra, hence the ouput
+-- f % Subring is never going to be an element of the subalgebra, hence the output
 -- is in the lower variables of tensorRing.
 -- input: f in ambient A or tensorRing of A.
 -- output: r in tensorRing of A such that f = a + r w/ a in A, r "minimal"
