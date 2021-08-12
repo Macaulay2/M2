@@ -330,7 +330,7 @@ coneSystem = Q -> (
     treeChambers = for T in treeChambers list(coneFromVData T);
 
     if #treeChambers > 1 then (
-        -- find all pairs of cones with full-dimensional interesection
+        -- find all pairs of cones with full-dimensional intersection
         aij := for i in 0..#treeChambers-1 list(
             tci := treeChambers#i;
             for j in i+1..#treeChambers-1 list(
@@ -341,7 +341,7 @@ coneSystem = Q -> (
             )
         );
 
-        -- now add each cone CT to the list of admissable subcones 
+        -- now add each cone CT to the list of admissible subcones 
         -- before adding every possible intersection to the list as well.
         ssets := for t in treeChambers list(rays t);
         addedTo := unique treeChambers; -- keep track of cones that have already been added
