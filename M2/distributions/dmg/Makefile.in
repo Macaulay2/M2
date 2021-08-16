@@ -32,6 +32,23 @@ file_preparation: always
 #     @loader_path     : relative to the path to the library that wants the library
 #     @rpath           : relative to any path installed on the path with the -rpath option to ld
 # Read about all that with "man dyld".
+
+
+# Sadly, the "otool" command isn't recursive, as this demo shows:
+#	$ otool -L M2-binary | grep libboost_regex
+#		/usr/local/opt/boost/lib/libboost_regex-mt.dylib (compatibility version 0.0.0, current version 0.0.0)
+#	$ otool -L /usr/local/opt/boost/lib/libboost_regex-mt.dylib | grep libicudata
+#		/usr/local/opt/icu4c/lib/libicudata.69.dylib (compatibility version 69.0.0, current version 69.1.0)
+#	$ otool -L M2-binary | grep libicudata
+#	$ 
+# I've install the "library $f not copied" error below to catch this.
+# I'm working around this temporarily by renaming some dylib files to disable linking with them:
+#	$ find /usr/local -name \*dylib---- -ls
+#	2071418        0 lrwxrwxr-x    1 brew             admin                  50 Jul 31 12:49 /usr/local/lib/libboost_regex-mt.dylib---- -> ../Cellar/boost/1.76.0/lib/libboost_regex-mt.dylib
+#	6329913        0 lrwxrwxr-x    1 brew             admin                  19 Jul 28 03:12 /usr/local/Cellar/gcc/11.2.0/lib/gcc/11/libgfortran.dylib---- -> libgfortran.5.dylib
+#	6331397        0 lrwxrwxr-x    1 brew             admin                  19 Jul 28 03:12 /usr/local/Cellar/gcc/11.2.0/lib/gcc/11/libquadmath.dylib---- -> libquadmath.0.dylib
+
+
 library_preparation: file_preparation
 
 	$(MKDIR_P) files/@package@/@tail_libdir@
@@ -68,13 +85,17 @@ library_preparation: file_preparation
 		| while read f;										\
 		  do (bf=`basename $$f` ;								\
 		      bi=`basename $$i` ;								\
-		      set -x ; \
+		      set -x ;										\
 		      if [ $$bf = $$bi ] ;								\
 		      then set -xe ; install_name_tool -id $$bi $$i ;					\
-		      else set -xe ; install_name_tool -change $$f @loader_path/$$bf $$i ; 		\
+		      else set -xe ; install_name_tool -change $$f @loader_path/$$bf $$i ;		\
+			   if ! [ -f files/@package@/@tail_libdir@/$$bf ] ;				\
+			   then echo " *** library $$f not copied" >&2  ;				\
+			        exit 1 ; 								\
+			   fi ;										\
 		      fi ) || exit 1 ;									\
 		     echo $$f ;										\
-		     done ;										\
+		  done || exit 1 ;									\
 	   fi ;												\
 	done
 
