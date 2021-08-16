@@ -20,6 +20,7 @@ file_preparation: always
 	umask 022 ; $(MKDIR_P) files/@package@
 	umask 022 ; $(T) -C @pre_exec_prefix@ . | @TAR@ xfp - -C files/@package@
 	umask 022 ; $(T) -C @pre_prefix@ . | @TAR@ xfp - -C files/@package@
+	rm -rf files/@package@/@tail_librariesdir@
 	set -e; cd files/@package@/@tail_infodir@; for p in @PACKAGES@; do install-info --info-dir=. "$$p.info"; done
 	cp @srcdir@/ReadMe-MacOSX.rtf files/@package@
 	ln -s @package@/ReadMe-MacOSX.rtf files
@@ -98,9 +99,6 @@ library_preparation: file_preparation
 		  done || exit 1 ;									\
 	   fi ;												\
 	done
-
-	: clean up
-	rm -rf files/@package@/@tail_librariesdir@
 
 	: dynamic libraries to be distributed:
 	cd files/@package@/@tail_libdir@ && for i in * ; do if [ -f $$i ] ; then (echo "-- $$i" ; set -x ; ls -l $$i ; otool -L $$i ) ; fi ; done
