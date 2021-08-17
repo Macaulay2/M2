@@ -700,7 +700,7 @@ Node
     	Text
 	    This function is provided by the package @TO Jets@.  Rings are 
 	    constructed incrementally as towers.  The function returns the 
-	    ring with variables in the jets order requested, and coeffients 
+	    ring with variables in the jets order requested, and coefficients 
 	    in all lower orders.  The grading or multigrading of the jets ring 
 	    follows from that of the base ring.
     	Example	    

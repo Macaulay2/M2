@@ -1351,7 +1351,7 @@ isPathBetween = {Oriented=>false, SavePath=>false, EdgesAdded=>{}} >> opts -> (p
     pathsToSee := edgesOutOfPoint(p, E, Oriented=>opts.Oriented);
 
     for edge in pathsToSee do (
-        --- get the edge index and enpoints
+        --- get the edge index and endpoints
         i := edge#0;
         e := edge#1;
         v := e#1;
