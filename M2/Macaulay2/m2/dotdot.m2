@@ -6,7 +6,7 @@ needs "ofcm.m2"
 needs "variables.m2"
 
 -- this code should go after the last method installed for baseName
-scan(join(apply(methods baseName,last),{MonoidElement}), X -> if X =!= Symbol and X =!= IndexedVariable and not ancestor(Expression,X) then (
+scan(join(apply(methods baseName,last),{MonoidElement}), X -> if X =!= Symbol and X =!= IndexedVariable and X =!= Thing and not ancestor(Expression,X) then (
 	  err1 := lookup(symbol .., Thing, Thing);
 	  err2 := lookup(symbol ..<, Thing, Thing);
 	  X .. X := (a,z) -> (
