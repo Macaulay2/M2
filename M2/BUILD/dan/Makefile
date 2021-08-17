@@ -29,10 +29,11 @@ RPM := $(shell if [ -d /var/lib/yum -o -d /var/lib/dnf ] ; then echo yes ; else 
 MACOSX := $(shell if [ `uname -s` = Darwin ] ; then echo yes ; else echo no; fi)
 
 ifeq ($(MACOSX),yes)
-# if we don't do this, we may get an absolute path in currentLayout:
-#    i8 : currentLayout#"factory gftables"
-#    o8 = /usr/local/Cellar/singular/4.1.3p2_2/share/factory/
-BUILDLIBS += gftables nauty factory csdp 4ti2 gfan normaliz topcom
+# # if we don't do this, we may get an absolute path in currentLayout:
+# #    i8 : currentLayout#"factory gftables"
+# #    o8 = /usr/local/Cellar/singular/4.1.3p2_2/share/factory/
+# BUILDLIBS += gftables nauty factory csdp 4ti2 gfan normaliz topcom
+# on the other hand, we can move the *.dylib files out of the way
 
 # we need an old version of tbb
 # brew install tbb@2020
