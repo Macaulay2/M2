@@ -435,7 +435,7 @@ writeDotFileHelper = (filename, G, type, op) -> (
     fil << type << " G {" << endl;
     V := vertexSet G;
     I := hashTable apply(#V, i -> V_i => i);
-    scan(V, v -> fil << "\t" << I#v << " [label=\"" << v << "\"];" << endl);
+    scan(V, v -> fil << "\t" << I#v << " [label=\"" << toString v << "\"];" << endl);
     E := toList \ edges G;
     scan(E, e -> fil << "\t" << I#(e_0) << " " << op << " " << I#(e_1) << ";"
 	<< endl);
@@ -589,7 +589,7 @@ lollipopGraph (ZZ, ZZ) := Graph => (m,n) -> (
 
 monomialGraph = method()
 monomialGraph (MonomialIdeal, ZZ) := Graph => (I, d) -> (
-    V := first entries basis(d, quotient I);
+    V := first entries lift(basis(d, quotient I),ring I);
     E := {};
     for v in V do(
         L := select(V, i -> first degree lcm (v,i) == d+1);
