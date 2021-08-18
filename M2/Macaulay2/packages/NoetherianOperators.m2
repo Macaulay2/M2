@@ -1773,7 +1773,7 @@ vectorSpaceAnn = (W) -> (
 )
 -- This function localizes a module at a prime P
 -- and then it computes the contraction back into the polynomial ring. 
--- In other words, it computes the interesection of all the primary
+-- In other words, it computes the intersection of all the primary
 -- components whose corresponding prime ideal is contained in P.
 localizeModule = (U, AssU, P) -> (
     R := ring P;

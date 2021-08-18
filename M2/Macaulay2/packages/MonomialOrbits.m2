@@ -260,7 +260,7 @@ normalFormsLis(List, List) := List => (Fs, G) -> (
     -- returns a minimal subset F of Fs such that G F = Fs.
     if #Fs == 0 then return {{}};
 
-    n := #(Fs_0_0); -- "number of variabes"
+    n := #(Fs_0_0); -- "number of variables"
     ident := apply(n, i-> i);
     G1 := select(G, g-> g != ident); -- remove the identity element if present.
 
