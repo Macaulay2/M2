@@ -5,12 +5,14 @@ doc///
  Key
   scan
   (scan, BasicList, Function)
+  (scan, BasicList, BasicList, Function)
   (scan, ZZ, Function)
   (scan, String, Function)
  Headline
   apply a function to each element in a list or sequence
  Usage
   scan(L, f)
+  scan(L, L', f)
   scan(n, f)
  Inputs
   L: {BasicList, String}
