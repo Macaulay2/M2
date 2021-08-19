@@ -68,8 +68,7 @@ ifeq ($(RPM),yes)
 CONFIGOPTIONS += --enable-rpm
 else
 ifeq ($(MACOSX),yes)
-# if we make a *.dmg file, we don't want to include any shared libraries in it (so we can pass the gatekeeper, eventually)
-# CONFIGOPTIONS += --enable-dmg --disable-shared
+CONFIGOPTIONS += --enable-dmg
 else
 # CONFIGOPTIONS += --enable-tarfile
 endif
