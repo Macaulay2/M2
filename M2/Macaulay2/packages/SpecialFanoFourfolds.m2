@@ -10,7 +10,7 @@
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.3", 
-    Date => "July 27, 2021",
+    Date => "August 27, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -1516,7 +1516,7 @@ cycleClass Ideal := X -> (
     sum(gens A,g -> g * dimdegree(X + last schubertCycleInt(toList(k+1:n-k) - toList reverse last baseName g,k,n,KK,Vp)))
 );
 
-cycleClass EmbeddedProjectiveSubvariety := X -> cycleClass trim sub(ideal X,ring ambientVariety X);
+cycleClass EmbeddedProjectiveSubvariety := X -> cycleClass idealOfSubvariety X;
 
 cycleClass SpecialGushelMukaiFourfold := X -> (
     if X.cache#?"classSurfaceInG14" then return X.cache#"classSurfaceInG14";

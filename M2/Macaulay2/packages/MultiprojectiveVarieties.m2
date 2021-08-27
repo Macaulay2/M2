@@ -12,7 +12,7 @@ if version#"VERSION" < "1.18" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.3", 
-    Date => "July 26, 2021",
+    Date => "August 27, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -37,10 +37,13 @@ if SparseResultants.Options.Version < "1.1" then error "your version of the Spar
 export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct", 
        "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan", "tangentSpace", "sectionalGenus",
        "MultirationalMap", "multirationalMap", "baseLocus", "degreeSequence", "inverse2", "toRationalMap",
-       "∏","⋂","⋃","PP"}
+       "∏","⋂","⋃","PP",
+       "ambientVariety"}
 
 debug Cremona;
 debug SparseResultants;
+
+importFrom("Resultants",{"fanoVariety","varietySweptOutByLinearSpaces"}); 
 
 MultiprojectiveVariety = new Type of MutableHashTable;
 
@@ -888,20 +891,28 @@ EmbeddedProjectiveVariety ===> EmbeddedProjectiveVariety := (X,Y) -> findIsomorp
 
 EmbeddedProjectiveSubvariety = new Type of EmbeddedProjectiveVariety;
 
-ambientVariety = method();
+ambientVariety = method(TypicalValue => EmbeddedProjectiveVariety);
+ambientVariety EmbeddedProjectiveVariety := X -> ambient X;
 ambientVariety EmbeddedProjectiveSubvariety := X -> X#"ambientVariety";
 
+projectiveVariety EmbeddedProjectiveSubvariety := o -> X -> X#"Variety";
+
+idealOfSubvariety = (cacheValue "idealOfSubvariety") (X -> trim sub(ideal projectiveVariety X,ring ambientVariety X));
+
 EmbeddedProjectiveSubvariety#{Standard,AfterPrint} = EmbeddedProjectiveSubvariety#{Standard,AfterNoPrint} = X -> (
-    Y := ambientVariety X;
-    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "ProjectiveVariety, " << "subvariety of codimension " << dim Y - dim X << " in " << expression Y << endl;
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "ProjectiveVariety, " << expression projectiveVariety X << " (subvariety of codimension " << (dim ambientVariety X) - (dim X) << " in " << expression ambientVariety X << ")" << endl;
 );
 
 makeSubvariety = method(TypicalValue => EmbeddedProjectiveSubvariety, Options => {Verify => true});
 makeSubvariety (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (X,Y) -> (
+    while instance(X,EmbeddedProjectiveSubvariety) do X = projectiveVariety X;
+    while instance(Y,EmbeddedProjectiveSubvariety) do Y = projectiveVariety Y;
     if o.Verify then if not isSubset(X,Y) then error "the first variety must be a subvariety of the second one";
+    if codim Y == 0 then return X;
     expression Y; -- this is useful when Y is a Grassmannian
     Z := new EmbeddedProjectiveSubvariety from X;
     Z#"ambientVariety" = Y;
+    Z#"Variety" = X;
     return Z;
 );
 makeSubvariety Ideal := o -> I -> (
@@ -910,6 +921,7 @@ makeSubvariety Ideal := o -> I -> (
     makeSubvariety(X,Y,Verify=>false)
 );
 makeSubvariety RingElement := o -> F -> makeSubvariety ideal F;
+EmbeddedProjectiveVariety % EmbeddedProjectiveVariety := (X,Y) -> makeSubvariety(X,Y,Verify=>true);
 
 tangentialChowForm (EmbeddedProjectiveVariety,ZZ,ZZ) := o -> (X,s,l) -> (
     S := o.SingularLocus;
@@ -924,6 +936,39 @@ Grass EmbeddedProjectiveSubvariety := o -> X -> (
     if isGrass ambientVariety X === false then error "expected a subvariety of some Grassmannian";
     ambientVariety X 
 );
+
+Fano (ZZ,EmbeddedProjectiveVariety,Option) := (k,X,opt) -> (
+    o := toList opt;
+    if not(#o == 2 and first o === AffineChartGrass) then error "AffineChartGrass is the only available option for Fano(ZZ,EmbeddedProjectiveVariety)";
+    if k <= -1 then error "expected a nonnegative integer";
+    if k == 0 then return X;
+    makeSubvariety fanoVariety(ideal X,k,AffineChartGrass=>last o)
+);
+Fano (ZZ,EmbeddedProjectiveVariety) := (k,X) -> Fano(k,X,AffineChartGrass=>true);
+Fano (EmbeddedProjectiveVariety,Option) := (X,opt) -> (
+    o := toList opt;
+    if not(#o == 2 and first o === AffineChartGrass) then error "AffineChartGrass is the only available option for Fano(EmbeddedProjectiveVariety)";
+    if unique flatten apply(degrees X,first) == {1} then 
+        makeSubvariety plucker(ideal X,AffineChartGrass=>last o)
+    else 
+        Fano(dim X,X,AffineChartGrass=>last o)
+);
+Fano EmbeddedProjectiveVariety := X -> Fano(X,AffineChartGrass=>true);
+Fano(EmbeddedProjectiveSubvariety,Option) := (X,opt) -> (
+    o := toList opt;
+    if not(#o == 2 and first o === AffineChartGrass) then error "AffineChartGrass is the only available option for Fano(EmbeddedProjectiveSubvariety)";
+    if codim Grass X == 0 then error "expected the ambient Grassmannian variety to be different from a projective space";
+    I := varietySweptOutByLinearSpaces(idealOfSubvariety X,AffineChartGrass=>last o);
+    projectiveVariety(sub(I,vars ring PP_(coefficientRing X)^(numgens ring I -1)),MinimalGenerators=>true,Saturate=>false)
+);
+Fano EmbeddedProjectiveSubvariety := X -> Fano(X,AffineChartGrass=>true);
+
+point EmbeddedProjectiveSubvariety := X -> makeSubvariety(point projectiveVariety X,ambientVariety X,Verify=>false);
+top EmbeddedProjectiveSubvariety := X -> makeSubvariety(top projectiveVariety X,ambientVariety X,Verify=>false);
+support EmbeddedProjectiveSubvariety := X -> makeSubvariety(support projectiveVariety X,ambientVariety X,Verify=>false);
+decompose EmbeddedProjectiveSubvariety := {} >> o -> X -> apply(decompose projectiveVariety X,Z -> makeSubvariety(Z,ambientVariety X,Verify=>false));
+singularLocus (EmbeddedProjectiveSubvariety,Option) := (X,opt) -> makeSubvariety(singularLocus(projectiveVariety X,opt),ambientVariety X,Verify=>false);
+singularLocus EmbeddedProjectiveSubvariety := X -> makeSubvariety(singularLocus projectiveVariety X,ambientVariety X,Verify=>false);
 
 
 MultirationalMap = new Type of MutableHashTable;
@@ -3107,7 +3152,7 @@ Headline => "higher Chow forms of a projective variety",
 Usage => "tangentialChowForm(X,s)", 
 Inputs => {"X" => EmbeddedProjectiveVariety, "s" => ZZ},
 Outputs => {EmbeddedProjectiveVariety => {"the subvariety of the appropriate Grassmannian defined by ",TO tangentialChowForm,TT"(",TO2{(ideal,MultiprojectiveVariety),"ideal"}," ",TT"X,s)"}},
-EXAMPLE {"X = PP_(ZZ/65521)[2,1];", "tangentialChowForm(X,1)", "Grass oo"},
+EXAMPLE {"X = PP_(ZZ/65521)[2,1];", "tangentialChowForm(X,1)", "ambientVariety oo"},
 SeeAlso => {(chowForm,EmbeddedProjectiveVariety)}}
 typicalValues#tangentialChowForm = typValTanForm;
 
@@ -3119,7 +3164,7 @@ Headline => "chow forms of a projective variety",
 Usage => "chowForm X", 
 Inputs => {"X" => EmbeddedProjectiveVariety},
 Outputs => {EmbeddedProjectiveVariety => {"the subvariety of the appropriate Grassmannian defined by ",TO chowForm,TT" ",TO2{(ideal,MultiprojectiveVariety),"ideal"}," ",TT"X"}},
-EXAMPLE {"X = PP_(ZZ/65521)[2,1];", "chowForm X", "Grass oo"},
+EXAMPLE {"X = PP_(ZZ/65521)[2,1];", "chowForm X", "ambientVariety oo"},
 SeeAlso => {(tangentialChowForm,EmbeddedProjectiveVariety,ZZ)}}
 typicalValues#chowForm = typValChowForm;
 
@@ -3134,6 +3179,41 @@ Outputs => {MultiprojectiveVariety => {"the conormal variety of ",TEX///$X$///}}
 EXAMPLE {"X = PP_QQ^(2,2);", "C = conormalVariety X;", "p2 = multirationalMap last projections C;", "image p2 == dual X"},
 SeeAlso => {(dual,EmbeddedProjectiveVariety)}}
 typicalValues#conormalVariety = typValConVar;
+
+document {
+Key => {(symbol %,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)},
+Headline => "subvariety of a projective variety", 
+Usage => "X % Y", 
+Inputs => {"X" => EmbeddedProjectiveVariety,"Y" => EmbeddedProjectiveVariety => {"which contains ",TEX///$X$///}},
+Outputs => {EmbeddedProjectiveVariety => {"the same variety ",TEX///$X$///," thought of as a subvariety of ",TEX///$Y$///}},
+EXAMPLE {"Y = projectiveVariety Grass(1,4,ZZ/33331);","p := point Y","pY := p % Y", "Fano pY"},
+SeeAlso => {ambientVariety,(Fano,EmbeddedProjectiveVariety)}}
+
+document { 
+Key => {(Fano,ZZ,EmbeddedProjectiveVariety),(Fano,EmbeddedProjectiveVariety)},
+Headline => "Fano scheme of a projective variety", 
+Usage => "Fano(k,X)
+Fano(k,X,AffineChartGrass=>...)
+Fano X
+Fano(X,AffineChartGrass=>...)", 
+Inputs => {"k" => ZZ => {"optional with default value equal to ",TEX///$\mathrm{dim}(X)$///}, "X" => EmbeddedProjectiveVariety},
+Outputs => {EmbeddedProjectiveVariety => {"the subvariety of the Grassmannian ",TEX///$\mathbb{G}(k,\mathrm{ambient}(X))$///," that parametrizes the ",TEX///$k$///,"-planes lying on ",TEX///$X$///}},
+PARA{"This function is based internally on the function ",TO plucker,", provided by the package ",TO Resultants,". In particular, note that by default the computation is done on a randomly chosen affine chart on the Grassmannian. To change this behavior, you can use the ",TO AffineChartGrass," option."},
+EXAMPLE {"K = ZZ/33331;","L = linearSpan {point PP_K^4,point PP_K^4}; -- a line in P^4","p := Fano L","Fano p","assert(Fano p == L)"},
+PARA{"If the input is a ",TO2{(symbol %,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety),"subvariety"}," ",TEX///$Y\subset\mathbb{G}(k,\mathbb{P}^n)$///,", then the output is the variety ",TEX///$W\subset\mathbb{P}^n$///," swept out by the linear spaces corresponding to points of ",TEX///$Y$///,". As an example, we now compute a surface scroll ",TEX///$W\subset\mathbb{P}^4$///," over an elliptic curve ",TEX///$Y\subset\mathbb{G}(1,\mathbb{P}^4)$///,"."},
+EXAMPLE {"G = projectiveVariety Grass(1,4,K);","Y := (G * random({{1},{1},{1},{1},{1}},0_G)) % G -- an elliptic curve","W = Fano Y; -- surface swept out by the lines of Y"},
+PARA{"We can recover the subvariety ",TEX///$Y\subset\mathbb{G}(k,\mathbb{P}^n)$///," by computing the Fano variety of ",TEX///$k$///,"-planes contained in ",TEX///$W$///,"."},
+EXAMPLE {"Fano(1,W) -- variety of lines contained in W","assert(image(oo << ambient Y) == Y)"},
+SeeAlso => {(plucker,Ideal),(Fano,ZZ,Ideal),(symbol %,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)}}
+
+document { 
+Key => {ambientVariety,(ambientVariety,EmbeddedProjectiveVariety)},
+Headline => "the ambient variety of a projective subvariety", 
+Usage => "ambientVariety X", 
+Inputs => {"X" => EmbeddedProjectiveVariety => {"a ",TO2{(symbol %,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety),"subvariety"}," of another ",TO2{EmbeddedProjectiveVariety,"variety"}," ",TT "Y"}},
+Outputs => {EmbeddedProjectiveVariety => {"the ambient variety ",TT "Y"}},
+EXAMPLE {"p = point PP_(ZZ/65521)^3;", "Y = random({1},p);", "X = p % Y;", "ambientVariety X", "ambient X"},
+SeeAlso => {(symbol %,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety),(ambient,MultiprojectiveVariety)}}
 
 undocumented {
 (expression,MultiprojectiveVariety),
@@ -3159,7 +3239,9 @@ undocumented {
 (inverse,MultirationalMap,Option),
 (inverse2,MultirationalMap,Option),
 (multirationalMap,MultiprojectiveVariety,MultiprojectiveVariety,Boolean), -- Intended for internal use only
-(symbol ?,MultiprojectiveVariety,MultiprojectiveVariety)}
+(symbol ?,MultiprojectiveVariety,MultiprojectiveVariety),
+(Fano,EmbeddedProjectiveVariety,Option),
+(Fano,ZZ,EmbeddedProjectiveVariety,Option)}
 
 ---------------
 ---- Tests ----
