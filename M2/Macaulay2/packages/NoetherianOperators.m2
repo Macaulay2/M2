@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
     "NoetherianOperators",
-    Version => "2.0.1",
-    Date => "Aug 26 2021",
+    Version => "2.2",
+    Date => "Sep 3 2021",
     Authors => {
         {Name => "Robert Krone", 
         Email => "krone@math.gatech.edu"},
@@ -890,16 +890,14 @@ noetherianOperators (Module) := List => true >> opts -> M -> (
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
 
--- Justin 5/8/21: method for determining multiplicity requires module to be primary, and localize(Module, Prime, List) does not return a primary component if the prime is embedded
--- noetherianOperators (Module, Ideal) := List => true >> opts -> (M,P) -> (
-    -- strats := new HashTable from {
-        -- "PunctualQuot" => noetherianOperatorsPunctual
-    -- };
-    -- strat := if opts.?Strategy then opts.Strategy else "PunctualQuot";
-    -- if strats#?strat then strats#strat(M, P, opts) 
-    -- else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
--- )
--- TODO: uncomment, document: Assumed to have no embedded primes
+noetherianOperators (Module, Ideal) := List => true >> opts -> (M,P) -> (
+    strats := new HashTable from {
+        "PunctualQuot" => noetherianOperatorsPunctual
+    };
+    strat := if opts.?Strategy then opts.Strategy else "PunctualQuot";
+    if strats#?strat then strats#strat(M, P, opts) 
+    else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
+)
 -- End dispatcher method
 
 
@@ -1629,10 +1627,10 @@ noetherianOperatorsPunctual Module := List => true >> opts -> M -> (
     reducedNoetherianOperators(M, super M, P)
 )
 
--- noetherianOperatorsPunctual (Module, Ideal) := List => true >> opts -> (M, P) -> (
-    -- assPrimes := ass comodule M;
-    -- reducedNoetherianOperators(localize(M, P, assPrimes), super M, P)
--- )
+noetherianOperatorsPunctual (Module, Ideal) := List => true >> opts -> (M, P) -> (
+    assPrimes := ass comodule M;
+    reducedNoetherianOperators(localize(M, P, assPrimes), super M, P)
+)
 
 -- This function can compute the Noetherian operators of a primary ideal Q.
 -- Here we pass first through the punctual Hilbert scheme 
@@ -2115,7 +2113,7 @@ doc ///
           d:ZZ
      Description
           Text
-	       The @TO gCorners@ of the ideal are computed in order to find the Hilbert polynomial, which is
+	       The @TO2 {gCorners, "g-corners"}@ of the ideal are computed in order to find the Hilbert polynomial, which is
 	       compared to the Hilbert function to find the degree of regularity, which is the degree at
 	       which the two become equal.
 	  Example
@@ -2701,7 +2699,7 @@ Usage
     noetherianOperators (I, P, Rational => false)
 Inputs
     I:Ideal
-        assumed to be unmixed
+        
     P:Ideal
         a minimal prime of $I$
 Outputs
@@ -2729,30 +2727,62 @@ Description
 SeeAlso
     noetherianOperators
     (noetherianOperators, Ideal)
+    (noetherianOperators, Module, Ideal)
+///
+
+doc ///
+Key
+    (noetherianOperators, Module, Ideal)
+Headline
+    Noetherian operators of a primary component
+Usage
+    noetherianOperators (U, P)
+Inputs
+    U:Module
+        
+    P:Ideal
+        a minimal prime of {\tt comodule U}
+Outputs
+    :List
+        of @TO2{DiffOp, "differential operators"}@
+Description
+    Text
+        Compute a set of Noetherian operators for the $P$-primary component of {\tt comodule U}.
+    Example
+       R = QQ[x,y,z]
+       U = image matrix{{x,y,z},{y,z,x}}
+       P = first associatedPrimes comodule U
+       noetherianOperators(U, P)
+    Text
+        If there are no embedFded primes, running this command for all associated primes is equivalent
+        to running a @TO2{differentialPrimaryDecomposition, "differential primary decomposition"}@.
+    Example
+        associatedPrimes comodule U /
+            (P -> {P, noetherianOperators(U,P)})
+        netList differentialPrimaryDecomposition U
+
+SeeAlso
+    noetherianOperators
+    (noetherianOperators, Ideal, Ideal)
+    differentialPrimaryDecomposition
 ///
 
 doc ///
 Key
     (noetherianOperators, Module)
-    -- (noetherianOperators, Module, Ideal)
 Headline
     Noetherian operators of a primary submodule
 Usage
     noetherianOperators U
-    -- noetherianOperators (U, P)
 Inputs
     U:Module
         a primary submodule
-    -- P:ideal
-        -- an associated prime of U
 Outputs
     :List
         of @TO2{DiffOp, "differential operators"}@
 Description
     Text
         Compute a set of Noetherian operators for the primary submodule U.
-        -- If a prime ideal P is provided, then Noetherian operators for a P-primary 
-        -- component of U are returned.
         
         This method contains an implementation of Algorithm 4.1 in @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@. 
     	For more details, see Section 4 of @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@.
@@ -2873,7 +2903,7 @@ Headline
     strategy for computing Noetherian operators
 Description
     Text
-        This strategy implements Algorithm 3.8 in @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
+        This strategy implements Algorithm 4.1 in @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@.
 
         The following example deals with a rather non-trivial primary ideal to show the capabilities
         of this strategy.
