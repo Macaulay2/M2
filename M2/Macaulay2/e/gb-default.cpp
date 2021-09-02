@@ -107,6 +107,10 @@ void gbA::initialize(const Matrix *m,
   // 10 is best so far (125.33 sec, 527 MB virtual).
   // 50 is faster/smaller than 100, and 1000 was awful, on 3-andersbuch
 
+  ringtable = nullptr;
+  ringtableZZ = nullptr;
+  first_gb_element = 0;
+  
   max_reduction_count = max_reduction_count0;
 
   const PolynomialRing *origR = m->get_ring()->cast_to_PolynomialRing();
@@ -154,8 +158,8 @@ void gbA::initialize(const Matrix *m,
   hilb_new_elems = false;
   hilb_n_in_degree = 0;
   n_saved_hilb = 0;
-  hf_orig = 0;
-  hf_diff = 0;
+  hf_orig = nullptr;
+  hf_diff = nullptr;
 
   this_degree = _F->lowest_primary_degree() - 1;
   npairs = 0;
@@ -423,6 +427,7 @@ gbA::spair *gbA::spair_node()
 {
   spair *result = reinterpret_cast<spair *>(spair_stash->new_elem());
   result->next = 0;
+  result->lead_of_spoly = 0;
   return result;
 }
 

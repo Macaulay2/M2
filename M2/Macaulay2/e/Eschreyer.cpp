@@ -148,7 +148,7 @@ void GBKernelComputation::strip_gb(const GBMatrix *m)
       gb.push_back(head.next);
     }
   for (i = 0; i < F->rank(); i++) mi.push_back(new MonomialIdeal(R));
-  deletearray(components);
+  freemem(components);
 }
 
 void GBKernelComputation::new_pairs(int i)
@@ -186,7 +186,7 @@ void GBKernelComputation::new_pairs(int i)
             elems.insert(b);
           }
 
-      deletearray(find_pairs_exp);
+      freemem(find_pairs_exp);
     }
 
   // Second, add in syzygies arising from the base ring, if any
@@ -228,7 +228,7 @@ void GBKernelComputation::new_pairs(int i)
   queue<Bag *> rejects;
   Bag *b;
   MonomialIdeal *new_mi = new MonomialIdeal(R, elems, rejects);
-  while (rejects.remove(b)) deleteitem(b);
+  while (rejects.remove(b)) freemem(b);
 
   int *m = M->make_one();
   for (j = new_mi->first(); j.valid(); j++)

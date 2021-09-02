@@ -211,7 +211,7 @@ FreeModule *FreeModule::sub_space(M2_arrayint a) const
     else
       {
         ERROR("subfreemodule: index out of bounds");
-        deleteitem(result);
+        freemem(result);
         return NULL;
       }
   if (schreyer != NULL) result->schreyer = schreyer->sub_space(a);
@@ -412,7 +412,7 @@ M2_arrayintOrNull FreeModule::select_by_degrees(M2_arrayintOrNull lo,
       if (degree_in_box(ndegrees, exp, lo, hi)) result.push_back(i);
     }
   M2_arrayint selection = stdvector_to_M2_arrayint(result);
-  deletearray(exp);
+  freemem(exp);
   return selection;
 }
 

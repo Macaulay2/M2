@@ -110,7 +110,8 @@ document {
 	    ", where the programs shipped with Macaulay2 are installed."},
 	{"Each path specified by the ", TT "AdditionalPaths", " option."},
 	{"Each path specified by the user's ", TT "PATH",
-	    " environment variable."}
+	    " environment variable."},
+	{"The path to ", TT "M2-binary", "."}
     },
     PARA {"For each path, any prefixes specified by the ", TT "Prefix",
 	" option are checked."},

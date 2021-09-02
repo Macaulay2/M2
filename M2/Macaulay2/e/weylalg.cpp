@@ -393,8 +393,8 @@ Nterm *WeylAlgebra::weyl_diff(const ring_elem c,
           result = tm;
         }
     }
-  deletearray(exp);
-  deletearray(result_exp);
+  freemem(exp);
+  freemem(result_exp);
   result->next = 0;
   return head.next;
 }
@@ -421,9 +421,9 @@ ring_elem WeylAlgebra::mult_by_term(const ring_elem f,
     }
   while (increment(current_derivative, top_derivative));
 
-  deletearray(expf);
-  deletearray(top_derivative);
-  deletearray(current_derivative);
+  freemem(expf);
+  freemem(top_derivative);
+  freemem(current_derivative);
   return result.value();
 }
 
@@ -514,8 +514,8 @@ gbvector *WeylAlgebra::gbvector_weyl_diff(
           result = tm;
         }
     }
-  deletearray(exp);
-  deletearray(result_exp);
+  freemem(exp);
+  freemem(result_exp);
   result->next = 0;
   return head.next;
 }
@@ -548,9 +548,9 @@ gbvector *WeylAlgebra::gbvector_mult_by_term(
     }
   while (increment(current_derivative, top_derivative));
 
-  deletearray(expf);
-  deletearray(top_derivative);
-  deletearray(current_derivative);
+  freemem(expf);
+  freemem(top_derivative);
+  freemem(current_derivative);
   return result.value();
 }
 

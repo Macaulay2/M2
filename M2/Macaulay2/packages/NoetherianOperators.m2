@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
     "NoetherianOperators",
-    Version => "2.0",
-    Date => "May 9, 2021",
+    Version => "2.0.1",
+    Date => "Aug 26 2021",
     Authors => {
         {Name => "Robert Krone", 
         Email => "krone@math.gatech.edu"},
@@ -1516,7 +1516,8 @@ reducedNoetherianOperators (Module, Module, Ideal) := List => true >> opts -> (a
     );
 
     -- For each column, find the lcm of denominators
-    lcmList := transpose entries K / (C -> (C / denominator // lcm));
+    denoms := transpose entries K / (C -> C / denominator) // matrix;
+    lcmList := entries lift(denoms, R) / lcm;
     -- Multiply each column by the lcm of its generators
     liftedK := transpose matrix apply(transpose entries K, lcmList, (C, c) -> C / (f -> if c%denominator f != 0 then error"something went horribly wrong" else numerator f * (c // denominator f)));
 
@@ -1583,7 +1584,7 @@ mapRtoHilb = (Q, P, S, depVars, indVars) -> (
 
 liftColumnsPunctualHilbert = (M, R') -> (
     cols := transpose entries M;
-    lcms := cols / (c -> c / denominator // lcm );
+    lcms := cols / (c -> c / denominator / (i -> lift(i, R')) // lcm );
     K := transpose matrix apply(cols, lcms, (c,m) -> c / times_m );
     sub(K,R')
 )
@@ -1773,7 +1774,7 @@ vectorSpaceAnn = (W) -> (
 )
 -- This function localizes a module at a prime P
 -- and then it computes the contraction back into the polynomial ring. 
--- In other words, it computes the interesection of all the primary
+-- In other words, it computes the intersection of all the primary
 -- components whose corresponding prime ideal is contained in P.
 localizeModule = (U, AssU, P) -> (
     R := ring P;

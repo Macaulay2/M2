@@ -59,7 +59,7 @@ IntermediateBasis BRPSfromMatrix(const Matrix *m)
         }
       F[i] = temp;
     }
-  deletearray(exp);
+  freemem(exp);
   return F;
 }
 
@@ -93,7 +93,7 @@ const Matrix *BRPStoMatrix(const PolynomialRing *P, const IntermediateBasis &F)
       C.append(P->make_vec(0, f));
     }
 
-  deletearray(exp);
+  freemem(exp);
   return C.to_matrix();
 }
 

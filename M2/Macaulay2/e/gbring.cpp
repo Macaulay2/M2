@@ -28,8 +28,6 @@ void GBRing::memstats()
 gbvector *GBRing::new_raw_term()
 {
   void *p = mem->new_elem();
-  // void *p = GC_MALLOC(gbvector_size);
-  //  if (p == 0) outofmem2(gbvector_size);
   return (reinterpret_cast<gbvector *>(p));
 }
 
@@ -43,7 +41,7 @@ exponents GBRing::exponents_make()
   return e;
 }
 
-void GBRing::exponents_delete(exponents e) { deletearray(e); }
+void GBRing::exponents_delete(exponents e) { freemem(e); }
 ////////////////////////////////////////////////////////////////
 GBRing::~GBRing()
 {
@@ -281,9 +279,10 @@ void GBRing::gbvector_remove_term(gbvector *f)
   // GC_FREE(reinterpret_cast<char *>(f));
 }
 
-void GBRing::gbvector_remove(gbvector *f)
+void GBRing::gbvector_remove(gbvector *f0)
 {
   // It is not clear whether we should try to free elements of K
+  gbvector *f = f0;
   while (f != 0)
     {
       gbvector *g = f;

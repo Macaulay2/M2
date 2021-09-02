@@ -136,8 +136,8 @@ Visualize
 EquivariantGB
 ExampleSystems
 RationalMaps
-FastLinAlg
-RandomRationalPoints
+FastMinors
+RandomPoints
 SwitchingFields
 SpectralSequences
 SectionRing
@@ -226,4 +226,7 @@ SuperLinearAlgebra
 SubalgebraBases
 AInfinity
 LinearTruncations
+ThinSincereQuivers
 Python
+BettiCharacters
+Jets

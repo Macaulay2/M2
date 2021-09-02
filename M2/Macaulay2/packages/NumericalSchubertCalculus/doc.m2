@@ -40,7 +40,7 @@ document {
 	 TO bracket2partition,
 	 --(converts a bracket into a partition)
 	 TO partition2bracket,
-	 --(converts a parition into a bracket)
+	 --(converts a partition into a bracket)
 	 TO NSC2phc
 	 --(converts between list of brackets/partitions and phc notation for a Schubert problem)
 	 },

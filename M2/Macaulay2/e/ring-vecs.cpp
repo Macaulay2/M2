@@ -14,7 +14,7 @@
 vec Ring::new_vec() const { return new vecterm; }
 void Ring::remove_vec_node(vec n) const
 {
-  deleteitem(n);
+  freemem(n);
 }
 
 vec Ring::make_vec(int r, ring_elem a) const
@@ -957,7 +957,7 @@ vec Ring::vec_remove_monomial_factors(vec f, bool make_squarefree_only) const
 
   vec result = vec_divide_by_expvector(exp, f);
 
-  deletearray(exp);
+  freemem(exp);
   return result;
 }
 

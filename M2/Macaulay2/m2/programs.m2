@@ -87,20 +87,18 @@ findProgram(String, List) := opts -> (name, cmds) -> (
 	instance(opts.MinimumVersion, Sequence) and
 	class \ opts.MinimumVersion === (String, String)) then
 	error "expected MinimumVersion to be a sequence of two strings";
-    pathsToTry := {};
-    -- try user-configured path first
-    if programPaths#?name then
-	pathsToTry = append(pathsToTry, programPaths#name);
-    -- now try M2-installed path
-    pathsToTry = append(pathsToTry, prefixDirectory | currentLayout#"programs");
-    -- any additional paths specified by the caller
-    pathsToTry = pathsToTry | opts.AdditionalPaths;
-    -- finally, try PATH
-    if getenv "PATH" != "" then
-	pathsToTry = join(pathsToTry,
-	    apply(separate(":", getenv "PATH"), dir ->
-		if dir == "" then "." else dir));
-    pathsToTry = fixPath \ pathsToTry;
+    pathsToTry := fixPath \ join(
+	-- try user-configured path first
+	if programPaths#?name then {programPaths#name} else {},
+	-- now try M2-installed path
+	{prefixDirectory | currentLayout#"programs"},
+	-- any additional paths specified by the caller
+	opts.AdditionalPaths,
+	-- try PATH
+	if getenv "PATH" == "" then {} else apply(separate(":", getenv "PATH"),
+	    dir -> if dir == "" then "." else dir),
+	-- try directory containing M2-binary
+	{bindir});
     prefixes := {(".*", "")} | opts.Prefix;
     errorCode := didNotFindProgram;
     versionFound := "0.0";
@@ -143,6 +141,7 @@ runProgram(Program, String, String) := opts -> (program, name, args) -> (
 	    makeDirectory opts.RunDirectory;
 	"cd " | opts.RunDirectory | " && " ) else "";
     cmd = cmd | program#"path" | addPrefix(name, program#"prefix") | " " | args;
+    if match("\\|", cmd) then cmd = "{ " | cmd | ";}";
     returnValue := run (cmd | " > " | outFile | " 2> " | errFile);
     message := "running: " | cmd | "\n";
     output := get outFile;

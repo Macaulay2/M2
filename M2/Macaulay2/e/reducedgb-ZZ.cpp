@@ -15,7 +15,9 @@ ReducedGB_ZZ::ReducedGB_ZZ(GBRing *R0,
                            const PolynomialRing *originalR0,
                            const FreeModule *F0,
                            const FreeModule *Fsyz0)
-    : ReducedGB(R0, originalR0, F0, Fsyz0), T(0)
+    : ReducedGB(R0, originalR0, F0, Fsyz0),
+      T(nullptr),
+      ringtableZZ(nullptr)
 {
   T = MonomialTableZZ::make(R0->n_vars());
   if (originalR->is_quotient_ring())

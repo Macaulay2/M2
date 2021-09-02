@@ -130,7 +130,7 @@ void GB_comp::remove_pair(s_pair *&p)
   p->second = NULL;
   p->next = NULL;
   _M->remove(p->lcm);
-  deleteitem(p);
+  freemem(p);
   p = NULL;
 }
 
@@ -368,8 +368,8 @@ void GB_comp::find_pairs(gb_elem *p)
   // Remove the local variables
   _M->remove(find_pairs_m);
   _M->remove(f_m);
-  deletearray(find_pairs_exp);
-  deletearray(find_pairs_lcm);
+  freemem(find_pairs_exp);
+  freemem(find_pairs_lcm);
 }
 
 void GB_comp::compute_s_pair(s_pair *p)
@@ -457,7 +457,7 @@ void GB_comp::gb_reduce(gbvector *&f, gbvector *&fsyz)
       emit_wrapped(o.str());
     }
   f = head.next;
-  deletearray(div_totalexp);
+  freemem(div_totalexp);
 }
 
 void GB_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
@@ -526,7 +526,7 @@ void GB_comp::gb_geo_reduce(gbvector *&f, gbvector *&fsyz)
   f = head.next;
 
   fsyz = fsyzb.value();
-  deletearray(div_totalexp);
+  freemem(div_totalexp);
 }
 
 void GB_comp::flush_pairs(int deg)

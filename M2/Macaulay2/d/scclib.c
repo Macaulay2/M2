@@ -77,21 +77,21 @@ int system_openin(M2_string filename) {
      char *fname = M2_tocharstar(filename);
      int fd;
      fd = open(fname, O_BINARY | O_RDONLY);
-     GC_FREE(fname);
+     freemem(fname);
      return fd;
      }
 
 int system_openout(M2_string filename) {
      char *fname = M2_tocharstar(filename);
      int fd = open(fname, O_BINARY | O_CREAT | O_WRONLY | O_TRUNC, 0644);
-     GC_FREE(fname);
+     freemem(fname);
      return fd;
      }
 
 int system_openoutappend(M2_string filename) {
      char *fname = M2_tocharstar(filename);
      int fd = open(fname, O_BINARY | O_CREAT | O_WRONLY | O_APPEND, 0644);
-     GC_FREE(fname);
+     freemem(fname);
      return fd;
      }
 
@@ -100,9 +100,9 @@ int system_exec(M2_ArrayString argv) {
      char **av = M2_tocharstarstar(argv);
      execvp(av[0],av);
      for (i=0; i<(int)argv->len; i++) {
-     	  GC_FREE(av[i]);
+     	  freemem(av[i]);
 	  }
-     GC_FREE(av);
+     freemem(av);
      return ERROR;
      }
 
@@ -130,7 +130,7 @@ M2_string system_getcwd()
 M2_string system_getenv(M2_string s) {
      char *ss = M2_tocharstar(s);
      char *x = getenv(ss);
-     GC_FREE(ss);
+     freemem(ss);
      if (x == NULL) return M2_tostring("");
      else return M2_tostring(x);
      }
@@ -315,14 +315,14 @@ M2_string system_readlink(M2_string filename) {
     }
     size *= 2;			/* r == size, try again */
   }
-  GC_FREE(fn);
+  freemem(fn);
   return s;
 }
 
 int system_chdir(M2_string filename) {
   char *fn = M2_tocharstar(filename);
   int ret = chdir(fn);
-  GC_FREE(fn);
+  freemem(fn);
   return ret;
 }
 
@@ -344,7 +344,7 @@ M2_string system_realpath(M2_string filename) {
   char buf[PATH_MAX+1];
   char *r = realpath(*fn ? fn : ".",buf);
   if (isDirectory(r) && r[1] != 0) strcat(r,"/");
-  GC_FREE(fn);
+  freemem(fn);
   return r == NULL ? NULL : M2_tostring(buf);
  #else
   return filename;
@@ -357,8 +357,8 @@ M2_string system_errfmt(M2_string filename, int lineno, int colno, int loaddepth
 	M2_string ret;
 	sprintf(s,posfmt,fn,lineno,colno,loaddepth);
 	ret = M2_tostring(s);
-	GC_FREE(s);
-	GC_FREE(fn);
+	freemem(s);
+	freemem(fn);
 	return ret;
 }
 
@@ -378,7 +378,7 @@ M2_bool system_fileExists(M2_string name) {
   struct stat buf;
   int r = stat(cname,&buf);
   errno = 0;
-  GC_FREE(cname);
+  freemem(cname);
   return r != ERROR;
 }
 
@@ -386,7 +386,7 @@ M2_bool system_fileReadable(M2_string name) {
   char *cname = M2_tocharstar(name);
   int r = access(cname,R_OK);
   errno = 0;
-  GC_FREE(cname);
+  freemem(cname);
   return r != ERROR;
 }
 
@@ -394,7 +394,7 @@ M2_bool system_fileWritable(M2_string name) {
   char *cname = M2_tocharstar(name);
   int r = access(cname,W_OK);
   errno = 0;
-  GC_FREE(cname);
+  freemem(cname);
   return r != ERROR;
 }
 
@@ -402,7 +402,7 @@ M2_bool system_fileExecutable(M2_string name) {
   char *cname = M2_tocharstar(name);
   int r = access(cname,X_OK);
   errno = 0;
-  GC_FREE(cname);
+  freemem(cname);
   return r != ERROR;
 }
 
@@ -410,7 +410,7 @@ int system_fileMode(M2_string name) {
   char *cname = M2_tocharstar(name);
   struct stat buf;
   int r = stat(cname,&buf);
-  GC_FREE(cname);
+  freemem(cname);
   return r == ERROR ? -1 : buf.st_mode & ~S_IFMT;
 }
 
@@ -423,14 +423,14 @@ int system_fileModeFD(int fd) {
 int system_chmod(M2_string name,int mode) {
   char *cname = M2_tocharstar(name);
   int r = chmod(cname,mode);
-  GC_FREE(cname);
+  freemem(cname);
   return r;
 }
 
 int system_isDirectory(M2_string name) {
   char *cname = M2_tocharstar(name);
   int r = isDirectory(cname);
-  GC_FREE(cname);
+  freemem(cname);
   return r;
 }
 
@@ -444,7 +444,7 @@ int system_isRegularFile(M2_string name) {
     stat
     #endif
     (cname,&buf);
-  GC_FREE(cname);
+  freemem(cname);
   return r == ERROR ? -1 : S_ISREG(buf.st_mode);
 }
 
@@ -456,7 +456,7 @@ M2_ArrayString system_readDirectory(M2_string name) {
   char *cname = M2_tocharstar(name);
   struct dirent *entry;
   DIR *dir = opendir(cname);
-  GC_FREE(cname);
+  freemem(cname);
   if (dir == NULL) return NULL;
   errno = 0;
   for (n=0; readdir(dir) != NULL; n++) ;
@@ -484,7 +484,7 @@ int system_fileLength_1(M2_string filename) {
   char *cname = M2_tocharstar(filename);
   struct stat statbuf;
   int ret = stat(cname,&statbuf);
-  GC_FREE(cname);
+  freemem(cname);
   if (ERROR == ret) return ERROR;
   return statbuf.st_size;
 }
@@ -500,7 +500,7 @@ int system_fileTime(M2_string name) {
     stat
     #endif
       (cname,&buf);
-  GC_FREE(cname);
+  freemem(cname);
   if (r == ERROR) return -1;
   return buf.st_mtime;
 }
@@ -510,7 +510,7 @@ int system_setFileTime(M2_string name, int modtime) {
   struct utimbuf buf = { time(NULL), modtime };
   int r;
   r = utime(cname,&buf);
-  GC_FREE(cname);
+  freemem(cname);
   if (r == ERROR) return -1;
   return 0;
 }
@@ -524,21 +524,21 @@ int system_mkdir(M2_string name) {
     mkdir(cname,0777)
     #endif
     ;
-  GC_FREE(cname);
+  freemem(cname);
   return r;
 }
 
 int system_rmdir(M2_string name) {
   char *cname = M2_tocharstar(name);
   int r = rmdir(cname);
-  GC_FREE(cname);
+  freemem(cname);
   return r;
 }
 
 int system_unlink(M2_string name) {
   char *cname = M2_tocharstar(name);
   int r = unlink(cname);
-  GC_FREE(cname);
+  freemem(cname);
   return r;
 }
 
@@ -552,8 +552,8 @@ int system_link(M2_string oldfilename,M2_string newfilename) {
     -1
     #endif
     ;
-  GC_FREE(old);
-  GC_FREE(new);
+  freemem(old);
+  freemem(new);
   return r;
 }
 
@@ -567,8 +567,8 @@ int system_symlink(M2_string oldfilename,M2_string newfilename) {
     -1
     #endif
     ;
-  GC_FREE(old);
-  GC_FREE(new);
+  freemem(old);
+  freemem(new);
   return r;
 }
 
@@ -601,14 +601,14 @@ M2_string system_readfile(int fd) {
 	       p = getmem_atomic(newbufsize);
 	       memcpy(p,text,size);
 	       bufsize = newbufsize;
-	       GC_FREE(text);
+	       freemem(text);
 	       text = p;
 	       }
 	  }
      M2_string s = (M2_string)getmem_atomic(sizeofarray(s,size));
      s->len = size;
      memcpy(s->array,text,size);
-     GC_FREE(text);
+     freemem(text);
      return s;
 }
 
@@ -805,8 +805,8 @@ int system_opensocket(M2_string host,M2_string serv) {
      char *tmphost = M2_tocharstar(host);
      char *tmpserv = M2_tocharstar(serv);
      int sd = opensocket(tmphost,tmpserv);
-     GC_FREE(tmphost);
-     GC_FREE(tmpserv);
+     freemem(tmphost);
+     freemem(tmpserv);
      return sd;
      }
 
@@ -814,8 +814,8 @@ int system_openlistener(M2_string interface0,M2_string serv) {
      char *tmpinterface0 = M2_tocharstar(interface0);
      char *tmpserv = M2_tocharstar(serv);
      int sd = openlistener(*tmpinterface0 ? tmpinterface0 : NULL,tmpserv);
-     GC_FREE(tmpinterface0);
-     GC_FREE(tmpserv);
+     freemem(tmpinterface0);
+     freemem(tmpserv);
      return sd;
      }
 
@@ -850,7 +850,7 @@ M2_string system_syserrmsg()
 int system_run(M2_string command){
      char *c = M2_tocharstar(command);
      int r = fix_status(system(c));
-     GC_FREE(c);
+     freemem(c);
      return r;
      }
 
