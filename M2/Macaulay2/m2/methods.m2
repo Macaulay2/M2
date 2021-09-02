@@ -31,7 +31,7 @@ noMethod       = (M, args, outputs) -> toString stack join( {line0 M},
     else {   printarg(" ",            args,   false) }) -- TODO: do better here, in what way?
 
 -- TODO: what is this for exactly?
-badClass := (meth,i,args) -> (
+badClass := meth -> (i, args) -> (
      if i == -1 then error(silentRobustString(45,3,meth),": expected an output class, but got: ", silentRobustString(45,3,args))
      else error(silentRobustString(45,3,meth),": expected argument ",toString (i+1)," to be a type, but it was: ", silentRobustString(45,3,args#i)))
 
@@ -87,7 +87,7 @@ BinaryNoOptions := outputs -> (
     -- TODO: this implementation cuts recursion depth by more than 6, do better!
     dispatchBy := if outputs === true then identity else class;
     methodFunction := newmethod1(args -> error noMethod(methodFunction, args, outputs), outputs, MethodFunctionBinary);
-    -- Note: the method on List can be overriden later to implement
+    -- Note: these methods may be overriden in order to implement
     -- specializations for handling more than two objects at once
     methodFunction List     :=
     methodFunction Sequence := args -> (
@@ -106,22 +106,22 @@ BinaryWithOptions := (opts, outputs) -> (
     else if instance(opts, OptionTable) then ((o, args) -> (f -> (f o) args))
     else error badopts opts;
     -- TODO: this can be simplified when https://github.com/Macaulay2/M2/issues/1878 is fixed
-    functionClosure :=
-    methodFunction := opts >> o -> args -> (
+    functionClosure := methodFunction := opts >> o -> args -> (
 	-- Common code for every associative method with options
+	-- this is essentially a method installed on (methodFunction, VisibleList)
 	if not instance(args, VisibleList) then args = 1:args;
 	if #args == 0 then return binaryCaller'(methodFunction, 1 : methodFunction, args, outputs, dispatcher(o, args));
 	if #args == 1 and (f := lookup(methodFunction, dispatchBy args#0)) =!= null then return (dispatcher(o, args#0)) f;
-	-- Note: a method may be installed on List to allow for specializations
-	-- e.g. for intersection of Modules, all may be intersected at once
-	if instance(args, List) and (f = lookup(methodFunction, List)) =!= null then return (dispatcher(o, args)) f;
+	-- Note: specializations for simultaneous computation may be implemented
+	-- by installing method functions on types that inherit from VisibleList
+	if (f = lookup(methodFunction, class args)) =!= null and f =!= functionClosure then return (dispatcher(o, args)) f;
 	-- TODO: a rudimentary caching of the lookup call here would be a significant benefit
 	binaryLookup := (x, y) -> binaryCaller'(methodFunction, (methodFunction, dispatchBy x, dispatchBy y), (x, y), outputs, dispatcher(o, (x, y)));
 	foldL(binaryLookup, args#0, drop(args, 1)));
     methodFunction = new MethodFunctionBinary from methodFunction;
-    -- Note: the method on List can be overriden later to implement
+    -- Note: these methods may be overriden in order to implement
     -- specializations for handling more than two objects at once
-    installMethod(methodFunction, List, opts >> o -> args -> (dispatcher(o, toSequence args)) functionClosure);
+    installMethod(methodFunction, List,     functionClosure);
     installMethod(methodFunction, Sequence, functionClosure);
     methodFunction)
 
@@ -158,7 +158,7 @@ MultipleArgsWithOptions := (methopts,opts,outputs) -> (
      innerMethodFunction = newmethod1234c(
 	  methodFunction,
 	  args -> error noMethod(methodFunction,args,outputs),
-	  (i,args) -> badClass(methodFunction,i,args),
+	  badClass methodFunction,
 	  outputs,
 	  opts =!= true
 	  );
@@ -170,7 +170,7 @@ MultipleArgsNoOptions := (methopts,outputs) -> (
      methodFunction := newmethod1234c(
 	  MethodFunction,
 	  args -> error noMethod(methodFunction,args,outputs),
-	  (i,args) -> badClass(methodFunction,i,args),
+	  badClass methodFunction,
 	  outputs,
 	  null
 	  );

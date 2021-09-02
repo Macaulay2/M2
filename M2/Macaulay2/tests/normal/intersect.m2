@@ -30,3 +30,11 @@ assert(
      ==
      subquotient(matrix {{a*b}},matrix {{d}})
      )
+
+--
+R = ZZ/101[a..d]
+M = coker random(R^{0,-1}, R^{-2,-3})
+L = new SelfInitializingType of VisibleList
+t1 = first elapsedTiming intersect L(20:M)
+t2 = first elapsedTiming intersect  (20:M)
+assert(t1 > 4 * t2)
