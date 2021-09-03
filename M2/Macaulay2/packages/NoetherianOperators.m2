@@ -859,17 +859,19 @@ assert((myKernel M - gens kernel M) == 0)
 noetherianOperators = method(Options => true)
 noetherianOperators (Ideal) := List => true >> opts -> I -> (
     strats := new HashTable from {
+        "PunctualQuot" => noetherianOperatorsPunctual,
         "PunctualHilbert" => noetherianOperatorsPunctual,
         "Hybrid" => hybridNoetherianOperators,
         "MacaulayMatrix" => noetherianOperatorsViaMacaulayMatrix,
     };
-    strat := if opts.?Strategy then opts.Strategy else "PunctualHilbert";
+    strat := if opts.?Strategy then opts.Strategy else "PunctualQuot";
     if strats#?strat then strats#strat(I, opts) 
     else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 )
 
 noetherianOperators (Ideal, Ideal) := List => true >> opts -> (I,P) -> (
     strats := new HashTable from {
+        "PunctualQuot" => noetherianOperatorsPunctual,
         "PunctualHilbert" => noetherianOperatorsPunctual,
         "Hybrid" => hybridNoetherianOperators,
         "MacaulayMatrix" => noetherianOperatorsViaMacaulayMatrix,
@@ -891,12 +893,13 @@ noetherianOperators (Module) := List => true >> opts -> M -> (
 -- Justin 5/8/21: method for determining multiplicity requires module to be primary, and localize(Module, Prime, List) does not return a primary component if the prime is embedded
 -- noetherianOperators (Module, Ideal) := List => true >> opts -> (M,P) -> (
     -- strats := new HashTable from {
-        -- "Punctual" => noetherianOperatorsPunctual
+        -- "PunctualQuot" => noetherianOperatorsPunctual
     -- };
-    -- strat := if opts.?Strategy then opts.Strategy else "Punctual";
+    -- strat := if opts.?Strategy then opts.Strategy else "PunctualQuot";
     -- if strats#?strat then strats#strat(M, P, opts) 
     -- else error ("expected Strategy to be one of: \"" | demark("\", \"", sort keys strats) | "\"")
 -- )
+-- TODO: uncomment, document: Assumed to have no embedded primes
 -- End dispatcher method
 
 
@@ -1855,7 +1858,7 @@ doc ///
            @UL {
                {TO DiffOp},
                {TO noetherianOperators, UL {
-                 {TO "Strategy => \"PunctualHilbert\""},
+                 {TO "Strategy => \"PunctualQuot\""},
                  {TO "Strategy => \"MacaulayMatrix\""},
                  {TO "Strategy => \"Hybrid\""}
                 }},
@@ -2658,7 +2661,7 @@ Headline
     Noetherian operators of a primary ideal
 Usage
     noetherianOperators Q
-    noetherianOperators (Q, Strategy => "PunctualHilbert")
+    noetherianOperators (Q, Strategy => "PunctualQuot")
 Inputs
     Q:Ideal
         assumed to be primary
@@ -2676,7 +2679,8 @@ Description
         The optional argument {\tt Strategy} can be used to choose different algorithms. Each strategy may accept additional optional arguments, see the documentation page for each strategy for details.
 
         @UL{
-            TO2 {"Strategy => \"PunctualHilbert\"", "\"PunctualHilbert\" (default)"},
+            TO2 {"Strategy => \"PunctualQuot\"", "\"PunctualQuot\" (default)"},
+            TO2 {"Strategy => \"PunctualQuot\"", "\"PunctualHilbert\" (alias for \"PunctualQuot\")"},
             TO2 {"Strategy => \"MacaulayMatrix\"", "\"MacaulayMatrix\""},
             TO2 {"Strategy => \"Hybrid\"", "\"Hybrid\""},
         }@
@@ -2781,7 +2785,7 @@ Description
         R=QQ[x_1,x_2,x_3,x_4]
         Q = ideal(x_1^2,x_1*x_2,x_1*x_3,x_1*x_4-x_3^2+x_1,x_3^2*x_4-x_2^2,x_3^2*x_4-x_3^2-x_2*x_3+2*x_1)
         isPrimary Q
-        noetherianOperators(Q, Strategy => "PunctualHilbert")
+        noetherianOperators(Q, Strategy => "PunctualQuot")
 ///
 
 doc ///
@@ -2821,7 +2825,7 @@ Description
 
 SeeAlso
     "Strategy => \"Hybrid\""
-    "Strategy => \"PunctualHilbert\""
+    "Strategy => \"PunctualQuot\""
     DependentSet
 ///
 
@@ -2858,13 +2862,13 @@ Description
 
         {\tt DependentSet =>} a list of variables. For details, see @TO DependentSet@.
 SeeAlso
-    "Strategy => \"PunctualHilbert\""
+    "Strategy => \"PunctualQuot\""
     "Strategy => \"MacaulayMatrix\""
 ///
 
 doc ///
 Key
-    "Strategy => \"PunctualHilbert\""
+    "Strategy => \"PunctualQuot\""
 Headline
     strategy for computing Noetherian operators
 Description
@@ -2880,7 +2884,7 @@ Description
         J = ideal((x_1^2-x_2*x_3)^k,(x_1*x_2-x_3*x_4)^k,(x_2^2-x_1*x_4)^k)
         Q = saturate(J,ideal(x_1*x_2*x_3*x_4))
         isPrimary Q
-        elapsedTime noetherianOperators(Q, Strategy => "PunctualHilbert")
+        elapsedTime noetherianOperators(Q, Strategy => "PunctualQuot")
 SeeAlso
     mapToPunctualHilbertScheme
     "Strategy => \"MacaulayMatrix\""
@@ -2927,7 +2931,7 @@ Description
         Q = ideal(x_1^2, x_2^2, x_1-x_2*x_3)
 	mapToPunctualHilbertScheme Q
 SeeAlso
-    "Strategy => \"PunctualHilbert\""
+    "Strategy => \"PunctualQuot\""
 ///
 
 
@@ -3207,7 +3211,7 @@ Description
         @TO numericalNoetherianOperators@ will usually require the user to set the option {\tt DependentSet}.
 
 Caveat
-    The option {\tt DependentSet} is ignored when calling @TO noetherianOperators@ with @TO "Strategy => \"PunctualHilbert\""@.
+    The option {\tt DependentSet} is ignored when calling @TO noetherianOperators@ with @TO "Strategy => \"PunctualQuot\""@.
     Note that this is the default strategy for @TO (noetherianOperators, Ideal)@.
 
 SeeAlso
