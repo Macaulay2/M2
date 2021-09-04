@@ -68,7 +68,7 @@ export {
 
 }
 
-export { "isPointEmbedded", "isPointEmbeddedInCurve", "AllVisible" }
+export { "isPointEmbedded", "isPointEmbeddedInCurve", "AllVisible", "Regularity" }
 
 --TruncDualData private keys
 protect \ {
@@ -649,14 +649,14 @@ assert(isWitnessPolynomial(p,I,h,10))
 ///
 
 
-isPointEmbeddedInCurve = method(Options=>{"regularity"=>-1})
+isPointEmbeddedInCurve = method(Options=>{Regularity => -1})
 isPointEmbeddedInCurve (Point,Ideal) := o-> (p,I) -> (
     R := ring I;
     I' := ideal sub(gens I, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
     p' := origin(R);
     m := matrix{apply(gens R, v->random(1,R))}; -- matrix for random linear change of coordinates
     I' = (map(R,R,m)) I'; -- I with new coordinates
-    r := o#"regularity";
+    r := o#Regularity;
     if r == -1 then (
 	r1 := localHilbertRegularity(p',I');
 	r2 := dim truncatedDual(p',I',r);
@@ -1870,7 +1870,7 @@ doc ///
                {TO differentialPrimaryDecomposition}
            }@
 
-	   Methods for computing and manipulating local dual spaces:
+	   Methods for numerically computing and manipulating local dual spaces:
 
 	   @UL {
     		   {TO truncatedDual},
@@ -1881,8 +1881,7 @@ doc ///
     		   {TO pairingMatrix},
 	 	   	   {TO isPointEmbedded},
 	 	   	   {TO isPointEmbeddedInCurve},
-	 		   {TO colon},
-               {TO reduceSpace}
+	 		   {TO colon}
 	   }@
 
 	   Auxiliary numerical linear algebra methods:
@@ -2364,7 +2363,7 @@ document {
 	(isPointEmbedded,Point,Ideal,List), isPointEmbedded,
 	AllVisible, [isPointEmbedded,AllVisible],
 	},
-    Headline => "determine if the point is an embedded component of the scheme",
+    Headline => "numerically determine if the point is an embedded component of the scheme",
     Usage => "B = isPointEmbedded(P,I,C)",
     Inputs => { 
 	"P", 
@@ -2372,24 +2371,27 @@ document {
 	"C"=>{" witness sets representing components of ", TT "Spec(I)", " containing ", TT "P"} 
 	},
     Outputs => { "B"=>Boolean },
-    PARA {"This method runs an embedded component test described in the following paper. "},
+    PARA {"This method runs a numerical embedded component test described in the following paper. "},
     refKroneLeykin,
     SeeAlso=>{isPointEmbeddedInCurve}
     }
 
 document {
     Key => {
-	(isPointEmbeddedInCurve,Point,Ideal), isPointEmbeddedInCurve
+	(isPointEmbeddedInCurve,Point,Ideal), isPointEmbeddedInCurve,
+    Regularity, [isPointEmbeddedInCurve, Regularity]
 	},
-    Headline => "determine if the point is an embedded component of a 1-dimensional scheme",
+    Headline => "numerically determine if the point is an embedded component of a 1-dimensional scheme",
     Usage => "B = isPointEmbeddedInCurve(P,I)",
     Inputs => { 
 	"P", 
 	"I"
 	},
     Outputs => { "B"=>Boolean },
-    PARA {"This method runs an embedded component test described in the following paper. "},
+    PARA {"This method runs a numerical embedded component test described in the following paper. "},
     refKroneLeykin,
+    PARA {"The optional parameter ",  TT "Regularity", " can be used to set the local Hilbert regularity. ",
+    "The default value -1 computes it using ", TO localHilbertRegularity},
     SeeAlso=>{isPointEmbeddedInCurve}
     }
 
@@ -2784,8 +2786,8 @@ Description
     Text
         Compute a set of Noetherian operators for the primary submodule U.
         
-        This method contains an implementation of Algorithm 4.1 in @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@. 
-    	For more details, see Section 4 of @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@.
+        This method contains an implementation of Algorithm 4.1 in the paper @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@. 
+    	For more details, see Section 4 of the paper @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@.
     Example
         R = QQ[x_1,x_2,x_3]
         U = image matrix {{x_1, x_2^2, 0}, {x_3, x_3^2, x_2^2-x_1*x_3}}
@@ -2827,7 +2829,7 @@ Headline
     strategy for computing Noetherian operators
 Description
     Text
-        This strategy implements Algorithm 2 in @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@,
+        This strategy implements Algorithm 2 in the paper @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@,
         and supports computing Noetherian operators of either primary ideals (@TO (noetherianOperators, Ideal)@), or primary components
         of unmixed ideals (@TO (noetherianOperators, Ideal, Ideal)@).
 
@@ -2847,7 +2849,7 @@ Description
         to compute kernels (via Grobner bases). The strategy {\tt "Gaussian"} computes kernels directly via a Gaussian reduction, and may offer performance improvements compared to {\tt "Default"}.
 
         {\tt IntegralStrategy => ...}: takes a boolean value. If {\tt true}, uses the Mourrain algorithm to compute the kernel of the MacaulayMatrix, which constructs columns
-        of the Macaulay matrix by taking integrals of the columns in the previous step. If {\tt false}, uses the method outlined in Algorithm 1 in @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@.
+        of the Macaulay matrix by taking integrals of the columns in the previous step. If {\tt false}, uses the method outlined in Algorithm 1 in the paper @ HREF("https://arxiv.org/abs/2006.13881", "Noetherian Operators and Primary Decomposition")@.
         If unset, will choose automatically. See: B. Mourrain. Isolated points, duality and residues. @EM "J. Pure Appl. Algebra"@, 117/118:469-493, 1997. 
            Algorithms for algebra (Eindhoven, 1996).
 
@@ -2887,10 +2889,10 @@ Description
         noetherianOperators(I, Strategy => "Hybrid", Sampler => I -> p)
 
     Text
-        {\tt Tolerance =>} a positive real number. This specifies the numerical precision when computing the
+        {\tt Tolerance => ...}: takes a positive real number. This specifies the numerical precision when computing the
         specialized Noetherian operators. The default value is {\tt 1e-6}. See See @TO "Tolerance (NoetherianOperators)"@.
 
-        {\tt DependentSet =>} a list of variables. For details, see @TO DependentSet@.
+        {\tt DependentSet =>...}: takes a list of variables. For details, see @TO DependentSet@.
 SeeAlso
     "Strategy => \"PunctualQuot\""
     "Strategy => \"MacaulayMatrix\""
@@ -2903,7 +2905,7 @@ Headline
     strategy for computing Noetherian operators
 Description
     Text
-        This strategy implements Algorithm 4.1 in @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@.
+        This strategy implements Algorithm 4.1 in the paper @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@.
 
         The following example deals with a rather non-trivial primary ideal to show the capabilities
         of this strategy.
@@ -2954,7 +2956,7 @@ Description
 	
     	
 	This method maps a P-primary ideal Q into a unique point in ${\rm Hilb}^m ( \,\mathbb{F}[[y_1,\ldots,y_c]] \,)$ that corresponds with Q.
-	This method can be seen as an implementation of the map $\gamma$ described in Section 2 of @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@. 
+	This method can be seen as an implementation of the map $\gamma$ described in Section 2 of the paper @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@. 
 
     Example
     	R = QQ[x_1, x_2, x_3]
@@ -3061,7 +3063,7 @@ Description
         will be used as the trusted point.
 
         {\tt NoetherianDegreeLimit =>} a non-negative @TO2 {ZZ, "integer"}@. Limits the degrees of the Noetherian operators (with respect to the variables $dx_i$).
-            If unset, will compute the full Noetherian operators of the "trusted" point. Can introduce speedups when the maxmial degree of the Noetherian operators
+            If unset, will compute the full Noetherian operators of the "trusted" point. Can introduce speed-ups when the maxmial degree of the Noetherian operators
             is known in advance.
 
         {\tt Tolerance =>} a positive real number. This specifies the numerical precision when computing the
@@ -3128,7 +3130,7 @@ Outputs
         the denominator of the rational function
 Description
     Text
-        Given a set of points $pts = \{p_1,\dots,p_k\}$ and values $vals = \{v_1,\dots,v_k\}$, attempts to find a rational function
+        Given a list of points $pts = \{p_1,\dots,p_k\}$ and values $vals = \{v_1,\dots,v_k\}$, attempts to find a rational function
         $f = g/h$, such that $f(p_i) = v_i$. The polynomials $g$ and $h$ have monomial support {\tt numBasis} and {\tt denBasis} respectively.
     Example
         R = CC[x,y]
@@ -3290,7 +3292,7 @@ Outputs
         the primary ideal corresponding to L and P
 Description
     Text
-        This method contains an implementation of Algorithm 3.9 in @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@. 
+        This method contains an implementation of Algorithm 3.9 in the paper @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@. 
         This method can be seen as the reverse operation of computing a set of Noetherian operators for a primary ideal.      
 
 
@@ -3304,7 +3306,7 @@ Description
 
         Next, we provide several examples to show the interplay between computing a set of Noetherian operators and then recovering the original ideal.
 
-        The first example shows an ideal that can be described with two different sets of Noetherian operators (this example appeared in Example 7.8 of @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@).
+        The first example shows an ideal that can be described with two different sets of Noetherian operators (this example appeared in Example 7.8 of the paper @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@).
     Example
         R = QQ[x_1,x_2,x_3,x_4]
         MM = matrix {{x_3,x_1,x_2},{x_1,x_2,x_4}}
@@ -3318,7 +3320,7 @@ Description
         Q2 = getIdealFromNoetherianOperators(L2, P);
         Q == Q2
     Text
-        The following example was given as the running example in the Introduction of @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
+        The following example was given as the running example in the Introduction of the paper @ HREF("https://arxiv.org/abs/2001.04700", "Primary ideals and their differential equations")@.
     Example
         Q = ideal(3*x_1^2*x_2^2-x_2^3*x_3-x_1^3*x_4-3*x_1*x_2*x_3*x_4+2*x_3^2*x_4^2,3*x_1^3*x_2*x_4-3*x_1*x_2^2*x_3*x_4-3*x_1^2*x_3*x_4^2+3*x_2*x_3^2*x_4^2+2*x_2^3-2*x_3*x_4^2,3*x_2^4*x_3-6*x_1*x_2^2*x_3*x_4+3*x_1^2*x_3*x_4^2+x_2^3-x_3*x_4^2,4*x_1*x_2^3*x_3+x_1^4*x_4-6*x_1^2*x_2*x_3*x_4-3*x_2^2*x_3^2*x_4+4*x_1*x_3^2*x_4^2,x_2^5-x_1*x_2^3*x_4-x_2^2*x_3*x_4^2+x_1*x_3*x_4^3,x_1*x_2^4-x_2^3*x_3*x_4-x_1*x_2*x_3*x_4^2+x_3^2*x_4^3,x_1^4*x_2-x_2^3*x_3^2-2*x_1^3*x_3*x_4+2*x_1*x_2*x_3^2*x_4,x_1^5-4*x_1^3*x_2*x_3+3*x_1*x_2^2*x_3^2+2*x_1^2*x_3^2*x_4-2*x_2*x_3^3*x_4,3*x_1^4*x_3*x_4-6*x_1^2*x_2*x_3^2*x_4+3*x_2^2*x_3^3*x_4+2*x_1^3*x_2+6*x_1*x_2^2*x_3-6*x_1^2*x_3*x_4-2*x_2*x_3^2*x_4,4*x_2^3*x_3^3+4*x_1^3*x_3^2*x_4-12*x_1*x_2*x_3^3*x_4+4*x_3^4*x_4^2-x_1^4+6*x_1^2*x_2*x_3+3*x_2^2*x_3^2-8*x_1*x_3^2*x_4)
         L = noetherianOperators(Q)
@@ -3364,9 +3366,9 @@ Outputs
         the primary submodule corresponding to L and P
 Description
     Text
-        This method contains an implementation of Algorithm 4.3 in @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@. 
+        This method contains an implementation of Algorithm 4.3 in the paper @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@. 
         This method can be seen as the reverse operation of computing a set of Noetherian operators for a primary module.
-    	For more details, see Section 4 of @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@.
+    	For more details, see Section 4 of the paper @ HREF("https://arxiv.org/abs/2104.03385", "Primary decomposition of modules: a computational differential approach")@.
         
     Example
     	R = QQ[x1,x2,x3,x4]
