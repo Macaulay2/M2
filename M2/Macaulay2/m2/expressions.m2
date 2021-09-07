@@ -1170,6 +1170,7 @@ texMath Table := m -> (
 	"{\\begin{array}{", #m#0: "c", "}", newline,
 	apply(m, row -> (between("&",apply(row,texMath)), ///\\///|newline)),
 	"\\end{array}}")
+    else "{}"
     )
 
 texMath MatrixExpression := x -> (
