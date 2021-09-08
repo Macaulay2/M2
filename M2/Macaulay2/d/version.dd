@@ -65,6 +65,8 @@ header "
    #else /* TBB 2021 */
      #include <tbb/version.h>
    #endif
+
+   #include <Eigen/Core>
    ";
 
 header "
@@ -219,6 +221,10 @@ setupconst("version", Expr(toHashTable(Sequence(
    "mpfi version" => Ccode(constcharstar,"MPFI_VERSION_STRING"),
    "tbb version" => Ccode(constcharstar,"TBB_VERSION_STRING"),
    "lapack version" => lapackversion(),
+   "eigen version" => Ccode(constcharstar, "
+       stringize(EIGEN_WORLD_VERSION) \".\"
+       stringize(EIGEN_MAJOR_VERSION) \".\"
+       stringize(EIGEN_MINOR_VERSION)"),
    "M2 suffix" => Ccode(constcharstar,"M2SUFFIX"),
    "executable extension" => Ccode(constcharstar,"EXEEXT"),
    "M2 name" => Ccode(constcharstar," \"M2\" M2SUFFIX EXEEXT "),
