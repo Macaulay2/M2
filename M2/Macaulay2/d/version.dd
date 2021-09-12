@@ -65,6 +65,8 @@ header "
    #else /* TBB 2021 */
      #include <tbb/version.h>
    #endif
+
+   #include <Eigen/Core>
    ";
 
 header "
@@ -118,6 +120,14 @@ readlineversion():constcharstar := Ccode(returns,"
 
 header "#include <gdbm.h>";
 gdbmversion():constcharstar := Ccode(returns, "return gdbm_version");
+
+header "extern \"C\" void ilaver_(int *major, int *minor, int *patch);";
+lapackversion():constcharstar := Ccode(returns, "
+    int major, minor, patch;
+    static char buf[40];
+    ilaver_(&major, &minor, &patch);
+    sprintf(buf, \"%d.%d.%d\", major, minor, patch);
+    return buf");
 
 ic := Ccode(int, "
      #if defined(__INTEL_COMPILER)
@@ -210,6 +220,11 @@ setupconst("version", Expr(toHashTable(Sequence(
    "mpfr version" => Ccode(constcharstar,"MPFR_VERSION_STRING"),
    "mpfi version" => Ccode(constcharstar,"MPFI_VERSION_STRING"),
    "tbb version" => Ccode(constcharstar,"TBB_VERSION_STRING"),
+   "lapack version" => lapackversion(),
+   "eigen version" => Ccode(constcharstar, "
+       stringize(EIGEN_WORLD_VERSION) \".\"
+       stringize(EIGEN_MAJOR_VERSION) \".\"
+       stringize(EIGEN_MINOR_VERSION)"),
    "M2 suffix" => Ccode(constcharstar,"M2SUFFIX"),
    "executable extension" => Ccode(constcharstar,"EXEEXT"),
    "M2 name" => Ccode(constcharstar," \"M2\" M2SUFFIX EXEEXT "),
