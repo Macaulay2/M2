@@ -224,6 +224,7 @@ void ARingZZpFFPACK::power_mpz(ElementType &result,
                                const ElementType a,
                                mpz_srcptr n) const
 {
+  if (is_zero(a) && mpz_sgn(n)<0) ERROR("division by zero");
   STT n1 = static_cast<STT>(mpz_fdiv_ui(n, mFfpackField.cardinality() - 1));
   power(result, a, n1);
 }

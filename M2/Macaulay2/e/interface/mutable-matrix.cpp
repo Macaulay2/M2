@@ -787,7 +787,9 @@ MutableMatrix *rawLinAlgInverse(MutableMatrix *A)
 {
   try
     {
-      return internMutableMatrix(A->invert());
+      MutableMatrix *B = A->invert();
+      if (B==0) ERROR("matrix not invertible");
+      return internMutableMatrix(B);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());

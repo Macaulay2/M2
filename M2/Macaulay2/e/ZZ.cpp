@@ -9,6 +9,7 @@
 
 #include "aring-zz-gmp.hpp"
 #include <utility>
+#include "error.h"
 
 unsigned int computeHashValue_mpz(mpz_srcptr a)
 {
@@ -265,8 +266,10 @@ ring_elem RingZZ::mult(const ring_elem f, const ring_elem g) const
 ring_elem RingZZ::power(const ring_elem f, int n) const
 {
   mpz_ptr result = new_elem();
-  mpz_pow_ui(result, f.get_mpz(), n);
-  mpz_reallocate_limbs(result);
+  if (n<0) ERROR("can only raise to a nonnegative power"); else {
+    mpz_pow_ui(result, f.get_mpz(), n);
+    mpz_reallocate_limbs(result);
+  }
   return ring_elem(result);
 }
 ring_elem RingZZ::power(const ring_elem f, mpz_srcptr n) const
