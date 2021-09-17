@@ -47,7 +47,7 @@ document {
      (S', U', V') = SVD(M, DivideConquer => true)
      norm \ ({S', U', V'}-{S, U, V})
      ///,
-     "The SVD routine calls on the SVD algorithms in the lapack library.",
+     "The SVD routine calls on the SVD algorithms in the lapack and eigen libraries.",
      SeeAlso => {eigenvalues, eigenvectors, norm, clean, "printingAccuracy", "printingPrecision" }
      }
 document { 
