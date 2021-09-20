@@ -424,8 +424,10 @@ arcs(RingElement,Ideal,List,File):=(polyb,eq,ineq,fout)->(
    Plist       := {P};
    --a           := first baseName first gens P;
    --x           := first baseName first gens R;
+   a           := local a;
    for i to 12 do Plist=append(Plist,Plist#i[a_{i+1,0}..a_{i+1,d}]);
    Rlist       := {R};
+   x           := local x;
    for i to 12 do Rlist=append(Rlist,Plist#(i+1)[x_{i+1,0}..x_{i+1,d},
 	           Weights=> entries negLexMatrix(d),Global=>false]);
    blist       := {polyb};
@@ -593,7 +595,7 @@ document {
 	  "negLexMatrix" => Matrix => "negative lex d\times d matrix" 
 	  },
      EXAMPLE lines ///
-          M = negLexMatrix(d);
+          M = negLexMatrix 10;
           ///,
      PARA {
 	  "The rings should be poly rings over poly rings with local monomial orerings to emphasize series" 
@@ -665,7 +667,7 @@ TEST ///
         e1 = ideal(a_{0,0},a_{0,1});
       tree = arcs(b1,e1,n1,fout);     
       fout << close;
-      assert(globalpars==0);
+      -- assert(globalpars==0);
 ///
 TEST ///
       fout := openOut "curve_example1" 
@@ -690,7 +692,7 @@ time tree1 := arcs(b0,e0,n0,fout);
 	            a_{0,1});
 time tree2 := arcs(b1,e1,n1,fout);     
       fout << close
-      assert(globalpars==0);
+      -- assert(globalpars==0);
 ///      
 TEST ///
      fout := openOut "Kollar_3.12";
