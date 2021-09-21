@@ -50,11 +50,10 @@ liftZZmodQQ := (r,S) -> (
      v_(0,0) / v_(1,0))
 
 --------------------------------
-ZZp = method(Options=> {Strategy => null}) -- values allowed: "Flint", "Ffpack", "Aring", "Old".
+ZZp = method(Options=> {Strategy => "Flint"}) -- values allowed: "Flint", "Ffpack", "Aring", "Old".
 ZZp ZZ := opts -> (n) -> ZZp(ideal n, opts)
 ZZp Ideal := opts -> (I) -> (
-      typ := opts#Strategy;
-      if typ === null then typ = "Flint";
+     typ := opts#Strategy;
      gensI := generators I;
      if ring gensI =!= ZZ then error "expected an ideal of ZZ";
      n := gcd flatten entries gensI;
