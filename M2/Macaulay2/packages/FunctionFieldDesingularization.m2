@@ -422,14 +422,14 @@ arcs(RingElement,Ideal,List,File):=(polyb,eq,ineq,fout)->(
    prevlist    := {-1};
    levellist   := {0};
    Plist       := {P};
-   --a           := first baseName first gens P;
-   --x           := first baseName first gens R;
-   a           := local a;
+   a           := getSymbol "a";
    for i to 12 do Plist=append(Plist,Plist#i[a_{i+1,0}..a_{i+1,d}]);
+   a = value a;
    Rlist       := {R};
-   x           := local x;
+   x           := getSymbol "x";
    for i to 12 do Rlist=append(Rlist,Plist#(i+1)[x_{i+1,0}..x_{i+1,d},
 	           Weights=> entries negLexMatrix(d),Global=>false]);
+   x = value x;
    blist       := {polyb};
    clist       := {polyb%promote(eq,R)};
    nlist       := {ineq};
@@ -500,7 +500,7 @@ arcs(RingElement,Ideal,List,File):=(polyb,eq,ineq,fout)->(
 	                bnew    := (rho(phistar*phi,eq1,polyb,Pstar,Rstar));
 	                if degree(Rstar_d,bnew)<2 then globalpars=1;
 			cnew    := bnew%ideal(Rstar_d);
---------print to file--------------------------------	       
+			--------print to file--------------------------------
 	                fout << endl << "phi=" << endl;
                         for i to d do fout << toString((phistar*phi)(R_i)) << endl;
 	                fout << endl;
@@ -520,10 +520,10 @@ arcs(RingElement,Ideal,List,File):=(polyb,eq,ineq,fout)->(
 		                 );
 	                   fout << toString(GBB) << endl << endl;
 	                   fout << "b=" << toString(bnew) << endl << endl;
-mindeg:=min(for j to d list degree(promote(x_{nextlevel,j},ring(bnew)),bnew));
-if mindeg==0 then print("global parameter found");
-if mindeg==1 then print("global parametrization found");    
----------------------------------------------------------	                     
+			   mindeg:=min(for j to d list degree(promote(x_{nextlevel,j},ring(bnew)),bnew));
+			   if mindeg==0 then print("global parameter found");
+			   if mindeg==1 then print("global parametrization found");    
+			   --------------------------------------------------------- 
 	                   linear := "not a leaf";
                            dc := for i to d-1 list degree(R_i,cnew);
                            if max(dc)>0 then(
