@@ -2,9 +2,7 @@ newPackage("FunctionFieldDesingularization",
      Version => "1.0", 
      Date => "September 13, 2021",
      Authors => {{Name => "Douglas A. Leonard", Email => "leonada@auburn.edu"}},
-     Headline => "A package for desingularization of function fields",
-     Reload=>true,
-     DebuggingMode=>true
+     Headline => "desingularization of function fields"
      )
 
 export {"negLexMatrix", "arcs"}
