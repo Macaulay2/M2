@@ -1,7 +1,7 @@
 newPackage(
     "Complexes",
-    Version => "0.99", 
-    Date => "14 Dec 2020",
+    Version => "0.999",
+    Date => "10 May 2021",
     Authors => {
         {   Name => "Gregory G. Smith", 
             Email => "ggsmith@mast.queensu.ca", 
@@ -29,10 +29,14 @@ export {
     "complex",
     "concentration",
     "connectingMap",
+    "connectingExtMap",
     "cylinder",
     "freeResolution",
     "homotopic",
+    "homotopyMap",
     "horseshoeResolution",
+    "koszulComplex",
+    "longExactSequence",
     "isComplexMorphism",
     "isExact",
     "isFree", -- TODO: move to Core, use for freemodules too
@@ -217,7 +221,7 @@ doc ///
             D2.dd_-1
             assert(D1 != D2)
     Caveat
-        This is a temporary method to allow comparisons among the different data types,
+        This is a temporary method to allow comparisons among the data types,
         and will be removed once the older data structure is replaced
     SeeAlso
         (chainComplex, Complex)
@@ -261,7 +265,7 @@ doc ///
             C2 = chainComplex D2
             assert(C2 == C1 ** C1)
     Caveat
-        This is a temporary method to allow comparisons among the different data types,
+        This is a temporary method to allow comparisons among the data types,
         and will be removed once the older data structure is replaced
     SeeAlso
         (complex, ChainComplex)
@@ -312,7 +316,7 @@ doc ///
             g1 = extend(D1, D, matrix{{1_R}})
             assert(g == g1)
     Caveat
-        This is a temporary method to allow comparisons among the different data types,
+        This is a temporary method to allow comparisons among the data types,
         and will be removed once the older data structure is replaced
     SeeAlso
         (chainComplex, ComplexMap)
@@ -361,7 +365,7 @@ doc ///
             assert(g == complex f)
             assert(isComplexMorphism g)
     Caveat
-        This is a temporary method to allow comparisons among the different data types,
+        This is a temporary method to allow comparisons among the data types,
         and will be removed once the older data structure is replaced
     SeeAlso
         (complex, ChainComplexMap)
@@ -383,6 +387,7 @@ restart
 installPackage "Complexes"
 check "Complexes"
 
+viewHelp Complexes
 restart
 needsPackage "Complexes"
 

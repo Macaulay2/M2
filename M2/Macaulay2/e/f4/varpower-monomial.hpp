@@ -4,10 +4,7 @@
 #define _varpower_monomial_hpp_
 
 #include <cstdio>
-
-#if !defined(SAFEC_EXPORTS)
 #include <engine-exports.h>
-#endif
 
 // typedef int64_t varpower_word;
 typedef long varpower_word;

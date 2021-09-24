@@ -143,7 +143,7 @@ KBasis::KBasis(const Matrix *bottom,
       var_wts[i] = ntuple::weight(heft_vector->len, exp, heft_vector);
       ntuple::copy(heft_vector->len, exp, var_degs + next);
     }
-  deletearray(exp);
+  freemem(exp);
 
   // Set the recursion variables
   kb_exp = newarray_atomic_clear(int, P->n_vars());

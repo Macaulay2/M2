@@ -1,5 +1,8 @@
 -- Copyright 1996 Michael E. Stillman
 
+needs "modules.m2"
+needs "ringmap.m2"
+
 PushforwardComputation = new SelfInitializingType of BasicList
 PushforwardComputation.synonym = "push-forward computation"
 
@@ -54,11 +57,12 @@ pushNonLinear := opts -> (f,M) -> (				    -- this returns the presentation matr
 	-- else to recommend it.
 	-- we should really be *lifting* the result to S along the natural map S ---> G
 	mapback := map(S, G, map(S^1, S^n1, 0) | vars S, DegreeMap => mapbackdeg );
-	-- let's at least check it splits f's degree map:
-	for i from 0 to deglen-1 do (
-	     e := for j from 0 to deglen-1 list if i === j then 1 else 0;
-	     if mapbackdeg f.cache.DegreeMap e =!= e then error "not implemented yet: unexpected degree map of ring map";
-	     );
+	if isHomogeneous f then (
+	     -- let's at least check it splits f's degree map:
+	     for i from 0 to deglen-1 do (
+		  e := for j from 0 to deglen-1 list if i === j then 1 else 0;
+		  if mapbackdeg f.cache.DegreeMap e =!= e then error "not implemented yet: unexpected degree map of ring map";
+		  ));
 	cleanupcode := g -> mapback selectInSubring(if numgens target f > 0 then 1 else 0, generators g);
 	f.cache#comp = (m1, cleanupcode);
 	);

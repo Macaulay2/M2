@@ -1,5 +1,13 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "methods.m2"
+
+-----------------------------------------------------------------------------
+-- Ring
+-----------------------------------------------------------------------------
+
+Ring.synonym = "ring"
+
 Ring == ZZ := (R,i) -> (
      if i === 0 then 1_R == 0
      else error "comparison of ring with nonzero integer encountered"
@@ -63,6 +71,7 @@ isWeylAlgebra Ring := R -> (
 ZZ.isCommutative = true
 QQ.isCommutative = true
 RR.isCommutative = true
+RRi.isCommutative = true
 
 isRing = method(TypicalValue => Boolean)
 isRing Thing := R -> false

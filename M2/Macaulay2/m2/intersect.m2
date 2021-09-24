@@ -4,15 +4,18 @@
 -- TODO: add intersection with a ring, via selectInSubring
 -- TODO: how to cache partial computation?
 
+needs "matrix1.m2"
+needs "shared.m2"
+
 -- This is a map from method keys to strategy hash tables
 algorithms := new MutableHashTable from {}
 
 -----------------------------------------------------------------------------
 -- utilities
 -----------------------------------------------------------------------------
--- both are also used in Saturation.m2
 
 -- TODO: can this be simplified using newRing?
+-- also used in Saturation package
 eliminationInfo = method()
 eliminationInfo Ring := (cacheValue symbol eliminationInfo) (R -> (
 	X := local X;
@@ -23,29 +26,28 @@ eliminationInfo Ring := (cacheValue symbol eliminationInfo) (R -> (
 	(R1, fto, fback)))
 
 -----------------------------------------------------------------------------
--- Intersection of ideals and modules
+-- General intersect method
 -----------------------------------------------------------------------------
 
-intersect = method(
-    Dispatch => Thing,
-    Options  => {
-	Strategy          => null,
-	MinimalGenerators => true
-	}
-    )
-intersect Ideal    := Ideal  => opts -> identity
-intersect Module   := Module => opts -> identity
-
-intersect List     :=           opts -> L -> intersect(opts, toSequence L)
-intersect Sequence :=           opts -> L -> (
+intersect List     :=
+intersect Sequence := -* [same as input type] => *- true >> opts -> L -> (
     if not #L > 0 then error "intersect: expected at least one object";
-    if not same apply(L, class)
-    -- TODO: can this be simplified? perhaps by removing MonomialIdeal?
-    and not all(L, l -> instance(l, Ideal)) then error "intersect: expected objects of the same type";
-    type := class L#0;
+    -- This will be the type of the result.
+    type :=
+    -- TODO: simplify this by either removing MonomialIdeal from top level
+    -- or write a function to find a common category for a list of objects
+    if all(L, l -> instance(l, Ideal))  then class L#0 else -- either Ideal or MonomialIdeal
+    if uniform toList L                 then class L#0
+    else error "intersect: expected objects of the same type";
+    -- In a sense, the method is installed on the output type, not the input types
+    -- e.g. Module.intersect
     func := lookup(symbol intersect, type);
-    if func === null then error("intersect: no method for objects of type " | toString type);
-    (func opts) L)
+    if func =!= null then func(opts, L)
+    else error("intersect: no method for objects of type " | synonym type))
+
+-----------------------------------------------------------------------------
+-- Intersection of ideals and modules
+-----------------------------------------------------------------------------
 
 intersectHelper := (L, key, opts) -> (
     -- For now, this is only for intersection of ideals and modules
@@ -63,7 +65,19 @@ intersectHelper := (L, key, opts) -> (
 
 -----------------------------------------------------------------------------
 
-Module.intersect = opts -> L -> intersectHelper(L, (intersect, Module, Module), opts)
+idealIntersectOpts :=
+moduleIntersectOpts := {
+    Strategy          => null,
+    MinimalGenerators => true
+    }
+
+intersect Ideal  := Ideal  =>  idealIntersectOpts >> opts -> identity
+intersect Module := Module => moduleIntersectOpts >> opts -> identity
+
+Ideal.intersect  =  idealIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, Ideal,  Ideal),  opts)
+Module.intersect = moduleIntersectOpts >> opts -> L -> intersectHelper(L, (intersect, Module, Module), opts)
+
+-----------------------------------------------------------------------------
 
 algorithms#(intersect, Module, Module) = new MutableHashTable from {
     Default => (opts, L) -> (
@@ -88,8 +102,6 @@ scan({Default}, strategy ->
     addHook(key := (intersect, Module, Module), algorithms#key#strategy, Strategy => strategy))
 
 -----------------------------------------------------------------------------
-
-Ideal.intersect = opts -> L -> intersectHelper(L, (intersect, Ideal, Ideal), opts)
 
 algorithms#(intersect, Ideal, Ideal) = new MutableHashTable from {
     Default => (opts, L) -> ideal intersect(opts, apply(L, module)),

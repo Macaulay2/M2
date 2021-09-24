@@ -67,6 +67,7 @@ doc ///
                 TO (dual, Complex),
                 TO (symbol SPACE, RingMap, Complex),
                 TO (symbol **, RingMap, Complex),
+                TO (koszulComplex, Matrix),
                 TO (naiveTruncation, Complex, ZZ, ZZ),
                 TO (canonicalTruncation, Complex, ZZ, ZZ),
                 TO (minimalPresentation, Complex),
@@ -111,11 +112,12 @@ doc ///
                 TO (isExact, Complex),
                 TO (isHomogeneous, Complex),
                 TO (isFree, Complex),
+                TO (isShortExactSequence, Complex),
                 TO (isWellDefined, ComplexMap),
                 TO (isCommutative, ComplexMap),
                 TO (isComplexMorphism, ComplexMap),
-                TO (isShortExactSequence, ComplexMap, ComplexMap),
                 TO (isQuasiIsomorphism, ComplexMap),
+                TO (isShortExactSequence, ComplexMap, ComplexMap),
                 TO (isNullHomotopic, ComplexMap),
                 TO (isNullHomotopyOf, ComplexMap, ComplexMap)
             }@
@@ -165,13 +167,13 @@ doc ///
         Text
     	    @UL {
                 TO (Ext, ZZ, Module, Module),
-                TO "(Ext, ZZ, Matrix, Matrix)",
-                TO "(Ext, ZZ, Matrix, Module)",
-                TO "(Ext, ZZ, Module, Matrix)",
+                TO (Ext, ZZ, Matrix, Module),
+                TO (Ext, ZZ, Module, Matrix),
                 TO (Hom, Complex, Complex),
                 TO (Hom, ComplexMap, ComplexMap),
                 TO (homomorphism, ComplexMap),
-                TO (homomorphism', ComplexMap)
+                TO (homomorphism', ComplexMap),
+                TO (connectingExtMap, Module, Matrix, Matrix)
             }@
         Text
     	    @SUBSECTION "Yoneda extensions and elements of Ext"@
@@ -201,14 +203,13 @@ doc ///
         Text
     	    @UL {
                 TO (Tor, ZZ, Module, Module),
-                TO "(Tor, ZZ, Module, Matrix)",
-                TO "(Tor, ZZ, Matrix, Module)",
-                TO "(Tor, ZZ, Matrix, Matrix)",
+                TO "(Tor, ZZ, Module, Matrix), not yet implemented",
+                TO "(Tor, ZZ, Matrix, Module), not yet implemented",
                 TO (tensor, Complex, Complex),
                 TO (tensor, ComplexMap, ComplexMap),
                 TO (tensorCommutativity, Complex, Complex),
                 TO (tensorAssociativity, Complex, Complex, Complex),
-                TO "symmetry of Tor"
+                TO "symmetry of Tor, not yet implemented"
             }@
     SeeAlso
         "Making chain complexes"
@@ -386,6 +387,7 @@ doc ///
     Key
         complex
         (complex, List)
+        [complex, Base]
         Base
     Headline
         make a chain complex
@@ -730,8 +732,6 @@ doc ///
    SeeAlso
 ///
 
--- XXX
-
 doc ///
     Key
         "differential of a chain complex"
@@ -740,6 +740,7 @@ doc ///
         get the maps between the terms in a complex
     Usage
         dd^C
+        dd_C
     Inputs
         C:Complex
     Outputs
@@ -1194,7 +1195,7 @@ doc ///
 
 doc ///
    Key
-     (components,Complex)
+     (components, Complex)
    Headline
      list the components of a direct sum
    Usage
@@ -1278,34 +1279,35 @@ doc ///
      (concentration,Complex)
 ///
 
-
 doc ///
-   Key
-     (isHomogeneous, Complex)
-   Headline
-     whether a complex is homogeneous
-   Usage
-     isHomogeneous C
-   Inputs
-     C:Complex
-   Outputs
-     :Boolean
-       that is true when {\tt C} is a homogeneous (i.e. graded) complex
-   Description
-    Text
-      A complex is homogeneous (graded) if the base ring is graded,
-      all of the component objects are graded, and
-      all the component maps are graded of degree zero.
-    Example
-      S = ZZ/101[a,b,c,d];
-      I = minors(2, matrix{{a,b,c},{b,c,d}})
-      C = freeResolution (S^1/I)
-      isHomogeneous C
-      J = minors(2, matrix{{a,b,c},{b,c,d^2}})
-      D = freeResolution (S^1/J)
-      isHomogeneous D
-   SeeAlso
-     isHomogeneous
+    Key
+        (isHomogeneous, Complex)
+    Headline
+         whether a complex is homogeneous
+    Usage
+         isHomogeneous C
+    Inputs
+         C:Complex
+    Outputs
+         :Boolean
+             that is true when {\tt C} is a homogeneous (i.e. graded) complex
+    Description
+        Text
+            A complex is homogeneous (graded) if the base ring is graded,
+            all of the component objects are graded, and
+            all the component maps are graded of degree zero.
+        Example
+            S = ZZ/101[a,b,c,d];
+            I = minors(2, matrix{{a,b,c},{b,c,d}})
+            C = freeResolution (S^1/I)
+            isHomogeneous C
+            J = minors(2, matrix{{a,b,c},{b,c,d^2}})
+            D = freeResolution (S^1/J)
+            isHomogeneous D
+    SeeAlso
+        "Basic invariants and properties"
+        isHomogeneous
+        (isHomogeneous, ComplexMap)
 ///
 
 doc ///
@@ -1442,87 +1444,207 @@ doc ///
 ///
 
 doc ///
-   Key
-     (betti,Complex)
-   Headline
-     display of degrees in a complex
-   Usage
-     betti C
-   Inputs
-     C:Complex
-     Weights => List
-	   a list of integers whose dot product with the multidegree of a basis
-	   element is enumerated in the display returned.  The default is the
-	   heft vector of the ring.  See @TO "heft vectors"@.
-   Outputs
-     :BettiTally
-       a diagram showing the degrees of the generators of the components in {\tt C}
-   Description
-    Text
-      Column $j$ of the top row of the diagram gives the rank of the
-      $j$-th component $C_j$ of the complex $C$.  The entry in column $j$ in the row labelled
-      $i$ is the number of basis elements of (weighted) degree $i+j$ in $C_j$.
-      When the complex is the free resolution of a module the entries are
-	  the total and the graded Betti numbers of the module.
+    Key
+        (homomorphism, ComplexMap)
+    Headline
+        get the homomorphism from an element of Hom
+    Usage
+        g = homomorphism f
+    Inputs
+        f:ComplexMap
+            a map of the form $f : R^1 \to Hom(C, D)$, where
+            $C$ and $D$ are complexes,
+            $Hom(C,D)$ has been previously computed, and $R$ is
+            the underlying ring of these complexes
+    Outputs
+        g:ComplexMap
+            the corresponding map of chain complexes from $C$ to $D$
+    Description
+        Text
+            As a first example, consider two Koszul complexes $C$ and $D$.
+            From a random map $f : R^1 \to Hom(C, D)$, we construct 
+            the corresponding map of chain complexes $g : C \to D$.
+        Example
+            R = ZZ/101[a,b,c]
+            C = freeResolution ideal"a,b,c"
+            D = freeResolution ideal"a2,b2,c2"
+            H = Hom(C,D)
+            f = randomComplexMap(H, complex R^{-2})
+            isWellDefined f
+            g = homomorphism f
+            isWellDefined g
+            assert not isCommutative g
+        Text
+            The map $g : C \to D$ corresponding to a random map into $Hom(C,D)$
+            does not generally commute with the differentials.  However, if the
+            element of $Hom(C,D)$ is a cycle, then the corresponding map does commute.
+        Example
+            f = randomComplexMap(H, complex R^{-2}, Cycle => true)
+            isWellDefined f
+            g = homomorphism f
+            isWellDefined g
+            assert isCommutative g
+            assert(degree g === 0)
+            assert(source g === C)
+            assert(target g === D)
+            assert(homomorphism' g == f)
+        Text
+            A homomorphism of non-zero degree can be encoded
+            in (at least) two ways.
+        Example
+            f1 = randomComplexMap(H, complex R^1, Degree => -2)
+            f2 = map(target f1, (source f1)[2], i -> f1_(i+2))
+            assert isWellDefined f2
+            g1 = homomorphism f1
+            g2 = homomorphism f2
+            assert(g1 == g2)
+            assert isWellDefined g1
+            assert isWellDefined g2
+            homomorphism' g1 == f1
+            homomorphism' g2 == f1
+    SeeAlso
+        (homomorphism, Matrix)
+        (homomorphism', ComplexMap)
+        (Hom, Complex, Complex)
+        (randomComplexMap, Complex, Complex)
+///
+
+doc ///
+    Key
+        (homomorphism', ComplexMap)
+    Headline
+        get the element of Hom from a map of complexes
+    Usage
+        f = homomorphism g
+    Inputs
+        g:ComplexMap
+            from $C$ to $D$
+    Outputs
+        f:ComplexMap
+            a map of the form $f : R^1 \to Hom(C, D)$, where
+            $R$ is the underlying ring of these complexes
+    Description
+        Text
+            As a first example, consider two Koszul complexes $C$ and $D$.
+            From a random map $f : R^1 \to Hom(C, D)$, we construct 
+            the corresponding map of chain complexes $g : C \to D$.
+        Example
+            R = ZZ/101[a,b,c]
+            C = freeResolution ideal"a,b,c"
+            D = freeResolution ideal"a2,b2,c2"
+            g = randomComplexMap(D, C, InternalDegree => 2)
+            isWellDefined g
+            f = homomorphism' g
+            isWellDefined f
+        Text
+            The map $g : C \to D$ corresponding to a random map into $Hom(C,D)$
+            does not generally commute with the differentials.  However, if the
+            element of $Hom(C,D)$ is a cycle, then the corresponding map does commute.
+        Example
+            g = randomComplexMap(D, C, Cycle => true, InternalDegree => 3)
+            isWellDefined g
+            f = homomorphism' g
+            isWellDefined f
+            assert isCommutative g
+            assert(degree f === 0)
+            assert(source f == complex(R^{-3}))
+            assert(target g === D)
+            assert(homomorphism f == g)
+    SeeAlso
+        (homomorphism', Matrix)
+        (homomorphism, ComplexMap)
+        (Hom, Complex, Complex)
+        (randomComplexMap, Complex, Complex)
+///
+
+doc ///
+    Key
+        (betti,Complex)
+    Headline
+        display of degrees in a complex
+    Usage
+        betti C
+    Inputs
+        C:Complex
+        Weights => List
+            a list of integers whose dot product with the multidegree
+            of a basis element is enumerated in the display returned.
+            The default is the heft vector of the ring.  
+            See @TO heft@.
+    Outputs
+        :BettiTally
+            a diagram showing the degrees of the generators of the components in {\tt C}
+    Description
+        Text
+            Column $j$ of the top row of the diagram gives the rank of
+            the $j$-th component $C_j$ of the complex $C$.  The entry
+            in column $j$ in the row labelled $i$ is the number of
+            basis elements of (weighted) degree $i+j$ in $C_j$.  When
+            the complex is the free resolution of a module the entries
+            are the total and the graded Betti numbers of the module.
       
-      As a first example, we consider the ideal 
-      in 18 variables which cuts out the variety
-      of commuting 3 by 3 matrices.
-    Example
-      S = ZZ/101[vars(0..17)]
-      m1 = genericMatrix(S,a,3,3)
-      m2 = genericMatrix(S,j,3,3)
-      J = ideal(m1*m2-m2*m1)
-      C0 = freeResolution J
-      betti C0
-    Text
-      From the display, we see that $J$ has 8 minimal generators, all
-      in degree 2, and that there are 2 linear syzygies on these
-      generators, and 31 quadratic syzygies.  
-      Since this complex is the free resolution of $S/J$, 
-      the projective dimension
-      is 6, the index of the last column, and the regularity of $S/J$ is 4, 
-      the index of the last row in the diagram.
-    Example
-      length C0
-      pdim betti C0
-      regularity betti C0
-    Text
-      The betti display still makes sense if the complex is not a free resolution.
-    Example
-      betti dual C0
-      C1 = Hom(C0, image matrix{{a,b}});
-      betti C1
-      C1_-6
-    Text
-      This module has 10 generators, 2 in degree $-9=(-6)+(-3)$, and 8 in degree $-8=(-6)+(-2)$.
-    Text
-      In the multi-graded case, the heft vector is used, by default, as the weight vector for weighting the
-	  components of the degree vectors of basis elements.
-      
-      The following example is a nonstandard $\mathbb{Z}$-graded polynomial ring.
-    Example
-      R = ZZ/101[a,b,c,Degrees=>{-1,-2,-3}];
-      heft R
-      C2 = freeResolution coker vars R
-      betti C2
-      betti(C2, Weights => {1})
-    Text
-      The following example is the Cox ring of the second Hirzebruch surface, and the complex
-      is the free resolution of the irrelevant ideal.
-    Example
-      T = QQ[a,b,c,d,Degrees=>{{1,0},{-2,1},{1,0},{0,1}}];
-      B = intersect(ideal(a,c),ideal(b,d))
-      C3 = freeResolution B
-      dd^C3
-      heft T
-      betti C3
-      betti(C3, Weights => {1,0})
-      betti(C3, Weights => {0,1})
-      degrees C3_1
-   SeeAlso
-     betti
-     BettiTally
+            As a first example, we consider the ideal in 18 variables
+            which cuts out the variety of commuting 3 by 3 matrices.
+        Example
+            S = ZZ/101[vars(0..17)]
+            m1 = genericMatrix(S,a,3,3)
+            m2 = genericMatrix(S,j,3,3)
+            J = ideal(m1*m2-m2*m1)
+            C0 = freeResolution J
+            betti C0
+        Text
+            From the display, we see that $J$ has 8 minimal
+            generators, all in degree 2, and that there are 2 linear
+            syzygies on these generators, and 31 quadratic syzygies.
+            Since this complex is the free resolution of $S/J$, the
+            projective dimension is 6, the index of the last column,
+            and the regularity of $S/J$ is 4, the index of the last
+            row in the diagram.
+        Example
+            length C0
+            pdim betti C0
+            regularity betti C0
+        Text
+            The betti display still makes sense if the complex is not a free resolution.
+        Example
+            betti dual C0
+            C1 = Hom(C0, image matrix{{a,b}});
+            betti C1
+            C1_-6
+        Text
+            This module has 10 generators, 2 in degree $-9=(-6)+(-3)$,
+            and 8 in degree $-8=(-6)+(-2)$.
+        Text
+            In the multi-graded case, the heft vector is used, by
+	        default, as the weight vector for weighting the components
+	        of the degree vectors of basis elements.
+        Text
+            The following example is a nonstandard $\mathbb{Z}$-graded
+            polynomial ring.
+        Example
+            R = ZZ/101[a,b,c,Degrees=>{-1,-2,-3}];
+            heft R
+            C2 = freeResolution coker vars R
+            betti C2
+            betti(C2, Weights => {1})
+        Text
+            The following example is the Cox ring of the second
+            Hirzebruch surface, and the complex is the free resolution
+            of the irrelevant ideal.
+        Example
+            T = QQ[a,b,c,d,Degrees=>{{1,0},{-2,1},{1,0},{0,1}}];
+            B = intersect(ideal(a,c),ideal(b,d))
+            C3 = freeResolution B
+            dd^C3
+            heft T
+            betti C3
+            betti(C3, Weights => {1,0})
+            betti(C3, Weights => {0,1})
+            degrees C3_1
+    SeeAlso
+        "Basic invariants and properties"
+        betti
+        BettiTally
 ///
 
 -- TODO: once we have Hom evaluation map,
@@ -2517,7 +2639,6 @@ doc ///
         (yonedaProduct, Module, Module)
 ///
 
--- TODO: this doc node needs more text, another example.
 doc ///
     Key
         (yonedaMap, Matrix)
@@ -2593,7 +2714,7 @@ doc ///
         (yonedaProduct, Module, Module)
 ///
 
-///
+doc ///
     Key
         (yonedaMap', ComplexMap)
         yonedaMap'
@@ -2605,6 +2726,8 @@ doc ///
         g:ComplexMap
             of degree $-d$ from the free resolution of $M$ to the free
             resolution of $N$
+        LengthLimit => ZZ
+            an upper bound on the lengths of the free resolutions constructed
     Outputs
         f:Matrix
             over a ring $R$, from $R^1$ to $\operatorname{Ext}^d_R(M,N)$,
@@ -2662,4 +2785,82 @@ doc ///
         (yonedaExtension', Complex)
         (yonedaProduct, Matrix, Matrix)
         (yonedaProduct, Module, Module)
+///
+
+doc ///
+    Key
+        (koszulComplex, Matrix)
+        (koszulComplex, List)
+        koszulComplex
+        [(koszulComplex, Matrix), Concentration]
+        [(koszulComplex, List), Concentration]
+    Headline
+        makes the Koszul complex
+    Usage
+        K = koszulComplex f
+    Inputs
+        f:Matrix
+            having one row, or a @ofClass List@ of ring elements
+        Concentration => Sequence
+            a pair {\tt (lo, hi)} which limits the non-zero terms in the output
+    Outputs
+        :Complex
+            the Koszul complex (or a subcomplex)
+    Description
+        Text
+            Let $R$ be a commutative ring and let $E$ be a free $R$-module of finite rank $r$.
+            Given a linear map $f \colon E \to R$, the Koszul complex associated to $f$
+            is the chain complex of $R$-modules
+
+            $\phantom{WWWW}
+              0 \leftarrow R \leftarrow \bigwedge^1 E \leftarrow \bigwedge^2 E \leftarrow \dotsb \leftarrow \bigwedge^r E 
+              \leftarrow 0,
+            $
+
+            where the differential is given by 
+
+            $\phantom{WWWW}
+              dd_k(e_1 \wedge e_2 \wedge \dotsb \wedge e_k) = 
+              \sum_{i=1}^k (-1)^{i+1} f(e_i) \, e_1 \wedge e_2 \wedge \dotsb \wedge \widehat{e_i} \wedge \dotsb \wedge e_k,
+            $
+            
+            and the superscript hat means the term is omitted.  For this method, the linear map $f$ is
+            given as either a matrix with one row, or a list of ring elements.
+        Example
+            S = QQ[a..d]
+            koszulComplex {a}
+            C = koszulComplex {a^2+b^2,c^3}
+            dd^C
+            K4 = koszulComplex vars S
+            dd^K4
+            assert isWellDefined K4
+        Text
+            To obtain natural subcomplexes, use the @TT "Concentration"@ option.
+        Example
+            koszulComplex(vars S, Concentration => (2,3))
+            koszulComplex(vars S, Concentration => (-1,5))
+        Text
+            The koszul complex can be constructed as an iterated tensor product.
+            The maps are identical, except that the even indexed differentials
+            have the opposite sign.
+        Example
+            C = koszulComplex {d} ** (koszulComplex {c} ** (koszulComplex {b} ** koszulComplex {a}))
+            K = koszulComplex {a,b,c,d}
+            netList {{dd^C, dd^K}}
+    SeeAlso
+        "Making chain complexes"
+        (symbol**, Complex, Complex)
+///
+
+///
+    Key
+    Headline
+    Usage
+    Inputs
+    Outputs
+    Description
+        Text
+        Example
+    Caveat
+    SeeAlso
 ///

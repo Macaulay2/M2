@@ -26,6 +26,7 @@ class PolyRing;
 class PolyRingFlat;
 class PolynomialRing;
 class RRR;
+class RRi;
 class RingMap;
 class RingZZ;
 class SchurRing2;
@@ -35,6 +36,7 @@ class SkewPolynomialRing;
 class SolvableAlgebra;
 class M2FreeAlgebra;
 class M2FreeAlgebraQuotient;
+class M2FreeAlgebraOrQuotient;
 
 class FreeModule;
 class RingMap;
@@ -93,7 +95,19 @@ class Ring : public MutableEngineObject
   void initialize_ring(long charac,
                        const PolynomialRing *DR = 0,
                        const M2_arrayint heft_vec = 0);
-  Ring() : heft_vector(0) {}
+  Ring()
+    : mCharacteristic(0),
+      degree_ring(nullptr),
+      heft_vector(nullptr),
+      AR(nullptr),
+      cR(nullptr),
+      _non_unit(),
+      _isfield(0),
+      zeroV(),
+      oneV(),
+      minus_oneV()
+  {
+  }
  public:
   virtual ~Ring();
 
@@ -121,6 +135,7 @@ class Ring : public MutableEngineObject
   virtual bool is_ZZ() const { return false; }
   virtual bool is_QQ() const { return false; }
   virtual bool is_RRR() const { return false; }
+  virtual bool is_RRi() const { return false; }
   virtual bool is_CCC() const { return false; }
   virtual bool is_fraction_field() const { return false; }
   virtual bool is_fraction_poly_ring() const { return false; }
@@ -202,10 +217,12 @@ class Ring : public MutableEngineObject
   virtual const LocalRing *cast_to_LocalRing() const { return 0; }
   virtual LocalRing *cast_to_LocalRing() { return 0; }
 
-  virtual const M2FreeAlgebra *cast_to_M2FreeAlgebra() const { return 0; }
-  virtual M2FreeAlgebra *cast_to_M2FreeAlgebra() { return 0; }
-  virtual const M2FreeAlgebraQuotient *cast_to_M2FreeAlgebraQuotient() const { return 0; }
-  virtual M2FreeAlgebraQuotient *cast_to_M2FreeAlgebraQuotient() { return 0; }
+  virtual const M2FreeAlgebra *cast_to_M2FreeAlgebra() const { return nullptr; }
+  virtual M2FreeAlgebra *cast_to_M2FreeAlgebra() { return nullptr; }
+  virtual const M2FreeAlgebraQuotient *cast_to_M2FreeAlgebraQuotient() const { return nullptr; }
+  virtual M2FreeAlgebraQuotient *cast_to_M2FreeAlgebraQuotient() { return nullptr; }
+  virtual const M2FreeAlgebraOrQuotient *cast_to_M2FreeAlgebraOrQuotient() const { return nullptr; }
+  virtual M2FreeAlgebraOrQuotient *cast_to_M2FreeAlgebraOrQuotient() { return nullptr; }
   
   virtual const SchurRing *cast_to_SchurRing() const { return 0; }
   virtual SchurRing *cast_to_SchurRing() { return 0; }
@@ -223,6 +240,8 @@ class Ring : public MutableEngineObject
   virtual const WeylAlgebra *cast_to_WeylAlgebra() const { return 0; }
   virtual RRR *cast_to_RRR() { return 0; }
   virtual const RRR *cast_to_RRR() const { return 0; }
+  virtual RRi *cast_to_RRi() { return 0; }
+  virtual const RRi *cast_to_RRi() const { return 0; }
   virtual CCC *cast_to_CCC() { return 0; }
   virtual const CCC *cast_to_CCC() const { return 0; }
   // Galois Field routines.  These three routines only return non-NULL values
@@ -294,6 +313,8 @@ class Ring : public MutableEngineObject
 
   // The default version calls from_long(0) and returns false.
   virtual bool from_BigReal(gmp_RR a, ring_elem &result) const;
+  // The default version calls from_long(0) and returns false.
+  virtual bool from_Interval(gmp_RRi a, ring_elem &result) const;
   // The default version calls from_long(0) and returns false.
   virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;
   // Returns false if this ring cannot coerce a double to an element in this

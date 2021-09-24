@@ -23,7 +23,7 @@ PfaffianComputation::PfaffianComputation(const Matrix *M0, int p0)
   for (int i = 0; i < p; i++) row_set[i] = i;
 }
 
-PfaffianComputation::~PfaffianComputation() { deletearray(row_set); }
+PfaffianComputation::~PfaffianComputation() { freemem(row_set); }
 int PfaffianComputation::step()
 // Compute one more pfafferminant of size p.
 // increments I and/or J and updates 'pfaffs', 'table'.

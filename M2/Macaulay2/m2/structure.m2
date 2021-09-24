@@ -1,5 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "methods.m2"
+
 positions = method()
 positions(MutableList,Function) := 
 positions(VisibleList,Function) := (v,f) -> for i from 0 to #v-1 list if f v#i then i else continue

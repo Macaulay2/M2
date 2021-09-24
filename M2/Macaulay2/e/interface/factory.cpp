@@ -12,10 +12,6 @@
 
 #define Matrix FactoryMatrix
 #include <factory/factory.h>  // from Messollen's libfac
-#if !HAVE_FACTORY_PREM
-CanonicalForm Prem(const CanonicalForm &F, const CanonicalForm &G);
-#endif
-#undef INT64
 #undef Matrix
 
 #pragma GCC diagnostic push

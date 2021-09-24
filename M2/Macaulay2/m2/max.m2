@@ -1,4 +1,8 @@
 --		Copyright 1993-1999,2004 by Daniel R. Grayson
+
+needs "fold.m2"
+needs "methods.m2"
+
 InfiniteNumber = new Type of BasicList
 InfiniteNumber.synonym = "infinite number"
 infinity = new InfiniteNumber from {1}

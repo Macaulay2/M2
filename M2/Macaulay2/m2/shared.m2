@@ -1,16 +1,22 @@
 -- in this file we write stub definitions (no content) for use by packages, so multiple packages can use the same thing
 
-truncate = method()
-export "truncate"
+needs "methods.m2"
 
-decompose = method(Options => true)
-export "decompose"
-
-protect Jacobian
-export "Jacobian"
+-- methods
 
 chi = method()
-export "chi"
+
+decompose = method(Options => true)
+
+intersect = method(Dispatch => Thing, Options => true)
+intersection = method(Options => true)
+
+truncate = method()
+
+isEmpty = method(TypicalValue => Boolean)
+
+-- symbols
+
+protect Jacobian
 
 protect Iterate
-export "Iterate"

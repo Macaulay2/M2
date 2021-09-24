@@ -1,59 +1,245 @@
+undocumented { presentationComplex }
+
 doc ///
 Key
   LocalRings
-   localRing
-  (localRing, Ring, Ideal)
 Headline
-  Localizing polynomial rings at a prime ideal
+  Localizations of polynomial rings at prime ideals
 Description
   Text
-    The basic definition of localization of polynomial rings at prime ideals along with various
-    elementary operations are defined in m2/localring.m2, which in turn depends on a raw local ring
-    type defined in e/localrings.hpp. This package extends the following methods to such local rings:
-    syz, resolution, length, trim, mingens, minimalPresentation, symbol//, inducedMap, symbol:,
-    saturate, annihilate.
+    This package defines the @TO LocalRing@ class for localizations of polynomial rings
+    and extends most basic commutative algebra computations to such local rings.
+    Moreover, the functions @TO hilbertSamuelFunction@ and @TO (length, Module)@ for
+    Artinian modules over a local ring are implemented in this package.
 
-    Note: Methods isSubset and symbol== are fixed in m2/modules2.m2 and reduce is fixed in m2/matrix.m2.
-    Many other methods that only rely on the methods above, such as map, modulo, subquotient, kernel,
-    cokernel, image, homology, Hom, Ext, Tor, etc. work for local rings automatically.
+    For information about the classical way of working with local rings at maximal ideals
+    see @TO "replacements for functions from version 1.0"@.
 
-    If you need specific methods that do not work, please inform Mahrud Sayrafi.
+    The following is an example of defining the rational quartic curve in $\PP^3$ localized
+    at a maximal ideal and a prime ideal using two different methods.
   Example
     R = ZZ/32003[a..d];
-  Text
-    Rational quartic curve in P^3:
-  Example
     I = monomialCurveIdeal(R,{1,3,4})
+    M = ideal"a,b,c,d"; -- maximal ideal at the origin
+    P = ideal"a,b,c"; -- prime ideal
+    RM = R_M
+    RP = localRing(R, P)
+  Text
+    An ideal, module, or chain complex may either be localized using @TO promote@ or using
+    the @TO tensor@ product.
+  Example
     C = res I
-    M = ideal"a,b,c,d"; "maximal ideal at the origin";
-    P = ideal"a,b,c"; "prime ideal";
-    RM = localRing(R, M);
     D = C ** RM;
     E = pruneComplex D
   Text
-    That is to say, the rational quartic curve is not locally Cohen-Macaulay at the origin.
-    Therefore the curve is not Cohen-Macaulay
+    The computation above shows that the rational quartic curve is not locally Cohen-Macaulay
+    at the origin. Therefore the curve is not Cohen-Macaulay
+
+    However, the curve is Cohen-Macaulay at the prime ideal $(a, b, c)$ (and in fact any other prime ideal).
   Example
-    RP = localRing(R, P);
     D' = C ** RP;
     E' = pruneComplex D'
   Text
-    However, the curve is Cohen-Macaulay at the prime ideal P (and in fact any other prime ideal)
+    The elementary definitions and operations are declared in @TT "localring.m2"@.
+    Engine routines for core computations are implemented in @TT "e/localring.hpp"@.
+
+    The following commutative algebra computations are implemented in this package:
+    @TO syz@, @TO resolution@, @TO mingens@, @TO minimalPresentation@, @TO trim@, @TO (length, Module)@,
+    @TO isSubset@, @TO inducedMap@, @TO (quotient, Matrix, Matrix)@, @TO (remainder, Matrix, Matrix)@,
+    @TO "Saturation :: quotient(Module,Module)"@, @TO saturate@, @TO annihilator@.
+    Most of these routines rely on the functions @TO liftUp@ and @TO "PruneComplex :: pruneComplex"@ and
+    take advantage of Nakayama's lemma and flatness of local rings.
+
+    In addition, methods such as @TO map@, @TO modulo@, @TO subquotient@, @TO kernel@, @TO cokernel@,
+    @TO image@, @TO homology@, @TO Hom@, @TO Ext@, @TO Tor@, etc. work over local rings automatically.
 Caveat
-  Currently limited to localization at prime ideals rather than any multiplicatively closed set.
+  Currently limited to localization at prime ideals rather than arbitrary multiplicatively closed sets.
   Quotients of local rings are not implemented yet. Moreover, certain functions (such as symbol%,
   radical, minimalPrimes, leadingCoefficient) are ambiguous or not yet defined.
 SeeAlso
-  PruneComplex
+  "PruneComplex :: PruneComplex"
+Subnodes
+  LocalRing
+///
+
+doc ///
+Node
+  Key
+    "replacements for functions from version 1.0"
+  Description
+    Text
+      This page describes the replacements for functions implemented in version 1.0 of this package by
+      Mike Stillman and David Eisenbud. That version implemented functionality for finding minimal
+      generators, syzygies and resolutions for polynomial rings localized at a maximal ideal.
+
+      Defining a local ring using @TO setMaxIdeal@ and @TO localRing@:
+    Example
+      S = ZZ/32003[x,y,z,w]
+      P = ideal(x,y,z,w)
+      setMaxIdeal P -- version 1.0
+      R = localRing(S, P) -- version 2.0 and above
+-- TODO
+--    Text
+--      @TO localComplement@
+--    Example
+    Text
+      Computing syzygies using @TO localsyz@ and @TO syz@:
+    Example
+      use S
+      m = matrix{{x,y*z},{z*w,x}}
+      m * localsyz m
+      use R
+      m = matrix{{x,y*z},{z*w,x}}
+      m * syz m
+    Text
+      Computing syzygies using @TO localMingens@ and @TO mingens@:
+    Example
+      use S
+      localMingens matrix{{x-1,x,y},{x-1,x,y}}
+      use R
+      mingens image matrix{{x-1,x,y},{x-1,x,y}}
+    Text
+      Computing syzygies using @TO localModulo@ and @TO modulo@:
+    Example
+      use S
+      localModulo(matrix {{x-1,y}}, matrix {{y,z}})
+      use R
+      modulo(matrix {{x-1,y}}, matrix {{y,z}})
+    Text
+      Computing syzygies using @TO localPrune@ and @TO prune@:
+    Example
+      use S
+      localPrune image matrix{{x-1,x,y},{x-1,x,y}}
+      use R
+      prune image matrix{{x-1,x,y},{x-1,x,y}}
+    Text
+      Computing syzygies using @TO localResolution@ and @TO resolution@:
+    Example
+      use S
+      localResolution coker matrix{{x,y*z},{z*w,x}}
+      oo.dd
+      use R
+      res coker matrix{{x,y*z},{z*w,x}}
+      oo.dd
+  Subnodes
+    setMaxIdeal
+    localComplement
+    localsyz
+    localMingens
+    localModulo
+    localPrune
+    localResolution
+///
+
+doc ///
+Node
+  Key
+    LocalRing
+    residueMap
+    maxIdeal
+    (max, LocalRing)
+  Headline
+    The class of all local rings
+  Description
+    Text
+      Currently only localizations at prime ideals of a polynomial ring are supported.
+    Example
+      S = QQ[x,y,z,w];
+      I = ideal"xz-y2,yw-z2,xw-yz"; -- The twisted cubic curve
+      R = S_I
+      K = frac(S/I)
+    Text
+      The maximal ideal and a residue map to the residue field are stored in the ring.
+    Example
+      max R
+      R.maxIdeal
+      R.residueMap
+    Text
+      Objects over the base ring can be localized easily.
+    Example
+      I ** R
+  SeeAlso
+    PolynomialRing
+    hilbertSamuelFunction
+   (length, Module)
+  Subnodes
+    localRing
+    liftUp
+   (baseRing, LocalRing)
+   (char, LocalRing)
+   (coefficientRing, LocalRing)
+   (degreeLength, LocalRing)
+   (degrees, LocalRing)
+   (dim, LocalRing)
+   (frac, LocalRing)
+   (generators, LocalRing)
+   (isCommutative, LocalRing)
+   (isWellDefined, LocalRing)
+   (numgens, LocalRing)
+
+Node
+  Key
+    localRing
+   (localRing, Ring,       Ideal)
+   (localRing, EngineRing, Ideal)
+   (symbol_, PolynomialRing, Ideal)
+   (symbol_, PolynomialRing, RingElement)
+  Headline
+    Constructor for local rings
+  Usage
+    R_P
+    R_f
+    localRing(R, P)
+  Inputs
+    R:PolynomialRing
+      the base ring for the localization
+    P:Ideal
+      a prime ideal for the localization
+    f:RingElement
+      a ring element to localize (not yet implemented)
+  Outputs
+    :LocalRing
+      the local ring $R_{\mathfrac p}$
+  Description
+    Text
+      This is the constructor for the type @TO LocalRing@.
+    Example
+      R = QQ[x,y,z,w];
+      P = ideal"xz-y2,yw-z2,xw-yz"; -- The twisted cubic curve
+      I = ideal"xz-y2,z(yw-z2)-w(xw-yz)";
+      RP = R_P
+      M = RP^1/promote(I, RP)
+      length M
+    Text
+      Note that the ideal $P$ is assumed to be prime. Use @TO (isWellDefined, LocalRing)@
+      to confirm that a local ring is well defined.
+
+Node
+  Key
+   (isWellDefined, LocalRing)
+  Headline
+    whether a local ring is well defined
+  Description
+    Text
+      This method checks whether the local ring was produced by localization at a prime ideal.
+    Example
+      R = QQ[x,y,z,w]
+      P = ideal"xz-y2,yw-z2,xw-yz"; -- The twisted cubic curve
+      isWellDefined R_P
+      Q = ideal"xz-y2,z(yw-z2)-w(xw-yz)";
+      isWellDefined R_Q
+  SeeAlso
+    isPrime
 ///
 
 doc ///
 Key
    liftUp
   (liftUp, Thing)
-  (liftUp, Ideal, Ring)
+  (liftUp, Ideal,  Ring)
   (liftUp, Module, Ring)
   (liftUp, Matrix, Ring)
+  (liftUp, RingElement,   Ring)
   (liftUp, MutableMatrix, Ring)
 Headline
   Lifts various objects over R_P to R.
@@ -183,7 +369,11 @@ SeeAlso
   "Macaulay2Doc :: length(Module)"
 ///
 
--- See (length, Module) in packages/Macaulay2Doc/functions/degree-doc.m2.
+importFrom_Core { "headline" }
+scan({ baseRing, char, coefficientRing, degreeLength, degrees, dim, frac, generators, isCommutative, numgens },
+    m -> document { Key => (m, LocalRing), Headline => headline makeDocumentTag (m, Ring), PARA {"See ", TO (m, Ring)} })
+
+undocumented apply({describe, expression, precision, presentation, toExternalString}, m -> (m, LocalRing))
 
 end--
 

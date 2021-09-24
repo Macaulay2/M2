@@ -1,5 +1,12 @@
 --		Copyright 1994-2006 by Daniel R. Grayson
 
+needs "code.m2"
+needs "hypertext.m2"
+needs "methods.m2"
+needs "packages.m2"
+needs "reals.m2" -- for ImmutableType
+needs "validate.m2" -- for fixup
+
 -- TODO: deprecate
 rootPath = "";
 rootURI = "file://";
@@ -755,9 +762,6 @@ tutorial = x -> (
 	  sublist -> EXAMPLE sublist,
 	  identity);
      x )
-
--- TODO: make this TT toString X
-synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
 
 findSynonyms = method()
 findSynonyms Symbol := x -> (

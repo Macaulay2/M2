@@ -195,10 +195,11 @@ endif()
 
 # Flags based on options
 if(MEMDEBUG)
-  add_compile_options(-DMEMDEBUG)
+  add_compile_definitions(MEMDEBUG)
 endif()
 if(PROFILING)
-  add_compile_options(-pg -DPROFILING)
+  add_compile_definitions(PROFILING)
+  add_compile_options(-pg)
   add_link_options(-pg)
 endif()
 
@@ -206,9 +207,11 @@ endif()
 # Note: certain flags are initialized by CMake based on the compiler and build type.
 if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging
   # INIT: -g
-  add_compile_options(-O0 -DGC_DEBUG -DMEMT_DEBUG -DMATHIC_DEBUG -DMATHICGB_DEBUG)
+  add_compile_definitions(GC_DEBUG MEMT_DEBUG MATHIC_DEBUG MATHICGB_DEBUG)
+  add_compile_options(-O0)
 else()
-  add_compile_options(-DNDEBUG -DOM_NDEBUG -DSING_NDEBUG -Wuninitialized)
+  add_compile_definitions(NDEBUG OM_NDEBUG SING_NDEBUG)
+  add_compile_options(-Wuninitialized)
 endif()
 if(CMAKE_BUILD_TYPE MATCHES "MinSizeRel")
   # INIT: -Os
@@ -243,6 +246,7 @@ add_compile_options(
   )
 
 # Querying the options so we can print them
+get_property(COMPILE_DEFINITIONS DIRECTORY PROPERTY COMPILE_DEFINITIONS)
 get_property(COMPILE_OPTIONS DIRECTORY PROPERTY COMPILE_OPTIONS)
 get_property(LINK_OPTIONS    DIRECTORY PROPERTY LINK_OPTIONS)
 
@@ -253,6 +257,7 @@ message("\n## Compiler information
 
 if(VERBOSE)
   message("## Build flags (excluding standard ${CMAKE_BUILD_TYPE} flags)
+     Compiler preprocessor options = ${COMPILE_DEFINITIONS}
      Compiler flags    = ${COMPILE_OPTIONS}
      Linker flags      = ${LINK_OPTIONS}\n")
   message("## CMake path variables

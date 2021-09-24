@@ -1,5 +1,7 @@
 --		Copyright 1996 by Daniel R. Grayson
 
+needs "methods.m2"
+
 getWWW = method()
 httpProduct := concatenate("Macaulay2/", version#"VERSION")
 

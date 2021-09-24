@@ -36,7 +36,7 @@ randomCanonicalCurveGenus8with8Points PolynomialRing := R ->(
      --  Note that the curves are have general Clifford index.
      FF:=coefficientRing R;
      p:=symbol p;
-     -- coordinate ring of the Plucker space:
+     -- coordinate ring of the Plücker space:
      P:=FF[flatten apply(6,j->apply(j,i->p_(i,j)))];
      skewMatrix:=matrix table(6,6,
 	  (i,j) -> (

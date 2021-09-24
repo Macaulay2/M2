@@ -264,12 +264,12 @@ document {
      }
 
 document {
-     Key => {localResolution, (localResolution,Module), (localResolution,Ideal)},
+     Key => {localResolution, (localResolution,Module), (localResolution,Ideal)} | apply(keys options localResolution, o -> [localResolution, o]),
      Headline => "find a resolution over a local ring",
      Usage => "localResolution M",
      Inputs => {
 	  "M" => {ofClass Module}, " or ", {ofClass Ideal},
-	  },
+	  } | apply(keys options localResolution, o -> toString o => {"see ", TO [resolution, o]}),
      PARA "This method has option inputs that it inherits from ", TO resolution, ".",
      Outputs => {
 	  ChainComplex

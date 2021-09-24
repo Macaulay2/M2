@@ -1,5 +1,9 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "gradedmodules.m2"
+needs "gb.m2"
+needs "modules2.m2"
+
 union := (x,y) -> keys(set x + set y)
 intersection := (x,y) -> keys(set x * set y)
 

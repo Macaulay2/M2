@@ -64,6 +64,7 @@ class PolyRing : public PolyRingFlat
 
   virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;
   virtual bool from_BigReal(gmp_RR z, ring_elem &result) const;
+  virtual bool from_Interval(gmp_RRi z, ring_elem &result) const;
   virtual bool from_double(double a, ring_elem &result) const;
   virtual bool from_complex_double(double re,
                                    double im,

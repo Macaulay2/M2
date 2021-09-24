@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 521315531
+-- -*- M2-comint -*- hash: -1827806061
 
 i1 : k = 3;
 
@@ -12,12 +12,9 @@ i3 : SchPblm = {
          ({1}, random(CC^6,CC^6))
          };
 
-i4 : stdio << "Schubert problem {2,1}^2 {1}^3 in Gr(3,6) with respect to random flags"<<endl;
-Schubert problem {2,1}^2 {1}^3 in Gr(3,6) with respect to random flags
+i4 : solveSimpleSchubert(SchPblm, k,n)
 
-i5 : solveSimpleSchubert(SchPblm, k,n)
-
-o5 = {| .426402+.387024ii     -.767149+.88679ii  -.299645+.514617ii  |, |
+o4 = {| .426402+.387024ii     -.767149+.88679ii  -.299645+.514617ii  |, |
       | .350714+.0538475ii    -1.21057+.628777ii .141417+.670654ii   |  |
       | -.00144609+.0615438ii -1.36249+.957226ii -.135443+.402697ii  |  |
       | .236976-.167254ii     -.849462+.793055ii -.0797972+.62109ii  |  |
@@ -59,6 +56,6 @@ o5 = {| .426402+.387024ii     -.767149+.88679ii  -.299645+.514617ii  |, |
      1.08396+.174263ii   .551008+.0768382ii .112884+.198469ii  |
      .689695-.590038ii   .157157+.310587ii  .453721+.129014ii  |
 
-o5 : List
+o4 : List
 
-i6 : 
+i5 : 

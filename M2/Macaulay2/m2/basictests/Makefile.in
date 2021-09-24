@@ -19,7 +19,7 @@ check: $(TESTRESULTS) check-gc
 
 $(TESTRESULTS) : @pre_exec_prefix@/bin/M2@EXE@
 
-ARGS := --silent -q --stop --no-setup -e 'srcdir = "@srcdir@/"'
+ARGS := --silent -q --stop --no-core -e 'srcdir = "@srcdir@/"'
 
 ifeq "@DEBUG@" "no"
 TLIMIT ?= 20

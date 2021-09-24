@@ -1,13 +1,8 @@
 /* svg stuff (used by VectorGraphics.m2) */
 
 svg.M2Svg {
-    vertical-align: middle;
     position: relative;
     display: inline;
-    stroke: black;
-    stroke-opacity: 1;
-    fill: none;
-    fill-opacity: 1;
 }
 
 svg.M2SvgClickable {

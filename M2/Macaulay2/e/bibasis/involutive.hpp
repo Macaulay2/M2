@@ -139,7 +139,7 @@ namespace BIBasis
                 }
                 
                 monoid->from_expvector(currentExponent, tmpRingMonomial);
-                deletearray(currentExponent);
+                freemem(currentExponent);
 
                 ring_elem tmpRingPolynomial = PRing->make_flat_term(coefficientUnit, tmpRingMonomial);
                 PRing->add_to(currentRingPolynomial, tmpRingPolynomial);
@@ -177,7 +177,7 @@ namespace BIBasis
                 MonomType* currentMonom = new MonomType();
                 if (!currentMonom)
                 {
-                    deletearray(monomVector);
+                    freemem(monomVector);
                     throw std::string("BIBasis::BooleanInvolutiveBasis::FillInitialSet(): got NULL instead of new monom.");
                 }
                 
@@ -190,7 +190,7 @@ namespace BIBasis
                 }
                 
                 *currentPolynom += *currentMonom;
-                deletearray(monomVector);
+                freemem(monomVector);
                 delete currentMonom;
             }
             

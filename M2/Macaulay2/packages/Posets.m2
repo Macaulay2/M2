@@ -11,8 +11,8 @@
 
 newPackage select((
     "Posets",
-        Version => "1.1.2",
-        Date => "07. August 2014",
+        Version => "1.1.3",
+        Date => "May 15, 2021",
         Authors => {
             {Name => "David Cook II", Email => "dwcook@eiu.edu", HomePage => "http://ux1.eiu.edu/~dwcook/"},
             {Name => "Sonja Mapes", Email => "smapes1@nd.edu", HomePage => "http://www.nd.edu/~smapes1/"},
@@ -51,7 +51,6 @@ newPackage select((
 posets'Precompute = if instance((options Posets).Configuration#"DefaultPrecompute", Boolean) then (options Posets).Configuration#"DefaultPrecompute" else true;
 posets'SuppressLabels = if instance((options Posets).Configuration#"DefaultSuppressLabels", Boolean) then (options Posets).Configuration#"DefaultSuppressLabels" else true;
 
-importFrom_Core {"printerr"}
 if (options Posets).Configuration#"DefaultPDFViewer" != "" then
     printerr "warning: the \"DefaultPDFViewer\" configuration option is deprecated"
 
@@ -3715,7 +3714,7 @@ doc ///
         plueckerPoset
         (plueckerPoset,ZZ)
     Headline
-        computes a poset associated to the Pluecker relations
+        computes a poset associated to the Plücker relations
     Usage
         P = plueckerPoset n
     Inputs
@@ -3725,10 +3724,10 @@ doc ///
         P:Poset
     Description
         Text
-            The ideal of Pluecker relations has a quadratic Groebner
+            The ideal of Plücker relations has a quadratic Groebner
             basis.  Under a suitable term order, the incomparable pairs
             of the poset $P$ generate the initial ideal of the ideal of
-            Pluecker relations.
+            Plücker relations.
 
             Given two subsets $S$ and $T$ of ${0,\ldots,n-1}$, we partially
             order $S \leq T$ if $\#S \geq \#T$ and $S_i \leq T_i$ for all

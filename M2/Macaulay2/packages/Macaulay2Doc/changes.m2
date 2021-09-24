@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.18",
 	  TO "changes, 1.17",
 	  TO "changes, 1.16",
 	  TO "changes, 1.15",
@@ -33,16 +34,79 @@ document {
      }
 
 document {
-     Key => "changes made for the next release",
+     Key => "changes made for the next release"
+     }
+
+document {
+     Key => "changes, 1.18",
      UL {
+     	 LI { "packages that have been published and certified:",
+     	       UL {
+     	       	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+	       	    LI { star, " ", TO "PhylogeneticTrees::PhylogeneticTrees", ", a package by Nathaniel Bushek, Ruth Davidson, Elizabeth Gross, Pamela Harris, Robert Krone, Colby Long, AJ Stewart, and Robert Walker for invariants for group-based phylogenetic models, has been published." },
+		    LI { star, " ", TO "GradedLieAlgebras::GradedLieAlgebras", ", a package by Clas Löfwall and Samuel Lundqvist for computations in graded Lie algebras, has been published." },
+	       	    LI { star, " ", TO "RelativeCanonicalResolution::RelativeCanonicalResolution", TEX ", a package by Christian Bopp and Michael Hoff for computation of the relative canonical resolution for g-nodal canonical curves with a fixed $g^1_k$, has been published." },
+		    LI { star, " ", TO "FrobeniusThresholds::FrobeniusThresholds", ", a package by Juliette Bruce, Daniel Hernández, Karl Schwede, Dan Smolkin, Pedro Teixeira, and Emily Witt, for calculations of F-thresholds, has been published." }
+		    }
+	       },
+	 LI { "new packages:",
+	      UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "AssociativeAlgebras::AssociativeAlgebras", ", a package by Frank Moore and Mike Stillman for noncommutative algebra, has been added." },
+		    LI { TO "RationalPoints2::RationalPoints2", ", a package by Jieao Song for finding rational points on a variety, has been added." },
+		    LI { TO "SuperLinearAlgebra::SuperLinearAlgebra", ", a package by Fereshteh Bahadorykhalily and Fatemeh Tarashi Kashani for computing with supermatrices, has been added." },
+		    LI { TO "SubalgebraBases::SubalgebraBases", ", a package by Michael Burr, Oliver Clarke, Timothy Duff, Jackson Leaman, Nathan Nichols, Elise Walker, Mike Stillman, and Harrison Tsai, for computing canonical subalgebra bases, has been added." },
+		    LI { TO "AInfinity::AInfinity", ", a package by David Eisenbud and Mike Stillman for A-infinity structures on free resolutions, has been added." },
+		    LI { TO "LinearTruncations::LinearTruncations", ", a package by Lauren Cranton Heller, David Eisenbud, and Navid Nemati for finding multigraded truncations that give linear resolutions, has been added." }
+		    }
+	       },
+	 LI { "improved packages:",
+	      UL {
+		   LI { "The package ", TO "NumericalSchubertCalculus::NumericalSchubertCalculus", " has been improved:
+			several functions and options were added for user convenience.
+			Output formats, verbosity, and documentation were greatly improved." 
+			},
+		   LI { "The package ", TO "VirtualResolutions::VirtualResolutions", " has been improved: a new strategy
+			using a significantly faster algorithm has been added for the ", TO "VirtualResolutions::multigradedRegularity", " function."
+		   	},
+		   LI { "The package ", TO "NoetherianOperators::NoetherianOperators", " has been improved: the ", TO "NoetherianOperators::DiffOp", " type has
+			 been reworked, and support for Noetherian operators and differential primary decompositions of modules has been added."
+			 },
+		   LI { "Several packages (",
+		       TO "Chordal::Chordal", ", ",
+		       TO "Graphs::Graphs", ", ",
+		       TO "Markov::Markov", ", and ",
+		       TO "Posets::Posets",
+		       ") that generate and display visualizations of mathematical objects using external image viewers ",
+		       "have been modified so that they no longer require package-specific configuration of these viewers.  ",
+		       "Instead, ", TO "show", " is used, which opens the images using the system default viewer (using ",
+		       TT "open", " on macOS and ", TT "xdg-open", " on Linux)."}
+		   }
+	      },
 	 LI { "functionality added:",
 	     UL {
+		 LI {"A new type of real number, ", TO RRi, " based on interval arithmetic has been added, based on the library ", TT "mpfi", ", thanks
+		      to Michael Burr, with help from Anton Leykin."},
 		 LI {"The function ", TO tests, " has been added, for getting information about a package's tests."},
+		 LI {"A new type of list, ", TO AngleBarList, ", has been added, for use in forming free associative algebras.
+		      An instance can be created with the notation ", TT "<|x,y,z|>", "." },
+	         LI {"The function ", TO assert, " now accepts an ", TO Expression, " object as its argument.
+		     This provides more useful error messages for debugging, because they will contain the expression in
+		     unevaluated form, which might be something like ", TT "d == 3", "."},
+		 LI {"In the function ", TO "MonomialOrbits::orbitRepresentatives", " in the package ", TO "MonomialOrbits::MonomialOrbits", ",
+		      it is now possible to specify a subset of monomials from which the monomials that represent orbits are chosen, or from 
+		      which the monomials that represent orbits are removed."}
 		 }
+	     },
+	LI { "functionality removed",
+	     UL {
+		  LI {"The type ", TT "MatrixDegreeExpression", " has been removed."},
+		  LI {"The type ", TT "ModuleMap", " has been removed."}
+		  }
 	     }
 	 }
      }
-
+     
 document {
      Key => "changes, 1.17",
      UL {
@@ -109,9 +173,9 @@ document {
 	 	   LI { TO "NoetherianOperators::NoetherianOperators", ", a package by Robert Krone, Justin Chen, Marc Harkonen, Yairon Cid-Ruiz, and Anton Leykin, for numerically computing local dual spaces, Hilbert functions, and Noetherian operators, has been added.
 			(The package ", TT "NumericalHilbert", " has been absorbed into this new package." },
 	 	   LI { TO "NumericalLinearAlgebra::NumericalLinearAlgebra", ", a package by Robert Krone, Marc Harkonen, and Anton Leykin for numerically compute local dual spaces and Hilbert functions, has been added." },
-	 	   LI { TO "RandomRationalPoints::RandomRationalPoints", ", a package by Sankhaneel Bisui, Thai Nguyen, Karl Schwede, Sarasij Maitra, and Zhan Jiang, for computing a random point in a given variety over a finite field, has been added." },
+	 	   LI { TO "RandomPoints::RandomPoints", ", previously called RandomRationalPoints a package by Sankhaneel Bisui, Thai Nguyen, Karl Schwede, Sarasij Maitra, and Zhan Jiang, for computing a random point in a given variety over a finite field, has been added." },
 	 	   LI { TO "ResLengthThree::ResLengthThree", ", a package by Lars Winther Christensen, Luigi Ferraro, Francesca Gandini, Frank Moore, and Oana Veliche, for multiplication in free resolutions of length three, has been added." },
-	 	   LI { TO "ResolutionsOfStanleyReisnerRings::ResolutionsOfStanleyReisnerRings", ", a package by  for , has been added." },
+	 	   LI { TO "ResolutionsOfStanleyReisnerRings::ResolutionsOfStanleyReisnerRings", ", a package by Ashleigh Adams for comparing resolutions of Stanley-Reisner rings and computing various systems of parameters, has been added." },
 		   LI { TO "Saturation :: Saturation", ", a package by Justin Chen, Mahrud Sayrafi, and Mike Stillman for computations involving quotients,
 		       	saturations, and annihilators of modules and ideals, has been added. The package is preloaded, so the routines
 		       	from this package will be used automatically. In particular, the new implementation supports
@@ -278,7 +342,7 @@ document {
 		    -- LI { TO "::", ", a package by ... for ..., has been added." },
 		    LI { TO "VirtualResolutions::VirtualResolutions", ", a package by Ayah Almousa, Christine Berkesch, Juliette Bruce, David Eisenbud, Michael Loper, and Mahrud Sayrafi, for virtual resolutions on products of projective spaces, has been added.
 			 (Actually, it was added in 1.14, but we forgot to say that in ", TO "changes, 1.14", "." },
-		    LI { TO "FastLinAlg::FastLinAlg", ", a package by Boyana Martinova, Marcus Robinson, Karl Schwede, and Yuhui (Wei) Yao, for faster linear algebra operations, has been added." },
+		    LI { TO "FastMinors::FastMinors", ", previously called FastLinAlg, a package by Boyana Martinova, Marcus Robinson, Karl Schwede, and Yuhui (Wei) Yao, for faster linear algebra operations, has been added." },
 		    LI { TO "FrobeniusThresholds::FrobeniusThresholds", ", a package by Juliette Bruce, Daniel Hernández, Karl Schwede, Dan Smolkin, Pedro Teixeira, and Emily Witt, for calculations of F-thresholds, has been added." },
 		    LI { "The package ", TT "SOS", " has been renamed to ", TO "SumsOfSquares::SumsOfSquares", "." },
 		    LI { TO "SpechtModule::SpechtModule", ", a package by Jonathan Niño for efficient computation of invariants for permutation groups, has been added." },

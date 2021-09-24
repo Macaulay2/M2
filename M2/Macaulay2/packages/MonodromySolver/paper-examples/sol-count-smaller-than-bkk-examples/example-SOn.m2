@@ -20,7 +20,7 @@ load "example-SOn.m2"
 describe R
 x0coords = flatten entries id_(CC^N)
 setRandomSeed 0
-(p0, x0) := createSeedPair(G,x0coords);
+(p0, x0) := createSeedPair(G,point{x0coords});
 elapsedTime (V,npaths) = monodromySolve(G,p0,{x0},NumberOfNodes=>2,NumberOfEdges=>4,Verbose=>true)
 
 -* 

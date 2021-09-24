@@ -1,10 +1,10 @@
--- -*- M2-comint -*- hash: 130646979
+-- -*- M2-comint -*- hash: -336752443
 
 i1 : QQ[x,y];
 
 i2 : I=ideal(x+y+1);
 
-o2 : Ideal of QQ[x, y]
+o2 : Ideal of QQ[x..y]
 
 i3 : T=tropicalVariety (I,IsHomogeneous=>false)
 
@@ -13,4 +13,3 @@ o3 = T
 o3 : TropicalCycle
 
 i4 : 
-     

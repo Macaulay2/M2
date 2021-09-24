@@ -3,8 +3,8 @@
 #ifndef __f4mem_h_
 #define __f4mem_h_
 
-#include "../newdelete.hpp"
-#include "moninfo.hpp"  // only for monomial_word
+#include "newdelete.hpp"
+#include "f4/moninfo.hpp"  // only for monomial_word
 
 typedef int *f4vec;
 
@@ -69,7 +69,7 @@ class F4Vec
     int s = alloc_stash(a);
     ndeallocs[s]++;
     current[s]--;
-    deletearray(a - 1);
+    freemem(a - 1);
     a = 0;
   }
 
@@ -143,7 +143,7 @@ class F4Mem : public our_new_delete
     monom_dealloc++;
     monom_freed += len;
     monom_current -= len;
-    deletearray(a);
+    freemem(a);
     a = 0;
   }
 

@@ -3,6 +3,12 @@
 -- html output
 -----------------------------------------------------------------------------
 
+needs "debugging.m2" -- for Descent
+needs "format.m2"
+needs "gb.m2" -- for for GroebnerBasis
+needs "packages.m2" -- for Package
+needs "system.m2" -- for getViewer
+
 -- TODO: unify the definition of the tex macros so book/M2book.tex can use them
 KaTeX := () -> (
     katexPath := locateCorePackageFileRelative("Style",
@@ -66,22 +72,6 @@ indentLevel := -1
 pushIndentLevel =  n     -> (indentLevel = indentLevel + n; n)
 popIndentLevel  = (n, s) -> (indentLevel = indentLevel - n; s)
 
--- whether fn exists on the path
--- TODO: check executable
-runnable := fn -> (
-    if fn == "" then return false;
-    if isAbsolutePath fn then fileExists fn
-    else 0 < # select(1, apply(separate(":", getenv "PATH"), p -> p|"/"|fn), fileExists))
-
--- preferred web browser
--- TODO: cache this value
-browser := () -> (
-    if runnable getenv "WWWBROWSER" then getenv "WWWBROWSER" -- compatibility
-    else if version#"operating system" === "Darwin" and runnable "open" then "open" -- Apple varieties
-    else if runnable "xdg-open" then "xdg-open" -- most Linux distributions
-    else if runnable "firefox" then "firefox" -- backup
-    else error "neither open nor xdg-open is found and WWWBROWSER is not set")
-
 -----------------------------------------------------------------------------
 -- Setup default rendering
 -----------------------------------------------------------------------------
@@ -139,7 +129,9 @@ html TT :=
 html CODE := (lookup(html, Hypertext)) @@ (x -> apply(x,fixNewLines))
 
 html CDATA   := x -> concatenate("<![CDATA[", x ,"]]>", newline)
-html COMMENT := x -> concatenate("<!--", x, "-->", newline)
+html COMMENT := x -> if match("--", concatenate x) then
+    error ///html comments cannot contain "--"/// else
+    concatenate("<!--", x, "-->", newline)
 
 html HREF := x -> (
      r := concatenate apply(splice if #x > 1 then drop(x, 1) else x, html1);
@@ -155,8 +147,9 @@ html TO2  := x -> (
     fkey := format tag;
     -- TODO: add this to htmlLiteral?
     name := if match("^ +$", x#1) then #x#1 : "&nbsp;&nbsp;" else x#1;
-    if isUndocumented tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
-    if isMissingDoc   tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
+    if isUndocumented tag or isMissingDoc tag then concatenate(
+	html TT name, " (missing documentation)",
+	html COMMENT("tag: ", toString tag.Key)) else
     concatenate(html ANCHOR{"title" => htmlLiteral headline tag, "href"  => toURL htmlFilename tag, name}))
 
 ----------------------------------------------------------------------------
@@ -164,6 +157,7 @@ html TO2  := x -> (
 ----------------------------------------------------------------------------
 
 html Thing := htmlLiteral @@ tex -- by default, we use tex (as opposed to actual html)
+html Nothing := x -> ""
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 html Net := n -> concatenate("<pre style=\"display:inline-table;text-align:left;vertical-align:",
@@ -207,7 +201,7 @@ show Hypertext := x -> (
     fn << html HTML { defaultHEAD "Macaulay2 Output", BODY {x}} << endl << close;
     show new URL from replace(" ", "%20", rootURI | realpath fn)) -- TODO: urlEncode might need to replace more characters
 show URL := url -> (
-    cmd := { browser(), url#0 }; -- TODO: silence browser messages, perhaps with "> /dev/null"
+    cmd := { getViewer("WWWBROWSER", "firefox"), url#0 }; -- TODO: silence browser messages, perhaps with "> /dev/null"
     if fork() == 0 then (
         setGroupID(0,0);
         try exec cmd;

@@ -63,7 +63,7 @@ cmake-profile-appleclang:
 
 cmake-latestclang:
 	mkdir -p builds.tmp/cmake-latestclang
-	cd builds.tmp/cmake-latestclang; cmake \
+	cd builds.tmp/cmake-latestclang; LIBRARY_PATH=`/usr/local/opt/llvm/bin/llvm-config --libdir` cmake \
 		-GNinja \
 	    -DCMAKE_C_COMPILER:FILEPATH=/usr/local/opt/llvm/bin/clang \
 		-DCMAKE_CXX_COMPILER:FILEPATH=/usr/local/opt/llvm/bin/clang++ \
@@ -93,6 +93,18 @@ cmake-gcc9:
 		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
 		../../../..
+
+ubuntu-cmake-gcc:
+	mkdir -p builds.tmp/ubuntu-cmake-gcc
+	cd builds.tmp/ubuntu-cmake-gcc; cmake \
+		-GNinja \
+	    -DCMAKE_C_COMPILER:FILEPATH=gcc \
+		-DCMAKE_CXX_COMPILER:FILEPATH=g++ \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
 # running cmake-gcc9 now: 30 May 2020.
 #  build-libraries (with testing off): 22m36s
 #  build-programs (with testing off): 12m19s
@@ -157,6 +169,14 @@ darwin64-gcc9 : always
 		--disable-strip \
 		--enable-download
 
+darwin64-gcc10 : always
+	mkdir -p builds.tmp/darwin64-gcc9
+	cd builds.tmp/darwin64-gcc9; ../../../../configure \
+		CC=gcc-10 CXX=g++-10 \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
 debug64-latestclang : always
 	mkdir -p builds.tmp/debug64-latestclang
 	cd builds.tmp/debug64-latestclang; ../../../../configure \
@@ -177,6 +197,7 @@ debug64-appleclang : always
 		--disable-strip \
 		--enable-download \
 		--enable-debug \
+		--enable-memdebug \
 		--disable-optimize
 
 debug64-gcc9 : always

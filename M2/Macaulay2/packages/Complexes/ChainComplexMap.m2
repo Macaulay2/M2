@@ -395,8 +395,12 @@ ComplexMap.directSum = args -> (
         error "expected maps all over the same ring";
     if not all(args, f -> degree f === deg) then
         error "expected maps to all have the same degree";
-    src := directSum (args/source);
-    tar := directSum (args/target);
+    -- WARNING: we call Complex.directSum directly rather than using
+    -- just directSum to avoid getting a cached copy of the direct
+    -- sum.  Otherwise the labels of the cached copies might get
+    -- changed (in Options.directSum).
+    src := Complex.directSum (args/source);
+    tar := Complex.directSum (args/target);
     -- only keep matrices in the homomorphism that are non-zero
     spots := unique flatten(args/(f -> keys f.map));
     maps := hashTable for i in spots list i => directSum(args/(f -> f_i));
@@ -634,7 +638,7 @@ homomorphism ComplexMap := ComplexMap => (h) -> (
         if which === null then error "expected source of map to be supported in one homological degree";            
         which
         );
-    homomorphism(i, h_i, target h)
+    homomorphism(i + degree h, h_i, target h)
     )
 
 homomorphism' ComplexMap := ComplexMap => (f) -> (
@@ -751,62 +755,43 @@ ComplexMap ** RingMap := ComplexMap => (f, phi) -> tensor(phi, f)
 --------------------------------------------------------------------
 -- canonical maps --------------------------------------------------
 --------------------------------------------------------------------
-extend(Complex,Complex,Matrix) := ComplexMap => opts -> (D,C,f)-> (
+extend(Complex,Complex,Matrix,Sequence) := ComplexMap => opts -> (D,C,f,p)-> (
     -- assumptions:
-    -- (a) f : C_lo --> D_lo, where lo is the smallest homological index in C.
-    -- (b) C should be a complex of free modules (free objects?)
-    -- (c) D should be an acyclic complex (i.e. only homology is at homological index 'lo')
+    -- let p == (j,i) 
+    -- (a) f : C_i --> D_j
+    -- (b) C should be a complex of free modules
+    -- (c) D should be exact at D_k, for all k > j, not checked explicitly
+    -- (d) f * dd^C_(i+1) lies in the image of dd^D_(j+1), not checked explicitly
     -- output:
-    --   a ComplexMorphism, g : C --> D such that g_lo = f.
-    (lo,hi) := C.concentration;
-    g := f; -- at each step, g : C_(i-1) -> D_(i-1)
-    maps := hashTable for i from lo to hi list i => (
-        if i === lo then f
-        else (
-            g = (g * dd^C_i) // dd^D_i;
-            map(D_i, C_i, g)
-            )
-        );
-    result := map(D,C,maps);
-    if false and opts.Verify then (
-        if not isComplexMorphism result
-        then error "map cannot be extended";
-        );
-    --result.cache.isCommutative = true;
-    result
-    )
-
--- TODO: KLUDGE NEEDING FIXING: the degree argument should be an optional argument: Degree => d
-extend(Complex,Complex,Matrix,ZZ) := ComplexMap => opts -> (D,C,f,d)-> (
-    -- assumptions:
-    -- (a) f : C_(lo-d) --> D_lo, where lo is the smallest homological index in D.
-    -- (b) C should be a complex of free modules (free objects?)
-    -- (c) D should be an acyclic complex (i.e. only homology is at homological index 'lo')
-    -- output:
-    --   a ComplexMorphism, g : C --> D of degree d such that g_lo = f.
+    --   a ComplexMorphism, g : C --> D of degree j-i such that g_i = f.
+    (j, i) := p;
     (loC, hiC) := C.concentration;
-    (loD, hiD) := D.concentration;
-    if target f =!= D_loD then error "expected the target of the map to be the beginning of the target complex";
-    if source f =!= C_(loD-d) then error "expected the map and the degree to be compatible";
+    if target f =!= D_j then 
+        error("expected the matrix to define a map to the "|j|"-th term of the target complex");
+    if source f =!= C_i then 
+        error("expected the matrix to define a map from the "|i|"-th term of the source complex");
+    d := j-i;
     g := f; -- at each step, g : C_(i-1) -> D_(i-1+d)
-    maps := hashTable for i from loD-d to hiC list i => (
-        if i === loD-d then f
+    maps := hashTable for k from i to hiC list k => (
+        if k === i then f
         else (
             if odd d then g = -g;
-            g = (g * dd^C_i) // dd^D_(i+d);
-            map(D_(i+d), C_i, g)
-            --if odd d and odd (i-loD+d) then imap = -imap;
+            g = (g * dd^C_k) // dd^D_(k+d);
+            map(D_(k+d), C_k, g)
             )
         );
     result := map(D, C, maps, Degree => d);
+    -- TODO: the following line: "false and" should be removed when we
+    -- switch Verify to have default value false.
     if false and opts.Verify then (
         if not isCommutative result
         then error "map cannot be extended";
         if degree result != d then error "map has incorrect degree";
         );
-    --result.cache.isCommutative = true;
     result
     )
+
+extend(Complex,Complex,Matrix) := ComplexMap => opts -> (D, C, f) -> extend(D, C, f, (0,0))
 
 -- sign convention: Using Conrad (Grothendieck Duality) sign choice for cone, pg 8 of intro. 
 -- NOTE: one could extend this to complex maps which commute, but have nonzero degree,
@@ -1079,13 +1064,26 @@ isNullHomotopyOf(ComplexMap, ComplexMap) := (h, f) -> (
     -- if debugLevel > 0, then more info as to where it is not, is given
     C := source f;
     D := target f;
-    if debugLevel == 0 then h * dd^C + dd^D * h == f
+    degf := degree f;
+    degh := degree h;
+    if target f != target h then (
+        if debugLevel > 0 then << "expected targets to be the same" << endl;
+        return false;
+        );
+    if source f != source h then (
+        if debugLevel > 0 then << "expected sources to be the same" << endl;
+        return false;
+        );
+    if degh - degf =!= 1 then (
+        if debugLevel > 0 then << "expected degree of first map to be one more than degree of the second" << endl;
+        return false;
+        );
+    if debugLevel == 0 then h * dd^C + (-1)^degf * dd^D * h == f
     else (
         result := true;
-        deg := degree h;
         (lo,hi) := concentration h;
         for i from lo to hi do (
-            if h_(i-1) * dd^C_i + dd^D_(deg+i) * h_i != f_i then (
+            if h_(i-1) * dd^C_i + (-1)^degf * dd^D_(degh+i) * h_i != f_i then (
                 << "fails to be a null homotopy at location " << i << endl;
                 result = false;
                 );
@@ -1124,8 +1122,8 @@ isNullHomotopic ComplexMap := Boolean => f -> (
     g := homomorphism' f;
     H := target g; 
     d := degree f;
-    g1 := g_d // dd^H_(d+1); 
-    g_d == dd^H_(d+1) * g1
+    g1 := g_0 // dd^H_(d+1); 
+    g_0 == dd^H_(d+1) * g1
     )
 
 nullHomotopy ComplexMap := ComplexMap => f -> (
@@ -1136,7 +1134,7 @@ nullHomotopy ComplexMap := ComplexMap => f -> (
     g := homomorphism' f;
     H := target g; 
     d := degree f;
-    g1 := g_d // dd^H_(d+1);
+    g1 := g_0 // dd^H_(d+1);
     homomorphism(d+1,g1,H)
     )
 
@@ -1247,7 +1245,11 @@ liftMapAlongQuasiIsomorphism(ComplexMap, ComplexMap) := (alpha,beta) -> (
     gamma1.cache.homotopy = map(N, P, h, Degree => 1);
     gamma1
     )
+ComplexMap // ComplexMap := (alpha, beta) -> liftMapAlongQuasiIsomorphism(alpha, beta)
+quotient(ComplexMap, ComplexMap) := opts -> (alpha, beta) -> liftMapAlongQuasiIsomorphism(alpha, beta)
 
+homotopyMap = method()
+homotopyMap ComplexMap := ComplexMap => f -> f.cache.homotopy
 --------------------------------------------------------------------
 -- short exact sequences -------------------------------------------
 --------------------------------------------------------------------
@@ -1272,29 +1274,65 @@ isShortExactSequence(Matrix, Matrix) := Boolean => (g, f) -> (
     kernel f == 0 and
     coker g == 0
     )  
+isShortExactSequence Complex := Boolean => C -> (
+    (lo, hi) := concentration C;
+    supp := for i from lo to hi list if C_i != 0 then i else continue;
+    lo = first supp;
+    hi = last supp;
+    if hi - lo > 3 then 
+        false
+    else
+        isShortExactSequence(dd^C_(hi-1), dd^C_hi)
+    )
 
-connectingMap = method()
-connectingMap(ComplexMap, ComplexMap) := ComplexMap => (g, f) -> (
+connectingMap = method(Options => {Concentration => null})
+connectingMap(ComplexMap, ComplexMap) := ComplexMap => opts -> (g, f) -> (
     -- 0 <-- C <--g-- B <--f-- A <-- 0
+    -- TODO: add in Concentration use!
+    if opts.Concentration =!= null then error "Concentration for connecting maps is not yet implemented";
     if debugLevel > 0 and not isShortExactSequence(g, f) then
         error "expected a short exact sequence of complexes";
     cylf := cylinder f;
     cf := cone f;
-    alpha := canonicalMap(cylf, source f);
-    beta := canonicalMap(cf, cylf);
+    -- we need (source f)[-1] below, but this operation
+    -- negates the differentials, resulting in homology
+    -- modules which are not ===.
+    -- Instead, we use sourcef1, which is the same, without
+    --   negated differentials.
+    (lo, hi) := concentration source f;
+    sourcef1 := complex(source f, Base => lo+1);
+    ----alpha := canonicalMap(cylf, source f);
+    ----beta := canonicalMap(cf, cylf);
     -- p is a quasi-isomorphism cone(f) --> C.
     p := map(target g, cf, {{ 
-                map(target g, source f[-1], 0), g
+                map(target g, sourcef1, 0), g
                 }});
     -- q is cone(f) --> A[-1]
-    q := map(source f[-1], cf, {{ 
-                id_(source f[-1]), map(source f[-1], source g, 0)
+    q := map(sourcef1, cf, {{ 
+                id_sourcef1, map(sourcef1, source g, 0)
                 }});
     if debugLevel > 1 then (
         assert isWellDefined p;
         assert isWellDefined q;
         );
     HH(q) * (HH(p))^-1
+    )
+
+longExactSequence = method(Options => true)
+longExactSequence(ComplexMap, ComplexMap) := Complex => {Concentration => null} >> opts -> (g,f) -> (
+    C := target g;
+    B := source g;
+    A := source f;
+    if target f != B then error "expected maps to be composable";
+    (loA, hiA) := concentration A;
+    (loB, hiB) := concentration B;
+    (loC, hiC) := concentration C;
+    lo := min(loA, loB, loC);
+    hi := max(hiA, hiB, hiC);
+    HHg := HH g; -- TODO need's possible Concentration
+    HHf := HH f; -- same.
+    delta := connectingMap(g,f); -- same
+    complex(flatten for i from lo to hi list {HHg_i, HHf_i, delta_(i+1)}, Base => 3*loC)
     )
 
 horseshoeResolution = method(Options => {LengthLimit=>infinity})
@@ -1319,3 +1357,20 @@ horseshoeResolution Complex := Sequence => opts -> ses -> (
     beta := map(FM, HS, i -> map(FM_i, HS_i, (HS_i)^[1]));
     (beta, alpha)
     )  
+horseshoeResolution(Matrix, Matrix) := Sequence => opts -> (g,f) -> (
+    horseshoeResolution(complex{g,f}, opts)
+    )  
+
+connectingExtMap = method(Options => {Concentration => null})
+connectingExtMap(Module, Matrix, Matrix) := ComplexMap => opts -> (M, g, f) -> (
+    F := freeResolution M;
+    connectingMap(Hom(F, g), Hom(F, f), opts)
+    )
+connectingExtMap(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
+    (g',f') := horseshoeResolution(g,f);
+    G := freeResolution N;
+    -- TODO: the indexing on opts.Concentration needs to be negated
+    connectingMap(Hom(f', G), Hom(g', G), opts)
+    )
+
+

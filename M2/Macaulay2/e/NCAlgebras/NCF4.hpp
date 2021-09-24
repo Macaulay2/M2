@@ -1,6 +1,12 @@
 #ifndef __nc_f4_hpp__
 #define __nc_f4_hpp__
 
+#include <tbb/queuing_mutex.h>                // for queuing_mutex
+#include <tbb/null_mutex.h>                   // for null_mutex
+#include <tbb/parallel_do.h>                  // for parallel_do_feeder
+#include <tbb/concurrent_unordered_map.h>     // for concurrent_unordered_map
+//#include <tbb/concurrent_vector.h>          // for concurrent_vector (no longer needed)
+
 #include "NCAlgebras/FreeMonoid.hpp"      // for MonomEq
 #include "MemoryBlock.hpp"                // for MemoryBlock
 #include "NCAlgebras/Range.hpp"           // for Range
@@ -8,8 +14,8 @@
 #include "NCAlgebras/OverlapTable.hpp"    // for OverlapTable
 #include "NCAlgebras/WordTable.hpp"       // for Overlap, WordTable
 #include "NCAlgebras/SuffixTree.hpp"      // for experimental suffix tree code
-//#include "VectorArithmetic.hpp"         // for VectorArithmetic, CoeffVector, etc
-#include "VectorArithmetic2.hpp"          // for VectorArithmetic, CoeffVector, etc
+#include "NCAlgebras/FreeAlgebra.hpp"     // for FreeAlgebra
+#include "VectorArithmetic.hpp"           // for VectorArithmetic, CoeffVector, etc
 #include "Polynomial.hpp"                 // for Monom, ConstPolyList, Poly
 #include "newdelete.hpp"                  // for VECTOR, our_new_delete
 
@@ -21,9 +27,6 @@
 #include <utility>                     // for pair
 #include <vector>                      // for vector
 
-#include <tbb/tbb.h>                        // for tbb
-
-class FreeAlgebra;
 union ring_elem;
 
 // this class contains an NCGB calculation using the F4 algorithm.
@@ -66,7 +69,7 @@ private:
     CoeffVector coeffVector;     // vector of coefficients
     Range<int> columnIndices;    // column indices used in the row.  Valid *only* after labelAndSortF4Matrix, 
                                  // as the indices are not known during creation.
-    Range<Word> columnWords;   // monoms used in the row.  Valid only *before* reduction begins, as reduction
+    Range<Word> columnWords;     // monoms used in the row.  Valid only *before* reduction begins, as reduction
                                  // does not update this field
   };
 
@@ -79,8 +82,11 @@ private:
 
   //using ColumnsVector = tbb::concurrent_vector<Column>;
   using ColumnsVector = std::vector<Column>;
+
+  // unfortunately we must use the GC allocator here for now
+  using RowsVector = std::vector<Row,gc_allocator<Row>>;
   //using RowsVector = tbb::concurrent_vector<Row>;
-  using RowsVector = std::vector<Row>;
+
   using PreRowFeeder = tbb::parallel_do_feeder<PreRow>;
   // The pair in this unordered_map is (i,j) where:
   //    i is the column number
@@ -98,8 +104,8 @@ private:
   PolyList mGroebner;
 
   bool mIsGraded;
-  int mTopComputedDegree;
-  int mHardDegreeLimit;
+  //int mTopComputedDegree;  // not used yet
+  //int mHardDegreeLimit;    // not used yet
 
   MemoryBlock mMonomialSpace;
   MemoryBlock mPreviousMonomialSpace;
@@ -108,7 +114,6 @@ private:
   MonomHashEqual mMonomHashEqual;
   MonomHash mMonomHash;
 
-  // TODO(?): we should change this to have keys 'Word's rather than 'Monom's since its unordered.
   MonomialHash mColumnMonomials;
   MonomialHash mPreviousColumnMonomials;
 
@@ -117,21 +122,19 @@ private:
   ColumnsVector mColumns;
   ColumnsVector mPreviousColumns;
 
-  // these should be std::vectors (or changeable)
   RowsVector mRows;
   RowsVector mPreviousRows;
-
   RowsVector mOverlaps;
 
   int mFirstOverlap; // First non pivot row (and all later ones are also non-pivot rows).
 
   // vector arithmetic class for reduction
-  //const VectorArithmetic *mVectorArithmetic;
-  const VectorArithmetic2 *mVectorArithmetic;
+  const VectorArithmetic* mVectorArithmetic;
 
   bool mIsParallel;
  
   // these are pointers to the MemoryBlocks used in creating the various structures.
+  // only used in parallelBuildF4Matrix, which is currently not used.
   std::vector<MemoryBlock*> mMemoryBlocks;
   std::vector<MemoryBlock*> mPreviousMemoryBlocks;
   tbb::queuing_mutex mColumnMutex;
@@ -144,13 +147,22 @@ public:
        bool isParallel
        );
 
-  ~NCF4() { mMonomialSpace.deallocateAll(); mPreviousMonomialSpace.deallocateAll(); }
+  ~NCF4() {
+    for (auto f : mGroebner) {
+      mFreeAlgebra.clear(*f);
+      delete f;
+    }
+    clearRows(mRows);
+    clearRows(mPreviousRows);
+    delete mVectorArithmetic;
+  };
 
-  const FreeAlgebra& freeAlgebra() const { return mFreeAlgebra; }
+  [[nodiscard]] const FreeAlgebra& freeAlgebra() const { return mFreeAlgebra; }
 
-  const ConstPolyList& currentValue() const
+  const PolyList& currentValue() const
   { 
-    return reinterpret_cast<const ConstPolyList&>(mGroebner);
+    //return reinterpret_cast<const ConstPolyList&>(mGroebner);
+    return mGroebner;
   }
 
   void compute(int softDegreeLimit);
@@ -205,12 +217,11 @@ private:
                            PreRowFeeder* feeder);
 
   void preRowsFromOverlap(const Overlap& o);
-  void parallelPreRowsFromOverlap(const Overlap& o);
 
   std::pair<bool, PreRow> findDivisor(Word w);
 
   void autoreduceByLastElement();
-  ring_elem getCoeffOfMonom(const Poly& f, const Monom& m);
+  ring_elem getCoeffOfMonom(const Poly& f, const Monom& m) const;
 
   template<typename LockType>
   void generalReduceF4Row(int index,
@@ -218,7 +229,7 @@ private:
                           int firstcol,
                           long &numCancellations,
                           DenseCoeffVector& dense,
-                          bool updatColumnIndex,
+                          bool updateColumnIndex,
                           LockType& lock);
 
   void reduceF4Row(int index,
@@ -258,6 +269,8 @@ private:
   // discard const qualifier here again because this creates a monom in mMonomialSpace
   std::pair<bool,int> findPreviousReducerPrefix(const Word& w);
   std::pair<bool,int> findPreviousReducerSuffix(const Word& w);
+
+  void clearRows(RowsVector& rowsVector);
 
   void processPreviousF4Matrix();
 };

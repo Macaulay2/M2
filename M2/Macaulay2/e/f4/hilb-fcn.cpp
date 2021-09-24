@@ -1,10 +1,21 @@
-#include "hilb-fcn.hpp"
-#include "hilb.hpp"
+/* Copyright 2010-2021, Michael E. Stillman */
 
-#include "debug.hpp"
-#include "relem.hpp"
-#include "matrix-con.hpp"
-#include <cstdio>
+#include "hilb-fcn.hpp"
+
+#include "error.h"            // for error
+#include "freemod.hpp"        // for FreeModule
+#include "hilb.hpp"           // for hilb_comp
+#include "matrix-con.hpp"     // for MatrixConstructor
+#include "monoid.hpp"         // for Monoid, monomial
+#include "polyring.hpp"       // for PolynomialRing
+#include "relem.hpp"          // for RingElement
+#include "ring.hpp"           // for Ring
+#include "style.hpp"          // for INTSIZE
+
+#include <cstdio>             // for fprintf, stderr
+#include <vector>             // for vector
+
+class Matrix;
 
 HilbertController::HilbertController(const FreeModule *F0,
                                      const RingElement *hf)

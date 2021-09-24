@@ -1,5 +1,16 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "set.m2"
+needs "methods.m2"
+
+    Sequence.synonym = "sequence"
+       Array.synonym = "array"
+        List.synonym = "list"
+   BasicList.synonym = "basic list"
+ VisibleList.synonym = "visible list"
+ MutableList.synonym = "mutable list"
+AngleBarList.synonym = "angle bar list"
+
 List#"major documentation node" = true
 
 List ? List := (s,t) -> if class s === class t then toSequence s ? toSequence t else (class s) ? (class t)
@@ -95,6 +106,8 @@ all(BasicList,BasicList,Function) := (x,y,p) -> not any(apply(x,y,identity), ij 
 --same BasicList            :=  L     -> same(L, identity)
 --same(BasicList, Function) := (L, f) -> #L <= 1 or (t := f L#0; not any(L, l -> t =!= f l))
 same = L -> #L <= 1 or (t := L#0; not any(L, l -> t =!= l))
+
+uniform = L -> same apply(L, class)
 
 member(Thing,VisibleList) := Boolean => (c,x) -> any(x, i -> c===i)
 

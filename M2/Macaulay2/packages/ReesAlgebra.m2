@@ -2288,9 +2288,9 @@ doc ///
      ideal to understand what's going on.
     Example
      irrelB = ideal(B_0,B_1)
-     intersection = saturate(D_0+D_1, irrelB)
-     codim intersection
-     degree intersection
+     doublePoint = saturate(D_0+D_1, irrelB)
+     codim doublePoint
+     degree doublePoint
     Text
      We can see the multiplicities of these components by comparing their degrees to the
      degrees of the reduced components

@@ -11,6 +11,10 @@
  * pager
  *-
 
+needs "system.m2" -- for chkrun
+needs "document.m2"
+needs "installPackage.m2" -- TODO: can this be removed?
+
 -----------------------------------------------------------------------------
 -- Local variables
 -----------------------------------------------------------------------------
@@ -270,7 +274,7 @@ getOperator := key -> if operator#?key then (
     fixup DIV (
 	if binary#?key then {
 	    PARA {"This operator may be used as a binary operator in an expression like ", TT ("x" | op | "y"), ". ",
-		"The user may install ", TO "Macaulay2Doc :: binary methods", "for handling such expressions with code such as"},
+		"The user may install ", TO "Macaulay2Doc :: binary methods", " for handling such expressions with code such as"},
 	    PRE if key === symbol SPACE
 	    then "         X Y := (x,y) -> ..."
 	    else "         X "|op|" Y := (x,y) -> ...",
@@ -557,7 +561,7 @@ about String   := o -> re -> lastabout = (
             pkgname := pkg#"name";
             if packagesSeen#?pkgname then continue else packagesSeen#pkgname = 1;
             dbname := pkg#"doc db file name";
-            dbkeys := keys fetchDocKeys pkg;
+            dbkeys := pkg#"doc keys"();
             db := if o.Body then openDatabase dbname;
             keyList := select(dbkeys, matchfun_re db);
             if o.Body then close db;

@@ -37,7 +37,8 @@ set(HFILES
 set(HPPONLYFILES
   MemoryBlock.hpp
   NCAlgebras/Range.hpp
-  VectorArithmetic2.hpp
+  VectorArithmetic.hpp
+  ARingElem.hpp
   newdelete.hpp
   timing.hpp
   SLP-defs.hpp
@@ -76,12 +77,33 @@ set(HPPONLYFILES
   ringelem.hpp
   schur-poly-heap.hpp
   smat.hpp
-  stdinc-m2.hpp
   style.hpp
-  f4/moninfo2.hpp
-  f4/res-memblock.hpp
-  f4/res-monomial-types.hpp
-  f4/res-schreyer-order.hpp
+  mathicgb/Atomic.hpp
+  mathicgb/PrimeField.hpp
+  mathicgb/MonoMonoid.hpp
+  mathicgb/Range.hpp
+  mathicgb/Poly.hpp
+  mathicgb/FixedSizeMonomialMap.h
+  mathicgb/KoszulQueue.hpp
+  mathicgb/MathicIO.hpp
+  mathicgb/MonoArena.hpp
+  mathicgb/MonoOrder.hpp
+  mathicgb/MonoProcessor.hpp
+  mathicgb/MonomialMap.hpp
+  mathicgb/NonCopyable.hpp
+  mathicgb/RawVector.hpp
+  mathicgb/ReducerHelper.hpp
+  mathicgb/ScopeExit.hpp
+  mathicgb/StaticMonoMap.hpp
+  mathicgb/Unchar.hpp
+  mathicgb/mtbb.hpp
+  mathicgb/stdinc.h
+  mathicgb/mathicgb.h
+  f4/f4-types.hpp
+  f4/memblock.hpp
+  schreyer-resolution/res-memblock.hpp
+  schreyer-resolution/res-monomial-types.hpp
+  schreyer-resolution/res-schreyer-order.hpp
   )
 
 # these files have .cpp file, but NOT .hpp file
@@ -96,7 +118,6 @@ set(CPPONLYFILES
   ntl-internal.cpp
   res-a2-gb.cpp
   ring-vecs.cpp
-
   interface/aring.cpp
   interface/aring.h
   interface/computation.h # no .cpp yet
@@ -129,28 +150,47 @@ set(CPPONLYFILES
   interface/ringelement.h
   interface/ringmap.cpp
   interface/ringmap.h
+  memtailor/Arena.cpp
+  memtailor/Arena.h
+  memtailor/BufferPool.cpp
+  memtailor/BufferPool.h
+  memtailor/MemoryBlocks.cpp
+  memtailor/MemoryBlocks.h
+  mathic/BitTriangle.cpp
+  mathic/BitTriangle.h
+  mathic/ColumnPrinter.cpp
+  mathic/ColumnPrinter.h
+  mathic/DivMask.cpp
+  mathic/DivMask.h
+  mathic/Timer.cpp
+  mathic/Timer.h
+  mathic/display.cpp
+  mathic/display.h
+  mathic/error.cpp
+  mathic/error.h
+  mathicgb/mathicgb.cpp
   )
 
 # these files all have .hpp and .cpp files
 # MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
-	myalloc
-	matrix-ncbasis
-    	VectorArithmetic
-	M2FreeAlgebraQuotient
-	M2FreeAlgebra
-	NCAlgebras/Word
-	NCAlgebras/NCReduction
-	NCAlgebras/FreeAlgebraQuotient
-	NCAlgebras/FreeAlgebra
-	NCAlgebras/FreeMonoid
-	NCAlgebras/WordTable
-	NCAlgebras/SuffixTree
-	NCAlgebras/NCGroebner
-	NCAlgebras/NCF4
-	NCAlgebras/OverlapTable
-	Polynomial
-	monomial-collection
+  myalloc
+  matrix-ncbasis
+  M2FreeAlgebraQuotient
+  M2FreeAlgebra
+  NCAlgebras/Word
+  NCAlgebras/NCReduction
+  NCAlgebras/FreeAlgebraQuotient
+  NCAlgebras/FreeAlgebra
+  NCAlgebras/FreeMonoid
+  NCAlgebras/WordTable
+  NCAlgebras/SuffixTree
+  NCAlgebras/NCGroebner
+  NCAlgebras/NCF4
+  NCAlgebras/OverlapTable
+  NCResolutions/nc-res-computation
+  Polynomial
+  monomial-collection
   Eschreyer
   GF
   LLL
@@ -158,6 +198,7 @@ set(SRCLIST
   SLP
   ZZ
   ZZp
+  aring-RRi
   aring-CC
   aring-CCC
   aring-RR
@@ -226,6 +267,7 @@ set(SRCLIST
   monoid
   monomial-sets
   monomial
+  monsort
   montable
   montableZZ
   mutablecomplex
@@ -271,32 +313,64 @@ set(SRCLIST
   f4/f4-mem
   f4/f4-monlookup
   f4/f4-spairs
-  f4/f4-syz
-  f4/f4-types
   f4/f4
   f4/gausser
   f4/hilb-fcn
-  f4/memblock
   f4/monhashtable
   f4/moninfo
-  f4/monsort
   f4/ntuple-monomial
-  f4/res-f4-computation
-  f4/res-f4-m2-interface
-  f4/res-f4-monlookup
-  f4/res-f4
-  f4/res-gausser-QQ-hybrid
-  f4/res-gausser-QQ
-  f4/res-gausser-ZZp
-  f4/res-gausser
-  f4/res-moninfo-dense
-  f4/res-moninfo-sparse
-  f4/res-moninfo
-  f4/res-monomial-sorter
-  f4/res-poly-ring
-  f4/res-schreyer-frame
-  f4/res-varpower-monomial
   f4/varpower-monomial
+  # local version of mathicgb
+  mathicgb/CFile
+  mathicgb/LogDomain
+  mathicgb/LogDomainSet
+  mathicgb/PolyRing
+  mathicgb/Basis
+  mathicgb/MonoLookup
+  mathicgb/PolyBasis
+  mathicgb/SparseMatrix
+  mathicgb/QuadMatrix
+  mathicgb/QuadMatrixBuilder
+  mathicgb/Scanner
+  mathicgb/ClassicGBAlg
+  mathicgb/F4MatrixBuilder
+  mathicgb/F4MatrixBuilder2
+  mathicgb/F4MatrixProjection
+  mathicgb/F4MatrixReducer
+  mathicgb/F4ProtoMatrix
+  mathicgb/F4Reducer
+  mathicgb/Reducer
+  mathicgb/TypicalReducer
+  mathicgb/ReducerDedup
+  mathicgb/ReducerHash
+  mathicgb/ReducerHashPack
+  mathicgb/ReducerNoDedup
+  mathicgb/ReducerPack
+  mathicgb/ReducerPackDedup
+  mathicgb/ModuleMonoSet
+  mathicgb/PolyHashTable
+  mathicgb/SPairs
+  mathicgb/SigPolyBasis
+  mathicgb/SigSPairQueue
+  mathicgb/SigSPairs
+  mathicgb/SignatureGB
+  mathicgb/io-util
+  # Schreyer resolution a la Linear algebra (F4 Faugere style)
+  schreyer-resolution/res-f4-computation
+  schreyer-resolution/res-f4-m2-interface
+  schreyer-resolution/res-f4-monlookup
+  schreyer-resolution/res-f4
+  schreyer-resolution/res-gausser-QQ-hybrid
+  schreyer-resolution/res-gausser-QQ
+  schreyer-resolution/res-gausser-ZZp
+  schreyer-resolution/res-gausser
+  schreyer-resolution/res-moninfo-dense
+  schreyer-resolution/res-moninfo-sparse
+  schreyer-resolution/res-moninfo
+  schreyer-resolution/res-monomial-sorter
+  schreyer-resolution/res-poly-ring
+  schreyer-resolution/res-schreyer-frame
+  schreyer-resolution/res-varpower-monomial
   # Boolean Involutive Gröbner Bases
   bibasis/bibasis
   bibasis/allocator
@@ -438,6 +512,33 @@ if(BUILD_TESTING)
 
     unit-tests/fromStream.cpp
     unit-tests/testMain.cpp # not needed, except for GC_INIT
+
+    # memtailor
+    memtailor/unit-tests/ArenaTest.cpp
+    memtailor/unit-tests/BufferPoolTest.cpp
+    memtailor/unit-tests/MemoryBlocksTest.cpp
+
+    # mathic
+    mathic/unit-tests/BitTriangle.cpp
+#    mathic/unit-tests/DivFinder.cpp
+    mathic/unit-tests/HashTable.cpp
+    mathic/unit-tests/PairQueue.cpp
+
+    # mathicgb
+    mathicgb/unit-tests/F4MatrixBuilder.cpp
+    mathicgb/unit-tests/F4MatrixReducer.cpp
+    mathicgb/unit-tests/MathicIO.cpp
+    mathicgb/unit-tests/MonoMonoid.cpp
+    mathicgb/unit-tests/PrimeField.cpp
+    mathicgb/unit-tests/QuadMatrixBuilder.cpp
+    mathicgb/unit-tests/Range.cpp
+    mathicgb/unit-tests/Scanner.cpp
+    mathicgb/unit-tests/SparseMatrix.cpp
+    mathicgb/unit-tests/gb-test.cpp
+    mathicgb/unit-tests/ideals.hpp
+    mathicgb/unit-tests/ideals.cpp
+    mathicgb/unit-tests/mathicgb.cpp
+    mathicgb/unit-tests/poly-test.cpp
     )
 
   if(BDWGC_FOUND)

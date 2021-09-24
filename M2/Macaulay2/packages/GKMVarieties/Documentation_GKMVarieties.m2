@@ -110,7 +110,7 @@ doc ///
 			with the highest weight $a_1w_1 + \cdots a_nw_n$.
 			These generalized flag varieties can be created as a @TO "GKMVariety"@ using the method 
 			@TO generalizedFlagVariety@.  For instance, the Grassmannian $Gr(2,4)$ of
-			2-dimensional subspaces in $\mathbb C^4$, embedded in $\mathbb P^5$ by the usual Plucker embedding, 
+			2-dimensional subspaces in $\mathbb C^4$, embedded in $\mathbb P^5$ by the usual Plücker embedding,
 			can be created as follows.
 
 		Example
@@ -125,13 +125,13 @@ doc ///
 			underlyingGraph G
 
 		Text
-			The line bundle $O(1)$ on $Gr(2,4)$, corresponding to its Plucker embedding, can be accessed by @TO (ampleKClass, GKMVariety)@.
+			The line bundle $O(1)$ on $Gr(2,4)$, corresponding to its Plücker embedding, can be accessed by @TO (ampleKClass, GKMVariety)@.
 			The method @TO (euler, KClass)@ computes its Lefschetz trace (a.k.a. equivariant Euler characteristic),
 			which in this case is the Laurent polynomial in the character ring of the torus $T$ 
 			whose terms correspond to be weights of the second exterior power of the standard representation of $GL_4$.
 
 		Example
-			O1 = ampleKClass Gr24 --the O(1) bundle on Gr24 via its Plucker embedding
+			O1 = ampleKClass Gr24 --the O(1) bundle on Gr24 via its Plücker embedding
 			euler O1
 
 		Text
@@ -1362,7 +1362,7 @@ doc ///
 			the line bundle. If no such line bundle is defined, it allows the user to construct one.
 		Text
 			The following example describes the ample line bundle on the Lagrangian Grassmannian $SpGr(2,4)$. The line bundle
-			is precisely the pullback of O(1) under the Plucker embedding $SpGr(2,4) \to \mathbb P^4$.
+			is precisely the pullback of O(1) under the Plücker embedding $SpGr(2,4) \to \mathbb P^4$.
 		Example
 			SpGr24 = generalizedFlagVariety("C",2,{2})
 			O1 = ampleKClass SpGr24
