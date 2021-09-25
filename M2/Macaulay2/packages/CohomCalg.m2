@@ -13,7 +13,7 @@ newPackage(
         PackageExports => {"NormalToricVarieties"},
         Configuration => {
             "executable" => "",
-            "silent" => "false"
+            "silent" => "true"
             }
         )
 
@@ -97,7 +97,8 @@ cohomCalg0 = (X,pneeded,issilent) -> (
     H := X.cache.CohomCalg;
     filename := temporaryFileName();
     filename << (toCohomCalg X) | (toCohomCalg pneeded) << close;
-    executable := runProgram(cohomCalgProgram, "--integrated " | filename);
+    executable := runProgram(cohomCalgProgram, "--integrated " | filename |
+	" | tail -1");
     if debugLevel >= 1 then << "-- CohomCalg: using temporary file " << filename << endl;
     if debugLevel >= 2 then << "-- CohomCalg: going to call: " << executable#"command" << endl;
     if not issilent then << executable#"error";

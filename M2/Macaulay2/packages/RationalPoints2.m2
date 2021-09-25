@@ -439,7 +439,7 @@ polredbest = p -> (
       << "f=polredbest("|toString p|")\n"
       << "for(d=0,poldegree(f),write1(\""|OUTPUT|"\",polcoeff(f,d),\",\"))\n"
       << "quit()" << close;
-    assert zero (runProgram(gp, "-q "|INPUT))#"return value";
+    assert zero (runProgram(gp, "-q <"|INPUT))#"return value";
     coeffs := value("{"|get OUTPUT|"}");
     removeFile \ {INPUT, OUTPUT};
     return sum apply(d+1, i -> coeffs_i*R_0^i);

@@ -10,7 +10,7 @@
 #include "schreyer-resolution/res-monomial-types.hpp"  // for res_packed_mon...
 #include "style.hpp"                                   // for GT, LT
 
-#include <memtailor/Arena.h>                           // for Arena
+#include "memtailor/Arena.h"                           // for Arena
 #include <algorithm>                                   // for stable_sort
 #include <utility>                                     // for pair
 #include <vector>                                      // for vector

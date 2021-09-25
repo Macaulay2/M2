@@ -92,15 +92,17 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      makeDirectory rundir;
      -* The bits in the binary representation of argmode determine arguments to add.
         If InvertArgs is set, argumentMode modifies the defaultMode rather than overriding them. *-
-     argmode := if 0 < argumentMode & InvertArgs then xor(defaultMode, argumentMode) else argumentMode;
+     argmode := if 0 < argumentMode & InvertArgs then defaultMode ^^ argumentMode else argumentMode;
      -* returns (" "|arg) if all bits in m are set in argmode *-
      readmode := (m, arg) -> if argmode & m == m then " " | arg else "";
      cmd := readmode(SetUlimit, ulimit);
      cmd = cmd | " cd " | rundir | ";";
-     cmd = cmd | readmode(GCMAXHEAP,      "GC_MAXIMUM_HEAP_SIZE=400M");
+     cmd = cmd | readmode(GCMAXHEAP,      if match("--enable-debug", version#"configure arguments")
+	       	    	      	   	  then "GC_MAXIMUM_HEAP_SIZE=800M"
+	       	    	      	   	  else "GC_MAXIMUM_HEAP_SIZE=400M");
      cmd = cmd | readmode(GCSTATS,        "GC_PRINT_STATS=1");
      cmd = cmd | readmode(GCVERBOSE,      "GC_PRINT_VERBOSE_STATS=1");
-     cmd = cmd | " " | format toAbsolutePath commandLine#0;
+     cmd = cmd | " " | format(bindir | "M2-binary");
      if argmode =!= defaultMode or not usermode then
      cmd = cmd | readmode(ArgQ,           "-q");
      cmd = cmd | readmode(ArgInt,         "--int");
@@ -121,7 +123,7 @@ runFile = (inf, inputhash, outf, tmpf, pkg, announcechange, usermode, examplefil
      cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir ", format d));
      -- TODO: fix capture, add preloaded packages to Macaulay2Doc, then delete the following two lines
      needsline := concatenate(" -e 'needsPackage(",format pkgname,",Reload=>true,FileName=>",format pkg#"source file",")'");
-     cmd = cmd | if pkgname != "Macaulay2Doc" and pkgname != "Core" then needsline else "";
+     cmd = cmd | if not member(pkgname, {"Macaulay2Doc", "Core", "User"}) then needsline else "";
      cmd = cmd | readmode(SetInputFile,   "<" | format inf);
      cmd = cmd | readmode(SetOutputFile,  ">>" | format toAbsolutePath tmpf);
      cmd = cmd | readmode(SetCaptureErr,  "2>&1");

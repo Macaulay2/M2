@@ -50,11 +50,10 @@ liftZZmodQQ := (r,S) -> (
      v_(0,0) / v_(1,0))
 
 --------------------------------
-ZZp = method(Options=> {Strategy => null}) -- values allowed: "Flint", "Ffpack", "Aring", "Old".
+ZZp = method(Options=> {Strategy => "Flint"}) -- values allowed: "Flint", "Ffpack", "Aring", "Old".
 ZZp ZZ := opts -> (n) -> ZZp(ideal n, opts)
 ZZp Ideal := opts -> (I) -> (
-      typ := opts#Strategy;
-      if typ === null then typ = "Flint";
+     typ := opts#Strategy;
      gensI := generators I;
      if ring gensI =!= ZZ then error "expected an ideal of ZZ";
      n := gcd flatten entries gensI;
@@ -139,38 +138,6 @@ basicRank Matrix := (f) -> (
     )
 
 initializeEngineLinearAlgebra QQ
---------------------------------
-
-ZZquotient := (R,I) -> (
-     gensI := generators I;
-     if ring gensI =!= ZZ then error "expected an ideal of ZZ";
-     n := gcd flatten entries gensI;
-     if n < 0 then n = -n;
-     if n === 0 then ZZ
-     else if savedQuotients#?n 
-     then savedQuotients#n
-     else (
-	  if n > 32767 then error "large characteristics not implemented yet";
-	  if n > 1 and not isPrime n
-	  then error "ZZ/n not implemented yet for composite n";
-	  S := new QuotientRing from rawZZp n;
-	  S.cache = new CacheTable;
-	  S.isBasic = true;
-	  S.ideal = I;
-	  S.baseRings = {R};
-     	  commonEngineRingInitializations S;
-          initializeEngineLinearAlgebra S;
-	  S.relations = gensI;
-	  S.isCommutative = true;
-	  S.presentation = matrix{{n}};
-	  S.order = S.char = n;
-	  S.dim = 0;					    -- n != 0 and n!= 1
-	  expression S := x -> expression rawToInteger raw x;
-	  fraction(S,S) := S / S := (x,y) -> x//y;
-	  S.frac = S;		  -- ZZ/n with n PRIME!
-	  savedQuotients#n = S;
-	  lift(S,QQ) := opts -> liftZZmodQQ;
-	  S))
 
 Ring / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
      if ring I =!= R then error "expected ideal of the same ring";

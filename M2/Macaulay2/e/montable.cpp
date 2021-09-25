@@ -360,7 +360,7 @@ void MonomialTable::minimalize(int nvars,
       first = next;
       /* At this point: [first,next) is the range of equal monomials */
     }
-  deleteitem(T);
+  freemem(T);
 }
 
 MonomialTable *MonomialTable::make_minimal(int nvars,

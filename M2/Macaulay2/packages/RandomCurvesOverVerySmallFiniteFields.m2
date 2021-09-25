@@ -592,7 +592,7 @@ randomCanonicalCurveGenus8with8Points (ZZ) := p -> (
      x := symbol x;
      R := kk[x_0..x_7];
      q := symbol q;
-     -- coordinate ring of the Plucker space:
+     -- coordinate ring of the Plücker space:
      P := kk[flatten apply(6,j->apply(j,i->q_(i,j)))];
      skewMatrix := matrix table(6,6,
 	  (i,j) -> (

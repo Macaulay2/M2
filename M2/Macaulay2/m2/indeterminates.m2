@@ -40,7 +40,7 @@ for i from 0 to 50 do succS#(varName i) = varName(i+1)
 succ = method()
 succ(ZZ,ZZ) := (x,y) -> x+1 === y
 succ(Sequence,Sequence) := (x,y) -> ( -- for multiple indices
-    #x === #y and all(#x-1,i-> x#i === y#i) and x#(#x-1)+1 === y#(#x-1)
+    #x === #y and all(#x-1,i-> x#i === y#i) and succ(last x,last y)
 )
 succ(BinaryOperation,BinaryOperation) := (x,y) -> x#0 === symbol .. and y#0 === symbol .. and (
     succ (x#2,y#1) or (

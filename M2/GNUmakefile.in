@@ -83,14 +83,14 @@ ifneq (@host_alias@,)
 # it was ../configure --build=@host_alias@ (for cross compiling)
 SUBMODULE_CONFIGOPTIONS += --host=@host_alias@
 endif
-copy-license-files-from-memtailor: LICENSE_FILES = README.md license.txt
-copy-license-files-from-mathic: LICENSE_FILES = README.md lgpl-*
-copy-license-files-from-mathicgb: LICENSE_FILES = README.md gpl-*
+#copy-license-files-from-memtailor: LICENSE_FILES = README.md license.txt
+#copy-license-files-from-mathic: LICENSE_FILES = README.md lgpl-*
+##copy-license-files-from-mathicgb: LICENSE_FILES = README.md gpl-*
 
 # the Makefile is the target used to run "configure" in the submodule:
-submodules/mathicgb/Makefile : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes # possibly add this option? --with-tbb
-submodules/mathic/Makefile   : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes
-submodules/memtailor/Makefile: SUBMODULE_CONFIGOPTIONS += --with-gtest=yes
+##submodules/mathicgb/Makefile : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes # possibly add this option? --with-tbb
+# submodules/mathic/Makefile   : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes
+# submodules/memtailor/Makefile: SUBMODULE_CONFIGOPTIONS += --with-gtest=yes
 submodules/fflas_ffpack/Makefile: LIBS += @LINALGLIBS@
 
 # Note: we don't necessarily use the "install" target of submodules, even
@@ -106,15 +106,15 @@ BUILDSUBTARGETS = check all run-configure check install
 SUBTARGETS = clean distclean
 GITSUBTARGETS = git-clean git-update git-status git-describe
 
-ifneq (,$(findstring memtailor,@BUILDSUBLIST@))
-all-in-mathicgb all-in-mathic:all-in-memtailor
-endif
+## ifneq (,$(findstring memtailor,@BUILDSUBLIST@))
+## all-in-mathicgb all-in-mathic:all-in-memtailor
+## endif
 
-ifneq (,$(findstring mathic ,@BUILDSUBLIST@))
-all-in-mathicgb:all-in-mathic
-endif
+# ifneq (,$(findstring mathic ,@BUILDSUBLIST@))
+# all-in-mathicgb:all-in-mathic
+# endif
 
-all-in-mathicgb:all-in-mathic all-in-memtailor
+# all-in-mathicgb:all-in-mathic all-in-memtailor
 
 $(foreach t,$(BUILDSUBTARGETS),$(eval $t:$t-in-submodules))
 

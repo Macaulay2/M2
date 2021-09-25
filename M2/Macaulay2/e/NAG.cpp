@@ -71,7 +71,7 @@ SLP<Field>::SLP()
 template <class Field>
 SLP<Field>::~SLP()
 {
-  deletearray(nodes);
+  freemem(nodes);
   if (handle != NULL)
     {
       printf("closing library\n");
@@ -1101,15 +1101,15 @@ void SLP<Field>::text_out(buffer& o) const
 //     add_to_complex_array(n,dx4,dx3);
 //     multiply_complex_array_scalar(n,dx4,1.0/6);
 //     copy_complex_array<ComplexField>(n,dx4,dx);
-//     deletearray(dx1);
-//     deletearray(dx2);
-//     deletearray(dx3);
-//     deletearray(dx4);
+//     freemem(dx1);
+//     freemem(dx2);
+//     freemem(dx3);
+//     freemem(dx4);
 //   } break;
 //   default: ERROR("unknown predictor");
 //   };
-//   deletearray(LHS);
-//   deletearray(RHS);
+//   freemem(LHS);
+//   freemem(RHS);
 // }
 
 // template <class Field>
@@ -1149,9 +1149,9 @@ i<maxCorSteps);
 
 //   copy_complex_array<ComplexField>(n,x1t,x1);
 
-//   deletearray(x1t);
-//   deletearray(LHS);
-//   deletearray(RHS);
+//   freemem(x1t);
+//   freemem(LHS);
+//   freemem(RHS);
 // }
 */
 
@@ -1205,8 +1205,8 @@ bool solve_via_lapack(int size,
       ret = false;
     }
 
-  deletearray(permutation);
-  deletearray(At);
+  freemem(permutation);
+  freemem(At);
 
   return ret;
 }
@@ -1256,7 +1256,7 @@ bool solve_via_lapack_without_transposition(
       ret = false;
     }
 
-  deletearray(permutation);
+  freemem(permutation);
 
   return ret;
 }
@@ -1321,12 +1321,12 @@ bool cond_number_via_svd(int size, complex* A, double& cond)
       // printf("(s_large=%lf, s_small=%lf)\n", sigma[0], sigma[size-1]);
     }
 
-  deletearray(workspace);
-  deletearray(rwork);
-  // deletearray(copyA);
-  deletearray(u);
-  deletearray(vt);
-  deletearray(sigma);
+  freemem(workspace);
+  freemem(rwork);
+  // freemem(copyA);
+  freemem(u);
+  freemem(vt);
+  freemem(sigma);
 
   return ret;
 }
@@ -1394,12 +1394,12 @@ bool norm_of_inverse_via_svd(int size, complex* A, double& norm)
       norm = 1 / sigma[size - 1];
     }
 
-  deletearray(workspace);
-  deletearray(rwork);
-  // deletearray(copyA);
-  deletearray(u);
-  deletearray(vt);
-  deletearray(sigma);
+  freemem(workspace);
+  freemem(rwork);
+  // freemem(copyA);
+  freemem(u);
+  freemem(vt);
+  freemem(sigma);
 
   return ret;
 }
@@ -1422,8 +1422,8 @@ PathTracker::PathTracker()
 PathTracker::~PathTracker()
 {
   for (int i = 0; i < n_sols; i++) raw_solutions[i].release();
-  deletearray(raw_solutions);
-  deletearray(DMforPN);
+  freemem(raw_solutions);
+  freemem(DMforPN);
 }
 
 // creates a PathTracker object (case: is_projective), builds slps for predictor
@@ -1955,19 +1955,19 @@ int PathTracker::track(const Matrix* start_sols)
   if (M2_numericalAlgebraicGeometryTrace > 0) printf("\n");
 
   // clear arrays
-  // deletearray(t_sols); // do not delete (same as raw_solutions)
-  deletearray(s_sols);
-  deletearray(x0t0);
-  deletearray(x1t1);
-  deletearray(dxdt);
-  deletearray(xt);
-  deletearray(dx1);
-  deletearray(dx2);
-  deletearray(dx3);
-  deletearray(dx4);
-  deletearray(Hxt);
-  deletearray(HxtH);
-  deletearray(HxH);
+  // freemem(t_sols); // do not delete (same as raw_solutions)
+  freemem(s_sols);
+  freemem(x0t0);
+  freemem(x1t1);
+  freemem(dxdt);
+  freemem(xt);
+  freemem(dx1);
+  freemem(dx2);
+  freemem(dx3);
+  freemem(dx4);
+  freemem(Hxt);
+  freemem(HxtH);
+  freemem(HxH);
 
   return n_sols;
 }
@@ -2060,10 +2060,10 @@ Matrix /* or null */* PathTracker::refine(const Matrix* sols,
   mpfr_clear(im);
 
   // clear arrays
-  deletearray(s_sols);
-  deletearray(dx);
-  deletearray(x1t1);
-  deletearray(HxH);
+  freemem(s_sols);
+  freemem(dx);
+  freemem(x1t1);
+  freemem(HxH);
 
   return mat.to_matrix();
 }

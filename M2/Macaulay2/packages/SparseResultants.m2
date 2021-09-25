@@ -9,8 +9,8 @@
 
 newPackage(
        "SparseResultants",
-        Version => "1.1", 
-        Date => "September 30, 2020",
+        Version => "1.2", 
+        Date => "July 8, 2021",
         Headline => "computations with sparse resultants",
         Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
 	Keywords => {"Commutative Algebra"},
@@ -21,7 +21,7 @@ newPackage(
 export{"sparseResultant", "SparseResultant", "sparseDiscriminant", "SparseDiscriminant",
        "denseResultant", "denseDiscriminant",
        "exponentsMatrix", "genericLaurentPolynomials", "genericMultihomogeneousPolynomial",
-       "MultidimensionalMatrix", "multidimensionalMatrix", "permute", "shape", "reverseShape", "sortShape", "sylvesterMatrix", "degreeDeterminant",
+       "MultidimensionalMatrix", "multidimensionalMatrix", "permute", "shape", "reverseShape", "sortShape", "sylvesterMatrix", "degreeDeterminant", "flattening",
        "randomMultidimensionalMatrix", "genericMultidimensionalMatrix", "genericSymmetricMultidimensionalMatrix", "genericSkewMultidimensionalMatrix"}
 
 hasAttribute = value Core#"private dictionary"#"hasAttribute";
@@ -558,6 +558,7 @@ multidimensionalMatrix (List) := (L) -> (
     F := makeMultilinearForm(L,X);
     L' := makeHyperrectangularArray(F,X);
     new MultidimensionalMatrix from {
+        symbol cache => new CacheTable,
         "shape" => n,
         "entries" => L',
         "multilinearForm" => F,
@@ -582,6 +583,7 @@ multidimensionalMatrix (RingElement) := (F) -> (
     F' := sub(F,vars R');
     L := makeHyperrectangularArray(F',X');
     new MultidimensionalMatrix from {
+        symbol cache => new CacheTable,
         "shape" => n,
         "entries" => L,
         "multilinearForm" => F',
@@ -672,6 +674,7 @@ MultidimensionalMatrix ! := (M) -> M#"multilinearForm";
 
 permute = method();
 permute (MultidimensionalMatrix,List) := (M,l) -> (
+    if M.cache#?("permute",l) then return M.cache#("permute",l);
     if not all(l,i -> instance(i,ZZ)) then error "expected a list of integers";
     d := dim M;
     if sort l != toList(0 .. d-1) then error("expected a permutation of the set "|toString toList(0 .. d-1));
@@ -680,7 +683,7 @@ permute (MultidimensionalMatrix,List) := (M,l) -> (
     K := ring M;
     D := entries diagonalMatrix toList(d : 1);
     R := K[flatten X',Degrees=>apply(d,i -> #(X'_i) : D_i)];
-    multidimensionalMatrix sub(M#"multilinearForm",R)
+    M.cache#("permute",l) = multidimensionalMatrix sub(M#"multilinearForm",R)
 );
 
 reverseShape = method();
@@ -740,22 +743,25 @@ genericMultidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix, D
 genericMultidimensionalMatrix Sequence := o -> n -> multidimensionalMatrix genericMultihomogeneousPolynomial(n,#n:1,CoefficientRing=>o.CoefficientRing,Variable=>o.Variable);
 genericMultidimensionalMatrix VisibleList := o -> n -> genericMultidimensionalMatrix(toSequence n,CoefficientRing=>o.CoefficientRing,Variable=>o.Variable);
 
-randomMultidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix, Dispatch => Thing, Options => {CoefficientRing => ZZ});
+randomMultidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix, Dispatch => Thing, Options => {CoefficientRing => ZZ, MaximalRank => null});
 randomMultidimensionalMatrix Sequence := o -> n -> (
     R := ring first first gensRing(o.CoefficientRing,toList n);
-    multidimensionalMatrix random(toList(#n : 1),R)
+    N := toList(#n : 1);
+    if o.MaximalRank === null then return multidimensionalMatrix random(N,R);
+    if not(instance(o.MaximalRank,ZZ) and o.MaximalRank > 0) then error "MaximalRank option expects a positive integer";
+    sum(o.MaximalRank,i -> multidimensionalMatrix product apply(entries diagonalMatrix N,d -> random(d,R))) 
 );
-randomMultidimensionalMatrix VisibleList := o -> n -> randomMultidimensionalMatrix(toSequence n,CoefficientRing=>o.CoefficientRing);
+randomMultidimensionalMatrix VisibleList := o -> n -> randomMultidimensionalMatrix(toSequence n,CoefficientRing=>o.CoefficientRing,MaximalRank=>o.MaximalRank);
 
 removeOneDim = method();
-removeOneDim (MultidimensionalMatrix) := (M) -> (
+removeOneDim MultidimensionalMatrix := (cacheValue "removeOneDim") (M -> (
     if all(shape M,i -> i == 1) then return multidimensionalMatrix {coefficient(product gens ring M#"multilinearForm",M#"multilinearForm")};
     X := select(M#"varsMultilinearForm",e -> #e > 1);
     R := (ring M)[flatten X];
     P := sub(sub(M#"multilinearForm",apply(select(M#"varsMultilinearForm",e -> #e == 1),t -> (first t)=>1)),R);
     X = apply(X,X0->apply(X0,u -> sub(u,R)));
     multidimensionalMatrix makeHyperrectangularArray(P,X)
-);
+));
 
 canApplySchlafli = method(Options => {Strategy => null});
 canApplySchlafli (List) := o -> (n) -> (
@@ -965,6 +971,39 @@ genericSkewMultidimensionalMatrix (ZZ,ZZ) := o -> (d,n) -> (
 );
 
 -- end Hyperdeterminants --
+
+flattening = method(TypicalValue => Matrix);
+flattening (List,MultidimensionalMatrix) := (n,A) -> (
+    if A.cache#?("flattening",n) then return A.cache#("flattening",n);
+    if #n > 0 and not(all(n,i -> instance(i,ZZ)) and min n >= 0 and max n <= dim A -1 and # unique n == #n) 
+    then error("expected a subset of {0,1,...,n-1}, where n = "|toString(dim A)|" is the dimension of the matrix");
+    n = sort n;
+    if A.cache#?("flattening",n) then return A.cache#("flattening",n);
+    m := select(dim A,i -> not member(i,n));
+    K := ring A;
+    x := A#"varsMultilinearForm";
+    N := if #n == 0 then matrix 1_K else gens product apply(x_n,ideal);
+    M := if #m == 0 then matrix 1_K else gens product apply(x_m,ideal);
+    mons := flatten((transpose M) * N);
+    L := gens product apply(gensRing(K,{product (shape A)_n,product (shape A)_m}),ideal);
+    F := A#"multilinearForm";
+    A.cache#("flattening",n) = matrix multidimensionalMatrix (L * sub(last coefficients(F,Monomials=>mons),K))_(0,0)
+);
+flattening (ZZ,MultidimensionalMatrix) := (n,A) -> flattening({n},A);
+
+flattenings = method();
+flattenings MultidimensionalMatrix := A -> (
+    n := toList(0 .. dim A -1);
+    S := apply(select(subsets(subsets n,2),s -> # first s > 0 and # last s > 0 and sort flatten s == n),first);
+    apply(S,s -> flattening(s,A))
+);
+
+rank MultidimensionalMatrix := A -> (
+    if min shape A == 1 then return rank removeOneDim A;
+    if A == 0 then return 0;
+    if all(dim A,i -> rank flattening(i,A) <= 1) then return 1;
+    max apply(flattenings A,rank)
+);
 
 beginDocumentation() 
 
@@ -1445,7 +1484,7 @@ document {
 }
 
 document { 
-    Key => {randomMultidimensionalMatrix,(randomMultidimensionalMatrix,VisibleList),[randomMultidimensionalMatrix,CoefficientRing]}, 
+    Key => {randomMultidimensionalMatrix,(randomMultidimensionalMatrix,VisibleList),[randomMultidimensionalMatrix,CoefficientRing],[randomMultidimensionalMatrix,MaximalRank]}, 
     Headline => "random multidimensional matrix", 
     Usage => "randomMultidimensionalMatrix(d_1,...,d_n)", 
     Inputs => {{TT"(d_1,...,d_n)",", a sequence of positive integers."}},
@@ -1490,7 +1529,7 @@ document {
     Key => {shape, (shape,MultidimensionalMatrix)}, 
     Headline => "shape of a multidimensional matrix", 
     Usage => "shape M", 
-    Inputs => {"M" => MultidimensionalMatrix => {"a ",TEX///$n$///,"-dimensional matrix of shape ",TEX///$k_1\times\cdots\times k_n$///}},
+    Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix of shape ",TEX///$k_1\times\cdots\times k_n$///}},
     Outputs => {List => {"the list of integers ",TEX///$\{k_1, \ldots, k_n\}$///}},
     EXAMPLE {
         "M = multidimensionalMatrix {{{0, 8, 3}, {7, 3, 2}, {2, 7, 0}, {4, 8, 4}}, {{0, 8, 1}, {3, 1, 0}, {4, 7, 4}, {0, 6, 9}}}",
@@ -1503,7 +1542,7 @@ document {
     Key => {(dim,MultidimensionalMatrix)}, 
     Headline => "dimension of a multidimensional matrix", 
     Usage => "dim M", 
-    Inputs => {"M" => MultidimensionalMatrix => {"a ",TEX///$n$///,"-dimensional matrix of shape ",TEX///$k_1\times\cdots\times k_n$///}},
+    Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix of shape ",TEX///$k_1\times\cdots\times k_n$///}},
     Outputs => {ZZ => {"the integer ",TEX///$n$///}},
     EXAMPLE {
         "M = multidimensionalMatrix {{{0, 8, 3}, {7, 3, 2}, {2, 7, 0}, {4, 8, 4}}, {{0, 8, 1}, {3, 1, 0}, {4, 7, 4}, {0, 6, 9}}}",
@@ -1557,6 +1596,45 @@ document {
         "assert(oo == ooo or oo == -ooo)"
      },
      SeeAlso => {(determinant,MultidimensionalMatrix)}
+}
+
+document { 
+    Key => {flattening,(flattening,List,MultidimensionalMatrix),(flattening,ZZ,MultidimensionalMatrix)}, 
+    Headline => "flattening of a multidimensional matrix", 
+    Usage => "flattening(s,M)", 
+    Inputs => {"M" => MultidimensionalMatrix => {"an ",TEX///$n$///,"-dimensional matrix"},
+               "s" => List => {"a subset of ",TT"{0,1,...,n-1}"}},
+    Outputs => {Matrix => {"the flattening of ",TT"M"," corresponding to the partition ",TT"(s,{0,1,...,n-1} - s)"}},
+    EXAMPLE {
+        "M = randomMultidimensionalMatrix(2,4,3,2)",
+        "s = {0,2};",
+        "Ms = flattening(s,M)",
+        "s' = {1,3};",
+        "Ms' = flattening(s',M)",
+        "assert(Ms == transpose Ms')",
+     },
+     PARA {"If the first argument is an integer ",TT"i",", it is interpreted as the list ",TT"{i}","."},
+     EXAMPLE {
+         "flattening(1,M)",
+         "assert(oo == flattening({1},M))"
+     },
+     SeeAlso => {(rank,MultidimensionalMatrix)}
+}
+
+document { 
+    Key => {(rank,MultidimensionalMatrix)}, 
+    Headline => "about the border rank of a multidimensional matrix", 
+    Usage => "rank M", 
+    Inputs => {"M" => MultidimensionalMatrix},
+    Outputs => {ZZ => {"a lower bound for the (border) rank of ",TT"M",", which is calculated as the maximum rank of all the ",TO2{flattening,"flattenings"}," of ",TT"M"}},
+    PARA{"In some cases, we know that the returned integer ",TT"r = rank M"," is exactly the border rank of ",TT"M",". For instance, this is the case if ",TT"r<3"," by a result of ",HREF{"https://arxiv.org/abs/1011.5867v2","C. Raicu"},". In general, however, we obtain only a lower bound and it is not known how to calculate this rank exactly without resorting to elimination."},
+    EXAMPLE {
+        "M = randomMultidimensionalMatrix(2,4,3,2,MaximalRank=>2)",
+        "rank M",
+        "M' = randomMultidimensionalMatrix(2,4,2,1,3,CoefficientRing=>ZZ/65521,MaximalRank=>4)",
+        "rank M'"
+     },
+     SeeAlso => {flattening,randomMultidimensionalMatrix}
 }
 
 -- Tests -- 

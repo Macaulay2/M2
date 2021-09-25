@@ -116,7 +116,7 @@ struct vecterm : public our_new_delete
 #define BIGCC_RE(f) (&(f).get_cc()->re) 
 
 // TODO: these need to be replaced... no casting, need new slot in ring_elem union type
-#define TOWER_VAL(f) (reinterpret_cast<poly>((f).poly_val))
+#define TOWER_VAL(f) (reinterpret_cast<ARingTowerPolynomial>((f).poly_val))
 #define TOWER_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
 
 #endif

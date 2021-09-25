@@ -52,7 +52,6 @@ newPackage select((
 -- Load configurations
 graphs'DotBinary = if instance((options Graphs).Configuration#"DotBinary", String) then (options Graphs).Configuration#"DotBinary" else "dot";
 
-importFrom_Core {"printerr"}
 if (options Graphs).Configuration#"JpgViewer" != "" then
     printerr "warning: the \"JpgViewer\" configuration option is deprecated"
 
@@ -144,7 +143,6 @@ export {
     "DFS",
     "descendants",
     "descendents",
-    "diameter",
     "distance",
     "distanceMatrix",
     "eccentricity",
@@ -437,7 +435,7 @@ writeDotFileHelper = (filename, G, type, op) -> (
     fil << type << " G {" << endl;
     V := vertexSet G;
     I := hashTable apply(#V, i -> V_i => i);
-    scan(V, v -> fil << "\t" << I#v << " [label=\"" << v << "\"];" << endl);
+    scan(V, v -> fil << "\t" << I#v << " [label=\"" << toString v << "\"];" << endl);
     E := toList \ edges G;
     scan(E, e -> fil << "\t" << I#(e_0) << " " << op << " " << I#(e_1) << ";"
 	<< endl);
@@ -591,7 +589,7 @@ lollipopGraph (ZZ, ZZ) := Graph => (m,n) -> (
 
 monomialGraph = method()
 monomialGraph (MonomialIdeal, ZZ) := Graph => (I, d) -> (
-    V := first entries basis(d, quotient I);
+    V := first entries lift(basis(d, quotient I),ring I);
     E := {};
     for v in V do(
         L := select(V, i -> first degree lcm (v,i) == d+1);
@@ -897,7 +895,6 @@ descendants = method()
 descendants (Digraph, Thing) := Set => (D,v) -> set flatten breadthFirstSearch(D, v)
 descendents = descendants
 
-diameter = method()
 diameter Graph := ZZ => G -> (
     allEntries := flatten entries distanceMatrix G;
     if member(-1, allEntries) then infinity else max allEntries
@@ -3434,7 +3431,6 @@ doc ///
 --diameter
 doc ///
     Key
-        diameter
         (diameter, Graph)
     Headline
         Computes the diameter of a graph
@@ -3483,7 +3479,7 @@ doc ///
             G = graph({1,2,3,4},{{2,3},{3,4}});
             d = distance(G, 1, 4)
     SeeAlso
-        diameter
+        (diameter, Graph)
         distanceMatrix
 ///
 
@@ -3510,7 +3506,7 @@ doc ///
             G = digraph({1,2,3,4},{{2,3},{3,4}},EntryMode=>"edges");
             d = distanceMatrix G
     SeeAlso
-        diameter
+        (diameter, Graph)
         distance
 ///
 
@@ -4859,7 +4855,7 @@ doc ///
             graphPower(G,2)
     SeeAlso
         distance
-        diameter
+        (diameter, Graph)
 ///
 
 --strongProuduct

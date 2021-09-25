@@ -697,7 +697,7 @@ bitxorfun(e:Expr):Expr := (
      else WrongArgZZ(1)
      else WrongNumArgs(2)
      else WrongNumArgs(2));
-setupfun("xor",bitxorfun);
+setupfun("bitxorfun",bitxorfun);
 semicolonfun(lhs:Code,rhs:Code):Expr := when eval(lhs) is err:Error do Expr(err) else eval(rhs);
 setup(SemicolonS,semicolonfun);
 starfun(rhs:Code):Expr := unarymethod(rhs,StarS);

@@ -1006,7 +1006,7 @@ Description
    given a polynomial ring S and a factor ring R = S/I and an R-module X,
    we compute (finite) A-infinity algebra structure mR on an S-free resolution of R
    and the A-infinity mR-module structure on an S-free resolution of X, and use them to
-   give a finite computation of the maps in an R-free resolution of X that we calle the
+   give a finite computation of the maps in an R-free resolution of X that we call the
    Burke resolution.
    Here is an example with the simplest Golod non-hypersurface in 3 variables
   Example
@@ -1152,7 +1152,7 @@ Description
   Example
    picture F
   Text
-   the functions displayBlocks and extractBlocks allow the examination of thes submatrices.
+   the functions displayBlocks and extractBlocks allow the examination of these submatrices.
   Example
    displayBlocks F.dd_2
    extractBlocks(F.dd_4, {{2,1}},{{3,1},{2,2}})
@@ -1310,7 +1310,7 @@ Usage
  displayBlocks M
 Inputs
  M:Matrix
-  with source and target labled direct sums of free modules
+  with source and target labeled direct sums of free modules
 Description
   Text
    The maps produced by @TO burkeResolution@ and @TO aInfinity@ have direct sums of labeled modules

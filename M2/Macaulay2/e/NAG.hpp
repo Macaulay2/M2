@@ -546,8 +546,8 @@ struct Solution
   ~Solution() { release(); }
   void release()
   {
-    deletearray(x);
-    deletearray(start_x);
+    freemem(x);
+    freemem(start_x);
   }
 };
 
@@ -600,8 +600,8 @@ class PathTracker : public MutableEngineObject
             *(Hxt + i * n + j) = tt;
           }
         *(Hxt + n * n + n - 1) = complex(0.);  // last row and column
-        deletearray(SxS);
-        deletearray(TxT);
+        freemem(SxS);
+        freemem(TxT);
       }
     else
       slpHxt->evaluate(n + 1, x0t0, Hxt);

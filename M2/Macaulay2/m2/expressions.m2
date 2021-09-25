@@ -473,18 +473,20 @@ binaryOperatorFunctions := new HashTable from {
      symbol != => ((x,y) -> x != y),
      symbol and => ((x,y) -> x and y),
      symbol or => ((x,y) -> x or y),
+     symbol xor => ((x,y) -> x xor y),
      symbol ^** => ((x,y) -> x^**y),
      symbol === => ((x,y) -> x === y),
      symbol =!= => ((x,y) -> x =!= y),
      symbol < => ((x,y) -> x < y),
      symbol <= => ((x,y) -> x <= y),
      symbol > => ((x,y) -> x > y),
-     symbol >= => ((x,y) -> x >= y)
+     symbol >= => ((x,y) -> x >= y),
+     symbol ^^ => ((x,y) -> x ^^ y)
      }
 
 expressionBinaryOperators =
 {symbol and, symbol <==, symbol ^**, symbol ^, symbol ==>, symbol _,
-    symbol ==, symbol ++, symbol <===, symbol <==>, symbol or,
+    symbol ==, symbol ++, symbol <===, symbol <==>, symbol or, symbol xor,
     symbol %, symbol SPACE, symbol &, symbol *, symbol +,
     symbol -, symbol |-, symbol :, symbol !=, symbol |, symbol ..<,
     symbol @@, symbol @, symbol **, symbol .., symbol ^^,
@@ -531,21 +533,21 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
 matrixOpts := x -> ( -- helper function
-    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null};
+    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null,MutableMatrix=>false};
     (opts,x) = override(opts,toSequence x);
     if class x === Sequence then x = toList x else if #x === 0 or class x#0 =!= List then x = { x }; -- for backwards compatibility
     (opts,x)
     )
 expressionValue MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
-    m = matrix applyTable(m,expressionValue);
+    m = (if opts#MutableMatrix then mutableMatrix else matrix) applyTable(m,expressionValue);
     if opts.Degrees === null then m else (
     R := ring m;
     map(R^(-opts.Degrees#0),R^(-opts.Degrees#1),entries m)
     ))
-toString'(Function,MatrixExpression) := (fmt,x) -> concatenate(
+toString'(Function, MatrixExpression) := (fmt,x) -> concatenate(
     (opts,m) := matrixOpts x;
-    "matrix {",
+    if opts#MutableMatrix then "mutableMatrix {" else "matrix {",
     between(", ",apply(m,row->("{", between(", ",apply(row,fmt)), "}"))),
     "}" )
 -----------------------------------------------------------------------------
@@ -566,7 +568,7 @@ toString'(Function, Table) := (fmt,m) -> concatenate(
      "}" )
 -----------------------------------------------------------------------------
 
-spacedOps := set { symbol =>, symbol and, symbol or, symbol ++ }
+spacedOps := set { symbol =>, symbol and, symbol or, symbol xor, symbol ++ }
 
 -- TODO: move this to latex.m2
 keywordTexMath = new HashTable from { -- both unary and binary keywords
@@ -1168,6 +1170,7 @@ texMath Table := m -> (
 	"{\\begin{array}{", #m#0: "c", "}", newline,
 	apply(m, row -> (between("&",apply(row,texMath)), ///\\///|newline)),
 	"\\end{array}}")
+    else "{}"
     )
 
 texMath MatrixExpression := x -> (

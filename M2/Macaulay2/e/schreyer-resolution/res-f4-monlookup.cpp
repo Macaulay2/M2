@@ -245,7 +245,7 @@ void ResF4MonomialLookupTableT<Key>::update_exponent_vector(
   if (size_of_exp <= nvars)
     {
       // Increase size of exponent vector
-      deleteitem(exp0);
+      freemem(exp0);
       if (nvars > 2 * size_of_exp)
         size_of_exp = nvars;
       else
@@ -567,7 +567,7 @@ void minimalize_res_varpower_monomials(const VECTOR(res_varpower_monomial) &
                 result_minimals.push_back(*j);
               }
           }
-        deleteitem(bins[i]);
+        freemem(bins[i]);
       }
 }
 

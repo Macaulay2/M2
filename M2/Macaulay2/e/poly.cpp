@@ -624,7 +624,7 @@ ring_elem PolyRing::homogenize(const ring_elem f,
   result->next = NULL;
   sort(head.next);  // The monomial order, etc. might all have changed.
                     // Some terms might even drop out
-  deletearray(exp);
+  freemem(exp);
   return head.next;
 }
 
@@ -1266,7 +1266,7 @@ void PolyRing::syzygy(const ring_elem a,
 // //   elem_text_out(o,y);
 // //   emit_line(o.str());
 // #endif
-//       deleteitem(g);
+//       freemem(g);
 #endif
     }
 }
@@ -1694,8 +1694,8 @@ int PolyRing::n_logical_terms(int nvars0, const ring_elem f) const
       exp2 = temp;
       result++;
     }
-  deletearray(exp1);
-  deletearray(exp2);
+  freemem(exp1);
+  freemem(exp2);
   return result;
 }
 
@@ -1736,7 +1736,7 @@ engine_RawArrayPairOrNull PolyRing::list_form(const Ring *coeffR,
       assert(monoms->array[next] != NULL);
       assert(coeffs->array[next] != NULL);
     }
-  deletearray(exp);
+  freemem(exp);
   return result;
 }
 
@@ -1785,7 +1785,7 @@ ring_elem PolyRing::get_part(const M2_arrayint wts,
     }
 
   inresult->next = 0;
-  deletearray(exp);
+  freemem(exp);
   return head.next;
 }
 
@@ -1917,8 +1917,8 @@ ring_elem PolyRing::get_coeff(const Ring *coeffR,
     }
 
   ring_elem result = get_logical_coeff(coeffR, t);
-  deletearray(exp2);
-  deletearray(exp);
+  freemem(exp2);
+  freemem(exp);
   return result;
 }
 
@@ -2042,7 +2042,7 @@ void PolyRing::degree_of_var(int n, const ring_elem a, int &lo, int &hi) const
       else if (exp[n] > hi)
         hi = exp[n];
     }
-  deletearray(exp);
+  freemem(exp);
 }
 
 void PolyRing::monomial_divisor(const ring_elem a, int *exp) const
@@ -2078,7 +2078,7 @@ ring_elem PolyRing::divide_by_var(int n, int d, const ring_elem a) const
       result->coeff = t->coeff;
       M_->from_expvector(exp, result->monom);
     }
-  deletearray(exp);
+  freemem(exp);
   result->next = 0;
   return head.next;
 }
@@ -2097,7 +2097,7 @@ ring_elem PolyRing::divide_by_expvector(const int *exp, const ring_elem a) const
       u->next = result;
       result = u;
     }
-  deletearray(exp0);
+  freemem(exp0);
   sort(result);
   return result;
 }
@@ -2277,7 +2277,7 @@ vec PolyRing::vec_coefficient_of_var(vec v, int x, int e) const
       vec_result->next = make_vec(t->comp, head.next);
       vec_result = vec_result->next;
     }
-  deletearray(exp);
+  freemem(exp);
   vec_result->next = NULL;
   return vec_head.next;
 }
@@ -2316,7 +2316,7 @@ vec PolyRing::vec_top_coefficient(const vec v, int &x, int &e) const
       }
 
   // Now we have the variable, and its exponent.
-  deletearray(exp);
+  freemem(exp);
   if (x == n_vars()) return v;
   return vec_coefficient_of_var(v, x, e);
 }
@@ -2541,8 +2541,8 @@ vec PolyRing::translate_gbvector_to_vec_QQ(const FreeModule *F,
       }
 
   // Finally, free vec_last, vec_comps;
-  deletearray(vec_comps);
-  deletearray(vec_last);
+  freemem(vec_comps);
+  freemem(vec_last);
 
   return result;
 }
@@ -2605,8 +2605,8 @@ vec PolyRing::translate_gbvector_to_vec(const FreeModule *F,
       }
 
   // Finally, free vec_last, vec_comps;
-  deletearray(vec_comps);
-  deletearray(vec_last);
+  freemem(vec_comps);
+  freemem(vec_last);
 
   return result;
 }

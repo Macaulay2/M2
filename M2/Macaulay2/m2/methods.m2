@@ -32,7 +32,7 @@ noMethod       = (M, args, outputs) -> toString stack join( {line0 M},
 
 -- TODO: what is this for exactly?
 badClass := meth -> (i, args) -> (
-     if i == -1 then error(silentRobustString(45,3,meth),": expected an output class, but got: ", silentRobustString(45,3,args))
+     if i === -1 then error(silentRobustString(45,3,meth),": expected an output class, but got: ", silentRobustString(45,3,args))
      else error(silentRobustString(45,3,meth),": expected argument ",toString (i+1)," to be a type, but it was: ", silentRobustString(45,3,args#i)))
 
 -- TODO: handle this in the interpreter, the same way that it is handled for function closures

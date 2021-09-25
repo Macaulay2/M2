@@ -17,7 +17,7 @@ LIBTOOL_BABY  = 4
 LIBTOOL_VERSION = $(LIBTOOL_MAJOR).$(LIBTOOL_MINOR).$(LIBTOOL_BABY)
 
 AUTOCONF_MAJOR = 2
-AUTOCONF_MINOR = 71
+AUTOCONF_MINOR = 68
 # version 2.60 was the first one with the macro AC_PROG_MKDIR_P
 # version 2.62 is required by the configure.ac in gc/libatomic_ops
 # version 2.68 is required by mpir 2.6.0
@@ -36,7 +36,7 @@ check-make:
 	@ echo GNU make version okay
 
 make-configure : check-autoconf configure
-configure: configure.ac config/files config/*.m4; autoconf
+configure: configure.ac VERSION config/files config/*.m4; autoconf
 
 get-tools: usr-build/aclocal-path get-m4 get-autoconf get-automake get-libtool usr-build/aclocal-path2 which-tools
 which-tools:

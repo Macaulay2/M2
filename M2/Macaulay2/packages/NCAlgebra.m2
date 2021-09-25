@@ -1410,7 +1410,7 @@ writeBergmanInputFile (NCRing,String,String) := opts -> (B,genListString,tempInp
       -- if we don't want to recompute the GB, we need to tell Bergman that there are no
       -- Spairs to work on for twice the max degree of the gens we send it so it
       -- doesn't try to create any more Spairs.
-      fil << "(load (mkbmpathexpand \"$bmload/lap/clisp/unix/hseries.fas\"))" << endl;
+      fil << "(load (mkbmpathexpand \"$bmload/hseries.fas\"))" << endl;
       fil << "(setinterruptstrategy minhilblimits)" << endl;
       fil << "(setinterruptstrategy minhilblimits)" << endl;
       fil << "(sethseriesminima" << concatenate(opts#DegreeLimit:" skipcdeg") << ")" << endl;
@@ -1531,7 +1531,7 @@ twoSidedNCGroebnerBasisBergman NCIdeal := opts -> I -> (
                         NumModuleVars=>opts#NumModuleVars);
   writeGBInitFile(tempInit,tempInput,tempOutput);
   stderr << "--Calling Bergman for NCGB calculation." << endl;
-  runCommand("bergman -i " | tempInit | " -on-error exit --silent > " | tempTerminal);
+  runCommand("bergman -on-error exit --silent < " | tempInit | " > " | tempTerminal);
   retVal := gbFromOutputFile(ring I,
                              tempOutput,
                              MakeMonic=>opts#MakeMonic,
@@ -1648,7 +1648,7 @@ normalFormBergman (List, NCGroebnerBasis) := opts -> (fList, ncgb) -> (
    << "Writing bergman init file." << endl;
    writeNFInitFile(tempInit,tempGBInput,tempNFInput,tempOutput);
    stderr << "--Calling Bergman for NF calculation for " << #nonConstantIndices << " elements." << endl;
-   runCommand("bergman -i " | tempInit | " -on-error exit --silent > " | tempTerminal);
+   runCommand("bergman -on-error exit --silent < " | tempInit | " > " | tempTerminal);
    -- these are now the nfs of the nonzero entries.  Need to splice back in
    -- the zeros where they were.
    nfList := nfFromTerminalFile(A,tempTerminal);
@@ -1672,7 +1672,7 @@ writeHSInitFile := (tempInit,
 		    tempPBOutput,
 		    tempHSOutput) -> (
    fil := openOut tempInit;
-   fil << "(setf (getenv \"bmload\") (mkbmpathexpand \"$bmload/lap/clisp/unix\"))" << endl;
+   fil << "(setf (getenv \"bmload\") (mkbmpathexpand \"$bmload\"))" << endl;
    fil << "(ncpbhgroebner " 
        << "\"" << tempInput << "\" "
        << "\"" << tempGBOutput << "\" "
@@ -1720,7 +1720,7 @@ hilbertBergman NCQuotientRing := opts -> B -> (
 			DegreeLimit=>opts#DegreeLimit);
   writeHSInitFile(tempInit,tempInput,tempGBOutput,tempPBOutput,tempHSOutput);
   stderr << "--Calling bergman for HS computation." << endl;
-  runCommand("bergman -i " | tempInit | " -on-error exit --silent > " | tempTerminal);
+  runCommand("bergman -on-error exit --silent < " | tempInit | " > " | tempTerminal);
   I.cache#gb = gbFromOutputFile(ring I,tempGBOutput);
   hsFromOutputFiles(B,tempHSOutput,tempTerminal)
 )

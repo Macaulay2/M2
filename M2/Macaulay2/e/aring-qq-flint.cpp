@@ -61,7 +61,7 @@ void ARingQQFlint::elem_text_out(buffer& o,
       o << str;
     }
   // std::cout << "output = " << o.str() << std::endl;
-  if (size > 1000) deletearray(allocstr);
+  if (size > 1000) freemem(allocstr);
 }
 
 void ARingQQFlint::syzygy(const ElementType& a,

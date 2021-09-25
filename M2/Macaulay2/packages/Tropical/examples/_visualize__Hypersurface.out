@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- hash: -776982606
--- polymake not present
 
 i1 : R=ZZ[x,y,z]
 
