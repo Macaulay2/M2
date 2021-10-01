@@ -20,6 +20,7 @@ m4_include(config/openmp.m4)
 m4_include(config/search-libraries.m4)
 m4_include(config/ax_boost_base.m4)
 m4_include(config/ax_boost_regex.m4)
+m4_include(config/ax_python.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -415,21 +416,11 @@ if test "$XML" = yes
 then AC_DEFINE(WITH_XML,1,[whether we are linking with the xml library])
 fi
 
-AC_SUBST(PYTHON,no)
-AC_ARG_WITH(python, AS_HELP_STRING(--with-python,[link with libpython]), PYTHON=$withval)
-if test "$PYTHON" = yes
-then AC_DEFINE(WITH_PYTHON,1,[whether we are linking with the python library])
-fi
-
 AC_SUBST(MYSQL,no)
 AC_ARG_WITH(mysql, AS_HELP_STRING(--with-mysql,[link with mysql]), MYSQL=$withval)
 if test "$MYSQL" = yes
 then AC_DEFINE(WITH_MYSQL,1,[whether we are linking with the mysql library])
 fi
-
-LIBPYTHONORIG=-lpython2.7
-AC_SUBST(LIBPYTHON,$LIBPYTHONORIG)
-AC_ARG_WITH(libpython, AS_HELP_STRING(--with-libpython=...,specify the python library ($LIBPYTHON)),LIBPYTHON=$withval)
 
 AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" option))
 if test "$enable_altivec" = yes
@@ -538,17 +529,6 @@ case $COMPRESS in
   bz2) TAR_COMPRESS_OPTION=--bzip ;;
     *) AC_MSG_ERROR(unrecognized option for enable-compress) ;;
 esac
-
-AC_SUBST(CYGWIN,no)
-AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin), CYGWIN=$enableval)
-if test "$CYGWIN" = yes 
-then if test "$OPTIMIZE" = no
-     then AC_MSG_ERROR([--disable-optimize and --enable-cygwin both specified])
-     fi
-     if test "$DEBUG$" = yes
-     then AC_MSG_ERROR([--enable-cygwin and --enable-debug both specified])
-     fi
-fi
 
 AC_SUBST(GIT_DESCRIPTION)
 # TODO: currently finds the last commit that changed the VERSION file
@@ -1276,13 +1256,14 @@ else
 fi
 AC_SUBST(GTEST_PATH)
 
+AC_SUBST(PYTHON,no)
+AC_ARG_WITH(python, AS_HELP_STRING(--with-python,[link with libpython]), PYTHON=$withval)
 if test "$PYTHON" = yes
-then AC_LANG(C)
-     if test "$LIBPYTHON" = "$LIBPYTHONORIG"
-     then AC_SEARCH_LIBS(Py_Initialize,python2.7,,AC_MSG_ERROR(libpython2.7 not found))
-     else LIBS="$LIBPYTHON $LIBS"
-     fi
-     AC_CHECK_HEADER(python2.7/Python.h,,AC_MSG_ERROR(include file python2.7/Python.h not found))
+then AC_DEFINE(WITH_PYTHON,1,[whether we are linking with the python library])
+    AX_PYTHON
+    CPPFLAGS="$CPPFLAGS -I$PYTHON_INCLUDE_DIR"
+    AC_CHECK_HEADER(Python.h,,AC_MSG_ERROR(Python.h not found))
+    AC_SEARCH_LIBS(Py_Initialize, $PYTHON_LIB,,AC_MSG_ERROR(libpython not found))
 fi
 
 dnl boost 1.65 was the first release containing the stacktrace library
@@ -1889,8 +1870,6 @@ fi
 test "$prefix" || prefix=/usr/local
 
 # for some distributions, we know what the prefix should be:
-test "$CYGWIN"  = yes && test "$prefix" != /usr && 
-     AC_MSG_ERROR(--enable-cygwin specified and --prefix not set to /usr)
 test "$DEB"     = yes && test "$prefix" != /usr && 
      AC_MSG_ERROR(--enable-deb specified and --prefix not set to /usr)
 test "$RPM"     = yes && test "$prefix" != /usr && 

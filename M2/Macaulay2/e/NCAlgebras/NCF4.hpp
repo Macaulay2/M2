@@ -1,12 +1,13 @@
 #ifndef __nc_f4_hpp__
 #define __nc_f4_hpp__
 
-#include <tbb/queuing_mutex.h>                // for queuing_mutex
-#include <tbb/null_mutex.h>                   // for null_mutex
+//#include <tbb/queuing_mutex.h>                // for queuing_mutex
+//#include <tbb/null_mutex.h>                   // for null_mutex
 //#include <tbb/parallel_do.h>                  // for parallel_do_feeder
-#include <tbb/parallel_for_each.h>            // for parallel_for_each and its feeder
-#include <tbb/concurrent_unordered_map.h>     // for concurrent_unordered_map
+//#include <tbb/concurrent_unordered_map.h>     // for concurrent_unordered_map
 //#include <tbb/concurrent_vector.h>          // for concurrent_vector (no longer needed)
+
+#include "m2tbb.hpp"                      // for tbb interface
 
 #include "NCAlgebras/FreeMonoid.hpp"      // for MonomEq
 #include "MemoryBlock.hpp"                // for MemoryBlock
@@ -89,14 +90,15 @@ private:
   //using RowsVector = tbb::concurrent_vector<Row>;
 
   //using PreRowFeeder = tbb::parallel_do_feeder<PreRow>;
-  using PreRowFeeder = tbb::feeder<PreRow>;
+  using PreRowFeeder = m2tbb::feeder<PreRow>;
 
   // The pair in this unordered_map is (i,j) where:
   //    i is the column number
   //    j is the row that reduces it
   //      (and -1 if there is no such row).
-  using MonomialHash = tbb::concurrent_unordered_map<Word,std::pair<int,int>,MonomHash,MonomHashEqual>;
-
+  //using MonomialHash = tbb::concurrent_unordered_map<Word,std::pair<int,int>,MonomHash,MonomHashEqual>;
+  using MonomialHash = m2tbb::concurrent_unordered_map<Word,std::pair<int,int>,MonomHash,MonomHashEqual>;
+  
   // data
   const FreeAlgebra& mFreeAlgebra;
   const ConstPolyList mInput;
@@ -140,7 +142,7 @@ private:
   // only used in parallelBuildF4Matrix, which is currently not used.
   std::vector<MemoryBlock*> mMemoryBlocks;
   std::vector<MemoryBlock*> mPreviousMemoryBlocks;
-  tbb::queuing_mutex mColumnMutex;
+  m2tbb::queuing_mutex mColumnMutex;
 
 public:
   NCF4(const FreeAlgebra& A,
@@ -241,8 +243,8 @@ private:
                    long &numCancellations,
                    ElementArray& dense)
   {
-    tbb::null_mutex noLock;
-    generalReduceF4Row<tbb::null_mutex>(index,
+    m2tbb::null_mutex noLock;
+    generalReduceF4Row<m2tbb::null_mutex>(index,
                                         first,
                                         firstcol,
                                         numCancellations,
@@ -256,9 +258,10 @@ private:
                            int firstcol,
                            long &numCancellations,
                            ElementArray& dense,
-                           tbb::queuing_mutex& lock)
+                           DenseCoeffVector& dense,
+                           m2tbb::queuing_mutex& lock)
   {
-    generalReduceF4Row<tbb::queuing_mutex>(index,
+    generalReduceF4Row<m2tbb::queuing_mutex>(index,
                                            first,
                                            firstcol,
                                            numCancellations,

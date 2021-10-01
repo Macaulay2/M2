@@ -206,6 +206,7 @@ COMMANDS = \
 	franzi-interface
 
 NAMES_H = \
+	m2tbb \
 	f4/f4-types \
 	f4/memblock \
 	VectorArithmetic \
