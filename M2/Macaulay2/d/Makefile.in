@@ -183,6 +183,7 @@ CXXFLAGS += -Wunused-function
 CFLAGS   += -Wfatal-errors
 CXXFLAGS += -Wfatal-errors
 
+version.o : CPPFLAGS += -I@srcdir@/../e/memtailor -I@srcdir@/../e/mathic -I@srcdir@/../e/mathicgb
 version.o : CXXFLAGS += -Wno-unused-local-typedefs
 
 # the following is included since g++-8 and gcc-8 give many warnings arising from "pragma omp"
