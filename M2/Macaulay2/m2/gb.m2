@@ -3,6 +3,7 @@
 --   set debugLevel = 77 for debug information
 --   see processAlgorithm for a set of TODO items
 
+needs "computations.m2"
 needs "matrix1.m2"
 needs "modules.m2"
 needs "printing.m2" -- for unbag
@@ -68,7 +69,7 @@ stoppingOptionDefaults := new OptionTable from {
     -- StepLimit, maybe
     }
 
--- used here by gb and in matrix3.m2
+-- used here by gb and in pushforward.m2
 gbDefaults = merge(computationOptionDefaults, stoppingOptionDefaults, x -> error "overlap")
 
 notForSyz   := set { Syzygies, ChangeMatrix, CodimensionLimit, Hilbert, StopWithMinimalGenerators, SubringLimit }
@@ -102,7 +103,7 @@ toEngineNat  := n -> if n === infinity then -1 else n
 ---------------------------
 
 -- also used in res.m2 and tests/engine/raw-gb.m2
-isComputationDone = c -> if RawStatusCodes#?c then "done" === RawStatusCodes#c else error "unknown computation status code"
+isComputationDone ZZ := {} >> o -> c -> if RawStatusCodes#?c then "done" === RawStatusCodes#c else error "unknown computation status code"
 
 processStrategy := strategies -> sum(flatten {strategies}, strategy ->
     if RawStrategyCodes#?strategy then RawStrategyCodes#strategy else error "gb: unknown strategy encountered")

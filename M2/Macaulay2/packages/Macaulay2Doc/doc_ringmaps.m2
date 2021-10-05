@@ -291,12 +291,6 @@ document {
 --      "The default is for the code to select the best strategy heuristically."
 --      }
 
-document {
-     Key => PushforwardComputation,
-     Headline => "a type of list used internally",
-     TT "PushforwardComputation", " -- a type of list used internally by ", TO "pushForward", " and ", TO "kernel", "."
-     }
-
 -- document {
 --      Key => EliminationOrder,
 --      Headline => "use the natural elmination order in a pushForward1 computation",

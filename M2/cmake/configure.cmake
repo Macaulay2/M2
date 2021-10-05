@@ -207,7 +207,7 @@ endif()
 # Note: certain flags are initialized by CMake based on the compiler and build type.
 if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging
   # INIT: -g
-  add_compile_definitions(GC_DEBUG MEMT_DEBUG MATHIC_DEBUG MATHICGB_DEBUG)
+  add_compile_definitions(GC_DEBUG)
   add_compile_options(-O0)
 else()
   add_compile_definitions(NDEBUG OM_NDEBUG SING_NDEBUG)

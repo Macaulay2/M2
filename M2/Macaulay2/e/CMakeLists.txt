@@ -1,6 +1,20 @@
 ###############################################################################
 ## This directory contains the rules for building M2-engine and M2-unit-tests
-## - run unit tests:  ctest -R unit-tests
+## memtailor, mathic, and mathicgb are also imported as subdirectories here
+## - run unit tests:  ctest -R unit-tests (includes mathicgb and friends)
+
+set(with_tbb true) # for mathicgb
+
+add_subdirectory(memtailor)
+add_subdirectory(mathic)
+add_subdirectory(mathicgb)
+
+if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging
+  add_compile_definitions(MEMT_DEBUG MATHIC_DEBUG MATHICGB_DEBUG)
+endif()
+
+###############################################################################
+## M2-engine sources
 
 # TODO: determine the fate of these files
 set(UNDETERMINED
@@ -78,27 +92,6 @@ set(HPPONLYFILES
   schur-poly-heap.hpp
   smat.hpp
   style.hpp
-  mathicgb/Atomic.hpp
-  mathicgb/PrimeField.hpp
-  mathicgb/MonoMonoid.hpp
-  mathicgb/Range.hpp
-  mathicgb/Poly.hpp
-  mathicgb/FixedSizeMonomialMap.h
-  mathicgb/KoszulQueue.hpp
-  mathicgb/MathicIO.hpp
-  mathicgb/MonoArena.hpp
-  mathicgb/MonoOrder.hpp
-  mathicgb/MonoProcessor.hpp
-  mathicgb/MonomialMap.hpp
-  mathicgb/NonCopyable.hpp
-  mathicgb/RawVector.hpp
-  mathicgb/ReducerHelper.hpp
-  mathicgb/ScopeExit.hpp
-  mathicgb/StaticMonoMap.hpp
-  mathicgb/Unchar.hpp
-  mathicgb/mtbb.hpp
-  mathicgb/stdinc.h
-  mathicgb/mathicgb.h
   f4/f4-types.hpp
   f4/memblock.hpp
   schreyer-resolution/res-memblock.hpp
@@ -150,25 +143,6 @@ set(CPPONLYFILES
   interface/ringelement.h
   interface/ringmap.cpp
   interface/ringmap.h
-  memtailor/Arena.cpp
-  memtailor/Arena.h
-  memtailor/BufferPool.cpp
-  memtailor/BufferPool.h
-  memtailor/MemoryBlocks.cpp
-  memtailor/MemoryBlocks.h
-  mathic/BitTriangle.cpp
-  mathic/BitTriangle.h
-  mathic/ColumnPrinter.cpp
-  mathic/ColumnPrinter.h
-  mathic/DivMask.cpp
-  mathic/DivMask.h
-  mathic/Timer.cpp
-  mathic/Timer.h
-  mathic/display.cpp
-  mathic/display.h
-  mathic/error.cpp
-  mathic/error.h
-  mathicgb/mathicgb.cpp
   )
 
 # these files all have .hpp and .cpp files
@@ -320,41 +294,6 @@ set(SRCLIST
   f4/moninfo
   f4/ntuple-monomial
   f4/varpower-monomial
-  # local version of mathicgb
-  mathicgb/CFile
-  mathicgb/LogDomain
-  mathicgb/LogDomainSet
-  mathicgb/PolyRing
-  mathicgb/Basis
-  mathicgb/MonoLookup
-  mathicgb/PolyBasis
-  mathicgb/SparseMatrix
-  mathicgb/QuadMatrix
-  mathicgb/QuadMatrixBuilder
-  mathicgb/Scanner
-  mathicgb/ClassicGBAlg
-  mathicgb/F4MatrixBuilder
-  mathicgb/F4MatrixBuilder2
-  mathicgb/F4MatrixProjection
-  mathicgb/F4MatrixReducer
-  mathicgb/F4ProtoMatrix
-  mathicgb/F4Reducer
-  mathicgb/Reducer
-  mathicgb/TypicalReducer
-  mathicgb/ReducerDedup
-  mathicgb/ReducerHash
-  mathicgb/ReducerHashPack
-  mathicgb/ReducerNoDedup
-  mathicgb/ReducerPack
-  mathicgb/ReducerPackDedup
-  mathicgb/ModuleMonoSet
-  mathicgb/PolyHashTable
-  mathicgb/SPairs
-  mathicgb/SigPolyBasis
-  mathicgb/SigSPairQueue
-  mathicgb/SigSPairs
-  mathicgb/SignatureGB
-  mathicgb/io-util
   # Schreyer resolution a la Linear algebra (F4 Faugere style)
   schreyer-resolution/res-f4-computation
   schreyer-resolution/res-f4-m2-interface
@@ -418,7 +357,7 @@ target_include_directories(M2-engine PUBLIC
   $<INSTALL_INTERFACE:include/Macaulay2>)
 
 # TODO: make engine independent of interpreter headers
-target_link_libraries(M2-engine PUBLIC M2-interpreter)
+target_link_libraries(M2-engine PUBLIC M2-interpreter memtailor mathic mathicgb)
 
 if(EIGEN3_FOUND)
   target_link_libraries(M2-engine PUBLIC Eigen3::Eigen)
@@ -453,7 +392,7 @@ target_compile_options(M2-engine PRIVATE
 ## Export the target
 
 # TODO: change ARCHIVE to LIBRARY once M2-engine can be used independently
-install(TARGETS M2-engine EXPORT Macaulay2
+install(TARGETS M2-engine mathicgb mathic memtailor EXPORT Macaulay2
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
   COMPONENT devel EXCLUDE_FROM_ALL
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Macaulay2
@@ -512,33 +451,6 @@ if(BUILD_TESTING)
 
     unit-tests/fromStream.cpp
     unit-tests/testMain.cpp # not needed, except for GC_INIT
-
-    # memtailor
-    memtailor/unit-tests/ArenaTest.cpp
-    memtailor/unit-tests/BufferPoolTest.cpp
-    memtailor/unit-tests/MemoryBlocksTest.cpp
-
-    # mathic
-    mathic/unit-tests/BitTriangle.cpp
-#    mathic/unit-tests/DivFinder.cpp
-    mathic/unit-tests/HashTable.cpp
-    mathic/unit-tests/PairQueue.cpp
-
-    # mathicgb
-    mathicgb/unit-tests/F4MatrixBuilder.cpp
-    mathicgb/unit-tests/F4MatrixReducer.cpp
-    mathicgb/unit-tests/MathicIO.cpp
-    mathicgb/unit-tests/MonoMonoid.cpp
-    mathicgb/unit-tests/PrimeField.cpp
-    mathicgb/unit-tests/QuadMatrixBuilder.cpp
-    mathicgb/unit-tests/Range.cpp
-    mathicgb/unit-tests/Scanner.cpp
-    mathicgb/unit-tests/SparseMatrix.cpp
-    mathicgb/unit-tests/gb-test.cpp
-    mathicgb/unit-tests/ideals.hpp
-    mathicgb/unit-tests/ideals.cpp
-    mathicgb/unit-tests/mathicgb.cpp
-    mathicgb/unit-tests/poly-test.cpp
     )
 
   if(BDWGC_FOUND)
