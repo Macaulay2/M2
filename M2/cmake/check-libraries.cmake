@@ -108,6 +108,12 @@ foreach(var IN ITEMS FOUND ROOT INCLUDE_DIRS LIBRARY_DIRS LIBRARIES VERSION_OK)
 endforeach()
 
 ###############################################################################
+## Libraries we build as a part of engine
+#   memtailor	special purpose memory allocators	(needs googletest + thread)
+#   mathic	symbolic algebra data structures	(needs memtailor  + thread)
+#   mathicgb	signature Groebner bases library	(needs mathic     + thread, tbb)
+
+###############################################################################
 ## Libraries we can download and build:
 #   eigen3	C++ template library for linear algebra
 #   bdw-gc	Boehm-Demers-Weiser conservative C/C++ Garbage Collector
@@ -137,6 +143,9 @@ find_package(MPSolve	3.2.0)
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 0.94m?
 find_package(GTest	1.10)
+#find_package(Memtailor 1.0.0)
+#find_package(Mathic    1.0.0)
+#find_package(Mathicgb  1.0.0)
 find_package(GLPK      4.59.0)
 
 pkg_search_module(FFLAS_FFPACK	IMPORTED_TARGET	fflas-ffpack>=2.4.3)

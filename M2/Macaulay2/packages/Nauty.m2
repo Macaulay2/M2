@@ -493,7 +493,7 @@ optionBoolean = (b, m, o, f) -> (
 )
 
 -- Processes an option which should be an integer (ZZ).
--- Throws an approprate error if the type is bad or the bound is bad, otherwise it returns the flag.
+-- Throws an appropriate error if the type is bad or the bound is bad, otherwise it returns the flag.
 optionZZ = (i, b, m, o, f) -> (
     if instance(i, Nothing) then ""
     else if not instance(i, ZZ) then error(m | ": Option [" | o | "] is not a valid type, i.e., ZZ or Nothing.")

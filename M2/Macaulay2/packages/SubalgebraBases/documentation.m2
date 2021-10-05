@@ -334,7 +334,7 @@ doc ///
 	  maps p_9 to t_1^2*t_2
         Text
 	  
-	        @TT "p_0"@, ..., @TT "p_9"@ are the variables of what is refered to in the code as the @TT "tensorRing"@,
+	        @TT "p_0"@, ..., @TT "p_9"@ are the variables of what is referred to in the code as the @TT "tensorRing"@,
             which has two types of variables: The variables corresponding to the variables in the @TO "ambient"@ ring (@TT "p_0"@,...,@TT "p_2"@ in this example) and the variables corresponding to the generators of the @TO "Subring"@ (@TT "p_3"@,...,@TT "p_9"@ in this example).
 	  
 	        The function @TO "moduleToSubringIdeal"@ converts the toric syzygy module from our example (which is returned by @TO "toricSyz"@ in the form of a matrix) to an ideal
@@ -755,7 +755,7 @@ doc ///
      Flag for autosubduction before the Sagbi algorithm
    Description
      Text 
-       By default, the function @TO "sagbi"@ performs autosubduction on the generators of the given subring before starting the main algorithm. This step is required in order to guarentee the correctness of the result in all cases.  The output of the @TO "sagbi"@ algorithm is often correct even when this step is skipped.  Setting this flag to @TT "false"@ may result in a performance improvement, albeit with a risk of errors.
+       By default, the function @TO "sagbi"@ performs autosubduction on the generators of the given subring before starting the main algorithm. This step is required in order to guarantee the correctness of the result in all cases.  The output of the @TO "sagbi"@ algorithm is often correct even when this step is skipped.  Setting this flag to @TT "false"@ may result in a performance improvement, albeit with a risk of errors.
    SeeAlso
      sagbi
      Autosubduce

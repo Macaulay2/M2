@@ -1,0 +1,77 @@
+ -- 0.0254811 seconds elapsed
+ -- 0.0072019 seconds elapsed
+ -- 0.744896 seconds elapsed
+ -- 0.343652 seconds elapsed
+ -- 0.0409109 seconds elapsed
+ -- 0.335433 seconds elapsed
+ -- 2.62428 seconds elapsed
+-- SIGSEGV
+-* stack trace, pid: 32301
+ 0# 0x000055BF4DC7BDDA in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+ 1# 0x000055BF4DC7BF80 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+ 2# 0x00007F1330B5A210 in /lib/x86_64-linux-gnu/libc.so.6
+ 3# 0x000055BF4DB3D8E3 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+ 4# 0x000055BF4DB3E88C in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+ 5# 0x000055BF4DB1AFE6 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+ 6# 0x000055BF4DC8FC0F in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+ 7# 0x000055BF4DCB4625 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+ 8# 0x000055BF4DCACAFE in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+ 9# 0x000055BF4DCAF407 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+10# 0x000055BF4DCAC5A7 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+11# 0x000055BF4DCAC9FF in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+12# 0x000055BF4DCAC153 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+13# 0x000055BF4DCACA91 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+14# 0x000055BF4DCAFB15 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+15# 0x000055BF4DCACAFE in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+16# 0x000055BF4DCB6A13 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+17# 0x000055BF4DCACAFE in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+18# 0x000055BF4DCAD9D0 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+19# 0x000055BF4DCAC153 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+20# 0x000055BF4DCAF4B2 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+21# 0x000055BF4DCAC5A7 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+22# 0x000055BF4DCB1438 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+23# 0x000055BF4DCACAFE in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+24# 0x000055BF4DCB1418 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+25# 0x000055BF4DCACAFE in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+26# 0x000055BF4DCB2963 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+27# 0x000055BF4DCE3090 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+28# 0x000055BF4DCE3DE1 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+29# 0x000055BF4DCE3F35 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+30# 0x000055BF4DCAD48C in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+31# 0x000055BF4DCAC9FF in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+32# 0x000055BF4DCAC132 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+33# 0x000055BF4DCACA91 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+34# 0x000055BF4DCAF4B2 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+35# 0x000055BF4DCAC5A7 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+36# 0x000055BF4DCB162E in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+37# 0x000055BF4DCAC5A7 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+38# 0x000055BF4DCAC090 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+39# 0x000055BF4DCAC153 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+40# 0x000055BF4DCC0E08 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+41# 0x000055BF4DCAD48C in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+42# 0x000055BF4DCAD3E3 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+43# 0x000055BF4DCAC9FF in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+44# 0x000055BF4DCAC111 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+45# 0x000055BF4DCAF4B2 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+46# 0x000055BF4DCAC5A7 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+47# 0x000055BF4DCADEFA in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+48# 0x000055BF4DCB18EB in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+49# 0x000055BF4DCAC5A7 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+50# 0x000055BF4DCACA91 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+51# 0x000055BF4DCADF6E in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+52# 0x000055BF4DCB18EB in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+53# 0x000055BF4DCAC5A7 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+54# 0x000055BF4DCAC111 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+55# 0x000055BF4DCB2963 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+56# 0x000055BF4DCE3090 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+57# 0x000055BF4DCE3DE1 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+58# 0x000055BF4DCE48C4 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+59# 0x000055BF4DC7B8C8 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+60# 0x000055BF4D8B87F6 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+61# 0x000055BF4D8B89D9 in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+62# 0x000055BF4D8B8FBD in /home/aleykin3/M2repos/anton-add-library-tbb/M2/BUILD/dan/builds.tmp/cos-3m2467-add-library-tbb/usr-dist/x86_64-Linux-Ubuntu-20.04/bin/M2-binary
+63# GC_inner_start_routine in /lib/x86_64-linux-gnu/libgc.so.1
+64# GC_call_with_stack_base in /lib/x86_64-linux-gnu/libgc.so.1
+65# start_thread in /lib/x86_64-linux-gnu/libpthread.so.0
+66# __clone in /lib/x86_64-linux-gnu/libc.so.6
+-- end stack trace *-

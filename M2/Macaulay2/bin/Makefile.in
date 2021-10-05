@@ -123,9 +123,6 @@ ifneq (@host_os@,mingw32)
 M2_LIBRARIES += -lc
 endif
 
-M2_LIBDEPS += $(LIBDEPS_FOR_BUILD)
-M2_LIBRARIES += $(LDLIBS_FOR_BUILD)
-
 clean::; rm -f $(EXEFILE) timestamp.o
 @pre_bindir@ : ; $(MKDIR_P) "$@"
 

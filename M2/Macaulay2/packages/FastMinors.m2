@@ -523,7 +523,7 @@ randomMinPosition(List) := o -> (L1) -> (
     return ((newList2#j)#2);
 );
 
---the following command chooses n1 *random* minumum element of a list
+--the following command chooses n1 *random* minimum element of a list
 randomMinPositions = method(Options=>{});
 randomMinPositions(ZZ, List) := o -> (n1, L1) -> (
     newList := apply(#L1, i -> {L1#i, random((#L1)^2), i});
@@ -1644,7 +1644,7 @@ document {
     UL {
         { BOLD "Heuristic submatrix selection:", " In this case, a submatrix is chosen via a greedy algorithm, looking for a submatrix with smallest (or largest) degree with respect to a random monomial order." }, 
         { BOLD "Submatrix selection via rational and geometric points:", " Here a rational or geometric point is found where a given ideal vanishes.  That point is plugged into the matrix and a submatrix of full rank is identified.   This approach currently only works over a finite field and is accomplished with the help of the package ", TO RandomPoints, "."},
-        { BOLD "Random submatrix selection:", " This either chooses a completely random submatrix, or a submatrix which has no zero columsn or rows."},
+        { BOLD "Random submatrix selection:", " This either chooses a completely random submatrix, or a submatrix which has no zero columns or rows."},
     },
     "There we highlight five important pre-programmed strategies provided to the user.",
     UL {
@@ -2010,7 +2010,7 @@ TEST/// --check #4 (regularInCodimension)
 T = (ZZ/101)[YY_1, YY_2, YY_3, YY_4, YY_5];
 J = ideal(YY_2*YY_3+3*YY_3^2+43*YY_1*YY_4+YY_3*YY_4-43*YY_2*YY_5+50*YY_3*YY_5,YY_2^2-18*YY_3^2+YY_1*YY_4-18*YY_2*YY_4-39*YY_3*YY_4-YY_1*YY_5+8*YY_2*YY_5-47*YY_3*YY_5,YY_1^2+16*YY_1*YY_2-3*YY_1*YY_3-32*YY_3^2+23*YY_1*YY_4-42*YY_2*YY_4-43*YY_3*YY_4+19*YY_1*YY_5+20*YY_2*YY_5-34*YY_3*YY_5,YY_3^3+16*YY_1*YY_2*YY_4+8*YY_1*YY_3*YY_4-36*YY_3^2*YY_4-YY_1*YY_4^2-47*YY_3*YY_4^2+45*YY_1*YY_3*YY_5-31*YY_3^2*YY_5+7*YY_1*YY_4*YY_5+16*YY_2*YY_4*YY_5+37*YY_3*YY_4*YY_5-16*YY_1*YY_5^2+36*YY_2*YY_5^2+15*YY_3*YY_5^2,YY_1*YY_3^2-48*YY_1*YY_2*YY_4+21*YY_1*YY_3*YY_4-45*YY_3^2*YY_4+47*YY_1*YY_4^2+10*YY_2*YY_4^2-47*YY_3*YY_4^2+13*YY_4^3-25*YY_1*YY_2*YY_5-33*YY_1*YY_3*YY_5+45*YY_3^2*YY_5+24*YY_1*YY_4*YY_5-36*YY_2*YY_4*YY_5-41*YY_3*YY_4*YY_5+26*YY_4^2*YY_5-27*YY_1*YY_5^2+30*YY_2*YY_5^2-13*YY_3*YY_5^2-24*YY_4*YY_5^2-17*YY_5^3);
 assert(regularInCodimension(1, T/J)===true);
---we shoudl change these a bit
+--we should change these a bit
 --assert(regularInCodimension(1, T/J, LexSmallest=>0, Random=>0)===true);
 -- note: if we set LexLargest=>0 running just on LexSmallest then regularInCodimension returns null
 -- same happens for all =>0, GRevLexSmallest=> nonzero

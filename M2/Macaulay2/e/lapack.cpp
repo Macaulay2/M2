@@ -2046,7 +2046,7 @@ bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
   bool ret = true;
   char dont = 'N';
   int wsize = 3 * size;
-  double *workspace = newarray_atomic(double, wsize);
+  double *workspace = newarray_atomic(double, 2*wsize);
   int info;
 
   double *copyA = make_lapack_array(*A);
@@ -2115,7 +2115,7 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
   char doit = 'V';
   int wsize = 4 * size;
 
-  double *workspace = newarray_atomic(double, wsize);
+  double *workspace = newarray_atomic(double, 2*wsize);
   int info;
 
   double *copyA = make_lapack_array(*A);
@@ -3022,9 +3022,9 @@ bool Lapack::eigenvalues(const LMatrixCC *A, LMatrixCC *eigvals)
   bool ret = true;
   char dont = 'N';
   int info;
-  int wsize = 4 * size;
+  int wsize = 2 * size;
   int rsize = 2 * size;
-  double *workspace = newarray_atomic(double, wsize);
+  double *workspace = newarray_atomic(double, 2*wsize);
   double *rwork = newarray_atomic(double, rsize);
 
   double *copyA = make_lapack_array(*A);
@@ -3090,9 +3090,9 @@ bool Lapack::eigenvectors(const LMatrixCC *A,
   bool ret = true;
   char dont = 'N';
   char doit = 'V';
-  int wsize = 4 * size;
+  int wsize = 2 * size;
   int rsize = 2 * size;
-  double *workspace = newarray_atomic(double, wsize);
+  double *workspace = newarray_atomic(double, 2*wsize);
   double *rwork = newarray_atomic(double, rsize);
   int info;
 
@@ -3161,8 +3161,8 @@ bool Lapack::eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigvals)
   char dont = 'N';
   char triangle = 'U'; /* Upper triangular part makes symmetric matrix. */
 
-  int wsize = 4 * size - 2;
-  double *workspace = newarray_atomic(double, wsize);
+  int wsize = 2 * size - 1;
+  double *workspace = newarray_atomic(double, 2*wsize);
   double *rwork = newarray_atomic(double, 3 * size - 2);
   int info;
 
@@ -3226,8 +3226,8 @@ bool Lapack::eigenvectors_hermitian(const LMatrixCC *A,
   char doit = 'V';
   char triangle = 'U'; /* Upper triangular part makes symmetric matrix */
 
-  int wsize = 4 * size - 2;
-  double *workspace = newarray_atomic(double, wsize);
+  int wsize = 2 * size - 1;
+  double *workspace = newarray_atomic(double, 2*wsize);
   double *rwork = newarray_atomic(double, 3 * size - 2);
   int info;
 
@@ -3290,9 +3290,9 @@ bool Lapack::SVD(const LMatrixCC *A,
     }
 
   int max = (rows >= cols) ? rows : cols;
-  int wsize = 4 * min + 2 * max;
+  int wsize = 2 * min + max;
   double *workspace = newarray_atomic(double, 2 * wsize);
-  double *rwork = newarray_atomic(double, 5 * max);
+  double *rwork = newarray_atomic(double, 5 * min);
 
   double *copyA = make_lapack_array(*A);
   double *u = newarray_atomic(double, 2 * rows * rows);
@@ -3364,11 +3364,11 @@ bool Lapack::SVD_divide_conquer(const LMatrixCC *A,
     }
 
   int max = (rows >= cols) ? rows : cols;
-  int wsize = 2 * min * min + 4 * min + 2 * max;
+  int wsize = min * min + 2 * min + max;
 
   double *workspace = newarray_atomic(double, 2 * wsize);
   int *iworkspace = newarray_atomic(int, 8 * min);
-  double *rwork = newarray_atomic(double, 5 * min * min + 7 * min);
+  double *rwork = newarray_atomic(double, 5 * min * min + 7 * min); // documentation not clear
 
   double *copyA = make_lapack_array(*A);
   double *u = newarray_atomic(double, 2 * rows * rows);

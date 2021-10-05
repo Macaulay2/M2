@@ -437,16 +437,25 @@ new SVG from GraphicsObject := (S,g) -> (
     main := svg(g,p,p,lights); -- run this first because it will compute the ranges too
     if main === null then return {};
     if g.?ViewPort then r := g.ViewPort else r = g.cache.ViewPort; -- should be cached at this stage
-    if r === null or r#0 == r#1 then (g.cache.SizeX=g.cache.SizeY=0.; return {}); -- nothing to draw
-    r = apply(r,numeric);
-    rr := r#1 - r#0;
-    if rr_0 == 0 then (
-	rr = vector { rr_1 * 16/10, rr_1 };
-	r = { vector { r#0_0 - 0.5*rr_0, r#0_1 }, vector { r#1_0 + 0.5*rr_0, r#1_1 } };
-	);
-    if rr_1 == 0 then (
-	rr = vector { rr_0, rr_0 * 10/16 };
-	r = { vector { r#0_0, r#0_1 - 0.5*rr_1 }, vector {  r#1_0, r#1_1 + 0.5*rr_1 } };
+--    if r === null or r#0 == r#1 then (g.cache.SizeX=g.cache.SizeY=0.; return {}); -- nothing to draw
+    if r === null or r#0 == r#1 then ( r={vector {0.,0.},vector {0.,0.}}; rr:=vector{0.,0.}; g.cache.SizeX=g.cache.SizeY=0.; ) else (
+	r = apply(r,numeric);
+	rr = r#1 - r#0;
+	if rr_0 == 0 then (
+	    rr = vector { rr_1 * 16/10, rr_1 };
+	    r = { vector { r#0_0 - 0.5*rr_0, r#0_1 }, vector { r#1_0 + 0.5*rr_0, r#1_1 } };
+	    );
+	if rr_1 == 0 then (
+	    rr = vector { rr_0, rr_0 * 10/16 };
+	    r = { vector { r#0_0, r#0_1 - 0.5*rr_1 }, vector {  r#1_0, r#1_1 + 0.5*rr_1 } };
+	    );
+	if g.?SizeX then g.cache.SizeX = numeric g.SizeX;
+	if g.?SizeY then g.cache.SizeY = numeric g.SizeY;
+	if not (g.?SizeX or g.?SizeY) then -- by default, make it fit inside 16 x 10
+	if rr_0 > 1.6*rr_1 then g.cache.SizeX = 16. else g.cache.SizeY = 10.;
+	-- at this stage one of the two is set
+	if not g.cache.?SizeY then g.cache.SizeY = g.cache.SizeX * rr_1/rr_0;
+	if not g.cache.?SizeX then g.cache.SizeX = g.cache.SizeY * rr_0/rr_1;
 	);
     -- axes
     axes:=null; axeslabels:=null; defsList:={};
@@ -479,20 +488,13 @@ new SVG from GraphicsObject := (S,g) -> (
 	axes=svg(axes,p,p);
 	axeslabels=svg(axeslabels,p,p);
 	);
-    if g.?SizeX then g.cache.SizeX = numeric g.SizeX;
-    if g.?SizeY then g.cache.SizeY = numeric g.SizeY;
-    if not (g.?SizeX or g.?SizeY) then -- by default, make it fit inside 16 x 10
-	if rr_0 > 1.6*rr_1 then g.cache.SizeX = 16. else g.cache.SizeY = 10.;
-    -- at this stage one of the two is set
-    if not g.cache.?SizeY then g.cache.SizeY = g.cache.SizeX * rr_1/rr_0;
-    if not g.cache.?SizeX then g.cache.SizeX = g.cache.SizeY * rr_0/rr_1;
-    -- put some extra blank space around picture
-    margin := if g.?Margin then g.Margin else 0.1;
-    r = { r#0-margin*rr, r#1+margin*rr }; rr = (1+2*margin)*rr;
+	-- put some extra blank space around picture
+	margin := if g.?Margin then g.Margin else 0.1;
+	r = { r#0-margin*rr, r#1+margin*rr }; rr = (1+2*margin)*rr;
     --
 --    tag := graphicsId();
     classTag := "M2Svg";
-    ss := SVG {
+    ss := {
 	"preserveAspectRatio" => "none",
 --	"id" => tag,
 	"style" => concatenate("width:",toString g.cache.SizeX,"em;",

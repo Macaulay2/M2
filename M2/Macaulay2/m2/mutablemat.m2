@@ -261,7 +261,7 @@ eigenvectors(Matrix) := o -> (A) -> (
 SVD = method(Options=>{DivideConquer=>false})
 SVD MutableMatrix := o -> A -> (
      k := ring A;
-     if not instance(k,InexactField) then error "eigenvalues requires matrices over RR or CC";
+     if not instance(k,InexactField) then error "SVD requires matrices over RR or CC";
      Sigma := mutableMatrix(RR_(k.precision),0,0,Dense=>true);
      U := if instance(k,RealField) then mutableMatrix(RR_(k.precision),0,0) else mutableMatrix(CC_(k.precision),0,0,Dense=>true);
      VT := if instance(k,RealField) then mutableMatrix(RR_(k.precision),0,0) else mutableMatrix(CC_(k.precision),0,0,Dense=>true);
@@ -269,7 +269,7 @@ SVD MutableMatrix := o -> A -> (
      (Sigma,U,VT))
 SVD Matrix := o -> A -> (
      k := ring A;
-     if not instance(k,InexactField) then error "eigenvalues requires matrices over RR or CC";
+     if not instance(k,InexactField) then error "SVD requires matrices over RR or CC";
      A = mutableMatrix(A,Dense=>true);
      (Sigma,U,VT) := SVD(A,o);
      (VerticalList flatten entries matrix Sigma,matrix U,matrix VT))
@@ -277,14 +277,14 @@ SVD Matrix := o -> A -> (
 QRDecomposition = method()
 QRDecomposition MutableMatrix := A -> (
      k := ring A;
-     if k =!= RR_53 then error "currently, QRDecomposition is only defined for matrices over RR_53";
+     -- if k =!= RR_53 then error "currently, QRDecomposition is only defined for matrices over RR_53";
      Q := mutableMatrix(k,0,0,Dense=>true);
      R := mutableMatrix(k,0,0,Dense=>true);
      rawQR(raw A, raw Q, raw R, true -* ReturnQR was a bad option name *- );
      (Q,R))
 QRDecomposition Matrix := A -> (
      k := ring A;
-     if k =!= RR_53 then error "currently, QRDecomposition is only defined for matrices over RR_53";
+     -- if k =!= RR_53 then error "currently, QRDecomposition is only defined for matrices over RR_53";
      A = mutableMatrix(A,Dense=>true);
      (Q,R) := QRDecomposition A;
      (matrix Q,matrix R))

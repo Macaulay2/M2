@@ -30,7 +30,7 @@ noMethod = (meth,args,outputs) -> error toString stack join( {line0 meth},
 	       false					    -- do better here
 	       )})
 badClass := (meth,i,args) -> (
-     if i == -1 then error(silentRobustString(45,3,meth),": expected an output class, but got: ", silentRobustString(45,3,args))
+     if i === -1 then error(silentRobustString(45,3,meth),": expected an output class, but got: ", silentRobustString(45,3,args))
      else error(silentRobustString(45,3,meth),": expected argument ",toString (i+1)," to be a type, but it was: ", silentRobustString(45,3,args#i)))
 
 methodDefaults := new OptionTable from {

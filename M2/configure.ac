@@ -651,8 +651,7 @@ AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom
 # The list PROGLIST is the list of programs and libraries for them that are distributed with M2.
 #     Initially, we offer no option for not compiling some of them.
 
-# AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack givaro ")
-AC_SUBST(SUBLIST, " fflas_ffpack givaro ")
+AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack givaro ")
 
 # The list SUBLIST is the list of submodules that might be used and linked into M2.
 
@@ -1871,7 +1870,7 @@ subset "$BUILDLIBLIST" "$BUILD_ALWAYS"
 sub=$?
 if test "$BUILDING" = no -a $sub = 1
 then c=`complement "$BUILDLIBLIST" "$BUILD_ALWAYS"`
-     AC_MSG_ERROR([automatic building of libraries disabled, but some must be built: $c])
+     AC_MSG_ERROR([ *** - automatic building of libraries disabled, but some must be built: $c])
 fi
 
 # Here we insert autoconf's default values so we can compute the relative locations in the directory tree
