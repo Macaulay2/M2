@@ -218,6 +218,7 @@ prune = method(
      Options => {
 	  Exclude => {}
 	  })
+debug = method()
 status = method (
      Options => new OptionTable from {
      	  TotalPairs => true,
@@ -391,15 +392,6 @@ options Function := OptionTable => f -> (
 
 options Command := OptionTable => f -> options f#0
 
-computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
-     if not M#?Name or not goodEnough(M#Name#0,options) 
-     then (
-	  ret := computeIt(M,options);
-	  M#Name = {options,ret};
-	  ret)
-     else M#Name#1
-     )
-
 toExternalString Option := z -> concatenate splice (
      if precedence z > precedence z#0 then ("(",toExternalString z#0,")") else toExternalString z#0,
      " => ",
@@ -565,6 +557,7 @@ runHooks(MutableHashTable, Thing, Thing) := true >> opts -> (store, key, args) -
     -- if Strategy is given, and it is among the known strategies, run only that hook
     if store.HookAlgorithms#?alg  then runHook(store.HookAlgorithms#alg,  key, alg,  args, opts) else
     -- otherwise, if the class of alg is a known strategy, run only that hook
+    -- TODO: implement reverse lookup to find strategy installed under ancestors of type?
     if store.HookAlgorithms#?type then runHook(store.HookAlgorithms#type, key, type, args, opts) else
     -- otherwise, give an error with the list of possible strategies
     error("unrecognized Strategy => '", toString alg, "' for ", toString key, newline,

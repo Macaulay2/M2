@@ -148,6 +148,7 @@ $(foreach c, clean distclean,
     $(eval $c-in-$1:; + if [ -f submodules/$1/Makefile ]; then $(MAKE) submodules/$1/Makefile && $(MAKE) -C submodules/$1 $c; fi)
     $(eval $c: $c-in-$1))
 
+git-checkout-in-$1:; cd @srcdir@/.. && git submodule update --init M2/submodules/$1
 git-update-in-$1:; cd @srcdir@/submodules/$1 && git checkout master && git pull
 git-status-in-$1:; cd @srcdir@/submodules/$1 && git status
 git-clean-in-$1:; cd @srcdir@/submodules/$1 && git clean -Xdf
@@ -210,7 +211,11 @@ ifeq (@BUILD_givaro@,yes)
 submodules/fflas_ffpack/Makefile: install-in-givaro
 endif
 
-all-in-Macaulay2:all-in-submodules
+ifeq "@DEVELOPMENT@" "yes"
+all-in-Macaulay2: all-in-submodules
+else
+all-in-Macaulay2: all-in-submodules git-checkout-in-memtailor git-checkout-in-mathic git-checkout-in-mathicgb
+endif
 
 ## 
 distclean:clean distclean-in-subdirs distclean-this-dir

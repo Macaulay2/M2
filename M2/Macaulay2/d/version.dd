@@ -31,6 +31,10 @@ header "
 //   #include <mpfr.h>
 //   #include <mpfi.h>
 
+   #include <memtailor.h>
+   #include <mathic.h>
+   #include <mathicgb.h>
+
    #include <frobby.h>
    #ifdef HAVE_FROBBY_VERSION
      extern const char* const frobby_version;
@@ -215,6 +219,9 @@ setupconst("version", Expr(toHashTable(Sequence(
 	 #endif
 	 "),
    "boost version" => Ccode(constcharstar,"BOOST_LIB_VERSION"),
+   "memtailor version" => Ccode(constcharstar,"MEMTAILOR_VERSION_STRING"),
+   "mathic version" => Ccode(constcharstar,"MATHIC_VERSION_STRING"),
+   "mathicgb version" => Ccode(constcharstar,"MATHICGB_VERSION_STRING"),
    "factory version" => factoryversion(),
    "readline version" => readlineversion(),
    "mpfr version" => Ccode(constcharstar,"MPFR_VERSION_STRING"),

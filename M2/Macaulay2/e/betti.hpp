@@ -5,6 +5,7 @@
 
 #include "buffer.hpp"
 
+#include "memtailor.h"
 #include <unordered_set>
 #include <unordered_map>
 #include <utility>
