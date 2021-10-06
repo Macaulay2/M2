@@ -61,7 +61,6 @@ needsPackage("RationalMaps",DebuggingMode=>false); -- for method: inverse3
 importFrom("Cremona",{"secantCone"})
 debug SparseResultants
 debug MultiprojectiveVarieties
-exportFrom(MultiprojectiveVarieties,{"coneOfLines"})
 
 ------------------------------------------------------------------------
 --------------------------- Cubic fourfolds ----------------------------
@@ -2457,14 +2456,6 @@ Outputs => {SpecialCubicFourfold => {"a random special cubic fourfold of the ind
 EXAMPLE {"X = specialCubicFourfold(\"Farkas-Verra C26\",ZZ/65521);", "describe X"},
 SeeAlso => (specialCubicFourfold, EmbeddedProjectiveVariety)}
 
-document {Key => {coneOfLines, (coneOfLines, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (coneOfLines, Ideal, Ideal)}, 
-Headline => "cone of lines on a subvariety passing through a point", 
-Usage => "coneOfLines(X,p)", 
-Inputs => {"X" => EmbeddedProjectiveVariety => {"a subvariety of ", TEX///$\mathbb{P}^n$///}, "p" => EmbeddedProjectiveVariety => {"a point on ", TEX///$X$///}}, 
-Outputs => {EmbeddedProjectiveVariety => {"the subscheme of ",TEX///$\mathbb{P}^n$///, " consisting of the union of all lines contained in ",TEX///$X$///, " and passing through ",TEX///$p$///}}, 
-PARA{"In the example below we compute the cone of lines passing through the generic point of a smooth del Pezzo fourfold in ",TEX///$\mathbb{P}^7$///, "."}, 
-EXAMPLE {"K := frac(QQ[a,b,c,d,e]); t = gens ring PP_K^4; phi = rationalMap {minors(2,matrix{{t_0,t_1,t_2},{t_1,t_2,t_3}}) + t_4};", "X = image phi;", "ideal X", "p := projectiveVariety minors(2,(vars K)||(vars ring PP_K^4))", "time coneOfLines(X,phi p)"}} 
-
 document {Key => {grassmannianHull, (grassmannianHull, SpecialGushelMukaiFourfold)}, 
 Headline => "grassmannian hull of a Gushel-Mukai fourfold", 
 Usage => "grassmannianHull X", 
@@ -2594,6 +2585,8 @@ EXAMPLE {"X = specialGushelMukaiFourfold \"cubic scroll\"", "X' = clean X", "X =
 SeeAlso => {(clean,SpecialCubicFourfold)}}
 
 undocumented {(random,SpecialCubicFourfold),(random,SpecialGushelMukaiFourfold),(symbol **,SpecialCubicFourfold,Ring),(symbol **,SpecialGushelMukaiFourfold,Ring)}
+
+undocumented {(coneOfLines,Ideal,Ideal)}
 
 ------------------------------------------------------------------------
 ------------------------------- Tests ----------------------------------

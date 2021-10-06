@@ -773,16 +773,17 @@ complexrank (RingElement) := o -> (F) -> (
    g1 := first select(J_*,g -> first degree g == e1);
    g2 := first select(J_*,g -> first degree g == e2);
    if discriminant g1 != 0 then return e1;
-   if discriminant g2 != 0 then return e2;
-   K := coefficientRing ring F;
-   local I; local g;
-   for j from e2 to d-1 do (
-      if j >= o.Limit then return (j..d);
-      I = Jl_j;
-      g = (gens I * random(K^(numgens I),K^1))_(0,0);
-      if discriminant g != 0 then return j else continue;
-   );
-   return d;
+   return e2; -- It follows from Terracini's Lemma.
+--   if discriminant g2 != 0 then return e2;
+--   K := coefficientRing ring F;
+--   local I; local g;
+--   for j from e2 to d-1 do (
+--      if j >= o.Limit then return (j..d);
+--      I = Jl_j;
+--      g = (gens I * random(K^(numgens I),K^1))_(0,0);
+--      if discriminant g != 0 then return j else continue;
+--   );
+--   return d;
 );
 
 matriceCompagna = method(TypicalValue => Matrix)
