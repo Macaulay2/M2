@@ -258,7 +258,7 @@ eigenvectors(Matrix) := o -> (A) -> (
      (e,v) := eigenvectors(mutableMatrix(numeric A,Dense=>true),o);
      (e, matrix v))
 
-SVD = method(Options=>{DivideConquer=>false})
+SVD = method(Options=>{DivideConquer=>true})
 SVD MutableMatrix := o -> A -> (
      k := ring A;
      if not instance(k,InexactField) then error "SVD requires matrices over RR or CC";
