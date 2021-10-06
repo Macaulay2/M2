@@ -535,13 +535,13 @@ part(List, ComplexMap) := ComplexMap => (deg, f) -> (
     )
 part(ZZ, ComplexMap) := ComplexMap => (deg, f) -> part({deg}, f)
 
-truncate(List, ComplexMap) := ComplexMap => (e, f) -> (
-    C := truncate(e, source f);
-    D := truncate(e, target f);
-    d := degree f;
-    map(D, C, i -> map(D_(i+d), C_i, truncate(e, f_i)), Degree => d)
-    )
-truncate(ZZ, ComplexMap) := ComplexMap => (e, f) -> truncate({e}, f)
+-- truncate(List, ComplexMap) := ComplexMap => (e, f) -> (
+--     C := truncate(e, source f);
+--     D := truncate(e, target f);
+--     d := degree f;
+--     map(D, C, i -> map(D_(i+d), C_i, truncate(e, f_i)), Degree => d)
+--     )
+-- truncate(ZZ, ComplexMap) := ComplexMap => (e, f) -> truncate({e}, f)
 
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------

@@ -12,12 +12,17 @@ newPackage(
             HomePage => "http://www.math.cornell.edu/~mike"
             }},
     Headline => "development package for beta testing new version of chain complexes",
-    PackageExports => {"Truncations"},
+--    PackageExports => {"Truncations"},
     AuxiliaryFiles => true,
     DebuggingMode => true
     )
 
 export {
+    "ChainComplex",
+    "res" => "resolution",
+    "resolution",
+    "ChainComplexMap",
+    
     "component",
     -- types
     "Complex",
@@ -137,6 +142,7 @@ load "Complexes/Tor.m2"
 --------------------------------------------------------------------
 -- interface code to legacy types ----------------------------------
 --------------------------------------------------------------------
+-*
 chainComplex Complex := ChainComplex => (cacheValue symbol ChainComplex) (C -> (
     (lo,hi) := concentration C;
     D := new ChainComplex;
@@ -170,7 +176,7 @@ chainComplex ComplexMap := ChainComplexMap => f -> (
 complex ChainComplexMap := ComplexMap => opts -> g -> (
     map(complex target g, complex source g, i -> g_i, Degree => degree g)
     )
-
+*-
 --------------------------------------------------------------------
 -- package documentation -------------------------------------------
 --------------------------------------------------------------------
@@ -192,7 +198,7 @@ load "Complexes/ChainComplexMapDoc.m2"
 --------------------------------------------------------------------
 -- documentation for legacy type conversion ------------------------
 --------------------------------------------------------------------
-doc ///
+///
     Key
         (complex, ChainComplex)
     Headline
@@ -240,7 +246,7 @@ doc ///
         (complex, ChainComplexMap)
 ///
 
-doc ///
+///
     Key
         (chainComplex, Complex)
     Headline
@@ -284,7 +290,7 @@ doc ///
         (chainComplex, ComplexMap)
 ///
 
-doc ///
+///
     Key
         (complex, ChainComplexMap)
     Headline
@@ -335,7 +341,7 @@ doc ///
         (chainComplex, Complex)
 ///
 
-doc ///
+///
     Key
         (chainComplex, ComplexMap)
     Headline

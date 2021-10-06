@@ -24,7 +24,7 @@ newPackage(
 	{Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud"}},
     Keywords => {"Commutative Algebra"},
     PackageExports => { "Saturation", "MinimalPrimes" },
-    PackageImports => { "Elimination" },
+    PackageImports => { "Elimination", "Complexes" },
     AuxiliaryFiles => true,
     DebuggingMode => false
     )

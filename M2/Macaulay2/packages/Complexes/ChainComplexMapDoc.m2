@@ -81,7 +81,7 @@ doc ///
                 TO (naiveTruncation, ComplexMap, Sequence),
                 TO (canonicalTruncation, ComplexMap, Sequence),
                 TO (part, List, ComplexMap),
-                TO (truncate, List, ComplexMap),
+                TO "(truncate, List, ComplexMap)",
                 TO (symbol SPACE, RingMap, ComplexMap),
                 TO (symbol **, RingMap, ComplexMap)
             }@
@@ -1412,7 +1412,7 @@ doc ///
         (Hom, Complex, Complex)
 ///
 
-doc ///
+///
     Key
         (truncate, List, ComplexMap)
         (truncate, ZZ, ComplexMap)
@@ -1551,7 +1551,7 @@ doc ///
         (naiveTruncation, Complex, Sequence)
         (canonicalTruncation, Complex, ZZ, ZZ)
         (canonicalTruncation, ComplexMap, ZZ, ZZ)
-        (truncate, List, ComplexMap)
+        "(truncate, List, ComplexMap)"
 ///
 
 doc ///
@@ -1613,7 +1613,7 @@ doc ///
         (canonicalTruncation, Complex, Sequence)
         (naiveTruncation, Complex, ZZ, ZZ)
         (naiveTruncation, ComplexMap, ZZ, ZZ)
-        (truncate, List, ComplexMap)
+        "(truncate, List, ComplexMap)"
 ///
 
 doc ///
@@ -1988,8 +1988,10 @@ doc ///
             kk = ZZ/32003
             R = kk[a,b,c]
             F = freeResolution (ideal gens R)^2
-            C1 = truncate(3, F)
-            C2 = truncate(4, F)
+            --C1 = truncate(3, F)
+            --C2 = truncate(4, F)
+            C1 = F -- TODO: replace these with truncate, once we can call that again...
+            C2 = F
             assert isWellDefined C1
             assert isWellDefined C2
             f = inducedMap(C1, C2)
