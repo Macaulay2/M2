@@ -36,12 +36,13 @@ eliminationInfo Ring := (cacheValue symbol eliminationInfo) (R -> (
 -- a VisibleList as input instead of List or Sequence.
 intersect List     :=
 intersect Sequence := true >> opts -> L -> (
-    -- This will be the type of the result.
-    type := if uniform toList L then class L#0;
-    -- We look for the specialized function based on the output type
-    -- rather than the input types; e.g. Module.intersect
-    func := if type =!= null then lookup(symbol intersect, type);
-    if func =!= null then func(opts, L) else intersect(opts, new VisibleList from L))
+    -- If the arguments are of the same type, we look for a specialized
+    -- function based on the output type rather than the input types.
+    if uniform L then (
+	type := class L#0; -- type of the result; e.g. Module
+	func := lookup(symbol intersect, type); -- e.g. Module.intersect
+	if func =!= null then return func(opts, L));
+    intersect(opts, new VisibleList from L))
 
 -----------------------------------------------------------------------------
 -- Intersection of ideals and modules
@@ -52,7 +53,7 @@ doTrim := (opts, C) -> if opts.MinimalGenerators then trim C else C;
 intersectHelper := (L, key, opts) -> (
     -- For now, this is only for intersection of ideals and modules
     -- TODO: this line may need to move, but otherwise this helper can be used for any class
-    if not same apply(L, ring) then error "intersect: expected objects in the same ring";
+    if not same apply(L, ring) then error "intersect: expected objects with the same ring";
     C := runHooks(key, (opts, L), Strategy => (strategy := opts.Strategy));
     if C =!= null then doTrim(opts, C) else if strategy === null
     then error("no applicable method for ", toString key)

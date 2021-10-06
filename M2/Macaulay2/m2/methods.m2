@@ -18,17 +18,15 @@ needs "option.m2"
 -- see lists.m2
 all' := (L, p) -> not any(L, x -> not p x)
 
-noapp := (f, x) -> concatenate("no method found for applying item of class ", toString class f, " to item of class ", toString class x)
-line0 :=  M     -> concatenate("no method found for applying ", silentRobustString(45, 3, M), " to:");
-
-printarg := (i, arg, out) -> horizontalJoin("     argument ", i, " :  ",
+noMethErr := M -> concatenate("no method found for applying ", silentRobustString(45, 3, M), " to:");
+printArgs := (i, arg, out) -> horizontalJoin("     argument ", i, " :  ",
     (if out then silentRobustNet else silentRobustNetWithClass)(60, 5, 3, arg));
 
-noMethodSingle = (M, args, outputs) -> toString stack     (  line0 M, printarg(" ", args, outputs) )
-noMethod       = (M, args, outputs) -> toString stack join( {line0 M},
+noMethodSingle = (M, args, outputs) -> toString stack     (  noMethErr M, printArgs(" ", args, outputs) )
+noMethod       = (M, args, outputs) -> toString stack join( {noMethErr M},
     if class args === Sequence and 0 < #args and #args <= 4 then apply(#args,
-	i -> printarg(toString (i+1), args#i, if outputs#?i then outputs#i else false))
-    else {   printarg(" ",            args,   false) }) -- TODO: do better here, in what way?
+	i -> printArgs(toString (i+1), args#i, if outputs#?i then outputs#i else false))
+    else {   printArgs(" ",            args,   false) }) -- TODO: do better here, in what way?
 
 -- TODO: what is this for exactly?
 badClass := meth -> (i, args) -> (
