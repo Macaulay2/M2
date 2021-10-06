@@ -16,7 +16,7 @@ newPackage(
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
-    PackageImports => {"PrimaryDecomposition"},
+    PackageImports => {"PrimaryDecomposition","TangentCone"},
     PackageExports => {"Cremona","SparseResultants"},
     DebuggingMode => false,
     Reload => false
@@ -35,7 +35,7 @@ if Cremona.Options.Version < "5.1" then (
 if SparseResultants.Options.Version < "1.1" then error "your version of the SparseResultants package is outdated (required version 1.1 or newer); you can download the latest version from https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages";
 
 export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections", "fiberProduct", 
-       "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan", "tangentSpace", "sectionalGenus",
+       "EmbeddedProjectiveVariety", "linearlyNormalEmbedding", "linearSpan", "tangentSpace", "coneOfLines", "sectionalGenus",
        "MultirationalMap", "multirationalMap", "baseLocus", "degreeSequence", "inverse2", "toRationalMap",
        "∏","⋂","⋃","PP",
        "ambientVariety"}
@@ -596,9 +596,10 @@ MultiprojectiveVariety * MultiprojectiveVariety := (X,Y) -> (
 );
 
 isSubset (MultiprojectiveVariety,MultiprojectiveVariety) := (X,Y) -> (
+    if X.cache#?("isSubsetOf",Y) then return X.cache#("isSubsetOf",Y);
     if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient multi-projective space";
-    if X === Y then return true;
-    isSubset(ideal Y,ideal X)
+    if X === Y then return X.cache#("isSubsetOf",Y) = true;
+    X.cache#("isSubsetOf",Y) = isSubset(ideal Y,ideal X)
 );
 
 fiberProductInt = (phi,psi) -> (
@@ -795,7 +796,24 @@ tangentSpace (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := (X,p) -> (
     projectiveVariety(ideal((vars ring I) * sub(jacobian I,subs)),MinimalGenerators=>true,Saturate=>false)
 );
 
-coneOfLines = method();
+tangentCone (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (X,p) -> (
+    if not isPoint p then if isPoint X then return tangentCone(p,X);
+    if not (isPoint p and isSubset(p,X)) then error "expected a point on the variety";
+    K := coefficientRing X;
+    n := dim ambient X;
+    a := toList coordinates p;
+    j := 0; while a_j == 0 do j = j+1;
+    A := transpose matrix{a} | submatrix'(diagonalMatrix toList(n+1:1),{j});
+    t := local t;
+    T := K[t_0..t_n];
+    f := map(T,ring ambient X,(vars T) * (transpose A));
+    I := trim f ideal X;
+    -- assert(f ideal p == ideal submatrix'(vars T,{0}));
+    J := (inverse f) sub(tangentCone(sub(sub(I,t_0=>1),K[t_1..t_n]),Strategy=>o.Strategy),T);
+    projectiveVariety(J,MinimalGenerators=>true,Saturate=>false)
+);
+
+coneOfLines = method(TypicalValue => EmbeddedProjectiveVariety);
 coneOfLines (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := (X,p) -> (
     if not isPoint p then if isPoint X then return coneOfLines(p,X);
     if not (isPoint p and isSubset(p,X)) then error "expected a point on the variety";
@@ -1786,7 +1804,7 @@ Subnodes => {TO MultiprojectiveVariety,TO MultirationalMap}}
 
 document {Key => {MultiprojectiveVariety}, 
 Headline => "the class of all multi-projective varieties", 
-PARA {"A ",EM"multi-projective variety"," is a closed subvariety of a product of projective spaces ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}$///,"."},
+PARA {"A ",EM"multi-projective variety"," is a closed subvariety of a product of projective spaces ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}$///,". This is actually the class of all closed subschemes of products of projective spaces."},
 Subnodes => {TO "projectiveVariety",-- TO (projectiveVariety,Ideal),TO (projectiveVariety,Ring),
 TO (projectiveVariety,List,Ring), 
 TO (projectiveVariety,List,List,Ring),
@@ -2117,6 +2135,17 @@ EXAMPLE {"K = ZZ/65521;",
 ///assert(X \ X' == X')///},
 SeeAlso => {(decompose,MultiprojectiveVariety),(radical,Ideal)}}
 
+document {Key => {(top,MultiprojectiveVariety)}, 
+Headline => "union of the top dimensional components of a multi-projective variety", 
+Usage => "top X", 
+Inputs => {MultiprojectiveVariety => "X"}, 
+Outputs => {MultiprojectiveVariety => {"the union of the top dimensional components of ",TT"X"}},
+EXAMPLE {"K = ZZ/65521;",
+"X = (linearSpan {point PP_K^4,point PP_K^4}) + (point PP_K^4);",
+"top X",
+///assert(top top X === top X)///},
+SeeAlso => {(decompose,MultiprojectiveVariety),(top,Ideal)}}
+
 document {Key => {fiberProduct,(fiberProduct,RationalMap,RationalMap)}, 
 Headline => "fiber product of multi-projective varieties", 
 Usage => "fiberProduct(phi,psi)", 
@@ -2364,7 +2393,8 @@ EXAMPLE {"K = ZZ/65521;",
 "h = parametrize Z;",
 "describe h",
 "describe inverse h",
-"W = projectiveVariety pfaffians(4,matrix pack(5,for i to 24 list random(1,ring PP_K^8)));",
+"A = matrix pack(5,for i to 24 list random(1,ring PP_K^8)), A = A - transpose A;",
+"W = projectiveVariety pfaffians(4,A);",
 "parametrize W",
 "parametrize (W ** (point W))"}, 
 SeeAlso => {(inverse,MultirationalMap),(symbol ===>,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)}}
@@ -2528,6 +2558,8 @@ multirationalMap X",
 Inputs => {MultiprojectiveVariety => "X"}, 
 Outputs => {MultirationalMap => {"the identity map on ",TT"X"}},
 EXAMPLE {"X = PP_QQ^{2,3,1};", "1_X;"},
+PARA {"The command ",TT "0_X"," returns instead the empty subscheme of ",TT "X","."},
+EXAMPLE {"0_X;"},
 SeeAlso => {(multirationalMap,MultiprojectiveVariety,MultiprojectiveVariety)}}
 
 document { 
@@ -3046,7 +3078,34 @@ Outputs => {EmbeddedProjectiveVariety => {"the embedded tangent space ",TEX///$T
 EXAMPLE {"X = PP_(ZZ/333331)^(3,2);",
 "p := point X",
 "tangentSpace(X,p)"},
-SeeAlso => {(singularLocus,MultiprojectiveVariety),(dual,EmbeddedProjectiveVariety),(point,MultiprojectiveVariety)}}
+SeeAlso => {(tangentCone,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety),(singularLocus,MultiprojectiveVariety),(dual,EmbeddedProjectiveVariety),(point,MultiprojectiveVariety)}}
+
+typValTanCone := typicalValues#tangentCone;
+typicalValues#tangentCone = EmbeddedProjectiveVariety;
+document { 
+Key => {(tangentCone,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)},
+Headline => "tangent cone to a projective variety at a point", 
+Usage => "tangentCone(X,p)
+tangentCone(p,X)", 
+Inputs => {"X" => EmbeddedProjectiveVariety,"p" => EmbeddedProjectiveVariety => {"a point on ",TEX///$X$///}},
+Outputs => {EmbeddedProjectiveVariety => {"the embedded tangent cone ",TEX///$C_p(X)$///," to ",TEX///$X$///," at the point ",TEX///$p$///}},
+EXAMPLE {"Y = random(3,0_(PP_(ZZ/333331)^6)), q = point Y, j = parametrize tangentSpace(Y,q);",
+"(X, p) = (j^* Y, j^* q);",
+"C = tangentCone(X,p);",
+"describe C",
+"assert(isSubset(C,tangentSpace(X,p)) and coneOfLines(C,p) == C)"},
+SeeAlso => {(tangentSpace,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety),(tangentCone,Ideal),coneOfLines}}
+typicalValues#tangentCone = typValTanCone;
+
+document {Key => {coneOfLines,(coneOfLines,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)}, 
+Headline => "cone of lines on a subvariety passing through a point", 
+Usage => "coneOfLines(X,p)
+coneOfLines(p,X)", 
+Inputs => {"X" => EmbeddedProjectiveVariety => {"a subvariety of ", TEX///$\mathbb{P}^n$///}, "p" => EmbeddedProjectiveVariety => {"a point on ", TEX///$X$///}}, 
+Outputs => {EmbeddedProjectiveVariety => {"the subscheme of ",TEX///$\mathbb{P}^n$///, " consisting of the union of all lines contained in ",TEX///$X$///, " and passing through ",TEX///$p$///}}, 
+PARA{"In the example below we compute the cone of lines passing through the generic point of a smooth del Pezzo fourfold in ",TEX///$\mathbb{P}^7$///, "."}, 
+EXAMPLE {"K := frac(QQ[a,b,c,d,e]); t = gens ring PP_K^4; phi = rationalMap {minors(2,matrix{{t_0,t_1,t_2},{t_1,t_2,t_3}}) + t_4};", "X = image phi;", "ideal X", "p := projectiveVariety minors(2,(vars K)||(vars ring PP_K^4))", "coneOfLines(X,phi p)", "ideal oo"},
+SeeAlso => (tangentCone,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)}
 
 document {Key => {sectionalGenus,(sectionalGenus,EmbeddedProjectiveVariety)},
 Headline => "the sectional genus of an embedded projective variety", 
@@ -3068,7 +3127,7 @@ EXAMPLE {"C = PP_(ZZ/100003)^(1,4);",
 "X = ⋃ {C,L,L'};",
 "D = decompose X",
 "assert(X == ⋃ D)"}, 
-SeeAlso => {(support,MultiprojectiveVariety),(decompose,Ideal)}} 
+SeeAlso => {(support,MultiprojectiveVariety),(top,MultiprojectiveVariety),(decompose,Ideal)}} 
 
 document {Key => {(degrees,MultiprojectiveVariety)}, 
 Headline => "degrees for the minimal generators", 
@@ -3098,7 +3157,8 @@ W = random({{2},{1}},Y);
 time g = V ===> W;
 g||W///,
 PARA{"In the next example, ",TEX///$Z\subset\mathbb{P}^9$///," is a random (smooth) del Pezzo sixfold, hence projectively equivalent to ",TEX///$\mathbb{G}(1,4)$///,"."},
-EXAMPLE lines ///Z = projectiveVariety pfaffians(4,matrix pack(5,for i to 24 list random(1,ring PP^9)));
+EXAMPLE lines ///A = matrix pack(5,for i to 24 list random(1,ring PP^9)); A = A - transpose A
+Z = projectiveVariety pfaffians(4,A);
 ? Z
 G := projectiveVariety Grass(1,4,K)
 time h = Z ===> G
@@ -3212,7 +3272,6 @@ undocumented {
 (net,MultiprojectiveVariety),
 (toString,MultiprojectiveVariety),
 (point,MultiprojectiveVariety,Boolean), -- Intended for internal use only
-(top,MultiprojectiveVariety), -- The user should think that varieties are at least equidimensional 
 (euler,MultiprojectiveVariety,Option),
 (singularLocus,EmbeddedProjectiveVariety,Option),
 (symbol *,ZZ,MultiprojectiveVariety), -- hidden to the user, since it returns non-reduced varieties
