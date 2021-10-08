@@ -4,6 +4,9 @@
 #include "monoid.hpp"
 #include "text-io.hpp"
 
+#include "debug.hpp"
+#include <iostream>
+
 unsigned int MonomialIdeal::computeHashValue() const
 {
   // Incorporate the length and the first 5 elements
@@ -780,6 +783,8 @@ MonomialIdeal *MonomialIdeal::erase(const int *m) const
 
 MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
 {
+  std::cout << "cout called sat" << std::endl;
+  std::cerr << "cerr called sat" << std::endl;
   MonomialIdeal *result = new MonomialIdeal(get_ring());
   Bag *b = new Bag();
   varpower::one(b->monom());

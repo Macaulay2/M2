@@ -47,7 +47,8 @@ file(COPY emacs/ DESTINATION ${M2_INSTALL_EMACSDIR}
 
 set(EMACS_FILES M2-emacs-help.txt M2-emacs.m2 M2-symbols.el.gz)
 list(TRANSFORM EMACS_FILES PREPEND ${M2_INSTALL_EMACSDIR}/)
-add_custom_target(M2-emacs ALL DEPENDS ${EMACS_FILES})
+#add_custom_target(M2-emacs ALL DEPENDS ${EMACS_FILES})
+add_custom_target(M2-emacs ALL)
 add_custom_command(OUTPUT ${EMACS_FILES}
   COMMENT "Generating Emacs package"
   COMMAND ${M2} ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/emacs/make-M2-emacs-help.m2
