@@ -11,8 +11,8 @@ if version#"VERSION" < "1.18" then error "this package requires Macaulay2 versio
 
 newPackage(
     "MultiprojectiveVarieties",
-    Version => "2.3", 
-    Date => "August 28, 2021",
+    Version => "2.4", 
+    Date => "October 9, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -561,38 +561,38 @@ ZZ * MultiprojectiveVariety := (n,X) -> (
     projectiveVariety((ideal X)^n,MinimalGenerators=>true,Saturate=>true)
 );
 
-MultiprojectiveVariety + MultiprojectiveVariety := (X,Y) -> (
-    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient multi-projective space";
-    projectiveVariety(intersect(ideal X,ideal Y),MinimalGenerators=>true,Saturate=>false)
-);
+MultiprojectiveVariety + MultiprojectiveVariety := (X,Y) -> ⋃ {X,Y};
 
 ⋃ = method();
 ⋃ List := L -> (
     if not(#L>0 and all(L,X -> instance(X,MultiprojectiveVariety))) then error "expected a list of multi-projective varieties"; 
+    if #L == 1 then return first L;
+    if (first L).cache#?("union",L) then return (first L).cache#("union",L);
     if # unique apply(L,ambient) > 1 then error "expected varieties in the same ambient multi-projective space";
-    projectiveVariety(intersect apply(L,ideal),MinimalGenerators=>true,Saturate=>false)   
+    (first L).cache#("union",L) = projectiveVariety(intersect apply(L,ideal),MinimalGenerators=>true,Saturate=>false)
 );
 
 MultiprojectiveVariety \ MultiprojectiveVariety := (X,Y) -> (
+    if X.cache#?("difference1",Y) then return X.cache#("difference1",Y);
     if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient multi-projective space";
-    projectiveVariety(quotient(ideal X,ideal Y,MinimalGenerators=>true),MinimalGenerators=>false,Saturate=>false)
+    X.cache#("difference1",Y) = projectiveVariety(quotient(ideal X,ideal Y,MinimalGenerators=>true),MinimalGenerators=>false,Saturate=>false)
 );
 
 MultiprojectiveVariety \\ MultiprojectiveVariety := (X,Y) -> (
+    if X.cache#?("difference2",Y) then return X.cache#("difference2",Y);
     if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient multi-projective space";
-    projectiveVariety(saturate(ideal X,ideal Y,MinimalGenerators=>true),MinimalGenerators=>false,Saturate=>false)
+    X.cache#("difference2",Y) = projectiveVariety(saturate(ideal X,ideal Y,MinimalGenerators=>true),MinimalGenerators=>false,Saturate=>false)
 );
 
-MultiprojectiveVariety * MultiprojectiveVariety := (X,Y) -> (
-    if ring ideal X =!= ring ideal Y then error "expected varieties in the same ambient multi-projective space";
-    projectiveVariety(ideal X + ideal Y,MinimalGenerators=>true,Saturate=>true)
-);
+MultiprojectiveVariety * MultiprojectiveVariety := (X,Y) -> ⋂ {X,Y};
 
 ⋂ = method();
 ⋂ List := L -> (
     if not(#L>0 and all(L,X -> instance(X,MultiprojectiveVariety))) then error "expected a list of multi-projective varieties"; 
+    if #L == 1 then return first L;
+    if (first L).cache#?("intersection",L) then return (first L).cache#("intersection",L);
     if # unique apply(L,ambient) > 1 then error "expected varieties in the same ambient multi-projective space";
-    projectiveVariety(sum apply(L,ideal),MinimalGenerators=>true,Saturate=>true)   
+    (first L).cache#("intersection",L) = projectiveVariety(sum apply(L,ideal),MinimalGenerators=>true,Saturate=>true)   
 );
 
 isSubset (MultiprojectiveVariety,MultiprojectiveVariety) := (X,Y) -> (
@@ -647,9 +647,15 @@ euler (MultiprojectiveVariety,Option) := (X,opt) -> (
 
 euler MultiprojectiveVariety := X -> euler(X,Verify=>true);
 
-basisMem = memoize((d,X) -> flatten entries gens image basis(d,ideal X));
+basisMem = (d,X) -> (
+    if X.cache#?(d,"basis") then return X.cache#(d,"basis");
+    J := ideal select(flatten entries gens ideal X,g -> all(degree g,d,(i,j) -> i<=j));
+    if numgens J == 0 then J = sub(J,ring ideal X);
+    X.cache#(d,"basis") = flatten entries gens image basis(d,J)
+);
 
 random (List,MultiprojectiveVariety) := o -> (l,X) -> (
+    l = deepSplice l;
     K := coefficientRing X;
     n := # X#"dimAmbientSpaces";
     if #l == n and all(l,j -> instance(j,ZZ)) then return random({l},X);
@@ -1312,6 +1318,19 @@ image MultirationalMap := Phi -> (
 RationalMap MultiprojectiveVariety := (Phi,X) -> (multirationalMap Phi) X;
 MultihomogeneousRationalMap MultiprojectiveVariety := (Phi,X) -> (multirationalMap Phi) X;
 
+image (MultirationalMap,ZZ) := (Phi,d) -> projectiveVariety(image(toRationalMap super Phi,d),MinimalGenerators=>false,Saturate=>false);
+image (ZZ,MultirationalMap) := (d,Phi) -> projectiveVariety(image(d,toRationalMap super Phi),MinimalGenerators=>false,Saturate=>false);
+
+image (MultirationalMap,String) := (Phi,alg) -> (
+    if Phi#"image" =!= null then return Phi#"image";
+    if Phi#"isDominant" === true then return target Phi;
+    Y := projectiveVariety(image(toRationalMap super Phi,alg),MinimalGenerators=>false,Saturate=>false);
+    if Phi#"image" === null then Phi#"image" = Y;
+    Phi#"isDominant" = Phi#"image" == target Phi;
+    if Phi#"isDominant" then Phi#"image" = target Phi;
+    return Phi#"image";
+);
+
 inverseImageViaMultirationalMapWeak = (Phi,Z) -> (
     if Phi.cache#?("inverseImage",Z) then return Phi.cache#("inverseImage",Z);
     if ring ambient target Phi =!= ring ambient Z then error "expected a multi-projective variety in the same ambient multi-projective space of the target of the map";
@@ -1794,6 +1813,13 @@ MultirationalMap << MultiprojectiveVariety := (Phi,Y) -> (
 );
 MultiprojectiveVariety << MultiprojectiveVariety := (X,Y) -> (1_X) << Y;
 
+rationalMap (MultiprojectiveVariety,Tally) := o -> (X,E) -> (
+    D := applyPairs(E,(k,v) -> if instance(k,MultiprojectiveVariety) then (idealOfSubvariety k,v) else (k,v));
+    f := multirationalMap rationalMap(ring X,D,Dominant=>o.Dominant);
+    if ring source f =!= ring X then error "internal error encountered: bad source found";
+    f#"source" = X;
+    return f;
+);
 
 beginDocumentation() 
 
@@ -3292,7 +3318,11 @@ undocumented {
 (multirationalMap,MultiprojectiveVariety,MultiprojectiveVariety,Boolean), -- Intended for internal use only
 (symbol ?,MultiprojectiveVariety,MultiprojectiveVariety),
 (Fano,EmbeddedProjectiveVariety,Option),
-(Fano,ZZ,EmbeddedProjectiveVariety,Option)}
+(Fano,ZZ,EmbeddedProjectiveVariety,Option),
+(image,MultirationalMap,ZZ),(image,ZZ,MultirationalMap), -- This is dangerous because the defining ideal may not be saturated
+(image,MultirationalMap,String),
+(rationalMap,MultiprojectiveVariety,Tally) -- It is already documented in Cremona.m2
+}
 
 ---------------
 ---- Tests ----

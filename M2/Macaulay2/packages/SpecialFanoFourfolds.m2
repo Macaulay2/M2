@@ -9,8 +9,8 @@
 
 newPackage(
     "SpecialFanoFourfolds",
-    Version => "2.3", 
-    Date => "August 28, 2021",
+    Version => "2.4", 
+    Date => "October 9, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -20,14 +20,14 @@ newPackage(
     Reload => false
 )
 
-if MultiprojectiveVarieties.Options.Version < "2.3" then (
-    <<endl<<"Your version of the MultiprojectiveVarieties package is outdated (required version 2.3 or newer);"<<endl;
+if MultiprojectiveVarieties.Options.Version < "2.4" then (
+    <<endl<<"Your version of the MultiprojectiveVarieties package is outdated (required version 2.4 or newer);"<<endl;
     <<"you can manually download the latest version from"<<endl;
     <<"https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages."<<endl;
     <<"To automatically download the latest version of MultiprojectiveVarieties in your current directory,"<<endl;
     <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
     <<///run "curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2";///<<endl<<endl<<"***"<<endl;
-    error "required MultiprojectiveVarieties package version 2.3 or newer";
+    error "required MultiprojectiveVarieties package version 2.4 or newer";
 );
 
 export{
@@ -132,17 +132,17 @@ specialCubicFourfold (String,Ring) := o -> (str,K) -> (
         return X;
     );
     if str === "quintic del Pezzo surface" then (
-        X = specialCubicFourfold(Var image rationalMap(ring PP_K^2,{3,4}),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X = specialCubicFourfold(surface({3,4},CoefficientRing=>K),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#"label" = "quinticDelPezzoSurface";
         return X;
     );
     if str === "quartic scroll" then (
-        X = specialCubicFourfold(Var image rationalMap(ring PP_K^2,{3,1,1}),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X = specialCubicFourfold(surface({3,1,1},CoefficientRing=>K),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#"label" = "quarticScrollSurface";
         return X;
     );
     if str === "C38" then (
-        X = specialCubicFourfold(Var image rationalMap(ring PP_K^2,{10,0,0,10}),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X = specialCubicFourfold(surface({10,0,0,10},CoefficientRing=>K),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#"label" = "C38Coble";
         return X;
     );
@@ -172,7 +172,7 @@ specialCubicFourfold (String,Ring) := o -> (str,K) -> (
        return X;
    );
    if str === "C32" then (
-        X = specialCubicFourfold(Var image rationalMap(ring PP_K^2,{9,1,4,6}),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X = specialCubicFourfold(surface({9,1,4,6},CoefficientRing=>K),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#"label" = "C32";
         return X;
    );
@@ -189,6 +189,13 @@ specialCubicFourfold String := o -> str -> specialCubicFourfold(str,ZZ/65521,Num
 
 surface = method(TypicalValue => EmbeddedProjectiveVariety);
 surface SpecialCubicFourfold := X -> X#"SurfaceContainedInTheFourfold";
+
+surface (VisibleList,Option) := (L,opt) -> (
+    o := toList opt;
+    if first o =!= CoefficientRing then error "CoefficientRing is the only available option for surface(VisibleList)";
+    image multirationalMap rationalMap(ring PP_(last o)^2,toList L)
+);
+surface List := L -> surface(L,CoefficientRing=>ZZ/65521)
 
 expression SpecialCubicFourfold := X -> expression("cubic fourfold containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X));
 
@@ -680,11 +687,7 @@ unirationalParametrization (SpecialCubicFourfold,EmbeddedProjectiveVariety) := (
     Psi
 );
 
-unirationalParametrization SpecialCubicFourfold := (cacheValue "unirationalParametrization") (X -> (
-    p := point X;
-    L := linearSpan {p,point coneOfLines(X,p)};
-    unirationalParametrization(X,L)
-));
+unirationalParametrization SpecialCubicFourfold := (cacheValue "unirationalParametrization") (X -> unirationalParametrization(X,line X));
 
 randomS42data = method();
 randomS42data Ring := K -> (
@@ -2067,7 +2070,8 @@ interpoleImage (RationalMap,List,ZZ) := o -> (g,D,j) -> (
 );
 
 mapDefinedByDivisor = method();
-mapDefinedByDivisor (QuotientRing,VisibleList) := (R,D) -> rationalMap(R,new Tally from apply(D,d -> first d => last d));
+mapDefinedByDivisor (QuotientRing,VisibleList) := (R,D) -> rationalMap(R,new Tally from apply(select(D,l -> last l > 0),d -> first d => last d));
+mapDefinedByDivisor (MultiprojectiveVariety,VisibleList) := (X,D) -> rationalMap(X,new Tally from apply(select(D,l -> last l > 0),d -> first d => last d));
 
 linearCombination = method();
 linearCombination (RingElement,Matrix) := (F,I) -> (
@@ -2489,6 +2493,23 @@ Inputs => {"X" => SpecialCubicFourfold => {"or ", ofClass SpecialGushelMukaiFour
 Outputs => {EmbeddedProjectiveVariety => {"the special surface contained in the fourfold ",TT"X"}}, 
 EXAMPLE {"X = specialCubicFourfold \"quintic del Pezzo surface\";", "S = surface X;", "assert isSubset(S,X)"}} 
 
+document { 
+Key => {(surface, List),(surface, VisibleList, Option)},
+Headline => "get a rational surface", 
+Usage => "surface {a,i,j,k,...}
+surface({a,i,j,k,...},CoefficientRing=>K)",
+Inputs => {List => {"a list ",TEX///$\{a,i,j,k,\ldots\}$///," of nonnegative integers"}}, 
+Outputs => {EmbeddedProjectiveVariety => {"the image of the rational map defined by the linear system of curves of degree ",TEX///$a$///," in ",TEX///$\mathbb{P}_{K}^2$///," having ",TEX///$i$///," random base points of multiplicity 1, ",TEX///$j$///," random base points of multiplicity 2, ",TEX///$k$///," random base points of multiplicity 3, and so on until the last integer in the given list."}},
+PARA{"In the example below, we take the image of the rational map defined by the linear system of septic plane curves with 3 random simple base points and 9 random double points."}, 
+EXAMPLE { 
+"S = surface {7,3,9};",
+"coefficientRing S",
+"T = surface({7,3,9},CoefficientRing=>ZZ/33331);",
+"X = specialCubicFourfold(T,NumNodes=>0);",
+"coefficientRing X",
+"describe X"},
+SeeAlso => {(rationalMap,PolynomialRing,List)}}
+
 document {Key => {unirationalParametrization, (unirationalParametrization, SpecialCubicFourfold), (unirationalParametrization, SpecialCubicFourfold, EmbeddedProjectiveVariety), (unirationalParametrization, SpecialGushelMukaiFourfold)}, 
 Headline => "unirational parametrization", 
 Usage => "unirationalParametrization X", 
@@ -2720,7 +2741,7 @@ for dg in {(2,0),(3,1),(4,1),(5,1),(4,3),(6,4),(8,5),(10,6),(12,7),(14,8),(16,9)
 ///
 
 TEST /// -- Test 5 -- rational and unirational parametrizations
-X = specialCubicFourfold image multirationalMap rationalMap(ring PP_(ZZ/333331)^2,{3,4});
+X = specialCubicFourfold surface({3,4},CoefficientRing=>ZZ/333331);
 time h = parametrize X;
 assert(degree(h,Strategy=>"random point") == 1 and target h === X and ambient source h == source h and h#"inverse" =!= null);
 time f = unirationalParametrization X;
