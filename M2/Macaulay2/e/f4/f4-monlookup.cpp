@@ -536,34 +536,26 @@ void minimalize_varpower_monomials(const VECTOR(varpower_monomial) & elems,
                                    VECTOR(int) & result_minimals,
                                    stash *mi_stash)
 {
-  VECTOR(VECTOR(int) *) bins;
-  for (int j = 0; j < elems.size(); j++)
+  std::vector<std::pair<int, int>> degs_and_indices;
+  int count = 0;
+  for (auto& b : elems)
     {
-      varpower_word d = varpower_monomials::simple_degree(elems[j]);
-      if (d >= bins.size())
-        for (int i = INTSIZE(bins); i <= d; i++) bins.push_back(nullptr);
-      if (bins[d] == nullptr) bins[d] = new VECTOR(int);
-      bins[d]->push_back(j);
+      int deg = varpower_monomials::simple_degree(b);
+      degs_and_indices.push_back(std::make_pair(deg, count));
+      ++count;
     }
+  std::stable_sort(degs_and_indices.begin(), degs_and_indices.end());
 
-  // Now insert these into a lookup table
-  F4MonomialLookupTableT<int> M(
-      10, mi_stash);  // The 10 is simply a suggested start value
-  for (int i = 0; i < bins.size(); i++)
-    if (bins[i] != nullptr)
-      {
-        for (VECTOR(int)::iterator j = bins[i]->begin(); j != bins[i]->end();
-             j++)
-          {
-            int k;
-            if (!M.find_one_divisor_vp(0, elems[*j], k))
-              {
-                M.insert_minimal_vp(0, elems[*j], 0);
-                result_minimals.push_back(*j);
-              }
-          }
-        freemem(bins[i]);
-      }
+  F4MonomialLookupTableT<int> M(10, mi_stash); // 10 is simply a suggested value
+  for (auto p : degs_and_indices)
+    {
+      int k; // unused: we only care if there is a divisor, not which index it has
+      if (!M.find_one_divisor_vp(0, elems[p.second], k))
+        {
+          M.insert_minimal_vp(0, elems[p.second], 0);
+          result_minimals.push_back(p.second);
+        }
+    }
 }
 
 template class F4MonomialLookupTableT<int32_t>;

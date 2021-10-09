@@ -1,5 +1,19 @@
 // Copyright 1994-2021 Michael E. Stillman
 
+// TODO MES:
+//  rename Nmi_node
+//  rename new_mi_node
+//  remove union in the Nmi_node: Baggage, down pointers will always be there.
+//  sat: do not loop if J is 0 or 1!
+//       perhaps first call radical on J?  (or is this being done in m2 code?)
+//  rewrite delete of a MonomialIdeal
+//  MonomialIdeal ==> rename to e.g. MonomialLookupTable
+//  A MonomialIdeal should be an engine object, which contains a MonomialLookupTable, and a ring.
+// Maybe:
+//   MonomialLookupTable
+//   some functions in a namespace, otherwise global, that compute sat, quotient, radical, etc.
+//   MonomialIdeal: engine object which is interned, and the monomial ideal is deleted on finalization.
+// Memory layout for this data structure?
 #include "monideal.hpp"
 #include "monoid.hpp"
 #include "text-io.hpp"
@@ -29,7 +43,7 @@ void MonomialIdeal::remove_MonomialIdeal()
   if ((count % 2) == 1) delete mi_stash;
 }
 
-Nmi_node *MonomialIdeal::new_mi_node(int v, int e, Nmi_node *d)
+Nmi_node *MonomialIdeal::new_internal_mi_node(int v, int e, Nmi_node *d)
 {
   Nmi_node *p = reinterpret_cast<Nmi_node *>(mi_stash->new_elem());
   p->var = v;
@@ -42,7 +56,7 @@ Nmi_node *MonomialIdeal::new_mi_node(int v, int e, Nmi_node *d)
   return p;
 }
 
-Nmi_node *MonomialIdeal::new_mi_node(int v, int e, Bag *b)
+Nmi_node *MonomialIdeal::new_leaf_mi_node(int v, int e, Bag *b)
 {
   Nmi_node *p = reinterpret_cast<Nmi_node *>(mi_stash->new_elem());
   p->var = v;
@@ -55,6 +69,9 @@ Nmi_node *MonomialIdeal::new_mi_node(int v, int e, Bag *b)
   return p;
 }
 
+// TODO: this is recursive, not so good for large monomial ideals!
+//   So replace this with something iterative.
+// Really: should be named: delete_monideal_tree or something like that...
 void MonomialIdeal::delete_mi_node(Nmi_node *p)
 {
   if (p == nullptr) return;
@@ -257,10 +274,9 @@ void MonomialIdeal::find_all_divisors(const int *exp, VECTOR(Bag *)& b) const
 
 int MonomialIdeal::search(const int *m, Bag *&b) const
 {
-  int *exp = newarray_atomic(int, get_ring()->n_vars());
+  int* exp = ARRAY_ON_STACK(int, get_ring()->n_vars());
   varpower::to_ntuple(get_ring()->n_vars(), m, exp);
   int result = search_expvector(exp, b);
-  freemem(exp);
   return result;
 }
 
@@ -314,15 +330,15 @@ void MonomialIdeal::insert1(Nmi_node *&top, Bag *b)
       if (*p == nullptr)
         {
           // make a new header node
-          *p = new_mi_node(insert_var, 0, up);
+          *p = new_internal_mi_node(insert_var, 0, up);
           (*p)->header = (*p)->left = (*p)->right = *p;
         }
       else if ((*p)->var < insert_var)
         {
           // make a new layer
           Nmi_node *header_node, *zero_node;
-          header_node = new_mi_node(insert_var, 0, up);
-          zero_node = new_mi_node(insert_var, 0, *p);
+          header_node = new_internal_mi_node(insert_var, 0, up);
+          zero_node = new_internal_mi_node(insert_var, 0, *p);
 
           header_node->left = header_node->right = zero_node;
           (*p)->down() = zero_node;
@@ -349,14 +365,14 @@ void MonomialIdeal::insert1(Nmi_node *&top, Bag *b)
 
           if (i.valid())
             {
-              insert_node = new_mi_node(
+              insert_node = new_internal_mi_node(
                 insert_var, insert_exp, static_cast<Nmi_node*>(nullptr));
               q->insert_to_left(insert_node);
               q = insert_node;
             }
           else
             {
-              insert_node = new_mi_node(insert_var, insert_exp, b);
+              insert_node = new_leaf_mi_node(insert_var, insert_exp, b);
               q->insert_to_left(insert_node);
               return;
             }
@@ -368,8 +384,8 @@ void MonomialIdeal::insert1(Nmi_node *&top, Bag *b)
   if (one_element)
     {
       // insert a header node and a var/exp = 0/0 leaf
-      top = new_mi_node(0, 0, static_cast<Nmi_node *>(nullptr));
-      Nmi_node *leaf_node = new_mi_node(0, 0, b);
+      top = new_internal_mi_node(0, 0, static_cast<Nmi_node *>(nullptr));
+      Nmi_node *leaf_node = new_leaf_mi_node(0, 0, b);
       top->left = top->right = leaf_node;
       top->header = leaf_node->header = leaf_node->left = leaf_node->right =
           top;
@@ -555,6 +571,50 @@ void MonomialIdeal::debug_check() const
     }
   assert(mi != nullptr);
   assert(debug_check(mi, nullptr) == count / 2);
+}
+
+bool MonomialIdeal::isWellFormed() const
+{
+  if (mi == nullptr) return true; // nothing else to check.
+
+  Nmi_node* p = mi;
+  while (p != nullptr)
+    {
+      // check the current node
+      if (p->left == nullptr) throw exc::engine_error("left node link is null");
+      if (p->right == nullptr) throw exc::engine_error("right node link is null");
+      if (p->header == nullptr) throw exc::engine_error("header node link is null");
+      if (p->tag == Nmi_node::node and p != mi and p->val.down == nullptr) throw exc::engine_error("down node link is null");
+
+      // now go to the next node
+      // if this is a leaf, go right.
+      // if this is a header, go down (up), and one left
+      // if this is an internal node, go down (to subtree).
+      if (p->tag == Nmi_node::node and p->header != p)
+        p = p->val.down;
+      else if (p->tag == Nmi_node::node and p->header == p)
+        {
+          // this is a header node (head of the double linked list at this level)
+          // Let's check all of the elements in the double ring at this level.
+          for (Nmi_node* q = p->right; q != p; q = q->right)
+            {
+              if (p->var != q->var) throw exc::engine_error("variable index is not consistent");
+              if (q->left->right != q) throw exc::engine_error("the double link list is inconsistent");
+              if (q->left != p and q->left->exp >= q->exp) throw exc::engine_error("exponents are not increasing going to the right");
+            }
+ 
+          // Now we continue 
+          p = p->val.down;
+          if (p != nullptr)
+            p = p->right;
+        }
+      else if (p->tag == Nmi_node::leaf)
+        {
+          p = p->right;
+        }
+    }
+
+  return true;
 }
 
 int MonomialIdeal::insert(Bag *b)

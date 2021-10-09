@@ -250,8 +250,6 @@ engine.o :						\
 	@srcdir@/../e/freemod.hpp			\
 	@srcdir@/../e/schorder.hpp			\
 	@srcdir@/../e/monideal.hpp			\
-	@srcdir@/../e/queue.hpp				\
-	@srcdir@/../e/index.hpp				\
 	@srcdir@/../e/int-bag.hpp			\
 	@srcdir@/../e/polyring.hpp			\
 	@srcdir@/../e/interface/computation.h		\

@@ -213,6 +213,7 @@ darwin64-appleclang : always
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-download
+#		--enable-build-libraries="cohomcalg"
 
 darwin64-latestclang : always
 	mkdir -p builds.tmp/darwin64-latestclang

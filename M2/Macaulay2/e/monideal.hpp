@@ -76,8 +76,8 @@ class MonomialIdeal : public EngineObject
   friend class MinimalPrimes;
 
  private:
-  Nmi_node *new_mi_node(int v, int e, Nmi_node *d);
-  Nmi_node *new_mi_node(int v, int e, Bag *b);
+  Nmi_node *new_internal_mi_node(int v, int e, Nmi_node *d);
+  Nmi_node *new_leaf_mi_node(int v, int e, Bag *b);
   void delete_mi_node(Nmi_node *p);
 
   Nmi_node *first_node() const;
@@ -91,6 +91,7 @@ class MonomialIdeal : public EngineObject
   void do_tree(Nmi_node *p, int depth, int indent, int disp) const;
   int debug_check(Nmi_node *p, const Nmi_node *up) const;
 
+  bool isWellFormed() const; // throws errors, or returns true, currently.
  protected:
   virtual unsigned int computeHashValue() const;
 
