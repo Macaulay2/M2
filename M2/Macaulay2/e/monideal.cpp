@@ -7,6 +7,8 @@
 #include "debug.hpp"
 #include <iostream>
 
+bool debug_in_sat = false;
+
 unsigned int MonomialIdeal::computeHashValue() const
 {
   // Incorporate the length and the first 5 elements
@@ -32,6 +34,7 @@ void MonomialIdeal::remove_MonomialIdeal()
 Nmi_node *MonomialIdeal::new_mi_node(int v, int e, Nmi_node *d)
 {
   Nmi_node *p = reinterpret_cast<Nmi_node *>(mi_stash->new_elem());
+  if (debug_in_sat) std::cout << "creating internal node " << p << std::endl;
   p->var = v;
   p->exp = e;
   p->left = NULL;
@@ -45,6 +48,7 @@ Nmi_node *MonomialIdeal::new_mi_node(int v, int e, Nmi_node *d)
 Nmi_node *MonomialIdeal::new_mi_node(int v, int e, Bag *b)
 {
   Nmi_node *p = reinterpret_cast<Nmi_node *>(mi_stash->new_elem());
+  if (debug_in_sat) std::cout << "creating leaf node     " << p << std::endl;
   p->var = v;
   p->exp = e;
   p->left = NULL;
@@ -65,6 +69,7 @@ void MonomialIdeal::delete_mi_node(Nmi_node *p)
     }
   else
     delete p->baggage();
+  if (debug_in_sat) std::cout << "deleting node " << p << std::endl;
   mi_stash->delete_elem(p);
 }
 
@@ -76,6 +81,7 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *RR, stash *mi_stash0)
       count = 1;
       mi_stash = new stash("mi_node", sizeof(Nmi_node));
     }
+  if (debug_in_sat) std::cout << "creating monideal default " << std::endl;
 }
 
 MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
@@ -84,6 +90,7 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
                              stash *mi_stash0)
     : R(R0), mi(0), count(0), mi_stash(mi_stash0)
 {
+  if (debug_in_sat) std::cout << "creating monideal default with rejects " << std::endl;
   if (mi_stash == 0)
     {
       count = 1;
@@ -122,6 +129,7 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0,
                              stash *mi_stash0)
     : R(R0), mi(0), count(0), mi_stash(mi_stash0)
 {
+  if (debug_in_sat) std::cout << "creating monideal default with queue " << std::endl;
   if (mi_stash == 0)
     {
       count = 1;
@@ -737,6 +745,7 @@ MonomialIdeal *MonomialIdeal::quotient(const int *m) const
 
 MonomialIdeal *MonomialIdeal::quotient(const MonomialIdeal &J) const
 {
+  debug_in_sat = true;
   std::cout << std::endl << "called quotient" << std::endl;
   MonomialIdeal *result = new MonomialIdeal(get_ring());
   Bag *b = new Bag();
@@ -765,6 +774,7 @@ MonomialIdeal *MonomialIdeal::quotient(const MonomialIdeal &J) const
       delete result;
       result = next_result;
     }
+  debug_in_sat = false;
   return result;
 }
 
@@ -831,6 +841,7 @@ MonomialIdeal *MonomialIdeal::erase(const int *m) const
 
 MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
 {
+  debug_in_sat = true;
   std::cout << std::endl << "cout called sat" << std::endl;
   std::cerr << "cerr called sat" << std::endl;
   MonomialIdeal *result = new MonomialIdeal(get_ring());
@@ -860,6 +871,7 @@ MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
       delete result;
       result = next_result;
     }
+  debug_in_sat = false;
   return result;
 }
 
