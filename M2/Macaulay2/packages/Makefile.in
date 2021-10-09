@@ -10,7 +10,7 @@ ALL_PACKAGES = $(shell cat @srcdir@/=distributed-packages)
 PACKAGES = $(ALL_PACKAGES)
 
 # packages under development that should be checked but not installed:
-DEVEL = EngineTests
+DEVEL = # EngineTests
 
 MakeDocumentation ?= true
 RemakeAllDocumentation ?= false

@@ -29,7 +29,9 @@ ENDMACRO ()
 ## Package options
 ## The default is to install all distributed packages
 set(PACKAGES "${DISTRIBUTED_PACKAGES}" CACHE INTERNAL "the list of packages to install")
-set(PACKAGES_DEVEL       "EngineTests" CACHE INTERNAL "the list of packages to only check")
+set(PACKAGES_DEVEL       "" CACHE INTERNAL "the list of packages to only check")
+#set(PACKAGES_DEVEL       "EngineTests" CACHE INTERNAL "the list of packages to only check")
+
 ## Arguments to M2
 set(errorDepth                  "3" CACHE STRING "set the error printing depth")
 set(debugLevel                  "0" CACHE STRING "set the debugging level")
