@@ -574,6 +574,16 @@ bool MonomialIdeal::isWellFormed() const
         p = p->val.down;
       else if (p->tag == Nmi_node::node and p->header == p)
         {
+          // this is a header node (head of the double linked list at this level)
+          // Let's check all of the elements in the double ring at this level.
+          for (Nmi_node* q = p->right; q != p; q = q->right)
+            {
+              if (p->var != q->var) throw exc::engine_error("variable index is not consistent");
+              if (q->left->right != q) throw exc::engine_error("the double link list is inconsistent");
+              if (q->left != p and q->left->exp >= q->exp) throw exc::engine_error("exponents are not increasing going to the right");
+            }
+ 
+          // Now we continue 
           p = p->val.down;
           if (p != nullptr)
             p = p->right;
