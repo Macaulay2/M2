@@ -737,15 +737,31 @@ MonomialIdeal *MonomialIdeal::quotient(const int *m) const
 
 MonomialIdeal *MonomialIdeal::quotient(const MonomialIdeal &J) const
 {
+  std::cout << std::endl << "called quotient" << std::endl;
   MonomialIdeal *result = new MonomialIdeal(get_ring());
   Bag *b = new Bag();
   varpower::one(b->monom());
   result->insert(b);
+
+  J.isWellFormed(); // allow to crash.
   for (Index<MonomialIdeal> i = J.first(); i.valid(); i++)
     {
+      std::cout << "iterator i: " << i.val() << std::endl;
+    }
+  
+  for (Index<MonomialIdeal> i = J.first();
+       i.valid();
+       i++)
+    {
+      std::cout << "about to create result1" << std::endl;
       MonomialIdeal *result1 = quotient(operator[](i)->monom().raw());
+      result1->isWellFormed();
+      std::cout << "about to create next_result" << std::endl;
       MonomialIdeal *next_result = result->intersect(*result1);
+      next_result->isWellFormed();
+      std::cout << "about to delete result1" << std::endl;
       delete result1;
+      std::cout << "about to delete result" << std::endl;
       delete result;
       result = next_result;
     }
@@ -828,11 +844,19 @@ MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
       std::cout << "iterator i: " << i.val() << std::endl;
     }
 
-  for (Index<MonomialIdeal> i = J.first(); i.valid(); i++)
+  for (Index<MonomialIdeal> i = J.first();
+       i.valid();
+       i++)
     {
+      std::cout << "about to create result1" << std::endl;
       MonomialIdeal *result1 = erase(operator[](i)->monom().raw());
+      result1->isWellFormed();
+      std::cout << "about to create next_result" << std::endl;
       MonomialIdeal *next_result = result->intersect(*result1);
+      next_result->isWellFormed();
+      std::cout << "about to delete result1" << std::endl;
       delete result1;
+      std::cout << "about to delete result" << std::endl;
       delete result;
       result = next_result;
     }
