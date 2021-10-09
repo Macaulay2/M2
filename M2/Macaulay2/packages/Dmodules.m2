@@ -14,7 +14,7 @@ newPackage("Dmodules",
      PackageImports => {"PrimaryDecomposition","ReesAlgebra","Elimination"}
      )
 
-export { "kappaAnnF1PlanarCurve", "reiffen", "kOrderAnnFa", "kOrderAnnFs", "kDiffFs",
+export { "kappaAnnF1PlanarCurve", "reiffen", "kOrderAnnFa", "kOrderAnnFs",
      "localBFunction", "multiplierIdeal", "ViaElimination", "ViaColonIdeal", "ViaLinearAlgebra",
      "isInMultiplierIdeal", "generalizedBFunction", "mGeneralizedBFunction",
      "jumpingCoefficients", "hasRationalSing",

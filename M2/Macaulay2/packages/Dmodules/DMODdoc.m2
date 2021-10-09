@@ -6,6 +6,7 @@ load "Dmodules/DOC/Dsystems.m2" -- some examples of D-modules
 load "Dmodules/DOC/canonicalSeries.m2" -- some examples of D-modules
 load "Dmodules/DOC/general.m2"
 load "Dmodules/DOC/localCohom.m2"
+load "Dmodules/DOC/paco-anton-paper.m2"
 
 document {
      Key => "Dmodules",
@@ -902,23 +903,15 @@ document {
      }
 
 document {
-     Key => {[Dlocalize,Strategy],[DlocalizeAll,Strategy],[Dlocalization,Strategy],[DlocalizeMap,Strategy]},
+     Key => {[Dlocalize,Strategy],[DlocalizeAll,Strategy],[Dlocalization,Strategy],[DlocalizeMap,Strategy],
+	 Oaku,OTW,OTWcyclic},
      Headline=>"strategy for computing a localization of a D-module",
      UL{
-	  {BOLD "Oaku", " -- use the Oaku algorithm"},
-	  {BOLD "OTW", " -- use the Oaku-Takayama-Walther algorithm"}
+	  {BOLD "Oaku", " -- use Oaku's algorithm"},
+	  {BOLD "OTW", " -- use Oaku-Takayama-Walther's algorithm"},
+	  {BOLD "OTWcyclic", " -- use Oaku-Takayama-Walther's algorithm for a cyclic module"}
 	  }
      }
-document {
-     Key => Oaku,
-     Headline => "an option for Dlocalize=>Strategy",
-     "see ", TO "Dlocalize"
-     } 
-document {
-     Key => OTW,
-     Headline => "an option for Dlocalize=>Strategy",
-     "see ", TO "Dlocalize"
-     } 
 
 document {
      Key => {Dlocalize, (Dlocalize,Ideal,RingElement), (Dlocalize,Module,RingElement)},

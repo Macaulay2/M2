@@ -1,17 +1,5 @@
 -- Copyright 1999-2008 by Anton Leykin and Harrison Tsai
 
--- TESTS TO WRITE (exported symbols);
---    AnnFs List
---    kDiffs
---    kOrderAnnFa
---    kOrderAnnFs
---    kappaAnnF1PlanarCurve
-
--- TESTS TO WRITE (unexported symbols);
---    diffRatFun (List, RingElement)
---    diffRatFun (List, RingElement, ZZ)
---    kCoeffVectorWRTs
-
 ---------------------------------------------------------------------------------
 AnnFs = method()
 AnnFs RingElement := Ideal => f -> (
