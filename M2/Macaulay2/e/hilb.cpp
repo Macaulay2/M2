@@ -2,6 +2,7 @@
 
 #include <limits>
 #include <cstdlib>
+#include <algorithm>
 
 #include "hilb.hpp"
 #include "relem.hpp"

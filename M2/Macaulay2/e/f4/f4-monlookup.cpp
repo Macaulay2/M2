@@ -12,6 +12,7 @@
 #include <gc/gc_allocator.h>         // for gc_allocator
 #include <cstdint>                   // for int32_t
 #include <vector>                    // for vector, vector<>::iterator
+#include <algorithm>
 
 template <typename Key>
 typename F4MonomialLookupTableT<Key>::mi_node *
