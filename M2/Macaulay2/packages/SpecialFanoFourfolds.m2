@@ -848,6 +848,8 @@ specialGushelMukaiFourfold Ideal := o -> S -> (
     );
 );
 
+specialGushelMukaiFourfold EmbeddedProjectiveVariety := o -> S -> specialGushelMukaiFourfold(idealOfSubvariety S,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+
 specialGushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
     G14 := Grass(1,4,K,Variable=>"p");
     local X;
@@ -919,7 +921,7 @@ specialGushelMukaiFourfold String := o -> str -> specialGushelMukaiFourfold(str,
 
 surface SpecialGushelMukaiFourfold := X -> X#"SurfaceContainedInTheFourfold";
 
-expression SpecialGushelMukaiFourfold := X -> expression("GM fourfold containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X)|(if X.cache#?"classSurfaceInG14" then (" with class "|toString(first cycleClass X)) else ""));
+expression SpecialGushelMukaiFourfold := X -> expression("GM fourfold containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X)|(if X.cache#?(surface X,"classSurfaceInG14") then (" with class "|toString(first cycleClass X)) else ""));
 
 describe SpecialGushelMukaiFourfold := X -> (
     S := surface X;
@@ -1524,12 +1526,12 @@ cycleClass EmbeddedProjectiveVariety := X -> (
 );
 
 cycleClass SpecialGushelMukaiFourfold := X -> (
-    if X.cache#?"classSurfaceInG14" then return X.cache#"classSurfaceInG14";
+    if X.cache#?(surface X,"classSurfaceInG14") then return X.cache#(surface X,"classSurfaceInG14");
     S := ideal surface X;
     j := toRationalMap toGrass X;
     cS := cycleClass j S;
     ab := toSequence flatten entries lift(transpose last coefficients(cS,Monomials=>vars ring cS),ZZ);
-    X.cache#"classSurfaceInG14" = (cS,ab)
+    X.cache#(surface X,"classSurfaceInG14") = (cS,ab)
 );
 
 ------------------------------------------------------------------------
@@ -2263,13 +2265,14 @@ Outputs => {SpecialGushelMukaiFourfold => {"the special Gushel-Mukai fourfold co
 PARA{"In the following example, we define a Gushel-Mukai fourfold containing a so-called ", TEX///$\tau$///, "-quadric."}, 
 EXAMPLE {"K = ZZ/33331; x = gens ring PP_K^8;", "S = projectiveVariety ideal(x_6-x_7, x_5, x_3-x_4, x_1, x_0-x_4, x_2*x_7-x_4*x_8);", "X = projectiveVariety ideal(x_4*x_6-x_3*x_7+x_1*x_8, x_4*x_5-x_2*x_7+x_0*x_8, x_3*x_5-x_2*x_6+x_0*x_8+x_1*x_8-x_5*x_8, x_1*x_5-x_0*x_6+x_0*x_7+x_1*x_7-x_5*x_7, x_1*x_2-x_0*x_3+x_0*x_4+x_1*x_4-x_2*x_7+x_0*x_8, x_0^2+x_0*x_1+x_1^2+x_0*x_2+2*x_0*x_3+x_1*x_3+x_2*x_3+x_3^2-x_0*x_4-x_1*x_4-2*x_2*x_4-x_3*x_4-2*x_4^2+x_0*x_5+x_2*x_5+x_5^2+2*x_0*x_6+x_1*x_6+2*x_2*x_6+x_3*x_6+x_5*x_6+x_6^2-3*x_4*x_7+2*x_5*x_7-x_7^2+x_1*x_8+x_3*x_8-3*x_4*x_8+2*x_5*x_8+x_6*x_8-x_7*x_8);", "time F = specialGushelMukaiFourfold(S,X);", "time describe F", "assert(F == X)"}} 
 
-document {Key => {(specialGushelMukaiFourfold, Ideal)}, 
+document {Key => {(specialGushelMukaiFourfold, EmbeddedProjectiveVariety),(specialGushelMukaiFourfold, Ideal)}, 
 Headline => "random special Gushel-Mukai fourfold", 
-Usage => "specialGushelMukaiFourfold I", 
-Inputs => {"I" => Ideal => {"the ideal of a smooth irreducible surface in the coordinate ring of a del Pezzo fivefold or del Pezzo sixfold (e.g., an ideal in the ring ", TO Grass, TEX///$(1,4)$///, ")"}}, 
+Usage => "specialGushelMukaiFourfold S
+specialGushelMukaiFourfold (S%Y)", 
+Inputs => {"S" => EmbeddedProjectiveVariety => {"a smooth irreducible surface ",TEX///$S$///," which is a ",TO2{(symbol %,MultiprojectiveVariety,MultiprojectiveVariety),"subvariety"}," of a del Pezzo fivefold/sixfold ",TEX///$Y$///,"; alternatively, you can pass the ideal of ",TEX///$S$///," in ",TEX///$Y$///," (e.g., an ideal in the ring ", TO Grass, TEX///$(1,4)$///, ")"}}, 
 Outputs => {SpecialGushelMukaiFourfold => {"a random special Gushel-Mukai fourfold containing the given surface"}}, 
-EXAMPLE {"G = Grass(1,4,ZZ/33331);", "-- cubic scroll in G(1,4)"|newline|"I = schubertCycle({2,0},G) + schubertCycle({1,0},G) + schubertCycle({1,0},G)", "X = specialGushelMukaiFourfold I;", "discriminant X"}, 
-SeeAlso => (specialGushelMukaiFourfold, String, Ring)} 
+EXAMPLE {"Y := projectiveVariety Grass(1,4,ZZ/33331);", "-- cubic scroll in G(1,4)"|newline|"S = schubertCycle({2,0},Y) * schubertCycle({1,0},Y) * schubertCycle({1,0},Y);", "X = specialGushelMukaiFourfold (S%Y);", "discriminant X"}, 
+SeeAlso => {(specialGushelMukaiFourfold, String, Ring),(symbol %,MultiprojectiveVariety,MultiprojectiveVariety)}} 
 
 document {Key => {(specialGushelMukaiFourfold, String, Ring), (specialGushelMukaiFourfold, String)}, 
 Headline => "random special Gushel-Mukai fourfold of a given type", 
