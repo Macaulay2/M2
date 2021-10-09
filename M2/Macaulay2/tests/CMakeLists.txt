@@ -12,7 +12,7 @@
 set(SUBDIRS normal slow gigantic goals quarantine engine threads)
 
 add_custom_target(M2-tests)
-add_dependencies(M2-tests M2-tests-ComputationsBook) # M2-tests-rationality
+#add_dependencies(M2-tests M2-tests-ComputationsBook) # M2-tests-rationality
 
 ###############################################################################
 ## Default resource limits

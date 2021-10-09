@@ -82,6 +82,7 @@ class MonomialIdeal : public EngineObject
   void do_tree(Nmi_node *p, int depth, int indent, int disp) const;
   int debug_check(Nmi_node *p, const Nmi_node *up) const;
 
+  bool isWellFormed() const;
  protected:
   virtual unsigned int computeHashValue() const;
 

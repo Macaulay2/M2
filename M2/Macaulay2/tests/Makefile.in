@@ -13,7 +13,8 @@ include Makefile.test
 
 TARGETS = all check status
 CLEANTARGETS = clean distclean
-SUBDIRS = ComputationsBook normal threads slow gigantic goals quarantine
+SUBDIRS = normal threads slow gigantic goals quarantine
+#SUBDIRS = ComputationsBook normal threads slow gigantic goals quarantine
 define do-in-subdirs
 $(foreach d,$(SUBDIRS),
 	$(eval .PHONY: $1-in-subdirs)

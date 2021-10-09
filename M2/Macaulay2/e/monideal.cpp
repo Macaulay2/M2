@@ -546,6 +546,38 @@ void MonomialIdeal::debug_check() const
   assert(debug_check(mi, NULL) == count / 2);
 }
 
+bool MonomialIdeal::isWellFormed() const
+{
+  Nmi_node* p = mi;
+
+  while (p != nullptr)
+    {
+      // check the current node
+      if (p->left == nullptr) throw exc::engine_error("left node link is null");
+      if (p->right == nullptr) throw exc::engine_error("right node link is null");
+      if (p->header == nullptr) throw exc::engine_error("header node link is null");
+      if (p->tag == Nmi_node::node and p != mi and p->val.down == nullptr) throw exc::engine_error("down node link is null");
+
+      // now go to the next node
+      // if this is a leaf, go right.
+      // if this is a header, go down (up), and one left
+      // if this is an internal node, go down (to subtree).
+      if (p->tag == Nmi_node::node and p->header != p)
+        p = p->val.down;
+      else if (p->tag == Nmi_node::node and p->header == p)
+        {
+          p = p->val.down;
+          if (p != nullptr)
+            p = p->right;
+        }
+      else if (p->tag == Nmi_node::leaf)
+        {
+          p = p->right;
+        }
+    }
+  return true;
+}
+
 int MonomialIdeal::insert(Bag *b)
 // Insert the monomial (and baggage) 'm', if it
 // is not already in the monomial ideal.  Return whether the
@@ -783,12 +815,19 @@ MonomialIdeal *MonomialIdeal::erase(const int *m) const
 
 MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
 {
-  std::cout << "cout called sat" << std::endl;
+  std::cout << std::endl << "cout called sat" << std::endl;
   std::cerr << "cerr called sat" << std::endl;
   MonomialIdeal *result = new MonomialIdeal(get_ring());
   Bag *b = new Bag();
   varpower::one(b->monom());
   result->insert(b);
+
+  J.isWellFormed(); // allow to crash.
+  for (Index<MonomialIdeal> i = J.first(); i.valid(); i++)
+    {
+      std::cout << "iterator i: " << i.val() << std::endl;
+    }
+
   for (Index<MonomialIdeal> i = J.first(); i.valid(); i++)
     {
       MonomialIdeal *result1 = erase(operator[](i)->monom().raw());
