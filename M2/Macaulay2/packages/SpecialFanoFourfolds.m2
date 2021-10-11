@@ -10,7 +10,7 @@
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.4", 
-    Date => "October 9, 2021",
+    Date => "October 11, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -321,7 +321,7 @@ associatedK3surface SpecialCubicFourfold := o -> X -> (
         if o.Verbose then <<"-- computing the map mu from P^5 to P^4 defined by the quadrics through the surface S_14"<<endl;
         mu = fanoMap X;
         if o.Verbose then <<"-- computing the surface U corresponding to the fourfold X"<<endl;
-        U = ideal matrix toRationalMap parametrize X;
+        U = ideal matrix parametrize X;
         I2 = arandom({3},S);
         if o.Verbose then <<"-- computing the surface U' corresponding to another fourfold X'"<<endl;
         U2 = ideal matrix inverse3(mu|I2);
@@ -338,7 +338,7 @@ associatedK3surface SpecialCubicFourfold := o -> X -> (
         if o.Verbose then <<"-- computing the map mu from P^5 to P^5 defined by the quadrics through the surface S_14"<<endl;
         mu = fanoMap X;
         if o.Verbose then <<"-- computing the surface U corresponding to the fourfold X"<<endl;
-        U = trim lift(ideal matrix toRationalMap parametrize X,ambient target mu);
+        U = trim lift(ideal matrix parametrize X,ambient target mu);
         I2 = arandom({3},S);
         if o.Verbose then <<"-- computing the surface U' corresponding to another fourfold X'"<<endl;
         U2 = trim lift(ideal matrix inverse3(mu|I2),ambient target mu);
@@ -1086,7 +1086,7 @@ associatedK3surface SpecialGushelMukaiFourfold := o -> X -> (
         if o.Verbose then <<"   of degree 1 through the tau quadric surface"<<endl;
         mu = fanoMap X;
         if o.Verbose then <<"-- computing the surface U corresponding to the fourfold X"<<endl;
-        U = ideal matrix toRationalMap parametrize X;
+        U = ideal matrix parametrize X;
         I2 = trim((ideal source mu) + (ideal arandom(2,S)));
         if o.Verbose then <<"-- computing the surface U' corresponding to another fourfold X'"<<endl;
         U2 = ideal matrix inverse3(mu|I2);

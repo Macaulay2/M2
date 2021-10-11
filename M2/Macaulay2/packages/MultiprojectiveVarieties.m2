@@ -12,7 +12,7 @@ if version#"VERSION" < "1.18" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.4", 
-    Date => "October 9, 2021",
+    Date => "October 11, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -313,7 +313,7 @@ describe MultiprojectiveVariety := X -> (
     (expressionVar(dim X,n))|cutOut
 );
 
-degrees MultiprojectiveVariety := X -> pairs tally degrees ideal X;
+degrees MultiprojectiveVariety := (cacheValue "degreesGensIdeal") (X -> sort pairs tally degrees ideal X);
 
 shape MultiprojectiveVariety := X -> X#"dimAmbientSpaces";
 
@@ -954,6 +954,8 @@ makeSubvariety Ideal := o -> I -> (
 );
 makeSubvariety RingElement := o -> F -> makeSubvariety ideal F;
 MultiprojectiveVariety % MultiprojectiveVariety := (X,Y) -> makeSubvariety(X,Y,Verify=>true);
+projectiveVariety Matrix := o -> M -> makeSubvariety ideal M;
+projectiveVariety RingElement := o -> f -> makeSubvariety f;
 
 tangentialChowForm (EmbeddedProjectiveVariety,ZZ,ZZ) := o -> (X,s,l) -> (
     S := o.SingularLocus;
@@ -1113,6 +1115,11 @@ toRationalMap (MultirationalMap,Boolean) := (Phi,withInverse) -> (
     return f;
 );
 toRationalMap MultirationalMap := Phi -> toRationalMap(Phi,true);
+
+matrix MultirationalMap := o -> Phi -> (
+    if # factor Phi > 1 then error "expected a multi-rational map whose target is embedded in a single projective space"; 
+    matrix first factor Phi
+);
 
 multirationalMap (MultirationalMap,MultiprojectiveVariety) := (Phi,Y) -> (
     if Y === target Phi then return Phi;
@@ -1524,6 +1531,32 @@ degree (MultirationalMap,Option) := (Phi,opt) -> (
     );
 );
 
+projectiveDegrees MultirationalMap := o -> Phi -> (
+    if o.NumDegrees < 0 then return {};
+    r := dim source Phi;
+    ll := {(r - min(r,o.NumDegrees))..r};
+    certificate := "MathMode: output certified!"|newline;
+    if Phi#"multidegree" =!= null then (if o.MathMode and o.Verbose then <<certificate; return (Phi#"multidegree")_ll);
+    if o.MathMode or # shape source Phi > 1 or # shape target Phi > 1 then (
+        graph(Phi,BlowUpStrategy=>o.BlowUpStrategy);
+        d := multidegree Phi;
+        if o.MathMode and o.Verbose then <<certificate;
+        return d_ll;
+    ) else return projectiveDegrees(toRationalMap Phi,MathMode=>o.MathMode,NumDegrees=>o.NumDegrees,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+);
+
+degreeMap MultirationalMap := o -> Phi -> (
+    certificate := "MathMode: output certified!"|newline;
+    if o.MathMode or Phi#"isBirational" === true or (Phi#"multidegree" =!= null and Phi#"image" =!= null) then (
+        -- this ignores the option BlowUpStrategy
+        d := degree Phi;
+        if o.MathMode and o.Verbose then <<certificate; 
+        return d;
+    );
+    if # shape target Phi == 1 then return degreeMap(toRationalMap Phi,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+    return degree(Phi,Strategy=>"random point");
+);
+
 baseLocus = method(TypicalValue => MultiprojectiveVariety);
 baseLocus MultirationalMap := Phi -> (
     if Phi#"baseLocus" =!= null then return Phi#"baseLocus";    
@@ -1859,7 +1892,7 @@ PARA{"Use this option only in the case you know that the ideal ",TT"I"," is alre
 SeeAlso => {projectiveVariety,[projectiveVariety,Saturate]}}
 
 document { 
-Key => {projectiveVariety, (projectiveVariety,Ideal), (projectiveVariety,Ring)}, 
+Key => {projectiveVariety, (projectiveVariety,Ideal), (projectiveVariety,Ring), (projectiveVariety,Matrix), (projectiveVariety,RingElement)}, 
 Headline => "the closed multi-projective subvariety defined by a multi-homogeneous ideal", 
 Usage => "projectiveVariety I", 
 Inputs => { "I" => Ideal => {"a homogeneous ideal in a polynomial ring ",TEX///$R$///," with the ",TEX///$\mathbb{Z}^n$///,"-grading where the degree of each variable is a standard basis vector, that is, ",TEX///$R$///," is the homogeneous coordinate ring of a product of ",TEX///$n$///," projective spaces ",TEX///$\mathbb{P}^{k_1}\times\mathbb{P}^{k_2}\times\cdots\times\mathbb{P}^{k_n}$///}},
@@ -2510,7 +2543,7 @@ SeeAlso => {(multidegree,MultirationalMap),(projectiveDegrees,RationalMap),(degr
 References => {"ArXiv preprint: ",HREF{"https://arxiv.org/abs/2101.04503","Computations with rational maps between multi-projective varieties"},"."}}
 
 document { 
-Key => {(multidegree,MultirationalMap)}, 
+Key => {(multidegree,MultirationalMap),(projectiveDegrees,MultirationalMap)}, 
 Headline => "projective degrees of a multi-rational map", 
 Usage => "multidegree Phi", 
 Inputs => { 
@@ -2523,7 +2556,7 @@ EXAMPLE {
 "Phi = last graph rationalMap {f,g};",
 "time multidegree Phi",
 "(degree source Phi,degree image Phi)"},
-SeeAlso => {(multidegree,ZZ,MultirationalMap),(multidegree,RationalMap),(degree,MultirationalMap)},
+SeeAlso => {(multidegree,ZZ,MultirationalMap),(multidegree,RationalMap),(degree,MultirationalMap),(projectiveDegrees,RationalMap)},
 References => {"ArXiv preprint: ",HREF{"https://arxiv.org/abs/2101.04503","Computations with rational maps between multi-projective varieties"},"."}}
 
 document { 
@@ -2545,7 +2578,7 @@ PARA{"Note, as in the example above, that calculation times may vary depending o
 SeeAlso => {(degree,MultirationalMap),(degreeMap,RationalMap),(multidegree,ZZ,MultirationalMap),(point,MultiprojectiveVariety),(symbol ^*,MultirationalMap)}}
 
 document { 
-Key => {(degree,MultirationalMap)}, 
+Key => {(degree,MultirationalMap),(degreeMap,MultirationalMap)}, 
 Headline => "degree of a multi-rational map", 
 Usage => "degree Phi", 
 Inputs => { 
@@ -2557,7 +2590,7 @@ EXAMPLE {
 "ZZ/300007[x_0..x_3], f = rationalMap {x_2^2-x_1*x_3, x_1*x_2-x_0*x_3, x_1^2-x_0*x_2}, g = rationalMap {x_1^2-x_0*x_2, x_0*x_3, x_1*x_3, x_2*x_3, x_3^2};",
 "Phi = last graph rationalMap {f,g};",
 "time degree Phi"},
-SeeAlso => {(degree,MultirationalMap,Option),(degree,RationalMap),(multidegree,MultirationalMap)}}
+SeeAlso => {(degree,MultirationalMap,Option),(degree,RationalMap),(multidegree,MultirationalMap),(degreeMap,RationalMap)}}
 
 document { 
 Key => {(isMorphism,MultirationalMap)}, 
@@ -3321,7 +3354,8 @@ undocumented {
 (Fano,ZZ,EmbeddedProjectiveVariety,Option),
 (image,MultirationalMap,ZZ),(image,ZZ,MultirationalMap), -- This is dangerous because the defining ideal may not be saturated
 (image,MultirationalMap,String),
-(rationalMap,MultiprojectiveVariety,Tally) -- It is already documented in Cremona.m2
+(rationalMap,MultiprojectiveVariety,Tally), -- It is already documented in Cremona.m2
+(matrix,MultirationalMap)
 }
 
 ---------------
@@ -3342,7 +3376,7 @@ assert(image Phi == target Phi and degree Phi == 1 and multidegree Phi == {3, 6,
 inverse(Phi,Verify=>true);
 assert(Phi * (inverse Phi) == 1 and (inverse Phi) * Phi == 1);
 B = baseLocus inverse Phi;
-assert(dim B == 2 and degree B == 14 and dim singularLocus B == -1 and degrees B == {({2,1},1),({1,2},1)});
+assert(dim B == 2 and degree B == 14 and dim singularLocus B == -1 and degrees B == {({1,2},1),({2,1},1)});
 (p1,p2) = graph Phi;
 assert((multidegree p1, multidegree p2) == ({141, 63, 25, 9, 3}, {141, 78, 40, 18, 6}));
 inverse(p1,Verify=>true);
@@ -3360,8 +3394,8 @@ assert((degree source h, degree target h) == (771, 141));
 
 TEST ///
 strForTest := "multi-rational map consisting of 2 rational maps
-source variety: threefold in PP^3 x PP^2 x PP^4 cut out by 12 hypersurfaces of multi-degrees (1,1,0)^2 (1,0,1)^7 (0,0,2)^1 (0,1,1)^2 
-target variety: threefold in PP^2 x PP^4 cut out by 3 hypersurfaces of multi-degrees (1,1)^2 (0,2)^1 
+source variety: threefold in PP^3 x PP^2 x PP^4 cut out by 12 hypersurfaces of multi-degrees (0,0,2)^1 (0,1,1)^2 (1,0,1)^7 (1,1,0)^2 
+target variety: threefold in PP^2 x PP^4 cut out by 3 hypersurfaces of multi-degrees (0,2)^1 (1,1)^2 
 base locus: empty subscheme of PP^3 x PP^2 x PP^4
 dominance: true
 multidegree: {66, 46, 31, 20}
@@ -3369,7 +3403,6 @@ degree: 1
 degree sequence (map 1/2): [(0,1,0), (0,0,2), (1,0,1), (2,0,0)]
 degree sequence (map 2/2): [(0,0,1), (2,0,0)]
 coefficient ring: ZZ/300007";
-
 R = ZZ/300007[x_0..x_3];
 C3 = ideal(x_2^2-x_1*x_3,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2);
 C2 = ideal(x_1^2-x_0*x_2,x_3);
@@ -3436,14 +3469,16 @@ inverse(Eta'',Verify=>4)
 TEST///
 Phi = last graph rationalMap projectiveVariety({1},{4},ZZ/300007);
 assert(multidegree(,Phi) == multidegree Phi)
+assert(projectiveDegrees Phi == multidegree Phi)
 degree(Phi,Strategy=>"random point")
 R = ZZ/33331[x_0..x_4];
 Phi = (last graph multirationalMap rationalMap transpose jacobian(-x_2^3+2*x_1*x_2*x_3-x_0*x_3^2-x_1^2*x_4+x_0*x_2*x_4))||projectiveVariety ideal(random(2,R));
-assert(? source Phi == "threefold in PP^4 x PP^4 cut out by 13 hypersurfaces of multi-degrees (1,1)^3 (0,2)^1 (2,1)^8 (4,0)^1 ")
+assert(? source Phi == "threefold in PP^4 x PP^4 cut out by 13 hypersurfaces of multi-degrees (0,2)^1 (1,1)^3 (2,1)^8 (4,0)^1 ")
 assert(? target Phi == "hypersurface in PP^4 defined by a form of degree 2")
 assert(degree(Phi,Strategy=>"random point") == 2)
 assert(degree(Phi,Strategy=>"0-th projective degree") == 2)
 assert(degree Phi == 2)
+assert(degreeMap Phi == 2)
 ///
 
 TEST ///
