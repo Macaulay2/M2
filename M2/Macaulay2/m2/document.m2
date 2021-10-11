@@ -687,6 +687,7 @@ undocumented Thing := key -> if key =!= null then (
 	    }))
 
 -- TODO: what does this do?
+-- somehow, this is the very first method called by the Core!!
 undocumented keys undocumentedkeys
 undocumentedkeys = null
 undocumented' = x -> error "late use of function undocumented'"
