@@ -609,15 +609,17 @@ document {
      "The command ", TO "needs", " can be used to load a file only if
      it hasn't already been loaded.",
      EXAMPLE ///needs fn///,
-     "For debugging or display purposes, it is sometimes useful to be able 
-     to simulate entering the lines of a file one by one, so they appear
-     on the screen along with prompts and output lines.  We use
-     ", TO "input", " for
-     this.",
-     EXAMPLE ///input fn///,
-     "There are other ways to manipulate the contents of a file with
-     multiple lines.  First, let's use ", TO "peek", " to observe the 
-     extent of this string returned by ", TO "get", ".",
+     PARA {
+	  "For debugging or display purposes, it is sometimes useful to be able 
+	  to simulate entering the lines of a file one by one, so they appear
+	  on the screen along with prompts and output lines.  One may use
+	  ", TO "input", " for that."
+	  -- we don't illustrate the use of 'input' here, because the documentation example parser can't handle it
+	  },
+     PARA {
+	  "There are other ways to manipulate the contents of a file with
+	  multiple lines.  First, let's use ", TO "peek", " to observe the 
+	  extent of this string returned by ", TO "get", "."},
      EXAMPLE ///peek get fn///,
      "The resulting string has newlines in it; we can use ", TO "lines", "
      to break it apart into a list of strings, with one row in each string.",
