@@ -51,7 +51,8 @@ export{
    "InputCheck",
    "associatedK3surface",
    "fanoFourfold",
-   "parametrizeFanoFourfold"
+   "parametrizeFanoFourfold",
+   "trisecantFlop"
 }
 
 needsPackage "IntegralClosure"; -- for method: normalization
@@ -2244,6 +2245,40 @@ eulerHilbertPol = method();
 eulerHilbertPol EmbeddedProjectiveVariety := (cacheValue "eulerHilbertPol") (X -> euler(hilbertPolynomial ideal X));
 
 ------------------------------------------------------------------------
+--------------------------- Trisecant Flops ----------------------------
+------------------------------------------------------------------------
+
+trisecantFlop = method(Options => {Verbose => false});
+trisecantFlop ZZ := o -> i -> (
+    try needsPackage "TrisecantFlops" else (
+        git := findProgram("git", "git --help");
+        dir := temporaryFileName() | "/";
+        mkdir dir;
+        <<"The package TrisecantFlops is not present."<<endl;
+        e := "";
+        while not(e == "y" or e == "yes" or e == "Y" or e == "Yes") do (
+            e = read("Do you want to download the latest version of the package now? (y/n) ");
+            if e == "n" or e == "no" or e == "N" or e == "No" then error "required package TrisecantFlops";
+        );
+        <<"-- downloading the package TrisecantFlops from https://github.com/giovannistagliano"<<endl;    
+        runProgram(git,"clone --depth 1 --no-checkout https://github.com/giovannistagliano/TrisecantFlops.git", RunDirectory => dir);
+        runProgram(git, "checkout master", RunDirectory => dir | "/TrisecantFlops");
+        if not fileExists(dir|"/TrisecantFlops/TrisecantFlops.m2") then error "something went wrong in downloading the package TrisecantFlops";
+        try needsPackage("TrisecantFlops",FileName => dir|"/TrisecantFlops/TrisecantFlops.m2") else error "something went wrong in loading the package TrisecantFlops";
+        <<"The package TrisecantFlops has been successfully loaded."<<endl;
+        f := "";
+        while not(f == "y" or f == "yes" or f == "Y" or f == "Yes" or f == "n" or f == "no" or f == "N" or f == "No") 
+        do f = read("Do you want to install the package for future use? (y/n) ");
+        if f == "y" or f == "yes" or f == "Y" or f == "Yes" then (
+            <<"-- installing the package TrisecantFlops"<<endl;    
+            installPackage("TrisecantFlops",Verbose => false,FileName => dir|"/TrisecantFlops/TrisecantFlops.m2");
+        );
+    );
+    if not member(value "TrisecantFlops",loadedPackages) then error "something went wrong";
+    value("trisecantFlop("|toString(i)|",Verbose=>"|toString(o.Verbose)|")")    
+);
+
+------------------------------------------------------------------------
 ---------------------------- Documentation -----------------------------
 ------------------------------------------------------------------------
 
@@ -2641,6 +2676,15 @@ Outputs => {SpecialGushelMukaiFourfold => {"which is mathematically identical to
 PARA{"This function is only useful for testing."},
 EXAMPLE {"X = specialGushelMukaiFourfold \"cubic scroll\"", "X' = clean X", "X === X'"},
 SeeAlso => {(clean,SpecialCubicFourfold)}}
+
+document {
+Key => {trisecantFlop,[trisecantFlop,Verbose]}, 
+Headline => "examples of trisecant flops", 
+Usage => "trisecantFlop i", 
+Inputs => {"i" => ZZ => {"an integer between 0 and 17"}},
+Outputs => {{"the i-th example of birational map ",TEX///$X\dashrightarrow W$///," in accordance to the Table 1 in the paper ",HREF{"https://arxiv.org/abs/1909.01263","Trisecant Flops, their associated K3 surfaces and the rationality of some Fano fourfolds"},"."}}, 
+PARA{"This function requires the package ",HREF{"https://github.com/giovannistagliano/TrisecantFlops","TrisecantFlops"},". If not present the user will be asked to automatically install the package."}}
+undocumented {(trisecantFlop,ZZ)}
 
 undocumented {(random,SpecialCubicFourfold),(random,SpecialGushelMukaiFourfold),(symbol **,SpecialCubicFourfold,Ring),(symbol **,SpecialGushelMukaiFourfold,Ring)}
 
