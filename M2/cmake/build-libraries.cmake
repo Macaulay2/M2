@@ -304,8 +304,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries mpfr mp MPFR_FOUND)
 
 # http://perso.ens-lyon.fr/nathalie.revol/software.html
 ExternalProject_Add(build-mpfi
-  URL               https://gforge.inria.fr/frs/download.php/file/38111/mpfi-1.5.4.tgz
-  URL_HASH          SHA256=3b3938595d720af17973deaf727cfc0dd41c8b16c20adc103a970f4a43ae3a56
+  URL               ${M2_SOURCE_URL}/mpfi-1.5.4.tar.gz
+  URL_HASH          SHA256=32e6ad529c97aa5ce03e28d01c921d1bce1a464fb4c57fbc248d7be21e652782
   PREFIX            libraries/mpfi
   SOURCE_DIR        libraries/mpfi/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -316,7 +316,6 @@ ExternalProject_Add(build-mpfi
                       --with-gmp=${MP_ROOT}
                       --with-mpfr=${MPFR_ROOT}
                       ${shared_setting}
-                      ${assert_setting}
                       CC=${CMAKE_C_COMPILER}
                       CFLAGS=${CFLAGS}
                       CPPFLAGS=${CPPFLAGS}
