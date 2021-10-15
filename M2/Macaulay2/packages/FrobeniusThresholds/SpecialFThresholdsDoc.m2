@@ -16,9 +16,9 @@ doc ///
         P:Product
             a product of polynomials 
         AtOrigin => Boolean
-            tells the function whether to only consider the behavior at the origin
+            tells the function whether to consider only the behavior at the origin
         Verbose => Boolean
-            toggles verbose output
+            whether the output is to be verbose
     Outputs
         :Boolean
             {\tt true} if the factors of {\tt f} are in simple normal crossing, {\tt false} otherwise

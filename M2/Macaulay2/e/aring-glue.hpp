@@ -130,6 +130,17 @@ class ConcreteRing : public Ring
     R->clear(a);
     return ret;
   }
+    
+  virtual bool from_Interval(gmp_RRi q, ring_elem &result) const
+  {
+     ElementType a;
+     R->init(a);
+     bool ret = get_from_Interval(*R, a, q);
+     if (ret) R->to_ring_elem(result, a);
+     R->clear(a);
+     return ret;
+   }
+    
   virtual bool from_BigComplex(gmp_CC q, ring_elem &result) const
   {
     ElementType a;
@@ -712,6 +723,8 @@ bool ConcreteRing<RingType>::promote(const Ring *R,
               return RP::promoter<ARingQQ, ARingRR>(R, S, fR, resultS);
             case M2::ring_RRR:
               return RP::promoter<ARingQQ, ARingRRR>(R, S, fR, resultS);
+            case M2::ring_RRi:
+              return RP::promoter<ARingQQ, ARingRRi>(R, S, fR, resultS);
             case M2::ring_CC:
               return RP::promoter<ARingQQ, ARingCC>(R, S, fR, resultS);
             case M2::ring_CCC:
@@ -726,6 +739,8 @@ bool ConcreteRing<RingType>::promote(const Ring *R,
               return RP::promoter<ARingRR, ARingRR>(R, S, fR, resultS);
             case M2::ring_RRR:
               return RP::promoter<ARingRR, ARingRRR>(R, S, fR, resultS);
+            case M2::ring_RRi:
+              return RP::promoter<ARingRR, ARingRRi>(R, S, fR, resultS);
             case M2::ring_CC:
               return RP::promoter<ARingRR, ARingCC>(R, S, fR, resultS);
             case M2::ring_CCC:
@@ -740,12 +755,26 @@ bool ConcreteRing<RingType>::promote(const Ring *R,
               return RP::promoter<ARingRRR, ARingRR>(R, S, fR, resultS);
             case M2::ring_RRR:
               return RP::promoter<ARingRRR, ARingRRR>(R, S, fR, resultS);
+            case M2::ring_RRi:
+              return RP::promoter<ARingRRR, ARingRRi>(R, S, fR, resultS);
             case M2::ring_CC:
               return RP::promoter<ARingRRR, ARingCC>(R, S, fR, resultS);
             case M2::ring_CCC:
               return RP::promoter<ARingRRR, ARingCCC>(R, S, fR, resultS);
             default:
               return false;
+          }
+      case M2::ring_RRi:
+        switch (S->ringID())
+           {
+              case M2::ring_RR:
+                return RP::promoter<ARingRRi, ARingRR>(R, S, fR, resultS);
+              case M2::ring_RRR:
+                return RP::promoter<ARingRRi, ARingRRR>(R, S, fR, resultS);
+              case M2::ring_RRi:
+                return RP::promoter<ARingRRi, ARingRRi>(R, S, fR, resultS);
+              default:
+                 return false;
           }
       case M2::ring_CC:
         switch (S->ringID())
@@ -845,6 +874,8 @@ bool ConcreteRing<RingType>::lift(const Ring *R,
               return RP::lifter<ARingRR, ARingRR>(R, S, result_gR, gS);
             case M2::ring_RRR:
               return RP::lifter<ARingRR, ARingRRR>(R, S, result_gR, gS);
+            case M2::ring_RRi:
+              return RP::lifter<ARingRR, ARingRRi>(R, S, result_gR, gS);
             case M2::ring_CC:
               return RP::lifter<ARingRR, ARingCC>(R, S, result_gR, gS);
             case M2::ring_CCC:
@@ -859,6 +890,8 @@ bool ConcreteRing<RingType>::lift(const Ring *R,
               return RP::lifter<ARingRRR, ARingRR>(R, S, result_gR, gS);
             case M2::ring_RRR:
               return RP::lifter<ARingRRR, ARingRRR>(R, S, result_gR, gS);
+            case M2::ring_RRi:
+              return RP::lifter<ARingRRR, ARingRRi>(R, S, result_gR, gS);
             case M2::ring_CC:
               return RP::lifter<ARingRRR, ARingCC>(R, S, result_gR, gS);
             case M2::ring_CCC:
@@ -1234,6 +1267,12 @@ inline unsigned long ConcreteRing<ARingCC>::get_precision() const
 
 template <>
 inline unsigned long ConcreteRing<ARingRRR>::get_precision() const
+{
+  return R->get_precision();
+}
+    
+template <>
+inline unsigned long ConcreteRing<ARingRRi>::get_precision() const
 {
   return R->get_precision();
 }

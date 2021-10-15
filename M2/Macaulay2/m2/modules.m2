@@ -1,12 +1,12 @@
  --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "reals.m2" -- for inexact number
+needs "ofcm.m2"  -- for degreesMonoid
+
 -----------------------------------------------------------------------------
 -- Matrix
 
-ModuleMap = new Type of HashTable
-ModuleMap.synonym = "module map"
-
-Matrix = new Type of ModuleMap
+Matrix = new Type of HashTable
 Matrix.synonym = "matrix"
 raw Matrix := f -> f.RawMatrix
 ring Matrix := f -> (
@@ -45,9 +45,9 @@ scan( {ZZ,QQ}, K -> (
 	  ))
 
 scan((
-	  (ZZ, { QQ, RR', CC' }),
-	  (QQ, { RR', CC' }),
-	  (RR',{ RR', CC' }),
+	  (ZZ, { QQ, RR', CC', RRi' }),
+	  (QQ, { RR', CC', RRi' }),
+	  (RR',{ RR', CC', RRi' }),
 	  (CC', { CC' })
 	  ), 
      (K,Ls) -> scan(Ls, L -> (

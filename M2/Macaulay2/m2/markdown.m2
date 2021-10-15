@@ -16,6 +16,8 @@ markdown HEAD := x -> concatenate("---\n",
 markdown BODY := x -> concatenate(shorten apply(x, markdown))
 *-
 
+needs "format.m2"
+
 -----------------------------------------------------------------------------
 -- Local utilities
 -----------------------------------------------------------------------------
@@ -44,7 +46,7 @@ markdown TITLE := x -> concatenate("title: ", apply(x, markdown), newline)
 
 markdown BODY  := x -> concatenate(
     "{% raw %}", shorten apply(x, markdown), "{% endraw %}")
-markdown SPAN  := x -> concatenate(apply(x, markdown), newline)
+markdown SPAN  := x -> concatenate(apply(x, markdown), newline) -- TODO: should this have a newline?
 markdown PARA  := x -> concatenate(apply(x, markdown), 2:newline)
 markdown DIV   := x -> (
     c := (parseAttr(DIV, x))#"class";

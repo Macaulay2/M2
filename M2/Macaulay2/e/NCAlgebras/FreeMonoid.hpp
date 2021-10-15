@@ -129,31 +129,36 @@ public:
   void wordFromMonom(Word& result, const Monom& m) const;
   void wordPrefixFromMonom(Word& result, const Monom& m, int endIndex) const;
   void wordSuffixFromMonom(Word& result, const Monom& m, int beginIndex) const;
-  void monomPrefixFromMonom(std::vector<int>& result, const Monom& m, int toDrop) const;
-  void monomSuffixFromMonom(std::vector<int>& result, const Monom& m, int toDrop) const;
   void monomInsertFromWord(MonomialInserter& result, const Word& w) const;
 
   // some functions to create monoms from words and monoms, placing result in
   // a MemoryBlock object.  This is primarily for NCF4.
-  Monom wordProductAsMonom(const Word& left, const Word& right, MemoryBlock& memBlock) const;
-  Monom wordProductAsMonom(const Word& left, const Word& mid, const Word& right, MemoryBlock & memBlock) const;
-  Word wordProductAsWord(const Word& left, const Word& right, MemoryBlock& memBlock) const;
-  Word wordProductAsWord(const Word& left, const Word& mid, const Word& right, MemoryBlock& memBlock) const;
-
+  Monom wordProductAsMonom(const Word& left,
+                           const Word& right,
+                           MemoryBlock& memBlock) const;
+  Monom wordProductAsMonom(const Word& left,
+                           const Word& mid,
+                           const Word& right,
+                           MemoryBlock & memBlock) const;
   Monom wordProductAsMonom(const Word& left,
                            const Monom& mid,
                            const Word& right,
                            MemoryBlock & memBlock) const;
+
+  Word wordProductAsWord(const Word& left,
+                         const Word& right,
+                         MemoryBlock& memBlock) const;
+  Word wordProductAsWord(const Word& left,
+                         const Word& mid,
+                         const Word& right,
+                         MemoryBlock& memBlock) const;
+
   
   int wordHeft(Word& word) const { return wordWeight(word, mHeftDegrees, 0); }
   int wordHeft(Word& word, int start_index) const { return wordWeight(word, mHeftDegrees, start_index); }
 
   // monomial support functions
   void support(const Monom& m, std::vector<int>& result) const;
-
-  // first and last variable functions
-  Word firstVar(const Monom& m) const;
-  Word lastVar(const Monom& m) const;
 
 private:
   int wordLength(const Monom&m) const { return m[0] - mNumWeights - 1; }

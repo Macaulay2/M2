@@ -6,7 +6,8 @@
 #include "res-a0.hpp"
 #include "res-a2.hpp"
 #include "finalize.hpp"
-#include "f4/res-f4-computation.hpp"
+#include "schreyer-resolution/res-f4-computation.hpp"
+#include "NCResolutions/nc-res-computation.hpp"
 
 #include <iostream>
 
@@ -33,6 +34,13 @@ ResolutionComputation *ResolutionComputation::choose_res(
   // the heft values of the variables are all positive.
   // All of these algorithms also assume that R is a polynomial ring.
 
+  const M2FreeAlgebraOrQuotient *NCP = R->cast_to_M2FreeAlgebraOrQuotient();
+  if (NCP != nullptr)
+    {
+      if (M2_gbTrace > 0) emit_line("NC resolution");
+      C = createNCRes(m, max_level, strategy);
+      return C;
+    }
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == nullptr)
     {

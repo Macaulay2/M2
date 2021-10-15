@@ -22,7 +22,7 @@ ARingZZ* makeIntegerRing()
 
 const CoefficientRingR *Ring::getCoefficientRingR() const
 {
-  if (cR == 0) cR = new CoefficientRingR(this);
+  if (cR == nullptr) cR = new CoefficientRingR(this);
   return cR;
 }
 
@@ -34,7 +34,7 @@ void Ring::initialize_ring(long P0,
   // If this is a basic routine, K = this, M = trivial monoid.
   // If this is a frac field, K = R, M = trivial monoid.
   mCharacteristic = P0;
-  if (DR == 0)
+  if (DR == nullptr)
     degree_ring = PolyRing::get_trivial_poly_ring();
   else
     degree_ring = DR;
@@ -228,6 +228,13 @@ bool Ring::from_BigReal(gmp_RR z, ring_elem &result) const
   result = from_long(0);
   return false;
 }
+
+bool Ring::from_Interval(gmp_RRi z, ring_elem &result) const
+{
+   result = from_long(0);
+   return false;
+}
+
 bool Ring::from_double(double a, ring_elem &result) const
 {
   result = from_long(0);

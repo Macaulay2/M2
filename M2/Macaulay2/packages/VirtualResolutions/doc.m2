@@ -41,7 +41,7 @@ doc ///
      paper, one may construct a virtual resolution of a module from its graded minimal free resolution and
      an element of the multigraded Castelnuovo-Mumford regularity of the module. (See Maclagan and Smith's paper
      {\em Multigraded Castelnuovo-Mumford Regularity} (see [MS04, @arXiv "math/0305214"@]) for the definition of multigraded regularity.)
-     Building on the @TO TateOnProducts@ package, this package contains a function allowing one
+     Building on the @TO TateOnProducts@ and @TO LinearTruncations@ packages, this package contains a function allowing one
      to compute the minimal elements of the multigraded Castelnuovo-Mumford regularity of a $B$-saturated module.
 
      Continuing the example from above, we see that $(2,0)$ is an element of the multigraded
@@ -99,10 +99,10 @@ doc ///
     Description
         Text
             Given the irrelevant ideal irr of a NormalToricVariety and a chain complex C, isVirtual returns true if
-            {\tt C}is a virtual resolution of some module. If not, it returns false. This is done by checking that the
+            {\tt C} is a virtual resolution of some module. If not, it returns false. This is done by checking that the
 	    higher homology groups of {\tt C}are supported on the irrelevant ideal.
 
-            If debugLevel is larger than zero, the homological degree where isVirtual fails is printed.
+            If @TO "debugLevel"@ is larger than zero, the homological degree where isVirtual fails is printed.
         Example
           R = ZZ/101[s,t];
           isVirtual(ideal(s,t),res ideal(t))
@@ -532,6 +532,8 @@ doc ///
           largest twist to compute cohomology for
         LowerLimit=>List
           smallest twist to compute cohomology for
+        Strategy=>String
+          implemented strategies are @TT "\"CohomologySearch\""@ and @TT "\"TruncationSearch\""@ (default)
     Outputs
         :List
           a list of multidegrees
@@ -541,11 +543,14 @@ doc ///
           minimal elements of the multigraded Castelnuovo-Mumford regularity of M as defined in Definition 1.1
           of [MS04] (see @arXiv "math/0305214"@). If the input is an ideal, multigraded regularity of $S^1/I$ is computed.
 
-          This is done by calling the @TO cohomologyHashTable@ method from @TO TateOnProducts@ and checking for the
-          multidegrees where Hilbert polynomial and Hilbert function match and where the higher sheaf cohomology
-          vanishes.
-
-          Note that the module or ideal is assumed to be saturated by the irrelevant ideal of the Cox ring.
+          There are two strategies implemented and run using @TO hooks@:
+        Tree
+          :@TT "Strategy => \"CohomologySearch\""@
+            :This strategy calls the @TO cohomologyHashTable@ method from @TO TateOnProducts@ and checks for the multidegrees where the Hilbert polynomial and Hilbert function match and where the higher sheaf cohomology vanishes.
+          :@TT "Strategy => \"TruncationSearch\""@ (default)
+            :This strategy uses @TO isQuasiLinear@ method from @TO LinearTruncations@ to search for the multidegrees where the module is regular by checking the Betti numbers of the truncation of the module. This strategy is much faster.
+        Text
+          Note that both strategies require the module or ideal to be saturated by the irrelevant ideal of the Cox ring.
 
           As an example, here we compute the minimal elements of the multigraded regularity for Example 1.4
           of [BES20] (see @arXiv "1703.07631"@). We consider the example of a hyperelliptic curve of genus 4 in $\PP^1\times\PP^2$.
@@ -557,10 +562,14 @@ doc ///
           After saturating the defining ideal by the irrelevant ideal we may compute its multigraded regularity.
         Example
           J = saturate(I,B);
-          debugLevel = 1
+          --debugLevel = 1
           L = multigradedRegularity(X, J)
         Text
+          If @TO "debugLevel"@ is larger than zero, additional information about the degree search is printed.
+
           This method also accepts the ring provided by @TO productOfProjectiveSpaces@ from the @TO TateOnProducts@ package.
+    Contributors
+      Lauren Cranton Heller contributed to the code for this method.
     Caveat
         The input is assumed to be saturated.
         Moreover, if the input is a module generated in non-positive degrees, then the output may be incorrect.

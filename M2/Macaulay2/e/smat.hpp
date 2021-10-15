@@ -253,7 +253,7 @@ typename SMat<CoeffRing>::sparsevec *SMat<CoeffRing>::vec_new() const
 template <typename CoeffRing>
 void SMat<CoeffRing>::vec_remove_node(sparsevec *&v) const
 {
-  deleteitem(v);
+  freemem(v);
 }
 
 template <typename CoeffRing>
@@ -759,7 +759,7 @@ void SMat<CoeffRing>::vec_permute(sparsevec *&v,
     if (w->row >= start_row && w->row < end_row)
       w->row = start_row + perminv[w->row - start_row];
   vec_sort(v);
-  deletearray(perminv);
+  freemem(perminv);
 }
 
 template <typename CoeffRing>
@@ -996,7 +996,7 @@ bool SMat<CoeffRing>::row_permute(size_t start_row, M2_arrayint perm)
       if (!done[j])
         {
           ERROR("expected permutation");
-          deletearray(done);
+          freemem(done);
           return false;
         }
       done[j] = false;
@@ -1018,7 +1018,7 @@ bool SMat<CoeffRing>::column_permute(size_t start_col, M2_arrayint perm)
       if (!done[j])
         {
           ERROR("expected permutation");
-          deletearray(done);
+          freemem(done);
           return false;
         }
       done[j] = false;
@@ -1027,8 +1027,8 @@ bool SMat<CoeffRing>::column_permute(size_t start_col, M2_arrayint perm)
     tmpvecs[i] = columns_[start_col + perm->array[i]];
   for (size_t i = 0; i < ncols_to_permute; i++)
     columns_[start_col + i] = tmpvecs[i];
-  deletearray(tmpvecs);
-  deletearray(done);
+  freemem(tmpvecs);
+  freemem(done);
   return true;
 }
 
@@ -1044,7 +1044,7 @@ void SMat<CoeffRing>::insert_columns(size_t i, size_t n_to_add)
   for (size_t c = 0; c < i; c++) columns_[c] = tmp[c];
   for (size_t c = i; c < orig_ncols; c++) columns_[c + n_to_add] = tmp[c];
 
-  deletearray(tmp);
+  freemem(tmp);
 }
 
 template <typename CoeffRing>
@@ -1069,7 +1069,7 @@ void SMat<CoeffRing>::delete_columns(size_t i, size_t j)
   for (size_t c = 0; c < i; c++) columns_[c] = tmp[c];
   for (size_t c = j + 1; c < orig_ncols; c++) columns_[c - ndeleted] = tmp[c];
 
-  deletearray(tmp);
+  freemem(tmp);
 }
 
 template <typename CoeffRing>

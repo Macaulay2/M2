@@ -243,11 +243,12 @@ coarseMultigradedRegularity ChainComplex := o-> F -> (
     --we assume F starts in homol degree 0.
     t := degreeLength ring F;
     range := toList(min F..max F-1);
-    degsF := apply(range,i -> degrees (F_i));
-    lowerbounds := flatten flatten apply(range, i->(
-	    apply(degsF_i, d -> apply(LL(i,t), ell -> d-ell))
-	    ));
-    apply(t, i-> max apply(lowerbounds, ell->ell_i))
+    degsF := flatten apply(range,i -> degrees (F_i));
+    --lowerbounds := flatten flatten apply(range, i->(
+    --	  apply(degsF_i, d -> apply(LL(i,t), ell -> d-ell))
+    --	  ));
+    --only changes degsF if t=1
+    apply(t, i-> max apply(degsF, ell->ell_i))
     )
 
 coarseMultigradedRegularity Module := o-> M-> (
@@ -1466,14 +1467,6 @@ beilinson = method(Options=>{BundleType=>PrunedQuotient}) -- other options: Quot
      beilinson(E^{{-1,-1}})
      beilinson random(E^{{-1,0}}, E^{{-2,-1}})
 *-
-
--- The following function should be moved to the Macaulay2 Core.
-tensor(Matrix,Matrix) := opts -> (A,B) -> A ** B
-tensor List := opts -> (L) -> (
-    result := L#0;
-    for i from 1 to #L-1 do result = tensor(result,L#i,opts);
-    result
-    )
 
 -- The following functions are here to facilitate the construction
 -- of the beilinson functor.  In particular, they make sure that the
@@ -4131,10 +4124,7 @@ doc ///
      degree such that truncate(R,M) has linear resolution
    Description
     Text
-     Uses a free resolution and takes the maximum degree of a term
-     minus the homological position in each component. Then adjusts
-     so that the sum of the degrees is at least the ordinary
-     regularity.
+     Uses a free resolution and takes the maximum degree of the terms.
     Example
      (S,E) = productOfProjectiveSpaces{1,1,2}
      I = ideal(x_(0,0)^2,x_(1,0)^3,x_(2,0)^4)
@@ -4142,8 +4132,9 @@ doc ///
      N = truncate(R,S^1/I);
      betti res N
      netList toList tallyDegrees res N
-   Caveat
-    We haven't yet proven that this is right.
+    Text
+     See the proof of Proposition 2.7 in
+       @ HREF("https://arxiv.org/abs/1411.5724","Tate Resolutions on Products of Projective Spaces")@.
    SeeAlso
     productOfProjectiveSpaces
     tallyDegrees

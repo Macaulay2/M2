@@ -9,8 +9,7 @@ newPackage(
                   Email => "", 
                   HomePage => ""}
               },
-        Headline => "Package for computations with noncommutative algebras",
-        DebuggingMode => true
+        Headline => "Package for computations with noncommutative algebras"
         )
 
 export {

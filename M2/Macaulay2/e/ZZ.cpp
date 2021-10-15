@@ -97,7 +97,7 @@ void RingZZ::elem_text_out(buffer &o,
       str = mpz_get_str(allocstr, 10, a);
       o << str;
     }
-  if (size > 1000) deletearray(allocstr);
+  if (size > 1000) freemem(allocstr);
 }
 
 ring_elem RingZZ::from_long(long n) const

@@ -16,6 +16,8 @@ using QQ = mpq_srcptr;
 using QQmutable = mpq_ptr;
 using RRRelement = mpfr_srcptr;
 using RRRmutable = mpfr_ptr;
+using RRielement = mpfi_srcptr;
+using RRimutable = mpfi_ptr;
 
 // The following is the data type used for complex numbers in aring-CCC
 // Perhaps we should have it be 
@@ -53,6 +55,7 @@ union ring_elem
   QQ mpq_val;
   ZZ mpz_val;
   mpfr_srcptr mpfr_val;
+  mpfi_srcptr mpfi_val;
   cc_doubles_srcptr cc_doubles_val;
   cc_srcptr cc_val;
   const void *mPolyVal;
@@ -66,6 +69,7 @@ union ring_elem
   explicit ring_elem(double a) : double_val(a) {}
   explicit ring_elem(mpq_srcptr a) : mpq_val(a) {}
   explicit ring_elem(mpfr_srcptr a) : mpfr_val(a) {}
+  explicit ring_elem(mpfi_srcptr a) : mpfi_val(a) {}
   explicit ring_elem(cc_srcptr a) : cc_val(a) {}
   explicit ring_elem(cc_doubles_srcptr a) : cc_doubles_val(a) {}
   explicit ring_elem(local_elem* a) : local_val(a) {}
@@ -83,6 +87,7 @@ union ring_elem
   const void* get_Poly() const { return mPolyVal; }
   mpq_srcptr get_mpq() const { return mpq_val; }
   mpfr_srcptr get_mpfr() const { return mpfr_val; }
+  mpfi_srcptr get_mpfi() const { return mpfi_val; }
   cc_srcptr get_cc() const { return cc_val; }
   cc_doubles_srcptr get_cc_doubles() const { return cc_doubles_val; }
   const local_elem* get_local_elem() const { return local_val; }
@@ -111,7 +116,7 @@ struct vecterm : public our_new_delete
 #define BIGCC_RE(f) (&(f).get_cc()->re) 
 
 // TODO: these need to be replaced... no casting, need new slot in ring_elem union type
-#define TOWER_VAL(f) (reinterpret_cast<poly>((f).poly_val))
+#define TOWER_VAL(f) (reinterpret_cast<ARingTowerPolynomial>((f).poly_val))
 #define TOWER_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
 
 #endif

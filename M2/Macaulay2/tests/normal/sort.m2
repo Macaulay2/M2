@@ -44,7 +44,7 @@ x  = {symbol generators, symbol size, symbol symmetricPower, symbol SPACE, symbo
       setEcho, symbol profile, symbol NOINDENT, symbol uniform, GroupRevLex, Sort, symbol MonoidElement, symbol NL, symbol match, symbol Holder, symbol ancestor, symbol and, symbol OO,
       symbol ann, symbol leadTerm, symbol OrderedMonoid, symbol any, symbol genus, symbol isSquareFree, Lex, symbol newRing, symbol applyPairs, symbol removeFile, symbol exp, symbol QQ,
       symbol isBorel, symbol coverMap, Bayer, symbol infinity, symbol homogenize, symbol ring, symbol TITLE, symbol FunctionApplication, symbol RR, HardDegreeLimit, symbol topComponents,
-      symbol pushForward, symbol alarm, symbol getWWW, symbol hilbertSeries, symbol characters, symbol quotient, symbol isIsomorphism, symbol TO, symbol PushforwardComputation, symbol TT,
+      symbol pushForward, symbol alarm, symbol getWWW, symbol hilbertSeries, symbol characters, symbol quotient, symbol isIsomorphism, symbol TO, symbol TT,
       symbol run, symbol nextkey, LongPolynomial, symbol STRONG, symbol UL, symbol member, symbol needs, symbol koszul, symbol AssociativeExpression, symbol chainComplex, symbol
       Schubert, symbol depth, symbol hilbertPolynomial, symbol betti, symbol partitions, NewFromMethod, symbol demark, DegreeMap, symbol not, symbol FilePosition, symbol length, Degree,
       Homogeneous, symbol isAffineRing, symbol MutableHashTable, symbol inducesWellDefinedMap, symbol flush, symbol numeric, symbol degrees, symbol while, symbol monoid, symbol ZZ, symbol
@@ -67,7 +67,7 @@ x  = {symbol generators, symbol size, symbol symmetricPower, symbol SPACE, symbo
       genericSkewMatrix, symbol mathML, symbol maxPosition, symbol saturate, symbol EmptyMarkUpType, symbol isNormal, Ascending, symbol Expression, argument, symbol
       currentFileName, symbol degree, symbol ChainComplex, symbol syz, Syzygies, GlobalAssignHook, symbol sleep, symbol isPrimitive, symbol seeParsing, symbol echoOn, symbol isSurjective,
       symbol Subscript, symbol drop, symbol showStructure, symbol dictionaryPath, symbol lines, symbol gcd, symbol lift, subscript, symbol printWidth, symbol presentation, symbol
-      append, symbol extend, symbol cone, symbol Hypertext, symbol openDatabaseOut, symbol Layout, symbol ModuleMap, symbol addStartFunction, symbol help, symbol pushForward1, symbol
+      append, symbol extend, symbol cone, symbol Hypertext, symbol openDatabaseOut, symbol Layout, symbol addStartFunction, symbol help, symbol pushForward1, symbol
       fromDual, symbol ascii, symbol locate, symbol get, symbol QuotientRing, symbol toSequence, symbol minors, Inverses, symbol shield, symbol local, Outputs, symbol isPrime, symbol
       copy, symbol super, symbol columnate, symbol ||, symbol reduceHilbert, symbol userSymbols, symbol tan, symbol graphIdeal, symbol HTML, symbol Nothing, symbol
       annihilator, symbol promote, symbol cosh, DegreeOrder, symbol texMath, symbol Superscript, symbol showTex, baseRings, symbol status, symbol RowExpression, symbol FractionField, symbol

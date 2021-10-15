@@ -1,5 +1,9 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
+needs "matrix1.m2"  -- for Ideal
+needs "matrix2.m2"  -- for modulo
+needs "quotring.m2" -- for QuotientRing
+
 Ideal * Vector := (I,v) -> (
      image((generators I) ** v#0)
      )
@@ -20,15 +24,12 @@ Module + Module := Module => (M,N) -> (
 	  )
      )
 
-tensor Sequence := opts -> args -> (
-     -- note: 'tensor (a => ZZ^2, b => ZZ^3, c => ZZ^4)' will not work to label the factors, as "tensor" takes options
-     --       maybe we need another syntax to present the labels
-     f := lookup prepend( tensor, apply(args,class));
-     if f =!= null then (f opts) args 
-     else fold((M,N) -> M**N, args)	  -- tensor product is left-associative
-     )
+-- TODO: remove this when all tensor methods are installed on 'tensor' instead of **
+tensor(Thing, Thing) := true >> opts -> (M, N) -> M ** N
+undocumented' (tensor, Thing, Thing)
 
-Module ** Module := Module => (M,N) -> (
+Module ** Module := Module => (M, N) -> tensor(M, N)
+tensor(Module, Module) := Module => {} >> opts -> (M, N) -> (
      (oM,oN) := (M,N);
      Y := youngest(M.cache.cache,N.cache.cache);
      if Y#?(symbol **,M,N) then return Y#(symbol **,M,N);
@@ -96,6 +97,10 @@ Ring ** Matrix := Matrix => (R,f) -> (
      if B === R and A === R then f
      else map( target f ** R, source f ** R, promote(cover f, R), Degree => first promote({degree f}, A, R) )
      )
+
+Ideal ** Ring := Ideal => (I, R) -> R ** I
+
+Ring ** Ideal := Ideal => (R, I) -> ideal(generators I ** R)
 
 -----------------------------------------------------------------------------       
 poincare Module := (cacheValue symbol poincare) (
@@ -316,20 +321,15 @@ hilbertPolynomial Ring := ProjectiveHilbertPolynomial => options -> (R) -> hilbe
 Ideal * Ring := Ideal => (I,S) -> if ring I === S then I else ideal(I.generators ** S)
 Ring * Ideal := Ideal => (S,I) -> if ring I === S then I else ideal(I.generators ** S)
 
+-- the key for issub hooks under GlobalHookStore
+protect ContainmentHooks
 issub := (f, g) -> (
-    RP := ring f;
-    if ring g =!= RP then error "expected objects of the same ring";
-    if instance(RP, LocalRing) then (
-        for i from 0 to numColumns f - 1 do (
-            LocalRings := needsPackage "LocalRings";
-            liftUp := value LocalRings.Dictionary#"liftUp";
-            L := flatten entries syz(liftUp(f_{i} | g), SyzygyRows => 1);
-            if not any(L, u -> isUnit promote(u, RP)) then return false;
-            );
-        true
-        )
-    else -1 === rawGBContains(raw gb g, raw f)    -- we can do better in the homogeneous case!
-    )
+    if (R := ring f) =!= ring g then error "isSubset: expected objects of the same ring";
+    if (c := runHooks(ContainmentHooks, (f, g))) =!= null then c
+    else error "isSubset: no strategy implemented for this type of ring")
+
+-- TODO: we can do better in the homogeneous case!
+addHook(ContainmentHooks, Strategy => Inhomogeneous, (f, g) -> -1 === rawGBContains(raw gb g, raw f))
 
 ZZ == Ideal := (n,I) -> I == n
 Ideal == ZZ := (I,n) -> (

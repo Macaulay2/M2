@@ -16,8 +16,7 @@ CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
 CXXFLAGS += -Wno-sign-conversion #-Wno-unused-local-typedefs -coverage
 
 # note: on some machines, gcc can't find -lstdc++
-LOADLIBES += @BUILTLIBS@ @LIBS@ -lmathicgb -lmathic -lmemtailor @FCLIBS@ -pthread
-#LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr -lflint -lntl -pthread -framework vecLib # -lgivaro -llinbox
+LOADLIBES += @BUILTLIBS@ @LIBS@ @FCLIBS@ -pthread
 
 # do not link with gtest -- it's supposed to get compiled in via #include:
 # LDFLAGS += -L$(GTEST_DIR)/lib/.libs
@@ -44,6 +43,9 @@ runtests: $(UNITTEST_TARGET)
 	time ./$(UNITTEST_TARGET)
 
 ARingRRRTest :  gtest-include.o ARingRRRTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
+	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
+
+ARingRRiTest :  gtest-include.o ARingRRiTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
 	@CXX@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
 ARingGFTest :  gtest-include.o ARingGFTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES) ../../system/supervisor.o
@@ -74,6 +76,9 @@ GivaroTest: GivaroTest.o
 
 checkRingRRR: ARingRRRTest
 	time ./ARingRRRTest
+
+checkRingRRi: ARingRRiTest
+	time ./ARingRRiTest
 
 #fails for whatever reasins
 checkRingRRRZZp: ARingRRRZZpTest

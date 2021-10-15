@@ -249,6 +249,8 @@ bumpPrecedence();
 bumpPrecedence();
      export orS := makeKeyword(binaryrightword("or"));
 bumpPrecedence();
+     export xorS := makeKeyword(binaryrightword("xor"));
+bumpPrecedence();
      export andS := makeKeyword(binaryrightword("and"));
 bumpPrecedence();
      export notS := makeKeyword(unaryword("not"));
@@ -356,7 +358,9 @@ export LeftArrowE := Expr(LeftArrowS);
 
 export EqualEqualE := Expr(EqualEqualS);
 export LessE := Expr(LessS);
+export LessEqualE := Expr(LessEqualS);
 export GreaterE := Expr(GreaterS);
+export GreaterEqualE := Expr(GreaterEqualS);
 export incomparableE := Expr(incomparableS);
 
 export NewS := makeProtectedSymbolClosure("NewMethod");
@@ -467,7 +471,7 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      LongDoubleRightArrowS, LongLongDoubleRightArrowS,
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS,
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, DotDotLessS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
-     AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS);
+     AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS, xorS);
 export opsWithUnaryMethod := array(SymbolClosure)(
      StarS, MinusS, PlusS, LessLessS, 
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS, 

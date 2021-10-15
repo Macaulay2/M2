@@ -1803,21 +1803,95 @@ combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
 		    );
 	       p = p.next));
      sethash(z,x.Mutable | y.Mutable));
+                                
+twistCombine(f:Expr,tw:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
+     z := newHashTable(x.Class,x.parent);
+     z.beingInitialized = true;
+     foreach pp in x.table do (
+	  p := pp;
+	  while p != p.next do (
+	       foreach qq in y.table do (
+		    q := qq;
+		    while q != q.next do (
+			 pqkey := applyEEE(f,p.key,q.key);
+			 when pqkey 
+			 is err:Error do (
+			      if err.message != continueMessage then return pqkey;
+			      )
+			 else (
+			      pqvalue := applyEEE(g,p.value,q.value);
+			      when pqvalue
+			      is err:Error do (
+				   if err.message != continueMessage then return pqvalue else nothing;
+				   )
+			      else (
+				   pqtwist := applyEEE(tw,p.key,q.key);
+				   when pqtwist
+				   is err:Error do (
+			              if err.message != continueMessage then return pqtwist else nothing;
+				      )
+				   else (
+				      pqhash := hash(pqkey);
+				      previous := lookup1(z,pqkey,pqhash);
+				      if previous == notfoundE
+				      then (
+					  tot := applyEEE(g,pqtwist,pqvalue);
+					  when tot
+					  is err:Error do (
+					      if err.message != continueMessage then return tot else nothing;
+					  )
+				          else (
+					     r := storeInHashTable(z,pqkey,pqhash,tot);
+					     when r is Error do return r else nothing;
+					  )
+				      )
+				      else (
+					  tot2 := applyEEE(g,pqtwist,pqvalue);
+					  when tot2
+					  is err:Error do (
+					      if err.message != continueMessage then return tot2 else nothing;
+					  )
+				          else (
+					     t :=  applyEEE(h,previous,tot2);
+					     when t is err:Error do (
+					         if err.message == continueMessage
+					         then remove(z,pqkey)
+					         else return t;
+					         )
+					     else (
+					         r := storeInHashTable(z,pqkey,pqhash,t);
+					         when r is Error do return r else nothing;
+					     )))));
+			 );
+			 q = q.next);
+		    );
+	       p = p.next));
+     sethash(z,x.Mutable | y.Mutable));
+
 combine(e:Expr):Expr := (
      when e
      is v:Sequence do
-     if length(v) == 5 then 
-     when v.0 is x:HashTable do
-     if x.Mutable then WrongArg(1,"an immutable hash table") else
-     when v.1 is y:HashTable do
-     if y.Mutable then WrongArg(2,"an immutable hash table") else
-     combine(v.2,v.3,v.4,x,y)
-     else WrongArg(1+1,"a hash table")
-     else WrongArg(0+1,"a hash table")
-     else WrongNumArgs(5)
-     else WrongNumArgs(5));
+     if length(v) == 5 then (
+        when v.0 is x:HashTable do
+        if x.Mutable then WrongArg(1,"an immutable hash table") else
+        when v.1 is y:HashTable do
+        if y.Mutable then WrongArg(2,"an immutable hash table") else
+        combine(v.2,v.3,v.4,x,y)
+        else WrongArg(1+1,"a hash table")
+        else WrongArg(0+1,"a hash table")
+     )
+     else if length(v) == 6 then (
+        when v.0 is x:HashTable do
+        if x.Mutable then WrongArg(1,"an immutable hash table") else
+        when v.1 is y:HashTable do
+        if y.Mutable then WrongArg(2,"an immutable hash table") else
+        twistCombine(v.2,v.3,v.4,v.5,x,y)
+        else WrongArg(1+1,"a hash table")
+        else WrongArg(0+1,"a hash table")
+     )
+     else WrongNumArgs(5,6)
+     else WrongNumArgs(5,6));
 setupfun("combine",combine);
-
 
 export unarymethod(right:Expr,methodkey:SymbolClosure):Expr := (
      method := lookup(Class(right),Expr(methodkey),methodkey.symbol.hash);

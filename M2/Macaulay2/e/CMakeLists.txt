@@ -1,6 +1,20 @@
 ###############################################################################
 ## This directory contains the rules for building M2-engine and M2-unit-tests
-## - run unit tests:  ctest -R unit-tests
+## memtailor, mathic, and mathicgb are also imported as subdirectories here
+## - run unit tests:  ctest -R unit-tests (includes mathicgb and friends)
+
+set(with_tbb true) # for mathicgb
+
+add_subdirectory(memtailor)
+add_subdirectory(mathic)
+add_subdirectory(mathicgb)
+
+if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging
+  add_compile_definitions(MEMT_DEBUG MATHIC_DEBUG MATHICGB_DEBUG)
+endif()
+
+###############################################################################
+## M2-engine sources
 
 # TODO: determine the fate of these files
 set(UNDETERMINED
@@ -37,7 +51,8 @@ set(HFILES
 set(HPPONLYFILES
   MemoryBlock.hpp
   NCAlgebras/Range.hpp
-  VectorArithmetic2.hpp
+  VectorArithmetic.hpp
+  ARingElem.hpp
   newdelete.hpp
   timing.hpp
   SLP-defs.hpp
@@ -76,12 +91,12 @@ set(HPPONLYFILES
   ringelem.hpp
   schur-poly-heap.hpp
   smat.hpp
-  stdinc-m2.hpp
   style.hpp
-  f4/moninfo2.hpp
-  f4/res-memblock.hpp
-  f4/res-monomial-types.hpp
-  f4/res-schreyer-order.hpp
+  f4/f4-types.hpp
+  f4/memblock.hpp
+  schreyer-resolution/res-memblock.hpp
+  schreyer-resolution/res-monomial-types.hpp
+  schreyer-resolution/res-schreyer-order.hpp
   )
 
 # these files have .cpp file, but NOT .hpp file
@@ -96,7 +111,6 @@ set(CPPONLYFILES
   ntl-internal.cpp
   res-a2-gb.cpp
   ring-vecs.cpp
-
   interface/aring.cpp
   interface/aring.h
   interface/computation.h # no .cpp yet
@@ -134,23 +148,23 @@ set(CPPONLYFILES
 # these files all have .hpp and .cpp files
 # MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
-	myalloc
-	matrix-ncbasis
-    	VectorArithmetic
-	M2FreeAlgebraQuotient
-	M2FreeAlgebra
-	NCAlgebras/Word
-	NCAlgebras/NCReduction
-	NCAlgebras/FreeAlgebraQuotient
-	NCAlgebras/FreeAlgebra
-	NCAlgebras/FreeMonoid
-	NCAlgebras/WordTable
-	NCAlgebras/SuffixTree
-	NCAlgebras/NCGroebner
-	NCAlgebras/NCF4
-	NCAlgebras/OverlapTable
-	Polynomial
-	monomial-collection
+  myalloc
+  matrix-ncbasis
+  M2FreeAlgebraQuotient
+  M2FreeAlgebra
+  NCAlgebras/Word
+  NCAlgebras/NCReduction
+  NCAlgebras/FreeAlgebraQuotient
+  NCAlgebras/FreeAlgebra
+  NCAlgebras/FreeMonoid
+  NCAlgebras/WordTable
+  NCAlgebras/SuffixTree
+  NCAlgebras/NCGroebner
+  NCAlgebras/NCF4
+  NCAlgebras/OverlapTable
+  NCResolutions/nc-res-computation
+  Polynomial
+  monomial-collection
   Eschreyer
   GF
   LLL
@@ -158,6 +172,7 @@ set(SRCLIST
   SLP
   ZZ
   ZZp
+  aring-RRi
   aring-CC
   aring-CCC
   aring-RR
@@ -226,6 +241,7 @@ set(SRCLIST
   monoid
   monomial-sets
   monomial
+  monsort
   montable
   montableZZ
   mutablecomplex
@@ -271,32 +287,29 @@ set(SRCLIST
   f4/f4-mem
   f4/f4-monlookup
   f4/f4-spairs
-  f4/f4-syz
-  f4/f4-types
   f4/f4
   f4/gausser
   f4/hilb-fcn
-  f4/memblock
   f4/monhashtable
   f4/moninfo
-  f4/monsort
   f4/ntuple-monomial
-  f4/res-f4-computation
-  f4/res-f4-m2-interface
-  f4/res-f4-monlookup
-  f4/res-f4
-  f4/res-gausser-QQ-hybrid
-  f4/res-gausser-QQ
-  f4/res-gausser-ZZp
-  f4/res-gausser
-  f4/res-moninfo-dense
-  f4/res-moninfo-sparse
-  f4/res-moninfo
-  f4/res-monomial-sorter
-  f4/res-poly-ring
-  f4/res-schreyer-frame
-  f4/res-varpower-monomial
   f4/varpower-monomial
+  # Schreyer resolution a la Linear algebra (F4 Faugere style)
+  schreyer-resolution/res-f4-computation
+  schreyer-resolution/res-f4-m2-interface
+  schreyer-resolution/res-f4-monlookup
+  schreyer-resolution/res-f4
+  schreyer-resolution/res-gausser-QQ-hybrid
+  schreyer-resolution/res-gausser-QQ
+  schreyer-resolution/res-gausser-ZZp
+  schreyer-resolution/res-gausser
+  schreyer-resolution/res-moninfo-dense
+  schreyer-resolution/res-moninfo-sparse
+  schreyer-resolution/res-moninfo
+  schreyer-resolution/res-monomial-sorter
+  schreyer-resolution/res-poly-ring
+  schreyer-resolution/res-schreyer-frame
+  schreyer-resolution/res-varpower-monomial
   # Boolean Involutive Gröbner Bases
   bibasis/bibasis
   bibasis/allocator
@@ -344,7 +357,7 @@ target_include_directories(M2-engine PUBLIC
   $<INSTALL_INTERFACE:include/Macaulay2>)
 
 # TODO: make engine independent of interpreter headers
-target_link_libraries(M2-engine PUBLIC M2-interpreter)
+target_link_libraries(M2-engine PUBLIC M2-interpreter memtailor mathic mathicgb)
 
 if(EIGEN3_FOUND)
   target_link_libraries(M2-engine PUBLIC Eigen3::Eigen)
@@ -379,7 +392,7 @@ target_compile_options(M2-engine PRIVATE
 ## Export the target
 
 # TODO: change ARCHIVE to LIBRARY once M2-engine can be used independently
-install(TARGETS M2-engine EXPORT Macaulay2
+install(TARGETS M2-engine mathicgb mathic memtailor EXPORT Macaulay2
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
   COMPONENT devel EXCLUDE_FROM_ALL
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Macaulay2
@@ -451,7 +464,6 @@ if(BUILD_TESTING)
   ## Link with Googletest
   if(GTEST_FOUND)
   target_link_libraries(M2-unit-tests GTest::GTest GTest::Main)
-  target_include_directories(M2-unit-tests PRIVATE ${GTEST_INCLUDE_DIR})
   endif()
 
   target_compile_options(M2-unit-tests PRIVATE

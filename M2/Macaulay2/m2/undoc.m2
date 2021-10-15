@@ -1,3 +1,5 @@
+-- TODO: put each call to undocumented next to the method
+
 undocumented {
     -- etc.
     (net, LITERAL),
@@ -55,7 +57,9 @@ undocumented {
     (html, MENU),
     (html, String),
     (html, RowExpression),
+    (html, Bag),
     (html, Boolean),
+    (html, Command),
     (html, Descent),
     (html, File),
     (html, Function),
@@ -64,6 +68,7 @@ undocumented {
     (html, Net),
     (html, Monoid),
     (html, Package),
+    (html, Program),
     (html, Ring),
     (html, RingFamily),
     (html, Thing),

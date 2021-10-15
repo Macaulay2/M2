@@ -19,7 +19,7 @@
 ------------------------------------
 
 -- Abstract classes ------------------------
-WSet = new Type of MutableHashTable
+WSet = new Type of HashTable
 Ambient = new Type of MutableHashTable
 SlicingVariety = new Type of MutableHashTable
 

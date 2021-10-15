@@ -721,6 +721,40 @@ document {
      Caveat => { "Currently, most transcendental functions are not implemented for complex arguments." },
      SeeAlso => {"ii", toCC, toRR, numeric, precision, format, "printingPrecision", "printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
      }
+
+undocumented {RRi'}
+
+document {
+     Key => RRi,
+     Headline => "the class of all real intervals",
+     "A real interval is entered as a pair of real numbers to the interval function.  It is stored internally as an arbitrary precision interval using the ", TO "MPFI", " library.",
+     EXAMPLE "interval(3.1415,3.1416)",
+     "The precision is measured in bits, is visible in the ring displayed on
+     the second of each pair of output lines, and can be recovered using ", TO "precision", ".",
+     EXAMPLE "precision interval(3.1415,3.1416)",
+     "For real intervals, the functions ", TO "class", " and ", TO "ring", " yield different
+     results.  That allows numbers of various precisions
+     to be used without creating a new ring for each precision.",
+     EXAMPLE {"class interval(3.1,3.5)", "ring interval(3.1,3.5)"},
+     "The precision can be specified on input by specifying the precision of both input ", TO "RR", " numbers.",
+     "Alternatively, the precision can be specified by including the option ", TT "Precision", ".",
+     EXAMPLE {"interval(2.5p100,3.2p1000)","interval(2.5,3.2,Precision=>200)"},
+     "Intervals can also be created using ", TO (span,Sequence), " to create the smallest interval containing the inputs.",
+     EXAMPLE {"span(2,Precision=>100)","span(2,3,interval(-1.5,-0.5),73)"},
+     "Operations using intervals are computed as sets so that the resulting intervals contain all possible outputs from pairs of points in input intervals.",
+     EXAMPLE {"interval(1,3)+interval(2,4)","interval(-1,1)*interval(2,3)","interval(0,1)-interval(0,1)","interval(1,2)/interval(1,2)"},
+     "The notion of equality tested by ", TO "==", " amounts to checking the equality of the endpoints of intervals.",
+     "The notion of equality tested by ", TO "===", " takes into account the precision of the inputs as well.",
+     EXAMPLE {"interval(1,3) == interval(1,3,Precision=>100)","interval(1,3) === interval(1,3,Precision=>100)","interval(1/3,1,Precision=>100)==interval(1/3,1,Precision=>1000)"},
+     "The notion of inequalities for intervals amounts to testing the inequality for all points in the intervals.  In particular, ",TO "<=", " is not the same as ",TO "<"," or ",TO "==",".",
+    EXAMPLE {"interval(1,2)<=interval(2,3)","interval(1,2)<=interval(1,2)", "interval(1,2)<interval(2,3)","interval(1,2)<interval(3,4)"},
+     "Transcendental functions on intervals produce intervals containing the image of the function on the interval.",
+     EXAMPLE {"exp(interval(2,4))","cos(interval(1,1.3))","sqrt(interval(2))"},
+     "Transcendental functions are available to high precision, with ", TO "numericInterval", ".",
+    EXAMPLE {"numericInterval(100,pi)","numericInterval_200 EulerConstant"},
+    SeeAlso => {toRRi, numericInterval, precision, interval, (span,Sequence), (span,List)}
+	  }
+
 document {
      Key => OrderedMonoid,
      Headline => "the class of all ordered monoids",

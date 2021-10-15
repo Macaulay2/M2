@@ -4,6 +4,8 @@
 -- UPDATE HISTORY : created 14 April 2018 at M2@UW;
 --                  updated November 2020
 --
+-- ISSUE TRACKER : https://github.com/orgs/Macaulay2/projects/3
+--
 -- TODO : 1. why are there shadowed symbols?
 --        2. any strategies to incorporate from Shimoyama-Yokoyama.m2
 --           or greedySat in GTZ.m2 or getSaturation in newGTZ.m2
@@ -30,7 +32,8 @@ export { "isSupportedInZeroLocus" }
 
 exportFrom_Core { "saturate", "annihilator" }
 
-importFrom_Core { "nonnull", "printerr", "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "eliminationInfo" }
+importFrom_Core { "nonnull", "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "eliminationInfo" }
+importFrom_Core { "isComputationDone", "cacheComputation", "fetchComputation", "cacheHit", "Context", "Computation" }
 
 -- TODO: where should these be placed?
 trim MonomialIdeal := MonomialIdeal => opts -> (cacheValue (symbol trim => opts)) ((I) -> monomialIdeal trim(module I, opts))
@@ -65,8 +68,6 @@ algorithms := new MutableHashTable from {}
 --------------------------------------------------------------------
 -- Helpers
 --------------------------------------------------------------------
-
-cacheHit := type -> if debugLevel > 0 then printerr("Cache hit on a ", synonym type, "! 🎉");
 
 -- given a ring R, determines if R is a poly ring over ZZ or a field
 isFlatPolynomialRing = R -> isPolynomialRing R and (isField(kk := coefficientRing R) or kk === ZZ)
@@ -114,30 +115,19 @@ grevLexRing(ZZ, Ring) := (i, R) -> (
 -- 6. PairLimit: stop after 100 S-pairs
 
 -- keys: the second object in the quotient
-QuotientOptions = new SelfInitializingType of BasicList
-QuotientOptions.synonym = "quotient options"
+QuotientContext = new SelfInitializingType of Context
+QuotientContext.synonym = "quotient context"
 
 -- keys: TODO: BasisElementLimit, DegreeLimit, PairLimit
-QuotientComputation = new Type of MutableHashTable
+QuotientComputation = new Type of Computation
 QuotientComputation.synonym = "quotient computation"
 
-new QuotientComputation from Sequence := (C, S) -> (
-    (A, B) := S;
-    cacheKey := QuotientOptions{ mingens B };
-    -- TODO: try to find other compatible cacheKeys that can be used in the computation
-    try A.cache#cacheKey else A.cache#cacheKey = new QuotientComputation from { Result => null })
+-- TODO: try to find a compatible context that can be used in the computation
+new QuotientContext from Sequence := (C, S) -> ( (A, B) := S; QuotientContext{ mingens B } )
+-- TODO: set BasisElementLimit, DegreeLimit, PairLimit?
+new QuotientComputation from Sequence := (C, S) -> new QuotientComputation from { Result => null }
 
-isComputationDone = method(TypicalValue => Boolean, Options => true)
-isComputationDone QuotientComputation := Boolean => options quotient >> opts -> container -> (
-    -- this function determines whether we can use the cached result, or further computation is necessary
-    try container.Result =!= null -* TODO: BasisElementLimit, DegreeLimit, PairLimit *- else false)
-
-cacheComputation = method(TypicalValue => CacheFunction, Options => true)
-cacheComputation QuotientComputation := CacheFunction => options quotient >> opts -> container -> new CacheFunction from (
-    -- this function takes advantage of FunctionClosures by modifying the container
-    computation -> (
-	if isComputationDone(opts, container) then ( cacheHit class container; container.Result ) else
-	if (result := computation(opts, container)) =!= null then ( container.Result = result )))
+-- TODO: implement a specialization for (isComputationDone, QuotientComputation)
 
 --quotient = method(...) -- defined in m2/quotient.m2
 quotient(Ideal,  Ideal)       := Ideal  => opts -> (I, J) -> quotientHelper(I, J, (quotient, Ideal, Ideal), opts)
@@ -197,8 +187,8 @@ quotientHelper = (A, B, key, opts) -> (
 	runHooks(key, (opts, A, B), Strategy => strategy));
 
     -- this is the logic for caching partial quotient computations. A.cache contains an option:
-    --   QuotientOptions{ mingens B } => QuotientComputation{ Result }
-    container := new QuotientComputation from (A, B);
+    --   QuotientContext{ mingens B } => QuotientComputation{ Result }
+    container := fetchComputation(QuotientComputation, A, new QuotientContext from (A, B));
 
     -- the actual computation of quotient occurs here
     C := (cacheComputation(opts, container)) computation;
@@ -347,18 +337,16 @@ scan({Quotient, Iterate}, strategy ->
 -- - should saturate(I) use the irrelevant ideal when multigraded?
 
 -- keys: the second ideal of saturation
-SaturateOptions = new SelfInitializingType of QuotientOptions
-SaturateOptions.synonym = "saturate options"
+SaturateContext = new SelfInitializingType of QuotientContext
+SaturateContext.synonym = "saturate context"
 
 -- keys: TODO: BasisElementLimit, DegreeLimit, PairLimit
 SaturateComputation = new Type of QuotientComputation
 SaturateComputation.synonym = "saturate computation"
 
-new SaturateComputation from Sequence := (C, S) -> (
-    (A, B) := S;
-    cacheKey := SaturateOptions{ mingens B };
-    -- TODO: try to find other compatible cacheKeys, perhaps of type QuotientOptions, that can be used in the computation
-    try A.cache#cacheKey else A.cache#cacheKey = new SaturateComputation from { Result => null })
+-- TODO: try to find other compatible cacheKeys, perhaps of type QuotientContext, that can be used in the computation
+new SaturateContext from Sequence := (C, S) -> ( (A, B) := S; SaturateContext{ mingens B } )
+new SaturateComputation from Sequence := (C, S) -> new SaturateComputation from { Result => null }
 
 -- TODO: isComputationDone and cacheComputation now can inherit from QuotientComputation,
 -- but perhaps there is something smarter that can be done in this specific case
@@ -384,6 +372,7 @@ saturate(Vector, RingElement) := Module => opts -> (v, f) -> saturate(image matr
 saturate Vector               := Module => opts ->  v     -> saturate(image matrix {v}, opts)
 
 -- used when P = decompose irr
+-- TODO: do a one-step caching here
 saturate(Ideal,  List)        := Ideal  => opts -> (I, L) -> fold(L, I, (J, I) -> saturate(I, J, opts))
 saturate(Module, List)        := Module => opts -> (M, L) -> fold(L, M, (J, M) -> saturate(M, J, opts))
 saturate(Vector, List)        := Module => opts -> (v, L) -> saturate(image matrix {v}, L, opts)
@@ -418,8 +407,8 @@ saturateHelper = (A, B, key, opts) -> (
 	runHooks(key, (opts, A, B), Strategy => strategy));
 
     -- this is the logic for caching partial saturation computations. A.cache contains an option:
-    --   SaturateOptions{ mingens B } => SaturateComputation{ Result }
-    container := new SaturateComputation from (A, B');
+    --   SaturateContext{ mingens B } => SaturateComputation{ Result }
+    container := fetchComputation(SaturateComputation, A, new SaturateContext from (A, B'));
 
     -- the actual computation of saturation occurs here
     C := (cacheComputation(opts, container)) computation;
@@ -540,8 +529,8 @@ algorithms#(saturate, Ideal, RingElement) = new MutableHashTable from {
 	-- Basic idea: in a ring R[z]/(f - z), with the RevLex order, compute GB of I.
 	-- assumptions for this case:
 	--   (1) the ring is of the form k[x1..xn].  No quotients, k a field or ZZ
-	--   (2) J is homogeneous
-	--   (3) I = homog, generated by one element
+	--   (2) I is homogeneous
+	--   (3) f = homog, generated by one element
 	R := ring I;
 	if not isFlatPolynomialRing R
 	or not isHomogeneous I
@@ -620,8 +609,8 @@ isSupportedInZeroLocus(Ideal, Module) := (B, M) -> (
     -- annihilator is known, it's faster to check whether saturate(annihilator M, B) == ideal 1
     if M.cache.?annihilator then (
 	N := annihilator M;
-	container := new SaturateComputation from (N, B);
-	try isComputationDone container then ( cacheHit class container; return saturate(N, B) == ideal 1_S ) else true);
+	container := fetchComputation(SaturateComputation, N, new SaturateContext from (N, B));
+	if isComputationDone container then ( cacheHit container; return saturate(N, B) == ideal 1_S ) else true);
     -- 2. check that a high enough power of elements of B annihilates M
     n := numgens S;
     all(first entries mingens B, g -> (

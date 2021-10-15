@@ -1,5 +1,13 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "engine.m2"
+needs "expressions.m2"
+needs "indeterminates.m2"
+needs "methods.m2"
+needs "orderedmonoidrings.m2"
+needs "shared.m2" -- for tensor
+needs "variables.m2"
+
 MonoidElement = new Type of HashTable
 MonoidElement.synonym = "monoid element"
 new MonoidElement from RawMonomial := (MonoidElement, f) -> hashTable{ symbol RawMonomial => f }
@@ -135,7 +143,7 @@ degreesMonoid List := memoize(
 	       Global => false,
 	       Inverses => true]))
 
-tensorDefaults = merge(monoidDefaults, 
+monoidTensorDefaults = merge(monoidDefaults,
      new OptionTable from {
 	  MonomialOrder => null,
 	  VariableBaseName => null,			    -- monoids being tensored already have variable names
@@ -491,10 +499,6 @@ monoid Array := opts -> args -> (
      else if args =!= () then error "variables provided conflict with Variables option";
      makeMonoid opts)
 
-tensor = method( Options => tensorDefaults, Dispatch => Thing)
-
-Monoid ** Monoid := Monoid => (M,N) -> tensor(M,N)
-
 tensoradj := (f,g,m,n) -> (
      if f === identity then (
 	  if g === identity 
@@ -519,7 +523,10 @@ degreePad = (n,x) -> (
 
 degreeNoLift = () -> error "degree not liftable"
 
-tensor(Monoid, Monoid) := Monoid => opts0 -> (M,N) -> (
+-- TODO: do we want to support a syntax this?
+--   'tensor (a => ZZ^2, b => ZZ^3, c => ZZ^4)'
+Monoid ** Monoid := Monoid => (M, N) -> tensor(M, N)
+tensor(Monoid, Monoid) := Monoid => monoidTensorDefaults >> opts0 -> (M, N) -> (
      Mopts := M.Options;
      Nopts := N.Options;
      opts := new MutableHashTable from opts0;

@@ -110,7 +110,8 @@ document {
 	    ", where the programs shipped with Macaulay2 are installed."},
 	{"Each path specified by the ", TT "AdditionalPaths", " option."},
 	{"Each path specified by the user's ", TT "PATH",
-	    " environment variable."}
+	    " environment variable."},
+	{"The path to ", TT "M2-binary", "."}
     },
     PARA {"For each path, any prefixes specified by the ", TT "Prefix",
 	" option are checked."},
@@ -123,8 +124,8 @@ document {
 	"file, then ", TT "name", " should coincide with the name of this ",
 	"file."},
     EXAMPLE lines ///
-	programPaths#"gfan" = "/path/to/gfan/"
-	gfan = findProgram("gfan", "gfan --help", Verbose => true)///,
+	programPaths#"gfan" = "/path/to/gfan/" -* no-capture-flag *-
+	gfan = findProgram("gfan", "gfan _version --help", Verbose => true)///,
     PARA {"One program that is shipped with a variety of prefixes in ",
 	"different distributions and for which the ", TT "Prefix",
 	" option is useful is TOPCOM:"},
@@ -138,7 +139,7 @@ document {
 	"trailing whitespace.  Piping with standard UNIX utilities such as ",
 	TT "sed", ", ", TT "head", ", ", TT "tail", ", ", TT "cut", ", and ",
 	TT "tr", " may be useful."},
-    EXAMPLE {///findProgram("gfan", "gfan --help", Verbose => true,
+    EXAMPLE {///findProgram("gfan", "gfan _version --help", Verbose => true,
   MinimumVersion => ("0.5",
     "gfan _version | head -2 | tail -1 | sed 's/gfan//'"))
     ///},

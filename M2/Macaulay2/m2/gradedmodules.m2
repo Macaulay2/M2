@@ -1,5 +1,8 @@
 --		Copyright 1997-2002 by Daniel R. Grayson
 
+needs "modules.m2"
+needs "ringmap.m2"
+
 GradedModule = new Type of MutableHashTable
 GradedModule.synonym = "graded module"
 ring GradedModule := (M) -> M.ring
@@ -357,7 +360,7 @@ gradedModuleMap Sequence := gradedModuleMap List := GradedModuleMap => maps -> (
      f.target = gradedModule(target \ maps);
      f.degree = 0;
      f)
-gradedModuleMap ModuleMap := GradedModuleMap => M -> gradedModuleMap (1:M)
+gradedModuleMap Matrix := GradedModuleMap => M -> gradedModuleMap (1:M)
 
 single := (v) -> (
      if not same v 

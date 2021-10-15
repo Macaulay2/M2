@@ -7,6 +7,9 @@
  * examples
  *-
 
+needs "hypertext.m2"
+needs "run.m2"
+
 processExamplesStrict = true
 
 -----------------------------------------------------------------------------
@@ -16,8 +19,8 @@ processExamplesStrict = true
 M2outputRE       = "\n+(?=i+[1-9][0-9]* : )"
 M2outputHash     = "-- -*- M2-comint -*- hash: "
 separateM2output = str -> (
-    L := separate(M2outputRE, replace("(\\A\n+|\n+\\Z)", "", str));
-    if match(regexQuote M2outputHash, str) then drop(drop(L, -1), 1) else L)
+    L := separate(M2outputRE, "\n" | replace("\n+\\Z", "", str));
+    if #L<=1 then L else drop(L,1))
 
 trimlines := L -> apply(L, x ->
     if instance(x, String) then (
@@ -47,6 +50,7 @@ EXAMPLE VisibleList := x -> (
 -----------------------------------------------------------------------------
 -- capture
 -----------------------------------------------------------------------------
+-- TODO: move to capture.m2
 
 -- TODO: the output format is provisional
 -- TODO: doesn't capture stderr
@@ -64,7 +68,7 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     -* see run.m2 for details of defaultMode, argumentMode, etc. *-
     -- TODO: somehow use SetUlimit, GCMAXHEAP, GCSTATS, GCVERBOSE,
     --       ArgInt, ArgQ, ArgNoReadline, ArgNoSetup, and ArgNoThreads
-    argmode := if 0 < argumentMode & InvertArgs then xor(defaultMode, argumentMode) else argumentMode;
+    argmode := if 0 < argumentMode & InvertArgs then defaultMode ^^ argumentMode else argumentMode;
     hasmode := m -> argmode & m == m;
     pushvar(symbol randomSeed, if hasmode ArgNoRandomize then 0 else randomSeed);
     -- TODO: these two are overridden in interp.dd at the moment
@@ -115,7 +119,7 @@ isCapturable = (inputs, pkg, isTest) -> (
     inputs = replace("-\\*.*?\\*-", "", inputs);
     -- TODO: remove this when the effects of capture on other packages is reviewed
     (isTest or match({"FirstPackage", "Macaulay2Doc"},            pkg#"pkgname"))
-    and not match({"EngineTests", "ThreadedGB", "RunExternalM2", "DiffAlg"}, pkg#"pkgname")
+    and not match({"MultiprojectiveVarieties", "EngineTests", "ThreadedGB", "RunExternalM2", "DiffAlg", "SpecialFanoFourfolds"}, pkg#"pkgname")
     and not (match({"Core", "Cremona"}, pkg#"pkgname") and version#"pointer size" == 4)
     -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
     and not match("(gbTrace|NAGtrace)",                       inputs) -- cerr/cout directly from engine isn't captured
@@ -190,7 +194,7 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
 
 -- used in installPackage.m2
 -- TODO: reduce the inputs to this function
-captureExampleOutput = (desc, inputs, pkg, cacheFunc, inf, outf, errf, data, inputhash, changeFunc, usermode) -> (
+captureExampleOutput = (desc, inputs, pkg, inf, outf, errf, data, inputhash, changeFunc, usermode) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
     -- try capturing in the same process
     if isCapturable(inputs, pkg, false) then (
@@ -198,12 +202,14 @@ captureExampleOutput = (desc, inputs, pkg, cacheFunc, inf, outf, errf, data, inp
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
 	(err, output) := capture(inputs, UserMode => false, PackageExports => pkg);
 	if err then printerr "capture failed; retrying ..."
-	else return outf << M2outputHash << inputhash << endl << output << close);
+	else (outf << M2outputHash << inputhash << endl << output << close;
+	    return true));
     -- fallback to using an external process
     stderr << commentize pad("making " | desc, 72) << flush;
     inf << replace("-\\* no-capture-flag \\*-", "", inputs) << endl << close;
-    if runFile(inf, inputhash, outf, errf, pkg, changeFunc, usermode, data)
-    then ( removeFile inf; cacheFunc() ))
+    r := runFile(inf, inputhash, outf, errf, pkg, changeFunc, usermode, data);
+    if r then removeFile inf;
+    r)
 
 -----------------------------------------------------------------------------
 -- process examples

@@ -65,18 +65,20 @@ document {
 	Usage => "minus(x)",
      TT "minus(x)", " yields ", TT "-x", ".",
      PARA{},
-     TT "minus(x,y)", " yields ", TT"x-y", " but see also ", TO "difference", "."
+     "See also ", TO "difference", "."
      }
 
 document {
-     Key => {abs,(abs, RR),(abs, CC),(abs, ZZ),(abs, QQ)},
+     Key => {abs,(abs, RR),(abs, CC),(abs, ZZ),(abs, QQ),(abs, RRi)},
      Headline => "absolute value function",
-	Usage => "abs x",
+	Usage => "abs x\nabs I",
 	Inputs => {
-		"x" => "a number"
+		"x" => "a number",
+        "I" => RRi
 		},
 	Outputs => {
-		{"the absolute value of ", TT "x"}
+		{"the absolute value of ", TT "x"},
+    RRi => {"an interval containing the absolute values of all the point of ", TT "I"}
 		},
      TT "abs x", " computes the absolute value of ", TT "x", ".",
 	EXAMPLE {
@@ -98,11 +100,12 @@ document {
      }
 
 document {
-     Key => {exp,(exp,RR),(exp,CC),(exp,ZZ),(exp,QQ),(exp,Constant)},
+     Key => {exp,(exp,RR),(exp,CC),(exp,ZZ),(exp,QQ),(exp,Constant),(exp,RRi)},
      Headline => "exponential function",
-     Usage => "exp x",
-     Inputs => { "x" => RR },
-     Outputs => { { "the exponential of ", TT "x" } } ,
+     Usage => "exp x\nexp I",
+     Inputs => { "x" => RR ,"I"=>RRi},
+    Outputs => { { "the exponential of ", TT "x" },
+        RRi=>{"an interval containing the exponentials of points of ", TT "I"} } ,
      EXAMPLE lines ///
      exp 1p300
      exp(pi*ii)
@@ -110,13 +113,14 @@ document {
      }
 
 document {
-     Key => {log,(log, RR),(log, QQ),(log, ZZ),(log,CC),(log,QQ,CC),(log,RR,CC),(log,ZZ,CC),
+     Key => {log,(log, RR),(log, QQ),(log, ZZ),(log,CC),(log, RRi),(log,QQ,CC),(log,RR,CC),(log,ZZ,CC),
 	  (log, ZZ, ZZ),(log, QQ, ZZ),(log, ZZ, QQ),(log, QQ, QQ),(log, RR, ZZ),
-	  (log, ZZ, RR),(log, QQ, RR),(log, RR, QQ),(log, RR, RR)},
+	  (log, ZZ, RR),(log, QQ, RR),(log, RR, QQ),(log, RR, RR),
+      (log, QQ, RRi), (log, RR, RRi), (log, RRi, QQ), (log, RRi, RR), (log, RRi, RRi), (log, RRi, ZZ),(log, ZZ, RRi)},
      Headline => "logarithm function",
-     Usage => "log x\nlog(b,x)\nlog_b x",
-     Inputs => { "x" => RR, "b" => RR => {"the base for the logarithm"} },
-     Outputs => { { "the logarithm of ", TT "x"} },
+     Usage => "log x\nlog(b,x)\nlog_b x\nlog I\nlog(b,I)\nlog_b I\nlog(J,x)\nlog_J x\nlog(J,I)\nlog_J I",
+Inputs => { "x" => RR, "b" => RR => {"the base for the logarithm"}, "I" => RRi, "J" => RRi => {"an interval of bases for the logarithm"} },
+Outputs => { { "the logarithm of ", TT "x"}, RRi => {"an interval containing the logarithms of points of ", TT "I"}, RRi => {"an interval containing the logarithms for bases in ", TT "J"} },
      EXAMPLE lines ///
 	  log 10
 	  log_2 10
@@ -124,11 +128,13 @@ document {
      ///
      }
 document {
-     Key => {sqrt,(sqrt, CC),(sqrt, QQ),(sqrt, ZZ),(sqrt, RR)},
+     Key => {sqrt,(sqrt, CC),(sqrt, QQ),(sqrt, ZZ),(sqrt, RR), (sqrt, RRi)},
      Headline => "square root function",
-     Usage => "sqrt x",
-     Inputs => { "x" => RR },
-     Outputs => { { "the square root of ", TT "x"} },
+Usage => "sqrt x\nsqrt I",
+     Inputs => { "x" => RR, "I" => RRi },
+     Outputs => { { "the square root of ", TT "x"},
+RRi => { "an interval containing the square roots of the points of ", TT "I" }
+},
      EXAMPLE lines ///
      sqrt 2p200
      sqrt (+ii)
@@ -194,15 +200,15 @@ doc ///
 ///
 
 document {
-     Key => {xor, (xor,ZZ,ZZ)},
+     Key => {symbol ^^, (symbol ^^,ZZ,ZZ)},
      Headline => "logical exclusive-or",
-     Usage => "xor(m,n)",
+     Usage => "m ^^ n",
      Inputs => { "m", "n"},
      Outputs => {
 	  ZZ => {"the bitwise logical exclusive-or of
 	       the integers ", TT "m", " and ", TT "n"}
 	  },
-     EXAMPLE "xor(10,12)",
+     EXAMPLE "10 ^^ 12",
      SeeAlso => { (symbol|,ZZ,ZZ), (symbol&,ZZ,ZZ) }
      }
 
@@ -217,6 +223,7 @@ document {
 	  TO "not",
 	  TO "and",
 	  TO "or",
+	  TO "xor",
 	  TO "if"
 	  }
      }
@@ -239,7 +246,7 @@ document {
      is true.",
      PARA{},
      "If ", TT "t", " is true, then the code in ", TT "u", " is not evaluated.",
-     SeeAlso =>{ "and", "not" }
+     SeeAlso =>{ "and", "not", "xor" }
      }
 
 document {
@@ -249,5 +256,24 @@ document {
      is true.",
      PARA{},
      "If ", TT "t", " is false, then the code in ", TT "u", " is not evaluated.",
-     SeeAlso =>{ "or", "not" }
+     SeeAlso =>{ "or", "not", "xor" }
      }
+
+doc ///
+  Key
+    symbol xor
+    (symbol xor, Boolean, Boolean)
+  Headline
+    exclusive disjunction
+  Usage
+    t xor u
+  Inputs
+    t:Boolean
+    u:Boolean
+  Outputs
+    :Boolean
+      equivalent to @TT "t and not u or not t and u"@
+  SeeAlso
+    symbol and
+    symbol or
+///

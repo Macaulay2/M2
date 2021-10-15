@@ -1,7 +1,7 @@
 newPackage("Matroids",
 	AuxiliaryFiles => true,
-	Version => "1.2.1",
-	Date => "January 5, 2020",
+	Version => "1.3.0",
+	Date => "May 8, 2021",
 	Authors => {{
 		Name => "Justin Chen",
 		Email => "jchen@math.berkeley.edu",
@@ -71,7 +71,8 @@ export {
 	"idealChowRing",
 	"cogeneratorChowRing",
 	"specificMatroid",
-	"allMatroids"
+	"allMatroids",
+	"allMinors"
 }
 
 Matroid = new Type of HashTable
@@ -366,7 +367,7 @@ hasMinor (Matroid, Matroid) := Boolean => (M, N) -> (
 		MX := M / X;
 		for Y in independentSets(dual MX, m - n - rank M + rank N) do (
 			if areIsomorphic(N, MX \ Y) then (
-				if debugLevel > 0 then print("Contract "|toString X|", delete "|toString (Y/(y -> y + #select(toList X, x -> x <= y))));
+				if debugLevel > 0 then print("Contract "|toString X|", delete "|toString (Y/(y -> (sort toList(M.groundSet - X))#y)));
 				return true;
 			);
 		);
@@ -703,14 +704,16 @@ specificMatroid String := Matroid => name -> (
 	) else if name == "vamos" then (
 		relaxation(specificMatroid "V8+", set{4,5,6,7})
 	) else if name == "pappus" then (
-		matroid(toList(0..8), {{0,1,2},{0,3,7},{0,4,8},{1,3,6},{1,5,8},{2,4,6},{2,5,7},{6,7,8}}/set, EntryMode => "nonbases")
+		matroid(toList(0..8), {{0,1,2},{0,4,6},{0,5,7},{1,3,6},{1,5,8},{2,3,7},{2,4,8},{3,4,5},{6,7,8}}/set, EntryMode => "nonbases")
 	) else if name == "nonpappus" then (
 		relaxation(specificMatroid "pappus", set{6,7,8})
 	) else if name == "AG32" then (
 		affineGeometry(3, 2)
 	) else if name == "R10" then (
 		matroid(id_((ZZ/2)^5) | matrix{{-1_(ZZ/2),1,0,0,1},{1,-1,1,0,0},{0,1,-1,1,0},{0,0,1,-1,1},{1,0,0,1,-1}})
-	) else error "Name string must be one of: fano, nonfano, V8+, vamos, pappus, nonpappus, AG32, R10"
+	) else if name == "betsyRoss" then (
+		matroid(toList(0..10), {{0,2,5},{0,2,6},{0,3,8},{0,3,9},{0,5,6},{0,7,10},{0,8,9},{1,3,6},{1,3,7},{1,4,5},{1,4,9},{1,5,9},{1,6,7},{1,8,10},{2,4,7},{2,4,8},{2,5,6},{2,7,8},{2,9,10},{3,5,10},{3,6,7},{3,8,9},{4,5,9},{4,6,10},{4,7,8}}, EntryMode => "nonbases")
+	) else error "Name string must be one of: fano, nonfano, V8+, vamos, pappus, nonpappus, AG32, R10, betsyRoss"
 )
 
 allMatroids = method()
@@ -730,6 +733,13 @@ allMatroids ZZ := List => n -> (
 	L := toList(0..#matroidList - #select(matroidList, M -> 2*rank M == n) - 1);
 	matroidList | (matroidList_L / dual)_(rsort L)
 )
+
+allMinors = method()
+allMinors (Matroid, Matroid) := List => (M, N) -> (
+	flatten apply(independentSets(M, rank M - rank N), X -> (
+		C := M/X; 
+		apply(select(independentSets(dual C, #C.groundSet - #N.groundSet), Y -> areIsomorphic(N, C\Y)), Y -> {X, Y/(y -> (sort toList(M.groundSet - X))#y)})
+)))
 
 -- Miscellaneous general purpose helper functions
 
@@ -2013,10 +2023,10 @@ doc ///
 			of indices, or a @TO2{List, "list"}@ of elements in M
 	Outputs
 		:Matroid
-			the deletion M &#92; S
+			the deletion M \ S
 	Description
 		Text
-			The deletion M &#92; S is obtained by restricting to the complement of S.
+			The deletion M \ S is obtained by restricting to the complement of S.
 			
 		Example
 			M = matroid({a,b,c,d},{{a,b},{a,c}})
@@ -2050,8 +2060,8 @@ doc ///
 			the contraction M / S
 	Description
 		Text
-			The contraction of M by S is given by M/S := (M* &#92; S)*, 
-			where * stands for dual, and &#92; is deletion.
+			The contraction of M by S is given by M/S := (M* \ S)*, 
+			where * stands for dual, and \ is deletion.
 			
 		Example
 			M = matroid({a,b,c,d},{{a,b},{a,c}})
@@ -2081,10 +2091,10 @@ doc ///
 			of indices, or a @TO2{List, "list"}@ of elements in M, disjoint from X
 	Outputs
 		:Matroid
-			the minor M / X &#92; Y
+			the minor M / X \ Y
 	Description
 		Text
-			The minor M / X &#92; Y of M is given by contracting X and 
+			The minor M / X \ Y of M is given by contracting X and 
 			deleting Y from M. The resulting matroid is independent 
 			of the order in which deletion and contraction is done. If 
 			X (or Y) is a set (of indices in M.groundSet), then X is identified 
@@ -2108,9 +2118,9 @@ doc ///
 			indices of Y (and X) are taken with respect to the ground set of M. 
 			
 			If one already has the indices Y0 of Y in M / X (or the indices X0 of 
-			X in M &#92; Y), one can simply use the notation M 
+			X in M \ Y), one can simply use the notation M 
 			@TO2{contraction, "/"}@ X @TO2{deletion, "\\"}@ Y0 
-			(or (M &#92; Y) / X0). Thus this method serves purely as a 
+			(or (M \ Y) / X0). Thus this method serves purely as a 
 			convenience, to save the user the (trivial) task of computing Y0 from Y.
 			
 			If X and Y are not disjoint, then an error is thrown (thus one should
@@ -2771,8 +2781,8 @@ doc ///
 			of a matroid is: if $M$ is a matroid consisting of $a$ loops 
 			and $b$ coloops, then T_M(x, y) = x^ay^b, and if 
 			$e \in&nbsp;M$ is neither a loop nor a coloop, then 
-			T_M(x, y) := T_{M/e}(x, y) + T_{M&#92;e}(x, y), where 
-			M&#92;e is the @TO deletion@ of M with respect to \{e\},
+			T_M(x, y) := T_{M/e}(x, y) + T_{M\e}(x, y), where 
+			M\e is the @TO deletion@ of M with respect to \{e\},
 			and M/e is the @TO contraction@ of M with respect to 
 			\{e\}. Many invariants of a matroid can be determined by 
 			substituting values into its Tutte polynomial - cf.
@@ -3419,7 +3429,8 @@ doc ///
 				"pappus",
 				"nonpappus",
 				"AG32",
-				"R10"
+				"R10",
+				"betsyRoss"
 			}
 		Text
 			Many of these matroids are interesting for their non-representability
@@ -3523,10 +3534,60 @@ doc ///
 			o7 = 70
 ///
 
+doc ///
+	Key
+		allMinors
+		(allMinors, Matroid, Matroid)
+	Headline
+		returns all minors of one matroid in another
+	Usage
+		allMinors(M, N)
+	Inputs
+		M:Matroid
+			the ambient matroid
+		N:Matroid
+			the candidate minor
+	Outputs
+		:List
+			of pairs (S, T), such that M / S \ T is isomorphic to N
+	Description
+		Text
+			This method returns a list of all possible ways to realize N 
+			as a minor of M. The output is a list of pairs (S, T) of subsets 
+			of the ground set of M such that 
+			@TO2{minor, "minor(M, S, T)"}@
+			is isomorphic to N.
+			
+			In fact, S will be an independent subset of M, of size = 
+			rank M - rank N, and T will be a coindependent subset of
+			M, of size = #((M/S).groundSet) - #N.groundSet, which is 
+			disjoint from S.
+			
+			The output of this method should be the empty list iff the 
+			output of @TO hasMinor@ is false (for the same input).
+			
+		Example
+			V = specificMatroid "vamos"
+			U25 = uniformMatroid(2,5)
+			elapsedTime L = allMinors(V, U25);
+			#L
+			netList L_{0..4}
+			all(L, pair -> areIsomorphic(U25, minor(V, pair#0, pair#1)))
+	SeeAlso
+		minor
+		hasMinor
+///
+
 undocumented {
 	(net, Matroid),
 	Loops,
-	ParallelEdges
+	ParallelEdges,
+	seriesConnection,
+	(seriesConnection, Matroid, Matroid),
+	parallelConnection,
+	(parallelConnection, Matroid, Matroid),
+	sum2,
+	(sum2, Matroid, Matroid)
 }
 
 TEST ///
@@ -3739,6 +3800,18 @@ smallMatroids = flatten smallMatroids
 assert(all(smallMatroids, isWellDefined))
 assert(not any(subsets(smallMatroids, 2), S -> areIsomorphic(S#0, S#1)))
 assert(all(smallMatroids_{1..69}, M -> areIsomorphic(M, fold(components M, (a, b) -> a ++ b))))
+///
+
+TEST ///
+P = specificMatroid "pappus"
+assert Equation(#nonbases P, 9)
+NP = specificMatroid "nonpappus"
+assert Equation(#nonbases NP, 8)
+U36 = uniformMatroid(3,6)
+U36minors = allMinors(P, U36)
+assert Equation(#U36minors, 3)
+BR = specificMatroid "betsyRoss"
+elapsedTime assert Equation(hasMinor(BR, U36), true)
 ///
 
 end--

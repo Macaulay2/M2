@@ -200,7 +200,7 @@ TEST ///
   -- test that inhomogeneous input either works, or doesn't crash the system
   -- inhomogeneous input.  For now, disallow...
   -- We never get to our code if the module is inhomogeneous.
-  -- Instead, the front end homogenizes the inout, calls this, and then dehomogenizes later.
+  -- Instead, the front end homogenizes the input, calls this, and then dehomogenizes later.
   S = ZZ/101[a..d]
   I = ideal(a*b-a-1, b^3-c*d-3)
   time res I
@@ -539,8 +539,6 @@ TEST ///
   R = ZZ/101[a..d]
   I = ideal random(R^1, R^{-2,-3,-4})
   P = gens gb syz gens I
-  -- TODO: get this to work, then remove 'try' line after that.
-  -- minimalBetti coker P -- FAILS
   betti res(coker P,  FastNonminimal => true)
   minimalBetti coker P
   
@@ -738,26 +736,29 @@ TEST ///
   S = ZZ/101[x_1..x_n]
   soc = random(S^1, S^{ -d});
   I = ideal fromDual soc;
+  time C = res I
   time B = betti res I
-  C = res I;
-  time F = res(I, FastNonminimal=>true)
+  time F = res(ideal I_*, FastNonminimal=>true)
   time B == betti(F, Minimize =>true)
   assert(betti F != betti C)
   assert(F =!= C)
 
-  I = ideal I_*;
-  F = res(I, FastNonminimal=>true)
+  F = res(ideal I_*, FastNonminimal=>true)
   assert(B == betti(F, Minimize =>true))
   C = res I;
   assert(B == betti C)
-  
+
+  I = ideal I_*;
   C1 = res(I, Strategy=>1);
   C2 = res(I, Strategy=>2);
   C0 = res(I, Strategy=>0);
   C4 = res(I, Strategy=>4);
   assert(C2 === C1)
   assert(C0 === C1)
-  assert(C4 =!= C1)
+  assert(C4 === C1)
+
+  I = ideal I_*;
+  C4 = res(I, Strategy=>4);
   C1 = res(I, Strategy=>1);
   C2 = res(I, Strategy=>2);
   C0 = res(I, Strategy=>0);

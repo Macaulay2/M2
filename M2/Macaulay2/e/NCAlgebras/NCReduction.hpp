@@ -11,7 +11,7 @@
 class FreeAlgebra;
 class Word;
 
-class PolynomialHeap
+class PolynomialHeap : public our_new_delete
 {
 public:
   virtual ~PolynomialHeap() {}

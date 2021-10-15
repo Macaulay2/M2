@@ -57,7 +57,7 @@ void ARingQQGMP::elem_text_out(buffer& o,
       str = mpq_get_str(allocstr, 10, &a);
       o << str;
     }
-  if (size > 1000) deletearray(allocstr);
+  if (size > 1000) freemem(allocstr);
 }
 
 void ARingQQGMP::syzygy(const ElementType& a,

@@ -37,6 +37,8 @@ const RingElement *IM2_RingElement_from_rational(const Ring *R, mpq_srcptr r);
 const RingElement *IM2_RingElement_from_BigComplex(const Ring *R, gmp_CC z);
 
 const RingElement *IM2_RingElement_from_BigReal(const Ring *R, gmp_RR z);
+    
+const RingElement *IM2_RingElement_from_Interval(const Ring *R, gmp_RRi z);
 
 gmp_ZZorNull IM2_RingElement_to_Integer(const RingElement *a);
 /* If the ring of a is ZZ, or ZZ/p, this returns the underlying representation.
@@ -47,6 +49,8 @@ gmp_QQorNull IM2_RingElement_to_rational(const RingElement *a);
 gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a);
 
 gmp_CCorNull IM2_RingElement_to_BigComplex(const RingElement *a);
+    
+gmp_RRiorNull IM2_RingElement_to_Interval(const RingElement *a);
 
 long rawDiscreteLog(const RingElement *h);
 

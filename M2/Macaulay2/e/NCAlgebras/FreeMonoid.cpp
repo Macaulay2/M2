@@ -10,8 +10,6 @@
 #include <ostream>                     // for string, operator<<, ostream
 #include <utility>                     // for pair
 
-#include <tbb/tbb.h>                   // for locks
-
 size_t FreeMonoidLogger::mCompares = 0;
 
 std::ostream& operator<<(std::ostream& o, FreeMonoidLogger a)
@@ -34,7 +32,7 @@ FreeMonoid::FreeMonoid(
     mNumWeights(wtvecs.size() / variableNames.size())
 {
   auto ndegrees = degreeMonoid().n_vars();
-  auto nvars = variableNames.size();
+  [[maybe_unused]] auto nvars = variableNames.size();
   assert(nvars * ndegrees == mDegrees.size());
 
   for (const int* i = mDegrees.data(); i != mDegrees.data() + mDegrees.size(); i += ndegrees)
@@ -90,7 +88,7 @@ void FreeMonoid::mult(const Monom& m1, const Monom& m2, MonomialInserter& result
 void FreeMonoid::mult3(const Monom& m1, const Monom& m2, const Monom& m3, MonomialInserter& result) const
 {
   int sz = m1[0] + wordLength(m2) + wordLength(m3);
-  result.push_back(m1[0] + wordLength(m2) + wordLength(m3));
+  result.push_back(sz);
   for (int i=1; i<=mNumWeights; ++i)
     result.push_back(m1[i] + m2[i] + m3[i]);
   result.insert(result.end(),m1.begin()+mNumWeights+1,m1.end());
@@ -108,17 +106,21 @@ int FreeMonoid::compare(const Monom& m1, const Monom& m2) const
   // is this thread-safe?
   //FreeMonoidLogger::logCompare();
   
+  // compare weights first
   for (int j = 1; j <= mNumWeights; ++j)
-    {
+    {      
       if (m1[j] > m2[j]) return GT;
       if (m1[j] < m2[j]) return LT;
     }
-  int m1WordLen = wordLength(m1);
-  int m2WordLen = wordLength(m2);  
-  if (m1WordLen > m2WordLen) return GT;
-  if (m1WordLen < m2WordLen) return LT;
+
+  // at this point, the weights are the same.
+  // the total length is just mNumWeights + 1 + wordLength, so just
+  // compare the total length (i.e. m1[0] and m2[0]
+  if (m1.size() > m2.size()) return GT;
+  if (m1.size() < m2.size()) return LT;
+
   // at this stage, they have the same weights and word length, so use lex order
-  for (int j = mNumWeights+1; j < m1WordLen + mNumWeights + 1; ++j)
+  for (int j = mNumWeights+1; j < m1.size(); ++j)
     {
       if (m1[j] > m2[j]) return LT;
       if (m1[j] < m2[j]) return GT;
@@ -131,6 +133,7 @@ int FreeMonoid::compare(const Word& w1, const Word& w2) const
 {
   int weight1;
   int weight2;
+
   // compute and compare weights
   for (int i = 0; i < mNumWeights; ++i)
   {
@@ -143,6 +146,7 @@ int FreeMonoid::compare(const Word& w1, const Word& w2) const
     if (weight1 > weight2) return GT;
     if (weight1 < weight2) return LT;
   }
+
   if (w1.size() > w2.size()) return GT;
   if (w1.size() < w2.size()) return LT;
   // at this stage, they have the same weights and word length, so use lex order
@@ -151,7 +155,7 @@ int FreeMonoid::compare(const Word& w1, const Word& w2) const
       if (w1[i] > w2[i]) return LT;
       if (w1[i] < w2[i]) return GT;
     }
-  // if we are here, the monomials are the same.
+  // if we are here, the monomials corresponding to the words are the same.
   return EQ;
 }
 
@@ -283,7 +287,8 @@ void FreeMonoid::fromMonomial(const int* monom, MonomialInserter& result) const
 void FreeMonoid::wordFromMonom(Word& result, const Monom& m) const
 {
   // just call the prefix command on the word length of the monom
-  wordPrefixFromMonom(result,m,wordLength(m));
+  result.init(m.begin() + mNumWeights + 1, m.end());
+  //wordPrefixFromMonom(result,m,wordLength(m));
 }
 
 void FreeMonoid::wordPrefixFromMonom(Word& result, const Monom& m, int endIndex) const 
@@ -294,40 +299,6 @@ void FreeMonoid::wordPrefixFromMonom(Word& result, const Monom& m, int endIndex)
 void FreeMonoid::wordSuffixFromMonom(Word& result, const Monom& m, int beginIndex) const
 {
   result.init(m.begin() + mNumWeights + 1 + beginIndex, m.end());
-}
-
-void FreeMonoid::monomPrefixFromMonom(std::vector<int>& result,
-                                      const Monom& m,
-                                      int toDrop) const
-{
-  if (is_one(m)) {   // if the monomial is the empty monomial
-    for (auto i : m) result.push_back(i);
-    return;
-  }  
-  result.push_back(m.size()-toDrop);
-  int monomOffset = numWeights() + 1;
-  for (int i = 0; i < numWeights(); ++i) result.push_back(0);
-  for (int i = 0; i < m.size()-toDrop; ++i)
-    result.push_back(m[monomOffset + i]);
-  Monom tmp(result.data());
-  setWeights(tmp);
-}
-
-void FreeMonoid::monomSuffixFromMonom(std::vector<int>& result,
-                                      const Monom& m,
-                                      int toDrop) const
-{
-  if (is_one(m)) {   // if the monomial is the empty monomial
-    for (auto i : m) result.push_back(i);
-    return;
-  }  
-  result.push_back(m.size()-toDrop);
-  int monomOffset = numWeights() + 1;
-  for (int i = 0; i < numWeights(); ++i) result.push_back(0);
-  for (int i = toDrop; i < m.size(); ++i)
-    result.push_back(m[monomOffset + i]);
-  Monom tmp(result.data());
-  setWeights(tmp);
 }
 
 void FreeMonoid::monomInsertFromWord(MonomialInserter& result, const Word& word) const
@@ -364,7 +335,7 @@ void FreeMonoid::setWeights(Monom& m) const
 
 int FreeMonoid::wordWeight(Word& word, const std::vector<int>& weight, int start_index) const
 {
-  assert(start_index < word.size());
+  assert(start_index <= word.size());
   int result = 0;
   for (int j = start_index; j < word.size(); ++j)
     result += weight[word.begin()[j]];
@@ -440,25 +411,6 @@ Monom FreeMonoid::wordProductAsMonom(const Word& left,
   return newmon;
 }
 
-// help the linker know to create these versions
-// template Monom FreeMonoid::wordProductAsMonom<tbb::null_mutex>(const Word& left,
-//                                                                const Monom& mid,
-//                                                                const Word& right,
-//                                                                MemoryBlock & memBlock,
-//                                                                tbb::null_mutex& noLock) const;
-
-// template Monom FreeMonoid::wordProductAsMonom<tbb::queuing_mutex>(const Word& left,
-//                                                                   const Monom& mid,
-//                                                                   const Word& right,
-//                                                                   MemoryBlock & memBlock,
-//                                                                   tbb::queuing_mutex& lock) const;
-
-// template Monom FreeMonoid::wordProductAsMonom<tbb::mutex>(const Word& left,
-//                                                           const Monom& mid,
-//                                                           const Word& right,
-//                                                           MemoryBlock & memBlock,
-//                                                           tbb::mutex& lock) const;
-
 // we are just placing the answer in result.  it is up to the caller
 // to clean it up.
 void FreeMonoid::support(const Monom& m, std::vector<int> &result) const
@@ -478,19 +430,6 @@ void FreeMonoid::support(const Monom& m, std::vector<int> &result) const
   for (auto i = 0; i < numVars(); i++)
     if (varsFound[i] > 0) result.push_back(i);
 } 
-
-Word FreeMonoid::firstVar(const Monom& m) const
-{
-  if (is_one(m)) return Word();
-  int monomOffset = numWeights() + 1;
-  return Word(m.begin() + monomOffset,m.begin() + monomOffset + 1);
-}
-
-Word FreeMonoid::lastVar(const Monom& m) const
-{
-  if (is_one(m)) return Word();
-  return Word(m.begin() + m.size() - 1, m.begin() + m.size());
-}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

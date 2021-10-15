@@ -580,7 +580,7 @@ document {
 	  {TT "Equations", " -- ", ofClass Ideal},
 	  {TT "Slice", " -- ", ofClass List, " or ", ofClass Matrix},
 	  {TT "Points", "--  a list of ", TO2(Point, "points")},
-	  {TT "IsIrreducible", " -- takes values ", TO "null", "(not determined), ", TO "true", ", or ", TO "false"}
+	  {TT "cache.IsIrreducible", " -- takes values ", TO "null", "(not determined), ", TO "true", ", or ", TO "false"}
 	  },
      "Optional keys:",
      UL {
@@ -1027,9 +1027,8 @@ doc ///
 
 doc ///
      Key
-          intersection
 	  (intersection,PolySpace,PolySpace)
-	  [intersection,Tolerance]
+	  [(intersection,PolySpace,PolySpace),Tolerance]
      Headline
           Intersection of polynomial spaces
      Usage
@@ -1122,7 +1121,7 @@ doc ///
   Key
     Homotopy
   Headline
-    a homotopy asbtract type
+    a homotopy abstract type
   Description
     Text
       A type that inherits from this {\bf abstract} type should supply methods for 
@@ -1176,6 +1175,17 @@ doc ///
     (under construction!) new types and methods needed to generalize WitnessSet
 ///
 
+
+doc ///
+  Key
+    (texMath, PolySpace)
+    (texMath, WitnessSet)
+    (texMath, PolySystem)
+    (texMath, Point)
+    (texMath, DualSpace)
+  Headline
+    convert to TeX math format
+///
 
 -* doc template
 doc ///

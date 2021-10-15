@@ -192,7 +192,7 @@ makePolynomials(Matrix, List, List) := o -> (MX, conds, sols) -> if o.Strategy =
 -- Output:
 --    List of solutions written w.r.t flags B
 ---------------------------------
-changeFlags = method(Options=>{oneHomotopy=>true})
+changeFlags = method(Options=>{OneHomotopy=>true})
 changeFlags(List, Sequence) := o->(solutionsA, conds'A'B)->( -- solutionsA is a list of matrices
    if #solutionsA == 0 then return {};
    (conditions,flagsA,flagsB) := conds'A'B; 
@@ -211,7 +211,7 @@ changeFlags(List, Sequence) := o->(solutionsA, conds'A'B)->( -- solutionsA is a 
    MX := sub(random(FFF^n,FFF^n),R)*(transpose genericMatrix(R,k,n-k)||id_(FFF^k)); -- random chart on G(k,n)
    -- THE SOLUTIONS MIGHT NOT FIT MX (that's why I have an error for some problems)
    
-   -- NEW: solutionsB := changeFlags'oneHomotopy(MX,solutionsA/(s->solutionToChart(s,MX)),conds'A'B);
+   -- NEW: solutionsB := changeFlags'OneHomotopy(MX,solutionsA/(s->solutionToChart(s,MX)),conds'A'B);
    -- OLD: 
    solutionsB := changeFlags(MX,solutionsA/(s->solutionToChart(s,MX)),conds'A'B,o);
    
@@ -253,7 +253,7 @@ changeFlags(List, Sequence) := o->(solutionsA, conds'A'B)->( -- solutionsA is a 
 --        and uses only linear homotopies.
 ----------------------------------
 changeFlags(Matrix, List, Sequence) := o -> (MX, solutionsA, conds'A'B) ->
-if o#oneHomotopy then changeFlags'oneHomotopy(MX, solutionsA, conds'A'B) else ( 
+if o#OneHomotopy then changeFlags'OneHomotopy(MX, solutionsA, conds'A'B) else ( 
    -- solutionsA is a list of lists (of values for the parameters)
    (conditions,flagsA,flagsB) := conds'A'B; 
    solutionsS := solutionsA;
@@ -288,8 +288,8 @@ if o#oneHomotopy then changeFlags'oneHomotopy(MX, solutionsA, conds'A'B) else (
    solutionsS
    )
 
-changeFlags'oneHomotopy = method()
-changeFlags'oneHomotopy(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutionsA is a list of lists (of values for the parameters)
+changeFlags'OneHomotopy = method()
+changeFlags'OneHomotopy(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutionsA is a list of lists (of values for the parameters)
    (conditions,flagsA,flagsB) := conds'A'B; 
    if #solutionsA == 0 then return {};
    t:= symbol t;
@@ -330,7 +330,7 @@ sols = solveSystem (
 Flags2 = {id_(FFF^4)_{1,3,0,2}, rsort id_(FFF^4)} --we should get (0,0) as solution
 solsT = changeFlags(MX, sols/coordinates, (conds, Flags1, Flags2))
 assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually (0,0)
-solsT = changeFlags'oneHomotopy(MX, sols, (conds, Flags1, Flags2))
+solsT = changeFlags'OneHomotopy(MX, sols, (conds, Flags1, Flags2))
 assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually (0,0)
 
 /// --end of TEST

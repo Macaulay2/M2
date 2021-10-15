@@ -1,6 +1,5 @@
 // Copyright 2014-2016  Michael E. Stillman
 
-#include "stdinc-m2.hpp"
 #include "util.hpp"
 
 M2_string string_std_to_M2(const std::string& s)

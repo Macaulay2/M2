@@ -1,9 +1,34 @@
+needs "packages.m2"
+needs "code.m2"
+needs "run.m2"
+
 -----------------------------------------------------------------------------
 -- Local utilities
 -----------------------------------------------------------------------------
 
 sourceFileStamp = (filename, linenum) -> concatenate(
     "--", toAbsolutePath filename, ":", toString linenum, ": location of test code")
+
+-----------------------------------------------------------------------------
+-- TestInput
+-----------------------------------------------------------------------------
+TestInput = new SelfInitializingType of HashTable
+new TestInput from Sequence := (T, S) -> TestInput {
+    "filename" => S_0,
+    "line number" => S_1,
+    "code" => concatenate(sourceFileStamp(S_0, S_1), newline, S_2)}
+TestInput.synonym = "test input"
+
+code TestInput := T -> T#"code"
+locate TestInput := T -> (T#"filename",
+    T#"line number" - depth net code T, 1,
+    T#"line number", 1,,)
+toString TestInput := T -> (
+    loc := locate T;
+    loc#0 | ":" | loc#1 | ":" | loc#2 | "-" | loc#3 | ":" | loc#4 | ":"
+    )
+net TestInput := T -> (toString T)^-1
+editMethod TestInput := EDIT @@ locate
 
 -----------------------------------------------------------------------------
 -- TEST
@@ -13,13 +38,11 @@ TEST = method(Options => {FileName => false})
 TEST List   := opts -> testlist   -> apply(testlist, test -> TEST(test, opts))
 TEST String := opts -> teststring -> (
     n := currentPackage#"test number";
-    currentPackage#"test inputs"#n = if opts.FileName then (
-        minimizeFilename teststring, 1,
-        concatenate(sourceFileStamp(teststring, 1), newline, get teststring)
-        ) else (
-        minimizeFilename currentFileName, currentLineNumber(),
-        concatenate(sourceFileStamp(currentFileName, currentLineNumber()),
-            newline, teststring));
+    currentPackage#"test inputs"#n = TestInput if opts.FileName then (
+        testCode := get teststring;
+        (minimizeFilename teststring, depth net testCode + 1, testCode)
+        ) else
+        (minimizeFilename currentFileName, currentLineNumber(), teststring);
     currentPackage#"test number" = n + 1;)
 -- TODO: support test titles
 TEST(String, String) := (title, teststring) -> (
@@ -51,8 +74,10 @@ captureTestResult := (desc, teststring, pkg, usermode) -> (
     runString(teststring, pkg, usermode))
 
 loadTestDir := pkg -> (
+    -- TODO: prioritize reading the tests from topSrcdir | "Macaulay2/tests/normal" instead
     testDir := pkg#"package prefix" |
         replace("PKG", pkg#"pkgname", currentLayout#"packagetests");
+    pkg#"test directory loaded" =
     if fileExists testDir then (
         tmp := currentPackage;
         currentPackage = pkg;
@@ -60,40 +85,45 @@ loadTestDir := pkg -> (
             match("\\.m2$", file)), test -> testDir | test),
             FileName => true);
         currentPackage = tmp;
-        pkg#"test directory loaded" = true;
-    ) else pkg#"test directory loaded" = false;
-)
+        true) else false)
+
+tests = method()
+tests Package := pkg -> (
+    if not pkg#?"test directory loaded" then loadTestDir pkg;
+    if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
+    previousMethodsFound = new HashTable from pkg#"test inputs"
+    )
+tests String := pkg -> tests needsPackage(pkg, LoadDocumentation => true)
 
 check = method(Options => {UserMode => null, Verbose => false})
-check String  := opts -> pkg -> check(-1, pkg, opts)
-check Package := opts -> pkg -> check(-1, pkg, opts)
-
-check(ZZ, String)  := opts -> (n, pkg) -> check(n, needsPackage (pkg, LoadDocumentation => true), opts)
-check(ZZ, Package) := opts -> (n, pkg) -> (
+check String  :=
+check Package := opts -> pkg -> check({}, pkg, opts)
+check(ZZ, String)  :=
+check(ZZ, Package) := opts -> (n, pkg) -> check({n}, pkg, opts)
+check(List, String)  := opts -> (L, pkg) -> check(L, needsPackage (pkg, LoadDocumentation => true), opts)
+check(List, Package) := opts -> (L, pkg) -> (
     if not pkg.Options.OptionalComponentsPresent then (
 	printerr("warning: skipping tests; ", toString pkg, " requires optional components"); return);
     usermode := if opts.UserMode === null then not noinitfile else opts.UserMode;
     --
     use pkg;
-    if pkg#?"documentation not loaded" then pkg = loadPackage(pkg#"pkgname", LoadDocumentation => true, Reload => true);
-    if not pkg#?"test directory loaded" then loadTestDir pkg;
-    tests := if n == -1 then toList(0 .. pkg#"test number" - 1) else {n};
-    if #tests == 0 then printerr("warning: ", toString pkg,  " has no tests");
+    tmp := previousMethodsFound;
+    inputs := tests pkg;
+    previousMethodsFound = tmp;
+    testKeys := if L == {} then keys inputs else L;
+    if #testKeys == 0 then printerr("warning: ", toString pkg,  " has no tests");
     --
-    errorList := {};
-    (hadError, numErrors) = (false, 0);
-    scan(tests, k -> (
-	    (filename, lineno, teststring) := pkg#"test inputs"#k;
+    errorList := for k in testKeys list (
+	    if not inputs#?k then error(pkg, " has no test #", k);
+	    teststring := code inputs#k;
 	    desc := "check(" | toString k | ", " | format pkg#"pkgname" | ")";
 	    ret := elapsedTime captureTestResult(desc, teststring, pkg, usermode);
-	    if not ret then errorList = append(errorList,
-		 (k, temporaryFilenameCounter - 2))));
-    outfile := k -> temporaryDirectory() | toString k | ".tmp";
-    if hadError then (
-	if opts.Verbose then apply(errorList, (j, k) -> (
-		(filename, lineno, teststring) := pkg#"test inputs"#j;
-		stderr << filename << ":" << lineno - 1 << ":1: error:" << endl;
-		printerr get("!tail " | outfile k)));
+	    if not ret then (k, temporaryFilenameCounter - 2) else continue);
+    outfile := errfile -> temporaryDirectory() | errfile | ".tmp";
+    if #errorList > 0 then (
+	if opts.Verbose then apply(errorList, (k, errfile) -> (
+		stderr << toString inputs#k << " error:" << endl;
+		printerr getErrors(outfile errfile)));
 	error("test(s) #", demark(", ", toString \ first \ errorList), " of package ", toString pkg, " failed.")))
 
 checkAllPackages = () -> (
@@ -107,5 +137,4 @@ checkAllPackages = () -> (
     argumentMode = tmp;
     if #fails > 0 then printerr("package(s) with failing tests: ",
 	demark(", ", fails));
-    return #fails;
-)
+    #fails)

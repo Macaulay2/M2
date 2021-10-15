@@ -71,7 +71,7 @@ SLP<Field>::SLP()
 template <class Field>
 SLP<Field>::~SLP()
 {
-  deletearray(nodes);
+  freemem(nodes);
   if (handle != NULL)
     {
       printf("closing library\n");
@@ -1101,15 +1101,15 @@ void SLP<Field>::text_out(buffer& o) const
 //     add_to_complex_array(n,dx4,dx3);
 //     multiply_complex_array_scalar(n,dx4,1.0/6);
 //     copy_complex_array<ComplexField>(n,dx4,dx);
-//     deletearray(dx1);
-//     deletearray(dx2);
-//     deletearray(dx3);
-//     deletearray(dx4);
+//     freemem(dx1);
+//     freemem(dx2);
+//     freemem(dx3);
+//     freemem(dx4);
 //   } break;
 //   default: ERROR("unknown predictor");
 //   };
-//   deletearray(LHS);
-//   deletearray(RHS);
+//   freemem(LHS);
+//   freemem(RHS);
 // }
 
 // template <class Field>
@@ -1149,9 +1149,9 @@ i<maxCorSteps);
 
 //   copy_complex_array<ComplexField>(n,x1t,x1);
 
-//   deletearray(x1t);
-//   deletearray(LHS);
-//   deletearray(RHS);
+//   freemem(x1t);
+//   freemem(LHS);
+//   freemem(RHS);
 // }
 */
 
@@ -1170,7 +1170,7 @@ bool solve_via_lapack(int size,
   int info;
 
   int* permutation = newarray_atomic(int, size);
-  complex* At = newarray(complex, size * size);
+  complex* At = newarray_atomic(complex, size * size);
   int i, j;
   for (i = 0; i < size; i++)
     for (j = 0; j < size; j++)  // transpose the matrix: lapack solves A^t x = b
@@ -1205,8 +1205,8 @@ bool solve_via_lapack(int size,
       ret = false;
     }
 
-  deletearray(permutation);
-  deletearray(At);
+  freemem(permutation);
+  freemem(At);
 
   return ret;
 }
@@ -1256,7 +1256,7 @@ bool solve_via_lapack_without_transposition(
       ret = false;
     }
 
-  deletearray(permutation);
+  freemem(permutation);
 
   return ret;
 }
@@ -1321,12 +1321,12 @@ bool cond_number_via_svd(int size, complex* A, double& cond)
       // printf("(s_large=%lf, s_small=%lf)\n", sigma[0], sigma[size-1]);
     }
 
-  deletearray(workspace);
-  deletearray(rwork);
-  // deletearray(copyA);
-  deletearray(u);
-  deletearray(vt);
-  deletearray(sigma);
+  freemem(workspace);
+  freemem(rwork);
+  // freemem(copyA);
+  freemem(u);
+  freemem(vt);
+  freemem(sigma);
 
   return ret;
 }
@@ -1394,12 +1394,12 @@ bool norm_of_inverse_via_svd(int size, complex* A, double& norm)
       norm = 1 / sigma[size - 1];
     }
 
-  deletearray(workspace);
-  deletearray(rwork);
-  // deletearray(copyA);
-  deletearray(u);
-  deletearray(vt);
-  deletearray(sigma);
+  freemem(workspace);
+  freemem(rwork);
+  // freemem(copyA);
+  freemem(u);
+  freemem(vt);
+  freemem(sigma);
 
   return ret;
 }
@@ -1422,8 +1422,8 @@ PathTracker::PathTracker()
 PathTracker::~PathTracker()
 {
   for (int i = 0; i < n_sols; i++) raw_solutions[i].release();
-  deletearray(raw_solutions);
-  deletearray(DMforPN);
+  freemem(raw_solutions);
+  freemem(DMforPN);
 }
 
 // creates a PathTracker object (case: is_projective), builds slps for predictor
@@ -1463,7 +1463,7 @@ PathTracker /* or null */* PathTracker::make(const Matrix* S,
 
   int n = S->n_cols() + 1;  // equals the number of variables
   p->maxDegreeTo3halves = 0;
-  p->DMforPN = newarray(double, n);
+  p->DMforPN = newarray_atomic(double, n);
   p->DMforPN[n - 1] = 1;
   p->S = S;
   p->slpS = NULL;
@@ -1665,15 +1665,15 @@ int PathTracker::track(const Matrix* start_sols)
         dt_decrease_factor_dbl);
 
   // memory distribution for arrays
-  complex* s_sols = newarray(complex, n * n_sols);
+  complex* s_sols = newarray_atomic(complex, n * n_sols);
   raw_solutions = newarray(Solution, n_sols);
-  complex* x0t0 = newarray(complex, n + 1);
+  complex* x0t0 = newarray_atomic(complex, n + 1);
   complex* x0 = x0t0;
   complex* t0 = x0t0 + n;
-  complex* x1t1 = newarray(complex, n + 1);
+  complex* x1t1 = newarray_atomic(complex, n + 1);
   //  complex* x1 =  x1t1;
   //  complex* t1 = x1t1+n;
-  complex* dxdt = newarray(complex, n + 1);
+  complex* dxdt = newarray_atomic(complex, n + 1);
   complex* dx = dxdt;
   complex* dt = dxdt + n;
   complex* Hxt = newarray_atomic(complex, (n + 1) * n);
@@ -1955,19 +1955,19 @@ int PathTracker::track(const Matrix* start_sols)
   if (M2_numericalAlgebraicGeometryTrace > 0) printf("\n");
 
   // clear arrays
-  // deletearray(t_sols); // do not delete (same as raw_solutions)
-  deletearray(s_sols);
-  deletearray(x0t0);
-  deletearray(x1t1);
-  deletearray(dxdt);
-  deletearray(xt);
-  deletearray(dx1);
-  deletearray(dx2);
-  deletearray(dx3);
-  deletearray(dx4);
-  deletearray(Hxt);
-  deletearray(HxtH);
-  deletearray(HxH);
+  // freemem(t_sols); // do not delete (same as raw_solutions)
+  freemem(s_sols);
+  freemem(x0t0);
+  freemem(x1t1);
+  freemem(dxdt);
+  freemem(xt);
+  freemem(dx1);
+  freemem(dx2);
+  freemem(dx3);
+  freemem(dx4);
+  freemem(Hxt);
+  freemem(HxtH);
+  freemem(HxH);
 
   return n_sols;
 }
@@ -1992,9 +1992,9 @@ Matrix /* or null */* PathTracker::refine(const Matrix* sols,
   n_sols = sols->n_rows();
 
   // memory distribution for arrays
-  complex* s_sols = newarray(complex, n * n_sols);
-  complex* dx = newarray(complex, n);
-  complex* x1t1 = newarray(complex, n + 1);
+  complex* s_sols = newarray_atomic(complex, n * n_sols);
+  complex* dx = newarray_atomic(complex, n);
+  complex* x1t1 = newarray_atomic(complex, n + 1);
   complex* x1 = x1t1;
   complex* t1 = x1t1 + n;
   complex* HxH = newarray_atomic(complex, n * (n + 1));
@@ -2060,10 +2060,10 @@ Matrix /* or null */* PathTracker::refine(const Matrix* sols,
   mpfr_clear(im);
 
   // clear arrays
-  deletearray(s_sols);
-  deletearray(dx);
-  deletearray(x1t1);
-  deletearray(HxH);
+  freemem(s_sols);
+  freemem(dx);
+  freemem(x1t1);
+  freemem(HxH);
 
   return mat.to_matrix();
 }
@@ -2185,8 +2185,8 @@ void PathTracker::text_out(buffer& o) const
 void Solution::make(int m, const complex* s_s)
 {
   this->n = m;
-  x = newarray(complex, m);
-  start_x = newarray(complex, m);
+  x = newarray_atomic(complex, m);
+  start_x = newarray_atomic(complex, m);
   copy_complex_array<ComplexField>(m, s_s, start_x);
 }
 

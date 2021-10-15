@@ -155,6 +155,13 @@ init():void := (
 	       stdIO.outisatty = false;
 	       )
 	  else
+	  if arg === "--webapp" then (
+	       stdIO.echo = true; -- so echo comes from M2 (need to disable it at level of tty with stty -echo)
+	       stdIO.readline = false; -- don't go thru readline
+	       stdIO.inisatty = true; -- otherwise hangs after first syntax error
+	       stdIO.outisatty = true; -- not so important?
+	  )
+	  else
 	  if arg === "--read-only-files" then (
 	       readonlyfiles = true;
 	       )
@@ -361,6 +368,8 @@ export openListener(filename:string):(file or errmsg) := (
      then opensocket(filename,false,false,true)
      else (file or errmsg)(errmsg("openListener: expected file name starting with '$'")));
 export flushinput(o:file):void := (
+     o.echoindex = o.echoindex - o.insize;
+     if o.echoindex < 0 then o.echoindex = 0;
      o.inindex = 0;
      o.insize = 0;
      o.bol = true;

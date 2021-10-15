@@ -10,7 +10,7 @@
 #include "relem.hpp"
 
 PolyList copyPolyVector(const M2FreeAlgebraOrQuotient* A,
-                        const ConstPolyList& polys)
+                        const PolyList& polys)
 {
   auto& A0 = A->freeAlgebra();
   PolyList result;

@@ -1,7 +1,9 @@
 document {
      Key => {numeric,(numeric,Matrix),(numeric,ZZ,Matrix),
 	  (numeric, Vector),(numeric, ZZ, Vector),
-	  (numeric, ZZ, CC), (numeric, RR), (numeric, CC), (numeric, ZZ, VisibleList), 
+	  (numeric, ZZ, CC), (numeric, RR), (numeric, RRi),
+      (numeric, ZZ, RRi),
+        (numeric, CC), (numeric, ZZ, VisibleList),
 	  (numeric, VisibleList), (numeric, ZZ, Constant), (numeric, Constant),
      	  (numeric, ZZ, Number), (numeric, Number),
 	  (numeric, ZZ, InfiniteNumber),(numeric, InfiniteNumber)},

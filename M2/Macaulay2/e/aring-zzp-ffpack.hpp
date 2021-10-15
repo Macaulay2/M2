@@ -44,6 +44,7 @@ class ARingZZpFFPACK : public RingInterface
 
   typedef FieldType::Element ElementType;
   typedef ElementType elem;
+  typedef std::vector<elem> ElementContainerType;
 
   typedef uint32_t
       UTT;  ////// attention: depends on STT;currently manual update

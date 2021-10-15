@@ -19,6 +19,6 @@ end
 
 restart
 elapsedTime load "NumericalSchubertCalculus/EXA/21e5x1-G48.m2"
-tracking time = 52.5297
+-- tracking time = 52.5297
 -- 376.668 seconds elapsed
 

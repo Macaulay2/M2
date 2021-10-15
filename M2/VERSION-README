@@ -1,36 +1,49 @@
+
 The only place the Macaulay2 version number appears is in the file ./VERSION .
 
-The convention for version numbers of Macaulay2 is this:
-  1.3     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
-  1.3.1   : a minor update, with changes people might want, stable, suitable
-     	    minor updates to binary distributions on certain architectures
-  1.3.1.1 : a development version, with no binary distributions
-  2.0     : this just means we've gotten bored seeing "1" at the beginning of the version number
+We have three main branches on github:
 
-It is best to increment version numbers on the "master" branch, so they are all
-incremented on the same branch, hence in a well-defined order, despite possible
-merging.
+   development -- all pull requests are merged into this branch
+   pre-master  -- development is manually merged into this branch occasionally, triggering builds
+   master      -- pre-master is manually merged into this branch after builds succeed there.  Daily builds occcur here.
+
+The development branch will always be ahead of the pre-master branch, and the pre-master branch will always be ahead of
+the master branch, so the merges above are all done by fast-fowarding.
+
+Near release time we have a release branch, with name of the form release-X.Y-branch, which is occasionally merged into development.
+
+The convention for version numbers of Macaulay2 is this:
+  1.18     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
+  1.18.1   : a minor update, with changes people might want, stable, suitable
+     	     minor updates to binary distributions on certain architectures
+  1.18.1.1 : a development version, with no binary distributions
 
 Here is the procedure:
 
     Things to do when incrementing the version number to X.Y.Z, say :
-       - on the master branch:
 	 - increment the version number in the file ./VERSION
 	 - add an entry to distributions/deb/changelog
 	 - commit the two files and push upstream
 
-    Things to do when developing a binary release for version X.Y
-       - on the master branch:
+    Things to do when developing a binary release for version X.Y (or version X.Y.Z)
+       - on the development branch:
 	 - increment version to X.Y, as described above
-	 - make a git branch of the form release-X.Y
-	      git branch release-X.Y
-	 - update version to X.Y.0.1, as described above, so development on the master branch can continue
-       - switch to release-X.Y and push it:
-       	      git checkout release-X.Y
+	 - make a git branch of the form release-X.Y and switch to it
+	      git branch -b release-X.Y-branch
+	 - push it upstream:
 	      git push -u origin release-X.Y
-         Prepare binary releases there, committing minor changes needed for
-         building on various architectures.  Periodically merge the branch into
-         the master branch.
+	 - tag provisionally it for Mahrud
+	      git tag release-X.Y-rc1
+	      git push origin release-X.Y-rc1
+	 - switch to development and merge the new release branch with development
+	      git checkout development
+	      git merge release-X.Y
+	 - update version to X.Y.0.1 on the development branch, as described above
+	      
+         Prepare binary releases on the release-X.Y branch, committing minor
+         changes needed for building on various architectures.  Periodically
+         merge the branch into the development branch.  Continue accepting pull
+         requests into the development branch.
 
 Note:
   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N

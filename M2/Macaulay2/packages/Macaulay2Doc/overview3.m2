@@ -53,6 +53,7 @@ document {
 	  TO "MPIR",
 	  TO "GNU MP",
 	  TO "MPFR",
+      TO "MPFI",
 	  TO "GC garbage collector",
 	  TO "LAPACK",
 	  TO "BLAS",
@@ -215,6 +216,18 @@ document {
 	  "The ", TT "MPFR", " library is used by Macaulay2 for its arbitrary precision real number arithmetic
 	  and associated transcendental functions.  It is available at ", HREF "http://www.mpfr.org/", ".  The
 	  library is remarkable for the care taken to return correctly rounded
+	  results.  It is hoped that this will form a good base for experimentation
+	  with algebraic algorithms that mix symbolic and numeric techniques.
+	  It is licensed under the GNU Lesser General Public License, version 3 or later."
+	  }
+     }
+
+document {
+     Key => "MPFI",
+     PARA {
+	  "The ", TT "MPFI", " library is used by Macaulay2 for its arbitrary precision real interval arithmetic
+	  and associated transcendental functions.  It is available at ", HREF "https://gforge.inria.fr/projects/mpfi/", ".  The
+	  library is based on the ", TO "MPFR", " library.  The library is remarkable for the care taken to return correctly rounded
 	  results.  It is hoped that this will form a good base for experimentation
 	  with algebraic algorithms that mix symbolic and numeric techniques.
 	  It is licensed under the GNU Lesser General Public License, version 3 or later."

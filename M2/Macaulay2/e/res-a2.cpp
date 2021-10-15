@@ -18,7 +18,7 @@ gb_emitter::gb_emitter(const Matrix *m)
   these = newarray_atomic_clear(int, m->n_cols());
 }
 
-gb_emitter::~gb_emitter() { deletearray(these); }
+gb_emitter::~gb_emitter() { freemem(these); }
 RingElement *gb_emitter::hilbertNumerator()
 {
   assert(0);  // This routine should NEVER be called
@@ -368,7 +368,7 @@ M2_arrayint gbres_comp::betti_minimal() const
         }
     }
   M2_arrayint result = betti_make(lo, hi, len, bettis);
-  deletearray(bettis);
+  freemem(bettis);
   return result;
 }
 

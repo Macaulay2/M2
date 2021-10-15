@@ -80,13 +80,13 @@ DetComputation::DetComputation(const Matrix *M0,
 
 DetComputation::~DetComputation()
 {
-  deletearray(row_set);
-  deletearray(col_set);
+  freemem(row_set);
+  freemem(col_set);
 
   if (D)
     {
-      for (size_t i = 0; i < p; i++) deletearray(D[i]);
-      deletearray(D);
+      for (size_t i = 0; i < p; i++) freemem(D[i]);
+      freemem(D);
     }
 }
 
@@ -318,7 +318,7 @@ Matrix /* or null */ *Matrix::exterior(int p, int strategy) const
   DetComputation *d = new DetComputation(this, p, 1, strategy);
   d->calc(-1);
   Matrix *result = d->determinants();
-  deleteitem(d);
+  freemem(d);
   return result;
 }
 
@@ -333,7 +333,7 @@ Matrix /* or null */ *Matrix::minors(int p, int strategy) const
   DetComputation *d = new DetComputation(this, p, 0, strategy);
   d->calc(-1);
   Matrix *result = d->determinants();
-  deleteitem(d);
+  freemem(d);
   return result;
 }
 
@@ -370,7 +370,7 @@ Matrix /* or null */ *Matrix::minors(
     d->set_next_minor(first_row->array, first_col->array);
   d->calc(n_to_compute);
   Matrix *result = d->determinants();
-  deleteitem(d);
+  freemem(d);
   return result;
 }
 

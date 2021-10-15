@@ -1,5 +1,9 @@
 --		Copyright 2007 by Daniel R. Grayson
 
+needs "varieties.m2" -- TODO: remove this dependency
+needs "format.m2"
+needs "html.m2" -- for htmlLiteral
+
 -- Default rendering is by concatenation of rendered inputs
 setupRenderer(mathML, concatenate, Hypertext)
 
@@ -27,7 +31,6 @@ mathML String := x -> (
      then mathML net x
      else concatenate("<mtext>",replace(" ", "&nbsp;", htmlLiteral x),"</mtext>")
      )
-mathML Nothing := texMath Nothing := tex Nothing := html Nothing := x -> ""
 mathML Symbol := x -> concatenate("<mi>",toString x,"</mi>")
 mathML InfiniteNumber := i -> if i === infinity then "<mrow><mi>&infin;</mi></mrow>" else "<mo>-</mo><mi>&infin;</mi>"
 mathML Array := s -> concatenate ( "<mrow><mo>[</mo><mrow>", between("<mo>,</mo>",mathML \ toList s), "</mrow><mo>]</mo></mrow>" )
@@ -57,7 +60,7 @@ mathML FunctionApplication := m -> (
      then concatenate (mfun, bigParenthesize margs)
      else concatenate (bigParenthesize mfun, bigParenthesize margs)
      )
-mathML MatrixExpression := x -> concatenate( "<mrow><mo>(</mo>", mtableML x, "<mo>)</mo></mrow>", newline )
+mathML MatrixExpression := x -> concatenate( "<mrow><mo>(</mo>", mtableML x#0, "<mo>)</mo></mrow>", newline )
 mathML Minus := v -> concatenate( "<mo>-</mo>", mathML v#0)
 mathML Divide := x -> concatenate("<mfrac>", mathML x#0, mathML x#1, "</mfrac>")
 mathML OneExpression := x -> "<mn>1</mn>"
@@ -156,7 +159,7 @@ mathML CacheFunction := f -> mathML "-*a cache function*-"
 mathML CoherentSheaf :=
 mathML Ideal :=
 mathML ImmutableType :=
-mathML ModuleMap :=
+mathML Matrix :=
 mathML MonoidElement :=
 mathML MutableMatrix :=
 mathML OptionTable :=
@@ -169,16 +172,16 @@ mathML GradedModuleMap :=
 mathML GroebnerBasis :=
 mathML IndexedVariableTable :=
 mathML Package :=
-mathML Resolution :=
 mathML ScriptedFunctor :=
 mathML Monoid :=
 mathML Variety :=
 mathML Thing := x -> (
      -- maybe "expression" should not just put unknown things in a holder ...
      -- anyway, we have to break the loop somehow here
-     if hasAttribute(x,ReverseDictionary) then mathML return mathML getAttribute(x,ReverseDictionary);
+     if hasAttribute(x,ReverseDictionary) then return mathML getAttribute(x,ReverseDictionary);
      y := expression x;
      if instance(y,Holder) and y#0 === x then mathML toString x else mathML y)
+mathML Nothing := x -> ""
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

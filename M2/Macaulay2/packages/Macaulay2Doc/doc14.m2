@@ -1,6 +1,6 @@
 --		Copyright 2008 by Daniel R. Grayson
 
-document { Key => {size2, (size2,CC), (size2,RR), (size2,ZZ)},
+document { Key => {size2, (size2,CC), (size2,RR), (size2,ZZ), (size2,RRi)},
      Usage => "size2 x",
      Headline => "number of binary digits to the left of the point",
      Inputs => {"x" => Number},
@@ -17,7 +17,7 @@ document { Key => {size2, (size2,CC), (size2,RR), (size2,ZZ)},
      size2 (1/0.-1/0.)
      ///}
 
-document { Key => {isReal,(isReal,CC),(isReal,QQ),(isReal,RR),(isReal,ZZ)},
+document { Key => {isReal,(isReal,CC),(isReal,QQ),(isReal,RR),(isReal,ZZ),(isReal, RRi)},
      Usage => "isReal x",
      Headline => "whether a number is real",
      Inputs => { "x" => Number },
@@ -59,21 +59,25 @@ document { Key => {commonRing, (commonRing,List)},
      	  ///
      }
 
-document { Key => {log1p,(log1p, QQ),(log1p, ZZ),(log1p, RR)},
-     Usage => "log1p x",
+document { Key => {log1p,(log1p, QQ),(log1p, ZZ),(log1p, RR),(log1p, RRi)},
+     Usage => "log1p x\nlog1p I",
      Headline => "logarithm of 1+x",
-     Inputs => { "x" },
-     Outputs => { RR => { "the logarithm of ", TT "1+x" }},
+     Inputs => { "x", "I" => RRi },
+     Outputs => { RR => { "the logarithm of ", TT "1+x" },
+RRi => { "an interval containing logarithm of 1 plus the points of ", TT "I" }
+},
      EXAMPLE lines ///
 log1p 1p100e-10
 log(1 + 1p100e-10)
      ///
      }
-document { Key => {expm1,(expm1, ZZ),(expm1, RR),(expm1, QQ)},
-     Usage => "expm1 x",
+document { Key => {expm1,(expm1, ZZ),(expm1, RR),(expm1, QQ),(expm1,RRi)},
+     Usage => "expm1 x\nexpm1 I",
      Headline => "exponential minus 1",
-     Inputs => { "x" },
-     Outputs => { RR => { "the quantity ", TT "exp(x)-1" }},
+     Inputs => { "x" , "I"=>RRi},
+     Outputs => { RR => { "the quantity ", TT "exp(x)-1" },
+RRi => { "an interval containing the exponential of the points of ", TT "I", " minus one"}
+},
      EXAMPLE lines ///
      	  expm1 1p100e-10
      	  exp(1p100e-10)-1
@@ -143,11 +147,12 @@ document { Key => {erfc,(erfc, QQ),(erfc, ZZ),(erfc, RR)},
      }
 document { 
      --- author(s): L. Gold, Dan Grayson
-     Key => {acos,(acos,ZZ), (acos,RR),(acos,CC),(acos, QQ)},
+     Key => {acos,(acos,ZZ), (acos,RR),(acos,CC),(acos, QQ),(acos, RRi)},
      Headline => "arccosine", 
-     Usage => "acos x",
-     Inputs => { "x" },
-     Outputs => { Number => { "the arccosine (in radians) of ", TT "x"} },
+     Usage => "acos x\nacos I",
+     Inputs => { "x", "I" => RRi },
+     Outputs => { Number => { "the arccosine (in radians) of ", TT "x"},
+                  RRi => { "an interval containing the arccosines of the points of ", TT "I" }},
      EXAMPLE lines ///
      acos 0.5
      ///,
@@ -155,12 +160,13 @@ document {
      }     
 document { 
      --- author(s): L. Gold, Dan Grayson
-     Key => {asin,(asin,ZZ),(asin,RR),(asin,CC),(asin, QQ)},
+     Key => {asin,(asin,ZZ),(asin,RR),(asin,CC),(asin, QQ),(asin, RRi)},
      Headline => "arcsine",
-     Usage => "asin x",
-     Inputs => { "x" },
+     Usage => "asin x\nasin I",
+     Inputs => { "x", "I" => RRi },
      Outputs => {
-	  Number => {"the arcsine (in radians) of ", TT "x"}
+	  Number => {"the arcsine (in radians) of ", TT "x"},
+      RRi => { "an interval containing the arcsines of the points of ", TT "I" }
 	  },
      EXAMPLE {
 	  "asin 1"
@@ -169,11 +175,12 @@ document {
      }
 document { 
      --- author(s): L. Gold
-     Key => {cosh, (cosh,ZZ),(cosh,RR),(cosh, QQ),(cosh,CC)},
+     Key => {cosh, (cosh,ZZ),(cosh,RR),(cosh, QQ),(cosh,CC),(cosh,RRi)},
      Headline => "compute the hyperbolic cosine",
-     Usage => "cosh x",
-     Inputs => { "x" },
-     Outputs => { Number => { "the hyperbolic cosine of ", TT "x" } },
+     Usage => "cosh x\ncosh I",
+     Inputs => { "x", "I"=>RRi},
+     Outputs => { Number => { "the hyperbolic cosine of ", TT "x" },
+         RRi => { "an interval containing the hyerbolic cosines of the points of ", TT "I" } },
      EXAMPLE lines ///
      cosh .2
      ///,
@@ -201,63 +208,75 @@ document {
      ///,
      PARA {"See ", wikipedia "Hyperbolic function", "."}
      }
-document { Key => {sec,(sec, ZZ),(sec,CC),(sec, RR),(sec, QQ)},
-     Usage => "sec x",
+document { Key => {sec,(sec, ZZ),(sec,CC),(sec, RR),(sec, QQ),(sec, RRi)},
+     Usage => "sec x\nsec I",
      Headline => "secant",
-     Inputs => { "x" },
-     Outputs => { RR => { "the secant of ", TT "x" }},
+     Inputs => { "x", "I" => RRi },
+     Outputs => { RR => { "the secant of ", TT "x" },
+RRi => { "an interval containing the secants of the points of ", TT "I" }
+},
      EXAMPLE lines ///
      	  sec(pi/3)
      ///,
      PARA {"See ", wikipedia "Trigonometric function", "."}
      }
-document { Key => {csc,(csc,CC),(csc, QQ),(csc, ZZ),(csc, RR)},
-     Usage => "csc x",
+document { Key => {csc,(csc,CC),(csc, QQ),(csc, ZZ),(csc, RR),(csc,RRi)},
+     Usage => "csc x\ncsc I",
      Headline => "cosecant",
-     Inputs => { "x" },
-     Outputs => { RR => { "the cosecant of ", TT "x" }},
+     Inputs => { "x","I"=>RRi },
+     Outputs => { RR => { "the cosecant of ", TT "x" },
+        RRi => { "an interval containing the cosecants of the points of ", TT "I" }
+},
      EXAMPLE lines ///
      	  csc(pi/3)
      ///,
      PARA {"See ", wikipedia "Trigonometric function", "."}
 
      }
-document { Key => {cot,(cot, ZZ),(cot, RR),(cot,CC),(cot, QQ)},
-     Usage => "cot x",
+document { Key => {cot,(cot, ZZ),(cot, RR),(cot,CC),(cot, QQ),(cot,RRi)},
+     Usage => "cot x\ncot I",
      Headline => "cotangent",
-     Inputs => { "x" },
-     Outputs => { RR => { "the cotangent of ", TT "x" }},
+     Inputs => { "x", "I"=>RRi },
+     Outputs => { RR => { "the cotangent of ", TT "x" },
+            RRi => { "an interval containing the cotangents of points of ", TT "I"}
+    },
      EXAMPLE lines ///
      	  cot(pi/3)
      ///,
      PARA {"See ", wikipedia "Trigonometric function", "."}
 
      }
-document { Key => {sech,(sech,CC),(sech, QQ),(sech, ZZ),(sech, RR)},
-     Usage => "sech x",
+document { Key => {sech,(sech,CC),(sech, QQ),(sech, ZZ),(sech, RR),(sech, RRi)},
+     Usage => "sech x\nsech I",
      Headline => "hyperbolic secant",
-     Inputs => { "x" },
-     Outputs => { RR => { "the hyperbolic secant of ", TT "x" }},
+     Inputs => { "x", "I" => RRi },
+     Outputs => { RR => { "the hyperbolic secant of ", TT "x" },
+     RRi => { "an interval containing the hyerbolic secants of the points of ", TT "I" }
+},
      EXAMPLE lines ///
      	  sech(pi/3)
      ///,
      PARA {"See ", wikipedia "Hyperbolic function", "."}
      }
-document { Key => {csch,(csch,CC),(csch, ZZ),(csch, RR),(csch, QQ)},
-     Usage => "csch x",
+document { Key => {csch,(csch,CC),(csch, ZZ),(csch, RR),(csch, QQ),(csch,RRi)},
+     Usage => "csch x\ncsch I",
      Headline => "hyperbolic cosecant",
-     Inputs => { "x" },
-     Outputs => { RR => { "the hyperbolic cosecant of ", TT "x" }},
+     Inputs => { "x", "I"=>RRi },
+     Outputs => { RR => { "the hyperbolic cosecant of ", TT "x" },
+        RRi => { "an interval containing the hyperbolic cosecants of the points of ", TT "I" }
+    },
      EXAMPLE lines ///
      	  csch(pi/3)
      ///,
      PARA {"See ", wikipedia "Hyperbolic function", "."}
      }
-document { Key => {coth,(coth,CC),(coth, QQ),(coth, ZZ),(coth, RR)},
-     Usage => "coth x",
+document { Key => {coth,(coth,CC),(coth, QQ),(coth, ZZ),(coth, RR),(coth,RRi)},
+     Usage => "coth x\ncoth I",
      Headline => "hyperbolic cotangent",
-     Inputs => { "x" },
-     Outputs => { RR => { "the hyperbolic cotangent of ", TT "x" }},
+     Inputs => { "x","I"=>RRi},
+     Outputs => { RR => { "the hyperbolic cotangent of ", TT "x" },
+        RRi => { "an interval containing the hyperbolic cotangents of the points of ", TT "I" }
+        },
      EXAMPLE lines ///
      	  coth(pi/3)
      ///,
