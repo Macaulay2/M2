@@ -101,14 +101,8 @@ gauss := (f,a,b,k,n) -> (
      int
      )
 
-integrate = (f,a,b) -> (
-     if not instance(f, Function) then error (
-	  "'integrate' expected argument 1 to be a function");
-     try a = a + 0. else error (
-	  "'integrate' expected argument 2 to be a number");
-     try b = b + 0. else error (
-	  "'integrate' expected argument 3 to be a number");
-     gauss(f,a,b,4,6))
+integrate = method()
+integrate(Function, Number, Number) := (f,a,b) -> gauss(f,a,b,4,6)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
