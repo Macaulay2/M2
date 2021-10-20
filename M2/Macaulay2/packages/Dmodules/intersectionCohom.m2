@@ -17,7 +17,7 @@ ICmodule(Ideal) := options -> I -> (
     if #primes > 1 then error "The variety defined by the ideal must be irreducible";
     P := primes#0;
     c:=codim P;
-    if options.LocStrategy == compIntersection then (  -- when complete intersection
+    if options.LocStrategy == CompleteIntersection then (  -- when complete intersection
 	g:=flatten entries (gens I);
     	if #g>c then error "This strategy is for complete intersections only";
         F := product((0..c-1), i->g#i);

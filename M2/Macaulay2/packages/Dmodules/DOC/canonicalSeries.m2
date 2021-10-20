@@ -289,13 +289,14 @@ doc ///
        $x_i$ as $t_i^{-1}x_i$. The function isTorusFixed verifies whether a D-ideal is 
        invariant under this action. 
        
-       [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@], 
+       See [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@],
        just before Lemma 2.3.1.
-     Example
-        W = makeWA(QQ[x_1,x_2])
-     	I = ideal(x_1*dx_1*(x_1*dx_1+b), x_1*dx_1*(x_2*dx_2+b),
-	    x_2*dx_2*(x_1*dx_1+b), x_2*dx_2*(x_2*dx_2+b))
-    	isTorusFixed I
+    Example
+       W = makeWA(QQ[x_1,x_2])
+       b = 2
+       I = ideal(x_1*dx_1*(x_1*dx_1+b), x_1*dx_1*(x_2*dx_2+b),
+	   x_2*dx_2*(x_1*dx_1+b), x_2*dx_2*(x_2*dx_2+b))
+       isTorusFixed I
 ///
 
 
