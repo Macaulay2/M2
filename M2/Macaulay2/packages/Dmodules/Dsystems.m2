@@ -161,7 +161,7 @@ RatAnn(RingElement, RingElement) := (g,f) -> (
 -- reiffen curves
 reiffen = method()
 reiffen(ZZ,ZZ) := (p,q) -> (
-     assert(p>=4 and q>=p+1);
+     if not (p>=4 and q>=p+1) then error "wrong values of argumenrs: see documentation";
      n := 2; 
      x := symbol x;
      R := QQ[x_1..x_n]; 
