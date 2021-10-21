@@ -74,9 +74,8 @@ namespace m2tbb {
   using ::tbb::enumerable_thread_specific;
 }
 
-#define parallel_do parallel_for_each
-#define parallel_do_feeder feeder
-
+// #define parallel_do parallel_for_each
+// #define parallel_do_feeder feeder
 // parallel_do -> parallel_for_each
 // parallel_do_feeder -> feeder
 

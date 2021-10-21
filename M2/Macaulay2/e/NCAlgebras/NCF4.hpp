@@ -89,8 +89,8 @@ private:
   using RowsVector = std::vector<Row,gc_allocator<Row>>;
   //using RowsVector = tbb::concurrent_vector<Row>;
 
-  //using PreRowFeeder = tbb::parallel_do_feeder<PreRow>;
-  using PreRowFeeder = m2tbb::feeder<PreRow>;
+  using PreRowFeeder = m2tbb::parallel_do_feeder<PreRow>;
+  //  using PreRowFeeder = m2tbb::feeder<PreRow>;
 
   // The pair in this unordered_map is (i,j) where:
   //    i is the column number
@@ -258,7 +258,6 @@ private:
                            int firstcol,
                            long &numCancellations,
                            ElementArray& dense,
-                           DenseCoeffVector& dense,
                            m2tbb::queuing_mutex& lock)
   {
     generalReduceF4Row<m2tbb::queuing_mutex>(index,
