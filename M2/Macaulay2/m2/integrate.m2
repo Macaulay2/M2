@@ -164,6 +164,44 @@ integrate(Function, InfiniteNumber, Number) := (f, a, b) -> (
     else if a == -infinity then integrate(x -> f(-x), -b, infinity)
     else error "expected infinity or -infinity")
 
+-- nodes and weights for 20-point gauss-hermite formula
+-- https://dlmf.nist.gov/3.5.28
+gaussHermiteNodes = {
+    0.245340708300901249904,
+    0.737473728545394358706,
+    0.123407621539532300789e1,
+    0.173853771211658620678e1,
+    0.225497400208927552308e1,
+    0.278880605842813048053e1,
+    0.334785456738321632691e1,
+    0.394476404011562521038e1,
+    0.460368244955074427308e1,
+    0.538748089001123286202e1
+    }
+
+gaussHermiteWeights = {
+    0.462243669600610089650,
+    0.286675505362834129720,
+    0.109017206020023320014,
+    0.248105208874636108822e-1,
+    0.324377334223786183218e-2,
+    0.228338636016353967257e-3,
+    0.780255647853206369415e-5,
+    0.108606937076928169400e-6,
+    0.439934099227318055363e-9,
+    0.222939364553415129252e-12
+    }
+
+integrate(Function, InfiniteNumber, InfiniteNumber) := (f, a, b) -> (
+    if a == b then 0
+    else if a == -infinity and b == infinity then (
+	g := x -> exp(x^2) * f(x);
+	sum(10, i ->  (
+		x := gaussHermiteNodes_i;
+		gaussHermiteWeights_i * (g(x) + g(-x)))))
+    else if a == infinity and b == -infinity then -integrate(f, b, a)
+    else error "expected infinity and/or -infinity")
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
