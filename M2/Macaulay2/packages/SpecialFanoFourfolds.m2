@@ -10,7 +10,7 @@
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.4", 
-    Date => "October 11, 2021",
+    Date => "October 23, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -127,23 +127,18 @@ specialCubicFourfold Ideal := o -> idS -> specialCubicFourfold(projectiveVariety
 
 specialCubicFourfold (String,Ring) := o -> (str,K) -> (
     local X;
-    if str === "very general" then (
-        X = specialCubicFourfold(random({{1},{1},{3}},0_(PP_K^5)),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
-        X.cache#(surface X,"label") = "very general";
-        return X;
-    );
     if str === "quintic del Pezzo surface" then (
-        X = specialCubicFourfold(surface({3,4},CoefficientRing=>K),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X = specialCubicFourfold(surface({3,4},K),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#(surface X,"label") = "quinticDelPezzoSurface";
         return X;
     );
     if str === "quartic scroll" then (
-        X = specialCubicFourfold(surface({3,1,1},CoefficientRing=>K),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X = specialCubicFourfold(surface({3,1,1},K),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#(surface X,"label") = "quarticScrollSurface";
         return X;
     );
     if str === "C38" then (
-        X = specialCubicFourfold(surface({10,0,0,10},CoefficientRing=>K),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X = specialCubicFourfold(surface({10,0,0,10},K),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#(surface X,"label") = "C38Coble";
         return X;
     );
@@ -179,7 +174,7 @@ specialCubicFourfold (String,Ring) := o -> (str,K) -> (
        return X;
    );
    if str === "C32" then (
-        X = specialCubicFourfold(surface({9,1,4,6},CoefficientRing=>K),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X = specialCubicFourfold(surface({9,1,4,6},K),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#(surface X,"label") = "C32";
         return X;
    );
@@ -197,12 +192,56 @@ specialCubicFourfold String := o -> str -> specialCubicFourfold(str,ZZ/65521,Num
 surface = method(TypicalValue => EmbeddedProjectiveVariety);
 surface SpecialCubicFourfold := X -> X#"SurfaceContainedInTheFourfold";
 
-surface (VisibleList,Option) := (L,opt) -> (
-    o := toList opt;
-    if first o =!= CoefficientRing then error "CoefficientRing is the only available option for surface(VisibleList)";
-    image multirationalMap rationalMap(ring PP_(last o)^2,toList L)
+surface (VisibleList,Ring,Option,Option) := (L,K,oN,oA) -> (
+    oN = toList oN; oA = toList oA;
+    if first oN === ambient and first oA === NumNodes then (oN,oA) = (oA,oN);
+    if first oN =!= NumNodes and first oA =!= ambient then error "NumNodes and ambient are the only available options for surface(VisibleList)";
+    if not (#L>0 and all(L,i->instance(i,ZZ) and i>=0)) then error "expected a list of nonnegative integers";
+    P := for i from 1 to #L-1 list for j from 1 to L_i list (i,point PP_K^2);
+    B := if #L==1 or all(take(L,-(#L-1)),i->i==0) then 0_(PP_K^2) else ⋃ apply(flatten P,p -> p_0 * p_1);
+    f := rationalMap(B,L_0,Dominant=>true);
+    if last oN > 0 then f = f * rationalMap((linearSpan apply(last oN,i -> point linearSpan {f point source f,f point source f}))_(target f),Dominant=>true);
+    if last oA =!= null then f = rationalMap(f << PP_K^(last oA),Dominant=>true);
+    S := target f;
+    S.cache#"rationalParametrization" = f;
+    S.cache#"linear system on PP^2" = L;
+    S.cache#"points on PP^2" = P;
+    if dim linearSpan S >= 5 and last oN >= 0 then S.cache#"FiniteNumberOfNodes" = last oN;
+    S.cache#"takeCurve" = ((D,d) -> (
+        if not(instance(D,ZZ) and D>0) then error "expected a positive integer for the degree of a plane curve";
+        if not (instance(d,VisibleList) and #d==#L-1 and all(#d,i->instance(d_i,ZZ) and d_i>=0 and d_i<=L_(i+1))) 
+        then error("expected a list of "|toString(#L-1)|" nonnegative integers representing a curve on the surface"|toString(L));
+        local C; local pt;
+        if sum toList d == 0 then (
+            pt = point PP_K^2;
+            C = random(D,pt);
+        ) else (
+            pts := flatten for a to #d-1 list take(apply(P_a,last),d_a);
+            C = random(D,⋃ pts);
+            pt = first pts;
+        );
+        if D == 2 then C.cache#"rationalParametrization" = inverse(rationalMap(pt%C,1),Verify=>true);
+        fC := f C;
+        makeSubvariety(fC,S,Verify=>true);
+        if not (dim fC == 1 and degree fC == D*L_0 - sum(#d,i->(i+1)*d_i)) then error "something went wrong when taking the curve";
+        fC.cache#"plane representation" = (D,d);
+        if D <= 2 then fC.cache#"rationalParametrization" = check rationalMap((parametrize C)*f,fC);
+        return fC;
+    ));
+    return S;
 );
-surface List := L -> surface(L,CoefficientRing=>ZZ/65521)
+surface (VisibleList,Ring,Option) := (L,K,opt) -> (
+    o := first toList opt;
+    if o === ambient 
+    then return surface(L,K,NumNodes=>0,opt)
+    else if o === NumNodes 
+    then return surface(L,K,opt,ambient=>null);
+    error "NumNodes and ambient are the only available options for surface(VisibleList)";
+);
+surface(VisibleList,Option,Option) := (L,opt1,opt2) -> surface(L,ZZ/65521,opt1,opt2);
+surface(VisibleList,Option) := (L,opt) -> surface(L,ZZ/65521,opt);
+surface (VisibleList,Ring) := (L,K) -> surface(L,K,NumNodes=>0,ambient=>null);
+surface List := L -> surface(L,ZZ/65521,NumNodes=>0,ambient=>null);
 
 expression SpecialCubicFourfold := X -> expression("cubic fourfold containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X));
 
@@ -623,7 +662,7 @@ find3Eminus1secantCurveOfDegreeE (EmbeddedProjectiveVariety,SpecialCubicFourfold
         if cond then (sectics17secant = sectics17secant + lift(p_0/e,ZZ); Sectics17secant = append(Sectics17secant,p_4); continue);
     );
     try assert (lines2secant == 0) else error "internal error encountered";
-    try assert(conics5secant + cubics8secant + quartics11secant + quintics14secant + sectics17secant == degE) else error "internal error encountered";
+    if conics5secant + cubics8secant + quartics11secant + quintics14secant + sectics17secant != degE then <<"--warning: something went wrong "<<(degT + conics5secant + cubics8secant + quartics11secant + quintics14secant + sectics17secant)<<" =!= "<<degV<<endl;
     if o.Verbose then <<"number 5-secant conics to S passing through p: "<<conics5secant<<endl;
     Out := {Lines2secant|{T},Conics5secant,Cubics8secant,Quartics11secant,Quintics14secant,Sectics17secant};
     if conics5secant == degE then return ({lines2secant+degT,conics5secant,cubics8secant,quartics11secant,quintics14secant,sectics17secant},Out);
@@ -633,12 +672,13 @@ find3Eminus1secantCurveOfDegreeE (EmbeddedProjectiveVariety,SpecialCubicFourfold
     if conics5secant + cubics8secant + quartics11secant == degE then return ({lines2secant+degT,conics5secant,cubics8secant,quartics11secant,quintics14secant,sectics17secant},Out);
     if o.Verbose then <<"number 14-secant quintics to S passing through p: "<<quintics14secant<<endl;
     if conics5secant + cubics8secant + quartics11secant + quintics14secant == degE then return ({lines2secant+degT,conics5secant,cubics8secant,quartics11secant,quintics14secant,sectics17secant},Out);
-    if o.Verbose then <<"number 17-secant sectics to S passing through p: "<<sectics17secant<<endl;
+    if o.Verbose then <<"number 17-secant sextics to S passing through p: "<<sectics17secant<<endl;
     return ({lines2secant+degT,conics5secant,cubics8secant,quartics11secant,quintics14secant,sectics17secant},Out);
 );
 
 detectCongruence = method();
 
+-*
 hintCongruence = method();
 hintCongruence MutableHashTable := X -> (
     if X.cache#?(surface X,"label") and X.cache#(surface X,"label") =!= "NotRecognized" then return; 
@@ -649,9 +689,10 @@ If you know, for instance, that the image of 'map X' is cut out by quadrics, the
 you can use a command like 'forceImage(map X,image(2,map X))' to inform the system.
 This should considerably reduce calculation times.///<<endl<<endl;
 );
+*-
 
 detectCongruence SpecialCubicFourfold := X -> (
-    hintCongruence X;
+    -- hintCongruence X;
     (l,L) := find3Eminus1secantCurveOfDegreeE(point ambient X,X,Verbose=>true);
     e := for i to 5 do if l_i == 1 then break (i+1);
     if e === null then error "no congruences detected";
@@ -659,7 +700,7 @@ detectCongruence SpecialCubicFourfold := X -> (
 );
 
 detectCongruence (SpecialCubicFourfold,ZZ) := (X,e) -> (
-    hintCongruence X;
+    -- hintCongruence X;
     f := method();
     f Ideal := p -> (
        phi := map X;
@@ -840,77 +881,62 @@ specialGushelMukaiFourfold (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)
 
 specialGushelMukaiFourfold (Ideal,Ideal) := o -> (idS,idX) -> specialGushelMukaiFourfold(projectiveVariety idS,projectiveVariety idX,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
-specialGushelMukaiFourfold Ideal := o -> S -> (
-    if isPolynomialRing ring S and numgens ring S === 10 then try(
-         G14 := Grass(1,4,coefficientRing ring S,Variable=>ring S);
-         assert isSubset(ideal G14,S);
-         return specialGushelMukaiFourfold(sub(S,G14),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
-    );
-    er := "expected the ideal of a surface in the coordinate ring of a GM fourfold or del Pezzo fivefold or del Pezzo sixfold";
-    R := ring S;
-    if not(isPolynomialRing ambient R and isHomogeneous ideal R) then error er;
-    if not((numgens ambient R -1 == 9 and degrees ideal R === toList(5:{2})) or (numgens ambient R -1 == 8 and (degrees ideal R === toList(5:{2}) or degrees ideal R === toList(6:{2})))) then error er;
-    r := dim ideal R -1;
-    if r != 4 and r != 5 and r != 6 then error er;
-    I := trim lift(S,ambient R);
-    if not(isHomogeneous I and dim I -1 == 2) then error er;
-    if r == 4 then (
-        return specialGushelMukaiFourfold(I,ideal R,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
-    );
-    if r == 5 then (
-        return specialGushelMukaiFourfold(I,(ideal R) + arandom({2},I),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
-    );
-    if r == 6 then (
-        j := toRationalMap toGrass Var R;
-        I' := trim lift(j S,ambient target j);
-        L := ideal image basis(1,I');
-        if codim L <= 0 then error "expected linear span of the surface to be of dimension at most 8";
-        if codim L >= 2 then L = arandom({1},L);
-        l := parametrize L;
-        I' = l^* I';
-        return specialGushelMukaiFourfold(I',((map l) ideal target j) + arandom({2},I'),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+specialGushelMukaiFourfold EmbeddedProjectiveVariety := o -> S -> (
+    Y := ambientVariety S;
+    er := "expected a surface in a GM fourfold or del Pezzo fivefold or del Pezzo sixfold";
+    if dim S != 2 then error er;
+    if not((dim ambient Y == 9 and dim Y == 6 and degrees Y === {({2},5)}) or 
+           (dim ambient Y == 8 and dim Y == 5 and degrees Y === {({2},5)}) or 
+           (dim ambient Y == 8 and dim Y == 4 and degrees Y === {({2},6)})
+          ) then error er;
+    if dim Y == 4 then return specialGushelMukaiFourfold(S,Y,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+    if dim Y == 5 then return specialGushelMukaiFourfold(S,Y * random(2,S),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+    if dim Y == 6 then (
+        if dim linearSpan S > 8 then error "expected linear span of the surface to be of dimension at most 8";
+        j := parametrize random(1,linearSpan S);
+        T := makeSubvariety(j^^ S,j^^ ambientVariety S);
+        if S.cache#?"FiniteNumberOfNodes" and (not T.cache#?"FiniteNumberOfNodes") then T.cache#"FiniteNumberOfNodes" = S.cache#"FiniteNumberOfNodes";
+        if S.cache#?"top" and (not T.cache#?"top") then T.cache#"top" = S.cache#"top";
+        if S.cache#?"singularLocus" and (not T.cache#?"singularLocus") then T.cache#"singularLocus" = S.cache#"singularLocus";
+        if S.cache#?"euler" and (not T.cache#?"euler") then T.cache#"euler" = S.cache#"euler";
+        return specialGushelMukaiFourfold(T,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
     );
 );
 
-specialGushelMukaiFourfold EmbeddedProjectiveVariety := o -> S -> specialGushelMukaiFourfold(idealOfSubvariety S,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+specialGushelMukaiFourfold Ideal := o -> I -> specialGushelMukaiFourfold(makeSubvariety I,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
 specialGushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
-    G14 := Grass(1,4,K,Variable=>"p");
+    G := Var Grass(1,4,K,Variable=>"p");
     local X;
-    if str === "very general" then (
-        X = specialGushelMukaiFourfold(trim sub(ideal(G14) + arandom({1,1,1,2},ambient G14),G14),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
-        X.cache#(surface X,"label") = "very general";
-        return X;
-    );
     if str === "sigma-plane" then (
-        X = specialGushelMukaiFourfold(schubertCycle({3,1},G14),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X = specialGushelMukaiFourfold(schubertCycle({3,1},G),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#(surface X,"label") = 6;
         return X;
     );
     if str === "rho-plane" then (
-        X = specialGushelMukaiFourfold(schubertCycle({2,2},G14),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X = specialGushelMukaiFourfold(schubertCycle({2,2},G),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#(surface X,"label") = 9;
         return X;
     );
     if str === "tau-quadric" then (
-        X = specialGushelMukaiFourfold(schubertCycle({1,1},G14) + arandom({1,1},G14),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X = specialGushelMukaiFourfold((schubertCycle({1,1},G) * random({{1},{1}},0_G))%G,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#(surface X,"label") = 1;
         return X;
     );
     if str === "cubic scroll" then (
-        X = specialGushelMukaiFourfold(schubertCycle({2,0},G14) + arandom({1,1},G14),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X = specialGushelMukaiFourfold((schubertCycle({2,0},G) * random({{1},{1}},0_G))%G,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#(surface X,"label") = 7; 
         return X;
     );
     if str === "quintic del Pezzo surface" then (
-        X = specialGushelMukaiFourfold(trim sub(ideal(G14) + arandom({1,1,1,1},ambient G14),G14),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X = specialGushelMukaiFourfold((G * random({4:{1}},0_G))%G,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#(surface X,"label") = 4;
         return X;
     );
     if str === "quintic" then return specialGushelMukaiFourfold("quintic del Pezzo surface",K,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
     if str === "K3 surface of degree 14" then (
-        G15 := Grass replace(1,5,Grass G14);
-        pr := rationalMap(G15,G14,select(gens ambient G15,g -> last last baseName g != 5));
+        G15 := Grass replace(1,5,Grass ring G);
+        pr := rationalMap(G15,ring G,select(gens ambient G15,g -> last last baseName g != 5));
         X = specialGushelMukaiFourfold(pr sub(ideal for i to 5 list random(1,ambient G15),G15),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#(surface X,"label") = 3;
         return X;
@@ -918,7 +944,8 @@ specialGushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
     if str === "K3 surface of genus 8" then return specialGushelMukaiFourfold("K3 surface of degree 14",K,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
     if str === "surface of degree 9 and genus 2" then (
         (g,T) := first randomS42data(K);
-        X = specialGushelMukaiFourfold((toRationalMap toGrass Var image g) g T,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        g = multirationalMap g; T = Var T;
+        X = specialGushelMukaiFourfold((g T)%image(g,2),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         X.cache#(surface X,"label") = 17;
         return X;     
     );
@@ -1252,7 +1279,7 @@ find2Eminus1secantCurveOfDegreeE (EmbeddedProjectiveVariety,SpecialGushelMukaiFo
         for j in delete(e,toList(1..6)) do cond = cond and ((2*j-1)*p_0 != j*p_3);
         if cond then (sectics11secant = sectics11secant + lift(p_0/e,ZZ); Sectics11secant = append(Sectics11secant,p_4); continue);
     );
-    try assert(lines1secant + conics3secant + cubics5secant + quartics7secant + quintics9secant + sectics11secant == degE) else error "internal error encountered";
+    if lines1secant + conics3secant + cubics5secant + quartics7secant + quintics9secant + sectics11secant != degE then <<"--warning: something went wrong "<<(lines1secant + conics3secant + cubics5secant + quartics7secant + quintics9secant + sectics11secant)<<" =!= "<<degE<<endl;
     Out := {Lines1secant,Conics3secant,Cubics5secant,Quartics7secant,Quintics9secant,Sectics11secant};
     if o.Verbose then <<"number 1-secant lines to S passing through p: "<<lines1secant<<endl;
     if lines1secant == degE then return ({lines1secant,conics3secant,cubics5secant,quartics7secant,quintics9secant,sectics11secant},Out);
@@ -1264,12 +1291,12 @@ find2Eminus1secantCurveOfDegreeE (EmbeddedProjectiveVariety,SpecialGushelMukaiFo
     if lines1secant + conics3secant + cubics5secant + quartics7secant == degE then return ({lines1secant,conics3secant,cubics5secant,quartics7secant,quintics9secant,sectics11secant},Out);
     if o.Verbose then <<"number 9-secant quintics to S passing through p: "<<quintics9secant<<endl;
     if lines1secant + conics3secant + cubics5secant + quartics7secant + quintics9secant == degE then return ({lines1secant,conics3secant,cubics5secant,quartics7secant,quintics9secant,sectics11secant},Out);
-    if o.Verbose then <<"number 11-secant sectics to S passing through p: "<<sectics11secant<<endl;
+    if o.Verbose then <<"number 11-secant sextics to S passing through p: "<<sectics11secant<<endl;
     return ({lines1secant,conics3secant,cubics5secant,quartics7secant,quintics9secant,sectics11secant},Out);
 );
 
 detectCongruence SpecialGushelMukaiFourfold := X -> (
-    hintCongruence X;
+    -- hintCongruence X;
     (l,L) := find2Eminus1secantCurveOfDegreeE(pointOnLinearSectionOfG14 grassmannianHull X,X,Verbose=>true);
     e := for i to 5 do if l_i == 1 then break (i+1);
     if e === null then error "no congruences detected";
@@ -1277,7 +1304,7 @@ detectCongruence SpecialGushelMukaiFourfold := X -> (
 );
 
 detectCongruence (SpecialGushelMukaiFourfold,ZZ) := (X,e) -> (
-    hintCongruence X;
+    -- hintCongruence X;
     f := method();
     f Ideal := p -> (
        phi := map X;
@@ -2566,18 +2593,19 @@ Outputs => {EmbeddedProjectiveVariety => {"the special surface contained in the 
 EXAMPLE {"X = specialCubicFourfold \"quintic del Pezzo surface\";", "S = surface X;", "assert isSubset(S,X)"}} 
 
 document { 
-Key => {(surface, List),(surface, VisibleList, Option)},
+Key => {(surface, List), (surface, VisibleList, Ring), (surface, VisibleList, Option), (surface, VisibleList, Option), (surface, VisibleList, Ring, Option), (surface, VisibleList, Option, Option), (surface, VisibleList, Ring, Option, Option)},
 Headline => "get a rational surface", 
 Usage => "surface {a,i,j,k,...}
-surface({a,i,j,k,...},CoefficientRing=>K)",
+surface({a,i,j,k,...),K)
+surface({a,i,j,k,...},K,NumNodes=>n,ambient=>m)",
 Inputs => {List => {"a list ",TEX///$\{a,i,j,k,\ldots\}$///," of nonnegative integers"}}, 
 Outputs => {EmbeddedProjectiveVariety => {"the image of the rational map defined by the linear system of curves of degree ",TEX///$a$///," in ",TEX///$\mathbb{P}_{K}^2$///," having ",TEX///$i$///," random base points of multiplicity 1, ",TEX///$j$///," random base points of multiplicity 2, ",TEX///$k$///," random base points of multiplicity 3, and so on until the last integer in the given list."}},
 PARA{"In the example below, we take the image of the rational map defined by the linear system of septic plane curves with 3 random simple base points and 9 random double points."}, 
 EXAMPLE { 
 "S = surface {7,3,9};",
 "coefficientRing S",
-"T = surface({7,3,9},CoefficientRing=>ZZ/33331);",
-"X = specialCubicFourfold(T,NumNodes=>0);",
+"T = surface({7,3,9},ZZ/33331);",
+"X = specialCubicFourfold T;",
 "coefficientRing X",
 "describe X"},
 SeeAlso => {(rationalMap,PolynomialRing,List)}}
@@ -2822,7 +2850,7 @@ for dg in {(2,0),(3,1),(4,1),(5,1),(4,3),(6,4),(8,5),(10,6),(12,7),(14,8),(16,9)
 ///
 
 TEST /// -- Test 5 -- rational and unirational parametrizations
-X = specialCubicFourfold surface({3,4},CoefficientRing=>ZZ/333331);
+X = specialCubicFourfold surface({3,4},ZZ/333331);
 time h = parametrize X;
 assert(degree(h,Strategy=>"random point") == 1 and target h === X and ambient source h == source h and h#"inverse" =!= null);
 time f = unirationalParametrization X;
