@@ -339,6 +339,7 @@ doc ///
     Key 
         (cotangentSheaf, NormalToricVariety)
 	(cotangentSheaf, ZZ, NormalToricVariety)
+	(cotangentSheaf, List, NormalToricVariety)
     Headline
         make the sheaf of Zariski 1-forms
     Usage 
