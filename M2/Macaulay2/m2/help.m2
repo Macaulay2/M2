@@ -387,37 +387,18 @@ getBody := (key, tag, rawdoc) -> (
 
 -- TODO: help symbol% before Macaulay2Doc is installed doesn't work
 help = method(Dispatch => Thing)
--- overview nodes and formatted documentation keys
-help String := key -> (
-    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    tag := getOption(rawdoc, symbol DocumentTag);
-    if tag.?Key and tag.Key =!= key then help tag.Key
-    else if      isGlobalSymbol key then help getGlobalSymbol key
-    else getBody(key, tag, rawdoc))
+help DocumentTag := tag -> (
+    rawdoc := fetchAnyRawDocumentation tag;
+    tag = if rawdoc =!= null then rawdoc.DocumentTag else tag;
+    getBody(tag.Key, tag, rawdoc))
 
--- Methods
 help Sequence := key -> (
-    if key === () then return if inDebugger then debuggerUsageMessage else help "initial help";
-    -- TODO: make this work with hook strategies; e.g. (foo, ZZ, Strategy => Default)
-    if lookup key === null then error("expected ", toString key, " to be a method");
-    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    tag := getOption(rawdoc, symbol DocumentTag);
-    getBody(key, tag, rawdoc))
+    if key =!= () then help makeDocumentTag key else
+    if inDebugger then debuggerUsageMessage else help "initial help")
 
--- Options
-help Array := key -> (
-    verifyKey key;
-    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    tag := getOption(rawdoc, symbol DocumentTag);
-    getBody(key, tag, rawdoc))
-
--- everything else: Symbols, Types, ScriptedFunctors, Functions, Keywords, and Packages
-help Symbol := key -> (
-    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    tag := getOption(rawdoc, symbol DocumentTag);
-    getBody(key, tag, rawdoc))
-
-help DocumentTag := tag -> help tag.Key
+help String :=
+help Symbol :=
+help Array :=
 help Thing := x -> help makeDocumentTag x
 help List  := l -> DIV between(HR{}, help \ l)
 help ZZ    := i -> seeAbout(help, i)
