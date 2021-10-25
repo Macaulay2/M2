@@ -954,13 +954,13 @@ specialGushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
         if instance(Vstr,ZZ) and Vstr >= 1 and Vstr <= 21 then return fourfoldFromTriple(Vstr,GMtables(Vstr,K),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
     );
     if str === "nodal D26''" then (
-        X = specialGushelMukaiFourfold(last exampleD26''data K,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X = specialGushelMukaiFourfold([4,5,1,0],[3,5,1,0],"cubic scroll",(1,K),InputCheck=>o.InputCheck,Verbose=>false);
         (surface X).cache#"FiniteNumberOfNodes" = 1;
         X.cache#(surface X,"label") = "mukai26''";
         return X;
     );
     if str === "nodal D44" then (
-        X = specialGushelMukaiFourfold(last exampleD44data K,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X = specialGushelMukaiFourfold([2,0,0,0],[1,0,0,0],"cubic scroll",K,InputCheck=>o.InputCheck,Verbose=>false);
         (surface X).cache#"FiniteNumberOfNodes" = 1;
         X.cache#(surface X,"label") = "nodal D44";
         return X;
@@ -1934,38 +1934,6 @@ fourfoldFromTriple (ZZ,VisibleList) := o -> (i,E) -> (
 );
 
 ------------------------------------------------------------------------
----------------- arXiv:2003.07809 --------------------------------------
-------------------------------------------------------------------------
-
-exampleD26''data = K -> (
-    q := apply(8,i -> point PP_K^2);
-    f := rationalMap(2*q_0+q_1+q_2+q_3+q_4+q_5,4);
-    f = f * rationalMap point linearSpan {f point source f,f point source f};
-    C := random(3,⋃ q);
-    g := f|C;
-    D := image g;
-    pr := inverse parametrize linearSpan D;
-    g = g * pr;
-    j := toRationalMap inverse rationalMap((linearSpan {g q_6,g q_7})_(image g),Dominant=>true);
-    B := image((rationalMap lift(matrix j,ambient source j)) * inverse pr);
-    V := image f;
-    if not(D == B * V and dim B == 2 and dim V == 2 and dim D == 1 and degree B == 3 and degree V == 7 and degree D == 5 and sectionalGenus B == 0 and sectionalGenus V == 2 and sectionalGenus D == 1) then error "something went wrong";
-    psi := rationalMap(B,Dominant=>true);
-    (B,V,D,psi,(toRationalMap psi) ideal V)
-);
-
-exampleD44data = K -> (
-    b := rationalMap(point PP_K^2,2) << PP_K^5;
-    v := rationalMap{veronese(2,2,K)};
-    V := image v;
-    B := ((b random(1,0_(source b))) ===> (v random(1,0_(source v)))) image b;
-    C := B * V;
-    if not(dim B == 2 and dim V == 2 and dim C == 1 and degree B == 3 and degree V == 4 and degree C == 2 and sectionalGenus B == 0 and sectionalGenus V == 0 and sectionalGenus C == 0) then error "something went wrong";
-    psi := rationalMap(B,Dominant=>true);
-    (B,V,C,psi,(toRationalMap psi) ideal V)
-);
-
-------------------------------------------------------------------------
 ---------------------- Prime Fano fourfolds ----------------------------
 ------------------------------------------------------------------------
 
@@ -2304,6 +2272,215 @@ trisecantFlop ZZ := o -> i -> (
     if not member(value "TrisecantFlops",loadedPackages) then error "something went wrong";
     value("trisecantFlop("|toString(i)|",Verbose=>"|toString(o.Verbose)|")")    
 );
+
+------------------------------------------------------------------------
+----------- GM fourfolds from curves on surfaces in PP^6 ---------------
+------------------------------------------------------------------------
+
+makeGMfromCurveOnSurfaceInP6 = method(Options => {InputCheck => 1, Verbose => true, "Gluing" => "cubic scroll", Degrees => hashTable{1=>(1,infinity),2=>(0,infinity),3=>(0,1)}});
+makeGMfromCurveOnSurfaceInP6 EmbeddedProjectiveVariety := o -> C -> (
+    S := ambientVariety C;
+    if not (dim C == 1 and dim S == 2 and dim ambient S == 6) then error "expected a curve on a surface in PP^6";
+    B := if o#"Gluing" === "cubic scroll" 
+         then glueScroll C 
+         else if o#"Gluing" === "quartic scroll"
+         then glueScroll' C
+         else error "the option \"Gluing\" expects \"cubic scroll\" or \"quartic scroll\"";
+    psi := rationalMap B;
+    psi' := if S.cache#?"rationalParametrization" then (parametrize S) * psi else psi|S;
+    H := image(1,psi');
+    if codim H == 0 then (if o.Verbose then (<<"got surface in GG(1,4) ⊂ PP^9 with linear span of dimension 9"<<endl); error "expected linear span of dimension at most 8");
+    if numgens ideal H > o.Degrees#1_1 then error "request on the degrees is not satisfied";
+    V := if char coefficientRing C <= 65521 then image(psi',"F4") else image psi';
+    if o.Verbose then <<"got surface in GG(1,4) ⊂ PP^9 with ideal generated in degrees "<<toStringDegreesVar V<<endl;
+    degs := flatten degrees ideal V;
+    if codim H == 1 and # select(degs,d -> d == 2) < 6 then error "the surface in G(1,4) is not contained in any GM fourfold";
+    if # select(degs,d -> d > 3) > 0 or 
+       # select(degs,d -> d == 2) < o.Degrees#2_0 or # select(degs,d -> d == 2) > o.Degrees#2_1 or
+       # select(degs,d -> d == 3) < o.Degrees#3_0 or # select(degs,d -> d == 3) > o.Degrees#3_1
+    then error "request on the degrees is not satisfied";
+    if o.InputCheck >= 2 then (
+        if isIsomorphism rationalMap(psi|S,V) then (
+            if S.cache#?"FiniteNumberOfNodes" and S.cache#"FiniteNumberOfNodes" == 0 then (V.cache#"top" = V; V.cache#"singularLocus" = 0_V);
+            if S.cache#?"FiniteNumberOfNodes" and S.cache#"FiniteNumberOfNodes" > 0 then V.cache#"FiniteNumberOfNodes" = S.cache#"FiniteNumberOfNodes";
+            V.cache#"euler" = eulerCharacteristic S;
+            if o.Verbose then <<"isomorphism between surface in PP^6 and surface in GG(1,4): YES"<<endl;
+        ) else (if o.Verbose then <<"isomorphism between surface in PP^6 and surface in GG(1,4): NO"<<endl);
+    );
+    X := specialGushelMukaiFourfold(V%image(psi,2),InputCheck=>o.InputCheck);
+    X.cache#"Construction" = (B,C);
+    return X;    
+);
+
+glueScroll = method(); -- glue P^1xP^2 along a curve 
+glueScroll EmbeddedProjectiveVariety := C -> (
+    if not (dim C == 1 and dim ambientVariety C == 2 and dim ambient C == 6) then error "expected a curve on a surface in PP^6";
+    if not((degree C <= 5 and sectionalGenus C == 0) or (degree C == 5 and sectionalGenus C == 1)) then error "not implemented yet: expected a rational curve of degree at most 5 or an elliptic curve of degree 5";
+    K := coefficientRing C;
+    (p,L,s) := CubicScroll K;
+    E := image s;
+    local D;
+    if degree C == 5 and sectionalGenus C == 0 then (
+        D = image(PP_K^(1,3) << source s);
+        D = ((point D) ===> (point L)) D;
+        E = (s(D) ===> C) E;
+    );
+    if degree C == 5 and sectionalGenus C == 1 then (
+        f := super parametrize ambientVariety C;
+        g := f|(f^* C);
+        H := random(1,linearSpan C);
+        pr := inverse parametrize H;
+        g = g * pr;
+        j := inverse rationalMap((linearSpan {g point source g,g point source g})_(image g),Dominant=>true);
+        B := image((rationalMap lift(matrix j,ring ambient source j)) * inverse pr);
+        if not(dim B == 2 and degree B == 3 and sectionalGenus B == 0 and isSubset(C,B)) then error "something went wrong";
+        E = (random(1,0_E) * E ===> B) E;
+    );
+    if degree C == 4 and sectionalGenus C == 0 then (
+        D = random({{2},{1}},0_(source s));
+        assert(dim(D*(baseLocus s)) == -1);
+        E = (s(D) ===> C) E;
+    );
+    if degree C == 3 and sectionalGenus C == 0 then (
+        E = (E * random({{1},{1}},0_E) ===> C) E;
+    );
+    if degree C == 2 and sectionalGenus C == 0 then (
+        D = random({{1},{1}},0_(source s));
+        assert(dim(D*(baseLocus s)) == -1);
+        E = (s(D) ===> C) E;
+    );
+    if degree C == 1 and sectionalGenus C == 0 then (
+        D = random({{1},{1}},point L);
+        assert(dim(D*(baseLocus s)) == 0);
+        E = (s(D) ===> C) E;
+    );
+    if not(dim E == 3 and degree E == 3 and isSubset(C,E)) then error "something went wrong";
+    E
+);
+
+glueScroll' = method(); -- glue quartic scroll fourfold along a curve
+glueScroll' EmbeddedProjectiveVariety := C -> (
+    if not (dim C == 1 and dim ambientVariety C == 2 and dim ambient C == 6) then error "expected a curve on a surface in PP^6";
+    if not(degree C <= 6 and sectionalGenus C == 0) then error "not implemented yet: expected rational curve of degree at most 6";
+    K := coefficientRing C;
+    (P,s) := QuarticScroll K;
+    E := image s;
+    local D;
+    if degree C == 6 and sectionalGenus C == 0 then (
+        D = image(PP_K^(1,3) << source s);
+        D = (sum(4,i -> point D) ===> sum(P,point)) D;
+        E = (s(D) ===> C) E;
+    );
+    if degree C == 5 and sectionalGenus C == 0 then (
+        D = image(PP_K^(1,3) << source s);
+        D = (sum(3,i -> point D) ===> sum {point P_0,point P_0,point P_1}) D;
+        E = (s(D) ===> C) E;
+    );
+    if degree C == 4 and sectionalGenus C == 0 then (
+        D = image(PP_K^(1,3) << source s);
+        D = (sum(4,i -> point D) ===> sum {point P_0,point P_0,point P_1,point P_2}) D;
+        E = (s(D) ===> C) E;
+    );
+    if degree C == 3 and sectionalGenus C == 0 then (
+        D = random({2:{1},{2}},0_(source s));
+        D = (sum(3,i -> point D) ===> sum {point P_0,point P_1,point P_2}) D;
+        E = (s(D) ===> C) E;
+    );
+    if degree C == 2 and sectionalGenus C == 0 then (
+        D = random({2:{1},{2}},0_(source s));
+        D = (sum(2,i -> point D) ===> sum {point P_0,point P_0}) D;
+        E = (s(D) ===> C) E;
+    );
+    if degree C == 1 and sectionalGenus C == 0 then (
+        D = random({3:{1}},point P_0);
+        E = (s(D) ===> C) E;
+    );
+    if not(dim E == 4 and degree E == 4 and isSubset(C,E)) then error "something went wrong";    
+    E
+);
+
+CubicScroll = memoize(K -> (
+    s := (multirationalMap segre parametrize(PP_K^1 ** PP_K^2)) << PP_K^6;   
+    p := (baseLocus s)\top baseLocus s;
+    L := top baseLocus s;
+    assert(baseLocus s == L + p and dim(L*p) == -1 and dim L == 1 and degree L == 1 and dim p == 0 and degree p == 1);
+    (p,L,s)
+));
+
+QuarticScroll = memoize(K -> (
+    b := super parametrize(PP_K[1,1,1,1]);
+    b = b * rationalMap point target b;
+    P0 := ((baseLocus b)\(support baseLocus b))\(support baseLocus b);
+    (P1,P2,P3) := toSequence decompose((baseLocus b)\\P0);
+    P := {P0,P1,P2,P3};
+    assert(⋃ {3*P_0,P_1,P_2,P_3} == baseLocus b);
+    assert(dim(P0*P1)==1 and dim(P0*P2)==1 and dim(P0*P3)==1);
+    assert(all(P,L -> degree L == 1 and dim L == 2));
+    (P,b)
+));
+
+curvesOnSurface = method(); -- some curves of degree d and genus g on a rational surface
+curvesOnSurface (EmbeddedProjectiveVariety,ZZ,ZZ) := (S,d,g) -> (
+    L := S.cache#"linear system on PP^2";
+    if #L != 4 then error "not implemented yet: the linear system on PP^2 must be of the form {a,i,j,k}";
+    U := {};
+    if g == 0 then (
+        for a from 1 to 2 do for i to L_1 do for j to L_2 do for k to L_3 do 
+        if a*L_0-i-2*j-3*k == d and i+j+k <= (if a == 1 then 2 else 5) then U = append(U,(a,{i,j,k}));
+    ) else if g == 1 then (
+        for i to L_1 do for j to L_2 do for k to L_3 do 
+        if 3*L_0-i-2*j-3*k == d and i+j+k <= 9 then U = append(U,(3,{i,j,k}));
+    ) else error "not implemented yet: the genus must be 0 or 1";
+    apply(U,u -> S.cache#"takeCurve" u)
+);
+
+takeGMsfromSurfaceInP6 = method(Options => {InputCheck => 1, Verbose => true, "Gluing" => "cubic scroll", Degrees => (options makeGMfromCurveOnSurfaceInP6).Degrees, "OnlyNewOnes" => false, "Output" => true});
+takeGMsfromSurfaceInP6 EmbeddedProjectiveVariety := o -> S -> (
+    if dim S != 2 or dim ambient S != 6 then error "expected a surface in PP^6";
+    if not(S.cache#?"linear system on PP^2" and S.cache#?"takeCurve") then error "expected a surface constructed with the function \"surface\"";
+    a := apply(toSequence S.cache#"linear system on PP^2",toString);
+    if #a != 4 then error "not implemented yet: the surface must be of the form \"surface {a,i,j,k}\"";
+    S.cache#"nice description" = "S("|a_0|";"|a_1|","|a_2|","|a_3|",NumNodes=>"|(if S.cache#?"FiniteNumberOfNodes" then toString(S.cache#"FiniteNumberOfNodes") else "?")|") ⊂ PP^"|toString(dim linearSpan S)|(if codim linearSpan S > 0 then " ⊂ PP^"|toString(dim ambient S) else "")|" of degree: "|toString(degree S)|", genus: "|toString(sectionalGenus S)|", and degrees: "|(toStringDegreesVar S);
+    if o.Verbose then <<"*******"<<endl<<"Surface: "<<S.cache#"nice description"<<" glued with a "<<o#"Gluing"<<endl;
+    local W; local X; U := {};
+    for d from 1 to 6 do for g to 1 do (
+        if g == 1 and d != 5 then continue;
+        W = curvesOnSurface(S,d,g);
+        for i to #W-1 do (
+            if o.Verbose then <<"Case "<<i+1<<" of "<<#W<<": "<<(if d >= 3 and g == 0 then "rational" else if d >= 3 and g == 1 then "elliptic" else "")<<" curve of degree "<<d<<" with plane representation "<<(W_i).cache#"plane representation"<<" on "<<"S("|a_0|";"|a_1|","|a_2|","|a_3|",NumNodes=>"|(if S.cache#?"FiniteNumberOfNodes" then toString(S.cache#"FiniteNumberOfNodes") else "?")|")"<<endl;
+            try X = makeGMfromCurveOnSurfaceInP6(W_i,InputCheck=>o.InputCheck,Verbose=>o.Verbose,"Gluing"=>o#"Gluing",Degrees=>o.Degrees) else continue;
+            if (not o#"OnlyNewOnes" or recognize X === "NotRecognized") and (not member(describe X,apply(U,describe))) then (
+                U = append(U,X);
+                if o.Verbose then <<"using "<<o#"Gluing"<<" found new GM fourfold with description:"<<endl<<describe X<<endl;  
+            ) else (if o.Verbose then <<"using "<<o#"Gluing"<<" found GM fourfold of discriminant "<<discriminant X<<" but that was already included"<<endl);
+        );
+    );
+    if o.Verbose then (
+        <<endl<<"Summary for the surface: "<<S.cache#"nice description"<<endl<<"glued with a "<<o#"Gluing"<<". Found "<<#U<<" new GM fourfold(s)"<<endl<<endl;
+        local C;
+        for i to #U-1 do (
+            C = ((U_i).cache#"Construction")_1;
+            assert(ambientVariety C === S);
+            <<i+1<<" of "<<#U<<": specialGushelMukaiFourfold("|(toExternalString new Array from S.cache#"linear system on PP^2")|","|(toExternalString new Array from flatten C.cache#"plane representation")|",\""|(o#"Gluing")|"\""|(if S.cache#?"FiniteNumberOfNodes" and S.cache#"FiniteNumberOfNodes" > 0 then (","|toString(S.cache#"FiniteNumberOfNodes")|")") else ")")<<endl;
+            <<"used "<<(if o#"Gluing"=="cubic scroll" then "the cubic Segre PP^1 x PP^2 ⊂ PP^5 ⊂ PP^6" else "a quartic scroll fourfold in PP^6")<<endl;
+            <<"glued along "<<(if degree C >= 3 and sectionalGenus C == 0 then "a rational" else if degree C >= 3 and sectionalGenus C == 1 then "an elliptic" else "")<<" curve of degree "<<degree C<<endl;
+            <<"Description of the fourfold:"<<endl<<describe(U_i)<<endl<<endl;
+        );
+        <<endl;
+    );
+    if o#"Output" then U else apply(U,describe)
+);
+
+specialGushelMukaiFourfold (Array,Array,String,Thing) := o -> (a,b,s,nK) -> (
+    if #a =!= 4 or #a =!= #b then error "expected two arrays of length 4";
+    if s =!= "cubic scroll" and s =!= "quartic scroll" then error "expected string to be \"cubic scroll\" or \"quartic scroll\""; 
+    (n,K) := if instance(nK,ZZ) then (nK,ZZ/65521) else if instance(nK,Ring) then (0,nK) else if instance(nK,VisibleList) and #nK==2 then (nK_0,nK_1) else error "not valid input";
+    C := (surface(a,K,NumNodes=>n,ambient=>6)).cache#"takeCurve" (b_0,{b_1,b_2,b_3});
+    X := makeGMfromCurveOnSurfaceInP6(C,InputCheck=>o.InputCheck,Verbose=>o.Verbose,"Gluing"=>s);
+    if o.Verbose then <<"description fourfold: "<<describe X<<endl;
+    X
+);
+specialGushelMukaiFourfold (Array,Array,String) := o -> (a,b,s) -> specialGushelMukaiFourfold(a,b,s,(0,ZZ/65521),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
 ------------------------------------------------------------------------
 ---------------------------- Documentation -----------------------------
@@ -2718,6 +2895,8 @@ undocumented {(random,SpecialCubicFourfold),(random,SpecialGushelMukaiFourfold),
 
 undocumented {(coneOfLines,Ideal,Ideal)}
 
+undocumented {(specialGushelMukaiFourfold,Array,Array,String,Thing),(specialGushelMukaiFourfold,Array,Array,String)} -- To be documented.
+
 ------------------------------------------------------------------------
 ------------------------------- Tests ----------------------------------
 ------------------------------------------------------------------------
@@ -2905,8 +3084,7 @@ detectCongruence Y;
 TEST /// -- Test 12 (1/2) -- GM fourfolds containing nodal surfaces
 debug SpecialFanoFourfolds;
 K = ZZ/65521;
-(B,V,C,psi,idS) = exampleD44data K;
-X = specialGushelMukaiFourfold(idS,InputCheck=>0);
+X = makeGMfromCurveOnSurfaceInP6((surface({2,0,0,0},K,ambient=>6)).cache#"takeCurve" (1,(0,0,0)),InputCheck=>0);
 assert(discriminant X == 36);
 assert(numberNodes surface X == 1);
 X' = random X;
@@ -2919,5 +3097,39 @@ X = specialGushelMukaiFourfold("nodal D26''",ZZ/33331,InputCheck=>0);
 assert(discriminant X == 26 and last cycleClass X == (7,4) and degree surface X == 11 and sectionalGenus surface X == 3);
 Y = specialGushelMukaiFourfold("nodal D44",ZZ/33331,InputCheck=>0);
 assert(discriminant Y == 44 and last cycleClass Y == (6,3) and degree surface Y == 9 and sectionalGenus surface Y == 1);
+///
+
+TEST /// -- Test 14 -- gluing scrolls along curves
+debug SpecialFanoFourfolds
+S = surface({3,4,0,0},ambient=>6);
+for a in {(1,0),(2,0),(3,0),(4,0),(5,0),(5,1)} do (
+    (d,g) := a;
+    E := curvesOnSurface(S,d,g);
+    assert(#E>0);
+    for C in E do (
+        <<"(d,g) = "<<(d,g)<<", curve: "<<? ideal C<<endl;
+        assert(degree C == d and sectionalGenus C == g);
+        B := glueScroll C;
+        assert(dim B == 3 and degree B == 3 and degrees B == {({1},1),({2},3)} and isSubset(C,S*B));
+        if g == 0 then (
+            B' := glueScroll' C;
+            assert(dim B' == 4 and degree B' == 4 and degrees B' == {({2},1),({3},3)} and isSubset(C,B'*S));
+        );    
+    );
+);
+C = first curvesOnSurface(surface({3,3,0,0},ZZ/333331),6,0);
+assert(dim C == 1 and degree C == 6 and sectionalGenus C == 0)
+B = glueScroll' C;
+assert(dim B == 4 and degree B == 4 and degrees B == {({2},1), ({3},3)} and isSubset(C,B) and isSubset(C,(ambientVariety C)*B))
+///
+
+TEST /// -- Test 15
+debug SpecialFanoFourfolds
+L = takeGMsfromSurfaceInP6(surface({3,1,1,0},ambient=>6),InputCheck=>0,"Gluing"=>"cubic scroll",Degrees=>hashTable{1=>(1,1),2=>(19,infinity),3=>(0,0)});
+X = first L;
+assert(#L == 1 and discriminant X == 18 and last cycleClass X == (5,3))
+L = takeGMsfromSurfaceInP6(surface({3,1,1,0},ambient=>6),InputCheck=>0,"Gluing"=>"quartic scroll",Degrees=>hashTable{1=>(1,1),2=>(19,infinity),3=>(0,0)});
+X = first L;
+assert(#L == 1 and discriminant X == 20 and last cycleClass X == (4,3))
 ///
 
