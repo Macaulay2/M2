@@ -5,13 +5,12 @@
 
 #include "mat.hpp"
 
-
 class FF_LUComputation
 {
   // This is a class encapsulating the LU decomposition
   // over a domain, using fraction free Gaussian elimination.
 
-  const Ring *R;                // R should be a domain.
+  const Ring *R;  // R should be a domain.
   MutableMatrix *M;
   int *col_perm;
   bool *need_div;
@@ -19,7 +18,7 @@ class FF_LUComputation
   ring_elem lastpivot;
   ring_elem pivot;
 
-private:
+ private:
   FF_LUComputation(MutableMatrix *M);
   ~FF_LUComputation();
 
@@ -41,7 +40,8 @@ private:
   // user interrupted.
 
   M2_arrayint get_column_permutation();
-public:
+
+ public:
   static M2_arrayintOrNull DO(MutableMatrix *M);
   // Replace M with its column echelon form.  If M has
   // column recording going on, then one obtains the whole

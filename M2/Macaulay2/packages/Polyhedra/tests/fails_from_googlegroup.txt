@@ -1,0 +1,51 @@
+Hi,
+
+I am trying to use the "Polyhedra" package for computing with polyhedra. It has a function "polarFace", which returns the face F* of P* (the polar polytope of P) dual to F of P. However, in all dimensions, the returned polytope is just a point. Here is an example where this fails:
+
+V = projectiveSpace(4)
+KX= fold(plus,toList apply(0..4, i-> V_i))
+P =  polytope KX -- this is just the polytope corresponding whose normal fan is the fan of P^4
+F = first faces(2,P)
+i139 : polarFace F
+
+o139 = {ambient dimension => 4           }
+        dimension of lineality space => 0
+        dimension of polyhedron => -1
+        number of facets => 0
+        number of rays => 0
+        number of vertices => 0
+
+
+
+Clearly, F should have dimension 2 and not be the empty polyhedron. Some investigation in the source code reveals that the function "faces" fails to update F.cache to include the information that it is a face of P, and hence the empty polyhedron is returned.
+
+Looking at the documentation, one sees that the bug is even present in the example run (http://www.math.uiuc.edu/Macaulay2/doc/Macaulay2-1.9/share/doc/Macaulay2/Polyhedra/html/_polar__Face.html).
+
+Am I doing something wrong, or is this really a bug?
+
+Best,
+Fredrik Meyer
+
+--------------------------------------------------------------------------------------------
+
+Seth Sullivant 	
+Jun 28 (21 hours ago)
+I was trying to use the polyhedra package to compute mixed volumes with the function "mixedVolume"
+
+loadPackage "Polyhedra"
+M1 = matrix{{0,0,0,0,0},{1,1,0,0,0},{1,2,0,0,0}}
+P1 = convexHull transpose M1
+M2 = matrix{{0,0,0,0,0},{1,0,1,0,0},{1,0,2,0,0}}
+P2 = convexHull transpose M2
+M3 = matrix{{0,0,0,0,0},{1,0,0,1,0},{1,0,0,2,0}}
+P3 = convexHull transpose M3
+M4 = matrix{{0,0,0,0,0},{1,0,0,0,1},{1,0,0,0,2}}
+P4 = convexHull transpose M4
+M5 = matrix{{0,1,1,0,0},{0,0,0,1,1}}
+P5 = convexHull transpose M5
+mixedVolume({P1,P2, P3,P4, P5})
+
+I computed this 4 times and got four different answers: 0, 1, 4, and 5.  The correct value of the mixed volume in this case is 6 (computed with  PHCPack).  Josephine Yu told me that the problem is probably with the randomization that goes in to a certain lifting for the polyhedral computation (only uses random integers between 0 and 24). 
+
+I'm not sure if there is anything to be done at this point, but I wanted to make people that might look aware of this problem.
+

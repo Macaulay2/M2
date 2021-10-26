@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Macaulay2: Poset Visualization</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/BootSideMenu.css" rel="stylesheet"/>
+    <link href="css/nouislider.min.css" rel="stylesheet"/>
+    <link href="css/common.css" rel="stylesheet"/>
+      
+    <script>
+      //global variables
+      activeSession = true;
+      curEdit = false;
+      curHighlight = false;
+      menuOpen = true;
+      dataLabels = ['1', '2', '3', '4', '5', '6', '7'];
+      dataRelMatrix = [[1, 1, 1, 1, 0, 1, 1], [0, 1, 1, 1, 0, 1, 1], [0, 0, 1, 1, 0, 1, 1], [0, 0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 1, 1, 1], [0, 0, 0, 0, 0, 1, 1], [0, 0, 0, 0, 0, 0, 1]];
+      dataCovRel = null;
+      dataGroupList = null;
+      portData = 8080; // initializes port from user
+      fixExtremalNodes = false;
+      dataMaxChains = null;
+      forceOn = false;
+      labelsOn = true;
+      tikzGenerated = false;
+      forceCharge = -1500;
+      forceLinkDist = 100;
+    </script>
+  </head>
+
+  <body>
+
+        <div id="side">
+          <h2>&#8202;&#8202;Menu</h2>
+          <div class="list-group" id="menuList">
+            <div class="list-group-item" id="sliderDiv"><div style="height:25px;">Force variables</div>
+            <span style="display:inline-block; width:60px;">&#8202; Charge:</span><div class="noUi-extended" id="charge-slider" style="vertical-align:middle;"></div><br>
+            <span style="display:inline-block; width:60px;">&#8202; Links:</span><div class="noUi-extended" id="linkdist-slider" style="vertical-align:middle;"></div>
+            </div>
+            <a id="editToggle" href="#" class="list-group-item">Enable editing</a>
+            <a id="labelToggle" href="#" class="list-group-item">Hide labels</a>
+            <a id="highlightToggle" href="#" class="list-group-item">Highlight comparable elements</a>
+            <a id="extremalNodeToggle" href="#" class="list-group-item">Fix extremal nodes</a>
+            <a id="reset" href="#" class="list-group-item">Reset nodes</a>
+            <a id="forceToggle" href="#" class="list-group-item">Turn on force</a>
+            <a id="exportTikz" href="#" class="list-group-item">Generate TikZ code</a>
+              
+            <a href="#collapse1" data-toggle="collapse" class="list-group-item">Boolean tests &#9662;</a>
+                <div id="collapse1" class="panel-collapse collapse">
+                    <a id="isAtomic" href="#" class="list-group-item"> &nbsp;&nbsp; isAtomic</a>
+                    <a id="isBounded" href="#" class="list-group-item"> &nbsp;&nbsp; isBounded</a>
+                    <a id="isDistributive" href="#" class="list-group-item"> &nbsp;&nbsp; isDistributive</a>
+                    <a id="isGeometric" href="#" class="list-group-item"> &nbsp;&nbsp; isGeometric</a>
+                    <a id="isGraded" href="#" class="list-group-item"> &nbsp;&nbsp; isGraded</a>
+                    <a id="isLattice" href="#" class="list-group-item"> &nbsp;&nbsp; isLattice</a>
+                    <a id="isLowerSemilattice" href="#" class="list-group-item"> &nbsp;&nbsp; isLowerSemilattice</a>
+                    <a id="isLowerSemimodular" href="#" class="list-group-item"> &nbsp;&nbsp; isLowerSemimodular</a>
+                    <a id="isModular" href="#" class="list-group-item"> &nbsp;&nbsp; isModular</a>
+                    <a id="isRanked" href="#" class="list-group-item"> &nbsp;&nbsp; isRanked</a>
+                    <a id="isSperner" href="#" class="list-group-item"> &nbsp;&nbsp; isSperner</a>
+                    <a id="isStrictSperner" href="#" class="list-group-item"> &nbsp;&nbsp; isStrictSperner</a>
+                    <a id="isUpperSemilattice" href="#" class="list-group-item"> &nbsp;&nbsp; isUpperSemilattice</a>
+                    <a id="isUpperSemimodular" href="#" class="list-group-item"> &nbsp;&nbsp; isUpperSemimodular</a>
+                </div>
+            <a href="#collapse2" data-toggle="collapse" class="list-group-item">Numerical invariants &#9662;</a>
+                <div id="collapse2" class="panel-collapse collapse">
+                    <a id="dilworthNumber" href="#" class="list-group-item"> &nbsp;&nbsp; dilworthNumber</a>
+                </div>
+              
+            <a id="endSession" href="#" class="list-group-item">End session</a> 
+          </div>
+        </div>
+
+        <div class="container">
+          <div id="canvasElement2d"></div>
+        </div>
+
+
+  <script src="js/jquery-1.11.3.min.js"></script>
+  <script src="js/BootSideMenu.js"></script>
+  <script src="js/d3.v3.min.js"></script>
+  <script src="js/visPoset.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/clipboard.min.js"></script>
+  <script src="js/nouislider.min.js"></script>
+
+  <script>
+      
+    // Initialize clipboard.js.
+    var clipboard = null;
+      
+//    $('#side').BootSideMenu({side:"right"});
+    $('#side').BootSideMenu({side:"right", closeOnClick: false, width: "230px"});
+    
+    // When the side menu bar is opened or closed (i.e, when the "toggler" div is clicked), resize the svg appropriately so that nodes do not go behind the side menu.
+    document.getElementsByClassName("toggler")[0].addEventListener("mousedown", function() {
+            menuOpen = !menuOpen;
+            updateWindowSize2d();    
+    }, false);
+
+    //document.getElementById("canvasElement2d").style.width = width;
+    //document.getElementById("canvasElement2d").style.height = height;
+
+    window.addEventListener('resize', updateWindowSize2d, false);
+      
+    // Initialize sliders
+    var chargeSlider = document.getElementById('charge-slider');
+    noUiSlider.create(chargeSlider, {
+        start: [1500],
+        //tooltips: true,
+        range: {
+			'min': [0],
+			'max': [6000]
+		}
+    });
+    //chargeSlider.noUiSlider.on('update', updateForceCharge);
+      
+    var linkDistSlider = document.getElementById('linkdist-slider');
+    noUiSlider.create(linkDistSlider, {
+        start: [100],
+        //tooltips: true,
+        range: {
+			'min': [0],
+			'max': [400]
+		}
+    });
+    //chargeSlider.noUiSlider.on('update', updateForceLinkDist);
+      
+    $(document).ready(function(){
+
+      $("#editToggle").on("click", function(){
+        if(curEdit) {
+          $(this).html("Enable editing");
+          curEdit = !curEdit;
+          disableEditing();
+        } else {
+          $(this).html("Disable editing");
+          curEdit = !curEdit;
+          enableEditing();
+        }
+      });
+        
+      $("#labelToggle").on("click", function(){
+        if(!labelsOn) {
+          $(this).html("Hide labels");
+          labelsOn = !labelsOn;
+          showLabels();
+        } else {
+          $(this).html("Show labels");
+          labelsOn = !labelsOn;
+          hideLabels();
+        }
+      });
+        
+      $("#highlightToggle").on("click", function(){
+        if(curHighlight) {
+          $(this).html("Highlight comparable elements");
+          unHighlightAll();
+          curHighlight = !curHighlight;
+        } else {
+          $(this).html("Disable highlighting");
+          enableHighlight();
+          curHighlight = !curHighlight;
+        }
+      });
+
+      $("#extremalNodeToggle").on("click", function(){
+        if(fixExtremalNodes) {
+          $(this).html("Fix extremal nodes");
+          fixExtremalNodes = !fixExtremalNodes;
+          
+        } else {
+          $(this).html("Don't fix extremal nodes");
+          fixExtremalNodes = !fixExtremalNodes;
+          
+        }
+        
+        force.stop();
+        nodes = [];
+        links = [];
+        restart();
+          
+        // Recompute node groups and reinitialize the display.
+        dataGroupList = computeNodeGroups(dataRelMatrix);
+        maxGroup = d3.max(dataGroupList);
+        rowSep = (height-2*vPadding)/maxGroup;
+        nodes = nodesFromLabelsGroups(dataLabels,dataGroupList);
+        setAllNodesFixed();
+        links = linksFromNodesRelations(nodes,dataCovRel);
+        force.nodes(nodes)
+          .links(links);
+        tick();
+          
+        // Update the side menu bar to reflect that all nodes are now fixed in their original positions.
+        if(forceOn) toggleForce();
+          
+        // Update the display.  
+        restart();
+      });    
+        
+      $("#reset").on("click", resetPoset);
+        
+      $("#forceToggle").on("click", toggleForce);
+    
+      $("#exportTikz").on("click", function() {
+        exportTikz();
+      })
+      
+      // Begin browser-M2 communication.
+      // For each item, a line in the function `onclickResults()`
+      // located in `visGraph2d.js` must be added. 
+      // 
+      // If you wish to delete the text to make it vanish when the graph is edited
+      // search for 'menuDefaults()'.
+
+      // Checks to see if user's poset is atomic
+      $("#isAtomic").on("click", function() {
+        clickTest = "isAtomic";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isAtomic/', poset2M2Constructor(dataLabels));
+      });
+        
+      // Checks to see if user's poset is bounded
+      $("#isBounded").on("click", function() {
+        clickTest = "isBounded";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isBounded/', poset2M2Constructor(dataLabels));
+      }); 
+        
+      // Checks to see if user's poset is distributive
+      $("#isDistributive").on("click", function() {
+        clickTest = "isDistributive";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isDistributive/', poset2M2Constructor(dataLabels));
+      });    
+        
+      // Checks to see if user's poset is geometric
+      $("#isGeometric").on("click", function() {
+        clickTest = "isGeometric";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isGeometric/', poset2M2Constructor(dataLabels));
+      });    
+        
+      // Checks to see if user's poset is graded
+      $("#isGraded").on("click", function() {
+        clickTest = "isGraded";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isGraded/', poset2M2Constructor(dataLabels));
+      });    
+        
+      // Checks to see if user's poset is a lattice
+      $("#isLattice").on("click", function() {
+        clickTest = "isLattice";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isLattice/', poset2M2Constructor(dataLabels));
+      });    
+        
+      // Checks to see if user's poset is a lower semilattice
+      $("#isLowerSemilattice").on("click", function() {
+        clickTest = "isLowerSemilattice";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isLowerSemilattice/', poset2M2Constructor(dataLabels));
+      });    
+        
+      // Checks to see if user's poset is lower semimodular
+      $("#isLowerSemimodular").on("click", function() {
+        clickTest = "isLowerSemimodular";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isLowerSemimodular/', poset2M2Constructor(dataLabels));
+      });    
+        
+      // Checks to see if user's poset is modular
+      $("#isModular").on("click", function() {
+        clickTest = "isModular";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isModular/', poset2M2Constructor(dataLabels));
+      });    
+        
+      // Checks to see if user's poset is ranked
+      $("#isRanked").on("click", function() {
+        clickTest = "isRanked";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isRanked/', poset2M2Constructor(dataLabels));
+      });    
+        
+      // Checks to see if user's poset is Sperner
+      $("#isSperner").on("click", function() {
+        clickTest = "isSperner";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isSperner/', poset2M2Constructor(dataLabels));
+      });    
+        
+      // Checks to see if user's poset is strict Sperner
+      $("#isStrictSperner").on("click", function() {
+        clickTest = "isStrictSperner";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isStrictSperner/', poset2M2Constructor(dataLabels));
+      });    
+        
+      // Checks to see if user's poset is an upper semilattice
+      $("#isUpperSemilattice").on("click", function() {
+        clickTest = "isUpperSemilattice";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isUpperSemilattice/', poset2M2Constructor(dataLabels));
+      });    
+        
+      // Checks to see if user's poset is upper semimodular
+      $("#isUpperSemimodular").on("click", function() {
+        clickTest = "isUpperSemimodular";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isUpperSemimodular/', poset2M2Constructor(dataLabels));
+      });    
+        
+      // Computes the Dilworth number of the user's poset (the maximal length of an antichain)
+      $("#dilworthNumber").on("click", function() {
+        clickTest = "dilworthNumber";
+        makeCorsRequest('POST','http://localhost:'+portData+'/dilworthNumber/', poset2M2Constructor(dataLabels));
+      });
+
+      // Ends the browser session and outputs the information to M2
+      $("#endSession").on("click", function() {
+        if(activeSession) {
+          //$(this).html("Session Terminated");
+          //$(this).html(<p style="color: #ffffff; background-color: #ff0000">Session terminated</p>);
+          document.getElementById("endSession").style.color = 'white';
+          document.getElementById("endSession").style.backgroundColor = 'red';
+          document.getElementById("endSession").innerHTML = "Session terminated";
+          makeCorsRequest('POST','http://localhost:'+portData+'/end/',poset2M2Constructor(dataLabels));
+          activeSession = !activeSession;
+        } else {
+          return;
+        }
+      });      
+
+      initializeBuilder();
+      disableEditing();
+    });
+
+
+    function toggleForce() {
+      if (forceOn) {
+        setAllNodesFixed();
+        document.getElementById("forceToggle").innerHTML = "Turn on force";
+      }
+      else {
+        setAllNodesUnfixed();
+        restart();
+        document.getElementById("forceToggle").innerHTML = "Turn off force";
+      }
+      forceOn = !forceOn;
+    }
+
+    </script>
+
+  </body>
+
+
+</html>

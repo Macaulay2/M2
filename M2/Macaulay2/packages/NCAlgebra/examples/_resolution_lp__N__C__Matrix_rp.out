@@ -1,0 +1,62 @@
+-- -*- M2-comint -*- hash: -777698962
+
+i1 : A = skewPolynomialRing(QQ,(-1)_QQ,{x,y,z})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o1 = A
+
+o1 : NCQuotientRing
+
+i2 : M = ncMatrix {{x,y,z}}
+
+o2 = | x y z |
+
+o2 : NCMatrix
+
+i3 : Mres = res M
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+
+      1      3      3      1
+o3 = A  <-- A  <-- A  <-- A
+                           
+     0      1      2      3
+
+o3 : NCChainComplex
+
+i4 : Mres#0
+
+o4 = | x y z |
+
+o4 : NCMatrix
+
+i5 : Mres#1
+
+o5 = | 0  -z -y |
+     | -z 0  -x |
+     | -y -x 0  |
+
+o5 : NCMatrix
+
+i6 : Mres#2
+
+o6 = | -x |
+     | -y |
+     | -z |
+
+o6 : NCMatrix
+
+i7 : betti Mres
+
+            0 1 2 3
+o7 = total: 1 3 3 1
+         0: 1 3 3 1
+
+o7 : BettiTally
+
+i8 : 

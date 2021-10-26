@@ -1,96 +1,6 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 document {
-     Key => (accumulate, Function, Thing, VisibleList),
-     TT "accumulate(f,x0,{x1,...,xn})", " -- computes the list ", TT "{f(x0,x1),f(f(x0,x1),x2),...}", ".",
-     EXAMPLE {
-	  "accumulate(identity, a, {b,c,d,e})",
-	  "accumulate (times, 1, 1 .. 10)"
-	  }
-     }
-
-document {
-     Key => (accumulate, Function, VisibleList),
-     TT "accumulate(f,{x0,x1,...,xn})", " -- computes the list ", TT "{f(x0,x1),f(f(x0,x1),x2),...}", ".",
-     EXAMPLE {
-	  "accumulate(identity, {a,b,c,d,e})",
-	  "accumulate(plus, 0 .. 10)"
-	  }
-     }
-
-document {
-     Key => (accumulate, VisibleList, Thing, Function),
-     TT "accumulate({xn,...,x1},x0,f)", " -- computes the list ", TT "{...,f(x2,f(x1,x0)),f(x1,x0)}", ".",
-     EXAMPLE "accumulate({a,b,c,d}, e, identity)"
-     }
-
-document {
-     Key => (accumulate, VisibleList, Function),
-     TT "accumulate({xn,...,x1,x0},f)", " -- computes the list ", TT "{...,f(x2,f(x1,x0)),f(x1,x0)}", ".",
-     EXAMPLE "accumulate({a,b,c,d,e}, identity)"
-     }
-
-document {
-     Key => accumulate,
-     Headline => "apply binary operator repeatedly",
-     SeeAlso => {"fold"}
-     }
-
-TEST ///
-     assert( accumulate(toList,a,{b,c,d}) == {{a, b}, {{a, b}, c}, {{{a, b}, c}, d}} )
-     assert( accumulate({a,b,c},d,toList) == {{a, {b, {c, d}}}, {b, {c, d}}, {c, d}} )
-     assert( accumulate(toList,{a,b,c,d}) == {{a, b}, {{a, b}, c}, {{{a, b}, c}, d}} )
-     assert( accumulate({a,b,c,d},toList) == {{a, {b, {c, d}}}, {b, {c, d}}, {c, d}} )
-///     
-
-document {
-     Key => (fold, Function, Thing, VisibleList),
-     TT "fold(f,x0,{x1,...,xn})", " -- computes ", TT "f(...f(f(x0,x1),x2)...)}", ".",
-     EXAMPLE "fold(identity, a, {b,c,d,e})"
-     }
-document {
-     Key => (fold, Function, VisibleList),
-     TT "fold(f,{x0,x1,...,xn})", " -- computes ", TT "f(...f(f(x0,x1),x2)...)}", ".",
-     EXAMPLE {
-	  "fold(identity, {a,b,c,d,e})",
-	  "fold(plus, {1,2,3,4,5})"
-	  }
-     }
-document {
-     Key => (fold, VisibleList, Thing, Function),
-     TT "fold({xn,...,x1},x0,f)", " -- computes ", TT "f(...f(x2,f(x1,x0))...)}", ".",
-     EXAMPLE "fold({a,b,c,d}, e, identity)"
-     }
-document {
-     Key => (fold, VisibleList, Function),
-     TT "fold({xn,...,x1,x0},f)", " -- computes ", TT "f(...f(x2,f(x1,x0))...)}", ".",
-     EXAMPLE "fold({a,b,c,d,e}, identity)"
-     }
-document {
-     Key => fold,
-     Headline => "apply binary operator repeatedly",
-     SeeAlso => {"accumulate"}
-     }
-
-TEST ///
-     assert( fold(toList, a, {b,c,d}) === {{{a, b}, c}, d} )
-     assert( fold({a,b,c}, d, toList) === {a, {b, {c, d}}} )
-     assert( fold(toList, {a,b,c,d}) === {{{a, b}, c}, d} )
-     assert( fold({a,b,c,d}, toList) === {a, {b, {c, d}}} )
-///
-
-document {
-     Key => demark,
-     Headline => "insert a string between elements of a list of strings",
-     TT "demark(s,x)", " -- given a list of strings ", TT "x", " and
-     a string ", TT "s", " provides the string obtained by concatenating
-     the elements of ", TT "x", " with a copy of ", TT "x", " inserted
-     between each successive pair.",
-     PARA{},
-     EXAMPLE "demark(\"+\",{\"a\",\"b\",\"c\"})"
-     }
-
-document {
      Key => InfiniteNumber,
      Headline => "the class of all infinite numbers"
      }
@@ -103,7 +13,7 @@ document {
 document {
      Key => IndeterminateNumber,
      Headline => "the class of all indeterminate numbers",
-     "Indeterminate numbers result, for exmaple, from multiplying 0 by infinity.
+     "Indeterminate numbers result, for example, from multiplying 0 by infinity.
      There is only one instance of this class."
      }
 
@@ -113,232 +23,6 @@ document {
      TT "indeterminate", " -- a representation of an indeterminate number,
      such as might result from multiplying 0 by infinity.",
      }
-
-document {
-     Key => {max,(max, VisibleList)},
-     Headline => "maximum of elements of a list",
-     TT "max x", " -- yields the maximum of the elements in the list or sequence x."
-     }
-
-document {
-     Key => {min,(min, VisibleList)},
-     Headline => "minimum of elements of a list",
-     TT "min x", " -- yields the minimum of the elements in the list or sequence x."
-     }
-
-TEST ///
-assert(max{4,5,6} === 6)
-assert(min{4,5,6} === 4)
-assert(max(4,5,6) === 6)
-assert(min(4,5,6) === 4)
-///
-
-document {
-     Key => {pack,(pack, BasicList, ZZ),(pack, ZZ, BasicList)},
-     Headline => "pack elements of a list into shorter ones",
-     TT "pack(n,v)", " -- packs the elements of the list or sequence
-     ", TT "v", " into a table ", TT "n", " at a time.",
-     PARA{},
-     "It produces, from a list ", TT "v", ", a list of lists formed 
-     by packing the elements of ", TT "v", " into lists ", TT "n", " 
-     at a time.  The last of the lists produced may have fewer 
-     than ", TT "n", " elements.",
-     EXAMPLE "pack(3,{a,b,c,d,e,f,g,h,i,j,k})",
-     }
-
-document {
-     Key => join,
-     Headline => "join lists",
-     TT "join(u,v,...)", " -- joins the elements of the lists or
-     sequences u, v, ... into a single list.",
-     PARA{},
-     "The class of the result is the same as the class of the first argument.
-     If there is just one argument, and it's mutable, a copy is returned.",
-     EXAMPLE "join({1,2,3},{a,b,c},{7,8,9})",
-     PARA{},
-     "The operator ", TO (symbol |, List, List), " can be used as a synonym."
-     }
-
-document {
-     Key => (take,BasicList,ZZ),
-     Usage => "take(v,n)",
-     Inputs => { "v", "n" },
-     Outputs => {
-	  {"a list containing the first ", TT "n", " elements of the list ", TT "v", " if ", TT "n", " is positive, or
-	       the last ", TT "-n", " elements if ", TT "n", " is negative."}
-	  },
-     EXAMPLE { "take({a,b,c,d,e,f},3)", "take({a,b,c,d,e,f},-2)" }
-     }
-
-document {
-     Key => (take,BasicList,List),
-     Usage => "take(v,{m,n})",
-     Inputs => { "v", Nothing => { TT "{m,n}", ", a pair of natural numbers" } },
-     Outputs => { {"a list containing those elements of the list ", TT "v", " in positions ", TT "m", " through ", TT "n" } },
-     EXAMPLE "take({a,b,c,d,e,f},{2,4})"
-     }
-
-document {
-     Key => take,
-     Headline => "take some elements from a list",
-     SeeAlso => "drop"
-     }
-
-document {
-     Key => first,
-     Headline => "first element of a list",
-     TT "first v", " -- yields the first element of the list v.",
-     PARA{},
-     "See also ", TO "last", "."
-     }
-
-document {
-     Key => last,
-     Headline => "last element of a list",
-     TT "last v", " -- yields the last element of the list v.",
-     PARA{},
-     "See also ", TO "first", "."
-     }
-
-document {
-     Key => {(positions, VisibleList, Function),positions},
-     Headline => "which elements of a list satisfy a condition",
-     Usage => "positions(v,f)",
-     Inputs => { "v", "f" => { "which, when applied to an element of ", TT "v", ", yields ", TO "true", " or ", TO "false", "" }},
-     Outputs => {
-	  List => { "the list of integers ", TT "k", ", in ascending order, such that ", TT "f v#k", " evaluates to ", TO "true" }
-	  },
-     EXAMPLE lines ///
-     positions(100..110,isPrime)
-     ///,
-     SeeAlso => {position,select}
-     }
-
-TEST "
-assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
-"
-
-document {
-     Key => [position, Reverse],
-     Headline => "search the list in reverse order",
-     Usage => "position(...,Reverse=>true)",
-     Consequences => {"the search is conducted in the reverse direction, starting at the end"}
-     }
-
-document {
-     Key => {position,(position, VisibleList, Function)},
-     Headline => "find first element of a list satisfying a condition",
-     TT "position(v,f)", " -- returns the index of the first element of ", TT "v", " satisfying 
-     the condition ", TT "f", ", or ", TO "null", " if there is none.",
-     SeeAlso => "positions"
-     }
-
-document { Key => (position, VisibleList, VisibleList, Function),
-     Usage => "position(v,w,f)",
-     Inputs => {"v","w","f"},
-     Outputs => {{"the smallest index ", TT "i", " such that ", TT "f(v#i,w#i)", " is true"}},
-     EXAMPLE lines ///
-     	  position((0,1,2,3,4), (0,0,0,9,9), (i,j)->i<j)
-     ///}
-
-document {
-     Key => delete,
-     Headline => "delete elements of a list",
-     TT "delete(x,v)", " -- removes any occurrences of the expression ", TT "x", "
-     from the list ", TT "v", ".",
-     PARA{},
-     "Equality is determined with ", TO "===", ", which is quick.",
-     EXAMPLE {
-	  "delete(c,{a,b,c,d,e,a,b,c,d,e})",
-	  },
-     SeeAlso => "member"
-     }
-
-TEST "
-stream = (action,state) -> () -> stream(action, action state)
-fib = stream( (i,j) -> (j,i+j), (0,1))
-scan(1 .. 22, i -> fib = fib())
-"
-
-document {
-     Key => {ultimate,(ultimate, Function, Thing)},
-     Headline => "ultimate value for an iteration",
-     TT "ultimate(f,x)", " -- yields the value ultimately obtained by
-     applying the function ", TT "f", " to ", TT "x", ".",
-     PARA{},
-     "Iteration ceases when an error occurs during application of the
-     function, or the result is the same.  Errors are not reported.",
-     PARA{},
-     "It's a bad idea to use this function, because unexpected errors will
-     produce unexpected results silently."
-     }
-
-document {
-     Key => subsets,
-     Headline => "produce all the subsets",
-     TT "subsets", " -- a function for computing a list of subsets
-     of a set or list."
-     }
-
-document {
-     Key => (subsets,ZZ,ZZ),
-     Usage => "subsets(n,j)",
-     Inputs => { "n", "j" },
-     Outputs => { {"a list of the subsets of ", TT "{0, ..., n-1}", " that have ", TT "j", " elements; each subset is provided as a list"} },
-     EXAMPLE "subsets(7,3)",
-     "If each of the sets is reversed, then the resulting list is in lexicographic order.",
-     EXAMPLE lines ///
-     	  x = reverse \ subsets(6,3)
-	  sort x === x
-     ///
-     }
-
-document {
-     Key => (subsets,Set,ZZ),
-     TT "subsets(s,j)", " -- yields a list of those subsets of the set ", TT "s", " that have ", TT "j", " elements.",
-     EXAMPLE "subsets(set {a,b,c},2)"
-     }
-
-document {
-     Key => {(subsets,List,ZZ),(subsets, Sequence, ZZ)},
-     TT "subsets(s,j)", " -- yields a list of those subsets of the list ", TT "s", " that have ", TT "j", " elements.",
-     EXAMPLE "subsets({a,b,c},2)"
-     }
-
-document {
-     Key => (subsets,ZZ),
-     Usage => "subsets n",
-     Inputs => { "n" },
-     Outputs => {{"a list of the subsets of the {0,1,...,n-1}"}},
-     EXAMPLE lines ///
-     	  subsets 4
-     ///
-     }
-
-document {
-     Key => {(subsets,List)},
-     TT "subsets s", " -- yields a list of the subsets of the list ", TT "s", ".",
-     PARA{},
-     "The subsets are returned as lists whose elements are in the same order.",
-     EXAMPLE "subsets {1,2,3}"
-     }
-
-document {
-     Key => (subsets,Set),
-     TT "subsets s", " yields a list of the subsets of the set ", TT "s", ".",
-     PARA{},
-     EXAMPLE "subsets set {a,b,c}"
-     }
-
-TEST "
-assert( subsets(4,2) === {{0,1},{0,2},{1,2},{0,3},{1,3},{2,3}} )
-assert( subsets({a,b,c,d},2) === {{a,b},{a,c},{b,c},{a,d},{b,d},{c,d}} )
-assert( 
-     set subsets(set {a,b,c,d},2) === 
-     set apply({{a,b},{a,c},{b,c},{a,d},{b,d},{c,d}},set) )
-assert( partitions 4 === {{4},{3,1},{2,2},{2,1,1},{1,1,1,1}} / (x -> new Partition from x) )
-assert( partitions(5,3) === {{3,2},{3,1,1},{2,2,1},{2,1,1,1},{1,1,1,1,1}} / (x -> new Partition from x) )
-"
 
 document {
      Key => (symbol -, List),
@@ -365,22 +49,6 @@ document {
      Inputs => { "v" => "a list interpreted as a vector", "w" => "a list interpreted as a vector" },
      Outputs => {"the difference of the two vectors"},
      EXAMPLE "{1,2,3} - {1,5,6}"
-     }
-
-document {
-     Key => number,
-     Headline => "count how many elements of a list satisfy a condition",
-     TT "number(x,f)", " the number of elements ", TT "e", " of the list ", TT "x", " 
-     for which ", TT "f(e)", " is true.",
-     PARA{},
-     SeeAlso => { "positions", "select" }
-     }
-
-document {
-     Key => same,
-     Headline => "whether everything in a list is the same",
-     TT "same v", " whether every element of the list ", TT "v", " is the same.
-     The comparison is done with ", TO "==", "."
      }
 
 document {
@@ -452,7 +120,7 @@ document {
      SeeAlso => {"product", "plus", "times"}
      }
 document {
-     Key => (sum, Tally),
+     Key => (sum, VirtualTally),
      Headline => "sum of elements",
      TT "sum v", " yields the sum of the elements in the tally ", TT "v", ".",
      PARA{},
@@ -517,7 +185,7 @@ document {
      SeeAlso => "product"
      }
 document {
-     Key => (product, Tally),
+     Key => (product, VirtualTally),
      Headline => "product of elements",
      TT "product v", " yields the product of the elements in the tally ", TT "v", ".",
      PARA{},
@@ -584,11 +252,19 @@ document {
      Key => Holder,
      Headline => "the class of all holder expressions",
      PARA{},
-     "This type of expresssion is a container for a single, arbitrary, thing that
+     "This type of expression is a container for a single, arbitrary, thing that
      is basic enough that the correct method for printing does not depend
      on its neighbors in the containing expression.  A negative number would
      not be basic enough for this purpose, since as a member of a sum, it would
      require special treatment."
+     }
+
+document {
+     Key => Describe,
+     Headline => "the class of the output of describe",
+     PARA{},
+     "This is a type of ", TO "Holder", " that contains the ",
+     TO "Expression", " produced by the method ", TO "Describe","."
      }
 
 document {
@@ -605,48 +281,9 @@ document {
      there is just one instance, an expression representing the number 1."
      }
 
-undocumented {
-     (symbol SPACE,Expression,Thing), (symbol SPACE,Thing,Expression),
-     (symbol SPACE,Holder,Holder),
-     (symbol *,Expression,Thing), (symbol *,Thing,Expression),
-     (symbol **,Expression,Thing), (symbol **,Thing,Expression),
-     (symbol +,Expression,Thing), (symbol +,Thing,Expression),
-     (symbol -,Expression,Thing), (symbol -,Thing,Expression),
-     (symbol /,Expression,Thing), (symbol /,Thing,Expression),
-     (symbol ==,Expression,Thing), (symbol ==,Thing,Expression),
-     (symbol ^,Thing,Expression),
-     (symbol _,Expression,Thing), 
-     (symbol _,Thing,Expression),
-     (symbol :,Expression,Expression),
-     (symbol :,Expression,Holder),
-     (symbol :,Expression,Thing),
-     (symbol :,Holder,Expression),
-     (symbol :,Holder,Holder),
-     (symbol :,Thing,Expression),
-     (symbol ..,Expression,Expression),
-     (symbol ..,Expression,Holder),
-     (symbol ..,Expression,Thing),
-     (symbol ..,Holder,Expression),
-     (symbol ..,Holder,Holder),
-     (symbol ..,Thing,Expression)
-     }
-
-undocumented {(value, RingElement),(value, Nothing), (value, IndexedVariableTable)}
-
 document {
-     Key => {Expression,
-	  (symbol SPACE,Expression,Expression),
-	  (symbol *,Expression,Expression),
-	  (symbol **,Expression,Expression),
-	  (symbol +,Expression,Expression),
-	  (symbol -,Expression),
-	  (symbol -,Expression,Expression),
-	  (symbol /,Expression,Expression),
-	  (symbol ==,Expression,Expression),
-	  (symbol ^,Expression,Expression),
-	  (symbol _,Expression,Expression),
-          (value,Expression)
-	  },
+     Key => {Expression, (value,Expression)} | flatten apply(toList value Core#"private dictionary"#"expressionBinaryOperators",
+	 op -> {(op,Expression,Expression),(op,Expression,Thing),(op,Thing,Expression),(op,Expression,Holder),(op,Holder,Expression),(op,Holder,Holder)}),
      Headline => "the class of all expressions",
      "An ", EM "expression", " is a symbolic representation of a mathematical expression.  It retains some of the semantics of the mathematical expression,
      as well as enough information to print the expression nicely.  In Macaulay2 expressions have two main functions: they are an intermediate phase in
@@ -721,8 +358,40 @@ document {
      TT "MatrixExpression", " is a type of ", TO "Expression", " representing
      a matrix.",
      PARA{},
-     EXAMPLE ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
+     EXAMPLE {
+	 ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
+	 ///R=QQ[x,y];///,
+         ///MatrixExpression {applyTable({{x^2-y^2,x^3-y^3},{x^2-4*y^2,x^3+y^3}},factor),Degrees=>{{{-2},{-3}},{{0},{0}}}}///,
+	 ///value oo///
+	 },
      SeeAlso => {"Table"}
+     }
+
+document {
+     Key => VectorExpression,
+     Headline => "the class of all vector expressions",
+     TT "VectorExpression", " is a type of ", TO "Expression", " representing
+     a vector.",
+     PARA{},
+     EXAMPLE ///VectorExpression {a,b,c}///,
+     SeeAlso => {"MatrixExpression"}
+     }
+
+document {
+     Key => SheafExpression,
+     Headline => "the class of sheaf expressions",
+     TT "SheafExpression", " is a type of ", TO "Expression", " representing
+     the sheaf associated to a given ring or module.",
+     PARA{},
+     }
+
+document {
+     Key => MapExpression,
+     Headline => "the class of map expressions",
+     TT "MapExpression", " is a type of ", TO "Expression", " representing
+     a map.",
+     PARA{},
+     EXAMPLE ///MapExpression {a,b,c}///,
      }
 
 document {
@@ -843,6 +512,30 @@ document {
      "The return value is ", TO "null", "."
      }
 
+doc ///
+  Key
+    printerr
+  Headline
+    print something to stderr
+  Usage
+    printerr x
+  Inputs
+    x:{String,Net,BasicList}
+  Description
+    Text
+      Print @TT "x"@, each line prepended with @TT "--"@, to @TO
+      stderr@.  This is useful for displaying warning messages and
+      verbose logs.
+    Example
+      printerr "Hello, world!"
+      printerr("foo" || "bar")
+    Text
+      If @TT "x"@ is @ofClass BasicList@, then its elements are first
+      joined with @TO horizontalJoin@.
+    Example
+      printerr("foo", "bar")
+///
+
 document {
      Key => hold,
      Headline => "hold something in a holder expression",
@@ -869,16 +562,32 @@ document {
      	  }
      }
 
-document {
-     Key => {pad,(pad, String, ZZ),(pad, ZZ, String)},
-     Headline => "pad a string with spaces",
-     TT "pad(s,n)", " -- pads the string ", TT "s", " to length ", TT "n", " with
-     spaces on the right.",
-     BR{},
- 
-     TT "pad(n,s)", " -- pads the string ", TT "s", " to length ", TT "n", " with
-     spaces on the left."
-     }
+doc ///
+  Key
+    pad
+    (pad, String, ZZ)
+    (pad, ZZ, String)
+    (pad, Net, ZZ)
+    (pad, ZZ, Net)
+  Headline
+    pad a string or net with spaces
+  Usage
+    pad(s,n)
+    pad(n,s)
+  Inputs
+    s:Net
+    n:ZZ
+  Description
+    Text
+      @TT "pad(s,n)"@ pads the string or net @TT "s"@ to length @TT
+      "n"@ with spaces on the right.
+
+      @TT "pad(n,s)"@ pads the string or net @TT "s"@ to length @TT
+      "n"@ with spaces on the left.
+    Example
+      pad(6, "foo")
+      pad("foo", 6) | "bar"
+///
 
 document {
      Key => columnate,
@@ -928,17 +637,6 @@ document {
      returns a scripted functor that accepts the arguments.",
      SeeAlso => "ScriptedFunctor"
      }
-
-TEST ("
-     R=ZZ/101[a..d]
-     C=resolution cokernel vars R
-     D = C ++ C[1] ++ C[2]
-     betti D
-     assert( degree HH_1 D === 0 )
-     assert( degree HH_0 D === 1 )
-     assert( degree HH_-1 D === 1 )
-     assert( degree HH_-2 D === 1 )
-     ")
 
 document {
      Key => {(sheafExt,ZZ,CoherentSheaf,CoherentSheaf),

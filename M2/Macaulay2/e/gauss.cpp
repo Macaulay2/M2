@@ -6,10 +6,12 @@
 #include "matrix-con.hpp"
 #include "newdelete.hpp"
 #include "interrupted.hpp"
+
+#include <iostream>
 extern RingZZ *globalZZ;
 
 int GaussElimComputation::complete_thru_degree() const
-  // The computation is complete up through this degree.
+// The computation is complete up through this degree.
 {
   if (status() == COMP_DONE) return 0;
   return -1;
@@ -21,7 +23,7 @@ gm_elem *GaussElimComputation::new_gen(int i)
   result->f = R->copy_vec(gens->elem(i));
 
   if (i < n_comps_per_syz)
-    result->fsyz = R->make_vec(i,R->one());
+    result->fsyz = R->make_vec(i, R->one());
   else
     result->fsyz = NULL;
   result->next = NULL;
@@ -36,7 +38,7 @@ void GaussElimComputation::insert(gm_elem *p)
           syz_list.push_back(p->fsyz);
           n_syz++;
         }
-      deleteitem(p);
+      freemem(p);
     }
   else
     {
@@ -64,33 +66,34 @@ void GaussElimComputation::insert(gm_elem *p)
     }
 }
 
-GaussElimComputation::GaussElimComputation(const Matrix *m, int collsyz, int nsyz)
-  : row(m->n_rows()-1),
-    R(m->get_ring()),
-    gens(m),
-    n_gb(0),
-    n_pairs(0),
-    n_syz(0),
-    collect_syz(collsyz)
+GaussElimComputation::GaussElimComputation(const Matrix *m,
+                                           int collsyz,
+                                           int nsyz)
+    : row(m->n_rows() - 1),
+      R(m->get_ring()),
+      gens(m),
+      n_gb(0),
+      n_pairs(0),
+      n_syz(0),
+      collect_syz(collsyz)
 {
   int i;
 
   typedef struct gm_elem *gm_elem_ptr;
-  reduce_list = newarray(gm_elem_ptr,m->n_rows());
-  gb_list = newarray(gm_elem_ptr,m->n_rows());
+  reduce_list = newarray(gm_elem_ptr, m->n_rows());
+  gb_list = newarray(gm_elem_ptr, m->n_rows());
 
-  for (i=0; i<m->n_rows(); i++)
+  for (i = 0; i < m->n_rows(); i++)
     {
       reduce_list[i] = NULL;
       gb_list[i] = NULL;
     }
 
-  if (nsyz < 0 || nsyz > m->n_cols())
-    nsyz = m->n_cols();
+  if (nsyz < 0 || nsyz > m->n_cols()) nsyz = m->n_cols();
   n_comps_per_syz = nsyz;
   Fsyz = m->cols()->sub_space(nsyz);
 
-  for (i=0; i<m->n_cols(); i++)
+  for (i = 0; i < m->n_cols(); i++)
     {
       gm_elem *p = new_gen(i);
       insert(p);
@@ -103,14 +106,14 @@ void GaussElimComputation::remove_gm_elem(gm_elem *&p)
     {
       R->remove_vec(p->f);
       R->remove_vec(p->fsyz);
-      deleteitem(p);
+      freemem(p);
       p = NULL;
     }
 }
 
 GaussElimComputation::~GaussElimComputation()
 {
-  for (int i=0; i<gens->n_rows(); i++)
+  for (int i = 0; i < gens->n_rows(); i++)
     {
       // remove the gm_elem list
       gm_elem *p = reduce_list[i];
@@ -123,7 +126,6 @@ GaussElimComputation::~GaussElimComputation()
       remove_gm_elem(gb_list[i]);
     }
 }
-
 
 void GaussElimComputation::reduce(gm_elem *&p, gm_elem *q)
 {
@@ -161,7 +163,7 @@ void GaussElimComputation::reduce(vec &f)
           ring_elem c = f->coeff;
           c = R->negate(c);
           vec g = R->mult_vec(c, gb_list[r]->f);
-          R->add_vec_to(f,g);
+          R->add_vec_to(f, g);
         }
       else
         {
@@ -176,8 +178,7 @@ void GaussElimComputation::reduce(vec &f)
 }
 void GaussElimComputation::reduce(vec &f, vec &fsyz, bool tail_only)
 {
-
-if (f == 0) return;
+  if (f == 0) return;
   vecterm head;
   vecterm *result = &head;
 
@@ -198,8 +199,8 @@ if (f == 0) return;
           c = R->negate(c);
           vec gsyz = R->mult_vec(c, gb_list[r]->fsyz);
           vec g = R->mult_vec(c, gb_list[r]->f);
-          R->add_vec_to(f,g);
-          R->add_vec_to(fsyz,gsyz);
+          R->add_vec_to(f, g);
+          R->add_vec_to(fsyz, gsyz);
         }
       else
         {
@@ -215,7 +216,7 @@ if (f == 0) return;
 void GaussElimComputation::start_computation()
 {
   if (status() == COMP_DONE) return;
-  for ( ; row >= 0; row--)
+  for (; row >= 0; row--)
     {
       if (gb_list[row] == NULL) continue;
       while (reduce_list[row] != NULL)
@@ -223,15 +224,22 @@ void GaussElimComputation::start_computation()
           gm_elem *p = reduce_list[row];
           reduce_list[row] = p->next;
           p->next = NULL;
-          reduce(gb_list[row], p); // replaces p
+          reduce(gb_list[row], p);  // replaces p
           if (M2_gbTrace >= 3)
-            if (p->f == NULL)
-              if (p->fsyz == NULL)
-                emit_wrapped("o");
+            {
+              if (p->f == NULL)
+                {
+                  if (p->fsyz == NULL)
+                    emit_wrapped("o");
+                  else
+                    emit_wrapped("z");
+                }
               else
-                emit_wrapped("z");
-            else
-              emit_wrapped("r");
+                emit_wrapped("r");
+            }
+          else
+            {
+            }
           insert(p);
           n_pairs++;
           if (system_interrupted())
@@ -257,7 +265,7 @@ void GaussElimComputation::start_computation()
       if (gb_list[r] == 0) continue;
       reduce(gb_list[r]->f, gb_list[r]->fsyz, true);
     }
-  if (M2_gbTrace >= 1)
+  if (M2_gbTrace >= 10)
     {
       buffer o;
       text_out(o);
@@ -266,15 +274,11 @@ void GaussElimComputation::start_computation()
   set_status(COMP_DONE);
 }
 
-const Matrix *GaussElimComputation::get_mingens()
-{
-  return get_gb();
-}
-
+const Matrix *GaussElimComputation::get_mingens() { return get_gb(); }
 const Matrix *GaussElimComputation::get_initial(int nparts)
 {
   MatrixConstructor mat(gens->rows(), 0);
-  for (int i=0; i<gens->n_rows(); i++)
+  for (int i = 0; i < gens->n_rows(); i++)
     if (gb_list[i] != NULL)
       {
         vec v = gb_list[i]->f;
@@ -286,25 +290,23 @@ const Matrix *GaussElimComputation::get_initial(int nparts)
 const Matrix *GaussElimComputation::get_gb()
 {
   MatrixConstructor mat(gens->rows(), 0);
-  for (int i=0; i<gens->n_rows(); i++)
-    if (gb_list[i] != NULL)
-      mat.append(R->copy_vec(gb_list[i]->f));
+  for (int i = 0; i < gens->n_rows(); i++)
+    if (gb_list[i] != NULL) mat.append(R->copy_vec(gb_list[i]->f));
   return mat.to_matrix();
 }
 
 const Matrix *GaussElimComputation::get_change()
 {
   MatrixConstructor mat(Fsyz, 0);
-  for (int i=0; i<gens->n_rows(); i++)
-    if (gb_list[i] != NULL)
-      mat.append(R->copy_vec(gb_list[i]->fsyz));
+  for (int i = 0; i < gens->n_rows(); i++)
+    if (gb_list[i] != NULL) mat.append(R->copy_vec(gb_list[i]->fsyz));
   return mat.to_matrix();
 }
 
 const Matrix *GaussElimComputation::get_syzygies()
 {
   MatrixConstructor mat(Fsyz, 0);
-  for (int i=0; i<syz_list.size(); i++)
+  for (int i = 0; i < syz_list.size(); i++)
     mat.append(R->copy_vec(syz_list[i]));
   return mat.to_matrix();
 }
@@ -312,33 +314,34 @@ const Matrix *GaussElimComputation::get_syzygies()
 void GaussElimComputation::text_out(buffer &o) const
 {
   o << newline;
-  for (int i=0; i<gens->n_rows(); i++) {
-    if (gb_list[i] != NULL)
-      {
+  for (int i = 0; i < gens->n_rows(); i++)
+    {
+      if (gb_list[i] != NULL)
+        {
+          o << "--- component " << i << " -----" << newline;
+          o << "gb elem = ";
+          R->vec_text_out(o, gb_list[i]->f);
+          o << newline;
+        }
+      else if (reduce_list[i] != NULL)
         o << "--- component " << i << " -----" << newline;
-        o << "gb elem = ";
-        R->vec_text_out(o, gb_list[i]->f);
-        o << newline;
-      }
-    else if (reduce_list[i] != NULL)
-        o << "--- component " << i << " -----" << newline;
-    for (gm_elem *p = reduce_list[i]; p!=NULL; p=p->next)
-      {
-        o << p->nterms;
-        o << " ## ";
-        R->vec_text_out(o, p->f);
-        o << " ## ";
-        R->vec_text_out(o, p->fsyz);
-        o << newline;
-      }
-  }
+      for (gm_elem *p = reduce_list[i]; p != NULL; p = p->next)
+        {
+          o << p->nterms;
+          o << " ## ";
+          R->vec_text_out(o, p->f);
+          o << " ## ";
+          R->vec_text_out(o, p->fsyz);
+          o << newline;
+        }
+    }
   o << newline;
-  for (int i=0; i<syz_list.size(); i++)
-    R->vec_text_out(o,syz_list[i]);
+  for (int i = 0; i < syz_list.size(); i++) R->vec_text_out(o, syz_list[i]);
   o << newline;
 }
 
-const Matrix /* or null */ *GaussElimComputation::matrix_remainder(const Matrix *m)
+const Matrix /* or null */ *GaussElimComputation::matrix_remainder(
+    const Matrix *m)
 {
   if (m->get_ring() != R)
     {
@@ -351,7 +354,7 @@ const Matrix /* or null */ *GaussElimComputation::matrix_remainder(const Matrix 
       return 0;
     }
   MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift());
-  for (int i=0; i<m->n_cols(); i++)
+  for (int i = 0; i < m->n_cols(); i++)
     {
       vec f = R->copy_vec(m->elem(i));
 
@@ -361,10 +364,10 @@ const Matrix /* or null */ *GaussElimComputation::matrix_remainder(const Matrix 
   return mat_remainder.to_matrix();
 }
 
-
-M2_bool GaussElimComputation::matrix_lift(const Matrix *m,
-                                     const Matrix /* or null */ **result_remainder,
-                                     const Matrix /* or null */ **result_quotient)
+M2_bool GaussElimComputation::matrix_lift(
+    const Matrix *m,
+    const Matrix /* or null */ **result_remainder,
+    const Matrix /* or null */ **result_quotient)
 {
   if (m->get_ring() != R)
     {
@@ -383,7 +386,7 @@ M2_bool GaussElimComputation::matrix_lift(const Matrix *m,
   MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift());
   MatrixConstructor mat_quotient(Fsyz, m->cols(), 0);
   bool all_zeroes = true;
-  for (int i=0; i<m->n_cols(); i++)
+  for (int i = 0; i < m->n_cols(); i++)
     {
       vec f = R->copy_vec(m->elem(i));
       vec fsyz = NULL;
@@ -400,9 +403,9 @@ M2_bool GaussElimComputation::matrix_lift(const Matrix *m,
 }
 
 int GaussElimComputation::contains(const Matrix *m)
-  // Return -1 if every column of 'm' reduces to zero.
-  // Otherwise return the index of the first column that
-  // does not reduce to zero.
+// Return -1 if every column of 'm' reduces to zero.
+// Otherwise return the index of the first column that
+// does not reduce to zero.
 {
   if (m->get_ring() != R)
     {
@@ -410,7 +413,7 @@ int GaussElimComputation::contains(const Matrix *m)
       return -1;
     }
   // Reduce each column of m one by one.
-  for (int i=0; i<m->n_cols(); i++)
+  for (int i = 0; i < m->n_cols(); i++)
     {
       vec f = R->copy_vec(m->elem(i));
       reduce(f);

@@ -1,7 +1,12 @@
 #include "overflow.hpp"
+#include <string>
 
 namespace safe {
-     void ov(const char *msg) { throw(exc::overflow_error(msg)); }
+void ov(const char *msg)
+{
+  const std::string s(msg);
+  throw(exc::overflow_exception(s));
+}
 }
 
 // Local Variables:

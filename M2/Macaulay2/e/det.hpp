@@ -18,51 +18,56 @@ class DetComputation : public our_new_delete
 {
   const Ring *R;
   const Matrix *M;
-  const FreeModule *F; // target free module of the result
+  const FreeModule *F;  // target free module of the result
   //  Matrix *result;  // Either:One row matrix collecting non-zero
-                  // determinants, or the resulting
-                  // exterior power; depending on 'do_exterior'
-  MatrixConstructor result;// Either:One row matrix collecting non-zero
-                  // determinants, or the resulting
-                  // exterior power; depending on 'do_exterior'
+  // determinants, or the resulting
+  // exterior power; depending on 'do_exterior'
+  MatrixConstructor result;  // Either:One row matrix collecting non-zero
+                             // determinants, or the resulting
+                             // exterior power; depending on 'do_exterior'
 
   bool done;
   int p;
 
-  bool do_exterior;             // true = construct exterior
-                                // power of matrix, false =
-                                // collect non-zero minors
-  int strategy;                 // 0: use Bareiss (fraction free, DOMAINS only)
-                                // 1: use cofactor method.
-  size_t * row_set;
-  size_t * col_set;
-  size_t this_row;
-  size_t this_col;
+  bool do_exterior;  // true = construct exterior
+                     // power of matrix, false =
+                     // collect non-zero minors
+  int strategy;      // 0: use Bareiss (fraction free, DOMAINS only)
+                     // 1: use cofactor method.
+  size_t *row_set;
+  size_t *col_set;
+  int this_row;
+  int this_col;
 
-  ring_elem **D;                // size p by p, dense representation.
+  ring_elem **D;  // size p by p, dense representation.
 
   void get_minor(size_t *r, size_t *c, int p, ring_elem **D);
   // Sets D[0..p-1,0..p-1] with the given minor of M.
 
   // Used in Bareiss:
-  bool get_pivot(ring_elem **D, int p, ring_elem &pivot, size_t &pivot_col);
-  ring_elem detmult(ring_elem f1, ring_elem g1,
-                    ring_elem f2, ring_elem g2,
+  bool get_pivot(ring_elem **D, size_t p, ring_elem &pivot, size_t &pivot_col);
+  ring_elem detmult(ring_elem f1,
+                    ring_elem g1,
+                    ring_elem f2,
+                    ring_elem g2,
                     ring_elem d);
-  void gauss(ring_elem **D, size_t i, size_t r, size_t pivot_col, ring_elem lastpivot);
-
+  void gauss(ring_elem **D,
+             size_t i,
+             size_t r,
+             size_t pivot_col,
+             ring_elem lastpivot);
 
   ring_elem calc_det(size_t *r, size_t *c, int p);
-     // Compute the determinant of the minor with rows r[0]..r[p-1]
-     // and columns c[0]..c[p-1].
+  // Compute the determinant of the minor with rows r[0]..r[p-1]
+  // and columns c[0]..c[p-1].
 
   ring_elem bareiss_det();
-     // Compute the determinant of the minor with rows r[0]..r[p-1]
-     // and columns c[0]..c[p-1].
+  // Compute the determinant of the minor with rows r[0]..r[p-1]
+  // and columns c[0]..c[p-1].
 
   // Subroutines for use in Bareiss algorithm:
 
-public:
+ public:
   DetComputation(const Matrix *M, int p, bool do_exterior, int strategy);
   ~DetComputation();
 
@@ -72,7 +77,7 @@ public:
   // The following two routines are only valid for 'do_exterior=0'
   void clear();
   void discard() { clear(); }
-  void set_next_minor(const int* rows, const int* cols);
+  void set_next_minor(const int *rows, const int *cols);
 
   Matrix *determinants() { return result.to_matrix(); }
 };

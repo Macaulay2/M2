@@ -1,0 +1,7 @@
+In this directory we have two files that can be used to redirect inclusions of
+GMP files to MPIR files.  Flint, in particular, doesn't seem to have a
+convenient configure option for specifying whether to use MPIR instead of GMP
+-- it just includes gmp.h.
+
+The way we bring these two files into play for flint is by compiling with a -I
+option pointing to this directory.

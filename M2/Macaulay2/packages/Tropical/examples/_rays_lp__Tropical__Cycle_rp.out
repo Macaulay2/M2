@@ -1,0 +1,25 @@
+-- -*- M2-comint -*- hash: -1556992540
+
+i1 : QQ[x,y,z,w]
+
+o1 = QQ[x..z, w]
+
+o1 : PolynomialRing
+
+i2 : I=ideal(x^2-y*z+w^2,w^3-x*y^3+z^3);
+
+o2 : Ideal of QQ[x..z, w]
+
+i3 : T=tropicalVariety I;
+
+i4 : rays T
+
+o4 = | -6 -3 0  1 3 6 |
+     | -5 -2 -1 1 2 5 |
+     | -7 -3 -1 1 4 7 |
+     | -6 -3 -1 1 3 7 |
+
+              4        6
+o4 : Matrix ZZ  <--- ZZ
+
+i5 : 

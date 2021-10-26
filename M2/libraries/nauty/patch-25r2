@@ -10,3 +10,49 @@ diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac
  THREADLIB=@threadlib@
  LOK=@lok@         # 0 if no 64-bit integers
  TESTPROGS=@testprogs@
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/nauty/tmp/nauty25r2/configure.ac nauty25r2/configure.ac
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/nauty/tmp/nauty25r2/configure.ac	2013-01-17 06:02:38.000000000 -0600
++++ nauty25r2/configure.ac	2013-05-08 23:40:28.818475700 -0500
+@@ -266,13 +266,13 @@
+    AS_HELP_STRING([--disable-clz], [Disable clz extensions]), [clzarg=given], [clzarg=notgiven])
+ AS_IF([test "x$clzarg" = "xnotgiven" -o "x$enable_clz" = "xyes"], [
+ AC_MSG_CHECKING(if __builtin_clz() is supported)
+-AC_LINK_IFELSE([main(){unsigned int x; x = __builtin_clz(x);}], [have_clz=1], [have_clz=0])
++AC_LINK_IFELSE([AC_LANG_SOURCE([main(){unsigned int x; x = __builtin_clz(x);}])], [have_clz=1], [have_clz=0])
+ AC_MSG_RESULT($have_clz)
+ AC_MSG_CHECKING(if __builtin_clzl() is supported)
+-AC_LINK_IFELSE([main(){unsigned long x; x = __builtin_clzl(x);}], [have_clzl=1], [have_clzl=0])
++AC_LINK_IFELSE([AC_LANG_SOURCE([main(){unsigned long x; x = __builtin_clzl(x);}])], [have_clzl=1], [have_clzl=0])
+ AC_MSG_RESULT($have_clzl)
+ AC_MSG_CHECKING(if __builtin_clzll() is supported)
+-AC_LINK_IFELSE([main(){unsigned long long x; x = __builtin_clzll(x);}], [have_clzll=1], [have_clzll=0])
++AC_LINK_IFELSE([AC_LANG_SOURCE([main(){unsigned long long x; x = __builtin_clzll(x);}])], [have_clzll=1], [have_clzll=0])
+ AC_MSG_RESULT($have_clzll)
+ ],[
+ have_clz=0
+@@ -288,14 +288,14 @@
+     threadlib=
+ else
+     AC_CHECK_LIB(pthread,pthread_create,have_pthread=1,have_pthread=0)
+-    if test $have_pthread ; then
++    if test $have_pthread != 0 ; then
+         threadlib=-lpthread
+     else
+         threadlib=
+     fi
+ fi
+ 
+-if test $have_pipe -a $have_wait ; then
++if test $have_pipe != 0 -a $have_wait != 0 ; then
+     shortg=1
+     shortg_or_null=shortg
+ else
+@@ -309,7 +309,7 @@
+ 
+ AC_CHECK_FUNC(getc_unlocked,have_getc_unlocked=1,have_getc_unlocked=0)
+ AC_CHECK_FUNC(flockfile,have_flockfile=1,have_flockfile=0)
+-if test $have_getc_unlocked -a $have_flockfile ; then
++if test $have_getc_unlocked != 0 -a $have_flockfile != 0 ; then
+     stdio_nolock=1
+ else
+     stdio_nolock=0

@@ -290,7 +290,7 @@ getReducedTransfer=method();
 getReducedTransfer (HashTable,ZZ) := (cohom,k) -> (
   tmp:=cohom;
   tk:=getTransfer(cohom,k);
-  -- cf. Dbasic.m2, Drank
+  -- cf. Dbasic.m2, holonomicRank
   W := ring(cohom#VResolution);
   createDpairs W;
   n := #(W.dpairInds#0);

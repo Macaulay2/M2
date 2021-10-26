@@ -1,0 +1,24 @@
+diff -ur /mike-raid/home/dan/src/M2/overnight/M2/BUILD/dan/builds.tmp/Ubuntu-16.04-x86_64.production/libraries/factory/tmp/factory-4.1.1/cf_factory.h factory-4.1.1/cf_factory.h
+--- /mike-raid/home/dan/src/M2/overnight/M2/BUILD/dan/builds.tmp/Ubuntu-16.04-x86_64.production/libraries/factory/tmp/factory-4.1.1/cf_factory.h	2017-12-06 12:37:14.000000000 -0500
++++ factory-4.1.1/cf_factory.h	2018-02-17 16:34:52.000000000 -0500
+@@ -15,7 +15,7 @@
+ #include "variable.h"
+ 
+ #include "factory/cf_gmp.h"
+-#include "factory/cf_assert.h"
++#include "cf_assert.h"
+ 
+ class InternalCF;
+ class CanonicalForm;
+diff -ur ~/Projects/M2/M2/M2/BUILD/mahrud/build/libraries/factory/build/m4/flint-check.m4 m4/flint-check.m4
+--- /home/mahrud/Projects/M2/M2/M2/BUILD/mahrud/build/libraries/factory/build/m4/flint-check.m4	2018-02-15 08:02:18.000000000 -0600
++++ m4/flint-check.m4	2020-05-28 13:44:27.476498101 -0500
+@@ -69,7 +69,7 @@
+ 	[
+ 	AC_TRY_RUN(
+ 	[#include <flint/flint.h>
+-	int main () { if ((int) version[0] < 2) return -1; else return 0; }
++	int main () { if (__FLINT_VERSION < 2) return -1; else return 0; }
+ 	],[
+ 	flint_found="yes"
+ 	break

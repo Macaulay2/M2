@@ -1,0 +1,30 @@
+diff -ur /home/dan/src/M2/M2/BUILD/dan/builds.tmp/Ubuntu-17.04-x86_64.production/libraries/mpir/tmp/mpir-2.7.2/configure.ac mpir-2.7.2/configure.ac
+--- /home/dan/src/M2/M2/BUILD/dan/builds.tmp/Ubuntu-17.04-x86_64.production/libraries/mpir/tmp/mpir-2.7.2/configure.ac	2015-11-13 07:05:54.000000000 -0600
++++ mpir-2.7.2/configure.ac	2017-04-16 11:35:33.402538687 -0500
+@@ -2595,7 +2595,7 @@
+             sed -n 's/^[ 	]*MULFUNC_PROLOGUE(\(.*\))/\1/p' $tmp_file ;
+             sed -n 's/^[ 	]*PROLOGUE(\([^,]*\).*)/\1/p' $tmp_file ;
+             sed -n 's/^;[ 	]*PROLOGUE(\([^,]*\).*)/\1/p' $tmp_file ;
+-            sed -n 's/[^G]*GLOBAL_FUNC[:space:]*\(.*\)/\1/p' $tmp_file ;
++            sed -n 's/[^G]*GLOBAL_FUNC[[:space:]]*\(.*\)/\1/p' $tmp_file ;
+           `]
+           for gmp_tmp in $gmp_ep; do
+             AC_DEFINE_UNQUOTED(HAVE_NATIVE_$gmp_tmp)
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-production/libraries/mpir/tmp/mpir-2.7.2/mp_set_fns.c mpir-2.7.2/mp_set_fns.c
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master-production/libraries/mpir/tmp/mpir-2.7.2/mp_set_fns.c	2014-09-14 15:59:13.000000000 -0400
++++ mpir-2.7.2/mp_set_fns.c	2016-03-25 17:00:40.000000000 -0400
+@@ -28,14 +28,4 @@
+ 			 void *(*realloc_func) (void *, size_t, size_t),
+ 			 void (*free_func) (void *, size_t))
+ {
+-  if (alloc_func == 0)
+-    alloc_func = __gmp_default_allocate;
+-  if (realloc_func == 0)
+-    realloc_func = __gmp_default_reallocate;
+-  if (free_func == 0)
+-    free_func = __gmp_default_free;
+-
+-  __gmp_allocate_func = alloc_func;
+-  __gmp_reallocate_func = realloc_func;
+-  __gmp_free_func = free_func;
+ }

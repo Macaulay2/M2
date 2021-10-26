@@ -1,5 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "methods.m2"
+
 accumulate = method()
 accumulate(Function,Thing,VisibleList) := VisibleList => (f,x,v) -> apply(v, y -> x = f(x,y))
 accumulate(VisibleList,Thing,Function) := VisibleList => (v,x,f) -> reverse apply(reverse v, w -> x = f(w,x))

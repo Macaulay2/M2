@@ -1,49 +1,45 @@
--- -*- M2-comint -*- {* hash: 1935272175 *}
---loading configuration for package "PHCpack" from file /Users/dan/Library/Application Support/Macaulay2/init-PHCpack.m2
+-- -*- M2-comint -*- hash: -2131607528
 
 i1 : R = CC[x,y,z];
 
 i2 : L = { z*(x+y), z*(x-y) };
 
 i3 : WitSets = cascade(L)
-writing output to file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44701-0/1PHCoutput
-calling phc -c < /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44701-0/2PHCbatch > /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44701-0/4PHCsession
-output of phc -c is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44701-0/1PHCoutput
-... constructing witness sets ... 
 
-o3 = A variety of dimension 2 with components in
-     dim 1:  [dim=1,deg=1]
-     dim 2:  [dim=2,deg=1]
+o3 = WitSets
 
 o3 : NumericalVariety
 
-i4 : W=first WitSets#1
+i4 : W=first WitSets#2
 
-o4 = [dim=1,deg=1]
+o4 = W
 
 o4 : WitnessSet
 
 i5 : W#Equations
 
-o5 = ideal ((.97573 + .218976*ii)zz1 + x*z + y*z, (- .98618 - .16568*ii)zz1 +
-     ------------------------------------------------------------------------
-     x*z - y*z, zz1)
+o5 = {-2} | (-.380139+.924929ii)zz1+(.547606+.836736ii)zz2-xz-yz |
+     {-2} | (.45571-.890128ii)zz1+(-.663772-.747935ii)zz2-xz+yz  |
+     {-1} | -zz1+(.537862+.843033ii)zz2                          |
 
-o5 : Ideal of CC  {x, y, z, zz1}
-                53
+o5 : PolySystem
 
 i6 : W#Points
 
-o6 = {{1.95866e-107-3.40637e-108*ii, 1.36255e-107, .993651+.112505*ii, 0}}
+o6 = {{.148619-.161802*ii, .45886-1.03272*ii, 3.21921e-32+7.65273e-33*ii, -2.28184e-32-4.87389e-33*ii, -1.6382e-32+1.66152e-32*ii}}
 
 o6 : VerticalList
 
 i7 : W#Slice
 
-o7 = {.879234 - .476389*ii + (.232678 - .972554*ii)x + (- .263104 -
+o7 = | .205377+.978683ii  .673112+.739541ii .943327-.331864ii 
+     | -.759495+.650513ii -.89022-.45553ii  -.972487+.232959ii
      ------------------------------------------------------------------------
-     .964767*ii)y + (- .820056 + .572283*ii)z + (.861897 + .507083*ii)zz1}
+     -.911067-.412259ii .497812+.867285ii  -.883724+.468009ii |
+     -.595572-.803302ii -.236638-.971598ii .871298-.490754ii  |
 
-o7 : List
+                2          6
+o7 : Matrix CC    <--- CC
+              53         53
 
 i8 : 

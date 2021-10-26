@@ -2,16 +2,18 @@
 ---------------------------------------------------------------------------
 -- PURPOSE: Calculating versal deformations and local Hilbert schemes
 -- PROGRAMMER : Nathan Ilten
--- UPDATE HISTORY : April 2012
+-- UPDATE HISTORY : November 2020
 ---------------------------------------------------------------------------
 newPackage("VersalDeformations",
-    Headline => "A package for calculating versal deformations and local Hilbert schemes",
-    Version => "1.1",
-    Date => "August 8, 2012",
+    Headline => "versal deformations and local Hilbert schemes",
+    Version => "3.0",
+    Date => "November 12, 2020",
     Authors => {
-        {Name => "Nathan Owen Ilten",
-	  HomePage => "http://people.cs.uchicago.edu/~nilten/",
-	  Email => "nilten@cs.uchicago.edu"}},
+        {Name => "Nathan Ilten",
+	  HomePage => "http://www.sfu.ca/~nilten/",
+	  Email => "nilten@sfu.ca"}},
+    Configuration => {"DefaultDefParam"=>"t"},
+    Keywords => {"Deformation Theory"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	 "journal URI" => "http://j-sag.org/",
@@ -19,19 +21,18 @@ newPackage("VersalDeformations",
 	 "acceptance date" => "2012-06-05",
 	 "published article URI" => "http://j-sag.org/Volume4/jsag-3-2012.pdf",
 	 "published code URI" => "http://j-sag.org/Volume4/VersalDeformations.m2",
-	 "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/VersalDeformations.m2",
-	 "release at publication" => 14710,
+	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/VersalDeformations.m2",
+	 "release at publication" => "ff4ff53a9177b4ff3f8995bbb41b194b92a69ca2",
 	 "version at publication" => "1.0",
 	 "volume number" => "4",
 	 "volume URI" => "http://j-sag.org/Volume4/"
-	 },
-    Configuration => {"DefaultDefParam"=>"t"}
+	 }
     )
 
 ---------------------------------------------------------------------------
 -- COPYRIGHT NOTICE:
 --
--- Copyright 2012 Nathan Owen Ilten
+-- Copyright 2020 Nathan Owen Ilten
 --
 --
 -- This program is free software: you can redistribute it and/or modify
@@ -54,6 +55,8 @@ defaultdefparam = (options VersalDeformations).Configuration#"DefaultDefParam"
 
 export {"liftDeformation",
      "firstOrderDeformations",
+     "checkComparisonTheorem",
+     "checkTangentSpace",
      "CT",
      "cotangentCohomology1",
      "cotangentCohomology2",
@@ -69,8 +72,11 @@ export {"liftDeformation",
      "correctionMatrix",
      "CorrectionMatrix",
      "CacheName",
-     "VersalDeformationResults"
-      }
+     "VersalDeformationResults",
+     "extMatrix",
+     "ModuleDeformation",
+     "DegreeBound"
+}
 
 protect VersalDeformationResults
 protect CacheName
@@ -80,6 +86,8 @@ protect HighestOrder
 protect SmartLift
 protect CorrectionMatrix
 protect DefParam
+protect ModuleDeformation
+protect DegreeBound
 
      
      
@@ -93,25 +101,43 @@ CT=new ScriptedFunctor
 CT#superscript=i->(if i==1 then return cotangentCohomology1; if i==2 then return cotangentCohomology2;
 	error "Higher cotangent cohomology not yet implemented")
 
-cotangentCohomology1=method(TypicalValue=>Matrix,Options=>{SourceRing=>null})
+cotangentCohomology1=method(TypicalValue=>Matrix,Options=>{SourceRing=>null,ModuleDeformation=>false})
 
 cotangentCohomology1Mod:=(F)->(
      A:=ring F/image F; --quotient ring
      Hom(ideal F,A)/(image ((transpose substitute(jacobian F,A)))))
      
-cotangentCohomology1 Matrix:=opts->F->lift(ambient basis(cotangentCohomology1Mod F,opts), ring F)
-cotangentCohomology1 (ZZ,Matrix):=opts->(deg,F)->lift(ambient basis(deg,cotangentCohomology1Mod(F),opts), ring F)
-cotangentCohomology1 (List,Matrix):=opts->(deg,F)->lift(ambient basis(deg,cotangentCohomology1Mod(F),opts), ring F)
-cotangentCohomology1 (ZZ,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology1Mod(F),opts), ring F)
-cotangentCohomology1 (InfiniteNumber,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology1Mod(F),opts), ring F)
-cotangentCohomology1 (ZZ,InfiniteNumber,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology1Mod(F),opts), ring F)
+cotangentCohomology1 Matrix:=opts->F->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
+	g:=map(ambient image F,image F,F);
+	ambient basis(coker Hom(g,coker F),SourceRing=>opts#SourceRing));
+ 	lift(ambient basis(cotangentCohomology1Mod F,SourceRing=>opts#SourceRing), ring F))
+cotangentCohomology1 (ZZ,Matrix):=opts->(deg,F)->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
+	g:=map(ambient image F,image F,F);
+	ambient basis(deg,coker Hom(g,coker F),SourceRing=>opts#SourceRing));
+	lift(ambient basis(deg,cotangentCohomology1Mod(F),SourceRing=>opts#SourceRing), ring F))
+cotangentCohomology1 (List,Matrix):=opts->(deg,F)->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
+	g:=map(ambient image F,image F,F);
+	ambient basis(deg,coker Hom(g,coker F),SourceRing=>opts#SourceRing));
+	lift(ambient basis(deg,cotangentCohomology1Mod(F),SourceRing=>opts#SourceRing), ring F))
+cotangentCohomology1 (ZZ,ZZ,Matrix):=opts->(lo,hi,F)->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
+	g:=map(ambient image F,image F,F);
+	ambient basis(lo,hi,coker Hom(g,coker F),SourceRing=>opts#SourceRing));
+	lift(ambient basis(lo,hi,cotangentCohomology1Mod(F),SourceRing=>opts#SourceRing), ring F))
+cotangentCohomology1 (InfiniteNumber,ZZ,Matrix):=opts->(lo,hi,F)->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
+	g:=map(ambient image F,image F,F);
+	ambient basis(lo,hi,coker Hom(g,coker F),SourceRing=>opts#SourceRing));
+	lift(ambient basis(lo,hi,cotangentCohomology1Mod(F),SourceRing=>opts#SourceRing), ring F))
+cotangentCohomology1 (ZZ,InfiniteNumber,Matrix):=opts->(lo,hi,F)->(if (numgens target F > 1) or (opts#ModuleDeformation) then return (
+	g:=map(ambient image F,image F,F);
+	ambient basis(lo,hi,coker Hom(g,coker F),SourceRing=>opts#SourceRing));
+	lift(ambient basis(lo,hi,cotangentCohomology1Mod(F),SourceRing=>opts#SourceRing), ring F))
 
-cotangentCohomology1 Ideal:=opts->I->lift(ambient basis(cotangentCohomology1Mod gens I,opts), ring I)
-cotangentCohomology1 (ZZ,Ideal):=opts->(deg,I)->lift(ambient basis(deg,cotangentCohomology1Mod(gens I),opts), ring I)
-cotangentCohomology1 (List,Ideal):=opts->(deg,I)->lift(ambient basis(deg,cotangentCohomology1Mod(gens I),opts), ring I)
-cotangentCohomology1 (ZZ,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology1Mod(gens I),opts), ring I)
-cotangentCohomology1 (InfiniteNumber,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology1Mod(gens I),opts), ring I)
-cotangentCohomology1 (ZZ,InfiniteNumber,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology1Mod(gens I),opts), ring I)
+cotangentCohomology1 Ideal:=opts->I->lift(ambient basis(cotangentCohomology1Mod gens I,SourceRing=>opts#SourceRing), ring I)
+cotangentCohomology1 (ZZ,Ideal):=opts->(deg,I)->lift(ambient basis(deg,cotangentCohomology1Mod(gens I),SourceRing=>opts#SourceRing), ring I)
+cotangentCohomology1 (List,Ideal):=opts->(deg,I)->lift(ambient basis(deg,cotangentCohomology1Mod(gens I),SourceRing=>opts#SourceRing), ring I)
+cotangentCohomology1 (ZZ,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology1Mod(gens I),SourceRing=>opts#SourceRing), ring I)
+cotangentCohomology1 (InfiniteNumber,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology1Mod(gens I),SourceRing=>opts#SourceRing), ring I)
+cotangentCohomology1 (ZZ,InfiniteNumber,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology1Mod(gens I),SourceRing=>opts#SourceRing), ring I)
 
 
 
@@ -120,97 +146,193 @@ cotangentCohomology2Mod:=F->(
      A:=ring F/image F;
      R:=gens ker F;
      kos:=koszul(2,F);
-     (Hom((image R/image kos),A)/(image substitute(transpose R,A)))
-     )
+     (Hom((image R/image kos),A)/(image substitute(transpose R,A))))
+
 
 cotangentCohomology2 Matrix:=opts->F->lift(ambient basis(cotangentCohomology2Mod F,opts),ring F)
-cotangentCohomology2 (ZZ,Matrix):=opts->(deg,F)->lift(ambient basis(deg,cotangentCohomology2Mod(F),opts), ring F)
-cotangentCohomology2 (List,Matrix):=opts->(deg,F)->lift(ambient basis(deg,cotangentCohomology2Mod(F),opts), ring F)
-cotangentCohomology2 (ZZ,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(F),opts), ring F)
-cotangentCohomology2 (InfiniteNumber,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(F),opts), ring F)
-cotangentCohomology2 (ZZ,InfiniteNumber,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(F),opts), ring F)
+cotangentCohomology2 (ZZ,Matrix):=opts->(deg,F)->lift(ambient basis(deg,cotangentCohomology2Mod(F),opts),ring F)
+cotangentCohomology2 (List,Matrix):=opts->(deg,F)->lift(ambient basis(deg,cotangentCohomology2Mod(F),opts),ring F)
+cotangentCohomology2 (ZZ,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(F),opts),ring F)
+cotangentCohomology2 (InfiniteNumber,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(F),opts),ring F)
+cotangentCohomology2 (ZZ,InfiniteNumber,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(F),opts),ring F)
 
 cotangentCohomology2 Ideal:=opts->I->lift(ambient basis(cotangentCohomology2Mod gens I,opts),ring I)
-cotangentCohomology2 (ZZ,Ideal):=opts->(deg,I)->lift(ambient basis(deg,cotangentCohomology2Mod(gens I),opts), ring I)
-cotangentCohomology2 (List,Ideal):=opts->(deg,I)->lift(ambient basis(deg,cotangentCohomology2Mod(gens I),opts), ring I)
-cotangentCohomology2 (ZZ,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(gens I),opts), ring I)
-cotangentCohomology2 (InfiniteNumber,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(gens I),opts), ring I)
-cotangentCohomology2 (ZZ,InfiniteNumber,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(gens I),opts), ring I)
+cotangentCohomology2 (ZZ,Ideal):=opts->(deg,I)->lift(ambient basis(deg,cotangentCohomology2Mod(gens I),opts),ring I)
+cotangentCohomology2 (List,Ideal):=opts->(deg,I)->lift(ambient basis(deg,cotangentCohomology2Mod(gens I),opts),ring I)
+cotangentCohomology2 (ZZ,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(gens I),opts),ring I)
+cotangentCohomology2 (InfiniteNumber,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(gens I),opts),ring I)
+cotangentCohomology2 (ZZ,InfiniteNumber,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(gens I),opts),ring I)
+
+
+
 
 normalMatrix=method(TypicalValue=>Matrix,Options=>{SourceRing=>null})
-normalMatrix Matrix:=opts->F->lift(ambient basis(Hom(ideal F, ring F/ideal F),opts), ring F)
-normalMatrix (ZZ,Matrix):=opts->(deg,F)->lift(ambient basis(deg,Hom(ideal F, ring F/ideal F),opts), ring F)
-normalMatrix (List,Matrix):=opts->(deg,F)->lift(ambient basis(deg,Hom(ideal F, ring F/ideal F),opts), ring F)
-normalMatrix (ZZ,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,Hom(ideal F, ring F/ideal F),opts), ring F)
-normalMatrix (InfiniteNumber,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,Hom(ideal F, ring F/ideal F),opts), ring F)
-normalMatrix (ZZ,InfiniteNumber,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi.Hom(ideal F, ring F/ideal F),opts), ring F)
+normalMatrix Matrix:=opts->F->(ambient basis(Hom(image F, coker F),opts))
+normalMatrix (ZZ,Matrix):=opts->(deg,F)->(ambient basis(deg,Hom(image F, coker F),opts))
+normalMatrix (List,Matrix):=opts->(deg,F)->(ambient basis(deg,Hom(image F, coker F),opts))
+normalMatrix (ZZ,ZZ,Matrix):=opts->(lo,hi,F)->(ambient basis(lo,hi,Hom(image F, coker F),opts))
+normalMatrix (InfiniteNumber,ZZ,Matrix):=opts->(lo,hi,F)->(ambient basis(lo,hi,Hom(image F, coker F),opts))
+normalMatrix (ZZ,InfiniteNumber,Matrix):=opts->(lo,hi,F)->(ambient basis(lo,hi,Hom(image F, coker F),opts))
 
 normalMatrix Ideal:=opts->I->lift(ambient basis(Hom(I, ring I/I),opts), ring I)
 normalMatrix (ZZ,Ideal):=opts->(deg,I)->lift(ambient basis(deg,Hom(I, ring I/I),opts), ring I)
 normalMatrix (List,Ideal):=opts->(deg,I)->lift(ambient basis(deg,Hom(I, ring I/I),opts), ring I)
 normalMatrix (ZZ,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,Hom(I, ring I/I),opts), ring I)
 normalMatrix (InfiniteNumber,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,Hom(I, ring I/I),opts), ring I)
-normalMatrix (ZZ,InfiniteNumber,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi.Hom(I, ring I/I),opts), ring I)
+normalMatrix (ZZ,InfiniteNumber,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,Hom(I, ring I/I),opts), ring I)
+
+
+extModule:=F->(
+	R:=syz F;
+	Z:=syz R;
+	M:=coker F;
+	hr:=Hom(R,M);
+	hz:=Hom(Z,M);
+	((ker hz)/image hr))
+
+
+extMatrix=method(TypicalValue=>Matrix,Options=>{SourceRing=>null})
+extMatrix Matrix:=opts->F->(ambient (basis(extModule F,opts)))
+extMatrix (ZZ,Matrix):=opts->(deg,F)->(ambient basis(deg,extModule F,opts))
+extMatrix (List,Matrix):=opts->(deg,F)->(ambient basis(deg,extModule F,opts))
+extMatrix (ZZ,ZZ,Matrix):=opts->(lo,hi,F)->(ambient basis(lo,hi,extModule F,opts))
+extMatrix (InfiniteNumber,ZZ,Matrix):=opts->(lo,hi,F)->(ambient basis(lo,hi,extModule F,opts))
+extMatrix (ZZ,InfiniteNumber,Matrix):=opts->(lo,hi,F)->(ambient basis(lo,hi,extModule F,opts))
+
+--need to add in various degree options
+	
+----------------------------------------------------------------------------
+-- Stuff to check comparison theorems 
+----------------------------------------------------------------------------
+--Checks if Piene-Schlessinger comparison theorem holds     
+checkComparisonTheorem = method(TypicalValue=>Boolean)
+checkComparisonTheorem Matrix :=F->(
+    deglist:=unique (degrees image F);
+    if not (class ring F)===PolynomialRing then error "Not a polynomial ring";
+    if not #(deglist_0)==1 then error "Not rank one grading";
+    if not (unique degrees ring F)=={{1}} then error "Not standard graded";
+    K:=sheaf image F;
+    all((degrees basis (saturate(image F)/image F))_1,i->i_0<(min deglist)_0) and (
+    all(deglist,d-> HH^1(K(d_0))==0)))
+checkComparisonTheorem Ideal :=I->(checkComparisonTheorem gens I)
+
+--Checks if dimension of space of sections of the normal bundle agrees with
+--degree zero part of what is calculated by "normalMatrix"
+checkTangentSpace = method(TypicalValue=>Boolean)
+checkTangentSpace (Ideal,Matrix) :=(I,N)->(
+    SI:=sheaf module I;
+    X:=Proj ring I;
+    numgens source N == rank Hom(SI,OO_X(0)/SI))
+checkTangentSpace (Matrix,Matrix) :=(F,N)->(checkTangentSpace(ideal F,N))
+checkTangentSpace Ideal := I->(checkTangentSpace(I,normalMatrix(0,I)))
+checkTangentSpace Matrix := F->(checkTangentSpace(ideal F,normalMatrix(0,F)))
+
      
 ----------------------------------------------------------------------------
 -- Stuff to lift deformation equation solutions
 ----------------------------------------------------------------------------
---auxiliary function to get lowest order degrees and terms of obstruction equations
-lowestOrderTerms:=(F,G,C,n,d)->(
-     if n==1 then (lowG:=map(source C_0,target F_0,0);
-     	  lowDeg:=toList(d:0)) 
-     else (lowDeg=apply(toList(0..(d-1)),i->min ({n-2}|positions(G,g->g^{i}!=0)));
-    	  lowG=matrix(apply(toList(0..(d-1)),i->{(G_(lowDeg_i))^{i}})));
-     (lowDeg,lowG))
+--outputs the least degree term of a polynomial, up to degree n
+leastTerm:=(f,n)->(
+    cf:=coefficients(f);
+    m:=min apply(flatten entries cf_0,i->(degree i)_0);
+    if m>n then return null;
+    pos:=positions(flatten entries cf_0,j->(degree j)_0==m);
+    (((cf_0)_pos)*((cf_1)^pos))_0_0    
+    )
 
-liftDeformation=method (Options=>{SanityCheck=>true,Verbose=>0})
+--transforms a polynomial into a list of polynomials, by degree
+polyToList:=(f,n)->(
+    deglist:=apply(exponents f,e->sum e);
+    cf:=coefficients(f);
+    apply(n+1,i->(
+	    pos:=positions(deglist,j->j==i);
+    	    ((cf_0)_pos)*((cf_1)^pos))_0_0)
+    )    
+
+--auxiliary function to get lowest order terms of obstruction equations
+lowestOrderTerms:=(G,n,d)->(
+     if n<2 then error "No obstruction equations yet.";
+     lowDeg:=apply(toList(0..(d-1)),i->min ({n-2}|positions(G,g->g^{i}!=0)));
+     matrix(apply(toList(0..(d-1)),i->{(G_(lowDeg_i))^{i}})))
+
+
+--auxiliary function. Returns (A,B) where A is a matrix of the lowest order terms of the ideal generated by G, and B is a matrix expressing the entries of A in terms of G
+lowestOrder:=(G,F,C,nk)->(
+    if G=={} then return (map((ring target F_0)^1,(ring target F_0)^0,0),null);
+    (n,k):=nk;
+    T:=newRing(ring G_0,Join=>false,DegreeMap=>(i->{1}),Degrees=>splice {(numgens ring G_0):1},MonomialOrder=>Weights=>splice {(numgens ring G_0):-1},Global=>false);
+    I:=ideal sub(sum G,T);
+    dl:=n+k;
+    if dl==infinity then dl={};
+    GBcalc:=gb(I,DegreeLimit=>dl,ChangeMatrix=>true);
+    GB:=flatten entries gens GBcalc;
+    LO:=apply(GB,f->leastTerm(f,n));
+    keep:=positions(LO,i->i=!=null);
+    LO=LO_keep;
+    B:=sub((getChangeMatrix(GBcalc))_keep,ring G_0);
+    A:=sub(matrix {LO},ring G_0);
+    (A,B))
+
+--auxilliary function, used to translate a vector representation of a homomorphism to a map
+vecToHom:=(v,T,S)->(
+	matrix map(T,S, transpose matrix pack(flatten entries v,numgens T)))
+
+
+--interchanges coefficients with variables
+varSwap:=R->((coefficientRing coefficientRing R)[gens R][gens coefficientRing R])
+
+liftDeformation=method (Options=>{SanityCheck=>true,Verbose=>0,DegreeBound=>0})
 
 
 liftDeformation(List,List,List,List):= opts->(F,R,G,C)->(
      n:=#F-1; --order so far
      d:=numgens source C_0; --number of obstructions
+     l:=numgens source R_0; --number of relations
+     r:=numgens target F_0; --number of gens of coker F
+     m:=numgens source F_0; 
      if n<1 then error "Need order at least one";
      -- find lowest order terms of obstruction equations
-     if d>0 then (lowDeg,lowG):=lowestOrderTerms(F,G,C,n,d)
-     else lowG=map(source C_0,target F_0,0); --unobstructed case
+     if opts#Verbose >3 then print "Calculating tangent cone for obstructions";    
+     if d>0 then (lowG,cm):=lowestOrder(G,F,C,(n+1,opts#DegreeBound))
+     else lowG=map((ring target F_0)^1,source C_0,0); --unobstructed case
      T:=ring F_0;
-     A:=T/ideal (F_0|transpose lowG); --setup a common ring
+     QT:= T/ideal(lowG);
+     A:=coker sub(F_0,QT); -- setup a module to compute obstructions in 
      if opts#Verbose > 3 then print "Calculating residual terms";
      fterms:=sum(apply(toList(1..n),i->F_i*R_(n+1-i))); --order n+1 terms
      eterms:=sum(apply(toList(1..(n-2)),i->C_i*G_(n-1-i))); -- terms from base equations
-     rem:=substitute(((transpose fterms)+eterms),A); --reduce modulo our ideal
-     if opts#Verbose >3 then print "Lifting Family and Equations";
-     lfameq:=rem//(substitute((transpose R_0)|C_0,A));
-     FO:=F|{-transpose lift(lfameq^(toList(0..(numgens target R_0)-1)),T)}; --lift the family
-     NG:=-lift(lfameq^(toList((numgens target R_0)..(numgens target R_0)+(numgens source C_0)-1)),T); --lift equations
-     --now we remove total space variables from the obstruction equations
-     if d==0 then (CNG:=NG; COC:=C_0)
-     else (
-          ltv:=apply(toList(0..(d-1)),i->(
-	       	    if not all(apply(G,g->g^{i}),h->h==0) then return 1;
-	       	    if NG_(i,0)==0 then return 1;
-	       	    leadCoefficient NG_(i,0))); --find correction factors
-     	  CNG=matrix apply(toList(0..(d-1)),i->{NG^{i}//ltv_i});  --correct equations
-     	  COC=matrix {apply(toList(0..(d-1)),i->ltv_i*(C_0)_{i})}; --correct coefficients
-     	  );
-     GO:=G|{CNG};
+     rem:=map(A^l,QT^1,(sub((transpose flatten fterms)+eterms,QT))); --reduce modulo generators and lowest order terms 
+     if opts#Verbose >3 then print "Lifting Family";
+     RACTION:=map(A^l,(QT)^(r*m),Hom(R_0,A));
+     lfam:=sub(rem//RACTION,T);     
+     FO:=F|{vecToHom(-lfam,target F_0,source F_0)}; --lift the family
+     if opts#Verbose >3 then print "Calculating Obstruction Equations";
+     obstructions:=rem-(RACTION*lfam);
+     B:=varSwap T;
+     clist:=coefficients(sub(C_0,B));
+     coeff:=(coefficients(sub(matrix obstructions,B),Monomials=>clist_0))_1;
+     NG:=-sub(coeff//clist_1,T);     
+     GO:=G|{NG};
      if opts#Verbose >3 then print "Lifting Relations and Coefficients";
-     lrelco:=((fterms+FO_(n+1)*R_0)+transpose(eterms+COC*CNG))//(F_0|transpose lowG);
+     lrelco:=vecToHom(flatten (fterms+FO_(n+1)*R_0)+transpose(eterms+C_0*NG),target F_0,source R_0)//(F_0| (T^r**lowG));
      RO:=R|{-lift(lrelco^(toList(0..(numgens target R_0)-1)),T)}; --lift relations
-     NC:=-transpose lift(lrelco^(toList((numgens target R_0)..(numgens target R_0)+d-1)),T);
-     if n==1 then CO:={COC} else (
-     	  COtriv:=C|{map(target C_0,source C_0,0)};
-	  if d==0 then CO=COtriv
-	  else CO={COC}|apply(toList(1..(n-1)),i->(
-		    map(target C_0,source C_0,matrix apply(toList(0..(d-1)),j->(
-			      if lowDeg_j==n-1-i then NC_j else (COtriv_i)_j)
-			 )
-		    )))
-          ); --correct the entries of coefficient matrices
+     CO:=C;
+     if n>1 then ( -- correct coefficients
+	 if lowG==0 then CO=(CO|{0*CO_0})
+	 else (
+     	     NC:=-lift((lrelco)^(toList((numgens target R_0)..(numgens target R_0)+r*(numgens source lowG)-1)),T);
+             e:=numgens source lowG;
+	     NCM:=matrix apply(e,i->flatten apply(l,j-> apply( r, k->((NC)_(k*e+i,j)))));
+     	     NCL:=apply(entries (transpose NCM*transpose  cm),i->apply(i,j->polyToList(j,n)));
+     	     CCL:=apply(n,i->matrix apply(NCL,j->apply(j,k->k_i)));
+	     CO=(CO|{0})+CCL;
+	     );
+	 );
      if opts#Verbose>3 and opts#SanityCheck	   then print "Doing Sanity Check";
      if opts#SanityCheck then if not 
-		(transpose(sum(apply(toList(0..(n+1)),i->FO_i*RO_(n+1-i))))+sum(apply(toList(0..(n-1)),i->CO_i*GO_(n-1-i))))==0 then error "Something is wrong"; 
+		(transpose(flatten sum(apply(toList(0..(n+1)),i->FO_i*RO_(n+1-i))))+sum(apply(toList(0..(n-1)),i->CO_i*GO_(n-1-i))))==0 then error "Something is wrong. Try increasing the value of DegreeBound or setting it to infinity."; 
      (FO,RO,GO,CO))
+
 
 --auxiliary function to find the action of  T1 on liftings     
 correctionMatrix=method()
@@ -221,7 +343,7 @@ correctionMatrix(Matrix,Matrix):=(F1,R1)->(
      L:=apply(params,s->(
 	sublist:=apply(params,r->(if r==s then  r=>1 else r=>0));
 	{sub(sub(F1,sublist),T),sub(sub(R1,sublist),T)}));
-     M:=matrix {apply(L,l->transpose(l_0*R1+F1*l_1))}; --changes to obstructions
+     M:=matrix {apply(L,l->transpose flatten(l_0*R1+F1*l_1))}; --changes to obstructions
      (M,L))
 
 
@@ -232,18 +354,23 @@ correctDeformation(Sequence,Matrix,List):=  opts -> (S,M,L)->(
      (F,R,G,C):=S; --we have to do things this way since we can only have at most four arguments
      n:=#F-1; --order so far
      d:=numgens source C_0; --number of obstructions
+     l:=numgens source R_0; --number of relations
+     r:=numgens target F_0; --number of gens of coker F
+     m:=numgens source F_0; 
      if n<2 then error "Need order at least two";
      -- find lowest order terms of obstruction equations
-     (lowDeg,lowG):=lowestOrderTerms(F,G,C,n,d);
+     lowG:=lowestOrderTerms(G,n,d);
      T:=ring F_0;
-     A:=T/ideal (F_0|transpose lowG); --setup a common ring
+     QT:= T/ideal(lowG);
+     A:=coker sub(F_0,QT); -- setup a module to compute obstructions in 
      if opts#Verbose > 3 then print "Calculating next order residual terms";
      fterms:=sum(apply(toList(1..n),i->F_i*R_(n+1-i))); --order n+1 terms
      eterms:=sum(apply(toList(1..(n-2)),i->C_i*G_(n-1-i))); -- terms from base equations
-     rem:=substitute(((transpose fterms)+eterms),A); --reduce modulo our ideal
+     rem:=map(A^l,QT^1,(sub((transpose flatten fterms)+eterms,QT))); --reduce modulo generators and lowest order terms 
      if opts#Verbose >3 then print "Trying to kill obstructions";
-     kobseq:=rem//(substitute((transpose R_0)|M,A));
-     CM:=-lift(kobseq^(toList((numgens target R_0)..(numgens target R_0)+(numgens source M)-1)),T); --here is how to perturb F
+     RACTION:=map(A^l,(QT)^(r*m),Hom(R_0,A));
+     kobseq:=rem//(RACTION | sub(M,QT));     
+     CM:=-lift(kobseq^(toList((numgens source RACTION)..(numgens source RACTION)+(numgens source M)-1)),T); --here is how to perturb F
      if opts#Verbose >3 then print "Adjusting family and relations";
      FC:=sum apply(toList(0..#L-1),i->CM_(i,0)*(L_i_0));
      RC:=sum apply(toList(0..#L-1),i->CM_(i,0)*(L_i_1));
@@ -251,7 +378,7 @@ correctDeformation(Sequence,Matrix,List):=  opts -> (S,M,L)->(
      RO:=drop(R,-1)|{R_n+RC};
      if opts#Verbose>3 and opts#SanityCheck	   then print "Doing Sanity Check";
      if opts#SanityCheck then if not 
-		(transpose(sum(apply(toList(0..(n)),i->FO_i*RO_(n-i))))+sum(apply(toList(0..(n-2)),i->C_i*G_(n-2-i))))==0 then error "Something is wrong"; 
+		(transpose flatten(sum(apply(toList(0..(n)),i->FO_i*RO_(n-i))))+sum(apply(toList(0..(n-2)),i->C_i*G_(n-2-i))))==0 then error "Something is wrong"; 
      (FO,RO))
 
 correctDeformation(List,List,List,List):=  opts -> (F,R,G,C)->(
@@ -264,11 +391,8 @@ firstOrderDeformations(Matrix,Matrix,Matrix):=  opts -> (F,R,T1)->(
      if T1==0 then return ({F,0*F},{R,0*R}); -- if rigid, nothing to do
      n:=numgens source T1; --number of deformation parameters
      defparam:=opts#DefParam; --deformation parameter name
---     T:=(coefficientRing ring F)[(gens ring F)|toList((value defparam)_1..(value defparam)_n),Degrees=>(degrees ring F)|((degrees T1)_1)];
---     T=T/sub(ideal ring F,T);
      T:=(ring F)[(value defparam)_1..(value defparam)_n,Join=>false,Degrees=>(apply((degrees T1)_1,i->-1*i))]; --setup ring with parameters
-	--T:=(ring F)[(value defparam)_1..(value defparam)_n]; --setup ring with parameters
-     FO:={substitute(F,T),(matrix{toList((value defparam)_1..(value defparam)_n)})*transpose substitute(T1,T)}; --first order family
+     FO:={substitute(F,T),sum apply(n,i->(value defparam)_(i+1)*sub(vecToHom(T1_{i},target F,source F),T))}; --first order family
      RO:={substitute(R,T),(-FO_1*substitute(R,T))//FO_0}; --first order relations
      if opts#SanityCheck then if not (FO_0*RO_1+FO_1*RO_0)==0 then error "Relations don't lift";
      (FO,RO))     
@@ -276,10 +400,48 @@ firstOrderDeformations(Matrix,Matrix,Matrix):=  opts -> (F,R,T1)->(
 ----------------------------------------------------------------------------
 -- Iterated lifting methods
 ----------------------------------------------------------------------------
-versalopts:={HighestOrder=>20,Verbose=>0,SanityCheck=>true, PolynomialCheck=>true,SmartLift=>true,CorrectionMatrix=>"auto",DefParam=>"t",CacheName=>null}
+versalopts:={DegreeBound=>0,HighestOrder=>20,Verbose=>0,SanityCheck=>true, PolynomialCheck=>true,SmartLift=>true,CorrectionMatrix=>"auto",DefParam=>defaultdefparam,CacheName=>null}
 versalDeformation=method(Options=>versalopts) 
 localHilbertScheme=method(Options=>versalopts)
 
+   
+versalDeformation Matrix:=  opts ->F0->(
+     if opts#Verbose > 0 then print "Calculating first order deformations and obstruction space";
+     if (numgens target F0)>1 then return versalDeformation(F0,CT^1(F0),extMatrix(F0),opts);
+     versalDeformation(F0,CT^1(F0),CT^2(F0),opts)
+     )
+
+localHilbertScheme Matrix:=  opts ->F0->(
+     if (numgens target F0)>1 then error "Input should only have one row.";
+     if opts#Verbose > 0 then print "Calculating first order deformations and obstruction space";
+     versalDeformation(F0,normalMatrix(0,F0),CT^2(0,F0),opts))
+
+versalDeformation (Matrix,Matrix,Matrix):= opts ->(F0,T1,T2)->(
+     cachename:=opts#CacheName;
+     if cachename===null then cachename=(F0).cache; 
+     ord:=-1+opts#HighestOrder;
+     if opts#Verbose >1 then print "Calculating first order relations";
+     (F,R):=firstOrderDeformations(F0,gens ker F0,T1,SanityCheck=>opts#SanityCheck,DefParam=>opts#DefParam);
+     if opts#Verbose >1 then print "Calculating standard expressions for obstructions";
+     A:=coker F_0;
+     l:=numgens source R_0;
+     m:=numgens source F_0;
+     r:=numgens target F_0;
+     NT2:=T2;
+     if not T2==0 then (RACTION:=map(A^l,(ring F_0)^(r*m),Hom(R_0,A));
+     		NT2=matrix (map(A^l,sub(source T2,ring F_0),sub(T2,ring F_0))%RACTION));
+     C:={sub(NT2,ring F_0)};
+     G:={};
+     if (numgens source T1)===0 then (
+	  print "No deformation parameters!";
+	  return (F,R,G,C));
+     if numgens ker F0 == 0 then (
+		if opts#Verbose>0 then print "No relations. Solution is polynomial";
+	  return (F,R,G,C);
+	  );
+     versalDeformation(F,R,G,C,HighestOrder=>opts#HighestOrder,DegreeBound=>opts#DegreeBound,Verbose=>opts#Verbose,
+	  SanityCheck=>opts#SanityCheck, PolynomialCheck=>opts#PolynomialCheck,SmartLift=>opts#SmartLift,
+	  CorrectionMatrix=>opts#CorrectionMatrix,CacheName=>cachename))
 
 versalDeformation (List,List,List,List):= opts ->(f,r,g,c)->(
      cachename:=opts#CacheName;
@@ -290,18 +452,17 @@ versalDeformation (List,List,List,List):= opts ->(f,r,g,c)->(
 	  if (opts#CorrectionMatrix==="auto") then (M,L):=correctionMatrix(F_1,R_1) else (M,L)=opts#CorrectionMatrix);
      i:=#F-2;
      polysol:=false;
-     timestop:=false;
      if opts#Verbose >0 then print "Starting lifting";
      while (i<ord) do (
 	  if opts#Verbose >1 then print ("Order "|toString(i+2));
-	  (F,R,G,C)=(liftDeformation(F,R,G,C,Verbose=>opts#Verbose,SanityCheck=>opts#SanityCheck));
+	  (F,R,G,C)=(liftDeformation(F,R,G,C,Verbose=>opts#Verbose,SanityCheck=>opts#SanityCheck,DegreeBound=>opts#DegreeBound));
   	 if opts#SmartLift and numgens source C_0>0 then 
 		(F,R)=correctDeformation((F,R,G,C),M,L,Verbose=>opts#Verbose,SanityCheck=>opts#SanityCheck);
 	  i=i+1;
 	  if opts#PolynomialCheck then ( --check if solution lifts to polynomial ring
 	       if opts#Verbose>3 then print "Checking polynomial lifting";
 	       if F_(-1)==0 and R_(-1)==0 and G_(-1)==0 then (
-	       	    if transpose((sum F)*(sum R))+(sum C)*(sum G)==0 then (
+	       	    if transpose flatten ((sum F)*(sum R))+(sum C)*(sum G)==0 then (
 			 i=ord;
 			 polysol=true;
 			 if opts#Verbose>0 then print "Solution is polynomial";
@@ -310,28 +471,10 @@ versalDeformation (List,List,List,List):= opts ->(f,r,g,c)->(
 	       );
 	cachename#VersalDeformationResults=(F,R,G,C);  
 	);
-     if not polysol and not timestop then print "Warning: calculation terminated since HighestOrder has been reached.";
+     if not polysol then print "Warning: calculation terminated since HighestOrder has been reached.";
      (F,R,G,C))
 
-versalDeformation (Matrix,Matrix,Matrix):= opts ->(F0,T1,T2)->(
-     cachename:=opts#CacheName;
-     if cachename===null then cachename=(F0).cache; 
-     ord:=-1+opts#HighestOrder;
-     if opts#Verbose >1 then print "Calculating first order relations";
-     (F,R):=firstOrderDeformations(F0,gens ker F0,T1,SanityCheck=>opts#SanityCheck,DefParam=>opts#DefParam);
-     C:={substitute(T2,ring F_0)};
-     G:={};
-     versalDeformation(F,R,G,C,HighestOrder=>opts#HighestOrder,Verbose=>opts#Verbose,
-	  SanityCheck=>opts#SanityCheck, PolynomialCheck=>opts#PolynomialCheck,SmartLift=>opts#SmartLift,
-	  CorrectionMatrix=>opts#CorrectionMatrix,CacheName=>cachename))
-   
-versalDeformation Matrix:=  opts ->F0->(
-     if opts#Verbose > 0 then print "Calculating first order deformations and obstruction space";
-     versalDeformation(F0,CT^1(F0),CT^2(F0),opts))
 
-localHilbertScheme Matrix:=  opts ->F0->(
-     if opts#Verbose > 0 then print "Calculating first order deformations and obstruction space";
-     versalDeformation(F0,normalMatrix(0,F0),CT^2(0,F0),opts))
 
 ---------------------------------------
 -- DOCUMENTATION
@@ -345,7 +488,7 @@ document {
      Headline => "calculating versal deformations and local Hilbert schemes",
      PARA{
      "This package provides tools for calculating tangent and obstruction spaces as well as
-     power series solutions for deformation problems involving isolated singularities and projective schemes."},
+     power series solutions for deformation problems involving isolated singularities and projective schemes, as well as deformations of modules."},
  
      
      
@@ -354,7 +497,9 @@ document {
     For details and mathematical background see ",
      
      UL {
-	  {"Jan Stevens, ",EM "Computing Versal Deformations", ", Experimental Mathematics Vol. 4 No. 2, 1994."}
+	  {"[DG89] Vincenzo Di Gennaro, ",EM "A note on deformations of coherent sheaves",", Boll. Un. Mat. Ital. B (7) 3 1989."},
+	  {"[Si01] Arvid Siqveland, ",EM "The Method of Computing Formal Moduli", ", Journal of Algebra 241, 2001."},
+	  {"[St94] Jan Stevens, ",EM "Computing Versal Deformations", ", Experimental Mathematics Vol. 4 No. 2, 1994."}
 	 },
 
      PARA{"The numerous examples presented in the documentation nodes 
@@ -371,7 +516,8 @@ document {
 	of the space of twisted cubic curves", ", American Journal of Mathematics, Vol. 107
 	No. 4, 761-774, 1985."},
 	{"[Pi74] Henry Pinkham, ",EM "Deformations of algebraic varieties with G_m action",
-	      ", Asterisque 20, 1974."},   
+	      ", Asterisque 20, 1974."},  
+	  {"[Si01] Arvid Siqveland, ",EM "The Method of Computing Formal Moduli", ", Journal of Algebra 241, 2001."}
       },
  
       PARA{"The author thanks Jan Christophersen for helpful hints,
@@ -444,7 +590,7 @@ document {
 	EXAMPLE {"T=ring first G;",
 	     "sum G"},
 	Caveat => {"The output may not be the local Hilbert scheme if standard comparison theorems 
-	     do not hold for the ideal generated by ",TT "FO","."}, 
+	     do not hold for the ideal generated by ",TT "FO",". This may be tested using ",TO checkComparisonTheorem," or ",TO checkTangentSpace,"."}, 
      }
 
 document {
@@ -476,7 +622,7 @@ document {
 equation calculated by the lifting algorithm will not be polynomial. Equations for the tangent cone at the origin of a versal base space are"},
      EXAMPLE {"T=ring first G;",
 	  "G_0"},
-     PARA {"This decomposes into three components:"},
+     PARA {"This decomposes into four components:"},
      EXAMPLE {"decompose ideal G_0"},
      PARA {"We now find a one-parameter deformation onto the component of highest dimension:"},
      EXAMPLE {"A=(coefficientRing ring F_0)[s];",
@@ -496,8 +642,7 @@ document{
 	      For details on using the command ",TT "versalDeformation",", please see the documentation 
 	      links below.  
 	      The most basic use of the method is via ",TO (versalDeformation,Matrix),", which computes
-	      the versal deformation of an isolated singularity. We restrict to this case in the following
-	      overview."
+	      the versal deformation of an isolated singularity. We give a brief overview of this case:"
 	      },
 	      PARA{TEX///First we fix some notation. Let $S$ be a polynomial ring over 
 		   some field $k$, and let $I$ be an ideal of $S$ defining a 
@@ -542,7 +687,19 @@ The $G^i$ now give equations for the miniversal base space of $X$.///},
 		 and then solve for $R^{i+1}$ and $C^{i-1}$. For the actual computation, 
 		 we avoid working over quotient rings involving high powers of 
 		 $a$ by representing the $(F^i,R^i,G^{i-2},C^{i-2})$ as lists of matrices 
-		 which keep track of the orders of the $t_j$ involved.///}
+		 which keep track of the orders of the $t_j$ involved.///},
+
+            PARA{TEX///Our approach to deformations of modules is similar. For a ring $S$, let $M$ be an $S$-module. Consider a free resolution of $M$:
+$$
+\ldots \to  S^l \to S^m \to S^r \to M\to 0
+$$
+with differentials $R^0:S^l\to S^m$ and $F^0:S^m\to S^r$.
+Similar to above, we iteratively solve a deformation equation
+$$
+	(transpose flatten (F^iR^i))+C^{i-2}G^{i-2}= 0
+$$
+where $T^1(S/I)$ and $T^2(S/I)$ from above have been replaced by appropriate tangent and obstruction spaces.///},{"See  ",TO (versalDeformation,Matrix,Matrix,Matrix)," for an example."},
+
 	 }
 document {
      Key =>{(versalDeformation,Matrix,Matrix,Matrix),
@@ -557,12 +714,12 @@ document {
      Headline => "computes a power series representation of a versal deformation",
      
      PARA{TT "F0",", ",TT "T1",", and ",TT "T2"," should all be matrices over some common
-	  polynomial ring, and ",TT "F0"," should have one row."}, 
+	  polynomial ring."}, 
      
      PARA{"Each element of the sequence ", TT "(F,R,G,C)"," is a list of matrices
 	  in increasing powers of the deformation parameter specified by ",TO DefParam,". Their
 	  sums satisfy the deformation equation ",
-	  TT "transpose ((sum F)*(sum R))+(sum C)*(sum G)==0"," up to powers of the deformation parameter equal to the
+	  TT "transpose flatten ((sum F)*(sum R))+(sum C)*(sum G)==0"," up to powers of the deformation parameter equal to the
 	  length of ",TT "F",". Furthermore,
 	  ",TT "F_0=F0",", ",TT "R_0=gens ker F0",", the columns of ",TT "C_0"," are multiples
 	  of those of ",TT "T2", " and ",TT "F_1"," consists 
@@ -610,7 +767,26 @@ document {
      EXAMPLE {"T=ring first G;",
 	  "sum G"},
      PARA {"At this point, the multigraded Hilbert scheme has 7 irreducible components:"},
-     EXAMPLE {"# primaryDecomposition ideal sum G"},	      
+     EXAMPLE {"# primaryDecomposition ideal sum G"},
+
+
+     PARA{"We may use this method to compute versal deformations of modules. Here, we consider
+	versal deformations for a torsion free rank one module of an E6 singularity, see ",TO2 {VersalDeformations,"[Si01]"},":"},
+     EXAMPLE{
+	"S=QQ[x,y]/ideal {x^4+y^3};",
+	"f= matrix {{x,-y^2},{y,x^3}};",
+	"(F,R,G,C)=versalDeformation(f,CT^1(f),extMatrix(f),Verbose=>2);"},
+	PARA {"The cokernel of ",TT "f"," is the module M1. Its versal deformation has a singular curve as its base space:"},
+     EXAMPLE {"T=ring first G;",
+	  "ideal sum G"},
+
+PARA{"We may also compute local Quot schemes for modules with zero-dimensional support:"},
+EXAMPLE{"S = QQ[a, b];",
+        "f =  matrix{{a, b, 0, 0}, {0, 0, a, b}};",
+	"(F,R,G,C)=versalDeformation(f,normalMatrix(f),extMatrix(f),Verbose=>2);"},
+	PARA {"We are considering the local Quot scheme for the surjection of ",TT "S^4"," to ",TT "coker f",". Equations for the base space are:"},
+     EXAMPLE {"T=ring first G;",
+	  "ideal sum G"},
       }
 
 
@@ -634,20 +810,18 @@ document {
 		"C" =>{ofClass List, " of matrices"},},
      Headline => "computes a power series representation of a versal deformation",
      
-     PARA{TT "F0", " should  be a matrix over some 
-	  polynomial ring with one row."},
-	  
-     
      PARA{"Each element of the sequence ", TT "(F,R,G,C)"," is a list of matrices
 	  in increasing powers of the deformation parameter specified by ",TO DefParam,". Their
 	  sums satisfy the deformation equation ",
-	  TT "transpose ((sum F)*(sum R))+(sum C)*(sum G)==0"," up to powers of the deformation parameter equal to the
+	  TT "transpose flatten ((sum F)*(sum R))+(sum C)*(sum G)==0"," up to powers of the deformation parameter equal to the
 	  length of ",TT "F",". Furthermore,
-	  ",TT "F_0=F0",", ",TT "R_0=gens ker F0",", the columns of ",TT "C_0"," are multiples
-	  of the those of ",TO cotangentCohomology2,TT "(F0)",",  and ",TT "F_1"," consists 
+	  ",TT "F_0=F0"," and ",TT "R_0=gens ker F0",". The columns of ",TT "C_0"," are multiples
+	  of the those of ",TO cotangentCohomology2,TT "(F0)"," if ",TT "F0"," has a single row, and ",TO extMatrix,TT "(F0)",
+	  " otherwise. ",TT "F_1"," consists 
 	  of first order perturbations corresponding to the basis of ",TO cotangentCohomology1,TT "(F0)",
 	  ". Thus, ",TT "F"," and ",TT "G"," represent a versal family and
-	  equations for a versal base space for the scheme cut out by the columns of ",TT "F0","." 
+	  equations for a versal base space, either for the scheme cut out by the columns of ",TT "F0"," (when ",TT "F0"," has a single row), or the 
+	  module ",TT "coker F0","." 
 	  }, 
 	
 	PARA{"Several options are available to control the termination of the calculation. 
@@ -711,7 +885,7 @@ document {
      PARA{"Each element of the sequence ", TT "(f,r,g,c)"," is a list of matrices
 	  in increasing powers of some deformation parameter. Their
 	  sums satisfy the deformation equation ",
-	  TT "transpose ( (sum f)*(sum r))+(sum c)*sum(g)==0"," up to powers of the deformation parameter equal to the
+	  TT "transpose flatten ( (sum f)*(sum r))+(sum c)*sum(g)==0"," up to powers of the deformation parameter equal to the
 	  length of ",TT "f","." 
 	    },
        
@@ -738,8 +912,10 @@ document {
 	  },
      PARA {"We now lift the first order deformations to second order:"},
      EXAMPLE{
+      "A:=(ring f_0)/(image f_0);",  
       "T2=cotangentCohomology2(F0);",
-      "c={substitute(T2,ring f_0)};",
+      "NT2:=lift(sub(T2,A)%sub(transpose r_0,A),ring f_0);",
+      "c={NT2};",
       "g={};",
       "(F,R,G,C)=liftDeformation(f,r,g,c);",
       "T=ring first F;",
@@ -758,9 +934,9 @@ document {
 		"R"=> {ofClass List, " of matrices"},
 		},
      PARA{TT "F0",", ",TT "R0",", and ",TT "T1"," should all be matrices over some common
-	  polynomial ring, and ",TT "F0"," and ",TT "T1"," should have one row. ",TT "R0"," should be the 
-	  first syzygy matrix of ",TT "F0"," and ",TT "T1"," should have the same number of
-	  columns as ",TT "F0","."},
+	  ring. ",TT "R0"," should be the 
+	  first syzygy matrix of ",TT "F0"," and ",TT "T1"," should have the same number rows as the product of the number of rows and
+	  columns of ",TT "F0","."},
 	  
      PARA{TT "F"," is a list of length two with ",TT "F_0=F0"," and ",TT "F_1"," the first
 	  order perturbations corresponding to ",TT "T1",". ",TT "R"," is a list of length
@@ -819,7 +995,7 @@ document {
       Usage => "(M,L) = correctionMatrix(F1,R1)",
       Inputs => {"F1"=>Matrix,"R1"=>Matrix},
       Outputs => {"(M,L)"=>Sequence},
-      PARA {TT "F1"," should be some first order perturbations of a one-row matrix with ", TT "R1",
+      PARA {TT "F1"," should be some first order perturbations of a matrix with ", TT "R1",
 	   " a lift of the corresponding relations, as in the output of ", TO firstOrderDeformations,". 
 	   ",TT "M"," is a matrix representing the effect of these perturbations one order higher, and ",
 	   TT "L", " gives a parameter-free version of the perturbations and lifted relations."}}     
@@ -833,7 +1009,9 @@ document {
 	  (cotangentCohomology1,Ideal),(cotangentCohomology1,ZZ,Ideal),
 	  (cotangentCohomology1,List,Ideal),(cotangentCohomology1,InfiniteNumber,ZZ,Ideal),
 	  (cotangentCohomology1,ZZ,InfiniteNumber,Ideal),(cotangentCohomology1,ZZ,ZZ,Ideal),
-	[cotangentCohomology1,SourceRing]},
+	[cotangentCohomology1,SourceRing],
+	[cotangentCohomology1,ModuleDeformation],
+	ModuleDeformation},
      Headline => "calculate first cotangent cohomology",
      Usage => "T1 = cotangentCohomology1(F) \n
      T1 = cotangentCohomology1(deg,F) \n
@@ -843,13 +1021,17 @@ document {
 	  "hi" => {"an ",(TO2 {ZZ,"integer"})," or ",(TO infinity)}
 	  },
      Outputs=>{"T1" => Matrix},
-     PARA {"The matrix ",TT "F"," must have a single row. Inputing an ideal instead has the same effect as inputing ",TT "gens F",".  The output ",TT "T1"," is a matrix
-	  over the same ring as ",TT "F"," whose columns form a basis for 
+     PARA {"Inputing an ideal instead has the same effect as inputing ",TT "gens F",".  The output ",TT "T1"," is a matrix
+	  over the same ring as ",TT "F",". If ",TT "F"," has a single row and ",TT "ModuleDeformation"," is ",TT "false",", the output
+	is a matrix whose columns form a basis for 
 	  (a graded piece of) the first cotangent cohomology
 	  module of ",TT "S/I",", where ",TT "S"," is the ring of ",TT "F"," and ",TT "I",
-	  " is ideal generated by the columns of ",TT "F",". Selection
+	  " is ideal generated by the columns of ",TT "F",". If ",TT "F"," has multiple rows or ",TT "ModuleDeformation"," is ",TT "true",", the output
+	is a matrix whose columns form a basis for (a graded piece of) the first extension
+	  module  ",TT "Ext^1(coker F,coker F)","."},
+	PARA {"Selection
 	  of graded pieces is done in the same manner as with ",TO basis,". If the selected
-	  pieces are infinite dimensional, an error occurs. The optional argument ",TO SourceRing," may be used in the same fashing as with ",TO basis,"."},
+	  pieces are infinite dimensional, an error occurs. The optional argument ",TO SourceRing," may be used in the same fashion as with ",TO basis,"."},
          PARA {"This is ",ofClass MethodFunction,", which may also be accessed via the ",TO ScriptedFunctor," ",TO CT,"."},
 	  PARA {"For example, consider the cone over the rational normal curve of degree four, see ",TO2 {VersalDeformations,"[Pi74]"},":"},
      EXAMPLE {"S=QQ[x_0..x_4];",
@@ -883,7 +1065,7 @@ document { Key
 	  module of ",TT "S/I",", where ",TT "S"," is the ring of ",TT "F"," and ",TT "I",
 	  " is ideal generated by the columns of ",TT "F",". Selection
 	  of graded pieces is done in the same manner as with ",TO basis,". If the selected
-	  pieces are infinite dimensional, an error occurs. The optional argument ",TO SourceRing," may be used in the same fashing as with ",TO basis,"."},
+	  pieces are infinite dimensional, an error occurs. The optional argument ",TO SourceRing," may be used in the same fashion as with ",TO basis,"."},
      PARA {"This is ",ofClass MethodFunction,", which may also be accessed via the ",TO ScriptedFunctor," ",TO CT,"."},
      PARA {"For example, consider the cone over the rational normal curve of degree four, see ",TO2 {VersalDeformations,"[Pi74]"},":"},
      EXAMPLE {"S=QQ[x_0..x_4];",
@@ -918,11 +1100,9 @@ document {
 	  "hi" => {"an ",(TO2 {ZZ,"integer"})," or ",(TO infinity)}
 	  },
      Outputs=>{"N" => Matrix},
-     PARA {"The matrix ",TT "F"," must have a single row.  Inputing an ideal instead has the same effect as inputing ",TT "gens F",".  The output ",TT "N"," is a matrix
+     PARA {"Inputing an ideal instead has the same effect as inputing ",TT "gens F",".  The output ",TT "N"," is a matrix
 	  over the same ring as ",TT "F"," whose columns form a basis for 
-	  (a graded piece of) the normal module ",TT "Hom(I,S/I)",",
-	  where ",TT "S"," is the ring of ",TT "F"," and ",TT "I",
-	  " is ideal generated by the columns of ",TT "F",". Selection
+	  (a graded piece of) the normal module ",TT "Hom(image F,coker F)",". Selection
 	  of graded pieces is done in the same manner as with ",TO basis,". If the selected
 	  pieces are infinite dimensional, an error occurs. The optional argument ",TO SourceRing," may be used in the same fashing as with ",TO basis,"."},
      PARA {"For example, consider a degenerate twisted cubic curve, see ",TO2 {VersalDeformations,"[PS85]"},":"},
@@ -931,6 +1111,30 @@ document {
 	  "N=normalMatrix(0,F)"},
      PARA {"The degree zero component of the normal module, and thus the tangent space of the Hilbert scheme,
 	   is sixteen dimensional."},}
+document {
+     Key =>{extMatrix,(extMatrix,Matrix),(extMatrix,ZZ,Matrix),
+	  (extMatrix,List,Matrix),(extMatrix,InfiniteNumber,ZZ,Matrix),
+	  (extMatrix,ZZ,InfiniteNumber,Matrix),(extMatrix,ZZ,ZZ,Matrix),
+		[extMatrix,SourceRing]},
+     Headline => "calculate obstruction space for modules",
+      Usage => "N = extMatrix(F) \n
+     N = extMatrix(deg,F) \n
+     N = extMatrix(lo,hi,F)",
+     Inputs => {"F" =>{"a ",(TO Matrix)},  "deg" => {"a ",(TO2 {List,"list"})," or ",(TO2 {ZZ,"integer"})},
+	  "lo" => {"an ",(TO2 {ZZ,"integer"})," or -",(TO infinity)},
+	  "hi" => {"an ",(TO2 {ZZ,"integer"})," or ",(TO infinity)}
+	  },
+     Outputs=>{"N" => Matrix},
+     PARA {"The output ",TT "N"," is a matrix
+	  over the same ring as ",TT "F"," whose columns form a basis for 
+	  (a graded piece of) the first extension module ",TT "Ext^1(image F,coker F)",". Selection
+	  of graded pieces is done in the same manner as with ",TO basis,". If the selected
+	  pieces are infinite dimensional, an error occurs. The optional argument ",TO SourceRing," may be used in the same fashing as with ",TO basis,"."},
+     PARA {"For example, consider the module M4 over an E6 singularity, see ",TO2 {VersalDeformations,"[Si01]"},":"},
+     EXAMPLE {"S=QQ[x,y]/ideal {x^4+y^3};",
+	  "F= matrix {{y,-x^2,0},{x,0,-y},{0,-y,-x}}",
+	  "N=extMatrix(F)"},
+     PARA {"There are six obstructions to deforming this module."},}
 
 document {
      Key =>CT,
@@ -961,6 +1165,14 @@ document {
 	  gives an upper bound on to what order
 	  a solution of the deformation equation is lifted.
 	 Default value is ",TT "20."},     }
+
+document {
+     Key =>{DegreeBound,[liftDeformation,DegreeBound],[localHilbertScheme,DegreeBound],[versalDeformation,DegreeBound]},
+     Headline => "determines the degree limit used to compute the tangent cone of obstruction equations",
+     PARA{TT "DegreeBound"," is the name of an optional argument. Its value is an ",TO2(ZZ,"integer")," or ",TT "infinity",". When lifting 
+	a deformation, the tangent cone for the obstruction equations is computed using a local term order. The computation uses the command ",TO gb," with
+	the option ",TO DegreeLimit," set to the order to which the deformation has been lifted, plus ",TT "DegreeBound",". Default value is ",TT "0.",
+	" If ",TO SanityCheck," is set to ",TT "true"," and results in an error being returned, this can be corrected by re-running the computation using a higher value of ",TT "DegreeBound."}}
 
 document {
      Key =>SmartLift,
@@ -997,12 +1209,57 @@ document {
 	  the form output by ",TO correctionMatrix,". The second term in the sequence is a list of two matrices which give some parameter-free first-order deformations and the corresponding lifted relations, respectively. The first term in the sequence is ",ofClass Matrix,", which describes the action on liftings of equations by the specified first-order deformations.  If set to auto, ",TO correctionMatrix," is used to calculate
 	  the relevant sequence. The default value of ",TT "CorrectionMatrix"," is auto."}}
 
+document {
+     Key =>{checkComparisonTheorem,(checkComparisonTheorem,Matrix),(checkComparisonTheorem,Ideal)},
+     Headline => "checks if the Piene-Schlessinger or Di Dennaro comparison theorem holds",
+     Usage => "B = checkComparisonTheorem(F) 
+     ",
+     Inputs => {"F" =>{"a ",(TO Matrix)," or an ",(TO Ideal)}},
+     Outputs=>{"B" => Boolean},
+     PARA{TEX///
+	Let $S$ be a polynomial ring in $n$ variables, and $F$ be a matrix representing a map of graded free modules over $S$. Let $E$ be the target of $F$, $M$ the cokernel, and $K$ the image. Denote by $\bar E,\bar{M},\bar{K}$ the corresponding sheaves. We are interested in comparing the degree zero local Quot functor parametrizing quotients of the module $E$ specializing to $M$, with the local Quot functor parametrizing quotients of the locally free sheaf $\bar E$ specializing to $\bar M$. In the special case that $E=S$, this means that we are comparing degree zero embedded deformations of the affine cone of $X=V(K)\subset \mathbb{P}^n$ with embedded deformations of $X$.
+///},
+PARA{TEX///
+Let $d_1,\ldots,d_m$ be the degrees of the generators of the source of $F$.
+The comparison theorem of Piene and Schlessinger states that in the case $E=S$ and $K$ saturated, the above-mentioned functors are isomorphic if the natural maps $M_{d_i}\to H^0(\mathbb{P}^n,\bar{M}(d_i))$ are isomorphisms. This is equivalent to requiring that $H^1((\mathbb{P}^n,\bar{K}(d_i))=0$ for each $i$.
+More generally, the theorem of Di Gennaro may be used. Consider arbitrary $E$ as above, and suppose that $K$ is a truncation of a saturated submodule. Again, the above-mentioned functors are isomorphic if $H^1((\mathbb{P}^n,\bar{K}(d_i))=0$ for each $i$.
+///," See ",TO2 {VersalDeformations,"[PS85] and [DG89]"},"."},
+	PARA{"This method tests if the above hypotheses of Di Gennaro's comparison test are fulfilled.  Inputing an ideal has the same effect as inputing ",TT "gens F",". In the following example, the comparison theorem does not hold for the ideal ",TT "I",", but does for the partial truncation ",TT "J","."},
+     EXAMPLE {"S = QQ[a..d];",
+	"I = ideal(a,b^3*c,b^4);",
+	"J=ideal b^4+ideal (ambient basis(3,I))",
+	"checkComparisonTheorem I",
+	"checkComparisonTheorem J"
+     } 
+     } 
+
+
+document {
+     Key =>{checkTangentSpace,(checkTangentSpace,Matrix),(checkTangentSpace,Ideal),(checkTangentSpace,Matrix,Matrix),(checkTangentSpace,Ideal,Matrix)},
+     Headline => "checks if dimension of space of sections of the normal bundle agrees with that calculated using normalMatrix",
+     Usage => "B = checkTangentSpace(F) \n
+		B = checkTangentSpace(F,N) 
+     ",
+     Inputs => {"F" =>{"a ",(TO Matrix)," or an ",(TO Ideal)}, "N" =>{"a ",(TO Matrix)}},
+     Outputs=>{"B" => Boolean},
+     PARA{"The matrix ",TT "F"," must have a single row.  Inputing an ideal instead has the same effect as inputing ",TT "gens F",". ",TT "checkTangentSpace"," tests if the number of columns of the matrix ",TT "N"," is equal to the dimension of the space of global sections of the normal bundle for the subscheme with ideal generated by ",TT "F",". If no matrix ",TT "N"," is supplied, ",TT "normalMatrix(0,F)"," is used. In the following example, the desired equality does not hold for the ideal ",TT "I",", but does for the partial truncation ",TT "J","."},
+     EXAMPLE {"S = QQ[a..d];",
+	"I = ideal(a,b^3*c,b^4);",
+	"J=ideal b^4+ideal (ambient basis(3,I))",
+	"checkTangentSpace I",
+	"checkTangentSpace J"
+     },
+    PARA{"Even if ",TT "checkTangentSpace"," returns the value ",TT "true",", it may occur that the map from the deformation space computed by ",TO localHilbertScheme," to the the local Hilbert scheme is not an isomorphism on tangent spaces, since the rank of the map is not computed."}
+     } 
+
+
+
 	document {
      Key =>CacheName,
      Headline => "determines hash table in which to cache solutions to the deformation equation",
      PARA{TT "CacheName"," is the name of an optional argument, whose value is either ",ofClass MutableHashTable," or ",TO null,". After each stage of lifting, the methods ",TO versalDeformation," and ",TO localHilbertScheme," will store the solution to the deformation equation 
 in ",TT "CacheName#VersalDeformationResults",". If the value of ",TT "CacheName"," is ",TO null,"
- is as the default, then the solution is stored in the hash table described in the documenatation of ",TO versalDeformation," and ",TO localHilbertScheme,"."}}
+ as is the default, then the solution is stored in the hash table described in the documentation of ",TO versalDeformation," and ",TO localHilbertScheme,"."}}
 
 document {
      Key =>VersalDeformationResults,
@@ -1042,7 +1299,7 @@ TEST ///
 S = QQ[a,b,c,d]
 J = minors(2,matrix{{a,b,c,d^2},{b,c,d,a^3}})
 (F,R,G,C)=versalDeformation(gens J,HighestOrder=>2,SmartLift=>false)
-assert(sum G==map(target G_0,source G_0,matrix {{t_1*t_12+a^2*t_4*t_12+a*t_7*t_12-d*t_12*t_14-d^2*t_4*t_15-a*d*t_12*t_15-d^2*t_7*t_16-a^2*d*t_12*t_16-a^2*t_1*t_17-a*t_1*t_18-a^2*t_7*t_18+a*d*t_5*t_19+d*t_8*t_19+d^2*t_18*t_19+a*d^2*t_5*t_20+d^2*t_8*t_20+d^3*t_18*t_20+t_2*t_21+a*t_3*t_21+a*d*t_6*t_21+d*t_9*t_21+2*a^2*t_19*t_21+2*a^2*d*t_20*t_21+a^2*d*t_12*t_22+d^3*t_18*t_23+a^2*d*t_21*t_23}, {t_10*t_12+d*t_11*t_12-a^2*t_10*t_17-a*t_10*t_18-t_12*t_21+a^2*t_17*t_21+a*t_18*t_21+t_2*t_22+a*t_3*t_22+2*a^2*t_19*t_22+2*a^2*d*t_20*t_22-a^2*t_4*t_23-a*t_7*t_23}, {t_10*t_21+d*t_11*t_21-t_21^2-t_1*t_22}, {t_12*t_21-t_13*t_21+t_1*t_23}, {t_12^2-t_12*t_13-a^2*t_12*t_17+a^2*t_13*t_17-a*t_12*t_18+a*t_13*t_18+a*t_15*t_21+a^2*t_16*t_21-t_2*t_23-a*t_3*t_23-a^2*t_19*t_23}, {t_12*t_22-t_13*t_22+t_10*t_23-t_21*t_23}}))
+assert (sum G==map(target G_0,source G_0,sub(matrix {{-t_1*t_12-t_2*t_21}, {-t_10*t_12+t_12*t_21-t_2*t_22}, {t_10*t_21-t_21^2-t_1*t_22}, {t_12*t_21-t_13*t_21+t_1*t_23}, {t_12^2-t_12*t_13-t_2*t_23}, {t_12*t_22-t_13*t_22+t_10*t_23-t_21*t_23}},ring G_0)))
 ///
 
 TEST ///
@@ -1064,11 +1321,11 @@ F0=gens I
 assert (sum F1==map(target F1_0,source F1_0,matrix {{x_1*t_1+x_0*t_2-x_1^2+x_0*x_2, x_0*t_4-x_1*x_2+x_0*x_3, -x_3*t_1-x_2*t_2+x_1*t_4-x_2^2+x_1*x_3, x_2*t_3-x_1*x_3+x_0*x_4, -x_4*t_1-x_3*t_2+x_3*t_3-x_2*x_3+x_1*x_4, x_4*t_3-x_3*t_4-x_3^2+x_2*x_4}}))
 assert (sum R1==map(target R1_0,source R1_0,matrix {{t_4+x_3, x_2, 0, x_4, x_3, 0, 0, 0}, {-t_2-x_2, t_1-x_1, x_4, 0, -t_3, 0, x_4, x_3}, {x_1, x_0, -x_3, -t_3, 0, x_4, 0, -t_3}, {0, 0, -t_4-x_3, -t_2-x_2, t_1-x_1, 0, -t_4-x_3, -t_3-x_2}, {0, 0, x_2, x_1, x_0, -t_4-x_3, -t_3, 0}, {0, 0, t_1, 0, 0, t_2-t_3+x_2, x_1, x_0}}))
 (F,R,G,C)=versalDeformation(F0)
-assert (sum F==map(target F_0,source F_0,( matrix {{x_1*t_1+x_0*t_2-x_1^2+x_0*x_2, x_0*t_4-x_1*x_2+x_0*x_3, -t_1*t_4-x_3*t_1-x_2*t_2+x_1*t_4-x_2^2+x_1*x_3, t_2*t_3-t_3^2+x_2*t_3-x_1*x_3+x_0*x_4, t_3*t_4-x_4*t_1-x_3*t_2+x_3*t_3-x_2*x_3+x_1*x_4, x_4*t_3-x_3*t_4-x_3^2+x_2*x_4}})))
-assert (sum R==map(target R_0, source R_0,matrix {{t_4+x_3, x_2, 0, x_4, x_3, 0, 0, 0}, {-t_2-x_2, t_1-x_1, x_4, 0, -t_3, 0, x_4, x_3}, {x_1, x_0, -x_3, -t_3, 0, x_4, 0, -t_3}, {0, 0, -t_4-x_3, -t_2-x_2, t_1-x_1, 0, -t_4-x_3, -t_3-x_2}, {0, 0, x_2, x_1, x_0, -t_4-x_3, -t_3, 0}, {0, 0, t_1, 0, 0, t_2-t_3+x_2, x_1, x_0}}))
-assert (sum G== map(target G_0,source G_0,(matrix {{t_2*t_3-t_3^2}, {t_1*t_3}, {t_3*t_4}})))
-assert (sum C==map(target C_0,source C_0,matrix {{0, 0, 0}, {0, 0, 0}, {x_3, -x_4, t_2-t_3}, {t_2+x_2, -x_3, -t_1}, {-t_1+x_1, -x_2, 0}, {-x_4, 0, t_4+x_3}, {0, -x_4, t_2+x_2}, {t_3, -x_3, -t_1+x_1}}))
-(F2,R2,G2,C2)=liftDeformation(F1,R1,{},{sub(CT^2(gens I),ring F1_0)}) 
+assert (sum F==map(target F_0,source F_0,sub(matrix {{x_1*t_1+x_0*t_2-x_1^2+x_0*x_2, -t_1*t_3+x_0*t_4-x_1*x_2+x_0*x_3, -t_2*t_3+t_3^2-t_1*t_4-x_3*t_1-x_2*t_2+x_1*t_4-x_2^2+x_1*x_3, t_2*t_3-t_3^2+x_2*t_3-x_1*x_3+x_0*x_4, -x_4*t_1-x_3*t_2+x_3*t_3-x_2*x_3+x_1*x_4, x_4*t_3-x_3*t_4-x_3^2+x_2*x_4}},ring F_0)))
+assert (sum R==map(target R_0,source R_0,sub(matrix {{t_4+x_3, x_2, 0, x_4, x_3, 0, 0, 0}, {-t_2-x_2, t_1-x_1, x_4, 0, -t_3, 0, x_4, x_3}, {x_1, x_0, -x_3, -t_3, 0, x_4, 0, -t_3}, {0, 0, -t_4-x_3, -t_2-x_2, t_1-x_1, 0, -t_4-x_3, -t_3-x_2}, {0, 0, x_2, x_1, x_0, -t_4-x_3, -t_3, 0}, {0, 0, t_1, 0, 0, t_2-t_3+x_2, x_1, x_0}},ring F_0)))
+assert (sum G== map(target G_0,source G_0,sub(matrix {{t_2*t_3-t_3^2}, {-t_1*t_3}, {t_3*t_4}},ring F_0)))
+assert (sum C==map(target C_0,source C_0,sub(matrix {{-t_1+x_1, t_3+x_2, 0}, {x_0, -t_1+x_1, 0}, {0, 0, t_2-t_3+x_2}, {t_2-t_3+x_2, x_3, -t_1+x_1}, {-t_1+x_1, t_3+x_2, x_0}, {0, 0, 0}, {0, 0, t_2-t_3+x_2}, {0, 0, -t_1+x_1}},ring F_0)))
+(F2,R2,G2,C2)=liftDeformation(F1,R1,{},{sub(C_0,ring F1_0)},Verbose=>4) 
 assert(F_2==sub(F2_2,ring F_0))
 assert(R_2==sub(R2_2,ring F_0))
 assert(G_0==sub(G2_0,ring F_0))
@@ -1078,15 +1335,48 @@ TEST ///
 S=QQ[x,y,z,w]
 F0=matrix {{x*z,y*z,z^2,x^3}}
 (F,R,G,C)=localHilbertScheme(F0)
-assert (sum F==map(target F_0,source F_0,matrix {{w^2*t_5*t_10^2*t_16+2*w^2*t_7*t_10*t_11*t_16+2*w^2*t_2*t_11^2*t_16+w^2*t_10^2*t_12+w^2*t_10*t_11*t_13+x*w*t_5*t_10*t_16+y*w*t_7*t_10*t_16-(1/2)*w^2*t_8*t_10*t_16+y*w*t_2*t_11*t_16-w^2*t_3*t_11*t_16+x*w*t_7*t_11*t_16+2*x*w*t_10*t_12+y*w*t_10*t_13+x*w*t_11*t_13+w^2*t_10*t_14-y^2*t_2*t_16-y*w*t_3*t_16-w^2*t_4*t_16-(1/2)*x*w*t_8*t_16+z*w*t_10+x^2*t_12+x*y*t_13+x*w*t_14+x*z, -w^2*t_5*t_10*t_11*t_16+w^2*t_10*t_11*t_12+w^2*t_11^2*t_13+w^2*t_6*t_10*t_16-2*w^2*t_10^2*t_16+y*w*t_7*t_11*t_16+(1/2)*w^2*t_8*t_11*t_16+y*w*t_10*t_12+x*w*t_11*t_12+2*y*w*t_11*t_13+w^2*t_11*t_14+x*y*t_5*t_16+x*w*t_6*t_16+y^2*t_7*t_16+(1/2)*y*w*t_8*t_16-x*w*t_10*t_16+z*w*t_11+x*y*t_12+y^2*t_13+y*w*t_14+x^2*t_16+y*z, -w^2*t_5^2*t_10^2*t_16^2-2*w^2*t_5*t_10^2*t_12*t_16-4*w^2*t_7*t_10*t_11*t_12*t_16-4*w^2*t_2*t_11^2*t_12*t_16+2*w^2*t_5*t_10*t_11*t_13*t_16-2*w^2*t_6*t_7*t_10*t_16^2+w^2*t_5*t_8*t_10*t_16^2+4*w^2*t_7*t_10^2*t_16^2-2*y*w*t_2*t_5*t_11*t_16^2-2*w^2*t_2*t_6*t_11*t_16^2+4*w^2*t_2*t_10*t_11*t_16^2-w^2*t_10^2*t_12^2-2*w^2*t_10*t_11*t_12*t_13-w^2*t_11^2*t_13^2-2*x*w*t_5*t_10*t_12*t_16-2*y*w*t_7*t_10*t_12*t_16+w^2*t_8*t_10*t_12*t_16-2*y*w*t_2*t_11*t_12*t_16+2*w^2*t_3*t_11*t_12*t_16-2*x*w*t_7*t_11*t_12*t_16-2*w^2*t_6*t_10*t_13*t_16+4*w^2*t_10^2*t_13*t_16-2*y*w*t_7*t_11*t_13*t_16-w^2*t_8*t_11*t_13*t_16+y^2*t_2*t_5*t_16^2+y*w*t_3*t_5*t_16^2+y*w*t_2*t_6*t_16^2+w^2*t_3*t_6*t_16^2-x*y*t_5*t_7*t_16^2-x*w*t_6*t_7*t_16^2-y^2*t_7^2*t_16^2-y*w*t_7*t_8*t_16^2-(1/4)*w^2*t_8^2*t_16^2-2*y*w*t_2*t_10*t_16^2-2*w^2*t_3*t_10*t_16^2-2*x*w*t_2*t_11*t_16^2-2*x*w*t_10*t_12^2-2*y*w*t_10*t_12*t_13-2*x*w*t_11*t_12*t_13-2*y*w*t_11*t_13^2-2*w^2*t_10*t_12*t_14-2*w^2*t_11*t_13*t_14+w^2*t_10*t_12*t_15+w^2*t_11*t_13*t_15+2*y^2*t_2*t_12*t_16+2*y*w*t_3*t_12*t_16+x*w*t_8*t_12*t_16-2*x*y*t_5*t_13*t_16-2*x*w*t_6*t_13*t_16-2*y^2*t_7*t_13*t_16-y*w*t_8*t_13*t_16+2*x*w*t_10*t_13*t_16+x*y*t_2*t_16^2+x*w*t_3*t_16^2-x^2*t_7*t_16^2-x^2*t_12^2-2*x*y*t_12*t_13-y^2*t_13^2-2*x*w*t_12*t_14-2*y*w*t_13*t_14-w^2*t_14^2+x*w*t_12*t_15+y*w*t_13*t_15+w^2*t_14*t_15-2*x^2*t_13*t_16+z*w*t_15+z^2, -2*w^3*t_5*t_10^2*t_11-2*w^3*t_7*t_10*t_11^2-2*w^3*t_2*t_11^3-y*w^2*t_5*t_10^2+w^3*t_6*t_10^2-2*w^3*t_10^3-2*x*w^2*t_5*t_10*t_11-2*y*w^2*t_7*t_10*t_11+w^3*t_8*t_10*t_11-3*y*w^2*t_2*t_11^2+w^3*t_3*t_11^2-x*w^2*t_7*t_11^2+2*x*w^2*t_6*t_10+y*w^2*t_8*t_10+w^3*t_9*t_10-3*x*w^2*t_10^2+2*y*w^2*t_3*t_11+w^3*t_4*t_11+x*w^2*t_8*t_11-w^3*t_1*t_14+w^3*t_1*t_15+z*w^2*t_1+y^3*t_2+y^2*w*t_3+y*w^2*t_4+x^2*y*t_5+x^2*w*t_6+x*y^2*t_7+x*y*w*t_8+x*w^2*t_9+x^3}}))
-assert (sum R==map(target R_0, source R_0,matrix {{-w*t_11-y, -w*t_5*t_11*t_16+w*t_6*t_16-2*w*t_10*t_16+x*t_16, w*t_5*t_10*t_16+w*t_7*t_11*t_16+w*t_10*t_12+w*t_11*t_13-(1/2)*w*t_8*t_16+x*t_12+y*t_13+w*t_14-w*t_15-z, -w^2*t_5*t_10*t_11-w^2*t_7*t_11^2+w^2*t_1*t_5*t_16+w^2*t_6*t_10-2*w^2*t_10^2-x*w*t_5*t_11+w^2*t_8*t_11+w^2*t_1*t_12+x*w*t_6+y^2*t_7+y*w*t_8+w^2*t_9-x*w*t_10+x^2}, {w*t_10+x, w*t_10*t_12+w*t_11*t_13+x*t_5*t_16+y*t_7*t_16+(1/2)*w*t_8*t_16+x*t_12+y*t_13+w*t_14-w*t_15-z, w*t_7*t_10*t_16+2*w*t_2*t_11*t_16-y*t_2*t_16-w*t_3*t_16, -w^2*t_5*t_10^2-w^2*t_7*t_10*t_11-2*w^2*t_2*t_11^2-y*w*t_7*t_10-y*w*t_2*t_11+w^2*t_3*t_11+w^2*t_1*t_13+y^2*t_2+y*w*t_3+w^2*t_4+x^2*t_5}, {0, w*t_11+y, w*t_10+x, w^2*t_1}, {-t_16, -t_5*t_16^2-2*t_12*t_16, t_7*t_16^2+2*t_13*t_16, -w*t_7*t_11*t_16-w*t_10*t_12-w*t_11*t_13-x*t_5*t_16+(1/2)*w*t_8*t_16-x*t_12-y*t_13-w*t_14-z}}))
-assert (sum G== map(target G_0,source G_0,matrix {{t_1*t_16}, {t_9*t_16}, {t_4*t_16}, {t_14*t_16-(1/2)*t_15*t_16}}))
-assert (sum C==map(target C_0,source C_0,matrix {{(1/2)*w^3*t_15+z*w^2, w^3*t_10+x*w^2, 0, -w^3*t_1}, {(1/2)*w^3*t_5*t_15*t_16+w^3*t_12*t_15+z*w^2*t_5*t_16+2*z*w^2*t_12, w^3*t_5*t_10*t_16+2*w^3*t_10*t_12+x*w^2*t_5*t_16+2*x*w^2*t_12, 2*w^3*t_11*t_12+y*w^2*t_5*t_16+w^3*t_6*t_16-2*w^3*t_10*t_16+2*y*w^2*t_12+x*w^2*t_16, 2*w^3*t_5*t_10*t_11-w^3*t_1*t_5*t_16-2*w^3*t_6*t_10+4*w^3*t_10^2-2*y*w^2*t_7*t_11-w^3*t_8*t_11-2*w^3*t_1*t_12-2*x*y*w*t_5-2*x*w^2*t_6-2*y^2*w*t_7-y*w^2*t_8+2*x*w^2*t_10-2*x^2*w}, {-(1/2)*w^3*t_7*t_15*t_16-w^3*t_13*t_15-z*w^2*t_7*t_16-2*z*w^2*t_13, -w^3*t_7*t_10*t_16-2*w^3*t_10*t_13-x*w^2*t_7*t_16-2*x*w^2*t_13, w^3*t_5*t_10*t_16+w^3*t_10*t_12-w^3*t_11*t_13-y*w^2*t_7*t_16-(1/2)*w^3*t_8*t_16+x*w^2*t_12-y*w^2*t_13-(1/2)*w^3*t_15-z*w^2, -2*w^3*t_5*t_10^2-4*w^3*t_7*t_10*t_11-4*w^3*t_2*t_11^2+w^3*t_1*t_7*t_16-2*x*w^2*t_5*t_10-2*y*w^2*t_7*t_10+w^3*t_8*t_10-2*y*w^2*t_2*t_11+2*w^3*t_3*t_11-2*x*w^2*t_7*t_11+2*w^3*t_1*t_13+2*y^2*w*t_2+2*y*w^2*t_3+w^3*t_4+x*w^2*t_8}, {-2*w^4*t_5*t_7*t_10*t_11*t_16-2*w^4*t_2*t_5*t_11^2*t_16+2*w^4*t_7*t_10*t_11*t_12+2*w^4*t_2*t_11^2*t_12-2*w^4*t_5*t_10*t_11*t_13-x*w^3*t_5^2*t_10*t_16-y*w^3*t_5*t_7*t_10*t_16+2*w^4*t_6*t_7*t_10*t_16-(1/2)*w^4*t_5*t_8*t_10*t_16-4*w^4*t_7*t_10^2*t_16+y*w^3*t_2*t_5*t_11*t_16+w^4*t_3*t_5*t_11*t_16+2*w^4*t_2*t_6*t_11*t_16-x*w^3*t_5*t_7*t_11*t_16-4*w^4*t_2*t_10*t_11*t_16-x*w^3*t_5*t_10*t_12+y*w^3*t_7*t_10*t_12-(1/2)*w^4*t_8*t_10*t_12+y*w^3*t_2*t_11*t_12-w^4*t_3*t_11*t_12+x*w^3*t_7*t_11*t_12-y*w^3*t_5*t_10*t_13+w^4*t_6*t_10*t_13-2*w^4*t_10^2*t_13-x*w^3*t_5*t_11*t_13+y*w^3*t_7*t_11*t_13+(1/2)*w^4*t_8*t_11*t_13-w^4*t_5*t_10*t_14-w^4*t_7*t_11*t_14+w^4*t_7*t_11*t_15+w^4*t_4*t_5*t_16-y*w^3*t_2*t_6*t_16-w^4*t_3*t_6*t_16+x*y*w^2*t_5*t_7*t_16+x*w^3*t_6*t_7*t_16+y^2*w^2*t_7^2*t_16+(1/2)*x*w^3*t_5*t_8*t_16+y*w^3*t_7*t_8*t_16+(1/4)*w^4*t_8^2*t_16+2*y*w^3*t_2*t_10*t_16+2*w^4*t_3*t_10*t_16+2*x*w^3*t_2*t_11*t_16-z*w^3*t_5*t_10+z*w^3*t_7*t_11-y^2*w^2*t_2*t_12-y*w^3*t_3*t_12+w^4*t_4*t_12-x^2*w^2*t_5*t_12-(1/2)*x*w^3*t_8*t_12+x*w^3*t_6*t_13+y^2*w^2*t_7*t_13+(1/2)*y*w^3*t_8*t_13-x*w^3*t_10*t_13-2*x*w^3*t_5*t_14+(1/2)*w^4*t_8*t_14+x*w^3*t_5*t_15-(1/2)*w^4*t_8*t_15-x*y*w^2*t_2*t_16-x*w^3*t_3*t_16+x^2*w^2*t_7*t_16-(1/2)*z*w^3*t_8+x^2*w^2*t_13, -w^4*t_5*t_10^2-w^4*t_7*t_10*t_11-2*w^4*t_2*t_11^2-y*w^3*t_7*t_10-y*w^3*t_2*t_11+w^4*t_3*t_11+y^2*w^2*t_2+y*w^3*t_3+w^4*t_4+x^2*w^2*t_5, 0, 0}}))
+assert (sum F==map(target F_0,source F_0,sub(matrix {{w^2*t_5*t_10^2*t_16+2*w^2*t_7*t_10*t_11*t_16+2*w^2*t_2*t_11^2*t_16+w^2*t_10^2*t_12+w^2*t_10*t_11*t_13+x*w*t_5*t_10*t_16+y*w*t_7*t_10*t_16-(1/2)*w^2*t_8*t_10*t_16+y*w*t_2*t_11*t_16-w^2*t_3*t_11*t_16+x*w*t_7*t_11*t_16+2*x*w*t_10*t_12+y*w*t_10*t_13+x*w*t_11*t_13+w^2*t_10*t_14-y^2*t_2*t_16-y*w*t_3*t_16-w^2*t_4*t_16-(1/2)*x*w*t_8*t_16+z*w*t_10+x^2*t_12+x*y*t_13+x*w*t_14+x*z, -w^2*t_5*t_10*t_11*t_16+w^2*t_10*t_11*t_12+w^2*t_11^2*t_13+w^2*t_6*t_10*t_16-2*w^2*t_10^2*t_16+y*w*t_7*t_11*t_16+(1/2)*w^2*t_8*t_11*t_16+y*w*t_10*t_12+x*w*t_11*t_12+2*y*w*t_11*t_13+w^2*t_11*t_14+x*y*t_5*t_16+x*w*t_6*t_16+y^2*t_7*t_16+(1/2)*y*w*t_8*t_16-x*w*t_10*t_16+z*w*t_11+x*y*t_12+y^2*t_13+y*w*t_14+x^2*t_16+y*z, -w^2*t_5^2*t_10^2*t_16^2-2*w^2*t_5*t_10^2*t_12*t_16-4*w^2*t_7*t_10*t_11*t_12*t_16-4*w^2*t_2*t_11^2*t_12*t_16+2*w^2*t_5*t_10*t_11*t_13*t_16-2*w^2*t_6*t_7*t_10*t_16^2+w^2*t_5*t_8*t_10*t_16^2+4*w^2*t_7*t_10^2*t_16^2-2*y*w*t_2*t_5*t_11*t_16^2-2*w^2*t_2*t_6*t_11*t_16^2+4*w^2*t_2*t_10*t_11*t_16^2-w^2*t_10^2*t_12^2-2*w^2*t_10*t_11*t_12*t_13-w^2*t_11^2*t_13^2-2*x*w*t_5*t_10*t_12*t_16-2*y*w*t_7*t_10*t_12*t_16+w^2*t_8*t_10*t_12*t_16-2*y*w*t_2*t_11*t_12*t_16+2*w^2*t_3*t_11*t_12*t_16-2*x*w*t_7*t_11*t_12*t_16-2*w^2*t_6*t_10*t_13*t_16+4*w^2*t_10^2*t_13*t_16-2*y*w*t_7*t_11*t_13*t_16-w^2*t_8*t_11*t_13*t_16+y^2*t_2*t_5*t_16^2+y*w*t_3*t_5*t_16^2+y*w*t_2*t_6*t_16^2+w^2*t_3*t_6*t_16^2-x*y*t_5*t_7*t_16^2-x*w*t_6*t_7*t_16^2-y^2*t_7^2*t_16^2-y*w*t_7*t_8*t_16^2-(1/4)*w^2*t_8^2*t_16^2-2*y*w*t_2*t_10*t_16^2-2*w^2*t_3*t_10*t_16^2-2*x*w*t_2*t_11*t_16^2-2*x*w*t_10*t_12^2-2*y*w*t_10*t_12*t_13-2*x*w*t_11*t_12*t_13-2*y*w*t_11*t_13^2-2*w^2*t_10*t_12*t_14-2*w^2*t_11*t_13*t_14+w^2*t_10*t_12*t_15+w^2*t_11*t_13*t_15+2*y^2*t_2*t_12*t_16+2*y*w*t_3*t_12*t_16+x*w*t_8*t_12*t_16-2*x*y*t_5*t_13*t_16-2*x*w*t_6*t_13*t_16-2*y^2*t_7*t_13*t_16-y*w*t_8*t_13*t_16+2*x*w*t_10*t_13*t_16+x*y*t_2*t_16^2+x*w*t_3*t_16^2-x^2*t_7*t_16^2-x^2*t_12^2-2*x*y*t_12*t_13-y^2*t_13^2-2*x*w*t_12*t_14-2*y*w*t_13*t_14-w^2*t_14^2+x*w*t_12*t_15+y*w*t_13*t_15+w^2*t_14*t_15-2*x^2*t_13*t_16+z*w*t_15+z^2, -2*w^3*t_5*t_10^2*t_11-2*w^3*t_7*t_10*t_11^2-2*w^3*t_2*t_11^3-y*w^2*t_5*t_10^2+w^3*t_6*t_10^2-2*w^3*t_10^3-2*x*w^2*t_5*t_10*t_11-2*y*w^2*t_7*t_10*t_11+w^3*t_8*t_10*t_11-3*y*w^2*t_2*t_11^2+w^3*t_3*t_11^2-x*w^2*t_7*t_11^2+2*x*w^2*t_6*t_10+y*w^2*t_8*t_10+w^3*t_9*t_10-3*x*w^2*t_10^2+2*y*w^2*t_3*t_11+w^3*t_4*t_11+x*w^2*t_8*t_11-w^3*t_1*t_14+w^3*t_1*t_15+z*w^2*t_1+y^3*t_2+y^2*w*t_3+y*w^2*t_4+x^2*y*t_5+x^2*w*t_6+x*y^2*t_7+x*y*w*t_8+x*w^2*t_9+x^3}},ring F_0)))
+assert (sum R==map(target R_0, source R_0,sub(matrix {{-w*t_11-y, -w*t_5*t_11*t_16+w*t_6*t_16-2*w*t_10*t_16+x*t_16, w*t_5*t_10*t_16+w*t_7*t_11*t_16+w*t_10*t_12+w*t_11*t_13-(1/2)*w*t_8*t_16+x*t_12+y*t_13+w*t_14-w*t_15-z, -w^2*t_5*t_10*t_11-w^2*t_7*t_11^2+w^2*t_1*t_5*t_16+w^2*t_6*t_10-2*w^2*t_10^2-x*w*t_5*t_11+w^2*t_8*t_11+w^2*t_1*t_12+x*w*t_6+y^2*t_7+y*w*t_8+w^2*t_9-x*w*t_10+x^2}, {w*t_10+x, w*t_10*t_12+w*t_11*t_13+x*t_5*t_16+y*t_7*t_16+(1/2)*w*t_8*t_16+x*t_12+y*t_13+w*t_14-w*t_15-z, w*t_7*t_10*t_16+2*w*t_2*t_11*t_16-y*t_2*t_16-w*t_3*t_16, -w^2*t_5*t_10^2-w^2*t_7*t_10*t_11-2*w^2*t_2*t_11^2-y*w*t_7*t_10-y*w*t_2*t_11+w^2*t_3*t_11+w^2*t_1*t_13+y^2*t_2+y*w*t_3+w^2*t_4+x^2*t_5}, {0, w*t_11+y, w*t_10+x, w^2*t_1}, {-t_16, -t_5*t_16^2-2*t_12*t_16, t_7*t_16^2+2*t_13*t_16, -w*t_7*t_11*t_16-w*t_10*t_12-w*t_11*t_13-x*t_5*t_16+(1/2)*w*t_8*t_16-x*t_12-y*t_13-w*t_14-z}},ring F_0)))
+assert (sum G== map(target G_0,source G_0,sub(matrix {{t_1*t_16}, {t_9*t_16}, {-t_4*t_16}, {-2*t_14*t_16+t_15*t_16}},ring F_0)))
+assert (sum C==map(target C_0,source C_0,sub(matrix {{(1/2)*w^3*t_15+z*w^2, w^3*t_10+x*w^2, 0, (1/2)*w^3*t_1}, {(1/2)*w^3*t_5*t_15*t_16+w^3*t_12*t_15+z*w^2*t_5*t_16+2*z*w^2*t_12, w^3*t_5*t_10*t_16+2*w^3*t_10*t_12+x*w^2*t_5*t_16+2*x*w^2*t_12, -2*w^3*t_11*t_12-y*w^2*t_5*t_16-w^3*t_6*t_16+2*w^3*t_10*t_16-2*y*w^2*t_12-x*w^2*t_16, -w^3*t_5*t_10*t_11+(1/2)*w^3*t_1*t_5*t_16+w^3*t_6*t_10-2*w^3*t_10^2+y*w^2*t_7*t_11+(1/2)*w^3*t_8*t_11+w^3*t_1*t_12+x*y*w*t_5+x*w^2*t_6+y^2*w*t_7+(1/2)*y*w^2*t_8-x*w^2*t_10+x^2*w}, {-(1/2)*w^3*t_7*t_15*t_16-w^3*t_13*t_15-z*w^2*t_7*t_16-2*z*w^2*t_13, -w^3*t_7*t_10*t_16-2*w^3*t_10*t_13-x*w^2*t_7*t_16-2*x*w^2*t_13, -w^3*t_5*t_10*t_16-w^3*t_10*t_12+w^3*t_11*t_13+y*w^2*t_7*t_16+(1/2)*w^3*t_8*t_16-x*w^2*t_12+y*w^2*t_13+(1/2)*w^3*t_15+z*w^2, w^3*t_5*t_10^2+2*w^3*t_7*t_10*t_11+2*w^3*t_2*t_11^2-(1/2)*w^3*t_1*t_7*t_16+x*w^2*t_5*t_10+y*w^2*t_7*t_10-(1/2)*w^3*t_8*t_10+y*w^2*t_2*t_11-w^3*t_3*t_11+x*w^2*t_7*t_11-w^3*t_1*t_13-y^2*w*t_2-y*w^2*t_3-(1/2)*w^3*t_4-(1/2)*x*w^2*t_8}, {-2*w^4*t_5*t_7*t_10*t_11*t_16-2*w^4*t_2*t_5*t_11^2*t_16+2*w^4*t_7*t_10*t_11*t_12+2*w^4*t_2*t_11^2*t_12-2*w^4*t_5*t_10*t_11*t_13-x*w^3*t_5^2*t_10*t_16-y*w^3*t_5*t_7*t_10*t_16+2*w^4*t_6*t_7*t_10*t_16-(1/2)*w^4*t_5*t_8*t_10*t_16-4*w^4*t_7*t_10^2*t_16+y*w^3*t_2*t_5*t_11*t_16+w^4*t_3*t_5*t_11*t_16+2*w^4*t_2*t_6*t_11*t_16-x*w^3*t_5*t_7*t_11*t_16-4*w^4*t_2*t_10*t_11*t_16-x*w^3*t_5*t_10*t_12+y*w^3*t_7*t_10*t_12-(1/2)*w^4*t_8*t_10*t_12+y*w^3*t_2*t_11*t_12-w^4*t_3*t_11*t_12+x*w^3*t_7*t_11*t_12-y*w^3*t_5*t_10*t_13+w^4*t_6*t_10*t_13-2*w^4*t_10^2*t_13-x*w^3*t_5*t_11*t_13+y*w^3*t_7*t_11*t_13+(1/2)*w^4*t_8*t_11*t_13-w^4*t_5*t_10*t_14-w^4*t_7*t_11*t_14+w^4*t_7*t_11*t_15+w^4*t_4*t_5*t_16-y*w^3*t_2*t_6*t_16-w^4*t_3*t_6*t_16+x*y*w^2*t_5*t_7*t_16+x*w^3*t_6*t_7*t_16+y^2*w^2*t_7^2*t_16+(1/2)*x*w^3*t_5*t_8*t_16+y*w^3*t_7*t_8*t_16+(1/4)*w^4*t_8^2*t_16+2*y*w^3*t_2*t_10*t_16+2*w^4*t_3*t_10*t_16+2*x*w^3*t_2*t_11*t_16-z*w^3*t_5*t_10+z*w^3*t_7*t_11-y^2*w^2*t_2*t_12-y*w^3*t_3*t_12+w^4*t_4*t_12-x^2*w^2*t_5*t_12-(1/2)*x*w^3*t_8*t_12+x*w^3*t_6*t_13+y^2*w^2*t_7*t_13+(1/2)*y*w^3*t_8*t_13-x*w^3*t_10*t_13-2*x*w^3*t_5*t_14+(1/2)*w^4*t_8*t_14+x*w^3*t_5*t_15-(1/2)*w^4*t_8*t_15-x*y*w^2*t_2*t_16-x*w^3*t_3*t_16+x^2*w^2*t_7*t_16-(1/2)*z*w^3*t_8+x^2*w^2*t_13, -w^4*t_5*t_10^2-w^4*t_7*t_10*t_11-2*w^4*t_2*t_11^2-y*w^3*t_7*t_10-y*w^3*t_2*t_11+w^4*t_3*t_11+y^2*w^2*t_2+y*w^3*t_3+w^4*t_4+x^2*w^2*t_5, 0, 0}},ring F_0)))
 (F1,R1,G1,C1)=localHilbertScheme(F0,SmartLift=>false)
-assert (sum F1==map(target F1_0,source F1_0,matrix {{-w^2*t_5*t_10^2*t_16-w^2*t_7*t_10*t_11*t_16-w^2*t_2*t_11^2*t_16-w^2*t_10^2*t_12+y*w*t_7*t_10*t_16+w^2*t_8*t_10*t_16+y*w*t_2*t_11*t_16+w^2*t_3*t_11*t_16+y*w*t_10*t_13+w^2*t_10*t_14-y^2*t_2*t_16-y*w*t_3*t_16-w^2*t_4*t_16+z*w*t_10+x^2*t_12+x*y*t_13+x*w*t_14+x*z, -2*w^2*t_5*t_10*t_11*t_16-w^2*t_7*t_11^2*t_16-w^2*t_10*t_11*t_12-y*w*t_5*t_10*t_16+w^2*t_6*t_10*t_16-2*w^2*t_10^2*t_16+w^2*t_8*t_11*t_16-y*w*t_10*t_12+x*w*t_11*t_12+y*w*t_11*t_13+w^2*t_11*t_14+x*y*t_5*t_16+x*w*t_6*t_16+y^2*t_7*t_16+y*w*t_8*t_16-x*w*t_10*t_16+z*w*t_11+x*y*t_12+y^2*t_13+y*w*t_14+x^2*t_16+y*z, 2*w^2*t_5*t_7*t_10*t_11*t_16^2+w^2*t_7^2*t_11^2*t_16^2-2*w^2*t_7*t_10*t_11*t_12*t_16-4*w^2*t_2*t_11^2*t_12*t_16+4*w^2*t_5*t_10*t_11*t_13*t_16+2*w^2*t_7*t_11^2*t_13*t_16-2*w^2*t_6*t_7*t_10*t_16^2+4*w^2*t_7*t_10^2*t_16^2-2*y*w*t_2*t_5*t_11*t_16^2-2*w^2*t_2*t_6*t_11*t_16^2-w^2*t_7*t_8*t_11*t_16^2+4*w^2*t_2*t_10*t_11*t_16^2-w^2*t_10^2*t_12^2-2*y*w*t_7*t_10*t_12*t_16-2*y*w*t_2*t_11*t_12*t_16+2*w^2*t_3*t_11*t_12*t_16+2*y*w*t_5*t_10*t_13*t_16-2*w^2*t_6*t_10*t_13*t_16+4*w^2*t_10^2*t_13*t_16-2*w^2*t_8*t_11*t_13*t_16+y^2*t_2*t_5*t_16^2+y*w*t_3*t_5*t_16^2+y*w*t_2*t_6*t_16^2+w^2*t_3*t_6*t_16^2-x*y*t_5*t_7*t_16^2-x*w*t_6*t_7*t_16^2-y^2*t_7^2*t_16^2-y*w*t_7*t_8*t_16^2-2*y*w*t_2*t_10*t_16^2-2*w^2*t_3*t_10*t_16^2-2*x*w*t_2*t_11*t_16^2+2*x*w*t_10*t_12^2+2*y*w*t_10*t_12*t_13+2*w^2*t_10*t_12*t_14-w^2*t_10*t_12*t_15+2*y^2*t_2*t_12*t_16+2*y*w*t_3*t_12*t_16-2*x*y*t_5*t_13*t_16-2*x*w*t_6*t_13*t_16-2*y^2*t_7*t_13*t_16-2*y*w*t_8*t_13*t_16+2*x*w*t_10*t_13*t_16+x*y*t_2*t_16^2+x*w*t_3*t_16^2-x^2*t_7*t_16^2-x^2*t_12^2-2*x*y*t_12*t_13-y^2*t_13^2-2*x*w*t_12*t_14-2*y*w*t_13*t_14-w^2*t_14^2+x*w*t_12*t_15+y*w*t_13*t_15+w^2*t_14*t_15-2*x^2*t_13*t_16+z*w*t_15+z^2, w^3*t_5*t_10^2*t_11+w^3*t_7*t_10*t_11^2+w^3*t_2*t_11^3-w^3*t_6*t_10^2+w^3*t_10^3-w^3*t_8*t_10*t_11-w^3*t_3*t_11^2+2*w^3*t_1*t_10*t_12+w^3*t_1*t_11*t_13+w^3*t_9*t_10+w^3*t_4*t_11-w^3*t_1*t_14+w^3*t_1*t_15+z*w^2*t_1+y^3*t_2+y^2*w*t_3+y*w^2*t_4+x^2*y*t_5+x^2*w*t_6+x*y^2*t_7+x*y*w*t_8+x*w^2*t_9+x^3}}))
-assert (sum R1==map(target R1_0, source R1_0,matrix {{-w*t_11-y, -w*t_5*t_11*t_16+w*t_6*t_16-2*w*t_10*t_16+x*t_16, -w*t_10*t_12+x*t_12+y*t_13+w*t_14-w*t_15-z, w^2*t_5*t_10*t_11+w^2*t_1*t_5*t_16-w^2*t_6*t_10+w^2*t_10^2-x*w*t_5*t_11+w^2*t_1*t_12+x*w*t_6+y^2*t_7+y*w*t_8+w^2*t_9-x*w*t_10+x^2}, {w*t_10+x, -w*t_5*t_10*t_16-w*t_7*t_11*t_16-w*t_10*t_12+x*t_5*t_16+y*t_7*t_16+w*t_8*t_16+x*t_12+y*t_13+w*t_14-w*t_15-z, w*t_7*t_10*t_16+2*w*t_2*t_11*t_16-y*t_2*t_16-w*t_3*t_16, w^2*t_7*t_10*t_11+w^2*t_2*t_11^2-y*w*t_7*t_10-w^2*t_8*t_10-y*w*t_2*t_11-w^2*t_3*t_11+w^2*t_1*t_13+y^2*t_2+y*w*t_3+w^2*t_4+x^2*t_5}, {0, w*t_11+y, w*t_10+x, w^2*t_1}, {-t_16, -t_5*t_16^2-2*t_12*t_16, t_7*t_16^2+2*t_13*t_16, w*t_5*t_10*t_16+w*t_10*t_12-x*t_5*t_16-x*t_12-y*t_13-w*t_14-z}}))
-assert (sum G1== map(target G1_0,source G1_0,matrix {{t_1*t_16}, {2*t_5*t_10*t_11*t_16+t_7*t_11^2*t_16-2*t_6*t_10*t_16+3*t_10^2*t_16-t_8*t_11*t_16+t_9*t_16}, {t_5*t_10^2*t_16+2*t_7*t_10*t_11*t_16+3*t_2*t_11^2*t_16-t_8*t_10*t_16-2*t_3*t_11*t_16+t_4*t_16}, {-t_5*t_10*t_16^2-t_7*t_11*t_16^2-2*t_10*t_12*t_16-t_11*t_13*t_16+(1/2)*t_8*t_16^2+t_14*t_16-(1/2)*t_15*t_16}}))
-assert (sum C1==map(target C1_0,source C1_0,matrix {{-w^3*t_5*t_10*t_16-w^3*t_7*t_11*t_16+(1/2)*w^3*t_8*t_16+(1/2)*w^3*t_15+z*w^2, w^3*t_10+x*w^2, 0, -w^3*t_1}, {-2*w^3*t_7*t_11*t_12*t_16+w^3*t_5*t_11*t_13*t_16+w^3*t_8*t_12*t_16-w^3*t_5*t_14*t_16+w^3*t_5*t_15*t_16+w^3*t_12*t_15+z*w^2*t_5*t_16+2*z*w^2*t_12, w^3*t_5*t_10*t_16+2*w^3*t_10*t_12+x*w^2*t_5*t_16+2*x*w^2*t_12, 2*w^3*t_11*t_12+y*w^2*t_5*t_16+w^3*t_6*t_16-2*w^3*t_10*t_16+2*y*w^2*t_12+x*w^2*t_16, 4*w^3*t_5*t_10*t_11+2*w^3*t_7*t_11^2+2*y*w^2*t_5*t_10-2*w^3*t_6*t_10+4*w^3*t_10^2-2*w^3*t_8*t_11-2*w^3*t_1*t_12-2*x*y*w*t_5-2*x*w^2*t_6-2*y^2*w*t_7-2*y*w^2*t_8+2*x*w^2*t_10-2*x^2*w}, {-2*w^3*t_7*t_10*t_12*t_16+2*w^3*t_5*t_10*t_13*t_16+w^3*t_7*t_11*t_13*t_16-w^3*t_8*t_13*t_16+w^3*t_7*t_14*t_16-w^3*t_7*t_15*t_16-w^3*t_13*t_15-z*w^2*t_7*t_16-2*z*w^2*t_13, -w^3*t_7*t_10*t_16-2*w^3*t_10*t_13-x*w^2*t_7*t_16-2*x*w^2*t_13, w^3*t_5*t_10*t_16+w^3*t_10*t_12-w^3*t_11*t_13-y*w^2*t_7*t_16-(1/2)*w^3*t_8*t_16+x*w^2*t_12-y*w^2*t_13-(1/2)*w^3*t_15-z*w^2, w^3*t_5*t_10^2-w^3*t_2*t_11^2-2*y*w^2*t_7*t_10-w^3*t_8*t_10-2*y*w^2*t_2*t_11+2*w^3*t_1*t_13+2*y^2*w*t_2+2*y*w^2*t_3+w^3*t_4}, {w^4*t_5^2*t_10^2*t_16-w^4*t_5*t_7*t_10*t_11*t_16+w^4*t_2*t_5*t_11^2*t_16-w^4*t_7^2*t_11^2*t_16+3*w^4*t_7*t_10*t_11*t_12+5*w^4*t_2*t_11^2*t_12-3*w^4*t_5*t_10*t_11*t_13-w^4*t_7*t_11^2*t_13-y*w^3*t_5*t_7*t_10*t_16+2*w^4*t_6*t_7*t_10*t_16-w^4*t_5*t_8*t_10*t_16-4*w^4*t_7*t_10^2*t_16+y*w^3*t_2*t_5*t_11*t_16-w^4*t_3*t_5*t_11*t_16+2*w^4*t_2*t_6*t_11*t_16+w^4*t_7*t_8*t_11*t_16-4*w^4*t_2*t_10*t_11*t_16+2*x*w^3*t_5*t_10*t_12+y*w^3*t_7*t_10*t_12-w^4*t_8*t_10*t_12+y*w^3*t_2*t_11*t_12-3*w^4*t_3*t_11*t_12-2*y*w^3*t_5*t_10*t_13+w^4*t_6*t_10*t_13-2*w^4*t_10^2*t_13+x*w^3*t_5*t_11*t_13+w^4*t_8*t_11*t_13-w^4*t_5*t_10*t_15+w^4*t_4*t_5*t_16-y*w^3*t_2*t_6*t_16-w^4*t_3*t_6*t_16+x*y*w^2*t_5*t_7*t_16+x*w^3*t_6*t_7*t_16+y^2*w^2*t_7^2*t_16+y*w^3*t_7*t_8*t_16+2*y*w^3*t_2*t_10*t_16+2*w^4*t_3*t_10*t_16+2*x*w^3*t_2*t_11*t_16-2*z*w^3*t_5*t_10-y^2*w^2*t_2*t_12-y*w^3*t_3*t_12+w^4*t_4*t_12-x^2*w^2*t_5*t_12+x*w^3*t_6*t_13+y^2*w^2*t_7*t_13+y*w^3*t_8*t_13-x*w^3*t_10*t_13-2*x*w^3*t_5*t_14+x*w^3*t_5*t_15-x*y*w^2*t_2*t_16-x*w^3*t_3*t_16+x^2*w^2*t_7*t_16+x^2*w^2*t_13, w^4*t_7*t_10*t_11+w^4*t_2*t_11^2-y*w^3*t_7*t_10-w^4*t_8*t_10-y*w^3*t_2*t_11-w^4*t_3*t_11+y^2*w^2*t_2+y*w^3*t_3+w^4*t_4+x^2*w^2*t_5, 0, 0}}))
+assert (sum F1==map(target F1_0,source F1_0,sub(matrix {{-w^2*t_5*t_10^2*t_16-w^2*t_7*t_10*t_11*t_16-w^2*t_2*t_11^2*t_16-w^2*t_10^2*t_12+y*w*t_7*t_10*t_16+w^2*t_8*t_10*t_16+y*w*t_2*t_11*t_16+w^2*t_3*t_11*t_16+y*w*t_10*t_13+w^2*t_10*t_14-y^2*t_2*t_16-y*w*t_3*t_16-w^2*t_4*t_16+z*w*t_10+x^2*t_12+x*y*t_13+x*w*t_14+x*z, -2*w^2*t_5*t_10*t_11*t_16-w^2*t_7*t_11^2*t_16-w^2*t_10*t_11*t_12-y*w*t_5*t_10*t_16+w^2*t_6*t_10*t_16-2*w^2*t_10^2*t_16+w^2*t_8*t_11*t_16-y*w*t_10*t_12+x*w*t_11*t_12+y*w*t_11*t_13+w^2*t_11*t_14+x*y*t_5*t_16+x*w*t_6*t_16+y^2*t_7*t_16+y*w*t_8*t_16-x*w*t_10*t_16+z*w*t_11+x*y*t_12+y^2*t_13+y*w*t_14+x^2*t_16+y*z, 2*w^2*t_5*t_7*t_10*t_11*t_16^2+w^2*t_7^2*t_11^2*t_16^2-2*w^2*t_7*t_10*t_11*t_12*t_16-4*w^2*t_2*t_11^2*t_12*t_16+4*w^2*t_5*t_10*t_11*t_13*t_16+2*w^2*t_7*t_11^2*t_13*t_16-2*w^2*t_6*t_7*t_10*t_16^2+4*w^2*t_7*t_10^2*t_16^2-2*y*w*t_2*t_5*t_11*t_16^2-2*w^2*t_2*t_6*t_11*t_16^2-w^2*t_7*t_8*t_11*t_16^2+4*w^2*t_2*t_10*t_11*t_16^2-w^2*t_10^2*t_12^2-2*y*w*t_7*t_10*t_12*t_16-2*y*w*t_2*t_11*t_12*t_16+2*w^2*t_3*t_11*t_12*t_16+2*y*w*t_5*t_10*t_13*t_16-2*w^2*t_6*t_10*t_13*t_16+4*w^2*t_10^2*t_13*t_16-2*w^2*t_8*t_11*t_13*t_16+y^2*t_2*t_5*t_16^2+y*w*t_3*t_5*t_16^2+y*w*t_2*t_6*t_16^2+w^2*t_3*t_6*t_16^2-x*y*t_5*t_7*t_16^2-x*w*t_6*t_7*t_16^2-y^2*t_7^2*t_16^2-y*w*t_7*t_8*t_16^2-2*y*w*t_2*t_10*t_16^2-2*w^2*t_3*t_10*t_16^2-2*x*w*t_2*t_11*t_16^2+2*x*w*t_10*t_12^2+2*y*w*t_10*t_12*t_13+2*w^2*t_10*t_12*t_14-w^2*t_10*t_12*t_15+2*y^2*t_2*t_12*t_16+2*y*w*t_3*t_12*t_16-2*x*y*t_5*t_13*t_16-2*x*w*t_6*t_13*t_16-2*y^2*t_7*t_13*t_16-2*y*w*t_8*t_13*t_16+2*x*w*t_10*t_13*t_16+x*y*t_2*t_16^2+x*w*t_3*t_16^2-x^2*t_7*t_16^2-x^2*t_12^2-2*x*y*t_12*t_13-y^2*t_13^2-2*x*w*t_12*t_14-2*y*w*t_13*t_14-w^2*t_14^2+x*w*t_12*t_15+y*w*t_13*t_15+w^2*t_14*t_15-2*x^2*t_13*t_16+z*w*t_15+z^2, w^3*t_5*t_10^2*t_11+w^3*t_7*t_10*t_11^2+w^3*t_2*t_11^3-w^3*t_6*t_10^2+w^3*t_10^3-w^3*t_8*t_10*t_11-w^3*t_3*t_11^2+2*w^3*t_1*t_10*t_12+w^3*t_1*t_11*t_13+w^3*t_9*t_10+w^3*t_4*t_11-w^3*t_1*t_14+w^3*t_1*t_15+z*w^2*t_1+y^3*t_2+y^2*w*t_3+y*w^2*t_4+x^2*y*t_5+x^2*w*t_6+x*y^2*t_7+x*y*w*t_8+x*w^2*t_9+x^3}},ring F1_0)))
+assert (sum R1==map(target R1_0, source R1_0,sub(matrix {{-w*t_11-y, -w*t_5*t_11*t_16+w*t_6*t_16-2*w*t_10*t_16+x*t_16, -w*t_10*t_12+x*t_12+y*t_13+w*t_14-w*t_15-z, w^2*t_5*t_10*t_11+w^2*t_1*t_5*t_16-w^2*t_6*t_10+w^2*t_10^2-x*w*t_5*t_11+w^2*t_1*t_12+x*w*t_6+y^2*t_7+y*w*t_8+w^2*t_9-x*w*t_10+x^2}, {w*t_10+x, -w*t_5*t_10*t_16-w*t_7*t_11*t_16-w*t_10*t_12+x*t_5*t_16+y*t_7*t_16+w*t_8*t_16+x*t_12+y*t_13+w*t_14-w*t_15-z, w*t_7*t_10*t_16+2*w*t_2*t_11*t_16-y*t_2*t_16-w*t_3*t_16, w^2*t_7*t_10*t_11+w^2*t_2*t_11^2-y*w*t_7*t_10-w^2*t_8*t_10-y*w*t_2*t_11-w^2*t_3*t_11+w^2*t_1*t_13+y^2*t_2+y*w*t_3+w^2*t_4+x^2*t_5}, {0, w*t_11+y, w*t_10+x, w^2*t_1}, {-t_16, -t_5*t_16^2-2*t_12*t_16, t_7*t_16^2+2*t_13*t_16, w*t_5*t_10*t_16+w*t_10*t_12-x*t_5*t_16-x*t_12-y*t_13-w*t_14-z}},ring F1_0)))
+assert (sum G1== map(target G1_0,source G1_0,sub(matrix {{t_1*t_16}, {2*t_5*t_10*t_11*t_16+t_7*t_11^2*t_16-2*t_6*t_10*t_16+3*t_10^2*t_16-t_8*t_11*t_16+t_9*t_16}, {-t_5*t_10^2*t_16-2*t_7*t_10*t_11*t_16-3*t_2*t_11^2*t_16+t_8*t_10*t_16+2*t_3*t_11*t_16-t_4*t_16}, {2*t_5*t_10*t_16^2+2*t_7*t_11*t_16^2+4*t_10*t_12*t_16+2*t_11*t_13*t_16-t_8*t_16^2-2*t_14*t_16+t_15*t_16}},ring F1_0)))
+assert (sum C1==map(target C1_0,source C1_0,sub(matrix {{-w^3*t_5*t_10*t_16-w^3*t_7*t_11*t_16+(1/2)*w^3*t_8*t_16+(1/2)*w^3*t_15+z*w^2, w^3*t_10+x*w^2, 0, (1/2)*w^3*t_1}, {-2*w^3*t_7*t_11*t_12*t_16+w^3*t_5*t_11*t_13*t_16+w^3*t_8*t_12*t_16-w^3*t_5*t_14*t_16+w^3*t_5*t_15*t_16+w^3*t_12*t_15+z*w^2*t_5*t_16+2*z*w^2*t_12, w^3*t_5*t_10*t_16+2*w^3*t_10*t_12+x*w^2*t_5*t_16+2*x*w^2*t_12, -2*w^3*t_11*t_12-y*w^2*t_5*t_16-w^3*t_6*t_16+2*w^3*t_10*t_16-2*y*w^2*t_12-x*w^2*t_16, -2*w^3*t_5*t_10*t_11-w^3*t_7*t_11^2-y*w^2*t_5*t_10+w^3*t_6*t_10-2*w^3*t_10^2+w^3*t_8*t_11+w^3*t_1*t_12+x*y*w*t_5+x*w^2*t_6+y^2*w*t_7+y*w^2*t_8-x*w^2*t_10+x^2*w}, {-2*w^3*t_7*t_10*t_12*t_16+2*w^3*t_5*t_10*t_13*t_16+w^3*t_7*t_11*t_13*t_16-w^3*t_8*t_13*t_16+w^3*t_7*t_14*t_16-w^3*t_7*t_15*t_16-w^3*t_13*t_15-z*w^2*t_7*t_16-2*z*w^2*t_13, -w^3*t_7*t_10*t_16-2*w^3*t_10*t_13-x*w^2*t_7*t_16-2*x*w^2*t_13, -w^3*t_5*t_10*t_16-w^3*t_10*t_12+w^3*t_11*t_13+y*w^2*t_7*t_16+(1/2)*w^3*t_8*t_16-x*w^2*t_12+y*w^2*t_13+(1/2)*w^3*t_15+z*w^2, -(1/2)*w^3*t_5*t_10^2+(1/2)*w^3*t_2*t_11^2+y*w^2*t_7*t_10+(1/2)*w^3*t_8*t_10+y*w^2*t_2*t_11-w^3*t_1*t_13-y^2*w*t_2-y*w^2*t_3-(1/2)*w^3*t_4}, {w^4*t_5^2*t_10^2*t_16-w^4*t_5*t_7*t_10*t_11*t_16+w^4*t_2*t_5*t_11^2*t_16-w^4*t_7^2*t_11^2*t_16+3*w^4*t_7*t_10*t_11*t_12+5*w^4*t_2*t_11^2*t_12-3*w^4*t_5*t_10*t_11*t_13-w^4*t_7*t_11^2*t_13-y*w^3*t_5*t_7*t_10*t_16+2*w^4*t_6*t_7*t_10*t_16-w^4*t_5*t_8*t_10*t_16-4*w^4*t_7*t_10^2*t_16+y*w^3*t_2*t_5*t_11*t_16-w^4*t_3*t_5*t_11*t_16+2*w^4*t_2*t_6*t_11*t_16+w^4*t_7*t_8*t_11*t_16-4*w^4*t_2*t_10*t_11*t_16+2*x*w^3*t_5*t_10*t_12+y*w^3*t_7*t_10*t_12-w^4*t_8*t_10*t_12+y*w^3*t_2*t_11*t_12-3*w^4*t_3*t_11*t_12-2*y*w^3*t_5*t_10*t_13+w^4*t_6*t_10*t_13-2*w^4*t_10^2*t_13+x*w^3*t_5*t_11*t_13+w^4*t_8*t_11*t_13-w^4*t_5*t_10*t_15+w^4*t_4*t_5*t_16-y*w^3*t_2*t_6*t_16-w^4*t_3*t_6*t_16+x*y*w^2*t_5*t_7*t_16+x*w^3*t_6*t_7*t_16+y^2*w^2*t_7^2*t_16+y*w^3*t_7*t_8*t_16+2*y*w^3*t_2*t_10*t_16+2*w^4*t_3*t_10*t_16+2*x*w^3*t_2*t_11*t_16-2*z*w^3*t_5*t_10-y^2*w^2*t_2*t_12-y*w^3*t_3*t_12+w^4*t_4*t_12-x^2*w^2*t_5*t_12+x*w^3*t_6*t_13+y^2*w^2*t_7*t_13+y*w^3*t_8*t_13-x*w^3*t_10*t_13-2*x*w^3*t_5*t_14+x*w^3*t_5*t_15-x*y*w^2*t_2*t_16-x*w^3*t_3*t_16+x^2*w^2*t_7*t_16+x^2*w^2*t_13, w^4*t_7*t_10*t_11+w^4*t_2*t_11^2-y*w^3*t_7*t_10-w^4*t_8*t_10-y*w^3*t_2*t_11-w^4*t_3*t_11+y^2*w^2*t_2+y*w^3*t_3+w^4*t_4+x^2*w^2*t_5, 0, 0}},ring F1_0)))
 FC=(correctDeformation(F1_{0,1,2},R1_{0,1,2},G1_{0},C1_{0}))_0
 assert (sub(sum FC,ring F_0)==sum F_{0,1,2})
 ///
+
+TEST ///
+S=QQ[x_0,x_1,x_2,x_3]
+F0=matrix {{x_0^6, x_0^5*x_1^2}}
+(F,R,G,C)=localHilbertScheme(F0)
+assert (sum G== map(target G_0,source G_0,0))
+///
+
+TEST ///
+S = QQ[a..d]
+I = ideal(a,b^3*c,b^4)
+J=ideal b^4+ideal (ambient basis(3,I))
+assert (checkTangentSpace gens I == false)
+assert (checkComparisonTheorem gens I == false)
+assert (checkTangentSpace gens J == true)
+assert (checkComparisonTheorem gens J == true)
+///
+
+TEST ///
+needsPackage "Truncations"
+S = ZZ/32003[a..d]
+I = monomialIdeal(a^2,a*b,b^4,a*c^3)
+J = truncate(3, I)
+(F,R,G,C) = localHilbertScheme(gens J, Verbose=>4,DegreeBound=>1,HighestOrder=>8)
+///
+TEST ///
+S=QQ[x,y]/ideal {x^4+y^3}
+f= matrix {{y,-x^2,0},{x,0,-y},{0,-y,-x}}
+(F,R,G,C)=versalDeformation(f,CT^1(f),extMatrix(f),Verbose=>4)
+assert (sum G==map(target G_0,source G_0,sub( matrix {{t_1^6+t_1^3*t_2^2+3*t_1^4*t_5+12*t_1^3*t_2*t_6-12*t_1^3*t_6^2+(1/2)*t_2^4+t_1*t_2^2*t_3+2*t_1^2*t_2*t_4+(7/2)*t_1*t_2^2*t_5+3*t_1^2*t_5^2+2*t_2^3*t_6+2*t_1*t_2*t_3*t_6-8*t_1^2*t_4*t_6+4*t_1*t_2*t_5*t_6+3*t_2^2*t_6^2-6*t_1*t_5*t_6^2+2*t_2*t_6^3+t_6^4-t_1*t_4^2-(3/2)*t_2*t_4*t_5+t_5^3-3*t_4*t_5*t_6}, {-t_1^4-6*t_1*t_6^2+t_3^2-t_2*t_4+t_3*t_5+t_5^2-2*t_4*t_6}, {0}, {0}, {0}, {-4*t_1^3*t_2-t_2^3-4*t_1*t_2*t_3-5*t_1*t_2*t_5-2*t_2^2*t_6+4*t_1*t_3*t_6+2*t_1*t_5*t_6-2*t_2*t_6^2+2*t_3*t_4+t_4*t_5}},ring G_0)))
+assert (sum F==map(target F_0,source F_0,sub(matrix {{t_1^2+t_3+t_5+y, -t_1^3-t_2^2-t_1*t_5-t_2*t_6-t_6^2+y*t_1+x*t_2-x^2, -t_1*t_2+2*t_1*t_6+t_4}, {t_2+t_6+x, 3*t_1*t_2-2*t_1*t_6-t_4, t_1^2+t_5-y}, {-t_1, -t_1^2+t_3-y, t_6-x}},ring F_0)))
+///
+

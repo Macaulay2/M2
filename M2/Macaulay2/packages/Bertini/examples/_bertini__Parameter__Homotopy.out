@@ -1,0 +1,124 @@
+-- -*- M2-comint -*- hash: -135560705
+
+i1 : R=CC[u1,u2,u3,x,y];
+
+i2 : f1=u1*(y-1)+u2*(y-2)+u3*(y-3); --parameters are u1, u2, and u3
+
+i3 : f2=(x-11)*(x-12)*(x-13)-u1;
+
+i4 : paramValues0={1,0,0};
+
+i5 : paramValues1={0,1+2*ii,0};
+
+i6 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{paramValues0 ,paramValues1 })
+
+o6 = {{{11.3376+.56228*ii, 1}, {13.3247, 1}, {11.3376-.56228*ii, 1}}, {{12,
+     ------------------------------------------------------------------------
+     2}, {13, 2}, {11, 2}}}
+
+o6 : List
+
+i7 : bPH_0--the solutions to the system with parameters set equal to paramValues0
+
+o7 = {{11.3376+.56228*ii, 1}, {13.3247, 1}, {11.3376-.56228*ii, 1}}
+
+o7 : List
+
+i8 : R=CC[x,y,z,u1,u2]
+
+o8 = R
+
+o8 : PolynomialRing
+
+i9 : f1=x^2+y^2-z^2
+
+      2    2    2
+o9 = x  + y  - z
+
+o9 : R
+
+i10 : f2=u1*x+u2*y
+
+o10 = x*u1 + y*u2
+
+o10 : R
+
+i11 : finalParameters0={0,1}
+
+o11 = {0, 1}
+
+o11 : List
+
+i12 : finalParameters1={1,0}
+
+o12 = {1, 0}
+
+o12 : List
+
+i13 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },HomVariableGroup=>{x,y,z})
+
+o13 = {{{1, -2.30252e-16+1.70802e-16*ii, -1}, {1,
+      -----------------------------------------------------------------------
+      -5.73444e-16+3.53557e-16*ii, 1}}, {{-2.9577e-16-1.70683e-16*ii, 1, 1},
+      -----------------------------------------------------------------------
+      {-2.1372e-17-6.80607e-17*ii, 1, -1}}}
+
+o13 : List
+
+i14 : bPH_0--The two solutions for finalParameters0
+
+o14 = {{1, -2.30252e-16+1.70802e-16*ii, -1}, {1, -5.73444e-16+3.53557e-16*ii,
+      -----------------------------------------------------------------------
+      1}}
+
+o14 : List
+
+i15 : finParamValues={{1},{2}}
+
+o15 = {{1}, {2}}
+
+o15 : List
+
+i16 : bPH1=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x})
+
+o16 = {{{1}, {-1}}, {{1.41421}, {-1.41421}}}
+
+o16 : List
+
+i17 : bPH2=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x},OutputStyle=>"OutSolutions")
+
+o17 = {{{1}, {-1}}, {{1.41421}, {-1.41421}}}
+
+o17 : List
+
+i18 : class bPH1_0_0
+
+o18 = Point
+
+o18 : Type
+
+i19 : class bPH2_0_0
+
+o19 = List
+
+o19 : Type
+
+i20 : dir1 := temporaryFileName(); -- build a directory to store temporary data
+
+i21 : makeDirectory dir1;
+
+i22 : bPH5=bertiniParameterHomotopy( {"x^2-u1"}, {u1},{{1},{2}},AffVariableGroup=>{x},OutputStyle=>"OutNone",TopDirectory=>dir1)
+
+i23 : B0=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_0")
+
+o23 = {{1}, {-1}}
+
+o23 : List
+
+i24 : B1=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_1")
+
+o24 = {{1.41421}, {-1.41421}}
+
+o24 : List
+
+i25 : 

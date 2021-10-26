@@ -1,249 +1,473 @@
---		Copyright 2006 by Daniel R. Grayson
+--		Copyright 2018 by Daniel R. Grayson and Lily Silverstein
 
-document {
-     Key => "lists and sequences",
-     "In this section we give an overview of the use of lists of all types, including:",
-     UL {
-	  SPAN {"basic lists (of class ", TO "BasicList", ")," },
-	  SPAN {"visible lists (of class ", TO "VisibleList", ")," },
-	  SPAN {"lists (of class ", TO "List", ")," },
-	  SPAN {"sequences (of class ", TO "Sequence", "), and" },
-	  SPAN {"arrays (of class ", TO "Array", ")." },
-	  SPAN {"mutable lists (of class ", TO "MutableList", ")." },
-	  },
-     SUBSECTION "lists",
-     "A list is a handy way to store a series of things.  We create one
-     by separating the elements of the series by commas and surrounding 
-     the series with braces.",
-     EXAMPLE "x = {a,b,c,d,e}",
-     "We retrieve the length of a list with the operator ", TO "#", " or with the function ", TT "length", ".",
-     EXAMPLE {"#x","length x"},
-     "We use the expression ", TT "x#n", " to obtain the n-th element of ", TT "x", ".  The elements are numbered consecutively starting with ", TT "0", ".
-     Alternatively, they are numbered consecutively ending with ", TT "-1", ".",
-     EXAMPLE {"x#2","x#-2"},
-     "The functions ", TO "first", " and ", TO "last", " retrieve the first and last elements of a list.",
-     EXAMPLE lines ///
-          first x
-	  last x
-     ///,
-     PARA {
-	  "Omitting an element of a list causes the symbol ", TO "null", " to 
-	  be inserted in its place."
-	  },
-     EXAMPLE lines (///
-      	  g = {3,4,,5}
-       	  peek g
-     ///),
-     PARA {
-	  "Lists can be used as vectors, provided their elements are the sorts of
-	  things that can be added and mutliplied."},
-     EXAMPLE "10000*{3,4,5} + {1,2,3}",
-     "If the elements of a list are themselves lists, we say that we have
-     a nested list.",
-     EXAMPLE {
-	  "y = {{a,b,c},{d,{e,f}}}",
-	  "#y"
-	  },
-     "One level of nesting may be eliminated with ", TO "flatten", ".",
-     EXAMPLE "flatten y",
-     "A table is a list whose elements are lists all of the same length.  
-     The inner lists are regarded as rows when the table is displayed as a
-     two-dimensional array with ", TO "MatrixExpression", ".",
-     EXAMPLE lines ///
-	  z = {{a,1},{b,2},{c,3}}
-	  isTable z
-      	  MatrixExpression z
-     ///,
-     SUBSECTION "sequences",
-     "Sequence are like lists, except that parentheses are used instead of braces to create them and to print them.  Sequences
-     are implemented in a more efficient way than lists, since a sequence is created every time a function is called with more than one argument.  
-     Another difference is that new types of list can be created by the user, but not new types of sequence.",
-     EXAMPLE lines ///
-          x = (a,b,c,d,e)
-	  #x
-	  x#2
-     ///,
-     "It is a bit harder to create a sequence of length 1, since no comma
-     would be involved, and parentheses are also used for simple grouping
-     of algebraic expressions.",
-     EXAMPLE lines ///
-          ()
-	  (a)
-	  (a,b)
-     ///,
-     "Most of the functions that apply to lists also work with sequences.  We
-     give just one example.",
-     EXAMPLE "append(x,f)",
-     "The functions ", TO "toList", " and ", TO "toSequence", " are provided
-     for converting between lists to sequences.",
-     EXAMPLE {
-	  "toList x",
-	  "toSequence oo",
-	  },
-     "Other functions for dealing especially with sequences
-     include ", TO "sequence", " and ", TO "deepSplice", ".",
-     SUBSECTION "arrays",
-     "An array is like a list, except that brackets are used instead of
-     braces when entering or displaying an array, and arrays can't be used
-     as vectors.  Their main use is notational: for example, they appear
-     in the construction of polynomial rings.",
-     EXAMPLE {
-	  "v = [a,b,c]",
-	  "v#2",
-	  "ZZ[a,b,c]"
-	  },
-     SUBSECTION "visible lists",
-     "Lists, sequences, and arrays are the three examples of what we call visible lists, which constitute the class ", TO "VisibleList", ".  Many functions
-     are defined to act uniformly on visible lists.",
-     EXAMPLE lines ( ///
-     	  {a,b,c}
-     	  class oo
-     	  parent oo
-     /// ),
-     SUBSECTION "basic lists",
-     "There is a type of list more general than a visible list, which we call a basic list.  Basic lists can be used for representing new datatypes
-     in a more secure way, since the many functions that act on lists and sequences do not act on basic lists.",
-     EXAMPLE lines ( ///
-     	  {a,b,c}
-     	  class oo
-     	  parent oo
-     	  parent oo
-     /// ),
-     "We can make a basic list with the ", TO "new", " operator.",
-     EXAMPLE "new BasicList from {a,b,c}",
-     "Similarly, we can make a new type of basic list, called ", TT "Container", ", say.",
-     EXAMPLE "Container = new Type of BasicList",
-     "We can make a new list of type Container.",
-     EXAMPLE "t = new Container from {a,b}",
-     "Some functions work on basic lists.",
-     EXAMPLE "join(t,t)",
-     "We can make a new method for the operator ", TT "++", ", say, that will join two such lists.",
-     EXAMPLE lines ///
-	 Container ++ Container := join;
-	 t ++ t
-     ///,
-     SUBSECTION "mutable lists",
-     "The elements of a basic list cannot normally be replaced by others.  However, there is a certain type of
-     basic list, called a mutable list (of class ", TO "MutableList", "), whose elements can be changed.  Because
-     the elements of a mutable list can be changed, circular structures can be created that would cause a print
-     routine to go into an infinite loop.  We avoid such infinite loops by not printing out the contents of mutable 
-     lists.  Instead, one uses ", TO "peek", " to display the elements in a controlled way.",
-     EXAMPLE lines ///
-	  s = new MutableList from {a,b,c}
-      	  peek s
-      	  s#2 = 1234;
-	  s
-      	  peek s
-     ///,
-     "Because the contents of mutable lists are not printed, they can be used as containers for big things that one
-     normally doesn't want printed.  For this purpose we have a special type of mutable list called a bag (of class ", TO "Bag", "),
-     that displays, when printed, a little information about its contents.",
-     EXAMPLE lines ///
-     	  Bag {100!}
-	  peek oo
-     ///,     
-     SUBSECTION "summary",
-     "We can see the hierarchy of types mentioned above using ", TO "showStructure", ".",
-     EXAMPLE lines ///
-        showStructure(List,Sequence,Array,Container,MutableList,Bag,BasicList)
-     ///,
-     Subnodes => {
-	  TO "ranges and repetitions",
-     	  "basic access methods",
-	  TO (symbol #, BasicList),
-	  TO (symbol #, BasicList, ZZ),
-	  TO (symbol #?, BasicList, ZZ),
-	  TO (symbol _, VisibleList, ZZ),
-	  TO (symbol _, VisibleList, List),
-	  TO first,
-	  TO last,
-	  "Conversions",
-	  TO toList,
-	  TO toSequence,
-	  TO sequence,
-	  TO unsequence,
-     	  "manipulating lists and sequences",
-	  TO append,
-	  TO between,
-	  TO delete,
-	  TO drop,
-	  TO flatten,
-	  TO fold,
-	  TO join,
-	  TO (symbol|,List,List),
-	  TO mingle,
-	  TO pack,
-	  TO prepend,
-	  TO reverse,
-	  TO rsort,
-	  TO sort,
-	  TO subtable,
-	  TO table,
-	  TO take,
-	  TO unique,
-     	  "applying functions to elements of lists",
-	  TO (apply,BasicList,Function),
-	  TO (scan,BasicList,Function),
-     	  "testing elements of lists",
-	  TO (all,BasicList,Function),
-	  TO (any,BasicList,Function),
-     	  "finding things in lists",
-	  TO (position,VisibleList,Function),
-	  TO (positions,VisibleList,Function),
-	  TO (select,BasicList,Function),
-	  TO (select,ZZ,BasicList,Function),
-	  "more information",
-	  TO VisibleList,
-	  TO BasicList
-	  }
-     }
+doc///
+ Key
+  "lists and sequences"
+ Headline
+  a detailed overview of lists and sequences in Macaulay2
+ Description
+  Text
+   This page gives an overview of the use of lists of all types, including:
+   
+   {\bf basic lists} (of class @TO BasicList@),@BR{}@
+   {\bf visible lists} (of class @TO VisibleList@),@BR{}@
+   {\bf lists} (of class @TO List@),@BR{}@
+   {\bf sequences} (of class @TO Sequence@),@BR{}@
+   {\bf arrays} (of class @TO Array@),
+   {\bf angle bar lists} (of class @TO AngleBarList@),
+   and@BR{}@
+   {\bf mutable lists} (of class @TO MutableList@).
+   
+   The sections of the overview are, in order:
+   
+   {\bf Creating lists; kinds of lists.} @BR{}@
+   {\bf Elements and indexing.} @BR{}@
+   {\bf Nested lists.} @BR{}@
+   {\bf Ranges and repetitions.} @BR{}@
+   {\bf Manipulating lists and sequences.} @BR{}@
+   {\bf Mapping over lists.} @BR{}@
+   {\bf Conditional expressions; selecting elements matching a criterion.}
+   
+   Links to individual documentation pages for the functions 
+   described in this article are collected in an alphabetized list 
+   at the very end of the page.
+   
+   
+   {\bf Creating lists; kinds of lists.}
+   
+   To create a {\bf list}, use curly braces around a comma-separated series of elements.
+  Example
+   L = {a,b,c,d,e}
+  Text
+   {\bf Sequences} are created and displayed using parentheses instead of braces.
+  Example
+   S = (a,b,c,d,e)
+  Text
+   Sequences are implemented in a more efficient way than lists, since a sequence 
+   is created every time a function is called with more than one argument. 
+   On the other hand, parentheses are also used for grouping algebraic 
+   expressions. This complicates some tasks, such as creating a sequence of 
+   length 1. 
+  Example
+   ()
+   (1,2)
+   (1)
+  Text
+   The functions @TO toList@ and @TO toSequence@, which convert between lists
+   and sequences, may be useful here.
+  Example
+   toSequence {1}
+  Text
+   Lists can be used as vectors, provided their elements
+   are the sorts of things that can be added and multiplied.
+  Example
+   10000*{3,4,5} + {1,2,3}
+  Text
+   An {\bf array} is another type of list, created and displayed using square brackets. Unlike lists and sequences, 
+   arrays can't be used as vectors. Their main use is notational; for example, they appear in the construction of polynomial rings.
+  Example
+   v = [1,2,3]
+   ZZ[a,b,c]
+  Text
+   An {\bf angle bar list} is another type of list, created and displayed using angle bars.  They are used in much the same way as arrays are.
+  Example
+   v = <|1,2,3|>
+   v#1
+  Text
+   Lists, sequences, and arrays are the three examples of what we call {\bf visible lists}, 
+   which constitute the class @TO VisibleList@. Many functions are defined to act uniformly 
+   on visible lists. There is a type of list more general than a visible list, which we 
+   call a @TO BasicList@. 
+   Basic lists are a secure choice for defining new datatypes, since the many functions 
+   that act on visible lists do not act on basic lists. 
+   Here we illustrate how to create a new type of basic list, in this case called {\em Container}.
+  Example
+   Container = new Type of BasicList
+   t = new Container from {a,b}
+  Text
+   We can then declare a new method for the operator @TO "++"@ that will join two Containers:
+  Example
+   Container ++ Container := join;
+   t ++ t
+  Text
+   Basic lists are normally {\em immutable}; that is, no element can
+   be replaced, added, or removed. (Functions like @TO append@, and the many others 
+   described in the {\bf Manipulating lists and sequences} section, will return a new list
+   in {\tt Macaulay2}, as a general rule, rather than modify the existing list.)
+   
+   However, there is a certain type of basic list, called a {\bf mutable list} 
+   (of class @TO MutableList@), whose elements can be changed.  
+   This allows the possibility of creating circular structures that would cause a print 
+   routine to go into an infinite loop. To avoid such infinite loops, the contents of mutable
+   lists are not printed. Instead, use @TO peek@ to display the elements in a controlled way.
+  Example
+   A = new MutableList from {a,b,c}
+   peek A
+   A#2 = 1234;
+   A
+   peek A
+  Text
+   Because the contents of mutable lists are not printed, they can be used as containers for 
+   big things one doesn't {\em want} to print. Although any mutable list can be used
+   in this way, there is a a special type of mutable list called a @TO Bag@, 
+   which is designed for this purpose. When printed, the bag displays only a little information
+   about its contents.
+  Example
+   r = Bag {100!}; r
+   q = Bag {1/100!}; q
+   unbag q
+  Text
+   The hierarchy of types mentioned above is summarized here using @TO showStructure@:
+  Example
+   showStructure(List,Sequence,Array,Container,MutableList,Bag,BasicList)
+  
+  --
+  Text
 
-document {
-     Key => "ranges and repetitions",
-     PARA {
-	  "In this section we discuss the use of ranges and repetitions."
-	  },
-     SUBSECTION "ranges",
-     "The operator ", TO "..", " can be used to create sequences of numbers,
-     sequences of subscripted variables, or sequences of those particular 
-     symbols that are known to ", TO "vars", ", and so on.",
-     EXAMPLE lines ///
-	  1 .. 5, y_1 .. y_5, a .. e
-     ///,
-     SUBSECTION "repetitions",
-     "The operator ", TO (symbol :, ZZ, Thing), " is used to create sequences by replicating something a certain number of times.",
-     EXAMPLE "12:a",
-     "Replicating something once results in a sequence of length 1, which cannot be entered by simply typing parentheses.",
-     EXAMPLE { "1:a", "(a)" },
-     SUBSECTION "ranges and repetitions in lists",
-     "Notice what happens when we try to construct a list using ", TO "..", " or ", TO ":", ".",
-     EXAMPLE {
-	  "z = {3 .. 6, 9, 3:12}",
-	  },
-     "The result above is a list of length 3 some of whose elements are sequences.
-     This may be a problem if the user intended to produce the list 
-     ", TT "{3, 4, 5, 6, 9, 12, 12, 12}", ".  The function ", TO "splice", " can
-     be used to flatten out one level of nesting - think of it as removing those
-     pairs of parentheses that are one level inward.",
-     EXAMPLE "splice z",
-     "The difference between ", TO "splice", " and ", TO "flatten", " is, essentially, that
-     ", TO "flatten", " removes braces one level inward.",
-     EXAMPLE lines ///
-         flatten {a,{b,c}}
-         splice {a,(b,c)}
-     ///,
-     "The function ", TO "toList", " converts sequences to lists.",
-     EXAMPLE lines ///
-          1..6
-          toList(1..6)
-     ///,
-     "Many operators and functions will splice lists presented to them.  For example, when
-     creating a polynomial ring, the array of variables and the list of degrees are spliced for you.",
-     EXAMPLE lines ///
-         QQ[a..c,x_1..x_4, Degrees => { 3:1, 4:2 }]
-	 degrees oo
-     ///
-     }
+   {\bf Elements and indexing.}
+
+   We retrieve the length of a list with the operator @TO "#"@ or with the function @TO length@.
+  Example
+   L = {926, 621, 429, 67, 594, 904, 264, 18, 35, 961};
+   #L
+   length L
+  Text
+   The expression $L\#n$ returns the $n$th element of $L$. The elements are numbered consecutively starting with 0. Alternatively, they are numbered consecutively ending with -1.
+  Example
+   L#0
+   L#2
+   L#-1
+  Text
+   The @TO "_"@ operator is similar to @TO "#"@, except that it can also take a list 
+   or range of indices. However, it may only be used with visible lists.
+  Example
+   L_1 
+   L_{3,6}
+  Text
+   The functions @TO first@ and @TO last@ retrieve the first and last elements of a list.
+  Example
+   first L
+   last L
+  Text
+   Omitting an element of a list causes the symbol @TO null@ to be inserted in its place.
+   When the value of an expression is {\tt null}, like when we ask for {\tt A#2} in the 
+   next example, the output line doesn't appear at all. 
+  Example
+   A = {3,4,,5}
+   peek A
+   A#2
+   
+  --
+  Text
+
+   {\bf Ranges and repetitions.}
+
+   The operator @TO ".."@ can be used to create sequences of numbers, sequences of subscripted variables, and so on.
+  Example
+   1 .. 5, x_1 .. x_5, a .. e
+  Text
+   The operator @TO (symbol :, ZZ, Thing)@ creates a sequence by replicating an element a given number of times.
+  Example
+   12:a
+  Text
+   Replicating something once is another way to create a sequence of length 1, which cannot be entered by simply typing parentheses.
+  Example
+   1:a
+  Text
+   Both @TO ".."@ and @TO ":"@ produce sequences, and may not behave as expected with respect to nesting. 
+   For instance, to create the list {\tt \{3, 4, 5, 6, 9, 12, 12, 12\}}, the following command will {\em not} work: 
+  Example
+   A = {3 .. 6, 9, 3:12}
+  Text
+   Instead, we get a list of length 3, some of whose elements are sequences. 
+   This is easily resolved with @TO splice@.
+  Example
+   A = splice {3..6, 9, 3:12}
+  Text
+   However, many operators and functions will automatically splice lists for you. 
+   Two examples are the array of variables defining a polynomial ring, and the indices 
+   passed to the @TO "_"@ operator.
+  Example
+   QQ[a..c,x_1..x_4]
+   L_{1..3,-3..-1}
+  
+  --
+  Text
+
+   {\bf Nested lists.}
+   
+   When the elements of a list are themselves lists, we call it a {\em nested list}.
+  Example
+   A = {{a,b,c},{d,{e,f}}}
+   #A
+   #(first A)
+  Text
+   One level of nesting may be eliminated with @TO flatten@.
+  Example
+   flatten A
+  Text
+   The function @TO splice@ acts analogously on sequences, removing those pairs of parentheses that are one level inward.
+  Example
+   splice (a, (b, c), (d, (e, f, (g, h))) )
+  Text
+   To remove all layers of nesting at once, use @TO deepSplice@.
+  Example
+   deepSplice (a, (b, c), (d, (e, f, (g, h))) )
+  Text
+   A table is a list whose elements are lists all of the same length. The inner lists are regarded as rows when the table is displayed as a two-dimensional array with @TO MatrixExpression@.
+  Example
+   T = {{a,1},{b,2},{c,3}}
+   isTable T
+   MatrixExpression T
+  Text
+   The function @TO table@ can be used to create a table (doubly
+   nested list) from two lists and a function of two arguments.  It applies
+   the function consecutively to each element from the first list paired
+   with each element from the second list, so the total number of evaluations
+   of the function is the product of the lengths of the two lists.
+  Example
+   table({1,2,3},{7,8},(i,j) -> 1000*i+j)
+  Text
+   The function @TO pack@{\tt (L, n)} turns the list $L$ into a nested list, whose
+   elements are lists containing the elements of $L$ taken $n$ at a time.
+  Example
+   pack(1..15, 4)
+  Text
+   On the other hand, @TO mingle@{\tt (L)} takes the nested list $L = \{L_1, L_2, \ldots, L_n\}$
+   and combines the elements of the $L_i$ into a single list in the following way:
+  Example
+   mingle({{1,2,3,4}, {10,20,30,40}, {100,200,300,400}, {a, b}})
+
+ 
+   
+  --
+  Text
+
+   {\bf Manipulating lists and sequences.}
+
+   Use @TO append@{\tt (L, x)} to create a copy of $L$ with the element $x$ added to the end. 
+   Since lists are immutable in Macaulay2, $L$ itself is not changed, unless redefined.
+  Example
+   L = {926, 621, 429, 67, 594, 904, 264, 18, 35, 961};
+   append(L, -10)
+   L
+   L = append(L, -10); L
+  Text
+   Use @TO prepend@{\tt (x, L)} to create a copy of $L$ with $x$ added to the beginning 
+   of the list. Notice the order of arguments is the opposite of append!
+  Example
+   L = prepend(-20, L)
+  Text
+   Use @TO insert@{\tt (n, x, L)} to specify that the element $x$ should be added 
+   to the list $L$ at position $n$.
+  Example
+   L = insert(5, -30, L)
+  Text
+   Use @TO switch@{\tt (m, n, L)} to switch the elements of $L$ in indices $m$ and $n$.
+  Example
+   L = switch(1, 2, L)
+  Text
+   The function @TO delete@ removes elements that have a particular {\em value}, NOT a particular {\em index}.
+  Example
+   L = delete(-10, L)
+  Text
+   To remove the element at index $n$, use the command @TO drop@{\tt (L, \{n,n\})}.
+  Example
+   L = drop(L, {1,1})
+  Text
+   You can also use drop to remove a specified number of elements from the beginning or end of $L$.
+  Example
+   L = drop(L, 2)
+   L = drop(L, -2)
+  Text
+   On the other hand, use @TO take@ to specify the number of elements to {\em keep}, or a range of indices to keep:
+  Example
+   L = take(L, 6)
+   L = take(L, {1,4})
+  Text
+   Use @TO between@{\tt (x, L)} to insert the element $x$ between every two elements of $L$.
+  Example
+   L = between(-5, L)
+  Text
+   Useful commands for reordering lists are @TO reverse@ (reverse the current order), @TO sort@ (put elements in ascending order), and @TO rsort@ (put elements in descending order). 
+  Example
+   L
+   reverse L
+   sort L
+   rsort L
+  Text
+   Use @TO unique@ to remove duplicates from a list or sequence.
+  Example
+   unique L
+  Text
+   Use @TO join@ to concatenate two lists or sequences. The symbol @TO symbol|@ is also used for concatenation.
+  Example
+   join(a..f, 1..6)
+   x_1..x_3 | y_1..y_4
+   
+  --
+  Text
+
+   {\bf Mapping over lists.}
+   
+   In programming, loops that operate on consecutive elements of a
+   list are common, so we offer various ways to apply functions to
+   each of the elements of a list, along with various ways to treat the
+   returned values.
+
+   The most basic operation is provided by @TO scan@, which applies
+   a function consecutively to each element of a list, discarding the
+   values returned.
+  Example
+   scan({a,b,c}, print)
+  Text
+   The keyword @TO "break"@ can be used to terminate the scan
+   prematurely, and optionally to specify a return value for the
+   expression.  Here we use it to locate the first even number in
+   a list.
+  Example
+   scan({3,5,7,11,44,55,77}, i -> if even i then break i)
+  Text
+   The function @TO apply@ is similar to @TO scan@, but
+   creates a list storing the values returned.
+  Example
+   apply({1,2,3,4}, i -> i^2)
+  Text
+   This operation is so common that we offer two shorthand notations for
+   it, one with the function on the right and one with the function on
+   the left.
+  Example
+   {1,2,3,4} / (i -> i^2)
+   (i -> i^2) \ {1,2,3,4}
+  Text
+   The associativity of these operators during parsing is set up so the 
+   following code works as one would wish.
+  Example
+   {1,2,3,4} / (i -> i^2) / (j -> 1000*j)
+   (j -> 1000*j) \ (i -> i^2) \ {1,2,3,4}
+   (j -> 1000*j) @@ (i -> i^2) \ {1,2,3,4}
+  Text
+   The function @TO apply@ can also be used with two lists of the same
+   length, in which case it will apply the function consecutively to
+   corresponding elements of the two lists.
+  Example
+   apply({1,2,3}, {7,8,9}, (i,j) -> 1000*i+j)
+  Text
+   The function @TO applyTable@ can be used to apply a function to 
+   each element of a table.
+  Example
+   applyTable( {{1,2,3},{4,5}}, i -> i^2)
+  Text
+   The functions @TO fold@ and @TO accumulate@ provide various
+   ways to iteratively apply a function of two arguments to the elements of a list.  One
+   of the arguments is the next element from the list, and the other argument
+   is the value returned by the previous application of the function.  As an
+   example, suppose we want to convert the list {\tt \{7,3,5,4,2\}} of digits
+   into the corresponding number {\tt 73542}.  The formula
+   {\tt (((7*10+3)*10+5)*10+4)+2} is a fast way to do it that doesn't
+   involve computing high powers of 10 separately.  We can do this with
+   @TO fold@ and the following code.
+  Example
+   fold((i,j) -> i*10+j, {7,3,5,4,2})
+  Text
+   Using @TO accumulate@ returns all the intermediate values of this iterative 
+   calculation along with the final result.
+  Example
+   accumulate((i,j) -> i*10+j, {7,3,5,4,2})
+   
+  --
+  Text
+  
+   {\bf Conditional expressions; selecting elements matching a criterion.}
+
+   Use @TO select@ to select those elements from a list
+   that satisfy some condition.  
+  Example
+   select({12, 3, -10, 42, 7, 6, 53}, even)
+   select({12, 3, -10, 42, 7, 6, 53}, i -> i<0 or i>40)
+  Text
+   An optional first argument of an integer $n$ specifies to select no more
+   than $n$ matching elements.
+  Example
+   select(2, {12, 3, -10, 42, 7, 6, 53}, even)
+  Text 
+   Use @TO positions@ to select the {\em indices} of elements satisfying
+   the condition.
+  Example
+   positions({12, 3, -10, 42, 7, 6, 53}, i -> i<0 or i>40)
+  Text
+   The singular @TO position@ returns only the first (or last, by specifying
+   {\tt Reverse => true}) matching index.
+  Example
+   position({12, 3, -10, 42, 7, 6, 53}, i -> i<0 or i>40)  
+   position({12, 3, -10, 42, 7, 6, 53}, i -> i<0 or i>40, Reverse => true)
+  Text
+   Use @TO number@ to count how many elements satisfy the condition.
+  Example
+   number({12, 3, -10, 42, 7, 6, 53}, i -> i<0 or i>40)
+  Text
+   Use @TO max@ and @TO min@ to find the maximum or minimum of the list. 
+   The functions @TO maxPosition@ and @TO minPosition@ give the index of the
+   maximum/minimum. Note that max and min work with many {\tt Macaulay2}
+   types besides numbers, for instance elements of a polynomial ring with 
+   respect to a monomial order.   
+  Example
+   R = QQ[x,y,z, MonomialOrder => Lex];
+   max {x^2*y*z, x*y^3*z^2, x^3, y^3, z}
+   maxPosition {x^2*y*z, x*y^3*z^2, x^3, y^3, z}
+   min {x^2*y*z, x*y^3*z^2, x^3, y^3, z}
+   minPosition {x^2*y*z, x*y^3*z^2, x^3, y^3, z}
+  Text
+   We may use @TO any@ to tell whether there is at least one element of 
+   a list satisfying a condition, and @TO all@ to tell whether all 
+   elements satisfy it.
+  Example
+   any({3, 6, 7, 8}, even)
+   all({3, 6, 7, 8}, even)
+ SeeAlso
+  (symbol #, BasicList)
+  (symbol #, BasicList, ZZ)
+  (symbol #?, BasicList, ZZ)
+  (symbol _, VisibleList, ZZ)
+  (symbol _, VisibleList, List)
+  (symbol|,List,List)
+  (all,BasicList,Function)
+  (any,BasicList,Function)
+  append
+  (apply,BasicList,Function)
+  between
+  deepSplice
+  delete
+  drop
+  first
+  flatten
+  fold
+  insert
+  join
+  last
+  mingle
+  number
+  pack
+  position
+  positions
+  prepend
+  reverse
+  rsort
+  same
+  (scan,BasicList,Function)
+  select
+  sort
+  splice
+  switch
+  table
+  take
+  uniform
+  unique
+  sequence
+  toList
+  toSequence
+  unsequence
+///
 
 document {
      Key => BasicList,
@@ -304,6 +528,27 @@ document {
      }
 
 document {
+     Key => AngleBarList,
+     Headline => "the class of lists delimited by <| ... |>",
+     PARA {
+	  "An angle bar list can be created by enclosing elements of any type between angle bars."
+	  },
+     EXAMPLE lines ///
+     x = <|a,b,c|>
+     # x
+     x#1
+     ///,
+     PARA {
+	  "To convert angle bar lists to and from other types of ", TO "BasicList", ", one may use ", TO "new", "."
+	  },
+     EXAMPLE lines ///
+     new AngleBarList from {a,b,c}
+     new Sequence from <|a,b,c|>
+     ///,
+     PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."}
+     }     
+
+document {
      Key => Array,
      Headline => "the class of all arrays -- [...]",
      PARA {
@@ -360,49 +605,38 @@ document {
      containing them.",
      PARA{},
      EXAMPLE { "{5:a,10:b}", "splice {5:a,10:b}" },
-     SeeAlso => {splice, (symbol..,ZZ,ZZ), "ranges and repetitions"}
+     SeeAlso => {splice, (symbol..,ZZ,ZZ), "lists and sequences"}
      }
 
 document {
-     Key => {toSequence,(toSequence, BasicList)},
+     Key => {toSequence,(toSequence, BasicList),(toSequence, String)},
      Headline => "convert to sequence",
-     TT "toSequence x", " -- yields the elements of a list ", TT "x", " as a sequence.",
+     TT "toSequence x", " -- yields the elements of a list or string ", TT "x", " as a sequence.",
      PARA{},
      "If ", TT "x", " is a sequence, then ", TT "x", " is returned.",
      PARA{},
      EXAMPLE {
-	  "toSequence {1,2,3}"
+	  "toSequence {1,2,3}",
+	  ///toSequence "foo"///
 	  },
      }
 
-undocumented (deepSplice,BasicList)
 document {
-     Key => deepSplice,
-     Headline => "remove subsequences",
-     TT "deepSplice v", " -- yields a new list v where any members of v 
-     which are sequences are replaced by their elements, and so on.",
-     PARA{},
-     "Works also for sequences, and leaves other expressions unchanged.
-     Copying the list v is always done when v is mutable.",
-     EXAMPLE "deepSplice { (a,b,(c,d,(e,f))), g, h }",
-     SeeAlso => "splice"
-     }
-
-document {
-     Key => {splice,(splice, BasicList)},
-     Headline => "remove subsequences",
-     TT "splice v", " -- yields a new list v where any members of v that are sequences
-     are replaced by their elements.",
-     PARA{},
-     "Works also for sequences, and leaves other expressions unchanged.
-     Copying the list v is always done when v is mutable.
-     Certain functions always splice their arguments or their argument
-     lists for the sake of convenience.",
+     Key => sequence,
+     Headline => "make a sequence",
+     Usage => "sequence v",
+     Inputs => { "v" => Thing },
+     Outputs => { Sequence => {TT "v", " if ", TT "v", " is a sequence, otherwise a sequence of length 1 containing ", TT "v"}},
+     PARA { "Such a function is needed occasionally to restore uniformity, because a nonempty parenthesized expression with no commas is not parsed as a sequence." },
      EXAMPLE {
-	  "splice ((a,b),c,(d,(e,f)))",
-      	  "splice [(a,b),c,(d,(e,f))]",
+	  "sequence()",
+	  "sequence(4)",
+      	  "sequence(4,5)",
+	  "identity()",
+	  "identity(4)",
+      	  "identity(4,5)",
 	  },
-     SeeAlso => "deepSplice"
+     SeeAlso => { unsequence }
      }
 
 document {
@@ -421,6 +655,7 @@ document {
 	  },
      SeeAlso => {"BasicList"}
      }
+ 
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

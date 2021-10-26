@@ -1,0 +1,47 @@
+-- -*- M2-comint -*- hash: -317304743
+
+i1 : A = QQ{x,y,z,w}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : B = A/ncIdeal{y*z + z*y - x^2, x*z + z*x - y^2, z^2 - x*y - y*x}
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o2 = B
+
+o2 : NCQuotientRing
+
+i3 : M = ncMatrix {{x,y,z,w},{y,z,w,x}}
+
+o3 = | x y z w |
+     | y z w x |
+
+o3 : NCMatrix
+
+i4 : N = M || 2*M || -3*M
+
+o4 = | x    y    z    w    |
+     | y    z    w    x    |
+     | 2*x  2*y  2*z  2*w  |
+     | 2*y  2*z  2*w  2*x  |
+     | -3*x -3*y -3*z -3*w |
+     | -3*y -3*z -3*w -3*x |
+
+o4 : NCMatrix
+
+i5 : ring N
+
+o5 = B
+
+o5 : NCQuotientRing
+
+i6 : ring lift N
+
+o6 = A
+
+o6 : NCPolynomialRing
+
+i7 : 

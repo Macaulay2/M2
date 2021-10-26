@@ -1,0 +1,53 @@
+-- -*- M2-comint -*- hash: 622304989
+
+i1 : A = skewPolynomialRing(QQ,(-1)_QQ,{w,x,y,z})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o1 = A
+
+o1 : NCQuotientRing
+
+i2 : B = QQ{a,b,c}
+
+o2 = B
+
+o2 : NCPolynomialRing
+
+i3 : f = ncMap(B,A,{a^3,b^2,a+b,a-b})
+
+o3 = NCRingMap B <--- A
+
+o3 : NCRingMap
+
+i4 : f(w*x+2*y)
+
+         3 2
+o4 = 2b+a b +2a
+
+o4 : B
+
+i5 : g = ncMap(B,B,{a*b,b^2,c*a*c},Derivation=>true)
+
+o5 = NCRingMap B <--- B
+
+o5 : NCRingMap
+
+i6 : g(a*b)==g(a)*b+a*g(b)
+
+o6 = true
+
+i7 : g(promote(1,B))
+
+o7 = 0
+
+o7 : B
+
+i8 : g(c*a+2*b)
+
+                2
+o8 = caca+cab+2b
+
+o8 : B
+
+i9 : 

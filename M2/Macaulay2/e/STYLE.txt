@@ -1,20 +1,21 @@
 Coding standards to follow when writing code in the Macaulay2 engine
 
-Currently, files are written in a number of different standard, unfortunately.
-The goal is to have a consistent format and style for the code.
+1. Run your c++ code through clang-format as in:
 
-Indentation:
-  no tabs in the files!
-  indentation for each level: 2 spaces (4 spaces is possible, but we need to be consistent).
-  ** find a tool which will give us our desired formatting automatically
-  (Jakob will remember the name)
+   find Macaulay2/e -name \*.cpp -o -name \*.hpp | xargs clang-format-3.8 -i -style=file
 
-  class definitions: class, {, public and private, end } all in same column
-  private data is separated, placed at end of class.  Names are generally
-  beginning with m, e.g. mRing.
-  
-Naming of member fields in classes:
+   or, more simply, in the e directory (or subdirectories), run, on e.g. foo.hpp, foo.cpp:
 
+   clang-format-3.8 -i -style=file foo.hpp
+   clang-format-3.8 -i -style=file foo.cpp
 
-Naming of hpp and cpp files:
+   The .clang-format file is in the top level M2 directory.
+
+   In particular, no tabs in these files.
+   
+2. Header file placement.
+
+   See
+
+       https://google.github.io/styleguide/cppguide.html#Names_and_Order_of_Includes
 

@@ -2,11 +2,12 @@ newPackage("Units",
     	Headline => "units conversion and physical constants",
     	Version => "0.9", 				    -- needs to be documented
     	Date => "May 5, 2011",
+	Keywords => {"Miscellaneous"},
     	Authors => {
-	     {Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://dangrayson.com/"}
+	     {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://dangrayson.com/"}
 	     }
     	)
-fundamentalUnits = { symbol s, symbol g, symbol m, symbol A, symbol cd, symbol mol, symbol K }
+fundamentalUnits = { symbol second, symbol gram, symbol meter, symbol ampere, symbol candela, symbol mole, symbol degreeKelvin }
 UnitMonomial = new Type of HashTable
 scan(fundamentalUnits, u -> (
 	  u <- new UnitMonomial from { u => 1 };
@@ -57,9 +58,6 @@ Measurement - Measurement := (m,n) -> m + -n
 
 Constant Number := Number Constant := Number Number := times
 
-kg = 1000 g
-cm = m / 100
-
 exa = 10^18
 peta = 10^15
 tera = 10^12
@@ -101,11 +99,12 @@ vigintillion = 10^63
 centillion = 10^303
 googol = 10^100
 
-kelvin = K
-mole = mol
-amp = ampere = A
-second = s
-minute = 60 s
+kg = kilo gram
+cm = centi meter
+kelvin = degreeKelvin
+mol = mole
+amp = ampere
+minute = 60 second
 hour = 60 minute
 day = 24 hour
 wk = week = 7 day
@@ -115,9 +114,8 @@ mo = month = yr/12
 decade = 10 yr
 century = 100 yr
 millennia = millennium = 1000 year
-meter = m
-gm = gram = g
-t = tonne = 1000 kg
+gm = gram
+tonne = 1000 kg
 inch = 254/100 * cm
 ft = foot = 12 inch
 chain = 66 ft
@@ -128,76 +126,76 @@ mile = 5280 foot
 acre = mile^2/640
 league = 3 mile
 marathon = 26 mile + 385 yard
-N = newton = kg m / s^2
-mm = milli m
-Pa = pascal = N/m^2
+newton = kg meter / second^2
+mm = milli meter
+Pa = pascal = newton/meter^2
 bar = 10^5 Pa
 micron = micro meter
 cc = cm^3
-are = 100 m^2
+are = 100 meter^2
 hectare = hecto are
-l = liter = 1000 cc
-J = joule = m N
-btu = 1055.06 J
-W = watt = J/s
-C = coulomb = A s
-V = volt = W/A
-ohm = V/A
+liter = 1000 cc
+joule = meter newton
+btu = 1055.06 joule
+watt = joule/second
+coulomb = ampere second
+volt = watt/ampere
+ohm = volt/ampere
 mho = 1/ohm
-angstrom = 10^-10 m
-fermi = 10^-15 m
-F = farad = C/V
-Wb = weber = V s
-H = henry = Wb/A
-T = tesla = Wb/m^2
-Hz = hertz = 1/s
-barn = 10^-28 m^2
-diopter = 1/m
-radian = m/m
+angstrom = 10^-10 meter
+fermi = 10^-15 meter
+farad = coulomb/volt
+weber = volt second
+henry = weber/ampere
+tesla = weber/meter^2
+hz = hertz = 1/second
+barn = 10^-28 meter^2
+diopter = 1/meter
+radian = meter/meter
 circle = pi radian 2
-sr = steradian = m^2/m^2
-arcdeg = deg = {* degree = *} 1/360 * circle
+sr = steradian = meter^2/meter^2
+arcdeg = deg = -* degree = *- 1/360 * circle
 arcmin = arcdeg/60
 arcsec = arcmin/60
-degC = degcelsius = K
+degC = degcelsius = degreeKelvin
 degF = degfahrenheit = 5/9 * degC
-light = c = 299792458 m/s
+light = cLight = lightspeed = 299792458 meter/second
 au = astronomicalunit = 499.004783806 light second
 solarmass = 1.9891e30 kg
-mu0 = 4 pi 10^-7 H/m
-epsilon0 = 1/mu0 c^2
-electron = e = 1.602176462e-19 C
+mu0 = 4 pi 10^-7 henry/meter
+epsilon0 = 1/mu0 lightspeed^2
+electron = electronCharge = 1.602176462e-19 coulomb
 ev = eV = electron volt
-h = 6.62606896p24e-34 J s
-hbar = h / 2 pi
-G = 6.6743e-11 N m^2 / kg^2
-amu = u = atomicmassunit = 1.66053873e-27 kg
+hPlanck = 6.62606896p24e-34 joule second
+hbar = hPlanck / 2 pi
+gravityG = 6.6743e-11 newton meter^2 / kg^2
+amu = atomicmassunit = 1.66053873e-27 kg
 N$A = avogadro = gram/amu mol
-R = gasconstant = 8.314472 J / mol K
-k = boltzmann = R / N$A
-stdtemp = standardtemp = 273.15 K
+gasConstantR = 8.314472 joule / mol degreeKelvin
+kBoltzmann = gasConstantR / N$A
+stdtemp = standardtemp = 273.15 degreeKelvin
 atmosphere = atm = 101325 Pa
-force = gravity = 9.80665 m/s^2
+force = gravity = 9.80665 meter/second^2
 water = gram force/cm^3
 waterdensity = gram / cm^3
-molarvolume = mol R stdtemp / atm
+molarvolume = mol gasConstantR stdtemp / atm
 alpha = 7.297352533e-3
 Hg = 13.5951 gram force / cm^3
 mmHg = mm Hg
 inHg = inch Hg
-dyne = cm gram / s^2
+dyne = cm gram / second^2
 erg = cm dyne
-P = poise = gram / cm s
-candela = cd
+poise = gram / cm second
+cd = candela
 lm = lumen = cd sr
-lx = lux = lm/m^2
+lx = lux = lm/meter^2
 footcandle = lumen/ft^2
 lb = pound = 0.45359237 kg
-hp = horsepower = 550 foot pound force / s
+hp = horsepower = 550 foot pound force / second
 grain = 1/7000 * pound
 oz = ounce = 1/16 * pound
 troyounce = 480 grain
-brgallon = 4.54609 l
+brgallon = 4.54609 liter
 gal = gallon = usgallon = 231 inch^3
 qt = quart = 1/4 * gallon
 pt = pint = 1/2 * quart
@@ -208,7 +206,10 @@ floz = fluidounce = 1/16 * pint
 bbl = barrel = 42 gallon
 bu = bushel = 2150.42 inch^3
 peck = 1/4 * bushel
-
+NM = nmi = nauticalMile = 1852 meter
+kn = knot = nauticalMile / hour
+cal = calorie = 4.1868 joule
+kcal = Cal = Calorie = kilo calorie
 
 Offset = new Type of BasicList
 Offset + Measurement := (o,m) -> new Offset from { o#0 + m, o#1 }
@@ -218,18 +219,18 @@ Offset - Offset := (o,p) -> ( if o#1 =!= p#1 then error "expected offsets from t
 expression Offset := o -> expression o#0 + expression o#1
 net Offset := net @@ expression
 
-ZeroKelvin = new Offset from { 0 * K , symbol ZeroKelvin }
-ZeroCelsius = ZeroKelvin + 273.15 K
+ZeroKelvin = new Offset from { 0 * degreeKelvin , symbol ZeroKelvin }
+ZeroCelsius = ZeroKelvin + 273.15 degreeKelvin
 ZeroFahrenheit = ZeroCelsius - 32 degF
 
 
 type := new MutableHashTable;
 scan({
-	  s/s => "dimensionless quantity",
-	  s => "time",
-	  m => "length",
-	  m^2 => "area",
-	  m^3 => "volume",
+	  second/second => "dimensionless quantity",
+	  second => "time",
+	  meter => "length",
+	  meter^2 => "area",
+	  meter^3 => "volume",
 	  volt => "voltage",
 	  newton => "force",
 	  watt => "power",
@@ -238,7 +239,7 @@ scan({
 	  mho => "conductance",
 	  pascal => "pressure",
 	  joule => "energy, work",
-	  newton/m^2 => "stress",
+	  newton/meter^2 => "stress",
 	  ampere => "current",
 	  mole => "amount",
 	  radian => "angle",
@@ -247,17 +248,19 @@ scan({
 	  farad => "capacitance",
 	  henry => "inductance",
 	  hertz => "frequency",
-	  m/s => "velocity",
-	  m/s^2 => "acceleration",
-	  kg/m^3 => "density",
+	  meter/second => "velocity",
+	  meter/second^2 => "acceleration",
+	  kg/meter^3 => "density",
 	  poise => "viscosity",
 	  kelvin => "temperature",
 	  candela => "luminous intensity",
 	  lumen => "luminous flux",
+	  gram meter^2/second => "action",
 	  lux => "illuminance, exitance",
-	  cd/m^2 => "luminance",
-	  J/K => "entropy",
-	  W/K => "entropy flow"
+	  cd/meter^2 => "luminance",
+	  joule/degreeKelvin => "entropy",
+	  joule/degreeKelvin/mole => "molar entropy",
+	  watt/degreeKelvin => "entropy flow"
 	  },
      x -> (
 	  m := x#0;
@@ -286,9 +289,9 @@ onecolon Measurement := m -> toString ( expression onecolon m#0 * expression m#1
 twocolon = method()
 twocolon RR := x -> toString floor x | ":" | twodigits onecolon (60 * (x - floor x))
 twocolon QQ := twocolon ZZ := x -> twocolon (0. + x)
-twocolon Measurement := m -> toString ( expression onecolon m#0 * expression m#1 )
+twocolon Measurement := m -> toString ( expression twocolon m#0 * expression m#1 )
 
-export values Units#"private dictionary"
+export keys Units#"private dictionary"
 
 beginDocumentation()
 

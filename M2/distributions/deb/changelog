@@ -1,48 +1,72 @@
-macaulay2 (0.9.97) stable; urgency=low
-  * initial release
- -- Daniel R Grayson <dan@math.uiuc.edu>  Wed, 29 Aug 2007 22:49:58 -0500
-macaulay2 (1.1.99) stable; urgency=low
-  * test release leading up to version 1.2
- -- Daniel R Grayson <dan@math.uiuc.edu>  Wed, 28 Jan 2009 22:49:58 -0500
-macaulay2 (1.2) stable; urgency=low
-  * release version 1.2
- -- Daniel R Grayson <dan@math.uiuc.edu>  Wed, 28 Jan 2009 22:49:58 -0500
-macaulay2 (1.2.1) unstable; urgency=low
-  * release version 1.2.1, experimental
- -- Daniel R Grayson <dan@math.uiuc.edu>  Wed, 28 Jan 2009 22:49:58 -0500
-macaulay2 (1.2.99) unstable; urgency=low
-  * release version 1.3
- -- Daniel R Grayson <dan@math.uiuc.edu>  Thu, 15 Oct 2009 22:49:58 -0500
-macaulay2 (1.3) stable; urgency=low
-  * release version 1.3
- -- Daniel R Grayson <dan@math.uiuc.edu>  Thu, 15 Oct 2009 22:49:58 -0500
-macaulay2 (1.3.1) stable; urgency=low
-  * release version 1.3.1
- -- Daniel R Grayson <dan@math.uiuc.edu>  Thu, 4 Nov 2009 22:49:58 -0500
-macaulay2 (1.3.1.1) unstable; urgency=low
-  * release version 1.3.1.1
- -- Daniel R Grayson <dan@math.uiuc.edu>  Wed, 17 Mar 2010 22:49:58 -0500
-macaulay2 (1.3.9) unstable; urgency=low
-  * release version 1.3.9
- -- Daniel R Grayson <dan@math.uiuc.edu>  Wed, 14 Sep 2010 22:49:58 -0500
-macaulay2 (1.3.99) unstable; urgency=low
-  * release version 1.3.99
- -- Daniel R Grayson <dan@math.uiuc.edu>  Wed, 14 Sep 2010 22:49:58 -0500
-macaulay2 (1.4) stable; urgency=low
-  * release version 1.4
- -- Daniel R Grayson <dan@math.uiuc.edu>  Wed, 20 Sep 2010 22:49:58 -0500
-macaulay2 (1.4.0.1) unstable; urgency=low
-  * release version 1.4.0.1
- -- Daniel R Grayson <dan@math.uiuc.edu>  Tue,  8 Feb 2011 09:26:46 -0500
-macaulay2 (1.5) unstable; urgency=low
-  * release version 1.5
- -- Daniel R Grayson <dan@math.uiuc.edu>  Tue,  19 Jun 2012 09:50:25 -0500
-macaulay2 (1.5.0.1) unstable; urgency=low
-  * release version 1.5.0.1
- -- Daniel R Grayson <dan@math.uiuc.edu>  Tue, 11 Nov 2012 05:43:05 -0500
-macaulay2 (1.6) unstable; urgency=low
-  * release version 1.6
- -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  26 Apr 2013 09:50:25 -0500
-macaulay2 (1.6.0.1) unstable; urgency=low
-  * release version 1.6.0.1
- -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  26 Apr 2013 09:50:25 -0500
+macaulay2 (1.10) stable; urgency=low
+  * release version 1.10
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Jun 2017 09:50:25 -0500
+macaulay2 (1.10.0.1) stable; urgency=low
+  * release version 1.10
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Jun 2017 09:50:25 -0500
+macaulay2 (1.11) stable; urgency=low
+  * release version 1.11
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Mar 2017 09:50:25 -0500
+macaulay2 (1.11.0.1) stable; urgency=low
+  * release version 1.11.0.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Mar 2017 09:50:25 -0500
+macaulay2 (1.11.1) stable; urgency=low
+  * release version 1.11.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 May 2018 09:50:25 -0500
+macaulay2 (1.11.1.1) stable; urgency=low
+  * release version 1.11.1.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 May 2018 09:50:25 -0500
+macaulay2 (1.12) stable; urgency=low
+  * release version 1.12
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 May 2018 09:50:25 -0500
+macaulay2 (1.12.0.1) stable; urgency=low
+  * release version 1.12.0.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Jul 2018 09:50:25 -0500
+macaulay2 (1.13) stable; urgency=low
+  * release version 1.13
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Jan 2019 09:50:25 -0500
+macaulay2 (1.13.0.1) stable; urgency=low
+  * release version 1.13.0.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  11 Jan 2019 09:50:25 -0500
+macaulay2 (1.14) stable; urgency=low
+  * release version 1.14
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 May 2019 09:50:25 -0500
+macaulay2 (1.14.0.1) stable; urgency=low
+  * release version 1.14.0.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  11 May 2019 09:50:25 -0500
+macaulay2 (1.15) stable; urgency=low
+  * release version 1.15
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Nov 2019 09:50:25 -0500
+macaulay2 (1.15.0.1) stable; urgency=low
+  * release version 1.15.0.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  11 Nov 2019 09:50:25 -0500
+macaulay2 (1.15.1.0) stable; urgency=low
+  * release version 1.15.1.0
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  22 May 2020 09:50:25 -0500
+macaulay2 (1.16) stable; urgency=low
+  * release version 1.16
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Jul 2020 09:50:25 -0500
+macaulay2 (1.16.0.1) stable; urgency=low
+  * release version 1.16.0.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  11 Jul 2020 09:50:25 -0500
+macaulay2 (1.16.0.2) stable; urgency=low
+  * release version 1.16.0.2
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  29 Aug 2020 09:50:25 -0500
+macaulay2 (1.16.99) stable; urgency=low
+  * release version 1.16.99
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Dec 2020 09:50:25 -0500
+macaulay2 (1.17) stable; urgency=low
+  * release version 1.17
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Dec 2020 09:50:25 -0500
+macaulay2 (1.17.0.1) stable; urgency=low
+  * release version 1.17.0.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Dec 2020 09:50:25 -0500
+macaulay2 (1.17.2.1) stable; urgency=low
+  * release version 1.17.2.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Jan 2021 09:50:25 -0500
+macaulay2 (1.18) stable; urgency=low
+  * release version 1.18
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Wed,  26 May 2021 09:50:25 -0500
+macaulay2 (1.18.0.1) stable; urgency=low
+  * release version 1.18.0.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Wed,  26 May 2021 09:50:25 -0500

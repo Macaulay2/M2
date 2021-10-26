@@ -1,0 +1,257 @@
+README:
+Functions that are used to see Exported vs. not Exported
+
+====================================================
+==        NumericalSchubertCalculus.m2 
+====================================================
+
+=== Exported ===
+
+setVerboseLevel, 
+			--function to change the amount of information printed on screen while running (levels 0,1,or 2)
+solveSchubertProblem
+			---uses homotopies of the Geometrical LR-rule to solve Schubert problems on a Grassmannian
+
+------------------
+-- Debug Level --
+------------------
+-- 0 = no debug mode
+-- 1 = print progress info and time main processes
+-- 2 = ... + checkerboard steps info
+-- >2 = new experimental stuff kicks in
+
+
+=== Not Exported ===
+
+redChkrPos 
+				-- given two brackets, computes the positions of the red checkers in the board
+moveRed  
+				-- makes the move of the red checkers during a game
+moveCheckers 
+				-- makes the next move of black and red checkers during a game
+				
+-- Statistics -- a few functions that count the frequencies of each type of move (of the 3x3 table) 
+			  --** Needs to be documented and programmed properly
+
+playCheckers 
+				-- given two partitions, plays the combinatorial checkerboard game and outputs the hashtable of the checkermoves played
+				-- it is also called recursively to play the next game of the Tournament and creates the Hashtable
+
+makeLocalCoordinates
+				-- translates a checkerboard into a matrix with 0s,1s, and variables
+
+solutionToChart
+				-- takes a solution matrix in global coordinates and converts it into local coordinates 
+				-- (making the linear transformation but just giving the values of the variables)
+
+changeFlags (better name?) (only used when LinearAlgebra is set to false!) ** NEEDS TO BE VERIFIED
+				-- function to convert solutions written wrt FlagsA to solutions written wrt FlagsB
+				-- it is called recursively: first only makes a change of coordinates (linear transformation)
+				-- the other call makes parameter homotopy changing one column at the time
+
+toRawSolutions  
+				-- takes solutions in local coordinates written as nxk matrices and just makes the list of values for the variables
+						of the local coordinates coordX in the checkerboard variety
+						(mainly used for writing solutions for the homotopy functions)
+
+normalizeColumn
+				-- given a matrix X, will create a 1 in position X_(r,c) by normalizing the column, i.e.
+				-- multiplying the column c by the multip. inverse of X_(r,c) leaving the other columns intact
+
+redCheckersColumnReduce
+				-- uses elementary operations to normalize columns according with redChecker positions
+
+redCheckersColumnReduceSwap
+				-- specific column reduction used in Ravi's change of coordinates for the swapping move
+
+redCheckersColumnReduce2
+				-- specific column reduction used in Ravi's change of coordinates
+
+columnReduce
+				-- given a solution matrix and the bracket (where the pivots are) makes 0's in the columns right to the pivots
+
+isRedCheckerInRegionE
+				-- Boolean to tell if a checker is northwest
+
+
+====================================================
+==        pieri.m2 
+====================================================
+
+=== Exported ===
+
+createRandomFlagsForSimpleSchubert
+				-- Given two conditions l,m in G(k,n) it produces d = k(n-k)-sum(l)-sum(m) many 
+				-- random matrices of size (n-k) x n
+
+solveSimpleSchubert
+				-- Solves a simple Schubert problem using Pieri's homotopy algorithm
+				-- (assumes user gives two partitions l,m and a bunch of flags)
+
+
+=== Not Exported ===
+
+generateChildren
+
+positionVariableChildren
+
+precookPieriHomotopy
+
+solveEasy
+
+trackSimpleSchubert
+
+
+====================================================
+==        service-functions.m2 
+====================================================
+
+=== Exported ===
+
+skewSchubertVariety 
+				-- (used in Pieri-homotopy)
+				-- 
+checkIncidenceSolution
+				--this is only for our tests... shouldn't be used by the user
+
+solutionsToAffineCoords
+				-- takes a list of solutions in global coordinates (as matrices)
+				   and writes it in terms of the coordinate chart: [**||id]
+				   *** This function may fail if the solutions cannot fit this local coordinates
+				******* This function is used ONLY in the checkNewtonIteration which in turn is not used anymore
+				        however, it is documented (we should remove it from doc.m2)
+
+partition2bracket
+
+bracket2partition
+
+randomSchubertProblemInstance
+
+LRnumber                    -- Computes the intersection number of a Schubert problem (number of solutions)
+
+NSC2phc                     -- Converts a Schubert problem from a list of partitions/brackets to the matrix of LRrule.  used in LRnumber
+
+=== Not Exported ===
+
+verifyLength(List, ZZ)
+				-- check if a partition l has k elements and adds 0s if not
+
+partition2bracket(List,ZZ,ZZ)
+				-- Dictionary function input partition and k,n --> bracket 
+
+output2partition(List) --input redcheckers
+				-- Dictionary function RedCheckers --> partition
+				
+output2bracket(List)
+				-- Dictionary function RedCheckers --> bracket
+
+bracket2partition(List,ZZ)
+				-- Dictionary function (bracket, n) -- the partition corresponding to the bracket
+
+
+printTree(MutableHashTable)--input node
+
+checkNewtonIteration
+				-- this is for testing only should be removed from the final version 
+					(seems not working with the new way to create eqns)
+				-- NOT USED at the moment
+
+
+dist(List,List) -- computes euclidean distance of 2 vectors 
+				--** NOT USED anymore
+
+moveFlags2Flags (List, List) --input two list of 2 flags (F's, G's)
+				-- it finds the transformations that sends (F1,F2) to (G1,G2) 
+
+MovingFlag'at'Root ZZ 
+				-- Creates a matrix that has the same shape as the moving flag obtained at the root
+				   from the specialization in the checkerboard game
+
+notAboveLambda(List,ZZ,ZZ) -- input(lambda, k,n)
+				-- Given a partition Lambda, this function computes all those that are
+				   not above Lambda in the Bruhat order. The output is a list of brackets
+				 ** used for making polynomials **
+
+checkSchubertProblem (List,ZZ,ZZ) 
+              -- checks if a list of partitions form a valid Schubert Problem
+
+verifyInput(List, ZZ,ZZ)
+			-- checks if the input is either partition or bracket and if it impose
+			-- a valid Schubert problem
+
+
+randomSchubertProblemInstance
+				-- Creates an instance of a Schubert problem by creating
+				-- random unitary matrices
+
+
+====================================================
+==        LR-makePolynomials.m2 
+====================================================
+
+=== Not Exported ===
+
+squareUpPolynomials(ZZ,Matrix)
+squareUpPolynomials(ZZ,Ideal)
+
+
+====================================================
+==        LR-resolveNode.m2 
+====================================================
+
+=== Not Exported ===
+
+blackBoxSolve
+				-- used to verify solutions vs. blackbox solver (only if resolveNodes is ran with the options
+				-- VERIFY'SOLUTIONS and BLACKBOX
+verifyStart
+				-- verifies the given solutions at the start of a homotopy
+globalStayCoords
+				-- the global (change of) coordinates of solutions in the LR-homotopy in the Stay Case
+globalSwapCoords
+				-- the global (change of) coordinates of solutions in the LR-homotopy in the Swap Case
+caseSwapStay
+				-- Homotopy done for the cases Swap and Stay
+verifyParent
+				-- Verify if the solution computed with LR-homotopies fits the father pattern (local coordinates)
+solveCases
+				-- This is one of the main things of the algorithm. It decides and transforms the nine cases
+				-- of the LR-homotopy algorithm
+resolveNode
+				-- Recursive function that fills up the information of each node in the whole checkerboard tournament
+				-- This is where ALL the action happens! 
+
+
+====================================================
+==        LR-ParameterHomotopy.m2 
+====================================================
+
+=== Exported ===
+
+randomSchubertProblemSolution
+				-- Given Schubert Problem conditions gives a random instance together with one solution
+
+=== Not Exported ===
+
+oneSolutionForOneInstance
+
+parametricSchubertProblem
+
+
+
+====================================================
+==        galois.m2 
+====================================================
+
+=== Exported ===
+
+findGaloisElement
+isFullSymmetric
+isGaloisFullSymmetric
+
+=== Not Exported ===
+
+
+
+
+

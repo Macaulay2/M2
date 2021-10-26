@@ -1,0 +1,30 @@
+Don't check for the presense of GMP (since --without-gmp doesn't work):
+
+diff -ur /home/dan/src/M2/M2/BUILD/dan/builds.tmp/linux32.generic.production/libraries/4ti2/tmp/4ti2-1.6.2/configure.ac 4ti2-1.6.2/configure.ac
+--- /home/dan/src/M2/M2/BUILD/dan/builds.tmp/linux32.generic.production/libraries/4ti2/tmp/4ti2-1.6.2/configure.ac	2014-01-14 20:30:06.000000000 -0500
++++ 4ti2-1.6.2/configure.ac	2015-05-04 07:58:50.835677193 -0400
+@@ -122,8 +122,8 @@
+ 
+ # Check for GNU MP.
+ AC_LANG(C++)
+-LB_CHECK_GMP(,,[AC_MSG_WARN([GNU MP not found.
+-4ti2 will be built without support for arbitrary-precision computations.])])
++dnl LB_CHECK_GMP(,,[AC_MSG_WARN([GNU MP not found.
++dnl 4ti2 will be built without support for arbitrary-precision computations.])])
+ if test -z "${GMP_HAVE_CXX}" ; then 
+   AC_MSG_WARN([Unable to use the GNU MP C++ library.  
+ Please make sure that GNU MP was configured with "--enable-cxx".
+
+Don't run the test involving gmp:
+
+diff -ur /home/dan/src/M2/M2/BUILD/dan/builds.tmp/linux32.generic.production/libraries/4ti2/tmp/4ti2-1.6.2/test/qsolve/api/Makefile.am 4ti2-1.6.2/test/qsolve/api/Makefile.am
+--- /home/dan/src/M2/M2/BUILD/dan/builds.tmp/linux32.generic.production/libraries/4ti2/tmp/4ti2-1.6.2/test/qsolve/api/Makefile.am	2013-07-28 20:27:28.000000000 -0400
++++ 4ti2-1.6.2/test/qsolve/api/Makefile.am	2015-05-04 18:10:37.546078337 -0400
+@@ -1,5 +1,6 @@
+ check_PROGRAMS = 
+-check_PROGRAMS += qsolve_main test_input_conversion_64_to_gmp test_input_conversion_gmp_to_64
++check_PROGRAMS += qsolve_main
++# check_PROGRAMS += test_input_conversion_64_to_gmp test_input_conversion_gmp_to_64
+ 
+ # Allow accessing groebner's header files as "groebner/HEADER.h"
+ AM_CXXFLAGS = -I$(top_srcdir)/src/

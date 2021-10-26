@@ -1,6 +1,7 @@
 /* Copyright 1998 by Daniel R. Grayson */
 
-#include <gc.h>
+#include <stdlib.h>
+#include <M2/gc-include.h>
 #include "html-check-links.h"
 #include "grammar.h"
 #include "getmem.h"
@@ -9,7 +10,7 @@ int abs_links = TRUE;
 int verbose = FALSE;
 extern FILE *yyin, *yyout;
 extern int yyparse(void);
-#ifdef DEBUG
+#ifndef NDEBUG
 extern int yydebug;
 #endif
 
@@ -97,9 +98,22 @@ static void process(char *f) {
   fclose(yyin);
 }
 
+void usage() {
+     fprintf(stderr,
+	     "Usage: html-check-links [OPTION]... [FILE]...\n"
+	     "Check html links in html files.\n"
+	     "\n"
+	     "Options:\n"
+	     "  --help                display this help and exit\n"
+	     "  --root PREFIX         prepend the given root prefix to each absolute path\n"
+	     "  --no-limit            change error message limit from 64 to infinity\n"
+	     "  --no-absolute-links   flag links with absolute paths as errors\n"
+	     "  --verbose             print the names of the files as they are opened\n");
+     }
+
 int main(int argc, char **argv) {
   int i = 1;
-# ifdef DEBUG
+# ifndef NDEBUG
   /*    yydebug = 1; */
 # endif
   GC_init();
@@ -120,8 +134,18 @@ int main(int argc, char **argv) {
       verbose = TRUE;
       i++;
     }
+    else if (argc > i && 0 == strcmp("--help",argv[i])) {
+      usage();
+      exit(0);
+    }
     else break;
   }
   for (; i<argc; i++) process(argv[i]);
   return errors > 0 ? 1 : 0;
 }
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/html-check-links html-check-links"
+ End:
+ */

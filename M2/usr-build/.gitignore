@@ -1,0 +1,10 @@
+/bin
+/include
+/share
+/src
+/lib
+/.untarred-*
+/.patched-*
+/.configured-*
+/.compiled-*
+/aclocal-path*

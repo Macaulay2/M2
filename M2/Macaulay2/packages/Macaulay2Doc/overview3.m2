@@ -1,7 +1,6 @@
 -- -*- coding: utf-8 -*-
 --		Copyright 1993-2009 by Daniel R. Grayson
 
-
 document {
      Key => "COPYING-GPL-2",
      Headline => "GNU General Public License, version 2",
@@ -24,15 +23,18 @@ document {
 	  )
      }
 
+-- TODO: combine these two
+document { Key => "copyright",
+     Headline => "a string containing the copyright notice for Macaulay2",
+     EXAMPLE "copyright" }
+
 document {
      Key => "Copyright and license",
      PARA {
-	  "Macaulay2, its object code and source code, and its documentation,
-	  are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit 
-	  you to use it either:
+	  "Macaulay2, its object code, source code, and documentation,
+	  are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit you to use it either
 	  under the terms of the GNU General Public License, version 2, as published by the Free Software Foundation, and as
-	  contained in the file ", TO "COPYING-GPL-2", " accompanying the program;
-	  or:
+	  contained in the file ", TO "COPYING-GPL-2", " accompanying the program, or
 	  under the terms of the GNU General Public License, version 3, as published by the Free Software Foundation, and as
 	  contained in the file ", TO "COPYING-GPL-3", " accompanying the program."
 	  },
@@ -47,31 +49,82 @@ document {
      Subnodes => {
 	  "libraries",
 	  TO "Singular-Factory",
-	  TO "Singular-Libfac",
 	  TO "frobby",
-	  TO "pari",
 	  TO "MPIR",
+	  TO "GNU MP",
 	  TO "MPFR",
+      TO "MPFI",
 	  TO "GC garbage collector",
 	  TO "LAPACK",
 	  TO "BLAS",
 	  TO "NTL library",
-	  TO "mpack",
+	  TO "FLINT",
+	  TO "givaro",
+	  TO "fflas-ffpack",
+	  TO "MPSolve",
+	  TO "Boost",
 	  "programs and their libraries",
 	  TO "4ti2",
 	  TO "gfan",
 	  TO "normaliz",
+	  TO "csdp",
 	  TO "nauty",
 	  TO "cdd+",
-	  TO "lrslib"
+	  TO "lrslib",
+	  TO "topcom",
+	  TO "cohomCalg"
      	  }
      }
 
 document {
-     Key => "mpack",
+     Key => "cohomCalg",
      PARA {
-	  "The library ", TT "mpack", " is a multiprecision linear algebra package based on lapack and blas,
-	  written by Nakata Maho.  It is available at ", HREF "http://mplapack.sourceforge.net/", "."
+     	  "The program ", TT "cohomCalg", ", by Ralph Blumenhagen, Benjamin Jurke, Thorsten Rahn, and Helmut Roschy,
+	  computes cohomology of line bundles, and is available from ", HREF "http://wwwth.mppmu.mpg.de/members/blumenha/cohomcalg/", "."
+	  }
+     }
+
+document {
+     Key => "topcom",
+     PARA {
+	  "The program ", TT "topcom", ", by Jörg Rambau, computes triangulations of point configurations and oriented matroids,
+	  and is available from ", HREF "http://www.rambau.wm.uni-bayreuth.de/TOPCOM/", "."
+	  }
+     }
+
+document {
+     Key => "csdp",
+     PARA {
+	  "The program ", TT "csdp", ", by Brian Borchers, solves semidefinite programming problems
+	  and is available from ", HREF "http://www.coin-or.org/download/source/Csdp", "."
+	  }
+     }
+
+document {
+     Key => "givaro",
+     PARA {
+	  "The library ", TT "givaro", " is a library for arithmetic and algebraic computations, is required for ", TO "fflas-ffpack", ", 
+	  and is available from ", HREF "https://github.com/linbox-team/givaro", "."
+	  }
+     }
+
+document {
+     Key => "fflas-ffpack",
+     PARA {
+	  "The library ", TT "fflas-ffpack", " is a library
+	  for dense and sparse linear algebra over a finite field or the ring of integers,
+ 	  available from ", HREF "https://github.com/linbox-team/fflas-ffpack", "."
+	  }
+     }
+
+document {
+     Key => "FLINT",
+     PARA {
+	  "The library ", TT "FLINT", " (Fast Library for Number Theory) is a
+	  library for computations in number theory, consisting mainly of routines for
+	  integer and polynomial arithmetic and linear algebra.  It was written
+	  by William Hart, Mike Hansen, Sebastian Pancratz, Fredrik Johansson,
+	  and others, and is available at ", HREF "http://flintlib.org/", "."
 	  }
      }
 
@@ -80,8 +133,7 @@ document {
      PARA {
      	  "The program ", TT "lrslib", ", written by David Avis,
 	  provides the reverse search algorithm for  vertex enumeration and convex hull problems.
-	  It is available at ", HREF "http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html", ",
-	  under the terms of the GNU General Public License, version 2."
+	  It is available at ", HREF "http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html", "."
 	  }
      }
 
@@ -92,8 +144,7 @@ document {
 	  is a C++ implementation of the double description 
 	  method of Motzkin, et al., for generating all vertices
 	  and extreme rays of a general convex polyhedron in $\\RR^d$ given by a system 
-	  of linear inequalities.  It is available at ", HREF "http://www.ifor.math.ethz.ch/~fukuda/cdd_home/", ",
-	  under the terms of the GNU General Public License, version 2."
+	  of linear inequalities.  It is available at ", HREF "http://www.ifor.math.ethz.ch/~fukuda/cdd_home/", "."
 	  }
      }
 
@@ -122,8 +173,7 @@ document {
      	  "The program ", TT "normaliz", ", written by Winfried Bruns, Bogdan Ichim, and Christof Soeger,
 	  provides computations in affine monoids, vector configurations, lattice polytopes, 
      	  and rational cones.  It is available at ", HREF "http://www.mathematik.uni-osnabrueck.de/normaliz/", ".  The package
-     	  ", TO "Normaliz::Normaliz", " is an interface to it.  It is licensed under the terms of
-	  the GNU General Public License, version 3."
+     	  ", TO "Normaliz::Normaliz", " is an interface to it."
 	  }
      }
 
@@ -155,7 +205,8 @@ document {
      Key => "NTL library",
      PARA {
 	  "The ", TT "NTL", " library, written by Victor Shoup, is used by Macaulay2, through the ", TO "Singular-Factory", " library,
-	  for its algebraic routines.  It is available at ", HREF "http://shoup.net/ntl/", "."
+	  for its algebraic routines.  It is available at ", HREF "http://shoup.net/ntl/", "
+	  and is licensed under the GNU Lesser General Public License, version 2 or later."
 	  }
      }
 
@@ -172,18 +223,30 @@ document {
      }
 
 document {
+     Key => "MPFI",
+     PARA {
+	  "The ", TT "MPFI", " library is used by Macaulay2 for its arbitrary precision real interval arithmetic
+	  and associated transcendental functions.  It is available at ", HREF "https://gforge.inria.fr/projects/mpfi/", ".  The
+	  library is based on the ", TO "MPFR", " library.  The library is remarkable for the care taken to return correctly rounded
+	  results.  It is hoped that this will form a good base for experimentation
+	  with algebraic algorithms that mix symbolic and numeric techniques.
+	  It is licensed under the GNU Lesser General Public License, version 3 or later."
+	  }
+     }
+
+document {
      Key => "GC garbage collector",
      PARA {
 	  "Macaulay2 uses the excellent garbage collector GC, version ", version#"gc version", ",
 	  written by Hans-J. Boehm and Alan J. Demers and generously licensed
 	  to the public.  It is available at
-	  ", HREF "http://www.hpl.hp.com/personal/Hans_Boehm/gc/", "."
+	  ", HREF "https://www.hboehm.info/gc/", "."
 	  },
      PARA{
 	  "Some environment variables can be set by the user to tune garbage collector performance:"
 	  },
      UL {
-	  LI { "GC_INITIAL_HEAP_SIZE -- initial heap size in bytes" },
+	  LI { "GC_INITIAL_HEAP_SIZE -- initial heap size in bytes, or number of gigabytes followed by 'G', similarly for 'M', 'K'" },
 	  LI { "GC_MAXIMUM_HEAP_SIZE -- maximum collected heap size" },
 	  LI { "GC_FREE_SPACE_DIVISOR -- if set to a number D, then
                          we try to make sure that we allocate at least N/D bytes between collections, where N is twice the
@@ -204,9 +267,8 @@ document {
 	  "The full list is found in the source code for gc in the file ", TT "doc/README.environment", "."
 	  },
      PARA {
-	  "Here are some error messages you may see from it when it aborts the program, due to lack of memory or related problems.
-	  Typically, the only recourse for the user is to increase the memory available to the program."
-	  },
+	  "Here are some error messages you may see from it when it aborts the program, due to lack of memory or related problems."
+      },
      UL {
 	  "Insufficient space for initial table allocation",
 	  "No space for lwp data structures",
@@ -216,29 +278,55 @@ document {
 	  "Too many heap sections: Increase MAXHINCR or MAX_HEAP_SECTS",
 	  "Too many root sets"
 	  },
+     PARA {
+      "You may simply be out of memory, and then the only recourse is to increase the memory available to the program.
+      However, if you don't have enough heap sections,
+      sometimes one can just start Macaulay2 by setting the GC_INITIAL_HEAP_SIZE environment variable 
+      to some larger value with an environment setting prefix on the M2 command line, e.g., ", TT "GC_INITIAL_HEAP_SIZE=20G M2", ".",
+	  },
      SeeAlso => { collectGarbage }
      }
 
-document {
-     Key => collectGarbage,
-     Headline => "collect the garbage in memory",
-     Usage => "collectGarbage()",
-     Consequences => {
-	  {"garbage is collected"}
-	  },
-     SeeAlso => "GC garbage collector"
-     }
+doc /// 
+    Key 
+        "MPSolve"
+    Headline 
+        a library for finding roots of univariate polynomials 
+    Description 
+        Text 
+            Starting with version 1.16, Macaulay2 incorporates the
+            MPsolve (version 3) package, available at @HREF
+            "https://numpi.dm.unipi.it/_media/software/mpsolve"@,
+            and originally developed by Dario Bini, Giuseppe
+            Fiorentino, and Leonardo Robol.
+            
+            This library is used by the @TO "roots"@ function, for
+            finding complex roots of a univariate polynomial
+    SeeAlso
+        (roots, RingElement)
+///
 
-document {
-     Key => "pari",
-     PARA {
-	  "Starting with version 1.2, Macaulay2 incorporates ", TT "pari", ", a free library for fast computations in number theory,
-	  available at ", HREF "http://pari.math.u-bordeaux.fr/", ",
-	  originally developed by Henri Cohen and his co-workers at Université Bordeaux I, France.
-	  It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), ".
-	  It is distributed under the terms of the GNU General Public License, version 2, see ", TO "COPYING-GPL-2", "."
-	  }
-     }
+doc ///
+  Key
+    "Boost"
+  Headline
+    a collection of C++ source libraries
+  Description
+    Text
+      @HREF {"https://www.boost.org/", "Boost"}@ is a collection of free peer-reviewed and
+      portable C++ libraries suitable for eventual standardization.
+
+      Macaulay2 incorporates the following Boost libraries:
+    Tree
+      @HREF {"https://www.boost.org/doc/libs/release/libs/stacktrace/", "Boost.Stacktrace"}@ (since version 1.16)
+        :used internally for printing stack traces
+      @HREF {"https://www.boost.org/doc/libs/release/libs/regex/", "Boost.Regex"}@ (since version 1.17)
+        :used by the @TO regex@ function, as well as other functions using @TO "regular expressions"@.
+
+    Text
+      Note: the program @TO "normaliz"@ utilizes the
+      @HREF {"https://www.boost.org/doc/libs/release/libs/dynamic_bitset/", "Boost dynamic_bitset class"}@.
+///
 
 document {
      Key => "frobby",
@@ -246,8 +334,7 @@ document {
 	  "Starting with version 1.2, Macaulay2 incorporates ", TT "frobby", ", a free library of routines for computing
 	  the Alexander dual of a monomial ideal (see ", TO (dual,MonomialIdeal), ", a method used internally
 	       by many routines), written
-	  by Bjarke Hammersholt Roune, and available at ", HREF "http://www.broune.com/frobby/", ".
-	  It is distributed under the terms of the GNU General Public License, version 2 (or later), see ", TO "COPYING-GPL-2", "."
+	  by Bjarke Hammersholt Roune, and available at ", HREF "http://www.broune.com/frobby/", "."
 	  }
      }
 
@@ -257,9 +344,7 @@ document {
      G.-M. Greuel, R. Stobbe, G. Pfister, H. Schoenemann, and J. Schmidt,
      University of Kaiserslautern, Macaulay2 incorporates ", TT "Singular-Factory", ",
      version ", version#"factory version", ", a free library of polynomial routines
-     that provides for factorization of polynomials.  It is distributed under the
-     terms of the GNU General Public License (version 2 (see ", TO "COPYING-GPL-2", ")
-	  or version 3 (see ", TO "COPYING-GPL-3", ")) and is available at 
+     that provides for factorization of polynomials.  It is available at 
      ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory"," and at 
      ", HREF "http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/SOURCES", ".  It
      is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
@@ -268,28 +353,7 @@ document {
      UL {
 	  TOH "factor",
 	  TOH "gcd",
-	  TOH "minimalPrimes",
-	  TOH "irreducibleCharacteristicSeries"
-	  }
-     }
-
-document {
-     Key => "Singular-Libfac",
-     "With the kind permission of the author, Michael Messollen, Macaulay2
-     incorporates ", TT "Singular-Libfac", ", version ", version#"libfac version", ",
-     a free library of routines, depending on ", TO "Singular-Factory", ", that provides
-     factorization of multivariate polynomials over finite fields and computation of the minimal associated primes 
-     of ideals via characteristic sets.  It is distributed under the terms of the
-     GNU General Public License (version 2 (see ", TO "COPYING-GPL-2", ") or version 3 (see ", TO "COPYING-GPL-3", ")), and is available at 
-     ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac"," and at 
-     ", HREF "http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/SOURCES", ".  It
-     is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
-     PARA{},
-     "The following important routines call upon it:",
-     UL {
-	  TOH "factor",
-	  TOH "gcd",
-	  TOH "minimalPrimes",
+	  TOH "MinimalPrimes :: minimalPrimes",
 	  TOH "irreducibleCharacteristicSeries"
 	  }
      }
@@ -297,46 +361,43 @@ document {
 document {
      Key => "MPIR",
      "The MPIR library, version ", version#"mpir version", " provides
-     routines for arbitrary precision integer and floating point arithmetic,
-     and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 2.1 or later.
-     It is available at ", HREF "http://www.mpir.org/", "."
+     routines for arbitrary precision integer and floating point arithmetic.
+     It is available at ", HREF "http://www.mpir.org/", ".  To see whether your copy of Macaulay2 is linked
+     with it (or with GMP), examine the variable ", TO "version", "."
      }
-
 
 document {
      Key => "4ti2",
      "The package of programs ", TT "4ti2", " is dedicated to algebraic, geometric and combinatorial
-     problems on linear spaces, and is distributed under the terms of the GNU General Public License (GPL), version 2 or later.
-     It is available at ", HREF "http://www.4ti2.de/", ".  The package ", TO "FourTiTwo::FourTiTwo", " runs it."
+     problems on linear spaces.  It is available at ", HREF "http://www.4ti2.de/", ".  The package ", TO "FourTiTwo::FourTiTwo", " runs it."
      }
 
--- document {
---      Key => "GNU MP",
---      "The GNU MP library, gmp, version ", version#"gmp version", " provides
---      routines for arbitrary precision integer and floating point arithmetic,
---      and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 2.1 or later.
---      It's available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and 
---      ", HREF "http://gmplib.org/", "."
---      }
+document {
+     Key => "GNU MP",
+     "The GNU MP library (GMP) provides
+     routines for arbitrary precision integer and floating point arithmetic.
+     It is available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and ", HREF "http://gmplib.org/", ".  To see whether your copy of Macaulay2 is linked
+     with it (or with MPIR), examine the variable ", TO "version", "."
+     }
 
 document {
      Key => "Acknowledgements",
      "We thank the National Science Foundation for generous funding since
      1993 for this project, Gert-Martin Greuel and Ruediger Stobbe for the
-     incorporation of their library ", TO "Singular-Factory", ", Michael Messollen for
-     the incorporation of his library ", TO "Singular-Libfac", ",
+     incorporation of their library ", TO "Singular-Factory", ",
      and David Eisenbud, Wolfram Decker and Sorin Popescu for
      early support, encouragement and suggestions.  We also acknowledge an
      intellectual debt to Dave Bayer, who, with Michael Stillman,
      wrote Macaulay, a specialized computer algebra system for algebraic
-     geometry and the predecessor of this program."
+     geometry and the predecessor of this program.",
+     SeeAlso => "authors of Macaulay2 packages"
      }
 
-{* -- Mike wanted this: 
+-* -- Mike wanted this: 
 document {
      Key => "preface",
      }
-*}
+*-
 
 document {
      Key => "prefixPath",
@@ -346,7 +407,7 @@ document {
 	  prefix, which is one of the members of the list ", TO "prefixPath", "; (b) the relative location of the directory
 	  containing the file, as recorded in the hash table ", TO "Layout", "; and (c) the base name of the file.
 	  The value of ", TO "prefixPath", " is used by ", TO "installPackage", " when determining how to direct
-	  documentation hyperlinks from one package to another, provided the option ", TO "AbsoluteLinks", " is set to ", TO "true", "."
+	  documentation hyperlinks from one package to another."
 	  },
      PARA {
 	  "The initial value of ", TO "prefixPath", " contains just the following two optional items.
@@ -361,7 +422,7 @@ document {
 	  "When running a newly compiled version of Macaulay2, adding something like ", TT "-E 'prefixDirectory=\"/usr/\"'", " to
 	  the command line is a good way to direct hyperlinks created by ", TO "installPackage", " to the documentation provided by
 	  an older copy of Macaulay2 installed with the prefix ", TT "/usr/", ", and that, in turn, is easily done within
-	  emacs by the keystroke sequence ", TT "CTRL-U f12", ", which offers you a chance to edit the command line."
+	  emacs by the keystroke sequence ", TT "C-u f12", ", which offers you a chance to edit the command line."
 	  },
      PARA {
 	  "The initial value of ", TO "prefixPath", " described above can be overridden by the user's ", TO "initialization file", ")."
@@ -423,21 +484,21 @@ document {
 	  "Macaulay2 comes with a variety of types of files, and some of them are associated with a 
 	  particular Macaulay2 package.  The hash table ", TT "currentLayout", " is a translation 
 	  table from names, corresponding to the various types of files, to directory paths.  The
-	  directory paths are to be interpreted relative to the path stored in ", TO "prefixDirectory", " or in one
-	  of the directories contained in the list ", TO "prefixPath", ".
+	  directory paths are to be interpreted relative to the path stored in ", TO "prefixDirectory", ".  Each
+	  of the directories contained in the list ", TO "prefixPath", " has its own layout, which will be detected at runtime.
 	  Some of the strings contain ", TT "PKG", " as a substring, which should be replaced
 	  by the name of package whose files will be stored in that directory."
 	  },
      PARA {
 	  "The hash table ", TO "Layout", " contains the two possible values for ", TO "currentLayout", ";
-	  corresponding to the two possible values for the ", TO "SeparateExec", " option used with ", TO "installPackage", ".
+	  corresponding to the two possible values for the ", TO [installPackage, SeparateExec], " option used with ", TO "installPackage", ".
 	  The hash table ", TT "Layout#2", " is used if architecture dependent files are to be stored in
 	  a directory tree separate from the one used for architecture independent files.  The hash table ", TT "Layout#1", "
 	  is used otherwise."
 	  },
      PARA {
 	  "Basic Macaulay2 files are regarded as being associated
-	  with a special package called ", TO2{"Macaulay2Doc::Core", "Core"}, ", and the corresponding documentation files
+	  with a special package called ", TT{"Core"}, ", and the corresponding documentation files
 	  are part of the package ", TT "Macaulay2Doc", "."
      	  },
      EXAMPLE {
@@ -489,14 +550,14 @@ document {
 	  }
      }
 
-{* -- Mike wanted this: 
+-* -- Mike wanted this: 
 document { Key => "frequently encountered problems",
      }
-*}
+*-
 
 document {
      Key => "specifying typical values",
-     "For the purpose of construction good documentation automatically, it
+     "For the purpose of constructing good documentation automatically, it
      is useful to specify the type of value typically returned by a function
      or method.  For example, the function ", TO "isModule", " returns a boolean
      value, and this is specified when creating the method function with the
@@ -537,8 +598,8 @@ document {
 	  TO "Daniel R. Grayson",
 	  TO "Michael E. Stillman",
      	  "Our co-author for the tutorials, long time supporter and user of Macaulay2, and collaborator on the project since 2007:",
-	  TO "David Eisenbud",
-	  }
+	  TO "David Eisenbud"},
+     SeeAlso => "authors of Macaulay2 packages"
      }
 
 document {
@@ -627,11 +688,11 @@ document {
      
      }
 
-{* -- Mike wanted this: 
+-* -- Mike wanted this: 
 document {
      Key => "Resources required",
      }
-*}
+*-
 
 document {
      Key => "debugging",
@@ -669,99 +730,14 @@ document {
      }
 
 document {
-     Key => "system facilities",
-     Subnodes => {
-     	  "Loading files:",
-	  TO "autoload",
-	  TO "initialization file",
-	  TO "input",
-	  TO "load",
-	  TO "needs",
-     	  "Echoing characters:",
-	  TO "clearEcho",
-	  TO "setEcho",
-     	  "Dumping and restoring the state of the system:",
-	  TO "dumpdata",
-	  TO "loaddata",
-	  TO "restart",
-	  TO "addStartFunction",
-	  TO "addEndFunction",
-     	  "Interface to the operating system:",
-	  TO "top level loop",
-	  TO "alarm",
-	  TO "currentDirectory",
-	  TO "exec",
-	  TO "exit",
-	  TO "fork",
-	  TO "getenv",
-	  TO "processID",
-	  TO "path",
-	  TO "quit",
-	  TO "run",
-	  TO "sleep",
-	  TO "time",
-	  TO "timing",
-	  TO "wait",
-     	  "Variables with information about the state of the current process:",
-	  TO "commandLine",
-	  TO "environment",
-	  TO "version",
-     	  "Dealing with the garbage collector:",
-	  TO "collectGarbage"
-	  }
-     }
-
-document {
-     Key => "initialization file",
-     "The file ", TT "init.m2", " is loaded automatically when the
-     program is started, if it exists.",
-     PARA{
-	  "On most systems the file is sought in the directory ", TT "$HOME/.Macaulay2/", ",
-	  where ", TT "$HOME", " is replaced by the path to the user's home
-	  directory."
-	  },
-     PARA{
-	  "Under Mac OS X, the file is sought instead in the
-	  directory ", TT "$HOME/Library/Application Support/Macaulay2/", "."
-	  },
-     PARA{
-	  "If the user wants a file called, say, ", TT "start.m2", " in the current
-	  directory to be loaded automatically when the program is started, then the
-	  following line of code can be placed in the file ", TT "init.m2", "."
-	  },
-     PRE {
-	  ///if fileExists "start.m2" then load(currentDirectory()|"start.m2")///
-	  },
-     PARA {
-	  "Warning: former versions of the program would also load a file named ", TT "init.m2", " found in the current directory."
-	  }
-     }
-
-document {
      Key => "combinatorial functions",
      UL {
-	  TO "random",
 	  TO "binomial",
+	  TO "compositions",
+	  TO "partitions",
+	  TO "random",
 	  TO "subsets",
-	  TO "tally",
-	  TO "partitions"
-	  }
-     }
-
-document {
-     Key => "top level loop",
-     "The top level evaluation loop of the interpreter contains hooks so the user can
-     control how printing of the results of evaluation is done.  If the result is 
-     ", TO "null", " then nothing is printed.  Otherwise, the appropriate method
-     associated with the symbol ", TO "Print", " is applied to perform the printing,
-     unless the printing is to be suppressed, as indicated by a semicolon at the end
-     of the statement, in which case the ", TO "NoPrint", " method is applied.",
-     UL {
-	  TO "AfterEval",
-	  TO "AfterPrint",
-	  TO "AfterNoPrint",
-	  TO "NoPrint",
-	  TO "Print",
+	  TO "tally"
 	  }
      }
 

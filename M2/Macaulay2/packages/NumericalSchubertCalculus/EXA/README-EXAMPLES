@@ -1,0 +1,51 @@
+
+
+=========  Examples that DO NOT WORK go here =================
+
+Weird_Error.m2    This has to be looked into
+
+1e43e3111-G48.m2    ***works with multiprecision*** 
+
+21e422-G48.m2       Seed 4: Singularity encountered
+
+1e9-G36.m2          Seed 21:Singularity but Finds all 42 solutions with Seed 5 in 3m4.142s
+
+2e8-G48.m2          126 solutions found and tested with all 3 engines:
+                       M2engine: 1819.89s = 30m 19.89s
+                       BERTINI:  1771.24s
+                       PHCPACK:  Singularity encountered
+                                
+
+=========   Examples that WORK go here. =======================
+
+21x2e3-G36.m2                Finds two solutions after 8.383s
+
+21e5-G38.m2                  Finds 32 solutions in 35m8.817s   wall 18m29.654s
+
+2e53e2-G48.m2                26 solutions computed in 408.48 
+
+1e6-G25.m2                   Finds five solutions in 4.475s
+
+1e621-G36.m2                 Finds sixteen solutions in 29.524s
+
+21e4-G37.m2                  Finds eight solutions in two ways 
+                                 LinearAlgebra true: 12.131s
+                                 LinearAlgebra false: 141.01s
+        with Seed 2, this last one doesn't assert all checkIncidenceSolution
+21e422-G48.m2               42 solutions found and tested with all 3 engines:
+	M2engine: 4m 25.335s
+	BERTINI:  2m41.881s
+	PHCPACK:  1m51.526s
+
+
+
+
+
+
+
+
+
+SUBDIRECTORIES:
+ProblemsG36/		family of examples (by Frank) 
+ProblemsG37/		family of examples (by Frank)
+

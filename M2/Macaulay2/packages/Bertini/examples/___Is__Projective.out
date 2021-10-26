@@ -1,0 +1,9 @@
+-- -*- M2-comint -*- hash: 1566708855
+
+i1 : R = CC[x,y,z];
+
+i2 : f = {(x^2+y^2-z^2)*(z-x),(x^2+y^2-z^2)*(z+y)};
+
+i3 : bertiniPosDimSolve(f,IsProjective=>1);
+
+i4 : 

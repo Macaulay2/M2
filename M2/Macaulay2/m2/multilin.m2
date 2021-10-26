@@ -1,5 +1,7 @@
 --		Copyright 1995-2002,2010 by Daniel R. Grayson and Michael Stillman
 
+needs "matrix1.m2"
+
 symmetricPower(ZZ, Matrix) := Matrix => (i,m) -> map(ring m, rawSymmetricPower(i, raw m))
 
 getMinorsStrategy := (R,options) -> (
@@ -24,7 +26,7 @@ getMinorsStrategy := (R,options) -> (
 
 minors = method(Options => { Limit => infinity, First => null, Strategy => null })
 exteriorPower = method(Options => { Strategy => null })
-determinant = method(Options => { Strategy => null })
+-- def of determinant moved to methods.m2
 
 exteriorPower(ZZ,Module) := Module => options -> (p,M) -> (
      R := ring M;
@@ -90,8 +92,8 @@ determinant Matrix := RingElement => options -> f -> (
      or not isFreeModule source f
      or not isFreeModule target f
      then error "expected a square matrix";
-     if hasEngineLinearAlgebra ring f then 
-       (ring f).determinant f
+     if hasEngineLinearAlgebra ring f and isBasicMatrix f and numRows f === numColumns f then
+       basicDet f
      else 
        (exteriorPower(numgens source f, f, options))_(0,0))
 

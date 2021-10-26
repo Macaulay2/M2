@@ -1,70 +1,20 @@
-some remnants from m2/Makefile.in:
+some helper code:
 
-DOCSEQUENCE  = $(shell cat @srcdir@/docseq)
-
-DUMPEDM2FILES += $(DOCSEQUENCE) # this depends on whether we load the documentation in last.m2
-
-
-
-
-PACKAGEPREFIX = tmp
-
-MAKEINFO = true
-M2OPTIONS := -q
-ifndef INTERACTIVE
-M2OPTIONS += --stop
-M2OPTIONS += --no-debug
-endif
-M2OPTIONS += -e errorDepth=0
-M2OPTIONS += -e debugLevel=0
-M2OPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => true, PackagePrefix => "$(PACKAGEPREFIX)/", MakeLinks => false, RemakeAllDocumentation => false) '
-ifndef INTERACTIVE
-M2OPTIONS += -e 'exit 0 '
-endif
-
-% : %.in
-	cp "$<" "$@"
-
-
-Macaulay2-doc.m2 : loads.awk docseq 
-	@echo making $@
-	@awk -f $^ >$@
-clean::; rm -f Macaulay2-doc.m2
-
-
-clean::; rm -f $(EXAMPLEDATAFILES)
-tmp/.documentation-made : $(DOCSEQUENCE) $(EXAMPLEDATAFILES)
-	@ echo making the Macaulay2 package, including the documentation and example output
-	@ set -x ; time ../bin/M2 $(M2OPTIONS)
-	touch "$@"
-clean::; rm -f tmp/.documentation-made
-
-remake-all: remake-doc remake2 remake3 remake4
-remake-html : remake-doc remake3
-remake-nodes: remake-doc remake2
-remake-examples: remake-doc remake4
-remake-failed-examples: remake-doc remake5
-remake-doc:
-	@ set -x ; rm -f tmp/.documentation-made
-remake2:
-	@ set -x ; rm -f $(subst $(M2PKGNAME),Macaulay2,tmp/$(packagedocRelDir)/*documentation.db tmp/*/$(packagedocRelDir)/*documentation.db)
-remake3:
-	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packagehtmlRelDir) tmp/*/$(packagehtmlRelDir))
-remake4:
-	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packageexamplesRelDir) tmp/*/$(packageexamplesRelDir))
-	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packagetestsRelDir) tmp/*/$(packagetestsRelDir))
-remake5:;
-	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packageexamplesRelDir)/*.errors tmp/*/$(packageexamplesRelDir)/*.errors)
-	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packagetestsRelDir)/*.errors tmp/*/$(packagetestsRelDir)/*.errors)
-
-
-all:: tmp
-tmp :; mkdir "$@"
-#	see startup.m2, too, for setting "prefixDirectory" to ./tmp while building, so it can find example output files
-
-tmp/$(package):tmp; mkdir $@
-clean::; rm -rf tmp/$(package)
-
-install:: all install-main
-install-main: tmp/$(package)
-	 tar cf - -C tmp/$(package) . | tar xf - -C @encapdir@
+x = {"PruneComplex", "CohomCalg", "Topcom", "ReflexivePolytopesDB", "AbstractToricVarieties", "TestIdeals", "AlgebraicSplines", "TriangularSets", "Chordal", "Tropical", "SymbolicPowers", "Complexes", "GroebnerWalk", "RandomMonomialIdeals", "Matroids", "NumericalImplicitization"}
+y = for i in x list needsPackage i
+getName = x -> (new OptionTable from x).Name
+commaAnd = x -> concatenate (
+     if #x > 2 then (between (", ", drop(x,1)), ", and ", x#-1)
+     else between (" and ", x))
+for i in y do (
+     << ///	       	    LI { TO "///
+	  << i
+	  << ///::///
+	  << i
+	  << ///", ", a package by ///
+          << commaAnd (for a in (options i).Authors list getName a)
+	  << /// for ///
+	  << (options i).Headline
+	  << ///, has been added." },/// 
+	  << endl
+     )

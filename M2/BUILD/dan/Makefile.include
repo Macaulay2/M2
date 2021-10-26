@@ -1,42 +1,44 @@
 # -*- makefile-gmake -*-
 
+default:
 TARGETS = default everything world configure all install check-links distclean clean arch-chk install-it rebuild-world check
 .PHONY : $(TARGETS)
+.NOTPARALLEL:
 $(TARGETS): banner
 banner:; @echo "-*- mode: compilation; default-directory: \"`pwd`/\" -*-"
 DIRECTORY ?= none
 ifneq ($(DIRECTORY),none)
 # why did I think this was a good idea ??
 # include builds.tmp/$(DIRECTORY)/include/configuration
-all:builds.tmp/$(DIRECTORY)/include/configuration
+all: banner make-configure builds.tmp/$(DIRECTORY)/include/configuration announce
 else
 $(warning DIRECTORY variable unset)
 endif
 all:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@ $(BUILDOPTIONS)
-clean:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@
+announce validate-html clean:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@
 arch-chk:
-everything:; $(MAKE) -C builds.tmp/$(DIRECTORY) all RemakeAllDocumentation=true RemakePackages=true
+everything:; $(MAKE) -C builds.tmp/$(DIRECTORY) ReinstallPackages=true RemakeAllDocumentation=true RerunExamples=true -k all check
 check-links:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/html-check-links check
-check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k check
-big-check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k big-check
-configure builds.tmp/$(DIRECTORY)/include/configuration:../../configure
-	mkdir -p builds.tmp/$(DIRECTORY)
-	D=`pwd` ;\
-	  echo "make: Entering directory \`$$D/builds.tmp/$(DIRECTORY)'" &&\
-	  cd builds.tmp/$(DIRECTORY) && $$D/../../configure $(CONFIGOPTIONS) &&\
-	  echo "make: Leaving directory \`$$D/builds.tmp/$(DIRECTORY)'"
-default: arch-chk all
-default: check-links
-distclean: distclean1
+big-check check:
+	$(MAKE) -C builds.tmp/$(DIRECTORY) -k $@
+help:
+	$(MAKE) -C builds.tmp/$(DIRECTORY) $@
+configure builds.tmp/$(DIRECTORY)/include/configuration:
+	mkdir -p "builds.tmp/$(DIRECTORY)"
+	@ D=`cd ../.. ; /bin/pwd` ;\
+	  E=`pwd` ;\
+	  echo "make: Entering directory \`$$E/builds.tmp/$(DIRECTORY)'" &&\
+	  cd "builds.tmp/$(DIRECTORY)" && ( set -x ; $$D/configure $(CONFIGOPTIONS)) &&\
+	  echo "make: Leaving directory \`$$E/builds.tmp/$(DIRECTORY)'"
+default: arch-chk all check check-links
+distclean: distclean1 distclean1-check
 distclean1:
 	if [ -e builds.tmp/$(DIRECTORY)/GNUmakefile ] ; \
 	then $(MAKE) -k -C builds.tmp/$(DIRECTORY) distclean -o config.status ; \
 	fi
+distclean1-check:
 	-! [ -d builds.tmp/$(DIRECTORY) ] || ! find builds.tmp/$(DIRECTORY) -type f | sed 's/^/========== /' | head -50 | grep . \
 		|| echo "========== files left after make distclean (first 50) ========" >&2
-	if [ -e builds.tmp/$(DIRECTORY)/. ] ; \
-	then rm -rf builds.tmp/$(DIRECTORY) ; \
-	fi
 install-it:; $(MAKE) -C builds.tmp/$(DIRECTORY) install -o all $(INSTALLOPTIONS)
 install:pre-install install-it post-install
 install-info:
@@ -46,23 +48,27 @@ install-info:
 cygwin-signature:; $(MAKE) -C builds.tmp/$(DIRECTORY)/distributions/cygwin/server signature
 pre-install post-install:
 rebuild-world: rebuild-world1 rebuild-world2 rebuild-world3
-rebuild-world1: arch-chk distclean-or-rm-rf
-distclean-or-rm-rf:
-	$(MAKE) -C "builds.tmp/$(DIRECTORY)" distclean || rm -rf "builds.tmp/$(DIRECTORY)"
-rebuild-world2:; $(MAKE) -C ../..
+rebuild-world1: arch-chk distclean2
+clean-rm-rf :
+	rm -rf "builds.tmp/$(DIRECTORY)"
+distclean2:
+	@if [ -f "builds.tmp/$(DIRECTORY)/GNUmakefile" ] ; then set -x ; $(MAKE) -f GNUmakefile -C "builds.tmp/$(DIRECTORY)" distclean ; fi
+rebuild-world2:make-configure
+make-configure:; $(MAKE) -C ../.. -f Makefile -o helpful
 rebuild-world3: configure all check check-links
 world: arch-chk configure all install check
 check-info:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/packages $@
-../../configure :; $(MAKE) -C ../..
 rm-dep:; find builds.tmp/$(DIRECTORY) -name \*.dep -delete
 find-M2:
 	: : : : : : : : : : : : : : : : : : M2s : : : : : : : : : : : : : : 
-	@for i in `pwd`/builds.tmp/*/StagingArea/*/bin/M2 ; do echo $$i ; done
+	@for i in `pwd`/builds.tmp/*/usr-dist/*/bin/M2 ; do echo $$i ; done
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : 
-CONFIGOPTIONS := --enable-encap --enable-download --enable-common-staging-area $(CONFIGOPTIONS)
+CONFIGOPTIONS := --enable-encap --enable-download $(CONFIGOPTIONS)
+CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)" FC="$(FC)" AR="$(AR)" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 AM_DEFAULT_VERBOSITY = 1
 PREFIX ?= /usr
 CONFIGOPTIONS += --prefix=$(PREFIX)
+CONFIGOPTIONS += --build=$(shell ../../config/config.guess)
 # Local Variables:
 # compile-command: "time make -f Makefile.include find-M2 DIRECTORY=none"
 # End:

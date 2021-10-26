@@ -2,7 +2,7 @@
 use actors;
 use actors2;
 
-header "#include \"../e/engine.h\"";
+header "#include <interface/random.h>";
 
 getParsing(e:Expr):Expr := (
      when e
@@ -12,42 +12,6 @@ getParsing(e:Expr):Expr := (
 	  list( toExpr(x.precedence), toExpr(x.binaryStrength), toExpr(x.unaryStrength)))
      else nullE);
 setupfun("getParsing",getParsing);
-dumpdatafun(e:Expr):Expr := (
-     when e
-     is s:stringCell do (
-	  o := stdIO.insize;
-	  p := stdIO.eof;
-	  q := stdIO.inindex;
-	  stdIO.insize = 0;
-	  stdIO.eof = false;
-	  stdIO.inindex = 0;
-	  r := dumpdata(s.v);
-	  stdIO.insize = o;
-	  stdIO.eof = p;
-	  stdIO.inindex = q;
-	  if 0 == r then nullE
-	  else buildErrorPacket("failed to dump data to '" + s.v + "'"))
-     else WrongArgString(0+1)
-     );
-setupfun("dumpdata",dumpdatafun);
-
-loaddatafun(e:Expr):Expr := (
-     when e
-     is s:Sequence do (
-	  when s.0 is x:Boolean do
-	  when s.1 is s:stringCell do (
-	       loaddata(if x == True then 1 else 0, s.v);			  -- should not return
-	       buildErrorPacket("failed to load data from '" + s.v + "'"))
-	  else WrongArgString(2)
-	  else WrongArgBoolean(1)
-	  )
-     is s:stringCell do (
-	  notifyYes := 1;
-	  loaddata(notifyYes,s.v);			  -- should not return
-	  buildErrorPacket("failed to load data from '" + s.v + "'"))
-     else WrongArg("string, or a pair: boolean value and string")
-     );
-setupfun("loaddata",loaddatafun);
 
 LongDoubleRightArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongDoubleRightArrowS);
 setup(LongDoubleRightArrowS,LongDoubleRightArrowFun);
@@ -144,12 +108,13 @@ exitfun(e:Expr):Expr := (
      when e
      is ZZcell do (
 	  if isInt(e) 
-	  then exit(toInt(e))
+	  then (
+	       exit(toInt(e));
+	       nullE			     -- just to satisfy noisy compilers
+	       )
 	  else WrongArgSmallInteger(1))
      else WrongArgZZ(1));
 setupfun("exit",exitfun).Protected = false;
-
-applythem(obj:HashTable,fn:FunctionClosure):void := applyFCE(fn,Expr(obj));
 
 lookupCountFun(e:Expr):Expr := (
      when e
@@ -267,20 +232,32 @@ leftDividefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LeftDivideS);
 setup(LeftDivideS,leftDividefun);
 
 header "
+#ifdef HAVE_SYS_IOCTL_H
  #include <sys/ioctl.h>
+#endif
+#ifdef HAVE_TERMIOS_H
  #include <termios.h>
- ";
+#endif
+";
 
 WindowWidth(fd:int):int := Ccode(returns,"
-     struct winsize x;
+   #ifdef HAVE_SYS_IOCTL_H
+     struct winsize x = {0};
      ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
      return x.ws_col;
-     ");
+   #else
+     return -1;
+   #endif
+");
 WindowHeight(fd:int):int := Ccode(returns,"
-     struct winsize x;
+   #ifdef HAVE_SYS_IOCTL_H
+     struct winsize x = {0};
      ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
      return x.ws_row;
-     ");
+   #else
+     return -1;
+   #endif
+");
 
 fileWidth(e:Expr):Expr := (
      when e
@@ -379,7 +356,7 @@ NetFileAppend(e:Expr):Expr := (
 installMethod(LessLessS,netFileClass,stringClass,NetFileAppend);
 installMethod(LessLessS,netFileClass,netClass,NetFileAppend);
 		   
-address(f:Frame):ulong := Ccode(ulong,"((unsigned long)",f,")");
+address(f:Frame):ulong := Ccode(ulong,"((unsigned long)(intptr_t)",f,")");
 
 showFrames(f:Frame):void := (
      stdIO << " frames bound :";
@@ -530,8 +507,6 @@ unstack(e:Expr):Expr := (
      else WrongArg("a net"));
 setupfun("unstack",unstack);
 
-header "#include <unistd.h>";
-alarm(x:uint) ::= Ccode(int,"alarm(",x,")");
 alarm(e:Expr):Expr := (
      when e is i:ZZcell do 
      if isInt(i)
@@ -702,13 +677,17 @@ method1c(e:Expr,env:Sequence):Expr := (
      else WrongArg("a class")
      );
 newmethod1(e:Expr):Expr := (
-     when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else (
 	  f := s.0;
 	  output := s.1;
-	  env := Sequence(nullE,f);
-	  cfc := Expr(CompiledFunctionClosure(if output == True then method1c else method1,nextHash(),env));
-	  env.0 = cfc;
-	  cfc)
+	  when s.2 is typ:HashTable do (
+	       env := Sequence(nullE,f);
+	       cfc := Expr(CompiledFunctionClosure(if output == True then method1c else method1,nextHash(),env));
+	       if typ != compiledFunctionClosureClass then cfc = SpecialExpr(typ,cfc);
+	       env.0 = cfc;
+	       cfc)
+	  else WrongArg(3,"a type of CompiledFunctionClosure")
+	  )
      else WrongNumArgs(2));
 setupfun("newmethod1",newmethod1);
 
@@ -1141,7 +1120,13 @@ echoOff(e:Expr):Expr := (
      );
 setupfun("echoOff",echoOff);
 header "#include <signal.h>";
-kill(pid:int,sig:int) ::= Ccode(int,"kill(",pid,",",sig,")");
+kill(pid:int,sig:int) ::= Ccode(int,"
+     #ifdef HAVE_KILL
+      kill(",pid,",",sig,")
+     #else
+      -1
+     #endif
+     ");
 kill(e:Expr):Expr := (
      when e 
      is pid:ZZcell do if !isInt(pid) then WrongArgSmallInteger() else (
@@ -1356,9 +1341,14 @@ fileTime(e:Expr):Expr := (
      else WrongArg("string, or integer and string"));
 setupfun("fileTime",fileTime);
 
+haveNoTimeInitialized := false;
+haveNoTime := false;
 currentTime(e:Expr):Expr := (
+     if !haveNoTimeInitialized then (
+	  haveNoTimeInitialized = true;
+	  foreach s in argv do if s === "--no-time" then haveNoTime = true);
      when e is a:Sequence do
-     if length(a) == 0 then toExpr(currentTime())
+     if length(a) == 0 then toExpr(if haveNoTime then 0 else currentTime())
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("currentTime",currentTime);
@@ -1459,8 +1449,6 @@ fillnodes(n:LexNode):void := (
 fillnodes(baseLexNode);
 setupconst("operatorNames",Expr(operatorNames));
 
-issym(d:Dictionary,s:string):Expr := when lookup(makeUniqueWord(s,parseWORD),d) is x:Symbol do True is null do False;
-
 getglobalsym(d:Dictionary,s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
      when lookup(w,d.symboltable) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
@@ -1510,75 +1498,6 @@ setupfun("isGlobalSymbol",isGlobalSymbol);
 --      else WrongNumArgs(0));
 -- setupfun("history",history);
 
-toPairs(r:array(int)):Expr := Expr( 
-     list (
-	  new Sequence len length(r)/2 at i do 
-	  provide new Sequence len 2 at j do 
-	  provide toExpr(r.(2*i+j))
-	  )
-     );
-
-regexmatch(e:Expr):Expr := (
-     ignorecase := false;
-     when e is a:Sequence do
-     if length(a) == 2 then
-     when a.0 is regexp:stringCell do
-     when a.1 is text:stringCell do (
-	  r := regexmatch(regexp.v,0,length(text.v),text.v,ignorecase);
-	  if regexmatchErrorMessage != noErrorMessage then buildErrorPacket("regex: "+regexmatchErrorMessage)
-     	  else if length(r) != 0 then toPairs(r) 
-	  else nullE)
-     else WrongArgString(2)
-     else WrongArgString(1)
-     else if length(a) == 3 then
-     when a.0 is regexp:stringCell do
-     when a.1 is start:ZZcell do if !isInt(start) then WrongArgSmallInteger(2) else
-     when a.2 is text:stringCell do (
-	  istart := toInt(start);
-	  r := regexmatch(regexp.v,istart,length(text.v)-istart,text.v,ignorecase);
-	  if length(r) != 0 then toPairs(r) 
-	  else if regexmatchErrorMessage == noErrorMessage
-	  then nullE
-	  else buildErrorPacket("regex: "+regexmatchErrorMessage))
-     else WrongArgString(3)
-     else WrongArgZZ(2)
-     else WrongArgString(1)
-     else if length(a) == 4 then
-     when a.0 is regexp:stringCell do
-     when a.1 is start:ZZcell do if !isInt(start) then WrongArgSmallInteger(2) else
-     when a.2 is range:ZZcell do if !isInt(range) then WrongArgSmallInteger(3) else
-     when a.3 is text:stringCell do (
-	  r := regexmatch(regexp.v,toInt(start),toInt(range),text.v,ignorecase);
-	  if length(r) != 0 then toPairs(r) 
-	  else if regexmatchErrorMessage == noErrorMessage
-	  then nullE
-	  else buildErrorPacket("regex: "+regexmatchErrorMessage))
-     else WrongArgString(4)
-     else WrongArgZZ(3)
-     else WrongArgZZ(2)
-     else WrongArgString(1)
-     else WrongNumArgs(2,3)
-     else WrongNumArgs(2,3));
-setupfun("regex",regexmatch);
-
-foo := "foo";
-replace(e:Expr):Expr := (
-     ignorecase := false;
-     when e is a:Sequence do
-     if length(a) == 3 then
-     when a.0 is regexp:stringCell do
-     when a.1 is replacement:stringCell do
-     when a.2 is text:stringCell do (
-	  r := regexreplace(regexp.v,replacement.v,text.v,foo,ignorecase);
-	  if r == foo then buildErrorPacket("replace: "+regexmatchErrorMessage)
-	  else toExpr(r))
-     else WrongArgString(3)
-     else WrongArgString(2)
-     else WrongArgString(1)
-     else WrongNumArgs(3)
-     else WrongNumArgs(3));
-setupfun("replaceStrings",replace);
-     
 listFrame(s:Sequence):Expr := Expr(List(mutableListClass, s, nextHash(), true));	  
 listFrame(f:Frame):Expr := if f.frameID == 0 then listFrame(emptySequence) else listFrame(f.values); -- refuse to defeat the protection of global variables
 frame(e:Expr):Expr := (
@@ -1646,17 +1565,17 @@ dictionaryPath(e:Expr):Expr := (
      is t:List do (					    -- set the current globalDictionary list
 	  s := t.v;
 	  n := length(s);
-	  if n == 0 then return WrongArg("expected a nonempty list of dictionaries");
+	  if n == 0 then return WrongArg("a nonempty list of dictionaries");
           sawUnprotected := false;
 	  foreach x in s do 
 	  when x is dc:DictionaryClosure do (
 	       d := dc.dictionary;
 	       if !d.Protected then sawUnprotected = true;
-	       if d.frameID != 0 || d.transient then return WrongArg("expected a list of global dictionaries")
+	       if d.frameID != 0 || d.transient then return WrongArg("a list of global dictionaries")
 	       )
-	  else return WrongArg("expected a list of dictionaries");
-	  for i from 0 to n-2 do for j from i+1 to n-1 do if s.i == s.j then return WrongArg("expected a list of dictionaries with no duplicate entries");
-          if !sawUnprotected then return WrongArg("expected a list of dictionaries, not all protected");
+	  else return WrongArg("a list of dictionaries");
+	  for i from 0 to n-2 do for j from i+1 to n-1 do if s.i == s.j then return WrongArg("a list of dictionaries with no duplicate entries");
+          if !sawUnprotected then return WrongArg("a list of dictionaries, not all protected");
      	  a := new array(Dictionary) len n do foreach x in s do when x is d:DictionaryClosure do provide d.dictionary else nothing;
      	  a.(n-1).outerDictionary = a.(n-1);
      	  for i from 0 to n-2 do a.i.outerDictionary = a.(i+1);
@@ -1692,6 +1611,7 @@ engineDebugLevelS := dummySymbol;
 debuggingModeS := dummySymbol;
 errorDepthS := dummySymbol;
 gbTraceS := dummySymbol;
+numericalAlgebraicGeometryTraceS := dummySymbol;
 debuggerHookS := dummySymbol;
 lineNumberS := dummySymbol;
 allowableThreadsS := dummySymbol;
@@ -1720,10 +1640,13 @@ export StandardE := Expr(StandardS);
 export topLevelMode := Expr(StandardS);
 topLevelModeS := dummySymbol;
 
-initialRandomSeed := toInteger(0);
+initialRandomSeed := zeroZZ;
 initialRandomHeight := toInteger(10);
 
-setupvar("maxAllowableThreads",toExpr(Ccode( int, " getMaxAllowableThreads() " )));
+maxAllowableThreadsS := setupvar("maxAllowableThreads",toExpr(0)); -- the value returned by getMaxAllowableThreads may not be initialized yet
+export setMaxAllowableThreads():void := (
+     setGlobalVariable(maxAllowableThreadsS, toExpr(Ccode(int, "getMaxAllowableThreads()")));
+     );
 
 syms := SymbolSequence(
      (  backtraceS = setupvar("backtrace",toExpr(backtrace));  backtraceS  ),
@@ -1733,6 +1656,7 @@ syms := SymbolSequence(
      (  defaultPrecisionS = setupvar("defaultPrecision",toExpr(defaultPrecision));  defaultPrecisionS  ),
      (  errorDepthS = setupvar("errorDepth",toExpr(errorDepth));  errorDepthS  ),
      (  gbTraceS = setupvar("gbTrace",toExpr(gbTrace));  gbTraceS  ),
+     (  numericalAlgebraicGeometryTraceS = setupvar("numericalAlgebraicGeometryTrace",toExpr(numericalAlgebraicGeometryTrace));  numericalAlgebraicGeometryTraceS  ),
      (  debuggerHookS = setupvar("debuggerHook",debuggerHook);  debuggerHookS  ),
      (  lineNumberS = setupvar("lineNumber",toExpr(lineNumber));  lineNumberS  ),
      (  allowableThreadsS = setupvar("allowableThreads",toExpr(Ccode( int, " getAllowableThreads() " )));  allowableThreadsS  ),
@@ -1863,6 +1787,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 		    else if sym === printingLeadLimitS then (printingLeadLimit = n; e)
 		    else if sym === printingTrailLimitS then (printingTrailLimit = n; e)
 		    else if sym === gbTraceS then (gbTrace = n; e)
+		    else if sym === numericalAlgebraicGeometryTraceS then (numericalAlgebraicGeometryTrace = n; e)
 		    else if sym === printWidthS then (printWidth = n; e)
 		    else buildErrorPacket(msg))
 	       else buildErrorPacket(
@@ -1875,6 +1800,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 		    || sym === printingLeadLimitS
 		    || sym === printingTrailLimitS
 		    || sym === gbTraceS
+		    || sym === numericalAlgebraicGeometryTraceS
 		    || sym === printWidthS
 		    then (when sym is s:SymbolClosure do s.symbol.word.name else "") + ": expected a small integer"
 		    else msg))
@@ -1965,7 +1891,11 @@ fileLength(e:Expr):Expr := (
 	       if ret == ERROR
 	       then Expr(buildErrorPacket(syscallErrorMessage("getting the length of a file")))
 	       else toExpr(ret))
-	  else if f.output then toExpr(getFileFOSS(f).bytesWritten + getFileFOSS(f).outindex)
+	  else if f.output then (
+	       foss := getFileFOSS(f);
+	       r := toExpr(foss.bytesWritten + foss.outindex);
+	       releaseFileFOSS(f);
+	       r)
      	  else buildErrorPacket("file not open"))
      is f:stringCell do (
 	  filename := f.v;
@@ -1995,6 +1925,7 @@ setupfun("dumpNodes",dumpNodes);
 toExternalString(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(toExternalString(x.v))
+     is x:RRicell do toExpr(toExternalString(x.v))
      is x:CCcell do toExpr(toExternalString(x.v))
      else WrongArg("a real or complex number")
      );
@@ -2006,7 +1937,6 @@ GCstats(e:Expr):Expr := (
 		    "heap size" => toExpr(Ccode(int,"GC_get_heap_size()")),
 		    "number of collections" => toExpr(Ccode(int,"GC_get_gc_no()")),
 		    "parallel" => toExpr(Ccode(bool,"!!GC_get_parallel()")),
-		    "all interior pointers" => toExpr(Ccode(bool,"GC_get_all_interior_pointers()")),
 		    "finalize on demand" => toExpr(Ccode(bool,"!!GC_get_finalize_on_demand()")),
 		    "java finalization" => toExpr(Ccode(bool,"GC_get_java_finalization()")),
 		    "don't expand" => toExpr(Ccode(bool,"GC_get_dont_expand()")),
@@ -2034,11 +1964,13 @@ GCstats(e:Expr):Expr := (
 		    "GC_ENABLE_INCREMENTAL" => toExpr(getenv("GC_ENABLE_INCREMENTAL")),
 		    "GC_PAUSE_TIME_TARGET" => toExpr(getenv("GC_PAUSE_TIME_TARGET")),
 		    "GC_FULL_FREQUENCY" => toExpr(getenv("GC_FULL_FREQUENCY")),
-		    "GC_FREE_SPACE_DIVISOR" => toExpr(getenv("GC_FREE_SPACE_DIVISOR")),
+		    "GC_FREE_SPACE_DIVISOR" => toExpr(getenv("GC_FREE_SPACE_DIVISOR")), -- the environment variable
+		    "GC_free_space_divisor" => toExpr(Ccode(long,"GC_get_free_space_divisor()")),           -- the set value in memory
 		    "GC_UNMAP_THRESHOLD" => toExpr(getenv("GC_UNMAP_THRESHOLD")),
 		    "GC_FORCE_UNMAP_ON_GCOLLECT" => toExpr(getenv("GC_FORCE_UNMAP_ON_GCOLLECT")),
 		    "GC_FIND_LEAK" => toExpr(getenv("GC_FIND_LEAK")),
 		    "GC_ALL_INTERIOR_POINTERS" => toExpr(getenv("GC_ALL_INTERIOR_POINTERS")),
+		    "GC_all_interior_pointers" => toExpr(Ccode(long,"GC_get_all_interior_pointers()")),           -- the set value in memory
 		    "GC_DONT_GC" => toExpr(getenv("GC_DONT_GC")),
 		    "GC_TRACE" => toExpr(getenv("GC_TRACE"))
 		    )))
@@ -2055,6 +1987,22 @@ setFactoryGFtableDirectory(e:Expr):Expr := (
 	  nullE)
      else WrongArgString());
 setupfun("setFactoryGFtableDirectory",setFactoryGFtableDirectory);
+
+serialNumber(e:Expr):Expr := (
+     when e 
+     is s:SymbolClosure do toExpr(s.symbol.serialNumber)
+     is o:HashTable do if o.Mutable then toExpr(o.hash) else WrongArg("hash table to be mutable")
+     is o:List do if o.Mutable then toExpr(o.hash) else WrongArg("list to be mutable")
+     is o:DictionaryClosure do toExpr(o.dictionary.hash)
+     is t:TaskCell do toExpr(t.body.serialNumber)
+     else WrongArg("a symbol or a mutable hash table or list"));
+setupfun("serialNumber",serialNumber);
+
+header "extern void TS_Test();";
+threadTest(e:Expr):Expr := (
+     Ccode(void, "TS_Test()");
+     nullE);
+setupfun("threadTest",threadTest);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d actors5.o "

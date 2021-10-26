@@ -1,23 +1,22 @@
-#warning "Remove points.hpp, points.cpp once this branch is merged into the trunk"
+#warning \
+    "Remove points.hpp, points.cpp once this branch is merged into the trunk"
 
 // Copyright 2005  Michael E. Stillman
 
 #ifndef _points_hpp_
 #define _points_hpp_
 
-#include "engine.h"
-#include "dmat-LU.hpp"
 class Matrix;
 class PolynomialRing;
 
 template <typename CoeffRing>
 class PointsComputation
 {
-public:
+ public:
   static Matrix *points(const PolynomialRing *R,
                         const typename CoeffRing::ring_type *K,
                         const DMat<CoeffRing> *Pts,
-                        Matrix * & result_std_monoms);
+                        Matrix *&result_std_monoms);
 };
 
 #endif

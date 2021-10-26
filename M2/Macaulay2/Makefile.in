@@ -2,18 +2,8 @@
 # we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 VPATH = @srcdir@
 include ../include/config.Makefile
-all: initialize-in-subdirs @pre_docdir@/COPYING-GPL-2 @pre_docdir@/COPYING-GPL-3 @pre_docdir@/README @pre_docdir@/LAYOUT
-$(foreach d,d e,							\
-	$(eval initialize-in-$d:; $$(MAKE) -C $d initialize DEPENDS=no)	\
-	$(eval .PHONY initialize-in-subdirs:initialize-in-$d)		\
-	$(eval .PHONY: initialize-in-subdirs))
-SUBDIRS = compat util probe regex c
-ifeq "@DUMPDATA@" "yes"
-SUBDIRS += dumpdata
-endif
-SUBDIRS += e-includes d e system kernel bin m2 emacs man packages html-check-links tests
-SUBDIRS += book
-SUBDIRS += packages/Macaulay2Doc/test
+all: @pre_docdir@/COPYING-GPL-2 @pre_docdir@/COPYING-GPL-3 @pre_docdir@/README @pre_docdir@/LAYOUT
+SUBDIRS = util c d e system bin m2 man packages editors html-check-links tests
 
 define do-in-subdirs
 $(foreach d,$(SUBDIRS),
@@ -34,3 +24,4 @@ distclean:; rm -f Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2 "
 # End:
+.NOTPARALLEL:

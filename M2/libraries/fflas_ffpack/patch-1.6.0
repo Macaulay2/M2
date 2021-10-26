@@ -1,0 +1,85 @@
+--- fflas-ffpack-1.6.0/fflas-ffpack/field/modular-randiter.h	2014-01-15 14:11:28.000000000 +0100
++++ fflas-ffpack-1.6.0/fflas-ffpack/field/modular-randiter.h	2014-01-15 14:23:26.000000000 +0100
+@@ -59,7 +59,7 @@ namespace FFPACK {
+ 		/*! @bug not so random... (at all)  */
+ 		Element &random (Element &a) const
+ 		{
+-			return _F.init(a,(double)(lrand48()-std::numeric_limits<long>::max()));
++			return _F.init(a,(double)(lrand48() + 1 - (  ( static_cast< int64_t >(2) )<<50 )     ));
+ 		}
+ 
+ 	private:
+--- fflas-ffpack-1.6.0/fflas-ffpack/utils/debug.h     2012-03-26 15:24:57.000000000 +0200
++++ fflas-ffpack-1.6.0/fflas-ffpack/utils/debug.h 2013-11-16 18:12:31.883220767 +0100
+@@ -109,7 +109,8 @@ throw FFPACK::Failure (__func__, __FILE_
+ 
+ namespace FFPACK {
+ 
+-
++        // anonymous namespace to prevent duplicate definition of Failure::_errorStream
++        namespace {
+ 	/*!  A precondtion failed.
+ 	 * @ingroup util
+ 	 * The \c throw mechanism is usually used here as in
+@@ -215,6 +216,7 @@ namespace FFPACK {
+ #endif
+ 
+ 	std::ostream *Failure::_errorStream;
++     } // anonymous namespace to prevent duplicate definition of Failure::_errorStream
+ } // FFPACK
+ 
+ #endif // __FFLASFFPACK_util_debug_H
+--- fflas-ffpack-1.6.0/utils/debug.h     2012-03-26 15:24:57.000000000 +0200
++++ fflas-ffpack-1.6.0/utils/debug.h 2013-11-16 18:12:31.883220767 +0100
+@@ -109,7 +109,8 @@ throw FFPACK::Failure (__func__, __FILE_
+ 
+ namespace FFPACK {
+ 
+-
++        // anonymous namespace to prevent duplicate definition of Failure::_errorStream
++        namespace {
+ 	/*!  A precondtion failed.
+ 	 * @ingroup util
+ 	 * The \c throw mechanism is usually used here as in
+@@ -215,6 +216,7 @@ namespace FFPACK {
+ #endif
+ 
+ 	std::ostream *Failure::_errorStream;
++     } // anonymous namespace to prevent duplicate definition of Failure::_errorStream
+ } // FFPACK
+ 
+ #endif // __FFLASFFPACK_util_debug_H
+--- fflas-ffpack-1.6.0/fflas-ffpack/ffpack/ffpack.h	2013-09-14 16:37:09.000000000 +0200
++++ fflas-ffpack-1.6.0/fflas-ffpack/ffpack/ffpack.h	2013-09-15 00:24:47.000000000 +0200
+@@ -1693,7 +1693,7 @@ else { // Left NullSpace
+ 	}
+ 
+ 	template <class Field, class Polynomial>
+-	std::list<Polynomial>&
++	Polynomial &
+ 	CharPoly( const Field& F, Polynomial& charp, const size_t N,
+ 		  typename Field::Element * A, const size_t lda,
+ 		  const FFPACK_CHARPOLY_TAG CharpTag= FfpackArithProg)
+@@ -1707,6 +1707,7 @@ else { // Left NullSpace
+ 		charp.resize(N+1);
+ 
+ 		Polynomial P = *(it++);
++		charp = P;
+ 		while( it!=factor_list.end() ){
+ 			mulpoly (F,charp, P, *it);
+ 			P = charp;
+--- fflas-ffpack-1.6.0/fflas-ffpack/ffpack/ffpack.h		2014-07-17 11:18:18.728996952 +0200
++++ fflas-ffpack-1.6.0/fflas-ffpack/ffpack/ffpack.h		2014-07-17 11:18:32.187105278 +0200
+@@ -812,8 +812,8 @@ else { // Left NullSpace
+ 					 typename Field::Element* A, const size_t lda,
+ 					 size_t* &rkprofile)
+ 	{
+-		size_t *P = new size_t[N];
+-		size_t *Q = new size_t[M];
++		size_t *P = new size_t[M];
++		size_t *Q = new size_t[N];
+ 		size_t R;
+ 
+ 		R = LUdivine (F, FFLAS::FflasNonUnit, FFLAS::FflasTrans, M, N, A, lda, P, Q);
+ 
+

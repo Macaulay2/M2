@@ -1,0 +1,16 @@
+-- -*- M2-comint -*- hash: -998000246
+
+i1 : QQ[x_0,x_1,x_2];
+
+i2 : I=ideal(x_0+x_1+x_2+1);
+
+o2 : Ideal of QQ[x ..x ]
+                  0   2
+
+i3 : T=tropicalVariety (I,Symmetry=>{{1,0,2}, {2,1,0} })
+
+o3 = T
+
+o3 : TropicalCycle
+
+i4 : 

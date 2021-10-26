@@ -6,20 +6,17 @@
 -- License as published by the Free Software Foundation, either version 2
 -- of the License, or any later version.
 
--- There are three tests for the Macaulay2 version number.  They may be removed after a new binary distribution of
--- Macaulay2 is available.
-if version#"VERSION" <= "1.4" then needsPackage "EdgeIdeals"
-
 newPackage select((
     "Nauty",
     Version => "1.4.3.1",
     Date => "01. March 2013",
     Authors => {{Name => "David Cook II",
-                 Email => "dcook8@nd.edu",
-                 HomePage => "http://www.nd.edu/~dcook8"}},
-    Headline => "Interface to nauty",
+                 Email => "dwcook@eiu.edu",
+                 HomePage => "http://ux1.eiu.edu/~dwcook/"}},
+    Headline => "interface to nauty",
+    Keywords => {"Graph Theory", "Interfaces"},
     Configuration => {"path" => ""},
-    if version#"VERSION" > "1.4" then PackageExports => {"EdgeIdeals"},
+    PackageExports => {"EdgeIdeals"},
     DebuggingMode => false,
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
@@ -28,27 +25,21 @@ newPackage select((
 	 "acceptance date" => "2011-04-20",
 	 "published article URI" => "http://j-sag.org/Volume3/jsag-1-2011.pdf",
 	 "published code URI" => "http://j-sag.org/Volume3/Nauty.m2",
-	 "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/Nauty.m2",
-	 "release at publication" => 13224,
+	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Nauty.m2",
+	 "release at publication" => "ea719b4fd3b65bb35ebd0f10f356c7d53ba73b7d",
 	 "version at publication" => "1.4.1",
 	 "volume number" => "3",
 	 "volume URI" => "http://j-sag.org/Volume3/"
 	 }
 ), x -> x =!= null)
 
-if version#"VERSION" <= "1.4" then (
-     needsPackage "SimplicialComplexes";
-     needsPackage "EdgeIdeals";
-     )
-
 -------------------
 -- Configuration
 -------------------
 
--- Check the ~/.Macaulay2/init-Nauty.m2 file for the absolute path.
--- If it's not there, then use the M2-Programs directory.
-nauty'path = (options Nauty).Configuration#"path";
-if nauty'path == "" then nauty'path = prefixDirectory | currentLayout#"programs";
+-- for backward compatibility
+if not programPaths#?"nauty" and Nauty#Options#Configuration#"path" != ""
+    then programPaths#"nauty" = Nauty#Options#Configuration#"path"
 
 -------------------
 -- Exports
@@ -353,7 +344,7 @@ onlyPlanar (List, Boolean) := List => (L, non) -> (
 )
 onlyPlanar List := List => L -> onlyPlanar(L, false)
 
--- Reorders a bipartite graph so all vertices of each color are continguous.
+-- Reorders a bipartite graph so all vertices of each color are contiguous.
 relabelBipartite = method()
 relabelBipartite List := List => L -> (
     r := callNauty("biplabg -q", L);
@@ -467,6 +458,8 @@ stringToGraph (String, PolynomialRing) := Graph => (str, R) -> graph stringToEdg
 -- Local-Only Code
 -------------------
 
+nauty = null
+
 -- Sends a command and retrieves the results into a list of lines.
 -- If ReadError is set to true and the command is successfully executed,
 -- then the data from stderr is returned (filterGraphs and removeIsomorphs
@@ -474,34 +467,20 @@ stringToGraph (String, PolynomialRing) := Graph => (str, R) -> graph stringToEdg
 protect ReadError;
 callNauty = method(Options => {ReadError => false})
 callNauty (String, List) := List => opts -> (cmdStr, dataList) -> (
+    if nauty === null then
+	nauty = findProgram("nauty", "complg --help",
+	    Prefix => {(".*", "nauty-")}); -- debian/fedora
     infn := temporaryFileName();
     erfn := temporaryFileName();
     -- output the data to a file
     o := openOut infn;
     scan(graphToString \ dataList, d -> o << d << endl);
     close o;
-    -- try to harvest the lines
-    r := lines try get openIn ("!" | nauty'path | cmdStr | " <" | infn | " 2>" | erfn)
-    else (
-        -- nauty errored, harvest the error
-        e := last separate(":", first lines get openIn erfn);
-        removeFile infn;
-        removeFile erfn;
-        -- special cases 
-        if e == " not found" then error("callNauty: nauty could not be found on the path [" | nauty'path | "].");
-        if e == "#q -V] [--keys] [-constraints -v] [ifile [ofile]]" then e = "invalid filter";
-	    error("callNauty: nauty terminated with the error [", e, "].");
-    );
+    exe := first separate(" ", cmdStr);
+    args := replace(exe | " ", "", cmdStr);
+    r := runProgram(nauty, exe, args | " < " | infn);
     removeFile infn;
-    -- If the method wants it, then read the stderr data instead.
-    if opts.ReadError then (
-        r = lines try get openIn erfn else (
-            removeFile erfn;
-            error("callNauty: nauty ran successfully, but no data was written to stderr as expected.  Report this to the package maintainer.");
-        );
-    );
-    removeFile erfn;
-    r
+    if opts.ReadError then lines r#"error" else lines r#"output"
 )
 
 -- Processes an option which should be a Boolean.
@@ -514,7 +493,7 @@ optionBoolean = (b, m, o, f) -> (
 )
 
 -- Processes an option which should be an integer (ZZ).
--- Throws an approprate error if the type is bad or the bound is bad, otherwise it returns the flag.
+-- Throws an appropriate error if the type is bad or the bound is bad, otherwise it returns the flag.
 optionZZ = (i, b, m, o, f) -> (
     if instance(i, Nothing) then ""
     else if not instance(i, ZZ) then error(m | ": Option [" | o | "] is not a valid type, i.e., ZZ or Nothing.")
@@ -548,7 +527,7 @@ doc ///
             (See @TO "Comparison of Graph6 and Sparse6 formats"@.)
             
             It is recommended to work with graphs represented as strings while using nauty-provided
-            methods and then converting the graphs to instances fo the class @TO "Graph"@ for further work 
+            methods and then converting the graphs to instances of the class @TO "Graph"@ for further work 
             (e.g., computing the chromatic number).
 
             The theoretical underpinnings of nauty are in the paper:
@@ -647,7 +626,7 @@ doc ///
             whether the two graphs are isomorphic
     Description
         Text
-            A very efficient method for determing whether two graphs (of the same format) are isomorphic.
+            A very efficient method for determining whether two graphs (of the same format) are isomorphic.
         Example
             R = QQ[a..e];
             areIsomorphic(cycle R, graph {a*c, c*e, e*b, b*d, d*a})
@@ -1559,8 +1538,8 @@ doc ///
             graph.  See the nauty documentation for a more complete description
             of each and how the argument $a$ is used.
 
-            The sixteen vertex invariants are:
-            @UL ({
+            The sixteen vertex invariants are: \break
+            @ {
                 "$i = 0$: none,",
                 "$i = 1$: twopaths,",
                 "$i = 2$: adjtriang(K),",
@@ -1577,7 +1556,7 @@ doc ///
                 "$i = 13$: adjacencies,",
                 "$i = 14$: cellfano, and",
                 "$i = 15$: cellfano2."
-            } / TEX) @
+            } / (x -> ( TEX ("\\ \\ \\ \\ " | x), BR{} )) @
         Example
             R = QQ[a..e];
             G = graph {a*e, e*c, c*b, b*d, d*a};
@@ -2034,4 +2013,3 @@ connected = buildGraphFilter {"Connectivity" => 0,
 prob = n -> log(n)/n;
 apply(2..30, n-> #filterGraphs(generateRandomGraphs(n, 100, 2*(prob n)), connected))
 apply(2..30, n-> #filterGraphs(generateRandomGraphs(n, 100, (prob n)/2), connected))
-

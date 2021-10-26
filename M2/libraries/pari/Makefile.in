@@ -1,21 +1,26 @@
-# license for pari: GPL v2
-
-#				pari
+LICENSEFILES = README COPYING
 
 # svn://pari.math.u-bordeaux.fr/pari/trunk
 
 HOMEPAGE = http://pari.math.u-bordeaux.fr/
 VPATH = @srcdir@
 
-# # pari maintainers have been known to break URL's, so we copy their software to another server:
-# # URL = http://pari.math.u-bordeaux.fr/pub/pari/unix
+# pari maintainers have been known to break URL's, so we copy their software to another server:
+# URL = http://pari.math.u-bordeaux.fr/pub/pari/unix
 
-VERSION = 2.5.3
+VERSION = 2.11.2
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-# URL = http://macaulay2.com/Downloads/OtherSourceCode/trunk
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 
-# leave out these tests:
+# uname gives a strange answer on the second command line below, under mac os x.  Pari's configure
+# script uses "uname -p", but I'm not sure whether it causes any problems.
+#   einsteinium$ uname -m
+#   x86_64
+#   einsteinium$ uname -p
+#   i386
+
+# We (used to) leave out these tests, now we don't test at all
+#   (test-all would run them all) :
 #   test-ellglobalred - requires data files that we don't download
 #   test-ellsea - requires data files "seadata"
 #   test-galois - requires galois data files "galdata"
@@ -25,64 +30,66 @@ URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 #		NOTE: the problem noted in 'program' is that install() does not work in your
 #		configuration (gp-sta only), so you will not be able to use this feature.
 #		Otherwise you can safely ignore the above warning.
+CHECKTARGET = .
 
-CHECKTARGET =										\
-    test-addprimes test-analyz test-apply test-aurifeuille test-bezout			\
-    test-bnfisintnorm test-bnr test-charpoly test-combinat test-compat			\
-    test-contfrac test-cxtrigo test-debugger test-det test-diffop test-ell		\
-    test-elliptic test-ellweilpairing test-err						\
-    test-exact0 test-extract test-ff test-ffisom					\
-    test-graph test-ideal test-idealappr test-idealramgroups test-intformal		\
-    test-intnum test-ispower test-krasner test-linear test-list test-lll test-mat	\
-    test-matsnf test-member test-minim test-modpr test-multivar-mul test-nf		\
-    test-nffactor test-nfhilbert test-nfields test-nfrootsof1 test-number		\
-    test-objets test-polchebyshev test-polmod test-polred				\
-    test-polyser test-printf test-qf test-qfbsolve test-quad				\
-    test-quadclassunit test-quadray test-random test-resultant test-rfrac test-rnf	\
-    test-rnfkummer test-round4 test-select test-stark test-subcyclo			\
-    test-subst test-sumiter test-thue test-trans test-zetak test-zn
+# we build only the shared library, because that's the version that is gmp compatible (??)
 
-BUILDTARGET = lib-sta
-INSTALLTARGET = install-lib-sta install-include
-PACKAGE-DISTCLEAN-TARGET = .
+INSTALLTARGET += install-include
 
-ifeq (@SHARED@,yes)
-BUILDTARGET += lib-dyn
-INSTALLTARGET += install-lib-dyn
+# choose the static library to build and install:
+BUILDTARGET += lib-sta
+INSTALLTARGET += install-lib-sta
+# BUILDTARGET += lib-dyn
+# INSTALLTARGET += install-lib-dyn
+
+HOST_OS = @host_os@
+HOST_CPU = @host_cpu@
+ifeq ($(HOST_OS),mingw32)
+HOST_OS = mingw
 endif
 
-CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR)
+ifneq (,$(findstring darwin,$(HOST_OS)))
+# Pari's configure script gets confused if the host_os contains the version number, e.g., darwin14.0.0:
+HOST_OS = darwin
+endif
+
+CONFIGURECMD = $(CONFIGENV) dfltlibdir=$(LIBRARIESDIR)/lib ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR) --host=$(HOST_CPU)-$(HOST_OS)
+
+# Pari's configure script is needlessly confusing, since it's almost impossible to figure out what directory is chosen as the build directory.
+# We've opted to search for the directory containing the file pari.cfg, hoping it's unique.
+
+GETODIR  = `cd $(BUILDDIR) && find . -name pari.cfg | head -1 | sed 's=/[^/]*$$=='`
+GETODIR2 = `find . -name pari.cfg | head -1 | sed 's=/[^/]*$$=='`
+
+INSTALLOPTIONS = -C $(GETODIR2)
+BUILDOPTIONS = -C $(GETODIR2)
+CHECKOPTIONS = -C $(GETODIR2)
 
 ifeq (@PROFILING@,yes)
 CONFIGURECMD += -pg
-INSTALLOPTIONS = -C `config/objdir`.prf
-BUILDOPTIONS = -C `config/objdir`.prf
-CHECKOPTIONS = -C `config/objdir`.prf
 else
 ifeq (@DEBUG@,yes)
 CONFIGURECMD += -g
-INSTALLOPTIONS = -C `config/objdir`.dbg
-BUILDOPTIONS = -C `config/objdir`.dbg
-CHECKOPTIONS = -C `config/objdir`.dbg
-else
-INSTALLOPTIONS = -C `config/objdir`
-BUILDOPTIONS = -C `config/objdir`
-CHECKOPTIONS = -C `config/objdir`
 endif
 endif
-
-CONFIGURECMD += | tee pari-config.log
 
 include ../Makefile.library
+
+# get the right binary utilities by putting them on the path, since no
+# configure option is offered for specifying them:
+CONFIGENV += PATH="/usr/@host@/bin:$(PATH)"
 
 # we have to detect which of these two answers it gives:
 #   ### Building without GNU MP support
 #   Using GNU MP, version 4.2.1
 config-chk: .config-checked-$(VERSION)
 clean::; rm -f .config-checked-*
-.config-checked-$(VERSION) : $(BUILDDIR)/pari-config.log
+.config-checked-$(VERSION):
 	: test whether pari successfully found gmp library during configuration :
-	grep 'Using GNU MP' $^
+	echo 'configfile(s) : '` find . -name pari.cfg `
+	. $(GETODIR2)/pari.cfg && echo kernlvl1 = $$kernlvl1 && [ $$kernlvl1 = gmp ]
+	: test whether pari found a dynamic library linker during configuration :
+	. $(GETODIR2)/pari.cfg && echo DLLD = $$DLLD && [ "$$DLLD" != "" ]
 	touch $@
 
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/pari/Makefile

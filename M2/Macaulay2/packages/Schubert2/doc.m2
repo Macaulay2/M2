@@ -48,7 +48,6 @@ Node
     "Ideas for future development"
     :methods not involving something exported by this package:
     (symbol _, OO, RingElement)
-    (variety, RingElement)
     (symbol SPACE,OO,RingElement)
 --------
 Node
@@ -314,7 +313,7 @@ Node
    Text
       There are several other methods for constructing abstract varieties: the following functions
       construct basic useful varieties:
-      @TO projectiveSpace@,
+      @TO abstractProjectiveSpace@,
       @TO projectiveBundle@,
       @TO flagBundle@, and
       @TO base@.
@@ -351,9 +350,9 @@ Node
    Text
      Then we create the projective space of dimension 4 over the base point.
    Example
-    X = projectiveSpace'_4 pt
+    X = abstractProjectiveSpace'_4 pt
    Text
-    Note that we use @TO projectiveSpace'@ to get Grothendieck-style notation.  This has the advantage that
+    Note that we use @TO abstractProjectiveSpace'@ to get Grothendieck-style notation.  This has the advantage that
     the first Chern class of the tautological line bundle is assigned to the variable {\tt h}:
    Example
      chern_1 OO_X(1)
@@ -380,16 +379,16 @@ Node
 --------
 Node
   Key
-    projectiveSpace'
-    (projectiveSpace',ZZ,AbstractVariety)
-    (projectiveSpace',ZZ)
-    [projectiveSpace',VariableName]
+    abstractProjectiveSpace'
+    (abstractProjectiveSpace',ZZ,AbstractVariety)
+    (abstractProjectiveSpace',ZZ)
+    [abstractProjectiveSpace',VariableName]
   Headline
     make a projective space
   Usage
-    projectiveSpace' n
-    projectiveSpace'(n, S)
-    projectiveSpace'_n S
+    abstractProjectiveSpace' n
+    abstractProjectiveSpace'(n, S)
+    abstractProjectiveSpace'_n S
   Inputs
     n : ZZ
     S : AbstractVariety
@@ -402,7 +401,7 @@ Node
        the base variety {\tt S}.
   Description
    Example
-     P = projectiveSpace' 3
+     P = abstractProjectiveSpace' 3
      tangentBundle P
      chern tangentBundle P
      todd P
@@ -413,17 +412,17 @@ Node
      {\em free} variable $n$, instead of working over @ TO point @:
    Example
      pt = base n
-     Q = projectiveSpace'_4 pt
+     Q = abstractProjectiveSpace'_4 pt
      chi OO_Q(n)
    Text
      The base variety may itself be a projective space:
    Example
-     S = projectiveSpace'(4, VariableName => h)
-     P = projectiveSpace'(3, S, VariableName => H)
+     S = abstractProjectiveSpace'(4, VariableName => h)
+     P = abstractProjectiveSpace'(3, S, VariableName => H)
      dim P
      todd P
   SeeAlso
-     projectiveSpace
+     abstractProjectiveSpace
      projectiveBundle
      flagBundle
      tangentBundle
@@ -434,17 +433,17 @@ Node
 --------
 Node
   Key
-    projectiveSpace
+    abstractProjectiveSpace
     VariableName
-    (projectiveSpace,ZZ,AbstractVariety)
-    (projectiveSpace,ZZ)
-    [projectiveSpace,VariableName]
+    (abstractProjectiveSpace,ZZ,AbstractVariety)
+    (abstractProjectiveSpace,ZZ)
+    [abstractProjectiveSpace,VariableName]
   Headline
     make a projective space
   Usage
-    projectiveSpace n
-    projectiveSpace(n, S)
-    projectiveSpace_n S
+    abstractProjectiveSpace n
+    abstractProjectiveSpace(n, S)
+    abstractProjectiveSpace_n S
   Inputs
     n : ZZ
     S : AbstractVariety
@@ -459,28 +458,33 @@ Node
    Text
      Equivalent to flagBundle(\{1,n\},S,VariableNames=>\{h,\}).
    Example
-     P = projectiveSpace 3
+     P = abstractProjectiveSpace 3
      tangentBundle P
      chern tangentBundle P
      todd P
      chi OO_P(3)
+   Text
+     The name is quite long.  Here is one way to make it shorter
+   Example
+     PP = abstractProjectiveSpace
+     X = PP 4
    Text
      To compute the Hilbert polynomial of a sheaf on projective space, we work
      over a base variety of dimension zero whose intersection ring contains a
      {\em free} variable $n$, instead of working over @ TO point @:
    Example
      pt = base n
-     Q = projectiveSpace_4 pt
+     Q = abstractProjectiveSpace_4 pt
      chi OO_Q(n)
    Text
      The base variety may itself be a projective space:
    Example
-     S = projectiveSpace(4, VariableName => symbol h)
-     P = projectiveSpace(3, S, VariableName => H)
+     S = abstractProjectiveSpace(4, VariableName => symbol h)
+     P = abstractProjectiveSpace(3, S, VariableName => H)
      dim P
      todd P
   SeeAlso
-     projectiveSpace'
+     abstractProjectiveSpace'
      projectiveBundle
      flagBundle
      tangentBundle
@@ -543,14 +547,14 @@ Node
     Then we make a projective space over it and use the auxiliary parameters {\tt p} and {\tt q} in a computation
     that checks the projection formula.
    Example
-     X = projectiveSpace'(3,S,VariableName => H)
+     X = abstractProjectiveSpace'(3,S,VariableName => H)
      intersectionRing X
      f = X.StructureMap
      x = chern f_* (f^* OO_S(p*a_1) * OO_X(q*H))
      y = chern f_* OO_X((f^*(p*a_1))+q*H)
      x == y
   SeeAlso
-    projectiveSpace'
+    abstractProjectiveSpace'
     base
     StructureMap
     chern
@@ -582,7 +586,7 @@ Node
       a rank 2 vector bundle on the projective plane.
     Example
       pt = base(n,p,q)
-      P2 = projectiveSpace'_2 pt
+      P2 = abstractProjectiveSpace'_2 pt
       E = abstractSheaf(P2, Rank=>2, ChernClass=>1+p*h+q*h^2)
       chern E(n*h)
   SeeAlso
@@ -883,7 +887,7 @@ Node
     Example
       X = point
       RX = intersectionRing X
-      Y = projectiveSpace 3
+      Y = abstractProjectiveSpace 3
       RY = intersectionRing Y
       fUpper = map(RX, RY, splice{4:0_RX})
       fLower = method()
@@ -894,7 +898,7 @@ Node
       This same example can be done much more easily via:
     Example
       X = point
-      Y = projectiveSpace 3
+      Y = abstractProjectiveSpace 3
       incl = map(Y,X,OO_X)
 --------
 Node
@@ -957,9 +961,9 @@ Node
       the base variety of $F$
   Description
     Example
-      X = projectiveSpace 4
+      X = abstractProjectiveSpace 4
       X.Base
-      Y = projectiveSpace_3 X
+      Y = abstractProjectiveSpace_3 X
       Y.Base
 --------
 Node
@@ -976,7 +980,7 @@ Node
       the list of ranks of the tautological sheaves on $F$
   Description
     Example
-      G = projectiveSpace 7
+      G = abstractProjectiveSpace 7
       G.BundleRanks
       X = flagBundle {1,2,3}
       X.BundleRanks
@@ -997,7 +1001,7 @@ Node
     Text
       The preferred way to get the list of tautological sheaves on $F$ is {\tt bundles F}.
     Example
-      G = projectiveSpace 7
+      G = abstractProjectiveSpace 7
       G.Bundles
       rank \ oo
       X = flagBundle {1,2,3}
@@ -1018,7 +1022,7 @@ Node
       the intersection ring of an abstract variety
   Description
     Example
-      X = projectiveSpace 3
+      X = abstractProjectiveSpace 3
       A =intersectionRing X
       A.VarietyDimension
 --------
@@ -1035,7 +1039,7 @@ Node
       @TO tautologicalLineBundle@.  The programmer is warned not to make direct reference to this
       key for this reason.
     Example
-      X = projectiveSpace 3
+      X = abstractProjectiveSpace 3
       try X.TautologicalLineBundle else print "bundle not found"
       L = tautologicalLineBundle X
       L === X.TautologicalLineBundle
@@ -1070,7 +1074,7 @@ Node
     the total Chern character of $F$
   Description
     Example
-     X = projectiveSpace' 3
+     X = abstractProjectiveSpace' 3
      L = OO_X(1)
      chern L
      ch L
@@ -1089,7 +1093,7 @@ Node
     the $i$-th Chern character of $F$
   Description
     Example
-     X = projectiveSpace' 3
+     X = abstractProjectiveSpace' 3
      L = OO_X(1)
      chern L
      ch_1 L, ch_2 L, ch_3 L
@@ -1147,9 +1151,9 @@ Node
     the Euler characteristic of $F$
   Description
    Example
-    X = projectiveSpace' 2
+    X = abstractProjectiveSpace' 2
     chi OO_X(-1), chi OO_X(0), chi OO_X(1), chi OO_X(2), chi OO_X(3)
-    Y = projectiveSpace'(2, base n)
+    Y = abstractProjectiveSpace'(2, base n)
     chi OO_Y(n)
    Text
     The algorithm uses the Hirzebruch-Riemann-Roch theorem.
@@ -1210,7 +1214,7 @@ Node
   Usage
    flagBundle(r,E)
   SeeAlso
-   projectiveSpace
+   abstractProjectiveSpace
    projectiveBundle
   Inputs
    r:List
@@ -1274,7 +1278,7 @@ Node
    make a projective bundle from an abstract sheaf
   SeeAlso
    projectiveBundle
-   projectiveSpace
+   abstractProjectiveSpace
    flagBundle
   Usage
     projectiveBundle' F
@@ -1300,7 +1304,7 @@ Node
     integral (chern_1 OO_Y(1))^(dim Y)
     bundles X/rank
   Caveat
-   Perhaps this should be merged with @ TO projectiveSpace @.  (The optional arguments are slightly different.)
+   Perhaps this should be merged with @ TO abstractProjectiveSpace @.  (The optional arguments are slightly different.)
 --------
 Node
   Key
@@ -1313,7 +1317,7 @@ Node
    make a projective bundle from an abstract sheaf
   SeeAlso
    projectiveBundle'
-   projectiveSpace
+   abstractProjectiveSpace
    flagBundle
   Usage
     projectiveBundle F
@@ -1339,53 +1343,7 @@ Node
     integral (chern_1 OO_Y(1))^(dim Y)
     bundles X/rank
   Caveat
-   Perhaps this should be merged with @ TO projectiveSpace @.  (The optional arguments are slightly different.)
---------
-Node
-  Key
-   PP'
-  Headline
-   make a projective space
-  Usage
-   PP'^n
-  Inputs
-   n:ZZ
-  Outputs
-   :FlagBundle
-    a projective space over @ TO point @ of dimension $n$
-  Description
-   Example
-    X = PP'^4
-    X.Base
-    dim X
-   Text
-    The projective space produced adheres to modern "Grothendieck-style" notation, with a tautological quotient bundle of rank 1.
-    For the opposite, "Fulton-style" notation see @ TO PP @.
-   Example
-    bundles X/rank
---------
-Node
-  Key
-   PP
-  Headline
-   make a projective space
-  Usage
-   PP^n
-  Inputs
-   n:ZZ
-  Outputs
-   :FlagBundle
-    a projective space over @ TO point @ of dimension $n$
-  Description
-   Example
-    X = PP^4
-    X.Base
-    dim X
-   Text
-    The projective space produced adheres to the older, "Fulton-style" notation, with a tautological subbundle of rank 1.  For the
-    opposite, "Grothendieck-style" notation, see @ TO PP' @.
-   Example
-    bundles X/rank
+   Perhaps this should be merged with @ TO abstractProjectiveSpace @.  (The optional arguments are slightly different.)
 --------
 Node
   Key
@@ -1416,8 +1374,8 @@ Node
     Text
       Blowing up a point in $\mathbb{P}^2$:
     Example
-      X = projectiveSpace 0
-      Y = projectiveSpace 2
+      X = abstractProjectiveSpace 0
+      Y = abstractProjectiveSpace 2
       i = map(Y,X,OO_X)
       (Ytilde, PN, PNmap, Ymap) = blowup(i)
       Ediv = chern(1, exceptionalDivisor Ytilde) -- the class of the exceptional divisor
@@ -1427,8 +1385,8 @@ Node
       surfaces in $\mathbb{P}^3$ containing a twisted cubic:
     Example
       B = base(r,s,t)
-      X = projectiveSpace(1, B)
-      Y = projectiveSpace(3, B)
+      X = abstractProjectiveSpace(1, B)
+      Y = abstractProjectiveSpace(3, B)
       i = map(Y,X,OO_X(3)) --includes P^1 into P^3 as the twisted cubic
       (Ytilde, PN, PNmap, Ymap) = blowup(i)
       Ediv = chern(1, exceptionalDivisor Ytilde)
@@ -1449,7 +1407,7 @@ Node
     exceptionalDivisor X
   Inputs
     X:AbstractVariety
-     a blowup, built using @ TO blowup @@
+     a blowup, built using @ TO blowup @
   Outputs
     :AbstractSheaf
       the exceptional divisor on X, expressed as a line bundle
@@ -1457,8 +1415,8 @@ Node
     blowup
   Description
     Example
-      T = projectiveSpace 2
-      S = projectiveSpace 0
+      T = abstractProjectiveSpace 2
+      S = abstractProjectiveSpace 0
       i = map(T,S,OO_S) -- inclusion of a point in P^2
       X = first blowup(i)
       exceptionalDivisor X
@@ -1633,7 +1591,7 @@ Node
     the intersection ring of $X$
   Description
    Example
-    intersectionRing PP'^3
+    intersectionRing abstractProjectiveSpace' 3
    Text
     The variables may not have been assigned their values in the intersection ring yet:
    Example
@@ -1644,6 +1602,7 @@ Node
     use ooo
     H_(1,1), H_(1,2), H_(1,3)
   SeeAlso
+   abstractProjectiveSpace'
    IntersectionRing
 --------
 Node
@@ -1715,7 +1674,7 @@ Node
     the $n$-th exterior power of $F$
   Description
    Example
-    tangentBundle PP^4
+    tangentBundle abstractProjectiveSpace 4
     exteriorPower_4 oo
     chern oo
   SeeAlso
@@ -1741,14 +1700,14 @@ Node
    Text
     In the first example, we let $n$ be a natural number.
    Example
-    tangentBundle PP^4
+    tangentBundle abstractProjectiveSpace 4
     symmetricPower_4 oo
     chern oo
    Text
     In the next example, we let $n$ be a free parameter in the ``intersection ring'' of the base variety.
    Example
     pt = base n
-    X = projectiveSpace'_2 pt
+    X = abstractProjectiveSpace'_2 pt
     tangentBundle X
     F = symmetricPower_n oo
     chern F
@@ -1782,7 +1741,7 @@ Node
     dimension zero whose integral is 1.)
   Description
    Example
-    X = PP^4
+    X = abstractProjectiveSpace 4
     f = X.StructureMap
     sectionClass f
     integral oo
@@ -1854,7 +1813,7 @@ Node
    (symbol /,AbstractVariety,AbstractVariety)
   Description
    Example
-    F = PP^2
+    F = abstractProjectiveSpace 2
     f = F.StructureMap
     source f
     f_* OO_F
@@ -1890,8 +1849,8 @@ Node
     the (absolute) tangent bundle of $X$ or the (relative) tangent bundle of $f$
   Description
    Example
-    X = projectiveSpace' 2
-    Y = projectiveSpace'_2 X
+    X = abstractProjectiveSpace' 2
+    Y = abstractProjectiveSpace'_2 X
     tangentBundle Y
     chern oo
     tangentBundle Y.StructureMap
@@ -1917,8 +1876,8 @@ Node
     the (absolute) cotangent bundle of $X$ or the (relative) cotangent bundle of $f$
   Description
    Example
-    X = projectiveSpace' 2
-    Y = projectiveSpace'_2 X
+    X = abstractProjectiveSpace' 2
+    Y = abstractProjectiveSpace'_2 X
     cotangentBundle Y
     chern oo
     cotangentBundle Y.StructureMap
@@ -1946,7 +1905,7 @@ Node
     of the (relative) tangent bundle of $f$
   Description
    Example
-    todd PP^6
+    todd abstractProjectiveSpace 6
 --------
 Node
   Key
@@ -2007,7 +1966,7 @@ Node
     point
     dim point
     intersectionRing point
-    X = PP^4
+    X = abstractProjectiveSpace 4
     f = X.StructureMap
     target f
 --------
@@ -2036,7 +1995,7 @@ Node
    Text
     If {\tt F} or {\tt G} is a ring element of degree 0, it represents a trivial bundle of that rank.
    Example
-    X = PP^1
+    X = abstractProjectiveSpace 1
     OO_X(1) * OO_X(2)
     chi oo
    Text
@@ -2071,7 +2030,7 @@ Node
     the (direct) sum of $F$ and $G$.  If one of the arguments is an integer, it represents the trivial sheaf of that rank.
   Description
    Example
-    X = PP^1
+    X = abstractProjectiveSpace 1
     OO_X(1) + OO_X(2)
     chi oo
     1 + OO_X(1)
@@ -2080,7 +2039,7 @@ Node
     The sheaves can be on different varieties if one of the varieties is over the other.
    Example
     ch OO_X(1)
-    Y = projectiveSpace'(3,X,VariableName=>k)
+    Y = abstractProjectiveSpace'(3,X,VariableName=>k)
     ch OO_Y(2)
     OO_Y(2) ++ OO_X(1)
     ch oo
@@ -2107,7 +2066,7 @@ Node
     the difference of $F$ and $G$.  If one of the arguments is an integer, it represents the trivial sheaf of that rank.
   Description
    Example
-    X = PP^1
+    X = abstractProjectiveSpace 1
     OO_X(1) - OO_X(2)
     chi oo
    Text
@@ -2130,7 +2089,7 @@ Node
    Text
     Maybe we should remove this operation, in favor of @ TO (symbol *, ZZ, AbstractSheaf) @.
    Example
-    X = PP^1
+    X = abstractProjectiveSpace 1
     F = OO_X(1)
     chi F^10
 --------
@@ -2154,7 +2113,7 @@ Node
   Description
    Example
     pt = base n
-    X = projectiveSpace'(3,pt)
+    X = abstractProjectiveSpace'(3,pt)
     A = intersectionRing X
     ch ((OO_X(1)) ^** 2)
     ch ((OO_X(1)) ^** 3)
@@ -2183,11 +2142,11 @@ Node
     the line bundle whose first Chern class is {\tt n}.
   Description
    Example
-    X = projectiveSpace' 4
+    X = abstractProjectiveSpace' 4
     OO_X(3)
     chi oo
     pt = base n
-    Y = projectiveSpace'(4,pt)
+    Y = abstractProjectiveSpace'(4,pt)
     OO_Y(n)
     chi oo
    Text
@@ -2221,7 +2180,7 @@ Node
     the tensor product of $F$ with the dual of $E$
   Description
    Example
-    X = PP^1
+    X = abstractProjectiveSpace 1
     Hom(OO_X(3),OO_X)
     chi oo
 --------
@@ -2240,30 +2199,11 @@ Node
    the abstract sheaf $O_D$, defined as $1 - O(-D)$
  Description
   Example
-   X = PP'^4
+   X = abstractProjectiveSpace' 4
    h
    F = OO_h
    chern F
    ch F
---------
-Node
- Key
-  (variety,RingElement)
- Headline
-  get the variety of a cycle class
- Usage
-  variety c
- Inputs
-  c:
-   contained in the intersection ring of an abstract variety $X$, say
- Outputs
-  :
-    $X$
- Description
-  Example
-   X = PP'^4
-   h
-   variety h
 --------
 Node
   Key
@@ -2279,7 +2219,7 @@ Node
     the structure sheaf of {\tt X}
   Description
    Example
-    X = PP^4
+    X = abstractProjectiveSpace 4
     OO_X
     rank oo
     chi ooo
@@ -2298,7 +2238,7 @@ Node
     the negation of {\tt F}, as a virtual sheaf.
   Description
    Example
-    X = PP^2
+    X = abstractProjectiveSpace 2
     - OO_X(1)
     chern oo
 --------
@@ -2320,7 +2260,7 @@ Node
    Text
     The determinant of {\tt F} is the $n$-th exterior power of {\tt F}, where $n$ is the rank of {\tt F}.
    Example
-    X = PP^1
+    X = abstractProjectiveSpace 1
     F = OO_X(1) ++ OO_X(1) ++ OO_X(3)
     det F
     chern oo
@@ -2342,7 +2282,7 @@ Node
     the dual of {\tt F}
   Description
    Example
-    X = PP'^1
+    X = abstractProjectiveSpace' 1
     dual OO_X(-1)
     chi oo
 --------
@@ -2358,7 +2298,7 @@ Node
     the rank of {\tt F}
   Description
    Example
-    rank tangentBundle PP^4
+    rank tangentBundle abstractProjectiveSpace 4
 --------
 Node
   Key
@@ -2374,27 +2314,8 @@ Node
     the variety of {\tt F}
   Description
    Example
-    X = PP^4
+    X = abstractProjectiveSpace 4
     tangentBundle X
-    variety oo
---------
-Node
-  Key
-   (variety,Ring)
-  Headline
-   the variety of an intersection ring
-  Usage
-   variety A
-  Inputs
-   A:
-    the intersection ring of a variety $X$, say
-  Outputs
-   :
-    $X$, the variety of {\tt A}
-  Description
-   Example
-    X = PP^1
-    intersectionRing X
     variety oo
 --------
 Node
@@ -2411,7 +2332,7 @@ Node
     the dimension of {\tt X}
   Description
    Example
-    dim PP^4
+    dim abstractProjectiveSpace 4
 --------
 Node
   Key
@@ -2483,7 +2404,7 @@ Node
    (symbol ^*,AbstractVarietyMap)
   Description
    Example
-    X = PP'^4
+    X = abstractProjectiveSpace' 4
     f = X.StructureMap
     OO_X(1)
     f_* oo
@@ -2504,7 +2425,7 @@ Node
     the dimension {\tt X}
   Description
    Example
-    dim PP^4
+    dim abstractProjectiveSpace 4
 --------
 Node
   Key
@@ -2520,7 +2441,7 @@ Node
     the source of {\tt f}
   Description
    Example
-    X = PP^4
+    X = abstractProjectiveSpace 4
     f = X.StructureMap
     source f
 --------
@@ -2538,7 +2459,7 @@ Node
     the target of {\tt f}
   Description
    Example
-    X = PP^4
+    X = abstractProjectiveSpace 4
     f = X.StructureMap
     target f
 --------
@@ -2737,7 +2658,7 @@ Node
    the topological Euler characteristic of the variety {\tt X}
  Description
   Example
-   euler PP^5
+   euler abstractProjectiveSpace 5
    euler flagBundle {1,1,1,1,1}
 -------
 Node
@@ -2767,7 +2688,7 @@ Node
    > proj(3,h,all): factor(chi(o(n*h)));
 			     1/6 (n + 3) (n + 2) (n + 1)
   Example
-   Ph = projectiveSpace'_3 base n
+   Ph = abstractProjectiveSpace'_3 base n
    factor chi OO(n*h)
   Pre
    > Ph[toddclass_];
@@ -2858,7 +2779,7 @@ Node
                         1/12 n  + 2/3 n  + ---- n  + 7/3 n + 1
                                             12
   Example
-   P5 = projectiveSpace'(5,base n,VariableName=>H)
+   P5 = abstractProjectiveSpace'(5,base n,VariableName=>H)
    chi(OO(n*H)-OO((n-2)*H))
 Node
  Key
@@ -2953,7 +2874,7 @@ Node
   Pre
    > proj(4,h,tang):            # need tangentbundle for chi
   Example
-   X = projectiveSpace'(4,base n,VariableName => h)
+   X = abstractProjectiveSpace'(4,base n,VariableName => h)
   Pre
    > F:=sheaf(2,[5*h,10*h^2]):  # defines the Horrocks-Mumford bundle
   Example
@@ -3054,12 +2975,12 @@ Node
   Text
     We we compute the arithmetic genus of a curve of degree $n$ in $\PP^2$:
   Example
-    Y = projectiveSpace'_2 base n
+    Y = abstractProjectiveSpace'_2 base n
     factor p_a (n*h)
   Text
    Here we compute the arithmetic genus of a curve on with $\PP^1 \times \PP^1$:
   Example
-    Z = projectiveSpace'_(1,VariableName => k) projectiveSpace'_1 base(m,n)
+    Z = abstractProjectiveSpace'_(1,VariableName => k) abstractProjectiveSpace'_1 base(m,n)
     factor p_a (m*h + n*k)
   Text
    In the code above we have used the notation {\tt f_(a,b) x} as an abbreviation for {\tt f(a,b,x)}, see @ TO (symbol _,Function,Thing) @.
@@ -3134,9 +3055,9 @@ Node
   StructureMap
  Description
   Example
-   X = projectiveSpace_3 point
-   Y = projectiveSpace_2 X
-   Z = projectiveSpace_1 Y
+   X = abstractProjectiveSpace_3 point
+   Y = abstractProjectiveSpace_2 X
+   Z = abstractProjectiveSpace_1 Y
    Z/Z
    Z/Y
    Z/X
@@ -3156,7 +3077,7 @@ Node
    the identity map from {\tt X} to itself
  Description
   Example
-   X = PP^4
+   X = abstractProjectiveSpace 4
    id_X
 ---
 Node
@@ -3174,8 +3095,8 @@ Node
    the compostion of {\tt g} and {\tt f}
  Description
   Example
-   X = projectiveSpace_3 point
-   Y = projectiveSpace_4 X
+   X = abstractProjectiveSpace_3 point
+   Y = abstractProjectiveSpace_4 X
    Y.StructureMap
    X.StructureMap * Y.StructureMap
 Node
@@ -3267,7 +3188,7 @@ Node
       (S,Q) = bundles X
       L = exteriorPower(2,dual S)
       P = flagBundle({5,1}) --Grothendieck-style PP^5
-      f = map(P,X,L) -- Plucker embedding of GG(1,3) in PP^5
+      f = map(P,X,L) -- Plücker embedding of GG(1,3) in PP^5
       H = last bundles P
       f^* (chern(1,H)) -- hyperplane section, should be sigma_1
       f_* chern(0,S) --expect 2 times hyperplane class since GG(1,3) has degree 2

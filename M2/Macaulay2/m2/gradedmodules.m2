@@ -1,13 +1,19 @@
 --		Copyright 1997-2002 by Daniel R. Grayson
 
+needs "modules.m2"
+needs "ringmap.m2"
+
 GradedModule = new Type of MutableHashTable
 GradedModule.synonym = "graded module"
 ring GradedModule := (M) -> M.ring
 
-spots := C -> select(keys C, i -> class i === ZZ)
+spots  = C -> select(keys C, i -> class i === ZZ)
+union := (x,y) -> keys(set x + set y)
+intersection := (x,y) -> keys(set x * set y)
+
 min GradedModule := C -> min spots complete C
 max GradedModule := C -> max spots complete C
-union := (x,y) -> keys(set x + set y)
+
 GradedModule == GradedModule := (C,D) -> (
      ring C === ring D
      and
@@ -34,6 +40,15 @@ net GradedModule := C -> (
 	       VerticalSpace => 1);
 	  printWidth = savePW;
 	  res))
+  
+texUnder = (x,y) -> "\\underset{\\vphantom{\\Big|}"|y|"}{"|x|"}"
+
+texMath GradedModule := C -> (
+     s := sort spots C;
+     if # s === 0 then "0"
+     else demark("\\quad ",apply(s,i->texUnder(texMath C_i,i)))
+      )
+
 length GradedModule := (M) -> (
      s := spots M;
      if #s === 0 then 0 else max s - min s)
@@ -43,7 +58,7 @@ GradedModuleMap.synonym = "graded module map"
 source GradedModuleMap := GradedModule => f -> f.source
 target GradedModuleMap := GradedModule => f -> f.target
 ring GradedModuleMap := (f) -> ring source f
-net GradedModuleMap := f -> (
+net GradedModuleMap := f -> (  -- net GradedModule & net ChainComplexMap are essentially identical...
      d := f.degree;
      v := between("",
 	  apply( sort toList (
@@ -59,6 +74,14 @@ net GradedModuleMap := f -> (
 	  );
      if # v === 0 then "0"
      else stack v)
+
+texMath GradedModuleMap := f -> (
+     d := f.degree;
+     s := sort intersection(spots f.source, spots f.target / (i -> i - d));
+     texMath if #s === 0 then ZERO else new VerticalList from apply(s,i-> expression(i+d) : MapExpression { target f_i, source f_i, f_i } : expression i)
+)
+
+
 GradedModuleMap _ ZZ := Matrix => (f,i) -> (
      if f#?i then f#i else map((target f)_(i+f.degree),(source f)_i,0)
      )
@@ -194,6 +217,8 @@ ZZ == GradedModuleMap := (i,f) -> f == i
 
 degree GradedModuleMap := G -> G.degree
 
+formation GradedModule := M -> if M.cache.?formation then M.cache.formation
+
 directSum GradedModule := GradedModule => M -> directSum(1 : M)
 GradedModule.directSum = v -> (
      E := new GradedModule;
@@ -205,21 +230,14 @@ GradedModule.directSum = v -> (
      scan(v, M -> scan(spots M, i -> spts#i = 1));
      spts = keys spts;
      scan(spts, i -> E#i = directSum apply(v, M -> M_i));
-     E	       
-     )
+     if not E.?cache then E.cache = new CacheTable;
+     E.cache.components = v;
+     E.cache.formation = FunctionApplication { directSum, v };
+     E)
 
-GradedModuleMap ++ GradedModuleMap := GradedModuleMap => (f,g) -> (
-     if f.degree != g.degree then (
-	  error "expected maps of the same degree";
-	  );
-     h := new GradedModuleMap;
-     h.ring = ring f;
-     h.source = f.source ++ g.source;
-     h.target = f.target ++ g.target;
-     h.degree = f.degree;
-     scan(union(spots f, spots g), i -> h#i = f_i ++ g_i);
-     h.cache.components = {f,g};
-     h)
+formation GradedModuleMap := M -> if M.cache.?formation then M.cache.formation
+
+GradedModuleMap ++ GradedModuleMap := GradedModuleMap => directSum
 
 GradedModuleMap.directSum = args -> (
      R := ring args#0;
@@ -233,7 +251,9 @@ GradedModuleMap.directSum = args -> (
      g := map(directSum apply(args, target), directSum apply(args, source), 
 	  j -> directSum apply(args, f -> f_j), Degree => d);
      g.cache = new CacheTable;
+     if not g.?cache then g.cache = new CacheTable;
      g.cache.components = toList args;
+     g.cache.formation = FunctionApplication { directSum, args };
      g
      )
 
@@ -289,14 +309,7 @@ gradedModule Sequence := gradedModule List := GradedModule => modules -> (
      C)
 gradedModule Module := GradedModule => M -> gradedModule (1:M)
 
-GradedModule ++ GradedModule := GradedModule => (C,D) -> (
-     E := new GradedModule;
-     E.cache = new CacheTable;
-     R := E.ring = C.ring;
-     if R =!= D.ring then error "expected graded modules over the same ring";
-     scan(union(spots C, spots D), i -> E#i = C_i ++ D_i);
-     E.cache.components = {C,D};
-     E)
+GradedModule ++ GradedModule := GradedModule => directSum
 
 GradedModule ++ Module := GradedModule => (C,M) -> C ++ gradedModule M
 Module ++ GradedModule := GradedModule => (M,C) -> gradedModule M ++ C
@@ -347,7 +360,7 @@ gradedModuleMap Sequence := gradedModuleMap List := GradedModuleMap => maps -> (
      f.target = gradedModule(target \ maps);
      f.degree = 0;
      f)
-gradedModuleMap ModuleMap := GradedModuleMap => M -> gradedModuleMap (1:M)
+gradedModuleMap Matrix := GradedModuleMap => M -> gradedModuleMap (1:M)
 
 single := (v) -> (
      if not same v 
@@ -433,7 +446,7 @@ minimalPresentation GradedModuleMap := prune GradedModuleMap := GradedModuleMap 
       k -> minimalPresentation f_k,
       Degree => f.degree)
 
-complete GradedModule := (M) -> null
+complete GradedModule := (M) -> M
 rank GradedModule := (M) -> sum(spots M, i -> (-1)^i * rank M#i)
 
 map(GradedModule,GradedModule,Function) := GradedModuleMap => options -> (C,D,f) -> (

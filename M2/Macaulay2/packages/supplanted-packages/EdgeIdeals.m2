@@ -19,8 +19,7 @@ newPackage("EdgeIdeals",
                         HomePage => "http://flash.lakeheadu.ca/~avantuyl/"
                        }
                       },
-           Headline => "a package for edge ideals.",
-           DebuggingMode => true
+           Headline => "a package for edge ideals."
           )
 
 needsPackage "GenericInitialIdeal"

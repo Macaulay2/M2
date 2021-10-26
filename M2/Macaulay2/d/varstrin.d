@@ -71,19 +71,18 @@ export putdigit(o:varstring,x:int):void := o << (x + if x<10 then '0' else 'a'-1
 
 export varstringarray := { a:array(string), n:int };
 export newvarstringarray(m:int):varstringarray := varstringarray( new array(string) len m do provide "", 0 );
-export append(v:varstringarray,s:string):varstringarray := (
+export append(v:varstringarray,s:string):void := (
      n := v.n;
-     if length(v.a) == n then varstringarray( 
-	  new array(string) len 2*n+1 do (
+     if length(v.a) == n then ( 
+	  v.a = new array(string) len 2*n+1 do (
 	       foreach t in v.a do provide t;
 	       provide s;
 	       while true do provide "";
-	       ),
-	  n+1)
+	       );
+	  v.n = n+1;)
      else (
      	  v.a.n = s;
-     	  v.n = n+1;
-     	  v));
+     	  v.n = n+1;));
 export extract(v:varstringarray):array(string) := new array(string) len v.n do foreach s in v.a do provide s;
 
 -- Local Variables:

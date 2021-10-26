@@ -1,26 +1,9 @@
 #include "engine-exports.h"
 #include "M2mem-replacement.h"
 #include <memory.h>
-#include <gc/gc.h>
+#include <M2/gc-include.h>
 
 typedef struct RingElementrec *RingElement;
-
-  const RingElement /* or null */ *rawGCDRingElement(
-                                             const RingElement *f, const RingElement *g,
-                                             const RingElement *mipo, M2_bool inExtension
-                                             )
-{
- /* connect to rawGCD */
-    return 0;
-}
-  const RingElement /* or null */ *rawExtendedGCDRingElement(
-                                                     const RingElement *f, const RingElement *g,
-                                                     const RingElement **A, const RingElement **B
-                                                     )
-{
-    /* connected to rawExtendedGCD */
-    return 0;
-}
 
 M2_arrayint M2_makearrayint(int n)
 {
@@ -67,12 +50,15 @@ M2_string M2_tostringn(char *s, int n)
 
 M2_string (*gmp_tonetCCparenpointer)(gmp_CC);
 M2_string (*gmp_tonetCCpointer)(gmp_CC);
-M2_string (*gmp_tostringRRpointer)(__mpfr_struct *);
+M2_string (*gmp_tostringRRpointer)(mpfr_srcptr);
 
 
 char newline[] = "\n";
 
 int M2_gbTrace = 0;
+int M2_numericalAlgebraicGeometryTrace = 0;
+
+struct FUNCTION_CELL *thread_prepare_list;
 
 /*
  Local Variables:

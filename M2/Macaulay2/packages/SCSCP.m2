@@ -1,4 +1,4 @@
-{*
+-*
   Copyright 2009 Dan Roozemond (TU Eindhoven, Netherlands)
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +12,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-*}
+*-
 
 newPackage(
 	"SCSCP",
@@ -22,6 +22,7 @@ newPackage(
 		{Name => "Dan Roozemond", Email => "dan.roozemond@gmail.com", HomePage => "http://magma.maths.usyd.edu.au/~danr"}
 	},
 	Headline => "SCSCP for Macaulay2",
+	Keywords => {"System"},
 	DebuggingMode => false,
 	AuxiliaryFiles => true,
 	PackageExports => {"OpenMath"},

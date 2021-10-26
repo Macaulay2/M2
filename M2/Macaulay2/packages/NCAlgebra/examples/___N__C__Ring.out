@@ -1,0 +1,127 @@
+-- -*- M2-comint -*- hash: 87296464
+
+i1 : A = QQ{x,y,z}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : f = y*z + z*y - x^2
+
+            2
+o2 = zy+yz-x
+
+o2 : A
+
+i3 : g = x*z + z*x - y^2
+
+         2
+o3 = zx-y +xz
+
+o3 : A
+
+i4 : h = z^2 - x*y - y*x
+
+      2
+o4 = z -yx-xy
+
+o4 : A
+
+i5 : I=ncIdeal{f,g,h}
+
+                             2      2      2
+o5 = Two-sided ideal {zy+yz-x , zx-y +xz, z -yx-xy}
+
+o5 : NCIdeal
+
+i6 : B=A/I
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o6 = B
+
+o6 : NCQuotientRing
+
+i7 : generators B
+
+o7 = {x, y, z}
+
+o7 : List
+
+i8 : numgens B
+
+o8 = 3
+
+i9 : isCommutative B
+
+o9 = false
+
+i10 : coefficientRing B
+
+o10 = QQ
+
+o10 : Ring
+
+i11 : x
+
+o11 = x
+
+o11 : B
+
+i12 : C = skewPolynomialRing(QQ,(-1)_QQ,{x,y,z,w})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o12 = C
+
+o12 : NCQuotientRing
+
+i13 : x
+
+o13 = x
+
+o13 : C
+
+i14 : use B
+
+o14 = B
+
+o14 : NCQuotientRing
+
+i15 : x
+
+o15 = x
+
+o15 : B
+
+i16 : use C
+
+o16 = C
+
+o16 : NCQuotientRing
+
+i17 : sigma = ncMap(C,C,{y,z,w,x})
+
+o17 = NCRingMap C <--- C
+
+o17 : NCRingMap
+
+i18 : D = oreExtension(C,sigma,a)
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o18 = D
+
+o18 : NCQuotientRing
+
+i19 : generators D
+
+o19 = {x, y, z, w, a}
+
+o19 : List
+
+i20 : numgens D
+
+o20 = 5
+
+i21 : 

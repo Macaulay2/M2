@@ -1,5 +1,8 @@
 // Copyright 1996 Michael E. Stillman
 
+#include <limits>
+#include <cstdlib>
+
 #include "hilb.hpp"
 #include "relem.hpp"
 #include "interrupted.hpp"
@@ -9,12 +12,17 @@ int partition_table::representative(int x)
   int i = x;
   while (dad[i] >= 0) i = dad[i];
   int j = x;
-  while (j != i) { int t = dad[j]; dad[j] = i; j = t; }
+  while (j != i)
+    {
+      int t = dad[j];
+      dad[j] = i;
+      j = t;
+    }
   return i;
 }
 
 int partition_table::merge_in(int x, int y)
-     // Returns the label representative of the merge of the two sets
+// Returns the label representative of the merge of the two sets
 {
   int t, newtop;
   int i = x;
@@ -24,25 +32,41 @@ int partition_table::merge_in(int x, int y)
   if (i == j) return i;
   n_sets--;
   if (dad[i] > dad[j])
-    { newtop = j; dad[newtop] += dad[i]; dad[i] = newtop; }
+    {
+      newtop = j;
+      dad[newtop] += dad[i];
+      dad[i] = newtop;
+    }
   else
-    { newtop = i; dad[newtop] += dad[j]; dad[j] = newtop; }
+    {
+      newtop = i;
+      dad[newtop] += dad[j];
+      dad[j] = newtop;
+    }
   while (dad[x] >= 0)
-    { t = x;  x = dad[x];  dad[t] = newtop; }
+    {
+      t = x;
+      x = dad[x];
+      dad[t] = newtop;
+    }
   while (dad[y] >= 0)
-    { t = y;  y = dad[y];  dad[t] = newtop; }
+    {
+      t = y;
+      y = dad[y];
+      dad[t] = newtop;
+    }
 
   return newtop;
 }
 
 void partition_table::merge_in(const int *m)
-     // merge in the varpower monomial 'm'.
+// merge in the varpower monomial 'm'.
 {
   index_varpower i = m;
   int var1 = i.var();
   occurs[var1] = 1;
   ++i;
-  for ( ; i.valid(); ++i)
+  for (; i.valid(); ++i)
     {
       var1 = merge_in(var1, i.var());
       occurs[i.var()] = 1;
@@ -50,15 +74,15 @@ void partition_table::merge_in(const int *m)
 }
 
 partition_table::partition_table(int nvars, stash *mi_stash0)
-  : n_vars(nvars),
-    n_sets(nvars),
-    adad(nvars),
-    aoccurs(nvars),
-    mi_stash(mi_stash0)
+    : n_vars(nvars),
+      n_sets(nvars),
+      adad(nvars),
+      aoccurs(nvars),
+      mi_stash(mi_stash0)
 {
   dad = adad.alloc(nvars);
   occurs = aoccurs.alloc(nvars);
-  for (int i=0; i<nvars; i++)
+  for (int i = 0; i < nvars; i++)
     {
       dad[i] = -1;
       occurs[i] = 0;
@@ -69,17 +93,18 @@ void partition_table::reset(int nvars)
 {
   n_vars = nvars;
   n_sets = nvars;
-  for (int i=0; i<nvars; i++)
+  for (int i = 0; i < nvars; i++)
     {
       dad[i] = -1;
       occurs[i] = 0;
     }
 }
-void partition_table::partition(MonomialIdeal * &I, array<MonomialIdeal *> &result)
-  // consumes and frees I
+void partition_table::partition(MonomialIdeal *&I,
+                                VECTOR(MonomialIdeal *)& result)
+// consumes and frees I
 {
   int k;
-  reset(I->topvar()+1);
+  reset(I->topvar() + 1);
   // Create the sets
   for (Index<MonomialIdeal> i = I->first(); i.valid(); i++)
     if (n_sets > 1)
@@ -89,13 +114,13 @@ void partition_table::partition(MonomialIdeal * &I, array<MonomialIdeal *> &resu
 
   if (n_sets == 1)
     {
-      result.append(I);
+      result.push_back(I);
       return;
     }
 
   int this_label = -1;
   n_sets = 0;
-  for (k=0; k<n_vars; k++)
+  for (k = 0; k < n_vars; k++)
     if (occurs[k] && dad[k] < 0)
       {
         dad[k] = this_label--;
@@ -104,13 +129,13 @@ void partition_table::partition(MonomialIdeal * &I, array<MonomialIdeal *> &resu
 
   if (n_sets == 1)
     {
-      result.append(I);
+      result.push_back(I);
       return;
     }
 
-  int first = result.length();
-  for (k=0; k<n_sets; k++)
-    result.append(new MonomialIdeal(I->get_ring(), mi_stash));
+  int first = result.size();
+  for (k = 0; k < n_sets; k++)
+    result.push_back(new MonomialIdeal(I->get_ring(), mi_stash));
 
   // Now partition the monomials
   Bag *b;
@@ -118,34 +143,34 @@ void partition_table::partition(MonomialIdeal * &I, array<MonomialIdeal *> &resu
     {
       const intarray &m = b->monom();
       int v = varpower::topvar(m.raw());
-      int loc = -1-dad[representative(v)];
-      result[first+loc]->insert_minimal(b);
+      int loc = -1 - dad[representative(v)];
+      result[first + loc]->insert_minimal(b);
     }
 
   delete I;
 }
 
-#define MAX_EXP (1 << (8*sizeof(int)-2))
+#define MAX_EXP (1 << (8 * sizeof(int) - 2))
 static int popular_var(const MonomialIdeal &I,
-                int &npure, int *pure,
-                int &nhits,
-                       const int *& non_pure_power,
-                       int & exp_of_popular)
-     // Return the variable which occurs the most often in non pure monomials,
-     // placing the number of monomials in which it occurs into 'nhits'.
-     // At the same time, set 'pure' and 'npure'.  If there is a non pure
-     // power monomial, set non_pure_power to this varpower monomial.
+                       int &npure,
+                       int *pure,
+                       int &nhits,
+                       const int *&non_pure_power,
+                       int &exp_of_popular)
+// Return the variable which occurs the most often in non pure monomials,
+// placing the number of monomials in which it occurs into 'nhits'.
+// At the same time, set 'pure' and 'npure'.  If there is a non pure
+// power monomial, set non_pure_power to this varpower monomial.
 {
   int k;
   npure = 0;
-  int nvars = I.topvar()+1;
-  for (k=0; k<nvars; k++)
-    pure[k] = -1;
+  int nvars = I.topvar() + 1;
+  for (k = 0; k < nvars; k++) pure[k] = -1;
 
-  int *hits = newarray_atomic_clear(int,nvars);
-  int *minnonzero = newarray_atomic(int,nvars);
-  for (k = 0; k<nvars; k++) hits[k] = 0;
-  for (k = 0; k<nvars; k++) minnonzero[k] = MAX_EXP;
+  int *hits = newarray_atomic_clear(int, nvars);
+  int *minnonzero = newarray_atomic(int, nvars);
+  for (k = 0; k < nvars; k++) hits[k] = 0;
+  for (k = 0; k < nvars; k++) minnonzero[k] = MAX_EXP;
 
   non_pure_power = NULL;
 
@@ -153,18 +178,17 @@ static int popular_var(const MonomialIdeal &I,
     {
       const int *m = I[i]->monom().raw();
       index_varpower j = m;
-      assert(j.valid());        // The monomial cannot be '1'.
+      assert(j.valid());  // The monomial cannot be '1'.
       ++j;
       if (j.valid())
         {
           non_pure_power = m;
-          //hits[v]++;
-          for ( ; j.valid(); ++j)
+          // hits[v]++;
+          for (; j.valid(); ++j)
             {
               int v = j.var();
               int e = j.exponent();
-              if (minnonzero[v] > e)
-                minnonzero[v] = e;
+              if (minnonzero[v] > e) minnonzero[v] = e;
               hits[v]++;
             }
         }
@@ -177,28 +201,30 @@ static int popular_var(const MonomialIdeal &I,
               npure++;
               pure[v] = e;
             }
-          else
-            if (pure[v] > e) pure[v] = e;
+          else if (pure[v] > e)
+            pure[v] = e;
         }
     }
 
   int popular = 0;
-  for (k=1; k<nvars; k++)
-    if (hits[k] > hits[popular])
-      popular = k;
+  for (k = 1; k < nvars; k++)
+    if (hits[k] > hits[popular]) popular = k;
   nhits = hits[popular];
   exp_of_popular = minnonzero[popular];
-  deletearray(hits);
-  deletearray(minnonzero);
+  freemem(hits);
+  freemem(minnonzero);
   return popular;
 }
 
-static int find_pivot(const MonomialIdeal &I, int &npure, int *pure, intarray &m)
-     // If I has a single monomial which is a non pure power, return 0,
-     // and set 'pure', and 'npure'.  If I has at least two non pure
-     // monomials, choose a monomial 'm', not in I, but at least of degree 1,
-     // which is suitable for divide and conquer in hilbert function
-     // computation.
+static int find_pivot(const MonomialIdeal &I,
+                      int &npure,
+                      int *pure,
+                      intarray &m)
+// If I has a single monomial which is a non pure power, return 0,
+// and set 'pure', and 'npure'.  If I has at least two non pure
+// monomials, choose a monomial 'm', not in I, but at least of degree 1,
+// which is suitable for divide and conquer in hilbert function
+// computation.
 {
   int nhits;
   int exp_of_v;
@@ -217,17 +243,17 @@ static int find_pivot(const MonomialIdeal &I, int &npure, int *pure, intarray &m
       varpower::copy(vp, m);
       return 0;
     }
-  varpower::var(v,exp_of_v,m);
+  varpower::var(v, exp_of_v, m);
   return 1;
 }
 
 static void iquotient_and_sum(MonomialIdeal &I,
-                       const int *m, // varpower
-                       MonomialIdeal *&quot,
-                       MonomialIdeal *&sum,
-                       stash *mi_stash)
+                              const int *m,  // varpower
+                              MonomialIdeal *&quot,
+                              MonomialIdeal *&sum,
+                              stash *mi_stash)
 {
-  array< queue<Bag *> *> bins;
+  VECTOR(queue<Bag *> *) bins;
   sum = new MonomialIdeal(I.get_ring(), mi_stash);
   quot = new MonomialIdeal(I.get_ring(), mi_stash);
   Bag *bmin = new Bag();
@@ -241,13 +267,13 @@ static void iquotient_and_sum(MonomialIdeal &I,
         quot->insert_minimal(b);
       else
         {
-          sum->insert_minimal(new Bag(0,I[i]->monom()));
+          sum->insert_minimal(new Bag(0, I[i]->monom()));
           int d = varpower::simple_degree(b->monom().raw());
-          if (d >= bins.length())
-            for (int j=bins.length(); j<=d; j++)
+          if (d >= bins.size())
+            for (int j = bins.size(); j <= d; j++)
               // bins.append((queue<Bag *> *)NULL);
-              bins.append(NULL);
-          if (bins[d] == NULL) //(queue<Bag *> *)NULL)
+              bins.push_back(NULL);
+          if (bins[d] == NULL)  //(queue<Bag *> *)NULL)
             bins[d] = new queue<Bag *>;
           bins[d]->insert(b);
         }
@@ -257,7 +283,7 @@ static void iquotient_and_sum(MonomialIdeal &I,
   // MES: is it worth looping through each degree, first checking
   // divisibility, and after that, insert_minimal of the ones that survive?
   Bag *b;
-  for (int j=0; j < bins.length(); j++)
+  for (int j = 0; j < bins.size(); j++)
     if (bins[j] != NULL)
       {
         while (bins[j]->remove(b)) quot->insert(b);
@@ -265,17 +291,16 @@ static void iquotient_and_sum(MonomialIdeal &I,
       }
 }
 
-
 void hilb_comp::next_monideal()
 {
   reset();
   MonomialIdeal *I = input_mat->make_monideal(this_comp);
-    // The above line adds the squares of the variables which are skew variables
-    // into the monomial ideal.  This allows Hilbert functions of such rings
-    // to be computed as usual.
+  // The above line adds the squares of the variables which are skew variables
+  // into the monomial ideal.  This allows Hilbert functions of such rings
+  // to be computed as usual.
   part_table.partition(I, current->monids);
-  current->i = current->monids.length() - 1;
-  current->first_sum = current->i + 1; // This part is not used at top level
+  current->i = current->monids.size() - 1;
+  current->first_sum = current->i + 1;  // This part is not used at top level
 }
 void hilb_comp::reset()
 {
@@ -284,35 +309,35 @@ void hilb_comp::reset()
     {
       current = new hilb_step;
       current->up = current->down = NULL;
-      current->h0 = R->from_int(0);
-      current->h1 = R->from_int(0);
+      current->h0 = R->from_long(0);
+      current->h1 = R->from_long(0);
     }
   else
     while (current->up != NULL) current = current->up;
 
-  R->remove(current->h0);       // This line should not be needed...
+  R->remove(current->h0);  // This line should not be needed...
   R->remove(current->h1);
-  current->h0 = R->from_int(0);         // This top level h0 is not used
-  current->h1 = R->from_int(1);
+  current->h0 = R->from_long(0);  // This top level h0 is not used
+  current->h1 = R->from_long(1);
 }
 hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix *m)
-: S(m->get_ring()->cast_to_PolynomialRing()),
-  R(RR),
-  M(S->getMonoid()),
-  D(S->degree_monoid()),
-  mi_stash(new stash("hilb mi", sizeof(Nmi_node))),
-  input_mat(m),
-  this_comp(0),
-  n_components(m->n_rows()),
-  current(NULL),
-  part_table(S->n_vars(), mi_stash)
+    : S(m->get_ring()->cast_to_PolynomialRing()),
+      R(RR),
+      M(S->getMonoid()),
+      D(S->degree_monoid()),
+      mi_stash(new stash("hilb mi", sizeof(Nmi_node))),
+      input_mat(m),
+      this_comp(0),
+      n_components(m->n_rows()),
+      current(NULL),
+      part_table(S->n_vars(), mi_stash)
 {
   assert(D == R->getMonoid());
-  one = R->getCoefficientRing()->from_int(1);
-  minus_one = R->getCoefficientRing()->from_int(-1);
+  one = R->getCoefficientRing()->from_long(1);
+  minus_one = R->getCoefficientRing()->from_long(-1);
   LOCAL_deg1 = D->make_one();
 
-  result_poincare = R->from_int(0);
+  result_poincare = R->from_long(0);
   nsteps = 0;
   maxdepth = 0;
   nideal = 0;
@@ -324,23 +349,23 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix *m)
 }
 
 hilb_comp::hilb_comp(const PolynomialRing *RR, const MonomialIdeal *I)
-: S(I->get_ring()->cast_to_PolynomialRing()),
-  R(RR),
-  M(S->getMonoid()),
-  D(S->degree_monoid()),
-  mi_stash(new stash("hilb mi", sizeof(Nmi_node))),
-  input_mat(0),
-  this_comp(0),
-  n_components(1),
-  current(NULL),
-  part_table(S->n_vars(),mi_stash)
+    : S(I->get_ring()->cast_to_PolynomialRing()),
+      R(RR),
+      M(S->getMonoid()),
+      D(S->degree_monoid()),
+      mi_stash(new stash("hilb mi", sizeof(Nmi_node))),
+      input_mat(0),
+      this_comp(0),
+      n_components(1),
+      current(NULL),
+      part_table(S->n_vars(), mi_stash)
 {
   assert(D == R->getMonoid());
-  one = R->getCoefficientRing()->from_int(1);
-  minus_one = R->getCoefficientRing()->from_int(-1);
+  one = R->getCoefficientRing()->from_long(1);
+  minus_one = R->getCoefficientRing()->from_long(-1);
   LOCAL_deg1 = D->make_one();
 
-  result_poincare = R->from_int(0);
+  result_poincare = R->from_long(0);
   nsteps = 0;
   maxdepth = 0;
   nideal = 0;
@@ -349,10 +374,9 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const MonomialIdeal *I)
   reset();
   MonomialIdeal *copyI = I->copy();
   part_table.partition(copyI, current->monids);
-  current->i = current->monids.length() - 1;
-  current->first_sum = current->i + 1; // This part is not used at top level
+  current->i = current->monids.size() - 1;
+  current->first_sum = current->i + 1;  // This part is not used at top level
 }
-
 
 hilb_comp::~hilb_comp()
 {
@@ -364,8 +388,7 @@ hilb_comp::~hilb_comp()
 
       R->remove(p->h0);
       R->remove(p->h1);
-      for (int i=0; i<p->monids.length(); i++)
-        delete p->monids[i];
+      for (int i = 0; i < p->monids.size(); i++) delete p->monids[i];
       delete p;
     }
 
@@ -377,45 +400,42 @@ hilb_comp::~hilb_comp()
 }
 
 int hilb_comp::calc(int n_steps)
-     // Possible return values: COMP_DONE, COMP_INTERRUPTED.
+// Possible return values: COMP_DONE, COMP_INTERRUPTED.
 {
-  if (n_components == 0)
-    return COMP_DONE;
+  if (n_components == 0) return COMP_DONE;
   if (n_steps >= 0)
     {
       int calc_nsteps = nsteps + n_steps;
       while (calc_nsteps-- > 0)
         {
           int result = step();
-          if (result == COMP_DONE)
-            return COMP_DONE;
-          if (system_interrupted())
-            return COMP_INTERRUPTED;
+          if (result == COMP_DONE) return COMP_DONE;
+          if (system_interrupted()) return COMP_INTERRUPTED;
         }
       return COMP_DONE_STEPS;
     }
-  else for (;;)
-    {
-      int result = step();
-      if (result == COMP_DONE)
-        return COMP_DONE;
-      if (system_interrupted())
-        return COMP_INTERRUPTED;
-    }
+  else
+    for (;;)
+      {
+        int result = step();
+        if (result == COMP_DONE) return COMP_DONE;
+        if (system_interrupted()) return COMP_INTERRUPTED;
+      }
 }
 
 int hilb_comp::step()
-     // Possible return values: COMP_DONE, COMP_COMPUTING
+// Possible return values: COMP_DONE, COMP_COMPUTING
 {
   nsteps++;
   if (current->i == current->first_sum)
     {
       current->h0 = current->h1;
-      current->h1 = R->from_int(1);
+      current->h1 = R->from_long(1);
     }
   if (current->i >= 0)
     {
-      // If the i th monomial ideal is a 'special case', simply compute its value
+      // If the i th monomial ideal is a 'special case', simply compute its
+      // value
       // Otherwise, find pivot, and quotient/sum creating next level down
       // (possibly make new hilb_step, and increment max_depth if needed)
       // and set current = current->down
@@ -427,14 +447,15 @@ int hilb_comp::step()
       // computed, so add the values, and place one step up
       R->add_to(current->h0, current->h1);
       ring_elem f = current->h0;
-      current->h0 = R->from_int(0);
-      current->h1 = R->from_int(0);
-      current->monids.shrink(0);
+      current->h0 = R->from_long(0);
+      current->h1 = R->from_long(0);
+      current->monids.clear();
       if (current->up == NULL)
         {
           if (input_mat)
             {
-              ring_elem tmp = R->make_flat_term(one, input_mat->rows()->degree(this_comp));
+              ring_elem tmp =
+                  R->make_flat_term(one, input_mat->rows()->degree(this_comp));
               R->mult_to(f, tmp);
               R->remove(tmp);
             }
@@ -442,8 +463,7 @@ int hilb_comp::step()
           this_comp++;
 
           // Now check if we have any more components
-          if (this_comp >= n_components)
-            return COMP_DONE;
+          if (this_comp >= n_components) return COMP_DONE;
           // otherwise go on to the next component:
 
           next_monideal();
@@ -464,21 +484,21 @@ void hilb_comp::recurse(MonomialIdeal *&I, const int *pivot_vp)
   nrecurse++;
   if (current->down == NULL)
     {
-      current->down = new hilb_step; // MES: is this ok?
+      current->down = new hilb_step;  // MES: is this ok?
       current->down->up = current;
       current->down->down = NULL;
     }
   current = current->down;
-  current->h0 = R->from_int(0);
+  current->h0 = R->from_long(0);
   M->degree_of_varpower(pivot_vp, LOCAL_deg1);
-  current->h1 = R->make_flat_term(one, LOCAL_deg1); // t^(deg vp)
+  current->h1 = R->make_flat_term(one, LOCAL_deg1);  // t^(deg vp)
   MonomialIdeal *quot, *sum;
   iquotient_and_sum(*I, pivot_vp, quot, sum, mi_stash);
   delete I;
   part_table.partition(sum, current->monids);
-  current->first_sum = current->monids.length() - 1;
+  current->first_sum = current->monids.size() - 1;
   part_table.partition(quot, current->monids);
-  current->i = current->monids.length() - 1;
+  current->i = current->monids.size() - 1;
 }
 
 void hilb_comp::do_ideal(MonomialIdeal *I)
@@ -487,7 +507,7 @@ void hilb_comp::do_ideal(MonomialIdeal *I)
   // Notice that one, and minus_one are global in this class.
   // LOCAL_deg1, LOCAL_vp are scratch variables defined in this class
   nideal++;
-  ring_elem F = R->from_int(1);
+  ring_elem F = R->from_long(1);
   ring_elem G;
   int len = I->length();
   if (len <= 2)
@@ -507,7 +527,7 @@ void hilb_comp::do_ideal(MonomialIdeal *I)
           varpower::lcm(I->first_elem(), I->second_elem(), LOCAL_vp);
           M->degree_of_varpower(LOCAL_vp.raw(), LOCAL_deg1);
           G = R->make_flat_term(one, LOCAL_deg1);
-          R->add_to(F,G);
+          R->add_to(F, G);
         }
       delete I;
     }
@@ -516,7 +536,7 @@ void hilb_comp::do_ideal(MonomialIdeal *I)
       int npure;
       intarray pivot;
       intarray pure_a;
-      int *pure = pure_a.alloc(I->topvar()+1);
+      int *pure = pure_a.alloc(I->topvar() + 1);
       if (!find_pivot(*I, npure, pure, pivot))
         {
           // set F to be product(1-t^(deg x_i^e_i))
@@ -528,15 +548,17 @@ void hilb_comp::do_ideal(MonomialIdeal *I)
           for (index_varpower i = pivot.raw(); i.valid(); ++i)
             if (pure[i.var()] != -1)
               {
-                ring_elem H = R->from_int(1);
+                ring_elem H = R->from_long(1);
                 D->power(M->degree_of_var(i.var()), pure[i.var()], LOCAL_deg1);
                 ring_elem tmp = R->make_flat_term(minus_one, LOCAL_deg1);
                 R->add_to(H, tmp);
                 R->mult_to(F, H);
                 R->remove(H);
 
-                H = R->from_int(1);
-                D->power(M->degree_of_var(i.var()), pure[i.var()] - i.exponent(), LOCAL_deg1);
+                H = R->from_long(1);
+                D->power(M->degree_of_var(i.var()),
+                         pure[i.var()] - i.exponent(),
+                         LOCAL_deg1);
                 tmp = R->make_flat_term(minus_one, LOCAL_deg1);
                 R->add_to(H, tmp);
                 R->mult_to(G, H);
@@ -589,12 +611,16 @@ void hilb_comp::stats() const
   while (p != NULL)
     {
       o << "----- depth " << d << " -------------" << newline;
-      o << "  " << p->monids.length() << " monomial ideals total" << newline;
+      o << "  " << p->monids.size() << " monomial ideals total" << newline;
       o << "  " << p->i << " = current location" << newline;
       o << "  " << p->first_sum + 1 << " sum monomial ideals" << newline;
-      o << "  h0 = ";  R->elem_text_out(o, p->h0); o << newline;
-      o << "  h1 = ";  R->elem_text_out(o, p->h1); o << newline;
-      for (int i=0; i<p->monids.length(); i++)
+      o << "  h0 = ";
+      R->elem_text_out(o, p->h0);
+      o << newline;
+      o << "  h1 = ";
+      R->elem_text_out(o, p->h1);
+      o << newline;
+      for (int i = 0; i < p->monids.size(); i++)
         {
           o << "  ---- monomial ideal ---------------" << newline;
           o << "  ";
@@ -613,19 +639,19 @@ void hilb_comp::stats() const
 //   int retval = hf->calc(-1);
 //   if (retval != COMP_DONE) return 1;
 //   result = hf->value();
-//   deleteitem(hf);
+//   freemem(hf);
 //   return 0;
 // }
 #endif
 RingElement *hilb_comp::hilbertNumerator(const Matrix *M)
-  /* This routine computes the numerator of the Hilbert series
-     for coker leadterms(M), using the degrees of the rows of M.
-     NULL is returned if the ring is not appropriate for
-     computing Hilbert series, or the computation was interrupted. */
+/* This routine computes the numerator of the Hilbert series
+   for coker leadterms(M), using the degrees of the rows of M.
+   NULL is returned if the ring is not appropriate for
+   computing Hilbert series, or the computation was interrupted. */
 {
   const PolynomialRing *P = M->get_ring()->get_degree_ring();
   if (P == 0) return 0;
-  hilb_comp *hf = new hilb_comp(P,M);
+  hilb_comp *hf = new hilb_comp(P, M);
   int retval = hf->calc(-1);
   if (retval != COMP_DONE) return 0;
   RingElement *result = hf->value();
@@ -635,7 +661,7 @@ RingElement *hilb_comp::hilbertNumerator(const Matrix *M)
 
 RingElement *hilb_comp::hilbertNumerator(const FreeModule *F)
 {
-  const Matrix *Fmatrix = Matrix::make(F,0,0);
+  const Matrix *Fmatrix = Matrix::make(F, 0, 0);
   RingElement *result = hilbertNumerator(Fmatrix);
   delete Fmatrix;
   return result;
@@ -648,7 +674,7 @@ RingElement /* or null */ *hilb_comp::hilbertNumerator(const MonomialIdeal *I)
 {
   const PolynomialRing *P = I->get_ring()->get_degree_ring();
   if (P == 0) return 0;
-  hilb_comp *hf = new hilb_comp(P,I);
+  hilb_comp *hf = new hilb_comp(P, I);
   int retval = hf->calc(-1);
   if (retval != COMP_DONE) return 0;
   RingElement *result = hf->value();
@@ -660,29 +686,34 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
 {
   // This is a bit of a kludge of a routine.  The idea is to loop through
   // all the terms of the polynomial h, expand out the exponent, and to add
-  // up the small integer values of the coefficients of those that have exp[0]=deg.
+  // up the small integer values of the coefficients of those that have
+  // exp[0]=deg.
   const PolynomialRing *P = h->get_ring()->cast_to_PolynomialRing();
 
-  int *exp = newarray_atomic(int,P->n_vars());
+  int *exp = newarray_atomic(int, P->n_vars());
   int result = 0;
-  for (Nterm *f = h->get_value(); f!=NULL; f=f->next)
+  for (Nterm *f = h->get_value(); f != NULL; f = f->next)
     {
       P->getMonoid()->to_expvector(f->monom, exp);
       if (exp[0] < deg)
         {
           ERROR("incorrect Hilbert function given");
-#warning "this error message doesn't get printed out, because 0 is a valid return value for this function"
-          result = 0;
-          break;
+          fprintf(
+              stderr,
+              "internal error: incorrect Hilbert function given, aborting\n");
+          abort();
         }
       else if (exp[0] == deg)
         {
-          int n = P->getCoefficientRing()->coerce_to_int(f->coeff);
+          std::pair<bool, long> res =
+              P->getCoefficientRing()->coerceToLongInteger(f->coeff);
+          assert(res.first &&
+                 std::abs(res.second) < std::numeric_limits<int>::max());
+          int n = static_cast<int>(res.second);
           result += n;
         }
-
     }
-  deletearray(exp);
+  freemem(exp);
   return result;
 }
 

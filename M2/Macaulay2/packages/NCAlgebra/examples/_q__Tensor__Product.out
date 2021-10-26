@@ -1,0 +1,49 @@
+-- -*- M2-comint -*- hash: -393276621
+
+i1 : A = QQ{x,y}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : B = skewPolynomialRing(QQ,(-1)_QQ, {a,b})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o2 = B
+
+o2 : NCQuotientRing
+
+i3 : C = qTensorProduct(A,B,-1_QQ)
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o3 = C
+
+o3 : NCQuotientRing
+
+i4 : ideal C
+
+o4 = Two-sided ideal {ba+ab, ax+xa, bx+xb, ay+ya, by+yb}
+
+o4 : NCIdeal
+
+i5 : D = A ** B
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o5 = D
+
+o5 : NCQuotientRing
+
+i6 : ideal D
+
+o6 = Two-sided ideal {ba+ab, ax-xa, bx-xb, ay-ya, by-yb}
+
+o6 : NCIdeal
+
+i7 : 

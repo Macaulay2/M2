@@ -1,3 +1,5 @@
+needs "set.m2"
+
 protect qname 						    -- an internal key
 
 -- from xhtml-math11-f.dtd:
@@ -214,6 +216,8 @@ validContent#"title" = PCDATA
 
 -- <!ENTITY % ul.content  "( %li.qname; )+" >
 validContent#"ul" = set { "li" }
+-- <!ENTITY % ol.content  "( %li.qname; )+" >
+validContent#"ol" = set { "li" }
 
 validContent#"comment" = PCDATA
 validContent#"cdata" = PCDATA

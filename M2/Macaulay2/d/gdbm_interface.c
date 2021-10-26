@@ -29,7 +29,7 @@ int system_dbmopen(M2_string filename, M2_bool mutable) {
      int flags = mutable ? GDBM_WRCREAT : GDBM_READER;
      int mode = 0666;
      char *FileName = M2_tocharstar(filename);
-     GDBM_FILE f = gdbm_open(FileName, 0, flags, mode, NULL);
+     GDBM_FILE f = gdbm_open(FileName, 4096, flags, mode, NULL);
      freemem(FileName);
      if (f == NULL) return ERROR;
      if (numfiles == 0) {
@@ -66,7 +66,7 @@ int system_dbmclose(int handle) {
 
 static datum todatum(M2_string x) {
      datum y;
-     y.dptr = x->array;
+     y.dptr = (char *)x->array;
      y.dsize = x->len;
      return y;
      }
@@ -77,7 +77,14 @@ static M2_string fromdatum(datum y) {
      x = (M2_string)getmem(sizeofarray(x,y.dsize));
      x->len = y.dsize;
      memcpy(x->array, y.dptr, y.dsize);
+     return x;
+     }
+
+static M2_string fromdatum_and_free(datum y) {
+     M2_string x = fromdatum(y);
      free(y.dptr);
+     y.dptr = NULL;
+     y.dsize = 0;
      return x;
      }
 
@@ -86,7 +93,7 @@ int system_dbmstore(int handle, M2_string key, M2_string content) {
      }
 
 M2_string /* or NULL */ system_dbmfetch(int handle, M2_string key) {
-     return fromdatum(gdbm_fetch(gdbm_files[handle],todatum(key)));
+     return fromdatum_and_free(gdbm_fetch(gdbm_files[handle],todatum(key)));
      }
 
 int system_dbmdelete(int handle, M2_string key) {
@@ -104,10 +111,9 @@ M2_string /* or NULL */ system_dbmfirst(int handle) {
 
 M2_string /* or NULL */ system_dbmnext(int handle) {
      if (hadlastkey) {
-	  lastkey = gdbm_nextkey(gdbm_files[handle]
-	       ,lastkey
-	       );
-	  hadlastkey = TRUE;
+	  datum x = gdbm_nextkey(gdbm_files[handle] ,lastkey);
+	  free(lastkey.dptr);
+	  lastkey = x;
 	  return fromdatum(lastkey);
 	  }
      else {
@@ -125,6 +131,6 @@ M2_string system_dbmstrerror(void) {
 
 /*
  Local Variables:
- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d gdbm-interface.o "
+ compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d gdbm_interface.o "
  End:
 */

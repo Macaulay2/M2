@@ -1,0 +1,49 @@
+Author: Manoj Kummini <mkummini@cmi.ac.in>
+
+These are files useful for running M2 inside vim on a GNU/Linux machine. 
+These use the scripts by David Cook II (earlier available at
+http://www.ms.uky.edu/~dcook/files/Macaulay2.vim).
+
+I. Required programmes
+
+    1. xterm 
+    2. screen
+    3. vim
+
+II. Files included 
+
+    0. 0README_linux  (this file)
+    
+    1. m2.vimrc (the RC file that sets the file-type, loads the dictionary
+file and the syntax file, etc.) 
+
+    2. m2.vim.dict (vim dictionary file, used for completion and
+spell-check)
+
+    3. m2.vim.syntax (instructions on how the various types of words are to
+be highlighted)
+
+    4. m2.vim.plugin (the main file that implements how M2 commands from
+the vim window is transferred to M2 running inside a screen session)
+
+    5. VimM2.scpt (wrapper Apple script around Terminal.app to start the M2
+session inside a screen session)
+
+III. Usage
+
+    1. copy m2.vimrc as $HOME/.vim/m2.vimrc, and source it from $HOME/.vimrc, preferably with
+
+    au BufRead, BufNewFile *.m2 so $HOME/.vim/m2.vimrc
+
+    2. copy m2.vim.dict as $HOME/.vim/dict/m2.vim.dict 
+
+    3. copy m2.vim.syntax as $HOME/.vim/syntax/m2.vim, without the .syntax
+at the end. (vim did not recognize the file with the .syntax at the end;
+perhaps some option may be set to take care of this issue.)
+
+    4. copy m2.vim.plugin as $HOME/.vim/plugin/m2.vim  and as 
+$HOME/.vim/ftplugin/m2.vim, without the .plugin at the end. (vim did not
+recognize the file with the .plugin at the end; perhaps some option may be
+set to take care of this issue. Further, depending on whether the filetype
+detection and plugin options are ON, the file inside the ftplugin
+directory might not be read.)

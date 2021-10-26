@@ -1,0 +1,36 @@
+--processing documentation nodes...
+--assembling table of contents
+--warning: symbol has no documentation: NumericalAlgebraicGeometry :: Field, package NumericalAlgebraicGeometry
+--warning: symbol has no documentation: NumericalAlgebraicGeometry :: GateHomotopy, package NumericalAlgebraicGeometry
+--warning: symbol has no documentation: NumericalAlgebraicGeometry :: parameters, package NumericalAlgebraicGeometry
+--warning: method has no documentation: NumericalAlgebraicGeometry :: parameters(GateSystem), key (parameters,GateSystem), package NumericalAlgebraicGeometry
+--warning: method has no documentation: NumericalAlgebraicGeometry :: gateSystem(GateMatrix,GateMatrix), key (gateSystem,GateMatrix,GateMatrix), package NumericalAlgebraicGeometry
+--warning: method has no documentation: NumericalAlgebraicGeometry :: gateSystem(GateMatrix,GateMatrix,GateMatrix), key (gateSystem,GateMatrix,GateMatrix,GateMatrix), package NumericalAlgebraicGeometry
+--warning: method has no documentation: NumericalAlgebraicGeometry :: gateSystem(Matrix), key (gateSystem,Matrix), package NumericalAlgebraicGeometry
+--warning: method has no documentation: NumericalAlgebraicGeometry :: gateSystem(PolySystem), key (gateSystem,PolySystem), package NumericalAlgebraicGeometry
+--warning: method has no documentation: NumericalAlgebraicGeometry :: gateSystem(PolySystem,List), key (gateSystem,PolySystem,List), package NumericalAlgebraicGeometry
+--warning: symbol has no documentation: NumericalAlgebraicGeometry :: GateParameterHomotopy, package NumericalAlgebraicGeometry
+--warning: symbol has no documentation: NumericalAlgebraicGeometry :: parametricSegmentHomotopy, package NumericalAlgebraicGeometry
+--warning: method has no documentation: NumericalAlgebraicGeometry :: parametricSegmentHomotopy(GateSystem), key (parametricSegmentHomotopy,GateSystem), package NumericalAlgebraicGeometry
+--warning: method has no documentation: NumericalAlgebraicGeometry :: parametricSegmentHomotopy(PolySystem), key (parametricSegmentHomotopy,PolySystem), package NumericalAlgebraicGeometry
+--warning: symbol has no documentation: NumericalAlgebraicGeometry :: trackHomotopy, package NumericalAlgebraicGeometry
+--warning: method has no documentation: NumericalAlgebraicGeometry :: trackHomotopy(Thing,List), key (trackHomotopy,Thing,List), package NumericalAlgebraicGeometry
+--warning: symbol has no documentation: NumericalAlgebraicGeometry :: endGameCauchy, package NumericalAlgebraicGeometry
+--warning: method has no documentation: NumericalAlgebraicGeometry :: endGameCauchy(GateHomotopy,Number,MutableMatrix), key (endGameCauchy,GateHomotopy,Number,MutableMatrix), package NumericalAlgebraicGeometry
+--warning: method has no documentation: NumericalAlgebraicGeometry :: endGameCauchy(GateHomotopy,Number,Point), key (endGameCauchy,GateHomotopy,Number,Point), package NumericalAlgebraicGeometry
+--warning: symbol has no documentation: NumericalAlgebraicGeometry :: Regularity, package NumericalAlgebraicGeometry
+--warning: 19 warning(s) occurred in documentation for package NumericalAlgebraicGeometry
+--making info file in /nethome/aleykin3/.Macaulay2/local/share/info/NumericalAlgebraicGeometry.info.tmp
+--warning: tag has no documentation: NumericalAlgebraicGeometry :: evaluate(GateSystem,Point), key (evaluate,GateSystem,Point), package NumericalAlgebraicGeometry
+--warning: tag has no documentation: NumericalAlgebraicGeometry :: evaluate(GateSystem,Point,Point), key (evaluate,GateSystem,Point,Point), package NumericalAlgebraicGeometry
+--warning: tag has no documentation: NumericalAlgebraicGeometry :: gateMatrix(GateSystem), key (gateMatrix,GateSystem), package NumericalAlgebraicGeometry
+--warning: tag has no documentation: NumericalAlgebraicGeometry :: net(GateSystem), key (net,GateSystem), package NumericalAlgebraicGeometry
+--warning: tag has no documentation: NumericalAlgebraicGeometry :: numFunctions(GateSystem), key (numFunctions,GateSystem), package NumericalAlgebraicGeometry
+--warning: tag has no documentation: NumericalAlgebraicGeometry :: numParameters(GateSystem), key (numParameters,GateSystem), package NumericalAlgebraicGeometry
+--warning: tag has no documentation: NumericalAlgebraicGeometry :: numVariables(GateHomotopy), key (numVariables,GateHomotopy), package NumericalAlgebraicGeometry
+--warning: tag has no documentation: NumericalAlgebraicGeometry :: numVariables(GateSystem), key (numVariables,GateSystem), package NumericalAlgebraicGeometry
+--warning: tag has no documentation: NumericalAlgebraicGeometry :: vars(GateSystem), key (vars,GateSystem), package NumericalAlgebraicGeometry
+stdio:1:1:(3): error: internal error: documentation node not processed yet: endGameCauchy
+
+
+

@@ -3,49 +3,49 @@
 --- notes: 
 
 undocumented {
+     (tex, Thing),
+     (tex, String),
+     (tex, Nothing),
+     (tex, Hypertext),
      (tex, COMMENT),
      (tex, IMG),
      (tex, TO2),
      (tex, TO),
-     (tex, HEADER1),
      (tex, TOH),
+     (tex, HEADER1),
      (tex, HEADER2),
      (tex, HEADER3),
      (tex, HEADER4),
      (tex, HEADER5),
-     (tex, Thing),
      (tex, HEADER6),
      (tex, LITERAL),
      (tex, STRONG),
-     (tex, Expression),
-     (tex, Hypertext),
-     (tex, String),
      (tex, ITALIC),
-     (tex, PolynomialRing),
      (tex, TEX),
      (tex, BR),
      (tex, TT),
      (tex, HR),
      (tex, PARA),
-     (tex, QuotientRing),
      (tex, CODE),
      (tex, HREF),
-     (tex, ChainComplex),
      (tex, TABLE),
      (tex, PRE),
-     (tex, Nothing),
+     (tex, DL),
+     (tex, DT),
+     (tex, DD),
+     (tex, OL),
      (tex, UL)
      }
 
 document { 
      Key => tex,
-     Headline => "convert to TeX format",
+     Headline => "convert to $\\TeX$ format",
      Usage => "tex x",
      Inputs => {
 	  "x" => "any Macaulay2 object"
 	  },
      Outputs => {
-	  String => {TT "x", " converted to TeX format"}
+	  String => {TT "x", " converted to $\\TeX$ format"}
 	  },
      EXAMPLE {
 	  "R = ZZ[a..f];",

@@ -4,10 +4,11 @@ newPackage(
      Date => "May 20 2009",
     Authors => {{Name => "Alexandra Seceleanu", HomePage => "http://www.math.uiuc.edu/~asecele2/"}},
      Headline => "symmetric polynomials",
+     Keywords => {"Combinatorics", "Representation Theory"},
      DebuggingMode => false
      )
 
-export {buildSymmetricGB,elementarySymmetric}
+export {"buildSymmetricGB","elementarySymmetric"}
 
 mons = (X,i)-> (
     n := #X;

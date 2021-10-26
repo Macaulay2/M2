@@ -1,5 +1,10 @@
 -- Copyright 1995-2002 by Michael Stillman
 
+needs "integers.m2" -- for lcm
+needs "matrix1.m2"
+needs "quotring.m2"
+needs "res.m2"
+
 MonomialIdeal = new Type of Ideal
 MonomialIdeal.synonym = "monomial ideal"
 monomialIdeal = method(TypicalValue => MonomialIdeal,Dispatch => Thing)
@@ -21,13 +26,13 @@ newMonomialIdeal = (R,rawI) -> new MonomialIdeal from {
 monomialIdealOfRow := (i,m) -> newMonomialIdeal(ring m,rawMonomialIdeal(raw m, i))
 
 codimopts := { Generic => false }
-codim MonomialIdeal := {  } >> opts -> m -> rawCodimension raw m
-codim Module := codimopts >> opts -> (cacheValue (symbol codim => opts)) (M -> runHooks(Module, symbol codim, (opts,M)))
+codim MonomialIdeal := codimopts >> opts -> m -> rawCodimension raw m
+codim Module := codimopts >> opts -> (cacheValue (symbol codim => opts)) (M -> runHooks((codim, Module), (opts, M)))
 codim Ideal := codimopts >> opts -> I -> codim( cokernel generators I, opts)
 codim PolynomialRing := codimopts >> opts -> R -> 0
 codim QuotientRing := codimopts >> opts -> (R) -> codim( cokernel presentation R, opts)
 
-addHook(Module, symbol codim, (opts,M) -> break (
+addHook((codim, Module), Strategy => Default, (opts, M) -> (
      R := ring M;
      if M == 0 then infinity
      else if isField R then 0
@@ -39,13 +44,18 @@ addHook(Module, symbol codim, (opts,M) -> break (
 	  n := rank target p;
 	  c := infinity;
 	  for i from 0 to n-1 when c > 0 do c = min(c,codim(monomialIdealOfRow(i,p)));
-	  c - codim(R,opts))))
+	  c - codim monomialIdealOfRow(0,matrix{{0_R}}) -- same as c - codim R, except works for iterated rings
+	  )))
 
 MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> (
      if n < 0 then error "expected nonnegative exponent"
      else if n === 0 then monomialIdeal 1_(ring I)
      else SimplePowerMethod(I,n)
      )
+
+MonomialIdeal ^ Array := (I, e) -> (
+   monomialIdeal (ideal I)^e
+)
 
 Ring / MonomialIdeal := (R,I) -> R / ideal I
 
@@ -80,71 +90,6 @@ MonomialIdeal - MonomialIdeal := MonomialIdeal => (I,J) -> (
      if ring I =!= ring J then error "expected monomial ideals in the same ring";
      newMonomialIdeal(ring I, raw I - raw J))
 
-radical MonomialIdeal := MonomialIdeal => options -> (I) -> newMonomialIdeal(ring I, rawRadical raw I)
-
-quotient(MonomialIdeal, MonomialIdeal) := MonomialIdeal => opts -> (I,J) -> newMonomialIdeal(ring I, rawColon(raw I, raw J))
-MonomialIdeal : MonomialIdeal := MonomialIdeal => quotient
-
-quotient(MonomialIdeal, RingElement) := opts -> (I,f) -> I : monomialIdeal terms f
-MonomialIdeal : RingElement := MonomialIdeal => quotient
-
-saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => o -> (I,J) -> newMonomialIdeal(ring I, rawSaturate(raw I, raw J))
-
-saturate(MonomialIdeal, RingElement) := Ideal => o -> (I,f) -> (
-     if size f === 1 and leadCoefficient f == 1 then saturate (I,monomialIdeal f)
-     else saturate(ideal I, ideal f)
-     )
-
-int := (I,J) -> (
-     if ring I =!= ring J then error "expected monomial ideals in the same ring";
-     newMonomialIdeal(ring I, rawIntersect(raw I, raw J)))
-
-intersect(List) := x -> intersect toSequence x
-
-intersect(Sequence) := args -> (
-    -- first check that all modules have the same target
-    -- and the same base ring
-    if #args === 0 then error "expected at least one argument";
-    M := args#0;
-    R := ring M;
-    if class M === MonomialIdeal then (
-	 if not all(args, M -> class M === MonomialIdeal and R === ring M)
-	 then error "expected monomial ideals over the same ring";
-	 i := 1;
-	 while i < #args do (
-	      M = int(M,args#i);
-	      i = i+1;
-	      );
-	 M)
-    else if class M === Module then (
-    	 F := ambient args#0;
-	 if not all(args, N -> ambient N == F)
-	 or M.?relations 
-	 and not all(args, N -> 
-	      N.?relations 
-	      and (N.relations == M.relations
-		   or
-		   image N.relations == image M.relations
-		   )
-	      )
-    	 then error "all modules must be submodules of the same module";
-    	 relns := directSum apply(args, N -> (
-		   if N.?relations 
-		   then generators N | N.relations
-		   else generators N
-		   )
-	      );
-    	 g := map(R^(#args),R^1, table(#args,1,x->1)) ** id_F;
-	 h := modulo(g, relns);
-	 if M.?relations then h = compress( h % M.relations );
-    	 subquotient( h, if M.?relations then M.relations )
-	 )
-    else if class M === Ideal then (
-	 ideal intersect apply(args,module)
-	 )
-    else error "expected modules, ideals, or monomial ideals"
-    )
-
 borel MonomialIdeal := MonomialIdeal => (I) -> newMonomialIdeal(ring I, rawStronglyStableClosure raw I)
 isBorel MonomialIdeal := Boolean => m -> rawIsStronglyStable raw m
 
@@ -162,10 +107,7 @@ independentSets Ideal := o -> (M) -> independentSets(monomialIdeal M,o)
 -- this code below here is by Greg Smith (and partially Mike Stillman)
 -----------------------------------------------------------------------------
 
-expression MonomialIdeal := (I) -> (
-     if numgens I === 0 then hold "0" 
-     else new FunctionApplication from { monomialIdeal, expression unsequence toSequence first( entries generators I) }
-     )
+expression MonomialIdeal := (I) -> (expression monomialIdeal) unsequence apply(toSequence first entries generators I, expression)
 
 MonomialIdeal#{Standard,AfterPrint} = MonomialIdeal#{Standard,AfterNoPrint} = (I) -> (
      << endl;				  
@@ -190,8 +132,6 @@ isMonomialIdeal = method(TypicalValue => Boolean)
 isMonomialIdeal Thing := x -> false
 isMonomialIdeal MonomialIdeal := (I) -> true
 isMonomialIdeal Ideal := (I) -> isPolynomialRing ring I and all(first entries generators I, r -> size r === 1 and leadCoefficient r == 1)
-
-hilbertSeries MonomialIdeal := lookup(hilbertSeries,Module)
 
 MonomialIdeal == Ideal := (I,J) -> ideal I == J
 Ideal == MonomialIdeal := (I,J) -> I == ideal J
@@ -239,7 +179,7 @@ lcm MonomialIdeal := (I) -> (if I.cache.?lcm
  -- We use E. Miller's definition for nonsquare 
  -- free monomial -- ideals.
 
-alexanderDual = local alexanderDual
+protect alexanderDual
 alexopts = {Strategy=>0}
 
 dual(MonomialIdeal, List) := alexopts >> o -> (I,a) -> (
@@ -251,7 +191,7 @@ dual(MonomialIdeal, List) := alexopts >> o -> (I,a) -> (
      newMonomialIdeal(ring I, rawAlexanderDual(raw I, a, o.Strategy)) -- 0 is the default algorithm
      )
 
-dual(MonomialIdeal,RingElement) := alexopts >> o -> (I,r) -> alexanderDual(I,first exponents r,o)
+dual(MonomialIdeal,RingElement) := alexopts >> o -> (I,r) -> dual(I,first exponents r,o)
 
 dual MonomialIdeal := alexopts >> o -> (I) -> (
   if I.cache#?alexanderDual
@@ -268,6 +208,8 @@ isSquareFree MonomialIdeal := (I) -> all(first entries generators I, m -> all(fi
 --  STANDARD PAIR DECOMPOSITION  ---------------------------
 -- algorithm 3.2.5 in Saito-Sturmfels-Takayama
 standardPairs = method()
+-- Note: (standardPairs, MonomialIdeal) is redefined in PrimaryDecomposition.m2, because it depends on associatedPrimes
+standardPairs MonomialIdeal        :=  I    -> error "standardPairs(MonomialIdeal) will be redefined in the PrimaryDecomposition package"
 standardPairs(MonomialIdeal, List) := (I,D) -> (
      R := ring I;
      X := generators R;
@@ -292,13 +234,6 @@ standardPairs(MonomialIdeal, List) := (I,D) -> (
 		    S = join(S, apply(B, b -> {psi(b), L}));
 	       	    )));
      S)
-Delta := (I) -> (
-     X := generators ring I;
-     d := #X - pdim cokernel generators I;
-     select( apply(associatedPrimes I, J -> set X - set first entries generators J), Y -> #Y >= d ) / toList
-     )
-
-standardPairs MonomialIdeal := (I) -> standardPairs(I,Delta I)
 
 --  LARGEST MONOMIAL IDEAL CONTAINED IN A GIVEN IDEAL  -----
 monomialSubideal = method();				    -- needs a new name?
@@ -317,6 +252,21 @@ monomialSubideal Ideal := (I) -> (
 	       ));
      monomialIdeal substitute(J, R)
      )
+
+
+polarize = method(Options => {VariableBaseName => "z"});
+polarize (MonomialIdeal) := o -> I -> (
+    n := #(generators ring I);
+    u := apply(#(first entries mingens I), i -> first exponents I_i);
+    Ilcm := max \ transpose u;
+    z := getSymbol(o.VariableBaseName);
+    Z := flatten apply(n, i -> apply(Ilcm#i, j -> z_{i,j}));
+    R := QQ(monoid[Z]);
+    G := generators R;
+    p := apply(n, i -> sum((Ilcm)_{0..i-1}));
+    monomialIdeal apply(u, e -> product apply(n, i -> product(toList(0..e#i-1), j -> G#(p#i+j))))
+    )
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

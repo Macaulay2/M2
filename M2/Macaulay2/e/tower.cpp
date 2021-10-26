@@ -1,17 +1,20 @@
 // Copyright 2010 Michael E. Stillman
 
 #include "tower.hpp"
+
 #include "dpoly.hpp"
 #include "ring.hpp"
 #include "varpower.hpp"
 #include "ringmap.hpp"
 #include "polyring.hpp"
+#include "monoid.hpp"
 
-Tower::~Tower()
-{
-}
+#define TOWER_POLYNOMIAL_VAL(f) reinterpret_cast<TowerPolynomial>((f).poly_val)
 
-bool Tower::initialize(int charac0, M2_ArrayString names0, const VECTOR(ring_elem) &extensions)
+Tower::~Tower() {}
+bool Tower::initialize(long charac0,
+                       M2_ArrayString names0,
+                       const VECTOR(ring_elem) & extensions)
 {
   initialize_ring(charac0);
   declare_field();
@@ -27,115 +30,138 @@ bool Tower::initialize(int charac0, M2_ArrayString names0, const VECTOR(ring_ele
     }
   else
     {
-      const_poly *exts = new const_poly[extensions.size()];
-      for (int i=0; i<extensions.size(); i++)
-        exts[i] = TOWER_VAL(extensions[i]);
+      TowerPolynomial* exts = new TowerPolynomial[extensions.size()];
+      for (int i = 0; i < extensions.size(); i++)
+        exts[i] = reinterpret_cast<TowerPolynomial>(extensions[i].poly_val);
       D = DRing::create(charac0, nvars, exts);
-      delete [] exts;
+      delete[] exts;
     }
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 
   return true;
 }
-Tower * Tower::create(int charac, M2_ArrayString names)
+Tower *Tower::create(int charac, M2_ArrayString names)
 {
   Tower *result = new Tower;
   VECTOR(ring_elem) extensions;
-  if (!result->initialize(charac, names, extensions))
-    return 0;
+  if (!result->initialize(charac, names, extensions)) return 0;
   return result;
 }
 
-Tower * Tower::create(const Tower *R, M2_ArrayString new_names)
+Tower *Tower::create(const Tower *R, M2_ArrayString new_names)
 {
-  //TODO: write
+  // TODO: write
   return 0;
 }
 
-Tower * Tower::create(const Tower *R, VECTOR(ring_elem) &extensions)
+Tower *Tower::create(const Tower *R, VECTOR(ring_elem) & extensions)
 {
   Tower *result = new Tower;
-  if (!result->initialize(R->charac(), R->names, extensions))
-    return 0;
+  if (!result->initialize(R->characteristic(), R->names, extensions)) return 0;
   return result;
+}
+
+unsigned int Tower::computeHashValue(const ring_elem a) const
+{
+  // TODO HASH
+  return 3212415;
 }
 
 void Tower::text_out(buffer &o) const
 {
-  o << "Tower[ZZ/" << charac() << "[";
-  for (int i=0; i<nvars-1; i++)
-    o << names->array[i] << ",";
-  if (nvars > 0)
-    o << names->array[nvars-1];
+  o << "Tower[ZZ/" << characteristic() << "[";
+  for (int i = 0; i < nvars - 1; i++) o << names->array[i] << ",";
+  if (nvars > 0) o << names->array[nvars - 1];
   o << "]]";
   D->extensions_text_out(o, names);
 }
 
-ring_elem Tower::from_int(int n) const
+int Tower::index_of_var(const ring_elem a) const
 {
-  poly f;
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(a);
+  return D->index_of_var(f1);
+}
+
+M2_arrayint Tower::support(const ring_elem a) const
+{
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(a);
+  std::vector<int> max_degs;
+  D->degrees_of_vars(f1, max_degs);
+  int nelems = 0;
+  for (size_t i = 0; i < max_degs.size(); i++)
+    if (max_degs[i] > 0) nelems++;
+  M2_arrayint result = M2_makearrayint(nelems);
+  int next = 0;
+  for (size_t i = 0; i < max_degs.size(); i++)
+    if (max_degs[i] > 0) result->array[next++] = static_cast<int>(i);
+  return result;
+}
+
+ring_elem Tower::from_long(long n) const
+{
+  TowerPolynomial f;
+  D->set_from_long(f, n);
+  return TOWER_RINGELEM(f);
+}
+
+ring_elem Tower::from_int(mpz_srcptr n) const
+{
+  TowerPolynomial f;
   D->set_from_int(f, n);
   return TOWER_RINGELEM(f);
 }
 
-ring_elem Tower::from_int(mpz_ptr n) const
+bool Tower::from_rational(mpq_srcptr q, ring_elem &result) const
 {
-  poly f;
-  D->set_from_int(f, n);
-  return TOWER_RINGELEM(f);
-}
-
-ring_elem Tower::from_rational(mpq_ptr q) const
-{
-  poly f;
-  D->set_from_rational(f, q);
-  return TOWER_RINGELEM(f);
+  TowerPolynomial f;
+  if (not D->set_from_mpq(f, q)) return false;
+  result = TOWER_RINGELEM(f);
+  return true;
 }
 
 ring_elem Tower::var(int v) const
 {
-  poly f;
+  TowerPolynomial f;
   D->set_var(f, v);
   return TOWER_RINGELEM(f);
 }
 
 bool Tower::is_unit(const ring_elem f) const
 {
-  poly f1 = TOWER_VAL(f);
-  //TODO: finish
-  // Compute inverse of f, see if it is null...
+  // Write this.  Git issue #611.
+  return false;
 }
 
 bool Tower::is_zero(const ring_elem f) const
 {
-  poly f1 = TOWER_VAL(f);
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
 
   return D->is_zero(f1);
 }
 
 bool Tower::is_equal(const ring_elem f, const ring_elem g) const
 {
-  poly f1 = TOWER_VAL(f);
-  poly g1 = TOWER_VAL(g);
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
+  TowerPolynomial g1 = TOWER_POLYNOMIAL_VAL(g);
 
   return D->is_equal(f1, g1);
 }
 
 int Tower::compare_elems(const ring_elem f, const ring_elem g) const
 {
-  poly f1 = TOWER_VAL(f);
-  poly g1 = TOWER_VAL(g);
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
+  TowerPolynomial g1 = TOWER_POLYNOMIAL_VAL(g);
 
   return D->compare(f1, g1);
 }
 
 ring_elem Tower::copy(const ring_elem f) const
 {
+  // Write this.  Git issue #611.
   return f;
-  //TODO: do the copy?
 }
 
 void Tower::remove(ring_elem &) const
@@ -145,9 +171,9 @@ void Tower::remove(ring_elem &) const
 
 ring_elem Tower::negate(const ring_elem g) const
 {
-  poly f1;
-  poly g1 = TOWER_VAL(g);
-  poly h;
+  TowerPolynomial f1;
+  TowerPolynomial g1 = TOWER_POLYNOMIAL_VAL(g);
+  TowerPolynomial h;
   D->set_zero(h);
   D->set_zero(f1);
   D->subtract(h, f1, g1);
@@ -156,9 +182,9 @@ ring_elem Tower::negate(const ring_elem g) const
 
 ring_elem Tower::add(const ring_elem f, const ring_elem g) const
 {
-  poly f1 = TOWER_VAL(f);
-  poly g1 = TOWER_VAL(g);
-  poly h;
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
+  TowerPolynomial g1 = TOWER_POLYNOMIAL_VAL(g);
+  TowerPolynomial h;
   D->set_zero(h);
   D->add(h, f1, g1);
   return TOWER_RINGELEM(h);
@@ -166,9 +192,9 @@ ring_elem Tower::add(const ring_elem f, const ring_elem g) const
 
 ring_elem Tower::subtract(const ring_elem f, const ring_elem g) const
 {
-  poly f1 = TOWER_VAL(f);
-  poly g1 = TOWER_VAL(g);
-  poly h;
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
+  TowerPolynomial g1 = TOWER_POLYNOMIAL_VAL(g);
+  TowerPolynomial h;
   D->set_zero(h);
   D->subtract(h, f1, g1);
   return TOWER_RINGELEM(h);
@@ -176,9 +202,9 @@ ring_elem Tower::subtract(const ring_elem f, const ring_elem g) const
 
 ring_elem Tower::mult(const ring_elem f, const ring_elem g) const
 {
-  poly f1 = TOWER_VAL(f);
-  poly g1 = TOWER_VAL(g);
-  poly h;
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
+  TowerPolynomial g1 = TOWER_POLYNOMIAL_VAL(g);
+  TowerPolynomial h;
   D->set_zero(h);
   D->mult(h, f1, g1);
   return TOWER_RINGELEM(h);
@@ -186,19 +212,18 @@ ring_elem Tower::mult(const ring_elem f, const ring_elem g) const
 
 ring_elem Tower::invert(const ring_elem f) const
 {
-  poly f1 = TOWER_VAL(f);
-  poly h;
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
+  TowerPolynomial h;
   D->set_zero(h);
-  if (!D->invert(h, f1))
-    ERROR("element not invertible");
+  if (!D->invert(h, f1)) ERROR("element not invertible");
   return TOWER_RINGELEM(h);
 }
 
 ring_elem Tower::divide(const ring_elem f, const ring_elem g) const
 {
-  poly f1 = TOWER_VAL(f);
-  poly g1 = TOWER_VAL(g);
-  poly h;
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
+  TowerPolynomial g1 = TOWER_POLYNOMIAL_VAL(g);
+  TowerPolynomial h;
   D->set_zero(h);
   D->divide(h, f1, g1);
   return TOWER_RINGELEM(h);
@@ -206,9 +231,9 @@ ring_elem Tower::divide(const ring_elem f, const ring_elem g) const
 
 ring_elem Tower::remainder(const ring_elem f, const ring_elem g) const
 {
-  poly f1 = TOWER_VAL(f);
-  poly g1 = TOWER_VAL(g);
-  poly h;
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
+  TowerPolynomial g1 = TOWER_POLYNOMIAL_VAL(g);
+  TowerPolynomial h;
   D->set_zero(h);
   D->remainder(h, f1, g1);
   return TOWER_RINGELEM(h);
@@ -216,72 +241,75 @@ ring_elem Tower::remainder(const ring_elem f, const ring_elem g) const
 
 ring_elem Tower::random() const
 {
-  poly f;
+  TowerPolynomial f;
   D->set_zero(f);
   D->set_random(f);
   return TOWER_RINGELEM(f);
 }
 
 void Tower::elem_text_out(buffer &o,
-                       const ring_elem f,
-                       bool p_one,
-                       bool p_plus,
-                       bool p_parens) const
+                          const ring_elem f,
+                          bool p_one,
+                          bool p_plus,
+                          bool p_parens) const
 {
-  D->elem_text_out(o, TOWER_VAL(f), p_one, p_plus, p_parens, names);
+  D->elem_text_out(o, TOWER_POLYNOMIAL_VAL(f), p_one, p_plus, p_parens, names);
 }
 
 class TowerEvaluator : public DPolyTraverser
 {
-  const DRing *D;
   const RingMap *map;
   const Ring *K;
   SumCollector *H;
 
-  poly f;
+  TowerPolynomial f;
   int first_var;
   const Ring *target;
   intarray vp;
   int nvars;
 
-  virtual bool viewTerm(long coeff, const exponents exp) {
+  virtual bool viewTerm(long coeff, const exponents exp)
+  {
     // translate exp to varpwer
     // map->eval_term
     // either:
     //  H->add, or target->add_to
     vp.shrink(0);
     varpower::from_ntuple(nvars, exp, vp);
-    ring_elem c = K->from_int(coeff);
+    ring_elem c = K->from_long(coeff);
     ring_elem a = map->eval_term(K, c, vp.raw(), first_var, nvars);
     H->add(a);
     return true;
   }
-public:
-  TowerEvaluator(const Tower *T, const RingMap *map0, const ring_elem f0, int first_var0)
-    : DPolyTraverser(T->D),
-      D(T->D),
-      map(map0),
-      f(TOWER_VAL(f0)),
-      first_var(first_var0),
-      nvars(T->n_vars())
+
+ public:
+  TowerEvaluator(const Tower *T,
+                 const RingMap *map0,
+                 const ring_elem f0,
+                 int first_var0)
+      : DPolyTraverser(T->D),
+        map(map0),
+        f(TOWER_POLYNOMIAL_VAL(f0)),
+        first_var(first_var0),
+        nvars(T->n_vars())
   {
-    const Ring *target = map->get_ring();
+    target = map->get_ring();
     H = target->make_SumCollector();
     const PolynomialRing *P = target->cast_to_PolynomialRing();
     K = (P == 0 ? target : P->getCoefficients());
   }
 
-  virtual ~TowerEvaluator() {
-    delete H;
-  }
-
-  ring_elem getValue() {
+  virtual ~TowerEvaluator() { delete H; }
+  ring_elem getValue()
+  {
     traverse(f);
     return H->getValue();
   }
 };
 
-ring_elem Tower::eval(const RingMap *map, const ring_elem f, int first_var) const
+ring_elem Tower::eval(const RingMap *map,
+                      const ring_elem f,
+                      int first_var) const
 {
   TowerEvaluator m(this, map, f, first_var);
   return m.getValue();
@@ -289,63 +317,58 @@ ring_elem Tower::eval(const RingMap *map, const ring_elem f, int first_var) cons
 
 bool Tower::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
-  poly f1 = TOWER_VAL(f);
-  // What Rf should be allowed?
-
-  //TODO: finish
-
+  // Write this.  Git issue #611.
   return false;
 }
 
 bool Tower::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 {
-  poly f1 = TOWER_VAL(f);
-  // What Rg should be allowed?
-
-  //TODO: finish
-
+  // Write this.  Git issue #611.
   return false;
-
 }
 
-void Tower::syzygy(const ring_elem a, const ring_elem b,
-                   ring_elem &x, ring_elem &y) const
+void Tower::syzygy(const ring_elem a,
+                   const ring_elem b,
+                   ring_elem &x,
+                   ring_elem &y) const
 {
-  //TODO: finish
+  // Write this.  Git issue #611.
 }
 
 ring_elem Tower::gcd(const ring_elem f, const ring_elem g) const
 {
-  poly h;
-  poly f1 = TOWER_VAL(f);
-  poly g1 = TOWER_VAL(g);
+  TowerPolynomial h;
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
+  TowerPolynomial g1 = TOWER_POLYNOMIAL_VAL(g);
   D->gcd(h, f1, g1);
   return TOWER_RINGELEM(h);
 }
 
-ring_elem Tower::gcd_extended(const ring_elem f, const ring_elem g,
-                              ring_elem &u, ring_elem &v) const
+ring_elem Tower::gcd_extended(const ring_elem f,
+                              const ring_elem g,
+                              ring_elem &u,
+                              ring_elem &v) const
 {
-  poly h, u1, v1;
-  poly f1 = TOWER_VAL(f);
-  poly g1 = TOWER_VAL(g);
+  TowerPolynomial h, u1, v1;
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
+  TowerPolynomial g1 = TOWER_POLYNOMIAL_VAL(g);
   D->gcd_coefficients(h, u1, v1, f1, g1);
   u = TOWER_RINGELEM(u1);
   v = TOWER_RINGELEM(v1);
   return TOWER_RINGELEM(h);
 }
 
-int Tower::degree(int whichvar, const ring_elem f) const
+int Tower::degreeInVariable(int whichvar, const ring_elem f) const
 {
-  poly f1 = TOWER_VAL(f);
-  return D->degree(whichvar,f1);
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
+  return D->degree(whichvar, f1);
 }
 
-ring_elem Tower::diff(int whichvar, const ring_elem f) const
+ring_elem Tower::differentiate(int whichvar, const ring_elem f) const
 {
-  poly f1 = TOWER_VAL(f);
-  poly h = 0;
-  D->diff(whichvar,h,f1);
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
+  TowerPolynomial h = 0;
+  D->diff(whichvar, h, f1);
   return TOWER_RINGELEM(h);
 }
 
@@ -355,20 +378,22 @@ int Tower::extension_degree(int firstvar) const
   return D->extension_degree(firstvar);
 }
 
-ring_elem Tower::power_mod(const ring_elem f, mpz_t n, const ring_elem g) const  // f^n mod g
+ring_elem Tower::power_mod(const ring_elem f,
+                           mpz_srcptr n,
+                           const ring_elem g) const  // f^n mod g
 {
-  poly f1 = TOWER_VAL(f);
-  poly g1 = TOWER_VAL(g);
-  poly h = 0;
-  D->power_mod(h,f1,n,g1);
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
+  TowerPolynomial g1 = TOWER_POLYNOMIAL_VAL(g);
+  TowerPolynomial h = 0;
+  D->power_mod(h, f1, n, g1);
   return TOWER_RINGELEM(h);
 }
 
 ring_elem Tower::lowerP(const ring_elem f) const
 {
-  poly f1 = TOWER_VAL(f);
-  poly h = 0;
-  D->lowerP(h,f1);
+  TowerPolynomial f1 = TOWER_POLYNOMIAL_VAL(f);
+  TowerPolynomial h = 0;
+  D->lowerP(h, f1);
   return TOWER_RINGELEM(h);
 }
 
@@ -378,8 +403,7 @@ ring_elem Tower::lowerP(const ring_elem f) const
 
 #include "relem.hpp"
 
-const RingElement *towerGCD(const RingElement *F,
-                            const RingElement *G)
+const RingElement *towerGCD(const RingElement *F, const RingElement *G)
 {
   const Tower *R = F->get_ring()->cast_to_Tower();
   const Tower *S = G->get_ring()->cast_to_Tower();
@@ -419,26 +443,29 @@ const RingElement *towerExtendedGCD(const RingElement *F,
 
 ring_elem Tower::translate(const PolynomialRing *R, ring_elem fR) const
 {
-  // create a poly in the Tower T, return it.
+  // create a TowerPolynomial in the Tower T, return it.
 
   const Monoid *M = R->getMonoid();
   const Ring *K = R->getCoefficients();
   int nvars = R->n_vars();
-  poly result = 0;
+  TowerPolynomial result = 0;
   exponents exp = new int[nvars];
   for (Nterm *t = fR; t != 0; t = t->next)
     {
-      ring_elem c;
       M->to_expvector(t->monom, exp);
-      int c1 = K->coerce_to_int(t->coeff);
+
+      std::pair<bool, long> res = K->coerceToLongInteger(t->coeff);
+      assert(res.first);
+      int c1 = static_cast<int>(res.second);
+
       D->add_term(result, c1, exp);
     }
-  delete [] exp;
+  delete[] exp;
   return TOWER_RINGELEM(result);
 }
 
 #if 0
-ring_elem DPoly::translateFromTower(int level, const PolynomialRing *P, poly f) const
+ring_elem DPoly::translateFromTower(int level, const PolynomialRing *P, TowerPolynomial f) const
 {
   if (f == 0) return 0;
   if (level == 0)
@@ -462,22 +489,24 @@ ring_elem DPoly::translateFromTower(int level, const PolynomialRing *P, poly f) 
     }
 }
 
-ring_elem DRing::translateFromTower(const PolynomialRing *P, poly f) const
+ring_elem DRing::translateFromTower(const PolynomialRing *P, TowerPolynomial f) const
 {
-  // create a polynomial in P from the tower poly fT
-  poly f = TOWER_VAL(fT);
+  // create a polynomial in P from the tower TowerPolynomial fT
+  TowerPolynomial f = TOWER_POLYNOMIAL_VAL(fT);
   return D.translateFromTower(level, P, f);
 }
 
 ring_elem Tower::translateFromTower(const PolynomialRing *P, ring_elem fT) const
 {
-  // create a polynomial in P from the tower poly fT
-  poly f = TOWER_VAL(fT);
+  // create a polynomial in P from the tower TowerPolynomial fT
+  TowerPolynomial f = TOWER_POLYNOMIAL_VAL(fT);
   return D->translateFromTower(P, f);
 }
 #endif
 
-const RingElement *rawTowerTranslatePoly(const Ring *newRing, const RingElement *F)
+extern "C" // TODO: remove when this function is in e/interface
+const RingElement *rawTowerTranslatePoly(const Ring *newRing,
+                                         const RingElement *F)
 {
   // either: F is an element in a Tower, or is an element in a PolynomialRing.
   // In both cases: the number of variables and the characteristic should
@@ -491,7 +520,7 @@ const RingElement *rawTowerTranslatePoly(const Ring *newRing, const RingElement 
           ERROR("expected rings with the same number of variables");
           return 0;
         }
-      if (P->charac() != T->charac())
+      if (P->characteristic() != T->characteristic())
         {
           ERROR("expected rings with the same characteristic");
           return 0;

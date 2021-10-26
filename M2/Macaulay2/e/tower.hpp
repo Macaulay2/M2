@@ -18,36 +18,41 @@ class Tower : public Ring
 
   DRing *D;
 
-protected:
+ protected:
   Tower() {}
+  bool initialize(long charac0,
+                  M2_ArrayString names0,
+                  const VECTOR(ring_elem) & extensions);
 
-  bool initialize(int charac0, M2_ArrayString names0, const VECTOR(ring_elem) &extensions);
-public:
+ public:
   virtual ~Tower();
 
-  Tower * cast_to_Tower() { return this; }
-  const Tower * cast_to_Tower() const { return this; }
-
+  Tower *cast_to_Tower() { return this; }
+  const Tower *cast_to_Tower() const { return this; }
   int n_vars() const { return nvars; }
+  static Tower *create(int charac, M2_ArrayString names);
+  static Tower *create(const Tower *R, M2_ArrayString new_names);
+  static Tower *create(const Tower *R, VECTOR(ring_elem) & extensions);
 
-  static Tower * create(int charac, M2_ArrayString names);
-  static Tower * create(const Tower *R, M2_ArrayString new_names);
-  static Tower * create(const Tower *R, VECTOR(ring_elem) &extensions);
-
-// The following are all the routines required by 'ring'
+  // The following are all the routines required by 'ring'
+  virtual unsigned int computeHashValue(const ring_elem a) const;
 
   virtual void text_out(buffer &o) const;
 
-  virtual ring_elem from_int(int n) const;
-  virtual ring_elem from_int(mpz_ptr n) const;
+  virtual ring_elem from_long(long n) const;
+  virtual ring_elem from_int(mpz_srcptr n) const;
   virtual ring_elem var(int v) const;
-  virtual ring_elem from_rational(mpq_ptr q) const;
+  virtual bool from_rational(mpq_srcptr q, ring_elem &result) const;
 
-  virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
+  virtual bool promote(const Ring *R,
+                       const ring_elem f,
+                       ring_elem &result) const;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
   // promote and lift work between what rings?
 
-  virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
+  virtual ring_elem eval(const RingMap *map,
+                         const ring_elem f,
+                         int first_var) const;
 
   virtual bool is_unit(const ring_elem f) const;
   virtual bool is_zero(const ring_elem f) const;
@@ -70,34 +75,41 @@ public:
 
   virtual void elem_text_out(buffer &o,
                              const ring_elem f,
-                             bool p_one=true,
-                             bool p_plus=false,
-                             bool p_parens=false) const;
+                             bool p_one = true,
+                             bool p_plus = false,
+                             bool p_parens = false) const;
 
-  virtual void syzygy(const ring_elem a, const ring_elem b,
-                      ring_elem &x, ring_elem &y) const;
+  virtual void syzygy(const ring_elem a,
+                      const ring_elem b,
+                      ring_elem &x,
+                      ring_elem &y) const;
+
+  virtual int index_of_var(const ring_elem a) const;
+  virtual M2_arrayint support(const ring_elem a) const;
 
   ring_elem gcd(const ring_elem f, const ring_elem g) const;
-  ring_elem gcd_extended(const ring_elem f, const ring_elem g,
-                         ring_elem &u, ring_elem &v) const;
+  ring_elem gcd_extended(const ring_elem f,
+                         const ring_elem g,
+                         ring_elem &u,
+                         ring_elem &v) const;
 
-  // These routines are here so we can write higher level operations in M2 to test the (eventual) engine routines
-  int degree(int var, const ring_elem f) const;
-  ring_elem diff(int var, const ring_elem f) const;
-  int extension_degree(int nvars) const; // returns -1 if infinite
-  ring_elem power_mod(const ring_elem f, mpz_t n, const ring_elem g) const;  // f^n mod g
+  // These routines are here so we can write higher level operations in M2 to
+  // test the (eventual) engine routines
+  int degreeInVariable(int var, const ring_elem f) const;
+  ring_elem differentiate(int var, const ring_elem f) const;
+  int extension_degree(int nvars) const;  // returns -1 if infinite
+  ring_elem power_mod(const ring_elem f,
+                      mpz_srcptr n,
+                      const ring_elem g) const;  // f^n mod g
   ring_elem lowerP(const ring_elem f) const;
 
   ring_elem translate(const PolynomialRing *R, ring_elem fR) const;
   // translate the element fR into a dpoly for this ring
-
 };
-
 
 class RingElement;
 
-extern const RingElement *towerGCD(const RingElement *F,
-                                   const RingElement *G);
+extern const RingElement *towerGCD(const RingElement *F, const RingElement *G);
 extern const RingElement *towerExtendedGCD(const RingElement *F,
                                            const RingElement *G,
                                            const RingElement **A,

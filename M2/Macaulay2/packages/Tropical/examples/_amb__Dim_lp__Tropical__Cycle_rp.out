@@ -1,0 +1,15 @@
+-- -*- M2-comint -*- hash: -1772594487
+
+i1 : QQ[x,y,z]
+
+o1 = QQ[x..z]
+
+o1 : PolynomialRing
+
+i2 : T=tropicalVariety(ideal(x+y+z));
+
+i3 : ambDim T
+
+o3 = 3
+
+i4 : 

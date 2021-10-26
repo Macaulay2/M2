@@ -6,44 +6,22 @@ VPATH = @srcdir@
 EXES := echoout timestmp
 CPPFLAGS :=  -I. -I../../include $(CPPFLAGS)
 
-ifeq (@OS@,Linux)
-EXES += screen
-endif
-
 all: $(EXES)
-
-# overlay.h is no longer needed
-#  all: overlay.h
-#  overlay.h : overlay ; ./$< >$@
-
-# all: targettypes.h
-#  we don't need targettypes.h any more
-#  it's replaced by stdint.h
-#  and it makes cross-compiling not work
-# targettypes.h : targettypes ; ./$^ >$@
 clean:
-	rm -f overlay.h overlay gmon.out $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) targettypes.h gc_tested gc_test
+	rm -f gmon.out $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) gc_tested gc_test
 	rm -rf *.dSYM
 ../bin/linkexec : linkexec ; cp -a $< $@
-ifeq "@OS@" "Windows-95-98-NT"
-all: ../setup.exe
-../setup.exe : setup; cp setup.exe ..
-endif
+
 distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/util/Makefile
 # gc_test
 CPPFLAGS += -I@srcdir@/../../include
-LDLIBS += @GC_LIBS@
 all: gc_tested
 gc_test : gc_test.c
+gc_test : LDLIBS += @LIBS@ @BUILTLIBS@
 
-# these two lines tried to link statically with libcc to help the test work
-# but it makes more sense to let it test the same way we link with it
-# gc_test : -lgc
-# .LIBPATTERNS = lib%.a
-gc_test:
-
-gc_tested: gc_test; ./$< && touch $@
+gc_tested: gc_test; LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)" ./$< && touch $@
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/util "
 # End:
+.NOTPARALLEL:

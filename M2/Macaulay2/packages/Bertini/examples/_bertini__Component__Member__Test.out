@@ -1,0 +1,25 @@
+-- -*- M2-comint -*- hash: -180762816
+
+i1 : R = CC[x,y,z];
+
+i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y};
+
+i3 : NV = bertiniPosDimSolve(F)
+
+o3 = NV
+
+o3 : NumericalVariety
+
+i4 : pts = {{0,0,0}} --z-axis
+
+o4 = {{0, 0, 0}}
+
+o4 : List
+
+i5 : bertiniComponentMemberTest(pts, NV)
+
+o5 = {{(dim=1,deg=1)}}
+
+o5 : List
+
+i6 : 

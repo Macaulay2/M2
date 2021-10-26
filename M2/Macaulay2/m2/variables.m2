@@ -1,10 +1,13 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "expressions.m2"
+needs "methods.m2"
+
 -- indexed variables
 
 IndexedVariable = new Type of BasicList
 IndexedVariable.synonym = "indexed variable"
-value' IndexedVariable := value				    -- do we really want this?
+expressionValue IndexedVariable := value				    -- do we really want this?
 IndexedVariableTable = new Type of MutableHashTable
 IndexedVariableTable.synonym = "indexed variable table"
 protect symbol$						    -- not exported, to avoid interference with the user
@@ -36,9 +39,12 @@ Ring _ IndexedVariable := (x,s) -> x.indexSymbols#s
 expression IndexedVariable := x -> (expression x#0) _ (expression x#1)
 net IndexedVariable := v -> net expression v
 toString IndexedVariable := v -> toString expression v
-expression IndexedVariableTable := x -> hold x
-net IndexedVariableTable :=
-toString IndexedVariableTable := x -> if x#?symbol$ then toString x#symbol$ else "{*an indexed variable table*}"
+texMath IndexedVariable := v -> texMath expression v
+expression IndexedVariableTable := x -> if x#?symbol$ then expression x#symbol$ else expression "-*an indexed variable table*-"
+net IndexedVariableTable := net @@ expression
+toString IndexedVariableTable := toString @@ expression
+texMath IndexedVariableTable := x -> texMath expression x
+
 IndexedVariable ? IndexedVariable := (x,y) -> toSequence x ? toSequence y
 Symbol ? IndexedVariable := (x,y) -> if x === (y#0) then symbol > else x ? (y#0)
 Symbol _ Thing := (X,i) -> new IndexedVariable from {X,i}

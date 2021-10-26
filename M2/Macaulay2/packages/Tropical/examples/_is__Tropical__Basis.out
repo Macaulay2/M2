@@ -1,0 +1,17 @@
+-- -*- M2-comint -*- hash: 1397472778
+
+i1 : QQ[x,y,z]
+
+o1 = QQ[x..z]
+
+o1 : PolynomialRing
+
+i2 : isTropicalBasis({x+y+z,2*x+3*y-z})
+
+o2 = false
+
+i3 : isTropicalBasis(flatten entries gens Grassmannian (1,4,QQ[a..l]))
+
+o3 = true
+
+i4 : 

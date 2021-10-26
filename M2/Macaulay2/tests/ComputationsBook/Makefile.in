@@ -1,0 +1,22 @@
+# @configure_input@
+include ../../../include/config.Makefile
+VPATH = @srcdir@
+CHAPTERS = completeIntersections constructions d-modules exterior-algebra geometry \
+	   monomialIdeals preface programming schemes solving toricHilbertScheme varieties
+.PHONY: changes capture
+all:
+$(CHAPTERS):; $(MKDIR_P) "$@"
+check capture changes :: Makefile.chapter $(CHAPTERS)
+$(foreach d,$(CHAPTERS),											\
+	$(eval capture check ::; + @echo "testing: ComputationsBook::$d"; \
+		$(MAKE) --no-print-directory -C $d -I .. $$@) \
+	$(eval changes::; diff -u @srcdir@/$d/chapter.m2 @srcdir@/$d/test.m2 || true)				\
+	$(eval changes::; diff -u @srcdir@/$d/chapter.out.expected @srcdir@/$d/test.out.expected || true))
+clean:; rm -f */*.trim */*.out programming/foo */*.tmp
+Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/tests/ComputationsBook/Makefile
+Makefile.chapter: Makefile.chapter.in; cd ../../..; ./config.status Macaulay2/tests/ComputationsBook/Makefile.chapter
+distclean:clean; rm -f Makefile
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/tests/ComputationsBook "
+# End:
+.NOTPARALLEL:

@@ -1,0 +1,46 @@
+To Do for the Numerical Schubert Calculus project
+
+November 2017
+
+Need to:
+ - Check Examples of the functions that are documented in 
+http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.10/share/doc/Macaulay2/NumericalSchubertCalculus/html/
+work properly with their examples
+
+ - fix example of changeFlags, and expand it for the different ways to use it
+
+ - verify and compare solveSchubertProblem vs solveSimpleSchubert
+
+ - make solveSimpleSchubert a Strategy for solveSchubert under the flag PieriHomotopy
+
+ - checkIncidenceSolution: either finish the documentation (add example) or delete it from there
+
+ - finish the explanation about how to use the function printStatistics in NumericalSchubertCalculus.m2 (and explain is for debugging reasons)
+
+ - error in example/documentation of setVerboseLevel
+
+ - to finish testing all functions, need to install PHC and GAP and see if the Galois functions work
+
+ - once we write a unified input, we need to update the nomenclature of the examples (specially those of the documentation)
+
+## Old Comments:
+
+ - Find examples where the software breaks and examine them.
+
+ - Make a table comparing all four implementations on the same problem
+    for the software paper.
+
+ - Standard input that should work for everything:
+
+   solveMe(SchubertProblem, k, n)
+
+ where SchubertProblem is a list of pairs
+   { ( bracket, flag ), (anotherBracket, anotherFlag),...}
+
+ Frank will write a PHC wrapper for this with standard checks 
+   (general flag, Schubert problem, etc.)
+
+ the service function verifyInput verifies all inputs, using breaks to return a 
+   useful error message to the user.
+
+ First step:  Read the TST and EXA directory, as well as the bugs,

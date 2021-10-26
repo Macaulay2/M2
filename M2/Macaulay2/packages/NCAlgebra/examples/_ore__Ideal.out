@@ -1,0 +1,23 @@
+-- -*- M2-comint -*- hash: 1979736868
+
+i1 : B = skewPolynomialRing(QQ,(-1)_QQ,{x,y,z,w})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o1 = B
+
+o1 : NCQuotientRing
+
+i2 : sigma = ncMap(B,B,{y,z,w,x})
+
+o2 = NCRingMap B <--- B
+
+o2 : NCRingMap
+
+i3 : C = oreIdeal(B,sigma,a)
+
+o3 = Two-sided ideal {yx+xy, zx+xz, zy+yz, wx+xw, wy+yw, wz+zw, ax-ya, ay-za, az-wa, aw-xa}
+
+o3 : NCIdeal
+
+i4 : 

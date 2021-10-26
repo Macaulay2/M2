@@ -22,6 +22,12 @@ document {
       	  "1.234e-20",
       	  "123+4*ii",
 	  },
+     "Integers may be entered in bases 2, 8, or 16 using particular prefixes.",
+     EXAMPLE {
+	  "0b10011010010 -- binary",
+	  "0o2322 -- octal",
+	  "0x4d2 -- hexadecimal",
+	  },
      "The usual arithmetic operations are available.",
      EXAMPLE {
 	  "4/5 + 2/3",
@@ -93,7 +99,7 @@ document {
 	  TO2 {"integers modulo a prime", "ZZ/p"},
 	  TT "GF(p^n)"
 	  },
-     "Create a finite field with q = p^n elements using",
+     "Create a finite field with $q = p^n$ elements using",
      EXAMPLE "F = GF(81,Variable=>a)",
      "This creates the ring of characteristic 3, having 3^4 = 81 elements.  The elements
      of this ring are 0, a, a^2, a^3, ..., a^80.",
@@ -112,7 +118,7 @@ document {
 	  "lift(a^20, ambient F)",
 	  "apply({20,40,80}, i -> lift(a^i, ambient F))",
 	  },
-     "(for more details on lift, see , ", TO "working with multiple rings", ").",
+     "(for more details on lift, see ", TO "working with multiple rings", ").",
      PARA{},
      "Finite fields can be used as base rings for polynomial rings.",
      EXAMPLE {
@@ -129,13 +135,6 @@ document {
      EXAMPLE "k = GF 81",
      "The generator of the field can be obtained as usual.",
      EXAMPLE "k_0",
-     "Notice that the name of the generator is displayed with a ", TT "$", " in it
-     to indicate that it is not accessible by typing.  Of course, you could assign the
-     generator to the symbol of your choice, but it will still print the same way.",
-     EXAMPLE {
-	  "a = k_0",
-      	  "a^20+1",
-	  },
      "You may use ", TO "ambient", " to see the quotient ring the field is made from.",
      EXAMPLE "ambient k",
      "Use ", TO "ideal", " to see the ideal that defined that quotient ring.",
@@ -156,7 +155,7 @@ document {
 	  },
      "If you have a quotient ring that you know is a finite field, then you can
      convert it to ring that is known by the system to be a finite field.",
-     EXAMPLE "GF (ZZ/2[T]/(T^9+T+1), Variable => T)",
+     EXAMPLE "GF (ZZ/2[T]/(T^9+T+1), Variable => T) -* no-capture-flag *-",
      "You may also provide your own choice of primitive element.  Internally,
      elements of the finite field are stored as powers of the primitive element.
      First we assign our quotient ring to a global variable to ensure that
@@ -170,7 +169,7 @@ document {
      EXAMPLE "T",
      "The generator of A can be obtained this way:",
      EXAMPLE "A_0",
-     "Use ", TO "substitute", " to see map it to an element of the finite field.",
+     "Use ", TO "substitute", " to map it to an element of the finite field.",
      EXAMPLE "substitute(A_0,k)",
      "Conversely, a given element of the finite field can be transferred back
      to the quotient ring with ", TO "lift", ".",
@@ -363,10 +362,12 @@ document {
       	  "leadCoefficient g",
       	  "leadMonomial g",
 	  },
-     "Notice that the lead monomial is an element of a monoid whose name is
-     ", TT "[a,b]", ".  Its exponents can be extracted with ", TO "exponents", ".",
-     EXAMPLE "exponents leadMonomial g",
-     "We can get all of the coefficients at once, assembled a one-rowed matrix,
+     "The exponents of a monomial or term can be extracted with ", TO "exponents", ".",
+     EXAMPLE {
+	 "exponents leadMonomial g",
+	 "exponents leadTerm g",
+	 },
+     "We can get all of the coefficients at once, assembled in a one-rowed matrix,
      along with a matrix containing the corresponding monomials.",
      EXAMPLE {
 	  "coefficients f",
@@ -415,13 +416,6 @@ document {
      other in the monomial ordering.",
      EXAMPLE "f ? g",
      }
-
-TEST ///
-A = ZZ[a..d]
-B = A[r,s,t]
-C = B[x,y,z]
-
-///
 
 document {
      Key => "factoring polynomials",
@@ -687,7 +681,7 @@ document {
 -- GB nodes -------
 -------------------
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "Hilbert functions",
@@ -708,7 +702,7 @@ document {
 document {
      Key => "solving systems of polynomial equations",
      }
-*}
+*-
 
 /// 
 Plan for the next node:
@@ -727,34 +721,34 @@ Plan for the next node:
 --   computing up to a given degree
 ///
 
-TEST ///
+///
 -- document these routines DO THIS
 -- schreyerMatrix F -- DO THIS
 
-{*
+-*
 leadTerm(ZZ,RingElement) := (n,f) -> (leadTerm(n,matrix{{f}}))_(0,0)
   -- leadTerm should call a ggleadterm routine?  DO THIS
-*}
+*-
      
-{*
+-*
 installHilbertFunction = method()
 installHilbertFunction(Module,RingElement) := (M,hf) -> (
      -- we need to place hf into the degree ring of M.
      hf = substitute(hf,degreesRing M);
      M.cache.poincare = hf;
      )
-*}
+*-
 
-{*
+-*
 installGroebner = method()
 -- DO THIS
-*}
+*-
 
-{*
+-*
 gbRemove = method()
 gbRemove Module := (M) -> remove((generators M).cache, {false,0})
 gbRemove Ideal := (I) -> remove((generators I).cache, {false,0})
-*}
+*-
   -- PROBLEM: what about the other GB
   
 R = QQ[a..d,Weights=>{-1,0,0,0},Global=>false]

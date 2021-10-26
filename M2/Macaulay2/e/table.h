@@ -8,14 +8,8 @@
 /******************************************************/
 /*these next lines added by MES, July 2002, to use our gc routines..*/
 #include "engine-includes.hpp"
-#if 0
-#include <M2/config.h>
-#include <gc/gc.h>
-#include "../d/M2mem.h"
-#endif
-#define ALLOC getmem
-#define  NEW(p) ((p) = (void *) ALLOC((long)sizeof *(p)))
-#define FREE(ptr) ((void)(GC_FREE((ptr)), (ptr) = 0))
+#define  NEW(p) ((p) = (void *) getmem((long)sizeof *(p)))
+#define FREE(ptr) ((void)(freemem((ptr)), (ptr) = 0))
 /******************************************************/
 
 #define T Table_T
@@ -37,7 +31,7 @@ extern void *Table_remove(T * table, const void *key);
 extern void   Table_map    (T * table,
         void apply(const void *key, void **value, void *cl),
         void *cl);
-const extern void **Table_toArray(T * table, void *end);
+extern const void **Table_toArray(T * table, void *end);
 #if defined(__cplusplus)
 }
 #endif

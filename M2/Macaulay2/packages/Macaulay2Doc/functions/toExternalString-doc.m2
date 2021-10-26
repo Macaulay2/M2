@@ -5,6 +5,7 @@
 undocumented {
     (toExternalString, Nothing),
     (toExternalString, Ideal),
+    (toExternalString, MonomialIdeal),
     (toExternalString, Boolean),
     (toExternalString, LATER),
     (toExternalString, Number),
@@ -39,7 +40,9 @@ undocumented {
     (toExternalString, Keyword),
     (toExternalString, PolynomialRing),
     (toExternalString, Net),
-    (toExternalString, String)
+    (toExternalString, String),
+    (toExternalString,FractionField),
+    (toExternalString,Variety)
     }     
 
 document { 

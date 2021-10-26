@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Macaulay2: Digraph Visualization</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/BootSideMenu.css" rel="stylesheet"/>
+    <link href="css/nouislider.min.css" rel="stylesheet"/>
+    <link href="css/common.css" rel="stylesheet"/>
+
+    <script>
+      //global variables
+      activeSession = true;
+      tikzGenerated = false;
+      curEdit = false;
+      curHighlight = false;
+  	  curView = "2d";
+      menuOpen = true;
+      dataData = [[0, 1, 1, 0, 0, 0, 0], [0, 0, 0, 1, 1, 0, 0], [0, 0, 0, 0, 1, 1, 0], [0, 0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 0, 0]];
+      labelData = ["1", "2", "3", "4", "5", "6", "7"];
+      portData = 8080; // initializes port from user
+      forceOn = true;
+      labelsOn = true;
+      forceCharge = -1500;
+      forceLinkDist = 150;
+    </script>
+  </head>
+
+  <body>
+
+        <div id="side">
+          <h3>&#8202;&#8202;Menu</h3>
+          <div class="list-group" id="menuList">
+            <div class="list-group-item" id="sliderDiv"><div style="height:25px;">Force variables</div>
+            <span style="display:inline-block; width:60px;">&#8202; Charge:</span><div class="noUi-extended" id="charge-slider" style="vertical-align:middle;"></div><br>
+            <span style="display:inline-block; width:60px;">&#8202; Links:</span><div class="noUi-extended" id="linkdist-slider" style="vertical-align:middle;"></div>
+            </div>
+            <a id="editToggle" href="#" class="list-group-item">Enable editing</a>
+            <a id="labelToggle" href="#" class="list-group-item">Hide labels</a>
+            <a id="highlightToggle" href="#" class="list-group-item">Highlight neighbors</a>
+            <a id="reset" href="#" class="list-group-item">Reset nodes</a>
+            <a id="forceToggle" href="#" class="list-group-item">Turn off force</a>
+            <a id="exportTikz" href="#" class="list-group-item">Generate TikZ code</a>
+              
+              <!-- <div id="tikzHolder" class="list-group-item"><input id="tikzTextBox" value="" size="15" style="vertical-align:middle;" readonly><button id="copyButton" style="vertical-align:middle;" data-clipboard-target="#tikzTextBox" type="button"><img src="images/32px-Octicons-clippy.svg" alt="Copy to clipboard" style="width:19px;height:19px;"></button></div> -->
+            
+            <a href="#collapse1" data-toggle="collapse" class="list-group-item">Boolean tests &#9662;</a>
+                <div id="collapse1" class="panel-collapse collapse">
+                    <a id="hasEulerianTrail" href="#" class="list-group-item"> &nbsp;&nbsp; hasEulerianTrail</a>
+                    <a id="isEulerian" href="#" class="list-group-item"> &nbsp;&nbsp; isEulerian</a>
+                    <a id="isStronglyConnected" href="#" class="list-group-item"> &nbsp;&nbsp; isStronglyConnected</a>
+                    <a id="isWeaklyConnected" href="#" class="list-group-item"> &nbsp;&nbsp; isWeaklyConnected</a>
+                </div>
+             <a id="endSession" href="#" class="list-group-item">End session</a>            
+          </div>
+        </div>
+  
+  <div class="container">
+    <div id="canvasElement2d"></div>
+  </div>
+
+  <script src="js/jquery-1.11.3.min.js"></script>
+  <script src="js/BootSideMenu.js"></script>
+  <script src="js/d3.v3.min.js"></script>
+  <script src="js/visDigraph2d.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/clipboard.min.js"></script>
+  <script src="js/nouislider.min.js"></script>
+
+  <script>
+      
+    console.log(dataData);
+    console.log(labelData);
+    console.log(8080);
+      
+    // Initialize clipboard.js.
+    var clipboard = null;
+      
+//    $('#side').BootSideMenu({side:"right"});
+    $('#side').BootSideMenu({side:"right", closeOnClick: false, width: "230px"});
+
+    // When the side menu bar is opened or closed (i.e, when the "toggler" div is clicked), resize the svg appropriately so that nodes do not go behind the side menu.
+    document.getElementsByClassName("toggler")[0].addEventListener("mousedown", function() {
+            menuOpen = !menuOpen;
+            updateWindowSize2d();    
+    }, false);  
+    
+    //document.getElementById("canvasElement2d").style.width = window.innerWidth;
+    //document.getElementById("canvasElement2d").style.height = window.innerHeight;
+      
+    window.addEventListener("resize", updateWindowSize2d, false);
+
+    // Initialize sliders
+    var chargeSlider = document.getElementById('charge-slider');
+    noUiSlider.create(chargeSlider, {
+        start: [1500],
+        //tooltips: true,
+        range: {
+			'min': [0],
+			'max': [6000]
+		}
+    });
+    //chargeSlider.noUiSlider.on('update', updateForceCharge);
+      
+    var linkDistSlider = document.getElementById('linkdist-slider');
+    noUiSlider.create(linkDistSlider, {
+        start: [100],
+        //tooltips: true,
+        range: {
+			'min': [0],
+			'max': [400]
+		}
+    });
+    //chargeSlider.noUiSlider.on('update', updateForceLinkDist);
+      
+      
+    $(document).ready(function(){
+
+      $("#editToggle").on("click", function(){
+        if(curEdit) {
+          $(this).html("Enable editing");
+          curEdit = !curEdit;
+          disableEditing();
+        } else {
+          $(this).html("Disable editing");
+          curEdit = !curEdit;
+          enableEditing();
+        }
+      });
+        
+      $("#labelToggle").on("click", function(){
+        if(!labelsOn) {
+          $(this).html("Hide labels");
+          labelsOn = !labelsOn;
+          showLabels();
+        } else {
+          $(this).html("Show labels");
+          labelsOn = !labelsOn;
+          hideLabels();
+        }
+      });
+    
+      $("#highlightToggle").on("click", function(){
+        if(curHighlight) {
+          $(this).html("Highlight neighbors");
+          unHighlightAll();
+          curHighlight = !curHighlight;
+        } else {
+          $(this).html("Disable highlighting");
+          enableHighlight();
+          curHighlight = !curHighlight;
+        }
+      });
+
+      $("#reset").on("click", resetGraph);
+      
+      $("#forceToggle").on("click", toggleForce);
+      
+      $("#exportTikz").on("click", function() {
+        exportTikz();
+      });
+
+      // Begin browser-M2 communication.
+      // For each item, a line in the function `onclickResults()`
+      // located in `visGraph2d.js` must be added. 
+      // 
+      // If you wish to delete the text to make it vanish when the graph is edited
+      // search for 'menuDefaults()'.
+
+      // Checks to see if user's graph has an Eulerian trail
+      $("#hasEulerianTrail").on("click", function() {
+        clickTest = "hasEulerianTrail";
+        makeCorsRequest('POST','http://localhost:'+portData+'/hasEulerianTrail/', digraph2M2Constructor(nodes,links));
+      });
+        
+      // Checks to see if users graph is Eulerian
+      $("#isEulerian").on("click", function() {
+        clickTest = "isEulerian";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isEulerian/', digraph2M2Constructor(nodes,links));
+      });      
+
+      // Checks to see if users graph is strongly connected
+      $("#isStronglyConnected").on("click", function() {
+        clickTest = "isStronglyConnected";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isStronglyConnected/', digraph2M2Constructor(nodes,links));
+      });      
+
+      // Checks to see if users graph is weakly connected
+      $("#isWeaklyConnected").on("click", function() {
+        clickTest = "isWeaklyConnected";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isWeaklyConnected/', digraph2M2Constructor(nodes,links));
+      });      
+        
+      // Ends the browser session and outputs the information to M2
+      $("#endSession").on("click", function() {
+        if(activeSession) {
+          //$(this).html("Session Terminated");
+          //$(this).html(<p style="color: #ffffff; background-color: #ff0000">Session terminated</p>);
+          document.getElementById("endSession").style.color = 'white';
+          document.getElementById("endSession").style.backgroundColor = 'red';
+          document.getElementById("endSession").innerHTML = "Session terminated";
+          makeCorsRequest('POST','http://localhost:'+portData+'/end/',digraph2M2Constructor(nodes,links));
+          activeSession = !activeSession;
+        } else {
+          return;
+        }
+      });            
+
+      initializeBuilder();
+      disableEditing();
+    });
+
+
+    function toggleForce() {
+      if (forceOn) {
+        setAllNodesFixed();
+        document.getElementById("forceToggle").innerHTML = "Turn on force";
+      }
+      else {
+        setAllNodesUnfixed();
+        document.getElementById("forceToggle").innerHTML = "Turn off force";
+      }
+      forceOn = !forceOn;
+    }
+    
+    </script>
+
+  </body>
+
+
+</html>

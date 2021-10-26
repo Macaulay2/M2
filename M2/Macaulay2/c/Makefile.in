@@ -1,10 +1,15 @@
 # @configure_input@
 ############################## main targets
-ifneq (@ETAGS@,)
+ifneq (@ETAGS@,false)
 all: tags
 endif
 all: scc1 scc-core.o
 include ../../include/config.Makefile
+
+# In this directory, we compile "scc1", the D to C translator, which we want to run
+# on the "build" machine, in the sense of autoconf.  So we do not want the cross-compiling compiler:
+# CC = @ CC_FOR_BUILD @
+
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
 ############################################
@@ -25,29 +30,27 @@ OFILES := $(CNAMES:.c=.o) grammar.o
 SRCFILES := $(HFILES) $(CNAMES) grammar.y scc-core.h scc-core.c
 CPPFLAGS := -I../../include -I/include -I@srcdir@/../../include -I@srcdir@ $(CPPFLAGS)
 
-# C standards
-# CFLAGS += -ansi
-CFLAGS += -std=c99
-# CFLAGS += -pedantic-errors
+# we include -Wno-unknown-attributes because libgc incorrectly assumes that clang 6 accepts __attribute__((__alloc_size__(1))):
+CFLAGS += -Wall -Wno-unknown-attributes
 
-CFLAGS += -Wall -Werror
+ifeq "@DEVELOPMENT@" "yes"
+CFLAGS +=  -Werror
+endif
+
 ifeq "@__INTEL_COMPILER@" "no"
 CFLAGS += -Wimplicit-function-declaration
 endif
 ifeq (@OS@,Linux)
 LDFLAGS += -Wl,-rpath,$(BUILTLIBPATH)/lib
 endif
-LOADLIBES += @GC_LIBS@
+LOADLIBES += -lgc
 
 ############################## compiling
 scc1: $(OFILES) 
-	@echo "LIBS: $(LIBS)"
-	@echo "LIBS: @LIBS@"
-	@echo "SCCFLAGS: $(SCCFLAGS)"
-	$(CC)  $(LDFLAGS) $(CFLAGS)  $(OFILES) $(LOADLIBES) $(LIBS) -o scc1
-	
+	$(CC)  $(LDFLAGS) $(CFLAGS)  $(OFILES) $(LOADLIBES) -o scc1
+
 $(OFILES) : $(HFILES)
-grammar.o: grammar.c; @CC@ $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)
+grammar.o: grammar.c; $(CC) $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)
 ############################## debugging, and building *.d and *.dd test programs
 all:.gdbinit
 .gdbinit:.gdbinit.in;cp $^ $@
@@ -69,7 +72,7 @@ tags: @srcdir@/TAGS
 wc : $(SRCFILES) ; wc -l $^
 ############################## cleaning
 clean::; rm -f *.o scc1 scc.a grammar.output grammar.tab.h \
-		scc.install scc core y.tab.h y.output grammar.c \
+		scc.install scc core y.tab.h y.output grammar.c TAGS \
 		*-exports.h *-exports.h.tmp *.sig *.sig.tmp typecode.db *.sym *.dep *.log *-tmp.c *.out *.dep.tmp
 distclean: clean
 	rm -f Makefile @srcdir@/TAGS
@@ -80,3 +83,4 @@ Makefile: Makefile.in
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/c "
 # End:
+.NOTPARALLEL:

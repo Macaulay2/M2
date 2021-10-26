@@ -9,14 +9,15 @@ newPackage(
 	       {Name => "Anton Leykin"},
 	       {Name => "Mauricio Velasco"}
 	       },
-	  Headline => "computations of Schur modules and maps between them",
+	  Headline => "Schur modules and maps between them",
+	  Keywords => {"Homological Algebra", "Representation Theory"},
 	  DebuggingMode => false,
 	  AuxiliaryFiles=>true
      	  )
      
-export{ schur, schurModule, Filling, 
-     straighten, printSchurModuleElement, schurModulesMap, augmentFilling, 
-     character, splitCharacter, characterRep, decomposeRep}
+export{ "schur", "schurModule", "Filling", 
+     "straighten", "printSchurModuleElement", "schurModulesMap", "augmentFilling", 
+     "character", "splitCharacter", "characterRep", "decomposeRep"}
 
 exteriorPower(List, Module) := opts -> (L,M) -> (
      if #L == 0 then exteriorPower(0,M)
@@ -374,10 +375,12 @@ splitCharacter RingElement := ce -> (
      -- Assumption: ring of pe: vars 0..n-1 
      --   are orig vars, n..2n-1 are elem symm fcns
      n:=numgens source vars ring ce;
-     R2 := if schurVersion < .5 then
-     	  symmRing n -- vars 0..n-1 are elem symm fcns
+     R2 := if schurVersion < .5 then (
+          error "need SchurRings, version > 0.5";
+     	  --symmRing n -- vars 0..n-1 are elem symm fcns
+          )
      else 
-     	  symmRing(coefficientRing ring pe, n); -- vars 0..n-1 are elem symm fcns
+     	  symmetricRing(coefficientRing ring pe, n); -- vars 0..n-1 are elem symm fcns
      es := (vars R2)_{0..n-1};
      toS substitute(pe,es|es)
      )

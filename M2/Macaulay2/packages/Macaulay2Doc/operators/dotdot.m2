@@ -43,7 +43,7 @@ document { Key => symbol ..,
      p_(1,1) .. q_(2,2)
      ///,
      PARA { "Use ", TO "..<", " instead to get a sequence that stops short of the endpoint." },
-     SeeAlso => {"ranges and repetitions", "polynomial rings", "subscripted variables", "..<"}
+     SeeAlso => {"polynomial rings", "subscripted variables", "..<"}
      }
 document { Key => symbol ..<, 
      Headline => "a binary operator, used for sequences of consecutive items, not including the endpoint",
@@ -77,7 +77,7 @@ document { Key => symbol ..<,
      p_(0,a) ..< r_(2,c)
      ///,
      PARA { "Use ", TO "..", " instead to get a sequence that does not stop short of the endpoint." },
-     SeeAlso => {"ranges and repetitions", "polynomial rings", "subscripted variables", ".."}
+     SeeAlso => {"polynomial rings", "subscripted variables", ".."}
      }
 document { Key => {(symbol .., List, List), (symbol .., Sequence, Sequence)},
      Headline => "rectangular sequences of consecutive lists and sequences",
@@ -123,7 +123,7 @@ document { Key => (symbol ..<, IndexedVariable, IndexedVariable),
      Headline => "sequences of consecutive indexed variables",
      Inputs => {"s","t"},
      Outputs => {
-	  {"the sequence of indexed variables with the same base and with consecutive subscripts, not inculding the endpoint"}
+	  {"the sequence of indexed variables with the same base and with consecutive subscripts, not including the endpoint"}
 	  },
      EXAMPLE lines ///
      x_1

@@ -1,0 +1,11 @@
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/normaliz/tmp/Normaliz2.9/source/libnormaliz/Makefile Normaliz2.9/source/libnormaliz/Makefile
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/normaliz/tmp/Normaliz2.9/source/libnormaliz/Makefile	2013-04-08 12:06:20.000000000 -0500
++++ Normaliz2.9/source/libnormaliz/Makefile	2013-05-08 23:04:27.343846400 -0500
+@@ -24,6 +24,7 @@
+ 
+ libnormaliz.a: cone_property.o hilbert_series.o libnormaliz-templated.o
+ 	ar -cr $@ $^
++	$(RANLIB) $@
+ 
+ clean:
+ 	-rm -f *.o

@@ -1,0 +1,268 @@
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/Makefile gfan0.6.2/Makefile
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/Makefile	2017-09-28 08:44:12.000000000 -0500
++++ gfan0.6.2/Makefile	2018-04-15 21:34:09.000000000 -0500
+@@ -359,7 +359,7 @@
+ 		app_integerfactorization.o \
+ 		app_tropicalvarietyspan.o \
+ 		app_chowbetti.o \
+-		
++
+ 
+ GFANLIBFILES= 	gfanlib.h \
+ 				gfanlib_polyhedralfan.cpp \
+@@ -385,7 +385,7 @@
+ 				gfanlib_paralleltraverser.h \
+ 				gfanlib_paralleltraverser.cpp \
+ 				gfanlib_tropicalhomotopy.h \
+-	#			gfanlib_tableau.h \   we do not yet support this one
++#				gfanlib_tableau.h \   we do not yet support this one
+ 
+ 
+ EXECS	  = $(MAIN)
+@@ -394,9 +394,9 @@
+ # (compiling with gcc version 4.7.2 and running gfan _tropicaltraverse on a starting cone for Grassmann3_7)
+ # Either this is a bug in the code or in the compiler. The bug disappears by compiling with -fno-guess-branch-probability
+ src/symmetrictraversal.o: src/symmetrictraversal.cpp
+-	$(CXX) $(CFLAGS) -fno-guess-branch-probability  -c src/symmetrictraversal.cpp -o src/symmetrictraversal.o
++#	$(CXX) $(CFLAGS) -fno-guess-branch-probability  -c src/symmetrictraversal.cpp -o src/symmetrictraversal.o
+ # If compiling with clang, use the line below instead:
+-#	$(CXX) $(CFLAGS) -c src/symmetrictraversal.cpp -o src/symmetrictraversal.o
++	$(CXX) $(CFLAGS) -c src/symmetrictraversal.cpp -o src/symmetrictraversal.o
+ 
+ # Define suffixes to make the program compile on legolas.imf.au.dk :
+ .SUFFIXES: .o .cpp .c
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/application.cpp gfan0.6.2/src/application.cpp
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/application.cpp	2017-06-20 09:47:37.000000000 -0500
++++ gfan0.6.2/src/application.cpp	2018-04-16 07:18:43.000000000 -0500
+@@ -557,7 +557,7 @@
+ 	if(strlen(p->name())>0)
+ 	  {
+ 	    char c[1024];
+-	    sprintf(c,"ln -s %s%s %s%s%s\n",path,name,path,name,p->name());
++	    sprintf(c,"ln -sf %s%s %s%s%s\n",path,name,path,name,p->name());
+ 	    fprintf(stderr,"%s",c);
+ 	    int err=system(c);
+ 	    assert(err==0);
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/enumeration.cpp gfan0.6.2/src/enumeration.cpp
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/enumeration.cpp	2017-06-20 09:47:37.000000000 -0500
++++ gfan0.6.2/src/enumeration.cpp	2018-04-16 07:10:33.000000000 -0500
+@@ -14,7 +14,7 @@
+ 
+ EnumerationFilePrinter::~EnumerationFilePrinter()
+ {
+-  assert(file==0);
++  // assert(file==0);
+ }
+ 
+ 
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/enumeration.h gfan0.6.2/src/enumeration.h
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/enumeration.h	2017-06-20 09:47:37.000000000 -0500
++++ gfan0.6.2/src/enumeration.h	2018-04-16 07:06:06.000000000 -0500
+@@ -36,7 +36,7 @@
+   FILE *file;
+  public:
+   EnumerationFilePrinter();
+-  ~EnumerationFilePrinter();
++  virtual ~EnumerationFilePrinter();
+ 
+   void open(std::string filename);
+   void open(FILE *file);
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/field.h gfan0.6.2/src/field.h
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/field.h	2017-06-20 09:47:37.000000000 -0500
++++ gfan0.6.2/src/field.h	2018-04-15 21:34:09.000000000 -0500
+@@ -203,6 +203,7 @@
+   {
+ 	  fprintf(stderr,"*this is not in Z/pZ.\n");
+ 	  assert(0);
++	  exit(0);
+   }
+   virtual bool isInteger()const
+   {
+@@ -218,6 +219,7 @@
+   Field& operator=(const Field& a)
+     {
+       assert(0);
++      exit(1);
+     }//assignment
+ };
+ 
+@@ -266,7 +268,8 @@
+   virtual FieldElement random()
+   {
+ 	  assert(0);
+-  }
++	  exit(1);
++       }
+     virtual int getCharacteristic()const=0;
+     virtual const char *name()=0;
+   virtual std::string toString()const=0;
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/field_rationalfunctions2.cpp gfan0.6.2/src/field_rationalfunctions2.cpp
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/field_rationalfunctions2.cpp	2017-06-20 09:47:37.000000000 -0500
++++ gfan0.6.2/src/field_rationalfunctions2.cpp	2018-04-15 21:34:09.000000000 -0500
+@@ -524,6 +524,7 @@
+ 
+     return sign+string("{").append(s,startIndex,slashIndex-startIndex)+string("\\over ").append(s,slashIndex+1,s.length()-slashIndex-1)+string("}");
+ */
++	  exit(1);
+ 	  }
+ 
+   std::string toString(bool writeIfOne=true, bool alwaysWriteSign=false, bool latexMode=false /*, bool mathMode=true*/) const
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/gmpallocator.cpp gfan0.6.2/src/gmpallocator.cpp
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/gmpallocator.cpp	2017-06-20 09:47:37.000000000 -0500
++++ gfan0.6.2/src/gmpallocator.cpp	2018-04-15 21:34:09.000000000 -0500
+@@ -29,7 +29,7 @@
+     {
+       ret++;
+       if(ret>=(NBUCKETSGMP))return -1;
+-      size>>1;
++      size>>=1;
+     }
+   return ret;
+ }
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/lp.cpp gfan0.6.2/src/lp.cpp
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/lp.cpp	2017-06-20 09:47:37.000000000 -0500
++++ gfan0.6.2/src/lp.cpp	2018-04-15 21:34:09.000000000 -0500
+@@ -59,6 +59,7 @@
+ {
+   fprintf(stderr,"hasInteriorPoint method not supported in \"%s\" LP class\n",name());
+   assert(0);
++  exit(1);
+ }
+ 
+ 
+@@ -119,6 +120,7 @@
+ {
+   fprintf(stderr,"hasHomogeneousSolution method not supported in \"%s\" LP class\n",name());
+   assert(0);
++  exit(1);
+ }
+ 
+ static LpSolver *soplex,*soplexCddGmp,*huber,*cdd,*cddgmp,*default_;
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/nbody.cpp gfan0.6.2/src/nbody.cpp
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/nbody.cpp	2017-06-20 09:47:37.000000000 -0500
++++ gfan0.6.2/src/nbody.cpp	2018-04-15 21:34:09.000000000 -0500
+@@ -17,6 +17,7 @@
+ 	r++;
+       }
+   assert(0);
++  exit(1);
+ }
+ 
+ static int sIndex(int i, int j, int N, bool withMasses)
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/packedmonomial.cpp gfan0.6.2/src/packedmonomial.cpp
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/packedmonomial.cpp	2017-06-20 09:47:37.000000000 -0500
++++ gfan0.6.2/src/packedmonomial.cpp	2018-04-15 21:34:09.000000000 -0500
+@@ -39,6 +39,7 @@
+ 
+ 	  *g=ret;
+ */
++	exit(1);
+ }
+ 
+ 
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/packedmonomial.h gfan0.6.2/src/packedmonomial.h
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/packedmonomial.h	2017-06-20 09:47:37.000000000 -0500
++++ gfan0.6.2/src/packedmonomial.h	2018-04-15 21:34:09.000000000 -0500
+@@ -79,7 +79,7 @@
+ 				int l=0;
+ 				int v=maxEntries[i];
+ 				assert(v>=0);
+-				while(v>0){v>>1;l++;}
++				while(v>0){v>>=1;l++;}
+ 				ret.push_back(l);
+ 			}
+ 			return ret;
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/parser.cpp gfan0.6.2/src/parser.cpp
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/parser.cpp	2017-06-20 09:47:37.000000000 -0500
++++ gfan0.6.2/src/parser.cpp	2018-04-15 21:34:09.000000000 -0500
+@@ -590,6 +590,7 @@
+ 
+   parserError("field",c);
+   assert(0);
++  exit(1);
+ }
+ 
+ 
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/polyhedralfan.cpp gfan0.6.2/src/polyhedralfan.cpp
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/polyhedralfan.cpp	2017-06-20 09:47:37.000000000 -0500
++++ gfan0.6.2/src/polyhedralfan.cpp	2018-04-15 21:34:09.000000000 -0500
+@@ -1672,6 +1672,7 @@
+     if(i->contains(v))return i->faceContaining(v);
+   debug<<"Vector "<<v<<" not contained in support of fan\n";
+   assert(0);
++  exit(1);
+ }
+ 
+ 
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/polymakefile.cpp gfan0.6.2/src/polymakefile.cpp
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/polymakefile.cpp	2017-06-20 09:47:37.000000000 -0500
++++ gfan0.6.2/src/polymakefile.cpp	2018-04-15 21:34:09.000000000 -0500
+@@ -329,6 +329,7 @@
+ IntegerMatrix PolymakeFile::readArrayArrayIntProperty(const char *p, int width)
+ {
+   assert(0);//Not implemented yet.
++  exit(1);
+ }
+ 
+ 
+@@ -371,7 +372,7 @@
+ {
+   list<int> ret;
+   int c=s.peek();
+-  while((c>='0') && (c<='9')|| (c==' '))
++  while(((c>='0') && (c<='9'))|| (c==' '))
+     {
+       //      fprintf(Stderr,"?\n");
+       int r;
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/polynomialgcd.cpp gfan0.6.2/src/polynomialgcd.cpp
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/polynomialgcd.cpp	2017-06-20 09:47:37.000000000 -0500
++++ gfan0.6.2/src/polynomialgcd.cpp	2018-04-15 21:34:09.000000000 -0500
+@@ -618,7 +618,7 @@
+ if(1)	{
+ 		static int i;
+ 		i++;
+-		if((i==1000))
++		if(i==1000)
+ 		{
+ //			debug<<simplifyPolysViaHomogeneitySpace(p);
+ //			debug<<"NonMon on:"<<p.getRing()<<p<<"\n";
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/vektor.cpp gfan0.6.2/src/vektor.cpp
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/einsteinium-release-1.11.1.beta/libraries/gfan/tmp/gfan0.6.2/src/vektor.cpp	2017-06-20 09:47:37.000000000 -0500
++++ gfan0.6.2/src/vektor.cpp	2018-04-15 21:34:09.000000000 -0500
+@@ -96,7 +96,7 @@
+ int gcdOfVector(IntegerVector const &v)
+ {
+   int ret=0;
+-  for(int i=0;i<v.size();i++)if(ret=v[i])break;
++  for(int i=0;i<v.size();i++)if((ret=v[i]))break;
+   if(ret<0)ret=-ret;
+   assert(ret!=0);
+   for(int i=0;i<v.size();i++)ret=gcdGFAN(ret,v[i]);
+diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-llvm-eigen/libraries/gfan/tmp/gfan0.6.2/src/timer.cpp gfan0.6.2/src/timer.cpp
+--- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-llvm-eigen/libraries/gfan/tmp/gfan0.6.2/src/timer.cpp	2017-06-20 16:47:37.000000000 +0200
++++ gfan0.6.2/src/timer.cpp	2019-09-26 14:31:33.000000000 +0200
+@@ -1,10 +1,10 @@
+ #include "timer.h"
+-#include "log.h"
+-
+ #include "iostream"
+ #include <time.h>
+ #include <assert.h>
+ 
++#include "log.h" // include last, because it defines a macro "log2" also defined as a function in math.h
++
+ using namespace std;
+ 
+ Timer* Timer::timers;
+diff -ur /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-llvm-eigen/libraries/gfan/tmp/gfan0.6.2/src/field_rationals.cpp gfan0.6.2/src/field_rationals.cpp
+--- /Users/dan/src/M2/M2/M2/BUILD/dan/builds.tmp/einsteinium-llvm-eigen/libraries/gfan/tmp/gfan0.6.2/src/field_rationals.cpp	2017-06-20 16:47:37.000000000 +0200
++++ gfan0.6.2/src/field_rationals.cpp	2019-09-26 14:32:05.000000000 +0200
+@@ -397,7 +397,7 @@
+ /*FieldRationals::FieldRationals():
+   Field(new FieldRationalsImplementation())
+ {
+-  /*  fprintf(Stderr,"Adding field rationals\n");
++  fprintf(Stderr,"Adding field rationals\n");
+   next=list;
+   list=this;
+   */

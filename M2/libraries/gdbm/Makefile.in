@@ -1,18 +1,25 @@
-# license for gdbm: GPL v2
+LICENSEFILES = COPYING
 
 # URL = ftp://ftp.gnu.org/gnu/gdbm
-URL = http://www.math.uiuc.edu/Macaulay2/Extra
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 VERSION = 1.9.1
+
 ifeq (@SHARED@,no)
-CONFIGOPTIONS += --disable-shared LIBS=-lmissing
+CONFIGOPTIONS += --disable-shared --enable-static
+endif
+
+ifeq ($(VERSION) @host@,1.9.1 x86_64-w64-mingw32)
+PATCHFILE += @abs_srcdir@/patch-1.9.1-mingw64
 endif
 
 include ../Makefile.library
+
+LIBS += -lmissing
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gdbm/Makefile
 uninstall clean::
 	if [ -d $(LIBRARIESDIR) ] ; \
 	then cd $(LIBRARIESDIR) && rm -rf include/gdbm.* info/gdbm.* lib/libgdbm.* man/man3/gdbm.* ;\
 	fi
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/libraries/gdbm "
+# compile-command: "make -C $M2BUILDDIR/libraries/gdbm AM_DEFAULT_VERBOSITY=1 "
 # End:

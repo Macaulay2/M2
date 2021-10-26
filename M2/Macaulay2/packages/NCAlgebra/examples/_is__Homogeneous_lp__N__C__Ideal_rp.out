@@ -1,0 +1,85 @@
+-- -*- M2-comint -*- hash: 1218573687
+
+i1 : A=QQ{x,y,z}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : w=x^3-y^2
+
+       2  3
+o2 = -y +x
+
+o2 : A
+
+i3 : isHomogeneous w
+
+o3 = false
+
+i4 : setWeights(A, {2,3,1})
+
+o4 = A
+
+o4 : NCPolynomialRing
+
+i5 : isHomogeneous w
+
+o5 = true
+
+i6 : I = ncIdeal{w,x+z^2}
+
+                        2  3   2
+o6 = Two-sided ideal {-y +x , z +x}
+
+o6 : NCIdeal
+
+i7 : isHomogeneous I
+
+o7 = true
+
+i8 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o8 = B
+
+o8 : NCQuotientRing
+
+i9 : M = ncMatrix {{x,y,z,0}, {-y*z-2*x^2,-y*x,z*x-x*z,x},{x*y-2*y*x,x*z,-x^2,y}, {-y^2-z*x,x^2,-x*y,z}}
+
+o9 = | x          y    z         0 |
+     | -y*z-2*x^2 -y*x y^2-2*x*z x |
+     | -2*y*x+x*y x*z  -x^2      y |
+     | -2*y^2+x*z x^2  -x*y      z |
+
+o9 : NCMatrix
+
+i10 : isHomogeneous M
+
+o10 = false
+
+i11 : assignDegrees(M,{1,0,0,0},{2,2,2,1})
+
+o11 = | x          y    z         0 |
+      | -y*z-2*x^2 -y*x y^2-2*x*z x |
+      | -2*y*x+x*y x*z  -x^2      y |
+      | -2*y^2+x*z x^2  -x*y      z |
+
+o11 : NCMatrix
+
+i12 : isHomogeneous M
+
+o12 = true
+
+i13 : N = ncMatrix {gens B}
+
+o13 = | x y z |
+
+o13 : NCMatrix
+
+i14 : isHomogeneous N
+
+o14 = true
+
+i15 : 

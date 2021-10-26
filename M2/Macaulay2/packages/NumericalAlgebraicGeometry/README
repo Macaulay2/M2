@@ -1,0 +1,42 @@
+.m2 files loaded by ../NumericalAlgebraicGeometry.m2 :
+
+     0-dim-methods				-- routines for 0-dim solution sets 
+     BSS-certified				-- certified tracking that emulates Blum-Shub-Smale machine
+     SLP 					-- (depreciated) preSLPs, old way of handling straight line programs
+     decomposition				-- numerical irreducible decomposition
+     deflation 					-- deflation (0- and positive-dimensional)
+     doc.m2 (and numericalAG.simpledoc)		-- documentation
+     extraNAGtypes				-- NAGtypes that are not shared (yet) by other numerical packages
+     intersection				-- intersection of two numerical varieties
+     npd					-- numerical primary decomposition
+     polynomial-space 				-- PolySpace and DualSpace operations
+     positive-dim-methods			-- routines for positive-dimensional solution sets 
+     refine 					-- refining/sharpening routines 
+     track					-- core homotopy tracking routines
+     witness-set				-- witness set manipulation routines 
+     
+
+SYSTEMS/	-- examples of systems of polynomials: 
+		-- load "SYSTEM/examplename.m2" makes F = list of polynomials
+TST/		-- tests loaded by the package via TEST, other tests
+
+PHCpack/        -- interface wrappers for PHCpack
+
+Bertini/        -- interface wrappers for Bertini
+
+hom4ps2_in_out	-- a helper script for HOM4PS2 wrapper
+		-- TO DO: check if still works... Does anybody want to develop an interface?
+
+certifiedNAG.m2 -- implementation of the algorithm from 
+		-- Beltran, Leykin. "Robust certified numerical homotopy continuation"
+		-- (not connected to the package)
+
+benchmarks.m2	-- a script used to benchmark internal and external 0-dim solvers
+		-- TO DO: move examples to  SYSTEMS/, create BENCHMARKS/ ???
+
+showcase.m2 	-- interesting examples
+		-- TO DO: split up in several "topics", create SHOWCASE/ ???
+
+
+
+

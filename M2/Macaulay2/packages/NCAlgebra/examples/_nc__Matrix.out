@@ -1,0 +1,22 @@
+-- -*- M2-comint -*- hash: 1732439513
+
+i1 : A = QQ{a,b,c,d}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : M = ncMatrix {{a,b,c,d}}
+
+o2 = | a b c d |
+
+o2 : NCMatrix
+
+i3 : N = ncMatrix {{M,2*M,3*M},{4*M,5*M,6*M}}
+
+o3 = | a   b   c   d   2*a 2*b 2*c 2*d 3*a 3*b 3*c 3*d |
+     | 4*a 4*b 4*c 4*d 5*a 5*b 5*c 5*d 6*a 6*b 6*c 6*d |
+
+o3 : NCMatrix
+
+i4 : 

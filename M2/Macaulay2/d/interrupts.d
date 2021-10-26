@@ -14,21 +14,19 @@ declarations "
 #define interrupted() test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))
 ";
 
+header "
+#include <M2/config.h>
+#include <unistd.h>
+";
 
 import threadLocal exceptionFlag:atomicField; -- indicates interrupt, stepping, or alarm
 
-header "extern int libfac_interruptflag;"; -- declared in libfac/factor/version.cc, but not exported, with C++ linkage
-getinterruptflag() ::= Ccode(int,"libfac_interruptflag");
-setinterruptflag(n:int) ::= Ccode(void,"libfac_interruptflag = ",n,"");
 export determineExceptionFlag():void := (
      store(exceptionFlag, test(interruptedFlag) || steppingFlag || alarmedFlag);
-     setinterruptflag(int(load(interruptedFlag)));
      );
-header "#include <unistd.h>";
-alarm(x:uint) ::= Ccode(int,"alarm(",x,")");
+export alarm(x:uint) ::= Ccode(int," alarm(",x,") ");
 export clearAlarm():void := alarm(uint(0));
 export clearAllFlags():void := (
-     setinterruptflag(0);
      store(exceptionFlag, false);
      compilerBarrier();
      store(interruptedFlag, false);
@@ -37,13 +35,12 @@ export clearAllFlags():void := (
      interruptPending = false;
      );
 export setInterruptFlag():void := (
-     --note ordering here, interrupt flag, then exception flag, then libfac interrupt flag. 
+     --note ordering here: interrupt flag, then exception flag.
      store(interruptedFlag, true);
      --compiler barrier necessary to disable compiler reordering.  
      --On architectures that do not enforce memory write ordering, emit a memory barrier
      compilerBarrier();
      store(exceptionFlag, true);
-     setinterruptflag(1);
      );
 export setAlarmedFlag():void := (
      store(interruptedFlag, true); -- an alarm is an interrupt, as far as the engine is concerned
@@ -56,7 +53,6 @@ export setSteppingFlag():void := (
      );
 export clearInterruptFlag():void := (
      --reverse previous order when undoing set.  
-     setinterruptflag(0);
      store(interruptedFlag, false);
      compilerBarrier();
      determineExceptionFlag();

@@ -1,0 +1,173 @@
+diff -ur /Users/mike/src/M2-git-linalg/M2/BUILD/mike/builds.tmp/opt64-all/libraries/fplll/tmp/libfplll-4.0.4/src/matrix.cpp libfplll-4.0.4/src/matrix.cpp
+--- /Users/mike/src/M2-git-linalg/M2/BUILD/mike/builds.tmp/opt64-all/libraries/fplll/tmp/libfplll-4.0.4/src/matrix.cpp	2013-05-30 03:50:42.000000000 -0400
++++ libfplll-4.0.4/src/matrix.cpp	2014-06-10 09:55:07.000000000 -0400
+@@ -22,7 +22,7 @@
+ 
+ template<class T>
+ void Matrix<T>::resize(int rows, int cols) {
+-  int oldSize = matrix.size();
++  int oldSize = static_cast<int>(matrix.size());
+   if (oldSize < rows) {
+     vector<NumVect<T> > m2(max(oldSize * 2, rows));
+     for (int i = 0; i < oldSize; i++) {
+@@ -178,9 +178,9 @@
+ inline char nextNonBlankChar(char& ch)
+ {
+   
+-  ch=getchar();
++  ch=static_cast<char>(getchar());
+   while (ch==' '||ch=='\t'||ch=='\r'||ch=='\n')
+-    ch=getchar();
++    ch=static_cast<char>(getchar());
+   return ch;
+ }
+ 
+diff -ur /Users/mike/src/M2-git-linalg/M2/BUILD/mike/builds.tmp/opt64-all/libraries/fplll/tmp/libfplll-4.0.4/src/nr.cpp libfplll-4.0.4/src/nr.cpp
+--- /Users/mike/src/M2-git-linalg/M2/BUILD/mike/builds.tmp/opt64-all/libraries/fplll/tmp/libfplll-4.0.4/src/nr.cpp	2013-05-30 03:50:42.000000000 -0400
++++ libfplll-4.0.4/src/nr.cpp	2014-06-10 10:05:57.000000000 -0400
+@@ -393,11 +393,11 @@
+ }
+ template<>
+ inline void Z_NR<double>::mul_2si(const Z_NR<double>& a, long b) {
+-  data = ldexp(a.data, b);
++  data = ldexp(a.data, static_cast<int>(b));
+ }
+ template<>
+ inline void Z_NR<double>::div_2si(const Z_NR<double>& a, long b) {
+-  data = ldexp(a.data, -b);
++  data = ldexp(a.data, static_cast<int>(-b));
+ }
+ template<>
+ inline void Z_NR<double>::addmul(const Z_NR<double>& a, const Z_NR<double>& b) {
+@@ -739,7 +739,7 @@
+     expo = 0;
+   else
+     expo = max(exponent() + expoAdd - numeric_limits<long>::digits, 0L);
+-  return static_cast<long>(ldexp(data, expoAdd - expo));
++  return static_cast<long>(ldexp(data, static_cast<int>(expoAdd - expo)));
+ }
+ template<>
+ inline long FP_NR<double>::get_si_exp(long& expo) const {
+@@ -845,7 +845,7 @@
+   if (b.exponent() + expoAdd >= numeric_limits<double>::digits)
+     data = b.data;
+   else
+-    data = ldexp(::rint(ldexp(b.data, expoAdd)), -expoAdd);
++    data = ldexp(::rint(ldexp(b.data, static_cast<int>(expoAdd))), static_cast<int>(-expoAdd));
+ }
+ template<>
+ inline void FP_NR<double>::floor(const FP_NR<double>& b) {
+@@ -948,7 +948,7 @@
+     expo = 0;
+   else
+     expo = max(exponent() + expoAdd - numeric_limits<long>::digits, 0L);
+-  return static_cast<long>(ldexpl(data, expoAdd - expo));
++  return static_cast<long>(ldexpl(data, static_cast<int>(expoAdd - expo)));
+ }
+ template<>
+ inline long FP_NR<long double>::get_si_exp(long& expo) const {
+@@ -1054,7 +1054,7 @@
+   if (b.exponent() + expoAdd >= numeric_limits<long double>::digits)
+     data = b.data;
+   else
+-    data = ldexpl(rintl(ldexpl(b.data, expoAdd)), -expoAdd);
++    data = ldexpl(rintl(ldexpl(b.data, static_cast<int>(expoAdd))), static_cast<int>(-expoAdd));
+ }
+ template<>
+ inline void FP_NR<long double>::floor(const FP_NR<long double>& b) {
+@@ -1163,7 +1163,7 @@
+   else if (expo < 0) {
+     /* NOTE: conversion of result to double is exact even if
+         sizeof(long) = 8 */
+-    result = static_cast<long>(ldexp(static_cast<double>(result), expo));
++    result = static_cast<long>(ldexp(static_cast<double>(result), static_cast<int>(expo)));
+     expo = 0;
+   }
+   return result;
+@@ -1491,7 +1491,7 @@
+ 
+ template<>
+ inline unsigned int FP_NR<mpfr_t>::getprec() {
+-  return mpfr_get_default_prec();
++  return static_cast<unsigned int>(mpfr_get_default_prec());
+ }
+ template<>
+ inline unsigned int FP_NR<mpfr_t>::setprec(unsigned int prec) {
+@@ -1692,20 +1692,20 @@
+ template<> template<>
+ inline void FP_NR<double>::get_z_exp_we(Z_NR<long>& a, long& expo, long expoAdd) const {
+   expo = 0;
+-  a = static_cast<long>(ldexp(data, expoAdd));
++  a = static_cast<long>(ldexp(data, static_cast<int>(expoAdd)));
+ }
+ #endif
+ #ifdef FPLLL_WITH_ZDOUBLE
+ template<> template<>
+ inline void FP_NR<double>::get_z_exp_we(Z_NR<double>& a, long& expo, long expoAdd) const {
+   expo = 0;
+-  a.getData() = trunc(ldexp(data, expoAdd));
++  a.getData() = trunc(ldexp(data, static_cast<int>(expoAdd)));
+ }
+ #endif
+ template<> template<>
+ inline void FP_NR<double>::get_z_exp_we(Z_NR<mpz_t>& a, long& expo, long expoAdd) const {
+   expo = max(exponent() + expoAdd - numeric_limits<double>::digits, 0L);
+-  mpz_set_d(a.getData(), ldexp(data, expoAdd - expo));
++  mpz_set_d(a.getData(), ldexp(data, static_cast<int>(expoAdd - expo)));
+ }
+ template<> template<class Z>
+ inline void FP_NR<double>::get_z_exp(Z_NR<Z>& a, long& expo) const {
+@@ -1718,14 +1718,14 @@
+ template<> template<>
+ inline void FP_NR<long double>::get_z_exp_we(Z_NR<long>& a, long& expo, long expoAdd) const {
+   expo = 0;
+-  a = static_cast<long>(ldexpl(data, expoAdd));
++  a = static_cast<long>(ldexpl(data, static_cast<int>(expoAdd)));
+ }
+ #endif
+ #ifdef FPLLL_WITH_ZDOUBLE
+ template<> template<>
+ inline void FP_NR<long double>::get_z_exp_we(Z_NR<double>& a, long& expo, long expoAdd) const {
+   expo = 0;
+-  a.getData() = trunc(static_cast<double>(ldexpl(data, expoAdd)));
++  a.getData() = trunc(static_cast<double>(ldexpl(data, static_cast<int>(expoAdd))));
+ }
+ #endif
+ template<> template<>
+@@ -1734,7 +1734,7 @@
+   /* If expo > 0, then
+      expoAdd - expo = numeric_limits<long double>::digits - exponent()
+      which implies that ldexpl(data, expoAdd - expo) is an integer */
+-  LDConvHelper::mpz_set_ld(a.getData(), trunc(ldexpl(data, expoAdd - expo)));
++  LDConvHelper::mpz_set_ld(a.getData(), trunc(ldexpl(data, static_cast<int>(expoAdd - expo))));
+ }
+ template<> template<class Z>
+ inline void FP_NR<long double>::get_z_exp(Z_NR<Z>& a, long& expo) const {
+@@ -1755,13 +1755,13 @@
+ template<> template<>
+ inline void FP_NR<dpe_t>::get_z_exp(Z_NR<double>& a, long& expo) const {
+   expo = max(DPE_EXP(data) - numeric_limits<double>::digits, 0);
+-  a.getData() = trunc(ldexp(DPE_MANT(data), DPE_EXP(data) - expo));
++  a.getData() = trunc(ldexp(DPE_MANT(data), static_cast<int>(DPE_EXP(data) - expo)));
+ }
+ #endif
+ template<> template<>
+ inline void FP_NR<dpe_t>::get_z_exp(Z_NR<mpz_t>& a, long& expo) const {
+   expo = max(DPE_EXP(data) - DPE_BITSIZE, 0);
+-  mpz_set_d(a.getData(), trunc(ldexp(DPE_MANT(data), DPE_EXP(data) - expo)));
++  mpz_set_d(a.getData(), trunc(ldexp(DPE_MANT(data), static_cast<int>(DPE_EXP(data) - expo))));
+ }
+ template<> template<class Z>
+ inline void FP_NR<dpe_t>::get_z_exp_we(Z_NR<Z>& a, long& expo, long expoAdd) const {
+diff -ur /Users/mike/src/M2-git-linalg/M2/BUILD/mike/builds.tmp/opt64-all/libraries/fplll/tmp/libfplll-4.0.4/src/util.h libfplll-4.0.4/src/util.h
+--- /Users/mike/src/M2-git-linalg/M2/BUILD/mike/builds.tmp/opt64-all/libraries/fplll/tmp/libfplll-4.0.4/src/util.h	2013-05-30 03:50:42.000000000 -0400
++++ libfplll-4.0.4/src/util.h	2014-06-10 09:57:07.000000000 -0400
+@@ -28,7 +28,7 @@
+ #ifdef FPLLL_WITH_GETRUSAGE
+   struct rusage rus;
+   getrusage(RUSAGE_SELF, &rus);
+-  return rus.ru_utime.tv_sec * 1000 + rus.ru_utime.tv_usec / 1000;
++  return static_cast<int>(rus.ru_utime.tv_sec * 1000 + rus.ru_utime.tv_usec / 1000);
+ #else
+   return time(NULL) * 1000;
+ #endif

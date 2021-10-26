@@ -271,6 +271,9 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 	       else if i == length(r) then r
 	       else new Sequence len i do foreach x in r do provide x)));
 
+export strtoseq(s:stringCell):Sequence := new Sequence len length(s.v) do
+    foreach c in s.v do provide stringCell(string(c));
+
 evalForCode(c:forCode):Expr := (
      r := if c.listClause == dummyCode then emptySequence else new Sequence len 1 do provide nullE;
      i := 0;				    -- index in r
@@ -285,7 +288,8 @@ evalForCode(c:forCode):Expr := (
 	  when invalue is Error do return invalue
 	  is ww:Sequence do w = ww
 	  is vv:List do w = vv.v
-	  else return printErrorMessageE(c.inClause,"expected a list or sequence");	  
+	  is s:stringCell do w = strtoseq(s)
+	  else return printErrorMessageE(c.inClause,"expected a list, sequence, or string");
 	  )
      else (
 	  if c.fromClause != dummyCode then (
@@ -1237,7 +1241,30 @@ handleError(c:Code,e:Expr):Expr := (
 	       if p != dummyPosition then err.position = p;
 	       e))
      else e);
+
+header "extern void M2_stack_push(char*);";
+header "extern void M2_stack_pop();";
+header "extern void M2_stack_trace();";
+stacktrace(e:Expr):Expr := (
+    Ccode(void,"M2_stack_trace()"); e );
+setupfun("stacktrace",stacktrace);
+
+evalprof(c:Code):Expr;
+evalraw(c:Code):Expr;
 export eval(c:Code):Expr := (
+    if Ccode(bool,"PROFILING == 1")
+    then Ccode(Expr,"evaluate_evalprof(",c,")")
+    else Ccode(Expr,"evaluate_evalraw(",c,")"));
+export evalprof(c:Code):Expr := (
+    when c is f:semiCode do ( -- what makes semiCode special?
+        -- printErrorMessage(codePosition(c),"--evaluating a semiCode");
+        -- TODO: how to get f.name?
+        Ccode(void,"M2_stack_push(",tocharstar(tostring(codePosition(c))),")");
+        e := evalraw(c);
+        Ccode(void,"M2_stack_pop()");
+        e)
+    else evalraw(c));
+export evalraw(c:Code):Expr := (
      -- better would for cancellation requests to set exceptionFlag:
      -- Ccode(void,"pthread_testcancel()");
      e := (
@@ -1397,10 +1424,16 @@ export eval(c:Code):Expr := (
 	       if length(v.z) == 0 then return emptyArray;
 	       r := evalSequence(v.z);
 	       if evalSequenceHadError then evalSequenceErrorMessage else Array(r)
+	       )
+	  is v:angleBarListCode do (
+	       if length(v.t) == 0 then return emptyAngleBarList;
+	       r := evalSequence(v.t);
+	       if evalSequenceHadError then evalSequenceErrorMessage else AngleBarList(r)
 	       ));
      when e is Error do handleError(c,e) else e);
 
 export evalexcept(c:Code):Expr := (
+     -- printErrorMessage(codePosition(c),"--evaluating: "+present(tostring(c)));
      e := eval(c);
      if test(exceptionFlag) then (				    -- compare this code to the code at the top of eval() above
 	  if alarmedFlag then (
@@ -1475,26 +1508,26 @@ breakFun(a:Code):Expr := (
 setupop(breakS,breakFun);
 
 assigntofun(lhs:Code,rhs:Code):Expr := (
-     left := eval(lhs);
-     when left
-     is q:SymbolClosure do (
-	  if q.symbol.Protected then (
-	       buildErrorPacket("assignment to protected variable '" + q.symbol.word.name + "'")
-	       )
-	  else (
-	       value := eval(rhs);
-	       when value is Error do return value else nothing;
-	       enlargeThreadFrame();
-	       q.frame.values.(q.symbol.frameindex) = value;
-	       value))
-     is Error do left
-     else (
-	  method := lookup(Class(left),LeftArrowE); -- method for x <- y is looked up under (symbol <-, class x)
-	  if method == nullE then buildErrorPacket("'<-': no method for object on left")
-	  else (
-	       value := eval(rhs);
-	       when value is Error do return value else nothing;
-	       applyEEE(method,left,value))));
+    left := eval(lhs);
+    when left is Error do return left else (
+	right := eval(rhs);
+	when right is Error do return right else (
+	    when left is s:SymbolClosure do (
+		sym := s.symbol;
+		symbody := Expr(SymbolBody(sym));
+		-- see syms and store in actors5.d
+		if lookup1Q(globalAssignmentHooks, symbody) then (
+		    vals := (if sym.thread then enlargeThreadFrame() else globalFrame).values;
+		    globalAssignment(sym.frameindex, sym, right))
+		else if sym.Protected then buildErrorPacket("assignment to protected variable '" + sym.word.name + "'")
+		else (
+		    enlargeThreadFrame(); -- TODO: what does this do?
+		    s.frame.values.(sym.frameindex) = right;
+		    right))
+	    else (
+		assignmethod := lookup(Class(left), LeftArrowE); -- method for x <- y is looked up under (symbol <-, class x)
+		if assignmethod == nullE then buildErrorPacket("'<-': no method for object on left")
+		else applyEEE(assignmethod, left, right)))));
 setup(LeftArrowS,assigntofun);
 
 idfun(e:Expr):Expr := e;
@@ -1572,24 +1605,50 @@ export mapkeys(f:Expr,o:HashTable):Expr := (
 	  while true do (
 	       if p == p.next then break;
 	       newkey := applyEE(f,p.key);
-	       if newkey == nullE then return buildErrorPacket("null key encountered"); -- remove soon!!!
 	       when newkey is Error do return newkey else nothing;
 	       when storeInHashTableNoClobber(x,newkey,p.value)
 	       is err:Error do return Expr(err) else nothing;
 	       p = p.next;
 	       ));
      Expr(sethash(x,o.Mutable)));
+export mapkeysmerge(f:Expr,o:HashTable,g:Expr):Expr := (
+     x := newHashTable(o.Class,o.parent);
+     x.beingInitialized = true;
+     foreach bucket in o.table do (
+	  p := bucket;
+	  while true do (
+	       if p == p.next then break;
+	       newkey := applyEE(f,p.key);
+	       when newkey is Error do return newkey else nothing;
+	       h := hash(newkey);
+	       val := lookup1(x,newkey,h);
+	       if val != notfoundE then (
+		  t := applyEEE(g,val,p.value);
+		  when t is err:Error do (
+			      if err.message != continueMessage then return t else remove(x,newkey); 
+			      -- in case "continue" is executed in g,  remove the key
+			      	   )
+			      else (
+				   storeInHashTable(x,newkey,h,t);
+				   )
+		  )
+	       else (
+		     storeInHashTable(x,newkey,h,p.value);
+	       );
+	       p = p.next;
+	       ));
+     Expr(sethash(x,o.Mutable)));
 mapkeysfun(e:Expr):Expr := (
      when      e is a:Sequence do
-     if        length(a) == 2
+     if        length(a) == 2 || length(a) == 3
      then when a.0 is o:HashTable 
      do        
      if        o.Mutable
      then      WrongArg("an immutable hash table")
-     else      mapkeys(a.1,o)
+     else      if length(a) == 2 then mapkeys(a.1,o) else mapkeysmerge(a.1,o,a.2)
      else      WrongArg(1,"a hash table")
-     else      WrongNumArgs(2)
-     else      WrongNumArgs(2));
+     else      WrongNumArgs(2,3)
+     else      WrongNumArgs(2,3));
 setupfun("applyKeys",mapkeysfun);
 
 export mapvalues(f:Expr,o:HashTable):Expr := (
@@ -1636,9 +1695,7 @@ merge(e:Expr):Expr := (
 	  if length(v) != 3 then return WrongNumArgs(3);
 	  g := v.2;
 	  when v.0 is x:HashTable do
-	  if x.Mutable then WrongArg("an immutable hash table") else
 	  when v.1 is y:HashTable do
-	  if y.Mutable then WrongArg("an immutable hash table") else 
 	  if length(x.table) >= length(y.table) then (
 	       z := copy(x);
 	       z.Mutable = true;
@@ -1660,14 +1717,13 @@ merge(e:Expr):Expr := (
 			      storeInHashTable(z,q.key,q.hash,q.value);
 			      );
 			 q = q.next));
-	       mut := false;
-	       if x.Class == y.Class && x.parent == y.parent then (
-		    z.Class = x.Class;
+	       mut := x.Mutable && y.Mutable;
+	       if x.parent == y.parent then (
+		    z.Class = commonAncestor(x.Class,y.Class);
 		    z.parent = x.parent;
-		    mut = x.Mutable;
 		    )
 	       else (
-		    z.Class = hashTableClass;
+		    if mut then z.Class = mutableHashTableClass else z.Class = hashTableClass;
 		    z.parent = nothingClass);
 	       Expr(sethash(z,mut)))
 	  else (
@@ -1691,16 +1747,14 @@ merge(e:Expr):Expr := (
 			      storeInHashTable(z,q.key,q.hash,q.value);
 			      );
 			 q = q.next));
-	       mut := false;
-	       if x.Class == y.Class && x.parent == y.parent then (
-		    z.Class = x.Class;
+	       mut := x.Mutable && y.Mutable;
+	       if x.parent == y.parent then (
+		    z.Class = commonAncestor(x.Class,y.Class);
 		    z.parent = x.parent;
-		    mut = x.Mutable;
 		    )
 	       else (
-		    z.Class = hashTableClass;
-		    z.parent = nothingClass;
-		    );
+		    if mut then z.Class = mutableHashTableClass else z.Class = hashTableClass;
+		    z.parent = nothingClass);
 	       Expr(sethash(z,mut)))
 	  else WrongArg(2,"a hash table")
 	  else WrongArg(1,"a hash table"))
@@ -1749,21 +1803,95 @@ combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
 		    );
 	       p = p.next));
      sethash(z,x.Mutable | y.Mutable));
+                                
+twistCombine(f:Expr,tw:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
+     z := newHashTable(x.Class,x.parent);
+     z.beingInitialized = true;
+     foreach pp in x.table do (
+	  p := pp;
+	  while p != p.next do (
+	       foreach qq in y.table do (
+		    q := qq;
+		    while q != q.next do (
+			 pqkey := applyEEE(f,p.key,q.key);
+			 when pqkey 
+			 is err:Error do (
+			      if err.message != continueMessage then return pqkey;
+			      )
+			 else (
+			      pqvalue := applyEEE(g,p.value,q.value);
+			      when pqvalue
+			      is err:Error do (
+				   if err.message != continueMessage then return pqvalue else nothing;
+				   )
+			      else (
+				   pqtwist := applyEEE(tw,p.key,q.key);
+				   when pqtwist
+				   is err:Error do (
+			              if err.message != continueMessage then return pqtwist else nothing;
+				      )
+				   else (
+				      pqhash := hash(pqkey);
+				      previous := lookup1(z,pqkey,pqhash);
+				      if previous == notfoundE
+				      then (
+					  tot := applyEEE(g,pqtwist,pqvalue);
+					  when tot
+					  is err:Error do (
+					      if err.message != continueMessage then return tot else nothing;
+					  )
+				          else (
+					     r := storeInHashTable(z,pqkey,pqhash,tot);
+					     when r is Error do return r else nothing;
+					  )
+				      )
+				      else (
+					  tot2 := applyEEE(g,pqtwist,pqvalue);
+					  when tot2
+					  is err:Error do (
+					      if err.message != continueMessage then return tot2 else nothing;
+					  )
+				          else (
+					     t :=  applyEEE(h,previous,tot2);
+					     when t is err:Error do (
+					         if err.message == continueMessage
+					         then remove(z,pqkey)
+					         else return t;
+					         )
+					     else (
+					         r := storeInHashTable(z,pqkey,pqhash,t);
+					         when r is Error do return r else nothing;
+					     )))));
+			 );
+			 q = q.next);
+		    );
+	       p = p.next));
+     sethash(z,x.Mutable | y.Mutable));
+
 combine(e:Expr):Expr := (
      when e
      is v:Sequence do
-     if length(v) == 5 then 
-     when v.0 is x:HashTable do
-     if x.Mutable then WrongArg(1,"an immutable hash table") else
-     when v.1 is y:HashTable do
-     if y.Mutable then WrongArg(2,"an immutable hash table") else
-     combine(v.2,v.3,v.4,x,y)
-     else WrongArg(1+1,"a hash table")
-     else WrongArg(0+1,"a hash table")
-     else WrongNumArgs(5)
-     else WrongNumArgs(5));
+     if length(v) == 5 then (
+        when v.0 is x:HashTable do
+        if x.Mutable then WrongArg(1,"an immutable hash table") else
+        when v.1 is y:HashTable do
+        if y.Mutable then WrongArg(2,"an immutable hash table") else
+        combine(v.2,v.3,v.4,x,y)
+        else WrongArg(1+1,"a hash table")
+        else WrongArg(0+1,"a hash table")
+     )
+     else if length(v) == 6 then (
+        when v.0 is x:HashTable do
+        if x.Mutable then WrongArg(1,"an immutable hash table") else
+        when v.1 is y:HashTable do
+        if y.Mutable then WrongArg(2,"an immutable hash table") else
+        twistCombine(v.2,v.3,v.4,v.5,x,y)
+        else WrongArg(1+1,"a hash table")
+        else WrongArg(0+1,"a hash table")
+     )
+     else WrongNumArgs(5,6)
+     else WrongNumArgs(5,6));
 setupfun("combine",combine);
-
 
 export unarymethod(right:Expr,methodkey:SymbolClosure):Expr := (
      method := lookup(Class(right),Expr(methodkey),methodkey.symbol.hash);

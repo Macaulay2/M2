@@ -1,12 +1,12 @@
 -- -*- M2-comint -*- {* hash: -726450979 *}
---loading configuration for package "ConvexInterface" from file /home/janko/.Macaulay2/init-ConvexInterface.m2
---loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
+--loading configuration for package "ConvexInterface" from file /home/member/dgrayson/.Macaulay2/init-ConvexInterface.m2
+--loading configuration for package "MapleInterface" from file /home/member/dgrayson/.Macaulay2/init-MapleInterface.m2
 
 i1 : C={{{}}, {{{-1, -1, -1, -1}}, {{1, 0, 0, 0}}, {{0, 1, 0, 0}}, {{0, 0, 1,0}}, {{0, 0, 0, 1}}}, {{{-1, -1, -1, -1}, {0, 1, 0, 0}}, {{-1, -1, -1,-1}, {0, 0, 1, 0}}, {{1, 0, 0, 0}, {0, 0, 1, 0}}, {{1, 0, 0, 0}, {0, 0, 0,1}}, {{0, 1, 0, 0}, {0, 0, 0, 1}}}, {}, {}, {}};
 
 i2 : mHomology(C)
 
-o2 = {ZZ, ZZ, 0, 0, 0}
+o2 = {}
 
 o2 : List
 
@@ -14,7 +14,7 @@ i3 : C= {{{}}, {{{-1, -1, -1, -1, -1}}, {{1, 0, 0, 0, 0}}, {{0, 1, 0, 0, 0}}, {{
 
 i4 : mHomology(C)
 
-o4 = {ZZ, ZZ/2, 0, 0, 0, 0}
+o4 = {}
 
 o4 : List
 

@@ -1,0 +1,30 @@
+-- -*- M2-comint -*- hash: 1474347240
+--loading configuration for package "FourTiTwo" from file /home/tim/.Macaulay2/init-FourTiTwo.m2
+--loading configuration for package "Topcom" from file /home/tim/.Macaulay2/init-Topcom.m2
+--warning: file katex not installed yet in package Style
+--loading configuration for package "NumericalAlgebraicGeometry" from file /home/tim/.Macaulay2/init-NumericalAlgebraicGeometry.m2
+--loading configuration for package "Bertini" from file /home/tim/.Macaulay2/init-Bertini.m2
+
+i1 : setRandomSeed 2020;
+
+i2 : R=CC[x,y,z];
+
+i3 : F=random(3,R);
+-- warning: experimental computation over inexact field begun
+--          results not reliable (one warning given per session)
+
+i4 : P=sum apply(gens R,g->diff(g,F)*random CC);
+
+i5 : PS = polySystem {F,P,random(1,R)-1};
+
+i6 : sols = sparseMonodromySolve PS;
+
+i7 : for i from 0 to 5 list norm evaluate(PS, sols#i)
+
+o7 = {1.57009e-16, 4.44089e-16, 7.1089e-16, 5.55112e-16, 1.07783e-15,
+     ------------------------------------------------------------------------
+     6.28037e-16}
+
+o7 : List
+
+i8 : 

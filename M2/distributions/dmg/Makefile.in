@@ -3,20 +3,25 @@
 include ../../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
-PKG_DMG = @package@-@ARCH@-@OS@-@REL@.dmg
+PKG_DMG = @package@-@ARCH@-@ISSUE@.dmg
 
 all: dmg tidy
 dmg: ../../$(PKG_DMG)
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
-../../$(PKG_DMG) : Makefile always file_preparation library_preparation
+../../$(PKG_DMG) : Makefile always file_preparation library_preparation top-directory-preparation
 	rm -f "$@"
 	@echo "warning: sometimes the following command gives a mystical error message about '(ipc/send) invalid destination port' ... "
 	hdiutil create -srcfolder files -volname "@package@-@ARCH@-@OS@-@REL@" "$@"
+top-directory-preparation:
+	umask 022 ; $(MKDIR_P) files
+	ln -sf /Applications files/.
 file_preparation: always
 	rm -rf files
 	umask 022 ; $(MKDIR_P) files/@package@
 	umask 022 ; $(T) -C @pre_exec_prefix@ . | @TAR@ xfp - -C files/@package@
 	umask 022 ; $(T) -C @pre_prefix@ . | @TAR@ xfp - -C files/@package@
+	rm -rf files/@package@/@tail_librariesdir@
+	set -e; cd files/@package@/@tail_infodir@; for p in @PACKAGES@; do install-info --info-dir=. "$$p.info"; done
 	cp @srcdir@/ReadMe-MacOSX.rtf files/@package@
 	ln -s @package@/ReadMe-MacOSX.rtf files
 
@@ -27,6 +32,24 @@ file_preparation: always
 #     @executable_path : relative to the path to the executable
 #     @loader_path     : relative to the path to the library that wants the library
 #     @rpath           : relative to any path installed on the path with the -rpath option to ld
+# Read about all that with "man dyld".
+
+
+# Sadly, the "otool" command isn't recursive, as this demo shows:
+#	$ otool -L M2-binary | grep libboost_regex
+#		/usr/local/opt/boost/lib/libboost_regex-mt.dylib (compatibility version 0.0.0, current version 0.0.0)
+#	$ otool -L /usr/local/opt/boost/lib/libboost_regex-mt.dylib | grep libicudata
+#		/usr/local/opt/icu4c/lib/libicudata.69.dylib (compatibility version 69.0.0, current version 69.1.0)
+#	$ otool -L M2-binary | grep libicudata
+#	$ 
+# I've install the "library $f not copied" error below to catch this.
+# I'm working around this temporarily by renaming some dylib files to disable linking with them:
+#	$ find /usr/local -name \*dylib---- -ls
+#	2071418        0 lrwxrwxr-x    1 brew             admin                  50 Jul 31 12:49 /usr/local/lib/libboost_regex-mt.dylib---- -> ../Cellar/boost/1.76.0/lib/libboost_regex-mt.dylib
+#	6329913        0 lrwxrwxr-x    1 brew             admin                  19 Jul 28 03:12 /usr/local/Cellar/gcc/11.2.0/lib/gcc/11/libgfortran.dylib---- -> libgfortran.5.dylib
+#	6331397        0 lrwxrwxr-x    1 brew             admin                  19 Jul 28 03:12 /usr/local/Cellar/gcc/11.2.0/lib/gcc/11/libquadmath.dylib---- -> libquadmath.0.dylib
+
+
 library_preparation: file_preparation
 
 	$(MKDIR_P) files/@package@/@tail_libdir@
@@ -63,13 +86,17 @@ library_preparation: file_preparation
 		| while read f;										\
 		  do (bf=`basename $$f` ;								\
 		      bi=`basename $$i` ;								\
-		      set -x ; \
+		      set -x ;										\
 		      if [ $$bf = $$bi ] ;								\
 		      then set -xe ; install_name_tool -id $$bi $$i ;					\
-		      else set -xe ; install_name_tool -change $$f @loader_path/$$bf $$i ; 		\
+		      else set -xe ; install_name_tool -change $$f @loader_path/$$bf $$i ;		\
+			   if ! [ -f files/@package@/@tail_libdir@/$$bf ] ;				\
+			   then echo " *** library $$f not copied" >&2  ;				\
+			        exit 1 ; 								\
+			   fi ;										\
 		      fi ) || exit 1 ;									\
 		     echo $$f ;										\
-		     done ;										\
+		  done || exit 1 ;									\
 	   fi ;												\
 	done
 
@@ -83,3 +110,4 @@ Makefile: Makefile.in; cd ../..; ./config.status distributions/dmg/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/dmg -o tidy "
 # End:
+.NOTPARALLEL:

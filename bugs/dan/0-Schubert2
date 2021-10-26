@@ -1,5 +1,0 @@
-an annoying message:
-
-i1 : loadPackage "Schubert2"
---warning: symbol "PushForward" in PackageDictionary is shadowed by a symbol in Schubert2.Dictionary
---  use the synonym Package$PushForward

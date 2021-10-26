@@ -1,0 +1,99 @@
+-- -*- M2-comint -*- hash: 1403548827
+
+i1 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o1 = B
+
+o1 : NCQuotientRing
+
+i2 : ncGroebnerBasis ideal B
+
+      2    2                2
+o2 = y x-xy ; Lead Term = (y x, 1)
+       2  2                  2
+     yx -x y; Lead Term = (yx , 1)
+         2
+     zx-y +xz; Lead Term = (zx, 1)
+            2
+     zy+yz-x ; Lead Term = (zy, 1)
+      2                      2
+     z -yx-xy; Lead Term = (z , 1)
+
+o2 : NCGroebnerBasis
+
+i3 : C = threeDimSklyanin(QQ,{a,b,c})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o3 = C
+
+o3 : NCQuotientRing
+
+i4 : ncGroebnerBasis ideal C
+
+           4049035857  2    479504274903  4 513457984      324   3   10609 2  2  6956383927  3    63565111 4
+o4 = babac+----------ba bc+-------------ba +---------ababc+---aba - ------a ba +------------a ba+---------a b; Lead Term = (babac, 1)
+           7406276800      1540505574400     80115975      103      173056      149977105200     161787600
+             572085999   2 2   7469841911  3   6551866359 2 3  671915007  2       75087  3     75087 5
+     babab- -----------ba b - -----------ba c+-----------a b +-----------a bac- --------a bc- ------a ; Lead Term = (babab, 1)
+            59825459200       29912729600     59825459200     29912729600       35952800      691400
+         2   617137  2     561286   3   9518912       617137   2   103 2    10874 3 2 2379728 4                    2
+     baba - -------ba ba- --------ba b+--------ababa+-------aba b- ---a bab+-----a b +-------a c; Lead Term = (baba , 1)
+            7000425       80115975     80115975      8901775        81      86425     7000425
+      4  1664      103  3  9    2   10609 2    86425 3                 4
+     b - ----babc- ---ba +---aba - ------a ba- -----a b; Lead Term = (b , 1)
+          729      104    104      682344      75816
+      2 2                      2
+     c +-ba+2ab; Lead Term = (c , 1)
+        9
+            9 2
+     cb+9bc+-a ; Lead Term = (cb, 1)
+            2
+        1 2 1
+     ca+-b +-ac; Lead Term = (ca, 1)
+        2   9
+      2  832     1  2  208 2                 2
+     b a+---bab- -ab - ---a c; Lead Term = (b a, 1)
+          81     9      81
+      2  103  2   4      103 2                 2
+     b c+---ba - --aba- ----a b; Lead Term = (b c, 1)
+         208     81     1872
+        2  926721   2    927   3  1458     80887239 2   96408 4                  2
+     bab +--------ba c- -----ab +-----abac+--------a bc+-----a ; Lead Term = (bab , 1)
+          35952800      86425    86425     35952800     86425
+
+o4 : NCGroebnerBasis
+
+i5 : centralElements(B,3)
+
+o5 = | y^3-y*x*z+x*y*z-x^3 |
+
+o5 : NCMatrix
+
+i6 : centralElements(C,3)
+
+o6 = | -1/2*b^3+81/103*b*a*c+a*b*c-729/206*a^3 |
+
+o6 : NCMatrix
+
+i7 : hilbertBergman B
+--Calling bergman for HS computation.
+Complete!
+
+                2      3      4      5      6      7      8      9      10
+o7 = 1 + 3T + 6T  + 10T  + 15T  + 21T  + 28T  + 36T  + 45T  + 55T  + 66T
+
+o7 : ZZ[T]
+
+i8 : hilbertBergman(C,DegreeLimit=>5)
+--Calling bergman for HS computation.
+Complete!
+
+                2      3      4      5
+o8 = 1 + 3T + 6T  + 10T  + 15T  + 21T
+
+o8 : ZZ[T]
+
+i9 : 

@@ -1,0 +1,110 @@
+What I needed to do/understand to debug singular code in M2 (i.e. via rawCharSeries function).
+
+1. compile with debug stuff
+2. make sure .emacs file doesn't have anything about gdb (my old .emacs file was messing things up).
+3. Use gdb on ubuntu, under vmware, or elsewhere (gdb on macosx is now seemingly permanently brain damaged and useless.
+4. Use debugging print commands in x-factor.cpp:
+     p showcf(f)
+     p showcfl(PS)
+     etc
+5. The variables are (in the debug output): v_1, v_2, ...
+  v_1 should correspond to the deepest level (or be a parameter), then v_2, etc.
+6. The switch between rational, integer, ZZ/p in libfac is mysterious, and likely flawed.  It is very delicate, 
+  in the most generous interpretation.
+7. In charsets.cc, or alg_factor.cc, etc, there are DEBUG statements to see various output.
+  This is quite useful.  But CERR then needs to be defined:
+e.g. in charset.cc:
+    #define IRRCHARSERIESDEBUG
+
+    #include <factory.h>
+    #ifdef HAVE_IOSTREAM
+    #define CIN std::cin
+    #define CERR std::cerr
+    #else
+    #define CIN cin
+    #endif
+
+
+ (Below is from an email to Hans in Feb, 2013.  This was supposedly fixed in libfac-3-1-6.)
+  I keep it here to help me remember the code when I need to go searching for other bugs.
+
+First, the offending ideal (the variables match the debug display in IrrCharSeries in charset.cc
+except that I use e.g. v1 instead of v_1):
+
+R1 = QQ[v7,v6,v5,v4,v3,v2,v1, MonomialOrder=>Lex]
+I1 = ideal((v2-1)*(v3-1),
+  (v4+1)*(v7+1),
+  (v2-1)*(v5-1)*(v6+1),
+  (v2+1)*(v6+1)*(v7-1),
+  (v1-1)*(v5-1)*(v7+v4),
+  v7*v6*v1+v7*v6+v7*v2*v1+v7*v2+2*v6*v4-v6*v1+v6-v4*v3*v1+v4*v3+2*v4*v2-v4*v1+v4-v3*v1+v3-v2*v1+v2-v1+1,
+  (v1-1)*(v3+v2)*(v4+1),
+  (v1+1)*(v3-1)*(v5-1)*(v6+1),
+  (v1-1)*(v3+1)*(v4+1)*(v6+1),
+  (v1-1)*(v3+1)*(v4+1)*(v5-1),
+  (v1-1)*(v2-1)*(v5-1)*(v7-1))
+
+-- And the line in Macaulay2 that translates this to your data types, and calls
+-- IrrCharSeries:
+C1 = rawCharSeries raw gens I1 -- this is WRONG (seems to me to be wrong, at least)
+
+-- Now: this ideal has codimension 4, and has 9 components of that minimal codim:
+  {ideal (v2 - 1, v4 + 1, v5 - 1, v6 + 1),
+   ideal (v3 - 1, v4 + 1, v5 - 1, v7 - 1),
+   ideal (v3 - 1, v4 + 1, v6 + 1, v7 - 1),
+   ideal (v2 - 1, v4 + 1, v6 + 1, v7 - 1),
+   ideal (v2 - 1, v3 - 1, v4 + 1, v7 - 1),
+   ideal (v1 + 1, v2 - 1, v4 + 1, v7 - 1),
+   ideal (v2 - 1, v4 + 1, v5 - 1, v7 - 1),
+   ideal (v1 - 1, v2 - 1, v4 + 1, v6 + 1),
+   ideal (v1 - 1, v2 - 1, v6 + 1, v7 + 1)}
+
+If we check what IrrCharSeries is returning, it has only 6 characteristic sets
+of length 4 (all 6 are (quasi-)linear, and appear in the following list.
+[Side note: If I use ZZ/101 instead of QQ, we only get 5 of the 9, so it is incorrect too,
+but different].
+
+The ones missing in the computation are (note: these are the ones with v2-1, v4+1, 
+but not having v6+1):
+   ideal (v2 - 1, v4 + 1, v5 - 1, v7 - 1)
+   ideal (v2 - 1, v3 - 1, v4 + 1, v7 - 1)
+   ideal (v1 + 1, v2 - 1, v4 + 1, v7 - 1)
+
+With a long session with gdb (actually, several long sessions!), I think
+that I have found the problem.  The issue appears to be with the optimization using the
+variable 'pi'. In the case of this example, it is incorrectly removing parts of the computation
+tree.
+
+Some of what I am writing here is probably obvious to you, but I am including
+the info for my own benefit, if I read this later!
+
+The computation proceeds essentially in tree form, with a "TODO" list qhi.
+Each element of this is of the form (f_r, f_(r-1), ..., f_1, PS) where PS is the
+original system, and at each stage, a single element f_i is added to the ideal
+at the parent node.  The nodes are processed in a depth first search manner (at
+least, that was the case in this example).  Let's label each node by its nr_of_iteration (a variable
+in IrrCharSeries), after it has been incremented.
+
+Using this notation, at loop#4: the ideal being processed is:
+  (v1-1)(v2-1), (v2+1)(v6+1), (v1-1)(v2-1)(v5-1), PS
+The char set cs found here (after the call to charseta):
+  v2-1, v4+1, (v1+1)(v3-1)(v5-1)(v6+1), (v1-1)(v5-1)(v7-1)
+
+This set cs is added to the set 'pi'.  But notice that every prime ideal coming
+from the char sets in this subtree, that contains v2-1, will also contain v6+1
+(as it should, since this part of the tree satisfies: (v2+1)(v6+1) = 0, therefore v6+1=0).
+
+Then, in loop#113: the ideal being processed is
+  v2-1, (v1-1)(v2-1)(v5-1), PS
+
+The char set it finds, after charseta, is the SAME one as above.  And since it
+is already in 'pi', the 'initalset' is not being added in (the block starting
+at "pi = myUnion(pi, ListCFList(cs));" is not being executed, as the factorset
+is the single polynomial (v1-1)(v3-1)) which for instance means we never add
+v5-1 into the ideal, and consequently, we are missing that part of the
+computation tree for which v6+1 is NOT in the minimal prime, and this is what
+is causing the three minimal primes to be missed in the algorithm.
+
+I'm not sure about the best way to remove this problem.  I can imagine other
+optimizations that could be done in this function too, but we should make it
+correct first, I think.

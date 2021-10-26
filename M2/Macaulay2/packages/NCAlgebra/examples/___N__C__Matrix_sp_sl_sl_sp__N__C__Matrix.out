@@ -1,0 +1,98 @@
+-- -*- M2-comint -*- hash: -1794147570
+
+i1 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o1 = B
+
+o1 : NCQuotientRing
+
+i2 : A = ambient B
+
+o2 = A
+
+o2 : NCPolynomialRing
+
+i3 : g = 2*(-y^3-x*y*z+y*x*z+x^3)
+
+        3             3
+o3 = -2y +2yxz-2xyz+2x
+
+o3 : A
+
+i4 : J = (ideal B) + ncIdeal {g}
+
+                             2      2       2           3             3
+o4 = Two-sided ideal {zy+yz-x , zx-y +xz, -z +yx+xy, -2y +2yxz-2xyz+2x }
+
+o4 : NCIdeal
+
+i5 : B' = A/J -- Factor of sklyanin
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o5 = B'
+
+o5 : NCQuotientRing
+
+i6 : k = ncMatrix {{x,y,z}}
+
+o6 = | x y z |
+
+o6 : NCMatrix
+
+i7 : BprimeToB = ncMap(B,B',gens B) -- way to lift back from B' to B
+
+o7 = NCRingMap B <--- B'
+
+o7 : NCRingMap
+
+i8 : M = BprimeToB rightKernelBergman rightKernelBergman k  -- second syzygy of k over B
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o8 = | -z y*z     -y^2    -y*x-2*x*y |
+     | x  y*x+x*y y*z+x^2 -y^2+3*x*z |
+     | y  -x*z    -x*y    x^2        |
+     | 0  -2*y    -2*x    -2*z       |
+
+o8 : NCMatrix
+
+i9 : gId = g*(ncMatrix applyTable(entries id_(ZZ^4), i -> promote(i,B)))
+
+o9 = | -2*y^3+2*y*x*z-2*x*y*z+2*x^3 0                            0                            0                            |
+     | 0                            -2*y^3+2*y*x*z-2*x*y*z+2*x^3 0                            0                            |
+     | 0                            0                            -2*y^3+2*y*x*z-2*x*y*z+2*x^3 0                            |
+     | 0                            0                            0                            -2*y^3+2*y*x*z-2*x*y*z+2*x^3 |
+
+o9 : NCMatrix
+
+i10 : assignDegrees(gId,{2,2,2,3},{5,5,5,6});
+
+i11 : M' = gId // M
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o11 = | -2*y*x 0  -2*y^2+2*x*z y*x*z+x^3 |
+      | -x     z  -y           y^2-x*z   |
+      | -y     -x z            y*z-x^2   |
+      | z      y  x            0         |
+
+o11 : NCMatrix
+
+i12 : M*M' == gId
+
+o12 = true
+
+i13 : 

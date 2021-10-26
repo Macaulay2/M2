@@ -4,9 +4,10 @@ newPackage(
     	Version => "0.6", 
     	Date => "August 25, 2010",
     	Authors => {{Name => "Janko Boehm", 
-		  Email => "boehm@math.uni-sb.de", 
+		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}},
-    	Headline => "Rational parametrization of rational plane curves and related computations",
+    	Headline => "rational parametrization of rational plane curves and related computations",
+	Keywords => {"Commutative Algebra"},
     	DebuggingMode => false,
 	CacheExampleOutput => true,
 	AuxiliaryFiles => true,
@@ -344,7 +345,7 @@ sub(par,T)
 
 
 
-{*
+-*
 
 -- old code
 -- inverts the birational maps C->RNC and RNC->(PP^1 or C2) separately
@@ -368,7 +369,7 @@ sub(par,T));
 --testParametrization(I,pI)
 --ideal ring pI
 
-*}
+*-
 
 
 -- optimizes the height of the parametrization (for odd degree)
@@ -821,7 +822,7 @@ l);
 -- modularPower(ZZ,ZZ,ZZ)
 -- compute the modular power
 -- 1st argument a an integer
--- 2st argument b a positive integer
+-- 2nd argument b a positive integer
 -- 3rd argument p a prime
 
 modularPower=method()
@@ -1020,7 +1021,7 @@ ia);
 
 -- modularQuotient(QQ,ZZ)
 -- 1st argument q a rational number
--- 2st argument p an integer
+-- 2nd argument p an integer
 -- compute the modular quotient q mod p
 -- (false if not exists)
 
@@ -1104,7 +1105,7 @@ if (rank source vars ring I)==3 then (
 
 ---------------------------------------------------------------------------------------------
 
-{*
+-*
 Copyright (C) [2009] [Janko Boehm]
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
@@ -1112,7 +1113,7 @@ This program is free software; you can redistribute it and/or modify it under th
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>
-*}
+*-
 
 
 

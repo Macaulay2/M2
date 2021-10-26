@@ -1,6 +1,0 @@
-# -*- makefile-gmake -*- @configure_input@
-all: @CONFIGURED_FILES@
-$(foreach f,@CONFIGURED_FILES@,$(eval $f: @srcdir@/$f.in; ./config.status $f))
-# Local Variables:
-# compile-command: "make -C $M2BUILDDIR -f Makefile.configfiles "
-# End:

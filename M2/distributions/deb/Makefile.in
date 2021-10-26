@@ -7,21 +7,26 @@ CHOWN = chown
 prefixtail=$(shell echo @prefix@ | sed 's,^/,,')
 TAROPTIONS = --owner=0 --group=0 --mode=a+rX,og-ws
 .PHONY: prepare
+
+# see https://www.debian.org/doc/debian-policy/ch-controlfields.html, section 5.6.12, description of "Version"
+# use it this way, for example:
+#    make DEBIAN_REVISION=1
+ifeq ($(DEBIAN_REVISION),)
+DIST_VERSION = @PACKAGE_VERSION@
+else
+DIST_VERSION = @PACKAGE_VERSION@-$(DEBIAN_REVISION)
+endif
+
 ############################## main targets
 
-ifeq (@ARCH@,x86_64)
-DEBARCH=amd64
-else
-ifeq (@ARCH@,i686)
-# libgc needs to be compiled with i686 to get multiple threads
-DEBARCH=i386
-else
-$(error unrecognized architecture @ARCH@)
-endif
+DEBARCH=$(shell dpkg-architecture -qDEB_BUILD_ARCH || echo none)
+
+ifeq ($(DEBARCH),)
+$(error dpkg-architecture failed)
 endif
 
-PKG_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DEBARCH)-@OS@-@ISSUE@.deb
-PKG_COM_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.deb
+PKG_DEB = @PACKAGE_TARNAME@-$(DIST_VERSION)-$(DEBARCH)-@OS@-@ISSUE@.deb
+PKG_COM_DEB = @PACKAGE_TARNAME@-$(DIST_VERSION)-common.deb
 
 all: chk-opts macaulay2/control.prelim tidy_before ../../$(PKG_DEB) ../../$(PKG_COM_DEB) announce maybe-tidy
 
@@ -35,16 +40,21 @@ no-sign:; @ echo 'You may have wanted to sign the *.deb files with the command  
 %.sig:
 %.sig: %; gpg --local-user Macaulay2 --detach-sign $^
 
-chk-opts: check-prefix-is-slash-usr check-debug-disabled check-optimize-enabled 
+chk-opts: check-DEBARCH check-prefix-is-slash-usr check-debug-disabled check-optimize-enabled 
 # Debian prefers stripped binaries, but we don't:
 # chk-opts: check-strip-enabled
+check-DEBARCH:; if [ "$(DEBARCH)" = none ] ; then echo "error: unrecognized *.deb architecture: @ARCH@"; exit 1; fi
 check-prefix-is-slash-usr:; [ "${prefix}" = /usr ]
 check-debug-disabled:; [ @DEBUG@ = no ]
 check-optimize-enabled:; [ @OPTIMIZE@ = yes ]
-check-strip-enabled:; [ @STRIP@ = yes ]
+check-strip-enabled:; [ @ENABLE_STRIP@ = yes ]
 macaulay2/control.prelim : @srcdir@/macaulay2/control.prelim.in Makefile
 	rm -f $@
-	<$< >$@ sed -e 's/[@]DEBARCH[@]/$(DEBARCH)/g' -e 's/[@]PACKAGE_VERSION[@]/@PACKAGE_VERSION@/g'
+	<$< >$@ sed -e 's/[@]DEBARCH[@]/$(DEBARCH)/g' -e 's/[@]PACKAGE_VERSION[@]/$(DIST_VERSION)/g'
+	! egrep -nH '@[A-Za-z_]+@' <$@
+macaulay2-common/control.prelim : @srcdir@/macaulay2-common/control.prelim.in Makefile
+	rm -f $@
+	<$< >$@ sed -e 's/[@]DEBARCH[@]/$(DEBARCH)/g' -e 's/[@]PACKAGE_VERSION[@]/$(DIST_VERSION)/g'
 	! egrep -nH '@[A-Za-z_]+@' <$@
 announce:
 	@ echo "============================================================================="
@@ -84,7 +94,7 @@ macaulay2-common/control.tar.gz : macaulay2-common/control macaulay2-common/post
 
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 prepare: .prepared
-.prepared: 
+tmp@bindir@/M2@EXE@ .prepared: 
 	: ensure change log is up to date...
 	fgrep 'macaulay2 (@PACKAGE_VERSION@) ' <@srcdir@/changelog
 	rm -rf tmp@prefix@ tmp-common@prefix@
@@ -146,7 +156,9 @@ libraries-used: .prepared tmp@bindir@/M2@EXE@
 clean::; rm -f libraries-used
 libraries-really-used: libraries-used libraries-used-directly
 	egrep `echo \`cat libraries-used-directly\` | sed -e 's=^=.*/=' -e 's= =|.*/=g'` <$< >$@
-packages-used: libraries-really-used
+files-used: Makefile
+	for i in @FILE_PREREQS@ ; do echo $$i ; done >$@
+packages-used: libraries-really-used files-used
 	cat $^ |								\
 	while read x ;								\
 	x=`readlink -f "$$x"` ;							\
@@ -158,7 +170,7 @@ macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
 	 size=`gunzip<macaulay2/data.tar.gz|wc -c` &&				\
 	 size=`echo $$size | sed 's/^\([0-9][0-9]*\)[0-9][0-9][0-9].*/\1/'` &&	\
 	 echo Installed-Size: $$size &&						\
-	 echo -n "Depends: macaulay2-common (= @PACKAGE_VERSION@)" &&		\
+	 echo -n "Depends: macaulay2-common (= $(DIST_VERSION))" &&		\
 	 cat packages-used | while read x ; do echo -n ", $$x" ; done &&	\
 	 echo									\
 	) >$@
@@ -171,8 +183,9 @@ macaulay2-common/control : macaulay2-common/control.prelim macaulay2-common/data
 	) >$@
 clean::; rm -f macaulay2-common/control
 distclean: clean; rm -f Makefile control macaulay2/control.prelim macaulay2-common/control.prelim
-% : %.in; cd ../..; ./config.status distributions/deb/$@
+Makefile : Makefile.in; cd ../..; ./config.status distributions/deb/$@
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/deb "
 # End:
+.NOTPARALLEL:

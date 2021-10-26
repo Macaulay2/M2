@@ -4,7 +4,7 @@
 #include "ZZp.hpp"
 
 template <>
-ring_elem getElement<Z_mod>(const Z_mod&  R, int index)
+ring_elem getElement<Z_mod>(const Z_mod& R, int index)
 {
   ring_elem a = getElement<RingZZ>(*globalZZ, index);
   return R.from_int(a.get_mpz());
@@ -13,23 +13,24 @@ ring_elem getElement<Z_mod>(const Z_mod&  R, int index)
 TEST(RingZZmod32003, fromStream)
 {
   std::istringstream i("+1234 +345 -235*a");
-  Z_mod *R = Z_mod::create(32003);
+  Z_mod* R = Z_mod::create(32003);
   ring_elem a;
   while (fromStream(i, *R, a))
     {
       buffer o;
       R->elem_text_out(o, a);
-      std::cout << o.str() << " peek: " << "." << static_cast<char>(i.peek()) << "." << std::endl;
+      std::cout << o.str() << " peek: "
+                << "." << static_cast<char>(i.peek()) << "." << std::endl;
     }
 }
 
 ///////////////////////////////////////////////
 TEST(RingZZmod101, create)
 {
-  Ring *R = Z_mod::create(101);
+  Ring* R = Z_mod::create(101);
   EXPECT_TRUE(R != 0);
 
-  EXPECT_TRUE(dynamic_cast< const Z_mod * >(R) != 0);
+  EXPECT_TRUE(dynamic_cast<const Z_mod*>(R) != 0);
   EXPECT_EQ(R->coefficient_type(), Ring::COEFF_BASIC);
   EXPECT_FALSE(R->is_ZZ());
   EXPECT_EQ(ringName(*R), "ZZ/101");
@@ -37,10 +38,10 @@ TEST(RingZZmod101, create)
 TEST(RingZZmod101, ones)
 {
   Z_mod* R = Z_mod::create(101);
-  EXPECT_TRUE(R->is_equal(R->one(), R->from_int(1)));
-  EXPECT_TRUE(R->is_equal(R->minus_one(), R->from_int(-1)));
-  EXPECT_TRUE(R->is_equal(R->zero(), R->from_int(0)));
-  EXPECT_TRUE(R->is_zero(R->from_int(0)));
+  EXPECT_TRUE(R->is_equal(R->one(), R->from_long(1)));
+  EXPECT_TRUE(R->is_equal(R->minus_one(), R->from_long(-1)));
+  EXPECT_TRUE(R->is_equal(R->zero(), R->from_long(0)));
+  EXPECT_TRUE(R->is_zero(R->from_long(0)));
 }
 TEST(RingZZmod101, negate)
 {
@@ -80,10 +81,10 @@ TEST(RingZZmod101, syzygy)
 //////////////////////////////////////////////////////////
 TEST(RingZZmod2, create)
 {
-  Ring *R = Z_mod::create(2);
+  Ring* R = Z_mod::create(2);
   EXPECT_TRUE(R != 0);
 
-  EXPECT_TRUE(dynamic_cast< const Z_mod * >(R) != 0);
+  EXPECT_TRUE(dynamic_cast<const Z_mod*>(R) != 0);
   EXPECT_EQ(R->coefficient_type(), Ring::COEFF_BASIC);
   EXPECT_FALSE(R->is_ZZ());
   EXPECT_EQ(ringName(*R), "ZZ/2");
@@ -91,10 +92,10 @@ TEST(RingZZmod2, create)
 TEST(RingZZmod2, ones)
 {
   Z_mod* R = Z_mod::create(2);
-  EXPECT_TRUE(R->is_equal(R->one(), R->from_int(1)));
-  EXPECT_TRUE(R->is_equal(R->minus_one(), R->from_int(-1)));
-  EXPECT_TRUE(R->is_equal(R->zero(), R->from_int(0)));
-  EXPECT_TRUE(R->is_zero(R->from_int(0)));
+  EXPECT_TRUE(R->is_equal(R->one(), R->from_long(1)));
+  EXPECT_TRUE(R->is_equal(R->minus_one(), R->from_long(-1)));
+  EXPECT_TRUE(R->is_equal(R->zero(), R->from_long(0)));
+  EXPECT_TRUE(R->is_zero(R->from_long(0)));
 }
 TEST(RingZZmod2, negate)
 {

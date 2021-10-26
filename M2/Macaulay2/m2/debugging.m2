@@ -1,5 +1,8 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "nets.m2"
+needs "methods.m2"
+
 symbolLocation = s -> (
      t := locate s;
      if t =!= null then t#0 | ":" | toString t#1| ":" | toString (t#2+1) | "-" | toString t#3| ":" | toString (t#4+1)
@@ -47,7 +50,7 @@ on = { CallLimit => 100000, Name => null, GenerateAssertions => false } >> opts 
      if not callCount#?fb then callCount#fb = 0;
      limit := opts.CallLimit;
      if not instance(f, Function) then error("expected a function");
-     fn := if opts.Name =!= null then opts.Name else try toString f else "{*function*}";
+     fn := if opts.Name =!= null then opts.Name else try toString f else "-*function*-";
      x -> (
 	  saveCallCount := callCount#fb = callCount#fb+1;
 	  onprint(fn, " (", saveCallCount, ")",
@@ -116,6 +119,12 @@ net Descent := x -> stack sort apply(pairs x,
 	  then net k
 	  else net k | " : " | net v
 	  ))
+texMath Descent := x -> "\\left|\\begin{array}{l}" | concatenate sort apply(pairs x,
+     (k,v) -> (
+	  if #v === 0
+	  then texMath net k -- sucks but no choice
+	  else texMath net k | " : " | texMath v
+	  ) | "\\\\") | "\\end{array}\\right."
 justTypes := syms -> select(apply(syms, value), s -> instance(s, Type))
 allThingsWithNames := syms -> select(apply(syms, value), s -> hasAttribute(s,ReverseDictionary))
      
@@ -128,8 +137,8 @@ show1(Sequence,Function) := show1(List,Function) := (types,pfun) -> (
 	       or pfun === class and v === Type
 	       then world
 	       else install pfun v);
-	  if hasAttribute(v,PrintNet) then v = getAttribute(v,PrintNet) else
-	  if hasAttribute(v,PrintNames) then v = getAttribute(v,PrintNames) else
+--	  if hasAttribute(v,PrintNet) then v = getAttribute(v,PrintNet) else
+--	  if hasAttribute(v,PrintNames) then v = getAttribute(v,PrintNames) else
 	  if hasAttribute(v,ReverseDictionary) then v = getAttribute(v,ReverseDictionary);
 	  if w#?v then w#v else w#v = new Descent
 	  );
@@ -180,7 +189,7 @@ localSymbols Type := X -> select2(X,localSymbols ())
 
 robust := y -> silentRobustNet(55,4,3,y)
 abbreviate := x -> (
-     if instance(x, Function) and match("^--Function.*--$", toString x) then "..."
+     if instance(x, Function) and match("^-\\*Function.*\\*-$", toString x) then "..."
      else robust x)
 listSymbols = method()
 listSymbols Dictionary := d -> listSymbols values d

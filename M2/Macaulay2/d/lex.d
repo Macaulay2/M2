@@ -3,7 +3,6 @@
 use ctype;
 use tokens;
 use varstrin;
-use interrupts;
 
 export wordEOF := dummyWord; -- replaced later
 export wordEOC := dummyWord; -- replaced later
@@ -31,7 +30,7 @@ export makeUniqueWord(s:string,p:parseinfo):Word := (
      hashTable.hashCode = WordListCell(newWord,hashTable.hashCode);
      newWord);
 
-export NewlineW := Word("{*dummy word for newline*}",TCnone,0,newParseinfo());	    	  -- filled in by keywords.d
+export NewlineW := Word("-*dummy word for newline*-",TCnone,0,newParseinfo());	    	  -- filled in by keywords.d
 export equal(t:ParseTree,w:Word):bool := (
      when t is u:Token do u.word == w else false
      );
@@ -113,7 +112,7 @@ getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
      getc(o);		  -- pass '/'
      pos := position(o);
      hadnewline := false;
-     tokenbuf << '\"';
+     tokenbuf << '\"';					    -- "
      while true do (
 	  ch := getc(o);
 	  if ch == ERROR then (
@@ -151,6 +150,8 @@ getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
      s := takestring(tokenbuf);
      Word(s,TCstring,0,parseWORD));
 
+isbindigit(c:int):bool := c == int('0') || c == int('1');
+isoctdigit(c:int):bool := c >= int('0') && c <= int('7');
 ishexdigit(c:int):bool := (
      c >= int('0') && c <= int('9') ||
      c >= int('a') && c <= int('f') ||
@@ -170,7 +171,11 @@ getstring(o:PosFile):(null or Word) := (
 	  ch := getc(o);
 	  if ch == ERROR then (
 	       if !test(interruptedFlag)
-	       then printErrorMessage(o.filename,line,column,"ERROR in string beginning here: " + o.file.errorMessage);
+	       then printErrorMessage(o.filename,line,column,
+		    (if o.file.eof 
+			 then "reading beyond EOF in string beginning here: "
+			 else "ERROR in string beginning here: ")
+		    + o.file.errorMessage);
 	       empty(tokenbuf);
 	       return NULL;
 	       );
@@ -215,7 +220,6 @@ getstring(o:PosFile):(null or Word) := (
 	  );
      s := takestring(tokenbuf);
      Word(s,TCstring,0,parseWORD));
-ismore(file:PosFile):bool := ( c := peek(file); c != EOF && c != ERROR );
 swline := ushort(0);
 swcolumn := ushort(0);
 skipwhite(file:PosFile):int := (
@@ -257,8 +261,8 @@ skipwhite(file:PosFile):int := (
 		    c == int('\n') || c == EOF
 		    ) do getc(file);
 	       )
-	  else if c == int('{') && peek(file,1) == int('*') then (
-	       -- block comment: {* ... *}
+	  else if c == int('-') && peek(file,1) == int('*') then (
+	       -- block comment: -* ... *-
 	       getc(file); getc(file);
 	       hadnewline := false;
 	       until (
@@ -276,7 +280,7 @@ skipwhite(file:PosFile):int := (
 			 getc(file);
 			 c = peek(file);
 		    	 if c == ERROR || c == EOF then return c; 
-		    	 c == int('}')			    -- {
+		    	 c == int('-')			    -- -
 		    	 && (
 			      getc(file);
 			      true ) ) )
@@ -284,7 +288,7 @@ skipwhite(file:PosFile):int := (
 	  else return 0));
 
 -- this errorToken means there was a parsing error or an error reading the file!
-export errorToken := Token(Word("{*error token*}",TCnone,0,newParseinfo()),
+export errorToken := Token(Word("-*error token*-",TCnone,0,newParseinfo()),
      dummyPosition.filename,
      dummyPosition.line,
      dummyPosition.column,
@@ -298,9 +302,13 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	  rc := skipwhite(file);
 	  if rc == ERROR then return errorToken;
 	  if rc == EOF  then (
-	       printErrorMessage(file.filename,swline,swcolumn,"EOF in block comment {* ... *} beginning here");
+	       printErrorMessage(file.filename,swline,swcolumn,"EOF in block comment -* ... *- beginning here");
 	       -- empty(tokenbuf);
 	       -- while true do (ch2 := getc(file); if ch2 == EOF || ch2 == ERROR || ch2 == int('\n') then break;);
+     	       return errorToken;
+	       );
+	  if rc == DEPRECATED then (
+	       printErrorMessage(file.filename,swline,swcolumn,"encountered disabled block comment syntax {* ... *} beginning here");
      	       return errorToken;
 	       );
 	  line := file.line;
@@ -319,11 +327,35 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else if isdigit(ch) || ch==int('.') && isdigit(peek(file,1)) then (
 	       typecode := TCint;
-	       while isdigit(peek(file)) do (
-		    tokenbuf << char(getc(file))
-		    );
+	       decimal := true;
+	       if ch == int('0') then (
+		    tokenbuf << char(getc(file));
+		    c := peek(file);
+		    if (c == int('b') || c == int('B')) &&
+			isbindigit(peek(file,1)) then (
+			 decimal = false;
+			 tokenbuf << char(getc(file));
+			 while isbindigit(peek(file)) do
+			      tokenbuf << char(getc(file)))
+		    else if (c == int('o') || c == int('O')) &&
+			     isoctdigit(peek(file,1)) then (
+			 decimal = false;
+			 tokenbuf << char(getc(file));
+			 while isoctdigit(peek(file)) do
+			      tokenbuf << char(getc(file)))
+		    else if (c == int('x') || c == int('X')) &&
+			     ishexdigit(peek(file,1)) then (
+			 decimal = false;
+			 tokenbuf << char(getc(file));
+			 while ishexdigit(peek(file)) do
+			      tokenbuf << char(getc(file)))
+		    else while isdigit(peek(file)) do
+			      tokenbuf << char(getc(file))
+		   )
+	       else while isdigit(peek(file)) do
+		    tokenbuf << char(getc(file));
 	       c := peek(file);
-	       if c == int('.') && peek(file,1) != int('.') || c == int('p') || c == int('e')
+	       if decimal && (c == int('.') && peek(file,1) != int('.') || c == int('p') || c == int('e'))
 	       then (
 		    typecode = TCRR;
 		    if c == int('.') then (
@@ -391,7 +423,6 @@ export gettoken(file:PosFile,obeylines:bool):Token := (
 	  w := gettoken1(file,sawNewline);
 	  if w.word != NewlineW then return w;
 	  if obeylines then return w;
-	  if int(w.column) == 0 && isatty(file) then return errorToken; -- user gets out with an extra NEWLINE
 	  sawNewline = true;
 	  ));
 

@@ -1,4 +1,8 @@
 -- -*- coding: utf-8 -*-
+
+-- maybe we can eliminate this package and put all the documentation into the Core package
+-- eventually
+
 newPackage ("Macaulay2Doc",
      InfoDirSection => "Macaulay2 and its packages", 
      AuxiliaryFiles => true,
@@ -7,18 +11,17 @@ newPackage ("Macaulay2Doc",
 	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
 	  },
+     Keywords => {"Documentation"},
+     PackageExports => Core#"pre-installed packages",
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION")
 
-if not member("Macaulay2Doc",Core#"base packages") 
-then Core#"base packages" = prepend("Macaulay2Doc",Core#"base packages")
+scan(pairs Core#"raw documentation", (k,v) -> (
+	  remove(Core#"raw documentation", k);
+	  Macaulay2Doc#"raw documentation"#k = v;
+	  ))
 
 beginDocumentation()
-
--- this is big, so we always notify:
-stderr << "--loading the Macaulay2 documentation from " << currentFileDirectory << "Macaulay2Doc/" << endl
-
-scan(pairs Core#"raw documentation", (k,v) -> Macaulay2Doc#"raw documentation"#k = v)
 
 load "./Macaulay2Doc/loads.m2"				    -- the ./ makes it load from the current directory
 
@@ -28,5 +31,5 @@ then error splice (
      toSequence between_", " values Macaulay2Doc#"private dictionary")
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Macaulay2Doc RemakePackages=true RemakeAllDocumentation=true IgnoreExampleErrors=false"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=Macaulay2Doc RemakePackages=false RemakeAllDocumentation=false IgnoreExampleErrors=false"
 -- End:

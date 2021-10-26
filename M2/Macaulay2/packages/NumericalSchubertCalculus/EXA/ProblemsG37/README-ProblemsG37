@@ -1,0 +1,95 @@
+-- Report of problems with errors in G36
+
+File												Error
+
+W^3W2^3W3-G37.m2						"trackHomotopy: singularity encountered"
+W^3W2^3W21-G37.m2						"trackHomotopy: singularity encountered"
+
+
+W^2W11^2W21W111-G37.m2			found all solutions but assertion of incidence failed
+W^2W2W11W21W111-G37.m2			found all solutions but assertion of incidence failed
+W^2W2^2W21W111-G37.m2				found all solutions but assertion of incidence failed
+W2^2W11W3W21-G37.m2					found all solutions but assertion of incidence failed
+WW2W3^2W21-G37.m2						found all solutions but assertion of incidence failed
+W^2W11W31W22-G37.m2
+W^2W2W31W22-G37.m2
+W^5W3W211-G37.m2
+W^3W11W3W22-G37.m2
+W^3W2W3W22-G37.m2
+W^4W31W211-G37.m2
+W^3W2^3W111-G37.m2
+W^2W11^2W3W21-G37.m2
+W2^3W3W21-G37.m2
+W^3W21^2W111-G37.m2
+W^3W3^2W21-G37.m2
+W^4W22W211-G37.m2
+W^2W2W11W3W21-G37.m2
+W2W11^2W21^2-G37.m2
+W^4W11W21W111-G37.m2
+W^4W2W21W111-G37.m2
+W^4W31W22-G37.m2
+W2^5W11-G37.m2
+WW2^2W11^2W21-G37.m2
+W^2W2^2W3W21-G37.m2
+W^5W3W22-G37.m2
+W^4W11W3W21-G37.m2
+W^4W2W3W21-G37.m2
+W^4W2W11W31-G37.m2
+W^2W2^4W11-G37.m2
+
+
+W^6W111^2-G37.m2						recursion limit of 300 exceeded
+W^6W3W111-G37.m2
+W^6W11W4
+W^6W2W4
+W^5W2W11W111
+W^5W11^2W111
+W^5W2^2W111
+W^8W4
+W^7W41
+W^5W11^2W3
+W^6W21W111
+W^6W3^2
+W^5W2W11W3
+W^7W11W111
+W^7W2W111
+W^6W11W211
+W^6W2W211
+W^7W221
+W^7W311
+W^4W11^4
+W^4W2W11^3
+W^6W11W22
+W^4W2^2W11^2
+W^5W2^2W3
+W^6W3W21
+W^6W2W22
+W^6W11W31
+W^4W2^3W11
+W^7W11W3
+W^7W32
+W^5W11^2W21
+W^6W2W31
+W^5W2W11W21
+W^9W111
+W^8W211
+W^4W2^4
+W^6W11^3
+W^7W2W3
+W^5W2^2W21
+W^6W2W11^2
+W^8W22
+W^6W2^2W11
+W^6W21^2
+W^8W31
+W^7W11W21
+W^6W2^3
+W^9W3
+W^7W2W21
+W^8W11^2
+W^8W2W11
+W^8W2^2
+W^9W21
+W^10W11
+W^10W2
+W^12

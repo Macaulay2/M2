@@ -2,13 +2,28 @@
 
 # @configure_input@
 VPATH = @srcdir@
+
+ENABLE_STRIP = @ENABLE_STRIP@
+
+ifeq "@OS@" "Darwin"
+STRIP_ARGS = -u -r
+# Under Mac OS X stripping the file M2-binary saves 2MB (when built without -g) but leads to several reproducible bugs under Mac OS X, such as this one:
+#  i2 : R = QQ[x,y,z];
+#  i3 : gcd(x^2*y,x*y^3^6)
+#  -- SIGSEGV
+#  -- stack trace, pid 8637:
+#  level 0 -- return addr: 0x0x1002bba71 -- frame: 0x0x700005134f30
+#  level 1 -- return addr: 0x0x7fff5c17eb3d -- frame: 0x0x700005134f50
+#  level 2 -- return addr: 0x0x1 -- frame: 0x0x700005134f60
+# The man page says "strip" is equivalent to "strip -u -r", but
+# experiments show that stripping with "strip -u -r" gets the file as small and prevents the crash. Why?
+endif
+
 NORULES = yes
 include ../../include/config.Makefile
 include ../d/Makefile.files
 include @srcdir@/../e/Makefile.files
-include @srcdir@/../e/f4/Makefile.files
 include @srcdir@/../system/Makefile.files
-include @srcdir@/../kernel/bibasis/Makefile.files
 
 %.o : %.c
 %.o : %-tmp.cc
@@ -17,30 +32,49 @@ include @srcdir@/../kernel/bibasis/Makefile.files
 %.s : %.cpp
 %.o : %.s
 
-M2_OBJECTS := $(M2_OBJECTS:%=../d/%) 
-M2_OBJECTS += $(patsubst %, ../d/%.o, $(M2_DNAMES))
-M2_OBJECTS += $(ENGINE_OFILES:%=../e/%)
-M2_OBJECTS += $(F4_OBJECT_FILES:%=../e/f4/%) 
-M2_OBJECTS += $(SYSTEM_OFILES:%=../system/%) 
-M2_OBJECTS += $(BIBASIS_OFILES:%=../kernel/bibasis/%) 
+# warning: static initializers are run in left-to-right order, and some of them depend on others of them
+M2_OBJECTS := $(SYSTEM_OFILES:%=../system/%) $(ENGINE_OFILES:%=../e/%) $(M2_OBJECTS:%=../d/%) $(patsubst %, ../d/%.o, $(M2_DNAMES))
 
 EXEFILE = @pre_bindir@/M2@EXE@
+M2SCRIPT = @pre_bindir@/M2
 
-all: $(EXEFILE)
+all: $(EXEFILE) $(M2SCRIPT) 
+
+$(M2SCRIPT): M2
+	@INSTALL_SCRIPT@ M2 $(M2SCRIPT)
 
 relink:
 	rm -f $(EXEFILE)
 	$(MAKE)
 
+foo : ; : @libdir@ $(BUILTLIBPATH)
+
 check: $(EXEFILE)
-	$< --check 1 --stop -E "exit 0"
+	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" $< --check 1 -q --stop -E "exit 0"
 
-# we specify the search path for finding shareable libraries, in case there are any,
-# but we haven't yet distributed any shareable libraries:
-M2_LDFLAGS += -Wl,-rpath,@libdir@
-M2_LDFLAGS += -Wl,-rpath,@librariesdir@
+ifeq (@OS@,Darwin)
+# We specify the search path for finding shareable libraries, in case there are any,
+# but we haven't yet distributed any shareable libraries.  This is in addition to 
+# setting DYLD_LIBRARY_PATH in the shell script M2, so it's redundant.  But it works, once
+# all the files are in their correct relative positions.
+M2_LDFLAGS += -Wl,-rpath,@executable_path/../@tail_librariesdir@
+# We also look in the standard place, for system libraries, but based on the prefix
+# given at configure time:
+M2_LDFLAGS += -Wl,-rpath,@executable_path/../@tail_libdir@
+endif
 
-ifeq (@OS@,MacOS)
+ifeq (@HAVE_WL_X_NOEXECSTACK@,yes)
+# Having a non-executable stack is considered by some to be and important
+# security measure for some linux distributions, such as Fedora and gentoo.
+M2_LDFLAGS += -Wl,-z,noexecstack
+# The execstack program could also be used, but it's more aggressive than the
+# linker, since it runs a system call that fails on NFS-mounted filesystems, as
+# the following output from strace shows:
+#   setxattr("a.out.#prelink#.cnMkMw", "security.selinux", "system_u:object_r:nfs_t:s0", 27, 0) = -1 EOPNOTSUPP (Operation not supported)
+# If necessary, we could reinstate its use, by moving the file to /tmp temporarily.
+endif
+
+ifeq (@OS@,Darwin)
 
 ## This option should increase the stack size to 16MB, but it makes M2 crash.
 ## The number 1000000 is hex.
@@ -54,10 +88,16 @@ endif
 
 M2_LDFLAGS += $(LDFLAGS)
 
-ifeq (gcc,@CC@)
-ifeq (@ISSUE@,Cygwin)
+ifeq ($(MAPFILE)-@HAVE_WL_MAP@,yes-yes)
+## - use this to get a memory map listing from the gnu linker
+M2_LDFLAGS  += -Wl,-Map,mapfile
+endif
+mapfile.demangled: mapfile ; demangle <$< >$@
+clean::; rm -f mapfile.demangled
+
+ifeq (@HAVE_WL_ENABLE_AUTO_IMPORT@,yes)
 M2_LDFLAGS  += -Wl,--enable-auto-import
-    # we add this linker option to prevent these warning messages:
+    # we add this linker option to prevent these warning messages under Cygwin:
     # /usr/lib/gcc/i686-pc-cygwin/3.4.4/../../../../i686-pc-cygwin/bin/ld: warning: auto-importing has been activated without --enable-auto-import specified on the command line.
     # This should work unless it involves constant data structures referencing symbols from auto-imported DLLs.
     # Info: resolving _rl_attempted_completion_over by linking to __imp__rl_attempted_completion_over (auto-import)
@@ -68,148 +108,80 @@ M2_LDFLAGS  += -Wl,--enable-auto-import
     # Info: resolving _rl_readline_version by linking to __imp__rl_readline_version (auto-import)
     # Info: resolving _gdbm_errno by linking to __imp__gdbm_errno (auto-import)
 endif
-ifeq ($(MAPFILE),yes)
-ifeq (yes,$(shell if gcc -Wl,-v 2>&1 | grep -q 'GNU ld' ; then echo yes ; else echo no ; fi))
-## - use this to get a memory map listing from the gnu linker
-M2_LDFLAGS  += -Wl,-Map,mapfile
-endif
-endif
-endif
-mapfile.demangled: mapfile ; demangle <$< >$@
-clean::; rm -f mapfile.demangled
-
-############################## macros
-
-TOSTATIC =
-UNSTATIC =
-
-ifeq (@OS@ @ISSUE@,MicrosoftWindows Cygwin)
-TOSTATIC = -Wl,-Bstatic
-UNSTATIC = -Wl,-Bdynamic
-else
-ifeq (@OS@,Linux)
-TOSTATIC = -Wl,-Bstatic
-UNSTATIC = -Wl,-Bdynamic
-else
-ifeq (@OS@,FreeBSD)
-TOSTATIC = -Wl,-Bstatic
-UNSTATIC = -Wl,-Bdynamic
-else
-ifeq (@OS@,SunOS)
-TOSTATIC = -Wl,-Bstatic
-UNSTATIC = -Wl,-Bdynamic
-else
-ifeq (@OS@,MacOS)
-# we know about it
-else
-$(warning no static linking method configured for this OS or linker)
-endif
-endif
-endif
-endif
-endif
-
-ifeq "@STATIC@" "yes"
-MAYBESTATIC = $(TOSTATIC)
-else 
-MAYBESTATIC = $(UNSTATIC)
-endif
-
-M2_LIBRARIES :=
-
-ifeq (@STATIC@,yes)
-M2_LIBRARIES += $(MAYBESTATIC)
-ifeq (@OS@,Linux)
-# This is for gc, see the end of gc/doc/README.linux:
-# --Dynamic libraries are supported on an ELF system.  A static executable
-# --should be linked with the gcc option "-Wl,-defsym,_DYNAMIC=0".
-# I'm turning this off, because we are never completely static any longer,
-# and because I don't understand it.
-# M2_LDFLAGS += -Wl,-defsym,_DYNAMIC=0
-endif
-endif
-
-ifeq "@DUMPDATA@" "yes"
-M2_LIBDEPS += ../dumpdata/libdump.a
-M2_LIBRARIES += -L../dumpdata -ldump
-endif
 
 ###################### libraries
 
 # the order of this list should agree with that in ../../configure.ac
-
-M2_LIBRARIES +=  @BUILTLIBS@
-M2_LIBRARIES +=  $(TOSTATIC) @LIBS_STATIC@
-M2_LIBRARIES +=  $(MAYBESTATIC) @LIBS_EITHER@
-# I'm not sure whether compiling statically with libstdc++ is a good idea
-M2_LIBRARIES += -lstdc++
-
-M2_LDFLAGS += @FCLIBS_FLAGS@
-M2_LIBRARIES += @LIBS_DYNAMIC@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_DYNAMIC@
+M2_LIBRARIES :=
+M2_LIBRARIES +=  @BUILTLIBS@ @LINALGLIBS@ @LIBS@ @FCLIBS@
 
 ifeq (@MYSQL@,yes)
 M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient
 endif
-ifeq (@XML@,yes)
-M2_LIBRARIES += -lxml2
-endif
-M2_LIBRARIES += -lm -lc
-ifeq (@CONSTRUCTOR_ORDER_LIB@,LR)
-M2_LIBRARIES := -L../d -lM2inits2 $(M2_LIBRARIES)
-else
-M2_LIBRARIES := $(M2_LIBRARIES) -L../d -lM2inits2
-endif
-M2_LIBDEPS += ../d/libM2inits2.a
-ifeq (@CONSTRUCTOR_ORDER_OBJ@,LR)
-M2_OBJECTS := ../d/M2inits.o $(M2_OBJECTS)
-else
-M2_OBJECTS := $(M2_OBJECTS) ../d/M2inits.o
+M2_LIBRARIES += -lm
+ifneq (@host_os@,mingw32)
+M2_LIBRARIES += -lc
 endif
 
 clean::; rm -f $(EXEFILE) timestamp.o
 @pre_bindir@ : ; $(MKDIR_P) "$@"
 
-# note: the use of "execstack -c" in the following commands is an important security measure for
-#    many linux distributions, such as Fedora and gentoo.
-#    But we've had a report of it not working...
 $(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
-	$(COMPILE.c) @srcdir@/timestamp.c -o timestamp.o
-	time @CC@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
-	if [ -x /usr/bin/execstack ] ; then execstack -c "$@".tmp ; fi
-	printenv LD_LIBRARY_PATH
-ifneq (@LDD@,)
-	- @LDD@ $@.tmp
+	@ $(WHY)
+	@ echo "compiling timestamp.cpp"
+	$(COMPILE.cc) @srcdir@/timestamp.cpp -o timestamp.o
+	time @CXX@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
+ifneq ("$(EXECSTACK)","no")
+	@ if [ -x /usr/bin/execstack ] ;\
+	  then if (set -x ; execstack -q "$@".tmp; execstack -c "$@".tmp ) ; \
+	       then : ;\
+	       else echo "-- execstack command failed, please report" >&2 ;\
+		    echo "   selinux may interfere: try using a different file system," >&2 ;\
+		    echo "   or add EXECSTACK=no to command line to bypass" >&2 ;\
+		    exit 1 ;\
+	       fi ;\
+	  fi
 endif
-ifneq (@OTOOL@,)
-	- @OTOOL@ -L $@.tmp
+	printenv LD_LIBRARY_PATH || true
+ifneq (@LDD@,false)
+	if LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" @LDD@ $@.tmp | grep "not found";	\
+	then echo "some libraries not found" >&2;							\
+	     exit 1;											\
+	fi
+	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" @LDD@ $@.tmp
 endif
-ifneq "@OBJCOPY@" ""
+ifneq (@OTOOL@,false)
+	@OTOOL@ -L $@.tmp
+endif
+ifneq "@DEBUG@" "yes"
+ifneq "@OBJCOPY@" "false"
 	@OBJCOPY@ --only-keep-debug "$@".tmp M2.debug-info
 endif
-ifeq "$(STRIP)" "yes"
-ifneq "@STRIPCMD@" ""
+ifeq "$(ENABLE_STRIP)" "yes"
+ifneq "@STRIP@" "false"
 ifeq (@STRIP_REMOVE_SECTION@,yes)
-	@STRIPCMD@ --remove-section=.comment --remove-section=.note "$@".tmp
+	@STRIP@ $(STRIP_ARGS) --remove-section=.comment --remove-section=.note "$@".tmp
 else
-	@STRIPCMD@ "$@".tmp
-ifneq "@OBJCOPY@" ""
+	@STRIP@ $(STRIP_ARGS) "$@".tmp
+ifneq "@OBJCOPY@" "false"
 	@OBJCOPY@ --add-gnu-debuglink=M2.debug-info "$@".tmp
 endif
 endif
 endif
 endif
+endif
+
 ifeq (@OS@ @SHARED@,Linux yes)
 ifneq (@BUILDLIST@,)
-ifneq (@OBJDUMP@,)
-	@OBJDUMP@ -x "$@".tmp | egrep RPATH
-	@OBJDUMP@ -x "$@".tmp | egrep "RPATH +@librariesdir@$$"
+ifneq (@OBJDUMP@,false)
+	@OBJDUMP@ -x "$@".tmp | egrep RPATH || [ $$? -lt 2 ]
+	@OBJDUMP@ -x "$@".tmp | egrep "RPATH +@librariesdir@$$" || [ $$? -lt 2 ]
 else
 	echo "--warning: 'objdump' not installed, can't check rpath in M2 binary"
 endif
 endif
 endif
 	mv "$@".tmp "$@"
-	ln -sf $(EXEFILE) @abs_top_builddir@
 
 clean::; rm -f M2.debug-info
 
@@ -221,7 +193,10 @@ all:
 clean::; rm -f @abs_top_builddir@/M2@EXE@
 distclean: clean; rm -f Makefile
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/bin/Makefile
+all relink check: M2
+M2: M2.in; cd ../..; ./config.status Macaulay2/bin/M2
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/bin relink "
 # End:
+.NOTPARALLEL:

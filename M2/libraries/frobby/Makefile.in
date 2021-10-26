@@ -1,4 +1,5 @@
-# license for frobby: GPL v2 or later
+# note: the next revision of frobby should come from https://github.com/Macaulay2/frobby
+
 LICENSEFILES = COPYING
 # author: Bjarke Roune <bjarke@cs.au.dk>
 #VERSION = 0.7.7-M2
@@ -11,15 +12,15 @@ TARDIR = frobby_v$(VERSION)
 TARFILE := frobby_v$(VERSION).tar.gz
 # this site was unreliable:
 # URL = http://www.broune.com/frobby
-URL = http://www.math.uiuc.edu/Macaulay2/Extra
-# URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 
 BUILDTARGET = library
-BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include \
-	CFLAGS="$(CFLAGS)" \
-	CXX="$(CXX)" \
-	LDFLAGS="$(LDFLAGS)" \
-	CPPFLAGS="$(CPPFLAGS)"
+BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include	\
+	CXXFLAGS="$(CXXFLAGS)"				\
+	CXX="$(CXX)"					\
+	LDFLAGS="$(LDFLAGS)"				\
+	CPPFLAGS="$(CPPFLAGS)"				\
+	RANLIB="@RANLIB@"
 CHECKOPTIONS = $(BUILDOPTIONS)
 
 # this ought to prevent trouble with carriage returns
@@ -33,13 +34,12 @@ INSTALLCMD = \
 	cp src/frobby.h $(LIBRARIESDIR)/include/frobby.h && \
 	cp src/stdinc.h $(LIBRARIESDIR)/include/stdinc.h
 CHECKTARGET = test
-include ../Makefile.library
 
-ifeq (@DEBUG@,yes)
-#### Building frobby in debug mode causes it to redefine operators new and delete.  So we don't do that.
-# BUILDOPTIONS += MODE=debug
-CPPFLAGS += -UDEBUG
-endif
+# gcc 8.3 needs more memory
+MLIMIT = 500000
+VLIMIT = 500000
+
+include ../Makefile.library
 
 ifeq (@OS@-@ISSUE@,MicrosoftWindows-Cygwin)
 LDFLAGS += -Wl,--enable-auto-import

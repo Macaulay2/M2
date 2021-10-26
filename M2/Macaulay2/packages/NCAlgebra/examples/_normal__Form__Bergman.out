@@ -1,0 +1,65 @@
+-- -*- M2-comint -*- hash: 1451222560
+
+i1 : A = QQ{x,y,z}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : f = y*z + z*y - x^2
+
+            2
+o2 = zy+yz-x
+
+o2 : A
+
+i3 : g = x*z + z*x - y^2
+
+         2
+o3 = zx-y +xz
+
+o3 : A
+
+i4 : h = z^2 - x*y - y*x
+
+      2
+o4 = z -yx-xy
+
+o4 : A
+
+i5 : I = ncIdeal {f,g,h}
+
+                             2      2      2
+o5 = Two-sided ideal {zy+yz-x , zx-y +xz, z -yx-xy}
+
+o5 : NCIdeal
+
+i6 : Igb = ncGroebnerBasis I
+--Calling Bergman for NCGB calculation.
+Complete!
+
+      2    2                2
+o6 = y x-xy ; Lead Term = (y x, 1)
+       2  2                  2
+     yx -x y; Lead Term = (yx , 1)
+         2
+     zx-y +xz; Lead Term = (zx, 1)
+            2
+     zy+yz-x ; Lead Term = (zy, 1)
+      2                      2
+     z -yx-xy; Lead Term = (z , 1)
+
+o6 : NCGroebnerBasis
+
+i7 : normalFormBergman(z^17,Igb)
+--Calling Bergman for NF calculation for 1 elements.
+Complete!
+Writing bergman input file.
+Writing bergman init file.
+
+                                           2             2    3           3     4         4     5       5     6     6     7   7     8 8
+o7 = yxyxyxyxyxyxyxyxz+xyxyxyxyxyxyxyxyz+8x yxyxyxyxyxyxy z+8x yxyxyxyxyxy z+28x yxyxyxyxy z+28x yxyxyxy z+56x yxyxy z+56x yxy z+70x y z
+
+o7 : A
+
+i8 : 

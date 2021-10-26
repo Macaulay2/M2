@@ -1,0 +1,50 @@
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/factory/tmp/factory/canonicalform.h factory/canonicalform.h
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/factory/tmp/factory/canonicalform.h	2013-01-25 12:35:19.000000000 -0600
++++ factory/canonicalform.h	2013-05-08 17:35:57.113485700 -0500
+@@ -49,7 +49,7 @@
+ inline int is_imm ( const InternalCF * const ptr )
+ {
+     // returns 0 if ptr is not immediate
+-    return ( ((int)((long)ptr)) & 3 );
++    return (intptr_t)ptr & 3;
+ }
+ 
+ 
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/factory/tmp/factory/imm.h factory/imm.h
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/factory/tmp/factory/imm.h	2013-01-25 12:35:19.000000000 -0600
++++ factory/imm.h	2013-05-08 17:37:04.288327900 -0500
+@@ -50,7 +50,7 @@
+ 
+ inline long imm2int ( const InternalCF * const imm )
+ {
+-    return ((long)imm) >> 2;
++    return ((intptr_t)imm) >> 2;
+ }
+ 
+ inline InternalCF * int2imm ( long i )
+@@ -63,10 +63,10 @@
+ inline int imm2int ( const InternalCF * const imm )
+ {
+     // this could be better done by masking the sign bit
+-    if ( ((int)((long)imm)) < 0 )
+-        return -((-(long)imm) >> 2);
++    if ( ((int)((intptr_t)imm)) < 0 )
++        return -((-(intptr_t)imm) >> 2);
+     else
+-        return (long)imm >> 2;
++        return (intptr_t)imm >> 2;
+ }
+ 
+ inline InternalCF * int2imm ( long i )
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/factory/tmp/factory/singext.cc factory/singext.cc
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/factory/tmp/factory/singext.cc	2013-01-25 12:35:19.000000000 -0600
++++ factory/singext.cc	2013-05-08 17:53:36.967105900 -0500
+@@ -55,7 +55,7 @@
+ int gf_value (const CanonicalForm & f )
+ {
+     InternalCF * ff = f.getval();
+-    return ((long)ff) >>2;
++    return ((intptr_t)ff) >>2;
+ }
+ 
+ CanonicalForm

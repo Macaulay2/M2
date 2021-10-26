@@ -1,0 +1,114 @@
+-- -*- M2-comint -*- hash: -706844698
+
+i1 : A = QQ{x,y,z}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : f = y*z + z*y - x^2
+
+            2
+o2 = zy+yz-x
+
+o2 : A
+
+i3 : g = x*z + z*x - y^2
+
+         2
+o3 = zx-y +xz
+
+o3 : A
+
+i4 : h = z^2 - x*y - y*x
+
+      2
+o4 = z -yx-xy
+
+o4 : A
+
+i5 : I = ncIdeal {f,g,h}
+
+                             2      2      2
+o5 = Two-sided ideal {zy+yz-x , zx-y +xz, z -yx-xy}
+
+o5 : NCIdeal
+
+i6 : Igb = ncGroebnerBasis I
+--Calling Bergman for NCGB calculation.
+Complete!
+
+      2    2                2
+o6 = y x-xy ; Lead Term = (y x, 1)
+       2  2                  2
+     yx -x y; Lead Term = (yx , 1)
+         2
+     zx-y +xz; Lead Term = (zx, 1)
+            2
+     zy+yz-x ; Lead Term = (zy, 1)
+      2                      2
+     z -yx-xy; Lead Term = (z , 1)
+
+o6 : NCGroebnerBasis
+
+i7 : M = ncMatrix {{x, y, z}}
+
+o7 = | x y z |
+
+o7 : NCMatrix
+
+i8 : sigma = ncMap(A,A,{y,z,x})
+
+o8 = NCRingMap A <--- A
+
+o8 : NCRingMap
+
+i9 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
+
+o9 = | x y z |
+     | y z x |
+     | z x y |
+
+o9 : NCMatrix
+
+i10 : Nred = N^3 % Igb
+
+o10 = | -y^2*z+y^3+y*x*z-y*x*y+x*y*z+x*y^2+2*x*y*x+x^2*z+3*x^2*y y^2*z+y*x*z+2*y*x*y+x*y*z+3*x*y^2-x*y*x-x^2*z+x^2*y+x^3  2*y^2*z+y^3+y*x*y+x*y*x+2*x^2*z+x^3                      |
+      | y^2*z+y*x*z+2*y*x*y+x*y*z+3*x*y^2-x*y*x-x^2*z+x^2*y+x^3  2*y^2*z+y^3+y*x*y+x*y*x+2*x^2*z+x^3                      -y^2*z+y^3+y*x*z-y*x*y+x*y*z+x*y^2+2*x*y*x+x^2*z+3*x^2*y |
+      | 2*y^2*z+y^3+y*x*y+x*y*x+2*x^2*z+x^3                      -y^2*z+y^3+y*x*z-y*x*y+x*y*z+x*y^2+2*x*y*x+x^2*z+3*x^2*y y^2*z+y*x*z+2*y*x*y+x*y*z+3*x*y^2-x*y*x-x^2*z+x^2*y+x^3  |
+
+o10 : NCMatrix
+
+i11 : B = A/I
+
+o11 = B
+
+o11 : NCQuotientRing
+
+i12 : phi = ncMap(B,A,gens B)
+
+o12 = NCRingMap B <--- A
+
+o12 : NCRingMap
+
+i13 : NB = phi N
+
+o13 = | x y z |
+      | y z x |
+      | z x y |
+
+o13 : NCMatrix
+
+i14 : N3B = NB^3
+
+o14 = | -y^2*z+y^3+y*x*z-y*x*y+x*y*z+x*y^2+2*x*y*x+x^2*z+3*x^2*y y^2*z+y*x*z+2*y*x*y+x*y*z+3*x*y^2-x*y*x-x^2*z+x^2*y+x^3  2*y^2*z+y^3+y*x*y+x*y*x+2*x^2*z+x^3                      |
+      | y^2*z+y*x*z+2*y*x*y+x*y*z+3*x*y^2-x*y*x-x^2*z+x^2*y+x^3  2*y^2*z+y^3+y*x*y+x*y*x+2*x^2*z+x^3                      -y^2*z+y^3+y*x*z-y*x*y+x*y*z+x*y^2+2*x*y*x+x^2*z+3*x^2*y |
+      | 2*y^2*z+y^3+y*x*y+x*y*x+2*x^2*z+x^3                      -y^2*z+y^3+y*x*z-y*x*y+x*y*z+x*y^2+2*x*y*x+x^2*z+3*x^2*y y^2*z+y*x*z+2*y*x*y+x*y*z+3*x*y^2-x*y*x-x^2*z+x^2*y+x^3  |
+
+o14 : NCMatrix
+
+i15 : (phi Nred) == N3B
+
+o15 = true
+
+i16 : 

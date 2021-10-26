@@ -2,6 +2,12 @@
 --- author(s): 
 --- notes: 
 
+-*
+-- TODO
+(map,ChainComplex,ChainComplex,ChainComplexMap)
+(map,GaloisField,GaloisField)
+*-
+
 undocumented {(map, RingFamily, Thing, Thing),(map, Thing, RingFamily, Thing)}
 
 document {
@@ -548,9 +554,19 @@ document {
 	  }
      }
 document { 
-     Key => [map, Degree],
-     Headline => "set the degree of a map",
+     Key => {Degree, [map, Degree]},
+     Headline => "specify the degree of a map",
      Usage => "map(..., Degree=>d)",
-     SeeAlso => {(map,Matrix)}
+     "Specifies that the degree of the map created should be ", TT "d", ". ",
+     "The degree may be an integer or a list of integers (multidegree).
+     The length of the list should be the same as the length of a degree for the ring, see ", TO "degreeLength", ".",
+     PARA{},
+     EXAMPLE {
+	  "R = ZZ/101[x]",
+      	  "p = map(R^1, R^1, {{x^4}})",
+      	  "isHomogeneous p",
+      	  "q = map(R^1, R^1, {{x^4}}, Degree => 4)",
+      	  "isHomogeneous q",
+	  },
+     SeeAlso => {map, matrix, [inducedMap, Degree], [matrix, Degree]}
      }
-

@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 
-{*
+-*
   Copyright 2009 Dan Roozemond (TU Eindhoven, Netherlands)
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-*}
+*-
 
 newPackage(
 	"OpenMath",
@@ -24,6 +24,8 @@ newPackage(
 			{Name => "Dan Roozemond", Email => "dan.roozemond@gmail.com", HomePage => "http://magma.maths.usyd.edu.au/~danr"}
 		},
     	Headline => "OpenMath for Macaulay2",
+	Keywords => {"System"},
+	PackageImports => {"MinimalPrimes"},
 	PackageExports => {"XML","ConwayPolynomials"},
     	DebuggingMode => false,
 		AuxiliaryFiles => true

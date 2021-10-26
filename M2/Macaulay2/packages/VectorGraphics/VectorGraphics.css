@@ -1,0 +1,50 @@
+/* svg stuff (used by VectorGraphics.m2) */
+
+svg.M2Svg {
+    position: relative;
+    display: inline;
+}
+
+svg.M2SvgClickable {
+    cursor: grab;
+}
+
+svg.M2Svg text {
+/*    font-size: 14px; /* /* just a reminder since code in M2 anyway:
+absolute sounds bad but actually it's not really absolute since it's in svg units */
+    font-family: sans-serif;
+}
+
+svg.M2Svg foreign-object {
+/*    font-size: 14px;*/ /* same. absolute sounds bad but actually it's not really absolute since it's in svg units */
+}
+
+.gfxauto {
+    fill-opacity: 75%;
+    cursor: pointer;
+}
+
+.gfxauto .gfxautoplay {
+    visibility: inherit;
+}
+
+.gfxauto .gfxautostop {
+    visibility: hidden;
+}
+
+.gfxauto.active .gfxautoplay {
+    visibility: hidden;
+}
+
+.gfxauto.active .gfxautostop {
+    visibility: inherit;
+}
+
+
+svg.M2Svg > .gfxauto {
+    visibility: hidden;
+}
+
+svg.M2Svg:hover > .gfxauto {
+    visibility: visible;
+}

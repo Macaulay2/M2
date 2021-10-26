@@ -1,0 +1,35 @@
+-- -*- M2-comint -*- hash: -415468352
+
+i1 : R = QQ[a,b,c,d]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : I = ideal(a*d-b*c)
+
+o2 = ideal(- b*c + a*d)
+
+o2 : Ideal of R
+
+i3 : S = R/I
+
+o3 = S
+
+o3 : QuotientRing
+
+i4 : S' = toNCRing(S)
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o4 = S'
+
+o4 : NCQuotientRing
+
+i5 : ideal S'
+
+o5 = Two-sided ideal {-ba+ab, -ca+ac, -cb+bc, -da+ad, -db+bd, -dc+cd, -bc+ad}
+
+o5 : NCIdeal
+
+i6 : 

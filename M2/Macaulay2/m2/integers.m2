@@ -1,9 +1,25 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "rings.m2"
+
+-----------------------------------------------------------------------------
+-- Number
+-----------------------------------------------------------------------------
+
+isHomogeneous Number := x -> true
 ring Number := class
 degree Number := i -> {}
 conjugate Number := identity
 toExternalString Number := simpleToString
+floor Number := x -> floor0(x)
+ceiling Number := x -> - floor(-x)
+
+-----------------------------------------------------------------------------
+-- ZZ
+-----------------------------------------------------------------------------
+
+ZZ.synonym = "integer"
+ZZ.texMath = ///{\mathbb Z}///
 
 ZZ.RawRing = rawZZ()
 protect isBasic
@@ -24,6 +40,8 @@ round ZZ := identity
 lift(ZZ,ZZ) := opts -> (i,ZZ) -> i
 promote(ZZ,ZZ) := (i,ZZ) -> i
 ZZ.random = opts -> ZZ -> rawRandomZZ opts.Height
+texMath ZZ := toString
+
 gcd = method(Binary => true)
 gcd List := x -> gcd toSequence x
 installMethod(gcd, () -> 0)
@@ -45,51 +63,22 @@ odd  = x -> 1 === x%2
 even = x -> 0 === x%2
 zero = x -> x == 0					    -- we use == so this can apply to all types of things
 
-smallprimes := {2,3,5,7,11,13,17,23,29,31,37,41,43,47}
-
-isPrime1 := n -> member(n,smallprimes) or all(smallprimes,p -> n%p =!= 0)
-
-isPrime2 := n -> (			  -- assume n > 2
-     a := 2;				  -- base for pseudo-primality
-     n1 := n-1;
-     n2 := 1;
-     while even n1 do (n1 = n1//2; n2 = 2*n2;);
-     kk := (-1) % n;
-     k := powermod(a,n1,n);
-     while k =!= 0 and k =!= 1 and n2 > 1 do (
-	  kk = k;
-	  k = k^2 % n;
-	  n2 = n2 // 2;
-	  );
-     k === 1 and kk === (-1) % n)
-
-biggest := 2^31-1
-
-isPseudoprime ZZ := Boolean => Pari$ispseudoprime
-
-isPrime ZZ := Boolean => (
-     if instance(Pari$isprime,Function) then Pari$isprime
-     else 
-     n -> (
-	  n = abs n;
-	  n > 1 and
-	  if n <= biggest 
-	  then (
-	       v := factor n;
-	       # v === 1 and v#0#1 === 1
-	       )
-	  else isPrime1 n and (n == 2 or isPrime2 n)
-	  ))
+isPrime       = method(TypicalValue => Boolean, Options => true)
+isPseudoprime = method(TypicalValue => Boolean, Options => true)
+isPrime       ZZ := Boolean => {} >> o -> n -> rawZZisPrime n -- calls flint
+isPseudoprime ZZ := Boolean => {} >> o -> n -> rawZZisProbablePrime n -- calls flint
 
 random ZZ := ZZ => opts -> n -> if n > 0 then rawRandomZZ n else error "random: expected a positive integer"
 random(ZZ,ZZ) := ZZ => opts -> (min,max) -> (
      if min > max then error "random: empty range";
      min + rawRandomZZ(max-min+1)
      )
-ceiling = x -> - floor(-x)
 isUnit ZZ := x -> x == 1 or x == -1
 
 ZZ & ZZ := ZZ => lookup(symbol &, ZZ, ZZ)
+
+ZZ ^^ ZZ := bitxorfun
+Boolean xor Boolean := (x, y) -> x and not y or not x and y
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

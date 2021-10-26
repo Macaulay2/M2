@@ -1,9 +1,3 @@
-needsPackage"RandomObjects"
-needsPackage"RandomSpaceCurves"
-needsPackage"RandomPlaneCurves"
-needsPackage"RandomGenus14Curves"
-needsPackage"RandomCanonicalCurves"
-
 newPackage(
 	"RandomCurves",
     	Version => "0.6",
@@ -22,9 +16,20 @@ newPackage(
 
 
                    },
-    	Headline => "Construction of random curves",
+    	Headline => "random curves",
+	Keywords => {"Examples and Random Objects"},
+	PackageExports => {"RandomObjects","RandomSpaceCurves","RandomPlaneCurves","RandomGenus14Curves","RandomCanonicalCurves"},
     	DebuggingMode => false
         )
+
+beginDocumentation()
+
+-- authors: add some text to this documentation node:
+doc ///
+Key
+ RandomCurves
+///
+
 end
 
 restart;

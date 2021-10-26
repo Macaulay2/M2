@@ -1,9 +1,13 @@
 --		Copyright 1993-1998 by Daniel R. Grayson, Michael E. Stillman
 
+needs "ext.m2"
+
 -- local cohomology
 
 truncatedDual := (M,e) -> (
      -- find (k-dual M), truncated in degrees >= e.
+     -- depends on truncate methods
+     needsPackage "Truncations";
      R := ring M;
      n := numgens R;
      ww := R^{-n};

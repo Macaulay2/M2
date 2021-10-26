@@ -1,17 +1,6 @@
 -- -*- coding: utf-8 -*-
 --		Copyright 1993-2002 by Daniel R. Grayson
 
-
-TEST ///
-     R = QQ[x,y,z]
-     C = res coker vars R
-     D = C ++ C
-     E = ker D_[0]
-     E = coker D_[0]
-     E = image D_[0]
-     E = coimage D_[0]
-///
-
 document {
      Key => Resolution,
      Headline => "the class of all resolution computations",
@@ -19,12 +8,12 @@ document {
      "These resolutions are internal engine objects not meant to be examined
      by the user.",
      PARA{},
-     "The symbol ", TT "Resolution", " is also used in a ", TO "ChainComplex", " to 
+     "The symbol ", TT "Resolution", " is also used in a ", TO "ChainComplex", " to
      store the resolution it comes from."
      }
 
 document {  -- This node is used as an example in the node: Key
-     Key => resolution, 
+     Key => resolution,
      Headline => "projective resolution"
      }
 document {
@@ -47,7 +36,7 @@ document {
 
 document { -- This node is used as an example in the node: Key
      Key => [resolution,SyzygyLimit],
-     Headline => "stop when this number of syzygies are obtained",
+     Headline => "stop when this number of syzygies is reached",
      TT "SyzygyLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ", which specifies that the computation should
      stop after a certain number of syzygies have computed.",
@@ -137,58 +126,50 @@ document {
 	  SPAN (TT "Strategy => 0", " -- Compute syzygies on the Gröbner bases of each syzygy
 	       module.  The algorithm uses important speedups due to R. La Scala.
 	       This algorithm appears to be on the average the fastest."),
-	  SPAN (TT "Strategy => 1", " -- An older version of algorithm 0, which doesn't allow as 
+	  SPAN (TT "Strategy => 1", " -- An older version of algorithm 0, which doesn't allow as
 	       much experimentation, but can sometimes be marginally faster."),
-	  SPAN (TT "Strategy => 2", " -- Compute syzygies on the minimal generators of each 
+	  SPAN (TT "Strategy => 2", " -- Compute syzygies on the minimal generators of each
 	       matrix in the resolution.  Over quotient rings, it's preferred."),
-	  SPAN (TT "Strategy => 3", " -- Same as algorithm 2, but compute those Hilbert functions 
+	  SPAN (TT "Strategy => 3", " -- Same as algorithm 2, but compute those Hilbert functions
 	       which allow removal of S-pairs (a la Robbiano, et al.). Sometimes this
 	       improvement can be very dramatic.")
 	  },
-     "All algorithms use induced monomial orders (Schreyer orders), since 
+     "All algorithms use induced monomial orders (Schreyer orders), since
      this makes an enormous improvement to the efficiency of the algorithm."
      }
 
 document {
      Key => SortStrategy,
      Headline => "specify a strategy for sorting S-pairs",
-     TT "SortStrategy", " -- a keyword for an optional argument that 
+     TT "SortStrategy", " -- a keyword for an optional argument that
      specifies the strategy to be used for sorting S-pairs."
      }
 
 document {
      Key => [resolution,SortStrategy],
-     TT "SortStrategy => n", " -- an option for ", TO "resolution", " which 
+     TT "SortStrategy => n", " -- an option for ", TO "resolution", " which
      specifies the strategy to be used for sorting S-pairs.",
      PARA{},
      "Not implemented yet."
      }
 
-TEST "
-R = ZZ/101[x,y]
-M = cokernel matrix {{x^2+y^4, y^2 + x*y^3 + 11, 1 + x*y^2}}
-C = res M
-assert (HH_-1 C == 0)
-assert (HH_0 C == M)
-assert (HH_1 C == 0)
-assert (HH_2 C == 0)
-assert (HH_3 C == 0)
-assert (HH_4 C == 0)
-"
-
 document {   -- This node is used as an example for the documentation node: Key, Usage
      Key => (resolution,Module),
-     Headline => "compute a projective resolution of a module",
+     Headline => "compute a free resolution of a module",
      Usage => "resolution M\nres M",
      Inputs => { "M" },
      Outputs => { {"a free resolution of ", TT "M"} },
-     "Warning: the resolution can have free modules with unexpected ranks
-     when the module ", TT "M", " is not homogeneous.  Here is an example
-     where even the lengths of the resolutions differ.  We compute
-     a resolution of the kernel of a ring map in two ways.
-     The ring ", TT "R", " is constructed naively, but the ring
-     ", TT "S", " is constructed with variables of the right degrees
-     so the ring map ", TT "g", " will turn out to be homogeneous.",
+     PARA {
+     	  "The given generators and relations are used to determine a ", TO "presentation", " of ", TT "M", " to serve as the first matrix of the free
+     	  resolution; if the presentation is not minimal, and a minimal resolution is desired, use ", 
+     	  TT "resolution minimalPresentation M", " instead."},
+     PARA {"Warning: the resolution can have free modules with unexpected ranks
+	  when the module ", TT "M", " is not homogeneous.  Here is an example
+	  where even the lengths of the resolutions differ.  We compute
+	  a resolution of the kernel of a ring map in two ways.
+	  The ring ", TT "R", " is constructed naively, but the ring
+	  ", TT "S", " is constructed with variables of the right degrees
+	  so the ring map ", TT "g", " will turn out to be homogeneous."},
      EXAMPLE {
 	  "k = ZZ/101; T = k[v..z];",
 	  "m = matrix {{x,y,z,x^2*v,x*y*v,y^2*v,z*v,x*w,y^3*w,z*w}}",
@@ -273,81 +254,15 @@ document { -- This node is used as an example in the documentation nodes: Inputs
      SeeAlso => { (symbol _, ChainComplex, ZZ), dd, res, ideal }
      }
 
-TEST ///
-S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
-m = matrix pack (3,toList (t_1 .. t_9))			  -- 3 by 3
-n = matrix pack (3,toList (u_1 .. u_9))			  -- 3 by 3
-
--- Try the following with various resolution algorithms
-
-alg = 0
-j = flatten (m * n - n * m)
-M = cokernel j
-C = res(M, LengthLimit => 4, DegreeLimit => 1, Strategy => alg)
-assert( rank C_2 == 2 )
-C = res(M, LengthLimit => 4, DegreeLimit => 2, Strategy => alg)
-assert( rank C_2 == 33 )
-assert( rank C_3 == 32 )
-assert( rank C_4 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 3, Strategy => alg)
-assert( rank C_3 == 60 )
-assert( rank C_4 == 61 )
-C = res(M, LengthLimit => 4, DegreeLimit => 4, Strategy => alg)
-assert( rank C_5 == 0 )
-
-alg = 1
-j = flatten (m * n - n * m)
-M = cokernel j
-C = res(M, LengthLimit => 4, DegreeLimit => 1, Strategy => alg)
-assert( rank C_2 == 2 )
-C = res(M, LengthLimit => 4, DegreeLimit => 2, Strategy => alg)
-assert( rank C_2 == 33 )
-assert( rank C_3 == 32 )
-assert( rank C_4 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 3, Strategy => alg)
-assert( rank C_3 == 60 )
-assert( rank C_4 == 61 )
-C = res(M, LengthLimit => 4, DegreeLimit => 4, Strategy => alg)
-assert( rank C_5 == 0 )
-
-alg = 2
-j = flatten (m * n - n * m)
-M = cokernel j
-C = res(M, LengthLimit => 4, DegreeLimit => 1+2, Strategy => alg)
-assert( rank C_2 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 2+2, Strategy => alg)
-assert( rank C_2 == 34 )
-assert( rank C_3 == 32 )
-assert( rank C_4 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 3+2, Strategy => alg)
-assert( rank C_3 == 60 )
-assert( rank C_4 == 61 )
-C = res(M, LengthLimit => 4, DegreeLimit => 4+2, Strategy => alg)
-assert( rank C_5 == 0 )
-
--- This one fails
-alg = 3
-j = flatten (m * n - n * m)
-M = cokernel j
-C = res(M, LengthLimit => 4, DegreeLimit => 1+2, Strategy => alg)
-assert( rank C_2 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 2+2, Strategy => alg)
-assert( rank C_2 == 34 )
-assert( rank C_3 == 32 )
-assert( rank C_4 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 3+2, Strategy => alg)
-assert( rank C_3 == 60 )
-assert( rank C_4 == 61 )
-C = res(M, LengthLimit => 4, DegreeLimit => 4+2, Strategy => alg)
-assert( rank C_5 == 0 )
-///
-
 document {
      Key => {status,(status, GroebnerBasis),(status, Resolution),(status, ChainComplex),
 	  [status, TotalPairs],[status, Monomials],[status, PairsRemaining]},
      Headline => "status of a resolution computation",
      TT "status C", " -- displays the status of the computation of a
-     chain complex ", TT "C", " constructed by ", TO "resolution", ".  The display has
+     chain complex ", TT "C", " constructed by application of ", TO "resolution", " to
+     a module, provided the resolution has been constructed in the engine;
+     in particular, the module should be homogeneous and the ultimate coefficient ring of its
+     ring should be a field.  The display has
      the same shape as the display produced by ", TO "betti", ", but
      the number(s) displayed in each degree differ.",
      PARA{},
@@ -389,170 +304,20 @@ document {
      }
 
 document {
-     Key => factor,
-     Headline => "factor a ring element or a ZZ-module",
-     PARA {
-	  "(Disambiguation: for division of matrices, which can be thought of as factoring
-	  one homomorphism through another, instead see ", TO (symbol //,Matrix, Matrix), ".  For
-	  lifting a map between modules to a map between their free resolutions, see ", TO extend, ".)"
-	  }
-     }
+    Key => Precision,
+    Headline => "name of an optional argument.",
+}
 
 document {
-     Key => (factor,Module),
-     Headline => "factor a ZZ-module",
-     Usage => "factor M",
-     Inputs => { "M" },
-     Outputs => {{ "a symbolic expression describing the decomposition of ", TT "M", " into a direct sum of principal modules"}},
-     "The ring of ", TT "M", " must be ", TO "ZZ", ".",
-     PARA {},
-     "In the following example we construct a module with a known (but disguised) factorization.",
-     EXAMPLE lines ///
-     	  f = random(ZZ^6, ZZ^4)
-          M = subquotient ( f * diagonalMatrix{2,3,8,21}, f * diagonalMatrix{2*11,3*5*13,0,21*5} )
-	  factor M
-     ///}
+    Key => Unique,
+    Headline => "do not return repeated polynomial roots",
+    "A boolean", TO Boolean, ", to select whether to return repeated roots or not.",
+}
 
-document {
-     Key => {(factor,RingElement),(factor,QQ),(factor,ZZ)},
-     Headline => "factor a ring element",
-     Usage => "factor x",
-     Inputs => {"x" => {"or ", ofClass{QQ,ZZ}}},
-     Outputs => {Product => {"the factorization of ", TT "x"}},
-     PARA{
-	  "The result is a ", TO "Product", " each of whose factors is a 
-	  ", TO "Power", " whose base is one of the factors found and whose
-	  exponent is an integer.",
-	  },
-     EXAMPLE {
-	  "factor 124744878111332355674003415153753485211381849014286981744945",
-	  "y = (2^15-4)/(2^15-5)",
-      	  "x = factor y",
-      	  "value x"
-	  },
-     PARA {
-	  "We may ", TO "peek", " inside ", TT "x", " to a high depth to see
-	  its true structure as ", TO "Expression", "."
-	  },
-     EXAMPLE "peek'(100,x)",
-     PARA {
-	  "For integers, factorization is done by ", TO "pari", TEX ", and the factors $x$ are actually
-	  just pseudoprimes, as described in the documentation of ", TO "isPseudoprime", "."
-	  },
-     PARA {
-	  "For multivariate polynomials the
-	  factorization is done with code of Michael Messollen (see 
-	  ", TO "Singular-Libfac", ").  For univariate
-	  polynomials the factorization is in turn done with code of 
-	  Gert-Martin Greuel and Ruediger Stobbe (see ", TO "Singular-Factory", ").",
-	  },
-     EXAMPLE {
-	  "R = ZZ/101[u]",
-      	  "factor (u^3-1)",
-	  },
-     "The constant term is provided as the last factor, if it's not equal
-     to 1.",
-     EXAMPLE {
-	  "F = frac(ZZ/101[t])",
-      	  "factor ((t^3-1)/(t^3+1))",
-	  }
-     }
-
-document {
-     Key => integrate,
-     Headline => "numerical integration",
-     TT "integrate(f,a,b)", " -- integrate f from a to b numerically, using
-     Gaussian quadrature.",
-     EXAMPLE "integrate(sin,0,pi)"
-     }
-
-document {
-     Key => {getWWW,(getWWW, String),(getWWW, String, Nothing),(getWWW, String, String)},
-     Headline => "get a web page",
-     SYNOPSIS (
-	  Usage => "getWWW URL",
-	  Inputs => {"URL" => String},
-	  Outputs => {{"the contents of the web page, together with the http headers, at the address given by ", TT "URL", ""}}
-	  ),
-     SYNOPSIS (
-	  Usage => "getWWW(URL,TEXT)",
-	  Inputs => {"URL" => String, "TEXT" => String},
-	  Outputs => {{"obtain the contents of the web page addressed by ", TT "URL", " from
-		    an http server, using the POST method, provided with ", TT "TEXT"}}
-	  ),
-     PARA{
-	  "Accessing a secure web site (whose URL begins with ", TT "https:", ")
-     	  depends on your having installed ", TT "openssl", " on your system."
-	  }
-     }
-
-document {
-     Key => Descent,
-     "A type of mutable hash table used by ", TO "showUserStructure", ", ", TO "showClassStructure", ", 
-     and ", TO "showStructure", " to display their tree of results conveniently."
-     }
-
-document {
-     Key => showUserStructure,
-     Headline => "show parent structure for those types defined by user",
-     Usage => "showUserStructure",
-     Outputs => {{ "a display of the parent structure of the types defined by the user and assigned to global variables" }},
-     PARA{"Each type is displayed to the right of its parent."},
-     PARA{"A type is an instance of the class ", TO "Type", "."},
-     EXAMPLE lines ///
-     R = QQ[x,y]
-     X = new Type of List
-     Y = new Type of X
-     Z = new Type of X
-     showUserStructure
-     ///,
-     SeeAlso => { showStructure, parent, ancestors}
-     }
-
-
-document {
-     Key => showStructure,
-     Headline => "display parent structure",
-     SYNOPSIS (
-     	  Usage => "showStructure",
-	  Outputs => {{ "a display of the parent structure of all types assigned to global variables" }}
-	  ),
-     SYNOPSIS (
-     	  Usage => "showStructure (X,Y,...)",
-	  Inputs => {"X" => Type,"Y" => Type},
-	  Outputs => {{ "a display of the class structure of the types specified" }}
-	  ),
-     PARA{"Each such type is displayed to the right of its ", TO "parent", "."},
-     PARA{"A type is an instance of ", TO "Type", ", by definition."},
-     EXAMPLE {
-	  "showStructure",
-	  "showStructure(ZZ,QQ,RR,RR_200,QQ[x],Ring)"
-	  },
-     SeeAlso => { "showClassStructure", "showUserStructure", ancestors }
-     }
-
-document {
-     Key => showClassStructure,
-     Headline => "display class structure",
-     SYNOPSIS (
-     	  Usage => "showClassStructure",
-	  Outputs => {{ "a display of the class structure of all objects assigned to global variables" }}
-	  ),
-     SYNOPSIS (
-     	  Usage => "showClassStructure (x,y,...)",
-	  Inputs => {"x","y"},
-	  Outputs => {{ "a display of the class structure of objects specified" }}
-	  ),
-     PARA{"Each object is displayed to the right of its ", TO "class", "."},
-     EXAMPLE lines ///
-     showClassStructure
-     ///,
-     SeeAlso => { "showStructure", "showUserStructure" }
-     }
 
 document {
      Key => Variety,
-     Headline => "the class of all algebraic varieties", 
+     Headline => "the class of all algebraic varieties",
      SeeAlso => "varieties"
      }
 document { Key => AffineVariety, Headline => "the class of all affine varieties" }
@@ -567,178 +332,6 @@ document {
      R = QQ[x,y];
      Spec R
      ///
-     }
-
-document {
-     Key => {(Proj, Ring), Proj},
-     Headline => "make a projective variety",
-     Usage => "Proj R",
-     Inputs => {"R"},
-     Outputs => {{ "the projective variety (or scheme) formed from the graded ring ", TT "R" }},
-     EXAMPLE lines ///
-     R = QQ[x,y];
-     Proj R
-     ///
-     }
-
-document {
-     Key => CoherentSheaf,
-     Headline => "the class of all coherent sheaves"
-     }
-
-document {
-     Key => sheaf,
-     Headline => "make a coherent sheaf"
-     }
-
-document {
-     Key => (sheaf, Variety, Module),
-     Headline => "make a coherent sheaf",
-     Usage => "sheaf(X,M)",
-     Inputs => {"X","M"},
-     Outputs => {{ "the coherent sheaf on the variety ", TT "X", " corresponding to the module ", TT "M" }},
-     PARA{
-     	  "If ", TT "X", " is the affine variety ", TT "Spec R", ", then ", TT "M", " should be an ", TT "R", "-module.  If ", TT "X", " is 
-     	  the projective variety ", TT "Proj R", ", then ", TT "M", " should be a homogeneous ", TT "R", "-module."
-	  }
-     }
-
-document {
-     Key => (sheaf, Variety, Ring),
-     Headline => "make a coherent sheaf of rings",
-     TT "sheaf(X,R)", " -- produce the coherent sheaf on the variety ", TT "X", " corresponding
-     to the ring ", TT "R", ".  The variety ", TT "X", " must be ", TT "Spec R", " or ", TT "Proj R", ".",
-     EXAMPLE lines ///
-     R = QQ[x,y,z]
-     X = Proj R
-     Y = Spec R
-     sheaf(X,R)
-     sheaf(Y,R)
-     ///}
-
-document {
-     Key => (sheaf, Variety),
-     Headline => "make a coherent sheaf",
-     Usage => "sheaf X",
-     Inputs => {"X"},
-     Outputs => {{ "the structure sheaf of rings on the variety ", TT "X" }},
-     EXAMPLE lines ///
-     R = QQ[x,y,z]
-     X = Proj R
-     Y = Spec R
-     sheaf X
-     sheaf Y
-     ///
-     }
-
-document {
-     Key => {(sheaf, Module),(symbol ~, Module)},
-     Headline => "make a coherent sheaf",
-     Usage => "sheaf M\nM~",
-     Inputs => {"M" => "homogeneous" },
-     Outputs => {{ "the coherent sheaf on a projective variety ", TT "X", " corresponding to ", TT "M" }},
-     EXAMPLE lines ///
-     R = QQ[x,y,z];
-     X = Proj R
-     M = R^{1,2,3}
-     sheaf M
-     M~
-     ///
-     }
-
-document {
-     Key => {(sheaf, Ring),(symbol ~, Ring)},
-     Headline => "make a coherent sheaf of rings",
-     Usage => "sheaf R\nR~",
-     Inputs => {"R"},
-     Outputs => {{"the coherent sheaf on a projective variety ", TT "X", " corresponding to ", TT "M"}},
-     EXAMPLE lines ///
-     R = QQ[x,y,z];
-     X = Proj R
-     sheaf R
-     R~
-     ///
-     }
-
-document {
-     Key => (module, CoherentSheaf),
-     Headline => "get the module defining a coherent sheaf",
-     Usage => "module F",
-     Inputs => {"F"},
-     Outputs => {{"the module from which the coherent sheaf ", TT "F", " was defined"}},
-     EXAMPLE lines ///
-     X = Proj(QQ[x,y,z])
-     F = OO_X(3)
-     module F
-     degrees oo
-     ///,
-     SeeAlso => { OO, degrees, Proj }
-     }
-
-document {
-     Key => (symbol ++, CoherentSheaf, CoherentSheaf),
-     Headline => "direct sum of coherent sheaves",
-     Usage => "F ++ G",
-     Inputs => {"F","G"},
-     Outputs => {{"the direct sum of ", TT "F", " and ", TT "G"}},
-     EXAMPLE lines ///
-     X = Proj(QQ[x,y,z])
-     OO_X(3) ++ OO_X(4)
-     module oo
-     ///
-     }
-
-document {
-     Key => (symbol **, CoherentSheaf, CoherentSheaf),
-     Headline => "tensor produce of coherent sheaves",
-     Usage => "F ** G",
-     Inputs => {"F","G"},
-     Outputs => {{"the tensor product of ", TT "F", " and ", TT "G"}},
-     EXAMPLE lines ///
-     X = Proj(QQ[x,y,z])
-     OO_X(-3) ++ OO_X(4)
-     oo ** oo
-     ///
-     }
-
-document {
-     Key => {(symbol SPACE, CoherentSheaf, ZZ), (symbol SPACE, SheafOfRings, ZZ)},
-     Headline => "canonical twist of a coherent sheaf",
-     Usage => "F(n)",
-     Inputs => {"F" => {"or ", ofClass SheafOfRings, ", on a projective variety"}, "n"},
-     Outputs => { CoherentSheaf => "the twist of F on a projective variety by the n-th power of the hyperplane line bundle." },
-     EXAMPLE lines ///
-     X = Proj(QQ[x,y,z])
-     F = OO_X
-     G = F(3)
-     module G
-     degrees oo
-     ///
-     }
-
-document { 
-     Key => {(symbol /, CoherentSheaf, CoherentSheaf), (symbol /, CoherentSheaf, Ideal)},
-     Headline => "quotient of coherent sheaves",
-     Usage => "F / G",
-     Inputs => { "F", "G" => {"or ", ofClass Ideal} },
-     Outputs => { CoherentSheaf => {"the quotient sheaf ", TT "F/G"} },
-     "We compute the cohomology of two sheaves supported on an elliptic curve.",
-     EXAMPLE lines ///
-     X = Proj(QQ[x,y,z])
-     I = ideal(y^2*z-x*(x-z)*(x-11*z))
-     N = (sheaf module I)/(sheaf module I^2)
-     G = OO_X^1/I
-     HH^1(G)
-     HH^1(N)
-     ///,
-     SeeAlso => {Proj, Spec, sheaf, (cohomology,ZZ,CoherentSheaf), OO}
-     }
-
-document {
-     Key => (exteriorPower, ZZ, CoherentSheaf),
-     Usage => "exteriorPower(i,F)",
-     Inputs => {"i","F"},
-     Outputs => {{ "the ", TT "i", "-th exterior power of ", TT "F"}}
      }
 
 document {
@@ -771,29 +364,10 @@ document {
      SeeAlso => {CoherentSheaf, cohomology}
      }
 
-document {
-     Key => {(instances, Type),instances},
-     Usage => "instances X",
-     Inputs => { "X" },
-     Outputs => {{"a hashtable listing global symbols whose values are instances of type ", TT "X"}},
-     EXAMPLE lines ///
-     20!
-     instances ZZ
-     ///
-     }
-
-document { Key => Core,
-     Headline => "the core part of Macaulay2",
-     PARA {
-     	  "This package contains the core functionality of Macaulay2, without the documentation, 
-     	  which is in the package ", TO "Macaulay2Doc", "."
-	  }
-     }
-
 document { Key => toRR,
      Headline => "convert to high-precision real number",
      Usage => "toRR(prec,x)",
-     Inputs => { 
+     Inputs => {
 	  "prec" => ZZ => {"the number of bits of precision desired"},
 	  "x" => {ofClass{RR,ZZ,QQ}}
 	  },
@@ -807,15 +381,15 @@ document { Key => toRR,
 document {
      Key => {toCC,
  	  (toCC, ZZ, ZZ), (toCC, ZZ, QQ), (toCC, ZZ, RR), (toCC, ZZ, CC),
- 	  (toCC, RR, RR), (toCC, ZZ, ZZ, ZZ), (toCC, ZZ, ZZ, QQ), 
-	  (toCC, ZZ, QQ, ZZ), (toCC, ZZ), (toCC, ZZ, QQ, QQ), (toCC, QQ), 
-	  (toCC, ZZ, RR, ZZ), (toCC, ZZ, ZZ, RR), (toCC, ZZ, RR, QQ), 
+ 	  (toCC, RR, RR), (toCC, ZZ, ZZ, ZZ), (toCC, ZZ, ZZ, QQ),
+	  (toCC, ZZ, QQ, ZZ), (toCC, ZZ), (toCC, ZZ, QQ, QQ), (toCC, QQ),
+	  (toCC, ZZ, RR, ZZ), (toCC, ZZ, ZZ, RR), (toCC, ZZ, RR, QQ),
 	  (toCC, ZZ, QQ, RR), (toCC, RR), (toCC, CC), (toCC, ZZ, RR, RR)
 	  },
      Headline => "convert to high-precision complex number",
      SYNOPSIS (
 	  Usage => "toCC(prec,x,y)\ntoCC(prec,x)",
-	  Inputs => { 
+	  Inputs => {
 	       "prec" => ZZ => {"the number of bits of precision desired"},
 	       "x" => {ofClass{ZZ,QQ,RR}},
 	       "y" => {ofClass{ZZ,QQ,RR}}
@@ -847,7 +421,7 @@ document { Key => InexactNumber,
 	  }
      }
 
-document { 
+document {
      Key => { Constant,
 	  (symbol /,Constant,Constant),
 	  (symbol /,Constant,InexactNumber),
@@ -874,7 +448,7 @@ document {
      	  },
      PARA {
 	  "A constant is a symbolic entity that can be approximated by a real or complex
-	  number to any desired accuracy.  It is converted to a numeric value of the 
+	  number to any desired accuracy.  It is converted to a numeric value of the
 	  correct precision, when necessary."
 	  },
      EXAMPLE lines ///

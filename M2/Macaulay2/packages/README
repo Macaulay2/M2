@@ -1,4 +1,31 @@
-Advice to authors of Macaulay2 packages:
+To add your package to Macaulay2:
+
+First test that your package works by running "installPackage" and "check" on
+it.  View the documentation with "viewHelp" to make sure it looks sensible,
+paging through each node by pressing the "next" button repeatedly.
+
+Then create an account on github.com and fork our repository
+https://github.com/Macaulay2/M2, clone your copy of M2, and add your package
+file to this "packages" directory, along with its directory of auxiliary files,
+if any.  Also add a line to the end of the file =distributed-packages
+containing the name of your package.  Add those changes, commit them, and push
+them to your repository.  Then on the github page for your copy of M2, push the
+button called "Pull request".  That will notify us that you'd like your
+addition to become part of Macaulay2/M2.
+
+More advanced users will want to add their new package to a new branch of the
+repository.
+
+For a better test that your package works with the latest version of Macaulay2,
+build Macaulay2 from the source code in the repository, and test it with the
+resulting "M2".
+
+For changes to an existing package, always base your changes on the current
+version of your package in the repository.
+
+=============================================================================
+
+Advice to authors of Macaulay2 packages about licensing:
 
 Macaulay2 is an aggregate, with the packages in this "packages" directory being
 separate components, each with its own set of authors, copyright, and license.
@@ -6,19 +33,19 @@ Since your package will be distributed as part of Macaulay2, your software
 should be licensed in a way that allows us to do that.
 
 Macaulay2 is currently licensed under GNU General Public License (GPL) version
-2, and soon also under version 3.  Either of those licenses also allow those
-who receive Macaulay2 to modify it and to redistribute it, so your software
-should also be licensed in a way that allows them to do that.
+2 and also under version 3.  Either of those licenses also allow those who
+receive Macaulay2 to modify it and to redistribute it, so your software should
+also be licensed in a way that allows them to do that.
 
-One possibility is for the your software to be put into the public domain.  In
-that case, you may adapt a brief license statement from the following model,
-and insert it as a comment in your file.
+One possibility is for your software to be put into the public domain.  In that
+case, you may adapt a brief license statement from the following model, and
+insert it as a comment such as this in your file(s).
 
-   {*
-   Copyright 2010, 2011 Joe Smith.
+   -*
+   Written by Joe Smith, 2011.
 
    This file is in the public domain.
-   *}
+   *-
 
 Alternatively, you may consider licensing your software under the GPL.
 Information about the GPL can be obtained here:
@@ -33,13 +60,13 @@ software under GPL can be obtained here:
 Alternatively, you may adapt a brief license statement from the following
 model.
 
-   {*
+   -*
    Copyright 2009, 2010 Joe Smith and Jane Doe.
 
    You may redistribute this file under the terms of the GNU General Public
    License as published by the Free Software Foundation, either version 2 of
    the License, or any later version.
-   *}
+   *-
 
 As Macaulay2 is an aggregate, and the packages will not be linked with code
 licensed under GPL version 3, a package licensed just under version 2 would

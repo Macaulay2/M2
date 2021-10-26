@@ -1,0 +1,17 @@
+-- -*- M2-comint -*- hash: 1207323258
+
+i1 : QQ[x,y,z]
+
+o1 = QQ[x..z]
+
+o1 : PolynomialRing
+
+i2 : V = tropicalVariety(ideal(x+y+z));
+
+i3 : multiplicities V
+
+o3 = {1, 1, 1}
+
+o3 : List
+
+i4 : 

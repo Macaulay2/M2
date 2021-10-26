@@ -1,0 +1,64 @@
+-- -*- M2-comint -*- hash: -1542844694
+
+i1 : R = QQ[q]/ideal{q^4+q^3+q^2+q+1}
+
+o1 = R
+
+o1 : QuotientRing
+
+i2 : M = matrix{{1,q,q},{q^4,1,1},{q^4,1,1}}
+
+o2 = | 1          q q |
+     | -q3-q2-q-1 1 1 |
+     | -q3-q2-q-1 1 1 |
+
+             3       3
+o2 : Matrix R  <--- R
+
+i3 : B = skewPolynomialRing(R,M,{x,y,z})
+
+o3 = B
+
+o3 : NCQuotientRing
+
+i4 : x*y == q^4*y*x
+
+o4 = true
+
+i5 : N = matrix{{1,1,1,1},{1,1,1,1},{1,1,1,1},{1,1,1,1}}
+
+o5 = | 1 1 1 1 |
+     | 1 1 1 1 |
+     | 1 1 1 1 |
+     | 1 1 1 1 |
+
+              4        4
+o5 : Matrix ZZ  <--- ZZ
+
+i6 : C = skewPolynomialRing(QQ,promote(N,QQ), {a,b,c,d})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o6 = C
+
+o6 : NCQuotientRing
+
+i7 : isCommutative C
+
+o7 = true
+
+i8 : isCommutative B
+
+o8 = false
+
+i9 : Bop = oppositeRing B
+
+o9 = Bop
+
+o9 : NCQuotientRing
+
+i10 : y*x == q^4*x*y
+
+o10 = true
+
+i11 : 

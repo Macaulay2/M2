@@ -1,0 +1,47 @@
+-- -*- M2-comint -*- hash: 307307630
+
+i1 : R=QQ[x1,x2,y]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : theDir = temporaryFileName();
+
+i3 : makeDirectory theDir
+
+i4 : makeB'InputFile(theDir,
+             BertiniInputConfiguration=>{MPType=>2},
+         AffVariableGroup=>{{x1,x2},{y}},
+             B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2});
+
+i5 : R=QQ[x1,x2,y,X]
+
+o5 = R
+
+o5 : PolynomialRing
+
+i6 : makeB'InputFile(theDir,
+             BertiniInputConfiguration=>{MPType=>2},
+         AffVariableGroup=>{{x1,x2},{y}},
+             NamePolynomials=>{f1,f2,f3},
+             B'Functions=>{
+            {X,x1+x2+1},
+            {f1,y*X^2+1},
+            {f2,x1-x2+1},
+            {f3,y-2}});
+
+i7 : R=QQ[x1,x2,y,X]
+
+o7 = R
+
+o7 : PolynomialRing
+
+i8 : makeB'InputFile(theDir,
+              BertiniInputConfiguration=>{MPype=>2},
+          AffVariableGroup=>{{x1,x2},{y}},
+               B'Polynomials=>{y*X^2+1,x1-x2+1,y-2},
+                B'Functions=>{
+                   {X,x1+x2+1}});
+
+i9 : 

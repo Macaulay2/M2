@@ -1,0 +1,208 @@
+-- -*- Mode: M2; mode: auto-fill; coding: utf-8; fill-column: 100 -*-
+Key
+     "numerical algebraic geometry"
+Headline
+     Introduction to NumericalAlgebraicGeometry
+Description
+     Code
+     	  SUBSECTION "Getting started"
+     Text
+	  Start by loading the package
+     Example
+          needsPackage "NumericalAlgebraicGeometry"
+     Text
+	  Define a ring of polynomials with complex coefficients:
+     Example
+	  R = CC[x,y,z]
+     Text
+	  Note that numbers in the ``field'' $CC$ are, in fact, (53-bit) floating point numbers: 
+     Example
+	  a = 1/3 + 0.12*ii
+	  b = pi*ii
+	  c = a*b
+	  c - c/a * a
+     Text
+	  A {\em polynomial system} is given by a list. One can also define an object of type {\em PolySystem}.
+     Example
+	  T = {x^2+y^2+z^2-1, x^2-y, x^3-z}
+	  polySystem {x^2+y^2+z^2-1, x^2-y, x^3-z}     	  
+     Text
+	  Let's solve it numerically:
+     Example
+	  solsT = solveSystem T
+	  #solsT
+	  realPoints solsT
+     Text
+	  The above command launches a {\em black-box} solver for 0-dimensional polynomial systems; 
+	  having a finite number of complex solutions is a prerequisite.    
+
+     Code
+     	  SUBSECTION "How does the black-box solver work?",
+     Text
+	  Here we discuss one of the simplest strategies to solve a 0-dimensional system of polynomials.
+
+     Text
+	  One can create the {\em total-degree start system} for any given {\em target system}. 
+     Example
+     	  R = CC[x,y,z]
+	  T = {x^2+y^2+z^2-1, x^2-y, x^3-z}
+    	  (S, solsS) = totalDegreeStartSystem T
+     Text
+	  The homotopy based on this system corresponds to the classical result in enumerative
+	  algebraic geometry: {\em Bezout bound} on the number of solutions in terms of degrees of
+	  the polynomial equations. 
+     Text
+	  The core routine tracks a linear segment homotopy 
+     Text
+          $H(t) = (1-t) S + gamma t T$ 
+     Text
+	  where $gamma=1$ by default. Here we pick a random value for $gamma$ 
+	  (as the black-box solver, {\em solveSystem}, does).  
+     Example
+    	  solsT = track(S,T,solsS,gamma=>random CC) 
+	  # select(solsT, s->status s === Regular)
+     Text
+    	  Randomization is essential here: with $gamma=1$ the continuation 
+	  paths become singular in the interior of the interval $[0,1]$.
+     Example
+    	  track(S,T,solsS) 
+     Text
+    	  To see documentation for {\em track} including the description of some other optional
+	  parameters that control the heuristic continuation algorithm,
+     Example
+    	  help track
+	  
+     Code
+     	  SUBSECTION "Newton's method"
+     Text
+	  Here we illustrate the behavior of Newton's method 
+	  on univariate polynomials with real coefficients:
+     Example
+	  R = RR[x]
+     Text
+	  {\em Newton's method}, one of the core numerical routines, can be used to find numerical
+	  approximations to the roots of a polynomial. 
+     Example
+	  f = polySystem{ x*(2*x^4+3*x^3+5*x^2+7*x+11) }
+	  X = point {{0.1}};
+	  for i to 10 do ( X = newton(f,X); print coordinates X )
+     Text
+	  Note that the convergence of the sequence of approximation to the {\em associated zero}
+	  $x=0$ is quadratic: the number of correct digits (roughly) doubles with every step. 
+     Text	  
+	  This is not so when the associated zero is multiple:
+     Example
+	  f = polySystem{ x^2*(2*x^4+3*x^3+5*x^2+7*x+11) }
+	  X = point {{0.1}};
+	  for i to 10 do ( X = newton(f,X); print coordinates X )
+     Text
+	  Taking a random starting point (not close to any root) may not produce good approximations
+	  for a long time.
+     Example
+     	  X = point{{100*random RR}};
+	  for i to 10 do ( X = newton(f,X); print coordinates X )
+
+     Code
+         SUBSECTION "Numerical rank and deflation"
+     Text
+     	 Newton method applied to an approximation of a singular isolated solution still converges, 
+	 but not {\em quadratically}. We detect singularity by looking at the Jacobian.
+     Example 
+         R = CC[x,y,z];
+	 T = polySystem {(x^2+y^2+z^2-3)^2, x^2-y, x^3-z};
+ 	 P = point {{1.00001, 1.00001+0.00002*ii, 1.00001-0.00002*ii}};
+	 J = evaluate(jacobian T, P)
+     Text 
+     	 The jacobian at the approximate solution is almost rank-deficient.
+	 {\em Numerical rank} is a the rank of a closeby matrix of the lowest possible rank.
+	 In practice, numerical rank is heuristically determined by analyzing the singular values
+         of the matrix.
+     Example 
+    	 first SVD J -- singular values
+    	 numericalRank J
+    	 numericalRank(J,Threshold=>0.0000001) 
+     Text 
+     	 To restore the quadratic convergence we use is {\em deflation}.
+     Example
+     	 r = deflate(T,P) -- returns the numerical rank, stores defalted system
+	 DF := T.Deflation#r
+	 P' := liftPointToDeflation(P,T,r) 
+     Text 
+     	 Now P' is an approximation to a regular solution of (an overdetermined system) DF that projects to P:	 
+     Example
+         J' = evaluate(jacobian DF,P') 
+    	 numericalRank J'
+     Text 
+         More than one deflation steps may be needed to regularize. The following function carries
+         out the chain of deflations storing, in particular, the {\em deflation sequence}.	 
+     Example
+         F = polySystem {x^3,y^3,x^2*y,z*(z-1)^2};
+	 P = point {{0.000001, 0.000001*ii,1.000001-0.000001*ii}};
+	 deflateInPlace(P,F)
+	 peek P 
+     
+     Code
+     	  SUBSECTION "Positive-dimensional solutions"
+     Text
+	  An (equidimensional) component of a solution set (a.k.a. variety) of positive dimension 
+	  is represented numerically with a {\em witness set}.
+     Text
+     	 A witness set representing a component of dimension $d$ is a triple: a system of $n-d$
+     	  polynomials, a system of $d$ linear functions, and a set of {\em witness points}.  
+     Example	  
+	  CC[x,y]
+	  wEquations = polySystem{(x^2+y^2+2)*x*y}
+	  wSlice = polySystem{x-y}
+	  wPoints = {point{{0.999999*ii,0.999999*ii}}, point{{ -1.000001*ii,-1.000001*ii}}}
+	  witnessSet(wEquations, wSlice, wPoints)
+     Text
+         For a variety, (a certain refinement of) its equidimensional decomposition is computed by a 
+	 {\em regenerative cascade}.  
+     Example
+     	 CC[x,y,z]
+	 sph = (x^2+y^2+z^2-1);     
+	 F = {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};
+         setRandomSeed 0;	 
+	 cs = regeneration F                         
+     Text
+     	 While the component of dimension 2 is irreducible, the other one can be further decomposed.
+     Example
+     	 decompose (first cs)
+     Text
+     	 The black-box function incorporating algorithms for 
+	 {\em numerical irreducible decomposition} 
+      	 constructs a {\em numerical variety}, which is simply a collection of
+     	 witness sets.
+     Example
+	 numericalIrreducibleDecomposition ideal F
+
+     Code
+     	 SUBSECTION "Using external software for homotopy continuation"
+     Text
+         The NumericalAlgebraicGeometry package is able to use of two external programs 
+	 for some homotopy continuation tasks. This is controlled by an optional argument {\em Software}.
+     Example
+    	 CC[x,y,z]
+         F = {x^2+y^2+z^2-1, x^2-y, x^3-z}
+	 sM = solveSystem F -- Software=>M2engine is the default
+	 sP = solveSystem(F,Software=>PHCPACK)
+	 sB = solveSystem(F,Software=>BERTINI) 	 
+     Text
+     	 The approximate comparison method (combined with approximate sorting) 
+	 should confirm that the results are essentially the same.
+     Example
+     	 areEqual(sortSolutions sM, sortSolutions sP)
+	 areEqual(sortSolutions sM, sortSolutions sB)
+     Text 
+         Here is an example of decomposition of a variety in 8-dimensional ambient space.
+     Example
+         R = CC[x11,x22,x21,x12,x23,x13,x14,x24];                                                              
+	 F = {x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14}; 
+	 numericalIrreducibleDecomposition(ideal F)
+	 numericalIrreducibleDecomposition(ideal F, Software=>PHCPACK)
+	 numericalIrreducibleDecomposition(ideal F, Software=>BERTINI)
+
+
+-- Local Variables:
+-- compile-command: "make -C /Users/de/src/M2/Macaulay2/packages PACKAGES=BeginningMacaulay2 RemakeAllDocumentation=true IgnoreExampleErrors=false"
+-- End:

@@ -1,0 +1,54 @@
+diff -ur /Users/dan/src/M2/M2-DanGrayson/M2/BUILD/dan/builds.tmp/mac64-linalg.production/libraries/4ti2/tmp/4ti2-1.6.2/test/qsolve/api/test_input_conversion_gmp.cpp 4ti2-1.6.2/test/qsolve/api/test_input_conversion_gmp.cpp
+--- /Users/dan/src/M2/M2-DanGrayson/M2/BUILD/dan/builds.tmp/mac64-linalg.production/libraries/4ti2/tmp/4ti2-1.6.2/test/qsolve/api/test_input_conversion_gmp.cpp	2009-03-16 17:00:17.000000000 -0400
++++ 4ti2-1.6.2/test/qsolve/api/test_input_conversion_gmp.cpp	2014-08-02 08:49:26.000000000 -0400
+@@ -27,6 +27,7 @@
+ 
+ #include "4ti2/4ti2.h"
+ #include "4ti2/4ti2xx.h"
++#include <stddef.h>
+ #include <gmpxx.h>
+ 
+ using namespace std;
+diff -ur /Users/dan/src/M2/M2-DanGrayson/M2/BUILD/dan/builds.tmp/mac64-linalg.production/libraries/4ti2/tmp/4ti2-1.6.2/m4/glpk-check.m4 4ti2-1.6.2/m4/glpk-check.m4
+--- /Users/dan/src/M2/M2-DanGrayson/M2/BUILD/dan/builds.tmp/mac64-linalg.production/libraries/4ti2/tmp/4ti2-1.6.2/m4/glpk-check.m4	2014-01-14 20:30:57.000000000 -0500
++++ 4ti2-1.6.2/m4/glpk-check.m4	2014-08-02 09:02:51.000000000 -0400
+@@ -56,9 +56,9 @@
+ 		CXXFLAGS="${CXXFLAGS} ${GLPK_CFLAGS}"
+ 		LIBS="${LIBS} ${GLPK_LIBS_NOLIBTOOL}"
+ 
+-		AC_LINK_IFELSE(AC_LANG_PROGRAM([extern "C" {
++		AC_LINK_IFELSE([AC_LANG_PROGRAM([extern "C" {
+ #include <glpk.h>
+-}], [glp_prob *lpx = glp_create_prob(); glp_delete_prob(lpx); ]),
++}], [glp_prob *lpx = glp_create_prob(); glp_delete_prob(lpx); ])],
+ 		[
+ 				AC_MSG_RESULT(found)
+ 				AC_SUBST(GLPK_CFLAGS)
+diff -ur /home/dan/src/M2/M2/BUILD/dan/builds.tmp/ubuntu64.production/libraries/4ti2/tmp/4ti2-1.6.2/test/qsolve/api/Makefile.am 4ti2-1.6.2/test/qsolve/api/Makefile.am
+--- /home/dan/src/M2/M2/BUILD/dan/builds.tmp/ubuntu64.production/libraries/4ti2/tmp/4ti2-1.6.2/test/qsolve/api/Makefile.am	2013-07-28 17:27:28.000000000 -0700
++++ 4ti2-1.6.2/test/qsolve/api/Makefile.am	2014-07-30 18:35:42.994852590 -0700
+@@ -1,5 +1,5 @@
+ check_PROGRAMS = 
+-check_PROGRAMS += qsolve_main test_input_conversion_64_to_gmp test_input_conversion_gmp_to_64
++check_PROGRAMS += qsolve_main
+ 
+ # Allow accessing groebner's header files as "groebner/HEADER.h"
+ AM_CXXFLAGS = -I$(top_srcdir)/src/
+@@ -12,16 +12,9 @@
+ qsolve_main_SOURCES = qsolve_main.cpp
+ qsolve_main_LDADD = $(top_builddir)/src/groebner/lib4ti2int64.la $(top_builddir)/src/4ti2/lib4ti2common.la 
+ 
+-test_input_conversion_64_to_gmp_SOURCES = test_input_conversion_64.cpp
+-test_input_conversion_64_to_gmp_LDADD = $(top_builddir)/src/groebner/lib4ti2gmp.la $(top_builddir)/src/4ti2/lib4ti2common.la
+-
+-test_input_conversion_gmp_to_64_SOURCES = test_input_conversion_gmp.cpp
+-test_input_conversion_gmp_to_64_LDADD = $(top_builddir)/src/groebner/lib4ti2int64.la $(top_builddir)/src/4ti2/lib4ti2common.la
+-
+ TESTS = 
+ TESTS += qsolve_main 
+-#test_input_conversion_64_to_gmp.sh test_input_conversion_gmp_to_64.sh
+ 
+-EXTRA_DIST = test_input_conversion_64_to_gmp.sh test_input_conversion_gmp_to_64.sh
++EXTRA_DIST = test_input_conversion_gmp_to_64.sh
+ 
+ $(TESTS): $(top_builddir)/src/groebner/lib4ti2int64.la 

@@ -1,26 +1,28 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
+-- TODO: needs "newring.m2" for flattenRing
+needs "galois.m2"
+needs "matrix1.m2"
+needs "modules.m2"
+needs "modules2.m2"
+needs "mutablemat.m2"
+
 RingMap = new Type of HashTable
 
 RingMap.synonym = "ring map"
 matrix RingMap := opts -> f -> f.matrix
-toExternalString RingMap := f -> concatenate(
-     "map(", toString target f, ",", toString source f, ",", toString first entries matrix f,
-     -- should do something about the degree map here
-     ")"
-     )
-toString RingMap := f -> concatenate(
-     "map(", toString target f, ",", toString source f, ",", toString first entries matrix f, ")"
-     )
-net RingMap := f -> horizontalJoin(
-     "map(", net target f, ",", net source f, ",", net first entries matrix f, ")"
-     )
 source RingMap := f -> f.source
 target RingMap := f -> f.target
 raw RingMap := f -> f.RawRingMap
 
-expression RingMap := f -> new FunctionApplication from {
-     map, expression (target f, source f, matrix f)}
+expression RingMap := f -> (expression map) (expression (target f, source f, first entries matrix f))
+toString RingMap := f -> toString expression f
+net RingMap := f -> net expression f
+texMath RingMap := x -> texMath expression x
+
+describe RingMap := f -> Describe expression f
+toExternalString RingMap := f -> toString describe f
+-- should do something about the degree map here
 
 degmap0 := n -> ( d := toList ( n : 0 ); e -> d )
 
@@ -153,11 +155,19 @@ RingMap Number := (p,m) -> fff(p, promote(m,source p))
 RingMap Matrix := Matrix => (p,m) -> (
      R := source p;
      S := target p;
-     if R =!= ring m 
-     then error "expected source of ring map to be the same as ring of matrix";
+     if R =!= ring m then (
+	  m = try promote(m,R) else error "ring of matrix not source of ring map, and not promotable to it";
+	  );
      F := p target m;
      E := p source m;
      map(F,E,map(S,rawRingMapEval(raw p, raw cover F, raw m)), Degree => p.cache.DegreeMap degree m))
+
+RingMap MutableMatrix := MutableMatrix => (p,m) -> (
+     R := source p;
+     S := target p;
+     if R =!= ring m 
+     then error "expected source of ring map to be the same as ring of matrix";
+     map(S,rawRingMapEval(raw p, raw m)))
 
 RingMap Vector := Vector => (p,m) -> (
      f := p new Matrix from m;
@@ -170,6 +180,7 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
 	  n2 := numgens R;
 	  F := target f;
 	  n1 := numgens F;
+	  if 0_F == 1_F then return ideal(1_R);
 	  if class F === FractionField then (
 	       C := last F.baseRings;
 	       if not (
@@ -264,7 +275,7 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
 	       k = F.baseRings#(numsame-1);
 	       (R',p) := flattenRing(R, CoefficientRing => k);
 	       (F',r) := flattenRing(F, CoefficientRing => k);
-	       if R' === R and F' === F then error "kernel Ringmap: not implemented yet";
+	       if R' === R and F' === F then error "kernel RingMap: not implemented yet";
 	       p^-1 kernel (r * f * p^-1))))
 
 coimage RingMap := QuotientRing => f -> f.source / kernel f

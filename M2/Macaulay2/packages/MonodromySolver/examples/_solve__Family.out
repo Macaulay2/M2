@@ -1,0 +1,26 @@
+-- -*- M2-comint -*- hash: -1254879311
+--loading configuration for package "FourTiTwo" from file /home/tim/.Macaulay2/init-FourTiTwo.m2
+--loading configuration for package "Topcom" from file /home/tim/.Macaulay2/init-Topcom.m2
+--warning: file katex not installed yet in package Style
+--loading configuration for package "NumericalAlgebraicGeometry" from file /home/tim/.Macaulay2/init-NumericalAlgebraicGeometry.m2
+--loading configuration for package "Bertini" from file /home/tim/.Macaulay2/init-Bertini.m2
+
+i1 : setRandomSeed 0
+
+o1 = 0
+
+i2 : R = CC[a,b,c,d,e,f][x,y];
+
+i3 : q  = a*x^2+b*y+c;
+
+i4 : l = d*x+e*y+f;
+
+i5 : (sys, sols) = solveFamily(polySystem{q,l}, NumberOfNodes=>3)
+
+o5 = (sys, {{1.7698-.292574*ii, 2.03236+1.25703*ii}, PointArray( 2 points: 1
+     ------------------------------------------------------------------------
+     0 ), {-.770087+.316588*ii, .35355-.743892*ii}})
+
+o5 : Sequence
+
+i6 : 

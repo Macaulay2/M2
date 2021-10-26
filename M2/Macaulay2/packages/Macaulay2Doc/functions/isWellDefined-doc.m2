@@ -13,7 +13,7 @@ document {
      Outputs => {
 	  Boolean => {"whether ", TT "f", " is a well-defined map"}
 	  },
-     "In order to check whether a matrix, whose source module is not free, is well-defined,
+     "In order to check whether a matrix, whose source module is not free, is well defined,
      then a Gröbner basis computation will probably be required.",
      EXAMPLE lines ///
      	  R = QQ[a..d];
@@ -21,7 +21,7 @@ document {
 	  isWellDefined f
 	  isWellDefined map(coker vars R, R^1, {{1_R}})
 	  ///,
-     "In order to check whether a ring map is well-defined,
+     "In order to check whether a ring map is well defined,
      it is often necessary to check that the image of an ideal 
      under a related ring map is zero.  This often requires
      a Gröbner basis as well.",

@@ -1,24 +1,12 @@
 #include <gtest/gtest.h>
-#include <gc/gc.h>
-extern "C"  void IM2_initialize(void);
+#include <M2/gc-include.h>
+#include <engine.h>
 
-extern "C" int breakOnMe () { return 0; }
-
-int break1 = breakOnMe ();
-double pi = 3.1415;
-int break2 = breakOnMe ();
-
-#ifdef NDEBUG
-#define GC_IGNORE_WARN
-#endif
-#define GC_FREE_SPACE_DIVISOR 12
-#define GC_INITIAL_HEAP_SIZE 70000000
-
-int main(int argc, char **argv) {
-    GC_INIT();
-    IM2_initialize();
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+int main(int argc, char **argv)
+{
+  IM2_initialize();
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }
 
 // Local Variables:

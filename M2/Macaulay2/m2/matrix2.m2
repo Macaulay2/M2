@@ -1,5 +1,10 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 
+needs "gb.m2"
+-- TODO: needs "genmat.m2" but would introduce a cycle
+needs "matrix1.m2"
+needs "quotring.m2"
+
 pivots = method()
 
 pivots Matrix := (p) -> (			    -- I wish this could be in the engine
@@ -130,8 +135,14 @@ complement Matrix := Matrix => (f) -> (
      else if instance(R,QuotientRing) then map(target f,,R ** complement lift(f,ambient R))
      else error "complement: expected matrix over affine ring or finitely generated ZZ-algebra")
 
+-- the method is declared in gb.m2
+mingens Ideal  := Matrix => opts -> I -> mingens(module I, opts)
 mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
-	  if not member(opts.Strategy, {Complement, null}) then error "mingens: unrecognized Strategy option";
+        c := runHooks((mingens, Module), (opts, M));
+        if c =!= null then c else error "mingens: no method implemented for this type of module"))
+
+-- FIXME: This is kind of a hack. The strategies should be separated in mingensHelper
+mingensHelper = ((opts, M) -> (
  	  mingb := m -> gb (m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
 	  zr := f -> if f === null or f == 0 then null else f;
 	  F := ambient M;
@@ -153,13 +164,25 @@ mingens Module := Matrix => opts -> (cacheValue symbol mingens) ((M) -> (
 		    else mingens mingb (id_F % mingb(M.relations)))
 	       else id_F)))
 
+addHook((mingens, Module), Strategy => Inhomogeneous, (opts, M) -> mingensHelper(opts ++ {Strategy => Inhomogeneous}, M))
+addHook((mingens, Module), Strategy => Complement,    (opts, M) -> mingensHelper(opts ++ {Strategy => Complement},    M))
+
+trim = method (Options => { Strategy => null -* TODO: add DegreeLimit => {} *-})
 trim Ring := Ring => opts -> (R) -> R
 trim QuotientRing := opts -> (R) -> (
      f := presentation R;
      A := ring f;
      A/(trim(ideal f,opts)))
 
-trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
+-- TODO: why is the caching key an Option?
+trim Ideal  := Ideal  => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
+trim Module := Module => opts -> (cacheValue symbol trim) (M -> (
+	if isFreeModule M then return M;
+	c := runHooks((trim, Module), (opts, M));
+	if c =!= null then c else error "trim: no method implemented for this type of module"))
+
+-- FIXME: This is kind of a hack. The strategies should be separated in trimHelper
+trimHelper = ((opts, M) -> (
 	  -- we preserve the ambient free module of which M is subquotient and try to minimize the generators and relations
 	  --   without computing an entire gb
 	  -- does using "complement" as in "mingens Module" above offer a benefit?
@@ -167,7 +190,8 @@ trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 	  zr := f -> if f === null or f == 0 then null else f;
 	  F := ambient M;
 	  epi := g -> -1 === rawGBContains(g, rawIdentity(raw F,0));
-	  N := if M.?generators then (
+     	  if not M.?generators then M = subquotient(ambient M,id_(ambient M),if M.?relations then M.relations);
+	  N := (
 	       if M.?relations then (
 		    if opts.Strategy === Complement then (
 			 gns := mingens(M,opts);
@@ -176,7 +200,7 @@ trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 			 gns = if not epi raw gns' then mingens gns';
 			 if gns === M.generators and rlns === M.relations then M
 			 else subquotient(F, gns, zr rlns))
-		    else if opts.Strategy === null then (
+		    else if opts.Strategy === Inhomogeneous then (
 	  	    	 tot := mingb(M.generators|M.relations);
 		    	 rel := mingb(M.relations);
 			 if tot === M.generators and rel === M.relations 
@@ -187,39 +211,31 @@ trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 		    if opts.Strategy === Complement then (
 			 g := mingens(M,opts);
 			 if g === M.generators then M else (
-			      M' := image g;		    -- this submodule has the same gb as M does
-			      Mgc := M.generators.cache;
-			      M'gc := M'.generators.cache;
-			      scan(pairs Mgc, (k,v) -> (
-					if instance(k,GroebnerBasisOptions) then (
-					     if not k.Syzygies then M'gc#k = v
-					     else (
-						  k' := new GroebnerBasisOptions from {
-						       HardDegreeLimit => k.HardDegreeLimit,
-						       Syzygies => false,
-						       SyzygyRows => 0
-						       };
-						  M'gc#k' = v; -- the gb, v, may actually have syzygies, but they won't be accessed
-						  )
-					     );
-					));
+			      M' := image g;
+			      -- The code below was intended to give M' a cheap Groebner basis,
+     			      -- but we comment out it, because even if Syzygies is set to false, ChangeMatrix might have been true, and we don't record that somehow.
+			      -- Mgc := M.generators.cache;
+			      -- M'gc := M'.generators.cache;
+			      -- scan(pairs Mgc, (k,v) -> (
+			      -- 		if instance(k,GroebnerBasisOptions) then (
+			      -- 		     if not k.Syzygies then M'gc#k = v
+			      -- 		     else (
+			      -- 			  k' := new GroebnerBasisOptions from {
+			      -- 			       HardDegreeLimit => k.HardDegreeLimit,
+			      -- 			       Syzygies => false,
+			      -- 			       SyzygyRows => 0
+			      -- 			       };
+			      -- 			  M'gc#k' = v; -- the gb, v, may actually have syzygies, but they won't be accessed
+			      -- 			  )
+			      -- 		     );
+			      -- 		));
 			      M'))
-		    else if opts.Strategy === null then (
+		    else if opts.Strategy === Inhomogeneous then (
 	  	    	 tot = mingb M.generators;
 		    	 subquotient(F, if not epi raw tot then mingens tot, ))
-		    else error "trim: unrecognized Strategy option"))
-	  else (
-	       if M.?relations then (
-		    if opts.Strategy === Complement then (
-			 rel = mingens(image M.relations,opts);
-			 if rel === M.relations then M 
-			 else if rel == 0 then F
-			 else cokernel rel)
-		    else if opts.Strategy === null then (
-		    	 subquotient(F, , zr mingens mingb M.relations ))
-		    else error "trim: unrecognized Strategy option")
-	       else F
-	       );
+		    else error "trim: unrecognized Strategy option"));
+	  if N.?generators and epi raw mingb N.generators then N = subquotient(ambient N,,if N.?relations then N.relations);
+	  -- TODO: make into a separate hook
 	  if ring M === ZZ then (
 	       LLLBases := needsPackage "LLLBases";
 	       LLL := value LLLBases.Dictionary#"LLL";
@@ -228,13 +244,21 @@ trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 	  N.cache.trim = N;
 	  N))
 
+addHook((trim, Module), Strategy => Inhomogeneous, (opts, M) -> trimHelper(opts ++ {Strategy => Inhomogeneous}, M))
+addHook((trim, Module), Strategy => Complement,    (opts, M) -> trimHelper(opts ++ {Strategy => Complement},    M))
+
 syz Matrix := Matrix => opts -> (f) -> (
+    c := runHooks((syz, Matrix), (opts, f));
+    if c =!= null then return c;
+    error "syz: no strategy implemented for this type of matrix")
+
+addHook((syz, Matrix), Strategy => Default, (opts, f) -> (
      if not isFreeModule target f or not isFreeModule source f
      then error "expected map between free modules";
      if ring f === ZZ or not isHomogeneous f
      then syz gb (f, opts, Syzygies=>true)
      else mingens image syz gb (f, opts, Syzygies=>true)
-     )
+     ))
 
 modulo = method(
      Options => {
@@ -293,14 +317,18 @@ quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
 Matrix // Matrix := Matrix => (f,g) -> quotient(f,g)
 Matrix \\ Matrix := (g,f) -> f // g
 quotient'(Matrix,Matrix) := Matrix => (f,g) -> (
-     if not isFreeModule source f or not isFreeModule source g
-     or not isFreeModule source g or not isFreeModule source g then error "expected maps between free modules";
+     if not isFreeModule source f or not isFreeModule target f
+     or not isFreeModule source g or not isFreeModule target g then error "expected maps between free modules";
      dual quotient(dual f, dual g))
 quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
-     L := source f;					    -- result may not be well-defined if L is not free
+     if target f != target g then error "quotient: expected maps with the same target";
+     c := runHooks((quotient, Matrix, Matrix), (opts, f, g));
+     if c =!= null then c else error "quotient: no method implemented for this type of input")
+
+addHook((quotient, Matrix, Matrix), Strategy => Default, (opts, f, g) -> (
+     L := source f;	     -- result may not be well-defined if L is not free
      M := target f;
      N := source g;
-     if M != target g then error "expected maps with the same target";
      if instance(ring M, InexactField)
        and numRows g === numColumns g
        and isFreeModule source g and isFreeModule source f
@@ -311,26 +339,30 @@ quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
      if M.?generators then (
 	  M = cokernel presentation M;	    -- this doesn't change the cover
 	  );
-     f = matrix f;
-     g = matrix g;
-     map(N, L, f //
-	  if M.?relations 
-	  then gb(g | presentation M, ChangeMatrix => true, SyzygyRows => rank source g)
-	  else gb(g,                  ChangeMatrix => true),
-	  Degree => degree f - degree g  -- do this in the engine instead
-	  ))
+     -- now M is a quotient module, without explicit generators
+     f' := matrix f;
+     g' := matrix g;
+     G := (
+	  if g.cache#?"gb for quotient"
+	  then g.cache#"gb for quotient"
+	  else g.cache#"gb for quotient" = (
+	       if M.?relations 
+	       then gb(g' | relations M, ChangeMatrix => true, SyzygyRows => rank source g')
+	       else gb(g',               ChangeMatrix => true)));
+     map(N, L, f' // G, 
+	  Degree => degree f' - degree g'  -- set the degree in the engine instead
+	  )))
 
-RingElement // Matrix      := (r,f) -> (r * id_(target f)) // f
-Matrix      \\ RingElement := (f,r) -> r // f
+Number // Matrix :=
+RingElement // Matrix := (r,f) -> (r * id_(target f)) // f
+Matrix \\ Number :=
+Matrix \\ RingElement := (f,r) -> r // f
 
-Number // Matrix := (r,f) -> promote(r,ring f) // f
-Matrix \\ Number := (f,r) -> r // f
-
-Matrix      // RingElement := (f,r) -> f // (r * id_(target f))
+Matrix // Number :=
+Matrix // RingElement := (f,r) -> f // (r * id_(target f))
+Number \\ Matrix :=
 RingElement \\ Matrix      := (r,f) -> f // r
 
-Matrix // Number := (f,r) -> f // promote(r,ring f)
-Number \\ Matrix := (r,f) -> f // r
 
 remainder'(Matrix,Matrix) := Matrix => (f,g) -> (
      if not isFreeModule source f or not isFreeModule source g
@@ -338,23 +370,31 @@ remainder'(Matrix,Matrix) := Matrix => (f,g) -> (
      dual remainder(dual f, dual g))
 remainder(Matrix,Matrix) := Matrix % Matrix := Matrix => (n,m) -> (
      R := ring n;
-     if R =!= ring m then error "expected matrices over the same ring";
-     if not isFreeModule source n or not isFreeModule source m
-     or not isFreeModule target n or not isFreeModule target m
-     then error "expected maps between free modules";
-     n % gb m)
+     if target m =!= target n then error "expected matrices with the same target";
+     if not isFreeModule source n or not isFreeModule source m then error "expected maps from free modules";
+     if not isQuotientModule target m then error "expected maps to a quotient module";
+     c := runHooks((remainder, Matrix, Matrix), (n, m));
+     if c =!= null then c else error "remainder: no method implemented for this type of input")
+addHook((remainder, Matrix, Matrix), Strategy => Default, (n, m) -> n % gb image m)
 
 Matrix % Module := Matrix => (f,M) -> f % gb M
 
-RingElement % Matrix := (r,f) -> ((r * id_(target f)) % f)_(0,0)
+RingElement % Matrix := (r,f) -> (
+     if isFreeModule target f and numgens target f === 1 
+     then ((r * id_(target f)) % f)_(0,0)
+     else error "expected target of matrix to be free, and of rank 1"
+     )
+
 RingElement % Ideal := (r,I) -> (
-     if ring r =!= ring I then error "expected ring element and ideal for the same ring";
+     R := ring I;
+     if ring r =!= R then error "expected ring element and ideal for the same ring";
      if r == 0 then return r;
-     r % if isHomogeneous I then gb(I, DegreeLimit => degree r) else gb I)
+     r % if isHomogeneous I and heft R =!= null then gb(I, DegreeLimit => degree r) else gb I)
 Number % Ideal := (r,I) -> (
-     r = promote(r,ring I);
+     R := ring I;
+     r = promote(r,R);
      if r == 0 then return r;
-     r % if isHomogeneous I then gb(I,DegreeLimit=>0) else gb I)
+     r % if isHomogeneous I and heft R =!= null then gb(I,DegreeLimit => toList (degreeLength R : 0)) else gb I)
 
 Matrix % RingElement := (f,r) -> f % (r * id_(target f))    -- this could be sped up: compute gb matrix {{r}} first, tensor with id matrix, force gb, etc
 
@@ -411,9 +451,10 @@ homogenize(Matrix, RingElement, List) := Matrix => (f,v,wts) -> (
      -- why did we have this?
      -- wts = apply(wts, i -> if instance(i,InfiniteNumber) then 0 else i);
      i := homogCheck(R,f,v,wts);
-     if debugLevel > 0 then << (new FunctionApplication from {rawHomogenize, (f.RawMatrix, index v, wts)}) << endl;
+     if debugLevel > 10 then << (new FunctionApplication from {rawHomogenize, (f.RawMatrix, index v, wts)}) << endl;
      map(target f, source f, rawHomogenize(f.RawMatrix, i, wts)))
 
+homogenize(RingElement, RingElement) :=
 homogenize(Matrix, RingElement) := Matrix => (f,n) -> (
      R := ring f;
      if degreeLength R =!= 1 then error "homogenization requires degrees of length 1";
@@ -423,8 +464,8 @@ homogenize(Matrix, RingElement) := Matrix => (f,n) -> (
 homogenize(Module,RingElement) := Module => (M,z) -> (
      if isFreeModule M then M
      else subquotient(
-	  if M.?generators then homogenize(M.generators,z),
-	  if M.?relations then homogenize(M.relations,z)))
+	  if M.?generators then homogenize(generators gb M.generators,z),
+	  if M.?relations then homogenize(generators gb M.relations,z)))
 
 homogenize(Ideal,RingElement) := Ideal => (I,z) -> ideal homogenize(module I, z)
 
@@ -433,11 +474,6 @@ homogenize(Module,RingElement,List) := Module => (M,z,wts) -> (
      else subquotient(
 	  if M.?generators then homogenize(M.generators,z,wts),
 	  if M.?relations then homogenize(M.relations,z,wts)))
-
-homogenize(RingElement, RingElement) := RingElement => (f,n) -> (
-     wts := (transpose (monoid ring f).Options.Degrees)#0;
-     homogenize(f,n,wts)
-     )
 
 homogenize(Vector, RingElement, List) := Vector => (f,v,wts) -> (
      p := homogenize(f#0,v,wts);
@@ -451,6 +487,7 @@ listOfVars(Ring,Thing) := (R,x) -> error("expected 'Variables=>' argument to be 
 listOfVars(Ring,Nothing) := (R,x) -> toList(0 .. numgens R-1)
 listOfVars(Ring,List) := (R,x) -> (
      vrs := splice x;
+     if #vrs === 0 then return vrs;
      types := unique apply(vrs,class);
      if #types != 1 then error "expected a list or sequence of integers or variables in the same ring";
      if first types =!= ZZ then vrs = index \ vrs;

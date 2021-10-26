@@ -1,62 +1,44 @@
-# license: for mpfr version 2.4.1: LGPL 2.1 or later and GPL (version number unspecified)
-# license: for mpfr version 2.4.2: same
-# license:          version 3.0  : GNU Lesser General Public License version 3 or later (LGPL v3+)
-#				   so our binary distributions should be distributed under GPL 3
-
 #############################################################################
 
-VERSION = 3.0.1
+VERSION = 4.0.2
+LICENSEFILES = README COPYING.LESSER
+TARFILE = $(LIBNAME)-$(VERSION).tar.xz
+TAROPTIONS = --xz
 
 #############################################################################
-
-# warning: version 3.1.2 breaks 'check loadPackage "EllipticIntegrals"'!  But it might be gc related.  Here's debug output:
-
-# i15 : scan(-4 .. 4, i -> scan(-4 .. 4, j -> (
-#       	       assert( distance(E.exp ( .2p200 ), E.exp ( .2p200 + i * E.Period' + j * E.Period )) < 1e-50 );
-#       	       assert( distance(E.exp ( .2p200+.3p200*ii ), E.exp ( .2p200+.3p200*ii + i * E.Period' + j * E.Period )) < 1e-50 );
-#       	       )));
-# GC_debug_free: found previously deallocated (?) object at 0x10fc7da30 in or near object at 0x10fc7da40(<smashed>, appr. sz = 57)
-# stdio:27:16:(3):[2]: error: assertion failed
-
-# VERSION = 3.1.2
-# TARFILE = mpfr-$(VERSION).tar.xz
-# UNTARCMD = xz --decompress < $(TARFILE_DIR)/$(TARFILE) | @TAR@ xf -
-
+CONFIGOPTIONS += --disable-thread-safe
+# Compiling mpfr with thread local variables is incompatible with libgc, because
+#   some libgc pointers are cached in the variables __gmpfr_cache_const_pi, 
+#   __gmpfr_cache_const_log2, __gmpfr_cache_const_euler, __gmpfr_cache_const_catalan
+# so for now we comment this out.  Detect the bug by running the tests in
+# the package EllipticIntegrals, especially the following code:
+#     i15 : scan(-4 .. 4, i -> scan(-4 .. 4, j -> (
+#           	       assert( distance(E.exp ( .2p200 ), E.exp ( .2p200 + i * E.Period' + j * E.Period )) < 1e-50 );
+#           	       assert( distance(E.exp ( .2p200+.3p200*ii ), E.exp ( .2p200+.3p200*ii + i * E.Period' + j * E.Period )) < 1e-50 );
+#           	       )));
+#     GC_debug_free: found previously deallocated (?) object at 0x10fc7da30 in or near object at 0x10fc7da40(<smashed>, appr. sz = 57)
+#     stdio:27:16:(3):[2]: error: assertion failed
 #############################################################################
-
-# warning: version 3.1.0 breaks 'check loadPackage "EllipticIntegrals"'!
-#VERSION = 3.1.0
-
+# Debugging note: the INSTALL file of mpfr recommends getting the latest patches 
+# from a file such as http://www.mpfr.org/mpfr-3.1.2/allpatches and applying them.
 #############################################################################
 
 RELAX = yes
 # URL = http://www.mpfr.org/mpfr-$(VERSION)
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 
-ifeq (@CC_THREAD_SUPPORT@,yes)
-# compiling mpfr with thread local variables is incompatible with libgc, because
-#   some libgc pointers are cached in the variables __gmpfr_cache_const_pi, 
-#   __gmpfr_cache_const_log2, __gmpfr_cache_const_euler, __gmpfr_cache_const_catalan
-# so for now we comment this out.  (Detect the bug by running the tests in
-# the package EllipticIntegrals.)
-# CONFIGOPTIONS += --enable-thread-safe
+ifeq (@DEBUG@,yes)
+CONFIGOPTIONS += --enable-assert
 endif
 
-ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
-endif
+
+# ifeq (@SHARED@,no)
+# CONFIGOPTIONS += --disable-shared
+# endif
+
 # PRECONFIGURE = autoreconf -i
 include ../Makefile.library
-
-# # These are old routines, long deprecated, missing in mpir 1.3.0
-# # but mpfr 2.4.2 still uses them, try removing them with 2.4.3:
-# CPPFLAGS += -Dmpz_div_2exp=mpz_tdiv_q_2exp -Dmpz_div_ui=mpz_tdiv_q_ui
-# # I don't know what to do about gmp_randinit, which is also undefined.  Just run "make -k check" and ignore the errors.
-# # So we need this, too:
-# CFLAGS += -Wimplicit -Werror
-
-# the DEBUG flag just makes lots of junk print out:
-CPPFLAGS += -UDEBUG
 
 BUILDOPTIONS += CPPFLAGS="$(CPPFLAGS)"
 CHECKOPTIONS += CPPFLAGS="$(CPPFLAGS)"

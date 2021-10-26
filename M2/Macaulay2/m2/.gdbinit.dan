@@ -1,8 +1,6 @@
 # -*- sh -*-
 echo -- loading .gdbinit\n
-# when debugging, gdb sets a trap in the memory space of ld.so, so its checksum will always change
-# so we send a message to the loaddata routine to ignore that
-set environment LOADDATA_IGNORE_CHECKSUMS yes
+set print thread-events off
 set auto-load safe-path /
 source .gdb-directories
 source .gdb-files
@@ -15,9 +13,18 @@ b fatal
 b ERROR
 b outofmem
 b abort
-b GC_err_printf
+b __assert_fail
+catch signal SIGABRT
+set args -q --no-randomize --no-time --no-threads
 handle SIGPWR nostop noprint
 handle SIGXCPU nostop noprint
+set unwindonsignal on
+set env GC_NPROCS 1
+set env GC_MARKERS 1
+
+# fix "During startup program terminated with signal ?, Unknown signal." under Mac OS X:
+set startup-with-shell off
+
 # source .gdb-run-it
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

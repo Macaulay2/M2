@@ -1,0 +1,36 @@
+-- -*- M2-comint -*- hash: -776982606
+
+i1 : R=ZZ[x,y,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : f=2*x*y+x*z+y*z+z^2
+
+                         2
+o2 = 2x*y + x*z + y*z + z
+
+o2 : R
+
+i3 : f=2*x^2+x*y+2*y^2+x*z+y*z+2*z^2
+
+       2           2                 2
+o3 = 2x  + x*y + 2y  + x*z + y*z + 2z
+
+o3 : R
+
+i4 : R=ZZ[w,x,y,z]
+
+o4 = R
+
+o4 : PolynomialRing
+
+i5 : f=8*x^2+8*y^2+8*z^2+8*w^2+2*x*y+2*x*z+2*y*z+2*x*w+2*y*w+2*z*w
+
+       2            2                   2                          2
+o5 = 8w  + 2w*x + 8x  + 2w*y + 2x*y + 8y  + 2w*z + 2x*z + 2y*z + 8z
+
+o5 : R
+
+i6 : 

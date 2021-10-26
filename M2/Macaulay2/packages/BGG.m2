@@ -1,17 +1,19 @@
 newPackage(
 	"BGG",
-    	Version => "1.4.1", 
-    	Date => "Jan 29, 2012",
+    	Version => "1.4.2", 
+    	Date => "Jan 11, 2016",
     	Authors => {
 	     {Name => "Hirotachi Abo", Email => "abo@uidaho.edu", HomePage => "http://www.webpages.uidaho.edu/~abo/"},
 	     {Name => "Wolfram Decker", Email => "decker@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/decker/"},
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},	     
-	     {Name => "Frank Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
+	     {Name => "Frank-Olaf Schreyer", Email => "schreyer@math.uni-sb.de", HomePage => "http://www.math.uni-sb.de/ag/schreyer/"},
 	     {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith/"},
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}
 	     },
     	Headline => "Bernstein-Gelfand-Gelfand correspondence",
+	Keywords => {"Commutative Algebra"},
 	PackageExports => {"BoijSoederberg"},
+	PackageImports => {"Truncations"},
     	DebuggingMode => false
     	)
 
@@ -880,6 +882,26 @@ doc ///
     Text
       Forms a minimal free complex representing the direct image complex of $F$ in the
       derived category, where $F$ is a module, chain complex or map of modules.
+   Caveat
+    The option "Regularity" is currently not supported.
+///
+
+doc ///
+   Key
+    Regularity
+   Headline
+    Option for directImageComplex
+   Caveat
+    Currently not supported
+///
+doc ///
+   Key
+    Exterior
+   Headline
+    dual exterior algebra cached in a polynomial ring
+   Description
+    Text
+     checked for, and possibly installed, by "symmetricToExterior"
 ///
 
 doc ///
@@ -891,14 +913,14 @@ doc ///
      F = directImageComplex M
    Inputs 
      M: Module
-       graded over a ring of the form S = A[y_0..y_n], representing a sheaf on ${\bf P}^n_A$,
+       graded over a ring of the form S = A[y_0..y_n], representing a sheaf on $\PP^n_A$,
        where A is a polynomial ring.
      Regularity=>ZZ
        the Castelnuovo-Mumford regularity of {\tt M}.  If not provided, this value will be computed
    Outputs
      F: ChainComplex
        complex of free modules over A. Homology in homological degree -i is 
-       $R^i \pi_* {\mathcal M}$, where ${\mathcal M}$ is the sheaf on ${\bf P}^n_A$ represented by M.
+       $R^i \pi_* {\mathcal M}$, where ${\mathcal M}$ is the sheaf on $\PP^n_A$ represented by M.
    Description
     Text
       The computation is done using the exterior algebra method described by Eisenbud and Schreyer,
@@ -915,25 +937,25 @@ doc ///
       for the variables of A as well as for the variables of S (bihomogeneous).
       
       It is proven in loc. cit. that every complex of free modules can be realized
-      as the direct image of a vector bundle on ${\bf P}^n_A$.
+      as the direct image of a vector bundle on $\PP^n_A$.
       
       The following example can be used to study the loci in the family of extensions
-      of a pair of vector bundles on $\bf P^1$ where the extension bundle has a given 
+      of a pair of vector bundles on $\PP^1$ where the extension bundle has a given
       splitting type: this type is calculated by the Fitting ideals of the
       matrices defining the direct image complexes of various twists of the bundle.
       See Section 5 in loc. cite. It is conjectured there that all the sums of
       these Fitting ideals for the universal extension of 
-      $\mathcal O_{P^1}^{r-1}$ by $\mathcal O_{P^1}(d)$ are radical, 
+      $\mathcal O_{\PP^1}^{r-1}$ by $\mathcal O_{\PP^1}(d)$ are radical,
       as in the example below.
       
-      First we examine the extensions of ${\mathcal O}_{P^1}(1)$ by ${\mathcal O}_{P^1}(-3)$.
+      First we examine the extensions of ${\mathcal O}_{\PP^1}(1)$ by ${\mathcal O}_{\PP^1}(-3)$.
       There is a 3-dimensional vector space 
       $$
-      Ext^1({\mathcal O}_{P^1}(1),{\mathcal O}_{P^1}(-3))
+      Ext^1({\mathcal O}_{\PP^1}(1),{\mathcal O}_{\PP^1}(-3))
       $$
       of extensions. The ``universal extension'' is thus a bundle on
-      ${\bf P^1}\times Ext$. The locus where the extension
-      bundle splits as ${\mathcal O}_{P^1}(-2) \oplus {\mathcal O}_{P^1}$ is the
+      $\PP^1\times Ext$. The locus where the extension
+      bundle splits as ${\mathcal O}_{\PP^1}(-2) \oplus {\mathcal O}_{\PP^1}$ is the
       locus where the map in the direct image complex drops rank, and this is
       the (cone over a) conic, defined by the determinant of this matrix.
     Example
@@ -945,7 +967,7 @@ doc ///
       det (F.dd_0)
     Text
       Here is a larger example, the extension of 
-      ${\mathcal O}_{P^1}^2$ by ${\mathcal O}_{P^1}(6)$
+      ${\mathcal O}_{\PP^1}^2$ by ${\mathcal O}_{\PP^1}(6)$
     Example
       r=3;
       d=6;
@@ -970,7 +992,7 @@ doc ///
    Inputs
      F:Matrix
        a homomorphism $F : M \rightarrow N$ of graded $S = A[y_0..y_n]$ modules, graded of degree 0,
-       where we think of $M$ and $N$ as representing sheaves on ${\bf P}^n_A$
+       where we think of $M$ and $N$ as representing sheaves on $\PP^n_A$
    Outputs
      piF:ChainComplexMap
        the induced map on chain complexes {\tt piF : directImageComplex M --> directImageComplex N}
@@ -1070,6 +1092,7 @@ doc ///
 doc ///
    Key 
      universalExtension
+     (universalExtension, List, List)
    Headline
      Universal extension of vector bundles on P^1
    Usage
@@ -1084,12 +1107,12 @@ doc ///
        representing the extension
    Description
     Text
-     Every vector bundle E on ${\mathbb P}^1$ splits as a sum of line bundles 
+     Every vector bundle E on $\PP^1$ splits as a sum of line bundles
      OO(a_i). If La is a list of integers, we write E(La) for the direct sum of the
      line bundle OO(La_i).  Given two such bundles specified by the lists
      La and Lb this script constructs a module representing the universal
      extension of E(Lb) by E(La). It is defined on the product variety
-     Ext^1(E(La), E(Lb)) x ${\mathbb P}^1$, and represented here by
+     Ext^1(E(La), E(Lb)) x $\PP^1$, and represented here by
      a graded module over the coordinate ring S = A[y_0,y_1] of this variety;
      here A is the coordinate ring of Ext^1(E(La), E(Lb)), which is a polynomial
      ring.
@@ -1225,7 +1248,7 @@ doc ///
      (projectiveProduct, Ring, List)
      (projectiveProduct, Matrix, List)
    Headline
-     Makes a product of projective spaces and a system of paramters
+     Makes a product of projective spaces and a system of parameters
    Usage
      (S, params) = projectiveProduct(A,dimList)
    Inputs 
@@ -1235,7 +1258,7 @@ doc ///
    Outputs
      S: Ring
      params: Matrix
-       S is the iterated tower ring A[x_(0,0)..x_(0,d1)]..[..x_(n,dn)] reprsenting the product
+       S is the iterated tower ring A[x_(0,0)..x_(0,d1)]..[..x_(n,dn)] representing the product
        P_A^{d1} x ..x P_A^{dn}, where the products are relative to A, and params is a system
        of multilinear forms in S. They are sparse if M is not present, or determined by M
        if it is.
@@ -1249,7 +1272,7 @@ TEST///
 	  E = ZZ/32003[e_0..e_2, SkewCommutative=>true];
 	  M = coker matrix {{x_0^2, x_1^2}};
 	  m = presentation truncate(regularity M,M);
-	  assert(symExt(m,E)==map(E^{4:1},E^4,{{e_2,e_1,e_0,0},{0,e_2,0,e_0},{0,0,e_2,e_1},{3:0,e_2}}))
+	  assert(symExt(m,E)==map(E^{{1}, {1}, {1}, {1}},E^4,{{e_2, 0, 0, 0}, {e_1, e_2, 0, 0}, {e_0, 0, e_2, 0}, {0, e_0, e_1, e_2}}))
 ///
 
 TEST///
@@ -1280,7 +1303,7 @@ TEST ///
 	  alphad = map(E^1,E^{2:-1},{{e_1,e_2}})
           assert(matrix entries beilinson(alphad,S) == matrix {{x_0, 0, -x_2, 0, x_0, x_1}})
           alpha = map(E^{2:-1},E^{1:-2},{{e_1},{e_2}});
-	  assert(matrix entries beilinson(alpha,S) ==  map(S^6,S^1,{{0}, {-1}, {0}, {1}, {0}, {0}}))
+	  assert(matrix entries beilinson(alpha,S) ==  map(S^6,S^1,{{0}, {1}, {0}, {-1}, {0}, {0}}))
 ///
 
 
@@ -1348,13 +1371,13 @@ TEST///
   assert(betti L == ans)
 ///
 
-{*
+-*
 --I don't see why the following doesn't work. The output of the left side sure LOOKS like that on the right
 TEST///
 A = ZZ/11[a,b]
 (projectiveProduct(A,{1,1}))_0 === A[x_(0,0), x_(0,1)][x_(1,0), x_(1,1)]
 ///
-*}
+*-
 
 TEST///
 A = QQ[a,b]
@@ -1367,6 +1390,6 @@ end
 
 restart
 uninstallPackage "BGG"
-notify=true
 installPackage "BGG"
+check "BGG"
 viewHelp BGG

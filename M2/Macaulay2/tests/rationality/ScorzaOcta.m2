@@ -108,13 +108,13 @@ coeffMatrixR = (MQ,d,Fprec) -> (
      sub(MR,Fprec)
      )     
 
--- Coefficent Matrix of the R_i for Scorza
+-- Coefficient Matrix of the R_i for Scorza
 ScorzaR = (n,CD,g,Fprec) -> (
      MQ := coeffMatrixQ(PolyScorza(n,CD,g),4);
      coeffMatrixR(MQ,3*n+1,Fprec)
      )
      
--- Coefficent Matrix of the R_i for Octa
+-- Coefficient Matrix of the R_i for Octa
 OctaR = (n,CD,g,Fprec) -> (
      MQ := coeffMatrixQ(PolyOcta(n,CD,g),8);
      coeffMatrixR(MQ,3*n+2,Fprec)

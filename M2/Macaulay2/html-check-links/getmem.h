@@ -2,7 +2,7 @@
 #define GETMEM_H
 #include <string.h>
 
-#include <gc/gc.h>
+#include <M2/gc-include.h>
 
 extern void outofmem() __attribute__ ((noreturn));
 static inline char *getmem(unsigned n) {

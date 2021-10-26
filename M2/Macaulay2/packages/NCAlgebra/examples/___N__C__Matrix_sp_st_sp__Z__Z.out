@@ -1,0 +1,39 @@
+-- -*- M2-comint -*- hash: -1967855044
+
+i1 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o1 = B
+
+o1 : NCQuotientRing
+
+i2 : M = ncMatrix {{x, y, z}}
+
+o2 = | x y z |
+
+o2 : NCMatrix
+
+i3 : sigma = ncMap(B,B,{y,z,x})
+
+o3 = NCRingMap B <--- B
+
+o3 : NCRingMap
+
+i4 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
+
+o4 = | x y z |
+     | y z x |
+     | z x y |
+
+o4 : NCMatrix
+
+i5 : N*3
+
+o5 = | 3*x 3*y 3*z |
+     | 3*y 3*z 3*x |
+     | 3*z 3*x 3*y |
+
+o5 : NCMatrix
+
+i6 : 

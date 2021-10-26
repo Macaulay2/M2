@@ -1,0 +1,28 @@
+-- -*- M2-comint -*- hash: -226670168
+
+i1 : needsPackage("Bertini", Configuration=>{"BERTINIexecutable"=>"/folder/subfolder/bertini"})
+
+o1 = Bertini
+
+o1 : Package
+
+i2 : R = CC[x,y]
+
+o2 = R
+
+o2 : PolynomialRing
+
+i3 : F = {x^2-1,y^2-2}
+
+       2       2
+o3 = {x  - 1, y  - 2}
+
+o3 : List
+
+i4 : solns = bertiniZeroDimSolve(F)
+
+o4 = {{1, 1.41421}, {1, -1.41421}, {-1, 1.41421}, {-1, -1.41421}}
+
+o4 : List
+
+i5 : 

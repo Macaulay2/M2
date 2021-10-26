@@ -1,0 +1,6 @@
+maybe we could make errorDepth equal to loadDepth sooner, to improve error messages:
+
+    i15 : run ///M2 -q -e 'print (loadDepth,errorDepth); exit 0'///
+    Macaulay2, version 1.6.0.1
+    with packages: ConwayPolynomials, Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra, TangentCone
+    (3, 0)

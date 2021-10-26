@@ -1,23 +1,33 @@
 SHARED_UNITTEST_CCFILES := \
   testMain \
     M2-cpp-replacement \
-    M2mem-replacement \
     basics-test \
     fromStream
 
 UNITTEST_CCFILES := \
     $(SHARED_UNITTEST_CCFILES) \
+    NCGroebnerTest \
+    PointArray \
+    ARingZZTest \
+    ARingQQFlintTest \
+    ARingQQGmpTest \
+    ARingRRTest \
+    ARingCCTest \
     ARingRRRTest \
+    ARingRRiTest \
+    ARingCCCTest \
     ARingZZpTest \
     ARingGFTest \
     RingZZTest \
     RingZZpTest \
     RingQQTest \
-    RingRRRTest \
-    RingCCCTest \
     RingTowerTest \
     DMatZZpTest \
+    ResTest \
     SubsetTest  
+
+#    RingRRRTest \
+#    RingCCCTest \
      
 
 SHARED_UNITTEST_CFILES += \
@@ -28,7 +38,7 @@ UNITTEST_CFILES += \
 
 UNITTEST_TARGET := testMain
 
-GTEST_DIR := ../../../libraries/final/gtest/
+GTEST_DIR := $(BUILTLIBPATH)/include/gtest
 
 E_FILES := $(addprefix ../, $(INTERFACE) $(COMMANDS) $(C_FILES))
 F4_FILES := $(addprefix ../f4/, $(F4_CCFILES))
@@ -37,7 +47,7 @@ E_OBJECT_FILES := $(addsuffix .o, $(E_FILES) $(F4_FILES))
 UNITTEST_FILES := $(UNITTEST_CCFILES) $(UNITTEST_CFILES)
 UNITTEST_SHARED_FILES := $(SHARED_UNITTEST_CCFILES) $(SHARED_UNITTEST_CFILES)
 
-UNITTEST_OBJECT_FILES :=  $(addsuffix .o, $(UNITTEST_FILES))
+UNITTEST_OBJECT_FILES :=  $(addsuffix .o, $(UNITTEST_FILES)) ../../d/M2mem.o ../../d/memdebug.o ../../d/debug.o
 UNITTEST_SHARED_OBJECT_FILES :=  $(addsuffix .o, $(UNITTEST_SHARED_FILES))
 
 

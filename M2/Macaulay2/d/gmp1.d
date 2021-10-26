@@ -1,11 +1,6 @@
 -- this file is small, so the exported definitions can be imported into the engine
-declarations "
-    #include <math.h>
-    #include <gmp.h>
-    #include <mpfr.h>
-";
 
-header "#include \"gmp_aux.h\"";
+header "";
 
 --This file contains gmp related functions.
 --Functions in this file may make calls to stdio.
@@ -14,14 +9,15 @@ use gmp;
 use stdio;
 use err;
 
-pow(x:ZZ, y:ZZ, n:ulong) ::= Ccode( void, "mpz_pow_ui(", x, ",", y, ",", n, ")" );
+pow(x:ZZmutable, y:ZZ, n:ulong) ::= Ccode( void, "mpz_pow_ui(", x, ",", y, ",", n, ")" );
 
 export (x:ZZ) ^ (n:int) : ZZ := (
      if n < 0 then fatal("internal error: negative exponent for integer power"); -- what else can we do???
      if isZero(x) then return x;
-     y := newZZ();
+     y := newZZmutable();
      pow(y,x,ulong(n));
-     y);
+     moveToZZandclear(y));
+
 export (x:ZZ) ^ (n:ZZ) : ZZ := (
      if isNegative(n) then fatal("internal error: negative exponent for integer power"); -- what else can we do???
      if !isULong(n) then fatal("integer exponent too large");
@@ -29,9 +25,10 @@ export (x:ZZ) ^ (n:ZZ) : ZZ := (
 
 export powermod(x:ZZ, y:ZZ, n:ZZ) : ZZ := (
      -- z = x^y mod n
-     z := newZZ();
+     z := newZZmutable();
      Ccode( void, "mpz_powm(",  z, ",",  x, ",",  y, ",",  n, ")" );
-     z);
+     moveToZZandclear(z)
+     );
 
 export (x:QQ) ^ (nn:ZZ) : QQ := (
      if !isLong(nn) then fatal("integer exponent too large");
@@ -40,7 +37,7 @@ export (x:QQ) ^ (nn:ZZ) : QQ := (
      if n < 0 then (
 	  x = inv(x);
 	  n = -n);
-     newRationalCanonical(numeratorRef(x)^ulong(n), denominatorRef(x)^ulong(n))
+     newQQCanonical(numeratorRef(x)^ulong(n), denominatorRef(x)^ulong(n))
      );
 
 -- printing
@@ -51,9 +48,20 @@ floor(x:double) ::= Ccode(double, "floor(", x, ")" );
 log2ten := log(10.) / log(2.);
 base := 10;
 
-getstr(returnexponent:long, base:int, sigdigs:int, x:RR) ::= tostring(
-     Ccode(charstarOrNull, "(M2_charstarOrNull) mpfr_get_str((char *)0,&", returnexponent, ",",
-	  base, ",(size_t)", sigdigs, ",", x, ",GMP_RNDN)"));
+getstr(returnexponent:long, base:int, sigdigs:int, x:RR) ::= (
+     strptr := Ccode(charstarOrNull, "(M2_charstarOrNull) mpfr_get_str((char *)0,&", returnexponent, ",",
+	  base, ",(size_t)", sigdigs, ",", x, ",GMP_RNDN)");
+     ret := tostring(strptr);
+     Ccode(void, "mpfr_free_str(", strptr, ")");
+     ret);
+
+getstr(returnexponent:long, base:int, sigdigs:int, x:RRi) ::= (
+     strptr := Ccode(charstarOrNull, "(M2_charstarOrNull) mpfr_get_str((char *)0,&", returnexponent, ",",
+	  base, ",(size_t)", sigdigs, ",", x, ",GMP_RNDN)");
+     ret := tostring(strptr);
+     Ccode(void, "mpfr_free_str(", strptr, ")");
+     ret);
+
 export format(
      s:int,			  -- number of significant digits (0 means all)
      ac:int,	    -- accuracy, how far to right of point to go (-1 means all)
@@ -150,6 +158,17 @@ export printingSeparator := "e";			    -- was "*10^"
 export tostringRR(x:RR):string := concatenate(format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,x));
 tostringRRpointer = tostringRR;
 
+export tostringRRi(x:RRi):string := concatenate( 
+    array(string)(
+       	"[",
+       	tostringRR(leftRR(x)),
+       	",",
+       	tostringRR(rightRR(x)),
+       	"]",
+        if isEmpty(x) then " (an empty interval)" else ""
+       	));  
+tostringRRipointer = tostringRRi;  
+
 
 export toExternalString(x:RR):string := (
      if isinf(x) then return if x < 0 then "-infinity" else "infinity";
@@ -173,6 +192,9 @@ export toExternalString(x:RR):string := (
 	       if ex != long(0) then "e" else "",
 	       if ex != long(0) then tostring(ex) else ""
 	       )));
+
+export toExternalString(x:RRi):string := (
+     concatenate(array(string)("[", toExternalString(leftRR(x)),",", toExternalString(rightRR(x)),"]")));
 
 export format(
      s:int,			  -- number of significant digits (0 means all)

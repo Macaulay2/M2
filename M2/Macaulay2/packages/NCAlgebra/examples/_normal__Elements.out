@@ -1,0 +1,51 @@
+-- -*- M2-comint -*- hash: 1850710827
+
+i1 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o1 = B
+
+o1 : NCQuotientRing
+
+i2 : basis(2,B)
+
+o2 = | x^2 y*x x*y y^2 x*z y*z |
+
+o2 : NCMatrix
+
+i3 : normalElements(B,2,r,s)
+Normal monomials of degree 2:
+ 2
+x
+ 2
+y
+Components of the normal variety, excluding normal monomials:
+
+o3 = {| r_(y*z) r_(x*z) r_(y*x)-r_(x*y) |}
+
+o3 : List
+
+i4 : normalElements(B,3,t,u)
+Normal monomials of degree 3:
+none
+Components of the normal variety, excluding normal monomials:
+
+o4 = {| t_(y^2*z) t_(y*x*z)+t_(x*y*z) t_(x^2*z) t_(y^3)-t_(x*y*z) t_(x*y^2)
+     ------------------------------------------------------------------------
+     t_(y*x*y) t_(x^2*y) t_(x*y*x) t_(x^3)+t_(x*y*z) |}
+
+o4 : List
+
+i5 : g = -y^3-x*y*z+y*x*z+x^3
+
+       3          3
+o5 = -y +yxz-xyz+x
+
+o5 : B
+
+i6 : isCentral g
+
+o6 = true
+
+i7 : 

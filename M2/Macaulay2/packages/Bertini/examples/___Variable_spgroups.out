@@ -1,0 +1,19 @@
+-- -*- M2-comint -*- hash: -273104196
+
+i1 : R = CC[x,y];
+
+i2 : F1 = {x*y+1,2*x*y+3*x+4*y+5};
+
+i3 : bertiniZeroDimSolve(F1, AffVariableGroup=>{{x},{y}});
+
+i4 : hR =CC[x0,x1,y0,y1]
+
+o4 = hR
+
+o4 : PolynomialRing
+
+i5 : F2 = {x1*y1+x0*y0,2*x1*y1+3*x1*y0+4*x0*y1+5*x0*y0};
+
+i6 : bertiniZeroDimSolve(F2,HomVariableGroup=>{{x0,x1},{y0,y1}});
+
+i7 : 

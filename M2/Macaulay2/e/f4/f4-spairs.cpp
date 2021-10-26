@@ -1,19 +1,24 @@
-// Copyright 2005 Michael E. Stillman
+// Copyright 2005-2021 Michael E. Stillman
 
-#include <algorithm>
-#include "f4-spairs.hpp"
+#include "f4/f4-spairs.hpp"
+
+#include "mem.hpp"            // for stash
+#include "style.hpp"          // for INTSIZE
+
+#include <gc/gc_allocator.h>  // for gc_allocator
+#include <stdint.h>           // for int32_t
+#include <stdio.h>            // for fprintf, stderr, size_t
+#include <algorithm>          // for stable_sort
+#include <vector>             // for vector, vector<>::iterator
 
 F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0)
-  : M(M0),
-    gb(gb0),
-    heap(0),
-    this_set(0),
-    nsaved_unneeded(0)
+    : M(M0), gb(gb0), heap(0), this_set(0), nsaved_unneeded(0)
 {
   max_varpower_size = 2 * M->n_vars() + 1;
 
   spair *used_to_determine_size = 0;
-  size_t spair_size = sizeofspair(used_to_determine_size,M->max_monomial_size());
+  size_t spair_size =
+      sizeofspair(used_to_determine_size, M->max_monomial_size());
   spair_stash = new stash("F4 spairs", spair_size);
 }
 
@@ -27,10 +32,7 @@ F4SPairSet::~F4SPairSet()
   delete spair_stash;
 }
 
-spair *F4SPairSet::make_spair(spair_type type,
-                              int deg,
-                              int i,
-                              int j)
+spair *F4SPairSet::make_spair(spair_type type, int deg, int i, int j)
 {
   spair *result = reinterpret_cast<spair *>(spair_stash->new_elem());
   result->next = 0;
@@ -56,11 +58,7 @@ void F4SPairSet::insert_spair(pre_spair *p, int me)
   heap = result;
 }
 
-void F4SPairSet::delete_spair(spair *p)
-{
-  spair_stash->delete_elem(p);
-}
-
+void F4SPairSet::delete_spair(spair *p) { spair_stash->delete_elem(p); }
 void F4SPairSet::insert_generator(int deg, packed_monomial lcm, int col)
 {
   spair *p = make_spair(F4_SPAIR_GEN, deg, col, -1);
@@ -73,10 +71,8 @@ bool F4SPairSet::pair_not_needed(spair *p, gbelem *m)
 {
   if (p->type != F4_SPAIR_SPAIR && p->type != F4_SPAIR_RING) return false;
   if (M->get_component(p->lcm) != M->get_component(m->f.monoms)) return false;
-  return M->unnecessary(m->f.monoms,
-                        gb[p->i]->f.monoms,
-                        gb[p->j]->f.monoms,
-                        p->lcm);
+  return M->unnecessary(
+      m->f.monoms, gb[p->i]->f.monoms, gb[p->j]->f.monoms, p->lcm);
 }
 
 int F4SPairSet::remove_unneeded_pairs()
@@ -87,7 +83,7 @@ int F4SPairSet::remove_unneeded_pairs()
   // MES: Check the ones in this_set? Probably not needed...
   spair head;
   spair *p = &head;
-  gbelem *m = gb[gb.size()-1];
+  gbelem *m = gb[gb.size() - 1];
   int nremoved = 0;
 
   head.next = heap;
@@ -100,8 +96,8 @@ int F4SPairSet::remove_unneeded_pairs()
         tmp->next = 0;
         delete_spair(tmp);
       }
-  else
-    p = p->next;
+    else
+      p = p->next;
   heap = head.next;
   return nremoved;
 }
@@ -117,7 +113,7 @@ int F4SPairSet::determine_next_degree(int &result_number)
       return 0;
     }
   nextdeg = heap->deg;
-  for (p = heap->next; p!=0; p=p->next)
+  for (p = heap->next; p != 0; p = p->next)
     if (p->deg > nextdeg)
       continue;
     else if (p->deg < nextdeg)
@@ -132,15 +128,14 @@ int F4SPairSet::determine_next_degree(int &result_number)
 }
 
 int F4SPairSet::prepare_next_degree(int max, int &result_number)
-  // Returns the (sugar) degree being done next, and collects all (or at
-  // most 'max', if max>0) spairs in this lowest degree.
-  // Returns the degree, sets result_number.
+// Returns the (sugar) degree being done next, and collects all (or at
+// most 'max', if max>0) spairs in this lowest degree.
+// Returns the degree, sets result_number.
 {
   this_set = 0;
   int result_degree = determine_next_degree(result_number);
   if (result_number == 0) return 0;
-  if (max > 0 && max < result_number)
-    result_number = max;
+  if (max > 0 && max < result_number) result_number = max;
   int len = result_number;
   spair head;
   spair *p;
@@ -163,8 +158,8 @@ int F4SPairSet::prepare_next_degree(int max, int &result_number)
 }
 
 spair *F4SPairSet::get_next_pair()
-  // get the next pair in this degree (the one 'prepare_next_degree' set up')
-  // returns 0 if at the end
+// get the next pair in this degree (the one 'prepare_next_degree' set up')
+// returns 0 if at the end
 {
   spair *result;
   if (!this_set) return 0;
@@ -176,7 +171,7 @@ spair *F4SPairSet::get_next_pair()
 }
 
 int F4SPairSet::find_new_pairs(bool remove_disjoints)
-  // returns the number of new pairs found
+// returns the number of new pairs found
 {
   nsaved_unneeded += remove_unneeded_pairs();
   int len = construct_pairs(remove_disjoints);
@@ -184,16 +179,13 @@ int F4SPairSet::find_new_pairs(bool remove_disjoints)
 }
 
 void F4SPairSet::display_spair(spair *p)
-  // A debugging routine which displays an spair
+// A debugging routine which displays an spair
 {
   if (p->type == F4_SPAIR_SPAIR)
     {
-      fprintf(stderr,"[%d %d deg %d lcm ",
-              p->i,
-              p->j,
-              p->deg);
+      fprintf(stderr, "[%d %d deg %d lcm ", p->i, p->j, p->deg);
       M->show(p->lcm);
-      fprintf(stderr,"\n");
+      fprintf(stderr, "\n");
     }
   else
     {
@@ -202,16 +194,16 @@ void F4SPairSet::display_spair(spair *p)
 }
 
 void F4SPairSet::display()
-  // A debugging routine which displays the spairs in the set
+// A debugging routine which displays the spairs in the set
 {
-  fprintf(stderr,"spair set\n");
-  for (spair *p = heap; p != 0; p=p->next)
+  fprintf(stderr, "spair set\n");
+  for (spair *p = heap; p != 0; p = p->next)
     {
       fprintf(stderr, "   ");
       display_spair(p);
     }
-  fprintf(stderr,"current set\n");
-  for (spair *p = this_set; p != 0; p=p->next)
+  fprintf(stderr, "current set\n");
+  for (spair *p = this_set; p != 0; p = p->next)
     {
       fprintf(stderr, "   ");
       display_spair(p);
@@ -222,8 +214,7 @@ void F4SPairSet::display()
 // Construction of new spairs //
 ////////////////////////////////
 
-pre_spair *
-F4SPairSet::create_pre_spair(int j)
+pre_spair *F4SPairSet::create_pre_spair(int j)
 {
   // Steps:
   //  a. allocate the space for the pre_spair and the varpower monomial
@@ -233,7 +224,7 @@ F4SPairSet::create_pre_spair(int j)
   result->j = j;
   result->type = F4_SPAIR_SPAIR;
   M->quotient_as_vp(gb[j]->f.monoms,
-                    gb[gb.size()-1]->f.monoms,
+                    gb[gb.size() - 1]->f.monoms,
                     result->quot,
                     result->deg1,
                     result->are_disjoint);
@@ -242,11 +233,10 @@ F4SPairSet::create_pre_spair(int j)
   return result;
 }
 
-void insert_pre_spair(VECTOR(VECTOR(pre_spair *) ) &bins, pre_spair *p)
+void insert_pre_spair(VECTOR(VECTOR(pre_spair *)) & bins, pre_spair *p)
 {
   int d = p->deg1;
-  if (d >= bins.size())
-    bins.resize(d+1);
+  if (d >= bins.size()) bins.resize(d + 1);
   bins[d].push_back(p);
 }
 
@@ -258,15 +248,15 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
 
   VP.reset();
   PS.reset();
-  gbelem *me = gb[gb.size()-1];
+  gbelem *me = gb[gb.size() - 1];
   int me_component = static_cast<int>(M->get_component(me->f.monoms));
 
   typedef VECTOR(pre_spair *) spairs;
 
-  VECTOR( VECTOR(pre_spair *) ) bins;
+  VECTOR(VECTOR(pre_spair *)) bins;
 
   // Loop through each element of gb, and create the pre_spair
-  for (int i=0; i<gb.size()-1; i++)
+  for (int i = 0; i < gb.size() - 1; i++)
     {
       if (gb[i]->minlevel == ELEM_NON_MIN_GB) continue;
       if (me_component != M->get_component(gb[i]->f.monoms)) continue;
@@ -281,23 +271,20 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
 
   PreSPairSorter C;
   int n_new_pairs = 0;
-  for (int i=0; i<bins.size(); i++)
+  for (int i = 0; i < bins.size(); i++)
     {
       if (bins[i].size() == 0) continue;
       // First sort the monomials of this degree
 
-      //TODO: MES remove all uses of QuickSorter here.
-      //      QuickSorter<PreSPairSorter>::sort(&C, &(bins[i])[0], bins[i].size());
-
-      std::sort(bins[i].begin(), bins[i].end(), C);
+      std::stable_sort(bins[i].begin(), bins[i].end(), C);
 
       // Loop through each degree and potentially insert...
       spairs::iterator first = bins[i].begin();
       spairs::iterator next = first;
       spairs::iterator end = bins[i].end();
-      for ( ; first != end; first = next)
+      for (; first != end; first = next)
         {
-          next = first+1;
+          next = first + 1;
           pre_spair *chosen = *first;
           while (next != end)
             {
@@ -316,7 +303,7 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
               // The following condition is that gcd is not one
               if (!remove_disjoints || !chosen->are_disjoint)
                 {
-                  insert_spair(chosen, INTSIZE(gb)-1);
+                  insert_spair(chosen, INTSIZE(gb) - 1);
                   n_new_pairs++;
                 }
             }
@@ -329,4 +316,5 @@ int F4SPairSet::construct_pairs(bool remove_disjoints)
 
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+//  indent-tabs-mode: nil
 //  End:

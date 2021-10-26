@@ -1,0 +1,12 @@
+diff -ur ../tmp/m4/ntl-check.m4 m4/ntl-check.m4
+--- ../tmp/m4/ntl-check.m4	2016-12-29 09:44:18.000000000 -0500
++++ m4/ntl-check.m4	2017-06-07 10:23:21.494542047 -0400
+@@ -58,7 +58,7 @@
+ 		NTL_LIBS="-lntl"
+ 	fi
+ ###	CFLAGS="${BACKUP_CFLAGS} ${NTL_CFLAGS} ${GMP_CFLAGS}"
+-	CXXFLAGS="${BACKUP_CFLAGS} ${BACKUP_CXXFLAGS} ${NTL_CFLAGS} ${GMP_CFLAGS}"
++	CXXFLAGS="${BACKUP_CXXFLAGS} ${NTL_CFLAGS} ${GMP_CFLAGS}"
+ 	LIBS="${BACKUP_LIBS} ${NTL_LIBS} ${GMP_LIBS}"
+ 
+ 	AC_TRY_LINK(

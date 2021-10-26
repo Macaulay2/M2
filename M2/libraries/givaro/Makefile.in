@@ -1,18 +1,29 @@
-# VERSION = 3.3.5
-# URL = http://ljk.imag.fr/CASYS/LOGICIELS/givaro/Downloads
+# http://givaro.forge.imag.fr/
+# svn://scm.forge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/givaro/trunk
+# see also (for older releases) https://forge.imag.fr/projects/givaro for source code
+# see also (for newer releases) https://github.com/linbox-team/givaro/releases
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 
-# our snapshot taken from:
-#  svn://scm.forge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/givaro/trunk
-VERSION = 3.4.3.491
-URL = http://macaulay2.com/Downloads/OtherSourceCode/trunk
-PRECONFIGURE = NOCONFIGURE=yes ./autogen.sh
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# compilation of givaro needs a little extra memory
+VLIMIT = 900000
+MLIMIT = 900000
+
+VERSION = 4.1.1
+#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# the patch modifies test/Makefile.am, so we must remake test/Makefile.in
+PRECONFIGURE = autoreconf -vif
+
 LICENSEFILES = COPYRIGHT Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt
 
 # linking givaro as a shared library is bad, because then under Mac OS X its static constructors
 # get run before ours do, and it calls our "operator new", which calls GC_malloc, before we've
 # had a chance to initialize it.
 CONFIGOPTIONS += --disable-shared
+
+# Disable vectorized instructions: SSE4.1, AVX, AVX2:
+# (this is needed if we wish to distribute binaries to others.  But it might be bad
+# for us if we don't.  So the configure script should have an option for that.)
+CONFIGOPTIONS += --disable-simd
 
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/givaro/Makefile

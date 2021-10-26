@@ -1,0 +1,51 @@
+-- -*- M2-comint -*- hash: 854427707
+
+i1 : writeParameterFile(storeBM2Files,{2,3,5,7});
+
+i2 : fileExists(storeBM2Files|"/final_parameters")
+
+o2 = true
+
+i3 : moveB'File(storeBM2Files,"final_parameters","start_parameters")
+
+i4 : fileExists(storeBM2Files|"/final_parameters")
+
+o4 = false
+
+i5 : fileExists(storeBM2Files|"/start_parameters")
+
+o5 = true
+
+i6 : moveB'File(storeBM2Files,"start_parameters","backup",CopyB'File=>true)
+
+i7 : fileExists(storeBM2Files|"/start_parameters")
+
+o7 = true
+
+i8 : fileExists(storeBM2Files|"/backup")
+
+o8 = true
+
+i9 : Dir1 = temporaryFileName();
+
+i10 : makeDirectory Dir1
+
+i11 : writeParameterFile(storeBM2Files,{2,3,5,7});
+
+i12 : moveB'File(storeBM2Files,"final_parameters","start_parameters",MoveToDirectory=>Dir1)
+
+i13 : fileExists(Dir1|"/start_parameters")
+
+o13 = true
+
+i14 : makeDirectory (storeBM2Files|"/Dir2")
+
+i15 : writeParameterFile(storeBM2Files,{2,3,5,7});
+
+i16 : moveB'File(storeBM2Files,"final_parameters","start_parameters",SubFolder=>"Dir2")
+
+i17 : fileExists(storeBM2Files|"/Dir2/start_parameters")
+
+o17 = true
+
+i18 : 

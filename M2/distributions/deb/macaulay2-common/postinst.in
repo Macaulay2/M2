@@ -4,7 +4,8 @@ prefix=@prefix@
 case "$1" in
     abort-upgrade|configure)
 	for p in @PACKAGES@
-	do install-info --quiet --info-dir="@infodir@" "@infodir@/$p.info"
+	do # info files get installed by dpkg as part of "Processing triggers for install-info (5.2.0.dfsg.1-2) ..."
+	   : install-info --quiet --info-dir="@infodir@" "@infodir@/$p.info"
 	done ;;
     abort-remove|abort-deconfigure) ;;
     *) echo "postinst called with unknown argument \`$1'" >&2

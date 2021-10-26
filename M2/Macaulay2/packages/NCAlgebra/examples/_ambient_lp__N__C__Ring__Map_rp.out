@@ -1,0 +1,41 @@
+-- -*- M2-comint -*- hash: -1088319854
+
+i1 : A = skewPolynomialRing(QQ,(-1)_QQ,{w,x,y,z})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o1 = A
+
+o1 : NCQuotientRing
+
+i2 : B = QQ{w,x,y,z}/ncIdeal{w*x+x*w,w*y+y*w,x*y+y*x}
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o2 = B
+
+o2 : NCQuotientRing
+
+i3 : f = ncMap(B,A,gens B)
+
+o3 = NCRingMap B <--- A
+
+o3 : NCRingMap
+
+i4 : isWellDefined f
+
+o4 = false
+
+i5 : g = ambient f
+
+o5 = NCRingMap B <--- QQ{w, x, y, z}
+
+o5 : NCRingMap
+
+i6 : (gens ideal A)/g
+
+o6 = {0, 0, 0, zw+wz, zx+xz, zy+yz}
+
+o6 : List
+
+i7 : 

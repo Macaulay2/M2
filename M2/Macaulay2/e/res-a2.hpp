@@ -21,7 +21,7 @@
 
 class gb_node : public our_new_delete
 {
-public:
+ public:
   virtual ~gb_node() {}
   virtual void set_output(gb_node *p) = 0;
 
@@ -31,19 +31,20 @@ public:
   virtual enum ComputationStatusCode calc_gb(int degree) = 0;
   virtual enum ComputationStatusCode calc_gens(int degree) = 0;
 
-  virtual bool is_done() = 0;   // Returns true if computation is completely done,
-                                // if no other generators are received.
+  virtual bool
+  is_done() = 0;  // Returns true if computation is completely done,
+                  // if no other generators are received.
 
-  virtual bool receive_generator(gbvector * f, int n, const ring_elem denom) = 0;
+  virtual bool receive_generator(gbvector *f, int n, const ring_elem denom) = 0;
   // returns true if f is minimal.  'denom' is only used in the 'origsyz>0'
   // case.
 
   // Reduction of a vector f (in correct free module), and its rep 'fsyz'.
-  virtual void reduce(gbvector * &f, gbvector * &fsyz) = 0;
+  virtual void reduce(gbvector *&f, gbvector *&fsyz) = 0;
 
   // Hilbert functions of these nodes...
   // Both of these return 0 if computed, non-zero if interrupted.
-  virtual RingElement /* or null */ * hilbertNumerator() = 0;
+  virtual RingElement /* or null */ *hilbertNumerator() = 0;
 
   virtual int n_gb_elems() const = 0;
   virtual const FreeModule *output_free_module() const = 0;
@@ -69,70 +70,68 @@ class gb_emitter : public gb_node
   int this_degree;
   int n_left;
   int n_i;
-  int n_in_degree;
   int n_gens;
   int *these;
 
   void flush();
   int start_degree(int deg);
-public:
+
+ public:
   gb_emitter(const Matrix *m);
   ~gb_emitter();
   virtual void set_output(gb_node *gg) { g = gg; }
-
   virtual enum ComputationStatusCode calc_gb(int degree);
   virtual enum ComputationStatusCode calc_gens(int degree);
 
   virtual bool is_done();
 
-  virtual bool receive_generator(gbvector *, int, const ring_elem) { return false; }
+  virtual bool receive_generator(gbvector *, int, const ring_elem)
+  {
+    return false;
+  }
 
   // Reduction of a vector f (in correct free module), and its rep 'fsyz'.
-  virtual void reduce(gbvector * &, gbvector * &) {}
-
+  virtual void reduce(gbvector *&, gbvector *&) {}
   // The following routine should NEVER be called
-  virtual RingElement /* or null */ * hilbertNumerator();
+  virtual RingElement /* or null */ *hilbertNumerator();
 
   virtual int n_gb_elems() const { return 0; }
   virtual const FreeModule *output_free_module() const { return gens->rows(); }
   virtual Matrix *get_matrix() { return const_cast<Matrix *>(gens); }
-
   virtual Matrix *min_gens_matrix() { return 0; }
   virtual Matrix *initial_matrix(int) { return 0; }
   virtual Matrix *gb_matrix() { return 0; }
   virtual Matrix *change_matrix() { return 0; }
-
   virtual void text_out(buffer &o) const;
   virtual void stats() const;
 };
 
 class gb2_comp : public gb_node
 {
-private:
+ private:
   // Ring information
   const PolynomialRing *originalR;
   GBRing *GR;
-  const Monoid *M; // flattened monomials (same as originalR->getMonoid())
-  const Ring *K;  // flattened coefficients (same as originalR->getCoefficients())
-  stash *mi_stash; // owned by the creator of this node
+  const Monoid *M;  // flattened monomials (same as originalR->getMonoid())
+  const Ring
+      *K;  // flattened coefficients (same as originalR->getCoefficients())
+  stash *mi_stash;  // owned by the creator of this node
 
   FreeModule *F;
-  FreeModule *Fsyz;     // This is a Schreyer module
-  const SchreyerOrder *S; // If non-NULL, the Schreyer order for F.
+  FreeModule *Fsyz;  // This is a Schreyer module
 
-  int level;                    // what level is this?
-  int state;                    // STATE_NEW_DEGREE, STATE_GB, STATE_GENS, STATE_HILB
+  int level;  // what level is this?
+  int state;  // STATE_NEW_DEGREE, STATE_GB, STATE_GENS, STATE_HILB
   int this_degree;
-  int n_gb_first;               // First GB element in the current degree.
-                                // (or previous degree, if state = STATE_NEW_DEGREE)
+  int n_gb_first;  // First GB element in the current degree.
+                   // (or previous degree, if state = STATE_NEW_DEGREE)
 
   s_pair_heap *spairs;
   s_pair *these_pairs;
   intarray total_pairs;
 
-  array<gb_elem *> gb;
-  Matrix *gbmatrix;
-  array<monideal_pair *> monideals; // baggage for each is 'gb_elem *'
+  VECTOR(gb_elem *) gb;
+  VECTOR(monideal_pair *) monideals;  // baggage for each is 'gb_elem *'
 
   // Syzygies collected
   gb_node *syz;
@@ -144,34 +143,32 @@ private:
   int n_subring;
   int n_syz;
 
-  int n_pairs;                  // Total number of pairs
-  int n_pairs_computed;         // Number of pairs total computed (sum of next 6 integers)
-  int n_pairs_syz;              // #pairs which produced non-zero syzygies
-  int n_pairs_usyz;             // #pairs which produced zero syzygies, after reduction
-  int n_pairs_gb;               // #pairs which produced gb elements
-  int n_pairs_zero;             // #pairs which reduced to 0 (syz reduced to 0 too)
-  int n_pairs_hilb;             // #pairs which were not done, due to HF info
-  int n_pairs_gcd;              // #pairs which were not done, due to gcd=1 pairs
+  int n_pairs;           // Total number of pairs
+  int n_pairs_computed;  // Number of pairs total computed (sum of next 6
+                         // integers)
+  int n_pairs_syz;       // #pairs which produced non-zero syzygies
+  int n_pairs_usyz;      // #pairs which produced zero syzygies, after reduction
+  int n_pairs_gb;        // #pairs which produced gb elements
+  int n_pairs_zero;      // #pairs which reduced to 0 (syz reduced to 0 too)
+  int n_pairs_hilb;      // #pairs which were not done, due to HF info
+  int n_pairs_gcd;       // #pairs which were not done, due to gcd=1 pairs
 
   // Syzygy type
-  int orig_syz;                 // >=0 means how many components to keep.
-                                // < 0 means compute syz's on minimal gens.
+  int orig_syz;  // >=0 means how many components to keep.
+                 // < 0 means compute syz's on minimal gens.
 
-  char is_ideal;
-  int strategy_flags;           // STRATEGY_LONGPOLYNOMIALS, USE_SORT are the current flags used
+  int strategy_flags;  // STRATEGY_LONGPOLYNOMIALS, USE_SORT are the current
+                       // flags used
 
   // Hilbert function information
   char use_hilb;
-  RingElement *hf;              // The Hilbert function, as so far computed
-  int hf_numgens_gb;                    // The HF has been computed for this many GB elements.
-                                // (Used to determine whether to recompute HF).
-  int hf_numgens_F;             // The HF was computed using this size of F.
+  RingElement *hf;    // The Hilbert function, as so far computed
+  int hf_numgens_gb;  // The HF has been computed for this many GB elements.
+                      // (Used to determine whether to recompute HF).
+  int hf_numgens_F;   // The HF was computed using this size of F.
   int n_gb_syz;
 
-  const RingElement *hf_orig;
-  int n_in_degree;              // The number of new elements that we expect to find
-                                // in this degree. <0 means we don't know how many.
-private:
+ private:
   void setup(FreeModule *Fsyz,
              stash *mi_stash,
              gb_node *gens,
@@ -183,25 +180,25 @@ private:
   // S-pair control
   s_pair *new_ring_pair(gb_elem *p, const int *lcm);
   s_pair *new_s_pair(gb_elem *p, gb_elem *q, const int *lcm);
-  void remove_pair(s_pair *& p);
+  void remove_pair(s_pair *&p);
 
   void find_pairs(gb_elem *p);
   void compute_s_pair(s_pair *p);
-  void gb_reduce(gbvector * &f, gbvector * &fsyz);
-  void gb_geo_reduce(gbvector * &f, gbvector * &fsyz);
-  void gb_insert(gbvector * f, gbvector * fsyz, int ismin);
+  void gb_reduce(gbvector *&f, gbvector *&fsyz);
+  void gb_geo_reduce(gbvector *&f, gbvector *&fsyz);
+  void gb_insert(gbvector *f, gbvector *fsyz, int ismin);
 
   int gb_sort_partition(int lo, int hi);
   void gb_sort(int lo, int hi);
 
   void flush_pairs();
-  Matrix *make_lead_term_matrix(); // for computing hilbert functions
+  Matrix *make_lead_term_matrix();  // for computing hilbert functions
 
   void schreyer_append(gbvector *f);
   bool s_pair_step();
   int get_pairs();
 
-public:
+ public:
   gb2_comp(FreeModule *Fsyz,
            stash *mi_stash,
            gb_node *gens,
@@ -214,16 +211,16 @@ public:
   virtual void set_output(gb_node *p);
 
   // calc returns COMP_DONE_*, or COMP_DONE, or COMP_INTERRUPTED.
-  bool receive_generator(gbvector * f, int n, const ring_elem denom);
+  bool receive_generator(gbvector *f, int n, const ring_elem denom);
   void end_degree();
   bool is_done();
 
   enum ComputationStatusCode calc_gb(int deg);
   enum ComputationStatusCode calc_gens(int deg);
 
-  virtual void reduce(gbvector * &f, gbvector * &fsyz);
+  virtual void reduce(gbvector *&f, gbvector *&fsyz);
 
-  virtual RingElement /* or null */ * hilbertNumerator();
+  virtual RingElement /* or null */ *hilbertNumerator();
 
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
   int n_gb_elems() const { return n_gb; }
@@ -233,7 +230,6 @@ public:
   Matrix *initial_matrix(int n);
   Matrix *gb_matrix();
   Matrix *change_matrix();
-
 
   void debug_out(s_pair *q) const;
   void debug_out(buffer &o, s_pair *q) const;
@@ -245,14 +241,14 @@ public:
     @ingroup res
 
     @brief One of the Resolution computations, based on computing step by step.
-    
+
     Induced (Schreyer) orders are used to speed up computation.
 */
 class gbres_comp : public ResolutionComputation
 {
-private:
+ private:
   const PolynomialRing *originalR;
-  stash *mi_stash; // for all of the nodes of the computation
+  stash *mi_stash;  // for all of the nodes of the computation
   GBRing *GR;
   int n_nodes;
   gb_node **nodes;
@@ -260,18 +256,21 @@ private:
   int lo_degree;
   int last_completed_degree;
   int strategy_flags;
-private:
+
+ private:
   void setup(const Matrix *m, int length, int origsyz, int strategy);
 
-protected:
+ protected:
   bool stop_conditions_ok();
 
-public:
+ public:
   gbres_comp(const Matrix *m, int length, int orig_syz, int strategy);
-  gbres_comp(const Matrix *m, int length, int orig_syz,
-          const RingElement *hf, int strategy);
+  gbres_comp(const Matrix *m,
+             int length,
+             int orig_syz,
+             const RingElement *hf,
+             int strategy);
 
-  virtual void remove_res();
   virtual ~gbres_comp();
 
   // Performing the computation
@@ -296,7 +295,10 @@ public:
 
   const Matrix /* or null */ *get_matrix(int level);
 
-  const FreeModule /* or null */ *get_free(int level) { return free_module(level); }
+  const FreeModule /* or null */ *get_free(int level)
+  {
+    return free_module(level);
+  }
 
   M2_arrayint get_betti(int type) const;
   // type is documented under rawResolutionBetti, in engine.h

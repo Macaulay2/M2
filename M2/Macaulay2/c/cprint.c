@@ -86,7 +86,7 @@ void printsymbol(node p){
 void pput(char *s){
      while (*s) {
 	  putchar(*s);
-	  if (*s == '\n') ;
+	  if (*s == '\n') { }
 	  s++;
 	  }
      }
@@ -280,6 +280,8 @@ static void cprintstructtag(node t,bool baseclass) {
   if (baseclass) printf(" BASECLASS");
 }
 
+#define type_decl "unsigned short type_;"
+
 static void cprintarraydef(node t){
      bool tagged = istaggedarraytype(t);
      node m = typedeftail(t);
@@ -289,7 +291,7 @@ static void cprintarraydef(node t){
      if (length(m)==2) len = CADR(m); else len = NULL;
      put(" {");			/* the extra space prevents further indentation! */
      if (tagged) {
-       put("unsigned short type_;");
+       put(type_decl);
      }
      if (length(m) == 1) put("int len;");
      cprint(typ);
@@ -304,7 +306,7 @@ static void cprintobjectdef(node t){
      cprintstructtag(t,TRUE);
      printf(" {");
      if (istaggedobjecttype(t)) {
-       put("unsigned int type_;");
+       put(type_decl);
        had_a_member = TRUE;
      }
      for (m=typedeftail(t); m != NULL; m = CDR(m)) {

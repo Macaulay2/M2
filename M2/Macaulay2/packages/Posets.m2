@@ -1,4 +1,4 @@
--- Copyright 2011, 2012, 2013: David Cook II, Sonja Mapes, Gwyn Whieldon
+-- Copyright 2011, 2012, 2013, 2014: David Cook II, Sonja Mapes, Gwyn Whieldon
 -- You may redistribute this file under the terms of the GNU General Public
 -- License as published by the Free Software Foundation, either version 2
 -- of the License, or any later version.
@@ -9,45 +9,50 @@
 ------------------------------------------
 ------------------------------------------
 
-if version#"VERSION" <= "1.4" then (
-    needsPackage "SimplicialComplexes";
-    needsPackage "Graphs";
-    needsPackage "FourTiTwo";
-    )
-
 newPackage select((
     "Posets",
-        Version => "1.0.6",
-        Date => "26. April 2013",
+        Version => "1.1.3",
+        Date => "May 15, 2021",
         Authors => {
-            {Name => "David Cook II", Email => "dcook8@nd.edu", HomePage => "http://www.nd.edu/~dcook8/"},
+            {Name => "David Cook II", Email => "dwcook@eiu.edu", HomePage => "http://ux1.eiu.edu/~dwcook/"},
             {Name => "Sonja Mapes", Email => "smapes1@nd.edu", HomePage => "http://www.nd.edu/~smapes1/"},
             {Name => "Gwyn Whieldon", Email => "whieldon@hood.edu", HomePage => "http://www.hood.edu/Academics/Departments/Mathematics/Faculty/Gwyneth-Whieldon.html"}
         },
-        Headline => "Package for processing partially ordered sets (posets)",
+        Headline => "partially ordered sets (posets)",
+	Keywords => {"Combinatorics"},
         Configuration => {
-            "DefaultPDFViewer" => "open", -- "open" for Macs and "evince" for Linux
+            "DefaultPDFViewer" => "",
             "DefaultPrecompute" => true,
             "DefaultSuppressLabels" => true
             },
         DebuggingMode => false,
-        if version#"VERSION" > "1.4" then PackageExports => {
+        PackageExports => {
             "SimplicialComplexes",
             "Graphs",
             "FourTiTwo"
-            }
+            },
+	Certification => {
+	     "journal name" => "The Journal of Software for Algebra and Geometry",
+	     "journal URI" => "http://j-sag.org/",
+	     "article title" => "Partially ordered sets in Macaulay2",
+	     "acceptance date" => "5 June 2015",
+	     "published article URI" => "http://msp.org/jsag/2015/7-1/p02.xhtml",
+	     "published article DOI" => "http://dx.doi.org/10.2140/jsag.2015.7.9-15",
+	     "published code URI" => "http://msp.org/jsag/2015/7-1/jsag-v7-n1-x02-Posets.m2",
+	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Posets.m2",
+	     "release at publication" => "3a8d880a524f36a9668750375bb6079a7b00ea0f",
+	     "version at publication" => "1.1.2",
+	     "volume number" => "7",
+	     "volume URI" => "http://msp.org/jsag/2015/7-1/"
+	     },
         ), x -> x =!= null)
 
-if version#"VERSION" <= "1.4" then (
-    needsPackage "SimplicialComplexes";
-    needsPackage "Graphs";
-    needsPackage "FourTiTwo";
-    )
-
 -- Load configurations
-posets'PDFViewer = if instance((options Posets).Configuration#"DefaultPDFViewer", String) then (options Posets).Configuration#"DefaultPDFViewer" else "open";
 posets'Precompute = if instance((options Posets).Configuration#"DefaultPrecompute", Boolean) then (options Posets).Configuration#"DefaultPrecompute" else true;
 posets'SuppressLabels = if instance((options Posets).Configuration#"DefaultSuppressLabels", Boolean) then (options Posets).Configuration#"DefaultSuppressLabels" else true;
+
+if (options Posets).Configuration#"DefaultPDFViewer" != "" then
+    printerr "warning: the \"DefaultPDFViewer\" configuration option is deprecated"
 
 export {
     --
@@ -61,7 +66,6 @@ export {
     "transitiveClosure",
     --
     -- Set default configurations
-    "setPDFViewer",
     "setPrecompute",
         "Precompute",
     "setSuppressLabels",
@@ -130,17 +134,17 @@ export {
     --
     -- TeX & GAP
     "displayPoset",
+        "PDFDirectory",
     "gapConvertPoset",
     "outputTexPoset",
     "texPoset",
         "Jitter",
-        "PDFViewer",
         "SuppressLabels",
     --
     -- Vertices & vertex properties
     "atoms",
     "compare",
-    "connectedComponents",
+  --"connectedComponents",
     "filtration",
     "joinExists",
     "joinIrreducibles",
@@ -174,9 +178,13 @@ export {
     "greeneKleitmanPartition",
     "hPolynomial",
     "moebiusFunction",
+  --"poincare",
+    "poincarePolynomial",
     "rankGeneratingFunction",
     "realRegions",
+    "tuttePolynomial",
     "zetaPolynomial",
+    "coxeterPolynomial",
     --
     -- Properties
     "dilworthNumber",
@@ -184,9 +192,9 @@ export {
     "isAtomic",
     "isBounded",
     "isComparabilityGraph",
-    "isConnected",
+  --"isConnected",
     "isDistributive",
-    "isEulerian",
+  --"isEulerian",
     "isGeometric",
     "isGraded",
     "isLattice",
@@ -262,6 +270,8 @@ toString Poset := p -> toString p.cache#"name"
 Poset _ ZZ := Thing => (P, i) -> P.GroundSet#i
 Poset _ List := List => (P, L) -> P.GroundSet_L
 installMethod(symbol _*, Poset, P -> P.GroundSet)
+vertices Poset := List => P -> P.GroundSet
+vertexSet Poset := List => P -> P.GroundSet
 
 toExternalString Poset := String => P -> "poset(" | toExternalString P.GroundSet | ", " | toExternalString P.Relations | ", " | toString P.RelationMatrix | ")"
 
@@ -271,24 +281,12 @@ transitiveClosure (List, List) := Matrix => (G, R) -> (
     idx := hashTable apply(#G, i -> G_i => i);
     R = for r in R list if first r === last r then continue else {idx#(first r), idx#(last r)};
     D := digraph merge(applyValues(partition(first, R), v -> last \ v), hashTable apply(#G, i -> i => {}), join);
-    -- The next four lines are a temporary work around for descendents [sic] which breaks for cyclic graphs.
-    if isCyclic D then (
-        H := floydWarshall D;
-        matrix apply(#G, i -> apply(#G, j -> if H#(i, j) < 1/0. then 1 else 0))
-        )
-    else matrix apply(Graphs$vertices D, v -> ( Dv := descendents(D, v); apply(Graphs$vertices D, u -> if u === v or member(u, Dv) then 1 else 0)))
+    matrix apply(vertexSet D, v -> ( Dv := descendants(D, v); apply(vertexSet D, u -> if u === v or member(u, Dv) then 1 else 0)))
     )
 
 ------------------------------------------
 -- Set default configurations
 ------------------------------------------
-
-setPDFViewer = method()
-setPDFViewer String := String => viewer -> (
-    alt := posets'PDFViewer;
-    posets'PDFViewer = viewer;
-    alt
-    )
 
 setPrecompute = method()
 setPrecompute Boolean := Boolean => pc -> (
@@ -863,7 +861,7 @@ lcmLatticeRecursive = G -> (
     )
 
 -- Portions of code for generating NCPartitions contributed by Andrew Hoefel.
--- New Type for Noncrossing Partitions to improve diplay of results.
+-- New Type for Noncrossing Partitions to improve display of results.
 NCPartition = new Type of List
 
 ncPartition = L -> new NCPartition from toList \ L
@@ -1037,14 +1035,16 @@ transitiveOrientation Graph := Poset => opts -> G -> (
     if not instance(opts.Random, Boolean) then error "The option Random must be a Boolean.";
     explore := (G, orientation, i, j) -> (
         k := orientation#{i,j};
-        for m in toList G#graph#i do if not member(m, G#graph#j) or abs orientation#{j, m} < k then
+        Ni := toList neighbors(G, i);
+        Nj := toList neighbors(G, j);
+        for m in Ni do if not member(m, Nj) or abs orientation#{j, m} < k then
             if orientation#{i,m} === 0 then (
                 orientation#{i,m} = k;
                 orientation#{m,i} = -k;
                 if not explore(G, orientation, i, m) then return false;
                 )
             else if orientation#{i,m} === -k then return false;
-        for m in toList G#graph#j do if not member(m, G#graph#i) or abs orientation#{i, m} < k then
+        for m in Nj do if not member(m, Ni) or abs orientation#{i, m} < k then
             if orientation#{m,j} === 0 then (
                 orientation#{m,j} = k;
                 orientation#{j,m} = -k;
@@ -1053,7 +1053,7 @@ transitiveOrientation Graph := Poset => opts -> G -> (
             else if orientation#{m,j} === -k then return false;
         true
         );
-    E := edges simpleGraph G;
+    E := toList \ edges G;
     E = (if opts.Random then random else identity) join(E, reverse \ E);
     orientation := new MutableHashTable from apply(E, e -> e => 0);
     k := 0;
@@ -1105,15 +1105,16 @@ youngSubposet ZZ := Poset => n -> (
 -- TeX & GAP
 ------------------------------------------
 
-displayPoset = method(Options => { symbol SuppressLabels => posets'SuppressLabels, symbol PDFViewer => posets'PDFViewer, symbol Jitter => false })
+displayPoset = method(Options => { symbol PDFDirectory => "", symbol SuppressLabels => posets'SuppressLabels, symbol Jitter => false })
 displayPoset Poset := opts -> P -> (
-    if not instance(opts.PDFViewer, String) then error "The option PDFViewer must be a string.";
+    if not instance(opts.PDFDirectory, String) then error "The option PDFDirectory must be a string.";
     if not instance(opts.SuppressLabels, Boolean) then error "The option SuppressLabels must be a Boolean.";
     if not instance(opts.Jitter, Boolean) then error "The option Jitter must be a Boolean.";
     name := temporaryFileName();
+    if opts.PDFDirectory != "" then name = opts.PDFDirectory | first lines get openIn concatenate("!basename ", name);
     outputTexPoset(P, concatenate(name, ".tex"), symbol SuppressLabels => opts.SuppressLabels, symbol Jitter => opts.Jitter);
-    run concatenate("pdflatex -output-directory /tmp ", name, " 1>/dev/null");
-    run concatenate(opts.PDFViewer, " ", name,".pdf &");
+    run concatenate("pdflatex -output-directory `dirname ", name, ".tex` ", name, " 1>/dev/null");
+    show URL("file://" | toAbsolutePath(name | ".pdf"));
     )
 
 gapConvertPoset = method()
@@ -1189,7 +1190,6 @@ compare = method()
 compare(Poset, Thing, Thing) := Boolean => (P, a, b) -> P.RelationMatrix_(indexElement(P, b))_(indexElement(P, a)) != 0
 
 -- Ported from Stembridge's Maple Package
-connectedComponents = method()
 connectedComponents Poset := List => P -> (
     if not P.cache.?connectedComponents then (
         C := new MutableList from apply(toList(0 ..< #P.GroundSet), i -> {i});
@@ -1313,10 +1313,11 @@ rankFunction Poset := List => P -> (
     if not P.cache.?coveringRelations then coveringRelations P;
     for r in P.cache.coveringRelations do (
         tmp := last rk#(r#1) - last rk#(r#0) - 1;
-        if tmp == 0 then continue;
         u := first rk#(r#0);
         v := first rk#(r#1);
-        if u == v then return P.cache.rankFunction = null;
+        if u == v then (
+	    if tmp == 0 then continue else return P.cache.rankFunction = null;
+	);
         rk = if tmp > 0 then apply(rk, g -> if first g == u then {v, last g + tmp} else g) else
                               apply(rk, g -> if first g == v then {u, last g - tmp} else g);
         );
@@ -1447,11 +1448,13 @@ boundedRegions(List, Ring) := (A, R) -> (
 characteristicPolynomial = method(Options => {symbol VariableName => getSymbol "q"})
 characteristicPolynomial Poset := RingElement => opts -> P -> (
     if not isRanked P then error "The poset must be ranked.";
+    minP := minimalElements P;
+    if #minP != 1 then error "The poset must have a unique minimal element.";
     rk := rankFunction P;
     mu := moebiusFunction P;
+    zeroHat := first minP;
     R := ZZ(monoid [opts.VariableName]);
-    zeroP := first minimalElements P;
-    sum(#P.GroundSet, i -> mu#(zeroP, P.GroundSet_i) * (R_0)^(max rk - rk#i))
+    sum(#P.GroundSet, i -> mu#(zeroHat, P.GroundSet_i) * (R_0)^(max rk - rk#i))
     )
 
 -- Following Stanley's definition in EC1
@@ -1517,6 +1520,20 @@ moebiusFunction Poset := HashTable => P -> (
     applyKeys(new HashTable from mu, (i, j) -> (F_i, F_j))
     )
 
+poincare Poset := RingElement => P -> poincarePolynomial P
+
+poincarePolynomial = method(Options => {symbol VariableName => getSymbol "t"})
+poincarePolynomial Poset := RingElement => opts -> P -> (
+    if not isRanked P then error "The poset must be ranked.";
+    minP := minimalElements P;
+    if #minP != 1 then error "The poset must have a unique minimal element.";
+    rk := rankFunction P;
+    mu := moebiusFunction P;
+    zeroHat := first minP;
+    R := ZZ(monoid [opts.VariableName]);
+    sum(#P.GroundSet, i -> mu#(zeroHat, P.GroundSet_i) * (-R_0)^(rk#i))
+    )
+
 rankGeneratingFunction = method(Options => {symbol VariableName => getSymbol "q"})
 rankGeneratingFunction Poset := RingElement => opts -> P -> (
     if not isRanked P then error "The poset must be ranked.";
@@ -1525,10 +1542,17 @@ rankGeneratingFunction Poset := RingElement => opts -> P -> (
     )
 
 realRegions = method()
-realRegions(List, Ring) := (A, R) -> (
+realRegions(List, Ring) := ZZ => (A, R) -> (
     L := intersectionLattice(A, R);
     M := moebiusFunction L;
     sum apply(L.GroundSet, i -> abs(M#(ideal 0_R, i)))
+    )
+
+-- G. Gordon, ``A Tutte polynomial for partially ordered sets,'' J. Combin. Theory Ser. B 59 (1993), no. 1, 132--155. 
+tuttePolynomial = method()
+tuttePolynomial Poset := RingElement => P -> (
+    R := QQ(monoid [getSymbol "t", getSymbol "z"]);
+    sum(antichains P, a -> ( f := filter(P, a); (R_0)^#f * (R_1+1)^(#(f - set a))))
     )
 
 zetaPolynomial = method(Options => {symbol VariableName => getSymbol "q"})
@@ -1539,6 +1563,15 @@ zetaPolynomial Poset := RingElement => opts -> P -> (
     X := toList(2..dim oP+2);
     Y := apply(X, n -> sum(2..n, i -> fV#(i-2) * binomial(n-2, i-2)));
     sum(#X, i -> Y_i * product(drop(X, {i,i}), xj -> (R_0 - xj)/(X_i-xj)))
+    )
+
+coxeterPolynomial = method(Options => {symbol VariableName => getSymbol "t"})
+coxeterPolynomial Poset := RingElement => opts -> P -> (
+    R := ZZ(monoid [opts.VariableName]);
+    M := P.RelationMatrix;
+    n := numrows M;
+    C := -M * inverse transpose M;
+    det (R_0 * id_(R^n) - C)
     )
 
 ------------------------------------------
@@ -1574,7 +1607,6 @@ isBounded Poset := Boolean => P -> #minimalElements P == 1 and #maximalElements 
 isComparabilityGraph = method()
 isComparabilityGraph Graph := Boolean => G -> transitiveOrientation(G, Strategy => "null") =!= null
 
-isConnected = method()
 isConnected Poset := Boolean => P -> #connectedComponents P == 1
 
 isDistributive = method()
@@ -1590,7 +1622,6 @@ isDistributive Poset := Boolean => P -> (
         )
     )
 
-isEulerian = method()
 isEulerian Poset := Boolean => P -> (
     if P.cache.?isEulerian then return P.cache.isEulerian;
     rk := rankFunction P;
@@ -1697,22 +1728,192 @@ doc ///
             routines which use or produce posets.  A poset (partially ordered
             set) is a set together with a binary relation satisfying reflexivity,
             antisymmetry, and transitivity.
-        Text
-            @SUBSECTION "Contributors"@
-            --
+
+            {\bf Contributors}:
+
             The following people have generously contributed code to the package:
             @HREF("http://www.math.cornell.edu/People/Grads/fisher.html","Kristine Fisher")@,
             @HREF("http://www.mathstat.dal.ca/~handrew/","Andrew Hoefel")@,
             @HREF("http://www.math.purdue.edu/~nkummini/","Manoj Kummini")@,
             @HREF("mailto:stephen.sturgeon\@uky.edu", "Stephen Sturgeon")@, and
             @HREF("http://people.math.gatech.edu/~jyu67/Josephine_Yu/Main.html", "Josephine Yu")@.
-        Text
-            @SUBSECTION "Other acknowledgements"@
-            --
+
+            {\bf Other acknowledgements}:
+
             A few methods in this package have been ported from John Stembridge's Maple
             package implementing posets, which is available at
             @HREF "http://www.math.lsa.umich.edu/~jrs/maple.html#posets"@.  Such methods
             are noted both in the source code and in the documentation.
+    SeeAlso
+        "Example: Constructing common posets"
+        "Example: Hibi ideals"
+        "Example: Intersection lattices"
+        "Example: LCM-lattices"
+///
+
+doc /// 
+    Key
+        "Example: Constructing common posets"
+    Description
+        Text
+            The standard way to construct a @TO "Poset"@ is the @TO "poset"@ method.
+            However, this package also provides many enumerators for common posets.
+
+            For example, we can construct a boolean lattice in many ways. 
+            First, we construct it with the @TO "booleanLattice"@ method.
+        Example
+            n = 3;
+            B = booleanLattice n;
+        Text
+            We can also construct it as a product of length 2 @TO "chain"@s.
+        Example
+            C2 = chain 2;
+            C = product(n, i -> C2);
+            areIsomorphic(B, C)
+        Text
+            Further, we can construct it as the @TO "divisorPoset"@ of a product of primes.
+        Example
+            P = {2, 3, 5, 7, 11, 13, 17, 19};
+            D = divisorPoset product take(P, n);
+            areIsomorphic(B, D)
+        Text
+            It is also the @TO "standardMonomialPoset"@ of the @TO "Ideal"@ of squares of the variables.
+        Example
+            R = QQ[x_1..x_n];
+            I = monomialIdeal apply(R_*, x -> x^2);
+            M = standardMonomialPoset I;
+            areIsomorphic(B, M)
+        Text
+            There are many other common posets that can be generated with this package. 
+            See the below list for the methods.
+    SeeAlso
+        booleanLattice
+        chain
+        divisorPoset
+        dominanceLattice
+        facePoset
+        intersectionLattice
+        lcmLattice
+        ncpLattice
+        partitionLattice
+        plueckerPoset
+        randomPoset
+        resolutionPoset
+        standardMonomialPoset
+        youngSubposet
+///
+
+doc ///
+    Key
+        "Example: Hibi ideals"
+    Description
+        Text
+            The Hibi ideal of $P$ is a @TO "MonomialIdeal"@ built over a ring in $2n$ variables
+            $x_0, \ldots, x_{n-1}, y_0, \ldots, y_{n-1}$, where $n$ is the size of the ground set of $P$.
+            The generators of the ideal are in bijection with order ideals in $P$.  Let $I$ be
+            an order ideal of $P$.  Then the associated monomial is the product of the $x_i$ associated
+            with members of $I$ and the $y_i$ associated with non-members of $I$.
+        Example
+            P = divisorPoset 12;
+            HP = hibiIdeal P
+        Text
+            Herzog and Hibi proved that every power of a Hibi ideal has a linear resolution.
+        Example
+            betti res HP
+            betti res (HP^2)
+            betti res (HP^3)
+        Text
+            Moreover, they proved that the projective dimension of the Hibi ideal is the 
+            Dilworth number of the poset, i.e., the maximum length of an antichain of $P$.
+        Example
+            pdim module HP
+            dilworthNumber P
+        Text
+            They further proved that the $i^{\rm th}$ Betti number of the quotient of a Hibi ideal
+            is the number of intervals of the @TO "distributiveLattice"@ of $P$ isomorphic to the rank
+            $i$ boolean lattice.  Using an exercise in Stanley's ``Enumerative Combinatorics'', we recover
+            this instead by looking at the number of elements of the distributive lattice that cover
+            exactly $i$ elements.
+        Example
+            LP = distributiveLattice P;
+            -- Get the covering relations of the distributive lattice.
+            cvrs = partition(last, coveringRelations LP);
+            -- Determine the number of elements each element covers.
+            iCvrs = tally apply(keys cvrs, i -> #cvrs#i);
+            -- Turn iCvrs into a list indexed by integers.
+            gk = prepend(1, apply(sort keys iCvrs, k -> iCvrs#k))
+            -- Determine the number of intervals of LP isomorphic to boolean lattices of a given rank.
+            apply(#gk, i -> sum(i..<#gk, j -> binomial(j, i) * gk_j))
+    SeeAlso
+        dilworthNumber
+        distributiveLattice
+        hibiIdeal
+///
+
+doc ///
+    Key
+        "Example: Intersection lattices"
+    Description
+        Text
+            The intersection lattice of a hyperplane arrangement $A$ is the
+            lattice of intersections in the arrangement partially ordered by containment.
+        Example
+            R = RR[x,y];
+            A = {x + y, x, x - y, y + 1};
+            LA = intersectionLattice(A, R)
+        Text
+            A theorem of Zaslavsky provides information about the topology of the complement
+            of hyperplane arrangements over @TO "RR"@.  In particular, the number of regions
+            that $A$ divides @TO "RR"@ into is derived from the @TO "moebiusFunction"@ of the
+            lattice.  This can also be accessed with the @TO "realRegions"@ method.
+        Example
+            MF = moebiusFunction LA;
+            sum apply(LA_*, i -> abs(MF#(ideal 0_R, i)))
+        Text
+            Furthermore, the number of these bounded regions can also be extracted from the
+            @TO "moebiusFunction"@ of the lattice; see also @TO "boundedRegions"@.
+        Example
+            MF' = moebiusFunction adjoinMax(LA, ideal 1_R);
+            abs(MF'#(ideal 0_R, ideal 1_R))
+    SeeAlso
+        boundedRegions
+        intersectionLattice
+        moebiusFunction
+        realRegions
+///
+
+doc ///
+    Key
+        "Example: LCM-lattices"
+    Description
+        Text
+            The LCM lattice of an @TO "Ideal"@ is the set of all
+            LCMs of subsets of the generators of the ideal with partial
+            ordering given by divisibility.  These are particularly useful
+            in the study of resolutions of monomial ideals.  
+        Example
+            R = QQ[a,b,c,d];
+            M = ideal(a^3*b^2*c, a^3*b^2*d, a^2*c*d, a*b*c^2*d, b^2*c^2*d);
+            LM = lcmLattice M;
+        Text
+            In particular, Gasharov, Peeva, and Welker provided a key connection
+            between the lcm-lattice of a monomial ideal and its minimal free resolution.
+            In particular, it is possible to use the lcm-lattice to compute the multigraded
+            Betti numbers of the ideal.
+
+            In particular, in the first example we show the $i^{\rm th}$ Betti number associated
+            to $a^2b^2c^2d$ is always $0$.
+        Example
+            D1 = orderComplex(openInterval(LM, 1_R, a^2*b^2*c^2*d));
+            prune HH(D1)
+        Text
+            In the second example, we show that the $(1, a^3b^2cd)$ Betti number is $2$.
+        Example
+            D2 = orderComplex(openInterval(LM, 1_R, a^3*b^2*c*d));
+            prune HH(D2)
+    SeeAlso
+        lcmLattice
+        SimplicialComplexes
 ///
 
 ------------------------------------------
@@ -1799,6 +2000,7 @@ doc ///
 doc ///
     Key
         (symbol _*,Poset)
+        (vertices, Poset)
     Headline
         returns the ground set of a poset
     Usage
@@ -1935,30 +2137,6 @@ doc ///
 ------------------------------------------
 -- Set default options
 ------------------------------------------
-
--- setPDFViewer
-doc ///
-    Key
-        setPDFViewer
-        (setPDFViewer,String)
-    Headline
-        sets the default PDFViewer option
-    Usage
-        alt = setPDFViewer viewer
-    Inputs
-        viewer:String
-            the new setting
-    Outputs
-        alt:String
-            the old setting
-    Description
-        Text
-            This method sets the default PDFViewer option.
-        Example
-            setPDFViewer "evince"
-    SeeAlso
-        PDFViewer
-///
 
 -- setPrecompute
 doc ///
@@ -2310,7 +2488,7 @@ doc ///
             pPartitionRing(divisorPoset 6, Strategy => "4ti2")
     SeeAlso
         hibiRing
-        isConnected
+        (isConnected, Poset)
         naturalLabeling
         orderIdeal
         principalOrderIdeal
@@ -3428,7 +3606,7 @@ doc ///
     Description
         Text
             The non-crossing partition lattice of order $n$ is the lattice
-            of @TO "ncPartition"@s of the set $\{0,\ldots,n-1\}$
+            of @TO "ncPartitions"@ of the set $\{0,\ldots,n-1\}$
             with ordering given by refinement.  That is, the
             non-crossing partition $p$ is greater than or equal to the
             non-crossing partition $q$ if each part of $p$ is contained in
@@ -3536,7 +3714,7 @@ doc ///
         plueckerPoset
         (plueckerPoset,ZZ)
     Headline
-        computes a poset associated to the Pluecker relations
+        computes a poset associated to the Plücker relations
     Usage
         P = plueckerPoset n
     Inputs
@@ -3546,10 +3724,10 @@ doc ///
         P:Poset
     Description
         Text
-            The ideal of Pluecker relations has a quadratic Groebner
+            The ideal of Plücker relations has a quadratic Groebner
             basis.  Under a suitable term order, the incomparable pairs
             of the poset $P$ generate the initial ideal of the ideal of
-            Pluecker relations.
+            Plücker relations.
 
             Given two subsets $S$ and $T$ of ${0,\ldots,n-1}$, we partially
             order $S \leq T$ if $\#S \geq \#T$ and $S_i \leq T_i$ for all
@@ -3810,33 +3988,35 @@ doc ///
         displayPoset
         (displayPoset,Poset)
         [displayPoset,SuppressLabels]
-        [displayPoset,PDFViewer]
         [displayPoset,Jitter]
-        PDFViewer
+        [displayPoset,PDFDirectory]
+        PDFDirectory
     Headline
         generates a PDF representation of a poset and attempts to display it
     Usage
         displayPoset P
         displayPoset(P, SuppressLabels => Boolean)
-        displayPoset(P, PDFViewer => String)
+        displayPoset(P, PDFDirectory => String)
         displayPoset(P, Jitter => Boolean)
     Inputs
         P:Poset
         SuppressLabels=>Boolean
             whether to display or suppress the labels of the poset
-        PDFViewer=>String
-            which gives the calling path of a PDF-viewer
         Jitter=>Boolean
             whether to randomly jitter the poset vertices
+        PDFDirectory=>String
+            which gives the path for the PDF
     Description
         Text
             This method generates a PDF of the Hasse Diagram of the Poset view LaTeX code which
-            uses TikZ.  The method attempts to display the PDF via the
-            specified PDFViewer.  See @TO "texPoset"@ for more about the
-            representation.
+            uses TikZ.  The method attempts to display the PDF using @TO "show"@.
+            See @TO "texPoset"@ for more about the representation.
 
-            Note that @TT "PDFViewer"@ option's default value can be set in
-            the "~/.Macaulay2/init-Posets.m2" file.
+            Normally, the vertices of the Poset are placed at regular intervals along
+            horizontal lines.  However, this can sometimes cause edges to appear in the
+            Hasse diagram that are not truly there.  The Jitter option can be used to randomly
+            shift the positions of the vertices horizontally, which can often cause the
+            edges to be more clear.
     SeeAlso
         outputTexPoset
         texPoset
@@ -3862,11 +4042,11 @@ doc ///
         A:Array
             representing a poset in GAP-format
         S:String
-            representing a poste in GAP-format
+            representing a poset in GAP-format
         P:Poset
     Outputs
         S:String
-            representing a poste in GAP-format
+            representing a poset in GAP-format
         P:Poset
     Description
         Text
@@ -3887,7 +4067,7 @@ doc ///
             P = gapConvertPoset S
             P == augmentPoset booleanLattice 3
         Text
-            When convering to GAP format, the method automatically augments the poset.  In this example,
+            When converting to GAP format, the method automatically augments the poset.  In this example,
             the $3$ chain becomes a $5$ chain in GAP format.
         Example
             gapConvertPoset chain 3
@@ -4051,7 +4231,6 @@ doc ///
 -- connectedComponents
 doc ///
     Key
-        connectedComponents
         (connectedComponents,Poset)
     Headline
         generates a list of connected components of a poset
@@ -4747,7 +4926,7 @@ doc ///
         (characteristicPolynomial,Poset)
         [characteristicPolynomial,VariableName]
     Headline
-        computes the characteristic polynomial of a ranked poset
+        computes the characteristic polynomial of a ranked poset with a unique minimal element
     Usage
         p = characteristicPolynomial P
         p = characteristicPolynomial(P, VariableName => symbol)
@@ -4986,6 +5165,49 @@ doc ///
             moebiusFunction chain 3
 ///
 
+-- poincarePolynomial
+doc ///
+    Key
+        poincarePolynomial
+        (poincarePolynomial,Poset)
+        [poincarePolynomial,VariableName]
+        (poincare, Poset)
+    Headline
+        computes the Poincare polynomial of a ranked poset with a unique minimal element
+    Usage
+        p = poincarePolynomial P
+        p = poincarePolynomial(P, VariableName => symbol)
+        p = poincare P
+    Inputs
+        P:Poset
+            a ranked poset
+        VariableName=>Symbol
+    Outputs
+        p:RingElement
+            the Poincare polynomial of $P$
+    Description
+        Text
+            The Poincare polynomial of $P$ is the polynomial in a single variable
+            $t$ derived from the @TO "rankFunction"@ and the @TO "moebiusFunction"@ of $P$.
+
+            The Poincare polynomial of the $n$ @TO "booleanLattice"@ is $(1+t)^n$.
+        Example
+            n = 5;
+            factor poincarePolynomial booleanLattice n
+        Text
+            The Poincare polynomial of the $B3$ arrangement is $(1+t)(1+3t)(1+5t)$.
+        Example
+            R = QQ[x,y,z];
+            A = {x,y,z,x+y,x+z,y+z,x-y,x-z,y-z};
+            LA = intersectionLattice(A, R);
+            factor poincarePolynomial LA
+    SeeAlso
+        intersectionLattice
+        isRanked
+        moebiusFunction
+        rankFunction
+///
+
 -- rankGeneratingFunction
 doc ///
     Key
@@ -5054,6 +5276,35 @@ doc ///
         intersectionLattice
 ///
 
+-- tuttePolynomial
+doc ///
+    Key
+        tuttePolynomial
+        (tuttePolynomial,Poset)
+    Headline
+        computes the Tutte polynomial of a poset
+    Usage
+        f = tuttePolynomial P
+    Inputs
+        P:Poset
+    Outputs
+        f:RingElement
+            the Tutte polynomial of $P$
+    Description
+        Text
+            The Tutte polynomial of $P$ is the polynomial $f$ such that
+        Example
+            B = booleanLattice 3;
+            f = tuttePolynomial B
+        Text
+            The Tutte polynomial evaluates at $t = 1$ and $z = 1$ is always
+            the number of subsets of the groundset of $P$.
+        Example
+            R = ring f;
+            sub(f, {R_0 => 1, R_1 => 1})
+    SeeAlso
+        antichains
+///
 -- zetaPolynomial
 doc ///
     Key
@@ -5091,7 +5342,35 @@ doc ///
     SeeAlso
         chains
 ///
-
+-- coxeterPolynomial
+doc ///
+    Key
+        coxeterPolynomial
+        (coxeterPolynomial,Poset)
+        [coxeterPolynomial,VariableName]
+    Headline
+        computes the Coxeter polynomial of a poset
+    Usage
+        z = coxeterPolynomial P
+        z = coxeterPolynomial(P, VariableName => symbol)
+    Inputs
+        P:Poset
+        VariableName=>Symbol
+    Outputs
+        z:RingElement
+            the Coxeter polynomial of $P$
+    Description
+        Text
+            The Coxeter polynomial of $P$ is the
+            characteristic polynomial of the Coxeter
+            transformation matrix $ -M M^{-t}$, where $M$
+            is the relation matrix. This depends only on
+            the derived category of modules over
+            the incidence algebra.
+        Example
+            B = booleanLattice 3;
+            z = coxeterPolynomial B
+///
 ------------------------------------------
 -- Properties
 ------------------------------------------
@@ -5267,7 +5546,6 @@ doc ///
 -- isConnected
 doc ///
     Key
-        isConnected
         (isConnected,Poset)
     Headline
         determines if a poset is connected
@@ -5340,7 +5618,6 @@ doc ///
 -- isEulerian
 doc ///
     Key
-        isEulerian
         (isEulerian,Poset)
     Headline
         determines if a ranked poset is Eulerian
@@ -5796,7 +6073,7 @@ doc ///
         isUpperSemimodular
         (isUpperSemimodular,Poset)
     Headline
-        determines if a lattice is upper semimoudlar
+        determines if a lattice is upper semimodular
     Usage
         i = isUpperSemimodular P
     Inputs
@@ -5877,7 +6154,6 @@ assert(P === poset({a,b,c,d}, {{a,b},{b,c},{a,d},{d,c}}, matrix {{1, 1, 1, 1}, {
 assert(P.GroundSet == {a, b, c, d})
 assert(P.Relations == {{a, b}, {b, c}, {a, d}, {d, c}})
 assert(P.RelationMatrix == map(ZZ^4,ZZ^4,{{1, 1, 1, 1}, {0, 1, 1, 0}, {0, 0, 1, 0}, {0, 0, 1, 1}}))
-assert(hasseDiagram P === digraph{{0,1},{0,3},{1,2},{3,2}})
 assert((sort coveringRelations P) == (sort P.Relations))
 assert(isLattice P)
 assert(comparabilityGraph P === graph {{0, 1}, {0, 2}, {0, 3}, {1, 2}, {2, 3}})
@@ -5899,7 +6175,6 @@ assert(P === poset({a,b,c,d}, {{a,b},{b,c},{a,d},{d,c}}, matrix {{1, 1, 1, 1}, {
 assert(P.GroundSet == {a, b, c, d})
 assert(P.Relations == {{a, b}, {b, c}, {a, d}, {d, c}})
 assert(P.RelationMatrix == map(ZZ^4,ZZ^4,{{1, 1, 1, 1}, {0, 1, 1, 0}, {0, 0, 1, 0}, {0, 0, 1, 1}}))
-assert(hasseDiagram P === digraph{{0,1},{0,3},{1,2},{3,2}})
 assert((sort coveringRelations P) == (sort P.Relations))
 assert(isLattice P)
 assert(comparabilityGraph P === graph {{0, 1}, {0, 2}, {0, 3}, {1, 2}, {2, 3}})
@@ -5924,7 +6199,6 @@ assert(P === poset({a,b,c,d,e}, {{a,b},{b,c},{a,d},{d,c},{d,e}}, matrix {{1, 1, 
 assert(P.GroundSet == {a, b, c, d, e})
 assert(P.Relations == {{a, b}, {b, c}, {a, d}, {d, c}, {d, e}})
 assert(P.RelationMatrix == map(ZZ^5,ZZ^5,{{1, 1, 1, 1, 1}, {0, 1, 1, 0, 0}, {0, 0, 1, 0, 0}, {0, 0, 1, 1, 1}, {0, 0, 0, 0, 1}}))
-assert(hasseDiagram P === digraph{{0,1},{0,3},{1,2},{3,2},{3,4}})
 assert((sort coveringRelations P) == (sort P.Relations))
 assert(not isLattice P)
 assert(comparabilityGraph P === graph {{0, 1}, {0, 2}, {0, 3}, {4, 0}, {1, 2}, {2, 3}, {4, 3}})
@@ -6010,8 +6284,6 @@ assert(B == poset(subsets 3, isSubset))
 assert(isLowerSemilattice B)
 assert(isUpperSemilattice B)
 assert(isDistributive B)
-assert(hasseDiagram B === digraph{{0, 4}, {0, 1}, {0, 2}, {1, 5}, {1, 3}, {2, 6}, {2, 3}, {3, 7}, {4, 5}, {4, 6}, {5, 7}, {6, 7}})
-assert(incomparabilityGraph B === graph({{4, 1}, {1, 2}, {1, 6}, {4, 2}, {5, 2}, {4, 3}, {5, 3}, {6, 3}, {5, 6}}, Singletons=> {0,7}))
 R=ring orderComplex B
 assert(sub(ideal(flatten entries facets orderComplex B),R) == sub(ideal(v_0*v_4*v_6*v_7,v_0*v_2*v_6*v_7,v_0*v_4*v_5*v_7,v_0*v_1*v_5*v_7,v_0*v_2*v_3*v_7,v_0*v_1*v_3*v_7),R))
 assert(sub(ideal(orderComplex B),R) == sub(ideal(v_1*v_2, v_1*v_4, v_2*v_4, v_3*v_4, v_2*v_5, v_3*v_5, v_1*v_6, v_3*v_6, v_5*v_6),R))
@@ -6021,7 +6293,6 @@ assert(dilworthLattice B == poset({{a,b}}))
 D=distributiveLattice B
 assert(D.cache#OriginalPoset == B)
 assert(# chains(D,9) == 48)
-assert(hasseDiagram D === digraph new HashTable from {0 => set {1}, 1 => set {2, 7, 15}, 2 => set {3, 5}, 3 => set {4, 10}, 4 => set {6, 9, 11}, 5 => set {4, 16}, 6 => set {14, 17}, 7 => set {3, 8}, 8 => set {4, 18}, 9 => set {12, 17}, 10 => set {11}, 11 => set {12, 14}, 12 => set {13}, 13 => set {19}, 14 => set {13}, 15 => set {5, 8}, 16 => set {9}, 17 => set {13}, 18 => set {6}, 19 => set {}})
 assert(filter(B, {"001", "110"}) == {"001", "011", "101", "111", "110"})
 assert(orderIdeal(B, {"001", "110"}) == {"000", "001", "010", "100", "110"})
 assert(principalFilter(B,"001") == {"001", "011", "101", "111"})
@@ -6042,7 +6313,7 @@ assert(r == toList(0..#r-1))
 assert(adjoinMin(flagPoset(B,{1,2,3})) == B)
 assert(adjoinMax(flagPoset(B,{0,1,2})) == B)
 assert(augmentPoset(flagPoset(B,{1,2})) == B)
-assert(hasseDiagram(diamondProduct(B,B))===digraph new HashTable from {0 => set {1, 2, 4, 8, 9, 11, 22, 23, 25}, 1 => set {3, 5, 15, 29}, 2 => set {3, 6, 16, 30}, 3 => set {7, 17, 31}, 4 => set {5, 6, 18, 32}, 5 => set {7, 19, 33}, 6 => set {7, 20, 34}, 7 => set{21, 35}, 8 => set {10, 12, 15, 36}, 9 => set {10, 13, 16, 37}, 10 => set {14, 17, 38}, 11 => set {12, 13,18, 39}, 12 => set {14, 19, 40}, 13 => set {14, 20, 41}, 14 => set {21, 42}, 15 => set {17, 19, 43}, 16 =>set {17, 20, 44}, 17 => set {21, 45}, 18 => set {19, 20, 46}, 19 => set {21, 47}, 20 => set {21, 48}, 21 => set {49}, 22 => set {24, 26, 29, 36}, 23 => set {24, 27, 30, 37}, 24 => set {28, 31, 38}, 25 => set {26,27, 32, 39}, 26 => set {28, 33, 40}, 27 => set {28, 34, 41}, 28 => set {35, 42}, 29 => set {31, 33, 43}, 30=> set {31, 34, 44}, 31 => set {35, 45}, 32 => set {33, 34, 46}, 33 => set {35, 47}, 34 => set {35, 48}, 35 => set {49}, 36 => set {38, 40, 43}, 37 => set {38, 41, 44}, 38 => set {42, 45}, 39 => set {40, 41, 46}, 40 => set {42, 47}, 41 => set {42, 48}, 42 => set {49}, 43 => set {45, 47}, 44 => set {45, 48}, 45 => set {49}, 46 => set {47, 48}, 47 => set {49}, 48 => set {49}, 49 => set {}})
+--assert(hasseDiagram(diamondProduct(B,B))===digraph new HashTable from {0 => set {1, 2, 4, 8, 9, 11, 22, 23, 25}, 1 => set {3, 5, 15, 29}, 2 => set {3, 6, 16, 30}, 3 => set {7, 17, 31}, 4 => set {5, 6, 18, 32}, 5 => set {7, 19, 33}, 6 => set {7, 20, 34}, 7 => set{21, 35}, 8 => set {10, 12, 15, 36}, 9 => set {10, 13, 16, 37}, 10 => set {14, 17, 38}, 11 => set {12, 13,18, 39}, 12 => set {14, 19, 40}, 13 => set {14, 20, 41}, 14 => set {21, 42}, 15 => set {17, 19, 43}, 16 =>set {17, 20, 44}, 17 => set {21, 45}, 18 => set {19, 20, 46}, 19 => set {21, 47}, 20 => set {21, 48}, 21 => set {49}, 22 => set {24, 26, 29, 36}, 23 => set {24, 27, 30, 37}, 24 => set {28, 31, 38}, 25 => set {26,27, 32, 39}, 26 => set {28, 33, 40}, 27 => set {28, 34, 41}, 28 => set {35, 42}, 29 => set {31, 33, 43}, 30=> set {31, 34, 44}, 31 => set {35, 45}, 32 => set {33, 34, 46}, 33 => set {35, 47}, 34 => set {35, 48}, 35 => set {49}, 36 => set {38, 40, 43}, 37 => set {38, 41, 44}, 38 => set {42, 45}, 39 => set {40, 41, 46}, 40 => set {42, 47}, 41 => set {42, 48}, 42 => set {49}, 43 => set {45, 47}, 44 => set {45, 48}, 45 => set {49}, 46 => set {47, 48}, 47 => set {49}, 48 => set {49}, 49 => set {}})
 assert(union(B,B)==B)
 C=union(B,naturalLabeling B)
 L=connectedComponents C
@@ -6099,6 +6370,7 @@ assert(moebiusFunction B === new HashTable from {("010","010") => 1, ("010","011
       ("100","111") => 1, ("111","100") => 0, ("011","101") => 0, ("101","011") => 0, ("111","101") => 0})
 assert(toString rankGeneratingFunction B === "q^3+3*q^2+3*q+1")
 assert(toString zetaPolynomial B == "q^3")
+assert(toString coxeterPolynomial B == "t^8+t^7+t^6-2*t^5-2*t^4-2*t^3+t^2+t+1")
 assert(dilworthNumber B === 3)
 assert(isAtomic B == true)
 assert(isBounded B == true)
@@ -6125,8 +6397,6 @@ B = chain 5
 assert(isLowerSemilattice B)
 assert(isUpperSemilattice B)
 assert(isDistributive B)
-assert(hasseDiagram B === digraph{{0, 1}, {1, 2}, {2, 3}, {3, 4}})
-assert(incomparabilityGraph B === graph({}, Singletons=> {0,1,2,3,4}))
 R=ring orderComplex B
 assert(sub(ideal(flatten entries facets orderComplex B),R) == sub(ideal(v_0*v_1*v_2*v_3*v_4),R))
 assert(sub(ideal(orderComplex B),R) == sub(ideal(),R))
@@ -6137,7 +6407,6 @@ D=distributiveLattice B
 assert(D.cache#OriginalPoset == B)
 assert(# chains(D,3) == 20)
 assert(# chains(D,6) == 1)
-assert(hasseDiagram D === digraph new HashTable from {0 => set {1}, 1 => set {2}, 2 => set {3}, 3 => set {4}, 4 => set {5}, 5 => set {}})
 assert(filter(B,{3}) == {3,4,5})
 assert(filter(B,{1}) == B.GroundSet)
 assert(orderIdeal(B,{3}) == {1,2,3})
@@ -6162,7 +6431,6 @@ assert(r == toList(0..#r-1))
 assert(adjoinMin(flagPoset(B,{1,2,3,4})) == B)
 assert(adjoinMax(flagPoset(B,{1,2,3,4})) == B)
 assert(augmentPoset(flagPoset(B,{1,2,3})) == B)
-assert(hasseDiagram(diamondProduct(B,B))===digraph new HashTable from {0 => set {1}, 1 => set {2, 5}, 2 => set {3, 6}, 3 => set {4, 7}, 4 => set {8}, 5 => set {6, 9}, 6 => set {7, 10}, 7 => set {8, 11}, 8 => set {12}, 9 => set {10, 13}, 10 => set {11, 14}, 11 => set {12, 15}, 12 => set {16}, 13 => set {14}, 14 => set {15}, 15 => set {16}, 16 => set {}})
 assert(union(B,B)==B)
 assert(atoms B == {2})
 assert(compare(B,1,2) == true)
@@ -6203,6 +6471,7 @@ assert(moebiusFunction B === new HashTable from {(5,2) => 0, (4,3) => 0, (2,5) =
        (3,3) => 1})
 assert(toString rankGeneratingFunction B === "q^4+q^3+q^2+q+1")
 assert(toString zetaPolynomial B == "(1/24)*q^4+(1/4)*q^3+(11/24)*q^2+(1/4)*q")
+assert(toString coxeterPolynomial B == "t^5+t^4+t^3+t^2+t+1")
 assert(dilworthNumber B === 1)
 assert(isAtomic B == false)
 assert(isBounded B == true)
@@ -6223,10 +6492,6 @@ assert(isUpperSemimodular B == true)
 
 ///
 
-
-
-
-
 --Tests for divisorPoset(ZZ)
 
 TEST ///
@@ -6236,8 +6501,6 @@ B = divisorPoset 96
 assert(isLowerSemilattice B)
 assert(isUpperSemilattice B)
 assert(isDistributive B)
-assert(hasseDiagram B === digraph {{0, 1}, {0, 2}, {1, 4}, {1, 3}, {2, 4}, {3, 5}, {3, 6}, {4, 6}, {5, 8}, {5, 7}, {6, 8}, {7, 9}, {7, 10}, {8, 10}, {9, 11}, {10,11}})
-assert(incomparabilityGraph B === graph({{1, 2},{2, 9}, {2, 3}, {2, 5}, {2, 7}, {3, 4}, {4, 5}, {4, 9}, {4, 7}, {5, 6}, {6, 9}, {6, 7}, {7, 8}, {8, 9}, {9, 10}}, Singletons =>{0,11}))
 R=ring orderComplex B
 assert(sub(ideal(flatten entries facets orderComplex B),R) == sub(ideal(v_0*v_2*v_4*v_6*v_8*v_10*v_11,v_0*v_1*v_4*v_6*v_8*v_10*v_11,v_0*v_1*v_3*v_6*v_8*v_10*v_11,v_0*v_1*v_3*v_5*v_8*v_10*v_11,v_0*v_1*v_3*v_5*v_7*v_10*v_11,v_0*v_1*v_3*v_5*v_7*v_9*v_11),R))
 assert(sub(ideal(orderComplex B),R) == sub(ideal(v_1*v_2,v_2*v_3,v_3*v_4,v_2*v_5,v_4*v_5,v_5*v_6,v_2*v_7,v_4*v_7,v_6*v_7,v_7*v_8,v_2*v_9,v_4*v_9,v_6*v_9,v_8*v_9,v_9*v_10),R))
@@ -6255,7 +6518,6 @@ D=distributiveLattice B
 assert(D.cache#OriginalPoset == B)
 assert(# chains(D,12) == 1386)
 assert(# chains(D,13) == 132)
-assert(hasseDiagram D === digraph new HashTable from {0 => set {1}, 1 => set {2, 4}, 2 => set {3, 9}, 3 => set {5, 11}, 4 => set {3}, 5 => set {6, 10}, 6 => set {7, 12}, 7 => set {8, 13}, 8 => set {14}, 9 => set {5, 15}, 10 => set {12, 17}, 11 => set {10}, 12 => set {13, 16}, 13 => set {14, 18}, 14 => set {19}, 15 => set {6, 20}, 16 => set {18, 22}, 17 => set {16}, 18 => set {19, 21}, 19 => set {23}, 20 => set {7, 24}, 21 => set {23, 26}, 22 => set {21}, 23 => set {25}, 24 => set {8}, 25 => set {27}, 26 => set {25}, 27 => set {}})
 assert(sort filter(B, {4,6}) == {4, 6, 8, 12, 16, 24, 32, 48, 96})
 assert(sort orderIdeal(B, {4,6}) == {1, 2, 3, 4, 6})
 assert(sort principalFilter(B,4) == {4, 8, 12, 16, 24, 32, 48, 96})
@@ -6353,8 +6615,6 @@ B = divisorPoset(x^2*y*z)
 assert(isLowerSemilattice B)
 assert(isUpperSemilattice B)
 assert(isDistributive B)
-assert(hasseDiagram B === digraph {{0, 1}, {0, 2}, {0, 3}, {1, 4}, {1, 5}, {2, 4}, {2, 6}, {3, 5}, {3, 6}, {3, 7}, {4, 8}, {5, 8}, {5, 9}, {6, 8}, {6, 10}, {7, 9}, {7, 10}, {8, 11}, {9, 11}, {10, 11}})
-assert(incomparabilityGraph B === graph({{1, 10}, {1, 2}, {1, 3}, {1, 6}, {1, 7}, {9, 2}, {2, 3}, {5, 2}, {2, 7}, {4, 3}, {4, 9}, {4, 10}, {4, 5}, {4, 6}, {4, 7}, {5, 6}, {5, 10}, {5, 7}, {9, 6}, {6, 7}, {8, 7}, {8, 9}, {8, 10}, {9, 10}}, Singletons =>{0,11}))
 S=ring orderComplex B
 assert(sub(ideal(flatten entries facets orderComplex B),R) == sub(ideal(v_0*v_3*v_7*v_10*v_11,v_0*v_3*v_6*v_10*v_11,v_0*v_2*v_6*v_10*v_11,v_0*v_3*v_7*v_9*v_11,v_0*v_3*v_5*v_9*v_11,v_0*v_1*v_5*v_9*v_11,v_0*v_3*v_6*v_8*v_11,v_0*v_2*v_6*v_8*v_11,v_0*v_3*v_5*v_8*v_11,v_0*v_1*v_5*v_8*v_11,v_0*v_2*v_4*v_8*v_11,v_0*v_1*v_4*v_8*v_11),R))
 assert(sub(ideal(orderComplex B),S) == sub(ideal(v_1*v_2,v_1*v_3,v_2*v_3,v_3*v_4,v_2*v_5,v_4*v_5,v_1*v_6,v_4*v_6,v_5*v_6,v_1*v_7,v_2*v_7,v_4*v_7,v_5*v_7,v_6*v_7,v_7*v_8,v_2*v_9,v_4*v_9,v_6*v_9,v_8*v_9,v_1*v_10,v_4*v_10,v_5*v_10,v_8*v_10,v_9*v_10),S))
@@ -6366,7 +6626,6 @@ assert(D.cache#OriginalPoset == B)
 
 assert(# chains(D,1) == # D.GroundSet)
 assert(# chains(D,2) == 837)
-assert(hasseDiagram D === digraph new HashTable from {0 => set {1}, 1 => set {2, 11, 17}, 2 => set {3, 6}, 3 => set {4, 19}, 4 => set {5, 7, 13, 18}, 5 => set {8, 14, 28}, 6 => set {4, 9, 32}, 7 => set {8, 25, 33}, 8 => set {10, 26, 34}, 9 => set {5, 35}, 10 => set {31, 36}, 11 => set {3, 12}, 12 => set {4, 15, 37}, 13 => set {14, 20, 33}, 14 => set {16, 23, 34}, 15 => set {5, 38}, 16 => set {29, 39}, 17 => set {6, 12, 40}, 18 => set {20, 25, 28}, 19 => set {18}, 20 => set {21, 23}, 21 => set {22, 42}, 22 => set {24, 27, 41}, 23 => set {22, 29}, 24 => set {30, 45}, 25 => set {21, 26}, 26 => set {22, 31}, 27 => set {30, 43}, 28 => set {23, 26}, 29 => set {27}, 30 => set {44}, 31 => set {24}, 32 => set {13, 35}, 33 => set {21, 34}, 34 => set {22, 36, 39}, 35 => set {14, 46}, 36 => set {24, 47}, 37 => set {7, 38}, 38 => set {8, 48}, 39 => set {27, 47}, 40 => set {9, 15}, 41 => set {43, 45}, 42 => set {41}, 43 => set {44}, 44 => set {49}, 45 => set {44}, 46 => set {16}, 47 =>  set {30}, 48 => set {10}, 49 => set {}})
 assert(sort filter(B, {x*y,x^2}) == {x*y, x^2, x*y*z, x^2*z, x^2*y, x^2*y*z})
 assert(sort orderIdeal(B,{x*y,x^2}) == {1, y, x, x*y, x^2})
 assert(sort principalFilter(B,x^2) == {x^2, x^2*z, x^2*y, x^2*y*z})
@@ -6387,74 +6646,14 @@ assert(r == toList(0..#r-1))
 assert(adjoinMin(flagPoset(B,{1,2,3,4})) == B)
 assert(adjoinMax(flagPoset(B,{0,1,2,3})) == B)
 assert(augmentPoset(flagPoset(B,{1,2,3})) == B)
---Removed for time purposes (slow!)
+///
 
---Stopped here for the night.
-{*
-assert(hasseDiagram(diamondProduct(B,B))===digraph new HashTable from {0 => set {1, 2, 12, 13}, 1 => set {3, 4, 23, 34}, 2 => set {4, 24, 35}, 3 => set {5, 6, 25, 36}, 4 => set {6, 26, 37}, 5 => set {7, 8, 27, 38}, 6 => set {8, 28, 39}, 7 => set{9, 10, 29, 40}, 8 => set {10, 30, 41}, 9 => set {11, 31, 42}, 10 => set {11, 32, 43}, 11 => set {33, 44}, 12 => set {14, 15, 34}, 13 => set {15, 35}, 14 => set {16, 17, 36}, 15 => set {17, 37}, 16 => set {18, 19, 38}, 17 => set {19, 39}, 18 => set {20, 21, 40}, 19 => set {21, 41}, 20 => set {22, 42}, 21 => set {22, 43}, 22 => set {44}, 23 => set {25, 26, 45, 56}, 24 => set {26, 46, 57}, 25 => set {27, 28, 47, 58}, 26 => set {28, 48, 59}, 27 => set {29, 30, 49, 60}, 28 => set {30, 50, 61}, 29 => set {31, 32, 51, 62}, 30 => set {32, 52, 63}, 31 => set {33, 53, 64}, 32 => set {33, 54, 65}, 33 => set {55, 66}, 34 => set {36, 37, 56}, 35 => set {37, 57}, 36 => set {38, 39, 58}, 37 => set {39, 59}, 38 => set {40, 41, 60}, 39 => set {41, 61}, 40 => set {42, 43, 62}, 41 => set {43, 63}, 42 => set {44, 64}, 43 => set {44, 65}, 44 => set {66}, 45 => set {47, 48, 67, 78}, 46 => set {48, 68, 79}, 47 => set {49, 50, 69, 80}, 48 => set {50, 70, 81}, 49 => set {51, 52, 71, 82}, 50 => set {52, 72, 83}, 51 => set {53, 54, 73, 84}, 52 => set {54, 74, 85}, 53 => set {55, 75, 86}, 54 => set {55, 76, 87}, 55 => set {77, 88}, 56 => set {58, 59, 78}, 57 => set {59, 79}, 58 => set {60, 61, 80}, 59 => set {61, 81}, 60 => set {62, 63, 82}, 61 => set {63, 83}, 62 => set {64, 65, 84}, 63 => set {65, 85}, 64 => set {66, 86}, 65 => set {66, 87}, 66 => set {88}, 67 => set {69, 70, 89, 100}, 68 => set {70, 90, 101}, 69 => set {71, 72, 91, 102}, 70 => set {72, 92, 103}, 71 => set {73, 74, 93, 104}, 72 => set {74, 94, 105}, 73 => set {75, 76, 95, 106}, 74 => set {76, 96, 107}, 75 => set {77, 97, 108}, 76 => set {77, 98, 109}, 77 => set {99, 110}, 78 => set {80, 81, 100}, 79 => set {81, 101}, 80 => set {82, 83, 102}, 81 => set {83, 103}, 82 => set {84, 85, 104}, 83 => set {85, 105}, 84 => set {86, 87, 106}, 85 => set {87, 107}, 86 => set {88, 108}, 87 => set {88, 109}, 88 => set {110}, 89 => set {91, 92, 111}, 90 => set {92, 112}, 91 => set {93, 94, 113}, 92 => set {94, 114}, 93 => set {95, 96, 115}, 94 => set {96, 116}, 95 => set {97, 98, 117}, 96 => set {98, 118}, 97 => set {99, 119}, 98 => set {99, 120}, 99 => set {121}, 100 => set {102, 103, 111}, 101 => set {103, 112}, 102 => set {104, 105, 113}, 103 => set {105, 114}, 104 => set {106, 107, 115}, 105 => set {107, 116}, 106 => set {108, 109, 117}, 107 => set {109, 118}, 108 => set {110, 119}, 109 => set {110, 120}, 110 => set {121}, 111 => set {113, 114}, 112 => set {114}, 113 => set {115, 116}, 114 => set {116}, 115 => set {117, 118}, 116 => set {118}, 117 => set {119, 120}, 118 => set {120}, 119 => set {121}, 120 => set {121}, 121 => set {}})
-assert(union(B,B)==B)
-assert(atoms B == {2,3})
-assert(compare(B,3,4) == false)
-assert(compare(B,3,6) == true)
-assert(compare(B,3,48) == true)
-assert((sort \ (filtration B)) == (sort \ (rankPoset B)))
-assert(joinExists(B,2,3) == true)
-assert(joinExists(B,3,6) == true)
-assert(joinExists(B,3,8) == true)
-assert(sort joinIrreducibles B == {1, 2, 3, 4, 8, 16, 32})
-assert(meetExists(B,16,3) == true)
-assert(meetExists(B,32,24) == true)
-assert(meetExists(B,32,16) == true)
-assert(sort meetIrreducibles B == {3, 6, 12, 24, 32, 48, 96})
-assert(maximalElements B == {96})
-assert(minimalElements B == {1})
-assert(posetJoin(B,2,3)== {6})
-assert(posetJoin(B,3,6)== {6})
-assert(posetJoin(B,3,8)== {24})
-assert(posetMeet(B,16,3)== {1})
-assert(posetMeet(B,32,24)== {gcd(24,32)})
-assert(posetMeet(B,32,16)== {16})
-assert(rankPoset B == {{1}, {2, 3}, {4, 6}, {8, 12}, {16, 24}, {32, 48}, {96}})
-assert(allRelations B == {{1, 1}, {1, 2}, {1, 3}, {1, 4}, {1, 6}, {1, 8}, {1, 12}, {1,16}, {1, 24}, {1, 32}, {1, 48}, {1, 96}, {2, 2}, {2, 4}, {2, 6}, {2, 8}, {2, 12}, {2, 16}, {2, 24}, {2, 32}, {2, 48}, {2, 96}, {3, 3}, {3, 6}, {3, 12}, {3, 24}, {3, 48}, {3, 96}, {4, 4}, {4, 8}, {4, 12}, {4, 16}, {4, 24}, {4, 32}, {4, 48}, {4, 96}, {6, 6}, {6, 12}, {6, 24}, {6, 48}, {6, 96}, {8, 8}, {8, 16}, {8, 24}, {8,32}, {8, 48}, {8, 96}, {12, 12}, {12, 24}, {12, 48}, {12, 96}, {16, 16}, {16, 32}, {16, 48}, {16, 96}, {24, 24}, {24, 48}, {24, 96}, {32, 32}, {32, 96}, {48, 48}, {48, 96}, {96, 96}})
-assert(coveringRelations B == {{1, 2}, {1, 3}, {2, 6}, {2, 4}, {3, 6}, {4, 8}, {4, 12}, {6, 12}, {8, 24}, {8, 16}, {12, 24}, {16, 32}, {16, 48}, {24, 48}, {32, 96}, {48, 96}})
-assert(antichains B == {{}, {1}, {2}, {2, 3}, {3}, {3, 4}, {3, 8}, {3, 16}, {3, 32}, {4}, {4, 6}, {6}, {6, 8}, {6, 16}, {6, 32}, {8}, {8, 12}, {12}, {12, 16}, {12, 32}, {16}, {16, 24}, {24}, {24, 32}, {32}, {32, 48}, {48}, {96}})
-assert(maximalAntichains B == {{1}, {96}, {2, 3}, {3, 32}, {3, 4}, {3, 8}, {3, 16}, {4, 6}, {6, 32}, {6, 8}, {6, 16}, {8, 12}, {12, 32}, {12, 16}, {16, 24}, {24, 32}, {32, 48}})
-assert(maximalChains B == {{1, 2, 6, 12, 24, 48, 96}, {1, 2, 4, 8, 24, 48, 96}, {1, 2, 4, 8, 16, 32, 96}, {1, 2, 4, 8, 16, 48, 96}, {1, 2, 4, 12, 24, 48, 96}, {1, 3, 6, 12, 24, 48, 96}})
-assert(chains B == {{}, {1}, {1, 2}, {1, 2, 4}, {1, 2, 4, 8}, {1, 2, 4, 8, 16}, {1, 2, 4, 8, 16, 32}, {1, 2, 4, 8, 16, 32, 96}, {1, 2, 4, 8, 16, 48}, {1, 2, 4, 8, 16, 48, 96}, {1, 2, 4, 8, 16, 96}, {1, 2, 4, 8, 24}, {1, 2, 4, 8, 24, 48}, {1, 2, 4, 8, 24, 48, 96}, {1, 2, 4, 8, 24, 96}, {1, 2, 4, 8, 32}, {1, 2, 4, 8, 32, 96}, {1, 2, 4, 8, 48}, {1, 2, 4, 8, 48, 96}, {1, 2, 4, 8, 96}, {1, 2, 4, 12}, {1, 2, 4, 12, 24}, {1, 2, 4, 12, 24, 48}, {1, 2, 4, 12, 24, 48, 96}, {1, 2, 4, 12, 24, 96}, {1, 2, 4, 12, 48}, {1, 2, 4, 12, 48, 96}, {1, 2, 4, 12, 96}, {1, 2, 4, 16}, {1, 2, 4, 16, 32}, {1, 2, 4, 16, 32, 96}, {1, 2, 4, 16, 48}, {1, 2, 4, 16, 48, 96}, {1, 2, 4, 16, 96}, {1, 2, 4, 24}, {1, 2, 4, 24, 48}, {1, 2, 4, 24, 48, 96}, {1, 2, 4, 24, 96}, {1, 2, 4, 32}, {1, 2, 4, 32, 96}, {1, 2, 4, 48}, {1, 2, 4, 48, 96}, {1, 2, 4, 96}, {1, 2, 6}, {1, 2, 6, 12}, {1, 2, 6, 12, 24}, {1, 2, 6, 12, 24, 48}, {1, 2, 6, 12, 24, 48, 96}, {1, 2, 6, 12, 24, 96}, {1, 2, 6, 12, 48}, {1, 2, 6, 12, 48, 96}, {1, 2, 6, 12, 96}, {1, 2, 6, 24}, {1, 2, 6, 24, 48}, {1, 2, 6, 24, 48, 96}, {1, 2, 6, 24, 96}, {1, 2, 6, 48}, {1, 2, 6, 48, 96}, {1, 2, 6, 96}, {1, 2, 8}, {1, 2, 8, 16}, {1, 2, 8, 16, 32}, {1, 2, 8, 16, 32, 96}, {1, 2, 8, 16, 48}, {1, 2, 8, 16, 48, 96}, {1, 2, 8, 16, 96}, {1, 2, 8, 24}, {1, 2, 8, 24, 48}, {1, 2, 8, 24, 48, 96}, {1, 2, 8, 24, 96}, {1, 2, 8, 32}, {1, 2, 8, 32, 96}, {1, 2, 8, 48}, {1, 2, 8, 48, 96}, {1, 2, 8, 96}, {1, 2, 12}, {1, 2, 12, 24}, {1, 2, 12, 24, 48}, {1, 2, 12, 24, 48, 96}, {1, 2, 12, 24, 96}, {1, 2, 12, 48}, {1, 2, 12, 48, 96}, {1, 2, 12, 96}, {1, 2, 16}, {1, 2, 16, 32}, {1, 2, 16, 32, 96}, {1, 2, 16, 48}, {1, 2, 16, 48, 96}, {1, 2, 16, 96}, {1, 2, 24}, {1, 2, 24, 48}, {1, 2, 24, 48, 96}, {1, 2, 24, 96}, {1, 2, 32}, {1, 2, 32, 96}, {1, 2, 48}, {1, 2, 48, 96}, {1, 2, 96}, {1, 3}, {1, 3, 6}, {1, 3, 6, 12}, {1, 3, 6, 12, 24}, {1, 3, 6, 12, 24, 48}, {1, 3, 6, 12, 24, 48, 96}, {1, 3, 6, 12, 24, 96}, {1, 3, 6, 12, 48}, {1, 3, 6, 12, 48, 96}, {1, 3, 6, 12, 96}, {1, 3, 6, 24}, {1, 3, 6, 24, 48}, {1, 3, 6, 24, 48, 96}, {1, 3, 6, 24, 96}, {1, 3, 6, 48}, {1, 3, 6, 48, 96}, {1, 3, 6, 96}, {1, 3, 12}, {1, 3, 12, 24}, {1, 3, 12, 24, 48}, {1, 3, 12, 24, 48, 96}, {1, 3, 12, 24, 96}, {1, 3, 12, 48}, {1, 3, 12, 48, 96}, {1, 3, 12, 96}, {1, 3, 24}, {1, 3, 24, 48}, {1, 3, 24, 48, 96}, {1, 3, 24, 96}, {1, 3, 48}, {1, 3, 48, 96}, {1, 3, 96}, {1, 4}, {1, 4, 8}, {1, 4, 8, 16}, {1, 4, 8, 16, 32}, {1, 4, 8, 16, 32, 96}, {1, 4, 8, 16, 48}, {1, 4, 8, 16, 48, 96}, {1, 4, 8, 16, 96}, {1, 4, 8, 24}, {1, 4, 8, 24, 48}, {1, 4, 8, 24, 48, 96}, {1, 4, 8, 24, 96}, {1, 4, 8, 32}, {1, 4, 8, 32, 96}, {1, 4, 8, 48}, {1, 4, 8, 48, 96}, {1, 4, 8, 96}, {1, 4, 12}, {1, 4, 12, 24}, {1, 4, 12, 24, 48}, {1, 4, 12, 24, 48, 96}, {1, 4, 12, 24, 96}, {1, 4, 12, 48}, {1, 4, 12, 48, 96}, {1, 4, 12, 96}, {1, 4, 16}, {1, 4, 16, 32}, {1, 4, 16, 32, 96}, {1, 4, 16, 48}, {1, 4, 16, 48, 96}, {1, 4, 16, 96}, {1, 4, 24}, {1, 4, 24, 48}, {1, 4, 24, 48, 96}, {1, 4, 24, 96}, {1, 4, 32}, {1, 4, 32, 96}, {1, 4, 48}, {1, 4, 48, 96}, {1, 4, 96}, {1, 6}, {1, 6, 12}, {1, 6, 12, 24}, {1, 6, 12, 24, 48}, {1, 6, 12, 24, 48, 96}, {1, 6, 12, 24, 96}, {1, 6, 12, 48}, {1, 6, 12, 48, 96}, {1, 6, 12, 96}, {1, 6, 24}, {1, 6, 24, 48}, {1, 6, 24, 48, 96}, {1, 6, 24, 96}, {1, 6, 48}, {1, 6, 48, 96}, {1, 6, 96}, {1, 8}, {1, 8, 16}, {1, 8, 16, 32}, {1, 8, 16, 32, 96}, {1, 8, 16, 48}, {1, 8, 16, 48, 96}, {1, 8, 16, 96}, {1, 8, 24}, {1, 8, 24, 48}, {1, 8, 24, 48, 96}, {1, 8, 24, 96}, {1, 8, 32}, {1, 8, 32, 96}, {1, 8, 48}, {1, 8, 48, 96}, {1, 8, 96}, {1, 12}, {1, 12, 24}, {1, 12, 24, 48}, {1, 12, 24, 48, 96}, {1, 12, 24, 96}, {1, 12, 48}, {1, 12, 48, 96}, {1, 12, 96}, {1, 16}, {1, 16, 32}, {1, 16, 32, 96}, {1, 16, 48}, {1, 16, 48, 96}, {1, 16, 96}, {1, 24}, {1, 24, 48}, {1, 24, 48, 96}, {1, 24, 96}, {1, 32}, {1, 32, 96}, {1, 48}, {1, 48, 96}, {1, 96}, {2}, {2, 4}, {2, 4, 8}, {2, 4, 8, 16}, {2, 4, 8, 16, 32}, {2, 4, 8, 16, 32, 96}, {2, 4, 8, 16, 48}, {2, 4, 8, 16, 48, 96}, {2, 4, 8, 16, 96}, {2, 4, 8, 24}, {2, 4, 8, 24, 48}, {2, 4, 8, 24, 48, 96}, {2, 4, 8, 24, 96}, {2, 4, 8, 32}, {2, 4, 8, 32, 96}, {2, 4, 8, 48}, {2, 4, 8, 48, 96}, {2, 4, 8, 96}, {2, 4, 12}, {2, 4, 12, 24}, {2, 4, 12, 24, 48}, {2, 4, 12, 24, 48, 96}, {2, 4, 12, 24, 96}, {2, 4, 12, 48}, {2, 4, 12, 48, 96}, {2, 4, 12, 96}, {2, 4, 16}, {2, 4, 16, 32}, {2, 4, 16, 32, 96}, {2, 4, 16, 48}, {2, 4, 16, 48, 96}, {2, 4, 16, 96}, {2, 4, 24}, {2, 4, 24, 48}, {2, 4, 24, 48, 96}, {2, 4, 24, 96}, {2, 4, 32}, {2, 4, 32, 96}, {2, 4, 48}, {2, 4, 48, 96}, {2, 4, 96}, {2, 6}, {2, 6, 12}, {2, 6, 12, 24}, {2, 6, 12, 24, 48}, {2, 6, 12, 24, 48, 96}, {2, 6, 12, 24, 96}, {2, 6, 12, 48}, {2, 6, 12, 48, 96}, {2, 6, 12, 96}, {2, 6, 24}, {2, 6, 24, 48}, {2, 6, 24, 48, 96}, {2, 6, 24, 96}, {2, 6, 48}, {2, 6, 48, 96}, {2, 6, 96}, {2, 8}, {2, 8, 16}, {2, 8, 16, 32}, {2, 8, 16, 32, 96}, {2, 8, 16, 48}, {2, 8, 16, 48, 96}, {2, 8, 16, 96}, {2, 8, 24}, {2, 8, 24, 48}, {2, 8, 24, 48, 96}, {2, 8, 24, 96}, {2, 8, 32}, {2, 8, 32, 96}, {2, 8, 48}, {2, 8, 48, 96}, {2, 8, 96}, {2, 12}, {2, 12, 24}, {2, 12, 24, 48}, {2, 12, 24, 48, 96}, {2, 12, 24, 96}, {2, 12, 48}, {2, 12, 48, 96}, {2, 12, 96}, {2, 16}, {2, 16, 32}, {2, 16, 32, 96}, {2, 16, 48}, {2, 16, 48, 96}, {2, 16, 96}, {2, 24}, {2, 24, 48}, {2, 24, 48, 96}, {2, 24, 96}, {2, 32}, {2, 32, 96}, {2, 48}, {2, 48, 96}, {2, 96}, {3}, {3, 6}, {3, 6, 12}, {3, 6, 12, 24}, {3, 6, 12, 24, 48}, {3, 6, 12, 24, 48, 96}, {3, 6, 12, 24, 96}, {3, 6, 12, 48}, {3, 6, 12, 48, 96}, {3, 6, 12, 96}, {3, 6, 24}, {3, 6, 24, 48}, {3, 6, 24, 48, 96}, {3, 6, 24, 96}, {3, 6, 48}, {3, 6, 48, 96}, {3, 6, 96}, {3, 12}, {3, 12, 24}, {3, 12, 24, 48}, {3, 12, 24, 48, 96}, {3, 12, 24, 96}, {3, 12, 48}, {3, 12, 48, 96}, {3, 12, 96}, {3, 24}, {3, 24, 48}, {3, 24, 48, 96}, {3, 24, 96}, {3, 48}, {3, 48, 96}, {3, 96}, {4}, {4, 8}, {4, 8, 16}, {4, 8, 16, 32}, {4, 8, 16, 32, 96}, {4, 8, 16, 48}, {4, 8, 16, 48, 96}, {4, 8, 16, 96}, {4, 8, 24}, {4, 8, 24, 48}, {4, 8, 24, 48, 96}, {4, 8, 24, 96}, {4, 8, 32}, {4, 8, 32, 96}, {4, 8, 48}, {4, 8, 48, 96}, {4, 8, 96}, {4, 12}, {4, 12, 24}, {4, 12, 24, 48}, {4, 12, 24, 48, 96}, {4, 12, 24, 96}, {4, 12, 48}, {4, 12, 48, 96}, {4, 12, 96}, {4, 16}, {4, 16, 32}, {4, 16, 32, 96}, {4, 16, 48}, {4, 16, 48, 96}, {4, 16, 96}, {4, 24}, {4, 24, 48}, {4, 24, 48, 96}, {4, 24, 96}, {4, 32}, {4, 32, 96}, {4, 48}, {4, 48, 96}, {4, 96}, {6}, {6, 12}, {6, 12, 24}, {6, 12, 24, 48}, {6, 12, 24, 48, 96}, {6, 12, 24, 96}, {6, 12, 48}, {6, 12, 48, 96}, {6, 12, 96}, {6, 24}, {6, 24, 48}, {6, 24, 48, 96}, {6, 24, 96}, {6, 48}, {6, 48, 96}, {6, 96}, {8}, {8, 16}, {8, 16, 32}, {8, 16, 32, 96}, {8, 16, 48}, {8, 16, 48, 96}, {8, 16, 96}, {8, 24}, {8, 24, 48}, {8, 24, 48, 96}, {8, 24, 96}, {8, 32}, {8, 32, 96}, {8, 48}, {8, 48, 96}, {8, 96}, {12}, {12, 24}, {12, 24, 48}, {12, 24, 48, 96}, {12, 24, 96}, {12, 48}, {12, 48, 96}, {12, 96}, {16}, {16, 32}, {16, 32, 96}, {16, 48}, {16, 48, 96}, {16, 96}, {24}, {24, 48}, {24, 48, 96}, {24, 96}, {32}, {32, 96}, {48}, {48, 96}, {96}})
-assert(flagChains(B,{1,2,3}) == {{2, 4, 8}, {2, 4, 12}, {2, 6, 12}, {3, 6, 12}})
-assert(chains B == sort join({{}},flatten apply(subsets({0,1,2,3,4,5,6}), s-> flagChains(B,s))))
-assert(isAntichain(B,{3,8})==true)
-assert(isAntichain(B,{2,16})==false)
-assert(# linearExtensions B == 132)
-assert(toString characteristicPolynomial B === "q^6-2*q^5+q^4")
-assert(toString flagfPolynomial B === "6*q_0*q_1*q_2*q_3*q_4*q_5*q_6+6*q_0*q_1*q_2*q_3*q_4*q_5+5*q_0*q_1*q_2*q_3*q_4*q_6+5*q_0*q_1*q_2*q_3*q_5*q_6+5*q_0*q_1*q_2*q_4*q_5*q_6+5*q_0*q_1*q_3*q_4*q_5*q_6+5*q_0*q_2*q_3*q_4*q_5*q_6+6*q_1*q_2*q_3*q_4*q_5*q_6+5*q_0*q_1*q_2*q_3*q_4+5*q_0*q_1*q_2*q_3*q_5+5*q_0*q_1*q_2*q_4*q_5+5*q_0*q_1*q_3*q_4*q_5+5*q_0*q_2*q_3*q_4*q_5+6*q_1*q_2*q_3*q_4*q_5+4*q_0*q_1*q_2*q_3*q_6+4*q_0*q_1*q_2*q_4*q_6+4*q_0*q_1*q_3*q_4*q_6+4*q_0*q_2*q_3*q_4*q_6+5*q_1*q_2*q_3*q_4*q_6+4*q_0*q_1*q_2*q_5*q_6+4*q_0*q_1*q_3*q_5*q_6+4*q_0*q_2*q_3*q_5*q_6+5*q_1*q_2*q_3*q_5*q_6+4*q_0*q_1*q_4*q_5*q_6+4*q_0*q_2*q_4*q_5*q_6+5*q_1*q_2*q_4*q_5*q_6+4*q_0*q_3*q_4*q_5*q_6+5*q_1*q_3*q_4*q_5*q_6+5*q_2*q_3*q_4*q_5*q_6+4*q_0*q_1*q_2*q_3+4*q_0*q_1*q_2*q_4+4*q_0*q_1*q_3*q_4+4*q_0*q_2*q_3*q_4+5*q_1*q_2*q_3*q_4+4*q_0*q_1*q_2*q_5+4*q_0*q_1*q_3*q_5+4*q_0*q_2*q_3*q_5+5*q_1*q_2*q_3*q_5+4*q_0*q_1*q_4*q_5+4*q_0*q_2*q_4*q_5+5*q_1*q_2*q_4*q_5+4*q_0*q_3*q_4*q_5+5*q_1*q_3*q_4*q_5+5*q_2*q_3*q_4*q_5+3*q_0*q_1*q_2*q_6+3*q_0*q_1*q_3*q_6+3*q_0*q_2*q_3*q_6+4*q_1*q_2*q_3*q_6+3*q_0*q_1*q_4*q_6+3*q_0*q_2*q_4*q_6+4*q_1*q_2*q_4*q_6+3*q_0*q_3*q_4*q_6+4*q_1*q_3*q_4*q_6+4*q_2*q_3*q_4*q_6+3*q_0*q_1*q_5*q_6+3*q_0*q_2*q_5*q_6+4*q_1*q_2*q_5*q_6+3*q_0*q_3*q_5*q_6+4*q_1*q_3*q_5*q_6+4*q_2*q_3*q_5*q_6+3*q_0*q_4*q_5*q_6+4*q_1*q_4*q_5*q_6+4*q_2*q_4*q_5*q_6+4*q_3*q_4*q_5*q_6+3*q_0*q_1*q_2+3*q_0*q_1*q_3+3*q_0*q_2*q_3+4*q_1*q_2*q_3+3*q_0*q_1*q_4+3*q_0*q_2*q_4+4*q_1*q_2*q_4+3*q_0*q_3*q_4+4*q_1*q_3*q_4+4*q_2*q_3*q_4+3*q_0*q_1*q_5+3*q_0*q_2*q_5+4*q_1*q_2*q_5+3*q_0*q_3*q_5+4*q_1*q_3*q_5+4*q_2*q_3*q_5+3*q_0*q_4*q_5+4*q_1*q_4*q_5+4*q_2*q_4*q_5+4*q_3*q_4*q_5+2*q_0*q_1*q_6+2*q_0*q_2*q_6+3*q_1*q_2*q_6+2*q_0*q_3*q_6+3*q_1*q_3*q_6+3*q_2*q_3*q_6+2*q_0*q_4*q_6+3*q_1*q_4*q_6+3*q_2*q_4*q_6+3*q_3*q_4*q_6+2*q_0*q_5*q_6+3*q_1*q_5*q_6+3*q_2*q_5*q_6+3*q_3*q_5*q_6+3*q_4*q_5*q_6+2*q_0*q_1+2*q_0*q_2+3*q_1*q_2+2*q_0*q_3+3*q_1*q_3+3*q_2*q_3+2*q_0*q_4+3*q_1*q_4+3*q_2*q_4+3*q_3*q_4+2*q_0*q_5+3*q_1*q_5+3*q_2*q_5+3*q_3*q_5+3*q_4*q_5+q_0*q_6+2*q_1*q_6+2*q_2*q_6+2*q_3*q_6+2*q_4*q_6+2*q_5*q_6+q_0+2*q_1+2*q_2+2*q_3+2*q_4+2*q_5+q_6+1")
---Removed for time purposes (slow!)
---assert(toString flaghPolynomial B === "q_1+q_2+q_3+q_4+q_5+1")
-assert(toString fPolynomial B === "6*q^7+37*q^6+96*q^5+135*q^4+110*q^3+51*q^2+12*q+1")
-assert(toString hPolynomial B === "5*q+1")
---Removed for time purposes (slow!)
---assert(greeneKleitmanPartition B === new Partition from {7,5})
-assert(moebiusFunction B === new HashTable from {(1,6) => 1, (24,48) => -1, (48,24) => 0, (1,8) => 0, (1,12) => 0, (32,48) => 0, (48,32) => 0, (1,16) => 0, (1,24) => 0, (48,48) => 1, (1,32) => 0, (96,1) => 0, (96,2) => 0, (96,3) => 0, (4,96) => 0, (96,4) => 0, (96,6) => 0, (8,96) => 0, (96,8) => 0, (12,96) => 0, (96,12) => 0, (16,96) => 1, (96,16) => 0, (1,48) => 0, (24,96) => 0, (96,24) => 0, (96,32) => 0, (32,96) => -1, (2,1) => 0, (2,2) => 1, (2,3) => 0, (2,4) => -1, (6,1) => 0, (2,6) => -1, (6,2) => 0, (6,3) => 0, (2,8) => 0, (6,4) => 0, (6,6) => 1, (6,8) => 0, (2,12) => 1, (96,48) => 0, (48,96) => -1, (6,12) => -1, (2,16) => 0, (6,16) => 0, (2,24) => 0, (6,24) => 0, (1,96) => 0, (2,32) => 0, (6,32) => 0, (2,48) => 0, (6,48) => 0, (96,96) => 1, (3,1) => 0, (3,2) => 0, (3,3) => 1, (3,4) => 0, (3,6) => -1, (3,8) => 0, (3,12) => 0, (3,16) => 0, (3,24) => 0, (2,96) => 0, (3,32) => 0, (6,96) => 0, (3,48) => 0, (4,1) => 0, (4,2) => 0, (4,3) => 0, (4,4) => 1, (8,1) => 0, (8,2) => 0, (4,6) => 0, (8,3) => 0, (8,4) => 0, (4,8) => -1, (12,1) => 0, (12,2) => 0, (8,6) => 0, (12,3) => 0, (12,4) => 0, (8,8) => 1, (4,12) => -1, (16,1) => 0, (12,6) => 0, (16,2) => 0, (16,3) => 0, (12,8) => 0, (8,12) => 0, (16,4) => 0, (4,16) => 0, (16,6) => 0, (8,16) => -1, (12,12) => 1, (16,8) => 0, (24,1) => 0, (24,2) => 0, (24,3) => 0, (24,4) => 0, (12,16) => 0, (4,24) => 1, (16,12) => 0, (24,6) => 0, (24,8) => 0, (8,24) => -1, (16,16) => 1, (32,1) => 0, (32,2) => 0, (32,3) => 0, (3,96) => 0, (24,12) => 0, (32,4) => 0, (12,24) => -1, (4,32) => 0, (32,6) => 0, (24,16) => 0, (8,32) => 0, (32,8) => 0, (16,24) => 0, (32,12) => 0, (12,32) => 0, (24,24) => 1, (32,16) => 0, (16,32) => -1, (48,1) => 0, (48,2) => 0, (48,3) => 0, (48,4) => 0, (4,48) => 0, (48,6) => 0, (24,32) => 0, (32,24) => 0, (8,48) => 1, (48,8) => 0, (12,48) => 0, (48,12) => 0, (32,32) => 1, (48,16) => 0, (16,48) => -1, (1,1) => 1, (1,2) => -1, (1,3) => -1, (1,4) => 0})
-assert(toString rankGeneratingFunction B === "q^6+2*q^5+2*q^4+2*q^3+2*q^2+2*q+1")
-assert(toString zetaPolynomial B == "(1/120)*q^6+(1/12)*q^5+(7/24)*q^4+(5/12)*q^3+(1/5)*q^2")
-assert(dilworthNumber B === 2)
-assert(isAtomic B == false)
-assert(isBounded B == true)
-assert(isConnected B == true)
-assert(isDistributive B == true)
-assert(isEulerian B == false)
-assert(isGeometric B == false)
-assert(isGraded B == true)
-assert(isLattice B == true)
-assert(isLowerSemilattice B == true)
-assert(isLowerSemimodular B == true)
-assert(isModular B == true)
-assert(isRanked B == true)
-assert(isSperner B == true)
-assert(isStrictSperner B == false)
-assert(isUpperSemilattice B == true)
-assert(isUpperSemimodular B == true)
-*}
+
+--Tests for isRanked
+
+TEST ///
+P = poset({0,1,2,3,4},{{0,2},{2,3},{1,4},{0,4},{1,3}})
+assert(isRanked P == false)
 ///
 
 end;
@@ -6466,5 +6665,32 @@ end;
 ------------------------------------------
 
 restart
-needsPackage("Posets", FileName => "./Posets.m2")
-
+needsPackage("Posets");
+R = RR[x,y];
+A = {x + y, x, x - y, y + 1};
+LA = intersectionLattice(A, R);
+realRegions(A, R)
+boundedRegions(A, R)
+RLA = rank LA
+MF = moebiusFunction LA;
+apply(RLA, r -> sum(r, x -> abs MF#(ideal 0_R, x)))
+R = QQ[a,b,c,d];
+M = ideal(a^3*b^2*c, a^3*b^2*d, a^2*c*d, a*b*c^2*d, b^2*c^2*d);
+LM = lcmLattice M;
+D1 = orderComplex(openInterval(LM, 1_R, a^2*b^2*c^2*d));
+prune HH(D1)
+D2 = orderComplex(openInterval(LM, 1_R, a^3*b^2*c*d));
+prune HH(D2)
+P = divisorPoset 12;
+HP = hibiIdeal P
+betti res HP
+LP = distributiveLattice P;
+cvrs = partition(last, coveringRelations LP);
+-- Determine the number of elements each element covers.
+iCvrs = tally apply(keys cvrs, i -> #cvrs#i);
+-- Turn iCvrs into a list indexed by integers.
+gk = prepend(1, apply(sort keys iCvrs, k -> iCvrs#k))
+-- Determine the number of intervals of LP isomorphic
+-- to boolean lattices of a given rank.
+apply(#gk, i -> sum(i..<#gk, j -> binomial(j, i) * gk_j))
+pdim module HP == dilworthNumber P

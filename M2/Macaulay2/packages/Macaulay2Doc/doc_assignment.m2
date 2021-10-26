@@ -421,7 +421,7 @@ document {
 	       p
 	  ///,
 	  PARA {
-	       "In this example, we see that the scope of the local variable ", TT "p", " is limited to the body of a ", TO "for", " loop."
+	       "In this example, we see that the scope of the local variable ", TT "j", " is limited to the body of a ", TO "for", " loop."
 	       },
 	  EXAMPLE lines ///
 	       i="a b c";
@@ -467,9 +467,8 @@ document {
 	       ///g = () -> (
      x := local x;
      R := QQ[x];
-     (x+2)^10);
-g()
-	       ///
+     (x+2)^10);///,
+     	       ///g()///
 	       }
 	  ),
      SYNOPSIS {
@@ -550,10 +549,10 @@ g()
 	       ZZ + ZZ := (x,y) -> x+y+100
 	       3 + 4
 	  ///,
-	  "By contrast, addition of complex numbers is not internal, and can be overridden.",
+	  "By contrast, division with remainder of rational numbers is not internal, and can be overridden.",
 	  EXAMPLE lines ///
-	       CC + CC := (w,z) -> w*z
-	       ii + ii
+	       QQ // QQ := (w,z) -> (numerator w + numerator z)/(denominator w + denominator z)
+	       (3/5) // (6/7)
 	  ///
 	  },
      SYNOPSIS {

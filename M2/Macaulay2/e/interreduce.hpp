@@ -10,8 +10,9 @@ class Interreducer
   GBRing *R;
   FreeModule *F;
   VECTOR(gbvector *) G;
-public:
-  Interreducer(GBRing *R, FreeModule *F, VECTOR(gbvector *) &elems0);
+
+ public:
+  Interreducer(GBRing *R, FreeModule *F, VECTOR(gbvector *) & elems0);
 
   void showElem(int i, int nterms);
   void show(int nterms);
@@ -29,8 +30,6 @@ public:
 
   bool reduceTail(gbvector *&f, int i);
   // reduces f w.r.t G \ i.
-
-
 };
 
 #endif

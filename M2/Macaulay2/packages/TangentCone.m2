@@ -7,10 +7,11 @@ newPackage ("TangentCone",
 	     {Name => "David Eisenbud", Email => "de@msri.org"}
 	     },
     	Headline => "tangent cones",
+	Keywords => {"Commutative Algebra"},
     	DebuggingMode => false
     	)
 
-export { tangentCone }
+export { "tangentCone" }
 
 tangentCone = method(TypicalValue => Ideal, 
      Options => { 

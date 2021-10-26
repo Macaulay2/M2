@@ -1,0 +1,36 @@
+--		Copyright 2016 by Daniel R. Grayson
+use actors5;
+
+declarations "
+#include <chrono>
+";
+
+-- The typedef from this type declaration is put into the include file actors6-exports.h,
+-- so that means we can write "use actors6;" only in a *.dd file, not in a *.d file.
+-- That's why we are renaming interp.d to interp.dd.  Eventually all *.d files should
+-- be renamed.
+Chrono := Type "std::chrono::steady_clock::time_point" ;    
+
+elapsedTimefun(a:Code):Expr := (
+     time1 := Ccode(Chrono, "std::chrono::steady_clock::now()");
+     ret := eval(a);
+     time2 := Ccode(Chrono, "std::chrono::steady_clock::now()");
+     d := Ccode(uint64_t, "(time2-time1).count()");
+     x := double(d)/1000000000.;
+     when ret
+     is Error do ret
+     else list(timeClass,Sequence(toExpr(x),ret)));
+setupop(elapsedTimingS,elapsedTimefun);
+showElapsedTimefun(a:Code):Expr := (
+     time3 := Ccode(Chrono, "std::chrono::steady_clock::now()");
+     ret := eval(a);
+     time4 := Ccode(Chrono, "std::chrono::steady_clock::now()");
+     d := Ccode(uint64_t, "(time4-time3).count()");
+     x := double(d)/1000000000.;
+     stdError << " -- " << x << " seconds elapsed" << endl;
+     ret);
+setupop(elapsedTimeS,showElapsedTimefun);
+
+-- Local Variables:
+-- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d actors6.o "
+-- End:

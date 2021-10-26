@@ -1,5 +1,11 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+-- TODO: seems to need ofcm.m2 for monoid
+-- TODO: seems to need quotring.m2 for isQuotientOf
+needs "methods.m2"
+needs "enginering.m2"
+needs "tables.m2"
+
 -----------------------------------------------------------------------------
 
 Monoid = new Type of Type
@@ -19,10 +25,21 @@ degreeLength OrderedMonoid := M -> M.degreeLength
 terms := symbol terms
 PolynomialRing = new Type of EngineRing
 PolynomialRing.synonym = "polynomial ring"
+PolynomialRing#{Standard,AfterPrint} = R -> (
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : "; -- standard template
+    << "PolynomialRing";
+    if #R.monoid.Options.WeylAlgebra > 0
+    then << ", " << #R.monoid.Options.WeylAlgebra << " differential variables";
+    if #R.monoid.Options.SkewCommutative > 0
+    then << ", " << #R.monoid.Options.SkewCommutative << " skew commutative variables";
+    << endl;
+    )
 
 isPolynomialRing = method(TypicalValue => Boolean)
 isPolynomialRing Thing := x -> false
 isPolynomialRing PolynomialRing := (R) -> true
+
+isHomogeneous PolynomialRing := R -> true
 
 exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
 
@@ -30,30 +47,16 @@ expression PolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      k := last R.baseRings;
      T := if (options R).Local === true then List else Array;
-     (expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (new T from (monoid R).generatorExpressions)
+     (expression k) (new T from toSequence runLengthEncode R.generatorExpressions)
      )
 
 describe PolynomialRing := R -> (
      k := last R.baseRings;
-     net ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expressionMonoid monoid R)))
+     Describe (expression k) (expressionMonoid monoid R)) -- not describe k, we only expand one level
+--toExternalString PolynomialRing := R -> toString describe R;
 toExternalString PolynomialRing := R -> (
      k := last R.baseRings;
      toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))
-
-tex PolynomialRing := R -> "$" | texMath R | "$"	    -- silly!
-
-texMath PolynomialRing := R -> (
-     if R.?tex then R.tex
-     else if hasAttribute(R,ReverseDictionary) then "\\text{" | toString getAttribute(R,ReverseDictionary)  | "}"
-     else (texMath last R.baseRings)|(texMath expression monoid R)
-     )
-
-net PolynomialRing := R -> (
-     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
-     else net expression R)
-toString PolynomialRing := R -> (
-     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
-     else toString expression R)
 
 degreeLength PolynomialRing := (RM) -> degreeLength RM.FlatMonoid
 
@@ -261,32 +264,57 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 --	       f}
 	  );
      	  if M.Options.Inverses === true then (
-	       denominator RM := f -> RM_( - min \ transpose exponents f );
+	       denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
 	       numerator RM := f -> f * denominator f;
 	       );
 	  factor RM := opts -> f -> (
-	       c := 1;
-	       (facs,exps) := rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
-     	       facs = apply(facs, p -> new RM from p);
-	       if liftable(facs#0,R) then (
+	       c := 1_R; 
+	       if (options RM).Inverses then (
+        	   minexps:=min\transpose apply(toList (rawPairs(raw RM.basering,raw f))#1,m->exponents(RM.numallvars,m));
+		   f=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
+		   c=RM_minexps;
+		   );
+	       isSimpleNumberField := F -> isField F and instance(baseRing F, QuotientRing) and coefficientRing baseRing F === QQ and numgens baseRing F == 1 and numgens ideal baseRing F == 1; 
+	       (facs,exps) := if isSimpleNumberField R then (
+		   (RM', toRM') := flattenRing(RM, CoefficientRing=>QQ);
+		   minp := (ideal RM')_0;
+		   ((fs,es) -> (for f in fs list raw (map(RM, RM', generators RM|{R_0})) new RM' from f, es)) (
+		       rawFactor(raw toRM' f, raw minp)) -- apply rawFactor, but the factors need to be converted back to RM
+	       ) else if instance(R, FractionField) then (
+        	   denom := lcm \\ (t -> denominator t_1) \ listForm f;
+        	   baseRM := (baseRing R)(RM.monoid);
+		   f = (map(baseRM, RM, generators baseRM)) (denom * f);
+		   ((fs,es) -> (for i in (0..<#fs) list raw (((map(RM, baseRM, generators RM)) new baseRM from fs_i) * if i==0 then 1/denom else 1), es)) (
+		       rawFactor raw f) -- similar: convert back to RM, and put denom back into the leadCoefficient
+	       ) else rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
+	       leadCoeff := x->( -- iterated leadCoefficient
+		   R:=ring x;
+		   if class R === PolynomialRing then leadCoeff leadCoefficient x else
+		   if class R === QuotientRing or class R === GaloisField then leadCoeff lift(x,ambient R) else
+    	    	   x);
+     	       facs = apply(#facs, i -> (
+		       p:=new RM from facs#i;
+		       if leadCoeff p >= 0 then p else (if odd(exps#i) then c=-c; -p)
+		       ));
+    	       if liftable(facs#0,RM.basering) then (
 		    -- factory returns the possible constant factor in front
 	       	    assert(exps#0 == 1);
-		    c = facs#0;
+		    c = c*(facs#0);
 		    facs = drop(facs,1);
 		    exps = drop(exps,1);
 		    );
 	       if #facs != 0 then (facs,exps) = toSequence transpose sort transpose {toList facs, toList exps};
 	       if c != 1 then (
-		    -- we put the possible constant factor at the end
+		    -- we put the possible constant (and monomial for Laurent polynomials) at the end
 		    facs = append(facs,c);
 		    exps = append(exps,1);
 		    );
 	       new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
-	  isPrime RM := f -> (
-	       v := factor f;				    -- constant term last
-	       #v === 1 and last v#0 === 1 and not isConstant first v#0
-	       or
-	       #v === 2 and v#0#1 === 1 and isConstant first v#0 and v#1#1 === 1
+	  isPrime RM := {} >> o -> f -> (
+	      v := factor f;
+	      cnt := 0; -- counts number of factors
+	      scan(v, x -> ( if not isUnit(x#0) then cnt=cnt+x#1 ));
+	      cnt == 1 -- cnt=0 is invertible element; cnt>1 is composite element; cnt=1 is prime element
 	       );
 	  RM.generatorSymbols = M.generatorSymbols;
 	  RM.generators = apply(num, i -> RM_i);
@@ -355,6 +383,9 @@ selectVariables(List,PolynomialRing) := (v,R) -> (
      o.Degrees = o.Degrees_v;
      o = new OptionTable from o;
      (S := (coefficientRing R)(monoid [o]),map(R,S,(generators R)_v)))
+
+antipode = method();
+antipode RingElement := (f) -> new ring f from rawAntipode raw f;
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -8,13 +8,14 @@ newPackage(
 		     Email => "chris@math.okstate.edu", 
 		     HomePage => "http://www.math.okstate.edu/~chris"}
 	},
-	Headline => "A Macaulay 2 package for manipulating lexicographic-type monomial ideals",
+	Headline => "lexicographic-type monomial ideals",
+	Keywords => {"Commutative Algebra"},
 	DebuggingMode => false
 	)
 
-export {macaulayRep, macaulayBound, macaulayLowerOperator, isHF, hilbertFunct, 
-     isCM, lexIdeal, isLexIdeal, isPurePower, LPP, generateLPPs, isLPP, cancelAll, 
-     multUpperHF, multLowerBound, multUpperBound, multBounds, PrintIdeals, MaxDegree}
+export {"macaulayRep", "macaulayBound", "macaulayLowerOperator", "isHF", "hilbertFunct", 
+     "isCM", "lexIdeal", "isLexIdeal", "isPurePower", "LPP", "generateLPPs", "isLPP", "cancelAll", 
+     "multUpperHF", "multLowerBound", "multUpperBound", "multBounds", "PrintIdeals", "MaxDegree"}
 
 --gives the d-th Macaulay representation of a.
 --use for finding upper bound for Hilbert function in degree d+1

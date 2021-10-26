@@ -13,6 +13,7 @@ newPackage(
                   Email => "daniel@momo.math.rwth-aachen.de",
                   HomePage => "http://wwwb.math.rwth-aachen.de/~daniel/"}},
         Headline => "Methods for Janet bases and Pommaret bases in Macaulay 2",
+	Keywords => {"Groebner Basis Algorithms"},
         DebuggingMode => false
         )
 
@@ -27,9 +28,9 @@ newPackage(
 --      "pretty printing" for InvolutiveBasis and FactorModuleBasis
 
 
-export {basisElements, multVar, janetMultVar, pommaretMultVar, janetBasis, InvolutiveBasis,
-     isPommaretBasis, invReduce, invSyzygies, janetResolution, Involutive, multVars,
-     FactorModuleBasis, factorModuleBasis, invNoetherNormalization, PermuteVariables}
+export {"basisElements", "multVar", "janetMultVar", "pommaretMultVar", "janetBasis", "InvolutiveBasis",
+     "isPommaretBasis", "invReduce", "invSyzygies", "janetResolution", "Involutive", "multVars",
+     "FactorModuleBasis", "factorModuleBasis", "invNoetherNormalization", "PermuteVariables"}
 
 ----------------------------------------------------------------------
 -- type InvolutiveBasis
@@ -587,7 +588,8 @@ janetResolution(Ideal) := I -> janetResolution janetBasis I
 
 janetResolution(Module) := M -> janetResolution janetBasis presentation M
 
-addHook(Module, symbol resolution, (opts,M) -> if opts.Strategy === Involutive then break janetResolution M)
+addHook((resolution, Module), Strategy => Involutive, (opts, M) ->
+    if opts.Strategy === Involutive then janetResolution M)
 
 
 -- enumeration of a (monomial) vector space basis of R/I
@@ -770,7 +772,7 @@ document {
 	     "J. Apel, The theory of involutive divisions and an application to Hilbert function computations. J. Symb. Comp. 25(6), 1998, pp. 683-704.",
              TEX "V. P. Gerdt, Involutive Algorithms for Computing Gr\\\"obner Bases. In: Cojocaru, S. and Pfister, G. and Ufnarovski, V. (eds.), Computational Commutative and Non-Commutative Algebraic Geometry, NATO Science Series, IOS Press, pp. 199-225.",
              "V. P. Gerdt and Y. A. Blinkov, Involutive bases of polynomial ideals. Minimal involutive bases. Mathematics and Computers in Simulation 45, 1998, pp. 519-541 resp. 543-560.",
-             "M. Janet, Lecons sur les systemes des equationes aux derivees partielles. Cahiers Scientifiques IV. Gauthiers-Villars, Paris, 1929.",
+             "M. Janet, Leçons sur les systèmes des équations aux dérivées partielles. Cahiers Scientifiques IV. Gauthiers-Villars, Paris, 1929.",
              "J.-F. Pommaret, Partial Differential Equations and Group Theory. Kluwer Academic Publishers, 1994.",
              "W. Plesken and D. Robertz, Janet's approach to presentations and resolutions for polynomials and linear pdes. Archiv der Mathematik 84(1), 2005, pp. 22-37.",
 	     TEX "D. Robertz, Janet Bases and Applications. In: Rosenkranz, M. and Wang, D. (eds.), Gr\\\"obner Bases in Symbolic Analysis, Radon Series on Computational and Applied Mathematics 2, de Gruyter, 2007, pp. 139-168.",

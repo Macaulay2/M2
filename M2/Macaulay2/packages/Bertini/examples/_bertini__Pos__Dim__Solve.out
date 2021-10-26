@@ -1,0 +1,65 @@
+-- -*- M2-comint -*- hash: 704393788
+
+i1 : R = QQ[x,y,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
+
+       3      2      2       2     3      2
+o2 = {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
+
+o2 : List
+
+i3 : S = bertiniPosDimSolve F
+
+o3 = S
+
+o3 : NumericalVariety
+
+i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
+
+o4 = {{-1.10806e-63-6.72876e-63*ii, 7.72046e-63-5.95645e-64*ii, .397346+.0700853*ii}}
+
+o4 : VerticalList
+
+i5 : S#1 --first specify dimension
+
+o5 = {(dim=1,deg=1)}
+
+o5 : List
+
+i6 : peek oo_0 --then list position
+
+o6 = WitnessSet{cache => CacheTable{...3...}                                                              }
+                Equations => {-3} | x3+xy2+xz2-x |
+                             {-3} | x2y+y3+yz2-y |
+                Points => {{-1.10806e-63-6.72876e-63*ii, 7.72046e-63-5.95645e-64*ii, .397346+.0700853*ii}}
+                Slice => | -1.51179-2.7846ii -.654837-3.31013ii 4.905-1.2379ii -2.03574+.148105ii |
+
+i7 : PD=primaryDecomposition( ideal F)
+
+             2    2    2
+o7 = {ideal(x  + y  + z  - 1), ideal (y, x)}
+
+o7 : List
+
+i8 : dim PD_0
+
+o8 = 2
+
+i9 : degree PD_0
+
+o9 = 2
+
+i10 : dim PD_1
+
+o10 = 1
+
+i11 : degree PD_1
+
+o11 = 1
+
+i12 : 

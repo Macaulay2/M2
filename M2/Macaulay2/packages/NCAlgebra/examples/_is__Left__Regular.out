@@ -1,0 +1,44 @@
+-- -*- M2-comint -*- hash: -1323607124
+
+i1 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o1 = B
+
+o1 : NCQuotientRing
+
+i2 : g = -y^3-x*y*z+y*x*z+x^3
+
+       3          3
+o2 = -y +yxz-xyz+x
+
+o2 : B
+
+i3 : isLeftRegular(g,6)
+
+o3 = true
+
+i4 : C = QQ{x,y}
+
+o4 = C
+
+o4 : NCPolynomialRing
+
+i5 : D = C/ncIdeal{x^2+x*y,y^2}
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o5 = D
+
+o5 : NCQuotientRing
+
+i6 : isLeftRegular(x,1)
+
+o6 = true
+
+i7 : isRightRegular(x,1)
+
+o7 = false
+
+i8 : 

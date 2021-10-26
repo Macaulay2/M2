@@ -2,14 +2,21 @@
 --- author(s): M. Stillman
 --- notes: only added example
 
-document { 
+document {
      Key => {ceiling},
      Headline => "ceiling function",
+     SeeAlso => {floor}
+     }
+     
+document { 
+     Key => {(ceiling,Number)},
+     Headline => "ceiling function",
      Usage => "ceiling x",
-     Inputs => { "x" => RR },
-     Outputs => { { "the smallest integer greater than or equal to the number ", TT "x" } },
+     Inputs => { "x" },
+     Outputs => { { "the least integer greater than or equal to the number ", TT "x",
+          ". The imaginary part of a complex number is ignored." } },
      EXAMPLE {
-	  "ceiling(-3.4)"
-	  },
+     "ceiling(-3.4)"
+     },
      SeeAlso => {floor}
      }

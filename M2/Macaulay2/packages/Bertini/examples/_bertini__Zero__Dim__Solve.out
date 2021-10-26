@@ -1,0 +1,46 @@
+-- -*- M2-comint -*- hash: 1488243299
+
+i1 : R = CC[x,y];
+
+i2 : F = {x^2-1,y^2-2};
+
+i3 : S = bertiniZeroDimSolve F
+
+o3 = {{1, 1.41421}, {1, -1.41421}, {-1, 1.41421}, {-1, -1.41421}}
+
+o3 : List
+
+i4 : peek S_0
+
+o4 = Point{AccuracyEst => 3.4703e-13         }
+           AccuracyEstInternal => 5.71549e-14
+           ConditionNumber => 2.40039
+           Coordinates => {1, 1.41421}
+           CycleNumber => 1
+           FinalTValue => .000390625
+           FunctionResidual => 7.85046e-17
+           MaxPrecisionUtilized => 52
+           Multiplicity => 1
+           NewtonResidual => 2.48129e-18
+           PathNumber => 0
+           PathsWithSameEndpoint => {}
+           PrecisionIncreased => 0
+           SolutionNumber => 0
+
+i5 : R = CC[x];
+
+i6 : F = {x^2*(x-1)};
+
+i7 : S = bertiniZeroDimSolve F
+
+o7 = {{1}, {4.30297e-15+1.81764e-15*ii}}
+
+o7 : List
+
+i8 : B = bertiniZeroDimSolve(F,UseRegeneration=>1)
+
+o8 = {{1}}
+
+o8 : List
+
+i9 : 

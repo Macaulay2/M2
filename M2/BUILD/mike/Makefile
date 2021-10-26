@@ -1,380 +1,308 @@
-# checking out the source code:
-#
-#      svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
-
 .PHONY: always
-
 always:
 
-sandboxed : always
-	mkdir -p sandbox64
-	cd sandbox64; ../../../configure \
-		--prefix="`pwd`/sandbox" \
+BRANCH := $(shell git branch --contains | grep '^\* ' | sed -e s=^..== -e s=/=.=g )
+
+#######################
+## cmake build files ##
+#######################
+
+cmake-make-appleclang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-make-appleclang-$(BRANCH)
+	cd builds.tmp/cmake-make-appleclang-$(BRANCH); cmake \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DCMAKE_INSTALL_PREFIX=`pwd`/installed \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
+cmake-appleclang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-appleclang
+	cd builds.tmp/cmake-appleclang; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+#		-DLINTING=on
+
+cmake-appleclang-tbb:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-appleclang-tbb
+	cd builds.tmp/cmake-appleclang-tbb; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		-DWITH_TBB=on \
+		../../../..
+#		-DLINTING=on
+
+cmake-debug-appleclang:
+	mkdir -p builds.tmp/cmake-debug-appleclang
+	cd builds.tmp/cmake-debug-appleclang; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=Debug \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
+cmake-profile-appleclang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-profile-appleclang
+	cd builds.tmp/cmake-profile-appleclang; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DPROFILING=on \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+#		-DLINTING=on
+
+cmake-latestclang:
+	mkdir -p builds.tmp/cmake-latestclang
+	cd builds.tmp/cmake-latestclang; LIBRARY_PATH=`/usr/local/opt/llvm/bin/llvm-config --libdir` cmake \
+		-GNinja \
+	    -DCMAKE_C_COMPILER:FILEPATH=/usr/local/opt/llvm/bin/clang \
+		-DCMAKE_CXX_COMPILER:FILEPATH=/usr/local/opt/llvm/bin/clang++ \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
+cmake-debug-latestclang:
+	mkdir -p builds.tmp/cmake-debug-latestclang
+	cd builds.tmp/cmake-debug-latestclang; cmake \
+		-GNinja \
+	    -DCMAKE_C_COMPILER:FILEPATH=/usr/local/opt/llvm/bin/clang \
+		-DCMAKE_CXX_COMPILER:FILEPATH=/usr/local/opt/llvm/bin/clang++ \
+		-DCMAKE_BUILD_TYPE=Debug \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
+cmake-gcc9:
+	mkdir -p builds.tmp/cmake-gcc9
+	cd builds.tmp/cmake-gcc9; cmake \
+		-GNinja \
+	    -DCMAKE_C_COMPILER:FILEPATH=/usr/local/bin/gcc-9 \
+		-DCMAKE_CXX_COMPILER:FILEPATH=/usr/local/bin/g++-9 \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
+ubuntu-cmake-gcc:
+	mkdir -p builds.tmp/ubuntu-cmake-gcc
+	cd builds.tmp/ubuntu-cmake-gcc; cmake \
+		-GNinja \
+	    -DCMAKE_C_COMPILER:FILEPATH=gcc \
+		-DCMAKE_CXX_COMPILER:FILEPATH=g++ \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
+# running cmake-gcc9 now: 30 May 2020.
+#  build-libraries (with testing off): 22m36s
+#  build-programs (with testing off): 12m19s
+#  cmake -DBUILD_TESTING=on .
+#  M2-core: 2m51s
+#  install-packages: (running)
+#  M2-unit-tests
+#  check-packages
+# ctest
+
+cmake-debug-gcc9:
+	mkdir -p builds.tmp/cmake-debug-gcc9
+	cd builds.tmp/cmake-debug-gcc9; cmake \
+		-GNinja \
+	    -DCMAKE_C_COMPILER:FILEPATH=/usr/local/bin/gcc-9 \
+		-DCMAKE_CXX_COMPILER:FILEPATH=/usr/local/bin/g++-9 \
+		-DCMAKE_BUILD_TYPE=Debug \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
+xcode:
+	mkdir -p builds.tmp/xcode
+	cd builds.tmp/xcode; cmake \
+		-GXcode \
+		../../../..
+
+###########################
+## configure build files ##
+###########################
+
+###########
+## MacOS ##
+###########
+# Some possibly useful configure options
+# 		--build=x86_64-apple-darwin
+#       --enable-build-libraries="flint ntl"
+
+darwin64-appleclang : always
+	mkdir -p builds.tmp/darwin64-appleclang
+	cd builds.tmp/darwin64-appleclang; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
 		--enable-download
 
-dan-ubuntu64: always
-	mkdir -p dan-ubuntu64
-	cd dan-ubuntu64; ../../../configure \
-		--prefix="`pwd`/sandbox" \
-                --enable-encap \
-	        --enable-download \
-                --disable-common-staging-area \
-                --build=x86_64-unknown-linux-gnu \
-                --with-mpir-config-options="ABI=64"
-
-opt64 : always
-	mkdir -p opt64
-	cd opt64; ../../../configure \
+darwin64-latestclang : always
+	mkdir -p builds.tmp/darwin64-latestclang
+	cd builds.tmp/darwin64-latestclang; ../../../../configure \
+		CC="/usr/local/opt/llvm/bin/clang" \
+		CXX="/usr/local/opt/llvm/bin/clang++" \
+		LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
 		--prefix="`pwd`/installed" \
-		CC="gcc-4.2 -m64" CXX="g++-4.2 -m64" \
-		--build=x86_64-apple-darwin \
+		--disable-strip \
+		--enable-download
+
+darwin64-gcc9 : always
+	mkdir -p builds.tmp/darwin64-gcc9
+	cd builds.tmp/darwin64-gcc9; ../../../../configure \
+		CC=gcc-9 CXX=g++-9 \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+darwin64-gcc10 : always
+	mkdir -p builds.tmp/darwin64-gcc9
+	cd builds.tmp/darwin64-gcc9; ../../../../configure \
+		CC=gcc-10 CXX=g++-10 \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+debug64-latestclang : always
+	mkdir -p builds.tmp/debug64-latestclang
+	cd builds.tmp/debug64-latestclang; ../../../../configure \
+		CC="/usr/local/opt/llvm/bin/clang" \
+		CXX="/usr/local/opt/llvm/bin/clang++" \
+		LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
+		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-download \
-		--enable-dmg \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+		--enable-debug \
+		--disable-optimize
 
-opt64-givaro : always
-	mkdir -p opt64-givaro
-	cd opt64-givaro; ../../../configure \
+debug64-appleclang : always
+	mkdir -p builds.tmp/debug64-appleclang
+	cd builds.tmp/debug64-appleclang; ../../../../configure \
 		--prefix="`pwd`/installed" \
-		CC="gcc-4.2 -m64" CXX="g++-4.2 -m64" \
-		--build=x86_64-apple-darwin \
-		--enable-fflas-ffpack \
-		--enable-givaro \
 		--disable-strip \
 		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+		--enable-debug \
+		--enable-memdebug \
+		--disable-optimize
 
-opt64-mathic : always
-	mkdir -p opt64-mathic
-	cd opt64-mathic; ../../../configure \
+debug64-gcc9 : always
+	mkdir -p builds.tmp/debug64-gcc9
+	cd builds.tmp/debug64-gcc9; ../../../../configure \
+		CC=gcc-9 CXX=g++-9 \
 		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
-		CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib -ltbb" \
-		--build=x86_64-apple-darwin \
-		--enable-memtailor \
-		--enable-mathic \
-		--enable-mathicgb \
 		--disable-strip \
 		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+		--enable-debug \
+		--disable-optimize
 
-debug64-mathic : always
-	mkdir -p debug64-mathic
-	cd debug64-mathic; ../../../configure \
+profile64-latestclang : always
+	mkdir -p builds.tmp/profile64-latestclang
+	cd builds.tmp/profile64-latestclang; ../../../../configure \
+		CC="/usr/local/opt/llvm/bin/clang" \
+		CXX="/usr/local/opt/llvm/bin/clang++" \
+		LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib" \
+		CPPFLAGS="-I/usr/local/opt/llvm/include" \
 		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
-		CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib -ltbb" \
-		--build=x86_64-apple-darwin \
-		CPPFLAGS="-DENGINE_DEBUG" \
+		--disable-strip \
+		--enable-download \
+		--enable-profile
+
+profile64-appleclang : always
+	mkdir -p builds.tmp/profile64-appleclang
+	cd builds.tmp/profile64-appleclang; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download \
+		--enable-profile
+
+profile64-gcc9 : always
+	mkdir -p builds.tmp/profile64-gcc9
+	cd builds.tmp/profile64-gcc9; ../../../../configure \
+		CC=gcc-9 CXX=g++-9 \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download \
+		--enable-profile
+
+###################
+## linux ##########
+###################
+
+linux-opt64-gcc8 : always
+	mkdir -p builds.tmp/opt64-gcc8
+	cd builds.tmp/opt64-gcc8; ../../../../configure \
+		CC=gcc-8 CXX=g++-8 \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+linux-opt64 : always
+	mkdir -p builds.tmp/opt64
+	cd builds.tmp/opt64; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+linux-debug64 : always
+	mkdir -p builds.tmp/debug64
+	cd builds.tmp/debug64; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		CPPFLAGS="-DENGINE_DEBUG_" \
+		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
 		--enable-debug \
 		--disable-optimize \
-		--enable-memtailor \
-		--enable-mathic \
-		--enable-mathicgb \
+		--enable-download
+
+linux-profile64 : always
+	mkdir -p builds.tmp/profile64
+	cd builds.tmp/profile64; ../../../../configure \
+		--prefix="`pwd`/installed" \
 		--disable-strip \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
-
-
-linux-opt64-mathic : always
-	mkdir -p opt64-mathic
-	cd opt64-mathic; ../../../configure \
-		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
-		CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib -ltbb" \
-		--disable-frobby \
-		--enable-memtailor \
-		--enable-mathic \
-		--enable-mathicgb \
-		--disable-strip \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
-
-linux-debug64-mathic : always
-	mkdir -p debug64-mathic
-	cd debug64-mathic; ../../../configure \
-		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
-		CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib -ltbb" \
-		CPPFLAGS="-DENGINE_DEBUG" \
-		--disable-frobby \
-		--enable-debug \
-		--disable-optimize \
-		--enable-memtailor \
-		--enable-mathic \
-		--enable-mathicgb \
-		--disable-strip \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
-
-opt64-linbox : always
-	mkdir -p opt64-linbox
-	cd opt64-linbox; ../../../configure \
-		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
-		--build=x86_64-apple-darwin \
-		--enable-fflas-ffpack \
-		--enable-givaro \
-		--enable-linbox \
-		--enable-memtailor \
-		--enable-mathic \
-		--enable-flint \
-		--disable-strip \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
-
-opt64-fplll : always
-	mkdir -p opt64-fplll
-	cd opt64-fplll; ../../../configure \
-		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
-		--build=x86_64-apple-darwin \
-		--enable-fflas-ffpack \
-		--enable-givaro \
-		--enable-linbox \
-		--enable-flint \
-		--enable-fplll \
-		--disable-strip \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
-
-opt64-flint : always
-	mkdir -p opt64-flint
-	cd opt64-flint; ../../../configure \
-		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
-		--build=x86_64-apple-darwin \
-		--enable-memtailor \
-		--enable-mathic \
-		--enable-flint \
-		--disable-strip \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
-
-#		CC="gcc-4.2 -m64" CXX="g++-4.2 -m64" 
-
-debug64-linbox : always
-	mkdir -p debug64-linbox
-	cd debug64-linbox; ../../../configure \
-		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
-		--build=x86_64-apple-darwin \
-		--enable-fflas-ffpack \
-		--enable-givaro \
-		--enable-linbox \
-		--enable-debug \
-		--disable-optimize \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
-
-debug64-givaro : always
-	mkdir -p debug64-givaro
-	cd debug64-givaro; ../../../configure \
-		--prefix="`pwd`/installed" \
-		CC="gcc-4.2 -m64" CXX="g++-4.2 -m64" \
-		CPPFLAGS="-DENGINE_DEBUG" \
-		--build=x86_64-apple-darwin \
-		--enable-fflas-ffpack \
-		--enable-givaro \
-		--enable-debug \
-		--disable-optimize \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
-
-debug64 : always
-	mkdir -p debug64
-	cd debug64; ../../../configure \
-		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
-		--build=x86_64-apple-darwin \
-		CPPFLAGS="-DENGINE_DEBUG" \
-		--enable-debug \
-		--disable-optimize \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
-
-debug64nofrobby : always
-	mkdir -p debug64
-	cd debug64; ../../../configure \
-		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
-		--with-mpir-config-options="ABI=64" \
-		--build=x86_64-apple-darwin \
-		--enable-debug \
-		--disable-optimize \
-		--enable-download \
-		--disable-frobby \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac pari"
-
-profile64 : always
-	mkdir -p profile64
-	cd profile64; ../../../configure \
-		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
-		--build=x86_64-apple-darwin \
 		--enable-profile \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+		--enable-download
 
-tiger32 : always
-	mkdir -p tiger32
-	cd tiger32; LDFLAGS=-static-libgcc ../../../configure \
-		--prefix="`pwd`/installed" \
-		--enable-dmg \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
-
-darwin32 : always
-	mkdir -p darwin32
-	cd darwin32;  ../../../configure \
-		CC="gcc -m32" CXX="g++ -m32" \
-		--build=i586-apple-darwin \
-		--prefix="`pwd`/installed" \
-		--enable-dmg \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
-#		--build=i386-apple-darwin9 \
-#		--enable-python
-# LDFLAGS=-shared-libgcc
-
-
-
-debug32 : always
-	mkdir -p debug32
-	cd debug32; ../../../configure \
-		--prefix="`pwd`/installed" \
-		--enable-debug \
-		--disable-optimize \
-		--enable-download \
-		LDFLAGS="-L/Users/mike/local/software/sage/sage-3.4/local/lib" \
-		CPPFLAGS="-I/Users/mike/local/software/sage/sage-3.4/local/include" \
-		--enable-python --with-libpython=/Users/mike/local/software/sage/sage-3.4/local/lib/python2.5/config/libpython2.5.a \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby"
-
-profile32 : always
-	mkdir -p profile32
-	cd profile32; ../../../configure \
-		--prefix="`pwd`/installed" \
-		--enable-profile \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
-
-# icc versions
-icc-darwin :
-	mkdir -p icc-darwin
-	cd icc-darwin; ../../../configure \
-		--prefix="`pwd`/installed" \
-		CC="icc" CXX="icpc" \
-		--enable-scscp \
-		--enable-dmg \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac pari"
-
-# These are for use on linux/ubuntu/redhat
-
+######## below this line is older ######################
 opt : always
 	mkdir -p opt
-	cd opt;	../../../configure \
+	cd opt; ../../../configure \
 		--prefix="`pwd`/installed" \
-		--enable-tarfile \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pari"
-
-opt64-ubuntu : always
-	mkdir -p opt
-	cd opt;	../../../configure \
-		--prefix="`pwd`/installed" \
-                --with-mpir-config-options="ABI=64" \
-		--build=x86_64-unknown-linux-gnu \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pari"
-
-ubuntu64-givaro : always
-	mkdir -p opt64-givaro
-	cd opt64-givaro; ../../../configure \
-		--prefix="`pwd`/installed" \
-		--enable-fflas-ffpack \
-		--enable-givaro \
 		--disable-strip \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
-
-ubuntu64-linbox : always
-	mkdir -p opt64-linbox
-	cd opt64-linbox; ../../../configure \
-		--prefix="`pwd`/installed" \
-		--enable-memtailor \
-		--enable-fflas-ffpack \
-		--enable-givaro \
-		--enable-flint \
-		--enable-linbox \
-		--disable-strip \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
-
-ubuntu64-linbox-debug : always
-	mkdir -p debug64-linbox
-	cd debug64-linbox; ../../../configure \
-		--prefix="`pwd`/installed" \
-		CPPFLAGS="-DENGINE_DEBUG" \
-		--enable-debug \
-		--disable-optimize \
-		--enable-fflas-ffpack \
-		--enable-givaro \
-		--enable-flint \
-		--enable-linbox \
-		--disable-strip \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
-
-icc-ubuntu64 :
-	mkdir -p icc-opt
-	cd icc-opt; ../../../configure \
-		--prefix="`pwd`/installed" \
-		CC="icc" CXX="icpc" \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac pari"
-  # ntl hangs on ./MakeDesc, so workaround:
-  # cd libraries/ntl/build/ntl-5.5.2/src/
-  # make CFLAGS=-g
-icc-debug : always
-	mkdir -p icc-debug
-	cd icc-debug; ../../../configure \
-		CC="icc" CXX="icpc" \
-		--prefix="`pwd`/installed" \
-		--enable-debug \
-		--disable-optimize \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pari"
-
+		--enable-download
 
 debug : always
 	mkdir -p debug
 	cd debug; ../../../configure \
 		--prefix="`pwd`/installed" \
 		--enable-debug \
+		--disable-strip \
 		--disable-optimize \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pari"
+		--enable-download
 
 profile : always
 	mkdir -p profile
 	cd profile; ../../../configure \
 		--prefix="`pwd`/installed" \
+		--disable-strip \
 		--enable-profile \
 		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pari"
 
-profile64-ubuntu : always
-	mkdir -p profile
-	cd profile; ../../../configure \
-		--prefix="`pwd`/installed" \
-		--build=x86_64-unknown-linux-gnu \
-		--enable-profile \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac lapack frobby pari"
-
+# the following is no longer possible for me.
+# TODO: work with Dan to fix that.
 upload : always
 	scp darwin64/*.dmg u00.math.uiuc.edu:/home/html/www/Macaulay2/Uploads
-	scp opt32/*.dmg u00.math.uiuc.edu:/home/html/www/Macaulay2/Uploads
+

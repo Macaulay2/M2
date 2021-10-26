@@ -1,5 +1,9 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "matrix.m2"
+needs "modules.m2"
+needs "quotient.m2"
+
 plurals := hashTable { "matrix" => "matrices" }
 pluralize := s -> if plurals#?s then plurals#s else s|"s"
 pluralsynonym := T -> try pluralize T.synonym else "objects of class "|toString T;
@@ -77,10 +81,9 @@ map(Module,Module,Matrix) := Matrix => o -> (M,N,f) -> (
 	  )
      else (
 	  R := ring M;
-	  N' := cover N;
 	  deg := if o.Degree === null then (degreeLength R : 0) else o.Degree;
 	  deg = degreeCheck(deg,R);
-	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw N', deg, raw f,0)))))
+	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw cover N, deg, raw f,0)))))
 
 -- combine the one above with the one below
 map(Module,ZZ,List) := 
@@ -128,7 +131,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	       );
 	  new Matrix from {
 	       symbol target => M,
-	       symbol RawMatrix => m,
+	       symbol RawMatrix => reduce(M,m),
 	       symbol source => if class N === Module then N else new Module from (R, rawSource m),
 	       symbol ring => R,
 	       symbol cache => new CacheTable
@@ -139,13 +142,13 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	  then error( "expected ", toString numgens M, " by ", toString rankN, " table");
 	  p = toSequence makeRawTable(R,p);
 	  h := (
-	       if class N === Module
+	       if instance(N,Module)
 	       then rawMatrix2(raw cover M, raw cover N, deg, flatten p,0)
 	       else rawMatrix1(raw cover M, rankN, flatten p, 0)
 	       );
 	  new Matrix from {
 	       symbol target => M,
-	       symbol RawMatrix => h,
+	       symbol RawMatrix => reduce(M,h),
 	       symbol source => if class N === Module then N else new Module from (R, rawSource h),
 	       symbol ring => R,
 	       symbol cache => new CacheTable
@@ -285,36 +288,6 @@ matrix(List) := Matrix => opts -> (m) -> (
 	  else error "expected a table of ring elements or matrices, or a list of elements of the same module")
      else error "expected a table of ring elements or matrices, or a list of elements of the same module")
 
---------------------------------------------------------------------------
-
-Module#id = (M) -> map(M,M,1)
-
-reshape = method()
-reshape(Module,Module,Matrix) := Matrix => (F, G, m) -> (
-     if not isFreeModule F or not isFreeModule G
-     then error "expected source and target to be free modules";
-     map(F,G,rawReshape(raw m, raw F, raw G)))
-
--- adjoint1:  m : F --> G ** H ===> F ** dual G --> H
--- adjoint:   m : F ** G --> H ===> F --> dual G ** H
-adjoint1 = method()
-adjoint1(Matrix,Module,Module) := Matrix => (m,G,H) -> reshape(H, (source m) ** (dual G), m)
-adjoint  = method()
-adjoint (Matrix,Module,Module) := Matrix => (m,F,G) -> reshape((dual G) ** (target m), F, m)
-
-flatten Matrix := Matrix => m -> (
-     R := ring m;
-     F := target m;
-     G := source m;
-     if not isFreeModule F or not isFreeModule G
-     then error "expected source and target to be free modules";
-     if numgens F === 1 
-     then m
-     else reshape(R^1, G ** dual F ** R^{- degree m}, m))
-
-flip = method()
-flip(Module,Module) := Matrix => (F,G) -> map(ring F,rawFlip(raw F, raw G))
-
 align := g -> (
      -- generator and relation maps can just as well have a nonzero degree
      -- this function zeroes the degree, preserving homogeneity
@@ -328,7 +301,9 @@ subquotient(Nothing,Matrix) := (null,relns) -> (
      E := target relns;
      rE := E.RawFreeModule;
      Mparts := {
-	  symbol cache => new CacheTable,
+	  symbol cache => new CacheTable from { 
+	       cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
+	       },
 	  symbol RawFreeModule => rE,
 	  symbol ring => R,
 	  symbol numgens => rawRank rE
@@ -350,7 +325,9 @@ subquotient(Matrix,Nothing) := (subgens,null) -> (
      subgens = align matrix subgens;
      if E.?generators then subgens = E.generators * subgens;
      Mparts := {
-	  symbol cache => new CacheTable,
+	  symbol cache => new CacheTable from { 
+	       cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
+	       },
 	  symbol RawFreeModule => rE,
 	  symbol ring => R,
 	  symbol numgens => rawRank rE,
@@ -376,7 +353,9 @@ subquotient(Matrix,Matrix) := (subgens,relns) -> (
 	       );
 	  if E.?relations then relns = relns | E.relations;
 	  Mparts := {
-	       symbol cache => new CacheTable,
+	       symbol cache => new CacheTable from { 
+		    cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
+		    },
 	       symbol RawFreeModule => rE,
 	       symbol ring => R,
 	       symbol numgens => rawRank rE,
@@ -427,26 +406,6 @@ Matrix#{Standard,AfterNoPrint} = f -> (
 
 -- precedence Matrix := x -> precedence symbol x
 
-compactMatrixForm = true
-
-net Matrix := f -> (
-     if f == 0 
-     then "0"
-     else (
-	  m := (
-	       if compactMatrixForm then (
-	       	    stack toSequence apply(lines toString f.RawMatrix, x -> concatenate("| ",x,"|"))
-	       	    )
-     	       else net expression f
-	       );
-	  if compactMatrixForm and degreeLength ring target f > 0 -- and isHomogeneous f
-	  then (
-	       d := degrees cover target f;
-	       if not all(d, i -> all(i, j -> j == 0)) then m = horizontalJoin(stack( d / toString ), " ", m);
-	       );
-	  m)
-     )
-
 image Matrix := Module => f -> (
      if f.cache.?image then f.cache.image else f.cache.image = subquotient(f,)
      )
@@ -465,10 +424,11 @@ Ideal.synonym = "ideal"
 
 ideal = method(Dispatch => Thing, TypicalValue => Ideal)
 
-expression Ideal := (I) -> new FunctionApplication from { ideal, unsequence apply(toSequence first entries generators I, expression) }
+expression Ideal := (I) -> (expression ideal) unsequence apply(toSequence first entries generators I, expression)
 net Ideal := (I) -> net expression I
 toString Ideal := (I) -> toString expression I
 toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
+texMath Ideal := (I) -> texMath expression I
 
 isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I
@@ -524,7 +484,6 @@ generator Module := RingElement => (M) -> (
      if n == 1 then return M_0;
      error "expected ideal to have a single generator")
 
-mingens Ideal := Matrix => options -> (I) -> mingens(module I,options)
 Ideal / Ideal := Module => (I,J) -> module I / module J
 Module / Ideal := Module => (M,J) -> M / (J * M)
 
@@ -541,9 +500,17 @@ Ideal + Ideal := Ideal => ((I,J) -> ideal (generators I | generators J)) @@ tosa
 Ideal + RingElement := Ideal + Number := ((I,r) -> I + ideal r) @@ tosamering
 RingElement + Ideal := Number + Ideal := ((r,I) -> ideal r + I) @@ tosamering
 degree Ideal := I -> degree cokernel generators I
-trim Ideal := Ideal => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
 Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
-Matrix % Ideal := Matrix => ((f,I) -> f % gb I) @@ samering
+Matrix % Ideal := Matrix => ((f,I) -> 
+     if numRows f === 1
+     then f % gb I
+     else (
+	  -- we should have an engine routine to reduce each entry of a matrix modulo an ideal, to make this faster
+	  R := ring I;
+	  S := R/I;
+	  lift(promote(f,S),R))
+     ) @@ samering
+Vector % Ideal := (v,I) -> new class v from {v#0%I}
 numgens Ideal := (I) -> numgens source generators I
 leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
 leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
@@ -608,6 +575,21 @@ ideal List := ideal Sequence := Ideal => v -> ideal matrix {flatten apply(toList
 ideal RingElement := ideal Number := Ideal => v -> ideal {v}
 ideal Ring := R -> ideal map(R^1,R^0,0)
 
+Ideal ^ Array := (I, e) -> (
+   R := ring I;
+   n := numgens R;
+   -- Error if input is not correct.
+   if any(e, i -> i < 0) then error "Expected nonnegative exponents.";
+   if #e != 1 and n != #e then error "Expected single integer array, or array with length equal to the number of variables.";
+   -- if only one element, then make vector the same as the length of
+   -- the number of variables with the same number in each entry
+   if #e == 1 then e = new Array from n:(e_0);
+   -- build a ring homomorphism that will perform this substitution for us
+   phi := map(R,R,matrix {apply(numgens R, i -> (R_i)^(e_i))});
+   -- apply the ring homomorphism and create the new ideal
+   ideal phi generators I
+)
+
 homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
      if g == 0 then cokernel f
      else if f == 0 then kernel g
@@ -628,38 +610,9 @@ homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
 	       );
 	  subquotient(h, if N.?relations then f | N.relations else f)))
 
-Hom(Matrix, Module) := Matrix => (f,N) -> (
-     -- this function was written by David Eisenbud
-     --say f: M --> M'
-     mfdual := transpose matrix f;
-     cN := cover N;
-     --Hom(M,N)
-     MN := Hom(source f,N);
-     --Hom(M',N)    
-     M'N :=Hom(target f, N);
-     --Hom(f,N): Hom(M',N) --> Hom(M,N)
-    if isFreeModule source f and isFreeModule target f then 
-        map(MN,M'N, mfdual**N)
-    else 
-        map(MN, M'N, ((mfdual**cN) * generators M'N)//generators MN)
-    )
-
-Hom(Module, Matrix) := Matrix => (M,g) -> (
-     -- this function was written by David Eisenbud
-     --say g: N --> N'	 
-     mg := matrix g;     
-     cMdual := dual cover M;
-     --Hom(M,N)
-     MN := Hom(M,source g);
-     --Hom(M,N')    
-     MN' := Hom(M,target g);
-     --Hom(f,N): Hom(M',N) --> Hom(M,N)
-     map(MN', MN, ((cMdual**mg)*generators MN)//generators MN')
-     )
-
-Hom(Matrix,Matrix) := Matrix => (f,g) -> (
-     -- this function was written by David Eisenbud
-     Hom(source f, g)*Hom(f, source g))
+Hom(Matrix,Module) := Matrix => (f,N) -> inducedMap(Hom(source f,N),Hom(target f,N),transpose cover f ** N,Verify=>false)
+Hom(Module,Matrix) := Matrix => (M,g) -> inducedMap(Hom(M,target g),Hom(M,source g),dual cover M ** g,Verify=>false)
+Hom(Matrix,Matrix) := Matrix => (f,g) -> Hom(source f,g) * Hom(f,source g)
 
 dual(Matrix) := Matrix => {} >> o -> f -> (
      R := ring f;
@@ -671,9 +624,8 @@ dual(Matrix) := Matrix => {} >> o -> f -> (
 Matrix.InverseMethod =
 inverse Matrix := (cacheValue symbol inverse) (
      m -> (
-      if hasEngineLinearAlgebra ring m then (
-          << "calling ffpack version of InverseMethod" << endl;
-          (ring m).inverse m)
+      if hasEngineLinearAlgebra ring m and isBasicMatrix m then
+          basicInverse m
       else (
 	      (quo,rem) := quotientRemainder(id_(target m), m);
 	      if rem != 0 then error "matrix not invertible";
@@ -718,7 +670,11 @@ content(RingElement) := Ideal => (f) -> ideal \\ last \ listForm f
 
 cover(Matrix) := Matrix => (f) -> matrix f
 
-rank Matrix := (f) -> rank image f
+rank Matrix := (f) -> (
+    if hasEngineLinearAlgebra ring f and isBasicMatrix f 
+    then basicRank f 
+    else rank image f
+    )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -1,0 +1,106 @@
+-- -*- M2-comint -*- hash: 1919099143
+
+i1 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o1 = B
+
+o1 : NCQuotientRing
+
+i2 : sigma = ncMap(B,B,{y,z,x})
+
+o2 = NCRingMap B <--- B
+
+o2 : NCRingMap
+
+i3 : C = oreExtension(B,sigma,w)
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o3 = C
+
+o3 : NCQuotientRing
+
+i4 : D = (ambient C)/(ideal C + ncIdeal{promote(w^2,ambient C)})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o4 = D
+
+o4 : NCQuotientRing
+
+i5 : M1 = ncMatrix {{x,y,z,w}}
+
+o5 = | x y z w |
+
+o5 : NCMatrix
+
+i6 : M2 = rightKernel(M1,1)
+
+o6 = | z  -x -y 0  0  -w 0 |
+     | -y z  -x -w 0  0  0 |
+     | x  y  z  0  -w 0  0 |
+     | 0  0  0  x  y  z  w |
+
+o6 : NCMatrix
+
+i7 : M3 = rightKernel(M2,1)
+
+o7 = | -y 0  w  0  0  0  0  0 |
+     | -x 0  0  -w 0  0  0  0 |
+     | z  -w 0  0  0  0  0  0 |
+     | 0  z  -x -y 0  0  -w 0 |
+     | 0  -y z  -x -w 0  0  0 |
+     | 0  x  y  z  0  -w 0  0 |
+     | 0  0  0  0  x  y  z  w |
+
+o7 : NCMatrix
+
+i8 : rightKernelBergman(M2)
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o8 = | 0 0  0  0  y  0  -w 0  |
+     | 0 0  0  0  x  w  0  0  |
+     | 0 0  0  0  -z 0  0  w  |
+     | 0 w  0  0  0  y  x  -z |
+     | 0 0  0  w  0  x  -z y  |
+     | 0 0  w  0  0  -z -y -x |
+     | w -z -y -x 0  0  0  0  |
+
+o8 : NCMatrix
+
+i9 : M4 = rightKernel(M3,1)
+
+o9 = | -w 0  0  0  0  0  0  0 |
+     | -y 0  w  0  0  0  0  0 |
+     | -x 0  0  -w 0  0  0  0 |
+     | z  -w 0  0  0  0  0  0 |
+     | 0  z  -x -y 0  0  -w 0 |
+     | 0  -y z  -x -w 0  0  0 |
+     | 0  x  y  z  0  -w 0  0 |
+     | 0  0  0  0  x  y  z  w |
+
+o9 : NCMatrix
+
+i10 : rightKernelBergman(M3)
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o10 = | 0 0  0  0  0  0  0  w  |
+      | 0 0  0  0  0  -w 0  y  |
+      | 0 0  0  0  w  0  0  x  |
+      | 0 0  0  0  0  0  w  -z |
+      | 0 w  0  0  y  x  -z 0  |
+      | 0 0  0  w  x  -z y  0  |
+      | 0 0  w  0  -z -y -x 0  |
+      | w -z -y -x 0  0  0  0  |
+
+o10 : NCMatrix
+
+i11 : 

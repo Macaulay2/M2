@@ -1,0 +1,156 @@
+-- -*- M2-comint -*- hash: 1595612603
+
+i1 : QQ[x,y];
+
+i2 : I=ideal(x+y+1);
+
+o2 : Ideal of QQ[x..y]
+
+i3 : T=tropicalVariety(I);
+
+i4 : rays(T)
+
+o4 = | 1 -1 0 |
+     | 0 -1 1 |
+
+              2        3
+o4 : Matrix ZZ  <--- ZZ
+
+i5 : maxCones(T)
+
+o5 = {{1}, {0}, {2}}
+
+o5 : List
+
+i6 : linealitySpace T
+
+o6 = 0
+
+              2
+o6 : Matrix ZZ  <--- 0
+
+i7 : Polyhedra$fVector fan T
+
+o7 = {1, 3}
+
+o7 : List
+
+i8 : multiplicities(T)
+
+o8 = {1, 1, 1}
+
+o8 : List
+
+i9 : QQ[x,y,z,w];
+
+i10 : I = ideal(w+x+y+z)
+
+o10 = ideal(x + y + z + w)
+
+o10 : Ideal of QQ[x..z, w]
+
+i11 : T = tropicalVariety(I, IsHomogeneous=>true, Symmetry=>{{1,0,2,3},{2,1,0,3},{3,1,2,0}})
+
+o11 = T
+
+o11 : TropicalCycle
+
+i12 : rays(T)
+
+o12 = | 3  -1 -1 -1 |
+      | -1 3  -1 -1 |
+      | -1 -1 3  -1 |
+      | -1 -1 -1 3  |
+
+               4        4
+o12 : Matrix ZZ  <--- ZZ
+
+i13 : maxCones(T)
+
+o13 = {{0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}}
+
+o13 : List
+
+i14 : I=intersect(ideal(x+y+z+w),ideal(x-y,y-z));
+
+o14 : Ideal of QQ[x..z, w]
+
+i15 : T= tropicalVariety(I,Prime=>false);
+
+i16 : rays(T)
+
+o16 = | 1  3  1  -1 1  -1 -1 -1 |
+      | 1  -1 1  3  -1 1  -1 -1 |
+      | 1  -1 -1 -1 1  1  3  -1 |
+      | -3 -1 -1 -1 -1 -1 -1 3  |
+
+               4        8
+o16 : Matrix ZZ  <--- ZZ
+
+i17 : maxCones(T)
+
+o17 = {{0}, {1, 2}, {1, 4}, {1, 7}, {2, 3}, {4, 6}, {3, 5}, {3, 7}, {5, 6},
+      -----------------------------------------------------------------------
+      {6, 7}}
+
+o17 : List
+
+i18 : multiplicities(T)
+
+o18 = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+
+o18 : List
+
+i19 : linealitySpace T
+
+o19 = | 1 |
+      | 1 |
+      | 1 |
+      | 1 |
+
+               4        1
+o19 : Matrix ZZ  <--- ZZ
+
+i20 : QQ[x,y,z,w];
+
+i21 : I=intersect(ideal(x+y+z+1),ideal(x^2-y*z));
+
+o21 : Ideal of QQ[x..z, w]
+
+i22 : T= tropicalVariety(I,Prime=>false,ComputeMultiplicities=>false);
+
+i23 : rays(T)
+
+o23 = | -4 4 0 0 4 4 |
+      | -4 0 4 0 8 0 |
+      | -4 0 0 4 0 8 |
+      | -3 1 1 1 3 3 |
+
+               4        6
+o23 : Matrix ZZ  <--- ZZ
+
+i24 : maxCones(T)
+
+o24 = {{0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {2, 3}, {1, 4}, {1, 5}, {2,
+      -----------------------------------------------------------------------
+      4}, {3, 5}, {4, 5}}
+
+o24 : List
+
+i25 : linealitySpace T
+
+o25 = | 0 |
+      | 0 |
+      | 0 |
+      | 1 |
+
+               4        1
+o25 : Matrix ZZ  <--- ZZ
+
+i26 : multiplicities(T)
+
+o26 = {{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}}
+
+o26 : List
+
+i27 : 

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Macaulay2: Graph Visualization</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/BootSideMenu.css" rel="stylesheet">
+    <link href="css/nouislider.min.css" rel="stylesheet">
+    <link href="css/common.css" rel="stylesheet">
+
+    <script type="text/javascript">
+      //global variables
+      activeSession = true;
+      tikzGenerated = false;
+      curEdit = false;
+      curHighlight = false;
+  	  curView = "2d";
+      menuOpen = true;
+      dataData = visArray;
+      labelData = visLabels;
+      portData = visPort; // initializes port from user
+      forceOn = true;
+      labelsOn = true;
+      forceCharge = -1500;
+      forceLinkDist = 150;
+    </script>
+  </head>
+
+  <body>
+
+        <div id="side">
+          <h2>&#8202;&#8202;Menu</h2>
+          <div class="list-group" id="menuList">
+            <div class="list-group-item" href="#" id="sliderDiv"><div style="height:25px;">Force variables</div>
+            <span style="display:inline-block; width:60px;">&#8202; Charge:</span><div class="noUi-extended" id="charge-slider" style="vertical-align:middle;"></div><br>
+            <span style="display:inline-block; width:60px;">&#8202; Links:</span><div class="noUi-extended" id="linkdist-slider" style="vertical-align:middle;"></div>
+            </div>
+            <a id="editToggle" href="#" class="list-group-item">Enable editing</a>
+            <a id="labelToggle" href="#" class="list-group-item">Hide labels</a>
+            <a id="highlightToggle" href="#" class="list-group-item">Highlight neighbors</a>
+            <a id="reset" href="#" class="list-group-item">Reset nodes</a>
+            <a id="forceToggle" href="#" class="list-group-item">Turn off force</a>
+            <a id="exportTikz" href="#" class="list-group-item">Generate TikZ code</a>
+            
+            <a href="#collapse1" data-toggle="collapse" class="list-group-item">Boolean tests &#9662;</a>
+                <div id="collapse1" class="panel-collapse collapse">
+                    <a id="hasEulerianTrail" href="#" class="list-group-item"> &nbsp;&nbsp; hasEulerianTrail</a>
+                    <a id="hasOddHole" href="#" class="list-group-item"> &nbsp;&nbsp; hasOddHole</a>
+                    <a id="isBipartite" href="#" class="list-group-item"> &nbsp;&nbsp; isBipartite</a>
+                    <a id="isChordal" href="#" class="list-group-item"> &nbsp;&nbsp; isChordal</a>
+                    <a id="isCM" href="#" class="list-group-item"> &nbsp;&nbsp; isCM</a>
+                    <a id="isComparabilityGraph" href="#" class="list-group-item"> &nbsp;&nbsp; isComparabilityGraph</a>
+                    <a id="isConnected" href="#" class="list-group-item"> &nbsp;&nbsp; isConnected</a>
+                    <a id="isCyclic" href="#" class="list-group-item"> &nbsp;&nbsp; isCyclic</a>
+                    <a id="isEulerian" href="#" class="list-group-item"> &nbsp;&nbsp; isEulerian</a>
+                    <a id="isForest" href="#" class="list-group-item"> &nbsp;&nbsp; isForest</a>
+                    <a id="isPerfect" href="#" class="list-group-item"> &nbsp;&nbsp; isPerfect</a>
+                    <a id="isRegular" href="#" class="list-group-item"> &nbsp;&nbsp; isRegular</a>
+                    <a id="isRigid" href="#" class="list-group-item"> &nbsp;&nbsp; isRigid</a>                    
+                    <a id="isSimple" href="#" class="list-group-item"> &nbsp;&nbsp; isSimple</a>
+                    <a id="isTree" href="#" class="list-group-item"> &nbsp;&nbsp; isTree</a>
+                </div>
+            <a href="#collapse2" data-toggle="collapse" class="list-group-item">Numerical invariants &#9662;</a>
+                <div id="collapse2" class="panel-collapse collapse">
+                    <a id="chromaticNumber" href="#" class="list-group-item"> &nbsp;&nbsp; chromaticNumber</a>
+                    <a id="independenceNumber" href="#" class="list-group-item"> &nbsp;&nbsp; independenceNumber</a>
+                    <a id="cliqueNumber" href="#" class="list-group-item"> &nbsp;&nbsp; cliqueNumber</a>
+                    <a id="degeneracy" href="#" class="list-group-item"> &nbsp;&nbsp; degeneracy</a>
+                    <a id="density" href="#" class="list-group-item"> &nbsp;&nbsp; density</a>
+                    <a id="diameter" href="#" class="list-group-item"> &nbsp;&nbsp; diameter</a>
+                    <a id="edgeConnectivity" href="#" class="list-group-item"> &nbsp;&nbsp; edgeConnectivity</a>
+                    <a id="minimalDegree" href="#" class="list-group-item"> &nbsp;&nbsp; minimalDegree</a>
+                    <a id="numberOfComponents" href="#" class="list-group-item"> &nbsp;&nbsp; numberOfComponents</a>
+                    <a id="numberOfTriangles" href="#" class="list-group-item"> &nbsp;&nbsp; numberOfTriangles</a>
+                    <a id="radius" href="#" class="list-group-item"> &nbsp;&nbsp; radius</a>
+                    <a id="vertexConnectivity" href="#" class="list-group-item"> &nbsp;&nbsp; vertexConnectivity</a>
+                    <a id="vertexCoverNumber" href="#" class="list-group-item"> &nbsp;&nbsp; vertexCoverNumber</a>
+                </div>
+             <a id="endSession" href="#" class="list-group-item">End session</a>            
+          </div>
+        </div>
+  
+  <div class="container">
+    <div id="canvasElement2d"></div>
+  </div>
+
+  <script src="js/jquery-1.11.3.min.js"></script>
+  <script src="js/BootSideMenu.js"></script>
+  <script src="js/d3.v3.min.js"></script>
+  <script src="js/visGraph2d.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/clipboard.min.js"></script>
+  <script src="js/nouislider.min.js"></script>
+      
+  <script type="text/javascript">
+    // Initialize clipboard.js.
+    var clipboard = null;
+      
+//    $('#side').BootSideMenu({side:"right"});
+    $('#side').BootSideMenu({side:"right", closeOnClick: false, width: "230px"});
+    // When the side menu bar is opened or closed (i.e, when the "toggler" div is clicked), resize the svg appropriately so that nodes do not go behind the side menu.
+    document.getElementsByClassName("toggler")[0].addEventListener("mousedown", function() {
+            menuOpen = !menuOpen;
+            updateWindowSize2d();    
+    }, false);
+
+    document.getElementById("canvasElement2d").style.width = window.innerWidth;
+    document.getElementById("canvasElement2d").style.height = window.innerHeight;
+      
+    window.addEventListener("resize", updateWindowSize2d, false);
+
+    // Initialize sliders
+    var chargeSlider = document.getElementById('charge-slider');
+    noUiSlider.create(chargeSlider, {
+        start: [1500],
+        //tooltips: true,
+        range: {
+			'min': [0],
+			'max': [6000]
+		}
+    });
+    //chargeSlider.noUiSlider.on('update', updateForceCharge);
+      
+    var linkDistSlider = document.getElementById('linkdist-slider');
+    noUiSlider.create(linkDistSlider, {
+        start: [100],
+        //tooltips: true,
+        range: {
+			'min': [0],
+			'max': [400]
+		}
+    });
+    //chargeSlider.noUiSlider.on('update', updateForceLinkDist);  
+      
+      
+    $(document).ready(function(){
+
+      $("#editToggle").on("click", function(){
+        if(curEdit) {
+          $(this).html("Enable editing");
+          curEdit = !curEdit;
+          disableEditing();
+        } else {
+          $(this).html("Disable editing");
+          curEdit = !curEdit;
+          enableEditing();
+        }
+      });
+    
+      $("#labelToggle").on("click", function(){
+        if(!labelsOn) {
+          $(this).html("Hide labels");
+          labelsOn = !labelsOn;
+          showLabels();
+        } else {
+          $(this).html("Show labels");
+          labelsOn = !labelsOn;
+          hideLabels();
+        }
+      });
+    
+      $("#highlightToggle").on("click", function(){
+        if(curHighlight) {
+          $(this).html("Highlight neighbors");
+          unHighlightAll();
+          curHighlight = !curHighlight;
+        } else {
+          $(this).html("Disable highlighting");
+          enableHighlight();
+          curHighlight = !curHighlight;
+        }
+      });
+
+      $("#reset").on("click", resetGraph);
+      
+      $("#forceToggle").on("click", toggleForce);
+      
+      $("#exportTikz").on("click", function() {
+        exportTikz();
+      });
+
+      // Begin browser-M2 communication.
+      // For each item, a line in the function `onclickResults()`
+      // located in `visGraph2d.js` must be added. 
+      // 
+      // If you wish to delete the text to make it vanish when the graph is edited
+      // search for 'menuDefaults()'.
+
+      // Checks to see if user's graph has an Eulerian trail
+      $("#hasEulerianTrail").on("click", function() {
+        clickTest = "hasEulerianTrail";
+        makeCorsRequest('POST','http://localhost:'+portData+'/hasEulerianTrail/', graph2M2Constructor(nodes,links));
+      });    
+        
+      // Checks to see if user's graph has an odd hole
+      $("#hasOddHole").on("click", function() {
+        clickTest = "hasOddHole";
+        makeCorsRequest('POST','http://localhost:'+portData+'/hasOddHole/', graph2M2Constructor(nodes,links));
+      });    
+      
+      // Checks to see if users graph is bipartite
+      $("#isBipartite").on("click", function() {
+        clickTest = "isBipartite";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isBipartite/', graph2M2Constructor(nodes,links));
+      });      
+
+      // Checks to see if users graph is chordal
+      $("#isChordal").on("click", function() {
+        clickTest = "isChordal";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isChordal/', graph2M2Constructor(nodes,links));
+      });                  
+
+      // Checks to see if users graph is Cohen-Macaulay
+      $("#isCM").on("click", function() {
+        clickTest = "isCM";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isCM/', graph2M2Constructor(nodes,links));
+      });
+        
+      // Checks to see if user's graph is a comparability graph of a poset.
+      $("#isComparabilityGraph").on("click", function() {
+        clickTest = "isComparabilityGraph";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isComparabilityGraph/', graph2M2Constructor(nodes,links));
+      });        
+
+      // Checks to see if users graph is Connected
+      $("#isConnected").on("click", function() {
+        clickTest = "isConnected";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isConnected/', graph2M2Constructor(nodes,links));
+      });      
+
+      // Checks to see if users graph is Cyclic
+      $("#isCyclic").on("click", function() {
+        clickTest = "isCyclic";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isCyclic/', graph2M2Constructor(nodes,links));
+      });      
+
+      // Checks to see if users graph is Eulerian
+      $("#isEulerian").on("click", function() {
+        clickTest = "isEulerian";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isEulerian/', graph2M2Constructor(nodes,links));
+      });      
+
+      // Checks to see if users graph is a Forest
+      $("#isForest").on("click", function() {
+        clickTest = "isForest";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isForest/', graph2M2Constructor(nodes,links));
+      });      
+
+      // Checks to see if users graph is Perfect
+      $("#isPerfect").on("click", function() {
+        clickTest = "isPerfect";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isPerfect/', graph2M2Constructor(nodes,links));
+      });      
+
+      // Checks to see if users graph is Regular
+      $("#isRegular").on("click", function() {
+        clickTest = "isRegular";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isRegular/', graph2M2Constructor(nodes,links));
+      });      
+
+      // Checks to see if users graph is Simple
+      $("#isSimple").on("click", function() {
+        clickTest = "isSimple";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isSimple/', graph2M2Constructor(nodes,links));
+      });      
+
+      // Checks to see if users graph is a Tree
+      $("#isTree").on("click", function() {
+        clickTest = "isTree";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isTree/', graph2M2Constructor(nodes,links));
+      });      
+
+      // Checks to see if users graph is Rigid
+      $("#isRigid").on("click", function() {
+        clickTest = "isRigid";
+        makeCorsRequest('POST','http://localhost:'+portData+'/isRigid/', graph2M2Constructor(nodes,links));
+      });      
+
+      // Computes the chromatic number of the user's graph
+      $("#chromaticNumber").on("click", function() {
+        clickTest = "chromaticNumber";
+        makeCorsRequest('POST','http://localhost:'+portData+'/chromaticNumber/', graph2M2Constructor(nodes,links));
+      });          
+    
+      // Computes the independence number of the user's graph
+      $("#independenceNumber").on("click", function() {
+        clickTest = "independenceNumber";
+        makeCorsRequest('POST','http://localhost:'+portData+'/independenceNumber/', graph2M2Constructor(nodes,links));
+      });    
+        
+      // Computes the clique number of the user's graph
+      $("#cliqueNumber").on("click", function() {
+        clickTest = "cliqueNumber";
+        makeCorsRequest('POST','http://localhost:'+portData+'/cliqueNumber/', graph2M2Constructor(nodes,links));
+      });   
+        
+      // Computes degeneracy of the user's graph
+      $("#degeneracy").on("click", function() {
+        clickTest = "degeneracy";
+        makeCorsRequest('POST','http://localhost:'+portData+'/degeneracy/', graph2M2Constructor(nodes,links));
+      });   
+        
+      // Computes density of the user's graph
+      $("#density").on("click", function() {
+        clickTest = "density";
+        makeCorsRequest('POST','http://localhost:'+portData+'/density/', graph2M2Constructor(nodes,links));
+      });   
+        
+      // Computes diameter of the user's graph
+      $("#diameter").on("click", function() {
+        clickTest = "diameter";
+        makeCorsRequest('POST','http://localhost:'+portData+'/diameter/', graph2M2Constructor(nodes,links));
+      });   
+        
+      // Computes edge connectivity of the user's graph
+      $("#edgeConnectivity").on("click", function() {
+        clickTest = "edgeConnectivity";
+        makeCorsRequest('POST','http://localhost:'+portData+'/edgeConnectivity/', graph2M2Constructor(nodes,links));
+      });   
+        
+      // Computes minimal degree of the user's graph
+      $("#minimalDegree").on("click", function() {
+        clickTest = "minimalDegree";
+        makeCorsRequest('POST','http://localhost:'+portData+'/minimalDegree/', graph2M2Constructor(nodes,links));
+      });   
+        
+      // Computes number of components of the user's graph
+      $("#numberOfComponents").on("click", function() {
+        clickTest = "numberOfComponents";
+        makeCorsRequest('POST','http://localhost:'+portData+'/numberOfComponents/', graph2M2Constructor(nodes,links));
+      });   
+        
+      // Computes number of triangles of the user's graph
+      $("#numberOfTriangles").on("click", function() {
+        clickTest = "numberOfTriangles";
+        makeCorsRequest('POST','http://localhost:'+portData+'/numberOfTriangles/', graph2M2Constructor(nodes,links));
+      });   
+        
+      // Computes radius of the user's graph
+      $("#radius").on("click", function() {
+        clickTest = "radius";
+        makeCorsRequest('POST','http://localhost:'+portData+'/radius/', graph2M2Constructor(nodes,links));
+      });   
+        
+      // Computes vertex connectivity of the user's graph
+      $("#vertexConnectivity").on("click", function() {
+        clickTest = "vertexConnectivity";
+        makeCorsRequest('POST','http://localhost:'+portData+'/vertexConnectivity/', graph2M2Constructor(nodes,links));
+      });   
+        
+      // Computes vertex cover number of the user's graph
+      $("#vertexCoverNumber").on("click", function() {
+        clickTest = "vertexCoverNumber";
+        makeCorsRequest('POST','http://localhost:'+portData+'/vertexCoverNumber/', graph2M2Constructor(nodes,links));
+      });   
+        
+      // Ends the browser session and outputs the information to M2
+      $("#endSession").on("click", function() {
+        if(activeSession) {
+          //$(this).html("Session Terminated");
+          //$(this).html(<p style="color: #ffffff; background-color: #ff0000">Session terminated</p>);
+          document.getElementById("endSession").style.color = 'white';
+          document.getElementById("endSession").style.backgroundColor = 'red';
+          document.getElementById("endSession").innerHTML = "Session terminated";
+          makeCorsRequest('POST','http://localhost:'+portData+'/end/',graph2M2Constructor(nodes,links));
+          activeSession = !activeSession;
+        } else {
+          return;
+        }
+      });            
+
+      initializeBuilder();
+      disableEditing();
+    });
+
+
+    function toggleForce() {
+      if (forceOn) {
+        setAllNodesFixed();
+        document.getElementById("forceToggle").innerHTML = "Turn on force";
+      }
+      else {
+        setAllNodesUnfixed();
+        document.getElementById("forceToggle").innerHTML = "Turn off force";
+      }
+      forceOn = !forceOn;
+    }
+    
+    </script>
+
+  </body>
+
+
+</html>

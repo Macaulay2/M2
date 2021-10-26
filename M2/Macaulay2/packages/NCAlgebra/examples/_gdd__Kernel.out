@@ -1,0 +1,33 @@
+-- -*- M2-comint -*- hash: 1820292536
+
+i1 : A = QQ{x,y,z}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : B = skewPolynomialRing(QQ,(-1)_QQ, {a,b,c})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o2 = B
+
+o2 : NCQuotientRing
+
+i3 : phi = ncMap(B,A,{a,b,c})
+
+o3 = NCRingMap B <--- A
+
+o3 : NCRingMap
+
+i4 : gddKernel(4,phi)
+Computing kernel in degree 1
+Computing kernel in degree 2
+Computing kernel in degree 3
+Computing kernel in degree 4
+
+o4 = {yx+xy, zx+xz, zy+yz}
+
+o4 : List
+
+i5 : 

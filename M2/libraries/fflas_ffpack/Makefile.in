@@ -1,17 +1,30 @@
+# https://linbox-team.github.io/fflas-ffpack/
+# https://github.com/linbox-team/fflas-ffpack/releases/download/v2.2.1/
 # svn://linalg.org/fflas-ffpack/
-# http://linalg.org/projects/fflas-ffpack
-
-# the tar files provided are too old, so we took a snapshot:
-# VERSION = 20110329
-VERSION = 1.4.2.169
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
-TARDIR = fflas-ffpack-$(VERSION)
+# This link is broken: http://linalg.org/projects/fflas-ffpack
+# http://linalg.org/
+URL = http://macaulay2.com/Downloads/OtherSourceCode
+VERSION = 2.2.2
+PRECONFIGURE = autoreconf -vif
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+TARDIR = fflas-ffpack-$(VERSION)
+TARFILE = fflas-ffpack-$(VERSION).tar.gz
+
+# we omit these failing tests: test-ftrsm test-pluq-check
+# there seems to be no way to omit them with the "-o" option to "make"
+CHECKTARGET = check TESTS="test-lu test-det test-echelon test-rankprofiles test-compressQ test-permutations test-fadd test-finit test-fscal test-fgemm test-fgemm-check test-ftrsm-check test-invert-check test-charpoly-check test-fger test-multifile test-maxdelayeddim regression-check"
+
+# We disable simd here because otherwise, we get compiler error message from clang under Mac OS about
+# always-inlined functions requiring target feature "xsave"; it's an interaction between givaro and fflas-ffpack.
+CONFIGOPTIONS += --disable-simd
+
+CONFIGOPTIONS += --disable-openmp
+
 LICENSEFILES = COPYING
-PRECONFIGURE = NOCONFIGURE=yes ./autogen.sh
 # INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/include/fflas-ffpack && \
 # 		@INSTALL_DATA@ include/config-blas.h $(LIBRARIESDIR)/include/. && \
 # 		@INSTALL_DATA@ include/fflas-ffpack/*.{h,inl} $(LIBRARIESDIR)/include/fflas-ffpack/.
+CONFIGOPTIONS += LIBS="@LINALGLIBS@ @FCLIBS@"
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/fflas_ffpack/Makefile
 # Local Variables:

@@ -3,7 +3,9 @@
 -- These installations are not really methods: we install them just for documentation
 -- None of this code will ever get called, because the functions are built-in.
 
-typicalValues#method = MethodFunction
+needs "methods.m2"
+needs "lists.m2"
+
 typicalValues#class = Type
 typicalValues#parent = Type
 typicalValues#(symbol timing) = Time
@@ -45,8 +47,13 @@ append(BasicList,Thing) := BasicList => append
 prepend(Thing,BasicList) := BasicList => prepend
 apply(BasicList,Function) := BasicList => apply
 apply(BasicList,BasicList,Function) := BasicList => apply
+apply(String,Function) := Sequence => apply
+apply(BasicList,String,Function) := Sequence => apply
+apply(String,BasicList,Function) := Sequence => apply
+apply(String,String,Function) := Sequence => apply
 apply(ZZ,Function) := List => apply
 applyKeys(HashTable,Function) := HashTable => applyKeys
+applyKeys(HashTable,Function,Function) := HashTable => applyKeys
 applyPairs(HashTable,Function) := HashTable => applyPairs
 applyValues(HashTable,Function) := HashTable => applyValues
 atEndOfFile(File) := Boolean => atEndOfFile
@@ -57,9 +64,6 @@ isOpen(Database) := Boolean => isOpen
 isOutputFile(File) := Boolean => isOutputFile
 mutable(Thing) := Boolean => mutable
 instance(Thing,Type) := Boolean => instance
-regex(String,String) := List => regex
-regex(String,ZZ,String) := List => regex
-regex(String,ZZ,ZZ,String) := List => regex
 characters String := List => characters
 concatenate Nothing := concatenate String := concatenate Symbol := concatenate ZZ := concatenate BasicList := String => concatenate
 deepSplice BasicList := BasicList => deepSplice
@@ -72,8 +76,6 @@ hashTable List := HashTable => hashTable
 typicalValues#horizontalJoin = Net
 horizontalJoin BasicList := Net => horizontalJoin
 unstack Net := List => unstack
-keys HashTable := List => keys
-pairs HashTable := List => pairs
 localDictionaries Function := List => localDictionaries
 localDictionaries Symbol := List => localDictionaries
 localDictionaries Pseudocode := List => localDictionaries
@@ -92,13 +94,6 @@ openListener String := File => openListener
 pack(BasicList,ZZ) := List => pack
 pack(ZZ,BasicList) := List => pack
 reverse BasicList := BasicList => reverse
-select(String,String) := List => select
-select(String,String,String) := List => select
-select(BasicList,Function) := BasicList => select
-select(HashTable,Function) := HashTable => select
-select(ZZ,Function) := List => select
-select(ZZ,BasicList,Function) := BasicList => select
-select(ZZ,HashTable,Function) := HashTable => select
 set VisibleList := Set => set
 tally VisibleList := Tally => tally
 splice BasicList := BasicList => splice
@@ -109,9 +104,8 @@ substring(String,ZZ,ZZ) := String => substring
 substring(ZZ,String) := String => substring
 substring(Sequence,String) := String => substring
 substring(ZZ,ZZ,String) := String => substring
-toList Set := toList BasicList := List => toList
-toSequence BasicList := Sequence => toSequence
-xor(ZZ,ZZ) := ZZ => xor
+toList Set := toList BasicList := toList String := List => toList
+toSequence BasicList := toSequence String := Sequence => toSequence
 ascii String := List => ascii
 ascii List := String => ascii
 remove(HashTable,Thing) := Nothing => remove
@@ -133,12 +127,10 @@ read (File,ZZ) := String => read
 read Sequence := String => read
 read String := String => read
 Function Thing := Thing => x -> (dummy x;)
-scan(BasicList,Function) := Nothing => scan
+scan(BasicList,Function) := scan(String,Function) := Nothing => scan
+scan(BasicList,BasicList,Function) := Nothing => scan
 scan(ZZ,Function) := Nothing => scan
 scanPairs(HashTable,Function) := Nothing => scanPairs
-locate Symbol := locate Pseudocode := locate Function := locate Sequence := locate Nothing := Sequence => locate
-separate String := List => separate
-separate(String,String) := List => separate
 lines(String,String) := List => lines
 lines String := List => lines
 linkFile(String,String) := Nothing => linkFile
@@ -158,24 +150,24 @@ chk := (type,key) -> if type#?key then (
      error("method already installed: ",toString type," # ",toString key))
 
 
-typval3f{*(Function,Type,Type)*} := (f,X,Z) -> (
+typval3f-*(Function,Type,Type)*- := (f,X,Z) -> (
      msg := toString f | "(" | toString X | ") => " | toString Z;
      chk(X, f);
      f(X) := Z => x -> (error("dummy method called: ", msg);)
      )
-typval4f{*(Function,Type,Type,Type)*} := (f,X,Y,Z) -> (
+typval4f-*(Function,Type,Type,Type)*- := (f,X,Y,Z) -> (
      chk(youngest (X,Y), (f,X,Y));
      f(X,Y) := Z => x -> (dummy x;)
      )
-typval5f{*(Function,Type,Type,Type,Type)*} := (f,X,Y,Z,W) -> (
+typval5f-*(Function,Type,Type,Type,Type)*- := (f,X,Y,Z,W) -> (
      chk(youngest (X,Y,Z), (f,X,Y,Z));
      f(X,Y,Z) := W => x -> (dummy x;)
      )
-typval3k{*(Keyword,Type,Type)*} := (f,X,Z) -> (
+typval3k-*(Keyword,Type,Type)*- := (f,X,Z) -> (
      chk(X, (f,X));
      installMethod(f, X, Z => x -> (dummy x;))
      )
-typval4k{*(Keyword,Type,Type,Type)*} := (f,X,Y,Z) -> (
+typval4k-*(Keyword,Type,Type,Type)*- := (f,X,Y,Z) -> (
      chk(youngest(X,Y), (f,X,Y));
      installMethod(f, X, Y, Z => x -> (dummy x;))
      )

@@ -1,4 +1,3 @@
-needsPackage"RandomObjects"
 newPackage(
 	"RandomCanonicalCurves",
     	Version => "0.6",
@@ -11,6 +10,9 @@ newPackage(
 		     HomePage => "http://www.crcg.de/wiki/User:Bothmer"}
                    },
     	Headline => "Construction of random smooth canonical curves up to genus 14",
+	Keywords => {"Examples and Random Objects"},
+     	PackageImports => {"Truncations","RandomSpaceCurves","RandomPlaneCurves","RandomGenus14Curves"},
+     	PackageExports => {"RandomObjects"},
     	DebuggingMode => false
         )
 
@@ -26,12 +28,6 @@ undocumented {
      randomCanonicalCurve,
      certifyCanonicalCurve}
 
-needsPackage"RandomObjects"
-needsPackage"RandomSpaceCurves"
-needsPackage"RandomPlaneCurves"
-needsPackage"RandomGenus14Curves"
-
-
 randomCanonicalModelOfPlaneCurve = method(Options => {Certify => false})
 
 -- input:
@@ -41,7 +37,7 @@ randomCanonicalModelOfPlaneCurve = method(Options => {Certify => false})
 -- output:
 --    I Ideal of R describing a canonical model
 randomCanonicalModelOfPlaneCurve (ZZ,ZZ,Ring) := opt -> (d,g,R) -> (
-	  x := local x;
+     x -> (
 	  S := (coefficientRing R)[x_0..x_2];
 	  delta:=binomial(d-1,2)-g;
 	  J:=(random nodalPlaneCurve)(d,delta,S,Certify=>opt.Certify,Attempts=>1);
@@ -50,7 +46,8 @@ randomCanonicalModelOfPlaneCurve (ZZ,ZZ,Ring) := opt -> (d,g,R) -> (
 	  SJ:=S/J;
 	  phi:=map(SJ,R,substitute(KC,SJ));
 	  I:=ideal mingens ker phi;
-	  return I);
+	  return I)
+     ) (x := local x) -- this construction prevents a memory allocation cycle involving local frames for the interpreter
 
 randomCanonicalModelOfSpaceCurve = method(Options => {Certify => false})
 
@@ -65,7 +62,7 @@ randomCanonicalModelOfSpaceCurve (ZZ,ZZ,Ring) := opt -> (d,g,R) -> (
      S := (coefficientRing R)[y_0..y_3];
      RS := R**S;
      I := (random spaceCurve)(d,g,S,Certify=>opt.Certify,Attempts=>1);
-     -- the canoncial linear system
+     -- the canonical linear system
      omegaC := presentation prune truncate(0,Ext^1(I,S^{ -4}));
      graph := substitute(vars R,RS)*substitute(omegaC,RS);
      J := saturate(ideal graph,substitute(y_0,RS));
@@ -76,7 +73,7 @@ randomCanonicalModelOfSpaceCurve (ZZ,ZZ,Ring) := opt -> (d,g,R) -> (
 randomCanonicalCurve=method(TypicalValue=>Ideal,Options=>{Certify=>false})
 
 -- construct a random canonical curve of genus g
--- by using plane cuves, space curves and verras construction for g=14
+-- by using plane curves, space curves and verras construction for g=14
 -- R a ring with g variables
 randomCanonicalCurve(ZZ,PolynomialRing):= opt -> (g,R)->(
      if g>14 or g<4 then error "no method implemented";
@@ -85,7 +82,7 @@ randomCanonicalCurve(ZZ,PolynomialRing):= opt -> (g,R)->(
 	  s:=floor(g/3); -- the speciality of a plane model of minimal degree
 	  d=g+2-s; -- the degree of the plane model
 	  return randomCanonicalModelOfPlaneCurve(d,g,R,Certify=>opt.Certify));
-     -- the following space curve models are choosen such that the
+     -- the following space curve models are chosen such that the
      -- brill noether number is positive and the construction via
      -- Hartshorne-Rao-Modules works
      if g==11 then return randomCanonicalModelOfSpaceCurve(12,11,R,Certify=>opt.Certify);

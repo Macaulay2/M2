@@ -3,10 +3,11 @@ newPackage(
     	Version => "0.3", 
     	Date => "June 14, 2010",
     	Authors => {{Name => "Janko Boehm", 
-		  Email => "boehm@math.uni-sb.de", 
+		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}
                   },
-    	Headline => "Interface to Maple",
+    	Headline => "interface to Maple",
+	Keywords => {"Interfaces"},
     	DebuggingMode => false,
         Configuration => {"MapleCommand"=>"maple"},
 	CacheExampleOutput => true,
@@ -15,7 +16,7 @@ newPackage(
 
 -- For information see documentation key "MapleInterface" below.
 
-export({"callMaple","store","readMaple","msqrt","integralBasis"})
+export {"callMaple","store","readMaple","msqrt","integralBasis"}
 
 getFilename = () -> (
      filename := temporaryFileName();
@@ -47,15 +48,16 @@ mapleprogram=replace("placeholder2",inputdata2,mapleprogram);
 mapleprogram=replace("placeholder1",L1,mapleprogram);
 mapleprogram=replace("placeholder3",rootPath|filename3,mapleprogram);
 --print mapleprogram;
-F := openOut(filename|".txt");
-F<<mapleprogram<<endl;
-close F;
---run(maplecommand|" "|rootPath|filename|".txt >"|rootPath|filename2|".txt");
-run("\""|maplecommand|"\""|" "|rootPath|filename|".txt >"|rootPath|filename2|".txt");
+filename|".txt" << mapleprogram << endl << close;
+outfile := rootPath|filename2|".txt";
+command := "\""|maplecommand|"\""|" <"|rootPath|filename|".txt >"|outfile;
+if debugLevel > 0 then (
+     stderr << "running " << command << endl
+     	    << "with input:" << endl << mapleprogram << endl);
+run command;
+if debugLevel > 0 then stderr << "and with output:" << endl << get outfile << endl;
 if fileExists(rootPath|filename3|".txt")==false then error("Maple returned errors, see file "|rootPath|filename2|".txt for the Maple-output and "|rootPath|filename|".txt for the Maple-input");
-F= openIn(rootPath|filename3|".txt");
-Lfc:=changeBrackets2(get(F));
---close F;
+Lfc:=changeBrackets2(get(rootPath|filename3|".txt"));
 run("rm"|" "|rootPath|filename|".txt");
 run("rm"|" "|rootPath|filename2|".txt");
 if class(opts.store)===String then (
@@ -76,10 +78,7 @@ replace("[]]","}",replace("[[]","{",S)))
 --changeBrackets("{{1,2},{3,4}}")
 
 readMaple=method()
-readMaple(String):=(fn)->(
-F:= openIn(fn);
-Lfc:=changeBrackets2(get(F));
-value Lfc)
+readMaple String := fn-> value changeBrackets2 get fn
 
 msqrt=method()
 msqrt(ZZ,ZZ):=(a,b)->(
@@ -104,7 +103,7 @@ matrix {L})
 
 ----------------------------------------------------------------------
 
-{*
+-*
 Copyright (C) [2009] [Janko Boehm]
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
@@ -112,7 +111,7 @@ This program is free software; you can redistribute it and/or modify it under th
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>
-*}
+*-
 
 
 beginDocumentation()
@@ -168,7 +167,7 @@ doc ///
 
       If you are using Macaulay 2 in cygwin and the Windows native Maple version
       best put the complete path to the Maple command line
-      executeable, e.g., StringWithMapleCommand could be (depending on the Maple version)
+      executable, e.g., StringWithMapleCommand could be (depending on the Maple version)
       
       "C:/Program Files/Maple 9.5/bin.win/cmaple9.5.exe"
 
@@ -363,7 +362,7 @@ doc ///
 
 
 
-{*
+-*
 uninstallPackage("MapleInterface")
 installPackage("MapleInterface",RerunExamples=>true);
-*}
+*-

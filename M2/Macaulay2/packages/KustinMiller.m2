@@ -5,13 +5,14 @@ newPackage(
     	Version => "1.4",
     	Date => "May 14, 2012",
     	Authors => {{Name => "Janko Boehm", 
-		  Email => "boehm@math.uni-sb.de", 
+		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"},
                   {Name => "Stavros Papadakis", 
 		  Email => "papadak@math.ist.utl.pt", 
 		  HomePage => "http://www.math.ist.utl.pt/~papadak/"}
                    },
-    	Headline => "Unprojection and the Kustin-Miller complex construction",
+    	Headline => "unprojection and the Kustin-Miller complex construction",
+	Keywords => {"Commutative Algebra"},
 	PackageExports => {"SimplicialComplexes"},
     	DebuggingMode => false,
 	Certification => {
@@ -21,8 +22,8 @@ newPackage(
 	     "acceptance date" => "2012-05-07",
 	     "published article URI" => "http://j-sag.org/Volume4/jsag-2-2012.pdf",
 	     "published code URI" => "http://j-sag.org/Volume4/KustinMiller.m2",
-	     "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/KustinMiller.m2",
-	     "release at publication" => 14712,
+	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/KustinMiller.m2",
+	     "release at publication" => "a611bb9148103fa0c7908595cc979c66d210bb70",
 	     "version at publication" => "1.4",
 	     "volume number" => "4",
 	     "volume URI" => "http://j-sag.org/Volume4/"
@@ -32,7 +33,7 @@ newPackage(
 
 -------------------------------------------------------------------------------
 
-{*
+-*
 Copyright [2011] [Janko Boehm, Stavros Papadakis]
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
@@ -40,10 +41,10 @@ This program is free software; you can redistribute it and/or modify it under th
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>
-*}
+*-
 
 
-{*
+-*
 
       Installation:
 
@@ -56,7 +57,7 @@ You should have received a copy of the GNU General Public License along with thi
       This package requires the package SimplicialComplexes.m2 Version 1.2 or higher,
       so install this first.
 
-*}
+*-
 
 
 
@@ -515,7 +516,7 @@ assert(not isGorenstein ideal (x_1*x_2, x_1*x_3))
 ///
 
 ---------------------------------------------------------------------
--- some usefull stuff for chain complexes
+-- some useful stuff for chain complexes
 
 -- check whether a chain complex is a resolution
 -- that is it is exact everywhere except at the
@@ -652,7 +653,7 @@ doc ///
       
       We provide a general command @TO kustinMillerComplex@ for the Kustin-Miller complex construction and demonstrate it on several examples connecting unprojection theory
       and combinatorics such as stellar subdivisions of simplicial complexes [6],
-      minimal resolutions of Stanley-Reisner rings of boundary complexes {\Delta}(d,m) 
+      minimal resolutions of Stanley-Reisner rings of boundary complexes $\Delta(d,m)$
       of cyclic polytopes of dimension d on m vertices [7], and the classical 
       (non-monomial) Tom example of unprojection [2].
       
@@ -858,7 +859,7 @@ doc ///
     :SimplicialComplex
   Description
    Text
-      Boundary complex of a cyclic polytope of dimension d on the variables of R as vertices, i.e., {\Delta}(d,m) if m is the number of variables of R.
+      Boundary complex of a cyclic polytope of dimension d on the variables of R as vertices, i.e., $\Delta(d,m)$ if m is the number of variables of R.
 
    Example
      K=QQ;
@@ -884,7 +885,7 @@ doc ///
 ///
 
 
-{*
+-*
 doc ///
   Key
     differentials
@@ -933,7 +934,7 @@ doc ///
   Caveat
     This is not a user level function.
 ///
-*}
+*-
 
 
 doc ///
@@ -1365,8 +1366,8 @@ doc ///
   Description
    Text
     In the following example we construct the minimal resolution of the Stanley-Reisner ring of
-    the cyclic polytope {\Delta}(4,8) of embedding codimension 4 (as a subcomplex of the simplex on 8 vertices) 
-    from those of the cyclic polytopes {\Delta}(2,6) and {\Delta}(4,7) (the last one being Pfaffian).
+    the cyclic polytope $\Delta(4,8)$ of embedding codimension 4 (as a subcomplex of the simplex on 8 vertices)
+    from those of the cyclic polytopes $\Delta(2,6)$ and $\Delta(4,7)$ (the last one being Pfaffian).
 
     This process can be iterated to give a recursive construction of the
     resolutions of all cyclic polytopes, for details see
@@ -1390,7 +1391,7 @@ doc ///
 
      We compare with the combinatorics, that is, check that
      the Kustin-Miller complex at the special fiber z=0 indeed resolves 
-     the Stanley-Reisner ring of {\Delta}(4,8).
+     the Stanley-Reisner ring of $\Delta(4,8)$.
 
    Example
      R'=K[x_1..x_8];
@@ -1490,13 +1491,13 @@ doc ///
 
 
 
-{*
+-*
 check "KustinMiller"
 uninstallPackage("KustinMiller")
 installPackage("KustinMiller")
 installPackage("KustinMiller",RerunExamples=>true)
 viewHelp("KustinMiller")
-*}
+*-
 
 end
 

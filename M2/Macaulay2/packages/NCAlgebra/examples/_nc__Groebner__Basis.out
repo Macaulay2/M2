@@ -1,0 +1,112 @@
+-- -*- M2-comint -*- hash: -2009704084
+
+i1 : R = QQ[a,b,c,d]/ideal{a*b+c*d}
+
+o1 = R
+
+o1 : QuotientRing
+
+i2 : A = R {x,y,z}
+
+o2 = A
+
+o2 : NCPolynomialRing
+
+i3 : I = ncIdeal {a*x*y,b*z^2}
+
+                             2
+o3 = Two-sided ideal {axy, bz }
+
+o3 : NCIdeal
+
+i4 : Igb = ncGroebnerBasis(I, InstallGB=>true)
+
+       2                2
+o4 = bz ; Lead Term = (z , b)
+     axy; Lead Term = (xy, a)
+
+o4 : NCGroebnerBasis
+
+i5 : c*z^2 % Igb
+
+       2
+o5 = cz
+
+o5 : A
+
+i6 : b*z^2 % Igb
+
+o6 = 0
+
+o6 : A
+
+i7 : A = QQ{x,y,z}
+
+o7 = A
+
+o7 : NCPolynomialRing
+
+i8 : p = y*z + z*y - x^2
+
+            2
+o8 = zy+yz-x
+
+o8 : A
+
+i9 : q = x*z + z*x - y^2
+
+         2
+o9 = zx-y +xz
+
+o9 : A
+
+i10 : r = z^2 - x*y - y*x
+
+       2
+o10 = z -yx-xy
+
+o10 : A
+
+i11 : I = ncIdeal {p,q,r}
+
+                              2      2      2
+o11 = Two-sided ideal {zy+yz-x , zx-y +xz, z -yx-xy}
+
+o11 : NCIdeal
+
+i12 : Igb = ncGroebnerBasis I
+--Calling Bergman for NCGB calculation.
+Complete!
+
+       2    2                2
+o12 = y x-xy ; Lead Term = (y x, 1)
+        2  2                  2
+      yx -x y; Lead Term = (yx , 1)
+          2
+      zx-y +xz; Lead Term = (zx, 1)
+             2
+      zy+yz-x ; Lead Term = (zy, 1)
+       2                      2
+      z -yx-xy; Lead Term = (z , 1)
+
+o12 : NCGroebnerBasis
+
+i13 : normalFormBergman(z^17,Igb)
+--Calling Bergman for NF calculation for 1 elements.
+Complete!
+Writing bergman input file.
+Writing bergman init file.
+
+                                            2             2    3           3     4         4     5       5     6     6     7   7     8 8
+o13 = yxyxyxyxyxyxyxyxz+xyxyxyxyxyxyxyxyz+8x yxyxyxyxyxyxy z+8x yxyxyxyxyxy z+28x yxyxyxyxy z+28x yxyxyxy z+56x yxyxy z+56x yxy z+70x y z
+
+o13 : A
+
+i14 : z^17 % Igb
+
+                                            2             2    3           3     4         4     5       5     6     6     7   7     8 8
+o14 = yxyxyxyxyxyxyxyxz+xyxyxyxyxyxyxyxyz+8x yxyxyxyxyxyxy z+8x yxyxyxyxyxy z+28x yxyxyxyxy z+28x yxyxyxy z+56x yxyxy z+56x yxy z+70x y z
+
+o14 : A
+
+i15 : 

@@ -1,0 +1,36 @@
+[submodule "M2/submodules/memtailor"]
+	path = M2/submodules/memtailor
+	url = https://github.com/Macaulay2/memtailor
+[submodule "M2/submodules/mathic"]
+	path = M2/submodules/mathic
+	url = https://github.com/Macaulay2/mathic
+[submodule "M2/submodules/mathicgb"]
+	path = M2/submodules/mathicgb
+	url = https://github.com/Macaulay2/mathicgb
+[submodule "M2/submodules/bdwgc"]
+	path = M2/submodules/bdwgc
+	url = https://github.com/Macaulay2/bdwgc.git
+[submodule "M2/submodules/libatomic_ops"]
+	path = M2/submodules/libatomic_ops
+	url = https://github.com/Macaulay2/libatomic_ops.git
+[submodule "M2/submodules/mpir"]
+	path = M2/submodules/mpir
+	url = https://github.com/Macaulay2/mpir.git
+[submodule "M2/submodules/flint2"]
+	path = M2/submodules/flint2
+	url = https://github.com/Macaulay2/flint2.git
+[submodule "M2/submodules/frobby"]
+	path = M2/submodules/frobby
+	url = https://github.com/Macaulay2/frobby.git
+[submodule "M2/submodules/fflas-ffpack"]
+	path = M2/submodules/fflas_ffpack
+	url = https://github.com/Macaulay2/fflas-ffpack.git
+[submodule "M2/submodules/givaro"]
+	path = M2/submodules/givaro
+	url = https://github.com/Macaulay2/givaro.git
+[submodule "M2/submodules/googletest"]
+	path = M2/submodules/googletest
+	url = https://github.com/google/googletest.git
+[submodule "M2/Macaulay2/editors/emacs"]
+	path = M2/Macaulay2/editors/emacs
+	url = https://github.com/Macaulay2/M2-emacs.git

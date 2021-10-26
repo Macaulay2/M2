@@ -2,27 +2,16 @@
 --- author(s): M. Stillman
 --- notes: 
 
+-*
+-- TODO
+degree(ChainComplexMap)
+degree(GradedModuleMap)
+degree(Matrix)
+*-
+
 document {
      Key => Parenthesize,
      "This class is used internally to implement the parentheses inserted by ", TO "parts", "."
-     }
-
-document {
-     Key => {(parts,RingElement),parts},
-     Headline => "display a polynomial degree by degree",
-     Usage => "parts f",
-     Inputs => {
-	  "f"
-	  },
-     Outputs => {
-	  Expression => {"an expression with the terms of ", TT "f", " of the each degree parenthesized, in increasing order"}
-	  },
-     EXAMPLE lines ///
-     	  R = QQ[x,y];
-	  f = (x+y+1)^2
-     	  parts f
-	  ///,
-     SeeAlso => { Parenthesize }
      }
 
 undocumented {
@@ -147,8 +136,8 @@ document {
      Outputs => {
 	  ZZ => {"the degree of ", TT "M"}
 	  },
-     "We assume that ", TT "M", " is a graded (homogeneous) module over a singly graded 
-     polynomal ring or a quotient of a polynomial ring, 
+     "We assume that ", TT "M", " is a graded (homogeneous) module over a 
+     polynomal ring or a quotient of a polynomial ring with all degrees of variables and heft vector equal to ", TT "{1}", ",
      over a field ", TT "k", ".",
      PARA{
 	  "If ", TT "M", " is finite dimensional over ", TT "k", ", the degree
@@ -163,38 +152,52 @@ document {
 	  degree minors_2 matrix {{t,x,y},{x,y,z}}
 	  ///,
      PARA {
-     	  "The algorithm computes the ", TO "hilbertSeries", " of ", TT "M", "
-	  (as a rational function), divides both numerator and denominator by ", TT "1-T", " 
-	  as often as possible, then evaluates both at ", TT "T=1", " and returns
-	  the resulting quotient as a (possibly rational) number.  When the module                                                                                 
- 	  has finite length, then the rational function is a polynomial, and evaluating                                                                                
- 	  it at 1 returns the dimension over the ground field, which for a graded (homogenous)
+     	  "The algorithm computes the ", TO "poincare", " polynomial of ", TT "M", ",
+	  divides it by ", TT "1-T", " 
+	  as often as possible, then evaluates it at ", TT "T=1", ".
+	  When the module has finite length,                                                           
+ 	  the result is the Hilbert series evaluated
+ 	  at 1, that is the dimension over the ground field, which for a graded (homogeneous)
 	  is the same as the length."
 	  },
      Caveat => {
 	  "If the base ring is ", TO "ZZ", ",
 	  or the module is not homogeneous, it is likely that the answer is not what
 	  you would expect.  Similarly, if the degrees of the variables
-	  are not all ", TT "{1}", ", then the answer is harder to interpret.  See ", TO "heft vectors", " and
+	  are not all ", TT "{1}", ", or the heft vector isn't ",TT "{1}", ", then the answer is harder to interpret.  See ", TO "heft vectors", " and
 	  ", TO "multidegree", "."
 	  },
      SeeAlso => {hilbertPolynomial, isHomogeneous}
      }
 
-document { 
-     Key => (length,Module),
-     Usage => "length M",
-     Inputs => {
-	  "M"
-	  },
-     Outputs => {
-	  ZZ => {"the length of ", TT "M"}
-	  },
-     "We assume that ", TT "M", " is a graded module over a singly graded 
-     polynomal ring or a quotient of a polynomial ring, 
-     over a field ", TT "k", ".  In this case, the length is the same as the degree, 
-     see ", TO (degree,Module), "."
-     }
+doc ///
+Key
+  (length, Module)
+Headline
+  Computes the length of a module
+Usage
+  l = length M
+Inputs
+  M: Module
+Outputs
+  l: ZZ
+    the length of M
+Description
+  Text
+    If M is a graded module over a singly graded polynomal ring or a quotient of a
+    polynomial ring over a field k then length is the same as the degree.
+
+    If M is over a local ring then length is computed by summing the output of
+    the Hilbert-Samuel function until it vanishes. Note that in this case the
+    @TO "LocalRings :: LocalRings"@ package must be loaded first.
+Consequences
+  Item
+    In the local case, the length of the module is stored in M.cache.length.
+Caveat
+  In the local case, the input is assumed to have finite length.
+SeeAlso
+  (degree, Module)
+///
 
 document { 
      Key => (degree,Ring),
@@ -219,13 +222,13 @@ document {
      Usage => "degree f",
      Inputs => {
 	  "f" => {"a ", TO2(RingElement, "ring element"), 
-	       "or ", TO2(Vector, "vector")}
+	       " or ", TO2(Vector, "vector")}
 	  },
      Outputs => {
 	  List => {"the degree or multidegree of ", TT "f"}
 	  },
      "In Macaulay2, the degree of a polynomial is a list of integers.
-     This is to accomodate polynomial rings having multigradings.  The 
+     This is to accommodate polynomial rings having multigradings.  The 
      usual situation is when the ring has the usual grading: each variable has
      length 1.",
      EXAMPLE {

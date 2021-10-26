@@ -1,28 +1,32 @@
 VPATH = @srcdir@
 LDFLAGS = -L$(BUILTLIBPATH)/lib
-CPPFLAGS =  -I$(BUILTLIBPATH)/include
+CPPFLAGS = -I$(BUILTLIBPATH)/include
 include ../include/config.Makefile
 check: clean-and-config
-clean:; rm -f config.status config.log config.args
-clean-and-config: check-config check-comment
+clean:; rm -rf tmp
+clean-and-config: check-config
 check-config:
-	@top_srcdir@/configure -n \
-	    LDFLAGS="$(LDFLAGS)" \
-	    CPPFLAGS="$(CPPFLAGS)" \
-	    CC="$(CC)" \
-	    CXX="$(CXX)" \
-	    CFLAGS="$(CFLAGS)" \
-	    CXXFLAGS="$(CXXFLAGS)" \
-	    --build="@build_alias@" \
+	rm -rf tmp
+	mkdir tmp
+	@ echo "make: [check-config] remark: the test below is important (only) for testing whether the configure script detects pre-installed libraries properly" >&2
+	cd tmp &&								\
+	    LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)"		\
+	    PATH="$(BUILTLIBPATH)/bin:$(PATH)"					\
+	    @abs_top_srcdir@/configure						\
+	    PKG_CONFIG_PATH=$(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)	\
+	    GFTABLESDIR=@PRE_GFTABLESDIR@					\
+	    LDFLAGS="@BUILTLIBS@ $(LDFLAGS)"					\
+	    --with-gtest-source-path="@GTEST_PATH@"				\
+	    CPPFLAGS="$(CPPFLAGS)"						\
+	    CC="$(CC)"								\
+	    CXX="$(CXX)"							\
+	    CFLAGS="$(CFLAGS)"							\
+	    CXXFLAGS="$(CXXFLAGS)"						\
+	    --build="@build_alias@"						\
 	    --disable-building
-	$(MAKE) -f Makefile clean
-check-comment:
-	@ if [ -f config.log ] ; \
-	  then echo "make: *** [check-config] remark: the test above is important (only) for testing whether the configure script detects pre-installed libraries properly" >&2 ;\
-	  fi
-
 distclean:: clean; rm -f Makefile
 Makefile: Makefile.in ; cd .. && ./config.status check-configure/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/check-configure -f Makefile -k check "
 # End:
+.NOTPARALLEL:

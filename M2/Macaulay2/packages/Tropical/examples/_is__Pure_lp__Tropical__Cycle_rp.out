@@ -1,0 +1,11 @@
+-- -*- M2-comint -*- hash: -914774163
+
+i1 : F=fan ({posHull(matrix{{1,2,3},{0,2,0}}),posHull(matrix{{0},{1}})});
+
+i2 : T=tropicalCycle (F,{1,2});
+
+i3 : isPure T
+
+o3 = false
+
+i4 : 

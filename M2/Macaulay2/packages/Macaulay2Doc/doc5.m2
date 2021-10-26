@@ -16,7 +16,7 @@ document {
 	  An error is signalled if the key ", TT "x", " does not occur in ", TT "defaults", "."
 	  },
      PARA {
-	  "A second possibility is for the argument ", TT "defaults", " to be ", TO "true", ",
+	  "A second possibility is for the argument ", TT "defaults", " to be ", TO "null", ",
 	  in which case the keys x are not checked for validity, and no default values
 	  are provided.  The main use of this is to separate the optional arguments from
 	  the other arguments, which can then be used for dispatching to the correct method."
@@ -26,258 +26,12 @@ document {
      	  of optional arguments for method functions that accept them."
 	  },
      EXAMPLE {
-	  "defs = new HashTable from { a => 1, b => 2 };",
+	  "defs = new OptionTable from { a => 1, b => 2 };",
 	  "override(defs, (4,b=>6,5))"
 	  }
      }
 
-document {
-     Key => userSymbols,
-     Headline => "a list of the user's symbols",
-	Usage => "userSymbols ()",
-	Outputs => {List => {" a list of symbols"}},
-     TT "userSymbols ()", " provides a list of symbols defined by
-     the user.",
-     BR{},
-     TT "userSymbols X", " limits the list to those symbols whose
-     values are instances of the ", TO "class", " ", TT "X", ".",
-     PARA{},
-     "Protected symbols are excluded from the list.",
-     SeeAlso => "listUserSymbols"
-     }
 
-document {
-     Key => listUserSymbols,
-     Headline => "display the user's symbols",
-     SYNOPSIS {
-     	  Usage => "listUserSymbols",
-     	  Outputs => {
-	       {"a display of the symbols defined and given values by the user, along with their types and values, in abbreviated form"}
-	       },
-	  PARA {
-	       "A symbol is considered to have been give a value, if it's current value is not equal to itself."
-	       },
-	  EXAMPLE lines ///
-	  t=3;
-	  R=QQ[x];
-	  listUserSymbols
-	  ///
-	  },
-     SYNOPSIS {
-     	  Usage => "listUserSymbols X",
-	  Inputs => {
-	       "X" => Type
-	       },
-     	  Outputs => {
-	       {"a display of the symbols of type ", TT "X", " defined and given values by the user,
-		    along with their types and values, in abbreviated form"}
-	       },
-	  EXAMPLE lines ///
-	  listUserSymbols ZZ
-	  ///
-	  },
-     SeeAlso => {"userSymbols"}
-     }
-
-document {
-     Key => clearOutput,
-     Headline => "forget output values",
-	Usage => "clearOutput",
-     TT "clearOutput", " is a command that attempts to release memory by 
-     clearing the values retained by the output line symbols.",
-     SeeAlso => { "clearAll" }
-     }
-
-document {
-     Key => clearAll,
-     Headline => "forget everything",
-	Usage => "clearAll",
-     TT "clearAll", " is a command that attempts to release memory by clearing 
-     the values retained by the output line symbols and all the user symbols.",
-     SeeAlso => {"userSymbols", "clearOutput"}
-     }
-
-document {
-     Key => exec,
-     Headline => "execute another program",
-	Usage => "exec argv",
-     TT "exec argv", "  uses the 'exec' operating system call to
-     start up another program, replacing the current Macaulay2 process.
-     Here ", TT "argv", " is a string, or a sequence or list of strings
-     to be passed as arguments to the new process.  The first string
-     is the name of the executable file."
-     }
-
-document {
-     Key => restart,
-     Headline => "restart Macaulay2",
-     Usage => "restart",
-     Consequences => { {"the program will be restarted from the beginning"} },
-     PARA{
-     	  "Functions previously registered with ", TO "addEndFunction", " will
-     	  be called before the current instance of the program terminates.  Then the program will be invoked
-	  afresh, as described in ", TO "Invoking the program", "."
-	  }
-     }
-
-document {
-     Key => {on,[on,CallLimit],[on,Name],[on,GenerateAssertions],GenerateAssertions,CallLimit},
-     Headline => "trace a function each time it's run",
-     Usage => "on f",
-     Inputs => { 
-	  "f" => Function,
-	  CallLimit => ZZ => {"the maximum number of times to permit the function ", TT "f", " to be called"},
-	  Name => String => {"the name to use for the function, in case ", TT "f", " is an anonymous function (not assigned to a global variable)"},
-     	  GenerateAssertions => Boolean => {
-	       "whether to print assertion statements that can be used as input to Macaulay2 to
-	       check the behavior of the function remains the same.  Arguments and values are prepared
-	       with ", TO "toExternalString", ", failure of which is sliently ignored."
-	       }
-	  },
-     Outputs => { Function => {"a new function that returns the same values that ", TT "f", " would have returned, but has a few side effects
-	       useful for debugging: upon entry, it prints its arguments, and upon exit it prints its return values.  The display includes the name of ", TT "f", ",
-	       a sequence number in parentheses that tells how many times the function has been called, and a number in brackets that gives the nesting (recursion) depth.
-	       The sequence number allows the entry and exit reports to be connected." 
-	       }},
-     PARA{
-     	  "Ideally, this function would replace ", TT "f", ", i.e., we would write ", TT "f = on f", ".  Unfortunately, all the pre-installed system functions
-	  are write-protected; fortunately, their methods are not, and can be replaced."
-	  },
-     EXAMPLE lines ///
-     ker Matrix := on(lookup(ker,Matrix),GenerateAssertions=>true,Name=>"ker");
-     f = x -> kernel (x|x);
-     R = QQ[a..c];
-     f vars R
-     ///,
-     SeeAlso => {"lookup"}
-     }
-
-document {
-     Key => assert,
-     Headline => "assert something is true",
-	Usage => "assert x",
-     TT "assert x", " prints an error message if x isn't true."
-     }
-
-document {
-     Key => notImplemented,
-     Headline => "print an 'not implemented' error message",
-	Usage => "notImplemented()",
-     TT "notImplemented()", " prints an error message that 
-     says \"not implemented yet\"."
-     }
-
-document {
-     Key => "errorDepth",
-     Headline => "set the error printing depth",
-     TT "errorDepth = i", " -- sets the error depth to ", TT "i", ", which should be
-     a small integer, returning the old value.",
-     PARA{
-	  "During the backtrace after an error message, a position in interpreted
-	  code is displayed only if the load depth was at least as large at the
-	  time the code was parsed as the error depth is now.  Typically, the
-	  error depth is set so that messages from code pre-interpreted and
-	  reloaded with ", TO "loaddata", " will not appear in the backtrace.",
-	  },
-     PARA{
-     	  "To increase the size of the stack trace for debugging, reduce the ", TT "errorDepth", ".",
-	  },
-     SeeAlso => { "loadDepth" }
-     }
-
-document {
-     Key => "loadDepth",
-     Headline => "the load depth",
-     TT "loadDepth = i", " -- sets the load depth to ", TT "i", ", which should be
-     a small integer, returning the old value.",
-     PARA{
-	  "During the backtrace after an error message, a position in interpreted
-	  code is displayed only if the load depth was at least as large at the
-	  time the code was parsed as the error depth is now.  The load depth 
-	  is set to 0 initially, is set to 1 when the files of the ", TO "Core::Core", "
-	  package are being loaded, is set to 2 while loading a package with the ", TO "debuggingMode", " option
-	  set to ", TO "false", ", and is set to 3 for user input."
-	  },
-     PARA {
-	  "The value of ", TO "loadDepth", " active when code is parsed is referred to later when
-	  error messages are being handled: see ", TO "errorDepth", "."
-	  },
-     Caveat => { "The user should not attempt to adjust the value of ", TO "loadDepth", "." },
-     }
-
-document {
-     Key => benchmark,
-     Headline => "accurate timing of execution",
-     Inputs => {
-	     "s" => String => "a string containing Macaulay2 code"
-	     },
-     Outputs => {
-	     RR => {"the number of seconds it takes to evaluate the code in ", TT "s"}
-	     },
-     Usage => "benchmark s",
-     "Produces an accurate timing for the code contained in the string ", TT "s", ".  The value returned is the number of seconds.",
-     EXAMPLE {
-		///benchmark "sqrt 2p3000000"///
-		},
-     "The snippet of code provided will be run enough times to register
-     meaningfully on the clock, and the garbage collector will be called
-     beforehand.",
-     }
-
-document {
-     Key => {memoize,(memoize, Function),(memoize, Function, List)},
-     Headline => "record results of function evaluation for future use",
-     TT "memoize f", " -- produces, from a function ", TT "f", ", a new function that
-     behaves the same as ", TT "f", ", but remembers previous answers to be provided
-     the next time the same arguments are presented.",
-     PARA{},
-     EXAMPLE lines ///
-     fib = n -> if n <= 1 then 1 else fib(n-1) + fib(n-2)
-     time fib 28
-     fib = memoize fib
-     time fib 28
-     time fib 28
-     ///,
-     PARA{},
-     "The function ", TT "memoize", " operates by constructing 
-     a ", TO "MutableHashTable", " in which the argument sequences are used
-     as keys for accessing the return value of the function.",
-     PARA{},
-     "An optional second argument to memoize provides a list of initial values,
-     each of the form ", TT "x => v", ", where ", TT "v", " is the value to
-     be provided for the argument ", TT "x", ".",
-     PARA{},
-     "Warning: when the value returned by ", TT "f", " is ", TO "null", ", it will always be 
-     recomputed, even if the same arguments are presented.",
-     PARA{},
-     "Warning: the new function created by ", TT "memoize", " will save
-     references to all arguments and values it encounters, and this will
-     often prevent those arguments and values from being garbage-collected
-     as soon as they might have been.  If the arguments are
-     implemented as mutable hash tables (modules, matrices and rings are
-     implemented this way) then a viable strategy is to stash computed
-     results in the arguments themselves.  See also ", TT "CacheTable", "."
-     }
-
-TEST "
-fib = memoize( n -> if n <= 1 then 1 else fib(n-1) + fib(n-2) )
-assert ( fib 10 == 89 )
-"
-
-TEST "
-a = 0
-f = memoize ( x -> ( a = a + 1; true ))
-f 1
-f 2
-f 3
-f 1
-f 2
-f 3
-f 1
-f 2
-f 3
-assert( a == 3 )
-"
 
 document {
      Key => Tally,
@@ -301,7 +55,7 @@ document {
      }
 
 document {
-     Key => (symbol **, Tally, Tally),
+     Key => (symbol **, VirtualTally, VirtualTally),
      Headline => "Cartesian product of tallies",
      TT "x ** y", " -- produces the Cartesian product of two tallies.",
      PARA{},
@@ -314,6 +68,38 @@ document {
 	  },
      SeeAlso => {"Tally", "tally"}
      }
+
+document {
+     Key => (symbol +, VirtualTally, VirtualTally),
+     Headline => "union of tallies",
+     TT "x + y", " -- produces the union of two tallies.",
+     PARA{},
+     "One of the arguments may be a ", TO "Set", ".",
+     PARA{},
+     EXAMPLE {
+	      "x = tally {a,b,b,c,c,c,d,d,d}",
+      	  "y = tally {a,a,a,b,b,c,d}",
+     	  "x' = new VirtualTally from x",
+	 	  "y' = new VirtualTally from y",
+	 	  "z' = y' - x'",
+	 	  "z' + x'",
+	  	  "z' + y'",
+	  },
+     }
+     
+document {
+     Key => (symbol -, VirtualTally),
+     Headline => "negation of a VirtualTally",
+     TT "-x", " -- the negation of ", TT "x",
+     PARA{},
+     EXAMPLE {
+      	  "x = tally {a,b,b,c,c,d,d,d}",
+	 	  "x' = new VirtualTally from x",
+	  	  "- x'",
+     },
+}     
+
+
 
 document {
      Key => (symbol +, Tally, Tally),
@@ -343,25 +129,11 @@ document {
      }
 
 document {
-     Key => {commonest, (commonest, VisibleList), (commonest, Set), (commonest, Tally)},
-     Headline => "the most common elements of a list or tally",
-     Usage => "commonest x",
-     Inputs => { "x" },
-     Outputs => { { "a list of the elements appearing most frequently in ", TT "x" } },
-     EXAMPLE "commonest {a,a,a,a,b,b,b,b,c,c,d}"
-     }
-
-document {
      Key => tally,
      Headline => "tally the elements of a list or sequence",
      TT "tally x", " tallies the frequencies of items in a list or sequence x.",
      SeeAlso => "Tally"
      }
-
-TEST ///
-assert( toString tally {1,1,1,2,1,3,2} === "new Tally from {1 => 4, 2 => 2, 3 => 1}" )
-assert( tally {1,1,1,2,1,3,2} === new Tally from {(1,4),(2,2),(3,1)} )
-///
 
 document {
 	Key => (tally, VisibleList),
@@ -401,7 +173,7 @@ document {
      TO2((symbol*,Set,Set),"intersection"), ", ",
      TO2((symbol-,Set,Set),"difference"), ", ",
      TO2((symbol**,Set,Set),"Cartesian product"), ", ",
-     TO2((symbol^**,Tally,ZZ),"Cartesian power"), ", and ",
+     TO2((symbol^**,VirtualTally,ZZ),"Cartesian power"), ", and ",
      TO2((isSubset,Set,Set),"subset"),
      " are available. For example,",
      EXAMPLE {
@@ -537,7 +309,7 @@ document {
      }
 
 document {
-     Key => (symbol ^**, Tally, ZZ),
+     Key => (symbol ^**, VirtualTally, ZZ),
      Headline => "Cartesian power of sets and tallies",
      Usage => "B = A^**n",
      Inputs => { "A", "n" },
@@ -551,22 +323,6 @@ document {
 	  ///,
      SeeAlso => {Set, (symbol**,Set,Set)}
      }
-
-TEST "
-x = set {1,2,3}
-y = set {3,4,5}
-assert( member(2,x) )
-assert( not member(x,x) )
-assert( sum y === 12 )
-assert( product y === 60 )
-assert ( x * y === set {3} )
-assert ( x ** y === set {
-	  (3, 4), (2, 5), (3, 5), (1, 3), (2, 3), (1, 4), (3, 3), (1, 5), (2, 4)
-	  } )
-assert ( x - y === set {2, 1} )
-assert ( x + y === set {1, 2, 3, 4, 5} )
-assert ( toString x === \"set {1, 2, 3}\" )
-"
 
 
 document {
@@ -605,164 +361,6 @@ document {
      economical manner.  Use ", TO prune, " to improve the presentation.",
      SeeAlso => {monomialCurveIdeal, Ext, variety, sheaf, prune}
      }    
-
-document {
-     Key => setRandomSeed,
-     Headline => "set starting point for random number generator"
-     }
-
-document {
-     Key => 1 : setRandomSeed,
-     Usage => "setRandomSeed()",
-     Consequences => {
-	  {"Initializes the random number generator to a fixed state, identical to the
-	       initial state in version 1.2 and earlier of Macaulay2.  After version 1.2,
-	       the random number seed is initially set to a number that depends on the current date, time (in seconds), and process id."}
-	  },
-     EXAMPLE lines ///
-     setRandomSeed()
-     random 2^100
-     setRandomSeed()
-     random 2^100
-     ///
-     }
-
-document {
-     Key => (setRandomSeed, ZZ),
-     Usage => "setRandomSeed i",
-     Inputs => {"i"},
-     Consequences => {
-     	  {"Sets the random number seed to the low-order 32 bits of the integer ", TT "i", ".
-     	  The sequence of future pseudo-random results is determined by the seed."}
-	  },
-     EXAMPLE {
-	  "setRandomSeed 123456",
-	  "for i to 10 list random 100",
-	  "setRandomSeed 123456",
-	  "for i to 10 list random 100"
-	  }
-     }
-
-document {
-     Key => (setRandomSeed, String),
-     Usage => ///setRandomSeed s///,
-     Inputs => {"s"},
-     Consequences => {
-	  {"Sets the random number seed to an integer computed from ", TT "s", ".  Every character 
-	  of the string contributes to the seed, but only 32 bits of data are used.
-	  The sequence of future pseudo-random results is determined by the seed."}
-	  },
-     EXAMPLE {
-	  ///setRandomSeed "thrkwjsxz"///,
-	  ///for i to 10 list random 100///,
-	  ///setRandomSeed "thrkwjsxz"///,
-	  ///for i to 10 list random 100///
-	  }
-     }
-
-document {
-     Key => {truncateOutput,(truncateOutput, ZZ),(truncateOutput, InfiniteNumber)},
-     Usage => "truncateOutput w",
-     Inputs => {"w" => ZZ },
-     Consequences => {{
-	  "The maximum output line width is set to ", TT "w", ", which should be an integer or ", TO "infinity", ".  
-	  This function works by assigning a value to ", TT "Thing#{Standard,BeforePrint}", ", which 
-     	  may conflict with other ", TO "BeforePrint", " methods installed by the user, or those installed by the system that do line wrapping."
-	  }}
-     }
-
-
-document {
-     Key => "printWidth",
-     Usage => "printWidth = n",
-     Inputs => {
-	  "n" => ZZ => "the width to use for wrapping printed output"
-	  },
-     Consequences => {
-	  "The function ", TO "wrap", " will use ", TT "n", " as the window width when wrapping
-	  certain types of output."
-	  }
-     }
-	  
-document {
-     Headline => "make a new link to a file",
-     Key => {(linkFile, String, String),linkFile},
-     Usage => "linkFile(o,n)",
-     Inputs => {
-	  "o" => String => "the path to an existing file",
-	  "n" => String => "a new path to the file"
-	  },
-     Consequences => {
-	  {"a new link ", TT "n", " is made to the existing file reachable using the path ", TT "o"}
-	  },
-     SeeAlso => { "moveFile", "copyFile" }
-     }
-
-document {
-     Key => {debug,(debug,Package)},
-     Headline => "open private dictionary of a package",
-     Usage => "debug p",
-     Inputs => {
-	  "p" => Package,
-	  },
-     Consequences => {
-	  {"the private dictionary of the package ", TT "p", " is added to ", TO "dictionaryPath", 
-	       " so its non-exported symbols are visible" }
-	  },
-     "For example, the private dictionary for Macaulay2 may be opened using",
-     EXAMPLE"debug Core",
-     "This allows access to the low level (\"raw\") routines implemented by the Macaulay2 engine,
-     although this is mainly useful for debugging Macaulay2 itself.",
-     EXAMPLE {
-	  "R = QQ[a..d];",
-	  "raw R"
-	  }
-     }
-
-document {
-     Key => symbol dictionaryPath,
-     "The value of ", TO "dictionaryPath", " is the list of global dictionaries whose symbols are visible.",
-     EXAMPLE { "dictionaryPath" },
-     SeeAlso => { Dictionary }
-     }
-
-document {
-     Key => Dictionary,
-     Headline => "the class of all dictionaries",
-     "A dictionary is a special sort of hash table whose keys are the strings, and whose values are the
-     corresponding symbols.",
-     EXAMPLE {
-	  "Core.Dictionary # \"sin\"",
-	  "Core.Dictionary #? \"sin\""
-	  }
-     }
-
-document {
-     Key => {dictionary,(dictionary, Keyword),(dictionary, Symbol),(dictionary, Thing)},
-     Headline => "determine the dictionary to which a symbol belongs",
-     Usage => "dictionary x",
-     Inputs => {
-	  "x" => Thing
-	  },
-     Outputs => {
-	  { "the dictionary to which the symbol ", TT "x", " belongs"}
-	  },
-     "If ", TT "x", " is the value of a symbol recorded in the internal table used to recover
-     global symbol from the values assigned to them, then that symbol is used."
-     }
-
-document {
-     Key => removeFile,
-     Headline => "remove a file",
-     Usage => "removeFile f",
-     Inputs => { "f" => String },
-     Consequences => {{ "the file reachable by the path ", TT "f", " is removed" }},
-     PARA {
-	  "Under a unix system such as GNU/Linux, what really happens is that the link to the file 
-	  specified by ", TT "f", " is removed.  The file itself disappears after all the links to 
-	  it are removed.  See ", TO "linkFile", "."
-	  }
-     }
 
 document {
      Key => wrap,

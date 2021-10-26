@@ -10,3 +10,22 @@ Ubuntu 12 hint:
     2) I install the  "libgmp3c2" package with an apt-get install
     3) I do a dpkg on the "libpari2-gmp" package
     4) A succesfully make an "apt-get install macaulay2".
+
+HTML validation:
+
+    Under Ubuntu, install w3c-markup-validator and run it from the command line with
+    the script at http://github.com/ysangkok/w3c-validator-runner, and run that with this
+    script:
+
+	#! /bin/bash
+	TMP="/tmp/validate-$$"
+	exec >&2
+	find "$1" -name \*.html |
+	   while read x
+	   do validator-runner.py "$x" > $TMP
+	      if [ -s $TMP ]
+	      then echo
+		   echo " *** $x"
+		   cat $TMP
+	      fi
+	   done

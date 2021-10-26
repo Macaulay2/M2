@@ -1,14 +1,24 @@
-# license for cddlib: GPL v2
-VERSION = 094f
-# http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
-# URL = ftp://ftp.ifor.math.ethz.ch/pub/fukuda/cdd
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
-ALLOPTIONS     = SUBDIRS="lib-src lib-src-gmp" gmpdir=/nowhere
+VERSION = 0.94m
+
+## I encountered a problem with certificate checking and got around it this way:
+# FETCHER = wget
+# FETCHOPTS += --no-check-certificate
+
+# cddlib is now available on github, so we could switch this library to a submodule
+# https://github.com/cddlib/cddlib
+# https://www.inf.ethz.ch/personal/fukudak/cdd_home/
+URL = http://macaulay2.com/Downloads/OtherSourceCode
+ALLOPTIONS     = SUBDIRS="lib-src" gmpdir=/nowhere
 CONFIGOPTIONS  = $(ALLOPTIONS)
+
+# we build mpir as gmp statically, so we can't make a shared library here
+CONFIGOPTIONS += --disable-shared
+
 BUILDOPTIONS   = $(ALLOPTIONS)
 CHECKOPTIONS   = $(ALLOPTIONS)
 INSTALLOPTIONS = $(ALLOPTIONS)
-PRECONFIGURE = autoconf
+PRECONFIGURE = autoreconf -vif
+LICENSEFILES = COPYING
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/cddlib/Makefile
 # Local Variables:

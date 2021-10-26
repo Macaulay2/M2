@@ -1,0 +1,14 @@
+In this directory are the various git submodules corresponding to the git
+repositories of the various third party libraries we link with and of the third
+party programs we include.  We hope to convert all of the entries in
+../libraries to submodules eventually, maintaining our own git repositories for
+those libraries and programs, if necessary.
+
+Not all of these submodules get initialized when building Macaulay2, because
+some of them may be present already in the OS and detected by ../configure, but
+if you wish to have a complete source tree that needs no network access or
+downloading during configuration and compilation, then just add "--recursive" to
+the "git clone" command line in ../INSTALL.
+
+For instructions about adding a new submodule, follow the same instructions as
+presented in the file ../libraries/README.

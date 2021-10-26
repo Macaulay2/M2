@@ -13,35 +13,34 @@
 //    fields of this structure type should include:
 //    next, coeff
 
-
 class polyheap
 {
-  const PolynomialRing *F;      // Our elements will be vectors in here
-  const Ring *K;                // The coefficient ring
-  Nterm * heap[GEOHEAP_SIZE];
+  const PolynomialRing *F;  // Our elements will be vectors in here
+  const Ring *K;            // The coefficient ring
+  Nterm *heap[GEOHEAP_SIZE];
   int top_of_heap;
 
-public:
+ public:
   polyheap(const PolynomialRing *F);
   ~polyheap();
 
-  void add(Nterm * p);
-  Nterm * remove_lead_term();   // Returns NULL if none.
+  void add(Nterm *p);
+  Nterm *remove_lead_term();  // Returns NULL if none.
 
-  Nterm * value();              // Returns the linearized value, and resets the polyheap.
+  Nterm *value();  // Returns the linearized value, and resets the polyheap.
 
-  Nterm * debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
+  Nterm *debug_list(int i)
+  {
+    return heap[i];
+  }  // DO NOT USE, except for debugging purposes!
 };
 
 inline polyheap::polyheap(const PolynomialRing *FF)
-: F(FF),
-  K(FF->getCoefficientRing()),
-  top_of_heap(-1)
+    : F(FF), K(FF->getCoefficientRing()), top_of_heap(-1)
 {
   // set K
   int i;
-  for (i=0; i<GEOHEAP_SIZE; i++)
-    heap[i] = NULL;
+  for (i = 0; i < GEOHEAP_SIZE; i++) heap[i] = NULL;
 }
 
 inline polyheap::~polyheap()
@@ -51,10 +50,10 @@ inline polyheap::~polyheap()
   // do anything here.
 }
 
-inline void polyheap::add(Nterm * p)
+inline void polyheap::add(Nterm *p)
 {
   int len = F->n_terms(p);
-  int i= 0;
+  int i = 0;
   while (len >= heap_size[i]) i++;
 
   ring_elem tmp1 = heap[i];
@@ -69,21 +68,20 @@ inline void polyheap::add(Nterm * p)
       i++;
 
       tmp1 = heap[i];
-      tmp2 = heap[i-1];
-      F->add_to(tmp1,tmp2);
+      tmp2 = heap[i - 1];
+      F->add_to(tmp1, tmp2);
       heap[i] = tmp1;
 
       len = F->n_terms(heap[i]);
-      heap[i-1] = NULL;
+      heap[i - 1] = NULL;
     }
-  if (i > top_of_heap)
-    top_of_heap = i;
+  if (i > top_of_heap) top_of_heap = i;
 }
 
-inline Nterm * polyheap::remove_lead_term()
+inline Nterm *polyheap::remove_lead_term()
 {
   int lead_so_far = -1;
-  for (int i=0; i <= top_of_heap; i++)
+  for (int i = 0; i <= top_of_heap; i++)
     {
       if (heap[i] == NULL) continue;
       if (lead_so_far < 0)
@@ -91,7 +89,7 @@ inline Nterm * polyheap::remove_lead_term()
           lead_so_far = i;
           continue;
         }
-      int cmp = EQ; //F->compare(heap[lead_so_far], heap[i]);
+      int cmp = EQ;  // F->compare(heap[lead_so_far], heap[i]);
       if (cmp == GT) continue;
       if (cmp == LT)
         {
@@ -100,7 +98,7 @@ inline Nterm * polyheap::remove_lead_term()
         }
       // At this point we have equality
       K->add_to(heap[lead_so_far]->coeff, heap[i]->coeff);
-      Nterm * tmp = heap[i];
+      Nterm *tmp = heap[i];
       heap[i] = tmp->next;
       tmp->next = NULL;
       F->remove(reinterpret_cast<ring_elem &>(tmp));
@@ -117,16 +115,16 @@ inline Nterm * polyheap::remove_lead_term()
         }
     }
   if (lead_so_far < 0) return NULL;
-  Nterm * result = heap[lead_so_far];
+  Nterm *result = heap[lead_so_far];
   heap[lead_so_far] = result->next;
   result->next = NULL;
   return result;
 }
 
-inline Nterm * polyheap::value()
+inline Nterm *polyheap::value()
 {
-  Nterm * result = NULL;
-  for (int i=0; i<=top_of_heap; i++)
+  Nterm *result = NULL;
+  for (int i = 0; i <= top_of_heap; i++)
     {
       if (heap[i] == NULL) continue;
       ring_elem tmp1 = result;

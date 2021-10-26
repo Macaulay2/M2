@@ -20,14 +20,13 @@ class GBDeclared : public GBComputation
   ReducedGB *G;
   const Matrix *trimmed_gens;
   const Matrix *syz;
-protected:
 
+ protected:
   virtual bool stop_conditions_ok() { return true; }
   // If the stop conditions in _Stop are inappropriate,
   // return false, and use ERROR(...) to provide an error message.
 
-
-public:
+ public:
   GBDeclared(const Matrix *m0,
              const Matrix *gb,
              const Matrix *change,
@@ -53,52 +52,50 @@ public:
   // Possibly returns NULL, if an error message is reported
 
   virtual ~GBDeclared() {}
-
   virtual void remove_gb() {}
-
-  virtual GBComputation * cast_to_GBComputation() { return this;}
-
-  virtual void start_computation() {  }
-
+  virtual GBComputation *cast_to_GBComputation() { return this; }
+  virtual void start_computation() {}
   virtual int complete_thru_degree() const { return G->complete_thru_degree(); }
   // The computation is complete up through this degree.
 
-  // Recall that the status of the computation is maintained by the Computation class,
+  // Recall that the status of the computation is maintained by the Computation
+  // class,
 
-  virtual const Ring * get_ring() const { return G->get_ring() ; }
-
+  virtual const Ring *get_ring() const { return G->get_ring(); }
   ////////////////////////////////
   // Results of the computation //
   ////////////////////////////////
   virtual const Matrix /* or null */ *get_gb() { return G->get_gb(); }
-
   virtual const Matrix /* or null */ *get_mingens() { return trimmed_gens; }
-
   virtual const Matrix /* or null */ *get_change() { return G->get_change(); }
-
   virtual const Matrix /* or null */ *get_syzygies() { return syz; }
+  virtual const Matrix /* or null */ *get_initial(int nparts)
+  {
+    return G->get_initial(nparts);
+  }
 
-  virtual const Matrix /* or null */ *get_initial(int nparts) { return G->get_initial(nparts); }
-
-  virtual const Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w) { return G->get_parallel_lead_terms(w); }
+  virtual const Matrix /* or null */ *get_parallel_lead_terms(M2_arrayint w)
+  {
+    return G->get_parallel_lead_terms(w);
+  }
 
   ////////////////////////////////
   // Normal forms and lifting ////
   ////////////////////////////////
 
-  virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m) {
+  virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m)
+  {
     return G->matrix_remainder(m);
   }
 
   virtual M2_bool matrix_lift(const Matrix *m,
-                           const Matrix /* or null */ **result_remainder,
-                           const Matrix /* or null */ **result_quotient) {
-    return G->matrix_lift(m,result_remainder,result_quotient);
+                              const Matrix /* or null */ **result_remainder,
+                              const Matrix /* or null */ **result_quotient)
+  {
+    return G->matrix_lift(m, result_remainder, result_quotient);
   }
 
-
   virtual int contains(const Matrix *m) { return G->contains(m); }
-
   //////////////////////////////////////
   // Statistics and spair information //
   //////////////////////////////////////
@@ -107,7 +104,6 @@ public:
   // This displays statistical information, and depends on the
   // M2_gbTrace value.
 };
-
 
 #endif
 

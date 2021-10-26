@@ -2,32 +2,70 @@
 
 use M2;
 header "
-   #include <sys/types.h>
-   #include <sys/stat.h>
-   #include <time.h>
-   #include <assert.h>
-   #include <pthread.h>
+#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
+#endif
+#ifdef HAVE_SYS_STAT_H
+ #include <sys/stat.h>
+#endif
+#ifdef HAVE_TIME_H
+ #include <time.h>
+#endif
+#ifdef HAVE_ASSERT_H
+ #include <assert.h>
+#endif
+#ifdef HAVE_PTHREAD_H
+ #include <pthread.h>
+#endif
+#ifdef HAVE_SYS_WAIT_H
+ #include <sys/wait.h>
+#endif
 ";
 
 declarations "
-    #ifndef _GNU_SOURCE
-    #define _GNU_SOURCE
-    #endif
-    #include <unistd.h>
-    #include <math.h>
-    #include <sys/resource.h>
+#ifndef _GNU_SOURCE
+ #define _GNU_SOURCE
+#endif
+#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
+#endif
+#ifdef HAVE_MATH_H
+ #include <math.h>
+#endif
+#ifdef HAVE_SYS_RESOURCE_H
+ #include <sys/resource.h>
+#endif
 ";
 
 export isatty(fd:int) ::= Ccode(int, "isatty(", fd, ")" );
-export fork() ::= Ccode(int, "fork()" );
+export fork() ::= Ccode(int, "
+     #ifdef HAVE_FORK
+      fork()
+     #else
+      -1
+     #endif
+     " );
 export close(fd:int) ::= Ccode(int, "close(", fd, ")" );
 export dup2(fd:int,fd2:int) ::= Ccode(int, "dup2(", fd, ",", fd2, ")" );
 export pow(x:double,y:double) ::= Ccode(double, "pow(", x, ",", y, ")" );
 export abort() ::= Ccode(exits,"abort()");
 export sleep(t:int):int := Ccode(int,"sleep(t)");
-export getpid():int := Ccode(int, "getpid()");	-- do it this way because glibc caches the result in memory, and that can interfere with dumpdata
-export getpgrp():int := Ccode(int, "getpgrp()");
-export setpgid(pid:int,pgid:int):int := Ccode(int, "setpgid(", pid, ",", pgid,")"); 
+export nanosleep(t:long):int := Ccode(returns,"struct timespec ts_sleep; ts_sleep.tv_sec = ",t,"/1000000000; ts_sleep.tv_nsec=",t,"%1000000000; return nanosleep(&ts_sleep, NULL);");
+export getpid():int := Ccode(int, "getpid()");
+export getpgrp():int := Ccode(int, "
+     #ifdef HAVE_GETPGRP
+      getpgrp()
+     #else
+      -1
+     #endif
+     ");
+export setpgid(pid:int,pgid:int):int := Ccode(int, "
+     #ifdef HAVE_SETPGID
+      setpgid(", pid, ",", pgid,")
+     #else
+      -1
+     #endif
+     "); 
 export exit(x:int):exits := Ccode( exits, "
      extern void clean_up();
      clean_up();
@@ -56,7 +94,13 @@ export read(fd:int, buffer:string, buffersize:int, offset:int):int := Ccode(retu
      ");
 import readline(buffer:string, buffersize:int, offset:int, prompt:string):int;
 import link(oldfilename:string,newfilename:string):int;
-export fchmod(fd:int,mode:int):int := Ccode(int, "fchmod(fd,mode)");
+export fchmod(fd:int,mode:int):int := Ccode(int, "
+     #ifdef HAVE_FCHMOD
+      fchmod(fd,mode)
+     #else
+      -1
+     #endif
+     ");
 import symlink(oldfilename:string,newfilename:string):int;
 import unlink(filename:string):int;
 import openin(filename:string):int;
@@ -67,13 +111,17 @@ import openlistener(interface:string,serv:string):int;
 import acceptBlocking(sd:int):int;
 import acceptNonblocking(sd:int):int;
 import syserrmsg():string;				    -- uses errno
-import strerror():constcharstar;			    -- uses errno
-export strerror(errno:int):string := tostring(Ccode(constcharstar,"strerror(",errno,")"));
+import strerror():constcharstar;			    -- uses errno 
+export strerror(errnum:int):string := tostring(Ccode(constcharstar,"strerror(",errnum,")"));
 import atend(f:function():void):void;
 import run(command:string):int;
 export pipe(fildes:array(int)):int := Ccode(returns,"
-     assert(fildes->len == 2);
-     return pipe(fildes->array);
+     #ifdef HAVE_PIPE
+      assert(fildes->len == 2);
+      return pipe(fildes->array);
+     #else
+      return -1;
+     #endif
      ");
 import exec(argv:array(string)):int;	-- beware: this routine calls GC_malloc
 export execstar(argv:charstarstar) ::= Ccode(int,"execvp(",argv,"[0],",argv,")");
@@ -82,18 +130,19 @@ import cpuTime():double;
 import strcmp(s:string,t:string):int;
 import strnumcmp(s:string,t:string):int;
 import randomint():int;
-header "#include <sys/wait.h>";
 export wait(pid:int):int := Ccode(returns, "
-     int status;
-     if (waitpid(pid,&status,0) == -1) return -1;
-     return status >> 8;
+     #ifdef HAVE_WAITPID
+      int status;
+      if (waitpid(pid,&status,0) == -1) return -1;
+      return status;
+     #else
+      return -1;
+     #endif
      ");
 import waitNoHang(pid:array(int)):array(int);
 import select(s:array(int)):array(int);
 import hash(x:double):int;
 import getcwd():string;
-import dumpdata(filename:string):int;
-import loaddata(notify:int,filename:string):int;
 import errfmt(filename:string,lineno:int,colno:int,loaddepth:int):string;
 threadLocal export loadDepth := ushort(0);
 import dbmopen(filename:string,write:bool):int;
@@ -126,15 +175,11 @@ import isRegularFile(name:string):int;
 import wordexp(word:string):ArrayStringOrNull;
 import readlink(filename:string):string;
 import realpath(filename:string):(null or string);
-import noErrorMessage:string;
-import regexmatchErrorMessage:string;
-import regexmatch(pattern:string, start:int, range:int, text:string, ignorecase:bool):array(int);
-import regexreplace(pattern:string, replacement: string, text:string, errflag:string, ignorecase:bool):string;
-import regexselect(pattern:string, replacement: string, text:string, errflag:array(string), ignorecase:bool):array(string);
 import readDirectory(name:string):(null or array(string));
 import strncmp(s:string,t:string,n:int):int;
 import history():array(string);
 import chdir(name:string):int;
+import initReadlineVariables():void;
 import handleInterruptsSetup(handleInterrupts:bool):void;
 export segmentationFault():void := Ccode(void, "*((int*)1)=0"); -- for debugging our handling of segmentation faults
 import isReady(fd:int):int;
@@ -149,9 +194,13 @@ export everytimeRun():void := (
      while x.next != x do (x.f(); x = x.next;));
 
 export limitFiles(n:int):int := Ccode(returns, "
-     struct rlimit lim;
-     lim.rlim_cur = lim.rlim_max = n;
-     return setrlimit(RLIMIT_NOFILE,&lim);
+     #ifdef HAVE_SETRLIMIT
+      struct rlimit lim;
+      lim.rlim_cur = lim.rlim_max = n;
+      return setrlimit(RLIMIT_NOFILE,&lim);
+     #else
+      return -1;
+     #endif
      ");
 export limitProcesses(n:int):int := Ccode(returns, "
      #ifdef RLIMIT_NPROC

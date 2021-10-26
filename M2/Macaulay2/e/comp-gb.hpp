@@ -8,14 +8,14 @@ class buffer;
 
 // The following are the return values from s_pair_step,
 // These are used in GB_comp, GBinhom_comp
-const int SPAIR_DONE   = 0;
-const int SPAIR_GB     = 1;
-const int SPAIR_SYZ    = 2;
-const int SPAIR_ZERO   = 3;
+const int SPAIR_DONE = 0;
+const int SPAIR_GB = 1;
+const int SPAIR_SYZ = 2;
+const int SPAIR_ZERO = 3;
 const int SPAIR_MINGEN = 4;
-const int SPAIR_GEN    = 5;
-const int SPAIR_PAIR   = 6;
-const int SPAIR_RING   = 7;
+const int SPAIR_GEN = 5;
+const int SPAIR_PAIR = 6;
+const int SPAIR_RING = 7;
 const int SPAIR_REMOVED = 8;
 const int SPAIR_DEFERRED = 9;
 
@@ -26,22 +26,21 @@ const int SPAIR_DEFERRED = 9;
 */
 class GBComputation : public Computation
 // This is the base type for all Groebner basis and syzygy computations
+// Note: some abstract methods in Computation need also to be defined.
 {
-protected:
+ protected:
   friend class GBProxy;
   GBComputation() {}
-
-  virtual bool stop_conditions_ok() = 0;
+  ////  bool stop_conditions_ok() override = 0;
   // If the stop conditions in _Stop are inappropriate,
   // return false, and use ERROR(...) to provide an error message.
 
-public:
+ public:
   virtual ~GBComputation();
 
-  virtual void remove_gb() = 0; // Should free all space associated with GB
+  virtual void remove_gb() = 0;  // Should free all space associated with GB
 
-  virtual GBComputation * cast_to_GBComputation() { return this;}
-
+  GBComputation *cast_to_GBComputation() override { return this; }
   static GBComputation *choose_gb(const Matrix *m,
                                   M2_bool collect_syz,
                                   int n_rows_to_keep,
@@ -55,15 +54,18 @@ public:
   // Returns NULL if an error occurs
 
   virtual const Ring *get_ring() const = 0;
+
   virtual Computation /* or null */ *set_hilbert_function(const RingElement *h);
-  // The default version returns an error saying that Hilbert functions cannot be used.
+  // The default version returns an error saying that Hilbert functions cannot
+  // be used.
 
-  virtual void start_computation() = 0;
+  void start_computation() override = 0;
 
-  virtual int complete_thru_degree() const = 0;
+  int complete_thru_degree() const override = 0;
   // The computation is complete up through this degree.
 
-  // Recall that the status of the computation is maintained by the Computation class,
+  // Recall that the status of the computation is maintained by the Computation
+  // class,
 
   ////////////////////////////////
   // Results of the computation //
@@ -87,8 +89,8 @@ public:
   virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m) = 0;
 
   virtual M2_bool matrix_lift(const Matrix *m,
-                           const Matrix /* or null */ **result_remainder,
-                           const Matrix /* or null */ **result_quotient) = 0;
+                              const Matrix /* or null */ **result_remainder,
+                              const Matrix /* or null */ **result_quotient) = 0;
 
   virtual int contains(const Matrix *m) = 0;
 
@@ -96,10 +98,9 @@ public:
   // Statistics and spair information //
   //////////////////////////////////////
 
-  virtual void text_out(buffer &o) const;
+  void text_out(buffer &o) const override;
   // This displays statistical information, and depends on the
   // M2_gbTrace value.
-
 };
 
 #endif

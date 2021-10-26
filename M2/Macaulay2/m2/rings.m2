@@ -1,5 +1,13 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "methods.m2"
+
+-----------------------------------------------------------------------------
+-- Ring
+-----------------------------------------------------------------------------
+
+Ring.synonym = "ring"
+
 Ring == ZZ := (R,i) -> (
      if i === 0 then 1_R == 0
      else error "comparison of ring with nonzero integer encountered"
@@ -19,6 +27,9 @@ dim Ring := R -> (
 char Ring := R -> (
      if R.?char then R.char 
      else error("characteristic of ", toString R, " unknown"))
+
+baseRing = method()
+baseRing Ring := R -> if R.?baseRings then last R.baseRings
 
 errorGenCoeff = () -> error "unable to provide generators for ring over specified coefficient ring"
 generators Ring := opts -> R -> (
@@ -49,9 +60,18 @@ isCommutative Ring := R -> R.isCommutative
 isSkewCommutative = method(TypicalValue => Boolean)
 isSkewCommutative Ring := R -> false
 
+isWeylAlgebra = method(TypicalValue => Boolean)
+isWeylAlgebra Ring := R -> (
+    not isCommutative R and 
+    isPolynomialRing R and 
+    R.monoid.Options.?WeylAlgebra and 
+    #R.monoid.Options.WeylAlgebra > 0
+    )
+
 ZZ.isCommutative = true
 QQ.isCommutative = true
 RR.isCommutative = true
+RRi.isCommutative = true
 
 isRing = method(TypicalValue => Boolean)
 isRing Thing := R -> false

@@ -1,0 +1,50 @@
+-- -*- M2-comint -*- hash: -1637860046
+
+i1 : B = skewPolynomialRing(QQ,(-1)_QQ,{x,y,z,w})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o1 = B
+
+o1 : NCQuotientRing
+
+i2 : sigma = ncMap(B,B,{y,z,w,x})
+
+o2 = NCRingMap B <--- B
+
+o2 : NCRingMap
+
+i3 : C = oreExtension(B,sigma,a)
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o3 = C
+
+o3 : NCQuotientRing
+
+i4 : sigmaC = ncMap(C,C,{y,z,w,x,a})
+
+o4 = NCRingMap C <--- C
+
+o4 : NCRingMap
+
+i5 : normalElements(sigmaC,1)
+
+o5 = | a |
+
+o5 : NCMatrix
+
+i6 : normalElements(sigmaC,2)
+
+o6 = 0
+
+              1
+o6 : Matrix QQ  <--- 0
+
+i7 : normalElements(sigmaC @@ sigmaC,2)
+
+o7 = | a^2 |
+
+o7 : NCMatrix
+
+i8 : 

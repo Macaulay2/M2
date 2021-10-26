@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: -504898623 *}
---loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
 
 i1 : R=QQ[y_0..y_2];
 
@@ -16,18 +15,18 @@ i3 : p=rationalPointOnConic(I,vb=>1)
 (a,b,c) = (1,43,-451)
 (a,b,c) = (1,43,-451)
 (R1,R2,R2) = (298,8,0)
-(alpha,beta,gamma) = (153,43,2)
+(alpha,beta,gamma) = (-153,43,2)
 (a,b,c) = (1,-13,43)
 (R1,R2,R2) = (20,3,0)
 (alpha,beta,gamma) = (20,-13,3)
 (a,b,c) = (1,1,-13)
 (R1,R2,R2) = (5,0,0)
-(alpha,beta,gamma) = (-5,1,1)
+(alpha,beta,gamma) = (5,1,1)
 (a,b,c) = (1,1,-2)
 (R1,R2,R2) = (1,0,0)
 (alpha,beta,gamma) = (-1,1,1)
 
-o3 = | 65466 1982 -897 |
+o3 = | 502 50 -13 |
 
               1        3
 o3 : Matrix QQ  <--- QQ

@@ -7,10 +7,11 @@ newPackage ( "Browse",
      Date => "1996",
      Version => "1.0",
      Headline => "a method for browsing and examining Macaulay2 data structures",
+     Keywords => {"Miscellaneous"},
      DebuggingMode => false
      )
 
-export {browse}
+export {"browse"}
 
 dictionaryPath = prepend(Core#"private dictionary",dictionaryPath)
 frame' = frame

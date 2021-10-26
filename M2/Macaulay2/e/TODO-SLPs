@@ -1,0 +1,83 @@
+// At the moment... ///////////////////////////////////////////////////////////
+
+there is 
+  template <class Field>  class SLP
+and 
+1) class StraightLineProgram : public SLP<ComplexField> // #ifdef SLPdouble
+2) class StraightLineProgram : public SLP<ComplexFieldArbitraryPrecision> // #ifdef SLPmpf
+
+Only one is compiled (default=1). StraightLineProgram connects up with rawStraightLineProgram in engine.h
+
+//Proposed (minimal) design ////////////////////////////////////////////////////////////////////
+
+template <class ARing>
+class SLP : public object
+{
+  ARing F; 
+public:
+  SLP();
+  typedef typename ARing::element_type element_type;
+private:
+  M2_arrayint program; /* each step is encoded with a subarray of integers 
+			  with relative references to previous steps;
+			  preSLP description in NumericalAlgebraicGeometry/SLP.m2 has details */
+  element_type* nodes; // array of evaluated nodes of the program 
+  intarray node_index; // points to position in program (rel. to start) of operation corresponding to a node
+  int num_consts, num_inputs, num_operations, num_outputs; /* at the moment outputs are arranged 
+							      in a matrix rather than array */
+public:
+  // functions below create new SLPs
+  static SLP<ARing> /* or null */ *make(const Matrix *consts, M2_arrayint program); // constructor from top-level
+  ?? static SLP<ARing> /* or null */ *make(const PolyRing???*, ring_elem); // constructor from polynomial ring
+  ?? static SLP<ARing> /* or null */ *make(const Matrix*); // constructor from a matrix with polynomial entries
+
+  SLP<ARing> /* or null */ *copy();
+  SLP<ARing> /* or null */ *concatenate(const SLP<ARing>* slp); // concatenate this and slp
+  SLP<ARing> /* or null */ *jacobian(M2_arrayint vars); // jacobians wrt inputs with specified numbers
+
+  virtual ~SLP();
+
+  bool evaluate(const DMat<ARing> input, const DMat<ARing> output); 
+
+private:
+  // in-place routines used by constructors, e.g.,
+  bool add(int a, int b); // append a node that is a sum of nodes with rel.positions a and b
+  bool sin(int a); //...
+  bool minor(int r1, int r2, int c1, int c2, intarray pos); /* appends a node containing a minor of
+							       the matrix composed of the nodes 
+							       with given relative positions */
+  ...
+  ...
+  bool output(int a); //append a node recording the output of node with given relative position
+};
+
+Should StraightLineProgram be replaced with ConcreteSLP? 
+
+How to make it possible to construct SLP<ARing1> from SLP<ARing2>,
+provided that one can promote from ARing2 to ARing1? 
+
+Should there be a "language" at top level for writing SLPs?
+
+//Anton and Mike discussed... //////////////////////////////////////////////////////
+
+  SLP's
+  coefficients
+  variables
+  outputs
+
+  request that all operations be done with a give, specific (and same) precision.
+  
+  use name EvaluationCircuit?
+
+  virtual abstract class StraightLineProgram -- interface with interpreter
+  specific implementation (template wrapper)
+  ConcreteSLP<RingType>
+    ConcreteSLP<ARingCCC>
+  map: n-tuple of elements of R --> m-tuple of elements of R
+       map: DMat<R> --> DMat<R>, where each has 1 row.
+
+  arings:
+  mainclass "Ring", abstract class, "ringelem" is a union type of possible 
+    ring elements.
+  ConcreteRing<RingType> wrapper class (e.g. RingType=ARingCCC)
+  lots of ARing classes, giving us lots of rings.

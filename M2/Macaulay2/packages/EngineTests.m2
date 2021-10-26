@@ -1,35 +1,265 @@
 newPackage(
         "EngineTests",
+    	AuxiliaryFiles => true,
         Version => "0.1", 
         Date => "29 Aug 2011",
-        Authors => {{Name => "Mike Stillman", 
-                  Email => "", 
-                  HomePage => ""}},
+	    Authors => {
+            {Name => "Michael E. Stillman", 
+		        Email => "mike@math.cornell.edu", 
+		        HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"},
+	        {Name => "Jakob Kröker", 
+		        Email => "kroeker@math.uni-hannover.de", 
+		        HomePage => "" }
+            },
         Headline => "a test suite for the Macaulay2 engine",
-	    PackageExports => {"FastLinearAlgebra"},
-        DebuggingMode => true
+	Keywords => {"Miscellaneous"},
+        AuxiliaryFiles=> true
         )
 
-export { ringOps, 
-     testMutableMatrices,
-     testFrac
-     }
+export { 
+   "runTests",
+   "testNorm",
+   "testClean",
+   "hasFFPACK",
+   "fields",
+   "finitefields",
+   "fieldsFFPACK",
+   "fieldsFLINT",
+   "fieldsGivaro",
+   "fieldsGF",
+   "ringsPID",
+   "ringsRR",
+   "ringsCC"
+   }
+
+debug Core
+
+hasFFPACK = try (ZZp(101, Strategy=>"FFPACK"); true) else false;
+
+fieldsFLINT = {
+    "ZZpFlint 2",
+    "ZZpFlint 5",
+    "ZZpFlint 101",
+    "ZZpFlint 4294967291"		  -- less than 2^32
+--    "ZZpFlint 8589934669"
+--    "ZZpFlint 4611686018427387847",
+--    "ZZpFlint 9223372036854775783"
+    }
+
+fieldsFFPACK = if hasFFPACK and false then{
+    "ZZpFFPACK 2",
+    "ZZpFFPACK 3",
+    "ZZpFFPACK 5",
+    "ZZpFFPACK 101",
+    "ZZpFFPACK 30000001",
+    "ZZpFFPACK maxFFPACKPrime"
+    } else {}
+fieldsGivaro = if hasFFPACK then {
+    ///GF(3,2, Strategy=>"Givaro")///,
+    ///GF(2,7, Strategy=>"Givaro")///,
+    ///GF(3,2, Strategy=>"CompleteGivaro")///,
+    ///GF(2,7, Strategy=>"CompleteGivaro")///
+    } else {}
+fieldsGF = {
+    "GF(3,2)",
+    "GF(5,12)",
+    ///GF(3,2, Strategy=>"New")///,
+    ///GF(2,7, Strategy=>"New")///
+    }
+
+fieldsGFFlintBig = {
+--    ///GF(2,1, Strategy=>"FlintBig")///,
+    ///GF(2,2, Strategy=>"FlintBig")///,
+    ///GF(2,3, Strategy=>"FlintBig")///,
+    ///GF(2,4, Strategy=>"FlintBig")///,
+    ///GF(2,5, Strategy=>"FlintBig")///,
+    ///GF(2,6, Strategy=>"FlintBig")///,
+    ///GF(2,7, Strategy=>"FlintBig")///,
+    ///GF(2,8, Strategy=>"FlintBig")///,
+    ///GF(2,9, Strategy=>"FlintBig")///,
+    ///GF(2,10, Strategy=>"FlintBig")///,
+    ///GF(2,11, Strategy=>"FlintBig")///,
+    ///GF(2,12, Strategy=>"FlintBig")///,
+    ///GF(2,13, Strategy=>"FlintBig")///,
+    ///GF(2,20, Strategy=>"FlintBig")///,
+    ///GF(2,30, Strategy=>"FlintBig")///,
+    
+    ///GF(3,1, Strategy=>"FlintBig")///,
+    ///GF(3,2, Strategy=>"FlintBig")///,
+    ///GF(3,3, Strategy=>"FlintBig")///,
+    ///GF(3,4, Strategy=>"FlintBig")///,
+    ///GF(3,5, Strategy=>"FlintBig")///,
+    ///GF(3,6, Strategy=>"FlintBig")///,
+    ///GF(3,7, Strategy=>"FlintBig")///,
+    ///GF(3,8, Strategy=>"FlintBig")///,
+    ///GF(3,13, Strategy=>"FlintBig")///,
+    ///GF(3,20, Strategy=>"FlintBig")///,
+
+    ///GF(5,1, Strategy=>"FlintBig")///,
+    ///GF(5,2, Strategy=>"FlintBig")///,
+    ///GF(5,3, Strategy=>"FlintBig")///,
+    ///GF(5,4, Strategy=>"FlintBig")///,
+    ///GF(5,5, Strategy=>"FlintBig")///,
+
+    ///GF(7,1, Strategy=>"FlintBig")///,
+    ///GF(7,2, Strategy=>"FlintBig")///,
+    ///GF(7,3, Strategy=>"FlintBig")///,
+    ///GF(7,4, Strategy=>"FlintBig")///,
+
+    ///GF(11,1, Strategy=>"FlintBig")///,
+    ///GF(11,2, Strategy=>"FlintBig")///,
+    ///GF(11,3, Strategy=>"FlintBig")///,
+
+    ///GF(13,1, Strategy=>"FlintBig")///,
+    ///GF(13,2, Strategy=>"FlintBig")///,
+    ///GF(13,30, Strategy=>"FlintBig")///,
+
+    ///GF(17,1, Strategy=>"FlintBig")///,
+    ///GF(17,2, Strategy=>"FlintBig")///,
+    ///GF(17,30, Strategy=>"FlintBig")///,
+
+    ///GF(19,1, Strategy=>"FlintBig")///,
+    ///GF(19,2, Strategy=>"FlintBig")///,
+    ///GF(19,10, Strategy=>"FlintBig")///,
+
+    ///GF(23,7, Strategy=>"FlintBig")///
+    }
+
+fieldsGFFlint = {
+    ///GF(2,1, Strategy=>"Flint")///,
+    ///GF(2,2, Strategy=>"Flint")///,
+    ///GF(2,3, Strategy=>"Flint")///,
+    ///GF(2,4, Strategy=>"Flint")///,
+    ///GF(2,5, Strategy=>"Flint")///,
+    ///GF(2,6, Strategy=>"Flint")///,
+    ///GF(2,7, Strategy=>"Flint")///,
+    ///GF(2,8, Strategy=>"Flint")///,
+    ///GF(2,9, Strategy=>"Flint")///,
+    ///GF(2,10, Strategy=>"Flint")///,
+    ///GF(2,11, Strategy=>"Flint")///,
+    ///GF(2,12, Strategy=>"Flint")///,
+    ///GF(2,13, Strategy=>"Flint")///,
+    
+    ///GF(3,1, Strategy=>"Flint")///,
+    ///GF(3,2, Strategy=>"Flint")///,
+    ///GF(3,3, Strategy=>"Flint")///,
+    ///GF(3,4, Strategy=>"Flint")///,
+    ///GF(3,5, Strategy=>"Flint")///,
+    ///GF(3,6, Strategy=>"Flint")///,
+    ///GF(3,7, Strategy=>"Flint")///,
+    ///GF(3,8, Strategy=>"Flint")///,
+
+    ///GF(5,1, Strategy=>"Flint")///,
+    ///GF(5,2, Strategy=>"Flint")///,
+    ///GF(5,3, Strategy=>"Flint")///,
+    ///GF(5,4, Strategy=>"Flint")///,
+    ///GF(5,5, Strategy=>"Flint")///,
+
+    ///GF(7,1, Strategy=>"Flint")///,
+    ///GF(7,2, Strategy=>"Flint")///,
+    ///GF(7,3, Strategy=>"Flint")///,
+    ///GF(7,4, Strategy=>"Flint")///,
+
+    ///GF(11,1, Strategy=>"Flint")///,
+    ///GF(11,2, Strategy=>"Flint")///,
+    ///GF(11,3, Strategy=>"Flint")///,
+
+    ///GF(13,1, Strategy=>"Flint")///,
+    ///GF(13,2, Strategy=>"Flint")///,
+    ///GF(13,3, Strategy=>"Flint")///,
+
+    ///GF(17,1, Strategy=>"Flint")///,
+    ///GF(17,2, Strategy=>"Flint")///,
+    ///GF(17,3, Strategy=>"Flint")///,
+
+    ///GF(19,1, Strategy=>"Flint")///,
+    ///GF(19,2, Strategy=>"Flint")///,
+    ///GF(19,3, Strategy=>"Flint")///,
+
+    ///GF(23,2, Strategy=>"Flint")///
+    }
+
+finitefields = join({
+    "ZZp 2", 
+    "ZZp 3",
+    "ZZp 5", 
+    "ZZp 101", 
+    "ZZp 32719"},
+    fieldsFLINT,
+    fieldsFFPACK,
+    fieldsGivaro,
+    fieldsGF,
+    fieldsGFFlint,
+    fieldsGFFlintBig
+    )
+
+fields = join({
+    "ZZp 2", 
+    "ZZp 3",
+    "ZZp 5", 
+    "ZZp 101", 
+    "ZZp 32719"},
+    fieldsFLINT,
+    fieldsFFPACK,
+    fieldsGivaro,
+    fieldsGF,
+    fieldsGFFlint,
+    fieldsGFFlintBig,
+    {"QQ"}
+    -- QQFlint not working yet
+    )
+
+ringsPID = {
+    "ZZ"
+    --"ZZFlint"
+    }
+
+ringsRR = {
+    "RR_53",
+    "RR_54",
+    "RR_100",
+    "RR_134",
+    "RR_200",
+    "RR_256",
+    "RR_1000",
+    "RR_10000"
+    }
+ringsCC = {
+    "CC_53",
+    "CC_54",
+    "CC_100",
+    "CC_134",
+    "CC_200",
+    "CC_256",
+    "CC_1000",
+    "CC_10000"
+    }
+
+runTests = (rings, tests, exceptions) -> (
+    R := rings/(r -> (r,value r));
+    T := tests/(t -> (t,value t));
+    for t in T do for r in R do  (
+        if member((r#0,t#0), exceptions) then (
+            << "xcep " << t#0 << " ring " << r#0 << endl;
+            )
+        else (
+            << "test " << t#0 << " ring " << r#0 << " time ";
+            tim := timing (t#1(r#1));
+            << tim#0 << endl;
+            )
+        )
+    )
 
 --load (EngineTests#"source directory"|"EngineTests/test-gbZZ.m2")
 --load (EngineTests#"source directory"|"EngineTests/test-linalg.m2")
 
-beginDocumentation()
+load "EngineTests/LinearAlgebra.Test.Driver.m2"
+load "EngineTests/MutableMatrix.Test.Driver.m2"
+load "EngineTests/Ring.Test.Driver.m2"
+load "EngineTests/GB.Test.Mathic.m2"
 
-doc ///
-Key
-  EngineTests
-Headline
-  a test suite for the Macaulay2 engine
-Description
-  Text
-Caveat
-SeeAlso
-///
+load "EngineTests/Res.f4.m2"
+--check  EngineTests
 
 ///
 testFracRaw = () -> (
@@ -54,9 +284,10 @@ testFrac = () -> (
 
 -- Tests of mutable matrix operations over ZZ/p
 
--- Test tow and column operations on dense and sparse mutable matrices,
+-- Test row and column operations on dense and sparse mutable matrices,
 -- over the rings: ZZ, ZZ/p, QQ, QQ[x,y,z], RRR, CCC, frac QQ[x,y]
 
+--TODO ringOpsZZp
 ringOpsZZp = (p) -> (
      -- test basic arithmetic over ZZ/p
      -- we do this by doing operations on 1x1 mutable matrices.
@@ -80,327 +311,152 @@ ringOpsZZp = (p) -> (
 	    )
      )
 
-testops = (R) -> (
-  << "testops..." << endl;
-  -- tests: numRows, numColumns, ==, 
-  -- rowSwap, columnSwap, 
-  -- rowAdd, columnAdd
-  -- rowMult, columnMult
-  -- NOT YET: rowPermute,columnPermute
-  m := mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  assert(numRows m == 5);
-  assert(numColumns m == 6);
-  --
-  m1 := matrix rowSwap(m, 1,2);
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  m2 := matrix rowSwap(m, 1,2);
-  assert(m1 == m2);
-  --
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  m1 = matrix columnSwap(m, 1,2);
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  m2 = matrix columnSwap(m, 1,2);
-  assert(m1 == m2);
-  --
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  m1 = matrix rowAdd(m, 1,-13,3);
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  m2 = matrix rowAdd(m, 1,-13,3);
-  assert(m1 == m2);
-  --
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  m1 = matrix columnAdd(m, 1,-13,3);
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  m2 = matrix columnAdd(m, 1,-13,3);
-  assert(m1 == m2);
-  --
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  m1 = matrix rowMult(m, 1, 14);
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  m2 = matrix rowMult(m, 1, 14);
-  assert(m1 == m2);
-  --
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  m1 = matrix columnMult(m, 1, 14);
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  m2 = matrix columnMult(m, 1, 14);
-  assert(m1 == m2);
-  --
-  {*
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  m1 = matrix columnPermute(m,1,{2,0,1});
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  m2 = matrix columnPermute(m,1,{2,0,1});  
-  assert(m1 == m2);
-  --
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  m1 = matrix rowPermute(m,1,{2,0,1});  
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  m2 = matrix rowPermute(m,1,{2,0,1});  
-  assert(m1 == m2);
-    *}
-  )
 
-debug Core
-testops0 = (R) -> (
-    -- test whether operations work on matrices with 0x0 matrix
-    -- also rx0 and 0xr
-    m1 := mutableMatrix(R, 0, 0);
-    assert(numColumns m1 == 0);
-    assert(numRows m1 == 0);
-    assert(m1 == 0);
-    assert(rawIsZero raw m1);
-    assert(m1 == m1);
-    m2 := m1 + m1;
-    assert(m2 == m1);
-    m2 = m1-m1;
-    assert(m2==m1);
-    rawInsertColumns(raw m1,0,1);
-    assert((numRows m1, numColumns m1) == (0,1));
-    rawInsertRows(raw m1,0,2);
-    assert((numRows m1, numColumns m1) == (2,1));
+
+-----------------------------------
+-- tests over approximate fields --
+-----------------------------------
+testClean = (R) -> (
+    -- R should be an RR or CC
+    -- this tests "clean" for: Matrix, MutableMatrix, poly ring.
+    M := mutableMatrix(R, 10, 10);
+    fillMatrix M;
+    N := M^4 - M*M*M^2;
+    for i from 0 to numRows N - 1 do N_(i,i) = 1.0 + N_(i,i);
+    N2 := matrix N;
+    assert(norm clean(.00001, N - mutableIdentity(R, numRows N)) == 0);
+    assert(norm clean(.00001, N2 - matrix mutableIdentity(R, numRows N2)) == 0);
+    -- this next test is actually not correct: 
+    --   clean does NOT truncate values, only ones that are close to 0
+    --assert(norm(clean(.00001, N) - mutableIdentity(R, numRows N)) == 0)
+    P := R[getSymbol "x", getSymbol "y"];
+    x := P_0;
+    y := P_1;
+    f := 1.01*x^2+3.2*y^2-y;
+    assert(clean(.0001, f^4 - (f^2)^2) == 0)
+    )
+testNorm = (R) -> (
+    -- R should be an RR or CC
+    M := mutableMatrix(R, 10, 10);
+    fillMatrix M;
+    a := norm matrix M;
+    matrixM := matrix M;
+    assert(mutableMatrix matrixM == M);
+    
+    b := norm M;
+    assert(a == b);
+    ans := (flatten entries M)/abs//max;
+    error := abs(b-ans);
+    if error > 2^(-precision R + 5) then (
+        print(" a==b" | toExternalString (a==b) ); 
+        print(" a:=" | toExternalString a | "; ans:=" | toExternalString ans ); 
+        peek M ;
+        print(" M := " | toExternalString matrixM );
+    );
     )
 
-debug Core
-testops2 = (R) -> (
-  -- testing:
-  --   rawInsertRows, rawInsertColumns
-  --   rawDeleteRows, rawDeleteColumns
-  << "testops2..." << endl;  
-  -- do the same operations on sparse and dense matrices, the answers should be the same
-  nrows := 5;
-  ncols := 6;
-  E := map(R^nrows,R^ncols, (i,j) -> 100*i+j);
-  for c from 0 to ncols do (
-      m := mutableMatrix(E, Dense=>false);
-      assert(not rawMutableMatrixIsDense(raw m));
-      rawInsertColumns(raw m,c,2);
-      m1 := matrix m;
-      m = mutableMatrix(E, Dense=>true);
-      assert(rawMutableMatrixIsDense(raw m));
-      rawInsertColumns(raw m,c,2);
-      m2 := matrix m;
-      assert(m1 == m2);
-      );
-  --
-  for r from 0 to nrows-1 do (
-      m := mutableMatrix(E, Dense=>false);
-      rawInsertRows(raw m,r,2);
-      m1 := matrix m;
-      m = mutableMatrix(E, Dense=>true);
-      rawInsertRows(raw m,r,2);
-      m2 := matrix m;
-      assert(m1 == m2);
-      );
-  -- delete using (pfirst, plast), where 0 <= pfirst <= plast < ncols
-  for p in subsets(splice{0..ncols}, 2) do (
-      pfirst := p#0;
-      plast := p#1 - 1;
-      m := mutableMatrix(E, Dense=>false);
-      rawDeleteColumns(raw m,pfirst, plast);
-      m1 := matrix m;
-      m = mutableMatrix(E, Dense=>true);
-      rawDeleteColumns(raw m,pfirst, plast);
-      m2 := matrix m;
-      assert(m1 == m2);
-      );
-  -- delete using (pfirst, plast), where 0 <= pfirst <= plast < nrows
-  for p in subsets(splice{0..nrows}, 2) do (
-      pfirst := p#0;
-      plast := p#1 - 1;
-      m := mutableMatrix(E, Dense=>false);
-      rawDeleteRows(raw m,pfirst,plast);
-      m1 := matrix m;
-      m = mutableMatrix(E, Dense=>true);
-      rawDeleteRows(raw m,pfirst,plast);
-      m2 := matrix m;
-      assert(m1 == m2);
-      )
-  )
+TEST ///
+  testClean(RR_53)
+  testClean(RR_100)
+  testClean(RR_200)
+  testClean(RR_54)
 
-testops3 = (R) -> (
-  << "testops3..." << endl;
-  -- testing:
-  -- rawMatrixRowOperation2, rawMatrixColumnOperation2
-  -- rawSortColumns2, 
-  -- rawColumnDotProduct
-  m := mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  rawMatrixColumnOperation2(raw m, 1, 2, raw promote(1,R), 
-       raw promote(-1,R), 
-       raw promote(2,R), 
-       raw promote(5,R),
-       false);
-  m1 := matrix m;
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  rawMatrixColumnOperation2(raw m, 1, 2, raw promote(1,R), 
-       raw promote(-1,R), 
-       raw promote(2,R), 
-       raw promote(5,R),
-       false);
-  m2 := matrix m;
-  assert(m1 == m2);
-  -- rawMatrixRowOperation2
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  rawMatrixRowOperation2(raw m, 1, 2, raw promote(1,R), 
-       raw promote(-1,R), 
-       raw promote(2,R), 
-       raw promote(5,R),
-       false);
-  m1 = matrix m;
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  rawMatrixRowOperation2(raw m, 1, 2, raw promote(1,R), 
-       raw promote(-1,R), 
-       raw promote(2,R), 
-       raw promote(5,R),
-       false);
-  m2 = matrix m;
-  assert(m1 == m2);
-  -- rawColumnDotProduct
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  n := matrix m;
-  n1 := matrix for i from 0 to 5 list for j from 0 to 5 list promote(rawColumnDotProduct(raw m, i,j), R);
-  assert((transpose n * n) == n1);
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  n = matrix m;
-  n1 = matrix for i from 0 to 5 list for j from 0 to 5 list promote(rawColumnDotProduct(raw m, i,j), R);
-  assert((transpose n * n) == n1)
-  )
+  testNorm(RR_53)
+  testNorm(RR_100)
+  testNorm(RR_200)
+  testNorm(RR_54)
 
-testops4 = (R) -> (
-  << "testops4..." << endl;
-  m := mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  m1 := matrix columnPermute(m,1,{2,0,1});
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  m2 := matrix columnPermute(m,1,{2,0,1});  
-  assert(m1 == m2);
-  --
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  m1 = matrix rowPermute(m,1,{2,0,1});  
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  m2 = matrix rowPermute(m,1,{2,0,1});  
-  assert(m1 == m2);
-  )
+  testClean(CC_53)
+  testClean(CC_100)
+  testClean(CC_200)
+  testClean(CC_54)
 
-testops5 = (R) -> (
-     << "testops5 (submatrix, scalar mult)..." << endl;
-     -- submatrix, scalar mult
-     m := mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-     assert(2*m == m+m);
-     assert(3*m == m+m+m);
-     m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-     assert(2*m == m+m);
-     assert(3*m == m+m+m);
-     -- submatrices for dense matrix types:
-     m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-     submatrix(m, {1,2,4,2}, {3,2,1});
-     submatrix(matrix m, {1,2,4,3}, {3,2,1});
-     assert(submatrix(m, {1,2,4,3}, {3,2,1}) == mutableMatrix submatrix(matrix m, {1,2,4,3}, {3,2,1}));
-     assert(submatrix(m, {3,2,1}) == mutableMatrix submatrix(matrix m, {3,2,1}));
-     -- submatrices for sparse matrix types:
-     --m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-     --submatrix(m, {1,2,4,2}, {3,2,1});
-     --submatrix(matrix m, {1,2,4,3}, {3,2,1})
-     --assert(submatrix(m, {1,2,4,3}, {3,2,1}) == mutableMatrix submatrix(matrix m, {1,2,4,3}, {3,2,1}));
-     --assert(submatrix(m, {3,2,1}) == mutableMatrix submatrix(matrix m, {3,2,1}));
-     )
-{*
-testops5 = (R) -> (
-     -- still being constructed
-     m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-     assert(2*m == m+m);
-     assert(3*m == m+m+m);
-     m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-     assert(2*m == m+m);
-     assert(3*m == m+m+m);
-     )
-*}
+  apply(15, i-> testNorm(CC_53) ) -- fails from time to time
+  apply(15, i->testNorm(CC_100) ) -- fails from time to time
+  apply(15, i->testNorm(CC_200) ) -- fails from time to time
+  apply(15, i-> testNorm(CC_54) ) -- fails from time to time
+///
 
-debug FastLinearAlgebra
 
-testrank = (R) -> (
-     << "testrank..." << endl;
-     m1 := random(R^5, R^11);
-     m2 := random(R^11, R^6);
-     m := mutableMatrix(m1 * m2);
-     assert(5 == rank m); -- this can fail every now and then.
-     )
 
-testMutableMatrices = (R) -> (
-     << "testing " << describe R << endl;
-     testops0 R;
-     testops R; 
-     testops2 R; 
-     testops3 R; 
-     testops4 R;
-     --testops5 R; -- Not working on 1.6 for R=ZZ
-     --testrank R;
-     << "tests passed for " << describe R << endl;
-     )
+
+
+
+testLinearAlgebraOverField = (R) -> (
+    -- fields to test this over:
+    --  ZZ/p (internal)
+    --  ZZ/p (FLINT)
+    --  ZZ/p (FFPACK)
+    --  GF (internal)
+    --  GF (GIVARO?)
+    --  GF (FLINT?)
+    --  QQ (internal, GMP)
+    --  QQ (FLINT)
+    --  rational function fields
+    --
+    -- test the following functions:
+    -- determinant
+    -- rank
+    -- inverse
+    -- mult
+    -- nullspace
+    -- solveLinear
+    -- rankProfile (row and column)
+    -- addmultipleto, subtractmultipleto
+    -- LU decomposition
+    << "testing matrix linear algebra for " << describe R << endl;
+    << "tests passed for " << raw R << endl;
+    )
+
+
+
 
 TEST ///
-  testMutableMatrices ZZ
+  R = RR_100
+  M = mutableMatrix(R,5,5)
+  fillMatrix M
+  N = matrix M
+  det N
+  det M
+  M*M - mutableMatrix(N*N)
+  inverse M
+  
+
+  R = CC_100
+  M = mutableMatrix(R,5,5)
+  fillMatrix M
+  N = matrix M
+  det N
+  det M
+  det(N*N) - (det N)^2
+  det(M*M) - (det M)^2
+  M*M - mutableMatrix(N*N)
+  
+  R = RR_53
+  M = mutableMatrix(R,5,5)
+  fillMatrix M
+  N = matrix M
+  det N
+  det M
+  M*M - mutableMatrix(N*N)
+///
+
+
+
+TEST /// 
+  -- of clean
+  R = CC_100 
+  M = matrix{{0.0001_R+ii_R}}
+  M = mutableMatrix{{0.0001_R+ii_R}}
+  clean_0.001 M
 ///
 
 TEST ///
-  testMutableMatrices(ZZ/101)
-///
-
-TEST ///
-  testMutableMatrices(GF 4)
-///
-
-TEST ///
-  testMutableMatrices(QQ)
-///
-
-TEST ///
-  testMutableMatrices(QQ[x,y])
-///
-
-TEST ///
-  testMutableMatrices(frac(QQ[x,y]))
-///
-
-TEST ///
-  testMutableMatrices(RR_53) -- crashes
-///
-
-TEST ///
-  testMutableMatrices(RR_100) -- crashes
-///
-
-TEST ///
-  testMutableMatrices(CC_53) -- crashes
-///
-
-TEST ///
-  testMutableMatrices(CC_100) -- crashes
-///
-
-TEST ///
-  -- FAILS: row-major versus column-major representation
-  debug Core
-  hasFlint := try (rawARingZZpFlint 101; true) else false;
-  if hasFlint then testMutableMatrices(ZZp(101, "Choose"=>"FLINT"))
-///
-
-TEST ///
-  -- FAILS: row-major versus column-major representation
-  debug Core
-  hasFlint := try (ZZp(101, "Choose"=>"FLINT"); true) else false;
-  if hasFlint then testMutableMatrices(ZZp(101, "Choose"=>"FLINT"))
-///
-
-TEST ///
-  -- passes
-  debug Core
-  hasFFPACK := try (ZZp(101, "Choose"=>"FFPACK"); true) else false;
-  if hasFFPACK then testMutableMatrices(ZZp(101, "Choose"=>"FFPACK"))
-///
-
-///
-rings = {ZZ, ZZ/101, ZZ/2, GF(4), GF(25), QQ, QQ[x,y], frac(QQ[x,y]), RR_53, RR_100, CC_53, CC_100}
-rings/testMutableMatrices
+  -- eigenvalues
+  M = mutableMatrix(CC_100,3,3)
+  M = matrix fillMatrix M
+  eigenvalues M
+  LUdecomposition M
 ///
 
 TEST ///
@@ -415,69 +471,18 @@ L3 = toList (1..32002);
 assert(L2 == L3)
 
 ///
-end
 
-restart
-loadPackage "EngineTests"
-check EngineTests
+beginDocumentation()
 
-testMutableMatrices(ZZ/101)
+doc ///
+Key
+  EngineTests
+Headline
+  a test suite for the Macaulay2 engine
+Description
+  Text
+Caveat
+SeeAlso
+///
 
--- BUG!! in usual Matrix submatrix code!!
-R = ZZ/101
-m = matrix mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-m^{1,1}
-----------------------
-R = ZZp 101
-     m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-     assert(2*m == m+m);
-     assert(3*m == m+m+m);
-     m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-     assert(2*m == m+m);
-     assert(3*m == m+m+m);
 
-debug Core
-rawSubmatrix(raw m, {0,1,2,3,4},{0,1,2,3,4})
-m = mutableMatrix(map(R^3,R^20, (i,j) -> 100*i+j), Dense=>true)
-rawSubmatrix(raw m, {0,2,0,2},{0,2,5,7,11,30})
-rawSubmatrix(raw m, {0,2,3,2},{0,2,5,7,11,10})
-
-debug EngineTests
-testMutableMatrices(ZZ/101)
-testMutableMatrices(ZZ/2)
-testMutableMatrices(GF 4)
-
-(67108819, 67108837, 67108859, 67108879, 67108913, 67108919, 67108933, 67108957, 67108961, 67108981)
-
-kk = ZZp 67108819
-testMutableMatrices kk
-
-kk = ZZp 67108981
-
-kk = ZZp 32003
-testMutableMatrices kk
-
-kk = ZZp 1049599
-kk = ZZp 1073742851
-
--- Question: how do we get 
---kk = GF (1073742851, 1, Strategy=>"Givaro")
---testMutableMatrices kk
-
---kk = GF (1049599, 1, Strategy=>"CompleteGivaro")
---testMutableMatrices kk
-
-kk = GF(2,4,Strategy=>"New")
-testMutableMatrices kk -- fails, since rank is not yet defined for this type of ring
-
-kk = GF(2,4,Strategy=>"Givaro")
-testMutableMatrices kk
-
-kk = GF(2,4,Strategy=>"CompleteGivaro")
-testMutableMatrices kk
-
-kk = GF(2,12,Strategy=>"New")
-testMutableMatrices kk
-
-kk = GF(5,12,Strategy=>"New")
-testMutableMatrices kk

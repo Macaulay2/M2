@@ -6,7 +6,7 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
 --      solsS = list of solutions to S
 -- OUT: solsT = list of target solutions corresponding to solsS
      HISTORY := DBG>1;
-     if #T > 0 then R := ring first T else error "expected nonempty target system";
+     if #T > 0 then R := commonRing T else error "expected nonempty target system";
      if #S != #T then 
      error "expected same number of polynomials in start and target systems";
      if any(S, f->ring f =!= R) or any(T, f->ring f =!= R)
@@ -21,7 +21,7 @@ trackProjectiveCertified (List,List,List) := List => (S,T,solsS) -> (
      
      -- M2 (main code)  --------------------------------------------------------     
      setupStartTime := currentTime();
-     -- threshholds and other tuning parameters (should include most of them as options)
+     -- thresholds and other tuning parameters (should include most of them as options)
      theSmallestNumber := 1e-12;
      
      K := coefficientRing R;

@@ -62,11 +62,11 @@ document {
 	  to compute the ones of higher degree first, so the expansion will be done to sufficiently high order
 	  at the first attempt, and thus be done just once."
 	  },
-{* no longer true:
+-* no longer true:
      Caveat => {
      	  "This requires a homogeneous module to compute properly, but
 	  will output something if run on a module which is not homogeneous."
 	  },
-*}
+*-
      SeeAlso => {degreesRing, reduceHilbert, poincare, poincareN, hilbertSeries, hilbertPolynomial, numgens, (symbol _, Function, Thing)}
      }

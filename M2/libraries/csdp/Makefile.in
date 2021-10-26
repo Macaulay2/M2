@@ -1,0 +1,32 @@
+CSDP_VERSION = 6.2.0
+LIBNAME = Csdp
+VERSION = $(CSDP_VERSION)
+PATCHFILE = @abs_srcdir@/patch-$(CSDP_VERSION)
+#URL = http://www.coin-or.org/download/source/Csdp
+URL = http://macaulay2.com/Downloads/OtherSourceCode
+TARFILE = Csdp-$(VERSION).tgz
+
+CONFIGURECMD = true
+BUILDOPTIONS  = CC="$(CC) $(OPENMP_CXXFLAGS)"
+BUILDOPTIONS += CXX="$(CXX) $(OPENMP_CXXFLAGS)"
+BUILDOPTIONS += LDFLAGS="$(LDFLAGS) $(OPENMP_CXXFLAGS)"
+BUILDOPTIONS += LDLIBS="$(LDLIBS) @OPENMP_LIBS@"
+BUILDOPTIONS += LIBS="-L../lib -lsdp @LINALGLIBS@ @FCLIBS@ -lm"
+
+#INSTALLOPTIONS = PREFIX=$(LIBRARIESDIR)
+
+# the test uses too much memory, leading to "libgomp: Thread creation failed: Resource temporarily unavailable", so we disable it
+#CHECKTARGET = unitTest
+CHECKTARGET = .
+
+LICENSEFILES = LICENSE README
+PROGRAMS = solver/csdp
+STRIPFILES = $(PROGRAMS) theta/complement theta/graphtoprob theta/rand_graph theta/theta
+
+#$(info BUILDOPTIONS is $(BUILDOPTIONS))
+
+include ../Makefile.library
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/csdp/Makefile
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/libraries/csdp "
+# End:

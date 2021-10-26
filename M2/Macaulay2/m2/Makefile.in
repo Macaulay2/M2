@@ -3,7 +3,7 @@
 # @configure_input@
 all: initialize phase1
 include ../../include/config.Makefile
-VPATH = @srcdir@ @srcdir@/../d
+VPATH = @srcdir@
 srcdir = $(shell cd @srcdir@; /bin/pwd)
 
 USER ?= unknown-user
@@ -14,21 +14,18 @@ Makefile: Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 .SUFFIXES: .m2
 .PHONY: html initialize prep tags install-tmp
 # there is a parallel list of tutorials in overview3.m2
-DUMPEDM2FILES := setup.m2
-DUMPEDM2SRCFILES := setup.m2
+DUMPEDM2FILES := Core.m2 startup.m2
+DUMPEDM2SRCFILES := Core.m2 startup.m2.in
 DUMPEDM2DOCFILES := \
 		@srcdir@/../packages/Macaulay2Doc/*.m2 \
 		@srcdir@/../packages/Macaulay2Doc/functions/*.m2 \
-		@srcdir@/../packages/Macaulay2Doc/variables/*.m2 \
+		@srcdir@/../packages/Macaulay2Doc/operators/*.m2 \
 		../packages/Macaulay2Doc.m2
 OTHERM2FILES := sagbi.m2
 ############################## loadsequence
 LOADSEQUENCE := $(shell cat @srcdir@/loadsequence)
 DUMPEDM2FILES += $(LOADSEQUENCE)
 DUMPEDM2SRCFILES += $(patsubst version.m2, version.m2.in, $(LOADSEQUENCE))
-############################## statuscodes.m2
-# an obsolete file:
-clean::; rm -f statuscodes.m2
 ############################## mpcodes.m2
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
@@ -43,7 +40,7 @@ DUMPEDM2FILES += tvalues.m2
 TVFILES := $(wildcard @srcdir@/../d/*.d)
 all: tvalues.m2
 tvalues.m2: @srcdir@/tvalues-make.m2 $(TVFILES)
-	@pre_exec_prefix@/bin/M2@EXE@ $(ARGS) --no-tvalues $< -e 'make "@srcdir@/../d/"; exit 0'
+	@pre_exec_prefix@/bin/M2 $(ARGS) --no-preload --no-tvalues $< -e 'make "@srcdir@/../d/"; exit 0'
 clean::;rm -f tvalues.m2
 ############################## installedpackages.m2
 # an obsolete file
@@ -57,36 +54,28 @@ all: tags
 tags: Makefile @srcdir@/TAGS @srcdir@/TAGS.doc
 clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 @srcdir@/TAGS: \
-		../d/startup.m2.in \
 		$(DUMPEDM2SRCFILES) \
 		installedpackages \
 		$(OTHERM2FILES) \
 		$(shell @FIND@ @srcdir@/../packages -name "*.m2" -a -not -name .\#\* | sort) \
-		../e-includes/statuscodes \
-		../emacs/makehlp.m2 \
-		../emacs/makem2.m2 \
-		../emacs/makesyms.m2 \
-		loads.awk \
+		../editors/emacs/make-M2-emacs-help.m2 \
+		../editors/make-M2-symbols.m2 \
 		@srcdir@/../*/COPYRIGHT \
-		@srcdir@/../d/basictests/*.m2 \
-		@srcdir@/../book/*.m2 \
+		@srcdir@/basictests/*.m2 \
 		@srcdir@/../packages/*.m2 \
 		@srcdir@/../packages/*/*.m2 \
-		@srcdir@/../packages/Macaulay2Doc/test/*.m2 \
-		@srcdir@/../packages/Macaulay2Doc/test/engine/*.m2 \
+		@srcdir@/../tests/*/*.m2 \
 		@srcdir@/../packages/SimpleDoc/doc.txt \
 		loadsequence \
 		Makefile.in \
-		Makefile.tests \
-		../emacs/Makefile.in \
-		../packages/Macaulay2Doc/test/Makefile.in \
-		../packages/Macaulay2Doc/test/Makefile.test.in \
-		../packages/Macaulay2Doc/test/slow/Makefile.in \
-		../packages/Macaulay2Doc/test/engine/Makefile.in \
+		../editors/Makefile.in \
+		../tests/Makefile.in \
+		../tests/Makefile.test.in \
+		../tests/slow/Makefile.in \
+		../tests/engine/Makefile.in \
 		../packages/Makefile.in \
 		../../Makefile ../../GNUmakefile.in \
-		@srcdir@/../packages/*/Makefile.in \
-		@srcdir@/README.DOC
+		@srcdir@/../packages/*/Makefile.in
 	: making $@
 	@ set -e ; \
 	  cd @srcdir@ && \
@@ -103,27 +92,19 @@ prep:: $(DUMPEDM2FILES)
 
 phase1:: prep
 
-ifneq "@DUMPDATA@" "no"
-phase1:: @pre_libm2dir@/Core/cache/@DUMPDATAFILE@
-@pre_libm2dir@/Core/cache/@DUMPDATAFILE@ redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_bindir@/M2@EXE@ $(OTHERDUMPEDM2FILES)
-	rm -f @pre_libm2dir@/Core/cache/@DUMPDATAFILE@
-	$(MKDIR_P) @pre_libm2dir@/Core/cache
-	@pre_exec_prefix@/bin/M2@EXE@ -q --stop -e 'errorDepth = 0' --dumpdata
-	printenv LD_LIBRARY_PATH
-endif
-
 # try to eliminate this intermediate file:
 phase1:: .Macaulay2-made
 .Macaulay2-made: $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_exec_prefix@/bin/M2@EXE@
 	touch $@
 clean::; rm -f .Macaulay2-made
-all: .gdbinit .gdb-files .gdb-run-it
-gdb: .gdbinit .gdb-files; gdb @pre_exec_prefix@/bin/M2@EXE@
+initialize: .gdb-directories .gdbinit .gdb-files
+gdb: .gdb-directories .gdbinit .gdb-files
+	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)" gdb @pre_exec_prefix@/bin/M2@EXE@
 .gdbinit: .gdbinit.$(USER); cp $< $@
-all: .gdb-directories
 clean::; rm -f .gdb-directories
-.gdb-directories: ../../libraries/*
-	echo 'echo -- loading .gdb-directories\n' >$@
+.gdb-directories: ../../libraries/* Makefile
+	echo '# -*- sh -*-' >$@
+	/bin/echo 'echo -- loading .gdb-directories\n' >>$@
 	for i in \
 		../../libraries/*/build/*/. \
 		../../libraries/ntl/build/*/src/. \
@@ -134,27 +115,26 @@ clean::; rm -f .gdb-directories
 	   then echo directory $$i >>$@ ;\
 	   fi ;\
 	done
+	/bin/echo 'echo -- loaded .gdb-directories\n' >>$@
 .gdbinit.$(USER):; touch $@
-clean::; rm -f .gdbinit.$(USER)
 clean::; rm -f .gdbinit
 .gdb-files: Makefile
-	echo 'echo -- loading .gdb-files\n' >$@
+	echo '# -*- sh -*-' >$@
+	/bin/echo 'echo -- loading .gdb-files\n' >>$@
+	echo 'set environment LD_LIBRARY_PATH $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)' >>$@
 	echo 'file @pre_exec_prefix@/bin/M2@EXE@' >>$@
+	/bin/echo 'echo -- loaded .gdb-files\n' >>$@
 clean::; rm -f .gdb-files
-.gdb-run-it: Makefile
-	echo 'echo -- loading .gdb-run-it\n' >$@
-	echo 'echo \n' >>$@
-	echo 'run -q --no-loaddata --no-readline --no-personality' >>$@
-clean::; rm -f .gdb-run-it
-profile: gmon.out; gprof @pre_exec_prefix@/bin/M2@EXE@ >profile
+profile: gmon.out; LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)" gprof @pre_exec_prefix@/bin/M2@EXE@ >profile
 clean::; rm -f profile
 @pre_packagesdir@ :; @INSTALL@ -d $@
 @pre_packagesdir@/Core  : ; @INSTALL@ -d $@
 @pre_packagesdir@/Core/% : % ; @INSTALL_DATA@ $^ $@
 FILES_TO_COPY := $(DUMPEDM2FILES) loadsequence installedpackages
 all:@pre_packagesdir@ @pre_packagesdir@/Core $(addprefix @pre_packagesdir@/Core/, $(FILES_TO_COPY))
-clean::; rm -rf ../cache/@DUMPDATAFILE@ cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 core gmon.out
+clean::; rm -rf cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 core gmon.out
 distclean: clean; rm -f Makefile version.m2
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 # End:
+.NOTPARALLEL:

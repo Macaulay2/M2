@@ -1,4 +1,3 @@
-# license for polymake: GPL v2, not included yet
 # we haven't succeeded in making this build process work, but the user can install it.  e.g., with fink under Mac OS X.
 # http://www.opt.tu-darmstadt.de/polymake/
 # Gawrilow is the one to ask about porting issues

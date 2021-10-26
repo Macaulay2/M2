@@ -1,0 +1,19 @@
+diff -ur /home/dan/src/M2/overnight/M2/BUILD/dan/builds.tmp/Ubuntu-14.04-x86_64.debug/libraries/nauty/tmp/nauty26r7/biplabg.c nauty26r7/biplabg.c
+--- /home/dan/src/M2/overnight/M2/BUILD/dan/builds.tmp/Ubuntu-14.04-x86_64.debug/libraries/nauty/tmp/nauty26r7/biplabg.c	2016-07-19 02:40:16.000000000 -0400
++++ nauty26r7/biplabg.c	2017-06-05 10:03:50.000000000 -0400
+@@ -111,13 +111,13 @@
+ 	    fflush(stderr);
+ 	}
+ 
+-	NODIGRAPHSYET(codetype);
+-
+ 	if (infilename && infilename[0] == '-') infilename = NULL;
+ 	infile = opengraphfile(infilename,&codetype,FALSE,1);
+ 	if (!infile) exit(1);
+ 	if (!infilename) infilename = "stdin";
+ 
++	NODIGRAPHSYET(codetype);
++
+ 	if (!outfilename || outfilename[0] == '-')
+ 	{
+ 	    outfilename = "stdout";

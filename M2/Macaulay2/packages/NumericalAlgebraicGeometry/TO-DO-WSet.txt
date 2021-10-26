@@ -1,0 +1,35 @@
+Goals:
+(W) implement (more orderly) data types representing (equidimensional) components of varieties
+(M) support multiprojective geometry
+(D) make robust the nonreduced case
+
+(W) is about various witness sets, here are the proposed types:
+    * WSet should layout a framework of methods ("primitives") that are used by higher level algorithms 
+    * PWSet, a projective witness set. Same for a component of a projective variety.
+      	    * PWSet should link to one or several WSets, witness sets in particular affine charts
+	    * A user option "Projectivize" should force an answer to an affine problem to be accompanied by an answer to its projectivization.
+    * ProxyWSet should represent an image of a rational map.
+    There should be either a field or a method called "ambient" for all of the above.
+    A NumericalVariety then is a collection of witness sets that have the same ambient.
+
+(M) MPWSet should represent a component of a multiprojective variety.
+   	     * Should it be a "collection of witness sets"?... or "collection" should be its own type?
+    	     * is MWSet, the specialization to a particular set or affine charts, necessary?
+
+(D) for deflation.
+    * deflation of an isolated point.
+    * deflation of a positive-dimensional variety: the output should be expressed in terms of ProxyWSet. 
+    * should we attach a "multiplicity structure"? (e.g., expressed in terms of an inverse system, via a DualSpace, etc.)
+    
+Examples:
+	* A kind of ProxyWSet is already in use by NumericalImplicitization.
+	* A biprojective ProxyWSet comes out of positive-dimensional deflation.
+	* A biprojective ProxyWSet appears (in the background) of the MonodromySolver approach to finding a generic (0-dim) fiber of a covering.
+
+Questions:
+	* Given two NumericalVarieties what is a good way to compute/describe their intersection?
+	* In multiprojective geometry, MPWSet for an irreducible component is supported on a polytope (in the lattice of "multidimensions").
+	In the context of MWSet (i.e., a problem that comes as a multiprojective problem specialized to a certain collection of affine charts),
+	can we say anything nice about the multidegree? (apart from	the observation that it is bounded by the projective multidegree...
+	that in turn may be bounded by some generalization of the log-concavity statement).
+	* Should we store DeflationSystem and DeflationRandomMatrix(matrices) with a system? or a point?

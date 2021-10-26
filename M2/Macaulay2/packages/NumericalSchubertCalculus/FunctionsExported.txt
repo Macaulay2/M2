@@ -1,0 +1,37 @@
+-- Functions Exported that need to be in the documentation
+----------------------------------------------------------
+
+	==== Already Done ===
+"NumericalSchubertCalculus" -- front page
+"randomSchubertProblemInstance"
+"setVerboseLevel", 
+"solveSchubertProblem"
+"partition2bracket",
+"bracket2partition",
+"changeFlags", -- in LR-makePolynomials.m2
+
+	==== Not Done Yet ===
+// NumericalSchubertCalculus.m2 //
+
+
+--"bigCellLocalCoordinates", 
+"printStatistics",
+
+// service-functions.m2 //
+--"skewSchubertVariety",
+"checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
+"solutionsToAffineCoords", --Temporary! User shouldn't use this function
+
+
+// LR-ParameterHomotopy.m2 //
+
+// pieri.m2 //
+"createRandomFlagsForSimpleSchubert",
+"solveSimpleSchubert"
+
+
+// galois.m2 //
+"findGaloisElement",
+"isFullSymmetric",
+"isGaloisFullSymmetric"
+

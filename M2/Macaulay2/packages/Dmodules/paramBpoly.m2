@@ -149,7 +149,7 @@ lcm := l -> (
 -- I = ideal
 -- list = the list of minimal primes associated to I
 calculateAss := (I) -> (
-     pInfo(2,"calculating minimal primes assosiated to I = " | 
+     pInfo(2,"calculating minimal primes associated to I = " | 
 	  toString I | "...");  
      R := ring I;
      local r;
@@ -489,7 +489,8 @@ factorBFunctionZmodP RingElement := Product => f -> (
      );-- end factorBFunctionZmodP
 
 BSet2tex := (s, filename) -> (
-     TeXfile := filename << "\\documentclass{article}\n\\begin{document}\n"; 
+     TeXfile := openOut filename;
+     TeXfile << "\\documentclass{article}\n\\begin{document}\n"; 
      s / (u -> ( 
 	       TeXfile << "\n\n$$ b(s)=";
 	       TeXfile << (
@@ -892,10 +893,8 @@ paramBpoly(RingElement, String) := List => o -> (f, fname) -> (
      	  );
      --!!!V = loadVTree((fname| ".v3"));
      -- transform into bSet
-     -- we no longer write to a file:
-     -- (fname | ".tex")  << toString V#poly << endl; 
      bs := VTree2bSet2 V;
-     -- BSet2tex(bs, (fname | ".tex"));
+     BSet2tex(bs,(fname | ".tex"));
      ret := apply(bs, u->(
 	       s := symbol s;
 	       RZ := (ZZ/DBIGPRIME)[s];

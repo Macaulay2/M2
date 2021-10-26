@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: 757075090 *}
---loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
 
 i1 : R=QQ[y_0..y_2];
 
@@ -9,7 +8,7 @@ o2 : Ideal of R
 
 i3 : p=rationalPointOnConic I
 
-o3 = | 1139 497 -1190 |
+o3 = | 67 49 -70 |
 
               1        3
 o3 : Matrix QQ  <--- QQ

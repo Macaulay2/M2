@@ -123,7 +123,7 @@ document {
 		    LI ("rmap -- ", TO "not documented yet"),
 		    LI ("row_degree -- ", TO "not documented yet"),
 		    LI ("row_degs -- ", TO "not documented yet"),
-		    LI ("sat -- ", TO "saturate"),
+		    LI ("sat -- ", TO "Saturation::saturate"),
 		    LI ("set -- ", TO "not documented yet"),
 		    LI ("set_value -- ", TO "not documented yet"),
 		    LI ("setcoldegs -- ", TO "not documented yet"),
@@ -148,7 +148,7 @@ document {
 			 TT "cokernel M ** cokernel N"),
 		    LI ("trace -- ", TO "trace"),
 		    LI ("transpose -- ", TO "transpose"),
-		    LI ("truncate -- ", TO "truncate"),
+		    LI ("truncate -- ", TO "Truncations::truncate(ZZ,Module)"),
 		    LI ("type -- ", TO "not documented yet"),
 		    LI ("version -- ", TO "version"),
 		    LI ("wedge -- ", TO "minors", ",", TO "exteriorPower")
@@ -160,9 +160,9 @@ document {
 		    LI ("<adjoint -- ", TO "not documented yet"),
 		    LI ("<analytic_spread -- ", TO "not documented yet"),
 		    LI ("<annihilated -- ", TO "not documented yet"),
-		    LI ("<annihilator -- ", TO "ann"),
-		    LI ("<annihilator1 -- ", TO "ann"),
-		    LI ("<annihilator2 -- ", TO "ann"),
+		    LI ("<annihilator -- ", TO "Saturation::annihilator"),
+		    LI ("<annihilator1 -- ", TO "Saturation::annihilator"),
+		    LI ("<annihilator2 -- ", TO "Saturation::annihilator"),
 		    LI ("<binomial -- ", TO "binomial"),
 		    LI ("<ceiling -- ", TO "not documented yet"),
 		    LI ("<changelog -- ", TO "not documented yet"),
@@ -231,9 +231,9 @@ document {
 		    LI ("<prune -- ", TO "prune"),
 		    LI ("<prune_and_map -- ", TO "not documented yet"),
 		    LI ("<push_forward -- ", TO "pushForward"),
-		    LI ("<push_forward1 -- ", TO "coimage (eventually)"),
+		    LI ("<push_forward1 -- ", TO "coimage", " (eventually)"),
 		    LI ("<quotient1 -- ", TO "quotient"),
-		    LI ("<radical -- ", TO "radical"),
+		    LI ("<radical -- ", TO "MinimalPrimes::radical"),
 		    LI ("<random_element -- ", TO "not documented yet"),
 		    LI ("<random_int -- ", TO "not documented yet"),
 		    LI ("<random_map -- ", TO "not documented yet"),
@@ -257,8 +257,8 @@ document {
 		    LI ("<ring -- ", TO "not documented yet"),
 		    LI ("<sagbi -- ", TO "not documented yet"),
 		    LI ("<sagbi_step -- ", TO "not documented yet"),
-		    LI ("<sat -- ", TO "saturate"),
-		    LI ("<sat1 -- ", TO "saturate"),
+		    LI ("<sat -- ", TO "Saturation::saturate"),
+		    LI ("<sat1 -- ", TO "Saturation::saturate"),
 		    LI ("<scroll -- ", TO "not documented yet"),
 		    LI ("<select -- ", TO "not documented yet"),
 		    LI ("<shout_list -- ", TO "not documented yet"),
@@ -271,9 +271,9 @@ document {
 		    LI ("<template_for_scripts -- ", TO "not documented yet"),
 		    LI ("<to_div_powers -- ", TO "not documented yet"),
 		    LI ("<tor -- ", TO "Tor"),
-		    LI ("<unmixed_radical -- ", TO "radical"),
-		    LI ("<unmixed_radical1 -- ", TO "radical"),
-		    LI ("<unmixed_radical2 -- ", TO "radical"),
+		    LI ("<unmixed_radical -- ", TO "MinimalPrimes::radical"),
+		    LI ("<unmixed_radical1 -- ", TO "MinimalPrimes::radical"),
+		    LI ("<unmixed_radical2 -- ", TO "MinimalPrimes::radical"),
 		    LI ("<wedge_cokernel -- ", TO "not documented yet"),
 		    LI ("<x_to_last -- ", TO "newCoordinateSystem"),
 		    LI ("<zeromat -- ", TO "not documented yet")
@@ -308,13 +308,13 @@ document {
 		    LI ("<hilb_fcn -- ", TO "not documented yet"),
 		    LI ("<inhomog_std -- ", TO "not documented yet"),
 		    LI ("<l_dual0 -- ", TO "not documented yet"),
-		    LI ("<l_from_dual -- ", TO "fromDual"),
+		    LI ("<l_from_dual -- ", TO "InverseSystems::fromDual"),
 		    LI ("<l_homog0 -- ", TO "not documented yet"),
 		    LI ("<l_min0 -- ", TO "not documented yet"),
 		    LI ("<l_minimal -- ", TO "not documented yet"),
 		    LI ("<l_minimal0 -- ", TO "not documented yet"),
 		    LI ("<l_tangentcone -- ", TO "not documented yet"),
-		    LI ("<l_to_dual -- ", TO "toDual"),
+		    LI ("<l_to_dual -- ", TO "InverseSystems::toDual"),
 		    LI ("<line_bundle_image -- ", TO "not documented yet"),
 		    LI ("<normal_cone -- ", TO "not documented yet"),
 		    LI ("<proj_bundle -- ", TO "not documented yet"),
@@ -520,28 +520,28 @@ document {
      " form a Gröbner basis, use ", TT "forceGB m", ".  See ", TO "forceGB",
      ".",
      
-     {*
+     -*
      -- Mike wanted this: 
      HEADER3 "hilb <standard basis>",
      "WRITE THIS",
-     *}
+     *-
      
-     {*
+     -*
      -- Mike wanted this: 
      HEADER3 "hilb_numer <standard basis> <ideal> <result>",
      "WRITE THIS",
-     *}
+     *-
      
      HEADER3 "homog <matrix> <homog variable> <new matrix>",
      "To homogenize a matrix ", TT "m", " with respect to a variable ",
      TT "x", ", use ", TT "homogenize(m,x)", ". One may also homogenize
      with respect to a given weight vector.  See ", TO "homogenize", ".",
      
-     {*
+     -*
      -- Mike wanted this: 
      HEADER3 "hulb <standard basis> <deg>",
      "WRITE THIS",
-     *}
+     *-
      
      HEADER3 "ideal <resulting matrix>",
      "To enter a one row matrix, use we may use the following method.",
@@ -566,23 +566,23 @@ document {
      "For conditional execution, use the if-then or if-then-else statement",
      -- Mike wanted this: "WRITE MORE",
      
-     {*
+     -*
      -- Mike wanted this: 
      HEADER3 "imap <new ring map> <R> <S> [ones, default=zeros]",
      "WRITE THIS",
-     *}
+     *-
      
-     {*
+     -*
      -- Mike wanted this: 
      HEADER3 "in <standard basis> [optional result matrix] [n]",
      "WRITE THIS",
-     *}
+     *-
      
-     {*
+     -*
      -- Mike wanted this: 
      HEADER3 "inpart <standard basis> <result matrix> [variable list]",
      "WRITE THIS",
-     *}
+     *-
      
      HEADER3 "int <name> <new value>",
      "To assign a value to a variable in Macaulay2, use ", TO "=", 
@@ -626,53 +626,53 @@ document {
      "Macaulay2 has no go to statements.  Instead, you should use the
      control structures.", -- Mike wanted this: "WRITE MORE",
      
-     {*
+     -*
      -- Mike wanted this: 
      HEADER3 "k_basis <matrix> <result matrix> [variable list]",
      "WRITE THIS",
-     *}
+     *-
      
-     {*
+     -*
      -- Mike wanted this: 
      HEADER3 "keep <standard basis> <result matrix> [n]",
      "WRITE THIS",
-     *}
+     *-
      
-     {*
+     -*
      -- Mike wanted this: 
      HEADER3 "kill <var1> ... <var n>",
      "WRITE THIS",
-     *}
+     *-
      
-     {*
+     -*
      -- Mike wanted this: 
      HEADER3 "koszul <int n, or matrix> <p> <result matrix>",
      "WRITE THIS",
-     *}
+     *-
      
-     {*
+     -*
      -- Mike wanted this: 
      HEADER3 "lift <standard basis> <matrix to lift> <result>",
      "WRITE THIS",
-     *}
+     *-
      
-     {*
+     -*
      -- Mike wanted this: 
      HEADER3 "lift_std <matrix> <computation>",
      "WRITE THIS",
-     *}
+     *-
      
-     {*
+     -*
      -- Mike wanted this: 
      HEADER3 "listvars",
      "WRITE THIS",
-     *}
+     *-
      
-     {*
+     -*
      -- Mike wanted this: 
      HEADER3 "mat <result matrix> [optional: file name]",
      "WRITE THIS",
-     *}
+     *-
      
      }
 

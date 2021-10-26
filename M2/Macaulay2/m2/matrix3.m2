@@ -1,5 +1,8 @@
 -- Copyright 1996 Michael E. Stillman
 
+needs "modules.m2"
+needs "ringmap.m2"
+
 PushforwardComputation = new SelfInitializingType of BasicList
 PushforwardComputation.synonym = "push-forward computation"
 
@@ -16,7 +19,7 @@ pushOptions := new OptionTable from {
 	  UseHilbertFunction => true,  -- if possible
 	  StopBeforeComputation => false,
 	  DegreeLimit => {},
-	  PairLimit => infinity,
+	  PairLimit => infinity
 	  -- unused options:
 	  -- Strategy => NonLinear,            -- use the best choice
 	  -- BasisElementLimit => infinity,  -- number of generators of GB in the subring
@@ -54,11 +57,12 @@ pushNonLinear := opts -> (f,M) -> (				    -- this returns the presentation matr
 	-- else to recommend it.
 	-- we should really be *lifting* the result to S along the natural map S ---> G
 	mapback := map(S, G, map(S^1, S^n1, 0) | vars S, DegreeMap => mapbackdeg );
-	-- let's at least check it splits f's degree map:
-	for i from 0 to deglen-1 do (
-	     e := for j from 0 to deglen-1 list if i === j then 1 else 0;
-	     if mapbackdeg f.cache.DegreeMap e =!= e then error "not implemented yet: unexpected degree map of ring map";
-	     );
+	if isHomogeneous f then (
+	     -- let's at least check it splits f's degree map:
+	     for i from 0 to deglen-1 do (
+		  e := for j from 0 to deglen-1 list if i === j then 1 else 0;
+		  if mapbackdeg f.cache.DegreeMap e =!= e then error "not implemented yet: unexpected degree map of ring map";
+		  ));
 	cleanupcode := g -> mapback selectInSubring(if numgens target f > 0 then 1 else 0, generators g);
 	f.cache#comp = (m1, cleanupcode);
 	);
@@ -77,7 +81,7 @@ pushNonLinear := opts -> (f,M) -> (				    -- this returns the presentation matr
 	 )
     )
 
-{*
+-*
 pushLinear := opts -> (f,M) -> (
     -- assumptions here:
     -- (a) f is homogeneous linear, and the linear forms are independent
@@ -109,10 +113,11 @@ pushLinear := opts -> (f,M) -> (
     mapback := map(S, R1, map(S^1, S^n1, 0) | submatrix(vars S, {0..n-1}));
     mapback g
     )
-*}
+*-
 
 kernel Matrix := Module => opts -> (cacheValue symbol kernel) ((m) -> (
 	  N := source m;
+	  if m == 0 then return N;
 	  P := target m;
 	  if m.?RingMap then (
 	       f := m.RingMap;

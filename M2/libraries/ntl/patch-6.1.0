@@ -1,0 +1,15 @@
+diff -ur /Users/mike/src/M2-git-linalg/M2/BUILD/mike/builds.tmp/darwin64/libraries/ntl/tmp/ntl-6.1.0/include/NTL/xdouble.h ntl-6.1.0/include/NTL/xdouble.h
+--- /Users/mike/src/M2-git-linalg/M2/BUILD/mike/builds.tmp/darwin64/libraries/ntl/tmp/ntl-6.1.0/include/NTL/xdouble.h	2014-03-13 13:05:11.000000000 -0400
++++ ntl-6.1.0/include/NTL/xdouble.h	2014-07-17 21:26:06.000000000 -0400
+@@ -52,9 +52,9 @@
+ };
+ 
+ inline xdouble to_xdouble(int a) { return xdouble(a, 0); }
+-inline xdouble to_xdouble(long a) { return xdouble(a, 0); }
++inline xdouble to_xdouble(long a) { return xdouble(static_cast<double>(a), 0); }
+ inline xdouble to_xdouble(unsigned int a) { return xdouble(a, 0); }
+-inline xdouble to_xdouble(unsigned long a) { return xdouble(a, 0); }
++inline xdouble to_xdouble(unsigned long a) { return xdouble(static_cast<double>(a), 0); }
+ 
+ xdouble to_xdouble(double a);
+ inline xdouble to_xdouble(float a) { return to_xdouble(double(a)); }

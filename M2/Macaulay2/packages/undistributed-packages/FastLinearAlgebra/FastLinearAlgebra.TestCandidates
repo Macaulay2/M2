@@ -1,0 +1,915 @@
+
+TEST ///
+    kk = ZZ/101
+    A = random(kk^23, kk^400)
+    B = random(kk^500, kk^23)
+    M = mutableMatrix(B*A);
+    N = nullSpace M;
+    assert(numRows N == numColumns M)
+    assert(numColumns N == numColumns M - 23)
+    assert((matrix M) * (matrix N) == 0)
+    
+    time N = nullSpace(M, RightSide=>false);
+    assert(numRows N == numRows M - 23)
+    assert(numColumns N == numRows M)
+    assert((matrix N) * (matrix M) == 0)
+///
+
+TEST ///
+    kk = ZZ/101
+    A = random(kk^23, kk^1000);
+    B = random(kk^1000, kk^23);
+    M = mutableMatrix(B*A);
+    N = nullSpace M;
+    assert(numRows N == numColumns M)
+    assert(numColumns N == numColumns M - 23)
+    assert((matrix M) * (matrix N) == 0)
+    
+    time N = nullSpace(M, RightSide=>false);
+    assert(numRows N == numRows M - 23)
+    assert(numColumns N == numRows M)
+    assert((matrix N) * (matrix M) == 0)
+///
+
+TEST ///
+    debug Core
+    kk = ZZp 101
+    M = mutableMatrix(kk,5000,5000);
+    N = mutableMatrix(kk,5000,5000);
+    fillMatrix M;
+    fillMatrix N;
+    time (M+N);	
+
+    A = mutableMatrix(kk,50000,50000, Dense=>false);
+    B = mutableMatrix(kk,50000,50000, Dense=>false);
+    --time fillMatrix(A, Density=>.001);    
+    --time fillMatrix(B, Density=>.001);    
+    time (A+B);
+    time (A*B); -- crashes: tries to grab too much memory: BUG
+
+    A = mutableMatrix(kk,50000,50000, Dense=>true); -- doesn't crash, but it should!!
+    B = mutableMatrix(kk,50000,50000, Dense=>true); 
+
+    A = mutableMatrix(kk,10000,10000, Dense=>true);
+
+///
+
+TEST ///
+needsPackage "FastLinearAlgebra"
+debug Core
+
+ 
+nrTests = 100; -- may depend on cardinality, e.g. 1 % or so
+fieldHashTable = constructGivaroField( 37,1 );
+testField(fieldHashTable, nrTests);
+
+nrTests = 100; -- may depend on cardinality, e.g. 1 % or so
+fieldHashTable = constructGivaroField( 5,3 );
+testField(fieldHashTable, nrTests);
+
+nrTests = 100; -- may depend on cardinality, e.g. 1 % or so
+fieldHashTable = constructGivaroField( 11,2 );
+testField(fieldHashTable, nrTests);
+fieldHashTable = constructGivaroField( 2,3 );
+testField(fieldHashTable, nrTests);
+
+fieldHashTable = constructMacaulayGF( 5,3 );
+testField(fieldHashTable, nrTests);
+
+fieldHashTable = constructMacaulayZZp(23,1);
+testField(fieldHashTable, nrTests);
+
+fieldHashTable = constructZZpFFPACK(23,1);
+testField(fieldHashTable, nrTests);
+
+ R = rawARingGaloisField(2,3)
+
+
+///
+
+
+
+TEST ///
+ 
+restart
+needsPackage "FastLinearAlgebra"
+kk = ZZ/101
+A = mutableMatrix random(kk^2, kk^2)
+rank A
+
+kk = GF(2^4, Strategy=>"New")
+A = mutableMatrix random(kk^2, kk^2)
+rank A
+
+kk = GF(2^4, Strategy=>"Givaro")
+A = mutableMatrix random(kk^2, kk^2)
+rank A
+
+kk = GF(2^4, Strategy=>"CompleteGivaro")
+A = mutableMatrix random(kk^2, kk^2)
+rank A
+ 
+///
+
+
+TEST ///
+kk = ZZ/101
+A = mutableMatrix random(kk^4, kk^4)
+B = mutableMatrix random(kk^4, kk^1)
+X = solveLinear(A,B)
+(matrix A) * (matrix X) - matrix B
+///
+
+TEST ///
+kk = ZZ/101
+A = mutableMatrix random(kk^100, kk^100);
+B = mutableMatrix random(kk^100, kk^5);
+X = solveLinear(A,B) 
+((matrix A) * (matrix X)) - matrix B
+///
+
+
+
+TEST ///
+kk = ZZ/101
+A = mutableMatrix random(kk^3, kk^4);
+B = mutableMatrix random(kk^4, kk^7);
+A * B
+(matrix A) * (matrix B) == matrix(A*B)
+///
+
+TEST ///
+kk = ZZ/101
+C = mutableMatrix random(kk^3, kk^7);
+A = mutableMatrix random(kk^3, kk^4);
+B = mutableMatrix random(kk^4, kk^7);
+
+C0 = matrix C
+addMultipleToExt(C,A,B,Alpha=>3_kk, Beta=>-1_kk)
+assert(-C0 + 3*(matrix A)*(matrix B) == matrix C)
+
+C = mutableMatrix C0
+addMultipleToExt(C,mutableMatrix transpose matrix A, B,Alpha=>3_kk, Beta=>-1_kk, TransposeA=>true)
+assert(-C0 + 3*(matrix A)*(matrix B) == matrix C)
+
+C = mutableMatrix C0
+addMultipleToExt(C,A,mutableMatrix transpose matrix B,Alpha=>3_kk, Beta=>-1_kk, TransposeB=>true)
+assert(-C0 + 3*(matrix A)*(matrix B) == matrix C)
+
+C = mutableMatrix C0
+addMultipleToExt(C,mutableMatrix transpose matrix A,
+     mutableMatrix transpose matrix B,
+     Alpha=>3_kk, 
+     Beta=>-1_kk, 
+     TransposeB=>true, 
+     TransposeA=>true)
+assert(-C0 + 3*(matrix A)*(matrix B) == matrix C)
+
+A * B
+assert((matrix A) * (matrix B) == matrix(A*B))
+///
+
+TEST ///
+kk = ZZ/101
+A = mutableMatrix random(kk^300, kk^400);
+B = mutableMatrix random(kk^400, kk^700);
+time C1 = A * B;
+time C2 = (matrix A) * (matrix B);
+assert(matrix C1 == C2)
+///
+
+TEST ///
+kk = ZZ/101
+A = mutableMatrix random(kk^3, kk^4);
+B = mutableMatrix random(kk^4, kk^7);
+assert (try (B * A;false) else true)
+time C1 = A * B;
+time C2 = (matrix A) * (matrix B);
+assert(matrix C1 == C2)
+///
+
+
+end
+
+--load "ffpack-test.m2"
+restart
+loadPackage "FastLinearAlgebra"
+kk = ZZ/101
+N = 3
+
+N = 4000
+N = 100
+M = mutableMatrix(kk, N, N, Dense=>true);
+time fillMatrix M;
+--viewHelp fillMatrix
+M
+time det M
+time det matrix M
+rank M
+methods rank
+
+A = random(kk^10, kk^31)
+B = random(kk^45, kk^10)
+C = B*A
+D = mutableMatrix C
+rank D
+rank C
+
+A = random(kk^10, kk^31)
+B = random(kk^31, kk^10)
+C = B*A
+D = mutableMatrix C
+det C
+det D
+
+restart
+loadPackage "FastLinearAlgebra"
+kk = ZZp (ideal 19)
+M = mutableMatrix(kk, 10, 10)
+for i from 0 to 9 do for j from 0 to 9 do M_(i,j) = random kk
+M
+rank M 
+
+M_(0,3) = 2_kk
+M
+random(kk^3, kk^4) -- BUG
+mutableMatrix oo
+3_kk  -- printing is wrong here
+matrix{{3_kk}}
+matrix {for i from 0 to 30 list i_kk}
+1_kk == 1
+1_kk
+0_kk
+oo == ooo
+
+matrix{{1_kk}}
+R = kk[a..d]
+basis(2,R) 
+random(R^1, R^{-2})  
+I = ideal random(R^1, R^{-2,-2,-2})  
+gens gb I;
+
+kk = ZZ/19
+debug Core
+rawDiscreteLog(raw 2_kk)
+rawDiscreteLog(raw 3_kk)
+
+TEST ///
+-- Test that for GF(p,n) (fixed p, various n):
+-- that the polynomials for different n are compatible:
+-- if (p^m-1) | (p^n-1), then
+--   if N = (p^n-1)//(p^m-1),
+--   and Fn(x) = min poly of the generator x
+--   and Fm(y) = min poly of the generator y
+-- then y = x^N
+-- 
+-- Check this: eliminate(x,ideal(Fn(x), y-x^N)).  If we get Fm(y), great, if not, ERROR>
+
+univariateCoefficients = method()
+univariateCoefficients RingElement := (F) -> (
+     R := ring F;
+     n := first degree F;
+     for i from 0 to n list lift(leadCoefficient part(i,F), ZZ)
+     )
+univariatePoly = method()
+univariatePoly(List, RingElement) := (coeffs, x) -> (
+     sum apply(#coeffs, i -> coeffs#i * x^i)
+     )
+
+checkPair = method()
+checkPair(Ring,Ring,Ring) := (R,S,T) -> (
+     -- R should be GF(p,m), S should be GF(p,n).
+     -- T should be ZZ/p[x1,x2] (with some names of vars)
+     -- if N = (p^n-1)/(p^m-1) is not an integer, then just return
+     -- otherwise:
+     -- 
+     Qm := R.order;
+     Qn := S.order;
+     if (Qn-1) % (Qm-1) == 0
+     then (
+	  N := (Qn-1) / (Qm-1);
+	  << "does divide, N=" << N << endl;
+	  Fm := univariateCoefficients (ideal ambient R)_0;
+	  Fn := univariateCoefficients (ideal ambient S)_0;
+	  -- now check result:
+	  ans := univariatePoly(Fm, T_1);
+	  I := ideal(univariatePoly(Fn, T_0), T_0^N-T_1);
+          GB := flatten entries selectInSubring(1, gens gb I);
+     	  if #GB != 1 then << "error: wrong number of elements in GB!!" << endl;
+	  if ideal ans != ideal GB then (
+	       << "Fm = " << ans << endl;
+	       << "Fn = " << univariatePoly(Fn, T_0) << endl;
+	       << "minpoly = " << GB_0 << endl;
+	       );
+	  )
+     )
+
+R = ZZ/2[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 23 list GF(2,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/3[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 15 list GF(3,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/5[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 10 list GF(5,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/7[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 8 list GF(7,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/11[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 7 list GF(11,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/13[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 6 list GF(13,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/17[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 6 list GF(17,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/19[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 5 list GF(19,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/23[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 5 list GF(23,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/29[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 5 list GF(29,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = ZZ/31[x,y, MonomialSize=>32, MonomialOrder=>Eliminate 1]
+L = for i from 1 to 5 list GF(31,i)
+L2 = subsets(L,2);
+for p in L2 do checkPair(p_0, p_1, R)
+
+R = GF(5,6)
+kk = ZZ/5
+phi = map(R,kk)
+phi(1_kk)
+phi(2_kk)
+phi(3_kk)
+phi(4_kk)
+
+factor(5^6-1)
+factor(5^2-1)
+factor(5^3-1)
+R6 = GF(5,6)
+R3 = GF(5,3)
+map(R6,R3)
+a = R6_0
+a
+N = (5^6-1)//(5^3-1)
+a^126
+///
+
+
+TEST ///
+-- Testing Givaro GF
+debug Core
+R = rawARingGaloisField(2,3)
+rawARingGFPolynomial R
+a = R_0
+rawARingGFCoefficients (a^3)
+
+ L = lines get "~/src/M2-trunk/M2-jakob-jan2012/Macaulay2/packages/ConwayPolynomials/ConwayPolynomials.txt";
+L#2 
+L#6
+kk = GF(2,7)
+R = ambient kk
+describe R
+
+debug Core
+R = rawARingGaloisField(2,7)
+rawARingGFPolynomial R
+
+k2 = rawARingGaloisField(2,2)
+rawARingGFPolynomial k2  -- a^2+a+1
+rawARingGFCoefficients (k2_0)
+
+k3 = rawARingGaloisField(2,3)
+rawARingGFPolynomial k3  -- 1+a^2+a^3
+rawARingGFCoefficients (k3_0)
+
+k4 = rawARingGaloisField(2,4)
+rawARingGFPolynomial k4  -- a^4+a+1
+rawARingGFCoefficients (k4_0)
+
+k5 = rawARingGaloisField(2,5)
+rawARingGFPolynomial k5  -- a^5+a^2+1
+rawARingGFCoefficients (k5_0)
+
+k6 = rawARingGaloisField(2,6)
+rawARingGFPolynomial k6  -- a^6+a^4+a^3+a+1
+rawARingGFCoefficients (k6_0)
+
+R = ZZ/2[a,b]
+I = ideal"a6+a4+a3+a+1,b-a21"
+eliminate(a, I)
+
+gf2 = GF(2,2)
+(ideal ambient gf2)_0 -- a2+a+1
+
+gf3 = GF(2,3)
+(ideal ambient gf3)_0 -- a3+a+1
+
+gf4 = GF(2,4)
+(ideal ambient gf4)_0 -- a4+a+1
+
+(map(gf4,gf2))(gf2_0) -- gf2_0 = a^2+a
+R = ZZ/2[a,b]
+I = ideal"a4+a+1,b-a5"
+eliminate(a, I)
+
+-- is there a way to lift from gf4 to gf2? Doesn't appear so...
+-- is there a way to expand a matrix of gf4 elements to a matrix over ZZ/2 or gf2?
+
+///
+
+TEST ///
+
+debug Core
+R = rawARingGaloisField(2,7)
+rawARingGFPolynomial R
+gen= rawARingGFGenerator R
+S = ZZ/2[x]/(x^7 + x^3 + 1)
+T = rawARingGaloisFieldFromQuotient(raw S_0)
+gen= rawARingGFGenerator T
+
+S = GF(3,4)
+R = ambient S
+T = rawARingGaloisFieldFromQuotient(raw R_0)
+gen= rawARingGFGenerator T
+
+///
+
+
+TEST /// -- Testing M2 ARing GF interface
+--restart
+--loadPackage "FastLinearAlgebra"
+A = GF(2,4)
+testGFArithmetic A
+
+B = GF(2,4, Strategy=>"New")
+testGFArithmetic B
+
+C = GF(2,4, Strategy=>"Givaro")
+testGFArithmetic C
+
+D = GF(2,4, Strategy=>"CompleteGivaro")
+testGFArithmetic D
+
+///
+
+TEST /// -- Testing M2 ARing GF interface
+--restart
+--loadPackage "FastLinearAlgebra"
+A = GF(3,3)
+testGFArithmetic A
+
+B = GF(3,3, Strategy=>"New")
+testGFArithmetic B
+
+C = GF(3,3, Strategy=>"Givaro")
+testGFArithmetic C
+
+D = GF(3,3, Strategy=>"CompleteGivaro")
+testGFArithmetic D
+
+///
+
+TEST /// -- of findGalois  (which will be placed into the engine?)
+restart
+loadPackage "FastLinearAlgebra"
+
+R = ZZ/5[b]
+G = (b^(5^4)-b) // (b^(5^2)-b)
+Gfacs = factor  G  -- 150 factors
+apply(Gfacs, fac -> (
+	  f := fac#1;
+	  S := R/f;
+	  S.char = 5;
+	  S.degree = 4;
+	  findPrimitive S
+	  ))
+
+findGalois(5,5)
+findGalois(5,5, Strategy=>"Blah")
+findGalois(5,5, Strategy=>"Givaro")
+findGalois(5,7, Strategy=>"Givaro")
+findGalois(5,8, Strategy=>"Givaro")
+findGalois(5,8)
+
+
+findGalois(5,4)
+findGalois(5,4)
+findGalois(5,3)
+findGalois(5,2)
+findGalois(5,1)
+findGalois(5,5^7, Variable=>getSymbol "c")
+
+debug Core
+rawARingGaloisField(5,2)
+rawARingGaloisField(5,3)
+kk = rawARingGaloisField(5,4)
+rawARingGFPolynomial kk
+rawARingGaloisField(5,5)
+rawARingGaloisField(5,6)
+rawARingGaloisField(5,7)
+
+rawARingGaloisField(5,8)
+
+
+A = GF(2,3)
+B = GF(2,3,Strategy=>"Givaro")  -- fails
+GF(2,3,Strategy=>"CompleteGivaro")  -- fails
+
+
+A = GF(2,3,Strategy=>"New")  -- fails, needs 'promote'
+
+debug Core
+B = ambient A
+B_0
+rawARingGaloisFieldFromQuotient(raw B_0)
+///
+
+TEST /// 
+-- Test of rank
+-- JAKOB: can you look at the FFPACK rank call in e/dmat.cpp, and see what is wrong?
+restart
+
+mat = {{1, -8, -8, 8, -5, 7, -5, 1}, 
+     {9, 3, -7, -3, -5, 2, 6, -7}, 
+     {5, -7, -9, -2, 0, 8, -2, 4}, 
+     {4, 0, -5, 4, -4, 4, -2, 5}, 
+     {3, 0, -1, 5, 8, -6, 4, 4}, 
+     {-7, 8, -7, -2, 9, 4, 4, 5}, 
+     {0, 9, -6, -3, 7, -3, -4, -5}, 
+     {-8, 1, 6, -2, 5, 6, -9, 7}, 
+     {-5, -5, 0, -6, -2, -5, -5, -6}}
+loadPackage "FastLinearAlgebra"
+debug Core
+debug FastLinearAlgebra
+kk = ZZp (ideal 19)
+
+M = matrix(kk, mat)
+mm = mutableMatrix M
+
+rawFFPackRank raw mm
+rank mm
+
+kk= ZZ/19
+M = matrix(kk, mat)
+mm = mutableMatrix M
+rawFFPackRank raw mm
+rank mm
+assert(5 == rank mm)  -- WRONG!!
+
+R = ZZ/19
+MR = matrix(R, mat)
+assert(5 == rank MR)
+syz MR
+///
+
+/// -- rawFFLU, is this active??
+kk = QQ
+M = random(QQ^5, QQ^3)
+debug Core
+mm = mutableMatrix M
+rawFFLU raw mm  -- doesn't look fraction free!!
+
+kk = ZZ/101
+A = mutableMatrix random(kk^10, kk^15)
+B = mutableMatrix random(kk^10, kk^1)
+x = mutableMatrix(kk, 15, 1)
+debug Core
+rawLinAlgSolve(raw A, raw B)
+x1 = matrix x
+(matrix A)*x1 == matrix B
+
+time A = random(kk^300, kk^300);
+time (A*A);
+time (A+A);
+
+restart
+restart
+debug loadPackage "FastLinearAlgebra"
+--kk = ZZ/101
+kk = ZZp 101
+kk = GF(2,4,Strategy=>"Givaro")
+random(kk^3, kk^4)
+N = 5
+m = mutableMatrix(kk, N, N)
+m = mutableMatrix random(kk^100, kk^100);
+rank m
+time for i from 0 to N-1 do for j from 0 to N-1 do m_(i,j) = random kk
+time M = matrix m;
+time(ans1 = m * m);
+time(ans2 = M * M);
+assert(ans2 == matrix ans1)
+
+kk = GF(2,4,Strategy=>"Givaro")
+M = mutableMatrix random(kk^3, kk^4)
+debug FastLinearAlgebra
+rank M
+
+restart
+debug Core
+debug loadPackage "FastLinearAlgebra"
+
+
+--kk = ZZp 1049599
+kk = ZZp 101
+N = 5
+M = random(kk^N, kk^N);
+time det M
+m = mutableMatrix M;
+time determinant m
+time rank m
+(matrix invert m) * M
+
+M1 = M_{0} | M_{1} | M_{0} + 2*M_{1} | M_{2} | M_{2} | M_{3}
+m1 = mutableMatrix M1
+rowRankProfile m1 -- WRONG
+columnRankProfile m1 -- WRONG
+m2 = mutableMatrix transpose M1
+rowRankProfile m2 -- WRONG
+columnRankProfile m2 -- WRONG
+
+M = matrix(kk, {{1,1,1,0}, {0,1,0,0}})
+m = mutableMatrix M
+nullSpace m
+m2 = mutableMatrix transpose M
+nullSpace(m2, RightSide=>false)
+B = matrix(kk, {{1,0},{0,1}})
+b = mutableMatrix B
+solveLinear(m, b)
+
+M = matrix(kk, {{1,1,1,0}, {0,1,0,0}})
+m = mutableMatrix M
+nullSpace m
+m2 = mutableMatrix transpose M
+nullSpace(m2, RightSide=>false)
+B = matrix(kk, {{0},{1} })
+b = mutableMatrix B
+x = solveLinear(m, b)
+(matrix m )*(matrix x)
+
+M = random(kk^10, kk^15)
+m = mutableMatrix M
+kerm = matrix nullSpace m
+assert(M * kerm == 0)
+assert(rank kerm == 5)
+m2 = mutableMatrix transpose M
+kerm2 = matrix nullSpace(m2, RightSide=>false)
+assert(kerm2 * (transpose M) == 0)
+assert(rank kerm2 == 5)
+
+kk = GF(3,4,Strategy=>"Givaro")
+rawARingGFGenerator raw kk
+N = 10
+N = 4
+--M = random(kk^N, kk^N);
+--M= matrix {{-a^3+a^2-a-1, -a^3-a^2-a-1, a-1, a-1}, {-a^2-1, a^3-a^2-a, a^3+a^2, -a^3-a^2+a+1}, {a^3-a^2+1, -a^2-a-1, -a^3-a^2+a, a^3-a^2-a+1}, {0, a^2-a-1, -a^2-1, -a^3+a-1}}
+M=matrix {{a^3+a^2, -a^3+a^2+a-1, a^3-a^2+a, -a^2-a}, {a^3-a-1, a^3-a^2-a-1, -a^3-a^2-a, a^3-a^2-1}, {a^2+a-1, a^2+1, -a^3-a^2, a^2+a+1}, {a^3+a^2-a-1, a^3+a^2-1, -a^2-a, a^3-a^2+a}}
+time det M
+M_(0,0)
+m = mutableMatrix M;
+time determinant m  -- WRONG
+rank m -- WRONG
+rank M
+time minv = invert m; -- NOT IMPLEMENTED for GF
+(matrix minv) * M
+
+for i from 0 to 3 list (
+  Mij := submatrix(M, drop(splice{0..3}, {i,i}), {1..3});
+  det1 := det Mij;
+  det2 := det mutableMatrix Mij;
+  det1-det2)
+
+result1 = 0_(ring M)
+result2 = 0_(ring M)
+for i from 0 to 3 list (
+  Mij := submatrix(M, drop(splice{0..3}, {i,i}), {1..3});
+  result1 = result1 + (-1)^i * M_(i,0) * det Mij;
+  result2 = result2 + (-1)^i * M_(i,0) * det mutableMatrix Mij;
+  )
+result1
+result2
+det M
+det mutableMatrix M -- wrong
+
+det M00
+det mutableMatrix M00
+
+M1 = M_{0} | M_{1} | M_{0} + 2*M_{1} | M_{2} | M_{2} | M_{3}
+rowRankProfile mutableMatrix M1 -- NOT IMPLEMENTED for GF
+columnRankProfile mutableMatrix M1 -- NOT IMPLEMENTED for GF
+
+///
+
+TEST /// -- testing char and min poly
+restart
+loadPackage "FastLinearAlgebra"
+R = ZZp 101
+M = random(R^10, R^10)
+Rt = R[t]
+characteristicPolynomial(M, Rt)
+M2 = M ++ M
+cp = characteristicPolynomial(M2, Rt)
+mp = minimalPolynomial(M2, Rt)
+assert(cp == mp^2)
+
+restart
+loadPackage "FastLinearAlgebra"
+R = ZZp 5
+Rt = R[t]
+M = mutableMatrix(R, 5000, 5000);
+fillMatrix M;
+time cp = characteristicPolynomial(M, Rt);
+time mp = minimalPolynomial(M, Rt);
+///
+
+
+/// -- looking into LUdivine
+restart
+loadPackage "FastLinearAlgebra"
+R = ZZp 101
+M = random(R^3, R^5)
+M1 = matrix(R, {{0,1,0,0,0},
+	        {0,1,0,1,1},
+		{0,1,0,1,0}})
+M2 = transpose M1
+M3 = matrix(R, {{0,0,0,0,0},
+	        {0,0,0,0,1},
+		{0,0,1,0,0}})
+M4 = transpose M3
+
+m = mutableMatrix M1      
+m = mutableMatrix M
+
+debug Core
+m = mutableMatrix M1
+m = mutableMatrix matrix{{1,2},{3,4}}
+(P,Q) = rawLQUPFactorization(raw m)
+
+  -- #P == rank of the matrix U (which columns pivots)
+  -- #Q == #rows of m, or is it rank m?  (ignore 0 rows)
+  -- A=3x5, rank 3:  #P=3, #Q=3
+
+loadPackage "FastLinearAlgebra"
+debug Core  
+debug FastLinearAlgebra
+R = ZZp 101
+M = random(R^3, R^3)
+M2 = M ++ M
+m = mutableMatrix M2
+cp = rawLinAlgCharPoly raw m
+mp = rawLinAlgMinPoly raw m
+
+P = R[t]
+det(t*id_(P^3) - M)
+
+P = ZZ/101[t]
+M = matrix {{41, 41, -29}, {-36, 19, 11}, {31, 15, -23}}
+det(M - t*id_(P^3))
+///
+
+TEST ///
+restart
+debug Core
+R = ZZp(23, "ARing"=>true)
+--R2 = ZZp(23, "ARing"=>false)
+R2 = ZZ/23
+raw R
+raw R2
+hasEngineLinearAlgebra R
+hasEngineLinearAlgebra R2
+
+m = mutableMatrix(R, 15, 15)
+fillMatrix m
+
+m2 = mutableMatrix(R2, 15, 15)
+fillMatrix m2
+
+needsPackage "FastLinearAlgebra"
+solveLinear(m,m)
+solveLinear(m2,m2) -- failed.
+
+det m
+det m2 -- isn't working?
+det matrix m2
+
+
+
+time m1 = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
+N = 400
+time m1 = map(ZZ^N, ZZ^N, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2);
+time m = syz m1;
+time LLL(m, Strategy=>fpLLL);
+time LLL(m);
+
+R = GF(2,7)
+ambient R
+S = ZZ/2[x]/(x^7+x+1)
+A = GF(S, PrimitiveElement => x^2)
+B = ZZ/2[y]
+phi = map(B,A,{y})
+phi(x) -- y^128 !! Oh no!!  But mathematically this is OK.
+phi(x^2) 
+phi(x^7)
+phi = map(S,A,{S_0})
+
+steps:
+1. find f (but with Givaro: this also produces a raw ring
+2. find primitive element
+3. construct GF
+
+findGaloisField(p,n)
+  find quotient poly f (using Conway Polynomials)
+  form R = kk[a]/f
+  find primitive element x
+  return x
+
+findGaloisField(p,n,Givaro=>true)
+findGaloisField(kka,n,Givaro=>true)
+  construct R0 = rawARingGF
+  get quotient poly as array
+  make a poly in one variable out of it (either in kka = kk[a], or in ZZ/p[a])
+  form R = kk[a]/f
+  find primitive element x
+  in R, set R#"RawGivaroRing" = R0
+  return x
+
+findGaloisField(kk[a], n, Givaro=>true/false)
+
+
+GF(p,n,Strategy=>"Givaro")
+
+-- checks to make sure size is OK, if not: error.
+-- first construct a raw Givaro field.
+-- then create a poly ring S in one var matching this.
+-- then call GF(S, rawGFRing)
+
+GF(R, Strategy=>"Givaro")
+-- calls Givaro with a given poly already
+GF(R, Strategy=>"New")
+
+
+Overall logic:
+Strategy=>null:  current method
+
+Strategy=>"New": 
+  case 1: GF(p,n):  (small rep) as currently done, EXCEPT: call different rawGaloisField routine.
+  case 2: GF a_R: (small rep) as currently done, EXCEPT: call different rawGaloisField routine.
+
+Strategy=>"Givaro":
+  case 1: GF a_R:
+    if size is too big, error
+    do current GF code, except: use different raw routine.
+
+  case 2: (p,n) or p^n:
+    if size is too big, error
+    make rawARingGF?  (Alternate: ?)
+    find f that they use
+    make ZZ/p[a]/(f) ring
+    have a new version of GF which takes an already constructed raw ring
+     but otherwise does exactly what is done now.
+
+
+possible structure for mutable matrices:
+class DMat<RingType>  -- just like now
+class SMat<RingType>  -- just like now
+class MutableMatrix  (virtual calls to everything) -- just like now
+  class ConcreteMutableMatrix<MatType>
+
+question: how to create a new matrix, given a ring?
+answer#1: have, inside the Ring hierarchy.  This seems to be the cleanest solution
+  virtual MutableMatrix* mutableZeroMatrix(size_t nrows, size_t ncols, bool dense)
+answer#2:
+  MutableMatrix has a virtual call:
+  virtual MutableMatrix * mutableZeroMatrix(size_t nrows, size_t ncols)
+  this could be called via... THIS DOESN'T WORK SO WELL!!
+  MatrixFactory: abstract class
+    ConcreteMatrixFactory<RingType>::mutableZeroMatrix
+
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=FastLinearAlgebra all check-FastLinearAlgebra RemakeAllDocumentation=true RerunExamples=true RemakePackages=true"
+-- End:

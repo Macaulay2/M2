@@ -1,0 +1,78 @@
+-- -*- M2-comint -*- hash: 1032715040
+
+i1 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o1 = B
+
+o1 : NCQuotientRing
+
+i2 : leftMultiplicationMap(x,2)
+
+o2 = | 1 0 0 0 0 0 |
+     | 0 1 0 0 0 0 |
+     | 0 0 1 0 0 0 |
+     | 0 0 0 0 0 0 |
+     | 0 0 0 1 0 0 |
+     | 0 0 0 0 0 0 |
+     | 0 0 0 0 1 0 |
+     | 0 0 0 0 0 0 |
+     | 0 0 0 0 0 1 |
+     | 0 0 0 0 0 0 |
+
+              10        6
+o2 : Matrix QQ   <--- QQ
+
+i3 : kernel oo
+
+o3 = image 0
+
+                               6
+o3 : QQ-module, submodule of QQ
+
+i4 : isRightRegular(x,2)
+
+o4 = true
+
+i5 : C = QQ{x,y}
+
+o5 = C
+
+o5 : NCPolynomialRing
+
+i6 : D = C/ncIdeal{x^2+x*y,y^2}
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o6 = D
+
+o6 : NCQuotientRing
+
+i7 : isRightRegular(x,1)
+
+o7 = false
+
+i8 : leftMultiplicationMap(x,1)
+
+o8 = | 1 -1 |
+     | 0 0  |
+
+              2        2
+o8 : Matrix QQ  <--- QQ
+
+i9 : M=matrix gens kernel oo
+
+o9 = | 1 |
+     | 1 |
+
+              2        1
+o9 : Matrix QQ  <--- QQ
+
+i10 : basis(1,D)*M
+
+o10 = | y+x |
+
+o10 : NCMatrix
+
+i11 : 

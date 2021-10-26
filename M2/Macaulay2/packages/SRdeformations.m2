@@ -4,25 +4,19 @@ newPackage(
     	Version => "0.51", 
     	Date => "July 12, 2010",
     	Authors => {{Name => "Janko Boehm", 
-		  Email => "boehm@math.uni-sb.de", 
+		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}
                   },
-    	Headline => "Deformations of Stanley-Reisner rings and related computations",
+    	Headline => "deformations of Stanley-Reisner rings and related computations",
+	Keywords => {"Combinatorial Commutative Algebra"},
     	DebuggingMode => false,
+     	PackageImports => { "ConvexInterface", "OldPolyhedra" },
         Configuration => {"UseConvex"=>false}
         )
 
 -- For information see documentation key "SRdeformations" below.
 
-
---if ((options SRdeformations).Configuration)#"UseConvex"==true then (
-  needsPackage "ConvexInterface"
---);
-needsPackage "Polyhedra"
-
-
-
-{*
+-*
 Before using "ConvexInterface" via giving the option 
 
 loadPackage("SRdeformations",Configuration=>{"UseConvex"=>true})
@@ -38,10 +32,10 @@ please set up "ConvexInterface" first.
 If you don't have Maple/Convex or haven't set up "ConvexInterface"
 stay with the standard option UseConvex=>false.
 
-Then automatically the package "Polyhedra" is used,
+Then automatically the package "OldPolyhedra" is used,
 but that is several magnitues slower compared to maple/convex.
 
-"Polyhedra" relies on the package "FourierMotzkin".
+"OldPolyhedra" relies on the package "FourierMotzkin".
 
 These packages are only used for computing convex hulls and lattice points thereof.
 Methods of "SRdeformations" relying on this package are so far:
@@ -49,7 +43,7 @@ Methods of "SRdeformations" relying on this package are so far:
 convHull
 globalSections
 
-*}
+*-
 
 
 
@@ -359,10 +353,10 @@ q=q+1);
 {matrix{L},idx});
 --rmg=(relevantMonomials(mg,v))#0
 
-{*
+-*
 rmg=relevantMonomials(mg,v)
 relationsCoefficientsSyzygies(rmg,v)
-*}
+*-
 -------------------------------------------------------------------
 -- find the deformations in the m-graded part of deformation space
 -- relations coming from denominator not dividing the monomial
@@ -637,7 +631,7 @@ fhom)
 
 
 ---------------------------------------------------------------------------
-{*
+-*
 A=matrix {{-1, -1, -1, -1}, {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0},{0,0,0,1}}
 R=QQ[x_0..x_4]
 addCokerGrading(R,A)
@@ -646,7 +640,7 @@ I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0)
 m=vector {-1,-1,0,2,0}
 --m=vector {-1,0,1,0,0}
 f=firstOrderDeformation(I,m)
-*}
+*-
 
 ----------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------
@@ -656,7 +650,7 @@ f=firstOrderDeformation(I,m)
 
 
 
-{*
+-*
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 -- deformations of SR pairs
@@ -677,7 +671,7 @@ extendDeformation(FirstOrderDeformation,PolynomialRing,ZZ):=(f,T,m)->(
 
 
 
-*}
+*-
 
 
 -------------------------------------------------------------------------------------------
@@ -738,11 +732,11 @@ Set == Set := (S1,S2)->(S1===S2)
 -- >> document
 Face == Face :=(F,G)->((set vert F) == (set vert G))
 
-{*
+-*
 F=face {x_0,x_1}
 G=face {x_1,x_0}
 F==G
-*}
+*-
 
 -- >> document
 dim(Face,PolynomialRing):=(F,R)->(
@@ -1005,11 +999,11 @@ if member(symbol complex,keys F)==true and member(symbol indices,keys F)==true t
 
 
 
-{*
+-*
 checkFaces=method()
 checkFaces(List):=(L)->(
 true)
-*}
+*-
 
 
 
@@ -1140,12 +1134,12 @@ ed:=rank source R.grading;
 faceslist:=toList apply(-1..ed,j->{});
 complexFromFacets(R,faceslist))
 
-{*
+-*
 newEmptyComplex(PolynomialRing,PolynomialRing):=(R,Rdual)->(
 ed:=rank source R.grading;
 faceslist:=toList apply(-1..ed,j->{});
 complexFromFacets(R,faceslist,Rdual))
-*}
+*-
 
 -- >> export
 addFaceDataToComplex=method()
@@ -1173,7 +1167,7 @@ C.isEquidimensional =isEquidimensional(facetlist);
 
 
 
-{*
+-*
 R=QQ[x_0..x_4]
 addCokerGrading(R)
 I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0)
@@ -1181,15 +1175,15 @@ C=idealToComplex(I)
 Cl=newEmptyComplex(R)
 addFaceDataToComplex(Cl,faces C)
 Cl==C
-*}
+*-
 
-{*Note:
+-*Note:
 To save memory the goal is to store face of complexes and their 
 subcomplexes only once. If (e.g. by boundaryOfPolytope, idealToCoComplex,...) 
 a complex C1 is computed which is a subcomplex of C and is a face of C1
 then then F.ofComplex returns still C.
 This e.g. allows us to dualize F if C was a polytope
-*}
+*-
 
 --------------------------------------------------
 -- computing the facets of a complex
@@ -1377,12 +1371,12 @@ while tst==false do (
 q=q+1);
 new ScriptedFunctor from {subscript => i-> L#(i+1)})
 
-{*
+-*
 L={vector {1,0,0},vector {-1,0,0},vector {0,1,0},vector {0,-1,0},vector {0,0,1},vector {0,0,-1}}
 P=convHull L
 dP=boundaryOfPolytope(P)
 computeFacesOfCompleteComplex(dP)
-*}
+*-
 
 
 setAppend=method()
@@ -1439,13 +1433,13 @@ toList((set L1)*(set L2)))
 --toList((set L1)+(set L2)))
 
 
-{*intersectLists({x_1,x_2},{x_2,x_3})
+-*intersectLists({x_1,x_2},{x_2,x_3})
 union({x_1,x_2},{x_2,x_3})
 
 intersectFaces(C.fc_2_0,C.fc_2_1)
 intersectFaces({C.fc_2_0,C.fc_2_1,C.fc_2_2})
 
-*}
+*-
 
 ---------------------------------------------------------------------
 -- compute faces of a simplicial complex
@@ -1487,12 +1481,12 @@ while d<#L and tst==false do (
 d=d+1);
 tst)
 
-{*
+-*
 fcC=facets C;
 isSubfaceOfFacets({x_1},fcC)
-*}
+*-
 
-{*
+-*
 C0=simplex R
 C=boundaryOfPolytope C0
 Cf=complexFromFacets(R,facets C)
@@ -1505,19 +1499,19 @@ Cf=complexFromFacets(R,facets C)
 Cf.noBoundary=true
 fc Cf
 dualize Cf
-*}
+*-
 
 ---------------------------------------------------------------
 applyToComplex(Complex,Function):=(C,f)->(
 applyToComplex(fc(C),f))
 
 --------------------------------------------------------------------
-{*
+-*
 compare two complexes:
 note that in many real world examples of high codimension 
 (given through their faces) the Stanley-Reisner ideal is not computeable 
 as it is too big to write down, so we can't use it
-*}
+*-
 -- >> document
 Complex == Complex :=(C1,C2)->(
 if not(C1.simplexRing===C2.simplexRing) then return(false);
@@ -1556,7 +1550,7 @@ tst)
 -- dual faces of a polytope
 
 
-{*
+-*
 -- obsolete
 
 addDualFaces=method()
@@ -1585,9 +1579,9 @@ Rdual:=K[v_0..v_(n-1)];
 Rdual.grading=0;
 addDualFaces(C,Rdual))
 
-*}
+*-
 
-{*
+-*
 R=QQ[x_0..x_10]
 Rdual=QQ[v_0..v_10]
 addCokerGrading(R)
@@ -1597,7 +1591,7 @@ addDualFaces(C,Rdual)
 peek C.fc_2_2
 peek C.fc_-1_0
 peek C.fc_dim(C)_0
-*}
+*-
 
 computeDualVertices=method()
 
@@ -1620,7 +1614,7 @@ q=q+1);
 L)
 
 
-{*
+-*
 -- obsolete
 computeDualVertices(List,List,PolynomialRing):=(F,fcts,Rdual)->(
 v:=(entries vars(Rdual))#0;
@@ -1630,13 +1624,13 @@ while q<#fcts do (
   if isSubset(F,fcts#q)==true then L=append(L,v#q);
 q=q+1);
 L)
-*}
+*-
 
 -----------------------------------------------------------------------
 -- make a simplex with dual faces
 -- >> export
 
-{*
+-*
 -- obsolete
 
 simplexWithDualFaces=method()
@@ -1683,7 +1677,7 @@ facetlist=append(facetlist,{
 addFaceDataToComplex(Cl,faceslist,facetlist);
 Cl)
 
-*}
+*-
 
 
 
@@ -1788,26 +1782,26 @@ Cl)
 
 -- implement dual simplex in facet representation i.e. for computeFaces=>false
 
-{*
+-*
 simplex(R)
 simplex(R,computeFaces=>true)
 simplex(R,computeFaces=>false)
-*}
+*-
 
 
-{*
+-*
 simplex(PolynomialRing):=(R)->(
 n:=rank source vars R;
 A:=raysPPn(n-1);
 simplex(R,A))
-*}
+*-
 
-{*
+-*
 R=QQ[x_0..x_5]
 addCokerGrading(R)
 C0=simplex(R)
 dC0=boundaryOfPolytope(C0)
-*}
+*-
 
 
 --------------------------------------------------------
@@ -1834,24 +1828,24 @@ p1:=X1#0;
 if abs(positionRing(p2)-positionRing(p1))==#X1-1 then return(true);
 false);
 
-{*
+-*
 isContigous({x_2,x_3,x_6,x_4,x_5,x_8,x_7})
 isContigous({x_2,x_3,x_6,x_4,x_5,x_8,x_7})
 isContigous({x_1,x_2,x_5,x_3})
-*}
+*-
 
 
 contigousSubsets=method()
 contigousSubsets(List):=(W)->(
 select(subsets(W),isContigous))
 
-{*
+-*
 contigousSubsets({x_4,x_5})
 contigousSubsets({x_3,x_4})
 contigousSubsets({x_1,x_2,x_3})
 contigousSubsets({x_2,x_3,x_4})
 contigousSubsets({x_1,x_2,x_4})
-*}
+*-
 
 
 maximalElements=method()
@@ -1890,10 +1884,10 @@ L1);
 maximalContigousSubsets=method()
 maximalContigousSubsets(List):=(L)->(
 maximalElements(contigousSubsets(L)))
-{*
+-*
 maximalContigousSubsets({x_1,x_2,x_4})
 maximalContigousSubsets({x_1,x_2,x_4,x_5,x_7,x_8,x_9})
-*}
+*-
 
 
 isEndset=method()
@@ -1902,11 +1896,11 @@ v:=(entries vars ring L#0)#0;
 if isSubset({v#0},L)==true or isSubset({v#(#v-1)},L)==true then return(true);
 false)
 
-{*
+-*
 isEndset({x_1,x_2})
 isEndset({x_1,x_3})
 isEndset({x_2,x_3})
-*}
+*-
 
 
 removeEndsets=method()
@@ -1918,13 +1912,13 @@ for j from 0 to #L-1 do (
 );
 L1);
 
-{*
+-*
 removeEndsets({{x_1,x_2},{x_3,x_4}})
 removeEndsets({{x_1,x_3},{x_7,x_8}})
 
 removeEndsets(maximalContigousSubsets({x_1,x_2,x_4}))
 removeEndsets(maximalContigousSubsets({x_1,x_2,x_4,x_5,x_7,x_8}))
-*}
+*-
 
 oddContigousNonEndsets=method()
 oddContigousNonEndsets(List):=(L)->(
@@ -1936,11 +1930,11 @@ for j from 0 to #L1-1 do (
 );
 L2)
 
-{*
+-*
 maximalContigousSubsets({x_1,x_2,x_4,x_5,x_7,x_8,x_9})
 removeEndsets(oo)
 oddContigousNonEndsets({x_1,x_2,x_4,x_5,x_7,x_8,x_9})
-*}
+*-
 
 isFaceOfCyclicPolytope=method()
 isFaceOfCyclicPolytope(List,ZZ):=(W,d)->(
@@ -1948,11 +1942,11 @@ isFaceOfCyclicPolytope(List,ZZ):=(W,d)->(
  if #oddContigousNonEndsets(W)<=d-#W then return(true);
 false);
 
-{*
+-*
 isFaceOfCyclicPolytope({x_2,x_3},3)
 isFaceOfCyclicPolytope({x_3,x_4},3)
 isFaceOfCyclicPolytope({x_4,x_9},3)
-*}
+*-
 
 
 boundaryCyclicPolytope0=method()
@@ -1984,7 +1978,7 @@ for j from 1 to #M do (
 addFaceDataToComplex(Cl,L);
 Cl);
 
-{*
+-*
 R=QQ[x_0..x_7]
 --addCokerGrading(R)
 --simplex(R)
@@ -1992,7 +1986,7 @@ C=boundaryCyclicPolytope0(4,R)
 peek C.fc_2_0
 dC=dualize C
 dC.grading
-*}
+*-
 
 boundaryCyclicPolytope=method()
 boundaryCyclicPolytope(ZZ,PolynomialRing):=(d,R)->(
@@ -2064,10 +2058,10 @@ Cl);
 
 
 
-{*
+-*
 R=QQ[x_0..x_6]
 C=fullCyclicPolytope(4,R)
-*}
+*-
 
 ----------------------------------------------------
 
@@ -2094,7 +2088,7 @@ F.dualFace=dF;
 dF)
 
 
-{*
+-*
 R=QQ[x_0..x_4]
 addCokerGrading R
 R.grading
@@ -2108,7 +2102,7 @@ dF.ofComplex.simplexRing
 dF.ofComplex.grading
 F==dualize dF
 F===dualize dF
-*}
+*-
 
 findAface=method()
 findAface(Complex):=(C)->(
@@ -2120,13 +2114,13 @@ while q<#fc do (
 q=q+1);
 error("empty complex"))
 
-{*
+-*
      n:=#(C.fc_(dim(C)-1));
      K:=coefficientRing simplexRing C;
      v:=symbol v;
      Rdual:=K[v_0..v_(n-1)];
      Rdual.grading=false;
-*}
+*-
 
 dualize(Complex):=(C)->(
 if member(symbol dualComplex,keys C)==true then (
@@ -2165,7 +2159,7 @@ dC.dualComplex=C;
 C.dualComplex=dC;
 dC)
 
-{*
+-*
 R=QQ[x_0..x_4]
 addCokerGrading R
 C=simplex(R)
@@ -2183,7 +2177,7 @@ dF=dbC.fc_2_0
 peek dF
 dualize C
 peek dF
-*}
+*-
 
 
 ---------------------------------------
@@ -2248,7 +2242,7 @@ if member(symbol fc,keys C)==false then (
  new Complex from L
 )
 
-{*
+-*
 R=QQ[x_0..x_4]
 addCokerGrading R
 C=simplex(R)
@@ -2257,7 +2251,7 @@ bC=boundaryOfPolytope(C)
 dbC=dualize(bC)
 
 C=boundaryOfPolytope simplex(R,computeFaces=>false)
-*}
+*-
 
 
 
@@ -2274,7 +2268,7 @@ idealToComplex=method()
 idealToComplex(Ideal):=(I)->(
 idealToComplex monomialIdeal I)
 
-{*
+-*
 idealToComplex(MonomialIdeal):=(I)->(
 n:=-1+rank source vars ring I;
 A:=raysPPn(n);
@@ -2282,7 +2276,7 @@ idealToComplex(I,A))
 
 idealToComplex(Ideal,Matrix):=(I,A)->(
 idealToComplex(monomialIdeal I,A))
-*}
+*-
 --idealToComplex(MonomialIdeal,Matrix):=(I,A)->(
 --if rank target A != rank source vars ring I then error("number of rows does not match the number of variables");
 --if isSquareFree(I)==false then error("Expected squarefree monomial ideal");
@@ -2368,13 +2362,13 @@ addFaceDataToComplex(Cl,L);
 Cl.ideal=I;
 Cl)
 
-{*
+-*
 C0=simplex R
 C=idealToComplex(I,C0)
 dualize C
 C0=simplex(R,computeFaces=>false)
 idealToComplex(I,C0)
-*}
+*-
 
 
 --------------------------------------------------------------
@@ -2746,7 +2740,7 @@ n:=#v;
 if C0.isSimp==false or n!=dim(C0)+1 then error("expected a subcomplex of a simplex");
 face(toList((set v)-(set vert F)),C0))
 
-{*
+-*
 C=dCP(3,QQ[x_0..x_4])
 F=C.fc_1_0
 complement F
@@ -2757,12 +2751,12 @@ dcC.fc_1
 C.fc_1
 coordinates dcC.fc_1_0
 coordinates cC.fc_1_0
-*}
+*-
 
 ---------------------------------------------------------------------------------
 
 
-{*
+-*
 R=QQ[x_0..x_15]
 addCokerGrading(R)
 C0=simplex(R)
@@ -2804,7 +2798,7 @@ cC=idealToCoComplex(I)
 --fc cC
 dualize cC
 
-*}
+*-
 
 
 --------------------------------------------------------------------------------------
@@ -2875,7 +2869,7 @@ closedStar=method()
 closedStar(Face,Complex):=(F,C)->(
 selectFaces(C,j->isClosedStarFace(j,F,C)))
 
-{*
+-*
 R=QQ[x_0..x_4]
 C=boundaryOfPolytope simplex(R)
 F=C.fc_0_0
@@ -2908,7 +2902,7 @@ F=C.fc_2_0
 link(F,C)
 closedStar(F,C)
 
-*}
+*-
 
 ---------------------------------------------------------------------------------------
 
@@ -2940,14 +2934,14 @@ possibleDenominators((entries mingens I)#0,(entries vars ring I)#0))
 possibleDenominators(Ideal,List):=(I,v)->(
 possibleDenominators((entries mingens I)#0,v))
 
-{*
+-*
 R=QQ[x_0..x_4]
 I=ideal(x_0*x_1*x_2,x_3*x_4)
 possibleDenominators(I)
 possibleDenominators(I,{x_0,x_1,x_3})
 C=idealToComplex I
 F=C.fc_0_0
-*}
+*-
 
 
 deformationsFace=method()
@@ -3012,7 +3006,7 @@ L:=select(defs,j->(dim j>0));
 F.deform={C,L};
 L)
 
-{*
+-*
 R=QQ[x_0..x_4]
 I=ideal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0)
 C1=idealToComplex I
@@ -3020,7 +3014,7 @@ F=C1.fc_0_1
 lkF=link(F,C1)
 L=deformationsFace(F,C1)
 
-*}
+*-
 
 applyC(Complex,Function):=(C,f)->(
 apply(fc C,L1->apply(L1,jj->f(jj))))
@@ -3205,14 +3199,14 @@ L);
 
 
 
-{*
+-*
 A=raysPPn(4)
 b=vector {2,3,0,0,0}
 globalSections(A,b,{2,3})
 b=vector {1,1,0,0,0}
 globalSections(A,b,{2,3,4})
 globalSectionsPPn(b,6)
-*}
+*-
 
 selectCoordinates=method()
 selectCoordinates(Vector,List):=(v,var)->(
@@ -3256,7 +3250,7 @@ P:=convexHull vt;
 lP:=latticePoints P;
 apply(lP,j->matrixToVector(A*j)));
 
-{*
+-*
 A=matrix {{1, 0}, {0, 1}, {-1, -1}}
 b=vector {2,0,0}
 globalSections(A,b)
@@ -3265,7 +3259,7 @@ A=matrix {{1, 0}, {0, 1}, {-1, -1},{1,1}}
 b=vector {2,2,0,0}
 globalSections(A,b)
 
-*}
+*-
 
 
 globalSections(Matrix,Vector,List):=(A,v,var)->(
@@ -3285,7 +3279,7 @@ Lv:=apply(L,j->sub(j,ZZ)-v);
 preLv:=apply(Lv,j->preImage(A,j));
 vt:=joinVectors(preLv);
 P:=convexHull vt;
--- this is needed for a bug in Polyhedra
+-- this is needed for a bug in OldPolyhedra
 if dim(P)==0 then (
   lP:={vertices P};
 ) else (
@@ -3293,14 +3287,14 @@ if dim(P)==0 then (
 );
 apply(lP,j->matrixToVector(A*j)));
 
-{*
+-*
 A=matrix {{1, 0}, {0, 1}, {-1, -1}}
 b=vector {1,1,0}
 globalSections(A,b,{0,1,2})
 globalSections(A,b,{1,2})
 globalSections(A,b,{1})
 globalSections(A,b,{2})
-*}
+*-
 
 matrixToVector=method()
 matrixToVector(Matrix):=(M)->(
@@ -3316,20 +3310,20 @@ M:=LM#0;
 for j from 1 to #L-1 do M=M|(LM#j);
 M)
 
-{*
+-*
 v1=vector {1/2,1}
 v2=vector {1,1}
 joinVectors({v1,v2})
-*}
+*-
 
 cutRay=method()
 cutRay(Vector):=(v)->(
 L:=tolist v;
 vector toList apply(0..#L-2,j->L#j/L#(#L-1)))
 
-{*
+-*
 cutRay(vector{1,2,0,-1})
-*}
+*-
 
 vectorToMatrix=method()
 vectorToMatrix(Vector):=(v)->((toList v)#0)
@@ -3339,11 +3333,11 @@ linesEquations(Matrix,Vector):=(A,v)->(
 kA:=gens ker transpose A;
 rh:=-transpose((transpose kA)*vectorToMatrix(v));
 kA||rh)
-{*
+-*
 A=matrix {{1, 0}, {0, 1}, {-1, -1},{1,1}}
 v=vector {2,0,0,0}
 linesEquations(A,v)
-*}
+*-
 
 boundaryEquations=method()
 boundaryEquations(Matrix):=(A)->(
@@ -3352,10 +3346,10 @@ B:=id_(ZZ^n);
 nv:=matrix {toList apply(0..n-1,j->0_ZZ)};
 B||nv)
 
-{*
+-*
 A=matrix {{1, 0}, {0, 1}, {-1, -1}}
 boundaryEquations(A)
-*}
+*-
 
 preImage=method()
 preImage(Matrix,Vector):=(A,b)->(
@@ -3367,12 +3361,12 @@ if kh==0 then return(false);
 v:=-(kh_(n,0))^(-1)*kh^(toList (0..n-1));
 vector (entries transpose v)#0)
 
-{*
+-*
 A=matrix {{1, 0}, {0, 1}, {-1, -1}}
 b=vector {-2,2,0}
 v=preImage(A,b)
 A*v
-*}
+*-
 
 ---------------------------------------------------------------------------------------
 -- cones
@@ -3567,7 +3561,7 @@ numberFace(List,PolynomialRing):=(L,R)->(
 apply(L,j->R_(j-1)))
 --numberFace({1,3},QQ[x_0..x_6])
 
-{*
+-*
 installPackage "SRdeformations"
 --L={vector {1,0,0},vector {0,1,0},vector {0,0,1},vector {-1,-1,-1}}
 --L={vector {1,0,0,0,0},vector {0,1,0,0,0},vector {0,0,1,0,0},vector {0,0,0,1,0},vector {0,0,0,0,1},vector {-1,-1,-1,-1,-1}}
@@ -3575,7 +3569,7 @@ L={vector {1,0,0},vector {-1,0,0},vector {0,1,0},vector {0,-1,0},vector {0,0,1},
 P=convHull(L,file=>"tst2.txt")
 convHull "tst2.txt"
 
-*}
+*-
 
 
 
@@ -3592,7 +3586,7 @@ for j from 0 to -1+rank target B do (
 );
 L)
 
-{*
+-*
 L={vector {1,0},vector {0,1},vector {-1,-1},vector {1,1}}
 --L={vector {1,0},vector {0,1},vector {-1,-1}}
 L={vector {1,0},vector {0,1},vector {-1,0},vector {0,-1}}
@@ -3622,7 +3616,7 @@ Rv=QQ[v_0..v_7]
 Rv.grading=sub(transpose vertices P,ZZ)
 fP=apply(fP,j->matrixToVarlist(j,Rv))
 
-*}
+*-
 
 
 
@@ -3639,14 +3633,14 @@ defslattice:=apply(defsX,j->preImage(A,j));
 convHull(defslattice,opts));
 --PT1(C1)
 
-{*
+-*
 PT1(Complex):=(C)->(
 A:=C.grading;
 defs:=deform C;
 defsX:=apply(defs,j->bigTorusDegree j);
 defslattice:=apply(defsX,j->preImage(A,j));
 convexHull joinVectors defslattice);
-*}
+*-
 
 tropDef=method()
 tropDef(Complex,Complex):=(C,P)->(
@@ -3748,7 +3742,7 @@ j:=(select(0..#var-1,jj->(var#jj==v)))#0;
 varPatt#j)
 --variableToPattern(var#0,var,varPatt)
 
-{*
+-*
 installPackage "SRdeformations"
 R=QQ[x_0..x_3]
 C=idealToComplex ideal(x_0*x_1,x_2*x_3)
@@ -3764,12 +3758,12 @@ B=TdefC.grading
 Bv=apply(entries B,vector)
 var=(entries vars TdefC.simplexRing)#0
 varPatt=apply(Bv,j->latticeToPattern(j,ldefs,patt))
-*}
+*-
 
 --------------------------------------------------------------------
 -- saving and loading complexes to files (todo)
 
-{*
+-*
 saveComplex=method()
 saveComplex(Complex,String):=(C,filename)->(
 F := openOut(filename|".txt");
@@ -3800,9 +3794,8 @@ value get(F))
 loadComplex("testc")
 
 
-F = dumpdata("daten.txt");
 
-*}
+*-
 
 ------------------------------------------------------------
 -- homology of a complex
@@ -3816,7 +3809,7 @@ mHomology Lc)
 
 --------------------------------------------------------------------
 
-{*
+-*
 Copyright (C) [2009] [Janko Boehm]
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
@@ -3824,7 +3817,7 @@ This program is free software; you can redistribute it and/or modify it under th
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>
-*}
+*-
 
 
 beginDocumentation()
@@ -3875,15 +3868,15 @@ doc ///
 
         {\it Jul 13, 2010 (Version 0.52)}
         
-           Some changes to ensure compatibility with the current version of Polyhedra (1.1), in particular
-           the method isSimplicial has been renamed to @TO isSimp@, as Polyhedra is now using the name
+           Some changes to ensure compatibility with the current version of OldPolyhedra (1.1), in particular
+           the method isSimplicial has been renamed to @TO isSimp@, as OldPolyhedra is now using the name
            name isSimplicial.
 
 
         {\it Jan 28, 2010 (Version 0.51)}
         
            Minor changes to ensure compatibility with the previous M2 version 1.2. Note that you will nevertheless
-           need to install a more recent version of Polyhedra which also works with 1.2 (tested with 1.0.6).
+           need to install a more recent version of OldPolyhedra which also works with 1.2 (tested with 1.0.6).
 
 
         {\it Oct 24, 2009 (Version 0.50)}
@@ -3893,11 +3886,11 @@ doc ///
 
         {\it Oct 18, 2009 (Version 0.49)}
 
-           Fixed a problem in @TO convHull@ (correspondence of P.polytopalFacets with the vertices of the dual). This was only a problem when using Polyhedra.m2.
+           Fixed a problem in @TO convHull@ (correspondence of P.polytopalFacets with the vertices of the dual). This was only a problem when using OldPolyhedra.m2.
 
         {\it Oct 6, 2009 (Version 0.48)}
 
-           Resolved a compatiblity issue with the new version of the M2 package {\it Polyhedra}.
+           Resolved a compatibility issue with the new version of the M2 package {\it OldPolyhedra}.
 
 
         {\it Oct 3, 2009 (Version 0.47)}
@@ -3958,13 +3951,13 @@ doc ///
 
       There are two choices of M2 packages to be called for computations with polyhedra:
 
-      @TO Polyhedra@:
+      @TO OldPolyhedra@:
 
       Works without additional configuration, but is not very fast.
 
       It uses the M2 package {\it FourierMotzkin}.
 
-      To use {\it Polyhedra} do
+      To use {\it OldPolyhedra} do
 
       @TO loadPackage@("SRdeformations",Configuration=>\{"UseConvex"=>false\})
 
@@ -3976,7 +3969,7 @@ doc ///
 
       This package has to be installed first, see its documentation for this.
 
-      It calls the Maple package Convex and is faster than Polyhedra, hence the perferable choice.
+      It calls the Maple package Convex and is faster than OldPolyhedra, hence the preferable choice.
       If you want to do non-trivial examples you have to go for it.
 
       To use it type
@@ -4596,12 +4589,12 @@ doc ///
     The coker grading of a @TO FirstOrderDeformation@ or @TO Complex@ or @TO PolynomialRing@.
 ///
 
-{*
+-*
   SeeAlso
     (grading,FirstOrderDeformation)
     (grading,Complex)
     (grading,PolynomialRing)
-*}
+*-
 
 doc ///
   Key
@@ -5082,9 +5075,9 @@ doc ///
         tally apply(T,isTrivial)
 ///
 
-{*
+-*
         Everything should also work for non-reduced monomial ideals, but not tested.
-        *}
+        *-
         
 
 
@@ -5964,7 +5957,7 @@ doc ///
         If R does not have a coker grading then the standard projective space fan rays are added, see @TO addCokerGrading@
         and @TO raysPPn@.
         
-        The Option computeFaces=>false suppresses the computaton of all faces.
+        The Option computeFaces=>false suppresses the computation of all faces.
         
         If Rdual is specified it is used for the vertices of the dual simplex, if not a new polynomial ring is created.
         It is graded by the coordinates of the vertices of the dual simplex.
@@ -6217,7 +6210,7 @@ doc ///
   SeeAlso
      Complex
   Caveat
-     This uses the package Polyhedra.m2 to compute the facets. Too slow compared to Maple/convex.
+     This uses the package OldPolyhedra.m2 to compute the facets. Too slow compared to Maple/convex.
 
      If the package {\it ConvexInterface} is loaded, then this command calls Maple/Convex.
      See the corresponding option explained at @TO SRdeformations@.
@@ -6400,8 +6393,8 @@ doc ///
      globalSections(A,b)
      globalSections(A,b,{1})
   Caveat
-    This uses the package Polyhedra.m2 (if ConvexInterface.m2 is not present) to compute the lattice points of a convex hull.
-    constructHilbertBasis of the package Polyhedra.m2 used by latticePoints overwrites global variable C.
+    This uses the package OldPolyhedra.m2 (if ConvexInterface.m2 is not present) to compute the lattice points of a convex hull.
+    constructHilbertBasis of the package OldPolyhedra.m2 used by latticePoints overwrites global variable C.
     Fixed this in my local version.
      
 ///
@@ -7563,7 +7556,7 @@ doc ///
      A*v
 ///
 
-{*
+-*
 doc ///
   Key
     selectFaces
@@ -7582,7 +7575,7 @@ doc ///
       Compute the subcomplex of faces satisfying a condition.
            
 ///
-*}
+*-
 
 doc ///
   Key
@@ -7684,7 +7677,7 @@ doc ///
     and non-Pfaffians) examples this may lead to an incorrect result. Use with care.
     This will be fixed at some point.
 
-    If using @TO Polyhedra@ to compute convex hulls and its faces instead of 
+    If using @TO OldPolyhedra@ to compute convex hulls and its faces instead of 
     {\it ConvexInterface} you are limited to rather simple examples.
 ///
 
@@ -7725,13 +7718,13 @@ doc ///
     and non-Pfaffians) examples this may lead to an incorrect result. Use with care.
     This will be fixed at some point.
 
-    If using @TO Polyhedra@ to compute convex hulls and its faces instead of 
+    If using @TO OldPolyhedra@ to compute convex hulls and its faces instead of 
     {\it ConvexInterface} you are limited to rather simple examples.
 ///
 
 
 
-{*
+-*
    Text
       
    Example
@@ -7778,7 +7771,7 @@ doc ///
       fvector C
       fvector B
 
-*}
+*-
 
 doc ///
   Key
@@ -7890,14 +7883,14 @@ doc ///
      The cone is represented as a complex on its rays, hence if @TO (dim,Face)@ is applied to a @TO Face@ it
      will return the dimension of the corresponding cone minus one.
       
-     This uses the package Polyhedra.m2 to compute the facets. Too slow compared to Maple/convex.
+     This uses the package OldPolyhedra.m2 to compute the facets. Too slow compared to Maple/convex.
 
      If the package {\it ConvexInterface} is loaded, then this command calls Maple/Convex.
      See the corresponding option explained at @TO SRdeformations@.
 ///
 
 
-{*
+-*
 installPackage("SRdeformations")
 installPackage("SRdeformations",RerunExamples=>true)
-*}
+*-

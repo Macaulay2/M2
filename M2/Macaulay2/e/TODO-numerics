@@ -1,3 +1,34 @@
+Notes: Mike and Anton 15 Aug 2013.
+
+A. Linear Algebra over approx fields:
+
+0. linalg branch needs to compile cleanly without flint,linbox
+1. RR, RRR, CC, CCC support
+  one of each!
+  this entails:
+    RRR, CCC will go away
+    coeffrings: CoefficientRingRRR, CoefficientRingCCC go away
+    writing: aring-RRR, aring-CCC, 
+     and aring-RR, aring-CC.
+2. Figure out how to remove "eval" from these aring types.
+3. DMat support:
+  RR, CC: lapack routines will be used directly
+  RRR, CCC: we need to write these linalg routines
+  show Anton: how the Mat types are organized now.
+4. SMat support?
+5. want ring-RRR, ring-CCC with flexible/adaptive precision
+  need: precision (element)
+        precision (matrix) -- not make much sense?
+
+
+show Anton MutableMatrix structure:
+  MutableMatrix -- abstract class
+   subclass: MutableMat<MatType> should really be: ConcreteMutableMatrix<MatType>
+  MatOps
+  MatArith
+  LinAlg
+----------------------------------
+
 Adding RRR and CCC linear algebra support
 
 1. Make new rings (in ConcreteRing structure)

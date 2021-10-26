@@ -1,7 +1,6 @@
 # URL = ftp://ftp.gnu.org/gnu/libtool
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
-VERSION = 2.2.6a
-TARDIR = $(LIBNAME)-2.2.6
+URL = http://macaulay2.com/Downloads/OtherSourceCode
+VERSION = 2.4.2
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif

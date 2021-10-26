@@ -1,0 +1,49 @@
+-- -*- M2-comint -*- hash: 1870170837
+
+i1 : A = QQ{a,b,c}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : I = ncIdeal {a*b+b*a,a*c+c*a,b*c+c*b}
+
+o2 = Two-sided ideal {ba+ab, ca+ac, cb+bc}
+
+o2 : NCIdeal
+
+i3 : B = A/I
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o3 = B
+
+o3 : NCQuotientRing
+
+i4 : sigma = ncMap(B,B,{b,c,a})
+
+o4 = NCRingMap B <--- B
+
+o4 : NCRingMap
+
+i5 : isWellDefined sigma
+
+o5 = true
+
+i6 : C = oreExtension(B,sigma,w)
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o6 = C
+
+o6 : NCQuotientRing
+
+i7 : isCentral w
+
+o7 = false
+
+i8 : isNormal w
+
+o8 = true
+
+i9 : 

@@ -108,7 +108,7 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool,l
      insert(
 	  Symbol(
 	       word, 
-	       nextHash(), 
+	       word.hash + 9898989, 
 	       position,
 	       dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
 	       dictionary.frameID, 
@@ -116,7 +116,8 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool,l
 	       1,				-- first lookup is now
 	       false,				      -- not protected
 	       false,
-	       thread
+	       thread,
+	       nextHash()
 	       ),
 	  dictionary.symboltable));
 export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
@@ -144,7 +145,6 @@ makeKeyword(w:Word):SymbolClosure := (
      globalFrame.values.(entry.frameindex) = Expr(sc);
      sc);
 export makeProtectedSymbolClosure(s:string):SymbolClosure := makeProtectedSymbolClosure(makeUniqueWord(s,parseWORD));
-makeKeyword(s:string):SymbolClosure := makeKeyword(makeUniqueWord(s,parseWORD));
 -----------------------------------------------------------------------------
 --Counter used for initializing precedence of different things in the parser
 prec := 0;
@@ -153,15 +153,11 @@ bumpPrecedence():void := prec = prec + 2;
 
 -- helper functions for setting up words with various methods for parsing them
 parseWORD.funs                 = parsefuns(defaultunary, defaultbinary);
-unary(s:string)         :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary))));
 unaryword(s:string)     :Word :=           makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary)));
-biunary(s:string)       :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,postfixop))));
 postfix(s:string)       :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr  ,nopr,parsefuns(errorunary,postfixop))));
 unarybinaryleft(s:string)     :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,prec,parsefuns(unaryop   ,binaryop))));
 unarybinaryright(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec-1,prec,parsefuns(unaryop   ,binaryop))));
 binaryleft(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop))));
-binaryleftword(s:string):Word :=           makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop)));
-nleft (s:string)        :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop))));
 nright(s:string)        :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec-1,nopr,parsefuns(errorunary,nbinaryop))));
 nleftword(s:string)     :Word :=           makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop)));
 nunarybinaryleft(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,prec,parsefuns(nnunaryop ,nbinaryop))));
@@ -205,17 +201,17 @@ special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,lprec:int,rprec:
 --     	    "a unary postfix operator"
 
 bumpPrecedence();
-     wordEOF = nleftword("{*end of file*}");
+     wordEOF = nleftword("-*end of file*-");
      makeKeyword(wordEOF);
 bumpPrecedence();
-     wordEOC = nleftword("{*end of cell*}");
+     wordEOC = nleftword("-*end of cell*-");
      makeKeyword(wordEOC);
 bumpPrecedence();
      precRightParen := prec;
 bumpPrecedence();
      export SemicolonW := nright(";");
      export SemicolonS := makeKeyword(SemicolonW);
-     NewlineW = nleftword("{*newline*}");
+     NewlineW = nleftword("-*newline*-");
 bumpPrecedence();
      export CommaW := nunarybinaryleft(","); export commaS := makeKeyword(CommaW);
 bumpPrecedence();
@@ -252,6 +248,8 @@ bumpPrecedence();
      export LongDoubleLeftArrowS := makeKeyword(unarybinaryright("<==")); -- also binary
 bumpPrecedence();
      export orS := makeKeyword(binaryrightword("or"));
+bumpPrecedence();
+     export xorS := makeKeyword(binaryrightword("xor"));
 bumpPrecedence();
      export andS := makeKeyword(binaryrightword("and"));
 bumpPrecedence();
@@ -291,6 +289,7 @@ bumpPrecedence();
 bumpPrecedence();
      precBracket := prec;
      export leftbracket := parens("[","]",precBracket, precRightParen, precRightParen);
+     export leftAngleBar := parens("<|","|>",precBracket, precRightParen, precRightParen);
 bumpPrecedence();
      export BackslashBackslashS := makeKeyword(binaryright("\\\\"));
      export StarS := makeKeyword(unarybinaryleft("*"));	    -- also binary
@@ -308,6 +307,8 @@ bumpPrecedence();
      parseWORD.precedence = prec; parseWORD.binaryStrength = nopr; parseWORD.unaryStrength = nopr;
      export timeS := special("time",unaryop,precSpace,wide);
      export timingS := special("timing",unaryop,precSpace,wide);
+     export elapsedTimeS := special("elapsedTime",unaryop,precSpace,wide);
+     export elapsedTimingS := special("elapsedTiming",unaryop,precSpace,wide);
      export shieldS := special("shield",unaryop,precSpace,wide);
      export throwS := special("throw",nunaryop,precSpace,wide);
      export returnS := special("return",nunaryop,precSpace,wide);
@@ -357,7 +358,9 @@ export LeftArrowE := Expr(LeftArrowS);
 
 export EqualEqualE := Expr(EqualEqualS);
 export LessE := Expr(LessS);
+export LessEqualE := Expr(LessEqualS);
 export GreaterE := Expr(GreaterS);
+export GreaterEqualE := Expr(GreaterEqualS);
 export incomparableE := Expr(incomparableS);
 
 export NewS := makeProtectedSymbolClosure("NewMethod");
@@ -468,7 +471,7 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      LongDoubleRightArrowS, LongLongDoubleRightArrowS,
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS,
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, DotDotLessS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
-     AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS);
+     AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS, xorS);
 export opsWithUnaryMethod := array(SymbolClosure)(
      StarS, MinusS, PlusS, LessLessS, 
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS, 
@@ -663,10 +666,6 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
 	       "left hand side of assignment inappropriate"))
      else makeErrorTree(assn.Operator, 
 	  "left hand side of assignment inappropriate"));
-bindnewdictionary(e:ParseTree,dictionary:Dictionary):ParseTree := (
-     n := newLocalDictionary(dictionary);
-     bind(e,n);
-     ParseTree(StartDictionary(n,e)));
 export bind(e:ParseTree,dictionary:Dictionary):void := (
      when e
      is s:StartDictionary do bind(s.body,dictionary)

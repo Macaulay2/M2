@@ -1,16 +1,17 @@
 --		Copyright 1996-2002 by Daniel R. Grayson
 
+needs "enginering.m2"
+needs "quotring.m2"
+needs "orderedmonoidrings.m2"
+
 GaloisField = new Type of EngineRing
 GaloisField.synonym = "Galois field"
 
-toExternalString GaloisField := k -> toString expression k
-toString GaloisField := k -> (
-     if hasAttribute(k,ReverseDictionary) then toString getAttribute(k,ReverseDictionary)
-     else toExternalString k)
-net GaloisField := k -> (
-     if hasAttribute(k,ReverseDictionary) then toString getAttribute(k,ReverseDictionary)
-     else net expression k)
-describe GaloisField := F -> net expression F
+toExternalString GaloisField := k -> toString describe k
+toString GaloisField := toString @@ expression
+net GaloisField := net @@ expression
+expression GaloisField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else (expression GF) (expression F.order)
+describe GaloisField := F -> Describe (expression GF) (expression F.order)
 
 precision GaloisField := F -> infinity
 
@@ -37,8 +38,6 @@ GF = method (
 	    --   "CompleteGivaro", uses Givaro representation, and also its choice of polynomial
 	  }
      )
-
-expression GaloisField := F -> new FunctionApplication from { GF, F.order }
 
 lastp := 2
 
@@ -137,6 +136,8 @@ findGalois(ZZ,ZZ) := RingElement => opts -> (p,n) -> (
 GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> (
      if not isPrime p then error "expected a prime number as base";
      if n <= 0 then error "expected positive exponent";
+     if n == 1 and member(opts.Strategy, {"Old", "Aring"})
+       then return ZZp(p, Strategy => opts.Strategy);
      x := opts.Variable;
      primelem := findGalois(p,n,opts);
      GF(ring primelem, PrimitiveElement=>primelem, Strategy=>opts.Strategy, SizeLimit=>opts.SizeLimit, Variable=>opts.Variable)
@@ -181,21 +182,37 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 	  var = S.generatorSymbols#0;
 	  );
      d := p^n-1;
-     if d < opts.SizeLimit
-     then (
+     typ := opts.Strategy;
+     if d >= opts.SizeLimit or primitiveElement != S_0 then (
+         typ = "FlintBig";
+         primitiveElement = S_0; -- Possibly NOT the primitive element in this case!!  We don't need it, and we don't want to compute it yet.
+           -- Note: we used to have Galois fields always encoded by powers of the primitive element.  Ring maps would use this
+           -- (in ringmap.m2) to help tell the engine where the primitive element goes.
+           -- But: for FlintBig, this isn't being used.  We should perhaps consider changing the code in ringmap.m2.
+           -- For now, setting primitiveElement will do.
+         )
+     else if typ === null then typ = "Flint";
+     --if d < opts.SizeLimit or opts.Strategy === "FlintBig"
+     --then (
 	  -- three cases: call rawGaloisField, rawARingGaloisField, rawARingGaloisField1
-	  rawF := if opts.Strategy === null then 
-	              rawGaloisField raw primitiveElement
-		  else if opts.Strategy === "Givaro" then
+	  rawF := if typ === "Old" then 
+                       rawGaloisField raw primitiveElement
+		  else if typ === "Givaro" then
 		       rawARingGaloisFieldFromQuotient raw primitiveElement
-		  else if opts.Strategy === "CompleteGivaro" then 
+		  else if typ === "CompleteGivaro" then 
 		       rawARingGaloisFieldFromQuotient raw primitiveElement
-		  else if opts.Strategy === "New" then
-		      rawARingGaloisField1 raw primitiveElement;
+		  else if typ === "New" then
+		      rawARingGaloisField1 raw primitiveElement
+                  else if typ === "FlintBig" then
+                       rawARingGaloisFieldFlintBig raw S_0 -- we do not pass a primitive element in this case
+                  else if typ === "Flint" then
+                       rawARingGaloisFieldFlintZech raw primitiveElement
+                  else error(///unknown type of Galois Field requested:///|opts.Strategy|///Possible values include "Flint", "FlintBig", "Givaro", "Old", "New"///);
 	  F := new GaloisField from rawF;
      	  F.degreeLength = 0;
 	  F.rawGaloisField = true;
-	  )
+	--  )
+-*      
      else (
 	  -- S' := S;
 	  T := toField(S);
@@ -203,6 +220,7 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      	  F.toField = true;
 	  F.rawGaloisField = false;
 	  );
+*-
      F.degreeLength = 0;
      F.PrimitiveElement = primitiveElement;		    -- notice the primitive element is not in F
      F.isBasic = true;
@@ -232,7 +250,7 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 	  );
      F.use = F -> var <- F_0;
      F.use F;
-     F / F := (x,y) -> x // y;
+     F / F := (x,y) -> if y == 0 then error "division by zero" else x // y;
      F % F := (x,y) -> if y == 0 then x else 0_F;
      -- if S' =!= null then (
      -- 	  -- what really want is to modify newRing so when it's called above,

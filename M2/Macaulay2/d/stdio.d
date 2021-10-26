@@ -47,7 +47,7 @@ export newFile(
 	outbuffer:string,	-- buffer
 	                        -- outbuffer . 0 is the first char in the buffer
 	outindex:int,	        -- outbuffer.(outindex-1) is the last char
-	outbol:int,	        -- outbuffer.outbol = first char of the current line
+	outbol:int,	        -- outbuffer.outbol is the index of the first char of the current line
 	     	       	        -- The text after this point may be combined with
 				-- subsequently printed nets.
         hadNet:bool,		-- whether a Net is present, in which case the
@@ -58,7 +58,7 @@ export newFile(
         readline:bool,          -- input handled by readline()
 	fileThreadState:int     -- state of thread handling 
 ):file := ( 
-foss := newFileOutputSyncState(outbuffer,outindex,outbol,hadNet,nets,bytesWritten,lastCharOut);
+foss := newFileOutputSyncState(outbuffer,outindex,outbol,hadNet,nets,bytesWritten,lastCharOut,false);
 --foss:= newDefaultFileOutputSyncState();
 m2f := newm2cfile(foss);
 Ccode(void,"M2File_SetThreadMode(",lvalue(m2f),",",fileThreadState,")");
@@ -155,6 +155,13 @@ init():void := (
 	       stdIO.outisatty = false;
 	       )
 	  else
+	  if arg === "--webapp" then (
+	       stdIO.echo = true; -- so echo comes from M2 (need to disable it at level of tty with stty -echo)
+	       stdIO.readline = false; -- don't go thru readline
+	       stdIO.inisatty = true; -- otherwise hangs after first syntax error
+	       stdIO.outisatty = true; -- not so important?
+	  )
+	  else
 	  if arg === "--read-only-files" then (
 	       readonlyfiles = true;
 	       )
@@ -247,8 +254,8 @@ openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
      fromChild := array(int)(NOFD,NOFD);
      if output && pipe(toChild) == ERROR || input && pipe(fromChild) == ERROR 
      then (
-	  if  toChild.0 != NOFD then close(  toChild.0);
-	  if  toChild.1 != NOFD then close(  toChild.1);
+	  if  toChild.0 != NOFD then close(toChild.0);
+	  if  toChild.1 != NOFD then close(toChild.1);
 	  return errmsg("can't make pipe : "+syserrmsg());
 	  );
      arglist := tocharstarstar(array(string)("/bin/sh","-c",substr(filename,1)));
@@ -361,49 +368,48 @@ export openListener(filename:string):(file or errmsg) := (
      then opensocket(filename,false,false,true)
      else (file or errmsg)(errmsg("openListener: expected file name starting with '$'")));
 export flushinput(o:file):void := (
+     o.echoindex = o.echoindex - o.insize;
+     if o.echoindex < 0 then o.echoindex = 0;
      o.inindex = 0;
      o.insize = 0;
      o.bol = true;
      );
 
 simpleflush(o:file):int := (				    -- write the entire buffer to file or enlarge the buffer
+     if o.outfd == NOFD then return ERROR;
      startFileOutput(o);
-     foss :=  getFileFOSS(o);
-     foss.outbol = 0;
-     if foss.outindex == 0 then ( releaseFileFOSS(o); endFileOutput(o); return 0; );
-     if o.outfd != -1 then (
+     foss := getFileFOSS(o);
+     if foss.capturing then (
+     	  if foss.outindex == length(foss.outbuffer)
+     	  then foss.outbuffer = enlarge(length(foss.outbuffer),foss.outbuffer);
+	  )
+     else (
+     	  foss.outbol = 0;
 	  off := 0;
 	  n := 0;
 	  while n >= 0 && off < foss.outindex && !test(interruptedFlag) do (
 	       n = write(o.outfd,foss.outbuffer,foss.outindex-off,off);
 	       if n > 0 then (
-	       	    off = off + n;
-	       	    foss.lastCharOut = int(foss.outbuffer.(off-1));
-     	       	    foss.bytesWritten = foss.bytesWritten + n));
+		    off = off + n;
+		    foss.lastCharOut = int(foss.outbuffer.(off-1));
+		    foss.bytesWritten = foss.bytesWritten + n));
 	  if 0 < off then (
 	       for k from off to foss.outindex-1 do foss.outbuffer.(k-off) = foss.outbuffer.k;
 	       foss.outindex = foss.outindex - off);
 	  if n == -1 then (
 	       fileErrorMessage(o,"writing");
 	       releaseFileFOSS(o);
-               endFileOutput(o);
+	       endFileOutput(o);
 	       return -1);
 	  if test(interruptedFlag) then (
 	       foss.outindex = 0;				    -- erase the output buffer after an interrupt
 	       releaseFileFOSS(o);
-               endFileOutput(o);
-	       return ERROR))
-     else if foss.outindex == length(foss.outbuffer)
-     then foss.outbuffer = enlarge(length(foss.outbuffer),foss.outbuffer);
+	       endFileOutput(o);
+	       return ERROR);
+	  );
      releaseFileFOSS(o);
      endFileOutput(o);
-     0);
-
--- simpleout(o:file,c:char):int := (
---      if o.outindex == length(o.outbuffer) && simpleflush(o) == ERROR then return ERROR;
---      o.outbuffer.(o.outindex) = c;
---      o.outindex = o.outindex + 1;
---      0);
+     NOERROR);
 
 simpleout(o:file,x:string):int := (
      foss := getFileFOSS(o);
@@ -415,6 +421,7 @@ simpleout(o:file,x:string):int := (
 	  if j == n then (
 	       if simpleflush(o) == ERROR then (releaseFileFOSS(o); return ERROR);
 	       j = foss.outindex;
+               n = length(foss.outbuffer);
 	       );
 	  b := m-i;					    -- number of bytes to transfer this time
 	  if b > n-j then b = n-j;
@@ -422,9 +429,10 @@ simpleout(o:file,x:string):int := (
 	  i = i + b;
 	  j = j + b;
 	  foss.outindex = j;
+	  foss.outbol = j;				    -- is this right?
 	  );
      releaseFileFOSS(o);
-     0);
+     NOERROR);
 
 flushnets(o:file):int := (
      foss := getFileFOSS(o);
@@ -441,11 +449,12 @@ flushnets(o:file):int := (
 	       ); 
 	  );
      releaseFileFOSS(o);
-     0);
+     NOERROR);
 
 export flush(o:file):int := (
      foss := getFileFOSS(o);
      if foss.hadNet then if ERROR == flushnets(o) then (releaseFileFOSS(o); return ERROR);
+     foss.outbol = foss.outindex;
      releaseFileFOSS(o);
      simpleflush(o));
 
@@ -533,13 +542,13 @@ export (o:file) << (n:Net) : file := (
      foss := getFileFOSS(o);
      if o.output then (
 	  if !foss.hadNet then (
-	       if foss.outindex != foss.outbol then (
-		    foss.nets = NetList(foss.nets,
-			 toNet(
-			      new string len foss.outindex - foss.outbol do
-			      for i from foss.outbol to foss.outindex - 1 do
-			      provide foss.outbuffer.i
-			      ));
+	       m := foss.outindex - foss.outbol;
+	       if m < 0 then Ccode(returns,"puts(\"internal error: beginning of line marker not within buffer\"); abort();");
+	       if m > 0 then ( 
+		    -- remove the first part of the line from the buffer and add it, as a net, to the (currently empty) list of nets
+		    s := toNet(new string len m do for i from foss.outbol to foss.outindex - 1 do provide foss.outbuffer.i);
+		    -- Ccode(void,"printf(\"adding a string of length %d starting at %d to the list of nets\\n\",", m, ",", foss.outbol, ");");
+		    foss.nets = NetList(foss.nets,s);
 		    foss.outindex = foss.outbol;
 		    );
      	       foss.hadNet = true;
@@ -554,7 +563,6 @@ export (o:file) << (c:char) : file := (
      foss := getFileFOSS(o);
      if o.output then (
 	  if foss.hadNet then (
-     	       foss.hadNet = true;
      	       foss.nets = NetList(foss.nets,toNet(c));
 	       )
 	  else (
@@ -582,24 +590,20 @@ export (o:file) << (x:string) : file := (
      o );
 
 endlfun(o:file):int := (
-     foss := getFileFOSS(o);
      if o.output then (
+     	  foss := getFileFOSS(o);
 	  if foss.hadNet then if ERROR == flushnets(o) then (releaseFileFOSS(o); return ERROR);
 	  o << newline;
-	  if o.outisatty || o == stdError 
-	  then (
-	       if ERROR == simpleflush(o) then (releaseFileFOSS(o); return ERROR);
-	       )
-	  else (
-	       foss.outbol = foss.outindex;
-	       );
-	  );
-     releaseFileFOSS(o);
-     0);
+	  foss.outbol = foss.outindex;
+     	  releaseFileFOSS(o);
+	  if o.outisatty || o == stdError then simpleflush(o) else NOERROR)
+     else (
+	  stderr << "not an output file" << newline;
+	  ERROR));
 
 maybeprompt(o:file):void := (
      o.bol = false;
-     if o.promptq then stdIO << o.prompt();
+     if o.promptq then stdIO << o.prompt(); -- does this ever really happen?  Experiments show not.  Some logic might be wrong.
      );
 
 octal(c:char):string := (
@@ -696,24 +700,21 @@ export filbuf(o:file):int := (
      while true do (
 	  n := length(o.inbuffer) - o.insize;
 	  if o.readline then (
+	       initReadlineVariables();
 	       flush(stdIO);
 	       if test(interruptedFlag) then return ERROR;
 	       startFileInput(o);
 	       r = readline(o.inbuffer,n,o.insize,o.prompt());
 	       endFileInput(o);
-	       if test(interruptedFlag) then (
-		    -- ignore interrupt flags set by our handler during calls to readline
-		    -- because readline uses interrupts for its own purposes
-		    store(interruptedFlag, false);
-		    determineExceptionFlag();
-		    );
 	       )
 	  else (
 	       if o.bol then maybeprompt(o);
 	       flush(stdIO);
 	       if test(interruptedFlag) then return ERROR;
-	       r = read(o.infd,o.inbuffer,n,o.insize);
-	       );
+	       r = (
+		    if o.infd == NOFD 
+		    then 0 -- take care of "string files" made by stringTokenFile in interp.d
+		    else read(o.infd,o.inbuffer,n,o.insize)));
 	  if r == ERROR then (
 	       fileErrorMessage(o,"read");
 	       return r;
@@ -957,8 +958,7 @@ export get(filename:string):StringOrError := (
 	  when readfile(f.infd)
 	  is null do (
 	       close(f);
-	       StringOrError(errmsg(fileErrorMessage(f,"read")))
-	       )
+	       StringOrError(errmsg(fileErrorMessage(f,"read"))))
 	  is s:string do (
 	       r := close(f);
 	       when r is m:errmsg

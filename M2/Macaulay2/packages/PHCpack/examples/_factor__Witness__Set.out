@@ -1,32 +1,19 @@
--- -*- M2-comint -*- {* hash: 370242144 *}
---loading configuration for package "PHCpack" from file /Users/dan/Library/Application Support/Macaulay2/init-PHCpack.m2
+-- -*- M2-comint -*- hash: 370242144
 
 i1 : R = CC[x,y,z]; f = {(x^2-y)*(x-1), x^3 - z};
 
 i3 : (w,ns) = topWitnessSet(f,1);
-... calling constructEmbedding ...
-calling phc -c < /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44733-0/2PHCbatch > /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44733-0/3PHCsession
-output of phc -c is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44733-0/1PHCoutput
-... calling solveSystem ...
-using temporary files /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44733-0/4PHCinput and /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44733-0/4PHCoutput
-... constructing a witness set ... 
 
 i4 : w
 
-o4 = [dim=1,deg=4]
+o4 = w
 
 o4 : WitnessSet
 
 i5 : L = factorWitnessSet(w)
-preparing input file to /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44733-0/5PHCinput
-preparing batch file to /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44733-0/7PHCbatch
-... calling monodromy breakup ...
-session information of phc -f is in /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44733-0/8PHCsession
-output of phc -f is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44733-0/6PHCoutput
 found 2 irreducible factors 
 
-o5 = A variety of dimension 1 with components in
-     dim 1:  (dim=1,deg=3) (dim=1,deg=1)
+o5 = L
 
 o5 : NumericalVariety
 

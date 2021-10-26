@@ -1,11 +1,15 @@
 --		Copyright 1995 by Daniel R. Grayson
 
+needs "expressions.m2"
+needs "methods.m2"
+
 ScriptedFunctor = new Type of MutableHashTable
 ScriptedFunctor.synonym = "scripted functor"
 globalAssignment ScriptedFunctor
 precedence ScriptedFunctor := x -> 70
 net ScriptedFunctor := lookup(net,Type)
 toString ScriptedFunctor := lookup(toString,Type)
+expression ScriptedFunctor := x -> new Holder from { x }
 methodOptions ScriptedFunctor := H -> null
 
 protect argument

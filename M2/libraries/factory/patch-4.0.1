@@ -1,0 +1,55 @@
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/factory/tmp/factory+m4-4.0.1/factory/cfCharSetsUtil.h factory+m4-4.0.1/factory/cfCharSetsUtil.h
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/factory/tmp/factory+m4-4.0.1/factory/cfCharSetsUtil.h	2014-10-15 14:05:06.000000000 -0500
++++ factory+m4-4.0.1/factory/cfCharSetsUtil.h	2014-10-15 14:21:14.000000000 -0500
+@@ -69,6 +69,8 @@
+ void
+ sortCFListByLevel (CFList& list);
+ 
++/*BEGINPUBLIC*/
++
+ CanonicalForm
+ Prem (const CanonicalForm& F, const CanonicalForm& G);
+ 
+@@ -78,6 +80,8 @@
+ CanonicalForm
+ Prem (const CanonicalForm &f, const CFList &L);
+ 
++/*ENDPUBLIC*/
++
+ CFList uniGcd (const CFList& L);
+ 
+ CFList
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/factory/tmp/factory+m4-4.0.1/factory/configure.ac factory+m4-4.0.1/factory/configure.ac
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/factory/tmp/factory+m4-4.0.1/factory/configure.ac	2014-10-15 14:05:06.000000000 -0500
++++ factory+m4-4.0.1/factory/configure.ac	2014-10-15 14:20:05.000000000 -0500
+@@ -18,7 +18,7 @@
+ AC_CONFIG_AUX_DIR([.])
+ AC_CONFIG_HEADER([_config.h])
+ 
+-AM_INIT_AUTOMAKE([-Wall foreign subdir-objects]) # -Wno-extra-portability -Werror silent-rules
++AM_INIT_AUTOMAKE([1.10 -Wall foreign subdir-objects]) # -Wno-extra-portability -Werror silent-rules
+ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+ 
+@@ -114,7 +114,9 @@
+ if test "x$enable_streamio" = xno || test "x$with_Singular" = xyes;  then
+   AC_DEFINE([NOSTREAMIO],[1])
+ else
++  AC_LANG(C++)
+   AC_CHECK_HEADERS(iostream.h strstream.h fstream.h iostream string fstream)
++  AC_LANG(C)
+   AC_CHECK_HEADERS(ctype.h, , [ AC_MSG_ERROR(standard C header files not found) ])
+ 
+   # since the FTE will compile only with stream IO enabled we will not
+@@ -218,9 +220,9 @@
+ 
+ LB_CHECK_GMP(3.1.1,,AC_MSG_ERROR([Unable to find GMP on your machine: please use --with-gmp=PATH_TO_DIR_CONTAINING_LIB_AND_INCLUDE (see also ./configure --help if you do not understand what we are talking about)]))
+ 
+-LB_CHECK_NTL(5.0,,AC_MSG_WARN([Unable to find NTL (which is strongly recommended) on your machine: please use --with-ntl=PATH_TO_DIR_CONTAINING_LIB_AND_INCLUDE (see also ./configure --help if you do not understand what we are talking about)]))
++LB_CHECK_NTL(5.0,,AC_MSG_ERROR([Unable to find NTL (which is strongly recommended) on your machine: please use --with-ntl=PATH_TO_DIR_CONTAINING_LIB_AND_INCLUDE (see also ./configure --help if you do not understand what we are talking about)]))
+ 
+-LB_CHECK_FLINT(2.3,,AC_MSG_WARN([Unable to find FLINT (which is strongly recommended) on your machine: please use --with-flint=PATH_TO_DIR_CONTAINING_LIB_AND_INCLUDE (see also ./configure --help if you do not understand what we are talking about)]))
++LB_CHECK_FLINT(2.3,,AC_MSG_ERROR([Unable to find FLINT (which is strongly recommended) on your machine: please use --with-flint=PATH_TO_DIR_CONTAINING_LIB_AND_INCLUDE (see also ./configure --help if you do not understand what we are talking about)]))
+ 
+ # arithmetic shift
+ #AC_MSG_CHECKING(whether your compiler does arithmetic shifts)

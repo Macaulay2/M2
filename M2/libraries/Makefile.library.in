@@ -2,11 +2,16 @@
 LIBRARY_MODE = yes
 include ../../include/config.Makefile
 TARFILE_DIR = @abs_top_srcdir@/BUILD/tarfiles
+export LD_LIBRARY_PATH:=$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 # some libraries (gdbm, mpfr, readline, gmp, and gc) use libtool, which 
 # insists on installing its files to a directory whose trailing part is the
 # prefix that was used at compile time, i.e., the only change allowed to the prefix
 # between compile time and install time is to prepend a string
 PREFIX = $(BUILTLIBPATH)
+.NOTPARALLEL:
+ifneq ($(PARALLEL),yes)
+NOTPARALLEL = -j1
+endif
 LIBNAME ?= $(shell basename `pwd`)
 UNTARDIR = build
 OLDUNTARDIR = build-old
@@ -14,13 +19,25 @@ TARDIR ?= $(LIBNAME)-$(VERSION)
 TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
 CHECKTARGET ?= check
 CHECKOPTIONS ?= 
-CHECKCMD ?= time $(MAKE) $(CHECKOPTIONS) $(CHECKTARGET)
+CHECKCMD ?= time $(MAKE) $(NOTPARALLEL) $(CHECKOPTIONS) $(CHECKTARGET)
 LIBRARIESDIR := $(PREFIX)
 BIN_DIR := $(LIBRARIESDIR)/bin
 LICENSE_DIR := $(LIBRARIESDIR)/licenses/$(LIBNAME)
 PRECONFIGURE  ?= :
 
-ifeq (@OS@,MacOS)
+export PKG_CONFIG_PATH := $(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)
+
+# suppress warning messages while compiling libraries, because it's not our code
+CXXFLAGS += -w
+CFLAGS += -w
+
+ifeq ($(OPTIMIZE),no)
+CXXFLAGS += -O0
+CFLAGS += -O0
+FCFLAGS += -O0
+endif
+
+ifeq (@OS@,Darwin)
 ## this option gives space in the binary so 'install_name_tool' can edit it and tell it where to find its dynamic libraries
 ## the editing is done in distributions/dmg/Makefile
 LDFLAGS += -headerpad_max_install_names
@@ -35,13 +52,20 @@ ifneq (@host_alias@,)
 CONFIGOPTIONS += --host=@host_alias@
 endif
 CONFIGOPTIONS += --cache-file=/dev/null
+TOOLNAMES =					\
+	AR=@AR@					\
+	AS=@AS@					\
+	DLLTOOL=@DLLTOOL@			\
+	OBJDUMP=@OBJDUMP@			\
+	STRIP=@STRIP@
 COMPILEFLAGS  =					\
 	CXXFLAGS="$(CXXFLAGS)"			\
 	CFLAGS="$(CFLAGS)"			\
 	FFLAGS="$(FCFLAGS)"			\
 	FCFLAGS="$(FCFLAGS)"			\
 	TARGET_ARCH=$(TARGET_ARCH)
-ALLFLAGS = \
+ALLFLAGS =					\
+	$(TOOLNAMES)				\
 	$(COMPILEFLAGS)				\
 	CPPFLAGS="$(CPPFLAGS)"			\
 	CC="$(CC)"				\
@@ -51,22 +75,26 @@ ALLFLAGS = \
 	LDLIBS="$(LDLIBS)"
 CONFIGENV     = env $(ALLFLAGS)
 CONFIGURESCRIPT ?= configure
-CONFIGURECMD  ?= $(PRECONFIGURE) && $(CONFIGENV) ./$(CONFIGURESCRIPT) --prefix=$(LIBRARIESDIR) $(CONFIGOPTIONS)
+CONFIGURECMD  ?= $(PRECONFIGURE) && ./$(CONFIGURESCRIPT) --prefix=$(LIBRARIESDIR) $(ALLFLAGS) $(CONFIGOPTIONS)
 BUILDTARGET   ?= 
-BUILDCMD      ?= $(MAKE) prefix=$(LIBRARIESDIR) $(BUILDOPTIONS) $(BUILDTARGET)
+BUILDCMD      ?= $(MAKE) $(NOTPARALLEL) prefix=$(LIBRARIESDIR) $(BUILDOPTIONS) $(BUILDTARGET)
 INSTALLTARGET ?= install
-INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
+INSTALLCMD    ?= $(MAKE) $(NOTPARALLEL) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET) && rm -f $(LIBRARIESDIR)/lib/*.la
 STRIPFILES    ?= 
 ifeq ($(STRIPFILES),)
-  STRIPCMD = true
+  STRIPCMD = :
 else
-  STRIPCMD = strip $(STRIPFILES)
+ ifeq (@ENABLE_STRIP@,yes)
+  STRIPCMD = @STRIP@ $(STRIPFILES)
+ else
+  STRIPCMD = :
+ endif
 endif
 BUILDDIR      ?= $(UNTARDIR)/$(TARDIR)
 TAROPTIONS    ?= --gzip
 UNTARCMD      ?= @TAR@ xf $(TARFILE_DIR)/$(TARFILE) $(TAROPTIONS)
 %.E: %.c; $(COMPILE.c) -E $(OUTPUT_OPTION) $<
-export PATH := @abs_top_srcdir@/autoconf/final/bin:$(PATH)
+export PATH := @abs_top_srcdir@/usr-build/bin:$(PATH)
 all:prereq install post-install
 prereq:
 post-install:
@@ -74,22 +102,24 @@ show-flags:; $(CONFIGENV) :
 install: .installed-$(VERSION) config-chk
 unconfigure:; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
 reconfigure: unconfigure configure
-uncompile:; rm -f .compiled-$(VERSION) .installed-$(VERSION)
+uncompile: uncompile-basic uncompile-extra
+uncompile-basic:; rm -f .compiled-$(VERSION) .installed-$(VERSION)
+uncompile-extra:
 recompile: uncompile compile
 uninstall::; rm -f .installed-$(VERSION)
 reinstall: uninstall install
 always:
 diffs: .untarred2-$(VERSION) always
-	D=`pwd`; cd $(UNTARDIR) && diff -ur $$D/tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$$D/$@ || echo diffs: `pwd`/$@
+	D=`pwd`; cd $(UNTARDIR) && diff -ur $(DIFF_OPTIONS) $$D/tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$$D/$@ || echo diffs: `pwd`/$@
 unmark:; rm -f .configured-$(VERSION) .compiled-$(VERSION)
-package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) clean ; fi
+package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) $(NOTPARALLEL) -C $(BUILDDIR) clean ; fi
 PACKAGE-DISTCLEAN-TARGET := distclean
-package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) $(PACKAGE-DISTCLEAN-TARGET) ; fi
+package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) $(NOTPARALLEL) -C $(BUILDDIR) $(PACKAGE-DISTCLEAN-TARGET) ; fi
 fetch: $(TARFILE_DIR)/$(TARFILE)
 patch: .patched-$(VERSION)
 license-dir: $(LICENSE_DIR)
 $(LICENSE_DIR):; $(MKDIR_P) $(LICENSE_DIR)
-compile: .compiled-$(VERSION) config-chk
+compile: config-chk .compiled-$(VERSION) 
 configure: .configured-$(VERSION) config-chk 
 config-chk:
 
@@ -97,35 +127,62 @@ PROGRAMS ?=
 LICENSEFILES ?=
 LIBRARIES ?=
 INCLUDEFILES ?=
+
+CDBUILDDIR = set +x && cd $(BUILDDIR) && echo make: Entering directory \'`pwd`\' && set -x
+
 .installed-$(VERSION)  : .compiled-$(VERSION)
-	( cd $(BUILDDIR) && set -x ; $(INSTALLCMD)  )
+	+ ( $(CDBUILDDIR) && set -x ; $(INSTALLCMD)  )
 ifneq ($(PROGRAMS),)
 	$(MKDIR_P) $(BIN_DIR)
-	cd $(BUILDDIR) && for p in $(PROGRAMS) ; do (set -x ; @INSTALL@ -s $$p $(BIN_DIR)) ; done
+#	Note: /usr/bin/install on Mac OS X is not gnu install, and doesn't know about --strip-program
+#	Stop stripping, anyway, so users can debug.
+	set -e ; $(CDBUILDDIR) && for p in $(PROGRAMS) ; do (set -x ; @INSTALL@ $$p $(BIN_DIR)) ; done
 endif
 ifneq ($(LIBRARIES),)
 	$(MKDIR_P) $(LIBRARIESDIR)/lib
-	cd $(BUILDDIR) && for p in $(LIBRARIES) ; do (set -x ; @INSTALL@ $$p $(LIBRARIESDIR)/lib) ; done
+	set -e ; $(CDBUILDDIR) && for p in $(LIBRARIES) ; do (set -x ; @INSTALL@ $$p $(LIBRARIESDIR)/lib) ; done
 endif
 ifneq ($(INCLUDEFILES),)
 	$(MKDIR_P) $(LIBRARIESDIR)/include
-	cd $(BUILDDIR) && for p in $(INCLUDEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LIBRARIESDIR)/include) ; done
+	set -e ; $(CDBUILDDIR) && for p in $(INCLUDEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LIBRARIESDIR)/include) ; done
 endif
 ifeq ($(LICENSEFILES),)
-	@ echo warning: no license files to be installed
+	@ echo "warning: *** no license files to be installed"
 else
 	$(MKDIR_P) $(LICENSE_DIR)
-	cd $(BUILDDIR) && for p in $(LICENSEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LICENSE_DIR)) ; done
+	set -e ; cd $(UNTARDIR)/$(TARDIR) && for p in $(LICENSEFILES) ; do (set -x ; @INSTALL_DATA@ "$$p" $(LICENSE_DIR)) ; done
 endif
+	for l in $(LIBRARIESDIR)/lib/*.dylib $(LIBRARIESDIR)/lib/*.so $(LIBRARIESDIR)/lib/*.so.* ;	\
+	do if [ -f "$$l" ] ;										\
+	   then echo "copying $$l to @pre_exec_prefix@/@tail_librariesdir@" ;				\
+		$(MKDIR_P) "@pre_exec_prefix@/@tail_librariesdir@" ;					\
+		@INSTALL_DATA@ "$$l" "@pre_exec_prefix@/@tail_librariesdir@" ;				\
+	   fi												\
+	done
 	touch $@
+## Here's why we copy the libraries above.
+# Macaulay2 includes many third party "libraries", such as gdbm, mpir, mpfr, and
+# factory.  Some of these create shared library files (with names such as
+# libgdbm.so.4.0.0), and we are ready to link with them, but then we have to
+# distribute them along with the executable file M2-binary.  On the other hand,
+# if the library makes a static library file, with a name like libgdb.a, then we
+# don't have to distribute that.  So now as the last step after building and
+# installing a library, we copy the shared library files from the "usr-host"
+# directory tree in the build directory to the Macaulay2 part of the "usr-dist"
+# directory tree in the build directory.  In that location, they will be found
+# when running M2 or its third party programs, and they will be
+# distributed along with Macaulay2.
 
 .compiled-$(VERSION)   : .configured-$(VERSION)
-	@ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD) && $(STRIPCMD) ) && touch $@
+	$(WHY)
+	@+ set -x ; ( $(CDBUILDDIR) && $(BUILDCMD) && $(STRIPCMD) ) && touch $@
 .configured-$(VERSION) : .patched-$(VERSION)
-	@ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
+	$(WHY)
+	@ set -x ; ( $(CDBUILDDIR) && $(CONFIGURECMD) ) && touch $@
 
-PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do patch -p0 < $$i ; done
+PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do patch --batch -p0 < $$i ; done
 .patched-$(VERSION) : $(PATCHFILE) $(TARFILE_DIR)/$(TARFILE)
+	$(WHY)
 	if [ -d $(UNTARDIR) -a -d $(OLDUNTARDIR)/$(UNTARDIR) ] ; \
 	    then echo please remove or move $(OLDUNTARDIR)/$(UNTARDIR) out of the way ; \
 	         exit 1 ; \
@@ -135,12 +192,14 @@ PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do patch -p0 < $$i ; done
 	cd $(UNTARDIR) && $(UNTARCMD)
 	$(PATCHCMD)
 	touch $@
-.untarred2-$(VERSION) : $(TARFILE_DIR)/$(TARFILE) ; mkdir tmp ; (cd tmp && $(UNTARCMD)) && touch $@
+.untarred2-$(VERSION) : $(TARFILE_DIR)/$(TARFILE)
+	$(WHY)
+	mkdir tmp ; (cd tmp && $(UNTARCMD)) && touch $@
 ifeq ($(FETCHER),)
-ifneq (@WGET@,)
+ifneq (@WGET@,false)
 FETCHER = @WGET@
 else
-ifneq (@CURL@,)
+ifneq (@CURL@,false)
 FETCHER = @CURL@
 else
 ifeq (@DOWNLOAD@,yes)
@@ -165,7 +224,6 @@ CHECKFETCHED = case "$(URL)" in									\
 	    fi ;;										\
 	esac
 $(TARFILE_DIR)/$(TARFILE) :
-	$(MKDIR_P) $(TARFILE_DIR)
 ifeq (@DOWNLOAD@,yes)
 	(cd $(TARFILE_DIR) && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED))
 else
@@ -177,7 +235,7 @@ else
 	@ false
 endif
 distclean: package-distclean
-clean::; rm -rf .patched* .untarred* $(LIBNAME)* .checked* .compiled* .configured* .installed* .untarred2* diffs tmp $(TARDIR) $(UNTARDIR) $(OLDUNTARDIR)
+clean::; rm -rf .patched* .untarred* $(LIBNAME)* .checked* .compiled* .configured* .installed* .untarred2* diffs tmp $(UNTARDIR) $(OLDUNTARDIR)
 distclean: clean ; rm -rf Makefile
 
 SLIMIT ?= 8192
@@ -197,12 +255,25 @@ endif
 ifeq (@ULIMIT_S@,yes)
 LIMIT += ; ulimit -s $(SLIMIT)
 endif
+ifeq (@ULIMIT_T@,yes)
+LIMIT += ; ulimit -t
+endif
+ifeq (@ULIMIT_M@,yes)
+LIMIT += ; ulimit -m
+endif
+ifeq (@ULIMIT_V@,yes)
+LIMIT += ; ulimit -v
+endif
+ifeq (@ULIMIT_S@,yes)
+LIMIT += ; ulimit -s
+endif
 recheck:
 	rm -f .checked-$(VERSION)
 	$(MAKE) check
 check: .checked-$(VERSION)
 .checked-$(VERSION) : .compiled-$(VERSION)
-	$(LIMIT); cd $(BUILDDIR) && $(CHECKCMD)
+	$(WHY)
+	+ set -x; $(LIMIT); $(CDBUILDDIR) && $(CHECKCMD)
 	touch $@
 
 ls:; ls -la . tarfiles
@@ -222,6 +293,13 @@ help:;
 	@ echo "  check                       check whether library compiled correctly"
 	@ echo "  recheck                     check, even if we've checked before"
 	@ echo ""
+autotool-versions:
+	whereis autoconf
+	autoconf --version | head -1
+	whereis aclocal
+	aclocal --version | head -1
+	whereis automake
+	automake --version | head -1
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries Makefile.library"

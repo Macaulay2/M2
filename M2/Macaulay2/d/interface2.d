@@ -7,9 +7,301 @@ use common;
 use hashtables;
 use util;
 use struct;
-header "#include <engine.h>";
 
+header "#include <engine.h>"; -- required for rawBIBasis, rawGbBoolean, NAG routines
+
+-- rawPointArray
+export rawPointArray(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2)
+     else when s.0 is epsilon:RRcell do 
+          if !isSmallInt(s.1) then WrongArgSmallInteger(2) else
+          toExpr(Ccode(RawPointArrayOrNull,
+		  "rawPointArray(",
+		    toDouble(epsilon), ",",
+		    getSmallInt(s.1),
+		    ")"
+		  ))
+	  else WrongArgRR(1)
+     else WrongNumArgs(2)
+     );
+setupfun("rawPointArray",rawPointArray);
+
+export rawPointArrayLookupOrAppend(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3)
+     else when s.0 is pa:RawPointArrayCell do 
+	  when s.1 is M:RawMutableMatrixCell do 
+	  if !isSmallInt(s.2) then WrongArgSmallInteger(3) else
+	  toExpr(Ccode(int, 
+		       "rawPointArrayLookupOrAppend(",
+		       pa.p, ",",
+ 		       M.p, ",",
+		       getSmallInt(s.2),
+		       ")"
+		       ))
+	  else WrongArg(2, "a raw mutable matrix")
+          else WrongArg(1, "a RawPointArray")
+     else WrongNumArgs(3)
+     );
+setupfun("rawPointArrayLookupOrAppend",rawPointArrayLookupOrAppend);
+
+export rawPointArrayLookup(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3)
+     else when s.0 is pa:RawPointArrayCell do 
+	  when s.1 is M:RawMutableMatrixCell do 
+	  if !isSmallInt(s.2) then WrongArgSmallInteger(3) else
+	  toExpr(Ccode(int, 
+		       "rawPointArrayLookup(",
+		       pa.p, ",",
+ 		       M.p, ",",
+		       getSmallInt(s.2),
+		       ")"
+		       ))
+	  else WrongArg(2, "a raw mutable matrix")
+          else WrongArg(1, "a RawPointArray")
+     else WrongNumArgs(3)
+     );
+setupfun("rawPointArrayLookup",rawPointArrayLookup);
+
+
+--------------------------
 -- straight line programs
+
+export rawSLProgram(e:Expr):Expr := (
+     when e is numConstantsAndInputs:ZZcell do 
+     if !isULong(numConstantsAndInputs.v) then WrongArgSmallInteger() 
+     else toExpr(Ccode(RawSLProgramOrNull, "rawSLProgram(", toULong(numConstantsAndInputs.v), ")"))
+     else WrongArgZZ());
+setupfun("rawSLProgram",rawSLProgram);
+
+export rawSLPInputGate(e:Expr):Expr := (
+     when e is slp:RawSLProgramCell do
+     	  toExpr(Ccode(ZZ,
+		    "rawSLPInputGate(",
+		    slp.p, 
+		    ")"
+		    ))
+     else WrongArg("SLProgram")
+     ); 
+setupfun("rawSLPInputGate",rawSLPInputGate);
+
+export rawSLPSumGate(e:Expr):Expr := (
+     when e is s:Sequence do (
+          if length(s) != 2 then WrongNumArgs(2)
+     	  else when s.0 is slp:RawSLProgramCell do (
+	       if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
+	       toExpr(Ccode(ZZ,
+	       	    "rawSLPSumGate(",
+		    	    slp.p, ",",
+			    getSequenceOfSmallIntegers(s.1),
+			    ")"
+		      ))
+               )
+               else WrongArg("SLProgram")
+	  )
+     else WrongNumArgs(2)
+     );
+setupfun("rawSLPSumGate",rawSLPSumGate);
+
+export rawSLPProductGate(e:Expr):Expr := (
+     when e is s:Sequence do (
+          if length(s) != 2 then WrongNumArgs(2)
+     	  else when s.0 is slp:RawSLProgramCell do (
+	       if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
+	       toExpr(Ccode(ZZ,
+	       	    "rawSLPProductGate(",
+		    	    slp.p, ",",
+			    getSequenceOfSmallIntegers(s.1),
+			    ")"
+		      ))
+               )
+               else WrongArg("SLProgram")
+	  )
+     else WrongNumArgs(2)
+     );
+setupfun("rawSLPProductGate",rawSLPProductGate);
+
+export rawSLPDetGate(e:Expr):Expr := (
+     when e is s:Sequence do (
+          if length(s) != 2 then WrongNumArgs(2)
+     	  else when s.0 is slp:RawSLProgramCell do (
+	       if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
+	       toExpr(Ccode(ZZ,
+	       	    "rawSLPDetGate(",
+		    	    slp.p, ",",
+			    getSequenceOfSmallIntegers(s.1),
+			    ")"
+		      ))
+               )
+               else WrongArg("SLProgram")
+	  )
+     else WrongNumArgs(2)
+     );
+setupfun("rawSLPDetGate",rawSLPDetGate);
+
+export rawSLPDivideGate(e:Expr):Expr := (
+     when e is s:Sequence do (
+          if length(s) != 2 then WrongNumArgs(2)
+     	  else when s.0 is slp:RawSLProgramCell do (
+	       if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
+	       toExpr(Ccode(ZZ,
+	       	    "rawSLPDivideGate(",
+		    	    slp.p, ",",
+			    getSequenceOfSmallIntegers(s.1),
+			    ")"
+		      ))
+               )
+               else WrongArg("SLProgram")
+	  )
+     else WrongNumArgs(2)
+     );
+setupfun("rawSLPDivideGate",rawSLPDivideGate);
+
+export rawSLPsetOutputPositions(e:Expr):Expr := (
+     when e is s:Sequence do (
+          if length(s) != 2 then WrongNumArgs(2)
+     	  else when s.0 is slp:RawSLProgramCell do (
+	       if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
+	       toExpr(Ccode(ZZ,
+	       	    "rawSLPsetOutputPositions(",
+		    	    slp.p, ",",
+			    getSequenceOfSmallIntegers(s.1),
+			    ")"
+		      ))
+               )
+               else WrongArg("SLProgram")
+	  )
+     else WrongNumArgs(2)
+     );
+setupfun("rawSLPsetOutputPositions",rawSLPsetOutputPositions);
+
+-- SLProgram evaluator
+
+export rawSLEvaluator(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 4 then WrongNumArgs(4)
+     else when s.0 is slp:RawSLProgramCell do (
+     	  if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
+     	  if !isSequenceOfSmallIntegers(s.2) then WrongArg(2,"a sequence of small integers") else
+	  when s.3 is M:RawMutableMatrixCell do (
+	       toExpr(Ccode(RawSLEvaluatorOrNull,
+		    	 "rawSLEvaluator(",
+		    	 slp.p, ",",
+			 getSequenceOfSmallIntegers(s.1), ",",
+			 getSequenceOfSmallIntegers(s.2), ",",
+		    	 M.p,
+		    	 ")"
+		    	 )))
+	  else  WrongArg(4, "a raw mutable matrix"))
+     else WrongArg(1,"a raw straight line program")
+     else WrongNumArgs(4)
+     );
+setupfun("rawSLEvaluator",rawSLEvaluator);
+
+export rawSLEvaluatorSpecialize(e:Expr):Expr := (
+     when e is s:Sequence do
+       if length(s) != 2 then WrongNumArgs(2)
+       else when s.0 is H:RawSLEvaluatorCell do 
+	    when s.1 is parameters:RawMutableMatrixCell do 
+	    toExpr(Ccode(RawSLEvaluatorOrNull,
+		    	 "rawSLEvaluatorSpecialize(",
+			 H.p, ",",
+			 parameters.p,
+		    	 ")"
+		    	 ))
+	    else  WrongArg(2, "a raw mutable matrix")
+	    else  WrongArg(1, "a raw homotopy")
+     else WrongNumArgs(2)
+     );
+setupfun("rawSLEvaluatorSpecialize",rawSLEvaluatorSpecialize);
+
+
+export rawSLEvaluatorEvaluate(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3)
+     else when s.0 is sle:RawSLEvaluatorCell do (
+	  when s.1 is inputs:RawMutableMatrixCell do (
+	  when s.2 is outputs:RawMutableMatrixCell do (
+	       possibleEngineError(Ccode(bool, 
+		       "rawSLEvaluatorEvaluate(",
+		       sle.p, ",",
+ 		       inputs.p, ",",
+		       outputs.p,
+		       ")"
+		       )))
+	  else WrongArg(3, "a raw mutable matrix"))
+	  else WrongArg(2, "a raw mutable matrix"))
+     else WrongArg(1,"a raw straight line program")
+     else WrongNumArgs(3)
+     );
+setupfun("rawSLEvaluatorEvaluate",rawSLEvaluatorEvaluate);
+
+-- Homotopy
+
+export rawHomotopy(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3)
+     else when s.0 is Hx:RawSLEvaluatorCell do (
+	  when s.1 is Hxt:RawSLEvaluatorCell do (
+     	  when s.2 is HxH:RawSLEvaluatorCell do (
+	       toExpr(Ccode(RawHomotopyOrNull,
+		    	 "rawHomotopy(",
+			    Hx.p, ",",
+			    Hxt.p, ",",
+			    HxH.p,
+		    	 ")"
+		    	 )))
+	  else  WrongArg(3, "a raw evaluator"))
+	  else  WrongArg(2, "a raw evaluator"))
+	  else  WrongArg(1, "a raw evaluator")
+     else WrongNumArgs(3)
+     );
+setupfun("rawHomotopy",rawHomotopy);
+
+export rawHomotopyTrack(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 10 then WrongNumArgs(10)
+     else when s.0 is H:RawHomotopyCell do 
+	  when s.1 is inputs:RawMutableMatrixCell do 
+	  when s.2 is outputs:RawMutableMatrixCell do
+	  when s.3 is output_extras:RawMutableMatrixCell do 
+	  when s.4 is initDt:RRcell do
+	  when s.5 is minDt:RRcell do
+	  when s.6 is epsilon:RRcell do 
+	  when s.7 is maxCorrSteps:ZZcell do
+	  when s.8 is infinityThreshold:RRcell do 
+	  if isBoolean(s.9) then -- checkPrecision 
+	  possibleEngineError(Ccode(bool, 
+		  "rawHomotopyTrack(",
+		  H.p, ",",
+		  inputs.p, ",",
+		  outputs.p, ",",
+		  output_extras.p, ",",
+		  initDt.v,",",
+		  minDt.v,",",
+		  epsilon.v,",",
+		  toInt(s.7),",",
+		  infinityThreshold.v,",",
+		  toBoolean(s.9),
+		  ")"
+		  ))
+	  else WrongArgBoolean(10)   
+	  else WrongArgRR(9)
+	  else WrongArgZZ(8)
+	  else WrongArgRR(7)
+	  else WrongArgRR(6)
+	  else WrongArgRR(5)
+          else WrongArg(4, "a raw mutable matrix")
+	  else WrongArg(3, "a raw mutable matrix")
+	  else WrongArg(2, "a raw mutable matrix")
+          else WrongArg(1,"a homotopy")
+     else WrongNumArgs(9)
+     );
+setupfun("rawHomotopyTrack",rawHomotopyTrack);
+
+-- old SLPs 
 
 export rawSLP(e:Expr):Expr := (
      when e is s:Sequence do
@@ -42,6 +334,8 @@ export rawEvaluateSLP(e:Expr):Expr := (
      else WrongNumArgs(2)
      );
 setupfun("rawEvaluateSLP",rawEvaluateSLP);
+
+-- old path trackers --------------------------------------------------------
 
 export rawPathTrackerPrecookedSLPs(e:Expr):Expr := (
      when e is s:Sequence do

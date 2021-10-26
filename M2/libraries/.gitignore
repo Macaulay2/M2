@@ -1,0 +1,9 @@
+/final
+/*/.config-checked-*
+/*/.compiled-*
+/*/.configured-*
+/*/.installed-*
+/*/.patched-*
+/*/.checked-*
+/*/build
+/*/build-old

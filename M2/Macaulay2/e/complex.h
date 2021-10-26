@@ -17,26 +17,26 @@
 extern "C" {
 #endif
 
-  void mpfc_init(gmp_CC result, long precision);
-  void mpfc_clear(gmp_CC result);
-  void mpfc_init_set(gmp_CC result, gmp_CC a);
-  void mpfc_set_si(gmp_CC result, long re);
-  void mpfc_set(gmp_CC result, gmp_CC a);
-  int mpfc_is_zero(gmp_CC a);
-  int mpfc_is_equal(gmp_CC a, gmp_CC b);
-  void mpfc_add(gmp_CC result, gmp_CC a, gmp_CC b);
-  void mpfc_neg(gmp_CC result, gmp_CC a);
-  void mpfc_sub(gmp_CC result, gmp_CC a, gmp_CC b);
-  void mpfc_mul(gmp_CC result, gmp_CC a, gmp_CC b);
-  void mpfc_invert(gmp_CC result, gmp_CC v);
+  void mpfc_init(gmp_CCmutable result, long precision);
+  void mpfc_clear(gmp_CCmutable result);
+  void mpfc_init_set(gmp_CCmutable result, gmp_CCmutable a);
+  void mpfc_set_si(gmp_CCmutable result, long re);
+  void mpfc_set(gmp_CCmutable result, gmp_CCmutable a);
+  int mpfc_is_zero(gmp_CCmutable a);
+  int mpfc_is_equal(gmp_CCmutable a, gmp_CCmutable b);
+  void mpfc_add(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b);
+  void mpfc_neg(gmp_CCmutable result, gmp_CCmutable a);
+  void mpfc_sub(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b);
+  void mpfc_mul(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b);
+  void mpfc_invert(gmp_CCmutable result, gmp_CCmutable v);
 
-  void mpfc_sub_mult(gmp_CC result, gmp_CC a, gmp_CC b);
+  void mpfc_sub_mult(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b);
   /* result -= a*b */
 
-  void mpfc_div(gmp_CC result, gmp_CC a, gmp_CC b);
-  void mpfc_abs(gmp_RR result, gmp_CC a);
-  void mpfc_sqrt(gmp_CC result, gmp_CC a);
-  void mpfc_conj(gmp_CC result, gmp_CC a);
+  void mpfc_div(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b);
+  void mpfc_abs(gmp_RRmutable result, gmp_CCmutable a);
+  void mpfc_sqrt(gmp_CCmutable result, gmp_CC a);
+  void mpfc_conj(gmp_CCmutable result, gmp_CCmutable a);
 
 #if defined(__cplusplus)
 }

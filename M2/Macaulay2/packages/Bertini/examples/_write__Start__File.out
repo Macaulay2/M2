@@ -1,0 +1,11 @@
+-- -*- M2-comint -*- hash: 647005171
+
+i1 : coordinatesOfTwoPnts={{1,0},{3,4}}
+
+o1 = {{1, 0}, {3, 4}}
+
+o1 : List
+
+i2 : writeStartFile(storeBM2Files,coordinatesOfTwoPnts);
+
+i3 : 

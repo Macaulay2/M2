@@ -1,5 +1,14 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "expressions.m2"
+needs "integers.m2"
+
+-----------------------------------------------------------------------------
+-- QQ
+-----------------------------------------------------------------------------
+
+QQ.synonym = "rational number"
+QQ.texMath = ///{\mathbb Q}///
 
 QQ.RawRing = rawQQ()
 QQ.isBasic = true
@@ -32,6 +41,7 @@ expression QQ := r -> (
      )
 toString QQ := r -> if denominator r === 1 then simpleToString numerator r else simpleToString r
 net QQ := r -> net expression r
+texMath QQ := r -> texMath expression r
 QQ.InverseMethod = x -> 1/x
 QQ.dim = 0
 QQ.Engine = true

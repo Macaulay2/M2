@@ -6,15 +6,15 @@ newPackage (
 	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
 	  },
+     Keywords => {"Miscellaneous"},
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
+     PackageImports => {"XML"},
      Version => "1.0"
      )
 
-needsPackage "XML"
-
 -- we should remove the dependence of this on the unix "date" command!
 
-export {runBenchmarks}
+export {"runBenchmarks"}
 
 benchmarks = new HashTable from {
      "res39" => "res of a generic 3 by 9 matrix over ZZ/101" => () -> (
@@ -216,7 +216,8 @@ runBenchmarks0 List := x -> (
 	  scan({
 		    ("model name[[:space:]]*: (.*)","\\1"),
 		    ("vendor_id[[:space:]]*: (.*)","\\1"),
-		    ("(cpu MHz)[[:space:]]*: (.*)","\\1 \\2")
+		    ("(cpu MHz)[[:space:]]*: (.*)","\\1 \\2"),
+		    ("(BogoMIPS)[[:space:]]*: (.*)","\\1 \\2")
 		    },
 	       (pattern,repl) -> ( 
 		    t := select(pattern,repl,cpuinfo);
@@ -226,7 +227,7 @@ runBenchmarks0 List := x -> (
 	  );
      if fileExists "/usr/sbin/system_profiler"
      then (
-	  r := get "!/usr/sbin/system_profiler SPHardwareDataType";
+	  r := get "! true | /usr/sbin/system_profiler SPHardwareDataType";
 	  << "-- ";
 	  scan({
 		    "Model Name: (.*)",
@@ -238,6 +239,14 @@ runBenchmarks0 List := x -> (
 	       s -> ( t := select(s,"\\1, ",r); if #t > 0 then << t#0));
 	  << endl;
 	  );
+     runsysctl := sysctl -> (
+	  args := "-n machdep.cpu.brand_string";
+	  if 0 == run (sysctl| " "|args|" 2>/dev/null 1>/dev/null") then get ("!"|sysctl|" "|args));
+     brandString := (
+     	  if fileExists "/usr/sbin/sysctl" then runsysctl "/usr/sbin/sysctl" 
+	  else if fileExists "/sbin/sysctl" then runsysctl "/sbin/sysctl" 
+	  else if fileExists "/proc/sys/machdep/cpu/brand_string" then get "/proc/sys/machdep/cpu/brand_string");
+     if brandString =!= null then << "-- Processor: " << brandString;
      << "-- Macaulay2 " << version#"VERSION";
      << ", compiled with " << version#"compiler";
      << endl;
@@ -278,7 +287,8 @@ Node
  Description
   Text
    The tests available are: @
-   UL apply(sort pairs benchmarks, (n,x) -> LI { toExternalString n, " -- ", x#0})
+   BR{}, 
+   apply(sort pairs benchmarks, (n,x) -> { toExternalString n, " -- ", x#0, BR{}})
    @
   Example
    runBenchmarks "res39"
@@ -349,6 +359,15 @@ Here is another possible benchmark, but it doesn't work for us yet:
   -- resG25: res of the coordinate ring of Grassmannian(2,5): 4.01 seconds
   -- gbB148: gb of Bayesian graph ideal #148: 17.207 seconds
 
+  -- beginning computation Thu Dec 26 14:01:15 PST 2013
+  -- Darwin einsteinium.pololu.internal 13.0.2 Darwin Kernel Version 13.0.2: Sun Sep 29 19:38:57 PDT 2013; root:xnu-2422.75.4~1/RELEASE_X86_64 x86_64
+  -- MacBook Pro, Intel Core i7, Processor Speed: 2.6 GHz, Cores: 4, 
+  -- Processor: Intel(R) Core(TM) i7-4960HQ CPU @ 2.60GHz
+  -- Macaulay2 1.6.0.1, compiled with gcc 4.2.1
+  -- res39: res of a generic 3 by 9 matrix over ZZ/101: .10664 seconds
+  -- resG25: res of the coordinate ring of Grassmannian(2,5): 2.06104 seconds
+  -- gbB148: gb of Bayesian graph ideal #148: 21.5273 seconds
+
 ---- a MacBook Pro (core 2 duo 2.4 GHZ, 4 GB ram):
   --- Mac OS X side:
     -- beginning computation Mon Sep 17 21:52:30 EDT 2007
@@ -371,6 +390,14 @@ Here is another possible benchmark, but it doesn't work for us yet:
     -- res39: res of a generic 3 by 9 matrix over ZZ/101: 0.188012 seconds
     -- resG25: res of the coordinate ring of Grassmannian(2,5): 2.54816 seconds
     -- gbB148: gb of Bayesian graph ideal #148: 19.8732 seconds
+
+-- beginning computation Mon Oct 28 13:29:27 EDT 2013
+-- Linux dublin.math.ias.edu 2.6.32-358.11.1.el6.x86_64 #1 SMP Wed Jun 12 03:01:25 EDT 2013 x86_64 x86_64 x86_64 GNU/Linux
+-- Intel(R) Xeon(R) CPU X5460 @ 3.16GHz  GenuineIntel  cpu MHz 3159.040  
+-- Macaulay2 1.6, compiled with gcc 4.4.7
+-- res39: res of a generic 3 by 9 matrix over ZZ/101: .148295 seconds
+-- resG25: res of the coordinate ring of Grassmannian(2,5): 2.50223 seconds
+-- gbB148: gb of Bayesian graph ideal #148: 19.7324 seconds
 
 -- beginning computation Thu Jan  4 20:25:24 EST 2007
 -- Darwin bayer.math.columbia.edu 8.8.1 Darwin Kernel Version 8.8.1: Mon Sep 25 19:42:00 PDT 2006; root:xnu-792.13.8.obj~1/RELEASE_I386 i386 i386 iMac5,1 Darwin
@@ -657,6 +684,14 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- res39: 2.7 seconds
 -- resG25: 37.77 seconds
 
+-- beginning computation Thu Dec 26 21:48:58 UTC 2013
+-- Linux pi-dan 3.10.24+ #614 PREEMPT Thu Dec 19 20:38:42 GMT 2013 armv6l GNU/Linux
+-- ARMv6-compatible processor rev 7 (v6l)  BogoMIPS 2.00  
+-- Macaulay2 1.6.0.1, compiled with gcc 4.6.3
+-- res39: res of a generic 3 by 9 matrix over ZZ/101: 3.45706 seconds
+-- resG25: res of the coordinate ring of Grassmannian(2,5): 49.9111 seconds
+-- gbB148: gb of Bayesian graph ideal #148: 404.365 seconds
+
 -- Linux geometry 2.3.18 #2 Thu Sep 16 17:50:47 CDT 1999 i586 unknown
 -- 3.46 seconds, Macaulay 2 0.8.55, compiled with gcc 2.95
 
@@ -666,7 +701,7 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- Linux geometry 2.2.0-pre4 #65 Mon Jan 4 20:14:06 CST 1999 i586 unknown
 -- 4.17 seconds, Macaulay 2 version 0.8.50, compiled with gcc 2.8.1
 
------ with SHAREDLIBS, including interpeter but not engine:
+----- with SHAREDLIBS, including interpreter but not engine:
 -- Linux geometry 2.2.0-pre4 #65 Mon Jan 4 20:14:06 CST 1999 i586 unknown
 -- 4.27 seconds, Macaulay 2 version 0.8.50
 
@@ -683,7 +718,7 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- Linux geometry 2.2.2 #77 Wed Feb 24 10:40:05 EST 1999 i586 unknown
 -- 4.38 seconds, Macaulay 2 0.8.53, compiled with gcc 2.91
 
------ with SHAREDLIBS, including engine and interpeter:
+----- with SHAREDLIBS, including engine and interpreter:
 -- Linux geometry 2.2.0-pre4 #65 Mon Jan 4 20:14:06 CST 1999 i586 unknown
 -- 4.81 seconds, Macaulay 2 version 0.8.50
 

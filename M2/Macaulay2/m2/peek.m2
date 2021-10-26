@@ -1,5 +1,9 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "expressions.m2" -- for precedence
+needs "hypertext.m2"
+needs "methods.m2"
+
 peek' = method(TypicalValue => Net)
 
 peek'(ZZ,ZZ) := (depth,n) -> toString n
@@ -80,7 +84,7 @@ seeParsing = args -> (					    -- let's eliminate this in favor of operatorAttri
 	  );
      q := getParsing symbol apply;
      scan(keys set join(values Core.Dictionary, values Core#"private dictionary"), s -> if getParsing s =!= q then t(getParsing s,s));
-     t(getParsing symbol apply, "{*...symbols...*}");
+     t(getParsing symbol apply, "-*...symbols...*-");
      new Table from prepend(
 	  { "parsing\nprecedence", "binary\nbinding\nstrength","unary\nbinding\nstrength", "\noperators" },
  	  sort pairs x / (

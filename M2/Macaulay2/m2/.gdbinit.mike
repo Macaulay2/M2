@@ -2,22 +2,27 @@ echo -- loading .gdbinit\n
 # when debugging, gdb sets a trap in the memory space of ld.so, so its checksum will always change
 # so we send a message to the loaddata routine to ignore that
 set print object
-set environment LOADDATA_IGNORE_CHECKSUMS yes
-
-directory /capybara/tmp/factory-build/2.0.5/factory/
-directory /capybara/tmp/libfac-build/2.0.5/libfac/
-directory /capybara/tmp/libfac-build/2.0.5/libfac/factor/
-directory /capybara/tmp/libfac-build/2.0.5/libfac/charset/
-directory /capybara/tmp/gmp-build/4.1.3/gmp-4.1.3/
-directory /capybara/tmp/gmp-build/4.1.3/gmp-4.1.3/mpn/
-directory /capybara/tmp/gmp-build/4.1.3/gmp-4.1.3/mpz/
-directory /capybara/tmp/gmp-build/4.1.3/gmp-4.1.3/mpq/
-directory /capybara/tmp/gmp-build/4.1.3/gmp-4.1.3/mpf/
-directory /capybara/tmp/gc-build/6.3/gc6.3/
-directory /capybara/tmp/gdbm-build/1.8.3/gdbm-1.8.3/
-directory /capybara/tmp/readline-build/5.0/readline-5.0/
-directory /capybara/tmp/ntl-build/5.3.1/ntl/src/
+set auto-load safe-path /
+source .gdb-directories
 source .gdb-files
+
+b fatalarrayindex
+b fatal
+b ERROR
+b outofmem
+b abort
+b _ntl_abort
+b GC_err_puts
+set args -q --no-randomize --no-time
+handle SIGPWR nostop noprint
+handle SIGXCPU nostop noprint
+set unwindonsignal on
+set env GC_NPROCS 1
+set env GC_MARKERS 1
+
+# fix "During startup program terminated with signal ?, Unknown signal." under Mac OS X:
+set startup-with-shell off
+
 # b random.cpp:24
 # b random.cpp:37
 # b random.cpp:44
@@ -34,7 +39,3 @@ source .gdb-files
 # handle SIGINT pass
 # b rawCharSeries
 # b IrrCharSeries
-b ERROR
-handle SIGPWR nostop noprint
-handle SIGXCPU nostop noprint
-source .gdb-run-it

@@ -1,0 +1,66 @@
+# -*- Makefile -*-
+
+LIBNAME ?= 
+VERSION ?=
+URL ?= ftp://ftp.gnu.org/gnu/$(LIBNAME)
+
+PREFIX = $(shell pwd)
+
+TARDIR ?= $(LIBNAME)-$(VERSION)
+TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
+
+LIBRARIESDIR = $(PREFIX)
+FINALLIBRARIESDIR = $(PREFIX)
+
+export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LOADLIBES FCFLAGS
+
+all install :: .installed-$(LIBNAME)-$(VERSION)
+unconfigure : ; rm -f .configured-$(LIBNAME)-$(VERSION) .compiled-$(LIBNAME)-$(VERSION) .installed-$(LIBNAME)-$(VERSION)
+reconfigure : unconfigure .configured-$(LIBNAME)-$(VERSION)
+uninstall   : ; rm -f .installed-$(LIBNAME)-$(VERSION)
+reinstall   : uninstall .installed-$(LIBNAME)-$(VERSION)
+unmark : ; rm -f .configured-$(LIBNAME)-$(VERSION) .compiled-$(LIBNAME)-$(VERSION)
+package-clean : unmark ; $(MAKE) -C $(BUILDDIR) clean
+package-distclean : unmark ; $(MAKE) -C $(BUILDDIR) distclean
+
+PRECONFIGURE  ?= :
+CONFIGURECMD  ?= $(PRECONFIGURE) && ./configure --prefix=$(FINALLIBRARIESDIR) $(CONFIGOPTIONS)
+BUILDTARGET   ?= 
+BUILDCMD      ?= $(MAKE) $(BUILDOPTIONS) $(BUILDTARGET)
+INSTALLTARGET ?= install
+INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
+
+BUILDDIR      ?= src/$(TARDIR)
+.installed-$(LIBNAME)-$(VERSION)  : .compiled-$(LIBNAME)-$(VERSION)   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)   ) && touch $@
+.compiled-$(LIBNAME)-$(VERSION)   : .configured-$(LIBNAME)-$(VERSION) ; @ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD)     ) && touch $@
+.configured-$(LIBNAME)-$(VERSION) : .patched-$(VERSION)    ; @ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
+
+ifneq ($(PATCHFILE),)
+.patched-$(VERSION) : $(PATCHFILE) .untarred-$(LIBNAME)-$(VERSION) ; patch -p0 <$< && touch $@
+else
+.patched-$(VERSION) : .untarred-$(LIBNAME)-$(VERSION) ; touch $@
+endif
+
+UNTARCMD ?= tar xzf src/$(TARFILE) -C src
+.untarred-$(LIBNAME)-$(VERSION) : src/$(TARFILE); $(UNTARCMD) && touch $@
+src/$(TARFILE):
+	if [ ! -d src ] ; then mkdir src ; fi
+	cd src && (curl $(URL)/$(TARFILE) -o "$(TARFILE)" || wget $(URL)/$(TARFILE))
+clean ::; rm -rf .patched* $(TARDIR) .fetched .untarred* $(LIBNAME)-*.tar.gz .compiled* .configured* .installed* tmp
+distclean :: clean ; rm -rf Makefile
+check ::
+
+help :;
+	@ echo ""
+	@ echo "usage: make [option...] [target...]"
+	@ echo ""
+	@ echo "targets:"
+	@ echo ""
+	@ echo "  all                         build/compile all files [the default target]"
+	@ echo "  reconfigure		      remake configuration files for library"
+	@ echo "  clean			      remove most created files, except Makefiles"
+	@ echo "  distclean		      remove all created files"
+	@ echo "  package-clean		      remove most created files in the package, except Makefiles"
+	@ echo "  package-distclean	      remove all created files in the package"
+	@ echo "  check			      check whether library compiled correctly"
+	@ echo ""

@@ -1,16 +1,23 @@
 # this pseudo-library fetches the precomputed finite field addition tables used by factory and puts them in the right place
 
 # URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
-VERSION=1.0
-TARFILE = factory-gftables.tar.gz
+URL = http://macaulay2.com/Downloads/OtherSourceCode
+VERSION=1.1
+#TARFILE = factory-gftables.tar.gz
+TARFILE = factory.4.0.1-gftables.tar.gz
 TARDIR = gftables
 CONFIGURECMD = :
 BUILDCMD = :
 CHECKTARGET = .
 # same as in m2/factor.m2
-GFTABLEDIR = @pre_packagesdir@/Core/factory
-INSTALLCMD = $(MKDIR_P) $(GFTABLEDIR) && cp -v gf* $(GFTABLEDIR)/.
+GFTABLEDIR = @pre_packagesdir@/Core/factory/gftables
+INSTALLCMD = $(MKDIR_P) $(GFTABLEDIR) && cp * $(GFTABLEDIR)/.
+
+# this stratagem sets LICENSEFILES to the string consisting of a single space, because each += adds one,
+# and that hushes the warning message "warning: *** no license files to be installed".
+# gftables comes with no license files.
+LICENSEFILES =
+LICENSEFILES +=
 
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gftables/Makefile

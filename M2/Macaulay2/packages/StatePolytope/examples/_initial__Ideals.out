@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: -1549979493 *}
+-- -*- M2-comint -*- hash: -1549979493
 
 i1 : R = QQ[a,b];
 
@@ -7,10 +7,9 @@ i2 : I = ideal(a^2+b^2,a*b);
 o2 : Ideal of R
 
 i3 : initialIdeals(I)  
-LP algorithm being used: "cddgmp".
 
-        3        2     2        3
-o3 = {{b , a*b, a }, {b , a*b, a }}
+             2   3     3        2
+o3 = {{a*b, a , b }, {a , a*b, b }}
 
 o3 : List
 

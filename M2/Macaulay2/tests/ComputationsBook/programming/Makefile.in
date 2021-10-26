@@ -1,0 +1,4 @@
+# @configure_input@
+chapter_srcdir = @srcdir@
+include ../Makefile.chapter
+.NOTPARALLEL:

@@ -1,0 +1,25 @@
+-- -*- M2-comint -*- hash: 1710447508
+
+i1 : A = QQ{x,y,z}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : B = skewPolynomialRing(QQ,(-1)_QQ, {a,b,c})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o2 = B
+
+o2 : NCQuotientRing
+
+i3 : C = freeProduct(A,B)
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o3 = C
+
+o3 : NCQuotientRing
+
+i4 : 

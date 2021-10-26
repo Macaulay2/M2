@@ -2,6 +2,7 @@ undocumented {
      (symbol _, ZZ, EngineRing),
      (symbol _, EngineRing, ZZ),
      (symbol _, RR, EngineRing),
+     (symbol _, RRi, EngineRing),
      (symbol _, ZZ, Monoid),
      (symbol _, Monoid, ZZ),
      (symbol _, Symbol, GeneralOrderedMonoid),
@@ -13,7 +14,6 @@ undocumented {
      (symbol _, RingElement, MonoidElement),
      (symbol _, PolynomialRing, List),
      (symbol _, RingElement, RingElement), --coeff of monomials in polynomial -- deprecate or obsolete
-     (symbol _, Holder, Holder),
      (symbol _, Ring, Symbol), -- maybe should be deprecated?
      (symbol _, Ring, IndexedVariable) -- this should be deprecated?
      }
@@ -66,11 +66,11 @@ document {
      PARA{},
      "Remark: any subscripts that are sequences will have their elements spliced into the rest of the list.",
      EXAMPLE "{a,b,c,d,e}_{2..4}",
-     SeeAlso => {"ranges and repetitions", (symbol _, VisibleList, ZZ)}
+     SeeAlso => {"lists and sequences", (symbol _, VisibleList, ZZ)}
      }
 
 document { 
-     Key => (symbol _, Tally, Thing),
+     Key => (symbol _, VirtualTally, Thing),
      Headline => "get a count from a tally",
      Usage => "t_x",
      Inputs => {

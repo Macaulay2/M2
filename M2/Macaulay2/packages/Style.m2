@@ -2,8 +2,11 @@
 newPackage( "Style",
      AuxiliaryFiles => true,
      Headline => "style sheets and images for the documentation",
+     Keywords => {"Documentation"},
      Version => "1.0"
      )
+
+beginDocumentation()
 
 document { Key => "Style",
      Headline => "style sheets and images for the documentation",

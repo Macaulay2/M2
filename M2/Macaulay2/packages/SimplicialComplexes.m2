@@ -22,24 +22,32 @@ newPackage(
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	     },
     	Headline => "simplicial complexes",
-    	DebuggingMode => false
+	Keywords => {"Combinatorial Commutative Algebra"},
+    	DebuggingMode => false,
+    	PackageExports => {"GenericInitialIdeal"}
     	)
 
-export {SimplicialComplex,
-     simplicialComplex,
-     boundary,fVector,isPure,label,
-     faces,facets,link,
-     simplicialChainComplex,
-     buchbergerComplex,
-     lyubeznikComplex,
-     superficialComplex,
-     faceIdeal,
-     Face,
-     vertices,
-     face,
-     useFaceClass,
-     isSubface,
-     isFaceOf}
+export {"SimplicialComplex",
+     "simplicialComplex",
+     "boundary","fVector","isPure","label",
+     "faces","facets","link",
+     "simplicialChainComplex",
+     "buchbergerComplex",
+     "lyubeznikComplex",
+     "superficialComplex",
+     "faceIdeal",
+     "Face",
+     "vertices",
+     "face",
+     "useFaceClass",
+     "isSubface",
+     "isFaceOf",
+     "skeleton",
+     "Flag",
+     "algebraicShifting",
+     "Multigrading",
+     "star",
+     "joinSimplicial"}
 
 complement := local complement
 complement = (m) -> (
@@ -146,7 +154,7 @@ lcmMonomials = (L) -> (
 
 lcmM = (L) -> (
 -- lcmM finds the lcm of a list of monomials; the quickest method Sorin knows
-    m := intersect toSequence (L/(i -> monomialIdeal(i)));
+    m := intersect \\ monomialIdeal \ L;
     m_0)
 
 
@@ -290,19 +298,128 @@ homology(Nothing,SimplicialComplex) :=
 homology(SimplicialComplex) := GradedModule => opts -> Delta -> (
      homology(chainComplex Delta))
 
-fVector = method(TypicalValue => List)
-fVector SimplicialComplex := HashTable => D -> (
-     N := poincare cokernel generators ideal D;
+------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- 20/07/2018 Lorenzo: some changes
+
+-- Fixed fVector to make it work also when the underlying ring is  multigraded.
+-- Added the option Flag to return the finer f-vector for the multigraded case.
+
+fVector = method(TypicalValue => List, Options => {Flag => false})
+fVector SimplicialComplex := opts -> D -> (
+     I := ideal D;
+     if not opts.Flag then (
+         S := newRing(ring D, Degrees => {#(gens ring D):1});
+         maptoS := map(S, ring D);
+         I = maptoS(I);
+     );
+     N := poincare cokernel generators I;
+     if opts.Flag then (
+     if not isBalanced(D) then (
+         stderr << "-- the grading does not correspond to a proper d-coloring." << endl;
+         return new HashTable from {}
+     );
+         R := newRing(ring N, Degrees => apply(gens ring N, g -> apply(gens ring N, f -> if index(f) == index(g) then 1 else 0)));
+         maptoR := map(R, ring N);
+         N = maptoR(N);
+     );
      if N == 0 then (
-	  new HashTable from {-1 => 0}
-     ) else (
-     	  d := dim D + 1;
-     	  t := first gens ring N;
-     	  while 0 == substitute(N, t => 1) do N = N // (1-t);
-     	  h := apply(reverse toList(0..d), i -> coefficient(t^i,N));
-     	  f := j -> sum(0..j+1, i -> binomial(d-i, j+1-i)*h#(d-i));
-     	  new HashTable from prepend(-1=>1, apply(toList(0..d-1), j -> j => f(j)))
-     ))
+         new HashTable from {-1 => 0}
+     )
+     else (
+         d := dim D + 1;
+         apply(gens ring N, t -> while 0 == substitute(N, t => 1) do N = N // (1-t));
+         supp := apply(flatten entries monomials(N), m -> degree m);
+         allsubsets := apply(subsets(#(gens ring N)), s -> apply(toList(0..#(gens ring N)-1), l -> if member(l,s) then 1 else 0));
+         flagh := L -> coefficient((flatten entries monomials part(L, N))#0, part(L, N));
+     flagf := M -> sum(supp, m -> if all(m,M, (i,j) -> j >= i) then flagh(m) else 0);
+     h := j -> sum(supp, s -> if sum(s)==j then flagh(s) else 0);
+     f := j -> sum(0..j+1, i -> binomial(d-i, d-j-1)*h(i));
+     if opts.Flag then (
+         new HashTable from apply(allsubsets, j -> j => flagf(j))
+     )
+     else new HashTable from prepend(-1=>1, apply(toList(0..d-1), j -> j => f(j)))
+     )
+     )
+
+-- Check if the grading on the ring defines a proper (dim(D)+1)-coloring on D. Used by fVector. Not exported.
+
+isBalanced = (D) -> (
+     d := dim D +1;
+     m := true;
+     if not d == #(degree first gens ring D) then (
+         m = false;
+     );
+     apply(flatten entries faces(1,D), f -> if max(degree f) > 1 then m = false);
+     return m;
+     );
+
+-- helper functions for algebraicShifting. Not exported.
+shiftMonomial = (m) -> (
+    variables := flatten entries vars ring m;
+    D := unique degrees ring m;
+    P := apply(D, d -> flatten entries basis(d, ring m));
+    f := (Q, v) -> {position(Q, q -> member(v, q)), position(Q_(position(Q, q -> member(v,q))), b -> b == v)};
+    multisupp := MultiSupp(m);
+    deg := degree(m);
+    auxlist := flatten apply(deg, d -> toList(0..d-1));
+    sm := 1;
+    apply(auxlist, multisupp, (i, j) -> sm = sm * (P_((f(P, j))_0))_((f(P, j))_1+i) );
+    return sm
+    );
+
+MultiSupp = (m) -> (
+    multisupp := {};
+    while m != 1 do (multisupp = append(multisupp, (support(m))_0);
+        m=m//((support(m))_0););
+    return multisupp
+    );
+
+
+shift = (I) -> (
+    shiftgens := apply( I_*, g -> shiftMonomial(g));
+    return ideal shiftgens
+    );
+
+
+-- Compute the algebraic shifting of a simplicial complex and the colored shifting if the ring is multigraded.
+algebraicShifting = method (Options => {Multigrading => false})
+algebraicShifting SimplicialComplex := opts -> S -> (
+    if not opts.Multigrading then (
+    R := newRing(ring S, Degrees => {#(gens ring S):1});
+    f := map(R, ring S);
+    g := map(ring S, R);
+    J := g(shift(gin(f(ideal S), Multigraded => opts.Multigrading)));
+    return simplicialComplex monomialIdeal J
+    )
+    else (
+        sI := monomialIdeal shift(gin(ideal S, Multigraded => opts.Multigrading));
+    return simplicialComplex sI
+    )
+    )
+-- Compute the i-th skeleton of a simplicial complex
+skeleton = method ()
+skeleton (ZZ, SimplicialComplex) :=  (n, S) -> (
+     simplicialComplex(flatten entries faces(n,S))
+     )
+
+-- Compute the star w.r.t. a face
+star = method ()
+star (SimplicialComplex, RingElement) := (S, f) -> (simplicialComplex(monomialIdeal(S):monomialIdeal(f)))
+
+-- The simplicial join of two simplicial complexes defined over different rings
+joinSimplicial = method ()
+joinSimplicial (SimplicialComplex, SimplicialComplex) := (A, B) -> (
+     T := tensor(ring A, ring B);
+     f := map(T, ring A);
+     g := map(T, ring B);
+     return simplicialComplex(monomialIdeal(f(ideal(A))+g(ideal(B))));
+     )
+
+SimplicialComplex * SimplicialComplex := joinSimplicial
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
 
 boundary SimplicialComplex := (D) -> (
      F := first entries facets D;
@@ -329,7 +446,7 @@ isPure SimplicialComplex := Boolean => (D) -> (
 lcmMRed = method()
 lcmMRed (List) := (L) -> (
 -- lcmMRed finds the reduced lcm of a list of monomials
-    m := intersect toSequence (L/(i -> monomialIdeal(i)));
+    m := intersect \\ monomialIdeal \ L;
     m_0//(product support m_0))
 
 faceBuchberger = (m, L) -> (
@@ -351,7 +468,7 @@ buchbergerComplex(List,Ring) := (L,R) -> (
 	      P = P + ideal nonfaces;
 	  d = d+1;
           );
-     simplicialComplex monomialIdeal nonfaces
+     simplicialComplex monomialIdeal matrix(R, {nonfaces})
      )
 
 buchbergerComplex(MonomialIdeal) := (I) -> (
@@ -364,7 +481,7 @@ buchbergerComplex(MonomialIdeal) := (I) -> (
 
 isSuperficial = method()
 isSuperficial List := (L) -> (
--- isSuperficial cheks if a list of monomials is already superficially oredred
+-- isSuperficial checks if a list of monomials is already superficially oredred
 -- that is every monomial in the list does not strictly divide the lcm of the previous ones
      R := ring(L_0);
      all(1..#L-1, i-> (previous:=lcmMonomials(take(L,i)); 
@@ -391,7 +508,7 @@ lyubeznikComplex(List,Ring) := (L,R) -> (
 	      P = P + ideal nonfaces;
 	  d = d+1;
           );
-     simplicialComplex monomialIdeal nonfaces
+     simplicialComplex monomialIdeal matrix(R, {nonfaces})
      )
 
 lyubeznikComplex(MonomialIdeal) := (I) -> (
@@ -428,7 +545,6 @@ superficialComplex(List, Ring) := (L,R) -> (
 
 superficialComplex(MonomialIdeal) := (I) -> (
      superficialComplex(flatten entries gens I, ring I))
-
 
 
 -----------------------------------------------------------------------
@@ -499,16 +615,14 @@ substitute(SimplicialComplex,PolynomialRing):=(C,R)->(
 simplicialComplex((entries sub(C.facets,R)))#0)
 
 
-{*
+-*
 installPackage "SimplicialComplexes"
 R = QQ[a..e]
 D = simplicialComplex monomialIdeal(a*b*c*d*e)
 substitute(D,R)
 F=(faces(1,D,useFaceClass=>true))#0
 isFaceOf(F,D)
-*}
-
--------------------------------------------------------------------------
+*-
 
 
 
@@ -535,6 +649,8 @@ document { Key => SimplicialComplexes,
      PARA{},
      "This package includes the following functions:",
      UL {
+      TO (symbol *, SimplicialComplex, SimplicialComplex),
+      TO algebraicShifting,
 	  TO boundary,
 	  TO buchbergerComplex,
 	  TO (chainComplex,SimplicialComplex),
@@ -547,15 +663,17 @@ document { Key => SimplicialComplexes,
 	  TO (homology,SimplicialComplex),
 	  TO (ideal,SimplicialComplex),
 	  TO isPure,
+	  TO joinSimplicial,
 	  TO label,
 	  TO lyubeznikComplex,
 	  TO (monomialIdeal,SimplicialComplex),
 	  TO (ring,SimplicialComplex),
 	  TO simplicialComplex,
 	  TO simplicialChainComplex,
+	  TO skeleton,
 	  TO superficialComplex
 	  }
---	  (TO "chainComplex", "(D) -- the chain complex of D"),
+--    (TO "chainComplex", "(D) -- the chain complex of D"),
 --	  (TO "boundary", "(r,D) -- the boundary map from r faces to r-1 faces"),
 --	  (TO "dim", "(D) -- the dimension of D"),
 --	  (TO "boundary", "(D) -- the boundary simplicial complex of D"),
@@ -635,7 +753,7 @@ document {
      ", EM "facets", ".  The function ", TO "simplicialComplex", " accepts either
      the ideal of nonfaces or the list of facets as input.",
      PARA{},
-     "In our first example we construct the octahedron by specfying its
+     "In our first example we construct the octahedron by specifying its
      ideal of nonfaces.",
      EXAMPLE {
 	  "R = ZZ[a..f];",
@@ -826,59 +944,7 @@ document {
      }
 
 
-document { 
-     Key => {fVector,(fVector,SimplicialComplex)},
-     Headline => "the f-vector of a simplicial complex",
-     Usage => "f = fVector D",
-     Inputs => {
-	  "D" => SimplicialComplex
-          },
-     Outputs => {
-	  "f" => {"such that ", TT "f#i", 
-	  " is the number of faces in ", TT "D", 
-	  " of dimension ", TT "i", ", 
-	  where ", TT "-1 <= i <= dim D"}
-          },
-     "The pentagonal bipyramid has 7 vertices, 15 edges
-     and 10 triangles.",
-     EXAMPLE {
-	  "R = ZZ[a..g];",
-	  "bipyramid = simplicialComplex monomialIdeal(
-	       a*g, b*d, b*e, c*e, c*f, d*f)",
-	  "f = fVector bipyramid",
-	  "f#0",
-	  "f#1",
-	  "f#2"
-          },
-     "Every simplicial complex other than the void
-     complex has a unique face of dimension -1.",
-     EXAMPLE {
-	  "void = simplicialComplex monomialIdeal 1_R",
-	  "fVector void"
-	  },
-     "For a larger examp;le we consider the polarization
-     of an artinian monomial ideal from section 3.2 in
-     Miller-Sturmfels, Combinatorial Commutative Algebra.",
-     EXAMPLE {
-	  "S = ZZ[x_1..x_4, y_1..y_4, z_1..z_4];",
-	  "I = monomialIdeal(x_1*x_2*x_3*x_4,
-	       y_1*y_2*y_3*y_4,
-	       z_1*z_2*z_3*z_4,
-	       x_1*x_2*x_3*y_1*y_2*z_1,
-	       x_1*y_1*y_2*y_3*z_1*z_2,
-	       x_1*x_2*y_1*z_1*z_2*z_3);",
-          "D = simplicialComplex I;",
-	  "fVector D"
-	  },
-     PARA{},
-     "The f-vector is computed using the Hilbert series
-     of the Stanley-Reisner ideal.  For example, see 
-     Hosten and Smith's
-     chapter Monomial Ideals, in Computations in 
-     Algebraic Geometry with Macaulay2, Springer 2001.",
-     SeeAlso => {SimplicialComplexes,
-	  faces}
-     }
+
 
 document { 
      Key => {isPure,(isPure,SimplicialComplex)},
@@ -1282,7 +1348,382 @@ document {
 	  faces
 	  }
      }
-     
+
+
+-------------------------------------------------------------
+-------------------------------------------------------------
+-- 20/07/2018 Lorenzo: new/modified documentation
+
+document {
+     Key => {skeleton,(skeleton,ZZ,SimplicialComplex)},
+     Headline => "the n-skeleton of the simplicial complex D",
+     Usage => "skeleton(n,D)",
+     Inputs => {
+      "i" => ZZ,
+      "D" => SimplicialComplex
+          },
+     Outputs => {
+      SimplicialComplex => {"the ", TT "n","-skeleton of a simplicial complex,
+       i.e. the subcomplex of all subfaces of dimension at most ", TT "n"},
+          },
+     "The 2-skeleton of the 5-simplex.",
+     EXAMPLE {
+          "R = ZZ[a..f];",
+          "simplex = simplicialComplex{a*b*c*d*e*f}",
+      "skel = skeleton(2,simplex)",
+      "fVector simplex",
+      "fVector skel"
+      },
+     SeeAlso => {SimplicialComplexes, fVector, faces}
+     }
+
+document {
+     Key => {fVector,(fVector,SimplicialComplex),[fVector,Flag]},
+     Headline => "the f-vector of a simplicial complex",
+     Usage => "f = fVector D",
+     Inputs => {
+      "D" => SimplicialComplex,
+      Flag => Boolean => "the flag f-vector if the simplicial complex is properly defined over a multigraded ring."
+          },
+     Outputs => {
+      "f" => {"such that ", TT "f#i",
+      " is the number of faces in ", TT "D",
+      " of dimension ", TT "i", " for ", TT "-1 <= i <= dim D", " or of squarefree degree ", TT "i."}
+          },
+     "The pentagonal bipyramid has 7 vertices, 15 edges
+     and 10 triangles.",
+     EXAMPLE {
+      "R = ZZ[a..g];",
+      "bipyramid = simplicialComplex monomialIdeal(
+      a*g, b*d, b*e, c*e, c*f, d*f)",
+      "f = fVector bipyramid",
+      "f#0",
+      "f#1",
+      "f#2"
+          },
+     "Every simplicial complex other than the void
+     complex has a unique face of dimension -1.",
+     EXAMPLE {
+      "void = simplicialComplex monomialIdeal 1_R",
+      "fVector void"
+      },
+     "For a larger examp;le we consider the polarization
+     of an artinian monomial ideal from section 3.2 in
+     Miller-Sturmfels, Combinatorial Commutative Algebra.",
+     EXAMPLE {
+      "S = ZZ[x_1..x_4, y_1..y_4, z_1..z_4];",
+      "I = monomialIdeal(x_1*x_2*x_3*x_4,
+           y_1*y_2*y_3*y_4,
+           z_1*z_2*z_3*z_4,
+           x_1*x_2*x_3*y_1*y_2*z_1,
+           x_1*y_1*y_2*y_3*z_1*z_2,
+           x_1*x_2*y_1*z_1*z_2*z_3);",
+          "D = simplicialComplex I;",
+      "fVector D"
+      },
+      "The boundary of the 3-dimensional cross-polytope is
+      3-colorable. If we define this simplicial complex over
+      a ", TT "Z^3", "-graded ring we can ask for its flag
+      f-vector.",
+      EXAMPLE {
+      "grading = {{1,0,0},{1,0,0},{0,1,0},{0,1,0},{0,0,1},{0,0,1}};",
+      "S = ZZ[x_1..x_6, Degrees => grading];",
+      "I = monomialIdeal(x_1*x_2,x_3*x_4,x_5*x_6);",
+      "fVector simplicialComplex I",
+      "fVector(simplicialComplex I, Flag => true)"
+      },
+     Caveat => {
+     "The option ", TT "Flag", " checks if the multigrading corresponds to a properly d-coloring of "
+     , TT "D", ", where d is the dimension of ", TT "D", " plus one. If it is not the case the output
+     is an empty HashTable."
+     },
+     PARA{},
+     "The f-vector is computed using the Hilbert series
+     of the Stanley-Reisner ideal.  For example, see
+     Hosten and Smith's
+     chapter Monomial Ideals, in Computations in
+     Algebraic Geometry with Macaulay2, Springer 2001.",
+     SeeAlso => {SimplicialComplexes,
+      faces}
+     }
+
+--These are documented in the above node.
+undocumented { "Flag" }
+
+
+document {
+     Key => {algebraicShifting,(algebraicShifting,SimplicialComplex),[algebraicShifting,Multigrading]},
+     Headline => "the algebraic shifting of a simplicial complex",
+     Usage => "A = algebraicShifting D",
+     Inputs => {
+     "D" => SimplicialComplex,
+     Multigrading => Boolean => "If true it returns the colored algebraic shifting w.r.t. the multigrading of the underlying ring."
+          },
+     Outputs => {
+     "A" => {"The algebraic shifting of the simplicial complex ", TT "D", ". If ", TT "Multigrading => true", " then it returns the so called colored shifted complex."}
+          },
+     "The boundary of the stacked 4-polytope on 6 vertices. Algebraic shifting preserves the f-vector.",
+     EXAMPLE {
+      "R=QQ[x_1..x_6];",
+      "I=monomialIdeal(x_2*x_3*x_4*x_5,x_1*x_6);",
+      "stacked = simplicialComplex(I)",
+      "shifted = algebraicShifting(stacked)",
+      "fVector stacked",
+      "fVector shifted"
+          },
+     "An empty triangle is a shifted complex.",
+     EXAMPLE {
+     "R=QQ[a,b,c];",
+     "triangle = simplicialComplex{a*b,b*c,a*c};",
+     "algebraicShifting(triangle) == triangle "
+     },
+     "The multigraded algebraic shifting does not preserve the Betti numbers.",
+     EXAMPLE {
+      "grading = {{1,0,0},{1,0,0},{1,0,0},{0,1,0},{0,0,1}};",
+      "R=QQ[x_{1,1},x_{1,2},x_{1,3},x_{2,1},x_{3,1}, Degrees=>grading];",
+      "delta = simplicialComplex({x_{1,3}*x_{2,1}*x_{3,1},x_{1,1}*x_{2,1},x_{1,2}*x_{3,1}})",
+      "shifted = algebraicShifting(delta, Multigrading => true)",
+      "prune (homology(delta))_1",
+      "prune (homology(shifted))_1"
+     },
+     "References:",
+     PARA {},
+     "G. Kalai, Algebraic Shifting, Computational Commutative Algebra and Combinatorics, 2001;",
+      PARA {},
+     "S. Murai, Betti numbers of strongly color-stable ideals and squarefree strongly color-stable ideals, Journal of Algebraic Combinatorics."
+     }
+
+--These are documented in the above node.
+undocumented { "Multigrading" }
+
+document {
+     Key => {star,(star,SimplicialComplex,RingElement)},
+     Headline => "star of a face in a simplicial complex",
+     Usage => "star(D,f)",
+     Inputs => {
+      "D" => SimplicialComplex,
+      "f" => RingElement => {"a monomial representing a face of the simplicial complex ", TT "D"}
+          },
+     Outputs => {
+      SimplicialComplex => {"the star of ", TT "f", " in ", TT "D"}
+          },
+     TEX "The star of a face $f$ in $D$ is the simplicial complex whose faces
+     are the subsets $g$ with $f \\cup g$ is a face of $D$.",
+     PARA {},
+     " The bow-tie complex.",
+     EXAMPLE {
+      "R = QQ[x_1..x_5];",
+      "bowtie = simplicialComplex {x_1*x_2*x_3,x_3*x_4*x_5}",
+      "star(bowtie,x_3)",
+      "star(bowtie,x_1*x_2)"
+      },
+     PARA {},
+     " The 3-simplex and a copy of its boundary glued along a triangle.",
+     EXAMPLE {
+      "R = QQ[a..e];",
+      "D = simplicialComplex {a*b*c*d, b*c*e, b*d*e, c*d*e}",
+      "star(D,b*c*d)",
+      "star(D,b)"
+      },
+     SeeAlso => {SimplicialComplexes, link
+      }
+     }
+
+document {
+     Key => {joinSimplicial,(joinSimplicial,SimplicialComplex,SimplicialComplex)},
+     Headline => "the join of two simplicial complexes",
+     Usage => "joinSimplicial(D,E)",
+     Inputs => {
+      "D" => SimplicialComplex,
+      "E" => SimplicialComplex
+          },
+     Outputs => {
+      SimplicialComplex => {"the join of ", TT "D", " and ", TT "E"}
+          },
+     TEX "The join of two simplicial complexes $D$ and $E$ is the simplicial complex whose faces
+     are the union of faces of $D$ and $E$. If $D$ is the simplicial complex consisting of a
+     single vertex then the join is the cone over $E$. If $D$ consists of two isolated vertices
+     then the join is the suspension of $E$.",
+     PARA {},
+     " The cone over a bow-tie complex.",
+     EXAMPLE {
+      "R = QQ[x_1..x_5];",
+      "bowtie = simplicialComplex {x_1*x_2*x_3, x_3*x_4*x_5};",
+      "S = QQ[v];",
+      "singleton = simplicialComplex {v};",
+      "singleton * bowtie"
+      },
+     PARA {},
+     " The octahedron is the suspension of a square.",
+     EXAMPLE {
+      "R = QQ[a..d];",
+      "square = simplicialComplex {a*b, b*c, c*d, a*d};",
+      "S = QQ[p,q];",
+      "poles = simplicialComplex {p, q};",
+      "octahedron = joinSimplicial(poles,square)"
+      },
+      PARA {},
+      " The join of an exagon and a pentagon.",
+      EXAMPLE {
+      "R = ZZ[x_1..x_6];",
+      "exagon = simplicialComplex {x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_5,x_5*x_6,x_1*x_6};",
+      "S = ZZ[y_1..y_5];",
+      "pentagon = simplicialComplex {y_1*y_2,y_2*y_3,y_3*y_4,y_4*y_5,y_1*y_5};",
+      "sphere = joinSimplicial(exagon,pentagon)",
+      "fVector(sphere)"
+      },
+      Caveat => {
+      "The two simplicial complexes have to be defined over different polynomial rings."
+      },
+      SeeAlso => {SimplicialComplexes, (symbol *,SimplicialComplex,SimplicialComplex)
+      }
+     }
+
+document {
+     Key => (symbol *,SimplicialComplex,SimplicialComplex),
+     Headline => "the join of two simplicial complexes",
+     Usage => "  J = D * E",
+     Inputs => {
+      "D" => SimplicialComplex,
+      "E" => SimplicialComplex
+      },
+     Outputs => {
+      "J" => SimplicialComplex
+      },
+
+     PARA{}, "Computes join of ",TT "D"," and ",TT "E",".",
+
+     PARA{}, "See also ",TO joinSimplicial,".",
+
+     }
+
+------------------------------------------------------------------------
+
+-- 20/07/2018 Lorenzo: new tests
+
+----------------------------------------------
+-- Boundary of the 4-Cross-Polytope
+----------------------------------------------
+
+TEST ///
+S = QQ[x_{1,1}..x_{2,4}, Degrees => {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1},{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}}]
+I = monomialIdeal(x_{1,1}*x_{2,1},x_{1,2}*x_{2,2},x_{1,3}*x_{2,3},x_{1,4}*x_{2,4})
+D = simplicialComplex(I)
+assert( (fVector(D))#2 == 32)
+assert( (fVector(D, Flag => true))#{1,1,0,0} == 4)
+///
+
+------------------------------------------------
+-- Test
+------------------------------------------------
+TEST ///
+R1 = QQ[x,y,z]
+S1 = simplicialComplex {x*y*z}
+R2 = QQ[a,b]
+S2 = simplicialComplex {a,b}
+J = S1 * S2
+T = ring J
+assert((fVector(S1 * S2))#1 == (fVector(S1))#1 + (fVector(S1))#0*(fVector(S2))#0)
+assert(star(J, x*y*z) == J)
+assert(#(flatten entries facets(star(J, a))) == 1)
+///
+--------------------------------------------------
+-- Real Projective plane
+-------------------------------------------------
+TEST ///
+R = ZZ[a..f]
+RP2 = simplicialComplex monomialIdeal(a*b*c,a*b*f,a*c*e,a*d*e,a*d*f,b*c*d,b*d*e,b*e*f,c*d*f,c*e*f)
+skel = skeleton(1, RP2)
+-- removing facets creates holes captured by HH_1
+assert(rank HH_1 skel == (fVector(RP2))#2)
+assert(dim skel == 1)
+S = ZZ[v]
+v = simplicialComplex {v}
+-- the cone is contractible
+conewrtv = joinSimplicial(v, RP2)
+assert(prune HH_1 conewrtv == 0)
+///
+
+---------------------------------------------------------------------------
+-- Example from Betti numbers of strongly color-stable ideals and
+-- squarefree strongly color-stable ideals
+-- Satoshi Murai
+-----------------------------------------------------------------------
+TEST ///
+grading = {{1,0,0},{1,0,0},{1,0,0},{0,1,0},{0,0,1}}
+R = QQ[x_{1,1},x_{1,2},x_{1,3},x_{2,1},x_{3,1}, Degrees => grading]
+delta = simplicialComplex({x_{1,3}*x_{2,1}*x_{3,1},x_{1,1}*x_{2,1},x_{1,2}*x_{3,1}})
+shifted = algebraicShifting(delta, Multigrading => true)
+assert((fVector(delta))#0 == (fVector(shifted))#0)
+assert((fVector(delta))#1 == (fVector(shifted))#1)
+assert((fVector(delta))#2 == (fVector(shifted))#2)
+assert(prune homology delta != prune homology shifted)
+///
+
+----------------------------------------------
+-- Boundary of the 4-Cross-Polytope
+----------------------------------------------
+TEST ///
+grading = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1},{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}}
+S = QQ[x_{1,1}..x_{2,4}, Degrees => grading]
+I = monomialIdeal(x_{1,1}*x_{2,1},x_{1,2}*x_{2,2},x_{1,3}*x_{2,3},x_{1,4}*x_{2,4})
+cross = simplicialComplex(I)
+assert( (fVector(cross))#2 == 32)
+assert( (fVector(cross, Flag => true))#{1,1,0,0} == 4)
+assert(dim skeleton(2,cross) == 2)
+assert((fVector(skeleton(2,cross)))#1 == (fVector(cross))#1)
+multishifted = algebraicShifting(cross, Multigrading => true)
+stdshifted = algebraicShifting(cross)
+assert( cross == multishifted)
+assert( cross != stdshifted)
+///
+------------------------------------------------------------------------
+-- Cartwright-Sturmfels ideals associated to graphs and linear spaces --
+-- Aldo Conca, Emanuela De Negri, Elisa Gorla --
+-- Ex. 1.10
+------------------------------------------------------------------------
+
+TEST ///
+row_grading = {{1,0},{1,0},{1,0},{0,1},{0,1},{0,1}}
+S=QQ[x_{1,1}..x_{2,3}, Degrees => row_grading]
+I = ideal(x_{1,1}*x_{2,1},x_{1,2}*x_{2,2},x_{1,3}*x_{2,2},x_{1,2}*x_{2,3},x_{1,3}*x_{2,3})
+multigin = ideal(x_{1,1}^2*x_{2,3},x_{1,1}*x_{1,2}*x_{2,3},x_{1,1}*x_{2,1},x_{1,2}*x_{2,1},x_{1,3}*x_{2,1},x_{1,1}*x_{2,2},x_{1,2}*x_{2,2})
+stdgin = ideal(x_{1,1}^2,x_{1,1}*x_{1,2},x_{1,2}^2,x_{1,1}*x_{1,3},x_{1,2}*x_{1,3},x_{1,3}^3,x_{1,3}^2*x_{2,1})
+assert(gin(I, AttemptCount => 10, Multigraded => true) == multigin)
+assert(gin(I, AttemptCount => 10) == stdgin)
+///
+
+------------------------------------------------------------------------
+-- Stacked 3-sphere on 7 vertices
+------------------------------------------------------------------------
+TEST ///
+S = QQ[x_1..x_7]
+I = monomialIdeal(x_2*x_3*x_4*x_5,x_3*x_4*x_5*x_6,x_1*x_6,x_1*x_7,x_2*x_7)
+st73 = simplicialComplex I
+shifted = algebraicShifting (st73)
+assert( (fVector(st73))#3 == (fVector(shifted))#3)
+assert(prune homology st73 == prune homology shifted)
+assert(not member(x_1*x_2*x_3*x_4, flatten entries facets(shifted)))
+///
+
+------------------------------------------------------------------------
+-- Test
+------------------------------------------------------------------------
+TEST///
+S = QQ[a..f]
+D = simplicialComplex({a*b*c,b*c*d,d*e*f})
+stD = star(D, d)
+assert(star(D, d) == simplicialComplex({d*e*f,b*c*d}))
+T = QQ[v]
+conev = stD * simplicialComplex({v})
+assert( (fVector(conev))#0 == 6 )
+assert( (fVector(conev))#1 == 11 )
+assert( (fVector(conev))#2 == 8 )
+///
+
+
+------------------------------------------------------------------------------
+
 TEST ///
 
 kk = ZZ
@@ -2195,12 +2636,12 @@ doc ///
 
 -------------------------------------------------------------------
 
-{*
+-*
 check ("SimplicialComplexes",UserMode=>false)
 loadPackage "SimplicialComplexes"
 installPackage "SimplicialComplexes"
 installPackage("SimplicialComplexes",RerunExamples=>true,UserMode=>false)
-*}
+*-
 
 -----------------------------------------------------------
 

@@ -28,14 +28,9 @@ ifeq "${ENCAP}" "yes"
 	@INSTALL@ -m 755 ../top/postinstall ../top/preremove ${prefix}
 	@INSTALL@ -m 644 ../top/INSTALL     ../top/encapinfo ${prefix}
 endif
-ifeq (@DUMPDATA@,yes)
-	$(POST_INSTALL)
-	@bindir@/M2@EXE@ --stop --dumpdata
-	$(NORMAL_INSTALL)
-endif
 
 install::@infodir@/dir
-@infodir@/dir :; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
+@infodir@/dir :; @INSTALL_DATA@ @abs_top_srcdir@/files/info-dir-template $@
 
 define ii
 install::
@@ -60,3 +55,4 @@ report-installed-M2-location:
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/install install "
 # End:
+.NOTPARALLEL:

@@ -15,7 +15,7 @@
 -- You should have received a copy of the GNU General Public License along with
 -- this program.  If not, see <http://www.gnu.org/licenses/>.
 --------------------------------------------------------------------------------
-{*Not needed now, but would be nice:
+-*Not needed now, but would be nice:
 kk as an optional second argument
 handling of rings (out put of pairs, so that ring name can be set)
 facility for making tensors
@@ -26,7 +26,7 @@ a code bettiTC that would tell you the Betti table of a tensor complex w/o compu
 links to arXiv papers in the documentation
 cleaning up tensorComplex1.  for instance, the balanced case should call the 
    non-balanced case, and compute w internally.
-*}
+*-
 
 
 newPackage(
@@ -51,6 +51,7 @@ newPackage(
       Name => "Dumitru Stamate", 
       Email => "dumitru.stamate@fmi.unibuc.ro"}},
   Headline => "multilinear algebra with labeled bases",
+  Keywords => {"Commutative Algebra"},
   DebuggingMode => false
   )
 
@@ -262,12 +263,12 @@ traceMap LabeledModule := LabeledModuleMap => E -> (
       I := fromOrdinal(i,T);
       if I_0 == I_1 then 1_S else 0_S)))
 
-{*multisetToMonomial = (l,m) -> (
+-*multisetToMonomial = (l,m) -> (
   seen := new MutableHashTable;
   scan(m, i -> if seen#?i then seen#i = seen#i +1 else seen#i = 1);
   apply(l, i -> if seen#?i then seen#i else 0))
 monomialToMultiset = (l,e) -> flatten apply(#e, i -> toList(e#i:l#i))
-*}
+*-
 
 
 symmetricMultiplication = method(TypicalValue => LabeledModuleMap)
@@ -347,7 +348,7 @@ isBalanced = f-> rank source f == sum ((underlyingModules target f)/rank)
 tensorComplex1 = method()
 
 
-{*
+-*
 This makes the first map of a tensor complex, at least when w satisfies a somewhat
 technical condition that is spelled out in the documentation file.  Eventually,
 if possible, we would like to allow w to be an arbitrary weight vector.  But we don't
@@ -358,7 +359,7 @@ The notation in the code follows the notation from the Berkesch-Erman-Kummini-Sa
 
 We start with a ring S and labeled free modules A and B_i for i=1..n.
 The input to the code is a map of labeled free modules
- f: A^*--> B_1\otimes B_2 \otimes ... \otimes B_n,
+ f: A^* --> B_1\otimes B_2 \otimes ... \otimes B_n,
  along with a weight vector w.  We think of f as the flattening of a tensor
  f\in A\otimes B_1\otimes ... \otimes B_n.
 
@@ -372,7 +373,7 @@ We also define r0 and r1 following the formulas given in Notation 5.2 of BEKS.  
 construction r0 is always 0.  Our restriction on w essentially amounts to the condition
 that r1 must equal 1 or 2.  The code thus gives an error message when r1<1 or r1>2.
 
-The desired map will be constructued as a composite g5 * g4 * g3 * g2 * g1 * g0 from
+The desired map will be constructed as a composite g5 * g4 * g3 * g2 * g1 * g0 from
 F1->G1->G2->G3->G4->G5->F0.  This follows the construction outlined in Section 4 of BEKS.
 
 The modules are defined as follows.  The definition of F1 and F0 can be found in Theorem 5.3
@@ -440,7 +441,7 @@ g5: The source of G5 is the tensor product of two modules.
 NOTE: When n=0 or n=1 (i.e. when f represents a 1-tensor or a 2-tensor), the main construction
 presents some issues having to do with tensor products over empty sets.  
 So we simply treat those cases separately in the code.
-*}
+*-
 
 
 
@@ -529,7 +530,7 @@ tensorComplex1 (LabeledModuleMap,List) := LabeledModuleMap => (f,w) -> (
 tensorComplex1 LabeledModuleMap := LabeledModuleMap => f -> (
   -- The output is the first map F0 <- F1 of the balanced tensor complex.
   -- If f is not balanced this outputs an error.  
-  -- If f is balanced, then this computes the appopriate weight w, and calls the other
+  -- If f is balanced, then this computes the appropriate weight w, and calls the other
   -- version of this method.
   if not isBalanced f then error "The map f is not a balanced tensor. Need to add a weight vector as a second input.";
   S := ring f;
@@ -565,7 +566,7 @@ flattenedESTensor (List, Ring) := LabeledModuleMap => o-> (L,kk)->(
       (i,j) -> if 0<=j-sum fromOrdinal(i,B) then if j-sum fromOrdinal(i,B)<n 
       then x_(j-sum fromOrdinal(i,B)) else 0 else 0)
  )
-{*
+-*
 flattenedESTensor = method()
 flattenedESTensor (List, Ring) := LabeledModuleMap => (L,kk)->(
   --make ring of generic tensor
@@ -581,7 +582,7 @@ flattenedESTensor (List, Ring) := LabeledModuleMap => (L,kk)->(
       (i,j) -> if 0<=j-sum fromOrdinal(i,B) then if j-sum fromOrdinal(i,B)<n 
       then x_(j-sum fromOrdinal(i,B)) else 0 else 0)
  )
-*}
+*-
 
 
 hyperdeterminant = method()
@@ -760,7 +761,7 @@ doc ///
       g = tensorComplex1(f,{0,0});
       transpose g
       betti res coker g
-      betti eagonNorthcott matrix f
+      betti eagonNorthcott matrix entries matrix f
       
     Text
       The following example is taken from the introduction to BEKS.
@@ -1111,7 +1112,7 @@ doc ///
      : LabeledModuleMap
    Description
     Text
-      Given a degree sequence $d\in \mathbb Z^{n+1}$ and a field $k$ of arbtirary characteristic, 
+      Given a degree sequence $d\in \mathbb Z^{n+1}$ and a field $k$ of arbitrary characteristic, 
       this produces the first map of pure resolution of type d as constructed by
       Eisenbud and Schreyer in Section 5 of ``Betti numbers of graded modules and cohomology 
       of vector bundles''.  The cokernel of this map is a module of finite of length over a
@@ -1176,7 +1177,7 @@ doc ///
      : LabeledModuleMap
    Description
     Text
-      Given a degree sequence $d\in \mathbb Z^{n+1}$ and a field $k$ of arbtirary characteristic, 
+      Given a degree sequence $d\in \mathbb Z^{n+1}$ and a field $k$ of arbitrary characteristic, 
       this produces the first map of a balanced tensor complex with a 
       pure resolution of type d, as constructed in Section 3
       of the paper ``Tensor Complexes: Multilinear free resolutions constructed from higher tensors
@@ -1504,7 +1505,7 @@ doc ///
 
 
 
-{*
+-*
 doc ///
    Key
      (coker,LabeledModuleMap)
@@ -1541,7 +1542,7 @@ doc ///
       f=map(F,F,(i,j)->a^i+b^j);
       entries matrix f     
 ///
-*}
+*-
 
 doc ///
    Key
@@ -1778,7 +1779,7 @@ doc ///
 ///
 
 
-{*
+-*
 doc ///
    Key
     (symbol ==, LabeledModule,  LabeledModule),
@@ -1806,7 +1807,7 @@ doc ///
      basisList(H)
    SeeAlso
 ///
-*}
+*-
 
 
 
@@ -1997,7 +1998,7 @@ doc ///
 ///
 print docTemplate
 ///
-{*beginDocumentation()
+-*beginDocumentation()
 
 undocumented { (net, LabeledModule), (net, LabeledModuleMap) }
 
@@ -2019,7 +2020,7 @@ undocumented { (net, LabeledModule), (net, LabeledModuleMap) }
     (symbol **, LabeledModuleMap, LabeledModuleMap)},
 
   Key => (symbol *, LabeledModuleMap, LabeledModuleMap),
-*}
+*-
 -------------------------------------------------------------------------------- 
 -- TEST
 --------------------------------------------------------------------------------

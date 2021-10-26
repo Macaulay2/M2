@@ -1,0 +1,8 @@
+# @configure_input@
+chapter_srcdir = @srcdir@
+include ../Makefile.chapter
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/tests/ComputationsBook/completeIntersections "
+# End:
+.NOTPARALLEL:

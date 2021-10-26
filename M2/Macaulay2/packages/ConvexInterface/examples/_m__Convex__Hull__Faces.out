@@ -1,6 +1,6 @@
 -- -*- M2-comint -*- {* hash: 1681883405 *}
---loading configuration for package "ConvexInterface" from file /home/janko/.Macaulay2/init-ConvexInterface.m2
---loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
+--loading configuration for package "ConvexInterface" from file /home/member/dgrayson/.Macaulay2/init-ConvexInterface.m2
+--loading configuration for package "MapleInterface" from file /home/member/dgrayson/.Macaulay2/init-MapleInterface.m2
 
 i1 : L={vector {1,0,0},vector {-1,0,0},vector {0,1,0},vector {0,-1,0},vector {0,0,1},vector {0,0,-1}}
 
@@ -12,14 +12,14 @@ o1 : List
 
 i2 : P=mConvexHullFaces(L)
 
-o2 = {| 1  0  0  |, {{{}}, {{1}, {2}, {3}, {4}, {5}, {6}}, {{2, 5}, {3, 5},
+o2 = {| 1  0  0  |, {{{}}, {{1}, {2}, {3}, {4}, {5}, {6}}, {{3, 5}, {2, 5},
       | -1 0  0  |
       | 0  1  0  |
       | 0  -1 0  |
       | 0  0  1  |
       | 0  0  -1 |
      ------------------------------------------------------------------------
-     {1, 5}, {4, 5}, {3, 6}, {2, 3}, {1, 3}, {2, 4}, {1, 4}, {2, 6}, {1, 6},
+     {2, 3}, {1, 5}, {1, 3}, {4, 5}, {2, 4}, {1, 4}, {3, 6}, {2, 6}, {1, 6},
      ------------------------------------------------------------------------
      {4, 6}}, {{2, 3, 5}, {1, 3, 5}, {2, 4, 5}, {1, 4, 5}, {2, 3, 6}, {1, 3,
      ------------------------------------------------------------------------

@@ -9,16 +9,13 @@ M2_OPTCFILES += debug.c
 ifeq "@DEBUG@" "yes"
 M2_OBJECTS += debug.o
 endif
-M2_OPTCFILES += M2inits1.cc M2inits2.cc M2inits3.cc 
 M2_CFILES += gmp_aux.c 
-M2_LASTCFILES += M2types.c scclib.c M2lib.c M2mem.c gdbm_interface.c
-M2_CFILES += main.c 
+M2_LASTCFILES += M2types.c scclib.c M2lib.c M2mem.c gdbm_interface.c memdebug.c
 M2_MADECFILES := startup.c
 M2_OBJECTS += $(M2_MADECFILES:.c=.o)
-M2_OBJECTS += ../regex/regex.o
-M2_CCFILES := gmp_init.cc
-M2_OBJECTS += $(M2_CCFILES:.cc=.o)
-M2_HFILES := getpagesize.h types.h M2inits.h M2mem.h debug.h startup-header.h startup-trailer.h
+M2_CCFILES := boost-regex.cpp main.cpp
+M2_OBJECTS += $(M2_CCFILES:.cpp=.o)
+M2_HFILES := getpagesize.h types.h M2mem.h debug.h startup-header.h startup-trailer.h memdebug.h
 
 M2_DFILES :=
 M2_DFILES += arithmetic.d
@@ -65,6 +62,7 @@ M2_DFILES += classes.dd
 M2_DFILES += buckets.dd
 M2_DFILES += equality.dd
 M2_DFILES += hashtables.dd
+M2_DFILES += regex.dd
 M2_DFILES += sets.dd
 M2_DFILES += version.dd
 M2_DFILES += evaluate.d
@@ -77,7 +75,7 @@ M2_DFILES += mysqldummy.d
 endif
 M2_DFILES += pthread.d
 M2_DFILES += actors.d
-M2_DFILES += actors2.d
+M2_DFILES += actors2.dd
 M2_DFILES += actors3.d
 M2_DFILES += actors4.d
 # M2_DFILES += tasks.d
@@ -87,20 +85,8 @@ else
 M2_SRCFILES += xmlactors.d
 endif
 M2_DFILES += actors5.d
+M2_DFILES += actors6.dd
 M2_DFILES += threads.dd
-ifeq (@PARI@,yes)
-M2_DFILES += pari.d
-M2_HFILES += pari-c.h
-M2_CFILES += pari-c.c
-else
-M2_SRCFILES += pari.d pari-c.h pari-c.c
-endif
-
-ifeq (@ENABLE_FLINT@,yes)
-M2_DFILES += flint.d
-else
-M2_SRCFILES += flint.d
-endif
 
 ifeq (@PYTHON@,yes)
 M2_LASTCFILES += python-c.c
@@ -111,25 +97,167 @@ endif
 M2_DFILES += interface.dd interface2.d
 M2_DFILES += texmacs.d
 # this one is last, because it contains the top level interpreter
-M2_DFILES += interp.d
+M2_DFILES += interp.dd
 
 # should automate these dependencies
 actors5.o : @srcdir@/startup-header.h
 actors5.o basic.o : \
 	@srcdir@/../e/engine.h \
-	@srcdir@/../e/rand.h \
 	@srcdir@/../e/newdelete.hpp \
 	@srcdir@/../d/M2mem.h \
 	@srcdir@/../d/debug.h \
-	../e-includes/statuscodes.h \
 	../../include/M2/config.h
+
+interface2.o :						\
+	../../include/M2/config.h			\
+	@srcdir@/../../include/M2/math-include.h	\
+	@srcdir@/../../include/M2/gc-include.h		\
+	@srcdir@/../system/mutex.h			\
+	@srcdir@/../c/scc-core.h			\
+	@srcdir@/../system/supervisorinterface.h	\
+	@srcdir@/../e/engine.h				\
+	@srcdir@/../e/engine-includes.hpp		\
+	@srcdir@/../d/M2mem.h				\
+	@srcdir@/../d/debug.h
+
+interface.o :						\
+	../../include/M2/config.h			\
+	@srcdir@/../system/mutex.h			\
+	@srcdir@/../e/newdelete.hpp			\
+	@srcdir@/../d/M2mem.h				\
+	@srcdir@/../c/scc-core.h			\
+	@srcdir@/../d/debug.h				\
+	@srcdir@/../system/supervisorinterface.h	\
+	@srcdir@/../e/engine.h				\
+	@srcdir@/../e/engine-includes.hpp		\
+	@srcdir@/../e/ZZp.hpp				\
+	@srcdir@/../e/ring.hpp				\
+	@srcdir@/../e/hash.hpp				\
+	@srcdir@/../e/newdelete.hpp			\
+	@srcdir@/../e/error.h				\
+	@srcdir@/../e/ringelem.hpp			\
+	@srcdir@/../e/monoid.hpp			\
+	@srcdir@/../e/intarray.hpp			\
+	@srcdir@/../e/style.hpp				\
+	@srcdir@/../e/buffer.hpp			\
+	@srcdir@/../e/mem.hpp				\
+	@srcdir@/../e/../system/mutex.h			\
+	@srcdir@/../e/imonorder.hpp			\
+	@srcdir@/../e/aring.hpp				\
+	@srcdir@/../e/exceptions.hpp			\
+	@srcdir@/../e/ZZ.hpp				\
+	@srcdir@/../e/coeffrings.hpp			\
+	@srcdir@/../e/monomial.hpp			\
+	@srcdir@/../e/varpower.hpp			\
+	@srcdir@/../e/exceptions.hpp			\
+	@srcdir@/../e/relem.hpp				\
+	@srcdir@/../e/engine.h				\
+	@srcdir@/../e/aring-glue.hpp			\
+	@srcdir@/../e/aring-translate.hpp		\
+	@srcdir@/../e/aring-RR.hpp			\
+	@srcdir@/../e/ringmap.hpp			\
+	@srcdir@/../e/aring-CC.hpp			\
+	@srcdir@/../e/aring-RRR.hpp			\
+	@srcdir@/../e/aring-CCC.hpp			\
+	@srcdir@/../e/aring-zz-gmp.hpp			\
+	@srcdir@/../e/aring-zz-flint.hpp		\
+	@srcdir@/../e/aring-zzp.hpp			\
+	@srcdir@/../e/aring-zzp-flint.hpp		\
+	@srcdir@/../e/aring-zzp-ffpack.hpp		\
+	@srcdir@/../e/aring-qq.hpp			\
+	@srcdir@/../e/aring-qq-flint.hpp		\
+	@srcdir@/../e/aring-qq-gmp.hpp			\
+	@srcdir@/../e/aring-m2-gf.hpp			\
+	@srcdir@/../e/aring-gf-givaro.hpp		\
+	@srcdir@/../e/polyring.hpp			\
+	@srcdir@/../e/skew.hpp				\
+	@srcdir@/../e/qring.hpp				\
+	@srcdir@/../e/aring-gf-flint-big.hpp		\
+	@srcdir@/../e/aring-gf-flint.hpp		\
+	@srcdir@/../e/aring-tower.hpp			\
+	@srcdir@/../e/mutablemat.hpp			\
+	@srcdir@/../e/mutablemat-defs.hpp		\
+	@srcdir@/../e/mat.hpp				\
+	@srcdir@/../e/relem.hpp				\
+	@srcdir@/../e/matrix-con.hpp			\
+	@srcdir@/../e/dmat.hpp				\
+	@srcdir@/../e/mat-util.hpp			\
+	@srcdir@/../e/text-io.hpp			\
+	@srcdir@/../e/dmat-zz-flint.hpp			\
+	@srcdir@/../e/dmat-qq-flint.hpp			\
+	@srcdir@/../e/dmat-zzp-flint.hpp		\
+	@srcdir@/../e/dmat-gf-flint-big.hpp		\
+	@srcdir@/../e/dmat-gf-flint.hpp			\
+	@srcdir@/../e/smat.hpp				\
+	@srcdir@/../e/ZZp.hpp				\
+	@srcdir@/../e/mat-elem-ops.hpp			\
+	@srcdir@/../e/mat-arith.hpp			\
+	@srcdir@/../e/mat-linalg.hpp			\
+	@srcdir@/../e/util.hpp				\
+	@srcdir@/../e/lapack.hpp			\
+	@srcdir@/../e/dmat-lu.hpp			\
+	@srcdir@/../e/dmat-lu-inplace.hpp		\
+	@srcdir@/../e/dmat-lu-zzp-ffpack.hpp		\
+	@srcdir@/../e/dmat-lu-zzp-flint.hpp		\
+	@srcdir@/../e/dmat-lu-qq.hpp			\
+	@srcdir@/../e/dmat-qq-interface-flint.hpp	\
+	@srcdir@/../e/eigen.hpp				\
+	@srcdir@/../e/SLP-defs.hpp			\
+	@srcdir@/../e/mutablemat-imp.hpp		\
+	@srcdir@/../e/SLP-imp.hpp			\
+	@srcdir@/../e/timing.hpp			\
+	@srcdir@/../e/aring-zzp.hpp			\
+	@srcdir@/../e/memory-status.hpp
+
+engine.o :						\
+	../../include/M2/config.h			\
+	@srcdir@/../../include/M2/math-include.h	\
+	@srcdir@/../e/newdelete.hpp			\
+	@srcdir@/../d/M2mem.h				\
+	@srcdir@/../c/scc-core.h			\
+	@srcdir@/../../include/M2/gc-include.h		\
+	@srcdir@/../c/scc-core.h			\
+	@srcdir@/../d/debug.h				\
+	@srcdir@/../system/supervisorinterface.h	\
+	@srcdir@/../e/error.h				\
+	@srcdir@/../e/exceptions.hpp			\
+	@srcdir@/../e/hash.hpp				\
+	@srcdir@/../e/monomial.hpp			\
+	@srcdir@/../e/engine-includes.hpp		\
+	@srcdir@/../e/monomial.hpp			\
+	@srcdir@/../e/buffer.hpp			\
+	@srcdir@/../e/varpower.hpp			\
+	@srcdir@/../e/intarray.hpp			\
+	@srcdir@/../e/style.hpp				\
+	@srcdir@/../e/mem.hpp				\
+	@srcdir@/../system/mutex.h			\
+	@srcdir@/../e/relem.hpp				\
+	@srcdir@/../e/ring.hpp				\
+	@srcdir@/../e/aring.hpp				\
+	@srcdir@/../e/ringelem.hpp			\
+	@srcdir@/../e/interface/gmp-util.h		\
+	@srcdir@/../e/ZZ.hpp				\
+	@srcdir@/../e/matrix.hpp			\
+	@srcdir@/../e/monoid.hpp			\
+	@srcdir@/../e/imonorder.hpp			\
+	@srcdir@/../e/interface/monomial-ordering.h	\
+	@srcdir@/../e/freemod.hpp			\
+	@srcdir@/../e/schorder.hpp			\
+	@srcdir@/../e/monideal.hpp			\
+	@srcdir@/../e/queue.hpp				\
+	@srcdir@/../e/index.hpp				\
+	@srcdir@/../e/int-bag.hpp			\
+	@srcdir@/../e/polyring.hpp			\
+	@srcdir@/../e/interface/computation.h		\
+	@srcdir@/../e/skew.hpp				\
+	@srcdir@/../e/qring.hpp				\
+	@srcdir@/../e/mat.hpp				
 
 # now assemble the files into various categories:
 M2_DNAMES := $(patsubst %.d, %, $(patsubst %.dd, %, $(M2_DFILES)))
 M2_OBJECTS += $(M2_CFILES:.c=.o)
-M2_OBJECTS += M2-factory.o
 M2_OBJECTS += $(M2_LASTCFILES:.c=.o)
-M2_SRCFILES += $(M2_OPTCFILES) $(M2_CFILES) M2inits.c
+M2_SRCFILES += $(M2_OPTCFILES) $(M2_CFILES)
 M2_SRCFILES += $(M2_CCFILES)
 M2_SRCFILES += $(M2_HFILES)
 M2_SRCFILES += $(M2_DFILES)

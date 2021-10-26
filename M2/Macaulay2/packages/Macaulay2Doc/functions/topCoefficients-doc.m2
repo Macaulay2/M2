@@ -31,5 +31,9 @@ document {
 	  f = y^4*(3*z^3-z^2-1) - y^3*z^7 + y + z^12
 	  (lf,cf) = topCoefficients f
           ///,
+     Caveat => {"If the polynomial ring B of f has a polynomial coefficient ring A, 
+         and no variables of B occur in f, then this 'drills down' into A and finds the
+         top variable and coefficient there, but as elements of B"
+         },
      SeeAlso => {pseudoRemainder}
      }

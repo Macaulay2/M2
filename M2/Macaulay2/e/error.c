@@ -10,46 +10,42 @@
 // the buffer).
 //
 // Then, it is unfortunately necessary to check whether an error has
-// occured, using 'error'.
+// occurred, using 'error'.
 //
 // Finally, the error flag is cleared upon giving control back to the front end.
 
+#include "error.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include "error.h"
 
 #define MAXERROR 200
 static int iserror = 0;
 static char errmsg[MAXERROR] = {'\0'};
 
-void ERROR(const char *s,...)
+void ERROR(const char *s, ...)
 {
   va_list ap;
-  if (iserror) fprintf(stderr, "--error message bumped: %s\n",errmsg);
+  if (iserror) fprintf(stderr, "--error message bumped: %s\n", errmsg);
   iserror = 1;
-  va_start(ap,s);
-  vsprintf(errmsg,s,ap);
+  va_start(ap, s);
+  vsprintf(errmsg, s, ap);
   va_end(ap);
 }
 
-void INTERNAL_ERROR(const char *s,...)
+void INTERNAL_ERROR(const char *s, ...)
 {
   char buf[MAXERROR];
   buf[0] = 0;
   va_list ap;
-  va_start(ap,s);
-  vsprintf(buf,s,ap);
+  va_start(ap, s);
+  vsprintf(buf, s, ap);
   va_end(ap);
   fprintf(stderr, "--internal error: %s\n", buf);
-  abort();                      /* we should exit after an internal error, to avoid crashing */
+  abort(); /* we should exit after an internal error, to avoid crashing */
 }
 
-int error()
-{
-  return iserror;
-}
-
+int error() { return iserror; }
 const char *error_message()
 {
   if (iserror == 0) return "";

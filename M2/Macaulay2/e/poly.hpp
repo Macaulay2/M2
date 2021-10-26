@@ -24,11 +24,12 @@ class PolyRing : public PolyRingFlat
   friend class ChineseRemainder;
 
   friend class MatrixStream;  // for new_term()
-  void initialize_poly_ring(const Ring *K, const Monoid *M,
+  void initialize_poly_ring(const Ring *K,
+                            const Monoid *M,
                             const PolynomialRing *deg_ring);
   // Only to be called from initialize_poly_ring and make_trivial_ZZ_poly_ring
 
-protected:
+ protected:
   void initialize_poly_ring(const Ring *K, const Monoid *M);
   // Called by subclasses (e.g. skew comm, Weyl, solvable.
   // After this, set the information for the special multiplication.
@@ -36,51 +37,59 @@ protected:
 
   virtual ~PolyRing();
   PolyRing() {}
-
   static PolyRing *trivial_poly_ring;
   static void make_trivial_ZZ_poly_ring();
-public:
+
+ public:
   static const PolyRing *create(const Ring *K, const Monoid *M);
 
-public:
+ public:
   virtual void clear();
 
   static const PolyRing *get_trivial_poly_ring();
 
-  virtual const PolyRing * cast_to_PolyRing()  const { return this; }
-  virtual       PolyRing * cast_to_PolyRing()        { return this; }
-
-
+  virtual const PolyRing *cast_to_PolyRing() const { return this; }
+  virtual PolyRing *cast_to_PolyRing() { return this; }
   virtual void text_out(buffer &o) const;
 
   /////////////////////////
   // Arithmetic ///////////
   /////////////////////////
 
-  virtual ring_elem from_int(int n) const;
-  virtual ring_elem from_int(mpz_ptr n) const;
-  virtual ring_elem from_rational(mpq_ptr q) const;
+  ring_elem fromCoefficient(ring_elem &coeff) const;
+
+  virtual ring_elem from_long(long n) const;
+  virtual ring_elem from_int(mpz_srcptr n) const;
+  virtual bool from_rational(mpq_srcptr q, ring_elem &result) const;
+
   virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;
   virtual bool from_BigReal(gmp_RR z, ring_elem &result) const;
+  virtual bool from_Interval(gmp_RRi z, ring_elem &result) const;
+  virtual bool from_double(double a, ring_elem &result) const;
+  virtual bool from_complex_double(double re,
+                                   double im,
+                                   ring_elem &result) const;
 
   virtual ring_elem var(int v) const;
 
   virtual int index_of_var(const ring_elem a) const;
   virtual M2_arrayint support(const ring_elem a) const;
 
-  virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
+  virtual bool promote(const Ring *R,
+                       const ring_elem f,
+                       ring_elem &result) const;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
 
   virtual ring_elem preferred_associate(ring_elem f) const;
   ring_elem preferred_associate_divisor(ring_elem ff) const;
-    // ff is an element of 'this'.
-    // result is in the coefficient ring
-    // If the coefficient ring of this is
-    //   ZZ -- gcd of all, same sign as lead coeff
-    //   QQ -- gcd(numerators)/lcm(denominators)
-    //   basic field -- lead coeff
-    //   frac(poly ring) -- gcd(numerators)/lcm(denominators)
-    //   frac(quotient of a poly ring) -- error
+  // ff is an element of 'this'.
+  // result is in the coefficient ring
+  // If the coefficient ring of this is
+  //   ZZ -- gcd of all, same sign as lead coeff
+  //   QQ -- gcd(numerators)/lcm(denominators)
+  //   basic field -- lead coeff
+  //   frac(poly ring) -- gcd(numerators)/lcm(denominators)
+  //   frac(quotient of a poly ring) -- error
 
   virtual bool is_unit(const ring_elem f) const;
   virtual bool is_zero(const ring_elem f) const;
@@ -90,9 +99,13 @@ public:
   virtual bool is_homogeneous(const ring_elem f) const;
   virtual void degree(const ring_elem f, int *d) const;
   virtual bool multi_degree(const ring_elem f, int *d) const;
-  virtual void degree_weights(const ring_elem f, M2_arrayint wts,
-                              int &lo, int &hi) const;
-  virtual ring_elem homogenize(const ring_elem f, int v, int deg,
+  virtual void degree_weights(const ring_elem f,
+                              M2_arrayint wts,
+                              int &lo,
+                              int &hi) const;
+  virtual ring_elem homogenize(const ring_elem f,
+                               int v,
+                               int deg,
                                M2_arrayint wts) const;
   virtual ring_elem homogenize(const ring_elem f, int v, M2_arrayint wts) const;
 
@@ -107,112 +120,142 @@ public:
   virtual ring_elem add(const ring_elem f, const ring_elem g) const;
   virtual ring_elem subtract(const ring_elem f, const ring_elem g) const;
   virtual ring_elem mult(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem power(const ring_elem f, mpz_t n) const;
+  virtual ring_elem power(const ring_elem f, mpz_srcptr n) const;
   virtual ring_elem power(const ring_elem f, int n) const;
   virtual ring_elem invert(const ring_elem f) const;
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
   ring_elem gcd(const ring_elem f, const ring_elem g) const;
-  ring_elem gcd_extended(const ring_elem f, const ring_elem g,
-                         ring_elem &u, ring_elem &v) const;
+  ring_elem gcd_extended(const ring_elem f,
+                         const ring_elem g,
+                         ring_elem &u,
+                         ring_elem &v) const;
 
-protected:
+ protected:
   void minimal_monomial(ring_elem f, int *&monom) const;
   Nterm *division_algorithm(Nterm *f, Nterm *g, Nterm *&quot) const;
   Nterm *division_algorithm(Nterm *f, Nterm *g) const;
   Nterm *powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm *&quot) const;
 
-public:
+ public:
   virtual ring_elem remainder(const ring_elem f, const ring_elem g) const;
   virtual ring_elem quotient(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem remainderAndQuotient(const ring_elem f, const ring_elem g,
+  virtual ring_elem remainderAndQuotient(const ring_elem f,
+                                         const ring_elem g,
                                          ring_elem &quot) const;
 
-  virtual void syzygy(const ring_elem a, const ring_elem b,
-                      ring_elem &x, ring_elem &y) const;
+  virtual void syzygy(const ring_elem a,
+                      const ring_elem b,
+                      ring_elem &x,
+                      ring_elem &y) const;
 
   virtual ring_elem random() const;
 
   virtual void elem_text_out(buffer &o,
                              const ring_elem f,
-                             bool p_one=true,
-                             bool p_plus=false,
-                             bool p_parens=false) const;
+                             bool p_one = true,
+                             bool p_plus = false,
+                             bool p_parens = false) const;
 
-  virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
+  virtual ring_elem eval(const RingMap *map,
+                         const ring_elem f,
+                         int first_var) const;
 
   virtual ring_elem mult_by_term(const ring_elem f,
-                                  const ring_elem c, const int *m) const;
+                                 const ring_elem c,
+                                 const int *m) const;
 
   virtual int n_flat_terms(const ring_elem f) const;
-  virtual int n_logical_terms(int nvars0,const ring_elem f) const;
+  virtual int n_logical_terms(int nvars0, const ring_elem f) const;
 
-  virtual ring_elem get_coeff(const Ring *coeffR,const ring_elem f, const int *vp) const;
-  virtual ring_elem get_terms(int nvars0, const ring_elem f, int lo, int hi) const;
+  virtual ring_elem get_coeff(const Ring *coeffR,
+                              const ring_elem f,
+                              const int *vp) const;
+  virtual ring_elem get_terms(int nvars0,
+                              const ring_elem f,
+                              int lo,
+                              int hi) const;
 
   virtual ring_elem make_flat_term(const ring_elem a, const int *m) const;
-  virtual ring_elem make_logical_term(const Ring *coeffR, const ring_elem a, const int *exp) const;
+  virtual ring_elem make_logical_term(const Ring *coeffR,
+                                      const ring_elem a,
+                                      const int *exp) const;
 
   virtual ring_elem lead_flat_coeff(const ring_elem f) const;
-  virtual ring_elem lead_logical_coeff(const Ring *coeffR, const ring_elem f) const;
+  virtual ring_elem lead_logical_coeff(const Ring *coeffR,
+                                       const ring_elem f) const;
 
-  virtual const int * lead_flat_monomial(const ring_elem f) const;
-  virtual void lead_logical_exponents(int nvars0, const ring_elem f, int * result_exp) const;
+  virtual const int *lead_flat_monomial(const ring_elem f) const;
+  virtual void lead_logical_exponents(int nvars0,
+                                      const ring_elem f,
+                                      int *result_exp) const;
 
-  ring_elem lead_term(const ring_elem f) const; // copies the lead term
+  ring_elem lead_term(const ring_elem f) const;  // copies the lead term
 
-  virtual engine_RawArrayPairOrNull list_form(const Ring *coeffR, const ring_elem f) const;
-  virtual ring_elem * get_parts(const M2_arrayint wts, const ring_elem f, long &result_len) const;
+  virtual engine_RawArrayPairOrNull list_form(const Ring *coeffR,
+                                              const ring_elem f) const;
+  virtual ring_elem *get_parts(const M2_arrayint wts,
+                               const ring_elem f,
+                               long &result_len) const;
   virtual ring_elem get_part(const M2_arrayint wts,
-                              const ring_elem f,
-                              bool lobound_given,
-                              bool hibound_given,
-                              long lobound,
-                              long hibound) const;
+                             const ring_elem f,
+                             bool lobound_given,
+                             bool hibound_given,
+                             long lobound,
+                             long hibound) const;
 
   virtual void mult_coeff_to(ring_elem a, ring_elem &f) const;
   virtual void divide_coeff_to(ring_elem &f, ring_elem a) const;
 
   virtual ring_elem lead_term(int nparts, const ring_elem f) const;
 
+ public:
+  ///////////////////////////////////////
+  // Univariate polynomial translation //
+  ///////////////////////////////////////
+  ring_elem fromSmallIntegerCoefficients(const std::vector<long> &coeffs,
+                                         int var) const;
+
+ public:
   /////////////////////////
   // RRR and CCC support //
   /////////////////////////
   virtual ring_elem zeroize_tiny(gmp_RR epsilon, const ring_elem f) const;
-  virtual void increase_maxnorm(gmp_RR norm, const ring_elem f) const;
-  // If any real number appearing in f has larger absolute value than norm, replace norm.
+  virtual void increase_maxnorm(gmp_RRmutable norm, const ring_elem f) const;
+  // If any real number appearing in f has larger absolute value than norm,
+  // replace norm.
 
-public:
+ public:
   virtual vec vec_lead_term(int nparts, const FreeModule *F, vec v) const;
 
   virtual vec vec_top_coefficient(const vec v, int &var, int &exp) const;
 
-  const vecterm * vec_locate_lead_term(const FreeModule *F, vec v) const;
+  const vecterm *vec_locate_lead_term(const FreeModule *F, vec v) const;
   // Returns a pointer to the lead vector of v.
   // This works if F has a Schreyer order, or an up/down order.
 
-protected:
+ protected:
   vec vec_coefficient_of_var(vec v, int var, int exp) const;
 
-
-  ring_elem diff_term(const int *m, const int *n,
+  ring_elem diff_term(const int *m,
+                      const int *n,
                       int *resultmon,
                       int use_coeff) const;
-
+  ring_elem power_direct(const ring_elem f, int n) const;
 
   ring_elem get_logical_coeff(const Ring *coeffR, const Nterm *&f) const;
   // Given an Nterm f, return the coeff of its logical monomial, in the
   // polynomial ring coeffR.  f is modified, in that it is replaced by
   // the pointer to the first term of f not used (possibly 0).
 
-public:
+ public:
   virtual void monomial_divisor(const ring_elem a, int *exp) const;
 
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const;
-  virtual ring_elem contract0(int n_top_variables, ring_elem a, ring_elem b) const;
   virtual bool in_subring(int nslots, const ring_elem a) const;
   virtual void degree_of_var(int n, const ring_elem a, int &lo, int &hi) const;
   virtual ring_elem divide_by_var(int n, int d, const ring_elem a) const;
-  virtual ring_elem divide_by_expvector(const int *exp, const ring_elem a) const;
+  virtual ring_elem divide_by_expvector(const int *exp,
+                                        const ring_elem a) const;
 
   virtual void lower_content(ring_elem &cont, ring_elem new_coeff) const;
   virtual ring_elem content(ring_elem f) const;
@@ -226,38 +269,41 @@ public:
   // heap merge of elements...?
 
   // Routines special to fields (anything else?)
-protected:
+ protected:
   Nterm *new_term() const;
   Nterm *copy_term(const Nterm *t) const;
 
   bool imp_attempt_to_cancel_lead_term(ring_elem &f,
-                                      ring_elem g,
-                                      ring_elem &coeff,
-                                      int *monom) const;
+                                       ring_elem g,
+                                       ring_elem &coeff,
+                                       int *monom) const;
 
-protected:
+ protected:
   ring_elem imp_skew_mult_by_term(const ring_elem f,
-                                  const ring_elem c, const int *m) const;
+                                  const ring_elem c,
+                                  const int *m) const;
   void imp_subtract_multiple_to(ring_elem &f,
-                                ring_elem a, const int *m, const ring_elem g) const;
-public:
+                                ring_elem a,
+                                const int *m,
+                                const ring_elem g) const;
+
+ public:
   void sort(Nterm *&f) const;
 
   ///////////////////////////////////////////////////////
   // Used in gbvector <--> vector/ringelem translation //
   ///////////////////////////////////////////////////////
   // These are only meant to be called by Ring's.
-public:
-  void determine_common_denominator_QQ(ring_elem f,
-                                               mpz_ptr denom_so_far) const;
+ public:
+  void determine_common_denominator_QQ(ring_elem f, mpz_ptr denom_so_far) const;
 
   ring_elem get_denominator_QQ(ring_elem f) const;
 
   ring_elem vec_get_denominator_QQ(vec f) const;
 
-  gbvector * translate_gbvector_from_vec_QQ(const FreeModule *F,
-                                            const vec v,
-                                            ring_elem &result_denominator) const;
+  gbvector *translate_gbvector_from_vec_QQ(const FreeModule *F,
+                                           const vec v,
+                                           ring_elem &result_denominator) const;
 
   vec translate_gbvector_to_vec_QQ(const FreeModule *F,
                                    const gbvector *v,
@@ -267,9 +313,9 @@ public:
 
   gbvector *translate_gbvector_from_ringelem(ring_elem coeff) const;
 
-  gbvector * translate_gbvector_from_vec(const FreeModule *F,
-                                         const vec v,
-                                         ring_elem &result_denominator) const;
+  gbvector *translate_gbvector_from_vec(const FreeModule *F,
+                                        const vec v,
+                                        ring_elem &result_denominator) const;
 
   vec translate_gbvector_to_vec(const FreeModule *F, const gbvector *v) const;
 
@@ -279,6 +325,10 @@ public:
   // Translate v/denom to a vector in F.  denom does not need to be positive,
   // although it had better be non-zero.
 };
+
+// Returns a PolyRing iff R = ZZ/p[x], for some variable x, and some prime p.
+// Otherwise returns null.
+const PolyRing * /* or null */ isUnivariateOverPrimeField(const Ring *R);
 
 #endif
 

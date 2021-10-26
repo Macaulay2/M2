@@ -1,0 +1,15 @@
+diff -ur /Users/dan/src/M2/M2-DanGrayson/M2/BUILD/dan/builds.tmp/mac64-pull.126.production/libraries/factory/tmp/factory/configure.ac factory/configure.ac
+--- /Users/dan/src/M2/M2-DanGrayson/M2/BUILD/dan/builds.tmp/mac64-pull.126.production/libraries/factory/tmp/factory/configure.ac	2014-03-06 13:42:43.000000000 -0500
++++ factory/configure.ac	2014-05-22 09:56:45.000000000 -0400
+@@ -178,9 +178,9 @@
+ 
+ LB_CHECK_GMP(3.1.1,,AC_MSG_ERROR([Unable to find GMP on your machine: please use --with-gmp=PATH_TO_DIR_CONTAINING_LIB_AND_INCLUDE (see also ./configure --help if you do not understand what we are talking about)]))
+ 
+-LB_CHECK_NTL(5.0,,AC_MSG_WARN([Unable to find NTL (which is strongly recommended) on your machine: please use --with-ntl=PATH_TO_DIR_CONTAINING_LIB_AND_INCLUDE (see also ./configure --help if you do not understand what we are talking about)]))
++LB_CHECK_NTL(5.0,,AC_MSG_ERROR([Unable to find NTL (which is strongly recommended) on your machine: please use --with-ntl=PATH_TO_DIR_CONTAINING_LIB_AND_INCLUDE (see also ./configure --help if you do not understand what we are talking about)]))
+ 
+-LB_CHECK_FLINT(2.3,,AC_MSG_WARN([Unable to find FLINT (which is strongly recommended) on your machine: please use --with-flint=PATH_TO_DIR_CONTAINING_LIB_AND_INCLUDE (see also ./configure --help if you do not understand what we are talking about)]))
++LB_CHECK_FLINT(2.3,,AC_MSG_ERROR([Unable to find FLINT (which is strongly recommended) on your machine: please use --with-flint=PATH_TO_DIR_CONTAINING_LIB_AND_INCLUDE (see also ./configure --help if you do not understand what we are talking about)]))
+ 
+ # arithmetic shift
+ #AC_MSG_CHECKING(whether your compiler does arithmetic shifts)

@@ -27,15 +27,6 @@ do not enter debugger upon error
 \fB\-\-debug n\fR
 debug warning message n by signalling an error
 .TP
-\fB\-\-dumpdata\fR
-read source code, dump data if so configured, exit (no init.m2)
-.TP
-\fB\-\-fullbacktrace\fR
-print full backtrace after error
-.TP
-\fB\-\-no\-loaddata\fR
-don't try to load the dumpdata file
-.TP
 \fB\-\-int\fR
 don't handle interrupts
 .TP
@@ -49,11 +40,11 @@ print no input prompts
 \fB\-\-no\-readline\fR
 don't use readline
 .TP
-\fB\-\-no\-setup\fR
-don't try to load setup.m2 or to loaddata
+\fB\-\-no\-core\fR
+don't load the Core
 .TP
-\fB\-\-no\-personality\fR
-don't set the personality and re-exec M2 (linux only)
+\fB\-\-no\-threads\fR
+don't start any additional threads (or tasks)
 .TP
 \fB\-\-prefix DIR\fR
 set prefixDirectory
@@ -86,9 +77,6 @@ evaluate expression '...' before initialization
 .TP
 \fB\-e '...'\fR
 evaluate expression '...' after initialization
-.TP
-\fB\-x\fR
-example prompts, don't use readline
 
 .\" .SH "DESCRIPTION"
 .\" .SH "OPTIONS"
@@ -100,7 +88,7 @@ example prompts, don't use readline
 The documentation for \fIMacaulay2\fP is available locally starting in
 @docdir@/Macaulay2Doc/html/index.html, where ${prefix} is replaced by the directory prefix used when
 the package was installed.  The directory is available as the value of the \fIMacaulay2\fP variable
-prefixDirectory, but the best way to get to it is to run the command \fIviewHelp\fP in \fIMacaulay2\fP.
+prefixDirectory, but the best way to get to the documentation is to run the command \fIviewHelp\fP in \fIMacaulay2\fP.
 
 The home page for \fIMacaulay2\fP is \fBhttp://www.math.uiuc.edu/Macaulay2/\fR.
 
@@ -112,7 +100,7 @@ are grateful.
 
 .SH "COPYRIGHT"
 
-\fIMacaulay2\fP is copyright 2010 by Daniel R. Grayson and Michael E. Stillman.  We permit you to
+\fIMacaulay2\fP is copyright 2019 by Daniel R. Grayson and Michael E. Stillman.  We permit you to
 use it under the terms of the GNU General Public License, version 2 or version 3, as published by
 the Free Software Foundation.  This is free software.  There is no warranty; not even for
 merchantability or fitness for a particular purpose.

@@ -1,5 +1,7 @@
 --		Copyright 2005, 2008 by Daniel R. Grayson and Michael E. Stillman
 
+needs "matrix.m2"
+
 MutableMatrix = new Type of HashTable
 MutableMatrix.synonym = "mutable matrix"
 raw MutableMatrix := m -> m.RawMutableMatrix
@@ -11,10 +13,10 @@ entries MutableMatrix := m -> (
      applyTable(entries raw m, r -> promote(r,R)))
 toString MutableMatrix := m -> "mutableMatrix " | toString entries m
 precision MutableMatrix := precision @@ ring
-net MutableMatrix := m -> (
-     m = raw m;
-     if m == 0 then return "0";
-     stack toSequence apply(lines toString m, x -> concatenate("| ",x,"|")))
+expression MutableMatrix := m -> MatrixExpression {applyTable(entries m, expression), MutableMatrix => true}
+texMath MutableMatrix := m -> texMath expression m
+net MutableMatrix := m -> net expression m
+
 map(Ring,RawMutableMatrix) := opts -> (R,m) -> (
      new MutableMatrix from {
 	  symbol Ring => R,
@@ -57,11 +59,34 @@ MutableMatrix + MutableMatrix := (m,n) -> map(ring m, raw m + raw n)
 MutableMatrix - MutableMatrix := (m,n) -> map(ring m, raw m - raw n)
 MutableMatrix * MutableMatrix := (m,n) -> map(ring m, raw m * raw n)
 RingElement * MutableMatrix := (f,n) -> map(ring f, raw f * raw n)
+MutableMatrix * RingElement := (n,f) -> map(ring f, raw n * raw f)
+ZZ * MutableMatrix := (f,n) -> map(ring f, raw (f_(ring n)) * raw n)
+MutableMatrix * ZZ := (n,f) -> map(ring f, raw n * raw (f_(ring n)))
+RR * MutableMatrix := (f,n) -> map(ring f, raw (f_(ring n)) * raw n)
+MutableMatrix * RR := (n,f) -> map(ring f, raw n * raw (f_(ring n)))
 
 MutableMatrix _ Sequence = (M,ij,val) -> (
      val = promote(val,ring M);
      (raw M)_ij = raw val; 
      val)
+
+transpose MutableMatrix := (f) -> map(ring f, rawDual raw f)
+
+lift(MutableMatrix,InexactNumber) := opts -> (M,RR) -> lift(M,default RR,opts)
+lift(MutableMatrix,InexactNumber') :=
+lift(MutableMatrix,RingElement) := 
+lift(MutableMatrix,Number) := Matrix => opts -> (f,S) -> (
+     R := ring f;
+     if R === S then return f;
+     lift(f, R, S, opts))     
+
+promote(MutableMatrix,InexactNumber) := (M,RR) -> promote(M,default RR)
+promote(MutableMatrix,InexactNumber') :=
+promote(MutableMatrix,RingElement) := 
+promote(MutableMatrix,Number) := Matrix => (f,S) -> (
+     R := ring f;
+     if R === S then return f;
+     promote(f, R, S))
 
 --------------------------------
 -- submatrices -----------------
@@ -159,6 +184,8 @@ randomMutableMatrix(ZZ,ZZ,RR,ZZ) := options -> (n,m,percentagezero,maxentry) -> 
 
 LUdecomposition = method()
 LUdecomposition MutableMatrix := (A) -> (
+     if not isField ring A then
+       error("LU not implemented over ring " | toString ring A);
      nrows := rawNumberOfRows raw A;
      L := mutableMatrix(ring A,0,0,Dense=>true);
      U := mutableMatrix(ring A,0,0,Dense=>true);
@@ -168,24 +195,38 @@ LUdecomposition Matrix := (A) -> (
      (p,L,U) := LUdecomposition mutableMatrix A;
      (p, matrix L,matrix U))
 
-solve = method(Options => { ClosestFit => false, MaximalRank => false, Precision=>0 })
+solve = method(Options => { ClosestFit => false,
+	                    MaximalRank => false,
+			    Precision=>0,
+			    Invertible=>false })
+
 solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      R := ring A;
-     if hasEngineLinearAlgebra R then (
-         return map(R,rawLinAlgSolve(raw A, raw b, true));
-         );
-     if (opts#Precision !=0) then (
-		A=mutableMatrix(promote(matrix(A), CC_(opts#Precision)));
-		b=mutableMatrix(promote(matrix(b), CC_(opts#Precision)))
-	);
---     if (precision A > precision b) then b=promote(b, ring A);
---     if (precision b > precision A) then A=promote(A, ring b);
-     x := mutableMatrix(ring A,0,0,Dense=>true);
-     if opts.ClosestFit
-     then rawLeastSquares(raw A,raw b,raw x,opts.MaximalRank)
-     else rawSolve(raw A,raw b,raw x);
-     x)
+     if not isField R then
+       error("solve not implemented over ring " | toString ring A);
+     if opts.ClosestFit then (
+         if (opts#Precision !=0) then (
+		     A=mutableMatrix(promote(matrix(A), CC_(opts#Precision)));
+		     b=mutableMatrix(promote(matrix(b), CC_(opts#Precision)))
+	         );
+         x := mutableMatrix(ring A,0,0,Dense=>true);
+         rawLeastSquares(raw A,raw b,raw x,opts.MaximalRank);
+         x)
+     else (
+         ans := if opts.Invertible then
+                    rawLinAlgSolveInvertible(raw A, raw b)
+                else
+                    rawLinAlgSolve(raw A, raw b);
+         if ans === null then null else map(R, ans)
+         )
+     )
+
 solve(Matrix,Matrix) := opts -> (A,b) -> (
+     if not isBasicMatrix A or not isBasicMatrix b then
+       error "expected matrices between free modules";
+     if ultimate(coefficientRing, ring A) === ZZ then (
+         return (b // A);
+        );
      matrix solve(mutableMatrix(A,Dense=>true),
                   mutableMatrix(b,Dense=>true),
 		  opts))
@@ -220,7 +261,7 @@ eigenvectors(Matrix) := o -> (A) -> (
 SVD = method(Options=>{DivideConquer=>false})
 SVD MutableMatrix := o -> A -> (
      k := ring A;
-     if not instance(k,InexactField) then error "eigenvalues requires matrices over RR or CC";
+     if not instance(k,InexactField) then error "SVD requires matrices over RR or CC";
      Sigma := mutableMatrix(RR_(k.precision),0,0,Dense=>true);
      U := if instance(k,RealField) then mutableMatrix(RR_(k.precision),0,0) else mutableMatrix(CC_(k.precision),0,0,Dense=>true);
      VT := if instance(k,RealField) then mutableMatrix(RR_(k.precision),0,0) else mutableMatrix(CC_(k.precision),0,0,Dense=>true);
@@ -228,10 +269,75 @@ SVD MutableMatrix := o -> A -> (
      (Sigma,U,VT))
 SVD Matrix := o -> A -> (
      k := ring A;
-     if not instance(k,InexactField) then error "eigenvalues requires matrices over RR or CC";
+     if not instance(k,InexactField) then error "SVD requires matrices over RR or CC";
      A = mutableMatrix(A,Dense=>true);
      (Sigma,U,VT) := SVD(A,o);
      (VerticalList flatten entries matrix Sigma,matrix U,matrix VT))
+
+QRDecomposition = method()
+QRDecomposition MutableMatrix := A -> (
+     k := ring A;
+     -- if k =!= RR_53 then error "currently, QRDecomposition is only defined for matrices over RR_53";
+     Q := mutableMatrix(k,0,0,Dense=>true);
+     R := mutableMatrix(k,0,0,Dense=>true);
+     rawQR(raw A, raw Q, raw R, true -* ReturnQR was a bad option name *- );
+     (Q,R))
+QRDecomposition Matrix := A -> (
+     k := ring A;
+     -- if k =!= RR_53 then error "currently, QRDecomposition is only defined for matrices over RR_53";
+     A = mutableMatrix(A,Dense=>true);
+     (Q,R) := QRDecomposition A;
+     (matrix Q,matrix R))
+
+rank MutableMatrix := (M) -> (
+    if isField ring M then
+      rawLinAlgRank raw M
+    else
+      rank matrix M
+    )
+
+determinant MutableMatrix := opts -> (M) -> (
+    if numRows M =!= numColumns M then error "expected a square matrix";
+    if isField ring M then
+      promote(rawLinAlgDeterminant raw M, ring M)
+    else
+      determinant matrix M
+    )
+
+inverse MutableMatrix := (M) -> (
+     if numRows M =!= numColumns M then error "expected square matrix";
+     if isField ring M then
+       map(ring M, rawLinAlgInverse raw M)
+     else
+       mutableMatrix inverse matrix M
+     )
+
+nullSpace = method()
+nullSpace(MutableMatrix) := (M) -> map(ring M, rawLinAlgNullSpace raw M)
+
+MutableMatrix ^ ZZ := (A, r) -> (
+     if r == 0 then 
+       return mutableIdentity(ring A, numRows A);
+     if r < 0 then (
+	  r = -r;
+	  A = inverse A;
+	  );
+     result := A;
+     if r > 1 then for i from 2 to r do result = result * A;
+     result     
+     )
+
+rowRankProfile = method()
+rowRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, true)
+
+columnRankProfile = method()
+columnRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, false)
+
+reducedRowEchelonForm = method()
+reducedRowEchelonForm Matrix := (M) -> (
+    matrix reducedRowEchelonForm(mutableMatrix M)
+    )
+reducedRowEchelonForm MutableMatrix := (M) -> map(ring M, rawLinAlgRREF raw M)
      
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

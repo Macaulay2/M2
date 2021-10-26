@@ -15,12 +15,13 @@
     @ingroup reducedgb
 
     @brief Base class for reduced Groebner basis computation.
-    
-    These classes take a Groebner basis, and compute a corresponding minimal Groebner basis.
+
+    These classes take a Groebner basis, and compute a corresponding minimal
+   Groebner basis.
 */
 class ReducedGB : public GBComputation
 {
-protected:
+ protected:
   GBRing *R;
   const PolynomialRing *originalR;
   const FreeModule *F;
@@ -35,8 +36,8 @@ protected:
             const PolynomialRing *originalR0,
             const FreeModule *F0,
             const FreeModule *Fsyz0);
-public:
 
+ public:
   virtual ~ReducedGB();
 
   static ReducedGB *create(const PolynomialRing *originalR0,
@@ -44,17 +45,15 @@ public:
                            const FreeModule *Fsyz0,
                            const GBWeight *wt0 = 0);
 
-  virtual GBComputation * cast_to_GBComputation() { return this;}
-
+  virtual GBComputation *cast_to_GBComputation() { return this; }
   virtual void start_computation() {}
-
   virtual int complete_thru_degree() const { return 0; }
   // The computation is complete up through this degree.
 
-  // Recall that the status of the computation is maintained by the Computation class,
+  // Recall that the status of the computation is maintained by the Computation
+  // class,
 
-  virtual const Ring * get_ring() const { return originalR ; }
-
+  virtual const Ring *get_ring() const { return originalR; }
   ////////////////////////////////
   // Results of the computation //
   ////////////////////////////////
@@ -85,8 +84,8 @@ public:
   virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
   virtual M2_bool matrix_lift(const Matrix *m,
-                           const Matrix /* or null */ **result_remainder,
-                           const Matrix /* or null */ **result_quotient);
+                              const Matrix /* or null */ **result_remainder,
+                              const Matrix /* or null */ **result_quotient);
 
   virtual int contains(const Matrix *m);
 
@@ -95,10 +94,11 @@ public:
   // to be provided by subclasses               //
   ////////////////////////////////////////////////
 
-  virtual void set_gb(VECTOR(POLY) &polys0) = 0;
+  virtual void set_gb(VECTOR(POLY) & polys0) = 0;
 
-  virtual void minimalize(const VECTOR(POLY) &polys0,
-    bool auto_reduce=true) { }
+  virtual void minimalize(const VECTOR(POLY) & polys0, bool auto_reduce = true)
+  {
+  }
 
   // I have to decide: does this ADD to the existing set?
 
@@ -120,7 +120,6 @@ public:
 
   virtual void remainder(gbvector *&f, bool use_denom, ring_elem &denom) = 0;
 };
-
 
 #endif
 

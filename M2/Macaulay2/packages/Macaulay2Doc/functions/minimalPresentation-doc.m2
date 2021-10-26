@@ -1,7 +1,7 @@
 --- status: Draft
 --- author(s): Amelia Taylor
 --- notes: This is a new file bringing together both prune and minPres as a 
----        complete minimal presetation collection.  trim is inherently 
+---        complete minimal presentation collection.  trim is inherently 
 ---        different as it minimizes to the extent possible while preserving
 ---        the ambient module.
 
@@ -18,7 +18,7 @@ document {
      }
 
 document { 
-     Key => {(minimalPresentation,Ring),(prune,Ring),minimalPresentationMap, minimalPresentationMapInv},
+     Key => {(minimalPresentation,Ring),(prune,Ring),minimalPresentationMap, minimalPresentationMapInv, [minimalPresentation,Exclude], [prune,Exclude]},
      Headline => "compute a minimal presentation of a quotient ring",
      Usage => "S = minimalPresentation R\nS = prune R",
      Inputs => { "R" => { "a quotient ring" }},
@@ -148,11 +148,11 @@ document {
 	  "N" => Module => {"isomorphic to ", TT "M"}
 	  },
      Consequences => {
-	  {TT "minimalPresentation", " stores the isomorphism from ", TT "M", " to ", TT "N", 
+	  {TT "The isomorphism from ", TT "N", " to ", TT "M", 
 	       " as ", TT "g = N.cache.pruningMap", " unless ", 
 	       TT "M.cache.pruningMap", " already exists, in which case ", 
-	       TT "N", " is the same as ", TT "M", " and the inverse 
-	       isomorphism is obtained by ", TT "g^-1"}
+	       TT "N", " is the same as ", TT "M", ".  The inverse 
+	       isomorphism can be obtained as ", TT "g^-1"}
 	       },   	      
      "If the Module ", TT "M", " is graded then the module ", TT "N", " 
      is a minimal presentation of ", TT "M", ".  If not, then an 
@@ -166,7 +166,8 @@ document {
 	  g = N.cache.pruningMap
 	  g^-1
      ///,
-     "This function also works when M is ", ofClass{GradedModule,ChainComplex,CoherentSheaf}, ".",
+     "This function also works when ", TT "M", " is ", ofClass{GradedModule,ChainComplex,CoherentSheaf}, ",
+     by acting on the modules and maps within it.",
      EXAMPLE lines ///
 	  I = ideal(a^2,b^3,c^4,d^7)
      	  X = Proj R

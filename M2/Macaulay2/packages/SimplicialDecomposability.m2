@@ -6,15 +6,15 @@
 -- License as published by the Free Software Foundation, either version 2
 -- of the License, or any later version.
 
-if version#"VERSION" <= "1.4" then needsPackage "SimplicialComplexes"
-newPackage select((
+newPackage (
    "SimplicialDecomposability",
    Version => "1.0.6",
    Date => "20. June 2011",
    Authors => {{Name => "David Cook II",
-                Email => "dcook8@nd.edu",
-                HomePage => "http://www.nd.edu/~dcook8"}},
+                Email => "dwcook@eiu.edu",
+                HomePage => "http://ux1.eiu.edu/~dwcook/"}},
    Headline => "various decomposability routines for simplicial complexes",
+   Keywords => {"Combinatorial Commutative Algebra"},
    DebuggingMode => false,
    Certification => {
 	"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
@@ -23,15 +23,14 @@ newPackage select((
 	"acceptance date" => "2010-08-03",
 	"published article URI" => "http://www.j-sag.org/Volume2/jsag-5-2010.pdf",
 	"published code URI" => "http://www.j-sag.org/Volume2/SimplicialDecomposability.m2",
-	"repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/SimplicialDecomposability.m2",
-	"release at publication" => 11861,	    -- as an integer
+	"repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/SimplicialDecomposability.m2",
+	"release at publication" => "d230ee4205bab933be32f3de7ae0ae0f52115c84",
 	"version at publication" => "1.0.5",
 	"volume number" => "2",
 	"volume URI" => "http://www.j-sag.org/volume2.html"
 	},
-    if version#"VERSION" > "1.4" then PackageExports => {"SimplicialComplexes"}
-), x -> x =!= null)
-if version#"VERSION" <= "1.4" then needsPackage "SimplicialComplexes"
+    PackageExports => {"SimplicialComplexes"}
+    )
 
 -------------------
 -- Exports
@@ -52,7 +51,7 @@ export {
    "isVertexDecomposable",
    "shellingOrder",
    -- Options
-   "Permutation",
+   "Permutation",		
    "Random"
 }
 
@@ -97,13 +96,6 @@ hTriangle SimplicialComplex := S -> (
    )
 )
 
--- Determines the hVector of the Stanley-Reisner ideal of a simplicial complex.
-hVector = method(TypicalValue => List)
-hVector SimplicialComplex := S -> (
-   N := numerator reduceHilbert hilbertSeries ideal S;
-   t := first gens ring N;
-   apply(dim S + 2, i -> coefficient(t^i,N))
-)
 
 protect isVD
 
@@ -124,7 +116,7 @@ isDecomposable (ZZ, SimplicialComplex) := (k, S) -> (
    -- short-circuit via the h-Vector or h-Triangle, depending on purity
    if not done then (
        if isPure S then (
-           if any(hVector S, i -> i<0) then ( iskd = false; done = true; )
+           if any(values hVector S, i -> i<0) then ( iskd = false; done = true; )
        )
        else (
            if any(values hTriangle S, i -> i < 0) then ( iskd = false; done = true; );
@@ -250,7 +242,7 @@ isVertexDecomposable SimplicialComplex := (cacheValue isVD) (S -> (
 
    -- pure case: vertex-decomposable => shellable => nonnegative h-Vector
    if isPure S then (
-       if any(hVector S, i -> i < 0) then return false;
+       if any(values hVector S, i -> i < 0) then return false;
    )
    -- non-pure case: Theorem 11.3 in [BW-2] shows vertex-decomposable implies
    -- shellable, hence nonnegative h-Triangle by Theorem 3.4 in [BW-1].
@@ -280,7 +272,7 @@ shellingOrder SimplicialComplex := opts -> S -> (
    -- The pure case is easier, so separate it
    if isPure S then (
        -- Negatives in the h-Vector imply not shellable for pure complexes
-       if any(hVector S, i -> i < 0) then return {};
+       if any(values hVector S, i -> i < 0) then return {};
        -- Start the recursion
        O = recursivePureShell({}, F);
    )
@@ -299,6 +291,61 @@ shellingOrder SimplicialComplex := opts -> S -> (
    -- cache & return
    S.cache.shellingOrder = O
 )
+
+-- Check if the grading on the ring defines a proper (dim(D)+1)-coloring on D. Used by fVector and hVector. Not exported.
+
+isBalanced = (D) -> (
+     d := dim D +1;
+     m := true;
+     if not d == #(degree first gens ring D) then (
+         m = false;
+     );
+     apply(flatten entries faces(1,D), f -> if max(degree f) > 1 then m = false);
+     return m;
+     );
+
+-------------------
+-- 27/12/2018 Lorenzo: some changes
+-------------------
+
+-- Modified hVector with the Flag option
+hVector = method(TypicalValue => List, Options => {Flag => false})
+hVector SimplicialComplex := opts -> D -> (
+     I := ideal D;
+     if not opts.Flag then (
+         S := newRing(ring D, Degrees => {#(gens ring D):1});
+         maptoS := map(S, ring D);
+         I = maptoS(I);
+     );
+     N := poincare cokernel generators I;
+     if opts.Flag then (
+     if not isBalanced(D) then (
+         stderr << "-- the grading does not correspond to a proper d-coloring." << endl;
+         return new HashTable from {}
+     );
+         R := newRing(ring N, Degrees => apply(gens ring N, g -> apply(gens ring N, f -> if index(f) == index(g) then 1 else 0)));
+         maptoR := map(R, ring N);
+         N = maptoR(N);
+     );
+     if N == 0 then (
+         new HashTable from {-1 => 0}
+     )
+     else (
+         d := dim D + 1;
+         apply(gens ring N, t -> while 0 == substitute(N, t => 1) do N = N // (1-t));
+         supp := apply(flatten entries monomials(N), m -> degree m);
+         allsubsets := apply(subsets(#(gens ring N)), s -> apply(toList(0..#(gens ring N)-1), l -> if member(l,s) then 1 else 0));
+         flagh := L -> coefficient((flatten entries monomials part(L, N))#0, part(L, N));
+     flagf := M -> sum(supp, m -> if all(m,M, (i,j) -> j >= i) then flagh(m) else 0);
+     h := j -> sum(supp, s -> if sum(s)==j then flagh(s) else 0);
+     f := j -> sum(0..j+1, i -> binomial(d-i, d-j-1)*h(i));
+     if opts.Flag then (
+         new HashTable from apply(supp, j -> j => flagh(j))
+     )
+     else new HashTable from apply(toList(0..d), j -> j => h(j))
+     )
+     )
+
 
 -------------------
 -- Local-Only Code
@@ -379,6 +426,7 @@ recursivePureShell (List, List) := (O, P) -> (
    );
    {}
 )
+
 
 -------------------
 -- Documentation
@@ -541,30 +589,6 @@ doc ///
        hVector
 ///
 
-doc ///
-   Key
-       hVector
-       (hVector, SimplicialComplex)
-   Headline
-       determines the h-Vector of a simplicial complex
-   Usage
-       hVector S
-   Inputs
-       S:SimplicialComplex
-   Outputs
-       h:List
-           the h-Vector of $S$
-   Description
-       Text
-           The h-Vector of a simplicial complex is the coefficients of the
-           numerator of the Hilbert series of the Stanley-Reisner ring
-           associated to the simplicial complex.
-       Example
-           R = QQ[a..d];
-           hVector simplicialComplex {a*b*c,d}
-   SeeAlso
-       fVector
-///
 
 doc ///
    Key
@@ -870,6 +894,53 @@ document {
 --These are documented in the above node.
 undocumented { "Random", "Permutation" }
 
+document {
+     Key => {hVector,(hVector,SimplicialComplex),[hVector,Flag]},
+     Headline => "the h-vector of a simplicial complex",
+     Usage => "h = hVector D",
+     Inputs => {
+     "D" => SimplicialComplex,
+     Flag => Boolean => "the flag h-vector if the simplicial complex is
+     properly defined over a multigraded ring."
+     },
+     Outputs => {
+     "h" => {"such that ", TT "h#i",
+     " is the ", TT "i-", "th entry of the h-vector of ", TT "D",
+     " for an integer ", TT "0 <= i <= dim D+1", " or a squarefree degree ", TT "i", "."}
+     },
+     "The h-vector of the 4-simplex.",
+     EXAMPLE {
+     "R = ZZ[a..e];",
+     "simplex = simplicialComplex{a*b*c*d*e}",
+     "hVector simplex",
+     },
+     "A filled triangle with two edges attached to two vertices shows
+     that the h-vector can have negative entries.",
+     EXAMPLE {
+     "R = ZZ[x_1..x_5];",
+     "delta = simplicialComplex{x_1*x_2*x_3,x_2*x_4,x_3*x_5}",
+     "hVector delta",
+     },
+     "The last example above can be considered in a ", TT "Z^3", "-graded
+      ring. Then we can compute its flag h-vector.",
+     EXAMPLE {
+     "grading = {{1,0,0},{1,0,0},{1,0,0},{0,1,0},{0,0,1}};",
+     "R = ZZ[x_1,x_2,x_3,y,z, Degrees => grading];",
+     "gamma = simplicialComplex{x_1*y*z,x_2*y,x_3*z}",
+     "hVector(gamma, Flag => true)",
+     },
+     Caveat => {
+     "The option ", TT "Flag", " checks if the multigrading corresponds to a properly d-coloring of "
+     , TT "D", ", where d is the dimension of ", TT "D", " plus one. If it is not the case the output
+     is an empty HashTable."
+     },
+     SeeAlso => {SimplicialComplexes,
+     faces}
+     }
+
+--These are documented in the above node.
+undocumented { "Flag" }
+
 -------------------
 -- Tests
 -------------------
@@ -934,12 +1005,12 @@ assert(hT#(3,0) == 1 and hT#(3,1) == 2 and hT#(3,2) == -1 and not hT#?(3,3));
 -- Tests of hVector
 TEST ///
 R = QQ[a..e];
-assert(hVector simplicialComplex {a, b, c, d, e} === {1,4});
-assert(hVector simplicialComplex {a*b*c*d*e} === {1,0,0,0,0,0});
-assert(hVector simplicialComplex {a*b*c, b*c*d, c*d*e} === {1,2,0,0});
-assert(hVector simplicialComplex {a*b, b*c, c*d, d*e, b*d} === {1,3,1});
-assert(hVector simplicialComplex {a*b*c, c*d*e} === {1, 2, -1, 0});
-assert(hVector simplicialComplex {a, b*c, d*e} === {1, 3, -2});
+assert(values hVector simplicialComplex {a, b, c, d, e} === {1,4});
+assert(values hVector simplicialComplex {a*b*c*d*e} === {1,0,0,0,0,0});
+assert(values hVector simplicialComplex {a*b*c, b*c*d, c*d*e} === {1,2,0,0});
+assert(values hVector simplicialComplex {a*b, b*c, c*d, d*e, b*d} === {1,3,1});
+assert(values hVector simplicialComplex {a*b*c, c*d*e} === {1, 2, -1, 0});
+assert(values hVector simplicialComplex {a, b*c, d*e} === {1, 3, -2});
 ///
 
 -- Tests of isDecomposable
@@ -1053,6 +1124,22 @@ assert(isVertexDecomposable simplicialComplex {a*b, c});
 assert(isVertexDecomposable simplicialComplex {a*b*c, c*d, d*e, e*f, d*f});
 assert(not isVertexDecomposable simplicialComplex {a*b*c, c*d, d*e*f});
 ///
+
+-- New tests for hVector
+----------------------------------------------
+-- Boundary of the 4-Cross-Polytope
+----------------------------------------------
+
+TEST ///
+S = QQ[x_{1,1}..x_{2,4}, Degrees => {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1},{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}}]
+I = monomialIdeal(x_{1,1}*x_{2,1},x_{1,2}*x_{2,2},x_{1,3}*x_{2,3},x_{1,4}*x_{2,4})
+D = simplicialComplex(I)
+assert( (hVector(D))#2 == 6)
+assert( (hVector(D, Flag => true))#{1,1,0,1} == 1)
+///
+
+
+
 
 end
 

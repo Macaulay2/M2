@@ -1,0 +1,199 @@
+-- -*- M2-comint -*- hash: 1170872574
+
+i1 : A = QQ{x,y,z}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : p = y*z + z*y - x^2
+
+            2
+o2 = zy+yz-x
+
+o2 : A
+
+i3 : q = x*z + z*x - y^2
+
+         2
+o3 = zx-y +xz
+
+o3 : A
+
+i4 : r = z^2 - x*y - y*x
+
+      2
+o4 = z -yx-xy
+
+o4 : A
+
+i5 : I = ncIdeal {p,q,r}
+
+                             2      2      2
+o5 = Two-sided ideal {zy+yz-x , zx-y +xz, z -yx-xy}
+
+o5 : NCIdeal
+
+i6 : Igb = twoSidedNCGroebnerBasisBergman I
+--Calling Bergman for NCGB calculation.
+Complete!
+
+      2    2                2
+o6 = y x-xy ; Lead Term = (y x, 1)
+       2  2                  2
+     yx -x y; Lead Term = (yx , 1)
+         2
+     zx-y +xz; Lead Term = (zx, 1)
+            2
+     zy+yz-x ; Lead Term = (zy, 1)
+      2                      2
+     z -yx-xy; Lead Term = (z , 1)
+
+o6 : NCGroebnerBasis
+
+i7 : Igb2 = ncGroebnerBasis(I,InstallGB=>true)
+
+      2                      2
+o7 = z -yx-xy; Lead Term = (z , 1)
+         2
+     zx-y +xz; Lead Term = (zx, 1)
+            2
+     zy+yz-x ; Lead Term = (zy, 1)
+
+o7 : NCGroebnerBasis
+
+i8 : z^17 % Igb
+
+                                           2             2    3           3     4         4     5       5     6     6     7   7     8 8
+o8 = yxyxyxyxyxyxyxyxz+xyxyxyxyxyxyxyxyz+8x yxyxyxyxyxyxy z+8x yxyxyxyxyxy z+28x yxyxyxyxy z+28x yxyxyxy z+56x yxyxy z+56x yxy z+70x y z
+
+o8 : A
+
+i9 : normalFormBergman(z^17,Igb)
+--Calling Bergman for NF calculation for 1 elements.
+Complete!
+Writing bergman input file.
+Writing bergman init file.
+
+                                           2             2    3           3     4         4     5       5     6     6     7   7     8 8
+o9 = yxyxyxyxyxyxyxyxz+xyxyxyxyxyxyxyxyz+8x yxyxyxyxyxyxy z+8x yxyxyxyxyxy z+28x yxyxyxyxy z+28x yxyxyxy z+56x yxyxy z+56x yxy z+70x y z
+
+o9 : A
+
+i10 : B = A/I
+
+o10 = B
+
+o10 : NCQuotientRing
+
+i11 : z^17
+
+                                      2               2 2               2               2 2               2 2 2             2   2             2               2 2               2 2   2           2 2 2 2           2 2 2             2   2             2   2 2           2     2           2               2 2               2 2     2         2 2   2 2         2 2   2           2 2 2 2           2 2 2 2 2         2 2 2   2         2 2 2             2   2             2   2   2         2   2 2 2         2   2 2           2     2           2     2 2         2       2         2               2 2               2 2       2       2 2     2 2       2 2     2         2 2   2 2         2 2   2 2 2       2 2   2   2       2 2   2           2 2 2 2           2 2 2 2   2       2 2 2 2 2 2       2 2 2 2 2         2 2 2   2         2 2 2   2 2       2 2 2     2       2 2 2             2   2             2   2     2       2   2   2 2       2   2   2         2   2 2 2         2   2 2 2 2       2   2 2   2       2   2 2           2     2           2     2   2       2     2 2 2       2     2 2         2       2         2       2 2       2         2       2               2 2               2 2         2     2 2       2 2     2 2       2       2 2     2 2       2 2     2 2 2     2 2     2   2     2 2     2         2 2   2 2         2 2   2 2   2     2 2   2 2 2 2     2 2   2 2 2       2 2   2   2       2 2   2   2 2     2 2   2     2     2 2   2           2 2 2 2           2 2 2 2     2     2 2 2 2   2 2     2 2 2 2   2       2 2 2 2 2 2       2 2 2 2 2 2 2     2 2 2 2 2   2     2 2 2 2 2         2 2 2   2         2 2 2   2   2     2 2 2   2 2 2     2 2 2   2 2       2 2 2     2       2 2 2     2 2     2 2 2       2     2 2 2             2   2             2   2       2     2   2     2 2     2   2     2       2   2   2 2       2   2   2 2 2     2   2   2   2     2   2   2         2   2 2 2         2   2 2 2   2     2   2 2 2 2 2     2   2 2 2 2       2   2 2   2       2   2 2   2 2     2   2 2     2     2   2 2           2     2           2     2     2     2     2   2 2     2     2   2       2     2 2 2       2     2 2 2 2     2     2 2   2     2     2 2         2       2         2       2   2     2       2 2 2     2       2 2       2         2       2         2 2     2           2     2                 2                 2           2     2         2 2     2         2       2       2 2       2       2 2 2     2       2   2     2       2         2     2 2         2     2 2   2     2     2 2 2 2     2     2 2 2       2     2   2       2     2   2 2     2     2     2     2     2           2   2 2           2   2 2     2     2   2 2   2 2     2   2 2   2       2   2 2 2 2       2   2 2 2 2 2     2   2 2 2   2     2   2 2 2         2   2   2         2   2   2   2     2   2   2 2 2     2   2   2 2       2   2     2       2   2     2 2     2   2       2     2   2             2 2 2             2 2 2       2     2 2 2     2 2     2 2 2     2       2 2 2   2 2       2 2 2   2 2 2     2 2 2   2   2     2 2 2   2         2 2 2 2 2         2 2 2 2 2   2     2 2 2 2 2 2 2     2 2 2 2 2 2       2 2 2 2   2       2 2 2 2   2 2     2 2 2 2     2     2 2 2 2           2 2   2           2 2   2     2     2 2   2   2 2     2 2   2   2       2 2   2 2 2       2 2   2 2 2 2     2 2   2 2   2     2 2   2 2         2 2     2         2 2     2   2     2 2     2 2 2     2 2     2 2       2 2       2       2 2       2 2     2 2         2     2 2                 2                 2         2       2       2 2       2       2         2     2 2         2     2 2 2       2     2   2       2     2           2   2 2           2   2 2   2       2   2 2 2 2       2   2 2 2         2   2   2         2   2   2 2       2   2     2       2   2             2 2 2             2 2 2     2       2 2 2   2 2       2 2 2   2         2 2 2 2 2         2 2 2 2 2 2       2 2 2 2   2       2 2 2 2           2 2   2           2 2   2   2       2 2   2 2 2       2 2   2 2         2 2     2         2 2     2 2       2 2       2       2 2                 2                 2       2         2     2 2         2     2           2   2 2           2   2 2 2         2   2   2         2   2             2 2 2             2 2 2   2         2 2 2 2 2         2 2 2 2           2 2   2           2 2   2 2         2 2     2         2 2                 2                 2     2           2   2 2           2   2             2 2 2             2 2 2 2           2 2   2           2 2                 2                 2   2             2 2 2             2 2                 2                 2 2                 2
+o11 = yxyxyxyxyxyxyxyxz+yxyxyxyxyxyxyx yz+yxyxyxyxyxyx y xz+yxyxyxyxyxyx yxyz+yxyxyxyxyx y xyxz+yxyxyxyxyx y x yz+yxyxyxyxyx yxy xz+yxyxyxyxyx yxyxyz+yxyxyxyx y xyxyxz+yxyxyxyx y xyx yz+yxyxyxyx y x y xz+yxyxyxyx y x yxyz+yxyxyxyx yxy xyxz+yxyxyxyx yxy x yz+yxyxyxyx yxyxy xz+yxyxyxyx yxyxyxyz+yxyxyx y xyxyxyxz+yxyxyx y xyxyx yz+yxyxyx y xyx y xz+yxyxyx y xyx yxyz+yxyxyx y x y xyxz+yxyxyx y x y x yz+yxyxyx y x yxy xz+yxyxyx y x yxyxyz+yxyxyx yxy xyxyxz+yxyxyx yxy xyx yz+yxyxyx yxy x y xz+yxyxyx yxy x yxyz+yxyxyx yxyxy xyxz+yxyxyx yxyxy x yz+yxyxyx yxyxyxy xz+yxyxyx yxyxyxyxyz+yxyx y xyxyxyxyxz+yxyx y xyxyxyx yz+yxyx y xyxyx y xz+yxyx y xyxyx yxyz+yxyx y xyx y xyxz+yxyx y xyx y x yz+yxyx y xyx yxy xz+yxyx y xyx yxyxyz+yxyx y x y xyxyxz+yxyx y x y xyx yz+yxyx y x y x y xz+yxyx y x y x yxyz+yxyx y x yxy xyxz+yxyx y x yxy x yz+yxyx y x yxyxy xz+yxyx y x yxyxyxyz+yxyx yxy xyxyxyxz+yxyx yxy xyxyx yz+yxyx yxy xyx y xz+yxyx yxy xyx yxyz+yxyx yxy x y xyxz+yxyx yxy x y x yz+yxyx yxy x yxy xz+yxyx yxy x yxyxyz+yxyx yxyxy xyxyxz+yxyx yxyxy xyx yz+yxyx yxyxy x y xz+yxyx yxyxy x yxyz+yxyx yxyxyxy xyxz+yxyx yxyxyxy x yz+yxyx yxyxyxyxy xz+yxyx yxyxyxyxyxyz+yx y xyxyxyxyxyxz+yx y xyxyxyxyx yz+yx y xyxyxyx y xz+yx y xyxyxyx yxyz+yx y xyxyx y xyxz+yx y xyxyx y x yz+yx y xyxyx yxy xz+yx y xyxyx yxyxyz+yx y xyx y xyxyxz+yx y xyx y xyx yz+yx y xyx y x y xz+yx y xyx y x yxyz+yx y xyx yxy xyxz+yx y xyx yxy x yz+yx y xyx yxyxy xz+yx y xyx yxyxyxyz+yx y x y xyxyxyxz+yx y x y xyxyx yz+yx y x y xyx y xz+yx y x y xyx yxyz+yx y x y x y xyxz+yx y x y x y x yz+yx y x y x yxy xz+yx y x y x yxyxyz+yx y x yxy xyxyxz+yx y x yxy xyx yz+yx y x yxy x y xz+yx y x yxy x yxyz+yx y x yxyxy xyxz+yx y x yxyxy x yz+yx y x yxyxyxy xz+yx y x yxyxyxyxyz+yx yxy xyxyxyxyxz+yx yxy xyxyxyx yz+yx yxy xyxyx y xz+yx yxy xyxyx yxyz+yx yxy xyx y xyxz+yx yxy xyx y x yz+yx yxy xyx yxy xz+yx yxy xyx yxyxyz+yx yxy x y xyxyxz+yx yxy x y xyx yz+yx yxy x y x y xz+yx yxy x y x yxyz+yx yxy x yxy xyxz+yx yxy x yxy x yz+yx yxy x yxyxy xz+yx yxy x yxyxyxyz+yx yxyxy xyxyxyxz+yx yxyxy xyxyx yz+yx yxyxy xyx y xz+yx yxyxy xyx yxyz+yx yxyxy x y xyxz+yx yxyxy x y x yz+yx yxyxy x yxy xz+yx yxyxy x yxyxyz+yx yxyxyxy xyxyxz+yx yxyxyxy xyx yz+yx yxyxyxy x y xz+yx yxyxyxy x yxyz+yx yxyxyxyxy xyxz+yx yxyxyxyxy x yz+yx yxyxyxyxyxy xz+yx yxyxyxyxyxyxyz+xy xyxyxyxyxyxyxz+xy xyxyxyxyxyx yz+xy xyxyxyxyx y xz+xy xyxyxyxyx yxyz+xy xyxyxyx y xyxz+xy xyxyxyx y x yz+xy xyxyxyx yxy xz+xy xyxyxyx yxyxyz+xy xyxyx y xyxyxz+xy xyxyx y xyx yz+xy xyxyx y x y xz+xy xyxyx y x yxyz+xy xyxyx yxy xyxz+xy xyxyx yxy x yz+xy xyxyx yxyxy xz+xy xyxyx yxyxyxyz+xy xyx y xyxyxyxz+xy xyx y xyxyx yz+xy xyx y xyx y xz+xy xyx y xyx yxyz+xy xyx y x y xyxz+xy xyx y x y x yz+xy xyx y x yxy xz+xy xyx y x yxyxyz+xy xyx yxy xyxyxz+xy xyx yxy xyx yz+xy xyx yxy x y xz+xy xyx yxy x yxyz+xy xyx yxyxy xyxz+xy xyx yxyxy x yz+xy xyx yxyxyxy xz+xy xyx yxyxyxyxyz+xy x y xyxyxyxyxz+xy x y xyxyxyx yz+xy x y xyxyx y xz+xy x y xyxyx yxyz+xy x y xyx y xyxz+xy x y xyx y x yz+xy x y xyx yxy xz+xy x y xyx yxyxyz+xy x y x y xyxyxz+xy x y x y xyx yz+xy x y x y x y xz+xy x y x y x yxyz+xy x y x yxy xyxz+xy x y x yxy x yz+xy x y x yxyxy xz+xy x y x yxyxyxyz+xy x yxy xyxyxyxz+xy x yxy xyxyx yz+xy x yxy xyx y xz+xy x yxy xyx yxyz+xy x yxy x y xyxz+xy x yxy x y x yz+xy x yxy x yxy xz+xy x yxy x yxyxyz+xy x yxyxy xyxyxz+xy x yxyxy xyx yz+xy x yxyxy x y xz+xy x yxyxy x yxyz+xy x yxyxyxy xyxz+xy x yxyxyxy x yz+xy x yxyxyxyxy xz+xy x yxyxyxyxyxyz+xyxy xyxyxyxyxyxz+xyxy xyxyxyxyx yz+xyxy xyxyxyx y xz+xyxy xyxyxyx yxyz+xyxy xyxyx y xyxz+xyxy xyxyx y x yz+xyxy xyxyx yxy xz+xyxy xyxyx yxyxyz+xyxy xyx y xyxyxz+xyxy xyx y xyx yz+xyxy xyx y x y xz+xyxy xyx y x yxyz+xyxy xyx yxy xyxz+xyxy xyx yxy x yz+xyxy xyx yxyxy xz+xyxy xyx yxyxyxyz+xyxy x y xyxyxyxz+xyxy x y xyxyx yz+xyxy x y xyx y xz+xyxy x y xyx yxyz+xyxy x y x y xyxz+xyxy x y x y x yz+xyxy x y x yxy xz+xyxy x y x yxyxyz+xyxy x yxy xyxyxz+xyxy x yxy xyx yz+xyxy x yxy x y xz+xyxy x yxy x yxyz+xyxy x yxyxy xyxz+xyxy x yxyxy x yz+xyxy x yxyxyxy xz+xyxy x yxyxyxyxyz+xyxyxy xyxyxyxyxz+xyxyxy xyxyxyx yz+xyxyxy xyxyx y xz+xyxyxy xyxyx yxyz+xyxyxy xyx y xyxz+xyxyxy xyx y x yz+xyxyxy xyx yxy xz+xyxyxy xyx yxyxyz+xyxyxy x y xyxyxz+xyxyxy x y xyx yz+xyxyxy x y x y xz+xyxyxy x y x yxyz+xyxyxy x yxy xyxz+xyxyxy x yxy x yz+xyxyxy x yxyxy xz+xyxyxy x yxyxyxyz+xyxyxyxy xyxyxyxz+xyxyxyxy xyxyx yz+xyxyxyxy xyx y xz+xyxyxyxy xyx yxyz+xyxyxyxy x y xyxz+xyxyxyxy x y x yz+xyxyxyxy x yxy xz+xyxyxyxy x yxyxyz+xyxyxyxyxy xyxyxz+xyxyxyxyxy xyx yz+xyxyxyxyxy x y xz+xyxyxyxyxy x yxyz+xyxyxyxyxyxy xyxz+xyxyxyxyxyxy x yz+xyxyxyxyxyxyxy xz+xyxyxyxyxyxyxyxyz
+
+o11 : B
+
+i12 : hilbertBergman B
+--Calling bergman for HS computation.
+Complete!
+
+                 2      3      4      5      6      7      8      9      10
+o12 = 1 + 3T + 6T  + 10T  + 15T  + 21T  + 28T  + 36T  + 45T  + 55T  + 66T
+
+o12 : ZZ[T]
+
+i13 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o13 = B
+
+o13 : NCQuotientRing
+
+i14 : A = ambient B
+
+o14 = A
+
+o14 : NCPolynomialRing
+
+i15 : g = -y^3-x*y*z+y*x*z+x^3
+
+        3          3
+o15 = -y +yxz-xyz+x
+
+o15 : A
+
+i16 : C = A/(ideal B + ncIdeal g)
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o16 = C
+
+o16 : NCQuotientRing
+
+i17 : M = ncMatrix {{x,y,z,0}, {-y*z-2*x^2,-y*x,z*x-x*z,x},{x*y-2*y*x,x*z,-x^2,y}, {-y^2-z*x,x^2,-x*y,z}}
+
+o17 = | x          y    z         0 |
+      | -y*z-2*x^2 -y*x y^2-2*x*z x |
+      | -2*y*x+x*y x*z  -x^2      y |
+      | -2*y^2+x*z x^2  -x*y      z |
+
+o17 : NCMatrix
+
+i18 : assignDegrees(M,{1,0,0,0},{2,2,2,1})
+
+o18 = | x          y    z         0 |
+      | -y*z-2*x^2 -y*x y^2-2*x*z x |
+      | -2*y*x+x*y x*z  -x^2      y |
+      | -2*y^2+x*z x^2  -x*y      z |
+
+o18 : NCMatrix
+
+i19 : ker1M = rightKernelBergman(M)
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o19 = | -z     -x     y            -y*z-x^2  |
+      | y      z      x            y^2       |
+      | -x     y      -z           2*y*x-x*y |
+      | -2*y^2 -2*x^2 -2*y*x+2*x*y -2*x*y*z  |
+
+o19 : NCMatrix
+
+i20 : M*ker1M == 0
+
+o20 = true
+
+i21 : ker2M = rightKernelBergman(ker1M)
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o21 = | -y x^2  -x*z       -x*y       |
+      | x  y^2  -y*x+2*x*y -y*z+2*x^2 |
+      | z  -x*y x^2        -x*z       |
+      | 0  -z   -y         -x         |
+
+o21 : NCMatrix
+
+i22 : ker3M = rightKernelBergman(ker2M)
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o22 = | 0  -2*y*x -2*y^2+2*x*z -y*x*z+x^3 |
+      | -y -z     -x           -x*y       |
+      | -z x      y            x*z        |
+      | x  y      -z           0          |
+
+o22 : NCMatrix
+
+i23 : 

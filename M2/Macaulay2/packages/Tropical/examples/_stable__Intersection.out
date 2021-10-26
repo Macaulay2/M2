@@ -1,0 +1,25 @@
+-- -*- M2-comint -*- hash: -1240239537
+
+i1 : QQ[x,y,z];
+
+i2 : I = ideal(x^2+y^2+z^2-1);
+
+o2 : Ideal of QQ[x..z]
+
+i3 : T1 = tropicalVariety(I);
+
+i4 : J = ideal(x*y+y*z+x*z+1);
+
+o4 : Ideal of QQ[x..z]
+
+i5 : T2 = tropicalVariety(J);
+
+i6 : V = tropicalVariety(I+J);
+
+i7 : W2 =  stableIntersection(T1,T2,Strategy=>"gfan");
+
+i8 : V#"Fan" == W2
+
+o8 = true
+
+i9 : 

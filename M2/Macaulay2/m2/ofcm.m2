@@ -1,5 +1,13 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "engine.m2"
+needs "expressions.m2"
+needs "indeterminates.m2"
+needs "methods.m2"
+needs "orderedmonoidrings.m2"
+needs "shared.m2" -- for tensor
+needs "variables.m2"
+
 MonoidElement = new Type of HashTable
 MonoidElement.synonym = "monoid element"
 new MonoidElement from RawMonomial := (MonoidElement, f) -> hashTable{ symbol RawMonomial => f }
@@ -36,7 +44,7 @@ degrees GeneralOrderedMonoid := M -> M.Options.Degrees
 raw GeneralOrderedMonoid := M -> M.RawMonoid
 
 rle = method(Dispatch => Thing)
-rle VisibleList := x -> apply(runLengthEncode x, y -> if instance(y,Holder) then hold rle y#0 else y)
+rle VisibleList := x -> apply(runLengthEncode x, y -> if instance(y,Holder) then rle y#0 else y)
 rle Option := x -> x#0 => rle x#1
 rle Thing := identity
 
@@ -56,10 +64,10 @@ monoidDefaults = (
 	  SkewCommutative => {},
 	  -- VariableOrder => null,		  -- not implemented yet
 	  WeylAlgebra => {},
-     	  Heft => null {* find one *},
+     	  Heft => null -* find one *-,
 	  DegreeRank => null,				    -- specifying DegreeRank=>3 and no Degrees means degrees {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 1}, ...}
-	  Join => null {* true *},			    -- whether the degrees in the new monoid ring will be obtained by joining the degrees in the coefficient with the degrees in the monoid
-      	  DegreeMap => null {* identity *},		    -- the degree map to use, if Join=>false is specified, for converting degrees in the coefficient ring to degrees in the monoid
+	  Join => null -* true *-,			    -- whether the degrees in the new monoid ring will be obtained by joining the degrees in the coefficient with the degrees in the monoid
+      	  DegreeMap => null -* identity *-,		    -- the degree map to use, if Join=>false is specified, for converting degrees in the coefficient ring to degrees in the monoid
      	  DegreeLift => null,				    -- a function for lifting degrees from the monoid ring to the coefficient ring.  Length must be correct.  Gives an error if lifting is not possible.
 	  Constants => false				    -- whether to use rawTowerRing when making a monoid ring
 	  }
@@ -79,16 +87,13 @@ monoidParts = (M) -> (
 expressionMonoid = M -> (
      T := if (options M).Local === true then List else Array;
      new T from apply(monoidParts M,expression))
-expression GeneralOrderedMonoid := M -> new Parenthesize from { new FunctionApplication from {monoid, expressionMonoid M} }
+expression GeneralOrderedMonoid := M -> if hasAttribute(M,ReverseDictionary) then expression getAttribute(M,ReverseDictionary) else new Parenthesize from { (expression monoid) expressionMonoid M }
+describe GeneralOrderedMonoid := M -> Describe new Parenthesize from { (expression monoid) expressionMonoid M }
 
-toExternalString GeneralOrderedMonoid := M -> toString expression M
-toString GeneralOrderedMonoid := M -> (
-     if hasAttribute(M,ReverseDictionary) then return toString getAttribute(M,ReverseDictionary);
-     toExternalString M)
-net GeneralOrderedMonoid := M -> (
-     if hasAttribute(M,ReverseDictionary) then return toString getAttribute(M,ReverseDictionary);
-     net expression M)
-describe GeneralOrderedMonoid := M -> net expression M
+toExternalString GeneralOrderedMonoid := toString @@ describe
+toString GeneralOrderedMonoid := toString @@ expression
+net GeneralOrderedMonoid := net @@ expression
+texMath GeneralOrderedMonoid := x -> texMath expression x
 
 degreesMonoid = method(TypicalValue => GeneralOrderedMonoid)
 degreesMonoid PolynomialRing := R -> (
@@ -208,6 +213,29 @@ fixWA := diffs -> (
 	       fix x#0 => fix x#1)
 	  else fix x))
 
+findSymbols = varlist -> (
+    -- varlist is a list or sequence of items we wish to use for variable names.
+    -- these may be: Symbol's, RingElement's (which are variables in a ring)
+    -- or lists or sequences of such.
+    -- Return value: a List of Symbol's and IndexVariable's (or an error message gets issued)
+    varlist = deepSplice sequence varlist;
+    v := flatten toList apply(varlist, x->if class x === MutableList then toList x else x);
+    genList := for i from 0 to #v-1 list (
+            try baseName v#i
+            else if instance(v#i,String) and match("[[:alnum:]$]+",v#i) then getSymbol v#i
+            else (
+                msg := concatenate("encountered object not usable as variable at position ",toString i," in list:");
+                preX := "        ";
+                pw := max(printWidth,80);
+                error (msg,newline,toString (preX | silentRobustNetWithClass(pw - width  preX, 5, 3, v#i)));
+                )
+            );
+     -- is this next line needed?
+     -- what is the purpose of this line?
+     scan(genList, sym -> if not (instance(sym,Symbol) or null =!= lookup(symbol <-, class sym)) then error "expected variable or symbol");
+     genList
+    )
+
 makeit1 := (opts) -> (
      M := new GeneralOrderedMonoid of MonoidElement;
      M#"original options" = opts;
@@ -234,9 +262,12 @@ makeit1 := (opts) -> (
 	  -- apply(varlist,M.generators,(e,x) -> new Holder2 from {expression e,x})
 	  );
      processTrm := (k,v) -> if v =!= 1 then Power{M.generatorExpressions#k, v} else M.generatorExpressions#k;
-     processTrms := trms -> new Product from apply(trms, processTrm);
+     processTrms := trms -> (
+	  if # trms === 1
+	  then processTrm trms#0
+	  else new Product from apply(trms, processTrm));
      expression M := x -> (
-	  processTrms rawSparseListFormMonomial x.RawMonomial
+	  hold processTrms rawSparseListFormMonomial x.RawMonomial -- hold needed if single variable
 	  -- new Holder2 from { processTrms rawSparseListFormMonomial x.RawMonomial, x }
 	  );
      M.indexSymbols = hashTable apply(M.generatorSymbols,M.generators,(v,x) -> v => x);
@@ -266,6 +297,7 @@ makeit1 := (opts) -> (
      remove(opts, VariableBaseName);
      M.Options = new OptionTable from opts;
      toString M := toExternalString M := x -> toString expression x;
+     texMath M := x -> texMath expression x;
      if numvars == 0 and not madeTrivialMonoid then (
 	  madeTrivialMonoid = true;
 	  M.RawMonoid = rawMonoid();
@@ -274,7 +306,7 @@ makeit1 := (opts) -> (
      	  M.degreesRing = (
 	       if opts.Heft =!= null 
 	       then degreesRing opts.Heft 
-	       else degreesRing degrk {* shouldn't really be needed *} 
+	       else degreesRing degrk -* shouldn't really be needed *-
 	       );
      	  M.degreesMonoid = monoid M.degreesRing;
 	  M.RawMonoid = rawMonoid(
@@ -324,7 +356,7 @@ makeit1 := (opts) -> (
      if opts.Global and not opts.Inverses then scan(M.generators, x -> if x <= 1 then error "not all variables are > 1, and Global => true");
      M)
 
-processDegrees := (degs,degrk,nvars) -> (
+processDegrees = (degs,degrk,nvars) -> (
      if not (degrk === null or instance(degrk,ZZ)) then error("DegreeRank => ... : expected an integer or null");
      if degs === null then degs = (
 	  if degrk === null then (
@@ -467,7 +499,7 @@ monoid Array := opts -> args -> (
      else if args =!= () then error "variables provided conflict with Variables option";
      makeMonoid opts)
 
-tensor = method( Options => tensorDefaults)
+tensor = method( Options => tensorDefaults, Dispatch => Thing)
 
 Monoid ** Monoid := Monoid => (M,N) -> tensor(M,N)
 
@@ -537,7 +569,7 @@ tensor(Monoid, Monoid) := Monoid => opts0 -> (M,N) -> (
 	       		 else x -> error "degree lift function not provided (DegreeLift option)")
 		    else lm);
 	       opts.Degrees = join(Mopts.Degrees, apply(Nopts.Degrees, opts.DegreeMap));
-	       if opts.Heft === null and Mopts.Heft =!= null then opts.Heft = Mopts.Heft {* a hint *};
+	       if opts.Heft === null and Mopts.Heft =!= null then opts.Heft = Mopts.Heft -* a hint *-;
 	       )
 	  else error "tensor: expected Join option to be true, false, or null")
      else (
@@ -582,8 +614,12 @@ monomialOrderMatrix RawMonomialOrdering := (mo) -> (
      mat := rawMonomialOrderingToMatrix mo;
      -- the last entry of 'mat' determines whether the tie breaker is Lex or RevLex.
      -- there may be no other elements of mat, so the next line needs to handle that case.
-     ordermat := if #mat === 1 then map(ZZ^0, ZZ^nvars, 0) else matrix pack(drop(mat,-1),nvars);
-     (ordermat, if last mat == 0 then Lex else RevLex)
+     ordermat := if #mat === 3 then map(ZZ^0, ZZ^nvars, 0) else matrix pack(drop(mat,-3),nvars);
+     (ordermat, 
+         if mat#-3 == 0 then Lex else RevLex,
+         if mat#-2 == -1 then Position=>Down else if mat#-2 == 1 then Position=>Up else Position=>mat#-2,
+         "ComponentBefore" => mat#-1
+         )
      )
 monomialOrderMatrix Monoid := (M) -> monomialOrderMatrix M.RawMonomialOrdering
 monomialOrderMatrix Ring := (R) -> monomialOrderMatrix monoid R

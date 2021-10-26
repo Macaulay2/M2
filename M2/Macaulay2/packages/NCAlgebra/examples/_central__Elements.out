@@ -1,0 +1,23 @@
+-- -*- M2-comint -*- hash: 609719595
+
+i1 : B = threeDimSklyanin(QQ,{1,1,-1},{x,y,z})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o1 = B
+
+o1 : NCQuotientRing
+
+i2 : centralElements(B,2)
+
+o2 = | x^2 y*x+x*y y^2 |
+
+o2 : NCMatrix
+
+i3 : centralElements(B,3)
+
+o3 = | y^3-y*x*z+x*y*z-x^3 |
+
+o3 : NCMatrix
+
+i4 : 

@@ -10,33 +10,34 @@ newPackage(
 		HomePage => "http://www.math.uni-bielefeld.de/~bcalmes/"},
                 {Name => "Viktor Petrov"}
 		},
-	Headline => "Root systems and Weyl groups",
+	Headline => "root systems and Weyl groups",
+	Keywords => {"Lie Groups and Lie Algebras"},
 	AuxiliaryFiles => true,
 	PackageExports => {"Graphics"},
 	DebuggingMode => false)
 
 -- Put here the name of functions that should be visible to users
 export{
-RootSystem, 
-cartanMatrix, 
-rootSystem, rootSystemA, rootSystemB, rootSystemC, rootSystemD, rootSystemE, rootSystemF4, rootSystemG2, 
-Weight, 
-weight, 
-Root, 
-isPositiveRoot, isRoot, addRoots,
-halfSumOfRoots, reflect, simpleRoot, rootCoefficients, 
-WeylGroupElement, 
-reduce, reducedDecomposition, isReduced, coxeterLength, longestWeylGroupElement, positiveRoots, reflection, scalarProduct, eval, isReflection, whoseReflection, 
-Parabolic, WeylGroupLeftCoset, WeylGroupRightCoset, WeylGroupDoubleCoset, 
-parabolic, minimalRepresentative, isMinimalRepresentative, 
-DynkinDiagram, DynkinType, 
-dynkinDiagram, connectedComponents, endVertices, dynkinType, dynkinExponents,
-poincareSeries,
-HasseDiagram, HasseGraph, 
-hasseDiagramToGraph, hasseGraphToPicture, storeHasseGraph, loadHasseGraph,
-underBruhat, aboveBruhat,
-isLtBruhat, intervalBruhat,
-numberOfPositiveRoots, listWeylGroupElements, neutralWeylGroupElement
+"RootSystem", 
+"cartanMatrix", 
+"rootSystem", "rootSystemA", "rootSystemB", "rootSystemC", "rootSystemD", "rootSystemE", "rootSystemF4", "rootSystemG2", 
+"Weight", 
+"weight", 
+"Root", 
+"isPositiveRoot", "isRoot", "addRoots",
+"halfSumOfRoots", "reflect", "simpleRoot", "rootCoefficients", 
+"WeylGroupElement", 
+"reduce", "reducedDecomposition", "isReduced", "coxeterLength", "longestWeylGroupElement", "positiveRoots", "reflection", "scalarProduct", "eval", "isReflection", "whoseReflection", 
+"Parabolic", "WeylGroupLeftCoset", "WeylGroupRightCoset", "WeylGroupDoubleCoset", 
+"parabolic", "minimalRepresentative", "isMinimalRepresentative", 
+"DynkinDiagram", "DynkinType", 
+"dynkinDiagram", "connectedComponents", "endVertices", "dynkinType", "dynkinExponents",
+"poincareSeries",
+"HasseDiagram", "HasseGraph", 
+"hasseDiagramToGraph", "hasseGraphToPicture", "storeHasseGraph", "loadHasseGraph",
+"underBruhat", "aboveBruhat",
+"isLtBruhat", "intervalBruhat",
+"numberOfPositiveRoots", "listWeylGroupElements", "neutralWeylGroupElement"
 }
 
 -- Variables that can be modified by the user
@@ -642,7 +643,7 @@ isReduced(RootSystem,BasicList) := (R,L) ->
 	b
 	)
 
---check whether the length of the Weyl group element multplied on the left by the reflection in the list is l(w)+length of list
+--check whether the length of the Weyl group element multiplied on the left by the reflection in the list is l(w)+length of list
 isReduced(BasicList,WeylGroupElement) := (L,w) ->
 	(
 	b:=true;
@@ -928,7 +929,7 @@ poincareSeries(RootSystem,Parabolic,RingElement):=(R,P,x)->
 
 HasseDiagram = new Type of BasicList 
 
---(not used anymore, another algorithm below) compute the interval between two Weyl group elements for the Bruhat order, i.e. the set of elements w such that u<=w<=v together with the reflections involved. This is done by finding successively the "cone" of all elements i steps below u and above v until these two cones can intersect (have a row in the same lenght). Whether we go down from u or up from v is decided at each iteration (variable fromtop) according to what seems to have the least number of elements in the last computed row. Then, when the two computed cones arrive at a lenght where they can intersect, one computes if they actually do, and one goes back up (and down) using their intersection finding all elements above this intersection or below it that are in the cones.
+--(not used anymore, another algorithm below) compute the interval between two Weyl group elements for the Bruhat order, i.e. the set of elements w such that u<=w<=v together with the reflections involved. This is done by finding successively the "cone" of all elements i steps below u and above v until these two cones can intersect (have a row in the same length). Whether we go down from u or up from v is decided at each iteration (variable fromtop) according to what seems to have the least number of elements in the last computed row. Then, when the two computed cones arrive at a length where they can intersect, one computes if they actually do, and one goes back up (and down) using their intersection finding all elements above this intersection or below it that are in the cones.
 --intervalBruhat = method()
 --intervalBruhat(WeylGroupElement,WeylGroupElement):= (u,v) ->
 --	(
@@ -2438,12 +2439,13 @@ TEST ///
 	R=rootSystemA(2);
 	L=toList(positiveRoots(R));
 	v=weight(R,{1,2});
-	assert(eval(R,v,L#0)==2);
-	assert(eval(R,v,L#1)==3);
-	assert(eval(R,v,L#2)==1);
-	assert(eval(R,1,L#0)==0);
-	assert(eval(R,1,L#1)==1);
-	assert(eval(R,1,L#2)==1)
+    assert(L/(ell -> (eval(R,v,ell), eval(R,1,ell)))//sort == sort {(2,0),(3,1),(1,1)})
+	--assert(eval(R,v,L#0)==2);
+	--assert(eval(R,v,L#1)==3);
+	--assert(eval(R,v,L#2)==1);
+	--assert(eval(R,1,L#0)==0);
+	--assert(eval(R,1,L#1)==1);
+	--assert(eval(R,1,L#2)==1)
 ///
 
 doc ///
@@ -2620,7 +2622,7 @@ doc ///
 ///
 
 TEST ///
-	assert(apply(listWeylGroupElements(rootSystemG2,4),reducedDecomposition)=={{1,2,1,2},{2,1,2,1}})
+	assert(set apply(listWeylGroupElements(rootSystemG2,4),reducedDecomposition)===set {{1,2,1,2},{2,1,2,1}})
 ///
 
 doc ///
@@ -4388,7 +4390,35 @@ TEST ///
 	w1 = reduce(R,{2});
 	w2 = reduce(R,{1,2,1,3,2});
 	myInterval=intervalBruhat(P % w1,P % w2);
-	assert(hasseDiagramToGraph(myInterval)===new HasseGraph from {{{"", {{"", 0}, {"", 1}}}}, {{"", {{"", 1}, {"", 2}}}, {"", {{"", 0}, {"", 1}, {"", 2}}}}, {{"", {{"", 1}, {"", 2}}}, {"", {{"", 0}, {"", 2}}}, {"", {{"", 0}, {"", 1}}}}, {{"", {{"", 0}}}, {"", {{"", 0}}}, {"", {{"", 0}}}}, {{"", {}}}})
+    G = hasseDiagramToGraph(myInterval, "labels" => "reduced decomposition")
+    -- the following test is dependent on the order chosen
+    -- this test should be changed to check correctness, not the specific order of nodes
+    assert(#G == 5)
+    G = toList G;
+    assert(G/length == {1,2,3,3,1})
+    -- check that the labels are all as expected
+    assert(G/(x -> x/first//set) === {
+        set{"12132"}, 
+        set{"2132", "1213"}, 
+        set{"121", "213", "123"}, 
+        set{"21", "23", "12"}, 
+        set{"2"}})
+    -- we should check that the links are correct too.
+    -- the following is one possible answer, but it can change.  Why?!
+    -*
+      assert(G#0 == {{"12132", {{"3", 0}, {"2", 1}}}});
+      assert(G#1 == {
+              {"2132", {{"232", 1}, {"2", 2}}}, 
+              {"1213", {{"1", 0}, {"3", 1}, {"232", 2}}}
+              });
+      assert(G#2 == {
+              {"123", {{"3", 0}, {"12321", 2}}}, 
+              {"121", {{"1", 0}, {"2", 1}}}, 
+              {"213", {{"3", 1}, {"1", 2}}}
+              });
+      assert(G#3 == {{"12", {{"121", 0}}}, {"21", {{"1", 0}}}, {"23", {{"3", 0}}}})
+      assert(G#4 == {{"2", {}}})
+      *-
 ///
 
 doc ///

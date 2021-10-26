@@ -41,3 +41,34 @@ diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac
     }
  
     if (($name, $val) = ($arg =~ /(.*?)=(.*)/)) {
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/ntl/tmp/ntl-5.5.2/src/MakeDesc.c ntl-5.5.2/src/MakeDesc.c
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/ntl/tmp/ntl-5.5.2/src/MakeDesc.c	2009-08-14 07:53:11.000000000 -0500
++++ ntl-5.5.2/src/MakeDesc.c	2013-05-10 09:34:12.401825400 -0500
+@@ -712,7 +712,7 @@
+ 
+ 
+ 
+-char *yn_vec[2] = { "no", "yes" }; 
++const char *yn_vec[2] = { "no", "yes" }; 
+ 
+ 
+ 
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/ntl/tmp/ntl-5.5.2/src/gen_gmp_aux.c ntl-5.5.2/src/gen_gmp_aux.c
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/ntl/tmp/ntl-5.5.2/src/gen_gmp_aux.c	2009-08-14 07:53:11.000000000 -0500
++++ ntl-5.5.2/src/gen_gmp_aux.c	2013-05-10 10:15:53.180861800 -0500
+@@ -91,11 +91,11 @@
+       ntl_zz_nbits = 2*bpl;
+    else
+       Error("sorry...this is a funny gmp");
++   
++   /* if (sizeof(mp_size_t) != sizeof(long) && */
++   /*     sizeof(mp_size_t) != sizeof(int)) */
+ 
+-   if (sizeof(mp_size_t) != sizeof(long) &&
+-       sizeof(mp_size_t) != sizeof(int))
+-
+-   Error("sorry...this is a funny gmp");
++   /* Error("sorry...this is a funny gmp"); */
+ 
+    ntl_wsp_nbits = bpl - 2;
+ 

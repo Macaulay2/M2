@@ -1,79 +1,128 @@
 --		Copyright 2006 by Daniel R. Grayson
+-- validate and fix Hypertext objects
 
-warning := x -> stderr << "--warning: " << concatenate x << endl
+needs "content.m2"
+needs "hypertext.m2"
+needs "methods.m2"
 
-noqname := (x,c) -> (
-     if instance(c,IntermediateMarkUpType)
-     then warning(format toString x," is an instance of an intermediate mark-up type ", format toString c, " with no qname, appearing in hypertext during validation")
-     else error (format toString x," is of an unrecognized type ", format toString c, " with no qname, appearing in hypertext during validation")
-     )
+-- TODO: make this local
+currentHelpTag = null
+
+-----------------------------------------------------------------------------
+-- Local variables
+-----------------------------------------------------------------------------
 
 haderror := false
-oops := x -> (haderror = true; x)
 
+-----------------------------------------------------------------------------
+-- Local utilities
+-----------------------------------------------------------------------------
 
-validate2 = method()					    -- check extra requirements, such as having at least one element, and the order of the elements
-validate2 Hypertext := x -> null
-validate2 HTML := x -> (
-     if not x#?0 or not class x#0 === HEAD then oops stderr << "--warning: first element of HTML must be HEAD" << endl;
-     if not x#?1 or not class x#1 === BODY then oops stderr << "--warning: second element of HTML must be BODY" << endl;
-     if #x != 2 then oops stderr << "--warning: HTML should have 2 elements" << endl);
-validate2 HEAD := x -> (
-     c := tally (class \ toList x);
-     if c_TITLE == 0 then oops stderr << "--warning: HEAD should have a TITLE element" << endl;
-     if c_TITLE > 1 then oops stderr << "--warning: HEAD should have at most one TITLE element" << endl;
-     -- BASE html item is currently unimplemented:
-     -- if c_BASE > 1 then oops stderr << "--warning: HEAD should have at most one BASE element" << endl;
-     )
-validate2 DL :=
-validate2 TR := 
-validate2 UL := 
-validate2 BLOCKQUOTE := x -> if #x === 0 then oops stderr << "--warning: " << class x << " should contain at least one element" << endl
-validate2 LATER := x -> validate2 x#0()
+flagError := x -> (haderror = true; printerr("warning: ", x))
+
+noqname := (tag, x) -> (
+    if instance(tag, IntermediateMarkUpType)
+    then warning(format toString x, " is an instance of an intermediate markup type ", format toString tag, " with no qname, appearing in hypertext during validation")
+    else   error(format toString x, " is of an unrecognized type ", format toString tag, " with no qname, appearing in hypertext during validation"))
+
+-- see content.m2
+chk := (p, x) -> (
+    c := class x;
+    if c === Option or c === LITERAL then return;
+    if not c.?qname then return noqname(c, x);
+    if not validContent#(p.qname)#?(c.qname) and c.qname =!= "comment"
+    then flagError("element of type ", toString p, " may not contain an element of type ", toString c))
+
+-----------------------------------------------------------------------------
+-- validate
+-----------------------------------------------------------------------------
 
 validate = method()
-validate String := x -> (
-     -- activate this later, after we convert the strings with htmlLiteral
-     -- if match("<",x) then oops stderr << "--warning: string contains tag start character '<' : \"" << x << "\"" << endl;
-     )
+validate(Type, BasicList) := (T, x) -> (
+    haderror = false;
+    if not T.?qname then return noqname(T, x);
+    if not validContent#?(T.qname) then error("internal error: valid content for qname ", toString T, " not recorded yet");
+    scan(x, e -> chk(T, e));
+    if haderror then error("validation failed: ", x))
 
-validate Option :=					    -- could check each part is a string!
-validate TO :=
-validate TOH :=
-validate TO2 := x -> scan(drop(x,1),validate)
-validate COMMENT := x -> (
-     if match("--",concatenate x) then oops stderr << "--warning: encountered \"--\" within COMMENT" << endl;
-     if match("-$",concatenate x) then oops stderr << "--warning: COMMENT ends with \"-\"" << endl;
-     )
-validate CDATA := x -> (
-     if match("]]>",concatenate x) then oops stderr << "--warning: encountered \"]]>\" within CDATA" << endl;
-     )
-validate LITERAL := validate TEX := x -> (
-     -- don't know what to do here yet...
-     )
-validate Hypertext := x -> (
-     c := class x;
-     if c.?qname then (
-	  n := c.qname;
-	  if validContent#?n then validate(c,validContent#n,x)
-	  else error("--internal error: valid content for qname ", format n, " not recorded yet");
-	  scan(x,validate))
-     else noqname(x,c);
-     validate2 x;
-     x)
-chk := (valid,p,c,x) -> (
-     if not c.?qname then noqname(x,c)
-     else if not valid#?(c.qname) and c.qname =!= "comment"
-     then oops stderr << "--warning: element of type " << format toString p << " can't contain an element of type " << format toString c << endl
-     )
-validate(Type, Set, BasicList) := (p,valid,x) -> (
-     haderror = false;
-     scan(x, e -> chk(valid,p,class e,e));
-     if haderror then error "validation failed")
-validate(MarkUpTypeWithOptions, Set, BasicList) := (p,valid,x) -> ( 
-     haderror = false;
-     scan(x, e -> if class e =!= Option then chk(valid,p,class e,e)); 
-     if haderror then error "validation failed")
+validate LATER      := x -> validate x#0()
+validate LITERAL    :=
+validate TEX        :=
+validate Thing      := identity
+validate Option     := x -> apply(splice x, validate)
+
+-- TODO: should this check for unescaped "<"?
+validate String     := x -> (utf8check x; x)
+validate Hypertext  := x -> (
+    validate(class x, x);
+    apply(splice x, validate))
+
+validate HTML       := x -> (
+    if #x != 2 then flagError "HTML should have 2 elements";
+    if not instance(x#0, HEAD) then flagError "first element of HTML must be HEAD";
+    if not instance(x#1, BODY) then flagError "second element of HTML must be BODY";
+    -- TODO: make every part return the content, then use apply
+    apply(splice x, validate))
+validate HEAD       := x -> (
+    validate(class x, x);
+    c := length select(toList x, y -> instance(y, TITLE));
+    if c != 1 then flagError "HEAD should have exactly one TITLE element";
+    apply(splice x, validate))
+
+validate HREF       := identity -- TODO
+validate TO         :=
+validate TOH        :=
+validate TO2        := x -> (
+    tag := fixup x#0;
+    if isUndocumented tag and signalDocumentationWarning tag then printerr("warning: undocumented node " | format tag | " cited by " | format currentDocumentTag) else
+    if isMissingDoc   tag and signalDocumentationWarning tag then printerr("warning: missing node: "     | format tag | " cited by " | format currentDocumentTag);
+    apply(splice x, validate))
+
+validate CDATA      := x -> (
+     if match("]]>",concatenate x) then flagError "encountered \"]]>\" within CDATA"; x)
+validate COMMENT    := x -> (
+     if match("--", concatenate x) then flagError "encountered \"--\" within COMMENT";
+     if match("-$", concatenate x) then flagError "COMMENT ends with \"-\""; x)
+
+-----------------------------------------------------------------------------
+-- Fixing hypertext issues
+-----------------------------------------------------------------------------
+
+fixup = method(Dispatch => Thing)
+fixup Thing       := z -> error("unrecognizable item ", toString z, " of class ", toString class z, " encountered while processing documentation node ", toString currentHelpTag)
+fixup List        := z -> fixup toSequence z
+fixup Nothing     := z -> () -- this will get removed by splice later
+fixup Sequence    :=
+fixup Hypertext   := z -> splice apply(z, fixup)
+fixup MarkUpType  := z -> (
+    if instance(z, BR)
+    or instance(z, HR)        then error("using '", toString z, "' alone in documentation is no longer supported, use '", toString z, "{}' instead")
+    else if instance(z, PARA) then error("using '", toString z, "' alone in documentation is no longer supported, use 'PARA{...}' around a paragraph")
+    else error("isolated mark up type encountered: ", toString z))
+
+fixup HREF        := x -> if #x == 2 then HREF{x#0, fixup x#1} else x
+fixup String      := s -> demark_" " separate("[ \t]*\r?\n[ \t]*", s)
+
+fixup Option      :=
+fixup BR          :=
+fixup HR          :=
+fixup CODE        :=
+fixup PRE         :=
+fixup IMG         :=
+fixup ANCHOR      :=
+fixup LABEL       :=
+fixup ExampleItem :=
+fixup LATER       :=
+fixup LITERAL     :=
+fixup TO          :=
+fixup TO2         :=
+fixup TOH         := identity
+
+-- TODO: move this
+hypertext = method(Dispatch => Thing)
+hypertext Hypertext := fixup
+hypertext Sequence  :=
+hypertext List      := x -> fixup DIV x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -1,17 +1,17 @@
-// Copyright 2005  Michael E. Stillman
+// Copyright 2005-2021  Michael E. Stillman
 
-#include "../newdelete.hpp"
-#include "moninfo.hpp"
-#include "monordering.h"
-#include <cstdio>
-#include <cstdlib>
+#include "f4/moninfo.hpp"
+#include "interface/monomial-ordering.h"  // for moGetWeightValues, moIsGRevLex
+#include "newdelete.hpp"                  // for freemem, newarray_atomic
+
+#include <cstdio>                         // for fprintf, stderr, stdout
+#include <cstdlib>                        // for rand
 
 MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
 {
   nvars = nvars0;
-  hashfcn = newarray_atomic(monomial_word,nvars);
-  for (int i=0; i<nvars; i++)
-    hashfcn[i] = rand();
+  hashfcn = newarray_atomic(monomial_word, nvars);
+  for (int i = 0; i < nvars; i++) hashfcn[i] = rand();
   mask = 0x10000000;
 
   ncalls_compare = 0;
@@ -34,15 +34,13 @@ MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
     {
       compare = &MonomialInfo::compare_lex;
 
-      if (M2_gbTrace >= 1)
-        fprintf(stderr, "lex order\n");
+      if (M2_gbTrace >= 1) fprintf(stderr, "lex order\n");
     }
   else if (moIsGRevLex(mo))
     {
       compare = &MonomialInfo::compare_grevlex;
 
-      if (M2_gbTrace >= 1)
-        fprintf(stderr, "grevlex order\n");
+      if (M2_gbTrace >= 1) fprintf(stderr, "grevlex order\n");
     }
   else
     {
@@ -50,39 +48,34 @@ MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
       nweights = weight_vectors->len / nvars;
       compare = &MonomialInfo::compare_weightvector;
 
-      if (M2_gbTrace >= 1)
-        fprintf(stderr, "weight order\n");
+      if (M2_gbTrace >= 1) fprintf(stderr, "weight order\n");
     }
 
   nslots = 2 + nvars + nweights;
   firstvar = 2 + nweights;
 }
 
-MonomialInfo::~MonomialInfo()
-{
-  deletearray(hashfcn);
-}
-
-monomial_word MonomialInfo::monomial_weight(const_packed_monomial m, const M2_arrayint wts) const
+MonomialInfo::~MonomialInfo() { freemem(hashfcn); }
+monomial_word MonomialInfo::monomial_weight(const_packed_monomial m,
+                                            const M2_arrayint wts) const
 {
   ncalls_weight++;
-  const_packed_monomial m1 = m+2;
+  const_packed_monomial m1 = m + 2;
   int top = wts->len;
   int *n = wts->array;
   monomial_word sum = 0;
-  for (int j=top; j>0; --j) sum += *m1++ * *n++;
+  for (int j = top; j > 0; --j) sum += *m1++ * *n++;
   return sum;
 }
 
 void MonomialInfo::show() const
 {
   fprintf(stderr, "monomial info\n");
-  fprintf(stderr, "  nvars  = %d",nvars);
-  fprintf(stderr, "  nslots = %d",nslots);
-  fprintf(stderr, "  mask   = %ld",mask);
+  fprintf(stderr, "  nvars  = %d", nvars);
+  fprintf(stderr, "  nslots = %d", nslots);
+  fprintf(stderr, "  mask   = %ld", mask);
   fprintf(stderr, "  hash values for each variable\n");
-  for (int i=0; i<nvars; i++)
-    fprintf(stderr, "    %ld\n",hashfcn[i]);
+  for (int i = 0; i < nvars; i++) fprintf(stderr, "    %ld\n", hashfcn[i]);
   fprintf(stderr, "  #calls compare = %lu\n", ncalls_compare);
   fprintf(stderr, "  #calls mult    = %lu\n", ncalls_mult);
   fprintf(stderr, "  #calls get comp= %lu\n", ncalls_get_component);
@@ -101,12 +94,27 @@ void MonomialInfo::show() const
 void MonomialInfo::show(const_packed_monomial m) const
 {
   fprintf(stderr, "[");
-  for (int v=1; v<monomial_size(m); v++)
+  for (int v = 1; v < monomial_size(m); v++)
     {
       if (v > 1) fprintf(stderr, " ");
       fprintf(stderr, "%ld", m[v]);
     }
   fprintf(stderr, "]");
+}
+
+void MonomialInfo::showAlpha(const_packed_monomial m) const
+{
+  long comp = get_component(m);
+
+  m += 2 + nweights;  // get by: hashcode, component, weightvals
+  for (int i = 0; i < nvars; i++)
+    {
+      long e = *m++;
+      if (e == 0) continue;
+      fprintf(stdout, "%c", 'a' + i);
+      if (e > 1) fprintf(stdout, "%ld", e);
+    }
+  fprintf(stdout, "<%ld>", comp);
 }
 
 // Local Variables:

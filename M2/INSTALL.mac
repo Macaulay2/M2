@@ -1,0 +1,25 @@
+#! /bin/sh -xe
+# This shell script contains the instructions for building Macaulay2 in the file 'INSTALL'.
+# This version of the script does not take care to avoid vector optimizations that may not run on other machines.
+# The result is provided in the build directory "./tmp".
+
+# Note: it will install software needed for building Macaulay2, so expert users may prefer to
+# perform the various steps manually.
+
+set -e
+xcode-select -p >/dev/null 2>&1 || xcode-select --install
+brew update | cat
+brew upgrade | cat
+brew install autoconf automake bdw-gc boost ccache cddlib ctags eigen flint gdbm glpk gmp gnu-tar libatomic_ops libmpc libomp libtool make mpfr mpir ncurses ninja ntl pkg-config tbb wget xz yasm | cat
+git describe --dirty --long --always --abbrev=40 --all
+gmake get-libtool
+gmake -f Makefile
+rm -rf tmp
+mkdir tmp
+cd tmp
+../configure --enable-download --enable-build-libraries="readline" CC=/usr/bin/gcc CXX=/usr/bin/g++
+gmake IgnoreExampleErrors=false
+
+# Local Variables:
+# compile-command: "sh -xe ./INSTALL.mac "
+# End:

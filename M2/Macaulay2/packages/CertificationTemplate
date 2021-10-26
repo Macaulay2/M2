@@ -1,15 +1,17 @@
 -- -*- mode: M2 -*-
 
+,
 	   Certification => {
-		"journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
+		"journal name" => "The Journal of Software for Algebra and Geometry",
 		"journal URI" => "http://j-sag.org/",
-		"article title" => "...",
-		"acceptance date" => "...",
-		"published article URI" => "http://j-sag.org/Volume.../....pdf",
-		"published code URI" => "http://j-sag.org/Volume.../....m2",
-     	        "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/....m2",
-		"release at publication" => ...,	    -- as an integer
-		"version at publication" => "...",
-		"volume number" => "...",
-		"volume URI" => "http://j-sag.org/Volume.../"
-		},
+		"article title" => "",
+		"acceptance date" => "",
+		"published article URI" => "",
+         	"published article DOI" => "",
+		"published code URI" => "",
+     	        "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/....m2",
+		"release at publication" => "",	    -- git commit number in hex
+		"version at publication" => "",
+		"volume number" => "11",
+		"volume URI" => "https://msp.org/jsag/2021/11-1/"
+		}

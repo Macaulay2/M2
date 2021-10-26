@@ -1,14 +1,32 @@
-newPackage "Python"
+-* 
+this does not work uless M2 is compiled --with-python
+*-
 
-exportFrom_Core {
-     "runSimpleString", "PythonObject", "runString", "sysGetObject", "objectType", "initspam"
-     }
+newPackage("Python",
+    Headline => "interface to Python"
+    )
+try exportFrom_Core {
+     "runSimpleString", "PythonObject", "runPythonString", "sysGetObject", "objectType", "initspam"
+     } then print " -- success: python is present" else (
+	 stderr << " -- warning: python is not present" << endl;
+	 stderr <<
+	     " -- specify --with-python in `configure` options and recompile M2"
+	      << endl;
+	 end
+     )
+
+importFrom_Core {
+    "pythonNumberAdd",
+    "pythonNumberSubtract",
+    "pythonNumberMultiply",
+    "pythonNumberTrueDivide"
+}
 
 export { "pythonHelp", "context", "rs", "Preprocessor" }
 
 exportMutable { "val", "eval", "valuestring", "stmt", "expr", "dict", "symbols", "stmtexpr" }
 
-pythonHelp = Command (() -> runString ///help()///)
+pythonHelp = Command (() -> runPythonString ///help()///)
 
 PythonObject#{Standard,AfterPrint} = x -> (
      << endl;
@@ -20,12 +38,15 @@ PythonObject#{Standard,AfterPrint} = x -> (
 rs = s -> ( 
      s = concatenate s;
      if debugLevel > 0 then stderr << "--python command: " << s << endl; 
-     runString s);
+     runPythonString s);
 
-numContexts := 0
-nextContext := () -> (
-     numContexts = numContexts + 1;
-     "context" | toString numContexts)
+numContexts = 0
+nextContext = method()
+installMethod(nextContext,
+    () -> (
+     	numContexts = numContexts + 1;
+     	"context" | toString numContexts)
+    )
 Context = new Type of HashTable
 globalAssignment Context
 use Context := c -> (scanPairs(c,(k,v) -> k <- v); c)
@@ -50,7 +71,7 @@ context String := opts -> init -> (
      else (
 	  s -> (
 	       evalstring("tmp = ",opts.Preprocessor,"(",format s,")");
-	       if debugLevel > 0 then stderr << "--intermediate value: tmp = " << format toString runString access "tmp" << endl;
+	       if debugLevel > 0 then stderr << "--intermediate value: tmp = " << format toString runPythonString access "tmp" << endl;
 	       eval access "tmp";
 	       null)
 	  );
@@ -59,7 +80,7 @@ context String := opts -> init -> (
 	  stmt s;
 	  val "temp");
      stmtexpr := s -> if match(";$",s) then stmt s else expr s;
-     symbols := () -> runString concatenate("__builtins__[",format dict,"].keys()");
+     symbols := () -> runPythonString concatenate("__builtins__[",format dict,"].keys()");
      use new Context from {
 	  global dict => dict,
 	  global val => val,
@@ -71,8 +92,16 @@ context String := opts -> init -> (
 	  global symbols => symbols
 	  })
 Context String := (c,s) -> c.stmtexpr s
-end
 
+PythonObject + PythonObject := (x, y) -> pythonNumberAdd(x, y)
+PythonObject - PythonObject := (x, y) -> pythonNumberSubtract(x, y)
+PythonObject * PythonObject := (x, y) -> pythonNumberMultiply(x, y)
+PythonObject / PythonObject := (x, y) -> pythonNumberTrueDivide(x, y)
+
+end --------------------------------------------------------
+
+
+restart
 debugLevel = 1
 debuggingMode = false
 loadPackage "Python"

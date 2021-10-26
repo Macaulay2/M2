@@ -24,8 +24,8 @@
 
 newPackage(
   "MultiplierIdeals",
-  Version => "1.0", 
-  Date => "May 19, 2013",
+  Version => "1.1", 
+  Date => "April 14, 2015",
   Authors => {
     {
       Name => "Zach Teitler",
@@ -39,7 +39,9 @@ newPackage(
       Name => "Claudiu Raicu"
     }
   },
-  Headline => "multiplier ideals, log canonical thresholds, and jumping numbers",
+  Headline => "multiplier ideals, log canonical thresholds,
+    and jumping numbers",
+  Keywords => {"D-modules"},
   PackageImports=>{
     "ReesAlgebra",
     "Normaliz"
@@ -47,7 +49,21 @@ newPackage(
   PackageExports=>{
     "HyperplaneArrangements"
   },
-  DebuggingMode=>false
+  DebuggingMode=>false,
+  Certification => {
+       "journal name" => "The Journal of Software for Algebra and Geometry",
+       "journal URI" => "http://j-sag.org/",
+       "article title" => "Software for multiplier ideals",
+       "acceptance date" => "5 June 2015",
+       "published article URI" => "http://msp.org/jsag/2015/7-1/p01.xhtml",
+       "published article DOI" => "http://dx.doi.org/10.2140/jsag.2015.7.1",
+       "published code URI" => "http://msp.org/jsag/2015/7-1/jsag-v7-n1-x01-MultiplierIdeals.m2",
+       "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MultiplierIdeals.m2",
+       "release at publication" => "a71903e3507b0384ece1ed43f815b9344258ed1a",
+       "version at publication" => "1.1",
+       "volume number" => "7",
+       "volume URI" => "http://msp.org/jsag/2015/7-1/"
+       }
 )
 
 -- Main functionality:
@@ -58,21 +74,31 @@ newPackage(
 --  monomial ideals (implemented in this package)
 --  ideal of monomial curve (implemented in this package)
 --  generic determinantal ideals (implemented in this package)
---  hyperplane arrangements (implemented in HyperplaneArrangements)
--- For arbitrary ideals, load and use the Dmodules package (NOT loaded by this package)
+--  hyperplane arrangements (implemented in this package)
+-- For arbitrary ideals, load and use the Dmodules package
+-- (NOT loaded by this package)
 
 
 -- Implementation for monomial ideals is based on Howald's Theorem,
 --  arXiv:math/0003232v1 [math.AG]
---  J.A. Howald, Multiplier ideals of monomial ideals.,
+--  J.A. Howald, "Multiplier ideals of monomial ideals.",
 --  Trans. Amer. Math. Soc. 353 (2001), no. 7, 2665-2671
 
 -- Implementation for monomial curves is based on the algorithm given in
 -- H.M. Thompson's paper: "Multiplier Ideals of Monomial Space
--- Curves." arXiv:1006.1915v4 [math.AG] 
--- 
+-- Curves." Proc. Amer. Math. Soc. Ser. B 1 (2014), 33–41.
+
 -- Implementation for generic determinantal ideals is based on the
 -- dissertation of Amanda Johnson, U. Michigan, 2003
+
+-- Implementation for hyperplane arrangements is based on
+-- algorithm given in 
+-- Zach Teitler, "A note on Mustață's computation of multiplier ideals
+-- of hyperplane arrangements.", Proc. Amer. Math. Soc. 136 (2008),
+-- no. 5, 1575--1579 
+-- arXiv:math/0610303 [math.AG]
+-- The implementation here is a borrowing and modification (with permission)
+-- from the HyperplaneArrangements package by Graham Denham & Greg Smith.
 
 
 --------------------------------------------------------------------------------
@@ -82,11 +108,11 @@ newPackage(
 --------------------------------------------------------------------------------
 
 export {
-  multiplierIdeal,
-  logCanonicalThreshold,
-  jumpingNumbers,
-  Interval,
-  IntervalType
+  "multiplierIdeal",
+  "logCanonicalThreshold",
+  "jumpingNumbers",
+  "Interval",
+  "IntervalType"
 }
 
 -- exportMutable {}
@@ -144,7 +170,8 @@ intmat2monomIdeal ( Matrix, Ring ) := (M,R) -> (
   return monomialIdeal genList;
 );
 -- only include rows whose last entry is d; and ignore last column
-intmat2monomIdeal ( Matrix, Ring, ZZ ) := (M,R,d) -> intmat2monomIdeal(M,R,d,numColumns(M)-1);
+intmat2monomIdeal ( Matrix, Ring, ZZ ) := (M,R,d) ->
+  intmat2monomIdeal(M,R,d,numColumns(M)-1);
 -- only include rows with entry 'd' in column 'c'; and ignore column 'c'
 intmat2monomIdeal ( Matrix, Ring, ZZ, ZZ ) := (M,R,d,c) -> (
   if ( numColumns M > 1 + numgens R ) then (
@@ -204,6 +231,15 @@ Qinterval ( List , Number , Number ) := o -> ( denoms , a , b ) -> (
   );
   return sort toList qSet;
 )
+Qinterval ( ZZ , Number , InfiniteNumber ) := o -> (d,a,b) ->
+  Qinterval(d,a,a,o);
+Qinterval ( ZZ , InfiniteNumber , Number ) := o -> (d,a,b) -> {};
+Qinterval ( ZZ , InfiniteNumber , InfiniteNumber ) := o -> (d,a,b) -> {};
+Qinterval ( List , Number , InfiniteNumber ) := o -> (d,a,b) ->
+  Qinterval(d,a,a,o);
+Qinterval ( List , InfiniteNumber , Number ) := o -> (d,a,b) -> {};
+Qinterval ( List , InfiniteNumber , InfiniteNumber ) := o -> (d,a,b) -> {};
+
 Qinterval ( ZZ , List ) := o -> (denom, interval) ->
   Qinterval(denom, interval#0, interval#1, o)
 Qinterval ( List , List ) := o -> (denoms, interval) ->
@@ -248,7 +284,8 @@ jumpingNumbers Sequence := o -> args -> (
     next = prev;
     multiplierIdeals = { prev };
   ) else (
-    pjn2 := Qinterval(jumpingDenominators(args), logCanonicalThreshold(args), pjn#0 );
+    pjn2 := Qinterval(jumpingDenominators(args), logCanonicalThreshold(args),
+      pjn#0 );
     -- pjn2#-1 = pjn#0
     -- The greatest potential jumping number less than p is pjn2#-2
     prev = trim multiplierIdeal append(args,pjn2#-2);
@@ -287,8 +324,8 @@ jumpingNumbers CentralArrangement := o -> A -> jumpingNumbers(sequence A, o)
 -- VIA DMODULES ----------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-{*
-  Unfortunately it is extremely difficult to acheive
+-*
+  Unfortunately it is extremely difficult to achieve
   compatibility with both Dmodules and HyperplaneArrangements,
   due primarily to conflicts in definitions of the method
   lct (defined in both Dmodules and HyperplaneArrangements)
@@ -309,15 +346,15 @@ jumpingNumbers CentralArrangement := o -> A -> jumpingNumbers(sequence A, o)
   
   (Note this is the current emphasis, not necessarily the long-term
   goal of this package.)
-*}
+*-
 
 --------------------------------------------------------------------------------
 -- MONOMIAL IDEALS -------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-{*
+-*
   Code in this section written by Zach Teitler 2010, 2011, 2012
-*}
+*-
 
 -- NewtonPolyhedron
 -- compute a matrix A such that Ax >= 0 defines the cone over
@@ -333,7 +370,7 @@ NewtonPolyhedron (MonomialIdeal) := I -> (
   setNmzOption("supp",true);
   
   -- Compute equations of supporting hyperplanes of (cone over) Newt(I)
-  normaliz( matrix(I / exponents / flatten) , 3 );
+  normaliz( matrix(I / exponents / flatten) , "rees_algebra");
   M := readNmzData("sup");
   
   -- Clean up tmp files, options
@@ -355,9 +392,9 @@ NewtonPolyhedron (MonomialIdeal) := I -> (
 ---- ie, Av >= b.
 ----   Some rows are ``unit rows'' with a single nonzero entry which is a 1,
 ---- corresponding to requiring the exponents (entries of v) to be >= 0.
----- These define *coordinate* facets of Newt(I) (ie, facets of Newt(I) contained
----- in facets of the positive orthant). All other rows define *non-coordinate*
----- facets.
+---- These define *coordinate* facets of Newt(I) (ie, facets of Newt(I)
+---- contained in facets of the positive orthant). All other rows define
+---- *non-coordinate* facets.
 ----
 ---- Second, get an integer matrix for t*Newt(I) by writing t=p/q
 ---- and setting M1 = (pA | -qb).
@@ -369,9 +406,9 @@ NewtonPolyhedron (MonomialIdeal) := I -> (
 ---- corresponds to t*Newt(I). From Howald's Theorem, we need the interior,
 ---- Int(t*Newt(I)). It is not quite correct to take M1 * (v | 1) > 0,
 ---- because this is wrong for the coordinate faces. (It is correct for the
----- non-coordinate faces.) Here "interior" means: relative to the positive orthant.
----- In other words, we are removing the part of the boundary of t*Newt(I)
----- which is in the interior of the positive orthant.
+---- non-coordinate faces.) Here "interior" means: relative to the positive
+---- orthant. In other words, we are removing the part of the boundary of
+---- t*Newt(I) which is in the interior of the positive orthant.
 ----
 ---- Let 'bump' be a vector of the same length as b, with entries 0 or 1:
 ----   the entry is 0 in each row of M1 corresponding to a coordinate face,
@@ -399,6 +436,14 @@ multiplierIdeal (MonomialIdeal, QQ) := (I,t) -> (
     
     multIdeal = monomialIdeal(1_R) ;
   
+  ) else if ( I == ideal(0_R) ) then (
+    
+    multIdeal = monomialIdeal(0_R);
+  
+  ) else if ( I == ideal(1_R) ) then (
+  
+    multIdeal = monomialIdeal(1_R);
+  
   ) else if ( t >= skodaPeriodicityOnset I ) then (
     
     s := 1 + floor(t-skodaPeriodicityOnset(I));
@@ -420,22 +465,26 @@ multiplierIdeal (MonomialIdeal, QQ) := (I,t) -> (
     M1 := M * diagonalMatrix( flatten { toList((n-1):q) , {p} } );
     
     -- Set up "bump" of nontrivial facets, but don't bump coordinate facets
-    -- (except we do end up bumping the row (0,..,0,1); but that's okay, no harm)
+    -- (except we do end up bumping the row (0,..,0,1); but that's okay,
+    -- no harm)
     bump := apply(toList(0..<m) ,
       i -> (  if ( M_(i,n-1) >= 0 ) then ( return 0; ) else ( return 1; )  ) );
-    -- now bump has a 0 in rows corresponding to coordinate facets, 1 in other rows
+    -- now bump has a 0 in rows corresponding to coordinate facets, 1 in other
+    -- rows
   
     -- "Bump" t*Newt(I): push nontrivial facets in by "epsilon" (which is 1)
     M2 := M1 - ( matrix(toList(m:toList((n-1):0))) | transpose matrix({bump}) );
     
-    -- Semigroup of lattice points inside "bumped" region (i.e., interior of t*Newt(I))
-    nmzOut := normaliz(M2,4,grading=>toList(numColumns(M2):1));
+    -- Semigroup of lattice points inside "bumped" region (i.e., interior of
+    -- t*Newt(I))
+    nmzOut := normaliz(M2,"inequalities",grading=>toList(numColumns(M2):1));
     M3 := nmzOut#"gen";
     
     -- Ideal generated by those lattice points
     J := intmat2monomIdeal(M3,R,1);
     
-    -- Howald's translation by (1,1,...,1) is same as colon with product of variables
+    -- Howald's translation by (1,1,...,1) is same as colon with product of
+    -- variables
     multIdeal = monomialIdeal quotient(J, product(flatten entries vars R)) ;
     
     -- Clean up tmp files, options
@@ -458,14 +507,25 @@ multiplierIdeal (MonomialIdeal, QQ) := (I,t) -> (
 --  1. a rational number t, defined by
 --        t = sup { c : x^v is in the c'th multiplier ideal of I }
 --     the threshold (of inclusion of x^v in the multiplier ideal of I).
---  2. a matrix (A' | -b') consisting of those rows of the defining matrix of Newt(I)
---     which impose the threshold on x^v.
---  In other words, the line joining the origin to the vector (v+(1,..,1)) hits the boundary of Newt(I)
---  at (1/t)*(v+(1,..,1)), and the vector (1/t)*(v+(1,..,1)) lies on the facets defined by the rows of (A' | -b')
+--  2. a matrix (A' | -b') consisting of those rows of the defining matrix of
+--     Newt(I) which impose the threshold on x^v.
+--  In other words, the line joining the origin to the vector (v+(1,..,1)) hits
+--  the boundary of Newt(I) at (1/t)*(v+(1,..,1)), and the vector
+--  (1/t)*(v+(1,..,1)) lies on the facets defined by the rows of (A' | -b')
 --  (via: (A'|-b')(w|1)^transpose >= 0 )
 logCanonicalThreshold (MonomialIdeal , RingElement) := (I , mon) -> (
   if ( leadMonomial(mon) != mon ) then (
     error("Second input must be a monomial (input was ",mon,")");
+  );
+  
+  R := ring I;
+  
+
+  emptyMatrix := (matrix {{}})^{}; -- 0-by-0 matrix
+  if ( I == ideal(0_R) ) then (
+    return ( 0 , emptyMatrix );
+  ) else if ( I == ideal(1_R) ) then (
+    return ( infinity , emptyMatrix );
   );
   
   v := first exponents mon;
@@ -495,18 +555,31 @@ logCanonicalThreshold (MonomialIdeal , RingElement) := (I , mon) -> (
   return ( threshVal , facetMatrix );
 );
 
-logCanonicalThreshold (MonomialIdeal) := I -> first logCanonicalThreshold ( I , 1_(ring(I)) )
+logCanonicalThreshold (MonomialIdeal) := I ->
+  first logCanonicalThreshold ( I , 1_(ring(I)) )
 
 skodaPeriodicityOnset (MonomialIdeal) := I -> (
   if I.cache#?"skodaPeriodicityOnset" then (
     I.cache#"skodaPeriodicityOnset"
   ) else (
-    I.cache#"skodaPeriodicityOnset" = analyticSpread I;
+    R := ring I;
+    if ( I == monomialIdeal(0_R) or I == monomialIdeal(1_R) ) then (
+      I.cache#"skodaPeriodicityOnset" = 0;
+    ) else (
+      I.cache#"skodaPeriodicityOnset" = analyticSpread I;
+    );
+    
     I.cache#"skodaPeriodicityOnset"
   )
 )
 
 jumpingDenominators (MonomialIdeal) := I -> (
+  
+  R := ring I;
+  if ( I == monomialIdeal(0_R) or I == monomialIdeal(1_R) ) then (
+    return {1};
+  );
+  
   denomList := {};
   M := NewtonPolyhedron(I);
   m := numRows M;
@@ -526,15 +599,16 @@ jumpingDenominators (MonomialIdeal) := I -> (
 -- MONOMIAL CURVES -------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-{*
+-*
   Code in this section written by Claudiu Raicu, Bart Snapp,
   Zach Teitler 2011, 2012
-*}
+*-
 
 -- affineMonomialCurveIdeal
 --
--- Compute defining ideal of a curve in affine 3-space parametrized by monomials,
--- i.e., parametrized by t -> (t^a,t^b,t^c) for positive integers a,b,c.
+-- Compute defining ideal of a curve in affine 3-space parametrized by
+-- monomials, i.e., parametrized by t -> (t^a,t^b,t^c) for positive integers
+-- a,b,c.
 --
 -- Input:
 --  * ring S
@@ -674,13 +748,13 @@ exceptionalDivisorDiscrepancy = (mm,ff) -> (
 -- Output:
 --  * ideal of R.
 -- The ring R should be a polynomial ring over a field.
--- The list mm should have nonnegative integers, with at least as many as the number
--- of variables in R. Currently we do not check these things.
+-- The list mm should have nonnegative integers, with at least as many as the
+-- number of variables in R. Currently we do not check these things.
 
 monomialValuationIdeal = (R,mm,val) -> (
   M := (matrix{mm}|matrix{{-val}}) || id_(ZZ^(#mm+1));
   setNmzOption("normal",true);
-  normalizOutput := normaliz(M,4,grading=>toList(numColumns(M):1));
+  normalizOutput := normaliz(M,"inequalities",grading=>toList(numColumns(M):1));
   M2 := normalizOutput#"gen";
   setNmzOption("normal",false);
   intmat2monomIdeal(M2,R,1)
@@ -689,8 +763,8 @@ monomialValuationIdeal = (R,mm,val) -> (
 
 -- exceptionalDivisorValuationIdeal
 --
--- Compute valuation ideal {h : v(h) >= val}, where the valuation v is induced by the
--- (mm,ord(mm,f_2)-ord(mm,f_1)) exceptional divisor.
+-- Compute valuation ideal {h : v(h) >= val}, where the valuation v is induced
+-- by the (mm,ord(mm,f_2)-ord(mm,f_1)) exceptional divisor.
 --
 -- Input:
 --  * ring R
@@ -703,7 +777,8 @@ monomialValuationIdeal = (R,mm,val) -> (
 exceptionalDivisorValuationIdeal = (R,ff,mm,val) -> (
   maxpow := ceiling(val / ord(mm,ff_1));
   if maxpow < 0 then ideal(1_R) else
-  sum apply(splice{0..maxpow}, i -> ideal(ff_0^i)*monomialValuationIdeal(R,mm,val-i*ord(mm,ff_1)))
+  sum apply(splice{0..maxpow},
+    i -> ideal(ff_0^i)*monomialValuationIdeal(R,mm,val-i*ord(mm,ff_1)))
 )
 
 
@@ -732,26 +807,29 @@ termIdeal = I -> (
 -- Output:
 --  * ideal
 --
--- For a prime ideal I and p>=0, the symbolic power I^(p) is the ideal of functions vanishing to
--- order at least p at every point of V(I). It is the I-primary component of I^p. The non-I-primary
+-- For a prime ideal I and p>=0, the symbolic power I^(p) is the ideal of
+-- functions vanishing to order at least p at every point of V(I).
+-- It is the I-primary component of I^p. The non-I-primary
 -- components of I^p have support contained in Sing(V(I)).
 --
--- For our ideals (of monomial curves) the singular locus is a single point, the origin.
--- We compute the symbolic power by computing I^p, then saturating with respect to the ideal
--- of the origin (to remove unwanted primary components).
+-- For our ideals (of monomial curves) the singular locus is a single point,
+-- the origin. We compute the symbolic power by computing I^p, then saturating
+-- with respect to the ideal of the origin (to remove unwanted primary
+-- components).
 --
 -- In the future this may be replaced by a better algorithm, perhaps?
 --
--- We assume the input ideal is indeed prime, and that its unique singular point is the origin.
+-- We assume the input ideal is indeed prime, and that its unique singular point
+-- is the origin.
 
 symbolicPowerCurveIdeal = (I,t) -> saturate(I^(max(0,t)))
 
 
 -- intersectionIndexSet
 --
--- Compute indexing set for intersection appearing in the formula for multiplier ideals.
--- This is a finite set of lattice points defined by some equations and inequalities.
--- See H.M. Thompson's paper (cited above).
+-- Compute indexing set for intersection appearing in the formula for multiplier
+-- ideals. This is a finite set of lattice points defined by some equations and
+-- inequalities. See H.M. Thompson's paper (cited above).
 --
 -- Input:
 --  * ring
@@ -779,13 +857,17 @@ symbolicPowerCurveIdeal = (I,t) -> saturate(I^(max(0,t)))
 --   vv := {(exponents(ff_0))_1, (exponents(ff_1))_1};
 --   
 --   cols := #(uu_0);
---   candidateGens1 := (normaliz(matrix{uu_0 - vv_0} || matrix{vv_0 - uu_0} || matrix{uu_1 - vv_1} || id_(ZZ^cols),4))#"gen";
---   candidateGens2 := (normaliz(matrix{uu_0 - vv_0} || matrix{vv_0 - uu_0} || matrix{vv_1 - uu_1} || id_(ZZ^cols),4))#"gen";
+--   candidateGens1 := (normaliz(matrix{uu_0 - vv_0} || matrix{vv_0 - uu_0} ||
+--     matrix{uu_1 - vv_1} || id_(ZZ^cols),4))#"gen";
+--   candidateGens2 := (normaliz(matrix{uu_0 - vv_0} || matrix{vv_0 - uu_0} ||
+--     matrix{vv_1 - uu_1} || id_(ZZ^cols),4))#"gen";
 --   candidateGens  := candidateGens1 || candidateGens2;
---   rhoEquation    := (transpose matrix {uu_1-uu_0}) | (transpose matrix {vv_1-vv_0});
+--   rhoEquation    := (transpose matrix {uu_1-uu_0}) |
+--     (transpose matrix {vv_1-vv_0});
 --   
 --   T := candidateGens * rhoEquation;
---   rows := toList select(0..<numRows T, i -> all(0..<numColumns T, j -> T_(i,j) > 0));
+--   rows := toList select(0..<numRows T, i ->
+--     all(0..<numColumns T, j -> T_(i,j) > 0));
 --   unique apply(rows, i -> flatten entries candidateGens^{i})
 -- )
 intersectionIndexSet = (R,exps) -> {exps}
@@ -793,8 +875,8 @@ intersectionIndexSet = (R,exps) -> {exps}
 
 -- multiplierIdeal of MonomialCurve
 --
--- Compute multiplier ideal of the defining ideal of a monomial space curve, ie., a curve in
--- affine 3-space parametrized by monomials, t->(t^a,t^b,t^c).
+-- Compute multiplier ideal of the defining ideal of a monomial space curve,
+-- ie., a curve in affine 3-space parametrized by monomials, t->(t^a,t^b,t^c).
 --
 -- Input:
 --  * ring R
@@ -803,7 +885,8 @@ intersectionIndexSet = (R,exps) -> {exps}
 -- Output:
 --  * an ideal
 
-multiplierIdeal (Ring, List, ZZ) := (R, nn, t) -> multiplierIdeal(R,nn,promote(t,QQ))
+multiplierIdeal (Ring, List, ZZ) := (R, nn, t) ->
+  multiplierIdeal(R,nn,promote(t,QQ))
 multiplierIdeal (Ring, List, QQ) := (R, nn, t) -> (
   ff := sortedGens(R,nn);
   curveIdeal := affineMonomialCurveIdeal(R,nn);
@@ -843,7 +926,8 @@ logCanonicalThreshold(Ring,List) := (R,nn) -> (
   lctTerm    := logCanonicalThreshold(termIdeal(curveIdeal));
   min (2, lctTerm, 
     min(
-         apply(indexList, mm -> (exceptionalDivisorDiscrepancy(mm,ff)+1)/ord(mm,ff_1) )
+         apply(indexList, mm ->
+           (exceptionalDivisorDiscrepancy(mm,ff)+1)/ord(mm,ff_1) )
     ) )
 )
 
@@ -854,7 +938,8 @@ jumpingDenominators (Ring,List) := (R,exps) -> (
   ff := sortedGens(R,exps);
   indexList  := intersectionIndexSet(R,exps);
   curveIdeal := ideal ff;
-  sort unique({1} | apply(indexList, m -> ord(m,ff_1)) | jumpingDenominators(termIdeal(curveIdeal)))
+  sort unique({1} | apply(indexList, m -> ord(m,ff_1)) |
+    jumpingDenominators(termIdeal(curveIdeal)))
 )
 
 
@@ -911,6 +996,18 @@ irreducibles := A -> (
 multiplierIdeal (CentralArrangement,List,Number) := Ideal => (A,m,s) -> (
   if (#tolist A != #m) then error "expected one weight for each hyperplane";
   R := ring A;
+  
+  if ( betterTrim(A) == arrangement({},R)
+    or betterTrim(A) == arrangement({0_R},R) ) then (
+    if ( s <= 0 ) then (
+      return ideal(1_R);
+    ) else (
+      return ideal(0_R);
+    );
+  ) else if ( betterTrim(A) == arrangement({1_R},R) ) then (
+    return ideal(1_R);
+  );
+  
   irreds := irreducibles(A);
   exps := irreds/(F->max(0,floor(s*weight(F,m))-rank(F)+1));
   ideals := irreds/(F-> trim ideal tolist (A_F));
@@ -918,17 +1015,26 @@ multiplierIdeal (CentralArrangement,List,Number) := Ideal => (A,m,s) -> (
 );
 multiplierIdeal (CentralArrangement,Number) := Ideal => (A,s) -> (
   betterTrim A;
-  return multiplierIdeal(A.cache#simpleCacheKey,A.cache#multiplicitiesCacheKey,s);
+  return multiplierIdeal(A.cache#simpleCacheKey,
+    A.cache#multiplicitiesCacheKey,s);
 );
 
 logCanonicalThreshold(CentralArrangement,List) := (A,m) -> (
   if (#tolist A != #m) then error "expected one weight for each hyperplane";
+  R := ring A;
+  if ( betterTrim(A) == arrangement({},R)
+    or betterTrim(A) == arrangement({0_R},R) ) then (
+    return 0;
+  ) else if ( betterTrim(A) == arrangement({1_R},R) ) then (
+    return infinity;
+  );
   irreds := irreducibles(A);
   return min(irreds/(F -> (rank(F)/weight(F,m))));
 );
 logCanonicalThreshold(CentralArrangement) := A -> (
   betterTrim A;
-  return logCanonicalThreshold(A.cache#simpleCacheKey,A.cache#multiplicitiesCacheKey);
+  return logCanonicalThreshold(A.cache#simpleCacheKey,
+    A.cache#multiplicitiesCacheKey);
 );
 
 skodaPeriodicityOnset(CentralArrangement) := A -> 1
@@ -937,12 +1043,19 @@ skodaPeriodicityOnset(CentralArrangement,List) := (A,m) -> 1
 
 jumpingDenominators(CentralArrangement,List) := (A,m) -> (
   if (#tolist A != #m) then error "expected one weight for each hyperplane";
+  R := ring A;
+  if ( betterTrim(A) == arrangement({},R)
+    or betterTrim(A) == arrangement({0_R},R)
+    or betterTrim(A) == arrangement({1_R},R) ) then (
+      return {1};
+  );
   irreds := irreducibles(A);
   return unique sort (irreds/(F -> weight(F,m)));
 );
 jumpingDenominators(CentralArrangement) := A -> (
   betterTrim A;
-  return jumpingDenominators(A.cache#simpleCacheKey,A.cache#multiplicitiesCacheKey);
+  return jumpingDenominators(A.cache#simpleCacheKey,
+    A.cache#multiplicitiesCacheKey);
 );
 
 
@@ -970,7 +1083,8 @@ genericDeterminantalSymbolicPower (Matrix,ZZ,ZZ) := (M,r,a) -> (
 )
 
 
--- multiplierIdeal (Ring,List,ZZ,ZZ) := (R,mm,r,c) -> multiplierIdeal(R,mm,r,promote(c,QQ))
+-- multiplierIdeal (Ring,List,ZZ,ZZ) := (R,mm,r,c) ->
+--   multiplierIdeal(R,mm,r,promote(c,QQ))
 -- multiplierIdeal (Ring,List,ZZ,QQ) := (R,mm,r,c) -> (
 --   m := mm_0;
 --   n := mm_1;
@@ -987,6 +1101,15 @@ multiplierIdeal (Matrix,ZZ,QQ) := (X,r,c) -> (
   m := numRows(X);
   n := numColumns(X);
   
+  -- if minors larger than size of matrix, then "minors" generate zero ideal
+  if ( r > min(m,n) ) then (
+    if ( c <= 0 ) then (
+      return ideal(1_R);
+    ) else (
+      return ideal(0_R);
+    );
+  );
+  
   -- should do:
   -- use skodaPeriodicityOnset to reduce coefficient 'c' before computing this
   
@@ -1000,11 +1123,19 @@ multiplierIdeal (Matrix,ZZ,QQ) := (X,r,c) -> (
   return J;
 )
 
--- logCanonicalThreshold(List,ZZ) := (mm,r) -> min( apply(0..<r , i -> (mm_0-i)*(mm_1-i)/(r-i)) )
--- logCanonicalThreshold(Ring,List,ZZ) := (R,mm,r) -> logCanonicalThreshold(mm,r)
-logCanonicalThreshold(Matrix,ZZ) := (M,r) ->
-  min( apply(0..<r , i -> (numRows(M)-i)*(numColumns(M)-i)/(r-i)) )
-
+-- logCanonicalThreshold(List,ZZ) := (mm,r) -> min( apply(0..<r ,
+--   i -> (mm_0-i)*(mm_1-i)/(r-i)) )
+-- logCanonicalThreshold(Ring,List,ZZ) := (R,mm,r) ->
+--   logCanonicalThreshold(mm,r)
+logCanonicalThreshold(Matrix,ZZ) := (M,r) -> (
+  if ( r <= 0 ) then (
+    return infinity;
+  ) else if ( r > min(numRows(M),numColumns(M)) ) then (
+    return 0;
+  ) else (
+    return min( apply(0..<r , i -> (numRows(M)-i)*(numColumns(M)-i)/(r-i)) );
+  );
+)
 
 -- skodaPeriodicityOnset(List,ZZ) := (mm,r) -> (
 --   ambdim := mm_0 * mm_1;
@@ -1021,7 +1152,13 @@ skodaPeriodicityOnset(Matrix,ZZ) := (M,r) -> (
 
 -- jumpingDenominators(Ring,List,ZZ) := (R,mm,r) -> toList(1..r-1)
 -- jumpingDenominators(List,ZZ) := (mm,r) -> toList(1..r-1)
-jumpingDenominators(Matrix,ZZ) := (M,r) -> toList(1..r-1)
+jumpingDenominators(Matrix,ZZ) := (M,r) -> (
+  if ( r <= 0 or r > min(numRows(M),numColumns(M)) ) then (
+    return {1};
+  ) else (
+    return toList(1..r-1);
+  );
+)
 
 
 --------------------------------------------------------------------------------
@@ -1062,11 +1199,12 @@ TEST ///
   debug MultiplierIdeals;
   R = QQ[x,y,z];
   -- use R;
-  I = monomialIdeal(x*z^2,y^3,y*z^3,y^2*z^2,x*y^2*z,x^2*y*z,x^3*z,x^2*y^2,x^4*y,x^5,z^6);
+  I = monomialIdeal(x*z^2,y^3,y*z^3,y^2*z^2,x*y^2*z,x^2*y*z,x^3*z,x^2*y^2,
+    x^4*y,x^5,z^6);
   -- this I is integrally closed!
   M1 = NewtonPolyhedron(I); -- integer matrix (A|b) s.t. Newt(I) = {Ax \geq b}
   setNmzOption("normal",true);
-  nmzOut = normaliz(M1,4,grading=>toList(numColumns(M1):1));
+  nmzOut = normaliz(M1,"inequalities",grading=>toList(numColumns(M1):1));
   M2 = nmzOut#"gen"; -- integer matrix whose rows (minimally) generate semigroup 
    -- of lattice points in {Ax \geq b}, where M1 = (A|b)
   setNmzOption("normal",false);
@@ -1129,7 +1267,8 @@ TEST ///
   assert ( JN3#0 === {1/1, 3/2, 2/1} );
   assert ( JN3#1 == {ideal (x*y,x*z,y*z),
                      ideal (x^2*y^2,x*y*z,x^2*z^2,y^2*z^2),
-                     ideal (x^3*y^3,x^2*y^2*z,x^2*y*z^2,x*y^2*z^2,x^3*z^3,y^3*z^3)} );
+                     ideal (x^3*y^3,x^2*y^2*z,x^2*y*z^2,x*y^2*z^2,x^3*z^3,
+                       y^3*z^3)} );
 ///
 
 -- Threshold computations
@@ -1138,19 +1277,48 @@ TEST ///
   R := QQ[x,y];
   -- use R;
   I := monomialIdeal( y^2 , x^3 );
-  assert ( logCanonicalThreshold( I , 1_R ) === (5/6,map(ZZ^1,ZZ^3,{{2, 3, -6}})) );
-  assert ( logCanonicalThreshold( I , x ) === (7/6,map(ZZ^1,ZZ^3,{{2, 3, -6}})) );
+  assert ( logCanonicalThreshold( I , 1_R )
+    === (5/6,map(ZZ^1,ZZ^3,{{2, 3, -6}})) );
+  assert ( logCanonicalThreshold( I , x )
+    === (7/6,map(ZZ^1,ZZ^3,{{2, 3, -6}})) );
   I = monomialIdeal( x^3 , x*y , y^4 );
-  assert ( logCanonicalThreshold( I , 1_R ) === (1/1,map(ZZ^2,ZZ^3,{{1, 2, -3}, {3, 1, -4}})) );
-  assert ( logCanonicalThreshold( I , x ) === (4/3,map(ZZ^1,ZZ^3,{{1, 2, -3}})) );
+  assert ( logCanonicalThreshold( I , 1_R )
+    === (1/1,map(ZZ^2,ZZ^3,{{1, 2, -3}, {3, 1, -4}})) );
+  assert ( logCanonicalThreshold( I , x )
+    === (4/3,map(ZZ^1,ZZ^3,{{1, 2, -3}})) );
 ///
 
 TEST ///
   R = QQ[x,y,z];
   I = monomialIdeal(x^8,y^6); -- Example 2 of [Howald 2000]
-  assert ( multiplierIdeal(I,1) == monomialIdeal (x^6,x^5*y,x^4*y^2,x^2*y^3,x*y^4,y^5) );
-  I = monomialIdeal(x*y^4*z^6, x^5*y, y^7*z, x^8*z^8); -- Example 7 of [Howald 2000]
+  assert ( multiplierIdeal(I,1)
+    == monomialIdeal (x^6,x^5*y,x^4*y^2,x^2*y^3,x*y^4,y^5) );
+  I = monomialIdeal(x*y^4*z^6, x^5*y, y^7*z, x^8*z^8);
+    -- Example 7 of [Howald 2000]
   assert ( logCanonicalThreshold(I) == 68/191 );
+///
+
+-- Zero ideal and unit ideal
+TEST ///
+  needsPackage "MultiplierIdeals";
+  R = QQ[x];
+  I = monomialIdeal(0_R);
+  assert ( multiplierIdeal(I,1) == monomialIdeal(0_R) );
+  assert ( multiplierIdeal(I,3/2) == monomialIdeal(0_R) );
+  assert ( multiplierIdeal(I,0) == monomialIdeal(1_R) );
+  assert ( logCanonicalThreshold(I) == 0 );
+  assert ( first logCanonicalThreshold(I,x) == 0 );
+///
+
+TEST ///
+  needsPackage "MultiplierIdeals";
+  R = QQ[x];
+  I = monomialIdeal(1_R);
+  assert ( multiplierIdeal(I,1) == monomialIdeal(1_R) );
+  assert ( multiplierIdeal(I,3/2) == monomialIdeal(1_R) );
+  assert ( multiplierIdeal(I,0) == monomialIdeal(1_R) );
+  assert ( logCanonicalThreshold(I) == infinity );
+  assert ( first logCanonicalThreshold(I,x) == infinity );
 ///
 
 --------------------------------------------------------------------------------
@@ -1198,7 +1366,8 @@ assert( (exceptionalDivisorValuation({3,5,11},{7,1,2},x)) === 7 )
 assert( (exceptionalDivisorValuation({3,5,11},{7,1,2},y)) === 1 )
 assert( (exceptionalDivisorValuation({3,5,11},{7,1,2},z)) === 2 )
 assert( (exceptionalDivisorValuation({3,5,11},{7,1,2},x^2*y-z)) === 3 )
-assert( (exceptionalDivisorValuation({3,5,11},{7,1,2},(x^2*y-z)^2 * x * (y + z))) === 14 )
+assert( (exceptionalDivisorValuation({3,5,11},{7,1,2},
+  (x^2*y-z)^2 * x * (y + z))) === 14 )
 ///
 
 TEST ///
@@ -1212,8 +1381,10 @@ assert( (monomialValuationIdeal(R,{2,3},0)) == monomialIdeal 1_R )
 assert( (monomialValuationIdeal(R,{2,3},-1)) == monomialIdeal 1_R )
 
 S = QQ[x,y,z];
-assert( (monomialValuationIdeal(S,{2,3,4},6)) == monomialIdeal (x^3,x^2*y,y^2,x*z,y*z,z^2) )
-assert( (monomialValuationIdeal(S,{3,4,5},9)) == monomialIdeal (x^3,x^2*y,x*y^2,y^3,x^2*z,y*z,z^2) )
+assert( (monomialValuationIdeal(S,{2,3,4},6))
+  == monomialIdeal (x^3,x^2*y,y^2,x*z,y*z,z^2) )
+assert( (monomialValuationIdeal(S,{3,4,5},9))
+  == monomialIdeal (x^3,x^2*y,x*y^2,y^3,x^2*z,y*z,z^2) )
 assert( (monomialValuationIdeal(S,{3,5,11},0)) == monomialIdeal 1_S )
 assert( (monomialValuationIdeal(S,{3,5,11},2)) == monomialIdeal (x,y,z) )
 ///
@@ -1224,14 +1395,20 @@ needsPackage"MultiplierIdeals";
 debug MultiplierIdeals;
 R = QQ[x,y,z];
 ff = sortedGens(R,{3,4,5});
-assert( (exceptionalDivisorValuationIdeal(R,ff,{1,1,2},6)) == ideal(z^3,y^2*z^2,x*y*z^2,x^2*z^2,y^3*z,x*y^2*z,y^4,x^3*y*z,x^4*z,x^2*y^3,x^3*y^2,x^5*y,x^6) )
+assert( (exceptionalDivisorValuationIdeal(R,ff,{1,1,2},6))
+  == ideal(z^3,y^2*z^2,x*y*z^2,x^2*z^2,y^3*z,x*y^2*z,y^4,x^3*y*z,x^4*z,x^2*y^3,
+  x^3*y^2,x^5*y,x^6) )
 assert( (exceptionalDivisorValuationIdeal(R,ff,{2,3,4},3)) == ideal(z,y,x^2) )
 S = QQ[x,y,z];
 ff = sortedGens(S,{2,3,4});
-assert( ( exceptionalDivisorValuationIdeal(S,ff,{1,2,2},4)) == ideal(z^2,y*z,y^2,x^2*z,x^2*y,x^3-x*z) )
-assert( ( exceptionalDivisorValuationIdeal(S,ff,{2,3,4},6)) == ideal(z^2,y*z,x*z,y^2,x^2-z) )
+assert( ( exceptionalDivisorValuationIdeal(S,ff,{1,2,2},4))
+  == ideal(z^2,y*z,y^2,x^2*z,x^2*y,x^3-x*z) )
+assert( ( exceptionalDivisorValuationIdeal(S,ff,{2,3,4},6))
+  == ideal(z^2,y*z,x*z,y^2,x^2-z) )
 assert( ( exceptionalDivisorValuationIdeal(S,ff,{2,3,4},1)) == ideal(z,y,x) )
-assert( ( exceptionalDivisorValuationIdeal(S,ff,{1,2,2},6)) == ideal(z^3,y*z^2,y^2*z,y^3,x^2*z^2,x^2*y*z,x^3*z-x*z^2,x^2*y^2,x^3*y-x*y*z,x^4-2*x^2*z+z^2) )
+assert( ( exceptionalDivisorValuationIdeal(S,ff,{1,2,2},6))
+  == ideal(z^3,y*z^2,y^2*z,y^3,x^2*z^2,x^2*y*z,x^3*z-x*z^2,x^2*y^2,x^3*y-x*y*z,
+  x^4-2*x^2*z+z^2) )
 assert( ( exceptionalDivisorValuationIdeal(S,ff,{1,2,2},-1)) == ideal 1_S )
 assert( ( exceptionalDivisorValuationIdeal(S,ff,{1,2,2},0)) == ideal 1_S )
 ///
@@ -1256,8 +1433,21 @@ J = affineMonomialCurveIdeal(R,{3,4,5})
 assert(symbolicPowerCurveIdeal(I,3) == I^3)
 assert(symbolicPowerCurveIdeal(J,3) != J^3)
 assert(symbolicPowerCurveIdeal(J,1) == J)
-assert( (symbolicPowerCurveIdeal(J,2)) == ideal(y^4-2*x*y^2*z+x^2*z^2,x^2*y^3-x^3*y*z-y^2*z^2+x*z^3,x^3*y^2-x^4*z-y^3*z+x*y*z^2,x^5+x*y^3-3*x^2*y*z+z^3) )
-assert( (symbolicPowerCurveIdeal(J,4)) == ideal(y^8-4*x*y^6*z+6*x^2*y^4*z^2-4*x^3*y^2*z^3+x^4*z^4,x^2*y^7-3*x^3*y^5*z+3*x^4*y^3*z^2-x^5*y*z^3-y^6*z^2+3*x*y^4*z^3-3*x^2*y^2*z^4+x^3*z^5,x^3*y^6-3*x^4*y^4*z+3*x^5*y^2*z^2-x^6*z^3-y^7*z+3*x*y^5*z^2-3*x^2*y^3*z^3+x^3*y*z^4,x^5*y^4-2*x^6*y^2*z+x^7*z^2+x*y^7-5*x^2*y^5*z+7*x^3*y^3*z^2-3*x^4*y*z^3+y^4*z^3-2*x*y^2*z^4+x^2*z^5,x^7*y^3-x^8*y*z-x^4*y^4*z-x^5*y^2*z^2+2*x^6*z^3+y^7*z-4*x*y^5*z^2+8*x^2*y^3*z^3-5*x^3*y*z^4-y^2*z^5+x*z^6,x^8*y^2-x^9*z+x^4*y^5-5*x^5*y^3*z+4*x^6*y*z^2-x*y^6*z+4*x^2*y^4*z^2-2*x^3*y^2*z^3-x^4*z^4-y^3*z^4+x*y*z^5,x^10+2*x^6*y^3-6*x^7*y*z+x^2*y^6-6*x^3*y^4*z+9*x^4*y^2*z^2+2*x^5*z^3+2*x*y^3*z^3-6*x^2*y*z^4+z^6) )
+assert( (symbolicPowerCurveIdeal(J,2)) == ideal(y^4-2*x*y^2*z+x^2*z^2,
+  x^2*y^3-x^3*y*z-y^2*z^2+x*z^3,x^3*y^2-x^4*z-y^3*z+x*y*z^2,
+  x^5+x*y^3-3*x^2*y*z+z^3) )
+assert( (symbolicPowerCurveIdeal(J,4))
+  == ideal(y^8-4*x*y^6*z+6*x^2*y^4*z^2-4*x^3*y^2*z^3+x^4*z^4,
+  x^2*y^7-3*x^3*y^5*z+3*x^4*y^3*z^2-x^5*y*z^3-y^6*z^2+3*x*y^4*z^3
+    -3*x^2*y^2*z^4+x^3*z^5,
+  x^3*y^6-3*x^4*y^4*z+3*x^5*y^2*z^2-x^6*z^3-y^7*z+3*x*y^5*z^2
+    -3*x^2*y^3*z^3+x^3*y*z^4,
+  x^5*y^4-2*x^6*y^2*z+x^7*z^2+x*y^7-5*x^2*y^5*z+7*x^3*y^3*z^2-3*x^4*y*z^3
+    +y^4*z^3-2*x*y^2*z^4+x^2*z^5,x^7*y^3-x^8*y*z-x^4*y^4*z-x^5*y^2*z^2
+    +2*x^6*z^3+y^7*z-4*x*y^5*z^2+8*x^2*y^3*z^3-5*x^3*y*z^4-y^2*z^5+x*z^6,
+  x^8*y^2-x^9*z+x^4*y^5-5*x^5*y^3*z+4*x^6*y*z^2-x*y^6*z+4*x^2*y^4*z^2
+    -2*x^3*y^2*z^3-x^4*z^4-y^3*z^4+x*y*z^5,x^10+2*x^6*y^3-6*x^7*y*z+x^2*y^6
+    -6*x^3*y^4*z+9*x^4*y^2*z^2+2*x^5*z^3+2*x*y^3*z^3-6*x^2*y*z^4+z^6) )
 assert( (symbolicPowerCurveIdeal(I,0)) == ideal 1_R )
 assert( (symbolicPowerCurveIdeal(J,-1)) == ideal 1_R )
 ///
@@ -1270,7 +1460,8 @@ debug MultiplierIdeals;
 R = QQ[x,y,z];
 assert( (multiplierIdeal(R,{2,3,4},1)) == ideal 1_R )
 assert( (multiplierIdeal(R,{2,3,4},7/6)) == ideal 1_R )
-assert( (multiplierIdeal(R,{2,3,4},20/7)) == ideal(y^2*z-x*z^2,x^2*z-z^2,y^3-x*y*z,x*y^2-z^2,x^2*y-y*z,x^3-x*z) )
+assert( (multiplierIdeal(R,{2,3,4},20/7))
+  == ideal(y^2*z-x*z^2,x^2*z-z^2,y^3-x*y*z,x*y^2-z^2,x^2*y-y*z,x^3-x*z) )
 assert( (multiplierIdeal(R,{3,4,5},11/5)) == ideal(y^2-x*z,x^2*y-z^2,x^3-y*z) )
 I = affineMonomialCurveIdeal(R,{2,3,4})
 assert(multiplierIdeal(R,{2,3,4},3/2) == Dmodules$multiplierIdeal(I,3/2))
@@ -1311,16 +1502,21 @@ TEST ///
      ideal(z,y^2,x*y,x^2),
      ideal(y^2-x*z,x^2*y-z^2,x^3-y*z),
      ideal(y^2*z-x*z^2,y^3-x*y*z,x*y^2-x^2*z,x^2*y-z^2,x^4-x*y*z),
-     ideal(y^2*z-x*z^2,y^3-x*y*z,x*y^2-x^2*z,x^2*y*z-z^3,x^3*z-y*z^2,x^3*y-x*z^2,x^4-x*y*z),
-     ideal(y^2*z-x*z^2,y^3-x*y*z,x^2*y*z-z^3,x^3*z-y*z^2,x^2*y^2-y*z^2,x^3*y-x*z^2,x^5-z^3),
-     ideal(y^2*z-x*z^2,x^2*y*z-z^3,x^3*z-y*z^2,y^4-x^2*z^2,x*y^3-z^3,x^2*y^2-y*z^2,x^4*y-x^2*z^2,x^5-z^3)}
+     ideal(y^2*z-x*z^2,y^3-x*y*z,x*y^2-x^2*z,x^2*y*z-z^3,x^3*z-y*z^2,
+       x^3*y-x*z^2,x^4-x*y*z),
+     ideal(y^2*z-x*z^2,y^3-x*y*z,x^2*y*z-z^3,x^3*z-y*z^2,x^2*y^2-y*z^2,
+       x^3*y-x*z^2,x^5-z^3),
+     ideal(y^2*z-x*z^2,x^2*y*z-z^3,x^3*z-y*z^2,y^4-x^2*z^2,x*y^3-z^3,
+       x^2*y^2-y*z^2,x^4*y-x^2*z^2,x^5-z^3)}
   } )
   assert( (jumpingNumbers(R,{3,4,5},Interval=>{3/2,5/2})) == {
     {16/9,17/9,2/1,22/9,5/2},
     {ideal(z,y,x^2),ideal(z,y^2,x*y,x^2),
      ideal(-y^2+x*z,-y^2*z+x*z^2,x*y^2-x^2*z,-x^2*y+z^2,-x^3+y*z),
-     ideal(-y^2*z+x*z^2,-y^3+x*y*z,-x*y^2+x^2*z,-x^2*y+z^2,-y^2*z^2+x*z^3,x*y^2*z-x^2*z^2,-x^2*y*z+z^3,-x^3*z+y*z^2,-x^3*z+y*z^2,-x^4+x*y*z),
-     ideal(y^2*z-x*z^2,y^3-x*y*z,x*y^2-x^2*z,x^2*y*z-z^3,x^3*z-y*z^2,x^3*y-x*z^2,x^4-x*y*z)}
+     ideal(-y^2*z+x*z^2,-y^3+x*y*z,-x*y^2+x^2*z,-x^2*y+z^2,-y^2*z^2+x*z^3,
+       x*y^2*z-x^2*z^2,-x^2*y*z+z^3,-x^3*z+y*z^2,-x^3*z+y*z^2,-x^4+x*y*z),
+     ideal(y^2*z-x*z^2,y^3-x*y*z,x*y^2-x^2*z,x^2*y*z-z^3,x^3*z-y*z^2,
+       x^3*y-x*z^2,x^4-x*y*z)}
   } )
 ///
 
@@ -1406,6 +1602,30 @@ TEST /// -- Example 6.3 of [Berkesch--Leykin 2010]
   )
 ///
 
+-- Empty (zero) arrangement and unit arrangement
+TEST ///
+  needsPackage "MultiplierIdeals";
+  R = QQ[x,y,z];
+  A = arrangement({},R);
+  B = arrangement({0_R},R);
+  C = arrangement({1_R},R);
+  assert ( trim(A) == trim(B) );
+  assert ( multiplierIdeal(A,0) == ideal(1_R) );
+  assert ( multiplierIdeal(A,1/2) == ideal(0_R) );
+  assert ( multiplierIdeal(A,1) == ideal(0_R) );
+  assert ( logCanonicalThreshold(A) == 0 );
+  
+  assert ( multiplierIdeal(B,0) == ideal(1_R) );
+  assert ( multiplierIdeal(B,1/2) == ideal(0_R) );
+  assert ( multiplierIdeal(B,1) == ideal(0_R) );
+  assert ( logCanonicalThreshold(B) == 0 );
+  
+  assert ( multiplierIdeal(C,0) == ideal(1_R) );
+  assert ( multiplierIdeal(C,1/2) == ideal(1_R) );
+  assert ( multiplierIdeal(C,1) == ideal(1_R) );
+  assert ( logCanonicalThreshold(C) == infinity );
+///
+
 --------------------------------------------------------------------------------
 -- GENERIC DETERMINANTAL -------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -1439,6 +1659,26 @@ TEST /// -- Example 5.7 of [Johnson, 2003] (thesis)
   assert( J == JJ );
 ///
 
+
+-- Zero determinantal ideal and unit determinantal ideal
+TEST ///
+  needsPackage "MultiplierIdeals";
+  R = QQ[x_1..x_6];
+  X = genericMatrix(R,2,3);
+  
+  -- minors larger than size of matrix: zero ideal
+  assert ( multiplierIdeal(X,3,0) == ideal(1_R) );
+  assert ( multiplierIdeal(X,3,1/2) == ideal(0_R) );
+  assert ( multiplierIdeal(X,3,1) == ideal(0_R) );
+  assert ( logCanonicalThreshold(X,3) == 0 );
+  
+  -- size zero minors: unit ideal
+  assert ( multiplierIdeal(X,0,0) == ideal(1_R) );
+  assert ( multiplierIdeal(X,0,1/2) == ideal(1_R) );
+  assert ( multiplierIdeal(X,0,1) == ideal(1_R) );
+  assert ( logCanonicalThreshold(X,0) == infinity );
+///
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- DOCUMENTATION ---------------------------------------------------------------
@@ -1448,7 +1688,7 @@ TEST /// -- Example 5.7 of [Johnson, 2003] (thesis)
 beginDocumentation()
 document { 
   Key => MultiplierIdeals,
-  Headline => "A package for computing multiplier ideals",
+  Headline => "multiplier ideals",
   PARA {
     EM "MultiplierIdeals",
     " is a package for computing multiplier ideals,
@@ -1481,48 +1721,56 @@ document {
   UL {
   LI {
     "[BL] ",
-    "Blickle, Manuel and Lazarsfeld, Robert ",
+    "Blickle, Manuel and Robert Lazarsfeld, ",
     EM "An informal introduction to multiplier ideals. ",
     "Trends in commutative algebra, 87-114, ",
     "Math. Sci. Res. Inst. Publ., 51, Cambridge Univ. Press, Cambridge, 2004."
   },
   LI {
     "[H] ",
-    "Howald, J.A. ",
+    "Howald, J.A., ",
     EM "Multiplier ideals of monomial ideals. ",
     "Trans. Amer. Math. Soc. 353 (2001), no. 7, 2665-2671"
   },
   LI {
     "[J] ",
-    "Johnson, Amanda ",
+    "Johnson, Amanda, ",
     EM "Multiplier ideals of determinantal ideals. ",
     "Thesis (Ph.D.)-University of Michigan. 2003"
   },
   LI {
     "[L] ",
-    "Lazarsfeld, Robert ",
+    "Lazarsfeld, Robert, ",
     EM "Positivity in algebraic geometry. II. ",
-    "2004 "
+    "Ergebnisse der Mathematik., vol. 49, Springer-Verlag, ",
+    "Berlin, 2004. Positivity for vector bundles, and multiplier ideals."
   },
   LI {
     "[M] ",
-    "Mustațǎ Mircea ",
+    "Mustata, Mircea, ",
     EM "Multiplier ideals of hyperplane arrangements. ",
     "Trans. Amer. Math. Soc. 358 (2006), no. 11, 5015-5023."
   },
   LI {
     "[T] ",
-    "Teitler, Zach ",
-    EM "A note on Mustațǎ's computation of multiplier ideals of hyperplane arrangements. ",
+    "Teitler, Zach, ",
+    EM "A note on Mustata's computation of multiplier ideals of hyperplane
+      arrangements. ",
     "Proc. Amer. Math. Soc. 136 (2008), no. 5, 1575-1579."
   },
   LI {
     "[Th] ",
-    "Thompson, H.M. ",
+    "Thompson, Howard M., ",
     EM "Multiplier Ideals of Monomial Space Curves, ",
-    HREF { "http://arxiv.org/abs/1006.1915" , "arXiv:1006.1915v4" },
-    " [math.AG]."
+    "Proc. Amer. Math. Soc. Ser. B 1 (2014), 33–41."
   }
+  },
+  Caveat => {
+    "The multiplier ideals and log canonical thresholds computed
+    by this package are valid over any field in any characteristic.
+    In some cases results may be computed over other coefficient rings,
+    such as ZZ, but they may not represent actual
+    multiplier ideals or log canonical thresholds."
   }
 }
 
@@ -1553,8 +1801,8 @@ document {
     Outputs => {
       Ideal => {}
     },
-    "Computes the multiplier ideal of I with coefficient t ",
-    "using Howald's Theorem and the package ", TO Normaliz, ".",
+    "Computes the multiplier ideal of ", TEX ///$I$///, " with coefficient ",
+    TEX ///$t$///, " using Howald's Theorem and the package ", TO Normaliz, ".",
   
     EXAMPLE lines ///
       R = QQ[x,y];
@@ -1570,14 +1818,15 @@ document {
     Usage => "multiplierIdeal(A,m,s)",
     Inputs => {
       "A" => CentralArrangement => {"a central hyperplane arrangement"},
-      "m" => List => {"a list of weights for the hyperplanes in A"},
+      "m" => List => {"a list of weights for the hyperplanes in ", TEX ///$A$///,
+        " (optional)"},
       "s" => Number => {"a coefficient"}
     },
     Outputs => {
       Ideal => {}
     },
-    "Computes the multiplier ideal of the ideal of A with coefficient s
-    using the package ",
+    "Computes the multiplier ideal of the ideal of ", TEX ///$A$///,
+    " with coefficient ", TEX ///$s$///, " using the package ",
     TO HyperplaneArrangements,
     ".",
   
@@ -1601,8 +1850,11 @@ document {
       "I" => Ideal
     },
     PARA {
-      "Computes the multiplier ideal of the space curve C parametrized by
-      (t^a,t^b,t^c) given by n=(a,b,c)."
+      "Computes the multiplier ideal of the space curve ", TEX ///$C$///,
+      " parametrized by ",
+      TEX ///$(t^a,t^b,t^c)$///,
+      " given by ",
+      TEX ///$n=(a,b,c)$///, "."
     },
     EXAMPLE lines ///
       R = QQ[x,y,z];
@@ -1617,7 +1869,7 @@ document {
     Usage => "multiplierIdeal(R,L,r,t)",
     Inputs => {
       "R" => Ring => {"a ring"},
-      "L" => List => {"dimensions {m,n} of a matrix"},
+      "L" => List => {"dimensions ", TEX ///$\{m,n\}$///, " of a matrix"},
       "r" => ZZ => {"the size of minors generating the determinantal ideal"},
       "t" => QQ => {"a coefficient"}
     },
@@ -1626,8 +1878,8 @@ document {
     },
     "Computes the multiplier ideal of the ideal of ",
     TEX ///$r \times r$///, " minors in a ", TEX ///$m \times n$///,
-    " matrix whose entries are independent variables in the ring R ",
-    "(a generic matrix).",
+    " matrix whose entries are independent variables in the ring ", TEX ///$R$///,
+    " (a generic matrix).",
   
     EXAMPLE lines ///
       x = symbol x;
@@ -1656,8 +1908,9 @@ document {
   },
   Headline => "log canonical threshold",
   PARA {
-    "The log canonical threshold of an ideal I is the infimum of t
-    for which the multiplier ideal J(I^t) is a proper ideal.
+    "The log canonical threshold of an ideal ", TEX ///$I$///, " is the infimum of ",
+    TEX ///$t$///, " for which the multiplier ideal ", TEX ///$J(I^t)$///,
+    " is a proper ideal.
     Equivalently it is the least nonzero jumping number."
   },
   SYNOPSIS {
@@ -1669,9 +1922,7 @@ document {
     Outputs => {
       QQ => {}
     },
-    "Computes the log canonical threshold of a monomial ideal I ",
-    "(the least positive value of t such that the multiplier ideal ",
-    "of I with coefficient t is a proper ideal).",
+    "Computes the log canonical threshold of a monomial ideal ", TEX ///$I$///, ".",
   
     EXAMPLE lines ///
       R = QQ[x,y];
@@ -1691,25 +1942,35 @@ document {
       "m" => RingElement => {"a monomial"}
     },
     Outputs => {
-      QQ => {"the least t such that m is not in the t-th multiplier ideal of I"},
-      Matrix => {"the equations of the facets of the Newton polyhedron of I which impose the threshold on m"}
+      QQ => {
+        "the least ", TEX ///$t$///, " such that ", TEX ///$m$///, " is not in the ",
+        TEX ///$t$///, "-th multiplier ideal of ", TEX ///$I$///
+      },
+      Matrix => {
+        "the equations of the facets of the Newton polyhedron of ", TEX ///$I$///,
+        " which impose the threshold on ", TEX ///$m$///
+      }
     },
-    "Computes the threshold of inclusion of the monomial m=x^v in the multiplier ideal J(I^t),
-    that is, the value t = sup{ c | m lies in J(I^c) } = min{ c | m does not lie in J(I^c)}. 
-    In other words, (1/t)*(v+(1,..,1)) lies on the boundary of the Newton polyhedron Newt(I).
-    In addition, returns the linear inequalities for those facets of Newt(I) which contain (1/t)*(v+(1,..,1)).
-    These are in the format of ", TO "Normaliz", ", i.e., a matrix (A | b) where the number of columns of A is
-    the number of variables in the ring, b is a column vector, and the inequality on the column
-    vector v is given by Av+b >= 0, entrywise.
-    As a special case, the log canonical threshold is the threshold of the monomial 1_R = x^0.",
+    "Computes the threshold of inclusion of the monomial ", TEX ///$m=x^v$///,
+    " in the multiplier ideal ", TEX ///$J(I^t)$///, ", that is, the value ",
+    TEX ///$t = sup\{ c | m lies in J(I^c) \} = min\{ c | m does not lie in J(I^c)\}$///, ". 
+    In other words, ", TEX ///$(1/t)(v+(1,..,1))$///, " lies on the boundary of the Newton
+    polyhedron Newt(", TEX ///$I$///, "). In addition, returns the linear inequalities for those
+    facets of Newt(", TEX ///$I$///, ") which contain ", TEX ///$(1/t)(v+(1,..,1))$///, ".
+    These are in the format of ", TO "Normaliz", ", i.e., a matrix ", TEX ///$(A | b)$///,
+    " where the number of columns of ", TEX ///$A$///, " is the number of variables in
+    the ring, ", TEX ///$b$///, " is a column vector, and the inequality on the column
+    vector ", TEX ///$v$///, " is given by ", TEX ///$Av+b \geq 0$///, ", entrywise.
+    As a special case, the log canonical threshold is the threshold of the
+    monomial ", TEX ///$1_R = x^0$///, ".",
   
     EXAMPLE lines ///
       R = QQ[x,y];
       I = monomialIdeal(x^13,x^6*y^4,y^9);
       logCanonicalThreshold(I,x^2*y)
       J = monomialIdeal(x^6,x^3*y^2,x*y^5); -- Example 6.7 of [Howald 2001] (thesis)
-      logCanonicalThreshold(I,1_R)
-      logCanonicalThreshold(I,x^2)
+      logCanonicalThreshold(J,1_R)
+      logCanonicalThreshold(J,x^2)
     ///
   },
   
@@ -1722,9 +1983,8 @@ document {
     Outputs => {
       QQ => {}
     },
-    "Computes the log canonical threshold of a hyperplane arrangement A
-    (the least positive value of t such that the multiplier ideal
-    of A with coefficient t is a proper ideal).",
+    "Computes the log canonical threshold of a hyperplane arrangement ",
+    TEX ///$A$///, ".",
   
     EXAMPLE lines ///
       R = QQ[x,y,z];
@@ -1745,9 +2005,9 @@ document {
       "logCanonicalThreshold" => QQ
     },
     PARA {
-      "The function {\tt logCanonicalThreshold} computes the log
-      canonical threshold of a space curve. This curve is defined via
-      {\tt n = (a,b,c)} through the embedding {\tt u\to(u^a,u^b,u^c)}."
+      "Computes the log canonical threshold of the ideal ",
+      TEX ///$I$///, " of a space curve parametrized by ",
+      TEX ///$u \to (u^a,u^b,u^c)$///, "."
     },
     
     EXAMPLE lines ///
@@ -1761,7 +2021,7 @@ document {
     Heading => "log canonical threshold of a generic determinantal ideal",
     Usage => "multiplierIdeal(L,r)",
     Inputs => {
-      "L" => List => {"dimensions {m,n} of a matrix"},
+      "L" => List => {"dimensions ", TEX ///$\{m,n\}$///, " of a matrix"},
       "r" => ZZ => {"the size of minors generating the determinantal ideal"}
     },
     Outputs => {
@@ -1771,8 +2031,10 @@ document {
     TEX ///$r \times r$///, " minors in a ", TEX ///$m \times n$///,
     " matrix whose entries are independent variables ",
     "(a generic matrix).",
-  
-    "lct of ideal of 2-by-2 minors of 4-by-5 matrix:",
+    
+    PARA {
+      "lct of ideal of 2-by-2 minors of 4-by-5 matrix:",
+    },
     EXAMPLE lines ///
       x = getSymbol "x";
       R = QQ[x_1..x_20];
@@ -1820,15 +2082,25 @@ document {
   },
   Headline => "jumping numbers",
   PARA {
-    "Jumping numbers of an ideal I are those real numbers t
-    at which the multiplier ideal J(I^t), as a function of the parameter t,
-    changes.
-    More precisely, t is a jumping number if J(I^t) is different from J(I^{t-epsilon})
-    for all epsilon > 0.
-    The jumping numbers form a discrete sequence of rational numbers.
-    Thus t_1, t_2 are two consecutive jumping numbers of I
-    when J(I^t) = J(I^t_1) for all t_1 \\leq t < t_2
-    and J(I^t) \\neq J(I^t_1) for t < t_1 or t_2 \\leq t."
+    "Jumping numbers of an ideal ", TEX ///$I$///, " are those real numbers ",
+    TEX ///$t$///,
+    " at which the multiplier ideal ", TEX ///$J(I^t)$///,
+    ", as a function of the parameter ", TEX ///$t$///, ", changes.
+    More precisely, ", TEX ///$t$///, " is a jumping number if ",
+    TEX ///$J(I^t)$///,
+    " is different from ",
+    TEX ///$J(I^{t-\epsilon})$///,
+    " for all ",
+    TEX ///$\epsilon > 0$///,
+    ". The jumping numbers form a discrete sequence of rational numbers.
+    Thus ",
+    TEX ///$t_1, t_2$///,
+    " are two consecutive jumping numbers of ", TEX ///$I$///, " when ",
+    TEX ///$J(I^t) = J(I^{t_1})$///,
+    " for all ", TEX ///$t_1 \leq t < t_2$///,
+    " and ", TEX ///$J(I^t) \neq J(I^{t_1})$///,
+    " for ", TEX ///$t < t_1$///,
+    " or ", TEX ///$t_2 \leq t$///, "."
   },
   PARA {
     "The jumpingNumbers command determines the jumping numbers
@@ -1836,26 +2108,43 @@ document {
     By definition, the multiplier ideals are then determined at the
     intermediate parameter values."
   },
+  PARA {
+    "The jumpingNumbers command can handle any input that the multiplierIdeals
+    command can handle (but omit the rational number argument of
+    multiplierIdeals). That is, jumpingNumbers can handle the following inputs:
+    a hyperplane arrangement; a hyperplane arrangement with a list of
+    multiplicities; a monomial ideal; a monomial space curve
+    (specified by giving a ring together with a list of exponents);
+    a generic determinantal ideal
+    (specified by giving a generic matrix together with a size of minors)."
+  },
   EXAMPLE lines ///
     R = QQ[x,y,z,w];
     I = monomialIdeal(x*y, x*z, y*z, y*w, z*w^2);
     jumpingNumbers(I)
   ///,
   PARA {
-    "By default, jumpingNumbers looks for jumping numbers in a closed interval
-    [a,b] where a is the log canonical threshold of the ideal
-    and b is a sufficiently large value to ensure that Skoda periodicity holds,
-    that is, J(I^t) = I.J(I^{t-1}) for t \\geq b.
+    "By default, jumpingNumbers looks for jumping numbers in a closed
+    interval ",
+    TEX ///$[a,b]$///, " where ", TEX ///$a$///, " is the log canonical threshold
+    of the ideal and ", TEX ///$b$///, " is a sufficiently large value to ensure
+    that Skoda periodicity holds, that is, ",
+    TEX ///$J(I^t) = I J(I^{t-1})$///, " for ", TEX ///$t \geq b$///, ".
     (In particular, the multiplier ideals and jumping numbers are determined
-    for all t by the output of this command.)
+    for all ", TEX ///$t$///, " by the output of this command.)
     The user may specify a different interval via the optional arguments ",
     TO "Interval", " and ", TO "IntervalType", "."
   },
+  EXAMPLE lines ///
+    R = QQ[x,y,z,w];
+    I = monomialIdeal(x*y, x*z, y*z, y*w, z*w^2);
+    jumpingNumbers(I,Interval=>{2,3},IntervalType=>"OpenClosed")
+  ///,
   SUBSECTION "References",
   UL {
   LI {
     "[ELSV] ",
-    "Lawrence Ein, Robert Lazarsfeld, Karen~E. Smith, and Dror Varolin,",
+    "Ein, Lawrence, Robert Lazarsfeld, Karen E. Smith, and Dror Varolin, ",
     EM "Jumping coefficients of multiplier ideals. ",
     "Duke Math. J. 123 (2004), no. 3, 469-506."
   }
@@ -1891,7 +2180,9 @@ document {
   },
   Headline => "interval for jumping numbers",
   PARA {
-    "Specify the interval in which to search for jumping numbers."
+    "Specify the interval in which to search for jumping numbers.
+    IntervalType may be \"Closed\" (default), \"Open\",
+    \"ClosedOpen\", or \"OpenClosed\"."
   },
   EXAMPLE lines ///
     R = QQ[x,y];

@@ -19,14 +19,15 @@ newPackage(
 	       Email => "de@msri.org",
 	       HomePage=>"http://www.msri.org/~de"}},
      Headline => "make a 3-generator ideal with an \"any\" resolution",
+     Keywords => {"Commutative Algebra"},
      DebuggingMode => false
      )
 
-export{bruns, 
-       brunsIdeal,
-       elementary, 
-       evansGriffith,
-       isSyzygy}
+export{"bruns", 
+       "brunsIdeal",
+       "elementary", 
+       "evansGriffith",
+       "isSyzygy"}
        
 
 --------------------------------------------------------------

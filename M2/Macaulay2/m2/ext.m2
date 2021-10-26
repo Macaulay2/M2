@@ -1,5 +1,9 @@
 --		Copyright 1995 by Daniel R. Grayson
 
+needs "gateway.m2" -- for ScriptedFunctor
+needs "matrix1.m2"
+needs "modules.m2"
+
 ExtOptions = new OptionTable from {
      Prune => true
      }
@@ -46,7 +50,7 @@ Ext(ZZ, Matrix, Module) := Matrix => opts -> (i,f,N) -> (
      R := ring f;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
-     if i < 0 then R^0
+     if i < 0 then map(R^0, R^0, {})
      else if i === 0 then Hom(f,N)
      else (
 	  g := resolution(f,LengthLimit=>i+1);
@@ -60,7 +64,7 @@ Ext(ZZ, Module, Matrix) := Matrix => opts -> (i,N,f) -> (
      R := ring f;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
-     if i < 0 then R^0
+     if i < 0 then map(R^0, R^0, {})
      else if i === 0 then Hom(N,f)
      else (
 	  C := resolution(N,LengthLimit=>i+1);

@@ -1,5 +1,12 @@
 -- Copyright 1996 Michael E. Stillman
 
+needs "galois.m2"
+needs "ofcm.m2"
+needs "quotring.m2"
+needs "ringmap.m2"
+needs "rings.m2"
+needs "matrix2.m2" -- for lift
+
 ----------------------------------
 -- new polynomial ring or quotient ring from old --
 ----------------------------------
@@ -7,7 +14,7 @@
 nothing := symbol nothing
 newRing = method( Options => applyValues(monoidDefaults, x -> nothing), TypicalValue => Ring )
 newRing PolynomialRing := opts -> (R) -> (
-     opts = new MutableHashTable from select(opts, v -> v =!= nothing);
+     opts = new MutableHashTable from select(new HashTable from opts, v -> v =!= nothing);
      nullify := k -> if not opts#?k then opts#k = monoidDefaults#k;
      if opts.?DegreeRank then (nullify Degrees;    nullify Heft);
      if opts.?Degrees and opts.Degrees =!= {} then (nullify DegreeRank; nullify Heft);

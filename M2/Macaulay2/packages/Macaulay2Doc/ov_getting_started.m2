@@ -128,7 +128,7 @@ document {
 	  init files so the directory containing M2 will the first one searched when
 	  looking for a program.  If you then try to use your account on different
 	  hardware, incorrect programs may be found, namely, those in the same
-	  directory as M2.  Similarly, incorrect sharable libraries may also be found."
+	  directory as M2.  Similarly, incorrect shareable libraries may also be found."
 	  },
      SeeAlso => {
 	  setupEmacs
@@ -144,7 +144,8 @@ document {
 	  },
      PARA {
 	  "A backup files is made carefully, and if a mangled initialization file is detected, it will not be modified.
-	  The lines added are bracketed by comment lines containing the phrases ", TT "Macaulay 2 start", " and ", TT "Macaulay 2 end", "."
+	  The lines added are bracketed by comment lines containing the phrases ", TT "Macaulay 2 start", " and ", TT "Macaulay 2 end", ".
+	  The function ", TO "setup", " does all this and more."
 	  },
      SeeAlso => {
 	  setup,
@@ -183,7 +184,7 @@ document { Key => "finding the Macaulay2 files",
      ", TT "share", ", so now we know, from the output above, that the Macaulay
      2 files have been installed with a prefix ", TT "/foo/bar", " as the name
      of its root directory.  It will follow, for example, that the M2 emacs
-     init file is located at ", TT "/foo/bar/share/emacs/site-lisp/M2-init.el", ".",
+     init file is located at ", TT "/foo/bar/share/emacs/site-lisp/Macaulay2/M2-init.el", ".",
      PARA {},
      "Another way to locate the files of Macaulay2 is to ask M2, assuming you
      can run it.  Start M2 and type the following expression.",
@@ -295,7 +296,7 @@ document { Key => "teaching emacs how to find M2-init.el",
      "If you are lucky, then the Macaulay2 directory tree has been installed
      with the same root as the emacs directory tree.  For example, if emacs
      and Macaulay2 are both installed in /usr, then ", TT "M2-init.el", " is located at
-     ", TT "/usr/share/emacs/site-lisp/M2-init.el", ", and emacs already knows
+     ", TT "/usr/share/emacs/site-lisp/Macaulay2/M2-init.el", ", and emacs already knows
      to look in that directory for source files.",
      PARA {},
      "The simplest way to teach emacs how to find ", TT "M2-init.el", " is to let M2 do it for you.  Run M2,
@@ -309,13 +310,10 @@ document { Key => "teaching emacs how to find M2-init.el",
      ", and ask for the description of the variable ", TT "load-path", ".",
      PARA {},
      "Let's assume that you have located the Macaulay2 source code, and that
-     ", TT "M2-init.el", " is located at ", TT "/foo/bar/share/emacs/site-lisp/M2-init.el", ",
+     ", TT "M2-init.el", " is located at ", TT "/foo/bar/share/emacs/site-lisp/Macaulay2/M2-init.el", ",
      and that you want to tell emacs to search that directory, too.  
      Insert the following command into the file .emacs in your home directory.",
-     PRE ///    (setq load-path 
-          (append
-           '( "/foo/bar/share/emacs/site-lisp" )
-           load-path))///,
+     PRE ///(add-to-list 'load-path "/foo/bar/share/emacs/site-lisp/Macaulay2")///,
      "The next time you start emacs, emacs will look also in that directory for 
      files, and it should find ", TT "M2-init.el", "."
      }
@@ -364,7 +362,7 @@ document { Key => "teaching emacs how to find M2",
      directory.  Put the following command in your
      .emacs file.",
      PRE ///(setq M2-exe "/foo/bar/bin/M2")///,
-     "The next time you start emacs it wil know how to find M2."
+     "The next time you start emacs it will know how to find M2."
      }
 
 document {
@@ -420,9 +418,7 @@ document {
           to examine the online emacs manual that can be read with ", TT "info", "
           mode; you may enter or re-enter that mode with the keystrokes ", TT "C-h i", ".  "
           },
-     PARA {"The Macaulay2 emacs interface consists of several files
-	  in the directory ", 
-	  TT "share/emacs/site-lisp/",
+     PARA {"The Macaulay2 emacs interface consists of several files in the directory ", TT "share/emacs/site-lisp/Macaulay2/",
 	  " in the Macaulay2 distribution tree.  If you're lucky, then your system administrator has installed Macaulay2 so
 	  that directory ends up in the same place where emacs looks for its files, as listed by the emacs variable ", TT "loadpath", ".
 	  If not, then in order for emacs to be able to find these files, place the following lines
@@ -570,68 +566,62 @@ PARA{},
 toggle whether long lines are truncated or wrapped; initially they are truncated."
      }
 
-document {
-     Key => "reading the documentation",
-     PARA {"The documentation for Macaulay2 is available in several
-     	  formats: text format while in Macaulay2, 
-     	  in info format, and the most important, html format.
-     	  "},
-     "The following functions for available for accessing the documentation.",
-     UL {
-	  TOH "apropos",
-	  TOH "examples",
-	  TOH "help", 
-	  TOH "viewHelp",
-	  TOH "infoHelp"
-	  },
-     PARA {"While in Macaulay2, type ", 
-	  TT"help", 
-	  " to get a summary of the most useful ways of obtaining
-	  help on a topic or function.
-	  Type",
-	  TT "viewHelp",
-	  " to start the web browser (if necessary) and to point it at
-	  the page index.html in your .Macaulay2 directory.
-	  For help on a specific topic, e.g., the jacobian function, use ",
-	  TT"viewHelp jacobian",
-          " or ",
-	  TT///viewHelp "jacobian"///,
-	  " or if you want the documentation for jacobian of an Ideal, use ",
-	  TT ///viewHelp (jacobian,Ideal)///
-     	  },
-     PARA {"Using 'help' instead of 'viewHelp' results in the help text appearing 
-	  in your Macaulay2 session. " 
-	  },
-     EXAMPLE ///help "jacobian"///,
-     PARA {
-	  "A useful tip: in emacs, if you place your cursor on one of the lines that starts with a '*',
-	  and press return, then you will get help on that topic."
-	  },
-     EXAMPLE ///* "jacobian(Ideal)"///,
-     PARA {
-	  "Reading the info form of the documentation in emacs is perhaps better than using ", TO "infoHelp", ",
-	  because the preferred way of running Macaulay2 is also in emacs. If you do so, we
-	  recommend configuring the emacs variable ", TT "Info-hide-note-references", " so
-	  its value is ", TT "hide", ".  The reason is that the Macaulay2 documentation sets up
-	  hyperlinks with all the required text already in them, but if ", TT "Info-hide-note-references", "
-	  is set to ", TT "t", ", then it will insert ", TT "See", " or ", TT "see", " in front of
-	  the hyperlink unless it sees that word (or ", TT "in", ") already present in the text."
-	  },
-     PARA {"The function ", TO apropos, " is useful to find functions and other defined symbols 
-	  which match a search string.  For example, to find all symbols
-	  in Macaulay2 which contain the string 'deal', use"
-     	  },
-     EXAMPLE ///apropos "deal"///,
-     PARA {"The documentation for most functions comes with example code.  You can 
-	  obtain the text of this example code using ", TO examples, "."
-	  },
-     EXAMPLE ///examples "jacobian(Ideal)"///,
-     PARA {
-	  "which returns it as a string. To place these on their own lines, print the string."
-	  },
-     EXAMPLE ///print examples "jacobian(Ideal)"///
-     }
+doc ///
+  Key
+    "reading the documentation"
+  Description
+    Text
+      The documentation for Macaulay2 is available in several formats and can
+      be searched and viewed using the following functions:
 
+    Tree
+      :Finding documentation nodes
+        about
+	apropos
+      :Accessing documentation nodes
+        help
+	viewHelp
+	infoHelp
+	(symbol?, Symbol)
+      :Getting other information from documentation
+        examples
+
+    Text
+      To begin, the @TO "about"@ method allows for searching all documentation nodes
+      whose title or content contains a given string:
+    Example
+      about "Horrocks-Mumford"
+    Text
+      The @TO "apropos"@ method is useful for finding all exported objects whose symbol
+      matches the given regular expression:
+    Example
+      apropos "(H|h)ilbert"
+    Text
+      While in Macaulay2, type @TO "help"@ to get the documentation on a topic or function,
+      or type @TO "viewHelp"@ to open @TT "~/.Macaulay2/index.html"@, which contains a list
+      of all installed packages, in your default web browser.
+
+      For help on a specific topic, e.g., the Jacobian function, use @TT "viewHelp jacobian"@
+      or @TT "viewHelp \"jacobian\""@, or if you want the documentation for Jacobian of an
+      Ideal, use @TT "viewHelp (jacobian, Ideal)"@ or @TT "viewHelp \"jacobian(Ideal)\""@.
+      Using @TO "help"@ instead of @TO "viewHelp"@ results in the help text appearing
+      in your Macaulay2 session.
+
+      @BOLD "A useful tip:"@ within Emacs, if you place your cursor on one of the resulting
+      output lines that starts with a @TT "*"@, and press the return key, Macaulay2 will
+      display that documentation node.
+
+      The documentation for most functions comes with example code.
+      You can obtain the text of this example code using @TO "examples"@.
+  Subnodes
+    about
+    apropos
+    help
+    viewHelp
+    infoHelp
+    (symbol?, Symbol)
+    examples
+///
 
 document {
      Key => "getting help or reporting bugs",
@@ -643,12 +633,12 @@ document {
 	  }
      }
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "what to read next??",
      }
-*}
+*-
 
 document {
      Key => "a first Macaulay2 session",
@@ -895,8 +885,9 @@ document {
      TT "M2 file1 file2 ... ", " -- starts the program, reading and 
      executing the specified files.",
      PARA{},
-     "The options that can be provided on the command line may be displayed by running ", TT "M2 --help", ", as follows.",
-     EXAMPLE ///run "M2 --help";///,
+     "The options that can be provided on the command line may be displayed by running ", TT "M2 --help", ".",
+     EXAMPLE ///assert(0 == run (commandLine#0 | " --help"));///,
+     -- In the long run, it would be better if we added the directory containing our M2 to PATH.
      PARA{},
      "To terminate the program, one may type ", TO "exit", ", ", TO "quit", ",
      ", TO "end", ", or the end of file character.",
@@ -935,7 +926,7 @@ document {
      It also provides for dynamic completion of symbols in the language.",
      PARA{},
      "There is an ASCII version of this section of the documentation distributed
-     in the file ", TT (Layout#1#"emacs" | "M2-emacs-hlp.txt"), ". It might be useful for you to visit
+     in the file ", TT (Layout#1#"emacs" | "M2-emacs-help.txt"), ". It might be useful for you to visit
      that file with emacs now, thereby avoiding having to cut and paste bits of
      text into emacs buffers for the deomonstrations below.",
      PARA{},
@@ -1105,9 +1096,8 @@ document {
 document {
      Key => "how Macaulay2 finds its files",
      "When you run Macaulay2, it has to find and load a sequence of
-     startup files containing code written in the Macaulay2 language,
-     or it has to find a data file containing a memory dump from a
-     previous session.  Here is the way it does that.",
+     startup files containing code written in the Macaulay2 language.
+     Here is the way it does that.",
      PARA{},
      "Its first task is to discover the path to the binary file ", TT "M2", " that is currently running.  On some systems, that
      information is available from the ", TT "/proc", " file system.  Otherwise, it examines the command name you used to run the
@@ -1119,15 +1109,6 @@ document {
      ", TO "prefixDirectory", ", which you can examine to see whether it all worked out.
      For detailed information about the relative location of Macaulay2 files,
      see ", TO "Layout", ".",
-     PARA{},
-     "A possible data memory dump file may be located in the directory ", TT replace("PKG","Core",Layout#1#"packagecache"), " 
-     and loaded with ", TO "loaddata", ".  If the file is present and and loading it works, then startup will be quicker.  
-     If it's absent then the necessary setup files will be loaded instead;
-     if problems with it are encountered, it is always safe to delete it.
-     The name of the file data dump file is of the form \"Macaulay2-*-data\",
-     where \"*\" is replaced by the value of the environment
-     variable name M2ARCH if present, or else is a value computed at compile time and
-     stored in the hash table called ", TO "version", " and accessible as ", TT "version#\"architecture\"", ".",
      Subnodes => {
 	  TO "Layout",
      	  TO "prefixDirectory"

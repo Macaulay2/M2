@@ -1,0 +1,68 @@
+-- -*- M2-comint -*- hash: -699724426
+
+i1 : R = CC[x,a,t]; -- include the path variable in the ring
+
+i2 : H = { (x^2-1)*a + (x^2-2)*(1-a)};
+
+i3 : sol1 = point {{1}};
+
+i4 : sol2 = point {{-1}};
+
+i5 : S1= { sol1, sol2  };--solutions to H when t=1
+
+i6 : S0 = bertiniUserHomotopy (t,{a=>t}, H, S1) --solutions to H when t=0
+
+o6 = {{1.41421}, {-1.41421}}
+
+o6 : List
+
+i7 : peek S0_0
+
+o7 = Point{AccuracyEst => 5.92958e-13        }
+           AccuracyEstInternal => 2.00447e-13
+           ConditionNumber => 5.80657
+           Coordinates => {1.41421}
+           CycleNumber => 1
+           FinalTValue => .0015625
+           FunctionResidual => 5.55112e-17
+           MaxPrecisionUtilized => 52
+           Multiplicity => 1
+           NewtonResidual => 1.64398e-16
+           PathNumber => 0
+           PathsWithSameEndpoint => {}
+           PrecisionIncreased => 0
+           SolutionNumber => 1
+
+i8 : R=CC[x,y,t,a]; -- include the path variable in the ring
+
+i9 : f1=(x^2-y^2);
+
+i10 : f2=(2*x^2-3*x*y+5*y^2);
+
+i11 : H = { f1*a + f2*(1-a)}; --H is a list of polynomials in x,y,t
+
+i12 : sol1=    point{{1,1}}--{{x,y}} coordinates
+
+o12 = sol1
+
+o12 : Point
+
+i13 : sol2=    point{{ -1,1}}
+
+o13 = sol2
+
+o13 : Point
+
+i14 : S1={sol1,sol2}--solutions to H when t=1
+
+o14 = {sol1, sol2}
+
+o14 : List
+
+i15 : S0=bertiniUserHomotopy(t,{a=>t}, H, S1, HomVariableGroup=>{x,y}) --solutions to H when t=0
+
+o15 = {{1, .3+.556776*ii}, {1, .3-.556776*ii}}
+
+o15 : List
+
+i16 : 

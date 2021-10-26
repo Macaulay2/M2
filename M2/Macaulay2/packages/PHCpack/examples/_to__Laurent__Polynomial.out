@@ -1,5 +1,4 @@
--- -*- M2-comint -*- {* hash: 1886230761 *}
---loading configuration for package "PHCpack" from file /Users/dan/Library/Application Support/Macaulay2/init-PHCpack.m2
+-- -*- M2-comint -*- hash: 1886230761
 
 i1 : QQ[x,y,z];
 
@@ -7,7 +6,9 @@ i2 : sys = {y-x^2, z-x^3, (x+y+z-1)/x};
 
 i3 : describe ring ideal sys
 
-o3 = frac QQ[x, y, z]
+o3 = frac/QQ[x..z, Degrees => {3:1}, Heft => {1}, MonomialOrder => {MonomialSize => 32}, DegreeRank => 1]\
+         |                                                         {GRevLex => {3:1}  }                  |
+         \                                                         {Position => Up    }                  /
 
 i4 : convertedSys = toLaurentPolynomial(sys,w);
 
@@ -19,8 +20,8 @@ o6 = {y-x^2, z-x^3, -w_0^(-1)+z*w_0^(-1)+y*w_0^(-1)+x*w_0^(-1), w_0-x}
 
 i7 : ring ideal convertedSys
 
-o7 = QQ {x, y, z, w }
-                   0
+o7 = QQ {x..z, w }
+                0
 
 o7 : PolynomialRing
 
@@ -38,7 +39,7 @@ i10 : f = (x*y + z^2*y) / y
        2
 o10 = z  + x
 
-o10 : frac(P)
+o10 : frac P
 
 i11 : liftable(f,P)
 

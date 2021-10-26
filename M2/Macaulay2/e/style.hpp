@@ -2,37 +2,10 @@
 #ifndef _style_hh_
 #define _style_hh_
 
+#include "newdelete.hpp"
 #include "engine-includes.hpp"
 
-#if 0
-#include <cmath>    // to get fabs(), gcc 3.0
-#include <stdio.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <limits.h>
-#include <string.h>
-#include <algorithm>
-#include <gmp.h>
-#include <mpfr.h>
-#endif
-
-#define VECTOR(T) std::vector< T, gc_allocator< T > >
 #define INTSIZE(a) static_cast<int>((a).size())
-
-#include "error.h"
-#include "buffer.hpp"
-#include "mem.hpp"
-
-#if defined(_WIN32)
-template <class T>
-inline void swap(T &t1, T &t2)
-{
-  T tmp = t1;
-  t1 = t2;
-  t2 = tmp;
-}
-#endif
 
 const int LT = -1;
 const int EQ = 0;
@@ -44,7 +17,6 @@ const int EXCEPTION = -2;
 #define GEOHEAP_SIZE 15
 
 extern const int heap_size[GEOHEAP_SIZE];
-
 
 #endif
 

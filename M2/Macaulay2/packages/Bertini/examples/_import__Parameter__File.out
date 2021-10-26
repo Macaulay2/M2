@@ -1,0 +1,11 @@
+-- -*- M2-comint -*- hash: 2116881562
+
+i1 : writeParameterFile(storeBM2Files,{1,2},NameParameterFile=>"final_parameters");
+
+i2 : importParameterFile(storeBM2Files)
+
+o2 = {1, 2}
+
+o2 : List
+
+i3 : 

@@ -24,24 +24,28 @@ document {
      Outputs => {
 	  Module => {"The module Hom_R(M,N), where M and N are both R-modules"}
 	  },
-     "If ", TT "M", " or ", TT "N", " is an ideal or ring, it is regarded as a module in the evident way.",
-     PARA{},
+     PARA{
+     	  "If ", TT "M", " or ", TT "N", " is an ideal or ring, it is regarded as a module in the evident way.",
+	  },
      EXAMPLE lines ///
      	  R = QQ[x,y]/(y^2-x^3);
 	  M = image matrix{{x,y}}
 	  H = Hom(M,M)
-	  H1 = prune H
 	  ///,
-     "Specific homomorphisms may be obtained using ", TO homomorphism, ".",
+     PARA {
+	  "To recover the modules used to create a Hom-module, use the function ", TO "formation", "."
+	  },
+     PARA {      
+     	  "Specific homomorphisms may be obtained using ", TO homomorphism, ", as follows."
+	  },
      EXAMPLE lines ///
-	  f1 = homomorphism H_{0}
-	  f2 = homomorphism H_{1}
-	  f3 = homomorphism H_{2}
+	  f0 = homomorphism H_{0}
+	  f1 = homomorphism H_{1}
 	  ///,
-     "In this example, f1 is the identity map, f2 is multiplication by x,
-     and f3 maps x to y and y to x^2.",
-     PARA{},
-     SeeAlso => {homomorphism, Ext}
+     PARA {
+	  "In the example above, ", TT "f0", " is the identity map, and ", TT "f1", " maps x to y and y to x^2."
+	  },
+     SeeAlso => {homomorphism, Ext, compose, formation}
      }
 
 document { 
@@ -117,10 +121,11 @@ Node
   :
    the induced map on Hom
  Description
+  -- the code for Hom(Module,Matrix) is wrong, so we simplify this example temporarily
   Example
    R = QQ[x]
    f = vars R
-   M = image f
+   M = coker presentation image f
    g = Hom(M,f)
    target g
    source g
@@ -166,8 +171,7 @@ document {
      Outputs => {
 	  Module => {"over the coefficient field of ", TT "R"}
 	  },
-     "If ", TT "F", " or ", TT "G", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way.",
-     PARA{},
+     PARA{"If ", TT "F", " or ", TT "G", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way."},
      EXAMPLE lines ///
           R = QQ[a..d];
 	  P3 = Proj R
@@ -179,3 +183,25 @@ document {
      SeeAlso => {sheafHom, Ext, sheafExt}
      }
 
+document {
+     Key => {(compose,Module,Module,Module), compose},
+     Headline => "composition as a pairing on Hom-modules",
+     Usage => "compose(M,N,P)",
+     Inputs => { "M", "N", "P" },
+     Outputs => { { "The map ", TT "Hom(M,N) ** Hom(N,P) -> Hom(M,P)", " provided by composition of homomorphisms." } },
+     PARA { "The modules should be defined over the same ring." },
+     PARA { "In the following example we check that the map does implement composition." },
+     EXAMPLE lines ///
+	R = QQ[x,y]
+	M = image vars R ++ R^2
+	f = compose(M,M,M);
+	H = Hom(M,M);
+	g = H_{0}
+	h = homomorphism g
+	f * (g ** g)
+	h' = homomorphism oo
+	h' === h * h
+	assert oo
+     ///,
+     SeeAlso => {Hom, homomorphism, homomorphism'}
+     }

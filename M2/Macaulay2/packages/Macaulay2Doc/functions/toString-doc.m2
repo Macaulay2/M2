@@ -7,9 +7,7 @@ undocumented {
 (toString,Array),
 (toString,Package),
 (toString,Resolution),
-(toString,PolynomialRing),
 (toString,Command),
-(toString,QuotientRing),
 (toString,Matrix),
 (toString,GeneralOrderedMonoid),
 (toString,MutableMatrix),
@@ -18,7 +16,7 @@ undocumented {
 (toString,IndeterminateNumber),
 (toString,Bag),
 (toString,Manipulator),
-(toString,Tally),
+(toString,VirtualTally),
 (toString,Set),
 (toString,ScriptedFunctor),
 (toString,DocumentTag),
@@ -38,13 +36,15 @@ undocumented {
 (toString,MutableList),
 (toString,Option),
 (toString,Function),
+(toString,FunctionBody),
 (toString,Symbol),
 (toString,Hypertext),
-(toString,FractionField),
 (toString,Net),
 (toString,String),
 (toString,QQ),
-(toString,Dictionary)
+(toString,Dictionary),
+(toString,CoherentSheaf),
+(toString,Variety)
 }
 
 document { 

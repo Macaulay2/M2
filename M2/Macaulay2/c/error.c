@@ -2,7 +2,7 @@
 
 #include "scc.h"
 
-void fatal(char *s,...)
+void fatal(const char *s,...)
 {
      va_list ap;
      va_start(ap,s);
@@ -119,12 +119,11 @@ void downpos(node n){
      if (p != NULL && p->filename != NULL) {
 	  fprintf(stderr,errfmt,p->filename,p->lineno,p->column+1,"");
 	  }
-     else if (cur.filename != NULL) {
+     else {
+	  assert(cur.filename != NULL);
 	  fprintf(stderr,errfmt,cur.filename,cur.lineno,cur.column+1,"");
 	  }
-     else assert(FALSE);
      }
-
 
 void failpos(char *filename, int lineno, node p) {
      downpos(p);

@@ -1,13 +1,9 @@
 # http://www.netlib.org/lapack/
 # documentation: http://www.netlib.org/lapack/lug/
 #URL = http://www.netlib.org/lapack
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 
-# VERSION = 3.2
-# version 3.2 doesn't compile
-# VERSION = 3.1.1
-# VERSION = 3.2.1
-VERSION = 3.2.2
+VERSION = 3.9.0
 
 TARFILE = lapack-$(VERSION).tgz
 CONFIGURECMD = cp make.inc.example make.inc
@@ -21,13 +17,12 @@ ifeq (@FC@,f95)
 BUILDOPTIONS += TIMER=INT_ETIME 
 endif
 BUILDTARGET = blaslib lapack_install lib
-ifeq (@SHARED@,yes)
-BUILDTARGET += ../liblapack.so
-endif
+LICENSEFILES = LICENSE
 INSTALLCMD = \
 	   install -d $(LIBRARIESDIR)/lib \
-	&& install lapack.a $(LIBRARIESDIR)/lib/liblapack.a \
-	&& install blas.a $(LIBRARIESDIR)/lib/libblas.a
+	&& install liblapack.a $(LIBRARIESDIR)/lib \
+	&& install librefblas.a $(LIBRARIESDIR)/lib \
+	&& install libtmglib.a $(LIBRARIESDIR)/lib
 CHECKTARGET = lapack_testing blas_testing
 ifeq (@FC@,)
 prereq:;: $(error no fortran compiler provided)

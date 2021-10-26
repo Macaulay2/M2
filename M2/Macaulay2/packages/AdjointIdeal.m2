@@ -4,11 +4,13 @@ newPackage(
     	Version => "0.6", 
     	Date => "August 25, 2010",
     	Authors => {{Name => "Janko Boehm", 
-		  Email => "boehm@math.uni-sb.de", 
+		  Email => "boehm@mathematik.uni-kl.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}},
-    	Headline => "Adjoint ideals of plane curves and related computations",
+    	Headline => "adjoint ideals of plane curves and related computations",
+	Keywords => {"Commutative Algebra"},
     	DebuggingMode => false,
 	CacheExampleOutput => true,
+	PackageImports => {"IntegralClosure","MapleInterface"},
 	AuxiliaryFiles => true
     	)
 
@@ -23,8 +25,6 @@ export {"extractLeftLower"}
 export {"forwardSubstitution"}
 export {"backwardSubstitution"}
 export {"traceMatrix"}
-
-needsPackage "MapleInterface"
 
 -- numerator of a row matrix
 matnum=(ibmm)->(
@@ -82,7 +82,7 @@ matrix {ibl});
 
 -- we use as pivotfunction the vanishing order at 0 (not the degree)
 -- i.e. we look for the entry with the minimal vanishing
--- so 0 get assiged infinity (not -infinity)
+-- so 0 get assigned infinity (not -infinity)
 
 vanishingOrder=(p)->(
 if p==0 then return(infinity);
@@ -92,13 +92,13 @@ if p!=0 then return((degree p)#0);
 
 -- vanishingOrder=(p)->(
 -- -(degree numerator p)#0)
-{*
+-*
 vanishingOrder=(p)->(
 if p==0 then return(infinity);
 --print(p,degree p);
 if p!=0 then return((degree numerator p)#0);
 )
-*}
+*-
 
 pivot=method()
 pivot(ZZ,ZZ,Matrix,Function):=(spa,k,trmw,pivotfunction)->(
@@ -244,7 +244,7 @@ otp)
 -- geometric genus
 geometricGenus=method()
 
-{*
+-*
 --old code without the coordinate change
 
 geometricGenus(Ideal):=(I1)->(
@@ -262,7 +262,7 @@ if contract((R_0)^d,I_(0))!=1 then error("Curve contains (1:0:0)");
 QR:=frac R;
 ib:=sub(integralBasis(I),QR);
 geometricGenus(I1,ib))
-*}
+*-
 
 geometricGenus(Ideal):=(I1)->(
 if dim I1 != 2 then error("Not a curve");
@@ -535,7 +535,7 @@ while tst==false do (
 {slist,slistback})
 --findCoordinateChange I
 
-{*
+-*
 
      installPackage "AdjointIdeal"
      K=QQ
@@ -548,7 +548,7 @@ while tst==false do (
      R=K[v,u,z]
      I=ideal(z^3-v^2*u)
      J=adjointIdeal(I)
-*}
+*-
 
 adjointIdeal(Ideal,Matrix):=(I1,ib)->(
 adjointIdeal(I1,ib,0));
@@ -606,7 +606,7 @@ ideal mingens saturate ideal interadj)
 
 -------------------------------------------------------------------------------
 
-{*
+-*
 Copyright (C) [2009] [Janko Boehm]
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
@@ -614,7 +614,7 @@ This program is free software; you can redistribute it and/or modify it under th
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>
-*}
+*-
 
 
 

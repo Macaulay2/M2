@@ -1,0 +1,92 @@
+--- givaro-3.7.0/src/kernel/zpz/givgfq.inl  2012-05-07 14:41:22.000000000 +0200
++++ givaro-3.7.0/src/kernel/zpz/givgfq.inl	2013-09-14 23:30:35.000000000 +0200
+@@ -1075,6 +1075,77 @@ namespace Givaro {
+         _plus1[(UT)_qm1o2] = 0;
+     }
+ 
++template<typename TT>
++    inline GFqDom<TT>::GFqDom(const UTT P, const UTT e, const std::vector<UTT>& modPoly, const std::vector<UTT>& generatorPol):
++            zero(0)
++        , one (power(P,e) - 1  )
++        , _characteristic(P)
++        , _exponent(e)
++        , _q( one + 1 )
++        , _qm1 ( one )
++        , _qm1o2(  (P==2)?  (one)  :  (_q >> 1) )   // 1 == -1 in GF(2^k)
++        , _log2pol( _q )
++        , _pol2log( _q )
++        , _plus1( _q )
++        , _dcharacteristic( (double)P )
++    {
++
++            // 1 is represented by q-1, zero by 0
++        _log2pol[0] = zero;
++
++        GFqDom<TT> Zp(P,1);
++        typedef Poly1FactorDom< GFqDom<TT>, Dense > PolDom;
++        PolDom Pdom( Zp );
++        typename PolDom::Element Ft, F(e+1), G(e), H;
++
++        for( size_t i = 0; i < F.size(); ++i )
++            Zp.init( F[i], modPoly[i]);
++
++        for( size_t i = 0; i < G.size(); ++i )
++        {
++            if (i <  generatorPol.size() )
++            {   Zp.init( G[i], generatorPol[i]); //std::cerr << " generatorPol[" << i << "]" << generatorPol[i] << std::endl;}
++            } else
++            {    Zp.init( G[i], 0 ); //std::cerr << " generatorPol[" << i << "]" << generatorPol[i] << std::endl; }
++        }}
++
++        //Pdom.give_prim_root(G,F);
++        Pdom.assign(H,G);
++
++        typedef Poly1PadicDom< GFqDom<TT>, Dense > PadicDom;
++        PadicDom PAD(Pdom);
++
++        PAD.eval(_log2pol[1],H);
++        PAD.eval(_irred, F);
++
++        for (UTT i = 2; i < _qm1; ++i) {
++            Pdom.mulin(H, G);
++            Pdom.modin(H, F);
++            PAD.eval(_log2pol[i], H);
++        }
++        _log2pol[_qm1] = 1;
++
++        _log2pol[0] = 0;
++
++        for (UTT i = 0; i < _q; ++i)
++            _pol2log[ _log2pol[i] ] = i;
++
++        _plus1[0] = 0;
++
++        UTT a,b,r;
++        for (UTT i = 1; i < _q; ++i) {
++            a = _log2pol[i];
++            r = a % P;
++            if (r == (P - 1))
++                b = a - r;
++            else
++                b = a + 1;
++            _plus1[i] = _pol2log[b] - _qm1;
++        }
++
++        _plus1[_qm1o2] = 0;
++    }
++
+         // Dan Roche 6-15-04, adapted my/ported back to Givaro
+         // by Martin Albrecht 10-06-06
+         // This constructor takes a vector of ints that represent the polynomial
+
+--- givaro-3.7.0/src/kernel/zpz/givgfq.h	2012-05-07 14:41:22.000000000 +0200
++++ givaro-3.7.0/src/kernel/zpz/givgfq.h	2013-09-14 23:36:36.000000000 +0200
+@@ -91,6 +91,8 @@ public:
+     	template<typename Vector>
+     	GFqDom(const UTT P, const UTT e, const Vector& modPoly);
+ 
++        GFqDom( const UTT P, const UTT e, const std::vector<UTT>& modPoly, const std::vector<UTT>& generatorPoly);
++
+ 	GFqDom( const GFqDom<TT>& F)
+ 	{
+ 		zero = F.zero;

@@ -1,20 +1,16 @@
-# we link it with 4ti2, but not with Macaulay2
-# license for glpk: GPL v3, versions 4.26 and later; GPL v2, version 4.14 (which we use)
-# VERSION = 4.39
-
-# VERSION = 4.14
-# PATCHFILE = @abs_srcdir@/patch-4.14
-# URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.3
-
-VERSION = 4.44
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
-
-# see http://www.gnu.org/software/glpk/
 # URL = ftp://ftp.gnu.org/gnu/glpk
+# we link it with 4ti2, but not with Macaulay2
+VERSION = 4.59
+URL = http://macaulay2.com/Downloads/OtherSourceCode
+HOMEPAGE = http://www.gnu.org/software/glpk/
 
-CONFIGOPTIONS = --disable-shared
-BUILDOPTIONS = SUBDIRS="include src"
-INSTALLOPTIONS = SUBDIRS="include src"
+ifeq (@SHARED@,no)
+CONFIGOPTIONS += --disable-shared
+else 
+CONFIGOPTIONS += --enable-shared
+endif
+
+INSTALLTARGET = install-strip
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/glpk/Makefile
 # Local Variables:

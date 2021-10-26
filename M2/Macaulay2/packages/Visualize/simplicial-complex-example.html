@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Macaulay2: Simplicial Complex Visualization</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/BootSideMenu.css" rel="stylesheet"/>
+    <link href="css/nouislider.min.css" rel="stylesheet"/>
+    <link href="css/common.css" rel="stylesheet"/>
+    <style>
+
+      polygon.face {
+        opacity: .4;
+      }
+        
+      #canvasElement2d:not(.active):not(.shift) polygon.face {
+        cursor: pointer;
+      }
+        
+      polygon.face.highlighted {
+        opacity: 1;
+        fill: #FF0000;
+        stroke-width: 4px;
+      }
+        
+    </style>
+    <script>
+      //global variables
+      activeSession = true;
+      tikzGenerated = false;
+      curEdit = false;
+      curHighlight = false;
+      menuOpen = true;
+      changedNodes = false;
+      labelData = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+      edgeData = [[0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [1, 2], [1, 3], [4, 5]];
+      faceData = [[0, 1, 2], [0, 1, 3], [0, 4, 5]];
+      portData = 8080; // initializes port from user
+      forceOn = true;
+      labelsOn = true;
+      forceCharge = -1500;
+      forceLinkDist = 150;
+    </script>
+  </head>
+
+  <body>
+
+        <div id="side">
+          <h2>&#8202;&#8202;Menu</h2>
+          <div class="list-group" id="menuList">
+            <div class="list-group-item" id="sliderDiv"><div style="height:25px;">Force variables</div>
+            <span style="display:inline-block; width:60px;">&#8202; Charge:</span><div class="noUi-extended" id="charge-slider" style="vertical-align:middle;"></div><br>
+            <span style="display:inline-block; width:60px;">&#8202; Links:</span><div class="noUi-extended" id="linkdist-slider" style="vertical-align:middle;"></div>
+            </div>
+            <a id="editToggle" href="#" class="list-group-item">Enable editing</a>
+            <a id="labelToggle" href="#" class="list-group-item">Hide labels</a>
+            <a id="highlightToggle" href="#" class="list-group-item">Highlight faces</a>
+            <a id="reset" href="#" class="list-group-item">Reset nodes</a>
+            <a id="forceToggle" href="#" class="list-group-item">Turn off force</a>
+            <a id="exportTikz" href="#" class="list-group-item">Generate TikZ code</a>
+            
+            <a href="#collapse1" data-toggle="collapse" class="list-group-item">Boolean tests &#9662;</a>
+                <div id="collapse1" class="panel-collapse collapse">
+                    <a id="isPure" href="#" class="list-group-item"> &nbsp;&nbsp; isPure</a>
+                </div>
+            <!--
+            <a href="#collapse2" data-toggle="collapse" class="list-group-item">Numerical invariants &#9662;</a>
+                <div id="collapse2" class="panel-collapse collapse">
+                    <a id="chromaticNumber" href="#" class="list-group-item"> &nbsp;&nbsp; chromaticNumber</a>
+                    <a id="independenceNumber" href="#" class="list-group-item"> &nbsp;&nbsp; independenceNumber</a>
+                    <a id="cliqueNumber" href="#" class="list-group-item"> &nbsp;&nbsp; cliqueNumber</a>
+                    <a id="degeneracy" href="#" class="list-group-item"> &nbsp;&nbsp; degeneracy</a>
+                    <a id="density" href="#" class="list-group-item"> &nbsp;&nbsp; density</a>
+                    <a id="diameter" href="#" class="list-group-item"> &nbsp;&nbsp; diameter</a>
+                    <a id="edgeConnectivity" href="#" class="list-group-item"> &nbsp;&nbsp; edgeConnectivity</a>
+                    <a id="minimalDegree" href="#" class="list-group-item"> &nbsp;&nbsp; minimalDegree</a>
+                    <a id="numberOfComponents" href="#" class="list-group-item"> &nbsp;&nbsp; numberOfComponents</a>
+                    <a id="numberOfTriangles" href="#" class="list-group-item"> &nbsp;&nbsp; numberOfTriangles</a>
+                    <a id="radius" href="#" class="list-group-item"> &nbsp;&nbsp; radius</a>
+                    <a id="vertexConnectivity" href="#" class="list-group-item"> &nbsp;&nbsp; vertexConnectivity</a>
+                    <a id="vertexCoverNumber" href="#" class="list-group-item"> &nbsp;&nbsp; vertexCoverNumber</a>
+                </div>
+                -->
+             <a id="endSession" href="#" class="list-group-item">End session</a>            
+          </div>
+        </div>
+  
+  <div class="container">
+    <div id="canvasElement2d"></div>
+  </div>
+
+  <script src="js/jquery-1.11.3.min.js"></script>
+  <script src="js/BootSideMenu.js"></script>
+  <script src="js/d3.v3.min.js"></script>
+  <script src="js/visSimplicialComplex2d.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/clipboard.min.js"></script>
+  <script src="js/nouislider.min.js"></script>
+      
+  <script>
+    // Initialize clipboard.js.
+    var clipboard = null;
+      
+//    $('#side').BootSideMenu({side:"right"});
+    $('#side').BootSideMenu({side:"right", closeOnClick: false, width: "230px"});
+    // When the side menu bar is opened or closed (i.e, when the "toggler" div is clicked), resize the svg appropriately so that nodes do not go behind the side menu.
+    document.getElementsByClassName("toggler")[0].addEventListener("mousedown", function() {
+            menuOpen = !menuOpen;
+            updateWindowSize2d();    
+    }, false);
+
+    document.getElementById("canvasElement2d").style.width = window.innerWidth;
+    document.getElementById("canvasElement2d").style.height = window.innerHeight;
+      
+    window.addEventListener("resize", updateWindowSize2d, false);
+
+    // Initialize sliders
+    var chargeSlider = document.getElementById('charge-slider');
+    noUiSlider.create(chargeSlider, {
+        start: [1500],
+        //tooltips: true,
+        range: {
+			'min': [0],
+			'max': [6000]
+		}
+    });
+    //chargeSlider.noUiSlider.on('update', updateForceCharge);
+      
+    var linkDistSlider = document.getElementById('linkdist-slider');
+    noUiSlider.create(linkDistSlider, {
+        start: [100],
+        //tooltips: true,
+        range: {
+			'min': [0],
+			'max': [400]
+		}
+    });
+    //chargeSlider.noUiSlider.on('update', updateForceLinkDist);  
+      
+      
+    $(document).ready(function(){
+
+      $("#editToggle").on("click", function(){
+        if(curEdit) {
+          $(this).html("Enable editing");
+          curEdit = !curEdit;
+          disableEditing();
+        } else {
+          $(this).html("Disable editing");
+          curEdit = !curEdit;
+          enableEditing();
+        }
+      });
+    
+      $("#labelToggle").on("click", function(){
+        if(!labelsOn) {
+          $(this).html("Hide labels");
+          labelsOn = !labelsOn;
+          showLabels();
+        } else {
+          $(this).html("Show labels");
+          labelsOn = !labelsOn;
+          hideLabels();
+        }
+      });
+    
+      $("#highlightToggle").on("click", function(){
+        if(curHighlight) {
+          $(this).html("Highlight faces");
+          unHighlightAll();
+          curHighlight = !curHighlight;
+        } else {
+          $(this).html("Disable highlighting");
+          enableHighlight();
+          curHighlight = !curHighlight;
+        }
+      });
+
+      $("#reset").on("click", resetComplex);
+      
+      $("#forceToggle").on("click", toggleForce);
+      
+      $("#exportTikz").on("click", function() {
+        exportTikz();
+      });
+
+      // Begin browser-M2 communication.
+      // For each item, a line in the function `onclickResults()`
+      // located in `visGraph2d.js` must be added. 
+      // 
+      // If you wish to delete the text to make it vanish when the graph is edited
+      // search for 'menuDefaults()'.
+
+      // Checks to see if user's graph has an Eulerian trail
+      $("#isPure").on("click", function() {
+        d3.select("#isPure").html("&nbsp;&nbsp; isPure :: <b>"+isPureComplex(nodes,links,faces).toString()+"</b>");
+      });    
+           
+      // Ends the browser session and outputs the information to M2
+      $("#endSession").on("click", function() {
+        if(activeSession) {
+          //$(this).html("Session Terminated");
+          //$(this).html(<p style="color: #ffffff; background-color: #ff0000">Session terminated</p>);
+          document.getElementById("endSession").style.color = 'white';
+          document.getElementById("endSession").style.backgroundColor = 'red';
+          document.getElementById("endSession").innerHTML = "Session terminated";
+          makeCorsRequest('POST','http://localhost:'+portData+'/end/',simplicialComplex2M2Constructor(nodes,links,faces));
+          activeSession = !activeSession;
+        } else {
+          return;
+        }
+      });            
+
+      initializeBuilder();
+      disableEditing();
+    });
+
+
+    function toggleForce() {
+      if (forceOn) {
+        setAllNodesFixed();
+        document.getElementById("forceToggle").innerHTML = "Turn on force";
+      }
+      else {
+        setAllNodesUnfixed();
+        document.getElementById("forceToggle").innerHTML = "Turn off force";
+      }
+      forceOn = !forceOn;
+    }
+    
+    </script>
+
+  </body>
+
+
+</html>

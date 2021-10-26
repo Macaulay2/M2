@@ -1,5 +1,7 @@
 -- This file written by Amelia Taylor <ataylor@stolaf.edu>
 
+needs "matrix1.m2"
+
 ----- This file was last updated on June 22, 2006
 
 --------------------------------------------------------------
@@ -9,7 +11,7 @@
 -- checkpoly, finishmap, monOrder and coreProgram are called 
 -- in the top-level program minimalPresentation.  
 
-{*
+-*
 checkpoly = (f)->(
      -- 1 Argument:  A polynomial.
      -- Return:      A list of the index of the first 
@@ -32,7 +34,7 @@ checkpoly = (f)->(
 finishMap = (A,L,xmap) -> (
      -- 2 Arguments:  A matrix and a new mutable list.
      -- Return:       a map from the ring corresponding to 
-     --               entries in the matix to itself given by 
+     --               entries in the matrix to itself given by 
      --               entries in the matrix which have a linear
      --               term that does not occur elsewhere in the 
      --               polynomial. 
@@ -230,12 +232,14 @@ reduceLinears Ideal := o -> (I) -> (
        );
      (substitute(ideal L,R), M)
      )
-*}
+*-
 
-reductorVariable = (f,excludes) -> (
+reductorVariable = (f,excludes,onlyOnes) -> (
      -- inputs:
      --     f: a polynomial
      --     excludes: a (possibly empty) set of variables to NOT reduce
+     --     onlyOnes: only return reductor if the lead coefficient is 1 or -1
+     --       (e.g. needed if the coefficient ring is ZZ)
      -- output:
      --     a list of two elements {c,x}, where c*x appears as a term in f
      --     such that the variable x does not appear elsewhere in f.
@@ -258,14 +262,17 @@ reductorVariable = (f,excludes) -> (
 	  -- best to choose linear terms with coefficient 1 or -1 if
 	  -- possible. 
      	  if pos =!= null then (coef_pos, leadMonomial s_pos)
-     	  else {coef_0, leadMonomial s_0}
+     	  else if not onlyOnes then {coef_0, leadMonomial s_0}
+          else {}
      	  )
      )
      
-findReductor = (L,excludes) -> (
+findReductor = (L,excludes,onlyOnes) -> (
      -- Inputs:
      --    L:List, of polynomials in a ring R
      --    excludes, a (possibly empty) set of variables
+     --    onlyOnes: only return reductor if the lead coefficient is 1 or -1
+     --       (e.g. needed if the coefficient ring is ZZ)
      -- Output:
      --    (x, x - 1/c f), where c*x is a term in f such that
      --      x does not appear in x - 1/c f, where f is some
@@ -276,7 +283,7 @@ findReductor = (L,excludes) -> (
      L1 := sort apply(L, f -> (size f,f));
      redVar := {};
      L2 := select(1, L1, p -> (
-	       redVar = reductorVariable(p#1, excludes);
+	       redVar = reductorVariable(p#1, excludes, onlyOnes);
 	       redVar =!= {})
 	  );
      if redVar =!= {} then (redVar#1, redVar#1 - (1/(redVar#0))*L2#0#1)
@@ -291,11 +298,12 @@ reduceLinears(Ideal,Set) := o -> (I,excludes) -> (
      -- (variable x, poly x+g) where x+g is in I, and x doesn't appear
      -- in J and x does not appear in any polynomial later in the L list.
      R := ring I;
+     onlyOnes := (coefficientRing R === ZZ); -- are there other cases when this is bad?
      L := flatten entries generators I;
      count := o.Limit;
      M := while count > 0 list (
        count = count - 1;
-       g := findReductor(L, excludes);
+       g := findReductor(L, excludes, onlyOnes);
        if g === null then break;
 --       << "---------------------------------" << endl;
 --       << "reducing using " << g#0 << endl << endl;
@@ -312,7 +320,7 @@ reduceLinears(Ideal,Set) := o -> (I,excludes) -> (
 --       << "reducing using " << g#0 << endl << endl;
 --       << "  sending it to " << g#1 << endl << endl;
 --       ));
-     (ideal L, M)
+     (ideal matrix(R,{L}), M) -- same as (ideal L,M) except if L=={}
      )
 
 backSubstitute = (M) -> (

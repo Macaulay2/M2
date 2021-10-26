@@ -1,19 +1,44 @@
-libraries linked with M2:
+See INSTALL file for our license.  Here we document briefly the licenses on the various
+libraries.
 
--lfac		singular libfac		GPL 2 or 3
--lcf		singular factory	GPL 2 or 3
--lntl		ntl			GPL 2 or later
--lgdbm		gdbm			GPL 2 for version 1.8.3, which we used to link with
-					GPL 3 or later, for version 1.9.1, which we link with
--lgc		Boehm gc		"Permission is hereby granted to use or copy this program for any purpose,  provided the above notices are retained on all copies."
--lmpfr		mpfr			LGPL 3 or later
+Libraries that may be linked with M2:
+
+-latomic_ops    atomic_ops		various permissive licenses
+-lblas		BLAS			public domain
+-lfactory	singular factory	GPL 2 or 3
+-lflint		FLINT	 		GPL 2 or later
 -lfrobby	frobby			GPL 2 or later
+-lgc		Boehm gc		"Permission is hereby granted to use or copy this program for any purpose,  provided the above notices are retained on all copies."
+-lgdbm		gdbm			GPL 3 or later
+-lgmp		gmp			version 6.0: LGPL 3 or later, or GPL 2 or later
+-llapack 	lapack			copyright by U Tennessee under a liberal license
+-lmathic	mathic			LGPL 2 or later
+-lmathicgb	mathicgb		GPL 2 or later
+-lmemtailor	memtailor		the Modified BSD License
+-lmpfr		mpfr			LGPL 3 or later
+-lmpirxx -lmpir	mpir			LGPL 2.1 or later
+-lntl		ntl			GPL 2 or later
 -lpari		pari			GPL 2 or later
--lmpirxx -lmpir	mpir			version 2.4.0 : LGPL 2.1 or later
-	 	lapack			copyright by U Tennessee under a liberal license
-		blas			no license file provided, probably public domain
+-lreadline	readline		GPL 3
+-lboost_regex	Boost.Regex		Boost Software License, Version 1.0
+-lboost_stacktrace Boost.Stacktrace	Boost Software License, Version 1.0
 
-code by other authors compiled as part of M2:
+Libraries we may link with in the future:
+
+-lcddlib        cddlib			GPL 2
+-lpolymake      polymake		GPL 2
+
+Programs we include with our distribution:
+
+	    	4ti2			GPL 2
+	        gfan		        GPL 2
+	        normaliz		GPL 3
+
+Libraries linked with some of our programs:
+
+	  	glpk			GPL 3
+
+Code by other authors compiled as part of M2:
 
 Macaulay2/kernel/bibasis		Mikhail V. Zinin, GPL 2 or later
 Macaulay2/kernel/mixed-cells		Anders Jensen and Anton Leykin, under development, not linked yet with M2
@@ -21,6 +46,7 @@ Macaulay2/e code by Franziska Hinkelmann 		public domain
 Macaulay2/e code by Anton Leykin			public domain
 Macaulay2/system code et al., by Bill Furnish		public domain
 modifications by Charles Boyd				public domain
+modifications by Paul Zinn-Justin			public domain
 
 for M2 binaries:
 

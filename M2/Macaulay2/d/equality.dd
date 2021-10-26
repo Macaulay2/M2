@@ -2,10 +2,13 @@
 use util;
 use tokens;
 
-header "
-  #include <engine.h>
-  #include <monomial.hpp>
-";
+header "// required for equality checks
+#include <interface/freemodule.h>           // for IM2_FreeModule_is_equal
+#include <interface/matrix.h>               // for IM2_Matrix_is_equal
+#include <interface/monomial-ideal.h>       // for IM2_MonomialIdeal_is_equal
+#include <interface/ringelement.h>          // for IM2_RingElement_is_equal
+#include <interface/ringmap.h>              // for IM2_RingMap_is_equal
+#include <monomial.hpp>                     // for Monomial"; -- TODO: remove this one
 
 equal(lhs:Expr,rhs:Expr):Expr;
 
@@ -132,6 +135,12 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       if strictequality(x.v,y.v) then True else False
 	       )
 	  else False)
+     is x:RRicell do ( -- Added for MPFI
+	  when rhs
+	  is y:RRicell do (
+	      if strictequality(x.v,y.v) then True else False
+	      )
+	  else False)  -- End added for MPFI
      is x:CCcell do (
 	  when rhs
 	  is y:CCcell do (
@@ -161,7 +170,13 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       )
 	  else False
 	  )
-     is RawRingCell do False
+     is x:RawRingCell do (
+	  when rhs
+	  is y:RawRingCell do (
+	      if x.p == y.p then True else False
+	       )
+	  else False
+	  )
      is x:RawMonomialIdealCell do (
 	  when rhs
 	  is y:RawMonomialIdealCell do (
@@ -187,7 +202,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  )
      is x:RawMatrixCell do (
 	  when rhs
-	  is y:RawMatrixCell do toExpr(Ccode(bool, "IM2_Matrix_is_equal(",x.p,",",y.p,")"))
+	  is y:RawMatrixCell do toExpr(Ccode(bool, "1 == IM2_Matrix_is_equal(",x.p,",",y.p,")"))
 	  else False
 	  )
      is x:MysqlConnectionWrapper do (
@@ -198,11 +213,18 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is MysqlFieldWrapper do False
      is MysqlResultWrapper do False
      is RawMutableMatrixCell do False			    -- mutable matrices may not stay equal, so they aren't equal
+     is RawMutableComplexCell do False			    -- mutable matrices may not stay equal, so they aren't equal
+     -- NAG begin
+     is RawHomotopyCell do False
+     is RawSLEvaluatorCell do False
+     is RawSLProgramCell do False
      is RawStraightLineProgramCell do False
      is RawPathTrackerCell do False
-     is x:RawComputationCell do (
+     is RawPointArrayCell do False
+     -- NAG end
+     is RawComputationCell do (
 	  when rhs
-	  is y:RawComputationCell do (
+	  is RawComputationCell do (
 	       False
 	       -- toExpr(Ccode(bool, "IM2_GB_is_equal(",x,",",y,")"))
 	       )
@@ -220,8 +242,8 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is pythonObjectCell do False
      is xmlNodeCell do False				    -- unimplemented
      is xmlAttrCell do False				    -- unimplemented
-     is x:TaskCell do False
-     is x:fileOutputSyncState do False
+     is TaskCell do False
+     is fileOutputSyncState do False
      );
 
 -- Local Variables:

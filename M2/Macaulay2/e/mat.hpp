@@ -7,23 +7,29 @@
 #include "hash.hpp"
 #include "relem.hpp"
 
+#include <iostream>
+
 class buffer;
 class RingElement;
 class Ring;
 class Matrix;
-template<class T> class MutableMat;
+template <class T>
+class MutableMat;
 
 /**
  * \ingroup matrices
  */
 
-class MutableMatrix : public mutable_object
+class MutableMatrix : public MutableEngineObject
 {
-protected:
+ protected:
   MutableMatrix() {}
-  virtual ~MutableMatrix() {}
-public:
-#if 1
+ public:
+  virtual ~MutableMatrix()
+  {
+  }
+
+#if 0
   // MESXXX
   class iterator : public our_new_delete
   {
@@ -36,11 +42,11 @@ public:
     virtual void copy_ring_elem(ring_elem &a) = 0;
   };
 #endif
-#if 1
+#if 0
   // MESXX
   virtual iterator * begin() const = 0;
 #endif
-  virtual const Ring * get_ring() const = 0;
+  virtual const Ring *get_ring() const = 0;
 
   virtual size_t n_rows() const = 0;
 
@@ -48,7 +54,10 @@ public:
 
   virtual bool is_dense() const = 0;
 
-  static MutableMatrix *zero_matrix(const Ring *R, size_t nrows, size_t ncols, bool dense);
+  static MutableMatrix *zero_matrix(const Ring *R,
+                                    size_t nrows,
+                                    size_t ncols,
+                                    bool dense);
   // If the ring is RR or CC, and dense is true, then MutableMatrixRR or
   // MutableMatrixCC will be used.
 
@@ -58,7 +67,7 @@ public:
   // If the ring is RR or CC, and dense is true, then MutableMatrixRR or
   // MutableMatrixCC will be used.
 
-  Matrix *to_matrix() const;
+  virtual Matrix *to_matrix() const = 0;
 
   void text_out(buffer &o) const;
 
@@ -71,19 +80,33 @@ public:
   //////////////////////////////
   // Casts down the hierarchy //
   //////////////////////////////
-  template< typename MatType>
-  MutableMat<MatType> * cast_to_MutableMat() { 
-    return dynamic_cast< MutableMat<MatType> *>(this); 
+  template <typename MatType>
+  MutableMat<MatType> *cast_to_MutableMat()
+  {
+    return dynamic_cast<MutableMat<MatType> *>(this);
   }
 
-  template< typename MatType>
-  const MutableMat<MatType> * cast_to_MutableMat() const { 
-    return dynamic_cast< const MutableMat<MatType> *>(this); 
+  template <typename MatType>
+  const MutableMat<MatType> *cast_to_MutableMat() const
+  {
+    return dynamic_cast<const MutableMat<MatType> *>(this);
   }
 
-  template<typename MatT> MatT * coerce();
+  template <typename MatT>
+  MatT *coerce()
+  {
+    MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
+    if (P == 0) return 0;
+    return P->get_Mat();
+  }
 
-  template<typename MatT> const MatT * coerce() const;
+  template <typename MatT>
+  const MatT *coerce_const() const
+  {
+    const MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
+    if (P == 0) return 0;
+    return P->get_Mat();
+  }
 
   ///////////////////////////////
   // Row and column operations //
@@ -131,16 +154,22 @@ public:
   virtual bool column_op(size_t i, ring_elem r, size_t j) = 0;
   /* column(i) <- column(i) + r * column(j) */
 
-  virtual bool column2by2(size_t c1, size_t c2,
-                          ring_elem a1, ring_elem a2,
-                          ring_elem b1, ring_elem b2) = 0;
+  virtual bool column2by2(size_t c1,
+                          size_t c2,
+                          ring_elem a1,
+                          ring_elem a2,
+                          ring_elem b1,
+                          ring_elem b2) = 0;
   /* column(c1) <- a1 * column(c1) + a2 * column(c2),
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
 
-  virtual bool row2by2(size_t r1, size_t r2,
-                       ring_elem a1, ring_elem a2,
-                       ring_elem b1, ring_elem b2) = 0;
+  virtual bool row2by2(size_t r1,
+                       size_t r2,
+                       ring_elem a1,
+                       ring_elem a2,
+                       ring_elem b1,
+                       ring_elem b2) = 0;
   /* row(r1) <- a1 * row(r1) + a2 * row(r2),
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
@@ -163,57 +192,58 @@ public:
   virtual bool delete_rows(size_t i, size_t j) = 0;
   /* Delete rows i .. j from M */
 
+  virtual void reduce_by_pivots() = 0;
+  /* Finds units (starting with 1 and -1, then moving to other units)
+     in the matrix 'this', and performs row and column operations to
+     create a matrix with isomorphic cokernel
+  */
+
   ///////////////////////////////
   // Matrix operations //////////
   ///////////////////////////////
 
-  virtual MutableMatrix * submatrix(M2_arrayint rows, M2_arrayint cols) const = 0;
+  virtual MutableMatrix *submatrix(M2_arrayint rows,
+                                   M2_arrayint cols) const = 0;
 
-  virtual MutableMatrix * submatrix(M2_arrayint cols) const = 0;
-
-  virtual bool set_submatrix(M2_arrayint rows,
-                             M2_arrayint cols,
-                             const MutableMatrix *N) = 0;
-  // returns false iff there is an error
+  virtual MutableMatrix *submatrix(M2_arrayint cols) const = 0;
 
   virtual bool is_zero() const = 0;
 
-
   virtual bool is_equal(const MutableMatrix *B) const = 0;
 
-  virtual MutableMatrix /* or null */ * add(const MutableMatrix *B) const = 0;
+  virtual MutableMatrix /* or null */ *add(const MutableMatrix *B) const = 0;
   // return this + B.  return NULL of sizes or types do not match.
 
-  virtual MutableMatrix /* or null */ * subtract(const MutableMatrix *B) const = 0;
+  virtual MutableMatrix /* or null */ *subtract(
+      const MutableMatrix *B) const = 0;
   // return this - B.  return NULL of sizes or types do not match.
   // note: can subtract a sparse + dense
   //       can subtract a matrix over RR and one over CC and/or one over ZZ.
 
-  virtual MutableMatrix /* or null */ * mult(const MutableMatrix *B) const = 0;
-  // return this * B.  return NULL of sizes or types do not match.
-  // note: can mult a sparse + dense
-  //       can mult a matrix over RR and one over CC and/or one over ZZ.
-
-  virtual MutableMatrix /* or null */ * mult(const RingElement *f) const = 0;
+  virtual MutableMatrix /* or null */ *mult(const RingElement *f) const = 0;
   // return f*this.  return NULL of sizes or types do not match.
 
-  virtual MutableMatrix * negate() const = 0;
+  virtual MutableMatrix *negate() const = 0;
+
+  virtual MutableMatrix /* or null */ *transpose() const = 0;
 
   ///////////////////////////////
   // Linear algebra /////////////
   ///////////////////////////////
-  virtual bool solve(const MutableMatrix *b, MutableMatrix *x) const = 0;
-  // resets x, find a solution for Ax=b.  Returns false if no such solution exists
 
-  virtual bool nullspaceU(MutableMatrix *x) const = 0;
-  // resets x, find a basis of solutions for Ux=0, where U is
-  // 'this', and is in upper triangular form from an LU decomp.  Returns true if
-  // this matrix type implements this algorith,
+  virtual M2_arrayintOrNull LU(MutableMatrix *L, MutableMatrix *U) const = 0;
 
-  virtual M2_arrayintOrNull LU(MutableMatrix *L,
-                                MutableMatrix *U) const = 0;
+  virtual M2_arrayintOrNull LUincremental(std::vector<size_t>& P, const MutableMatrix* v, int m) = 0;
 
-  virtual bool eigenvalues(MutableMatrix *eigenvals, bool is_symm_or_hermitian) const = 0;
+  virtual void triangularSolve(MutableMatrix* x, int m, int strategy) = 0;
+
+  // replace 'this=A' with a matrix which encodes both 'L' and 'U', returning a
+  // permutation P
+  // of 0..numRows A-1 s.t. LU = PA
+  //  virtual M2_arrayintOrNull LUInPlace() const = 0;
+
+  virtual bool eigenvalues(MutableMatrix *eigenvals,
+                           bool is_symm_or_hermitian) const = 0;
 
   virtual bool eigenvectors(MutableMatrix *eigenvals,
                             MutableMatrix *eigenvecs,
@@ -228,11 +258,13 @@ public:
                              MutableMatrix *x,
                              bool assume_full_rank) const = 0;
 
+  virtual bool QR(MutableMatrix *Q, MutableMatrix *R, bool return_QR) const = 0;
+
   ///////////////////////////////////
   /// LU decomposition routines /////
   ///////////////////////////////////
 
-  // A = m x n 'this' is factored as A = LQUP, where 
+  // A = m x n 'this' is factored as A = LQUP, where
   //   L is m x m lower unit triangular
   //   U is m x n upper triangular
   //   Q is a m x m permutation matrix
@@ -242,73 +274,75 @@ public:
   //   L and U are placed into A
   // Two integer arrays are returned:
   // The first represents Q, giving the rows of U ??
-  // The second represents P, which tells which columns of A have non-zero pivots
-  //   (and, the elements below the main diagonal in these columns form the lower part of L).
-  // If the ring or matrix type does not support this computation, an engine_error is thrown.
-  virtual engine_RawArrayIntPairOrNull LQUPFactorizationInPlace(bool transpose) { 
+  // The second represents P, which tells which columns of A have non-zero
+  // pivots
+  //   (and, the elements below the main diagonal in these columns form the
+  //   lower part of L).
+  // If the ring or matrix type does not support this computation, an
+  // engine_error is thrown.
+  virtual engine_RawArrayIntPairOrNull LQUPFactorizationInPlace(bool transpose)
+  {
     throw exc::engine_error("not implemented for this ring or matrix type");
   }
 
-  // Return a permutation P of 0..nrows-1 and place into LU
-  // the encoded L and U matrices, such that this = A = PLU
-  virtual M2_arrayintOrNull LU1(MutableMatrix *LU) const { return 0; }
-
-  // If X = this, and A = PLU, then replace X with a solution to AX=B
-  // If the sizes don't match, return null, otherwise return 'this'
-  // ASSUMPTION: (LU, row_permutation) is the result of an LU
-  // decomposition of A.  (LU is encoded as in LU1).
-  virtual MutableMatrix *LUSolve(const MutableMatrix *LU,
-                                 const M2_arrayint row_permutation,
-                                 const MutableMatrix *B) const { return 0; }
-
   /// Fast linear algebra routines (well, fast for some rings)
 
-  virtual size_t rank() const { return static_cast<size_t>(-1); }
+  virtual size_t rank() const = 0;
 
-  virtual const RingElement* determinant() const { return NULL; }
+  virtual const RingElement *determinant() const = 0;
 
-  // Find the inverse matrix.  If the matrix is not square, or 
+  // Find the inverse matrix.  If the matrix is not square, or
   // the ring is one in which th matrix cannot be inverted,
   // then NULL is returned, and an error message is set.
-  virtual MutableMatrix* invert() const { return 0; }
+  virtual MutableMatrix *invert() const = 0;
+
+  // Find the row reduced echelon form of 'this'. If
+  // the ring is one in which the rref cannot be computed,
+  // then NULL is returned, and an error message is set.
+  virtual MutableMatrix *rowReducedEchelonForm() const = 0;
 
   // Returns an array of increasing integers {n_1, n_2, ...}
-  // such that if M is the matrix with rows (resp columns, if row_profile is false)
+  // such that if M is the matrix with rows (resp columns, if row_profile is
+  // false)
   // then rank(M_{0..n_i-1}) + 1 = rank(M_{0..n_i}).
   // NULL is returned, and an error is set, if this function is not available
   // for the given choice of ring and dense/sparseness.
-  virtual M2_arrayintOrNull rankProfile(bool row_profile) const { return 0; }
-  
+  virtual M2_arrayintOrNull rankProfile(bool row_profile) const = 0;
+
   // Find a spanning set for the null space.  If M = this,
-  // and right_side is true, return a matrix whose rows span {x |  xM = 0},
-  // otherwise return a matrix whose columns span {x | Mx = 0}
-  virtual MutableMatrix* nullSpace(bool right_side) const { return 0; }
+  // return a matrix whose columns span {x | Mx = 0}
+  virtual MutableMatrix *nullSpace() const = 0;
 
-  // Return a matrix whose rows or columns solve either Ax = B (right_side=true)
-  // or xA = B (right_side=false).  The first argument returned is false
-  // in this case.
-  virtual std::pair<bool, MutableMatrix*> solveLinear(const MutableMatrix* B, 
-                                                      bool right_side) const { 
-    return std::pair<bool, MutableMatrix*>(0,static_cast<MutableMatrix*>(NULL)); 
-  }
+  // Returns X, if (this=A) AX=B has a solution.
+  // Returns NULL, if not.
+  // Throws an exception if any other usage issues arise (bad rings, sizes, not
+  // implemented...)
+  virtual MutableMatrix *solveLinear(const MutableMatrix *B) const = 0;
 
-  /** C=this,A,B should be mutable matrices over the same ring, and a,b
-     elements of this ring. AND of the same density type.
-     C = b*C + a * op(A)*op(B),
-     where op(A) = A or transpose(A), depending on transposeA
-     where op(B) = B or transpose(B), depending on transposeB
-  */
-  virtual void  addMultipleTo(const MutableMatrix* A,
-                              const MutableMatrix* B,
-                              bool transposeA,
-                              bool transposeB,
-                              const RingElement* a,
-                              const RingElement* b)
-  {
-    //std::cerr << "MutableMatrix : rawLinAlgAddMultipleTo" << std::endl;
-    return ;
-  }
+  // Returns X, if this=A is invertible, and AX=B. (so X is uniquely determined)
+  // Returns NULL, if A is not invertible.
+  // Throws an exception if any other usage issues arise.
+  virtual MutableMatrix *solveInvertible(const MutableMatrix *B) const = 0;
 
+  virtual void addMultipleTo(const MutableMatrix *A,
+                             const MutableMatrix *B) = 0;
+
+  virtual void subtractMultipleTo(const MutableMatrix *A,
+                                  const MutableMatrix *B) = 0;
+
+  virtual MutableMatrix /* or null */ *mult(const MutableMatrix *B) const = 0;
+
+  // return this * B.
+  // both matrices must be of the same type.
+  // If not, or sizes don't match, NULL is returned.
+
+  virtual void clean(gmp_RR epsilon) = 0;  // modifies 'this'
+  virtual gmp_RRorNull norm() const = 0;
+
+  virtual M2SLEvaluator *createSLEvaluator(
+      M2SLProgram *P,
+      M2_arrayint constsPos,
+      M2_arrayint varsPos) const = 0;  // this = const matrix
 };
 
 #endif

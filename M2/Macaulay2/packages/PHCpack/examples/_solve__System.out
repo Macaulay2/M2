@@ -1,5 +1,4 @@
--- -*- M2-comint -*- {* hash: -1663871215 *}
---loading configuration for package "PHCpack" from file /Users/dan/Library/Application Support/Macaulay2/init-PHCpack.m2
+-- -*- M2-comint -*- hash: -1663871215
 
 i1 : R = CC[x,y,z]
 
@@ -15,7 +14,6 @@ o2 = {x + y + z - 1, x  + y , x + y - z - 3}
 o2 : List
 
 i3 : L = solveSystem(S)
-using temporary files /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44693-0/0PHCinput and /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44693-0/0PHCoutput
 
 o3 = {{1-ii, 1+ii, -1}, {1+ii, 1-ii, -1}}
 
@@ -23,7 +21,7 @@ o3 : List
 
 i4 : oneSoln = L_0
 
-o4 = {1-ii, 1+ii, -1}
+o4 = oneSoln
 
 o4 : Point
 
@@ -46,7 +44,7 @@ i7 : #system > numcols vars R --overdetermined system
 o7 = true
 
 i8 : solns = solveSystem(system);
-using temporary files /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44693-0/1PHCinput and /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44693-0/1PHCoutput
+*** after parseSolutions, ring has {x, y, z} ***
 
 i9 : numSolns = #solns
 

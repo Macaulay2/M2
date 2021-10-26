@@ -1,0 +1,49 @@
+-- -*- M2-comint -*- hash: -264889504
+
+i1 : A = QQ{x,y,z}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : isCommutative A
+
+o2 = false
+
+i3 : B = skewPolynomialRing(QQ,(-1)_QQ,{x,y,z})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o3 = B
+
+o3 : NCQuotientRing
+
+i4 : isCommutative B
+
+o4 = false
+
+i5 : C = skewPolynomialRing(QQ,1_QQ,{x,y,z})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o5 = C
+
+o5 : NCQuotientRing
+
+i6 : isCommutative C
+
+o6 = true
+
+i7 : D = toNCRing(QQ[x,y,SkewCommutative=>true])
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o7 = D
+
+o7 : NCQuotientRing
+
+i8 : isExterior D
+
+o8 = true
+
+i9 : 

@@ -35,8 +35,7 @@ diffOps (Ideal, ZZ) := (I, k) -> (
      syzy := (syz full)^{0..rank source temp - 1}; 
      pInfo(1, "Reducing matrix of " | rank source syzy | " by " |
 	  rank target syzy | " syzygies with respect to I...");
-     -- syzy = compress (syzy % (directSum toList(rank target syzy:matrix{{F}})));
-     syzy = gens gb (syzy % (directSum toList(rank target syzy:matrix{{F}})));
+     syzy = gens gb (syzy % I);
      
      hashTable {PolyGens => syzy, BasisElts => Dbasis}
      )

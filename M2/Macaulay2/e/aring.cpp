@@ -4,7 +4,6 @@
 #include "aring-zzp.hpp"
 
 namespace M2 {
-
 };
 
 // Local Variables:

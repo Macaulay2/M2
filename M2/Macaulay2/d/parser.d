@@ -2,14 +2,6 @@
 use tokens;
 use lex;
 
-export parseInt(s:string):ZZ := (
-     i := toInteger(0);
-     foreach c in s do (
-	  if c == '\"'
-	  then nothing
-	  else i = 10 * i + (c - '0')
-	  );
-     i);
 export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
      prec := defaultPrecision;
      ss := new string len length(s) + 1 do (		    -- we add 1 to get at least one null character at the end
@@ -52,6 +44,23 @@ export hexvalue   (c:char ):int  := (
      else 0						    -- we don't expect this to happen
      );
 export hexvalue   (c:int ):int  := hexvalue(char(c));
+
+export parseInt(s:string):ZZ := (
+     i := zeroZZ;
+     n := length(s);
+     if n == 1 then i = toInteger(s.0 - '0')
+     else if s.0 == '0' && (s.1  == 'b' || s.1 == 'B') then
+     	  for j from 2 to n - 1 do i = 2 * i + (s.j - '0')
+     else if s.0 == '0' && (s.1 == 'o' || s.1 == 'O') then
+     	  for j from 2 to n - 1 do i = 8 * i + (s.j - '0')
+     else if s.0 == '0' && (s.1 == 'x' || s.1 == 'X') then
+     	  for j from 2 to n - 1 do i = 16 * i + hexvalue(s.j)
+     else foreach c in s do (
+	  if c == '\"'
+	  then nothing
+	  else i = 10 * i + (c - '0')
+	  );
+     i);
 
 export parseString(s:string):string := (
      parseError = false;
@@ -98,15 +107,15 @@ export parseString(s:string):string := (
      tostring(v)
      );
 
-export thenW := Word("{*dummy word: then*}",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export whenW := Word("{*dummy word: when*}",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export elseW := Word("{*dummy word: else*}",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export ofW := Word("{*dummy word: of*}",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export doW := Word("{*dummy word: do*}",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export listW := Word("{*dummy word: list*}",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export fromW := Word("{*dummy word: from*}",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export inW := Word("{*dummy word: in*}",TCnone,0,newParseinfo());		  -- filled in by binding.d
-export toW := Word("{*dummy word: to*}",TCnone,0,newParseinfo());		  -- filled in by binding.d
+export thenW := Word("-*dummy word: then*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
+export whenW := Word("-*dummy word: when*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
+export elseW := Word("-*dummy word: else*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
+export ofW := Word("-*dummy word: of*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
+export doW := Word("-*dummy word: do*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
+export listW := Word("-*dummy word: list*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
+export fromW := Word("-*dummy word: from*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
+export inW := Word("-*dummy word: in*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
+export toW := Word("-*dummy word: to*-",TCnone,0,newParseinfo());		  -- filled in by binding.d
 export debug := false;
 export tracefile := dummyfile;
 export openTokenFile(filename:string):(TokenFile or errmsg) := (
@@ -251,17 +260,6 @@ matcher(left:string):string := (
 	  );
      ""
      );
-match(left:string,right:string):bool := (
-     rest := matchList;
-     while true do
-     when rest
-     is null do return false
-     is matchPair:MatchPair do (
-	  if matchPair.left == left
-	  then if matchPair.right == right
-	  then return true;
-	  rest = matchPair.next;
-	  ));
 export varexprlist := {
      list:array(ParseTree),
      size:int

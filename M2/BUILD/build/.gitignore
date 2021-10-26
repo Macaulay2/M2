@@ -1,0 +1,10 @@
+GNUmakefile
+Macaulay2
+check-configure
+config.args
+config.log
+config.status
+distributions
+include
+libraries
+srcdir

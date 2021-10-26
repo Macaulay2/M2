@@ -1,6 +1,215 @@
-diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp frobby_v0.9.0/src/main.cpp
---- /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/src/main.cpp	2013-04-21 15:00:54.000000000 -0500
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/Makefile frobby_v0.9.0/Makefile
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/Makefile	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/Makefile	2019-07-11 12:34:20.000000000 -0400
+@@ -70,8 +70,7 @@
+   BIN_INSTALL_DIR = "/usr/local/bin/"
+ endif
+ 
+-cflags = $(CFLAGS) $(CPPFLAGS) -Wall -ansi -pedantic -I $(GMP_INC_DIR)	\
+-         -Wno-uninitialized -Wno-unused-parameter
++cxxflags = $(CXXFLAGS) $(CPPFLAGS) -I $(GMP_INC_DIR) -Wno-uninitialized -Wno-unused-parameter
+ program = frobby
+ library = libfrobby.a
+ benchArgs = $(FROBBYARGS)
+@@ -81,31 +80,31 @@
+ endif
+ 
+ ifndef ldflags
+-  ldflags = $(cflags) $(LDFLAGS) -lgmpxx -lgmp
++  ldflags = $(LDFLAGS) -lgmpxx -lgmp
+ endif
+ 
+ MATCH=false
+ ifeq ($(MODE), release)
+   outdir = bin/release/
+-  cflags += -O2
++  cxxflags += -O2
+   MATCH=true
+ endif
+ ifeq ($(MODE), debug)
+   rawSources := $(rawSources) $(rawTests)
+   outdir = bin/debug/
+-  cflags += -g -D DEBUG -fno-inline -Werror -Wextra -Wno-uninitialized \
++  cxxflags += -g -D DEBUG -fno-inline -Werror -Wextra -Wno-uninitialized \
+             -Wno-unused-parameter
+   MATCH=true
+ endif
+ ifeq ($(MODE), shared)
+   outdir = bin/shared/
+-  cflags += -O2 -fPIC
++  cxxflags += -O2 -fPIC
+   library = libfrobby.so
+   MATCH=true
+ endif
+ ifeq ($(MODE), profile)
+   outdir = bin/profile/
+-  cflags += -g -pg -O2 -D PROFILE
++  cxxflags += -g -pg -O2 -D PROFILE
+   ldflags += -pg
+   MATCH=true
+   benchArgs = _profile $(FROBBYARGS)
+@@ -113,14 +112,14 @@
+ ifeq ($(MODE), analysis)
+   rawSources := $(rawSources) $(rawTests)
+   outdir = bin/analysis/
+-  cflags += -Wextra -fsyntax-only -O1 -Wfloat-equal -Wundef				\
+-  -Wno-endif-labels -Wshadow -Wlarger-than-1000 -Wpointer-arith			\
+-  -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wsign-compare	\
+-  -Waggregate-return -Wmissing-noreturn -Wmissing-format-attribute		\
+-  -Wno-multichar -Wno-deprecated-declarations -Wpacked					\
+-  -Wno-redundant-decls -Wunreachable-code -Winline						\
+-  -Wno-invalid-offsetof -Winvalid-pch -Wlong-long						\
+-  -Wdisabled-optimization -D DEBUG -Werror
++  cxxflags += -Wextra -fsyntax-only -O1 -Wfloat-equal -Wundef			\
++      -Wno-endif-labels -Wshadow -Wlarger-than-1000 -Wpointer-arith		\
++      -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wsign-compare	\
++      -Waggregate-return -Wmissing-noreturn -Wmissing-format-attribute		\
++      -Wno-multichar -Wno-deprecated-declarations -Wpacked			\
++      -Wno-redundant-decls -Wunreachable-code -Winline				\
++      -Wno-invalid-offsetof -Winvalid-pch -Wlong-long				\
++      -Wdisabled-optimization -D DEBUG -Werror
+   MATCH=true
+ endif
+ 
+@@ -217,6 +216,7 @@
+ 	  $(patsubst $(outdir)main.o,,$(objs))
+ else
+ 	ar crs bin/$(library) $(patsubst $(outdir)main.o,,$(objs))
++	$(RANLIB) bin/$(library)
+ endif
+ 
+ # Compile and output object files.
+@@ -224,8 +224,8 @@
+ # to allow dependency analysis to work.
+ $(outdir)%.o: src/%.cpp
+ 	@mkdir -p $(dir $@)
+-	$(CXX) ${cflags} -c $< -o $@
+-	$(CXX) $(cflags) -MM -c $< > $(@:.o=.d).tmp
++	$(CXX) ${cxxflags} -c $< -o $@
++	$(CXX) $(cxxflags) -MM -c $< > $(@:.o=.d).tmp
+ # using /usr/bin/env echo to get the non-built-in echo on OS X, since
+ # the built-in one does not understand the parameter -n.
+ 	@/usr/bin/env echo -n "$(dir $@)" > $(@:.o=.d)
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.cpp frobby_v0.9.0/src/FrobbyStringStream.cpp
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.cpp	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/FrobbyStringStream.cpp	2019-06-23 09:36:38.000000000 -0400
+@@ -41,6 +41,11 @@
+   return *this;
+ }
+ 
++FrobbyStringStream& FrobbyStringStream::operator<<(unsigned long long integer) {
++  appendIntegerToString(_str, integer);
++  return *this;
++}
++
+ FrobbyStringStream& FrobbyStringStream::operator<<(unsigned long integer) {
+   appendIntegerToString(_str, integer);
+   return *this;
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.h frobby_v0.9.0/src/FrobbyStringStream.h
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.h	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/FrobbyStringStream.h	2019-06-23 09:36:38.000000000 -0400
+@@ -25,6 +25,7 @@
+  used for operations that need to be efficient. */
+ class FrobbyStringStream {
+  public:
++  FrobbyStringStream& operator<<(unsigned long long integer);
+   FrobbyStringStream& operator<<(unsigned long integer);
+   FrobbyStringStream& operator<<(unsigned int integer);
+   FrobbyStringStream& operator<<(const mpz_class& integer);
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/HashMap.h frobby_v0.9.0/src/HashMap.h
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/HashMap.h	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/HashMap.h	2019-06-23 09:36:39.000000000 -0400
+@@ -35,10 +35,16 @@
+ class FrobbyHash {};
+ 
+ // *********************************************************
+-#ifdef __GNUC__ // Only GCC defines this macro
++#if defined(__GNUC__) || defined(__clang__)
++#if 0
+ #include "hash_map/hash_map"
+ #include <string>
++#endif
++#include <unordered_map>
++template<class Key, class Value>
++  class HashMap : public std::unordered_map<Key, Value, FrobbyHash<Key>> { };
+ 
++#if 0
+ template<>
+ class FrobbyHash<string> : public __gnu_cxx::hash<string> {
+ };
+@@ -47,9 +53,8 @@
+ class HashMap : public __gnu_cxx::hash_map<Key, Value,
+   FrobbyHash<Key> > {
+ };
+-
++#endif
+ #else
+-
+ // *********************************************************
+ #ifdef _MSC_VER // Only Microsoft C++ defines this macro
+ #include <hash_map>
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/StatisticsStrategy.cpp frobby_v0.9.0/src/StatisticsStrategy.cpp
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/StatisticsStrategy.cpp	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/StatisticsStrategy.cpp	2019-06-23 09:36:39.000000000 -0400
+@@ -140,7 +140,7 @@
+   if (_nodeCount == 0)
+     return 0.0;
+   else {
+-    mpz_class q = mpq_class(_subGenSum) / _nodeCount;
++    mpq_class q = mpq_class(_subGenSum) / _nodeCount;
+     return q.get_d();
+   }
+ }
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/Term.h frobby_v0.9.0/src/Term.h
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/Term.h	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/Term.h	2019-06-23 09:36:38.000000000 -0400
+@@ -99,6 +99,10 @@
+     ASSERT(offset < _varCount);
+     return _exponents[offset];
+   }
++  Exponent operator[](unsigned long long offset) const {
++    ASSERT(offset < _varCount);
++    return _exponents[offset];
++  }
+ 
+   Exponent& operator[](int offset) {
+     ASSERT(0 <= offset);
+@@ -113,6 +117,10 @@
+     ASSERT(offset < _varCount);
+     return _exponents[offset];
+   }
++  Exponent& operator[](unsigned long long offset) {
++    ASSERT(offset < _varCount);
++    return _exponents[offset];
++  }
+ 
+   bool operator==(const Term& term) const {
+     ASSERT(_varCount == term._varCount);
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/VarNames.h frobby_v0.9.0/src/VarNames.h
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/VarNames.h	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/VarNames.h	2019-06-23 09:36:39.000000000 -0400
+@@ -21,7 +21,7 @@
+ 
+ #include <vector>
+ #include <string>
+-
++#include <unordered_map>
+ class Scanner;
+ 
+ /** Defines the variables of a polynomial ring and facilities IO
+@@ -102,7 +102,8 @@
+ private:
+   static bool compareNames(const string* a, const string* b);
+ 
+-  typedef HashMap<string, size_t> VarNameMap;
++  typedef unordered_map<string, size_t> VarNameMap;
++  //typedef HashMap<string, size_t> VarNameMap;
+   VarNameMap _nameToIndex;
+   vector<const string*> _indexToName;
+ };
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp frobby_v0.9.0/src/main.cpp
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/main.cpp	2019-06-23 09:36:38.000000000 -0400
 @@ -24,6 +24,7 @@
  
  #include <ctime>
@@ -9,9 +218,9 @@ diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac
  
  /** This function runs the Frobby console interface. the ::main
      function calls this function after having set up DEBUG-specific
-diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp frobby_v0.9.0/src/randomDataGenerators.cpp
---- /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/src/randomDataGenerators.cpp	2013-04-21 15:00:54.000000000 -0500
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp frobby_v0.9.0/src/randomDataGenerators.cpp
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/randomDataGenerators.cpp	2019-06-23 09:36:38.000000000 -0400
 @@ -25,6 +25,7 @@
  
  #include <limits>
@@ -20,9 +229,31 @@ diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac
  
  void generateLinkedListIdeal(BigIdeal& ideal, size_t variableCount) {
    VarNames names(variableCount);
-diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/test/messages/runtest frobby_v0.9.0/test/messages/runtest
---- /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/test/messages/runtest	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/test/messages/runtest	2013-04-21 15:18:15.000000000 -0500
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/stdinc.h frobby_v0.9.0/src/stdinc.h
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/src/stdinc.h	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/stdinc.h	2019-06-23 09:36:39.000000000 -0400
+@@ -29,6 +29,7 @@
+ // Some versions of GMP do not define gmp_fprintf unless cstdio is
+ // included first, so we have to include it here.
+ #include <cstdio>
++#include <cstddef>
+ 
+ #include <gmp.h>
+ #include <gmpxx.h>
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/test/internal/runtests frobby_v0.9.0/test/internal/runtests
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/test/internal/runtests	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/test/internal/runtests	2019-06-23 09:36:39.000000000 -0400
+@@ -7,6 +7,6 @@
+ fi
+ 
+ $frobby test 2> /dev/null > /dev/null
+-if [ $? == 0 ]; then exit 0; fi
++if [ $? = 0 ]; then exit 0; fi
+ echo "*** Internal test failed, rerunning tests with output ***"
+ $frobby test
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/test/messages/runtest frobby_v0.9.0/test/messages/runtest
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/test/messages/runtest	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/test/messages/runtest	2019-06-23 09:36:38.000000000 -0400
 @@ -9,7 +9,7 @@
  action="$1"
  shift
@@ -32,9 +263,9 @@ diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac
  echo "$1" > $tmpFile
  shift
  
-diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test frobby_v0.9.0/test/testScripts/run_euler_test
---- /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test	2011-09-23 15:09:13.000000000 -0500
-+++ frobby_v0.9.0/test/testScripts/run_euler_test	2013-04-21 15:00:54.000000000 -0500
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test frobby_v0.9.0/test/testScripts/run_euler_test
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test	2011-09-23 16:09:13.000000000 -0400
++++ frobby_v0.9.0/test/testScripts/run_euler_test	2019-06-23 09:36:38.000000000 -0400
 @@ -3,9 +3,9 @@
  frobby=../../bin/frobby
  testhelper=../testScripts/testhelper
@@ -48,9 +279,9 @@ diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac
  genPivots="rarevar popvar maxsupp minsupp any random rarest raremax"
  stdPivots="popvar rarevar popgcd any random"
  shift
-diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/testhelper frobby_v0.9.0/test/testScripts/testhelper
---- /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/testhelper	2011-09-23 15:09:13.000000000 -0500
-+++ frobby_v0.9.0/test/testScripts/testhelper	2013-04-21 15:00:54.000000000 -0500
+diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/testhelper frobby_v0.9.0/test/testScripts/testhelper
+--- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/gallium-master/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/testhelper	2011-09-23 16:09:13.000000000 -0400
++++ frobby_v0.9.0/test/testScripts/testhelper	2019-06-23 09:36:39.000000000 -0400
 @@ -57,10 +57,10 @@
  
  origParams="$*" # used for debug output below
@@ -65,16 +296,4 @@ diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac
 +frobbyChangedInput="./frobbyTestScriptTemporary_standardInput"
  
  frobby="$origFrobby"
- frobbyOut="$origFrobbyOut"
-diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/StatisticsStrategy.cpp frobby_v0.9.0/src/StatisticsStrategy.cpp
---- /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/StatisticsStrategy.cpp	2011-09-23 16:09:12.000000000 -0400
-+++ frobby_v0.9.0/src/StatisticsStrategy.cpp	2013-05-18 17:22:09.000000000 -0400
-@@ -140,7 +140,7 @@
-   if (_nodeCount == 0)
-     return 0.0;
-   else {
--    mpz_class q = mpq_class(_subGenSum) / _nodeCount;
-+    mpq_class q = mpq_class(_subGenSum) / _nodeCount;
-     return q.get_d();
-   }
- }
+ frobbyOut="$origFrobbyOut"d

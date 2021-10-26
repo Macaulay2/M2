@@ -63,7 +63,7 @@ document {
      "Graded modules:",
      UL {
 	  TO basis,
-	  TO truncate,
+	  TO "Truncations::truncate(ZZ,Module)",
 	  TO (degree, Module),
 	  TO (genera, Module),
 	  TO (hilbertSeries, Module),
@@ -74,9 +74,9 @@ document {
      "Annihilators, quotients and Gröbner bases:",
      UL {
 	  TO (gb, Module),
-	  TO (symbol :, Module, Ideal),
-	  TO (annihilator, Module),
-	  TO (saturate, Module, Ideal),
+	  TO "Saturation::Ideal : Ideal",
+	  TO "Saturation::annihilator(Module)",
+	  TO "Saturation::saturate(Module,Ideal)",
 	  },
      "Common homological computations:",
      UL {
@@ -118,6 +118,7 @@ document {
 	  -- Mike wanted this: TO "tensor products of modules",
 	  -- Mike wanted this: TO "Hom modules and homomorphisms",
 	  -- Mike wanted this: TO "annihilators and submodule quotients",
+	  TO "Saturation :: module quotients, saturation, and annihilator",
 
 	  "graded modules",
 	  TO "Hilbert functions and free resolutions",
@@ -465,7 +466,7 @@ document {
 	  "target F == R^1",
 	  "matrix F"
 	  },
-     "Macaulay2 also does not check that the homomorphism is well-defined
+     "Macaulay2 also does not check that the homomorphism is well defined
      (i.e. the relations of the source map into the relations of the target).
      Use ", TO isWellDefined, " to check.  This generally requires a Gröbner
      basis computation (which is performed automatically, if it is required
@@ -482,12 +483,12 @@ document {
      TO (symbol//,Matrix,Matrix), ".
      In order to do this, we need the inclusion map of ", TT "M", 
      " into ", TT "R^1", ".",
-     {*
+     -*
      -- Mike wanted this: 
      "  We explain these canonical maps
      more thoroughly in ", TO "canonical maps between modules", ", 
      but for now we just write down the inclusion map.",
-     *}
+     *-
      EXAMPLE {
 	  "inc = inducedMap(R^1, M)"
 	  },
@@ -499,7 +500,7 @@ document {
 	  "target G == M and source G == M",
 	  "inc * G == F"
 	  },
-     "Let's make sure that this map ", TT "G", " is welldefined.",
+     "Let's make sure that this map ", TT "G", " is well defined.",
      EXAMPLE {
 	  "isWellDefined G",
 	  "isIsomorphism G",
@@ -518,13 +519,13 @@ document {
 	  }
      }
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "canonical maps between modules",
      Headline => "empty"
      }
-*}
+*-
 
 document {
      -- old??
@@ -554,7 +555,7 @@ document {
 --	  }
      }
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "direct sums of modules",
@@ -562,17 +563,17 @@ document {
      "
      "
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "tensor products of modules",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "Hom modules and homomorphisms",
@@ -591,16 +592,8 @@ target f
      syz transpose matrix f
      ///
 }
-*}
+*-
 
-
-{*
--- Mike wanted this: 
-document {
-     Key => "annihilators and submodule quotients",
-     Headline => "empty",
-     }
-*}
 
 document {
      Key => "Hilbert functions and free resolutions",
@@ -631,7 +624,7 @@ document {
 	  },
      "The last number in the list of genera is the degree minus one.  The second to last
      number is the genus of the generic linear section curve, ..., and the first
-     number is the arithmetic genus",
+     number is the arithmetic genus.",
      SUBSECTION "the Hilbert series",
      "The Hilbert series (", TO (hilbertSeries, Module), ") of ", TT "M", " is by definition the formal power series ",
      TT "H(t) = sum(d in ZZ) dim(M_d) t^d", ".  This is a rational function with 
@@ -675,45 +668,45 @@ document {
      of the maps ", TT "CC.d_1, CC.d_3, CC.d_4", " are all linear."
      }
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "degrees of elements and free modules",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "degree and multiplicity of a module",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "Hilbert functions and polynomials",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "homogenization",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "truncation and homogeneous components of a graded module",
      Headline => "empty",
      }
-*}
+*-
 
 document {
      Key => "exterior power of a module",
@@ -739,45 +732,45 @@ document {
 	SeeAlso => "exterior power of a matrix"
      }
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "Fitting ideals",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "adjoints of maps",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "Ext and Tor",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "local cohomology",
      Headline => "empty",
      }
-*}
+*-
 
-{*
+-*
 -- Mike wanted this: 
 document {
      Key => "is a module Cohen-Macaulay?",
      Headline => "empty",
      }
-*}
+*-
 
 -- one link (in this file) to this node
 document {
@@ -820,48 +813,18 @@ document {
 
 -- no links to this node
 document {
-     Key => "annihilator of a module",
-     "The annihilator of a module M over a ring R, ann(M) = { f in R | fM = 0 }, is computed
-     using the ", TO "annihilator", " function.",
-     EXAMPLE {
-	  "R = QQ[a..i];",
-	  "M = cokernel genericMatrix(R,a,3,3)",
-	  "annihilator M"
-	  },
-     "You may also use the abbreviation ", TO "ann",
-     EXAMPLE {
-	  "ann (M/(a*M))"
-	  }
-     }
-
--- no links to this node
-document {
      Key => "information about a map of modules",
      "usual information: source, target, ring.",
      }
 
 -- no links to this node
-{* -- Mike wanted this: 
+-* -- Mike wanted this: 
 document {
      Key => "kernel, cokernel and image of a map of modules",
      }
-*}
+*-
 
--- no links to this node
-document {
-     Key => "what is a subquotient module?",
-     "There are two basic types of modules over a ring R: submodules of R^n
-     and quotients of R^n.  Macaulay2's notion of a module includes both
-     of these.  Macaulay2 represents every module as a quotient image(f)/image(g),
-     where f and g are both homomorphisms from free modules to F: f : F --> G and g : H --> G.
-     The columns of f represent the generators of ", TT "M", ", and the columns of g represent the relations of the module M.",
-     EXAMPLE {
-	  "R = ZZ/32003[a,b,c,d,e];",
-	  },
-     "Include here: generators, relations."
-     }
-
-{* -- Mike wanted this: 
+-* -- Mike wanted this: 
 
 -- no links to this node
 document {
@@ -883,5 +846,4 @@ document {
 document {
      Key => "Hom module",
      }
-*}
-
+*-

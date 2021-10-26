@@ -15,28 +15,28 @@ class SolvableAlgebra : public PolyRing
                                  const Monoid *M,
                                  const Matrix *Q);
 
-protected:
+ protected:
   bool initialize_solvable(const Matrix *Q);
   SolvableAlgebra() {}
   virtual ~SolvableAlgebra();
 
-public:
-  static SolvableAlgebra *create(const PolynomialRing *R,
-                                 const Matrix *Q);
+ public:
+  static SolvableAlgebra *create(const PolynomialRing *R, const Matrix *Q);
 
   virtual bool is_commutative_ring() const { return false; }
   virtual bool is_solvable_algebra() const { return true; }
-
-  virtual const SolvableAlgebra * cast_to_SolvableAlgebra()  const      { return this; }
-  virtual       SolvableAlgebra * cast_to_SolvableAlgebra()             { return this; }
-
-  virtual ring_elem power(const ring_elem f, mpz_t n) const;
+  virtual const SolvableAlgebra *cast_to_SolvableAlgebra() const
+  {
+    return this;
+  }
+  virtual SolvableAlgebra *cast_to_SolvableAlgebra() { return this; }
+  virtual ring_elem power(const ring_elem f, mpz_srcptr n) const;
   virtual ring_elem power(const ring_elem f, int n) const;
 
-public:
+ public:
   virtual ring_elem mult_by_term(const ring_elem f,
-                                     const ring_elem c,
-                                     const int *m) const;
+                                 const ring_elem c,
+                                 const int *m) const;
 };
 #endif
 

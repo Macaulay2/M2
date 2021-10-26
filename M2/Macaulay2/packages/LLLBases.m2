@@ -3,7 +3,8 @@ newPackage("LLLBases",
      Version => "1.1", 
      Date => "July 7, 2005",
      Authors => {{Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}},
-     Headline => "a package for computing Lenstra-Lenstra-Lovasz bases",
+     Headline => "Lenstra-Lenstra-Lovasz bases",
+     Keywords => {"Algebraic Number Theory", "Linear Algebra"},
      DebuggingMode => false
      )
 
@@ -754,9 +755,11 @@ gcdLLL List := options -> (s) -> (
      then bgcdLLL(s,options.Threshold)
      else agcdLLL(s,options.Threshold))
 
-addHook(Module, symbol resolution, (o,M) -> if ring M === ZZ then break chainComplex compress LLL presentation M)
+addHook((resolution, Module), Strategy => symbol LLL,
+    (o,M) -> if ring M === ZZ then chainComplex compress LLL presentation M)
 
-addHook(Module, symbol minimalPresentation, (o,M) -> (
+addHook((minimalPresentation, Module), Strategy => symbol LLL,
+    (o, M) -> (
 	  return null;					    -- this routine isn't correct yet -- it only partially minimizes; we could use this for trim and improve it for this
 	  R := ring M;
 	  if R === ZZ then (
@@ -963,7 +966,7 @@ document {
   	  "RealFP -- double",
   	  "RealQP -- quad_float (quasi quadruple precision)
              useful when roundoff errors can cause problems",
-	  "RealQP1 -- only availabel in the BKZ variant, uses
+	  "RealQP1 -- only available in the BKZ variant, uses
 	     double precision for the search phase of the BKZ
 	     reduction, and quad_float for the orthogonalization",
   	  "RealXD -- xdouble (extended exponent doubles)
@@ -1121,7 +1124,7 @@ document {
      Key => CohenEngine,
      Headline => "use the original Macaulay2 LLL algorithm",
      TT "CohenEngine", " -- a strategy value for ", TO [LLL,Strategy], " used to specify
-     that the all-integer LLL algortithm from H.Cohen's book (with improvements
+     that the all-integer LLL algorithm from H.Cohen's book (with improvements
 	  by Euchner and Schnorr) should be used.  This is basically the same 
      algorithm as ", TT "Strategy=>NTL", ", but is often outperformed by that
      algorithm."
@@ -1130,7 +1133,7 @@ document {
      Key => CohenTopLevel,
      Headline => "use the Macaulay2 language LLL algorithm",
      TT "CohenTopLevel", " -- a strategy value for ", TO [LLL,Strategy], " used to specify
-     that the all-integer LLL algortithm from H.Cohen's book (with improvements
+     that the all-integer LLL algorithm from H.Cohen's book (with improvements
 	  by Euchner and Schnorr) should be used, as coded in the front-end of Macaulay2.  
      This is basically the same 
      algorithm as ", TT "Strategy=>CohenEngine", ", but is written at top level, so that 
@@ -1348,13 +1351,73 @@ TEST ///
     time LLL m1;  -- .76 sec 44.9 seconds (front-end implementation), Quality of output is higher still
     time LLL(m1, Strategy=>CohenEngine); -- 
     time LLL(m1, Strategy=>CohenTopLevel); -- 
-    -- time LLL(m1, Strategy=>{BKZ,RealFP}); -- too long
+    time LLL(m1, Strategy=>{BKZ,RealFP}); -- 
+    time LLL(m, Strategy=>{BKZ,RealFP}); --
+    --time LLL(m, Strategy=>{BKZ,RealRR}); -- 4.9 sec (in 2015)
+    time LLL(m); 
+
+    assert isLLL (a = time LLL(m, Strategy=>NTL))
+    assert isLLL (a = time LLL(m, Strategy=>CohenEngine))
+    assert isLLL (a = time LLL(m, Strategy=>CohenTopLevel))
     
-    -- time LLL(m, Strategy=>{BKZ,RealFP}); -- too long
-    -- time LLL(m, Strategy=>{BKZ,RealRR}); -- too long
-    time LLL(m);    
+    assert isLLL (a = time LLL(m, Strategy=>RealFP))
+    assert isLLL (a = time LLL(m, Strategy=>RealQP))
+    assert isLLL (a = time LLL(m, Strategy=>RealXD))
+    assert isLLL (a = time LLL(m, Strategy=>RealRR)) -- many times slower than all other variants
+
+    assert isLLL (a = time LLL(m, Strategy=>{Givens,RealFP}))
+    assert isLLL (a = time LLL(m, Strategy=>{Givens,RealQP}))
+    assert isLLL (a = time LLL(m, Strategy=>{Givens,RealXD}))
+    --assert isLLL (a = time LLL(m, Strategy=>{Givens,RealRR})) -- really slow
+
+    assert isLLL (a = time LLL(m, Strategy=>{BKZ,Givens,RealFP}))
+    assert isLLL (a = time LLL(m, Strategy=>{BKZ,Givens,RealQP}))
+    assert isLLL (a = time LLL(m, Strategy=>{BKZ,Givens,RealQP1}))    
+    assert isLLL (a = time LLL(m, Strategy=>{BKZ,Givens,RealXD}))
+    --assert isLLL (a = time LLL(m, Strategy=>{BKZ,Givens,RealRR})) -- too slow
+
+    assert isLLL (a = time LLL(m, Strategy=>{BKZ,RealFP}))
+    assert isLLL (a = time LLL(m, Strategy=>{BKZ,RealQP}))
+    assert isLLL (a = time LLL(m, Strategy=>{BKZ,RealQP1}))    
+    assert isLLL (a = time LLL(m, Strategy=>{BKZ,RealXD}))
+    --assert isLLL (a = time LLL(m, Strategy=>{BKZ,RealRR})) -- too slow
 ///
 
+TEST ///
+  -- trivial and edge cases
+  m = random(ZZ^0, ZZ^5)
+  a = LLL m
+  assert(numRows a == 0)
+  --assert(numColumns a == 0) -- what is the correct value here?
+  assert(a == 0)  
+
+  m = random(ZZ^5, ZZ^0)
+  a = LLL m
+  assert(numRows a == 5)
+  assert(numColumns a == 0) -- no, what is the correct value here?
+  assert(a == 0)
+
+  m = matrix{{1}}  
+  a = LLL m
+  assert (a == m)
+///
+TEST ///
+    setRandomSeed 0
+    m0 = random(ZZ^20, ZZ^30, Height=>100000)
+    m1 = syz m0;
+    m = m1;
+
+    setRandomSeed 0
+    m0 = random(ZZ^40, ZZ^50, Height=>10000)
+    m1 = syz m0;
+    m2 = kernelLLL m0;
+    m = m1;
+    m = m2;
+
+    time LLL(m1);
+    ---time LLL(m1, Strategy=>fpLLL);
+    -- TODO: run these on all variants that work
+///
 
 -------------------
 -- hermite -----

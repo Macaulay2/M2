@@ -1,0 +1,55 @@
+--- NEAR FUTURE ---
+engine track:
+
+  DMat submatrix operations
+  (A,B are submatrices given by a rectangular window; c is a scalar) 
+    set_zero(A), copy i.e. A=B, A+=B, 
+    A *= c 
+    A = c*B
+    A += c*B 
+  )
+  MatOps vs MatrixOps???  
+
+
+adaptive precision:
+
+  proposed heuristic? if (log(cond number) + log(rel.error) + safety bits?) > precision then status =  INCREASE_PRECISION
+                      decide when to decrease?  
+
+  mechanism: (1) engine returns with a flag "increase/decrease" precision
+             (2) M2 code decides what to do: 
+                 for example, the current approximation for x gets promoted to CC_prec where prec is new precision 
+              	 also, create a (rawEvaluatorK?) evaluator for the homotopy with the new precision 
+
+
+--- ISSUES ---
+
+Normalize=>true: is probably a good default for the blackbox... but causes checks to fail in NumericalSchubertCalculus
+
+movePoints: fails if the new points are not regular -- there should be a blackbox combining endgame/refine before this is fixed
+
+isSolution?
+
+isOn: merge two versions?
+
+numericalIntersection: need to handle witness sets with ProjectionDimension key
+
+engine track: problem with the origin (change handling relative error tolerance, see witness-set examples)
+
+NAGtrace: separate "progress update" from other "talk"?
+
+hypersurfaceSection does not remove junk
+
+numericalIrreducibleDecomposition fails on a singular point: e.g., ideal(x_1^2,x_2^2,x_3^3)
+
+movePoints should take a list of Points
+
+deflation needs work
+
+points WitnessSet -- should return list of Points not list of lists (check if external packages use it)
+
+decompose -- still not robust for nonreduced components 
+
+---functions that we may forget---
+
+segmentHomotopyProjective

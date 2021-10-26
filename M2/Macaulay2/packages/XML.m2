@@ -3,8 +3,9 @@
 newPackage("XML",
     	Version => "1.1", 
     	Date => "September 1, 2010",
-    	Authors => {{Name => "Dan Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}},
+    	Authors => {{Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}},
     	Headline => "an XML parser",
+	Keywords => {"Miscellaneous"},
     	DebuggingMode => false)
 export {
      "XMLnode", "tag", "children", "parse", "toXMLnode", "Trim", "toLibxmlNode",
@@ -12,7 +13,7 @@ export {
      }
 scan(pairs Core#"private dictionary", (k,v) -> if match("^(Lib)?xml[A-Z]",k) then (
 	  XML#"private dictionary"#k = v;
-	  export v))
+	  export k))
 
 xmlTypeTable = new HashTable from xmlTypes()
 xmlTypeIndex = new HashTable from apply(xmlTypes(),(a,b) -> (b,a))
@@ -665,7 +666,7 @@ undocumented {
   (net,XMLnode)
   }
 
-{*
+-*
 generateAssertions ///
 x = parse ////<foo a="hi there">ho there<bar/></foo>////
 #x
@@ -676,7 +677,7 @@ y = x.children#1;
 #y
 y.tag
 ///
-*}
+*-
 
 TEST ///
      x = parse ////<foo a="hi there">ho there<bar/></foo>////

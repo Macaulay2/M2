@@ -19,54 +19,53 @@ struct gm_elem : public our_new_delete
     @ingroup gb
 
     @brief Gaussian elimination class.  To be rewritten.
-    
-    This class provides very slow Gaussian elimination functionality, and also only over
+
+    This class provides very slow Gaussian elimination functionality, and also
+   only over
     (exact) fields.
 */
 class GaussElimComputation : public GBComputation
 {
-private:
+ private:
   int row;
-  gm_elem **reduce_list;        // One list for each row
-  gm_elem **gb_list;            // The GB elem (if any) with the given row index
-                                // as lead term.
+  gm_elem **reduce_list;  // One list for each row
+  gm_elem **gb_list;      // The GB elem (if any) with the given row index
+                          // as lead term.
 
-  const Ring *R;                // Ring of 'gens'.  Should be a field.
-  const Matrix *gens;           // This is the input
+  const Ring *R;       // Ring of 'gens'.  Should be a field.
+  const Matrix *gens;  // This is the input
   const FreeModule *Fsyz;
   VECTOR(vec) syz_list;
 
   int n_gb;
   int n_pairs, n_syz;
 
-  int collect_syz;      // 0 or 1
+  int collect_syz;  // 0 or 1
   int n_comps_per_syz;
 
-private:
+ private:
   gm_elem *new_gen(int i);
   void remove_gm_elem(gm_elem *&p);
   void insert(gm_elem *p);
 
   void reduce(gm_elem *&p, gm_elem *q);
-  void reduce(vec &f, vec &fsyz, bool tail_only=false);
+  void reduce(vec &f, vec &fsyz, bool tail_only = false);
   void reduce(vec &f);
-protected:
-  virtual bool stop_conditions_ok() { return true; }
 
-public:
+ protected:
+  virtual bool stop_conditions_ok() { return true; }
+ public:
   // An honest GB computation
   GaussElimComputation(const Matrix *m, int collect_syz, int n_syz);
   ~GaussElimComputation();
 
   virtual void remove_gb() {}
-
   virtual void start_computation();
 
   virtual int complete_thru_degree() const;
   // The computation is complete up through this degree.
 
-  virtual const Ring * get_ring() const { return R; }
-
+  virtual const Ring *get_ring() const { return R; }
   ////////////////////////////////
   // Results of the computation //
   ////////////////////////////////
@@ -87,8 +86,8 @@ public:
   virtual const Matrix /* or null */ *matrix_remainder(const Matrix *m);
 
   virtual M2_bool matrix_lift(const Matrix *m,
-                           const Matrix /* or null */ **result_remainder,
-                           const Matrix /* or null */ **result_quotient);
+                              const Matrix /* or null */ **result_remainder,
+                              const Matrix /* or null */ **result_quotient);
 
   virtual int contains(const Matrix *m);
 

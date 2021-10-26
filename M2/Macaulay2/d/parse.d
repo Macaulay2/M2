@@ -28,7 +28,6 @@ use varnets;
 use strings1;
 use stdio0;
 use stdiop0;
-use atomic;
 use pthread0;
 
 
@@ -74,7 +73,7 @@ export Word := {		-- a word, one for each name made by makeUniqueWord()
      };
 export Symbol := {		    -- symbol table entry for a symbol
      word:Word,			    --   the word
-     hash:int,			    --   just a counter, unique, unchanging
+     hash:int,			    --   based on the hash code of word, unchanging
      position:Position,	    	    --   the position where the definition was made
      unary:unop,
      postfix:unop,
@@ -85,7 +84,8 @@ export Symbol := {		    -- symbol table entry for a symbol
      lookupCount:int,		    -- number of times looked up
      Protected:bool,	            -- whether protected against assignment by the user
      flagLookup:bool,		    -- whether to warn when symbol is used
-     thread:bool		    -- whether to use threadFrame instead of globalFrame
+     thread:bool,		    -- whether to use threadFrame instead of globalFrame
+     serialNumber:int		    -- a counter, used to tell the age for the Serialization package
      };
 export SymbolListCell := {word:Word, entry:Symbol, next:SymbolList};
 export SymbolList := null or SymbolListCell;
@@ -225,13 +225,14 @@ export newFromCode   := {+newClause:Code,fromClause:Code,position:Position};
 export newOfCode     := {+newClause:Code,ofClause:Code,position:Position};
 export newCode       := {+newClause:Code,position:Position};
 
-export CodeSequence := tarray(Code);
-export sequenceCode := {+x:CodeSequence, position:Position};
-export listCode     := {+y:CodeSequence, position:Position};
-export arrayCode    := {+z:CodeSequence, position:Position};
-export semiCode     := {+w:CodeSequence, position:Position};
-export multaryCode := {+f:multop, args:CodeSequence, position:Position};
-export forCode := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
+export CodeSequence     := tarray(Code);
+export sequenceCode     := {+x:CodeSequence, position:Position};
+export listCode         := {+y:CodeSequence, position:Position};
+export arrayCode        := {+z:CodeSequence, position:Position};
+export angleBarListCode := {+t:CodeSequence, position:Position};
+export semiCode         := {+w:CodeSequence, position:Position};
+export multaryCode      := {+f:multop, args:CodeSequence, position:Position};
+export forCode          := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
 
 export newLocalFrameCode := {+
      frameID:int,
@@ -258,7 +259,7 @@ export Code := (
      or globalSymbolClosureCode or threadSymbolClosureCode or localSymbolClosureCode
      or parallelAssignmentCode 
      or unaryCode or binaryCode or ternaryCode or multaryCode or forCode
-     or sequenceCode or listCode or arrayCode or semiCode
+     or sequenceCode or listCode or arrayCode or angleBarListCode or semiCode
      or newCode or newFromCode or newOfCode or newOfFromCode
      or whileDoCode or whileListCode or whileListDoCode
      or ifCode or tryCode or adjacentCode or functionCode or catchCode
@@ -355,6 +356,7 @@ export pythonObjectCell := {+v:pythonObject};
 
 export TaskCellBody := {+
      hash:int,
+     serialNumber:int,
      task:taskPointer, resultRetrieved:bool,
      fun:Expr, arg:Expr, returnValue:Expr  };
 export TaskCell := {+ body:TaskCellBody };
@@ -363,6 +365,7 @@ export TaskCell := {+ body:TaskCellBody };
 export Expr := (
      CCcell or
      RRcell or
+     RRicell or
      Boolean or
      CodeClosure or
      CompiledFunction or
@@ -388,8 +391,15 @@ export Expr := (
      RawMonomialIdealCell or
      RawMonomialOrderingCell or
      RawMutableMatrixCell or
+     RawMutableComplexCell or
+     -- NAG begin
+     RawHomotopyCell or
+     RawSLEvaluatorCell or
+     RawSLProgramCell or
      RawStraightLineProgramCell or
      RawPathTrackerCell or
+     RawPointArrayCell or
+     -- NAG end
      RawRingCell or
      RawRingElementCell or
      RawRingMapCell or
@@ -415,6 +425,10 @@ export True := Expr(Boolean(true));	  -- don't make new ones!
 export False := Expr(Boolean(false));	  -- use toExpr instead
 --Conversion from C boolean value to Expression
 export toExpr(v:bool):Expr := if v then True else False;
+
+export zeroE := Expr(zeroZZcell);
+export  oneE := Expr( oneZZcell);
+export  minusoneE := Expr( minusoneZZcell);
 
 --Internal "null" expressions that should never be visible to user
 export nullE := Expr(Nothing());
@@ -450,9 +464,12 @@ export HashTable := {+
      mutex:SpinLock
      };
 
---This unfortunately needs to be here as it references Hash Tabe which needs expr.  
+--This unfortunately needs to be here as it references Hash Table which needs expr.  
 
 export m2cfile := Pointer "struct M2File*";	
+
+-- TODO: note: Excessive padding in 'struct parse_file_struct' (34 padding bytes, where 2 is optimal).
+-- Optimal fields order: filename, errorMessage, inbuffer, prompt, reward, unsyncOutputState, cfile, threadSyncMutex, hash, pid, listenerfd, connection, numconns, infd, inindex, insize, echoindex, outfd, type_, error, listener, input, inisatty, eof, promptq, fulllines, bol, echo, readline, output, outisatty, consider reordering the fields or adding explicit padding members
 
 export file := {+
         -- general stuff
@@ -487,7 +504,7 @@ export file := {+
 	outfd:int,		-- file descriptor or -1
         outisatty:bool,
 	unsyncOutputState:fileOutputSyncState, -- default sync state to use for unsync output
-	 -- Mutex for syncronization and for buffering 
+	 -- Mutex for synchronization and for buffering 
 	 -- Lock before output in sync output mode
 	threadSyncMutex:ThreadMutex,
 	-- C structure for this file that provides for thread support

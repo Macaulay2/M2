@@ -3,14 +3,16 @@
 --- notes: include example?
 
 document { 
-     Key => {tanh, (tanh,CC),(tanh,ZZ),(tanh,RR),(tanh, QQ)},
+     Key => {tanh, (tanh,CC),(tanh,ZZ),(tanh,RR),(tanh, QQ),(tanh, RRi)},
      Headline => "compute the hyperbolic tangent",
-     Usage => "tanh x",
+     Usage => "tanh x\ntanh I",
      Inputs => { 
-	  "x" => RR 
+	  "x" => RR,
+      "I" => RRi
 	  },
      Outputs => { 
-	  RR => { "the hyperbolic tangent of ", TT "x" } 
+	  RR => { "the hyperbolic tangent of ", TT "x" },
+      RRi => { "an interval containing the hyerbolic tangents of the points of ", TT "I" }
 	  }
 --     EXAMPLE {
 --	  }

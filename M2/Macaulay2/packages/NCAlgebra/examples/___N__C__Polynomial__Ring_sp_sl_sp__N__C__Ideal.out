@@ -1,0 +1,70 @@
+-- -*- M2-comint -*- hash: -63744996
+
+i1 : A = QQ{x,y,z}
+
+o1 = A
+
+o1 : NCPolynomialRing
+
+i2 : f = y*z + z*y - x^2
+
+            2
+o2 = zy+yz-x
+
+o2 : A
+
+i3 : g = x*z + z*x - y^2
+
+         2
+o3 = zx-y +xz
+
+o3 : A
+
+i4 : h = z^2 - x*y - y*x
+
+      2
+o4 = z -yx-xy
+
+o4 : A
+
+i5 : I=ncIdeal{f,g,h}
+
+                             2      2      2
+o5 = Two-sided ideal {zy+yz-x , zx-y +xz, z -yx-xy}
+
+o5 : NCIdeal
+
+i6 : B = A/I
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o6 = B
+
+o6 : NCQuotientRing
+
+i7 : z^2
+
+o7 = yx+xy
+
+o7 : B
+
+i8 : R = toField(QQ[a]/ideal(a^4+a^3+a^2+a+1))
+
+o8 = R
+
+o8 : PolynomialRing
+
+i9 : C = skewPolynomialRing(R,a,{x,y,z})
+
+o9 = C
+
+o9 : NCQuotientRing
+
+i10 : y*x
+
+          3    2
+o10 = (- a  - a  - a - 1)xy
+
+o10 : C
+
+i11 : 

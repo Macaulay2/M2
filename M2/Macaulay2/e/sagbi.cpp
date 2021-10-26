@@ -4,7 +4,8 @@
 #include "sagbi.hpp"
 #include "matrix-con.hpp"
 
-ring_elem sagbi::subduct(const PolyRing *R,
+ring_elem sagbi::subduct(int numslots,
+                         const PolyRing *R,
                          ring_elem a,
                          const RingMap *phi,
                          GBComputation *J)
@@ -12,27 +13,27 @@ ring_elem sagbi::subduct(const PolyRing *R,
   Nterm *f = a;
   Nterm head;
   Nterm *result = &head;
-  MatrixConstructor mat(R->make_FreeModule(1),1);
+  MatrixConstructor mat(R->make_FreeModule(1), 1);
 
   while (f != NULL)
     {
-      Nterm * g = f;
+      Nterm *g = f;
       f = f->next;
       g->next = NULL;
 
-      mat.set_entry(0,0,g);
+      mat.set_entry(0, 0, g);
       Matrix *m = mat.to_matrix();
       const Matrix *n = J->matrix_remainder(m);
-      ring_elem g1 = n->elem(0,0);
+      ring_elem g1 = n->elem(0, 0);
       delete m;
       delete n;
 
       // Is g1 a monomial in the new variables?
-      if (R->in_subring(1,g1))
+      if (R->in_subring(numslots, g1))
         {
           g->next = f;
           f = g;
-          ring_elem phi_g1 = R->eval(phi,g1,0);
+          ring_elem phi_g1 = R->eval(phi, g1, 0);
           ring_elem fr = f;
           R->internal_subtract_to(fr, phi_g1);
           f = fr;
@@ -48,9 +49,7 @@ ring_elem sagbi::subduct(const PolyRing *R,
   return head.next;
 }
 
-Matrix *sagbi::subduct(const Matrix *m,
-                       const RingMap *phi,
-                       GBComputation *J)
+Matrix *sagbi::subduct(int numparts, const Matrix *m, const RingMap *phi, GBComputation *J)
 {
   MatrixConstructor result(m->rows(), m->cols());
   const PolyRing *R = m->get_ring()->cast_to_PolyRing();
@@ -59,15 +58,15 @@ Matrix *sagbi::subduct(const Matrix *m,
       ERROR("expected polynomial ring");
       return 0;
     }
-  for (int i=0; i<m->n_cols(); i++)
+  int nslots = R->getMonoid()->n_slots(numparts);
+  for (int i = 0; i < m->n_cols(); i++)
     {
-      ring_elem a = m->elem(0,i);
-      ring_elem b = subduct(R, R->copy(a), phi, J);
-      result.set_entry(0,i,b);
+      ring_elem a = m->elem(0, i);
+      ring_elem b = subduct(nslots, R, R->copy(a), phi, J);
+      result.set_entry(0, i, b);
     }
   return result.to_matrix();
 }
-
 
 #ifdef DEVELOPMENT
 #warning "sagbi code commented out"
@@ -230,7 +229,7 @@ Matrix *sagbi::subduct(const Matrix *m,
 // //
 // //   // Extend the binomial ring
 // //
-// //   deleteitem(oldRS);
+// //   freemem(oldRS);
 // //
 // //   // Add the (xi - in(fi)) into this binomial comp.
 // // }
@@ -295,7 +294,7 @@ Matrix *sagbi::subduct(const Matrix *m,
 // //       if (Pending->lo_degree() < _current_degree)
 // //   _current_degree = Pending->lo_degree();
 // //
-// //       // At this point, the lowest degree occuring in 'Pending' should be
+// //       // At this point, the lowest degree occurring in 'Pending' should be
 // //       // added to the GB.
 // //       append_to_basis(Pending->take_matrix(_current_degree));
 // //

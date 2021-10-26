@@ -92,8 +92,8 @@ assert (Ediv^5 != 0)
 --but now the common curve they contain is a curve of degree d and genus
 --c*(c-1)/2.  Obviously we build this curve as a plane curve and re-embed it
 BB = base(r,s,t,c,d)
-P2 = projectiveSpace(2,BB)
-P3 = projectiveSpace(3,BB)
+P2 = abstractProjectiveSpace(2,BB)
+P3 = abstractProjectiveSpace(3,BB)
 C = sectionZeroLocus(OO_P2(c)) -- plane curve of degree c
 g = (c-1)*(c-2)/2 -- and its genus
  -- we map with degree d*c, but since d is a free variable, we can later replace

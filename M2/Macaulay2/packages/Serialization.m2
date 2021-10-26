@@ -5,6 +5,7 @@ newPackage (
 	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}
 	  },
      Version => "0.1",
+     Keywords => {"System"},
      Headline => "reversible conversion of all Macaulay2 objects to strings")
 
 -- this code is re-entrant
@@ -13,7 +14,7 @@ export { "serialize", "mark" }
 
 debug Core
     generatorSymbols' = generatorSymbols
-    waterMarkSymbol = symbol waterMark
+    waterMarkSymbol = symbol waterMark	 -- the last symbol defined in the Core
     Attributes' = Attributes
     setAttribute' = setAttribute
     getAttribute' = getAttribute
@@ -26,7 +27,7 @@ dictionaryPath = delete(Core#"private dictionary",dictionaryPath)
 w := x -> (scan(x,i -> assert (i =!= "")); x)
 
 mark = () -> (
-     waterMarkSymbol <- hash new MutableHashTable;
+     waterMarkSymbol <- serialNumber new MutableHashTable;
      )
 currentWaterMark = () -> value waterMarkSymbol
 
@@ -72,7 +73,7 @@ serialize = x -> (
 			 );
 		    code1#i = r | ":=" | t;
 		    );
-	       if hash x > currentWaterMark() and hasAttribute'(x,ReverseDictionary') then p getAttribute'(x,ReverseDictionary');
+	       if hasAttribute'(x,ReverseDictionary') then p getAttribute'(x,ReverseDictionary');
 	       if debugLevel > 0 then (
 		    stderr << "-- pp " << X << " ( " << f << " , " << x << ") returning " << r << endl;
 		    );
@@ -83,7 +84,7 @@ serialize = x -> (
 		    stderr << "-- qq " << X << " ( " << f << " , " << x << ")" << endl;
 		    );
 	       t := f x;
-	       if hash x > currentWaterMark() and hasAttribute'(x,ReverseDictionary') then (
+	       if hasAttribute'(x,ReverseDictionary') then (
 		    u := "globalAssignFunction(" | p getAttribute'(x,ReverseDictionary') | "," | p x | ")";
 		    if t === null then t = "";
 		    t = t | u;
@@ -95,7 +96,7 @@ serialize = x -> (
 	       ));
      pp(Thing, x -> (
 	       if mutable x then 
-	       if hash x < currentWaterMark() then 
+	       if serialNumber x < currentWaterMark() then 
 	       if hasAttribute'(x,ReverseDictionary')
 	       then toString getAttribute'(x,ReverseDictionary')
 	       else error "serialize: encountered an older mutable object not assigned to a global variable"
@@ -107,10 +108,10 @@ serialize = x -> (
 	       then toString getAttribute'(x,ReverseDictionary')
 	       else error "serialize: encountered a function not assigned to a global variable"));
      pp(Symbol, x -> (
-	       if value x =!= x and (hash x > currentWaterMark() or serializable#?x) then p value x;
+	       if value x =!= x and (serialNumber x > currentWaterMark() or serializable#?x) then p value x;
 	       "global " | toString x));
      qq(Symbol, x -> (
-	       if value x =!= x and (hash x > currentWaterMark() or serializable#?x)
+	       if value x =!= x and (serialNumber x > currentWaterMark() or serializable#?x)
 	       then (
 		    t := p x | "<-" | p value x;
 		    if hasAttribute'(x,ReverseDictionary')
@@ -133,29 +134,29 @@ serialize = x -> (
 	       then concatenate("newClass(", p class x,",", "hashTable {",between_"," apply(pairs x,(k,v) -> ("(",p k,",",p v,")")),"})" )
 	       else concatenate("hashTable {",between_"," apply(pairs x,(k,v) -> ("(",p k,",",p v,")")),"}" )));
      pp(MutableList, x -> (
-	       if hash x < currentWaterMark() and hasAttribute'(x,ReverseDictionary') then toString getAttribute'(x,ReverseDictionary')
+	       if serialNumber x < currentWaterMark() and hasAttribute'(x,ReverseDictionary') then toString getAttribute'(x,ReverseDictionary')
 	       else ( scan(x,p); "newClass(" | p class x | ",{})")));
      qq(MutableList, x -> (
-	       if hash x < currentWaterMark() and hasAttribute'(x,ReverseDictionary') then return;
+	       if serialNumber x < currentWaterMark() and hasAttribute'(x,ReverseDictionary') then return;
 	       if #x > 0 then concatenate between_"\n" w for i from 1 to #x list ( j := #x-i; px := p x ; px | "#" | toString j | "=" | p x#j )));
      pp(MutableHashTable, x -> (
-	       if hash x < currentWaterMark() and hasAttribute'(x,ReverseDictionary') then toString getAttribute'(x,ReverseDictionary')
+	       if serialNumber x < currentWaterMark() and hasAttribute'(x,ReverseDictionary') then toString getAttribute'(x,ReverseDictionary')
 	       else (
 		    scan(pairs x,(k,v) -> (p k; p v));
 		    if parent x =!= Nothing
 		    then "newClass(" | p class x | "," | p parent x | ",hashTable{})"
 		    else "newClass(" | p class x | ",hashTable{})")));
      qq(MutableHashTable, x -> (
-	       if hash x < currentWaterMark() and hasAttribute'(x,ReverseDictionary') then return;
+	       if serialNumber x < currentWaterMark() and hasAttribute'(x,ReverseDictionary') then return;
 	       if #x > 0 then concatenate between_"\n" w apply(pairs x,(k,v) -> (p x, "#", p k, "=", p v))
 	       ));
      pp(GlobalDictionary, x -> (
-	       if hash x < currentWaterMark() and hasAttribute'(x,ReverseDictionary') then toString getAttribute'(x,ReverseDictionary')
+	       if serialNumber x < currentWaterMark() and hasAttribute'(x,ReverseDictionary') then toString getAttribute'(x,ReverseDictionary')
 	       else (
 		    scan(pairs x,(k,v) -> (p k; p v; p value v));
 		    "new Dictionary")));
      qq(GlobalDictionary, x -> (
-	       if hash x < currentWaterMark() and hasAttribute'(x,ReverseDictionary') then return;
+	       if serialNumber x < currentWaterMark() and hasAttribute'(x,ReverseDictionary') then return;
 	       concatenate between_"\n" w apply(pairs x,(nam,sym) -> (p x, "#", format nam, "=", p sym))
 	       ));
      pp(Monoid, x -> toExternalString x);

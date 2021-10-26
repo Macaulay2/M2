@@ -1,0 +1,26 @@
+-- -*- M2-comint -*- hash: 1711309908
+
+i1 : B = skewPolynomialRing(QQ,(-1)_QQ, {a,b,c})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o1 = B
+
+o1 : NCQuotientRing
+
+i2 : envelopingAlgebra(B,v)
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o2 = QQ{a, b, c, v , v , v } / {ba+ab, ca+ac, cb+bc, v v +v v , v v +v v , v v +v v , v a-av , v a-av , v a-av , v b-bv } + More...
+                  0   1   2                           1 0  0 1   2 0  0 2   2 1  1 2   0    0   1    1   2    2   0    0
+
+o2 : NCQuotientRing
+
+i3 : 

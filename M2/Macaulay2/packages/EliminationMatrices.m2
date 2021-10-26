@@ -12,43 +12,45 @@ newPackage("EliminationMatrices",
 	     {Name => "Laurent Busé", Email => "Laurent.Buse@inria.fr", HomePage => "http://www-sop.inria.fr/members/Laurent.Buse/"},
 	     {Name => "Manuel Dubinsky", Email => "manudubinsky@gmail.com" }
 	     },
-   Headline => "Package for computing resultants",
+   Headline => "resultants",
+   Keywords => {"Commutative Algebra"},
+   PackageImports => { "Elimination" },
    DebuggingMode => false
    )
 
 export {
---	matrixToListByColumns,
---	matrixToListByRows,
---	rankNum,
-	maxCol,
-	maxMinor,
+--	"matrixToListByColumns",
+--	"matrixToListByRows",
+--	"rankNum",
+	"maxCol",
+	"maxMinor",
 -- MAIN FUNCTIONS
-	degHomPolMap,
-	listDetComplex,
-	detComplex,
-	mapsComplex,
-	minorsComplex,
---	degMap,
---	macRes,
-	macaulayFormula,
-	bezoutianMatrix,
---	ciRes,
-	ciResDeg,
-	ciResDegGH,
---	cm2Res,
---	detRes,
-	detResDeg,
---	rankNE,
-	symbol Numeric,
-	symbol Exact,
-	symbol Sylvester,
-	symbol Macaulay,
-	symbol CM2Residual,
-	symbol ciResidual,
-	symbol determinantal,
-	symbol byResolution,
-	eliminationMatrix,
-	regularityVar
+	"degHomPolMap",
+	"listDetComplex",
+	"detComplex",
+	"mapsComplex",
+	"minorsComplex",
+--	"degMap",
+--	"macRes",
+	"macaulayFormula",
+	"bezoutianMatrix",
+--	"ciRes",
+	"ciResDeg",
+	"ciResDegGH",
+--	"cm2Res",
+--	"detRes",
+	"detResDeg",
+--	"rankNE",
+	"Numeric",
+	"Exact",
+	"Sylvester",
+	"Macaulay",
+	"CM2Residual",
+	"ciResidual",
+	"determinantal",
+	"byResolution",
+	"eliminationMatrix",
+	"regularityVar"
 }
 
 
@@ -795,7 +797,7 @@ beginDocumentation()
 ---------------------------------------------------------------
 document {
 	Key => {EliminationMatrices},
-	Headline => "A package for computing resultants.",
+	Headline => "resultants",
 	
 	TT "EliminationMatrices", " is a package for elimination theory, emphasizing universal formulas, in particular, resultant computations.",
 	
@@ -813,9 +815,9 @@ document {
 
     PARA {}, "[BEM01] ", ITALIC "Laurent Busé, Mohamed Elkadi and Bernard Mourrain",", Resultant over the residual of a complete intersection, Journal of Pure and Applied Algebra 164 (2001), no. 1-2, 35–57.",
 
-    PARA {}, "[Bus01a] ", ITALIC "Laurent Busé",", Residual resultant over the projective plane and the implicitization problem, Internation Symposium on Symbolic and Algebraic Computing (ISSAC), ACM, (2001). Please, see the errata.pdf attached file., pp. 48–55.", 
+    PARA {}, "[Bus01a] ", ITALIC "Laurent Busé",", Residual resultant over the projective plane and the implicitization problem, International Symposium on Symbolic and Algebraic Computing (ISSAC), ACM, (2001). Please, see the errata.pdf attached file., pp. 48–55.", 
 
---    PARA {}, "[Bus01b] ", ITALIC "Laurent Busé",", Étude du resultant sur une variété algébrique. phd thesis. (2001) ", 
+--    PARA {}, "[Bus01b] ", ITALIC "Laurent Busé",", Étude du résultant sur une variété algébrique. phd thesis. (2001) ", 
 
     PARA {}, "[Bus04] ", ITALIC "Laurent Busé",", Resultants of determinantal varieties, J.Pure Appl. Algebra193 (2004), no.1-3, 71–97.", 
 
@@ -847,7 +849,7 @@ document {
 ------------------------ \ degHomPolMap / ------------------------
 document {
      	Key => {degHomPolMap, (degHomPolMap, Matrix, List, List, ZZ), (degHomPolMap, Matrix, List, ZZ)},
-	Headline => "given a subset of variables 'var' of the polynomial ring R, it returns the base of monomials on these variables, and the matrix of coefficients of a morphism of free modules f:R(d1)+...+R(dn)->R_d with respect to these variables",
+	Headline => "return the base of monomials in a subset of variables, and the matrix of coefficients of a morphism of free modules f:R(d1)+...+R(dn)->R_d with respect to these variables",
 	Usage => " coefAndMonomials = degHomPolMap(r, l, v, d)",
 
 	Inputs => {
@@ -936,7 +938,7 @@ document {
 
 document {
      	Key => {minorsComplex, (minorsComplex, ZZ, List, ChainComplex)},
-	Headline => "This function calculates some minors of the maps of a graded ChainComplex with respect to a subset of the variables of the polynomial ring in a fixed degree. The choice of the minors is according to the construction of the determinant of a complex",
+	Headline => "calculate some minors of the maps of a graded ChainComplex in a subset of variables and fixed degree",
 	Usage => " minorsOfTheComplex = minorsComplex(d,v,C)",
 
 	Inputs => {
@@ -948,7 +950,7 @@ document {
 		List => {"a list of square (full-rank) matrices"}
 	},
 
-	PARA {}, "This function calculates some minors of the maps of a graded ChainComplex with respect to a subset of the variables of the polynomial ring in a fixed degree.",
+	PARA {}, "This function calculates some minors of the maps of a graded ChainComplex with respect to a subset of the variables of the polynomial ring in a fixed degree. The choice of the minors is according to the construction of the determinant of a complex",
 	PARA {}, "The input ChainComplex needs to be an exact complex of free modules over a polynomial ring. The polynomial ring must contain the list ", TT "v", " as variables.",
 	PARA {}, "It is recommended not to defines rings as R=QQ[x,y][a,b,c] when the variables to eliminate are '{x,y}'. In this case, see ", TO "flattenRing", " for passing from ", TEX "$R=QQ[x,y][a,b,c]$", " to ", TEX "QQ[x,y,a,b,c].",
 	

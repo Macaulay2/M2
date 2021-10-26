@@ -1,0 +1,228 @@
+8 Dec 2017
+      talking: Mike and Mahrud
+
+Ring
+  PolynomialRing
+    FactorRing
+  FractionRing
+  
+
+
+    -----------------------------------------
+14 Nov 2013 
+Items to clean up
+- coeffrings.hpp: remove its use whenever possible
+- promote/eval/lift should be in aring-translate, not in specific classes
+-- Ring_RRR: remove this?
+
+------------------------------------------
+
+
+Roadmap of to do items, not in order of priority (yet)
+. random functions in aring classes should take an random object
+     needs to be called from C++, includes gmp, givaro, flint generators.
+. RingElement
+  make virtual
+  make ConcreteRing versions
+. promote/lift for ConcreteRings functional
+. inverse and divide in aring classes: return boolean
+. linear algebra interface in MatLinAlg.hpp: get interface the way we want it.
+. rewritten calls to lin alg in dmat or mat should be removed, changed to MatLinAlg routines.
+. what about lapack type routines?
+. what about associates (in Ring)?
+. what about remainderAndQuotient (in Ring)?
+. add in linear algebra and matrix mult routines for
+  ARingZZFlint
+  ARingQQFLint
+  what else?
+. Remove code in QQ and ZZ, and start using ConcreteRing<ARingZZGMP>, etc.
+. RR, CC, RRR, CCC: write arithmetic routines, and remove other implementations of these.
+. RR..CCC: add in linear algebra and mult routines.
+
+Matrices 
+  . Files:
+    mat.hpp -- defines the virtual base class for MutableMatrix
+    mutablemat.hpp -- defines the wrpper interface for DMat and SMat.  Subclass of MutableMatrix
+    x-mutablemat.cpp -- defines top level interface
+      e.g.: creating a mutable matrix, row and column ops, linear algebra routines, arithmetic
+    mat.cpp
+
+  . lower level files:
+    dmat.hpp
+      DenseMatrixDef.hpp         -- these files contain specialized ring versions if needed
+      DenseMatrixLinAlg.hpp
+      DenseMatrixArithmetic.hpp
+    smat.hpp
+      SparseMatrixDef.hpp
+      SparseMatrixLinAlg.hpp
+      SparseMatrixArithmetic.hpp
+    dmat-each-ring-type??
+
+  . change 
+    x-mutablemat + d/interface.dd:  
+      . change row and cols to size_t's (or unsigned long).  Prefer: size_t. (e.g. in row and col ops)
+    mat.hpp:
+      . no ringelem interfaces here!  Use RIngElement...
+         (will need to change in mutablemat.hpp too)
+
+    DenseMatrixDef:  make an iterator type?
+    SparseMatrixDef: same?           
+
+    . array() in dmat should not be visible.
+
+  . structure:
+    MatrixLinAlg<MT>::determinant, ::SVD, etc.
+    mat.cpp: e.g.: SVD: coerces all matrices, then calls MatrixLinAlg<MT>::SVD()
+       and for MutableMat<MT>, only ONE def of SVD, etc.
+
+    so for example, take SVD:
+    x-mutablemat.cpp: function to call M->SVD(...)
+    mat.hpp: abstract SVD
+    mutablemat.hpp: one def of SVD, which coerces matrices correctly, calls MatrixApproxLinAlg<MT>::SVD
+    MatrixApproxLinAlg<MT>::SVD:
+      one generic def ("not implemented")
+      redef for RRR, CCC (in .hpp file)
+        (Question: is this where the lapack interface code gets placed?)
+
+  a. make RR_53 ring with ElementType 'double'
+  b. same with CC_53?
+  c. DenseApproxLinAlg::SVD: take from lapack.cpp,
+    no need to copy matrices back and forth...
+    BUT: do need to resize matrices before call to lapack.
+
+--------More general----------------
+Dense matrices:
+
+. routines which resize matrices are not working (and giving large number of warning messages
+. test dense matrices:
+  . general routines in unit-tests for testing over any ring
+  . ZZ
+  . QQ
+  . other non-aring ring classes
+  . RRR  including lapack calls
+  . CCC  including lapack calls
+  . aring-ZZ-flint
+  . aring-ZZp  3 flavors
+  . GF (1 non-aring, 2 aring)
+  . aring-QQ (once written)
+  . linear algebra routines
+
+. change to row-major form
+. remove?  DONE grab, 
+. remove?  coerce, dead code
+. make sure file structure is orthogonal and transparent
+.  DenseMatrixDef: might need other defs?
+
+ARings
+
+. ZZ flint
+  make a front end ring
+  change globalZZ? 
+    one possible: also make mpz aring, and then we can switch select flint vs gmp
+. ZZ[x] flint
+. QQ flint
+. promote, lift
+. make sure that promote and lift work also for mutable matrices
+  and are fast enough for:
+  mat(ZZ) --> mat(ZZ/p)
+  mat(ZZ) --> mat(ZZ[x])
+  mat(ZZ) --> mat(QQ)
+  
+. also: gcd, interpolate, eval, cra, ratreconstruct
+
+Tower rings
+
+. should have perhaps ZZ/p[x] as base?  Maybe not...
+
+
+the following files contain member fcn defs for DMat:
+
+YES: dmat.hpp dmat.cpp
+
+NO x-mutablemat.cpp
+NO mat.cpp
+
+NO: dmat-LU.hpp dmat-LU.cpp  BUT: DMatLU called by MutableMat< DMat>...
+
+NO lapack.hpp lapack.cpp
+NO mutablemat.hpp  BUT: has calls for lin alg of MutableMat<T>.  These should come from DMat, SMat
+
+YES dmat-ffpack.cpp
+
+NOT USED linalg.hpp BUT: is included
+
+
+
+
+
+points.hpp points.cpp  -- 
+
+
+  -     means not implemented
+  g     generic code for all rings
+  i     implemented specially for this ring type
+
+DMat routines implemented:
+
+ARing:              DMat    ZZp ZZpFfpack   ZZpFlint    ZZFlint  QQFlint  ZZgmp   QQgmp   GF  GFGivaro    RR  CC  RRR CCC
+--------------------------------------------------------------------------------------------------
+isZero              gen     
+isEqual             gen
+scalarMultInPlace   gen
+negateInPlace       gen
+addInPlace          gen
+subtractInPlace     gen
+transpose           gen
+
+rank                  -     .       i       i               i       i
+determinant           -     .       i       i               i       i
+inverse               -     .       i       i               i       i
+mult                gen     .     ??i       i               i       i
+nullSpace             -     .       i       i         ??wrong    todo
+solveLinear           -     .       i     ??i             ??i    todo
+solveLinear(A,B,X)    -     .       i     ??i             ??i    todo
+rankProfile           -     .       i    todo            todo    todo
+addMultipleTo      todo     .       i       i               i       i
+subtractMultipleTo todo     .       i       i               i       i
+
+solve                 -     i
+nullspaceU            -     i
+LU                    -     i
+
+eigenvalues           -     
+eigenvaluesHermitian  -
+eigenvectors          -
+eigenvectorsHermitian -
+leastSquares          -
+SVD                   -
+
+SMat
+ARing:              SMat    ZZgmp   ZZflint QQgmp   QQflint ZZp ZZpFlint    ZZpFfpack   GF  GFGivaro    RR  CC  RRR CCC
+--------------------------------------------------------------------------------------------------
+isZero              gen
+isEqual             gen
+scalarMultInPlace   gen
+negateInPlace       gen
+addInPlace          gen
+subtractInPlace     gen
+transpose          todo
+
+rank                  -
+determinant           -
+inverse               -
+mult               todo
+nullSpace             -
+solveLinear           -
+solveLinear(A,B,X)    -
+rankProfile           -
+addMultipleTo      todo
+subtractMultipleTo todo
+solve                 -
+nullspaceU            -
+LU                    -
+eigenvalues           -
+eigenvaluesHermitian  -
+eigenvectors          -
+eigenvectorsHermitian -
+leastSquares          -
+SVD                   -

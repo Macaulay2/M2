@@ -3,7 +3,6 @@
 #include "aring-wrap.hpp"
 
 namespace M2 {
-
 };
 
 // Local Variables:

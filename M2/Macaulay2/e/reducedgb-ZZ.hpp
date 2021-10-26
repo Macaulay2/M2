@@ -17,7 +17,7 @@ class ReducedGB_ZZ : public ReducedGB
                                       const FreeModule *Fsyz0,
                                       const GBWeight *wt0);
 
-  enum divisor_type { DIVISOR_NONE, DIVISOR_RING, DIVISOR_MODULE};
+  enum divisor_type { DIVISOR_NONE, DIVISOR_RING, DIVISOR_MODULE };
 
   MonomialTableZZ *T;
   const MonomialTableZZ *ringtableZZ;
@@ -29,23 +29,19 @@ class ReducedGB_ZZ : public ReducedGB
                const FreeModule *F0,
                const FreeModule *Fsyz0);
 
-public:
-
+ public:
   virtual ~ReducedGB_ZZ();
 
   virtual void remove_gb() {}
+  virtual void set_gb(VECTOR(POLY) & polys0);
 
-  virtual void set_gb(VECTOR(POLY) &polys0);
-
-  virtual void minimalize(const VECTOR(POLY) &polys0,
-                          bool auto_reduced);
+  virtual void minimalize(const VECTOR(POLY) & polys0, bool auto_reduced);
   // I have to decide: does this ADD to the existing set?
 
   virtual void remainder(POLY &f, bool use_denom, ring_elem &denom);
   // WARNING: this should only be used with term orders!
   // REALLY??
   virtual void remainder(gbvector *&f, bool use_denom, ring_elem &denom);
-
 };
 
 #endif

@@ -1,6 +1,15 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "classes.m2" -- for codeHelper
+
+Option.synonym = "option"
 OptionTable.synonym = "option table"
+
+all' := (L, p) -> not any(L, x -> not p x)
+
+new OptionTable from List := (OptionTable, opts) -> (
+    if all'(opts, opt -> opt === null or any({Symbol, String, Type}, T -> instance(opt#0, T)))
+    then new HashTable from opts else error("expected option key to be a symbol, a string, or a type"))
 
 installMethod(symbol >>, OptionTable, Function, Function => 
   (opts,f) -> args -> (
@@ -10,8 +19,8 @@ installMethod(symbol >>, OptionTable, Function, Function =>
   )
 
 codeHelper#(functionBody(new OptionTable from {} >> identity)) = g -> { 
-     ("-- function f:", value (first localDictionaries g)#"f"),
-     ("-- option table opts:", value (first localDictionaries g)#"opts")
+     ("-- function f:", value' (first localDictionaries g)#"f"),
+     ("-- option table opts:", value' (first localDictionaries g)#"opts")
      }
 
 installMethod(symbol >>, List, Function, Function =>
@@ -19,8 +28,8 @@ installMethod(symbol >>, List, Function, Function =>
      )
 
 codeHelper#(functionBody({} >> identity)) = g -> { 
-     ("-- function f:", value (first localDictionaries g)#"f"),
-     ("-- option table opts:", value (first localDictionaries g)#"opts")
+     ("-- function f:", value' (first localDictionaries g)#"f"),
+     ("-- option table opts:", value' (first localDictionaries g)#"opts")
      }
 
 installMethod(symbol >>, Boolean, Function, Function => 
@@ -32,7 +41,7 @@ installMethod(symbol >>, Boolean, Function, Function =>
   )
 
 codeHelper#(functionBody(true >> identity)) = g -> { 
-     ("-- function f:", value (first localDictionaries g)#"f")
+     ("-- function f:", value' (first localDictionaries g)#"f")
      }
 
 installMethod(symbol ++, OptionTable, OptionTable, OptionTable =>

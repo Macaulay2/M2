@@ -1,0 +1,66 @@
+-- -*- M2-comint -*- hash: -1393920928
+
+i1 : R = CC[x,t]; -- include the path variable in the ring
+
+i2 : H = { (x^2-1)*t + (x^2-2)*(1-t)};
+
+i3 : sol1 = point {{1}};
+
+i4 : sol2 = point {{-1}};
+
+i5 : S1= { sol1, sol2  };--solutions to H when t=1
+
+i6 : S0 = bertiniTrackHomotopy (t, H, S1) --solutions to H when t=0
+
+o6 = {{-1.41421}, {1.41421}}
+
+o6 : List
+
+i7 : peek S0_0
+
+o7 = Point{ConditionNumber => 1           }
+           Coordinates => {-1.41421}
+           CycleNumber => 1
+           FunctionResidual => 4.44089e-16
+           LastT => .0015625
+           MaximumPrecision => 52
+           Multiplicity => 1
+           NewtonResidual => 0
+           SolutionNumber => -1
+           SolutionStatus => Regular
+
+i8 : R=CC[x,y,t]; -- include the path variable in the ring
+
+i9 : f1=(x^2-y^2);
+
+i10 : f2=(2*x^2-3*x*y+5*y^2);
+
+i11 : H = { f1*t + f2*(1-t)}; --H is a list of polynomials in x,y,t
+
+i12 : sol1=    point{{1,1}}--{{x,y}} coordinates
+
+o12 = sol1
+
+o12 : Point
+
+i13 : sol2=    point{{ -1,1}}
+
+o13 = sol2
+
+o13 : Point
+
+i14 : S1={sol1,sol2}--solutions to H when t=1
+
+o14 = {sol1, sol2}
+
+o14 : List
+
+i15 : S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
+
+o15 = {{-.947782-.710437*ii, .11122-.740833*ii}, {-.847231+1.44261*ii,
+      -----------------------------------------------------------------------
+      .549043+.904502*ii}}
+
+o15 : List
+
+i16 : 

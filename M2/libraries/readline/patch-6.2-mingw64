@@ -1,0 +1,12 @@
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/readline/tmp/readline-6.2/rltypedefs.h readline-6.2/rltypedefs.h
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/readline/tmp/readline-6.2/rltypedefs.h	2009-01-04 13:32:33.000000000 -0600
++++ rltypedefs.h	2013-05-08 13:44:50.122339200 -0500
+@@ -26,6 +26,8 @@
+ extern "C" {
+ #endif
+ 
++#include <winsock2.h>
++
+ /* Old-style */
+ 
+ #if !defined (_FUNCTION_DEF)

@@ -2,14 +2,20 @@
 
 -- this file should be mentioned *last* in dumpseq
 
+needs "engine.m2"
+needs "methods.m2"
+needs "nets.m2"
+needs "orderedmonoidrings.m2" -- for degreesRing
+needs "packages.m2"
+needs "robust.m2"
+needs "varieties.m2"
+
 recursionLimit = 300
 
 degreesRing 0;
 
 setIOUnSynchronized()					    -- try to avoid deadlocks when running examples
 
-addStartFunction(() -> setRandomSeed((currentTime() << 16) + processID()))
-addStartFunction(() -> path = unique apply( path, minimizeFilename))
 addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
 addEndFunction(() -> path = {})
 
@@ -25,79 +31,58 @@ QQ.Wrap = x -> wr("=",x)
 ignoreP := set { "Core", "Classic", "Parsing", "SimpleDoc" }
 mentionQ := p -> not ignoreP#?(toString p)
 
-addStartFunction( 
+addStartFunction(
      () -> (
 	  if class value getGlobalSymbol "User" =!= Package then (
      	       dismiss "User";
-	       newPackage("User", DebuggingMode => true, Reload => true);
-	       -- debug:
-	       -- protect User#"private dictionary";
+	       newPackage("User",
+		   Headline       => "default package for interpreter interactions",
+		   DebuggingMode  => true,
+		   PackageImports => if member("--no-preload", commandLine) then {} else Core#"pre-installed packages");
+	       path = prepend("./",path); -- now we search also the user's current directory, since our files have already been loaded
+	       path = unique apply( path, minimizeFilename);	    -- beautify
 	       allowLocalCreation User#"private dictionary";
 	       );
 	  if not nobanner then (
 	       if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
-	       hd := "with packages: ";
-	       stderr << hd << wrap(printWidth-#hd, concatenate between_", " sort apply(select(loadedPackages,mentionQ),toString)) << endl;
+	       relevant := select(loadedPackages,mentionQ);
+	       if #relevant > 0 then (
+	       	    hd := "with packages: ";
+	       	    stderr << hd << wrap(printWidth-#hd, concatenate between_", " sort apply(relevant,toString)) << endl;
+		    );
 	       if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush;
 	       );
 	  )
      )
 
 addStartFunction( () -> (
-	  -- we use "realpath" to produce real paths, because Cygwin-style symbolic links are not understood by native Windows applications
-	  prefixPath = 
-	  if prefixDirectory === null 
-	  then {} 
-	  else nonnull {				    -- detect the layout used and accomodate searches for both layouts
-	       if isDirectory(prefixDirectory|"common/") then realpath(prefixDirectory|"common/"),
-	       if isDirectory prefixDirectory then realpath prefixDirectory,
-	       if isDirectory(prefixDirectory|version#"machine") then realpath(prefixDirectory|version#"machine")
-	       };
+	  prefixPath = if prefixDirectory === null then {} else {prefixDirectory};
 	  if not noinitfile and getenv "HOME" =!= "" then (
 	       prefixPath = prepend(applicationDirectory()|"local/", prefixPath);
-	       userMacaulay2Directory();
+	       setUpApplicationDirectory();
 	       makePackageIndex())))
 
-userpath' := userpath = {
-	  applicationDirectory() | "code/",
-	  d1 := applicationDirectory() | "local/" | Layout#1#"packages", 
-	  d2 := applicationDirectory() | "local/" | Layout#2#"packages"
-	  }
+addStartFunction( () -> tallyInstalledPackages() )
+
 addStartFunction( () -> if not noinitfile then (
 	  -- remove empty directories and dead symbolic links from the local application directory
 	  dir := applicationDirectory() | "local/";
 	  apply(reverse findFiles dir,
 	       fn -> if fn =!= dir then (
 		    if isDirectory fn and # readDirectory fn == 2 then removeDirectory fn else
-		    if readlink fn =!= null and not fileExists fn then removeFile fn
+		    if readlink fn =!= null and not fileExists fn then removeFile fn else
+		    if match("\\.info\\.tmp$",fn) then removeFile fn
 		    ));
-	  -- if isDirectory d1 and isDirectory d2 then stderr << "--warning: both types of layout in use for user-installed packages" << endl
 	  ))
 
-addStartFunction( () -> if dumpdataFile =!= null and fileExists dumpdataFile then (
-	  dumptime := fileTime dumpdataFile;
-	  newfiles := select(values loadedFiles, fn -> dumptime < fileTime fn);
-	  if #newfiles == 0 then return;
-	  stderr << "--warning: old dumpdata file: " << dumpdataFile << endl;
-	  stderr << "--         the following source files are newer:" << endl;
-	  scan(sort newfiles, fn -> stderr << "--         " << fn << endl)))
-addStartFunction( () -> if version#"gc version" < "7.0" then error "expected libgc version 7.0 or larger; perhaps our sharable library is not being found" )
+addStartFunction( () -> if version#"gc version" < "7.0" then error "expected libgc version 7.0 or larger; perhaps our shareable library is not being found" )
 unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
-noinitfile' := noinitfile
-Core#"pre-installed packages" = lines get (currentFileDirectory | "installedpackages")
-Core#"base packages" = {}				    -- these will be kept visible while other packages are loaded
-path = packagepath
 Function.GlobalReleaseHook = (X,x) -> (
      if dictionary X =!= User#"private dictionary" then warningMessage(X," redefined");
-     if hasAttribute(x,ReverseDictionary) then removeAttribute(x,ReverseDictionary);
+     if hasAttribute(x,ReverseDictionary) and getAttribute(x,ReverseDictionary) === X then removeAttribute(x,ReverseDictionary);
      )
-waterMark = hash symbol waterMark
-endPackage "Core" -- after this point, private global symbols, such as noinitfile, are no longer visible, and public symbols have been exported
-scan(Core#"pre-installed packages",	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
-     needsPackage)
-Core#"base packages" = join(Core#"pre-installed packages",Core#"base packages")
-if not noinitfile' then path = join(userpath',path)
-if #OutputDictionary > 0 then error("symbols entered into OutputDictionary during startup phase: ",toString keys OutputDictionary)
+waterMark = serialNumber symbol waterMark      -- used by Serialization package
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -6,42 +6,40 @@ newPackage(
 	Authors => {
 	     {Name => "Gunnar Floystad", Email => "nmagf@uib.no"}
 	      },
-   	Headline => "Triplets of degree sequences, and associated Betti diagrams
-and cohomology tables",
-   	DebuggingMode => false,
-	Reload => true
+     	PackageImports => {"BoijSoederberg"},
+   	Headline => "triplets of degree sequences and associated Betti diagrams and cohomology tables",
+	Keywords => {"Commutative Algebra"},
+   	DebuggingMode => false
    	)
 export {
-     Triplet,
-     strands,
-     strandsL,
-     conj,
+     "Triplet",
+     "strands",
+     "strandsL",
+     "conj",
      --
-     triplet,
-     rotForw,
-     rotBack,
-     toHomology,
-     toDegree,
-     dualHomTriplet,
-     type,     
+     "triplet",
+     "rotForw",
+     "rotBack",
+     "toHomology",
+     "toDegree",
+     "dualHomTriplet",
+     "type",     
      --
-     isDegreeTriplet,
-     isHomologyTriplet,
+     "isDegreeTriplet",
+     "isHomologyTriplet",
      --
-     Betti1,
-     Betti3,
-     BettiDiagram1,
-     BettiDiagram3,
+     "Betti1",
+     "Betti3",
+     "BettiDiagram1",
+     "BettiDiagram3",
      --     
-     binPol,
-     hilbCoeff, 
-     hilbPol,
-     chiPol,
+     "binPol",
+     "hilbCoeff", 
+     "hilbPol",
+     "chiPol",
      --
-     cohMatrix,
-     cohTable}
-  
-needsPackage("BoijSoederberg");
+     "cohMatrix",
+     "cohTable"}
 
 ----------------------------
 --New type:Triplet
@@ -1064,7 +1062,7 @@ document {
 	  "T" => "a homology triplet"
 	  },
      Outputs => {
-	 List => "list of coefficents a_i for Hilbert polynomial"
+	 List => "list of coefficients a_i for Hilbert polynomial"
 	  },
      "The Hilbert polynomial will be written as a linear combination
      of the polynomials a_i binPol(n,i), where ", TO binPol, " is used to compute  these polynomials.",

@@ -1,0 +1,16 @@
+-- -*- M2-comint -*- hash: -1537369413
+
+i1 : R := ZZ;
+
+i2 : n := 6;
+
+i3 : m := matrix{{3, 2, 4, 6}};
+
+              1        4
+o3 : Matrix ZZ  <--- ZZ
+
+i4 : t := LRtriple(n,m);
+
+i5 : w := wrapTriplet(t);
+
+i6 : 

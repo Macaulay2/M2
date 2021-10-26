@@ -1,5 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "methods.m2"
+
 printpass := ID -> x -> (stderr << ID << ": " << x << endl; x)
 fold3 := (f,x,v) -> (scan(v, y -> x = f(x,y)); x)
 fold2 := (f,v) -> fold3(f,v#0,drop(v,1))
@@ -7,7 +9,7 @@ mergeopts := x -> fold2((a,b) -> merge(a,b,last), x)
 makeDir := name -> if name != "" and (not fileExists name or not isDirectory (name | "/.")) then mkdir name
 
 searchPath = method()
-searchPath(List,String) := List => (pth,fn) -> select(pth, dir -> fileExists(dir|"/"|fn))
+searchPath(List,String) := List => (pth,fn) -> searchPath'(pth,fn)
 searchPath(String) := List => (fn) -> searchPath(path,fn)
 
 makeDirectory = method()
@@ -20,13 +22,13 @@ makeDirectory String := name -> (			    -- make the whole path, too
 copyFile = method(Options => new OptionTable from { Verbose => false, UpdateOnly => false })
 copyFile(String,String) := opts -> (src,tar) -> (
      if src === tar then (
-     	  if opts.Verbose then stderr << "--skipping: " << src << " the same as " << tar << endl;
+     	  if opts.Verbose then printerr("skipping: " | src | " the same as " | tar);
 	  )
      else if opts.UpdateOnly and fileExists tar and fileTime src <= fileTime tar then (
-     	  if opts.Verbose then stderr << "--skipping: " << src << " not newer than " << tar << endl;
+     	  if opts.Verbose then printerr("skipping: " | src | " not newer than " | tar)
 	  )
      else (
-     	  if opts.Verbose then stderr << "--copying: " << src << " -> " << tar << endl;
+     	  if opts.Verbose then printerr("copying: " | src | " -> " | tar);
      	  tar << get src << close;
      	  fileTime(fileTime src,tar);
      	  fileMode(fileMode src,tar);
@@ -61,13 +63,8 @@ baseFilename = fn -> (
 
 findFiles = method(Options => new OptionTable from { Exclude => {}, FollowLinks => false })
 findFiles String := opts -> name -> (
-     excludes := opts.Exclude;
-     if class excludes =!= List then (
-     	  excludes = {excludes};
-	  opts = mergeopts(opts, new OptionTable from {Exclude => excludes});
-	  );
      bn := baseFilename name;
-     if any(excludes, pattern -> match(pattern, bn)) then return {};
+     if match(opts.Exclude, bn) then return {};
      if not fileExists name and readlink name === null then return {};
      if not (isDirectory name or opts.FollowLinks and isDirectory (name|"/.")) then return {name};
      if not name#-1 === "/" then name = name | "/";
@@ -75,8 +72,6 @@ findFiles String := opts -> name -> (
 	       f -> if f === "." or f === ".." then {} else findFiles(name|f,opts)))
      )
 findFiles List := opts -> names -> flatten apply(names,findFiles)
-
-backupFileRegexp = "\\.~[0-9.]+~$"					    -- we don't copy backup files.
 
 -- The unix 'cp' command is confusing when copying directories, because the
 -- result depends on whether the destination exists:
@@ -110,7 +105,9 @@ backupFileRegexp = "\\.~[0-9.]+~$"					    -- we don't copy backup files.
 -- For safety, we insist the destination directory already exist.
 -- Normally the base names of the source and destination directories will be
 -- the same.
-copyDirectory = method(Options => mergeopts( options copyFile, options findFiles, new OptionTable from { Verbose => false }))
+
+copyDirectory = method( Options =>
+    options copyFile ++ options findFiles ++ { Exclude => "\\.~[0-9.]+~$", Verbose => false })
 copyDirectory(String,String) := opts -> (src,dst) -> (
      if not fileExists src then error("directory not found: ",src);
      if not isDirectory src then error("file not a directory: ",src);
@@ -127,10 +124,12 @@ copyDirectory(String,String) := opts -> (src,dst) -> (
 	       else (
      		    if not isRegularFile srcf 
 		    then (if opts.Verbose then stderr << "--  skipping: non regular file: " << srcf << endl)
-		    else if match(backupFileRegexp,srcf)
-		    then (if opts.Verbose then stderr << "--  skipping: backup file: " << srcf << endl)
+		    else if match(opts.Exclude, srcf)
+		    then (if opts.Verbose then stderr << "--  skipping: excluded file: " << srcf << endl)
 		    else copyFile(srcf,tarf,applyPairs(options copyFile, (k,v) -> (k,opts#k)))))));
-symlinkDirectory = method( Options => mergeopts(options findFiles, new OptionTable from { Verbose => false, Undo => false }))
+
+symlinkDirectory = method( Options =>
+    options findFiles ++ { Exclude => "\\.~[0-9.]+~$", Undo => false, Verbose => false })
 symlinkDirectory(String,String) := opts -> (src,dst) -> (
      if not fileExists src then error("directory not found: ",src);
      if not isDirectory src then error("file not a directory: ",src);
@@ -149,8 +148,8 @@ symlinkDirectory(String,String) := opts -> (src,dst) -> (
 	       else (
      		    if not isRegularFile srcf 
 		    then (if opts.Verbose then stderr << "--  skipping: non regular file: " << srcf << endl)
-		    else if match(backupFileRegexp,srcf)
-		    then (if opts.Verbose then stderr << "--  skipping: backup file: " << srcf << endl)
+		    else if match(opts.Exclude, srcf)
+		    then (if opts.Verbose then stderr << "--  skipping: excluded file: " << srcf << endl)
 		    else (
 			 tardir := concatenate between("/",drop(separate("/",tarf),-1)); -- directory part of file name
 			 relsrcf := relativizeFilename(tardir,srcf);
@@ -192,14 +191,17 @@ String << Thing := File => (filename,x) -> (
 
 temporaryDirectoryName = null
 temporaryDirectoryCounter = 0
+-- Track the process ID: if we fork, then the child should (lazily) get a new temp dir and not clean up the parent's temp dir
+temporaryDirectoryProcessID = -1
 temporaryFilenameCounter = 0
 addStartFunction( () -> (
 	  temporaryDirectoryCounter = 0;
 	  temporaryFilenameCounter = 0;
 	  temporaryDirectoryName = null;
+	  temporaryDirectoryProcessID = -1;
 	  ))
 addEndFunction( () -> (
-	  if temporaryDirectoryName =!= null 
+	  if (temporaryDirectoryName =!= null and temporaryDirectoryProcessID === processID())
 	  then scan(reverse findFiles temporaryDirectoryName, 
 	       fn -> (
 		    if isDirectory fn then (
@@ -212,7 +214,7 @@ addEndFunction( () -> (
 			 )))))
 
 temporaryDirectory = () -> (
-     if temporaryDirectoryName === null 
+     if (temporaryDirectoryName === null or temporaryDirectoryProcessID =!= processID())
      then temporaryDirectoryName = (
 	  tmp := (
 	       if getenv "TMPDIR" === ""
@@ -223,8 +225,9 @@ temporaryDirectory = () -> (
 	  if not isDirectory tmp then error("expected a directory: ", tmp);
 	  if not fileExecutable tmp then error("expected a executable directory: ", tmp);
 	  if not fileWritable tmp then error("expected a writable directory: ", tmp);
+	  temporaryDirectoryProcessID=processID();
 	  while true do (
-	       fn := tmp | "M2-" | toString processID() | "-" | toString temporaryDirectoryCounter | "/";
+	       fn := tmp | "M2-" | toString temporaryDirectoryProcessID | "-" | toString temporaryDirectoryCounter | "/";
 	       temporaryDirectoryCounter = temporaryDirectoryCounter + 1;
 	       try mkdir fn else continue;
 	       break fn
@@ -265,7 +268,7 @@ tt#":" = "_co"			    -- has a meaning for gnu make and in URLs
 tt#";" = "_se"			    -- has a meaning for gnu make and in URLs
 tt#"?" = "_qu"				      -- has a meaning in URLs and sh
 tt#"\""= "_dq"					 -- " has a meaning for xargs
-tt#"\\"= "_bs"			  -- can't occur in a file name: MSDOS and sh
+tt#"\\"= "_bs"			 -- can't occur in a file name: MS-DOS and sh
 tt#"_" = "_us"					      -- our escape character
 
 -- some OSes are case insensitive:
@@ -318,7 +321,7 @@ mungeFile = (filename, headerline, trailerline, text) -> (
      insert := headerline | text | trailerline;
      local action;
      if fileExists filename then (
-     	  filename = realpath filename;	-- no other editor does this, but it seems like a good idea...
+     	  filename = realpath filename;	-- if filename is a symbolic link, we want to preserve that link and modify the underlying file
 	  hdr := "^" | regexpString headerline;
 	  tlr := "^" | regexpString trailerline;
      	  regexp := hdr | "(.|\n)*" | tlr ;
@@ -349,8 +352,8 @@ mungeFile = (filename, headerline, trailerline, text) -> (
      if promptUser then while true do (
 	  response := toLower read concatenate(action, " ", format filename, " ? [y/n/r/q/!/?]: ");
 	  if response == "y" then break else
-	  if response == "n" then return false else
-	  if response == "q" then return true else
+	  if response == "n" then (removeFile tmp; return false) else
+	  if response == "q" then (removeFile tmp; return true ) else
 	  if response == "!" then (promptUser = false; break) else
 	  if response == "?" then (
 	       << ///   y     yes
@@ -374,8 +377,13 @@ mungeFile = (filename, headerline, trailerline, text) -> (
 
 emacstempl := ///
 ;; add "/PREFIX/DIR" to VAR if it isn't there
-(if (not (member "/PREFIX/DIR" VAR))
-     (setq VAR (cons "/PREFIX/DIR" VAR)))
+(add-to-list 'VAR "/PREFIX/DIR")
+///
+
+emacsenvtempl := ///
+;; add "/PREFIX/DIR" to VAR if it isn't there
+(if (not (string-match "/PREFIX/DIR" (getenv "VAR")))
+     (setenv "VAR" "/PREFIX/DIR:$VAR" t))
 ///
 
 dotemacsFix0 = ///
@@ -389,6 +397,10 @@ dotemacsFix0 = ///
 ; want to use your f12 key for something else.  However, this action
 ; will be undone the next time you run setup() or setupEmacs().
 (global-set-key [ f12 ] 'M2)
+
+; Prevent Emacs from inserting a superfluous "See" or "see" in front
+; of the hyperlinks when reading documentation in Info mode.
+(setq Info-hide-note-references 'hide)
 ///
 
 emacsHeader := ";-*-emacs-lisp-*-\n"
@@ -426,12 +438,14 @@ endif
 shellfixes := {
      ("PATH", currentLayout#"bin",""),
      ("MANPATH", currentLayout#"man",":"),
-     ("INFOPATH", currentLayout#"info",""),
+     ("INFOPATH", currentLayout#"info",":"),
      ("LD_LIBRARY_PATH", currentLayout#"lib","")}
 emacsfixes := {
-     ("load-path", currentLayout#"emacs"),
-     ("exec-path", currentLayout#"bin"),
-     ("Info-default-directory-list", currentLayout#"info")}
+     ("load-path", currentLayout#"emacs", emacstempl),
+     -- the exec-path fix is not needed, because we exec the shell and ask it to find M2
+     -- ("exec-path", currentLayout#"bin", emacstempl),
+     ("Info-default-directory-list", currentLayout#"info", emacstempl),
+     ("PATH", currentLayout#"bin", emacsenvtempl)}
 
 stripdir := dir -> if dir === "/" then dir else replace("/$","",dir)
 fix := (var,dir,rest,templ) -> replace_(":REST",rest) replace_("VAR",var) replace_("DIR",stripdir dir) templ
@@ -460,7 +474,7 @@ local dotemacsFix
 setupEmacs = method()
 setup = method()
 mungeEmacs = () -> (
-     dotemacsFix = concatenate(emacsHeader, apply(emacsfixes, (var,dir) -> fix(var,dir,"",emacstempl)), dotemacsFix0);
+     dotemacsFix = concatenate(emacsHeader, apply(emacsfixes, (var,dir,templ) -> fix(var,dir,"",templ)), dotemacsFix0);
      supplantStringFile(dotemacsFix,"~/"|M2emacs,false);
      mungeFile("~/"|".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", M2emacsRead )
      )
@@ -470,23 +484,25 @@ prelim := () -> (
      )
 installMethod(setupEmacs, () -> ( prelim(); mungeEmacs(); ))
 installMethod(setup, () -> (
-     -- tcsh reads .tcshrc,or,that doesn't exists,.cshrc
-     -- from bash info:
-     --     After reading that file, it looks for `~/.bash_profile',
-     --     `~/.bash_login', and `~/.profile', in that order, and reads and
-     --     executes commands from the first one that exists and is readable.
      prelim();
      dotprofileFix = concatenate(shHeader, apply(shellfixes, (var,dir,rest) -> fix(var,dir,rest,bashtempl)));
      dotloginFix = concatenate(shHeader,apply(shellfixes, (var,dir,rest) -> fix(var,dir,rest,cshtempl)));
      supplantStringFile(dotprofileFix,"~/"|M2profile,false);
      supplantStringFile(dotloginFix,"~/"|M2login,false);
-     fileExists("~/"|".bash_profile") and mungeFile("~/"|".bash_profile",startToken,endToken,M2profileRead) or
-     fileExists("~/"|".bash_login") and mungeFile("~/"|".bash_login",startToken,endToken,M2profileRead) or
-     mungeFile("~/"|".profile",startToken,endToken,M2profileRead) or
-     mungeFile("~/"|".bashrc",startToken,endToken,M2profileRead) or
-     mungeFile("~/"|".login",startToken,endToken,M2loginRead) or
-     fileExists("~/"|".tcshrc" ) and mungeFile("~/"|".tcshrc",startToken,endToken,M2loginRead) or
-     mungeFile("~/"|".cshrc",startToken,endToken,M2loginRead) or
+     -- bash:
+     --   from bash info:
+     --     After reading that file, it looks for `~/.bash_profile',
+     --     `~/.bash_login', and `~/.profile', in that order, and reads and
+     --     executes commands from the first one that exists and is readable.
+     mungeFile(     if fileExists "~/.bash_profile" then "~/.bash_profile"
+	       else if fileExists "~/.bash_login"   then "~/.bash_login"
+	       else "~/.profile",
+	       startToken,endToken,M2profileRead) or
+     -- zsh:
+     mungeFile("~/.zprofile",startToken,endToken,M2profileRead) or
+     -- csh and tcsh:
+     mungeFile("~/.login",startToken,endToken,M2loginRead) or
+     -- emacs:
      mungeEmacs(); ))
 
 scanLines = method()

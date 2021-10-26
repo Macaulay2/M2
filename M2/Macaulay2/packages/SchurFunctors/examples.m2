@@ -6,7 +6,7 @@ debug SchurFunctors
 peek loadedFiles
 addColumn
 debug SchurFunctors
-<<<<<<< .mine
+-- <<<<<<< .mine
 
 E=QQ^4
 mu={2,1}
@@ -21,7 +21,7 @@ v = straighten(new Filling from {{3,2,1}}, M)
 
 
 straighten(F,M)
-=======
+-- =======
 -- Koszul complex check
 n = 4;
 R = QQ[x_1..x_n];
@@ -41,7 +41,8 @@ SMM = apply(3, i->(
 	  schurModulesMap(N,M,F) ))
 SMM#1*SMM#0
 
->>>>>>> .r7062
+-- >>>>>>> .r7062
+
 L={{1,0}}
 normalize L
 ---examples

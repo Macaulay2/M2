@@ -1,14 +1,13 @@
-# license for ntl: GPL v2
-# @configure_input@
-# http://www.shoup.net
 # a library for doing number theory
-VERSION = 5.5.2
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+LICENSEFILES = doc/copying.txt
+# @configure_input@
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+VERSION = 10.5.0
 TARDIR = ntl-$(VERSION)
 BUILDDIR = $(UNTARDIR)/$(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz
 # URL = http://shoup.net/ntl
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
+URL = http://macaulay2.com/Downloads/OtherSourceCode
 CONFIGURECMD = ./configure $(CONFIGUREOPTIONS)
 
 ifeq (@DEBUG@,yes)
@@ -23,23 +22,20 @@ DEB_CXXFLAGS = -O2
 DEB_LDFLAGS =
 endif
 
-CONFIGUREOPTIONS =								\
+CONFIGUREOPTIONS =							\
+	TUNE=generic							\
+	NATIVE=off							\
 	PREFIX=@pre_libm2dir@						\
-	LIBDIR=@pre_librariesdir@						\
-	INCLUDEDIR=@pre_libm2dir@/include					\
+	LIBDIR=@pre_librariesdir@					\
+	INCLUDEDIR=@pre_libm2dir@/include				\
 	DOCDIR=@pre_libm2dir@/share/doc					\
-	NTL_GMP_LIP=on NTL_STD_CXX=on NTL_NO_INIT_TRANS=on NTL_CXX_ONLY=on	\
-	CC="@CXX@"								\
-	CXX="@CXX@"								\
-	CFLAGS="$(CFLAGS) $(DEB_CFLAGS)"					\
-	CXXFLAGS="$(CXXFLAGS) $(DEB_CXXFLAGS)"					\
-	CPPFLAGS="$(CPPFLAGS) $(DEB_CPPFLAGS)"					\
-	LDFLAGS="$(LDFLAGS) $(DEB_LDFLAGS)"					\
-	LDFLAGS_CXX="$(LDFLAGS) $(DEB_LDFLAGS)"
-
-ifeq (@DEBUG@,yes)
-CONFIGUREOPTIONS += WIZARD=off
-endif
+	NTL_GMP_LIP=on							\
+	NTL_NO_INIT_TRANS=on						\
+	RANLIB="@RANLIB@"						\
+	CXX="@CXX@"							\
+	CXXFLAGS="$(CXXFLAGS) $(DEB_CXXFLAGS)"				\
+	CPPFLAGS="$(CPPFLAGS) $(DEB_CPPFLAGS)"				\
+	LDFLAGS="$(LDFLAGS) $(DEB_LDFLAGS)"			
 
 BUILDOPTIONS =					\
 	MakeDescCFLAGS=-O0			\
@@ -48,6 +44,15 @@ BUILDOPTIONS =					\
 	CXXFLAGS="$(CXXFLAGS) $(DEB_CXXFLAGS)"	\
 	LDFLAGS="$(LDFLAGS) $(DEB_LDFLAGS)"	\
 	LDFLAGS_CXX="$(LDFLAGS) $(DEB_LDFLAGS)"
+
+# ntl's makefiles give too many warning messages about "jobserver unavailable: using -j1.  Add `+' to parent make rule."
+BUILDOPTIONS += -j1
+
+ifeq (@NTL_WIZARD@,yes)
+CONFIGUREOPTIONS += TUNE=auto
+else
+CONFIGUREOPTIONS += TUNE=generic
+endif
 
 CHECKOPTIONS =					\
 	CFLAGS="$(CFLAGS) $(DEB_CFLAGS)"	\
@@ -68,6 +73,8 @@ INSTALLOPTIONS =				\
 INSTALLCMD = $(MAKE) $(INSTALLOPTIONS) install
 
 include ../Makefile.library
+
+uncompile-extra:; @ cd $(BUILDDIR) && $(MAKE) clobber
 check: check-once
 check-once: .installed-$(VERSION)
 	$(MAKE) -C $(BUILDDIR) check

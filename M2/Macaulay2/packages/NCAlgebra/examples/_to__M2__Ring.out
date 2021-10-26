@@ -1,0 +1,61 @@
+-- -*- M2-comint -*- hash: 143262837
+
+i1 : A = skewPolynomialRing(QQ,(-1)_QQ,{w,x,y,z})
+--Calling Bergman for NCGB calculation.
+Complete!
+
+o1 = A
+
+o1 : NCQuotientRing
+
+i2 : x*y-y*x
+
+o2 = 2xy
+
+o2 : A
+
+i3 : w^2
+
+      2
+o3 = w
+
+o3 : A
+
+i4 : B = toM2Ring(A)
+
+o4 = B
+
+o4 : QuotientRing
+
+i5 : x*y-y*x
+
+o5 = 0
+
+o5 : B
+
+i6 : w^2
+
+      2
+o6 = w
+
+o6 : B
+
+i7 : C = toM2Ring(A,SkewCommutative=>true)
+
+o7 = C
+
+o7 : PolynomialRing, 4 skew commutative variables
+
+i8 : x*y-y*x
+
+o8 = 2x*y
+
+o8 : C
+
+i9 : w^2
+
+o9 = 0
+
+o9 : C
+
+i10 : 

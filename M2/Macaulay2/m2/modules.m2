@@ -1,18 +1,12 @@
  --		Copyright 1993-2002 by Daniel R. Grayson
 
------------------------------------------------------------------------------
-vector = method()
-vector List := v -> (
-     m := matrix apply(v, i -> {i});
-     new target m from {m})
+needs "reals.m2" -- for inexact number
+needs "ofcm.m2"  -- for degreesMonoid
 
 -----------------------------------------------------------------------------
 -- Matrix
 
-ModuleMap = new Type of HashTable
-ModuleMap.synonym = "module map"
-
-Matrix = new Type of ModuleMap
+Matrix = new Type of HashTable
 Matrix.synonym = "matrix"
 raw Matrix := f -> f.RawMatrix
 ring Matrix := f -> (
@@ -51,9 +45,9 @@ scan( {ZZ,QQ}, K -> (
 	  ))
 
 scan((
-	  (ZZ, { QQ, RR', CC' }),
-	  (QQ, { RR', CC' }),
-	  (RR',{ RR', CC' }),
+	  (ZZ, { QQ, RR', CC', RRi' }),
+	  (QQ, { RR', CC', RRi' }),
+	  (RR',{ RR', CC', RRi' }),
 	  (CC', { CC' })
 	  ), 
      (K,Ls) -> scan(Ls, L -> (
@@ -68,16 +62,28 @@ promote(Matrix,QQ,CC') := (m,K,L) -> promote( promote(m,RR_(precision L)), L) --
 -----------------------------------------------------------------------------
 -- Vector
 
+vector = method()
+vector Matrix := f -> (
+     if not isFreeModule source f or numgens source f =!= 1 then error "expected source to be free with rank 1";
+     new target f from {f}
+    )
+vector List := v -> vector matrix apply(splice v, i -> {i});
+
+-----------------------------------------------------------------------------
+
 Vector = new Type of BasicList				    -- an instance v will have one entry, an n by 1 matrix m, with class v === target m
 Vector.synonym = "vector"
 Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
-net Vector := v -> net super first v
 entries Vector := v -> entries ambient v#0 / first
 norm Vector := v -> norm v#0
-toExternalString Vector := 				    -- not quite right
-toString Vector := v -> concatenate ( "vector ", toString entries super v )
+expression Vector := v -> VectorExpression apply(flatten entries super v#0,expression)
+net Vector := v -> net expression v
+toExternalString Vector :=
+toString Vector := v -> toString expression v
+texMath Vector := v -> texMath expression v
+--html Vector := v -> html expression v
 ring Vector := v -> ring class v
-module Vector := v -> target first v
+module Vector := v -> target v#0
 leadTerm Vector := v -> new class v from leadTerm v#0
 degree Vector := v -> (
      f := ambient v#0;
@@ -86,23 +92,30 @@ matrix Vector := opts -> v -> v#0
 new Matrix from Vector := (Matrix,v) -> v#0
 new Vector from Matrix := (M,f) -> (
      if not isFreeModule source f or numgens source f =!= 1 then error "expected source to be free with rank 1";
-     if M === Vector then error "expected a module";
-     new target f from {f})
+     if M =!= target f then error "module must be target of matrix";
+     new M from {f})
+super Vector := Vector => v -> vector super v#0
 
-Number * Vector := RingElement * Vector := (r,v) -> new class v from {r * v#0}
-Vector + Vector := (v,w) -> (
-     if class v =!= class w then error "expected vectors from the same module";
-     m := v#0 + w#0;
-     new target m from {m})
-Vector - Vector := (v,w) -> (
-     if class v =!= class w then error "expected vectors from the same module";
-     m := v#0 - w#0;
-     new target m from {m})
+Vector || Vector := Vector => (v,w) -> vector(v#0||w#0)
+Vector ^ List := (v,l) -> vector (v#0^l)
 
-Vector ** Vector := (v,w) -> (
-     if ring v =!= ring w then error "expected vectors over the same ring";
-     u := v#0 ** w#0;
-     new target u from {u})
+promote(Vector,InexactNumber) := 
+promote(Vector,InexactNumber') :=
+promote(Vector,RingElement) := 
+promote(Vector,Number) := Vector => (v,S) -> vector (promote(v#0,S))
+numeric Vector := v -> numeric(defaultPrecision,v)
+numeric(ZZ,Vector) := (prec,v) -> (
+     F := ring v;
+     if instance(F, InexactField) then return v;
+     if F === ZZ or F === QQ then return promote(v,RR_prec);
+     error "expected vector of numbers"
+     )
+
+- Vector := Vector => v -> vector (-v#0)
+Number * Vector := RingElement * Vector := Vector => (r,v) -> new class v from {r * v#0}
+Vector + Vector := Vector => (v,w) -> vector(v#0+w#0)
+Vector - Vector := Vector => (v,w) -> vector(v#0-w#0)
+Vector ** Vector := Vector => (v,w) -> vector(v#0**w#0)
 
 Vector == Vector := (v,w) -> v === w
 
@@ -126,7 +139,9 @@ new Module from Sequence := (Module,x) -> (
 	  assert instance(R,Ring);
 	  assert instance(rM,RawFreeModule);
 	  new Module of Vector from hashTable {
-     	       symbol cache => new CacheTable,
+     	       symbol cache => new CacheTable from { 
+		    cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
+		    },
      	       symbol RawFreeModule => rM,
      	       symbol ring => R,
      	       symbol numgens => rawRank rM
@@ -187,67 +202,33 @@ numgens Module := M -> (
      else M.numgens
      )
 
-toString Module := M -> (
-     if M.?relations then (
-	  if M.?generators
-	  then "subquotient(" | toString M.generators | "," | toString M.relations | ")"
-	  else "cokernel " | toString M.relations
-	  )
-     else (
-	  if M.?generators
-	  then "image " | toString M.generators
-	  else (
-	       if numgens M === 0
-	       then "0"
-	       else toString expression M
-	       )
-	  )
-     )
-
-toExternalString Module := M -> (
-     if M.?relations then (
-	  if M.?generators
-	  then "subquotient(" | toExternalString M.generators | "," | toExternalString M.relations | ")"
-	  else "cokernel " | toExternalString M.relations
-	  )
-     else (
-	  if M.?generators
-	  then "image " | toExternalString M.generators
-	  else (
-	       if all(degrees M, deg -> all(deg, zero)) 
-	       then "(" | toString ring M | ")^" | numgens M
-	       else "(" | toString ring M | ")^" | toExternalString (- degrees M)
-	       )
-	  )
-     )
-
 expression Module := M -> (
-     if M.?relations 
+     if M.?relations
      then if M.?generators
-     then new FunctionApplication from { subquotient, (expression M.generators, expression M.relations) }
-     else new FunctionApplication from { cokernel, expression M.relations }
+     then (expression subquotient) (expression (M.generators, M.relations))
+     else (expression cokernel) (expression M.relations)
      else if M.?generators
-     then new FunctionApplication from { image, expression M.generators }
-     else if numgens M === 0 then 0
-     else new Power from {expression ring M, numgens M}
-     )
-
--- net Module := M -> net expression M
-
-net Module := M -> (
-     -- we want compactMatrixForm to govern the matrix here, also.
-     if M.?relations 
-     then if M.?generators
-     then net new FunctionApplication from { subquotient, (net M.generators, net M.relations) }
-     else net new FunctionApplication from { cokernel, net M.relations }
-     else if M.?generators
-     then net new FunctionApplication from { image, net M.generators }
-     else if numgens M === 0 then "0"
+     then (expression image) (expression M.generators)
      else (
-	  R := ring M;
-	  net new Superscript from { if hasAttribute(R,ReverseDictionary) then getAttribute(R,ReverseDictionary) else expression R, numgens M}
-	  )
+	 n := numgens M;
+	 new Superscript from {unhold expression ring M, if n =!= 0 then unhold expression n else moduleZERO }
      )
+ )
+toString Module := M -> toString expression M
+net Module := M -> net expression M
+texMath Module := M -> texMath expression M
+
+describe Module := M -> Describe (
+     if M.?relations
+     then if M.?generators
+     then (expression subquotient) (unhold describe M.generators, unhold describe M.relations)
+     else (expression cokernel) (describe M.relations)
+     else if M.?generators
+     then (expression image) (describe M.generators)
+     else new Superscript from {unhold expression ring M, if all(degrees M, deg -> all(deg, zero)) then expression numgens M
+	 else expression(-degrees M)}
+     )
+toExternalString Module := M -> toString describe M
 
 Module == Module := (M,N) -> (
      -- this code might not be the quickest - Mike should check it
@@ -385,6 +366,8 @@ genus Module := (M) -> (
      (-1)^d * (e - 1))
 genus Ring := (R) -> genus R^1
 
+possiblyLift := x -> if denominator x === 1 then numerator x else x -- x is in QQ
+
 rank Module := (cacheValue symbol rank) (M -> (
 	  R := ring M;
 	  if isFreeModule M then numgens M 
@@ -402,11 +385,7 @@ rank Module := (cacheValue symbol rank) (M -> (
 			 numgens source generators gb M.generators)
 		    else numgens M))
 	  else if dim M < dim ring M then 0
-	  else (
-	       -- note: degrees can be rational
-	       r := degree M / degree ring M;
-	       if liftable(r,ZZ) then lift(r,ZZ) else r
-	       )))
+	  else possiblyLift( degree M / degree R )))
 
 ambient Module := Module => M -> (
      if M.?generators then M.generators.target
