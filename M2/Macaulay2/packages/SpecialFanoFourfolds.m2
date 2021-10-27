@@ -10,7 +10,7 @@
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.4", 
-    Date => "October 23, 2021",
+    Date => "October 27, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -896,8 +896,8 @@ specialGushelMukaiFourfold EmbeddedProjectiveVariety := o -> S -> (
         j := parametrize random(1,linearSpan S);
         T := makeSubvariety(j^^ S,j^^ ambientVariety S);
         if S.cache#?"FiniteNumberOfNodes" and (not T.cache#?"FiniteNumberOfNodes") then T.cache#"FiniteNumberOfNodes" = S.cache#"FiniteNumberOfNodes";
-        if S.cache#?"top" and (not T.cache#?"top") then T.cache#"top" = S.cache#"top";
-        if S.cache#?"singularLocus" and (not T.cache#?"singularLocus") then T.cache#"singularLocus" = S.cache#"singularLocus";
+        if S.cache#?"top" and (not T.cache#?"top") then (T.cache#"top" = j^^(S.cache#"top"); if top T == T then T.cache#"top" = T);
+        if S.cache#?"singularLocus" and (not T.cache#?"singularLocus") then T.cache#"singularLocus" = j^^(S.cache#"singularLocus");
         if S.cache#?"euler" and (not T.cache#?"euler") then T.cache#"euler" = S.cache#"euler";
         return specialGushelMukaiFourfold(T,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
     );
@@ -2291,7 +2291,8 @@ makeGMfromCurveOnSurfaceInP6 EmbeddedProjectiveVariety := o -> C -> (
     H := image(1,psi');
     if codim H == 0 then (if o.Verbose then (<<"got surface in GG(1,4) ⊂ PP^9 with linear span of dimension 9"<<endl); error "expected linear span of dimension at most 8");
     if numgens ideal H > o.Degrees#1_1 then error "request on the degrees is not satisfied";
-    V := if char coefficientRing C <= 65521 then image(psi',"F4") else image psi';
+    -- V := if char coefficientRing C <= 65521 then image(psi',"F4") else image psi';
+    V := image psi';
     if o.Verbose then <<"got surface in GG(1,4) ⊂ PP^9 with ideal generated in degrees "<<toStringDegreesVar V<<endl;
     degs := flatten degrees ideal V;
     if codim H == 1 and # select(degs,d -> d == 2) < 6 then error "the surface in G(1,4) is not contained in any GM fourfold";
@@ -2472,15 +2473,17 @@ takeGMsfromSurfaceInP6 EmbeddedProjectiveVariety := o -> S -> (
 );
 
 specialGushelMukaiFourfold (Array,Array,String,Thing) := o -> (a,b,s,nK) -> (
-    if #a =!= 4 or #a =!= #b then error "expected two arrays of length 4";
+    if #a =!= #b then error "expected two arrays of the same length";
     if s =!= "cubic scroll" and s =!= "quartic scroll" then error "expected string to be \"cubic scroll\" or \"quartic scroll\""; 
     (n,K) := if instance(nK,ZZ) then (nK,ZZ/65521) else if instance(nK,Ring) then (0,nK) else if instance(nK,VisibleList) and #nK==2 then (nK_0,nK_1) else error "not valid input";
-    C := (surface(a,K,NumNodes=>n,ambient=>6)).cache#"takeCurve" (b_0,{b_1,b_2,b_3});
+    C := (surface(a,K,NumNodes=>n,ambient=>6)).cache#"takeCurve" (first b,toList take(b,-(#b-1)));
     X := makeGMfromCurveOnSurfaceInP6(C,InputCheck=>o.InputCheck,Verbose=>o.Verbose,"Gluing"=>s);
     if o.Verbose then <<"description fourfold: "<<describe X<<endl;
     X
 );
 specialGushelMukaiFourfold (Array,Array,String) := o -> (a,b,s) -> specialGushelMukaiFourfold(a,b,s,(0,ZZ/65521),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+specialGushelMukaiFourfold (Array,Array,Thing) := o -> (a,b,nK) -> specialGushelMukaiFourfold(a,b,"cubic scroll",nK,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+specialGushelMukaiFourfold (Array,Array) := o -> (a,b) -> specialGushelMukaiFourfold(a,b,"cubic scroll",(0,ZZ/65521),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
 ------------------------------------------------------------------------
 ---------------------------- Documentation -----------------------------
@@ -2895,7 +2898,7 @@ undocumented {(random,SpecialCubicFourfold),(random,SpecialGushelMukaiFourfold),
 
 undocumented {(coneOfLines,Ideal,Ideal)}
 
-undocumented {(specialGushelMukaiFourfold,Array,Array,String,Thing),(specialGushelMukaiFourfold,Array,Array,String)} -- To be documented.
+undocumented {(specialGushelMukaiFourfold,Array,Array,String,Thing),(specialGushelMukaiFourfold,Array,Array,String),(specialGushelMukaiFourfold,Array,Array,Thing),(specialGushelMukaiFourfold,Array,Array)} -- To be documented.
 
 ------------------------------------------------------------------------
 ------------------------------- Tests ----------------------------------
