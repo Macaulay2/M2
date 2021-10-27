@@ -216,15 +216,12 @@ factorBFunction(RingElement) := Product => f -> (
      if coefficientRing R =!= QQ then
      error "expected polynomial over QQ";
      
-     pInfo(666, {"f =" , f});
      l := listForm f;
      d := product(l, u -> denominator(u#1));
      l = l / (u -> (u#0, lift(u#1*d, ZZ)));
      R' := ZZ(monoid [R_0]);
      f = sum (l, u -> u#1*R'_(u#0));
      f = factor f;
-     pInfo(666, {"f =" , f});
-     
      f = select(f, u-> first degree u#0 > 0);
      
      result := apply(f, u->(
@@ -232,14 +229,13 @@ factorBFunction(RingElement) := Product => f -> (
 	       coeff := listForm u#0 / (v->v#1);
 	       Power(R_0 + (if #coeff> 1 then (coeff#1/coeff#0) else 0), u#1)
 	       ));
-     result
+     if #result==0 then 1_R' else result
      );-- end factorBFunction
 
 bFunctionRoots = method()
 bFunctionRoots RingElement := List => f -> (
-     p := factorBFunction f;
-     apply(toList p, 
-	  u -> - leadCoefficient substitute(u#0, {(ring u#0)_0 => 0_(ring u#0)}) )
+     if f==1 then {} else apply(toList factorBFunction f, 
+	 u -> - leadCoefficient substitute(u#0, {(ring u#0)_0 => 0_(ring u#0)}) )
      );
 getIntRoots = method()
 getIntRoots RingElement := List => f -> (
@@ -247,4 +243,35 @@ getIntRoots RingElement := List => f -> (
      roots = select(roots, u -> denominator u == 1);
      apply(roots, u -> numerator u)    
      );-- end getIntRoots
+
  
+TEST ///
+Dtrace 1
+pInfo(1, "testing globalBFunction...")
+
+for str in {IntRing, TryGeneric, NonGeneric, GeneralBernsteinSato} do (
+     	  print str;
+	  x = symbol x; dx = symbol dx; 
+	  R = QQ[x, dx, WeylAlgebra => {x=>dx}];
+	  n = 10;
+	  f = x^n;     	    	 
+	  b = globalBFunction(f, Strategy => str);
+	  assert ((n^n * b) == ( 
+		    use ring b;
+		    s := (ring b)_0;
+		    product(n, i -> n * (s + 1) - i)       
+		    ))
+	  );
+	  
+clearAll()
+pInfo(1, "testing generalB...")
+for str in {InitialIdeal, StarIdeal} do (
+     	  pInfo(1, "Strategy=>" | toString str);
+	  R = QQ[x_1..x_4];
+	  F = {x_3*x_1^2 + x_4*x_2^3};
+	  b = {1_R,x_1,x_2} / (g->toString factorBFunction generalB (F,g,Strategy=>str));
+	  assert(toString b == "{(s+1)*(s+2)*(s+3/2)*(s+4/3)*(s+5/3)*(s+5/6)*(s+7/6), (s+1)*(s+2)*(s+5/2)*(s+4/3)*(s+5/3)*(s+11/6)*(s+13/6), (s+1)*(s+2)*(s+3/2)*(s+5/3)*(s+7/3)*(s+7/6)*(s+11/6)}")
+	  );
+
+assert(toString factorBFunction generalB (F,1_R,Exponent=>2) == "(s+1)*(s+2)^2*(s+3)*(s+3/2)*(s+5/2)*(s+4/3)*(s+5/3)*(s+7/3)*(s+8/3)*(s+5/6)*(s+7/6)*(s+11/6)*(s+13/6)")
+///
