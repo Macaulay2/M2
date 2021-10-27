@@ -623,6 +623,9 @@ isSupportedInZeroLocus(Ideal, Module) := (B, M) -> (
 	G := groebnerBasis(sub(presentation M, R), Strategy => "F4"); -- TODO: try "MGB"
 	-- TODO: is "ann coker" necessary?
 	0 != ann coker selectInSubring(1, leadTerm G))))
+-- check if a graded module sheafifies to zero
+isSupportedInZeroLocus(Ideal, GradedModule) := (B, G) -> (
+    all(min G .. max G, deg -> isSupportedInZeroLocus(B, G_deg)))
 
 --------------------------------------------------------------------
 -- Annihilators
