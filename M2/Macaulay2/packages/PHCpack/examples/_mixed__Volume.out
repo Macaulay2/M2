@@ -1,6 +1,4 @@
 -- -*- M2-comint -*- hash: -1229619679
-Hello world from process 0 out of 1 processes
--- COMPILE TIME: Feb 24 2021, 10:08:22
 
 i1 : R = CC[x,y];
 
@@ -59,4 +57,3 @@ o10 = {{.979319-.202321*ii, .930645-.365923*ii}, {-.979319+.202321*ii,
 o10 : List
 
 i11 : 
-Bye world from process 0 out of 1 processes

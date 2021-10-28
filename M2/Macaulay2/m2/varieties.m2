@@ -1,5 +1,13 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
+needs "ext.m2"
+needs "gateway.m2"
+needs "local.m2"
+needs "matrix1.m2"
+needs "modules.m2"
+needs "monideal.m2"
+needs "multilin.m2"
+
 Variety = new Type of MutableHashTable
 Variety.synonym = "variety"
 Variety.GlobalAssignHook = globalAssignFunction
@@ -202,8 +210,8 @@ CoherentSheaf(*) := F -> F(>=-infinity)
 SumOfTwists = new Type of BasicList
 CoherentSheaf LowerBound := SumOfTwists => (F,b) -> new SumOfTwists from {F, b}
 SheafOfRings LowerBound := SumOfTwists => (O,b) -> O^1 b
-net SumOfTwists := S -> net S#0 | if S#1#0 === neginfinity then "(*)" else "(>=" | net S#1#0 | ")"
-texMath SumOfTwists := S -> texMath S#0 | if S#1#0 === neginfinity then "(*)" else "(\\ge" | texMath S#1#0 | ")"
+net SumOfTwists := S -> net S#0 | if S#1#0 === -infinity then "(*)" else "(>=" | net S#1#0 | ")"
+texMath SumOfTwists := S -> texMath S#0 | if S#1#0 === -infinity then "(*)" else "(\\ge" | texMath S#1#0 | ")"
 
 cohomology(ZZ,SumOfTwists) :=  Module => opts -> (i,S) -> (
      F := S#0;

@@ -1,5 +1,9 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "matrix.m2"
+needs "modules.m2"
+needs "quotient.m2"
+
 plurals := hashTable { "matrix" => "matrices" }
 pluralize := s -> if plurals#?s then plurals#s else s|"s"
 pluralsynonym := T -> try pluralize T.synonym else "objects of class "|toString T;
@@ -373,7 +377,8 @@ subquotient(Module,Matrix,Nothing) := (F,g,r) -> (
      subquotient(g,r))
 subquotient(Module,Nothing,Nothing) := (F,g,r) -> F
 
-Matrix ** Matrix := Matrix => ((f,g) -> (
+Matrix ** Matrix := Matrix => (A, B) -> tensor(A, B)
+tensor(Matrix, Matrix) := Matrix => {} >> opts -> ((f, g) -> (
      samering(target f,target g);
      samering(source f,source g);
      R := ring target f;

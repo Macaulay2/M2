@@ -1,0 +1,106 @@
+-- -*- M2-comint -*- hash: 1050689034
+--loading configuration for package "MonomialIntegerPrograms" from file /home/lily/.Macaulay2/init-MonomialIntegerPrograms.m2
+Using default executable name "scip".
+To change this, load package using CustomPath option.
+Current value of ScipPrintLevel is 0.
+To set a custom default value, load package using CustomScipPrintLevel option.
+
+i1 : R = QQ[x,y,z]; L = {1, 3, 6, 5, 4, 4};
+
+i3 : M = monomialIdealsWithHilbertFunction(L, R); #M
+
+o4 = 306
+
+i5 : netList take(M, 5)
+
+     +-------------------------------------------------+
+     |                2      2   2      2     2        |
+o5 = |monomialIdeal (x y, x*y , x z, x*z , y*z )       |
+     +-------------------------------------------------+
+     |                2      2   2      2     2        |
+     |monomialIdeal (x y, x*y , y z, x*z , y*z )       |
+     +-------------------------------------------------+
+     |                2      2          3      2     2 |
+     |monomialIdeal (x y, x*y , x*y*z, y z, x*z , y*z )|
+     +-------------------------------------------------+
+     |                2      2            2     2   4  |
+     |monomialIdeal (x y, x*y , x*y*z, x*z , y*z , z ) |
+     +-------------------------------------------------+
+     |                2      2     2     2   3         |
+     |monomialIdeal (x y, x*y , x*z , y*z , z )        |
+     +-------------------------------------------------+
+
+i6 : M = monomialIdealsWithHilbertFunction(L, R, BoundGenerators => 3); #M
+
+o7 = 57
+
+i8 : netList take(M, 5)
+
+     +----------------------------------------+
+     |                3     2   3          2  |
+o8 = |monomialIdeal (x , x*y , y , x*y*z, y z)|
+     +----------------------------------------+
+     |                3   2    3          2   |
+     |monomialIdeal (x , x y, y , x*y*z, y z) |
+     +----------------------------------------+
+     |                3     2   3   2         |
+     |monomialIdeal (x , x*y , y , x z, x*y*z)|
+     +----------------------------------------+
+     |                3   2    3   2          |
+     |monomialIdeal (x , x y, y , x z, x*y*z) |
+     +----------------------------------------+
+     |                3     2   3   2    2    |
+     |monomialIdeal (x , x*y , y , x z, y z)  |
+     +----------------------------------------+
+
+i9 : S = QQ[a..f]
+
+o9 = S
+
+o9 : PolynomialRing
+
+i10 : I = monomialIdealsWithHilbertFunction({1, 6, 19, 45, 84}, S, SquareFree => true); #I
+
+o11 = 60
+
+i12 : first random I
+
+o12 = monomialIdeal (a*b, b*d, a*c*d*e, a*c*d*f, a*c*e*f, b*c*e*f, a*d*e*f,
+      -----------------------------------------------------------------------
+      c*d*e*f)
+
+o12 : MonomialIdeal of S
+
+i13 : #monomialIdealsWithHilbertFunction({1, 3, 6, 5, 4, 4}, R, FirstBetti => 5)
+
+o13 = 57
+
+i14 : #monomialIdealsWithHilbertFunction({1, 3, 6, 5, 4, 4}, R, FirstBetti => 6)
+
+o14 = 174
+
+i15 : #monomialIdealsWithHilbertFunction({1, 3, 4, 2, 1}, R, GradedBettis => {0, 0, 2, 2, 1})
+
+o15 = 30
+
+i16 : #monomialIdealsWithHilbertFunction({1, 3, 6, 7, 6, 5, 4, 4, 4}, R, FirstBetti => 6, BoundGenerators => 5)
+
+o16 = 654
+
+i17 : #monomialIdealsWithHilbertFunction({1, 3, 6, 7, 6, 5, 4, 4, 4}, R, FirstBetti => 6, BoundGenerators => 4)
+
+o17 = 60
+
+i18 : #monomialIdealsWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, FirstBetti => 5)
+
+o18 = 240
+
+i19 : #monomialIdealsWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, BoundGenerators => 3)
+
+o19 = 300
+
+i20 : #monomialIdealsWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, GradedBettis => {0, 2, 3, 1, 0})
+
+o20 = 60
+
+i21 : 

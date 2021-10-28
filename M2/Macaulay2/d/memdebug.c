@@ -120,8 +120,8 @@ struct REAR {
      int trapcount;
      };
 
-int front = sizeof(struct FRONT); /* available to the user in gdb */
-int rear  = sizeof(struct FRONT);
+
+
 
 void *delay_chain[FREE_DELAY];
 int delay_chain_index;
@@ -133,14 +133,14 @@ size_t M2_debug_size(void *p) {
      return f->size;
 }
 
-void* M2_debug_malloc(size_t size) {
+void *M2_debug_malloc(size_t size) {
      struct FRONT *f;
      char *p;
      struct REAR *r;
      int i;
      int INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
-     f = (struct FRONT *)GC_malloc( sizeof(struct FRONT) + sizeof(int)*INTS_BODY + sizeof(struct REAR) );
-     if (f == NULL) outofmem();
+     f = (struct FRONT *)GC_MALLOC( sizeof(struct FRONT) + sizeof(int)*INTS_BODY + sizeof(struct REAR) );
+     if (f == NULL) outofmem2(size);
      p = (char *)f + sizeof(struct FRONT);
      r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
@@ -158,10 +158,10 @@ void* M2_debug_malloc_uncollectable(size_t size) {
      struct REAR *r;
      int i;
      int INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
-     f = (struct FRONT *)GC_malloc_uncollectable(
+     f = (struct FRONT *)GC_MALLOC_UNCOLLECTABLE(
 	  sizeof(struct FRONT) + sizeof(int)*INTS_BODY + sizeof(struct REAR)
 	  );
-     if (f == NULL) outofmem();
+     if (f == NULL) outofmem2(size);
      p = (char *)f + sizeof(struct FRONT);
      r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
@@ -179,8 +179,8 @@ void* M2_debug_malloc_atomic(size_t size) {
      struct REAR *r;
      int i;
      int INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
-     f = (struct FRONT *)GC_malloc_atomic( sizeof(struct FRONT) + sizeof(int)*INTS_BODY + sizeof(struct REAR) );
-     if (f == NULL) outofmem();
+     f = (struct FRONT *)GC_MALLOC_ATOMIC( sizeof(struct FRONT) + sizeof(int)*INTS_BODY + sizeof(struct REAR) );
+     if (f == NULL) outofmem2(size);
      p = (void *)f + sizeof(struct FRONT);
      r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
@@ -198,8 +198,8 @@ void* M2_debug_malloc_atomic_uncollectable(size_t size) {
      struct REAR *r;
      int i;
      int INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
-     f = (struct FRONT *)GC_malloc_atomic_uncollectable( sizeof(struct FRONT) + sizeof(int)*INTS_BODY + sizeof(struct REAR) );
-     if (f == NULL) outofmem();
+     f = (struct FRONT *)GC_MALLOC_ATOMIC_UNCOLLECTABLE( sizeof(struct FRONT) + sizeof(int)*INTS_BODY + sizeof(struct REAR) );
+     if (f == NULL) outofmem2(size);
      p = (void *)f + sizeof(struct FRONT);
      r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
      f->size = r->size = size;
@@ -211,10 +211,43 @@ void* M2_debug_malloc_atomic_uncollectable(size_t size) {
      return p;
      }
 
-static void volatile smashed(void) {
-     fprintf(stderr,"smashed object found\n");
+static void volatile smashed(void *p) {
+     if (0 == GC_base(p)) {
+	  fprintf(stderr,"-- *** memdebug -- non-heap object encountered, %p, aborting\n",p);
+	  }
+     else {
+	  fprintf(stderr,"-- *** memdebug -- smashed object found, %p, aborting\n",p);
+	  }
      trap();
-     _exit(1);
+     abort();
+     }
+
+void *M2_debug_to_outer(void *p) {
+     struct FRONT *f = p - sizeof(struct FRONT);
+     if (f->fence[0] != FRONT_FENCE) smashed(p);
+     return f;
+     }
+
+
+void *M2_debug_to_inner(void *q) {
+     struct FRONT *f = q;
+     if (f->fence[0] != FRONT_FENCE) smashed(q);
+     return (void *)f + sizeof(struct FRONT);
+     }
+
+void M2_debug_info(void *p) {
+     struct FRONT *f;
+     struct REAR *r;
+     int INTS_BODY, i, smashed = 0;
+     size_t size;
+     if (p == NULL) return;
+     f = p - sizeof(struct FRONT);
+     size = f->size;
+     INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
+     r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
+     for (i=0; i<FENCE_INTS; i++) if (f->fence[i] != FRONT_FENCE) smashed = 1;
+     for (i=0; i<FENCE_INTS; i++) if (r->fence[i] != REAR_FENCE ) smashed = 1;
+     fprintf(stderr,"addr %p, base %p, GC_base %p, trapcount %d, length %lu%s\n",p,f,GC_base(p),f->trapcount,size,smashed ? ", smashed" : "");
      }
 
 void M2_debug_free(void *p) {
@@ -226,11 +259,11 @@ void M2_debug_free(void *p) {
      f = (struct FRONT *)(p - sizeof(struct FRONT));
      size = f->size;
      INTS_BODY = (size + sizeof(int) - 1)/sizeof(int);
-     r = (struct REAR *)(p + sizeof(int)*INTS_BODY);
+     r = p + sizeof(int)*INTS_BODY;
      _trapcount = f->trapcount;
-     if (r->trapcount != _trapcount || r->size != size) smashed();
-     for (i=0; i<FENCE_INTS; i++) if (f->fence[i] != FRONT_FENCE) smashed();
-     for (i=0; i<FENCE_INTS; i++) if (r->fence[i] != REAR_FENCE) smashed();
+     if (r->trapcount != _trapcount || r->size != size) smashed(p);
+     for (i=0; i<FENCE_INTS; i++) if (f->fence[i] != FRONT_FENCE) smashed(p);
+     for (i=0; i<FENCE_INTS; i++) if (r->fence[i] != REAR_FENCE ) smashed(p);
      if (_trapcount == trapset) trap();
      trapchk(p);
      for (i=0; i<FENCE_INTS; i++) f->fence[i] = FRONT_FENCE_GONE;
@@ -238,20 +271,20 @@ void M2_debug_free(void *p) {
      for (i=0; i<FENCE_INTS; i++) r->fence[i] = REAR_FENCE_GONE;
 #if FREE_DELAY != 0
      if (delay_chain[delay_chain_index] != NULL) {
-	  GC_free(delay_chain[delay_chain_index]);
+	  GC_FREE(delay_chain[delay_chain_index]);
 	  }
      delay_chain[delay_chain_index] = (void *)f;
      delay_chain_index ++;
      if (delay_chain_index == FREE_DELAY) delay_chain_index = 0;
 #else
-     GC_free(f);
+     GC_FREE(f);
 #endif
      }
 
 void* M2_debug_realloc(void *old, size_t size) {
      void *new = M2_debug_malloc(size);
      size_t oldsize = M2_debug_size(old);
-     if (new == NULL) outofmem();
+     if (new == NULL) outofmem2(size);
      memcpy(new,old,size < oldsize ? size : oldsize);
      return new;
      }

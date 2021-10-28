@@ -66,7 +66,7 @@ VARIABLE = "a";
 pow = (n, lst) -> (
     if n < 0 then error "power of a list is not defined for n negative";
     result := {{}};
-    for i in (0..<n) do result = flatten \ (result ** lst);
+    for i in (0..<n) do result = toList \ flatten \ (result ** lst);
     return result;
 );
 -------------------------------------------------------------------------------
@@ -439,7 +439,7 @@ polredbest = p -> (
       << "f=polredbest("|toString p|")\n"
       << "for(d=0,poldegree(f),write1(\""|OUTPUT|"\",polcoeff(f,d),\",\"))\n"
       << "quit()" << close;
-    assert zero (runProgram(gp, "-q "|INPUT))#"return value";
+    assert zero (runProgram(gp, "-q <"|INPUT))#"return value";
     coeffs := value("{"|get OUTPUT|"}");
     removeFile \ {INPUT, OUTPUT};
     return sum apply(d+1, i -> coeffs_i*R_0^i);

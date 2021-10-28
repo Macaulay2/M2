@@ -281,8 +281,6 @@ document {
      there is just one instance, an expression representing the number 1."
      }
 
-undocumented {(value, RingElement),(value, Nothing), (value, IndexedVariableTable)}
-
 document {
      Key => {Expression, (value,Expression)} | flatten apply(toList value Core#"private dictionary"#"expressionBinaryOperators",
 	 op -> {(op,Expression,Expression),(op,Expression,Thing),(op,Thing,Expression),(op,Expression,Holder),(op,Holder,Expression),(op,Holder,Holder)}),
@@ -513,6 +511,30 @@ document {
 		},
      "The return value is ", TO "null", "."
      }
+
+doc ///
+  Key
+    printerr
+  Headline
+    print something to stderr
+  Usage
+    printerr x
+  Inputs
+    x:{String,Net,BasicList}
+  Description
+    Text
+      Print @TT "x"@, each line prepended with @TT "--"@, to @TO
+      stderr@.  This is useful for displaying warning messages and
+      verbose logs.
+    Example
+      printerr "Hello, world!"
+      printerr("foo" || "bar")
+    Text
+      If @TT "x"@ is @ofClass BasicList@, then its elements are first
+      joined with @TO horizontalJoin@.
+    Example
+      printerr("foo", "bar")
+///
 
 document {
      Key => hold,

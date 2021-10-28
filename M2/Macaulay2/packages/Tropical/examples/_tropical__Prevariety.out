@@ -1,10 +1,9 @@
 -- -*- M2-comint -*- hash: 1364290900
--- polymake not present
 
 i1 : QQ[x_1,x_2,x_3,x_4]
 
-o1 = QQ[x , x , x , x ]
-         1   2   3   4
+o1 = QQ[x ..x ]
+         1   4
 
 o1 : PolynomialRing
 
@@ -26,7 +25,7 @@ o3 : Fan
 
 i4 : QQ[x_0,x_1]
 
-o4 = QQ[x , x ]
+o4 = QQ[x ..x ]
          0   1
 
 o4 : PolynomialRing
@@ -39,7 +38,7 @@ o5 : Fan
 
 i6 : QQ[x_0,x_1]
 
-o6 = QQ[x , x ]
+o6 = QQ[x ..x ]
          0   1
 
 o6 : PolynomialRing

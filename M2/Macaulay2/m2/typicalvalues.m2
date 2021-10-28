@@ -3,6 +3,9 @@
 -- These installations are not really methods: we install them just for documentation
 -- None of this code will ever get called, because the functions are built-in.
 
+needs "methods.m2"
+needs "lists.m2"
+
 typicalValues#class = Type
 typicalValues#parent = Type
 typicalValues#(symbol timing) = Time
@@ -103,7 +106,6 @@ substring(Sequence,String) := String => substring
 substring(ZZ,ZZ,String) := String => substring
 toList Set := toList BasicList := toList String := List => toList
 toSequence BasicList := toSequence String := Sequence => toSequence
-xor(ZZ,ZZ) := ZZ => xor
 ascii String := List => ascii
 ascii List := String => ascii
 remove(HashTable,Thing) := Nothing => remove
@@ -126,6 +128,7 @@ read Sequence := String => read
 read String := String => read
 Function Thing := Thing => x -> (dummy x;)
 scan(BasicList,Function) := scan(String,Function) := Nothing => scan
+scan(BasicList,BasicList,Function) := Nothing => scan
 scan(ZZ,Function) := Nothing => scan
 scanPairs(HashTable,Function) := Nothing => scanPairs
 lines(String,String) := List => lines

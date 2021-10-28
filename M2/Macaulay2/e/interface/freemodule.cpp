@@ -96,7 +96,7 @@ M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
       D->to_expvector(F->degree(i), exp);
       for (int j = 0; j < D->n_vars(); j++) result->array[next++] = exp[j];
     }
-  deletearray(exp);
+  freemem(exp);
   return result;
 }
 

@@ -284,7 +284,6 @@ M2_arrayint ARingGFGivaro::representationToM2Array(UTT representation,
   std::cerr << "representation" << representation << std::endl;
 #endif
   long exp = 0;
-  assert(representation != 0);
 
   while (representation != 0)
     {

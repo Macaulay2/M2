@@ -211,8 +211,8 @@ static int popular_var(const MonomialIdeal &I,
     if (hits[k] > hits[popular]) popular = k;
   nhits = hits[popular];
   exp_of_popular = minnonzero[popular];
-  deletearray(hits);
-  deletearray(minnonzero);
+  freemem(hits);
+  freemem(minnonzero);
   return popular;
 }
 
@@ -639,7 +639,7 @@ void hilb_comp::stats() const
 //   int retval = hf->calc(-1);
 //   if (retval != COMP_DONE) return 1;
 //   result = hf->value();
-//   deleteitem(hf);
+//   freemem(hf);
 //   return 0;
 // }
 #endif
@@ -713,7 +713,7 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
           result += n;
         }
     }
-  deletearray(exp);
+  freemem(exp);
   return result;
 }
 

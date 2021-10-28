@@ -136,12 +136,10 @@ document {
 	 (heft, Ring),
 	 (heft, PolynomialRing),
 	 (heft, QuotientRing),
-	 (heft, Module),
-	 (heft, GradedModule),
-	 (heft, Resolution)},
+	 (heft, Module)},
      Headline => "heft vector of ring, module, graded module, or resolution",
      Usage => "heft X",
-     Inputs => { "X" => {ofClass{Ring,Module,GradedModule,Resolution}} },
+     Inputs => { "X" => {ofClass{Ring,Module}} },
      Outputs => { List => {"the heft vector in use for ", TT "X", ", if ", TT "X", " is a
 	       ring, or for the ring of ", TT "X", ", if ", TT "X", " is a module.
 	       If there is no heft vector, then ", TO "null", " is returned."

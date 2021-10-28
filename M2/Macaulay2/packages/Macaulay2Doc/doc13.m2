@@ -145,28 +145,6 @@ document { Key => {round,(round,QQ),(round,RR),(round,ZZ,RR),(round,ZZ),(round,C
 	  ),
      SeeAlso => { floor, ceiling }
      }
-document { Key => {URL,(NewFromMethod, URL, String)},
-     Headline => "a type representing a URL",
-     Usage => "URL h",
-     Inputs => { "h" => String => "a URL" },
-     Outputs => {{ "an object of type ", TT "URL" }},
-     PARA {
-	  "The function ", TO "show", " knows how display entities of various types, including URLs."
-	  }}
-document { Key => {show, (show, URL)},
-     Headline => "display various TeX, hypertext, or a URL, in an external application",
-     Usage => "show x",
-     Inputs => { "x" => { ofClass{ Hypertext, TEX, URL } }},
-     Consequences => {{ "an external viewer, such as a web browser, is started to view the object ", TT "x" }},
-     SeeAlso => { showTex, showHtml }}
-document { Key => showHtml,
-     Headline => "convert hypertext to html and display with a browser",
-     Usage => "showHtml x",
-     Inputs => { "x" => Hypertext },
-     Consequences => {{ "an external viewer, such as a web browser, is started to view the object ", TT "x" }},
-     "The result is the same as ", TT "show x", ".",
-     Caveat => "This function may be phased out."
-     }
 
 undocumented {(isConstant, Number)}
 document { Key => {isConstant,(isConstant, RingElement)},

@@ -54,6 +54,8 @@ Node
     (check, String)
     (check, ZZ, Package)
     (check, ZZ, String)
+    (check, List, Package)
+    (check, List, String)
     [check, UserMode]
     [check, Verbose]
   Headline
@@ -61,11 +63,14 @@ Node
   Usage
     check pkg
     check(i, pkg)
+    check(L, pkg)
   Inputs
     pkg:Package
       or String, the package to test
     i:ZZ
-      the index of the test to run or -1 to run all tests
+      the index of a test to run
+    L:List
+      containing indices of tests to run, or {\tt {}} to run all tests
     UserMode=>Boolean
       if true, do not use the @TT "-q"@ in arguments to the Macaulay2 executable when running tests,
       thereby allowing it to load the user's @TO "initialization file"@, allowing it to load packages

@@ -1,3 +1,8 @@
+needs "engine.m2"
+needs "enginering.m2"
+needs "mutablemat.m2"
+needs "quotring.m2" -- for initializeEngineLinearAlgebra
+
 ZZFlintRing = new Type of EngineRing
 QQFlintRing = new Type of EngineRing
 --toString ZZFlintRing := R -> toString R.RawRing

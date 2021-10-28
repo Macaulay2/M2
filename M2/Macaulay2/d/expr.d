@@ -24,20 +24,15 @@ threadLocal export recursionLimit := 300;
 
 
 threadCounter := 0;
-threadLocal HashCounter := ( threadCounter = threadCounter + 1; 1000000 + (threadCounter-1) * 10000 );
+threadLocal HashCounter := ( threadCounter = threadCounter + 1; 1000000 + 3 + (threadCounter-1) * 10000 );
+
 export nextHash():int := (
      HashCounter = HashCounter + 1;
+     if HashCounter < 0 -- check for integer overflow
+     then Ccode(void, " fprintf(stderr, \" *** hash code serial number counter overflow (too many mutable objects created)\\n\"); abort(); ");
      HashCounter);
 
---STDERR file ash workaround to preserve numbering scheme
-nextHash();
---Dummy file hash workaround to preserve numbering scheme
-nextHash();
---STDIO file hash workaround to preserve numbering scheme
-nextHash();
-
 export NULL ::= null();
-
 
 -- scopes
 

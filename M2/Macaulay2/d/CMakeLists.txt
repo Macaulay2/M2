@@ -147,8 +147,14 @@ target_include_directories(M2-interpreter
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e> # need newdelete.hpp
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/c> # need scc-core.h
     $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/Macaulay2/d>
+    # for version.dd to get version numbers
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e/mathic>
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e/memtailor>
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e/mathicgb>
+    # for libraries that the interpreter needs
     $<BUILD_INTERFACE:${READLINE_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${LIBXML2_INCLUDE_DIR}>
+    $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>
     $<INSTALL_INTERFACE:include/Macaulay2>
   PRIVATE
     ${SQLite3_INCLUDE_DIRS}

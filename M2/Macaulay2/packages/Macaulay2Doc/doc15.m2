@@ -241,7 +241,7 @@ Usage
     I = span(S,Precision => prec)
 Inputs
     S:Sequence
-        containig @TO Number@ (including @TO RRi@)
+        containing @TO Number@ (including @TO RRi@)
     Precision => ZZ
         specifies the desired precision of the output, a value of {\tt -1} uses the minimum precision of the inputs.
 Outputs

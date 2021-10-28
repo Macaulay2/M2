@@ -8,9 +8,8 @@
 /******************************************************/
 /*these next lines added by MES, July 2002, to use our gc routines..*/
 #include "engine-includes.hpp"
-#define ALLOC getmem
-#define  NEW(p) ((p) = (void *) ALLOC((long)sizeof *(p)))
-#define FREE(ptr) ((void)(GC_FREE((ptr)), (ptr) = 0))
+#define  NEW(p) ((p) = (void *) getmem((long)sizeof *(p)))
+#define FREE(ptr) ((void)(freemem((ptr)), (ptr) = 0))
 /******************************************************/
 
 #define T Table_T

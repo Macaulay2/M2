@@ -129,7 +129,7 @@ document {
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
 	  "h = localCohom (2,I)",
-     	  "pruneLocalCohom h"
+     	  "Dprune h"
 	  },
      SeeAlso => {"pruneLocalCohom"} 
      }

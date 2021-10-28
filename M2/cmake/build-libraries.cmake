@@ -727,7 +727,7 @@ ExternalProject_Add(build-memtailor
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(libraries memtailor googletest MEMTAILOR_FOUND)
+#_ADD_COMPONENT_DEPENDENCY(libraries memtailor googletest MEMTAILOR_FOUND)
 
 
 # https://github.com/Macaulay2/mathic
@@ -747,7 +747,7 @@ ExternalProject_Add(build-mathic
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(libraries mathic memtailor MATHIC_FOUND)
+#_ADD_COMPONENT_DEPENDENCY(libraries mathic memtailor MATHIC_FOUND)
 
 
 # https://github.com/Macaulay2/mathicgb
@@ -774,7 +774,7 @@ ExternalProject_Add(build-mathicgb
 if(EXISTS ${M2_HOST_PREFIX}/bin/mgb)
   execute_process(COMMAND mv ${M2_HOST_PREFIX}/bin/mgb ${M2_INSTALL_PROGRAMSDIR}/)
 endif()
-_ADD_COMPONENT_DEPENDENCY(libraries mathicgb mathic MATHICGB_FOUND)
+#_ADD_COMPONENT_DEPENDENCY(libraries mathicgb mathic MATHICGB_FOUND)
 
 
 #############################################################################

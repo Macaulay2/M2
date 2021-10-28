@@ -1,4 +1,5 @@
-loadPackage ("Dmodules", FileName => "../../Dmodules.m2")
+restart
+needsPackage "Dmodules"
 
 ------------------------- EXAMPLES for Drestriction --------------------------------
 

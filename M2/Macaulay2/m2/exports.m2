@@ -1,5 +1,7 @@
 --		Copyright 2004,2005,2006,2007,2008 by Daniel R. Grayson
 
+needs "packages.m2"
+
 export {
 	"!",
 	"!=",
@@ -325,7 +327,6 @@ export {
 	"ProgramRun",
 	"Prune",
 	"Pseudocode",
-	"PushforwardComputation",
 	"QQ",
 	"QRDecomposition",
 	"Quotient",
@@ -978,6 +979,7 @@ export {
 	"presentation",
 	"pretty",
 	"print",
+	"printerr",
 	"printString",
 	"printingTimeLimit",
 	"processID",

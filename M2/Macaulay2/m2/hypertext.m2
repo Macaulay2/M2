@@ -1,6 +1,9 @@
 --  Copyright 1993-2003 by Daniel R. Grayson
 -- Revamped by P. Zinn-Justin and Mahrud Sayrafi 2020
--- html0.m2 -> hypertext.m2
+
+needs "regex.m2" -- for toLower
+needs "lists.m2" -- for all
+needs "methods.m2"
 
 -----------------------------------------------------------------------------
 -- Hypertext type declarations and basic constructors

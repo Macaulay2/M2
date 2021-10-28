@@ -10,12 +10,12 @@ ifeq "@DEBUG@" "yes"
 M2_OBJECTS += debug.o
 endif
 M2_CFILES += gmp_aux.c 
-M2_LASTCFILES += M2types.c scclib.c M2lib.c M2mem.c gdbm_interface.c
+M2_LASTCFILES += M2types.c scclib.c M2lib.c M2mem.c gdbm_interface.c memdebug.c
 M2_MADECFILES := startup.c
 M2_OBJECTS += $(M2_MADECFILES:.c=.o)
 M2_CCFILES := boost-regex.cpp main.cpp
 M2_OBJECTS += $(M2_CCFILES:.cpp=.o)
-M2_HFILES := getpagesize.h types.h M2mem.h debug.h startup-header.h startup-trailer.h
+M2_HFILES := getpagesize.h types.h M2mem.h debug.h startup-header.h startup-trailer.h memdebug.h
 
 M2_DFILES :=
 M2_DFILES += arithmetic.d
