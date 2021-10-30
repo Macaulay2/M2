@@ -65,7 +65,7 @@ document {
 	Usage => "minus(x)",
      TT "minus(x)", " yields ", TT "-x", ".",
      PARA{},
-     TT "minus(x,y)", " yields ", TT"x-y", " but see also ", TO "difference", "."
+     "See also ", TO "difference", "."
      }
 
 document {

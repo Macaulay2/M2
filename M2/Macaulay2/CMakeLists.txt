@@ -144,3 +144,5 @@ install(EXPORT Macaulay2 NAMESPACE Macaulay2::
   COMPONENT devel EXCLUDE_FROM_ALL)
 export(TARGETS M2-binary M2-engine M2-interpreter M2-supervisor
   NAMESPACE Macaulay2:: FILE Macaulay2Config.cmake)
+export(TARGETS mathicgb mathic memtailor
+  NAMESPACE MathicGB:: FILE MathicGBConfig.cmake)

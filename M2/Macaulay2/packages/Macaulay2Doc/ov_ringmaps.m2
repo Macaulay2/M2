@@ -89,7 +89,7 @@ document {
 	  "Ring maps",
 	  TO "basic construction, source and target of a ring map",
 	  TO "evaluation and composition of ring maps",
-	  TO "kernel and image of a ring map",
+	  TO "kernel and coimage of a ring map",
 	  -- Mike wanted this: TO "preimage of an ideal",
 	  TO "graphIdeal",
 	  TO "graphRing"
@@ -345,17 +345,17 @@ document {
 
 
 document {
-     Key => "kernel and image of a ring map",
-     "The kernel and image of a ring map can be computed 
-     using ", TO "image", " and ", TO "ker", " .  The output 
-     of ", TT "ker", " is an ideal and the output of ", TT "image", " is a 
+     Key => "kernel and coimage of a ring map",
+     "The kernel and coimage of a ring map can be computed
+     using ", TO "coimage", " and ", TO "ker", " .  The output
+     of ", TT "ker", " is an ideal and the output of ", TT "coimage", " is a
      ring or quotient ring.",
      EXAMPLE {
-	  "R = QQ[x,y,w]; U = QQ[s,t,u]/ideal(s^2);",
-	  "H = map(U,R,matrix{{s^2,t^3,u^4}})",
+	  "R = QQ[x,y,w]; U = QQ[s,t]/ideal(s^4+t^4);",
+	  "H = map(U,R,matrix{{s^2,s*t,t^2}})",
 	  "ker H",
-	  --"image H"
+	  "coimage H"
 	  }
      -- if module and ring map are homogeneous, and Hilbert F is known,
-     -- this is used in computing the kernel (or image).
+     -- this is used in computing the kernel (or coimage).
      }

@@ -181,7 +181,8 @@ needsPackage = method(TypicalValue => Package, Options => options loadPackage)
 needsPackage String  := opts -> pkgname -> (
     if PackageDictionary#?pkgname
     and instance(pkg := value PackageDictionary#pkgname, Package)
-    and (opts.FileName === null or opts.FileName == pkg#"source file")
+    and (opts.FileName === null or
+	realpath opts.FileName == realpath pkg#"source file")
     then use value PackageDictionary#pkgname
     else loadPackage(pkgname, opts))
 
