@@ -12,7 +12,7 @@ if version#"VERSION" < "1.18" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.4", 
-    Date => "October 27, 2021",
+    Date => "October 30, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -224,7 +224,7 @@ net MultiprojectiveVariety := X -> if hasAttribute(X,ReverseDictionary) then toS
 
 MultiprojectiveVariety#{Standard,AfterPrint} = MultiprojectiveVariety#{Standard,AfterNoPrint} = X -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "ProjectiveVariety, " << expression X;
-    if isSubvariety X then << " (subvariety of codimension " << dim ambientVariety X - dim X << " in " << expression ambientVariety X << ")";
+    if isSubvariety X then << " (subvariety of codimension " << dim ambientVariety X - dim X << " in " << ambientVariety X << ")";
     << endl;
 );
 

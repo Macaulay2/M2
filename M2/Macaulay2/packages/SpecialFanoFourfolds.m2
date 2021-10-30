@@ -10,7 +10,7 @@
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.4", 
-    Date => "October 27, 2021",
+    Date => "October 30, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -43,6 +43,7 @@ export{
    "normalSheaf",
    "isAdmissible",
    "isAdmissibleGM",
+   "CongruenceOfCurves",
    "detectCongruence",
    "surface",
    "GMtables",
@@ -260,8 +261,8 @@ describe SpecialCubicFourfold := X -> (
 );
 
 map SpecialCubicFourfold := o -> X -> (
-    if X.cache#?(surface X,"AssociatedMap") then return X.cache#(surface X,"AssociatedMap");
-    X.cache#(surface X,"AssociatedMap") = rationalMap(ideal surface X,3)
+    if (surface X).cache#?("AssociatedMapFanoFourfolds",ambient X) then return (surface X).cache#("AssociatedMapFanoFourfolds",ambient X);
+    (surface X).cache#("AssociatedMapFanoFourfolds",ambient X) = rationalMap(ideal surface X,3)
 );
 
 recognize = method(); -- try to recognize
@@ -305,42 +306,48 @@ fanoMapCubic = X -> (
     if X.cache#(surface X,"label") === "quinticDelPezzoSurface" then (
         mu = rationalMap S;
         forceImage(mu,ideal(0_(target mu)));
+        (mu#"map").cache#"multiplicityFanoMap" = 1;
         return mu;
     );
     if X.cache#(surface X,"label") === "quarticScrollSurface" then (
         mu = rationalMap(S,Dominant=>2);
         forceImage(mu,ideal(0_(target mu)));
+        (mu#"map").cache#"multiplicityFanoMap" = 1;
         return mu;
     );
     if X.cache#(surface X,"label") === "C38Coble" or X.cache#(surface X,"label") === "FarkasVerra" then (
         mu = rationalMap(S,5,2);
         forceImage(mu,ideal(0_(target mu)));
+        (mu#"map").cache#"multiplicityFanoMap" = 2;
         return mu;
     );
     if X.cache#(surface X,"label") === "oneNodalSepticDelPezzoSurfaceC26" then (
         mu = rationalMap(S,5,2);
         interpoleImage(mu,{2,2,2,2,2},2);
         mu = rationalMap(mu,Dominant=>true);
+        (mu#"map").cache#"multiplicityFanoMap" = 2;
         return mu;
     );
     if X.cache#(surface X,"label") === "C42" then (
         mu = rationalMap(S^3 : ideal first gens ring S,8);
         interpoleImage(mu,{2,2,2,2,2},2);
         mu = rationalMap(mu,Dominant=>true);
+        (mu#"map").cache#"multiplicityFanoMap" = 3;
         return mu;
     );
     if X.cache#(surface X,"label") === "6NodalOcticSrollC38" then (
         mu = rationalMap(S^3 : ideal first gens ring S,8);
         forceImage(mu,image(2,mu));
         mu = rationalMap(mu,Dominant=>true);
+        (mu#"map").cache#"multiplicityFanoMap" = 3;
         return mu;
     );
     error "not implemented yet: fourfold not recognized yet or not rational";
 );
 
 fanoMap SpecialCubicFourfold := X -> (
-    if X.cache#?(surface X,"fanoMap") then return X.cache#(surface X,"fanoMap");
-    X.cache#(surface X,"fanoMap") = fanoMapCubic X
+    if (surface X).cache#?("fanoMap",ambient X) then return (surface X).cache#("fanoMap",ambient X);
+    (surface X).cache#("fanoMap",ambient X) = fanoMapCubic X
 );
 
 parametrize SpecialCubicFourfold := X -> (
@@ -545,10 +552,10 @@ parameterCount (Ideal,Ideal,Boolean) := o -> (S,X,isSing) -> (
     -- );
     h0NX := rank HH^0 NX;
     if o.Verbose then <<"h^0(N_{S,X}) = "|toString(h0NX)<<endl;
-    if o.Verbose then <<"dim{[X] : S\\subset X} >= "|toString(h0N + M - h0NX)<<endl;
+    if o.Verbose then <<"dim{[X] : S ⊂ X} >= "|toString(h0N + M - h0NX)<<endl;
     if o.Verbose then <<(if c > 1 then "dim GG("|toString(c-1)|",P(H^0(O_(P^"|toString(n)|")("|toString(d)|")))) = " else "dim P(H^0(O_(P^"|toString(n)|")("|toString(d)|"))) = ")|toString(c * (binomial(n+d,d) - c))<<endl;
     w := c*(binomial(n+d,d)-c) - (h0N+M-h0NX);
-    if o.Verbose then <<"codim{[X] : S\\subset X} <= "|toString(w)<<endl;
+    if o.Verbose then <<"codim{[X] : S ⊂ X} <= "|toString(w)<<endl;
     return (w,(m,h0N,h0NX));
 );
 
@@ -678,51 +685,14 @@ find3Eminus1secantCurveOfDegreeE (EmbeddedProjectiveVariety,SpecialCubicFourfold
 
 detectCongruence = method();
 
--*
-hintCongruence = method();
-hintCongruence MutableHashTable := X -> (
-    if X.cache#?(surface X,"label") and X.cache#(surface X,"label") =!= "NotRecognized" then return; 
-    if (map X)#"idealImage" =!= null then return;
-    <<///Hint: the current version of the method 'detectCongruence' needs 
-of the often long calculation 'image map X', where 'X' is the fourfold.
-If you know, for instance, that the image of 'map X' is cut out by quadrics, then 
-you can use a command like 'forceImage(map X,image(2,map X))' to inform the system.
-This should considerably reduce calculation times.///<<endl<<endl;
-);
-*-
-
 detectCongruence SpecialCubicFourfold := X -> (
-    -- hintCongruence X;
     (l,L) := find3Eminus1secantCurveOfDegreeE(point ambient X,X,Verbose=>true);
     e := for i to 5 do if l_i == 1 then break (i+1);
     if e === null then error "no congruences detected";
-    return detectCongruence(X,e);
+    return congruenceOfCurves(X,e);
 );
 
-detectCongruence (SpecialCubicFourfold,ZZ) := (X,e) -> (
-    -- hintCongruence X;
-    f := method();
-    f Ideal := p -> (
-       phi := map X;
-       S := ideal surface X; 
-       q := phi p;
-       E := coneOfLines(imageOfAssociatedMap X,q);
-       g := rationalMap(q);
-       E' := g E;
-       g' := rationalMap(target g,Grass(0,1,coefficientRing g),{random(1,target g),random(1,target g)});
-       decE' := apply(select(decompose g' E',s -> (dim s,degree s) == (1,1)),y -> radical trim (g'^*y + E'));
-       decE := apply(decE',D -> g^* D);
-       P := apply(decE,D -> (D' := phi^* D; (degree D',dim D' -1, dim (D'+S) -1,degree (D'+S),D')));
-       P = select(P,s -> s_0 == e and s_1 == 1 and s_2 == 0 and s_3 == 3*e-1);
-       if #P != 1 then error "internal error encountered";
-       C := last first P;
-       if genus C != 0 then C = top C;
-       C
-    );
-    f EmbeddedProjectiveVariety := p -> Var f (ideal p);
-    try f point ambient X else error "no congruences detected";
-    f
-);
+detectCongruence (SpecialCubicFourfold,ZZ) := (X,e) -> congruenceOfCurves(X,e);
 
 unirationalParametrization = method();
 
@@ -890,7 +860,11 @@ specialGushelMukaiFourfold EmbeddedProjectiveVariety := o -> S -> (
            (dim ambient Y == 8 and dim Y == 4 and degrees Y === {({2},6)})
           ) then error er;
     if dim Y == 4 then return specialGushelMukaiFourfold(S,Y,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
-    if dim Y == 5 then return specialGushelMukaiFourfold(S,Y * random(2,S),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+    if dim Y == 5 then (
+        X := specialGushelMukaiFourfold(S,Y * random(2,S),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+        X.cache#"varietyDefinedBylinearSyzygies" = Y;
+        return X;
+    );
     if dim Y == 6 then (
         if dim linearSpan S > 8 then error "expected linear span of the surface to be of dimension at most 8";
         j := parametrize random(1,linearSpan S);
@@ -965,7 +939,25 @@ specialGushelMukaiFourfold (String,Ring) := o -> (str,K) -> (
         X.cache#(surface X,"label") = "nodal D44";
         return X;
     );
-    error "not valid string, permitted strings are: \"sigma-plane\", \"rho-plane\", \"tau-quadric\", \"cubic scroll\", \"quintic del Pezzo surface\", \"K3 surface of degree 14\", \"surface of degree 9 and genus 2\", \"1\",...,\"21\", \"nodal D26''\", \"nodal D44\"";
+    if str === "october2021-D26''" then (
+        X = specialGushelMukaiFourfold([4,5,1,0],[2,3,0,0],"cubic scroll",K,InputCheck=>o.InputCheck,Verbose=>false);
+        (surface X).cache#"FiniteNumberOfNodes" = 0;
+        X.cache#(surface X,"label") = "october2021-26''";
+        return X;
+    );
+    if str === "october2021-D28" then (
+        X = specialGushelMukaiFourfold([6,4,6,0],[3,3,5,0],"cubic scroll",K,InputCheck=>o.InputCheck,Verbose=>false);
+        (surface X).cache#"FiniteNumberOfNodes" = 0;
+        X.cache#(surface X,"label") = "october2021-28";
+        return X;
+    );
+    if str === "october2021-D34'" then (
+        X = specialGushelMukaiFourfold([6,4,6,0],[3,1,6,0],"cubic scroll",K,InputCheck=>o.InputCheck,Verbose=>false);
+        (surface X).cache#"FiniteNumberOfNodes" = 0;
+        X.cache#(surface X,"label") = "october2021-34'";
+        return X;
+    );
+    error "not valid string, permitted strings are: \"sigma-plane\", \"rho-plane\", \"tau-quadric\", \"cubic scroll\", \"quintic del Pezzo surface\", \"K3 surface of degree 14\", \"surface of degree 9 and genus 2\", \"1\",...,\"21\", \"nodal D26''\", \"nodal D44\", \"october2021-D26''\", \"october2021-D28\", \"october2021-D34'\"";
 );
 
 specialGushelMukaiFourfold String := o -> str -> specialGushelMukaiFourfold(str,ZZ/65521,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
@@ -1002,6 +994,9 @@ describe SpecialGushelMukaiFourfold := X -> (
     if recognize X === "gushel26''" and dim singLocus grassmannianHull X >= 0 then descr = descr|newline|"(case considered in Section 1 of arXiv:2003.07809)";
     if recognize X === "mukai26''" and dim singLocus grassmannianHull X >= 0 then descr = descr|newline|"(case considered in Section 2 of arXiv:2003.07809)";
     if recognize X === "mukai26''" and dim singLocus grassmannianHull X == -1 then descr = descr|newline|"(case considered in Section 3 of arXiv:2003.07809)";
+    if recognize X === "october2021-26''" then descr = descr|newline|"(case discovered in October 2021)";
+    if recognize X === "october2021-28" then descr = descr|newline|"(case discovered in October 2021)";
+    if recognize X === "october2021-34'" then descr = descr|newline|"(case discovered in October 2021)";
     net expression descr
 );
 
@@ -1010,13 +1005,13 @@ grassmannianHull SpecialGushelMukaiFourfold := X -> varietyDefinedBylinearSyzygi
 grassmannianHull EmbeddedProjectiveVariety := X -> varietyDefinedBylinearSyzygies X; -- undocumented
 
 map SpecialGushelMukaiFourfold := o -> X -> (
-    if X.cache#?(surface X,"AssociatedMap") then return X.cache#(surface X,"AssociatedMap");
+    if (surface X).cache#?("AssociatedMapFanoFourfolds",grassmannianHull X) then return (surface X).cache#("AssociatedMapFanoFourfolds",grassmannianHull X);
     S := ideal surface X;
     J1 := select(S_*,s -> degree s == {1});
     if #J1 > 0 then J1 =  (ideal J1) * (ideal vars ring S) else J1 = ideal ring S;
     J2 := select(S_*,s -> degree s == {2});
     if #J2 > 0 then J2 =  ideal J2 else J2 = ideal ring S;
-    X.cache#(surface X,"AssociatedMap") = rationalMap trim sub(J1+J2,ring grassmannianHull X)    
+    (surface X).cache#("AssociatedMapFanoFourfolds",grassmannianHull X) = rationalMap trim sub(J1+J2,ring grassmannianHull X)    
 );
 
 recognizeGMFourfold = X -> ( 
@@ -1050,6 +1045,10 @@ recognizeGMFourfold = X -> (
     --
     if (d == 26 and e == 25 and a == 11 and b == 6 and invS == (17,11,2) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then return "gushel26''";
     if ((d == 18 or d == 26) and e == 3 and a == 7 and b == 4 and invS == (11,3,0) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then if numberNodes(S,Verbose=>false) == 1 and discriminant X == 26 then return "mukai26''";
+    --
+    if (d == 26 and e == 7 and a == 5 and b == 4 and invS == (9,2,1) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then return "october2021-26''";
+    if (d == 28 and e == 13 and a == 8 and b == 5 and invS == (13,6,1) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then return "october2021-28";
+    if (d == 34 and e == 13 and a == 9 and b == 5 and invS == (14,7,1) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3}) then return "october2021-34'";
     "NotRecognized"
 );
 
@@ -1072,29 +1071,54 @@ fanoMapGM = X -> (
     if X.cache#(surface X,"label") === 1 then (
         mu = rationalMap(S,1);
         forceImage(mu,ideal(0_(target mu)));
+        (mu#"map").cache#"multiplicityFanoMap" = 1;
         return mu;
     );
     if X.cache#(surface X,"label") === 3 then (
         mu = rationalMap(S^3 : ideal first gens ring S,5);
         interpoleImage(mu,{3},3);
         mu = rationalMap(mu,Dominant=>true);
+        (mu#"map").cache#"multiplicityFanoMap" = 3;
         return mu;
     );
     if X.cache#(surface X,"label") === 6 then (
         mu = rationalMap(S,1,Dominant=>true);
+        (mu#"map").cache#"multiplicityFanoMap" = 1;
         return mu;
     );
     if X.cache#(surface X,"label") === 17 then (
         mu = rationalMap(S^2 : ideal first gens ring S,3);
         forceImage(mu,ideal(0_(target mu)));
+        (mu#"map").cache#"multiplicityFanoMap" = 2;
         return mu;
     );
+    if X.cache#(surface X,"label") === 18 then (
+        mu = rationalMap(S^2 : ideal first gens ring S,3);
+        interpoleImage(mu,{2,2,2,2,2},2);
+        mu = rationalMap(mu,Dominant=>true);
+        (mu#"map").cache#"multiplicityFanoMap" = 2;
+        return mu;
+    );
+    if X.cache#(surface X,"label") === "october2021-26''" then (
+        mu = rationalMap(S^2 : ideal first gens ring S,3);
+        interpoleImage(mu,{2},2);
+        mu = rationalMap(mu,Dominant=>true);
+        (mu#"map").cache#"multiplicityFanoMap" = 2;
+        return mu;
+    );
+    if X.cache#(surface X,"label") === "october2021-34'" then (
+        mu = rationalMap((S^3 : ideal first gens ring S) : ideal first gens ring S,5);
+        interpoleImage(mu,{3},3);
+        mu = rationalMap(mu,Dominant=>true);
+        (mu#"map").cache#"multiplicityFanoMap" = 3;
+        return mu;
+    );    
     error "not implemented yet: fourfold not recognized yet or not rational";
 );
 
 fanoMap SpecialGushelMukaiFourfold := X -> (
-    if X.cache#?(surface X,"fanoMap") then return X.cache#(surface X,"fanoMap");
-    X.cache#(surface X,"fanoMap") = fanoMapGM X
+    if (surface X).cache#?("fanoMap",grassmannianHull X) then return (surface X).cache#("fanoMap",grassmannianHull X);
+    (surface X).cache#("fanoMap",grassmannianHull X) = fanoMapGM X
 );
 
 parametrize SpecialGushelMukaiFourfold := X -> (
@@ -1165,6 +1189,33 @@ associatedK3surface SpecialGushelMukaiFourfold := o -> X -> (
         if o.Verbose then <<"-- computing the image of f"<<endl;
         if ch <= 65521 then image(f,"F4") else interpoleImage(f,toList(36:2),2);
         return (multirationalMap mu,Var U,Var {L,C},multirationalMap f);
+    );
+    if X.cache#(surface X,"label") === "october2021-26''" then (
+        if o.Verbose then <<"-- computing the map mu from the fivefold in P^8 to P^5 defined by the hypersurfaces"<<endl;
+        if o.Verbose then <<"   of degree 3 with points of multiplicity 2 along the surface S of degree 9 and genus 2"<<endl;
+        mu = rationalMap fanoMap X;
+        if o.Verbose then <<"-- computing the surface U corresponding to the fourfold X"<<endl;
+        U = trim ideal apply(13,j -> (if o.Verbose then <<"-- (step "<<j+1<<" of 13)"<<endl; if ch <= 65521 then image(mu|(I + ideal arandom S),"F4") else interpoleImage(mu,I + ideal arandom S,{2,4},4)));
+        I2 = trim((ideal source mu) + (ideal arandom S));
+        if o.Verbose then <<"-- computing the surface U' corresponding to another fourfold X'"<<endl;
+        U2 = trim ideal apply(13,j -> (if o.Verbose then <<"-- (step "<<j+1<<" of 13)"<<endl; if ch <= 65521 then image(mu|(I2 + ideal arandom S),"F4") else interpoleImage(mu,I2 + ideal arandom S,{2,4},4)));
+        if o.Verbose then <<"-- computing the four exceptional lines and the exceptional cubic curve"<<endl;
+        P26'' := ideal 1; while dim P26'' != 1 or degree P26'' != 4 do P26'' = plucker(trim(U+U2),1); 
+        exceptionalLines26'' := apply(decompose trim lift(P26'',ambient ring P26''),l -> sub(plucker sub(l,ring P26''),vars ring U));
+        C26'' := saturate quotient(U+U2,intersect exceptionalLines26''); 
+        topC26'' := ideal(1_(ring C26'')); 
+        for i to 6 do (
+            j'' := parametrize arandom({1},ring C26''); 
+            topC26'' = intersect(topC26'',j'' top j''^* C26'')
+        ); 
+        C26'' = trim ideal select(topC26''_*,t -> degree t <= {2});
+        if not(dim C26'' == 2 and degree C26'' == 3) then error "something went wrong";
+        if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree 26"<<endl;
+        f = mapDefinedByDivisor(quotient U,{(ideal arandom(1,ring U),1),(C26'',3)}|apply(exceptionalLines26'',l -> (l,1))); 
+        if numgens target f != 15 then error "something went wrong";
+        if o.Verbose then <<"-- computing the image of f"<<endl;
+        if ch <= 65521 then image(f,"F4") else interpoleImage(f,toList(66:2),2);
+        return (multirationalMap mu,Var U,Var prepend(C26'',exceptionalLines26''),multirationalMap f);
     );
     error "not implemented yet: fourfold not recognized yet or not rational";
 );
@@ -1296,37 +1347,13 @@ find2Eminus1secantCurveOfDegreeE (EmbeddedProjectiveVariety,SpecialGushelMukaiFo
 );
 
 detectCongruence SpecialGushelMukaiFourfold := X -> (
-    -- hintCongruence X;
     (l,L) := find2Eminus1secantCurveOfDegreeE(pointOnLinearSectionOfG14 grassmannianHull X,X,Verbose=>true);
     e := for i to 5 do if l_i == 1 then break (i+1);
     if e === null then error "no congruences detected";
-    return detectCongruence(X,e);
+    return congruenceOfCurves(X,e);
 );
 
-detectCongruence (SpecialGushelMukaiFourfold,ZZ) := (X,e) -> (
-    -- hintCongruence X;
-    f := method();
-    f Ideal := p -> (
-       phi := map X;
-       S := ideal surface X; 
-       q := phi p;
-       E := coneOfLines(imageOfAssociatedMap X,q);
-       g := rationalMap(q);
-       E' := g E;
-       g' := rationalMap(target g,Grass(0,1,coefficientRing g),{random(1,target g),random(1,target g)});
-       decE' := apply(select(decompose g' E',s -> (dim s,degree s) == (1,1)),y -> radical trim (g'^*y + E'));
-       decE := apply(decE',D -> g^* D);
-       P := apply(decE,D -> (D' := phi^* D; (degree D',dim D' -1, dim (D'+S) -1,degree (D'+S),D')));
-       P = select(P,s -> s_0 == e and s_1 == 1 and s_2 == 0 and s_3 == 2*e-1);
-       if #P != 1 then error "internal error encountered";
-       C := last first P;
-       if genus C != 0 then C = trim sub(top trim lift(C,ambient ring C),ring C);
-       C
-    );
-    f EmbeddedProjectiveVariety := p -> Var trim lift(f sub(ideal p,ring grassmannianHull X),ring ambient X);
-    try f (pointOnLinearSectionOfG14 grassmannianHull X) else error "no congruences detected";
-    f
-);
+detectCongruence (SpecialGushelMukaiFourfold,ZZ) := (X,e) -> congruenceOfCurves(X,e);
 
 isAdmissibleGM = method();
 
@@ -1372,10 +1399,10 @@ parameterCount SpecialGushelMukaiFourfold := o -> X -> (
     NX := normalSheaf(S,G);
     h0NX := rank HH^0 NX;
     if o.Verbose then <<"h^0(N_{S,X}) = "|toString(h0NX)<<endl;
-    if o.Verbose then <<"dim{[X] : S\\subset X \\subset Y} >= "|toString(h0N + m-1 - h0NX)<<endl;
+    if o.Verbose then <<"dim{[X] : S ⊂ X ⊂ Y} >= "|toString(h0N + m-1 - h0NX)<<endl;
     if o.Verbose then <<"dim P(H^0(O_Y(2))) = 39"<<endl;
     w := 39 - (h0N + m-1 - h0NX);
-    if o.Verbose then <<"codim{[X] : S\\subset X \\subset Y} <= "|toString(w)<<endl;
+    if o.Verbose then <<"codim{[X] : S ⊂ X ⊂ Y} <= "|toString(w)<<endl;
     return (w,(m,h0N,h0NX));
 );
 
@@ -1433,6 +1460,102 @@ random SpecialGushelMukaiFourfold := o -> X -> (
     X' := specialGushelMukaiFourfold(surface X,random(2,surface X) * grassmannianHull X,InputCheck=>-1);
     X'.cache#"varietyDefinedBylinearSyzygies" = grassmannianHull X;
     return X';
+);
+
+------------------------------------------------------------------------
+----------------------------- Congruences ------------------------------
+------------------------------------------------------------------------
+
+CongruenceOfCurves = new Type of HashTable;
+
+globalAssignment CongruenceOfCurves;
+
+CongruenceOfCurves.synonym = "congruence of curves";
+
+congruenceOfCurves = method();
+
+congruenceOfCurves (EmbeddedProjectiveVariety,ZZ) := (X,e) -> (
+    (a,Y) := if instance(X,SpecialCubicFourfold) 
+             then (3,ambient X)
+             else if instance(X,SpecialGushelMukaiFourfold)
+             then (2,grassmannianHull X)
+             else error "expected an instance of the class SpecialCubicFourfold or SpecialGushelMukaiFourfold";
+    phi := map X;
+    imageOfAssociatedMap X; -- image of phi
+    S := surface X;
+    f := method();
+    f EmbeddedProjectiveVariety := p -> (
+        if not isPoint p then error "expected a point";
+        if not(ring ambient p === ring ambient Y and isSubset(p,Y)) then error(if a == 2 then "expected a point on the del Pezzo fivefold containing the surface" else "expected a point in the ambient space of the surface");
+        q := phi ideal p;
+        E := coneOfLines(image phi,q);
+        g := rationalMap q;
+        E' := g E;
+        g' := rationalMap {random(1,target g),random(1,target g)};
+        decE' := apply(select(decompose g' E',s -> (dim s,degree s) == (1,1)),y -> radical trim (g'^*y + E'));
+        decE := apply(decE',D -> g^* D);
+        P := apply(decE,D -> (D' := projectiveVariety gens phi^* D; (degree D',dim D',dim(D' * S),degree(D' * S),D')));
+        P = select(P,s -> s_0 == e and s_1 == 1 and s_2 == 0 and s_3 == a*e-1);
+        if #P != 1 then (if #P > 1 
+                         then error "got more than one curve of the congruence that passes through the point"
+                         else error "got no curve of the congruence that passes through the point");
+        C := last first P;
+        if sectionalGenus C != 0 then C = top C;
+        makeSubvariety(C,Y)
+    );    
+    try f (if a == 2 then pointOnLinearSectionOfG14 Y else point Y) else error "no congruences detected";
+    new CongruenceOfCurves from {
+        "function" => f,
+        "fourfold" => X,
+        "degree" => e,
+        "string" => "of "|toString(a*e-1)|"-secant "|(if e == 1 then "lines" else if e == 2 then "conics" else if e == 3 then "cubic curves" else if e == 4 then "quartic curves" else if e == 5 then "quintic curves" else "curves of degree "|toString(e))
+    }
+);
+
+toString CongruenceOfCurves := net CongruenceOfCurves := f -> if hasAttribute(f,ReverseDictionary) then toString getAttribute(f,ReverseDictionary) else "a congruence "|f#"string";
+
+CongruenceOfCurves#{Standard,AfterPrint} = CongruenceOfCurves#{Standard,AfterNoPrint} = f -> (
+    S := surface f#"fourfold";
+    Y := if dim ambient S == 5 then ambient f#"fourfold" else grassmannianHull f#"fourfold";
+    e := f#"degree";
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Congruence " << f#"string" << " to ";
+    << if hasAttribute(S,ReverseDictionary) then toString getAttribute(S,ReverseDictionary) else "surface";
+    <<" in ";
+    << if hasAttribute(Y,ReverseDictionary) then toString getAttribute(Y,ReverseDictionary) else (if codim Y > 0 then "a del Pezzo fivefold" else "PP^5");
+    if S.cache#?("fanoMap",Y) and ((S.cache#("fanoMap",Y))#"map").cache#"multiplicityFanoMap" == e
+    then << "; parameter space: " << Var target S.cache#("fanoMap",Y);
+    << endl;
+);
+
+CongruenceOfCurves EmbeddedProjectiveVariety := (f,p) -> f#"function" p;
+CongruenceOfCurves Ideal := (f,Ip) -> idealOfSubvariety f projectiveVariety gens Ip;
+
+member(EmbeddedProjectiveVariety,CongruenceOfCurves) := (C,f) -> (
+    L := (map f#"fourfold") C;
+    dim L == 1 and unique degrees ideal L === {{1}}
+);
+
+map CongruenceOfCurves := o -> f -> (
+    X := f#"fourfold";
+    S := surface X;
+    (a,Y) := if dim ambient X == 5 then (3,ambient X) else (2,grassmannianHull X);
+    e := f#"degree";
+    local phi;
+    try phi = fanoMap X 
+    then (
+        e' := phi#"map".cache#"multiplicityFanoMap";
+        if e =!= e' then error("the congruence seems not valid; try the command: detectCongruence(...,"|toString(e')|")");
+        return multirationalMap phi;
+    ) else (
+        <<"--warning: the congruence comes from an unknown type of fourfold"<<endl;
+        phi = toRationalMap rationalMap(S_Y,a*e-1,e,Dominant=>true);
+        p := point Y;
+        if dim target phi - 1 == 4 and f p == projectiveVariety gens phi^* phi ideal p then (
+            phi#"map".cache#"multiplicityFanoMap" = e; 
+            S.cache#("fanoMap",Y) = phi;
+            return multirationalMap phi;
+        ) else error "something went wrong when computing the parameter space";
+    );    
 );
 
 ------------------------------------------------------------------------
@@ -2196,7 +2319,7 @@ toGushel SpecialGushelMukaiFourfold := X -> (
 < SpecialGushelMukaiFourfold := X -> try toGushel X else error "not able to deform to Gushel type";
 
 imageOfAssociatedMap = method();
-imageOfAssociatedMap MutableHashTable := X -> (
+imageOfAssociatedMap EmbeddedProjectiveVariety := X -> (
     f := map X;
     if f#"idealImage" =!= null then return image f;
     e := if X.cache#?(surface X,"label") then X.cache#(surface X,"label") else "not recognized yet";
@@ -2685,6 +2808,35 @@ Outputs => {Boolean => {"whether ",TEX///$d$///," is an integer ",TEX///$>$///,"
 EXAMPLE{"select(140,isAdmissibleGM)"},
 SeeAlso => {isAdmissible}} 
 
+document {Key => {CongruenceOfCurves}, 
+Headline => "the class of all congruences of secant curves to surfaces", 
+PARA{"Objects of this type are created by ",TO detectCongruence,"."}}
+
+document {Key => {(symbol SPACE, CongruenceOfCurves, EmbeddedProjectiveVariety), (symbol SPACE, CongruenceOfCurves, Ideal)}, 
+Headline => "get the curve of a congruence passing through a point", 
+Usage => "f(p)", 
+Inputs => {"f" => CongruenceOfCurves => {"a congruence of curves to a surface inside a variety ", TEX///$Y$///}, "p" => EmbeddedProjectiveVariety => {"a (general) point of ",TEX///$Y$///}}, 
+Outputs => {EmbeddedProjectiveVariety => {"the unique curve of the congruence ", TEX///$f$///, " that passes through ", TEX///$p$///}}, 
+EXAMPLE {"X = specialCubicFourfold surface {3,4};", "f = detectCongruence(X,1);","C = f point ambient X;","member(C,f)","assert oo"},
+SeeAlso => {detectCongruence, (member, EmbeddedProjectiveVariety, CongruenceOfCurves)}}
+
+document {Key => {(map, CongruenceOfCurves)}, 
+Headline => "compute the parameter space of a congruence", 
+Usage => "map f", 
+Inputs => {"f" => CongruenceOfCurves => {"a congruence of curves to a surface inside a variety ", TEX///$Y$///}}, 
+Outputs => {MultirationalMap => {"a dominant map from ",TEX///$Y$///," to the parameter space of ",TEX///$f$///," whose general fibers are the curves of the congruence"}},
+EXAMPLE {"S = PP_(ZZ/65521)[2,2];","Y = ambient S;","X = specialCubicFourfold S;","f = detectCongruence(X,1);","F = map f;","Q = target F","f;","p = point Y;","assert(f p == F^* F p)"},
+SeeAlso => {detectCongruence}}
+
+document {Key => {(member, EmbeddedProjectiveVariety, CongruenceOfCurves)}, 
+Headline => "test membership in a congruence of curves", 
+Usage => "member(C,f)", 
+Inputs => {"C" => EmbeddedProjectiveVariety => {"a curve"}, "f" => CongruenceOfCurves}, 
+Outputs => {Boolean => {"whether the curve ",TEX///$C$///," belongs to the congruence ", TEX///$f$///}}, 
+SeeAlso => {(symbol SPACE, CongruenceOfCurves, EmbeddedProjectiveVariety)}}
+
+undocumented{(toString, CongruenceOfCurves), (net, CongruenceOfCurves)} 
+
 document {Key => {detectCongruence}, 
 Headline => "detect and return a congruence of secant curves to a surface", 
 PARA{"See ",TO (detectCongruence, SpecialCubicFourfold)," and ",TO (detectCongruence, SpecialGushelMukaiFourfold),"."}} 
@@ -2693,7 +2845,7 @@ document {Key => {(detectCongruence, SpecialCubicFourfold, ZZ), (detectCongruenc
 Headline => "detect and return a congruence of (3e-1)-secant curves of degree e", 
 Usage => "detectCongruence X"|newline|"detectCongruence(X,e)", 
 Inputs => {"X" => SpecialCubicFourfold => {"containing a surface ", TEX///$S\subset\mathbb{P}^5$///}, "e" => ZZ => {"a positive integer (optional but recommended)"}}, 
-Outputs => {FunctionClosure => {"which takes a (general) point ", TEX///$p\in\mathbb{P}^5$///, " and returns the unique rational curve of degree ", TEX///$e$///, ", ", TEX///$(3e-1)$///, "-secant to ", TEX///$S$///, ", and passing through ", TEX///$p$///, " (an error is thrown if such a curve does not exist or is not unique)"}}, 
+Outputs => {CongruenceOfCurves => {"that is a function which takes a (general) point ", TEX///$p\in\mathbb{P}^5$///, " and returns the unique rational curve of degree ", TEX///$e$///, ", ", TEX///$(3e-1)$///, "-secant to ", TEX///$S$///, ", and passing through ", TEX///$p$///, " (an error is thrown if such a curve does not exist or is not unique)"}}, 
 EXAMPLE {"-- A general cubic fourfold of discriminant 26"|newline|"X = specialCubicFourfold(\"Farkas-Verra C26\",ZZ/33331);", "describe X", "time f = detectCongruence X;", "p := point ambient X -- random point on P^5", "time C = f p; -- 5-secant conic to the surface", "assert(dim C == 1 and degree C == 2 and dim(C * surface X) == 0 and degree(C * surface X) == 5 and isSubset(p, C))"}, 
 SeeAlso => {(detectCongruence, SpecialGushelMukaiFourfold, ZZ), coneOfLines}} 
 
@@ -2701,7 +2853,7 @@ document {Key => {(detectCongruence, SpecialGushelMukaiFourfold, ZZ), (detectCon
 Headline => "detect and return a congruence of (2e-1)-secant curves of degree e inside a del Pezzo fivefold", 
 Usage => "detectCongruence X"|newline|"detectCongruence(X,e)", 
 Inputs => {"X" => SpecialGushelMukaiFourfold => {"containing a surface ", TEX///$S\subset Y$///,", where ",TEX///$Y$///," denotes the unique del Pezzo fivefold containing the fourfold ",TEX///$X$///}, "e" => ZZ => {"a positive integer (optional but recommended)"}}, 
-Outputs => {FunctionClosure => {"which takes a (general) point ", TEX///$p\in Y$///, " and returns the unique rational curve of degree ", TEX///$e$///, ", ", TEX///$(2e-1)$///, "-secant to ", TEX///$S$///, ", contained in ",TEX///$Y$///," and passing through ", TEX///$p$///, " (an error is thrown if such a curve does not exist or is not unique)"}}, 
+Outputs => {CongruenceOfCurves => {"that is a function which takes a (general) point ", TEX///$p\in Y$///, " and returns the unique rational curve of degree ", TEX///$e$///, ", ", TEX///$(2e-1)$///, "-secant to ", TEX///$S$///, ", contained in ",TEX///$Y$///," and passing through ", TEX///$p$///, " (an error is thrown if such a curve does not exist or is not unique)"}}, 
 EXAMPLE{"-- A GM fourfold of discriminant 20"|newline|"X = specialGushelMukaiFourfold(\"17\",ZZ/33331);", "describe X", "time f = detectCongruence X;", "Y = grassmannianHull X; -- del Pezzo fivefold containing X", "p := point Y -- random point on Y", "time C = f p; -- 3-secant conic to the surface", "S = surface X;", "assert(dim C == 1 and degree C == 2 and dim(C*S) == 0 and degree(C*S) == 3 and isSubset(p,C) and isSubset(C,Y))"}, 
 SeeAlso => {(detectCongruence, SpecialCubicFourfold, ZZ), coneOfLines}} 
 
