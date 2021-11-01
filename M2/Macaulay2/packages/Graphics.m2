@@ -9,25 +9,26 @@ newPackage(
 		HomePage => "http://bcalmes.perso.math.cnrs.fr/"},
                 {Name => "Viktor Petrov"}
 		},
-	Headline => "Create graphics",
+	Headline => "create graphics",
+	Keywords => {"Graphics"},
 	DebuggingMode => false)
 
 -- Put here the name of functions that should be visible to users
 export{
-Point2D, Point3D, Segment2D, Segment3D, Polygon2D, Polygon3D, Circle, Sphere, TextTag, GraphicPrimitive, 
-FormattedGraphicPrimitives, Picture,
-point, segment, polygon, circle, sphere, textTag, formatGraphicPrimitives, picture,
-pictureZone, 
-mergeFormattedGraphicPrimitives,
-svgObject, svgPicture, defaultSVGOpening,
-pgfObject, pgfPicture,
-viewPicture
+"Point2D", "Point3D", "Segment2D", "Segment3D", "Polygon2D", "Polygon3D", "Circle", "Sphere", "TextTag", "GraphicPrimitive", 
+"FormattedGraphicPrimitives", "Picture",
+"point", "segment", "polygon", "circle", "sphere", "textTag", "formatGraphicPrimitives", "picture",
+"pictureZone", 
+"mergeFormattedGraphicPrimitives",
+"svgObject", "svgPicture", "defaultSVGOpening",
+"pgfObject", "pgfPicture",
+"viewPicture"
 }
 
 -- Variables that can be modified by the user
 exportMutable{
-possibleSVGOptions, defaultSVGOptions, defaultSVGValues, defaultSVGHeading, defaultSVGClosing,
-possiblePGFOptions, defaultPGFOptions, defaultPGFValues
+"possibleSVGOptions", "defaultSVGOptions", "defaultSVGValues", "defaultSVGHeading", "defaultSVGClosing",
+"possiblePGFOptions", "defaultPGFOptions", "defaultPGFValues"
 }
 
 -- Package code 
@@ -115,7 +116,7 @@ textTag(Point2D,String) := (p,s) -> new TextTag from {p,s}
 
 textTag(Point3D,String) := (p,s) -> new TextTag from {p,s} 
 
---Turning a GraphicPrimitive object into a formated one by specifying options. These options will be passed to the different methods to create pictures in different formats (ex: SVG, etc.) so they are not constrained here because I don't know what graphic formats will be supported in the future. 
+--Turning a GraphicPrimitive object into a formatted one by specifying options. These options will be passed to the different methods to create pictures in different formats (ex: SVG, etc.) so they are not constrained here because I don't know what graphic formats will be supported in the future. 
 formatGraphicPrimitives = method()
 formatGraphicPrimitives(BasicList,HashTable) := (gplist, h) ->
 	(
@@ -936,7 +937,7 @@ doc ///
 	Key
 		(formatGraphicPrimitives,BasicList,HashTable)
 	Headline
-		create a formated graphic primitive object
+		create a formatted graphic primitive object
 	Usage
 		textTag(gplist,h)	
 	Inputs
