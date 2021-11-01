@@ -6,7 +6,7 @@ newPackage(
 	Date => "February 26, 2010",
 	Authors => {
 		{Name => "Baptiste Calmès",
-		HomePage => "http://www.math.uni-bielefeld.de/~bcalmes/"},
+		HomePage => "http://bcalmes.perso.math.cnrs.fr/"},
                 {Name => "Viktor Petrov"}
 		},
 	Headline => "commutative formal group laws",
