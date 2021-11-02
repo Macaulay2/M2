@@ -73,10 +73,14 @@ gParse GraphicsObject := g -> ( -- GraphicsObject used as coordinate
 gParse GraphicsCoordinate := identity
 
 
-GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,
-    new class opts1 from gParse if any(opts2,x->x#0===symbol cache) then opts2 else append(opts2,symbol cache => new CacheTable),
+GraphicsObject ++ List := (opts1, opts2) -> (
+    opts2 = gParse if any(opts2,x->x#0===symbol cache) then opts2 else append(opts2,symbol cache => new CacheTable);
+    sty := new MutableHashTable from select(opts2,o -> class o#0 === String);
+    if #sty>0 then opts2 = append(opts2,symbol style => merge(opts1.style,sty,last));
+    opts3 := new class opts1 from select(opts2,o -> class o#0 =!= String);
+    merge(opts1,opts3,
     (x,y) -> if instance(x,Matrix) and instance(y,Matrix) then y*x else y -- for TransformMatrix and AnimMatrix
-    ) -- cf similar method for OptionTable
+    )) -- cf similar method for OptionTable
 
 -- a bunch of options are scattered throughout the code:
 -- * all dimensions are redefined as dimensionless quantities: Radius, FontSize, etc
