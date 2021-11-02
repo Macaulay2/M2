@@ -555,76 +555,6 @@ assert (HH_2 C == 0)
 assert (HH_3 C == 0)
 assert (HH_4 C == 0)
 
-
---
-S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
-m = matrix pack (3,toList (t_1 .. t_9))			  -- 3 by 3
-n = matrix pack (3,toList (u_1 .. u_9))			  -- 3 by 3
-
--- Try the following with various resolution algorithms
-
-alg = 0
-j = flatten (m * n - n * m)
-M = cokernel j
-C = res(M, LengthLimit => 4, DegreeLimit => 1, Strategy => alg)
-assert( rank C_2 == 2 )
-C = res(M, LengthLimit => 4, DegreeLimit => 2, Strategy => alg)
-assert( rank C_2 == 33 )
-assert( rank C_3 == 32 )
-assert( rank C_4 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 3, Strategy => alg)
-assert( rank C_3 == 60 )
-assert( rank C_4 == 61 )
-C = res(M, LengthLimit => 4, DegreeLimit => 4, Strategy => alg)
-assert( rank C_5 == 0 )
-
-alg = 1
-j = flatten (m * n - n * m)
-M = cokernel j
-C = res(M, LengthLimit => 4, DegreeLimit => 1, Strategy => alg)
-assert( rank C_2 == 2 )
-C = res(M, LengthLimit => 4, DegreeLimit => 2, Strategy => alg)
-assert( rank C_2 == 33 )
-assert( rank C_3 == 32 )
-assert( rank C_4 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 3, Strategy => alg)
-assert( rank C_3 == 60 )
-assert( rank C_4 == 61 )
-C = res(M, LengthLimit => 4, DegreeLimit => 4, Strategy => alg)
-assert( rank C_5 == 0 )
-
-alg = 2
-j = flatten (m * n - n * m)
-M = cokernel j
-C = res(M, LengthLimit => 4, DegreeLimit => 1+2, Strategy => alg)
-assert( rank C_2 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 2+2, Strategy => alg)
-assert( rank C_2 == 34 )
-assert( rank C_3 == 32 )
-assert( rank C_4 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 3+2, Strategy => alg)
-assert( rank C_3 == 60 )
-assert( rank C_4 == 61 )
-C = res(M, LengthLimit => 4, DegreeLimit => 4+2, Strategy => alg)
-assert( rank C_5 == 0 )
-
--- This one fails
-alg = 3
-j = flatten (m * n - n * m)
-M = cokernel j
-C = res(M, LengthLimit => 4, DegreeLimit => 1+2, Strategy => alg)
-assert( rank C_2 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 2+2, Strategy => alg)
-assert( rank C_2 == 34 )
-assert( rank C_3 == 32 )
-assert( rank C_4 == 3 )
-C = res(M, LengthLimit => 4, DegreeLimit => 3+2, Strategy => alg)
-assert( rank C_3 == 60 )
-assert( rank C_4 == 61 )
-C = res(M, LengthLimit => 4, DegreeLimit => 4+2, Strategy => alg)
-assert( rank C_5 == 0 )
-
-
 --
      assert( (     M = ZZ^2 ++ ZZ^3) === ZZ^5 );
      assert( (     formation M) === new FunctionApplication from {directSum,(ZZ^2,ZZ^3)} );
@@ -659,35 +589,6 @@ assert( partitions(5,3) === {{3,2},{3,1,1},{2,2,1},{2,1,1,1},{1,1,1,1,1}} / (x -
 --
 assert( toString tally {1,1,1,2,1,3,2} === "new Tally from {1 => 4, 2 => 2, 3 => 1}" )
 assert( tally {1,1,1,2,1,3,2} === new Tally from {(1,4),(2,2),(3,1)} )
-
-
-
---
-assert( toString Tor == "Tor" )
-
-
---
-R = ZZ/101[x,y]
-assert(
-     intersect(image matrix {{1},{x}}, image matrix {{x}, {x^2}})
-     == image matrix {{x}, {x^2}}
-     )
-assert(
-     intersect(image matrix {{1},{x}}, image matrix {{x}, {x^3}}) ==  0
-     )
-assert( intersect( ideal(x^2,y), ideal (x,y^2)) == ideal (y^2, x^2, x*y) )
-
-
---
-R = ZZ/101[a..d]
-assert(
-     intersect(
-	  subquotient(matrix {{a}},matrix {{d}}),
-	  subquotient(matrix {{b}},matrix{{d}})
-	  )
-     ==
-     subquotient(matrix {{a*b}},matrix {{d}})
-     )
 
 
 --
@@ -1151,44 +1052,6 @@ assert( P == poincare prune W )
 
 
 --
-    R = ZZ/101[a,b]
-    S = ZZ/101[a,b,c]
-    M = cokernel matrix{{c^3}}
-    f = map(S,R)
-    assert( R^{0,-1,-2} == pushForward(f,M) )
-
-
---
-debug Core
-M = mutableMatrix(map(ZZ^5, ZZ^7, (i,j) -> 3*i^3 + j^2 +3),Dense=>false)
-rawInsertColumns(raw M,3,4)
-M
-rawDeleteColumns(raw M,8,9)
-M
-
-rawInsertRows(raw M,5,6)
-M
-rawDeleteRows(raw M,1,1)
-M
-
-M = mutableMatrix(map(ZZ^5, ZZ^7, (i,j) -> 3*i^3 + j^2 +3),Dense=>true)
-rawInsertColumns(raw M,3,4)
-M
-rawDeleteColumns(raw M,8,9)
-M
-
-rawInsertRows(raw M,5,6)
-M
-rawDeleteRows(raw M,1,1)
-M
-
-rawDeleteColumns(raw M,3,6)
-M
-rawDeleteRows(raw M,4,9)
-M
-
-
---
 R = QQ[a..d, MonomialOrder => GRevLex]
 a*c + b^2 + a*c^3
 R = QQ[a..d, MonomialOrder => {GRevLex=>2, GRevLex=>2}]
@@ -1497,21 +1360,6 @@ f = (a+b+c)^3
 assert(someTerms(f,0,1) == leadTerm f)
 assert(someTerms(f,-1,1) == c^3)
 assert(someTerms(f,-2,2) == 3*b*c^2 + c^3)
-
-
---
-  P3 = ZZ/32003[a..i];
-  M = comodule monomialCurveIdeal(P3,{1,3,8,9,12,13,17,21})
-  P2 = ZZ/32003[a,b,c,d,e,f];
-  F = map(P3,P2,random(P3^1, P3^{-1,-1,-1,-1,-1,-1}))
-time   N = pushForward(F,M);
-  P2 = ZZ/32003[a,b,c,d,e,f];
-  F = map(P3,P2,random(P3^1, P3^{-1,-1,-1,-1,-1,-1}))
-time   N = pushForward(F,M);
-  hilbertPolynomial M
-  hilbertPolynomial N
-  ann N
-
 
 
 --

@@ -650,7 +650,7 @@ document {
      }	   
 
 TEST ///
-   fout = openOut "curve_example0";
+   fout = openOut "/dev/null";
          F = QQ;
          d = 1;
         P0 = F[a_{0,0}..a_{0,d}];
@@ -668,7 +668,7 @@ TEST ///
       -- assert(globalpars==0);
 ///
 TEST ///
-      fout := openOut "curve_example1" 
+      fout := openOut "/dev/null" 
          F := ZZ/2
          d := 1
         P0 := F[a_{0,0}..a_{0,d}];
@@ -693,7 +693,7 @@ time tree2 := arcs(b1,e1,n1,fout);
       -- assert(globalpars==0);
 ///      
 TEST ///
-     fout := openOut "Kollar_3.12";
+     fout := openOut "/dev/null";
         F := QQ
         d := 2
        P0 := F[a_{0,0}..a_{0,d}];
@@ -711,7 +711,7 @@ time tree := arcs(b0,e0,n0,fout);
      assert(#tree#0==5)
 ///     
 TEST ///
-     fout := openOut "Kollar_3.12light";
+     fout := openOut "/dev/null";
         F := QQ
         d := 2
        P0 := F[a_{0,0}..a_{0,d}];
@@ -729,7 +729,7 @@ time tree := arcs(b0,e0,n0,fout);
      assert(#tree#0==4)
 ///     
 TEST ///
-     fout := openOut "Kollar_2.65char0"
+     fout := openOut "/dev/null"
         F := QQ
         d := 2
        P0 := F[a_{0,0}..a_{0,d}];
@@ -749,7 +749,7 @@ time tree := arcs(b0,e0,n0,fout);
      assert(#tree#0==8)
 ///
 TEST ///
-     fout := openOut "Cutkosky7.35.1"
+     fout := openOut "/dev/null"
         F := ZZ/2
         d := 3
        P0 := F[a_{0,0}..a_{0,d}];
@@ -783,7 +783,7 @@ time Tree := arcs(B0,E0,N0,fout);
      assert(#tree#0==2)
 ///
 TEST ///
-     fout := openOut "Cutkosky7.35.2"
+     fout := openOut "/dev/null"
         F := ZZ/2
         d := 2
        P0 := F[a_{0,0}..a_{0,d}];
@@ -817,7 +817,7 @@ time Tree := arcs(B0,E0,N0,fout);
      assert(#tree#0==2)
 ///
 TEST ///
-     fout := openOut "non-singular"
+     fout := openOut "/dev/null"
         F := ZZ/2
         d := 2
        P0 := F[a_{0,0}..a_{0,d}];

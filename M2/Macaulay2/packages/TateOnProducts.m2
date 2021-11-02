@@ -1468,14 +1468,6 @@ beilinson = method(Options=>{BundleType=>PrunedQuotient}) -- other options: Quot
      beilinson random(E^{{-1,0}}, E^{{-2,-1}})
 *-
 
--- The following function should be moved to the Macaulay2 Core.
-tensor(Matrix,Matrix) := opts -> (A,B) -> A ** B
-tensor List := opts -> (L) -> (
-    result := L#0;
-    for i from 1 to #L-1 do result = tensor(result,L#i,opts);
-    result
-    )
-
 -- The following functions are here to facilitate the construction
 -- of the beilinson functor.  In particular, they make sure that the
 -- generators are in the correct order and the signs are correct.

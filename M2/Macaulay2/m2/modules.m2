@@ -297,7 +297,7 @@ degrees Module := N -> if N.?degrees then N.cache.degrees else N.cache.degrees =
      if nd == 0 then toList (rk : {})
      else pack(nd,rawMultiDegree N.RawFreeModule))
 
-Module ^ ZZ := Module => (M,i) -> directSum (i:M)
+Module ^ ZZ := Module => (M,i) -> if i > 0 then directSum (i:M) else 0*M
 
 Ring ^ List := Module => (
      (R,degs) -> (

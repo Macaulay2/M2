@@ -14,7 +14,7 @@ newPackage("Dmodules",
      PackageImports => {"PrimaryDecomposition","ReesAlgebra","Elimination"}
      )
 
-export { "kappaAnnF1PlanarCurve", "reiffen", "kOrderAnnFa", "kOrderAnnFs", "kDiffFs",
+export { "kappaAnnF1PlanarCurve", "reiffen", "kOrderAnnFa", "kOrderAnnFs",
      "localBFunction", "multiplierIdeal", "ViaElimination", "ViaColonIdeal", "ViaLinearAlgebra",
      "isInMultiplierIdeal", "generalizedBFunction", "mGeneralizedBFunction",
      "jumpingCoefficients", "hasRationalSing",
@@ -26,7 +26,7 @@ export { "kappaAnnF1PlanarCurve", "reiffen", "kOrderAnnFa", "kOrderAnnFs", "kDif
      "OaTaWa","pruneLocalCohom","paramBpoly","GroundField","makeCyclic","Generator","AnnG","isHolonomic","DHom","DExt","Special",
      "None","Info","PolySols","Alg","GD","Duality","PolyExt","RatSols","RatExt","createDpairs","dpairInds","extractVarsAlgebra","extractDiffsAlgebra",
      "dpairVars","Fourier","Dtransposition","singLocus","charIdeal","holonomicRank","Ddim","makeWA"=>"makeWeylAlgebra","makeWeylAlgebra","Ddual","Dlocalize",
-     "Oaku","OTW","Dlocalization","DlocalizationAll","DlocalizeMap","LocModule","GeneratorPower","LocMap","annFS",
+     "Oaku","OTW","OTWcyclic","Dlocalization","DlocalizationAll","DlocalizeMap","LocModule","GeneratorPower","LocMap","annFS",
      "DlocalizeAll","IntegrateBfunction","Bfunction","DlocalizationMap","Dresolution","Schreyer","Vhomogenize","Dres",
      "Drestriction","Drestrict","DrestrictionClasses","DrestrictClasses","DrestrictIdeal","DrestrictAll",
      "DrestrictionComplex","DrestrictionAll","DrestrictionIdeal","DrestrictComplex","HomologyModules",
@@ -37,8 +37,8 @@ export { "kappaAnnF1PlanarCurve", "reiffen", "kOrderAnnFa", "kOrderAnnFs", "kDif
      "diffOps","PolyGens","BasisElts","putWeylAlgebra","inw","gbw",
      "Dprune","pInfo","optGB","FourierInverse","Output","stafford",
      "BMM","pruneCechComplexCC","populateCechComplexCC",
-     "logCohomology","SetVariables", "eulerOperators", "toricIdealPartials", "genToDistractionGens", "thetaIdeal", 
-     "cssExpts", "cssExptsMult", "isTorusFixed"
+     "logCohomology","SetVariables", "eulerOperators", "toricIdealPartials", "genToDistractionGens", "distraction", "indicialIdeal",  
+     "cssExpts", "cssExptsMult", "solveFrobeniusIdeal", "isTorusFixed", "ICmodule", "ICcohom", "LocCohomStrategy"
      }
    
 scan({"Local", "Global"}, nm -> assert (isGlobalSymbol nm and value getGlobalSymbol nm === getGlobalSymbol nm))
@@ -79,6 +79,9 @@ load "./Dmodules/multiplierIdeals.m2"
 -- Christine's algorithms
 load "./Dmodules/canonicalSeries.m2"
 
+-- Andras' algorithms
+load "./Dmodules/intersectionCohom.m2"
+
 -- HOOKS
 
 addHook((resolution, Module), Strategy => WeylAlgebra,
@@ -93,6 +96,9 @@ addHook((codim, Module), Strategy => WeylAlgebra,
 	  R := ring M;
 	  op := options R;
 	  if op.?WeylAlgebra and op.WeylAlgebra =!= {} then (dim R - Ddim M)))
+
+TEST /// input "Dmodules/TST/Drestriction.tst.m2" ///
+
 
 beginDocumentation()
 load "./Dmodules/DMODdoc.m2"

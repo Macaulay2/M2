@@ -3,47 +3,6 @@ undocumented {
      }
 
 document {
-     Key => (symbol **, RingMap, Module),
-     Headline => "tensor product of a module via a ring map",
-     Usage => "f ** M",
-     Inputs => {
-	  "f" => { "a ring map from ", TT "R", " to ", TT "S" },
-	  "M" => { "an ", TT "R", "-module" }
-	  },
-     Outputs => {
-	  { "the tensor product of ", TT "M", " with ", TT "S", " over ", TT "R" }
-	  },
-     EXAMPLE lines ///
-	  R = QQ[x,y];
-	  S = QQ[t];
-	  f = map(S,R,{t^2,t^3})
-	  f ** coker vars R
-	  f ** image vars R
-	  ///,
-     SeeAlso => { (symbol SPACE, RingMap, Module) }
-     }
-
-document {
-     Key => (symbol **, RingMap, Matrix),
-     Headline => "tensor product of a module map via a ring map",
-     Usage => "f ** g",
-     Inputs => {
-	  "f" => { "from ", TT "R", " to ", TT "S" },
-	  "g" => { "a map of ", TT "R", "-modules" }
-	  },
-     Outputs => {
-	  { "the tensor product of ", TT "g", " with ", TT "S", " over ", TT "R" }
-	  },
-     EXAMPLE lines ///
-	  R = QQ[x,y];
-	  S = QQ[t];
-	  f = map(S,R,{t^2,t^3})
-	  f ** vars R
-	  ///,
-     SeeAlso => { (symbol SPACE, RingMap, Module) }
-     }
-
-document {
      Key => {"powers",
 	  (symbol ^,RingMap,ZZ)
 	  },
@@ -331,12 +290,6 @@ document {
 --      PARA{},
 --      "The default is for the code to select the best strategy heuristically."
 --      }
-
-document {
-     Key => PushforwardComputation,
-     Headline => "a type of list used internally",
-     TT "PushforwardComputation", " -- a type of list used internally by ", TO "pushForward", " and ", TO "kernel", "."
-     }
 
 -- document {
 --      Key => EliminationOrder,

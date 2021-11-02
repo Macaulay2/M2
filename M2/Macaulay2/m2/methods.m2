@@ -1,159 +1,259 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
+-*
+  Methods are the most common type of dynamic dispatch, along with Hooks.
+  The method function is stored under the youngest mutable hash table in the
+  method key sequence.
+*-
 
 needs "option.m2"
 
-MethodFunction = new Type of CompiledFunctionClosure
-MethodFunctionSingle = new Type of CompiledFunctionClosure
-MethodFunctionBinary = new Type of CompiledFunctionClosure
-MethodFunctionWithOptions = new Type of FunctionClosure
+-----------------------------------------------------------------------------
+-- Local variables
+-----------------------------------------------------------------------------
 
-MethodFunction.synonym = "method function"
-MethodFunctionSingle.synonym = "method function with a single argument"
-MethodFunctionBinary.synonym = "binary method function"
-MethodFunctionWithOptions.synonym = "method function with options"
+-----------------------------------------------------------------------------
+-- Local utilities
+-----------------------------------------------------------------------------
 
-dispatcherFunctions = {}
+-- see lists.m2
+all' := (L, p) -> not any(L, x -> not p x)
 
-noapp := (f,x) -> error(
-     "no method for applying item of class ", toString class f, 
-     " to item of class ", toString class x
-     )
+noMethErr := M -> concatenate("no method found for applying ", silentRobustString(45, 3, M), " to:");
+printArgs := (i, arg, out) -> horizontalJoin("     argument ", i, " :  ",
+    (if out then silentRobustNet else silentRobustNetWithClass)(60, 5, 3, arg));
 
-f := (i,arg,out) -> horizontalJoin("     argument ",i," :  ", (if out then silentRobustNet else silentRobustNetWithClass)(60,5,3,arg));
-line0 := meth -> concatenate("no method found for applying ", silentRobustString(45,3,meth), " to:");
+noMethodSingle = (M, args, outputs) -> toString stack     (  noMethErr M, printArgs(" ", args, outputs) )
+noMethod       = (M, args, outputs) -> toString stack join( {noMethErr M},
+    if class args === Sequence and 0 < #args and #args <= 4 then apply(#args,
+	i -> printArgs(toString (i+1), args#i, if outputs#?i then outputs#i else false))
+    else {   printArgs(" ",            args,   false) }) -- TODO: do better here, in what way?
 
-noMethodSingle = (meth,args,output) -> error toString stack( line0 meth, f(" ",args,output))
-noMethod = (meth,args,outputs) -> error toString stack join( {line0 meth},
-     if class args === Sequence and 0 < #args and #args <= 4
-     then apply(#args, i -> f(toString (i+1),args#i,if outputs#?i then outputs#i else false))
-     else {f(" ",args,
-	       false					    -- do better here
-	       )})
-badClass := (meth,i,args) -> (
+-- TODO: what is this for exactly?
+badClass := meth -> (i, args) -> (
      if i === -1 then error(silentRobustString(45,3,meth),": expected an output class, but got: ", silentRobustString(45,3,args))
      else error(silentRobustString(45,3,meth),": expected argument ",toString (i+1)," to be a type, but it was: ", silentRobustString(45,3,args#i)))
 
-methodDefaults := new OptionTable from {
-     Binary => false,
-     TypicalValue => Thing,
-     Options => null,
-     Dispatch => {Thing,Thing,Thing,Thing}                  -- Thing or Type (for single arg dispatch) or list of Thing or Type (for multiple inheritance)
-     	       	    	      	   	     	       	    -- if a list, it's assumed to continue with the default, which is Thing ...
-     }
-
-BinaryNoOptions := (outputs) -> (
-     methodFunction := newmethod1(args -> noMethod(methodFunction,args,outputs),outputs,MethodFunctionBinary);
-     binaryLookup := (x,y) -> (
-	  -- Common code for every associative method without options
-	  f := lookup(methodFunction,class x,class y);
-	  if f === null then noMethod(methodFunction,(x,y),outputs) else f(x,y)
-	  );
-     methodFunction(Sequence) := self := 
-     args -> (
-	  -- Common code for every associative method without options
-	  if #args === 2 then binaryLookup args
-	  else if #args >= 3 then (
-	       r := self(args#0,args#1);
-	       for i from 2 to #args-1 do r = self(r,args#i);
-	       r)
-	  else if #args === 1 then args#0
-	  else if #args === 0 then (
-	       f := lookup (1 : methodFunction);
-	       if f === null then noMethod(methodFunction,args,outputs) else f args
-	       )
-	  else error "wrong number of arguments"
-	  );
-     methodFunction)
-
+-- TODO: handle this in the interpreter, the same way that it is handled for function closures
 chkopt0 := k -> if not ( instance(k, Symbol) ) then error "expected SYMBOL => VALUE"
 chkopt  := o -> if not ( class o === Option and #o === 2 and instance(o#0, Symbol) ) then error "expected SYMBOL => VALUE"
 chkopts := x -> if class x === OptionTable then scan(keys x,chkopt0) else if class x === List then scan(x,chkopt) else error "expected list of optional arguments"
+badopts := x -> "options must be declared as a list, an option table, or as true for arbitrary options"
 
-SingleArgWithOptions := (opts,outputs) -> (
-     -- chkopts opts;
-     local methodFunction;
-     class' := if outputs then identity else class;
-     if opts === true then (
-	  methodFunction = opts >> 
-	  o ->
-	      arg -> (
-	       -- Common code for every method with options, single argument, with Options => true
-	       f := lookup(methodFunction, class' arg);
-	       if f === null then noMethodSingle(methodFunction,arg,outputs) else 
-	       if #o === 0 then f arg else f(o,arg)
-	       );
-	  methodFunction
-	  )
-     else (
-	  if instance(opts, List) then opts = new OptionTable from opts;
-	  methodFunction = opts >> 
-	  o ->
-	      arg -> (
-	       -- Common code for every method with options, single argument, not Options => true
-	       f := lookup(methodFunction, class' arg);
-	       if f === null then noMethodSingle(methodFunction,arg,outputs) else (f o) arg
-	       );
-	  methodFunction
-	  )
-     )
+-----------------------------------------------------------------------------
+-- MethodFunction* type declarations and basic constructors
+-----------------------------------------------------------------------------
 
-BinaryWithOptions := (opts,outputs) -> (
-     -- chkopts opts;
-     error "associative methods with options not implemented yet"
-     )
+MethodFunction = new Type of CompiledFunctionClosure
+MethodFunction.synonym = "method function"
+
+-- TODO: are these two really useful?
+MethodFunctionSingle = new Type of FunctionClosure
+MethodFunctionSingle.synonym = "method function with a single argument"
+
+MethodFunctionBinary = new Type of FunctionClosure
+MethodFunctionBinary.synonym = "associative binary method function"
+
+MethodFunctionWithOptions = new Type of FunctionClosure
+MethodFunctionWithOptions.synonym = "method function with options"
+
+-----------------------------------------------------------------------------
+-- helpers for method
+-----------------------------------------------------------------------------
+-- from interpreter:
+-- newmethod1
+-- newmethod1234c
+
+notImplemented = x -> error concatenate between(" ", splice {x, "not implemented yet"})
+
+-----------------------------------------------------------------------------
+
+-- see fold.m2, where this is turned into a method
+-- TODO: add Left associative vs Right associative methods
+foldL = (f, x, L) -> (scan(L, y -> x = f(x, y)); x)
+
+-- TODO: combine these, if it doesn't hurt recursion limits
+-- Common code for methods without options
+binaryCaller := (M, key, args, outputs) -> (
+    if (f := lookup key) =!= null then f args else error noMethod(M, args, outputs))
+-- Common code for methods with options
+binaryCaller' := (M, key, args, outputs, dispatcher) -> (
+    if (f := lookup key) =!= null then dispatcher f else error noMethod(M, args, outputs))
+
+BinaryNoOptions := outputs -> (
+    -- This type is essentially the same as SingleNoOption: it installs a method
+    -- for Sequence with dispatching done in top level instead of the interpreter
+    -- TODO: this implementation cuts recursion depth by more than 6, do better!
+    dispatchBy := if outputs === true then identity else class;
+    methodFunction := newmethod1(args -> error noMethod(methodFunction, args, outputs), outputs, MethodFunctionBinary);
+    -- Note: these methods may be overriden in order to implement
+    -- specializations for handling more than two objects at once
+    methodFunction List     :=
+    methodFunction Sequence := args -> (
+	-- Common code for every associative method without options
+	if #args == 0 then return binaryCaller(methodFunction, 1 : methodFunction, args, outputs);
+	if #args == 1 and (f := lookup(methodFunction, dispatchBy args#0)) =!= null then return f(args#0);
+	-- TODO: a rudimentary caching of the lookup call here would be a significant benefit
+	binaryLookup := (x, y) -> binaryCaller(methodFunction, (methodFunction, dispatchBy x, dispatchBy y), (x, y), outputs);
+	foldL(binaryLookup, args#0, drop(args, 1)));
+    methodFunction)
+BinaryWithOptions := (opts, outputs) -> (
+    -- chkopts opts;
+    if instance(opts, List) then opts = new OptionTable from opts;
+    dispatchBy := if   outputs === true then identity else class;
+    dispatcher := if      opts === true then ((o, args) -> if #o === 0 then (f -> f args) else (f -> f(o, args)))
+    else if instance(opts, OptionTable) then ((o, args) -> (f -> (f o) args))
+    else error badopts opts;
+    -- TODO: this can be simplified when https://github.com/Macaulay2/M2/issues/1878 is fixed
+    functionClosure := methodFunction := opts >> o -> args -> (
+	-- Common code for every associative method with options
+	-- this is essentially a method installed on (methodFunction, VisibleList)
+	if not instance(args, VisibleList) then args = 1:args;
+	if #args == 0 then return binaryCaller'(methodFunction, 1 : methodFunction, args, outputs, dispatcher(o, args));
+	if #args == 1 and (f := lookup(methodFunction, dispatchBy args#0)) =!= null then return (dispatcher(o, args#0)) f;
+	-- Note: specializations for simultaneous computation may be implemented
+	-- by installing method functions on types that inherit from VisibleList
+	if (f = lookup(methodFunction, class args)) =!= null and f =!= functionClosure then return (dispatcher(o, args)) f;
+	-- TODO: a rudimentary caching of the lookup call here would be a significant benefit
+	binaryLookup := (x, y) -> binaryCaller'(methodFunction, (methodFunction, dispatchBy x, dispatchBy y), (x, y), outputs, dispatcher(o, (x, y)));
+	foldL(binaryLookup, args#0, drop(args, 1)));
+    methodFunction = new MethodFunctionBinary from methodFunction;
+    -- Note: these methods may be overriden in order to implement
+    -- specializations for handling more than two objects at once
+    installMethod(methodFunction, List,     functionClosure);
+    installMethod(methodFunction, Sequence, functionClosure);
+    methodFunction)
+
+-----------------------------------------------------------------------------
+
+-- Common code for methods with options or other special calling routines
+singleCaller := (M, key, args, outputs, dispacher) -> (
+    if (f := lookup key) =!= null then dispacher f else error noMethodSingle(M, args, outputs))
+
+SingleNoOptions := outputs -> (
+    -- TODO: this implementation cuts recursion depth in half
+    -- TODO: make the debugger print the line that called the method instead of this line
+    methodFunction := newmethod1(args -> error noMethodSingle(methodFunction, args, outputs), outputs, MethodFunctionSingle))
+SingleWithOptions := (opts, outputs) -> (
+    -- TODO: https://github.com/Macaulay2/M2/issues/1878
+    -- chkopts opts;
+    if instance(opts, List) then opts = new OptionTable from opts;
+    dispatchBy := if   outputs === true then identity else class;
+    dispatcher := if      opts === true then ((o, arg) -> if #o === 0 then (f -> f arg) else (f -> f(o, arg)))
+    else if instance(opts, OptionTable) then ((o, arg) -> (f -> (f o) arg))
+    else error badopts opts;
+    methodFunction := opts >> o -> arg -> (
+	-- Common code for every method with options and a single argument
+	singleCaller(methodFunction, (methodFunction, dispatchBy arg), arg, outputs, dispatcher(o, arg)));
+    methodFunction = new MethodFunctionSingle from methodFunction)
+
+-----------------------------------------------------------------------------
 
 MultipleArgsWithOptions := (methopts,opts,outputs) -> (
      if instance(opts,List) then opts = new OptionTable from opts;
      local innerMethodFunction;
      methodFunction := new MethodFunctionWithOptions from (opts >> o -> arg -> innerMethodFunction(o,arg));
+    -- TODO: this implementation cuts recursion depth by 3!
      innerMethodFunction = newmethod1234c(
 	  methodFunction,
-	  args -> noMethod(methodFunction,args,outputs),
-	  (i,args) -> badClass(methodFunction,i,args),
+	  args -> error noMethod(methodFunction,args,outputs),
+	  badClass methodFunction,
 	  outputs,
 	  opts =!= true
 	  );
-     methodFunction)     
+     methodFunction)
 MultipleArgsWithOptionsGetMethodOptions := meth -> (frames (frames meth)#0#1)#0#0 -- this recovers the value of methopts
 
 MultipleArgsNoOptions := (methopts,outputs) -> (
+    -- Note: this implementation is perfectly tuned for recursion!
      methodFunction := newmethod1234c(
 	  MethodFunction,
-	  args -> noMethod(methodFunction,args,outputs),
-	  (i,args) -> badClass(methodFunction,i,args),
+	  args -> error noMethod(methodFunction,args,outputs),
+	  badClass methodFunction,
 	  outputs,
 	  null
-	  )
-     )
+	  );
+     methodFunction)
 MultipleArgsNoOptionsGetMethodOptions := meth -> (frames (frames meth)#0#1)#0#0
 
-all' := (L, f) -> scan(L, x -> if not f(x) then break false) === null
+-----------------------------------------------------------------------------
+
+-- TODO: also support return type polymorphism
+-- https://github.com/Macaulay2/M2/issues/1375
+setReturnTypes := (methodFunction, returnType) -> (
+    if returnType === Thing       then Thing else
+    if instance(returnType, Type) then typicalValues#methodFunction = returnType
+    else error("expected typical value ", toString returnType, " to be a type"))
+
+getReturnTypes := methodFunction -> if typicalValues#?methodFunction then typicalValues#methodFunction
+
+-----------------------------------------------------------------------------
+-- method
+-----------------------------------------------------------------------------
+-- also see methods in code.m2
+-- TODO: https://github.com/Macaulay2/M2/issues/1690
+-- TODO: https://github.com/Macaulay2/M2/issues/62
+
+methodDefaults := new OptionTable from {
+    Binary       => false,
+    -- Thing or Type (for single arg dispatch) or list of Thing or Type (for multiple inheritance)
+    -- if a list, it's assumed to continue with the default, which is Thing ...
+    Dispatch     => {Thing, Thing, Thing, Thing},
+    Options      => null,
+    TypicalValue => Thing,
+    }
 
 method = methodDefaults >> opts -> args -> (
      if args =!= () then error "expected only optional arguments";
      chk := c -> c === Thing or c === Type;
      if not if instance(opts.Dispatch,List) then all'(opts.Dispatch, chk) else chk opts.Dispatch
      then error "expected Dispatch option to be: Thing, Type, or a list of those";
-     singleArgDispatch := chk opts.Dispatch;
-     outputs := if not singleArgDispatch then apply(opts.Dispatch, c -> c === Type) else opts.Dispatch === Type;
+     singleDispatch := chk opts.Dispatch;
+     outputs := if not singleDispatch then apply(opts.Dispatch, c -> c === Type) else opts.Dispatch === Type;
      saveCurrentFileName := currentFileName;		    -- for debugging
-     saveCurrentLineNumber := currentLineNumber;	    -- for debugging
+     saveCurrentLineNumber := currentLineNumber();	    -- for debugging
      methodFunction := (
-	  if opts.Options === null then (
-       	       if opts.Binary then BinaryNoOptions(outputs)
-       	       else if singleArgDispatch then newmethod1 (args -> noMethodSingle(methodFunction,args,outputs), outputs, MethodFunctionSingle)
-       	       else MultipleArgsNoOptions(opts, outputs))
-	  else (
-       	       if opts.Binary then BinaryWithOptions(opts.Options,outputs)
-       	       else if singleArgDispatch then SingleArgWithOptions (opts.Options, outputs)
-       	       else MultipleArgsWithOptions(opts, opts.Options, outputs)
-	       )
-	  );
-     if opts.TypicalValue =!= Thing then (
-	  if not instance(opts.TypicalValue,Type) then error("expected typical value ", toString opts.TypicalValue, " to be a type");
-	  typicalValues#methodFunction = opts.TypicalValue;
-	  );
-     methodFunction)
+        if opts.Options === null then (
+	    if opts.Binary    then BinaryNoOptions(outputs) else
+	    if singleDispatch then SingleNoOptions(outputs)
+	    else MultipleArgsNoOptions(opts, outputs))
+	else (
+	    if opts.Binary    then BinaryWithOptions(opts.Options, outputs) else
+	    if singleDispatch then SingleWithOptions(opts.Options, outputs)
+	    else MultipleArgsWithOptions(opts, opts.Options, outputs)));
+    setReturnTypes(methodFunction, opts.TypicalValue);
+    methodFunction)
+
+-- get the options used when a method was declared
+-- TODO: doesn't work for MethodFunctionSingle, MethodFunctionBinary
+methodOptions = method(TypicalValue => OptionTable)
+methodOptions Function := methodOptions Symbol := f -> null
+methodOptions MethodFunctionWithOptions := MultipleArgsWithOptionsGetMethodOptions
+methodOptions MethodFunction := MultipleArgsNoOptionsGetMethodOptions
+methodOptions Command := f -> methodOptions f#0
+
+-- get the options of function, method function, or various other objects
+options = method(Dispatch => Thing, TypicalValue => OptionTable)
+options Command  := C   -> options C#0
+options Sequence := key -> (
+    if (m := lookup key) =!= null then options m
+    else error("no method installed for ", toString key))
+
+oftab := new HashTable from {
+    -- MethodFunctionWithOptions
+    functionBody(method(Options => {}))                    => f -> notImplemented(),
+    functionBody(method(Options => {}, Dispatch => Thing)) => f -> notImplemented(),
+    -- FunctionClosure, MethodFunctionSingle, MethodFunctionBinary
+    functionBody(  {} >> identity)                         => f -> first frame f,
+    -- TODO: changing to true fixes https://github.com/Macaulay2/M2/issues/1881
+    -- but introduces a different bug
+    functionBody(true >> identity)                         => f -> null,
+    }
+
+options Function := f -> if oftab#?(fb := functionBody f) then oftab#fb f
+
+-----------------------------------------------------------------------------
+-- Install various generic methods
+-----------------------------------------------------------------------------
 
 setupMethods := (args, symbols) -> (
      scan(symbols, n -> (
@@ -169,7 +269,7 @@ setupMethods((), {
 	  koszul, symmetricPower, trace, target, source,
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
-	  substitute, rank, complete, ambient, baseName, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
+	  substitute, rank, complete, ambient, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
 	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw, exp,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, assign, numgens, realPart, imaginaryPart, conjugate,
@@ -179,6 +279,9 @@ setupMethods((), {
 	  hasEngineLinearAlgebra, nullSpace,
       isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile
 	  })
+
+assert = method()
+assert Thing := x -> assert' x
 
 use = method(Dispatch => Thing)
 use Thing := identity
@@ -218,6 +321,7 @@ prune = method(
      Options => {
 	  Exclude => {}
 	  })
+debug = method()
 status = method (
      Options => new OptionTable from {
      	  TotalPairs => true,
@@ -227,15 +331,17 @@ status = method (
 
 minimalBetti = method(Options => true)
 
-sopts := 
-Options => {
-     DegreeOrder => null,				    -- used to be Ascending
-     MonomialOrder => Ascending
-     }
+-- sort
+-- TODO: see sortBy in classes.m2
+-- cf. https://github.com/Macaulay2/M2/issues/1154
+sort = method(
+    Options => {
+	DegreeOrder   => null,     -- used to be Ascending
+	MonomialOrder => Ascending
+	})
+rsort       = method(Options => options sort)
+sortColumns = method(Options => options sort)
 
-sortColumns = method sopts
-sort = method sopts
-rsort = method sopts
 
 matrix = method (
      Options => {
@@ -294,7 +400,6 @@ toExternalString Thing := x -> (
      if hasAttribute(x,ReverseDictionary) then return toString getAttribute(x,ReverseDictionary);
      error("can't convert anonymous object of class ",toString class x," to external string"))
 
-options = method(Dispatch => Thing, TypicalValue => OptionTable)
 setupMethods(Dispatch => Thing, {max,min,directSum,vars})
 net = method(Dispatch => Thing, TypicalValue => Net)
 factor = method( Options => { } )
@@ -369,37 +474,6 @@ erase symbol denominator
 denominator = method()
 denominator QQ := olddenominator
 
-emptyOptionTable := new OptionTable
-options     Ring := x -> null
-options Sequence := s -> (
-     m := lookup s;
-     if m === null then error "method not found";
-     options m)
-
-notImplemented = x -> error "not implemented yet"
-
-oftab := hashTable {
-     functionBody (method(Options => {})) => f -> notImplemented(),
-     functionBody (method(Options => {}, Dispatch => Thing)) => f -> notImplemented(),
-     functionBody ({} >> identity) => f -> first frame f,
-     functionBody (true >> identity) => f -> null
-     }
-options Function := OptionTable => f -> (
-     fb := functionBody f;
-     if oftab#?fb then oftab#fb f
-     )
-
-options Command := OptionTable => f -> options f#0
-
-computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
-     if not M#?Name or not goodEnough(M#Name#0,options) 
-     then (
-	  ret := computeIt(M,options);
-	  M#Name = {options,ret};
-	  ret)
-     else M#Name#1
-     )
-
 toExternalString Option := z -> concatenate splice (
      if precedence z > precedence z#0 then ("(",toExternalString z#0,")") else toExternalString z#0,
      " => ",
@@ -464,7 +538,6 @@ scan(flexiblePostfixOperators, op -> (
 	  installAssignmentMethod(op, Type, (X,am) -> installAssignmentMethod(op, X, am));
 	  undocumented' ((op, symbol =), Type);
 	  ))
-
 -----------------------------------------------------------------------------
 -- helper functions usable in documentation
 -----------------------------------------------------------------------------
@@ -479,19 +552,13 @@ foodict := first localDictionaries foo
 bar := lookup(foo,Sequence)
 
 -----------------------------------------------------------------------------
-
-ck := f -> ( assert( f =!= null ); assert( instance(f, Function) ); f )
-dispatcherFunctions = join (dispatcherFunctions, {
-	  -- lookup(method(),Sequence),
-	  -- ck lookup(method(Options => {}),Sequence)
-	  })
-
------------------------------------------------------------------------------
 -- hooks
+-----------------------------------------------------------------------------
 -- also see hooks in code.m2
 -- TODO: get this to work with lookup and flagLookup
 -- TODO: get this to work on HashTables
 -- TODO: get this to work with codeHelper
+-- TODO: https://github.com/Macaulay2/M2/issues/1153
 
 protect symbol Hooks
 protect symbol HookAlgorithms
@@ -565,6 +632,7 @@ runHooks(MutableHashTable, Thing, Thing) := true >> opts -> (store, key, args) -
     -- if Strategy is given, and it is among the known strategies, run only that hook
     if store.HookAlgorithms#?alg  then runHook(store.HookAlgorithms#alg,  key, alg,  args, opts) else
     -- otherwise, if the class of alg is a known strategy, run only that hook
+    -- TODO: implement reverse lookup to find strategy installed under ancestors of type?
     if store.HookAlgorithms#?type then runHook(store.HookAlgorithms#type, key, type, args, opts) else
     -- otherwise, give an error with the list of possible strategies
     error("unrecognized Strategy => '", toString alg, "' for ", toString key, newline,
@@ -575,13 +643,14 @@ protect QuotientRingHook
 
 -----------------------------------------------------------------------------
 -- stashing or caching computed values for future reference in functions that take a mutable hash table as input
+-----------------------------------------------------------------------------
 
 CacheFunction = new Type of FunctionClosure
 CacheFunction.synonym = "a cache function"
 net CacheFunction := f -> "-*a cache function*-"
 cacheValue = key -> f -> new CacheFunction from (x -> (
-     	  c := try x.cache else x.cache = new CacheTable;
-     	  if c#?key then (
+	  c := try x.cache else x.cache = new CacheTable;
+	  if c#?key then (
 	       val := c#key;
 	       if class val === CacheFunction then (
 		    remove(c,key);
@@ -590,7 +659,7 @@ cacheValue = key -> f -> new CacheFunction from (x -> (
 	       )
 	  else c#key = f x))
 stashValue = key -> f -> new CacheFunction from (x -> (
-     	  if x#?key then (
+	  if x#?key then (
 	       val := x#key;
 	       if class val === CacheFunction then (
 		    remove(x,key);
@@ -619,14 +688,6 @@ info = method(Dispatch => Thing, TypicalValue => String)
 
 show = method()
 
--- method options
-
-methodOptions = method(TypicalValue => OptionTable)
-methodOptions Function := methodOptions Symbol := f -> null
-methodOptions MethodFunctionWithOptions := MultipleArgsWithOptionsGetMethodOptions
-methodOptions MethodFunction := MultipleArgsNoOptionsGetMethodOptions
-methodOptions Command := f -> methodOptions f#0
-
 -- values of functions by lookup
 lookupfuns = new MutableHashTable
 storefuns = new MutableHashTable
@@ -650,6 +711,7 @@ locate List       := List     => x -> apply(x, locate)
 protect symbol locate
 
 -- baseName
+baseName = method()
 baseName Thing := R -> (
      if hasAttribute(R,ReverseDictionary) then (
 	  x := getAttribute(R,ReverseDictionary);
@@ -678,10 +740,6 @@ exp RingElement := RingElement => r -> (
 	       if rn == 0 then break e;
 	       e = e + rn;
 	       )))
-
--- assert
-assert = method()
-assert Thing := x -> assert' x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

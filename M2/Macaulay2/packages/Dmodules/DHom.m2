@@ -12,7 +12,7 @@ List ^ List := (Vars, Exps) -> (
 
 -- This routine takes a weight vector w of strictly positive integers
 -- and returns the exponents beta in N^n such that 
--- ( k_0 < w_1 beta_1 + ... + w_n bet_n <= k_1) 
+-- ( k_0 < w_1 beta_1 + ... + w_n beta_n <= k_1) 
 findExps := (w, k0, k1) -> (
      local minimum, local alpha, local tempExps;
      -- base case: weight vector w has dim 1
@@ -88,6 +88,7 @@ PolySols(Module, List) := options -> (M, w) -> (
 	  input to be a quotient module";
      	  if numgens target gens M > 1 then error "non-cyclic
 	  modules not yet supported for Grobner deformation method";
+	  if #w != n then error ("PolySols expected a weight vector of length" | n);
      	  if any(w, i -> i <= 0) then error "expected strictly
 	  positive weight vector";
 	  
@@ -838,3 +839,177 @@ ExternalProduct(ChainComplex, ChainComplex) := options -> (F, G) -> (
      GW := incMap2 G;
      FW**GW
      )
+
+
+----- A utility function for the tests in this file -------
+compareSpans = method();
+compareSpans (List, List) := (list1, list2) -> (
+    -- INPUT: list1, list2      two lists of polynomials (assumed to be in the same ring)
+    -- OUTPUT: true if the lists have the same span (over the coefficient ring), 
+    -- false otherwise.
+    if #list1 == 0 and #list2 == 0 then true
+    else if #list1 == 0 and #list2 != 0 then false
+    else if #list1 != 0 and #list2 == 0 then false
+    else (
+	combinedList := list1 | list2;
+	combinedMat := matrix {combinedList}; -- This ensures coeffMat1 and coeffMat2
+	                                      -- have same number of cols.
+	combinedCoeffMat := lift(last coefficients combinedMat,
+	    coefficientRing ring combinedMat);
+	coeffMat1 := combinedCoeffMat_{0..<#list1};
+	coeffMat2 := combinedCoeffMat_{#list1..<#combinedList};
+	
+	-- Sanity checks
+	assert(numColumns coeffMat1 == #list1);
+	assert(numColumns coeffMat2 == #list2);
+	
+	image coeffMat1 == image coeffMat2
+	)
+    );
+
+
+
+
+TEST ///
+-- TESTS TO WRITE (exported symbols);
+--    PolyExt Ideal
+--    PolyExt Module
+--    PolyExt (ZZ, Ideal)
+--    PolyExt (ZZ, Module)
+
+--    RatExt Ideal
+--    RatExt Module
+--    RatExt (Ideal, RingElement)
+--    RatExt (Module, RatExt)
+--    RatExt (ZZ, Module)
+--    RatExt (ZZ, Ideal)
+--    RatExt (ZZ, Ideal, RingElement)
+--    RatExt (ZZ, Module, RingElement)
+
+--    DHom (Module, Module, List)
+
+--    DExt (Module, Module, List)
+
+--    ExternalProduct (Module, Module)
+--    ExternalProduct (ChainComplex, ChainComplex)
+--    ExternalProduct (Module, Module) .... with TwistMap => true
+--    ExternalProduct (ChainComplex, ChainComplex) .... with TwistMap => true
+
+
+
+-- TESTS TO WRITE (unexported symbols);
+--    divideOutGCD RingElement
+--    divideOutGCD Matrix
+
+--    TwistOperator (Ideal, RingElement, ZZ)
+--    TwistOperator (Ideal, List, List)
+--    TwistOperator (RingElement, RingElement, ZZ)
+--    TwistOperator (RingElement, List, List)
+
+compareSpans = value(Dmodules#"private dictionary"#"compareSpans");
+---------------- TESTS for compareSpan -----------------------
+-- Test 1:
+S = QQ[x,y,z];
+mylist1 = {x, y};
+mylist2 = {x + y, x-y};
+assert(compareSpans(mylist1, mylist2));
+
+-- Test 2:
+mylist1 = {1, x, y};
+mylist2 = {1, x + y, x-y};
+assert(compareSpans(mylist1, mylist2));
+
+-- Test 3:
+mylist1 = {x, y};
+mylist2 = {1, x + y, x-y};
+assert(not compareSpans(mylist1, mylist2));
+
+-- Test 4:
+mylist1 = {1, x, y};
+mylist2 = {x + y, x-y};
+assert(not compareSpans(mylist1, mylist2));
+
+
+----------------------- TESTS for ^ -----------------------
+x = symbol x; y = symbol y; z = symbol z;
+R = QQ[x,y,z];
+assert({x,y,z}^{2,3,4} == x^2*y^3*z^4);
+
+
+
+----------------------- TESTS for PolySols -------------------------
+-- Test 1: Simple example 
+x = symbol x; Dx = symbol Dx;
+W = QQ[x,Dx,WeylAlgebra => {x=>Dx}];
+I = ideal(x*Dx^4);
+ansGD = {1, x, x^2, x^3};
+ansDuality = {-1, x, -x^2, x^3};
+assert( ansGD == PolySols I / (f -> substitute(f, W)) );
+assert( ansGD == PolySols comodule I / (f -> substitute(f, W)) );
+assert( ansDuality == PolySols(I, Alg => Duality) / (f -> substitute(f, W)) );
+assert( ansDuality == PolySols(comodule I, Alg => Duality) / (f -> substitute(f, W)) );
+
+-- Test 2: Polynomial solutions of an Appell F1
+I = AppellF1({-1,5,4,-2}, Vars => Local);
+sols1 = PolySols I;
+R = ring sols1#0;
+sols2 = PolySols (I, Alg => Duality) / (f -> substitute(f, R));
+assert(compareSpans(sols1, sols2));
+
+-- Test 3: Testing weights
+x = symbol x; y = symbol y; Dx = symbol Dx; Dy = symbol Dy;
+W = QQ[x,y,Dx,Dy,WeylAlgebra => {x=>Dx,y=>Dy}];
+weight = {9, 7};
+I = ideal {x*y*Dx+y^2*Dy-2*y, x^2*Dy^2+2*x*y*Dy^2-y^2*Dy^2-2*x*Dy+2*y*Dy-2};
+ansGD = PolySols(I, weight);
+R = ring ansGD#0;
+ansDuality = PolySols(I, Alg => Duality) / (f -> sub(f, R));
+assert(compareSpans(ansGD, ansDuality));
+
+
+--------------------- TESTS for PolyExt -----------------------
+
+
+--------------------- TESTS for RatSols -----------------------
+-- Test 1: 
+x = symbol x; Dx = symbol Dx;
+y = symbol y; Dy = symbol Dy;
+W = QQ[x,y,Dx,Dy,WeylAlgebra =>{x=>Dx, y=>Dy}];
+tx = x*Dx;
+ty = y*Dy;
+
+I = ideal(tx*(tx+ty)-x*(tx+ty+3)*(tx-1),
+     ty*(tx+ty)-y*(tx+ty+3)*(ty+1));
+assert(#RatSols(I, y, {10,1}) == 1);
+assert(#RatSols(I, y-1, {10,1}) == 1);
+
+--Test 2:
+singLocFactors = {x,y,x-1,y-1,x-y};
+R = extractVarsAlgebra W;
+K = frac R;
+allSols = RatSols(I,  singLocFactors, {10,1}) / (f -> sub(f, K));
+ans = {(-x+y)/(-y^4 + 3*y^3 - 3*y^2 + y), (-x*y^3 + 3*x*y^2 - 3*x*y + 4*x - 3*y)/(-y^4 + 3*y^3 - 3*y^2 + y)};
+
+thelcd = lcm((allSols | ans) / denominator);
+assert compareSpans( thelcd*allSols / (f -> lift(f, R)), thelcd*ans / (f -> lift(f, R)));
+
+
+---------------------- TESTS forDHom and DExt ------------------------
+-- Test 1: Simple ODE examples
+x = symbol x; dx = symbol dx;
+W = QQ[x, dx, WeylAlgebra => {x=>dx}]
+M = cokernel matrix{{x*(dx-1)^2}}
+N = cokernel matrix{{x*dx*(dx-1)}}
+B = DHom(N,M);
+assert( (matrix{{B#0_(0,0)}})*(relations N)%(relations M) == 0 )
+BE = DExt(M,N);
+BE' = DExt(N,M);
+assert( all (keys BE, i -> BE#i == BE'#i) );
+
+-- Test 2: small GKZ -- takes a while
+A = matrix{{1,2}};
+I = gkz(A, {2});
+J = substitute(gkz(A, {1}), vars ring I);
+B = DHom(I,J);
+assert( (matrix{{B#0_(0,0)}})*(gens I)%(gens J) == 0 )
+///

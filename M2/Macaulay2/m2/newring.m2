@@ -41,7 +41,7 @@ newRing QuotientRing := opts -> R -> (
 
 -- made a method and documented elsewhere.
 Ring ** Ring := Ring => (R,S) -> tensor(R,S)
-tensor(Ring,Ring) := Ring => opts -> (R,S) -> (
+tensor(Ring, Ring) := Ring => monoidTensorDefaults >> opts -> (R, S) -> (
      if R === (try coefficientRing S) then return S;
      if S === (try coefficientRing R) then return R;
      if R === QQ and ZZ === (try coefficientRing S) then (
@@ -61,9 +61,9 @@ PolynomialRing ** QuotientRing :=
 QuotientRing ** QuotientRing := (R,S) -> tensor(R,S)
 
 tensor(PolynomialRing, PolynomialRing) :=
-tensor(QuotientRing, PolynomialRing) :=
+tensor(QuotientRing,   PolynomialRing) :=
 tensor(PolynomialRing, QuotientRing) :=
-tensor(QuotientRing, QuotientRing) := optns -> (R,S) -> (
+tensor(QuotientRing,   QuotientRing) := monoidTensorDefaults >> optns -> (R, S) -> (
      k := coefficientRing R;
      if k =!= coefficientRing S 
      then error "expected rings to have the same coefficient ring";

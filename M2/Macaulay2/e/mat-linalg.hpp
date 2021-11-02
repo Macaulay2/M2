@@ -4,13 +4,6 @@
 #define _mat_linalg_hpp_
 
 
-// #define NO_LAPACK
-/*
-Uncommenting the above has two consequences:
-  (1) This effectively eliminates the use of LAPACK (eigen is used instead for machine precision).
-  (2) This slows down the compilation (at the moment) due to heavy templating in eigen. 
-*/
-
 /**
  * \ingroup matrices
  */

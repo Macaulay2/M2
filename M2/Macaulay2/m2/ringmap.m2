@@ -436,17 +436,8 @@ RingMap ** Matrix := Matrix => (f,m) -> (
      if source f =!= ring m then error "expected matrix over source ring";
      map(f ** target m, f ** source m, f cover m))
 
-tensor(Ring,RingMap,Module) := opts -> (S,f,M) -> (
-     if S =!= target f then error "tensor: expected ring and target of ring map to be the same";
-     f ** M)
-
-tensor(Ring,RingMap,Matrix) := opts -> (S,f,m) -> (
-     if S =!= target f then error "tensor: expected ring and target of ring map to be the same";
-     f ** m)
-
-tensor(RingMap,Module) := Module => opts -> (f,M) -> f ** M
-
-tensor(RingMap,Matrix) := Matrix => opts -> (f,m) -> f ** m
+tensor(RingMap, Module) := Module => {} >> opts -> (f, M) -> f ** M
+tensor(RingMap, Matrix) := Matrix => {} >> opts -> (f, m) -> f ** m
 
 isInjective RingMap := (f) -> kernel f == 0
 
