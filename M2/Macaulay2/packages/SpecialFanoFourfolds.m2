@@ -127,6 +127,7 @@ specialCubicFourfold EmbeddedProjectiveVariety := o -> S -> (
 specialCubicFourfold Ideal := o -> idS -> specialCubicFourfold(projectiveVariety idS,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
 specialCubicFourfold (String,Ring) := o -> (str,K) -> (
+    if o.NumNodes =!= null then error "the option NumNodes is ignored, the number of nodes is determined automatically";
     local X;
     if str === "quintic del Pezzo surface" then (
         X = specialCubicFourfold(surface({3,4},K),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
@@ -169,23 +170,29 @@ specialCubicFourfold (String,Ring) := o -> (str,K) -> (
        X.cache#(surface X,"label") = "C42";
        return X;
    );
-   if str === "general cubic 4-fold of discriminant 48" or str === "C48" then (
+   if str === "cubic 4-fold of discriminant 48" or str === "C48" then (
        X = specialCubicFourfold(randomS48 K,NumNodes=>6,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
        X.cache#(surface X,"label") = "C48";
        return X;
    );
    if str === "general cubic 4-fold of discriminant 32" or str === "C32" then (
-        X = specialCubicFourfold(surface({9,1,4,6},K),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
-        X.cache#(surface X,"label") = "C32";
-        return X;
+       X = specialCubicFourfold(surface({9,1,4,6},K),NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+       X.cache#(surface X,"label") = "C32";
+       return X;
    );
    if str === "general cubic 4-fold of discriminant 44" or str === "C44" then ( -- Enriques surface (see e.g. https://arxiv.org/pdf/1210.1903.pdf, p. 7)
-        J := Var ideal jacobian ideal discriminant first genericPolynomials({2,-1,-1,-1},K);
-        X = specialCubicFourfold((parametrize random({{1},{1},{1},{1}},0_J))^* J,NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
-        X.cache#(surface X,"label") = "C44";
-        return X;
+       J := Var ideal jacobian ideal discriminant first genericPolynomials({2,-1,-1,-1},K);
+       X = specialCubicFourfold((parametrize random({{1},{1},{1},{1}},0_J))^* J,NumNodes=>0,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+       X.cache#(surface X,"label") = "C44";
+       return X;
    );
-   error "not valid string, permitted strings are: \"quintic del Pezzo surface\", \"quartic scroll\", \"3-nodal septic scroll\", \"one-nodal septic del Pezzo surface\", \"6-nodal octic scroll\", \"general cubic 4-fold of discriminant 32\", \"general cubic 4-fold of discriminant 38\", \"general cubic 4-fold of discriminant 42\", \"general cubic 4-fold of discriminant 44\", \"general cubic 4-fold of discriminant 48\"";
+   if str === "8-nodal nonic scroll" then (
+       X = LaiFarkasVerraC42(K,NumNodes=>8,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+       X.cache#(surface X,"label") = "LaiFarkasVerraC42";
+       (surface X).cache#"euler" = -44;
+       return X;       
+   );
+   error "not valid string, permitted strings are: \"quintic del Pezzo surface\", \"quartic scroll\", \"3-nodal septic scroll\", \"one-nodal septic del Pezzo surface\", \"6-nodal octic scroll\", \"general cubic 4-fold of discriminant 32\", \"general cubic 4-fold of discriminant 38\", \"general cubic 4-fold of discriminant 42\", \"8-nodal nonic scroll\", \"general cubic 4-fold of discriminant 44\", \"cubic 4-fold of discriminant 48\"";
 );
 
 specialCubicFourfold String := o -> str -> specialCubicFourfold(str,ZZ/65521,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
@@ -256,7 +263,7 @@ describe SpecialCubicFourfold := X -> (
     descr = descr|(if n > 0 then toString(n)|"-nodal " else "(smooth) ");
     descr = descr|"surface of degree "|toString(d)|" and sectional genus "|toString(g)|newline;
     descr = descr|(if # unique degs == 1 then "cut out by "|toString(#degs)|" hypersurfaces of degree "|toString(first degs) else "cut out by "|toString(#degs)|" hypersurfaces of degrees "|toString(toSequence degs));
-    recognize X;
+    if recognize X === "LaiFarkasVerraC42" then descr = descr|newline|"(the surface is the 8-nodal nonic scroll studied by K.-W. Lai, G. Farkas and A. Verra,"|newline|"this implementation is due to M. Hoff)";
     net expression descr
 );
 
@@ -795,6 +802,70 @@ randomS48 Ring := K -> (
     (psi * g) D
 );
 
+LaiFarkasVerraC42 = method(Options => options specialCubicFourfold);
+LaiFarkasVerraC42 Ring := o -> K -> ( 
+--  **
+--  The code of this function has been written by Michael Hoff
+--  **
+--  24.10.2019
+--  The construction and notation follow Farkas and Verra: 
+--  "THE UNIRATIONALITY OF THE MODULI SPACE OF K3 SURFACES OF DEGREE 42" 
+    y := local y;
+    P2 := K[y_0..y_2];
+    p := ideal(y_0,y_1);
+    z := local z;
+    P4 := K[z_0..z_4];
+    blowup := map(P2,P4, gens p *matrix basis(2,p)); -- linear system |2h-p|
+    F1 := kernel blowup; -- Hirzebruch surface F1
+    l := ideal(random(P4^1,P4^{3:-1})); -- line in P4
+    t := apply(8, i-> (preimage_blowup(ideal(random(P2^1,P2^{2:-1}))))); -- 8 points on F1
+    spantl := apply(#t,i->gens intersect(t_i,l)*matrix basis(1,intersect(t_i,l))); -- linear span of l and t_i
+    points16 := intersect (points2 := apply(#spantl,i->(saturate((ideal(spantl_i)+F1),t_i)))); -- 16 residual points on F1
+    assert((dim points16, degree points16, genus points16) == (1, 16, 15));
+    -- see FV end of page 4
+    RF1 := P4/F1;
+    z = gens RF1;
+    E := ideal(z_0,z_1,z_3);
+    pointsOnF1 := sub(points16,RF1);
+    I := intersect(pointsOnF1,E);
+    C := ideal(gens I * random(source gens I, RF1^{1:-3}));
+    C = saturate(sub(C,P4)+F1,sub(E,P4));
+    assert((dim C, degree C, genus C) == (2, 8, 4));
+    projl := map(P4,P2,gens l);
+    octic := preimage_projl(C); -- plane octic curve with 8 + 9 singular points
+    singOctic := saturate ideal singularLocus octic;
+    assert((dim singOctic, degree singOctic, genus singOctic) == (1, 17, 16));
+    points8 := saturate(preimage_projl(points16));
+    points9 := saturate(singOctic, points8);
+    -- blow up of 9 points
+    x := local x;
+    P5 := K[x_0..x_5];
+    blowup2 := map(P2,P5,gens points9*matrix basis(4,points9));
+    T := kernel blowup2;
+    -- betti res T
+    gamma := preimage_blowup2(octic); -- hyperelliptic curve of degree 14 and arithmetic genus 12
+    -- betti res gamma
+    singGamma := preimage_blowup2(points8);
+    -- betti (resSingGamma = res singGamma)
+    -- I take the canonical map to compute pairs of points which are involuted. 
+    w := local w;
+    P3 := K[w_0..w_3];
+    canMap := map(P2,P3,gens singOctic*matrix basis(5,singOctic));
+    twistedCubic := preimage_canMap(octic);
+    betti (resTwistedC := res twistedCubic);
+    assert((dim twistedCubic, degree twistedCubic, genus twistedCubic) == (2, 3, 0));
+    M := resTwistedC.dd_2;
+    -- I take many lines and compute the ideal where the generators stabilizes
+    pNip := apply(40, i-> saturate(canMap(ideal(random(K)*M_{0} + random(K)*M_{1})),singOctic));
+    L := apply(#pNip,i->(ideal(gens(preimage_blowup2(pNip#i)))_{0,1,2,3}));
+    betti (R := intersect(L));
+    R = ideal( (gens R)_{0..5,6..8}); -- the nonic scroll with 8 singularities
+    -- betti res R 
+    assert((dim R, degree R, genus R) == (3, 9, -8) and gamma + R == gamma);
+    if o.NumNodes =!= 8 then error "the number of nodes is equal to 8";
+    specialCubicFourfold(R,NumNodes=>8,Verbose=>o.Verbose,InputCheck=>o.InputCheck)
+);
+
 clean SpecialCubicFourfold := X -> (
     K := coefficientRing X;
     x := local x; 
@@ -982,9 +1053,8 @@ describe SpecialGushelMukaiFourfold := X -> (
     if recognize X === "gushel26''" and dim singLocus grassmannianHull X >= 0 then descr = descr|newline|"(case considered in Section 1 of arXiv:2003.07809)";
     if recognize X === "mukai26''" and dim singLocus grassmannianHull X >= 0 then descr = descr|newline|"(case considered in Section 2 of arXiv:2003.07809)";
     if recognize X === "mukai26''" and dim singLocus grassmannianHull X == -1 then descr = descr|newline|"(case considered in Section 3 of arXiv:2003.07809)";
-    if recognize X === "october2021-26''" then descr = descr|newline|"(case discovered in October 2021)";
-    if recognize X === "october2021-28" then descr = descr|newline|"(case discovered in October 2021)";
-    if recognize X === "october2021-34'" then descr = descr|newline|"(case discovered in October 2021)";
+    if recognize X === "october2021-26''" or recognize X === "october2021-28" or recognize X === "october2021-28-2" or recognize X === "october2021-34'" then descr = descr|newline|"(case discovered in October 2021)";
+    if recognize X === "october2021-20" then descr = descr|newline|"(case discovered in October 2021; see also Table 1 of arXiv:2003.07809)";
     net expression descr
 );
 
@@ -1034,8 +1104,10 @@ recognizeGMFourfold = X -> (
     if (d == 26 and e == 25 and a == 11 and b == 6 and invS == (17,11,2) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then return "gushel26''";
     if ((d == 18 or d == 26) and e == 3 and a == 7 and b == 4 and invS == (11,3,0) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then if numberNodes(S,Verbose=>false) == 1 and discriminant X == 26 then return "mukai26''";
     --
+    if (d == 20 and e == 14 and a == 8 and b == 5 and invS == (13,6,1) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then return "october2021-20";
     if (d == 26 and e == 7 and a == 5 and b == 4 and invS == (9,2,1) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then return "october2021-26''";
     if (d == 28 and e == 13 and a == 8 and b == 5 and invS == (13,6,1) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then return "october2021-28";
+    if (d == 28 and e == 10 and a == 6 and b == 5 and invS == (11,4,1) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then return "october2021-28-2";
     if (d == 34 and e == 13 and a == 9 and b == 5 and invS == (14,7,1) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3}) then return "october2021-34'";
     "NotRecognized"
 );
@@ -2594,9 +2666,7 @@ specialGushelMukaiFourfold (Array,Array,String,Thing) := o -> (a,b,s,nK) -> (
     if s =!= "cubic scroll" and s =!= "quartic scroll" then error "expected string to be \"cubic scroll\" or \"quartic scroll\""; 
     (n,K) := if instance(nK,ZZ) then (nK,ZZ/65521) else if instance(nK,Ring) then (0,nK) else if instance(nK,VisibleList) and #nK==2 then (nK_0,nK_1) else error "not valid input";
     C := (surface(a,K,NumNodes=>n,ambient=>6)).cache#"takeCurve" (first b,toList take(b,-(#b-1)));
-    X := makeGMfromCurveOnSurfaceInP6(C,InputCheck=>o.InputCheck,Verbose=>o.Verbose,"Gluing"=>s);
-    if o.Verbose then <<"description fourfold: "<<describe X<<endl;
-    X
+    makeGMfromCurveOnSurfaceInP6(C,InputCheck=>o.InputCheck,Verbose=>o.Verbose,"Gluing"=>s)
 );
 specialGushelMukaiFourfold (Array,Array,String) := o -> (a,b,s) -> specialGushelMukaiFourfold(a,b,s,(0,ZZ/65521),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 specialGushelMukaiFourfold (Array,Array,Thing) := o -> (a,b,nK) -> specialGushelMukaiFourfold(a,b,"cubic scroll",nK,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
@@ -2610,9 +2680,10 @@ beginDocumentation()
 
 document {Key => SpecialFanoFourfolds, 
 Headline => "A package for working with special cubic fourfolds and special Gushel-Mukai fourfolds",
-PARA {"This package is still under development, but it already contains several tools related to the rationality problem for cubic fourfolds and Gushel-Mukai fourfolds."},
+PARA {"This package contains several tools related to the rationality problem for cubic fourfolds and Gushel-Mukai fourfolds."},
 PARA {"The following are some references that have benefited from this package."},
 References => UL{
+{"M. Hoff and G. S., ",EM"Explicit constructions of K3 surfaces and unirational Noether-Lefschetz divisors",", available at ",HREF{"https://arxiv.org/abs/2110.15819","arXiv:2110.15819"}," (2021)."},
 {"G. S., ",EM"Some new rational Gushel fourfolds",", available at ",HREF{"https://arxiv.org/abs/2003.07809","arXiv:2003.07809"}," (2020)."},
 {"G. S., ",EM"On some families of Gushel-Mukai fourfolds",", available at ",HREF{"https://arxiv.org/abs/2002.07026","arXiv:2002.07026"}," (2020)."},
 {"M. Hoff and G. S., ",EM"New examples of rational Gushel-Mukai fourfolds",", available at ",HREF{"https://arxiv.org/abs/1910.12838","arXiv:1910.12838"}," (2020)."},
@@ -2744,7 +2815,7 @@ PARA{"The corresponding example of fourfold can be obtained as follows."},
 EXAMPLE {"psi = rationalMap(ideal B,Dominant=>2);", "X = specialGushelMukaiFourfold psi ideal V;"}, 
 PARA{"This is basically the same as doing this:"}, 
 EXAMPLE {"specialGushelMukaiFourfold(\"1\",ZZ/33331);"},
-SeeAlso => (specialGushelMukaiFourfold,String,Ring)} 
+SeeAlso => {(specialGushelMukaiFourfold,String,Ring),(specialGushelMukaiFourfold,Array,Array)}} 
 
 undocumented {(GMtables, Ring, String), (GMtables,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)}; 
 
@@ -2933,7 +3004,7 @@ EXAMPLE {
 "X = specialCubicFourfold T;",
 "coefficientRing X",
 "describe X"},
-SeeAlso => {(rationalMap,PolynomialRing,List)}}
+SeeAlso => {(rationalMap,PolynomialRing,List),(specialGushelMukaiFourfold,Array,Array)}}
 
 document {Key => {unirationalParametrization, (unirationalParametrization, SpecialCubicFourfold), (unirationalParametrization, SpecialCubicFourfold, EmbeddedProjectiveVariety), (unirationalParametrization, SpecialGushelMukaiFourfold)}, 
 Headline => "unirational parametrization", 
@@ -3043,14 +3114,35 @@ undocumented {(random,SpecialCubicFourfold),(random,SpecialGushelMukaiFourfold),
 
 undocumented {(coneOfLines,Ideal,Ideal)}
 
-undocumented {(specialGushelMukaiFourfold,Array,Array,String,Thing),(specialGushelMukaiFourfold,Array,Array,String),(specialGushelMukaiFourfold,Array,Array,Thing),(specialGushelMukaiFourfold,Array,Array)} -- To be documented.
+document {Key => {(specialGushelMukaiFourfold, Array, Array, String, Thing), (specialGushelMukaiFourfold, Array, Array), (specialGushelMukaiFourfold, Array, Array, String), (specialGushelMukaiFourfold, Array, Array, Thing)}, 
+Headline => "construct GM fourfolds by gluing cubic or quartic scrolls to surfaces in PP^6", 
+Usage => "specialGushelMukaiFourfold(surface,curve)
+specialGushelMukaiFourfold(surface,curve,scroll)
+specialGushelMukaiFourfold(surface,curve,K)
+specialGushelMukaiFourfold(surface,curve,scroll,K)", 
+Inputs => {"surface" => Array => {"an array of integers ",TT"[a,i,j,k,...]"," to indicate the rational surface ",TEX///$S\subset\mathbb{P}^6$///," constructed by ",TO2{(surface,List),"surface"},TT"({a,i,j,k,...},K,ambient=>6)"},
+           "curve" => Array => {"an array of integers ",TT"[d,l,m,n,...]"," to indicate the plane representation of a curve ",TEX///$C$///," on the surface ",TEX///$S$///," (the command that constructs ",TEX///$C$///," is ",TT///S.cache#"takeCurve"(d,{l,m,n,...})///,")"},
+           "scroll" => String => {"which can be either \"cubic scroll\" (the default value) or \"quartic scroll\", to indicate the type of scroll ",TEX///$B\subset\mathbb{P}^6$///," to be used; in the former case ",TEX///$B\simeq\mathbb{P}^1\times\mathbb{P}^2\subset\mathbb{P}^5\subset\mathbb{P}^6$///," while in the latter case ",TEX///$B\subset\mathbb{P}^6$///," is a generic projection of a rational normal quartic scroll of dimension 4 in ",TEX///$\mathbb{P}^7$///},
+           "K" => {{"the coefficient ring (",TT"ZZ/65521"," is used by default)"}}},
+Outputs => {SpecialGushelMukaiFourfold => {"a GM fourfold ",TEX///$X$///," containing the surface ",TEX///$\overline{\psi_{B}(S)}\subset\mathbb{G}(1,4)\subset\mathbb{P}^9$///,", where ",TEX///$B$///," is a scroll of the indicated type such that ",TEX///$C\subseteq S\cap B$///," and ",TEX///$\psi_{B}:\mathbb{P}^6\dashrightarrow\mathbb{G}(1,4)$///," is the birational map defined by ",TEX///$B$///}},
+PARA {"From the returned fourfold ",TEX///$X$///,", with the following commands we obtain the surface ",TEX///$S$///,", the curve ",TEX///$C$///,", and the scroll ",TEX///$B$///," used in the construction: "},PARA{TT///(B,C) = X.cache#"Construction"; S = ambientVariety C;///},PARA{"Then the surface ",TEX///$\overline{\psi_{B}(S)}\subset\mathbb{G}(1,4)$///," can be constructed with "},PARA{TT///psi = rationalMap B; (psi S)%(image psi);///},
+PARA {"In the following example we construct a GM fourfold containing the image via ",TEX///$\psi_B:\mathbb{P}^6\dashrightarrow\mathbb{G}(1,4)$///," of a quintic del Pezzo surface ",TEX///$S\subset\mathbb{P}^5\subset\mathbb{P}^6$///,", obtained as the image of the plane via the linear system of quartic curves with three general simple base points and two general double points, which cuts ",TEX///$B\simeq\mathbb{P}^1\times\mathbb{P}^2\subset\mathbb{P}^5\subset\mathbb{P}^6$///," along a rational normal quartic curve obtained as the image of a general conic passing through the two double points."},
+EXAMPLE lines ///X = specialGushelMukaiFourfold([4, 3, 2],[2, 0, 2],Verbose=>false);
+describe X
+(B,C) = X.cache#"Construction";
+S = ambientVariety C;
+C;
+B;
+assert(C == S * B)///,
+References => UL{{"G. S., ",EM"On some families of Gushel-Mukai fourfolds",", available at ",HREF{"https://arxiv.org/abs/2002.07026","arXiv:2002.07026"}," (2020)."}},
+SeeAlso => {(surface,VisibleList,Ring), GMtables}}
 
 ------------------------------------------------------------------------
 ------------------------------- Tests ----------------------------------
 ------------------------------------------------------------------------
 
 TEST /// -- Test 0 -- cubic fourfolds from strings: describe, discriminant, parameterCount
-strIn := {"quintic del Pezzo surface", "quartic scroll", "3-nodal septic scroll", "one-nodal septic del Pezzo surface", "general cubic 4-fold of discriminant 38", "general cubic 4-fold of discriminant 42", "general cubic 4-fold of discriminant 48"};
+strIn := {"quintic del Pezzo surface", "quartic scroll", "3-nodal septic scroll", "one-nodal septic del Pezzo surface", "general cubic 4-fold of discriminant 38", "general cubic 4-fold of discriminant 42", "cubic 4-fold of discriminant 48"};
 strOut := "Special cubic fourfold of discriminant 14
 containing a (smooth) surface of degree 5 and sectional genus 1
 cut out by 5 hypersurfaces of degree 2
