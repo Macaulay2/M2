@@ -1017,9 +1017,9 @@ multidoc ///
   Description
    Text
     @BOLD "VectorGraphics"@ is a package to produce SVG 2d and 3d graphics.
-    All usable types are descendents of the type GraphicsObject, and are self-initializing.
+    All usable types are descendents of the type @TO {GraphicsObject}@, and are self-initializing.
     Coordinates can be entered as vectors in $\mathbb{R}^2$, $\mathbb{R}^3$ or $\mathbb{R}^4$
-    ($\mathbb{R}^4$ is projective coordinates); alternatively, one can enter them as sequences.
+    ($\mathbb{R}^4$ is projective coordinates); alternatively, one can enter them as arrays.
     With the default perspective matrix,
     the x axis points to the right, the y axis points up, and the z axis points towards the viewer.
     All types are option tables, i.e., their arguments are options. There are two types of options:
@@ -1030,9 +1030,9 @@ multidoc ///
     In @ TO {Standard} @ mode, the graphical objects are not directly visible; to export them to SVG
     in order to embed them into a web page, use @ TO {html} @. In @ TO {WebApp} @ mode, the graphical objects
     are shown as output.
-    There are two auxiliary files. VectorGraphics.css is a set of styling options that is not required,
+    There are two auxiliary files. @TT "VectorGraphics.css"@ is a set of styling options that is not required,
     but its default options can be useful for consistency of style. For all
-    dynamical effects (rotating and dragging in 3d, animations), both VectorGraphics.js and VectorGraphics.css are needed.
+    dynamical effects (rotating and dragging in 3d, animations), both @TT "VectorGraphics.js"@ and @TT "VectorGraphics.css"@ are needed.
  Node
   Key
    GraphicsAncestor
@@ -1055,7 +1055,7 @@ multidoc ///
    A list of VectorGraphics objects
   Description
    Text
-    A class that represents a list of @ TO {VectorGraphics} @ objects, displayed together. The preferred way to create a @BOLD "GraphicsList"@ is via @ TO{gList} @.
+    A class that represents a list of @ TO {VectorGraphics} @ objects, displayed together. The preferred way to create a @BOLD "GraphicsList"@ is via @ TO{gList} @ or @ TO{gNode} @.
  Node
   Key
    Circle
@@ -1063,7 +1063,7 @@ multidoc ///
    An SVG circle
   Description
    Text
-    An SVG circle. The two compulsory options are Center (coordinates of the center) and Radius (radius).
+    An SVG circle. The two compulsory options are @TT "Center"@ (coordinates of the center) and @TT "Radius"@ (radius).
     Instead of the radius, one can specify any point of the circle.
     In 3d, gives a decent approximation of a sphere.
    Example
@@ -1077,7 +1077,7 @@ multidoc ///
    An SVG line
   Description
    Text
-    A simple SVG line. The two compulsory options are Point1 and Point2, which are vectors (or sequences) describing the two endpoints.
+    A simple SVG line. The two compulsory options are @TT "Point1"@ and @TT "Point2"@, which are vectors (or sequences) describing the two endpoints.
    Example
     Line{Point1=>vector{0,0},Point2=>vector{2,1},"stroke"=>"green"}
     Line{[0,0],[2,1],"stroke-width"=>0.1} -- simplified syntax
@@ -1089,8 +1089,8 @@ multidoc ///
   Description
    Text
     A source of light for a 3d SVG picture.
-    This corresponds to the SVG "specular" lighting, use the property Specular. The location is given by Center.
-    By default a Light is invisible (it has opacity 0) and is unaffected by matrix transformations outside it (Static true).
+    This corresponds to the SVG "specular" lighting, use the property @TT "Specular"@. The location is given by @TT "Center"@.
+    By default a Light is invisible (it has opacity 0) and is unaffected by matrix transformations outside it (@TT "Static"@ true).
    Example
     Light{"fill"=>"yellow","opacity"=>1}
     v={[74.5571, 52.0137, -41.6631],[27.2634, -29.9211, 91.4409],[-81.3041, 57.8325, 6.71156],[-20.5165, -79.9251, -56.4894]};
@@ -1100,7 +1100,7 @@ multidoc ///
 	Light{[110,0,0],Radius=>10,"opacity"=>"1"},ViewPort=>{vector{-110,-100},vector{110,100}},
 	Size=>40,TransformMatrix=>rotation(-1.5,[4,1,0]))
   Caveat
-   Do not use the same Light object multiple times within the same @ TO {GraphicsObject} @.
+   Do not use the same @TT "Light"@ object multiple times within the same @ TO {GraphicsObject} @.
  Node
   Key
    GraphicsCoordinate
@@ -1109,7 +1109,7 @@ multidoc ///
   Description
    Text
     A type that is used to describe (possibly dynamic) coordinates. Internally all coordinates are in $\RR^4$ (projective coordinates).
-    Any GraphicsObject can be turned into a GraphicsCoordinate corresponding to the reference point $(0,0,0,1)$ in its local coordinate system.
+    Any @TO {GraphicsObject}@ can be turned into a @BOLD "GraphicsCoordinate"@ corresponding to the reference point $(0,0,0,1)$ in its local coordinate system.
     It can then be manipulated using various operations such as addition, multiplication by scalar, etc
    Example
     a=gNode([0,0],Circle{Radius=>1}); b=gNode([1,1],Circle{Radius=>1}); mid=a+b
@@ -1121,7 +1121,7 @@ multidoc ///
    An SVG ellipse
   Description
    Text
-    An SVG ellipse. The three compulsory options are Center (coordinates of the center) and RadiusX, RadiusY (radii).
+    An SVG ellipse. The three compulsory options are @TT "Center"@ (coordinates of the center) and @TT "RadiusX"@, @TT "RadiusY"@ (radii).
    Example
     Ellipse{Center=>vector{10,10},RadiusX=>50,RadiusY=>20,"stroke"=>"none","fill"=>"red"}
     Ellipse{[10,10],50,20,"stroke"=>"blue"} -- equivalent syntax
@@ -1134,7 +1134,7 @@ multidoc ///
    An SVG path
   Description
    Text
-    An SVG path. It follows the syntax of SVG paths, except successive commands must be grouped together in a list called PointList.
+    An SVG path. It follows the syntax of SVG paths, except successive commands must be grouped together in a list called @TT "PointList"@.
    Example
     c=Circle{Radius=>0.1,"fill"=>"black"};
     v1=gNode([0,0],c,Draggable=>true); v2=gNode([0,1],c,Draggable=>true); v3=gNode([2,1],c,Draggable=>true); v4=gNode([1,2],c,Draggable=>true);
@@ -1146,7 +1146,7 @@ multidoc ///
    An SVG polygon
   Description
    Text
-    An SVG polygon. The coordinates must form a list called PointList. (the difference with Polyline is that the last coordinate is reconnected to the first)
+    An SVG polygon. The coordinates must form a list called @TT "PointList"@. (the difference with @TO {Polyline}@ is that the last coordinate is reconnected to the first)
    Example
     Polygon{PointList=>{[0,10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white"}
  Node
@@ -1156,7 +1156,7 @@ multidoc ///
    An SVG sequence of lines
   Description
    Text
-    An SVG sequence of lines. The coordinates must form a list called PointList. (the difference with Polygon is that the last coordinate is not reconnected to the first)
+    An SVG sequence of lines. The coordinates must form a list called @TT "PointList"@. (the difference with @TO {Polygon}@ is that the last coordinate is not reconnected to the first)
    Example
     Polyline{PointList=>{[0,10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white"}
  Node
@@ -1308,7 +1308,7 @@ multidoc ///
    An option to blur a VectorGraphics object
   Description
    Text
-    This corresponds to the feGaussianBlur SVG filter.
+    This corresponds to the @TT "feGaussianBlur"@ SVG filter.
     The value is the amount of blurriness relative to the size of the object.
   Caveat
     In animated 3d, the amount of blurriness does not vary as the size varies.
@@ -1407,7 +1407,10 @@ multidoc ///
   Key
    GraphicsType
   Headline
-   A particular type of type used by VectorGraphics, similar to SelfInitializingType.
+   VectorGraphics type
+  Description
+   Text
+    A particular type of type, used by @TO {VectorGraphics}@, similar to @TO {SelfInitializingType}@.
  Node
   Key
    Draggable
