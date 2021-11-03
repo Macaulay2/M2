@@ -12,7 +12,7 @@ if version#"VERSION" < "1.18" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.4", 
-    Date => "October 11, 2021",
+    Date => "October 30, 2021",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -224,7 +224,7 @@ net MultiprojectiveVariety := X -> if hasAttribute(X,ReverseDictionary) then toS
 
 MultiprojectiveVariety#{Standard,AfterPrint} = MultiprojectiveVariety#{Standard,AfterNoPrint} = X -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "ProjectiveVariety, " << expression X;
-    if isSubvariety X then << " (subvariety of codimension " << dim ambientVariety X - dim X << " in " << expression ambientVariety X << ")";
+    if isSubvariety X then << " (subvariety of codimension " << dim ambientVariety X - dim X << " in " << ambientVariety X << ")";
     << endl;
 );
 
@@ -1353,12 +1353,13 @@ MultirationalMap ^* := (Phi) -> MultiprojectiveVariety := (Z) -> inverseImageVia
 
 MultirationalMap ^^ MultiprojectiveVariety := (Phi,Z) -> (
     -- A fast inverse image but to be used only when Phi is a linear embedding (intended for internal use only)
+    if Phi.cache#?("inverseImage",Z) then return Phi.cache#("inverseImage",Z);
     if ring ambient target Phi =!= ring ambient Z then error "expected a projective variety in the same ambient projective space of the target of the map";
     g := toRingMap(Phi,ring target Phi);
     if not(# (source Phi)#"dimAmbientSpaces" == 1 and # (target Phi)#"dimAmbientSpaces" == 1 and 
            ambient source Phi == source Phi and first max degrees ideal toMatrix g == 1) 
     then error "expected a linear morphism between projective spaces";
-    projectiveVariety(g sub(ideal Z,ring target Phi),MinimalGenerators=>true,Saturate=>false)
+    Phi.cache#("inverseImage",Z) = projectiveVariety(g sub(ideal Z,ring target Phi),MinimalGenerators=>true,Saturate=>false)
 );
 
 MultirationalMap ^** MultiprojectiveVariety := (Phi,Z) -> (
