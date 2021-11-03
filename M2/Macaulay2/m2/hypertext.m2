@@ -313,7 +313,8 @@ htmlGlobalAttr = {
     "style",
     "tabindex",
     "title",
-    "translate"
+    "translate",
+    "xmlns"
     }
 
 scan({HTML, HEAD, TITLE, BODY}, T -> addAttribute(T, htmlGlobalAttr))
