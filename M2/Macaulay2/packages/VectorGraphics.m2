@@ -17,7 +17,7 @@ newPackage(
 export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
     "GraphicsList", "Circle", "Light", "Ellipse", "Path", "Polygon", "Polyline", "GraphicsText", "Line", "GraphicsHtml",
     "gList", "viewPort", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot",
-    "Contents", "TextContent", "HtmlContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "RefPoint", "Size", "ViewPort",
+    "Contents", "TextContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "RefPoint", "Size", "ViewPort",
     "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Radius",
     "Blur", "Static", "PointList", "Axes", "Margin", "Mesh", "Draggable",
     "SVG",
@@ -117,7 +117,7 @@ GraphicsType List := (T,opts) -> (
 perspective = persp -> (
     if instance(persp,Matrix) then persp else (
 	if persp === () then persp = 1000;
-	matrix {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,-1/persp,1}} -- output is {x,y,z,1-z/p}
+	matrix {{1,0,0,0},{0,-1,0,0},{0,0,-1,0},{0,0,-1/persp,1}} -- output is {x,y,z,1-z/p}
     -- note in particular that distance = z-p *cannot* be extracted from this;
     -- however, z/(1-z/p) is essentially inverse distance which is good enough for sorting purposes
     )
@@ -125,29 +125,15 @@ perspective = persp -> (
 
 viewPort = g -> (
     svg g; -- need to be rendered
-    g.cache.ViewPort
+    v := g.cache.ViewPort;
+    {vector{v#0_0,-v#1_1},vector{v#1_0,-v#0_1}} -- annoying sign
     )
-viewPort1 := method() -- returns [xmin,ymin],[xmax,ymax]
-viewPort1 GraphicsObject := x -> null
 
---distance = method() -- already defined by Graphs TODO clarify this mess
-distance GraphicsObject := x -> 0_RR
-
--- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
-scale := (x,g) -> x_3/(g.cache.Owner.PerspectiveMatrix*x)_3
 
 project3d := (x,g) -> (
     y := g.cache.Owner.PerspectiveMatrix*x;
-    (1/y_3)*y^{0,1,2} -- used for e.g. ViewPort and distance
+    (1/y_3)*y
     )
-project2d := (x,g) -> (
-    y := project3d(x,g);
-    vector {y_0,y_1}
-)
-project2d' := (x,g) -> (
-    y := project3d(x,g);
-    vector {y_0,-y_1} -- annoying sign for actual svg coords
-)
 
 graphicsIdCount := 0;
 graphicsId := () -> (
@@ -170,71 +156,19 @@ Ellipse = new GraphicsType of GraphicsObject from ( "ellipse",
     { symbol Center => vector {0.,0.,0.,1.}, symbol RadiusX => 50., symbol RadiusY => 50. },
     { "rx", "ry", "cx", "cy" }
     )
-viewPort1 Ellipse := g -> (
-    p := compute(g.Center,g.cache.CurrentMatrix);
-    sc := scale(p,g);
-    p=project2d(p,g);
-    rx:=g.RadiusX*sc;
-    ry:=g.RadiusY*sc;
-    r := vector {rx,ry};
-    { p-r, p+r }
-    )
-distance Ellipse := g -> (
-    -(project3d(compute(g.Center,g.cache.CurrentMatrix),g))_2
-    )
 
 Circle = new GraphicsType of Ellipse from ( "circle",
     { symbol Center => vector {0.,0.,0.,1.}, symbol Radius => 50. },
     { "r", "cx", "cy" }
     )
-viewPort1 Circle := g -> (
-    p := compute(g.Center,g.cache.CurrentMatrix);
-    if instance(g.Radius,Number) then (
-	sc := scale(p,g);
-	r:=g.Radius*sc;
-	p=project2d(p,g);
-	) else (
-	p=project2d(p,g);
-	pp:=project2d(compute(g.Radius,g.cache.CurrentMatrix),g)-p;
-	r=sqrt(pp_0^2+pp_1^2);
-	);
-    r = vector {r,r};
-    { p - r, p + r }
-    )
-
 
 GraphicsText = new GraphicsType of GraphicsObject from ( "text",
     { symbol RefPoint => vector {0.,0.,0.,1.}, symbol TextContent => "", symbol FontSize => 14. },
     { "x", "y" }
     )
-viewPort1 GraphicsText := g -> (
-    f := g.FontSize;
-    p := compute(g.RefPoint,g.cache.CurrentMatrix);
-    sc := scale(p,g);
-    p=project2d(p,g);
-    f=f*sc;
-    r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
-    pp := p + vector {
-	if g#?"text-anchor" then (if g#"text-anchor" == "middle" then -0.5*r_0 else if g#"text-anchor" == "end" then -r_0 else 0) else 0,
-	if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then -0.5*r_1 else if g#"dominant-baseline" == "hanging" then -r_1 else 0) else 0
-	};
-    {pp,pp+r}
-    )
-
 Line = new GraphicsType of GraphicsObject from ( "line",
     { Point1 => vector {0.,0.,0.,1.}, Point2 => vector {50.,50.,0.,1.}},
     { "x1", "y1", "x2", "y2" }
-    )
-viewPort1 Line := g -> (
-    p1 := project2d(compute (g.Point1,g.cache.CurrentMatrix),g);
-    p2 := project2d(compute (g.Point2,g.cache.CurrentMatrix),g);
-    p := transpose{entries p1,entries p2};
-    { vector(min\p), vector(max\p) }
-    )
-distance Line := g -> (
-    d1 := (project3d(compute (g.Point1,g.cache.CurrentMatrix),g))_2;
-    d2 := (project3d(compute (g.Point2,g.cache.CurrentMatrix),g))_2;
-    -0.5*(d1+d2)
     )
 
 GraphicsPoly = new Type of GraphicsObject;
@@ -242,12 +176,6 @@ GraphicsPoly = new Type of GraphicsObject;
 Polyline = new GraphicsType of GraphicsPoly from ( "polyline", { symbol PointList => {} }, { "points" } )
 Polygon = new GraphicsType of GraphicsPoly from ( "polygon", { symbol PointList => {} }, { "points" } )
 Path = new GraphicsType of GraphicsPoly from ( "path", { symbol PointList => {} }, { "d" } )
-viewPort1 GraphicsPoly := g -> ( -- relative coordinates *not* supported, screw this
-    s := select(g.PointList, x -> not instance(x,String));
-    if #s == 0 then return null;
-    s = transpose apply(s, x -> entries project2d(compute(x,g.cache.CurrentMatrix),g));
-    {vector(min\s), vector(max\s)}
-    )
 
 -- to make lists of them
 GraphicsList = new GraphicsType of GraphicsObject from ( "g", { symbol Contents => {} } )
@@ -257,21 +185,12 @@ gList = true >> opts -> x -> (
     if any(cnt,x->not instance(x,GraphicsObject)) then error "Contents should be a list of GraphicsObject only";
     GraphicsList { symbol Contents => cnt, opts }
 )
-viewPort1 GraphicsList := x -> (
-    s := nonnull apply(x.Contents, y->y.cache.ViewPort);
-    if #s===0 then null else (
-	s = transpose s;
-	mn := transpose (entries \ s#0);
-	mx := transpose (entries \ s#1);
-	{vector (min\mn), vector(max\mx)}
-    )
-)
 -- lists with preferred coordinate
 gNode = true >> opts -> x -> (
     x = deepSplice x;
     ctr := x#0;
     cnt := nonnull toList drop(x,1);
-    if any(cnt,x->not instance(x,GraphicsObject)) then error "Contents should be a list of GraphicsObject only";
+    if any(cnt,y->not instance(y,GraphicsObject)) then error "Contents should be a list of GraphicsObject only";
     (if #cnt === 1 then if #opts === 0 then cnt#0 else new class cnt#0 from merge(cnt#0,opts,last) else GraphicsList { symbol Contents => cnt, opts }) ++ { symbol TransformMatrix => translation ctr }
     )
 Number * GraphicsAncestor := (x,v) -> new GraphicsCoordinate from {
@@ -393,12 +312,8 @@ compute (Vector,Matrix) := (v,cmat) -> cmat*v -- normal coordinates are affected
 compute (GraphicsCoordinate,Matrix) := (v,cmat) -> v.RefPointFunc cmat -- graphics coordinates aren't (they're "nodes")
 
 GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
-    { symbol RefPoint => vector {0.,0.,0.,1.}, symbol HtmlContent => null, symbol FontSize => 14. },
+    { symbol RefPoint => vector {0.,0.,0.,1.}, symbol TextContent => null, symbol FontSize => 14. },
     { "x", "y", "xmlns" => "http://www.w3.org/1999/xhtml" }
-    )
-viewPort1 GraphicsHtml := g -> (
-    p := project2d(compute (g.RefPoint,g.cache.CurrentMatrix),g);
-    { p, p } -- TODO properly
     )
 
 -- lighting
@@ -408,8 +323,6 @@ Light = new GraphicsType of Circle from ( "circle",
     )
 -- in case it's drawn, it's a circle
 
--- viewPort1 ignores lights if invisible
-viewPort1 Light := g -> if toString g.style#"opacity" == "0" then null else (lookup(viewPort1,Circle)) g -- that opacity test sucks
 
 
 --
@@ -464,109 +377,151 @@ is3d Matrix := m -> m^{2,3} != matrix {{0,0,1.,0},{0,0,0,1.}} or m_2 != vector {
 -- a bit messy: a 2d translation / rotation looks like {{c,-s,0,x},{s,c,0,y},{0,0,1,0},{0,0,1,0}}
 is3d List := l -> any(l,is3d)
 is3d' = g -> (g.cache.?Is3d and g.cache.Is3d) or (g.?AnimMatrix and is3d g.AnimMatrix) or (g.?TransformMatrix and is3d g.TransformMatrix)
-is3d GraphicsObject := is3d'
-is3d Ellipse := g -> is3d' g or is3d g.Center
-is3d Circle := g -> is3d' g or is3d g.Center or is3d g.Radius
-is3d GraphicsHtml :=
-is3d GraphicsText := g -> is3d' g or is3d g.RefPoint
-is3d Light := g -> true
-is3d Line := g -> is3d' g or is3d g.Point1 or is3d g.Point2
-is3d GraphicsPoly := g -> is3d' g or any(g.PointList,is3d)
+is3d GraphicsObject := g -> g.cache.Is3d = is3d'
+is3d Ellipse := g -> g.cache.Is3d = is3d' g or is3d g.Center
+is3d Circle := g -> g.cache.Is3d = is3d' g or is3d g.Center or is3d g.Radius
+is3d GraphicsText := g -> g.cache.Is3d = is3d' g or is3d g.RefPoint
+is3d Light := g -> g.cache.Is3d = true
+is3d Line := g -> g.cache.Is3d = is3d' g or is3d g.Point1 or is3d g.Point2
+is3d GraphicsPoly := g -> g.cache.Is3d = is3d' g or any(g.PointList,is3d)
 is3d Thing := x -> false
 is3d GraphicsList := l -> (
     -- the interesting one: recurse up and down
-    if is3d' l or any(l.Contents,is3d) then (
+    l.cache.Is3d = if is3d' l or any(l.Contents,is3d) then (
 	scan(l.Contents, g->g.cache.Is3d=true);
 	true
 	) else false
     )
 is3d GraphicsCoordinate := x -> (x.RefPointFunc(map(RR^4,RR^4,1)))_2 != 0 -- TEMP? TODO better
 
-local svg1;
-svgLookup := hashTable {
-    symbol TransformMatrix => (g,x) -> (g.cache.Options#"data-matrix" = x;),
-    symbol AnimMatrix => (g,x) -> (g.cache.Options#"data-dmatrix" = x;),
-    symbol Radius => (g,x) -> (
-	if instance(x,Number) then (
+coord = (g,name,ind,labx,laby) -> (
+    x := g#name;
+    if instance(x,GraphicsCoordinate) or is3d g then ac(g.cache.Options,"data-coords",ind,x);
+    x=compute(x,g.cache.CurrentMatrix);
+    x' := project3d(x,g);
+    g.cache.Options#labx = x'_0;
+    g.cache.Options#laby = x'_1;
+    (x,x')
+)
+
+svg1 = method()
+svg1 Ellipse := g -> (
+    (x,x'):=coord(g,symbol Center,0,"cx","cy");
+    -- then radius: circle vs ellipse
+    if instance(g,Circle) then (
+	r := g.Radius;
+	if instance(r,Number) then (
 	    if is3d g then (
-		p := compute(g.Center,g.cache.CurrentMatrix);
-		sc := scale(p,g);
-		r := x * sc;
-		g.cache.Options#"data-r"=x;
-		) else r = x;
+		g.cache.Options#"data-r"=r;
+		-- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
+		scale := x_3/(g.cache.Owner.PerspectiveMatrix*x)_3;
+		r = r * scale;
+		);
 	    ) else (
-	    p  =project2d(compute(g.Center,g.cache.CurrentMatrix),g);
-	    pp:=project2d(compute(x,g.cache.CurrentMatrix),g)-p;
-	    r=sqrt(pp_0^2+pp_1^2);
-	    if is3d g or instance(x,GraphicsCoordinate) then ac(g.cache.Options,"data-coords",1,x);
+	    if is3d g or instance(r,GraphicsCoordinate) then ac(g.cache.Options,"data-coords",1,r);
+	    y:=project3d(compute(r,g.cache.CurrentMatrix),g)-x';
+	    r=sqrt(y_0^2+y_1^2);
 	    );
 	g.cache.Options#"r" = r;
-	),
-    symbol RadiusX => (g,x) -> (
-	r := compute(g.Center,g.cache.CurrentMatrix);
-	sc := scale(r,g);
-	g.cache.Options#"rx" = x * sc;
-	if is3d g then g.cache.Options#"data-rx"=x;
-	),
-    symbol RadiusY => (g,x) -> (
-	r := compute(g.Center,g.cache.CurrentMatrix);
-	sc := scale(r,g);
-	g.cache.Options#"ry" = x * sc;
-	if is3d g then g.cache.Options#"data-ry"=x;
-	),
-    symbol OneSided => (g,x) -> (g.cache.Options#"data-onesided"=x;),
-    symbol FontSize => (g,x) -> (
-	-- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
-	r := compute(g.RefPoint,g.cache.CurrentMatrix);
-	sc := scale(r,g);
-	f:=max(0,x*sc);
-	g.style#"font-size" = toString f|"px";
-	if is3d g then g.cache.Options#"data-fontsize"=x;
-	if instance(g,GraphicsHtml) then ( -- a bit hacky because foreignObject is so buggy
-	    g.style#"overflow"="visible"; -- makes width/height irrelevant
-	    g.style#"width"="100%"; -- -- but still needed otherwise webkit won't render
-	    g.style#"height"="100%";
-	    )
-	),
-    symbol PointList => (g,x) -> (
-	x1 := select(x,y->not instance(y,String));
-	if is3d g or any(x1,y->instance(y,GraphicsCoordinate)) then g.cache.Options#"data-coords"=x1; -- be more subtle? select?
-	s := demark(" ", flatten apply(x, y -> if not instance(y,String) then apply(entries project2d'(compute(y,g.cache.CurrentMatrix),g),toString) else y));
-	if instance(g,Path) then g.cache.Options#"d" = s else g.cache.Options#"points" = s;
-	),
-    symbol Center => (g,x) -> (
-	if instance(x,GraphicsCoordinate) or is3d g then ac(g.cache.Options,"data-coords",0,x);
-	x = project2d'(compute(x,g.cache.CurrentMatrix),g);
-	g.cache.Options#"cx" = x_0;
-	g.cache.Options#"cy" = x_1;
-	),
-    symbol RefPoint => (g,x) -> (
-	if instance(x,GraphicsCoordinate) or is3d g then ac(g.cache.Options,"data-coords",0,x);
-	x = project2d'(compute(x,g.cache.CurrentMatrix),g);
-	g.cache.Options#"x" = x_0;
-	g.cache.Options#"y" = x_1;
-	),
-    symbol Point1 => (g,x) -> (
-	if instance(x,GraphicsCoordinate) or is3d g then ac(g.cache.Options,"data-coords",0,x);
-	x = project2d'(compute(x,g.cache.CurrentMatrix),g);
-	g.cache.Options#"x1" = x_0;
-	g.cache.Options#"y1" = x_1;
-	),
-    symbol Point2 => (g,x) -> (
-	if instance(x,GraphicsCoordinate) or is3d g then ac(g.cache.Options,"data-coords",1,x);
-	x = project2d'(compute(x,g.cache.CurrentMatrix),g);
-	g.cache.Options#"x2" = x_0;
-	g.cache.Options#"y2" = x_1;
-	),
-    symbol Static => (g,x) -> (if x then g.cache.Options#"data-static" = "true";),
-    symbol Contents => (g,x) -> (
-	x = stableSort x;
-	g.cache.Contents = apply(x, y -> svg1(y,g.cache.CurrentMatrix));
-	),
-    symbol TextContent => (g,x) -> (g.cache.Contents = {x};),
-    symbol HtmlContent => (g,x) -> (g.cache.Contents = if instance(x,VisibleList) then toList x else {x};),
-    symbol Draggable => (g,x) -> (if x then g.cache.Options#"class" = (if g.cache.Options#?"class" then g.cache.Options#"class" | " " else "") | "M2SvgDraggable";)
-    }
+	r = vector {r,r};
+	) else (
+	rx := g.RadiusX;
+	ry := g.RadiusY;
+	if is3d g then (
+	    g.cache.Options#"data-rx"=rx;
+	    g.cache.Options#"data-ry"=ry;
+	    -- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
+	    scale = x_3/(g.cache.Owner.PerspectiveMatrix*x)_3;
+	    rx = rx * scale;
+	    ry = ry * scale;
+	    );
+	g.cache.Options#"rx" = rx;
+	g.cache.Options#"ry" = ry;
+	r = vector {rx,ry};
+	);
+    if is3d g then (
+	-- distance
+	g.cache.Distance=x'_2;
+	);
+    -- viewport
+    g.cache.ViewPort = if instance(g,Light) and toString g.style#"opacity" === "0" then null else ( -- ViewPort ignores lights if invisible TODO better
+	x'=x'^{0,1};
+	{ x' - r, x' + r }
+	);
+    );
+svg1 Line := g -> (
+    (p1,p1'):=coord(g,symbol Point1,0,"x1","y1");
+    (p2,p2'):=coord(g,symbol Point2,1,"x2","y2");
+    -- viewport
+    p := {{p1'_0,p2'_0},{p1'_1,p2'_1}};
+    g.cache.ViewPort={ vector(min\p), vector(max\p) };
+    if is3d g then (
+	-- distance
+	g.cache.Distance=0.5*(p1'_2+p2'_2)
+	)
+    );
+svg1 GraphicsPoly := g -> (
+    x := g.PointList;
+    x1 := select(x,y->not instance(y,String));
+    if is3d g or any(x1,y->instance(y,GraphicsCoordinate)) then g.cache.Options#"data-coords"=x1; -- be more subtle? select?
+    x1 = apply(x1,y->project3d(compute(y,g.cache.CurrentMatrix),g));
+    i:=-1;
+    s := demark(" ", flatten apply(x, y -> if not instance(y,String) then (i=i+1;{toString x1#i_0,toString x1#i_1}) else y));
+    if instance(g,Path) then g.cache.Options#"d" = s else g.cache.Options#"points" = s;
+    -- viewport
+    g.cache.ViewPort= if #x1 === 0 then null else (
+	s = transpose apply(x1,y->{y_0,y_1});
+	{vector(min\s), vector(max\s)}
+	);
+    if is3d g then (
+	-- distance
+	g.cache.Distance = if #x1 === 0 then 0_RR else sum(x1,y->y_2) / #x1
+	)
+    );
+svg1 GraphicsText := g -> (
+    (x,x'):=coord(g,symbol RefPoint,0,"x","y");
+    c := g.TextContent;
+    g.cache.Contents = if instance(c,VisibleList) then toList c else {c};
+    -- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
+    scale := if is3d g then x_3/(g.cache.Owner.PerspectiveMatrix*x)_3 else 1;
+    -- font size
+    f:=max(0,g.FontSize*scale);
+    g.style#"font-size" = toString f|"px";
+    if is3d g then g.cache.Options#"data-fontsize"=g.FontSize;
+    if is3d g then (
+	-- distance
+	g.cache.Distance=x'_2;
+	);
+    -- view port
+    x'=x'^{0,1};
+    g.cache.ViewPort = if instance(g,GraphicsHtml) then { x', x' } else ( -- TEMP
+	r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
+	x' = x' + vector {
+	    if g#?"text-anchor" then (if g#"text-anchor" == "middle" then -0.5*r_0 else if g#"text-anchor" == "end" then -r_0 else 0) else 0,
+	    if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then -0.5*r_1 else if g#"dominant-baseline" == "hanging" then 0 else -r_1) else -r_1
+	    };
+	{x',x'+r}
+	);
+    )
+svg1 GraphicsList := g -> (
+    x:=g.Contents;
+    g.cache.Contents = if is3d g then (
+	scan(x, y -> y.cache.svgElement = svg2(y,g.cache.CurrentMatrix));
+	-- distance
+	g.cache.Distance = if #(g.Contents) === 0 then 0_RR else sum(x, y->y.cache.Distance) / #x;
+	-- sorting
+	x=stableSort x;
+	apply(x,y->y.cache.svgElement)
+	) else apply(x, y -> svg2(y,g.cache.CurrentMatrix));
+    -- view port
+    s := nonnull apply(x, y->y.cache.ViewPort);
+    g.cache.ViewPort = if #s === 0 then null else (
+	s = transpose s;
+	mn := transpose (entries \ s#0);
+	mx := transpose (entries \ s#1);
+	{vector (min\mn), vector(max\mx)}
+	);
+    );
 
 -- produces SVG element hypertext
 precompute := (g,m,c) -> ( -- 1st phase (object,current matrix,cache of owner)
@@ -585,18 +540,27 @@ updateGraphicsCache := (g,m) -> ( -- 2nd phase (object,current matrix)
 	is3d g; -- TODO better to force 3d state of children to be determined
 	scan(g.Contents,x -> updateGraphicsCache(x,g.cache.CurrentMatrix));
 	);
-    if g.?OneSided and g.OneSided then determineSide g;
-    g.cache.ViewPort = viewPort1 g; -- update the range
-    g.cache.Distance = distance g; -- update the distance
+    if is3d g then (
+	if g.?OneSided and g.OneSided then determineSide g;
+	);
 --    if not g.cache.?Options then g.cache.Options = new MutableHashTable; -- TEMP (cause of lights), do better see above
-    filter g;
+    if g.?TransformMatrix then g.cache.Options#"data-matrix" = g.TransformMatrix;
+    if g.?AnimMatrix then g.cache.Options#"data-dmatrix" = g.AnimMatrix;
+    if g.?Static and g.Static then g.cache.Options#"data-static" = "true";
+    if g.?Draggable and g.Draggable then g.cache.Options#"class" = (if g.cache.Options#?"class" then g.cache.Options#"class" | " " else "") | "M2SvgDraggable";
+    if instance(g,GraphicsHtml) then ( -- a bit hacky because foreignObject is so buggy
+	g.style#"overflow"="visible"; -- makes width/height irrelevant
+	g.style#"width"="100%"; -- -- but still needed otherwise webkit won't render
+	g.style#"height"="100%";
+	)
     )
 
-svg1 = (g,m) -> ( -- 3rd phase (object,current matrix)
+svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
     s := try svgElement class g else return; -- what is the else for?
     updateTransformMatrix(g,m); -- it's already been done but annoying issue of objects that appear several times
     g.cache.Contents={};
-    scan(keys g, key -> if svgLookup#?key then svgLookup#key(g,g#key));
+    svg1 g;
+    filter g;
     args := g.cache.Contents;
     if #g.cache.Options>0 then args = append(args, applyValues(new OptionTable from g.cache.Options,jsString));
     if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
@@ -608,7 +572,7 @@ svg = g -> (
     g.cache.PerspectiveMatrix = perspective if g.?Perspective then g.Perspective else ();
     precompute(g,one,g.cache);
     updateGraphicsCache(g,one);
-    svg1(g,one)
+    svg2(g,one)
     )
 
 globalAssignment GraphicsAncestor
@@ -623,18 +587,7 @@ short GraphicsObject := g -> (
     if s<shortSize then hold g else hold(g++{Size=>shortSize})
     )
 
-distance GraphicsPoly := g -> (
-    s := select(g.PointList, x -> not instance(x,String));
-    if #s == 0 then 0_RR else -sum(s,x->(project3d(compute(x,g.cache.CurrentMatrix),g))_2) / #s
-    )
-distance GraphicsList := g -> (
-    if #(g.Contents) == 0 then 0_RR else sum(g.Contents, x->x.cache.Distance) / #(g.Contents)
-    )
 GraphicsObject ? GraphicsObject := (x,y) -> y.cache.Distance ? x.cache.Distance
-distance GraphicsText := g -> (
-    y := compute(g.RefPoint,g.cache.CurrentMatrix);
-    -y_2/y_3
-    )
 
 -- defs
 svgDefs = new MarkUpType of Hypertext
@@ -694,9 +647,9 @@ new SVG from GraphicsObject := (S,g) -> (
 	    );
 	axeslabels0 := gList(
 	    -- we use GraphicsHtml here despite limitations of ForeignObject. could use GraphicsText instead
-	    GraphicsHtml { symbol RefPoint => vector {xmax*1.06,0,0,1}, symbol HtmlContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x, FontSize => 0.08*min(rr_0,rr_1)},
-	    GraphicsHtml { symbol RefPoint => vector {0,ymax*1.06,0,1}, symbol HtmlContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => 0.08*min(rr_0,rr_1)},
-	    if is3d g then GraphicsHtml { symbol RefPoint => vector {0,0,zmax*1.06,1}, symbol HtmlContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)},
+	    GraphicsHtml { symbol RefPoint => vector {xmax*1.06,0,0,1}, symbol TextContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x, FontSize => 0.08*min(rr_0,rr_1)},
+	    GraphicsHtml { symbol RefPoint => vector {0,ymax*1.06,0,1}, symbol TextContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => 0.08*min(rr_0,rr_1)},
+	    if is3d g then GraphicsHtml { symbol RefPoint => vector {0,0,zmax*1.06,1}, symbol TextContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)},
 	    Perspective => p,
 	    );
 	axes=svg axes0;
@@ -715,7 +668,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	"style" => concatenate("width:",toString g.cache.Size_0,"em;",
 	    "height:",toString g.cache.Size_1,"em;"
 	    ),
-	"viewBox" => concatenate between(" ",toString \ {r#0_0,-r#1_1,r#1_0-r#0_0,r#1_1-r#0_1}),
+	"viewBox" => concatenate between(" ",toString \ {r#0_0,r#0_1,r#1_0-r#0_0,r#1_1-r#0_1}),
 	};
     if is3d g or draggable g then ss = append(ss, "onmousedown" => "gfxMouseDown(event)"); -- TODO more customized: might want 2d background drag etc
     if is3d g then (
@@ -849,7 +802,7 @@ filter = g -> (
 			light = p*(light || vector {1});
 			opts = opts | {
 			    feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString gg.Specular, "lighting-color" => if sp<0 then "black" else toString gg.style#"fill",
-				fePointLight { "data-origin" => gg.cache.Options#"id", "x" => toString(light_0/light_3), "y" => toString(-light_1/light_3), "z" => toString(4*gg.Radius/light_3) } },
+				fePointLight { "data-origin" => gg.cache.Options#"id", "x" => toString(light_0/light_3), "y" => toString(light_1/light_3), "z" => toString(4*gg.Radius/light_3) } },
 			    feComposite { "in" => "spec"|toString i, "in2" => "SourceGraphic", "operator" => "in", "result" => "clipspec"|toString i },
 			    feComposite { "in" => (if i==0 then "SourceGraphic" else "result"|toString(i-1)),  "in2" => "clipspec"|toString i, "result" => "result"|toString i,
 				"operator" => "arithmetic", "k1" => "0", "k2" => "1", "k3" => "1", "k4" => "0" }
@@ -986,7 +939,7 @@ showGraph = G -> if G.cache#?"graphics" then G.cache#"graphics" else (
 		if instance(lab,GraphicsObject) then lab else (
 		    Ellipse{RadiusX=>0.5*w,RadiusY=>0.5*h,"fill"=>"white"},
 		    -- GraphicsText({(0,0),toString lab}|vgTextOpts h)
-		    GraphicsHtml{HtmlContent => DIV{lab,"style"=>"width:fit-content;width:-moz-fit-content;transform:translate(-50%,-50%)"},FontSize=>.25*sc}
+		    GraphicsHtml{TextContent => DIV{lab,"style"=>"width:fit-content;width:-moz-fit-content;transform:translate(-50%,-50%)"},FontSize=>.25*sc}
 		    ));
 	    )
 	else if first l === "graph" then (
@@ -1167,9 +1120,9 @@ multidoc ///
   Description
    Text
     Some SVG text. The location of the start of the text is given by the option RefPoint.
-    The text itself is the option TextContent (a string).
+    The text itself is the option @TT "TextContent"@ (a string or list of strings).
     The text can be "stroke"d or "fill"ed.
-    Font size should be specified with FontSize.
+    Font size should be specified with @TT "FontSize"@.
    Example
     GraphicsText{TextContent=>"Test","stroke"=>"red","fill"=>"none","stroke-width"=>0.5}
     gList(GraphicsText{[0,0],"P",FontSize=>14},GraphicsText{[7,0],"AUL",FontSize=>10})
@@ -1395,7 +1348,7 @@ multidoc ///
    Html content inside a VectorGraphics object
   Description
    Text
-    Some arbitrary HTML content, specified by the option HtmlContent (a @ TO{Hypertext} @ object or other content to render in HTML).
+    Some arbitrary HTML content, specified by the option @TT "TextContent"@ (a @ TO{Hypertext} @ object or other content to render in HTML).
   Caveat
    Due to a limitation of @TT "<foreignObject>"@, coordinates are rounded to the nearest integer. So use large enough coordinate systems.
  Node
@@ -1437,6 +1390,10 @@ multidoc ///
     a=gNode([-1,-1],Circle{Radius=>0.1,"fill"=>"red","stroke"=>"black"})
     b=gNode([1,1],Circle{Radius=>0.1,"fill"=>"green","stroke"=>"black",Draggable=>true})
     gList(Line{a,b},a,b)
+   Text
+    Dragging acts recursively:
+   Example
+    l=null; scan(5,i->l=gNode([100,0],l,Circle{"fill"=>"red"},Draggable=>true)); l++{Margin=>1}
  Node
   Key
    place
@@ -1514,7 +1471,7 @@ multidoc ///
     digraph select(b**b,a->a#1 % a#0 == 0 and first degree a#1 == first degree a#0 +1)
 ///
 undocumented {
-    Contents, TextContent, HtmlContent, RefPoint, Specular, Radius, Point1, Point2, PointList, Mesh, FontSize, RadiusX, RadiusY,
+    Contents, TextContent, RefPoint, Specular, Radius, Point1, Point2, PointList, Mesh, FontSize, RadiusX, RadiusY,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
     (expression, GraphicsAncestor), (html,GraphicsObject), (net,GraphicsAncestor), (toString,GraphicsAncestor), (short,GraphicsObject),
     (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
@@ -1592,9 +1549,9 @@ p=random splice{0..11};
 
 -- icosahedron
 vertices={vector{0.,0.,-95.1057},vector{0.,0.,95.1057},vector{-85.0651,0.,-42.5325},vector{85.0651,0.,42.5325},vector{68.8191,-50.,-42.5325},vector{68.8191,50.,-42.5325},vector{-68.8191,-50.,42.5325},vector{-68.8191,50.,42.5325},vector{-26.2866,-80.9017,-42.5325},vector{-26.2866,80.9017,-42.5325},vector{26.2866,-80.9017,42.5325},vector{26.2866,80.9017,42.5325}};
-faces={{1,11,7},{1,7,6},{1,6,10},{1,10,3},{1,3,11},{4,8,0},{5,4,0},{9,5,0},{2,9,0},{8,2,0},{11,9,7},{7,2,6},{6,8,10},{10,4,3},{3,5,11},{4,10,8},{5,3,4},{9,11,5},{2,7,9},{8,6,2}};
+faces=({1,11,7},{1,7,6},{1,6,10},{1,10,3},{1,3,11},{4,8,0},{5,4,0},{9,5,0},{2,9,0},{8,2,0},{11,9,7},{7,2,6},{6,8,10},{10,4,3},{3,5,11},{4,10,8},{5,3,4},{9,11,5},{2,7,9},{8,6,2});
 icosa=apply(faces,f->Polygon{apply(f,j->vertices#j),"fill"=>"gray","stroke"=>"none"});
-i=gList(toSequence icosa,TransformMatrix=>matrix{{0.7,0,0,0},{0,0.7,0,0},{0,0,0.7,0},{0,0,0,1}})
+i=gList(icosa,Draggable=>true,TransformMatrix=>matrix{{0.7,0,0,0},{0,0.7,0,0},{0,0,0.7,0},{0,0,0,1}})
 
 rnd = () -> random(-1.,1.); cols={"red","green","blue","yellow","magenta","cyan"};
 gList(i, apply(toSequence cols, c -> Light{100*vector{1.5+rnd(),rnd(),rnd()},Radius=>10,"opacity"=>1,"fill"=>c,Specular=>20,AnimMatrix=>rotation(0.02,[rnd(),rnd(),rnd()])}),ViewPort=>{vector{-200,-200},vector{200,200}},Size=>40)

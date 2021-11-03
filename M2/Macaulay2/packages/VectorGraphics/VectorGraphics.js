@@ -133,7 +133,7 @@ function gfxMouseMove(event) {
 	var d=x*x+y*y;
 	x*=1+d/3; y*=1+d/3; // nonlinear correction
 
-	var mat=new Matrix([[1-x*x+y*y,2*x*y,2*x,0],[2*x*y,1+x*x-y*y,-2*y,0],[-2*x,2*y,1-x*x-y*y,0],[0,0,0,1+x*x+y*y]]);
+	var mat=new Matrix([[1-x*x+y*y,-2*x*y,-2*x,0],[-2*x*y,1+x*x-y*y,-2*y,0],[2*x,2*y,1-x*x-y*y,0],[0,0,0,1+x*x+y*y]]);
 	mat.leftmultiply(1/(1+x*x+y*y));
 	gfxRotateDrag(mat);
 	gfxRedo(this);
@@ -237,13 +237,13 @@ function gfxRedraw(el) {
 	    ctr.add(u); // should we normalize u first?
 	    var v = el.ownerSVGElement.gfxdata.pmatrix.vectmultiply(u);
 	    if (v[3]/el.gfxdata.coords[i][3] <= 0 ) { if (v[3]==0) v[3]=.00001; flag=true; } // to avoid division by zero
-	    return [v[0]/v[3],-v[1]/v[3]];
+	    return [v[0]/v[3],v[1]/v[3]];
 	});
 	// center
 	el.gfxdata.ctr=ctr.multiply(1/ctr[3]);
 	// distance
 	var v = el.ownerSVGElement.gfxdata.pmatrix.vectmultiply(ctr);
-	el.gfxdata.distance=-v[2]/v[3]; // this is the only z coord we really need
+	el.gfxdata.distance=v[2]/v[3]; // this is the only z coord we really need
 	el.gfxdata.scale = 1/v[3]; // dirty trick for semi-3d objects (circles, ellipses, text); makes certain assumptions on form of cmatrix TODO retire
 	// behind screen?
 	if (flag) {
@@ -326,7 +326,7 @@ function gfxRedraw(el) {
 			else {
 			    lightel.children[j].setAttribute("lighting-color",origin.style.fill); // TODO should make it proportional to sp/||?
 			    lightel2.setAttribute("x",lightrefl[0]/lightrefl[3]);
-			    lightel2.setAttribute("y",-lightrefl[1]/lightrefl[3]);
+			    lightel2.setAttribute("y",lightrefl[1]/lightrefl[3]);
 			    lightel2.setAttribute("z",4*origin.gfxdata.r/lightrefl[3]);
 			}
 		    }
@@ -379,7 +379,7 @@ function gfxRedraw(el) {
 	    el.gfxdata.ctr=ctr.multiply(1/cnt);
 	    var svgel = el.ownerSVGElement ?  el.ownerSVGElement : el;
 	    var v=svgel.gfxdata.pmatrix.vectmultiply(ctr);
-	    el.gfxdata.distance=-v[2]/v[3]; // this is the only z coord we really need
+	    el.gfxdata.distance=v[2]/v[3]; // this is the only z coord we really need
 	} else {
 	    el.gfxdata.ctr=new Vector([0,0,0,0]);
 	    el.gfxdata.distance=-1e6;
@@ -489,7 +489,7 @@ function gfxCheckData(el,mat) { // mat is the future pmatrix*cmatrix
 	el.gfxdata[v]=eval("("+el.dataset[v]+")");
     // start the computation of matrices... (see gfxRecompute() for details)
     if (el.tagName=="svg") {
-	if (!el.gfxdata.pmatrix) el.gfxdata.pmatrix=matrix([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,-1/1000,1]]);
+	if (!el.gfxdata.pmatrix) el.gfxdata.pmatrix=matrix([[1,0,0,0],[0,-1,0,0],[0,0,-1,0],[0,0,-1/1000,1]]);
 	mat = el.gfxdata.pmatrix;
     } else if (el.gfxdata.static) mat = el.ownerSVGElement.gfxdata.pmatrix;
 
@@ -505,7 +505,7 @@ function gfxCheckData(el,mat) { // mat is the future pmatrix*cmatrix
     if ((el.tagName=="polyline")||(el.tagName=="polygon")) {
 	var pts = el.points;
 	for (var i=0; i<pts.length; i++)
-	    if (!el.gfxdata.coords[i]) el.gfxdata.coords[i]=mati.vectmultiply(vector([pts[i].x,-pts[i].y,0,1]));
+	    if (!el.gfxdata.coords[i]) el.gfxdata.coords[i]=mati.vectmultiply(vector([+pts[i].x,+pts[i].y,0,1]));
     }
     else if (el.tagName=="path") { // annoying special case
 	var path = el.getAttribute("d").split(" "); // for lack of better
@@ -513,29 +513,29 @@ function gfxCheckData(el,mat) { // mat is the future pmatrix*cmatrix
 	for (var i=0; i<path.length; i++)
 	    if (path[i] != "" && ( path[i] < "A" || path[i] > "Z" )) // ...
 	{
-	    if (!el.gfxdata.coords[ii]) el.gfxdata.coords[ii]=mati.vectmultiply(vector([+path[i],-path[i+1],0,1]));
+	    if (!el.gfxdata.coords[ii]) el.gfxdata.coords[ii]=mati.vectmultiply(vector([+path[i],+path[i+1],0,1]));
 	    i++;
 	    ii++;
 	}
     }
     else if (el.tagName=="line") {
-	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0] = mati.vectmultiply(vector([el.x1.baseVal.value,-el.y1.baseVal.value,0,1]));
-	if (!el.gfxdata.coords[1]) el.gfxdata.coords[1] = mati.vectmultiply(vector([el.x2.baseVal.value,-el.y2.baseVal.value,0,1]));
+	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0] = mati.vectmultiply(vector([el.x1.baseVal.value,el.y1.baseVal.value,0,1]));
+	if (!el.gfxdata.coords[1]) el.gfxdata.coords[1] = mati.vectmultiply(vector([el.x2.baseVal.value,el.y2.baseVal.value,0,1]));
     }
     else if (el.tagName=="text") {
-	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0]=mati.vectmultiply(vector([el.x.baseVal[0].value,-el.y.baseVal[0].value,0,1])); // weird
+	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0]=mati.vectmultiply(vector([el.x.baseVal[0].value,el.y.baseVal[0].value,0,1])); // weird
 	if (!el.gfxdata.fontsize) el.gfxdata.fontsize=el.style.fontSize.substring(0,el.style.fontSize.length-2);
     }
     else if (el.tagName=="foreignObject") {
-	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0]=mati.vectmultiply(vector([el.x.baseVal.value,-el.y.baseVal.value,0,1]));
+	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0]=mati.vectmultiply(vector([el.x.baseVal.value,el.y.baseVal.value,0,1]));
 	if (!el.gfxdata.fontsize) el.gfxdata.fontsize=el.style.fontSize.substring(0,el.style.fontSize.length-2);
     }
     else if (el.tagName=="circle") {
-	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0]=mati.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,0,1]));
+	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0]=mati.vectmultiply(vector([el.cx.baseVal.value,el.cy.baseVal.value,0,1]));
 	if (!el.gfxdata.coords[1] && !el.gfxdata.r) el.gfxdata.r=el.r.baseVal.value; // default is, radius is static. coords[1] would be a dynamic one
     }
     else if (el.tagName=="ellipse") {
-	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0]=mati.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,0,1]));
+	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0]=mati.vectmultiply(vector([el.cx.baseVal.value,el.cy.baseVal.value,0,1]));
 	if (!el.gfxdata.rx) el.gfxdata.rx=el.rx.baseVal.value;
 	if (!el.gfxdata.ry) el.gfxdata.ry=el.ry.baseVal.value;
     }
