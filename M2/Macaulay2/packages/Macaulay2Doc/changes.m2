@@ -44,7 +44,8 @@ document {
 	    UL {
 		LI { "Integers may now be entered using the binary, octal, and hexadecimal numeral systems with with \"0b\", \"0o\", and \"0x\" prefixes, respectively."},
 		LI { "A new binary operator, ", TO2 {(symbol ^^, ZZ, ZZ), "^^"}, ", has been added for computing the bitwise XOR of two integers.  This replaces the \"xor\" method."},
-		LI { "A new keyword, ", TO2 {(symbol xor, Boolean, Boolean), "xor"}, ", has been added for finding the logical XOR of two boolean objects."}
+		LI { "A new keyword, ", TO2 {(symbol xor, Boolean, Boolean), "xor"}, ", has been added for finding the logical XOR of two boolean objects."},
+		LI { "The function ", TO printerr, ", for printing warning messages and logs to ", TO stderr, ", is now exported."}
 		}
 	    }
 	}
