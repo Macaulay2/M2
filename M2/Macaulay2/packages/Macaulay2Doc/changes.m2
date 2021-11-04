@@ -38,6 +38,17 @@ document {
      }
 
 document {
+    Key => "changes, 1.19",
+    UL {
+	LI { "functionality added:",
+	    UL {
+		LI { "Integers may now be entered using the binary, octal, and hexadecimal numeral systems with with \"0b\", \"0o\", and \"0x\" prefixes, respectively."}
+		}
+	    }
+	}
+    }
+
+document {
      Key => "changes, 1.18",
      UL {
      	 LI { "packages that have been published and certified:",
