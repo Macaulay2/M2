@@ -4,7 +4,9 @@
 #define M2TBB_HPP
 
 #define TBB_PRESENT
-#define TBB_VERSION_MAJOR 2020
+
+
+
 
 /// A compatibility layer for tbb. If we are compiling with tbb present, then
 /// these classes will simply be the same classes as in tbb. However, if we
@@ -15,8 +17,15 @@
 /// uses of tbb go through m2tbb, so make sure to do that.
 
 #ifdef TBB_PRESENT
+#include <tbb/version.h>
 
-#if TBB_VERSION_MAJOR >= 2021
+#define XSTR(x) STR(x)
+#define STR(x) #x
+
+//#define TBB_VERSION_MAJOR 2020
+#pragma message "TBB_VERSION_MAJOR = " XSTR(TBB_VERSION_MAJOR)
+
+#if 1   //TBB_VERSION_MAJOR >= 2021
 
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/concurrent_unordered_map.h>     

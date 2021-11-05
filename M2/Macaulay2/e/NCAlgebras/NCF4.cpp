@@ -526,8 +526,11 @@ void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
   // during the for loop
   // process each element in mReducersTodo
 
-  //m2tbb::parallel_for_each(mReducersTodo.begin(), mReducersTodo.end(),
+#if 1  
+  m2tbb::parallel_for_each(mReducersTodo.begin(), mReducersTodo.end(),
+#else                           
   m2tbb::parallel_do(mReducersTodo.begin(), mReducersTodo.end(),
+#endif                     
       [&](const PreRow& prerow, PreRowFeeder& feeder)
       {
         auto& data = threadData.local();

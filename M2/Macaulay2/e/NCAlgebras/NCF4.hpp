@@ -89,8 +89,12 @@ private:
   using RowsVector = std::vector<Row,gc_allocator<Row>>;
   //using RowsVector = tbb::concurrent_vector<Row>;
 
+#if 1  //TBB_MAJOR_VERSION >= 2021  
+  using PreRowFeeder = m2tbb::feeder<PreRow>;
+#else
   using PreRowFeeder = m2tbb::parallel_do_feeder<PreRow>;
-  //  using PreRowFeeder = m2tbb::feeder<PreRow>;
+#endif
+
 
   // The pair in this unordered_map is (i,j) where:
   //    i is the column number
