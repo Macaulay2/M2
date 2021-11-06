@@ -44,8 +44,8 @@ MonodromyOptions = {
 	AugmentNodeCount=>0,
 	BatchSize => infinity,
 	Potential => null,
-	NumberOfNodes => 2,
-	NumberOfEdges => 4,
+	NumberOfNodes => null,
+	NumberOfEdges => null,
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses "track" if false, "trackHomotopy" if true
 	Verbose => false,
@@ -303,17 +303,26 @@ staticMonodromySolve (System, Point, List) := o -> (PS, p0, sols0) -> (
     if existsPotential and toString o.Potential == "potentialE" and instance(o.TargetSolutionCount, Nothing) then error "potentialE requires target solution count";
     existsRandomizer := not instance(o.Randomizer, Nothing);
     if existsRandomizer and not isGS then error "setting Randomizer requires a GateSystem";
-    useLinearSegment := true; -- initialized value
+    isScaleInvariant := areEqual(0, norm evaluate(PS, point((random CC) * matrix p0), first sols0));
+    useLinearSegment := if isScaleInvariant then true else false; -- initialized value
+    numNodes := o.NumberOfNodes;
+    numEdges := o.NumberOfEdges;
     randomizer := if not existsRandomizer then (
-        isScaleInvariant := areEqual(0, norm evaluate(PS, point((random CC) * matrix p0), first sols0));
-        if isScaleInvariant then (p -> (random CC) * p) else (
-            useLinearSegment = false;
-            (p -> p)
-            )
-        ) else (
+        if isScaleInvariant then (
+	    if instance(numNodes, Nothing) then numNodes = 2;
+	    if instance(numEdges, Nothing) then numEdges = 4;
+	    (p -> (random CC) * p)
+	    )
+	else (
+	    if instance(numNodes, Nothing) then numNodes = 4;
+	    if instance(numEdges, Nothing) then numEdges = 1;
+	    (p -> p)
+	);
+    ) else (
         assert instance(o.Randomizer, Function);
         o.Randomizer
         );
+    print randomizer;
     filterCondition := if instance(o.FilterCondition, Nothing) then (x -> false) else (
         assert instance(o.FilterCondition, Function);
         o.FilterCondition
@@ -342,7 +351,7 @@ staticMonodromySolve (System, Point, List) := o -> (PS, p0, sols0) -> (
     setTrackTime(HG, 0);    
     if #sols0 < 1 then error "at least one solution expected";    
     PointArrayTolerance = o.PointArrayTol; -- global variable!!!
-    o.GraphInitFunction(HG, p0, node1, o.NumberOfNodes, o.NumberOfEdges);
+    o.GraphInitFunction(HG, p0, node1, numNodes, numEdges);
     --Needs to return HG for use by dynamicMonodromySolve
     coreMonodromySolve(HG, node1, new OptionTable from (new HashTable from mutableOptions))
 )
