@@ -162,7 +162,7 @@ jobs:
           make -C ../.. all
           export CPPFLAGS="-I`brew --prefix`/include -I`brew --prefix tbb@2020_u3`/include"
           export  LDFLAGS="-L`brew --prefix`/lib     -L`brew --prefix tbb@2020_u3`/lib"
-          ../../configure --enable-download
+          ../../configure --enable-download --with-python
 
       - name: Build Macaulay2 using Make
         if: matrix.build-system == 'autotools'
