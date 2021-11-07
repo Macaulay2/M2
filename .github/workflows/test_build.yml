@@ -134,6 +134,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF \
             -DCMAKE_PREFIX_PATH="`brew --prefix`;`brew --prefix tbb@2020_u3`" \
             -DCMAKE_INSTALL_PREFIX=/usr \
+            -DWITH_PYTHON=ON \
             --debug-trycompile
 
       - name: Build libraries using Ninja
