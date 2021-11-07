@@ -161,8 +161,11 @@ jobs:
         run: |
           make -C ../.. get-libtool get-automake get-autoconf
           make -C ../.. all
+          export PYVERSION=`python3 -c "from sys import version_info; \
+            print(f'{version_info.major}.{version_info.minor}')"`
           export CPPFLAGS="-I`brew --prefix`/include -I`brew --prefix tbb@2020_u3`/include"
-          export  LDFLAGS="-L`brew --prefix`/lib     -L`brew --prefix tbb@2020_u3`/lib"
+          export  LDFLAGS="-L`brew --prefix`/lib     -L`brew --prefix tbb@2020_u3`/lib \
+            -L`brew --prefix python`/Frameworks/Python.framework/Versions/${PYVERSION}/lib"
           ../../configure --enable-download --with-python
 
       - name: Build Macaulay2 using Make
