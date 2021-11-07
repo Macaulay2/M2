@@ -47,6 +47,11 @@ document {
 		LI { "A new keyword, ", TO2 {(symbol xor, Boolean, Boolean), "xor"}, ", has been added for finding the logical XOR of two boolean objects."},
 		LI { "The function ", TO printerr, ", for printing warning messages and logs to ", TO stderr, ", is now exported."}
 		}
+	    },
+	LI { "improved packages:",
+	    UL {
+		LI { "The package ", TO "Python", " is once again distributed.  It now has support for Python 3 and includes many new features."}
+		}
 	    }
 	}
     }
