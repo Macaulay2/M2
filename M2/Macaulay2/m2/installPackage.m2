@@ -205,7 +205,7 @@ assembleTree := (pkg, nodes) -> (
 	    and pkg#"raw documentation"#fkey.?Subnodes then (
 		subnodes := pkg#"raw documentation"#fkey.Subnodes;
 		subnodes  = select(deepApply(subnodes, identity), DocumentTag);
-		subnodes  = select(subnodes, node -> package node === pkg);
+		subnodes  = select(fixup \ subnodes, node -> package node === pkg);
 		tag => getPrimaryTag \ subnodes)
 	    else tag => {}));
     -- build the forest
