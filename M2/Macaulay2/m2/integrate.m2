@@ -202,6 +202,13 @@ integrate(Function, InfiniteNumber, InfiniteNumber) := (f, a, b) -> (
     else if a == infinity and b == -infinity then -integrate(f, b, a)
     else error "expected infinity and/or -infinity")
 
+integrate(Function, Constant, Constant) :=
+integrate(Function, Constant, Number) :=
+integrate(Function, Constant, InfiniteNumber) :=
+integrate(Function, Number, Constant) :=
+integrate(Function, InfiniteNumber, Constant) :=
+    (f, a, b) -> integrate(f, a + 0, b + 0)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
