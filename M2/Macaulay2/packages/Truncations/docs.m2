@@ -56,6 +56,8 @@ Node
     @UL {
         {"[MS04]: Maclagan and Smith, Multigraded Castelnuovo-Mumford Regularity (see ", arXiv "math/0305214", ")."}
         }@
+  Contributors
+    Lauren Cranton Heller contributed to the code and documentation for this package.
   Subnodes
     (truncate, List, Module)
     (truncate, List, Matrix)
