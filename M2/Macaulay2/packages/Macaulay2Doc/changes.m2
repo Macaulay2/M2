@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.19",
 	  TO "changes, 1.18",
 	  TO "changes, 1.17",
 	  TO "changes, 1.16",
@@ -40,6 +41,11 @@ document {
 document {
     Key => "changes, 1.19",
     UL {
+	LI { "improved packages:",
+	    UL {
+		LI { "The package ", TO "Truncations", " has been improved to support modules over the Cox rings of simplicial ", TO2 {"NormalToricVarieties", "normal toric varieties"}, "." }
+		}
+	    },
 	LI { "functionality added:",
 	    UL {
 		LI { "Integers may now be entered using the binary, octal, and hexadecimal numeral systems with the prefixes \"0b\", \"0o\", and \"0x\", respectively."},
