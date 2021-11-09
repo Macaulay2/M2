@@ -47,7 +47,19 @@ document {
 		LI { "A new keyword, ", TO2 {(symbol xor, Boolean, Boolean), "xor"}, ", has been added for finding the logical XOR of two boolean objects."},
 		LI { "The function ", TO printerr, ", for printing warning messages and logs to ", TO stderr, ", is now exported."}
 		}
-	    }
+	    },
+	LI { "packages that have been published and certified:",
+           UL {
+              -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+              LI { star, " ", TO "ExteriorModules::ExteriorModules", ", a package by Luca Amata and Marilena Crupi for monomial modules over exterior algebras, has been published." }
+              }
+           },
+        LI { "new packages:",
+           UL {
+              -- LI { TO "::", ", a package by ... for ..., has been added." },
+              LI { TO "TSpreadIdeals::TSpreadIdeals", ", a package by Luca Amata for t-spread ideals of a polynomial ring, has been added." }
+              }
+           }
 	}
     }
 
