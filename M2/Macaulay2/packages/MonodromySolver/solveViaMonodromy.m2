@@ -309,21 +309,22 @@ staticMonodromySolve (System, Point, List) := o -> (PS, p0, sols0) -> (
     useLinearSegment := if isScaleInvariant then true else false; -- initialized value
     numNodes := o.NumberOfNodes;
     numEdges := o.NumberOfEdges;
-    randomizer := if not existsRandomizer then (
+    local randomizer;
+    if existsRandomizer then (
+        assert instance(o.Randomizer, Function);
+        randomizer = o.Randomizer;
+	) else (
         if isScaleInvariant then (
 	    if instance(numNodes, Nothing) then numNodes = 2;
 	    if instance(numEdges, Nothing) then numEdges = 4;
-	    (p -> (random CC) * p)
+	    randomizer = (p -> (random CC) * p);
 	    )
 	else (
 	    if instance(numNodes, Nothing) then numNodes = 4;
 	    if instance(numEdges, Nothing) then numEdges = 1;
-	    (p -> p)
+	    randomizer = (p -> p);
 	);
-    ) else (
-        assert instance(o.Randomizer, Function);
-        o.Randomizer
-        );
+    );
     filterCondition := if instance(o.FilterCondition, Nothing) then (x -> false) else (
         assert instance(o.FilterCondition, Function);
         o.FilterCondition

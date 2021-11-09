@@ -79,12 +79,13 @@ doc ///
         Text
     
         Example
-            setRandomSeed 2020;
+            setRandomSeed 2021;
             R=CC[x,y,z];
             F=random(3,R);
             P=sum apply(gens R,g->diff(g,F)*random CC);
             PS = polySystem {F,P,random(1,R)-1};
-            sols = sparseMonodromySolve PS;
+            sols = sparseMonodromySolve(PS, Verbose=>true)
+    	    length points sols
             for i from 0 to 5 list norm evaluate(PS, sols#i)
         Text
             For systems with dense support such as the above, the total number of paths tracked is generally not optimal, though timings may 
