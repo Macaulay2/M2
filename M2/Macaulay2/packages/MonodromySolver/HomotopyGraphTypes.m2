@@ -42,7 +42,7 @@ addNode (HomotopyGraph, Point, PointArray) := (HG, params, partialSols) -> (
 	Edges => new MutableList from {}
     };
     if (not HG.SLP)  then (
-	N.SpecializedSystem = specializeSystem (params, HG.Family));
+	N.SpecializedSystem = specializeSystem (params, HG.System));
     HG.Vertices = append(HG.Vertices, N);
     N
 )
@@ -76,14 +76,18 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := o -> (HG, n1, n2) -> (
         p2 = HG.Randomizer p2;
         );
     if HG.SLP then (
-        seg := HG.Homotopy;
+	seg := parametricSegmentHomotopy HG.System;
         edgeHomotopy := if HG.LinearSegment then seg else (
             -- create random arc between p1 and p2 in the parameter space
-            c := E.gamma1;
+	    gamma := E.gamma1;
             t := seg.GateHomotopy#"T";
-            -- next line is a bit inefficient
-            H := sub(seg.GateHomotopy#"H", t=> t* ( (2-4*c) *t + (4*c-1)));
-            gateHomotopy(H, vars HG.Family, t, Parameters => seg.Parameters)
+	    gammat := gamma * t;
+	    tau := gammat / (1+ gammat - t); -- Sommese Wampler Lemma 7.1.3
+	    H := sub(gateMatrix HG.System,
+    		transpose parameters HG.System,
+    		(1-tau)*(transpose seg.Parameters)^{0..numParameters HG.System-1} + tau*(transpose seg.Parameters)^{numParameters HG.System..2*numParameters HG.System-1}
+    		);
+            gateHomotopy(H, vars HG.System, t, Parameters => seg.Parameters)
             );
     	E#"homotopy12" = specialize(edgeHomotopy, p1||p2);
     	E#"homotopy21" = specialize(edgeHomotopy, p2||p1);
@@ -132,8 +136,7 @@ installMethod(homotopyGraph, o -> ()-> new HomotopyGraph from {
 homotopyGraph System := o -> PF -> (
     HG := homotopyGraph();
     HG.SLP = instance(PF, GateSystem);
-    HG.Family = PF,
-    if HG.SLP then HG.Homotopy = parametricSegmentHomotopy PF,
+    HG.System = PF;
     HG.Potential = o.Potential;
     HG.FilterCondition = o.FilterCondition;
     HG.Randomizer = o.Randomizer;
