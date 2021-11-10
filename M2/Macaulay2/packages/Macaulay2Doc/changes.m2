@@ -72,8 +72,7 @@ document {
 	     	    },
 	       LI { "improved packages:",
 	    	    UL {
-		     	 LI { "The package ", TO "MonodromySolver::MonodromySolver", " includes several new convenience functions for manipulating systems and creating seed pairs."},
-		     	 LI { "The package ", TO "Python", " is once again distributed.  It now has support for Python 3 and includes many new features."}
+		     	 LI { "The package ", TO "MonodromySolver::MonodromySolver", " includes several new convenience functions for manipulating systems and creating seed pairs."}
 			 }
 	    	    },
 	       LI { "functionality added:",
