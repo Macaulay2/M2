@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.19",
 	  TO "changes, 1.18",
 	  TO "changes, 1.17",
 	  TO "changes, 1.16",
@@ -40,6 +41,35 @@ document {
 document {
     Key => "changes, 1.19",
     UL {
+	 LI { "new packages:",
+	      UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "MonomialIntegerPrograms::MonomialIntegerPrograms", ", a package by ... for ..., has been added." },
+		    LI { TO "ThinSincereQuivers::ThinSincereQuivers", ", a package by ... for ..., has been added." },
+		    LI { TO "Python::Python", ", a package by ... for ..., has been added." },
+		    LI { TO "BettiCharacters::BettiCharacters", ", a package by ... for ..., has been added." },
+		    LI { TO "Jets::Jets", ", a package by ... for ..., has been added." },
+		    LI { TO "FunctionFieldDesingularization::FunctionFieldDesingularization", ", a package by ... for ..., has been added." },
+		    LI { TO "HomotopyLieAlgebra::HomotopyLieAlgebra", ", a package by ... for ..., has been added." },
+		    LI { TO "TSpreadIdeals::TSpreadIdeals", ", a package by ... for ..., has been added." },
+		    LI { TO "ExteriorModules::ExteriorModules", ", a package by Luca Amata and Marilena Crupi for monomial modules over exterior algebras, has been added." }
+		    }
+	       },
+	LI { "packages that have been published and certified:",
+	     UL {
+		  -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		  LI { star, " ", TO "DecomposableSparseSystems::DecomposableSparseSystems", ", a package by 
+		       Taylor Brysiewicz, Jose Israel Rodriguez, Frank Sottile, and Thomas Yahl for solving decomposable sparse systems, has been published." },
+		  LI { star, " ", TO "SparseResultants::SparseResultants", ", a package by Giovanni Staglianò for computations with sparse resultants, has been published." },
+		  LI { star, " ", TO "ExteriorModules::ExteriorModules", ", a package by Luca Amata and Marilena Crupi for monomial modules over exterior algebras, has been published." }     
+		  }
+	     },
+	LI { "packages that have been renamed:",
+	     UL {
+		  LI { "The package ", TT "FastLinAlg", " has been renamed to ", TO "FastMinors::FastMinors", "." },
+		  LI { "The package ", TT "RandomRationalPoints", " has been renamed to ", TO "RandomPoints::RandomPoints", "." }			    
+		  }
+	     },
 	LI { "functionality added:",
 	    UL {
 		LI { "Integers may now be entered using the binary, octal, and hexadecimal numeral systems with the prefixes \"0b\", \"0o\", and \"0x\", respectively."},
