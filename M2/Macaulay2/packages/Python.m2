@@ -1,5 +1,5 @@
 -* 
-this does not work uless M2 is compiled --with-python
+this does not work unless M2 is compiled --with-python
 *-
 
 pythonPresent := Core#"private dictionary"#?"runPythonString"

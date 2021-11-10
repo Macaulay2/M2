@@ -44,14 +44,14 @@ document {
 	 LI { "new packages:",
 	      UL {
 		    -- LI { TO "::", ", a package by ... for ..., has been added." },
-		    LI { TO "MonomialIntegerPrograms::MonomialIntegerPrograms", ", a package by ... for ..., has been added." },
-		    LI { TO "ThinSincereQuivers::ThinSincereQuivers", ", a package by ... for ..., has been added." },
-		    LI { TO "Python::Python", ", a package by ... for ..., has been added." },
-		    LI { TO "BettiCharacters::BettiCharacters", ", a package by ... for ..., has been added." },
-		    LI { TO "Jets::Jets", ", a package by ... for ..., has been added." },
-		    LI { TO "FunctionFieldDesingularization::FunctionFieldDesingularization", ", a package by ... for ..., has been added." },
-		    LI { TO "HomotopyLieAlgebra::HomotopyLieAlgebra", ", a package by ... for ..., has been added." },
-		    LI { TO "TSpreadIdeals::TSpreadIdeals", ", a package by ... for ..., has been added." },
+		    LI { TO "MonomialIntegerPrograms::MonomialIntegerPrograms", ", a package by Lily Silverstein and Jay White for using integer programming for fast computations with monomial ideals, has been added." },
+		    LI { TO "ThinSincereQuivers::ThinSincereQuivers", ", a package by Mary Barker and Patricio Gallardo for construction of flow polytopes and their associated quivers, has been added." },
+		    LI { TO "Python::Python", ", a package by Daniel R. Grayson and Doug Torrance for an interface to Python, has been added." },
+		    LI { TO "BettiCharacters::BettiCharacters", ", a package by Federico Galetto for finite group characters on free resolutions and graded modules, has been added." },
+		    LI { TO "Jets::Jets", ", a package by Federico Galetto and Nicholas Iammarino, for computing jets of various algebraic, geometric and combinatorial objects, has been added." },
+		    LI { TO "FunctionFieldDesingularization::FunctionFieldDesingularization", ", a package by Douglas A. Leonard for desingularization of function fields, has been added." },
+		    LI { TO "HomotopyLieAlgebra::HomotopyLieAlgebra", ", a package by David Eisenbud for homotopy Lie algebra, has been added." },
+		    LI { TO "TSpreadIdeals::TSpreadIdeals", ", a package by Luca Amata for t-spread ideals of a polynomial ring, has been added." },
 		    LI { TO "ExteriorModules::ExteriorModules", ", a package by Luca Amata and Marilena Crupi for monomial modules over exterior algebras, has been added." }
 		    }
 	       },
