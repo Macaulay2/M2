@@ -17,6 +17,11 @@ class ntuple
   static bool is_one(int nvars, int *a);
   static void mult(int nvars, const int *a, const int *b, int *result);
   static void power(int nvars, const int *a, int n, int *result);
+  static void multpower(int nvars,
+                        const int *a,
+                        const int *b,
+                        int n,
+                        int *result);
   static void divide(int nvars, const int *a, const int *b, int *result);
   // result = a - b
   static void quotient(int nvars, const int *a, const int *b, int *result);
@@ -58,6 +63,16 @@ inline void ntuple::mult(int nvars, const int *a, const int *b, int *result)
 inline void ntuple::power(int nvars, const int *a, int n, int *result)
 {
   for (int i = nvars; i > 0; i--) *result++ = safe::mult(*a++, n);
+}
+
+inline void ntuple::multpower(int nvars,
+                              const int *a,
+                              const int *b,
+                              int n,
+                              int *result)
+{
+  for (int i = nvars; i > 0; i--)
+    *result++ = safe::add(*a++, safe::mult(*b++, n));
 }
 
 inline void ntuple::divide(int nvars, const int *a, const int *b, int *result)
