@@ -13,8 +13,10 @@ include Makefile.test
 
 TARGETS = all check status
 CLEANTARGETS = clean distclean
-SUBDIRS = normal threads slow gigantic goals quarantine
+#SUBDIRS = normal threads slow gigantic goals quarantine
 #SUBDIRS = ComputationsBook normal threads slow gigantic goals quarantine
+SUBDIRS =
+
 define do-in-subdirs
 $(foreach d,$(SUBDIRS),
 	$(eval .PHONY: $1-in-subdirs)
@@ -24,7 +26,7 @@ endef
 $(foreach t,$(TARGETS),$(eval $(call do-in-subdirs,$t)))
 $(foreach t,$(CLEANTARGETS),$(eval $(call do-in-subdirs,$t,DEPENDS=no)))
 
-check: check-deferred
+check: # check-deferred
 check-deferred:
 	-@ if egrep -nHw 'defer|deferred|disable|disabled' @abs_srcdir@/*.m2 >/dev/null 2>&1 ; \
 	  then echo "make: warning: tests in the following files have been deferred:" >&2 ; \
