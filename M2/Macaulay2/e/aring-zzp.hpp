@@ -7,6 +7,7 @@
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
+#include "error.h"           // for ERROR
 
 class Z_mod;
 class RingMap;
@@ -207,8 +208,9 @@ class ARingZZp : public RingInterface
 
   void divide(elem &result, elem a, elem b) const
   {
-    assert(b != 0);
-    if (a != 0 && b != 0)
+    //    assert(b != 0);
+    if (b == 0) ERROR("division by zero");
+    if (a != 0)
       {
         int c = a - b;
         if (c <= 0) c += p1;
@@ -231,6 +233,8 @@ class ARingZZp : public RingInterface
 
   void power_mpz(elem &result, elem a, mpz_srcptr n) const
   {
+    //    assert( a != 0 || mpz_sgn(n)>=0);
+    if (a==0 && mpz_sgn(n)<0) ERROR("division by zero");
     int n1 = static_cast<int>(mpz_fdiv_ui(n, p1));
     power(result, a, n1);
   }

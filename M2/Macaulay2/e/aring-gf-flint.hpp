@@ -17,6 +17,7 @@
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
+#include "error.h"           // for ERROR
 
 class PolynomialRing;
 class RingElement;
@@ -150,8 +151,9 @@ class ARingGFFlint : public RingInterface
 
   void invert(ElementType& result, const ElementType& a) const
   {
-    assert(not is_zero(a));
-    fq_zech_inv(&result, &a, mContext);
+    //    assert(not is_zero(a));
+    if (is_zero(a)) ERROR("division by zero");
+    else fq_zech_inv(&result, &a, mContext);
   }
 
   void add(ElementType& result,
@@ -219,20 +221,20 @@ class ARingGFFlint : public RingInterface
 
   void power(ElementType& result, const ElementType& a, int n) const
   {
-    if (is_zero(a))
-      set_zero(result);
-    else if (n < 0)
+    if (n < 0)
       {
         invert(result, a);
         fq_zech_pow_ui(&result, &result, -n, mContext);
       }
+    else if (is_zero(a))
+      set_zero(result);
     else
       fq_zech_pow_ui(&result, &a, n, mContext);
   }
 
   void power_mpz(ElementType& result, const ElementType& a, mpz_srcptr n) const
   {
-    if (is_zero(a))
+    if (is_zero(a) && mpz_sgn(n)>=0)
       {
         set_zero(result);
         return;
