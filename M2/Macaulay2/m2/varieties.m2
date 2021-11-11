@@ -233,6 +233,7 @@ cohomology(ZZ,CoherentSheaf) := Module => opts -> (i,F) -> (
 	       n := numgens A;
 	       M := cokernel lift(presentation module F,A) ** cokernel p;
 	       rank source basis(0, Ext^(n-1-i)(M,A^{-n})))))
+cohomology(ZZ,ProjectiveVariety,CoherentSheaf) := Module => opts -> (i,X,F) -> cohomology(i,F,opts)
 
 cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
 

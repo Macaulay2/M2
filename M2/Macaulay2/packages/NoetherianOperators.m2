@@ -222,14 +222,14 @@ eliminatingDual (Point,Matrix,List,ZZ) := o -> (p,Igens,ind,d) -> (
     RdBasis
     )
 
-truncate (PolySpace, ZZ) := (L,d) -> (
+truncate (PolySpace, ZZ) := {} >> o -> (L,d) -> (
     R := ring L;
     if not L.Reduced then L = reduceSpace L;
     tGens := select(flatten entries gens L, q -> first degree q <= d);
     if #tGens == 0 then polySpace map(R^1,R^0,0) else polySpace matrix{tGens}
     )
-truncate (DualSpace, ZZ) := (L,d) -> dualSpace(truncate(L.Space,d),L.BasePoint)
-truncate (PolySpace, List, ZZ) := (L,ind,d) -> (
+truncate (DualSpace, ZZ) := {} >> o -> (L,d) -> dualSpace(truncate(L.Space,d),L.BasePoint)
+truncate (PolySpace, List, ZZ) := {} >> o -> (L,ind,d) -> (
     R := ring L;
     n := numgens R;
     if not all(ind, i->class i === ZZ) or not all(ind, i -> i>=0 and i<n)
@@ -245,7 +245,7 @@ truncate (PolySpace, List, ZZ) := (L,ind,d) -> (
     TL = truncate(TL,d);
     polySpace(TtoR gens TL)
     )
-truncate (DualSpace, List, ZZ) := (L,ind,d) -> dualSpace(truncate(L.Space,ind,d),L.BasePoint)
+truncate (DualSpace, List, ZZ) := {} >> o -> (L,ind,d) -> dualSpace(truncate(L.Space,ind,d),L.BasePoint)
 
 gCorners = method(TypicalValue => Matrix, Options => {Tolerance => null, StandardBasis => false})
 gCorners (Point,Ideal) := o -> (p,I) -> gCorners(p,gens I,o)

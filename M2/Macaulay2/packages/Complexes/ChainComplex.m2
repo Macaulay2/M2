@@ -682,12 +682,12 @@ part(List, Complex) := Complex => (deg, C) -> (
     )
 part(ZZ, Complex) := Complex => (deg, C) -> part({deg}, C)
 
-truncate(List, Complex) := Complex => (e, C) -> (
+truncate(List, Complex) := Complex => {} >> o -> (e, C) -> (
     (lo, hi) := concentration C;
     if lo === hi then return complex truncate(e, C_lo);
     complex hashTable for i from lo+1 to hi list i => truncate(e, dd^C_i)
     )
-truncate(ZZ, Complex) := Complex => (e, C) -> truncate({e}, C)
+truncate(ZZ, Complex) := Complex => {} >> o -> (e, C) -> truncate({e}, C)
 
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------

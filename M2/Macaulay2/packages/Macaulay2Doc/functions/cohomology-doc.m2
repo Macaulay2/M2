@@ -193,10 +193,10 @@ document {
      }
 
 document { 
-     Key => {(cohomology,ZZ,CoherentSheaf)},
+     Key => {(cohomology,ZZ,ProjectiveVariety,CoherentSheaf),(cohomology,ZZ,CoherentSheaf)},
      Headline => "cohomology of a coherent sheaf on a projective variety",
-     Usage => "HH^i F\ncohomology(i,F)",
-     Inputs => {"i"=> ZZ, "F" => CoherentSheaf =>{"on a projective variety ", TT "X"} },
+     Usage => "HH^i(X,F)\nHH^i F\ncohomology(i,X,F)\ncohomology(i,F)",
+     Inputs => {"i"=> ZZ, "X" => ProjectiveVariety, "F" => CoherentSheaf =>{"on the projective variety ", TT "X"} },
      Outputs => {Module=>{"the ", TT "i", "-th cohomology group of ", TT "F", " as a vector space 
 	       over the coefficient field of ", TT "X"} 
 	  },

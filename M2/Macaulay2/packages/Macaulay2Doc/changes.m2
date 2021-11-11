@@ -57,6 +57,11 @@ document {
             LI { TO "QuartenaryQuartics", ", a package by Kapustka, Kapustka, Ranestad, Schenck, Stillman and Yuan containing code and examples for their paper arxiv:2111.05817, has been added." }
 		    }
 	       },
+ 	  LI { "improved packages:",
+	      UL {
+        		LI { "The package ", TO "Truncations", " has been improved to support modules over the Cox rings of simplicial ", TO2 {"NormalToricVarieties", "normal toric varieties"}, "." }
+		       }
+	      },
 	  LI { "packages that have been published and certified:",
 	       UL {
 		    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
