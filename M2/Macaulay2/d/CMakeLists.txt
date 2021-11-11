@@ -156,9 +156,9 @@ target_include_directories(M2-interpreter
     $<BUILD_INTERFACE:${LIBXML2_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>
     $<INSTALL_INTERFACE:include/Macaulay2>
+    $<$<BOOL:${WITH_PYTHON}>:$<BUILD_INTERFACE:${Python3_INCLUDE_DIRS}>>
   PRIVATE
     ${SQLite3_INCLUDE_DIRS}
-    ${Python3_INCLUDE_DIRS}
   )
 
 # TODO: Including most of these is only necessary because of version.dd

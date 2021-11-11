@@ -39,23 +39,57 @@ document {
      }
 
 document {
-    Key => "changes, 1.19",
-    UL {
-	LI { "improved packages:",
-	    UL {
-		LI { "The package ", TO "Truncations", " has been improved to support modules over the Cox rings of simplicial ", TO2 {"NormalToricVarieties", "normal toric varieties"}, "." }
-		}
-	    },
-	LI { "functionality added:",
-	    UL {
-		LI { "Integers may now be entered using the binary, octal, and hexadecimal numeral systems with the prefixes \"0b\", \"0o\", and \"0x\", respectively."},
-		LI { "A new binary operator, ", TO2 {(symbol ^^, ZZ, ZZ), "^^"}, ", has been added for computing the bitwise XOR of two integers.  This replaces the \"xor\" method."},
-		LI { "A new keyword, ", TO2 {(symbol xor, Boolean, Boolean), "xor"}, ", has been added for finding the logical XOR of two boolean objects."},
-		LI { "The function ", TO printerr, ", for printing warning messages and logs to ", TO stderr, ", is now exported."}
-		}
-	    }
-	}
-    }
+     Key => "changes, 1.19",
+     UL {
+	  LI { "new packages:",
+	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "MonomialIntegerPrograms::MonomialIntegerPrograms", ", a package by Lily Silverstein and Jay White for using integer programming for fast computations with monomial ideals, has been added." },
+		    LI { TO "ThinSincereQuivers::ThinSincereQuivers", ", a package by Mary Barker and Patricio Gallardo for construction of flow polytopes and their associated quivers, has been added." },
+		    LI { TO "Python::Python", ", a package by Daniel R. Grayson and Doug Torrance for an interface to Python, has been added." },
+		    LI { TO "BettiCharacters::BettiCharacters", ", a package by Federico Galetto for finite group characters on free resolutions and graded modules, has been added." },
+		    LI { TO "Jets::Jets", ", a package by Federico Galetto and Nicholas Iammarino, for computing jets of various algebraic, geometric and combinatorial objects, has been added." },
+		    LI { TO "FunctionFieldDesingularization::FunctionFieldDesingularization", ", a package by Douglas A. Leonard for desingularization of function fields, has been added." },
+		    LI { TO "HomotopyLieAlgebra::HomotopyLieAlgebra", ", a package by David Eisenbud for homotopy Lie algebra, has been added." },
+		    LI { TO "TSpreadIdeals::TSpreadIdeals", ", a package by Luca Amata for t-spread ideals of a polynomial ring, has been added." },
+		    LI { TO "ExteriorModules::ExteriorModules", ", a package by Luca Amata and Marilena Crupi for monomial modules over exterior algebras, has been added." }
+		    }
+	       },
+ 	  LI { "improved packages:",
+	      UL {
+        		LI { "The package ", TO "Truncations", " has been improved to support modules over the Cox rings of simplicial ", TO2 {"NormalToricVarieties", "normal toric varieties"}, "." }
+		       }
+	      },
+	  LI { "packages that have been published and certified:",
+	       UL {
+		    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "DecomposableSparseSystems::DecomposableSparseSystems", ", a package by 
+		       	 Taylor Brysiewicz, Jose Israel Rodriguez, Frank Sottile, and Thomas Yahl for solving decomposable sparse systems, has been published." },
+		  	 LI { star, " ", TO "SparseResultants::SparseResultants", ", a package by Giovanni Staglianò for computations with sparse resultants, has been published." },
+		  	 LI { star, " ", TO "ExteriorModules::ExteriorModules", ", a package by Luca Amata and Marilena Crupi for monomial modules over exterior algebras, has been published." }     
+		  	 }
+	     	    },
+	       LI { "packages that have been renamed:",
+	     	    UL {
+		  	 LI { "The package ", TT "FastLinAlg", " has been renamed to ", TO "FastMinors::FastMinors", "." },
+		  	 LI { "The package ", TT "RandomRationalPoints", " has been renamed to ", TO "RandomPoints::RandomPoints", "." }			    
+		  	 }
+	     	    },
+	       LI { "improved packages:",
+	    	    UL {
+		     	 LI { "The package ", TO "MonodromySolver::MonodromySolver", " includes several new convenience functions for manipulating systems and creating seed pairs."}
+			 }
+	    	    },
+	       LI { "functionality added:",
+	    	    UL {
+			 LI { "Integers may now be entered using the binary, octal, and hexadecimal numeral systems with the prefixes \"0b\", \"0o\", and \"0x\", respectively."},
+			 LI { "A new binary operator, ", TO2 {(symbol ^^, ZZ, ZZ), "^^"}, ", has been added for computing the bitwise XOR of two integers.  This replaces the \"xor\" method."},
+			 LI { "A new keyword, ", TO2 {(symbol xor, Boolean, Boolean), "xor"}, ", has been added for finding the logical XOR of two boolean objects."},
+			 LI { "The function ", TO printerr, ", for printing warning messages and logs to ", TO stderr, ", is now exported."}
+			 }
+	    	    }
+       	       }
+  	  }
 
 document {
      Key => "changes, 1.18",

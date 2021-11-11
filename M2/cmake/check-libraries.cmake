@@ -171,7 +171,7 @@ if(WITH_SQL)
   list(APPEND LIBRARIES_LIST SQLite3)
 endif()
 if(WITH_PYTHON)
-  find_package(Python3 3.7 REQUIRED)
+  find_package(Python3 3.7 REQUIRED COMPONENTS Development)
   list(APPEND LIBRARIES_LIST Python3)
 endif()
 

@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
     "NoetherianOperators",
-    Version => "2.2",
-    Date => "Sep 3 2021",
+    Version => "2.2.1",
+    Date => "Nov 2 2021",
     Authors => {
         {Name => "Robert Krone", 
         Email => "krone@math.gatech.edu"},
@@ -1726,7 +1726,7 @@ getModuleFromNoetherianOperators (Ideal, List) := Module => (P,L) -> (
     R := ring P;
     FF := frac(R/P);
     D := ring L_0;
-    S := FF[gens D];
+    S := FF(monoid [gens D]);
     W := apply(L, F -> sub(F, S));
     m := 1 + max apply(W, M -> max(0, max flatten apply(flatten entries M, v -> degree v)));
     V := mingens vectorSpaceAnn(W);
@@ -1736,12 +1736,12 @@ getModuleFromNoetherianOperators (Ideal, List) := Module => (P,L) -> (
     -- some process of idealization of a module
     T := symbol T;
     p := rank super V;
-    AA := D[T_1..T_p];
-    BB := coefficientRing(R)[gens AA | gens R, Degrees => toList splice(p:1, (#gens R):0)];
+    AA := D(monoid [T_1..T_p]);
+    BB := (coefficientRing(R))(monoid [gens AA | gens R, Degrees => toList splice(p:1, (#gens R):0)]);
     X := AA / ideal((vars AA) * (gens V));
     Q := ker map(X, BB, vars AA | sub(vars R + vars D, AA));
     
-    U := image sub(last coefficients(sub(super basis(1, Q), R[T_1..T_p])), R);
+    U := image sub(last coefficients(sub(super basis(1, Q), R(monoid [T_1..T_p]))), R);
     AssU := ass comodule U;
     localizeModule(U, AssU, P)
 )
