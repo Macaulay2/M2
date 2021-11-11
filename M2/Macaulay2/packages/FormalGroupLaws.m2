@@ -43,7 +43,7 @@ FormalSeries == FormalSeries := (s,t) ->
 	);
 
 --Defining truncation of formal series (note: truncate is already defined for modules, but I don't think it is important.)
-truncate(FormalSeries,ZZ) := (s,n) -> new FormalSeries from {part(0,min(n,s#1),numgens(class(s#0)):1,s#0),min(n,s#1)} 
+truncate(FormalSeries,ZZ) := {} >> o -> (s,n) -> new FormalSeries from {part(0,min(n,s#1),numgens(class(s#0)):1,s#0),min(n,s#1)}
 
 --Defining the sum of FormalSeries
 FormalSeries + FormalSeries := (s,t) ->

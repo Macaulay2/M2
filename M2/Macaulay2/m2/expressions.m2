@@ -1220,7 +1220,6 @@ print = x -> (<< net x << endl;) -- !! one may want to modify this depending on 
 -----------------------------------------------------------------------------
 
 File << Thing := File => (o,x) -> printString(o,net x)
-List << Thing := List => (files,x) -> apply(files, o -> o << x)
 
 o := () -> concatenate(interpreterDepth:"o")
 

@@ -55,6 +55,11 @@ document {
 		    LI { TO "ExteriorModules::ExteriorModules", ", a package by Luca Amata and Marilena Crupi for monomial modules over exterior algebras, has been added." }
 		    }
 	       },
+ 	  LI { "improved packages:",
+	      UL {
+        		LI { "The package ", TO "Truncations", " has been improved to support modules over the Cox rings of simplicial ", TO2 {"NormalToricVarieties", "normal toric varieties"}, "." }
+		       }
+	      },
 	  LI { "packages that have been published and certified:",
 	       UL {
 		    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },

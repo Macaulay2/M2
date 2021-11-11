@@ -557,6 +557,8 @@ document {
   Key => {
     methods,
    (methods, Command),
+   (methods, Manipulator),
+   (methods, Package),
    (methods, Sequence),
    (methods, Thing),
    (methods, ScriptedFunctor),
@@ -567,7 +569,7 @@ document {
      SYNOPSIS (
 	  Usage => "methods x",
 	  Inputs => {
-	       "x" => { ofClass{Function,Type,Keyword} }
+	       "x" => { ofClass{Function,Type,Keyword,Package} }
 	       },
 	  Outputs => {{
 		    ofClass VerticalList, " of those methods associated with ", TT "x"
