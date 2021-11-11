@@ -2,30 +2,33 @@
 --- author(s):Giulio
 --- notes: 
 
-
 doc ///
 Node
   Key
+     (intersect, Ideal, Ideal)
+    [(intersect, Ideal, Ideal), Strategy]
+    [(intersect, Ideal, Ideal), MinimalGenerators]
      (intersect, Ideal)
-    [(intersect, Ideal),  Strategy]
-    [(intersect, Ideal),  MinimalGenerators]
+     (intersect, Module, Module)
+    [(intersect, Module, Module), Strategy]
+    [(intersect, Module, Module), MinimalGenerators]
      (intersect, Module)
-    [(intersect, Module), Strategy]
-    [(intersect, Module), MinimalGenerators]
   Headline
-    compute an intersection of ideals or modules
+    compute an intersection of a sequence of ideals or modules
   Usage
+    intersect(M, N)
     intersect(M, N, ..., P)
   Inputs
-    :{List,Sequence}
-      containing modules that are submodules of the same module or ideals in the same ring
+    :{Ideal,Module}
+    :{Ideal,Module}
+      submodules of the same module or ideals in the same ring
     Strategy=>Thing
       specifies the algorithm
     MinimalGenerators=>Boolean
       indicates whether the output should be @TO2 {trim, "trimmed"}@
   Outputs
     :{Ideal,Module}
-      the intersection of the objects given
+      the intersection of the sequence of objects
   Description
     Text
       This function calculates the intersection of submodules of the same free module, or of ideals in the same ring.

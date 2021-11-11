@@ -216,8 +216,7 @@ pushFwd(RingMap,ChainComplex):=o->(f,C) ->
 
 
 -- New method for tensor that returns the tensor product of a complex via a ring map
-tensor(RingMap,ChainComplex) := ChainComplex => 
- opts -> (f,C) -> (
+tensor(RingMap, ChainComplex) := ChainComplex => {} >> opts -> (f,C) -> (
          k := min C; 
     D := chainComplex(
 	if even(k) then apply(

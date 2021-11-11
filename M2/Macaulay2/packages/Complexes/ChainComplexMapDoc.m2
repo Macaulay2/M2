@@ -29,6 +29,8 @@ doc ///
                 TO (resolutionMap, Complex),
                 TO (homology, ComplexMap),
                 TO (augmentationMap, Complex),
+                TO (symbol**, Complex, Matrix),
+                TO (freeResolution, Matrix),
                 TO (extend, Complex, Complex, Matrix),
                 TO (nullHomotopy, ComplexMap)
            }@
@@ -225,6 +227,85 @@ doc ///
         (isCommutative, ComplexMap)
         (source, ComplexMap)
         (target, ComplexMap)
+///
+
+doc ///
+    Key
+        (map, Complex, Complex, List)
+    Headline
+        make a map of chain complexes
+    Usage
+        f = map(D, C, L)
+    Inputs
+        C:Complex
+        D:Complex
+        L:List
+            consisting of either matrices, or lists of maps of complexes
+        Degree => ZZ
+            the degree of the resulting map
+        DegreeLift => 
+            unused
+        DegreeMap =>
+            unused
+    Outputs
+        f:ComplexMap
+            from $C$ to $D$
+    Description
+        Text
+            A map of complexes $f \colon C \rightarrow D$ of degree $d$ is a
+            sequence of maps $f_i \colon C_i \rightarrow D_{d+i}$.  
+            No relationship between the maps $f_i$ and 
+            and the differentials of either $C$ or $D$ is assumed.
+            
+            This method has two very different usages.  The first is to 
+            construct a chain complex map from a list of matrices.  The second
+            constructs a chain complex map from essentially a block matrix
+            whose entries are chain complex maps.
+        Text
+            In the first case, we construct a map of chain complexes
+            by specifying the individual maps between the terms.
+        Example
+            R = ZZ/101[a,b,c];
+            C = freeResolution coker matrix{{a^2-b^2,b^3-c^3,c^4}}
+            D = freeResolution coker vars R
+            L = {map(D_0, C_0, 1),
+                map(D_1, C_1, {{a, 0, 0}, {-b, b^2, 0}, {0, -c^2, c^3}}),
+                map(D_2, C_2, {{a*b^2, 0, 0}, {-a*c^2, a*c^3, 0}, {b*c^2, -b*c^3, b^2*c^3}}),
+                map(D_3, C_3, {{a*b^2*c^3}})
+                }
+            f = map(D, C, L)
+            assert isWellDefined f
+            assert isHomogeneous f
+            assert(degree f == 0)
+            assert isComplexMorphism f
+        Text
+            In the second, we construct a map of chain complexes via a block matrix
+            whose individual entries are already maps of chain complexes.
+            We illustrate by constructing a mapping cone.
+        Example
+            f = extend(D,C,id_(R^1))
+            assert(degree f == 0)
+            g = map(D, C[-1], f[-1], Degree => -1) -- a variant of f having degree -1
+            cf = map(E = C[-1] ++ D, E, {
+                    {dd^(C[-1]),    0}, 
+                    {         g, dd^D}
+                    })
+            assert isWellDefined cf
+            assert(degree cf == -1)
+        Text
+            We convert this map of complexes {\tt cf} into the differential of the mapping cone.
+            For the following constructor, the source and target of
+            the input must be identical, in this case the chain complex $E$.
+        Example
+            conef = complex cf 
+            assert isWellDefined conef
+            assert(conef == cone f)
+    SeeAlso
+        "Making maps between chain complexes"
+        (map, Complex, Complex, HashTable)
+        (degree, ComplexMap)
+        (extend, Complex, Complex, Matrix)
+        (cone, ComplexMap)
 ///
 
 doc ///
@@ -1160,7 +1241,7 @@ doc ///
             h2 = Hom(m, f)
             assert(h2 == Hom(map(complex target m, complex source m, i -> m), f))
         Text
-            XXX write this text after writing doc for homomorphism and homomorphism'.
+            Todo: write this text after writing doc for homomorphism and homomorphism'.
         Example
             e = randomComplexMap(source h, complex(S^1, Base => -1))
             phi = homomorphism e
@@ -1222,6 +1303,53 @@ doc ///
         (Hom, ComplexMap, ComplexMap)
         (randomComplexMap, Complex, Complex)
         (dual, Matrix)
+///
+
+doc ///
+    Key
+        (symbol**, Complex, Matrix)
+        (symbol**, Matrix, Complex)
+    Headline
+        create the tensor product of a complex and a map of modules
+    Usage
+        h = C ** f
+        h = f ** C
+    Inputs
+        C:Complex
+            over a ring $R$
+        f:Matrix
+            defining a homomorphism from the $R$-module $M$ to the $R$-module $N$
+    Outputs
+        h:ComplexMap
+            from $C \otimes M$ to $C \otimes N$
+    Description
+        Text
+            For any chain complex $C$, a map $f \colon M \to N$ of $R$-modules induces a
+            morphism $C \otimes f$ of chain complexes
+            from $C \otimes M$ to $C \otimes N$.  This method returns this map of chain complexes.
+        Example
+            R = ZZ/101[a..d];
+            I = ideal(c^2-b*d, b*c-a*d, b^2-a*c)
+            J = ideal(I_0, I_1)
+            C = koszulComplex vars R
+            f = map(R^1/I, R^1/J, 1)
+            C ** f
+            f ** C
+            f' = random(R^2, R^{-1, -1, -1})
+            C ** f'
+            f' ** C
+            assert isWellDefined(C ** f')
+            assert isWellDefined(f' ** C)
+        Text
+            Tensoring with a complex defines a functor from the category
+            of $R$-modules to the category of complexes over $R$.
+        Example
+            f'' = random(source f', R^{-2,-2})
+            assert((C ** f') * (C ** f'') == C ** (f' * f''))
+            assert(C ** id_(R^{-1,-2,-3}) == id_(C ** R^{-1,-2,-3}))
+    SeeAlso
+        "Making maps between chain complexes"
+        (symbol**, Complex, Complex)
 ///
 
 doc ///
@@ -1529,12 +1657,18 @@ doc ///
 doc ///
     Key
         (symbol**, RingMap, ComplexMap)
+        (symbol**, Ring, ComplexMap)
+        (symbol**, ComplexMap, RingMap)
+        (symbol**, ComplexMap, Ring)
         (tensor, RingMap, ComplexMap)
+        (tensor, ComplexMap, RingMap)
     Headline
         tensor a map of complexes along a ring map
     Usage
         phi ** f
         tensor(phi, f)
+        S ** f
+        f ** S
     Inputs
         phi:RingMap
             whose source is a ring $R$, and whose target is a ring $S$
@@ -1544,6 +1678,10 @@ doc ///
         :ComplexMap
             over the ring $S$
     Description
+        Text
+            These methods implement the base change of rings.  As input, one can either
+            give a ring map $\phi$, or the ring $S$ (when there is a canonical map
+                from $R$ to $S$).
         Text
             We illustrate the tensor product of a map of complexes along a ring map.
         Example
@@ -1571,6 +1709,15 @@ doc ///
     Key
         resolutionMap
         (resolutionMap, Complex)
+        [resolutionMap, LengthLimit]
+        [resolutionMap, DegreeLimit]
+        [resolutionMap, FastNonminimal]
+        [resolutionMap, HardDegreeLimit]
+        [resolutionMap, PairLimit]
+        [resolutionMap, SortStrategy]
+        [resolutionMap, StopBeforeComputation]
+        [resolutionMap, Strategy]
+        [resolutionMap, SyzygyLimit]
     Headline
         map from a free resolution to the given complex
     Usage
@@ -1680,6 +1827,7 @@ doc ///
         canonicalMap
         (canonicalMap, Complex, Complex)
         [canonicalMap, UseTarget]
+        UseTarget
     Headline
         gets the natural map arising from various constructions
     Usage
@@ -1870,6 +2018,9 @@ doc ///
         (symbol-, ComplexMap, RingElement)
         (symbol-, ComplexMap, Number)
         (symbol*, RingElement, ComplexMap)
+        (symbol*, Number, ComplexMap)
+        (symbol*, ComplexMap, RingElement)
+        (symbol*, ComplexMap, Number)
     Headline
         perform arithmetic operations on complex maps
     Usage
@@ -1893,7 +2044,7 @@ doc ///
             The set of complex maps forms a module over the underlying @TO2((ring, ComplexMap), "ring")@.
             These methods implement the basic operations of addition, subtraction, and scalar multiplication.
         Example
-            R = ZZ/101[a..d]
+            R = ZZ/101[a..d];
             C = freeResolution coker matrix{{a*b, a*c^2, b*c*d^3, a^3}}
             D = freeResolution coker matrix{{a*b, a*c^2, b*c*d^3, a^3, a*c*d}}
             f = randomComplexMap(D, C, Cycle => true)
@@ -1922,6 +2073,7 @@ doc ///
             assert(h+a == h + a*id_C)
             assert(1-h == id_C - h)
             assert(b-c*h == -c*h + b*id_C)
+            assert(b-h*c == -h*c + id_C*b)
         Text
             Arithmetic on differentials can be a useful method
             for constructing new chain complexes.
@@ -2662,8 +2814,66 @@ doc ///
 
 doc ///
     Key
-        (tensorCommutativity, Complex, Complex)
+        (tensorCommutativity, Module, Module)
         tensorCommutativity
+    Headline
+        make the canonical isomorphism arising from commutativity
+    Usage
+        tensorCommutativity(M, N)
+    Inputs
+        M:Module
+        N:Module
+            both over the same ring $R$
+    Outputs
+        :Matrix
+            that is an isomorphism from $M \otimes_R N$ to 
+            $N \otimes_R M$.
+    Description
+        Text
+            Given $R$-modules $M$ and $N$, there exists a canonical isomorphism
+            $f \colon M \otimes_R N \to N \otimes_R M$ interchanging the factors.
+            This method implements this isomorphism.
+        Text
+            Even for free modules, this map is not simply given by the identity matrix.
+        Example
+            R = ZZ/101[x,y];
+            M = R^2
+            N = R^3
+            f = tensorCommutativity(M, N)
+            assert isWellDefined f
+            assert isIsomorphism f
+        Text
+            By giving the generators of $M$ and $N$ sufficiently 
+            different degrees, we see that the 
+            canonical generators for the two
+            tensor products come in different orders.
+            The isomorphism is given by the corresponding
+            permutation matrix.
+        Example
+            M = R^{1,2}
+            N = R^{100,200,300}
+            M ** N
+            N ** M
+            tensorCommutativity(M, N)
+        Text
+            For completeness, we include an example when
+            neither module is free.
+        Example
+            g = tensorCommutativity(coker vars R ++ coker vars R, image vars R)
+            source g
+            target g
+            assert isWellDefined g
+            assert isIsomorphism g
+    SeeAlso
+        "Working with Tor"
+        (tensorCommutativity, Complex, Complex)
+        (tensorAssociativity, Module, Module, Module)
+        (isIsomorphism, Matrix)
+///
+
+doc ///
+    Key
+        (tensorCommutativity, Complex, Complex)
     Headline
         make the canonical isomorphism arising from commutativity
     Usage
@@ -2671,10 +2881,11 @@ doc ///
     Inputs
         C:Complex
         D:Complex
+            both over the same ring $R$
     Outputs
         :ComplexMap
-            which is an isomorphism from {\tt C ** D} to 
-            {\tt D ** C} 
+            that is an isomorphism from $C \otimes_R D$ to 
+            $D \otimes_R C$
     Description
         Text
             The commutativity of tensor products of modules induces
@@ -2684,13 +2895,14 @@ doc ///
             Using two term complexes of small rank,
             we see that this isomorphism need not be the identity map.
         Example
-            S = ZZ/101[x_0..x_8]
+            S = ZZ/101[x_0..x_8];
             C = complex{genericMatrix(S,x_0,2,1)}
             D = complex{genericMatrix(S,x_2,1,2)}
             F = C ** D
             G = D ** C
             f = tensorCommutativity(C,D)
             assert isWellDefined f
+            assert isComplexMorphism f
             assert(source f === F)
             assert(target f === G)
             assert(f_1 != id_(source f_1))
@@ -2714,6 +2926,7 @@ doc ///
             D = ses(ideal(x_3,x_4,x_5), ideal(x_6,x_7,x_8))
             h = tensorCommutativity(C, D);
             assert isWellDefined h
+            assert isComplexMorphism h
             assert(ker h == 0)
             assert(coker h == 0)
             k = h^-1;
@@ -2725,6 +2938,7 @@ doc ///
             Interchanging the arguments gives the inverse map.
         Example
             h1 = tensorCommutativity(D, C)
+            assert isComplexMorphism h1
             assert(h1*h == id_(C**D))
             assert(h*h1 == id_(D**C))
         Text
@@ -2738,10 +2952,13 @@ doc ///
             F = freeResolution ideal(x_2, x_3, x_4)
             g = extend(F, E, map(F_0, E_0, 1))
             assert(tensorCommutativity(D,F) * (f**g) == (g**f) * tensorCommutativity(C,E))
+            assert isComplexMorphism tensorCommutativity(D,F)
+            assert isComplexMorphism tensorCommutativity(C,E)
     SeeAlso
         "Working with Tor"
         (tensorCommutativity, Module, Module)
         (tensorAssociativity, Complex, Complex, Complex)
+        (isComplexMorphism, ComplexMap)
 ///
 
 doc ///
@@ -2965,6 +3182,7 @@ doc ///
     Key
         (isQuasiIsomorphism, ComplexMap)
         [isQuasiIsomorphism, Concentration]
+        isQuasiIsomorphism
     Headline
          whether a map of complexes is a quasi-isomorphism
     Usage
@@ -2993,7 +3211,7 @@ doc ///
             assert isIsomorphism HH_0 f
             assert isIsomorphism HH_1 f
         Text
-            XXX TODO. Free resolutions of complexes produce quasi 
+            TODO. Free resolutions of complexes produce quasi 
             isomorphisms. (use example to doc of (resolution, Complex)).
         Example
             D = complex{random(S^2, S^{-3,-3,-4})}
@@ -3200,6 +3418,92 @@ doc ///
 
 doc ///
     Key
+        (freeResolution, Matrix)
+    Headline
+        compute the induced map between free resolutions
+    Usage
+        freeResolution f
+    Inputs
+        f:Matrix
+            defining a map from an $R$-module $M$ to an $R$-module $N$
+        LengthLimit => ZZ
+            this is used to limit somehow the computation where resolutions might be too long or infinite
+        DegreeLimit => List
+            or @ofClass ZZ@, an option that specifies that the computation stops at the given
+            (slanted) degree 
+        FastNonminimal => Boolean
+            unused (TODO: probably used)
+        HardDegreeLimit => List
+            unused (TODO: used?)
+        PairLimit => ZZ
+            or @TO infinity@, an internal option which specifies that the computation should stop after a 
+            certain number of s-pairs have computed
+        SortStrategy => ZZ
+            an internal option that specifies the strategy to be used for sorting S-pairs
+        StopBeforeComputation => Boolean
+            whether to start the computation. This can be useful when you want to obtain the 
+            partially computed resolution contained in an interrupted computation.
+        Strategy => ZZ
+            TODO: perhaps needs its own page
+        SyzygyLimit => ZZ
+            or @TO infinity@, 
+            an internal option which specifies that the computation should stop after a 
+            certain number of syzygies have computed
+    Outputs
+        :ComplexMap
+            an induced map of chain complexes from the free resolution of $M$ to the
+            free resolution of $N$
+    Description
+        Text
+            A homomorphism $f \colon M \to N$ of $R$-modules induces a morphism of chain complexes
+            from any free resolution of $M$ to a free resolution of $N$.  This method 
+            constructs this map of chain complexes.
+        Example
+            R = QQ[a..d];
+            I = ideal(c^2-b*d, b*c-a*d, b^2-a*c)
+            J = ideal(I_0, I_1)
+            M = R^1/J
+            N = R^1/I
+            f = map(N, M, 1)
+            g = freeResolution f
+            assert isWellDefined g
+            assert isComplexMorphism g
+            assert(source g === freeResolution M)
+            assert(target g === freeResolution N)
+        Text
+            Taking free resolutions is a functor, up to homotopy, from
+            the category of modules to the category of chain
+            complexes.
+            In the subsequent example, the composition of the induced
+            chain maps $g$ and $g'$ happens to be equal to 
+            the induced map of the composition.
+        Example
+            K = ideal(I_0)
+            L = R^1/K
+            f' = map(M, L, 1)
+            g' = freeResolution f'
+            g'' = freeResolution(f * f')
+            assert(g'' === g * g')
+            assert(freeResolution id_N === id_(freeResolution N))
+        Text
+            Over a quotient ring, free resolutions are often infinite.
+            Use the optional argument {\tt LengthLimit} to obtain
+            a truncation of the map between resolutions.
+        Example
+            S = ZZ/101[a,b]
+            R = S/(a^3+b^3)
+            f = map(R^1/(a,b), R^1/(a^2, b^2), 1)
+            g = freeResolution(f, LengthLimit => 7)
+            assert isWellDefined g
+            assert isComplexMorphism g
+    SeeAlso
+        "Making maps between chain complexes"
+        (freeResolution, Module)
+        (isComplexMorphism, ComplexMap)
+///
+
+doc ///
+    Key
         (extend, Complex, Complex, Matrix, Sequence)
         (extend, Complex, Complex, Matrix)
     Headline
@@ -3294,6 +3598,8 @@ doc ///
         liftMapAlongQuasiIsomorphism
         (symbol//, ComplexMap, ComplexMap)
         (quotient, ComplexMap, ComplexMap)
+        homotopyMap
+        (homotopyMap, ComplexMap)
     Headline
         lift a map of chain complexes along a quasi-isomorphism
     Usage
@@ -3360,11 +3666,6 @@ doc ///
             assert isComplexMorphism f'
             h = homotopyMap f'
             isNullHomotopyOf(h, g * (f//g) - f)
-        Text
-            TODO: XXX start here. Do triangles, invert interesting quasi-isomorphism.
-            isSemiFree, and add in an example or 2.  Include
-            finding an inverse for a quasi-isomorphism.
-            We need some kind of better example here.
     Caveat
         The following three assumptions are not checked:
         $f$ is a morphism, the source of $f$ is semifree,
@@ -3373,6 +3674,86 @@ doc ///
         "Towards computing in the derived category"
         isQuasiIsomorphism
         isComplexMorphism
+///
+
+-- TODO: In the above doc node (liftMapAlongQuasiIsomorphism, ComplexMap, ComplexMap)
+-- Do triangles, invert interesting quasi-isomorphism.
+-- isSemiFree, and add in an example or 2.  Include
+-- finding an inverse for a quasi-isomorphism.
+-- We need some kind of better example here.
+
+doc ///
+    Key
+        (horseshoeResolution, Complex)
+        (horseshoeResolution, Matrix, Matrix)
+        horseshoeResolution
+        [horseshoeResolution, LengthLimit]
+    Headline
+        make the horseshoe resolution
+    Usage
+        (beta, alpha) = horseshoeResolution C
+        (beta, alpha) = horseshoeResolution(g, f)
+    Inputs
+        C:Complex
+            (or a pair of maps) that is
+            a short exact sequence of modules
+        LengthLimit => ZZ
+            limit the lengths of the constructed free resolutions
+    Outputs
+        :Sequence
+            consisting of a pair of chain complex maps
+            $\beta$ and $\alpha$
+    Description
+        Text
+            Given a short exact sequence of modules
+
+            $\phantom{WWWW}
+            0 \leftarrow N \xleftarrow{g} M \xleftarrow{f} L \leftarrow 0,
+            $
+
+            the horsehoe lemma produces simultaneous free resolutions
+            of $N$, $M$ and $L$, which form a short exact sequence of complexes.
+            This method returns these two chain complex maps.
+        Text
+            We illustrate this method by constructing simultaneous
+            free resolutions of three monomial ideals.
+        Example
+            S = ZZ/101[a,b,c];
+            I = ideal(a^3, b^3, c^3)
+            J = I + ideal(a*b*c)
+            K = I : ideal(a*b*c)
+            C = complex{
+                map(comodule J, comodule I, 1),
+                map(comodule I, (comodule K) ** S^{-3}, {{a*b*c}})
+                }
+            assert isShortExactSequence C
+            (beta, alpha) = horseshoeResolution C
+            assert isShortExactSequence(beta, alpha)
+            assert(prune HH source alpha == complex C_2)
+            assert(prune HH target alpha == complex C_1)
+            assert(prune HH target beta == complex C_0)
+            assert isFree target alpha
+        Text
+            The constructed resolution of the middle term $C_1$
+            is almost never minimal.
+        Example
+            target alpha
+            freeResolution C_1
+            minimize target alpha
+        Text
+            The optional argument {\tt LengthLimit} allows one to
+            truncate the constructed free resolutions.
+        Example
+            (beta, alpha) = horseshoeResolution(C, LengthLimit => 2)
+            assert isShortExactSequence(beta, alpha)
+            prune HH source alpha
+            assert isFree target alpha
+    SeeAlso
+        "Towards computing in the derived category"
+        (isShortExactSequence, Complex)
+        (minimize, Complex)
+        (connectingMap, ComplexMap, ComplexMap)
+        connectingExtMap
 ///
 
 doc ///
@@ -3390,6 +3771,8 @@ doc ///
         g:ComplexMap
             a surjective morphism $g \colon B \to C$ 
             whose kernel is the same as the image of $f$
+        Concentration => Sequence
+            not yet implemented
     Outputs
         h:ComplexMap
             a complex morphism
@@ -3397,7 +3780,7 @@ doc ///
             is the homology of $A$, shifted by $-1$
     Description
         Text
-            Give a short exact sequence of chain complexes
+            Given a short exact sequence of chain complexes
 
             $\phantom{WWWW}
             0 \leftarrow C \xleftarrow{g} B \xleftarrow{f} A \leftarrow 0,
@@ -3638,7 +4021,6 @@ doc ///
             $\operatorname{Hom}_S(M, -)$ to a short exact sequence of modules.  The
             second comes from applying the contravariant functor
             $\operatorname{Hom}_S(-, M)$ to a short exact sequence of modules.
-            
             More explicitly, given the short exact sequence
 
             $\phantom{WWWW}
@@ -3719,8 +4101,253 @@ doc ///
         isShortExactSequence
         longExactSequence
         Ext
+        "Working with Tor"
 ///
 
+doc ///
+    Key
+        (Tor, ZZ, Matrix, Module)
+        (Tor, ZZ, Module, Matrix)
+    Headline
+        make the induced map on Tor modules
+    Usage
+        g = Tor_i(f, M)
+        h = Tor_i(M, f)
+    Inputs
+        i:ZZ
+        f:Matrix
+            defining a homomorphism from the $R$-module $L$ to
+            the $R$-module $N$
+        M:Module
+            over the ring $R$
+    Outputs
+        g:Matrix
+            defining the induced homomorphism from
+            $\operatorname{Tor}_i^R(L, M)$ to 
+            $\operatorname{Tor}_i^R(N, M)$,
+            or the matrix $h$
+            defining the induced homomorphism from
+            $\operatorname{Tor}_i^R(M, L)$ to 
+            $\operatorname{Tor}_i^R(M, N)$
+    Description
+        Text
+            The $\operatorname{Tor}$ functors are derived functors of
+            the tensor product functor.
+            Given a homomorphism $f \colon L \to N$
+            of $R$-modules and an $R$-module $M$, this method returns
+            the induced homomorphism 
+            $g \colon \operatorname{Tor}_i^R(L, M) \to
+            \operatorname{Tor}_i^R(N, M)$.
+            
+        Example
+            R = ZZ/101[a..d];
+            L = R^1/ideal(a^2, b^2, c^2, a*c, b*d)
+            N = R^1/ideal(a^2, b^2, c^2, a*c, b*d, a*b)
+            f = map(N,L,1)
+            M = coker vars R
+            betti freeResolution L
+            betti freeResolution N
+            g1 = Tor_1(f, M)
+            g2 = Tor_2(f, M)
+            g3 = Tor_3(f, M)
+            g4 = Tor_4(f, M)
+            assert(source g2 === Tor_2(L, M))
+            assert(target g2 === Tor_2(N, M))
+            prune ker g3
+            prune coker g3
+        Text
+            Although the $\operatorname{Tor}$ functors are symmetric,
+            the actual matrices depend on the order of the arguments.
+        Example
+            M = R^1/ideal(a^2,b^2,c^3,b*d)
+            h1 = Tor_1(M, f)
+            h1' = Tor_1(f, M)
+            Tor_1(L, M)
+            Tor_1(M, L)
+            assert(source h1 == Tor_1(M, L))
+            assert(source h1' == Tor_1(L, M))
+            h2 = Tor_2(M, f)
+            h2' = Tor_2(f, M)
+            prune h2
+            prune h2'
+    SeeAlso
+        "Working with Tor"
+///
+
+doc ///
+    Key
+        (torSymmetry, ZZ, Module, Module)
+        torSymmetry
+    Headline
+        makes the canonical isomorphism realizing the symmetry of Tor
+    Usage
+        torSymmetry(i, M, N)
+    Inputs
+        i:ZZ
+        M:Module
+        N:Module
+            over the same ring $R$ as $M$
+    Outputs
+        :Matrix
+            representing an $R$-module homomorphism from
+            $\operatorname{Tor}_i^R(M, N)$ to $\operatorname{Tor}_i^R(N, M)$
+    Description
+        Text
+            @TO2(tensorCommutativity, "Tensor commutativity")@
+            gives rise to an isomorphism from
+            $\operatorname{Tor}_i^R(M, N)$ to $\operatorname{Tor}_i^R(N, M)$.
+            This method returns this isomorphism.
+        Text
+            We compute the Betti numbers of the Veronese surface
+            in two ways: $\operatorname{Tor}(M, \ZZ/101)$ or
+            via Koszul cohomology $\operatorname{Tor}(\ZZ/101, M)$.
+        Example
+            S = ZZ/101[a..f];
+            I = trim minors(2, genericSymmetricMatrix(S, 3))
+            M = S^1/I;
+            N = coker vars S
+            f1 = torSymmetry(1,M,N)
+            f2 = torSymmetry(1,N,M)
+            assert(f1 * f2 == 1)
+            assert(f2 * f1 == 1)
+            g1 = torSymmetry(2,M,N);
+            g2 = torSymmetry(2,N,M);
+            assert(g1 * g2 == 1)
+            assert(g2 * g1 == 1)
+            h1 = torSymmetry(3,M,N);
+            h2 = torSymmetry(3,N,M);
+            assert(h1 * h2 == 1)
+            assert(h2 * h1 == 1)
+        Text
+            Although the Tor modules are isomorphic, they are
+            presented with different numbers of generators.  As a
+            consequence, the matrices need not be square.
+            For example, after pruning the modules, $f_1$ and $f_2$
+            are represented by the same matrix.
+        Example
+            p1 = prune f1
+            p2 = prune f2
+            assert(p1 * p2 == 1)
+    SeeAlso
+        "Working with Tor"
+        Tor
+///
+
+doc ///
+    Key
+        (connectingTorMap, Module, Matrix, Matrix)
+        (connectingTorMap, Matrix, Matrix, Module)
+        connectingTorMap
+        [connectingTorMap, Concentration]
+    Headline
+        makes the connecting maps in Tor
+    Usage
+        connectingTorMap(M, g, f)
+        connectingTorMap(g, f, M)
+    Inputs
+        M:Module
+            over a ring $S$
+        f:Matrix
+            over a ring $S$ defining an injective map $f \colon A \to B$
+        g:Matrix
+            over a ring $S$ defining a surjective map $g \colon B \to C$
+            such that the image of $f$ equals the kernel of $g$
+        Concentration => Sequence
+            not yet implemented
+    Outputs
+        :ComplexMap
+    Description
+        Text
+            Since Tor is a bifunctor, there are two different connecting maps.
+            The first comes from applying the covariant functor
+            $M \otimes_S -$ to a short exact sequence of modules.  The
+            second comes from applying the covariant functor
+            $- \otimes_S M$ to a short exact sequence of modules.
+            More explicitly, given the short exact sequence
+
+            $\phantom{WWWW}
+            0 \leftarrow C \xleftarrow{g} B  \xleftarrow{f} A \leftarrow 0,
+            $
+            
+            the $i$-th connecting homomorphism is, in the first case, 
+            a map $\operatorname{Tor}^S_i(M, C) \to \operatorname{Tor}^S_{i-1}(M, A)$
+            and, in the second case,  
+            a map $\operatorname{Tor}^S_i(A, M) \to \operatorname{Tor}^S_{i-1}(C, M)$.
+        Text
+            As a first example, let $\Bbbk$ be the base field as an $S$-module.
+            Applying the functor $\Bbbk \otimes_S -$ to a short exact sequence of modules
+
+            $\phantom{WWWW}
+            0 \leftarrow S/(I+J) \leftarrow S/I \oplus S/J  \leftarrow S/I \cap J \leftarrow 0
+            $
+
+            gives rise to the long exact sequence of Tor modules
+            having the form
+
+            $\phantom{WWWW}
+            \dotsb \leftarrow \operatorname{Tor}_{i-1}(\Bbbk, S/(I+J))
+            \xleftarrow{\delta_{i}} 
+            \operatorname{Tor}_i(\Bbbk, S/I \cap J)
+            \leftarrow \operatorname{Tor}_i(\Bbbk, S/I \oplus S/J)
+            \leftarrow \operatorname{Tor}_i(\Bbbk, S/(I+J))
+            \leftarrow \dotsb.
+            $
+        Example
+            S = ZZ/101[a..d];
+            I = ideal(c^3-b*d^2, b*c-a*d)
+            J = ideal(a*c^2-b^2*d, b^3-a^2*c)
+            g = map(S^1/(I+J), S^1/I ++ S^1/J, {{1,1}});
+            f = map(S^1/I ++ S^1/J, S^1/intersect(I,J), {{1},{-1}});
+            assert isShortExactSequence(g,f)
+            kk = coker vars S
+            delta = connectingTorMap(kk, g, f)
+            assert isWellDefined delta
+            assert(source delta_2 == Tor_2(kk, target g))
+            assert(target delta_2 == Tor_1(kk, source f))
+            prune delta
+        Text
+            The connecting homomorphism fits into a natural
+            long exact sequence in Tor.
+        Example
+            F = freeResolution kk;
+            LES = longExactSequence(F ** g, F ** f);
+            assert all(3, i -> dd^LES_(3*(i+1)) == delta_(i+1))
+            assert(HH LES == 0)
+        Text
+            As a second example,
+            applying the functor $- \otimes_S \Bbbk$ to a short exact sequence of modules
+
+            $\phantom{WWWW}
+            0 \leftarrow S/(I+J) \leftarrow S/I \oplus S/J  \leftarrow S/I \cap J \leftarrow 0
+            $
+
+            gives rise to the long exact sequence of Tor modules
+            having the form
+
+            $\phantom{WWWW}
+            \dotsb \leftarrow \operatorname{Tor}_{i-1}(S/(I+J), \Bbbk)
+            \xleftarrow{\delta_{i}} 
+            \operatorname{Tor}_i(S/I \cap J, \Bbbk)
+            \leftarrow \operatorname{Tor}_i(S/I \oplus S/J, \Bbbk)
+            \leftarrow \operatorname{Tor}_i(S/(I+J), \Bbbk)
+            \leftarrow \dotsb.
+            $
+        Example
+            delta' = connectingTorMap(g, f, kk)
+            assert isWellDefined delta'
+            (g',f') = horseshoeResolution(g,f);
+            assert isShortExactSequence(g',f')
+            LES' = longExactSequence(g' ** kk, f' ** kk);
+            assert(HH LES' == 0)
+            assert all(3, i -> dd^LES'_(3*(i+1)) == delta'_(i+1))
+    SeeAlso
+        "Working with Tor"
+        connectingMap
+        isShortExactSequence
+        longExactSequence
+        Tor
+        "Working with Ext"
+///
 
 ///
     Key

@@ -28,6 +28,7 @@ List + List  := List => (v,w) -> apply(v,w,plus)
      - List  := List => v -> apply(v,minus)
 List - List  := List => (v,w) -> apply(v,w,difference)
 Thing * List := List => (a,v) -> apply(v,x->a * x)
+List ** List := List => (X,Y) -> flatten for x in X list apply(Y, y -> (x, y))
 
 List / Thing := List => (v,b) -> apply(v,x->x / b)	    -- slight conflict with List / Function!
 List // RingElement := List // Number := List => (v,b) -> apply(v,x->x // b)
