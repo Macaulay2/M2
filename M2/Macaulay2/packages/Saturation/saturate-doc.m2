@@ -104,6 +104,7 @@ Node
      isSupportedInZeroLocus
     (isSupportedInZeroLocus, Ideal, Ideal)
     (isSupportedInZeroLocus, Ideal, Module)
+    (isSupportedInZeroLocus, Ideal, GradedModule)
   Headline
     whether support of a module is contained in the zero locus of the (irrelevant) ideal
   Usage

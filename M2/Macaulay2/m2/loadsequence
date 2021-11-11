@@ -30,6 +30,8 @@ peek.m2
 printing.m2
 http.m2
 
+computations.m2
+
 gateway.m2
 rings.m2
 integers.m2
@@ -62,7 +64,7 @@ galois.m2
 ringmap.m2
 newring.m2
 genmat.m2
-matrix3.m2
+pushforward.m2
 ext.m2
 tor.m2
 gradedmodules.m2

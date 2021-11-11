@@ -457,10 +457,6 @@ installHTML := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationC
 -- helper functions for installPackage
 -----------------------------------------------------------------------------
 
-dispatcherMethod := m -> m#-1 === Sequence and (
-    f := lookup m;
-    any(dispatcherFunctions, g -> functionBody f === functionBody g))
-
 reproduciblePaths = outstr -> (
      if topSrcdir === null then return outstr;
      srcdir := regexQuote toAbsolutePath topSrcdir;
@@ -720,11 +716,14 @@ installPackage Package := opts -> pkg -> (
 	(hadError, numErrors) = (false, 0); -- declared in run.m2
 	generateExampleResults(pkg, rawDocumentationCache, exampleDir, exampleOutputDir, verboseLog, pkgopts, opts);
 
-	if not opts.IgnoreExampleErrors and hadError
-	then error("installPackage: ", toString numErrors, " error(s) occurred running examples for package ", pkg#"pkgname",
+	if hadError then (
+	    errmsg := ("installPackage: ", toString numErrors, " error(s) occurred running examples for package ", pkg#"pkgname",
 	    if opts.Verbose or debugLevel > 0 then ":" | newline | newline |
 	    concatenate apply(select(readDirectory exampleOutputDir, file -> match("\\.errors$", file)), err ->
 		err | newline |	concatenate(width err : "*") | newline | getErrors(exampleOutputDir | err)) else "");
+	    if opts.IgnoreExampleErrors
+	    then stderr << " -- warning: " << concatenate errmsg << endl
+	    else error errmsg);
 
 	-- if no examples were generated, then remove the directory
 	if length readDirectory exampleOutputDir == 2 then removeDirectory exampleOutputDir;
@@ -777,7 +776,6 @@ installPackage Package := opts -> pkg -> (
 				tag := makeDocumentTag m;
 				if  not isUndocumented tag
 				and not hasDocumentation tag
-				and not dispatcherMethod m
 				and signalDocumentationWarning tag then printerr(
 				    "warning: method has no documentation: ", toString tag,
 				    ", key ", toExternalString tag.Key,

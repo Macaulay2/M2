@@ -44,8 +44,8 @@ MonodromyOptions = {
 	AugmentNodeCount=>0,
 	BatchSize => infinity,
 	Potential => null,
-	NumberOfNodes => 2,
-	NumberOfEdges => 4,
+	NumberOfNodes => null,
+	NumberOfEdges => null,
 	NumberOfRepeats => 10,
 	"new tracking routine" => true, -- uses "track" if false, "trackHomotopy" if true
 	Verbose => false,
@@ -191,7 +191,9 @@ createSeedPair (System, Point) := o -> (P, x0) -> (
     if not linearInParameters then error(
         "heuristic linearity check failed" | "\n" |
         "automated seeding assumes system is affine-linear in parameters" | "\n" |
-        "can you seed manually?"
+        "can you seed manually?" | "\n" | 
+	"or, if you are working with a gate system GS, try the commands" | "\n" |
+	"debug MonodromySolver; newtonHomotopy GS"
         );
     -*
     for fixed x0: p --> P(p,x0)=Ap+b for A in CC^(Nxn), b in CC^N
@@ -303,17 +305,26 @@ staticMonodromySolve (System, Point, List) := o -> (PS, p0, sols0) -> (
     if existsPotential and toString o.Potential == "potentialE" and instance(o.TargetSolutionCount, Nothing) then error "potentialE requires target solution count";
     existsRandomizer := not instance(o.Randomizer, Nothing);
     if existsRandomizer and not isGS then error "setting Randomizer requires a GateSystem";
-    useLinearSegment := true; -- initialized value
-    randomizer := if not existsRandomizer then (
-        isScaleInvariant := areEqual(0, norm evaluate(PS, point((random CC) * matrix p0), first sols0));
-        if isScaleInvariant then (p -> (random CC) * p) else (
-            useLinearSegment = false;
-            (p -> p)
-            )
-        ) else (
+    isScaleInvariant := areEqual(0, norm evaluate(PS, point((random CC) * matrix p0), first sols0));
+    useLinearSegment := if isScaleInvariant then true else false; -- initialized value
+    numNodes := o.NumberOfNodes;
+    numEdges := o.NumberOfEdges;
+    local randomizer;
+    if existsRandomizer then (
         assert instance(o.Randomizer, Function);
-        o.Randomizer
-        );
+        randomizer = o.Randomizer;
+	) else (
+        if isScaleInvariant then (
+	    if instance(numNodes, Nothing) then numNodes = 2;
+	    if instance(numEdges, Nothing) then numEdges = 4;
+	    randomizer = (p -> (random CC) * p);
+	    )
+	else (
+	    if instance(numNodes, Nothing) then numNodes = 4;
+	    if instance(numEdges, Nothing) then numEdges = 1;
+	    randomizer = (p -> p);
+	);
+    );
     filterCondition := if instance(o.FilterCondition, Nothing) then (x -> false) else (
         assert instance(o.FilterCondition, Function);
         o.FilterCondition
@@ -337,12 +348,16 @@ staticMonodromySolve (System, Point, List) := o -> (PS, p0, sols0) -> (
     mutableOptions := new MutableHashTable from o;
     if instance(o.StoppingCriterion, Nothing) then setStoppingCriterion(o.NumberOfRepeats, HG, mutableOptions);
     if o.TargetSolutionCount =!= null then HG.TargetSolutionCount = o.TargetSolutionCount;
-    PA := pointArray sols0;
-    node1 := addNode(HG, p0, PA);
+    local node1;
+    if isGS then (
+    	p1 := point random(CC^1, CC^(length coordinates p0));
+    	sols1 := trackHomotopy(specialize(parametricSegmentHomotopy PS, transpose(matrix p0|matrix p1)), sols0);
+	node1 = addNode(HG, p1, pointArray sols1);
+	) else node1 = addNode(HG, p0, pointArray sols0);
     setTrackTime(HG, 0);    
     if #sols0 < 1 then error "at least one solution expected";    
     PointArrayTolerance = o.PointArrayTol; -- global variable!!!
-    o.GraphInitFunction(HG, p0, node1, o.NumberOfNodes, o.NumberOfEdges);
+    o.GraphInitFunction(HG, p0, node1, numNodes, numEdges);
     --Needs to return HG for use by dynamicMonodromySolve
     coreMonodromySolve(HG, node1, new OptionTable from (new HashTable from mutableOptions))
 )

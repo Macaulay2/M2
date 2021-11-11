@@ -70,6 +70,7 @@ newPackage(
 export { "Hybrid", "minimalPrimes", "minprimes" => "minimalPrimes", "radical", "radicalContainment", "installMinprimes" }
 
 importFrom_Core { "raw", "rawCharSeries", "rawGBContains", "rawRadical", "newMonomialIdeal" }
+importFrom_Core { "isComputationDone", "cacheComputation", "fetchComputation", "updateComputation", "cacheHit", "Context", "Computation" }
 
 -*------------------------------------------------------------------
 -- Can we use these as keys to a ring's HashTable without exporting them?
@@ -123,8 +124,6 @@ load "./MinimalPrimes/PDState.m2"
 load "./MinimalPrimes/splitIdeals.m2"
 load "./MinimalPrimes/factorTower.m2"
 load "./MinimalPrimes/radical.m2"
-
-cacheHit := type -> if debugLevel > 0 then printerr("Cache hit on a ", synonym type, "! 🎉");
 
 -- Redundancy control:
 -- find, if any, an element of I which is NOT in the ideal J.
@@ -196,36 +195,25 @@ minimalPrimes Ideal := List => opts -> I -> minprimesHelper(I, (minimalPrimes, I
 decompose     Ideal := List => options minimalPrimes >> opts -> I -> minprimesHelper(I, (minimalPrimes, Ideal), opts)
 
 -- keys: none so far
-MinimalPrimesOptions = new SelfInitializingType of BasicList
-MinimalPrimesOptions.synonym = "minimal primes options"
+MinimalPrimesContext = new SelfInitializingType of Context
+MinimalPrimesContext.synonym = "minimal primes context"
 
 -- keys: CodimensionLimit and Result
-MinimalPrimesComputation = new Type of MutableHashTable
+MinimalPrimesComputation = new Type of Computation
 MinimalPrimesComputation.synonym = "minimal primes computation"
 
--- if there is a compatible computation stored in I.cache,
--- returns the computation object, otherwise creates the entry:
---   MinimalPrimesOptions{} => MinimalPrimesComputation{ CodimensionLimit, Result }
-new MinimalPrimesComputation from Ideal  := (C, I) -> (
-    -- TODO: currently there are no options that could go in MinimalPrimesOptions,
-    -- but can we give options to this function? This is needed for saturate, etc.
-    cacheKey := MinimalPrimesOptions{};
-    try I.cache#cacheKey else I.cache#cacheKey = new MinimalPrimesComputation from {
-	Result => null, CodimensionLimit => -1 })
+new MinimalPrimesComputation from Ideal := (C, I) -> new MinimalPrimesComputation from {
+    CodimensionLimit => -1,
+    Result           => null}
 
-isComputationDone = method(TypicalValue => Boolean, Options => true)
 isComputationDone MinimalPrimesComputation := Boolean => options minimalPrimes >> opts -> container -> (
     -- this function determines whether we can use the cached result, or further computation is necessary
-    try instance(container.Result, List) and opts.CodimensionLimit <= container.CodimensionLimit else false)
+    instance(container.Result, List)
+    and opts.CodimensionLimit <= container.CodimensionLimit)
 
-cacheComputation = method(TypicalValue => CacheFunction, Options => true)
-cacheComputation MinimalPrimesComputation := CacheFunction => options minimalPrimes >> opts -> container -> new CacheFunction from (
-    -- this function takes advantage of FunctionClosures by modifying the container
-    computation -> (
-	if isComputationDone(opts, container) then ( cacheHit class container; container.Result ) else
-	if (result := computation(opts, container)) =!= null then (
-	    container.CodimensionLimit = opts.CodimensionLimit;
-	    container.Result = result)))
+updateComputation(MinimalPrimesComputation, List) := List => options minimalPrimes >> opts -> (container, result) -> (
+    container.CodimensionLimit = opts.CodimensionLimit;
+    container.Result = result)
 
 -- Helper for minimalPrimes and decompose
 minprimesHelper = (I, key, opts) -> (
@@ -247,8 +235,8 @@ minprimesHelper = (I, key, opts) -> (
     computation := (opts, container) -> runHooks(key, (opts, I), Strategy => opts.Strategy);
 
     -- this is the logic for caching partial minimal primes computations. I.cache contains an option:
-    --   MinimalPrimesOptions{} => MinimalPrimesComputation{ CodimensionLimit, Result }
-    container := new MinimalPrimesComputation from I;
+    --   MinimalPrimesContext{} => MinimalPrimesComputation{ CodimensionLimit, Result }
+    container := fetchComputation(MinimalPrimesComputation, I, new MinimalPrimesContext from I);
 
     -- the actual computation of minimal primes occurs here
     L := (cacheComputation(opts, container)) computation;

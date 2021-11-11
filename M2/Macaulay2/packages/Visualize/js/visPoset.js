@@ -1398,9 +1398,22 @@ function exportTikz (event){
   var timestamp = makeid();
 
   var tikzTex = "";
-//  tikzTex =  "\\begin{tikzpicture}\n          % Point set in the form x-coord/y-coord/node ID/node label\n          \\newcommand*\\points{"+points+"}\n          % Edge set in the form Source ID/Target ID\n          \\newcommand*\\edges{"+edges+"}\n          % Scale to make the picture able to be viewed on the page\n          \\newcommand*\\scale{0.02}\n          % Creates nodes\n          \\foreach \\x/\\y/\\z/\\w in \\points {\n          \\node (\\z) at (\\scale*\\x,-\\scale*\\y) [circle,draw] {$\\w$};\n          }\n          % Creates edges\n          \\foreach \\x/\\y in \\edges {\n          \\draw (\\x) -- (\\y);\n          }\n      \\end{tikzpicture}";
-//  tikzTex =  "\\begin{tikzpicture}\n         \\newcommand*\\points{"+points+"}\n          \\newcommand*\\edges{"+edges+"}\n          \\newcommand*\\scale{0.02}\n          \\foreach \\x/\\y/\\z/\\w in \\points {\n          \\node (\\z) at (\\scale*\\x,-\\scale*\\y) [circle,draw] {$\\w$};\n          }\n          \\foreach \\x/\\y in \\edges {\n          \\draw (\\x) -- (\\y);\n          }\n      \\end{tikzpicture}\n      % \\points is point set in the form x-coord/y-coord/node ID/node label\n     % \\edges is edge set in the form Source ID/Target ID\n      % \\scale makes the picture able to be viewed on the page\n";  
-  tikzTex =  "\\begin{tikzpicture}\n         \\newcommand*\\points"+timestamp+"{"+points+"}\n          \\newcommand*\\edges"+timestamp+"{"+edges+"}\n          \\newcommand*\\scale"+timestamp+"{0.02}\n          \\foreach \\x/\\y/\\z/\\w in \\points"+timestamp+" {\n          \\node (\\z) at (\\scale"+timestamp+"*\\x,-\\scale"+timestamp+"*\\y) [circle,draw,inner sep=0pt] {$\\w$};\n          }\n          \\foreach \\x/\\y in \\edges"+timestamp+" {\n          \\draw (\\x) -- (\\y);\n          }\n      \\end{tikzpicture}\n      % \\points"+timestamp+" is point set in the form x-coord/y-coord/node ID/node label\n     % \\edges"+timestamp+" is edge set in the form Source ID/Target ID\n      % \\scale"+timestamp+" makes the picture able to be viewed on the page\n";  
+  tikzTex =  "\\begin{tikzpicture}\n" +
+    "\\newcommand*\\points" +timestamp + "{" + points + "}\n" +
+    "\\newcommand*\\edges" + timestamp + "{" + edges + "}\n" +
+    "\\newcommand*\\scale" + timestamp + "{0.02}\n" +
+    "\\foreach \\x/\\y/\\z/\\w in \\points" + timestamp + "\n" +
+    "  \\node (\\z) at (\\scale" + timestamp + "*\\x,-\\scale" + timestamp +
+    "*\\y) [circle,draw,inner sep=0pt] {$\\w$};\n" +
+    "\\foreach \\x/\\y in \\edges" + timestamp + "\n" +
+    "  \\draw (\\x) -- (\\y);\n" +
+    "\\end{tikzpicture}\n" +
+    "% \\points" + timestamp +
+    " is point set in the form x-coord/y-coord/node ID/node label\n" +
+    "% \\edges" + timestamp +
+    " is edge set in the form Source ID/Target ID\n" +
+    "% \\scale" + timestamp +
+    " makes the picture able to be viewed on the page\n";
 
     
   if(!tikzGenerated){
@@ -1408,11 +1421,11 @@ function exportTikz (event){
     tikzDiv.id = "tikzHolder";
     tikzDiv.className = "list-group-item";
     tikzDiv.setAttribute('href','#');
-    var tikzInput = document.createElement("input");
+    var tikzInput = document.createElement("textarea");
     tikzInput.value = "";
     tikzInput.id = "tikzTextBox";
-    tikzInput.size = "15";
-    tikzInput.style = "vertical-align:middle;";
+    tikzInput.rows = 20;
+    tikzInput.style = "vertical-align:middle; width: 100%";
     var tikzButton = document.createElement("button");
     tikzButton.id = "copyButton";
     tikzButton.style = "vertical-align:middle;";

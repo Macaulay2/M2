@@ -4,8 +4,6 @@
 load "./quickGB.m2"
 
 --- a few commands to make cartesian product of lists easier (and faster than using toList and set!)
--- TODO: move this to the Core
-List ** List := (xs,ys) -> flatten for x in xs list apply(ys, y -> {x,y})
 -- compose all functions in a list
 composeList := fs -> if #fs == 0 then identity else (first fs) @@ (composeList drop(fs,1))
 -- takes the iterated cartesian product of a List of Lists.  Care is taken

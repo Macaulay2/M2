@@ -26,7 +26,7 @@ Searching the array is likely to be O(log n), which is achieved via std::map.
 
 debug Core
 
-PointArrayTolerance = 1e-12
+PointArrayTolerance = 1e-4
 
 PointArray = new Type of MutableHashTable
 pointArray = method(Options=>{})
@@ -47,8 +47,8 @@ points PointArray := P -> P_(indices P)
 appendPoint = method()
 appendPoint(PointArray,Point) := (A,b) -> (
     if A#"raw" === null then A#"raw" = rawPointArray(PointArrayTolerance,2*#coordinates b); -- 2*n real coordinates
-    if rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose sub(matrix b,CC_53),0) =!= length A 
-    then error "can't append";
+    lookupOrAppendResult := rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose sub(matrix b,CC_53),0);
+    if  lookupOrAppendResult =!= length A then error "can't append";
     A#(length A) = b
     )
 appendPoints = method()

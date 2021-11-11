@@ -1,3 +1,10 @@
+//#define NO_LAPACK
+/*
+Uncommenting the above has two consequences:
+  (1) This effectively eliminates the use of LAPACK (eigen is used instead for machine precision).
+  (2) This slows down the compilation (at the moment) due to heavy templating in eigen. 
+*/
+
 #include <cstdlib>
 
 #include <M2/math-include.h>
@@ -17,12 +24,14 @@ using Real = eigen_mpfr::mpreal;
 using Complex = std::complex<Real>;
 using MatrixXmpRRR = Eigen::Matrix<Real,Eigen::Dynamic,Eigen::Dynamic>;
 using MatrixXmpCCC = Eigen::Matrix<Complex,Eigen::Dynamic,Eigen::Dynamic>;
+#ifdef NO_LAPACK
 using MatrixXmpRR = Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic>;
 using MatrixXmpCC = Eigen::Matrix<std::complex<double>,Eigen::Dynamic,Eigen::Dynamic>;
-
+#endif
 
 namespace EigenM2 {
 
+#ifdef NO_LAPACK  
 // RR/CC
 
 // Need to rewrite matrix conversion functions
@@ -262,6 +271,7 @@ bool least_squares(const LMatrixCC *A,
 
   return true;
 }
+#endif
 
 // RRR/CCC
 

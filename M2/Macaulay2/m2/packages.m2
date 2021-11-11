@@ -137,11 +137,13 @@ readPackage = method(TypicalValue => OptionTable, Options => { FileName => null 
 readPackage Package := opts -> pkg     -> options pkg
 readPackage String  := opts -> pkgname -> (
     if pkgname === "Core" then return newPackageOptions#"Core";
+    remove(newPackageOptions, pkgname);
     filename := if opts.FileName === null then pkgname | ".m2" else opts.FileName;
     loadPackageOptions#pkgname = new OptionTable from { HeaderOnly => true };
     load filename;
     remove(loadPackageOptions, pkgname);
-    newPackageOptions#pkgname)
+    if newPackageOptions#?pkgname then return newPackageOptions#pkgname
+    else error("readPackage: ", filename, " does not contain a valid package (missing newPackage)"))
 
 loadPackage = method(
     TypicalValue => Package,
@@ -526,7 +528,6 @@ use Package := pkg -> (
     checkShadow();
     if pkg.?use then pkg.use pkg else pkg)
 
-debug = method()
 debug ZZ      := i   -> debugWarningHashcode = i
 debug Package := pkg -> (
     dict := pkg#"private dictionary";

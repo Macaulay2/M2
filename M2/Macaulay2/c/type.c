@@ -220,7 +220,10 @@ node type(node e){		/* assume e is checked previously */
 			 assert(FALSE);
 		    	 return caddr(ht);
 			 }
-		    else assert(FALSE); return NULL;
+		    else {
+			 assert(FALSE);
+			 return NULL;
+			 }
 		    }
 	       assert(FALSE); return NULL;
 	       }
@@ -458,7 +461,10 @@ node ExpandType(node t, node *f) {
 		    *f = cons(newN,*f);
 		    return newN;
 		    }
-	       else assert(FALSE); return NULL;
+	       else {
+		    assert(FALSE);
+		    return NULL;
+		    }
 	       }
 	  default: assert(FALSE); return NULL;
 	  }

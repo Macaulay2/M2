@@ -1334,7 +1334,7 @@ ToricVectorBundle == ToricVectorBundle := (tvb1,tvb2) -> tvb1 === tvb2
 -- PURPOSE : Computing the tensor product of two toric vector bundles over the same Fan
 --   INPUT : '(tvb1,tvb2)',  two ToricVectorBundle over the same Fan in the same description
 --  OUTPUT : 'tvb',  a ToricVectorBundle which is the tensor product in the same description
-tensor (ToricVectorBundle,ToricVectorBundle) := ToricVectorBundle => opts -> (tvb1,tvb2) -> (
+tensor(ToricVectorBundle, ToricVectorBundle) := ToricVectorBundle => {} >> opts -> (tvb1, tvb2) -> (
      -- Checking for input errors
      if tvb1#"ToricVariety" != tvb2#"ToricVariety" then error("Expected bundles over the same toric variety.");
      k1 := tvb1#"rank of the vector bundle";

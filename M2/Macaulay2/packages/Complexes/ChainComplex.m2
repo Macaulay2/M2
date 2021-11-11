@@ -784,7 +784,7 @@ homomorphism(ZZ, Matrix, Complex) := ComplexMap => (i, f, E) -> (
 --------------------------------------------------------------------
 -- Tensor products -------------------------------------------------
 --------------------------------------------------------------------
-tensor(Complex, Complex) := Complex => opts -> (C, D) -> (
+tensor(Complex, Complex) := Complex => {} >> opts -> (C, D) -> (
     Y := youngest(C,D);
     if Y.cache#?(tensor,C,D) then return Y.cache#(tensor,C,D);
     R := ring C;
@@ -863,7 +863,7 @@ RingMap Complex := Complex => (phi,C) -> (
     complex mapHash
     )
 
-tensor(RingMap, Complex) := Complex => opts -> (phi, C) -> (
+tensor(RingMap, Complex) := Complex => {} >> opts -> (phi, C) -> (
     if source phi =!= ring C then error "expected the source of the ring map to be the ring of the complex";
     (lo,hi) := concentration C;
     modules := hashTable for i from lo to hi list i => tensor(phi, C_i);
@@ -873,7 +873,7 @@ tensor(RingMap, Complex) := Complex => opts -> (phi, C) -> (
         map(modules#(i-1), modules#i, tensor(phi, matrix dd^C_i));
     complex maps
     )
-tensor(Complex, RingMap) := Complex => opts -> (C, phi) -> tensor(phi, C)
+tensor(Complex, RingMap) := Complex => {} >> opts -> (C, phi) -> tensor(phi, C)
 
 RingMap ** Complex := Complex => (phi, C) -> tensor(phi, C)
 Complex ** RingMap := Complex => (C, phi) -> tensor(phi, C)
