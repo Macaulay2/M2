@@ -27,8 +27,10 @@ unsigned int MonomialIdeal::computeHashValue() const
 
 void MonomialIdeal::remove_MonomialIdeal()
 {
+  if (debug_in_sat) std::cout << "called: remove_MonomialIdeal" << std::endl;
   delete_mi_node(mi);
   if ((count % 2) == 1) delete mi_stash;
+  if (debug_in_sat) std::cout << "  leaving remove_MonomialIdeal" << std::endl;
 }
 
 Nmi_node *MonomialIdeal::new_mi_node(int v, int e, Nmi_node *d)
@@ -263,11 +265,25 @@ int MonomialIdeal::search(const int *m, Bag *&b) const
 
 Nmi_node *MonomialIdeal::next(Nmi_node *p) const
 {
+  if (debug_in_sat)
+    std::cout << "entering next, p = " << p << std::endl;
+
   while (p != NULL)
     {
+      if (debug_in_sat)
+        std::cout << "  about to go left, p = " << p << std::endl;
+      
       p = p->left;
+
+      if (debug_in_sat)
+        std::cout << "  p = " << p << std::endl;
+      
       if (p->tag == Nmi_node::leaf)
-        return p;
+        {
+          if (debug_in_sat)
+            std::cout << "  leaving, p = " << p << std::endl;
+          return p;
+        }
       else
         p = p->down();
     }
