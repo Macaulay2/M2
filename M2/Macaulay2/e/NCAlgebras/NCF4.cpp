@@ -88,12 +88,12 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
 #endif
   
   // build the F4 matrix
-  m2tbb::tick_count t0 = m2tbb::tick_count::now();
+  mtbb::tick_count t0 = mtbb::tick_count::now();
   //if (mIsParallel)
   //  parallelBuildF4Matrix(overlapsToProcess);
   //else
   buildF4Matrix(overlapsToProcess);
-  m2tbb::tick_count t1 = m2tbb::tick_count::now();
+  mtbb::tick_count t1 = mtbb::tick_count::now();
   if (M2_gbTrace >= 2) 
     std::cout << "Time spent on build step: " << (t1-t0).seconds() << std::endl;
     
@@ -110,12 +110,12 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
   else if (M2_gbTrace >= 50) displayF4Matrix(std::cout);
 
   // reduce the matrix
-  t0 = m2tbb::tick_count::now();
+  t0 = mtbb::tick_count::now();
   if (mIsParallel)
     parallelReduceF4Matrix();
   else
     reduceF4Matrix();
-  t1 = m2tbb::tick_count::now();
+  t1 = mtbb::tick_count::now();
   if (M2_gbTrace >= 2) 
     std::cout << "Time spent on reduction step: " << (t1-t0).seconds() << std::endl;
 
@@ -514,8 +514,8 @@ void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
     MemoryBlock* memoryBlock;
   };
 
-  m2tbb::enumerable_thread_specific<ThreadData> threadData([&](){  
-      m2tbb::queuing_mutex::scoped_lock myColumnLock(mColumnMutex);
+  mtbb::enumerable_thread_specific<ThreadData> threadData([&](){  
+      mtbb::queuing_mutex::scoped_lock myColumnLock(mColumnMutex);
       ThreadData data;
       data.memoryBlock = new MemoryBlock;
       mMemoryBlocks.push_back(data.memoryBlock);
@@ -526,11 +526,7 @@ void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
   // during the for loop
   // process each element in mReducersTodo
 
-#if 1  
-  m2tbb::parallel_for_each(mReducersTodo.begin(), mReducersTodo.end(),
-#else                           
-  m2tbb::parallel_do(mReducersTodo.begin(), mReducersTodo.end(),
-#endif                     
+  mtbb::parallel_for_each(mReducersTodo.begin(), mReducersTodo.end(),
       [&](const PreRow& prerow, PreRowFeeder& feeder)
       {
         auto& data = threadData.local();
@@ -848,11 +844,11 @@ void NCF4::labelAndSortF4Matrix()
   // stable sort was here before, but this sort is based on a total ordering
   // with no ties so we can use an unstable (and hence parallel!) sort.
   if (mIsParallel)
-    m2tbb::parallel_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
+    mtbb::parallel_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
   else
     std::stable_sort(columnIndices.begin(),columnIndices.end(),monomialSorter);
 
-  auto applyLabelingColumns = [&](const m2tbb::blocked_range<int>& r) {
+  auto applyLabelingColumns = [&](const mtbb::blocked_range<int>& r) {
     for (auto count = r.begin(); count != r.end(); ++count)
       {
         auto& val = mColumnMonomials[tempWords[columnIndices[count]]];
@@ -865,11 +861,11 @@ void NCF4::labelAndSortF4Matrix()
   // apply the sorted labeling to the columns
   mColumns.resize(sz);
   if (mIsParallel)
-    m2tbb::parallel_for(m2tbb::blocked_range<int>{0,(int)sz}, applyLabelingColumns);
+    mtbb::parallel_for(mtbb::blocked_range<int>{0,(int)sz}, applyLabelingColumns);
   else
-    applyLabelingColumns(m2tbb::blocked_range<int>{0,(int)sz});
+    applyLabelingColumns(mtbb::blocked_range<int>{0,(int)sz});
 
-  auto applyLabelingRows = [&](const m2tbb::blocked_range<int>& r) {
+  auto applyLabelingRows = [&](const mtbb::blocked_range<int>& r) {
     for (auto i = r.begin(); i != r.end(); ++i)
       {
         auto& comps = mRows[i].columnIndices;
@@ -887,9 +883,9 @@ void NCF4::labelAndSortF4Matrix()
 
   // now fix the column labels in the rows and set pivot rows in columns
   if (mIsParallel)
-    m2tbb::parallel_for(m2tbb::blocked_range<int>{0,(int)mRows.size()},applyLabelingRows);
+    mtbb::parallel_for(mtbb::blocked_range<int>{0,(int)mRows.size()},applyLabelingRows);
   else
-    applyLabelingRows(m2tbb::blocked_range<int>{0,(int)mRows.size()});
+    applyLabelingRows(mtbb::blocked_range<int>{0,(int)mRows.size()});
 }
 
 // both reduceF4Row and parallelReduceF4Row call this function
@@ -955,8 +951,8 @@ void NCF4::generalReduceF4Row(int index,
 void NCF4::parallelReduceF4Matrix()
 {
   long numCancellations = 0;
-  using threadLocalDense_t = m2tbb::enumerable_thread_specific<ElementArray>;
-  using threadLocalLong_t = m2tbb::enumerable_thread_specific<long>;
+  using threadLocalDense_t = mtbb::enumerable_thread_specific<ElementArray>;
+  using threadLocalLong_t = mtbb::enumerable_thread_specific<long>;
 
   // create a dense array for each thread
   threadLocalDense_t threadLocalDense([&]() { 
@@ -968,9 +964,9 @@ void NCF4::parallelReduceF4Matrix()
   
   // reduce each overlap row by mRows.
 
-  m2tbb::queuing_mutex lock;
-  m2tbb::parallel_for(m2tbb::blocked_range<int>{mFirstOverlap,(int)mRows.size()},
-                    [&](const m2tbb::blocked_range<int>& r)
+  mtbb::queuing_mutex lock;
+  mtbb::parallel_for(mtbb::blocked_range<int>{mFirstOverlap,(int)mRows.size()},
+                    [&](const mtbb::blocked_range<int>& r)
                     {
                       threadLocalDense_t::reference my_dense = threadLocalDense.local();
                       threadLocalLong_t::reference my_accum = numCancellationsLocal.local();

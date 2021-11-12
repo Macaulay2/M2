@@ -89,19 +89,14 @@ private:
   using RowsVector = std::vector<Row,gc_allocator<Row>>;
   //using RowsVector = tbb::concurrent_vector<Row>;
 
-#if 1  //TBB_MAJOR_VERSION >= 2021  
-  using PreRowFeeder = m2tbb::feeder<PreRow>;
-#else
-  using PreRowFeeder = m2tbb::parallel_do_feeder<PreRow>;
-#endif
-
+  using PreRowFeeder = mtbb::feeder<PreRow>;
 
   // The pair in this unordered_map is (i,j) where:
   //    i is the column number
   //    j is the row that reduces it
   //      (and -1 if there is no such row).
   //using MonomialHash = tbb::concurrent_unordered_map<Word,std::pair<int,int>,MonomHash,MonomHashEqual>;
-  using MonomialHash = m2tbb::concurrent_unordered_map<Word,std::pair<int,int>,MonomHash,MonomHashEqual>;
+  using MonomialHash = mtbb::concurrent_unordered_map<Word,std::pair<int,int>,MonomHash,MonomHashEqual>;
   
   // data
   const FreeAlgebra& mFreeAlgebra;
@@ -146,7 +141,7 @@ private:
   // only used in parallelBuildF4Matrix, which is currently not used.
   std::vector<MemoryBlock*> mMemoryBlocks;
   std::vector<MemoryBlock*> mPreviousMemoryBlocks;
-  m2tbb::queuing_mutex mColumnMutex;
+  mtbb::queuing_mutex mColumnMutex;
 
 public:
   NCF4(const FreeAlgebra& A,
@@ -247,8 +242,8 @@ private:
                    long &numCancellations,
                    ElementArray& dense)
   {
-    m2tbb::null_mutex noLock;
-    generalReduceF4Row<m2tbb::null_mutex>(index,
+    mtbb::null_mutex noLock;
+    generalReduceF4Row<mtbb::null_mutex>(index,
                                         first,
                                         firstcol,
                                         numCancellations,
@@ -262,9 +257,9 @@ private:
                            int firstcol,
                            long &numCancellations,
                            ElementArray& dense,
-                           m2tbb::queuing_mutex& lock)
+                           mtbb::queuing_mutex& lock)
   {
-    generalReduceF4Row<m2tbb::queuing_mutex>(index,
+    generalReduceF4Row<mtbb::queuing_mutex>(index,
                                            first,
                                            firstcol,
                                            numCancellations,

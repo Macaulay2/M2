@@ -3,6 +3,9 @@
 #ifndef M2TBB_HPP
 #define M2TBB_HPP
 
+#include "mathicgb/mathicgb/mtbb.hpp"
+
+#if 0
 #define TBB_PRESENT
 
 
@@ -42,7 +45,7 @@ namespace m2tbb {
   using ::std::mutex;
   using ::tbb::queuing_mutex;
   using ::tbb::null_mutex;
-  using ::tbb::parallel_for_each;
+  //  using ::tbb::parallel_for_each;
   using ::tbb::parallel_for;
   using ::tbb::parallel_sort;
   using ::tbb::blocked_range;
@@ -50,6 +53,22 @@ namespace m2tbb {
   using ::tbb::concurrent_unordered_map;
   using ::tbb::feeder;
   using ::tbb::enumerable_thread_specific;
+
+  template<typename T1, typename T2, typename T3>
+  void parallel_for_each(T1&& a, T2&& b, T3&& c)
+  {
+    tbb::parallel_for_each(a,b,c);
+  }
+
+  class task_scheduler_init {
+  public:
+    task_scheduler_init(int nthreads) {
+      const auto tbbMaxThreadCount = nthreads == 0 ?
+        tbb::default_concurrency() : nthreads;
+      tbb::global_control global_limit(tbb::global_control::max_allowed_parallelism,
+                                       tbbMaxThreadCount);
+    }
+  };
 }
 
 // as new as 2021 section
@@ -81,6 +100,16 @@ namespace m2tbb {
   using ::tbb::concurrent_unordered_map;
   using ::tbb::parallel_do_feeder;
   using ::tbb::enumerable_thread_specific;
+
+  class task_scheduler_init {
+  public:
+    task_scheduler_init(int nthreads) {
+      const auto tbbMaxThreadCount = nthreads == 0 ?
+        tbb::task_scheduler_init::automatic : nthreads;
+      tbb::task_scheduler_init scheduler(tbbMaxThreadCount);
+
+    }
+  };
 }
 
 // #define parallel_do parallel_for_each
@@ -103,7 +132,6 @@ namespace m2tbb {
   class task_scheduler_init {
   public:
     task_scheduler_init(int) {}
-    static const int automatic = 1;
   };
 
   class mutex {
@@ -262,6 +290,21 @@ namespace m2tbb {
     }
   }
 
+  template<class InputIterator, class Body>
+  void parallel_for_each(InputIterator begin, InputIterator end, Body body) {
+    typedef typename std::remove_reference<decltype(*begin)>::type Task;
+    std::vector<Task> tasks;
+    parallel_do_feeder<Task> feeder(tasks);
+    for (; begin != end; ++begin) {
+      tasks.push_back(*begin);
+      while (!tasks.empty()) {
+        auto task = std::move(tasks.back());
+        tasks.pop_back();
+        body(task, feeder);
+      }
+    }
+  }
+  
   template<class It, class Pred>
   void parallel_sort(It begin, It end, Pred&& pred) {
     std::sort(begin, end, pred);
@@ -305,5 +348,5 @@ namespace m2tbb {
 }
 
 #endif
-
+#endif
 #endif

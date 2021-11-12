@@ -28,6 +28,19 @@ cmake-appleclang:
 		../../../..
 #		-DLINTING=on
 
+# first do:
+#   brew unlink tbb@2021
+#   brew link tbb@2020_u3
+cmake-tbb2020-appleclang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-tbb2020-appleclang
+	cd builds.tmp/cmake-tbb2020-appleclang; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
 cmake-appleclang-tbb:
 	echo "git branch is " $(BRANCH)
 	mkdir -p builds.tmp/cmake-appleclang-tbb

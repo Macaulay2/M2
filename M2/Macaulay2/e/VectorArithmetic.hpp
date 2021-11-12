@@ -174,8 +174,8 @@ public:
                      int last,
                      MemoryBlock& monomialSpace) const
   { 
-    m2tbb::null_mutex noLock;
-    safeDenseToSparse<m2tbb::null_mutex>(dense,
+    mtbb::null_mutex noLock;
+    safeDenseToSparse<mtbb::null_mutex>(dense,
 					     sparse,
 					     comps,
 					     first,
