@@ -204,10 +204,8 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
     -- types
     b := select(e, x -> instance(value x, Type));
     -- methods
-    -- TODO: if a package introduces a methods where all components are from
-    -- another package, e.g. (res, List), this code will miss it.
     -- TODO: should we limit to methods that have individual documentation? Probably not
-    m := unique select(flatten \\ documentableMethods \ value \ toList e, x -> package x === pkg);
+    m := documentableMethods pkg;
     -- symbols
     c := select(e, x -> instance(value x, Symbol));
     -- other things
@@ -253,7 +251,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 		    HREF { if installLayout =!= null then installLayout#"packages" | pkg#"pkgname" | "/" else pkg#"auxiliary files", pkg#"pkgname" | "/" }, ".")
 		}
 	    },
-	if #e > 0 then DIV {
+	if pkg#"pkgname" =!= "Macaulay2Doc" and #e + #m > 0 then DIV {
 	    SUBSECTION "Exports",
 	    DIV { "class" => "exports",
 		fixup UL {
@@ -357,6 +355,7 @@ getDescription := (key, tag, rawdoc) -> (
 
 -- This is the overall template of a documentation page
 -- for specialized templates, see documentationValue above
+-- TODO: allow customizing the template for different output methods
 getBody := (key, tag, rawdoc) -> (
     currentHelpTag = tag;
     result := fixup DIV nonnull splice (

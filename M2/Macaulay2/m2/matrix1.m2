@@ -668,6 +668,7 @@ scan({ZZ,QQ}, S -> (
 	       else (ideal lift(generators I,S,opts)) + ideal (presentation ring I ** S))));
 
 content(RingElement) := Ideal => (f) -> ideal \\ last \ listForm f
+content(RingElement, RingElement) := Ideal => (f,x) -> ideal last coefficients(f, Variables => {x})
 
 cover(Matrix) := Matrix => (f) -> matrix f
 

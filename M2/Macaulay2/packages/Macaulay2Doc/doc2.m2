@@ -30,13 +30,13 @@ document {
      }
 
 document {
-     Key => { (symbol <<, File, Thing),(symbol <<, String, Thing), (symbol <<, File, Manipulator),(symbol <<, List, Thing),
+     Key => { (symbol <<, File, Thing),(symbol <<, String, Thing), (symbol <<, File, Manipulator),
 	  (symbol <<, Nothing, Thing),(symbol <<, Nothing, Manipulator), (symbol <<, Thing),
 	  (symbol <<, File, Symbol),(symbol <<, File, Net),(symbol <<,File,String) },
      Headline => "print to a file",
      Usage => "f << x\n  << x",
      Inputs => { 
-	  "f" => Nothing => { ofClass {File, String, List, Nothing} },
+	  "f" => Nothing => { ofClass {File, String, Nothing} },
 	  "x"
 	  },
      Outputs => {
@@ -72,6 +72,16 @@ document {
      ///,
      SeeAlso => { stdio, stderr, endl, close }
      }
+
+document {
+    Key => (symbol <<, List, List),
+    Headline => "component-wise comparison of lists",
+    Usage => "L1 << L2",
+    Inputs => { "L1" => List, "L2" => List },
+    Outputs => { Boolean => "whether the first list is less than or equal to the second list in each component" },
+    SourceCode => (symbol <<, List, List),
+    SeeAlso => (symbol ?, List, List)
+    }
 
 document {
      Key => symbol >>, 

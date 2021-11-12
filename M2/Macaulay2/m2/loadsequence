@@ -78,10 +78,10 @@ minPres.m2
 monomcurve.m2
 fano.m2
 schubert.m2
-code.m2
 local.m2
 
 packages.m2
+code.m2
 examples.m2
 document.m2
 installPackage.m2
