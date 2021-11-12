@@ -801,6 +801,7 @@ MonomialIdeal *MonomialIdeal::quotient(const MonomialIdeal &J) const
       result = next_result;
     }
   debug_in_sat = false;
+  std::cout << "  leaving quotient" << std::endl;
   return result;
 }
 
@@ -897,7 +898,9 @@ MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
       delete result;
       result = next_result;
     }
+
   debug_in_sat = false;
+  std::cout << "  leaving sat" << std::endl;
   return result;
 }
 
