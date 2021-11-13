@@ -1000,6 +1000,7 @@ tostringfun(e:Expr):Expr := (
 	  -- Ccode(string, "IM2_MonomialIdeal_to_string(",x.p,")" )
 	  )
      is c:RawComputationCell do toExpr(Ccode(string, "IM2_GB_to_string(",c.p,")" ))
+     is pythonObjectCell do toExpr("<<a python object>>")
      is x:xmlNodeCell do toExpr(toString(x.v))
      is xmlAttrCell do toExpr("<<libxml attribute>>")
      is x:TaskCell do (
@@ -1017,7 +1018,6 @@ tostringfun(e:Expr):Expr := (
 	       + ">>"
 	       ))
     is x:fileOutputSyncState do toExpr("File Output Sync State")
-    else buildErrorPacket("unable to convert to string")
 );
 setupfun("simpleToString",tostringfun);
 
