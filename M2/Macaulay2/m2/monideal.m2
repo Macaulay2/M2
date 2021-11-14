@@ -173,6 +173,7 @@ jacobian MonomialIdeal := Matrix => (I) -> jacobian generators I
 -- TODO: move to res.m2, or add as a strategy
 resolution MonomialIdeal := ChainComplex => opts -> I -> resolution ideal I
 betti MonomialIdeal := opts -> I -> betti(ideal I,opts)
+minimalBetti MonomialIdeal := opts -> I -> minimalBetti(ideal I,opts)
 
 lcm MonomialIdeal := (I) -> (if I.cache.?lcm 
   then I.cache.lcm

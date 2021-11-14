@@ -6,6 +6,7 @@
 *-
 
 needs "gb.m2" -- for GroebnerBasis
+needs "res.m2" -- needed by minimalBetti
 needs "chaincomplexes.m2"
 needs "gradedmodules.m2"
 needs "modules2.m2"
@@ -143,10 +144,8 @@ texMath MultigradedBettiTally := v -> (
 -----------------------------------------------------------------------------
 
 -- local function for selecting and computing the appropriate heft
-heftfun0 := wt -> d -> sum( min(#wt, #d), i -> wt#i * d#i )
-heftfun := (wt1, wt2) -> (
-    if wt1 =!= null then heftfun0 wt1 else
-    if wt2 =!= null then heftfun0 wt2 else d -> 0)
+heftfun := wt -> d -> sum( min(#wt, #d), i -> wt#i * d#i )
+heftvec := (wt1, wt2) -> if wt1 =!= null then wt1 else if wt2 =!= null then wt2 else {}
 
 betti = method(TypicalValue => BettiTally, Options => { Weights => null, Minimize => false })
 betti GroebnerBasis := opts -> G -> betti(generators G, opts)
@@ -154,34 +153,21 @@ betti Ideal         := opts -> I -> betti(generators I, opts)
 betti Module        := opts -> M -> betti(presentation M, opts)
 betti Matrix        := opts -> f -> betti(chainComplex f, opts)
 betti BettiTally    := opts -> B -> if opts.Weights === null then B else (
-    heftfn := heftfun0 opts.Weights;
+    heftfn := heftfun opts.Weights;
     applyKeys(B, (i,d,h) -> (i,d,heftfn d)))
 
 unpackEngineBetti = w -> (
     -- w is the result of e.g. rawGBBetti.
     -- this is an array of ints, of the form:
     -- [lodegree, hidegree, len, b(lodegree,0), b(lodegree,1), ..., b(lodegree,len), ... b(hidegree,len)]
-    lo := w#0;
-    hi := w#1;
-    len := w#2;
-    w = drop(w,3);
-    w = pack(len+1,w);
-    w = table(lo .. hi, 0 .. len, (i,j) -> (j,{i+j},i+j) => w#(i-lo)#j); -- no weight option used here
-    w = toList splice w;
-    w = select(w, option -> option#1 != 0);
-    new BettiTally from w)
+    (lo, hi, len) := (w#0, w#1, w#2);
+    w = pack(len+1, drop(w, 3));
+    w = flatten table(toList(lo .. hi), toList(0 .. len),
+	(i,j) -> ((j, {i+j}, i+j), w#(i-lo)#j)); -- no weight option used here
+    new BettiTally from select(w, (k,v) -> v != 0))
 
-rawBetti = (computation, type) -> (
-    w := rawGBBetti(computation, type);
-    lo := w#0;
-    hi := w#1;
-    len := w#2;
-    w = drop(w,3);
-    w = pack(len+1,w);
-    w = table(lo .. hi, 0 .. len, (i,j) -> (j,{i+j},i+j) => w#(i-lo)#j); -- no weight option used here
-    w = toList splice w;
-    w = select(w, option -> option#1 != 0);
-    new BettiTally from w)
+-- used in EngineTests
+rawBetti = (computation, type) -> unpackEngineBetti rawGBBetti(computation, type)
 
 undocumented' (betti,Resolution)
 betti Resolution := opts -> X -> (
@@ -189,20 +175,19 @@ betti Resolution := opts -> X -> (
     -- currently if opts.Minimize is true, then an error is given
     -- unless the FastNonminimal=>true option was given for the free resolution.
     B := rawBetti(X.RawComputation, if opts.Minimize then 4 else 0); -- the raw version takes no weight option
-    heftfn := heftfun(opts.Weights, heft ring X);
-    applyKeys(B, (i,d,h) -> (i,d,heftfn d)))
+    betti(B, Weights => heftvec(opts.Weights, heft ring X)))
 
 betti GradedModule := opts -> C -> (
-    if C.?Resolution and degreeLength ring C === 1 and heft ring C === {1} then betti(C.Resolution,opts)
-    else (
-	if opts.Minimize then error "Minimize=>true is currently only supported for res(...,FastNonminimal=>true)";
-	complete C;
-	heftfn := heftfun(opts.Weights, heft ring C);
-	new BettiTally from flatten apply(
-	    select(pairs C, (i,F) -> class i === ZZ),
-	    (i,F) -> (
-		if not isFreeModule F then error("betti: expected module at spot ", toString i, " in chain complex to be free");
-		apply(pairs tally degrees F, (d,n) -> (i,d,heftfn d) => n)))))
+    R := ring C;
+    if C.?Resolution and degreeLength R === 1 and heft R === {1} then return betti(C.Resolution, opts);
+    if opts.Minimize then error "Minimize=>true is currently only supported for res(...,FastNonminimal=>true)";
+    complete C;
+    heftfn := heftfun heftvec(opts.Weights, heft R);
+    new BettiTally from flatten apply(
+	select(pairs C, (i,F) -> class i === ZZ),
+	(i,F) -> (
+	    if not isFreeModule F then error("betti: expected module at spot ", toString i, " in chain complex to be free");
+	    apply(pairs tally degrees F, (d,n) -> (i,d,heftfn d) => n))))
 
 -----------------------------------------------------------------------------
 -- minimalBetti
@@ -212,28 +197,33 @@ minimalBetti = method(
     TypicalValue => BettiTally,
     Options => {
 	DegreeLimit => null,
-	LengthLimit => null,
+	LengthLimit => infinity,
 	Weights => null
 	})
 minimalBetti Ideal  :=
 minimalBetti Module := opts -> M -> (
-    C := if opts.LengthLimit === null
-    then resolution(M, StopBeforeComputation => true, FastNonminimal => true)
-    else resolution(M, StopBeforeComputation => true, FastNonminimal => true, LengthLimit => opts.LengthLimit + 1);
-    if not C.?Resolution or not C.Resolution.?RawComputation
-    then error "cannot use 'minimalBetti' with this input.
-    Input must be an ideal or module in a polynomial
-    ring or skew commutative polynomial ring over
-    a finite field, which is singly graded.
+    R := ring M;
+    degreelimit := resolutionDegreeLimit(R, opts.DegreeLimit);
+    lengthlimit := resolutionLengthLimit(R, opts.LengthLimit);
+    -- check to see if a cached resolution is sufficient
+    cacheKey := ResolutionContext{};
+    if M.cache#?cacheKey and isComputationDone(C := M.cache#cacheKey,
+	DegreeLimit => degreelimit, LengthLimit => lengthlimit)
+    then return betti(C.Result.Resolution, Weights => opts.Weights);
+    -- if not, compute a fast non-minimal resolution
+    C = resolution(M,
+	StopBeforeComputation => true, FastNonminimal => true,
+	DegreeLimit => degreelimit, LengthLimit => lengthlimit + 1);
+    C = if C.?Resolution and C.Resolution.?RawComputation then C.Resolution.RawComputation
+    -- TODO: when can this error happen?
+    else error "cannot use 'minimalBetti' with this input. Input must be an ideal or module in a
+    polynomial ring or skew commutative polynomial ring over a finite field, which is singly graded.
     These restrictions might be removed in the future.";
-    rawC := C.Resolution.RawComputation;
-    w := rawMinimalBetti(rawC,
-	if opts.DegreeLimit =!= null then {opts.DegreeLimit} else {},
-	if opts.LengthLimit =!= null then {opts.LengthLimit} else {});
-    B := unpackEngineBetti w;
-    -- The following code is lifted directly from 'betti Resolution'
-    heftfn := heftfun(opts.Weights, heft ring M);
-    applyKeys(B, (i,d,h) -> (i,d,heftfn d)))
+    --
+    B := unpackEngineBetti rawMinimalBetti(C,
+	if opts.DegreeLimit =!= null     then {opts.DegreeLimit} else {},
+	if opts.LengthLimit =!= infinity then {opts.LengthLimit} else {});
+    betti(B, Weights => heftvec(opts.Weights, heft R)))
 
 -----------------------------------------------------------------------------
 
