@@ -11,6 +11,12 @@ needs "gradedmodules.m2"
 needs "modules2.m2"
 
 -----------------------------------------------------------------------------
+-- Local utilities
+-----------------------------------------------------------------------------
+
+nonzeroKeys = x -> select(keys x, k -> x#k != 0)
+
+-----------------------------------------------------------------------------
 -- BettiTally type declarations and basic constructors
 -----------------------------------------------------------------------------
 
@@ -231,7 +237,7 @@ minimalBetti Module := opts -> M -> (
 
 -----------------------------------------------------------------------------
 
-pdim BettiTally := B -> max apply(keys B, first) -- TODO: should this be max - min?
+pdim BettiTally := B -> if #(s := first \ nonzeroKeys B) > 0 then max s - min s else 0
 -- TODO: implement the following for MultigradedBettiTally
 poincare BettiTally := B -> (
     if #B === 0 then return 0;				    -- yes, it's not in a degree ring, but that should be okay
@@ -301,7 +307,7 @@ Ring ^ BettiTally := ChainComplex => (R,B) -> (
 regularity = method(TypicalValue => ZZ, Options => { Weights => null })
 regularity   BettiTally := opts -> C -> (
     if opts.Weights =!= null then C = betti(C, opts);
-    max apply(keys C, (i,d,h) -> h-i))
+    max apply(nonzeroKeys C, (i,d,h) -> h-i))
 regularity ChainComplex := opts -> C -> regularity betti(C, opts)
 regularity        Ideal := opts -> I -> (
     if I == 0 then -infinity else if I == 1 then 0
