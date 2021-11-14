@@ -6,6 +6,7 @@
 
 needs "chaincomplexes.m2"
 needs "computations.m2"
+needs "betti.m2"
 needs "max.m2"
 
 -----------------------------------------------------------------------------

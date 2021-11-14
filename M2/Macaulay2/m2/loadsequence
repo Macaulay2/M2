@@ -69,6 +69,7 @@ ext.m2
 tor.m2
 gradedmodules.m2
 chaincomplexes.m2
+betti.m2
 res.m2
 monideal.m2
 intersect.m2

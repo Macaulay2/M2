@@ -7,6 +7,7 @@ needs "matrix1.m2"
 needs "modules.m2"
 needs "monideal.m2"
 needs "multilin.m2"
+needs "betti.m2"
 
 Variety = new Type of MutableHashTable
 Variety.synonym = "variety"

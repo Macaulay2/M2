@@ -3,6 +3,7 @@
 needs "integers.m2" -- for lcm
 needs "matrix1.m2"
 needs "quotring.m2"
+needs "betti.m2"
 needs "res.m2"
 
 MonomialIdeal = new Type of Ideal

@@ -71,8 +71,9 @@ undocumented {
 	(texMath, Variety),
 	(texMath, Vector),
 	(texMath, VectorExpression),
-	(texMath, VerticalList)
-	     }
+	(texMath, VerticalList),
+	(texMath, BettiTally),
+	}
 
 document { 
      Key => texMath,
