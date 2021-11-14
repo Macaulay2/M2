@@ -73,6 +73,7 @@ undocumented {
 	(texMath, VectorExpression),
 	(texMath, VerticalList),
 	(texMath, BettiTally),
+	(texMath, MultigradedBettiTally),
 	}
 
 document { 

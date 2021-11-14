@@ -1,7 +1,6 @@
 -- moved from chaincomplexes.m2
 
 -* TODO
-- https://github.com/Macaulay2/M2/issues/1976
 - https://github.com/Macaulay2/M2/issues/647
 - https://github.com/Macaulay2/M2/issues/2159
 *-
@@ -86,7 +85,7 @@ rawBettiTally = v -> (
 rawMultigradedBettiTally = B -> (
     if keys B == {} then return 0;
     N := max apply(pairs B, (key, n) -> ((i,d,h) := key; length d));
-    R := ZZ[vars(0..N-1)];
+    R := ZZ[vars(0..N-1), MonomialOrder => Lex, Inverses => true];
     H := new MutableHashTable;
     (rows, cols) := ({}, {});
     scan(pairs B,
@@ -115,7 +114,7 @@ rawMultigradedBettiTally = B -> (
 	) else (
 	T = table(max((keys H)/(j -> #H#j)), sort keys H,
 	    (i,k) -> if i < #H#k then H#k#i else null);
-	T = prepend(sort keys H,T);
+	T = prepend(toString \ sort keys H, T);
 	);
     T)
 
@@ -124,11 +123,14 @@ net MultigradedBettiTally := B -> netList(rawMultigradedBettiTally B, Alignment 
 
 texMath BettiTally := v -> (
     v = rawBettiTally v;
-    concatenate(
-	"\\begin{matrix}\n",
-	apply(v, row -> (between("&", apply(row,x->if not match("^[0-9]*$",x) then ("\\text{",x,"}") else x)), "\\\\")),
-	"\\end{matrix}\n",
-	))
+    v = join({prepend(2, drop(v#0, 1)), prepend("\\text{total:}\n  ", drop(v#1, 1))}, drop(v, 2));
+    v = between("\\\\\n", apply(v, row -> concatenate between(" & ", row)));
+    concatenate("\\begin{matrix}", newline, v, newline, "\\end{matrix}"))
+texMath MultigradedBettiTally := v -> (
+    v = rawMultigradedBettiTally v;
+    v = if compactMatrixForm then prepend(prepend(2, drop(v#0, 1)), drop(v, 1)) else v;
+    v = between("\\\\\n", apply(v, row -> concatenate between(" & ", row)));
+    concatenate("\\begin{matrix}", newline, v, newline, "\\end{matrix}"))
 
 -----------------------------------------------------------------------------
 -- betti
