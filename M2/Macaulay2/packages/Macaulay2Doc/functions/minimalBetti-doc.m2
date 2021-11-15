@@ -60,6 +60,7 @@ doc ///
      then this function will result in an error.
    SeeAlso
      betti
+     [betti, Minimize]
      resolution
-     FastNonminimal
+     [resolution, FastNonminimal]
 ///

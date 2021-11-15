@@ -646,7 +646,7 @@ document {
 	H := poincare M;
 	t := (ring H)_0;  -- The variable t above
 	while H % (1-t) == 0 do H = H // (1-t);
-	H)",
+	H);",
           "poincare' M",
 	  },
      SUBSECTION "free resolutions",
@@ -665,7 +665,17 @@ document {
      TT "i", "-th row and ", TT "j", "-th column (indices starting at 0),
      is the number of ", TT "j", "-th syzygies in degree ", TT "i+j", ".
      In the above example, there are 15 second syzygies of degree 4, and the entries
-     of the maps ", TT "CC.d_1, CC.d_3, CC.d_4", " are all linear."
+     of the maps ", TT "CC.d_1, CC.d_3, CC.d_4", " are all linear.",
+     Subnodes => {
+	 TO isHomogeneous,
+	 TO (codim, Module),
+	 TO (degree, Module),
+	 TO (genera, Module),
+	 TO (hilbertSeries, Module),
+	 TO (poincare, Module),
+	 TO reduceHilbert,
+	 TO betti,
+	 }
      }
 
 -*

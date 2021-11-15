@@ -58,6 +58,7 @@ multigraded BettiTally := MultigradedBettiTally => bt -> new MultigradedBettiTal
 -- note: this is subtly different from BettiTally ZZ
 -- see https://github.com/Macaulay2/M2/issues/2303
 MultigradedBettiTally List := (B, l) -> applyKeys(B, (i,d,h) -> (i,d-l,h))
+MultigradedBettiTally Sequence := (B, a) -> B toList a
 
 -----------------------------------------------------------------------------
 -- functions for pretty-printing the internal representation of Betti tables
@@ -169,7 +170,6 @@ unpackEngineBetti = w -> (
 -- used in EngineTests
 rawBetti = (computation, type) -> unpackEngineBetti rawGBBetti(computation, type)
 
-undocumented' (betti,Resolution)
 betti Resolution := opts -> X -> (
     -- this version works only for rings of degree length 1
     -- currently if opts.Minimize is true, then an error is given
@@ -177,6 +177,7 @@ betti Resolution := opts -> X -> (
     B := rawBetti(X.RawComputation, if opts.Minimize then 4 else 0); -- the raw version takes no weight option
     betti(B, Weights => heftvec(opts.Weights, heft ring X)))
 
+betti ChainComplex :=
 betti GradedModule := opts -> C -> (
     R := ring C;
     if C.?Resolution and degreeLength R === 1 and heft R === {1} then return betti(C.Resolution, opts);
@@ -273,7 +274,6 @@ hilbertSeries(ZZ, BettiTally) := o -> (n,B) -> (
 
 -----------------------------------------------------------------------------
 
--- TODO: document this, and convert to use Complexes
 Ring ^ BettiTally := ChainComplex => (R,B) -> (
     -- donated by Hans-Christian von Bothmer
     -- given a betti Table B and a Ring R make a chainComplex
@@ -293,11 +293,8 @@ Ring ^ BettiTally := ChainComplex => (R,B) -> (
 -- regularity
 -----------------------------------------------------------------------------
 
--- TODO: reference multigradedRegularity in the documentation
 regularity = method(TypicalValue => ZZ, Options => { Weights => null })
-regularity   BettiTally := opts -> C -> (
-    if opts.Weights =!= null then C = betti(C, opts);
-    max apply(nonzeroKeys C, (i,d,h) -> h-i))
+regularity   BettiTally := opts -> B -> max apply(nonzeroKeys betti(B, opts), (i,d,h) -> h-i)
 regularity ChainComplex := opts -> C -> regularity betti(C, opts)
 regularity        Ideal := opts -> I -> (
     if I == 0 then -infinity else if I == 1 then 0
