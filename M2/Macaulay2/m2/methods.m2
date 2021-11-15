@@ -329,8 +329,6 @@ status = method (
      	  Monomials => false
      	  })
 
-minimalBetti = method(Options => true)
-
 -- sort
 -- TODO: see sortBy in classes.m2
 -- cf. https://github.com/Macaulay2/M2/issues/1154
@@ -366,7 +364,6 @@ setupMethods(TypicalValue => List,
 
 length = method(TypicalValue => ZZ, Dispatch => Thing)
 codim = method( Options => true )
-regularity = method( TypicalValue => ZZ, Options => { Weights => null } )
 
 -- defined in d/actors4.d
 format' := format

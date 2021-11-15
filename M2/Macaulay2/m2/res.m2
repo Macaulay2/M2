@@ -26,14 +26,14 @@ spots := C -> select(keys C, i -> instance(i, ZZ))
 
 baseRing' := R -> ultimate(coefficientRing, R) -- Note: different from first R.baseRings
 
-resolutionLengthLimit := (R, lengthLimit) -> (
+resolutionLengthLimit = (R, lengthLimit) -> (
     if lengthLimit == infinity then (
 	A := baseRing' R;
 	nvars := # generators(R, CoefficientRing => A);
 	nvars + 1 + if A === ZZ then 1 else 0)
     else lengthLimit )
 
-resolutionDegreeLimit := (R, degreeLimit) -> (
+resolutionDegreeLimit = (R, degreeLimit) -> (
     degreeLimit = if degreeLimit =!= null      then  degreeLimit  else {};
     degreeLimit = if instance(degreeLimit, ZZ) then {degreeLimit} else degreeLimit;
     if #degreeLimit == degreeLength R and all(degreeLimit, d -> instance(d, ZZ))
@@ -465,6 +465,7 @@ getpairs  := g -> rawGBBetti(raw g, 1)
 remaining := g -> rawGBBetti(raw g, 2)
 nmonoms   := g -> rawGBBetti(raw g, 3)
 
+-- Note: this needs betti.m2
 status Resolution := opts -> r -> (
      r = raw r;
      b := new BettiTally;
