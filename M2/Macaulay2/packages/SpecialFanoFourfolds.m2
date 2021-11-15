@@ -1411,6 +1411,7 @@ surfaceDeterminingInverseOfFanoMap EmbeddedProjectiveVariety := o -> X -> (
             else error "unrecognized Strategy; available strategies are: \"DirectImage\", \"F4\", \"Interpolate\""
         )
     );
+    if recognize X === "FarkasVerra" then U = top U;
     (surface X).cache#("surfaceDeterminingInverseOfFanoMap",ideal X) = U
 );
 
@@ -1419,8 +1420,8 @@ exceptionalCurves EmbeddedProjectiveVariety := o -> X -> (
     NumLines := o#"NumberLines";
     if NumLines =!= infinity then if not(instance(NumLines,ZZ) and NumLines >= 0) then error "option NumberLines expects a nonnegative integer";
     if NumLines === infinity then (
-        if member(recognize X,{"quarticScrollSurface", "oneNodalSepticDelPezzoSurfaceC26", 3}) then NumLines = 0;
-        if member(recognize X,{"FarkasVerra", 17}) then NumLines = 1;
+        if member(recognize X,{"quarticScrollSurface", "oneNodalSepticDelPezzoSurfaceC26", "FarkasVerra", 3}) then NumLines = 0;
+        if recognize X === 17 then NumLines = 1;
         if recognize X === 1 then NumLines = 2;
         if recognize X === "october2021-26''" then NumLines = 4;
         if member(recognize X,{"quinticDelPezzoSurface", "C42"}) then NumLines = 5;
@@ -1461,7 +1462,7 @@ exceptionalCurves EmbeddedProjectiveVariety := o -> X -> (
     if degree((U*U')\L) =!= degree(U*U') - degree(L) then error "some exceptional line has multiplicity > 1";    
     if o.Verbose then <<"-- computing the top components of (U*U')\\{exceptional lines} via interpolation"<<endl;
     local C;
-    if member(recognize X,{"quarticScrollSurface", "FarkasVerra", "oneNodalSepticDelPezzoSurfaceC26", "C38Coble", "C42", 17, "october2021-26''"})
+    if member(recognize X,{"quarticScrollSurface", "oneNodalSepticDelPezzoSurfaceC26", "FarkasVerra", "C38Coble", "C42", 17, "october2021-26''"})
     then C = interpolateTop((U*U')\L,{2},Verbose=>o.Verbose,"Deep"=>2)
     else C = interpolateTop(2,(U*U')\L,Verbose=>o.Verbose,"Deep"=>3);
     U.cache#"exceptionalCurves" = (L%U,C%U)
@@ -2797,7 +2798,7 @@ Inputs => {"surface" => Array => {"an array of integers ",TT"[a,i,j,k,...]"," to
 Outputs => {SpecialGushelMukaiFourfold => {"a GM fourfold ",TEX///$X$///," containing the surface ",TEX///$\overline{\psi_{B}(S)}\subset\mathbb{G}(1,4)\subset\mathbb{P}^9$///,", where ",TEX///$B$///," is a scroll of the indicated type such that ",TEX///$C\subseteq S\cap B$///," and ",TEX///$\psi_{B}:\mathbb{P}^6\dashrightarrow\mathbb{G}(1,4)$///," is the birational map defined by ",TEX///$B$///}},
 PARA {"From the returned fourfold ",TEX///$X$///,", with the following commands we obtain the surface ",TEX///$S$///,", the curve ",TEX///$C$///,", and the scroll ",TEX///$B$///," used in the construction: "},PARA{TT///(B,C) = X.cache#"Construction"; S = ambientVariety C;///},PARA{"Then the surface ",TEX///$\overline{\psi_{B}(S)}\subset\mathbb{G}(1,4)$///," can be constructed with "},PARA{TT///psi = rationalMap B; (psi S)%(image psi);///},
 PARA {"In the following example we construct a GM fourfold containing the image via ",TEX///$\psi_B:\mathbb{P}^6\dashrightarrow\mathbb{G}(1,4)$///," of a quintic del Pezzo surface ",TEX///$S\subset\mathbb{P}^5\subset\mathbb{P}^6$///,", obtained as the image of the plane via the linear system of quartic curves with three general simple base points and two general double points, which cuts ",TEX///$B\simeq\mathbb{P}^1\times\mathbb{P}^2\subset\mathbb{P}^5\subset\mathbb{P}^6$///," along a rational normal quartic curve obtained as the image of a general conic passing through the two double points."},
-EXAMPLE lines ///X = specialGushelMukaiFourfold([4, 3, 2],[2, 0, 2],Verbose=>false);
+EXAMPLE lines ///X = specialGushelMukaiFourfold([4, 3, 2],[2, 0, 2]);
 describe X
 (B,C) = X.cache#"Construction";
 S = ambientVariety C;
