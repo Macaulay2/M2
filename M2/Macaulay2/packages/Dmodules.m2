@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage("Dmodules", 
-     Version => "1.4.0.1",
-     Date => "01/28/2011",
+     Version => "1.4.1.1",
+     Date => "01/31/2020",
      Headline => "D-modules",
      HomePage => "http://people.math.gatech.edu/~aleykin3/Dmodules",
      AuxiliaryFiles => true,
