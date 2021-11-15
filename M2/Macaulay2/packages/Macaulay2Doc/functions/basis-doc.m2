@@ -1,11 +1,6 @@
 doc ///
    Key
-     basis
-     [basis,Limit]
-     [basis,Variables]
-     [basis,SourceRing]
-     [basis,Degree]
-     [basis,Truncate]
+      basis
      (basis, Ideal)
      (basis, InfiniteNumber, InfiniteNumber, Ideal)
      (basis, InfiniteNumber, InfiniteNumber, Matrix)
@@ -49,20 +44,25 @@ doc ///
      (basis, ZZ, ZZ, Matrix)
      (basis, ZZ, ZZ, Module)
      (basis, ZZ, ZZ, Ring)
+     [basis, Degree]
+     [basis, Limit]
+     [basis, SourceRing]
+     [basis, Strategy]
+     [basis, Truncate]
+     [basis, Variables]
    Headline
      basis or generating set of all or part of a ring, ideal or module
    Usage
      f = basis M
-     f = basis(deg,M)
-     f = basis(lo,hi,M)
+     f = basis(deg, M)
+     f = basis(lo, hi, M)
    Inputs
-     M:Module
-       @ofClass{Ring,Ideal,Matrix}@
-     deg:ZZ
-       @ofClass{List}@, a degree or degree vector
-     lo:ZZ
+     M:{Module,Ring,Ideal,Matrix}
+     deg:{ZZ,List}
+       a degree or degree vector
+     lo:{ZZ,InfiniteNumber}
        or {\tt -infinity}, the low degree
-     hi:ZZ
+     hi:{ZZ,InfiniteNumber}
        or @TO infinity@, the high degree
      Limit=>ZZ
        an upper bound on the number of basis elements to collect
@@ -70,18 +70,17 @@ doc ///
        a list of variables, or variable indices (defaults to the generators of the ring of M)
      SourceRing=>Ring
        if not the ring (of) M, then returns a module map whose target and source have different rings
-     Degree=>List
-       or @ofClass ZZ@.  Sets the degree of the resulting matrix.  Default is 0.  Seldom Used
+     Strategy=>Thing
+       specifies the algorithm
+     Degree=>{ZZ,List}
+       sets the degree of the resulting matrix.  Default is 0.  Seldom Used
      Truncate=>Boolean
        internal use only.  Used to implement @TO "Truncations::truncate(ZZ,Module)"@
    Outputs
      f:Matrix
-       a map from a free module over the ring of {\tt M} (or by the ring specified with the {\tt SourceRing} option, if given),
-	       to {\tt M} which sends the
-	       basis elements of the free module to a basis (over the coefficient field) of the 
-	       specified part of {\tt M}
-       A matrix from a free module to $M$, whose columns generate
-       the desired part of the module, over the base ring.
+       a map from a free module over the ring of {\tt M} (or by the ring specified with the
+       {\tt SourceRing} option, if given), to {\tt M} which sends the basis elements of the
+       free module to a basis (over the coefficient field) of the specified part of {\tt M}
    Description
     Text
       The function {\tt basis} finds a basis or generating set of a module over a coefficient ring,
