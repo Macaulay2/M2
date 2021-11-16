@@ -20,6 +20,12 @@ FC = gfortran
 #    time make SIGN=no DEBUG=no CC=gcc-8 CXX=g++-8 FC=gfortran-8 DIRSUFF=-gcc8
 #############################################################################
 
+# to get the Python package working
+# for Mac OS X:
+# CONFIGOPTIONS += --with-python=2.7
+# LDFLAGS += $(shell python-config --libs)
+# can't get Py_DecodeLocale to be defined
+
 # We may distribute the result, so prevent aggressive optimizations based on the current architecture:
 CONFIGOPTIONS += --build=$(shell ../../config/config.guess)
 
