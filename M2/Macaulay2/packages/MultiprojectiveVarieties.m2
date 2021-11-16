@@ -1286,9 +1286,12 @@ multirationalMap MultiprojectiveVariety := X -> (
 
 ZZ _ MultiprojectiveVariety := (n,X) -> (
     if n == 0 then (
-        O := projectiveVariety(ideal(1_(ring ambient X)),MinimalGenerators=>true,Saturate=>false);
-        O#"dimVariety" = -1;
-        return O;
+        if not (ambient X).cache#?"emptySubscheme" then (
+            O := projectiveVariety(ideal(1_(ring ambient X)),MinimalGenerators=>true,Saturate=>false);
+            O#"dimVariety" = -1;
+            (ambient X).cache#"emptySubscheme" = O;
+        );
+        return (ambient X).cache#"emptySubscheme";
     );
     if n =!= 1 then error "expected integer to be 0 or 1"; 
     multirationalMap X
