@@ -1411,6 +1411,7 @@ surfaceDeterminingInverseOfFanoMap EmbeddedProjectiveVariety := o -> X -> (
             else error "unrecognized Strategy; available strategies are: \"DirectImage\", \"F4\", \"Interpolate\""
         )
     );
+    if member(recognize X,{"FarkasVerra", 1}) then U = top U;
     (surface X).cache#("surfaceDeterminingInverseOfFanoMap",ideal X) = U
 );
 
@@ -1419,8 +1420,8 @@ exceptionalCurves EmbeddedProjectiveVariety := o -> X -> (
     NumLines := o#"NumberLines";
     if NumLines =!= infinity then if not(instance(NumLines,ZZ) and NumLines >= 0) then error "option NumberLines expects a nonnegative integer";
     if NumLines === infinity then (
-        if member(recognize X,{"quarticScrollSurface", "oneNodalSepticDelPezzoSurfaceC26", 3}) then NumLines = 0;
-        if member(recognize X,{"FarkasVerra", 17}) then NumLines = 1;
+        if member(recognize X,{"quarticScrollSurface", "oneNodalSepticDelPezzoSurfaceC26", "FarkasVerra", 3}) then NumLines = 0;
+        if recognize X === 17 then NumLines = 1;
         if recognize X === 1 then NumLines = 2;
         if recognize X === "october2021-26''" then NumLines = 4;
         if member(recognize X,{"quinticDelPezzoSurface", "C42"}) then NumLines = 5;
@@ -1461,7 +1462,7 @@ exceptionalCurves EmbeddedProjectiveVariety := o -> X -> (
     if degree((U*U')\L) =!= degree(U*U') - degree(L) then error "some exceptional line has multiplicity > 1";    
     if o.Verbose then <<"-- computing the top components of (U*U')\\{exceptional lines} via interpolation"<<endl;
     local C;
-    if member(recognize X,{"quarticScrollSurface", "FarkasVerra", "oneNodalSepticDelPezzoSurfaceC26", "C38Coble", "C42", 17, "october2021-26''"})
+    if member(recognize X,{"quarticScrollSurface", "oneNodalSepticDelPezzoSurfaceC26", "FarkasVerra", "C38Coble", "C42", 17, "october2021-26''"})
     then C = interpolateTop((U*U')\L,{2},Verbose=>o.Verbose,"Deep"=>2)
     else C = interpolateTop(2,(U*U')\L,Verbose=>o.Verbose,"Deep"=>3);
     U.cache#"exceptionalCurves" = (L%U,C%U)
@@ -1478,11 +1479,11 @@ associatedK3surface SpecialGushelMukaiFourfold := associatedK3surface SpecialCub
     if U.cache#?"MapToMinimalK3Surface" then return (mu,U,{L,C},U.cache#"MapToMinimalK3Surface");
     genK3 := lift((discriminant(X)+2)/2,ZZ);
     f := null; H := random(1,0_U);
-    if member(recognize X,{"NotRecognized", "FarkasVerra", "oneNodalSepticDelPezzoSurfaceC26", 1}) then (
+    if member(recognize X,{"NotRecognized", "FarkasVerra", "oneNodalSepticDelPezzoSurfaceC26"}) then (
         if o.Verbose then <<"-- skipping computation of the map f from U to the minimal K3 surface of degree "<<discriminant X<<endl;
     ) else if recognize X === 3 then (
         if o.Verbose then <<"-- computing the normalization of U"<<endl;
-        normU := normalization(U,Verbose=>o.Verbose);
+        normU := normalization(U,Verbose=>false);
         if o.Verbose then <<"-- inverting the normalization of U"<<endl;
         f = multirationalMap super inverse3 normU;
     ) else if recognize X === 17 then (
@@ -1491,6 +1492,14 @@ associatedK3surface SpecialGushelMukaiFourfold := associatedK3surface SpecialCub
         if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree "<<discriminant X<<endl;
         f1 := mapDefinedByDivisor(target f0,{(f0 (H*U),1),(f0 (3*C),1),(f0 L,1)});        
         f = f0 * f1;
+    ) else if recognize X === 1 then (
+        if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree "<<discriminant X<<endl;
+        f = mapDefinedByDivisor(U,{(H,1),(L,1),(C,degree C)});
+        if char coefficientRing X <= 65521 then image(f,"F4");
+        f = rationalMap(f,Dominant=>true);
+        if o.Verbose then <<"-- computing normalization of the surface image"<<endl;
+        f = multirationalMap super toRationalMap(f * inverse3 normalization(target f,Verbose=>false));
+        if f#"image" === null then error "something went wrong";
     ) else (
         if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree "<<discriminant X<<endl;    
         m := degree C;
@@ -1506,7 +1515,7 @@ associatedK3surface SpecialGushelMukaiFourfold := associatedK3surface SpecialCub
             if o.Verbose then <<"-- computing the image of f via interpolation"<<endl;
             interpolateImage(f,toList(binomial(genK3-2,2) : 2),2,Verbose=>o.Verbose);
         ) else image f;
-        if not f#?"image" then error "something went wrong";
+        if f#"image" === null then error "something went wrong";
         if degrees image f =!= {({2},binomial(genK3-2,2))} then error "the degrees for the generators of the ideal of the K3 surface are not as expected";
         U.cache#"MapToMinimalK3Surface" = f;
     );
@@ -2797,7 +2806,7 @@ Inputs => {"surface" => Array => {"an array of integers ",TT"[a,i,j,k,...]"," to
 Outputs => {SpecialGushelMukaiFourfold => {"a GM fourfold ",TEX///$X$///," containing the surface ",TEX///$\overline{\psi_{B}(S)}\subset\mathbb{G}(1,4)\subset\mathbb{P}^9$///,", where ",TEX///$B$///," is a scroll of the indicated type such that ",TEX///$C\subseteq S\cap B$///," and ",TEX///$\psi_{B}:\mathbb{P}^6\dashrightarrow\mathbb{G}(1,4)$///," is the birational map defined by ",TEX///$B$///}},
 PARA {"From the returned fourfold ",TEX///$X$///,", with the following commands we obtain the surface ",TEX///$S$///,", the curve ",TEX///$C$///,", and the scroll ",TEX///$B$///," used in the construction: "},PARA{TT///(B,C) = X.cache#"Construction"; S = ambientVariety C;///},PARA{"Then the surface ",TEX///$\overline{\psi_{B}(S)}\subset\mathbb{G}(1,4)$///," can be constructed with "},PARA{TT///psi = rationalMap B; (psi S)%(image psi);///},
 PARA {"In the following example we construct a GM fourfold containing the image via ",TEX///$\psi_B:\mathbb{P}^6\dashrightarrow\mathbb{G}(1,4)$///," of a quintic del Pezzo surface ",TEX///$S\subset\mathbb{P}^5\subset\mathbb{P}^6$///,", obtained as the image of the plane via the linear system of quartic curves with three general simple base points and two general double points, which cuts ",TEX///$B\simeq\mathbb{P}^1\times\mathbb{P}^2\subset\mathbb{P}^5\subset\mathbb{P}^6$///," along a rational normal quartic curve obtained as the image of a general conic passing through the two double points."},
-EXAMPLE lines ///X = specialGushelMukaiFourfold([4, 3, 2],[2, 0, 2],Verbose=>false);
+EXAMPLE lines ///X = specialGushelMukaiFourfold([4, 3, 2],[2, 0, 2]);
 describe X
 (B,C) = X.cache#"Construction";
 S = ambientVariety C;
