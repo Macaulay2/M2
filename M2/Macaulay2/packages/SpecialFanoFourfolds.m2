@@ -1411,7 +1411,7 @@ surfaceDeterminingInverseOfFanoMap EmbeddedProjectiveVariety := o -> X -> (
             else error "unrecognized Strategy; available strategies are: \"DirectImage\", \"F4\", \"Interpolate\""
         )
     );
-    if recognize X === "FarkasVerra" then U = top U;
+    if member(recognize X,{"FarkasVerra", 1}) then U = top U;
     (surface X).cache#("surfaceDeterminingInverseOfFanoMap",ideal X) = U
 );
 
@@ -1479,11 +1479,11 @@ associatedK3surface SpecialGushelMukaiFourfold := associatedK3surface SpecialCub
     if U.cache#?"MapToMinimalK3Surface" then return (mu,U,{L,C},U.cache#"MapToMinimalK3Surface");
     genK3 := lift((discriminant(X)+2)/2,ZZ);
     f := null; H := random(1,0_U);
-    if member(recognize X,{"NotRecognized", "FarkasVerra", "oneNodalSepticDelPezzoSurfaceC26", 1}) then (
+    if member(recognize X,{"NotRecognized", "FarkasVerra", "oneNodalSepticDelPezzoSurfaceC26"}) then (
         if o.Verbose then <<"-- skipping computation of the map f from U to the minimal K3 surface of degree "<<discriminant X<<endl;
     ) else if recognize X === 3 then (
         if o.Verbose then <<"-- computing the normalization of U"<<endl;
-        normU := normalization(U,Verbose=>o.Verbose);
+        normU := normalization(U,Verbose=>false);
         if o.Verbose then <<"-- inverting the normalization of U"<<endl;
         f = multirationalMap super inverse3 normU;
     ) else if recognize X === 17 then (
@@ -1492,6 +1492,14 @@ associatedK3surface SpecialGushelMukaiFourfold := associatedK3surface SpecialCub
         if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree "<<discriminant X<<endl;
         f1 := mapDefinedByDivisor(target f0,{(f0 (H*U),1),(f0 (3*C),1),(f0 L,1)});        
         f = f0 * f1;
+    ) else if recognize X === 1 then (
+        if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree "<<discriminant X<<endl;
+        f = mapDefinedByDivisor(U,{(H,1),(L,1),(C,degree C)});
+        if char coefficientRing X <= 65521 then image(f,"F4");
+        f = rationalMap(f,Dominant=>true);
+        if o.Verbose then <<"-- computing normalization of the surface image"<<endl;
+        f = multirationalMap super toRationalMap(f * inverse3 normalization(target f,Verbose=>false));
+        if f#"image" === null then error "something went wrong";
     ) else (
         if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree "<<discriminant X<<endl;    
         m := degree C;
@@ -1507,7 +1515,7 @@ associatedK3surface SpecialGushelMukaiFourfold := associatedK3surface SpecialCub
             if o.Verbose then <<"-- computing the image of f via interpolation"<<endl;
             interpolateImage(f,toList(binomial(genK3-2,2) : 2),2,Verbose=>o.Verbose);
         ) else image f;
-        if not f#?"image" then error "something went wrong";
+        if f#"image" === null then error "something went wrong";
         if degrees image f =!= {({2},binomial(genK3-2,2))} then error "the degrees for the generators of the ideal of the K3 surface are not as expected";
         U.cache#"MapToMinimalK3Surface" = f;
     );
