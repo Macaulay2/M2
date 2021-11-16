@@ -3,10 +3,10 @@
 -- ideals, of regularity 4.
 
 newPackage(
-    "QuatenaryQuartics",
+    "QuaternaryQuartics",
     Version => "0.99",
     Date => "11 Nov 2021",
-    Headline => "code to support the paper 'Quatenary Quartic Forms and Gorenstein Rings'",
+    Headline => "code to support the paper 'Quaternary Quartic Forms and Gorenstein Rings'",
     Authors => {
         {Name => "Gregorz Kapustka"},
         {Name => "Michal Kapustka"},
@@ -262,26 +262,26 @@ smallerBettiTables BettiTally := (B) -> (
 -* Documentation section *-
 beginDocumentation()
 
-load "./QuatenaryQuartics/Section1Doc.m2"
-load "./QuatenaryQuartics/Section2Doc.m2"
-load "./QuatenaryQuartics/Section3Doc.m2"
-load "./QuatenaryQuartics/Section4Doc.m2"
-load "./QuatenaryQuartics/Section5Doc.m2"
-load "./QuatenaryQuartics/Section6Doc.m2"
-load "./QuatenaryQuartics/Section7Doc.m2"
-load "./QuatenaryQuartics/Section8Doc.m2"
-load "./QuatenaryQuartics/Section9Doc.m2"
-load "./QuatenaryQuartics/Appendix2.m2"
+load "./QuaternaryQuartics/Section1Doc.m2"
+load "./QuaternaryQuartics/Section2Doc.m2"
+load "./QuaternaryQuartics/Section3Doc.m2"
+load "./QuaternaryQuartics/Section4Doc.m2"
+load "./QuaternaryQuartics/Section5Doc.m2"
+load "./QuaternaryQuartics/Section6Doc.m2"
+load "./QuaternaryQuartics/Section7Doc.m2"
+load "./QuaternaryQuartics/Section8Doc.m2"
+load "./QuaternaryQuartics/Section9Doc.m2"
+load "./QuaternaryQuartics/Appendix2.m2"
 
 doc ///
     Key
-        QuatenaryQuartics
+        QuaternaryQuartics
     Headline
         code to support the paper 'Quaternary Quartic Forms and Gorenstein Rings'
     Description
         Text
             This package contains code and examples for the paper @TO "[QQ]"@
-            {\it Quatenary Quartic Forms and Gorenstein Rings},
+            {\it Quaternary Quartic Forms and Gorenstein Rings},
             by Grzegorz Kapustka,
             Michal Kapustka, Kristian Ranestad, Hal Schenck, Mike
             Stillman and Beihui Yuan, referenced below.
@@ -369,7 +369,7 @@ doc ///
           }@
 
     References
-        @TO "[QQ]"@ {\it Quatenary Quartic Forms and Gorenstein Rings},
+        @TO "[QQ]"@ {\it Quaternary Quartic Forms and Gorenstein Rings},
             by Grzegorz Kapustka,
             Michal Kapustka, Kristian Ranestad, Hal Schenck, Mike
             Stillman and Beihui Yuan. (arxiv:2111.05817) 2021.
@@ -380,10 +380,10 @@ doc ///
     Key
         "[QQ]"
     Headline
-        Quatenary Quartic Forms and Gorenstein rings (Kapustka, Kapustka, Ranestad, Schenck, Stillman, Yuan, 2021)
+        Quaternary Quartic Forms and Gorenstein rings (Kapustka, Kapustka, Ranestad, Schenck, Stillman, Yuan, 2021)
     Description
         Text
-            [QQ] @arXiv("2111.05817", "Quatenary Quartic Forms and Gorenstein Rings")@
+            [QQ] @arXiv("2111.05817", "Quaternary Quartic Forms and Gorenstein Rings")@
             by Grzegorz Kapustka,
             Michal Kapustka, Kristian Ranestad, Hal Schenck, Mike
             Stillman and Beihui Yuan, 2021.
@@ -947,7 +947,7 @@ doc ///
 TEST ///
 -*
   restart
-  needsPackage "QuatenaryQuartics"
+  needsPackage "QuaternaryQuartics"
 *-
   S = ZZ/101[a..d]
   M = randomPoints(S, 7)
@@ -1064,14 +1064,14 @@ end--
 
 -* Development section *-
 restart
-debug needsPackage "QuatenaryQuartics"
-check "QuatenaryQuartics"
+debug needsPackage "QuaternaryQuartics"
+check "QuaternaryQuartics"
 
 restart
 installPackage "GroebnerStrata"
-uninstallPackage "QuatenaryQuartics"
+uninstallPackage "QuaternaryQuartics"
 restart
-installPackage "QuatenaryQuartics"
-viewHelp "QuatenaryQuartics"
-check QuatenaryQuartics
+installPackage "QuaternaryQuartics"
+viewHelp "QuaternaryQuartics"
+check QuaternaryQuartics
 
