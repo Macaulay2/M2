@@ -256,7 +256,7 @@ Additionally, build targets are available for a few programs which are not built
 [CSDP]: https://github.com/coin-or/Csdp/wiki
 [Gfan]: https://users-math.au.dk/~jensen/software/gfan/gfan.html
 [Normaliz]: https://www.normaliz.uni-osnabrueck.de/
-[TOPCOM]: http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
+[TOPCOM]: https://www.wm.uni-bayreuth.de/de/team/rambau_joerg/TOPCOM/
 [cohomCalg]: https://github.com/BenjaminJurke/cohomCalg
 [lrs]: http://cgm.cs.mcgill.ca/~avis/C/lrs.html
 [nauty]: http://pallini.di.uniroma1.it/
