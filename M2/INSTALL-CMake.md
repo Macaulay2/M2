@@ -149,7 +149,7 @@ For a complete list, along with descriptions, try `cmake -LAH .` or see `cmake/c
 - `PROFILING:BOOL=OFF`: enable profiling build flags
 - `USING_MPIR:BOOL=OFF`: use MPIR instead of GMP
 - `WITH_OMP:BOOL=OFF`: link with the OpenMP library
-- `WITH_PYTHON:BOOL=OFF`: link with the Python library
+- `WITH_PYTHON:BOOL=OFF`: link with the Python library (set to `ON` to use the `Python` package)
 - `WITH_SQL:BOOL=OFF`: link with the MySQL library
 - `WITH_XML:BOOL=ON`: link with the libxml2 library
 - `BUILD_DOCS:BOOL=OFF`: build internal documentation
