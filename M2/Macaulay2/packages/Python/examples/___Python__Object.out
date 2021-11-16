@@ -1,0 +1,53 @@
+-- -*- M2-comint -*- hash: 69153162
+
+i1 : x = rs "5"
+
+o1 = 5
+
+o1 : PythonObject of class int
+
+i2 : y = rs "2"
+
+o2 = 2
+
+o2 : PythonObject of class int
+
+i3 : x + y
+
+o3 = 7
+
+o3 : PythonObject of class int
+
+i4 : x - y
+
+o4 = 3
+
+o4 : PythonObject of class int
+
+i5 : x * y
+
+o5 = 10
+
+o5 : PythonObject of class int
+
+i6 : x / y
+
+o6 = 2.5
+
+o6 : PythonObject of class float
+
+i7 : x > y
+
+o7 = true
+
+i8 : x == y
+
+o8 = false
+
+i9 : x + 2
+
+o9 = 7
+
+o9 : PythonObject of class int
+
+i10 : 

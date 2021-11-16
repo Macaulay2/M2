@@ -1,0 +1,11 @@
+-- -*- M2-comint -*- hash: -136132636
+
+i1 : length rs "'Hello, world!'"
+
+o1 = 13
+
+i2 : length rs "[1,2,3,4,5]"
+
+o2 = 5
+
+i3 : 
