@@ -67,7 +67,7 @@ doc ///
       
       We find that there is exactly one more singular point, and that it is of multiplicity 2.
     CannedExample
-      needsPackage "FastLinAlg"
+      needsPackage "FastMinors" -- "FastLinAlg" in versions of M2 before 1.19
       setRandomSeed 500
       elapsedTime chooseGoodMinors(200, 4, J);
       J1 = cy + oo;
