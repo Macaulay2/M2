@@ -100,7 +100,6 @@ document {
      }
 
 undocumented { 
-     (texMath,BettiTally),
      (toExternalString,RingElement), (toExternalString,RingMap),
      (symbol ==, Constant, RingElement),
      (symbol ==, RingElement, Constant),

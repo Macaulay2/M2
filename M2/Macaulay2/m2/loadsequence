@@ -63,6 +63,7 @@ matrix2.m2
 galois.m2
 ringmap.m2
 newring.m2
+basis.m2
 genmat.m2
 pushforward.m2
 ext.m2
@@ -70,6 +71,7 @@ tor.m2
 gradedmodules.m2
 chaincomplexes.m2
 res.m2
+betti.m2
 monideal.m2
 intersect.m2
 factor.m2
