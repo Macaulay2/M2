@@ -56,40 +56,37 @@ document {
 		    }
 	       },
  	  LI { "improved packages:",
-	      UL {
-        		LI { "The package ", TO "Truncations", " has been improved to support modules over the Cox rings of simplicial ", TO2 {"NormalToricVarieties", "normal toric varieties"}, "." }
-		       }
-	      },
+	       UL {
+		    LI { "The package ", TO "Truncations", " has been improved to support modules over the Cox rings of simplicial ", TO2 {"NormalToricVarieties", "normal toric varieties"}, "." },
+		    LI { "The package ", TO "MonodromySolver::MonodromySolver", " includes several new convenience functions for manipulating systems and creating seed pairs."}
+		    }
+	       },
 	  LI { "packages that have been published and certified:",
 	       UL {
 		    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
 		    LI { star, " ", TO "DecomposableSparseSystems::DecomposableSparseSystems", ", a package by 
-		       	 Taylor Brysiewicz, Jose Israel Rodriguez, Frank Sottile, and Thomas Yahl for solving decomposable sparse systems, has been published." },
-		  	 LI { star, " ", TO "SparseResultants::SparseResultants", ", a package by Giovanni Staglianò for computations with sparse resultants, has been published." },
-		  	 LI { star, " ", TO "ExteriorModules::ExteriorModules", ", a package by Luca Amata and Marilena Crupi for monomial modules over exterior algebras, has been published." }     
-		  	 }
-	     	    },
-	       LI { "packages that have been renamed:",
-	     	    UL {
-		  	 LI { "The package ", TT "FastLinAlg", " has been renamed to ", TO "FastMinors::FastMinors", "." },
-		  	 LI { "The package ", TT "RandomRationalPoints", " has been renamed to ", TO "RandomPoints::RandomPoints", "." }			    
-		  	 }
-	     	    },
-	       LI { "improved packages:",
-	    	    UL {
-		     	 LI { "The package ", TO "MonodromySolver::MonodromySolver", " includes several new convenience functions for manipulating systems and creating seed pairs."}
-			 }
-	    	    },
-	       LI { "functionality added:",
-	    	    UL {
-			 LI { "Integers may now be entered using the binary, octal, and hexadecimal numeral systems with the prefixes \"0b\", \"0o\", and \"0x\", respectively."},
-			 LI { "A new binary operator, ", TO2 {(symbol ^^, ZZ, ZZ), "^^"}, ", has been added for computing the bitwise XOR of two integers.  This replaces the \"xor\" method."},
-			 LI { "A new keyword, ", TO2 {(symbol xor, Boolean, Boolean), "xor"}, ", has been added for finding the logical XOR of two boolean objects."},
-			 LI { "The function ", TO printerr, ", for printing warning messages and logs to ", TO stderr, ", is now exported."}
-			 }
-	    	    }
-       	       }
-  	  }
+		       	 Taylor Brysiewicz, Jose Israel Rodriguez, Frank Sottile, and Thomas Yahl for solving decomposable sparse systems, has been published." 
+			 },
+		    LI { star, " ", TO "SparseResultants::SparseResultants", ", a package by Giovanni Staglianò for computations with sparse resultants, has been published." },
+		    LI { star, " ", TO "ExteriorModules::ExteriorModules", ", a package by Luca Amata and Marilena Crupi for monomial modules over exterior algebras, has been published." }     
+		    }
+	       },
+	  LI { "packages that have been renamed:",
+	       UL {
+		    LI { "The package ", TT "FastLinAlg", " has been renamed to ", TO "FastMinors::FastMinors", "." },
+		    LI { "The package ", TT "RandomRationalPoints", " has been renamed to ", TO "RandomPoints::RandomPoints", "." }			    
+		    }
+	       },
+	  LI { "functionality added:",
+	       UL {
+		    LI { "Integers may now be entered using the binary, octal, and hexadecimal numeral systems with the prefixes \"0b\", \"0o\", and \"0x\", respectively."},
+		    LI { "A new binary operator, ", TO2 {(symbol ^^, ZZ, ZZ), "^^"}, ", has been added for computing the bitwise XOR of two integers.  This replaces the \"xor\" method."},
+		    LI { "A new keyword, ", TO2 {(symbol xor, Boolean, Boolean), "xor"}, ", has been added for finding the logical XOR of two boolean objects."},
+		    LI { "The function ", TO printerr, ", for printing warning messages and logs to ", TO stderr, ", is now exported."}
+		    }
+	       }
+	  }
+     }
 
 document {
      Key => "changes, 1.18",
