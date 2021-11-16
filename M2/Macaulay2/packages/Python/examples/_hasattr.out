@@ -1,0 +1,17 @@
+-- -*- M2-comint -*- hash: 1419129866
+
+i1 : foo = rs "'Hello, world!'"
+
+o1 = Hello, world!
+
+o1 : PythonObject of class str
+
+i2 : hasattr(foo, "upper")
+
+o2 = true
+
+i3 : hasattr(foo, "bar")
+
+o3 = false
+
+i4 : 

@@ -1,0 +1,9 @@
+-- -*- M2-comint -*- hash: -99396530
+
+i1 : rs "2 + 2"
+
+o1 = 4
+
+o1 : PythonObject of class int
+
+i2 : 

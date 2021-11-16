@@ -1,0 +1,39 @@
+-- -*- M2-comint -*- hash: -256566628
+
+i1 : x = rs "[1,2,3,4]"
+
+o1 = [1, 2, 3, 4]
+
+o1 : PythonObject of class list
+
+i2 : getitem(x, 0)
+
+o2 = 1
+
+o2 : PythonObject of class int
+
+i3 : x_1
+
+o3 = 2
+
+o3 : PythonObject of class int
+
+i4 : x = rs "{'spam':1,'eggs':2}"
+
+o4 = {'spam': 1, 'eggs': 2}
+
+o4 : PythonObject of class dict
+
+i5 : getitem(x, "spam")
+
+o5 = 1
+
+o5 : PythonObject of class int
+
+i6 : x_"eggs"
+
+o6 = 2
+
+o6 : PythonObject of class int
+
+i7 : 
