@@ -175,6 +175,8 @@ rotate(ZZ,VisibleList) := (n,s) -> (
 sort List :=  opts -> internalsort
 rsort List := opts -> internalrsort
 
+List << List := (A, B) -> all(min(#A, #B), i -> A#i <= B#i)
+
 -- we've been waiting to do this:
 binaryOperators = sort binaryOperators
 prefixOperators = sort prefixOperators

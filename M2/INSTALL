@@ -343,6 +343,24 @@ following:
     Everything needed to build Macaulay2 will be included.
 
 -----------------------
+Building with Python support
+-----------------------
+
+The "Python" package embeds a Python interpreter inside Macaulay2.  For this
+to work, the Macaulay2 binary needs to be linked against the Python shared
+library.  To do this, add the option "--with-python" to the "configure" command
+line below.  Optionally, you may specify the Python version, e.g.,
+"--with-python=3.10".  Otherwise, the system's default version is used.
+
+Make sure that Python header files and shared library are available on your
+system. On Debian/Ubuntu systems, do this by running "apt install python3-dev".
+
+If the Python shared library is not in a standard location, then add its path
+to LDFLAGS.  For example, if Python has been installed using brew, then add
+the following to LDFLAGS, replacing X with the appropriate minor version:
+"-L`brew --prefix python`/Frameworks/Python.framework/Versions/3.X/lib".
+
+-----------------------
 Compiling Macaulay2
 -----------------------
 

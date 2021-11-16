@@ -196,8 +196,8 @@ makeDocumentTag String      := opts -> key -> (
 -- correct its package, if it is incorrect (e.g. truncate, quotient)
 -- TODO: can this be modified to fix the tag in-place? then we would only need to
 -- fix the tag in (validate, TO), rather than also in (info, TO) and (html, TO).
-fixup DocumentTag := DocumentTag => tag -> makeDocumentTag(
-    if instance(key := tag.Key, String) then return tag else key, Package => package key)
+fixup DocumentTag := DocumentTag => tag -> (
+    if (rawdoc := fetchAnyRawDocumentation tag) =!= null then rawdoc.DocumentTag else tag)
 
 -----------------------------------------------------------------------------
 -- formatting document tags

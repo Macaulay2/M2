@@ -15,7 +15,21 @@ newPackage(
         Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
 	Keywords => {"Commutative Algebra"},
         PackageExports => {"Resultants"},
-        DebuggingMode => false
+        DebuggingMode => false,
+	Certification => {
+	     "journal name" => "The Journal of Software for Algebra and Geometry",
+	     "journal URI" => "http://j-sag.org/",
+	     "article title" => "A package for computations with sparse resultants",
+	     "acceptance date" => "5 May 2021",
+	     "published article URI" => "https://msp.org/jsag/2021/11-1/p07.xhtml",
+	     "published article DOI" => "10.2140/jsag.2021.11.61",
+	     "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x07-SparseResultants.m2",
+	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/SparseResultants.m2",
+	     "release at publication" => "4b0b826f08857b22cf17aebf9c56257ff44d8946",	    -- git commit number in hex
+	     "version at publication" => "1.1",
+	     "volume number" => "11",
+	     "volume URI" => "https://msp.org/jsag/2021/11-1/"
+	     }
 )
 
 export{"sparseResultant", "SparseResultant", "sparseDiscriminant", "SparseDiscriminant",

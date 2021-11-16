@@ -7,6 +7,7 @@
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
+#include "error.h"           // for ERROR
 
 class RingMap;
 
@@ -162,17 +163,22 @@ class ARingZZpFlint : public RingInterface
 
   void divide(ElementType &result, ElementType a, ElementType b) const
   {
-    assert(b != 0);
+    //    assert(b != 0);
+    if (b == 0) ERROR("division by zero");
     result = nmod_div(a, b, mModulus);
   }
 
   void power(ElementType &result, ElementType a, long n) const
   {
+    //    assert(a != 0 || n>=0 );
+    if (a==0 && n<0) ERROR("division by zero");
     result = n_powmod2_preinv(a, n, mModulus.n, mModulus.ninv);
   }
 
   void power_mpz(ElementType &result, ElementType a, mpz_srcptr n) const
   {
+    //    assert( a != 0 || mpz_sgn(n)>=0);
+    if (a==0 && mpz_sgn(n)<0) ERROR("division by zero");
     unsigned long nbar = mpz_fdiv_ui(n, mCharac - 1);
     result = n_powmod2_ui_preinv(a, nbar, mModulus.n, mModulus.ninv);
   }

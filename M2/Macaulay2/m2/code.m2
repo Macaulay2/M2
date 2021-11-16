@@ -5,6 +5,7 @@ needs "gateway.m2"
 needs "lists.m2"
 needs "methods.m2"
 needs "nets.m2"
+needs "packages.m2"
 
 -----------------------------------------------------------------------------
 -- code
@@ -171,6 +172,8 @@ methods Thing  := F -> (
     if nullaryMethods#?(1:F) then found#(1:F) = true;
     searchAllDictionaries(Type, T -> scan(thingMethods(T, F), key -> found#key = true));
     previousMethodsFound = new NumberedVerticalList from sortByName keys found)
+
+methods Package := P -> select(methods(), m -> package m === P)
 
 -- this one is here because it needs previousMethodsFound
 options ZZ := i -> options previousMethodsFound#i

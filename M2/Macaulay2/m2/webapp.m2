@@ -7,7 +7,7 @@ needs "varieties.m2"
 
 -- topLevelMode=WebApp definitions
 -- tags are required to help the browser app distinguish html from text
-webAppTags := apply((17,18,19,20,28,29,30,(17,36),(36,18)),ascii);
+webAppTags := apply((17,18,19,20,28,29,30,14,(17,36),(36,18)),ascii);
     (	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
 	webAppEndTag,         -- closing tag ~ </span>
 	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
@@ -15,6 +15,7 @@ webAppTags := apply((17,18,19,20,28,29,30,(17,36),(36,18)),ascii);
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
 	webAppUrlTag,         -- used internally to follow URLs
+	webAppPromptTag,      -- input prompt
 	webAppTexTag,         -- effectively deprecated, ~ <span class='M2Html'> $
 	webAppTexEndTag       -- effectively deprecated, ~ $ </span>
 	)=webAppTags;
@@ -26,8 +27,10 @@ webAppTagsRegex := concatenate("[",drop(webAppTags,-2),"]")
 ZZ#{WebApp,InputPrompt} = lineno -> concatenate(
     webAppCellEndTag, -- close previous cell
     webAppCellTag,
+    webAppPromptTag,
     interpreterDepth:"i",
     toString lineno,
+    webAppEndTag,
     " : ",
     webAppInputTag)
 
@@ -37,18 +40,17 @@ Thing#{WebApp,BeforePrint} = identity
 
 Nothing#{WebApp,Print} = identity
 
+on := () -> concatenate(webAppPromptTag,interpreterDepth:"o", toString lineNumber,webAppEndTag)
+
 Thing#{WebApp,Print} = x -> (
-    oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
     y := html x; -- we compute the html now (in case it produces an error)
     if class y =!= String then error "invalid html output";
-    << endl << oprompt | webAppHtmlTag | y | webAppEndTag << endl;
+    << endl << on() | " = " | webAppHtmlTag | y | webAppEndTag << endl;
     )
 
 InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Print} x )
 
 -- afterprint
-
-on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 htmlAfterPrint :=  x -> (
     if class x === Sequence then x = RowExpression deepSplice { x };
@@ -83,15 +85,14 @@ Module#{WebApp,AfterPrint} = M -> htmlAfterPrint(
 	)
     )
 
-Matrix#{WebApp,AfterPrint} = Matrix#{WebApp,AfterNoPrint} = f -> htmlAfterPrint (Matrix, if isFreeModule target f and isFreeModule source f then (" ", new MapExpression from {target f,source f}))
-
 Net#{WebApp,AfterPrint} = identity
 
 Nothing#{WebApp,AfterPrint} = identity
 
-RingMap#{WebApp,AfterPrint} = RingMap#{WebApp,AfterNoPrint} = f -> htmlAfterPrint (class f," ",new MapExpression from {target f,source f})
+Matrix#{WebApp,AfterPrint} = Matrix#{WebApp,AfterNoPrint} =
+RingMap#{WebApp,AfterPrint} = RingMap#{WebApp,AfterNoPrint} = f -> htmlAfterPrint (class f, " ", new MapExpression from {target f,source f})
 
-Sequence#{WebApp,AfterPrint} = Sequence#{WebApp,AfterNoPrint} = identity
+--Sequence#{WebApp,AfterPrint} = Sequence#{WebApp,AfterNoPrint} = identity
 
 CoherentSheaf#{WebApp,AfterPrint} = F -> (
      X := variety F;
@@ -121,11 +122,13 @@ if topLevelMode === WebApp then (
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
 	y := html x; -- we compute the html now (in case it produces an error)
+	if class y =!= String then error "invalid html output";
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
     -- the show hack
     showURL := lookup(show,URL);
     show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
+    EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> show URL concatenate("#editor:",filename,":",toString start,":",toString startcol,"-",toString stop,":",toString stopcol))x;
     -- redefine htmlLiteral to exclude codes
     htmlLiteral = (s -> if s===null then null else replace(webAppTagsRegex,"",s)) @@ htmlLiteral;
     )

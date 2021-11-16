@@ -204,10 +204,8 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
     -- types
     b := select(e, x -> instance(value x, Type));
     -- methods
-    -- TODO: if a package introduces a methods where all components are from
-    -- another package, e.g. (res, List), this code will miss it.
     -- TODO: should we limit to methods that have individual documentation? Probably not
-    m := unique select(flatten \\ documentableMethods \ value \ toList e, x -> package x === pkg);
+    m := documentableMethods pkg;
     -- symbols
     c := select(e, x -> instance(value x, Symbol));
     -- other things
@@ -253,7 +251,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 		    HREF { if installLayout =!= null then installLayout#"packages" | pkg#"pkgname" | "/" else pkg#"auxiliary files", pkg#"pkgname" | "/" }, ".")
 		}
 	    },
-	if #e > 0 then DIV {
+	if pkg#"pkgname" =!= "Macaulay2Doc" and #e + #m > 0 then DIV {
 	    SUBSECTION "Exports",
 	    DIV { "class" => "exports",
 		fixup UL {
@@ -357,6 +355,7 @@ getDescription := (key, tag, rawdoc) -> (
 
 -- This is the overall template of a documentation page
 -- for specialized templates, see documentationValue above
+-- TODO: allow customizing the template for different output methods
 getBody := (key, tag, rawdoc) -> (
     currentHelpTag = tag;
     result := fixup DIV nonnull splice (
@@ -387,37 +386,18 @@ getBody := (key, tag, rawdoc) -> (
 
 -- TODO: help symbol% before Macaulay2Doc is installed doesn't work
 help = method(Dispatch => Thing)
--- overview nodes and formatted documentation keys
-help String := key -> (
-    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    tag := getOption(rawdoc, symbol DocumentTag);
-    if tag.?Key and tag.Key =!= key then help tag.Key
-    else if      isGlobalSymbol key then help getGlobalSymbol key
-    else getBody(key, tag, rawdoc))
+help DocumentTag := tag -> (
+    rawdoc := fetchAnyRawDocumentation tag;
+    tag = if rawdoc =!= null then rawdoc.DocumentTag else tag;
+    getBody(tag.Key, tag, rawdoc))
 
--- Methods
 help Sequence := key -> (
-    if key === () then return if inDebugger then debuggerUsageMessage else help "initial help";
-    -- TODO: make this work with hook strategies; e.g. (foo, ZZ, Strategy => Default)
-    if lookup key === null then error("expected ", toString key, " to be a method");
-    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    tag := getOption(rawdoc, symbol DocumentTag);
-    getBody(key, tag, rawdoc))
+    if key =!= () then help makeDocumentTag key else
+    if inDebugger then debuggerUsageMessage else help "initial help")
 
--- Options
-help Array := key -> (
-    verifyKey key;
-    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    tag := getOption(rawdoc, symbol DocumentTag);
-    getBody(key, tag, rawdoc))
-
--- everything else: Symbols, Types, ScriptedFunctors, Functions, Keywords, and Packages
-help Symbol := key -> (
-    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    tag := getOption(rawdoc, symbol DocumentTag);
-    getBody(key, tag, rawdoc))
-
-help DocumentTag := tag -> help tag.Key
+help String :=
+help Symbol :=
+help Array :=
 help Thing := x -> help makeDocumentTag x
 help List  := l -> DIV between(HR{}, help \ l)
 help ZZ    := i -> seeAbout(help, i)
