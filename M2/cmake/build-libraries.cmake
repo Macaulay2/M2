@@ -295,13 +295,17 @@ ExternalProject_Add(build-mpfr
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
+if(NOT MPFR_ROOT)
+  set(MPFR_ROOT ${M2_HOST_PREFIX})
+endif()
 set(MPFR_INCLUDE_DIR ${MPFR_INCLUDE_DIRS}) # TODO: make this unnecessary in d/CMakeLists.txt
 _ADD_COMPONENT_DEPENDENCY(libraries mpfr mp MPFR_FOUND)
 
+
 # http://perso.ens-lyon.fr/nathalie.revol/software.html
 ExternalProject_Add(build-mpfi
-  URL               https://gforge.inria.fr/frs/download.php/file/38111/mpfi-1.5.4.tgz
-  URL_HASH          SHA256=3b3938595d720af17973deaf727cfc0dd41c8b16c20adc103a970f4a43ae3a56
+  URL               ${M2_SOURCE_URL}/mpfi-1.5.4.tar.gz
+  URL_HASH          SHA256=32e6ad529c97aa5ce03e28d01c921d1bce1a464fb4c57fbc248d7be21e652782
   PREFIX            libraries/mpfi
   SOURCE_DIR        libraries/mpfi/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -312,7 +316,6 @@ ExternalProject_Add(build-mpfi
                       --with-gmp=${MP_ROOT}
                       --with-mpfr=${MPFR_ROOT}
                       ${shared_setting}
-                      ${assert_setting}
                       CC=${CMAKE_C_COMPILER}
                       CFLAGS=${CFLAGS}
                       CPPFLAGS=${CPPFLAGS}
@@ -331,8 +334,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries mpfi "mp;mpfr" MPFI_FOUND)
 
 # http://shoup.net/ntl
 ExternalProject_Add(build-ntl
-  URL               https://www.shoup.net/ntl/ntl-11.4.3.tar.gz
-  URL_HASH          SHA256=b7c1ccdc64840e6a24351eb4a1e68887d29974f03073a1941c906562c0b83ad2
+  URL               https://github.com/libntl/ntl/archive/refs/tags/v11.5.1.tar.gz
+  URL_HASH          SHA256=ef578fa8b6c0c64edd1183c4c303b534468b58dd3eb8df8c9a5633f984888de5
   PREFIX            libraries/ntl
   SOURCE_DIR        libraries/ntl/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -429,8 +432,8 @@ _ADD_COMPONENT_DEPENDENCY(libraries flint "mp;mpfr;ntl" FLINT_FOUND)
 # https://service.mathematik.uni-kl.de/ftp/pub/Math/Singular/Factory/
 # TODO: what is ftmpl_inst.o?
 ExternalProject_Add(build-factory
-  URL               https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode/factory-4.2.0.tar.gz
-  URL_HASH          SHA256=b66c4c78847e24b71386a42ea2fb368b721f5cb03966c8c78801f1677c45e6c0
+  URL               https://faculty.math.illinois.edu/Macaulay2/Downloads/OtherSourceCode/factory-4.2.1.tar.gz
+  URL_HASH          SHA256=3a3135d8d9e89bca512b22c8858f3e03f44b15629df6f0309ce4f7ddedd09a15
   PREFIX            libraries/factory
   SOURCE_DIR        libraries/factory/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -987,13 +990,12 @@ _ADD_COMPONENT_DEPENDENCY(programs nauty "" NAUTY)
 # https://www.normaliz.uni-osnabrueck.de/
 # normaliz needs libgmp, libgmpxx, boost and is used by the package Normaliz
 ExternalProject_Add(build-normaliz
-  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.8.9/normaliz-3.8.9.tar.gz
-  URL_HASH          SHA256=a4c3eda39ffe42120adfd3bda9433b01d9965516e3f98e401b62752a54bee5dd
+  URL               https://github.com/Normaliz/Normaliz/releases/download/v3.9.1/normaliz-3.9.1.tar.gz
+  URL_HASH          SHA256=ad5dbecc3ca3991bcd7b18774ebe2b68dae12ccca33c813ab29891beb85daa20
   PREFIX            libraries/normaliz
   SOURCE_DIR        libraries/normaliz/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/normaliz/patch-3.8.5
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
@@ -1024,7 +1026,7 @@ ExternalProject_Add(build-normaliz
 _ADD_COMPONENT_DEPENDENCY(programs normaliz "mp;nauty" NORMALIZ)
 
 
-# http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
+# https://www.wm.uni-bayreuth.de/de/team/rambau_joerg/TOPCOM/
 set(topcom_PROGRAMS
   B_A B_A_center B_D checkregularity cocircuits2facets cross cube cyclic hypersimplex lattice
   chiro2allfinetriangs   chiro2dual              chiro2nallfinetriangs  chiro2placingtriang
