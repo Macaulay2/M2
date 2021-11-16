@@ -24,6 +24,8 @@ verboseLog = if debugLevel > 0 then printerr else identity
 if pythonPresent then verboseLog "success: python is present" else (
     verboseLog "warning: python is not present";
     verboseLog "specify --with-python in `configure` options and recompile M2";
+    load "Python/no-python.m2";
+    load "Python/doc.m2";
     end)
 
 exportFrom_Core {
