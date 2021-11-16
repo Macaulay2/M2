@@ -1026,7 +1026,7 @@ ExternalProject_Add(build-normaliz
 _ADD_COMPONENT_DEPENDENCY(programs normaliz "mp;nauty" NORMALIZ)
 
 
-# http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
+# https://www.wm.uni-bayreuth.de/de/team/rambau_joerg/TOPCOM/
 set(topcom_PROGRAMS
   B_A B_A_center B_D checkregularity cocircuits2facets cross cube cyclic hypersimplex lattice
   chiro2allfinetriangs   chiro2dual              chiro2nallfinetriangs  chiro2placingtriang
