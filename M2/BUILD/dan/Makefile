@@ -20,6 +20,14 @@ FC = gfortran
 #    time make SIGN=no DEBUG=no CC=gcc-8 CXX=g++-8 FC=gfortran-8 DIRSUFF=-gcc8
 #############################################################################
 
+# detect the OS flavor
+DEBIAN := $(shell if [ -d /var/lib/dpkg ] ; then echo yes ; else echo no; fi)
+RPM := $(shell if [ -d /var/lib/yum -o -d /var/lib/dnf ] ; then echo yes ; else echo no; fi)
+MACOSX := $(shell if [ `uname -s` = Darwin ] ; then echo yes ; else echo no; fi)
+
+# temporary (2021-11-17) : to get 2.8.4 built by us, avoiding a bug in 2.8.3
+BUILDLIBS += flint
+
 # to get the Python package working
 # for Mac OS X:
 ifeq ($(MACOSX),yes)
@@ -32,11 +40,6 @@ endif
 
 # We may distribute the result, so prevent aggressive optimizations based on the current architecture:
 CONFIGOPTIONS += --build=$(shell ../../config/config.guess)
-
-# detect the OS flavor
-DEBIAN := $(shell if [ -d /var/lib/dpkg ] ; then echo yes ; else echo no; fi)
-RPM := $(shell if [ -d /var/lib/yum -o -d /var/lib/dnf ] ; then echo yes ; else echo no; fi)
-MACOSX := $(shell if [ `uname -s` = Darwin ] ; then echo yes ; else echo no; fi)
 
 ifeq ($(MACOSX),yes)
 # # if we don't do this, we may get an absolute path in currentLayout:
