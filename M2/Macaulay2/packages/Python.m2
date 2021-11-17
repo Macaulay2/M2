@@ -16,6 +16,7 @@ newPackage("Python",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
     AuxiliaryFiles => true,
+    CacheExampleOutput => true,
     OptionalComponentsPresent => pythonPresent
     )
 
