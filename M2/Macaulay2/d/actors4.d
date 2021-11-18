@@ -689,6 +689,8 @@ packfun(e:Expr):Expr := (
 			      nn := toInt(n);
 			      if nn > 0
 			      then packlist(x,nn)
+			      else if nn == 0 && length(x) == 0
+			      then emptyList
 			      else WrongArg(2,"a positive integer"))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
@@ -700,6 +702,8 @@ packfun(e:Expr):Expr := (
 			      nn := toInt(n);
 			      if nn > 0
 			      then packlist(x.v,nn)
+			      else if nn == 0 && length(x.v) == 0
+			      then emptyList
 			      else WrongArg(2,"a positive integer"))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
@@ -711,6 +715,8 @@ packfun(e:Expr):Expr := (
 			      nn := toInt(n);
 			      if nn > 0
 			      then packstring(x.v,nn)
+			      else if nn == 0 && length(x.v) == 0
+			      then emptyList
 			      else WrongArg(2,"a positive integer"))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
