@@ -93,6 +93,7 @@ openListener String := File => openListener
 pack(BasicList,ZZ) := List => pack
 pack(ZZ,BasicList) := List => pack
 reverse BasicList := BasicList => reverse
+reverse String := String => reverse
 set VisibleList := Set => set
 tally VisibleList := Tally => tally
 splice BasicList := BasicList => splice
