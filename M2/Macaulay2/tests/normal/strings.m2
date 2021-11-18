@@ -64,3 +64,4 @@ assert Equation(pack("The quick brown fox jumps over the lazy dog", 5),
     {"The q","uick ","brown"," fox ","jumps"," over"," the ","lazy ","dog"})
 assert Equation(pack(5, "The quick brown fox jumps over the lazy dog"),
     {"The q","uick ","brown"," fox ","jumps"," over"," the ","lazy ","dog"})
+assert Equation(pack(0, ""), pack("", 0))
