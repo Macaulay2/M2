@@ -55,3 +55,6 @@ assert Equation(apply("foo", identity), ("f", "o", "o"))
 assert Equation(apply("foo", "bar", concatenate), ("fb", "oa", "or"))
 assert Equation(apply("foo", ("b", "a", "r"), concatenate), ("fb", "oa", "or"))
 assert Equation(apply(("f", "o", "o"), "bar", concatenate), ("fb", "oa", "or"))
+
+-- reverse
+assert Equation(reverse "Hello, world!", "!dlrow ,olleH")
