@@ -31,9 +31,9 @@ BUILDLIBS += flint
 # to get the Python package working
 # for Mac OS X:
 ifeq ($(MACOSX),yes)
-CONFIGOPTIONS += --with-python=3.9
-LDFLAGS  += -L/usr/local/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/lib/python3.9/config-3.9-darwin
-CPPFLAGS += -I/usr/local/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/include/python3.9
+# CONFIGOPTIONS += --with-python=3.9
+# LDFLAGS  += -L/usr/local/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/lib/python3.9/config-3.9-darwin
+# CPPFLAGS += -I/usr/local/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/include/python3.9
 else 
 CONFIGOPTIONS += --with-python
 endif
