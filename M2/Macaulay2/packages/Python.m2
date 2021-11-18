@@ -190,7 +190,7 @@ addHook((value, PythonObject),
     Strategy => "unknown -> PythonObject")
 addPyToM2Function({"function", "builtin_function_or_method", "method-wrapper"},
     toFunction, "function -> FunctionClosure")
-addPyToM2Function("dict", dictToHashTable, "dict -> HashTable")
+addPyToM2Function({"dict", "defaultdict"}, dictToHashTable, "dict -> HashTable")
 addPyToM2Function({"set", "frozenset"}, set @@ iterableToList, "set -> Set")
 addPyToM2Function("list", iterableToList, "list -> List")
 addPyToM2Function({"tuple", "range"}, toSequence @@ iterableToList,
