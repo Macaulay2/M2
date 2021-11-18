@@ -166,7 +166,7 @@ dictToHashTable(PythonObject) := x -> (
 toFunction = method()
 toFunction PythonObject := x -> y -> (
     p := partition(a -> instance(a, Option),
-	if instance(y, VisibleList) then y else {y});
+	if instance(y, Sequence) then y else 1:y);
     args := toPython if p#?false then toSequence p#false else ();
     kwargs := toPython hashTable if p#?true then toList p#true else {};
     if debugLevel > 0 then printerr(
