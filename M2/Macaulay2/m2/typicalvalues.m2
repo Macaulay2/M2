@@ -98,6 +98,7 @@ reverse BasicList := BasicList => reverse
 reverse String := String => reverse
 set VisibleList := Set => set
 tally VisibleList := Tally => tally
+tally String := Tally => tally
 splice BasicList := BasicList => splice
 typicalValues#stack = Net
 stack BasicList := Net => stack
