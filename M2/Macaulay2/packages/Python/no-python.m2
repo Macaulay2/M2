@@ -57,8 +57,21 @@ toFunction = method()
 toFunction PythonObject := err
 
 toPython = method()
-for type in {Boolean, CC, Constant, HashTable, List, Nothing, PythonObject, QQ,
-    RR, Sequence, Set, String, ZZ} do installMethod(toPython, type, err)
+for type in {
+    Boolean,
+    CC,
+    Constant,
+    HashTable,
+    Nothing,
+    PythonObject,
+    QQ,
+    RR,
+    Sequence,
+    Set,
+    String,
+    VisibleList,
+    ZZ
+    } do installMethod(toPython, type, err)
 
 for op in {symbol +, symbol -, symbol *, symbol /, symbol //, symbol %,
     symbol ^, symbol <<, symbol >>, symbol &, symbol |, symbol ^^, symbol and,

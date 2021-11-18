@@ -446,7 +446,6 @@ doc ///
     (toPython,CC)
     (toPython,Constant)
     (toPython,HashTable)
-    (toPython,List)
     (toPython,Nothing)
     (toPython,PythonObject)
     (toPython,QQ)
@@ -454,6 +453,7 @@ doc ///
     (toPython,Sequence)
     (toPython,Set)
     (toPython,String)
+    (toPython,VisibleList)
     (toPython,ZZ)
   Headline
     convert Macaulay2 things to Python objects

@@ -293,7 +293,7 @@ toPython Sequence := L -> (
     result := pythonTupleNew n;
     for i to n - 1 do pythonTupleSetItem(result, i, toPython L_i);
     result)
-toPython List := L -> (
+toPython VisibleList := L -> (
     n := #L;
     result := pythonListNew n;
     for i to n - 1 do pythonListSetItem(result, i, toPython L_i);
