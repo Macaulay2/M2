@@ -53,8 +53,8 @@ document {
 		    LI { TO "HomotopyLieAlgebra::HomotopyLieAlgebra", ", a package by David Eisenbud for homotopy Lie algebra, has been added." },
 		    LI { TO "TSpreadIdeals::TSpreadIdeals", ", a package by Luca Amata for t-spread ideals of a polynomial ring, has been added." },
 		    LI { TO "ExteriorModules::ExteriorModules", ", a package by Luca Amata and Marilena Crupi for monomial modules over exterior algebras, has been added." },
-            	    LI { TO "GroebnerStrata", ", a package by Kristine Jones and Mike Stillman for working with Groebner families and subschemes of Hilbert schemes, has been added." },
-            	    LI { TO "QuaternaryQuartics", ", a package by Kapustka, Kapustka, Ranestad, Schenck, Stillman and Yuan containing code and examples for their paper 'Quaternary Quartic Forms and Gorenstein Rings', has been added." },
+            	    LI { TO "GroebnerStrata::GroebnerStrata", ", a package by Kristine Jones and Mike Stillman for working with Groebner families and subschemes of Hilbert schemes, has been added." },
+            	    LI { TO "QuaternaryQuartics::QuaternaryQuartics", ", a package by Kapustka, Kapustka, Ranestad, Schenck, Stillman and Yuan containing code and examples for their paper 'Quaternary Quartic Forms and Gorenstein Rings', has been added." },
 		    LI { TO "RealRoots::RealRoots", ", a package by Jordy Lopez, Kelly Maluccio, Frank Sottile, and Thomas Yahl for symbolically exploring, counting, and locating real solutions to polynomial systems, has been added." },
 		    LI { TO "K3Surfaces::K3Surfaces", ", a package by Michael Hoff and Giovanni Staglianò for explicit constructions of K3 surfaces, has been added." }
 		    }
