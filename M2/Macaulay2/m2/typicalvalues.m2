@@ -92,6 +92,8 @@ openInOut String := openInOut File := File => openInOut
 openListener String := File => openListener
 pack(BasicList,ZZ) := List => pack
 pack(ZZ,BasicList) := List => pack
+pack(String,ZZ) := List => pack
+pack(ZZ,String) := List => pack
 reverse BasicList := BasicList => reverse
 reverse String := String => reverse
 set VisibleList := Set => set

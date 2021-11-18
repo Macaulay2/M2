@@ -646,6 +646,14 @@ packlist(v:Sequence,n:int):Expr := (
 		    j := i;
 		    i = i+1;
 	       	    provide v.j))));
+packstring(s:string,n:int):Expr := (
+     d := length(s);
+     i := 0;
+     list(new Sequence len (d + n - 1) / n do
+	  provide stringCell(new string len if n < d - i then n else d - i do (
+	       j := i;
+	       i = i + 1;
+	       provide s.j))));
 packfun(e:Expr):Expr := (
      when e
      is a:Sequence do (
@@ -659,13 +667,15 @@ packfun(e:Expr):Expr := (
 			      when a.1
 			      is x:Sequence do packlist(x,nn)
 			      is x:List do packlist(x.v,nn)
+			      is x:stringCell do packstring(x.v,nn)
 			      else WrongArg(1,"a list or sequence")
 			      )
 			 else if nn == 0 then (
 			      when a.1
 			      is x:Sequence do if length(x) == 0 then emptyList else WrongArg(1,"a positive integer")
 			      is x:List do if length(x.v) == 0 then emptyList else WrongArg(1,"a positive integer")
-			      else WrongArg(1,"a list or sequence")
+			      is x:stringCell do if length(x.v) == 0 then emptyList else WrongArg(1,"a positive integer")
+			      else WrongArg(1,"a list, sequence, or string")
 			      )
 			 else WrongArg(1,"a positive integer")
 			 )
@@ -693,7 +703,18 @@ packfun(e:Expr):Expr := (
 			      else WrongArg(2,"a positive integer"))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
-	       else WrongArg(1,"a list or sequence"))
+	       is x:stringCell do (
+		    when a.1
+		    is n:ZZcell do (
+			 if isInt(n)
+			 then (
+			      nn := toInt(n);
+			      if nn > 0
+			      then packstring(x.v,nn)
+			      else WrongArg(2,"a positive integer"))
+			 else WrongArgSmallInteger(2))
+		    else WrongArgZZ(2))
+	       else WrongArg(1,"a list, sequence, or string"))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 setupfun("pack", packfun);
