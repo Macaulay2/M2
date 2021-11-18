@@ -14,6 +14,12 @@ export trace := false;
 threadLocal export backtrace := true;
 threadLocal lastCode := dummyCode;
 threadLocal lastCodePosition := Position("",ushort(0),ushort(0),ushort(0));
+export chars := new array(Expr) len 256 do (
+    i := 0;
+    while i<256 do (
+	provide Expr(stringCell(string(char(i))));
+	i = i+1;
+	));
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
 export evalAllButTail(c:Code):Code := while true do c = (
@@ -272,7 +278,7 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 	       else new Sequence len i do foreach x in r do provide x)));
 
 export strtoseq(s:stringCell):Sequence := new Sequence len length(s.v) do
-    foreach c in s.v do provide stringCell(string(c));
+    foreach c in s.v do provide chars.(int(uchar(c)));
 
 evalForCode(c:forCode):Expr := (
      r := if c.listClause == dummyCode then emptySequence else new Sequence len 1 do provide nullE;
