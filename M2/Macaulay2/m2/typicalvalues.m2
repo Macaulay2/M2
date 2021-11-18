@@ -64,7 +64,6 @@ isOpen(Database) := Boolean => isOpen
 isOutputFile(File) := Boolean => isOutputFile
 mutable(Thing) := Boolean => mutable
 instance(Thing,Type) := Boolean => instance
-characters String := List => characters
 concatenate Nothing := concatenate String := concatenate Symbol := concatenate ZZ := concatenate BasicList := String => concatenate
 deepSplice BasicList := BasicList => deepSplice
 drop(BasicList,ZZ) := drop(BasicList,List) := BasicList => drop

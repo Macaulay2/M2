@@ -333,14 +333,6 @@ setupfun("any",any);
 --     else WrongNumArgs(2));
 --setupfun("find",find);
 
-characters(e:Expr):Expr := (
-     when e
-     is s:stringCell do list(
-	  new Sequence len length(s.v) do (
-	       foreach c in s.v do provide chars.(int(uchar(c)))))
-     else buildErrorPacket("expects a string"));
-setupfun("characters",characters);
-
 ascii(e:Expr):Expr := (
      if isIntArray(e)
      then toExpr((
