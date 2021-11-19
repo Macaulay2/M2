@@ -16,15 +16,16 @@ i3 : hooks value
 
 o3 = {0 => (value, PythonObject, Strategy => unknown -> PythonObject)    }
      {1 => (value, PythonObject, Strategy => function -> FunctionClosure)}
-     {2 => (value, PythonObject, Strategy => dict -> HashTable)          }
-     {3 => (value, PythonObject, Strategy => set -> Set)                 }
-     {4 => (value, PythonObject, Strategy => list -> List)               }
-     {5 => (value, PythonObject, Strategy => tuple -> Sequence)          }
-     {6 => (value, PythonObject, Strategy => str -> String)              }
-     {7 => (value, PythonObject, Strategy => complex -> CC)              }
-     {8 => (value, PythonObject, Strategy => float -> RR)                }
-     {9 => (value, PythonObject, Strategy => int -> ZZ)                  }
-     {10 => (value, PythonObject, Strategy => bool -> Boolean)           }
+     {2 => (value, PythonObject, Strategy => Counter -> Tally)           }
+     {3 => (value, PythonObject, Strategy => dict -> HashTable)          }
+     {4 => (value, PythonObject, Strategy => set -> Set)                 }
+     {5 => (value, PythonObject, Strategy => list -> List)               }
+     {6 => (value, PythonObject, Strategy => tuple -> Sequence)          }
+     {7 => (value, PythonObject, Strategy => str -> String)              }
+     {8 => (value, PythonObject, Strategy => complex -> CC)              }
+     {9 => (value, PythonObject, Strategy => float -> RR)                }
+     {10 => (value, PythonObject, Strategy => int -> ZZ)                 }
+     {11 => (value, PythonObject, Strategy => bool -> Boolean)           }
 
 o3 : NumberedVerticalList
 
