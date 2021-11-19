@@ -434,6 +434,12 @@ assert Equation(5 ^^ y, 7)
 assert Equation(x xor y, rs "7")
 assert Equation(x xor 2, 7)
 assert Equation(5 xor y, 7)
+
+----------------------
+-- unary operations --
+----------------------
+assert Equation(-x, -5)
+assert Equation(+x, 5)
 ///
 
 TEST ///
