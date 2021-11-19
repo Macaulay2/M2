@@ -250,6 +250,9 @@ scan({
 	)
     )
 
+-PythonObject := o -> o@@"__neg__"()
++PythonObject := o -> o@@"__pos__"()
+
 PythonObject Thing := (o, x) -> (toFunction o) x
 
 length PythonObject := x -> value x@@"__len__"()
