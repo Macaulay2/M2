@@ -71,6 +71,8 @@ doc ///
     (symbol ?, PythonObject, PythonObject)
     (symbol ?, PythonObject, Thing)
     (symbol ?, Thing, PythonObject)
+    (symbol +, PythonObject)
+    (symbol -, PythonObject)
   Headline
     a python object
   Description
@@ -103,8 +105,10 @@ doc ///
       dunder method in Python.  In particular,
     Code
       UL {
-        LI {TT "+", " → ", TT "__add__"},
-        LI {TT "-", " → ", TT "__sub__"},
+        LI {TT "+", " → ", TT "__add__", " (binary), ",
+	    TT "__pos__", " (unary)"},
+        LI {TT "-", " → ", TT "__sub__", " (binary), ",
+	    TT "__neg__", " (unary)"},
         LI {TT "*", " → ", TT "__mul__"},
         LI {TT "/", " → ", TT "__truediv__"},
         LI {TT "//", " → ", TT "__floordiv__"},

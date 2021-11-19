@@ -84,7 +84,9 @@ PythonObject Thing :=
 length PythonObject :=
 value PythonObject :=
 PythonObject @@ Thing :=
-PythonObject_Thing := err
+PythonObject_Thing :=
++PythonObject :=
+-PythonObject := err
 
 rs = x -> error errmsg
 objectType = x -> error errmsg
