@@ -49,10 +49,11 @@ counter := 0
 next := () -> counter = counter + 1
 optTO := key -> (
     tag := makeDocumentTag(key, Package => package key);
+    ptag := getPrimaryTag tag;
     fkey := format tag;
+    if currentHelpTag.?Key and instance(currentHelpTag.Key, Sequence) and currentHelpTag =!= ptag then return;
     if isUndocumented tag then return;
     if isSecondaryTag tag then (
-	ptag := getPrimaryTag tag;
 	-- this is to avoid doubling "\" in documentation for symbol \ and symbol \\
 	ref := if match("\\\\", fkey) then concatenate("/// ", fkey, " ///") else format fkey;
 	-- TODO: figure out how to align the lists using padding
@@ -194,6 +195,12 @@ documentationValue(Symbol, Keyword)         := (S, f) -> (
     a := smenu documentableMethods f;
     if #a > 0 then DIV nonnull splice ( "class" => "waystouse",
 	SUBSECTION {"Ways to use ", TT toExternalString f, " :"}, nonnull prepend(c, a)))
+-- this is the only one not involving a Symbol
+-- e.g. Depth :: depth(Ideal, Ring)
+documentationValue(Nothing, Sequence) := (S, s) -> (
+    a := smenu documentableMethods s#0;
+    if #a > 0 then DIV nonnull splice ( "class" => "waystouse",
+	SUBSECTION {"Ways to use this method:"}, a))
 
 -- TODO: simplify this process
 -- e.g. Macaulay2Doc :: Macaulay2Doc
@@ -365,9 +372,10 @@ getDescription := (key, tag, rawdoc) -> (
 -- TODO: combine sections when multiple tags are being documented (e.g. strings and methods)
 getBody := (key, tag, rawdoc) -> (
     currentHelpTag = tag;
+    synopsis := getSynopsis(key, tag, rawdoc);
     result := fixup DIV nonnull splice (
 	HEADER1{ formatDocumentTag key, commentize getOption(rawdoc, Headline) },
-	if (synopsis := getSynopsis(key, tag, rawdoc)) =!= null then DIV { SUBSECTION "Synopsis", synopsis },
+	if synopsis =!= null then DIV { SUBSECTION "Synopsis", synopsis },
 	getDescription(key, tag, rawdoc),
 	if instance(key, Array) then getDefaultOptions(key#0, key#1),
 	getOption(rawdoc, Acknowledgement),
@@ -376,10 +384,14 @@ getBody := (key, tag, rawdoc) -> (
 	getOption(rawdoc, Caveat),
 	getOption(rawdoc, SourceCode),
 	getOption(rawdoc, SeeAlso),
-	if instance(key, Symbol) then (
+	-- this is so a "Ways to use" section is listed when multiple
+	-- method keys are documented together without the base function
+	if instance(key, Sequence) then (
+	    documentationValue(, key)) else
+	if instance(key, Symbol)   then (
 	    documentationValue(key, value key),
-	    getTechnical(key, value key))
-	else if instance(key, Array) then (
+	    getTechnical(key, value key)) else
+	if instance(key, Array)    then (
 	    if instance(opt := key#1, Option)
 	    then documentationValue(opt#0, opt)
 	    else documentationValue(opt, value opt)),
