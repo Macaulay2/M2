@@ -57,6 +57,11 @@ checkRing := A -> (
     if not same degrees A then error "expected variables all of the same degree";
     )
 
+-- given a list {a,a,b,b,b,c,...} returns a list {{2,a}, {3,b}, {1,c}, ...}
+runLengthEncoding := x -> if #x === 0 then x else (
+     p := join({0}, select(1 .. #x - 1, i -> x#i =!= x#(i-1)), {#x});
+     apply(#p-1, i -> (p#(i+1)-p#i, x#(p#i))))
+
 -----------------------------------------------------------------------------
 -- Variety, etc. type declarations and basic constructors
 -----------------------------------------------------------------------------
@@ -163,10 +168,6 @@ SheafOfRings.synonym = "sheaf of rings"
 CoherentSheaf = new Type of HashTable
 CoherentSheaf.synonym = "coherent sheaf"
 
-expression SheafOfRings := O -> Subscript { OO, expression O.variety }
-net        SheafOfRings :=     net @@ expression
-texMath    SheafOfRings := texMath @@ expression
-
 -- constructors
 sheaf = method()
 -- TODO: sheaf Ring and sheaf Module should return a sheaf over variety of the ring rather than Proj,
@@ -247,28 +248,22 @@ symmetricPower(ZZ, CoherentSheaf) := CoherentSheaf => o -> (i, F) -> sheaf(varie
 annihilator CoherentSheaf := Ideal => o -> F -> annihilator(module F, o)
 
 -- printing
-runLengthEncoding := x -> if #x === 0 then x else (
-     p := join({0}, select(1 .. #x - 1, i -> x#i =!= x#(i-1)), {#x});
-     apply(#p-1, i -> (p#(i+1)-p#i, x#(p#i))))
+expression SheafOfRings := O -> Subscript { OO, expression O.variety }
+net        SheafOfRings :=      net @@ expression
+texMath    SheafOfRings :=  texMath @@ expression
+toString   SheafOfRings := toString @@ expression
 
--- TODO: add the variety here
-describe   CoherentSheaf := F -> (expression sheaf) (describe F.module)
+describe   CoherentSheaf := F -> Describe (Subscript { expression sheaf, expression F.variety }) (expression F.module)
 expression CoherentSheaf := F -> (
-     M := module F;
-     if M.?relations or M.?generators or numgens M === 0 then SheafExpression expression M
-     else (
-	    X := variety F;
-	    rle := runLengthEncoding (- degrees F);
-	    expr := null;
-	    scan(rle,
-		(n,d) -> (
-		    s := new Superscript from {expression OO_X, expression n};
-		    if not all(d, zero) then s = Adjacent {s, if #d === 1 then Parenthesize unhold expression d#0 else expression toSequence d};
-		    if expr === null then expr = s else expr = expr ++ s;
-		    ));
-	    expr
-	    )
-	)
+    (X, M) := (variety F, module F);
+    if M.?relations or M.?generators or numgens M === 0 then return SheafExpression expression M;
+    degs := runLengthEncoding(- degrees M); -- a list of O_X^r(d) for each summand
+    sums := apply(degs, (r, d) -> (
+	    s := new Superscript from {expression OO_X, expression r};
+	    -- TODO: get rid of the extra space in OO_X^1 (1,2) when #d > 1
+	    if all(d, zero) then s else new Adjacent from {
+		s, (if #d == 1 then new Parenthesize from d else expression toSequence d)}));
+    fold((a, b) -> a++b, sums))
 net      CoherentSheaf :=      net @@ expression
 texMath  CoherentSheaf :=  texMath @@ expression
 toString CoherentSheaf := toString @@ expression
@@ -277,21 +272,12 @@ toString CoherentSheaf := toString @@ expression
 mathML SheafOfRings :=
 mathML CoherentSheaf := lookup(mathML, Thing)
 
-CoherentSheaf#AfterPrint = F -> (
-     X := variety F;
-     M := module F;
-     n := rank ambient F;
-     "coherent sheaf on ", X,
-     if M.?generators then
-     if M.?relations then (", subquotient of ", ambient F)
-     else (", subsheaf of ", ambient F)
-     else if M.?relations then (", quotient of ", ambient F)
-     else if n > 0 then (
-	  ", free"
-	  -- if not all(degrees M, d -> all(d, zero))
-	  -- then << ", degrees " << if degreeLength M === 1 then flatten degrees M else degrees M;
-	  )
-      )
+CoherentSheaf#AfterPrint = F -> ("coherent sheaf on ", variety F,
+    if isFreeModule(M := module F)    then (", free of rank ",   rank F)    else
+    if M.?generators and M.?relations then (", subquotient of ", ambient F) else
+    if M.?generators                  then (", subsheaf of ",    ambient F) else
+    if M.?relations                   then (", quotient of ",    ambient F)
+    )
 
 -- used to be in m2/jupyter.m2
 CoherentSheaf#{Jupyter, AfterPrint} = F -> (
@@ -308,21 +294,30 @@ expressionValue SheafExpression := x -> sheaf expressionValue x#0
 -- SumOfTwists type declarations and basic constructors
 -----------------------------------------------------------------------------
 
+-- used as a bound for sums of twists
 LowerBound = new SelfInitializingType of BasicList
->  InfiniteNumber := >  ZZ := LowerBound => i -> LowerBound{i+1}
->= InfiniteNumber := >= ZZ := LowerBound => i -> LowerBound{i}
-SheafOfRings(*) := O -> O^1(*)
-CoherentSheaf(*) := F -> F(>=-infinity)
+-- TODO: implement for multigraded twists
+>  InfiniteNumber := >  ZZ            := LowerBound => b -> LowerBound{b+1}
+>= InfiniteNumber := >= ZZ := >= List := LowerBound => b -> LowerBound{b}
 
 SumOfTwists = new Type of BasicList
-CoherentSheaf LowerBound := SumOfTwists => (F,b) -> new SumOfTwists from {F, b}
-SheafOfRings LowerBound := SumOfTwists => (O,b) -> O^1 b
-net SumOfTwists := S -> net S#0 | if S#1#0 === -infinity then "(*)" else "(>=" | net S#1#0 | ")"
-texMath SumOfTwists := S -> texMath S#0 | if S#1#0 === -infinity then "(*)" else "(\\ge" | texMath S#1#0 | ")"
+SumOfTwists.synonym = "sum of twists"
+
+-- constructors
+SheafOfRings(*)  := SumOfTwists => O -> O^1(>=-infinity)
+CoherentSheaf(*) := SumOfTwists => F ->   F(>=-infinity)
+SheafOfRings  LowerBound := SumOfTwists => (O, b) -> O^1(b)
+CoherentSheaf LowerBound := SumOfTwists => (F, b) -> new SumOfTwists from {F, b}
 
 -- basic methods
 ring    SumOfTwists := S ->    ring S#0
 variety SumOfTwists := S -> variety S#0
+
+-- printing
+expression SumOfTwists := S -> (expression S#0) (if S#1#0 === -infinity then expression symbol(*) else (expression symbol>=) (expression S#1#0))
+net        SumOfTwists :=      net @@ expression
+texMath    SumOfTwists :=  texMath @@ expression
+toString   SumOfTwists := toString @@ expression
 
 -----------------------------------------------------------------------------
 -- helpers for sheaf cohomology
