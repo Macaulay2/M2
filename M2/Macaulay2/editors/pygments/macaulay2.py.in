@@ -1,6 +1,6 @@
 """
     pygments.lexers.macaulay2
-    ~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
     Lexer for Macaulay2.
 
     :copyright: Copyright 2006-2021 by the Pygments team, see AUTHORS.
@@ -11,6 +11,8 @@ from pygments.lexer import RegexLexer, words
 from pygments.token import Comment, Keyword, Name, String, Text
 
 __all__ = ['Macaulay2Lexer']
+
+@M2BANNER@
 
 M2KEYWORDS = (
     @M2KEYWORDS@
