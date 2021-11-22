@@ -69,8 +69,8 @@ set(DLIST
   equality.dd
   hashtables.dd
   regex.dd
-  sets.dd
   evaluate.d
+  sets.dd
   mysql.d	# removed unless WITH_SQL
   mysqldummy.d	# removed if WITH_SQL
   pthread.d
