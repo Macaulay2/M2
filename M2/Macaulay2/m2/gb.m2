@@ -494,17 +494,6 @@ markedGB(Matrix, Matrix) := GroebnerBasis => opts -> (leadterms, m) -> (
 -- miscellaneous
 -----------------------------------------------------------------------------
 
--- new functions from Mike, needing a bit of development
-
-installHilbertFunction = method()
-installHilbertFunction(Module, RingElement) := (M, hf) -> (
-    -- we need to place hf into the degree ring of M.
-    hf = substitute(hf, degreesRing M);
-    M.cache.poincare = hf;
-    )
-installHilbertFunction(Ideal, RingElement)  := (I, hf) -> installHilbertFunction(comodule I, hf)
-installHilbertFunction(Matrix, RingElement) := (m, hf) -> installHilbertFunction(cokernel m, hf)
-
 -- TODO: what is this? it is never used. Should it be removed?
 installGroebner = method()
 
