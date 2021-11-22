@@ -445,6 +445,7 @@ comodule Module := Module => M -> cokernel super map(M,M,1)
 quotient Module := Module => opts -> M -> comodule M
 comodule Ideal := Module => I -> cokernel generators I
 quotient Ideal := Module => opts -> I -> (ring I) / I
+module   Ideal := Module => (cacheValue symbol module) (I -> image generators I)
 
 genera Ideal := (I) -> genera ((ring I)^1/I)
 genus Ideal := (I) -> genus ((ring I)^1/I)
@@ -536,12 +537,6 @@ Ideal == Ideal := (I,J) -> (
 
 Ideal == Module := (I,M) -> module I == M
 Module == Ideal := (M,I) -> M == module I
-
-module Ideal := Module => (cacheValue symbol module) (
-     I -> (
-	  M := image generators I;
-	  if I.cache.?poincare then M.cache.poincare = I.cache.poincare;
-	  M))
 
 ideal Matrix := Ideal => (f) -> (
      R := ring f;
