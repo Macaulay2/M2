@@ -10,70 +10,213 @@ needs "monideal.m2"
 needs "multilin.m2"
 needs "betti.m2"
 
+-----------------------------------------------------------------------------
+-- Local utilities
+-----------------------------------------------------------------------------
+
+checkRing := A -> (
+    -- TODO: make this unnecessary
+    if not degreeLength A === 1 then error "expected degreeLength of ring to be 1";
+    if not same degrees A then error "expected variables all of the same degree";
+    )
+
+-----------------------------------------------------------------------------
+-- Variety, etc. type declarations and basic constructors
+-----------------------------------------------------------------------------
+
 Variety = new Type of MutableHashTable
 Variety.synonym = "variety"
 Variety.GlobalAssignHook = globalAssignFunction
 Variety.GlobalReleaseHook = globalReleaseFunction
+
 AffineVariety = new Type of Variety
 AffineVariety.synonym = "affine variety"
+
 ProjectiveVariety = new Type of Variety
 ProjectiveVariety.synonym = "projective variety"
-ring Variety := X -> X.ring
-toString Variety := toString @@ expression
+
+-- constructors
+Spec = method(TypicalValue => AffineVariety)
+Spec Ring := (stashValue symbol Spec) (R ->
+    new AffineVariety from {
+	symbol ring => R,
+	symbol cache => new CacheTable
+	}
+    )
+
+Proj = method(TypicalValue => ProjectiveVariety)
+Proj Ring := (stashValue symbol Proj) (R ->
+    new ProjectiveVariety from {
+	symbol ring => if isHomogeneous R then R else error "Proj: expected a homogeneous ring",
+	symbol cache => new CacheTable
+	}
+    )
+
+-- TODO: PP(1,2,3) for weighted Proj and PP(V) for vector space V and PP(E) for bundle E?
+--PP = new ScriptedFunctor from {
+--     superscript => (
+--	  i -> R -> (
+--	       x := symbol x;
+--	       Proj (R[ x_0 .. x_i ])
+--	       )
+--	  )
+--     }
+
+-- basic methods
+ring  Variety := X -> X.ring
+ideal Variety := X -> ideal ring X -- TODO: should this give the irrelevant ideal?
+
+dim     AffineVariety := X -> dim ring X
+dim ProjectiveVariety := X -> dim ring X - 1 -- TODO: - Picard rank instead?
+
+codim ProjectiveVariety := options(codim, QuotientRing) >> o -> X -> codim(ring X, o)
+
+char     AffineVariety := X -> char ring X
+char ProjectiveVariety := X -> char(ring X / saturate ideal X) -- TODO: saturate with respect to B?
+
+-- TODO: should these be defined, but return 0 for an AffineVariety?
+degree ProjectiveVariety := X -> degree ring X
+genus  ProjectiveVariety := X -> genus  ring X
+genera ProjectiveVariety := X -> genera ring X
+-- euler ProjectiveVariety is defined further down
+-- TODO: define degrees, eulers
+
+ambient     AffineVariety :=     AffineVariety => X -> Spec ambient ring X
+ambient ProjectiveVariety := ProjectiveVariety => X -> Proj ambient ring X
+
+-- arithmetic ops
+-- TODO: uncomment the projective ones when Proj works with multigraded rings
+-- TODO: use ** instead of * to match NormalToricVarieties, etc.
+AffineVariety     *      AffineVariety :=     AffineVariety => (X, Y) -> Spec(ring X ** ring Y)
+--ProjectiveVariety *  ProjectiveVariety := ProjectiveVariety => (X, Y) -> Proj(ring X ** ring Y)
+AffineVariety     ** Ring              :=     AffineVariety => (X, R) -> X * Spec R
+--ProjectiveVariety ** Ring              := ProjectiveVariety => (X, R) -> X ** Proj R
+
+-- This method returns either a Variety, an AbstractVariety (from Schubert2),
+-- a NormalToricVariety, or any other variety stashed in R.variety.
+-- TODO: instead of an error, return Proj R when there is no variety,
+-- then replace Proj ring M in code for sheaf with variety ring M
+variety = method(TypicalValue => Variety)
+variety Ring        := S -> if S.?variety then S.variety else error "no variety associated with ring"
+variety Ideal       := I -> Proj(ring I/I) -- TODO: should this be saturated?
+variety RingElement := f -> variety ring f -- TODO: should this be V(f) instead?
+
+sameVariety := Fs -> if not same apply(Fs, variety) then error "expected coherent sheaves on the same variety"
+
+-- printing
+expression       Variety := X -> if hasAttribute(X, ReverseDictionary) then expression getAttribute(X, ReverseDictionary) else (describe X)#0
+-- TODO: are these all necessary?
+net              Variety :=      net @@ expression
+texMath          Variety :=  texMath @@ expression
+toString         Variety := toString @@ expression
 toExternalString Variety := toString @@ describe
-net Variety := net @@ expression
-texMath Variety := x -> texMath expression x
-expression Variety := (X) -> if hasAttribute(X,ReverseDictionary) then expression getAttribute(X,ReverseDictionary) else (describe X)#0
-describe AffineVariety := (X) -> Describe (expression Spec) (expression X.ring)
-describe ProjectiveVariety := (X) -> Describe (expression Proj) (expression X.ring)
 
-char AffineVariety := X -> char ring X
-char ProjectiveVariety := X -> (
-     I := saturate ideal X;
-     char( ring I / I ))
+describe     AffineVariety := X -> Describe (expression Spec) (expression X.ring)
+describe ProjectiveVariety := X -> Describe (expression Proj) (expression X.ring)
 
-ambient ProjectiveVariety := X -> Proj ambient ring X
-ambient     AffineVariety := X -> Spec ambient ring X
-ideal Variety := X -> ideal ring X
-Spec = method()
-
-Spec Ring := AffineVariety => (R) -> if R.?Spec then R.Spec else R.Spec = (
-     new AffineVariety from {
-     	  symbol ring => R,
-	  symbol cache => new CacheTable
-     	  }
-     )
-Proj = method()
-
-Proj Ring := ProjectiveVariety => (R) -> if R.?Proj then R.Proj else R.Proj = (
-     if not isHomogeneous R then error "expected a homogeneous ring";
-     new ProjectiveVariety from {
-     	  symbol ring => R,
-	  symbol cache => new CacheTable
-     	  }
-     )
-
-sheaf = method()
+-----------------------------------------------------------------------------
+-- SheafOfRings and CoherentSheaf type declarations and basic constructors
+-----------------------------------------------------------------------------
 
 SheafOfRings = new Type of HashTable
 SheafOfRings.synonym = "sheaf of rings"
-expression SheafOfRings := O -> Subscript { OO, expression O.variety }
-net SheafOfRings := net @@ expression
-texMath SheafOfRings := x -> texMath expression x
-Ring ~ := sheaf Ring := SheafOfRings => R -> new SheafOfRings from { symbol variety => Proj R, symbol ring => R }
-sheaf(Variety,Ring) := SheafOfRings => (X,R) -> (
-     if ring X =!= R then error "expected the variety of the ring";
-     new SheafOfRings from { symbol variety => X, symbol ring => R } )
-ring SheafOfRings := O -> O.ring
 
 CoherentSheaf = new Type of HashTable
 CoherentSheaf.synonym = "coherent sheaf"
-describe CoherentSheaf := F -> (expression sheaf) (describe F.module)
 
+expression SheafOfRings := O -> Subscript { OO, expression O.variety }
+net        SheafOfRings :=     net @@ expression
+texMath    SheafOfRings := texMath @@ expression
+
+-- constructors
+sheaf = method()
+-- TODO: sheaf Ring and sheaf Module should return a sheaf over variety of the ring rather than Proj,
+-- and if a variety doesn't already exist then either Proj or Spec should be defined and cached.
+sheaf Ring := Ring ~ := SheafOfRings =>     R  -> sheaf(Proj R, R)
+sheaf Variety        := SheafOfRings =>  X     -> sheaf(X, ring X)
+sheaf(Variety, Ring) := SheafOfRings => (X, R) -> (
+    if ring X =!= R then error "sheaf: expected ring of the variety";
+    new SheafOfRings from { symbol variety => X, symbol ring => R } )
+
+-- TODO: should sheaves have a cache, or should things be stored in their module?
+-- TODO: should the module of a sheaf be fixed, or should it be allowed to change?
+-- TODO: https://github.com/Macaulay2/M2/issues/1358
+sheaf Module := Module ~ := CoherentSheaf =>     M  -> sheaf(Proj ring M, M)
+sheaf(Variety, Module)   := CoherentSheaf => (X, M) -> (
+    if M.cache#?(sheaf, X) then return M.cache#(sheaf, X);
+    M.cache#(sheaf, X) = (
+	if ring M =!= ring X then error "sheaf: expected module and variety to have the same ring";
+	if instance(X, ProjectiveVariety) and not isHomogeneous M then error "sheaf: expected a homogeneous module";
+	new CoherentSheaf from {
+	    symbol module => M,
+	    symbol variety => X
+	    }
+	))
+
+-- TODO: consider adding IdealSheaf or SheafOfIdeals type
+-- sheaf Ideal := Ideal ~ := CoherentSheaf => I -> sheaf(Proj ring M, I)
+
+applyMethod = (key, X) -> (
+    if (F := lookup key) =!= null then F X else error "no method available") -- expand this error message later
+
+OO = new ScriptedFunctor from {
+     subscript => X -> applyMethod((symbol _,     OO, class X), (OO, X)),
+     argument  => X -> applyMethod((symbol SPACE, OO, class X), (OO, X)),
+     }
+OO.texMath = ///{\mathcal O}///
+installMethod(symbol_, OO, Variety, (OO, X) -> sheaf(X, ring X))
+
+-- basic methods
+variety SheafOfRings  :=
+variety CoherentSheaf := F -> F.variety
+
+ring SheafOfRings  :=
+ring CoherentSheaf := F -> ring F.variety
+
+module SheafOfRings  := Module => F -> module F.ring
+module CoherentSheaf := Module => F -> F.module
+
+codim   CoherentSheaf := options(codim, Module) >> o -> F -> codim(F.module, o)
+rank    CoherentSheaf := F -> rank    F.module
+degrees CoherentSheaf := F -> degrees F.module
+numgens CoherentSheaf := F -> numgens F.module
+betti   CoherentSheaf := o -> F -> betti(F.module, o)
+
+super   CoherentSheaf := CoherentSheaf => F -> sheaf super   module F
+ambient CoherentSheaf := CoherentSheaf => F -> sheaf ambient module F
+cover   CoherentSheaf := CoherentSheaf => F -> sheaf cover   module F
+
+-- twist and powers
+-- TODO: check projectivity
+-- TODO: https://github.com/Macaulay2/M2/issues/2288
+SheafOfRings(ZZ)   := CoherentSheaf => (O, a) -> O^1(a)
+CoherentSheaf(ZZ)  := CoherentSheaf => (F, a) -> sheaf(F.variety, F.module ** (ring F)^{a})
+SheafOfRings  ^ ZZ := SheafOfRings  ^ List := CoherentSheaf => (O, n) -> sheaf(O.variety, (ring O)^n)
+CoherentSheaf ^ ZZ := CoherentSheaf ^ List := CoherentSheaf => (F, n) -> sheaf(F.variety, F.module^n)
+dual CoherentSheaf := CoherentSheaf => options(dual, Module) >> o -> F -> sheaf(F.variety, dual(F.module, o))
+
+-- arithmetic ops
+CoherentSheaf.directSum = args -> ( sameVariety args; sheaf(variety args#0, directSum apply(args, module)) )
+CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F, G) -> sheaf(F.variety, F.module ++ G.module)
+CoherentSheaf ** CoherentSheaf := CoherentSheaf => (F, G) -> sheaf(F.variety, F.module ** G.module)
+CoherentSheaf  / CoherentSheaf := CoherentSheaf => (F, G) -> sheaf(F.variety, F.module  / G.module)
+CoherentSheaf  / Ideal         := CoherentSheaf => (F, I) -> sheaf(F.variety, F.module  / I)
+Ideal * CoherentSheaf          := CoherentSheaf => (I, F) -> sheaf(F.variety, I * F.module)
+directSum CoherentSheaf        := CoherentSheaf =>  F     -> CoherentSheaf.directSum(1 : F)
+
+-- multilinear ops
+exteriorPower (ZZ, CoherentSheaf) := CoherentSheaf => o -> (i, F) -> sheaf(variety F,  exteriorPower(i, module F, o))
+symmetricPower(ZZ, CoherentSheaf) := CoherentSheaf => o -> (i, F) -> sheaf(variety F, symmetricPower(i, module F, o))
+
+annihilator CoherentSheaf := Ideal => o -> F -> annihilator(module F, o)
+
+-- printing
 runLengthEncoding := x -> if #x === 0 then x else (
      p := join({0}, select(1 .. #x - 1, i -> x#i =!= x#(i-1)), {#x});
      apply(#p-1, i -> (p#(i+1)-p#i, x#(p#i))))
 
+-- TODO: add the variety here
+describe   CoherentSheaf := F -> (expression sheaf) (describe F.module)
 expression CoherentSheaf := F -> (
      M := module F;
      if M.?relations or M.?generators or numgens M === 0 then SheafExpression expression M
@@ -90,16 +233,15 @@ expression CoherentSheaf := F -> (
 	    expr
 	    )
 	)
-
-net CoherentSheaf := (F) -> net expression F
-texMath CoherentSheaf := (F) -> texMath expression F
-toString CoherentSheaf := (F) -> toString expression F
+net      CoherentSheaf :=      net @@ expression
+texMath  CoherentSheaf :=  texMath @@ expression
+toString CoherentSheaf := toString @@ expression
 
 CoherentSheaf#AfterPrint = F -> (
      X := variety F;
      M := module F;
      n := rank ambient F;
-     ("coherent sheaf on ",X,
+     "coherent sheaf on ", X,
      if M.?generators then
      if M.?relations then (", subquotient of ", ambient F)
      else (", subsheaf of ", ambient F)
@@ -109,68 +251,31 @@ CoherentSheaf#AfterPrint = F -> (
 	  -- if not all(degrees M, d -> all(d, zero))
 	  -- then << ", degrees " << if degreeLength M === 1 then flatten degrees M else degrees M;
 	  )
-     )
- )
+      )
 
-sheaf(Variety,Module) :=  CoherentSheaf => (X,M) -> if M.cache#?(sheaf,X) then M.cache#(sheaf,X) else M.cache#(sheaf,X) = (
-     if ring M =!= ring X then error "expected module and variety to have the same ring";
-     if instance(X,ProjectiveVariety) and not isHomogeneous M
-     then error "expected a homogeneous module";
-     new CoherentSheaf from {
-     	  symbol module => M,
-	  symbol variety => X
-	  }
-     )
-Module ~ := sheaf Module := CoherentSheaf => (M) -> sheaf(Proj ring M,M)
+-----------------------------------------------------------------------------
+-- SumOfTwists type declarations and basic constructors
+-----------------------------------------------------------------------------
 
--- I've removed these methods because they should really produce a coherent sheaf of ideals rather than a coherent sheaf of modules!
--- Ideal ~ := sheaf Ideal := CoherentSheaf => (M) -> sheaf(Proj ring M,module M)
+LowerBound = new SelfInitializingType of BasicList
+>  InfiniteNumber := >  ZZ := LowerBound => i -> LowerBound{i+1}
+>= InfiniteNumber := >= ZZ := LowerBound => i -> LowerBound{i}
+SheafOfRings(*) := O -> O^1(*)
+CoherentSheaf(*) := F -> F(>=-infinity)
 
-variety = method()
-variety CoherentSheaf := Variety => (F) -> F.variety
-variety SheafOfRings := Variety => O -> O.variety
--- The following two methods returns either a Variety or 
--- (from Schubert2) an AbstractVariety, or
--- (from NormalToricVarieties) a NormalToricVariety
--- and perhaps other uses later...
-variety Ring := S -> if S.?variety then S.variety else error "no variety associated with ring"
-variety RingElement := f -> variety ring f
+SumOfTwists = new Type of BasicList
+CoherentSheaf LowerBound := SumOfTwists => (F,b) -> new SumOfTwists from {F, b}
+SheafOfRings LowerBound := SumOfTwists => (O,b) -> O^1 b
+net SumOfTwists := S -> net S#0 | if S#1#0 === -infinity then "(*)" else "(>=" | net S#1#0 | ")"
+texMath SumOfTwists := S -> texMath S#0 | if S#1#0 === -infinity then "(*)" else "(\\ge" | texMath S#1#0 | ")"
 
-ring CoherentSheaf := (F) -> ring F.module
-numgens CoherentSheaf := (F) -> numgens F.module
-module CoherentSheaf := Module => F -> F.module
-module SheafOfRings  := Module => F -> module F.ring
-Ideal * CoherentSheaf := (I,F) -> sheaf(F.variety, I * module F)
-CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.variety, F.module ++ G.module)
-CoherentSheaf.directSum = args -> sheaf((first args).variety,directSum apply(args, F -> F.module))
-directSum CoherentSheaf := directSum @@ sequence
-CoherentSheaf ** CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.variety, F.module ** G.module)
-CoherentSheaf ZZ := CoherentSheaf => (F,n) -> sheaf(variety F, F.module ** (ring F)^{n})
-SheafOfRings ZZ := CoherentSheaf => (O,n) -> O^1(n)
-CoherentSheaf ^ ZZ := CoherentSheaf => (F,n) -> sheaf(F.variety, F.module^n)
-CoherentSheaf / CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.variety, F.module / G.module)
-CoherentSheaf / Ideal := CoherentSheaf => (F,I) -> sheaf(F.variety, F.module / I)
+-- basic methods
+ring    SumOfTwists := S ->    ring S#0
+variety SumOfTwists := S -> variety S#0
 
-variety Ideal := I -> Proj(ring I/I)
-
-SheafOfRings ^ ZZ := SheafOfRings ^ List := (O,n) -> (
-     R := ring O;
-     X := variety O;
-     sheaf_X R^n
-     )
-
-annihilator CoherentSheaf := Ideal => o -> (F) -> annihilator F.module
-
-codim   CoherentSheaf := options (codim,Module) >> opts -> (F) -> codim(module F,opts)
-rank    CoherentSheaf := (F) -> rank  module F
-degrees CoherentSheaf := (F) -> degrees module F
-
-exteriorPower(ZZ,CoherentSheaf) := CoherentSheaf => options -> (i,F) -> 
-    sheaf(variety F, exteriorPower(i,F.module,options))
-
-super   CoherentSheaf := CoherentSheaf => (F) -> sheaf super   module F
-ambient CoherentSheaf := CoherentSheaf => (F) -> sheaf ambient module F
-cover   CoherentSheaf := CoherentSheaf => (F) -> sheaf cover   module F
+-----------------------------------------------------------------------------
+-- helpers for sheaf cohomology
+-----------------------------------------------------------------------------
 
 degreeList = (M) -> (
      if dim M > 0 then error "expected module of finite length";
@@ -204,18 +309,6 @@ globalSectionsModule = (G,bound) -> (
 	  );
      minimalPresentation M)
 
-LowerBound = new SelfInitializingType of BasicList
->  InfiniteNumber := >  ZZ := LowerBound => i -> LowerBound{i+1}
->= InfiniteNumber := >= ZZ := LowerBound => i -> LowerBound{i}
-SheafOfRings(*) := O -> O^1(*)
-CoherentSheaf(*) := F -> F(>=-infinity)
-
-SumOfTwists = new Type of BasicList
-CoherentSheaf LowerBound := SumOfTwists => (F,b) -> new SumOfTwists from {F, b}
-SheafOfRings LowerBound := SumOfTwists => (O,b) -> O^1 b
-net SumOfTwists := S -> net S#0 | if S#1#0 === -infinity then "(*)" else "(>=" | net S#1#0 | ")"
-texMath SumOfTwists := S -> texMath S#0 | if S#1#0 === -infinity then "(*)" else "(\\ge" | texMath S#1#0 | ")"
-
 cohomology(ZZ,SumOfTwists) :=  Module => opts -> (i,S) -> (
      F := S#0;
      R := ring F;
@@ -240,29 +333,13 @@ cohomology(ZZ,ProjectiveVariety,CoherentSheaf) := Module => opts -> (i,X,F) -> c
 
 cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
 
-applyMethod = (key,x) -> (
-     f := lookup key;
-     if f === null then error "no method available";	    -- expand this error message later
-     f x)
+-----------------------------------------------------------------------------
 
-OO = new ScriptedFunctor from {
-     subscript => X -> applyMethod((symbol _,OO,class X),(OO,X)),
-     argument => X -> applyMethod((symbol SPACE,OO,class X),(OO,X)),
-     }
-OO.texMath = ///{\mathcal O}///
-installMethod(symbol _,OO,Variety,(OO,X) -> sheaf_X ring X)
-sheaf Variety := X -> sheaf_X ring X
+minimalPresentation CoherentSheaf := prune CoherentSheaf := o -> F -> sheaf minimalPresentation HH^0 F(>=0)
 
---PP = new ScriptedFunctor from {
---     superscript => (
---	  i -> R -> (
---	       x := symbol x;
---	       Proj (R[ x_0 .. x_i ])
---	       )
---	  )
---     }
-
-minimalPresentation CoherentSheaf := prune CoherentSheaf := opts -> F -> sheaf minimalPresentation HH^0 F(>=0)
+-----------------------------------------------------------------------------
+-- cotangentSheaf and tangentSheaf
+-----------------------------------------------------------------------------
 
 cotangentSheaf = method(Options => {Minimize => true})
 tangentSheaf = method(Options => {Minimize => true})
@@ -270,11 +347,6 @@ tangentSheaf = method(Options => {Minimize => true})
 -- weightedVars = S -> (
 --      map(S^1, S^-(degrees S), {apply(generators S, flatten degrees S, times)})
 --      )
-
-checkRing := A -> (
-     if not degreeLength A === 1 then error "expected degreeLength of ring to be 1";
-     if not same degrees A then error "expected variables all of the same degree";
-     )
 
 cotangentSheaf ProjectiveVariety := CoherentSheaf => opts -> (cacheValue (symbol cotangentSheaf => opts)) ((X) -> (
 	  R := ring X;
@@ -295,26 +367,19 @@ cotangentSheaf(ZZ,ProjectiveVariety) := CoherentSheaf => opts -> (i,X) -> (
 
 tangentSheaf ProjectiveVariety := CoherentSheaf => opts -> (X) -> dual cotangentSheaf(X,opts)
 
-dim AffineVariety := X -> dim ring X
-dim ProjectiveVariety := X -> dim ring X - 1
-codim ProjectiveVariety := options(codim,PolynomialRing) >> opts -> X -> codim(ring X,opts)
+-----------------------------------------------------------------------------
+-- singularLocus
+-----------------------------------------------------------------------------
 
-genera ProjectiveVariety := X -> genera ring X
-genus ProjectiveVariety := X -> genus ring X
-
-AffineVariety * AffineVariety := AffineVariety => (X,Y) -> Spec(ring X ** ring Y)
-AffineVariety ** Ring := AffineVariety => (X,R) -> Spec(ring X ** R)
--- this is not right:
--- ProjectiveVariety ** Ring := ProjectiveVariety => (X,R) -> Proj(ring X ** R)
-
-singularLocus(ProjectiveVariety) := X -> (
+singularLocus     AffineVariety :=     AffineVariety => X -> Spec singularLocus ring X
+singularLocus ProjectiveVariety := ProjectiveVariety => X -> (
      R := ring X;
      f := presentation R;
      A := ring f;
      checkRing A;
      Proj(A / saturate (minors(codim(R,Generic=>true), jacobian f) + ideal f)))
 
-singularLocus(AffineVariety) := X -> Spec singularLocus ring X
+-----------------------------------------------------------------------------
 
 eulers CoherentSheaf := F -> (
      if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
@@ -328,13 +393,12 @@ genera CoherentSheaf := F -> (
 genus CoherentSheaf := F -> (
      if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
      genus module F)
-
 degree CoherentSheaf := F -> (
      if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
      degree F.module)
-degree ProjectiveVariety := X -> degree ring X
-
 pdim CoherentSheaf := F -> pdim module F
+
+-----------------------------------------------------------------------------
 
 hilbertSeries ProjectiveVariety := opts -> X -> ( notImplemented(); hilbertSeries(ring X,opts) )
 hilbertSeries CoherentSheaf := opts -> F -> (
@@ -350,11 +414,9 @@ hilbertPolynomial CoherentSheaf := opts -> F -> (
 hilbertFunction(List,CoherentSheaf) := hilbertFunction(ZZ,CoherentSheaf) := (d,F) -> ( notImplemented(); hilbertFunction(d,F.module))
 hilbertFunction(List,ProjectiveVariety) := hilbertFunction(ZZ,ProjectiveVariety) := (d,X) -> ( notImplemented(); hilbertFunction(d,ring X))
 
-dual CoherentSheaf := {} >> o -> F -> sheaf_(F.variety) dual F.module
-betti CoherentSheaf := opts -> F -> (
-     if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     betti (F.module,opts))
+-----------------------------------------------------------------------------
 
+-- TODO: simplify using the fact that tensor is a binary method
 binaryPower := (W,n,times,unit,inverse) -> (
      if n === 0 then return unit();
      if n < 0 then (W = inverse W; n = -n);
@@ -372,6 +434,10 @@ Monoid        ^** ZZ := (M,n) -> binaryPower(M,n,tensor,() -> monoid [], x -> er
 Ring          ^** ZZ := (R,n) -> binaryPower(R,n,tensor,() -> coefficientRing R, x -> error "Ring ^** ZZ: expected non-negative integer")
 Module        ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> (ring F)^1, dual)
 CoherentSheaf ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> OO_(F.variety)^1, dual)
+
+-----------------------------------------------------------------------------
+-- Sheaf Hom and Ext
+-----------------------------------------------------------------------------
 
 sheafHom = method(TypicalValue => CoherentSheaf)
 sheafHom(CoherentSheaf,CoherentSheaf) := (F,G) -> sheaf Hom(module F, module G)
@@ -410,6 +476,7 @@ sheafExt(ZZ,SheafOfRings,SheafOfRings) := Module => (n,O,R) -> sheafExt^n(O^1,R^
 -- The following algorithms and examples appear in Gregory G. Smith,
 -- Computing global extension modules, Journal of Symbolic Computation
 -- 29 (2000) 729-746.
+-- See tests/normal/ext-global.m2 for the examples
 -----------------------------------------------------------------------------
 
 Ext(ZZ,CoherentSheaf,SumOfTwists) := Module => opts -> (m,F,G') -> (
@@ -459,6 +526,11 @@ Ext(ZZ,SheafOfRings,SheafOfRings) := Module => opts -> (n,O,R) -> Ext^n(O^1,R^1,
 -- end of code donated by Greg Smith <ggsmith@math.berkeley.edu>
 -----------------------------------------------------------------------------
 
+-----------------------------------------------------------------------------
+-- hh: Hodge decomposition
+-----------------------------------------------------------------------------
+-- TODO: HodgeTally for pretty printing the Hodge diamond
+
 hh = new ScriptedFunctor from {
      superscript => (
 	  pq -> new ScriptedFunctor from {
@@ -490,6 +562,7 @@ euler ProjectiveVariety := X -> (
 ------------------------------------
 -- Code donated by Frank Schreyer --
 ------------------------------------
+-- TODO: move elsewhere
 
 randomKRationalPoint = method()
 randomKRationalPoint Ideal := I -> (
