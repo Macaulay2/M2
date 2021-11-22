@@ -54,8 +54,9 @@ hilbertFunctionQ(ZZ, ZZ) := memoize(
 
 -- TODO: where should this go?
 heft = method()
-heft Ring           := R -> ( o := options R; if o =!= null and o.?Heft then o.Heft )
-heft PolynomialRing := R -> (options R.FlatMonoid).Heft
+heft Ring           :=
+heft Monoid         := R -> if (o := options R) =!= null and o.?Heft then o.Heft
+heft PolynomialRing := R -> heft R.FlatMonoid
 heft QuotientRing   := R -> heft ambient R
 -- TODO: deprecate this in favor of just "heft ring M"
 heft Module         := M -> heft ring M
@@ -258,7 +259,7 @@ hilbertSeries Module := opts -> M -> (
     -- is it guaranteed to work in some sense?
     -- if not isHomogeneous M then error "expected a homogeneous module";
     A := ring M;
-    if (options A).Heft === null then error "hilbertSeries: ring has no heft vector";
+    if heft A === null then error "hilbertSeries: ring has no heft vector";
     ord := opts.Order;
     -- using cached result
     if ord === infinity then (
@@ -286,7 +287,7 @@ hilbertSeries Module := opts -> M -> (
 	s := (
 	    num = numerator h;
 	    if num == 0 then 0_T else (
-		wts := (options ring M).Heft;
+		wts := heft ring M;
 		(lo, hi) := weightRange(wts, num);
 		if ord <= lo then 0_T else (
 		    num = part(, ord-1, wts, num);
