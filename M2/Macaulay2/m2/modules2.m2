@@ -61,6 +61,8 @@ tensor(Module, Module) := Module => {} >> opts -> (M, N) -> (
 Matrix ** Module := Matrix => (f,M) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else  f ** id_M
 Module ** Matrix := Matrix => (M,f) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else id_M ** f
 
+-- TODO: this is undocumented and only works correctly in a specific case.
+-- can its goal be accomplished differently?
 Option ** Option := (x,y) -> (
      (a,b) := (x#0,y#0);			 -- the labels
      (M,N) := (x#1,y#1);			 -- the objects (modules, etc.)
@@ -77,8 +79,8 @@ Option ** Option := (x,y) -> (
 -----------------------------------------------------------------------------
 -- base change
 -----------------------------------------------------------------------------
+-- TODO: make documentation page for base change
 Module ** Ring := Module => (M,R) -> R ** M		    -- grandfathered, even though our modules are left modules
-
 Ring ** Module := Module => (R,M) -> (
      A := ring M;
      if A === R then return M;
@@ -90,7 +92,6 @@ Ring ** Module := Module => (R,M) -> (
      else map(R,A) ** M)
 
 Matrix ** Ring := Matrix => (f,R) -> R ** f		    -- grandfathered, even though our modules are left modules
-
 Ring ** Matrix := Matrix => (R,f) -> (
      B := ring source f;
      A := ring target f;
@@ -98,11 +99,10 @@ Ring ** Matrix := Matrix => (R,f) -> (
      else map( target f ** R, source f ** R, promote(cover f, R), Degree => first promote({degree f}, A, R) )
      )
 
-Ideal ** Ring := Ideal => (I, R) -> R ** I
-Ring ** Ideal := Ideal => (R, I) -> ideal(generators I ** R)
+Ideal * Ring := Ideal ** Ring := Ideal => (I, R) -> R ** I
+Ring * Ideal := Ring ** Ideal := Ideal => (R, I) -> if ring I === R then I else ideal(I.generators ** R)
 
-Ideal * Ring := Ideal => (I,S) -> if ring I === S then I else ideal(I.generators ** S)
-Ring * Ideal := Ideal => (S,I) -> if ring I === S then I else ideal(I.generators ** S)
+-----------------------------------------------------------------------------
 
 -- the key for issub hooks under GlobalHookStore
 protect ContainmentHooks
