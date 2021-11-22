@@ -166,7 +166,7 @@ dictToHashTable(PythonObject) := x -> (
 toFunction = method()
 toFunction PythonObject := x -> y -> (
     p := partition(a -> instance(a, Option),
-	if instance(y, VisibleList) then y else {y});
+	if instance(y, Sequence) then y else 1:y);
     args := toPython if p#?false then toSequence p#false else ();
     kwargs := toPython hashTable if p#?true then toList p#true else {};
     if debugLevel > 0 then printerr(
@@ -190,7 +190,9 @@ addHook((value, PythonObject),
     Strategy => "unknown -> PythonObject")
 addPyToM2Function({"function", "builtin_function_or_method", "method-wrapper"},
     toFunction, "function -> FunctionClosure")
-addPyToM2Function("dict", dictToHashTable, "dict -> HashTable")
+addPyToM2Function("Counter", x -> new Tally from dictToHashTable x,
+    "Counter -> Tally")
+addPyToM2Function({"dict", "defaultdict"}, dictToHashTable, "dict -> HashTable")
 addPyToM2Function({"set", "frozenset"}, set @@ iterableToList, "set -> Set")
 addPyToM2Function("list", iterableToList, "list -> List")
 addPyToM2Function({"tuple", "range"}, toSequence @@ iterableToList,
@@ -248,6 +250,9 @@ scan({
 	)
     )
 
+-PythonObject := o -> o@@"__neg__"()
++PythonObject := o -> o@@"__pos__"()
+
 PythonObject Thing := (o, x) -> (toFunction o) x
 
 length PythonObject := x -> value x@@"__len__"()
@@ -293,7 +298,7 @@ toPython Sequence := L -> (
     result := pythonTupleNew n;
     for i to n - 1 do pythonTupleSetItem(result, i, toPython L_i);
     result)
-toPython List := L -> (
+toPython VisibleList := L -> (
     n := #L;
     result := pythonListNew n;
     for i to n - 1 do pythonListSetItem(result, i, toPython L_i);
@@ -429,6 +434,12 @@ assert Equation(5 ^^ y, 7)
 assert Equation(x xor y, rs "7")
 assert Equation(x xor 2, 7)
 assert Equation(5 xor y, 7)
+
+----------------------
+-- unary operations --
+----------------------
+assert Equation(-x, -5)
+assert Equation(+x, 5)
 ///
 
 TEST ///
