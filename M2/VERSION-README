@@ -32,9 +32,10 @@ Here is the procedure:
 	      git branch -b release-X.Y-branch
 	 - push it upstream:
 	      git push -u origin release-X.Y
-	 - tag provisionally it for Mahrud
-	      git tag release-X.Y-rc1
-	      git push origin release-X.Y-rc1
+	 - make builds on that branch, making modifications as needed
+	 - when the builds complete, then
+	      git tag release-X.Y
+	      git push origin release-X.Y
 	 - switch to development and merge the new release branch with development
 	      git checkout development
 	      git merge release-X.Y

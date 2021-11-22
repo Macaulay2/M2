@@ -143,9 +143,9 @@ various modern operating systems:
     Download yasm from http://yasm.tortall.net/Download.html and install it in /usr/local, the usual
         way (untar, configure, make, make install).
 
-  Suse Linux Leap 42.1:
+  Suse Linux Leap 15.3:
 
-    sudo zypper -n install man man-pages emacs-x11 gcc git screen autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gdbm-devel gmp-devel lapack-devel libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool libatomic_ops-devel libmpir-devel mpfr-devel ntl-devel flint-devel glpk-devel cddlib-devel givaro-devel boost-devel rpm-build mpc-devel yasm
+    sudo zypper -n install man man-pages emacs-x11 gcc git screen autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gdbm-devel gmp-devel lapack-devel libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool libatomic_ops-devel libmpir-devel mpfr-devel ntl-devel flint-devel glpk-devel cddlib-devel givaro-devel boost-devel rpm-build mpc-devel yasm tbb-devel eigen3-devel
 
     Add
 
