@@ -56,7 +56,6 @@ export {
     "isFano", 
     "isFibration",
     "isNef",  
-    "isProjective",
     "isProper", 
     "isQQCartier", 
     "kleinschmidt",

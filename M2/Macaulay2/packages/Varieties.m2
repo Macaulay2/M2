@@ -31,6 +31,7 @@ export {
     "tangentSheaf",
     "cotangentSheaf",
     "canonicalBundle",
+    "isProjective",
     -- Functors
     "hh", -- TODO: should this be defined in Core?
     "OO",
@@ -130,6 +131,7 @@ genus  ProjectiveVariety := X -> genus  ring X
 genera ProjectiveVariety := X -> genera ring X
 -- euler ProjectiveVariety is defined further down
 -- TODO: define degrees, eulers
+hilbertPolynomial ProjectiveVariety := opts -> X -> hilbertPolynomial(ring X, opts)
 
 ambient     AffineVariety :=     AffineVariety => X -> Spec ambient ring X
 ambient ProjectiveVariety := ProjectiveVariety => X -> Proj ambient ring X
@@ -141,6 +143,13 @@ AffineVariety     *      AffineVariety :=     AffineVariety => (X, Y) -> Spec(ri
 --ProjectiveVariety *  ProjectiveVariety := ProjectiveVariety => (X, Y) -> Proj(ring X ** ring Y)
 AffineVariety     ** Ring              :=     AffineVariety => (X, R) -> X * Spec R
 --ProjectiveVariety ** Ring              := ProjectiveVariety => (X, R) -> X ** Proj R
+
+-- property checks
+-- TODO: document
+isProjective = method(TypicalValue => Boolean)
+isProjective Variety           := X -> false
+isProjective ProjectiveVariety := X -> true
+-- TODO: isSmooth
 
 -- This method returns either a Variety, an AbstractVariety (from Schubert2),
 -- a NormalToricVariety, or any other variety stashed in R.variety.
@@ -166,6 +175,13 @@ mathML Variety := lookup(mathML, Thing)
 
 describe     AffineVariety := X -> Describe (expression Spec) (expression X.ring)
 describe ProjectiveVariety := X -> Describe (expression Proj) (expression X.ring)
+
+-----------------------------------------------------------------------------
+-- Divisors
+-----------------------------------------------------------------------------
+
+-- used for algorithms that need a non-trivial Picard group
+checkProjective := X -> if not isProjective X then error "expected a coherent sheaf over a projective variety"
 
 -----------------------------------------------------------------------------
 -- SheafOfRings and CoherentSheaf type declarations and basic constructors
@@ -224,7 +240,6 @@ module CoherentSheaf := Module => F -> F.module
 
 codim   CoherentSheaf := options(codim, Module) >> o -> F -> codim(F.module, o)
 rank    CoherentSheaf := F -> rank    F.module
-degrees CoherentSheaf := F -> degrees F.module
 numgens CoherentSheaf := F -> numgens F.module
 betti   CoherentSheaf := o -> F -> betti(F.module, o)
 
@@ -232,13 +247,22 @@ super   CoherentSheaf := CoherentSheaf => F -> sheaf(F.variety, super   F.module
 ambient CoherentSheaf := CoherentSheaf => F -> sheaf(F.variety, ambient F.module)
 cover   CoherentSheaf := CoherentSheaf => F -> sheaf(F.variety, cover   F.module)
 
+degree  CoherentSheaf := F -> degree  module F
+degrees CoherentSheaf := F -> degrees module F
+euler   CoherentSheaf := F -> euler   module F
+eulers  CoherentSheaf := F -> eulers  module F
+genus   CoherentSheaf := F -> genus   module F
+genera  CoherentSheaf := F -> genera  module F
+pdim    CoherentSheaf := F -> pdim    module F
+
+hilbertPolynomial CoherentSheaf := opts -> F -> hilbertPolynomial(module F, opts)
+
 -- twist and powers
--- TODO: check projectivity
--- TODO: https://github.com/Macaulay2/M2/issues/2288
-SheafOfRings(ZZ)   := CoherentSheaf => (O, a) -> O^1(a)
-CoherentSheaf(ZZ)  := CoherentSheaf => (F, a) -> sheaf(F.variety, F.module ** (ring F)^{a})
-SheafOfRings  ^ ZZ := SheafOfRings  ^ List := CoherentSheaf => (O, n) -> sheaf(O.variety, (ring O)^n)
-CoherentSheaf ^ ZZ := CoherentSheaf ^ List := CoherentSheaf => (F, n) -> sheaf(F.variety, F.module^n)
+-- TODO: sheaf should dehomogenize modules on Affine varieties
+SheafOfRings(ZZ)   := SheafOfRings  Sequence := CoherentSheaf => (O, a) -> O^1(a)
+CoherentSheaf(ZZ)  := CoherentSheaf Sequence := CoherentSheaf => (F, a) -> sheaf(F.variety, F.module ** (ring F)^{splice{a}})
+SheafOfRings  ^ ZZ := SheafOfRings  ^ List   := CoherentSheaf => (O, n) -> sheaf(O.variety, (ring O)^n)
+CoherentSheaf ^ ZZ := CoherentSheaf ^ List   := CoherentSheaf => (F, n) -> sheaf(F.variety, F.module^n)
 dual CoherentSheaf := CoherentSheaf => options(dual, Module) >> o -> F -> sheaf(F.variety, dual(F.module, o))
 
 -- arithmetic ops
@@ -318,7 +342,7 @@ SumOfTwists.synonym = "sum of twists"
 SheafOfRings(*)  := SumOfTwists => O -> O^1(>=-infinity)
 CoherentSheaf(*) := SumOfTwists => F ->   F(>=-infinity)
 SheafOfRings  LowerBound := SumOfTwists => (O, b) -> O^1(b)
-CoherentSheaf LowerBound := SumOfTwists => (F, b) -> new SumOfTwists from {F, b}
+CoherentSheaf LowerBound := SumOfTwists => (F, b) -> (checkProjective variety F; new SumOfTwists from {F, b})
 
 -- basic methods
 ring    SumOfTwists := S ->    ring S#0
@@ -486,41 +510,6 @@ singularLocus ProjectiveVariety := ProjectiveVariety => X -> (
      A := ring f;
      checkRing A;
      Proj(A / saturate (minors(codim(R,Generic=>true), jacobian f) + ideal f)))
-
------------------------------------------------------------------------------
-
-eulers CoherentSheaf := F -> (
-     if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     eulers module F)
-euler CoherentSheaf := F -> (
-     if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     euler module F)
-genera CoherentSheaf := F -> (
-     if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     genera module F)
-genus CoherentSheaf := F -> (
-     if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     genus module F)
-degree CoherentSheaf := F -> (
-     if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     degree F.module)
-pdim CoherentSheaf := F -> pdim module F
-
------------------------------------------------------------------------------
-
-hilbertSeries ProjectiveVariety := opts -> X -> ( notImplemented(); hilbertSeries(ring X,opts) )
-hilbertSeries CoherentSheaf := opts -> F -> (
-     if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     notImplemented();
-     hilbertSeries(module F,opts))
-
-hilbertPolynomial ProjectiveVariety := ProjectiveHilbertPolynomial => opts -> X -> hilbertPolynomial(ring X, opts)
-hilbertPolynomial CoherentSheaf := opts -> F -> (
-     if class variety F =!= ProjectiveVariety then error "expected a coherent sheaf over a projective variety";
-     hilbertPolynomial(F.module,opts))
-
-hilbertFunction(List,CoherentSheaf) := hilbertFunction(ZZ,CoherentSheaf) := (d,F) -> ( notImplemented(); hilbertFunction(d,F.module))
-hilbertFunction(List,ProjectiveVariety) := hilbertFunction(ZZ,ProjectiveVariety) := (d,X) -> ( notImplemented(); hilbertFunction(d,ring X))
 
 -----------------------------------------------------------------------------
 
