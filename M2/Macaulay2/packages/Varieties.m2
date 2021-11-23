@@ -227,9 +227,9 @@ degrees CoherentSheaf := F -> degrees F.module
 numgens CoherentSheaf := F -> numgens F.module
 betti   CoherentSheaf := o -> F -> betti(F.module, o)
 
-super   CoherentSheaf := CoherentSheaf => F -> sheaf super   module F
-ambient CoherentSheaf := CoherentSheaf => F -> sheaf ambient module F
-cover   CoherentSheaf := CoherentSheaf => F -> sheaf cover   module F
+super   CoherentSheaf := CoherentSheaf => F -> sheaf(F.variety, super   F.module)
+ambient CoherentSheaf := CoherentSheaf => F -> sheaf(F.variety, ambient F.module)
+cover   CoherentSheaf := CoherentSheaf => F -> sheaf(F.variety, cover   F.module)
 
 -- twist and powers
 -- TODO: check projectivity
@@ -388,8 +388,13 @@ cohomology(ZZ,ProjectiveVariety,CoherentSheaf) := Module => opts -> (i,X,F) -> c
 cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
 
 -----------------------------------------------------------------------------
+-- Module of twisted global sections Γ_*(F)
+-----------------------------------------------------------------------------
 
-minimalPresentation CoherentSheaf := prune CoherentSheaf := o -> F -> sheaf minimalPresentation HH^0 F(>=0)
+-- TODO: cache this in the sheaf
+-- TODO: should F>=0 be hardcoded?
+minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> (
+    F -> sheaf(F.variety, minimalPresentation(HH^0 F(>=0), opts)))
 
 -----------------------------------------------------------------------------
 -- cotangentSheaf and tangentSheaf
@@ -493,9 +498,10 @@ CoherentSheaf ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> OO_(F.variety)^1, 
 -- Sheaf Hom and Ext
 -----------------------------------------------------------------------------
 
+-- TODO: assert that sheaves are on the same variety
 sheafHom = method(TypicalValue => CoherentSheaf)
-sheafHom(CoherentSheaf,CoherentSheaf) := (F,G) -> sheaf Hom(module F, module G)
-Hom(CoherentSheaf,CoherentSheaf) := Module => (F,G) -> HH^0 sheafHom(F,G)
+sheafHom(CoherentSheaf,CoherentSheaf) := (F,G) -> sheaf(variety F, Hom(module F, module G))
+Hom(CoherentSheaf,CoherentSheaf) := Module => (F,G) -> HH^0(variety F, sheafHom(F, G))
 
 Hom(SheafOfRings,CoherentSheaf) := Module => (O,G) -> Hom(O^1,G)
 Hom(CoherentSheaf,SheafOfRings) := Module => (F,O) -> Hom(F,O^1)
@@ -517,7 +523,7 @@ sheafExt = new ScriptedFunctor from {
 	  )
      }
 sheafExt(ZZ,CoherentSheaf,CoherentSheaf) := CoherentSheaf => (
-     (n,F,G) -> sheaf Ext^n(module F, module G)
+     (n,F,G) -> sheaf_(variety F) Ext^n(module F, module G)
      )
 
 sheafExt(ZZ,SheafOfRings,CoherentSheaf) := Module => (n,O,G) -> sheafExt^n(O^1,G)
