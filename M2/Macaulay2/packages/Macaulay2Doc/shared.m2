@@ -7,6 +7,15 @@ document { Key => truncate,     methodstr, SeeAlso => { "Truncations::Truncation
 document { Key => chi,          methodstr }
 document { Key => isEmpty,      methodstr, SeeAlso => { "Polyhedra::Polyhedra",(isEmpty, RRi)} }
 
+document { Key => cone,
+    Headline => "mapping cone or polyhedral cone",
+    SeeAlso => {
+	(cone, ChainComplexMap),
+	"Complexes::cone(ComplexMap)",
+	"Polyhedra::cone(Polyhedron)",
+	}
+    }
+
 -- also see functions/intersect-doc.m2
 document {
     Key => { intersect, (intersect, List), (intersect, Sequence) },

@@ -6,6 +6,8 @@ needs "methods.m2"
 
 chi = method()
 
+cone = method()
+
 decompose = method(Options => true)
 
 intersect = method(Options => true, Binary => true) -- an associative binary method
