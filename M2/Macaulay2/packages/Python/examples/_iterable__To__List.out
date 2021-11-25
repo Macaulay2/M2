@@ -1,6 +1,6 @@
--- -*- M2-comint -*- hash: -1865839374
+-- -*- M2-comint -*- hash: 20170580
 
-i1 : x = rs "range(3)"
+i1 : x = pythonValue "range(3)"
 
 o1 = range(0, 3)
 

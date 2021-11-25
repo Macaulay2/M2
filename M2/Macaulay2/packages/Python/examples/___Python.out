@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -846338172
+-- -*- M2-comint -*- hash: 636783514
 
 i1 : toPython {1, 2/3, "foo", (1, 2, 3), hashTable {"foo" => "bar"}}
 
@@ -6,7 +6,7 @@ o1 = [1, 0.6666666666666666, 'foo', (1, 2, 3), {'foo': 'bar'}]
 
 o1 : PythonObject of class list
 
-i2 : value rs "[1, 2/3, 'foo', (1, 2, 3), {'foo' : 'bar'}]"
+i2 : value pythonValue "[1, 2/3, 'foo', (1, 2, 3), {'foo' : 'bar'}]"
 
 o2 = {1, .666667, foo, (1, 2, 3), HashTable{foo => bar}}
 

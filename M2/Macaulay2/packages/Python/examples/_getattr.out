@@ -1,6 +1,6 @@
--- -*- M2-comint -*- hash: -1348121585
+-- -*- M2-comint -*- hash: 1790491913
 
-i1 : foo = rs "'Hello, world!'"
+i1 : foo = pythonValue "'Hello, world!'"
 
 o1 = Hello, world!
 
