@@ -2,7 +2,7 @@
 this does not work unless M2 is compiled --with-python
 *-
 
-pythonPresent := Core#"private dictionary"#?"runPythonString"
+pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
     Version => "0.2",
@@ -32,7 +32,6 @@ if pythonPresent then verboseLog "success: python is present" else (
 exportFrom_Core {
     "runSimpleString",
     "PythonObject",
-    "runPythonString",
     "objectType"}
 
 importFrom_Core {
@@ -54,6 +53,7 @@ importFrom_Core {
     "pythonObjectSetAttrString",
     "pythonObjectCall",
     "pythonObjectStr",
+    "pythonRunString",
     "pythonSetNew",
     "pythonTrue",
     "pythonTupleNew",
