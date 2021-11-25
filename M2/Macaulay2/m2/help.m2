@@ -407,8 +407,8 @@ getBody := (key, tag, rawdoc) -> (
 help = method(Dispatch => Thing)
 help DocumentTag := tag -> (
     rawdoc := fetchAnyRawDocumentation tag;
-    tag = if rawdoc =!= null then rawdoc.DocumentTag else tag;
-    getBody(tag.Key, tag, rawdoc))
+    rawtag := if rawdoc =!= null then rawdoc.DocumentTag else tag;
+    getBody(tag.Key, rawtag, rawdoc))
 
 help Sequence := key -> (
     if key =!= () then help makeDocumentTag key else
