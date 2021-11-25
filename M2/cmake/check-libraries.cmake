@@ -52,6 +52,9 @@ else()
 endif()
 
 find_package(TBB	REQUIRED QUIET) # See FindTBB.cmake
+IF (TBB_VERSION_MAJOR GREATER_EQUAL 2021)
+  set(HAVE_TBB2021 YES)
+ENDIF (TBB_VERSION_MAJOR GREATER_EQUAL 2021)
 # TODO: replace gdbm, see https://github.com/Macaulay2/M2/issues/594
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
 # TODO: replace libatomic_ops, see https://github.com/Macaulay2/M2/issues/1113

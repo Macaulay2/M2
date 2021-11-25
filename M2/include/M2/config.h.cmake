@@ -350,4 +350,6 @@
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #cmakedefine size_t ${CMAKE_HOST_SYSTEM}
 
+#cmakedefine HAVE_TBB2021
+
 #endif /* _M2_CONFIG_H */
