@@ -266,7 +266,7 @@ setupMethods := (args, symbols) -> (
 setupMethods((), { 
 	  entries, baseName, borel, gcdCoefficients, singularLocus,
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
-	  koszul, symmetricPower, trace, target, source,
+	  koszul, target, source,
 	  getChangeMatrix, cover, coverMap, super, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
 	  substitute, complete, ambient, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
@@ -293,8 +293,6 @@ default = method()
 --     m := lookup(X,symbol default);
 --     if m === null then error "no method found";
 --     m ())
-
-determinant = method(Options => { Strategy => null })
 
 random = method(Options => {
 	  MaximalRank => false,
