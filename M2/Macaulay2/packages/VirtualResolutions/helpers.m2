@@ -42,7 +42,7 @@ normalToricVarietyWithTateData = X -> (
 -- input: multigraded polynomial ring with Tate Data
 -- output: NormalToricVariety, with the given ring cached in it
 normalToricVarietyFromTateData = S -> (
-    if S.?variety and S.?variety.?ring and S.?variety.cache.ring.?TateData then return S.variety;
+    if S.?variety and S.variety.cache.?ring and S.variety.cache.ring.?TateData then return S.variety;
     if not S.?TateData then error "expected a ring with TateData";
     X := cartesianProduct apply(toSequence dimVector S, n -> toricProjectiveSpace(n, CoefficientRing => coefficientRing S));
     X.cache.ring = S; S.variety = X)
