@@ -30,6 +30,7 @@ export {
     "sheafHom",
     "tangentSheaf",
     "cotangentSheaf",
+    "canonicalBundle",
     -- Functors
     "hh", -- TODO: should this be defined in Core?
     "OO",
@@ -250,8 +251,10 @@ Ideal * CoherentSheaf          := CoherentSheaf => (I, F) -> sheaf(F.variety, I 
 directSum CoherentSheaf        := CoherentSheaf =>  F     -> CoherentSheaf.directSum(1 : F)
 
 -- multilinear ops
-exteriorPower (ZZ, CoherentSheaf) := CoherentSheaf => o -> (i, F) -> sheaf(variety F,  exteriorPower(i, module F, o))
-symmetricPower(ZZ, CoherentSheaf) := CoherentSheaf => o -> (i, F) -> sheaf(variety F, symmetricPower(i, module F, o))
+-- TODO: document
+determinant        CoherentSheaf  := CoherentSheaf => o ->     F  -> exteriorPower(rank F, F, o)
+exteriorPower (ZZ, CoherentSheaf) := CoherentSheaf => o -> (i, F) -> sheaf(F.variety,  exteriorPower(i, F.module, o))
+symmetricPower(ZZ, CoherentSheaf) := CoherentSheaf => o -> (i, F) -> sheaf(F.variety, symmetricPower(i, F.module, o))
 
 annihilator CoherentSheaf := Ideal => o -> F -> annihilator(module F, o)
 
@@ -446,34 +449,31 @@ minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opt
     F -> sheaf(F.variety, minimalPresentation(HH^0 F(>=0), opts)))
 
 -----------------------------------------------------------------------------
--- cotangentSheaf and tangentSheaf
+-- cotangentSheaf, tangentSheaf, and canonicalBundle
 -----------------------------------------------------------------------------
-
-cotangentSheaf = method(Options => {Minimize => true})
-tangentSheaf = method(Options => {Minimize => true})
-
+-- TODO: make this work for weighted projective spaces, see c564ec04
+-- this would be useful for checking things about mirror symmetry
 -- weightedVars = S -> (
 --      map(S^1, S^-(degrees S), {apply(generators S, flatten degrees S, times)})
 --      )
 
-cotangentSheaf ProjectiveVariety := CoherentSheaf => opts -> (cacheValue (symbol cotangentSheaf => opts)) ((X) -> (
-	  R := ring X;
-	  F := presentation R;
-	  S := ring F;
-	  checkRing S;
-	  d := vars S ** R;
-	  e := jacobian F ** R;
-     	  -- assert (d*e == 0);
-	  om := sheaf(X, homology(d,e));
-	  if opts.Minimize then om = minimalPresentation om;
-	  om))
+-- TODO: this is the slowest part of hh and euler, look into other strategies
+-- TODO: simplify caching here and in minimalPresentation
+cotangentSheaf = method(TypicalValue => CoherentSheaf, Options => options exteriorPower ++ { Minimize => true })
+cotangentSheaf ProjectiveVariety := opts -> (cacheValue (symbol cotangentSheaf => opts)) (X -> (
+	R := ring X; checkRing R;
+	S := ring(F := presentation R);
+	(d, e) := (vars S ** R, jacobian F ** R); -- assert(d * e == 0);
+	prune' := if opts.Minimize then prune else identity;
+	prune' sheaf(X, homology(d, e))))
+cotangentSheaf(ZZ, ProjectiveVariety) := opts -> (i, X) -> exteriorPower(i, cotangentSheaf(X, opts), Strategy => opts.Strategy)
 
-cotangentSheaf(ZZ,ProjectiveVariety) := CoherentSheaf => opts -> (i,X) -> (
-     if X#?(cotangentSheaf,i)
-     then X#(cotangentSheaf,i) 
-     else X#(cotangentSheaf,i) = exteriorPower(i,cotangentSheaf(X,opts)))
+tangentSheaf = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
+tangentSheaf ProjectiveVariety := opts -> X -> dual cotangentSheaf(X, opts)
 
-tangentSheaf ProjectiveVariety := CoherentSheaf => opts -> (X) -> dual cotangentSheaf(X,opts)
+-- TODO: document
+canonicalBundle = method(TypicalValue => CoherentSheaf, Options => options cotangentSheaf)
+canonicalBundle ProjectiveVariety := opts -> X -> determinant(cotangentSheaf(X, opts), Strategy => opts.Strategy)
 
 -----------------------------------------------------------------------------
 -- singularLocus
