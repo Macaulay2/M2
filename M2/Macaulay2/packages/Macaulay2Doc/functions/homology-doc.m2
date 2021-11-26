@@ -2,6 +2,8 @@
 --- author(s): dan
 --- notes: 
 
+undocumented {(homology,ZZ,Sequence)}
+
 document { 
      Key => homology,
      Headline => "general homology functor",

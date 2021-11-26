@@ -330,7 +330,7 @@ document { Key => MethodFunctionWithOptions,
 undocumented (methodOptions, MethodFunctionWithOptions)
 undocumented (methodOptions, MethodFunction)
 undocumented (methodOptions, Symbol)
-document { Key => {(methodOptions, Function),(methodOptions, Command),(methodOptions, ScriptedFunctor),methodOptions},
+document { Key => {(methodOptions, Function),(methodOptions, Command),(methodOptions, Functor),methodOptions},
      Headline => "recover the options used when a method function was created",
      Usage => "methodOptions f",
      Inputs => { "f" },

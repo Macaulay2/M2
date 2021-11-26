@@ -1,6 +1,6 @@
 --		Copyright 1995 by Daniel R. Grayson
 
-needs "gateway.m2" -- for ScriptedFunctor
+needs "functors.m2"
 needs "matrix1.m2"
 needs "modules.m2"
 

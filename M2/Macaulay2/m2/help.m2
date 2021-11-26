@@ -134,7 +134,7 @@ isDocumentableMethod     Type :=
 isDocumentableMethod   Symbol :=
 isDocumentableMethod  Command :=
 isDocumentableMethod Function :=
-isDocumentableMethod ScriptedFunctor := isDocumentableThing
+isDocumentableMethod Functor  := isDocumentableThing
 
 documentableMethods := key -> select(methods key, isDocumentableMethod)
 
@@ -184,7 +184,7 @@ documentationValue(Symbol, Command)         :=
 -- e.g. Macaulay2Doc :: flush
 documentationValue(Symbol, Manipulator)     :=
 -- e.g. Macaulay2Doc :: HH
-documentationValue(Symbol, ScriptedFunctor) :=
+documentationValue(Symbol, Functor)         :=
 -- e.g. Macaulay2Doc :: sum
 documentationValue(Symbol, Function)        :=
 -- e.g. Macaulay2Doc :: xor
@@ -330,10 +330,10 @@ getSynopsis := (key, tag, rawdoc) -> (
     result := nonnull {
 	if rawdoc.?BaseFunction then SPAN { "Function: ", TO rawdoc.BaseFunction }
 	else if instance(key, Sequence) and key#?0 then (
-	    if  instance(key#0, ScriptedFunctor) then SPAN { "Scripted functor: ", TO key#0 }
-	    else if instance(key#0, Keyword)     then SPAN { "Operator: ",         TO key#0 }
-	    else if instance(key#0, Function)    then SPAN { "Function: ",         TO key#0 }
-	    else if instance(key#0, Sequence) and #key#0 === 2 and key#0#1 === symbol=
+	    if  instance(key#0, Functor)  then SPAN { "Functor: ",  TO key#0 } else
+	    if  instance(key#0, Keyword)  then SPAN { "Operator: ", TO key#0 } else
+	    if  instance(key#0, Function) then SPAN { "Function: ", TO key#0 } else
+	    if  instance(key#0, Sequence) and #key#0 === 2 and key#0#1 === symbol=
 	    then SPAN { "Operator: ", TO key#0#0 }), -- assignment operator for this operator
 	if rawdoc.?Usage        then                           rawdoc.Usage, -- TODO: handle getUsage here
 	if rawdoc.?Inputs       then  LI { "Inputs:",       UL rawdoc.Inputs },
@@ -507,7 +507,7 @@ briefDocumentation Thing       := key -> (
     if waystouse =!= null then << endl << waystouse << endl;
     if technical =!= null then << endl << technical << endl;)
 
-? ScriptedFunctor :=
+? Functor  :=
 ? Function :=
 ? Command  :=
 ? Keyword  :=

@@ -561,7 +561,7 @@ document {
    (methods, Package),
    (methods, Sequence),
    (methods, Thing),
-   (methods, ScriptedFunctor),
+   (methods, Functor),
    (methods, Symbol),
    (methods, Type)
    },

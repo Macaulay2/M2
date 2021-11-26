@@ -1,5 +1,6 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "functors.m2"
 needs "matrix.m2"
 needs "modules.m2"
 needs "quotient.m2"

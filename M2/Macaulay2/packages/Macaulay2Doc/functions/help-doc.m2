@@ -172,8 +172,8 @@ doc ///
 Node
   Key
     (symbol?, Symbol)
-    (symbol?, ScriptedFunctor)
     (symbol?, Function)
+    (symbol?, Functor)
     (symbol?, Keyword)
     (symbol?, Package)
     (symbol?, Type)

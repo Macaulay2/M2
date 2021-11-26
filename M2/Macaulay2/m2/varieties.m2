@@ -1,7 +1,7 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
 needs "ext.m2"
-needs "gateway.m2"
+needs "functors.m2"
 needs "hilbert.m2"
 needs "local.m2"
 needs "matrix1.m2"
@@ -239,15 +239,10 @@ cohomology(ZZ,ProjectiveVariety,CoherentSheaf) := Module => opts -> (i,X,F) -> c
 
 cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
 
-applyMethod = (key,x) -> (
-     f := lookup key;
-     if f === null then error "no method available";	    -- expand this error message later
-     f x)
-
 OO = new ScriptedFunctor from {
-     subscript => X -> applyMethod((symbol _,OO,class X),(OO,X)),
-     argument => X -> applyMethod((symbol SPACE,OO,class X),(OO,X)),
-     }
+    subscript => X -> applyFunctor((symbol _,     OO, class X), (OO, X)),
+    argument  => X -> applyFunctor((symbol SPACE, OO, class X), (OO, X)),
+    }
 OO.texMath = ///{\mathcal O}///
 installMethod(symbol _,OO,Variety,(OO,X) -> sheaf_X ring X)
 sheaf Variety := X -> sheaf_X ring X
