@@ -56,11 +56,12 @@ if notify then stderr << "--loading configuration for package \"PKG\" from file 
 warn0 := (sym, front, behind, syns) -> (
     -- just for debugging:
     -- error("symbol ", format sym, " in ", toString behind, " is shadowed by a symbol in ", toString front);
-    stderr << "--warning: symbol " << format toString sym << " in " << behind << " is shadowed by a symbol in " << front << endl;
+    printerr("warning: symbol ", format toString sym, " in ", toString behind,
+	" is shadowed by a symbol in ", toString front);
     if #syns > 0 then if #syns > 1
-    then stderr << "--  use one of the synonyms " << demark(", ", syns) << endl
-    else stderr << "--  use the synonym " << syns#0 << endl
-    else stderr << "--  no synonym is available" << endl)
+    then printerr("  use one of the synonyms ", demark(", ", syns))
+    else printerr("  use the synonym ", syns#0)
+    else printerr("  no synonym is available"))
 warn := x -> if not seenWarnings#?x and debuggingMode then (warn0 x; seenWarnings#x = true)
 
 checkShadow := () -> (
