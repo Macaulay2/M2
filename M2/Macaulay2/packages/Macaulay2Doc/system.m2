@@ -728,7 +728,7 @@ document {
 	  for your system."
 	  },
      PRE replace(regexQuote homeDirectory, "/home/m2user/",
-	   concatenate between_"\n" apply(value Core#"private dictionary"#"userpath",s -> (5,s))),
+	   concatenate between_"\n" apply(core "userpath", s -> (5, s))),
      EXAMPLE {
 	  "stack path",
 	  ///path = append(path, "~/resolutions/"); stack path///

@@ -183,6 +183,7 @@ makeDocumentTag' := opts -> key -> (
 
 makeDocumentTag = method(Dispatch => Thing, Options => { Package => null })
 makeDocumentTag DocumentTag := opts -> identity
+makeDocumentTag List        := opts -> L   -> apply(L, key -> makeDocumentTag(key, opts))
 makeDocumentTag Thing       := opts -> key -> (makeDocumentTag' opts) key
 makeDocumentTag String      := opts -> key -> (
     local pkg;
@@ -384,11 +385,11 @@ isSecondaryTag   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?Pr
 isUndocumented   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?"undocumented" and d#"undocumented" === true )
 hasDocumentation = key -> null =!= fetchAnyRawDocumentation makeDocumentTag(key, Package => null)
 
+-- TODO: is it possible to expand to (filename, start,startcol, stop,stopcol, pos,poscol)?
 locate DocumentTag := tag -> (
-    rawdoc := fetchAnyRawDocumentation tag;
-    if rawdoc =!= null
-    then (rawdoc#"filename", rawdoc#"linenum",,,,,) -- TODO: (filename, start,startcol, stop,stopcol, pos,poscol)
-    else (currentFileName, currentLineNumber(),,,,,))
+    if (rawdoc := fetchAnyRawDocumentation tag) =!= null
+    then (minimizeFilename rawdoc#"filename", rawdoc#"linenum")
+    else (currentFileName, currentLineNumber()))
 
 -----------------------------------------------------------------------------
 -- helpers for the document function
@@ -621,7 +622,7 @@ document List := opts -> args -> (
 	    if o#?key then error("option ", toString key, " encountered twice");
 	    o#key = arg#1));
     -- Set the description
-    o.Description = select(args, arg -> not instance(arg, Option));
+    o.Description = select(nonnull args, arg -> not instance(arg, Option));
     -- Set the primary key
     key := if o.?Key then o.Key else error "missing Key";
     rest := if instance(key, List) then (

@@ -2,8 +2,10 @@
 --- author(s): 
 --- notes: 
 
+
 undocumented {
 	  (net, Adjacent),
+	  (net, AngleBarList),
 	  (net, Array),
 	  (net, Bag),
 	  (net, BasicList),
@@ -43,6 +45,8 @@ undocumented {
 	  (net, IndexedVariable),
 	  (net, InexactField),
 	  (net, InfiniteNumber),
+	  (net, LATER),
+	  (net, LITERAL),
 	  (net, List),
 	  (net, MENU),
 	  (net, Manipulator),
@@ -93,6 +97,7 @@ undocumented {
 	  (net, TOH),
 	  (net, TT),
 	  (net, Table),
+	  (net, TestInput),
 	  (net, VirtualTally),
 	  (net, Thing),
 	  (net, Time),
