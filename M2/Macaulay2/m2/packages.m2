@@ -1,6 +1,7 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 -- TODO: eventually we won't be able to keep all packages open, anyway, since 256 can be our limit on open file descriptors
 
+needs "code.m2"
 needs "files.m2"
 needs "fold.m2"
 needs "lists.m2"
@@ -112,6 +113,7 @@ net      Package :=
 toString Package := pkg -> if pkg#?"pkgname" then pkg#"pkgname" else "-*package*-"
 texMath  Package := pkg -> texMath toString pkg
 options  Package := pkg -> pkg.Options
+methods  Package := memoize(pkg -> select(methods(), m -> package m === pkg))
 
 -- TODO: should this go elsewhere?
 toString Dictionary := dict -> (
