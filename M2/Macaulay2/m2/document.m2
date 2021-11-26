@@ -686,7 +686,6 @@ undocumented Thing := key -> if key =!= null then (
 	    "linenum"          => currentLineNumber()
 	    }))
 
--- TODO: what does this do?
 -- somehow, this is the very first method called by the Core!!
 undocumented keys undocumentedkeys
 undocumentedkeys = null
