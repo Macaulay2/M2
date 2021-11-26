@@ -10,13 +10,12 @@ export {
     "iter",
     "iterableToList",
     "next",
+    "pythonValue",
     "setattr",
     "setitem",
     "toFunction",
     "toPython",
-    "rs",
     "objectType",
-    "runPythonString",
     "runSimpleString"}
 
 errmsg = "Macaulay2 was built without Python support"
@@ -46,6 +45,10 @@ iterableToList PythonObject := err
 
 next = method()
 next PythonObject := err
+
+pythonValue = method(Dispatch => Thing)
+pythonValue String :=
+pythonValue Sequence := err
 
 setattr = method()
 setattr(PythonObject, String, Thing) := err
@@ -88,7 +91,5 @@ PythonObject_Thing :=
 +PythonObject :=
 -PythonObject := err
 
-rs = x -> error errmsg
 objectType = x -> error errmsg
-runPythonString = x -> error errmsg
 runSimpleString = x -> error errmsg

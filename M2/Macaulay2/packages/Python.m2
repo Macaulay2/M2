@@ -2,7 +2,7 @@
 this does not work unless M2 is compiled --with-python
 *-
 
-pythonPresent := Core#"private dictionary"#?"runPythonString"
+pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
     Version => "0.2",
@@ -32,7 +32,6 @@ if pythonPresent then verboseLog "success: python is present" else (
 exportFrom_Core {
     "runSimpleString",
     "PythonObject",
-    "runPythonString",
     "objectType"}
 
 importFrom_Core {
@@ -54,6 +53,7 @@ importFrom_Core {
     "pythonObjectSetAttrString",
     "pythonObjectCall",
     "pythonObjectStr",
+    "pythonRunString",
     "pythonSetNew",
     "pythonTrue",
     "pythonTupleNew",
@@ -63,7 +63,7 @@ importFrom_Core {
     "pythonUnicodeFromString"
 }
 
-export { "pythonHelp", "context", "rs", "Preprocessor", "toPython",
+export { "pythonHelp", "context", "Preprocessor", "toPython",
     "addPyToM2Function",
     "getattr",
     "getitem",
@@ -72,6 +72,7 @@ export { "pythonHelp", "context", "rs", "Preprocessor", "toPython",
     "iter",
     "iterableToList",
     "next",
+    "pythonValue",
     "setattr",
     "setitem",
     "toFunction"
@@ -79,7 +80,7 @@ export { "pythonHelp", "context", "rs", "Preprocessor", "toPython",
 
 exportMutable { "val", "eval", "valuestring", "stmt", "expr", "dict", "symbols", "stmtexpr"}
 
-pythonHelp = Command (() -> runPythonString ///help()///)
+pythonHelp = Command (() -> pythonValue ///help()///)
 
 toString PythonObject := pythonUnicodeAsUTF8 @@ pythonObjectStr
 
@@ -91,10 +92,11 @@ PythonObject#{Standard,AfterPrint} = x -> (
      << concatenate(interpreterDepth:"o") << lineNumber << " : PythonObject " << t << endl;
      )
 
-rs = s -> ( 
-     s = concatenate s;
-     if debugLevel > 0 then stderr << "--python command: " << s << endl; 
-     runPythonString s);
+pythonValue = method(Dispatch => Thing)
+pythonValue String := s -> (
+    if debugLevel > 0 then printerr("python command: ", s);
+    pythonRunString s)
+pythonValue Sequence := S -> pythonValue \\ concatenate \\ toString \ S
 
 numContexts = 0
 nextContext = method()
@@ -111,10 +113,10 @@ context = method(Options => {
 	  })
 context String := opts -> init -> (
      dict := nextContext();
-     rs("eval(compile( '",dict," = {}','','single' ),__builtins__) ");
+     pythonValue("eval(compile( '",dict," = {}','','single' ),__builtins__) ");
      access := s -> concatenate(dict,"[", format s, "]");
-     val := s -> rs access s;
-     eval := s -> rs concatenate("eval(compile(",s,",'','single' ),",dict,")");
+     val := s -> pythonValue access s;
+     eval := s -> pythonValue concatenate("eval(compile(",s,",'','single' ),",dict,")");
      evalstring := s -> eval replace("\n","\\n",format concatenate s);
      evalstring init;
      valuestring := s -> (
@@ -127,7 +129,7 @@ context String := opts -> init -> (
      else (
 	  s -> (
 	       evalstring("tmp = ",opts.Preprocessor,"(",format s,")");
-	       if debugLevel > 0 then stderr << "--intermediate value: tmp = " << format toString runPythonString access "tmp" << endl;
+	       if debugLevel > 0 then stderr << "--intermediate value: tmp = " << format toString pythonValue access "tmp" << endl;
 	       eval access "tmp";
 	       null)
 	  );
@@ -136,7 +138,7 @@ context String := opts -> init -> (
 	  stmt s;
 	  val "temp");
      stmtexpr := s -> if match(";$",s) then stmt s else expr s;
-     symbols := () -> runPythonString concatenate("__builtins__[",format dict,"].keys()");
+     symbols := () -> pythonValue concatenate("__builtins__[",format dict,"].keys()");
      use new Context from {
 	  global dict => dict,
 	  global val => val,
@@ -318,44 +320,47 @@ TEST ///
 -----------
 -- value --
 -----------
-assert Equation(value rs "True", true)
-assert Equation(value rs "5", 5)
-assert Equation(value rs "3.14159", 3.14159)
-assert Equation(value rs "complex(1, 2)", 1 + 2*ii)
-assert Equation(value rs "'foo'", "foo")
-assert Equation(value rs "(1, 3, 5, 7, 9)", (1, 3, 5, 7, 9))
-assert Equation(value rs "range(5)", (0, 1, 2, 3, 4))
-assert Equation(value rs "[1, 3, 5, 7, 9]", {1, 3, 5, 7, 9})
+assert Equation(value pythonValue "True", true)
+assert Equation(value pythonValue "5", 5)
+assert Equation(value pythonValue "3.14159", 3.14159)
+assert Equation(value pythonValue "complex(1, 2)", 1 + 2*ii)
+assert Equation(value pythonValue "'foo'", "foo")
+assert Equation(value pythonValue "(1, 3, 5, 7, 9)", (1, 3, 5, 7, 9))
+assert Equation(value pythonValue "range(5)", (0, 1, 2, 3, 4))
+assert Equation(value pythonValue "[1, 3, 5, 7, 9]", {1, 3, 5, 7, 9})
 assert BinaryOperation(symbol ===,
-    value rs "{1, 3, 5, 7, 9}", set {1, 3, 5, 7, 9})
-assert BinaryOperation(symbol ===, value rs "frozenset([1, 3, 5, 7, 9])",
+    value pythonValue "{1, 3, 5, 7, 9}", set {1, 3, 5, 7, 9})
+assert BinaryOperation(symbol ===,
+    value pythonValue "frozenset([1, 3, 5, 7, 9])",
     set {1, 3, 5, 7, 9})
-assert BinaryOperation(symbol ===, value rs "{'a':1, 'b':2, 'c':3}",
+assert BinaryOperation(symbol ===, value pythonValue "{'a':1, 'b':2, 'c':3}",
     hashTable{"a" => 1, "b" => 2, "c" => 3})
-assert Equation((value rs "abs")(-1), rs "1")
-assert Equation(value rs "None", null)
+assert Equation((value pythonValue "abs")(-1), pythonValue "1")
+assert Equation(value pythonValue "None", null)
 ///
 
 TEST ///
 ----------------------
 -- nested iterators --
 ----------------------
-assert Equation(value rs "[[1,2]]", {{1,2}})
-assert Equation(value rs "[(1,2)]", {(1,2)})
-assert BinaryOperation(symbol ===, value rs "[{1,2}]", {set {1,2}})
-assert BinaryOperation(symbol ===, value rs "[{1:2}]", {hashTable {1 => 2}})
-assert Equation(value rs "([1,2],)", 1:{1,2})
-assert Equation(value rs "((1,2),)", 1:(1,2))
-assert BinaryOperation(symbol ===, value rs "({1,2},)", 1:set {1,2})
-assert BinaryOperation(symbol ===, value rs "({1:2},)", 1:hashTable {1 => 2})
-assert BinaryOperation(symbol ===, value rs "{(1,2)}", set {(1,2)})
-assert BinaryOperation(symbol ===, value rs "{(1,2):[3,4]}",
+assert Equation(value pythonValue "[[1,2]]", {{1,2}})
+assert Equation(value pythonValue "[(1,2)]", {(1,2)})
+assert BinaryOperation(symbol ===, value pythonValue "[{1,2}]", {set {1,2}})
+assert BinaryOperation(symbol ===, value pythonValue "[{1:2}]",
+    {hashTable {1 => 2}})
+assert Equation(value pythonValue "([1,2],)", 1:{1,2})
+assert Equation(value pythonValue "((1,2),)", 1:(1,2))
+assert BinaryOperation(symbol ===, value pythonValue "({1,2},)", 1:set {1,2})
+assert BinaryOperation(symbol ===, value pythonValue "({1:2},)",
+    1:hashTable {1 => 2})
+assert BinaryOperation(symbol ===, value pythonValue "{(1,2)}", set {(1,2)})
+assert BinaryOperation(symbol ===, value pythonValue "{(1,2):[3,4]}",
     hashTable {(1,2) => {3,4}})
-assert BinaryOperation(symbol ===, value rs "{(1,2):(3,4)}",
+assert BinaryOperation(symbol ===, value pythonValue "{(1,2):(3,4)}",
     hashTable {(1,2) => (3,4)})
-assert BinaryOperation(symbol ===, value rs "{(1,2):{3,4}}",
+assert BinaryOperation(symbol ===, value pythonValue "{(1,2):{3,4}}",
     hashTable {(1,2) => set {3,4}})
-assert BinaryOperation(symbol ===, value rs "{(1,2):{3:4}}",
+assert BinaryOperation(symbol ===, value pythonValue "{(1,2):{3:4}}",
     hashTable {(1,2) => hashTable {3 => 4}})
 ///
 
@@ -363,75 +368,75 @@ TEST ///
 -----------------------
 -- binary operations --
 -----------------------
-x = rs "5"
-y = rs "2"
+x = pythonValue "5"
+y = pythonValue "2"
 
 -- addition
-assert Equation(x + y, rs "7")
+assert Equation(x + y, pythonValue "7")
 assert Equation(x + 2, 7)
 assert Equation(5 + y, 7)
 
 -- subtraction
-assert Equation(x - y, rs "3")
+assert Equation(x - y, pythonValue "3")
 assert Equation(x - 2, 3)
 assert Equation(5 - y, 3)
 
 -- multiplication
-assert Equation(x * y, rs "10")
+assert Equation(x * y, pythonValue "10")
 assert Equation(x * 2, 10)
 assert Equation(5 * y, 10)
 
 -- true division
-assert Equation(x / y, rs "2.5")
+assert Equation(x / y, pythonValue "2.5")
 assert Equation(x / 2, 2.5)
 assert Equation(5 / y, 2.5)
 
 -- floor division
-assert Equation(x // y, rs "2")
+assert Equation(x // y, pythonValue "2")
 assert Equation(x // 2, 2)
 assert Equation(5 // y, 2)
 
 -- modulo
-assert Equation(x % y, rs "1")
+assert Equation(x % y, pythonValue "1")
 assert Equation(x % 2, 1)
 assert Equation(5 % y, 1)
 
 -- power
-assert Equation(x ^ y, rs "25")
+assert Equation(x ^ y, pythonValue "25")
 assert Equation(x ^ 2, 25)
 assert Equation(5 ^ y, 25)
 
 -- left shift
-assert Equation(x << y, rs "20")
+assert Equation(x << y, pythonValue "20")
 assert Equation(x << 2, 20)
 assert Equation(5 << y, 20)
 
 -- right shift
-assert Equation(x >> y, rs "1")
+assert Equation(x >> y, pythonValue "1")
 assert Equation(x >> 2, 1)
 assert Equation(5 >> y, 1)
 
 -- and
-assert Equation(x & y, rs "0")
+assert Equation(x & y, pythonValue "0")
 assert Equation(x & 2, 0)
 assert Equation(5 & y, 0)
-assert Equation(x and y, rs "0")
+assert Equation(x and y, pythonValue "0")
 assert Equation(x and 2, 0)
 assert Equation(5 and y, 0)
 
 -- or
-assert Equation(x | y, rs "7")
+assert Equation(x | y, pythonValue "7")
 assert Equation(x | 2, 7)
 assert Equation(5 | y, 7)
-assert Equation(x or y, rs "7")
+assert Equation(x or y, pythonValue "7")
 assert Equation(x or 2, 7)
 assert Equation(5 or y, 7)
 
 -- xor
-assert Equation(x ^^ y, rs "7")
+assert Equation(x ^^ y, pythonValue "7")
 assert Equation(x ^^ 2, 7)
 assert Equation(5 ^^ y, 7)
-assert Equation(x xor y, rs "7")
+assert Equation(x xor y, pythonValue "7")
 assert Equation(x xor 2, 7)
 assert Equation(5 xor y, 7)
 
@@ -446,29 +451,29 @@ TEST ///
 -----------------------
 -- string operations --
 -----------------------
-foo = rs "'foo'"
-bar = rs "'bar'"
+foo = pythonValue "'foo'"
+bar = pythonValue "'bar'"
 
 -- concatenation
-assert Equation(foo + bar, rs "'foobar'")
+assert Equation(foo + bar, pythonValue "'foobar'")
 assert Equation(foo + "bar", "foobar")
 assert Equation("foo" + bar, "foobar")
 
 -- repetition
-assert Equation(foo * rs "2", rs "'foofoo'")
+assert Equation(foo * pythonValue "2", pythonValue "'foofoo'")
 assert Equation(foo * 2, "foofoo")
-assert Equation("foo" * rs "2", "foofoo")
-assert Equation(rs "2" * foo, rs "'foofoo'")
+assert Equation("foo" * pythonValue "2", "foofoo")
+assert Equation(pythonValue "2" * foo, pythonValue "'foofoo'")
 assert Equation(2 * foo, "foofoo")
-assert Equation(rs "2" * "foo", "foofoo")
+assert Equation(pythonValue "2" * "foo", "foofoo")
 
 -- check a few methods
-assert Equation(foo@@capitalize(), rs "'Foo'")
-assert Equation(foo@@center(5, "x"), rs "'xfoox'")
-assert Equation((rs "'{0}, {1}!'")@@format("Hello", "world"),
-    rs "'Hello, world!'")
-assert Equation(foo@@replace("f", "F"), rs "'Foo'")
-assert Equation(foo@@upper(), rs "'FOO'")
+assert Equation(foo@@capitalize(), pythonValue "'Foo'")
+assert Equation(foo@@center(5, "x"), pythonValue "'xfoox'")
+assert Equation((pythonValue "'{0}, {1}!'")@@format("Hello", "world"),
+    pythonValue "'Hello, world!'")
+assert Equation(foo@@replace("f", "F"), pythonValue "'Foo'")
+assert Equation(foo@@upper(), pythonValue "'FOO'")
 ///
 
 end --------------------------------------------------------

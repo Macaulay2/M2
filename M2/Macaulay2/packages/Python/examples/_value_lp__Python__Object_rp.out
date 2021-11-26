@@ -1,6 +1,6 @@
--- -*- M2-comint -*- hash: -1994211580
+-- -*- M2-comint -*- hash: 2033858126
 
-i1 : value rs "[1, 3.14159, 'foo', (1,2,3), {'foo':'bar'}]"
+i1 : value pythonValue "[1, 3.14159, 'foo', (1,2,3), {'foo':'bar'}]"
 
 o1 = {1, 3.14159, foo, (1, 2, 3), HashTable{foo => bar}}
 
@@ -29,7 +29,7 @@ o3 = {0 => (value, PythonObject, Strategy => unknown -> PythonObject)    }
 
 o3 : NumberedVerticalList
 
-i4 : rs "int"
+i4 : pythonValue "int"
 
 o4 = <class 'int'>
 

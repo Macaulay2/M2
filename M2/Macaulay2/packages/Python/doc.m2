@@ -12,7 +12,7 @@ doc ///
       objects.
     Example
       toPython {1, 2/3, "foo", (1, 2, 3), hashTable {"foo" => "bar"}}
-      value rs "[1, 2/3, 'foo', (1, 2, 3), {'foo' : 'bar'}]"
+      value pythonValue "[1, 2/3, 'foo', (1, 2, 3), {'foo' : 'bar'}]"
       math = import "math"
       math@@sqrt 2
 ///
@@ -84,8 +84,8 @@ doc ///
     Text
       You can perform basic arithmetic on python objects.
     Example
-      x = rs "5"
-      y = rs "2"
+      x = pythonValue "5"
+      y = pythonValue "2"
       x + y
       x - y
       x * y
@@ -145,13 +145,13 @@ doc ///
       or the shortcut @TT "_"@.  This is equivalent to square brackets
       (@TT "[]"@) in Python. For example, this works for lists.
     Example
-      x = rs "[1,2,3,4]"
+      x = pythonValue "[1,2,3,4]"
       getitem(x, 0)
       x_1
     Text
       It also works for dictionaries.
     Example
-      x = rs "{'spam':1,'eggs':2}"
+      x = pythonValue "{'spam':1,'eggs':2}"
       getitem(x, "spam")
       x_"eggs"
 ///
@@ -176,38 +176,46 @@ doc ///
       or the shortcut @TT "_"@.  This is equivalent to square brackets
       (@TT "[]"@) in Python. For example, this works for lists.
     Example
-      x = rs "[1,2,3,4]"
+      x = pythonValue "[1,2,3,4]"
       setitem(x, 0, 5)
       x
     Text
       It also works for dictionaries.
     Example
-      x = rs "{'spam':1,'eggs':2}"
+      x = pythonValue "{'spam':1,'eggs':2}"
       x_"ham" = 3
       x
 ///
 
 doc ///
   Key
-    rs
-    runPythonString
+    pythonValue
+    (pythonValue, String)
+    (pythonValue, Sequence)
   Headline
     execute Python source code from a string
   Usage
-    rs s
-    runPythonString s
+    pythonValue s
   Inputs
-    s:String -- containing Python source code
+    s:{String, Sequence} -- containing Python source code
   Outputs
     :PythonObject -- the return value of the given code
   Description
     Text
       This function a is wrapper around the function @TT
       HREF{"https://docs.python.org/3/c-api/veryhigh.html#c.PyRun_String",
-      "PyRun_String"}@ from the Python C API.  It is also available
-      as @TT "runPythonString"@.
+      "PyRun_String"}@ from the Python C API.
     Example
-      rs "2 + 2"
+      pythonValue "2 + 2"
+    Text
+      If a sequence is given, then its elements are converted to strings using
+      @TO "toString"@ and then joined using @TO "concatenate"@.  You can see the
+       expression sent to the Python interpreter by setting @TO "debugLevel"@
+       to a positive value.
+    Example
+      debugLevel = 1
+      x = 5
+      pythonValue("3 + ", x)
   SeeAlso
     runSimpleString
 ///
@@ -226,11 +234,11 @@ doc ///
       This function a is wrapper around the function @TT
       HREF{"https://docs.python.org/3/c-api/veryhigh.html#c.PyRun_SimpleString",
       "PyRun_SimpleString"}@ from the Python C API.  Note that, unlike
-      @TO "rs"@, it has no return value.
+      @TO "pythonValue"@, it has no return value.
     Example
       runSimpleString "print('Hello, world!')"
   SeeAlso
-    rs
+    pythonValue
 ///
 
 doc ///
@@ -252,7 +260,7 @@ doc ///
       "Python counterpart"}@.  In particular, @TT "i"@ is an iterator
       for the iterable object @TT "x"@.
     Example
-      x = rs "range(3)"
+      x = pythonValue "range(3)"
       i = iter x
   SeeAlso
     next
@@ -276,7 +284,7 @@ doc ///
       "Python counterpart"}@.  In particular, it retrieves the next item
       from an iterator.
     Example
-      x = rs "range(3)"
+      x = pythonValue "range(3)"
       i = iter x
       next i
       next i
@@ -308,7 +316,7 @@ doc ///
       The elements are converted to Macaulay2 objects (if
       possible) using @TO "value"@.
     Example
-      x = rs "range(3)"
+      x = pythonValue "range(3)"
       iterableToList x
       class \ oo
   SeeAlso
@@ -340,7 +348,7 @@ doc ///
     Text
       Optional arguments can be provided using options.
     Example
-      int = toFunction rs "int"
+      int = toFunction pythonValue "int"
       int("deadbeef", "base" => 16)
     Text
       If a python object and a Macaulay2 thing are separated by a space, then
@@ -366,8 +374,8 @@ doc ///
       This is equivalent the Python @HREF {
       "https://docs.python.org/3/library/functions.html#len", "len"}@ function.
     Example
-      length rs "'Hello, world!'"
-      length rs "[1,2,3,4,5]"
+      length pythonValue "'Hello, world!'"
+      length pythonValue "[1,2,3,4,5]"
 ///
 
 doc ///
@@ -386,7 +394,7 @@ doc ///
       This function attempts to convert @TT "x"@ to its corresponding
       Macaulay2 equivalent.
     Example
-      value rs "[1, 3.14159, 'foo', (1,2,3), {'foo':'bar'}]"
+      value pythonValue "[1, 3.14159, 'foo', (1,2,3), {'foo':'bar'}]"
       class \ oo
     Text
       Since the type of @TT "x"@ is not initially known, a sequence of
@@ -397,7 +405,7 @@ doc ///
     Text
       If no conversion can be done, then @TT "x"@ is returned.
     Example
-      rs "int"
+      pythonValue "int"
       value oo
     Text
       Users may add additional hooks using @TO "addHook"@ or the
@@ -531,7 +539,7 @@ doc ///
       "https://docs.python.org/3/library/functions.html#getattr", "getattr"}@
       function.
     Example
-      foo = rs "'Hello, world!'"
+      foo = pythonValue "'Hello, world!'"
       (getattr(foo, "upper"))()
     Text
       In Python, "." is generally used as a shortcut for this function, but
@@ -561,7 +569,7 @@ doc ///
       "https://docs.python.org/3/library/functions.html#hasattr", "hasattr"}@
       function.
     Example
-      foo = rs "'Hello, world!'"
+      foo = pythonValue "'Hello, world!'"
       hasattr(foo, "upper")
       hasattr(foo, "bar")
 ///
@@ -615,6 +623,6 @@ doc ///
       "https://docs.python.org/3/library/functions.html#type", "type"}@ function
       in Python.
     Example
-      objectType rs "2"
-      objectType rs "'Hello, world!'"
+      objectType pythonValue "2"
+      objectType pythonValue "'Hello, world!'"
 ///

@@ -1,6 +1,6 @@
--- -*- M2-comint -*- hash: 1819488742
+-- -*- M2-comint -*- hash: 1233933522
 
-i1 : x = rs "[1,2,3,4]"
+i1 : x = pythonValue "[1,2,3,4]"
 
 o1 = [1, 2, 3, 4]
 
@@ -14,7 +14,7 @@ o3 = [5, 2, 3, 4]
 
 o3 : PythonObject of class list
 
-i4 : x = rs "{'spam':1,'eggs':2}"
+i4 : x = pythonValue "{'spam':1,'eggs':2}"
 
 o4 = {'spam': 1, 'eggs': 2}
 
