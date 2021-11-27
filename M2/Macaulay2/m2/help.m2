@@ -403,7 +403,6 @@ getBody := (key, tag, rawdoc) -> (
 -- View help within Macaulay2
 -----------------------------------------------------------------------------
 
--- TODO: help symbol% before Macaulay2Doc is installed doesn't work
 help = method(Dispatch => Thing)
 help DocumentTag := tag -> (
     rawdoc := fetchAnyRawDocumentation tag;

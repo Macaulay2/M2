@@ -27,6 +27,7 @@ hypertext.m2
 validate.m2
 expressions.m2
 peek.m2
+code.m2
 printing.m2
 http.m2
 
@@ -83,7 +84,6 @@ schubert.m2
 local.m2
 
 packages.m2
-code.m2
 examples.m2
 document.m2
 installPackage.m2
