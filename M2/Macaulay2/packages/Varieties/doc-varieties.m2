@@ -1,6 +1,10 @@
 undocumented {
     (describe, ProjectiveVariety),
     (describe, AffineVariety),
+    (symbol /,         AffineVariety, Thing),
+    (symbol /,     ProjectiveVariety, Thing),
+    (symbol SPACE,     AffineVariety, Array),
+    (symbol SPACE, ProjectiveVariety, Array),
     }
 
 document {

@@ -104,6 +104,14 @@ Proj Ring := (stashValue symbol Proj) (R ->
 --	  )
 --     }
 
+-- this is a kludge to make Spec ZZ/101[x,y]/(y^2-x^3) and Proj ZZ/101[x,y]/(x^2-y^2) work as expected
+-- TODO: also make Spec kk{x,y} or Spec kk<|x,y|> work when they are supported
+-- TODO: document this in Proj and Spec
+    AffineVariety/Thing :=     AffineVariety => (X, I) -> Spec((ring X)/I)
+ProjectiveVariety/Thing := ProjectiveVariety => (X, I) -> Proj((ring X)/I) -- TODO: should this be saturated?
+    AffineVariety Array :=     AffineVariety => (X, M) -> Spec((ring X) M)
+ProjectiveVariety Array := ProjectiveVariety => (X, M) -> Proj((ring X) M)
+
 -- basic methods
 ring  Variety := X -> X.ring
 ideal Variety := X -> ideal ring X -- TODO: should this give the irrelevant ideal?
@@ -608,6 +616,10 @@ euler ProjectiveVariety := X -> (
 -----------------------------------------------------------------------------
 -- Tests
 -----------------------------------------------------------------------------
+
+TEST ///
+  X = Spec ZZ/101[x,y]/(y^2-x^3)
+///
 
 -- needs "./Varieties/tests.m2"
 
