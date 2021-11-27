@@ -76,3 +76,9 @@ macaulay2 (1.19) stable; urgency=low
 macaulay2 (1.19.0.1) stable; urgency=low
   * release version 1.19.0.1
  -- Daniel R Grayson <dan@math.uiuc.edu>  Wed,  26 Nov 2021 09:50:25 -0500
+macaulay2 (1.19.1) stable; urgency=low
+  * release version 1.19.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Wed,  26 Nov 2021 09:50:25 -0500
+macaulay2 (1.19.1.1) stable; urgency=low
+  * release version 1.19.01.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Wed,  26 Nov 2021 09:50:25 -0500
