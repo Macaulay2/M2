@@ -1036,7 +1036,14 @@ document {
 	  }
      }
 
-debug Core
+binaryOperators := core "binaryOperators"
+prefixOperators := core "prefixOperators"
+postfixOperators := core "postfixOperators"
+flexibleBinaryOperators := core "flexibleBinaryOperators"
+flexiblePrefixOperators := core "flexiblePrefixOperators"
+flexiblePostfixOperators := core "flexiblePostfixOperators"
+allOperators := core "allOperators"
+getParsing := core "getParsing"
 
 document {
      Key => "operators",
@@ -1151,12 +1158,10 @@ document {
 	  parsed as though it had been written as ", TT "2+(3*5)", ".  The symbol ", TO "SPACE", " represents the operator that is used when
 	  two things are adjacent in program code."
 	  },
-     TABLE { "class" => "examples",  TR TD PRE net (value Core#"private dictionary"#"seeOperatorPrecedence")() }
+     TABLE { "class" => "examples",  TR TD PRE net (core "seeOperatorPrecedence")() }
      }
 
 sp := seeParsing()
-
-dictionaryPath = select(dictionaryPath, d -> d =!= Core#"private dictionary")
 
 document {
      Key => seeParsing,

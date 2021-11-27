@@ -6,8 +6,6 @@ doc ///
     TestInput
     (code, TestInput)
     (locate, TestInput)
-    (toString, TestInput)
-    (net, TestInput)
   Headline
     locate a package's tests
   Usage

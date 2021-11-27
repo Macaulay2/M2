@@ -98,14 +98,19 @@ fghij"///,
 	  "stack v"
 	  },
      Subnodes => {
-	  TO "///",
 	  "functions for handling strings",
+	  TO "regular expressions",
 	  TO concatenate,
 	  TO format,
 	  TO lines,
-	  TO "regular expressions",
+	  TO ascii,
+	  TO utf8,
+	  TO substring,
+	  TO (symbol _, String, ZZ),
+	  TO (symbol _, String, Sequence),
 	  "functions for handling nets",
 	  TO horizontalJoin,
+	  TO pad,
 	  TO stack,
 	  TO unstack,
 	  "more information",
@@ -131,7 +136,8 @@ document {
      PARA{
 	  "A net is a two-dimensional array of characters, and strings are regarded
 	  as a type of ", TO2{ Net, "net" }, "."
-	  }
+	  },
+     Subnodes => TO \ {(net, String), toString, toExternalString, "///", "\""}
      }
 
 
@@ -152,7 +158,8 @@ document {
      PARA{},
      "Warning: if so many characters are written to a file that an internal buffer
      is filled before the line ends or first net is seen, then the buffer will be 
-     flushed, and writing a net subsequently will produce an unexpected result."
+     flushed, and writing a net subsequently will produce an unexpected result.",
+     Subnodes => TO \ {net, (width, Net), (height, Net), (depth, Net)}
      }
 
 document {
