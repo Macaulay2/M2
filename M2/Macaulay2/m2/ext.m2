@@ -6,22 +6,19 @@ needs "matrix1.m2"
 needs "modules.m2"
 needs "Hom.m2"
 
+-- TODO: should this be fixed for all Ext methods,
+-- or should they each have their own options?
 ExtOptions = new OptionTable from {
     MinimalGenerators => true
      }
 
 Ext = new ScriptedFunctor from {
-    argument => ExtOptions >> opts -> (M, N) -> (
-	       f := lookup(Ext,class M,class N);
-	       if f === null then noMethod(Ext,(M,N),{false,false});
-	(f opts)(M, N)),
     superscript => i -> new ScriptedFunctor from {
-	argument => ExtOptions >> opts -> (M, N) -> (
-		    	      f := lookup(Ext,class i,class M,class N);
-		    	      if f === null then noMethod(Ext,(i,M,N),{false,false,false});
-	     (f opts)(i, M, N))
-	       }
-     }
+	-- Ext^1(F, G)
+	argument => ExtOptions >> opts -> X -> applyMethodWithOpts''(Ext, functorArgs(i, X), opts)
+	},
+    argument => ExtOptions >> opts -> X -> applyMethodWithOpts''(Ext, X, opts)
+    }
 
 -- TODO: Ext^i(R, S) should work as well
 Ext(ZZ, Ring, Ring)   :=
