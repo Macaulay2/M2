@@ -482,6 +482,9 @@ poincare ChainComplex := C -> (
      scan(keys C, i -> if class i === ZZ then scanPairs(tally degrees C_i, (d,m) -> f = f + m * (-1)^i * product(# d, j -> S_j^(d_j))));
      f)
 
+-- TODO: make poincareN return in variables of (degreesRing R)[S],
+-- so that sub(poincareN C, S => -1) == poincare C holds
+poincareN = method(TypicalValue => RingElement)
 poincareN ChainComplex := (C) -> (
      s := getSymbol "S";
      t := getSymbol "T";

@@ -247,11 +247,12 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
 	       SS := ring graph;
 	       chh := checkHilbertHint graph;
 	       if chh then (
-		   hf := poincare (target f)^1;
-		   T := (ring hf)_0;
-		   degs := degrees source graph;
-		   hf = hf * product(numgens source graph, i -> 1 - T^(degs#i#0));
-		   (cokernel graph).cache.poincare = hf;
+		   -- compare with pushNonLinear
+		   hf := poincare module target f;
+		   T := degreesRing SS;
+		   hf = hf * product(degrees source graph, d -> 1 - T_d);
+		   -- cache poincare
+		   poincare cokernel graph = hf;
 		   );
 	       mapback := map(R, ring graph, map(R^1, R^n1, 0) | vars R);
 	       G := gb(graph,opts);

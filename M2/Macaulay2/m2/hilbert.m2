@@ -78,6 +78,7 @@ heft Module         := M -> heft ring M
 -----------------------------------------------------------------------------
 
 -- see the comment in the documentation for (degree, Ideal) about what this means when M is not homogeneous
+poincare = method(TypicalValue => RingElement)
 poincare Ring   := R -> poincare module R
 poincare Ideal  := I -> poincare comodule I
 poincare Module := M -> (
@@ -87,6 +88,15 @@ poincare Module := M -> (
 
 addHook((poincare, Module), Strategy => Default, M -> (
 	new degreesRing M from rawHilbert raw leadTerm gb -* presentation cokernel ?? *- presentation M))
+
+-- manually installs the numerator of the reduced Hilbert series for the module
+storefuns#poincare = method()
+storefuns#poincare(Ideal,  RingElement) := (I, hf) -> storefuns#poincare(comodule I, hf)
+storefuns#poincare(Matrix, RingElement) := (m, hf) -> storefuns#poincare(cokernel m, hf)
+storefuns#poincare(Module, RingElement) := (M, hf) -> M.cache.poincare = substitute(hf, degreesRing M)
+
+-- TODO: deprecate this
+installHilbertFunction = storefuns#poincare
 
 -----------------------------------------------------------------------------
 -- pdim, dim, degree, multidegree, length
@@ -373,17 +383,3 @@ addHook((hilbertFunction, List, Module), Strategy => Default, (L, M) -> (
     f := hilbertSeries(M, Order => 1 + sum(h, L, times));
     U := monoid ring f;
     coefficient(U_L, f)))
-
------------------------------------------------------------------------------
--- miscellaneous
------------------------------------------------------------------------------
-
--- new functions from Mike, needing a bit of development
-
-installHilbertFunction = method()
-installHilbertFunction(Ideal,  RingElement) := (I, hf) -> installHilbertFunction(comodule I, hf)
-installHilbertFunction(Matrix, RingElement) := (m, hf) -> installHilbertFunction(cokernel m, hf)
-installHilbertFunction(Module, RingElement) := (M, hf) -> (
-    -- we need to place hf into the degree ring of M.
-    hf = substitute(hf, degreesRing M);
-    M.cache.poincare = hf)

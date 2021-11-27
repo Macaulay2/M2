@@ -284,7 +284,7 @@ gbGetHilbertHint := (m, opts) -> (
 	if g.cache.?image then (
 	    M := g.cache.image;
 	    if M.cache.?poincare and checkHilbertHint m
-	    then poincare target g - M.cache.poincare)))
+	    then poincare target g - poincare M)))
 
 checkArgGB := m -> (
     R := ring target m;

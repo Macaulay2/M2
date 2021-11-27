@@ -3,7 +3,8 @@ R=QQ[a..k]
 I=trim ideal(a*b+c*d,a*e+b*f+c*g+d*h);
 M=cokernel gens I
 use degreesRing R
-M.cache.poincare = 1-2*T^2+T^4;
+-- cache poincare
+poincare M = 1-2*T^2+T^4;
 -- FIXME
 --assert(dim I == 9)
 
@@ -19,7 +20,8 @@ I = ideal random(R^1, R^{3:-3});
 time hf = poincare I
 S = QQ[a..d,MonomialOrder=>Eliminate 2]
 J = substitute(I,S)
-installHilbertFunction(J, hf)
+-- cache poincare
+poincare J = hf
 gbTrace=3
 time gens gb J;
 selectInSubring(1,gens gb J)
@@ -30,7 +32,8 @@ I = ideal random(R^1, R^{3:-3});
 time hf = poincare I
 S = QQ[a..d,MonomialOrder=>Eliminate 2]
 J = substitute(I,S)
-installHilbertFunction(gens J, hf)
+-- cache poincare
+poincare gens J = hf
 gbTrace=3
 time gens gb gens J;
 selectInSubring(1,gens gb J)
@@ -41,7 +44,8 @@ I = image random(R^1, R^{3:-3});
 time hf = poincare I
 S = QQ[a..d,MonomialOrder=>Eliminate 2]
 J = substitute(I,S)
-installHilbertFunction(J, hf)
+-- cache poincare
+poincare J = hf
 gbTrace=3
 time gens gb J
 --status: this is a strange one
