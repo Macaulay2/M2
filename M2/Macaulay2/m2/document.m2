@@ -396,7 +396,7 @@ locate DocumentTag := tag -> (
 
 emptyOptionTable := new OptionTable from {}
 getOptionDefaultValues := method(Dispatch => Thing)
-getOptionDefaultValues Symbol   := x -> if value x =!= x then getOptionDefaultValues value x else emptyOptionTable
+getOptionDefaultValues Symbol   := x -> if instance(f := value x, Function) then getOptionDefaultValues f else emptyOptionTable
 getOptionDefaultValues Thing    := x -> emptyOptionTable
 getOptionDefaultValues Function := f -> (
      o := options f;
