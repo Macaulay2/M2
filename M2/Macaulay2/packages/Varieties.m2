@@ -542,32 +542,25 @@ Hom(CoherentSheaf, SheafOfRings)  :=
 Hom(CoherentSheaf, CoherentSheaf) := Module => o -> (F, G) -> HH^0(variety F, sheafHom(F, G, o))
 
 sheafHom = method(TypicalValue => CoherentSheaf, Options => options Hom)
--- TODO: should this assert that the sheaves are on the same variety?
 sheafHom(SheafOfRings, SheafOfRings)  :=
 sheafHom(SheafOfRings, CoherentSheaf) :=
 sheafHom(CoherentSheaf, SheafOfRings)  :=
-sheafHom(CoherentSheaf, CoherentSheaf) := CoherentSheaf => o -> (F, G) -> sheaf(variety F, Hom(module F, module G, o))
-
--- see m2/ext.m2
-ExtOptions = options Ext.argument
+sheafHom(CoherentSheaf, CoherentSheaf) := CoherentSheaf => o -> (F, G) -> (
+    sameVariety(F, G); sheaf(variety F, Hom(module F, module G, o)))
 
 sheafExt = new ScriptedFunctor from {
-    superscript => (
-	i -> new ScriptedFunctor from {
-	    argument => ExtOptions >> opts -> (M, N) -> (
-		f := lookup(sheafExt,class i,class M,class N);
-		if f === null then error "no method available";
-		(f opts)(i,M,N))
-	    }
-	)
+    superscript => i -> new ScriptedFunctor from {
+	-- sheafExt^1(F, G)
+	argument => X -> applyMethod''(sheafExt, functorArgs(i, X))
+	},
+    argument => X -> applyMethod''(sheafExt, X)
     }
 
 sheafExt(ZZ, SheafOfRings, SheafOfRings)  :=
 sheafExt(ZZ, SheafOfRings, CoherentSheaf) :=
 sheafExt(ZZ, CoherentSheaf, SheafOfRings)  :=
-sheafExt(ZZ, CoherentSheaf, CoherentSheaf) := CoherentSheaf => opts -> (
-     (n,F,G) -> sheaf_(variety F) Ext^n(module F, module G, opts)
-     )
+sheafExt(ZZ, CoherentSheaf, CoherentSheaf) := CoherentSheaf => options Ext.argument >> opts -> (i, F, G) -> (
+    sameVariety(F, G); sheaf(variety F, Ext^i(module F, module G, opts)))
 
 -----------------------------------------------------------------------------
 -- code donated by Greg Smith <ggsmith@math.berkeley.edu>
