@@ -793,31 +793,6 @@ Ext(ZZ, CoherentSheaf, CoherentSheaf) := Module => opts -> (n, F, G) -> (
 -----------------------------------------------------------------------------
 -- TODO: HodgeTally for pretty printing the Hodge diamond
 
--- If "functorArgs" is not recognized by Macaulay2, try one of the following commands.
--- needs "gateway.m2"
--- needs "Core/gateway.m2"
-
--- From: gateway.m2
--- TODO: combine for all functors
-applyMethodWithOpts' = (key, desc, X, opts) -> (
-    if (F := lookup key) =!= null then (F opts) X
-    else error("no method for ", desc, " applied to ", X))
-
-applyMethodWithOpts'' = (F, X, opts) -> (
-    -- TODO: write a variation of lookup to do this
-    key := prepend(F, apply(X, class));
-    applyMethodWithOpts'(key, toString F, X, opts))
-
--*
--- From: gateway.m2
--- flatten the arguments given to a scripted functor
-functorArgs = method()
-functorArgs(Thing,        Sequence) := (i,    args) -> prepend(i, args)
-functorArgs(Thing, Thing, Sequence) := (i, j, args) -> prepend(i, prepend(j, args))
-functorArgs(Thing, Thing, Thing)    :=
-functorArgs(Thing, Thing)           := identity
-*-
-
 hhOptions = new OptionTable from {
     Degree => 0
     }
@@ -831,33 +806,19 @@ hh = new ScriptedFunctor from {
     argument => hhOptions >> opts -> X -> applyMethodWithOpts''(hh, X, opts)
     }
 
-
--- DELETE (was in Varieties.m2).
---hh = new ScriptedFunctor from {
---     superscript => (
---	  pq -> new ScriptedFunctor from {
---	       argument => X -> (
---		    a := (pq,X);
---		    f := lookup_hh ( class \ a );
---		    if f === null then error "no method available";
---	       	    f a
---		    )
---	       }
---	  )
---     }
+-- using Hodge symmetry and Serre duality to ease the computation
+-- TODO: is minimum necessarily the most efficient?
+min'pq := d -> (p,q) -> min{(p,q), (q,p), (d-p,d-q), (d-q,d-p)}
 
 -- The Hodge numbers of a projective variety.
-hh(Sequence, ProjectiveVariety) := opts -> (pq,X) -> if X.cache.?hh and X.cache.hh#?pq then X.cache.hh#pq else (
-    (p,q) := pq;
-    if not instance(p, ZZ) or not instance(q, ZZ) then error "expected integer superscripts";
-    d := dim X;
-    pqs := { (p,q), (q,p), (d-p,d-q), (d-q,d-p) };
-    (p,q) = min { (p,q), (q,p), (d-p,d-q), (d-q,d-p) };
-    h := hh^q reflexiveDifferentials(p, X);
-    if not X.cache.?hh then X.cache.hh = new MutableHashTable;
-    scan(pqs, pq -> X.cache.hh#pq = h);
-    h)
-
+-- hh^(p,q) X = dim HH^p(X, Omega^q)
+hh(Sequence, ProjectiveVariety) := ZZ => (pq, X) -> (
+    -- p and q are swapped here, because cotangentSheaf seems to be the
+    -- slowest part of this algorithm, so we minimize the exterior powers
+    (q,p) := (min'pq dim X) pq;
+    if not X.cache.?hh   then X.cache.hh = new MutableHashTable;
+    if X.cache.hh#?(p,q) then X.cache.hh#(p,q) else X.cache.hh#(p,q) = (
+	hh^q reflexiveDifferentials(p, X)))
 
 -- This function hh^i(F) computes coherent sheaf cohomology for a coherent sheaf
 -- on a closed subspace in a projective space, or more generally in a weighted projective space.

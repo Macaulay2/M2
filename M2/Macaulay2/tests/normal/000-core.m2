@@ -1,12 +1,5 @@
 -- these tests were in random places in Macaulay2Doc
 -- TODO: move them somewhere appropriate
---
-     k = ZZ/101
-     R = k[a,b,c,d]/(a^4+b^4+c^4+d^4)
-     X = Proj R
-     result = table(3,3,(p,q) -> timing ((p,q) => rank HH^q(cotangentSheaf(p,X))))
-     assert( {{1, 0, 1}, {0, 20, 0}, {1, 0, 1}} === applyTable(result,last@@last) )
-     print new MatrixExpression from result
 
 --
 fib = memoize( n -> if n <= 1 then 1 else fib(n-1) + fib(n-2) )

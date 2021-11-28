@@ -106,7 +106,7 @@ export {
 importFrom_Core {
     "nonnull", "listZZ",
     "getAttribute", "hasAttribute", "ReverseDictionary",
-    "applyMethod", "applyMethod''", "functorArgs",
+    "applyMethod", "applyMethod''", "applyMethodWithOpts''", "functorArgs",
     "toString'", "expressionValue", "unhold", -- TODO: prune these
     "concatBlocks", "concatCols", "concatRows",
     "addHook", "tryHooks", "cacheHooks",

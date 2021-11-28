@@ -550,15 +550,9 @@ cohomology(ZZ,ToricVectorBundle) := opts -> (i,T)-> (
 
 
 -- PURPOSE : Computing the rank of the cohomology group of a given ToricVectorBundle
---   INPUT : '(i,S)',  'i' for the 'i'th cohomology group, 'S' a Sequence of ToricVectorBundle and a weight vector
+--   INPUT : '(i,T,u)',  'i' for the 'i'th cohomology group, 'T' a ToricVectorBundle and 'u' a weight vector
 --  OUTPUT : 'ZZ',	     the rank of the degree 'weight' part of the 'i'th cohomology group of the bundle
-hh(ZZ,Sequence) := (i,S) -> (
-     -- Checking for input errors
-     if #S != 2 then error("The Sequence has to contain a toric vector bundle and a weight vector.");
-     if not instance(S#1,Matrix) then error("The second argument has to be a weight vector given by a matrix.");
-     if not instance(S#0,ToricVectorBundleKaneyama) and not instance(S#0,ToricVectorBundleKlyachko) then error("The first argument has to be a toric vector bundle.");
-     (T,u) := S;
-     rank cohomology(i,T,u))
+hh(ZZ,ToricVectorBundle,Matrix) := (i,T,u) -> rank cohomology(i,T,u)
 
 
 -- PURPOSE : Computing the rank of the cohomology group of a given ToricVectorBundle
@@ -2982,12 +2976,13 @@ document {
      }
 
 document {
-     Key => {(hh,ZZ,ToricVectorBundle)},
+     Key => {(hh,ZZ,ToricVectorBundle,Matrix),(hh,ZZ,ToricVectorBundle)},
      Headline => " the rank of the i-th cohomology group of a toric vector bundle",
      Usage => " d = hh^i E \nd = hh^i (E,u)",
      Inputs => {
 	  "i" => ZZ,
-	  "E" => {"and an optional ",TT "u",", ",ofClass Matrix," over ",TO ZZ,", giving a point in the lattice of the fan"}
+	  "E" => ToricVectorBundle,
+	  "u" => {"over ",TO ZZ,", giving a point in the lattice of the fan"}
 	  },
      Outputs => {
 	  "d" => ZZ
