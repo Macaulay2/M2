@@ -573,19 +573,17 @@ sheafExt(ZZ, CoherentSheaf, CoherentSheaf) := CoherentSheaf => options Ext.argum
 
 Ext(ZZ, SheafOfRings,  SumOfTwists) :=
 Ext(ZZ, CoherentSheaf, SumOfTwists) := Module => opts -> (m,F,G') -> (
+    sameVariety(F, G');
+    X := variety F;
+    checkProjective X;
+    checkVariety(X, F);
      -- depends on truncate methods
      needsPackage "Truncations";
      G := G'#0;
      e := G'#1#0;
-     if variety G =!= variety F
-     then error "expected sheaves on the same variety";
-     if not instance(variety G,ProjectiveVariety)
-     then error "expected sheaves on a projective variety";
      M := module F;
      N := module G;
      R := ring M;
-     if not isAffineRing R
-     then error "expected sheaves on a variety over a field";
      local E;
      if dim M === 0 or m < 0 then E = R^0
      else (
