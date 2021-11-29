@@ -65,11 +65,10 @@ Proj Ring := (stashValue symbol Proj) (R ->
 -- basic methods
 ring  Variety := X -> X.ring
 ideal Variety := X -> ideal ring X -- TODO: should this give the irrelevant ideal?
+codim Variety := options(codim, QuotientRing) >> o -> X -> codim(ring X, o)
 
 dim     AffineVariety := X -> dim ring X
 dim ProjectiveVariety := X -> dim ring X - 1 -- TODO: - Picard rank instead?
-
-codim ProjectiveVariety := options(codim, QuotientRing) >> o -> X -> codim(ring X, o)
 
 char     AffineVariety := X -> char ring X
 char ProjectiveVariety := X -> char(ring X / saturate ideal X) -- TODO: saturate with respect to B?
