@@ -40,6 +40,7 @@ export {
 importFrom_Core {
     "getAttribute", "hasAttribute", "ReverseDictionary",
     "toString'", "expressionValue", "unhold", -- TODO: prune these
+    "tryHooks", "cacheHooks",
     }
 
 -----------------------------------------------------------------------------
@@ -247,9 +248,11 @@ super   CoherentSheaf := CoherentSheaf => F -> sheaf(F.variety, super   F.module
 ambient CoherentSheaf := CoherentSheaf => F -> sheaf(F.variety, ambient F.module)
 cover   CoherentSheaf := CoherentSheaf => F -> sheaf(F.variety, cover   F.module)
 
+-- TODO: do all need to be hookified? Perhaps prefixing
+-- the variety to the key, like 'euler(X, F)', would be better.
 degree  CoherentSheaf := F -> degree  module F
 degrees CoherentSheaf := F -> degrees module F
-euler   CoherentSheaf := F -> euler   module F
+euler   CoherentSheaf := F -> tryHooks((euler, CoherentSheaf), F, euler @@ module)
 eulers  CoherentSheaf := F -> eulers  module F
 genus   CoherentSheaf := F -> genus   module F
 genera  CoherentSheaf := F -> genera  module F
@@ -469,8 +472,10 @@ cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) 
 
 -- TODO: optimize caching here
 -- TODO: should F>=0 be hardcoded?
-minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> (cacheValue symbol minimalPresentation) (
-    F -> sheaf(F.variety, minimalPresentation(HH^0 F(>=0), opts)))
+minimalPresentation CoherentSheaf := prune CoherentSheaf := CoherentSheaf => opts -> F -> (
+    cacheHooks(symbol minimalPresentation, F, (minimalPresentation, CoherentSheaf), (opts, F),
+	-- this is the default algorithm
+	(opts, F) -> sheaf(F.variety, minimalPresentation(HH^0 F(>=0), opts))))
 
 -----------------------------------------------------------------------------
 -- cotangentSheaf, tangentSheaf, and canonicalBundle
