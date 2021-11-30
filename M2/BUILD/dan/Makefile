@@ -26,7 +26,7 @@ RPM := $(shell if [ -d /var/lib/yum -o -d /var/lib/dnf ] ; then echo yes ; else 
 MACOSX := $(shell if [ `uname -s` = Darwin ] ; then echo yes ; else echo no; fi)
 
 # temporary (2021-11-17) : to get 2.8.4 built by us, avoiding a bug in 2.8.3
-BUILDLIBS += flint
+BUILDLIBS += flint factory
 
 # to get the Python package working
 # for Mac OS X:
