@@ -136,6 +136,8 @@ isCapturable = (inputs, pkg, isTest) -> (
     and not match("(addHook|export|newPackage)",              inputs) -- these commands have permanent effects
     and not match("(installMethod|installAssignmentMethod)",  inputs) -- same as above
     and not match("(Global.*Hook|add.*Function|Echo|Print)",  inputs) -- same as above
+    and not match("(method)",                                 inputs) -- same as above
+    and not match("(protect)",                                inputs) -- currently capture tries to clear all symbols, so protect breaks it
     )
 
 -----------------------------------------------------------------------------
