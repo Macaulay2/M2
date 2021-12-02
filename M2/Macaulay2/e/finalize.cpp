@@ -3,7 +3,7 @@
 #include "finalize.hpp"
 #include "engine-includes.hpp"
 
-#include "atomic_ops.h"
+#include <atomic_ops.h>
 #include "monideal.hpp"
 #include "comp-gb.hpp"
 #include "comp-res.hpp"
