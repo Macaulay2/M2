@@ -397,7 +397,6 @@ twistedGlobalSectionsModule = (F, bound) -> (
 -- cohomology
 -----------------------------------------------------------------------------
 -- TODO: add hooks for X not finite type over k?
--- TODO: improve caching until HH^0 F(>=0) is cached
 
 -- HH^p(X, OO_X)
 cohomology(ZZ,          SheafOfRings) := Module => opts -> (p,    O) -> cohomology(p, variety O, O^1, opts)
@@ -408,6 +407,8 @@ cohomology(ZZ,                    SumOfTwists) := Module => opts -> (p,    S) ->
 cohomology(ZZ, ProjectiveVariety, SumOfTwists) := Module => opts -> (p, X, S) -> (
     checkVariety(X, S);
     (F, b) := (S#0, S#1#0);
+    if not F.cache.?HH    then F.cache.HH = new MutableHashTable;
+    if F.cache.HH#?(p, b) then F.cache.HH#(p, b) else F.cache.HH#(p, b) =
     if p == 0 then twistedGlobalSectionsModule(F, b) else HH^(p+1)(module F, Degree => b))
 
 -- HH^p(X, F)
@@ -417,6 +418,8 @@ cohomology(ZZ,     AffineVariety, CoherentSheaf) := Module => opts -> (p, X, F) 
     if p == 0 then module F else (ring F)^0)
 cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) -> (
     checkVariety(X, F);
+    if not F.cache.?HH then F.cache.HH = new MutableHashTable;
+    if F.cache.HH#?p   then return F.cache.HH#p;
     -- TODO: only need basis(0, G) in the end, is this too much computation?
     G := if p == 0 then twistedGlobalSectionsModule(F, 0) -- HH^0 F(>=0)
     else (
@@ -431,7 +434,7 @@ cohomology(ZZ, ProjectiveVariety, CoherentSheaf) := Module => opts -> (p, X, F) 
 	-- TODO: check that X is proper (or at least finite type)
 	Ext^(n-p)(M, w));
     k := coefficientRing ring F;
-    k^(rank source basis(0, G)))
+    F.cache.HH#p = k^(rank source basis(0, G)))
 
 -----------------------------------------------------------------------------
 -- Module of twisted global sections Γ_*(F)
