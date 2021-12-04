@@ -89,6 +89,8 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     if not hasmode ArgNoPreload then
     scan(Core#"pre-installed packages", needsPackage);
     needsPackage \ toString \ flatten { if opts.PackageExports === null then currentPackage else opts.PackageExports };
+    --shallow copy, but we only need to remember which things started with attributes
+    oldAttributes := copy Attributes;
     -- TODO: is this still necessary? If so, add a test in tests/normal/capture.m2
     -- dictionaryPath = prepend(oldPrivateDictionary,      dictionaryPath); -- this is necessary mainly due to T from degreesMonoid
     dictionaryPath = prepend(User#"private dictionary", dictionaryPath); -- this is necessary mainly due to indeterminates.m2
@@ -97,14 +99,16 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     ret := capture' s;
     collectGarbage();
 
+    --Without the toSequence {v}, if v is a Sequence, hasAnAttribute breaks
     scan(value \ values User#"private dictionary", v ->
-	if hasAttribute(v, ReverseDictionary) then removeAttribute(v, ReverseDictionary));
+        if hasAnAttribute toSequence {v} and not oldAttributes#?v
+        then remove(Attributes,v));
     -- null out all symbols in the private dictionary, otherwise those values leak
     -- See bug #2330 for details.
-    scan(values User#"private dictionary", s -> s <- null);
+    scan(values User#"private dictionary", s -> (if mutable s then s <- null));
     User#"private dictionary" = oldPrivateDictionary;
     -- null out the symbols in the OutputDictionary as well
-    scan(values OutputDictionary, s -> s <- null);
+    scan(values OutputDictionary, s -> (if mutable s then s <- null));
     popvar symbol OutputDictionary;
     -- TODO: this should eventually be unnecessary
     scan(keys oldMutableVars, symb -> symb <- oldMutableVars#symb);
@@ -136,8 +140,7 @@ isCapturable = (inputs, pkg, isTest) -> (
     and not match("(addHook|export|newPackage)",              inputs) -- these commands have permanent effects
     and not match("(installMethod|installAssignmentMethod)",  inputs) -- same as above
     and not match("(Global.*Hook|add.*Function|Echo|Print)",  inputs) -- same as above
-    and not match("(method)",                                 inputs) -- same as above
-    and not match("(protect)",                                inputs) -- currently capture tries to clear all symbols, so protect breaks it
+    and not match("(importFrom|exportFrom)",                  inputs) -- currently capture tries to clear all symbols created, these break it
     )
 
 -----------------------------------------------------------------------------
