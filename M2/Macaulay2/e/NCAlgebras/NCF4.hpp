@@ -1,9 +1,15 @@
 #ifndef __nc_f4_hpp__
 #define __nc_f4_hpp__
 
+#include "M2/config.h"
+
 #include <tbb/queuing_mutex.h>                // for queuing_mutex
 #include <tbb/null_mutex.h>                   // for null_mutex
-#include <tbb/parallel_do.h>                  // for parallel_do_feeder
+#ifdef HAVE_TBB2021
+#include <tbb/parallel_for_each.h>                 // for feeder
+#else /*TBB 2020*/
+#include <tbb/parallel_do.h>                 // for parallel_do_feeder
+#endif /*HAVE_TBB2021*/
 #include <tbb/concurrent_unordered_map.h>     // for concurrent_unordered_map
 //#include <tbb/concurrent_vector.h>          // for concurrent_vector (no longer needed)
 
@@ -86,8 +92,11 @@ private:
   // unfortunately we must use the GC allocator here for now
   using RowsVector = std::vector<Row,gc_allocator<Row>>;
   //using RowsVector = tbb::concurrent_vector<Row>;
-
+#ifdef HAVE_TBB2021
+  using PreRowFeeder = tbb::feeder<PreRow>;
+#else /* TBB 2020 */
   using PreRowFeeder = tbb::parallel_do_feeder<PreRow>;
+#endif /* HAVE_TBB2021 */
   // The pair in this unordered_map is (i,j) where:
   //    i is the column number
   //    j is the row that reduces it

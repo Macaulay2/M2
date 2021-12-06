@@ -529,6 +529,17 @@ void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
   // can't do this loop as a range-based for loop since we are adding to it
   // during the for loop
   // process each element in mReducersTodo
+#ifdef HAVE_TBB2021
+  tbb::parallel_for_each(mReducersTodo.begin(), mReducersTodo.end(),
+      [&](const PreRow& prerow, PreRowFeeder& feeder)
+      {
+        auto& data = threadData.local();
+        processPreRow(prerow,
+                      data.rowsVector,
+                      *data.memoryBlock,
+                      &feeder);
+      });
+#else /*TBB 2020*/
   tbb::parallel_do(mReducersTodo.begin(), mReducersTodo.end(),
       [&](const PreRow& prerow, PreRowFeeder& feeder)
       {
@@ -538,6 +549,7 @@ void NCF4::parallelBuildF4Matrix(const std::deque<Overlap>& overlapsToProcess)
                       *data.memoryBlock,
                       &feeder);
       });
+#endif /* HAVE_TBB2021 */
 
   // combine the thread local rows into mRows
   for (const auto& data : threadData)
