@@ -269,13 +269,13 @@ setupMethods((), {
 	  koszul, symmetricPower, trace, target, source,
 	  getChangeMatrix, cover, coverMap, super, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
-	  substitute, rank, complete, ambient, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
+	  substitute, complete, ambient, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
 	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
 	  content, leadTerm, leadCoefficient, leadMonomial, components,
-	  leadComponent, degreesRing, degrees, assign, numgens, realPart, imaginaryPart, conjugate,
+	  leadComponent, degreesRing, assign, realPart, imaginaryPart, conjugate,
 	  relations, cone, standardForm, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,
 	  presentation, dismiss, precision, 
-	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage,
+	  norm, clean, fraction, part, coefficient, preimage,
 	  hasEngineLinearAlgebra, nullSpace,
       isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile
 	  })
@@ -357,10 +357,11 @@ setupMethods(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit,
 	  isSubset,isHomogeneous, isIsomorphism, isField, isConstant
 	  })
-setupMethods(TypicalValue => ZZ,
-     {binomial,degreeLength,height,char,pdim,dim,depth,width,euler,genus})
-setupMethods(TypicalValue => List,
-     {eulers, genera})
+setupMethods(TypicalValue => ZZ, {
+	binomial, char, degreeLength, depth, dim, euler, genus, height,
+	numgens, numColumns, numRows, pdim, rank, width})
+setupMethods(TypicalValue => List, {
+	degrees, eulers, genera})
 
 length = method(TypicalValue => ZZ, Dispatch => Thing)
 codim = method( Options => true )
