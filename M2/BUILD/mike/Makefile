@@ -41,6 +41,26 @@ cmake-tbb2020-appleclang:
 		-DBUILD_DOCS=on \
 		../../../..
 
+cmake-no-tbb-appleclang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-no-tbb-appleclang
+	cd builds.tmp/cmake-no-tbb-appleclang; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
+cmake-tbb2021-appleclang:
+	echo "git branch is " $(BRANCH)
+	mkdir -p builds.tmp/cmake-tbb2021-appleclang
+	cd builds.tmp/cmake-tbb2021-appleclang; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+
 cmake-appleclang-tbb:
 	echo "git branch is " $(BRANCH)
 	mkdir -p builds.tmp/cmake-appleclang-tbb

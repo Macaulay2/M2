@@ -31,6 +31,7 @@ header "
 //   #include <mpfr.h>
 //   #include <mpfi.h>
 
+   #include <mathicgb/mathicgb/mtbb.hpp>
    #include <memtailor.h>
    #include <mathic.h>
    #include <mathicgb.h>
@@ -61,14 +62,7 @@ header "
    #include <givaro/givconfig.h>
    Givaro::GivaroMain givaroMain;
 
-   /* TODO - fix conditionals once TBB 2021 support is added (#2105) */
-   #if 1 /* TBB 2020 */
-     #include <tbb/version.h>
-     #define TBB_VERSION_STRING \\
-       (stringize(TBB_VERSION_MAJOR) \".\" stringize(TBB_VERSION_MINOR))
-   #else /* TBB 2021 */
-     #include <tbb/version.h>
-   #endif
+   /* TBB_VERSION_STRING is set in mtbb.hpp */
 
    #include <Eigen/Core>
    ";
