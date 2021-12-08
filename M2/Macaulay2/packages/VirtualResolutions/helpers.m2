@@ -1,7 +1,7 @@
 plotRegion = method()
 plotRegion(Function, List, List) := (func, low, high) -> printerr netList(Boxes => false,
-    table(min(high - low) + 1, max(high - low) + 1,
-	(i, j) -> if func(j + first low, first high - i) then "." else "x"))
+    table(last(high - low) + 1, first(high - low) + 1,
+	(i, j) -> if func(j + first low, last high - i) then "." else "x"))
 plotRegion(List, List, List) := (L, low, high) -> plotRegion(
     (i, j) -> any(L, ell -> i >= ell_0 and j >= ell_1), low, high)
 
