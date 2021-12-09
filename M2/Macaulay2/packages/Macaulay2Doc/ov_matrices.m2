@@ -347,7 +347,7 @@ document {
 
 document {
      Key => "determinants and minors",
-     "The command ", TO "det", " can be used to compute the determinant of 
+     "The command ", TO2(determinant, "det"), " can be used to compute the determinant of
      a square matrix.",
      EXAMPLE {
 	  "R = ZZ[a..d];",
