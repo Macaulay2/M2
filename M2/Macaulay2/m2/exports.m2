@@ -89,8 +89,6 @@ export {
 	"Caveat",
 	"Center",
 	"Certification",
-	"ChainComplex",
-	"ChainComplexMap",
 	"ChangeMatrix",
 	"CheckDocumentation",
 	"ClosestFit",
@@ -1026,7 +1024,6 @@ export {
 	"reorganize",
 	"replace",
 	"reshape",
-	"resolution",
 	"restart",
 	"return",
 	"returnCode",
@@ -1228,7 +1225,6 @@ export {
         "minPres" => "minimalPresentation",
         "numcols" => "numColumns",
         "numrows" => "numRows",
-        "res" => "resolution",
         "sub" => "substitute"
 }
 

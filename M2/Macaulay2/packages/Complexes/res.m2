@@ -1,14 +1,30 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
--- TODO:
+
+-- issues and moving parts:
+-- 1. different algorithms to call for different situations
+--   this should be handled by hooks
+-- 2. cache partial computations
+--   . be able to resume a computation
+--   . cache (in M): RawComputation (should have: which Strategy was used)
+--   . cache (in M): the actual complex.
+-- freeResolution(M, opts): Length, DegreeLimit.
+-- EngineResolution object: has RawComputation (at least for engine resolutions), ring, degree limit, status...
+-- complex EngineResolution => Complex -- takes the current state of the EngineResolution and makes it a complex
+-- makeResolutionObject(Module, opts)
+-- compute(EngineResolution, ending conditions)
+-- TODO for 27 Oct 2021: get ResolutionObject working.
+
 -- 1. set DegreeLimit to something other than null on initialization
 -- 2. replace Resolution with ResolutionComputation
 -- 3. integrate with the Complexes package
 
+-- next time: EngineResolution, and routines for that.
 --needs "chaincomplexes.m2"
 --needs "computations.m2"
 
 importFrom_Core { "storefuns", "RawComputation", "raw" }
-importFrom_Core { "isComputationDone", "cacheComputation", "fetchComputation", "updateComputation", "cacheHit", "Context", "Computation" }
+importFrom_Core { "isComputationDone", "cacheComputation", "fetchComputation", 
+    "updateComputation", "cacheHit", "Context", "Computation" }
 importFrom_Core { "degreeToHeft", "rawKernelOfGB", "flagInhomogeneity", "rawBetti", 
     "rawStartComputation", "rawGBSetStop", "rawStatus1", 
     "rawGBBetti", "rawResolution", "FreeAlgebraQuotient"}
@@ -147,7 +163,15 @@ resolutionBySyzygies := (opts, M) -> (
 
 -- M.cache.ResolutionComputation: opts (degreelimit, lengthlimit, strategy) => raw Computation object.
 -- M.cache.Resolution: opts (...) => Complex
-resolutionInEngine := (opts, M) -> (
+resolutionInEngine = (opts, M) -> (
+    -- first check if we can handle this M with these options.
+    -- if no strategy given, choose a strategy.
+    -- get options: degreelimit, lengthlimit
+    -- now look at stashed Resolution: if it handles what we need, we potentially prune the stashed version or return it.
+    ---M.cache.ResolutionComputation (W below)
+    ---M.cache.FreeResolution 
+    )
+resolutionInEngine = (opts, M) -> (
      R := ring M;
      if not engineReady M then return null;
      -- TODO: label strategy 1 and 2
