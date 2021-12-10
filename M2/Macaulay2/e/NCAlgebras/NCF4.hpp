@@ -1,12 +1,6 @@
 #ifndef __nc_f4_hpp__
 #define __nc_f4_hpp__
 
-//#include <tbb/queuing_mutex.h>                // for queuing_mutex
-//#include <tbb/null_mutex.h>                   // for null_mutex
-//#include <tbb/parallel_do.h>                  // for parallel_do_feeder
-//#include <tbb/concurrent_unordered_map.h>     // for concurrent_unordered_map
-//#include <tbb/concurrent_vector.h>          // for concurrent_vector (no longer needed)
-
 #include "m2tbb.hpp"                      // for tbb interface
 
 #include "NCAlgebras/FreeMonoid.hpp"      // for MonomEq
@@ -95,8 +89,7 @@ private:
   //    i is the column number
   //    j is the row that reduces it
   //      (and -1 if there is no such row).
-  //using MonomialHash = tbb::concurrent_unordered_map<Word,std::pair<int,int>,MonomHash,MonomHashEqual>;
-  using MonomialHash = mtbb::concurrent_unordered_map<Word,std::pair<int,int>,MonomHash,MonomHashEqual>;
+  using MonomialHash = mtbb::unordered_map<Word,std::pair<int,int>,MonomHash,MonomHashEqual>;
   
   // data
   const FreeAlgebra& mFreeAlgebra;
