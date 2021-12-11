@@ -952,7 +952,7 @@ void NCF4::parallelReduceF4Matrix()
 {
   long numCancellations = 0;
   using threadLocalDense_t = mtbb::enumerable_thread_specific<ElementArray>;
-  using threadLocalLong_t = mtbb::enumerable_thread_specific<long>;
+  using threadLocalLongPtr_t = mtbb::enumerable_thread_specific<long*>;
 
   // create a dense array for each thread
   threadLocalDense_t threadLocalDense([&]() { 
@@ -960,7 +960,9 @@ void NCF4::parallelReduceF4Matrix()
   });
   auto denseVector = mVectorArithmetic->allocateElementArray(mColumnMonomials.size());
   
-  threadLocalLong_t numCancellationsLocal;
+  threadLocalLongPtr_t numCancellationsLocal([&]() {
+    return new long;
+  });;
   
   // reduce each overlap row by mRows.
 
@@ -969,12 +971,12 @@ void NCF4::parallelReduceF4Matrix()
                     [&](const mtbb::blocked_range<int>& r)
                     {
                       threadLocalDense_t::reference my_dense = threadLocalDense.local();
-                      threadLocalLong_t::reference my_accum = numCancellationsLocal.local();
+                      threadLocalLongPtr_t::reference my_accum = numCancellationsLocal.local();
                       for (auto i = r.begin(); i != r.end(); ++i)
                         parallelReduceF4Row(i,
                                             mRows[i].columnIndices[0],
                                             -1,
-                                            my_accum,
+                                            *my_accum,
                                             my_dense,
                                             lock);
                     });
@@ -983,7 +985,7 @@ void NCF4::parallelReduceF4Matrix()
   for (auto i : numCancellationsLocal)
   {
     ++numThreads;
-    numCancellations += i;
+    numCancellations += *i;
   }
 
   // sequentially perform one more pass to reduce the spair rows down 
@@ -1005,6 +1007,9 @@ void NCF4::parallelReduceF4Matrix()
 
   for (auto tlDense : threadLocalDense)
     mVectorArithmetic->deallocateElementArray(tlDense);
+
+  for (auto tlDense : numCancellationsLocal)
+    delete tlDense;
 
   mVectorArithmetic->deallocateElementArray(denseVector);
   // std::cout << "Number of cancellations: " << numCancellations << std::endl;
