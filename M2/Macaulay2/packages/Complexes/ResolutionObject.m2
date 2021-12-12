@@ -1,3 +1,8 @@
+-- todo 10 Dec 2021.
+-- 1. res M -- needs length limit if the ring is not a polynomial ring over a field (or ZZ?)
+-- 2. resolutionDegreeLimit: should check that argument is null, an integer, or a list of integers of the right length.
+--      at the moment (1.19.1): it handles null, integer case, but doesn't verify it is a list otherwise.
+
 importFrom_Core { "RawComputation", "raw" }
 importFrom_Core { "degreeToHeft", 
     "rawBetti", 
@@ -124,7 +129,6 @@ end--
 restart
 debug needsPackage  "Complexes"
 load "ResolutionObject.m2"
-
 gbTrace=1
 S = ZZ/101[a..d]
 I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)

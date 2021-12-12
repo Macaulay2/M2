@@ -1,0 +1,18 @@
+handling R=field case within 'computation' feels like a kludge
+
+runHooks -- running all hooks one by one until non-null is found, or just running one hook.
+
+computation: (opts, container) -> does what?
+container: output 
+
+ResolutionComputation
+ResolutionContext
+
+fetchComputation
+cacheComputation
+
+isComputationDone ResolutionComputation (seems to check degree limit and length limit to check viability of previous result)
+updateComputation(ResolutionComputation, result chain complex)
+
+res.m2
+computations.m2
