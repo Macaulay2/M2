@@ -528,10 +528,7 @@ vertices ToricDivisor := Matrix => D -> (
 latticePoints ToricDivisor := Matrix => D -> (
     V := vertices D;
     if V === null then return null;
-    d := numRows V;
-    V = transpose (normaliz (transpose V,"polytope"))#"gen";
-    s := select (numColumns V, i -> V_(d,i) === 1);
-    c := (V_s)^{0..d-1};
+    c := matrix(vector \ latticePoints convexHull V);
     c_(sortColumns c) 
     );
 

@@ -27,7 +27,7 @@ newPackage(
     Headline => "routines for working with normal toric varieties and related objects",
     Keywords => {"Toric Geometry"},
     PackageExports => {"Polyhedra", "Schubert2", "Varieties","Truncations"},
-    PackageImports => {"FourierMotzkin","Normaliz","LLLBases"},
+    PackageImports => {"FourierMotzkin", "LLLBases"},
     DebuggingMode => false
     )
 
