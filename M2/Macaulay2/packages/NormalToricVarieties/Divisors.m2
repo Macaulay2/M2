@@ -488,9 +488,6 @@ isAmple ToricDivisor := Boolean => D -> (
 	 ) 
      );
 
-hilbertBasis(Matrix,Thing) := Matrix => opts -> (C, notused) -> (
-    transpose (normaliz(transpose C,"integral_closure"))#"gen")
-
 isVeryAmple ToricDivisor := Boolean => D -> (
     if not isAmple D then return false;
     if isSmooth variety D then return true;    
@@ -501,7 +498,7 @@ isVeryAmple ToricDivisor := Boolean => D -> (
     m := numColumns L;
     all (n, 
 	i -> (
-	    H := hilbertBasis(V - matrix {toList(n:1)} ** V_{i}, "notused");
+	    H := matrix(vector \ hilbertBasis coneFromVData(V - matrix {toList(n:1)} ** V_{i}));
 	    P := L - matrix {toList(m:1)} ** V_{i};
 	    isSubset(set entries transpose H, set entries transpose P)
 	    )
