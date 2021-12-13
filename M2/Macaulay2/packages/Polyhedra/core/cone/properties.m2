@@ -179,12 +179,8 @@ compute#Cone#computedHilbertBasis = method()
 compute#Cone#computedHilbertBasis Cone := C -> (
    inputMatrix := (facets C) || (hyperplanes C) || ( - hyperplanes C);
    hb := transpose hilbertBasis(transpose inputMatrix, InputType=>"lattice");
-   r := ring inputMatrix;
-   result := apply(0..(numColumns hb - 1), i -> hb_i);
-   eq := hyperplanes C;
-   zero :=  transpose matrix {toList ((numRows eq):0)};
-   result = apply(result, h -> (promote(matrix h, r)) // inputMatrix);
-   toList result
+   hb = promote(hb, ring inputMatrix) // inputMatrix;
+   apply(numColumns hb, i -> hb_{i})
 )
 
 
