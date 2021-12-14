@@ -964,7 +964,7 @@ _ADD_COMPONENT_DEPENDENCY(libraries nauty "" NAUTY_FOUND)
 
 
 # https://www.normaliz.uni-osnabrueck.de/
-# normaliz needs libgmp, libgmpxx, boost and is used by the package Normaliz
+# normaliz needs libgmp, libgmpxx, boost, and openmp, and is used by the package Normaliz
 ExternalProject_Add(build-normaliz
   URL               https://github.com/Normaliz/Normaliz/releases/download/v3.10.2/normaliz-3.10.2.tar.gz
   URL_HASH          SHA256=0f649a8eae5535c18df15e8d35fc055fd0d7dbcbdd451e8876f4a47061481f07
@@ -977,6 +977,8 @@ ExternalProject_Add(build-normaliz
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --disable-shared # TODO: for polymake --enable-shared
                       --without-flint # ${FLINT_ROOT}
+		      --without-nauty
+		      --without-cocoalib
                       "CPPFLAGS=${CPPFLAGS} -I${GMP_INCLUDE_DIRS}"
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -990,16 +992,15 @@ ExternalProject_Add(build-normaliz
                       "OPENMP_CXXFLAGS=${OpenMP_CXX_FLAGS} ${OpenMP_CXX_LDLIBS}"
             COMMAND patch --fuzz=10 --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/normaliz/patch-libtool
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
-  INSTALL_COMMAND   ${CMAKE_STRIP} source/normaliz # TODO: for polymake ${MAKE} -j${PARALLEL_JOBS} install-strip
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/normaliz
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/normaliz
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different source/normaliz ${M2_INSTALL_PROGRAMSDIR}/
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-_ADD_COMPONENT_DEPENDENCY(programs normaliz "gmp;nauty" NORMALIZ)
+_ADD_COMPONENT_DEPENDENCY(libraries normaliz "gmp;nauty" NORMALIZ_FOUND)
 
 
 # https://www.wm.uni-bayreuth.de/de/team/rambau_joerg/TOPCOM/
