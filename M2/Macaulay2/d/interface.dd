@@ -9,6 +9,7 @@ use struct;
 
 header "// TODO: break apart this file so each piece includes only one:
 #include <interface/aring.h>
+#include <interface/cone.h>
 #include <interface/cra.h>
 #include <interface/factory.h>
 #include <interface/flint.h>
@@ -3850,6 +3851,16 @@ export rawNCReductionTwoSided(e:Expr):Expr := (
   ) else WrongNumArgs(2)
   );
 setupfun("rawNCReductionTwoSided",rawNCReductionTwoSided);
+
+-----------------------------------------------------------------------------
+-- Hilbert basis of a cone
+-----------------------------------------------------------------------------
+
+export rawHilbertBasis(e:Expr):Expr := (
+     when e is G:RawMatrixCell do toExpr(Ccode(RawMatrixOrNull, "rawHilbertBasis(", G.p, ")"))
+     else WrongArgMatrix());
+setupfun("rawHilbertBasis", rawHilbertBasis);
+
 -----------------------------------------------------------------------------
 -- LU
 -----------------------------------------------------------------------------
