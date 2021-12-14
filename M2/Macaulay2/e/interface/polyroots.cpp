@@ -44,10 +44,7 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
   P->degree_of_var(0,p->get_value(),lodeg,hideg);
   if (prec == -1)
     prec = (K->get_precision() == 0 ? 53 : K->get_precision());
-
   
-  
-  ///////////// TODO: implement roots of a polynomial, via e.g. arb or mpsolve.
   mps_context *s = mps_context_new ();
   mps_monomial_poly *mps_p = mps_monomial_poly_new (s, hideg);
   mps_context_select_algorithm(s, MPS_ALGORITHM_SECULAR_GA);
@@ -161,6 +158,8 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
     free(radii);
   }
 
+  mps_monomial_poly_free(s, (mps_polynomial *)mps_p);
+  mps_context_free(s);
   return result;
 }
 
