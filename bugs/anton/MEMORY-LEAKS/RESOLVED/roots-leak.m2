@@ -1,3 +1,5 @@
+-- this leaked memory
+-- RESOLVED on 2021-12-13
 R := CC[x,y];
 S := CC[R_0];
 toS = map(S,R,matrix{{S_0,1}})
