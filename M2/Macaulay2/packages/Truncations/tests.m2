@@ -369,18 +369,18 @@ needsPackage "Truncations"
 S = ZZ/32003[x_0,x_1,y_0,y_1,z_0..z_2, Degrees => {2:{1,0,0},2:{0,1,0},3:{0,0,1}}]
 
 n = 11 -- 78 twists
-elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 10s -> 7.3s
+elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 10s -> 7.3s -> 4.6s
 elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 2.8s -> 0.2s, GOOD
 elapsedTime truncate(compositions(3, n), S); -- (28.8 ->) 7.8s -> 5.6s -> 0.19s GOOD
 elapsedTime truncate(compositions(3, n), S); -- (16.8 ->) 7.7s -> 5.4s -> 0.18s GOOD
 elapsedTime truncate(compositions(3, n), S^3, MinimalGenerators => false); -- 8.5s -> 0.6s, GOOD
 elapsedTime truncate(compositions(3, n), S^3, MinimalGenerators => false); -- 6.6s -> 0.5s GOOD
 
-elapsedTime truncate(compositions(3, n), S^3); -- (67s ->) 61s -> 72s -> 7.3s
+elapsedTime truncate(compositions(3, n), S^3); -- (67s ->) 61s -> 72s -> 7.3s -> 0.5s
 elapsedTime truncate(compositions(3, n), S^3); -- (54s ->) 60s -> 60s -> 0.4s GOOD
 
 n = 15 -- 136 twists
-elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 31s -> 23.8s
+elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 31s -> 23.8s -> 11.8
 elapsedTime truncate(compositions(3, n), S, MinimalGenerators => false); -- 0.8s GOOD
 elapsedTime truncate(compositions(3, n), S); -- (?? ->) >3min -> 0.8s GOOD
 elapsedTime truncate(compositions(3, n), S); -- (?? ->) >3min -> 0.7s GOOD

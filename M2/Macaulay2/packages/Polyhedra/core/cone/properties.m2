@@ -175,11 +175,10 @@ compute#Cone#computedDimension Cone := C -> (
 )
 
 
+importFrom_Core { "raw", "rawHilbertBasis" } -- calls libnormaliz
 compute#Cone#computedHilbertBasis = method()
 compute#Cone#computedHilbertBasis Cone := C -> (
-   inputMatrix := (facets C) || (hyperplanes C) || ( - hyperplanes C);
-   hb := transpose hilbertBasis(transpose inputMatrix, InputType=>"lattice");
-   hb = promote(hb, ring inputMatrix) // inputMatrix;
+   hb := transpose map(ZZ, rawHilbertBasis raw transpose rays C);
    apply(numColumns hb, i -> hb_{i})
 )
 
