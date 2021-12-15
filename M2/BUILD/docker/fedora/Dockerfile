@@ -14,7 +14,8 @@ RUN microdnf install openblas-devel libxml2-devel readline-devel gdbm-devel \
 	boost-devel libatomic_ops-devel libomp-dev libtbb-dev
 
 # Libraries we can build (factory not available on ubuntu)
-RUN microdnf install eigen3-devel glpk-devel gmp-devel mpfr-devel ntl-devel libfrobby-devel gc-devel
+RUN microdnf install eigen3-devel glpk-devel gmp-devel mpfr-devel ntl-devel \
+	libnauty-devel libnormaliz-devel libfrobby-devel gc-devel
 
 # Programs we can build
 # TODO: cohomcalg available soon. Polymake requires firefox???

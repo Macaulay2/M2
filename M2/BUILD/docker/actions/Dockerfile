@@ -19,7 +19,7 @@ RUN apt-get install -y -q --no-install-recommends libatomic-ops-dev libboost-sta
 	libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
 	libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libntl-dev gfan \
 	libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
-	libsingular-dev singular-data libmemtailor-dev libmathic-dev libmathicgb-dev libcdd-dev \
+	libnauty-dev libnormaliz-dev libsingular-dev singular-data libcdd-dev \
 	cohomcalg topcom 4ti2 normaliz coinor-csdp nauty lrslib w3c-markup-validator libtbb-dev
 
 # Testing with clang-11 compiler
