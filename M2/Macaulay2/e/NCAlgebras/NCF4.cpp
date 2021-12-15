@@ -962,7 +962,7 @@ void NCF4::parallelReduceF4Matrix()
   
   threadLocalLongPtr_t numCancellationsLocal([&]() {
     return new long;
-  });;
+  });
   
   // reduce each overlap row by mRows.
 

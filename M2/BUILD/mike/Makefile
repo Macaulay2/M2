@@ -3,6 +3,8 @@ always:
 
 BRANCH := $(shell git branch --contains | grep '^\* ' | sed -e s=^..== -e s=/=.=g )
 
+BREWPREFIX := `brew --prefix`
+
 #######################
 ## cmake build files ##
 #######################
@@ -22,6 +24,7 @@ cmake-appleclang:
 	mkdir -p builds.tmp/cmake-appleclang
 	cd builds.tmp/cmake-appleclang; cmake \
 		-GNinja \
+		-DCMAKE_PREFIX_PATH=`brew --prefix` \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
@@ -36,8 +39,10 @@ cmake-tbb2020-appleclang:
 	mkdir -p builds.tmp/cmake-tbb2020-appleclang
 	cd builds.tmp/cmake-tbb2020-appleclang; cmake \
 		-GNinja \
+		-DCMAKE_PREFIX_PATH=`brew --prefix` \
+		-DBUILD_NATIVE=off \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-		-DBUILD_TESTING=on \
+		-DBUILD_TESTING=off \
 		-DBUILD_DOCS=on \
 		../../../..
 
@@ -47,7 +52,9 @@ cmake-no-tbb-appleclang:
 	cd builds.tmp/cmake-no-tbb-appleclang; cmake \
 		-GNinja \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-		-DBUILD_TESTING=on \
+		-DCMAKE_PREFIX_PATH=`brew --prefix` \
+		-DBUILD_NATIVE=off \
+		-DBUILD_TESTING=off \
 		-DBUILD_DOCS=on \
 		../../../..
 
@@ -57,7 +64,9 @@ cmake-tbb2021-appleclang:
 	cd builds.tmp/cmake-tbb2021-appleclang; cmake \
 		-GNinja \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-		-DBUILD_TESTING=on \
+		-DCMAKE_PREFIX_PATH=`brew --prefix` \
+		-DBUILD_NATIVE=off \
+		-DBUILD_TESTING=off \
 		-DBUILD_DOCS=on \
 		../../../..
 
@@ -175,6 +184,16 @@ xcode:
 # Some possibly useful configure options
 # 		--build=x86_64-apple-darwin
 #       --enable-build-libraries="flint ntl"
+
+arm64-appleclang : always
+	mkdir -p builds.tmp/arm64-appleclang
+	cd builds.tmp/arm64-appleclang; ../../../../configure \
+		CPPFLAGS="-I`brew --prefix`/include" \
+		LDFLAGS="-L`brew --prefix`/lib" \
+	    --with-boost-regex=boost_regex \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
 
 darwin64-appleclang : always
 	mkdir -p builds.tmp/darwin64-appleclang
