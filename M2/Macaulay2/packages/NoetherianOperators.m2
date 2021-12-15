@@ -1475,7 +1475,7 @@ solvePDE(Ideal) := List => true >> opts -> I -> solvePDE (module I, opts)
 solvePDE(Matrix) := List => true >> opts -> M -> solvePDE (image M, opts)
 
 -- differentialPrimaryDecomposition = solvePDE
-differentialPrimaryDecomposition = method()
+differentialPrimaryDecomposition = method(Options => true)
 differentialPrimaryDecomposition Module := List => true >> opts -> M -> solvePDE(M, opts)
 differentialPrimaryDecomposition Ideal := List => true >> opts -> I -> differentialPrimaryDecomposition(module I, opts)
 
