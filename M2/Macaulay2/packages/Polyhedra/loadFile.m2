@@ -1,6 +1,6 @@
 needsPackage "FourierMotzkin"
--- needsPackage "FourTiTwo"
-needsPackage "Normaliz"
+-- needsPackage "FourTiTwo" -- see interfaces/fourtitwo.m2
+-- needsPackage "Normaliz" -- see interfaces/normaliz.m2
 needsPackage "Topcom"
 
 load "./exports.m2"
@@ -103,6 +103,7 @@ load "./tests/isWellDefined.m2"
 -- Interfaces to other software
 --
 load "./interfaces/fourierMotzkinAlternatives.m2"
+load "./interfaces/fourtitwo.m2"
 load "./interfaces/normaliz.m2"
 
 -------------------------------------------------------------------------------

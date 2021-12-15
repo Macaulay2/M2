@@ -25,14 +25,14 @@ isPointed Cone := C -> (
    getProperty(C, pointed)
 )
 
--- hilbertBasis = method()
-hilbertBasis Cone := List => o -> (C -> (
+
+hilbertBasis = method(Options => true)
+hilbertBasis Cone := List => {} >> o -> (C -> (
       if isPointed C then getProperty(C, computedHilbertBasis)
       else error("Hilbert basis not implemented for non-pointed cones yet.")
    )
 )
 
-     
 
 --   INPUT : '(v,P)',  a weight vector 'v' given by a one column matrix over ZZ or QQ and a 
 --     	     	       Cone 'C'

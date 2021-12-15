@@ -1593,7 +1593,7 @@ document {
      }
 
 document {
-     Key => {(hilbertBasis,Cone)},
+     Key => {hilbertBasis, (hilbertBasis,Cone)},
      Headline => "computes the Hilbert basis of a Cone",
      Usage => " HB = hilbertBasis C",
      Inputs => {
@@ -1612,12 +1612,16 @@ document {
      PARA{}, HREF("http://www.hemmecke.de/raymond/", "Raymond Hemmecke's"), " ", EM "On the 
      computation of Hilbert bases of cones", ", in A. M. Cohen, X.-S. Gao, and N. Takayama, 
      editors, Mathematical Software, ICMS 2002, pages 307317. World Scientific, 2002.",
-     
+
      EXAMPLE {
 	  " C = coneFromVData matrix {{1,2},{2,1}}",
 	  " hilbertBasis C"
-	  }
+	  },
+
+     PARA{}, "Beginning with Macaulay2 version 1.24.11, this method calls the internal function ",
+     TT "rawHilbertBasis", " which calls the C++ library ", TO2 {"normaliz", "libnormaliz"}, ".",
      
+     SeeAlso => {"FourTiTwo::hilbertBasis(Matrix)"}
      }
 
 document {

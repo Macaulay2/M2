@@ -34,6 +34,7 @@ export {
    "linearTransform",
    "polyhedra", 
    "vertices",
+   "hilbertBasis",
    "areCompatible", 
    "commonFace", 
    "contains", 
