@@ -15,6 +15,14 @@ document { Key => cone,
 	"Polyhedra::cone(Polyhedron)",
 	}
     }
+document { Key => rays,
+    Headline => "1-dimensional cones of a fan or polyhedral object",
+    SeeAlso => {
+	"FourTiTwo::rays(Matrix)",
+	"NormalToricVarieties::rays(NormalToricVariety)",
+	"Polyhedra::rays(PolyhedralObject)",
+	}
+    }
 
 -- also see functions/intersect-doc.m2
 document {

@@ -7,6 +7,7 @@ needs "methods.m2"
 chi = method()
 
 cone = method()
+rays = method()
 
 decompose = method(Options => true)
 
