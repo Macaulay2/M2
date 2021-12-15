@@ -29,7 +29,7 @@ RUN apt-get install -y --no-install-recommends software-properties-common && \
     apt-get install -y -q --no-install-recommends libeigen3-dev libgc-dev \
 	libglpk-dev libgmp3-dev libmpfr-dev libmps-dev libgtest-dev \
 	libntl-dev libflint-dev libsingular-dev singular-data libfrobby-dev \
-	libmemtailor-dev libmathic-dev libmathicgb-dev && apt-get clean
+	libnauty-dev libnormaliz-dev && apt-get clean
 
 # Programs we can build
 RUN apt-get install -y --no-install-recommends libcdd-dev lrslib \

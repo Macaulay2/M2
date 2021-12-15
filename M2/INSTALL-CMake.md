@@ -27,7 +27,7 @@ There are 10 libraries that must be found on the system.
 - On Fedora/CentOS, install `openblas-devel gmp-devel libxml2-devel readline-devel gdbm-devel boost-devel libomp-devel tbb-devel libffi-devel`.
 - On Mac OS X, using Homebrew, install `gmp libxml2 readline gdbm boost libomp tbb libffi`.
 
-**TIP**: x86_64 binary packages for all dependencies on Mac OS X 10.15+ and Linux distributions are available through the [Macaulay2 tap](https://github.com/Macaulay2/homebrew-tap/) for Homebrew. To download the dependencies this way run:
+**TIP**: x86_64 and arm64 binary packages for all dependencies on Mac OS X 12+ and Linux distributions are available through the [Macaulay2 tap](https://github.com/Macaulay2/homebrew-tap/) for Homebrew. To download the dependencies this way run:
 ```
 brew tap Macaulay2/tap
 brew install --only-dependencies macaulay2/tap/M2
@@ -216,6 +216,8 @@ Macaulay2 uses several external libraries and programs, which can be built using
   - `build-mpfi`:	[MPFI] a multiple precision interval arithmetic library based on MPFR
   - `build-mpsolve`: [MPSolve] library for solving multiprecision polynomials
   - `build-msolve`:	[MSolve] library for solving multivariate polynomials
+  - `build-nauty`:	[nauty] library for computing automorphism groups of graphs and digraphs
+  - `build-normaliz`: [Normaliz] library for computations in affine monoids, lattice polytopes, and rational cones
   - `build-ntl`:	[NTL] library for doing number theory
 
 [Boehm-Demers-Weiser]: https://www.hboehm.info/gc/
@@ -243,8 +245,6 @@ Macaulay2 uses several external libraries and programs, which can be built using
   - `build-csdp`:	[CSDP] software for solving semidefinite programming problems
   - `build-gfan`:	[Gfan] software for computing Grobner fans and tropical varieties
   - `build-lrslib`:	[lrs] software for vertex enumeration/convex hull problems
-  - `build-nauty`:	[nauty] software for computing automorphism groups of graphs and digraphs
-  - `build-normaliz`: [Normaliz] software for computations in affine monoids, lattice polytopes, and rational cones
   - `build-topcom`:	[TOPCOM] software for computing triangulations of point configurations and oriented matroids
 
 Additionally, build targets are available for a few programs which are not built and distributed by default due to time or licensing constraints:
