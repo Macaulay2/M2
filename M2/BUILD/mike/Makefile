@@ -195,6 +195,16 @@ arm64-appleclang : always
 		--disable-strip \
 		--enable-download
 
+arm64-tbb2020-appleclang : always
+	mkdir -p builds.tmp/arm64-tbb2020-appleclang
+	cd builds.tmp/arm64-tbb2020-appleclang; ../../../../configure \
+		CPPFLAGS="-I`brew --prefix`/include" \
+		LDFLAGS="-L`brew --prefix`/lib" \
+	    --with-boost-regex=boost_regex \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
 darwin64-appleclang : always
 	mkdir -p builds.tmp/darwin64-appleclang
 	cd builds.tmp/darwin64-appleclang; ../../../../configure \
