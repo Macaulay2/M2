@@ -540,12 +540,6 @@ flagSymbol(e:Expr):Expr := (
      else WrongArg("a symbol"));
 setupfun("flagLookup",flagSymbol);
 
-export chars := new array(Expr) len 256 do (
-     i := 0;
-     while i<256 do (
-	  provide Expr(stringCell(string(char(i))));
-	  i = i+1;
-	  ));
 getcfun(e:Expr):Expr := (
      when e
      is f:file do (

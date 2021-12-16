@@ -2,50 +2,7 @@
 --- author(s): MES
 --- notes: 
 
-undocumented {
-(toString,Sequence),
-(toString,Array),
-(toString,Package),
-(toString,Resolution),
-(toString,Command),
-(toString,Matrix),
-(toString,GeneralOrderedMonoid),
-(toString,MutableMatrix),
-(toString,Vector),
-(toString,InfiniteNumber),
-(toString,IndeterminateNumber),
-(toString,Bag),
-(toString,Manipulator),
-(toString,VirtualTally),
-(toString,Set),
-(toString,ScriptedFunctor),
-(toString,DocumentTag),
-(toString,Ideal),
-(toString,RingElement),
-(toString,RingMap),
-(toString,EngineRing),
-(toString,IndexedVariable),
-(toString,Module),
-(toString,GaloisField),
-(toString,GroebnerBasis),
-(toString,Thing),
-(toString,HashTable),
-(toString,MutableHashTable),
-(toString,Type),
-(toString,BasicList),
-(toString,MutableList),
-(toString,Option),
-(toString,Function),
-(toString,FunctionBody),
-(toString,Symbol),
-(toString,Hypertext),
-(toString,Net),
-(toString,String),
-(toString,QQ),
-(toString,Dictionary),
-(toString,CoherentSheaf),
-(toString,Variety)
-}
+undocumented methods toString
 
 document { 
      Key => toString,

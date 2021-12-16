@@ -15,8 +15,8 @@
 ---------------------------------------------------------------------------
 newPackage(
     "Saturation",
-    Version => "0.2",
-    Date => "November 8, 2020",
+    Version => "0.3",
+    Date => "November 29, 2021",
     Headline => "quotient, saturation, and annihilator routines for ideals and modules",
     Authors => {
 	{Name => "Justin Chen",    Email => "justin.chen@math.gatech.edu"},
@@ -32,8 +32,8 @@ export { "isSupportedInZeroLocus" }
 
 exportFrom_Core { "saturate", "annihilator" }
 
-importFrom_Core { "nonnull", "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "eliminationInfo" }
-importFrom_Core { "isComputationDone", "cacheComputation", "fetchComputation", "cacheHit", "Context", "Computation" }
+importFrom_Core { "nonnull", "raw", "rawColon", "rawSaturate", "newMonomialIdeal", "eliminationInfo", "resolutionDegreeLimit" }
+importFrom_Core { "isComputationDone", "cacheComputation", "fetchComputation", "updateComputation", "cacheHit", "Context", "Computation" }
 
 -- TODO: where should these be placed?
 trim MonomialIdeal := MonomialIdeal => opts -> (cacheValue (symbol trim => opts)) ((I) -> monomialIdeal trim(module I, opts))
@@ -118,16 +118,29 @@ grevLexRing(ZZ, Ring) := (i, R) -> (
 QuotientContext = new SelfInitializingType of Context
 QuotientContext.synonym = "quotient context"
 
--- keys: TODO: BasisElementLimit, DegreeLimit, PairLimit
 QuotientComputation = new Type of Computation
 QuotientComputation.synonym = "quotient computation"
 
 -- TODO: try to find a compatible context that can be used in the computation
 new QuotientContext from Sequence := (C, S) -> ( (A, B) := S; QuotientContext{ mingens B } )
--- TODO: set BasisElementLimit, DegreeLimit, PairLimit?
-new QuotientComputation from Sequence := (C, S) -> new QuotientComputation from { Result => null }
+new QuotientComputation from Sequence := (C, S) -> new QuotientComputation from {
+    BasisElementLimit => (S#2).BasisElementLimit,
+    DegreeLimit       => (S#2).DegreeLimit,
+    PairLimit         => (S#2).PairLimit,
+    Result            => null}
 
--- TODO: implement a specialization for (isComputationDone, QuotientComputation)
+isComputationDone QuotientComputation := Boolean => options quotient >> opts -> container -> (
+    -- this function determines whether we can use the cached result, or further computation is necessary
+    not instance(container.Result, Nothing)
+    and opts.BasisElementLimit <= container.BasisElementLimit
+    and(opts.DegreeLimit       <= container.DegreeLimit and opts.DegreeLimit =!= {} or container.DegreeLimit === {})
+    and opts.PairLimit         <= container.PairLimit)
+
+updateComputation(QuotientComputation, Thing) := Thing => options quotient >> opts -> (container, result) -> (
+    container.BasisElementLimit = opts.BasisElementLimit;
+    container.DegreeLimit       = opts.DegreeLimit;
+    container.PairLimit         = opts.PairLimit;
+    container.Result            = result)
 
 --quotient = method(...) -- defined in m2/quotient.m2
 quotient(Ideal,  Ideal)       := Ideal  => opts -> (I, J) -> quotientHelper(I, J, (quotient, Ideal, Ideal), opts)
@@ -158,15 +171,17 @@ Module : Module               := Ideal  =>         (M, N) -> quotient(M, N)
 
 -- Helper for quotient methods
 quotientHelper = (A, B, key, opts) -> (
-    if ring B === ZZ then B = sub(B, ring A);
+    R := ring A;
+    if ring B === ZZ then B = sub(B, R);
 
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
     cast := if instance(A, MonomialIdeal) then monomialIdeal else ideal;
+    opts = opts ++ { DegreeLimit => resolutionDegreeLimit(R, opts.DegreeLimit) };
 
     -- this logic runs the strategies in order, or the specified strategy
     computation := (opts, container) -> (
-	if (R := ring A) =!= ring B then error "expected objects in the same ring";
+	if R =!= ring B then error "expected objects in the same ring";
 	if instance(B, RingElement) then B = ideal B;
 	if uniform' {A, B} and ambient' A != ambient' B
 	then error "expected objects to be contained in the same ambient object";
@@ -188,7 +203,7 @@ quotientHelper = (A, B, key, opts) -> (
 
     -- this is the logic for caching partial quotient computations. A.cache contains an option:
     --   QuotientContext{ mingens B } => QuotientComputation{ Result }
-    container := fetchComputation(QuotientComputation, A, new QuotientContext from (A, B));
+    container := fetchComputation(QuotientComputation, A, (A, B, opts), new QuotientContext from (A, B));
 
     -- the actual computation of quotient occurs here
     C := (cacheComputation(opts, container)) computation;
@@ -211,6 +226,7 @@ algorithms#(quotient, Ideal, Ideal) = new MutableHashTable from {
     -- FIXME: potential bug with nonstandard fields, see the last test in quotient-test.m2
     Quotient => (opts, I, J) -> (
 	R := ring I;
+	-- FIXME: this line computes a gb for I!!!
 	mR := transpose generators J ** (R / I);
 	-- if J is a single element, this is the same as
 	-- computing syz gb(matrix{{f}} | generators I, ...)
@@ -340,16 +356,19 @@ scan({Quotient, Iterate}, strategy ->
 SaturateContext = new SelfInitializingType of QuotientContext
 SaturateContext.synonym = "saturate context"
 
--- keys: TODO: BasisElementLimit, DegreeLimit, PairLimit
 SaturateComputation = new Type of QuotientComputation
 SaturateComputation.synonym = "saturate computation"
 
 -- TODO: try to find other compatible cacheKeys, perhaps of type QuotientContext, that can be used in the computation
 new SaturateContext from Sequence := (C, S) -> ( (A, B) := S; SaturateContext{ mingens B } )
-new SaturateComputation from Sequence := (C, S) -> new SaturateComputation from { Result => null }
+new SaturateComputation from Sequence := (C, S) -> new SaturateComputation from {
+    BasisElementLimit => (S#2).BasisElementLimit,
+    DegreeLimit       => (S#2).DegreeLimit,
+    PairLimit         => (S#2).PairLimit,
+    Result            => null}
 
--- TODO: isComputationDone and cacheComputation now can inherit from QuotientComputation,
--- but perhaps there is something smarter that can be done in this specific case
+-- Note: isComputationDone and updateComputation inherit from QuotientComputation
+-- TODO: is there something smarter that can be done for saturation in particular?
 
 -- saturate = method(Options => options saturate) -- defined in m2/quotient.m2
 saturate(Ideal,  Ideal)       := Ideal  => opts -> (I, J) -> saturateHelper(I, J, (saturate, Ideal, Ideal), opts)
@@ -381,17 +400,19 @@ saturate(Vector, List)        := Module => opts -> (v, L) -> saturate(image matr
 
 -- Helper for saturation methods
 saturateHelper = (A, B, key, opts) -> (
-    if ring B === ZZ then B = sub(B, ring A);
+    R := ring A;
+    if ring B === ZZ then B = sub(B, R);
 
     -- this is only here because some methods are not implemented for RingElement
     B' := if instance(B, RingElement) or instance(B, Number) then ideal B else B;
 
     strategy := opts.Strategy;
     doTrim := if opts.MinimalGenerators then trim else identity;
+    opts = opts ++ { DegreeLimit => resolutionDegreeLimit(R, opts.DegreeLimit) };
 
     -- this logic runs the strategies in order, or the specified strategy
     computation := (opts, container) -> (
-	if (R := ring A) =!= ring B then error "expected objects in the same ring";
+	if R =!= ring B then error "expected objects in the same ring";
 	-- note: if B \subset A then A:B^infty should be "everything", but computing
 	-- a gb for A can be slow, so isSubset' doesn't compute a gb
 	-- TODO: if radical A is cached and B \subset radical A then A : B^infty = ambient A
@@ -408,7 +429,7 @@ saturateHelper = (A, B, key, opts) -> (
 
     -- this is the logic for caching partial saturation computations. A.cache contains an option:
     --   SaturateContext{ mingens B } => SaturateComputation{ Result }
-    container := fetchComputation(SaturateComputation, A, new SaturateContext from (A, B'));
+    container := fetchComputation(SaturateComputation, A, (A, B, opts), new SaturateContext from (A, B'));
 
     -- the actual computation of saturation occurs here
     C := (cacheComputation(opts, container)) computation;
@@ -609,7 +630,7 @@ isSupportedInZeroLocus(Ideal, Module) := (B, M) -> (
     -- annihilator is known, it's faster to check whether saturate(annihilator M, B) == ideal 1
     if M.cache.?annihilator then (
 	N := annihilator M;
-	container := fetchComputation(SaturateComputation, N, new SaturateContext from (N, B));
+	container := fetchComputation(SaturateComputation, N, (N, B, options saturate), new SaturateContext from (N, B));
 	if isComputationDone container then ( cacheHit container; return saturate(N, B) == ideal 1_S ) else true);
     -- 2. check that a high enough power of elements of B annihilates M
     n := numgens S;

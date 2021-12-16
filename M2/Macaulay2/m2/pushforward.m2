@@ -2,6 +2,7 @@
 -- TODO: adjust PushForward.m2 package to add a strategy
 -- TODO: lift(M, S) should call pushForward in some cases
 
+needs "basis.m2"
 needs "modules.m2"
 needs "ringmap.m2"
 

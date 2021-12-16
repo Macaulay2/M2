@@ -203,13 +203,14 @@ doc ///
         Text
     	    @UL {
                 TO (Tor, ZZ, Module, Module),
-                TO "(Tor, ZZ, Module, Matrix), not yet implemented",
-                TO "(Tor, ZZ, Matrix, Module), not yet implemented",
+                TO (Tor, ZZ, Module, Matrix),
+                TO (Tor, ZZ, Matrix, Module),
                 TO (tensor, Complex, Complex),
                 TO (tensor, ComplexMap, ComplexMap),
                 TO (tensorCommutativity, Complex, Complex),
                 TO (tensorAssociativity, Complex, Complex, Complex),
-                TO "symmetry of Tor, not yet implemented"
+                TO (torSymmetry, ZZ, Module, Module),
+                TO connectingTorMap
             }@
     SeeAlso
         "Making chain complexes"
@@ -310,7 +311,7 @@ doc ///
             D_4
         Text
             The function {\tt concentration} does no computation.
-            To eliminate extraneous zeros, use @TO (prune,Complex)@.
+            To eliminate extraneous zeros, use @TO (prune, Complex)@.
         Example
             f1 = a*id_C  
             E = ker f1
@@ -328,6 +329,24 @@ doc ///
         "Basic invariants and properties"
         (symbol _, Complex, ZZ)
         (concentration, ComplexMap)
+///
+
+doc ///
+    Key
+        Concentration
+    Headline
+        optional argument used to specify the concentration
+    Description
+        Text
+            In this package, each complex $C$ has a concentration
+            $(\ell, h)$ such that $\ell \leq h$.  For all $i < \ell$
+            and all $i > h$, the term $C_i$ is zero.  When $\ell \leq
+            i \leq h$, the module $C_i$ may or may not be zero.
+        Text
+            Several methods use this optional argument to specify the 
+            concentration of their outputs.
+    SeeAlso
+        (concentration, Complex)
 ///
 
 doc ///
@@ -576,7 +595,45 @@ doc ///
         (symbol SPACE, Complex, Array)
 ///
 
--- TODO: add in doc for (complex, ComplexMap).
+doc ///
+    Key
+        (complex, ComplexMap)
+    Headline
+        make a complex by specifying the differential
+    Usage
+        C = complex d
+    Inputs
+        d:ComplexMap
+        Base => ZZ
+            unused
+    Outputs
+        C:Complex
+            whose differential is $d$
+    Description
+        Text
+            Given a map $d$ of complexes having degree -1 and whose source 
+            and targets are equal, this method constructs the chain complex
+            whose differential is $d$.  This constructor does not verify that
+            $d^2 = 0$.
+        Example
+            S = ZZ/101[x_1..x_4];
+            F = freeResolution coker vars S
+            d = randomComplexMap(F, F, Cycle => true, InternalDegree => -1, Degree => -1)
+            d^2
+            C = complex d
+            assert isWellDefined C
+            assert all(0..4, i -> dd^C_i == d_i)
+        Example
+            e = randomComplexMap(F, F, InternalDegree => -1, Degree => -1)
+            D = complex e
+            debugLevel = 1
+            assert not isWellDefined D
+    SeeAlso
+        "Making chain complexes"
+        (isWellDefined, Complex)
+        (complex, HashTable)
+        (complex, List)
+///
 
 -- TODO: Add programming details
 doc ///
@@ -880,13 +937,46 @@ doc ///
         freeResolution
         (freeResolution, Module)
         (freeResolution, Ideal)
+        (freeResolution, MonomialIdeal)
+        [freeResolution, LengthLimit]
+        [freeResolution, DegreeLimit]
+        [freeResolution, FastNonminimal]
+        [freeResolution, HardDegreeLimit]
+        [freeResolution, PairLimit]
+        [freeResolution, SortStrategy]
+        [freeResolution, StopBeforeComputation]
+        [freeResolution, Strategy]
+        [freeResolution, SyzygyLimit]
     Headline
         compute a free resolution of a module or ideal
     Usage
         freeResolution M
     Inputs
         M:Module
-            or @ofClass Ideal@, an ideal {\tt I} in a ring {\tt R}
+            or @ofClass Ideal@ or @ofClass MonomialIdeal@, an ideal {\tt I} in a ring {\tt R}
+        LengthLimit => ZZ
+            this is used to limit somehow the computation where resolutions might be too long or infinite
+        DegreeLimit => List
+            or @ofClass ZZ@, an option that specifies that the computation stops at the given
+            (slanted) degree 
+        FastNonminimal => Boolean
+            unused (TODO: probably used)
+        HardDegreeLimit => List
+            unused (TODO: used?)
+        PairLimit => ZZ
+            or @TO infinity@, an internal option which specifies that the computation should stop after a 
+            certain number of s-pairs have computed
+        SortStrategy => ZZ
+            an internal option that specifies the strategy to be used for sorting S-pairs
+        StopBeforeComputation => Boolean
+            whether to start the computation. This can be useful when you want to obtain the 
+            partially computed resolution contained in an interrupted computation.
+        Strategy => ZZ
+            TODO: perhaps needs its own page
+        SyzygyLimit => ZZ
+            or @TO infinity@, 
+            an internal option which specifies that the computation should stop after a 
+            certain number of syzygies have computed
     Outputs
         :Complex
             a free resolution of the module {\tt M} or of the
@@ -924,10 +1014,12 @@ doc ///
             C = freeResolution (coker vars R, LengthLimit => 7)
             dd^C
     SeeAlso
+        "Making chain complexes"
         (resolution, Complex)
         (resolutionMap, Complex)
         (betti, Complex)
 ///
+
 
 doc ///
    Key
@@ -1132,6 +1224,7 @@ doc ///
      (symbol^, Complex, Array)
      (symbol_, Complex, Array)
      (isShortExactSequence, ComplexMap, ComplexMap)
+     (sum, Complex)
 ///
 
 doc ///
@@ -1275,8 +1368,8 @@ doc ///
       prune C6
       concentration prune C6
    SeeAlso
-     (prune,Complex)
-     (concentration,Complex)
+     (prune, Complex)
+     (concentration, Complex)
 ///
 
 doc ///
@@ -1503,7 +1596,9 @@ doc ///
             homomorphism' g1 == f1
             homomorphism' g2 == f1
     SeeAlso
+        "Working with Ext"
         (homomorphism, Matrix)
+        (homomorphism, ZZ, Matrix, Complex)
         (homomorphism', ComplexMap)
         (Hom, Complex, Complex)
         (randomComplexMap, Complex, Complex)
@@ -1551,8 +1646,66 @@ doc ///
             assert(target g === D)
             assert(homomorphism f == g)
     SeeAlso
+        "Working with Ext"
         (homomorphism', Matrix)
         (homomorphism, ComplexMap)
+        (Hom, Complex, Complex)
+        (randomComplexMap, Complex, Complex)
+///
+
+doc ///
+    Key
+        (homomorphism, ZZ, Matrix, Complex)
+    Headline
+        get the homomorphism from an element of Hom
+    Usage
+        g = homomorphism(i, f, E)
+    Inputs
+        i:ZZ
+        f:Matrix
+            a map of the form $f \colon R^1 \to E_i$
+        E:Complex
+            having the form
+            $E = \operatorname{Hom}(C, D)$ for some complexes $C$ and $D$
+    Outputs
+        g:ComplexMap
+            the corresponding map of chain complexes from $C$ to $D$ of degree $i$
+    Description
+        Text
+            An element of the complex $\operatorname{Hom}(C, D)$ corresponds to a map of 
+            complexes from $C$ to $D$.  Given an element in the $i$-th term, this
+            method returns the corresponding map of complexes of degree $i$.
+        Text
+            As a first example, consider two Koszul complexes $C$ and $D$.
+            From a random map $f \colon R^1 \to Hom(C, D)$, we construct 
+            the corresponding map of chain complexes $g \colon C \to D$.
+        Example
+            R = ZZ/101[a,b,c];
+            C = freeResolution ideal"a,b,c"
+            D = freeResolution ideal"a2,b2,c2"
+            E = Hom(C,D)
+            f = random(E_2, R^{-5})
+            g = homomorphism(2, f, E)
+            assert isWellDefined g
+            assert not isCommutative g
+        Text
+            The map $g \colon C \to D$ corresponding to a random map into $Hom(C,D)$
+            does not generally commute with the differentials.  However, if the
+            element of $Hom(C,D)$ is a cycle, then the corresponding map does commute.
+        Example
+            h = randomComplexMap(E, complex R^{-2}, Cycle => true, Degree => -1)
+            f = h_0
+            g = homomorphism(-1, f, E)
+            assert isWellDefined g
+            assert isCommutative g
+            assert(degree g === -1)
+            assert(source g === C)
+            assert(target g === D)
+            assert(homomorphism' g == h)
+    SeeAlso
+        "Working with Ext"
+        (homomorphism, Matrix)
+        (homomorphism', ComplexMap)
         (Hom, Complex, Complex)
         (randomComplexMap, Complex, Complex)
 ///
@@ -2064,15 +2217,21 @@ doc ///
     Usage
         phi ** C
         tensor(phi, C)
+        S ** C
+        C ** S
     Inputs
         phi:RingMap
-            whose source is a ring $R$, and whose target is a ring $S$
+            whose source is a ring $R$ and whose target is a ring $S$
         C:Complex
             over the ring $R$
     Outputs
         :Complex
             over the ring $S$
     Description
+        Text
+            These methods implement the base change of rings.  As input, one can either
+            give a ring map $\phi$, or the ring $S$ (when there is a canonical map
+                from $R$ to $S$).
         Text
             We illustrate the tensor product of a complex along a ring map.
         Example
@@ -2213,19 +2372,25 @@ doc ///
     Key
         (minimalPresentation, Complex)
         (prune, Complex)
+        (prune, ComplexMap)
+        (minimalPresentation, ComplexMap)
     Headline
         minimal presentation of all terms in a complex
     Usage
         D = minimalPresentation C
         D = prune C
+        h = minimalPresentation f
+        h = prune f
     Inputs
         C:Complex
+            or $f$ @ofClass ComplexMap@
         Exclude => 
             unused
     Outputs
         D:Complex
             isomorphic to the input, where each term is replaced
-            by a minimally presented model
+            by a minimally presented model, or $h$ @ofClass ComplexMap@
+            where the source and target are minimally presented
     Consequences
         Item
             The isomorphism $g : D \to C$ is available as 
@@ -2234,7 +2399,8 @@ doc ///
     Description
         Text
             This is frequently useful to make the output of certain
-            operations readable or understandable.
+            operations readable or understandable.  This operation
+            is functorial, applying both to complexes and complex maps.
         Text
             In particular, homology often needs to be pruned to
             be understood.  For instance, this is useful 
@@ -2251,8 +2417,8 @@ doc ///
             assert isComplexMorphism g
             assert (target g == C)
             assert (source g == D)
-            h = g^-1
-            assert(g*h == 1 and h*g == 1)
+            g^-1
+            assert(g*g^-1 == 1 and g^-1*g == 1)
         Text
             The image of a map of complexes also becomes more
             understandable via pruning.
@@ -2270,9 +2436,16 @@ doc ///
             assert isComplexMorphism g
             assert (target g == C)
             assert (source g == D)
-            h = g^-1
-            assert(g*h == 1 and h*g == 1)
+            g^-1
+            assert(g*g^-1 == 1 and g^-1*g == 1)
+        Text
+            One can directly prune the map of complexes $f$.
+        Example
+            h = prune f
+            assert(source h === prune source f)
+            assert(target h === prune target f)
    SeeAlso
+       "Making chain complexes"
        (minimize, Complex)
        (minimalPresentation, Module)
        randomComplexMap
@@ -2284,6 +2457,7 @@ doc ///
     Key
         (minimize, Complex)
         minimize
+        minimizingMap
     Headline
         a quasi-isomorphic complex whose terms have minimal rank
     Usage
@@ -2433,6 +2607,49 @@ doc ///
      freeResolution
      prune
 ///
+
+doc ///
+    Key
+        (sum, Complex)
+        (sum, ComplexMap)
+    Headline
+        make the direct sum of all terms
+    Usage
+        sum C
+        sum f
+    Inputs
+        C:Complex
+            or {\tt f}, @ofClass ComplexMap@
+    Outputs
+        :Module
+            or @ofClass Matrix@, if the input is a complex map
+    Description
+        Text
+            This is the forgetful functor from the
+            category of chain complexes to the category of modules.
+            A chain complex $C$ is sent to the direct sum 
+            $\bigoplus_i C_i$ of its terms.
+            A map of chain complexes $f \colon C \to D$ is sent to the
+            direct sum $\bigoplus_i f_i \colon \bigoplus_i C_i \to \bigoplus_i D_i$.
+        Example
+            S = ZZ/101[a,b,c];
+            C = koszulComplex {a,b,c}
+            sum C
+            assert(rank sum C == 2^3)
+        Example
+            f = randomComplexMap(C, C, InternalDegree => 1, Cycle => true)
+            g = sum f
+            assert(g^2 === sum f^2)
+            assert(target g === sum target f)
+            assert(source g === sum source f)
+            h = sum dd^C
+            assert(h^2 == 0)
+    SeeAlso
+        "Basic invariants and properties"
+        (directSum, Complex)
+        koszulComplex
+        randomComplexMap
+///
  
 doc ///
   Key
@@ -2451,7 +2668,7 @@ doc ///
     Text
       This method checks whether the given representation of each
       module $C_i$ is free. To determine whether the complex $C$ is
-      isomorphic to a free complex, use @TO2("(prune,Complex)", "prune")@.
+      isomorphic to a free complex, use @TO2((prune,Complex), "prune")@.
     Text
       The following example demonstrates that the presentation of a module
       might not reveal the property of being free.
@@ -2643,6 +2860,7 @@ doc ///
     Key
         (yonedaMap, Matrix)
         yonedaMap
+        [yonedaMap, LengthLimit]
     Headline
         creates a chain complex map representing an extension of modules
     Usage
@@ -2718,6 +2936,7 @@ doc ///
     Key
         (yonedaMap', ComplexMap)
         yonedaMap'
+        [yonedaMap', LengthLimit]
     Headline
         identifies the element of Ext corresponding to a map of free resolutions
     Usage
@@ -2787,6 +3006,202 @@ doc ///
         (yonedaProduct, Module, Module)
 ///
 
+--XXXX
+doc ///
+    Key
+        (yonedaProduct, Matrix, Matrix)
+        yonedaProduct
+    Headline
+        make the product of two elements in Ext modules
+    Usage
+        h = yonedaProduct(f,g)
+    Inputs
+        f:Matrix
+            of the form $f \colon R \to \operatorname{Ext}_R^d(L,M)$
+        g:Matrix
+            of the form $g \colon R \to \operatorname{Ext}_R^e(M,N)$
+    Outputs
+        h:Matrix
+            of the form $h \colon R \to \operatorname{Ext}_R^{d+e}(L,N)$
+    Description
+        Text
+            Given a triple $(L, M, N)$ of $R$-modules, the Yoneda product is a pairing between $\operatorname{Ext}$-modules
+            
+            $\phantom{WWWW}
+             \operatorname{Ext}_R^d(L,M) \otimes \operatorname{Ext}_R^e(M,N) \to \operatorname{Ext}_R^{d+e}(L,N).
+            $
+
+
+            For an element of $\operatorname{Ext}_R^{e}(M,N)$, thought of as an extension
+
+            $\phantom{WWWW}
+             0 \leftarrow M \leftarrow F_{0} \leftarrow F_{1} \leftarrow \dotsb \leftarrow F_{e-2} \leftarrow P \leftarrow N \leftarrow 0,
+            $
+
+            and for an element of $\operatorname{Ext}_R^{d}(L,M)$, thought of as an extension
+
+            $\phantom{WWWW}
+             0 \leftarrow L \leftarrow G_{0} \leftarrow G_1 \leftarrow \dotsb \leftarrow G_{d-2} \leftarrow Q \leftarrow M \leftarrow 0,
+            $
+
+            the Yoneda product corresponds to
+
+            $\phantom{WWWW}
+             0 \leftarrow L \leftarrow G_{0} \leftarrow G_{1} \leftarrow \dotsb \leftarrow Q \leftarrow F_{0}
+             \leftarrow F_{1} \leftarrow \dotsb \leftarrow P \leftarrow N \leftarrow 0,
+            $
+
+            where the map from $F_0$ to $Q$ factors through $M$.  For more information about extensions,
+            see @TO yonedaExtension@.
+        Text
+            Alternatively, the module $\operatorname{Ext}^d_R(L,M)$ is constructed from
+            a free resolution $G$ of $L$,
+
+            $\phantom{WWWW}
+              0 \leftarrow L \leftarrow G_0 \leftarrow G_1 \leftarrow \dotsb
+              \leftarrow G_d \leftarrow \dotsb,
+            $
+
+            by taking the homology of the complex $\operatorname{Hom}_R(G, M)$.
+            An element of $\operatorname{Ext}^d_R(L,M)$ is represented by
+            an element of $\operatorname{Hom}_R(G_d, M)$.  This map extends to a complex map
+            having degree $-d$ from $G$ to the free resolution $F$ of $M$.
+            The Yoneda product is the composition of the map of chain complexes from 
+            $G$ to $F$ with the map of chain complexes having degree $-e$ from $F$ to 
+            a free resolution of $N$.
+            For more information about these maps, see @TO yonedaMap@.
+        Text
+            As an example, we take two distinct elements of an $\operatorname{Ext}^1$-module
+            to obtain a non-zero element of the $\operatorname{Ext}^2$-module.
+        Example
+            S = ZZ/101[x_0..x_3];
+            I = borel monomialIdeal(x_1*x_2)
+            E1 = Ext^1(S^1/I, S^1/I)
+            (f, g) = (E1_{6}, E1_{9})
+            h = yonedaProduct(f, g)
+            assert isWellDefined h
+            assert(target h == Ext^2(S^1/I, S^1/I))
+            C = yonedaExtension h
+            assert isWellDefined C
+            assert isHomogeneous C
+            assert(HH C == 0)
+            assert(coker yonedaProduct(E1,E1) == 0)
+        Text
+            In our second example, all three modules in the triple are distinct
+            and the image of the Yoneda product is not surjective.
+        Example
+            R = S/(x_0*x_1, x_2*x_3);
+            E1 = Ext^1(R^1/(x_0, x_2), R^1/(x_0, x_2, x_3))
+            E2 = Ext^2(R^1/(x_0, x_2, x_3), R^1/(x_0, x_1, x_2, x_3))
+            E3 = Ext^3(R^1/(x_0, x_2), R^1/(x_0, x_1, x_2, x_3))
+            h = yonedaProduct(E1_{0}, E2_{1})
+            assert isWellDefined h
+            assert(target h == E3)
+            C = yonedaExtension h
+            assert isWellDefined C
+            assert isHomogeneous C
+            assert(HH C == 0)
+            assert(coker yonedaProduct(E1, E2) != 0)
+    SeeAlso
+        "Working with Ext"
+        (yonedaProduct, Module, Module)
+///
+
+doc ///
+    Key
+        (yonedaProduct, Module, Module)
+    Headline
+        make the product map between Ext modules
+    Usage
+        yonedaProduct(D,E)
+    Inputs
+        D:Module
+            having the form $\operatorname{Ext}_R^d(L,M)$
+        E:Module
+            having the form $\operatorname{Ext}_R^e(M,N)$
+    Outputs
+        :Matrix
+            defining a map from $\operatorname{Ext}_R^d(L,M) \otimes_R \operatorname{Ext}_R^e(M,N)$ to 
+            $\operatorname{Ext}_R^{d+e}(L,N)$
+    Description
+        Text
+            For any triple $(L, M, N)$ of $R$-modules, the Yoneda product is a pairing between $\operatorname{Ext}$-modules
+            
+            $\phantom{WWWW}
+             \operatorname{Ext}_R^d(L,M) \otimes \operatorname{Ext}_R^e(M,N) \to \operatorname{Ext}_R^{d+e}(L,N).
+            $
+
+            Given $D = \operatorname{Ext}_R^d(L,M)$ and  $E = \operatorname{Ext}_R^e(M,N)$,
+            this method returns this pairing. To compute the product of a pair of elements, 
+            see @TO (yonedaProduct, Matrix, Matrix)@.
+
+            Specifically, for an element of $\operatorname{Ext}_R^{e}(M,N)$, thought of as an extension
+
+            $\phantom{WWWW}
+             0 \leftarrow M \leftarrow F_{0} \leftarrow F_{1} \leftarrow \dotsb \leftarrow F_{e-2} \leftarrow P \leftarrow N \leftarrow 0,
+            $
+
+            and for an element of $\operatorname{Ext}_R^{d}(L,M)$, thought of as an extension
+
+            $\phantom{WWWW}
+             0 \leftarrow L \leftarrow G_{0} \leftarrow G_1 \leftarrow \dotsb \leftarrow G_{d-2} \leftarrow Q \leftarrow M \leftarrow 0,
+            $
+
+            the Yoneda product corresponds to
+
+            $\phantom{WWWW}
+             0 \leftarrow L \leftarrow G_{0} \leftarrow G_{1} \leftarrow \dotsb \leftarrow Q \leftarrow F_{0}
+             \leftarrow F_{1} \leftarrow \dotsb \leftarrow P \leftarrow N \leftarrow 0,
+            $
+
+            where the map from $F_0$ to $Q$ factors through $M$.  For more information about extensions,
+            see @TO yonedaExtension@.
+        Text
+            Alternatively, the module $\operatorname{Ext}^d_R(L,M)$ is constructed from
+            a free resolution $G$ of $L$,
+
+            $\phantom{WWWW}
+              0 \leftarrow L \leftarrow G_0 \leftarrow G_1 \leftarrow \dotsb
+              \leftarrow G_d \leftarrow \dotsb,
+            $
+
+            by taking the homology of the complex $\operatorname{Hom}_R(G, M)$.
+            An element of $\operatorname{Ext}^d_R(L,M)$ is represented by
+            an element of $\operatorname{Hom}_R(G_d, M)$.  This map extends to a complex map
+            having degree $-d$ from $G$ to the free resolution $F$ of $M$.
+            The Yoneda product is the composition of the map of chain complexes from 
+            $G$ to $F$ with the map of chain complexes having degree $-e$ from $F$ to 
+            a free resolution of $N$.
+            For more information about these maps, see @TO yonedaMap@.
+        Text
+            In our first example, the image of the tensor product of 
+            two $\operatorname{Ext}^1$-modules happens to generate the
+            the $\operatorname{Ext}^2$-module.
+        Example
+            S = ZZ/101[x_0..x_3];
+            I = borel monomialIdeal(x_1*x_2)
+            E1 = Ext^1(S^1/I, S^1/I)
+            h = yonedaProduct(E1, E1)
+            assert isWellDefined h
+            assert(target h == Ext^2(S^1/I, S^1/I))
+            coker h == 0
+        Text
+            In our second example, all three modules in the triple are distinct
+            and the image of the Yoneda product is not surjective.
+        Example
+            R = S/(x_0*x_1, x_2*x_3);
+            E1 = Ext^1(R^1/(x_0, x_2), R^1/(x_0, x_2, x_3))
+            E2 = Ext^2(R^1/(x_0, x_2, x_3), R^1/(x_0, x_1, x_2, x_3))
+            E3 = Ext^3(R^1/(x_0, x_2), R^1/(x_0, x_1, x_2, x_3))
+            h = yonedaProduct(E1, E2)
+            assert isWellDefined h
+            assert(target h == E3)
+            prune coker h
+    SeeAlso
+        "Working with Ext"
+        (yonedaProduct, Matrix, Matrix)
+///
+
 doc ///
     Key
         (koszulComplex, Matrix)
@@ -2850,6 +3265,176 @@ doc ///
     SeeAlso
         "Making chain complexes"
         (symbol**, Complex, Complex)
+///
+
+doc ///
+    Key
+        (poincare, Complex)
+    Headline
+        assemble degrees of a chain complex into a polynomial
+    Usage
+        poincare C
+    Inputs
+        C:Complex
+    Outputs
+        :RingElement
+            in the @TO2((degreesRing,Ring), "ring of degrees")@ of the underlying ring of $C$
+    Description
+        Text
+            This method encodes information about the degrees of the generators of each term
+            in a chain complex. It returns an element in the degrees ring, which
+            is the ring of Laurent polynomials whose monomials
+            correspond to the degrees of the monomials in the underlying ring of $C$.
+            When the $i$-th term $C_i$ of the complex $C$ 
+            is generated by elements of degree $d_{i,1}, d_{i,2}, \dotsc$,
+            this Laurent polynomial is 
+            $\sum_i (-1)^i \sum_j T^{d_{i,j}}$,
+            where we use multi-index notation $T^d =
+            T_0^{d_0} T_1^{d_1} \dotsb T_r^{d_r}$.
+        Example
+            R = ZZ/32003[a..f];
+            K = koszulComplex vars R
+            betti K
+            p = poincare K
+            factor p
+        Example
+            C = freeResolution ideal(a*b, b*c*d, c*d*e^2)
+            betti C
+            poincare C
+        Text
+            Since the number of variables in the degrees ring is 
+            equal to the rank of the grading group, the Poincare 
+            polynomial may have more than one variable.
+        Example
+            S = ZZ/101[x,y,z, DegreeRank => 3];
+            L = koszulComplex vars S
+            poincare L
+        Text
+            If the terms in the complex are not free, then
+            this method uses just the degrees of the generators of each term.
+        Example
+            D = C ** coker vars R
+            poincare D
+            betti D
+        Text
+            This is equivalent to computing the Poincare polynomial of the Betti table.
+        Example
+            poincare betti D
+    SeeAlso
+        "Basic invariants and properties"
+        poincare
+        (poincareN, Complex)
+        betti
+///
+
+-- TODO: add in the key poincareN, once Complexes replaces ChainComplexes...
+doc ///
+    Key
+        (poincareN, Complex)
+    Headline
+        assemble degrees of a chain complex into a polynomial
+    Usage
+        poincareN C
+    Inputs
+        C:Complex
+    Outputs
+        :RingElement
+    Description
+        Text
+            This method encodes information about the internal and
+            homological degrees of the generators of each term in a
+            chain complex. It returns an element in the ring of
+            Laurent polynomials whose monomials correspond to the
+            degrees of the monomials in the underlying ring of $C$,
+            together with a variable to record the homological degree.
+            When the $i$-th term $C_i$ of the complex $C$ is generated
+            by elements of degree $d_{i,1}, d_{i,2}, \dotsc$, this
+            Laurent polynomial is $\sum_i (-1)^i \sum_j S^i
+            T^{d_{i,j}}$, where we use multi-index notation $T^d =
+            T_0^{d_0} T_1^{d_1} \dotsb T_r^{d_r}$.
+        Example
+            R = ZZ/32003[a..f];
+            K = koszulComplex vars R
+            betti K
+            p = poincareN K
+            factor p
+        Example
+            C = freeResolution ideal(a*b, b*c*d, c*d*e^2)
+            betti C
+            poincareN C
+        Text
+            Since the number of variables in the degrees ring is 
+            equal to the rank of the grading group, the Poincare 
+            polynomial may have more than one variable.
+        Example
+            S = ZZ/101[x,y,z, DegreeRank => 3];
+            L = koszulComplex vars S
+            poincareN L
+        Text
+            If the terms in the complex are not free, then
+            this method uses just the degrees of the generators of each term.
+        Example
+            D = C ** coker vars R
+            poincareN D
+            betti D
+    SeeAlso
+        "Basic invariants and properties"
+        (poincare, Complex)
+        betti
+///
+
+doc ///
+    Key
+        (regularity, Complex)
+    Headline
+        compute the Castelnuovo-Mumford regularity
+    Usage
+        regularity C
+    Inputs
+        C:Complex
+        Weights => List
+            for more information, see @TO [regularity, Weights]@
+    Outputs
+        :ZZ
+    Description
+        Text
+            Given a free complex $C$ over a standard graded polynomial ring,
+            the regularity $r$ of $C$ is the smallest integer such that
+            each basis element of $C_i$ has degree at most $i + r$.
+        Example
+            R = ZZ/101[a..d];
+            I = ideal(b^2-a*c, b*c-a*d, c^2-b*d)
+            C = freeResolution(R^1/I)
+            betti C
+            regularity C
+            regularity I
+            regularity (R^1/I)
+            assert(regularity C === regularity(R^1/I))
+        Text
+            The regularity is the label of the last row of the Betti table of $C$.
+        Example
+            betti C
+            betti(C[3])
+            regularity(C[3])
+        Text
+            Here is a slightly more complicated example.
+        Example
+            J = ideal(a^3, b^3, c^3, d^3, (a+b+c+d)^3);
+            FJ = freeResolution J
+            betti FJ
+            regularity FJ
+        Text
+            Although Castelnuovo-Mumford regularity is defined
+            in more general settings (e.g. toric varieties with multi-degrees)
+            this method does not currently handle these 
+            extensions.  Similarly, Castelnuovo-Mumford
+            regularity can be defined for non-free complexes,
+            but this method doesn't handle that case either.
+    SeeAlso
+        "Basic invariants and properties"
+        regularity
+        betti
+        freeResolution
 ///
 
 ///

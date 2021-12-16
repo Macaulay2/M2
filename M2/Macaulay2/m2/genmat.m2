@@ -1,5 +1,6 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 
+needs "basis.m2"
 needs "modules.m2" -- for Matrix
 
 getIndex := (R,x) -> (

@@ -1103,9 +1103,6 @@ makeS2 (S/intersect(ideal"a,b", ideal"b,c",ideal"c,a"))
 *-
 
 --------------------------------------------------------------------
--- This is used in some examples.  Move to the engine?
-content(RingElement, RingElement) := Ideal => (f,x) -> ideal last coefficients(f, Variables => {x})
---------------------------------------------------------------------
 TOOSLOW = method()
 TOOSLOW String := (str) -> null
 

@@ -149,7 +149,7 @@ For a complete list, along with descriptions, try `cmake -LAH .` or see `cmake/c
 - `PROFILING:BOOL=OFF`: enable profiling build flags
 - `USING_MPIR:BOOL=OFF`: use MPIR instead of GMP
 - `WITH_OMP:BOOL=OFF`: link with the OpenMP library
-- `WITH_PYTHON:BOOL=OFF`: link with the Python library
+- `WITH_PYTHON:BOOL=OFF`: link with the Python library (set to `ON` to use the `Python` package)
 - `WITH_SQL:BOOL=OFF`: link with the MySQL library
 - `WITH_XML:BOOL=ON`: link with the libxml2 library
 - `BUILD_DOCS:BOOL=OFF`: build internal documentation
@@ -256,7 +256,7 @@ Additionally, build targets are available for a few programs which are not built
 [CSDP]: https://github.com/coin-or/Csdp/wiki
 [Gfan]: https://users-math.au.dk/~jensen/software/gfan/gfan.html
 [Normaliz]: https://www.normaliz.uni-osnabrueck.de/
-[TOPCOM]: http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
+[TOPCOM]: https://www.wm.uni-bayreuth.de/de/team/rambau_joerg/TOPCOM/
 [cohomCalg]: https://github.com/BenjaminJurke/cohomCalg
 [lrs]: http://cgm.cs.mcgill.ca/~avis/C/lrs.html
 [nauty]: http://pallini.di.uniroma1.it/

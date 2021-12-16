@@ -1253,7 +1253,7 @@ TEST ///
   FJ = freeResolution J
   N = complex (S^1/J)
   f = map(N, FJ, hashTable{0=> map(N_0, FJ_0, 1)})
-  isWellDefined f
+  assert isWellDefined f
   assert(liftMapAlongQuasiIsomorphism(f,f) == 1)
 
   -- test #2
@@ -1291,7 +1291,7 @@ TEST ///
   assert isWellDefined g'
   assert isComplexMorphism g'
   assert(g * fC1 == fD * g')
-  h = g'.cache.homotopy
+  h = homotopyMap g'
   assert isWellDefined h
   assert(degree h == 1)
   assert isNullHomotopyOf(h, g*fC1-fD*g')

@@ -62,12 +62,14 @@ exportMutable {
 userPath = MonomialIntegerPrograms#Options#Configuration#"CustomPath";
 
 ScipPath = if userPath === "" then(
+    if debugLevel > 0 then
     print("Using default executable name \"scip\".\nTo change this, load package using CustomPath option.");
     "scip") else userPath;
 
 userPrintLevel = MonomialIntegerPrograms#Options#Configuration#"CustomScipPrintLevel";
 
 ScipPrintLevel = if userPrintLevel === "" then(
+    if debugLevel > 0 then
     print("Current value of ScipPrintLevel is 0.\nTo set a custom default value, load package using CustomScipPrintLevel option.");
     0) else value userPrintLevel;
 ------------------------

@@ -1,5 +1,12 @@
 --		Copyright 2018 by Daniel R. Grayson and Lily Silverstein
 
+undocumented {
+    symbol (,  symbol ),
+    symbol [,  symbol ],
+    symbol <|, symbol |>,
+    symbol {,  symbol },
+    }
+
 doc///
  Key
   "lists and sequences"

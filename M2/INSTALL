@@ -143,9 +143,9 @@ various modern operating systems:
     Download yasm from http://yasm.tortall.net/Download.html and install it in /usr/local, the usual
         way (untar, configure, make, make install).
 
-  Suse Linux Leap 42.1:
+  Suse Linux Leap 15.3:
 
-    sudo zypper -n install man man-pages emacs-x11 gcc git screen autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gdbm-devel gmp-devel lapack-devel libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool libatomic_ops-devel libmpir-devel mpfr-devel ntl-devel flint-devel glpk-devel cddlib-devel givaro-devel boost-devel rpm-build mpc-devel yasm
+    sudo zypper -n install man man-pages emacs-x11 gcc git screen autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gdbm-devel gmp-devel lapack-devel libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool libatomic_ops-devel libmpir-devel mpfr-devel ntl-devel flint-devel glpk-devel cddlib-devel givaro-devel boost-devel rpm-build mpc-devel yasm tbb-devel eigen3-devel
 
     Add
 
@@ -341,6 +341,24 @@ following:
       rm -rf ../.git
     Alternatively, tar up just this directory and not its parent directory.
     Everything needed to build Macaulay2 will be included.
+
+-----------------------
+Building with Python support
+-----------------------
+
+The "Python" package embeds a Python interpreter inside Macaulay2.  For this
+to work, the Macaulay2 binary needs to be linked against the Python shared
+library.  To do this, add the option "--with-python" to the "configure" command
+line below.  Optionally, you may specify the Python version, e.g.,
+"--with-python=3.10".  Otherwise, the system's default version is used.
+
+Make sure that Python header files and shared library are available on your
+system. On Debian/Ubuntu systems, do this by running "apt install python3-dev".
+
+If the Python shared library is not in a standard location, then add its path
+to LDFLAGS.  For example, if Python has been installed using brew, then add
+the following to LDFLAGS, replacing X with the appropriate minor version:
+"-L`brew --prefix python`/Frameworks/Python.framework/Versions/3.X/lib".
 
 -----------------------
 Compiling Macaulay2

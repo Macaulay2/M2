@@ -13,7 +13,7 @@ the master branch, so the merges above are all done by fast-fowarding.
 Near release time we have a release branch, with name of the form release-X.Y-branch, which is occasionally merged into development.
 
 The convention for version numbers of Macaulay2 is this:
-  1.18     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
+  1.18     : a major release, such as occurs every 6 months (May 15 and November 15), stable, made into binary distributions
   1.18.1   : a minor update, with changes people might want, stable, suitable
      	     minor updates to binary distributions on certain architectures
   1.18.1.1 : a development version, with no binary distributions
@@ -32,9 +32,10 @@ Here is the procedure:
 	      git branch -b release-X.Y-branch
 	 - push it upstream:
 	      git push -u origin release-X.Y
-	 - tag provisionally it for Mahrud
-	      git tag release-X.Y-rc1
-	      git push origin release-X.Y-rc1
+	 - make builds on that branch, making modifications as needed
+	 - when the builds complete, then
+	      git tag release-X.Y
+	      git push origin release-X.Y
 	 - switch to development and merge the new release branch with development
 	      git checkout development
 	      git merge release-X.Y

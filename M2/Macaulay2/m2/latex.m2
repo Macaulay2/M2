@@ -32,13 +32,13 @@ noopts := x -> select(x,e -> class e =!= Option)
 
 texLiteralTable := new MutableHashTable
 scan(0 .. 255, c -> texLiteralTable#(ascii{c}) = concatenate(///{\char ///, toString c, "}"))
-scan(characters ascii(32 .. 126), c -> texLiteralTable#c = c)
-scan(characters "\\{}$&#^_%~|<>\"", c -> texLiteralTable#c = concatenate("{\\char ", toString (ascii c)#0, "}"))
+scan(ascii(32 .. 126), c -> texLiteralTable#c = c)
+scan("\\{}$&#^_%~|<>\"", c -> texLiteralTable#c = concatenate("{\\char ", toString (ascii c)#0, "}"))
 texLiteralTable#"\n" = "\n"
 texLiteralTable#"\r" = "\r"
 texLiteralTable#"\t" = "\t"
 texLiteralTable#"`"  = "{`}" -- break ligatures ?` and !` in font \tt. See page 381 of TeX Book.
-texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
+texLiteral = s -> concatenate apply(s, c -> texLiteralTable#c)
 
 HALFLINE    := "\\vskip 4.75pt\n"
 ENDLINE     := "\\leavevmode\\hss\\endgraf\n"
@@ -47,7 +47,7 @@ ENDVERBATIM := "\\endgroup{}"
 
 texExtraLiteralTable := copy texLiteralTable
 texExtraLiteralTable#" " = "\\ "
-texExtraLiteral := s -> demark(ENDLINE, apply(lines s, l -> apply(characters l, c -> texExtraLiteralTable#c)))
+texExtraLiteral := s -> demark(ENDLINE, apply(lines s, l -> apply(l, c -> texExtraLiteralTable#c)))
 
 --------------------------------------------
 -- this loop depends on the feature of hash tables that when the keys

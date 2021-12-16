@@ -1,6 +1,7 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 -- TODO: eventually we won't be able to keep all packages open, anyway, since 256 can be our limit on open file descriptors
 
+needs "code.m2"
 needs "files.m2"
 needs "fold.m2"
 needs "lists.m2"
@@ -56,11 +57,12 @@ if notify then stderr << "--loading configuration for package \"PKG\" from file 
 warn0 := (sym, front, behind, syns) -> (
     -- just for debugging:
     -- error("symbol ", format sym, " in ", toString behind, " is shadowed by a symbol in ", toString front);
-    stderr << "--warning: symbol " << format toString sym << " in " << behind << " is shadowed by a symbol in " << front << endl;
+    printerr("warning: symbol ", format toString sym, " in ", toString behind,
+	" is shadowed by a symbol in ", toString front);
     if #syns > 0 then if #syns > 1
-    then stderr << "--  use one of the synonyms " << demark(", ", syns) << endl
-    else stderr << "--  use the synonym " << syns#0 << endl
-    else stderr << "--  no synonym is available" << endl)
+    then printerr("  use one of the synonyms ", demark(", ", syns))
+    else printerr("  use the synonym ", syns#0)
+    else printerr("  no synonym is available"))
 warn := x -> if not seenWarnings#?x and debuggingMode then (warn0 x; seenWarnings#x = true)
 
 checkShadow := () -> (
@@ -111,6 +113,7 @@ net      Package :=
 toString Package := pkg -> if pkg#?"pkgname" then pkg#"pkgname" else "-*package*-"
 texMath  Package := pkg -> texMath toString pkg
 options  Package := pkg -> pkg.Options
+methods  Package := memoize(pkg -> select(methods(), m -> package m === pkg))
 
 -- TODO: should this go elsewhere?
 toString Dictionary := dict -> (

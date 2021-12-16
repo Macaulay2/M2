@@ -197,7 +197,6 @@ DiffAlg
 DeterminantalRepresentations
 FGLM
 SpechtModule
-SpecialFanoFourfolds
 SchurComplexes
 SimplicialPosets
 SlackIdeals
@@ -221,6 +220,7 @@ NumericalLinearAlgebra
 ResLengthThree
 MonomialOrbits
 MultiprojectiveVarieties
+SpecialFanoFourfolds
 RationalPoints2
 SuperLinearAlgebra
 SubalgebraBases
@@ -231,4 +231,10 @@ Python
 BettiCharacters
 Jets
 FunctionFieldDesingularization
+HomotopyLieAlgebra
 TSpreadIdeals
+RealRoots
+ExteriorModules
+K3Surfaces
+GroebnerStrata
+QuaternaryQuartics

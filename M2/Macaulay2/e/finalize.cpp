@@ -3,7 +3,15 @@
 #include "finalize.hpp"
 #include "engine-includes.hpp"
 
-#include "atomic_ops.h"
+#include <atomic_ops.h>
+// AO_fetch_and_add1 is not available on some architectures (e.g., hppa)
+#ifndef AO_HAVE_fetch_and_add1
+  AO_INLINE AO_t AO_fetch_and_add1(volatile AO_t *addr)
+  {
+    return __atomic_fetch_add(addr, 1, __ATOMIC_RELAXED);
+  }
+#endif
+
 #include "monideal.hpp"
 #include "comp-gb.hpp"
 #include "comp-res.hpp"

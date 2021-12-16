@@ -26,7 +26,7 @@ needs "nets.m2"
 -- of individual subtypes.
 setupRenderer = (parser, joiner, T) -> (
     parser T := node -> joiner apply(node,
-	subnode -> if class subnode =!= Option then parser subnode))
+	subnode -> if class subnode =!= Option and class subnode =!= OptionTable then parser subnode))
 
 -- Default joiners: (TODO: move to string.m2?)
 -- concatenate
@@ -38,7 +38,7 @@ wrapHorizontalJoin := x -> wrap horizontalJoin x
 -- MarkUpType > IntermediateMarkUpType
 
 -- skip Options; TODO: define parser Option := null instead
-noopts := x -> select(x,e -> class e =!= Option)
+noopts := x -> select(x,e -> class e =!= Option and class e =!= OptionTable)
 
 -----------------------------------------------------------------------------
 -- Setup uniform rendering
@@ -126,6 +126,7 @@ scan({net, info},
 	parser' COMMENT :=
 	parser' LITERAL :=
 	parser' Option  :=
+	parser' OptionTable  :=
 	parser' Nothing := x -> ();
 	parser' BR     := x -> ("", BK);
 	-- and rendering for types that inherit from HypertextContainer, but
@@ -286,7 +287,7 @@ net TO  := x -> (
      then concatenate( "\"", format x#0, "\"", if x#?1 then x#1)
      else horizontalJoin( "\"", net x#0, "\"", if x#?1 then x#1)
      )
-net TO2 := x -> x#1
+net TO2 := x -> format x#1
 
 -- TODO: move this back from help.m2
 net  MENU := x -> net redoMENU x

@@ -281,9 +281,29 @@ document {
      there is just one instance, an expression representing the number 1."
      }
 
+undocumented {
+    (symbol -, Thing, Minus),
+    (symbol +, Sum, ZeroExpression),
+    (symbol +, Holder, ZeroExpression),
+    (symbol +, Sum, Sum),
+    (symbol +, Sum, Holder),
+    (symbol +, Holder, Sum),
+    (symbol +, ZeroExpression, Expression),
+    (symbol +, Expression, ZeroExpression),
+    (symbol +, Expression, Sum),
+    (symbol +, Sum, Expression),
+    }
+
+expressionMethodKeys := flatten apply(toList core "expressionBinaryOperators", op -> {
+	(op, Expression, Expression),
+	(op, Expression, Holder),
+	(op, Expression, Thing),
+	(op, Holder, Expression),
+	(op, Holder, Holder),
+	(op, Thing, Expression)})
+
 document {
-     Key => {Expression, (value,Expression)} | flatten apply(toList value Core#"private dictionary"#"expressionBinaryOperators",
-	 op -> {(op,Expression,Expression),(op,Expression,Thing),(op,Thing,Expression),(op,Expression,Holder),(op,Holder,Expression),(op,Holder,Holder)}),
+     Key => join({Expression, (value, Expression), (symbol -, Expression)}, expressionMethodKeys),
      Headline => "the class of all expressions",
      "An ", EM "expression", " is a symbolic representation of a mathematical expression.  It retains some of the semantics of the mathematical expression,
      as well as enough information to print the expression nicely.  In Macaulay2 expressions have two main functions: they are an intermediate phase in
@@ -536,6 +556,8 @@ doc ///
       printerr("foo", "bar")
 ///
 
+undocumented methods hold
+
 document {
      Key => hold,
      Headline => "hold something in a holder expression",
@@ -545,6 +567,8 @@ document {
 	       already an expression, in which case ", TT "x", " is returned." }},
      EXAMPLE "(hold 2)^5 * (hold 3)^3",
      }
+
+undocumented methods expression
 
 document {
      Key => expression,

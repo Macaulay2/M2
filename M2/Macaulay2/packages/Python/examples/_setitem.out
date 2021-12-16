@@ -1,0 +1,31 @@
+-- -*- M2-comint -*- hash: 1233933522
+
+i1 : x = pythonValue "[1,2,3,4]"
+
+o1 = [1, 2, 3, 4]
+
+o1 : PythonObject of class list
+
+i2 : setitem(x, 0, 5)
+
+i3 : x
+
+o3 = [5, 2, 3, 4]
+
+o3 : PythonObject of class list
+
+i4 : x = pythonValue "{'spam':1,'eggs':2}"
+
+o4 = {'spam': 1, 'eggs': 2}
+
+o4 : PythonObject of class dict
+
+i5 : x_"ham" = 3
+
+i6 : x
+
+o6 = {'spam': 1, 'eggs': 2, 'ham': 3}
+
+o6 : PythonObject of class dict
+
+i7 : 
