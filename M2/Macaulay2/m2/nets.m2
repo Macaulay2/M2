@@ -278,6 +278,9 @@ netList VisibleList := o -> (x) -> (
 	  sum(1 .. br, i -> try height x#i else 1)	    -- this allows the base row to be absent
 	  ))
 
+characters = method()
+characters String := toList
+
 -- TODO: move to debugging, except for Net?
 commentize = method(Dispatch => Thing)
 commentize Nothing   := s -> ""

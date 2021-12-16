@@ -1,0 +1,24 @@
+-- -*- M2-comint -*- hash: 170764785
+
+i1 : pythonValue "2 + 2"
+
+o1 = 4
+
+o1 : PythonObject of class int
+
+i2 : debugLevel = 1
+
+o2 = 1
+
+i3 : x = 5
+
+o3 = 5
+
+i4 : pythonValue("3 + ", x)
+ -- python command: 3 + 5
+
+o4 = 8
+
+o4 : PythonObject of class int
+
+i5 : 

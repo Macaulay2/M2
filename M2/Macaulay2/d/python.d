@@ -25,7 +25,7 @@ setupfun("runSimpleString",PyRunSimpleString);
 
 import RunString(s:string):pythonObjectOrNull;
 PyRunString(e:Expr):Expr := when e is s:stringCell do toExpr(RunString(s.v)) else WrongArgString();
-setupfun("runPythonString",PyRunString);
+setupfun("pythonRunString",PyRunString);
 
 import Main():int;
 PyMain(e:Expr):Expr := toExpr(Main());

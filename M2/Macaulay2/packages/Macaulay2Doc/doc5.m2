@@ -129,35 +129,6 @@ document {
      }
 
 document {
-     Key => tally,
-     Headline => "tally the elements of a list or sequence",
-     TT "tally x", " tallies the frequencies of items in a list or sequence x.",
-     SeeAlso => "Tally"
-     }
-
-document {
-	Key => (tally, VisibleList),
-	Headline => "tally the elements of a list, sequence, or array",
-	Usage => "y = tally x",
-	Inputs => {
-		"x" => {}
-		},
-	Outputs => {
-		"y" => "a listing of tallied results"
-		},
-	"It produces an hash table (multiset) ", TT "y", " which tallies the
-     frequencies of occurrences of items in the list ", TT "x", ", i.e.,
-     ", TT "y_i", " is the number of times ", TT "i", " appears in ", TT "x", ", or is ", TT "0", " if
-     ", TT "i", " doesn't appear in the list.",
-     EXAMPLE {
-	  "y = tally {1,2,3,a,b,1,2,a,1,2,{a,b},{a,b},a}",
-       	  "y_2",
-	  "y_5",
-	  "y_{a,b}",
-	  }
-  }
-
-document {
      Key => Set, 
      Headline => "the class of all sets",
      "Elements of sets may be any immutable object, such as integers, ring elements

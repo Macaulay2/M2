@@ -43,23 +43,6 @@ document {
      }
 
 document {
-     Key => html,
-     Headline => "convert to html format",
-	Usage => "html x",
-	Inputs => {"x" => {}},
-	Outputs => {String => {}},
-     TT "html x", " converts ", TT "x", " to HTML format",
-     PARA{
-     "The return value is a string that is suitable for use in an
-     html file, readable by a world wide web client. ",
-     TO "hypertext", " elements are translated into the corresponding HTML elements. ",
-     "When no HTML conversion is available, ", TO "tex", " is called.
-     (La)TeX can be rendered in the browser using MathJax or KaTeX.
-     "},
-     SeeAlso => "mathML"
-     }
-
-document {
      Key => {Command,(symbol SPACE,Command,Thing)},
      Headline => "the class of all commands",
      Usage => "Command g",
@@ -100,7 +83,6 @@ document {
      }
 
 undocumented { 
-     (toExternalString,RingElement), (toExternalString,RingMap),
      (symbol ==, Constant, RingElement),
      (symbol ==, RingElement, Constant),
      ((symbol SPACE, symbol =), Function, Thing),

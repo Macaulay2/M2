@@ -242,6 +242,7 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
+               -* no-capture-flag *-
 	       String * String = peek;
 	       "left" * "right" = "value"
 	  ///,
@@ -516,6 +517,7 @@ document {
 		    }},
 	  "The first line of the following example illustrates the syntax above.",
 	  EXAMPLE lines ///
+              -* no-capture-flag *-
 	       String * String := peek;
 	       "left" * "right"
 	  ///,

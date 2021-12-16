@@ -7,8 +7,10 @@
 -- TODO: not reentrant yet, see resetCounters
 
 needs "document.m2"
+needs "examples.m2"
 needs "hypertext.m2"
 needs "packages.m2"
+needs "printing.m2"
 needs "validate.m2"
 
 -----------------------------------------------------------------------------

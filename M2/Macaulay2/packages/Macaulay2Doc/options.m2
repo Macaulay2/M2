@@ -3,10 +3,10 @@ f = key -> select(value \ unique values Core.Dictionary, f -> instance(f, Functi
 f Truncate
 *-
 
-nonnull := value Core#"private dictionary"#"nonnull";
-headline := value Core#"private dictionary"#"headline";
-isMissingDoc := value Core#"private dictionary"#"isMissingDoc";
-isUndocumented := value Core#"private dictionary"#"isUndocumented";
+nonnull := core "nonnull";
+headline := core "headline";
+isMissingDoc := core "isMissingDoc";
+isUndocumented := core "isUndocumented";
 
 opts := nonnull \\ options \ select(value \ values Core.Dictionary, f -> instance(f, Function));
 opts  = nonnull \\ options \ methods() | opts; -- e.g. catch DegreeLimit from [(minimalBetti, Ideal), DegreeLimit]

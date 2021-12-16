@@ -47,7 +47,7 @@ document {
      "This is the customary way to make a polynomial ring.",
      PARA{},
      "Optional arguments (placed inside the array):",
-     UL (TO \ keys value Core#"private dictionary"#"monoidDefaults"),
+     UL (TO \ keys core "monoidDefaults"),
      SeeAlso => "polynomial rings"}
 document {
      Key => (symbol SPACE, Ring, List),
@@ -56,7 +56,7 @@ document {
      ordered monoid specified by ", TT "...", ", together with the option ", TT "Local => true", ".",
      PARA{},
      "Optional arguments (placed inside the list):",
-     UL (TO \ keys value Core#"private dictionary"#"monoidDefaults"),
+     UL (TO \ keys core "monoidDefaults"),
      SeeAlso => "polynomial rings"}
 document {
      Key => (symbol SPACE,Ring, OrderedMonoid),

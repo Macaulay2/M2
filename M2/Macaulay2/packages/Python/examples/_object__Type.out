@@ -1,12 +1,12 @@
--- -*- M2-comint -*- hash: 935509013
+-- -*- M2-comint -*- hash: 42511345
 
-i1 : objectType rs "2"
+i1 : objectType pythonValue "2"
 
 o1 = <class 'int'>
 
 o1 : PythonObject of class type
 
-i2 : objectType rs "'Hello, world!'"
+i2 : objectType pythonValue "'Hello, world!'"
 
 o2 = <class 'str'>
 

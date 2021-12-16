@@ -27,6 +27,7 @@ hypertext.m2
 validate.m2
 expressions.m2
 peek.m2
+code.m2
 printing.m2
 http.m2
 
@@ -83,7 +84,6 @@ schubert.m2
 local.m2
 
 packages.m2
-code.m2
 examples.m2
 document.m2
 installPackage.m2
@@ -103,7 +103,6 @@ jupyter.m2
 texmacs.m2
 pretty.m2
 programs.m2
-undoc.m2
 obsolete.m2
 exports.m2
 typicalvalues.m2

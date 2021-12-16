@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -454216416
+-- -*- M2-comint -*- hash: -1691897374
 
 i1 : math = import "math"
 
@@ -18,7 +18,7 @@ o3 = 1.4142135623730951
 
 o3 : PythonObject of class float
 
-i4 : int = toFunction rs "int"
+i4 : int = toFunction pythonValue "int"
 
 o4 = int
 

@@ -1,12 +1,12 @@
--- -*- M2-comint -*- hash: 69153162
+-- -*- M2-comint -*- hash: 658999336
 
-i1 : x = rs "5"
+i1 : x = pythonValue "5"
 
 o1 = 5
 
 o1 : PythonObject of class int
 
-i2 : y = rs "2"
+i2 : y = pythonValue "2"
 
 o2 = 2
 

@@ -345,7 +345,7 @@ sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning targ
      local dummy;
      g := generators R;
      A := R;
-     while try (A = coefficientRing A; true) else false
+     while try (A = if instance(A,FractionField) then frac coefficientRing A else coefficientRing A; true) else false
      do g = join(g, generators A);
      h := new MutableHashTable;
      for i from 0 to #g-1 do h#(g#i) = if h#?(g#i) then (h#(g#i),i) else 1:i;
