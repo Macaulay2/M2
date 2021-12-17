@@ -3,7 +3,7 @@
 ## memtailor, mathic, and mathicgb are also imported as subdirectories here
 ## - run unit tests:  ctest -R unit-tests (includes mathicgb and friends)
 
-set(with_tbb true) # for mathicgb
+set(with_tbb ${WITH_TBB}) # for mathicgb
 
 add_subdirectory(memtailor)
 add_subdirectory(mathic)
