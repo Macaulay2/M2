@@ -189,8 +189,8 @@ if firstTime then (
 	       else ""
 	       )
           | "  Boost " | version#"boost version" | ", by the Boost community" | newline
-          | "  Givaro " | version#"givaro version" | ", by the Givaro group" | newline
-          | "  FFLAS-FFPACK " | version#"fflas_ffpack version" | ", by the FFLAS group" | newline
+	  | "  Givaro " | version#"givaro version" | ", by the LinBox Team" | newline
+	  | "  FFLAS-FFPACK " | version#"fflas_ffpack version" | ", by the LinBox Team" | newline
      	  | "  MPFR " | version#"mpfr version" | ", by Free Software Foundation" | newline
 	  | "  BLAS and LAPACK 3.0" | ", by J. Dongarra et al." | newline
           | "  MPSolve 3.1.8, by D. Bini et al." | newline
