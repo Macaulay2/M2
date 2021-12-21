@@ -9,6 +9,7 @@
 #include "engine-exports.h"                 // for M2_gbTrace
 #include "ring.hpp"                         // for Ring
 #include "ringelem.hpp"                     // for ring_elem
+#include "../system/supervisorinterface.h"  // for getAllowableThreads
 
 #include <cassert>                          // for assert
 #include <cstdlib>                          // for exit, size_t
@@ -30,6 +31,7 @@ NCF4::NCF4(const FreeAlgebra& A,
       mColumnMonomials(10,mMonomHash,mMonomHashEqual),
       mPreviousColumnMonomials(10,mMonomHash,mMonomHashEqual),
       mVectorArithmetic(new VectorArithmetic(A.coefficientRing())),
+      mScheduler(0),   // 0 for tbb::info::default_concurrency(), for now
       mIsParallel(isParallel)
 {
   if (M2_gbTrace >= 1)
@@ -896,7 +898,7 @@ template<typename LockType>
 void NCF4::generalReduceF4Row(int index,
                               int first,
                               int firstcol,
-                              long& numCancellations,
+                              NCF4Stats &ncF4Stats,
                               ElementArray& dense,
                               bool updateColumnIndex,
                               LockType& lock)
@@ -916,7 +918,7 @@ void NCF4::generalReduceF4Row(int index,
     int pivotrow = mColumns[first].pivotRow;
     if (pivotrow >= 0)
       {
-        numCancellations++;
+        ncF4Stats.numCancellations++;
         mVectorArithmetic->denseCancelFromSparse(dense,
                                                     mRows[pivotrow].coeffVector,
                                                     mRows[pivotrow].columnIndices);
@@ -950,9 +952,9 @@ void NCF4::generalReduceF4Row(int index,
 
 void NCF4::parallelReduceF4Matrix()
 {
-  long numCancellations = 0;
+  NCF4Stats ncF4Stats;
   using threadLocalDense_t = mtbb::enumerable_thread_specific<ElementArray>;
-  using threadLocalLongPtr_t = mtbb::enumerable_thread_specific<long*>;
+  using threadLocalStats_t = mtbb::enumerable_thread_specific<NCF4Stats>;
 
   // create a dense array for each thread
   threadLocalDense_t threadLocalDense([&]() { 
@@ -960,10 +962,13 @@ void NCF4::parallelReduceF4Matrix()
   });
   auto denseVector = mVectorArithmetic->allocateElementArray(mColumnMonomials.size());
   
-  threadLocalLongPtr_t numCancellationsLocal([&]() {
-    return new long;
+  threadLocalStats_t threadLocalStats([&]() {
+    return NCF4Stats();
   });
-  
+
+  // access the number of allowable threads this way.
+  //std::cout << "M2 Number of Threads: " << getAllowableThreads() << std::endl;
+
   // reduce each overlap row by mRows.
 
   mtbb::queuing_mutex lock;
@@ -971,21 +976,21 @@ void NCF4::parallelReduceF4Matrix()
                     [&](const mtbb::blocked_range<int>& r)
                     {
                       threadLocalDense_t::reference my_dense = threadLocalDense.local();
-                      threadLocalLongPtr_t::reference my_accum = numCancellationsLocal.local();
+                      threadLocalStats_t::reference my_threadStats = threadLocalStats.local();
                       for (auto i = r.begin(); i != r.end(); ++i)
                         parallelReduceF4Row(i,
                                             mRows[i].columnIndices[0],
                                             -1,
-                                            *my_accum,
+                                            my_threadStats,
                                             my_dense,
                                             lock);
                     });
   
   int numThreads = 0;
-  for (auto i : numCancellationsLocal)
+  for (auto tlStats : threadLocalStats)
   {
     ++numThreads;
-    numCancellations += *i;
+    ncF4Stats.numCancellations += tlStats.numCancellations;
   }
 
   // sequentially perform one more pass to reduce the spair rows down 
@@ -993,7 +998,7 @@ void NCF4::parallelReduceF4Matrix()
     reduceF4Row(i,
                 mRows[i].columnIndices[0],
                 -1,
-                numCancellations,
+                ncF4Stats,
                 denseVector);
 
   // interreduce the matrix with respect to these overlaps.
@@ -1002,23 +1007,20 @@ void NCF4::parallelReduceF4Matrix()
     reduceF4Row(i-1,
                 mRows[i-1].columnIndices[1],
                 mRows[i-1].columnIndices[0],
-                numCancellations,
+                ncF4Stats,
                 denseVector);
 
   for (auto tlDense : threadLocalDense)
     mVectorArithmetic->deallocateElementArray(tlDense);
 
-  for (auto tlDense : numCancellationsLocal)
-    delete tlDense;
-
   mVectorArithmetic->deallocateElementArray(denseVector);
-  // std::cout << "Number of cancellations: " << numCancellations << std::endl;
+  // std::cout << "Number of cancellations: " << ncF4Stats.numCancellations << std::endl;
   // std::cout << "Number of threads used: " << numThreads << std::endl;
 }
 
 void NCF4::reduceF4Matrix()
 {
-  long numCancellations = 0;
+  NCF4Stats ncF4Stats;
 
   auto denseVector = mVectorArithmetic->allocateElementArray(mColumnMonomials.size());
 
@@ -1027,7 +1029,7 @@ void NCF4::reduceF4Matrix()
     reduceF4Row(i,
                 mRows[i].columnIndices[0],
                 -1,
-                numCancellations,
+                ncF4Stats,
                 denseVector);
 
   // interreduce the matrix with respect to these overlaps.
@@ -1035,12 +1037,12 @@ void NCF4::reduceF4Matrix()
     reduceF4Row(i-1,
                 mRows[i-1].columnIndices[1],
                 mRows[i-1].columnIndices[0],
-                numCancellations,
+                ncF4Stats,
                 denseVector);
 
   mVectorArithmetic->deallocateElementArray(denseVector);
 
-  //std::cout << "Number of cancellations: " << numCancellations << std::endl;
+  //std::cout << "Number of cancellations: " << ncF4Stats.numCancellations << std::endl;
 }
 
 void NCF4::displayF4MatrixSize(std::ostream & o) const

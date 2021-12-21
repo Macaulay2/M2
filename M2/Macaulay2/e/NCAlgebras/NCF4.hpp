@@ -91,6 +91,12 @@ private:
   //      (and -1 if there is no such row).
   using MonomialHash = mtbb::unordered_map<Word,std::pair<int,int>,MonomHash,MonomHashEqual>;
   
+  // thread local information
+  struct NCF4Stats {
+    NCF4Stats() : numCancellations(0) {}
+    long numCancellations;
+  };
+
   // data
   const FreeAlgebra& mFreeAlgebra;
   const ConstPolyList mInput;
@@ -127,6 +133,8 @@ private:
 
   // vector arithmetic class for reduction
   const VectorArithmetic* mVectorArithmetic;
+
+  mtbb::task_scheduler_init mScheduler; 
 
   bool mIsParallel;
  
@@ -224,7 +232,7 @@ private:
   void generalReduceF4Row(int index,
                           int first,
                           int firstcol,
-                          long &numCancellations,
+                          NCF4Stats &ncF4Stats,
                           ElementArray& dense,
                           bool updateColumnIndex,
                           LockType& lock);
@@ -232,14 +240,14 @@ private:
   void reduceF4Row(int index,
                    int first,
                    int firstcol,
-                   long &numCancellations,
+                   NCF4Stats &ncF4Stats,
                    ElementArray& dense)
   {
     mtbb::null_mutex noLock;
     generalReduceF4Row<mtbb::null_mutex>(index,
                                         first,
                                         firstcol,
-                                        numCancellations,
+                                        ncF4Stats,
                                         dense,
                                         true,
                                         noLock);
@@ -248,14 +256,14 @@ private:
   void parallelReduceF4Row(int index,
                            int first,
                            int firstcol,
-                           long &numCancellations,
+                           NCF4Stats &ncF4Stats,
                            ElementArray& dense,
                            mtbb::queuing_mutex& lock)
   {
     generalReduceF4Row<mtbb::queuing_mutex>(index,
                                            first,
                                            firstcol,
-                                           numCancellations,
+                                           ncF4Stats,
                                            dense,
                                            false,
                                            lock);
