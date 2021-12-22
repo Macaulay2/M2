@@ -64,7 +64,7 @@ cmake-tbb2021-appleclang:
 	cd builds.tmp/cmake-tbb2021-appleclang; cmake \
 		-GNinja \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-		-DCMAKE_PREFIX_PATH=`brew --prefix` \
+		-DCMAKE_PREFIX_PATH="`brew --prefix tbb@2021`;`brew --prefix`" \
 		-DBUILD_NATIVE=off \
 		-DBUILD_TESTING=off \
 		-DBUILD_DOCS=on \
@@ -193,6 +193,19 @@ arm64-appleclang : always
 	    --with-boost-regex=boost_regex \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
+		--enable-download
+
+debug-arm64-appleclang : always
+	mkdir -p builds.tmp/debug-arm64-appleclang
+	cd builds.tmp/debug-arm64-appleclang; ../../../../configure \
+		CPPFLAGS="-I`brew --prefix`/include" \
+		LDFLAGS="-L`brew --prefix`/lib" \
+	    --with-boost-regex=boost_regex \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-debug \
+		--enable-memdebug \
+		--disable-optimize \
 		--enable-download
 
 arm64-tbb2020-appleclang : always
