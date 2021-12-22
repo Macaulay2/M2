@@ -122,8 +122,12 @@ function gfxMouseMove(event) {
 	var x=event.offsetX*this.viewBox.baseVal.width/this.width.baseVal.value+this.viewBox.baseVal.x;
 	var y=event.offsetY*this.viewBox.baseVal.height/this.height.baseVal.value+this.viewBox.baseVal.y;
 	*/
-	x=event.movementX*this.viewBox.baseVal.width/this.width.baseVal.value;
+	/*
+	x=event.movementX*this.viewBox.baseVal.width/this.width.baseVal.value; // doesn't work in forefox: value is in different units
 	y=event.movementY*this.viewBox.baseVal.height/this.height.baseVal.value;
+	*/
+	x=event.movementX*this.viewBox.baseVal.width/this.clientWidth;
+	y=event.movementY*this.viewBox.baseVal.height/this.clientHeight;
 	gfxTranslateDrag(x,y,0);
 	gfxRedo(this);
     } else if ((event.buttons & 2 && !event.shiftKey)||(event.buttons & 1 && event.shiftKey)) {
