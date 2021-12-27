@@ -2,6 +2,7 @@
 
 needs "ext.m2"
 needs "gateway.m2"
+needs "hilbert.m2"
 needs "local.m2"
 needs "matrix1.m2"
 needs "modules.m2"

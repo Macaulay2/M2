@@ -59,6 +59,7 @@ freealgebras.m2
 multilin.m2
 flint.m2
 modules2.m2
+hilbert.m2
 gb.m2
 matrix2.m2
 galois.m2

@@ -19,8 +19,6 @@ use Ring := x -> ( if x.?use then x.use x; x)
 
 ZZ == Ring := (i,R) -> R == i
 
-poincare Ring := R -> poincare module R
-
 dim Ring := R -> (
      if R.?dim then R.dim
      else if isField R then 0
