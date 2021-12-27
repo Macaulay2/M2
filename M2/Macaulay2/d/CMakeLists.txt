@@ -139,7 +139,7 @@ add_library(M2-interpreter OBJECT ${CLIST} ${CXXLIST} ${TAGS}
   $<$<BOOL:${WITH_XML}>:xml-c.c xml-c.h>
   $<$<BOOL:${WITH_PYTHON}>:python-c.c>)
 
-target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex)
+target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex TBB::tbb)
 
 target_include_directories(M2-interpreter
   PUBLIC

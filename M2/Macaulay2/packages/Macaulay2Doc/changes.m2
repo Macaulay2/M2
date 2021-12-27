@@ -6,6 +6,7 @@ document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
 	  TO "changes made for the next release",
+	  TO "changes, 1.19.1",
 	  TO "changes, 1.19",
 	  TO "changes, 1.18",
 	  TO "changes, 1.17",
@@ -36,6 +37,18 @@ document {
 
 document {
      Key => "changes made for the next release"
+     }
+
+document {
+     Key => "changes, 1.19.1",
+     UL {
+          LI { "bugs fixed:",
+	       UL {
+		    LI { "repaired two broken links to packages in the changes documentation" },
+		    LI { "restored the 'Ways to use' and 'For the programmer' sections of the documentation provided by ", TO "help", " for a method function." }
+		    }
+	       }
+     	  }
      }
 
 document {

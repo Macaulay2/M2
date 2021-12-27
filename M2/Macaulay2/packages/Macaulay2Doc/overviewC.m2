@@ -729,15 +729,6 @@ Plan for the next node:
 leadTerm(ZZ,RingElement) := (n,f) -> (leadTerm(n,matrix{{f}}))_(0,0)
   -- leadTerm should call a ggleadterm routine?  DO THIS
 *-
-     
--*
-installHilbertFunction = method()
-installHilbertFunction(Module,RingElement) := (M,hf) -> (
-     -- we need to place hf into the degree ring of M.
-     hf = substitute(hf,degreesRing M);
-     M.cache.poincare = hf;
-     )
-*-
 
 -*
 installGroebner = method()

@@ -153,7 +153,7 @@ sagbi(SAGBIBasis) := o -> S -> (
         sagbiGB = gb(compTable#"presentation"#"syzygyIdeal", DegreeLimit => compTable#"stoppingData"#"degree");
 	zeroGens = submatByDegree(mingens ideal selectInSubring(1, gens sagbiGB), compTable#"stoppingData"#"degree");
 	syzygyPairs = compTable#"presentation"#"substitution"(zeroGens);
-	terminationCondition1 = rawStatus1 raw sagbiGB == 6;
+	terminationCondition1 = (rawStatus1 raw sagbiGB == 6) and (compTable#"stoppingData"#"degree" >= max flatten flatten degrees gens sagbiGB);
 
 	-- Have we previously found any syzygies of degree currDegree?
         if compTable#"pending"#?(compTable#"stoppingData"#"degree") then (

@@ -672,7 +672,8 @@ document {
 	 TO (degree, Module),
 	 TO (genera, Module),
 	 TO (hilbertSeries, Module),
-	 TO (poincare, Module),
+	 TO poincare,
+	 TO poincareN,
 	 TO reduceHilbert,
 	 TO betti,
 	 }
