@@ -6,17 +6,11 @@
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-#include <iostream>
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpragmas"
-// The following line, which would be useful, doesn't quiet g++-8 about pragma omp...
-#pragma GCC diagnostic ignored "-Wunknown-pragmas"
-#pragma GCC diagnostic ignored "-Wshorten-64-to-32"
-#pragma GCC diagnostic ignored "-Wconversion"
-#pragma GCC diagnostic ignored "-Wunused-variable"
 
-// this fixes a weird problem in the package "openblas" of Arch Linux, which somehow fails to declare this function:
-extern "C" void openblas_set_num_threads(int num_threads);
+#include <type_traits> // define bool_constant to fix issue #2347
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 #define bool_constant givaro_bool_constant
 #include <fflas-ffpack/ffpack/ffpack.h>
 #undef bool_constant

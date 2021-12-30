@@ -9,6 +9,7 @@ needs "gb.m2" -- for GroebnerBasis
 needs "res.m2" -- needed by minimalBetti
 needs "chaincomplexes.m2"
 needs "gradedmodules.m2"
+needs "hilbert.m2"
 needs "modules2.m2"
 
 -----------------------------------------------------------------------------

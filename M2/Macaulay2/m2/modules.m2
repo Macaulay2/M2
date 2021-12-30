@@ -346,26 +346,6 @@ schreyerOrder Module := Matrix => (F) -> (
 schreyerOrder Matrix := Matrix => (m) -> map(target m, new Module from (ring m, rawSchreyerSource raw m), m)
 schreyerOrder RawMatrix := RawMatrix => (m) -> rawMatrixRemake2(rawTarget m, rawSchreyerSource m, rawMultiDegree m, m, 0)
 
-euler Module := (M) -> euler hilbertPolynomial M
-euler Ring := (R) -> euler R^1
-
-eulers Module := (M) -> (
-     h := hilbertPolynomial M;
-     apply(toList ( 0 .. dim h ), i -> euler diff(h,i) ))
-eulers Ring := (R) -> eulers R^1
-
-genera Module := (M) -> (
-     e := eulers M;
-     d := dim M - 1;
-     apply(#e, i -> (-1)^(i+d) * (e#i - 1)))
-genera Ring := (R) -> genera R^1
-
-genus Module := (M) -> (
-     e := euler M;
-     d := dim M - 1;
-     (-1)^d * (e - 1))
-genus Ring := (R) -> genus R^1
-
 possiblyLift := x -> if denominator x === 1 then numerator x else x -- x is in QQ
 
 rank Module := (cacheValue symbol rank) (M -> (

@@ -757,12 +757,6 @@ g = random(R^4,R^{-2,-2})
 
 
 --
-R = ZZ/101[a..d]
-assert( hilbertFunction(3,R) === 20 )
-assert( hilbertFunction(10,R) === 286 )
-
-
---
 clearAll
 R = ZZ/101[a..f]
 assert( dim image matrix {{a,b}} == 6 )
@@ -1010,16 +1004,6 @@ assert( degree U4 == 0 )
 R=ZZ/101[x]
 assert(monomialIdeal vars R != 0)
 assert(monomialIdeal map(R^1,R^1,0) == 0)
-
-
---
-     -- here we test the commutativity of the pentagon of associativities!
-     C = QQ^1[0] ++ QQ^1[-1]
-     assert(
-	  (tensorAssociativity(C,C,C) ** C) * tensorAssociativity(C,C**C,C) * (C ** tensorAssociativity(C,C,C))
-	  ==
-	  tensorAssociativity(C**C,C,C) * tensorAssociativity(C,C,C**C)
-	  )
 
 
 --
@@ -1694,42 +1678,6 @@ n = apply(L, m -> p m)
 assert( n === {matrix {{-x^3+w^2*z, -x^2+w*y}}, matrix {{x, w}}} )
 
 
---
-R = QQ[a..d];
-I = ideal random(R^1, R^{3:-3});
-time hf = poincare I
-S = QQ[a..d,MonomialOrder=>Eliminate 2]
-J = substitute(I,S)
-installHilbertFunction(J, hf)
-gbTrace=3
-time gens gb J;
-selectInSubring(1,gens gb J)
-
--- Now check it for matrices
-R = QQ[a..d];
-I = ideal random(R^1, R^{3:-3});
-time hf = poincare I
-S = QQ[a..d,MonomialOrder=>Eliminate 2]
-J = substitute(I,S)
-installHilbertFunction(gens J, hf)
-gbTrace=3
-time gens gb gens J;
-selectInSubring(1,gens gb J)
-
--- Now check it for modules
-R = QQ[a..d];
-I = image random(R^1, R^{3:-3});
-time hf = poincare I
-S = QQ[a..d,MonomialOrder=>Eliminate 2]
-J = substitute(I,S)
-installHilbertFunction(J, hf)
-gbTrace=3
-time gens gb J
---status: this is a strange one
---status: it's a gb computation that seems to run out of memory far too soon
---status: Mike?
-selectInSubring(1,gens gb J)
-
 
 --
 clearAll
@@ -1752,39 +1700,6 @@ assert ( 0 == HH_1 res M )
 assert ( 0 == HH_2 res M )
 assert ( 0 == HH_3 res M )
 assert ( 0 == HH_4 res M )
-
-
---
-scan(3, n -> (
-     x := local x;
-     R := ZZ/101[x_0 .. x_n];
-     scan(-2 .. 2, d -> (
-	  M := R^{-d};
-	  h := hilbertPolynomial M;
-	  scan(d .. d + 4, e -> assert(numgens source basis(e,M) == h e))))))
-
---
-scan(3, n -> (
-     x := local x;
-     R := ZZ/101[x_0 .. x_n];
-     scan(-2 .. 2, d -> (
-	  M := R^{-d};
-	  h := hilbertPolynomial (M, Projective => false);
-	  i := (ring h)_0;
-	  scan(d .. d + 4, e -> (
-		    r := numgens source basis(e,M);
-		    s := substitute(h, { i => e/1 });
-		    assert( r == s)))))))
-
-
---
-R = ZZ/101[x,y]
-M = R^1/x
-T = degreesRing R
-t = T_0
-assert( hilbertSeries (M, Order => 5) == t^4+t^3+t^2+t+1 )
-assert( hilbertSeries (M, Order => 4) == t^3+t^2+t+1 )
-assert( hilbertSeries (M, Order => 7) == t^6+t^5+t^4+t^3+t^2+t+1 )
 
 
      --

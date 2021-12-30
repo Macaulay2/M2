@@ -1999,7 +1999,7 @@ document {
      },
      
      PARA{}, "Notice that after multiplying ", TT "U", " by the unimodular matrix ", TT "A", " and applying the
-     change of variables ", TT "B", " (using the ", TO "sub", " command), the first entry in ", TT "U'", " above is now monic in ", TT "x", ".",
+     change of variables ", TT "B", " (using the ", TO2(substitute, "sub"), " command), the first entry in ", TT "U'", " above is now monic in ", TT "x", ".",
      
      PARA{}, "The order of the variables given in the list matter, as changeVar 
      will construct a change of variable so that the new unimodular row is monic in the ", EM "last",

@@ -1,15 +1,6 @@
 # @configure_input@
 chapter_srcdir = @srcdir@
 
-# it seems that factory gives a different order of factors, depending on whether
-# we are on a 32 bit machine
-
-ifeq "$(shell uname -m)" "i686"
-EXPECTED = test.out.expected-32
-endif
-
-diff-32:; diff -u @srcdir@/test.out.expected @srcdir@/test.out.expected-32
-
 include ../Makefile.chapter
 
 Makefile: Makefile.in; cd ../../../..; ./config.status Macaulay2/tests/ComputationsBook/varieties/Makefile
