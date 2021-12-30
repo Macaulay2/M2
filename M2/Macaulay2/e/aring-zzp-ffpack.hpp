@@ -11,8 +11,6 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-// this fixes a weird problem in the package "openblas" of Arch Linux, which somehow fails to declare this function:
-extern "C" void openblas_set_num_threads(int num_threads);
 #define bool_constant givaro_bool_constant
 #include <fflas-ffpack/ffpack/ffpack.h>
 #undef bool_constant
