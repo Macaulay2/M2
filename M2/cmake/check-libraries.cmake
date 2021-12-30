@@ -71,7 +71,7 @@ foreach(lang IN ITEMS C CXX)
     get_filename_component(_libdir "${OpenMP_${_lib}_LIBRARY}" DIRECTORY)
     # TODO: remove when this is fixed: https://gitlab.kitware.com/cmake/cmake/-/issues/20934
     string(REGEX REPLACE "^lib" "" _lib "${_lib}")
-    set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} -L${_libdir} -l${_lib}")
+    set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} -L${_libdir} -Wl,-rpath,${_libdir} -l${_lib}")
   endforeach()
 endforeach()
 
