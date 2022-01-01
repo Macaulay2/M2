@@ -61,7 +61,6 @@ header "
    #include <givaro/givconfig.h>
    Givaro::GivaroMain givaroMain;
 
-   /* TODO - fix conditionals once TBB 2021 support is added (#2105) */
    #ifdef HAVE_TBB2021
      #include <tbb/version.h>
    #else /* TBB 2020 */
@@ -69,7 +68,6 @@ header "
      #define TBB_VERSION_STRING \\
        (stringize(TBB_VERSION_MAJOR) \".\" stringize(TBB_VERSION_MINOR))
    #endif
-
 
    #include <Eigen/Core>
    ";
