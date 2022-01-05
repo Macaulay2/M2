@@ -7,4 +7,3 @@
 #include "mathicgb/mathicgb/mtbb.hpp"
 
 #endif
-
