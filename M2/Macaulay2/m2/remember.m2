@@ -27,6 +27,23 @@ codeHelper#(functionBody(memoize(identity,{}))) = g -> {
      ("-- initialValues:", value (first localDictionaries g)#"initialValues") 
      }
 
+memoizedFunctionBody := functionBody memoize sin
+
+memoizeValues = f -> (
+     if not instance(f,Function) then error "expected a function";
+     if functionBody f =!= memoizedFunctionBody then error "expected a memoized function";
+     values := (frame f)#1;
+     assert instance(values, MutableHashTable);
+     values
+     )
+
+memoizeClear = f -> (
+     if not instance(f,Function) then error "expected a function";
+     if functionBody f =!= memoizedFunctionBody then error "expected a memoized function";
+     assert instance((frame f)#1, MutableHashTable);
+     (frame f)#1 = new MutableHashTable;
+     )
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

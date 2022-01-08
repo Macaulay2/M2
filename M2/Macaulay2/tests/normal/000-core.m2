@@ -59,8 +59,10 @@ f 1
 f 2
 f 3
 assert( a == 3 )
-
-
+assert instance(memoizeValues f, MutableHashTable)
+assert (# (memoizeValues f) === 3)
+memoizeClear f
+assert (# (memoizeValues f) === 0)
 
 --
 x = set {1,2,3}

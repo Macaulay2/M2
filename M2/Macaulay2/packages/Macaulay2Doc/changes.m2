@@ -36,7 +36,15 @@ document {
      }
 
 document {
-     Key => "changes made for the next release"
+     Key => "changes made for the next release",
+     UL {
+ 	  LI { "functionality added:",
+	       UL {
+		    LI { "New functions ", TO "memoizeValues", " and ", TO "memoizeClear", " have been added for dealing with the values retained by
+			 functions created with memoize." }
+		    }
+	       }
+	  }
      }
 
 document {
