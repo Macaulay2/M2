@@ -16,3 +16,75 @@ updateComputation(ResolutionComputation, result chain complex)
 
 res.m2
 computations.m2
+
+    hooks: independent of caching results.
+
+    caching:
+      res Module
+    stash result in M.cache#(Resolution, degreelimit, lengthlimit) (or add in the options we want)
+
+    example:
+      res M has been computed, and cached.
+    then:
+      res(M, DegreeLimit => 4) -- this looks into that cache, determines if computation is needed.
+        if computation is needed: do it, and stash the new result, with new degree limit/length limit etc.
+        if not, prune down the complex that is cached to this degree limit.
+
+R = ZZ/101[a..d]
+I = ideal vars R
+M = R^1/I
+gbTrace=3
+C = res(M, Strategy => 0)
+C1 = res(M, Strategy => 1) -- no computation.
+
+restart
+R = ZZ/101[a..j]
+I = (ideal vars R)^[3]
+M = R^1/I
+gbTrace=3
+C = res(M, Strategy => 0, DegreeLimit => 7, LengthLimit => 5, SyzygyLimit => 10)
+C1 = res(M, Strategy => 0, DegreeLimit => 7, LengthLimit => 4)
+
+C = res(M, Strategy => 0, DegreeLimit => 7, LengthLimit => 5)
+C1 = res(M, Strategy => 1, LengthLimit => 6)
+C1 = res(M, Strategy => 1) -- no computation.
+
+  M.cache.Resolution(degree limit, length limit): ResolutionObject
+  M.cache.Resolution: ResolutionObject(degree limit, length limit)
+
+this happens before running hooks
+if a resolution is cached:
+  if a res with a different strategy is requested, throws out the old one, starts over.
+    
+    
+res Module:
+  look to see if there is a resolution in the cache.
+  if something in the cache:
+    if opts.Strategy is unspecified or matches the cached strategy 
+    yes:
+      do we need to do more computation? (depends on length limit/degree limit)
+        yes: 
+          can the computation to be continued?
+          yes: continue the computation (Needs more precision).
+               update the cache
+               RETURN RESULT
+          no: drop though (will recompute)
+        no: RETURN RESULT, cache not updated.
+    no:
+      drop through
+
+  construct the cached ResolutionObject, cache it.
+  
+  run hooks
+    one of these will do computation (potentially).
+      these hooks can count on the cache existing.
+      but must set the strategy in this object, if unset.
+      they must cache the data needed to continue a computation
+        (if larger degree or length is needed)
+        and they must allow if the computation is interrupted.
+    
+    
+    
+        
+      
+  

@@ -184,3 +184,11 @@ assert(prune HH F == complex comodule I)
 raw W
 peek W
 raw W
+
+restart
+R = ZZ/101[a..d]
+M = coker vars R
+C = res M
+C.cache
+debug Core
+peek M.cache#(new ResolutionContext)
