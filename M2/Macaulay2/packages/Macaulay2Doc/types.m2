@@ -679,6 +679,47 @@ document {
      }
 
 document {
+     Key => RR',
+     Headline => "the parent class of all rings of real numbers",
+     PARA {
+	  "Floating point real numbers are treated in a special way.  Recall first to create a polynomial, one must
+	  first create a polynomial ring to contain it.  And then, the polynomial ring is the class of the polynomial."
+	  },
+     EXAMPLE lines ///
+     R = QQ[x,y,z]
+     x^2
+     class x^2
+     ///,
+     PARA {
+	  "Floating point real numbers, however, can be created directly, as follows, without creating a ring."
+	  },
+     EXAMPLE lines ///
+     r = 4.5
+     s = 4.3p300
+     ///,
+     PARA {
+	  "The floating point numbers created above have different precisions, and thus are regarded as being elements of 
+	  different rings, whose elements all have the same precision."
+	  },
+     EXAMPLE lines ///
+     precision r
+     precision s
+     ring r
+     ring s
+     ///,
+     PARA {
+	  "In order to make it convenient to define methods that apply to all such rings, those rings have a common
+	  parent, namely ", TT "RR'", ".  Notice that ", TT "RR'", " is printed in a special way."
+	  },
+     EXAMPLE lines ///
+     RR'
+     parent ring r     
+     parent ring s
+     parent ring s === RR'
+     ///
+     }
+
+document {
      Key => CC,
      Headline => "the class of all complex numbers",
      "In Macaulay2, complex numbers are represented as floating point numbers, and so are
@@ -720,6 +761,47 @@ document {
      ///,
      Caveat => { "Currently, most transcendental functions are not implemented for complex arguments." },
      SeeAlso => {"ii", toCC, toRR, numeric, precision, format, "printingPrecision", "printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
+     }
+
+document {
+     Key => CC',
+     Headline => "the parent class of all rings of complex numbers",
+     PARA {
+	  "Floating point complex numbers are treated in a special way.  Recall first to create a polynomial, one must
+	  first create a polynomial ring to contain it.  And then, the polynomial ring is the class of the polynomial."
+	  },
+     EXAMPLE lines ///
+     R = QQ[x,y,z]
+     x^2
+     class x^2
+     ///,
+     PARA {
+	  "Floating point complex numbers, however, can be created directly, as follows, without creating a ring."
+	  },
+     EXAMPLE lines ///
+     r = 4.5 * ii
+     s = 4.3p300 * ii
+     ///,
+     PARA {
+	  "The floating point numbers created above have different precisions, and thus are regarded as being elements of 
+	  different rings, whose elements all have the same precision."
+	  },
+     EXAMPLE lines ///
+     precision r
+     precision s
+     ring r
+     ring s
+     ///,
+     PARA {
+	  "In order to make it convenient to define methods that apply to all such rings, those rings have a common
+	  parent, namely ", TT "CC'", ".  Notice that ", TT "CC'", " is printed in a special way."
+	  },
+     EXAMPLE lines ///
+     CC'
+     parent ring r     
+     parent ring s
+     parent ring s === CC'
+     ///
      }
 
 undocumented {RRi'}
