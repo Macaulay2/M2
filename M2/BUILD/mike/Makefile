@@ -53,6 +53,7 @@ cmake-no-tbb-appleclang:
 		-GNinja \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 		-DCMAKE_PREFIX_PATH=`brew --prefix` \
+		-DWITH_TBB=off \
 		-DBUILD_NATIVE=off \
 		-DBUILD_TESTING=off \
 		-DBUILD_DOCS=on \
@@ -66,7 +67,7 @@ cmake-tbb2021-appleclang:
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 		-DCMAKE_PREFIX_PATH="`brew --prefix tbb@2021`;`brew --prefix`" \
 		-DBUILD_NATIVE=off \
-		-DBUILD_TESTING=off \
+		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
 		../../../..
 

@@ -20,7 +20,7 @@ NCF4::NCF4(const FreeAlgebra& A,
            const ConstPolyList& input,
            int hardDegreeLimit,
            int strategy,
-           bool isParallel
+           int numThreads // 0 for tbb::info::default_concurrency(), for now
            )
     : mFreeAlgebra(A),
       mInput(input),
@@ -31,9 +31,11 @@ NCF4::NCF4(const FreeAlgebra& A,
       mColumnMonomials(10,mMonomHash,mMonomHashEqual),
       mPreviousColumnMonomials(10,mMonomHash,mMonomHashEqual),
       mVectorArithmetic(new VectorArithmetic(A.coefficientRing())),
-      mScheduler(0),   // 0 for tbb::info::default_concurrency(), for now
-      mIsParallel(isParallel)
+      mNumThreads(mtbb::numThreads(numThreads)), 
+      mIsParallel(mNumThreads != 1),
+      mScheduler(mNumThreads)
 {
+  //  std::cout << "number of processors being used: " << mNumThreads << std::endl;
   if (M2_gbTrace >= 1)
     {
       buffer o;
@@ -72,10 +74,14 @@ void NCF4::compute(int softDegreeLimit)
           o << "{" << degSet.first << "}(" << toBeProcessed->size() << ")";
           emit_wrapped(o.str());
         }
-      process(*toBeProcessed);
+      mScheduler.execute([this,&toBeProcessed]()
+      {
+        process(*toBeProcessed);
+      });
+      
       mOverlapTable.removeLowestDegree(); // TODO: suspect line.
       // we really want to just delete toBeProcessed...
-    }
+      }
 }
 
 void NCF4::process(const std::deque<Overlap>& overlapsToProcess)

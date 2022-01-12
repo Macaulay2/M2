@@ -134,9 +134,11 @@ private:
   // vector arithmetic class for reduction
   const VectorArithmetic* mVectorArithmetic;
 
-  mtbb::task_scheduler_init mScheduler; 
-
+  int mNumThreads;
   bool mIsParallel;
+  
+  mtbb::task_arena mScheduler;
+
  
   // these are pointers to the MemoryBlocks used in creating the various structures.
   // only used in parallelBuildF4Matrix, which is currently not used.
@@ -149,7 +151,7 @@ public:
        const ConstPolyList& input,
        int hardDegreeLimit,
        int strategy,
-       bool isParallel
+       int numThreads // 0 for tbb::info::default_concurrency(), for now
        );
 
   ~NCF4() {
