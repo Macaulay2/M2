@@ -156,6 +156,10 @@ I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
 F = freeResolution(I, Strategy => 4) -- nonminimal...
 assert isWellDefined F
 
+I = ideal I_*
+F = freeResolution(I, DegreeLimit => 3, LengthLimit => 2)
+F = freeResolution(I, DegreeLimit => 2, LengthLimit => 2)
+F = freeResolution I
 -- change strategy
 -- degree limit, changing degree limit
 -- hooks

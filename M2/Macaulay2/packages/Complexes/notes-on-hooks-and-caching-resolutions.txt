@@ -55,25 +55,38 @@ C1 = res(M, Strategy => 1) -- no computation.
 this happens before running hooks
 if a resolution is cached:
   if a res with a different strategy is requested, throws out the old one, starts over.
-    
+
+totally order (LengthLimit, DegreeLimit) lexicographically
+    cache in a module:
+      ResolutionObject (should also have a length, degree limit pair)
+      Resolution: a complex
+        it the cache table: says it is a resolution with degree,length limits
+        also has a pointer back to the module
     
 res Module:
-  look to see if there is a resolution in the cache.
-  if something in the cache:
-    if opts.Strategy is unspecified or matches the cached strategy 
+  look to see if there is a Resolution in the cache
+     if the stashed complex has exactly the same Degree and Length limits
+      return the cached complex
+     if (lengthLimit, degreeLimit) < cached values (lexicographically)
+      return the truncation of the cached complex
+  look to see if there is a ResolutionObject in the cache
+     if so
+  if there is a ResolutionObject in the cache:
+    if opts.Strategy is unspecified or matches the cached strategy (ResolutionObject knows the strategy)
     yes:
       do we need to do more computation? (depends on length limit/degree limit)
-        yes: 
-          can the computation to be continued?
-          yes: continue the computation (Needs more precision).
-               update the cache
-               RETURN RESULT
-          no: drop though (will recompute)
-        no: RETURN RESULT, cache not updated.
+        (query ResolutionObject: returns one of three states (the first 2 are the same)
+            are you complete in degrees <= (lengthlimit, degreelimit)? yes
+            are you not yet done, but can be continued to compute that? yes 
+            I cannot compute that: need to throw me out and start over. no
+          yes: continue the computation to compute <= (lengthlimit, degreelimit).
+               update the cache (cached Resolution is changed, also ResolutionObject might change itself)
+               RETURN the cached Resolution
+          no: drop though (the ResolutionObject needs to be replaced)
     no:
       drop through
 
-  construct the cached ResolutionObject, cache it.
+  construct a new ResolutionObject, cache it (doesn't run the computation, just creates it). (sets isDone?, DegreeLimit, LengthLimit, Strategy).
   
   run hooks
     one of these will do computation (potentially).
