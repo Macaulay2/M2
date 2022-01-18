@@ -968,6 +968,39 @@ I = ideal I_*; elapsedTime Igb = NCGB(I, 15, Strategy => "F4Parallel"); -- 220 s
 I = ideal I_*; elapsedTime Igb = NCGB(I, 16, Strategy => "F4"); --
 I = ideal I_*; elapsedTime Igb = NCGB(I, 16, Strategy => "F4Parallel"); -- 
 
+
+
+
+-- Testing: tbb2020 vs tbb2021 attempts on Mike's M1 max (14 Jan 2022)
+restart
+needsPackage "AssociativeAlgebras"
+kk = ZZ/32003
+R = kk<|x,y,z,w|>
+I = ideal {x*y-y*x-7*z*w-7*w*z, 3*x*z-4*y*w-3*z*x-4*w*y, 31*x*w+25*y*z+25*z*y-31*w*x, x*y+y*x-z*w+w*z, x*z+y*w+z*x-w*y, x*w-y*z+z*y+w*x};
+
+gbTrace=2
+I = ideal I_*; elapsedTime Igb = NCGB(I, 13, Strategy => "F4"); 
+  -- timings
+  -- zoom, tbb2020: 16.7 sec
+  -- zoom, tbb2021, gbTrace=2: 17.2 sec
+I = ideal I_*; elapsedTime Igb = NCGB(I, 13, Strategy => "F4Parallel"); 
+  -- timings
+  -- zoom, tbb2020: 7.6 sec
+  -- zoom, tbb2020, build matrix in parallel: CRASH in tbb::concurrent_vector code
+  -- zoom, tbb2021, gbTrace=2: 7.9 sec
+I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy => "F4"); 
+  -- timings
+  -- zoom, tbb2020:  60.4 sec
+I = ideal I_*; elapsedTime Igb = NCGB(I, 14, Strategy => "F4Parallel"); 
+  -- timings
+  -- zoom, tbb2020: 27.0 sec
+  -- zoom, tbb2021: 25.5 sec
+
+I = ideal I_*; elapsedTime Igb = NCGB(I, 15, Strategy => "F4"); 
+I = ideal I_*; elapsedTime Igb = NCGB(I, 15, Strategy => "F4Parallel"); 
+
+
+
 -- CRT tests
 restart
 needsPackage "AssociativeAlgebras"

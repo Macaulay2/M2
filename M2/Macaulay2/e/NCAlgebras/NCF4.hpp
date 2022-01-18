@@ -93,8 +93,9 @@ private:
   
   // thread local information
   struct NCF4Stats {
-    NCF4Stats() : numCancellations(0) {}
+    NCF4Stats() : numCancellations(0), numRows(0) {}
     long numCancellations;
+    long numRows;
   };
 
   // data

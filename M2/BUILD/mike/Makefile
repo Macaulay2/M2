@@ -39,10 +39,10 @@ cmake-tbb2020-appleclang:
 	mkdir -p builds.tmp/cmake-tbb2020-appleclang
 	cd builds.tmp/cmake-tbb2020-appleclang; cmake \
 		-GNinja \
-		-DCMAKE_PREFIX_PATH=`brew --prefix` \
-		-DBUILD_NATIVE=off \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-		-DBUILD_TESTING=off \
+		-DCMAKE_PREFIX_PATH="`brew --prefix tbb@2020`;`brew --prefix`" \
+		-DBUILD_NATIVE=off \
+		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
 		../../../..
 
