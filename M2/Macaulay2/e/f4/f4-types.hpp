@@ -3,12 +3,13 @@
 #ifndef _F4types_h_
 #define _F4types_h_
 
+
+#include "VectorArithmetic.hpp"      // for ElementArray
 #include "f4/f4-monlookup.hpp"       // for F4MonomialLookupTableT
 #include "f4/moninfo.hpp"            // for MonomialInfo, monomial_word, pac...
 #include "f4/varpower-monomial.hpp"  // for varpower_monomials, varpower_mon...
 #include "newdelete.hpp"             // for our_new_delete, VECTOR, (gc_allocator)
 #include "style.hpp"                 // for LT
-#include "VectorArithmetic.hpp"      // for ElementArray
 
 #define sizeofspair(s, len) \
   (sizeof(*s) - sizeof(s->lcm) + (len) * sizeof(s->lcm[0]))

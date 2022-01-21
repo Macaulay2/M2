@@ -97,10 +97,10 @@ void NCF4::process(const std::deque<Overlap>& overlapsToProcess)
   
   // build the F4 matrix
   mtbb::tick_count t0 = mtbb::tick_count::now();
-  //if (mIsParallel)
-  //  parallelBuildF4Matrix(overlapsToProcess);
-  //else
-  buildF4Matrix(overlapsToProcess);
+  // if (mIsParallel)
+  //   parallelBuildF4Matrix(overlapsToProcess);
+  // else
+    buildF4Matrix(overlapsToProcess);
   mtbb::tick_count t1 = mtbb::tick_count::now();
   if (M2_gbTrace >= 2) 
     std::cout << "Time spent on build step: " << (t1-t0).seconds() << std::endl;
@@ -983,19 +983,26 @@ void NCF4::parallelReduceF4Matrix()
                     {
                       threadLocalDense_t::reference my_dense = threadLocalDense.local();
                       threadLocalStats_t::reference my_threadStats = threadLocalStats.local();
-                      for (auto i = r.begin(); i != r.end(); ++i)
+                      for (auto i = r.begin(); i != r.end(); ++i) {
                         parallelReduceF4Row(i,
                                             mRows[i].columnIndices[0],
                                             -1,
                                             my_threadStats,
                                             my_dense,
                                             lock);
+                        my_threadStats.numRows++;
+                      }
                     });
   
   int numThreads = 0;
   for (auto tlStats : threadLocalStats)
   {
     ++numThreads;
+    if (M2_gbTrace >= 2)
+      {
+        std::cout << "numCancellations for this thread: " << tlStats.numCancellations << std::endl;
+        std::cout << "numRows for this thread: " << tlStats.numRows << std::endl;
+      }
     ncF4Stats.numCancellations += tlStats.numCancellations;
   }
 
@@ -1020,8 +1027,11 @@ void NCF4::parallelReduceF4Matrix()
     mVectorArithmetic->deallocateElementArray(tlDense);
 
   mVectorArithmetic->deallocateElementArray(denseVector);
-  // std::cout << "Number of cancellations: " << ncF4Stats.numCancellations << std::endl;
-  // std::cout << "Number of threads used: " << numThreads << std::endl;
+  if (M2_gbTrace >= 2)
+    {
+      std::cout << "Number of cancellations: " << ncF4Stats.numCancellations << std::endl;
+      std::cout << "Number of threads used: " << numThreads << std::endl;
+    }
 }
 
 void NCF4::reduceF4Matrix()

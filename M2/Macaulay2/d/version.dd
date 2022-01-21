@@ -31,7 +31,6 @@ header "
 //   #include <mpfr.h>
 //   #include <mpfi.h>
 
-   #include <mathicgb/mathicgb/mtbb.hpp>
    #include <memtailor.h>
    #include <mathic.h>
    #include <mathicgb.h>
@@ -63,6 +62,7 @@ header "
    Givaro::GivaroMain givaroMain;
 
    /* TBB_VERSION_STRING is set in mtbb.hpp */
+   #include <mathicgb/mathicgb/mtbb.hpp>
 
    #include <Eigen/Core>
    ";

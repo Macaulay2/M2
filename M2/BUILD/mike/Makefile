@@ -19,21 +19,8 @@ cmake-make-appleclang:
 		-DBUILD_DOCS=on \
 		../../../..
 
-cmake-appleclang:
-	echo "git branch is " $(BRANCH)
-	mkdir -p builds.tmp/cmake-appleclang
-	cd builds.tmp/cmake-appleclang; cmake \
-		-GNinja \
-		-DCMAKE_PREFIX_PATH=`brew --prefix` \
-		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-		-DBUILD_TESTING=on \
-		-DBUILD_DOCS=on \
-		../../../..
 #		-DLINTING=on
 
-# first do:
-#   brew unlink tbb@2021
-#   brew link tbb@2020_u3
 cmake-tbb2020-appleclang:
 	echo "git branch is " $(BRANCH)
 	mkdir -p builds.tmp/cmake-tbb2020-appleclang
@@ -59,10 +46,10 @@ cmake-no-tbb-appleclang:
 		-DBUILD_DOCS=on \
 		../../../..
 
-cmake-tbb2021-appleclang:
+cmake-appleclang:
 	echo "git branch is " $(BRANCH)
-	mkdir -p builds.tmp/cmake-tbb2021-appleclang
-	cd builds.tmp/cmake-tbb2021-appleclang; cmake \
+	mkdir -p builds.tmp/cmake-appleclang
+	cd builds.tmp/cmake-appleclang; cmake \
 		-GNinja \
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 		-DCMAKE_PREFIX_PATH="`brew --prefix tbb@2021`;`brew --prefix`" \
@@ -70,18 +57,6 @@ cmake-tbb2021-appleclang:
 		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
 		../../../..
-
-cmake-appleclang-tbb:
-	echo "git branch is " $(BRANCH)
-	mkdir -p builds.tmp/cmake-appleclang-tbb
-	cd builds.tmp/cmake-appleclang-tbb; cmake \
-		-GNinja \
-		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-		-DBUILD_TESTING=on \
-		-DBUILD_DOCS=on \
-		-DWITH_TBB=on \
-		../../../..
-#		-DLINTING=on
 
 cmake-debug-appleclang:
 	mkdir -p builds.tmp/cmake-debug-appleclang
@@ -189,8 +164,8 @@ xcode:
 arm64-appleclang : always
 	mkdir -p builds.tmp/arm64-appleclang
 	cd builds.tmp/arm64-appleclang; ../../../../configure \
-		CPPFLAGS="-I`brew --prefix`/include" \
-		LDFLAGS="-L`brew --prefix`/lib" \
+		CPPFLAGS="-I`brew --prefix tbb@2021`/include -I`brew --prefix`/include" \
+		LDFLAGS="-L`brew --prefix tbb@2021`/lib -L`brew --prefix`/lib" \
 	    --with-boost-regex=boost_regex \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
@@ -212,8 +187,19 @@ debug-arm64-appleclang : always
 arm64-tbb2020-appleclang : always
 	mkdir -p builds.tmp/arm64-tbb2020-appleclang
 	cd builds.tmp/arm64-tbb2020-appleclang; ../../../../configure \
-		CPPFLAGS="-I`brew --prefix`/include" \
-		LDFLAGS="-L`brew --prefix`/lib" \
+		CPPFLAGS="-I`brew --prefix tbb@2020`/include -I`brew --prefix`/include" \
+		LDFLAGS="-L`brew --prefix tbb@2020`/lib -L`brew --prefix`/lib" \
+	    --with-boost-regex=boost_regex \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download
+
+arm64-no-tbb-appleclang : always
+	mkdir -p builds.tmp/arm64-no-tbb-appleclang
+	cd builds.tmp/arm64-no-tbb-appleclang; ../../../../configure \
+		CPPFLAGS="-I`brew --prefix tbb@2021`/include -I`brew --prefix`/include" \
+		LDFLAGS="-L`brew --prefix tbb@2021`/lib -L`brew --prefix`/lib" \
+		--disable-tbb \
 	    --with-boost-regex=boost_regex \
 		--prefix="`pwd`/installed" \
 		--disable-strip \

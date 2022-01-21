@@ -1,6 +1,7 @@
 #ifndef __vector_arithmetic_hpp__
 #define __vector_arithmetic_hpp__
 
+#include "m2tbb.hpp"
 #include "NCAlgebras/Range.hpp"  // for Range
 #include "newdelete.hpp"         // for VECTOR
 #include "MemoryBlock.hpp"       // for MemoryBlock
@@ -8,11 +9,7 @@
 #include "aring-glue.hpp"
 #include <variant>
 #include <type_traits>
-
 #include "f4/f4-mem.hpp"         // for F4Mem
-
-#include "m2tbb.hpp"
-
 #include "ARingElem.hpp"
 
 class Ring;
