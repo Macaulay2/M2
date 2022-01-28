@@ -31,7 +31,7 @@ enum spair_type {
   F4_SPAIR_ELEM
 };
 
-struct poly : public our_new_delete
+struct GBF4Polynomial : public our_new_delete
 {
   int len;
   CoeffVector coeffs;
@@ -59,7 +59,7 @@ struct spair : public our_new_delete
 
 struct gbelem : public our_new_delete
 {
-  poly f;
+  GBF4Polynomial f;
   int deg;
   int alpha;  // the homogenizing degree
   gbelem_type minlevel;

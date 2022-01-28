@@ -1,0 +1,15 @@
+-- -*- M2-comint -*- hash: -968680977
+
+i1 : x = pythonValue "range(3)"
+
+o1 = range(0, 3)
+
+o1 : PythonObject of class range
+
+i2 : i = iter x
+
+o2 = <range_iterator object at 0x7f3350e77990>
+
+o2 : PythonObject of class range_iterator
+
+i3 : 

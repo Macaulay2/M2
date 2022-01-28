@@ -1,6 +1,8 @@
 --		Copyright 1995-2002 by Daniel R. Grayson and Michael Stillman
 -- methods of "map" with a RawMatrix replace "getMatrix", which was a private function
 
+needs "modules.m2"
+
 oops := R -> error (
      if degreeLength R === 1
      then "expected degree to be an integer or list of integers of length 1"

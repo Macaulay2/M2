@@ -1,7 +1,6 @@
 SHARED_UNITTEST_CCFILES := \
   testMain \
     M2-cpp-replacement \
-    M2mem-replacement \
     basics-test \
     fromStream
 
@@ -48,7 +47,7 @@ E_OBJECT_FILES := $(addsuffix .o, $(E_FILES) $(F4_FILES))
 UNITTEST_FILES := $(UNITTEST_CCFILES) $(UNITTEST_CFILES)
 UNITTEST_SHARED_FILES := $(SHARED_UNITTEST_CCFILES) $(SHARED_UNITTEST_CFILES)
 
-UNITTEST_OBJECT_FILES :=  $(addsuffix .o, $(UNITTEST_FILES))
+UNITTEST_OBJECT_FILES :=  $(addsuffix .o, $(UNITTEST_FILES)) ../../d/M2mem.o ../../d/memdebug.o ../../d/debug.o
 UNITTEST_SHARED_OBJECT_FILES :=  $(addsuffix .o, $(UNITTEST_SHARED_FILES))
 
 

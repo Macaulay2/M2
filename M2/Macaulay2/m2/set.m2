@@ -1,5 +1,7 @@
 -- Copyright 1994 by Daniel R. Grayson
 
+needs "methods.m2"
+
 VirtualTally.synonym = "virtual tally"
 Tally.synonym = "tally"
 Set.synonym = "set"
@@ -78,7 +80,7 @@ product Set := s -> product toList s
 
 unique = method(Dispatch => Thing, TypicalValue => List)
 unique Sequence := x -> unique toList x
-unique List := x -> (
+unique VisibleList := x -> (
      -- old faster way: keys set x
      -- new way preserves order:
      seen := new MutableHashTable;

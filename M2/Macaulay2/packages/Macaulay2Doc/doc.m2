@@ -152,6 +152,7 @@ document {
     (symbol*,  RingElement, RingElement),
     (symbol*,  Thing, List),
     (symbol*,  ZZ, ProjectiveHilbertPolynomial),
+    (symbol*,  ProjectiveHilbertPolynomial, ZZ),
     (symbol*,  RingElement, Vector)
 	  },
      Headline => "a binary operator, usually used for multiplication",
@@ -213,12 +214,7 @@ document {
      	       integers ", TT "m", " and ", TT "n", " by logical 'and'."}
 	  },
      EXAMPLE "(2^15 + 2^13 + 2^42) & (2^15 + 2^23 + 2^42) == 2^15 + 2^42",
-     SeeAlso => {(symbol |,ZZ,ZZ),xor}
-     }
-
-document {
-     Key => symbol ^^,
-     Headline => "a binary operator"
+     SeeAlso => {(symbol |,ZZ,ZZ),(symbol ^^,ZZ,ZZ)}
      }
 
 undocumented {
@@ -230,6 +226,8 @@ document {
 	  (symbol +, ChainComplexMap, ChainComplexMap),
 	  (symbol +, Number, InfiniteNumber),
 	  (symbol +, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
+	  (symbol +, ZZ, ProjectiveHilbertPolynomial),
+	  (symbol +, ProjectiveHilbertPolynomial, ZZ),
 	  (symbol +, MonomialIdeal, MonomialIdeal),
 	  (symbol +,CC),
 	  (symbol +,CC,CC),
@@ -316,6 +314,8 @@ document {
 	  (symbol -, ChainComplexMap, ChainComplexMap),
 	  (symbol -, Minus),
 	  (symbol -, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
+	  (symbol -, ProjectiveHilbertPolynomial, ZZ),
+	  (symbol -, ZZ, ProjectiveHilbertPolynomial),
 	  (symbol -, Number, InfiniteNumber),
 	  (symbol -, RingElement, GradedModuleMap),
 	  (symbol -, GradedModuleMap),
@@ -656,7 +656,7 @@ document {
      	       integers ", TT "m", " and ", TT "n", " by logical 'or'."}
 	  },
      EXAMPLE "2^42 | 2^15 == 2^42 + 2^15",
-     SeeAlso => {(symbol &,ZZ,ZZ),xor}
+     SeeAlso => {(symbol &,ZZ,ZZ),(symbol ^^,ZZ,ZZ)}
      }
 
 document {
@@ -819,6 +819,7 @@ document {
 document {
      Key => { symbol ==,
 	  (symbol==, Matrix, Matrix), (symbol==, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
+	  (symbol==, ZZ, ProjectiveHilbertPolynomial), (symbol==, ProjectiveHilbertPolynomial, ZZ),
 	  (symbol==, ChainComplex, ChainComplex), (symbol==, RingElement, RingElement), (symbol==, GradedModuleMap, GradedModuleMap),
 	  (symbol==, Ideal, Ideal), (symbol==, MutableMatrix, MutableMatrix), (symbol ==,Boolean,Boolean),
 	  (symbol ==,CC,CC), (symbol ==,CC,QQ), (symbol ==,CC,RR), (symbol ==,CC,ZZ), (symbol ==,Matrix,Number),

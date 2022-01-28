@@ -1,0 +1,39 @@
+-- -*- M2-comint -*- hash: -1691897374
+
+i1 : math = import "math"
+
+o1 = <module 'math' (built-in)>
+
+o1 : PythonObject of class module
+
+i2 : pysqrt = toFunction math@@sqrt
+
+o2 = pysqrt
+
+o2 : FunctionClosure
+
+i3 : pysqrt 2
+
+o3 = 1.4142135623730951
+
+o3 : PythonObject of class float
+
+i4 : int = toFunction pythonValue "int"
+
+o4 = int
+
+o4 : FunctionClosure
+
+i5 : int("deadbeef", "base" => 16)
+
+o5 = 3735928559
+
+o5 : PythonObject of class int
+
+i6 : math@@cos pi
+
+o6 = -1.0
+
+o6 : PythonObject of class float
+
+i7 : 

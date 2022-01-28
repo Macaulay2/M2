@@ -3,6 +3,13 @@
 --   set debugLevel = 77 for debug information
 --   see processAlgorithm for a set of TODO items
 
+needs "computations.m2"
+needs "matrix1.m2"
+needs "modules.m2"
+needs "printing.m2" -- for unbag
+needs "quotient.m2"
+needs "rings.m2"
+
 -----------------------------------------------------------------------------
 -- Local variables
 -----------------------------------------------------------------------------
@@ -62,7 +69,7 @@ stoppingOptionDefaults := new OptionTable from {
     -- StepLimit, maybe
     }
 
--- used here by gb and in matrix3.m2
+-- used here by gb and in pushforward.m2
 gbDefaults = merge(computationOptionDefaults, stoppingOptionDefaults, x -> error "overlap")
 
 notForSyz   := set { Syzygies, ChangeMatrix, CodimensionLimit, Hilbert, StopWithMinimalGenerators, SubringLimit }
@@ -96,7 +103,7 @@ toEngineNat  := n -> if n === infinity then -1 else n
 ---------------------------
 
 -- also used in res.m2 and tests/engine/raw-gb.m2
-isComputationDone = c -> if RawStatusCodes#?c then "done" === RawStatusCodes#c else error "unknown computation status code"
+isComputationDone ZZ := {} >> o -> c -> if RawStatusCodes#?c then "done" === RawStatusCodes#c else error "unknown computation status code"
 
 processStrategy := strategies -> sum(flatten {strategies}, strategy ->
     if RawStrategyCodes#?strategy then RawStrategyCodes#strategy else error "gb: unknown strategy encountered")
@@ -277,7 +284,7 @@ gbGetHilbertHint := (m, opts) -> (
 	if g.cache.?image then (
 	    M := g.cache.image;
 	    if M.cache.?poincare and checkHilbertHint m
-	    then poincare target g - M.cache.poincare)))
+	    then poincare target g - poincare M)))
 
 checkArgGB := m -> (
     R := ring target m;
@@ -486,17 +493,6 @@ markedGB(Matrix, Matrix) := GroebnerBasis => opts -> (leadterms, m) -> (
 -----------------------------------------------------------------------------
 -- miscellaneous
 -----------------------------------------------------------------------------
-
--- new functions from Mike, needing a bit of development
-
-installHilbertFunction = method()
-installHilbertFunction(Module, RingElement) := (M, hf) -> (
-    -- we need to place hf into the degree ring of M.
-    hf = substitute(hf, degreesRing M);
-    M.cache.poincare = hf;
-    )
-installHilbertFunction(Ideal, RingElement)  := (I, hf) -> installHilbertFunction(comodule I, hf)
-installHilbertFunction(Matrix, RingElement) := (m, hf) -> installHilbertFunction(cokernel m, hf)
 
 -- TODO: what is this? it is never used. Should it be removed?
 installGroebner = method()

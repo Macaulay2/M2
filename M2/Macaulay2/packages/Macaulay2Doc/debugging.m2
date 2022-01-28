@@ -557,6 +557,8 @@ document {
   Key => {
     methods,
    (methods, Command),
+   (methods, Manipulator),
+   (methods, Package),
    (methods, Sequence),
    (methods, Thing),
    (methods, ScriptedFunctor),
@@ -567,7 +569,7 @@ document {
      SYNOPSIS (
 	  Usage => "methods x",
 	  Inputs => {
-	       "x" => { ofClass{Function,Type,Keyword} }
+	       "x" => { ofClass{Function,Type,Keyword,Package} }
 	       },
 	  Outputs => {{
 		    ofClass VerticalList, " of those methods associated with ", TT "x"
@@ -607,7 +609,10 @@ document {
      global symbols for keys that appear to be storing references to
      methods.  Types that don't appear as values of global variables will
      not be examined, so perhaps not all methods will be found.",
-     SeeAlso => {(code, List)}
+     SeeAlso => {
+	 (options, ZZ), (code, ZZ), (code, List),
+	 (locate, List), (makeDocumentTag, List)
+	 }
      }
 
 document { Key => "backtrace",

@@ -44,7 +44,7 @@ newPackage ("VirtualResolutions",
 	 }
     )
 
-importFrom_Core { "printerr", "raw", "rawKernelOfGB" }
+importFrom_Core { "raw", "rawKernelOfGB" }
 importFrom_LinearTruncations { "gradedPolynomialRing" }
 
 export{

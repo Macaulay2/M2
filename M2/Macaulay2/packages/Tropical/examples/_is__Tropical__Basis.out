@@ -2,7 +2,7 @@
 
 i1 : QQ[x,y,z]
 
-o1 = QQ[x, y, z]
+o1 = QQ[x..z]
 
 o1 : PolynomialRing
 

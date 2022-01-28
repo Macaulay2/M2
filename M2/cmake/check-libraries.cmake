@@ -6,11 +6,11 @@
 ## - list NTL variables:        cmake -LA . | grep NTL
 ##    reconfigure NTL variables: cmake -U*NTL* .
 
-# These are the libraries linked with Macaulay2 in Macaulay2/{e,bin}/CMakeLists.txt
+# These are some of the libraries linked with Macaulay2 in Macaulay2/{d,e,bin}/CMakeLists.txt
+# Others, like TBB::tbb and Boost::regex, are linked as imported libraries in those files.
+# TODO: turn all these libraries into imported libraries and find incompatibilities another way.
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
-
-set(LIBRARIES_LIST MPSOLVE MATHICGB MATHIC MEMTAILOR FROBBY FACTORY FLINT NTL MPFI MPFR MP BDWGC LAPACK)
-set(LIBRARIES_LIST MPSOLVE MATHICGB MATHIC MEMTAILOR FROBBY FACTORY FLINT NTL MPFI MPFR MP BDWGC LAPACK TBB)
+set(LIBRARIES_LIST MPSOLVE FROBBY FACTORY FLINT NTL MPFI MPFR MP BDWGC LAPACK)
 set(LIBRARY_LIST   READLINE HISTORY GDBM ATOMICOPS)
 
 message(CHECK_START " Checking for existing libraries and programs")
@@ -71,7 +71,7 @@ foreach(lang IN ITEMS C CXX)
     get_filename_component(_libdir "${OpenMP_${_lib}_LIBRARY}" DIRECTORY)
     # TODO: remove when this is fixed: https://gitlab.kitware.com/cmake/cmake/-/issues/20934
     string(REGEX REPLACE "^lib" "" _lib "${_lib}")
-    set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} -L${_libdir} -l${_lib}")
+    set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} -L${_libdir} -Wl,-rpath,${_libdir} -l${_lib}")
   endforeach()
 endforeach()
 
@@ -109,6 +109,12 @@ foreach(var IN ITEMS FOUND ROOT INCLUDE_DIRS LIBRARY_DIRS LIBRARIES VERSION_OK)
 endforeach()
 
 ###############################################################################
+## Libraries we build as a part of engine
+#   memtailor	special purpose memory allocators	(needs googletest + thread)
+#   mathic	symbolic algebra data structures	(needs memtailor  + thread)
+#   mathicgb	signature Groebner bases library	(needs mathic     + thread, tbb)
+
+###############################################################################
 ## Libraries we can download and build:
 #   eigen3	C++ template library for linear algebra
 #   bdw-gc	Boehm-Demers-Weiser conservative C/C++ Garbage Collector
@@ -122,9 +128,6 @@ endforeach()
 #   cddlib	Double Description Method of Motzkin	(needs gmp)
 #   mpsolve	Multiprecision Polynomial SOLVEr	(needs gmp, mpfr)
 #   googletest	C++ unit-testing library
-#   memtailor	special purpose memory allocators	(needs googletest + thread)
-#   mathic	symbolic algebra data structures	(needs memtailor  + thread)
-#   mathicgb	signature Groebner bases library	(needs mathic     + thread, tbb)
 #   glpk	GNU Linear Programming Kit              (needs gmp)
 #   givaro	prime field and algebraic computations	(needs gmp)
 #  fflas_ffpack	Finite Field Linear Algebra Routines	(needs gmp, givaro + LAPACK)
@@ -141,9 +144,9 @@ find_package(MPSolve	3.2.0)
 find_package(Frobby	0.9.0)
 find_package(CDDLIB)  # 0.94m?
 find_package(GTest	1.10)
-find_package(Memtailor	1.0.0)
-find_package(Mathic	1.0.0)
-find_package(Mathicgb	1.0.0)
+#find_package(Memtailor 1.0.0)
+#find_package(Mathic    1.0.0)
+#find_package(Mathicgb  1.0.0)
 find_package(GLPK      4.59.0)
 
 pkg_search_module(FFLAS_FFPACK	IMPORTED_TARGET	fflas-ffpack>=2.4.3)
@@ -152,7 +155,7 @@ pkg_search_module(GIVARO	IMPORTED_TARGET	givaro>=4.1.1)
 
 set(LIBRARY_OPTIONS
   Eigen3 BDWGC MPIR MPFR MPFI NTL Flint Factory Frobby cddlib MPSolve
-  GTest Memtailor Mathic Mathicgb GLPK Givaro FFLAS_FFPACK)
+  GTest GLPK Givaro FFLAS_FFPACK)
 
 ###############################################################################
 ## Optional libraries:
@@ -169,7 +172,7 @@ if(WITH_SQL)
   list(APPEND LIBRARIES_LIST SQLite3)
 endif()
 if(WITH_PYTHON)
-  find_package(Python3 3.7 REQUIRED)
+  find_package(Python3 3.7 REQUIRED COMPONENTS Development)
   list(APPEND LIBRARIES_LIST Python3)
 endif()
 

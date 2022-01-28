@@ -45,9 +45,9 @@ binomial_ring::binomial_ring(const PolynomialRing * /* RR */)
 
 binomial_ring::~binomial_ring()
 {
-  deletearray(degrees);
-  deletearray(weights);
-  deleteitem(monstash);
+  freemem(degrees);
+  freemem(weights);
+  freemem(monstash);
 }
 
 void binomial_ring::remove_monomial(monomial &m) const
@@ -465,10 +465,10 @@ void binomial_s_pair_set::remove_lcm_list(s_pair_lcm_list *p)
     {
       s_pair_elem *thispair = p->pairs;
       p->pairs = thispair->next;
-      deleteitem(thispair);
+      freemem(thispair);
     }
   R->remove_monomial(p->lcm);
-  deleteitem(p);
+  freemem(p);
 }
 void binomial_s_pair_set::remove_pair_list(s_pair_degree_list *p)
 {
@@ -478,7 +478,7 @@ void binomial_s_pair_set::remove_pair_list(s_pair_degree_list *p)
       p->pairs = thislcm->next;
       remove_lcm_list(thislcm);
     }
-  deleteitem(p);
+  freemem(p);
 }
 binomial_s_pair_set::~binomial_s_pair_set()
 {
@@ -594,17 +594,17 @@ bool binomial_s_pair_set::next(const int *d,
       R->remove_monomial(_prev_lcm);
       _prev_lcm = thislcm->lcm;
       thislcm->lcm = NULL;
-      deleteitem(thislcm);
+      freemem(thislcm);
 
       if (thisdeg->pairs == NULL)
         {
           // Now we must remove this larger degree list
           _pairs->next = thisdeg->next;
-          deleteitem(thisdeg);
+          freemem(thisdeg);
         }
     }
 
-  deleteitem(s);
+  freemem(s);
   return true;
 }
 
@@ -759,14 +759,14 @@ binomialGB::monomial_list *binomialGB::ideal_quotient(monomial m) const
             if (find_divisor(result, p->m))
               {
                 R->remove_monomial(p->m);
-                deleteitem(p->tag);  // There is only one element at this point
-                deleteitem(p);
+                freemem(p->tag);  // There is only one element at this point
+                freemem(p);
               }
             else if ((r = find_divisor(currentresult, p->m)))
               {
                 gbmin_elem *p1 = new gbmin_elem(p->tag->elem, p->mask);
                 R->remove_monomial(p->m);
-                deleteitem(p);
+                freemem(p);
                 p1->next = r->tag;
                 r->tag = p1;
               }
@@ -787,7 +787,7 @@ binomialGB::monomial_list *binomialGB::ideal_quotient(monomial m) const
           }
         currentresult = NULL;
       }
-  deletearray(deglist);
+  freemem(deglist);
   return result;
 }
 
@@ -838,7 +838,7 @@ void binomialGB::remove_monomial_list(monomial_list *mm) const
       R->remove_monomial(mm->m);
       monomial_list *tmp = mm;
       mm = mm->next;
-      deleteitem(tmp);
+      freemem(tmp);
     }
 }
 
@@ -948,7 +948,7 @@ int binomialGB::n_masks() const
       if (!found) masks[nmasks++] = p->mask;
     }
   emit(o.str());
-  deleteitem(masks);
+  freemem(masks);
   return nmasks;
 }
 void binomialGB::debug_display() const
@@ -1015,16 +1015,16 @@ binomialGB_comp *binomialGB_comp::create(const Matrix *m,
 void binomialGB_comp::remove_gb()
 {
   int i;
-  deleteitem(Gmin);
-  deleteitem(Pairs);
+  freemem(Gmin);
+  freemem(Pairs);
   // remove each element of Gens
-  for (i = 0; i < Gens.size(); i++) deleteitem(Gens[i]);
+  for (i = 0; i < Gens.size(); i++) freemem(Gens[i]);
   // remove each element of G
-  for (i = 0; i < G.size(); i++) deleteitem(G[i]);
+  for (i = 0; i < G.size(); i++) freemem(G[i]);
   // The following is just to ease garbage collection
   for (i = 0; i < mingens.size(); i++) mingens[i] = NULL;
   for (i = 0; i < mingens_subring.size(); i++) mingens_subring[i] = NULL;
-  deleteitem(R);
+  freemem(R);
 }
 
 binomialGB_comp::~binomialGB_comp() { remove_gb(); }
@@ -1045,7 +1045,7 @@ void binomialGB_comp::enlarge(const PolynomialRing *newR, int *wts)
     R->translate_binomial(old_ring, Gens[i]->f);
   for (i = 0; i < G.size(); i++) R->translate_binomial(old_ring, G[i]->f);
 
-  deleteitem(old_ring);
+  freemem(old_ring);
 }
 
 void binomialGB_comp::add_generators(const Matrix *m)

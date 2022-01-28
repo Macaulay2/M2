@@ -22,6 +22,12 @@ document {
       	  "1.234e-20",
       	  "123+4*ii",
 	  },
+     "Integers may be entered in bases 2, 8, or 16 using particular prefixes.",
+     EXAMPLE {
+	  "0b10011010010 -- binary",
+	  "0o2322 -- octal",
+	  "0x4d2 -- hexadecimal",
+	  },
      "The usual arithmetic operations are available.",
      EXAMPLE {
 	  "4/5 + 2/3",
@@ -722,15 +728,6 @@ Plan for the next node:
 -*
 leadTerm(ZZ,RingElement) := (n,f) -> (leadTerm(n,matrix{{f}}))_(0,0)
   -- leadTerm should call a ggleadterm routine?  DO THIS
-*-
-     
--*
-installHilbertFunction = method()
-installHilbertFunction(Module,RingElement) := (M,hf) -> (
-     -- we need to place hf into the degree ring of M.
-     hf = substitute(hf,degreesRing M);
-     M.cache.poincare = hf;
-     )
 *-
 
 -*

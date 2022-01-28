@@ -85,7 +85,7 @@ inline void DMatLUinPlace<M2::ARingGFFlintBig>::computeLU()
   mPerm.clear();
   for (long i = 0; i < mLU.numRows(); i++) mPerm.push_back(perm[i]);
   mSign = (_perm_parity(perm, mLU.numRows()) == 0);
-  deletearray(perm);
+  freemem(perm);
 
   // Now we set mPivotColumns
   LUUtil<RingType>::computePivotColumns(mLU, mPivotColumns);
@@ -104,7 +104,7 @@ inline void DMatLUinPlace<M2::ARingGFFlint>::computeLU()
   mPerm.clear();
   for (long i = 0; i < mLU.numRows(); i++) mPerm.push_back(perm[i]);
   mSign = (_perm_parity(perm, mLU.numRows()) == 0);
-  deletearray(perm);
+  freemem(perm);
 
   // Now we set mPivotColumns
   LUUtil<RingType>::computePivotColumns(mLU, mPivotColumns);
@@ -339,8 +339,8 @@ inline void DMatLUinPlace<M2::ARingRR>::computeLU()
   LUUtil<RingType>::computePivotColumns(mLU, mPivotColumns);
   mIsDone = true;
 
-  deletearray(perm);
-  deletearray(copyA);
+  freemem(perm);
+  freemem(copyA);
 }
 
 template <>
@@ -408,8 +408,8 @@ inline void DMatLUinPlace<M2::ARingCC>::computeLU()
   LUUtil<RingType>::computePivotColumns(mLU, mPivotColumns);
   mIsDone = true;
 
-  deletearray(perm);
-  deletearray(copyA);
+  freemem(perm);
+  freemem(copyA);
 }
 
 template <class RingType>

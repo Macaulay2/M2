@@ -134,7 +134,7 @@ doubling_stash::~doubling_stash()
     {
       if (doubles[i] != NULL)
         emit("internal warning -- deleting a double stash");
-      deleteitem(doubles[i]);
+      freemem(doubles[i]);
     }
 }
 

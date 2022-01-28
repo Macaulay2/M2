@@ -1,6 +1,20 @@
 ###############################################################################
 ## This directory contains the rules for building M2-engine and M2-unit-tests
-## - run unit tests:  ctest -R unit-tests
+## memtailor, mathic, and mathicgb are also imported as subdirectories here
+## - run unit tests:  ctest -R unit-tests (includes mathicgb and friends)
+
+set(with_tbb true) # for mathicgb
+
+add_subdirectory(memtailor)
+add_subdirectory(mathic)
+add_subdirectory(mathicgb)
+
+if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging
+  add_compile_definitions(MEMT_DEBUG MATHIC_DEBUG MATHICGB_DEBUG)
+endif()
+
+###############################################################################
+## M2-engine sources
 
 # TODO: determine the fate of these files
 set(UNDETERMINED
@@ -97,7 +111,6 @@ set(CPPONLYFILES
   ntl-internal.cpp
   res-a2-gb.cpp
   ring-vecs.cpp
-
   interface/aring.cpp
   interface/aring.h
   interface/computation.h # no .cpp yet
@@ -344,7 +357,7 @@ target_include_directories(M2-engine PUBLIC
   $<INSTALL_INTERFACE:include/Macaulay2>)
 
 # TODO: make engine independent of interpreter headers
-target_link_libraries(M2-engine PUBLIC M2-interpreter)
+target_link_libraries(M2-engine PUBLIC M2-interpreter memtailor mathic mathicgb)
 
 if(EIGEN3_FOUND)
   target_link_libraries(M2-engine PUBLIC Eigen3::Eigen)
@@ -379,7 +392,7 @@ target_compile_options(M2-engine PRIVATE
 ## Export the target
 
 # TODO: change ARCHIVE to LIBRARY once M2-engine can be used independently
-install(TARGETS M2-engine EXPORT Macaulay2
+install(TARGETS M2-engine mathicgb mathic memtailor EXPORT Macaulay2
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/Macaulay2/lib
   COMPONENT devel EXCLUDE_FROM_ALL
   PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Macaulay2

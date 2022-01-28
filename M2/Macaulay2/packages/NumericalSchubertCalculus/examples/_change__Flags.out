@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- hash: -895766969
--- COMPILE TIME: May  9 2021, 16:10:46
 
 i1 : k=3; n=6;
 
@@ -43,7 +42,7 @@ i9 : FlagsF = F/last;
 i10 : FlagsG = G/last;
 
 i11 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
-     -- used 2.61738 seconds
+     -- used 1.67774 seconds
 
 o11 = {| .124063-.286284ii   .167867-.0639299ii  .295488-.366109ii   |, |
        | -.25181-.0448108ii  -.107521-.190275ii  -.0896067-.483543ii |  |
@@ -64,7 +63,7 @@ o11 : List
 i12 : assert all(S', s-> checkIncidenceSolution(s,G))
 
 i13 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), OneHomotopy=>false)
-     -- used 1.52701 seconds
+     -- used 1.29217 seconds
 
 o13 = {| -.226702-.119043ii  -.326452-.119841ii  .0929953-.230085ii |, |
        | -.229738+.0833434ii -.445398+.0639826ii .150646-.436884ii  |  |

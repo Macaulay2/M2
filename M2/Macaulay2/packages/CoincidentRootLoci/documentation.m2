@@ -275,7 +275,7 @@ Headline => "compute the complex rank",
 Usage => "complexrank F", 
 Inputs => {"F" => RingElement => {"a binary form ",TEX///$F\in K[x,y]$///," of degree ",TEX///$d$///,", where ",TEX///$K$///," is either ",TEX///$\mathbb{Q}$///,", or more generally a field"}},
 Outputs => {ZZ => {"the rank of ",TEX///$F$///,", i.e., the minimum integer ",TEX///$r$///," such that there is a decomposition ",TEX///$F = c_1\,(l_1)^d+\cdots+c_r\,(l_r)^d$///," where ",TEX///$l_1,\ldots,l_r\in\bar{K}[x,y]$///," are linear forms and ",TEX///$c_1,\ldots,c_r\in\bar{K}$///}},
-PARA{"This method provides a quick way to calculate the complex rank of a binary form as an application of the methods ",TO (apolar,RingElement,ZZ)," and ",TO (discriminant,RingElement),". But note that there is a very small, but non-zero, probability of obtaining a greater value."},
+PARA{"This method provides a quick way to calculate the complex rank of a binary form as an application of the methods ",TO (apolar,RingElement,ZZ)," and ",TO (discriminant,RingElement),"."},
 EXAMPLE {"R := QQ[x,y];","F = 325699392019820093805938500473136959995883*x^11-5810907570924644857232186920803498012892938*x^10*y+65819917752061707843768328400359649501719860*x^9*y^2-519457154316395169830396776661486079064173600*x^8*y^3+1705429425321816258526777767700378341505324800*x^7*y^4-3810190868583760635545828188931628645390528000*x^6*y^5+9250941324308079844692884039573393626015320480*x^5*y^6-9323164714263069666482962682446368124512793200*x^4*y^7+1072684515031339121680779290598231336889158000*x^3*y^8-66208958025372412656331871291180685863962950*x^2*y^9-3357470237827984950448384820635661305324565*x*y^10+2036327846200712576945384935680953020530520*y^11","complexrank F"},
 SeeAlso => {realrank}}
 document { 

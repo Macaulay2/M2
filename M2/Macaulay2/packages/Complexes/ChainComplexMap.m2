@@ -38,7 +38,7 @@ map(Complex, Complex, HashTable) := ComplexMap => opts -> (tar, src, maps) -> (
         symbol cache => new CacheTable
         }
     )
-map(Complex, Complex, List) := opts -> (tar, src, maps) -> (
+map(Complex, Complex, List) := ComplexMap => opts -> (tar, src, maps) -> (
     -- case 1: maps is a (single) list of matrices (maps between components of the complex)
     -- case 2: maps is a double list of ComplexMap's
     --    in this case, if the maps all commute with differentials, and are diagonal, then
@@ -309,10 +309,6 @@ ComplexMap == ZZ := Boolean => (f,n) -> (
 ZZ == ComplexMap := Boolean => (n,f) -> f == n
 
 RingElement * ComplexMap := (r,f) -> (
-    -- remark: if isInCenter(RingElement) is implemented,
-    -- we could use that here to recognize commutativity
-    -- in that case, replace 'isCommutative ring f' with 'isInCenter r'
-    -- and simplify '- ComplexMap' by removing the cache test and assignment.
     df := degree f;
     (lo,hi) := (source f).concentration;
     maps := hashTable for i from lo to hi list i => (
@@ -325,9 +321,27 @@ RingElement * ComplexMap := (r,f) -> (
     result
     )
 
+ComplexMap * RingElement := (f,r) -> (
+    df := degree f;
+    (lo,hi) := (source f).concentration;
+    maps := hashTable for i from lo to hi list i => (
+        h := f_i * r;
+        if h == 0 then continue else h
+        );
+    result := map(target f, source f, maps, Degree=>df);
+    if isCommutativeCached f and isCommutative ring f then
+        result.cache.isCommutative = true;
+    result
+    )
+
 Number * ComplexMap := (r,f) -> (
     try r = promote(r,ring f) else error "can't promote scalar to ring of complex homomorphism";
     r * f
+    )
+
+ComplexMap * Number := (f,r) -> (
+    try r = promote(r,ring f) else error "can't promote scalar to ring of complex homomorphism";
+    f * r
     )
 
 - ComplexMap := (f) -> (
@@ -521,13 +535,13 @@ part(List, ComplexMap) := ComplexMap => (deg, f) -> (
     )
 part(ZZ, ComplexMap) := ComplexMap => (deg, f) -> part({deg}, f)
 
-truncate(List, ComplexMap) := ComplexMap => (e, f) -> (
+truncate(List, ComplexMap) := ComplexMap => {} >> o -> (e, f) -> (
     C := truncate(e, source f);
     D := truncate(e, target f);
     d := degree f;
     map(D, C, i -> map(D_(i+d), C_i, truncate(e, f_i)), Degree => d)
     )
-truncate(ZZ, ComplexMap) := ComplexMap => (e, f) -> truncate({e}, f)
+truncate(ZZ, ComplexMap) := ComplexMap => {} >> o -> (e, f) -> truncate({e}, f)
 
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------
@@ -539,7 +553,6 @@ prune ComplexMap := ComplexMap => opts -> f -> (
     D := target f;
     if not D.cache.?pruningMap then f = (minimalPresentation D).cache.pruningMap^-1 * f;
     f
-    --map(minimalPresentation target f, minimalPresentation source f, k -> minimalPresentation f_k)
     )
 
 homology(ZZ,ComplexMap) := Matrix => opts -> (i,f) -> (
@@ -683,7 +696,7 @@ randomComplexMap(Complex, Complex) := ComplexMap => o -> (D,C) -> (
 --------------------------------------------------------------------
 -- tensor products -------------------------------------------------
 --------------------------------------------------------------------
-tensor(ComplexMap, ComplexMap) := ComplexMap => opts -> (f,g) -> (
+tensor(ComplexMap, ComplexMap) := ComplexMap => {} >> opts -> (f,g) -> (
     -- f : C1 --> C2, g : D1 --> D2
     -- f**g : C1**D1 --> C2**D2
     -- (f**g)_i : sum_j(C1_j ** D1_(i-j) --> C2_(j+df) ** D2_(i-j+dg))
@@ -743,11 +756,11 @@ Ring ** ComplexMap := ComplexMap => (R,f) -> f ** R
 RingMap ComplexMap := ComplexMap => (phi,f) ->
     map(phi target f, phi source f, i -> phi f_i)
 
-tensor(RingMap, ComplexMap) := ComplexMap => opts -> (phi, f) -> (
+tensor(RingMap, ComplexMap) := ComplexMap => {} >> opts -> (phi, f) -> (
     if source phi =!= ring f then error "expected the source of the ring map to be the ring of the complex map";
     map(tensor(phi, target f), tensor(phi, source f), i -> tensor(phi, matrix f_i))
     )
-tensor(ComplexMap, RingMap) := ComplexMap => opts -> (f, phi) -> tensor(phi, f)
+tensor(ComplexMap, RingMap) := ComplexMap => {} >> opts -> (f, phi) -> tensor(phi, f)
 
 RingMap ** ComplexMap := ComplexMap => (phi, f) -> tensor(phi, f)
 ComplexMap ** RingMap := ComplexMap => (f, phi) -> tensor(phi, f)
@@ -1153,7 +1166,7 @@ tensorCommutativity(Complex, Complex) := ComplexMap => (C,D) -> (
               b := ba#0; -- summand D_b ** C_(i-b)
               -- should be the zero map, unless a+b == i
               if a+b === i then 
-                  tensorCommutativity(C_a, D_b)
+                  (-1)^(a*b) * tensorCommutativity(C_a, D_b)
               else map(
                   DC_i.cache.components#(DC_i.cache.indexComponents#ba),
                   CD_i.cache.components#(CD_i.cache.indexComponents#ab),
@@ -1242,14 +1255,17 @@ liftMapAlongQuasiIsomorphism(ComplexMap, ComplexMap) := (alpha,beta) -> (
     gamma = hashTable for i from loP to hiP list i => gamma#i;
     h = hashTable for i from loP to hiP list i => h#i;
     gamma1 := map(M, P, gamma);
-    gamma1.cache.homotopy = map(N, P, h, Degree => 1);
+    gamma1.cache.homotopyMap = map(N, P, h, Degree => 1);
     gamma1
     )
 ComplexMap // ComplexMap := (alpha, beta) -> liftMapAlongQuasiIsomorphism(alpha, beta)
 quotient(ComplexMap, ComplexMap) := opts -> (alpha, beta) -> liftMapAlongQuasiIsomorphism(alpha, beta)
 
 homotopyMap = method()
-homotopyMap ComplexMap := ComplexMap => f -> f.cache.homotopy
+homotopyMap ComplexMap := ComplexMap => f -> (
+    if not f.cache.?homotopyMap then error "expected a complex map created by 'liftMapAlongQuasiIsomorphism'";
+    f.cache.homotopyMap
+    )
 --------------------------------------------------------------------
 -- short exact sequences -------------------------------------------
 --------------------------------------------------------------------
@@ -1346,8 +1362,8 @@ horseshoeResolution Complex := Sequence => opts -> ses -> (
     N := ses_2;
     -- the following will have correct length, since 
     -- they have been constructed during yonedaMap.
-    FM := freeResolution M;
-    FN := freeResolution N;
+    FM := freeResolution(M, LengthLimit => opts.LengthLimit);
+    FN := freeResolution(N, LengthLimit => opts.LengthLimit);
     HS := complex hashTable for i from 1 to length FM list (
       i => map(FN_(i-1) ++ FM_(i-1), 
              FN_i ++ FM_i, 
@@ -1367,7 +1383,7 @@ connectingExtMap(Module, Matrix, Matrix) := ComplexMap => opts -> (M, g, f) -> (
     connectingMap(Hom(F, g), Hom(F, f), opts)
     )
 connectingExtMap(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
-    (g',f') := horseshoeResolution(g,f);
+    (g', f') := horseshoeResolution(g, f);
     G := freeResolution N;
     -- TODO: the indexing on opts.Concentration needs to be negated
     connectingMap(Hom(f', G), Hom(g', G), opts)

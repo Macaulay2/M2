@@ -14,8 +14,8 @@ Makefile: Makefile.in ; cd ../.. && ./config.status Macaulay2/m2/Makefile
 .SUFFIXES: .m2
 .PHONY: html initialize prep tags install-tmp
 # there is a parallel list of tutorials in overview3.m2
-DUMPEDM2FILES := setup.m2 startup.m2
-DUMPEDM2SRCFILES := setup.m2 startup.m2.in
+DUMPEDM2FILES := Core.m2 startup.m2
+DUMPEDM2SRCFILES := Core.m2 startup.m2.in
 DUMPEDM2DOCFILES := \
 		@srcdir@/../packages/Macaulay2Doc/*.m2 \
 		@srcdir@/../packages/Macaulay2Doc/functions/*.m2 \
@@ -68,7 +68,6 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		@srcdir@/../packages/SimpleDoc/doc.txt \
 		loadsequence \
 		Makefile.in \
-		Makefile.tests \
 		../editors/Makefile.in \
 		../tests/Makefile.in \
 		../tests/Makefile.test.in \

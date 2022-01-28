@@ -3,18 +3,17 @@
 --- notes: Mike will make this work for rings
 
 document { 
-     Key =>{binomial, (binomial,ZZ,ZZ)},
+     Key =>{binomial, (binomial,ZZ,ZZ), (binomial,RingElement,ZZ)},
 	Headline => "binomial coefficient",
 	Usage => "binomial(n,k)",
 	Inputs => {
-		"n" => ZZ,
+		"n" => {ofClass{ZZ,RingElement}},
 		"k" => ZZ => ", must be non-negative"
 		},
-	Outputs => {{"the binomial coefficient, the coefficient of ", TT "x^k", " in ", TT "(1+x)^n"}
+	Outputs => {{"the binomial coefficient, the coefficient of ", TEX "$x^k$", " in ", TEX "$(1+x)^n$",
+		" or ", TEX "$n(n-1)...(n-k+1)/k!$" }
 		},
      EXAMPLE {"binomial(13,6)",
 	      "binomial(-1,3)"},
-     Caveat => {"Doesn't do polynomials, things like ", TT "binomial(x,3)", 
-	             " where ", TT "x", " is an element of a ring other than", TT " ZZ"},
      SeeAlso => {}
      }

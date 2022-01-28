@@ -110,8 +110,9 @@ quickEliminate1 = (elimindices,I) -> (
    -- to eliminate.
    (toR1,toR) := eliminationRing(elimindices,ring I);
    J := toR1 I;
-   if isHomogeneous I then
-      (cokernel generators J).cache.poincare = poincare cokernel generators I;
+   -- cache poincare
+   if isHomogeneous I then poincare J = poincare I;
+   -- compare with eliminate1 from Elimination
    ideal mingens ideal toR selectInSubring(1,generators computeGB J)
 )
 

@@ -124,7 +124,7 @@ symbolsForRouge = template -> (
 
 pygmentsformat = symlist -> demark("," | newline | "    ", format \ symlist)
 symbolsForPygments = template -> (
-    output := concatenate("# ", banner, newline, newline, template);
+    output := replace("@M2BANNER@", "# " | banner, template);
     output = replace("@M2VERSION@",   version#"VERSION",        output);
     output = replace("@M2KEYWORDS@",  pygmentsformat KEYWORDS,  output);
     output = replace("@M2DATATYPES@", pygmentsformat DATATYPES, output);

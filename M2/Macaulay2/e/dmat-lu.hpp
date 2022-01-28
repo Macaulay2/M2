@@ -380,9 +380,9 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
           if (!ring().is_zero(tmp))
             {
               // Cleanup, and return false
-              deletearray(b);
-              deletearray(y);
-              deletearray(x);
+              freemem(b);
+              freemem(y);
+              freemem(x);
               ring().clear(tmp);
               ring().clear(tmp2);
               // printf("returning false\n");
@@ -424,9 +424,9 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
   for (size_t i = 0; i < LU.numRows(); i++) ring().clear(b[i]);
   for (size_t i = 0; i < rk; i++) ring().clear(y[i]);
   for (size_t i = 0; i < LU.numColumns(); i++) ring().clear(x[i]);
-  deletearray(b);
-  deletearray(y);
-  deletearray(x);
+  freemem(b);
+  freemem(y);
+  freemem(x);
   return true;  // The system seems to have been consistent
 }
 

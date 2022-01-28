@@ -47,7 +47,31 @@ needs "./MonodromySolver/Documentation.m2"
 end
 
 restart
+load "./MonodromySolver.m2"
 check "MonodromySolver"
+vars(x,y,a)
+f=gateSystem(gateMatrix{{a}}, gateMatrix{{x,y}}, transpose gateMatrix{{x^2-a^2, x-a, y-1}})
+a0 = point{{2.0}}
+xy0 = point{{2.0,1.0}}
+debug MonodromySolver
+squareDown(a0,xy0,f)
+
+elapsedTime load "monodromy-rotary.m2"
+setRandomSeed 0
+(p0,x0)=seedNewton(G, Iterations=>infinity)
+
+elapsedTime load "monodromy-rotary.m2"
+setRandomSeed 0
+(p0,x0)=seedNewton(G, Iterations=>infinity)
+debug MonodromySolver
+(p0,x0)=newtonHomotopy(G)
+
+
+areEqual(0, norm evaluate(G, point((random CC) * matrix p0), x0))
+assert(norm evaluate(G,point p0,point x0) < 1e-6)
+assert(S:=first SVD evaluateJacobian(G, p0, x0); min S > 1e-6)
+elapsedTime V=first monodromySolve(G, p0, {x0}, Verbose=>true)
+
 
 uninstallPackage "MonodromySolver"
 restart

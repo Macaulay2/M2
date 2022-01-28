@@ -69,8 +69,8 @@ set(DLIST
   equality.dd
   hashtables.dd
   regex.dd
-  sets.dd
   evaluate.d
+  sets.dd
   mysql.d	# removed unless WITH_SQL
   mysqldummy.d	# removed if WITH_SQL
   pthread.d
@@ -139,7 +139,7 @@ add_library(M2-interpreter OBJECT ${CLIST} ${CXXLIST} ${TAGS}
   $<$<BOOL:${WITH_XML}>:xml-c.c xml-c.h>
   $<$<BOOL:${WITH_PYTHON}>:python-c.c>)
 
-target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex)
+target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex TBB::tbb)
 
 target_include_directories(M2-interpreter
   PUBLIC
@@ -147,12 +147,18 @@ target_include_directories(M2-interpreter
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e> # need newdelete.hpp
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/c> # need scc-core.h
     $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/Macaulay2/d>
+    # for version.dd to get version numbers
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e/mathic>
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e/memtailor>
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Macaulay2/e/mathicgb>
+    # for libraries that the interpreter needs
     $<BUILD_INTERFACE:${READLINE_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${LIBXML2_INCLUDE_DIR}>
+    $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>
     $<INSTALL_INTERFACE:include/Macaulay2>
+    $<$<BOOL:${WITH_PYTHON}>:$<BUILD_INTERFACE:${Python3_INCLUDE_DIRS}>>
   PRIVATE
     ${SQLite3_INCLUDE_DIRS}
-    ${Python3_INCLUDE_DIRS}
   )
 
 # TODO: Including most of these is only necessary because of version.dd

@@ -21,7 +21,7 @@ void F4toM2Interface::from_M2_vec(const VectorArithmetic* VA,
                                   const MonomialInfo *MI,
                                   const FreeModule *F,
                                   vec v,
-                                  poly &result)
+                                  GBF4Polynomial &result)
 {
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
   const Monoid *M = R->getMonoid();
@@ -59,7 +59,7 @@ void F4toM2Interface::from_M2_vec(const VectorArithmetic* VA,
 void F4toM2Interface::poly_set_degrees(const VectorArithmetic* VA,
                                        const MonomialInfo *MI,
                                        const M2_arrayint wts,
-                                       const poly &f,
+                                       const GBF4Polynomial &f,
                                        int &deg_result,
                                        int &alpha)
 {
@@ -95,7 +95,7 @@ void F4toM2Interface::from_M2_matrix(const VectorArithmetic* VA,
 
 vec F4toM2Interface::to_M2_vec(const VectorArithmetic* VA,
                                const MonomialInfo *MI,
-                               const poly &f,
+                               const GBF4Polynomial &f,
                                const FreeModule *F)
 {
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();

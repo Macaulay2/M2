@@ -16,7 +16,7 @@ Version => "0.3", Date => "August 11th, 2019", Authors => {
      Email => "cjamesbott@gmail.com"}
 }, --this file is in the public domain
 Keywords => {"Commutative Algebra"},
-Headline => "rational maps between varieties", PackageImports => {"FastLinAlg"})
+Headline => "rational maps between varieties", PackageImports => {"FastMinors"})
 export{
 	"isBirationalMap",
 	"idealOfImageOfMap",
@@ -1350,7 +1350,7 @@ document{
     [mapOntoImage, QuickRank]
     },
     Headline=>" An option for computing how rank is computed",
-            "If set to true, then checking if rank is at least a certain number will be computed via the package", TT "FastLinAlg",
+            "If set to true, then checking if rank is at least a certain number will be computed via the package", TT "FastMinors",
     SeeAlso=>
         inverseOfMap
 }

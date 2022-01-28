@@ -66,6 +66,8 @@ document {
      "We intend to add parsing precedences to this table and eliminate ", TO "seeParsing", "."
      }
 
+undocumented {(value, RingElement), (value, Nothing), (value, IndexedVariableTable)}
+
 document {
      Key => value,
      Headline => "evaluate"
@@ -610,24 +612,6 @@ document {
      SeeAlso => { "oo", "ooo" }
      }
 
-document {
-     Key => {locate,(locate, Pseudocode), (locate, Function), (locate, Sequence), (locate, Symbol), (locate, Nothing)},
-     Headline => "locate source code",
-     TT "locate f", " -- for a symbol interpreted function ", TT "f", "
-     returns a sequence ", TT "(n,i,c,j,d,k,e)", " describing the location of
-     the definition in the source code.  The name of the source file
-     is ", TT "n", " and the code is occupies line ", TT "i", " column ", TT "c", "
-     through line ", TT "j", " column ", TT "d", ", with the central point of interest
-     located at line ", TT "k", " column ", TT "e", ".  If the function ", TT "f", " is compiled,
-     then the location is not available, and ", TO "null", " is returned.",
-     PARA{},
-     "If ", TT "f", " is a sequence, then ", TO "lookup", " is applied
-     first, and then the location of the resulting function is provided.",
-     PARA{},
-     "If ", TT "f", " is ", TO "null", ", then ", TO "null", " is returned."
-     }
-
-
 -- document {
 --      Key => precedence,
 --      Headline => "parsing precedence",
@@ -705,7 +689,7 @@ document {
      }
 
 document {
-     Key => {memoize,(memoize, Function),(memoize, Function, List)},
+     Key => {memoize,(memoize, Function),(memoize, Function, List), memoizeClear, memoizeValues},
      Headline => "record results of function evaluation for future use",
      TT "memoize f", " -- produces, from a function ", TT "f", ", a new function that
      behaves the same as ", TT "f", ", but remembers previous answers to be provided
@@ -718,25 +702,34 @@ document {
      time fib 28
      time fib 28
      ///,
-     PARA{},
-     "The function ", TT "memoize", " operates by constructing
-     a ", TO "MutableHashTable", " in which the argument sequences are used
-     as keys for accessing the return value of the function.",
-     PARA{},
-     "An optional second argument to memoize provides a list of initial values,
-     each of the form ", TT "x => v", ", where ", TT "v", " is the value to
-     be provided for the argument ", TT "x", ".",
-     PARA{},
-     "Warning: when the value returned by ", TT "f", " is ", TO "null", ", it will always be
-     recomputed, even if the same arguments are presented.",
-     PARA{},
-     "Warning: the new function created by ", TT "memoize", " will save
-     references to all arguments and values it encounters, and this will
-     often prevent those arguments and values from being garbage-collected
-     as soon as they might have been.  If the arguments are
-     implemented as mutable hash tables (modules, matrices and rings are
-     implemented this way) then a viable strategy is to stash computed
-     results in the arguments themselves.  See also ", TT "CacheTable", "."
+     PARA{
+	  "An optional second argument to memoize provides a list of initial values,
+	  each of the form ", TT "x => v", ", where ", TT "v", " is the value to
+	  be provided for the argument ", TT "x", "."
+	  },
+     PARA{
+	  "The function ", TT "memoize", " operates by constructing
+	  a ", TO "MutableHashTable", ", in which the arguments are used
+	  as keys for accessing the return value of the function.  This mutable hash table
+	  can be obtained using the function ", TT "memoizeValues", ", as follows."
+	  },
+     EXAMPLE "peek memoizeValues fib",
+     PARA {
+	  "That hash table can be replaced by an empty one with the function ", TT "memoizeClear", "."
+	  },
+     EXAMPLE lines ///
+     memoizeClear fib
+     peek memoizeValues fib
+     ///,
+     PARA{
+	  "Warning: the new function created by ", TT "memoize", " will save
+	  references to all arguments and values it encounters, and this will
+	  often prevent those arguments and values from being garbage-collected
+	  as soon as they might have been.  If the arguments are
+	  implemented as mutable hash tables (modules, matrices and rings are
+	  implemented this way) then a viable strategy is to stash computed
+	  results in the arguments themselves.  See also ", TT "CacheTable", "."
+	  },
      }
 
 document {

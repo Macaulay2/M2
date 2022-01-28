@@ -65,20 +65,20 @@ const ARingTower *ARingTower::create(const ARingTower &R,
 // Allocation /////
 ///////////////////
 // TODO: what is the contract here???!!
-poly ARingTower::alloc_poly_n(int deg) const
+ARingPolynomial ARingTower::alloc_poly_n(int deg) const
 // if elems == 0, then set all coeffs to 0.
 {
-  poly result = new poly_struct;
-  result->polys = new poly[deg + 1];
+  ARingPolynomial result = new ARingPolynomialStruct;
+  result->polys = new ARingPolynomial[deg + 1];
   result->deg = deg;
   result->len = deg + 1;
   for (int i = 0; i <= deg; i++) result->polys[i] = 0;
   return result;
 }
 
-poly ARingTower::alloc_poly_0(int deg) const
+ARingPolynomial ARingTower::alloc_poly_0(int deg) const
 {
-  poly result = new poly_struct;
+  ARingPolynomial result = new ARingPolynomialStruct;
   result->coeffs = new ARingZZpFFPACK::ElementType[deg + 1];
   result->deg = deg;
   result->len = deg + 1;
@@ -86,7 +86,7 @@ poly ARingTower::alloc_poly_0(int deg) const
   return result;
 }
 
-void ARingTower::dealloc_poly(poly &f) const
+void ARingTower::dealloc_poly(ARingPolynomial &f) const
 // only f is freed, not any pointers in the array of f
 {
   if (f == 0) return;
@@ -95,7 +95,7 @@ void ARingTower::dealloc_poly(poly &f) const
   f = 0;
 }
 
-void ARingTower::clear(int level, poly &f) const
+void ARingTower::clear(int level, ARingPolynomial &f) const
 // free all space associated to f, set f to 0.
 {
   if (f == 0) return;
@@ -113,7 +113,7 @@ void ARingTower::clear(int level, poly &f) const
   f = 0;
 }
 
-void ARingTower::reset_degree(poly &f) const
+void ARingTower::reset_degree(ARingPolynomial &f) const
 {
   if (f == 0) return;
   int fdeg = f->deg;
@@ -127,10 +127,10 @@ void ARingTower::reset_degree(poly &f) const
   dealloc_poly(f);  // sets f to 0
 }
 
-poly ARingTower::copy(int level, const poly f) const
+ARingPolynomial ARingTower::copy(int level, const ARingPolynomial f) const
 {
   if (f == 0) return 0;
-  poly result = alloc_poly_n(f->deg);
+  ARingPolynomial result = alloc_poly_n(f->deg);
   if (level == 0)
     for (int i = 0; i <= f->deg; i++) result->coeffs[i] = f->coeffs[i];
   else
@@ -140,13 +140,13 @@ poly ARingTower::copy(int level, const poly f) const
 }
 
 // TODO: should increase_capacity set the degree??  I don't think so...
-void ARingTower::increase_capacity(int newdeg, poly &f) const
+void ARingTower::increase_capacity(int newdeg, ARingPolynomial &f) const
 {
   assert(f != 0);
   if (f->len <= newdeg)
     {
-      poly *newelems = newarray(poly, newdeg + 1);
-      poly *fp = f->polys;
+      ARingPolynomial *newelems = newarray(ARingPolynomial, newdeg + 1);
+      ARingPolynomial *fp = f->polys;
       for (int i = 0; i <= f->deg; i++) newelems[i] = fp[i];
       for (int i = f->deg + 1; i < newdeg + 1; i++) newelems[i] = 0;
       delete[] fp;
@@ -182,7 +182,7 @@ void ARingTower::extensions_text_out(buffer &o) const
 }
 
 namespace {
-  int n_nonzero_terms(int level, poly f)
+  int n_nonzero_terms(int level, ARingPolynomial f)
   {
     if (f == 0) return 0;
     int nterms = 0;
@@ -200,7 +200,7 @@ namespace {
   }
 };
 
-bool ARingTower::is_one(int level, const poly f) const
+bool ARingTower::is_one(int level, const ARingPolynomial f) const
 {
   if (f == 0) return false;
   if (f->deg != 0) return false;
@@ -212,7 +212,7 @@ bool ARingTower::is_one(int level, const poly f) const
 
 void ARingTower::elem_text_out(buffer &o,
                                int level,
-                               const poly f,
+                               const ARingPolynomial f,
                                bool p_one,
                                bool p_plus,
                                bool p_parens) const
@@ -286,25 +286,25 @@ void ARingTower::elem_text_out(buffer &o,
     }
 }
 
-poly ARingTower::var(int level, int v) const
+ARingPolynomial ARingTower::var(int level, int v) const
 // make the variable v (but at level 'level')
 {
   if (v > level) return 0;
   int which = (v == 0 ? 1 : 0);
-  poly result =
+  ARingPolynomial result =
       alloc_poly_0(which);  // TODO: check that this initializes elements to 0
   result->coeffs[which] = 1;
   for (int i = 1; i <= level; i++)
     {
       which = (i == v ? 1 : 0);
-      poly a = result;
+      ARingPolynomial a = result;
       result = alloc_poly_n(which);
       result->polys[which] = a;
     }
   return result;
 }
 
-bool ARingTower::is_equal(int level, const poly f, const poly g) const
+bool ARingTower::is_equal(int level, const ARingPolynomial f, const ARingPolynomial g) const
 {
   if (f == 0)
     {
@@ -321,14 +321,14 @@ bool ARingTower::is_equal(int level, const poly f, const poly g) const
       return true;
     }
   // level > 0
-  poly *fp = f->polys;
-  poly *gp = g->polys;
+  ARingPolynomial *fp = f->polys;
+  ARingPolynomial *gp = g->polys;
   for (int i = 0; i <= f->deg; i++)
     if (!is_equal(level - 1, fp[i], gp[i])) return false;
   return true;
 }
 
-void ARingTower::add_in_place(int level, poly &f, const poly g) const
+void ARingTower::add_in_place(int level, ARingPolynomial &f, const ARingPolynomial g) const
 {
   if (g == 0) return;
   if (f == 0)
@@ -353,7 +353,7 @@ void ARingTower::add_in_place(int level, poly &f, const poly g) const
     reset_degree(f);
 }
 
-void ARingTower::negate_in_place(int level, poly &f) const
+void ARingTower::negate_in_place(int level, ARingPolynomial &f) const
 {
   if (f == 0) return;
   int deg = f->deg;
@@ -369,7 +369,7 @@ void ARingTower::negate_in_place(int level, poly &f) const
     }
 }
 
-void ARingTower::subtract_in_place(int level, poly &f, const poly g) const
+void ARingTower::subtract_in_place(int level, ARingPolynomial &f, const ARingPolynomial g) const
 {
   if (g == 0) return;
   if (f == 0)
@@ -396,7 +396,7 @@ void ARingTower::subtract_in_place(int level, poly &f, const poly g) const
 }
 
 void ARingTower::mult_by_coeff(int level,
-                               poly &f,
+                               ARingPolynomial &f,
                                const BaseCoefficientType &b) const
 {
   assert(!mBaseRing.is_zero(b));
@@ -415,7 +415,7 @@ void ARingTower::mult_by_coeff(int level,
     }
 }
 
-void ARingTower::mult_by_coeff(poly &f, const BaseCoefficientType &b) const
+void ARingTower::mult_by_coeff(ARingPolynomial &f, const BaseCoefficientType &b) const
 {
   if (f == 0) return;
   if (mBaseRing.is_zero(b))

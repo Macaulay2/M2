@@ -1,0 +1,20 @@
+ -- 0.0163893 seconds elapsed
+ -- 0.0069584 seconds elapsed
+ -- 1.56053 seconds elapsed
+ -- 0.552883 seconds elapsed
+ -- 0.0463818 seconds elapsed
+ -- 0.0353547 seconds elapsed
+ -- 2.3753 seconds elapsed
+ -- 1.0335 seconds elapsed
+version: 1.18.0.1
+machine: x86_64-Linux-Ubuntu-20.04
+n-by-n matrix with entries in RR_53
+n=100: 1.95399e-14
+n=100, symmetric: 3.90799e-14
+n=500: 6.92779e-14
+n=500, symmetric: 1.66978e-13
+n-by-n matrix with entries in CC_53
+n=100: 3.69422e-14
+n=100, Hermitian: 2.13325e-14
+n=500: 55.1153
+n=500, Hermitian: .185042

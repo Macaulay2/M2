@@ -26,7 +26,7 @@ document {
      eigenvalues(M, Hermitian=>true)
      class \ oo
      ///,
-     "The lapack library is used to compute eigenvectors of real and complex matrices.",
+     "The lapack and eigen libraries are used to compute eigenvectors of real and complex matrices.",
      Caveat => {"The eigenvalues are approximate."},
      SeeAlso => {eigenvectors, SVD}
      }
