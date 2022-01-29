@@ -191,7 +191,7 @@ document {
 	Key => {areEqual, (areEqual,CC,CC), (areEqual,Number,Number), 
 	    (areEqual,List,List), (areEqual,BasicList,BasicList),
 	    (areEqual,Matrix,Matrix), (areEqual,MutableMatrix,MutableMatrix), (areEqual,Point,Point), 
-	    (areEqual,BasicList,Point), (areEqual,Point,BasicList),
+	    --(areEqual,BasicList,Point), (areEqual,Point,BasicList),
 	    (symbol ==,Point,Point),
 	    [areEqual,Projective]},
 	Headline => "determine if solutions are equal",
@@ -420,10 +420,11 @@ evaluate(jacobian S, p)
     }
 
 document {
-    Key => {residual, 
-	(residual,List,Point),
-	(residual,Matrix,Matrix),
-	(residual,PolySystem,Point)
+    Key => {residual,
+	(residual,System,Point) --??? 
+--	(residual,List,Point),
+--	(residual,Matrix,Matrix),
+--	(residual,PolySystem,Point)
 	},
     Headline => "residual of a polynomial function at a point",
     Usage => "y = residual(f,x)",

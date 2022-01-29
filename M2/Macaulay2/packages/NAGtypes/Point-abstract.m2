@@ -8,13 +8,19 @@ net Point := p -> net coordinates p
 
 point = method()
 point List := s -> error "not implemented"
-
+point Point := identity
 Point == Point := (a,b) -> areEqual(a,b) -- the default Tolerance is used
 Point ? Point := (a,b) -> if isGEQ(a,b) then symbol > else symbol <
 
+-- expected methods
+notImplementedError := p -> error ("implementation of this method for the descendant of (abstract) type "|toString class p |" is expected")
 coordinates = method()
-coordinates Point := p -> error "not implemented"
+coordinates Point := notImplementedError 
+status Point := o -> notImplementedError
+project = method() -- project point to the first n coordinates
+project (Point,ZZ) := (p,n) -> notImplementedError p
 
+-- methods relying on expected methods 
 matrix Point := o -> p -> matrix {coordinates p}
 
 norm (Thing, Point) := (no,p) -> norm(no, coordinates p)
@@ -22,12 +28,11 @@ norm (Thing, Matrix) := (no,M) -> norm(no, flatten entries M)
 norm (Thing, List) := (no,p) -> (
      if instance(no,InfiniteNumber) and no === infinity then return max(p/abs);
      assert((instance(no, ZZ) or instance(no, QQ) or instance(no, RR)) and no>0);
-     1/0
---     (sum(p, c->abs(c)^no))^(1/no)
+     (sum(p, c->abs(c)^no))^(1/no)
      )
 
 isRealPoint = method(Options=>{Tolerance=>1e-6})
-oisRealPoint Point := o -> p -> norm (coordinates p / imaginaryPart) < o.Tolerance
+isRealPoint Point := o -> p -> norm (coordinates p / imaginaryPart) < o.Tolerance
 
 realPoints = method(Options=>{Tolerance=>1e-6})
 realPoints List := o -> pp -> select(pp, isRealPoint)
@@ -39,14 +44,12 @@ areEqual (Number,Number) := o -> (a,b) -> areEqual(toCC a, toCC b, o)
 areEqual (CC,CC) := o -> (a,b) -> (
      abs(a-b) < o.Tolerance
      ) 
--*
 areEqual (Matrix,Matrix) := o -> (a,b) -> (
      areEqual(flatten entries a, flatten entries b, o)
      ) 
 areEqual (MutableMatrix,MutableMatrix) := o -> (a,b) -> (
      areEqual(flatten entries a, flatten entries b, o)
      ) 
-*-
 areEqual (Point,Point) := o -> (a,b) -> (
     a = coordinates a;
     b = coordinates b;

@@ -22,7 +22,7 @@ net FrontLevelPoint := p -> (
   	if hasAttribute(p,PrintNames) then return net getAttribute(p,PrintNames);
   	if hasAttribute(p,ReverseDictionary) then return toString getAttribute(p,ReverseDictionary);
   	);
-    s := if p.?SolutionStatus then p.SolutionStatus else Regular;
+    s := if p.cache.?SolutionStatus then p.cache.SolutionStatus else Regular;
     if s === Regular then net p.Coordinates 
     else if s === Singular then net toSequence p.Coordinates
     else if s === MinStepFailure then net "[M,t=" | net p.LastT | net "]"
@@ -36,29 +36,28 @@ net FrontLevelPoint := p -> (
     ) 
 globalAssignment FrontLevelPoint
 
-point Point := p -> new FrontLevelPoint from p
-point List := s -> new FrontLevelPoint from {Coordinates=>(
+point List := s -> new FrontLevelPoint from {
+    Coordinates=>(
 	c := first s;
 	if instance(c,List) then c	
 	else if instance(c,Matrix) or instance(c,MutableMatrix) then flatten entries c
 	else error "wrong type of coordinates: List or Matrix expected"   
-	)} | drop(s,1)
+	), 
+    cache => new CacheTable from drop(s,1) }
 point Matrix := M -> point {flatten entries M} 
 toExternalString FrontLevelPoint := p -> "point { " | toExternalString coordinates p |" }"
 
 coordinates FrontLevelPoint := p -> p.Coordinates
 
-status FrontLevelPoint := o -> p -> if p.?SolutionStatus then p.SolutionStatus else null
+status FrontLevelPoint := o -> p -> if p.cache.?SolutionStatus then p.cache.SolutionStatus else null
 
-project = method()
 -- project point to the first n coordinates
 project (FrontLevelPoint,ZZ) := (p,n) -> (
     p' := point { take(coordinates p, n) };
-    if p.?ErrorBoundEstimate then p'.ErrorBoundEstimate = p.ErrorBoundEstimate;
+    if p.cache.?ErrorBoundEstimate then p'.cache.ErrorBoundEstimate = p.cache.ErrorBoundEstimate;
     p'
     )
     
-residual = method(Options=>{Norm=>2})
 residual (List,FrontLevelPoint) := o->(S,p)-> residual(polySystem S,p,o)
 residual (PolySystem,FrontLevelPoint) := o->(P,p)-> residual(P.PolyMap,matrix p,o)
 residual (Matrix,Matrix) := o->(S,p)->norm(o.Norm, point evaluate(S,p))

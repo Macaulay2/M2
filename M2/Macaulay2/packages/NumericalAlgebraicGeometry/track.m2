@@ -90,7 +90,7 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
      	  );
     
      solsS = solsS / (s->sub(transpose matrix (
-		 if class s === Point then s
+		 if instance(s,Point) then s
 	     	 else {toList s}
 	     	 ), CC)); -- convert to vectors
      if o.Projectivize then (
@@ -625,10 +625,10 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 		 if HISTORY then drop(toList s, -1)
 		 else toList s
 		 );
-	     p.SolutionSystem = T;
+	     p.cache.SolutionSystem = T;
 	     --if p.ConditionNumber > o.SingularConditionNumber and p.SolutionStatus===Regular 
 	     --then p.SolutionStatus = Singular;
-	     if PT=!=null then p.Tracker=PT;
+	     if PT=!=null then p.cache.Tracker=PT;
 	     p
 	     ))
      )
