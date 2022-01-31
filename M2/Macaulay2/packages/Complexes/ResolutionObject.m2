@@ -25,117 +25,6 @@ raw ResolutionObject := X -> X.RawComputation
 
 inf := t -> if t === infinity then -1 else t
 
--*
-resolutionObject = method(Options => {
-        SortStrategy => 0, 
-        Strategy => 0,
-        LengthLimit => infinity,
-        DegreeLimit => infinity})
-resolutionObject Module := ResolutionObject => opts -> M -> (
-    RO := new ResolutionObject;
-    RO.ring = ring M;
-    -- the following line needs to change logic.
-    lengthlimit := if opts.LengthLimit === infinity then numgens RO.ring + 1 else opts.LengthLimit;
-    RO.RawComputation = rawResolution(
-      raw M,            -- the matrix
-      true,             -- whether to resolve the cokernel of the matrix
-      lengthlimit,      -- how long a resolution to make, (hard : cannot be increased by stop conditions below)
-      false,	        -- useMaxSlantedDegree
-      0,                -- maxSlantedDegree (is this the same as harddegreelimit?)
-      opts.Strategy,    -- algorithm number
-      opts.SortStrategy	-- strategy
-      );
-    RO.Strategy = opts.Strategy;
-    RO.LengthLimit = lengthlimit;
-    RO.returnCode = rawStatus1 RO.RawComputation;
-    RO
-    )
-
-compute = method(Options => true)
-compute ResolutionObject := {
-      DegreeLimit => {},
-      SyzygyLimit => infinity,
-      PairLimit => infinity
-      } >> opts -> (RO) -> (
-    rawGBSetStop(
-        RO.RawComputation,
-        false,                                      -- always_stop
-        degreeToHeft(RO.ring, inf opts.DegreeLimit), -- degree_limit
-        0,                                          -- basis_element_limit (not relevant for resolutions)
-        inf opts.SyzygyLimit,                       -- syzygy_limit
-        inf opts.PairLimit,                         -- pair_limit
-        0,                                          -- codim_limit (not relevant for resolutions)
-        0,                                          -- subring_limit (not relevant for resolutions)
-        false,                                      -- just_min_gens
-        {}                                          -- length_limit
-        );
-    rawStartComputation RO.RawComputation;
-    RO.returnCode = rawStatus1 RO.RawComputation;
-    RO.DegreeLimit = opts.DegreeLimit;
-    RO
-    )
-*-
-
--- moduleAt = method()
--- moduleAt(ResolutionObject, ZZ) := (W,i) ->
---     new Module from (W.ring, rawResolutionGetFree(W.RawComputation, i))
-
--- matrixAt = method()
--- matrixAt(ResolutionObject, ZZ) := (W,i) -> (
---     src := moduleAt(W, i); -- TODO: stash these
---     tar := moduleAt(W, i-1);
---     map(tar, src, rawResolutionGetMatrix(W.RawComputation, i))
---     )
-
--*
-complex ResolutionObject := Complex => opts -> RO -> (
-    lengthlimit := RO.LengthLimit;
-    modules := for i from 0 to lengthlimit list 
-        new Module from (RO.ring, rawResolutionGetFree(RO.RawComputation, i));
-    maps := hashTable for i from 1 to lengthlimit list (
-        if modules#i == 0 then break;
-        i => map(modules#(i-1), modules#i, rawResolutionGetMatrix(RO.RawComputation, i))
-        );
-    complex maps
-    )
-*-
-
--*
-freeResolution Module := Complex => opts -> M -> (
-    -- TODO: handle caching and strategies and hooks via Mahrud's new method.
-    local F;
-    if opts.LengthLimit < 0 then error "expected a non-negative value for LengthLimit";
-    
-    if not M.cache.?freeResolution
-      or M.cache.freeResolution.cache.LengthLimit < opts.LengthLimit
-      then M.cache.freeResolution = (
-          R := ring M;
-          strategy := if instance(opts.Strategy, Number) then opts.Strategy else
-              if isQuotientRing R or isSkewCommutative R then 2 else 1;
-          -- some strategies require a GB, some don't.  The next line implements this choice.
-          f := if member(strategy, {0,4}) then gens gb presentation M else presentation M;
-          lengthlimit := defaultLengthLimit(ring M, 0, opts.LengthLimit);
-          RO := resolutionObject(f, 
-              LengthLimit => lengthlimit,
-              Strategy => strategy
-              );
-          compute(RO, DegreeLimit => opts.DegreeLimit);
-          -- TODO: check that this is complete.
-          F = complex RO;
-          F.cache.LengthLimit = if length F < lengthlimit then infinity else lengthlimit;
-          F.cache.Module = M;
-          F
-         );
-    F = M.cache.freeResolution;
-    if opts.LengthLimit < length F
-    then (
-        F = naiveTruncation(F, 0, opts.LengthLimit);
-        F.cache.Module = M;
-        );
-    F
-    )
-*-
-
 naiveTruncationByLengthAndDegree = method()
 naiveTruncationByLengthAndDegree(Complex, ZZ, ZZ) := Complex => (C, lengthlimit, degreelimit) -> (
     naiveTruncation(C, -infinity, lengthlimit); -- TODO: also truncate by (slanted) degrees.
@@ -271,11 +160,7 @@ resolutionInEngine = (opts, M) -> (
         );
     
     RO.compute();
-    return RO.complex();
-    -- now: create the engine computation
-    --      create isComputable func
-    --      create compute func
-    --      create complex func.
+    RO.complex()
     )
 
 addHook((freeResolution, Module), resolutionInEngine, Strategy => Engine)
@@ -284,64 +169,6 @@ addHook((freeResolution, Module), resolutionInEngine, Strategy => Engine)
 --scan({Engine}, strategy ->
 --    addHook(key := (resolution, Module), algorithms#key#strategy, Strategy => strategy))
 
--- Note: the RawComputation below can only appear in some hooks...
--*    
-    -- call the correct hook.  Note that 
-    lengthlimit := if opts.LengthLimit === infinity then numgens RO.ring + 1 else opts.LengthLimit;
-    RO.RawComputation = rawResolution(
-      raw M,            -- the matrix
-      true,             -- whether to resolve the cokernel of the matrix
-      lengthlimit,      -- how long a resolution to make, (hard : cannot be increased by stop conditions below)
-      false,	        -- useMaxSlantedDegree
-      0,                -- maxSlantedDegree (is this the same as harddegreelimit?)
-      opts.Strategy,    -- algorithm number
-      opts.SortStrategy	-- strategy
-      );
-    RO.Strategy = opts.Strategy;
-    RO.LengthLimit = lengthlimit;
-    RO.returnCode = rawStatus1 RO.RawComputation;
-    RO
-    )
-
-    RO := resolutionObject(M, 
-        LengthLimit => lengthlimit,
-        DegreeLimit => degreelimit,
-        Strategy => strategy
-        );
-    
-    -- TODO: handle caching and strategies and hooks via Mahrud's new method.
-    local F;
-    if opts.LengthLimit < 0 then error "expected a non-negative value for LengthLimit";
-    
-    if not M.cache.?freeResolution
-      or M.cache.freeResolution.cache.LengthLimit < opts.LengthLimit
-      then M.cache.freeResolution = (
-          R := ring M;
-          strategy := if instance(opts.Strategy, Number) then opts.Strategy else
-              if isQuotientRing R or isSkewCommutative R then 2 else 1;
-          -- some strategies require a GB, some don't.  The next line implements this choice.
-          f := if member(strategy, {0,4}) then gens gb presentation M else presentation M;
-          lengthlimit := defaultLengthLimit(ring M, 0, opts.LengthLimit);
-          RO := resolutionObject(f, 
-              LengthLimit => lengthlimit,
-              Strategy => strategy
-              );
-          compute(RO, DegreeLimit => opts.DegreeLimit);
-          -- TODO: check that this is complete.
-          F = complex RO;
-          F.cache.LengthLimit = if length F < lengthlimit then infinity else lengthlimit;
-          F.cache.Module = M;
-          F
-         );
-    F = M.cache.freeResolution;
-    if opts.LengthLimit < length F
-    then (
-        F = naiveTruncation(F, 0, opts.LengthLimit);
-        F.cache.Module = M;
-        );
-    F
-    )
-*-
 
 end--
 restart
