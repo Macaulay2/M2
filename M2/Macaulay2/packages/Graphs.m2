@@ -1969,6 +1969,26 @@ doc ///
         degree
 ///
 
+doc ///
+    Key
+        degreeSequence
+        (degreeSequence, Graph)
+    Headline
+        the degree sequence of a graph
+    Usage
+        degreeSequence G
+    Inputs
+        G:Graph
+    Outputs
+        :List -- the degree sequence of G
+    Description
+        Text
+            The degree sequence of a graph is the list of the degrees of its
+            vertices sorted in nonincreasing order.
+        Example
+            degreeSequence pathGraph 5
+///
+
 --edges
 doc ///
     Key
