@@ -69,6 +69,7 @@ export {
     -- Basic data
     "adjacencyMatrix",
     "degreeMatrix",
+    "degreeSequence",
     "edges",
     "incidenceMatrix",
     "laplacianMatrix",
@@ -363,6 +364,9 @@ degree (Digraph,Thing) := ZZ => (D,v) -> #(children(D,v) + parents(D,v))
 
 degreeMatrix = method()
 degreeMatrix Digraph := Matrix => G -> diagonalMatrix apply(entries transpose adjacencyMatrix G, a -> #positions(a, j -> j != 0))
+
+degreeSequence = method()
+degreeSequence Graph := List => G -> rsort \\ sum \ entries adjacencyMatrix G
 
 edges = method()
 edges Digraph := List => D -> (
