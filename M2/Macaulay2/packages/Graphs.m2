@@ -5485,6 +5485,9 @@ TEST ///
   digraph ({2, 1, 3}, {{2, 1}, {3, 1}})})
 ///
 
+TEST ///
+assert Equation(degreeSequence pathGraph 5, {2, 2, 2, 1, 1})
+///
 
 end;
 
