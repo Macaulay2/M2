@@ -253,6 +253,9 @@ runcmd := cmd -> (
 Digraph = new Type of HashTable
 Graph = new Type of Digraph
 
+Digraph.synonym = "digraph"
+Graph.synonym = "graph"
+
 digraph = method(Options => {symbol Singletons => null, symbol EntryMode => "auto"})
 digraph List := Digraph => opts -> L -> (
     mode := if #L == 0 or opts.EntryMode == "edges" then "e" 
