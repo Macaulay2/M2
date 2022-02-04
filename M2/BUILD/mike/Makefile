@@ -63,6 +63,8 @@ cmake-debug-appleclang:
 	cd builds.tmp/cmake-debug-appleclang; cmake \
 		-GNinja \
 		-DCMAKE_BUILD_TYPE=Debug \
+		-DCMAKE_PREFIX_PATH="`brew --prefix tbb@2021`;`brew --prefix`" \
+		-DBUILD_NATIVE=off \
 		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
 		../../../..
@@ -174,8 +176,8 @@ arm64-appleclang : always
 debug-arm64-appleclang : always
 	mkdir -p builds.tmp/debug-arm64-appleclang
 	cd builds.tmp/debug-arm64-appleclang; ../../../../configure \
-		CPPFLAGS="-I`brew --prefix`/include" \
-		LDFLAGS="-L`brew --prefix`/lib" \
+		CPPFLAGS="-I`brew --prefix tbb@2021`/include -I`brew --prefix`/include" \
+		LDFLAGS="-L`brew --prefix tbb@2021`/lib -L`brew --prefix`/lib" \
 	    --with-boost-regex=boost_regex \
 		--prefix="`pwd`/installed" \
 		--disable-strip \

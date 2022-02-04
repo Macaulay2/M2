@@ -61,8 +61,9 @@ header "
    #include <givaro/givconfig.h>
    Givaro::GivaroMain givaroMain;
 
-   /* TBB_VERSION_STRING is set in mtbb.hpp */
-   #include <mathicgb/mathicgb/mtbb.hpp>
+   #ifdef WITH_TBB
+   #include <tbb/tbb.h>
+   #endif
 
    #include <Eigen/Core>
    ";
@@ -220,7 +221,13 @@ setupconst("version", Expr(toHashTable(Sequence(
    "readline version" => readlineversion(),
    "mpfr version" => Ccode(constcharstar,"MPFR_VERSION_STRING"),
    "mpfi version" => Ccode(constcharstar,"MPFI_VERSION_STRING"),
-   "tbb version" => Ccode(constcharstar,"TBB_VERSION_STRING"),
+   "tbb version" => Ccode(constcharstar,"
+	 #ifdef WITH_TBB
+	   stringize(TBB_VERSION_MAJOR) \".\" stringize(TBB_VERSION_MINOR)
+	 #else
+	   \"not present\"
+	 #endif
+	 "),
    "lapack version" => lapackversion(),
    "eigen version" => Ccode(constcharstar, "
        stringize(EIGEN_WORLD_VERSION) \".\"
