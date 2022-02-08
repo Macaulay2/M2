@@ -22,7 +22,7 @@ Node
       indicates whether currently loaded packages and exported symbols
       should be accessible while @TT "str"@ is being evaluated.
     PackageExports=>List
-      of packages to be loaded before evaluating @TT "str"@
+      of packages to be loaded before evaluating @TT "str"@.  The current package, as given by @TO currentPackage@, will be included.
   Outputs
     err:Boolean
       whether the evaluation was interrupted because of an error
