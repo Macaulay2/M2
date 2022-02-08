@@ -69,6 +69,7 @@ export {
     -- Basic data
     "adjacencyMatrix",
     "degreeMatrix",
+    "degreeSequence",
     "edges",
     "incidenceMatrix",
     "laplacianMatrix",
@@ -252,6 +253,9 @@ runcmd := cmd -> (
 Digraph = new Type of HashTable
 Graph = new Type of Digraph
 
+Digraph.synonym = "digraph"
+Graph.synonym = "graph"
+
 digraph = method(Options => {symbol Singletons => null, symbol EntryMode => "auto"})
 digraph List := Digraph => opts -> L -> (
     mode := if #L == 0 or opts.EntryMode == "edges" then "e" 
@@ -363,6 +367,9 @@ degree (Digraph,Thing) := ZZ => (D,v) -> #(children(D,v) + parents(D,v))
 
 degreeMatrix = method()
 degreeMatrix Digraph := Matrix => G -> diagonalMatrix apply(entries transpose adjacencyMatrix G, a -> #positions(a, j -> j != 0))
+
+degreeSequence = method()
+degreeSequence Graph := List => G -> rsort \\ sum \ entries adjacencyMatrix G
 
 edges = method()
 edges Digraph := List => D -> (
@@ -1963,6 +1970,26 @@ doc ///
         adjacencyMatrix
         laplacianMatrix
         degree
+///
+
+doc ///
+    Key
+        degreeSequence
+        (degreeSequence, Graph)
+    Headline
+        the degree sequence of a graph
+    Usage
+        degreeSequence G
+    Inputs
+        G:Graph
+    Outputs
+        :List -- the degree sequence of G
+    Description
+        Text
+            The degree sequence of a graph is the list of the degrees of its
+            vertices sorted in nonincreasing order.
+        Example
+            degreeSequence pathGraph 5
 ///
 
 --edges
@@ -5458,6 +5485,9 @@ TEST ///
   digraph ({2, 1, 3}, {{2, 1}, {3, 1}})})
 ///
 
+TEST ///
+assert Equation(degreeSequence pathGraph 5, {2, 2, 2, 1, 1})
+///
 
 end;
 
