@@ -1,8 +1,8 @@
 HOMEPAGE = https://www.normaliz.uni-osnabrueck.de/
 # get releases from https://github.com/Normaliz/Normaliz/releases
 # version 3.2 uses autoconf, so take advantage of that when upgrading
-VERSION = 3.7.2
-VERSION2 = 3.7
+VERSION = 3.9.2
+VERSION2 = 3.9
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 # these authors sometimes change the file without changing the name, so we copy it to our own site:
