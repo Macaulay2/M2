@@ -367,7 +367,7 @@ gbBoolean Ideal := Ideal => I -> ideal map(ring I, rawGbBoolean(raw compress gen
 engineMGB = method(
     Options => {
 	"Reducer"        => null,
-	"Threads"        => 0,
+	"Threads"        => null,
 	"SPairGroupSize" => 0,
 	"Log"            => ""
 	})
@@ -379,7 +379,9 @@ engineMGB Matrix := opts -> M -> (
 	 else if instance(opts#"Reducer", ZZ) then opts#"Reducer"
 	 else error "Expected \"F4\" or \"Classic\" as reducer type");
      groupsize := if instance(opts#"SPairGroupSize", ZZ) then opts#"SPairGroupSize" else error "expected an integer for SPairGroupSize";
-     nthreads  := if instance(opts#"Threads",        ZZ) then opts#"Threads"        else error "expected an integer for number of threads to use";
+     nthreads  := if opts#"Threads" === null then numTBBThreads 
+         else if instance(opts#"Threads",        ZZ) then opts#"Threads"
+         else error "expected an integer for number of threads to use";
      logarg    := if instance(opts#"Log",        String) then opts#"Log"            else error "Log expects a string argument, e.g. \"all\" or \"F4\"";
      map(ring M, rawMGB(raw M, reducer, groupsize, nthreads, logarg)))
 
