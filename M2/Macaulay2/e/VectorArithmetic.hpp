@@ -392,7 +392,6 @@ class VectorArithmetic
                                 ConcreteVectorArithmetic<M2::ARingZZpFFPACK>*,
                                 ConcreteVectorArithmetic<M2::ARingZZp>*,
                                 ConcreteVectorArithmetic<M2::ARingGFM2>*,
-                                ConcreteVectorArithmetic<M2::ARingGFGivaro>*,
                                 ConcreteVectorArithmetic<CoefficientRingR>*,
                                 ConcreteVectorArithmetic<CoefficientRingZZp>*,
                                 ConcreteVectorArithmetic<M2::DummyRing>*>;
@@ -435,10 +434,6 @@ public:
       case M2::ring_GFM2:
         mConcreteVector = new ConcreteVectorArithmetic
           {R, &dynamic_cast< const M2::ConcreteRing<M2::ARingGFM2>* >(R)->ring()};
-        break;
-      case M2::ring_GFGivaro:
-        mConcreteVector = new ConcreteVectorArithmetic
-          {R, &dynamic_cast< const M2::ConcreteRing<M2::ARingGFGivaro>* >(R)->ring()};
         break;
       case M2::ring_old:
         if (R->cast_to_Z_mod() != nullptr)

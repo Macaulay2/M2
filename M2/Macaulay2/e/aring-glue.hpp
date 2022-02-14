@@ -62,7 +62,7 @@ class ConcreteRing : public Ring
 
   bool isGaloisField() const
   {
-    return ringID() == ring_GFM2 or ringID() == ring_GFGivaro or
+    return ringID() == ring_GFM2  or
            ringID() == ring_GFFlintBig or ringID() == ring_GFFlintZech;
   }
 
@@ -711,36 +711,17 @@ bool ConcreteRing<RingType>::promote(const Ring *R,
           {
             case M2::ring_ZZp:
               return false;
-            case M2::ring_GFGivaro:
-              return RP::promoter<ARingZZp, ARingGFGivaro>(R, S, fR, resultS);
             case M2::ring_ZZpFfpack:
               return RP::promoter<ARingZZp, ARingZZpFFPACK>(R, S, fR, resultS);
             default:
               return false;
           }
         break;
-      case M2::ring_GFGivaro:
-        switch (S->ringID())
-          {
-            case M2::ring_ZZp:
-              return RP::promoter<ARingGFGivaro, ARingZZp>(R, S, fR, resultS);
-            case M2::ring_GFGivaro:
-              return RP::promoter<ARingGFGivaro, ARingGFGivaro>(
-                  R, S, fR, resultS);
-            case M2::ring_ZZpFfpack:
-              return RP::promoter<ARingGFGivaro, ARingZZpFFPACK>(
-                  R, S, fR, resultS);
-            default:
-              return false;
-          }
       case M2::ring_ZZpFfpack:
         switch (S->ringID())
           {
             case M2::ring_ZZp:
               return RP::promoter<ARingZZpFFPACK, ARingZZp>(R, S, fR, resultS);
-            case M2::ring_GFGivaro:
-              return RP::promoter<ARingZZpFFPACK, ARingGFGivaro>(
-                  R, S, fR, resultS);
             case M2::ring_ZZpFfpack:
               return RP::promoter<ARingZZpFFPACK, ARingZZpFFPACK>(
                   R, S, fR, resultS);
@@ -862,36 +843,17 @@ bool ConcreteRing<RingType>::lift(const Ring *R,
           {
             case M2::ring_ZZp:
               return false;
-            case M2::ring_GFGivaro:
-              return RP::lifter<ARingZZp, ARingGFGivaro>(R, S, result_gR, gS);
             case M2::ring_ZZpFfpack:
               return RP::lifter<ARingZZp, ARingZZpFFPACK>(R, S, result_gR, gS);
             default:
               return false;
           }
         break;
-      case M2::ring_GFGivaro:
-        switch (S->ringID())
-          {
-            case M2::ring_ZZp:
-              return RP::lifter<ARingGFGivaro, ARingZZp>(R, S, result_gR, gS);
-            case M2::ring_GFGivaro:
-              return RP::lifter<ARingGFGivaro, ARingGFGivaro>(
-                  R, S, result_gR, gS);
-            case M2::ring_ZZpFfpack:
-              return RP::lifter<ARingGFGivaro, ARingZZpFFPACK>(
-                  R, S, result_gR, gS);
-            default:
-              return false;
-          }
       case M2::ring_ZZpFfpack:
         switch (S->ringID())
           {
             case M2::ring_ZZp:
               return RP::lifter<ARingZZpFFPACK, ARingZZp>(R, S, result_gR, gS);
-            case M2::ring_GFGivaro:
-              return RP::lifter<ARingZZpFFPACK, ARingGFGivaro>(
-                  R, S, result_gR, gS);
             case M2::ring_ZZpFfpack:
               return RP::lifter<ARingZZpFFPACK, ARingZZpFFPACK>(
                   R, S, result_gR, gS);
@@ -1085,38 +1047,6 @@ inline bool ConcreteRing<ARingGFFlint>::lift(const Ring *Rg,
   ring().from_ring_elem(a, f);
   bool retval = ring().lift(Rg, a, result);
   ring().clear(a);
-  return retval;
-}
-
-template <>
-inline bool ConcreteRing<ARingGFGivaro>::promote(const Ring *Rf,
-                                                 const ring_elem f,
-                                                 ring_elem &result) const
-{
-  // Rf = Z/p[x]/F(x) ---> GF(p,n)
-  // promotion: need to be able to know the value of 'x'.
-  // lift: need to compute (primite_element)^e
-
-  ElementType a;
-  bool retval = R->promote(Rf, f, a);
-  R->to_ring_elem(result, a);
-  return retval;
-}
-
-template <>
-inline bool ConcreteRing<ARingGFGivaro>::lift(const Ring *Rg,
-                                              const ring_elem f,
-                                              ring_elem &result) const
-{
-  // Rf = Z/p[x]/F(x) ---> GF(p,n)
-  // promotion: need to be able to know the value of 'x'.
-  // lift: need to compute (primite_element)^e
-
-  ElementType a;
-  R->init(a);
-  R->from_ring_elem(a, f);
-  bool retval = R->lift(Rg, a, result);
-  R->clear(a);
   return retval;
 }
 
@@ -1379,13 +1309,6 @@ inline const RingElement *ConcreteRing<ARingGFM2>::getMinimalPolynomial() const
 }
 
 template <>
-inline const RingElement *ConcreteRing<ARingGFGivaro>::getMinimalPolynomial()
-    const
-{
-  return findMinimalPolynomial(ring().originalRing());
-}
-
-template <>
 inline const RingElement *ConcreteRing<ARingGFFlintBig>::getMinimalPolynomial()
     const
 {
@@ -1418,13 +1341,6 @@ inline const RingElement *ConcreteRing<ARingGFM2>::getRepresentation(
     const ring_elem &a) const
 {
   return getLiftedRepresentation<ARingGFM2>(ring(), a);
-}
-
-template <>
-inline const RingElement *ConcreteRing<ARingGFGivaro>::getRepresentation(
-    const ring_elem &a) const
-{
-  return getLiftedRepresentation<ARingGFGivaro>(ring(), a);
 }
 
 template <>
@@ -1462,11 +1378,6 @@ template <>
 inline const RingElement *ConcreteRing<ARingGFM2>::getGenerator() const
 {
   return getGen<ConcreteRing<ARingGFM2> >(*this);
-}
-template <>
-inline const RingElement *ConcreteRing<ARingGFGivaro>::getGenerator() const
-{
-  return getGen<ConcreteRing<ARingGFGivaro> >(*this);
 }
 template <>
 inline const RingElement *ConcreteRing<ARingGFFlint>::getGenerator() const

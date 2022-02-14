@@ -54,6 +54,7 @@ cmake-appleclang:
 		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 		-DCMAKE_PREFIX_PATH="`brew --prefix tbb@2021`;`brew --prefix libffi`;`brew --prefix`" \
 		-DBUILD_NATIVE=off \
+		-DCMAKE_INSTALL_PREFIX=`pwd`/installed \
 		-DBUILD_TESTING=on \
 		-DBUILD_DOCS=on \
 		../../../..
@@ -81,6 +82,20 @@ cmake-profile-appleclang:
 		../../../..
 #		-DLINTING=on
 
+cmake-profile-appleclang:
+	mkdir -p builds.tmp/cmake-profile-appleclang
+	cd builds.tmp/cmake-profile-appleclang; cmake \
+		-GNinja \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DCMAKE_PREFIX_PATH="`brew --prefix tbb@2020`;`brew --prefix`" \
+		-DCMAKE_INSTALL_PREFIX=`pwd`/installed-profile \
+		-DBUILD_NATIVE=on \
+		-DBUILD_TESTING=on \
+		-DBUILD_DOCS=on \
+		../../../..
+#		-DLINTING=on
+
+# this one still needs to be modified for M1
 cmake-latestclang:
 	mkdir -p builds.tmp/cmake-latestclang
 	cd builds.tmp/cmake-latestclang; LIBRARY_PATH=`/usr/local/opt/llvm/bin/llvm-config --libdir` cmake \
@@ -92,6 +107,7 @@ cmake-latestclang:
 		-DBUILD_DOCS=on \
 		../../../..
 
+# this one still needs to be modified for M1
 cmake-debug-latestclang:
 	mkdir -p builds.tmp/cmake-debug-latestclang
 	cd builds.tmp/cmake-debug-latestclang; cmake \
@@ -103,6 +119,7 @@ cmake-debug-latestclang:
 		-DBUILD_DOCS=on \
 		../../../..
 
+# this one still needs to be modified for M1, tbb
 cmake-gcc9:
 	mkdir -p builds.tmp/cmake-gcc9
 	cd builds.tmp/cmake-gcc9; cmake \
@@ -114,6 +131,7 @@ cmake-gcc9:
 		-DBUILD_DOCS=on \
 		../../../..
 
+# this one still needs to be modified for M1, tbb
 ubuntu-cmake-gcc:
 	mkdir -p builds.tmp/ubuntu-cmake-gcc
 	cd builds.tmp/ubuntu-cmake-gcc; cmake \
@@ -135,6 +153,7 @@ ubuntu-cmake-gcc:
 #  check-packages
 # ctest
 
+# this one still needs to be modified for M1, tbb
 cmake-debug-gcc9:
 	mkdir -p builds.tmp/cmake-debug-gcc9
 	cd builds.tmp/cmake-debug-gcc9; cmake \
@@ -146,6 +165,7 @@ cmake-debug-gcc9:
 		-DBUILD_DOCS=on \
 		../../../..
 
+# does this even work?
 xcode:
 	mkdir -p builds.tmp/xcode
 	cd builds.tmp/xcode; cmake \
