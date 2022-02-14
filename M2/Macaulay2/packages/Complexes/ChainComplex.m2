@@ -482,7 +482,19 @@ defaultLengthLimit = (R, baselen, len) -> (
 
 load "./res.m2"
 
-freeResolution = method(Options => options resolution)
+freeResolution = method(Options => {
+	StopBeforeComputation	=> false,
+	LengthLimit		=> infinity,	-- (infinity means numgens R)
+	DegreeLimit		=> infinity,	-- slant degree limit
+	SyzygyLimit		=> infinity,	-- number of min syzs found
+	PairLimit		=> infinity,	-- number of pairs computed
+	HardDegreeLimit		=> {},		-- throw out information in degrees above this one
+	SortStrategy		=> 0,		-- strategy choice for sorting S-pairs
+	Strategy		=> null,	-- algorithm to use, usually 1, but sometimes 2
+	FastNonminimal		=> false
+	}
+    )
+
 freeResolution Module := Complex => opts -> M -> (
     if opts.LengthLimit < 0 then error "expected a non-negative value for LengthLimit";
     if not M.cache.?freeResolution

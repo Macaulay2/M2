@@ -26,15 +26,20 @@ raw ResolutionObject := X -> X.RawComputation
 inf := t -> if t === infinity then -1 else t
 
 naiveTruncationByLengthAndDegree = method()
+
+naiveTruncationByLengthAndDegree(Complex, InfiniteNumber, InfiniteNumber) :=
+naiveTruncationByLengthAndDegree(Complex, InfiniteNumber, ZZ) :=
+naiveTruncationByLengthAndDegree(Complex, ZZ, InfiniteNumber) :=
 naiveTruncationByLengthAndDegree(Complex, ZZ, ZZ) := Complex => (C, lengthlimit, degreelimit) -> (
-    naiveTruncation(C, -infinity, lengthlimit); -- TODO: also truncate by (slanted) degrees.
+    naiveTruncation(C, -infinity, lengthlimit) -- TODO: also truncate by (slanted) degrees.
     )
 
 freeResolution Module := Complex => opts -> M -> (
     -- This handles caching, hooks for different methods of computing 
     -- resolutions or over different rings which require different algorithms.
+    local C;
     if M.cache.?Resolution then (
-        C := M.cache.Resolution;
+        C = M.cache.Resolution;
         if not C.cache.?LengthLimit or not C.cache.?DegreeLimit then
             error "internal error: Resolution should have both a LengthLimit and DegreeLimit";
         if C.cache.LengthLimit === opts.LengthLimit and C.cache.DegreeLimit === opts.DegreeLimit then
@@ -70,8 +75,19 @@ freeResolution Module := Complex => opts -> M -> (
         };
     M.cache.ResolutionObject = RO;
 
-    -- the following will return a complex (or error), and perhaps modify M.cache.ResolutionObject, M.Resolution?    
-    runHooks((freeResolution, Module), (opts, M), Strategy => opts.Strategy)
+    -- the following will return a complex (or error), 
+    -- and perhaps modify M.cache.ResolutionObject, M.Resolution?    
+    C = runHooks((freeResolution, Module), (opts, M), Strategy => opts.Strategy);
+    
+    if C =!= null then (
+        assert(instance(C, Complex));
+        C.cache.LengthLimit = RO.LengthLimit;
+        C.cache.DegreeLimit = RO.DegreeLimit;
+        C.cache.Module = M;
+        M.cache.Resolution = C;
+        return C;
+        );    
+    
     
     -- each hook must do the following:
     -- set Strategy.
@@ -106,21 +122,21 @@ resolutionInEngine = (opts, M) -> (
 
     if RO.?RawComputation then error "internal error: our logic is wrong";
 
-    RO.LengthLimit = if opts.LengthLimit === infinity then numgens R else opts.LengthLimit;
-    RO.DegreeLimit = if opts.DegreeLimit === null then infinity else degreeToHeft(R, opts.DegreeLimit);
+    lengthlimit := if opts.LengthLimit === infinity then numgens R else opts.LengthLimit; -- TODO: handle quotient ring case
     RO.RawComputation = rawResolution(
         raw presentation M, -- the matrix
         true,             -- whether to resolve the cokernel of the matrix
-        RO.LengthLimit,   -- how long a resolution to make, (hard : cannot be increased by stop conditions below)
+        lengthlimit,      -- how long a resolution to make, (hard : cannot be increased by stop conditions below)
         false,            -- useMaxSlantedDegree
         0,                -- maxSlantedDegree (is this the same as harddegreelimit?)
         1,                -- algorithm number, 1 in this case.
         opts.SortStrategy -- sorting strategy, for advanced use
         );
     RO.returnCode = rawStatus1 RO.RawComputation; -- do we need this?
-
+    RO.DegreeLimit = opts.DegreeLimit;
+    --  === infinity then infinity else degreeToHeft(R, opts.DegreeLimit);
     RO.compute = () -> (
-        deglimit := if RO.DegreeLimit === infinity then {} else {RO.degreeLimit};
+        deglimit := if RO.DegreeLimit === infinity then {} else {degreeToHeft(R, RO.DegreeLimit)};
         rawGBSetStop(
             RO.RawComputation,
             false,                                      -- always_stop
@@ -138,18 +154,18 @@ resolutionInEngine = (opts, M) -> (
         RO.DegreeLimit = opts.DegreeLimit;
         );
 
-    RO.isComputable = (lengthlimit, degreelimit) -> (
+    RO.isComputable = (lengthlimit, degreelimit) -> ( -- not working correctly yet.
         -- returns Boolean, and if it returns true, might set RO.LengthLimit, RO.DegreeLimit.
         << "calling isComputable" << endl;
         if lengthlimit > RO.LengthLimit then return false;
         RO.LengthLimit = lengthlimit;
-        RO.DegreeLimit = degreelimit;
+        RO.DegreeLimit = degreelimit; 
         true
         );
 
     RO.complex = () -> (
         -- returns a Complex. 
-        lengthlimit := RO.LengthLimit;
+        lengthlimit := if RO.LengthLimit === infinity then numgens R else RO.LengthLimit; -- TODO: handle quotient ring case
         modules := for i from 0 to lengthlimit list 
             new Module from (R, rawResolutionGetFree(RO.RawComputation, i));
         maps := hashTable for i from 1 to lengthlimit list (
@@ -172,30 +188,43 @@ addHook((freeResolution, Module), resolutionInEngine, Strategy => Engine)
 
 end--
 restart
-debug needsPackage  "Complexes"
-load "ResolutionObject.m2"
+debug loadPackage("Complexes")
+load "Complexes/ResolutionObject.m2"
 gbTrace=1
 S = ZZ/101[a..d]
 I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
 M = S^1/I
 F = freeResolution(M, Strategy => Engine)
+remove(M.cache, symbol Resolution)
+peek M.cache
 assert isWellDefined F
-F2 = freeResolution(I, LengthLimit => 2)
+F2 = freeResolution(M, LengthLimit => 2)
 dd^F2
 betti F2
-F3 = freeResolution(I, LengthLimit => 3)
-F3 = freeResolution(I, LengthLimit => 10)
+F3 = freeResolution(M, LengthLimit => 3)
+F3 = freeResolution(M, LengthLimit => 10)
 
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-F = freeResolution(I, Strategy => 2)
+S = ZZ/101[vars(0..20)]
+M = coker vars S
+F = freeResolution(M, Strategy => Engine)
+-- control-c in the middle, look at M.cache.ResolutionObject
+peek M.cache.ResolutionObject
+freeResolution(M, LengthLimit => 4)
+assert isWellDefined F
+F2 = freeResolution(M, LengthLimit => 2)
+
+
+
+M = comodule ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
+F = freeResolution(M, Strategy => 2)
 assert isWellDefined F
 
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-F = freeResolution(I, Strategy => 0)
+M = comodule ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
+F = freeResolution(M, Strategy => 0)
 assert isWellDefined F
 
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-F = freeResolution(I, Strategy => 3)
+M = comodule ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
+F = freeResolution(M, Strategy => 3)
 assert isWellDefined F
 
 I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
