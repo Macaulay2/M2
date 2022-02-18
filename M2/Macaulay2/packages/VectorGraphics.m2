@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "VectorGraphics",
-        Version => "0.97",
-        Date => "October 25, 2021", -- "May 18, 2018",
+        Version => "0.98",
+        Date => "December 19, 2021", -- "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
@@ -14,7 +14,7 @@ newPackage(
 	PackageExports => {"Text"}
         )
 
-export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
+export{"GraphicsType", "GraphicsObject", "GraphicsCoordinate", "GraphicsPoly",
     "GraphicsList", "Circle", "Light", "Ellipse", "Path", "Polygon", "Polyline", "GraphicsText", "Line", "GraphicsHtml",
     "gList", "viewPort", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot",
     "Contents", "TextContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "RefPoint", "Size", "ViewPort",
@@ -31,7 +31,7 @@ protect Is3d
 protect Animated
 protect CurrentMatrix
 protect PerspectiveMatrix
-protect svgElement
+--protect svgElement
 protect Owner
 protect JsFunc
 protect RefPointFunc
@@ -131,22 +131,24 @@ viewPort = g -> (
 
 
 project3d := (x,g) -> (
+    if x_3<0 then x=-x; -- shouldn't happen
     y := g.cache.Owner.PerspectiveMatrix*x;
+    if y_3<0 then ( g.style#"visibility"="hidden"; return vector{0.,0.,0.,0.}; );
     (1/y_3)*y
     )
 
 graphicsIdCount := 0;
 graphicsId := () -> (
     graphicsIdCount=graphicsIdCount+1;
-    "Graphics_" | toString processID() | "_" | toString graphicsIdCount
+    "gfx_" | toString processID() | "_" | toString graphicsIdCount
     )
 
-svgElement := method(Dispatch=>Type) -- to each GraphicsType is assigned a svg MarkupType
+svgElement = method(Dispatch=>Type) -- to each GraphicsType is assigned a svg MarkupType
 
 new GraphicsType of GraphicsObject from VisibleList := (T,T2,x) -> (
     g:=new Type;
     g.Options=x#1;
-    s := new MarkUpType of Hypertext;
+    s := new MarkUpType of if x#0=="g" then HypertextContainer else HypertextParagraph;
     addAttribute(s,svgAttr | if #x>=3 then x#2 else {});
     s.qname = x#0;
     svgElement g := g' -> s;
@@ -335,7 +337,7 @@ draggable GraphicsObject := x -> x.?Draggable and x.Draggable
 draggable GraphicsList := x -> x.?Draggable or any(x.Contents,draggable)
 
 
-SVG = new MarkUpType of Hypertext
+SVG = new MarkUpType of HypertextContainer
 addAttribute(SVG,svgAttr|{"height","preserveAspectRatio","viewBox","width","x","xmlns"=>"http://www.w3.org/2000/svg","y","zoomAndPan"})
 
 --
@@ -523,9 +525,7 @@ svg1 GraphicsList := g -> (
 	);
     );
 
--- produces SVG element hypertext
 precompute := (g,m,c) -> ( -- 1st phase (object,current matrix,cache of owner)
-    g.cache.Filter={}; -- clean up filters from past
     g.cache.Owner=c; -- owner cache
     remove(g.cache,Is3d);
     updateTransformMatrix(g,m);
@@ -540,10 +540,8 @@ updateGraphicsCache := (g,m) -> ( -- 2nd phase (object,current matrix)
 	is3d g; -- TODO better to force 3d state of children to be determined
 	scan(g.Contents,x -> updateGraphicsCache(x,g.cache.CurrentMatrix));
 	);
-    if is3d g then (
-	if g.?OneSided and g.OneSided then determineSide g;
-	);
---    if not g.cache.?Options then g.cache.Options = new MutableHashTable; -- TEMP (cause of lights), do better see above
+    remove(g.style,"visibility"); -- reset visibility status
+    if g.?OneSided and g.OneSided then determineSide g;
     if g.?TransformMatrix then g.cache.Options#"data-matrix" = g.TransformMatrix;
     if g.?AnimMatrix then g.cache.Options#"data-dmatrix" = g.AnimMatrix;
     if g.?Static and g.Static then g.cache.Options#"data-static" = "true";
@@ -552,7 +550,8 @@ updateGraphicsCache := (g,m) -> ( -- 2nd phase (object,current matrix)
 	g.style#"overflow"="visible"; -- makes width/height irrelevant
 	g.style#"width"="100%"; -- -- but still needed otherwise webkit won't render
 	g.style#"height"="100%";
-	)
+	g.style#"pointer-events"="none"; -- since it takes the whole space, need to kill click event
+	);
     )
 
 svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
@@ -567,8 +566,10 @@ svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
     style(s args,new OptionTable from g.style)
     )
 
+-- produces SVG element hypertext
 svg = g -> (
     g.cache.Light={};
+    g.cache.Filter={};
     g.cache.PerspectiveMatrix = perspective if g.?Perspective then g.Perspective else ();
     precompute(g,one,g.cache);
     updateGraphicsCache(g,one);
@@ -590,15 +591,9 @@ short GraphicsObject := g -> (
 GraphicsObject ? GraphicsObject := (x,y) -> y.cache.Distance ? x.cache.Distance
 
 -- defs
-svgDefs = new MarkUpType of Hypertext
+svgDefs = new MarkUpType of HypertextContainer
 svgDefs.qname="defs"
 addAttribute(svgDefs,svgAttr)
-
-scanDefs := g -> (
-    lst := g.cache.Filter;
-    if g.?Contents then lst = lst | flatten apply(g.Contents,scanDefs);
-    lst
-    )
 
 -- full SVG with the headers
 new SVG from GraphicsObject := (S,g) -> (
@@ -654,7 +649,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	    );
 	axes=svg axes0;
 	axeslabels=svg axeslabels0;
-	defsList = scanDefs axes0 | scanDefs axeslabels0;
+	defsList = axes0.cache.Filter | axeslabels0.cache.Filter;
 	);
 	-- put some extra blank space around picture
 	margin := if g.?Margin then g.Margin else 0.1;
@@ -678,7 +673,7 @@ new SVG from GraphicsObject := (S,g) -> (
     if axes =!= null then ss = append(ss, axes);
     if axeslabels =!= null then ss = append(ss, axeslabels);
     ss = append(ss,main);
-    defsList = unique ( defsList | scanDefs g );
+    defsList = unique ( defsList | g.cache.Filter );
     if #defsList>0 then ss=append(ss,svgDefs defsList);
     -- then autorotate button
     if animated g then (
@@ -698,6 +693,159 @@ new SVG from GraphicsObject := (S,g) -> (
     )
 
 html GraphicsObject := g -> html SVG g;
+
+-- tex output
+tikzscale := 1; -- not thread-safe
+tikzsize := 1; -- same
+svgunits = hashTable { "px" => 1., "in" => 96., "cm" => 37.795, "mm" => 3.7795, "pt" => 1.3333, "pc" => 16,
+    "em" => 14., "ex" => 7., "ch" => "7", "rem" =>14. } -- this second line is approximate
+
+svglen = s -> try value s else if last s == "%" then 0.01*value substring(s,0,#s-1) else (
+    unit := substring(s,-2);
+    num := substring(s,0,#s-2);
+    if svgunits#?unit then svgunits#unit*value num else error "unknown svg unit"
+    )
+tikzconv1 := x -> y -> (
+    if substring(y,0,3)=="rgb" then ( -- TODO cmy as well
+	c := value substring(y,3);
+	y = "{rgb,255:red,"|toString min(c#0,255)|";green,"|toString min(c#1,255)|";blue,"|toString min(c#2,255)|"}";
+	);
+    x|"="|y
+    )
+tikzconv := hashTable {
+    "stroke" => tikzconv1 "draw", "fill" => tikzconv1 "fill",
+    "stroke-opacity" => tikzconv1 "draw opacity", "fill-opacity" => tikzconv1 "fill opacity", "stroke-linejoin" => tikzconv1 "line join",
+    "stroke-width" => y -> "line width="|toString(tikzscale*svglen y)|"cm",
+    "font-size" => y -> "scale="|toString(3.15*tikzscale*svglen y), -- messy: cm -> scale using 96dpi and 12px fontsize
+    "viewBox" => y -> (
+	vb := pack(value \ separate("\\s|,",y),2);
+	tikzsize = sqrt(0.5*(vb#1#0^2+vb#1#1^2));
+	"execute at begin picture={\\useasboundingbox[draw=none] ("|toString vb#0#0|","|toString vb#0#1|") rectangle ++("|toString vb#1#0|","|toString vb#1#1|");}"
+	) }
+ovr := x -> ( -- borrowed from html.m2
+    T := class x;
+    (op,ct) := try override(options T, toSequence x) else error("markup type ", toString T, ": ",
+	"unrecognized option name(s): ", toString select(toList x, c -> instance(c, Option)));
+    if op#"style" =!= null then op = op ++ for o in apply(separate(";",op#"style"),y->separate(":",y)) list (if #o==2 then o#0 => o#1 else continue);
+    st := for o in pairs op list (if tikzconv#?(o#0) then tikzconv#(o#0) o#1 else continue);
+    (op,ct,st)
+    )
+tex SVG := texMath SVG := x -> concatenate(
+    (op,ct,st) := ovr x;
+    if op#?"viewBox" and op#?"width" and op#?"height" then (
+	-- compute scaling
+	vb := value \ take(separate("\\s|,",op#"viewBox"),-2);
+	xsc := svglen op#"width"/svgunits#"cm" / vb#0; -- a bit too big because based on 96dpi
+	ysc := svglen op#"height"/svgunits#"cm" / vb#1;
+	tikzscale = sqrt(0.5*(xsc^2+ysc^2));
+	st = st | {"x={("|toString xsc|"cm,0cm)}","y={(0cm,"|toString (-ysc)|"cm)}"};
+	) else (
+	tikzscale = 1;
+	st = append(st,"y={(0cm,-1cm)}");
+	);
+    st=append(st,"baseline=(current  bounding  box.center)");
+    st=append(st,"every path/.style={draw="|try op#"stroke" else "black"|",fill="|try op#"fill" else "none"|"}");
+    if not op#?"stroke-linejoin" then st=append(st,"line join=round");
+    "\\begin{tikzpicture}[",
+    demark(",",st),
+    "]\n",
+    apply(ct,tex),
+    "\\end{tikzpicture}"
+    )
+tex svgElement Circle := x -> concatenate(
+    (op,ct,st) := ovr x;
+    "\\path",
+    if #st>0 then "["|demark(",",st)|"]",
+    " (",
+    toString op#"cx",
+    ",",
+    toString op#"cy",
+    ") circle[radius=",
+    toString op#"r",
+    "];\n"
+    )
+tex svgElement Ellipse := x -> concatenate(
+    (op,ct,st) := ovr x;
+    "\\path",
+    if #st>0 then "["|demark(",",st)|"]",
+    " (",
+    toString op#"cx",
+    ",",
+    toString op#"cy",
+    ") circle[x radius=",
+    toString op#"rx",
+    ",y radius=",
+    toString op#"ry",
+    "];\n"
+    )
+tex svgElement GraphicsHtml :=
+tex svgElement GraphicsText := x -> concatenate(
+    (op,ct,st) := ovr x;
+    col := null;
+     -- TODO intepret options correctly (stroke vs fill)
+    st = apply(st, s -> if substring(s,0,4) == "fill" or substring(s,0,4) == "draw" then if substring(s,5) != "none" then substring(s,5) else "" else s);
+    "\\node",
+    if #st>0 then "["|demark(",",st)|"]",
+    " at (",
+    toString op#"x",
+    ",",
+    toString op#"y",
+    ") {",
+    if instance(ct,VisibleList) then tex \ toList ct else tex ct,
+    "};\n"
+    )
+tex svgElement GraphicsList := x -> concatenate(
+    (op,ct,st) := ovr x;
+    if op#?"class" and op#"class" === "gfxauto" then return "";
+    "\\begin{scope}",
+    if #st>0 then "[every path/.append style={"|demark(",",st)|"}]",
+    "\n",
+    apply(ct,tex),
+    "\\end{scope}\n"
+    )
+tex svgElement Line := x -> concatenate(
+    (op,ct,st) := ovr x;
+    "\\path",
+    if #st>0 then "["|demark(",",st)|"]",
+    " (",
+    toString op#"x1",
+    ",",
+    toString op#"y1",
+    ") -- (",
+    toString op#"x2",
+    ",",
+    toString op#"y2",
+    ");\n"
+    )
+tex svgElement Path := x -> concatenate(
+    (op,ct,st) := ovr x;
+    "\\path",
+    if #st>0 then "["|demark(",",st)|"]",
+    " svg[scale=1cm] {",
+    op#"d",
+    "};\n"
+    )
+tex svgElement Polyline := x -> concatenate(
+    (op,ct,st) := ovr x;
+    pts := pack(separate("\\s|,",op#"points"),2);
+    "\\path",
+    if #st>0 then "["|demark(",",st)|"]",
+    " ",
+    demark(" -- ",apply(pts,y->"("|toString y#0|","|toString y#1|")")),
+    ";\n"
+    )
+tex svgElement Polygon := x -> concatenate(
+    (op,ct,st) := ovr x;
+    pts := pack(separate("\\s|,",op#"points"),2);
+    "\\path",
+    if #st>0 then "["|demark(",",st)|"]",
+    " ",
+    demark(" -- ",apply(pts,y->"("|toString y#0|","|toString y#1|")")),
+    " -- cycle;\n"
+    )
+tex svgDefs := x -> "" -- not implemented
+
+tex GraphicsObject := texMath GraphicsObject := g -> tex SVG g;
 
 -- now transformations
 -- following 2 functions can be used to produce matrices to be fed to either
@@ -731,13 +879,12 @@ determineSide GraphicsPoly := g -> (
     -- find first 3 coords
     coords := select(g.PointList, x -> not instance(x,String));
     if #coords<3 then ( remove(g.cache,Filter); return; );
-    coords=apply(take(coords,3),x->compute(x,g.cache.CurrentMatrix));
-    coords = apply(coords, x -> (1/x_3)*x^{0,1});
+    coords=apply(take(coords,3),x->project3d(compute(x,g.cache.CurrentMatrix),g));
     coords = {coords#1-coords#0,coords#2-coords#0};
-    g.style#"visibility" = if coords#0_0*coords#1_1-coords#0_1*coords#1_0 < 0 then "hidden" else "visible";
+    if coords#0_0*coords#1_1-coords#0_1*coords#1_0 > 0 then g.style#"visibility" =  "hidden";
     )
 
-HypertextInternalLink = new Type of Hypertext -- could be useful elsewhere
+HypertextInternalLink = new Type of HypertextContainer -- could be useful elsewhere
 toString HypertextInternalLink := net HypertextInternalLink := x -> (
     -- ideally we'd use "override" to get the tag, but...
     tag := (select(x, y -> instance(y,Option) and y#0==="id"))#0#1;
@@ -747,16 +894,16 @@ toString HypertextInternalLink := net HypertextInternalLink := x -> (
 svgFilter := new MarkUpType of HypertextInternalLink
 addAttribute(svgFilter,svgAttr | {"x","y","width","height"})
 svgFilter.qname="filter"
-feGaussianBlur := new MarkUpType of Hypertext
+feGaussianBlur := new MarkUpType of HypertextParagraph
 addAttribute(feGaussianBlur,svgAttr|{"in","result","stdDeviation"})
 feGaussianBlur.qname="feGaussianBlur";
-feSpecularLighting := new MarkUpType of Hypertext
+feSpecularLighting := new MarkUpType of HypertextParagraph
 addAttribute(feSpecularLighting,svgAttr| {"result","specularExponent","lighting-color"})
 feSpecularLighting.qname="feSpecularLighting"
-fePointLight := new MarkUpType of Hypertext
+fePointLight := new MarkUpType of HypertextParagraph
 addAttribute(fePointLight,svgAttr|{"x","y","z"})
 fePointLight.qname="fePointLight"
-feComposite := new MarkUpType of Hypertext
+feComposite := new MarkUpType of HypertextParagraph
 addAttribute(feComposite,svgAttr|{"in","in2","operator","result","k1","k2","k3","k4"})
 feComposite.qname="feComposite"
 
@@ -765,8 +912,7 @@ filter = g -> (
     l := c.Light;
     p := c.PerspectiveMatrix;
     -- unrelated: pick up other filters from options (e.g., "fill"=>somegradient)
-    g.cache.Filter = (if g.cache.?Filter then g.cache.Filter else {}) -- in rare cases (e.g., axes) that Filter doesn't exist
-    | select(values g.style, y->instance(y,HypertextInternalLink));
+    c.Filter = c.Filter | select(values g.style, y->instance(y,HypertextInternalLink));
     -- now main part
     if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,GraphicsPoly)) then (
 	tag := graphicsId();
@@ -812,7 +958,7 @@ filter = g -> (
 		);
 	    );
 	g.cache.Options#"filter"=svgFilter opts;
-	g.cache.Filter=append(g.cache.Filter,g.cache.Options#"filter");
+	c.Filter=append(c.Filter,g.cache.Options#"filter");
 	)
     )
 

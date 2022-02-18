@@ -131,12 +131,12 @@ pushNonLinear := (opts, f, M) -> (
     m1 := presentation (cokernel xvars m  **  cokernel generators J);
 
     if opts.UseHilbertFunction and all({f, m}, isHomogeneous) then (
-	p := poincare cokernel m;
-	assert( degreesRing R === degreesRing G );
-	DG := degreesRing G;
-	hf := p * product(degrees source generators J, d -> 1 - DG_d);
-	assert( degreesRing ring m1 === ring hf );
-	(cokernel m1).cache.poincare = hf);
+	-- compare with kernel RingMap
+	hf := poincare cokernel m;
+	T := degreesRing G;
+	hf = hf * product(degrees source generators J, d -> 1 - T_d);
+	-- cache poincare
+	poincare cokernel m1 = hf);
 
     mapbackdeg := d -> take(d, -deglen);
     -- that choice of degree map was chosen to make the symmetricPower functor homogeneous, but it doesn't have much
@@ -181,7 +181,7 @@ pushLinear := opts -> (f,M) -> (
     if isHomogeneous f and isHomogeneous m then (
         hf := poincare cokernel m;
         T := (ring hf)_0;
-        (cokernel m1).cache.poincare = hf;
+        poincare cokernel m1 = hf;
         );
     gbopts := applyPairs(gbDefaults, (k,v) -> if opts#?k and k =!= Strategy then (k,opts#k) else (k,v));
     g := selectInSubring(1, generators gb(m1,gbopts));

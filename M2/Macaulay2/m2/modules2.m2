@@ -61,6 +61,8 @@ tensor(Module, Module) := Module => {} >> opts -> (M, N) -> (
 Matrix ** Module := Matrix => (f,M) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else  f ** id_M
 Module ** Matrix := Matrix => (M,f) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else id_M ** f
 
+-- TODO: this is undocumented and only works correctly in a specific case.
+-- can its goal be accomplished differently?
 Option ** Option := (x,y) -> (
      (a,b) := (x#0,y#0);			 -- the labels
      (M,N) := (x#1,y#1);			 -- the objects (modules, etc.)
@@ -77,8 +79,8 @@ Option ** Option := (x,y) -> (
 -----------------------------------------------------------------------------
 -- base change
 -----------------------------------------------------------------------------
+-- TODO: make documentation page for base change
 Module ** Ring := Module => (M,R) -> R ** M		    -- grandfathered, even though our modules are left modules
-
 Ring ** Module := Module => (R,M) -> (
      A := ring M;
      if A === R then return M;
@@ -90,7 +92,6 @@ Ring ** Module := Module => (R,M) -> (
      else map(R,A) ** M)
 
 Matrix ** Ring := Matrix => (f,R) -> R ** f		    -- grandfathered, even though our modules are left modules
-
 Ring ** Matrix := Matrix => (R,f) -> (
      B := ring source f;
      A := ring target f;
@@ -98,228 +99,10 @@ Ring ** Matrix := Matrix => (R,f) -> (
      else map( target f ** R, source f ** R, promote(cover f, R), Degree => first promote({degree f}, A, R) )
      )
 
-Ideal ** Ring := Ideal => (I, R) -> R ** I
+Ideal * Ring := Ideal ** Ring := Ideal => (I, R) -> R ** I
+Ring * Ideal := Ring ** Ideal := Ideal => (R, I) -> if ring I === R then I else ideal(I.generators ** R)
 
-Ring ** Ideal := Ideal => (R, I) -> ideal(generators I ** R)
-
------------------------------------------------------------------------------       
-poincare Module := (cacheValue symbol poincare) (
-     M -> (
-	  -- see the comment in the documentation for (degree,Ideal) about what this means when M is not homogeneous
-	  new degreesRing M from rawHilbert raw leadTerm gb -* presentation cokernel ?? *- presentation M))
-
-recipN = (n,wts,f) -> (
-     -- n is a positive integer
-     -- wts is a weight vector
-     -- f is a polynomial of the form 1 plus terms of positive weight, which we verify
-     -- we compute the terms of the expansion of 1/f of weight less than n
-     if n <= 0 then error "expected a positive integer";
-     if part(,0,wts,f) != 1 then error "expected a polynomial of the form 1 plus terms of positive weight";
-     g := 1_(ring f);  -- g always has the form 1 plus terms weight 1,2,...,m-1
-     m := 1;			   -- 1-f*g always has terms of wt m and higher
-     tr := h -> part(,m-1,wts,h);
-     while m < n do (
-	  m = 2*m;
-	  g = g + tr(g * (1 - tr(g * tr f)));
-	  );
-     if m === n then g else part(,n-1,wts,g))
-
-heft = method()
-heft Ring := R -> ( o := options R; if o =!= null and o.?Heft then o.Heft )
-heft PolynomialRing := R -> (options R.FlatMonoid).Heft
-heft QuotientRing := R -> heft ambient R
-heft Module := M -> heft ring M
-
-exactKey := "exact hilbertSeries"
-reducedKey := "reduced exact hilbertSeries"
-approxKey := "approximate hilbertSeries"
-
-reduceHilbert = method()
-reduceHilbert Divide := ser -> (
-     num := numerator ser;				    -- an element of the degrees ring
-     if num == 0 then return Divide {num, 1_(ring num)};
-     den := denominator ser;				    -- a Product of Powers
-     newden := Product nonnull apply(toList den, pwr -> (
-	       fac := pwr#0;				    -- 1-T_i
-	       ex  := pwr#1;	 			    -- exponent
-	       while ex > 0
-	       and num % fac == 0			    -- this works because of Mike's magic in the engine
-	       do (
-		    num = num // fac;
-		    ex = ex - 1;
-		    );
-	       if ex > 0 then Power {fac,ex}));
-     Divide {num, newden})
-
-protect symbol Order
-assert( class infinity === InfiniteNumber )
-hilbertSeries = method(Options => {
-     	  Order => infinity,
-	  Reduce => false
-	  }
-     )
-
-hilbertSeries QuotientRing := 
-hilbertSeries PolynomialRing := opts -> R -> hilbertSeries(R^1, opts)
-hilbertSeries Ideal := opts -> (I) -> hilbertSeries(comodule I,opts)
-hilbertSeries Module := opts -> (M) -> (
-     -- some examples compute degrees of inhomogeneous modules, so we can't refuse to compute when the module is not homogeneous.
-     -- is it guaranteed to work in some sense?
-     -- if not isHomogeneous M then error "expected a homogeneous module";
-     A := ring M;
-     if (options A).Heft === null then error "hilbertSeries: ring has no heft vector";
-     ord := opts.Order;
-     reduced := opts.Reduce;
-     if ord === infinity then (
-	  if reduced then (
-	       if M.cache#?reducedKey then return M.cache#reducedKey;
-	       if M.cache#?exactKey then return (M.cache#reducedKey = reduceHilbert M.cache#exactKey);
-	       )
-	  else (
-	       if M.cache#?exactKey then return M.cache#exactKey;
-	       )
-	  )
-     else if class ord === ZZ then (
-	  if M.cache#?approxKey then (
-	       (ord2,ser) := M.cache#approxKey;
-	       if ord == ord2 then return ser
-	       else if ord < ord2 then return part(,ord-1,heft M,ser)))
-     else error "hilbertSeries: expected infinity or an integer as value of Order option";
-     T := degreesRing A;
-     if ord === infinity then (
-     	  num := poincare M; -- 'poincare' treats monomial ideals correctly (as the corresponding quotient module)
-     	  denom := tally degrees A.FlatMonoid;
-	  r := Divide{
-	       num,
-	       Product apply(sort apply(pairs denom, (i,e) -> {1 - T_i,e}), t -> Power t)};
-	  M.cache#exactKey = r;
-	  if reduced then M.cache#reducedKey = reduceHilbert r else r)
-     else (
-	  h := hilbertSeries(M,Reduce => true);
-	  s := (
-	       num = numerator h;
-	       if num == 0 then 0_T else (
-		    wts := (options ring M).Heft;
-		    (lo,hi) := weightRange(wts,num);
-		    if ord <= lo then 0_T else (
-		    	 num = part(,ord-1,wts,num);
-			 scan(denominator h, denom -> (
-				   rec := recipN(ord-lo,wts,denom#0);
-				   scan(denom#1, i -> num = part(,ord-1,wts,num * rec))));
-			 num)));
-	  M.cache#approxKey = (ord,s);
-	  s))
-
-hilbertFunction(ZZ,Module) := hilbertFunction(ZZ,Ring) := hilbertFunction(ZZ,Ideal) := (d,M) -> hilbertFunction({d},M)
-hilbertFunction(List,Ring) := (d,R) -> hilbertFunction(d,R^1)
-hilbertFunction(List,Ideal) := hilbertFunction(List,Module) := (d,M) -> (
-     if not all(d,i->class i === ZZ) then error "expected degree to be an integer or list of integers";
-     if degreeLength M =!= #d then error "degree length mismatch";
-     h := (options ring M).Heft;
-     if h === null then error "hilbertFunction: ring has no heft vector";
-     f := hilbertSeries(M, Order => 1 + sum(h,d,times));
-     U := monoid ring f;
-     coefficient(U_d,f))
-
-ProjectiveHilbertPolynomial = new Type of HashTable
-ProjectiveHilbertPolynomial.synonym = "projective Hilbert polynomial"
-
-ProjectiveHilbertPolynomial ZZ := (P,i) -> sum(pairs P, (n,c) -> c * binomial(n+i,n))
-
-hilbertPolynomial = method(
-     Options => { Projective => true }, 
-     TypicalValue => ProjectiveHilbertPolynomial )
-
-hilbertPolynomial Ideal := options -> (I) -> hilbertPolynomial((ring I)^1/I,options)
-
-euler ProjectiveHilbertPolynomial := (P) -> P(0)
-diff(ProjectiveHilbertPolynomial,ZZ) := ProjectiveHilbertPolynomial => (P,i) -> (
-     new ProjectiveHilbertPolynomial from select(
-     	  apply(pairs P, (n,c) -> (n-i,c)),
-	  (n,c) -> n >= 0
-	  ))
-diff ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (P) -> diff(P,1)
-ProjectiveHilbertPolynomial + ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (h,k) -> merge(h,k,continueIfZero @@ plus)
-- ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => h -> applyValues(h,minus)
-ProjectiveHilbertPolynomial - ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (h,k) -> h + -k
-ProjectiveHilbertPolynomial == ProjectiveHilbertPolynomial := (h,k) -> h === k
-dim ProjectiveHilbertPolynomial := (P) -> if #P === 0 then -1 else max keys P
-degree ProjectiveHilbertPolynomial := (P) -> if #P === 0 then 0 else P#(dim P)
-ZZ * ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (b,h) -> (
-     if b === 1 then h 
-     else if b === 0 then new ProjectiveHilbertPolynomial from {}
-     else applyValues(h,c -> b*c)
-     )
-
-hilbertSeries ProjectiveHilbertPolynomial := opts -> h -> (
-     T := degreesRing 1;
-     t := T_0;
-     d := max keys h;
-     new Divide from {
-	  sum( apply( pairs h, (n,a) -> a * (1-t)^(d-n) ) ),
-	  new Power from {1-t,d+1}
-	  }
-     )
-
-expression ProjectiveHilbertPolynomial := (h) -> (
-     sum(sort pairs h, (n,c) -> c * new Subscript from {"P", n})
-     )	  
-net ProjectiveHilbertPolynomial := (h) -> net expression h
-texMath ProjectiveHilbertPolynomial := x -> texMath expression x
-
-projectiveHilbertPolynomial = method()
-projectiveHilbertPolynomial ZZ := ProjectiveHilbertPolynomial => (n) -> (
-     new ProjectiveHilbertPolynomial from { n => 1 }
-     )
-projectiveHilbertPolynomial(ZZ,ZZ) := ProjectiveHilbertPolynomial => memoize(
-     (n,d) -> new ProjectiveHilbertPolynomial from (
-     	  if d <= 0 
-	  then apply(min(-d+1,n+1), j -> n-j => (-1)^j * binomial(-d,j))
-     	  else apply(n+1, j -> n-j => binomial(d-1+j,j))))
-
-hilbertFunctionRing = memoize(() -> QQ(monoid [getSymbol "i"]))
-hilbertFunctionQ = method()
-hilbertFunctionQ(ZZ) := (n) -> (
-     if n === 0 then 1_(hilbertFunctionRing())
-     else (
-	  i := (hilbertFunctionRing())_0;
-	  (1/n) * (n+i) * hilbertFunctionQ(n-1)))
-hilbertFunctionQ(ZZ,ZZ) := memoize(
-     (n,d) -> (
-     	  if d === 0 then hilbertFunctionQ(n)
-     	  else (
-	       i := (hilbertFunctionRing())_0;
-	       substitute(hilbertFunctionQ(n), {i => i+d}))))
-
-hilbertPolynomial Module := ProjectiveHilbertPolynomial => o -> (M) -> (
-    if not isHomogeneous M then error "expected a homogeneous module";
-    R := ring M;
-    if degreeLength R != 1 
-    then error "expected a singly graded ring";
-    if not all((options R).Degrees, d -> d === {1})
-    then error "expected a ring whose variables all have degree 1";
-    n := numgens ring M - 1;
-    f := poincare M;
-    T := (ring f)_0;
-    p := pairs standardForm f;
-    if o.Projective 
-    then (
-	 if #p===0 
-	 then new ProjectiveHilbertPolynomial from {}
-	 else sum(p, (d,c) -> (
-	      	   if #d === 0 then d = 0 else d = d#0;
-	      	   c * projectiveHilbertPolynomial(n,-d))))
-    else (
-	 if #p===0
-	 then 0_(hilbertFunctionRing())
-	 else sum(p, (d,c) -> (
-	      	   if #d === 0 then d = 0 else d = d#0;
-	      	   c * hilbertFunctionQ(n,-d)))))
-
-hilbertPolynomial Ring := ProjectiveHilbertPolynomial => options -> (R) -> hilbertPolynomial(R^1, options)
-
-Ideal * Ring := Ideal => (I,S) -> if ring I === S then I else ideal(I.generators ** S)
-Ring * Ideal := Ideal => (S,I) -> if ring I === S then I else ideal(I.generators ** S)
+-----------------------------------------------------------------------------
 
 -- the key for issub hooks under GlobalHookStore
 protect ContainmentHooks
@@ -352,54 +135,6 @@ Module == ZZ := (M,n) -> (
 	  else M.numgens === 0
 	  )
      )
-
-dim Module := M -> (
-     c := codim M;
-     if c === infinity then -1 else dim ring M - c
-     )
-
-degree Ring := R -> degree R^1
-degree Module := (
-     () -> (
-     	  -- constants:
-	  local ZZ1;
-	  local T;
-	  local h;
-	  local ev;
-	  M -> (
-	       if ZZ1 === null then (
-		    ZZ1 = degreesRing 1;
-		    T = ZZ1_0;
-		    h = 1 - T;
-		    );
-	       hft := heft M;
-	       if hft === null then error "degree: no heft vector defined";
-	       hn := poincare M;
-	       n := degreeLength M;
-	       if n === 0 then return lift(hn,ZZ);		    -- assert( hd == 1 );
-	       to1 := map(ZZ1,ring hn,apply(hft,i->T^i));	    -- this assigns a privileged role to the heft vector, which we need to investigate
-	       hn = to1 hn;
-	       if hn == 0 then return 0;
-	       while hn % h == 0 do hn = hn // h;
-	       if ev === null then ev = map(ZZ,ZZ1,{1}); -- ring maps are defined only later
-	       ev hn)))()
-
-multidegree Module := M -> (
-     A := degreesRing M;
-     onem := map(A,A,apply(generators A, t -> 1-t));
-     c := codim M;
-     if c === infinity then 0_A else part(c,numgens A:1,onem numerator poincare M))
-multidegree Ring := R -> multidegree R^1
-multidegree Ideal := I -> multidegree cokernel generators I
-
-length Module := ZZ => (cacheValue symbol length) (M -> (
-    c := runHooks((length, Module), M);
-    if c =!= null then c else error "length: no method implemented for this type of module"))
-
-addHook((length, Module), Strategy => Default, M -> (
-     if not isHomogeneous M then notImplemented();
-     if dim M > 0 then return infinity;
-     degree M))
 
 -----------------------------------------------------------------------------
 
@@ -603,7 +338,6 @@ flip = method()
 flip(Module,Module) := Matrix => (F,G) -> map(ring F,rawFlip(raw F, raw G))
 
 -----------------------------------------------------------------------------
-pdim Module := M -> length resolution minimalPresentation M
 
 Module / Module := Module => (M,N) -> (
      L := ambient M;

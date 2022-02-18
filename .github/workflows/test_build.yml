@@ -39,7 +39,7 @@ jobs:
           - autotools
         os:
           - ubuntu-20.04
-          - macos-10.15
+          - macos-11
         compiler:
           - default
         include:
@@ -50,13 +50,13 @@ jobs:
             cc: clang-11
           # This build tests Clang rather than AppleClang (keep)
           - build-system: cmake
-            os: macos-10.15
+            os: macos-11
             compiler: clang-11
             cxx: clang++
             cc: clang
         exclude:
           - build-system: cmake
-            os: macos-10.15
+            os: macos-11
             compiler: default
     env:
       VERBOSE: 1
@@ -132,7 +132,7 @@ jobs:
         run: |
           cmake -S../.. -B. -GNinja \
             -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF \
-            -DCMAKE_PREFIX_PATH="`brew --prefix`;`brew --prefix tbb@2020_u3`" \
+            -DCMAKE_PREFIX_PATH="`brew --prefix`;`brew --prefix tbb@2020`" \
             -DCMAKE_INSTALL_PREFIX=/usr \
             -DWITH_PYTHON=ON \
             --debug-trycompile
@@ -163,8 +163,8 @@ jobs:
           make -C ../.. all
           export PYVERSION=`python3 -c "from sys import version_info; \
             print(f'{version_info.major}.{version_info.minor}')"`
-          export CPPFLAGS="-I`brew --prefix`/include -I`brew --prefix tbb@2020_u3`/include"
-          export  LDFLAGS="-L`brew --prefix`/lib     -L`brew --prefix tbb@2020_u3`/lib \
+          export CPPFLAGS="-I`brew --prefix`/include -I`brew --prefix tbb@2020`/include"
+          export  LDFLAGS="-L`brew --prefix`/lib     -L`brew --prefix tbb@2020`/lib \
             -L`brew --prefix python`/Frameworks/Python.framework/Versions/${PYVERSION}/lib"
           ../../configure --enable-download --with-python
 

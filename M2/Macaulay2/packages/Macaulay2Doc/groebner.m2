@@ -411,7 +411,7 @@ document {
 	  },
      "Now we provide the hint and compute the Groebner basis anew.",
      EXAMPLE {
-      	  "(cokernel f).cache.poincare = (1-T^3)*(1-T^3)*(1-T^5)*(1-T^6)",
+	  "poincare cokernel f = (1-T^3)*(1-T^3)*(1-T^5)*(1-T^6) -- cache poincare",
       	  "time betti gb f"
 	  },
      "The computation turns out to be substantially faster."
