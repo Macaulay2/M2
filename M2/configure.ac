@@ -174,6 +174,30 @@ AC_CHECK_TOOL(DLLTOOL,dlltool,false)
 AC_CHECK_TOOL(LD,ld,false)
 AC_CHECK_TOOL(STRIP,strip,false)
 
+AC_ARG_WITH([documentation],
+    [AC_HELP_STRING([--with-documentation=...],
+        [space-delimited list of types of documentation to build; available
+         options are "html", "info", and "pdf"; default value is "html info"])],
+    [DOCUMENTATION=$withval],
+    [DOCUMENTATION="html info"])
+
+if test "$DOCUMENTATION" = no
+then DOCUMENTATION=""
+elif test "$DOCUMENTATION" = yes
+then DOCUMENTATION="html info"
+else for DOCTYPE in $DOCUMENTATION
+    do case $DOCTYPE in
+            html|info|pdf)
+                ;;
+            *)
+                AC_MSG_ERROR([unknown documentation type ($DOCTYPE); expected html, info, or pdf])
+                ;;
+        esac
+    done
+fi
+
+AC_SUBST(DOCUMENTATION)
+
 if test "$STRIP" != "false"
 then AC_MSG_CHECKING(whether $STRIP accepts the remove-section option)
      if "$STRIP" --help 2>&1 | grep remove-section >/dev/null
