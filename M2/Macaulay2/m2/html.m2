@@ -9,10 +9,13 @@ needs "gb.m2" -- for for GroebnerBasis
 needs "packages.m2" -- for Package
 needs "system.m2" -- for getViewer
 
+getStyleFile := fn -> locateCorePackageFileRelative("Style",
+    layout -> replace("PKG", "Style", layout#"package") | fn,
+    installPrefix, htmlDirectory);
+
 -- TODO: unify the definition of the tex macros so book/M2book.tex can use them
 KaTeX := () -> (
-    katexPath := locateCorePackageFileRelative("Style",
-	layout -> replace("PKG", "Style", layout#"package") | "katex", installPrefix, htmlDirectory);
+    katexPath := getStyleFile "katex";
     katexTemplate := ///
     <link rel="stylesheet" href="%PATH%/katex.min.css" />
     <script defer="defer" type="text/javascript" src="%PATH%/katex.min.js"></script>
@@ -45,8 +48,7 @@ KaTeX := () -> (
 -- The default stylesheet for documentation
 defaultStylesheet := () -> LINK {
     "rel" => "stylesheet", "type" => "text/css",
-    "href" => locateCorePackageFileRelative("Style",
-	layout -> replace("PKG", "Style", layout#"package") | "doc.css", installPrefix, htmlDirectory)}
+    "href" => getStyleFile "doc.css"}
 
 -- Also set the character encoding with a meta http-equiv statement. (Sometimes XHTML
 -- is parsed as HTML, and then the HTTP header or a meta tag is used to determine the
