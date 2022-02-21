@@ -114,6 +114,7 @@ PARA       = new MarkUpType of HypertextParagraph -- double spacing inside
 DIV        = new MarkUpType of HypertextContainer
 BR         = new MarkUpType of Hypertext
 HR         = new MarkUpType of HypertextParagraph
+SCRIPT     = new MarkUpType of HypertextParagraph
 
 -- Headers
 HEADER1    = new MarkUpType of HypertextParagraph
@@ -321,6 +322,7 @@ scan({HTML, HEAD, TITLE, BODY}, T -> addAttribute(T, htmlGlobalAttr))
 addAttribute(META,  htmlGlobalAttr | {"name", "content", "http-equiv"})
 addAttribute(LINK,  htmlGlobalAttr | {"href", "rel", "title", "type"})
 addAttribute(STYLE, htmlGlobalAttr | {"type"})
+addAttribute(SCRIPT, htmlGlobalAttr | {"src", "type"})
 
 -- html global and event attributes
 htmlAttr = htmlGlobalAttr | {
