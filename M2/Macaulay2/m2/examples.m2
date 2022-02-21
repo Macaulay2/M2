@@ -35,7 +35,7 @@ trimlines := L -> apply(L, x ->
 
 makeExampleItem = method()
 -- TODO: can this be handled with a NewFromMethod?
-makeExampleItem PRE    := p -> flatten apply(toList p, s -> PRE \ separateM2output s)
+makeExampleItem PRE    := p -> flatten apply(toList p, s -> PRE \ M2CODE \ separateM2output s)
 makeExampleItem String := s -> ExampleItem s
 
 -- allows canned examples with EXAMPLE PRE "..."
@@ -243,7 +243,7 @@ processExamplesLoop Thing       := identity
 processExamplesLoop Sequence    :=
 processExamplesLoop Hypertext   := x -> apply(x, processExamplesLoop)
 processExamplesLoop ExampleItem := x -> (
-    result := if currentExampleResults#?currentExampleCounter then PRE currentExampleResults#currentExampleCounter else (
+    result := if currentExampleResults#?currentExampleCounter then PRE M2CODE currentExampleResults#currentExampleCounter else (
 	if #currentExampleResults === currentExampleCounter then (
 	    if processExamplesStrict
 	    then error("example results terminate prematurely: ", toString currentExampleKey)
