@@ -4,4 +4,5 @@ import 'highlight.js/styles/default.css';
 import './highlight-override.css';
 
 hljs.registerLanguage('macaulay2', macaulay2);
+hljs.configure({ cssSelector: 'code' });
 hljs.highlightAll();
