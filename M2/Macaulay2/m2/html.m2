@@ -43,7 +43,7 @@ KaTeX := () -> (
     <link href="%PATH%/contrib/copy-tex.min.css" rel="stylesheet" type="text/css" />
     <script defer="defer" type="text/javascript" src="%PATH%/contrib/copy-tex.min.js"></script>
     <script defer="defer" type="text/javascript" src="%PATH%/contrib/render-a11y-string.min.js"></script>///;
-    LITERAL replace("%PATH%", katexPath, katexTemplate))
+    LITERAL replace("%PATH%", katexPath, katexTemplate | newline))
 
 -- The default stylesheet for documentation
 defaultStylesheet := () -> LINK {
@@ -55,7 +55,13 @@ defaultStylesheet := () -> LINK {
 -- character encoding.  Locally-stored documentation does not have an HTTP header.)
 defaultCharset := () -> META { "http-equiv" => "Content-Type", "content" => "text/html; charset=utf-8" }
 
-defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStylesheet(), KaTeX() }
+defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStylesheet(), KaTeX(),
+    SCRIPT {
+	"type" => "text/javascript",
+	"src" => getStyleFile "highlight.js",
+	""
+	}
+    }
 
 -----------------------------------------------------------------------------
 -- Local utilities
