@@ -347,6 +347,8 @@ addAttribute(TH,     htmlAttr | {"colspan", "headers", "rowspan"})
 addAttribute(IMG,    htmlAttr | {"alt", "src", "srcset", "width", "height",
 	"sizes", "crossorigin", "longdesc", "referrerpolicy", "ismap", "usemap"})
 
+M2CODE = method()
+M2CODE Thing := x -> CODE("class" => "language-macaulay2", x)
 
 -- Written by P. Zinn-Justin
 style = method(Options => true)
