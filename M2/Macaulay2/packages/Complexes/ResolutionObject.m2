@@ -1,12 +1,10 @@
--- todo 7 Feb 2022
--- 1. debug DegreeLimit, LengthLimit, interrupting for Engine resolution
--- 2. after that: other engine strategies
--- 3. after that: other strategies
-
--- todo 10 Dec 2021.
--- 1. res M -- needs length limit if the ring is not a polynomial ring over a field (or ZZ?)
--- 2. resolutionDegreeLimit: should check that argument is null, an integer, or a list of integers of the right length.
---      at the moment (1.19.1): it handles null, integer case, but doesn't verify it is a list otherwise.
+-- todo 14 Feb 2022
+-- our hook for resolutionInEngine (Strategy1) seems to be working.
+--   (well, close: restarting a computation with large LengthLimit, resetting to
+--   a small LengthLimit still computes lots of stuff in higher degrees.
+--   See example: 20 generators, of degrees 1, ..., 20 below.
+-- connect up Strategies 0, 2, 3?  
+-- then inhomogeneous, resolutionBySyzygies...
 
 importFrom_Core { "RawComputation", "raw" }
 importFrom_Core { "degreeToHeft", 
@@ -25,38 +23,30 @@ raw ResolutionObject := X -> X.RawComputation
 
 inf := t -> if t === infinity then -1 else t
 
-naiveTruncationByLengthAndDegree = method()
-
-naiveTruncationByLengthAndDegree(Complex, InfiniteNumber, InfiniteNumber) :=
-naiveTruncationByLengthAndDegree(Complex, InfiniteNumber, ZZ) :=
-naiveTruncationByLengthAndDegree(Complex, ZZ, InfiniteNumber) :=
-naiveTruncationByLengthAndDegree(Complex, ZZ, ZZ) := Complex => (C, lengthlimit, degreelimit) -> (
-    naiveTruncation(C, -infinity, lengthlimit) -- TODO: also truncate by (slanted) degrees.
-    )
-
 freeResolution Module := Complex => opts -> M -> (
     -- This handles caching, hooks for different methods of computing 
     -- resolutions or over different rings which require different algorithms.
+    --
+    -- LengthLimit prescribes the length of the computed complex
+    -- DegreeLimit is a lower limit on what will be computed degree-wise, but more might be computed.
     local C;
     if M.cache.?Resolution then (
         C = M.cache.Resolution;
         if not C.cache.?LengthLimit or not C.cache.?DegreeLimit then
             error "internal error: Resolution should have both a LengthLimit and DegreeLimit";
-        if C.cache.LengthLimit === opts.LengthLimit and C.cache.DegreeLimit === opts.DegreeLimit then
-            return C;
         if C.cache.LengthLimit >= opts.LengthLimit and C.cache.DegreeLimit >= opts.DegreeLimit then
-            return naiveTruncationByLengthAndDegree(C, opts.LengthLimit, opts.DegreeLimit);
+            return naiveTruncation(C, -infinity, opts.LengthLimit);
         remove(M.cache, symbol Resolution); -- will be replaced below
         );
     if M.cache.?ResolutionObject then (
         RO := M.cache.ResolutionObject;
         if opts.Strategy === null or opts.Strategy === RO.Strategy
         then (
-            if RO.isComputable(opts.LengthLimit, opts.DegreeLimit) -- can change RO.LengthLimit, RO.DegreeLimit
+            if RO.isComputable(opts.LengthLimit, opts.DegreeLimit) -- this is informational: does not change RO.
             then (
-                RO.compute(); -- it is possible to interrupt this and then the following lines do not happen.
-                C = RO.complex();
-                C.cache.LengthLimit = opts.LengthLimit;
+                RO.compute(opts.LengthLimit, opts.DegreeLimit); -- it is possible to interrupt this and then the following lines do not happen.
+                C = RO.complex(opts.LengthLimit);
+                C.cache.LengthLimit = if max C < opts.LengthLimit then infinity else opts.LengthLimit;
                 C.cache.DegreeLimit = opts.DegreeLimit;
                 C.cache.Module = M;
                 M.cache.Resolution = C;
@@ -81,8 +71,8 @@ freeResolution Module := Complex => opts -> M -> (
     
     if C =!= null then (
         assert(instance(C, Complex));
-        C.cache.LengthLimit = RO.LengthLimit;
-        C.cache.DegreeLimit = RO.DegreeLimit;
+        C.cache.LengthLimit = if max C < opts.LengthLimit then infinity else opts.LengthLimit;
+        C.cache.DegreeLimit = opts.DegreeLimit;
         C.cache.Module = M;
         M.cache.Resolution = C;
         return C;
@@ -97,6 +87,8 @@ freeResolution Module := Complex => opts -> M -> (
     -- either way, each hook has to create these functions...
 
     -- Question: where is the actual computation happening? In the hook!
+    
+    error("no method implemented to handle this ring and module");
     );
 
 resolutionInEngine = (opts, M) -> (
@@ -122,7 +114,14 @@ resolutionInEngine = (opts, M) -> (
 
     if RO.?RawComputation then error "internal error: our logic is wrong";
 
-    lengthlimit := if opts.LengthLimit === infinity then numgens R else opts.LengthLimit; -- TODO: handle quotient ring case
+    lengthlimit := if opts.LengthLimit === infinity 
+        then (
+            flatR := first flattenRing R;
+            if ideal flatR != 0 then 
+                error "need to provide LengthLimit for free resolutions over quotients of polynomial rings";
+            numgens flatR)
+        else opts.LengthLimit;
+    << "creating raw computation" << endl;
     RO.RawComputation = rawResolution(
         raw presentation M, -- the matrix
         true,             -- whether to resolve the cokernel of the matrix
@@ -133,10 +132,9 @@ resolutionInEngine = (opts, M) -> (
         opts.SortStrategy -- sorting strategy, for advanced use
         );
     RO.returnCode = rawStatus1 RO.RawComputation; -- do we need this?
-    RO.DegreeLimit = opts.DegreeLimit;
-    --  === infinity then infinity else degreeToHeft(R, opts.DegreeLimit);
-    RO.compute = () -> (
-        deglimit := if RO.DegreeLimit === infinity then {} else {degreeToHeft(R, RO.DegreeLimit)};
+
+    RO.compute = (lengthlimit, degreelimit) -> (
+        deglimit := if degreelimit === infinity then {} else degreeToHeft(R, degreelimit);
         rawGBSetStop(
             RO.RawComputation,
             false,                                      -- always_stop
@@ -151,32 +149,34 @@ resolutionInEngine = (opts, M) -> (
             );
         rawStartComputation RO.RawComputation;
         RO.returnCode = rawStatus1 RO.RawComputation;
-        RO.DegreeLimit = opts.DegreeLimit;
+        RO.DegreeLimit = degreelimit;
         );
 
-    RO.isComputable = (lengthlimit, degreelimit) -> ( -- not working correctly yet.
-        -- returns Boolean, and if it returns true, might set RO.LengthLimit, RO.DegreeLimit.
+    RO.isComputable = (lengthlimit, degreelimit) -> ( -- this does not mutate RO.
+        -- returns Boolean if the given engine computation can compute the free res to this length and degree.
         << "calling isComputable" << endl;
-        if lengthlimit > RO.LengthLimit then return false;
-        RO.LengthLimit = lengthlimit;
-        RO.DegreeLimit = degreelimit; 
-        true
+        lengthlimit <= RO.LengthLimit
         );
 
-    RO.complex = () -> (
-        -- returns a Complex. 
-        lengthlimit := if RO.LengthLimit === infinity then numgens R else RO.LengthLimit; -- TODO: handle quotient ring case
-        modules := for i from 0 to lengthlimit list 
-            new Module from (R, rawResolutionGetFree(RO.RawComputation, i));
-        maps := hashTable for i from 1 to lengthlimit list (
-            if modules#i == 0 then break;
+    RO.complex = (lengthlimit) -> (
+        << "calling RO.complex" << endl;
+        -- returns a Complex of length <= lengthlimit
+        i := 0;
+        modules := while i <= lengthlimit list (
+            F := new Module from (R, rawResolutionGetFree(RO.RawComputation, i));
+            if F == 0 then break;
+            i = i+1;
+            F
+            );
+        if #modules === 1 then return complex(modules#0, Base => 0);
+        maps := hashTable for i from 1 to #modules-1 list (
             i => map(modules#(i-1), modules#i, rawResolutionGetMatrix(RO.RawComputation, i))
             );
         complex maps
         );
     
-    RO.compute();
-    RO.complex()
+    RO.compute(opts.LengthLimit, opts.DegreeLimit);
+    RO.complex(opts.LengthLimit)
     )
 
 addHook((freeResolution, Module), resolutionInEngine, Strategy => Engine)
@@ -204,8 +204,20 @@ betti F2
 F3 = freeResolution(M, LengthLimit => 3)
 F3 = freeResolution(M, LengthLimit => 10)
 
+I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
+M = S^1/I
+F1 = freeResolution(M, LengthLimit => 2)
+F2 = freeResolution(M, LengthLimit => 3)
+F3 = freeResolution(M, LengthLimit => 5)
+
+
+restart
+debug loadPackage("Complexes")
+load "Complexes/ResolutionObject.m2"
+gbTrace=1
 S = ZZ/101[vars(0..20)]
-M = coker vars S
+I = ideal for i from 1 to numgens S list S_(i-1)^i
+M = S^1/I
 F = freeResolution(M, Strategy => Engine)
 -- control-c in the middle, look at M.cache.ResolutionObject
 peek M.cache.ResolutionObject
@@ -213,8 +225,21 @@ freeResolution(M, LengthLimit => 4)
 assert isWellDefined F
 F2 = freeResolution(M, LengthLimit => 2)
 
-
-
+-- XXX
+restart
+debug loadPackage("Complexes")
+load "Complexes/ResolutionObject.m2"
+gbTrace=1
+kk = ZZ/101
+A = kk[a,b,c]
+B = A/(a^2, b^3-c^3)
+C = B[d, Join => false]
+I = ideal(c^2*d, a*b^2-c^2*d)
+M = comodule I
+freeResolution(M, LengthLimit => 10)
+freeResolution(M, LengthLimit => 5, DegreeLimit => 4)
+freeResolution(M, LengthLimit => 4)
+freeResolution(M, LengthLimit => 6, DegreeLimit => 1)
 M = comodule ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
 F = freeResolution(M, Strategy => 2)
 assert isWellDefined F
