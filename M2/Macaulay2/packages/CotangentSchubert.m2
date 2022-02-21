@@ -1,8 +1,8 @@
 newPackage(
     "CotangentSchubert",
     AuxiliaryFiles => true,
-    Version => "0.5",
-    Date => "19 Dec 2021", -- "22 Mar 2021",
+    Version => "0.6",
+    Date => "21 Feb 2022", -- "22 Mar 2021",
     Authors => {{Name => "Paul Zinn-Justin",
             Email => "pzinn@unimelb.edu.au",
             HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
@@ -45,6 +45,9 @@ multidoc ///
  Node
   Key
    setupCotangent
+   [setupCotangent,Presentation]
+   [setupCotangent,Ktheory]
+   [setupCotangent,Equivariant]
   Headline
    Set up cotangent Schubert calculus rings
   Usage
@@ -53,6 +56,7 @@ multidoc ///
   Inputs
    dimensions : Sequence
     of integers
+   Presentation => Symbol
    Ktheory => Boolean
    Equivariant => Boolean
   Description
@@ -100,8 +104,8 @@ multidoc ///
    A : Ring
   Description
    Text
-    computes a motivic Chern class with label i (a ``string'', i.e., a string made of characters from "0" to "d"
-    where d is the number of steps of the flag variety) in a K-theory ring @TT "A"@
+    This function computes a motivic Chern class with label @TT "i"@ (a string made of characters from "0" to "d"
+    where d is the number of steps of the flag variety) or list of labels @TT "I"@ in a K-theory ring @TT "A"@
     previously built using @TO{setupCotangent}@. If @TT "A"@ is not specified, then the ring that was defined last is used.
    Example
     (A,B,FF,I)=setupCotangent(1,3,Presentation=>Borel,Ktheory=>true,Equivariant=>false);
@@ -135,8 +139,8 @@ multidoc ///
    A : Ring
   Description
    Text
-    computes a motivic Segre class with label i (a ``string'', i.e., a string made of characters from "0" to "d"
-    where d is the number of steps of the flag variety) in a K-theory ring @TT "A"@
+    This function computes a motivic Segre class with label @TT "i"@ (a string made of characters from "0" to "d"
+    where d is the number of steps of the flag variety) or list of labels @TT "I"@ in a K-theory ring @TT "A"@
     previously built using @TO{setupCotangent}@. If @TT "A"@ is not specified, then the ring that was defined last is used.
    Example
     (A,B,FF,I)=setupCotangent(1,3,Presentation=>Borel,Ktheory=>true,Equivariant=>false);
@@ -166,8 +170,8 @@ multidoc ///
    A : Ring
   Description
    Text
-    computes a Schubert class with label i (a ``string'', i.e., a string made of characters from "0" to "d"
-    where d is the number of steps of the flag variety) in a K-theory ring @TT "A"@
+    This function computes a Schubert class with label @TT "i"@ (a string made of characters from "0" to "d"
+    where d is the number of steps of the flag variety) or list of labels @TT "I"@ in a K-theory ring @TT "A"@
     previously built using @TO{setupCotangent}@. If @TT "A"@ is not specified, then the ring that was defined last is used.
     The primed classes are dual classes.
  Node
@@ -184,7 +188,7 @@ multidoc ///
    A : Ring
   Description
    Text
-    Computes the i^th Chern class of the j^th tautological bundle of the flag variety whose K-theory (or cohomology)
+    This function computes the i-th Chern class of the j-th tautological bundle of the flag variety whose K-theory (or cohomology)
     ring is given by @TT "A"@. If @TT "A"@ is not specified, then the ring that was defined last is used.
  Node
   Key
@@ -199,26 +203,69 @@ multidoc ///
    a : RingElement
   Description
    Text
-    Pushes forward a K-theory or cohomology class from either the flag variety or its cotangent bundle.
+    This function returns the push forward of a (K-theory or cohomology) class from either the flag variety or its cotangent bundle
+    to a point.
     The ring of input @TT "a"@ must have been previously created with @TO {setupCotangent}@.
  Node
   Key
    inversion
- Node
-  Key
-   fullToPartial
+  Headline
+   Inversion number of a string
+  Description
+   Text
+    Given a string of digits "a_1 a_2 ... a_n", computes the inversion number of that string
+    (the number of i<j such that a_i>a_j).
  Node
   Key
    restrict
+  Headline
+   Restriction to fixed points
+  Description
+   Text
+    Given a (K-theory or cohomology) class in a ring defined by @TO {setupCotangent}@
+    with the options @TT "Presentation => Borel"@ and @TT "Equivariance => true"@,
+    this function computes its restriction to fixed points (effectively, giving the class
+    as would be produced by the option @TT "Presentation => EquivLoc"@).
  Node
   Key
    zeroSection
+  Headline
+   Class of the zero section of the cotangent bundle of a flag variety
+  Description
+   Text
+    This function returns the class of the base of the cotangent bundle of the flag variety
+    in the cohomology ring given as argument (or the last ring defined with @TO {setupCotangent}@
+    if no argument is given).
  Node
   Key
    dualZeroSection
+  Headline
+   Class of the zero section of the tangent bundle of a flag variety
+  Description
+   Text
+    This function returns the class of the base of the tangent bundle of the flag variety
+    in the cohomology ring given as argument (or the last ring defined with @TO {setupCotangent}@
+    if no argument is given).
+ Node
+  Key
+   canonicalClass
+  Headline
+   Class of the canonical bundle of a flag variety
+  Description
+   Text
+    This function returns the class of the canonical bundle of the flag variety
+    in the cohomology ring given as argument (or the last ring defined with @TO {setupCotangent}@
+    if no argument is given).
  Node
   Key
    puzzle
+   [puzzle, Generic]
+   [puzzle, Ktheory]
+   [puzzle, Ktheory']
+   [puzzle, Equivariant]
+   [puzzle, Labels]
+   [puzzle, Paths]
+   [puzzle, Steps]
    Puzzle
   Headline
    Compute puzzles with given boundaries
@@ -239,7 +286,7 @@ multidoc ///
    Steps => ZZ
   Description
    Text
-    Produces a list of puzzles with boundaries given by strings @TT "a"@ (northwest side),
+    This function produces a list of puzzles with boundaries given by strings @TT "a"@ (northwest side),
     @TT "b"@ (northeast side), @TT "c"@ (bottom side).
     The default @TT "Generic=>true"@ produces "generic" puzzles corresponding to the multiplication of
     motivic Segre classes @TO {sClass}@, whereas @TT "Generic=>false"@ produces "classic" puzzles
@@ -253,6 +300,8 @@ multidoc ///
     whereas "*" stands for any puzzle label.
 
     @TT "Labels"@ and @TT "Paths"@ are drawing options which only affect HTML and TeX output of puzzles.
+    The Net output of puzzles is a rotated, squashed version where equilateral triangles become right triangles;
+    each cluster of three labels represents the labels around an elementary up-pointing triangle.
    Example
     puzzle ("0101","1001",Equivariant=>false)
  Node
@@ -315,7 +364,6 @@ undocumented {
     Presentation, Ktheory, Equivariant, Partial, Borel, EquivLoc,
     Paths, Labels, Length, Steps, Ktheory',
     (restrict,Matrix),(restrict,Matrix,RingElement),
-    (fullToPartial,Matrix),(fullToPartial,Matrix,RingElement),
     (inversion,String)
     }
 
@@ -323,14 +371,22 @@ TEST ///
 (A,B,FF,I)=setupCotangent(2,4,Presentation=>Borel,Ktheory=>false,Equivariant=>false);
 assert((schubertClass "0101")^2 == schubertClass "1001" + schubertClass "0110") -- classic Schubert calculus
 assert(pushforwardToPoint((segreClass "0101")^2*chernClass "0101")==-4) -- ex of p43 of II: chi(S_0101^3)=-4
+assert(sum apply(I,segreClass) == 1) -- sum rule for Segre classes
 ///
 
 TEST ///
-(D,FF,I)=setupCotangent(1,2,4,Ktheory=>true)
+(D,FF,I)=setupCotangent(2,4,Ktheory=>true);
+assert(sum apply(I,segreClass) == 1) -- sum rule for Segre classes
+P=puzzle("0101","0110"); assert(#P == 12) -- generic puzzles
+assert(sClass I * fugacityVector P == sClass "0101"*sClass "0110")
+///
+
+TEST ///
+(D,FF,I)=setupCotangent(1,3,5,Ktheory=>false)
 segreCls=sClass I;
-i1=I#1;i2=I#2;
+i1=I#11;i2=I#27;
 a=sClass i1*sClass i2;
-P=puzzle(i1,i2) -- generic 2-step puzzles
+P=puzzle(i1,i2); -- generic 2-step puzzles
 b=segreCls*(fugacityVector P);
 assert(a==b)
 ///
