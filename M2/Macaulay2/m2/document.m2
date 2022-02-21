@@ -536,7 +536,7 @@ getUsage := val -> (
     if not instance(val, String) then error "Usage: expected a string";
     val = apply(nonempty separate val, u -> replace("^[[:space:]]*(.*)[[:space:]]*$", "\\1", u));
     if #val === 0 then error "Usage: expected content";
-    DL flatten { "class" => "element", DT "Usage: ", DD \ TT \ val } )
+    DL flatten { "class" => "element", DT "Usage: ", DD \ M2CODE \ val } )
 
 getHeadline   := (val, key)   -> (
     title := if instance(val, String) then fixup val else error("expected ", toString key, " option to be a string");
