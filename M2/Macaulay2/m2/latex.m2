@@ -180,7 +180,8 @@ tex     TABLE := x -> concatenate applyTable(noopts x, tex)
 
 tex  PRE :=
 tex CODE := x -> concatenate ( VERBATIM, "\n\\penalty-200\n", HALFLINE,
-     shorten lines concatenate x
+     shorten lines concatenate apply(noopts x, y ->
+	  if instance(y, Hypertext) then concatenate noopts y else y)
      / (line ->
 	  if #line <= maximumCodeWidth then line
 	  else concatenate(substring(0,maximumCodeWidth,line), " ..."))

@@ -14,12 +14,28 @@ Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/editors/Makefile
 @pre_emacsdir@ :; @INSTALL@ -d "$@"
 @pre_emacsdir@/% : $(addprefix emacs/, %) ; @INSTALL_DATA@ $^ @pre_emacsdir@
 
-emacs/M2-symbols.el : make-M2-symbols.m2 ../m2/exports.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
+emacs/M2-symbols.el highlightjs/macaulay2.js : make-M2-symbols.m2 ../m2/exports.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
 	@pre_exec_prefix@/bin/M2 $(ARGS) @srcdir@/make-M2-symbols.m2 -e 'exit 0'
 emacs/M2-emacs.m2 emacs/M2-emacs-help.txt: emacs/make-M2-emacs-help.m2 @pre_exec_prefix@/bin/M2@EXE@ @pre_exec_prefix@/bin/M2
 	cd emacs; @pre_exec_prefix@/bin/M2 $(ARGS) @abs_srcdir@/emacs/make-M2-emacs-help.m2 -e 'exit 0'
 
-clean::; rm -rf @pre_emacsdir@/* atom emacs prism pygments vim
+ifeq (@NPM@,false)
+highlightjs/highlight.js:
+	@echo "warning: html docs will not have syntax highlighting"
+	touch $@
+else
+$(CURDIR)/highlightjs/%: @srcdir@/highlightjs/%
+	cp $< $@
+
+highlightjs/highlight.js: highlightjs/macaulay2.js \
+	$(CURDIR)/highlightjs/package.json         \
+	$(CURDIR)/highlightjs/webpack.config.js    \
+	$(CURDIR)/highlightjs/index.js             \
+	$(CURDIR)/highlightjs/highlight-override.css
+	cd $(dir $@) && $ @NPM@ install && @NPM@ run build
+endif
+
+clean::; rm -rf @pre_emacsdir@/* atom emacs highlightjs prism pygments vim
 distclean:: clean; rm -f Makefile
 
 # Local Variables:

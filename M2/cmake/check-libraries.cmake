@@ -20,6 +20,7 @@ message(CHECK_START " Checking for existing libraries and programs")
 find_package(PkgConfig	REQUIRED QUIET)
 find_program(MAKE  NAMES gmake make)
 find_program(ETAGS NAMES etags)
+find_program(NPM   NAMES npm)
 
 if(BUILD_DOCS)
   find_package(Doxygen)

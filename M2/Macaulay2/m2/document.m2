@@ -536,7 +536,7 @@ getUsage := val -> (
     if not instance(val, String) then error "Usage: expected a string";
     val = apply(nonempty separate val, u -> replace("^[[:space:]]*(.*)[[:space:]]*$", "\\1", u));
     if #val === 0 then error "Usage: expected content";
-    DL flatten { "class" => "element", DT "Usage: ", DD \ TT \ val } )
+    DL flatten { "class" => "element", DT "Usage: ", DD \ M2CODE \ val } )
 
 getHeadline   := (val, key)   -> (
     title := if instance(val, String) then fixup val else error("expected ", toString key, " option to be a string");
@@ -545,7 +545,7 @@ getHeadline   := (val, key)   -> (
     title)
 getSubsection := (val, title) -> fixup DIV { SUBSECTION title, val }
 getSourceCode :=  val         -> DIV {"class" => "waystouse",
-    fixup DIV {SUBSECTION "Code", PRE demark_newline unstack stack apply(enlist val, m -> (
+    fixup DIV {SUBSECTION "Code", PRE M2CODE demark_newline unstack stack apply(enlist val, m -> (
 		f := lookup m; if f === null then error("SourceCode: ", toString m, ": not a method");
 		c := code f;   if c === null then error("SourceCode: ", toString m, ": code for method not found");
 		reproduciblePaths toString c))}}

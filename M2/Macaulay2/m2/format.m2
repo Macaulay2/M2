@@ -66,7 +66,9 @@ info TITLE :=
 net  COMMENT :=
 info COMMENT :=
 net  LITERAL :=
-info LITERAL := x -> ""
+info LITERAL :=
+net  SCRIPT  :=
+info SCRIPT  := x -> ""
 
 info String  := identity
 info Nothing := net

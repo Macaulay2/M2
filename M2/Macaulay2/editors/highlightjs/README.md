@@ -2,7 +2,25 @@ Macaulay2 in highlight.js
 =========================
 
 [highlight.js](https://highlightjs.org/) is a JavaScript syntax highlighter
-with language auto-detection and zero dependencies.
+with language auto-detection and zero dependencies.  It is used for syntax
+highlighting examples in the Macaulay2 html documentation.
+
+Downloading
+-----------
+
+A bundled copy of highlight.js, including just the core library, the
+Macaulay2 language, and the default style, is distributed with
+Macaulay2 itself in the `Style` package.
+
+Alternatively, you can download it using either of the following methods:
+
+```
+npm install highlightjs-macaulay2
+```
+
+```
+git clone https://github.com/d-torrance/highlightjs-macaulay2
+```
 
 Building
 --------
