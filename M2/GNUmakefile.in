@@ -206,6 +206,9 @@ $(foreach s,@BUILDSUBLIST@,$(eval $(call build-submodule-rules,$s)))
 # installation into usr-dist
 ## It's annoying that fflas_ffpack will copy the files during installation every time.
 all-in-fflas_ffpack: install-in-fflas_ffpack
+all-in-memtailor:    install-in-memtailor
+all-in-mathic:       install-in-mathic
+all-in-mathicgb:     install-in-mathicgb
 
 ifeq (@BUILD_givaro@,yes)
 # fflas_ffpack depends on givaro, so if they both get built, then build givaro first.
