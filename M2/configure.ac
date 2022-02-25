@@ -1245,35 +1245,44 @@ then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
 fi
 
-dnl if test $BUILD_memtailor = no
-dnl then AC_LANG(C++)
-dnl      SAVE_CXXFLAGS="$CXXFLAGS"
-dnl      CXXFLAGS="$CXXFLAGS"
-dnl      AC_SEARCH_LIBS(MEMTAILOR_VERSION_STRING,memtailor,,BUILD_memtailor=yes)
-dnl      AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
-dnl      CXXFLAGS="$SAVE_CXXFLAGS"
-dnl fi
-dnl test $BUILD_memtailor = yes && BUILTLIBS="-lmemtailor $BUILTLIBS"
+AC_ARG_ENABLE([build-memtailor],
+    [AS_HELP_STRING([--disable-build-memtailor],
+	[use system memtailor instead of building git submodule])],,
+    [enable_build_memtailor=yes])
+if test $enable_build_memtailor = yes
+then
+    BUILD_memtailor=yes
+    BUILTLIBS="-lmemtailor $BUILTLIBS"
+else AC_LANG(C++)
+    AC_SEARCH_LIBS(MEMTAILOR_VERSION_STRING,memtailor,,BUILD_memtailor=yes)
+    AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
+fi
 
-dnl if test $BUILD_mathic = no
-dnl then AC_LANG(C++)
-dnl      SAVE_CXXFLAGS="$CXXFLAGS"
-dnl      CXXFLAGS="$CXXFLAGS"
-dnl      AC_SEARCH_LIBS(MATHIC_VERSION_STRING,mathic,,BUILD_mathic=yes)
-dnl      AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
-dnl      CXXFLAGS="$SAVE_CXXFLAGS"
-dnl fi
-dnl test $BUILD_mathic = yes && BUILTLIBS="-lmathic $BUILTLIBS"
+AC_ARG_ENABLE([build-mathic],
+    [AS_HELP_STRING([--disable-build-mathic],
+	[use system mathic instead of building git submodule])],,
+    [enable_build_mathic=yes])
+if test $enable_build_mathic = yes
+then
+    BUILD_mathic=yes
+    BUILTLIBS="-lmathic $BUILTLIBS"
+else AC_LANG(C++)
+    AC_SEARCH_LIBS(MATHIC_VERSION_STRING,mathic,,BUILD_mathic=yes)
+    AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
+fi
 
-dnl if test $BUILD_mathicgb = no
-dnl then AC_LANG(C++)
-dnl      SAVE_CXXFLAGS="$CXXFLAGS"
-dnl      CXXFLAGS="$CXXFLAGS"
-dnl      AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes; AC_MSG_NOTICE(will build mathicgb))
-dnl      AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes; AC_MSG_NOTICE(will build mathicgb))
-dnl      CXXFLAGS="$SAVE_CXXFLAGS"
-dnl fi
-dnl test $BUILD_mathicgb = yes && BUILTLIBS="-lmathicgb $BUILTLIBS"
+AC_ARG_ENABLE([build-mathicgb],
+    [AS_HELP_STRING([--disable-build-mathicgb],
+	[use system mathicgb instead of building git submodule])],,
+    [enable_build_mathicgb=yes])
+if test $enable_build_mathicgb = yes
+then
+    BUILD_mathicgb=yes
+    BUILTLIBS="-lmathicgb $BUILTLIBS"
+else AC_LANG(C++)
+    AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes)
+    AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes)
+fi
 
 if test $BUILD_gtest = no
 then
