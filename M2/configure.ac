@@ -209,7 +209,7 @@ else AC_MSG_ERROR($TAR: GNU tar is required)
 fi
 
 AC_ARG_ENABLE([documentation],
-    [AC_HELP_STRING([--enable-documentation=...],
+    [AS_HELP_STRING([--enable-documentation=...],
         [space-delimited list of types of documentation to build; available
          options are "html", "info", and "pdf"; default value is "html info"])],
     [DOCUMENTATION=$enableval],
