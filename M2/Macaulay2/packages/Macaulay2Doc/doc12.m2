@@ -626,14 +626,23 @@ document {
      }
 
 document {
+    Key => {Functor, (symbol SPACE, Functor, Thing)},
+    Headline => "the class of all functors",
+    "A functor $F : C \to D$ is a mapping between the categories $C$ and $D$ which
+    for every object $A$ of $C$ gives an object $F A$ of $D$ and
+    for every morphism $f : A \to B$ given a morphism $F f : F A \to F B$ which
+    preserves composition and identity elements.",
+    Subnodes => TO \ {"argument", "ScriptedFunctor"}
+    }
+
+document {
      Key => {ScriptedFunctor,
 	  (symbol^, ScriptedFunctor, Thing),
-	  (symbol_, ScriptedFunctor, Thing),
-	  Functor, (symbol SPACE, Functor, Thing)},
+	  (symbol_, ScriptedFunctor, Thing)},
      Headline => "the class of all scripted functors",
      "A scripted functor accepts a subscript or a superscript:
      the primary example is ", TO "HH", ".",
-     Subnodes => TO \ {"subscript", "superscript", "argument"}
+     Subnodes => TO \ {"subscript", "superscript"}
      }
 
 document {
