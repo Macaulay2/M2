@@ -100,7 +100,7 @@ class F4Res
   std::vector<long> mSPairComponents;  // index into mFrame.level(mThisLevel)
   std::vector<res_packed_monomial>
       mColumns;  // all the monomials at level lev-2 we need to consider
-  //  MemoryBlock<res_monomial_word> mMonomSpace;  // for monomials stored in this
+  //  ResMemoryBlock<res_monomial_word> mMonomSpace;  // for monomials stored in this
                                                // (lev,degree) in mColumns and
                                                // the lead terms in Row.
   MonomialMemorySpace mMonomSpace2;

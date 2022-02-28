@@ -26,7 +26,7 @@
 
 #include "betti.hpp"                                   // for BettiDisplay
 #include "engine-exports.h"                            // for M2_arrayint
-#include "schreyer-resolution/res-memblock.hpp"        // for MemoryBlock
+#include "schreyer-resolution/res-memblock.hpp"        // for ResMemoryBlock
 #include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
 #include "schreyer-resolution/res-monomial-types.hpp"  // for component_index
 #include "schreyer-resolution/res-poly-ring.hpp"       // for ResPolyRing, ResPolynomial
@@ -89,7 +89,7 @@ class SchreyerFrame
   const ResGausser& gausser() const { return mRing.resGausser(); }
   // This is where we place the monomials in the frame
   // This requires some care from people calling this function
-  MemoryBlock<res_monomial_word>& monomialBlock() { return mMonomialSpace; }
+  ResMemoryBlock<res_monomial_word>& monomialBlock() { return mMonomialSpace; }
   // Debugging, Memory info //
   void show(int len) const;  // len is how much of the polynomials to display
                              // (len=-1 means all, len=0 means just the frame)
@@ -208,7 +208,7 @@ class SchreyerFrame
   ///////////////////
   const ResPolyRing& mRing;
   Frame mFrame;
-  MemoryBlock<res_monomial_word>
+  ResMemoryBlock<res_monomial_word>
       mMonomialSpace;  // We keep all of the monomials here, in order
 
   // This class contains, and allows one to uniquify, all degrees appearing
@@ -238,8 +238,8 @@ class SchreyerFrame
 
   // These are used during frame construction
 
-  MemoryBlock<PreElement> mPreElements;
-  MemoryBlock<res_varpower_word> mVarpowers;
+  ResMemoryBlock<PreElement> mPreElements;
+  ResMemoryBlock<res_varpower_word> mVarpowers;
   int mMaxVPSize;
 
   // These are used during matrix computation
