@@ -39,8 +39,7 @@ newPackage select((
         Headline => "graphs and directed graphs (digraphs)",
 	Keywords => {"Graph Theory"},
         Configuration => {
-            "DotBinary" => "dot",
-            "JpgViewer" => ""
+            "DotBinary" => "dot"
             },
 	PackageImports => { "PrimaryDecomposition" },
         PackageExports => {
@@ -51,9 +50,6 @@ newPackage select((
 
 -- Load configurations
 graphs'DotBinary = if instance((options Graphs).Configuration#"DotBinary", String) then (options Graphs).Configuration#"DotBinary" else "dot";
-
-if (options Graphs).Configuration#"JpgViewer" != "" then
-    printerr "warning: the \"JpgViewer\" configuration option is deprecated"
 
 -- Exports
 export {
