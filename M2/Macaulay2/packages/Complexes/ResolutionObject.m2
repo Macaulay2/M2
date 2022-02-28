@@ -1,10 +1,15 @@
--- todo 14 Feb 2022
+-- todo for 28 Feb 2022, or one week after that
+-- problem: sometimes when error occurs, RO object should be removed?
+-- (1)  see bug below in exterior algebra example.
+-- (2) take our example collection and make into a robust set of tests.
+-- 
 -- our hook for resolutionInEngine (Strategy1) seems to be working.
 --   (well, close: restarting a computation with large LengthLimit, resetting to
 --   a small LengthLimit still computes lots of stuff in higher degrees.
 --   See example: 20 generators, of degrees 1, ..., 20 below.
--- connect up Strategies 0, 2, 3?  
--- then inhomogeneous, resolutionBySyzygies...
+-- connect up Strategies 0, 2, 3 DONE
+-- then (3) inhomogeneous, resolutionBySyzygies, over a field, over ZZ.
+-- then (4) nonminimal resolutions
 
 importFrom_Core { "RawComputation", "raw" }
 importFrom_Core { "degreeToHeft", 
@@ -91,31 +96,15 @@ freeResolution Module := Complex => opts -> M -> (
     error("no method implemented to handle this ring and module");
     );
 
-resolutionInEngine = (opts, M) -> (
-    -- opts are the options from resolution.  Includes Strategy, LengthLimit, DegreeLimit.
-    -- M is a Module.
-    
-    -- first determine if this method applies.  
-    -- Return null if not, as quickly as possible
+resolutionObjectInEngine = (opts, M, matM) -> (
+    RO := M.cache.ResolutionObject;
     R := ring M;
-    if not (
-        R.?Engine and
-        heft R =!= null and
-        isHomogeneous M and
-        (isCommutative R or isSkewCommutative R) and (
-            A := ultimate(coefficientRing, R);
-            A =!= R and isField A
-        ))
-    then return null;
-
-    -- otherwise: we set the Strategy to be Engine.
-    RO := M.cache.ResolutionObject;  -- this must exist?
-    if RO.Strategy === null then RO.Strategy = Engine;
-
     if RO.?RawComputation then error "internal error: our logic is wrong";
 
     lengthlimit := if opts.LengthLimit === infinity 
         then (
+            if isSkewCommutative R then 
+                error "need to provide LengthLimit for free resolutions over skew-commutative rings";
             flatR := first flattenRing R;
             if ideal flatR != 0 then 
                 error "need to provide LengthLimit for free resolutions over quotients of polynomial rings";
@@ -123,12 +112,12 @@ resolutionInEngine = (opts, M) -> (
         else opts.LengthLimit;
     << "creating raw computation" << endl;
     RO.RawComputation = rawResolution(
-        raw presentation M, -- the matrix
+        raw matM,         -- the matrix
         true,             -- whether to resolve the cokernel of the matrix
         lengthlimit,      -- how long a resolution to make, (hard : cannot be increased by stop conditions below)
         false,            -- useMaxSlantedDegree
         0,                -- maxSlantedDegree (is this the same as harddegreelimit?)
-        1,                -- algorithm number, 1 in this case.
+        RO.Strategy,      -- algorithm number, 0, 1, 2 or 3...
         opts.SortStrategy -- sorting strategy, for advanced use
         );
     RO.returnCode = rawStatus1 RO.RawComputation; -- do we need this?
@@ -153,7 +142,7 @@ resolutionInEngine = (opts, M) -> (
         );
 
     RO.isComputable = (lengthlimit, degreelimit) -> ( -- this does not mutate RO.
-        -- returns Boolean if the given engine computation can compute the free res to this length and degree.
+        -- returns Boolean value true if the given engine computation can compute the free res to this length and degree.
         << "calling isComputable" << endl;
         lengthlimit <= RO.LengthLimit
         );
@@ -179,8 +168,129 @@ resolutionInEngine = (opts, M) -> (
     RO.complex(opts.LengthLimit)
     )
 
-addHook((freeResolution, Module), resolutionInEngine, Strategy => Engine)
+resolutionInEngine1 = (opts, M) -> (
+    -- opts are the options from resolution.  Includes Strategy, LengthLimit, DegreeLimit.
+    -- M is a Module.
+    
+    -- first determine if this method applies.  
+    -- Return null if not, as quickly as possible
+    R := ring M;
+    if not (
+        R.?Engine and
+        heft R =!= null and
+        isHomogeneous M and
+        isCommutative R and (
+            A := ultimate(coefficientRing, R);
+            A =!= R and isField A
+        ))
+    then return null;
 
+    << "Doing freeResolution Strategy=>1" << endl;
+
+    RO := M.cache.ResolutionObject;  -- this exists already
+    if RO.Strategy === null then RO.Strategy = 1
+    else if RO.Strategy =!= 1 then error "our internal logic is flawed";
+
+    matM := presentation M;
+    resolutionObjectInEngine(opts, M, matM)
+    )
+
+resolutionInEngine0 = (opts, M) -> (
+    -- opts are the options from resolution.  Includes Strategy, LengthLimit, DegreeLimit.
+    -- M is a Module.
+    
+    -- first determine if this method applies.  
+    -- Return null if not, as quickly as possible
+    R := ring M;
+    if not (
+        R.?Engine and
+        heft R =!= null and
+        isHomogeneous M and
+        isCommutative R and (
+            A := ultimate(coefficientRing, R);
+            A =!= R and isField A
+        ))
+    then return null;
+
+    << "Doing freeResolution Strategy=>0" << endl;
+    RO := M.cache.ResolutionObject;  -- this exists already
+    if RO.Strategy === null then RO.Strategy = 0
+    else if RO.Strategy =!= 0 then error "our internal logic is flawed";
+
+    << "computing GB in preparation for computing the resolution" << endl;
+    gbM := gens gb presentation M;
+    resolutionObjectInEngine(opts, M, gbM)
+    )
+
+resolutionInEngine2 = (opts, M) -> (
+    -- opts are the options from resolution.  Includes Strategy, LengthLimit, DegreeLimit.
+    -- M is a Module.
+    
+    -- first determine if this method applies.  
+    -- Return null if not, as quickly as possible
+    R := ring M;
+    if not (
+        R.?Engine and
+        heft R =!= null and
+        isHomogeneous M and
+        (
+            A := ultimate(coefficientRing, R);
+            A =!= R and isField A
+        ))
+    then return null;
+
+    << "Doing freeResolution Strategy=>2" << endl;
+
+    RO := M.cache.ResolutionObject;  -- this exists already
+    if RO.Strategy === null then RO.Strategy = 2
+    else if RO.Strategy =!= 2 then error "our internal logic is flawed";
+
+    matM := presentation M;
+    resolutionObjectInEngine(opts, M, matM)
+    )
+
+resolutionInEngine3 = (opts, M) -> (
+    -- opts are the options from resolution.  Includes Strategy, LengthLimit, DegreeLimit.
+    -- M is a Module.
+    
+    -- first determine if this method applies.  
+    -- Return null if not, as quickly as possible
+    R := ring M;
+    if not (
+        R.?Engine and
+        heft R =!= null and
+        isHomogeneous M and
+        (
+            A := ultimate(coefficientRing, R);
+            A =!= R and isField A
+        ))
+    then return null;
+
+    << "Doing freeResolution Strategy=>3" << endl;
+
+    RO := M.cache.ResolutionObject;  -- this exists already
+    if RO.Strategy === null then RO.Strategy = 3
+    else if RO.Strategy =!= 3 then error "our internal logic is flawed";
+
+    matM := presentation M;
+    resolutionObjectInEngine(opts, M, matM)
+    )
+
+resolutionInEngine = (opts, M) -> (
+    R := ring M;
+    if isQuotientRing R or isSkewCommutative R then 
+        resolutionInEngine2(opts, M)
+    else
+        resolutionInEngine1(opts, M)
+    )
+
+-- addHook((freeResolution, Module), resolutionInEngine3, Strategy => 3)
+-- addHook((freeResolution, Module), resolutionInEngine2, Strategy => 2)
+addHook((freeResolution, Module), resolutionInEngine0, Strategy => 0)
+addHook((freeResolution, Module), resolutionInEngine2, Strategy => 2)
+addHook((freeResolution, Module), resolutionInEngine3, Strategy => 3)
+addHook((freeResolution, Module), resolutionInEngine1, Strategy => 1)
+addHook((freeResolution, Module), resolutionInEngine, Strategy => Engine)
 
 --scan({Engine}, strategy ->
 --    addHook(key := (resolution, Module), algorithms#key#strategy, Strategy => strategy))
@@ -194,7 +304,8 @@ gbTrace=1
 S = ZZ/101[a..d]
 I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
 M = S^1/I
-F = freeResolution(M, Strategy => Engine)
+--F = freeResolution(M, Strategy => Engine)
+F = freeResolution(M)
 remove(M.cache, symbol Resolution)
 peek M.cache
 assert isWellDefined F
@@ -206,10 +317,19 @@ F3 = freeResolution(M, LengthLimit => 10)
 
 I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
 M = S^1/I
+F3 = freeResolution(M, Strategy => 2)
+assert(dd^F3_1 == gens I)
+
+I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
+M = S^1/I
+F3 = freeResolution(M, Strategy => 3)
+assert(dd^F3_1 == gens I)
+
+I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
+M = S^1/I
 F1 = freeResolution(M, LengthLimit => 2)
 F2 = freeResolution(M, LengthLimit => 3)
 F3 = freeResolution(M, LengthLimit => 5)
-
 
 restart
 debug loadPackage("Complexes")
@@ -224,6 +344,86 @@ peek M.cache.ResolutionObject
 freeResolution(M, LengthLimit => 4)
 assert isWellDefined F
 F2 = freeResolution(M, LengthLimit => 2)
+
+-- exterior algebra example
+restart
+debug loadPackage("Complexes")
+load "Complexes/ResolutionObject.m2"
+E = ZZ/101[a..d, SkewCommutative => true]
+I = ideal"ab, acd"
+C = freeResolution(I) -- gives an error
+break
+C = freeResolution(I, LengthLimit => 5) -- BUG: this should now work
+
+I = ideal"ab, acd"
+C = freeResolution(I, Strategy => 2)
+
+I = ideal"ab, acd"
+C = freeResolution(I, Strategy => 3)
+
+-- module over a quotient ring
+restart
+debug loadPackage("Complexes")
+load "Complexes/ResolutionObject.m2"
+R = ZZ/101[a..d]/(a^2-b^2, a*b*c)
+I = ideal"ab, acd"
+C0 = freeResolution(I, LengthLimit => 6, Strategy => 0)
+
+I = ideal"ab, acd"
+C1 = freeResolution(I, LengthLimit => 6, Strategy => 1)
+
+I = ideal"ab, acd"
+C2 = freeResolution(I, LengthLimit => 6, Strategy => 2)
+
+I = ideal"ab, acd"
+C3 = freeResolution(I, LengthLimit => 6, Strategy => 3)
+
+C0 == C1
+C0 == C2
+C0 == C3
+
+C = freeResolution(I, LengthLimit => 6, Strategy => 0)
+C = freeResolution(I, LengthLimit => 6, Strategy => 1)
+C = freeResolution(I, LengthLimit => 7, Strategy => 1)
+C = freeResolution(I, LengthLimit => 5, Strategy => 0)
+
+I = ideal"ab, acd"
+
+-- inhomogeneous example
+restart
+debug loadPackage("Complexes")
+load "Complexes/ResolutionObject.m2"
+R = ZZ/101[a..d]
+I = ideal"a3-b2, abc-d, a3-d"
+freeResolution(I, Strategy=>2)
+
+prune HH C
+C = freeResolution(I, LengthLimit => 6)
+methods res
+--
+
+-- Over the rationals
+restart
+S = QQ[a..d]
+I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
+M = S^1/I
+res M
+--F = freeResolution(M, Strategy => Engine)
+F = freeResolution(M)
+
+-- Weyl algebra
+restart
+S = QQ[x,y,Dx,Dy,h, WeylAlgebra => {{x,Dx}, {y,Dy}, h}]
+M = coker matrix{{x*Dx, y*Dx}}
+isHomogeneous M
+gbTrace=1
+res(M, Strategy => 2)
+I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
+M = S^1/I
+res M
+--F = freeResolution(M, Strategy => Engine)
+F = freeResolution(M)
+
 
 -- XXX
 restart
