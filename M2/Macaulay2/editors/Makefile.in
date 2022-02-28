@@ -22,6 +22,7 @@ emacs/M2-emacs.m2 emacs/M2-emacs-help.txt: emacs/make-M2-emacs-help.m2 @pre_exec
 ifeq (@NPM@,false)
 highlightjs/highlight.js:
 	@echo "warning: html docs will not have syntax highlighting"
+	$(MKDIR_P) $(@D)
 	touch $@
 else
 $(CURDIR)/highlightjs/%: @srcdir@/highlightjs/%
