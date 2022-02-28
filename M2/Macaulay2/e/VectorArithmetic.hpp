@@ -495,7 +495,7 @@ public:
         break;
       default:
         // dummy ring type for default
-	// throw an error here...
+        // throw an error here...
         std::cerr << "*** error! *** ring ID not found....!" << std::endl;
         mConcreteVector = new ConcreteVectorArithmetic<M2::DummyRing>();
       }
