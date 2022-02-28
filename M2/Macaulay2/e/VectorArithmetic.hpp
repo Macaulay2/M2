@@ -1,6 +1,39 @@
 #ifndef __vector_arithmetic_hpp__
 #define __vector_arithmetic_hpp__
 
+// #include <utility>                  // for swap
+// #include <assert.h>                 // for assert
+// #include <stddef.h>                 // for size_t
+// #include <iostream>                 // for operator<<, ostream, endl, basic_...
+// #include <variant>                  // for visit, variant
+// #include <vector>                   // for vector
+
+// #include "m2tbb.hpp"                // for null_mutex
+
+// #include "ARingElem.hpp"            // for ARingElem
+// #include "NCAlgebras/Range.hpp"     // for Range
+// #include "ZZp.hpp"                  // for Z_mod
+// #include "aring-glue.hpp"           // for ConcreteRing
+// #include "aring.hpp"                // for DummyRing, ring_GFFlintBig, ring_...
+// #include "buffer.hpp"               // for buffer
+// #include "f4/f4-mem.hpp"            // for F4Vec
+// #include "ring.hpp"                 // for Ring
+// #include "ringelem.hpp"             // for ring_elem
+
+// class CoefficientRingR;
+// class CoefficientRingZZp;
+// class MemoryBlock;
+// namespace M2 { class ARingGFFlint; }
+// namespace M2 { class ARingGFFlintBig; }
+// namespace M2 { class ARingGFGivaro; }
+// namespace M2 { class ARingGFM2; }
+// namespace M2 { class ARingQQGMP; }
+// namespace M2 { class ARingZZp; }
+// namespace M2 { class ARingZZpFFPACK; }
+// namespace M2 { class ARingZZpFlint; }
+
+
+
 #include "m2tbb.hpp"
 #include "NCAlgebras/Range.hpp"  // for Range
 #include "newdelete.hpp"         // for VECTOR
@@ -14,12 +47,9 @@
 class Ring;
 using ComponentIndex = int;
 
-// this is still deriving from our_new_delete, since this
-// class doesn't know whether mValue points to a std::vector or a VECTOR.
-// this issue persists in the Row struct in NCF4 as well.
 class ElementArray
 {
-  template<typename RingType, typename ElementArrayType> friend class ConcreteVectorArithmetic;
+  template<typename RingType> friend class ConcreteVectorArithmetic;
 
 public:
   ElementArray() : mValue(nullptr) {}
@@ -39,8 +69,7 @@ private:
   void* mValue;
 };
 
-template<typename RingType,
-         typename ElementArrayType = ElementArray>
+template<typename RingType>
 class ConcreteVectorArithmetic
 {
 public:
@@ -57,7 +86,7 @@ public:
   const Ring* mOriginalRing;
   const RingType* mRing;
 
-  ElementArrayContainer* elementArray(const ElementArrayType& f) const
+  ElementArrayContainer* elementArray(const ElementArray& f) const
   {
     return reinterpret_cast<ElementArrayContainer*>(f.getValue());
   }
@@ -70,7 +99,7 @@ public:
   /////////////////////////////
   // Allocation/Deallocation //
   /////////////////////////////
-  ElementArrayType copyElementArray(const ElementArray& sparse) const
+  ElementArray copyElementArray(const ElementArray& sparse) const
   {
     auto& v = * elementArray(sparse);
     auto tempPtr = new ElementArrayContainer(v.size());
@@ -81,10 +110,10 @@ public:
 	mRing->init_set(d, v[n]);
         ++n;
       }
-    return ElementArrayType {tempPtr};    
+    return ElementArray {tempPtr};    
   }
 
-  ElementArrayType allocateElementArray(ComponentIndex nelems) const
+  ElementArray allocateElementArray(ComponentIndex nelems) const
   {
     auto tempPtr = new ElementArrayContainer(nelems);
     for (auto& d : *tempPtr)
@@ -92,10 +121,10 @@ public:
 	mRing->init(d);
 	mRing->set_zero(d);
       }
-    return ElementArrayType {tempPtr};    
+    return ElementArray {tempPtr};    
   }
 
-  void deallocateElementArray(ElementArrayType& coeffs) const
+  void deallocateElementArray(ElementArray& coeffs) const
   {
     auto& svec = * elementArray(coeffs);
     for (auto& e : svec) {
@@ -109,13 +138,13 @@ public:
   /// Linear Algebra /////
   ////////////////////////
 
-  size_t size(const ElementArrayType& coeffs) const
+  size_t size(const ElementArray& coeffs) const
   {
     return elementArray(coeffs)->size();
   }
 
-  void fillDenseArray(ElementArrayType& dense,
-                      const ElementArrayType& sparse,
+  void fillDenseArray(ElementArray& dense,
+                      const ElementArray& sparse,
                       const Range<int>& comps) const
   {
     // Note: this function simply fills in the values coming from '(sparse, comps)'.
@@ -132,8 +161,8 @@ public:
     for (ComponentIndex i = 0; i < len; i++) mRing->set(dvec[comps[i]],svec[i]);
   }
 
-  void denseCancelFromSparse(ElementArrayType& dense,
-                             const ElementArrayType& sparse,
+   void denseCancelFromSparse(ElementArray& dense,
+                             const ElementArray& sparse,
                              const Range<int>& comps) const
   {
     // ASSUMPTION: svec[0] == 1.
@@ -145,7 +174,29 @@ public:
       mRing->subtract_multiple(dvec[comps[i]], a, svec[i]);
   }
 
-  int denseNextNonzero(ElementArrayType& dense,
+  void denseCancelFromSparse(ElementArray& dense,
+                             const ElementArray& sparse,
+                             const Range<int>& comps,
+                             ElementArray& result_multiplier) const
+  {
+    // ASSUMPTION: svec[0] == 1, comps.size() >= 1
+    auto& dvec = * elementArray(dense);
+    auto& svec = * elementArray(sparse);
+    auto& mults = * elementArray(result_multiplier);
+
+    ARingElem a(mRing,dvec[comps[0]]);
+    for (int i=0; i < comps.size(); ++i)
+      {
+        mRing->subtract_multiple(dvec[comps[i]], *a, svec[i]);
+        //mStats.incrementNumAdditions();
+        FieldElement b;
+        mRing->init(b);
+        mRing->set(*a, b);
+        mults.emplace_back(b);
+      }
+  }
+  
+  int denseNextNonzero(ElementArray& dense,
                        int first,
                        int last) const
   {
@@ -162,8 +213,8 @@ public:
     return last + 1;
   }
 
-  void denseToSparse(ElementArrayType& dense,
-                     ElementArrayType& sparse, // output value: sets this value
+  void denseToSparse(ElementArray& dense,
+                     ElementArray& sparse, // output value: sets this value
                      Range<int>& comps, // output value: sets comps
                      int first,
                      int last,
@@ -180,8 +231,8 @@ public:
   }
 
   template<typename LockType>
-  void safeDenseToSparse(ElementArrayType& dense,
-                               ElementArrayType& sparse, // output value: sets this value
+  void safeDenseToSparse(ElementArray& dense,
+                               ElementArray& sparse, // output value: sets this value
                                Range<int>& comps, // output value: sets comps
                                int first,
                                int last,
@@ -213,8 +264,8 @@ public:
 	}
   }
 
-  void denseToSparse(ElementArrayType& dense,
-                           ElementArrayType& sparse, // output value: sets this value
+  void denseToSparse(ElementArray& dense,
+                           ElementArray& sparse, // output value: sets this value
                            int*& comps,
                            int first,
                            int last,
@@ -245,7 +296,7 @@ public:
 	}
   }
 
-  void setZeroInRange(ElementArrayType& dense,
+  void setZeroInRange(ElementArray& dense,
                       int first,
                       int last) const
   {
@@ -257,7 +308,7 @@ public:
       mRing->set_zero(dvec[i]);
   }
   
-  void makeMonic(ElementArrayType& sparse) const
+  void makeMonic(ElementArray& sparse) const
   {
     auto& svec = * elementArray(sparse);
 
@@ -269,7 +320,7 @@ public:
   }
 
   template<typename Container>
-  void appendToContainer(const ElementArrayType& sparse,
+  void appendToContainer(const ElementArray& sparse,
                          Container& c) const
   {
     auto& svec = * elementArray(sparse);
@@ -282,9 +333,9 @@ public:
   }
 
   template<typename Container>
-  ElementArrayType elementArrayFromContainer(const Container& c) const
+  ElementArray elementArrayFromContainer(const Container& c) const
   {
-    ElementArrayType sparse = allocateElementArray(c.size());
+    ElementArray sparse = allocateElementArray(c.size());
     auto& svec = * elementArray(sparse);
     for (auto i = 0; i < c.size(); ++i)
     {
@@ -294,7 +345,7 @@ public:
     return sparse;
   }
 
-  ring_elem ringElemFromElementArray(const ElementArrayType& sparse,
+  ring_elem ringElemFromElementArray(const ElementArray& sparse,
                                      int index) const
   {
     auto& svec = * elementArray(sparse);
@@ -303,7 +354,7 @@ public:
     return tmp;
   }
 
-  std::ostream& displayElementArray(std::ostream& o, const ElementArrayType& v) const
+  std::ostream& displayElementArray(std::ostream& o, const ElementArray& v) const
   {
     auto& svec = * elementArray(v);
 
@@ -327,7 +378,7 @@ public:
   /// Append support /////
   ////////////////////////
   
-  void pushBackOne(ElementArrayType& coeffs) const
+  void pushBackOne(ElementArray& coeffs) const
   {
     auto& svec = * elementArray(coeffs);
     FieldElement one;
@@ -336,7 +387,7 @@ public:
     svec.emplace_back(one); // This grabs 'one' in cases where it is allocated...  I think...!
   }
 
-  void pushBackMinusOne(ElementArrayType& coeffs) const
+  void pushBackMinusOne(ElementArray& coeffs) const
   {
     auto& svec = * elementArray(coeffs);
     FieldElement minus_one;
@@ -345,8 +396,8 @@ public:
     svec.emplace_back(minus_one);
   }
 
-  void pushBackElement(ElementArrayType& coeffs,
-                       const ElementArrayType& take_from_here,
+  void pushBackElement(ElementArray& coeffs,
+                       const ElementArray& take_from_here,
                        size_t loc) const
   {
     auto& svec = * elementArray(coeffs);
@@ -357,8 +408,8 @@ public:
     svec.emplace_back(a);
   }
   
-  void pushBackNegatedElement(ElementArrayType& coeffs,
-                              const ElementArrayType& take_from_here,
+  void pushBackNegatedElement(ElementArray& coeffs,
+                              const ElementArray& take_from_here,
                               size_t loc) const
   {
     auto& svec = * elementArray(coeffs);
@@ -380,7 +431,7 @@ template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 // this is the dispatching class using std::variant
 class VectorArithmetic
 {
-  using ElementArrayType = ElementArray;
+  using ElementArray = ElementArray;
 
   // does the order of the variant types matter?
   using CVA_Type = std::variant<ConcreteVectorArithmetic<M2::ARingZZpFlint>*,
@@ -459,7 +510,7 @@ public:
   }
 
   // provide simple visitor interface to underlying std::variant types
-  size_t size(const ElementArrayType& coeffs) const {
+  size_t size(const ElementArray& coeffs) const {
     return std::visit([&](auto& arg) -> size_t { return arg->size(coeffs); }, mConcreteVector);
   }
   
@@ -467,45 +518,45 @@ public:
   // Allocation/Deallocation //
   /////////////////////////////
   /// Create a coefficient vector with room for `nelems` coefficients
-  ElementArrayType allocateElementArray(ComponentIndex nelems) const {
-    return std::visit([&](auto& arg) -> ElementArrayType { return arg->allocateElementArray(nelems);}, mConcreteVector);
+  ElementArray allocateElementArray(ComponentIndex nelems) const {
+    return std::visit([&](auto& arg) -> ElementArray { return arg->allocateElementArray(nelems);}, mConcreteVector);
   }
 
-  ElementArrayType copyElementArray(const ElementArray& sparse) const {
-    return std::visit([&](auto& arg) -> ElementArrayType { return arg->copyElementArray(sparse);}, mConcreteVector);
+  ElementArray copyElementArray(const ElementArray& sparse) const {
+    return std::visit([&](auto& arg) -> ElementArray { return arg->copyElementArray(sparse);}, mConcreteVector);
   }
 
   /// Create a coefficient vector with 0 elements.  Can be increased in size.
-  // ElementArrayType allocateElementArray() const = 0;
+  // ElementArray allocateElementArray() const = 0;
 
   /// Deallocate all the coefficients, and the array itself.
-  void deallocateElementArray(ElementArrayType& coeffs) const {
+  void deallocateElementArray(ElementArray& coeffs) const {
     std::visit([&](auto& arg) { arg->deallocateElementArray(coeffs); }, mConcreteVector);
   }
   
   ////////////////////////
   /// Linear Algebra /////
   ////////////////////////
-  void fillDenseArray(ElementArrayType& dense,
-			   const ElementArrayType& coeffs,
+  void fillDenseArray(ElementArray& dense,
+			   const ElementArray& coeffs,
 			   const Range<int>& comps) const {
     std::visit([&](auto& arg) { arg->fillDenseArray(dense,coeffs,comps); }, mConcreteVector);
   }
 
-  void denseCancelFromSparse(ElementArrayType& dense,
-                                const ElementArrayType& coeffs,
+  void denseCancelFromSparse(ElementArray& dense,
+                                const ElementArray& coeffs,
                                 const Range<int>& comps) const {
     std::visit([&](auto& arg) { arg->denseCancelFromSparse(dense,coeffs,comps); }, mConcreteVector);
   }
 
-  int denseNextNonzero(ElementArrayType& dense,
+  int denseNextNonzero(ElementArray& dense,
                           int first,
                           int last) const {
     return std::visit([&](auto& arg) -> int { return arg->denseNextNonzero(dense,first,last); }, mConcreteVector);
   }
 
-  void denseToSparse(ElementArrayType& dense,
-                           ElementArrayType& coeffs, // sets coeffs
+  void denseToSparse(ElementArray& dense,
+                           ElementArray& coeffs, // sets coeffs
                            Range<int>& comps, // sets comps
                            int first,
                            int last,
@@ -513,8 +564,8 @@ public:
     std::visit([&](auto& arg) { arg->denseToSparse(dense,coeffs,comps,first,last,monomialSpace); }, mConcreteVector);  
   }
 
-  void denseToSparse(ElementArrayType& dense,
-                           ElementArrayType& coeffs, // sets coeffs
+  void denseToSparse(ElementArray& dense,
+                           ElementArray& coeffs, // sets coeffs
                            int*& comps, // sets comps
                            int first,
                            int last,
@@ -523,8 +574,8 @@ public:
   }
 
   template<typename LockType>
-  void safeDenseToSparse(ElementArrayType& dense,
-                               ElementArrayType& coeffs, // sets coeffs
+  void safeDenseToSparse(ElementArray& dense,
+                               ElementArray& coeffs, // sets coeffs
                                Range<int>& comps, // sets comps
                                int first,
                                int last,
@@ -535,11 +586,11 @@ public:
     std::visit([&](auto& arg) { arg->template safeDenseToSparse<LockType>(dense,coeffs,comps,first,last,monomialSpace,lock); }, mConcreteVector);      
   }
 
-  void setZeroInRange(ElementArrayType& dense, int first, int last) const {
+  void setZeroInRange(ElementArray& dense, int first, int last) const {
     std::visit([&](auto& arg) { arg->setZeroInRange(dense, first, last); }, mConcreteVector);      
   }
   
-  void makeMonic(ElementArrayType& coeffs) const {
+  void makeMonic(ElementArray& coeffs) const {
     std::visit([&](auto& arg) { arg->makeMonic(coeffs); }, mConcreteVector);      
   }
 
@@ -548,22 +599,22 @@ public:
   /////////////////////////////
 
   template<class Container>
-  void appendToContainer(const ElementArrayType& coeffs,
+  void appendToContainer(const ElementArray& coeffs,
                                      Container& c) const {
     std::visit([&](auto& arg) { arg->template appendToContainer<Container>(coeffs, c); }, mConcreteVector);      
   }
 
   template<class Container>
-  ElementArrayType elementArrayFromContainer(const Container& c) const {
-    return std::visit([&](auto& arg) -> ElementArrayType { return arg->template elementArrayFromContainer<Container>(c); }, mConcreteVector);
+  ElementArray elementArrayFromContainer(const Container& c) const {
+    return std::visit([&](auto& arg) -> ElementArray { return arg->template elementArrayFromContainer<Container>(c); }, mConcreteVector);
   }
 
-  ring_elem ringElemFromElementArray(const ElementArrayType& coeffs,
+  ring_elem ringElemFromElementArray(const ElementArray& coeffs,
                                      int index) const {
     return std::visit([&](auto& arg) -> ring_elem { return arg->ringElemFromElementArray(coeffs,index); }, mConcreteVector);
   }
 
-  std::ostream& displayElementArray(std::ostream& o, const ElementArrayType& v) const
+  std::ostream& displayElementArray(std::ostream& o, const ElementArray& v) const
   {
     return std::visit([&](auto& arg) -> std::ostream& { return arg->displayElementArray(o, v); }, mConcreteVector);
   }
@@ -572,25 +623,25 @@ public:
   /// Append support   /////
   //////////////////////////
   
-  void pushBackOne(ElementArrayType& coeffs) const
+  void pushBackOne(ElementArray& coeffs) const
   {
     return std::visit([&](auto& arg) { arg->pushBackOne(coeffs); }, mConcreteVector);
   }
 
-  void pushBackMinusOne(ElementArrayType& coeffs) const
+  void pushBackMinusOne(ElementArray& coeffs) const
   {
     return std::visit([&](auto& arg) { arg->pushBackMinusOne(coeffs); }, mConcreteVector);
   }
 
-  void pushBackElement(ElementArrayType& coeffs,
-                       const ElementArrayType& take_from_here,
+  void pushBackElement(ElementArray& coeffs,
+                       const ElementArray& take_from_here,
                        size_t loc) const
   {
     return std::visit([&](auto& arg) { arg->pushBackElement(coeffs,take_from_here,loc); }, mConcreteVector);
   }
   
-  void pushBackNegatedElement(ElementArrayType& coeffs,
-                              const ElementArrayType& take_from_here,
+  void pushBackNegatedElement(ElementArray& coeffs,
+                              const ElementArray& take_from_here,
                               size_t loc) const
   {
     return std::visit([&](auto& arg) { arg->pushBackNegatedElement(coeffs,take_from_here,loc); }, mConcreteVector);
