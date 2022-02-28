@@ -3,6 +3,7 @@
 #ifndef _res_f4_hpp_
 #define _res_f4_hpp_
 
+#include "VectorArithmetic.hpp"
 #include "f4/monhashtable.hpp"
 #include "schreyer-resolution/res-memblock.hpp"
 #include "schreyer-resolution/res-poly-ring.hpp"
@@ -34,6 +35,7 @@ class F4Res
   void construct(int lev, int degree);
 
   const ResGausser& resGausser() const { return mRing.resGausser(); }
+  const VectorArithmetic& vectorArithmetic() const { return mRing.vectorArithmetic(); }
   const ResMonoid& monoid() const { return mRing.monoid(); }
   const ResPolyRing& ring() const { return mRing; }
  private:

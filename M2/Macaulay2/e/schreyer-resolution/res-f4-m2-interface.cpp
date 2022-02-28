@@ -1,5 +1,6 @@
 // Copyright 2016 Michael E. Stillman
 
+#include "m2tbb.hpp" // Needs to occur earlier than ffpack.
 #include "schreyer-resolution/res-f4-m2-interface.hpp"
 #include "ZZ.hpp"                                         // for RingZZ
 #include "aring-RRR.hpp"                                  // for ARingRRR

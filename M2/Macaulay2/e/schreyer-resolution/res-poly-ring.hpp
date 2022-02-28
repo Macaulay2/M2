@@ -3,6 +3,7 @@
 #ifndef _res_poly_ring_hpp_
 #define _res_poly_ring_hpp_
 
+#include "VectorArithmetic.hpp"                        // for VectorArithmetic
 #include "newdelete.hpp"                               // for our_new_delete
 #include "schreyer-resolution/res-gausser.hpp"         // for CoefficientVector
 #include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
@@ -49,19 +50,32 @@ class ResPolynomial
 class ResPolyRing : public our_new_delete
 {
  public:
-  ResPolyRing(const ResGausser* G, const ResMonoid* M, const Monoid* origM)
-    : mResGausser(G), mMonoid(M), mOriginalMonoid(origM), mSkew(nullptr)
+  ResPolyRing(const Ring* baseRing,
+              const ResGausser* G,
+              const ResMonoid* M,
+              const Monoid* origM)
+    : mResGausser(G),
+      mVectorArithmetic(baseRing),
+      mMonoid(M),
+      mOriginalMonoid(origM),
+      mSkew(nullptr)
   {
   }
-  ResPolyRing(const ResGausser* G,
+  ResPolyRing(const Ring* baseRing, // usually the underlying base field, although for non-minimal complexes, it does not need to be a field.
+              const ResGausser* G,
               const ResMonoid* M,
               const Monoid* origM,
               const SkewMultiplication* skewInfo)
-    : mResGausser(G), mMonoid(M), mOriginalMonoid(origM), mSkew(skewInfo)
+    : mResGausser(G),
+      mVectorArithmetic(baseRing),
+      mMonoid(M),
+      mOriginalMonoid(origM),
+      mSkew(skewInfo)
   {
   }
 
-  const ResGausser& resGausser() const { return *mResGausser; }
+  const ResGausser& resGausser() const { return *mResGausser; } 
+  const VectorArithmetic& vectorArithmetic() const { return mVectorArithmetic; }
   const ResMonoid& monoid() const { return *mMonoid; }
   const Monoid& originalMonoid() const { return *mOriginalMonoid; }
   bool isSkewCommutative() const { return mSkew != nullptr; }
@@ -73,6 +87,7 @@ class ResPolyRing : public our_new_delete
 
  private:
   std::unique_ptr<const ResGausser> mResGausser;
+  VectorArithmetic mVectorArithmetic;
   std::unique_ptr<const ResMonoid> mMonoid;
   const Monoid* mOriginalMonoid;
   const SkewMultiplication* mSkew;
