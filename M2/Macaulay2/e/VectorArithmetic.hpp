@@ -69,6 +69,16 @@ private:
   void* mValue;
 };
 
+class VectorArithmeticStats
+{
+  mutable long mNumAdditions;
+public:
+  VectorArithmeticStats() : mNumAdditions(0) {}
+
+  void incrementNumAdditions() const { ++mNumAdditions; }
+  long numAdditions() const { return mNumAdditions; }
+};
+
 template<typename RingType>
 class ConcreteVectorArithmetic
 {
@@ -85,6 +95,7 @@ public:
  private:
   const Ring* mOriginalRing;
   const RingType* mRing;
+  mutable VectorArithmeticStats mStats;
 
   ElementArrayContainer* elementArray(const ElementArray& f) const
   {
@@ -95,6 +106,8 @@ public:
   ConcreteVectorArithmetic(const Ring* origR, const RingType* R) : mOriginalRing(origR), mRing(R) {}
 
   const Ring* ring() const { return mOriginalRing; }
+
+  const VectorArithmeticStats& stats() const {return mStats; }
   
   /////////////////////////////
   // Allocation/Deallocation //
@@ -184,16 +197,16 @@ public:
     auto& svec = * elementArray(sparse);
     auto& mults = * elementArray(result_multiplier);
 
-    ARingElem a(mRing,dvec[comps[0]]);
+    const FieldElement& a = dvec[comps[0]];
     for (int i=0; i < comps.size(); ++i)
       {
-        mRing->subtract_multiple(dvec[comps[i]], *a, svec[i]);
-        //mStats.incrementNumAdditions();
-        FieldElement b;
-        mRing->init(b);
-        mRing->set(*a, b);
-        mults.emplace_back(b);
+        mRing->subtract_multiple(dvec[comps[i]], a, svec[i]);
+        mStats.incrementNumAdditions();
       }
+    FieldElement b;
+    mRing->init(b);
+    mRing->set(b, a);
+    mults.push_back(b); // this grabs b.
   }
   
   int denseNextNonzero(ElementArray& dense,
@@ -354,13 +367,23 @@ public:
     return tmp;
   }
 
+  std::ostream& displayElement(std::ostream& o, const ElementArray& v, int index) const
+  {
+    auto& vec = * elementArray(v);
+
+    buffer b;
+    mRing->elem_text_out(b, vec[index], true, true, true);
+    o << b.str();
+    return o;
+  }
+  
   std::ostream& displayElementArray(std::ostream& o, const ElementArray& v) const
   {
-    auto& svec = * elementArray(v);
+    auto& vec = * elementArray(v);
 
     bool first = true;
-    o << "[(" << svec.size() << ")";
-    for (const auto& a : svec)
+    o << "[(" << vec.size() << ")";
+    for (const auto& a : vec)
       {
         buffer b;
         mRing->elem_text_out(b, a, true, true, true);
@@ -549,6 +572,13 @@ public:
     std::visit([&](auto& arg) { arg->denseCancelFromSparse(dense,coeffs,comps); }, mConcreteVector);
   }
 
+  void denseCancelFromSparse(ElementArray& dense,
+                             const ElementArray& coeffs,
+                             const Range<int>& comps,
+                             ElementArray& result_multipler) const {
+    std::visit([&](auto& arg) { arg->denseCancelFromSparse(dense,coeffs,comps,result_multipler); }, mConcreteVector);
+  }
+  
   int denseNextNonzero(ElementArray& dense,
                           int first,
                           int last) const {
@@ -614,6 +644,15 @@ public:
     return std::visit([&](auto& arg) -> ring_elem { return arg->ringElemFromElementArray(coeffs,index); }, mConcreteVector);
   }
 
+  /////////////////////////////
+  /// (Debugging) Display /////
+  /////////////////////////////
+  
+  std::ostream& displayElement(std::ostream& o, const ElementArray& v, int index) const
+  {
+    return std::visit([&](auto& arg) -> std::ostream& { return arg->displayElement(o, v, index); }, mConcreteVector);
+  }
+  
   std::ostream& displayElementArray(std::ostream& o, const ElementArray& v) const
   {
     return std::visit([&](auto& arg) -> std::ostream& { return arg->displayElementArray(o, v); }, mConcreteVector);
