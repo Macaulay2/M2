@@ -347,9 +347,9 @@ document {
      Headline => "computing the convex hull of points, rays and polyhedra",
      Usage => " P = convexHull M \nP = convexHull(M,N) \nP = convexHull(P1,P2) \nP = convexHull L \nP = convexHull(M,N,W)",
      Inputs => {
-	  "M" => Matrix => {"with entries in", TO ZZ," or ", TO QQ},
-	  "N" => Matrix => {"with entries in", TO ZZ," or ", TO QQ},
-	  "W" => Matrix => {"with entries in", TO ZZ," or ", TO QQ},
+	  "M" => Matrix => {"with entries in ", TO ZZ," or ", TO QQ},
+	  "N" => Matrix => {"with entries in ", TO ZZ," or ", TO QQ},
+	  "W" => Matrix => {"with entries in ", TO ZZ," or ", TO QQ},
 	  "P1" => Polyhedron,
 	  "P2" => Polyhedron,
 	  "L" => List
@@ -435,8 +435,8 @@ document {
      Headline => "computes the positive hull of rays, cones, and the cone over a polyhedron",
      Usage => " C = coneFromVData M \nC = coneFromVData(M,N) \nC = coneFromVData(C1,C2) \nC = coneFromVData P \nC = coneFromVData L",
      Inputs => {
-	  "M" => Matrix => {"with entries in", TO ZZ," or ", TO QQ},
-	  "N" => Matrix => {"with entries in", TO ZZ," or ", TO QQ},
+	  "M" => Matrix => {"with entries in ", TO ZZ," or ", TO QQ},
+	  "N" => Matrix => {"with entries in ", TO ZZ," or ", TO QQ},
 	  "C1" => Cone,
 	  "C2" => Cone,
 	  "P" => Polyhedron,
