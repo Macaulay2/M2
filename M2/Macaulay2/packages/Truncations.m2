@@ -269,6 +269,20 @@ truncate(List, Matrix) := Matrix => truncateModuleOpts >> opts -> (degs, f) -> (
     f' := f * inducedMap(source f, F)       * inducedMap(F, source gens F, gens F);
     map(G, F, inducedMap(G, source f', f') // inducedMap(G, source gens G, gens G)))
 
+-*
+truncate(List,    List, Matrix) := Matrix => truncateModuleOpts >> opts -> (tardegs, srcdegs, f) -> (
+    -- Given a graded map, truncate the target, but less than the source
+    -- TODO: assert that srcdegs >= tardegs with respect to the cone of truncation
+    src := truncate(srcdegs, source f, opts);
+    tar := truncate(tardegs, target f, opts);
+    ...
+    )
+*-
+-- TODO: finish the top one and document this one
+truncate(Nothing, List, Matrix) := Matrix => truncateModuleOpts >> opts -> (tardegs, srcdegs, f) -> (
+    -- Given a graded map, truncate only the source and return the inclusion composed with the map
+    f * inducedMap(source f, truncate(srcdegs, source f, opts)))
+
 --------------------------------------------------------------------
 
 truncate(InfiniteNumber, Thing) := truncateModuleOpts >> o -> (d, M) -> (
