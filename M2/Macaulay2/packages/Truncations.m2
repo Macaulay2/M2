@@ -292,6 +292,10 @@ truncate(InfiniteNumber, Thing) := truncateModuleOpts >> o -> (d, M) -> (
 truncate(Nothing,        InfiniteNumber, Matrix) :=
 truncate(InfiniteNumber, InfiniteNumber, Matrix) := lookup(truncate, List, List, Matrix)
 
+-- TODO: implement union types in M2 and simplify stuff like this
+truncate(Nothing,        InfiniteNumber, Matrix) :=
+truncate(InfiniteNumber, InfiniteNumber, Matrix) := lookup(truncate, List, List, Matrix)
+
 --------------------------------------------------------------------
 -- basis using basisPolyhedron (experimental)
 --------------------------------------------------------------------
