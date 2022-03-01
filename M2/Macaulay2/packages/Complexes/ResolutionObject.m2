@@ -1,6 +1,6 @@
 -- todo for 28 Feb 2022, or one week after that
 -- problem: sometimes when error occurs, RO object should be removed?
--- (1)  see bug below in exterior algebra example.
+-- (1)  see bug below in exterior algebra example. DONE
 -- (2) take our example collection and make into a robust set of tests.
 -- 
 -- our hook for resolutionInEngine (Strategy1) seems to be working.
@@ -8,8 +8,10 @@
 --   a small LengthLimit still computes lots of stuff in higher degrees.
 --   See example: 20 generators, of degrees 1, ..., 20 below.
 -- connect up Strategies 0, 2, 3 DONE
--- then (3) inhomogeneous, resolutionBySyzygies, over a field, over ZZ.
+-- then (3) inhomogeneous, resolutionBySyzygies (FIRST UP ON March 7), over a field (DONE), over ZZ.
 -- then (4) nonminimal resolutions
+-- (5) revisit augmentationMap, in case when the resolution 
+--   messes with the module generators.
 
 importFrom_Core { "RawComputation", "raw" }
 importFrom_Core { "degreeToHeft", 
@@ -35,6 +37,7 @@ freeResolution Module := Complex => opts -> M -> (
     -- LengthLimit prescribes the length of the computed complex
     -- DegreeLimit is a lower limit on what will be computed degree-wise, but more might be computed.
     local C;
+    if opts.LengthLimit < 0 then return complex (ring M)^0;
     if M.cache.?Resolution then (
         C = M.cache.Resolution;
         if not C.cache.?LengthLimit or not C.cache.?DegreeLimit then
@@ -103,11 +106,19 @@ resolutionObjectInEngine = (opts, M, matM) -> (
 
     lengthlimit := if opts.LengthLimit === infinity 
         then (
-            if isSkewCommutative R then 
+            if isSkewCommutative R then (
+                -- we remove the ResolutionObject from M.cache since 
+                -- otherwise it is in an incomplete and unrecoverable state
+                remove(M.cache, symbol ResolutionObject);
                 error "need to provide LengthLimit for free resolutions over skew-commutative rings";
+                );
             flatR := first flattenRing R;
-            if ideal flatR != 0 then 
+            if ideal flatR != 0 then (
+                -- we remove the ResolutionObject from M.cache since 
+                -- otherwise it is in an incomplete and unrecoverable state
+                remove(M.cache, symbol ResolutionObject);
                 error "need to provide LengthLimit for free resolutions over quotients of polynomial rings";
+                );
             numgens flatR)
         else opts.LengthLimit;
     << "creating raw computation" << endl;
@@ -278,11 +289,37 @@ resolutionInEngine3 = (opts, M) -> (
 
 resolutionInEngine = (opts, M) -> (
     R := ring M;
-    if isQuotientRing R or isSkewCommutative R then 
-        resolutionInEngine2(opts, M)
-    else
-        resolutionInEngine1(opts, M)
+    if isQuotientRing R or isSkewCommutative R then (
+        M.cache.ResolutionObject.Strategy = 2;
+        resolutionInEngine2(opts ++ {Strategy => 2}, M)
+        )
+    else (
+        M.cache.ResolutionObject.Strategy = 1;
+        resolutionInEngine1(opts ++ {Strategy => 1}, M)
+        )
     )
+
+resolutionOverField = (opts, M) -> (
+    R := ring M;
+    if not isField R then return null;
+    RO := M.cache.ResolutionObject;
+    
+    RO.compute = (lengthlimit, degreelimit) -> (
+        RO.FieldComputation = minimalPresentation M;
+        );
+
+    RO.isComputable = (lengthlimit, degreelimit) -> true;
+
+    RO.complex = (lengthlimit) -> (
+        N := RO.FieldComputation;
+        C := complex N;
+        C.cache.augmentationMap = map(complex M, C, i -> N.cache.pruningMap);
+        C);
+    
+    RO.compute(opts.LengthLimit, opts.DegreeLimit);
+    RO.complex(opts.LengthLimit)
+    )
+
 
 -- addHook((freeResolution, Module), resolutionInEngine3, Strategy => 3)
 -- addHook((freeResolution, Module), resolutionInEngine2, Strategy => 2)
@@ -291,6 +328,7 @@ addHook((freeResolution, Module), resolutionInEngine2, Strategy => 2)
 addHook((freeResolution, Module), resolutionInEngine3, Strategy => 3)
 addHook((freeResolution, Module), resolutionInEngine1, Strategy => 1)
 addHook((freeResolution, Module), resolutionInEngine, Strategy => Engine)
+addHook((freeResolution, Module), resolutionOverField, Strategy => "Field")
 
 --scan({Engine}, strategy ->
 --    addHook(key := (resolution, Module), algorithms#key#strategy, Strategy => strategy))
@@ -306,6 +344,16 @@ I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
 M = S^1/I
 --F = freeResolution(M, Strategy => Engine)
 F = freeResolution(M)
+
+M = S^1/I
+freeResolution(M, LengthLimit => 0)
+
+M = S^1/I
+freeResolution(M, LengthLimit => 1)
+
+M = S^1/I
+freeResolution(M, LengthLimit => -1)
+    
 remove(M.cache, symbol Resolution)
 peek M.cache
 assert isWellDefined F
@@ -341,7 +389,7 @@ M = S^1/I
 F = freeResolution(M, Strategy => Engine)
 -- control-c in the middle, look at M.cache.ResolutionObject
 peek M.cache.ResolutionObject
-freeResolution(M, LengthLimit => 4)
+F = freeResolution(M, LengthLimit => 4)
 assert isWellDefined F
 F2 = freeResolution(M, LengthLimit => 2)
 
@@ -353,14 +401,14 @@ E = ZZ/101[a..d, SkewCommutative => true]
 I = ideal"ab, acd"
 C = freeResolution(I) -- gives an error
 break
-C = freeResolution(I, LengthLimit => 5) -- BUG: this should now work
+C = freeResolution(I, LengthLimit => 5)
 
 I = ideal"ab, acd"
-C = freeResolution(I, Strategy => 2)
+C = freeResolution(I, Strategy => 2, LengthLimit => 7)
 
 I = ideal"ab, acd"
-C = freeResolution(I, Strategy => 3)
-
+C2 = freeResolution(I, Strategy => 3, LengthLimit => 7)
+assert(betti C === betti C2)
 -- module over a quotient ring
 restart
 debug loadPackage("Complexes")
@@ -423,6 +471,23 @@ M = S^1/I
 res M
 --F = freeResolution(M, Strategy => Engine)
 F = freeResolution(M)
+
+-- Over a field
+restart -- XXX
+debug loadPackage("Complexes")
+load "Complexes/ResolutionObject.m2"
+gbTrace=1
+kk = ZZ/32003
+M = coker random(kk^3, kk^2)
+F = freeResolution M
+g = augmentationMap F
+source g == F
+target g == complex M
+isWellDefined g
+coker g == 0
+ker g == 0 -- since this is an isomorphism
+
+res M -- BUG: this is wrong. 
 
 
 -- XXX
