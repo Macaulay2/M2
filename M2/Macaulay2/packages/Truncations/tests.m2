@@ -372,6 +372,11 @@ TEST /// -- test of inducedTruncationMap
   assert(src === source g)
 ///
 
+TEST /// -- test of subtruncate
+  M = module(QQ[x,y])
+  assert(truncate(1, 2, id_M) == map(truncate(1, M), truncate(2, M), {{y, 0, 0}, {0, y, x}}))
+///
+
 end--
 
 restart
