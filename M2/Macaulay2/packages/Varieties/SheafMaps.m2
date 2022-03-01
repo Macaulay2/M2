@@ -17,9 +17,7 @@ export {
 
 -- given a graded map, truncate only the source
 -- and return the inclusion composed with the map
--- TODO: should this be an option for truncate?
-subtruncate = { MinimalGenerators => false } >> opts -> (degs, f) -> (
-    f * inducedMap(source f, truncate(degs, source f, opts)))
+subtruncate = { MinimalGenerators => false } >> opts -> (degs, f) -> truncate(, degs, f, opts)
 
 -- given a list of sheaf maps with matching targets,
 -- truncate only the sources of the corresponding
