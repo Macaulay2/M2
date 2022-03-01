@@ -177,12 +177,15 @@ determinant Matrix := RingElement => opts -> f -> (
 -----------------------------------------------------------------------------
 
 fittingIdeal = method(TypicalValue => Ideal)
-fittingIdeal(ZZ, Module) := (i, M) -> (
-     p := presentation M;
+-- TODO: document this
+fittingIdeal(ZZ, Matrix) := (i, p) -> (
      n := rank target p;
      if n <= i
-     then ideal 1_(ring M)
+     then ideal 1_(ring p)
      else trim minors(n-i,p))
+fittingIdeal(ZZ, Module) := (i, M) -> fittingIdeal(i, presentation M)
+
+-- TODO: fittingImage of a ring map
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
