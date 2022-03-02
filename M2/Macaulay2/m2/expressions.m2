@@ -335,6 +335,7 @@ RowExpression = new HeaderType of Expression
 RowExpression.synonym = "row expression"
 net RowExpression := w -> horizontalJoin apply(toList w,net)
 html RowExpression := w -> concatenate apply(w,html)
+tex RowExpression := w -> concatenate apply(w,tex)
 texMath RowExpression := w -> concatenate apply(w,texMath)
 toString'(Function, RowExpression) := (fmt,w) -> concatenate apply(w,fmt)
 -----------------------------------------------------------------------------
