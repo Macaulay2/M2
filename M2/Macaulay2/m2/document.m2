@@ -46,9 +46,10 @@ verifyKey Sequence := key -> ( -- e.g., (res, Module) or (symbol **, Module, Mod
     else if #key == 1 and not instance(key#0, Function)
     then error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function")
     else if #key  > 1
-    and not any({Keyword, Command, Function, Functor}, type -> instance(key#0, type)) and not methodNames#?(key#0)
-    and not (instance(key#0, Sequence) and 2 == #key#0 and key#0#1 === symbol= and instance(key#0#0, Keyword))
-    then error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function, command, functor, or keyword");
+    and not any({Keyword, Command, Function, ScriptedFunctor, Functor}, type -> instance(key#0, type)) 
+    and not methodNames#?(key#0)
+    and not (instance(key#0, Sequence) and 2 == #key#0 and key#0#1 === symbol= and instance(key#0k#0, Keyword))
+    then error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function, command, scripted functor, functor, or keyword");
     --
     if  isUnaryAssignmentOperator key           -- e.g., ((?, =), Type), or (?, =)
     or isBinaryAssignmentOperator key then true -- e.g., ((?, =), Type, Type)

@@ -34,6 +34,7 @@ http.m2
 computations.m2
 functors.m2
 
+gateway.m2
 rings.m2
 integers.m2
 engine.m2

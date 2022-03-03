@@ -631,8 +631,7 @@ document {
     "A functor $F : C \to D$ is a mapping between the categories $C$ and $D$ which
     for every object $A$ of $C$ gives an object $F A$ of $D$ and
     for every morphism $f : A \to B$ given a morphism $F f : F A \to F B$ which
-    preserves composition and identity elements.",
-    Subnodes => TO \ {"argument", "ScriptedFunctor"}
+    preserves composition and identity elements."
     }
 
 document {
@@ -642,14 +641,15 @@ document {
      Headline => "the class of all scripted functors",
      "A scripted functor accepts a subscript or a superscript:
      the primary example is ", TO "HH", ".",
-     Subnodes => TO \ {"subscript", "superscript"}
+     Subnodes => {TO "argument", TO "subscript", TO "superscript"}
      }
 
 document {
      Key => argument,
-     Headline => "specify the function in a functor for an argument",
-     TT "argument", " -- a key used in functors under which is
+     Headline => "specify the function in a scripted functor for an argument",
+     TT "argument", " -- a key used in scripted functors under which is
      stored the function that accepts the arguments.",
+     SeeAlso => "ScriptedFunctor"
      }
 
 document {
@@ -657,7 +657,8 @@ document {
      Headline => "specify the function in a scripted functor for a subscript",
      TT "subscript", " -- a key used in scripted functors under which is
      stored the function of one variable that accepts the subscript and
-     returns a functor that accepts the arguments.",
+     returns a scripted functor that accepts the arguments.",
+     SeeAlso => "ScriptedFunctor"
      }
 
 document {
@@ -665,7 +666,8 @@ document {
      Headline => "specify the function in a scripted functor for a superscript",
      TT "superscript", " -- a key used in scripted functors under which is
      stored the function of one variable that accepts the superscript and
-     returns a functor that accepts the arguments.",
+     returns a scripted functor that accepts the arguments.",
+     SeeAlso => "ScriptedFunctor"
      }
 
 document {
