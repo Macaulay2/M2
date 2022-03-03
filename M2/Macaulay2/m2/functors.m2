@@ -1,4 +1,3 @@
---		Copyright 1995 by Daniel R. Grayson
 -- TODO: figure out how to load this file later
 
 needs "code.m2" -- for methods
