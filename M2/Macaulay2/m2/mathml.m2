@@ -172,6 +172,7 @@ mathML GradedModuleMap :=
 mathML GroebnerBasis :=
 mathML IndexedVariableTable :=
 mathML Package :=
+mathML ScriptedFunctor :=
 mathML Functor :=
 mathML Monoid :=
 mathML Variety :=

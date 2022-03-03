@@ -637,11 +637,16 @@ document {
 document {
      Key => {ScriptedFunctor,
 	  (symbol^, ScriptedFunctor, Thing),
-	  (symbol_, ScriptedFunctor, Thing)},
+	  (symbol_, ScriptedFunctor, Thing),
+	  (symbol SPACE, ScriptedFunctor, Thing)},
      Headline => "the class of all scripted functors",
      "A scripted functor accepts a subscript or a superscript:
      the primary example is ", TO "HH", ".",
-     Subnodes => {TO "argument", TO "subscript", TO "superscript"}
+     Subnodes => {
+	  TO "argument", 
+	  TO "subscript", 
+	  TO "superscript"
+	  }
      }
 
 document {

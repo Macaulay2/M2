@@ -1,7 +1,6 @@
 --		Copyright 1994-2006 by Daniel R. Grayson
 
 needs "code.m2"
-needs "functors.m2" -- for Functor
 needs "hypertext.m2"
 needs "methods.m2"
 needs "packages.m2"
@@ -46,9 +45,8 @@ verifyKey Sequence := key -> ( -- e.g., (res, Module) or (symbol **, Module, Mod
     else if #key == 1 and not instance(key#0, Function)
     then error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function")
     else if #key  > 1
-    and not any({Keyword, Command, Function, ScriptedFunctor, Functor}, type -> instance(key#0, type)) 
-    and not methodNames#?(key#0)
-    and not (instance(key#0, Sequence) and 2 == #key#0 and key#0#1 === symbol= and instance(key#0k#0, Keyword))
+    and not any({Keyword, Command, Function, ScriptedFunctor, Functor}, type -> instance(key#0, type)) and not methodNames#?(key#0)
+    and not (instance(key#0, Sequence) and 2 == #key#0 and key#0#1 === symbol= and instance(key#0#0, Keyword))
     then error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function, command, scripted functor, functor, or keyword");
     --
     if  isUnaryAssignmentOperator key           -- e.g., ((?, =), Type), or (?, =)
@@ -246,8 +244,7 @@ fSeq := new HashTable from {
     (2, symbol ~       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol !       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
 
-    -- Functors
-    -- TODO: make sure hh.argument is also covered
+    -- ScriptedFunctors
     (4, class, ScriptedFunctor, ZZ) => s -> (
 	hh := s#0;
 	if hh.?subscript
@@ -261,11 +258,13 @@ fSeq := new HashTable from {
     (2, class, ScriptedFunctor    ) => s -> (
 	hh := s#0;
 	if hh.?subscript and hh.?superscript then (
-	    printerr("warning: ambiguous functor, with both subscript method and superscript method: ", toString s);
+	    printerr("warning: ambiguous scripted functor, with both subscript method and superscript method: ", toString s);
 	    toString s)
 	else if hh.?subscript   then (toString hh, " _ ", toString s#1)
 	else if hh.?superscript then (toString hh, " ^ ", toString s#1)
 	else (toString hh, " ", toString s#1)),
+
+    -- Functors
     (2, class, Functor) => s ->      (toString s#0, " ",  toString s#1),
 
     -- Methods

@@ -37,7 +37,7 @@ RingMap#{Standard,AfterPrint} =
 RingMap#{Standard,AfterNoPrint} = f -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : "; -- standard template
     -- TODO: is there an alternative that isn't grayed out as comments by syntax highlighters?
-    << class f << " " << target f << " <--- " << source f;
+    << class f << " " << target f << " <- " << source f;
     << endl;
     )
 
