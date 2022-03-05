@@ -3898,6 +3898,7 @@ assert(maxWeightBasis(F7, rsort w) === set{0,1,2})
 ///
 
 TEST ///
+-- no-check-flag #1392
 M0 = matroid graph({{a,b},{b,c},{c,d},{d,e},{e,f},{f,g},{f,h},{c,h},{c,f},{a,g},{d,g}})
 M1 = matroid graph({{a,b},{b,c},{c,d},{d,e},{e,f},{f,g},{f,h},{c,h},{c,f},{a,g},{a,h}})
 T = ZZ[x,y]
@@ -4023,3 +4024,6 @@ installPackage "Matroids"
 installPackage("Matroids", RemakeAllDocumentation => true)
 viewHelp "Matroids"
 check "Matroids"
+
+-- custom rank functions
+scan(flats M, F -> M.cache.rankFunction#F = rank (representationOf M)_(toList F))
