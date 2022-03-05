@@ -1,7 +1,7 @@
 newPackage("Matroids",
 	AuxiliaryFiles => true,
-	Version => "1.4.0",
-	Date => "Nov 8, 2021",
+	Version => "1.4.5",
+	Date => "Mar 4, 2022",
 	Authors => {{
 		Name => "Justin Chen",
 		Email => "jchen@math.berkeley.edu",
@@ -34,6 +34,7 @@ export {
 	"groundSet",
 	"indicesOf",
 	"bases",
+	"ranks",
 	"nonbases",
 	"circuits",
 	"fundamentalCircuit",
@@ -56,6 +57,7 @@ export {
 	"parallelConnection",
 	"sum2",
 	"relaxation",
+	"representation",
 	"representationOf",
 	"relabel",
 	"quickIsomorphismTest",
@@ -81,12 +83,14 @@ export {
 Matroid = new Type of HashTable
 Matroid.synonym = "matroid"
 
+largeNumBases := 100
+
 globalAssignment Matroid
 net Matroid := M -> (
 	net ofClass class M | " of rank " | toString(M.rank) | " on " | toString(#M.groundSet) | " elements"
 )
 
-Matroid == Matroid := (M, N) -> set bases M === set bases N and M.groundSet === N.groundSet
+Matroid == Matroid := (M, N) -> M.groundSet === N.groundSet and set bases M === set bases N
 
 matroid = method(Options => {EntryMode => "bases", ParallelEdges => {}, Loops => {}})
 matroid (List, List) := Matroid => opts -> (E, L) -> (
@@ -112,13 +116,13 @@ matroid (List, List) := Matroid => opts -> (E, L) -> (
 		M.cache.circuits = L;
 	) else if opts.EntryMode == "nonbases" then M.cache.nonbases = L;
 	M.cache.groundSet = E;
-	M.cache.rankFunction = new MutableHashTable;
+	M.cache.ranks = new MutableHashTable;
 	M
 )
 matroid List := Matroid => opts -> B -> matroid(unique flatten B, B, opts)
 matroid Matrix := Matroid => opts -> A -> (
 	k := rank A;
-	matroid(apply(numcols A, i -> matrix A_i), (select(subsets(numcols A, k), S -> rank A_S == k))/set)
+	setRepresentation(matroid(apply(numcols A, i -> A_{i}), (select(subsets(numcols A, k), S -> rank A_S == k))/set), A)
 )
 matroid Graph := Matroid => opts -> G -> (
 	P := opts.ParallelEdges;
@@ -129,7 +133,7 @@ matroid Graph := Matroid => opts -> G -> (
 	for i from 0 to #P - 1 do (
 		C = C | select(C, c -> member(E#(P#i), c))/(c -> c - set{E#(P#i)} + set{e+i}) | {set{E#(P#i), e + i}};
 	);
-	matroid(edges G | P | L, C | apply(#L, i -> set{e + #P + i}), EntryMode => "circuits")
+	setRepresentation(matroid(edges G | P | L, C | apply(#L, i -> set{e + #P + i}), EntryMode => "circuits"), sub(incidenceMatrix G, ZZ/2))
 )
 matroid (List, MonomialIdeal) := Matroid => opts -> (E, I) -> (
 	allVars := product gens ring I;
@@ -144,13 +148,18 @@ matroid Ideal := Matroid => opts -> I -> (
 	else error "Expected a squarefree monomial ideal"
 )
 
+setRepresentation = (M, A) -> (
+	M.cache.representation = A;
+	M.cache.rankFunction = S -> rank A_S;
+	M
+)
+
 ideal Matroid := MonomialIdeal => M -> ( -- Stanley-Reisner ideal of independence complex
-	if not M.cache.?ideal then (
+	if M.cache.?ideal then M.cache.ideal else M.cache.ideal = (
 		x := getSymbol "x";
 		R := QQ(monoid [x_0..x_(#M.groundSet - 1)]);
-		M.cache.ideal = dual monomialIdeal({0_R} | apply(bases M, b -> product(toList(M.groundSet - b) /(i -> R_i))))
-	);
-	M.cache.ideal
+		dual monomialIdeal({0_R} | apply(bases M, b -> product(toList(M.groundSet - b) /(i -> R_i))))
+	)
 )
 
 isWellDefined Matroid := Boolean => M -> (
@@ -217,14 +226,12 @@ bases Matroid := List => M -> M.bases
 
 nonbases = method()
 nonbases Matroid := List => M -> (
-	if not M.cache.?nonbases then M.cache.nonbases = subsets(M.groundSet, rank M) - set M.bases;
-	M.cache.nonbases
+	if M.cache.?nonbases then M.cache.nonbases else M.cache.nonbases = subsets(M.groundSet, rank M) - set M.bases
 )
 
 circuits = method()
 circuits Matroid := List => M -> (
-	if not M.cache.?circuits then M.cache.circuits = (ideal M)_*/indices/set;
-	M.cache.circuits
+	if M.cache.?circuits then M.cache.circuits else M.cache.circuits = (ideal M)_*/indices/set
 )
 
 fundamentalCircuit = method()
@@ -255,21 +262,22 @@ isDependent (Matroid, Set) := Boolean => (M, S) -> (
 rank Matroid := ZZ => M -> M.rank
 rank (Matroid, List) := ZZ => (M, S) -> rank(M, set indicesOf(M, S))
 rank (Matroid, Set) := ZZ => (M, S) -> (
-	if not M.cache.rankFunction#?S then (
-		currentRank := 0;
-		if #bases M > 100 then (
+	if M.cache.ranks#?S then M.cache.ranks#S else M.cache.ranks#S = (
+		S0 := sort keys S;
+		if M.cache.?rankFunction then (M.cache.rankFunction)(S0)
+		else if #bases M > largeNumBases then (
 			I := ideal M; R := ring I;
-			currentRank = dim (map((coefficientRing R)(monoid [(gens R)_(keys S)]), R))(I);
+			dim (map((coefficientRing R)(monoid [(gens R)_S0]), R))(I)
 		) else (
+			currentRank := 0;
 			maxRank := min(#S, rank M);
 			for b in bases M do (
 				currentRank = max(currentRank, #(b*S));
-				if currentRank == maxRank then return currentRank;
+				if currentRank == maxRank then break;
 			);
-		);
-		M.cache.rankFunction#S = currentRank;
-	);
-	M.cache.rankFunction#S
+			currentRank
+		)
+	)
 )
 
 closure = method()
@@ -286,8 +294,7 @@ closure (Matroid, Set) := Set => (M, S) -> (
 
 hyperplanes = method()
 hyperplanes Matroid := List => M -> (
-	if not M.cache.?hyperplanes then M.cache.hyperplanes = (circuits dual M)/(c -> M.groundSet - c);
-	M.cache.hyperplanes
+	if M.cache.?hyperplanes then M.cache.hyperplanes else M.cache.hyperplanes = (circuits dual M)/(c -> M.groundSet - c)
 )
 
 flats = method()
@@ -299,7 +306,7 @@ flats (Matroid, ZZ) := List => (M, r) -> ( -- returns flats of rank r
 	unique (select(subsets(M.groundSet, r), s -> rank_M s == r)/closure_M)
 )
 flats Matroid := List => M -> (
-	if not M.cache.?flats then (
+	if M.cache.?flats then M.cache.flats else M.cache.flats = (
 		H := hyperplanes M;
 		flatList := H;
 		numFlatsFound := 0;
@@ -307,9 +314,8 @@ flats Matroid := List => M -> (
 			numFlatsFound = #flatList;
 			flatList = unique flatten apply(flatList, F -> apply(H, h -> h*F));
 		);
-		M.cache.flats = append(sort(flatList, f -> #f), M.groundSet);
-	);
-	M.cache.flats
+		append(sort(flatList, f -> #f), M.groundSet)
+	)
 )
 
 latticeOfFlats = method()
@@ -318,25 +324,25 @@ latticeOfFlats Matroid := Poset => M -> poset(flats M/toList, (a, b) -> isSubset
 fVector Matroid := HashTable => opts -> M -> hashTable pairs tally(flats M/rank_M)
 
 dual Matroid := Matroid => {} >> opts -> M -> (
-	if not M.cache.?dual then (
+	if M.cache.?dual then M.cache.dual else M.cache.dual = (
 		D := matroid(M_*, (bases M)/(b -> M.groundSet - b));
 		D.cache.dual = M;
-		M.cache.dual = D;
-	);
-	M.cache.dual
+		D
+	)
 )
 
 restriction = method()
 restriction (Matroid, List) := Matroid => (M, S) -> restriction(M, set indicesOf(M, S))
 restriction (Matroid, Set) := Matroid => (M, S) -> ( -- assumes S is a subset of M.groundSet (not M_*)
 	S0 := sort keys S;
-	if #bases M > 100 then (
+	matroid(M_S0, if #bases M > largeNumBases then (
 		I := ideal M; R := ring I;
-		return matroid(M_S0, monomialIdeal (map((coefficientRing R)(monoid [(gens R)_(S0)]), R))(I));
-	);
-	B := bases M/(b -> S*b);
-	r := max sizes B;
-	matroid(M_S0, indicesOf(S0, unique select(B, b -> #b == r) /toList))
+		monomialIdeal (map((coefficientRing R)(monoid [(gens R)_(S0)]), R))(I)
+	) else (
+		B := bases M/(b -> S*b);
+		r := max sizes B;
+		indicesOf(S0, unique select(B, b -> #b == r) /toList)
+	))
 )
 Matroid | Set := (M, S) -> restriction(M, S)
 Matroid | List := (M, S) -> restriction(M, S)
@@ -476,13 +482,15 @@ relaxation (Matroid, Set) := Matroid => (M, S) -> (
 	if member(S, circuits M) and member(S, hyperplanes M) then matroid(M_*, append(bases M, S))
 	else error "Expected circuit-hyperplane"
 )
+relaxation Matroid := Matroid => M -> relaxation(M, first toList(set circuits M * set hyperplanes M))
 
 representationOf = method()
 representationOf Matroid := Thing => M -> (
-	if instance(M_0, Matrix) then transpose matrix((M_*)/(v -> flatten entries v))
-	else if all(M_*, c -> instance(c, Set) and #c <= 2) then (
+	if all(M_*, c -> instance(c, Set) and #c <= 2) then (
 		graph(join(M_*, (flatten(select(M_*, c -> #c == 1)/toList))/(v -> {v,v})))
-	) else error "No representation found"
+	-- ) else if all(M_*, c -> instance(c, Matrix)) then matrix{M_*}
+	) else if M.cache.?representation then M.cache.representation
+	else ( << "No representation stored" << endl; null )
 )
 
 relabel = method()
@@ -593,8 +601,7 @@ areIsomorphic (Matroid, Matroid) := Boolean => (M, N) -> (
 )
 
 tuttePolynomial Matroid := RingElement => M -> (
-	if not M.cache.?tuttePolynomial then M.cache.tuttePolynomial = tuttePolynomial(M, ZZ(monoid(["x","y"]/getSymbol)));
-	M.cache.tuttePolynomial
+	if M.cache.?tuttePolynomial then M.cache.tuttePolynomial else M.cache.tuttePolynomial = tuttePolynomial(M, ZZ(monoid(["x","y"]/getSymbol)))
 )
 tuttePolynomial (Matroid, Ring) := RingElement => (M, R) -> (
 	a := coloops M;
@@ -631,7 +638,8 @@ simpleMatroid Matroid := Matroid => M -> M \ set(select((ideal M)_*, m -> first 
 
 uniformMatroid = method()
 uniformMatroid (ZZ, ZZ) := Matroid => (k, n) -> (
-	if 0 <= k and k <= n then matroid(toList(0..<n), subsets(n, k)/set) else error(k | " is not between 0 and " | n)
+	if k > n then (k,n) = (n,k);
+	matroid(toList(0..<n), subsets(n, k)/set)
 )
 
 affineGeometry = method()
@@ -710,7 +718,7 @@ idealChowRing Matroid := Ideal => M -> (
 )
 
 cogeneratorChowRing = method()
-cogeneratorChowRing Matroid := RingElement => M -> ( -- sorted flats makes this method 3x faster
+cogeneratorChowRing Matroid := RingElement => M -> ( -- sorted flats makes this 3x faster
 	t := getSymbol "t";
 	I := trim idealChowRing M;
 	R := ring I;
@@ -731,7 +739,7 @@ specificMatroid String := Matroid => name -> (
 	) else if name == "fano" then (
 		projectiveGeometry(2, 2)
 	) else if name == "nonfano" then (
-		relaxation(specificMatroid "fano", set{1,3,4})
+		relaxation(specificMatroid "fano", set{4,5,6})
 	) else if name == "V8+" then (
 		matroid(toList(0..7), {{0,1,2,3},{0,3,4,5},{1,2,4,5},{0,3,6,7},{1,2,6,7},{4,5,6,7}}/set, EntryMode => "nonbases")
 	) else if name == "vamos" then (
