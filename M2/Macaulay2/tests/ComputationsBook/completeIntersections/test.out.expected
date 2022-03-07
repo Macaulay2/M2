@@ -488,7 +488,7 @@ i79 : phi = map(R,S,{X_1,X_2,X_3,0,0,0})
 
 o79 = phi
 
-o79 : RingMap R <--- S
+o79 : RingMap R <- S
 
 i80 : P = prune (phi ** P);
 
@@ -732,7 +732,7 @@ i109 : psi = map(K,B)
 
 o109 = psi
 
-o109 : RingMap K <--- B
+o109 : RingMap K <- B
 
 i110 : apply(10, i -> rank (psi ** Ext^i(M,coker vars B)))
 

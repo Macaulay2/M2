@@ -401,6 +401,11 @@ setupMethods(Dispatch => Thing, {max,min,directSum,vars})
 net = method(Dispatch => Thing, TypicalValue => Net)
 factor = method( Options => { } )
 
+cohomology = method( Options => { 
+	  Degree => 0		  -- for local cohomology and sheaf cohomology
+	  } )
+homology = method( Options => { } )
+
 width File := fileWidth
 height File := fileHeight
 

@@ -646,7 +646,7 @@ document {
 	  TO "argument", 
 	  TO "subscript", 
 	  TO "superscript"
-	  }
+     	  }
      }
 
 document {
