@@ -232,62 +232,62 @@ toExternalString Module := M -> toString describe M
 
 Module == Module := (M,N) -> (
      -- this code might not be the quickest - Mike should check it
-     ring M === ring N
-     and degrees ambient M === degrees ambient N
-     and (
-	  if M.?relations 
-	  then N.?relations and (
-	       -- if isHomogeneous N.relations and isHomogeneous M.relations
-	       -- then gb N.relations == gb M.relations
-	       -- else 
-		    (
-		    -- temporary
-		    isSubset(image M.relations, image N.relations)
-		    and
-		    isSubset(image N.relations, image M.relations)
-		    )
-	       )
-     	  else not N.?relations
-	  )
-     and (
-	  if M.?generators then (
-	       if N.?generators then (
-		    f := (
-			 if M.?relations 
-			 then M.relations|M.generators
-		    	 else M.generators);
-		    g := (
-			 if N.?relations
-			 then N.relations|N.generators
-			 else N.generators);
-		    -- if isHomogeneous f and isHomogeneous g
-		    -- then gb f == gb g
+     M === N or (
+	  ring M === ring N
+	  and degrees ambient M === degrees ambient N
+	  and (
+	       if M.?relations 
+	       then N.?relations and (
+		    -- if isHomogeneous N.relations and isHomogeneous M.relations
+		    -- then gb N.relations == gb M.relations
 		    -- else 
 			 (
 			 -- temporary
-		    	 isSubset(image f, image g)
-		    	 and
-		    	 isSubset(image g, image f)
+			 M.relations === N.relations
+			 or (
+			      isSubset(image M.relations, image N.relations)
+			      and
+			      isSubset(image N.relations, image M.relations))))
+	       else not N.?relations or N.relations == 0)
+	  and (
+	       if M.?generators then (
+		    if N.?generators then (
+			 f := (
+			      if M.?relations 
+			      then M.relations|M.generators
+			      else M.generators);
+			 g := (
+			      if N.?relations
+			      then N.relations|N.generators
+			      else N.generators);
+			 -- if isHomogeneous f and isHomogeneous g
+			 -- then gb f == gb g
+			 -- else 
+			      (
+			      -- temporary
+			      isSubset(image f, image g)
+			      and
+			      isSubset(image g, image f)
+			      )
 			 )
-		    )
+		    else (
+			 f = (
+			      if M.?relations
+			      then M.relations|M.generators
+			      else M.generators
+			      );
+			 if isHomogeneous f then f = substitute(f,0);
+			 isSubset(ambient N, image f)))
 	       else (
-		    f = (
-			 if M.?relations
-			 then M.relations|M.generators
-			 else M.generators
-			 );
-		    if isHomogeneous f then f = substitute(f,0);
-		    isSubset(ambient N, image f)))
-	  else (
-	       if N.?generators then (
-		    g = (
-			 if N.?relations 
-			 then N.relations|N.generators 
-			 else N.generators
-			 );
-		    if isHomogeneous g then g = substitute(g,0);
-		    isSubset(ambient M, image g))
-	       else true)))
+		    if N.?generators then (
+			 g = (
+			      if N.?relations 
+			      then N.relations|N.generators 
+			      else N.generators
+			      );
+			 if isHomogeneous g then g = substitute(g,0);
+			 isSubset(ambient M, image g))
+		    else true))))
 
 degrees Module := N -> if N.?degrees then N.cache.degrees else N.cache.degrees = (
      if not isFreeModule N then N = cover N;
