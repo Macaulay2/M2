@@ -360,7 +360,7 @@ export {
 	"SVD",
 	"SYNOPSIS",
 	"Schubert",
-	"ScriptedFunctor",
+	"ScriptedFunction",
 	"SeeAlso",
 	"SelfInitializingType",
 	"SeparateExec",

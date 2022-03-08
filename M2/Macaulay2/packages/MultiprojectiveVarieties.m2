@@ -160,7 +160,7 @@ higherSecantVarietyToRationalNormalScroll (Array,ZZ,Ring) := (d,k,K) -> (
     X#(symbol matrix) = M;
     X
 );
-PP = new ScriptedFunctor from {
+PP = new ScriptedFunction from {
     symbol ring => null,
     argument => (
         A -> (
@@ -180,7 +180,7 @@ PP = new ScriptedFunctor from {
             if not (instance(K,Ring) and isField K) then error "expected a field";
             if PP.ring === null then PP.ring = K;
             errStr := toString(///These are some ways of using PP:///||///PP^n -> n-dimensional projective space///||///PP^{n1,n2,...} -> product of projective spaces: PP^n1 x PP^n2 x ...///||///PP^(n,d) -> d-uple embedding of PP^n: v_d(PP^n)///||///PP^({n1,n2,...},{d1,d2,...}) -> Segre-Veronese variety: v_d1(PP^n1) x v_d2(PP^n2) x ...///||///PP[a1,a2,...] -> rational normal scroll: P(O(a1))+P(O(a2))+...///||///PP([a1,a2,...],k) -> k-th secant variety of PP[a1,a2,...]///||///(PP([a1,a2,...],k)).matrix -> the matrix from which PP([a1,a2,...],k) is constructed///);
-            new ScriptedFunctor from {
+            new ScriptedFunction from {
                 superscript => (
                     l -> (
                         if instance(l,List) or instance(l,ZZ) then projectiveVariety(l,K)

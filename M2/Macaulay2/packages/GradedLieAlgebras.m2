@@ -1673,7 +1673,7 @@ imultindex = (y,a,L)->(
 -- the identity map on a Lie algebra
 ----------------------------------------
 
-(ScriptedFunctor)_(LieAlgebra):=(f,L)-> 
+(ScriptedFunction)_(LieAlgebra):=(f,L)-> 
     if f===id then (
 	h:=new HashTable from 
              join(apply(L#numgens,i->(L#cache.gens)_i=>(L#cache.gens)_i),

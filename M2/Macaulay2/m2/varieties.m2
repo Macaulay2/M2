@@ -244,7 +244,7 @@ applyMethod = (key,x) -> (
      if f === null then error "no method available";	    -- expand this error message later
      f x)
 
-OO = new ScriptedFunctor from {
+OO = new ScriptedFunction from {
      subscript => X -> applyMethod((symbol _,OO,class X),(OO,X)),
      argument => X -> applyMethod((symbol SPACE,OO,class X),(OO,X)),
      }
@@ -252,7 +252,7 @@ OO.texMath = ///{\mathcal O}///
 installMethod(symbol _,OO,Variety,(OO,X) -> sheaf_X ring X)
 sheaf Variety := X -> sheaf_X ring X
 
---PP = new ScriptedFunctor from {
+--PP = new ScriptedFunction from {
 --     superscript => (
 --	  i -> R -> (
 --	       x := symbol x;
@@ -381,9 +381,9 @@ sheafHom(SheafOfRings,CoherentSheaf) := Module => (O,G) -> sheafHom(O^1,G)
 sheafHom(CoherentSheaf,SheafOfRings) := Module => (F,O) -> sheafHom(F,O^1)
 sheafHom(SheafOfRings,SheafOfRings) := Module => (O,R) -> sheafHom(O^1,R^1)
 
-sheafExt = new ScriptedFunctor from {
+sheafExt = new ScriptedFunction from {
      superscript => (
-	  i -> new ScriptedFunctor from {
+	  i -> new ScriptedFunction from {
 	       argument => (M,N) -> (
 		    f := lookup(sheafExt,class i,class M,class N);
 		    if f === null then error "no method available"
@@ -455,9 +455,9 @@ Ext(ZZ,SheafOfRings,SheafOfRings) := Module => opts -> (n,O,R) -> Ext^n(O^1,R^1,
 -- end of code donated by Greg Smith <ggsmith@math.berkeley.edu>
 -----------------------------------------------------------------------------
 
-hh = new ScriptedFunctor from {
+hh = new ScriptedFunction from {
      superscript => (
-	  pq -> new ScriptedFunctor from {
+	  pq -> new ScriptedFunction from {
 	       argument => X -> (
 		    a := (pq,X);
 		    f := lookup_hh ( class \ a );

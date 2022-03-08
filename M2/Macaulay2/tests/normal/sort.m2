@@ -60,7 +60,7 @@ x  = {symbol generators, symbol size, symbol symmetricPower, symbol SPACE, symbo
       symbol odd, symbol return, symbol else, symbol combine, symbol isMonomialIdeal, symbol EXAMPLE, symbol isIdeal, SubringLimit, NoPrint, Variables, symbol MatrixExpression, symbol
       Adjacent, symbol Vector, symbol truncate, Usage, symbol isQuotientRing, symbol tangentSheaf, symbol hypertext, symbol plus, symbol errorDepth, symbol columnMult, symbol clearOutput,
       symbol firstkey, symbol toList, symbol MarkUpType, symbol width, symbol isWellDefined, symbol of, symbol coefficients, symbol on, symbol oo, symbol or, symbol eigenvectors, symbol
-      ScriptedFunctor, symbol showUserStructure, symbol code, symbol isField, symbol keys, symbol degreesRing, symbol close, symbol pi, symbol scanValues, SyzygyLimit, symbol
+      ScriptedFunction, symbol showUserStructure, symbol code, symbol isField, symbol keys, symbol degreesRing, symbol close, symbol pi, symbol scanValues, SyzygyLimit, symbol
       truncateOutput, symbol pseudoRemainder, Inputs, symbol columnSwap, symbol edit, symbol restart, symbol pdim, symbol then, symbol homology, symbol GeneralOrderedMonoid, symbol vars,
       symbol ITALIC, symbol sum, symbol WrapperType, symbol Ring, symbol substring, symbol isInputFile, symbol gradedModuleMap, symbol poincareN, symbol to, NewMethod, symbol applyKeys,
       symbol newPackage, symbol deepSplice, symbol stdio, symbol cohomology, symbol RingElement, symbol ooo, symbol sinh, symbol subsets, SyzygyMatrix, symbol InfiniteNumber, symbol

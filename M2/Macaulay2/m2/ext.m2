@@ -9,14 +9,14 @@ ExtOptions = new OptionTable from {
      Prune => true
      }
 
-Ext = new ScriptedFunctor from {
+Ext = new ScriptedFunction from {
      argument => (
 	  (M,N) -> (
 	       f := lookup(Ext,class M,class N);
 	       if f === null then noMethod(Ext,(M,N),{false,false});
 	       f(M,N))),	  
      superscript => (
-	  i -> new ScriptedFunctor from {
+	  i -> new ScriptedFunction from {
 	       argument => (X -> (
 	       	    	 ExtOptions >> opts -> (M,N) -> (
 		    	      f := lookup(Ext,class i,class M,class N);

@@ -14,7 +14,7 @@ document {
      class ", TT "A", ", and ", TT "N", " be of 
      class ", TT "B", ", then the method can be installed with ",
      PRE "     cohomology(ZZ, A, B) := opts -> (i,M,N) -> ...",
-     SeeAlso => {"homology", "HH", "ScriptedFunctor"}
+     SeeAlso => {"homology", "HH", "ScriptedFunction"}
      }
 *-
 document { 
@@ -27,7 +27,7 @@ document {
      class ", TT "A", ", and ", TT "N", " be of
      class ", TT "B", ", then the method can be installed with ",
      PRE "     cohomology(ZZ, A, B) := opts -> (i,M,N) -> ...",
-     SeeAlso => {"homology", "HH", "ScriptedFunctor"}
+     SeeAlso => {"homology", "HH", "ScriptedFunction"}
      }
 document { 
      Key => (cohomology,ZZ,SheafOfRings),

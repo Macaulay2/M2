@@ -45,9 +45,9 @@ verifyKey Sequence := key -> ( -- e.g., (res, Module) or (symbol **, Module, Mod
     else if #key == 1 and not instance(key#0, Function)
     then error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function")
     else if #key  > 1
-    and not any({Keyword, Command, Function, ScriptedFunctor, Functor}, type -> instance(key#0, type)) and not methodNames#?(key#0)
+    and not any({Keyword, Command, Function, ScriptedFunction, Functor}, type -> instance(key#0, type)) and not methodNames#?(key#0)
     and not (instance(key#0, Sequence) and 2 == #key#0 and key#0#1 === symbol= and instance(key#0#0, Keyword))
-    then error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function, command, scripted functor, functor, or keyword");
+    then error("documentation key ", format toString key, " encountered, but ", format toString key#0, " is not a function, command, scripted function, functor, or keyword");
     --
     if  isUnaryAssignmentOperator key           -- e.g., ((?, =), Type), or (?, =)
     or isBinaryAssignmentOperator key then true -- e.g., ((?, =), Type, Type)
@@ -244,21 +244,21 @@ fSeq := new HashTable from {
     (2, symbol ~       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
     (2, symbol !       ) => s -> (toString s#1, " ", toString s#0), -- postfix operator
 
-    -- ScriptedFunctors
-    (4, class, ScriptedFunctor, ZZ) => s -> (
+    -- ScriptedFunctions
+    (4, class, ScriptedFunction, ZZ) => s -> (
 	hh := s#0;
 	if hh.?subscript
 	then (toString hh, "_", toString s#1, "(", toString s#2, ",", toString s#3, ")")
 	else (toString hh, "^", toString s#1, "(", toString s#2, ",", toString s#3, ")")),
-    (3, class, ScriptedFunctor, ZZ) => s -> (
+    (3, class, ScriptedFunction, ZZ) => s -> (
 	hh := s#0;
 	if hh.?subscript
 	then (toString hh, "_", toString s#1, " ", toString s#2)
 	else (toString hh, "^", toString s#1, " ", toString s#2)),
-    (2, class, ScriptedFunctor    ) => s -> (
+    (2, class, ScriptedFunction    ) => s -> (
 	hh := s#0;
 	if hh.?subscript and hh.?superscript then (
-	    printerr("warning: ambiguous scripted functor, with both subscript method and superscript method: ", toString s);
+	    printerr("warning: ambiguous scripted function, with both subscript method and superscript method: ", toString s);
 	    toString s)
 	else if hh.?subscript   then (toString hh, " _ ", toString s#1)
 	else if hh.?superscript then (toString hh, " ^ ", toString s#1)

@@ -190,7 +190,7 @@ Node
           (TT "? Weights",  " -- displays brief information about ways to use the option ", TT "Weights", "."),
           (TT "? Package",  " -- displays brief information about the package ", TT "Package", "."),
           (TT "? symbol>>", " -- displays brief information about ways to use the operator ", TT ">>", "."),
-          (TT "? HH",       " -- displays brief information about ways to use the scripted functor ", TT "HH", ".")
+          (TT "? HH",       " -- displays brief information about ways to use the scripted function ", TT "HH", ".")
           }@
 
       If the object is defined by the user, brief information about the object and its class are printed.

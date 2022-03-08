@@ -11,7 +11,7 @@ document {
      class ", TT "B", ", then the method for computing ", TT "HH_i(M,N)", " can be installed with 
      code of the following form.",
      PRE "     homology(ZZ, A, B) := opts -> (i,M,N) -> ...",
-     SeeAlso => {"cohomology", "HH", "ScriptedFunctor"}
+     SeeAlso => {"cohomology", "HH", "ScriptedFunction"}
      }
 
 document { 

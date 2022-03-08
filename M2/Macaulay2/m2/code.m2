@@ -162,7 +162,7 @@ methods Sequence := F -> (
     scan(select(F, e -> instance(e, Type)), T -> scan(sequenceMethods(T, F, tallyF), key -> found#key = true));
     previousMethodsFound = new NumberedVerticalList from sortByName keys found)
 
-methods ScriptedFunctor := -- TODO: OO and other scripted functors aren't supported
+methods ScriptedFunction := -- TODO: OO and other scripted functions aren't supported
 methods Symbol :=
 methods Thing  := F -> (
     if F === HH then return join(methods homology, methods cohomology);

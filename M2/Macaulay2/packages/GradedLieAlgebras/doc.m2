@@ -3038,14 +3038,14 @@ document {
 
 doc ///
 Key
-     (symbol _,ScriptedFunctor,LieAlgebra)
+     (symbol _,ScriptedFunction,LieAlgebra)
      
 Headline
      get the identity homomorphism
 Usage
     f=id_L 
 Inputs
-   id: ScriptedFunctor
+   id: ScriptedFunction
    L: LieAlgebra
 Outputs
    f: LieAlgebraMap

@@ -180,8 +180,8 @@ Node
 	@TT "(cohomology,ZZ,X)"@ the method for @TT "HH^ZZ X"@
 	@TT "(homology,ZZ,X,Y)"@ the method for @TT "HH_ZZ (X,Y)"@
 	@TT "(cohomology,ZZ,X,Y)"@ the method for @TT "HH^ZZ (X,Y)"@
-	@TT "(E,ZZ,X)"@ the method for @TT "E_ZZ X"@ or @TT "E^ZZ X"@, where @TT "E"@ is a scripted functor
-	@TT "(E,ZZ,X,Y)"@ the method for @TT "E_ZZ (X,Y)"@ or @TT "E^ZZ (X,Y)"@, where @TT "E"@ is a scripted functor
+	@TT "(E,ZZ,X)"@ the method for @TT "E_ZZ X"@ or @TT "E^ZZ X"@, where @TT "E"@ is a scripted function
+	@TT "(E,ZZ,X,Y)"@ the method for @TT "E_ZZ (X,Y)"@ or @TT "E^ZZ (X,Y)"@, where @TT "E"@ is a scripted function
 
     Example
       makeDocumentTag "some title"

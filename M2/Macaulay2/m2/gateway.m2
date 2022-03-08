@@ -3,29 +3,29 @@
 needs "expressions.m2"
 needs "methods.m2"
 
-ScriptedFunctor = new Type of MutableHashTable
-ScriptedFunctor.synonym = "scripted functor"
-globalAssignment ScriptedFunctor
-precedence ScriptedFunctor := x -> 70
-net ScriptedFunctor := lookup(net,Type)
-toString ScriptedFunctor := lookup(toString,Type)
-expression ScriptedFunctor := x -> new Holder from { x }
-methodOptions ScriptedFunctor := H -> null
+ScriptedFunction = new Type of MutableHashTable
+ScriptedFunction.synonym = "scripted function"
+globalAssignment ScriptedFunction
+precedence ScriptedFunction := x -> 70
+net ScriptedFunction := lookup(net,Type)
+toString ScriptedFunction := lookup(toString,Type)
+expression ScriptedFunction := x -> new Holder from { x }
+methodOptions ScriptedFunction := H -> null
 
 protect argument
 protect subscript
 protect superscript
-ScriptedFunctor ^ Thing := (G,i) -> (
+ScriptedFunction ^ Thing := (G,i) -> (
      if G#?superscript 
      then G#superscript i
      else error("no method for ", toString G, "^", toString i)
      )
-ScriptedFunctor _ Thing := (G,i) -> (
+ScriptedFunction _ Thing := (G,i) -> (
      if G#?subscript 
      then G#subscript i
      else error("no method for ", toString G, "_", toString i)
      )
-ScriptedFunctor Thing := (G,X) -> (
+ScriptedFunction Thing := (G,X) -> (
      if G#?argument
      then G#argument X
      else error("no method for ", toString G, " ", toString X)
@@ -37,7 +37,7 @@ args(Thing,Thing) := identity
 args(Thing,Thing,Sequence) := (i,j,args) -> prepend(i,prepend(j,args))
 args(Thing,Thing,Thing) := identity
 
-id = new ScriptedFunctor from { 
+id = new ScriptedFunction from { 
      subscript => (
 	  (x) -> (
 	       r := lookup(id,class x);
@@ -45,11 +45,11 @@ id = new ScriptedFunctor from {
 	       else error ("no method 'id_' found for item of class ", toString class x)))
      }
 
-HH = new ScriptedFunctor from {
+HH = new ScriptedFunction from {
      subscript => (
-	  i -> new ScriptedFunctor from {
+	  i -> new ScriptedFunction from {
 	       superscript => (
-		    j -> new ScriptedFunctor from {
+		    j -> new ScriptedFunction from {
 	       	    	 argument => (
 			      X -> cohomology args(i,j,X)
 			      )
@@ -61,9 +61,9 @@ HH = new ScriptedFunctor from {
 	       }
 	  ),
      superscript => (
-	  j -> new ScriptedFunctor from {
+	  j -> new ScriptedFunction from {
 	       subscript => (
-		    i -> new ScriptedFunctor from {
+		    i -> new ScriptedFunction from {
 	       	    	 argument => (
 			      X -> homology args(j,i,X)
 			      )

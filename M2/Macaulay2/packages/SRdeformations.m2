@@ -1024,7 +1024,7 @@ ec)
 
 newComplex=method()
 newComplex(PolynomialRing,List,List,PolynomialRing) := (R,faceslist,facetlist,Rdual)-> (
- fc0:=new ScriptedFunctor from {subscript => i-> faceslist_(i+1)};
+ fc0:=new ScriptedFunction from {subscript => i-> faceslist_(i+1)};
  L:={
      symbol simplexRing => R,
 --     symbol dualSimplexRing => Rdual,
@@ -1044,7 +1044,7 @@ newComplex(PolynomialRing,List,List,PolynomialRing) := (R,faceslist,facetlist,Rd
 
 
 newComplex(PolynomialRing,List,List) := (R,faceslist,facetlist)-> (
- fc0:=new ScriptedFunctor from {subscript => i-> faceslist_(i+1)};
+ fc0:=new ScriptedFunction from {subscript => i-> faceslist_(i+1)};
  L:={
      symbol simplexRing => R,
 --     symbol dualSimplexRing => false,
@@ -1063,7 +1063,7 @@ newComplex(PolynomialRing,List,List) := (R,faceslist,facetlist)-> (
 
 newComplexFromFacets=method()
 newComplexFromFacets(PolynomialRing,List,PolynomialRing):= (R,facetlist,Rdual)-> (
--- fc:=new ScriptedFunctor from {subscript => i-> {}};
+-- fc:=new ScriptedFunction from {subscript => i-> {}};
  L:={
      symbol simplexRing => R,
      symbol grading => R.grading,
@@ -1080,7 +1080,7 @@ newComplexFromFacets(PolynomialRing,List,PolynomialRing):= (R,facetlist,Rdual)->
 
 
 newComplexFromFacets(PolynomialRing,List):= (R,facetlist)-> (
--- fc:=new ScriptedFunctor from {subscript => i-> {}};
+-- fc:=new ScriptedFunction from {subscript => i-> {}};
  L:={
      symbol simplexRing => R,
      symbol grading => R.grading,
@@ -1144,7 +1144,7 @@ complexFromFacets(R,faceslist,Rdual))
 -- >> export
 addFaceDataToComplex=method()
 addFaceDataToComplex(Complex,List,List):=(C,faceslist,facetlist)->(
-fc:=new ScriptedFunctor from {subscript => i-> faceslist_(i+1)};
+fc:=new ScriptedFunction from {subscript => i-> faceslist_(i+1)};
 C.isSimp=isSimp(facetlist);
 C.dim=dim(facetlist);
 C.fvector = fvector(faceslist);
@@ -1326,7 +1326,7 @@ if member(symbol fc,keys C)==true then return(toList apply(-1..edim(C),j->C.fc_j
 if member(symbol isSimp,keys C)==true then (
  if C.isSimp==true then (
 --  faceslist:=computeFacesOfSimplicialComplex(C);
---  fc:=new ScriptedFunctor from {subscript => i-> faceslist_(i+1)};
+--  fc:=new ScriptedFunction from {subscript => i-> faceslist_(i+1)};
   C.fc=computeFacesOfSimplicialComplex(C);
   C.fvector=fvector fc C;
   return(fc C);
@@ -1369,7 +1369,7 @@ while tst==false do (
   qq=qq+1);
   if anznew==0 then tst=true;
 q=q+1);
-new ScriptedFunctor from {subscript => i-> L#(i+1)})
+new ScriptedFunction from {subscript => i-> L#(i+1)})
 
 -*
 L={vector {1,0,0},vector {-1,0,0},vector {0,1,0},vector {0,-1,0},vector {0,0,1},vector {0,0,-1}}
@@ -1460,7 +1460,7 @@ while q<=d+1 do (
 q=q+1);
 for q from d+2 to edim(C)+1 do L=append(L,{});
 pf:=member(symbol polytopalFacets,keys C);
-new ScriptedFunctor from {subscript => i->( 
+new ScriptedFunction from {subscript => i->( 
             if pf==true and i==dim(C)-1 then return(C.polytopalFacets);
             L_(i+1)
 )})
@@ -2223,7 +2223,7 @@ if member(symbol fc,keys C)==false then (
  return(new Complex from L)
 );
  newfaces:=replaceDim(fc(C),dim(C)+1,{});
- fc0:=new ScriptedFunctor from {subscript => i-> (newfaces)_(i+1)};
+ fc0:=new ScriptedFunction from {subscript => i-> (newfaces)_(i+1)};
  newfvector:=replaceDim(C.fvector,dim(C)+1,0);
  L={
      symbol simplexRing => C.simplexRing,
@@ -5181,7 +5181,7 @@ doc ///
         Faces can be created by @TO face@ by
         specifying a @TO List@ or @TO Set@ of variables of a @TO PolynomialRing@ and some more optional data.
         
-        Usually faces are accessed as faces of a @TO complex@ C using the @TO ScriptedFunctor@ C.fc with the subscripts "dimension of the face" and "index of the face".
+        Usually faces are accessed as faces of a @TO complex@ C using the @TO ScriptedFunction@ C.fc with the subscripts "dimension of the face" and "index of the face".
         
         {\bf The data stored in a face F:}
         
@@ -6684,7 +6684,7 @@ doc ///
 
         If not just the facets but the faces of C a known (e.g., after computed with @TO fc@) then the following data is present:
 
-        {\it C.fc}, a @TO ScriptedFunctor@ with the faces of C sorted and indexed by dimension.
+        {\it C.fc}, a @TO ScriptedFunction@ with the faces of C sorted and indexed by dimension.
 
         {\it C.fvector}, a @TO List@ with the F-vector of C.
 
@@ -6818,7 +6818,7 @@ doc ///
 
         {\it C.isEquidimensional}, a @TO Boolean@ indicating whether C is equidimensional.
 
-        {\it C.fc}, a @TO ScriptedFunctor@ with the faces of C sorted and indexed by dimension.
+        {\it C.fc}, a @TO ScriptedFunction@ with the faces of C sorted and indexed by dimension.
 
         {\it C.fvector}, a @TO List@ with the F-vector of C.
 

@@ -325,10 +325,10 @@ toricIdeal = (S, a) -> (
 
 
 
--- makes a scripted functor i.e toricHH^i will now mean toricHH(i,....)
-toricHH = new ScriptedFunctor from {
+-- makes a scripted function i.e toricHH^i will now mean toricHH(i,....)
+toricHH = new ScriptedFunction from {
      supscript => (
-	  i -> new ScriptedFunctor from {
+	  i -> new ScriptedFunction from {
 	       argument =>  (M,B,P,d) -> (
 		      	      f := lookup (toricHH,class i,class M,class B,class d);
 		    	      if f === null then error "no method available"

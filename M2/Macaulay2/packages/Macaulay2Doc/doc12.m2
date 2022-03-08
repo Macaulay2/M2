@@ -635,12 +635,12 @@ document {
     }
 
 document {
-     Key => {ScriptedFunctor,
-	  (symbol^, ScriptedFunctor, Thing),
-	  (symbol_, ScriptedFunctor, Thing),
-	  (symbol SPACE, ScriptedFunctor, Thing)},
-     Headline => "the class of all scripted functors",
-     "A scripted functor accepts a subscript or a superscript:
+     Key => {ScriptedFunction,
+	  (symbol^, ScriptedFunction, Thing),
+	  (symbol_, ScriptedFunction, Thing),
+	  (symbol SPACE, ScriptedFunction, Thing)},
+     Headline => "the class of all scripted functions",
+     "A scripted function accepts a subscript or a superscript:
      the primary example is ", TO "HH", ".",
      Subnodes => {
 	  TO "argument", 
@@ -651,28 +651,28 @@ document {
 
 document {
      Key => argument,
-     Headline => "specify the function in a scripted functor for an argument",
-     TT "argument", " -- a key used in scripted functors under which is
+     Headline => "specify the function in a scripted function for an argument",
+     TT "argument", " -- a key used in scripted functions under which is
      stored the function that accepts the arguments.",
-     SeeAlso => "ScriptedFunctor"
+     SeeAlso => "ScriptedFunction"
      }
 
 document {
      Key => subscript,
-     Headline => "specify the function in a scripted functor for a subscript",
-     TT "subscript", " -- a key used in scripted functors under which is
+     Headline => "specify the function in a scripted function for a subscript",
+     TT "subscript", " -- a key used in scripted functions under which is
      stored the function of one variable that accepts the subscript and
-     returns a scripted functor that accepts the arguments.",
-     SeeAlso => "ScriptedFunctor"
+     returns a scripted function that accepts the arguments.",
+     SeeAlso => "ScriptedFunction"
      }
 
 document {
      Key => superscript,
-     Headline => "specify the function in a scripted functor for a superscript",
-     TT "superscript", " -- a key used in scripted functors under which is
+     Headline => "specify the function in a scripted function for a superscript",
+     TT "superscript", " -- a key used in scripted functions under which is
      stored the function of one variable that accepts the superscript and
-     returns a scripted functor that accepts the arguments.",
-     SeeAlso => "ScriptedFunctor"
+     returns a scripted function that accepts the arguments.",
+     SeeAlso => "ScriptedFunction"
      }
 
 document {

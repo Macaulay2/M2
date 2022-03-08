@@ -9,9 +9,9 @@ TorOptions = new OptionTable from {
      }
 
 
-Tor = new ScriptedFunctor from {
+Tor = new ScriptedFunction from {
      subscript => (
-	  i -> new ScriptedFunctor from {
+	  i -> new ScriptedFunction from {
 	       argument => (X -> (
 	       	    	 TorOptions >> opts -> (M,N) -> (
 		    	      f := lookup(Tor,class i,class M,class N);
