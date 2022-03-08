@@ -1,7 +1,7 @@
 newPackage("Matroids",
 	AuxiliaryFiles => true,
-	Version => "1.4.5",
-	Date => "Mar 4, 2022",
+	Version => "1.4.6",
+	Date => "March 8, 2022",
 	Authors => {{
 		Name => "Justin Chen",
 		Email => "jchen@math.berkeley.edu",
@@ -35,6 +35,7 @@ export {
 	"indicesOf",
 	"bases",
 	"ranks",
+	"storedRepresentation",
 	"nonbases",
 	"circuits",
 	"fundamentalCircuit",
@@ -57,7 +58,6 @@ export {
 	"parallelConnection",
 	"sum2",
 	"relaxation",
-	"representation",
 	"representationOf",
 	"relabel",
 	"quickIsomorphismTest",
@@ -149,7 +149,7 @@ matroid Ideal := Matroid => opts -> I -> (
 )
 
 setRepresentation = (M, A) -> (
-	M.cache.representation = A;
+	M.cache.storedRepresentation = A;
 	M.cache.rankFunction = S -> rank A_S;
 	M
 )
@@ -489,7 +489,7 @@ representationOf Matroid := Thing => M -> (
 	if all(M_*, c -> instance(c, Set) and #c <= 2) then (
 		graph(join(M_*, (flatten(select(M_*, c -> #c == 1)/toList))/(v -> {v,v})))
 	-- ) else if all(M_*, c -> instance(c, Matrix)) then matrix{M_*}
-	) else if M.cache.?representation then M.cache.representation
+	) else if M.cache.?storedRepresentation then M.cache.storedRepresentation
 	else ( << "No representation stored" << endl; null )
 )
 
@@ -757,27 +757,45 @@ specificMatroid String := Matroid => name -> (
 	) else if name == "R10" then (
 		matroid(id_((ZZ/2)^5) | matrix{{-1_(ZZ/2),1,0,0,1},{1,-1,1,0,0},{0,1,-1,1,0},{0,0,1,-1,1},{1,0,0,1,-1}})
 	) else if name == "betsyRoss" then (
-		matroid(toList(0..10), {{0,2,5},{0,2,6},{0,3,8},{0,3,9},{0,5,6},{0,7,10},{0,8,9},{1,3,6},{1,3,7},{1,4,5},{1,4,9},{1,5,9},{1,6,7},{1,8,10},{2,4,7},{2,4,8},{2,5,6},{2,7,8},{2,9,10},{3,5,10},{3,6,7},{3,8,9},{4,5,9},{4,6,10},{4,7,8}}, EntryMode => "nonbases")
+		a := (GF 4)_0;
+		matroid matrix {{1,0,0,1,1,1,1,1,1,1,1},{0,1,0,a,1,a+1,1,0,a+1,a+1,1},{0,0,1,a,a+1,1,0,a+1,a+1,a,a}}
+		-- matroid(toList(0..10), {{0,2,5},{0,2,6},{0,3,8},{0,3,9},{0,5,6},{0,7,10},{0,8,9},{1,3,6},{1,3,7},{1,4,5},{1,4,9},{1,5,9},{1,6,7},{1,8,10},{2,4,7},{2,4,8},{2,5,6},{2,7,8},{2,9,10},{3,5,10},{3,6,7},{3,8,9},{4,5,9},{4,6,10},{4,7,8}}, EntryMode => "nonbases")
 	) else error "Name string must be one of: U24, C5, P6, Q6, fano, nonfano, V8+, vamos, pappus, nonpappus, AG32, R9A, R9B, R10, betsyRoss"
 )
 
 allMatroids = method()
-allMatroids ZZ := List => n -> (
-	if n > 8 then error "Can only return all matroids on <= 8 elements";
-	if n == 1 then return {uniformMatroid(0, 1), uniformMatroid(1, 1)};
-	startedReading := false;
-	E := toList(0..<n); r := 0;
-	matroidList := for l in lines get(first select(apply(path, p -> p | "Matroids/SmallMatroids.txt"), p -> fileExists p)) list (
-		if startedReading then (
-			if #l == 0 then break
-			else if #l > binomial(n, r) then ( r = r + 1; PE := reverse sort subsets(set E, r); );
-			matroid(E, PE_(positions(characters l, c -> c === "*")))
-		) else if l == ("-- " | n | " elements") then (startedReading = true;)
-	);
-	matroidList = {uniformMatroid(0, n)} | delete(null, matroidList);
-	L := toList(0..#matroidList - #select(matroidList, M -> 2*rank M == n) - 1);
-	matroidList | (matroidList_L / dual)_(rsort L)
+allMatroids (ZZ, ZZ) := List => (n, r) -> (
+	if r > n//2 then return allMatroids(n, n-r)/dual;
+	E := toList(0..<n);
+	if r == 0 then return {uniformMatroid(0, n)};
+	if r == 1 then return {uniformMatroid(1, n)} | apply(n-1, i -> matroid(E, take(subsets(n, 1), i+1), EntryMode => "nonbases"));
+	if n > 9 then error "Can only return all matroids on <= 9 elements";
+	PE := reverse sort subsets(set E, r);
+	numMatroids := {7, 13, 23, 38, 37, 108, 58, 325, 940, 87, 1275, 190214};
+	-- cf. Table 1 in https://arxiv.org/pdf/math/0702316.pdf
+	K := {(4,2),(5,2),(6,2),(6,3),(7,2),(7,3),(8,2),(8,3),(8,4),(9,2),(9,3),(9,4)};
+	H := hashTable apply(#K, i -> K#i => {2*i+1+sum take(numMatroids,i), 2*i+sum take(numMatroids,i+1)});
+	db := "SmallMatroids.txt";
+	if not fileExists db then db = "Matroids/" | db;
+	apply(take(lines get db, H#(n,r)), l -> matroid(E, PE_(positions(characters l, c -> c === "*"))))
 )
+allMatroids ZZ := List => n -> flatten apply(n+1, i -> allMatroids(n, i))
+-- allMatroids ZZ := List => n -> (
+	-- if n > 8 then error "Can only return all matroids on <= 8 elements";
+	-- if n == 1 then return {uniformMatroid(0, 1), uniformMatroid(1, 1)};
+	-- startedReading := false;
+	-- E := toList(0..<n); r := 0;
+	-- matroidList := for l in lines get(first select(apply(path, p -> p | "Matroids/SmallMatroids.txt"), p -> fileExists p)) list (
+		-- if startedReading then (
+			-- if #l == 0 then break
+			-- else if #l > binomial(n, r) then ( r = r + 1; PE := reverse sort subsets(set E, r); );
+			-- matroid(E, PE_(positions(characters l, c -> c === "*")))
+		-- ) else if l == ("-- " | n | " elements") then (startedReading = true;)
+	-- );
+	-- matroidList = {uniformMatroid(0, n)} | delete(null, matroidList);
+	-- L := toList(0..#matroidList - #select(matroidList, M -> 2*rank M == n) - 1);
+	-- matroidList | (matroidList_L / dual)_(rsort L)
+-- )
 
 allMinors = method()
 allMinors (Matroid, Matroid) := List => (M, N) -> (
@@ -981,8 +999,9 @@ doc ///
 		Text
 
 			One can create a matroid by specifying its @TO circuits@ or 
-			@TO nonbases@ instead, using the option 
-			@TO2{[matroid, EntryMode], "EntryMode"}@. Regardless of the 
+			@TO nonbases@ instead, using the option
+			@TO2{[matroid, EntryMode], "EntryMode"}@. 
+			Regardless of the 
 			value of EntryMode, the bases 
 			are automatically computed in the process of creation.
 			
@@ -1218,21 +1237,21 @@ doc ///
 			For a matroid M, there are 2 important differences between 
 			M.groundSet and the elements of M (given by 
 			@TO2{(symbol _*, Matroid), "M_*"}@). First is data 
-			types: M.groundSet is a @TO Set@, and M&#95;* is a @TO List@. 
+			types: M.groundSet is a @TO Set@, and M_* is a @TO List@. 
 			Second, M.groundSet always consists of integers from 0 to n-1, 
 			where n is the number of elements of M: on the other hand,
 			the elements of M themselves can be arbitrary (e.g. symbols, 
 			matrices, edges in a graph, etc.).
 			
 			Thus, one can think of M.groundSet as the
-			set of indices of the elements in the list M&#95;*: the first
+			set of indices of the elements in the list M_*: the first
 			element of M has index 0, corresponding to the 
 			element 0 in M.groundSet; the second element of M 
 			has index 1, etc. 
 			
 			The key point is that all sets associated to the structure of a 
 			matroid - bases, circuits, flats, etc. - are subsets of 
-			M.groundSet (not M&#95;*). In particular, they are also of class
+			M.groundSet (not M_*). In particular, they are also of class
 			@TO Set@ (although a collection of them is usually a @TO List@),
 			and are also indexed from 0 to n-1. (An exception here is loops
 			and coloops, which are given as a list of indices, rather than
@@ -1247,7 +1266,7 @@ doc ///
 			difference between inputting lists or sets.
 			
 			In summary: @TO2{List, "lists"}@ are used for elements in M, and 
-			given as sublists of M&#95;*, while @TO2{Set, "sets"}@ are used
+			given as sublists of M_*, while @TO2{Set, "sets"}@ are used
 			for indices, and given as subsets of M.groundSet.
 			
 		Example
@@ -1269,7 +1288,7 @@ doc ///
 			specified subset of M.groundSet. In the final example, a list of
 			indices is given, which goes against the conventions above, but
 			the elements of the list are treated (correctly) as indices, and
-			if debugLevel is greater than 0, then a warning is printed.
+			if {\tt debugLevel} is greater than 0, then a warning is printed.
 			
 		Example
 			N1 = M | {a,c,d}
@@ -1280,6 +1299,7 @@ doc ///
 			N3 == N2
 	SeeAlso
 		(symbol _, Matroid, List)
+		indicesOf
 		relabel
 ///
 
@@ -1324,7 +1344,7 @@ doc ///
 		Example
 			F7 = specificMatroid "fano"
 			M4 = matroid completeGraph 4
-			all(F7_*, x -> #getIsos(F7 \ {x}, M4) > 0)
+			all(F7_*, x -> areIsomorphic(F7 \ {x}, M4))
 	Caveat
 		There are important differences between this method and
 		@TO groundSet@: see that page for more details.
@@ -1347,7 +1367,7 @@ doc ///
 		E:List
 		M:Matroid
 		L:List
-			a list of sublists of E, or a sublist of M&#95;*
+			a list of sublists of E, or a sublist of M_*
 	Outputs
 		:List
 			of indices
@@ -1366,7 +1386,7 @@ doc ///
 		
 			The second case is with a matroid as input. Here the ambient 
 			list E is taken as the ground set of the matroid 
-			(i.e. E = M&#95;*), and L should be a list of elements of M 
+			(i.e. E = M_*), and L should be a list of elements of M 
 			(not a list of lists); in this case the inverse of this method 
 			is given by @TO2{(symbol _, Matroid, List), "taking subscripts"}@
 			with respect to M.
@@ -1378,11 +1398,12 @@ doc ///
 			M_S == B
 		Text
 			
-			In this case, if L is not a sublist of M&#95;*, then a warning is 
+			In this case, if L is not a sublist of M_*, then a warning is 
 			printed, and L itself is returned. This is done so that if a user 
 			inputs a list of indices, then it will be interpreted as a set of 
 			indices. For more on this, cf. @TO groundSet@.
 	SeeAlso
+		groundSet
 		(symbol _, Matroid, List)
 		relabel
 ///
@@ -1775,6 +1796,16 @@ doc ///
 			independent subset of S. The map 2^E $\to \mathbb{N}$, 
 			S $\mapsto$ rank(S), is called the rank function, and 
 			completely determines the matroid.
+			
+			Once the rank of a given subset is computed, it is cached in the
+			matroid (under {\tt M.cache#"ranks"}), so future computations of
+			the rank of the same set are (essentially) instant.
+			
+			The user may choose to install a custom rank function for a 
+			matroid (which should take in a list, and output an integer),
+			under {\tt M.cache#"rankFunction"}.
+			This is done automatically when a matroid is constructed from 
+			a matrix or graph.
 			
 		Example
 			M = matroid({a,b,c,d},{{a,b},{a,c}})
@@ -2312,10 +2343,12 @@ doc ///
 		relaxation
 		(relaxation, Matroid, Set)
 		(relaxation, Matroid, List)
+		(relaxation, Matroid)
 	Headline
 		relaxation of matroid
 	Usage
 		relaxation(M, S)
+		relaxation M
 	Inputs
 		M:Matroid
 		S:Set
@@ -2331,6 +2364,10 @@ doc ///
 			and a @TO2{(hyperplanes, Matroid), "hyperplane"}@ of 
 			M, then the set $B \cup&nbsp;\{S\}$ is the set of bases
 			of a matroid on E, called the relaxation of M by S.
+			
+			If no set S is provided, then this function will take S 
+			to be a random circuit-hyperplane (the first in lexicographic
+			order).
 			
 			Many interesting matroids arise as relaxations of other
 			matroids: e.g. the non-Fano matroid is a relaxation of the
@@ -3628,21 +3665,26 @@ doc ///
 	Key
 		allMatroids
 		(allMatroids, ZZ)
+		(allMatroids, ZZ, ZZ)
 	Headline
-		returns all n-element matroids
+		returns all n-element matroids of rank r
 	Usage
 		allMatroids n
+		allMatroids(n, r)
 	Inputs
 		n:ZZ
 			the size of the ground set
+		r:ZZ
+			the target rank
 	Outputs
 		:List
 			of matroids on n elements
 	Description
 		Text
-			This method returns a list of matroids on n elements, for small n 
-			(currently, n <= 8). This list is complete for isomorphism types
-			of matroids on n elements, i.e. every matroid on n elements is
+			This method returns a list of matroids on n elements of rank r,
+			for small n (currently, n <= 9). This list is complete for
+			isomorphism types of matroids on n elements, i.e. every matroid
+			on n elements is 
 			@TO2{(areIsomorphic, Matroid, Matroid), "isomorphic"}@ to a 
 			unique matroid in this list.
 			
@@ -3770,8 +3812,8 @@ doc ///
 
 undocumented {
 	(net, Matroid),
-	-- Loops,
-	-- ParallelEdges,
+	ranks,
+	storedRepresentation,
 	seriesConnection,
 	(seriesConnection, Matroid, Matroid),
 	parallelConnection,
@@ -4024,6 +4066,3 @@ installPackage "Matroids"
 installPackage("Matroids", RemakeAllDocumentation => true)
 viewHelp "Matroids"
 check "Matroids"
-
--- custom rank functions
-scan(flats M, F -> M.cache.rankFunction#F = rank (representationOf M)_(toList F))
