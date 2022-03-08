@@ -346,7 +346,7 @@ i76 : phi = map(PP4, S, matrix{{0_PP4, 0_PP4, 0_PP4}} | vars PP4)
 
 o76 = phi
 
-o76 : RingMap PP4 <--- S
+o76 : RingMap PP4 <- S
 
 i77 : surfaceA = phi ideal selectInSubring(1, gens gb I)
 
@@ -368,7 +368,7 @@ i80 : PP2xPP1 = QQ[x, y, z, u, v];
 
 i81 : embed = map(PP2xPP1, R, 0 | vars PP2xPP1);
 
-o81 : RingMap PP2xPP1 <--- R
+o81 : RingMap PP2xPP1 <- R
 
 i82 : blowUp = PP2xPP1 / embed(blowUpIdeal);
 
@@ -376,7 +376,7 @@ i83 : PP5 = QQ[A .. F];
 
 i84 : segre = map(blowUp, PP5, matrix{{x*u,y*u,z*u,x*v,y*v,z*v}});
 
-o84 : RingMap blowUp <--- PP5
+o84 : RingMap blowUp <- PP5
 
 i85 : ker segre
 
@@ -389,7 +389,7 @@ i86 : projection = map(PP4, PP5, matrix{{a, c, d, c, b, e}})
 
 o86 = projection
 
-o86 : RingMap PP4 <--- PP5
+o86 : RingMap PP4 <- PP5
 
 i87 : surfaceB = trim projection ker segre
 
@@ -407,7 +407,7 @@ o88 : Ideal of PP4
 
 i89 : sigma = map( PP4, PP4, matrix{{d, e, a, c, b}});
 
-o89 : RingMap PP4 <--- PP4
+o89 : RingMap PP4 <- PP4
 
 i90 : surfaceC = sigma determinantal
 
@@ -437,7 +437,7 @@ i96 : R = QQ[t, u, v, A .. H];
 i97 : phi = map(R, PP3, matrix{{t}} | 
               u*matrix{{A, B, C, D}} + v*matrix{{E, F, G, H}});
 
-o97 : RingMap R <--- PP3
+o97 : RingMap R <- PP3
 
 i98 : imageFamily = phi Q;
 

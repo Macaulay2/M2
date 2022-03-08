@@ -736,7 +736,7 @@ o104 = true
 
 i105 : StoS = map(S, S, {x_1, x_2, x_3, x_3 - x_4, x_5, x_6, x_7});
 
-o105 : RingMap S <--- S
+o105 : RingMap S <- S
 
 i106 : J = StoS IA
 

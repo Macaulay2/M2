@@ -413,7 +413,7 @@ i53 : G = removeRedundantVariables JM
 
 o53 = G
 
-o53 : RingMap B <--- B
+o53 : RingMap B <- B
 
 i54 : ideal gens gb(G JM)
 
@@ -431,7 +431,7 @@ i56 : F = map(CX, ring J, matrix{{a,b,c,d,e}} |
 
 o56 = F
 
-o56 : RingMap CX <--- T
+o56 : RingMap CX <- T
 
 i57 : J1 = F J
 
@@ -484,7 +484,7 @@ o64 : Ideal of B
 
 i65 : G = removeRedundantVariables JM;
 
-o65 : RingMap B <--- B
+o65 : RingMap B <- B
 
 i66 : toString ideal gens gb(G JM)
 
@@ -498,7 +498,7 @@ o67 : Ideal of B
 
 i68 : GG = removeRedundantVariables K;
 
-o68 : RingMap B <--- B
+o68 : RingMap B <- B
 
 i69 : ideal gens gb (GG K)
 
@@ -555,7 +555,7 @@ i81 : F = map(S,R,zG)
 
 o81 = F
 
-o81 : RingMap S <--- R
+o81 : RingMap S <- R
 
 i82 : PA = trim ker F
 
@@ -781,7 +781,7 @@ i99 : F = removeRedundantVariables I
 
 o99 = F
 
-o99 : RingMap A <--- A
+o99 : RingMap A <- A
 
 i100 : I1 = ideal gens gb(F I)
 
