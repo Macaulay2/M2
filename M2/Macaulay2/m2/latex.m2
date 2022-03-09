@@ -97,6 +97,8 @@ texMath Thing := x -> texMath net x -- if we're desperate (in particular, for ra
 tex     String := texLiteral
 texMath String := s -> "\\texttt{" | texLiteral s | "}"
 
+tex Net := n -> concatenate(
+    "\\begin{tabular}[t]{l}", demark("\\\\\n", apply(unstack n, tex)), "\\end{tabular}")
 texMath Net := n -> concatenate(
     "\\begin{array}{l}", demark("\\\\\n", apply(unstack n, texMath)), "\\end{array}")
 
@@ -106,20 +108,27 @@ texMath VerticalList := s -> concatenate(
 texMath NumberedVerticalList := s -> concatenate(
     "\\left\\{\\begin{aligned}", demark("\\\\", apply(#s, i -> i | ".\\quad&" | texMath s#i)), "\\end{aligned}\\right\\}")
 
-texMathVisibleList := (op, L, delim, cl) -> concatenate("\\left", op, demark_delim apply(toList L, texMath), "\\right", cl)
+texMathVisibleList := (op, L, delim, cl) -> concatenate("\\left", op, if #L > 0 then demark_delim apply(toList L, texMath) else "\\,", "\\right", cl)
 texMath AngleBarList := L -> texMathVisibleList("<", L, ",\\,", ">")
 texMath Array        := L -> texMathVisibleList("[", L, ",\\,", "]")
 texMath Sequence     := L -> texMathVisibleList("(", L, ",\\,", ")")
-texMath VisibleList  := L -> texMathVisibleList("\\{", L, ",\\,", "\\}")
+texMath VisibleList  := L -> texMathVisibleList("\\{", L, ",\\:", "\\}")
 texMath BasicList    := L -> concatenate(texMath class L, texMathVisibleList("\\{", L, ",\\,", "\\}"))
-texMath MutableList  := L -> concatenate(texMath class L, "\\left\\{", if #L > 0 then "\\ldots "|#L|"\\ldots", "\\right\\}")
+texMathMutable :=
+texMath MutableList  := L -> concatenate(texMath class L, "\\left\\{", if #L > 0 then "\\ldots "|#L|"\\ldots" else "\\,", "\\right\\}")
 
 texMath HashTable := H -> if H.?texMath then H.texMath else (
-    if hasAttribute(H, ReverseDictionary) then texMath toString getAttribute(H, ReverseDictionary) else
-    if mutable H then      (lookup(texMath, MutableList)) H
-    else texMath class H | (lookup(texMath, List)) apply(sortByName pairs H, (k, v) -> k => v))
+    if hasAttribute(H, ReverseDictionary) then texMath toString getAttribute(H, ReverseDictionary)
+    else if mutable H then texMathMutable H
+    else texMath class H | texMath apply(sortByName pairs H, (k, v) -> k => v))
 
 texMath Function := f -> texMath toString f
+
+texMath ZZ := n -> (
+    s := simpleToString n;
+    j := 1 - (#s-1) % 3;
+    concatenate for i in s list (if j==2 then (j=0; "\\,",i) else (j=j+1; i))
+    )
 
 --     \rm     Roman
 --     \sf     sans-serif
@@ -212,7 +221,10 @@ tex     STYLE := x -> ""
 -- (tex, TOH) defined in format.m2
 tex TO   := x -> tex TT format x#0
 tex TO2  := x -> ( tag := x#0; text := x#1; tex TT text )
-tex HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral toURL first x, "\">}", tex last x, "\\special{html:</a>}")
+--tex HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral toURL first x, "\">}", tex last x, "\\special{html:</a>}")
+scan({texMath,tex}, f ->
+    f HREF := x -> concatenate("\\href{", texLiteral toURL first x, "}{", f last x, "}")
+    )
 
 tex MENU := x -> tex drop(redoMENU x, 1)
 
