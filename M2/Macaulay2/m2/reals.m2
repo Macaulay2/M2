@@ -232,6 +232,7 @@ conjugate CC := z -> toCC(precision z, realPart z, - imaginaryPart z)
 isConstant Number := i -> true
 
 round RR := round CC := round0
+round Constant := round0 @@ numeric
 round(ZZ,RR) := (n,x) -> (
      prec := precision x;
      p := (toRR(prec,10))^n;
@@ -269,6 +270,7 @@ lngamma ZZ := lngamma QQ := lngamma RR := x -> (
      (y,s) := lgamma x;
      if s == -1 then y + ii * numeric_(precision y) pi else y
      )
+lngamma Constant := lngamma @@ numeric
 
 expression Constant := hold
 toString Constant := net Constant := c -> toString c#0
@@ -277,7 +279,6 @@ numeric Constant := c -> c#1 defaultPrecision
 numeric(ZZ,Constant) := (prec,c) -> c#1 prec
 numericInterval Constant := c -> if #c < 3 then interval(0,-1,Precision=>defaultPrecision) else c#2 defaultPrecision
 numericInterval(ZZ,Constant) := (prec,c) -> if #c < 3 then interval(0,-1,Precision=>prec) else c#2 prec
-exp Constant := c -> exp numeric c
 
 constantTexMath := new HashTable from {
     symbol pi => "\\pi",
@@ -427,14 +428,19 @@ isReal CC := z -> imaginaryPart z == 0
 
 acosh = method()
 acosh Number := z -> log(z+sqrt(z^2-1))
+acosh Constant := acosh @@ numeric
 asinh = method()
 asinh Number := z -> log(z+sqrt(z^2+1))
+asinh Constant := asinh @@ numeric
 atanh = method()
 atanh Number := z -> log((1+z)/(1-z))/2
+atanh Constant := atanh @@ numeric
 acoth = method()
 acoth Number := z -> atanh(1/z)
+acoth Constant := acoth @@ numeric
 acot = method()
 acot Number := z -> atan(1/z)
+acot Constant := acot @@ numeric
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -174,6 +174,13 @@ typval4k-*(Keyword,Type,Type,Type)*- := (f,X,Y,Z) -> (
      chk(youngest(X,Y), (f,X,Y));
      installMethod(f, X, Y, Z => x -> (dummy x;))
      )
+
+if member("--no-tvalues", commandLine) then end
+
+-- numerical functions that will be wrapped
+redefs := hashTable apply({acos, agm, asin, atan, atan2, BesselJ, BesselY, cos, cosh, cot, coth, csc, csch, eint, erf, erfc, exp, expm1, Gamma, log, log1p, sec, sech, sin, sinh, sqrt, tan, tanh, zeta},
+    f -> f => method());
+
 typval = x -> (
      if #x == 3 then (
 	  if instance(x#0,Function) then typval3f x
@@ -186,9 +193,150 @@ typval = x -> (
 	  else error "typval: expected keyword or function"
 	  )
      else if #x == 5 then typval5f x
-     else error "typval: expected 3, 4, or 5 arguments"
+     else error "typval: expected 3, 4, or 5 arguments";
+     if redefs#?(x#0) then (
+	 f' := x#0;
+	 f := redefs#f';
+	 args := drop(drop(x,-1),1);
+	 installMethod append(prepend(f,args),last x => f');
+	 if args === sequence RR then f Constant := f' @@ numeric
+	 else if #args === 2 then (
+	     if args#0 === RR then f (Constant, args#1) := (x,y) -> f'(numeric x,y);
+	     if args#1 === RR then f (args#0, Constant) := (x,y) -> f'(x,numeric y);
+	     if args === (RR,RR) then f(Constant, Constant) := (x,y) -> f'(numeric x,numeric y); -- phew
+	     ))
      )
-if not member("--no-tvalues", commandLine) then load "tvalues.m2"
+
+load "tvalues.m2"
+
+scan(keys redefs, f -> globalAssign(baseName f,redefs#f));
+
+
+-- TODO abs Constant
+
+nilp := x -> (  -- degree of nilpotency
+    R := ring x;
+    k := R; while not isField k do k = baseRing k;
+    f := map(R,k(monoid [getSymbol "X"]),{x});
+    I := kernel f;
+    if I == 0 or (l:=listForm I_0; #l>1) then infinity else l#0#0#0
+    )
+
+taylor := (f,g) -> f RingElement := x -> (
+    try promote(f lift(x,RR),ring x)
+    else try promote(f lift(x,CC),ring x)
+    else (
+	n := try nilp x else error (toString f | ": expected an algebra over QQ"); -- by now this is incorrect; e.g., ZZ/p allowed
+	if n === infinity then error (toString f | ": undefined");
+	g(x,n)
+	)
+    )
+
+taylor (exp, (x,n) -> (
+	s := 1; xx := 1;
+	for k from 1 to n-1 do (
+            xx = (1/k)*xx*x;
+            s = s + xx;
+            );
+	s
+	))
+
+taylor (expm1, (x,n) -> (
+	s := 0; xx := 1;
+	for k from 1 to n-1 do (
+            xx = (1/k)*xx*x;
+            s = s + xx;
+            );
+	s
+	))
+
+sintaylor := (x,n) -> (
+    s := x; xx := x;
+    k := 3;
+    while k<n do (
+        xx = -(1/k/(k-1))*xx*x^2;
+	s = s + xx;
+	k=k+2;
+        );
+    s
+    )
+taylor (sin, sintaylor)
+end
+costaylor := (x,n) -> (
+    s := 1; xx := 1;
+    k := 2;
+    while k<n do (
+        xx = -(1/k/(k-1))*xx*x^2;
+	s = s + xx;
+	k=k+2;
+        );
+    s
+    )
+taylor (cos, costaylor)
+
+taylor (tan, (x,n) -> sintaylor(x,n) * (costaylor(x,n))^-1)
+taylor (sec, (x,n) -> (costaylor(x,n))^-1)
+
+sinhtaylor := (x,n) -> (
+    s := x; xx := x;
+    k := 3;
+    while k<n do (
+        xx = (1/k/(k-1))*xx*x^2;
+	s = s + xx;
+	k=k+2;
+        );
+    s
+    )
+taylor (sinh, sinhtaylor)
+
+coshtaylor := (x,n) -> (
+    s := 1; xx := 1;
+    k := 2;
+    while k<n do (
+        xx = (1/k/(k-1))*xx*x^2;
+	s = s + xx;
+	k=k+2;
+        );
+    s
+    )
+taylor (cosh, coshtaylor)
+
+taylor (tanh, (x,n) -> sinhtaylor(x,n) * (coshtaylor(x,n))^-1)
+taylor (sech, (x,n) -> (coshtaylor(x,n))^-1)
+
+taylor (asin, (x,n) -> (
+	s := x; xx := x;
+	k := 3;
+	while k<n do (
+            xx = (k-2)/(k-1)*xx*x^2;
+	    s = s + xx/k;
+	    k=k+2;
+            );
+	s
+	))
+
+taylor (atan, (x,n) -> (
+	s := x; xx := x;
+	k := 3;
+	while k<n do (
+            xx = -xx*x^2;
+	    s = s + xx/k;
+	    k=k+2;
+            );
+	s
+	))
+
+taylor (log1p, (x,n) -> (
+	s:=x; xx := x;
+	k := 2;
+	while k<n do (
+        xx = -xx*x;
+	s = s + xx/k;
+	k=k+1;
+        );
+    s
+    ))
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
