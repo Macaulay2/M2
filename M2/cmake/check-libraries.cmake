@@ -76,8 +76,6 @@ endforeach()
 
 if(WITH_TBB)
   find_package(TBB REQUIRED)
-else()
-  find_package(TBB)
 endif()
 
 ###############################################################################
