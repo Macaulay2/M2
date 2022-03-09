@@ -230,7 +230,7 @@ describe Module := M -> Describe (
      )
 toExternalString Module := M -> toString describe M
 
-Module == Module := (M,N) -> (
+Module == Module := (M,N) -> M === N or (
      -- this code might not be the quickest - Mike should check it
      ring M === ring N
      and degrees ambient M === degrees ambient N
@@ -242,6 +242,8 @@ Module == Module := (M,N) -> (
 	       -- else 
 		    (
 		    -- temporary
+		    M.relations === N.relations
+		    or
 		    isSubset(image M.relations, image N.relations)
 		    and
 		    isSubset(image N.relations, image M.relations)
