@@ -442,6 +442,8 @@ acot = method()
 acot Number := z -> atan(1/z)
 acot Constant := acot @@ numeric
 
+if member("--no-tvalues", commandLine) then end
+
 -- TODO abs Constant
 typval = x -> (
     f' := x#0;
@@ -462,7 +464,8 @@ typval = x -> (
 	if args#1 === RR then f (args#0, Constant) := (x,y) -> f'(x,numeric y);
 	if args === (RR,RR) then f(Constant, Constant) := (x,y) -> f'(numeric x,numeric y); -- phew
     ))
-if not member("--no-tvalues", commandLine) then load "tvalues.m2"
+
+load "tvalues.m2"
 
 nilp := x -> (  -- degree of nilpotency
     R := ring x;
