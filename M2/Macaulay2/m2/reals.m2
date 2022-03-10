@@ -469,7 +469,8 @@ load "tvalues.m2"
 
 nilp := x -> (  -- degree of nilpotency
     R := ring x;
-    f := map(R,QQ(monoid [getSymbol "X"]),{x});
+    k := R; while not isField k do k = baseRing k;
+    f := map(R,k(monoid [getSymbol "X"]),{x});
     I := kernel f;
     if I == 0 or (l:=listForm I_0; #l>1) then infinity else l#0#0#0
     )
