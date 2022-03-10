@@ -427,19 +427,19 @@ isReal RRi := isReal RR := isReal QQ := isReal ZZ := x -> true
 isReal CC := z -> imaginaryPart z == 0
 
 acosh = method()
-acosh Number := z -> log(z+sqrt(z^2-1))
+acosh Number := z -> log'(z+sqrt(z^2-1))
 acosh Constant := acosh @@ numeric
 asinh = method()
+asinh Number := z -> log'(z+sqrt(z^2+1))
 asinh Constant := asinh @@ numeric
-asinh Number := z -> log(z+sqrt(z^2+1))
 atanh = method()
-atanh Number := z -> log((1+z)/(1-z))/2
+atanh Number := z -> log'((1+z)/(1-z))/2
 atanh Constant := atanh @@ numeric
 acoth = method()
 acoth Number := z -> atanh(1/z)
 acoth Constant := acoth @@ numeric
 acot = method()
-acot Number := z -> atan(1/z)
+acot Number := z -> atan'(1/z)
 acot Constant := acot @@ numeric
 
 if member("--no-tvalues", commandLine) then end
