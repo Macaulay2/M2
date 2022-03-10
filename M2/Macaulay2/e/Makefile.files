@@ -252,6 +252,7 @@ COMMANDS = \
 	franzi-interface
 
 NAMES_H = \
+	m2tbb \
 	mathicgb/mathicgb/Atomic \
 	mathicgb/mathicgb/PrimeField \
 	mathicgb/mathicgb/MonoMonoid \
