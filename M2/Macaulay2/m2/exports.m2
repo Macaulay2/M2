@@ -86,6 +86,7 @@ export {
 	"CacheFunction",
 	"CacheTable",
 	"CallLimit",
+	"CatalanConstant",
 	"Caveat",
 	"Center",
 	"Certification",

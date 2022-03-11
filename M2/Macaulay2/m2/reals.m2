@@ -263,6 +263,7 @@ char InexactField := R -> 0
 
 pi = new Constant from { symbol pi, pi0, piRRi0 }
 EulerConstant = new Constant from { symbol EulerConstant, mpfrConstantEuler, eRRi0}
+CatalanConstant = new Constant from { symbol CatalanConstant, mpfrConstantCatalan, cRRi0}
 ii = new Constant from { symbol ii, ConstantII}
 
 lngamma = method()
@@ -283,6 +284,7 @@ numericInterval(ZZ,Constant) := (prec,c) -> if #c < 3 then interval(0,-1,Precisi
 constantTexMath := new HashTable from {
     symbol pi => "\\pi",
     symbol EulerConstant => "\\gamma",
+    symbol CatalanConstant => "\\mathrm{G}",
     symbol ii => "\\mathbf{i}"
     }
 texMath Constant := c -> if constantTexMath#?(c#0) then constantTexMath#(c#0) else texMath toString c#0

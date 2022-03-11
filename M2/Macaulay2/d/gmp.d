@@ -2164,11 +2164,16 @@ export eRRi(prec:ulong):RRi := (
      Ccode( void, "mpfi_const_euler(",  z, ")" );
      moveToRRiandclear(z));
 
+export cRRi(prec:ulong):RRi := (
+     z := newRRimutable(prec);
+     Ccode( void, "mpfi_const_catalan(",  z, ")" );
+     moveToRRiandclear(z));
+
 export exp(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_exp(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
-                                     
+
 export exp(x:RRi):RRi := (
      z := newRRimutable(precision0(x));
      Ccode( void, "mpfi_exp(", z, ",", x, ")" );
