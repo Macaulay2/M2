@@ -260,7 +260,7 @@ sintaylor := (x,n) -> (
     s
     )
 taylor (sin, sintaylor)
-end
+
 costaylor := (x,n) -> (
     s := 1; xx := 1;
     k := 2;
