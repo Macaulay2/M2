@@ -443,6 +443,7 @@ public:
     mRing->negate(a, a);
     svec.emplace_back(a);
   }
+
 };
 
 // `overloaded` construct (not standard until C++20)
@@ -686,6 +687,10 @@ public:
     return std::visit([&](auto& arg) { arg->pushBackNegatedElement(coeffs,take_from_here,loc); }, mConcreteVector);
   }
 
+  const VectorArithmeticStats& stats() const {
+    return std::visit([&](auto& arg) -> const VectorArithmeticStats& { return arg->stats(); }, mConcreteVector);
+  }
+  
 };
 
 #endif
