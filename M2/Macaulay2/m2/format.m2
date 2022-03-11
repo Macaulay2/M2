@@ -176,7 +176,8 @@ net CODE  :=
 info TT   :=
 info CODE :=  x -> horizontalJoin apply(noopts x,net)
 
-info PRE  := x -> wrap(printWidth, "-", concatenate apply(noopts x,toString))
+info PRE  := x ->
+    wrap(printWidth, "-", concatenate apply(noopts x,toString @@ info))
 
 net TH := Hop(net, "-")
 
