@@ -174,6 +174,15 @@ public:
     for (ComponentIndex i = 0; i < len; i++) mRing->set(dvec[comps[i]],svec[i]);
   }
 
+  void fillFromSparse(ElementArray& dense,
+                      size_t len, // length of both sparse and comps.
+                      const ElementArray& sparse,
+                      const int* comps
+                      ) const
+  {
+    fillDenseArray(dense, sparse, Range(comps, comps + len));
+  }
+  
    void denseCancelFromSparse(ElementArray& dense,
                              const ElementArray& sparse,
                              const Range<int>& comps) const
@@ -207,6 +216,23 @@ public:
     mRing->init(b);
     mRing->set(b, a);
     mults.push_back(b); // this grabs b.
+  }
+
+  void sparseCancel(ElementArray& dense,
+                    const ElementArray& sparse,
+                    int* comps,
+                    ElementArray& result_loc) const
+  {
+    auto& svec = * elementArray(sparse);
+    denseCancelFromSparse(dense, sparse, Range(comps, comps + svec.size()), result_loc);
+  }
+
+  void sparseCancel(ElementArray dense,
+                    const ElementArray sparse,
+                    int* comps) const
+  {
+    auto& svec = * elementArray(sparse);
+    denseCancelFromSparse(dense, sparse, Range(comps, comps + svec.size()));
   }
   
   int denseNextNonzero(ElementArray& dense,
@@ -396,6 +422,33 @@ public:
     o << "]" << std::endl;
     return o;
   }
+
+  std::ostream& displayAsDenseArray(std::ostream& o,
+                                    size_t len,
+                                    const ElementArray& v,
+                                    const Range<int>& comps
+                                    ) const
+  {
+    auto& vec = * elementArray(v);
+    auto i = comps.cbegin();
+    auto c = vec.cbegin();
+    o << "[(" << vec.size() << ") ";
+    for (auto j = 0; j < len; ++j)
+      {
+        if (i == comps.cend() or *i != j)
+          o << ". ";
+        else
+          {
+            buffer b;
+            mRing->elem_text_out(b, *c, true, true, true);
+            o << b.str() << " ";
+            ++i;
+            ++c;
+          }
+      }
+    o << "]" << std::endl;
+    return o;
+  }
   
   ////////////////////////
   /// Append support /////
@@ -579,6 +632,19 @@ public:
                              ElementArray& result_multipler) const {
     std::visit([&](auto& arg) { arg->denseCancelFromSparse(dense,coeffs,comps,result_multipler); }, mConcreteVector);
   }
+
+  void sparseCancel(ElementArray& dense,
+                    const ElementArray& sparse,
+                    int* comps,
+                    ElementArray& result_loc) const {
+    std::visit([&](auto& arg) { arg->sparseCancel(dense,sparse,comps,result_loc); }, mConcreteVector);
+  }
+
+  void sparseCancel(ElementArray& dense,
+                    const ElementArray& sparse,
+                    int* comps) const {
+    std::visit([&](auto& arg) { arg->sparseCancel(dense,sparse,comps); }, mConcreteVector);
+  }
   
   int denseNextNonzero(ElementArray& dense,
                           int first,
@@ -659,6 +725,15 @@ public:
     return std::visit([&](auto& arg) -> std::ostream& { return arg->displayElementArray(o, v); }, mConcreteVector);
   }
 
+  std::ostream& displayAsDenseArray(std::ostream& o,
+                                    size_t len,
+                                    const ElementArray& v,
+                                    const Range<int>& comps
+                                    ) const
+  {
+    return std::visit([&](auto& arg) -> std::ostream& { return arg->displayAsDenseArray(o, len, v, comps); }, mConcreteVector);
+  }
+  
   //////////////////////////
   /// Append support   /////
   //////////////////////////
@@ -691,7 +766,7 @@ public:
     return std::visit([&](auto& arg) -> const VectorArithmeticStats& { return arg->stats(); }, mConcreteVector);
   }
   
-};
+  };
 
 #endif
 
