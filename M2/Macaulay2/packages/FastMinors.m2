@@ -1,5 +1,5 @@
 newPackage( "FastMinors",
-Version => "1.2.3", Date => "November 30, 2021", Authors => {
+Version => "1.2.4", Date => "March 13th, 2022", Authors => {
     {Name => "Boyana Martinova",
     Email=> "u1056124@utah.edu"
     },
@@ -326,6 +326,7 @@ chooseRandomNonzeroSubmatrix(ZZ, Matrix) := opts -> (n1, M1) -> (
       --print concatenate("in loop, i =", toString(i));
       --curList = flatten entries curM1;
       entryList = entries transpose matrix nonzeroEntries(curM1);
+      if #entryList == 0 then return null;
       curEntry = entryList#(random(#entryList));
       --print (curList#curMax);
       curRow = curEntry#0;
