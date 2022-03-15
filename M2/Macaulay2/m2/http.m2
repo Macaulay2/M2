@@ -5,14 +5,16 @@ needs "methods.m2"
 getWWW = method()
 httpProduct := concatenate("Macaulay2/", version#"VERSION")
 
+crlf := "\r\n";
+
 GET := (host,url,connection) -> (
      connection = 
      openInOut connection
-     << "GET " << url << " HTTP/1.1" << endl
-     << "User-Agent: " << httpProduct << endl
-     << "Connection: close" << endl
-     << "Host: " << host << endl
-     << endl << flush;
+     << "GET " << url << " HTTP/1.1" << crlf
+     << "User-Agent: " << httpProduct << crlf
+     << "Connection: close" << crlf
+     << "Host: " << host << crlf
+     << crlf << flush;
      first( get connection, close connection )
      )
 
