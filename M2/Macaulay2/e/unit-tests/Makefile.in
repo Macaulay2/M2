@@ -12,7 +12,6 @@ CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
      -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)/include \
 	 -I@srcdir@/../../d -I../../d \
 	 -I@srcdir@/../../c #-Wno-unused-local-typedefs # ffpack has some of these.
-CPPFLAGS += -I@srcdir@/../memtailor -I@srcdir@/../mathic -I@srcdir@/../mathicgb
 CXXFLAGS += -Wno-sign-conversion #-Wno-unused-local-typedefs -coverage
 
 # note: on some machines, gcc can't find -lstdc++

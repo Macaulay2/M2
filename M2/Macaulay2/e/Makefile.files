@@ -26,40 +26,6 @@ INTERFACE = \
 	NCResolutions/nc-res-computation \
 	Polynomial \
 	monomial-collection \
-	mathicgb/mathicgb/CFile \
-	mathicgb/mathicgb/LogDomain \
-	mathicgb/mathicgb/LogDomainSet \
-	mathicgb/mathicgb/PolyRing \
-	mathicgb/mathicgb/Basis \
-	mathicgb/mathicgb/MonoLookup \
-	mathicgb/mathicgb/PolyBasis \
-	mathicgb/mathicgb/SparseMatrix \
-	mathicgb/mathicgb/QuadMatrix \
-	mathicgb/mathicgb/QuadMatrixBuilder \
-	mathicgb/mathicgb/Scanner \
-	mathicgb/mathicgb/ClassicGBAlg \
-	mathicgb/mathicgb/F4MatrixBuilder \
-	mathicgb/mathicgb/F4MatrixBuilder2 \
-	mathicgb/mathicgb/F4MatrixProjection \
-	mathicgb/mathicgb/F4MatrixReducer \
-	mathicgb/mathicgb/F4ProtoMatrix \
-	mathicgb/mathicgb/F4Reducer \
-	mathicgb/mathicgb/Reducer \
-	mathicgb/mathicgb/TypicalReducer \
-	mathicgb/mathicgb/ReducerDedup \
-	mathicgb/mathicgb/ReducerHash \
-	mathicgb/mathicgb/ReducerHashPack \
-	mathicgb/mathicgb/ReducerNoDedup \
-	mathicgb/mathicgb/ReducerPack \
-	mathicgb/mathicgb/ReducerPackDedup \
-	mathicgb/mathicgb/ModuleMonoSet \
-	mathicgb/mathicgb/PolyHashTable \
-	mathicgb/mathicgb/SPairs \
-	mathicgb/mathicgb/SigPolyBasis \
-	mathicgb/mathicgb/SigSPairQueue \
-	mathicgb/mathicgb/SigSPairs \
-	mathicgb/mathicgb/SignatureGB \
-	mathicgb/mathicgb/io-util \
 	eigen \
 	monomial-sets \
 	mutablecomplex \
@@ -212,18 +178,6 @@ INTERFACE = \
 	weylalg
 
 COMMANDS = \
-	memtailor/memtailor \
-	memtailor/memtailor/Arena \
-	memtailor/memtailor/BufferPool \
-	memtailor/memtailor/MemoryBlocks \
-	mathic/mathic \
-	mathic/mathic/BitTriangle \
-	mathic/mathic/ColumnPrinter \
-	mathic/mathic/DivMask \
-	mathic/mathic/Timer \
-	mathic/mathic/display \
-	mathic/mathic/error \
-	mathicgb/mathicgb \
 	ntl-internal \
 	ntl-debugio \
 	matrix-kbasis \
@@ -253,26 +207,6 @@ COMMANDS = \
 
 NAMES_H = \
 	m2tbb \
-	mathicgb/mathicgb/Atomic \
-	mathicgb/mathicgb/PrimeField \
-	mathicgb/mathicgb/MonoMonoid \
-	mathicgb/mathicgb/Range \
-	mathicgb/mathicgb/Poly \
-	mathicgb/mathicgb/FixedSizeMonomialMap \
-	mathicgb/mathicgb/KoszulQueue \
-	mathicgb/mathicgb/MathicIO \
-	mathicgb/mathicgb/MonoArena \
-	mathicgb/mathicgb/MonoOrder \
-	mathicgb/mathicgb/MonoProcessor \
-	mathicgb/mathicgb/MonomialMap \
-	mathicgb/mathicgb/NonCopyable \
-	mathicgb/mathicgb/RawVector \
-	mathicgb/mathicgb/ReducerHelper \
-	mathicgb/mathicgb/ScopeExit \
-	mathicgb/mathicgb/StaticMonoMap \
-	mathicgb/mathicgb/Unchar \
-	mathicgb/mathicgb/mtbb \
-	mathicgb/mathicgb/stdinc \
 	f4/f4-types \
 	f4/memblock \
 	VectorArithmetic \
