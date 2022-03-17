@@ -410,43 +410,43 @@ public:
       {
       case M2::ring_ZZpFlint:
         mConcreteVector = new ConcreteVectorArithmetic
-          (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFlint>* >(R)->ring());
+          {R, &dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFlint>* >(R)->ring()};
         break;
       case M2::ring_GFFlintBig:
         mConcreteVector = new ConcreteVectorArithmetic
-          (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingGFFlintBig>* >(R)->ring());
+          {R, &dynamic_cast< const M2::ConcreteRing<M2::ARingGFFlintBig>* >(R)->ring()};
         break;
       case M2::ring_GFFlintZech:
         mConcreteVector = new ConcreteVectorArithmetic
-          (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingGFFlint>* >(R)->ring());
+          {R, &dynamic_cast< const M2::ConcreteRing<M2::ARingGFFlint>* >(R)->ring()};
         break;
       case M2::ring_QQ:
         mConcreteVector = new ConcreteVectorArithmetic
-          (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingQQGMP>* >(R)->ring());
+          {R, &dynamic_cast< const M2::ConcreteRing<M2::ARingQQGMP>* >(R)->ring()};
 	break;
       case M2::ring_ZZpFfpack:
         mConcreteVector = new ConcreteVectorArithmetic
-          (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFFPACK>* >(R)->ring());
+          {R, &dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFFPACK>* >(R)->ring()};
 	break;
       case M2::ring_ZZp:
         mConcreteVector = new ConcreteVectorArithmetic
-          (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingZZp>* >(R)->ring());
+          {R, &dynamic_cast< const M2::ConcreteRing<M2::ARingZZp>* >(R)->ring()};
         break;
       case M2::ring_GFM2:
         mConcreteVector = new ConcreteVectorArithmetic
-          (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingGFM2>* >(R)->ring());
+          {R, &dynamic_cast< const M2::ConcreteRing<M2::ARingGFM2>* >(R)->ring()};
         break;
       case M2::ring_GFGivaro:
         mConcreteVector = new ConcreteVectorArithmetic
-          (R, &dynamic_cast< const M2::ConcreteRing<M2::ARingGFGivaro>* >(R)->ring());
+          {R, &dynamic_cast< const M2::ConcreteRing<M2::ARingGFGivaro>* >(R)->ring()};
         break;
       case M2::ring_old:
         if (R->cast_to_Z_mod() != nullptr)
-          mConcreteVector = new ConcreteVectorArithmetic(R, R->cast_to_Z_mod()->get_CoeffRing());
+          mConcreteVector = new ConcreteVectorArithmetic{R, R->cast_to_Z_mod()->get_CoeffRing()};
         else
           {
             std::cout << "Using GC ring in VectorArithmetic." << std::endl;
-            mConcreteVector = new ConcreteVectorArithmetic(R, R->getCoefficientRingR());
+            mConcreteVector = new ConcreteVectorArithmetic{R, R->getCoefficientRingR()};
           }
         break;
       default:
