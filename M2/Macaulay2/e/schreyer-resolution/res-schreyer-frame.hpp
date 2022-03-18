@@ -86,7 +86,9 @@ class SchreyerFrame
 
   const ResMonoid& monoid() const { return mRing.monoid(); }
   const ResPolyRing& ring() const { return mRing; }
-  const ResGausser& gausser() const { return mRing.resGausser(); }
+  const ResGausser& gausser() const { return mRing.resGausser(); } // TODO: remove this line
+  //const VectorArithmetic& gausser() const { return mRing.resGausser(); }
+  
   // This is where we place the monomials in the frame
   // This requires some care from people calling this function
   ResMemoryBlock<res_monomial_word>& monomialBlock() { return mMonomialSpace; }

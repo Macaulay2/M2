@@ -483,7 +483,7 @@ void F4Res::gaussReduce()
   // corresponding syzygy, which is auto-reduced and correctly ordered.
 
   // allocate a dense row, of correct size
-  CoefficientVector gauss_row = mRing.resGausser().allocateCoefficientVector(
+  ElementArray gauss_row = mRing.resGausser().allocateCoefficientVector(
       static_cast<ComponentIndex>(mColumns.size()));
   //  std::cout << "gauss_row: " << (gauss_row.isNull() ? "null" : "not-null")
   //  << std::endl;

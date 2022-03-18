@@ -15,6 +15,8 @@ public:
   Range() : mFirst(nullptr), mLast(nullptr) {}
   Range(T* first, T* last) : mFirst(first), mLast(last) {}
   Range(std::pair<T*, T*> a) : mFirst(a.first), mLast(a.second) {}
+
+  template<class S> Range(const Range<S>& copy) : mFirst(copy.begin()), mLast(copy.end()) {}
   
   explicit Range(std::vector<T>& vec) : mFirst(vec.data()), mLast(vec.data() + vec.size()) {}
   explicit Range(VECTOR(T)& vec) : mFirst(vec.data()), mLast(vec.data() + vec.size()) {}

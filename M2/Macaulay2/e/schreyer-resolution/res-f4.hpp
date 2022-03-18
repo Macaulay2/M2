@@ -34,7 +34,8 @@ class F4Res
   // NOTE: it is not needed to have done: construct(lev-1,degree)
   void construct(int lev, int degree);
 
-  const ResGausser& resGausser() const { return mRing.resGausser(); }
+  const ResGausser& resGausser() const { return mRing.resGausser(); } // TODO: remove
+  //  const VectorArithmetic& resGausser() const { return mRing.resGausser(); } // TODO: remove
   const VectorArithmetic& vectorArithmetic() const { return mRing.vectorArithmetic(); }
   const ResMonoid& monoid() const { return mRing.monoid(); }
   const ResPolyRing& ring() const { return mRing; }
@@ -45,7 +46,7 @@ class F4Res
         mLeadTerm;  // monomial (level lev-1) giving rise to this row
     // The following two should have the same length.
     std::vector<ComponentIndex> mComponents;  // indices into mColumns
-    CoefficientVector mCoeffs;
+    ElementArray mCoeffs;
     Row() : mLeadTerm(nullptr) {}
   };
 

@@ -5,7 +5,7 @@
 
 #include "VectorArithmetic.hpp"                        // for VectorArithmetic
 #include "newdelete.hpp"                               // for our_new_delete
-#include "schreyer-resolution/res-gausser.hpp"         // for CoefficientVector
+#include "schreyer-resolution/res-gausser.hpp"         // for what? 
 #include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
 #include "schreyer-resolution/res-monomial-types.hpp"  // for res_monomial_word
 
@@ -28,7 +28,7 @@ class ResPolynomial
   static long npoly_destructor;
   int len;  // in monomials?  This only determines both sizes below
             // in the case of fixed length monomials
-  CoefficientVector coeffs;
+  ElementArray coeffs;
   //  std::unique_ptr<FieldElement[]> coeffs;
   std::vector<res_monomial_word> monoms;
   //  std::unique_ptr<res_monomial_word[]> monoms;
@@ -74,7 +74,8 @@ class ResPolyRing : public our_new_delete
   {
   }
 
-  const ResGausser& resGausser() const { return *mResGausser; } 
+    const ResGausser& resGausser() const { return *mResGausser; } // TODO: remove this line.
+  //const VectorArithmetic& resGausser() const { return mVectorArithmetic; }
   const VectorArithmetic& vectorArithmetic() const { return mVectorArithmetic; }
   const ResMonoid& monoid() const { return *mMonoid; }
   const Monoid& originalMonoid() const { return *mOriginalMonoid; }
@@ -97,7 +98,7 @@ class ResPolynomialConstructor
 {
  private:
   std::vector<res_packed_monomial> monoms;
-  CoefficientVector coeffs;
+  ElementArray coeffs;
   //  std::vector<FieldElement> coeffs;
   const ResPolyRing& mRing;
 
@@ -122,7 +123,7 @@ class ResPolynomialConstructor
     monoms.push_back(monom);  // a pointer
   }
 
-  CoefficientVector& coefficientInserter() { return coeffs; }
+  ElementArray& coefficientInserter() { return coeffs; }
   void setPoly(ResPolynomial& result)
   {
     ncalls++;
@@ -141,7 +142,7 @@ class ResPolynomialConstructor
 
   static void setPolyFromArrays(ResPolynomial& result,
                                 int len,
-                                CoefficientVector& coeffs,
+                                ElementArray& coeffs,
                                 std::vector<res_monomial_word>& monoms)
   {
     ncalls_fromarray++;

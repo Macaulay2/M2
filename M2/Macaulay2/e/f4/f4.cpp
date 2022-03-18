@@ -514,10 +514,10 @@ void F4GB::gauss_reduce(bool diagonalize)
               auto& pivot_coeffs = get_coeffs_array(pivot_rowelem);
               n_reduction_steps++;
               mVectorArithmetic->denseCancelFromSparse(gauss_row,
-                                                          pivot_coeffs,
-                                                          Range(pivot_rowelem.comps,
-                                                                pivot_rowelem.comps + pivot_rowelem.len)
-                                                          );
+                                                       pivot_coeffs,
+                                                       Range(pivot_rowelem.comps,
+                                                             pivot_rowelem.comps + pivot_rowelem.len)
+                                                       );
               int last1 = pivot_rowelem.comps[pivot_rowelem.len - 1];
               if (last1 > last) last = last1;
             }
@@ -575,7 +575,8 @@ void F4GB::tail_reduce()
         continue;  // row reduced to zero, ignore it.
       // At this point, we should have an element to reduce
       bool anychange = false;
-      mVectorArithmetic->fillDenseArray(gauss_row, r.coeffs, Range(r.comps, r.comps + r.len));
+      mVectorArithmetic->fillDenseArray(gauss_row, r.coeffs, Range(r.comps,
+                                                                   r.comps + r.len));
       int firstnonzero = r.comps[0];
       int first = (r.len == 1 ? ncols : r.comps[1]);
       int last = r.comps[r.len - 1];
@@ -588,8 +589,9 @@ void F4GB::tail_reduce()
               row_elem &pivot_rowelem =
                   mat->rows[pivotrow];  // pivot_rowelems.coeffs is set at this
               mVectorArithmetic->denseCancelFromSparse(gauss_row,
-                                                          pivot_rowelem.coeffs,
-                                                          Range(pivot_rowelem.comps, pivot_rowelem.comps + pivot_rowelem.len));
+                                                       pivot_rowelem.coeffs,
+                                                       Range(pivot_rowelem.comps,
+                                                             pivot_rowelem.comps + pivot_rowelem.len));
               int last1 = pivot_rowelem.comps[pivot_rowelem.len - 1];
               if (last1 > last) last = last1;
             }

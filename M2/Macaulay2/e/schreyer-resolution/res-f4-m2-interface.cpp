@@ -50,14 +50,14 @@ bool ResGausserZZp::isAllowedCoefficientRing(const Ring* K) const
 }
 
 ring_elem ResGausserZZp::to_ring_elem(const Ring* K,
-                                      const CoefficientVector& coeffs,
+                                      const ElementArray& coeffs,
                                       size_t loc) const
 {
   auto& elems = coefficientVector(coeffs);
   return K->from_long(coeff_to_int(elems[loc]));
 }
 
-void ResGausserZZp::from_ring_elem(CoefficientVector& result,
+void ResGausserZZp::from_ring_elem(ElementArray& result,
                                    ring_elem a,
                                    ring_elem unused) const
 {
@@ -79,7 +79,7 @@ bool ResGausserQQ::isAllowedCoefficientRing(const Ring* K) const
 }
 
 ring_elem ResGausserQQ::to_ring_elem(const Ring* K,
-                                     const CoefficientVector& coeffs,
+                                     const ElementArray& coeffs,
                                      size_t loc) const
 {
   auto& elems = coefficientVector(coeffs);
@@ -95,7 +95,7 @@ ring_elem ResGausserQQ::to_ring_elem(const Ring* K,
   return result;
 }
 
-void ResGausserQQ::from_ring_elem(CoefficientVector& result,
+void ResGausserQQ::from_ring_elem(ElementArray& result,
                                   ring_elem numer,
                                   ring_elem denom) const
 {
@@ -133,7 +133,7 @@ bool ResGausserQQHybrid::isAllowedCoefficientRing(const Ring* K) const
 }
 
 ring_elem ResGausserQQHybrid::to_ring_elem(const Ring* K,
-                                           const CoefficientVector& coeffs,
+                                           const ElementArray& coeffs,
                                            size_t loc) const
 {
   auto& elems = coefficientVector(coeffs);
@@ -159,7 +159,7 @@ ring_elem ResGausserQQHybrid::to_ring_elem(const Ring* K,
   return result;
 }
 
-void ResGausserQQHybrid::from_ring_elem(CoefficientVector& result,
+void ResGausserQQHybrid::from_ring_elem(ElementArray& result,
                                         ring_elem numer,
                                         ring_elem denom) const
 {
@@ -210,7 +210,7 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
 
   int* exp = new int[M->n_vars()];
 
-  CoefficientVector coeffs = R.resGausser().allocateCoefficientVector();
+  ElementArray coeffs = R.resGausser().allocateCoefficientVector();
   // all these pointers (or values) are still in the element f.
   //  auto monoms = std::unique_ptr<res_monomial_word[]>(new res_monomial_word[n
   //  * R.monoid().max_monomial_size()]);

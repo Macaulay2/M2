@@ -5,6 +5,7 @@
 
 #include "newdelete.hpp"  // for our_new_delete
 #include "ringelem.hpp"   // for ring_elem
+#include "VectorArithmetic.hpp" // for ElementArray
 
 #include <iosfwd>         // for ostream
 #include <type_traits>    // for swap
@@ -12,23 +13,25 @@
 
 class Ring;
 
-typedef int ComponentIndex;
+// typedef int ComponentIndex;
 
-class CoefficientVector
-{
-  // disallow copy...
-  friend class ResGausser;
-  friend class ResGausserZZp;
-  friend class ResGausserQQ;
-  friend class ResGausserQQHybrid;
+// class CoefficientVector
+// {
+//   // disallow copy...
+//   friend class ResGausser;
+//   friend class ResGausserZZp;
+//   friend class ResGausserQQ;
+//   friend class ResGausserQQHybrid;
 
- public:
-  CoefficientVector() : mValue(nullptr) {}
-  bool isNull() const { return mValue == nullptr; }
-  void swap(CoefficientVector& b) { std::swap(mValue, b.mValue); }
- private:
-  void* mValue;
-};
+//  public:
+//   CoefficientVector() : mValue(nullptr) {}
+//   bool isNull() const { return mValue == nullptr; }
+//   void swap(CoefficientVector& b) { std::swap(mValue, b.mValue); }
+//  private:
+//   void* mValue;
+// };
+
+using CoefficientVector = ElementArray; // hack for now, to boostrap change ResGausser ==> VectorArithmetic
 
 class ResGausser : public our_new_delete
 {
