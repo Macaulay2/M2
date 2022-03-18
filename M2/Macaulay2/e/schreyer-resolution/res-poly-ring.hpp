@@ -74,8 +74,8 @@ class ResPolyRing : public our_new_delete
   {
   }
 
-    const ResGausser& resGausser() const { return *mResGausser; } // TODO: remove this line.
-  //const VectorArithmetic& resGausser() const { return mVectorArithmetic; }
+  //const ResGausser& resGausser() const { return *mResGausser; } // TODO: remove this line.
+  const VectorArithmetic& resGausser() const { return mVectorArithmetic; }
   const VectorArithmetic& vectorArithmetic() const { return mVectorArithmetic; }
   const ResMonoid& monoid() const { return *mMonoid; }
   const Monoid& originalMonoid() const { return *mOriginalMonoid; }

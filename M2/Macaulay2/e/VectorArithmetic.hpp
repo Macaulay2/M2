@@ -218,8 +218,9 @@ public:
     auto& svec = * elementArray(sparse);
 
     typename RingType::Element a(*mRing,dvec[comps[0]]);
-    for (int i=0; i < comps.size(); ++i)
+    for (int i=1; i < comps.size(); ++i)
       mRing->subtract_multiple(dvec[comps[i]], a, svec[i]);
+    mRing->set_zero(dvec[comps[0]]);
   }
 
   void denseCancelFromSparse(ElementArray& dense,
@@ -232,15 +233,18 @@ public:
     auto& svec = * elementArray(sparse);
     auto& mults = * elementArray(result_multiplier);
 
-    const FieldElement& a = dvec[comps[0]];
-    for (int i=0; i < comps.size(); ++i)
-      {
-        mRing->subtract_multiple(dvec[comps[i]], a, svec[i]);
-        mStats.incrementNumAdditions();
-      }
     FieldElement b;
     mRing->init(b);
-    mRing->set(b, a);
+    mRing->set(b, dvec[comps[0]]);
+
+    for (int i=1; i < comps.size(); ++i)
+      {
+        mRing->subtract_multiple(dvec[comps[i]], b, svec[i]);
+        mStats.incrementNumAdditions();
+      }
+    mRing->set_zero(dvec[comps[0]]);
+
+    mRing->negate(b, b);
     mults.push_back(b); // this grabs b.
   }
 
@@ -483,6 +487,11 @@ public:
     return o;
   }
 
+  long to_modp_long(ElementArray& coeffs, size_t loc) const
+  {
+    return 0; // DANGER WILL ROBINSON!
+  }
+  
   ////////////////////////
   /// Append support /////
   ////////////////////////
@@ -531,13 +540,11 @@ public:
   }
 
   // We want to remove this function!
-  void from_ring_elem(ElementArray& coeffs, ring_elem numer, ring_elem denom)
+  void from_ring_elem(ElementArray& coeffs, ring_elem numer, ring_elem denom) const
   // Appends numer/denom to coeffs array
   {
     auto& svec = * elementArray(coeffs);
-    ring_elem val = numer;
     FieldElement inumer;
-    FieldElement idenom;
     mRing->init(inumer);
     mRing->from_ring_elem(inumer, numer);
     svec.emplace_back(inumer);
@@ -545,7 +552,28 @@ public:
 };
 
 template<>
-inline void ConcreteVectorArithmetic<M2::ARingQQGMP>::from_ring_elem(ElementArray& coeffs, ring_elem numer, ring_elem denom)
+inline long ConcreteVectorArithmetic<M2::ARingZZpFlint>::to_modp_long(ElementArray& coeffs, size_t loc) const
+{
+  auto& svec = * elementArray(coeffs);
+  return mRing->coerceToLongInteger(svec[loc]);
+}
+
+template<>
+inline long ConcreteVectorArithmetic<M2::ARingZZp>::to_modp_long(ElementArray& coeffs, size_t loc) const
+{
+  auto& svec = * elementArray(coeffs);
+  return mRing->coerceToLongInteger(svec[loc]);
+}
+
+template<>
+inline long ConcreteVectorArithmetic<M2::ARingZZpFFPACK>::to_modp_long(ElementArray& coeffs, size_t loc) const
+{
+  auto& svec = * elementArray(coeffs);
+  return mRing->coerceToLongInteger(svec[loc]);
+}
+
+template<>
+inline void ConcreteVectorArithmetic<M2::ARingQQGMP>::from_ring_elem(ElementArray& coeffs, ring_elem numer, ring_elem denom) const
 {
   // TODO: this will fail: input is alas ZZ integers... not QQ elements...
     auto& svec = * elementArray(coeffs);
@@ -866,6 +894,15 @@ public:
     return std::visit([&](auto& arg) -> std::ostream& { return arg->displayAsDenseArray(o, len, v, Range(comps.data(), comps.data() + comps.size())); }, mConcreteVector);
   }
   
+  long getNumAdditions() const
+  {
+    return std::visit([&](auto& arg) -> long { return arg->mStats.numAdditions(); }, mConcreteVector);
+  }
+
+  long to_modp_long(ElementArray& coeffs, size_t loc) const
+  {
+    return std::visit([&](auto& arg) -> long { return arg->to_modp_long(coeffs, loc); }, mConcreteVector);
+  }
   
   //////////////////////////
   /// Append support   /////
