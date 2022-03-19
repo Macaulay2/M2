@@ -28,7 +28,7 @@ shorten := s -> (
      s)
 
 -- TODO: remove as duplicate
-noopts := x -> select(x,e -> class e =!= Option)
+noopts := x -> select(x,e -> class e =!= Option and class e =!= OptionTable)
 
 texLiteralTable := new MutableHashTable
 scan(0 .. 255, c -> texLiteralTable#(ascii{c}) = concatenate(///{\char ///, toString c, "}"))

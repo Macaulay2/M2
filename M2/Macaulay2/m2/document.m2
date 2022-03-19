@@ -389,7 +389,7 @@ hasDocumentation = key -> null =!= fetchAnyRawDocumentation makeDocumentTag(key,
 locate DocumentTag := tag -> (
     if (rawdoc := fetchAnyRawDocumentation tag) =!= null
     then (minimizeFilename rawdoc#"filename", rawdoc#"linenum")
-    else (currentFileName, currentLineNumber()))
+    else (currentFileName, currentRowNumber()))
 
 -----------------------------------------------------------------------------
 -- helpers for the document function
@@ -649,7 +649,7 @@ document List := opts -> args -> (
 		    PrimaryTag => tag, -- tag must be primary
 		    symbol DocumentTag => tag2,
 		    "filename" => currentFileName,
-		    "linenum" => currentLineNumber()
+		    "linenum" => currentRowNumber()
 		    })));
     -- Check BaseFunction
     assert(not o.?BaseFunction or instance(o.BaseFunction, Function));
@@ -668,7 +668,7 @@ document List := opts -> args -> (
     if #ino > 0 then o.Options = ino else remove(o, Options);
     -- Set the location of the documentation
     o#"filename" = currentFileName;
-    o#"linenum"  = currentLineNumber();
+    o#"linenum"  = currentRowNumber();
     currentDocumentTag = null;
     storeRawDocumentation(tag, new HashTable from o))
 
@@ -684,7 +684,7 @@ undocumented Thing := key -> if key =!= null then (
 	    symbol DocumentTag => tag,
 	    "undocumented"     => true,
 	    "filename"         => currentFileName,
-	    "linenum"          => currentLineNumber()
+	    "linenum"          => currentRowNumber()
 	    }))
 
 -- somehow, this is the very first method called by the Core!!

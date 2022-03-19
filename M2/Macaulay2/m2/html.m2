@@ -189,6 +189,9 @@ html GroebnerBasis :=
 html Package :=
 html Boolean :=
 html Function :=
+html FilePosition :=
+html Manipulator :=
+html Dictionary :=
 html Type := html @@ toString
 -- except not these descendants
 html Monoid :=

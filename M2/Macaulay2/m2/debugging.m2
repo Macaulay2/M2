@@ -241,6 +241,8 @@ generateAssertions List := y -> (
 	       else lin
 	       )))^-1
 
+currentPosition = () -> new FilePosition from { currentFileName, currentRowNumber(), currentColumnNumber() }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
