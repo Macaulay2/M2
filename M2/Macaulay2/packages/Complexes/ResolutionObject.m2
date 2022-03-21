@@ -13,6 +13,18 @@
 -- (5) revisit augmentationMap, in case when the resolution 
 --   messes with the module generators.
 
+-- "BUGS" found in M2:
+--  1. Issue #2405
+--   M === N maybe should check equality by pointer first:
+--   caused a problem in constructing the augmentation map for resolutions
+--   over a field (when field is inexact).
+-*
+     R = RR_53
+     M = coker matrix{{1.3, 1.4}, {1.1, 1.5}, {.3, .6}}
+     assert(M === M) -- this is good
+     assert(not(M == M)) -- M===M but M != M...
+*-
+
 importFrom_Core { "RawComputation", "raw" }
 importFrom_Core { "degreeToHeft", 
     "rawBetti", 
@@ -313,6 +325,39 @@ resolutionOverField = (opts, M) -> (
     RO.complex = (lengthlimit) -> (
         N := RO.FieldComputation;
         C := complex N;
+        C.cache.augmentationMap = map(complex M, C, i -> 
+            if i === 0 then map(M, C_0, matrix N.cache.pruningMap));
+        C);
+    
+    RO.compute(opts.LengthLimit, opts.DegreeLimit);
+    RO.complex(opts.LengthLimit)
+    )
+
+resolutionBySyzygies = (opts, M) -> (
+    -- if the ring R is an approximate field, return null.
+    -- otherwise, 'syz' should be working for all other rings, and
+    -- so this method should in principal work.
+    R := ring M;
+    -- TODO: return null for any rings such that syz is not available.
+    -- TODO: are there any such rings?  Perhaps inexact fields...
+    
+    -- YYY: Start here. This should work with Weyl algebras, etc, 
+    -- different lengthlimits.  degreelimits: perhaps.
+    
+    RO := M.cache.ResolutionObject;
+    RO.SyzygyList = new MutableList from {presentation M};
+    
+    RO.compute = (lengthlimit, degreelimit) -> (
+        -- finish
+        m := RO.SyzygyList#(#RO.SyzygyList-1);
+        );
+
+    RO.isComputable = (lengthlimit, degreelimit) -> true;
+
+    RO.complex = (lengthlimit) -> (
+        -- rewrite
+        N := RO.FieldComputation;
+        C := complex N;
         C.cache.augmentationMap = map(complex M, C, i -> N.cache.pruningMap);
         C);
     
@@ -320,19 +365,13 @@ resolutionOverField = (opts, M) -> (
     RO.complex(opts.LengthLimit)
     )
 
-
--- addHook((freeResolution, Module), resolutionInEngine3, Strategy => 3)
--- addHook((freeResolution, Module), resolutionInEngine2, Strategy => 2)
+addHook((freeResolution, Module), resolutionBySyzygies, Strategy => "Syzygies")
 addHook((freeResolution, Module), resolutionInEngine0, Strategy => 0)
 addHook((freeResolution, Module), resolutionInEngine2, Strategy => 2)
 addHook((freeResolution, Module), resolutionInEngine3, Strategy => 3)
 addHook((freeResolution, Module), resolutionInEngine1, Strategy => 1)
 addHook((freeResolution, Module), resolutionInEngine, Strategy => Engine)
 addHook((freeResolution, Module), resolutionOverField, Strategy => "Field")
-
---scan({Engine}, strategy ->
---    addHook(key := (resolution, Module), algorithms#key#strategy, Strategy => strategy))
-
 
 end--
 restart
@@ -409,6 +448,13 @@ C = freeResolution(I, Strategy => 2, LengthLimit => 7)
 I = ideal"ab, acd"
 C2 = freeResolution(I, Strategy => 3, LengthLimit => 7)
 assert(betti C === betti C2)
+
+-- module over a quotient ring (old res.m2 version)
+restart
+R = ZZ/101[a..d]/(a^2-b^2, a*b*c)
+I = ideal"ab, acd"
+res(R^1/I, Strategy => "Syzygies")
+
 -- module over a quotient ring
 restart
 debug loadPackage("Complexes")
@@ -488,6 +534,26 @@ coker g == 0
 ker g == 0 -- since this is an isomorphism
 
 res M -- BUG: this is wrong. 
+
+
+
+-- Over an inexact field
+restart -- XXX
+debug loadPackage("Complexes")
+load "Complexes/ResolutionObject.m2"
+gbTrace=1
+kk = RR_53
+kk = ZZ/101
+M = coker random(kk^3, kk^2)
+F = freeResolution M
+g = augmentationMap F
+source g == F
+target g == complex M
+isWellDefined g
+coker g == 0
+ker g == 0 -- since this is an isomorphism
+
+res M
 
 
 -- XXX
