@@ -719,7 +719,6 @@ sin(e:Expr):Expr := (
      is x:RRicell do toExpr(sin(x.v))				    -- # typical value: sin, RRi, RRi
      else buildErrorPacket("expected a number")
      );
-setupfun("sin",sin);
 setupfun("sin",sin).Protected=false;
 cos(e:Expr):Expr := (
      when e
@@ -728,7 +727,6 @@ cos(e:Expr):Expr := (
      is x:RRicell do toExpr(cos(x.v))				    -- # typical value: cos, RRi, RRi
      else buildErrorPacket("expected a number")
      );
-setupfun("cos",cos);
 setupfun("cos",cos).Protected=false;
 tan(e:Expr):Expr := (
      when e
@@ -737,7 +735,6 @@ tan(e:Expr):Expr := (
      is x:RRicell do toExpr(tan(x.v))				    -- # typical value: tan, RRi, RRi
      else buildErrorPacket("expected a number")
      );
-setupfun("tan",tan);
 setupfun("tan",tan).Protected=false;
 acos(e:Expr):Expr := (
      when e
@@ -754,7 +751,6 @@ acos(e:Expr):Expr := (
 	  )
      else buildErrorPacket("expected a number")
      );
-setupfun("acos",acos);
 setupfun("acos",acos).Protected=false;
 sec(e:Expr):Expr := (
      when e
@@ -763,7 +759,6 @@ sec(e:Expr):Expr := (
      is x:RRicell do toExpr(sec(x.v))				    -- # typical value: sec, RRi, RRi
      else buildErrorPacket("expected a number")
      );
-setupfun("sec",sec);
 setupfun("sec",sec).Protected=false;
 csc(e:Expr):Expr := (
      when e
@@ -772,7 +767,6 @@ csc(e:Expr):Expr := (
      is x:RRicell do toExpr(csc(x.v))				    -- # typical value: csc, RRi, RRi
      else buildErrorPacket("expected a number")
      );
-setupfun("csc",csc);
 setupfun("csc",csc).Protected=false;
 cot(e:Expr):Expr := (
      when e
@@ -781,7 +775,6 @@ cot(e:Expr):Expr := (
      is x:RRicell do toExpr(cot(x.v))				    -- # typical value: cot, RRi, RRi
      else buildErrorPacket("expected a number")
      );
-setupfun("cot",cot);
 setupfun("cot",cot).Protected=false;
 sech(e:Expr):Expr := (
      when e
@@ -790,7 +783,6 @@ sech(e:Expr):Expr := (
      is x:RRicell do toExpr(sech(x.v))				    -- # typical value: sech, RRi, RRi
      else buildErrorPacket("expected a number")
      );
-setupfun("sech",sech);
 setupfun("sech",sech).Protected=false;
 csch(e:Expr):Expr := (
      when e
@@ -799,7 +791,6 @@ csch(e:Expr):Expr := (
      is x:RRicell do toExpr(csch(x.v))				    -- # typical value: csch, RRi, RRi
      else buildErrorPacket("expected a number")
      );
-setupfun("csch",csch);
 setupfun("csch",csch).Protected=false;
 coth(e:Expr):Expr := (
      when e
@@ -808,7 +799,6 @@ coth(e:Expr):Expr := (
      is x:RRicell do toExpr(coth(x.v))				    -- # typical value: coth, RRi, RRi
      else buildErrorPacket("expected a number")
      );
-setupfun("coth",coth);
 setupfun("coth",coth).Protected=false;
 asin(e:Expr):Expr := (
      when e
@@ -825,7 +815,6 @@ asin(e:Expr):Expr := (
 	  )
      else buildErrorPacket("expected a number")
      );
-setupfun("asin",asin);
 setupfun("asin",asin).Protected=false;
 log1p(e:Expr):Expr := (
      when e
@@ -833,7 +822,6 @@ log1p(e:Expr):Expr := (
      is x:RRicell do toExpr(log1p(x.v))				    -- # typical value: log1p, RRi, RRi
      else buildErrorPacket("expected a number")
      );
-setupfun("log1p",log1p);
 setupfun("log1p",log1p).Protected=false;
 expm1(e:Expr):Expr := (
      when e
@@ -841,28 +829,24 @@ expm1(e:Expr):Expr := (
      is x:RRicell do toExpr(expm1(x.v))				    -- # typical value: expm1, RRi, RRi
      else buildErrorPacket("expected a number")
      );
-setupfun("expm1",expm1);
 setupfun("expm1",expm1).Protected=false;
 eint(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(eint(x.v))				    -- # typical value: eint, RR, RR
      else buildErrorPacket("expected a number")
      );
-setupfun("eint",eint);
 setupfun("eint",eint).Protected=false;
 Gamma(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(Gamma(x.v))				    -- # typical value: Gamma, RR, RR
      else buildErrorPacket("expected a number")
      );
-setupfun("Gamma",Gamma);
 setupfun("Gamma",Gamma).Protected=false;
 Digamma(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(Digamma(x.v))			    -- # typical value: Digamma, RR, RR
      else buildErrorPacket("expected a number")
      );
-setupfun("Digamma",Digamma);
 setupfun("Digamma",Digamma).Protected=false;
 export lgamma(x:RR):Expr := (
      z := newRRmutable(precision(x));
@@ -880,21 +864,18 @@ zeta(e:Expr):Expr := (
      is x:RRcell do toExpr(zeta(x.v))				    -- # typical value: zeta, RR, RR
      else buildErrorPacket("expected a number")
      );
-setupfun("zeta",zeta);
 setupfun("zeta",zeta).Protected=false;
 erf(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(erf(x.v))				    -- # typical value: erf, RR, RR
      else buildErrorPacket("expected a number")
      );
-setupfun("erf",erf);
 setupfun("erf",erf).Protected=false;
 erfc(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(erfc(x.v))				    -- # typical value: erfc, RR, RR
      else buildErrorPacket("expected a number")
      );
-setupfun("erfc",erfc);
 setupfun("erfc",erfc).Protected=false;
 BesselJ(n:long,x:RR):RR := (
      if n == long(0) then j0(x)
@@ -908,7 +889,6 @@ BesselJ(e:Expr):Expr := (
 	       else WrongArg(2,"a number"))
 	  else WrongArgZZ(1))
      else WrongNumArgs(2));
-setupfun("BesselJ",BesselJ);
 setupfun("BesselJ",BesselJ).Protected=false;
 BesselY(n:long,x:RR):RR := (
      if n == long(0) then y0(x)
@@ -922,7 +902,6 @@ BesselY(e:Expr):Expr := (
 	       else WrongArg(2,"a number"))
 	  else WrongArgZZ(1))
      else WrongNumArgs(2));
-setupfun("BesselY",BesselY);
 setupfun("BesselY",BesselY).Protected=false;
 atan2(yy:Expr,xx:Expr):Expr := (
      when yy
@@ -947,13 +926,11 @@ atan(e:Expr):Expr := (
      else WrongNumArgs(1)
      else buildErrorPacket("expected a number or a pair of numbers")
      );
-setupfun("atan",atan);
 setupfun("atan",atan).Protected=false;
 atan2(e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 2 then atan2(s.0,s.1)
      else WrongNumArgs(2)
      else WrongNumArgs(2));
-setupfun("atan2",atan2);
 setupfun("atan2",atan2).Protected=false;
 
 Beta(yy:Expr,xx:Expr):Expr := (
@@ -968,7 +945,6 @@ Beta(e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 2 then Beta(s.0,s.1)
      else WrongNumArgs(2)
      else WrongNumArgs(2));
-setupfun("Beta",Beta);
 setupfun("Beta",Beta).Protected=false;
 
 cosh(e:Expr):Expr := (
@@ -978,7 +954,6 @@ cosh(e:Expr):Expr := (
      is x:RRicell do toExpr(cosh(x.v))				    -- # typical value: cosh, RRi, RRi
      else buildErrorPacket("expected a number")
      );
-setupfun("cosh",cosh);
 setupfun("cosh",cosh).Protected=false;
 sinh(e:Expr):Expr := (
      when e
@@ -987,7 +962,6 @@ sinh(e:Expr):Expr := (
      is x:RRicell do toExpr(sinh(x.v))				    -- # typical value: sinh, RRi, RRi
      else buildErrorPacket("expected a number")
      );
-setupfun("sinh",sinh);
 setupfun("sinh",sinh).Protected=false;
 tanh(e:Expr):Expr := (
      when e
@@ -996,7 +970,6 @@ tanh(e:Expr):Expr := (
      is x:RRicell do toExpr(tanh(x.v))				    -- # typical value: tanh, RRi, RRi
      else buildErrorPacket("expected a number")
      );
-setupfun("tanh",tanh);
 setupfun("tanh",tanh).Protected=false;
 exp(e:Expr):Expr := (
      when e
@@ -1005,7 +978,6 @@ exp(e:Expr):Expr := (
      is x:RRicell do toExpr(exp(x.v))			    -- # typical value: exp, RRi, RRi
      else buildErrorPacket("expected a number")
      );
-setupfun("exp",exp);
 setupfun("exp",exp).Protected=false;
 log(e:Expr):Expr := (
      when e
@@ -1044,7 +1016,6 @@ log(e:Expr):Expr := (
                      else buildErrorPacket("Not defined")
      else WrongArg("a number or a pair of numbers")
      );
-setupfun("log",log);
 setupfun("log",log).Protected=false;
 agm(e:Expr):Expr := (
      when e
@@ -1064,7 +1035,6 @@ agm(e:Expr):Expr := (
 	  else WrongArg(2,"a number"))
      else WrongNumArgs(2)
      );
-setupfun("agm",agm);
 setupfun("agm",agm).Protected=false;
 -- abs(x:double):double := if x.v < 0. then -x.v else x.v;
 floor(e:Expr):Expr := (
@@ -1132,7 +1102,6 @@ sqrt(a:Expr):Expr := (
      is x:CCcell do toExpr(sqrt(x.v))				    -- # typical value: sqrt, CC, CC
      is Error do a
      else WrongArgRR());
-setupfun("sqrt",sqrt);
 setupfun("sqrt",sqrt).Protected=false;
 map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
      newlen := length(a1);
