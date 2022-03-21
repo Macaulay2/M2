@@ -209,7 +209,8 @@ method = methodDefaults >> opts -> args -> (
      then error "expected Dispatch option to be: Thing, Type, or a list of those";
      singleDispatch := chk opts.Dispatch;
      outputs := if not singleDispatch then apply(opts.Dispatch, c -> c === Type) else opts.Dispatch === Type;
-     saveCurrentPosition := currentFilePosition();		    -- for debugging
+     saveCurrentFileName := currentFileName;		    -- for debugging
+     saveCurrentRowNumber := currentRowNumber();	    -- for debugging
      methodFunction := (
         if opts.Options === null then (
 	    if opts.Binary    then BinaryNoOptions(outputs) else
