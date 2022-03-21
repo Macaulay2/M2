@@ -59,7 +59,7 @@ document { Key => {commonRing, (commonRing,List)},
      	  ///
      }
 
-document { Key => {log1p,(log1p, QQ),(log1p, ZZ),(log1p, RR),(log1p, RRi)},
+document { Key => {log1p,(log1p, RR),(log1p, RRi)},
      Usage => "log1p x\nlog1p I",
      Headline => "logarithm of 1+x",
      Inputs => { "x", "I" => RRi },
@@ -71,7 +71,7 @@ log1p 1p100e-10
 log(1 + 1p100e-10)
      ///
      }
-document { Key => {expm1,(expm1, ZZ),(expm1, RR),(expm1, QQ),(expm1,RRi)},
+document { Key => {expm1,(expm1, RR),(expm1,RRi)},
      Usage => "expm1 x\nexpm1 I",
      Headline => "exponential minus 1",
      Inputs => { "x" , "I"=>RRi},
@@ -83,7 +83,7 @@ RRi => { "an interval containing the exponential of the points of ", TT "I", " m
      	  exp(1p100e-10)-1
      ///
      }
-document { Key => {eint,(eint, QQ),(eint, ZZ),(eint, RR)},
+document { Key => {eint,(eint, RR)},
      Usage => "eint x",
      Headline => "exponential integral",
      Inputs => { "x" },
@@ -93,7 +93,7 @@ document { Key => {eint,(eint, QQ),(eint, ZZ),(eint, RR)},
      ///,
      PARA {"See ", wikipedia "Exponential integral", "."}
      }
-document { Key => {Gamma,(Gamma, ZZ),(Gamma, RR),(Gamma, QQ)},
+document { Key => {Gamma,(Gamma, RR)},
      Usage => "Gamma x",
      Headline => "Gamma function",
      Inputs => { "x" },
@@ -103,7 +103,7 @@ document { Key => {Gamma,(Gamma, ZZ),(Gamma, RR),(Gamma, QQ)},
      ///,
      PARA {"See ", wikipedia "Gamma function", "."}
      }
-document { Key => {lngamma,(lngamma, QQ),(lngamma, ZZ),(lngamma, RR)},
+document { Key => {lngamma,(lngamma, RR)},
      Usage => "lngamma x",
      Headline => "logarithm of the Gamma function",
      Inputs => { "x" },
@@ -115,7 +115,7 @@ document { Key => {lngamma,(lngamma, QQ),(lngamma, ZZ),(lngamma, RR)},
 	  lngamma (-2.000000000000000000000000000000001p120)
      ///
      }
-document { Key => {zeta,(zeta, QQ),(zeta, ZZ),(zeta, RR)},
+document { Key => {zeta,(zeta, RR)},
      Usage => "zeta x",
      Headline => "Riemann zeta function",
      Inputs => { "x" },
@@ -125,7 +125,7 @@ document { Key => {zeta,(zeta, QQ),(zeta, ZZ),(zeta, RR)},
      ///,
      PARA {"See ", wikipedia "Riemann zeta function", "."}
      }
-document { Key => {erf,(erf, ZZ),(erf, RR),(erf, QQ)},
+document { Key => {erf,(erf, RR)},
      Usage => "erf x",
      Headline => "error function",
      Inputs => { "x" },
@@ -135,7 +135,7 @@ document { Key => {erf,(erf, ZZ),(erf, RR),(erf, QQ)},
      ///,
      PARA {"See ", wikipedia "Error function", "."}
      }
-document { Key => {erfc,(erfc, QQ),(erfc, ZZ),(erfc, RR)},
+document { Key => {erfc,(erfc, RR)},
      Usage => "erfc x",
      Headline => "complementary error function",
      Inputs => { "x" },
@@ -147,7 +147,7 @@ document { Key => {erfc,(erfc, QQ),(erfc, ZZ),(erfc, RR)},
      }
 document { 
      --- author(s): L. Gold, Dan Grayson
-     Key => {acos,(acos,ZZ), (acos,RR),(acos,CC),(acos, QQ),(acos, RRi)},
+     Key => {acos,(acos,RR),(acos,CC),(acos, RRi)},
      Headline => "arccosine", 
      Usage => "acos x\nacos I",
      Inputs => { "x", "I" => RRi },
@@ -160,7 +160,7 @@ document {
      }     
 document { 
      --- author(s): L. Gold, Dan Grayson
-     Key => {asin,(asin,ZZ),(asin,RR),(asin,CC),(asin, QQ),(asin, RRi)},
+     Key => {asin,(asin,RR),(asin,CC),(asin, RRi)},
      Headline => "arcsine",
      Usage => "asin x\nasin I",
      Inputs => { "x", "I" => RRi },
@@ -175,7 +175,7 @@ document {
      }
 document { 
      --- author(s): L. Gold
-     Key => {cosh, (cosh,ZZ),(cosh,RR),(cosh, QQ),(cosh,CC),(cosh,RRi)},
+     Key => {cosh, (cosh,RR),(cosh,CC),(cosh,RRi)},
      Headline => "compute the hyperbolic cosine",
      Usage => "cosh x\ncosh I",
      Inputs => { "x", "I"=>RRi},
@@ -208,7 +208,7 @@ document {
      ///,
      PARA {"See ", wikipedia "Hyperbolic function", "."}
      }
-document { Key => {sec,(sec, ZZ),(sec,CC),(sec, RR),(sec, QQ),(sec, RRi)},
+document { Key => {sec,(sec,CC),(sec, RR),(sec, RRi)},
      Usage => "sec x\nsec I",
      Headline => "secant",
      Inputs => { "x", "I" => RRi },
@@ -220,7 +220,7 @@ RRi => { "an interval containing the secants of the points of ", TT "I" }
      ///,
      PARA {"See ", wikipedia "Trigonometric function", "."}
      }
-document { Key => {csc,(csc,CC),(csc, QQ),(csc, ZZ),(csc, RR),(csc,RRi)},
+document { Key => {csc,(csc,CC),(csc, RR),(csc,RRi)},
      Usage => "csc x\ncsc I",
      Headline => "cosecant",
      Inputs => { "x","I"=>RRi },
@@ -233,7 +233,7 @@ document { Key => {csc,(csc,CC),(csc, QQ),(csc, ZZ),(csc, RR),(csc,RRi)},
      PARA {"See ", wikipedia "Trigonometric function", "."}
 
      }
-document { Key => {cot,(cot, ZZ),(cot, RR),(cot,CC),(cot, QQ),(cot,RRi)},
+document { Key => {cot,(cot, RR),(cot,CC),(cot,RRi)},
      Usage => "cot x\ncot I",
      Headline => "cotangent",
      Inputs => { "x", "I"=>RRi },
@@ -246,7 +246,7 @@ document { Key => {cot,(cot, ZZ),(cot, RR),(cot,CC),(cot, QQ),(cot,RRi)},
      PARA {"See ", wikipedia "Trigonometric function", "."}
 
      }
-document { Key => {sech,(sech,CC),(sech, QQ),(sech, ZZ),(sech, RR),(sech, RRi)},
+document { Key => {sech,(sech,CC),(sech, RR),(sech, RRi)},
      Usage => "sech x\nsech I",
      Headline => "hyperbolic secant",
      Inputs => { "x", "I" => RRi },
@@ -258,7 +258,7 @@ document { Key => {sech,(sech,CC),(sech, QQ),(sech, ZZ),(sech, RR),(sech, RRi)},
      ///,
      PARA {"See ", wikipedia "Hyperbolic function", "."}
      }
-document { Key => {csch,(csch,CC),(csch, ZZ),(csch, RR),(csch, QQ),(csch,RRi)},
+document { Key => {csch,(csch,CC),(csch, RR),(csch,RRi)},
      Usage => "csch x\ncsch I",
      Headline => "hyperbolic cosecant",
      Inputs => { "x", "I"=>RRi },
@@ -270,7 +270,7 @@ document { Key => {csch,(csch,CC),(csch, ZZ),(csch, RR),(csch, QQ),(csch,RRi)},
      ///,
      PARA {"See ", wikipedia "Hyperbolic function", "."}
      }
-document { Key => {coth,(coth,CC),(coth, QQ),(coth, ZZ),(coth, RR),(coth,RRi)},
+document { Key => {coth,(coth,CC),(coth, RR),(coth,RRi)},
      Usage => "coth x\ncoth I",
      Headline => "hyperbolic cotangent",
      Inputs => { "x","I"=>RRi},
@@ -328,7 +328,7 @@ document { Key => {InexactNumber'},
 document { Key => {RingFamily},
      "This family is used to contain classes that correspond to a family of similar rings with a default member."
      }
-document { Key => {BesselJ,(BesselJ, ZZ, QQ),(BesselJ, ZZ, ZZ),(BesselJ, ZZ, RR)},
+document { Key => {BesselJ,(BesselJ, ZZ, RR)},
      Usage => "BesselJ(n,x)\nBesselJ_n x",
      Headline => "Bessel function of the first kind",
      Inputs => {
@@ -345,7 +345,7 @@ document { Key => {BesselJ,(BesselJ, ZZ, QQ),(BesselJ, ZZ, ZZ),(BesselJ, ZZ, RR)
      PARA {"See ", wikipedia "Bessel function", "."},
      SeeAlso => { BesselY }
      }
-document { Key => {BesselY,(BesselY, ZZ, ZZ),(BesselY, ZZ, RR),(BesselY, ZZ, QQ)},
+document { Key => {BesselY,(BesselY, ZZ, RR)},
      Usage => "BesselY(n,x)\nBesselY_n x",
      Headline => "Bessel function of the second kind",
      Inputs => {
@@ -362,8 +362,7 @@ document { Key => {BesselY,(BesselY, ZZ, ZZ),(BesselY, ZZ, RR),(BesselY, ZZ, QQ)
      PARA {"See ", wikipedia "Bessel function", "."},
      SeeAlso => { BesselJ }
      }
-document { Key => {agm,(agm, ZZ, ZZ),(agm, QQ, ZZ),(agm, ZZ, QQ),(agm, QQ, QQ),(agm, ZZ, RR),(agm, RR, ZZ),(agm, QQ, RR),(agm, RR, QQ),(agm, RR, RR),
-	  (agm,CC,CC),(agm,CC,QQ),(agm,CC,RR),(agm,CC,ZZ),(agm,QQ,CC),(agm,RR,CC),(agm,ZZ,CC)},
+document { Key => {agm,	(agm, RR, RR), (agm,CC,CC)},
      Usage => "agm(x,y)",
      Inputs => { "x" => "a number", "y" => "a number" },
      Outputs => { {"the arithmetic-geometric mean of ", TT "x", " and ", TT "y"}},
