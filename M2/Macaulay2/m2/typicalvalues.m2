@@ -199,11 +199,11 @@ typval = x -> (
 	 f := redefs#f';
 	 args := drop(drop(x,-1),1);
 	 installMethod append(prepend(f,args),last x => f');
-	 if args === sequence RR then f Constant := f' @@ numeric
+	 if args === sequence RR then f Number := f Constant := f' @@ numeric
 	 else if #args === 2 then (
-	     if args#0 === RR then f (Constant, args#1) := (x,y) -> f'(numeric x,y);
-	     if args#1 === RR then f (args#0, Constant) := (x,y) -> f'(x,numeric y);
-	     if args === (RR,RR) then f(Constant, Constant) := (x,y) -> f'(numeric x,numeric y); -- phew
+	     if args#0 === RR then f (Number, args#1) := f (Constant, args#1) := (x,y) -> f'(numeric x,y);
+	     if args#1 === RR then f (args#0, Number) := f (args#0, Constant) := (x,y) -> f'(x,numeric y);
+	     if args === (RR,RR) then f(Number, Number) := f(Number, Constant) := f(Constant, Number) := f(Constant, Constant) := (x,y) -> f'(numeric x,numeric y); -- phew
 	     ))
      )
 
