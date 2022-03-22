@@ -178,8 +178,9 @@ typval4k-*(Keyword,Type,Type,Type)*- := (f,X,Y,Z) -> (
 if member("--no-tvalues", commandLine) then end
 
 -- numerical functions that will be wrapped
-redefs := hashTable apply({acos, agm, asin, atan, atan2, BesselJ, BesselY, cos, cosh, cot, coth, csc, csch, eint, erf, erfc, exp, expm1, Gamma, log, log1p, sec, sech, sin, sinh, sqrt, tan, tanh, zeta},
+redefs := hashTable apply({acos, agm, asin, atan, atan2, BesselJ, BesselY, Beta, cos, cosh, cot, coth, csc, csch, Digamma, eint, erf, erfc, exp, expm1, Gamma, log, log1p, sec, sech, sin, sinh, sqrt, tan, tanh, zeta},
     f -> f => method());
+variants := new MutableHashTable;
 
 typval = x -> (
      if #x == 3 then (
@@ -199,17 +200,22 @@ typval = x -> (
 	 f := redefs#f';
 	 args := drop(drop(x,-1),1);
 	 installMethod append(prepend(f,args),last x => f');
-	 if args === sequence RR then f Number := f Constant := f' @@ numeric
+	 if args === sequence RR then variants#(f,Number) = variants#(f,Constant) = f' @@ numeric
 	 else if #args === 2 then (
-	     if args#0 === RR then f (Number, args#1) := f (Constant, args#1) := (x,y) -> f'(numeric x,y);
-	     if args#1 === RR then f (args#0, Number) := f (args#0, Constant) := (x,y) -> f'(x,numeric y);
-	     if args === (RR,RR) then f(Number, Number) := f(Number, Constant) := f(Constant, Number) := f(Constant, Constant) := (x,y) -> f'(numeric x,numeric y); -- phew
-	     ))
+	     if args#0 === RR then variants#(f,Number,args#1) = variants#(f,Constant,args#1) = (x,y) -> f'(numeric x,y);
+	     if args#1 === RR then variants#(f,args#0,Number) = variants#(f,args#0,Constant) = (x,y) -> f'(x,numeric y);
+	     if args === (RR,RR) then variants#(f,Number,Number) = variants#(f,Number,Constant) = variants#(f,Constant,Number) = variants#(f,Constant,Constant) = (x,y) -> f'(numeric x,numeric y); -- phew
+	     );
+	 )
      )
 
 load "tvalues.m2"
 
 scanPairs(redefs, (k,v) -> globalAssign(baseName k,v))
+scanPairs(new HashTable from variants, (args,f) -> (
+	installMethod append(args,f);
+	undocumented args;
+	))
 
 -- TODO abs Constant
 

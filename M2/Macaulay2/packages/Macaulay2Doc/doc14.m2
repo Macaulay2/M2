@@ -103,6 +103,27 @@ document { Key => {Gamma,(Gamma, RR)},
      ///,
      PARA {"See ", wikipedia "Gamma function", "."}
      }
+document { Key => {Beta,(Beta, RR, RR)},
+     Usage => "Beta (x,y)",
+     Headline => "Beta function",
+     Inputs => { "x" },
+     Outputs => { RR => { "the beta function of ", TT "x", " and ", TT "y" }},
+     EXAMPLE lines ///
+	  Beta (3,4)
+     ///,
+     PARA {"See ", wikipedia "Beta function", "."}
+     }
+document { Key => {Digamma,(Digamma, RR)},
+     Usage => "Digamma x",
+     Headline => "Digamma function",
+     Inputs => { "x" },
+     Outputs => { RR => { "the digamma function (logarithmic derivative of the gamma fuction) of ", TT "x" }},
+     EXAMPLE lines ///
+	  Digamma 6
+     ///,
+     PARA {"See ", wikipedia "Digamma function", "."},
+     SeeAlso => {Gamma}
+     }
 document { Key => {lngamma,(lngamma, RR)},
      Usage => "lngamma x",
      Headline => "logarithm of the Gamma function",
@@ -321,6 +342,16 @@ document { Key => {EulerConstant},
      	  EulerConstant+100p100
      ///,
      PARA {"See ", wikipedia "Euler-Mascheroni constant", "."}
+     }
+document { Key => {CatalanConstant},
+     Usage => "CatalanConstant",
+     Headline => "Catalan's constant",
+     Outputs => { RR => { "Catalan's constant, converted to a numeric value of the correct precision, when necessary." }},
+     EXAMPLE lines ///
+	  CatalanConstant
+	  numeric_100 CatalanConstant
+	  ///,
+     PARA {"See ", wikipedia "Catalan's constant", "."}
      }
 document { Key => {InexactNumber'},
      "This class is the common parent of the classes of complex fields and real fields."
