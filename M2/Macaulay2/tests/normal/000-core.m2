@@ -449,7 +449,7 @@ assert (not isPrimitive 0_R)
 
 --
 assert ( class (x->x) === FunctionClosure )
-assert ( class sin === CompiledFunction )
+assert ( class abs === CompiledFunction )
 assert ( class depth === MethodFunction )
 
 
