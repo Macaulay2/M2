@@ -108,10 +108,14 @@ class ResPolynomialConstructor
 
   ResPolynomialConstructor(const ResPolyRing& R) : mRing(R)
   {
-    coeffs = R.resGausser().allocateCoefficientVector();
+    //coeffs = R.resGausser().allocateCoefficientVector();
+    coeffs = R.resGausser().allocateElementArray();
   }
 
-  ~ResPolynomialConstructor() { mRing.resGausser().deallocate(coeffs); }
+  ~ResPolynomialConstructor() {
+     //mRing.resGausser().deallocate(coeffs); }
+    mRing.resGausser().deallocateElementArray(coeffs);
+  }
   void appendMonicTerm(res_packed_monomial monom)
   {
     monoms.push_back(monom);  // a pointer
@@ -205,7 +209,8 @@ inline void display_poly(std::ostream& o, const ResPolyRing& R, const ResPolynom
   int i = 0;
   for (auto it = ResPolynomialIterator(R, f); it != end; ++it, ++i)
     {
-      R.resGausser().out(o, f.coeffs, i);
+      //R.resGausser().out(o, f.coeffs, i);
+      R.resGausser().displayElement(o, f.coeffs, i);
       res_const_packed_monomial mon = it.monomial();
       R.monoid().showAlpha(mon);
     }

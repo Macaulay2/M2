@@ -210,7 +210,9 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
 
   int* exp = new int[M->n_vars()];
 
-  ElementArray coeffs = R.resGausser().allocateCoefficientVector();
+  //ElementArray coeffs = R.resGausser().allocateCoefficientVector();
+  ElementArray coeffs = R.resGausser().allocateElementArray();
+
   // all these pointers (or values) are still in the element f.
   //  auto monoms = std::unique_ptr<res_monomial_word[]>(new res_monomial_word[n
   //  * R.monoid().max_monomial_size()]);
@@ -265,7 +267,8 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
       w = w + R.monoid().monomial_size(w);
       M->from_expvector(exp, m1);
       ring_elem a =
-          R.resGausser().to_ring_elem(origR->getCoefficientRing(), f.coeffs, i);
+          //R.resGausser().to_ring_elem(origR->getCoefficientRing(), f.coeffs, i);
+          R.resGausser().ringElemFromElementArray(f.coeffs,i);
       Nterm* g = origR->make_flat_term(a, m1);
       g->next = 0;
       if (last[comp] == 0)
@@ -439,7 +442,8 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
           C.ring().monoid().to_expvector(w, exp, comp);
           w = w + C.ring().monoid().monomial_size(w);
           M->from_expvector(exp, m1);
-          ring_elem a = C.gausser().to_ring_elem(K, f.coeffs, i);
+          //ring_elem a = C.gausser().to_ring_elem(K, f.coeffs, i);
+	  ring_elem a = C.gausser().ringElemFromElementArray(f.coeffs, i);
           Nterm* g = RP->make_flat_term(a, m1);
           if (g == nullptr) continue;
           g->next = 0;
@@ -508,8 +512,10 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
           long comp = C.monoid().get_component(i.monomial());
           if (newcomps[comp] >= 0)
             {
-              ring_elem a = C.ring().resGausser().to_ring_elem(
-                  K, f.coeffs, i.coefficient_index());
+              //ring_elem a = C.ring().resGausser().to_ring_elem(
+              //    K, f.coeffs, i.coefficient_index());
+              ring_elem a = C.ring().resGausser().ringElemFromElementArray(
+                  f.coeffs, i.coefficient_index());
               result->set_entry(newcomps[comp], col, a);
             }
         }
