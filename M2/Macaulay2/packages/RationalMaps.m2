@@ -1466,7 +1466,7 @@ doc ///
             This technique is described in Proposition 1.5 on page 21 in the book
         Text
             @UL{
-                {"Vasconcelos, Wolmer.  ", BOLD "Integral closure. Rees algebras, multiplicities, algorithms.", " Springer Monographs in Mathematics. ", EM "Springer-Verlag, Berlin,", "2005. xii+519 pp."}
+                {"Vasconcelos, Wolmer.  ", BOLD "Integral closure.", " Springer Monographs in Mathematics. ", EM "Springer-Verlag, Berlin,", "2005. xii+519 pp."}
             }@
     SeeAlso
         SaturationStrategy
