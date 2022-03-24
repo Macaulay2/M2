@@ -51,10 +51,10 @@ class ElementArray
 {
   // disallow copy...
   // can't remove these until we stop compiling the gausser files
-  friend class ResGausser;
-  friend class ResGausserZZp;
-  friend class ResGausserQQ;
-  friend class ResGausserQQHybrid;
+  // friend class ResGausser;
+  // friend class ResGausserZZp;
+  // friend class ResGausserQQ;
+  // friend class ResGausserQQHybrid;
 
   template<typename RingType> friend class ConcreteVectorArithmetic;
 

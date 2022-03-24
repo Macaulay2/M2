@@ -77,14 +77,14 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   //   (a) coefficients are ZZ/p, for p in range.
 
   const Ring* K = origR->getCoefficients();
-  ResGausser* KK = ResGausser::newResGausser(K);
-  if (KK == 0)
-    {
-      ERROR(
-          "cannot use res(...,FastNonminimal=>true) with this type of "
-          "coefficient ring");
-      return nullptr;
-    }
+  // ResGausser* KK = ResGausser::newResGausser(K);
+  // if (KK == 0)
+  //   {
+  //     ERROR(
+  //         "cannot use res(...,FastNonminimal=>true) with this type of "
+  //         "coefficient ring");
+  //     return nullptr;
+  //   }
 
   auto mo = origR->getMonoid()->getMonomialOrdering();  // mon ordering
   auto motype = MonomialOrderingType::Weights;

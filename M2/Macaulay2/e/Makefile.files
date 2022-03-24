@@ -48,10 +48,6 @@ INTERFACE = \
 	schreyer-resolution/res-schreyer-frame \
 	schreyer-resolution/res-f4 \
 	schreyer-resolution/res-f4-computation \
-	schreyer-resolution/res-gausser \
-	schreyer-resolution/res-gausser-ZZp \
-	schreyer-resolution/res-gausser-QQ \
-	schreyer-resolution/res-gausser-QQ-hybrid \
 	f4/f4 \
 	f4/f4-mem \
 	f4/f4-monlookup \

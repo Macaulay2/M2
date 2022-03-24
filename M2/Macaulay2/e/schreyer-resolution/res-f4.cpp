@@ -1,7 +1,7 @@
 // Copyright 2014-2016 Michael E. Stillman
 
 #include "schreyer-resolution/res-f4.hpp"
-#include "schreyer-resolution/res-gausser.hpp"
+//#include "schreyer-resolution/res-gausser.hpp"
 #include "schreyer-resolution/res-schreyer-frame.hpp"
 
 #include "schreyer-resolution/res-monomial-sorter.hpp"

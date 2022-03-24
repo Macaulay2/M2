@@ -296,10 +296,10 @@ set(SRCLIST
   schreyer-resolution/res-f4-m2-interface
   schreyer-resolution/res-f4-monlookup
   schreyer-resolution/res-f4
-  schreyer-resolution/res-gausser-QQ-hybrid
-  schreyer-resolution/res-gausser-QQ
-  schreyer-resolution/res-gausser-ZZp
-  schreyer-resolution/res-gausser
+  # schreyer-resolution/res-gausser-QQ-hybrid
+  # schreyer-resolution/res-gausser-QQ
+  # schreyer-resolution/res-gausser-ZZp
+  # schreyer-resolution/res-gausser
   schreyer-resolution/res-moninfo-dense
   schreyer-resolution/res-moninfo-sparse
   schreyer-resolution/res-moninfo

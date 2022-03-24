@@ -5,7 +5,7 @@
 
 #include "VectorArithmetic.hpp"                        // for VectorArithmetic
 #include "newdelete.hpp"                               // for our_new_delete
-#include "schreyer-resolution/res-gausser.hpp"         // for what? 
+//#include "schreyer-resolution/res-gausser.hpp"         // for what? 
 #include "schreyer-resolution/res-moninfo.hpp"         // for ResMonoid
 #include "schreyer-resolution/res-monomial-types.hpp"  // for res_monomial_word
 

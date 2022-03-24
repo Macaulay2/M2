@@ -27,10 +27,10 @@
 #include "polyring.hpp"                                   // for PolynomialRing
 #include "ring.hpp"                                       // for Ring, globalZZ
 #include "schreyer-resolution/res-f4-computation.hpp"     // for F4ResComput...
-#include "schreyer-resolution/res-gausser-QQ-hybrid.hpp"  // for ResGausserQ...
-#include "schreyer-resolution/res-gausser-QQ.hpp"         // for ResGausserQQ
-#include "schreyer-resolution/res-gausser-ZZp.hpp"        // for ResGausserZZp
-#include "schreyer-resolution/res-gausser.hpp"            // for ResGausser
+//#include "schreyer-resolution/res-gausser-QQ-hybrid.hpp"  // for ResGausserQ...
+//#include "schreyer-resolution/res-gausser-QQ.hpp"         // for ResGausserQQ
+//#include "schreyer-resolution/res-gausser-ZZp.hpp"        // for ResGausserZZp
+//#include "schreyer-resolution/res-gausser.hpp"            // for ResGausser
 #include "schreyer-resolution/res-moninfo.hpp"            // for ResMonoid
 #include "schreyer-resolution/res-monomial-types.hpp"     // for res_monomia...
 #include "schreyer-resolution/res-poly-ring.hpp"          // for ResPolynomialIterator
@@ -44,6 +44,7 @@
 #include <type_traits>                                    // for move
 #include <vector>                                         // for vector, vec...
 
+#if 0
 bool ResGausserZZp::isAllowedCoefficientRing(const Ring* K) const
 {
   return K->isFinitePrimeField();
@@ -185,6 +186,7 @@ void ResGausserQQHybrid::from_ring_elem(ElementArray& result,
   //  out(std::cout, result, elems.size()-1);
   //  std::cout << " done" << std::endl;
 }
+#endif
 
 ////////////////////////////////////
 void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
