@@ -560,7 +560,7 @@ void SchreyerFrame::insertBasic(int lev, res_packed_monomial monom, int degree)
   myframe.emplace_back(FrameElement(monom, degree));
   auto& myelem = myframe[idx];
   //myelem.mSyzygy.coeffs = gausser().allocateCoefficientVector();
-  myelem.mSyzygy.coeffs = gausser().allocateElementArray();
+  myelem.mSyzygy.coeffs = vectorArithmetic().allocateElementArray();
   // The rest of this code simply sets the total monomial for the Schreyer order
   // and should be moved out of here. (MES 3 Feb 2016)
   auto& myorder = schreyerOrder(lev);
@@ -898,7 +898,7 @@ void SchreyerFrame::fillinSyzygies(int slanted_deg, int lev)
   if (M2_gbTrace >= 2)
     {
       std::cout << "done" << std::endl;
-      std::cout << "#additions so far: " << gausser().getNumAdditions()
+      std::cout << "#additions so far: " << vectorArithmetic().getNumAdditions()
                 << std::endl;
     }
 }

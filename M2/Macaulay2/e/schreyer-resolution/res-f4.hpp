@@ -35,7 +35,7 @@ class F4Res
   void construct(int lev, int degree);
 
   //  const ResGausser& resGausser() const { return mRing.resGausser(); } // TODO: remove
-  const VectorArithmetic& resGausser() const { return mRing.resGausser(); } // TODO: remove
+  //  const VectorArithmetic& resGausser() const { return mRing.resGausser(); } // TODO: remove
   const VectorArithmetic& vectorArithmetic() const { return mRing.vectorArithmetic(); }
   const ResMonoid& monoid() const { return mRing.monoid(); }
   const ResPolyRing& ring() const { return mRing; }

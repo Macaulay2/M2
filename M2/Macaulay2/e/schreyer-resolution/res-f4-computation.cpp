@@ -100,11 +100,13 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   ResPolyRing* R;
   if (origR->is_skew_commutative())
     {
-      R = new ResPolyRing(K, KK, MI, origR->getMonoid(), &(origR->getSkewInfo()));
+      //R = new ResPolyRing(K, KK, MI, origR->getMonoid(), &(origR->getSkewInfo()));
+      R = new ResPolyRing(K, MI, origR->getMonoid(), &(origR->getSkewInfo()));
     }
   else
     {
-      R = new ResPolyRing(K, KK, MI, origR->getMonoid());
+      //R = new ResPolyRing(K, KK, MI, origR->getMonoid());
+      R = new ResPolyRing(K, MI, origR->getMonoid());
     }
   auto result = new F4ResComputation(origR, R, groebnerBasisMatrix, max_level);
 

@@ -211,7 +211,7 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
   int* exp = new int[M->n_vars()];
 
   //ElementArray coeffs = R.resGausser().allocateCoefficientVector();
-  ElementArray coeffs = R.resGausser().allocateElementArray();
+  ElementArray coeffs = R.vectorArithmetic().allocateElementArray();
 
   // all these pointers (or values) are still in the element f.
   //  auto monoms = std::unique_ptr<res_monomial_word[]>(new res_monomial_word[n
@@ -221,7 +221,7 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
   res_monomial_word* nextmonom = monoms.data();
   for (gbvector* t = f; t != 0; t = t->next)
     {
-      R.resGausser().from_ring_elem(
+      R.vectorArithmetic().from_ring_elem(
           coeffs, t->coeff, f->coeff);  // note: f->coeff is assumed to be 1 for
                                         // finite fields, but for QQ both of
                                         // these are integers
@@ -268,7 +268,7 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
       M->from_expvector(exp, m1);
       ring_elem a =
           //R.resGausser().to_ring_elem(origR->getCoefficientRing(), f.coeffs, i);
-          R.resGausser().ringElemFromElementArray(f.coeffs,i);
+          R.vectorArithmetic().ringElemFromElementArray(f.coeffs,i);
       Nterm* g = origR->make_flat_term(a, m1);
       g->next = 0;
       if (last[comp] == 0)
@@ -443,7 +443,7 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
           w = w + C.ring().monoid().monomial_size(w);
           M->from_expvector(exp, m1);
           //ring_elem a = C.gausser().to_ring_elem(K, f.coeffs, i);
-	  ring_elem a = C.gausser().ringElemFromElementArray(f.coeffs, i);
+	  ring_elem a = C.vectorArithmetic().ringElemFromElementArray(f.coeffs, i);
           Nterm* g = RP->make_flat_term(a, m1);
           if (g == nullptr) continue;
           g->next = 0;
@@ -514,7 +514,7 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
             {
               //ring_elem a = C.ring().resGausser().to_ring_elem(
               //    K, f.coeffs, i.coefficient_index());
-              ring_elem a = C.ring().resGausser().ringElemFromElementArray(
+              ring_elem a = C.ring().vectorArithmetic().ringElemFromElementArray(
                   f.coeffs, i.coefficient_index());
               result->set_entry(newcomps[comp], col, a);
             }
@@ -564,7 +564,7 @@ public:
       }
   }
 
-  const Ring* ring() const { return mSchreyerFrame.gausser().get_ring(); }
+  const Ring* ring() const { return mSchreyerFrame.vectorArithmetic().get_ring(); }
 
   int numRows() const { return mNumRows; }
 
@@ -653,7 +653,7 @@ public:
             {
               mComponents.push_back(new_comp);
               long val =
-                mGenerator.mSchreyerFrame.gausser().to_modp_long(f.coeffs, i.coefficient_index());
+                mGenerator.mSchreyerFrame.vectorArithmetic().to_modp_long(f.coeffs, i.coefficient_index());
               mCoefficients.push_back(val);
             }
         }
@@ -766,7 +766,7 @@ template<typename Gen>
 int SchreyerFrame::rankUsingDenseMatrix(Gen& D, bool transposed)
 {
   unsigned int charac =
-      static_cast<unsigned int>(gausser().get_ring()->characteristic());
+      static_cast<unsigned int>(vectorArithmetic().get_ring()->characteristic());
   M2::ARingZZpFFPACK R(charac);
   DMat<M2::ARingZZpFFPACK> M(R, 0, 0);
   if (!transposed)
@@ -799,7 +799,7 @@ template<typename Gen>
 int SchreyerFrame::rankUsingDenseMatrixFlint(Gen& D, bool transposed)
 {
   unsigned int charac =
-      static_cast<unsigned int>(gausser().get_ring()->characteristic());
+      static_cast<unsigned int>(vectorArithmetic().get_ring()->characteristic());
   M2::ARingZZpFlint R(charac);
   DMat<M2::ARingZZpFlint> M(R, 0, 0);
   if (!transposed)

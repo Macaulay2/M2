@@ -51,23 +51,21 @@ class ResPolyRing : public our_new_delete
 {
  public:
   ResPolyRing(const Ring* baseRing,
-              const ResGausser* G,
+              //const ResGausser* G,
               const ResMonoid* M,
               const Monoid* origM)
-    : mResGausser(G),
-      mVectorArithmetic(baseRing),
+    : mVectorArithmetic(baseRing),
       mMonoid(M),
       mOriginalMonoid(origM),
       mSkew(nullptr)
   {
   }
   ResPolyRing(const Ring* baseRing, // usually the underlying base field, although for non-minimal complexes, it does not need to be a field.
-              const ResGausser* G,
+              //const ResGausser* G,
               const ResMonoid* M,
               const Monoid* origM,
               const SkewMultiplication* skewInfo)
-    : mResGausser(G),
-      mVectorArithmetic(baseRing),
+    : mVectorArithmetic(baseRing),
       mMonoid(M),
       mOriginalMonoid(origM),
       mSkew(skewInfo)
@@ -75,7 +73,7 @@ class ResPolyRing : public our_new_delete
   }
 
   //const ResGausser& resGausser() const { return *mResGausser; } // TODO: remove this line.
-  const VectorArithmetic& resGausser() const { return mVectorArithmetic; }
+  //const VectorArithmetic& resGausser() const { return mVectorArithmetic; }
   const VectorArithmetic& vectorArithmetic() const { return mVectorArithmetic; }
   const ResMonoid& monoid() const { return *mMonoid; }
   const Monoid& originalMonoid() const { return *mOriginalMonoid; }
@@ -87,7 +85,7 @@ class ResPolyRing : public our_new_delete
                 long& bytes_alloc) const;
 
  private:
-  std::unique_ptr<const ResGausser> mResGausser;
+  //std::unique_ptr<const ResGausser> mResGausser;
   VectorArithmetic mVectorArithmetic;
   std::unique_ptr<const ResMonoid> mMonoid;
   const Monoid* mOriginalMonoid;
@@ -109,17 +107,17 @@ class ResPolynomialConstructor
   ResPolynomialConstructor(const ResPolyRing& R) : mRing(R)
   {
     //coeffs = R.resGausser().allocateCoefficientVector();
-    coeffs = R.resGausser().allocateElementArray();
+    coeffs = R.vectorArithmetic().allocateElementArray();
   }
 
   ~ResPolynomialConstructor() {
      //mRing.resGausser().deallocate(coeffs); }
-    mRing.resGausser().deallocateElementArray(coeffs);
+    mRing.vectorArithmetic().deallocateElementArray(coeffs);
   }
   void appendMonicTerm(res_packed_monomial monom)
   {
     monoms.push_back(monom);  // a pointer
-    mRing.resGausser().pushBackOne(coeffs);
+    mRing.vectorArithmetic().pushBackOne(coeffs);
   }
 
   void pushBackTerm(res_packed_monomial monom)
@@ -131,7 +129,7 @@ class ResPolynomialConstructor
   void setPoly(ResPolynomial& result)
   {
     ncalls++;
-    result.len = static_cast<int>(mRing.resGausser().size(coeffs));
+    result.len = static_cast<int>(mRing.vectorArithmetic().size(coeffs));
     std::swap(result.coeffs, coeffs);
     result.monoms.resize(result.len * mRing.monoid().max_monomial_size());
 
@@ -210,7 +208,7 @@ inline void display_poly(std::ostream& o, const ResPolyRing& R, const ResPolynom
   for (auto it = ResPolynomialIterator(R, f); it != end; ++it, ++i)
     {
       //R.resGausser().out(o, f.coeffs, i);
-      R.resGausser().displayElement(o, f.coeffs, i);
+      R.vectorArithmetic().displayElement(o, f.coeffs, i);
       res_const_packed_monomial mon = it.monomial();
       R.monoid().showAlpha(mon);
     }

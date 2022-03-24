@@ -87,7 +87,7 @@ class SchreyerFrame
   const ResMonoid& monoid() const { return mRing.monoid(); }
   const ResPolyRing& ring() const { return mRing; }
   //const ResGausser& gausser() const { return mRing.resGausser(); } // TODO: remove this line
-  const VectorArithmetic& gausser() const { return mRing.resGausser(); }
+  const VectorArithmetic& vectorArithmetic() const { return mRing.vectorArithmetic(); }
   
   // This is where we place the monomials in the frame
   // This requires some care from people calling this function
