@@ -1611,6 +1611,7 @@ engineDebugLevelS := dummySymbol;
 debuggingModeS := dummySymbol;
 errorDepthS := dummySymbol;
 gbTraceS := dummySymbol;
+numTBBThreadsS := dummySymbol;
 numericalAlgebraicGeometryTraceS := dummySymbol;
 debuggerHookS := dummySymbol;
 lineNumberS := dummySymbol;
@@ -1655,7 +1656,8 @@ syms := SymbolSequence(
      (  debuggingModeS = setupvarThread("debuggingMode",toExpr(debuggingMode));  debuggingModeS  ),
      (  defaultPrecisionS = setupvar("defaultPrecision",toExpr(defaultPrecision));  defaultPrecisionS  ),
      (  errorDepthS = setupvar("errorDepth",toExpr(errorDepth));  errorDepthS  ),
-     (  gbTraceS = setupvar("gbTrace",toExpr(gbTrace));  gbTraceS  ),
+     (  gbTraceS = setupvar("gbTrace",toExpr(gbTrace));  gbTraceS  ), 
+     (  numTBBThreadsS = setupvar("numTBBThreads",toExpr(numTBBThreads));  numTBBThreadsS  ),
      (  numericalAlgebraicGeometryTraceS = setupvar("numericalAlgebraicGeometryTrace",toExpr(numericalAlgebraicGeometryTrace));  numericalAlgebraicGeometryTraceS  ),
      (  debuggerHookS = setupvar("debuggerHook",debuggerHook);  debuggerHookS  ),
      (  lineNumberS = setupvar("lineNumber",toExpr(lineNumber));  lineNumberS  ),
@@ -1771,6 +1773,10 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 		    else if sym === engineDebugLevelS then (engineDebugLevel = n; e)
 		    else if sym === recursionLimitS then (recursionLimit = n; e)
 		    else if sym === lineNumberS then (lineNumber = n; e)
+		    else if sym === numTBBThreadsS then (
+			 if n < 0 then return buildErrorPacket("numTBBThreads cannot be set to negative value");
+             numTBBThreads = n;
+             e)
 		    else if sym === allowableThreadsS then (
 			 if n < 1 || n > Ccode( int, " getMaxAllowableThreads() " ) 
 			 then return buildErrorPacket("allowableThreads: expected integer in range 1 .. " + tostring(Ccode( int, " getMaxAllowableThreads() " )));
@@ -1800,6 +1806,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 		    || sym === printingLeadLimitS
 		    || sym === printingTrailLimitS
 		    || sym === gbTraceS
+            || sym === numTBBThreadsS
 		    || sym === numericalAlgebraicGeometryTraceS
 		    || sym === printWidthS
 		    then (when sym is s:SymbolClosure do s.symbol.word.name else "") + ": expected a small integer"

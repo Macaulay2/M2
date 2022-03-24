@@ -3,11 +3,15 @@
 ## memtailor, mathic, and mathicgb are also imported as subdirectories here
 ## - run unit tests:  ctest -R unit-tests (includes mathicgb and friends)
 
-set(with_tbb true) # for mathicgb
+set(with_tbb ${WITH_TBB}) # for mathicgb
 
 add_subdirectory(memtailor)
 add_subdirectory(mathic)
 add_subdirectory(mathicgb)
+
+target_compile_options(mathicgb PRIVATE
+  -Wall -Wextra -Wno-unused-parameter -Wno-unused-value -Wno-unused-variable -Wno-sign-compare
+  )
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging
   add_compile_definitions(MEMT_DEBUG MATHIC_DEBUG MATHICGB_DEBUG)

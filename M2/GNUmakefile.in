@@ -83,14 +83,15 @@ ifneq (@host_alias@,)
 # it was ../configure --build=@host_alias@ (for cross compiling)
 SUBMODULE_CONFIGOPTIONS += --host=@host_alias@
 endif
-#copy-license-files-from-memtailor: LICENSE_FILES = README.md license.txt
-#copy-license-files-from-mathic: LICENSE_FILES = README.md lgpl-*
-##copy-license-files-from-mathicgb: LICENSE_FILES = README.md gpl-*
+copy-license-files-from-memtailor: LICENSE_FILES = README.md license.txt
+copy-license-files-from-mathic: LICENSE_FILES = README.md lgpl-*
+copy-license-files-from-mathicgb: LICENSE_FILES = README.md gpl-*
 
 # the Makefile is the target used to run "configure" in the submodule:
-##submodules/mathicgb/Makefile : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes # possibly add this option? --with-tbb
-# submodules/mathic/Makefile   : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes
-# submodules/memtailor/Makefile: SUBMODULE_CONFIGOPTIONS += --with-gtest=yes
+submodules/mathicgb/Makefile : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes \
+	--disable-cli # possibly add this option? --with-tbb
+submodules/mathic/Makefile   : SUBMODULE_CONFIGOPTIONS += --with-gtest=yes
+submodules/memtailor/Makefile: SUBMODULE_CONFIGOPTIONS += --with-gtest=yes
 submodules/fflas_ffpack/Makefile: LIBS += @LINALGLIBS@
 
 # Note: we don't necessarily use the "install" target of submodules, even
@@ -106,15 +107,15 @@ BUILDSUBTARGETS = check all run-configure check install
 SUBTARGETS = clean distclean
 GITSUBTARGETS = git-clean git-update git-status git-describe
 
-## ifneq (,$(findstring memtailor,@BUILDSUBLIST@))
-## all-in-mathicgb all-in-mathic:all-in-memtailor
-## endif
+ifneq (,$(findstring memtailor,@BUILDSUBLIST@))
+all-in-mathicgb all-in-mathic:all-in-memtailor
+endif
 
-# ifneq (,$(findstring mathic ,@BUILDSUBLIST@))
-# all-in-mathicgb:all-in-mathic
-# endif
+ifneq (,$(findstring mathic ,@BUILDSUBLIST@))
+all-in-mathicgb:all-in-mathic
+endif
 
-# all-in-mathicgb:all-in-mathic all-in-memtailor
+all-in-mathicgb:all-in-mathic all-in-memtailor
 
 $(foreach t,$(BUILDSUBTARGETS),$(eval $t:$t-in-submodules))
 
@@ -182,10 +183,12 @@ submodules/$1/Makefile:@srcdir@/submodules/$1/configure @srcdir@/submodules/$1/M
 		LDLIBS="$$(LDLIBS)"							\
 		LIBS="$$(LIBS)"								\
 		$$(SUBMODULE_CONFIGOPTIONS)
-@srcdir@/submodules/$1/configure.ac:
-ifeq (@DOWNLOAD@,yes)
-	cd @srcdir@/.. && git submodule update --init M2/submodules/$1
-else
+
+@srcdir@/submodules/$1/configure.ac: $(if $(or $(filter yes, @DOWNLOAD@), \
+	$(filter $1, memtailor mathic mathicgb)), \
+	git-checkout-in-$1, git-checkout-warning-for-$1)
+
+git-checkout-warning-for-$1:
 	@ echo "error: for the submodule \"$1\"" >&2
 	@ echo "       the source code is not present in the directory \"submodules/$1\"" >&2
 	@ echo "       so either run 'git submodule update --init' in the source tree" >&2
@@ -194,7 +197,7 @@ else
 	@ echo "       To clone a repository together with its submodules, add the option" >&2
 	@ echo "       '--recursive' to the 'git clone' command." >&2
 	@ false
-endif
+
 @srcdir@/submodules/$1/configure @srcdir@/submodules/$1/Makefile.in: @srcdir@/submodules/$1/configure.ac @srcdir@/submodules/$1/Makefile.am
 	cd @srcdir@/submodules/$1 && NOCONFIGURE=1 ./autogen.sh
 endef
@@ -204,6 +207,9 @@ $(foreach s,@BUILDSUBLIST@,$(eval $(call build-submodule-rules,$s)))
 # installation into usr-dist
 ## It's annoying that fflas_ffpack will copy the files during installation every time.
 all-in-fflas_ffpack: install-in-fflas_ffpack
+all-in-memtailor:    install-in-memtailor
+all-in-mathic:       install-in-mathic
+all-in-mathicgb:     install-in-mathicgb
 
 ifeq (@BUILD_givaro@,yes)
 # fflas_ffpack depends on givaro, so if they both get built, then build givaro first.
@@ -211,11 +217,7 @@ ifeq (@BUILD_givaro@,yes)
 submodules/fflas_ffpack/Makefile: install-in-givaro
 endif
 
-ifeq "@DEVELOPMENT@" "yes"
 all-in-Macaulay2: all-in-submodules
-else
-all-in-Macaulay2: all-in-submodules git-checkout-in-memtailor git-checkout-in-mathic git-checkout-in-mathicgb
-endif
 
 ## 
 distclean:clean distclean-in-subdirs distclean-this-dir
