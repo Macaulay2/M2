@@ -544,6 +544,7 @@ public:
   }
 
   // We want to remove this function!
+  // TODO: Decide what to do with this function
   void from_ring_elem(ElementArray& coeffs, ring_elem numer, ring_elem denom) const
   // Appends numer/denom to coeffs array
   {
@@ -690,9 +691,9 @@ public:
     return std::visit([&](auto& arg) -> const Ring* { return arg->ring(); }, mConcreteVector);
   }
 
-  const Ring* get_ring() const {
-    return std::visit([&](auto& arg) -> const Ring* { return arg->ring(); }, mConcreteVector);
-  }
+  //const Ring* get_ring() const {
+  //  return std::visit([&](auto& arg) -> const Ring* { return arg->ring(); }, mConcreteVector);
+  //}
   
   // provide simple visitor interface to underlying std::variant types
   size_t size(const ElementArray& coeffs) const {
@@ -765,7 +766,6 @@ public:
     std::visit([&](auto& arg) { arg->denseCancelFromSparse(dense,coeffs,comps,result_multipler); }, mConcreteVector);
   }
 
-  // TODO: Think about a way to remove these two versions of the function.
   //void sparseCancel(ElementArray& dense,
   //void denseCancelFromSparse(ElementArray& dense,
   //                           const ElementArray& sparse,
