@@ -18,8 +18,7 @@ newPackage( "RationalMaps",
     }, --this file is in the public domain
     Keywords => {"Commutative Algebra"},
     Headline => "rational maps between varieties", 
-    PackageExports => {"FastMinors"},
-    DebuggingMode => true
+    PackageExports => {"FastMinors"}    
 )
 --Hassanzadeh was supported by CNPq-bolsa de Produtividade and by the MathAmSud project ``ALGEO''
 --Schwede was supported in part by the NSF FRG Grant DMS \#1265261/1501115, NSF CAREER Grant DMS \#1252860/1501102, NSF Grants DMS \#1840190 and DMS \#2101800.
