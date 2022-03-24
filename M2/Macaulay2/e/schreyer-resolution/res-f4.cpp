@@ -566,7 +566,9 @@ void F4Res::gaussReduce()
                   mRing.vectorArithmetic().denseCancelFromSparse(
                       gauss_row,
                       mReducers[firstcol].mCoeffs,
-                      mReducers[firstcol].mComponents.data());
+                      Range(mReducers[firstcol].mComponents.data(),
+                            mReducers[firstcol].mComponents.data() +
+                            mRing.vectorArithmetic().size(mReducers[firstcol].mCoeffs)));
                 }
               else
                 {
@@ -574,7 +576,9 @@ void F4Res::gaussReduce()
                   mRing.vectorArithmetic().denseCancelFromSparse(
                       gauss_row,
                       mReducers[firstcol].mCoeffs,
-                      mReducers[firstcol].mComponents.data(),
+                      Range(mReducers[firstcol].mComponents.data(),
+                            mReducers[firstcol].mComponents.data() +
+                            mRing.vectorArithmetic().size(mReducers[firstcol].mCoeffs)),
                       result.coefficientInserter());
 
 #ifdef DEBUG_GAUSS

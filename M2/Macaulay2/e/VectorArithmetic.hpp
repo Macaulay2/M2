@@ -252,22 +252,22 @@ public:
   //void sparseCancel(ElementArray& dense,
   // find a way to remove these next two functions.
   // the issue seems to be the caller doesn't know the size, perhaps?
-  void denseCancelFromSparse(ElementArray& dense,
-                             const ElementArray& sparse,
-                             int* comps,
-                             ElementArray& result_loc) const
-  {
-    auto& svec = * elementArray(sparse);
-    denseCancelFromSparse(dense, sparse, Range(comps, comps + svec.size()), result_loc);
-  }
+  //void denseCancelFromSparse(ElementArray& dense,
+  //                           const ElementArray& sparse,
+  //                           int* comps,
+  //                           ElementArray& result_loc) const
+  //{
+  //  auto& svec = * elementArray(sparse);
+  //  denseCancelFromSparse(dense, sparse, Range(comps, comps + svec.size()), result_loc);
+  //}
 
-  void denseCancelFromSparse(ElementArray dense,
-                             const ElementArray sparse,
-                             int* comps) const
-  {
-    auto& svec = * elementArray(sparse);
-    denseCancelFromSparse(dense, sparse, Range(comps, comps + svec.size()));
-  }
+  //void denseCancelFromSparse(ElementArray dense,
+  //                           const ElementArray sparse,
+  //                           int* comps) const
+  //{
+  //  auto& svec = * elementArray(sparse);
+  //  denseCancelFromSparse(dense, sparse, Range(comps, comps + svec.size()));
+  //}
   
   int denseNextNonzero(ElementArray& dense,
                        int first,
@@ -577,9 +577,11 @@ inline long ConcreteVectorArithmetic<M2::ARingZZpFFPACK>::to_modp_long(ElementAr
 }
 
 template<>
-inline void ConcreteVectorArithmetic<M2::ARingQQGMP>::from_ring_elem(ElementArray& coeffs, ring_elem numer, ring_elem denom) const
+inline void ConcreteVectorArithmetic<M2::ARingQQGMP>::from_ring_elem(ElementArray& coeffs,
+                                                                     ring_elem numer,
+                                                                     ring_elem denom) const
 {
-  // TODO: this will fail: input is alas ZZ integers... not QQ elements...
+    // TODO: this will fail: input is alas ZZ integers... not QQ elements...
     auto& svec = * elementArray(coeffs);
     ring_elem val = numer;
     FieldElement inumer;
@@ -602,10 +604,10 @@ inline void ConcreteVectorArithmetic<M2::ARingQQGMP>::from_ring_elem(ElementArra
 }
 
 // `overloaded` construct (not standard until C++20)
-template<class... Ts> 
-struct overloaded : Ts... { using Ts::operator()...; };
+//template<class... Ts> 
+//struct overloaded : Ts... { using Ts::operator()...; };
 
-template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+//template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 // this is the dispatching class using std::variant
 class VectorArithmetic
@@ -765,21 +767,21 @@ public:
 
   // TODO: Think about a way to remove these two versions of the function.
   //void sparseCancel(ElementArray& dense,
-  void denseCancelFromSparse(ElementArray& dense,
-                             const ElementArray& sparse,
-                             int* comps,
-                             ElementArray& result_loc) const {
+  //void denseCancelFromSparse(ElementArray& dense,
+  //                           const ElementArray& sparse,
+  //                           int* comps,
+  //                           ElementArray& result_loc) const {
     //std::visit([&](auto& arg) { arg->sparseCancel(dense,sparse,comps,result_loc); }, mConcreteVector);
-    std::visit([&](auto& arg) { arg->denseCancelFromSparse(dense,sparse,comps,result_loc); }, mConcreteVector);
-  }
+  //  std::visit([&](auto& arg) { arg->denseCancelFromSparse(dense,sparse,comps,result_loc); }, mConcreteVector);
+  //}
 
   //void sparseCancel(ElementArray& dense,
-  void denseCancelFromSparse(ElementArray& dense,
-                             const ElementArray& sparse,
-                             int* comps) const {
+  //void denseCancelFromSparse(ElementArray& dense,
+  //                           const ElementArray& sparse,
+  //                           int* comps) const {
     //std::visit([&](auto& arg) { arg->sparseCancel(dense,sparse,comps); }, mConcreteVector);
-    std::visit([&](auto& arg) { arg->denseCancelFromSparse(dense,sparse,comps); }, mConcreteVector);
-  }
+  //  std::visit([&](auto& arg) { arg->denseCancelFromSparse(dense,sparse,comps); }, mConcreteVector);
+  //}
   
   int denseNextNonzero(ElementArray& dense,
                           int first,
