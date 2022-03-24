@@ -1934,7 +1934,7 @@ parametrizeFanoFourfold EmbeddedProjectiveVariety := o -> X -> (
         C := line(X,p) + line(X,p);
         if degree C != 2 then error "something went wrong while finding conic on fourfold";
         return inverse3 multirationalMap rationalMap(sub(ideal C,ring X),1);
-    );
+    );  
     if o.Strategy =!= 1 then error "strategy not available";
     parametrize X
 );
@@ -1946,7 +1946,7 @@ parametrizeFanoFourfold EmbeddedProjectiveVariety := o -> X -> (
 inverse3 = method();
 inverse3 RationalMap := psi -> (
     if psi#"inverseRationalMap" =!= null then return psi#"inverseRationalMap";
-    phi := rationalMap inverseOfMap(map psi,CheckBirational=>false,AssumeDominant=>true,MinorsCount=>0,Verbose=>false); 
+    phi := rationalMap map inverseOfMap(map psi,CheckBirational=>false,AssumeDominant=>true,QuickRank=>false,MinorsLimit=>0,Verbosity=>0); 
     forceInverseMap(phi,psi); 
     phi
 );
@@ -2936,11 +2936,11 @@ for dg in {(2,0),(3,1),(4,1),(5,1),(4,3),(6,4),(8,5),(10,6),(12,7),(14,8),(16,9)
     <<"(d,g) = "<<dg<<endl;
     X = fanoFourfold dg;
     assert(dim X == 4 and degree X == dg_0 and (genera ideal X)_3 == dg_1);
-    if member(dg,{(2,0),(4,1),(5,1),(16,9)}) then (
-        time f = parametrizeFanoFourfold X;
+    if member(dg,{(2,0),(4,1),(5,1),(16,9)}) then (        
+        time f = parametrizeFanoFourfold X;        
         assert(source f == ambient source f and dim source f == 4);
         assert(target f === X);
-        g = f#"inverse";
+        g = f#"inverse";        
         assert(g =!= null);
         p = point source f;
         assert(g f p == p);
