@@ -96,9 +96,10 @@ runExample String := BettiTally => opts -> (prefix) -> (
     tim2 := elapsedTiming minimalBetti I1;
     B := tim2#1;
     F := openOutAppend timefilename;
-    F << " times: (" << tim1#0 << " " << tim2#0 << ") "  << " " << opts.Comment << get "!date";
+    comment := if opts.Comment == "" then "" else "["|opts.Comment|"] ";
+    F << " times: (" << tim1#0 << " " << tim2#0 << ") "  << " " << comment << get "!date";
     close F;
-    << " times: (" << tim1#0 << " " << tim2#0 << ") "  << " " << opts.Comment << get "!date";    
+    << " times: (" << tim1#0 << " " << tim2#0 << ") "  << " " << comment << " " << get "!date";    
     B
     )
 
@@ -127,7 +128,7 @@ getAGR(ZZ,ZZ,ZZ) := Ideal => opts -> args -> (
     elapsedTime value get filename
     )
 
-runAGR = method(Options => options makeExampleFile)
+runAGR = method(Options => options runExample)
 runAGR(ZZ,ZZ,ZZ,ZZ) :=
 runAGR(ZZ,ZZ,ZZ) := BettiTally => opts -> args -> (
     prefix := prefixAGR args;
@@ -152,7 +153,7 @@ getCNC ZZ := Ideal => opts -> (g) -> (
     elapsedTime value get filename
     )
 
-runCNC = method(Options => options makeExampleFile)
+runCNC = method(Options => options runExample)
 runCNC ZZ := BettiTally => opts -> g -> runExample(prefixCNC g, opts)
 
 prefixPCNC = method()
@@ -180,7 +181,7 @@ getPCNC(ZZ, ZZ) := Ideal => opts -> (g, p) -> (
     )
 getPCNC ZZ := Ideal => opts -> g -> getPCNC(g, 101)
 
-runPCNC = method(Options => options makeExampleFile)
+runPCNC = method(Options => options runExample)
 runPCNC ZZ := BettiTally => opts -> g -> runExample(prefixPCNC g, opts)
 runPCNC(ZZ,ZZ) := BettiTally => opts -> (g, p) -> runExample(prefixPCNC(g,p), opts)
 
@@ -818,7 +819,7 @@ viewHelp "ExamplesFreeResolutions"
   -- and PCNC (prym canonical nodal curves).
   restart
   debug needsPackage "ExamplesFreeResolutions"
-  dir = "./Foo/"
+  dir = "./ExamplesFreeResolutions/ExamplesAndTimings/"
 
   elapsedTime for i from 3 to 16 do (   -- 168 seconds, Mac M1 Max, 19 March 2022
       setRandomSeed "resolutions";
@@ -858,38 +859,37 @@ TEST ///
   restart
   debug needsPackage "ExamplesFreeResolutions"
   dir = "./Foo/"
-
+  dir = "./ExamplesFreeResolutions/ExamplesAndTimings/"
+  comment = "MES M1 max git 2377498d9"
   -- CNC curves
   for i from 6 to 15 do (
-      assert(elapsedTime runCNC(i, Directory => dir) === bettiCNC#i);
+      assert(elapsedTime runCNC(i, Directory => dir, Comment => comment) === bettiCNC#i);
       )
 
   -- PCNC curves
   for i from 9 to 16 do (
-      assert(elapsedTime runPCNC(i, 32003, Directory => dir) === bettiPCNC#i);
+      assert(elapsedTime runPCNC(i, 32003, Directory => dir, Comment => comment) === bettiPCNC#i);
       )
   
   -- AGR examples
   deg = 2;
-  for nv from 6 to 10 list elapsedTime runAGR(deg,nv,10007, Directory => dir)
+  for nv from 6 to 10 list elapsedTime runAGR(deg,nv,10007, Directory => dir, Comment => comment)
 
   deg = 3;
-  for nv from 6 to 10 list elapsedTime runAGR(deg,nv,10007, Directory => dir)
+  for nv from 6 to 10 list elapsedTime runAGR(deg,nv,10007, Directory => dir, Comment => comment)
 
   deg = 4;
-  for nv from 6 to 10 list elapsedTime runAGR(deg,nv,10007, Directory => dir)
+  for nv from 6 to 10 list elapsedTime runAGR(deg,nv,10007, Directory => dir, Comment => comment)
 
   deg = 5;
-  for nv from 6 to 10 list elapsedTime runAGR(deg,nv,10007, Directory => dir)
-  -- note: (5,10): is not a generic resolution numerically (1 extra syzygy).
+  for nv from 6 to 10 list elapsedTime runAGR(deg,nv,10007, Directory => dir, Comment => comment)
+  -- note: (5,10): is not a generic resolution numerically (1 extra syzygy)?
 
   deg = 6;
-  for nv from 6 to 9 list elapsedTime runAGR(deg,nv,10007, Directory => dir)
+  for nv from 6 to 9 list elapsedTime runAGR(deg,nv,10007, Directory => dir, Comment => comment)
 
   deg = 7;
-  for nv from 6 to 9 list elapsedTime runAGR(deg,nv,10007, Directory => dir)
-
-  -- Now let's consider AGR examples with different number of 
+  for nv from 6 to 9 list elapsedTime runAGR(deg,nv,10007, Directory => dir, Comment => comment)
 
 ///
 
