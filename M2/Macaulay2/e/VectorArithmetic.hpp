@@ -555,8 +555,6 @@ inline void ConcreteVectorArithmetic<M2::ARingQQGMP>::from_ring_elem(ElementArra
 // this is the dispatching class using std::variant
 class VectorArithmetic
 {
-  using ElementArray = ElementArray;
-
   // does the order of the variant types matter?
   using CVA_Type = std::variant<ConcreteVectorArithmetic<M2::ARingZZpFlint>*,
                                 ConcreteVectorArithmetic<M2::ARingGFFlintBig>*,
