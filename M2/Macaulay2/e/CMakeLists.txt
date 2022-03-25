@@ -287,7 +287,6 @@ set(SRCLIST
   f4/f4-monlookup
   f4/f4-spairs
   f4/f4
-  f4/gausser
   f4/hilb-fcn
   f4/monhashtable
   f4/moninfo
@@ -296,10 +295,6 @@ set(SRCLIST
   schreyer-resolution/res-f4-m2-interface
   schreyer-resolution/res-f4-monlookup
   schreyer-resolution/res-f4
-  # schreyer-resolution/res-gausser-QQ-hybrid
-  # schreyer-resolution/res-gausser-QQ
-  # schreyer-resolution/res-gausser-ZZp
-  # schreyer-resolution/res-gausser
   schreyer-resolution/res-moninfo-dense
   schreyer-resolution/res-moninfo-sparse
   schreyer-resolution/res-moninfo

@@ -58,7 +58,6 @@ INTERFACE = \
 	f4/monhashtable \
 	monsort \
 	f4/moninfo \
-	f4/gausser \
 	betti \
 	GF \
 	ZZ \

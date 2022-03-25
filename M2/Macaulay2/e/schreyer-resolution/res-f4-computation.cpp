@@ -77,15 +77,6 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   //   (a) coefficients are ZZ/p, for p in range.
 
   const Ring* K = origR->getCoefficients();
-  // ResGausser* KK = ResGausser::newResGausser(K);
-  // if (KK == 0)
-  //   {
-  //     ERROR(
-  //         "cannot use res(...,FastNonminimal=>true) with this type of "
-  //         "coefficient ring");
-  //     return nullptr;
-  //   }
-
   auto mo = origR->getMonoid()->getMonomialOrdering();  // mon ordering
   auto motype = MonomialOrderingType::Weights;
   if (moIsLex(mo))
@@ -100,12 +91,10 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   ResPolyRing* R;
   if (origR->is_skew_commutative())
     {
-      //R = new ResPolyRing(K, KK, MI, origR->getMonoid(), &(origR->getSkewInfo()));
       R = new ResPolyRing(K, MI, origR->getMonoid(), &(origR->getSkewInfo()));
     }
   else
     {
-      //R = new ResPolyRing(K, KK, MI, origR->getMonoid());
       R = new ResPolyRing(K, MI, origR->getMonoid());
     }
   auto result = new F4ResComputation(origR, R, groebnerBasisMatrix, max_level);

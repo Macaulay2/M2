@@ -14,10 +14,6 @@
 //   . gb_array: 3 routines commented out, due to using these.
 //   . need a display routine for Polynomial, also one that limits the number of
 //   monomials displayed
-// res-gausser
-//   . don't use gc
-//   . perhaps define CoefficientArray in this class, so it is easily changed
-//   . don't yet use ARing stuff.
 // res-f4-types.hpp
 //   . has lots of junk (most already commented out)
 
@@ -35,7 +31,6 @@
 #include <utility>                                     // for pair
 #include <vector>                                      // for vector
 
-class ResGausser;
 struct StopConditions;
 class F4Res;
 
@@ -86,7 +81,6 @@ class SchreyerFrame
 
   const ResMonoid& monoid() const { return mRing.monoid(); }
   const ResPolyRing& ring() const { return mRing; }
-  //const ResGausser& gausser() const { return mRing.resGausser(); } // TODO: remove this line
   const VectorArithmetic& vectorArithmetic() const { return mRing.vectorArithmetic(); }
   
   // This is where we place the monomials in the frame
@@ -133,7 +127,6 @@ class SchreyerFrame
   void setBettiDisplays();
   int rank(int slanted_degree, int lev);  // rank of the degree 'degree' map of
                                           // scalars level 'lev' to 'lev-1'.
-  //  int rankUsingSparseMatrix(int slanted_degree, int lev);
 
   template<typename Gen>
   int rankUsingSparseMatrix(Gen& D);

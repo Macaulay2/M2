@@ -1,9 +1,7 @@
 // Copyright 2014-2016 Michael E. Stillman
 
 #include "schreyer-resolution/res-f4.hpp"
-//#include "schreyer-resolution/res-gausser.hpp"
 #include "schreyer-resolution/res-schreyer-frame.hpp"
-
 #include "schreyer-resolution/res-monomial-sorter.hpp"
 
 #include "ExponentVector.hpp"
@@ -88,13 +86,11 @@ void F4Res::clearMatrix()
 
   for (auto& f : mReducers)
     {
-      //mRing.resGausser().deallocate(f.mCoeffs);
       mRing.vectorArithmetic().deallocateElementArray(f.mCoeffs);
     }
 
   for (auto& f : mSPairs)
     {
-      //mRing.resGausser().deallocate(f.mCoeffs);
       mRing.vectorArithmetic().deallocateElementArray(f.mCoeffs);
     }
 
@@ -231,7 +227,6 @@ void F4Res::loadRow(Row& r)
 {
   //  std::cout << "loadRow: " << std::endl;
 
-  //r.mCoeffs = resGausser().allocateCoefficientVector();
   r.mCoeffs = vectorArithmetic().allocateElementArray();
 
   //  monoid().showAlpha(r.mLeadTerm);
@@ -486,12 +481,11 @@ void F4Res::gaussReduce()
   // corresponding syzygy, which is auto-reduced and correctly ordered.
 
   // allocate a dense row, of correct size
-  //ElementArray gauss_row = mRing.resGausser().allocateCoefficientVector(
   ElementArray gauss_row = mRing.vectorArithmetic().allocateElementArray(
       static_cast<ComponentIndex>(mColumns.size()));
   //  std::cout << "gauss_row: " << (gauss_row.isNull() ? "null" : "not-null")
   //  << std::endl;
-  //  std::cout << "gauss_row size: " << mRing.resGausser().size(gauss_row) <<
+  //  std::cout << "gauss_row size: " << mRing.vectorArithmetic().size(gauss_row) <<
   //  std::endl;
 
   for (long i = 0; i < mSPairs.size(); i++)
@@ -525,7 +519,6 @@ void F4Res::gaussReduce()
           std::cout << "about to fill from sparse " << i << std::endl;
 #endif
 
-          //mRing.resGausser().fillFromSparse(
           mRing.vectorArithmetic().fillDenseArray(
               gauss_row,
               r.mCoeffs,
@@ -547,14 +540,11 @@ void F4Res::gaussReduce()
                                               : "not-null")
                         << std::endl;
               std::cout << "  dense: ";
-              //mRing.resGausser().debugDisplay(std::cout, gauss_row)
               mRing.vectorArithmetic().displayElementArray(std::cout, gauss_row)
                   << std::endl;
-              //mRing.resGausser().debugDisplay(std::cout,
               mRing.vectorArithmetic().displayElementArray(std::cout,
                                               mReducers[firstcol].mCoeffs);
               std::cout << std::endl;
-              //mRing.resGausser().debugDisplay(std::cout,
               mRing.vectorArithmetic().displayElementArray(std::cout,
                                               result.coefficientInserter());
               std::cout << std::endl;
@@ -562,7 +552,6 @@ void F4Res::gaussReduce()
 
               if (onlyConstantMaps and not track[firstcol])
                 {
-                  //mRing.resGausser().sparseCancel(
                   mRing.vectorArithmetic().denseCancelFromSparse(
                       gauss_row,
                       mReducers[firstcol].mCoeffs,
@@ -572,7 +561,6 @@ void F4Res::gaussReduce()
                 }
               else
                 {
-                  //mRing.resGausser().sparseCancel(
                   mRing.vectorArithmetic().denseCancelFromSparse(
                       gauss_row,
                       mReducers[firstcol].mCoeffs,
@@ -583,14 +571,11 @@ void F4Res::gaussReduce()
 
 #ifdef DEBUG_GAUSS
                   std::cout << "  done with sparseCancel" << std::endl;
-                  //mRing.resGausser().debugDisplay(std::cout, gauss_row)
                   mRing.vectorArithmetic().displayElementArray(std::cout, gauss_row)
                      << std::endl;
-                  //mRing.resGausser().debugDisplay(std::cout,
                   mRing.vectorArithmetic().displayElementArray(std::cout,
                                                   mReducers[firstcol].mCoeffs)
                       << std::endl;
-                  //mRing.resGausser().debugDisplay(std::cout,
                   mRing.vectorArithmetic().displayElementArray(std::cout,
                                                   result.coefficientInserter())
                       << std::endl;
@@ -615,7 +600,6 @@ void F4Res::gaussReduce()
       std::cout << "just set syz" << std::endl;
 #endif
     }
-  //mRing.resGausser().deallocate(gauss_row);
   mRing.vectorArithmetic().deallocateElementArray(gauss_row);
 }
 
@@ -705,7 +689,6 @@ void F4Res::debugOutputMatrixSparse(std::vector<Row>& rows)
   for (ComponentIndex i = 0; i < rows.size(); i++)
     {
       std::cout << "coeffs[" << i << "] = ";
-      //mRing.resGausser().debugDisplay(std::cout, rows[i].mCoeffs);
       mRing.vectorArithmetic().displayElementArray(std::cout, rows[i].mCoeffs);
       std::cout << " comps = ";
       for (long j = 0; j < rows[i].mComponents.size(); ++j)
@@ -718,7 +701,6 @@ void F4Res::debugOutputMatrix(std::vector<Row>& rows)
 {
   for (ComponentIndex i = 0; i < rows.size(); i++)
     {
-      //mRing.resGausser().debugDisplayRow(std::cout,
       mRing.vectorArithmetic().displayAsDenseArray(std::cout,
                                              static_cast<int>(mColumns.size()),
                                              rows[i].mCoeffs,

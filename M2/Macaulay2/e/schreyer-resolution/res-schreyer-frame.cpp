@@ -558,7 +558,6 @@ void SchreyerFrame::insertBasic(int lev, res_packed_monomial monom, int degree)
   long idx = myframe.size();
   myframe.emplace_back(FrameElement(monom, degree));
   auto& myelem = myframe[idx];
-  //myelem.mSyzygy.coeffs = gausser().allocateCoefficientVector();
   myelem.mSyzygy.coeffs = vectorArithmetic().allocateElementArray();
   // The rest of this code simply sets the total monomial for the Schreyer order
   // and should be moved out of here. (MES 3 Feb 2016)

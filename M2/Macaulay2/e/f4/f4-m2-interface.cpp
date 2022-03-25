@@ -1,7 +1,6 @@
 // Copyright 2005-2021 Michael E. Stillman
 
 #include "f4/f4-m2-interface.hpp"
-#include "f4/gausser.hpp"              // for Gausser
 #include "f4/moninfo.hpp"              // for monomial_word, MonomialInfo
 #include "f4/ntuple-monomial.hpp"      // for ntuple_word
 #include "freemod.hpp"                 // for FreeModule
