@@ -3,6 +3,7 @@
 #include "monideal.hpp"
 #include "monoid.hpp"
 #include "text-io.hpp"
+#include "finalize.hpp" // for keepAlive
 
 unsigned int MonomialIdeal::computeHashValue() const
 {
@@ -174,6 +175,7 @@ bool MonomialIdeal::is_equal(const MonomialIdeal &mi0) const
       i++;
       j++;
     }
+  keepAlive(&mi0);
   return true;
 }
 
@@ -619,6 +621,7 @@ MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
           }
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
+  keepAlive(&J);
   return result;
 }
 
@@ -649,6 +652,7 @@ MonomialIdeal *MonomialIdeal::operator*(const MonomialIdeal &J) const
         new_elems.insert(b);
       }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
+  keepAlive(&J);
   return result;
 }
 
@@ -666,6 +670,7 @@ MonomialIdeal *MonomialIdeal::operator+(const MonomialIdeal &J) const
       new_elems.insert(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
+  keepAlive(&J);
   return result;
 }
 
@@ -683,6 +688,7 @@ MonomialIdeal *MonomialIdeal::operator-(const MonomialIdeal &J) const
           result->insert_minimal(b);
         }
     }
+  keepAlive(&J);
   return result;
 }
 
@@ -714,6 +720,7 @@ MonomialIdeal *MonomialIdeal::quotient(const MonomialIdeal &J) const
       delete result;
       result = next_result;
     }
+  keepAlive(&J);
   return result;
 }
 
@@ -792,6 +799,7 @@ MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
       delete result;
       result = next_result;
     }
+  keepAlive(&J);
   return result;
 }
 

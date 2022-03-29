@@ -3,6 +3,12 @@
 #include "finalize.hpp"
 #include "engine-includes.hpp"
 
+void keepAlive(const void*)
+{
+  // do nothing.  This is just present to make sure the argument is
+  // not garbage collected earlier than it should be.
+}
+
 #include <atomic_ops.h>
 // AO_fetch_and_add1 is not available on some architectures (e.g., hppa)
 #ifndef AO_HAVE_fetch_and_add1
