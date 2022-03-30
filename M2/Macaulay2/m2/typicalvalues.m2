@@ -202,8 +202,8 @@ typval = x -> (
 	 installMethod append(prepend(f,args),last x => f');
 	 if args === sequence RR then variants#(f,Number) = variants#(f,Constant) = f' @@ numeric
 	 else if #args === 2 then (
-	     if args#0 === RR then variants#(f,Number,args#1) = variants#(f,Constant,args#1) = (x,y) -> f'(numeric x,y);
-	     if args#1 === RR then variants#(f,args#0,Number) = variants#(f,args#0,Constant) = (x,y) -> f'(x,numeric y);
+	     if args#0 === RR then variants#(f,Number,args#1) = variants#(f,Constant,args#1) = (x,y) -> f'(numeric_(precision y) x,y);
+	     if args#1 === RR then variants#(f,args#0,Number) = variants#(f,args#0,Constant) = (x,y) -> f'(x,numeric_(precision x) y);
 	     if args === (RR,RR) then variants#(f,Number,Number) = variants#(f,Number,Constant) = variants#(f,Constant,Number) = variants#(f,Constant,Constant) = (x,y) -> f'(numeric x,numeric y); -- phew
 	     );
 	 )

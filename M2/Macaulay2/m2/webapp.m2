@@ -55,12 +55,17 @@ Thing#{WebApp,BeforePrint} = identity
 
 Nothing#{WebApp,Print} = identity
 
+printFunc := Thing#{WebApp,print} = x -> (
+    y := html x; -- we compute the html now (in case it produces an error)
+    if class y =!= String then error "invalid html output";
+    << webAppHtmlTag | y | webAppEndTag << endl;
+    )
+
 on := () -> concatenate(webAppPromptTag,interpreterDepth:"o", toString lineNumber,webAppEndTag)
 
 Thing#{WebApp,Print} = x -> (
-    y := html x; -- we compute the html now (in case it produces an error)
-    if class y =!= String then error "invalid html output";
-    << endl << on() | " = " | webAppHtmlTag | y | webAppEndTag << endl;
+    << endl << on() | " = ";
+    printFunc x;
     )
 
 InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Print} x )
@@ -68,10 +73,9 @@ InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Pri
 -- afterprint
 
 htmlAfterPrint :=  x -> (
+    << endl << on() | " : ";
     if class x === Sequence then x = RowExpression deepSplice { x };
-    y := html x; -- we compute the html now (in case it produces an error)
-    if class y =!= String then error "invalid html output";
-    << endl << on() | " : " | webAppHtmlTag | y | webAppEndTag << endl;
+    printFunc x;
     )
 
 Thing#{WebApp,AfterPrint} = x -> htmlAfterPrint class x;
@@ -135,12 +139,6 @@ if topLevelMode === WebApp then (
     processExamplesLoop ExampleItem := (x->new LITERAL from extractStr x) @@ (lookup(processExamplesLoop,ExampleItem));
     -- the help hack 2 (incidentally, this regex is safer than in standard mode)
     M2outputRE      = "(?="|webAppCellTag|")";
-    -- the print hack
-    print = x -> if topLevelMode === WebApp then (
-	y := html x; -- we compute the html now (in case it produces an error)
-	if class y =!= String then error "invalid html output";
-	<< webAppHtmlTag | y | webAppEndTag << endl;
-	) else ( << net x << endl; );
     -- the show hack
     showURL := lookup(show,URL);
     show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;

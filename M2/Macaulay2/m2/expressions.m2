@@ -1076,7 +1076,7 @@ texMath Product := v -> (
 	nums := apply(v, x -> isNumber x);
 	precs := apply(v, x -> precedence x <= p);
 	seps := apply (n-1, i-> if nums#i and (nums#(i+1) or class v#(i+1) === Power and isNumber v#(i+1)#0) then "\\cdot "
-	    else if class v#i =!= Power and not precs#i and not precs#(i+1) then
+	    else if class v#i =!= Power and class v#i =!= Subscript and not precs#i and not precs#(i+1) then
 	    if nums#i or class v#i === Symbol then "\\," else "\\ "
 	    else "");
 	boxes := apply(n, i -> (
@@ -1221,7 +1221,14 @@ texMath VectorExpression := v -> (
     )
 
 -----------------------------------------------------------------------------
-print = x -> (<< net x << endl;) -- !! one may want to modify this depending on the type of output !!
+print =  x -> (
+    c := class x;
+    while not c#?{topLevelMode,print} do (
+	if c === Thing then (<< net x << endl; return); -- default
+	c = parent c;
+	);
+    c#{topLevelMode,print} x
+    )
 -----------------------------------------------------------------------------
 
 File << Thing := File => (o,x) -> printString(o,net x)
