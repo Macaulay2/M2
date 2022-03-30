@@ -315,11 +315,13 @@ Constant ^ Constant := (c,d) -> (numeric c) ^ (numeric d)
 Constant ^ InexactNumber := (c,x) -> (numeric(precision x,c)) ^ x
 InexactNumber ^ Constant := (x,c) -> x ^ (numeric(precision x,c))
 
-Constant == Constant := (c,d) -> numeric d == numeric d
+Constant == Constant := (c,d) -> numeric c == numeric d
 Constant == RingElement :=
 Constant == InexactNumber := (c,x) -> numeric(precision x,c) == x
 RingElement == Constant :=
 InexactNumber == Constant := (x,c) -> x == numeric(precision x,c)
+Constant ? Constant := (c,d) -> numeric c ? numeric d
+InexactNumber ? Constant := (x,c) -> x ? numeric(precision x,c)
 
 Constant _ Ring := (c,R) -> (
      prec := precision R;
@@ -339,6 +341,11 @@ Constant / Number := (c,x) -> numeric c / x
 Number / Constant := (x,c) -> x / numeric c
 Constant ^ Number := (c,x) -> (numeric c) ^ x
 Number ^ Constant := (x,c) -> x ^ (numeric c)
+
+Constant == Number := (c,x) -> numeric c == x
+Number == Constant := (x,c) -> x == numeric c
+Constant ? Number := (c,x) -> numeric c ? x
+Number ? Constant := (x,c) -> x ? numeric c
 
 Constant + InfiniteNumber := (c,x) -> x
 InfiniteNumber + Constant := (x,c) -> x
