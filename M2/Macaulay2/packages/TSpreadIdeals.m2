@@ -652,7 +652,7 @@ else error "expected a graded ideal";
 -- returns the initial ideal of an ideal
 ----------------------------------------------------------------------------------------------
 initialIdeal = method(TypicalValue=>Ideal)
-initialIdeal Ideal := I -> ideal rsort leadTerm I
+initialIdeal Ideal := I -> ideal rsort leadTerm gb I
 
 -------------------------------------------------------------------------------------------
 -- returns the minimal Betti numbers of the quotient S/I

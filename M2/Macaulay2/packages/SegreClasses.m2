@@ -293,7 +293,7 @@ chowClass Scheme := opts -> X -> (
                     Ls=Ls+sum(wDims_i,j->ideal(random(OneAti(degreeLength R,i),R)));
                 );
             );
-            ZeroDimGB=ideal groebnerBasis(saturate(X)+Ls+LA, Strategy=>"F4");
+            ZeroDimGB=groebnerBasis(saturate(X)+Ls+LA, Strategy=>"F4");
             classI=classI+(numColumns basis(cokernel leadTerm ZeroDimGB))*w;
         );
     );
