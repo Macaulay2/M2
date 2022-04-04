@@ -378,7 +378,7 @@ minimalBettiNumbers Ideal := BettiTally => opts -> I -> betti freeResolution(ide
 -- Computes the initial ideal of an ideal
 ----------------------------------------------------------------------------------------------
 initialIdeal = method(TypicalValue=>Ideal)
-initialIdeal Ideal := I -> ideal rsort leadTerm I
+initialIdeal Ideal := I -> ideal rsort leadTerm gb I
 
 
 beginDocumentation()
