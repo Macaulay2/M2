@@ -381,12 +381,19 @@ load(e:Expr):Expr := (
      else buildErrorPacket("expected string as file name"));
 setupfun("simpleLoad",load);
 
-currentLineNumber(e:Expr):Expr := (
+currentRowNumber(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 0 then toExpr(int(currentPosFile.line))
      else WrongNumArgs(0)
      else WrongNumArgs(0));
-setupfun("currentLineNumber",currentLineNumber);
+setupfun("currentRowNumber",currentRowNumber);
+
+currentColumnNumber(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) == 0 then toExpr(int(currentPosFile.column))
+     else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("currentColumnNumber",currentColumnNumber);
 
 input(e:Expr):Expr := (
      when e

@@ -1,6 +1,9 @@
 VPATH = @srcdir@
 LDFLAGS = -L$(BUILTLIBPATH)/lib
 CPPFLAGS = -I$(BUILTLIBPATH)/include
+BUILD_MEMTAILOR = $(if $(filter memtailor, @BUILDSUBLIST@),yes,no)
+BUILD_MATHIC    = $(if $(filter mathic   , @BUILDSUBLIST@),yes,no)
+BUILD_MATHICGB  = $(if $(filter mathicgb , @BUILDSUBLIST@),yes,no)
 include ../include/config.Makefile
 check: clean-and-config
 clean:; rm -rf tmp
@@ -23,6 +26,9 @@ check-config:
 	    CFLAGS="$(CFLAGS)"							\
 	    CXXFLAGS="$(CXXFLAGS)"						\
 	    --build="@build_alias@"						\
+	    --enable-build-memtailor=$(BUILD_MEMTAILOR)				\
+	    --enable-build-mathic=$(BUILD_MATHIC)				\
+	    --enable-build-mathicgb=$(BUILD_MATHICGB)				\
 	    --disable-building
 distclean:: clean; rm -f Makefile
 Makefile: Makefile.in ; cd .. && ./config.status check-configure/Makefile
