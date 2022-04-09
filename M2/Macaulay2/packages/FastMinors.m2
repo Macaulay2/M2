@@ -2400,6 +2400,11 @@ assert(regularInCodimension(1, R, Strategy=>StrategyRandom));
 assert(regularInCodimension(1, R, Strategy=>StrategyPoints, MinMinorsFunction => x->x, CodimCheckFunction => x -> x));
 ///
 
+TEST /// --check #17 (checking multi-graded support)
+    S = ZZ/101[x,y, Degrees => {{1,0},{0,2}}]
+    M = random(S^4, S^{5:{-3,-4}})
+    chooseGoodMinors(10, 2, M)
+///
 
 
 
