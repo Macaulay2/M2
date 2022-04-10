@@ -1,5 +1,5 @@
 newPackage( "FastMinors",
-Version => "1.2.4", Date => "March 13th, 2022", Authors => {
+Version => "1.2.5", Date => "April 7th, 2022", Authors => {
     {Name => "Boyana Martinova",
     Email=> "u1056124@utah.edu"
     },
@@ -15,7 +15,7 @@ Version => "1.2.4", Date => "March 13th, 2022", Authors => {
     Email=> "yuhuiyao4ever@gmail.com"
     }
 }, --this file is in the public domain
-Headline => "faster linear algebra operations", PackageExports => {"RandomPoints"}, PackageImports => {"RandomPoints"}, DebuggingMode => true, Reload=>false)
+Headline => "faster linear algebra operations", PackageExports => {"RandomPoints"}, PackageImports => {"RandomPoints"}, DebuggingMode => false, Reload=>false)
 export{
 --  "selectSmallestTerms",
   "chooseSubmatrixSmallestDegree", --there are checks
@@ -555,7 +555,9 @@ replaceSmallestTerm(List, MutableMatrix) := opts -> (submatrixS, M1) -> (
     myRand := random(#rowListS);
     moddedRow := rowListS#(myRand);
     moddedCol := colListS#(myRand);
-    val := (M1_(moddedRow, moddedCol))*(random(1, ambR));
+    val := 0;
+    if (#(gens ambR) > 0) then 
+        val = (M1_(moddedRow, moddedCol))*(random(degree((gens ambR)#(random(#gens ambR))), ambR));
     if (val == 0) then val = sub((max(flatten entries M2))^2, ring M1);
     mutedSM_(moddedRow, moddedCol) = val;
     return mutedSM;
@@ -2398,6 +2400,11 @@ assert(regularInCodimension(1, R, Strategy=>StrategyRandom));
 assert(regularInCodimension(1, R, Strategy=>StrategyPoints, MinMinorsFunction => x->x, CodimCheckFunction => x -> x));
 ///
 
+TEST /// --check #17 (checking multi-graded support)
+    S = ZZ/101[x,y, Degrees => {{1,0},{0,2}}]
+    M = random(S^4, S^{5:{-3,-4}})
+    chooseGoodMinors(10, 2, M)
+///
 
 
 
