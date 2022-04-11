@@ -1,17 +1,13 @@
--- todo for 28 Feb 2022, or one week after that
--- problem: sometimes when error occurs, RO object should be removed?
--- (1)  see bug below in exterior algebra example. DONE
--- (2) take our example collection and make into a robust set of tests.
--- 
--- our hook for resolutionInEngine (Strategy1) seems to be working.
---   (well, close: restarting a computation with large LengthLimit, resetting to
---   a small LengthLimit still computes lots of stuff in higher degrees.
---   See example: 20 generators, of degrees 1, ..., 20 below.
--- connect up Strategies 0, 2, 3 DONE
--- then (3) inhomogeneous, resolutionBySyzygies (FIRST UP ON March 7), over a field (DONE), over ZZ.
--- then (4) nonminimal resolutions
--- (5) revisit augmentationMap, in case when the resolution 
---   messes with the module generators.
+-- todo for April 11, 2022:
+--   we just had finished resolutionBySyzgyies, although maybe some more testing is in order.
+--   e.g.: interrupts, Weyl algebra.
+--   need: Strategy => OverZZ.
+--   need: Strategy => Inhomogeneous.
+--   . take our example collection and make into a robust set of tests.
+--   . write gradedModule function to make a complex out of a hashtable of modules (maps are zero).
+--   . nonminimal resolutions
+--   . revisit augmentationMap, in case when the resolution 
+--          messes with the module generators.
 
 -- "BUGS" found in M2:
 --  1. Issue #2405
@@ -345,20 +341,39 @@ resolutionBySyzygies = (opts, M) -> (
     -- different lengthlimits.  degreelimits: perhaps.
     
     RO := M.cache.ResolutionObject;
-    RO.SyzygyList = new MutableList from {presentation M};
+
+    RO.SchreyerOrder = instance(R, PolynomialRing) or (
+        baserings := R.baseRings;
+        #baserings =!= 0 and instance(last baserings, PolynomialRing)
+        );
+
+    RO.SyzygyList = new MutableList from {
+        if RO.SchreyerOrder then schreyerOrder presentation M 
+        else presentation M
+        };
     
     RO.compute = (lengthlimit, degreelimit) -> (
-        -- finish
+        -- finish XXX
         m := RO.SyzygyList#(#RO.SyzygyList-1);
+        for i from #RO.SyzygyList to lengthlimit-1 do (
+            if numcols m == 0 then return;
+            msyz := syz m; -- add degree limit...
+            if RO.SchreyerOrder then msyz = schreyerOrder msyz;
+            RO.SyzygyList#i = msyz;
+            m = msyz;
+            );
         );
 
     RO.isComputable = (lengthlimit, degreelimit) -> true;
 
     RO.complex = (lengthlimit) -> (
-        -- rewrite
-        N := RO.FieldComputation;
-        C := complex N;
-        C.cache.augmentationMap = map(complex M, C, i -> N.cache.pruningMap);
+        syzmats := toList RO.SyzygyList;
+        C := if numcols first syzmats === 0 then complex M
+             else (
+                 if numcols last syzmats === 0 then syzmats = drop(syzmats, -1);
+                 complex syzmats
+                 );
+        C.cache.augmentationMap = map(complex M, C, i -> map(M, target presentation M, 1));
         C);
     
     RO.compute(opts.LengthLimit, opts.DegreeLimit);
@@ -627,3 +642,56 @@ C = res M
 C.cache
 debug Core
 peek M.cache#(new ResolutionContext)
+
+-- Resolution by syzygies
+-- #1 Over ZZ needs separate hook.
+  restart
+  needsPackage "Complexes"
+  load "Complexes/ResolutionObject.m2"
+  
+  m = matrix{{2,3,7},{7,14,21}}
+  M = coker m
+  -- new code:
+  C = freeResolution(M, Strategy => "Syzygies")
+
+  gbTrace=2
+  syz m
+  C = res M
+  C.dd
+  res(M, Strategy => "Syzygies")
+  presentation M
+  minimalPresentation M
+
+-- Example 2
+  restart
+  needsPackage "Complexes"
+  load "Complexes/ResolutionObject.m2"
+  S = ZZ/101[a..d]
+  R = S/(a^2, b^2, c^2, d^2)
+  I = ideal(a,b,c,d)
+  m = syz gens I
+  schreyerOrder source m
+  debug Core
+  raw source m
+  n = schreyerOrder m
+  schreyerOrder source n
+  n2 = syz n
+  raw target n2
+  raw source n2
+  F = freeResolution(I, LengthLimit => 7, Strategy => "Syzygies")
+  isWellDefined F
+  prune HH F
+
+  -- Weyl algebra example
+  -- Exterior algebra example
+  -- inhomog example
+  -- Orlik-Solomon algebra
+  needsPackage "HyperplaneArrangements"
+  A = typeA 3
+  E = ZZ/101[e_1..e_6, SkewCommutative => true]
+  I = orlikSolomon(A, E)
+  F = freeResolution(E^1/I, LengthLimit => 7, Strategy => "Syzygies")
+  isWellDefined F
+  -- TODO: write gradedModule function to make a complex out of a hashtable of modules (maps are zero).
+  for i from 0 to length F - 1 list i => prune HH_i F
+  betti F
