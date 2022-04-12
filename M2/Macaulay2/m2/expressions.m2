@@ -335,6 +335,7 @@ RowExpression = new HeaderType of Expression
 RowExpression.synonym = "row expression"
 net RowExpression := w -> horizontalJoin apply(toList w,net)
 html RowExpression := w -> concatenate apply(w,html)
+tex RowExpression := w -> concatenate apply(w,tex)
 texMath RowExpression := w -> concatenate apply(w,texMath)
 toString'(Function, RowExpression) := (fmt,w) -> concatenate apply(w,fmt)
 -----------------------------------------------------------------------------
@@ -677,7 +678,7 @@ net Adjacent := net FunctionApplication := m -> (
      then horizontalJoin (netfun, bigParenthesize netargs)
      else horizontalJoin (bigParenthesize netfun, bigParenthesize netargs)
      )
-texMath Adjacent := texMath FunctionApplication := m -> (
+texMath Adjacent := texMath FunctionApplication := m -> if m#0 === sqrt then "\\sqrt{"| texMath m#1 |"}" else (
      p := precedence m;
      fun := m#0;
      args := m#1;
@@ -823,10 +824,10 @@ net Sum := v -> (
 isNumber = method(TypicalValue => Boolean)
 isNumber Thing := i -> false
 isNumber RR :=
-isNumber QQ :=
-isNumber Divide := -- QQ never appears in an expression, so we take care of it this way
+isNumber QQ := -- QQ never appears in an expression...
 isNumber ZZ := i -> true
 isNumber Holder := i -> isNumber i#0
+isNumber Divide := d -> isNumber d#0 and isNumber d#1 -- .. so we take care of it this way
 
 startsWithSymbol = method(TypicalValue => Boolean)
 startsWithSymbol Thing := i -> false
@@ -1067,22 +1068,26 @@ html Sum := v -> (
 *-
 
 texMath Product := v -> (
-     n := # v;
-     if n === 0 then "1"
-     else (
-     	  p := precedence v;
-	  nums := apply(v, x -> isNumber x or (class x === Power and isNumber x#0 and (x#1 === 1 or x#1 === ONE)));
-	  seps := apply (n-1, i-> if nums#i and (nums#(i+1) or class v#(i+1) === Power and isNumber v#(i+1)#0) then "\\cdot " else if nums#i or class v#i === Symbol or (class v#i === Power and class v#i#0 === Symbol and (v#i#1 === 1 or v#i#1 === ONE)) then "\\," else "");
-     	  boxes := apply(v,
-		    term -> (
-			 if precedence term <= p and class expression term =!= Divide
-			 then "\\left(" | texMath term | "\\right)"
-			 else texMath term
-			 )
-		    );
-	  concatenate splice mingle (boxes,seps)
-	  )
-      )
+    n := # v;
+    if n === 0 then "1"
+    else (
+	v = apply(v, x -> if class x === Power and (x#1 === 1 or x#1 === ONE) then x#0 else x);
+	p := precedence v;
+	nums := apply(v, x -> isNumber x);
+	precs := apply(v, x -> precedence x <= p);
+	seps := apply (n-1, i-> if nums#i and (nums#(i+1) or class v#(i+1) === Power and isNumber v#(i+1)#0) then "\\cdot "
+	    else if class v#i =!= Power and class v#i =!= Subscript and not precs#i and not precs#(i+1) then
+	    if nums#i or class v#i === Symbol then "\\," else "\\ "
+	    else "");
+	boxes := apply(n, i -> (
+		if precs#i and class v#i =!= Divide
+		then "\\left(" | texMath v#i | "\\right)"
+		else texMath v#i
+		)
+	    );
+	concatenate splice mingle (boxes,seps)
+	)
+    )
 -*
 html Product := v -> (
      n := # v;
@@ -1167,9 +1172,9 @@ texMath SparseMonomialVectorExpression := v -> (
 
 texMath Table := m -> (
     if m#?0 then concatenate(
-	"{\\begin{array}{", #m#0: "c", "}", newline,
-	apply(m, row -> (between("&",apply(row,texMath)), ///\\///|newline)),
-	"\\end{array}}")
+	"\\begin{array}{", #m#0: "c", "}", newline,
+	between(///\\/// | newline, apply(toList m, row -> between("&",apply(row,texMath)))),
+	newline, "\\end{array}")
     else "{}"
     )
 
@@ -1182,7 +1187,7 @@ texMath MatrixExpression := x -> (
 	if opts.Degrees =!= null then (
 	    degs := apply(opts.Degrees#0,texMath);
 	    if opts.CompactMatrix then "\\begin{smallmatrix}" else "\\begin{array}{l}",
-	    apply(#m, i -> degs#i | "\\vphantom{" | concatenate m#i | "}\\\\"),
+	    apply(#m, i -> concatenate(degs#i,"\\vphantom{",m#i, "}", if i<#m-1 then "\\\\")),
 	    if opts.CompactMatrix then "\\end{smallmatrix}" else "\\end{array}"
 	    ),
 	"\\left(",
@@ -1195,7 +1200,7 @@ texMath MatrixExpression := x -> (
 	apply(#m, i -> concatenate(
 		if opts.Degrees =!= null then "\\vphantom{"| degs#i | "}",
 		 between("&",m#i),
-		 "\\\\",
+		 if i<#m-1 then "\\\\", -- sadly, LaTeX *requires* no final \\
 		 newline,
 		 if opts.BlockMatrix =!= null then if h<#opts.BlockMatrix#0-1 and j == opts.BlockMatrix#0#h then (j=0; h=h+1; "\\hline\n") else (j=j+1;)
 		 )),
@@ -1216,7 +1221,14 @@ texMath VectorExpression := v -> (
     )
 
 -----------------------------------------------------------------------------
-print = x -> (<< net x << endl;) -- !! one may want to modify this depending on the type of output !!
+print =  x -> (
+    c := class x;
+    while not c#?{topLevelMode,print} do (
+	if c === Thing then (<< net x << endl; return); -- default
+	c = parent c;
+	);
+    c#{topLevelMode,print} x
+    )
 -----------------------------------------------------------------------------
 
 File << Thing := File => (o,x) -> printString(o,net x)
@@ -1269,7 +1281,7 @@ Boolean#{Standard,AfterPrint} = identity
 
 FilePosition = new Type of BasicList
 FilePosition.synonym = "file position"
-toString'(Function, FilePosition) := (fmt,i) -> concatenate(i#0,":",toString i#1,":",toString i#2)
+toString FilePosition :=
 net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 
 -- extra stuff

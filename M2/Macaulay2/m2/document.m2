@@ -389,7 +389,7 @@ hasDocumentation = key -> null =!= fetchAnyRawDocumentation makeDocumentTag(key,
 locate DocumentTag := tag -> (
     if (rawdoc := fetchAnyRawDocumentation tag) =!= null
     then (minimizeFilename rawdoc#"filename", rawdoc#"linenum")
-    else (currentFileName, currentLineNumber()))
+    else (currentFileName, currentRowNumber()))
 
 -----------------------------------------------------------------------------
 -- helpers for the document function
@@ -536,7 +536,7 @@ getUsage := val -> (
     if not instance(val, String) then error "Usage: expected a string";
     val = apply(nonempty separate val, u -> replace("^[[:space:]]*(.*)[[:space:]]*$", "\\1", u));
     if #val === 0 then error "Usage: expected content";
-    DL flatten { "class" => "element", DT "Usage: ", DD \ TT \ val } )
+    DL flatten { "class" => "element", DT "Usage: ", DD \ M2CODE \ val } )
 
 getHeadline   := (val, key)   -> (
     title := if instance(val, String) then fixup val else error("expected ", toString key, " option to be a string");
@@ -545,7 +545,7 @@ getHeadline   := (val, key)   -> (
     title)
 getSubsection := (val, title) -> fixup DIV { SUBSECTION title, val }
 getSourceCode :=  val         -> DIV {"class" => "waystouse",
-    fixup DIV {SUBSECTION "Code", PRE demark_newline unstack stack apply(enlist val, m -> (
+    fixup DIV {SUBSECTION "Code", PRE M2CODE demark_newline unstack stack apply(enlist val, m -> (
 		f := lookup m; if f === null then error("SourceCode: ", toString m, ": not a method");
 		c := code f;   if c === null then error("SourceCode: ", toString m, ": code for method not found");
 		reproduciblePaths toString c))}}
@@ -649,7 +649,7 @@ document List := opts -> args -> (
 		    PrimaryTag => tag, -- tag must be primary
 		    symbol DocumentTag => tag2,
 		    "filename" => currentFileName,
-		    "linenum" => currentLineNumber()
+		    "linenum" => currentRowNumber()
 		    })));
     -- Check BaseFunction
     assert(not o.?BaseFunction or instance(o.BaseFunction, Function));
@@ -668,7 +668,7 @@ document List := opts -> args -> (
     if #ino > 0 then o.Options = ino else remove(o, Options);
     -- Set the location of the documentation
     o#"filename" = currentFileName;
-    o#"linenum"  = currentLineNumber();
+    o#"linenum"  = currentRowNumber();
     currentDocumentTag = null;
     storeRawDocumentation(tag, new HashTable from o))
 
@@ -684,7 +684,7 @@ undocumented Thing := key -> if key =!= null then (
 	    symbol DocumentTag => tag,
 	    "undocumented"     => true,
 	    "filename"         => currentFileName,
-	    "linenum"          => currentLineNumber()
+	    "linenum"          => currentRowNumber()
 	    }))
 
 -- somehow, this is the very first method called by the Core!!

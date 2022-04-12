@@ -878,7 +878,9 @@ const Matrix* rawNCGroebnerBasisTwoSided(const Matrix* input, int maxdeg, int st
       bool isParallel = strategy & 32;
       if (isF4)
         {
-          NCF4 G(A->freeAlgebra(), elems, maxdeg, strategy, isParallel);
+          int numthreads = M2_numTBBThreads; // settable from front end.
+          std::cout << "Using numthreads = " << numthreads << std::endl;
+          NCF4 G(A->freeAlgebra(), elems, maxdeg, strategy, (isParallel ? numthreads : 1));
           G.compute(maxdeg); // this argument is actually the soft degree limit
           auto result = copyPolyVector(A, G.currentValue());
           return polyListToMatrix(A, result, 1, result.size()); // consumes the Poly's in result

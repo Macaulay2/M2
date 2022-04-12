@@ -9,10 +9,13 @@ needs "gb.m2" -- for for GroebnerBasis
 needs "packages.m2" -- for Package
 needs "system.m2" -- for getViewer
 
+getStyleFile := fn -> locateCorePackageFileRelative("Style",
+    layout -> replace("PKG", "Style", layout#"package") | fn,
+    installPrefix, htmlDirectory);
+
 -- TODO: unify the definition of the tex macros so book/M2book.tex can use them
 KaTeX := () -> (
-    katexPath := locateCorePackageFileRelative("Style",
-	layout -> replace("PKG", "Style", layout#"package") | "katex", installPrefix, htmlDirectory);
+    katexPath := getStyleFile "katex";
     katexTemplate := ///
     <link rel="stylesheet" href="%PATH%/katex.min.css" />
     <script defer="defer" type="text/javascript" src="%PATH%/katex.min.js"></script>
@@ -40,20 +43,25 @@ KaTeX := () -> (
     <link href="%PATH%/contrib/copy-tex.min.css" rel="stylesheet" type="text/css" />
     <script defer="defer" type="text/javascript" src="%PATH%/contrib/copy-tex.min.js"></script>
     <script defer="defer" type="text/javascript" src="%PATH%/contrib/render-a11y-string.min.js"></script>///;
-    LITERAL replace("%PATH%", katexPath, katexTemplate))
+    LITERAL replace("%PATH%", katexPath, katexTemplate | newline))
 
 -- The default stylesheet for documentation
 defaultStylesheet := () -> LINK {
     "rel" => "stylesheet", "type" => "text/css",
-    "href" => locateCorePackageFileRelative("Style",
-	layout -> replace("PKG", "Style", layout#"package") | "doc.css", installPrefix, htmlDirectory)}
+    "href" => getStyleFile "doc.css"}
 
 -- Also set the character encoding with a meta http-equiv statement. (Sometimes XHTML
 -- is parsed as HTML, and then the HTTP header or a meta tag is used to determine the
 -- character encoding.  Locally-stored documentation does not have an HTTP header.)
 defaultCharset := () -> META { "http-equiv" => "Content-Type", "content" => "text/html; charset=utf-8" }
 
-defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStylesheet(), KaTeX() }
+defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStylesheet(), KaTeX(),
+    SCRIPT {
+	"type" => "text/javascript",
+	"src" => getStyleFile "highlight.js",
+	""
+	}
+    }
 
 -----------------------------------------------------------------------------
 -- Local utilities
@@ -181,6 +189,9 @@ html GroebnerBasis :=
 html Package :=
 html Boolean :=
 html Function :=
+html FilePosition :=
+html Manipulator :=
+html Dictionary :=
 html Type := html @@ toString
 -- except not these descendants
 html Monoid :=

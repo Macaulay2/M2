@@ -48,12 +48,6 @@ ifeq ($(MACOSX),yes)
 # #    o8 = /usr/local/Cellar/singular/4.1.3p2_2/share/factory/
 # BUILDLIBS += gftables nauty factory csdp 4ti2 gfan normaliz topcom
 # on the other hand, we can move the *.dylib files out of the way
-
-# we need an old version of tbb
-# brew install tbb@2020
-LDFLAGS  += "-L/usr/local/opt/tbb@2020/lib"
-CPPFLAGS += "-I/usr/local/opt/tbb@2020/include"
-
 endif
 
 ifeq ($(DEBIAN),yes)

@@ -1,4 +1,4 @@
--- Paul Zinn-Justin 2018-2021
+-- Paul Zinn-Justin 2018-2022
 
 needs "expressions.m2"
 needs "matrix1.m2"
@@ -7,7 +7,7 @@ needs "varieties.m2"
 
 -- topLevelMode=WebApp definitions
 -- tags are required to help the browser app distinguish html from text
-webAppTags := apply((17,18,19,20,28,29,30,14,(17,36),(36,18)),ascii);
+webAppTags := apply((17,18,19,20,28,29,30,14,21,(17,36),(36,18)),ascii);
     (	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
 	webAppEndTag,         -- closing tag ~ </span>
 	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
@@ -15,7 +15,8 @@ webAppTags := apply((17,18,19,20,28,29,30,14,(17,36),(36,18)),ascii);
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
 	webAppUrlTag,         -- used internally to follow URLs
-	webAppPromptTag,      -- input prompt
+	webAppPromptTag,      -- input/output prompt
+	webAppPositionTag,    -- code position (row:col)
 	webAppTexTag,         -- effectively deprecated, ~ <span class='M2Html'> $
 	webAppTexEndTag       -- effectively deprecated, ~ $ </span>
 	)=webAppTags;
@@ -23,6 +24,15 @@ webAppTags := apply((17,18,19,20,28,29,30,14,(17,36),(36,18)),ascii);
 webAppTagsRegex := concatenate("[",drop(webAppTags,-2),"]")
 
 -- output routines for WebApp mode
+recordPosition = () -> if currentFileName == "stdio" then ( -- for now only stdio recorded
+    webAppPositionTag,
+--    toString currentFileName,
+--    ":",
+    toString currentRowNumber(), -- not to be confused with lineNumber!!!
+    ":",
+    toString currentColumnNumber(),
+    webAppEndTag
+    )
 
 ZZ#{WebApp,InputPrompt} = lineno -> concatenate(
     webAppCellEndTag, -- close previous cell
@@ -32,20 +42,30 @@ ZZ#{WebApp,InputPrompt} = lineno -> concatenate(
     toString lineno,
     webAppEndTag,
     " : ",
-    webAppInputTag)
+    webAppInputTag,
+    recordPosition()
+)
 
-ZZ#{WebApp,InputContinuationPrompt} = lineno -> webAppInputContdTag
+ZZ#{WebApp,InputContinuationPrompt} = lineno -> concatenate(
+    webAppInputContdTag,
+    recordPosition()
+    )
 
 Thing#{WebApp,BeforePrint} = identity
 
 Nothing#{WebApp,Print} = identity
 
+printFunc := Thing#{WebApp,print} = x -> (
+    y := html x; -- we compute the html now (in case it produces an error)
+    if class y =!= String then error "invalid html output";
+    << webAppHtmlTag | y | webAppEndTag << endl;
+    )
+
 on := () -> concatenate(webAppPromptTag,interpreterDepth:"o", toString lineNumber,webAppEndTag)
 
 Thing#{WebApp,Print} = x -> (
-    y := html x; -- we compute the html now (in case it produces an error)
-    if class y =!= String then error "invalid html output";
-    << endl << on() | " = " | webAppHtmlTag | y | webAppEndTag << endl;
+    << endl << on() | " = ";
+    printFunc x;
     )
 
 InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Print} x )
@@ -53,10 +73,9 @@ InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Pri
 -- afterprint
 
 htmlAfterPrint :=  x -> (
+    << endl << on() | " : ";
     if class x === Sequence then x = RowExpression deepSplice { x };
-    y := html x; -- we compute the html now (in case it produces an error)
-    if class y =!= String then error "invalid html output";
-    << endl << on() | " : " | webAppHtmlTag | y | webAppEndTag << endl;
+    printFunc x;
     )
 
 Thing#{WebApp,AfterPrint} = x -> htmlAfterPrint class x;
@@ -92,7 +111,7 @@ Nothing#{WebApp,AfterPrint} = identity
 Matrix#{WebApp,AfterPrint} = Matrix#{WebApp,AfterNoPrint} =
 RingMap#{WebApp,AfterPrint} = RingMap#{WebApp,AfterNoPrint} = f -> htmlAfterPrint (class f, " ", new MapExpression from {target f,source f})
 
---Sequence#{WebApp,AfterPrint} = Sequence#{WebApp,AfterNoPrint} = identity
+-- Sequence#{WebApp,AfterPrint} = Sequence#{WebApp,AfterNoPrint} = identity
 
 CoherentSheaf#{WebApp,AfterPrint} = F -> (
      X := variety F;
@@ -115,16 +134,11 @@ ZZ#{WebApp,AfterPrint} = identity
 
 if topLevelMode === WebApp then (
     compactMatrixForm = false;
+    extractStr := x -> concatenate apply(x,y -> if instance(y,Hypertext) then extractStr y else if instance(y,String) then y);
     -- the help hack: if started in WebApp mode, help is compiled in it as well
-    processExamplesLoop ExampleItem := (x->new LITERAL from replace("\\$\\{prefix\\}","usr",x#0)) @@ (lookup(processExamplesLoop,ExampleItem));
+    processExamplesLoop ExampleItem := (x->new LITERAL from extractStr x) @@ (lookup(processExamplesLoop,ExampleItem));
     -- the help hack 2 (incidentally, this regex is safer than in standard mode)
     M2outputRE      = "(?="|webAppCellTag|")";
-    -- the print hack
-    print = x -> if topLevelMode === WebApp then (
-	y := html x; -- we compute the html now (in case it produces an error)
-	if class y =!= String then error "invalid html output";
-	<< webAppHtmlTag | y | webAppEndTag << endl;
-	) else ( << net x << endl; );
     -- the show hack
     showURL := lookup(show,URL);
     show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;

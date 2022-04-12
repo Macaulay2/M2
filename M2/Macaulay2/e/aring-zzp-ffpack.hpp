@@ -8,9 +8,11 @@
 #include "ringelem.hpp"
 
 #include <type_traits> // define bool_constant to fix issue #2347
+#include <utility>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wmacro-redefined"
 #define bool_constant givaro_bool_constant
 #include <fflas-ffpack/ffpack/ffpack.h>
 #undef bool_constant

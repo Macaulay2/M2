@@ -45,6 +45,11 @@ add_custom_target(man COMMAND zcat ${MAN} | groff -man -Tascii DEPENDS ${MAN})
 
 add_executable(M2-binary timestamp.cpp main.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/startup.c ${TAGS} ${MAN})
+
+target_compile_options(M2-binary PRIVATE
+  -Wno-mismatched-tags  # caused by struct/class issue with including interp-exports.h
+  )
+
 target_link_libraries(M2-binary
   ${Boost_stacktrace_lib}
   M2-supervisor M2-engine M2-interpreter ${CMAKE_DL_LIBS})

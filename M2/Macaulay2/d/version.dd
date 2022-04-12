@@ -61,13 +61,8 @@ header "
    #include <givaro/givconfig.h>
    Givaro::GivaroMain givaroMain;
 
-   /* TODO - fix conditionals once TBB 2021 support is added (#2105) */
-   #if 1 /* TBB 2020 */
-     #include <tbb/tbb_stddef.h>
-     #define TBB_VERSION_STRING \\
-       (stringize(TBB_VERSION_MAJOR) \".\" stringize(TBB_VERSION_MINOR))
-   #else /* TBB 2021 */
-     #include <tbb/version.h>
+   #ifdef WITH_TBB
+   #include <tbb/tbb.h>
    #endif
 
    #include <Eigen/Core>
@@ -226,7 +221,13 @@ setupconst("version", Expr(toHashTable(Sequence(
    "readline version" => readlineversion(),
    "mpfr version" => Ccode(constcharstar,"MPFR_VERSION_STRING"),
    "mpfi version" => Ccode(constcharstar,"MPFI_VERSION_STRING"),
-   "tbb version" => Ccode(constcharstar,"TBB_VERSION_STRING"),
+   "tbb version" => Ccode(constcharstar,"
+	 #ifdef WITH_TBB
+	   stringize(TBB_VERSION_MAJOR) \".\" stringize(TBB_VERSION_MINOR)
+	 #else
+	   \"not present\"
+	 #endif
+	 "),
    "lapack version" => lapackversion(),
    "eigen version" => Ccode(constcharstar, "
        stringize(EIGEN_WORLD_VERSION) \".\"

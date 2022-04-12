@@ -27,6 +27,8 @@ codeHelper#(functionBody(memoize(identity,{}))) = g -> {
      ("-- initialValues:", value (first localDictionaries g)#"initialValues") 
      }
 
+-- all memoized functions share the same function body (they differ only in the values of the local variables f, values, and x),
+-- so here we create one to use for checking.  The function "sin" could be any function.
 memoizedFunctionBody := functionBody memoize sin
 
 memoizeValues = f -> (
