@@ -132,7 +132,13 @@ define submodule-rules
 $(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
 all-in-$1: run-configure-in-$1 build-in-$1 copy-license-files-from-$1
 copy-license-files-from-submodules: copy-license-files-from-$1
-copy-license-files-from-$1:; $(MKDIR_P) $(BUILTLIBPATH)/licenses/$1 && for i in $$(LICENSE_FILES); do cp -v @srcdir@/submodules/$1/$$$$i $(BUILTLIBPATH)/licenses/$1 ; done
+copy-license-files-from-$1:
+	@$(MKDIR_P) $(BUILTLIBPATH)/licenses/$1
+	@for i in $$(LICENSE_FILES); do                                     \
+	  if ! ls $(BUILTLIBPATH)/licenses/$1/$$$$i > /dev/null 2>&1; then  \
+	    cp -v @srcdir@/submodules/$1/$$$$i $(BUILTLIBPATH)/licenses/$1; \
+	  fi ;                                                              \
+	done
 build-in-$1: submodules/$1/Makefile
 	$(MAKE) -C submodules/$1 all
 check-in-$1: run-configure-in-$1
