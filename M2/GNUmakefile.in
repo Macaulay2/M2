@@ -132,7 +132,13 @@ define submodule-rules
 $(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
 all-in-$1: run-configure-in-$1 build-in-$1 copy-license-files-from-$1
 copy-license-files-from-submodules: copy-license-files-from-$1
-copy-license-files-from-$1:; $(MKDIR_P) $(BUILTLIBPATH)/licenses/$1 && for i in $$(LICENSE_FILES); do cp -v @srcdir@/submodules/$1/$$$$i $(BUILTLIBPATH)/licenses/$1 ; done
+copy-license-files-from-$1:
+	@$(MKDIR_P) $(BUILTLIBPATH)/licenses/$1
+	@for i in $$(LICENSE_FILES); do                                     \
+	  if ! ls $(BUILTLIBPATH)/licenses/$1/$$$$i > /dev/null 2>&1; then  \
+	    cp -v @srcdir@/submodules/$1/$$$$i $(BUILTLIBPATH)/licenses/$1; \
+	  fi ;                                                              \
+	done
 build-in-$1: submodules/$1/Makefile
 	$(MAKE) -C submodules/$1 all
 check-in-$1: run-configure-in-$1
@@ -140,7 +146,7 @@ ifeq ($(no-check-$1),)
 	ulimit -v 1000000 && $(MAKE) -C submodules/$1 check
 endif
 
-install-in-$1: build-in-$1; + $(MAKE) -C submodules/$1 install
+install-in-$1: build-in-$1
 
 # it may look odd to make submodules/$1/Makefile, but this allows recovery if the submodule
 # has been updated or cleaned, and needing scripts (such as "missing") installed by libtool 
@@ -210,6 +216,23 @@ all-in-fflas_ffpack: install-in-fflas_ffpack
 all-in-memtailor:    install-in-memtailor
 all-in-mathic:       install-in-mathic
 all-in-mathicgb:     install-in-mathicgb
+
+install-in-fflas_ffpack: $(BUILTLIBPATH)/include/fflas-ffpack/fflas-ffpack.h
+install-in-memtailor:    $(BUILTLIBPATH)/include/memtailor.h
+install-in-mathic:       $(BUILTLIBPATH)/include/mathic.h
+install-in-mathicgb:     $(BUILTLIBPATH)/include/mathicgb.h
+
+$(BUILTLIBPATH)/include/fflas-ffpack/fflas-ffpack.h:
+	$(MAKE) -C submodules/fflas_ffpack install
+
+$(BUILTLIBPATH)/include/memtailor.h:
+	$(MAKE) -C submodules/memtailor install
+
+$(BUILTLIBPATH)/include/mathic.h:
+	$(MAKE) -C submodules/mathic install
+
+$(BUILTLIBPATH)/include/mathicgb.h:
+	$(MAKE) -C submodules/mathicgb install
 
 ifeq (@BUILD_givaro@,yes)
 # fflas_ffpack depends on givaro, so if they both get built, then build givaro first.
