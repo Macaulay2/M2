@@ -842,6 +842,16 @@ Gamma(e:Expr):Expr := (
      else buildErrorPacket("expected a number")
      );
 setupfun("Gamma",Gamma).Protected=false;
+incompleteGamma(e:Expr):Expr :=
+     when e
+     is a:Sequence do
+	 if length(a) != 2 then WrongNumArgs(2)
+	 else when a.0 is s:RRcell do
+	     when a.1 is x:RRcell do toExpr(incompleteGamma(s.v, x.v)) -- # typical value: incompleteGamma, RR, RR, RR
+	     else WrongArgRR(2)
+	 else WrongArgRR(1)
+     else WrongNumArgs(2);
+setupfun("incompleteGamma",incompleteGamma).Protected=false;
 Digamma(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(Digamma(x.v))			    -- # typical value: Digamma, RR, RR
