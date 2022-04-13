@@ -178,7 +178,7 @@ typval4k-*(Keyword,Type,Type,Type)*- := (f,X,Y,Z) -> (
 if member("--no-tvalues", commandLine) then end
 
 -- numerical functions that will be wrapped
-redefs := hashTable apply({acos, agm, asin, atan, atan2, BesselJ, BesselY, Beta, cos, cosh, cot, coth, csc, csch, Digamma, eint, erf, erfc, exp, expm1, Gamma, log, log1p, sec, sech, sin, sinh, sqrt, tan, tanh, zeta},
+redefs := hashTable apply({acos, agm, asin, atan, atan2, BesselJ, BesselY, Beta, cos, cosh, cot, coth, csc, csch, Digamma, eint, erf, erfc, exp, expm1, Gamma, incompleteGamma, log, log1p, sec, sech, sin, sinh, sqrt, tan, tanh, zeta},
     f -> f => method());
 variants := new MutableHashTable;
 
