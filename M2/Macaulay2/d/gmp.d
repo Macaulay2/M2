@@ -2400,6 +2400,11 @@ export Gamma(x:RR):RR := (
      Ccode( void, "mpfr_gamma(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
 
+export incompleteGamma(s:RR,x:RR):RR := (
+     z := newRRmutable(precision0(x));
+     Ccode( void, "mpfr_gamma_inc(", z, ",", s, ",", x, ", GMP_RNDN)" );
+     moveToRRandclear(z));
+
 export Digamma(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_digamma(", z, ",", x, ", GMP_RNDN)" );
