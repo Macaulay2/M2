@@ -755,6 +755,7 @@ export {
 	"importFrom",
 	"in",
 	"incomparable",
+	"incompleteGamma",
 	"independentSets",
 	"indeterminate",
 	"index",
