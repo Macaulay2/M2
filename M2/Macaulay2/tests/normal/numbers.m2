@@ -838,6 +838,10 @@ assert ( atan (1/0.) === pi/2 )
 assert ( atan (1/(0.*ii)) == pi/2 )
 assert ( instance(atan (1/(0.*ii)) , CC) )
 
+assert small(incompleteGamma(5, 0) - Gamma 5)
+assert small(incompleteGamma(1, 5) - exp(-5))
+assert small(incompleteGamma(1/2, 5) - sqrt pi * erfc sqrt 5)
+
 -- I don't know whether we want to fix this:
 -- assert ( 1/11 == toRR(1/11) )
 -- assert ( 1/11 == 1p200/11 )
