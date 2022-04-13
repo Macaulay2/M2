@@ -420,7 +420,6 @@ depth String := s -> 0
 -----------------------------------------------------------------------------
 
 toList = method(Dispatch => Thing)
-toList List := List => x -> x
 toList BasicList := toList Set := toList String := List => toList1
 
 -----------------------------------------------------------------------------
