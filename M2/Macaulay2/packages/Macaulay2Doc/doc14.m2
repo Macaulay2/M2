@@ -93,16 +93,6 @@ document { Key => {eint,(eint, RR)},
      ///,
      PARA {"See ", wikipedia "Exponential integral", "."}
      }
-document { Key => {Gamma,(Gamma, RR)},
-     Usage => "Gamma x",
-     Headline => "Gamma function",
-     Inputs => { "x" },
-     Outputs => { RR => { "the gamma function of ", TT "x" }},
-     EXAMPLE lines ///
-     	  Gamma 6
-     ///,
-     PARA {"See ", wikipedia "Gamma function", "."}
-     }
 document { Key => {Beta,(Beta, RR, RR)},
      Usage => "Beta (x,y)",
      Headline => "Beta function",
