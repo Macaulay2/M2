@@ -838,9 +838,22 @@ assert ( atan (1/0.) === pi/2 )
 assert ( atan (1/(0.*ii)) == pi/2 )
 assert ( instance(atan (1/(0.*ii)) , CC) )
 
+assert small(1 - inverseErf erf 1)
+assert small(1/2 - erf inverseErf(1/2))
+
 assert small(Gamma(5, 0) - Gamma 5)
 assert small(Gamma(1, 5) - exp(-5))
 assert small(Gamma(1/2, 5) - sqrt pi * erfc sqrt 5)
+
+assert small(Gamma(1/2, 5) / Gamma(1/2) - regularizedGamma(1/2, 5))
+assert small(5 - inverseRegularizedGamma(1/2, regularizedGamma(1/2, 5)))
+assert small(1/5 - regularizedGamma(1/2, inverseRegularizedGamma(1/2, 1/5)))
+
+assert small(regularizedBeta(1/3, 4, 1) - 1/81)
+assert small(regularizedBeta(1/3, 4, 5) -
+    (regularizedBeta(1/3, 3, 5) - (1/3)^3 * (2/3)^5 / (3 * Beta(3, 5))))
+assert small(1/3 - inverseRegularizedBeta(regularizedBeta(1/3, 4, 5), 4, 5))
+assert small(1/3 - regularizedBeta(inverseRegularizedBeta(1/3, 4, 5), 4, 5))
 
 -- I don't know whether we want to fix this:
 -- assert ( 1/11 == toRR(1/11) )
