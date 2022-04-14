@@ -1187,6 +1187,7 @@ export {
 	"try",
 	"tutorial",
 	"typicalValues",
+	"uniquePermutations",
 	"ultimate",
 	"unbag",
 	"uncurry",

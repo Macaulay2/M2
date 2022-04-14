@@ -111,7 +111,7 @@ ZZ ? String := (n,s) -> concatenate(#s:toString n) ? s
 
 fugacityVector = true >> o -> L -> (
     if #L === 0 then return 0; -- error "can't determine puzzle size";
-    I := unique permutations sort bottom(first L);
+    I := uniquePermutations sort bottom(first L);
     t := fugacityTally(L,o);
     vector apply(I,i->t_i)
     )
