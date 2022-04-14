@@ -205,6 +205,51 @@ typval = x -> (
 	     if args#0 === RR then variants#(f,Number,args#1) = variants#(f,Constant,args#1) = (x,y) -> f'(numeric_(precision y) x,y);
 	     if args#1 === RR then variants#(f,args#0,Number) = variants#(f,args#0,Constant) = (x,y) -> f'(x,numeric_(precision x) y);
 	     if args === (RR,RR) then variants#(f,Number,Number) = variants#(f,Number,Constant) = variants#(f,Constant,Number) = variants#(f,Constant,Constant) = (x,y) -> f'(numeric x,numeric y); -- phew
+	     )
+	 else if #args === 3 then (
+	     if args#0 === RR then
+		 variants#(f, Number,   args#1, args#2) =
+		 variants#(f, Constant, args#1, args#2) =
+		 (x,y,z) -> f'((numeric_min(precision y, precision z)) x, y, z);
+	     if args#1 === RR then
+		 variants#(f, args#0, Number,   args#2) =
+		 variants#(f, args#0, Constant, args#2) =
+		 (x,y,z) -> f'(x, (numeric_min(precision x, precision z)) y, z);
+	     if args#2 === RR then
+		 variants#(f, args#0, args#1, Number)   =
+		 variants#(f, args#0, args#1, Constant) =
+		 (x,y,z) -> f'(x, y, (numeric_min(precision x, precision y)) z);
+	     if args#0 === RR and args#1 === RR then
+		 variants#(f, Number,   Number,   args#2) =
+		 variants#(f, Number,   Constant, args#2) =
+		 variants#(f, Constant, Number,   args#2) =
+		 variants#(f, Constant, Constant, args#2) =
+		 (x,y,z) ->
+		     f'(numeric_(precision z) x, numeric_(precision z) y, z);
+	     if args#0 === RR and args#2 === RR then
+	         variants#(f, Number,   args#1, Number)   =
+		 variants#(f, Number,   args#1, Constant) =
+		 variants#(f, Constant, args#1, Number)   =
+		 variants#(f, Constant, args#1, Constant) =
+		 (x,y,z) ->
+		     f'(numeric_(precision y) x, y, numeric_(precision y) z);
+	     if args#1 === RR and args#2 === RR then
+		 variants#(f, args#0, Number,   Number)   =
+		 variants#(f, args#0, Number,   Constant) =
+		 variants#(f, args#0, Constant, Number)   =
+		 variants#(f, args#0, Constant, Constant) =
+		 (x,y,z) ->
+		     f'(x, numeric_(precision x) y, numeric_(precision x) z);
+	     if args === (RR, RR, RR) then
+		 variants#(f, Number,   Number,   Number)   =
+		 variants#(f, Number,   Number,   Constant) =
+		 variants#(f, Number,   Constant, Number)   =
+		 variants#(f, Number,   Constant, Constant) =
+		 variants#(f, Constant, Number,   Number)   =
+		 variants#(f, Constant, Number,   Constant) =
+		 variants#(f, Constant, Constant, Number)   =
+		 variants#(f, Constant, Constant, Constant) =
+		 (x,y,z) -> f'(numeric x, numeric y, numeric z);
 	     );
 	 )
      )
