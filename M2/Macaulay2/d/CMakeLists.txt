@@ -86,6 +86,7 @@ set(DLIST
   python.d	# removed unless WITH_PYTHON
   interface.dd interface2.d
   texmacs.d
+  boostmath.dd
   interp.dd	# this one is last, because it contains the top level interpreter
   version.dd
   )
