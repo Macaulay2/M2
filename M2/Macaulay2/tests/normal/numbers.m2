@@ -836,6 +836,8 @@ assert ( size2 (1/0.-1/0.) > 2000 )
 assert ( isInfinite ( ii / 0. ) )
 assert ( isInfinite ( ii * (1/0.) ) )
 assert ( isInfinite ( ii * (1/(0.+0.*ii)) ) )
+assert ( not isInfinite pi )
+assert ( isInfinite infinity )
 
 assert ( atan (1/0.) === pi/2 )
 assert ( atan (1/(0.*ii)) == pi/2 )
