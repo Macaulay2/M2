@@ -136,26 +136,6 @@ document { Key => {zeta,(zeta, RR)},
      ///,
      PARA {"See ", wikipedia "Riemann zeta function", "."}
      }
-document { Key => {erf,(erf, RR)},
-     Usage => "erf x",
-     Headline => "error function",
-     Inputs => { "x" },
-     Outputs => { RR => { "the error function of ", TT "x" }},
-     EXAMPLE lines ///
-     	  erf 2
-     ///,
-     PARA {"See ", wikipedia "Error function", "."}
-     }
-document { Key => {erfc,(erfc, RR)},
-     Usage => "erfc x",
-     Headline => "complementary error function",
-     Inputs => { "x" },
-     Outputs => { RR => { "the complementary error function of ", TT "x" }},
-     EXAMPLE lines ///
-     	  erfc 2
-     ///,
-     PARA {"See ", wikipedia "Error function", "."}
-     }
 document { 
      --- author(s): L. Gold, Dan Grayson
      Key => {acos,(acos,RR),(acos,CC),(acos, RRi)},
