@@ -48,3 +48,34 @@ document {
      	  "acot 2",
 	  }
      }
+
+document {
+     Key => {atanh, (atanh,Number), (atanh,Constant)},
+     Headline => "compute the hyperbolic arctangent of a number",
+     Usage => "atanh x",
+     Inputs => { "x" => { ofClass Number, " or ", ofClass Constant } },
+     Outputs => {
+	  Number => { "the hyperbolic arctangent of ", TT "x" }
+	  },
+     EXAMPLE {
+	  "atanh .4",
+	  "atanh 4."
+	  }
+     }
+
+document {
+     Key => {acoth, (acoth,Number), (acoth,Constant)},
+     Headline => "compute the hyperbolic arctangent of a number",
+     Usage => "acoth x",
+     Inputs => { "x" => { ofClass Number, " or ", ofClass Constant } },
+     Outputs => {
+	  Number => { "the hyperbolic arccotangent of ", TT "x" }
+	  },
+     EXAMPLE {
+	  "acoth .4",
+	  "acoth 4."
+	  }
+     }
+
+     
+     

@@ -107,7 +107,6 @@ substring(String,ZZ,ZZ) := String => substring
 substring(ZZ,String) := String => substring
 substring(Sequence,String) := String => substring
 substring(ZZ,ZZ,String) := String => substring
-toList Set := toList BasicList := toList String := List => toList
 toSequence BasicList := toSequence String := Sequence => toSequence
 ascii String := List => ascii
 ascii List := String => ascii

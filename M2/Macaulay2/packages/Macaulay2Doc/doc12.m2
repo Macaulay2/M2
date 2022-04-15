@@ -373,7 +373,7 @@ document {
      }
 
 document {
-     Key => MatrixExpression,
+     Key => {MatrixExpression, CompactMatrix, BlockMatrix},
      Headline => "the class of all matrix expressions",
      TT "MatrixExpression", " is a type of ", TO "Expression", " representing
      a matrix.",
@@ -384,6 +384,24 @@ document {
          ///MatrixExpression {applyTable({{x^2-y^2,x^3-y^3},{x^2-4*y^2,x^3+y^3}},factor),Degrees=>{{{-2},{-3}},{{0},{0}}}}///,
 	 ///value oo///
 	 },
+     PARA {
+	  "The optional argument ", TO "CompactMatrix", " may be used with ", TT "new MatrixExpression", " to specify
+	  whether the matrix should be displayed compactly."
+	  },
+     EXAMPLE lines ///
+     R = QQ[x];
+     f = {{x^2,x^3}}
+     new MatrixExpression from {f, CompactMatrix => false}
+     new MatrixExpression from {f, CompactMatrix => true}
+     ///,
+     PARA {
+	  "The optional argument ", TO "BlockMatrix", " may be used with ", TT "new MatrixExpression", " to specify
+	  the numbers of rows and columns to use when displaying the matrix as a block matrix."
+	  },
+     EXAMPLE lines ///
+     g = apply(4,i -> apply(4,j -> 10*i+j+10))
+     new MatrixExpression from { g, BlockMatrix => {{1,2},{3,1}}}
+     ///,
      SeeAlso => {"Table"}
      }
 

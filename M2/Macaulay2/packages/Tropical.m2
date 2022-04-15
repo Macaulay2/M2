@@ -841,6 +841,7 @@ doc ///
 	Key
 		visualizeHypersurface
 		(visualizeHypersurface,RingElement)
+		Valuation
 	Headline
 		visualize the tropical hypersurface of the given polynomial
 	Usage

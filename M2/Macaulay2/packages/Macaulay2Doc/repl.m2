@@ -865,31 +865,46 @@ document {
      SeeAlso => { getGlobalSymbol }
      }
 
-document { Key => symbol currentColumnNumber,
+document { 
+     Key => currentColumnNumber,
      Headline => "current column number of the current input file",
      Usage => "currentColumnNumber()",
      Outputs => { ZZ => "the current column number of the current input file" },
      EXAMPLE "currentColumnNumber()",
      SeeAlso => {"currentRowNumber", "currentFileName" }
      }
-document { Key => symbol currentRowNumber,
+document { 
+     Key => currentRowNumber,
      Headline => "current row number of the current input file",
      Usage => "currentRowNumber()",
      Outputs => { ZZ => "the current row number of the current input file" },
      EXAMPLE "currentRowNumber()",
-     SeeAlso => {"currentColumnNumber", "currentFileName" }
+     SeeAlso => {"currentColumnNumber", "currentFileName", "currentPosition" }
      }
-document { Key => symbol currentFileDirectory,
+document { 
+     Key => symbol currentFileDirectory,
      Headline => "the directory containing the current input file",
      Usage => "currentFileDirectory",
      Outputs => { String => "the directory containing the current input file" },
      EXAMPLE "currentFileDirectory",
      SeeAlso => "currentFileName" }
-document { Key => symbol currentFileName,
+document { 
+     Key => symbol currentFileName,
      Headline => "the current source file",
      Usage => "currentFileName",
      Outputs => { String => "the name of the current source file" },
      EXAMPLE "currentFileName",
+     SeeAlso => {"currentRowNumber", "currentColumnNumber", "currentPosition" }
+     }
+document { 
+     Key => currentPosition,
+     Headline => "the current position in the current source file",
+     Usage => "currentPosition()",
+     Outputs => { FilePosition => "the current position in the source file" },
+     EXAMPLE lines ///
+     currentPosition()
+     peek'_2 oo
+     ///,
      SeeAlso => {"currentRowNumber", "currentColumnNumber" }
      }
 
