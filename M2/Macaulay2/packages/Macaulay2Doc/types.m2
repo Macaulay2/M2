@@ -26,7 +26,7 @@ document {
 	       instances of the new type to nets for display."
 	       },
 	  EXAMPLE lines ///
-	       new Type of BasicList from Function := (A,B,f) -> hashTable { net => f }; -* no-capture-flag *-
+	       new Type of BasicList from Function := (A,B,f) -> hashTable { net => f, html => f }; -* no-capture-flag *-
 	  ///,
 	  PARA {
 	       "The hash tables ", TT "AA", ", ", TT "BB", ", and ", TT "C", " will normally be instances of ", TO "Type", "."
