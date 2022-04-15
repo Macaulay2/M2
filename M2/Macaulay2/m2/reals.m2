@@ -441,6 +441,7 @@ isInfinite' = isInfinite
 isInfinite = method()
 isInfinite Number := isInfinite'
 isInfinite Constant := isInfinite @@ numeric
+isInfinite InfiniteNumber := x -> true
 
 acosh = method()
 acosh Number := z -> log(z+sqrt(z^2-1))
