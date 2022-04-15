@@ -1365,6 +1365,9 @@ fi
 AX_BOOST_REGEX
 LIBS="$LIBS $BOOST_REGEX_LIB"
 
+AC_CHECK_HEADERS([boost/math/special_functions.hpp], [],
+    [AC_MSG_ERROR([Boost Math Toolkit not available])])
+
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
 AC_SUBST(ULIMIT_V,yes)
