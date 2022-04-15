@@ -435,6 +435,7 @@ isReal = method()
 isReal RRi := isReal RR := isReal QQ := isReal ZZ := x -> true
 isReal CC := z -> imaginaryPart z == 0
 isReal Constant := isReal @@ numeric
+isReal InfiniteNumber := x -> false
 
 acosh = method()
 acosh Number := z -> log(z+sqrt(z^2-1))
