@@ -473,7 +473,8 @@ document { Key => {isANumber, (isANumber,Number)},
      SeeAlso => {isFinite, isInfinite}
      }
 
-document { Key => {isInfinite, (isInfinite,Number)},
+document { Key => {isInfinite, (isInfinite,Number), (isInfinite, Constant),
+	(isInfinite, InfiniteNumber)},
      Usage => "isInfinite x",
      Headline => "whether a number is infinite",
      Inputs => { "x" => Number },
