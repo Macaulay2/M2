@@ -437,6 +437,10 @@ isReal CC := z -> imaginaryPart z == 0
 isReal Constant := isReal @@ numeric
 isReal InfiniteNumber := x -> false
 
+isInfinite' = isInfinite
+isInfinite = method()
+isInfinite Number := isInfinite'
+
 acosh = method()
 acosh Number := z -> log(z+sqrt(z^2-1))
 acosh Constant := acosh @@ numeric
