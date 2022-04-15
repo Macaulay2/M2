@@ -171,17 +171,36 @@ class ARingZZpFlint : public RingInterface
 
   void power(ElementType &result, ElementType a, long n) const
   {
-    //    assert(a != 0 || n>=0 );
-    if (a==0 && n<0) ERROR("division by zero");
-    result = n_powmod2_preinv(a, n, mModulus.n, mModulus.ninv);
+    if (a != 0)
+      {
+        result = n_powmod2_preinv(a, n, mModulus.n, mModulus.ninv);
+      }
+    else
+      {
+        // case a == 0
+        if (n < 0) ERROR("division by zero"); // TODO: throw error.
+        if (n == 0) return set_from_long(result, 1);
+        if (n > 0) return set_zero(result);
+      }
   }
 
   void power_mpz(ElementType &result, ElementType a, mpz_srcptr n) const
   {
-    //    assert( a != 0 || mpz_sgn(n)>=0);
-    if (a==0 && mpz_sgn(n)<0) ERROR("division by zero");
-    unsigned long nbar = mpz_fdiv_ui(n, mCharac - 1);
-    result = n_powmod2_ui_preinv(a, nbar, mModulus.n, mModulus.ninv);
+    if (a != 0)
+      {
+        unsigned long nbar = mpz_fdiv_ui(n, mCharac - 1);
+        result = n_powmod2_ui_preinv(a, nbar, mModulus.n, mModulus.ninv);
+      }
+    else
+      {
+        // case a == 0
+        if (mpz_sgn(n) == 0)
+          set_from_long(result, 1);
+        else if (mpz_sgn(n) > 0)
+          set_zero(result);
+        else
+          ERROR("division by zero"); // TODO: throw error.
+      }
   }
 
   void swap(ElementType &a, ElementType &b) const

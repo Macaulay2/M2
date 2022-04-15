@@ -35,7 +35,6 @@ private:
 #include "interrupted.hpp"
 
 #include "aring-m2-gf.hpp"
-#include <iostream>
 
 bool GF::initialize_GF(const RingElement *prim)
 {
@@ -121,9 +120,6 @@ bool GF::initialize_GF(const RingElement *prim)
   zeroV = from_long(0);
   oneV = from_long(1);
   minus_oneV = from_long(-1);
-
-  // M2::GaloisFieldTable G(*_originalR, primelem);
-  //  G.display(std::cout);
 
   return true;
 }
@@ -382,18 +378,33 @@ ring_elem GF::mult(const ring_elem f, const ring_elem g) const
 
 ring_elem GF::power(const ring_elem f, int n) const
 {
-  if (f.get_int() == _ZERO) return ring_elem(_ZERO);
-  int m = (f.get_int() * n) % Q1_;
-  if (m <= 0) m += Q1_;
-  return ring_elem(m);
+  if (f.get_int() != _ZERO)
+    {
+      int m = (f.get_int() * n) % Q1_;
+      if (m <= 0) m += Q1_;
+      return ring_elem(m);
+    }
+  else
+    {
+      // f == 0 element.
+      if (n == 0) return ring_elem(_ONE);
+      return ring_elem(_ZERO);
+    }
 }
 ring_elem GF::power(const ring_elem f, mpz_srcptr n) const
 {
-  if (f.get_int() == _ZERO) return ring_elem(_ZERO);
-  int exp = RingZZ::mod_ui(n, Q1_);
-  int m = (f.get_int() * exp) % Q1_;
-  if (m <= 0) m += Q1_;
-  return ring_elem(m);
+  if (f.get_int() != _ZERO)
+    {
+      int exp = RingZZ::mod_ui(n, Q1_);
+      int m = (f.get_int() * exp) % Q1_; // WARNING TODO: possible overflow! Check!
+      if (m <= 0) m += Q1_;
+      return ring_elem(m);
+    }
+  else
+    {
+      if (mpz_sgn(n) == 0) return ring_elem(_ONE);
+      return ring_elem(_ZERO);
+    }
 }
 
 ring_elem GF::invert(const ring_elem f) const

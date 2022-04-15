@@ -273,13 +273,34 @@ class ARingGFM2 : public RingInterface
         if (result <= 0) result += mGF.orderMinusOne();
       }
     else
-      result = 0;
+      {
+        // a is the zero element
+        if (n > 0)
+          result = 0;
+        else if (n == 0)
+          result = mGF.one();
+        else
+          ERROR("division by zero");
+      }
   }
 
   void power_mpz(elem &result, elem a, mpz_srcptr n) const
   {
-    long n1 = mpz_fdiv_ui(n, mGF.orderMinusOne());
-    power(result, a, n1);
+    if (a != 0)
+      {
+        long n1 = mpz_fdiv_ui(n, mGF.orderMinusOne());
+        power(result, a, n1);
+      }
+    else
+      {
+        // a is the zero element
+        if (mpz_sgn(n) > 0)
+          result = 0;
+        else if (mpz_sgn(n) == 0)
+          result = mGF.one();
+        else
+          ERROR("division by zero");
+      }
   }
 
   void swap(ElementType &a, ElementType &b) const

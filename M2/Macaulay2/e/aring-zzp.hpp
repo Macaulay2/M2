@@ -228,15 +228,27 @@ class ARingZZp : public RingInterface
         if (result <= 0) result += p1;
       }
     else
-      result = 0;
+      {
+        // a == 0
+        if (n == 0) result = p1; // the element 1 in this ring.
+        else if (n < 0) ERROR("division by zero");
+        else result = 0;
+      }
   }
 
   void power_mpz(elem &result, elem a, mpz_srcptr n) const
   {
-    //    assert( a != 0 || mpz_sgn(n)>=0);
-    if (a==0 && mpz_sgn(n)<0) ERROR("division by zero");
-    int n1 = static_cast<int>(mpz_fdiv_ui(n, p1));
-    power(result, a, n1);
+    if (a != 0)
+      {
+        int n1 = static_cast<int>(mpz_fdiv_ui(n, p1));
+        power(result, a, n1);
+      }
+    else
+      {
+        if (mpz_sgn(n) == 0) result = p1; // the element 1 in this ring.
+        else if (mpz_sgn(n) < 0) ERROR("division by zero");
+        else result = 0; // result is 0 in the ring.
+      }
   }
 
   void swap(ElementType &a, ElementType &b) const
