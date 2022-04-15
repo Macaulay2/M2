@@ -1157,7 +1157,6 @@ isANumber(e:Expr):Expr := (
 setupfun("isANumber",isANumber);
 
 isInfinite(e:Expr):Expr := (
-     -- # typical value: isInfinite, Number, Boolean
      when e
      is x:ZZcell do False
      is x:QQcell do False
@@ -1166,7 +1165,7 @@ isInfinite(e:Expr):Expr := (
      is x:CCcell do toExpr(isinf(x.v))
      else WrongArg("a number")
      );
-setupfun("isInfinite",isInfinite);
+setupfun("isInfinite",isInfinite).Protected=false;
 
 gcIsVisible(e:Expr):Expr := (
      Ccode(void, "assert(GC_is_visible(",e,"))");
