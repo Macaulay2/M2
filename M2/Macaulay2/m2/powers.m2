@@ -17,7 +17,7 @@ binomial(ZZ,ZZ) := ZZ => memoize (
 	  )
      )
 
-binomial(RingElement, ZZ):= (q,n)->(
+binomial(RingElement, ZZ):= (q,n)-> if n<0 then error "binomial undefined" else (
      product(n, i-> q-i) * (promote(product(n, i->1+i),ring q))^(-1))
 
 -- Local Variables:
