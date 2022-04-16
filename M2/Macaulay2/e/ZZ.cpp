@@ -292,9 +292,11 @@ ring_elem RingZZ::invert(const ring_elem f) const
 ring_elem RingZZ::divide(const ring_elem f, const ring_elem g) const
 {
   mpz_ptr result = new_elem();
-  mpz_ptr rem = new_elem();
+  mpz_t rem;
+  mpz_init(rem);
   mpz_fdiv_qr(result, rem, f.get_mpz(), g.get_mpz());
   if (mpz_sgn(rem)) ERROR("not divisible");
+  mpz_clear(rem);
   mpz_reallocate_limbs(result);
   return ring_elem(result);
 }

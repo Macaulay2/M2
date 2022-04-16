@@ -903,6 +903,7 @@ ring_elem PolyRing::power_direct(const ring_elem ff, int n) const
             add_to(result, h);
         }
     }
+    mpz_clear(bin_c);
     return result;
 }
 
