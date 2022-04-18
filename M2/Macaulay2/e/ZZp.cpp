@@ -145,6 +145,7 @@ ring_elem Z_mod::from_int(mpz_srcptr n) const
   mpz_init(result);
   mpz_mod_ui(result, n, P);
   int m = static_cast<int>(mpz_get_si(result));
+  mpz_clear(result);
   //  cout << m << endl;
   if (m < 0) m += P;
   m = _log_table[m];

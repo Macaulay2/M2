@@ -153,6 +153,7 @@ ring_elem ChineseRemainder::CRA(const PolyRing *R,
     }
 
   mpz_clear(result_coeff);
+  mpz_clear(mn_half);
   result->next = nullptr;
   return head.next;
 }
