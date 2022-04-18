@@ -452,7 +452,8 @@ processSignature := (tag, fn) -> item -> (
 	opttag := getPrimaryTag makeDocumentTag([fn, optsymb], Package => package tag);
 	name := if tag === opttag then TT toString optsymb else TO2 { opttag, toString optsymb };
 	type  = if type =!= null and type =!= Nothing then ofClass type else TT "..."; -- type Nothing is treated as above
-	defval := SPAN{"default value ", reproduciblePaths replace("^-\\*Function.*?\\*-", "-*Function*-", toString opts#optsymb)};
+	maybeformat := if instance(opts#optsymb, String) then format else identity;
+	defval := SPAN{"default value ", maybeformat reproduciblePaths replace("^-\\*Function.*?\\*-", "-*Function*-", toString opts#optsymb)};
 	text = if text =!= null and #text > 0 then text else if tag =!= opttag then LATER {() -> headline opttag};
 	text = if text =!= null and #text > 0 then (", ", text);
 	-- e.g: Key => an integer, default value 42, the meaning of the universe
