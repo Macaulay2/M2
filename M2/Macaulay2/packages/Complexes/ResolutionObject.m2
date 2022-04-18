@@ -337,9 +337,6 @@ resolutionBySyzygies = (opts, M) -> (
     -- TODO: return null for any rings such that syz is not available.
     -- TODO: are there any such rings?  Perhaps inexact fields...
     
-    -- YYY: Start here. This should work with Weyl algebras, etc, 
-    -- different lengthlimits.  degreelimits: perhaps.
-    
     RO := M.cache.ResolutionObject;
 
     RO.SchreyerOrder = instance(R, PolynomialRing) or (
@@ -354,6 +351,8 @@ resolutionBySyzygies = (opts, M) -> (
     
     RO.compute = (lengthlimit, degreelimit) -> (
         -- finish XXX
+        if isWeylAlgebra R and lengthlimit === infinity then
+            lengthlimit = numgens R; -- TODO: add the global dim of coefficient ring of R.
         m := RO.SyzygyList#(#RO.SyzygyList-1);
         for i from #RO.SyzygyList to lengthlimit-1 do (
             if numcols m == 0 then return;
@@ -387,6 +386,33 @@ addHook((freeResolution, Module), resolutionInEngine3, Strategy => 3)
 addHook((freeResolution, Module), resolutionInEngine1, Strategy => 1)
 addHook((freeResolution, Module), resolutionInEngine, Strategy => Engine)
 addHook((freeResolution, Module), resolutionOverField, Strategy => "Field")
+
+
+cechComplex = method()
+cechComplex MonomialIdeal := Complex => B -> (
+    if radical B != B then error "expected squarefree monomial ideal";
+    R := ring B;
+    n := numgens R;
+    g := gens R;
+    dg := for x in g list getSymbol("d" | toString x);
+    weylPairs := for i to #g-1 list g#i =>  dg#i;
+    D := (coefficientRing R)(monoid[g, dg, 
+            WeylAlgebra => weylPairs,
+            Degrees => entries (id_(ZZ^n) || - id_(ZZ^n))
+            ]);
+    phi := map(D, R);
+    F := dual freeResolution module phi B; -- BUG: degrees are incorrect in one location.
+    (lo, hi) := concentration F;
+    modules := hashTable for i from lo to hi list i => (
+        degs := degrees F_i;
+        directSum for d in degs list (
+            -- d is a list of -1's and 0's of length n
+            D^{-d}/ideal for i to n-1 list if d#i === -1 then D_i * D_(n+i) + 1 else D_(n+i)
+            )
+        );
+    maps := for i from lo+1 to hi list map(modules#(i-1), modules#i, dd^F_i);
+    complex maps
+    )
 
 end--
 restart
@@ -695,3 +721,58 @@ peek M.cache#(new ResolutionContext)
   -- TODO: write gradedModule function to make a complex out of a hashtable of modules (maps are zero).
   for i from 0 to length F - 1 list i => prune HH_i F
   betti F
+
+D = QQ[x,y,z,dx,dy,dz, WeylAlgebra => {x => dx, y => dy, z => dz}, Degrees => {{1},{1},{1},{-1},{-1},{-1}}];
+degree (x*dx)
+isHomogeneous (x*dx)
+
+-- Cech complex on P^2
+restart
+needsPackage("Complexes")
+load "Complexes/ResolutionObject.m2"
+R = ZZ/101[x,y,z]
+F = dual freeResolution module ideal vars R
+dd^F
+
+
+
+D = QQ[x,y,z,dx,dy,dz, WeylAlgebra => {x => dx, y => dy, z => dz}, Degrees => {
+        {1,0,0},{0,1,0},{0,0,1},
+        {-1,0,0},{0,-1,0},{0,0,-1}}]
+I = ideal(x,y,z)
+FI = freeResolution module I
+F = dual FI
+Fx = D^{{1,0,0}}/(x*dx+1, dy, dz)
+Fy = D^{{0,1,0}}/(dx, y*dy+1, dz)
+Fz = D^{{0,0,1}}/(dx, dy, z*dz+1)
+Fxy = D^{{1,1,0}}/(x*dx+1, y*dy+1, dz)
+Fxz = D^{{1,0,1}}/(x*dx+1, dy, z*dz+1)
+Fyz = D^{{0,1,1}}/(dx, y*dy+1, z*dz+1)
+Fxyz = D^{{1,1,1}}/(x*dx+1, y*dy+1, z*dz+1)
+
+phi = map(D, R)
+FD = phi F
+d1 = map(Fxyz, Fxy ++ Fxz ++ Fyz, dd^FD_-1)
+isWellDefined d1
+d0 = map(source d1, Fx ++ Fy ++ Fz, dd^FD_0)
+isWellDefined d0
+d1 * d0
+C = complex({d1, d0}, Base => -2)
+isWellDefined C
+prune HH C
+prune HH^2 C
+prune Hom(C, D^1/(dx,dy,dz))
+Hom(D^1, D^1/(dx,dy,dz))
+
+restart
+needsPackage("Complexes")
+load "Complexes/ResolutionObject.m2"
+
+R = ZZ/101[x,y,z]
+cechComplex monomialIdeal(x,y,z)
+
+R = ZZ/101[a..d]
+cechComplex monomialIdeal(a*c,b*c,a*d,b*d)
+
+n = 3
+entries (id_(ZZ^n) || - id_(ZZ^n))
