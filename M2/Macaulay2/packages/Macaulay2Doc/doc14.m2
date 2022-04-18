@@ -17,7 +17,8 @@ document { Key => {size2, (size2,CC), (size2,RR), (size2,ZZ), (size2,RRi)},
      size2 (1/0.-1/0.)
      ///}
 
-document { Key => {isReal,(isReal,CC),(isReal,QQ),(isReal,RR),(isReal,ZZ),(isReal, RRi)},
+document { Key => {isReal,(isReal,CC),(isReal,QQ),(isReal,RR),(isReal,ZZ),
+	(isReal, RRi), (isReal, Constant), (isReal, InfiniteNumber)},
      Usage => "isReal x",
      Headline => "whether a number is real",
      Inputs => { "x" => Number },
@@ -442,7 +443,8 @@ document { Key => {isANumber, (isANumber,Number)},
      SeeAlso => {isFinite, isInfinite}
      }
 
-document { Key => {isInfinite, (isInfinite,Number)},
+document { Key => {isInfinite, (isInfinite,Number), (isInfinite, Constant),
+	(isInfinite, InfiniteNumber)},
      Usage => "isInfinite x",
      Headline => "whether a number is infinite",
      Inputs => { "x" => Number },

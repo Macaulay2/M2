@@ -1196,6 +1196,9 @@ void GBRing::gbvector_combine_lead_terms_ZZ(const FreeModule *F,
   mpz_init(u1);
   mpz_init(v1);
   mpz_gcdext(gab, u1, v1, a.get_mpz(), b.get_mpz());
+  mpz_clear(gab);
+  //these ring_elem must not escape the function, because they aren't allocated on
+  //the gc heap
   ring_elem u = ring_elem(u1);
   ring_elem v = ring_elem(v1);
   if (globalZZ->is_zero(u) || globalZZ->is_zero(v))
@@ -1230,6 +1233,8 @@ void GBRing::gbvector_combine_lead_terms_ZZ(const FreeModule *F,
       gbvector *result_syz1 = mult_by_term(Fsyz, gsyz, v, MONOM2, comp);
       gbvector_add_to(Fsyz, result_syz, result_syz1);
     }
+  mpz_clear(u1);
+  mpz_clear(v1);
 }
 
 void GBRing::gbvector_apply(const FreeModule *F,

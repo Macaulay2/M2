@@ -115,7 +115,7 @@ member(Thing,VisibleList) := Boolean => (c,x) -> any(x, i -> c===i)
 sum List := x -> plus toSequence x
 
 sum(ZZ,Function) := (n,f) -> (
-     if n === 0 then 0
+     if n <= 0 then 0
      else (
 	  s := f 0;
 	  for i from 1 to n-1 do s = s + f i;
@@ -141,7 +141,7 @@ sum(VisibleList, VisibleList, Function) := (x,y,f) -> (
 product List := x -> times toSequence x
 
 product(ZZ,Function) := (n,f) -> (
-     if n === 0 then 1
+     if n <= 0 then 1
      else (
 	  s := f 0;
 	  for i from 1 to n-1 do s = s * f i;
