@@ -196,6 +196,7 @@ void ARingZZpFFPACK::power(ElementType &result,
         set_from_long(result, 1);
       else
         set_zero(result);
+      return;
     }
   ElementType base;
   set(base, a);
