@@ -226,19 +226,12 @@ class ARingGFFlint : public RingInterface
         invert(result, a);
         fq_zech_pow_ui(&result, &result, -n, mContext);
       }
-    else if (is_zero(a))
-      set_zero(result);
     else
       fq_zech_pow_ui(&result, &a, n, mContext);
   }
 
   void power_mpz(ElementType& result, const ElementType& a, mpz_srcptr n) const
   {
-    if (is_zero(a) && mpz_sgn(n)>=0)
-      {
-        set_zero(result);
-        return;
-      }
     mpz_t abs_n;
     mpz_init(abs_n);
     mpz_abs(abs_n, n);

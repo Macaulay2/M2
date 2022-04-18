@@ -250,7 +250,10 @@ ring_elem Z_mod::mult(const ring_elem f, const ring_elem g) const
 ring_elem Z_mod::power(const ring_elem f, int n) const
 {
   if (f.get_int() == _ZERO) {
-    if (n<0) ERROR("division by zero");
+    if (n < 0)
+      ERROR("division by zero");
+    else if (n == 0)
+      return ring_elem(0); // this is the element one in this ring.  (P-1) is the zero element...
     return ring_elem(_ZERO);
   }
   int m = (f.get_int() * n) % _P1;
@@ -261,6 +264,8 @@ ring_elem Z_mod::power(const ring_elem f, mpz_srcptr n) const
 {
   if (f.get_int() == _ZERO) {
     if (mpz_sgn(n)<0) ERROR("division by zero");
+    else if (mpz_sgn(n) == 0)
+      return ring_elem(0);
     return ring_elem(_ZERO);
   }
   int n1 = RingZZ::mod_ui(n, _P1);

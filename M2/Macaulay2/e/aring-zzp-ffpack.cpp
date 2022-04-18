@@ -190,8 +190,12 @@ void ARingZZpFFPACK::power(ElementType &result,
 {
   if (is_zero(a))
     {
-      if (n < 0) ERROR("division by zero");
-      set(result, a);
+      if (n < 0)
+        ERROR("division by zero");
+      else if (n == 0)
+        set_from_long(result, 1);
+      else
+        set_zero(result);
       return;
     }
   ElementType base;
@@ -224,9 +228,21 @@ void ARingZZpFFPACK::power_mpz(ElementType &result,
                                const ElementType a,
                                mpz_srcptr n) const
 {
-  if (is_zero(a) && mpz_sgn(n)<0) ERROR("division by zero");
-  STT n1 = static_cast<STT>(mpz_fdiv_ui(n, mFfpackField.cardinality() - 1));
-  power(result, a, n1);
+  if (is_zero(a))
+    {
+      if (mpz_sgn(n) < 0)
+        ERROR("division by zero");
+      else if (mpz_sgn(n) == 0)
+        set_from_long(result, 1);
+      else
+        set_zero(result);
+    }
+  else
+    {
+      // a != 0
+      STT n1 = static_cast<STT>(mpz_fdiv_ui(n, mFfpackField.cardinality() - 1));
+      power(result, a, n1);
+    }
 }
 
 ///@note duplicate code
