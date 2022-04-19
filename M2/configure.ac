@@ -783,6 +783,11 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      fi
 fi
 
+## we always build gc so we can configure it for large memory spaces
+## see issue #2445
+BUILD_gc=yes
+BUILD_ALWAYS="$BUILD_ALWAYS gc"
+
 AC_MSG_CHECKING(whether package bdw-gc is provided)
 dnl Note: we don't include -lgccpp below, because linking with that library is what replaces ::new and friends with GC_MALLOC_UNCOLLECTABLE and friends:
 if [ pkg-config --exists bdw-gc ]
@@ -793,6 +798,7 @@ then AC_MSG_RESULT(yes)
 else AC_MSG_RESULT(no)
      BUILD_gc=yes
 fi
+
 if test $BUILD_gc = yes
 then BUILTLIBS="-lgc -lpthread $BUILTLIBS"
 else if test $SHARED = no -a $TRY_STATIC = yes
