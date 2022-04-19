@@ -3,7 +3,9 @@
 --- notes: Mike will make this work for rings
 
 document { 
-     Key =>{binomial, (binomial,ZZ,ZZ), (binomial,RingElement,ZZ)},
+     Key =>{binomial, (binomial, Number, Number), (binomial, Number, Constant),
+	 (binomial, Constant, Number), (binomial, Constant, Constant),
+	 (binomial,RingElement,ZZ)},
 	Headline => "binomial coefficient",
 	Usage => "binomial(n,k)",
 	Inputs => {
