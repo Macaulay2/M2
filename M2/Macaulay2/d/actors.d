@@ -575,7 +575,11 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
      is x:ZZcell do (
 	  when rhs
 	  is y:ZZcell do (
-	       if !isNegative(y.v) then toExpr(x.v^y.v) 
+	       if !isNegative(y.v) 
+	       then (
+		    if isLong(y.v) then toExpr(x.v^y.v)
+		    else buildErrorPacket("expected exponent to be a small integer")
+		    )
 	       else if x.v === 1 then toExpr(x.v)
 	       else if x.v === -1 then (
 		    if int(y.v%ushort(2)) == 0
@@ -583,10 +587,14 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 		    else minusoneE)
 	       else if isZero(x.v) then buildErrorPacket("division by zero")
 	       else (
-	       	    den := x.v^-y.v;
-		    if isNegative(den)
-		    then toExpr(newQQCanonical(minusoneZZ,-den))
-		    else toExpr(newQQCanonical(     oneZZ, den))))
+		    ex := - y.v;
+		    if !isLong(ex)
+		    then buildErrorPacket("exected exponent to be a small integer")
+		    else (
+	       	    	 den := x.v^ex;
+		    	 if isNegative(den)
+		    	 then toExpr(newQQCanonical(minusoneZZ,-den))
+		    	 else toExpr(newQQCanonical(     oneZZ, den)))))
 	  is y:QQcell do (
 	       d := denominator(y.v);
 	       if d === 1 then toExpr(x.v^numerator(y.v))
@@ -616,10 +624,18 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,PowerS))
      is x:QQcell do (
 	  when rhs
-	  is y:ZZcell do toExpr(x.v^y.v)
+	  is y:ZZcell do (
+	       if isLong(y.v) 
+	       then toExpr(x.v^y.v)
+	       else buildErrorPacket("expected exponent to be a small integer")
+	       )
 	  is y:QQcell do (
 	       d := denominator(y.v);
-	       if d === 1 then toExpr(x.v^numerator(y.v))
+	       if d === 1 then (
+		    if isLong(numerator(y.v))
+		    then toExpr(x.v^numerator(y.v))
+		    else buildErrorPacket("expected exponent to have a small numerator")
+		    )
 	       else if isNegative(x.v)
 	       then if isOdd(d) then (
 		    if isOdd(numerator(y.v))
