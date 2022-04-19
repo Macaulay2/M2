@@ -3,8 +3,15 @@
 needs "methods.m2"
 needs "remember.m2"
 
-binomial(ZZ,ZZ) := ZZ => memoize (
+binomial(Number,   Number) := binomial(Number,   Constant) :=
+binomial(Constant, Number) := binomial(Constant, Constant) := ZZ => memoize (
      (n,i) -> (
+	  if n == floor n then n = floor n;
+	  if i == floor i then i = floor i;
+	  if not (isReal n and isReal i)
+	  then error "expected arguments to be real numbers";
+	  if instance(n, RRi) or instance(i, RRi)
+	  then error "not yet implemented for intervals with nonzero diameter";
 	  if i < 0 then 0
 	  else if i === 0 then 1
      	  else if n > 0 then (
