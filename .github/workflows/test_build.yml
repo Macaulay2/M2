@@ -166,7 +166,7 @@ jobs:
           export CPPFLAGS="-I`brew --prefix`/include"
           export  LDFLAGS="-L`brew --prefix`/lib \
             -L`brew --prefix python`/Frameworks/Python.framework/Versions/${PYVERSION}/lib"
-          ../../configure --enable-download --with-python
+          ../../configure --enable-download --with-python --with-system-gc
 
       - name: Build Macaulay2 using Make
         if: matrix.build-system == 'autotools'
