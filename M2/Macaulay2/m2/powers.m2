@@ -6,8 +6,6 @@ needs "remember.m2"
 binomial(Number,   Number) := binomial(Number,   Constant) :=
 binomial(Constant, Number) := binomial(Constant, Constant) := ZZ => memoize (
      (n,i) -> (
-	  if n == floor n then n = floor n;
-	  if i == floor i then i = floor i;
 	  if not (isReal n and isReal i)
 	  then error "expected arguments to be real numbers";
 	  if instance(n, RRi) or instance(i, RRi)
