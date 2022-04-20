@@ -6,10 +6,10 @@ needs "remember.m2"
 binomial(Number,   Number) := binomial(Number,   Constant) :=
 binomial(Constant, Number) := binomial(Constant, Constant) := ZZ => memoize (
      (n,i) -> (
-	  if not (isReal n and isReal i)
-	  then error "expected arguments to be real numbers";
+	  if instance(numeric n, CC) or instance(numeric i, CC)
+	  then error "not yet implemented for complex numbers";
 	  if instance(n, RRi) or instance(i, RRi)
-	  then error "not yet implemented for intervals with nonzero diameter";
+	  then error "not yet implemented for real intervals";
 	  if i < 0 then 0
 	  else if i === 0 then 1
      	  else if n > 0 then (
