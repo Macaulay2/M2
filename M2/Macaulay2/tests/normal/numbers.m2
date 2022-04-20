@@ -854,6 +854,11 @@ assert small(Gamma(1/2, 5) / Gamma(1/2) - regularizedGamma(1/2, 5))
 assert small(5 - inverseRegularizedGamma(1/2, regularizedGamma(1/2, 5)))
 assert small(1/5 - regularizedGamma(1/2, inverseRegularizedGamma(1/2, 1/5)))
 
+assert small(lngamma 0.5 - log sqrt pi)
+assert small(lngamma(1/2) - log sqrt pi)
+assert small(lngamma 4 - log 6)
+assert small(lngamma pi - log Gamma pi)
+
 assert small(regularizedBeta(1/3, 4, 1) - 1/81)
 assert small(regularizedBeta(1/3, 4, 5) -
     (regularizedBeta(1/3, 3, 5) - (1/3)^3 * (2/3)^5 / (3 * Beta(3, 5))))
