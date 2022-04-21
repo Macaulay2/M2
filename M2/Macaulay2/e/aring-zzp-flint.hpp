@@ -16,7 +16,6 @@ class RingMap;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-#pragma GCC diagnostic ignored "-Wmacro-redefined"
 #include "flint/arith.h"
 #include "flint/nmod_vec.h"
 #pragma GCC diagnostic pop

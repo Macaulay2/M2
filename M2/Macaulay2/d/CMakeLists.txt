@@ -192,6 +192,7 @@ target_compile_options(M2-interpreter PRIVATE
   -Wno-sign-compare
   -Wno-uninitialized
   -Wno-unused
+  -Wno-array-bounds   # FIXME: caused by scc1's implementation of arrays
 
   # FIXME: mismatched-tags and parentheses-equality errors are caused by scc1
   $<$<COMPILE_LANG_AND_ID:C,AppleClang,Clang>:-Wno-parentheses-equality>
