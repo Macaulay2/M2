@@ -1257,11 +1257,11 @@ then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
 fi
 
-AC_ARG_ENABLE([build-memtailor],
-    [AS_HELP_STRING([--disable-build-memtailor],
+AC_ARG_WITH([system-memtailor],
+    [AS_HELP_STRING([--with-system-memtailor],
 	[use system memtailor instead of building git submodule])],,
-    [enable_build_memtailor=yes])
-if test $enable_build_memtailor = yes
+    [with_system_memtailor=no])
+if test $with_system_memtailor = no
 then
     BUILD_memtailor=yes
     BUILTLIBS="-lmemtailor $BUILTLIBS"
@@ -1270,11 +1270,11 @@ else AC_LANG(C++)
     AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
 fi
 
-AC_ARG_ENABLE([build-mathic],
-    [AS_HELP_STRING([--disable-build-mathic],
+AC_ARG_WITH([system-mathic],
+    [AS_HELP_STRING([--with-system-mathic],
 	[use system mathic instead of building git submodule])],,
-    [enable_build_mathic=yes])
-if test $enable_build_mathic = yes
+    [with_system_mathic=no])
+if test $with_system_mathic = no
 then
     BUILD_mathic=yes
     BUILTLIBS="-lmathic $BUILTLIBS"
@@ -1283,11 +1283,11 @@ else AC_LANG(C++)
     AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
 fi
 
-AC_ARG_ENABLE([build-mathicgb],
-    [AS_HELP_STRING([--disable-build-mathicgb],
+AC_ARG_WITH([system-mathicgb],
+    [AS_HELP_STRING([--with-system-mathicgb],
 	[use system mathicgb instead of building git submodule])],,
-    [enable_build_mathicgb=yes])
-if test $enable_build_mathicgb = yes
+    [with_system_mathicgb=no])
+if test $with_system_mathicgb = no
 then
     BUILD_mathicgb=yes
     BUILTLIBS="-lmathicgb $BUILTLIBS"
