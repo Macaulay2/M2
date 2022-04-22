@@ -38,6 +38,11 @@ document {
 document {
      Key => "changes made for the next release",
      UL {
+   	  LI { "improved packages:",
+	       UL {
+	       	    LI { "The package ", TO "GraphicalModelsMLE", " has been improved following many recommendations through its certification process. Several computations have been optimized. The names of several procedures and options have been modified. " }
+		    }
+	       },
  	  LI { "functionality added:",
 	       UL {
 		    LI { "New functions ", TO "memoizeValues", " and ", TO "memoizeClear", " have been added for dealing with the values retained by
