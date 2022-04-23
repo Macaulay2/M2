@@ -10,7 +10,6 @@
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-#pragma GCC diagnostic ignored "-Wmacro-redefined"
 #include <flint/fq_nmod.h>
 #include <flint/flint.h>
 #pragma GCC diagnostic pop
