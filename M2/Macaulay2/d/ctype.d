@@ -25,7 +25,8 @@ foreach c in " \t\r"	                   do setchartype(c,WHITE);
 foreach c in "\n"                          do setchartype(c,NEWLINE);
 foreach c in "$"                           do setchartype(c,DOLLAR);
 
-for c from 128 to 255	       	    	   do setchartype(char(c),ALPHA);
+for c from 128 to 225	       	    	   do setchartype(char(c),ALPHA);
+for c from 227 to 255	       	    	   do setchartype(char(c),ALPHA);
 					      setchartype('\'',ALPHA);
 					      setchartype('\"',QUOTE);
 
