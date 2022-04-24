@@ -9,8 +9,8 @@
 
 newPackage(
     "SpecialFanoFourfolds",
-    Version => "2.5", 
-    Date => "November 10, 2021",
+    Version => "2.5.1", 
+    Date => "April 24, 2022",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -57,6 +57,16 @@ export{
 needsPackage "IntegralClosure"; -- for method: normalization
 needsPackage "CharacteristicClasses"; -- for method: eulerCharacteristic
 needsPackage("RationalMaps",DebuggingMode=>false); -- for method: inverse3
+
+if RationalMaps.Options.Version < "1.0" then (
+    <<endl<<"Your version of the RationalMaps package is outdated (required version 1.0 or newer);"<<endl;
+    <<"you can manually download the latest version from"<<endl;
+    <<"https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages."<<endl;
+    <<"To automatically download the latest version of RationalMaps in your current directory,"<<endl;
+    <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
+    <<///run "curl -s -o RationalMaps.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/RationalMaps.m2";///<<endl<<endl<<"***"<<endl;
+    error "required RationalMaps package version 1.0 or newer";
+);
 
 debug SparseResultants
 debug MultiprojectiveVarieties
@@ -869,6 +879,7 @@ describe SpecialGushelMukaiFourfold := X -> (
     if recognize X === "mukai26''" and dim singLocus grassmannianHull X == -1 then descr = descr|newline|"(case considered in Section 3 of arXiv:2003.07809)";
     if recognize X === "october2021-26''" or recognize X === "october2021-28" or recognize X === "october2021-28-2" or recognize X === "october2021-34'" then descr = descr|newline|"(case discovered in October 2021)";
     if recognize X === "october2021-20" then descr = descr|newline|"(case discovered in October 2021; see also Table 1 of arXiv:2003.07809)";
+    if recognize X === "april2022-GM42''" then descr = descr|newline|"(strange example discovered in October 2021)";
     net expression descr
 );
 
@@ -932,6 +943,7 @@ recognizeGMFourfold = X -> (
     if (d == 28 and e == 13 and a == 8 and b == 5 and invS == (13,6,1) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then return "october2021-28";
     if (d == 28 and e == 10 and a == 6 and b == 5 and invS == (11,4,1) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}) then return "october2021-28-2";
     if (d == 34 and e == 13 and a == 9 and b == 5 and invS == (14,7,1) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3}) then return "october2021-34'";
+    if (d == 34 and e == 7 and a == 9 and b == 6 and invS == (15,7,0) and degs == {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3}) then if numberNodes(S,Verbose=>false) == 1 and discriminant X == 42 then return "april2022-GM42''";
     "NotRecognized"
 );
 
@@ -994,7 +1006,28 @@ fanoMapGM = X -> (
         mu = rationalMap(mu,Dominant=>true);
         (mu#"map").cache#"multiplicityFanoMap" = 3;
         return mu;
-    );    
+    );
+    if recognize X === "mukai26''" then (
+        mu = rationalMap(S^3 : ideal first gens ring S,5);
+        interpolateImage(mu,toList(15:2),2);
+        mu = rationalMap(mu,Dominant=>true);
+        (mu#"map").cache#"multiplicityFanoMap" = 3;
+        return mu;
+    );
+    if recognize X === "october2021-20" then (
+        mu = rationalMap(S^3 : ideal first gens ring S,5);
+        interpolateImage(mu,{2,2},2);
+        mu = rationalMap(mu,Dominant=>true);
+        (mu#"map").cache#"multiplicityFanoMap" = 3;
+        return mu;
+    );
+    if recognize X === "gushel26''" then ( -- to be tested
+        mu = rationalMap((S^5 : ideal first gens ring S) : ideal first gens ring S,9);
+        interpolateImage(mu,{2,2,2,2,2,2},2);
+        mu = rationalMap(mu,Dominant=>true);
+        (mu#"map").cache#"multiplicityFanoMap" = 5;
+        return mu;
+    );
     error "not implemented yet: fourfold not recognized yet or not rational";
 );
 
@@ -1384,14 +1417,14 @@ surfaceDeterminingInverseOfFanoMap EmbeddedProjectiveVariety := o -> X -> (
     Str := o.Strategy;
     if Str === null then (
         Str = "Interpolate";
-        if member(recognize X,{"quinticDelPezzoSurface", "quarticScrollSurface", 1}) then Str = "Inverse";
-        if member(recognize X,{"C38Coble", "FarkasVerra", 3, 17, "october2021-26''"}) and char coefficientRing X <= 65521 then Str = "F4";
+        if member(recognize X,{"quinticDelPezzoSurface", "quarticScrollSurface", 1, 6}) then Str = "Inverse";
+        if member(recognize X,{"C38Coble", "FarkasVerra", 3, 17, "october2021-26''", 18}) and char coefficientRing X <= 65521 then Str = "F4";
     );
     mu := fanoMap X;
     if Str === "Inverse" then (
         muInv := inverse3(mu|X);
         if not X.cache#?"rationalParametrization" then X.cache#"rationalParametrization" = muInv;
-        return (surface X).cache#("surfaceDeterminingInverseOfFanoMap",ideal X) = projectiveVariety matrix muInv;
+        return (surface X).cache#("surfaceDeterminingInverseOfFanoMap",ideal X) = projectiveVariety(if member(recognize X,{1, 6}) then gens saturate ideal matrix muInv else matrix muInv);
     );
     mu = super mu;
     if Str === "Interpolate" then (W := Var image mu; iW := lift(3 - (2*(sectionalGenus W)-2)/(degree W),ZZ));
@@ -1420,11 +1453,12 @@ exceptionalCurves EmbeddedProjectiveVariety := o -> X -> (
     NumLines := o#"NumberLines";
     if NumLines =!= infinity then if not(instance(NumLines,ZZ) and NumLines >= 0) then error "option NumberLines expects a nonnegative integer";
     if NumLines === infinity then (
-        if member(recognize X,{"quarticScrollSurface", "oneNodalSepticDelPezzoSurfaceC26", "FarkasVerra", 3}) then NumLines = 0;
-        if recognize X === 17 then NumLines = 1;
+        if member(recognize X,{"quarticScrollSurface", "oneNodalSepticDelPezzoSurfaceC26", "FarkasVerra", 3, "6NodalOcticSrollC38", 18, "gushel26''"}) then NumLines = 0;
+        if member(recognize X,{17, 6, "mukai26''"}) then NumLines = 1;
         if recognize X === 1 then NumLines = 2;
+        if recognize X === "october2021-34'" then NumLines = 3;
         if recognize X === "october2021-26''" then NumLines = 4;
-        if member(recognize X,{"quinticDelPezzoSurface", "C42"}) then NumLines = 5;
+        if member(recognize X,{"quinticDelPezzoSurface", "C42", "october2021-20"}) then NumLines = 5;
         if recognize X === "C38Coble" then NumLines = 10;
     );
     a := if instance(X,SpecialCubicFourfold) then 3 else if instance(X,SpecialGushelMukaiFourfold) then 2 else error "expected an instance of the class SpecialCubicFourfold or SpecialGushelMukaiFourfold";
@@ -1443,9 +1477,12 @@ exceptionalCurves EmbeddedProjectiveVariety := o -> X -> (
     if dim(U*U') > 1 then error "something went wrong";
     local LL; local L;
     if instance(NumLines,ZZ) and NumLines > 0 and member(recognize X,{"quinticDelPezzoSurface", 1}) then (
-        if o.Verbose then <<"-- computing the "<<NumLines<<" exceptional lines"<<" as the top components of U*U'"<<endl;
+        if o.Verbose then <<"-- computing the "<<NumLines<<" exceptional line(s)"<<" as the top components of U*U'"<<endl;
         L = interpolateTop(U*U',if recognize X === 1 then {2} else {3},Verbose=>o.Verbose,"Deep"=>2);
         if degree(U*U') =!= degree(L) then error "something went wrong";
+    ) else if instance(NumLines,ZZ) and NumLines == 1 and recognize X === "mukai26''" then (
+        if o.Verbose then <<"-- computing the "<<NumLines<<" exceptional line(s)"<<" as the top components of U*U'"<<endl;
+        L = first select(decompose interpolateTop((U*U'),{2},Verbose=>o.Verbose,"Deep"=>2),Cu -> dim Cu == 1 and degree Cu == 1);
     ) else if instance(NumLines,ZZ) and NumLines > 0 then (
         if o.Verbose then <<"-- computing the "<<NumLines<<" exceptional line(s) via the Fano scheme of lines"<<endl;
         LL = Fano(1,U*U');
@@ -1462,7 +1499,7 @@ exceptionalCurves EmbeddedProjectiveVariety := o -> X -> (
     if degree((U*U')\L) =!= degree(U*U') - degree(L) then error "some exceptional line has multiplicity > 1";    
     if o.Verbose then <<"-- computing the top components of (U*U')\\{exceptional lines} via interpolation"<<endl;
     local C;
-    if member(recognize X,{"quarticScrollSurface", "oneNodalSepticDelPezzoSurfaceC26", "FarkasVerra", "C38Coble", "C42", 17, "october2021-26''"})
+    if member(recognize X,{"quarticScrollSurface", "oneNodalSepticDelPezzoSurfaceC26", "FarkasVerra", "C38Coble", "C42", 17, "october2021-26''", "october2021-34'", "6NodalOcticSrollC38", 18, " mukai26''"})
     then C = interpolateTop((U*U')\L,{2},Verbose=>o.Verbose,"Deep"=>2)
     else C = interpolateTop(2,(U*U')\L,Verbose=>o.Verbose,"Deep"=>3);
     U.cache#"exceptionalCurves" = (L%U,C%U)
@@ -1478,12 +1515,12 @@ associatedK3surface SpecialGushelMukaiFourfold := associatedK3surface SpecialCub
     mu := multirationalMap super fanoMap X;
     if U.cache#?"MapToMinimalK3Surface" then return (mu,U,{L,C},U.cache#"MapToMinimalK3Surface");
     genK3 := lift((discriminant(X)+2)/2,ZZ);
-    f := null; H := random(1,0_U);
-    if member(recognize X,{"NotRecognized", "FarkasVerra", "oneNodalSepticDelPezzoSurfaceC26"}) then (
+    f := null; H := random(1,0_U); local normU;
+    if member(recognize X,{"NotRecognized", "october2021-34'", "october2021-20"}) then (
         if o.Verbose then <<"-- skipping computation of the map f from U to the minimal K3 surface of degree "<<discriminant X<<endl;
     ) else if recognize X === 3 then (
         if o.Verbose then <<"-- computing the normalization of U"<<endl;
-        normU := normalization(U,Verbose=>false);
+        normU = normalization(U,Verbose=>false);
         if o.Verbose then <<"-- inverting the normalization of U"<<endl;
         f = multirationalMap super inverse3 normU;
     ) else if recognize X === 17 then (
@@ -1492,6 +1529,11 @@ associatedK3surface SpecialGushelMukaiFourfold := associatedK3surface SpecialCub
         if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree "<<discriminant X<<endl;
         f1 := mapDefinedByDivisor(target f0,{(f0 (H*U),1),(f0 (3*C),1),(f0 L,1)});        
         f = f0 * f1;
+    ) else if member(recognize X,{"oneNodalSepticDelPezzoSurfaceC26", 18}) then (
+        if o.Verbose then <<"-- computing desingularization of U"<<endl;
+        normU = experimentalNormalizationInv(U,Verbose=>o.Verbose);
+        if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree "<<discriminant X<<endl;
+        f = normU * mapDefinedByDivisor(image(normU,"F4"),{(random(1,0_(target normU)),1),(normU L,1),(normU C,degree C)});
     ) else if recognize X === 1 then (
         if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree "<<discriminant X<<endl;
         f = mapDefinedByDivisor(U,{(H,1),(L,1),(C,degree C)});
@@ -1505,6 +1547,7 @@ associatedK3surface SpecialGushelMukaiFourfold := associatedK3surface SpecialCub
         m := degree C;
         if recognize X === "C42" then m = 2;
         f = mapDefinedByDivisor(U,{(H,1),(L,1),(C,m)});
+        if recognize X === "FarkasVerra" then f = f * experimentalNormalizationInv(image(f,"F4"),Verbose=>o.Verbose);
     );
     if f =!= null then (
         if dim target f =!= genK3 then error("expected map to PP^"|(toString genK3)|", but got map to PP^"|toString(dim target f));
@@ -2075,11 +2118,31 @@ fitVariety EmbeddedProjectiveVariety := (cacheValue "fitVariety") (X -> (
 
 normalization = method(Options => {Verbose => true});
 normalization EmbeddedProjectiveVariety := o -> X -> (
-    if X.cache#?"Normalization" then return X.cache#"Normalization";
-    if o.Verbose then <<"-- computing normalization... "<<endl;
+    if X.cache#?"Normalization" then return X.cache#"Normalization";    
+    if o.Verbose then <<"-- computing normalization of "|toString(? ideal X)<<endl;
     f := rationalMap icMap ring X;
     if o.Verbose then <<"-- got: "|toString(expression f)<<endl;
     X.cache#"Normalization" = f
+);
+
+experimentalNormalizationInv = method(Options => {Verbose => true});
+experimentalNormalizationInv EmbeddedProjectiveVariety := o -> X -> (
+    if X.cache#?"ExperimentalNormalizationInv" then return X.cache#"ExperimentalNormalizationInv";    
+    if not (dim X == 2 and dim linearSpan X > 5) then error "expected a surface with linear span of dimension > 5";
+    if o.Verbose then <<"-- computing experimental normalization of "|toString(? ideal X)<<endl;
+    pts := apply(dim ambient X - 5,i -> point X);
+    pr := rationalMap((linearSpan pts)_X,Dominant=>true);
+    if degree target pr != degree X - (dim ambient X - 5) then error "something went wrong";
+    n := multirationalMap normalization(target pr,Verbose=>o.Verbose);
+    if o.Verbose then <<"-- inverting normalization"<<endl;
+    n' := inverse3 n;
+    if o.Verbose then <<"-- inverting projection"<<endl;
+    pr' := inverse3 pr;
+    if o.Verbose then <<"-- contracting exceptional line(s) on the normalization"<<endl;
+    h := mapDefinedByDivisor(source n,{(random(1,0_(source n)),1)}|apply(pts,p -> (n' pr'^* p,1)));
+    if dim ambient target h != dim ambient source h + (dim ambient X - 5) then error "something went wrong";
+    N := pr * n' * h;
+    X.cache#"ExperimentalNormalizationInv" = N
 );
 
 varietyDefinedBylinearSyzygies = method();
@@ -3054,3 +3117,10 @@ assert(#L == 1 and discriminant X == 18 and last cycleClass X == (5,3))
 -- assert(#L == 1 and discriminant X == 20 and last cycleClass X == (4,3))
 ///
 
+TEST /// -- Test 16
+debug SpecialFanoFourfolds;
+S = surface({3,1},NumNodes=>2);
+assert(dim S == 2 and degree S == 8 and dim ambient S == 6 and degrees S == {({2},5),({3},4)});
+T = image experimentalNormalizationInv S;
+assert(dim T == 2 and degree T == 8 and dim ambient T == 8 and degrees T == {({2},20)})
+///
