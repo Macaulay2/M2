@@ -387,21 +387,28 @@ addHook((freeResolution, Module), resolutionInEngine1, Strategy => 1)
 addHook((freeResolution, Module), resolutionInEngine, Strategy => Engine)
 addHook((freeResolution, Module), resolutionOverField, Strategy => "Field")
 
-
+debug Core
 cechComplex = method()
 cechComplex MonomialIdeal := Complex => B -> (
     if radical B != B then error "expected squarefree monomial ideal";
     R := ring B;
     n := numgens R;
     g := gens R;
-    dg := for x in g list getSymbol("d" | toString x);
+    makediff := (s) -> (
+        if class s === Symbol then "d" | toString s
+        else if class s === IndexedVariable then (
+            ds := getSymbol("d"|toString first s); 
+            ds_(last s)
+            )
+        );
+    dg := for x in R.generatorSymbols list makediff x;
     weylPairs := for i to #g-1 list g#i =>  dg#i;
     D := (coefficientRing R)(monoid[g, dg, 
             WeylAlgebra => weylPairs,
             Degrees => entries (id_(ZZ^n) || - id_(ZZ^n))
             ]);
     phi := map(D, R);
-    F := dual freeResolution module phi B; -- BUG: degrees are incorrect in one location.
+    F := dual freeResolution module phi B;
     (lo, hi) := concentration F;
     modules := hashTable for i from lo to hi list i => (
         degs := degrees F_i;
@@ -411,12 +418,12 @@ cechComplex MonomialIdeal := Complex => B -> (
             )
         );
     maps := for i from lo+1 to hi list map(modules#(i-1), modules#i, dd^F_i);
-    complex maps
+    complex(maps, Base => lo)
     )
 
 end--
 restart
-debug loadPackage("Complexes")
+debug loadPackage("Complexes", FileName => "./Complexes.m2")
 load "Complexes/ResolutionObject.m2"
 gbTrace=1
 S = ZZ/101[a..d]
@@ -553,6 +560,7 @@ M = coker matrix{{x*Dx, y*Dx}}
 isHomogeneous M
 gbTrace=1
 res(M, Strategy => 2)
+
 I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
 M = S^1/I
 res M
@@ -560,7 +568,7 @@ res M
 F = freeResolution(M)
 
 -- Over a field
-restart -- XXX
+restart
 debug loadPackage("Complexes")
 load "Complexes/ResolutionObject.m2"
 gbTrace=1
@@ -579,7 +587,7 @@ res M -- BUG: this is wrong.
 
 
 -- Over an inexact field
-restart -- XXX
+restart
 debug loadPackage("Complexes")
 load "Complexes/ResolutionObject.m2"
 gbTrace=1
@@ -597,7 +605,6 @@ ker g == 0 -- since this is an isomorphism
 res M
 
 
--- XXX
 restart
 debug loadPackage("Complexes")
 load "Complexes/ResolutionObject.m2"
@@ -772,7 +779,13 @@ R = ZZ/101[x,y,z]
 cechComplex monomialIdeal(x,y,z)
 
 R = ZZ/101[a..d]
-cechComplex monomialIdeal(a*c,b*c,a*d,b*d)
+C = cechComplex monomialIdeal(a*c,b*c,a*d,b*d)
 
+R = ZZ/101[s_0,s_1,t_0,t_1]
+I = monomialIdeal intersect(ideal(s_0,s_1), ideal(t_0,t_1))
+C = cechComplex I
+prune HH C
+
+prune HH C
 n = 3
 entries (id_(ZZ^n) || - id_(ZZ^n))
