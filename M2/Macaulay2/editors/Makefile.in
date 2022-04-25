@@ -21,6 +21,7 @@ emacs/M2-emacs.m2 emacs/M2-emacs-help.txt: emacs/make-M2-emacs-help.m2 @pre_exec
 
 ifeq (@HIGHLIGHTJS@,yes)
 $(CURDIR)/highlightjs/%: @srcdir@/highlightjs/%
+	$(MKDIR_P) $(@D)
 	cp $< $@
 
 highlightjs/highlight.js: highlightjs/macaulay2.js \
