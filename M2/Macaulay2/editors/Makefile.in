@@ -24,12 +24,23 @@ $(CURDIR)/highlightjs/%: @srcdir@/highlightjs/%
 	$(MKDIR_P) $(@D)
 	cp $< $@
 
+highlightjs/node_modules: $(CURDIR)/highlightjs/package.json
+ifeq (@DOWNLOAD@,yes)
+	cd $(@D) && @NPM@ install
+else
+	@echo "error: missing highlightjs dependencies, so either use a \"fat\" tar file" >&2
+	@echo "       of the Macaulay2 source code or rerun the Macaulay2 \"configure\" command" >&2
+	@echo "       with the added option \"--enable-download\" to enable automatic" >&2
+	@echo "       downloading of these dependencies over the internet" >&2
+	@false
+endif
+
 highlightjs/highlight.js: highlightjs/macaulay2.js \
 	$(CURDIR)/highlightjs/package.json         \
 	$(CURDIR)/highlightjs/webpack.config.js    \
 	$(CURDIR)/highlightjs/index.js             \
 	$(CURDIR)/highlightjs/highlight-override.css
-	cd $(dir $@) && $ @NPM@ install && @NPM@ run build
+	cd $(dir $@) && @NPM@ run build
 else
 highlightjs/highlight.js:
 	@echo "warning: html docs will not have syntax highlighting"
