@@ -25,7 +25,7 @@ foreach c in " \t\r"	                   do setchartype(c,WHITE);
 foreach c in "\n"                          do setchartype(c,NEWLINE);
 foreach c in "$"                           do setchartype(c,DOLLAR);
 
-for c from 128 to 225	       	    	   do setchartype(char(c),ALPHA);
+for c from 128 to 225	       	    	   do setchartype(char(c),ALPHA);  -- 226 is unicode math symbol
 for c from 227 to 255	       	    	   do setchartype(char(c),ALPHA);
 					      setchartype('\'',ALPHA);
 					      setchartype('\"',QUOTE);
@@ -54,6 +54,7 @@ export isnewline  (c:char):bool := (chartype(c) & NEWLINE  ) != 0;
 export isquote    (c:char):bool := (chartype(c) & QUOTE    ) != 0;
 
 export isalnum  (s:string):bool := (
+     if int(uchar(s.0)) == 226 && length(s) == 3 then return true; -- unicode math symbol
      foreach c in s do if !isalnum(c) then return false;
      true);
 
