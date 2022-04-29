@@ -213,9 +213,35 @@ class SchreyerFrame
   // Betti tables: set after the frame has been constructed.
   BettiDisplay mBettiNonminimal;
   BettiDisplay mBettiMinimal;
-  BettiDisplay mComputationStatus;  // -1: no entries, 0: frame only so far, 1:
-                                    // syzygies computed, 2: rank taken into
-                                    // account.
+
+  // For each (deg, level), where deg is the slanted degree (actual degree - level).
+  // the following Betti display contains the status of the computation of that part.
+  // value = 0.  No syzygies in this (deg, level).  Nothing to see here. Move along.
+  // value = 1.  The frame is nonzero, but the syzygies themselves have not yet been computed.
+  // value = 2.  The syzygies have been constructed.
+  // value = 3.  The rank from (deg,lev) to (deg+1,lev-1) has been computed (this requires the syzygies have been constructed).
+  //             cannot do thiese computations until the syzygies have been constructed.
+  BettiDisplay mComputationStatus;
+
+  // Another way to organize this. Say degrees are bigrees.
+  // (deg1, deg2, lev), where the deg1, deg2 are the actual degrees (not slanted).
+  // have lots of (deg1, deg2, lev) slots (each one is where there are elements in the frame).
+  // nodes: (deg1, deg2, lev, do_syzygies)
+  // nodes: (deg1, deg2, lev, do_rank)
+  // (deg1, deg2, lev, do_syzygies) depends on :
+  //    (deg1-i, deg2-j, lev-1, do_syzygies) for all (i,j) in semigroup of degrees of the variables.
+  // computeSyzygiesInDegree(deg1,deg2,lev).
+  // computeRankInDegree(deg1,deg2,lev).
+  // Want (maybe) a data structure: contains nodes as above, knows the partial order.
+  //   Select the minimal elements and remove them from this list.
+
+  // TODO for Frank and Mike (29 April 2022)
+  // 1. keep the singly graded aspect for now, but create a graph of nodes.
+  // 2. use chapter 3 flow graphs from ProTBB book.
+  // 3. After we get this to work, we will generalize to multi-graded situation (at least for products of PP^n's,
+  //   but hopefully for toric degrees eventually.
+
+  // This is currently unused.  Remove?
   std::vector<std::pair<int, int>> mMinimalizeTODO;  // a list of (slanted deg,
                                                      // level) for which to
                                                      // compute min betti
