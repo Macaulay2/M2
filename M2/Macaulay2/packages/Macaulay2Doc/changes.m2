@@ -40,7 +40,12 @@ document {
      UL {
    	  LI { "improved packages:",
 	       UL {
-	       	    LI { "The package ", TO "GraphicalModelsMLE", " has been improved following many recommendations through its certification process. Several computations have been optimized. The names of several procedures and options have been modified. " }
+	       	    LI { "The package ", TO "GraphicalModelsMLE", " has been improved following many recommendations through its certification process. Several computations have been optimized. The names of several procedures and options have been modified. " },
+  		    LI { "The package ", TO "Complexes::Complexes", " has been improved.  
+                The documentation has been enhanced, numerous minor bugs have been fixed, and 
+                free resolutions have been implemented independent of the 
+                current  ", TO "ChainComplex", " class."
+                }
 		    }
 	       },
  	  LI { "functionality added:",

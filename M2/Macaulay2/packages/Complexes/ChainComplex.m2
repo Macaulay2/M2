@@ -1099,7 +1099,7 @@ yonedaExtension' Complex := Matrix => C -> (
     -- notice that D is a shifted complex which changes the sign of the differential
     D := naiveTruncation(C, (lo+1,hi))[1];
     s := map(M,D,i -> if i == lo then dd^C_(lo+1) else map(M_i, D_i, 0));
-    g := resolutionMap M;
+    g := resolutionMap(M, LengthLimit => hi);
     sinverse := liftMapAlongQuasiIsomorphism(g, s);
     yonedaMap := sinverse_(hi-1);  -- map FM_d --> N
     extd := Ext^(hi-lo-1)(C_lo, C_hi);

@@ -31,6 +31,11 @@ importFrom_Core { "degreeToHeft",
     "rawResolutionGetFree", "rawResolutionGetMatrix"
     }
 
+hasNoQuotients = method()
+hasNoQuotients QuotientRing := (R) -> isField R
+hasNoQuotients PolynomialRing := (R) -> hasNoQuotients coefficientRing R
+hasNoQuotients Ring := (R) -> true
+
 ResolutionObject = new Type of MutableHashTable
 ResolutionObject.synonym = "resolution object"
 toString ResolutionObject := C -> toString raw C
@@ -45,13 +50,24 @@ freeResolution Module := Complex => opts -> M -> (
     -- LengthLimit prescribes the length of the computed complex
     -- DegreeLimit is a lower limit on what will be computed degree-wise, but more might be computed.
     local C;
-    if opts.LengthLimit < 0 then return complex (ring M)^0;
+    if opts.LengthLimit < 0 then (
+        C = complex (ring M)^0;
+        C.cache.LengthLimit = opts.LengthLimit;
+        C.cache.DegreeLimit = infinity;
+        C.cache.Module = M;
+        return C;
+        );
     if M.cache.?Resolution then (
         C = M.cache.Resolution;
         if not C.cache.?LengthLimit or not C.cache.?DegreeLimit then
             error "internal error: Resolution should have both a LengthLimit and DegreeLimit";
-        if C.cache.LengthLimit >= opts.LengthLimit and C.cache.DegreeLimit >= opts.DegreeLimit then
-            return naiveTruncation(C, -infinity, opts.LengthLimit);
+        if C.cache.LengthLimit >= opts.LengthLimit and C.cache.DegreeLimit >= opts.DegreeLimit then (
+            C' := naiveTruncation(C, -infinity, opts.LengthLimit);
+            C'.cache.LengthLimit = opts.LengthLimit;
+            C'.cache.DegreeLimit = C.cache.DegreeLimit;
+            C'.cache.Module = C.cache.Module;
+            return C';
+            );
         remove(M.cache, symbol Resolution); -- will be replaced below
         );
     if M.cache.?ResolutionObject then (
@@ -129,7 +145,7 @@ resolutionObjectInEngine = (opts, M, matM) -> (
                 );
             numgens flatR)
         else opts.LengthLimit;
-    << "creating raw computation" << endl;
+
     RO.RawComputation = rawResolution(
         raw matM,         -- the matrix
         true,             -- whether to resolve the cokernel of the matrix
@@ -162,12 +178,10 @@ resolutionObjectInEngine = (opts, M, matM) -> (
 
     RO.isComputable = (lengthlimit, degreelimit) -> ( -- this does not mutate RO.
         -- returns Boolean value true if the given engine computation can compute the free res to this length and degree.
-        << "calling isComputable" << endl;
         lengthlimit <= RO.LengthLimit
         );
 
     RO.complex = (lengthlimit) -> (
-        << "calling RO.complex" << endl;
         -- returns a Complex of length <= lengthlimit
         i := 0;
         modules := while i <= lengthlimit list (
@@ -204,7 +218,8 @@ resolutionInEngine1 = (opts, M) -> (
         ))
     then return null;
 
-    << "Doing freeResolution Strategy=>1" << endl;
+    if gbTrace > 0 then
+      << "[Doing freeResolution Strategy => 1]" << endl;
 
     RO := M.cache.ResolutionObject;  -- this exists already
     if RO.Strategy === null then RO.Strategy = 1
@@ -231,12 +246,12 @@ resolutionInEngine0 = (opts, M) -> (
         ))
     then return null;
 
-    << "Doing freeResolution Strategy=>0" << endl;
+    if gbTrace > 0 then
+      << "[Doing freeResolution Strategy => 0]" << endl;
     RO := M.cache.ResolutionObject;  -- this exists already
     if RO.Strategy === null then RO.Strategy = 0
     else if RO.Strategy =!= 0 then error "our internal logic is flawed";
 
-    << "computing GB in preparation for computing the resolution" << endl;
     gbM := gens gb presentation M;
     resolutionObjectInEngine(opts, M, gbM)
     )
@@ -258,7 +273,8 @@ resolutionInEngine2 = (opts, M) -> (
         ))
     then return null;
 
-    << "Doing freeResolution Strategy=>2" << endl;
+    if gbTrace > 0 then
+      << "[Doing freeResolution Strategy => 2]" << endl;
 
     RO := M.cache.ResolutionObject;  -- this exists already
     if RO.Strategy === null then RO.Strategy = 2
@@ -285,7 +301,8 @@ resolutionInEngine3 = (opts, M) -> (
         ))
     then return null;
 
-    << "Doing freeResolution Strategy=>3" << endl;
+    if gbTrace > 0 then 
+      << "[Doing freeResolution Strategy => 3]" << endl;
 
     RO := M.cache.ResolutionObject;  -- this exists already
     if RO.Strategy === null then RO.Strategy = 3
@@ -350,9 +367,21 @@ resolutionBySyzygies = (opts, M) -> (
         };
     
     RO.compute = (lengthlimit, degreelimit) -> (
-        -- finish XXX
-        if isWeylAlgebra R and lengthlimit === infinity then
-            lengthlimit = numgens R; -- TODO: add the global dim of coefficient ring of R.
+        if lengthlimit === infinity then (
+            if isWeylAlgebra R then (
+                -- TODO: there are better estimates on the global dimension
+                -- of R depending on the coefficient ring
+                K := ultimate(coefficientRing, R);
+                lengthlimit = # gens(R, CoefficientRing => K);
+                if K === ZZ then lengthlimit = lengthlimit + 1;
+                )
+            else if hasNoQuotients R then (
+                K = ultimate(coefficientRing, R);
+                lengthlimit = # gens(R, CoefficientRing => K);
+                if K === ZZ then lengthlimit = lengthlimit + 1;
+                )
+            else error "require LengthLimit to be finite";
+            );
         m := RO.SyzygyList#(#RO.SyzygyList-1);
         for i from #RO.SyzygyList to lengthlimit-1 do (
             if numcols m == 0 then return;
