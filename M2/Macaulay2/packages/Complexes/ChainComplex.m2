@@ -1121,7 +1121,8 @@ yonedaMap Matrix := ComplexMap => opts -> f -> (
     g := homomorphism E.cache.yonedaExtension f; -- g: FM_d --> N
     -- the " + degree f" is needed because of the behavior of homomorphism:
     -- that function appears to ignore the degree of the incoming map.
-    g0 := map(FN_0, FM_d, g, Degree => degree f + degree g);
+    --TODO: is changing this line to the next one correct?  g0 := map(FN_0, FM_d, g, Degree => degree f + degree g);
+    g0 := map(FN_0, FM_d, g, Degree => degree g);
     extend(FN, FM, g0, (0,d))
     )
 
