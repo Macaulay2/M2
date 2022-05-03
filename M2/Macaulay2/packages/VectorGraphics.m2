@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "VectorGraphics",
-        Version => "0.98",
-        Date => "December 19, 2021", -- "May 18, 2018",
+        Version => "0.99",
+        Date => "March 30, 2022", -- "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
@@ -16,8 +16,8 @@ newPackage(
 
 export{"GraphicsType", "GraphicsObject", "GraphicsCoordinate", "GraphicsPoly",
     "GraphicsList", "Circle", "Light", "Ellipse", "Path", "Polygon", "Polyline", "GraphicsText", "Line", "GraphicsHtml",
-    "gList", "viewPort", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot",
-    "Contents", "TextContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "RefPoint", "Size", "ViewPort",
+    "gList", "viewPort", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot2d", "plot3d", "listPlot", "matrixPlot",
+    "Contents", "TextContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "RefPoint", "Size", "ViewPort", "Frame",
     "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Radius",
     "Blur", "Static", "PointList", "Axes", "Margin", "Mesh", "Draggable",
     "SVG",
@@ -57,7 +57,7 @@ gParse Vector := x -> (
     else if rank class x === 4 then sub(x,RR)
     )
 gParse List := l -> apply(l,gParse)
-gParse Option := o -> if o#0 === symbol Contents then o else o#0 => gParse o#1
+gParse Option := o -> if o#0 === symbol Contents then o else o#0 => gParse o#1 -- don't parse Contents. annoying side-effect: can't use short syntax with GraphicsList
 gParse OptionTable := h -> applyValues(h,gParse)
 gParse Thing := identity
 
@@ -356,6 +356,7 @@ jsString MutableList := x -> jsString toList x
 jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
 jsString GraphicsCoordinate := x -> x.JsFunc()
+jsString RR := x -> format(0,-1,1000,1000,"",x)
 
 one := map(RR^4,RR^4,1)
 updateTransformMatrix := (g,m) -> ( -- (object,matrix of parent)
@@ -468,7 +469,7 @@ svg1 GraphicsPoly := g -> (
     if is3d g or any(x1,y->instance(y,GraphicsCoordinate)) then g.cache.Options#"data-coords"=x1; -- be more subtle? select?
     x1 = apply(x1,y->project3d(compute(y,g.cache.CurrentMatrix),g));
     i:=-1;
-    s := demark(" ", flatten apply(x, y -> if not instance(y,String) then (i=i+1;{toString x1#i_0,toString x1#i_1}) else y));
+    s := demark(" ", flatten apply(x, y -> if not instance(y,String) then (i=i+1;{jsString x1#i_0,jsString x1#i_1}) else y));
     if instance(g,Path) then g.cache.Options#"d" = s else g.cache.Options#"points" = s;
     -- viewport
     g.cache.ViewPort= if #x1 === 0 then null else (
@@ -499,8 +500,8 @@ svg1 GraphicsText := g -> (
     g.cache.ViewPort = if instance(g,GraphicsHtml) then { x', x' } else ( -- TEMP
 	r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
 	x' = x' + vector {
-	    if g#?"text-anchor" then (if g#"text-anchor" == "middle" then -0.5*r_0 else if g#"text-anchor" == "end" then -r_0 else 0) else 0,
-	    if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then -0.5*r_1 else if g#"dominant-baseline" == "hanging" then 0 else -r_1) else -r_1
+	    if g.style#?"text-anchor" then (if g.style#"text-anchor" == "middle" then -0.5*r_0 else if g.style#"text-anchor" == "end" then -r_0 else 0) else 0,
+	    if g.style#?"dominant-baseline" then (if g.style#"dominant-baseline" == "middle" then -0.5*r_1 else if g.style#"dominant-baseline" == "hanging" then 0 else -r_1) else -r_1
 	    };
 	{x',x'+r}
 	);
@@ -621,6 +622,7 @@ new SVG from GraphicsObject := (S,g) -> (
     axes:=null; axeslabels:=null; defsList:={};
     if g.?Axes and g.Axes =!= false then (
 	p := g.cache.PerspectiveMatrix;
+	fs := 0.08*min(rr_0,rr_1);
 	arr := arrow(.02*min(rr_0,rr_1));
 	-- determine intersection of viewport with axes TODO more symmetrically
 	xmin := (p_(3,3)*r#0_0-p_(0,3))/(p_(0,0)-p_(3,0)*r#0_0);
@@ -633,26 +635,40 @@ new SVG from GraphicsObject := (S,g) -> (
 	    zmax := 0.25*(xmax-xmin+ymax-ymin);
 	    zmin := -zmax;
 	    );
-	axes0 := gList(
+	axes0 := gList if g.Axes === Frame then ( -- only 2d for now
+	    xscale := -floor (log(xmax-xmin)/log 10-1);
+	    yscale := -floor (log(ymax-ymin)/log 10-1);
+	    Polygon { PointList => { vector {xmin,ymin,0,1}, vector {xmax,ymin,0,1}, vector {xmax,ymax,0,1}, vector {xmin,ymax,0,1} } },
+	    apply(ceiling(xmin*10^xscale)..floor(xmax*10^xscale), i -> ( x := promote(i / 10^xscale,RR); (
+			Line { vector {x, ymax}, vector {x, 0.995*ymax+0.05*ymin} },
+			if i%10 == 0 then GraphicsText { vector {x, 1.008*ymax-0.008*ymin}, toString x, FontSize => fs, "text-anchor" => "middle", "dominant-baseline" => "text-top", "fill"=>"black", "fill-width" => "0.2%", "stroke" => "none"},
+			Line { vector {x, ymin}, vector {x, 0.995*ymin+0.05*ymax} },
+			if i%10 == 0 then GraphicsText { vector {x, 1.008*ymin-0.008*ymax}, toString x, FontSize => fs, "text-anchor" => "middle", "dominant-baseline" => "hanging", "fill"=>"black", "fill-width" => "0.2%", "stroke" => "none"}
+			))),
+	    apply(ceiling(ymin*10^yscale)..floor(ymax*10^yscale), i -> ( y := promote(i / 10^yscale,RR); (
+			Line { vector {xmax, y}, vector {0.995*xmax+0.05*xmin,y} },
+			if i%10 == 0 then GraphicsText { vector {1.008*xmax-0.008*xmin,y}, toString y, FontSize => fs, "text-anchor" => "start", "dominant-baseline" => "middle", "fill"=>"black", "fill-width" => "0.2%", "stroke" => "none"},
+			Line { vector {xmin, y}, vector {0.995*xmin+0.05*xmax,y} },
+			if i%10 == 0 then GraphicsText { vector {1.008*xmin-0.008*xmax,y}, toString y, FontSize => fs, "text-anchor" => "end", "dominant-baseline" => "middle", "fill"=>"black", "fill-width" => "0.2%", "stroke" => "none"}
+			))),
+	    Perspective => p,
+	    "stroke" => "black", "stroke-width"=>"0.5%"
+	    ) else (
 	    Line { Point1 => vector {xmin,0,0,1}, Point2 => vector {xmax,0,0,1}, "marker-end" => arr },
 	    Line { Point1 => vector {0,ymin,0,1}, Point2 => vector {0,ymax,0,1}, "marker-end" => arr },
 	    if is3d g then Line { Point1 => vector{0,0,zmin,1}, Point2 => vector {0,0,zmax,1}, "marker-end" => arr },
+	    -- we use GraphicsHtml here despite limitations of ForeignObject. could use GraphicsText instead
+	    GraphicsHtml { symbol RefPoint => vector {xmax*1.06,0,0,1}, symbol TextContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x, FontSize => fs},
+	    GraphicsHtml { symbol RefPoint => vector {0,ymax*1.06,0,1}, symbol TextContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => fs},
+	    if is3d g then GraphicsHtml { symbol RefPoint => vector {0,0,zmax*1.06,1}, symbol TextContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => fs},
 	    Perspective => p,
 	    "stroke"=>"black", "stroke-width"=>"0.5%"
 	    );
-	axeslabels0 := gList(
-	    -- we use GraphicsHtml here despite limitations of ForeignObject. could use GraphicsText instead
-	    GraphicsHtml { symbol RefPoint => vector {xmax*1.06,0,0,1}, symbol TextContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x, FontSize => 0.08*min(rr_0,rr_1)},
-	    GraphicsHtml { symbol RefPoint => vector {0,ymax*1.06,0,1}, symbol TextContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => 0.08*min(rr_0,rr_1)},
-	    if is3d g then GraphicsHtml { symbol RefPoint => vector {0,0,zmax*1.06,1}, symbol TextContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)},
-	    Perspective => p,
-	    );
 	axes=svg axes0;
-	axeslabels=svg axeslabels0;
-	defsList = axes0.cache.Filter | axeslabels0.cache.Filter;
+	defsList = axes0.cache.Filter;
 	);
 	-- put some extra blank space around picture
-	margin := if g.?Margin then g.Margin else 0.1;
+	margin := if g.?Margin then g.Margin else 0.12;
 	r = { r#0-margin*rr, r#1+margin*rr }; rr = (1+2*margin)*rr;
     --
 --    tag := graphicsId();
@@ -671,7 +687,6 @@ new SVG from GraphicsObject := (S,g) -> (
 	);
     ss = append(ss,"class" => classTag);
     if axes =!= null then ss = append(ss, axes);
-    if axeslabels =!= null then ss = append(ss, axeslabels);
     ss = append(ss,main);
     defsList = unique ( defsList | g.cache.Filter );
     if #defsList>0 then ss=append(ss,svgDefs defsList);
@@ -706,21 +721,27 @@ svglen = s -> try value s else if last s == "%" then 0.01*value substring(s,0,#s
     if svgunits#?unit then svgunits#unit*value num else error "unknown svg unit"
     )
 tikzconv1 := x -> y -> (
-    if substring(y,0,3)=="rgb" then ( -- TODO cmy as well
-	c := value substring(y,3);
-	y = "{rgb,255:red,"|toString min(c#0,255)|";green,"|toString min(c#1,255)|";blue,"|toString min(c#2,255)|"}";
+    if substring(y,0,3)=="hsl" then (
+	c := value replace("%","/100.",substring(y,3));
+	i := floor(6*c#0); f := 6*c#0-i;
+	F := if i==0 then {0,1-f,1} else if i==1 then {f,0,1} else if i==2 then {1,0,1-f} else if i==3 then {1,f,0} else if i==4 then {1-f,1,0} else if i==5 then {0,1,f} else {0,1,1};
+	rgb := c#2*({1,1,1}-c#1*F);
+	y = "{rgb,1:red,"|jsString rgb#0|";green,"|jsString rgb#1|";blue,"|jsString rgb#2|"}";
+	) else if substring(y,0,3)=="rgb" then ( -- TODO cmy as well
+	c = value substring(y,3);
+	y = "{rgb,255:red,"|jsString min(c#0,255)|";green,"|jsString min(c#1,255)|";blue,"|jsString min(c#2,255)|"}";
 	);
     x|"="|y
     )
 tikzconv := hashTable {
     "stroke" => tikzconv1 "draw", "fill" => tikzconv1 "fill",
     "stroke-opacity" => tikzconv1 "draw opacity", "fill-opacity" => tikzconv1 "fill opacity", "stroke-linejoin" => tikzconv1 "line join",
-    "stroke-width" => y -> "line width="|toString(tikzscale*svglen y)|"cm",
-    "font-size" => y -> "scale="|toString(3.15*tikzscale*svglen y), -- messy: cm -> scale using 96dpi and 12px fontsize
+    "stroke-width" => y -> "line width="|jsString(tikzscale*svglen y)|"cm",
+    "font-size" => y -> "scale="|jsString(3.15*tikzscale*svglen y), -- messy: cm -> scale using 96dpi and 12px fontsize
     "viewBox" => y -> (
 	vb := pack(value \ separate("\\s|,",y),2);
 	tikzsize = sqrt(0.5*(vb#1#0^2+vb#1#1^2));
-	"execute at begin picture={\\useasboundingbox[draw=none] ("|toString vb#0#0|","|toString vb#0#1|") rectangle ++("|toString vb#1#0|","|toString vb#1#1|");}"
+	"execute at begin picture={\\bgroup\\tikzset{every path/.style={}}\\clip ("|jsString vb#0#0|","|jsString vb#0#1|") rectangle ++("|jsString vb#1#0|","|jsString vb#1#1|");\\egroup}"
 	) }
 ovr := x -> ( -- borrowed from html.m2
     T := class x;
@@ -728,7 +749,7 @@ ovr := x -> ( -- borrowed from html.m2
 	"unrecognized option name(s): ", toString select(toList x, c -> instance(c, Option)));
     if op#"style" =!= null then op = op ++ for o in apply(separate(";",op#"style"),y->separate(":",y)) list (if #o==2 then o#0 => o#1 else continue);
     st := for o in pairs op list (if tikzconv#?(o#0) then tikzconv#(o#0) o#1 else continue);
-    (op,ct,st)
+    (op,sequence ct,st)
     )
 tex SVG := texMath SVG := x -> concatenate(
     (op,ct,st) := ovr x;
@@ -738,7 +759,7 @@ tex SVG := texMath SVG := x -> concatenate(
 	xsc := svglen op#"width"/svgunits#"cm" / vb#0; -- a bit too big because based on 96dpi
 	ysc := svglen op#"height"/svgunits#"cm" / vb#1;
 	tikzscale = sqrt(0.5*(xsc^2+ysc^2));
-	st = st | {"x={("|toString xsc|"cm,0cm)}","y={(0cm,"|toString (-ysc)|"cm)}"};
+	st = st | {"x={("|jsString xsc|"cm,0cm)}","y={(0cm,"|jsString (-ysc)|"cm)}"};
 	) else (
 	tikzscale = 1;
 	st = append(st,"y={(0cm,-1cm)}");
@@ -757,11 +778,11 @@ tex svgElement Circle := x -> concatenate(
     "\\path",
     if #st>0 then "["|demark(",",st)|"]",
     " (",
-    toString op#"cx",
+    jsString op#"cx",
     ",",
-    toString op#"cy",
+    jsString op#"cy",
     ") circle[radius=",
-    toString op#"r",
+    jsString op#"r",
     "];\n"
     )
 tex svgElement Ellipse := x -> concatenate(
@@ -769,13 +790,13 @@ tex svgElement Ellipse := x -> concatenate(
     "\\path",
     if #st>0 then "["|demark(",",st)|"]",
     " (",
-    toString op#"cx",
+    jsString op#"cx",
     ",",
-    toString op#"cy",
+    jsString op#"cy",
     ") circle[x radius=",
-    toString op#"rx",
+    jsString op#"rx",
     ",y radius=",
-    toString op#"ry",
+    jsString op#"ry",
     "];\n"
     )
 tex svgElement GraphicsHtml :=
@@ -787,9 +808,9 @@ tex svgElement GraphicsText := x -> concatenate(
     "\\node",
     if #st>0 then "["|demark(",",st)|"]",
     " at (",
-    toString op#"x",
+    jsString op#"x",
     ",",
-    toString op#"y",
+    jsString op#"y",
     ") {",
     if instance(ct,VisibleList) then tex \ toList ct else tex ct,
     "};\n"
@@ -808,20 +829,20 @@ tex svgElement Line := x -> concatenate(
     "\\path",
     if #st>0 then "["|demark(",",st)|"]",
     " (",
-    toString op#"x1",
+    jsString op#"x1",
     ",",
-    toString op#"y1",
+    jsString op#"y1",
     ") -- (",
-    toString op#"x2",
+    jsString op#"x2",
     ",",
-    toString op#"y2",
+    jsString op#"y2",
     ");\n"
     )
 tex svgElement Path := x -> concatenate(
     (op,ct,st) := ovr x;
     "\\path",
     if #st>0 then "["|demark(",",st)|"]",
-    " svg[scale=1cm] {",
+    " svg[scale="|jsString tikzscale|"cm] {",
     op#"d",
     "};\n"
     )
@@ -831,7 +852,7 @@ tex svgElement Polyline := x -> concatenate(
     "\\path",
     if #st>0 then "["|demark(",",st)|"]",
     " ",
-    demark(" -- ",apply(pts,y->"("|toString y#0|","|toString y#1|")")),
+    demark(" -- ",apply(pts,y->"("|jsString y#0|","|jsString y#1|")")),
     ";\n"
     )
 tex svgElement Polygon := x -> concatenate(
@@ -840,7 +861,7 @@ tex svgElement Polygon := x -> concatenate(
     "\\path",
     if #st>0 then "["|demark(",",st)|"]",
     " ",
-    demark(" -- ",apply(pts,y->"("|toString y#0|","|toString y#1|")")),
+    demark(" -- ",apply(pts,y->"("|jsString y#0|","|jsString y#1|")")),
     " -- cycle;\n"
     )
 tex svgDefs := x -> "" -- not implemented
@@ -1018,43 +1039,95 @@ gfxLabel = true >> o -> label -> (
     )
 *-
 
--- note that the range is only where the curve actually lies, not the original range "r" provided.
--- the reason is that it's not clear how to force that original range (there are possible coordinate transformations etc)
-plot = true >> o -> (P,r) -> (
+-- plot rewrite
+plot2d = true >> o -> (P,r) -> ( -- #r == 2, P should be a polynomial or nonempty list of polynomials
     pkg := needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
     sS := value pkg.Dictionary#"solveSystem";
     pkg2 := needsPackage "NAGtypes";
     Crd := pkg2.Dictionary#"Coordinates";
-    R := ring P; -- R should have one or two variables
-    if not instance(r,List) then error("incorrect ranges");
-    if not instance(r#0,List) then r = { r };
-    if #r>2 or (numgens R =!= #r and numgens R =!= #r+1) then error("incorrect number of variables / ranges");
-    if numgens R === #r then R2 := coefficientRing R else R2 = (coefficientRing R) ( monoid [last gens R] );
-    if (#r === 1) then ( r = r#0;
-	if (o.?Mesh) then n := o.Mesh else n = 100;
-	val := transpose apply(n+1, i -> (
-		x := i*(r#1-r#0)/n+r#0;
-		f := map(R2,R, matrix { if numgens R === 1 then { x } else { x, R2_0 } });
-		y := if numgens R === 1 then { f P } else sort apply(sS { f P }, p -> first p#Crd); -- there are subtle issues with sorting solutions depending on real/complex...
-		apply(y, yy -> if abs imaginaryPart yy < 1e-6 then vector { x, realPart yy })));
-	GraphicsList { "fill"=>"none", Axes=>gens R,
-	    symbol Contents => apply(val, v -> Path { flag:=true; PointList => flatten apply(v, w -> if w === null then (flag=true; {}) else first({ if flag then "M" else "L", w },flag=false))}),
-	    o }
-	) else (
-	if (o.?Mesh) then n = o.Mesh else n = 10;
-	val = table(n+1,n+1,(i,j)->(
-		x := i*(r#0#1-r#0#0)/n+r#0#0;
-		y := j*(r#1#1-r#1#0)/n+r#1#0;
-		f := map(R2,R, matrix { if numgens R === 2 then { x,y } else { x, y, R2_0 } });
-		z := if numgens R === 2 then { f P } else sort apply(sS { f P }, p -> first p#Crd); -- there are subtle issues with sorting solutions depending on real/complex...
-		apply(z, zz -> if abs imaginaryPart zz < 1e-6 then vector { x, y, realPart zz })));
-	GraphicsList { Axes=>gens R,
+    if not instance(P,List) then P={P};
+    R := ring first P; if any(P, p -> ring p =!= R) then error "All polynomials must be in the same ring";
+    n := try o.Mesh else 100; -- TODO better
+    flag := all(r,x->instance(x,Number)); -- only first coord specified
+    explicit := numgens R === 1; -- no solving, just plotting
+    rx := if flag then r else ( r = gParse r; apply(r,x->x_0) );
+    ymin := 1000; ymax := -1000; -- TODO beter
+    val := transpose apply(n+1, i -> (
+	    x := i*(rx#1-rx#0)/n+rx#0;
+	    yy := if explicit then apply(P, p -> sub (p,R_0=>x)) else sort apply(sS append(P, R_0 -x), p -> p#Crd#1); -- there are subtle issues with sorting solutions depending on real/complex...
+	    apply(yy, y -> if abs imaginaryPart y < 1e-6 then (
+		    y = realPart y;
+		    if y<ymin then ymin = y;
+		    if y>ymax then ymax = y;
+		    vector { x, y }))));
+    if flag then r = {vector{rx#0,ymin},vector{rx#1,ymax}};
+    if not explicit then (
+    ry := apply(r,x->x_1);
+    val = val | transpose apply(n+1, i -> (
+	    y := i*(ry#1-ry#0)/n+ry#0;
+	    xx := sort apply(sS append(P, R_1 -y), p -> p#Crd#0); -- there are subtle issues with sorting solutions depending on real/complex...
+	    apply(xx, x -> if abs imaginaryPart x < 1e-6 then (
+		    x = realPart x;
+		    vector { x, y })))));
+    pathify := l -> apply(l, v -> Path { flag:=true;
+		    PointList => flatten apply(v, w -> if w === null then (flag=true; {}) else first({ if flag then "M" else "L", w },flag=false))});
+    GraphicsList { "fill"=>"none", Size => 40, Axes => Frame, -- Axes=>gens R,
+	symbol Contents => flatten {
+	    pathify val,
+	    Line { r#0, r#1, "stroke" => "none", "fill" => "none" } -- primitive (rectangle instead?)
+	    },
+	o }
+    )
+
+-- should we test if it's a curve or a surface?
+plot3d = true >> o -> (P,r) -> (
+    pkg := needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
+    sS := value pkg.Dictionary#"solveSystem";
+    pkg2 := needsPackage "NAGtypes";
+    Crd := pkg2.Dictionary#"Coordinates";
+    if not instance(P,List) then P={P};
+    R := ring first P; if any(P, p -> ring p =!= R) then error "All polynomials must be in the same ring";
+    n := try o.Mesh else 10; -- TODO better
+    r = gParse r;
+    explicit := numgens R === 2; -- no solving, just plotting
+    rx := apply(r,x->x_0);
+    ry := apply(r,x->x_1);
+    val := table(n+1,n+1,(i,j)->(
+	    x := i*(rx#1-rx#0)/n+rx#0;
+	    y := j*(ry#1-ry#0)/n+ry#0;
+	    zz := if explicit then apply(P,p -> sub(p,{R_0=>x,R_1=>y})) else sort apply(sS (P | { R_0-x,R_1-y}), p -> p#Crd#2); -- there are subtle issues with sorting solutions depending on real/complex...
+	    apply(zz, z -> if abs imaginaryPart z < 1e-6 then vector { x, y, realPart z })));
+    GraphicsList { Size => 40, Axes=>gens R, "fill" => "white", -- Axes=>Frame TODO
 	    symbol Contents => flatten flatten table(n,n,(i,j) -> for k from 0 to min(#val#i#j,#val#(i+1)#j,#val#i#(j+1),#val#(i+1)#(j+1))-1 list (
 		    if val#i#j#k === null or val#(i+1)#j#k === null or val#i#(j+1)#k === null or val#(i+1)#(j+1)#k === null then continue;
 		    Polygon { PointList => { val#i#j#k, val#(i+1)#j#k, val#(i+1)#(j+1)#k, val#i#(j+1)#k } } ) ), -- technically this is wrong -- the quad isn't flat, we should make triangles
 	o }
     )
-)
+
+listPlot = true >> o -> L -> if all(L, x -> instance(x,Number)) then listPlot(o,apply(#L,i->[i,L#i])) else (
+    joined := not o.?Join or o.Join;
+    if #L === 0 then return;
+    L = gParse L;
+    dist := if #L === 1 then 1 else min if joined then apply(#L-1,i->norm(L#(i+1)-L#i)) else (j := #L//2; apply(#L,i->if i!=j then norm(L#j-L#i) else norm(first L-last L)));
+    pts := GraphicsList { Contents => apply(L, r -> Circle { r, 0.1*dist }), "stroke"=>"none" };
+    GraphicsList { Size => 40, Axes=>true, "fill" => "black",
+	symbol Contents => if joined then {Polyline { PointList => L, "fill" => "none" },pts} else { pts },
+	o
+	}
+    )
+
+matrixPlot = method(Options => true)
+matrixPlot Matrix := true >> o -> m -> matrixPlot(entries m,o)
+matrixPlot List := true >> o -> L -> (
+    L' := flatten L;
+    mn := min L'; -- TODO also accept complex numbers
+    mx := max L'; if mx == mn then if mx>0 then mn=0 else if mn<0 then mx=0 else mx=1;
+    GraphicsList {
+	Size => 40, "stroke" => "none",
+	symbol Contents => flatten apply(#L, i -> apply(#(L#i), j -> Polygon{PointList=>{[j,-i],[j+1,-i],[j+1,-i-1],[j,-i-1]},"fill"=>"hsl(0,0%,"|toString round(100*(L#i#j-mn)/(mx-mn))|"%)"})),
+	o
+	}
+    )
 
 -- existing types that get a new output
 -- partitions
@@ -1445,25 +1518,60 @@ multidoc ///
     Ellipse{[60,60],40,30, "fill"=>radialGradient{("0%","stop-color:red"),("100%","stop-color:yellow")}}
  Node
   Key
-   plot
+   plot2d
+   plot3d
   Headline
    Draws a curve or surface
   Description
    Text
     Draws a curve or surface defined implicitly or explicitly by a polynomial.
-    The first argument is a polynomial, the second is a (list of) range(s) of variable(s).
-    If the number of ranges is equal to the number of variables of the polynomial, the graph of the polynomial
-    is drawn. If it is one fewer, then the zero set of the polynomial is drawn.
+    The first argument is a polynomial or set of polynomials, the second is a list of two coordinates specifying the range(s) of variable(s).
+    In @TT "plot2d"@ (resp. @TT "plot3d"@), if the number of variables of the ring of the polynomials is 1 (resp. 2), the graph of the polynomial is drawn;
+    otherwise, the zero set of the polynomial is drawn.
     The option Mesh specifies the number of sampled values of the variables.
    Example
     R=RR[x,y];
     P=y^2-(x+1)*(x-1)*(x-2);
-    plot(P,{-2,3},"stroke-width"=>0.05,Size=>40,"stroke"=>"red")
+    plot2d(P,{-2,3},"stroke-width"=>0.05,"stroke"=>"red",Axes=>true)
+ Node
+  Key
+   matrixPlot
+   (matrixPlot,List)
+   (matrixPlot,Matrix)
+  Headline
+   Graphical representation of a matrix
+  Description
+   Text
+    Represents a matrix or table of real numbers as a black and white rectangle.
+   Example
+    random (RR^6,RR^10)
+    matrixPlot oo
+    matrixPlot apply(32,i->apply(i+1,j->binomial(i,j)%2))
+ Node
+  Key
+   listPlot
+  Headline
+   Graphical representation of a list
+  Description
+   Text
+    Given a list of real numbers or vectors, this function joins them together to form a piecewise linear curve.
+    If the arguments are numbers, they form the y coordinates, and the x coordinates are assumed to be regularly spaced.
+
+    The optional argument @TT "Join"@ specifies whether points should be connected by a line.
+   Example
+    listPlot apply(10,i->0.1*i^2)
  Node
   Key
    Axes
   Headline
    An option to draw axes
+  Description
+   Text
+    Axes can take the values False (no axes are drawn), True (standard axes), or Frame (a box with value ticks).
+    Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
+   Example
+    Circle{Radius=>25,Axes=>true}
+    Circle{Radius=>25,Axes=>Frame}
  Node
   Key
    Margin
@@ -1473,6 +1581,7 @@ multidoc ///
    Text
     The margin is proportional to the size of the image.
     It increases the view port beyond the value returned by @ TO{viewPort} @ or set by @ TO{ViewPort} @.
+    Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
    Example
     Circle{"fill"=>"red","stroke"=>"none",Margin=>0}
     Circle{"fill"=>"red","stroke"=>"none",Margin=>0.5}
@@ -1617,7 +1726,7 @@ multidoc ///
     digraph select(b**b,a->a#1 % a#0 == 0 and first degree a#1 == first degree a#0 +1)
 ///
 undocumented {
-    Contents, TextContent, RefPoint, Specular, Radius, Point1, Point2, PointList, Mesh, FontSize, RadiusX, RadiusY,
+    Contents, TextContent, RefPoint, Specular, Radius, Point1, Point2, PointList, Mesh, FontSize, RadiusX, RadiusY, Frame,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
     (expression, GraphicsAncestor), (html,GraphicsObject), (net,GraphicsAncestor), (toString,GraphicsAncestor), (short,GraphicsObject),
     (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
