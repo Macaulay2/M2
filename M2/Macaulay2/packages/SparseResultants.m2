@@ -306,8 +306,6 @@ SparseDiscriminant#{Standard,AfterPrint} = SparseDiscriminant#{Standard,AfterNoP
     << ")" << endl;
 );
 
-texMath SparseDiscriminant := texMath @@ net;
-
 describe SparseDiscriminant := (D) -> (
     str := "sparse discriminant associated to "|net(D#"exponents");
     if char D > 0 then str = str|" over "|toString(ZZ/char D);
@@ -567,8 +565,6 @@ MultidimensionalMatrix#{Standard,AfterPrint} = MultidimensionalMatrix#{Standard,
 MultidimensionalMatrix.Wrap = x -> wrap(printWidth,"-", net x);
 
 net MultidimensionalMatrix := M -> net entries M;
-
-texMath MultidimensionalMatrix := texMath @@ net;
 
 multidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix);
 
