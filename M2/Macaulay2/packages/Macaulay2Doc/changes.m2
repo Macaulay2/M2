@@ -46,7 +46,11 @@ document {
  	  LI { "functionality added:",
 	       UL {
 		    LI { "New functions ", TO "memoizeValues", " and ", TO "memoizeClear", " have been added for dealing with the values retained by
-			 functions created with memoize." }
+			 functions created with memoize." },
+		    LI { "A new method ", TO "uniquePermutations", " has been added. Equivalent to ", M2CODE "unique @@ permutations", " except faster." },
+		    LI { "A number of unicode symbols have been added as synonyms, e.g., ℤ or ⊗." },
+		    LI { "New numeric functions ", TO "Beta", " and ", TO "Digamma", ", new numeric constant ", TO "CatalanConstant",
+			". Numeric functions accept constants as arguments." }
 		    }
 	       }
 	  }
