@@ -2461,7 +2461,7 @@ beginDocumentation()
 
 document {Key => SpecialFanoFourfolds, 
 Headline => "A package for working with special cubic fourfolds and special Gushel-Mukai fourfolds",
-PARA {"This package contains several tools related to the rationality problem for cubic fourfolds and Gushel-Mukai fourfolds."},
+PARA {"This package contains several tools related to the rationality problem for cubic fourfolds and Gushel-Mukai fourfolds. See ",HREF{"https://arxiv.org/abs/2204.11518","arXiv:2204.11518"}," for some applications."},
 PARA {"The following are some references that have benefited from this package."},
 References => UL{
 {"M. Hoff and G. S., ",EM"Explicit constructions of K3 surfaces and unirational Noether-Lefschetz divisors",", available at ",HREF{"https://arxiv.org/abs/2110.15819","arXiv:2110.15819"}," (2021)."},
@@ -2793,7 +2793,7 @@ Headline => "associated K3 surface to a rational cubic fourfold",
 Usage => "associatedK3surface X", 
 Inputs => {"X" => SpecialCubicFourfold => {"containing a surface ", TEX///$S\subset\mathbb{P}^5$///," that admits a congruence of ",TEX///$(3e-1)$///,"-secant curves of degree ",TEX///$e$///}}, 
 Outputs => {{"the dominant ",TO2{MultirationalMap,"rational map"}," ",TEX///$\mu:\mathbb{P}^5 \dashrightarrow W$///," defined by the linear system of hypersurfaces of degree ",TEX///$3e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{EmbeddedProjectiveVariety,"surface"}," ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\mu$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{MultirationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to a minimal K3 surface, the associated K3 surface to ",TEX///$X$///,"."}},
-PARA {"Thus, the code ",TT "image last associatedK3surface X"," gives the (minimal) associated K3 surface to ",TT"X",". For more details and notation, see the paper ",HREF{"https://arxiv.org/abs/1909.01263","Trisecant Flops, their associated K3 surfaces and the rationality of some Fano fourfolds"},"."},
+PARA {"Thus, the code ",TT "image last associatedK3surface X"," gives the (minimal) associated K3 surface to ",TT"X",". For more details and notation, see the papers ",HREF{"https://arxiv.org/abs/1909.01263","Trisecant Flops, their associated K3 surfaces and the rationality of some Fano fourfolds"}," and ",HREF{"https://arxiv.org/abs/2204.11518","Explicit computations with cubic fourfolds, Gushel-Mukai fourfolds, and their associated K3 surfaces"},"."},
 EXAMPLE {"X = specialCubicFourfold \"quartic scroll\";", "describe X", "time (mu,U,C,f) = associatedK3surface(X,Verbose=>true);", "? mu", "? U", "last C", "image f"},
 SeeAlso => {(associatedK3surface, SpecialGushelMukaiFourfold), detectCongruence}} 
 
@@ -2802,8 +2802,8 @@ Headline => "associated K3 surface to a rational Gushel-Mukai fourfold",
 Usage => "associatedK3surface X", 
 Inputs => {"X" => SpecialGushelMukaiFourfold => {"containing a surface ", TEX///$S\subset Y$///," that admits a congruence of ",TEX///$(2e-1)$///,"-secant curves of degree ",TEX///$e$///," inside the unique del Pezzo fivefold ",TEX///$Y$///," containing the fourfold ",TEX///$X$///}}, 
 Outputs => {{"the dominant ",TO2{MultirationalMap,"rational map"}," ",TEX///$\mu:Y\dashrightarrow W$///," defined by the linear system of hypersurfaces of degree ",TEX///$2e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{EmbeddedProjectiveVariety,"surface"}," ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\mu$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{MultirationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to a minimal K3 surface, the associated K3 surface to ",TEX///$X$///,"."}},
-PARA {"Thus, the code ",TT "image last associatedK3surface X"," gives the (minimal) associated K3 surface to ",TT"X",". For more details and notation, see the paper ",HREF{"https://arxiv.org/abs/1909.01263","Trisecant Flops, their associated K3 surfaces and the rationality of some Fano fourfolds"},"."},
-EXAMPLE {"X = specialGushelMukaiFourfold \"tau-quadric\";", "describe X", "time (mu,U,C,f) = associatedK3surface X;", "? mu", "? U", "first C -- two disjoint lines"},
+PARA {"Thus, the code ",TT "image last associatedK3surface X"," gives the (minimal) associated K3 surface to ",TT"X",". For more details and notation, see the paper ",HREF{"https://arxiv.org/abs/2204.11518","Explicit computations with cubic fourfolds, Gushel-Mukai fourfolds, and their associated K3 surfaces"},"."},
+EXAMPLE {"X = specialGushelMukaiFourfold \"tau-quadric\";", "describe X", "time (mu,U,C,f) = associatedK3surface X;", "? mu", "? U", "first C -- two disjoint lines", "image f"},
 SeeAlso => {(associatedK3surface, SpecialCubicFourfold), detectCongruence}} 
 
 document {Key => {parametrizeFanoFourfold, (parametrizeFanoFourfold, EmbeddedProjectiveVariety), [parametrizeFanoFourfold,Strategy]}, 
@@ -2876,7 +2876,7 @@ S = ambientVariety C;
 C;
 B;
 assert(C == S * B)///,
-References => UL{{"G. S., ",EM"On some families of Gushel-Mukai fourfolds",", available at ",HREF{"https://arxiv.org/abs/2002.07026","arXiv:2002.07026"}," (2020)."}},
+References => UL{{"G. S., ",EM"Explicit computations with cubic fourfolds, Gushel-Mukai fourfolds, and their associated K3 surfaces",", available at ",HREF{"https://arxiv.org/abs/2204.11518","arXiv:2204.11518"}," (2022)."}},
 SeeAlso => {(surface,VisibleList,Ring), GMtables}}
 
 ------------------------------------------------------------------------
