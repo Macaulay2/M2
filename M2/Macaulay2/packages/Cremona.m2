@@ -31,7 +31,7 @@ newPackage(
 	     }
 	)
 
-if topLevelMode =!= Standard then (topLevelMode = Standard; <<"--warning: topLevelMode set to Standard by Cremona.m2"<<endl);
+if topLevelMode =!= Standard then <<"--warning: topLevelMode is not set to Standard"<<endl;
 
 export{
    "ChernSchwartzMacPherson",

@@ -32,7 +32,7 @@ newPackage(
 	     }
 )
 
-if topLevelMode =!= Standard then (topLevelMode = Standard; <<"--warning: topLevelMode set to Standard by SparseResultants.m2"<<endl);
+if topLevelMode =!= Standard then <<"--warning: topLevelMode is not set to Standard"<<endl;
 
 export{"sparseResultant", "SparseResultant", "sparseDiscriminant", "SparseDiscriminant",
        "denseResultant", "denseDiscriminant",
@@ -306,6 +306,8 @@ SparseDiscriminant#{Standard,AfterPrint} = SparseDiscriminant#{Standard,AfterNoP
     << ")" << endl;
 );
 
+texMath SparseDiscriminant := texMath @@ net;
+
 describe SparseDiscriminant := (D) -> (
     str := "sparse discriminant associated to "|net(D#"exponents");
     if char D > 0 then str = str|" over "|toString(ZZ/char D);
@@ -565,6 +567,8 @@ MultidimensionalMatrix#{Standard,AfterPrint} = MultidimensionalMatrix#{Standard,
 MultidimensionalMatrix.Wrap = x -> wrap(printWidth,"-", net x);
 
 net MultidimensionalMatrix := M -> net entries M;
+
+texMath MultidimensionalMatrix := texMath @@ net;
 
 multidimensionalMatrix = method(TypicalValue => MultidimensionalMatrix);
 
