@@ -31,8 +31,6 @@ newPackage(
 	     }
 	)
 
-if topLevelMode =!= Standard then <<"--warning: topLevelMode is not set to Standard"<<endl;
-
 export{
    "ChernSchwartzMacPherson",
    "SegreClass",

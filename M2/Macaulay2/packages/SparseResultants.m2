@@ -32,8 +32,6 @@ newPackage(
 	     }
 )
 
-if topLevelMode =!= Standard then <<"--warning: topLevelMode is not set to Standard"<<endl;
-
 export{"sparseResultant", "SparseResultant", "sparseDiscriminant", "SparseDiscriminant",
        "denseResultant", "denseDiscriminant",
        "exponentsMatrix", "genericLaurentPolynomials", "genericMultihomogeneousPolynomial",
