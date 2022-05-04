@@ -108,8 +108,8 @@ newPackage(
 --------------------------------------------------------------------------------
 
 export {
-  "multiplierIdeal",
-  "logCanonicalThreshold",
+  -- "multiplierIdeal",
+  -- "logCanonicalThreshold",
   "jumpingNumbers",
   "Interval",
   "IntervalType"
@@ -140,8 +140,8 @@ setNmzOption("bigint",true);
 -- The methods are grouped by type of ideal: monomial, hyperplane, etc.
 
 -- Exported:
-multiplierIdeal = method();
-logCanonicalThreshold = method();
+-- multiplierIdeal = method();
+-- logCanonicalThreshold = method();
 jumpingNumbers = method(Dispatch => Thing,
   Options => {
     Interval => {0,infinity},
@@ -955,7 +955,7 @@ multiplicitiesCacheKey := getSymbol "m";
 irredCacheKey := getSymbol "irreds";
 
 -- rank (Flat) := ZZ => F -> rank subArrangement F
-weight := (F,m) -> sum((tolist F)/(i->m_i))
+weight := (F,m) -> sum((toList F)/(i->m_i))
 normal := h -> (
      h/leadCoefficient h);  -- representative of functional, mod scalars
 
@@ -967,13 +967,13 @@ normal := h -> (
 -- should be deleted from here, and we just use their trim
 betterTrim := A -> (
   if A.cache#?simpleCacheKey then return(A.cache#simpleCacheKey);
-  if (tolist A == {}) then (
+  if (toList A == {}) then (
     A.cache#simpleCacheKey = A;
     A.cache#multiplicitiesCacheKey = {};
     return A;
   ) else (
     count := new MutableHashTable;
-    scan(tolist A, h -> (
+    scan(toList A, h -> (
       if h != 0 then (
         if not count#?(normal h) then count#(normal h) = 0;
         count#(normal h) = 1+count#(normal h);
@@ -994,7 +994,7 @@ irreducibles := A -> (
 );
 
 multiplierIdeal (CentralArrangement,List,Number) := Ideal => (A,m,s) -> (
-  if (#tolist A != #m) then error "expected one weight for each hyperplane";
+  if (#toList A != #m) then error "expected one weight for each hyperplane";
   R := ring A;
   
   if ( betterTrim(A) == arrangement({},R)
@@ -1010,7 +1010,7 @@ multiplierIdeal (CentralArrangement,List,Number) := Ideal => (A,m,s) -> (
   
   irreds := irreducibles(A);
   exps := irreds/(F->max(0,floor(s*weight(F,m))-rank(F)+1));
-  ideals := irreds/(F-> trim ideal tolist (A_F));
+  ideals := irreds/(F-> trim ideal toList (A_F));
   return intersect apply(#exps, i->(ideals_i)^(exps_i));
 );
 multiplierIdeal (CentralArrangement,Number) := Ideal => (A,s) -> (
@@ -1020,7 +1020,7 @@ multiplierIdeal (CentralArrangement,Number) := Ideal => (A,s) -> (
 );
 
 logCanonicalThreshold(CentralArrangement,List) := (A,m) -> (
-  if (#tolist A != #m) then error "expected one weight for each hyperplane";
+  if (#toList A != #m) then error "expected one weight for each hyperplane";
   R := ring A;
   if ( betterTrim(A) == arrangement({},R)
     or betterTrim(A) == arrangement({0_R},R) ) then (
@@ -1042,7 +1042,7 @@ skodaPeriodicityOnset(CentralArrangement) := A -> 1
 skodaPeriodicityOnset(CentralArrangement,List) := (A,m) -> 1
 
 jumpingDenominators(CentralArrangement,List) := (A,m) -> (
-  if (#tolist A != #m) then error "expected one weight for each hyperplane";
+  if (#toList A != #m) then error "expected one weight for each hyperplane";
   R := ring A;
   if ( betterTrim(A) == arrangement({},R)
     or betterTrim(A) == arrangement({0_R},R)
@@ -1453,15 +1453,14 @@ assert( (symbolicPowerCurveIdeal(J,-1)) == ideal 1_R )
 ///
 
 TEST ///
-needsPackage"MultiplierIdeals";
 needsPackage"Dmodules";
+needsPackage"MultiplierIdeals";
 debug MultiplierIdeals;
 
 R = QQ[x,y,z];
 assert( (multiplierIdeal(R,{2,3,4},1)) == ideal 1_R )
 assert( (multiplierIdeal(R,{2,3,4},7/6)) == ideal 1_R )
-assert( (multiplierIdeal(R,{2,3,4},20/7))
-  == ideal(y^2*z-x*z^2,x^2*z-z^2,y^3-x*y*z,x*y^2-z^2,x^2*y-y*z,x^3-x*z) )
+assert( (multiplierIdeal(R,{2,3,4},20/7)) == ideal(y^2*z-x*z^2,x^2*z-z^2,y^3-x*y*z,x*y^2-z^2,x^2*y-y*z,x^3-x*z) )
 assert( (multiplierIdeal(R,{3,4,5},11/5)) == ideal(y^2-x*z,x^2*y-z^2,x^3-y*z) )
 I = affineMonomialCurveIdeal(R,{2,3,4})
 assert(multiplierIdeal(R,{2,3,4},3/2) == Dmodules$multiplierIdeal(I,3/2))
@@ -1780,7 +1779,6 @@ document {
 
 document {
   Key => {
-    multiplierIdeal,
     (multiplierIdeal,MonomialIdeal,QQ),
     (multiplierIdeal,MonomialIdeal,ZZ),
     (multiplierIdeal,CentralArrangement,List,Number),
@@ -1898,7 +1896,6 @@ document {
 
 document {
   Key => {
-    logCanonicalThreshold,
     (logCanonicalThreshold,MonomialIdeal),
     (logCanonicalThreshold,MonomialIdeal,RingElement),
     (logCanonicalThreshold,CentralArrangement),
