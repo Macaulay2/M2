@@ -4,8 +4,8 @@
 # Variables that could be overridden on the command line or in a makefile that includes this one:
 #  CC
 #  CXX
-FC = /usr/bin/fc
-FC = /usr/local/bin/gfortran
+FC = fc
+FC = gfortran
 #  AR
 # configure script options:
 #  OPTIONS
