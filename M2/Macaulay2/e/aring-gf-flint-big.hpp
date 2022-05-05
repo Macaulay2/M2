@@ -17,7 +17,7 @@
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-
+#include "exceptions.hpp" // for exc::division_by_zero_error
 #include <iostream>
 
 class PolynomialRing;
@@ -168,7 +168,8 @@ class ARingGFFlintBig : public RingInterface
 
   void invert(ElementType& result, const ElementType& a) const
   {
-    assert(not is_zero(a));
+    if (is_zero(a))
+      throw exc::division_by_zero_error();
     fq_nmod_inv(&result, &a, mContext);
   }
 
@@ -219,7 +220,6 @@ class ARingGFFlintBig : public RingInterface
       printf("\n  b = ");
       fq_nmod_print_pretty(&b, mContext);
 #endif
-    assert(not is_zero(b));
     invert(c, b);
 #if 0
       printf("\n  1/b = ");
@@ -247,15 +247,20 @@ class ARingGFFlintBig : public RingInterface
 
   void power_mpz(ElementType& result, const ElementType& a, mpz_srcptr n) const
   {
-    mpz_t abs_n;
-    mpz_init(abs_n);
-    mpz_abs(abs_n, n);
+    if (mpz_sgn(n) < 0 and is_zero(a))
+      throw exc::division_by_zero_error();
+
     ElementType base;
     init(base);
     if (mpz_sgn(n) < 0)
       invert(base, a);
     else
       copy(base, a);
+
+    mpz_t abs_n;
+    mpz_init(abs_n);
+    mpz_abs(abs_n, n);
+    
     fmpz_t fn;
     fmpz_init_set_readonly(fn, abs_n);
     fq_nmod_pow(&result, &base, fn, mContext);

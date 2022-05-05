@@ -976,10 +976,12 @@ ring_elem PolyRing::invert(const ring_elem f) const
         }
     }
 
-  ERROR("division is not defined in this ring");
+  ERROR("element is not invertible in this ring");
   return ZERO_RINGELEM;
 }
 
+/// Warning! This function works even if g does not divide f.
+//  It returns the remainder on division.
 ring_elem PolyRing::divide(const ring_elem f, const ring_elem g) const
 {
   ring_elem rem, d;
@@ -1019,6 +1021,7 @@ bool PolyRing::imp_attempt_to_cancel_lead_term(ring_elem &f,
     }
   else
     {
+      throw exc::internal_error("should not get to this code in imp_attempt_to_cancel_lead_term");
       coeff = K_->zero();
       result = false;
       // What do we do here??  Call divide, and hope for the best?
@@ -1135,6 +1138,7 @@ ring_elem PolyRing::remainder(const ring_elem f, const ring_elem g) const
 {
   ring_elem quot;
   ring_elem rem;
+  if (is_zero(g)) throw exc::internal_error("cannot use division algorithm dividing by zero");
   rem = remainderAndQuotient(f, g, quot);
   return rem;
 }
@@ -1143,6 +1147,7 @@ ring_elem PolyRing::quotient(const ring_elem f, const ring_elem g) const
 {
   ring_elem quot;
   ring_elem rem;
+  if (is_zero(g)) throw exc::internal_error("cannot use division algorithm dividing by zero");
   rem = remainderAndQuotient(f, g, quot);
   return quot;
 }
@@ -1153,13 +1158,17 @@ ring_elem PolyRing::remainderAndQuotient(const ring_elem f,
 {
   if (K_->get_precision() > 0)
     {
-      ERROR(
+      throw exc::engine_error(
           "polynomial division not yet implemented for RR or CC coefficients");
-      quot = from_long(0);
-      return from_long(0);
     }
   Nterm *q, *r;
   ring_elem rem;
+  if (is_zero(f))
+    {
+      // In this case both the remainder and quotient are 0.
+      quot = from_long(0);
+      return from_long(0); 
+    }
   if (is_zero(g))
     {
       quot = from_long(0);
@@ -1167,7 +1176,18 @@ ring_elem PolyRing::remainderAndQuotient(const ring_elem f,
     }
   else
     {
-      if (M_->has_monomials_lt_one())
+      bool has_negative_exponent_variables = getMonoid()->numInvertibleVariables() > 0;
+      bool has_vars_lt_one = getMonoid()->numNonTermOrderVariables() > 0;
+      
+      if (has_negative_exponent_variables and not has_vars_lt_one)
+        {
+          Nterm* f1 = f;
+          Nterm* g1 = g;
+          r = division_algorithm_with_laurent_variables(f1, g1, q);
+          quot = q;
+          return r;
+        }
+      else if (has_vars_lt_one)
         {
           Nterm *f1 = f;
           Nterm *g1 = g;
@@ -1369,6 +1389,68 @@ void PolyRing::increase_maxnorm(gmp_RRmutable norm, const ring_elem f) const
 // These are private routines, called from remainder
 // or remainderAndQuotient or quotient.
 /////////////////////////////////////////
+
+///@brief Create an exponent vector whose i-th value is the minimum
+/// of the exponents of that variable, if that variable is a Laurent variable
+/// (i.e. allows negative exponents).
+
+std::vector<int> PolyRing::setNegativeExponentMonomial(Nterm* f) const
+{
+  int *exp = new int[n_vars()];
+  std::vector<int> result(n_vars(), 0);
+  Nterm* t = f;
+  getMonoid()->to_expvector(t->monom, exp);
+  for (int i=0; i<n_vars(); i++)
+    if (getMonoid()->isLaurentVariable(i))
+      result[i] = exp[i];
+
+  for (t = t->next; t != nullptr; t = t->next)
+    {
+      getMonoid()->to_expvector(t->monom, exp);
+      for (int i=0; i<n_vars(); i++)
+        if (getMonoid()->isLaurentVariable(i) and exp[i] < result[i])
+          result[i] = exp[i];
+    }
+  delete [] exp;
+  return result;
+}
+
+Nterm *PolyRing::division_algorithm_with_laurent_variables(Nterm *f, Nterm *g, Nterm *&quot) const
+{
+  // Step 1: replace f with f1, m1 (f = m1 * f1, f1 has only exponents >= 0, and no monomial factors)
+  // Same: g = n1 * g1.
+  // then if f1 = q * g1 + r, (q, r polynomials with only non-negative exponents)
+  // then f = (q*m1*n1^(-1)) * g + m1*r
+  //std::pair<Nterm*, int*> factor_out_inverse_variables(f);
+  auto expf = setNegativeExponentMonomial(f);
+  auto expg = setNegativeExponentMonomial(g);
+  int* m = getMonoid()->make_one();
+  int* n = getMonoid()->make_one();
+  getMonoid()->from_expvector(expf.data(), m);
+  getMonoid()->from_expvector(expg.data(), n);
+
+  for (auto& a : expf) a = -a;
+  for (auto& a : expg) a = -a;
+  int* minv = getMonoid()->make_one();
+  int* ninv = getMonoid()->make_one();
+  getMonoid()->from_expvector(expf.data(), minv);
+  getMonoid()->from_expvector(expg.data(), ninv);
+
+  for (int i=0; i<n_vars(); ++i)
+    expf[i] = -expf[i] + expg[i];
+  int* mninv = getMonoid()->make_one();
+  getMonoid()->from_expvector(expf.data(), mninv);
+  
+  ring_elem c = getCoefficientRing()->from_long(1);
+  Nterm* f1 = mult_by_term(f, c, minv); // f1 = m^-1 * f, m only involves the variables which allow negative exponents
+  Nterm* g1 = mult_by_term(g, c, ninv); // g1 = n^-1 * g.
+  Nterm* quot1 = nullptr;
+  Nterm* rem1 = division_algorithm(f1, g1, quot1);
+  Nterm* rem = mult_by_term(rem1, c, m);
+  quot = mult_by_term(quot1, c, mninv);
+  return rem;
+}
+
 Nterm *PolyRing::division_algorithm(Nterm *f, Nterm *g, Nterm *&quot) const
 {
   // This returns the remainder, and sets quot to be the quotient.
@@ -1433,7 +1515,6 @@ Nterm *PolyRing::division_algorithm(Nterm *f, Nterm *g) const
   // This does standard division by one polynomial, returning the remainder.
   // However, it does work for Weyl algebra, skew commutative algebra,
   // as long as the coefficient ring is a field.
-
   ring_elem a = copy(f);
   Nterm *t = a;
   Nterm *b = g;
@@ -1509,15 +1590,15 @@ Nterm *PolyRing::powerseries_division_algorithm(Nterm *f,
 
   // This returns the remainder, and sets quot to be the quotient.
 
+  std::vector expf = setNegativeExponentMonomial(f);
+  std::vector expg = setNegativeExponentMonomial(g);
   ring_elem a = copy(f);
   Nterm *t = a;
   Nterm *b = g;
 
   if (!M_->weight_value_exists())
     {
-      // do NOTHING in this case...
-      quot = 0;
-      return t;
+      throw exc::engine_error("no method for division in this ring");
     }
 
   Nterm divhead;
@@ -1550,8 +1631,7 @@ Nterm *PolyRing::powerseries_division_algorithm(Nterm *f,
           if (gfirst == gsecond)
             {
               // In this case, we return silently
-              quot = 0;
-              return t;
+              throw exc::internal_error("division algorithm for this element is not implemented");
             }
           for (; z->next != 0; z = z->next)
             ;
