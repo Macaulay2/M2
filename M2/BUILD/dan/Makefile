@@ -4,8 +4,8 @@
 # Variables that could be overridden on the command line or in a makefile that includes this one:
 #  CC
 #  CXX
-FC = /usr/bin/fc
-FC = /usr/local/bin/gfortran
+FC = fc
+FC = gfortran
 #  AR
 # configure script options:
 #  OPTIONS
@@ -46,7 +46,7 @@ ifeq ($(MACOSX),yes)
 # # if we don't do this, we may get an absolute path in currentLayout:
 # #    i8 : currentLayout#"factory gftables"
 # #    o8 = /usr/local/Cellar/singular/4.1.3p2_2/share/factory/
-# BUILDLIBS += gftables nauty factory csdp 4ti2 gfan normaliz topcom
+BUILDLIBS += 4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg
 # on the other hand, we can move the *.dylib files out of the way
 endif
 

@@ -267,11 +267,11 @@ CatalanConstant = new Constant from { symbol CatalanConstant, mpfrConstantCatala
 ii = new Constant from { symbol ii, ConstantII}
 
 lngamma = method()
-lngamma ZZ := lngamma QQ := lngamma RR := x -> (
+lngamma RR := x -> (
      (y,s) := lgamma x;
      if s == -1 then y + ii * numeric_(precision y) pi else y
      )
-lngamma Constant := lngamma @@ numeric
+lngamma ZZ := lngamma QQ := lngamma Constant := lngamma @@ numeric
 
 expression Constant := hold
 toString Constant := net Constant := c -> toString c#0

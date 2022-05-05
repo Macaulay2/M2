@@ -166,7 +166,6 @@ class ARingZZGMP : public RingInterface
 
   void power(ElementType& result, const ElementType& a, unsigned long n) const
   {
-    assert(n >= 0);
     return mpz_pow_ui(&result, &a, n);
   }
 

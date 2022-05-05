@@ -105,18 +105,6 @@ document { Key => {Digamma,(Digamma, RR)},
      PARA {"See ", wikipedia "Digamma function", "."},
      SeeAlso => {Gamma}
      }
-document { Key => {lngamma,(lngamma, RR)},
-     Usage => "lngamma x",
-     Headline => "logarithm of the Gamma function",
-     Inputs => { "x" },
-     Outputs => {{ "the logarithm of the gamma function of ", TT "x", " as a real or imaginary number" }},
-     EXAMPLE lines ///
-     	  lngamma 2.1
-	  lngamma(-1.1)
-	  lngamma(-2.1)
-	  lngamma (-2.000000000000000000000000000000001p120)
-     ///
-     }
 document { Key => {zeta,(zeta, RR)},
      Usage => "zeta x",
      Headline => "Riemann zeta function",

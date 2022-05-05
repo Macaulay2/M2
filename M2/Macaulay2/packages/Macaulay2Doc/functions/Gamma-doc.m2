@@ -81,3 +81,30 @@ doc ///
     Gamma
     inverseRegularizedGamma
 ///
+
+doc ///
+  Key
+    lngamma
+    (lngamma, RR)
+    (lngamma, ZZ)
+    (lngamma, QQ)
+    (lngamma, Constant)
+  Headline
+    logarithm of the Gamma function
+  Usage
+    lngamma x
+  Inputs
+    x:RR
+  Outputs
+    :{RR, CC}
+      the logarithm of the @TO Gamma@ function of @TT "x"@ as a real
+      or complex number.
+  Description
+    Example
+      lngamma 2.1
+      lngamma(-1.1)
+      lngamma(-2.1)
+      lngamma (-2.000000000000000000000000000000001p120)
+  SeeAlso
+    Gamma
+///

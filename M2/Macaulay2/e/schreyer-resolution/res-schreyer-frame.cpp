@@ -761,6 +761,7 @@ void SchreyerFrame::getBounds(int& loDegree, int& hiDegree, int& length) const
       length = 0;
       return;
     }
+  length = 0;
   auto& lev0 = level(0);
   loDegree = hiDegree = static_cast<int>(lev0[0].mDegree);
   for (int lev = 0; lev < mFrame.mLevels.size(); lev++)

@@ -167,7 +167,6 @@ AC_CHECK_PROGS(OBJDUMP,objdump,false)
 AC_CHECK_PROGS(OBJCOPY,objcopy,false)
 AC_CHECK_PROGS(LDD,ldd,false)
 AC_CHECK_PROGS(GIT,git,false)
-AC_CHECK_PROGS(NPM,npm,false)
 
 AC_CHECK_TOOL(AR,ar,false)
 AC_CHECK_TOOL(AS,as,false)
@@ -231,6 +230,23 @@ else for DOCTYPE in $DOCUMENTATION
 fi
 
 AC_SUBST(DOCUMENTATION)
+
+AC_ARG_ENABLE([syntax-highlighting],
+    [AS_HELP_STRING([--enable-syntax-highlighting],
+	[whether to enable syntax highlighting using highlightjs in the html
+	 documentation])],
+    [HIGHLIGHTJS=$enableval],
+    [HIGHLIGHTJS=no])
+
+if test "x$HIGHLIGHTJS" = xyes
+then AC_CHECK_PROGS(NPM,npm,false)
+     if test "x$NPM" = xfalse
+     then AC_MSG_ERROR([npm is required for syntax highlighting])
+     fi
+else AC_SUBST(NPM,false)
+fi
+
+AC_SUBST(HIGHLIGHTJS)
 
 AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
@@ -783,18 +799,30 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      fi
 fi
 
-AC_MSG_CHECKING(whether package bdw-gc is provided)
+## we build gc by default so we can configure it for large memory spaces
+## see issue #2445
+AC_ARG_WITH([system-gc],
+    [AS_HELP_STRING([--with-system-gc],
+        [use system gc instead of building it])],
+    [],
+    [with_system_gc=no])
+
+AS_IF([test "x$with_system_gc" = xyes],
+    [AC_MSG_CHECKING(whether package bdw-gc is provided)
 dnl Note: we don't include -lgccpp below, because linking with that library is what replaces ::new and friends with GC_MALLOC_UNCOLLECTABLE and friends:
-if [ pkg-config --exists bdw-gc ]
-then AC_MSG_RESULT(yes)
-     CPPFLAGS="`pkg-config --cflags-only-I bdw-gc | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
-     dnl should probably use `pkg-config --libs bdw-gc` here instead
-     FOUND_gc=yes
-else AC_MSG_RESULT(no)
-     BUILD_gc=yes
-fi
+     if [ pkg-config --exists bdw-gc ]
+     then AC_MSG_RESULT(yes)
+          CPPFLAGS="`pkg-config --cflags-only-I bdw-gc | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
+          dnl should probably use `pkg-config --libs bdw-gc` here instead
+          FOUND_gc=yes
+     else AC_MSG_RESULT(no)
+          BUILD_gc=yes
+     fi],
+    [BUILD_gc=yes])
+
 if test $BUILD_gc = yes
 then BUILTLIBS="-lgc -lpthread $BUILTLIBS"
+     BUILD_ALWAYS="$BUILD_ALWAYS gc"
 else if test $SHARED = no -a $TRY_STATIC = yes
      then SEARCH_LIBRARIES(GC_malloc,"/usr/lib/libgc.a" "/usr/local/lib/libgc.a",,
           [AC_MSG_ERROR([libgc.a not found])])
@@ -1245,11 +1273,11 @@ then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
 fi
 
-AC_ARG_ENABLE([build-memtailor],
-    [AS_HELP_STRING([--disable-build-memtailor],
+AC_ARG_WITH([system-memtailor],
+    [AS_HELP_STRING([--with-system-memtailor],
 	[use system memtailor instead of building git submodule])],,
-    [enable_build_memtailor=yes])
-if test $enable_build_memtailor = yes
+    [with_system_memtailor=no])
+if test $with_system_memtailor = no
 then
     BUILD_memtailor=yes
     BUILTLIBS="-lmemtailor $BUILTLIBS"
@@ -1258,11 +1286,11 @@ else AC_LANG(C++)
     AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
 fi
 
-AC_ARG_ENABLE([build-mathic],
-    [AS_HELP_STRING([--disable-build-mathic],
+AC_ARG_WITH([system-mathic],
+    [AS_HELP_STRING([--with-system-mathic],
 	[use system mathic instead of building git submodule])],,
-    [enable_build_mathic=yes])
-if test $enable_build_mathic = yes
+    [with_system_mathic=no])
+if test $with_system_mathic = no
 then
     BUILD_mathic=yes
     BUILTLIBS="-lmathic $BUILTLIBS"
@@ -1271,11 +1299,11 @@ else AC_LANG(C++)
     AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
 fi
 
-AC_ARG_ENABLE([build-mathicgb],
-    [AS_HELP_STRING([--disable-build-mathicgb],
+AC_ARG_WITH([system-mathicgb],
+    [AS_HELP_STRING([--with-system-mathicgb],
 	[use system mathicgb instead of building git submodule])],,
-    [enable_build_mathicgb=yes])
-if test $enable_build_mathicgb = yes
+    [with_system_mathicgb=no])
+if test $with_system_mathicgb = no
 then
     BUILD_mathicgb=yes
     BUILTLIBS="-lmathicgb $BUILTLIBS"

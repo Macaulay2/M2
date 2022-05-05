@@ -11,9 +11,10 @@ previousPrime = (n) -> if n < 2 then null else (while not isPrime n do n = n-1; 
 assert checkPowersOfZero(30, ZZ/5)
 assert checkPowersOfZero(30, ZZ/32003)
 assert checkPowersOfZero(30, ZZ/1048583) -- nextPrime 2^20
-assert checkPowersOfZero(30, ZZ/(nextPrime 2^40)) -- nextPrime 2^40
-assert checkPowersOfZero(30, ZZ/(nextPrime 2^60)) -- nextPrime 2^60
-assert checkPowersOfZero(30, ZZ/(nextPrime 2^63)) -- nextPrime 2^63
+if version#"pointer size" > 4 then (
+    assert checkPowersOfZero(30, ZZ/(nextPrime 2^40)); -- nextPrime 2^40
+    assert checkPowersOfZero(30, ZZ/(nextPrime 2^60)); -- nextPrime 2^60
+    assert checkPowersOfZero(30, ZZ/(nextPrime 2^63))) -- nextPrime 2^63
 assert checkPowersOfZero(30, GF 5)
 
 assert checkPowersOfZero(30, GF 5)

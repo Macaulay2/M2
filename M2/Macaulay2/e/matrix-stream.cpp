@@ -35,7 +35,6 @@ void MatrixStream::appendTermBegin(Component com)
 
 void MatrixStream::appendExponent(VarIndex index, Exponent exponent)
 {
-  assert(index >= 0);
   assert(index < mPolyRing->n_vars());
   mCurrentExponents[index] = exponent;
 }

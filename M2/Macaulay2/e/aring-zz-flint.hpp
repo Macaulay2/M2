@@ -174,7 +174,6 @@ void set_from_mpz(ElementType& result, mpz_srcptr a) const
              const ElementType& a,
              const unsigned long n) const
   {
-    assert(n >= 0);
     return fmpz_pow_ui(&result, &a, n);
   }
 
