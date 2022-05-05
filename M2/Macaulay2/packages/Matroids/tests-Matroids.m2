@@ -53,8 +53,10 @@ S = uniformMatroid(2,4) ++ matroid completeGraph 3
 assert(S == uniformMatroid(2,4) + matroid completeGraph 3)
 C = components S
 assert(S == C#0 ++ C#1)
-M = matroid(graph({{0,1},{1,2},{0,2},{3,4},{4,5},{3,5}}), Loops => {0,3,5})
-assert(#loops M == 3 and #connectedComponents getRepresentation M == 2)
+G = graph({{0,1},{1,2},{0,2},{3,4},{4,5},{3,5}})
+assert(#connectedComponents getRepresentation matroid G == 2)
+M = matroid(G, Loops => {0,3,5})
+assert(#loops M == 3)
 C = components M
 assert(#C == 5 and #getIsos(M, fold(C, (a, b) -> a ++ b)) == 432)
 assert(characteristicPolynomial M == 0)
