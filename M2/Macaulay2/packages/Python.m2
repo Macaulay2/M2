@@ -5,8 +5,8 @@ this does not work unless M2 is compiled --with-python
 pythonPresent := Core#"private dictionary"#?"pythonRunString"
 
 newPackage("Python",
-    Version => "0.2",
-    Date => "November 6, 2021",
+    Version => "0.3",
+    Date => "May 4, 2022",
     Headline => "interface to Python",
     Authors => {
 	{Name => "Daniel R. Grayson",
