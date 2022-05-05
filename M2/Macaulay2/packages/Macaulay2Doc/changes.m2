@@ -54,8 +54,11 @@ document {
 			 functions created with memoize." },
 		    LI { "A new method ", TO "uniquePermutations", " has been added. Equivalent to ", M2CODE "unique @@ permutations", " except faster." },
 		    LI { "A number of unicode symbols have been added as synonyms, e.g., ℤ or ⊗." },
-		    LI { "New numeric functions ", TO "Beta", " and ", TO "Digamma", ", new numeric constant ", TO "CatalanConstant",
-			". Numeric functions accept constants as arguments." }
+		    LI { "New numeric functions ", TO "Beta", ", ", TO "Digamma", ", ", TO "inverseErf", ", ", TO "regularizedBeta", ", ", TO "inverseRegularizedBeta", ", ", TO "regularizedGamma", ", and ", TO "inverseRegularizedGamma", ", new numeric constant ", TO "CatalanConstant",
+			".  ", TO "Gamma", " now accepts two arguments, for the incomplete gamma function.  Numeric functions accept constants as arguments." },
+		    LI { TO "pack", ", ", TO "reverse", ", and ", TO "tally", " now support strings." },
+		    LI { TO "unique", " now supports all visible lists." },
+		    LI { "Syntax highlighting of Macaulay2 code in the HTML documentation has been added as a build-time option.  Use ", TO "M2CODE", " to indicate code to be highlighted." }
 		    }
 	       }
 	  }
