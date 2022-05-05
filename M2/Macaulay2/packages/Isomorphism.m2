@@ -128,7 +128,7 @@ checkDegrees(B,B)
 ///
 
 isIsomorphic = method(Options =>{Homogeneous => true, Verbose => false, Strict =>false})
-isIsomorphic(Module, Module) := sequence => o ->  (N,M)->(
+isIsomorphic(Module, Module) := Sequence => o ->  (N,M)->(
     --returns a pair (false, null) or (true, f), or where f is an isomorphism 
     --f: M to N.
     --if an inhomogeneous iso is to be allowed, use the option
