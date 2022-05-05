@@ -237,14 +237,14 @@ Matrix /* or null */ *rawSubduction(int numparts,
                                     Computation *C);
    
 Matrix /* or null */ *rawSubduction1(int numparts,
-                                       const Ring *rawT,
-                                       const Ring *rawS,
-                                       const Matrix *m,
-                                       const RingMap *inclusionAmbient,
-                                       const RingMap *fullSubstitution,
-                                       const RingMap *substitutionInclusion,
-                                       Computation *rawGBI,
-                                       Computation *rawGBReductionIdeal); 
+                                     const Ring *rawT,
+                                     const Ring *rawS,
+                                     const Matrix *m,
+                                     const RingMap *inclusionAmbient,
+                                     const RingMap *fullSubstitution,
+                                     const RingMap *substitutionInclusion,
+                                     Computation *rawGBI,
+                                     Computation *rawGBReductionIdeal); 
 
 void rawDisplayMatrixStream(const Matrix *inputMatrix);
 
