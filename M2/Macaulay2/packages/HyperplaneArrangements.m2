@@ -3928,7 +3928,7 @@ e = symbol e
 osDefault = orlikSolomon(typeA 3, e)
 E = ring osDefault
 osMatroids = orlikSolomon(typeA 3, E, Strategy=>Matroids)
-osClassic = orlikSolomon(typeA 3, E, Strategy=>Popescu)
+osPopescu = orlikSolomon(typeA 3, E, Strategy=>Popescu)
 assert(osDefault === osMatroids)
 assert(osMatroids === osPopescu)
 ///
