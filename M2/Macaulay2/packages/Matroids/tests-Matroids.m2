@@ -54,7 +54,7 @@ assert(S == uniformMatroid(2,4) + matroid completeGraph 3)
 C = components S
 assert(S == C#0 ++ C#1)
 M = matroid(graph({{0,1},{1,2},{0,2},{3,4},{4,5},{3,5}}), Loops => {0,3,5})
-assert(#loops M == 3 and #connectedComponents representationOf M == 2)
+assert(#loops M == 3 and #connectedComponents getRepresentation M == 2)
 C = components M
 assert(#C == 5 and #getIsos(M, fold(C, (a, b) -> a ++ b)) == 432)
 assert(characteristicPolynomial M == 0)
@@ -90,9 +90,9 @@ K4 = completeGraph 4
 M4 = matroid K4
 assert(toString tuttePolynomial M4 === "x^3+y^3+3*x^2+4*x*y+3*y^2+2*x+2*y")
 assert(tutteEvaluate(M4, 2, 1) === 38)
-assert(representationOf M4 === K4)
+assert(getRepresentation M4 === K4)
 A = random(ZZ^3,ZZ^5)
-assert(representationOf matroid A === A)
+assert(getRepresentation matroid A === A)
 ///
 
 TEST ///
