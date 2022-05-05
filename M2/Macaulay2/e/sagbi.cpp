@@ -78,7 +78,8 @@ ring_elem sagbi::subduct1(int numslots,
                             GBComputation *gbI,
                             GBComputation *gbReductionIdeal)
 {
-    ring_elem fr = a;
+    Nterm *f = a;
+    ring_elem fr = f;
     MatrixConstructor matT(T->make_FreeModule(1), 1);
     MatrixConstructor matS(S->make_FreeModule(1), 1);
     bool breakFlag = false;
@@ -121,6 +122,7 @@ ring_elem sagbi::subduct1(int numslots,
                 delete l;
                 
                 S->internal_subtract_to(fr,h1InS);
+                f = fr;
             }
             else
                 breakFlag = true;
