@@ -33,8 +33,15 @@ class sagbi
                             GBComputation *gbI,
                             GBComputation *gbReductionIdeal);
 
-  static Matrix *subduct1(int numparts, const Ring *rawT, const Ring *rawS, const Matrix *m, const RingMap *inclusionAmbient, const RingMap *fullSubstitution,
-                          const RingMap *substitutionInclusion, GBComputation *gbI, GBComputation *gbReductionIdeal);
+  static Matrix *subduct1(int numparts, 
+                          const Ring *rawT, 
+                          const Ring *rawS, 
+                          const Matrix *m, 
+                          const RingMap *inclusionAmbient, 
+                          const RingMap *fullSubstitution,
+                          const RingMap *substitutionInclusion, 
+                          GBComputation *gbI, 
+                          GBComputation *gbReductionIdeal);
 };
 
 #if 0
