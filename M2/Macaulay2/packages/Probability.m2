@@ -341,8 +341,12 @@ tDistribution Constant := df -> (
     continuousProbabilityDistribution(
 	x -> Gamma((df + 1)/2) / (sqrt(df * pi) * Gamma(df / 2)) *
 	    (1 + x^2/df)^(-(df + 1) / 2),
-	RandomGeneration => () -> random normalDistribution() / sqrt(
-	    random chiSquaredDistribution df / df),
+	DistributionFunction => x -> (
+	    p := 1 - 1/2*regularizedBeta(df/(x^2 + df), df/2, 1/2);
+	    if x >= 0 then p else 1 - p),
+	QuantileFunction => p -> (if p >= 0.5
+	    then sqrt(df / inverseRegularizedBeta(2 - 2 * p, df/2, 1/2) - df)
+	    else -sqrt(df / inverseRegularizedBeta(2 * p, df/2, 1/2) - df)),
 	Support => (-infinity, infinity),
 	Description => "t(" | toString df | ")"))
 
@@ -1152,11 +1156,6 @@ doc ///
       probability_X 3
       quantile_X 0.4
       random X
-  Caveat
-    This distribution currently uses numerical integration to approximate
-    values of its cumulative distribution function, and so @TO probability@,
-    @TO quantile@, and @TO (random, ProbabilityDistribution)@ are slow are
-    inaccurate.
 ///
 
 doc ///
@@ -1367,11 +1366,13 @@ X = tDistribution 3
 assert(abs(density_X 0 - 0.3675526) < 1e-7)  -- R: dt(0, 3)
 assert(abs(density_X 3 - 0.02297204) < 1e-7) -- R: dt(3, 3)
 
-assert(abs(probability_X(-3) - 0.02883444) < 1e-5) -- R: pt(-3, 3)
-assert(abs(probability_X 0 -  0.5) < 1e-5)
+assert(abs(probability_X(-3) - 0.02883444) < 1e-7) -- R: pt(-3, 3)
+assert(abs(probability_X 0 -  0.5) < 1e-7)
+assert(abs(probability_X 3 - 0.9711656) < 1e-7) -- R: pt(3, 3)
 
-assert(abs(quantile_X 0.02883444 + 3) < 1e-3)
-assert(abs quantile_X 0.5 < 1e-5)
+assert(abs(quantile_X 0.02883444 + 3) < 1e-6)
+assert(abs quantile_X 0.5 < 1e-7)
+assert(abs(quantile_X 0.9711656 - 3) < 1e-5)
 ///
 
 TEST ///
