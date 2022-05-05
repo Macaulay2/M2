@@ -7,6 +7,7 @@ newPackage(
                   Email => "de@msri.org", 
                   HomePage => "http://www.msri.org/~de"}
                   },
+    Keywords => {"Commutative Algebra", "Homological Algebra", "Projective Algebraic Geometry"},
     DebuggingMode => false
     )
 
