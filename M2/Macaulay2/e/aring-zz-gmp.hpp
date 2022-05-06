@@ -150,18 +150,20 @@ class ARingZZGMP : public RingInterface
     mpz_mul(&result, &a, &b);
   }
 
-  ///@brief test doc
-  bool divide(ElementType& result,
+  ///@brief exact division of integers.
+
+  void divide(ElementType& result,
               const ElementType& a,
               const ElementType& b) const
   {
     if (mpz_divisible_p(&a, &b))
       {
         mpz_divexact(&result, &a, &b);
-        return true;
       }
     else
-      return false;
+      {
+        throw exc::engine_error("division not exact");
+      }
   }
 
   void power(ElementType& result, const ElementType& a, unsigned long n) const
@@ -173,6 +175,7 @@ class ARingZZGMP : public RingInterface
                  const ElementType& a,
                  mpz_srcptr n) const
   {
+    if (mpz_sgn(n) < 0) throw exc::engine_error("can only raise to a nonnegative power");
     std::pair<bool, int> n1 = RingZZ::get_si(n);
     if (n1.first)
       mpz_pow_ui(&result, &a, n1.second);

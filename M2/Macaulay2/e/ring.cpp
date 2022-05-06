@@ -98,17 +98,32 @@ ring_elem Ring::var(int v) const
   return zeroV;
 }
 
+/// @brief Exponentiation. This is the default function, if a class doesn't define this.
+//
+//  The method used is successive squaring.
+//  Which classes actually use this?
 ring_elem Ring::power(const ring_elem gg, mpz_srcptr m) const
 {
   ring_elem ff = gg;
-  int cmp = mpz_sgn(m);
+  int cmp = mpz_sgn(m); // the sign of m, <0, ==0, >0
   if (cmp == 0) return one();
   mpz_t n;
   mpz_init_set(n, m);
+  // @TODO MES: rewrite this so it inverts before creating n.
+  // That way we don't have to catch any exceptions here.
+  // e.g. as
+#if 0  
+  if (cmp < 0)
+    ff = invert(ff);
+  mpz_init_set(n, m);
+  mpz_t n;
+  if (cmp < 0)
+    mpz_neg(n, n);
+#endif  
   if (cmp < 0)
     {
       mpz_neg(n, n);
-      ff = invert(ff);
+      ff = invert(ff); // this can raise an exception, in which case we need to free n.
       if (is_zero(ff))
         {
           ERROR(
@@ -144,6 +159,7 @@ ring_elem Ring::power(const ring_elem gg, mpz_srcptr m) const
 
 ring_elem Ring::power(const ring_elem gg, int n) const
 {
+  // TODO: reorganize to match the above routine (but using an int).
   ring_elem ff = gg;
   if (n == 0) return one();
   if (n < 0)

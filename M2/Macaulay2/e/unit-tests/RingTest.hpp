@@ -13,6 +13,7 @@
 
 #include "interface/random.h"
 #include "ZZ.hpp"
+#include "exceptions.hpp"
 
 const int ntrials = 100;  // 5000
 
@@ -100,6 +101,10 @@ void testRingSubtract(const T* R, int ntrials)
 template <typename T>
 void testRingDivide(const T* R, int ntrials)
 {
+  auto zero = R->zero();
+  auto a = R->from_long(3);
+  EXPECT_ANY_THROW(R->divide(a, zero));
+
   RingElementGenerator<T> gen(*R);
   for (int i = 0; i < ntrials; i++)
     {
@@ -116,6 +121,7 @@ void testRingDivide(const T* R, int ntrials)
         }
     }
 }
+
 template <typename T>
 void testRingAxioms(const T* R, int ntrials)
 {

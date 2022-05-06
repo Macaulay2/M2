@@ -50,10 +50,9 @@ bool GF::initialize_GF(const RingElement *prim)
 
   if (_originalR->n_quotients() != 1)
     {
-      ERROR(
+      throw exc::engine_error(
           "rawGaloisField expected an element of a quotient ring of the form "
           "ZZ/p[x]/(f)");
-      return false;
     }
   ring_elem f = _originalR->quotient_element(0);
   Nterm *t = f;
@@ -89,8 +88,7 @@ bool GF::initialize_GF(const RingElement *prim)
 
   if (polys.size() != Q_)
     {
-      ERROR("GF: primitive element expected");
-      return false;
+      throw exc::engine_error("GF: primitive element expected");
     }
 
   assert(_x_exponent >= 0);
@@ -387,8 +385,12 @@ ring_elem GF::power(const ring_elem f, int n) const
   else
     {
       // f == 0 element.
-      if (n == 0) return ring_elem(_ONE);
-      return ring_elem(_ZERO);
+      if (n == 0)
+        return ring_elem(_ONE);
+      else if (n > 0)
+        return ring_elem(_ZERO);
+      else
+        throw exc::division_by_zero_error();
     }
 }
 ring_elem GF::power(const ring_elem f, mpz_srcptr n) const
@@ -402,21 +404,27 @@ ring_elem GF::power(const ring_elem f, mpz_srcptr n) const
     }
   else
     {
-      if (mpz_sgn(n) == 0) return ring_elem(_ONE);
-      return ring_elem(_ZERO);
+      if (mpz_sgn(n) == 0)
+        return ring_elem(_ONE);
+      else if (mpz_sgn(n) > 0)
+        return ring_elem(_ZERO);
+      else
+        throw exc::division_by_zero_error();
     }
 }
 
 ring_elem GF::invert(const ring_elem f) const
 {
-  // error if f == _ZERO
+  if (f.get_int() == _ZERO)
+    throw exc::division_by_zero_error();
   if (f.get_int() == _ONE) return ring_elem(_ONE);
   return ring_elem(Q1_ - f.get_int());
 }
 
 ring_elem GF::divide(const ring_elem f, const ring_elem g) const
 {
-  if (g.get_int() == _ZERO) assert(0);  // MES: raise an exception
+  if (g.get_int() == _ZERO)
+    throw exc::division_by_zero_error();
   if (f.get_int() == _ZERO) return ring_elem(_ZERO);
   return modulus_sub(f.get_int(), g.get_int(), Q1_);
 }

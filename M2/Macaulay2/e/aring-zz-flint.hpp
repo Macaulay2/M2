@@ -181,7 +181,7 @@ void set_from_mpz(ElementType& result, mpz_srcptr a) const
                  const ElementType& a,
                  mpz_srcptr n) const
   {
-    if (mpz_sgn(n)<0) ERROR("can only raise to a nonnegative power");
+    if (mpz_sgn(n) < 0) throw exc::engine_error("can only raise to a nonnegative power");
     std::pair<bool, int> n1 = RingZZ::get_si(n);
     if (n1.first)
       fmpz_pow_ui(&result, &a, n1.second);

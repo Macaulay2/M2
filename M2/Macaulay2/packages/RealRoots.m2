@@ -4,20 +4,21 @@ newPackage(
     Version=>"0.1",
     Date=>"Oct 9, 2020",
     Authors=>{
-     	{Name=>"Jordy Lopez",
+     	{Name=>"Jordy Lopez Garcia",
 	 Email=>"jordy.lopez@tamu.edu",
-	 HomePage=>""},
+	 HomePage=>"https://www.github.com/jordylopez27"},
     	{Name=>"Kelly Maluccio",
-	 Email=>"kmaluccio@tamu.edu",
-	 HomePage=>"https://www.math.tamu.edu/~kmaluccio"},
+	 Email=>"keleburke@aggienetwork.com",
+	 HomePage=>"https://www.github.com/kmaluccio"},
     	{Name=>"Frank Sottile",
 	 Email=>"sottile@tamu.edu",
 	 HomePage=>"https://www.math.tamu.edu/~frank.sottile/"},
 	{Name=>"Thomas Yahl",
-	 Email=>"Thomasjyahl@tamu.edu",
-	 HomePage=>"https://math.tamu.edu/~thomasjyahl"}
+	 Email=>"thomasjyahl@tamu.edu",
+	 HomePage=>"https://www.github.com/tjyahl"}
 	},
-    Headline=>"Package for symbolically exploring, counting, and locating real solutions to polynomial systems",
+    Headline=>"Package for symbolically exploring, counting, and locating real solutions to general polynomial systems",
+    Keywords=>{"Real Algebraic Geometry"},
     PackageImports=>{},
     PackageExports=>{},
     DebuggingMode=>true
@@ -26,18 +27,22 @@ newPackage(
 
 export{
     --methods
-    "eliminant",
-    "regularRep",
-    "charPoly",
+    "minimalPolynomial",
+    "univariateEliminant",
+    "regularRepresentation",
+    "characteristicPolynomial",
     "variations",
     "SylvesterSequence",
-    "numSylvester",
+    "SylvesterCount",
     "SturmSequence",
-    "numSturm",
+    "SturmCount",
     "realRootIsolation",
     "BudanFourierBound",
     "traceForm",
-    "numTrace",
+    "traceCount",
+    "rationalUnivariateRepresentation",
+    "HurwitzMatrix",
+    "isHurwitzStable",
     --options
     "Multiplicity"
     }
@@ -47,30 +52,40 @@ export{
 --METHODS FOR INTERNAL USE--
 ----------------------------
 
---Check that a ring is a univariate polynomial ring over a field of characteristic zero
-----worry about more interesting fields?
-----make warning optional?
-isUnivariate = method()
-isUnivariate (Ring) := Boolean => R->(
-    K := coefficientRing R;
-    if instance(K,InexactField) then print "Warning: Computations over inexact field";
-    (isPolynomialRing R) and (numgens R === 1) and (isField K) and (char K === 0)
+--Check that a polynomial is univariate
+isUnivariatePolynomial = method()
+isUnivariatePolynomial (RingElement) := Boolean => f->(
+    S := select(support f,x->index x < numgens ring f);
+    #S <= 1
+    )
+
+--Determines the variable of a univariate polynomial
+variable = method()
+variable (RingElement) := RingElement => f->(
+    if not isUnivariatePolynomial(f) then error "Error: Expected univariate polynomial";
+    S := select(support f,x->index x < numgens ring f);
+    if S === {} then (ring f)_0 else S#0
+    )
+
+variable (Ideal) := RingElement => I->(
+    S := support I;
+    if S === {} then (ring I)_0 else S#0
     )
 
 
---Check that a ring is Artinian over a field of characteristic zero
-----check if warning is printed more than once
+--Check that a ring is zero-dimensional
+----isArtinian does NOT work over fields with parameters.
 isArtinian = method()
 isArtinian (Ring) := Boolean => R->(
-    K := coefficientRing R;
-    if instance(K,InexactField) then print "Warning: Computations over inexact field";
-    (isField K) and (char K===0) and (dim R===0)
+    if instance(coefficientRing R,InexactField) then print "Warning: Computations over inexact field";
+    dim R === 0
     )
 
-
+        
 --Computes the sign of a real number
 sign = method()
-sign (Number) := ZZ => n ->(
+for A in {ZZ,QQ,RR} do
+sign (A) := ZZ => n->(
      if n < 0 then -1 
      else if n == 0 then 0
      else if n > 0 then 1
@@ -79,8 +94,9 @@ sign (Number) := ZZ => n ->(
 
 --Computes the sign of a real univariate polynomial at a given real number
 signAt = method()
-signAt (RingElement,Number) := ZZ => (f,r)->(
-    sign(substitute(f,(ring f)_0=>r))
+for A in {ZZ,QQ,RR} do
+signAt (RingElement,A) := ZZ => (f,r)->(
+    sign(sub(f,{variable f => r}))
     )
 
 signAt (RingElement,InfiniteNumber) := ZZ => (f,r)->(
@@ -92,14 +108,36 @@ signAt (RingElement,InfiniteNumber) := ZZ => (f,r)->(
     )
 
 
+--Computes the sequence of Horner polynomials associated to f
+HornerSequence = method()
+HornerSequence (RingElement) := RingElement => f ->(
+    d := first degree f;
+    x := variable(f);
+    a := apply(d+1,i->coefficient(x^(d-i),f));
+    H := new MutableList from {sub(a#0,ring f)};
+    for i from 1 to d-1 do (
+	H#i = x*H#(i-1) + a#i);
+    toList H
+    )
+
+
+--computes the signature of a matrix
+----can also use SylvesterCount(ch,variable ch,Multiplicity=>true)
+signature = method()
+signature (Matrix) := ZZ => M->(
+    ch := characteristicPolynomial M;
+    coeffs := flatten entries sub(last coefficients ch,ring M);
+    2*(variations coeffs) - rank M
+    )
+
+
 --Computes the sequence of derivatives of f
 derivSequence = method()
 derivSequence (RingElement) := List => f->(
-    R := ring f;
-    if not isUnivariate(R) then error "Error: Expected univariate polynomial";
+    if not isUnivariatePolynomial(f) then error "Error: Expected univariate polynomial.";
     if (f == 0) then error "Error: Expected nonzero polynomial";
     
-    t := R_0;
+    t := variable f;
     d := first degree f;
     apply(d+1, i -> diff(t^i,f))
     )
@@ -108,42 +146,32 @@ derivSequence (RingElement) := List => f->(
 --EXPORTED METHODS--
 --------------------
 
---Compute the eliminant of 'f' in the quotient ideal defined by 'I'
+--Compute the minimalPolynomial of 'f' in the quotient ideal defined by 'I'
 ----better naming for strategies?
-----fix second option to use minimal polynomial/give better error
-eliminant = method(Options=>{Strategy=>0})
-eliminant (RingElement,Ideal) := RingElement => opts-> (f,I)->(
+minimalPolynomial = method(Options=>{Strategy=>0})
+minimalPolynomial (RingElement,Ideal) := RingElement => opts->(f,I)->(
     R := ring f;
     if not (ring I === R) then error "Error: Expected polynomial and ideal of the same ring";
-    eliminant(sub(f,R/I))
+    minimalPolynomial(sub(f,R/I))
     )
     
-eliminant (RingElement) := RingElement => opts-> f->(
+minimalPolynomial (RingElement) := RingElement => opts->f->(
     R := ring f;
     if not isArtinian(R) then error "Error: Expected element of Artinian ring";
+
+    K := coefficientRing R;
+    Z := getSymbol "Z";
+    S := K(monoid [Z]);
     
-    if (opts.Strategy === 1) then (
-	--This strategy computes the eliminant as the kernel of the multiplication map
-	K := coefficientRing R;
-    	Z := getSymbol "Z";
-    	S := K(monoid [Z]);
+    if (opts.Strategy === 0) then (
+	--This strategy computes the minimalPolynomial as the kernel of the multiplication map
     	phi := map(R,S,{f});
     	(ker phi)_0
         
-	) else if (opts.Strategy === 2) then (
-	--This strategy computes the eliminant as a characteristic polynomial when possible
-	n := numgens source basis R;
-    	g := charPoly(f);
-    	if (first degree g === n) then g else error "Error: Eliminant not computed"
-    	
-	) else (
-	--This strategy computes the eliminant by finding a minimal linear combination in powers of f
+	) else if (opts.Strategy === 1) then (
+      	--This strategy computes the minimalPolynomial by finding a minimal linear combination in powers of f
     	B := basis R;
-    	n = numgens source B;
-    	K = coefficientRing R;
-	
-    	Z = getSymbol "Z";
-    	S = K(monoid [Z]);
+    	n := numgens source B;
     	
     	P := map(R^1,R^(n+1),(i,j)->f^j);
     	M := last coefficients(P, Monomials=>B);
@@ -153,15 +181,21 @@ eliminant (RingElement) := RingElement => opts-> f->(
     )
 
 
+--Function alias
+univariateEliminant = method(Options=>{Strategy=>0})
+univariateEliminant (RingElement) := o-> f-> minimalPolynomial(f,o)
+univariateEliminant (RingElement,Ideal) := o-> (g,I)-> minimalPolynomial(g,I,o)
+
+
 --Computes a matrix representation of the multiplication map determined by f
-regularRep = method()
-regularRep (RingElement,Ideal) := Matrix => (f,I)->(
+regularRepresentation = method()
+regularRepresentation (RingElement,Ideal) := Matrix => (f,I)->(
     R := ring f;
     if not (ring I === R) then error "Error: Expected polynomial ring and ideal of the same ring";
-    regularRep(sub(f,R/I))
+    regularRepresentation(sub(f,R/I))
     )
 
-regularRep (RingElement) := Matrix => f->(
+regularRepresentation (RingElement) := Matrix => f->(
     R := ring f;
     if not isArtinian(R) then error "Error: Expected element of Artinian ring";
     K := coefficientRing R;
@@ -172,35 +206,80 @@ regularRep (RingElement) := Matrix => f->(
     )
 
 
---Computes the characteristic polynomial of a matrix
-charPoly = method()
-charPoly (Matrix) := RingElement => M->(
+--Computes the characteristic polynomial of a matrix.
+characteristicPolynomial = method(Options => {Variable => "Z"})
+characteristicPolynomial (Matrix) := RingElement => opts->M->(
     n := numgens source M;
     if not (numgens target M === n) then error "Error: Expected a square matrix";
     
-    K := ring M;
-    if not (isField K and char K === 0) then error "Error: Expected a field of characteristic zero";
-    
-    Z := getSymbol "Z";
+    K := ring M; 
+    Z := opts.Variable;
     S := K(monoid [Z]);
-
-    IdZ := S_0*id_(S^n);
-    det(IdZ - M)
+    
+    if (n < 30) then (
+    	--characteristic polynomial via determinants
+	IdZ := S_0*id_(S^n);
+    	det(IdZ - M)
+	
+	) else (
+	
+	--characteristic polynomial via elementary symmetric polynomials and traces
+	A := id_(ZZ^n);
+    	traces := {n}|apply(n,k->(A = M*A; trace A));
+    	coeffs := new MutableList from {1};
+    	for k from 1 to n do (
+	    coeffs#k = -sum(k,i->coeffs#(k-i-1)*traces#(i+1))/k
+	    );
+    	sum(n+1,i->coeffs#i*S_0^(n-i))
+	)
     )
+
+
+--characteristicPolynomial (RingElement,Ideal) := RingElement => opts->(f,I)->(
+--    R := ring f;
+--    if not (ring(I) === R) then error "Error: Expected polynomial ring and ideal of the same ring";
+--    characteristicPolynomial(sub(f,R/I))
+--    )
+
+
 
 --Computes the characteristic polynomial of the regular representation of f
-charPoly (RingElement,Ideal) := RingElement => (f,I)->(
+characteristicPolynomial (RingElement,Ideal) := RingElement => opts->(f,I)->(
     R := ring f;
-    if not (ring I === R) then error "Error: Expected polynomial ring and ideal of the same ring";
-    charPoly(sub(f,R/I))
+    Z := opts.Variable;
+    if not (ring(I) === R) then error "Error: Expected polynomial ring and ideal of the same ring";
+    characteristicPolynomial(sub(f,R/I))
     )
 
-charPoly (RingElement) := RingElement => f->(
-    (B,mf) := regularRep(f);
-    charPoly(mf)
+characteristicPolynomial (RingElement) := RingElement => opts->f->(
+    (B,mf) := regularRepresentation(f);
+    characteristicPolynomial(mf)
     )
 
-
+--check this
+characteristicPolynomial (RingElement) := RingElement => opts->t ->(
+ 
+    R := ring t; 
+    Z := opts.Variable;
+    K := coefficientRing R;
+    S := K(monoid [Z]);
+    
+    if not isArtinian(R) then error "Error: Expected element of Artinian ring";
+    B := basis R;
+    D := numgens source B;
+    v := transpose(matrix{flatten append({1},toList apply(D-1,i -> 0))}); 
+    
+    Vtr := matrix{toList apply(D, i-> trace last regularRepresentation(B_(0,i)))};
+    Mt := last regularRepresentation(t);
+    traces := {D}|apply(D,k->(v = Mt*v;(Vtr*v)_(0,0)));
+    coeffs := new MutableList from {1};
+        for k from 1 to D do (
+	coeffs#k = -sum(k,i->(coeffs#(k-i-1)*traces#(i+1)))/k
+	);
+    sum(D+1,i->coeffs#i*S_0^(D-i))
+    )
+    
+    
 --Computes the number of sign changes in a list of real numbers
 variations = method()
 variations (List) := ZZ => l->(
@@ -214,18 +293,18 @@ variations (List) := ZZ => l->(
     n
     )
 
-
 --Computes the difference in variations of the derivative sequence at specified values
 BudanFourierBound = method()
-for A in {Number,InfiniteNumber} do 
-for B in {Number,InfiniteNumber} do
+for A in {ZZ,QQ,RR,InfiniteNumber} do 
+for B in {ZZ,QQ,RR,InfiniteNumber} do
 BudanFourierBound (RingElement,A,B) := ZZ => (f,a,b)->(
+    if not isUnivariatePolynomial(f) then error "Error: Expected univariate polynomial.";
     if not (a<b) then error "Error: Expected non-empty interval";
     l := derivSequence f;
     variations apply(l,g->signAt(g,a)) - variations apply(l,g->signAt(g,b))
     )
 
-BudanFourierBound (RingElement) := ZZ => f->( 
+BudanFourierBound (RingElement) := ZZ => f->(
     BudanFourierBound(f,-infinity,infinity)
     )
 
@@ -234,24 +313,24 @@ BudanFourierBound (RingElement) := ZZ => f->(
 ----This isn't actually the Sylvester sequence since we divide by gcd(f,g)
 SylvesterSequence = method()
 SylvesterSequence (RingElement, RingElement) := List => (f,g)->(
+    if (f==0 or g==0) then error "Error: Expected nonzero polynomials";
+    if not (isUnivariatePolynomial(f)) then error "Error: Expected univariate polynomials";
     R := ring f;
+    if not isField coefficientRing R then error "Error: Expected polynomials over a field";
     if not (ring g === R) then error "Error: Polynomials should be in the same ring";
-    if not isUnivariate(R) then error "Error: Expected univariate polynomials";
     
     --dividing out common factors
     h := gcd(f,g);
     f = sub(f/h,R);
     g = sub(g/h,R);
-        
-    --'d' is a bound for the length of the Sylvester sequence:
-    m := if f == 0 then 0 else first degree f;
-    n := if g == 0 then 0 else first degree g;
-    d := 2 + min {m,n};
+
+    Syl := new MutableList from {f,g};
     
-    Syl := new MutableList from toList(0..d);
-    Syl#0 = f;
-    Syl#1 = g;
-    scan(2..d, i -> Syl#i = -Syl#(i-2) % Syl#(i-1));
+    i := 1;
+    while (Syl#i != 0) do (
+	i = i+1;
+	Syl#i = -Syl#(i-2) % Syl#(i-1)
+    );
     	    
     toList Syl
     )
@@ -259,17 +338,25 @@ SylvesterSequence (RingElement, RingElement) := List => (f,g)->(
 
 --Computes the difference in the number of roots of f where g is positive and where g is negative
 ----letting g = 1 gives the number of real roots from the Sturm sequence
-numSylvester = method()
-for A in {Number,InfiniteNumber} do 
-for B in {Number,InfiniteNumber} do
-numSylvester (RingElement,RingElement,A,B) := ZZ => (f, g, a, b)->(
+SylvesterCount = method(Options=>{Multiplicity=>false})
+for A in {ZZ,QQ,RR,InfiniteNumber} do 
+for B in {ZZ,QQ,RR,InfiniteNumber} do
+SylvesterCount (RingElement,RingElement,A,B) := ZZ => opts->(f, g, a, b)->(
     if not (a<b) then error "Error: Expected non-empty interval";
-    l := SylvesterSequence(f,diff((ring f)_0,f)*g);
-    variations apply(l,h->signAt(h,a)) - variations apply(l,h->signAt(h,b))
+    l := SylvesterSequence(f,diff(variable f,f)*g);
+    n := variations apply(l,h->signAt(h,a)) - variations apply(l,h->signAt(h,b));
+    if opts.Multiplicity then (
+	h := gcd(f,diff(variable f,f));
+	while (first degree h > 0) do (
+	    n = n + SylvesterCount(h,g,a,b);
+	    h = gcd(h,diff(variable h,h))
+	    )
+	);
+    n
     )
 
-numSylvester (RingElement,RingElement) := ZZ => (f,g)->(
-    numSylvester(f,g,-infinity,infinity)
+SylvesterCount (RingElement,RingElement) := ZZ => opts->(f,g)->(
+    SylvesterCount(f,g,-infinity,infinity)
     )
 
 
@@ -277,54 +364,47 @@ numSylvester (RingElement,RingElement) := ZZ => (f,g)->(
 SturmSequence = method()
 SturmSequence (RingElement) := List => f->(
     if (f == 0) then error "Error: Expected nonzero polynomial";
-    R := ring f;
-    SylvesterSequence(f,diff(R_0,f))
+    SylvesterSequence(f,diff(variable f,f))
     )
 
 
 --Computes the difference in variations of the Sturm sequence at specified values
-numSturm = method(Options=>{Multiplicity=>false})
-for A in {Number,InfiniteNumber} do
-for B in {Number,InfiniteNumber} do
-numSturm (RingElement,A,B) := ZZ => opts->(f,a,b)->(
+SturmCount = method(Options=>{Multiplicity=>false})
+for A in {ZZ,QQ,RR,InfiniteNumber} do
+for B in {ZZ,QQ,RR,InfiniteNumber} do
+SturmCount (RingElement,A,B) := ZZ => opts->(f,a,b)->(
     R := ring f;
-    h := gcd(f,diff(R_0,f));
-    f = sub(f/h,R);
-    n := numSylvester(f,1_R,a,b);
-    if (opts.Multiplicity==true) then (
-	while(first degree h > 0) do (
-	    n = n + numSturm(h,a,b,opts);
-	    h = gcd(h,diff(R_0,h));
-	    )
-	);
-    n
+    SylvesterCount(f,1_R,a,b,opts)
     )
 
-numSturm (RingElement) := ZZ => opts-> f->( 
-    numSturm(f,-infinity,infinity,opts)
+SturmCount (RingElement) := ZZ => opts->f->( 
+    SturmCount(f,-infinity,infinity,opts)
     )
 
 
 --Uses Sturm sequence and a bisection method to isolate real solutions to a real univariate polynomial within a tolerance
 realRootIsolation = method()
-realRootIsolation (RingElement,RR) := List => (f,eps)->(
+for A in {ZZ,QQ,RR} do
+realRootIsolation (RingElement,A) := List => (f,r)->(
+    if not r > 0 then error "Error: Expected positive integer or positive rational number";
+    
+    if not isUnivariatePolynomial(f) then error "Error: Expected univariate polynomial";
     R := ring f;
-    if not isUnivariate(R) then error "Error: Expected univariate polynomial";
     
-    f = sub(f/gcd(f,diff(R_0,f)),R);
+    f = sub(f/gcd(f,diff(variable f,f)),R);
     
-    if (numSturm(f)>0) then (
+    if (SturmCount(f)>0) then (
 	l := SturmSequence(f);
 	
 	--bound for real roots
-    	C := flatten entries sub(last coefficients f, coefficientRing R);
+	C := (listForm f)/last;
     	M := (sum(C,abs))/(leadCoefficient f);
 	
 	L := {{-M,M}};
 	midp := 0;
 	v := new MutableHashTable from {M=>variations apply(l,g->signAt(g,M)),-M=>variations apply(l,g->signAt(g,-M))};
 	
-	while (max apply(L,I-> I#1-I#0) > eps) or (max apply(L,I-> v#(I#0)-v#(I#1)) > 1) do (
+	while (max apply(L,I-> I#1-I#0) > r) or (max apply(L,I-> v#(I#0)-v#(I#1)) > 1) do (
 	    for I in L do (
 		midp = (sum I)/2;
 		v#midp = variations apply(l,g->signAt(g,midp));
@@ -342,57 +422,120 @@ realRootIsolation (RingElement,RR) := List => (f,eps)->(
 	{}
 	)
     )
-        
     
     
 --Computes the trace form of f in an Artinian ring 
-----change names? mm? tr?
 traceForm = method()
 traceForm (RingElement,Ideal) := Matrix => (f,I)->(
     R := ring f;
+    if not (ring I === R) then error "Error: Expected RingElement and Ideal in same Ring";
     traceForm(sub(f,R/I))
     )
 
 traceForm (RingElement) := Matrix => f->(
     R := ring f;
-    if not isArtinian R then error "Error: Expected Artinian ring";    
+    if not isArtinian(R) then error "Error: Expected zero-dimensional ring";
     B := basis R;
     K := coefficientRing R;
 
     mm := sub(last coefficients(f*B**B,Monomials=>B),K);
-    tr := matrix {apply(first entries B, x -> trace last regularRep x)};
+    tr := matrix {apply(first entries B, x -> trace last regularRepresentation x)};
     adjoint(tr*mm, source tr, source tr)
     )
 
 
 --Compute the number of real points of a scheme/real univariate polynomial/real polynomial system using the trace form.
---Use numSylvester for this
-numTrace = method()
-numTrace (RingElement) := ZZ => f->(
+traceCount = method()
+traceCount (RingElement) := ZZ => f->(
     R := ring f;
-    numTrace(R/f)
+    traceCount(R/f)
     )
 
-numTrace (List) := ZZ => F->(
+traceCount (List) := ZZ => F->(
     I := ideal F;
     R := ring I;
-    numTrace(R/I)
+    traceCount(R/I)
     )
 
-numTrace (Ideal) := ZZ=> I->(
+traceCount (Ideal) := ZZ=> I->(
     R := ring I;
-    numTrace(R/I)
+    traceCount(R/I)
     )
 
-numTrace (QuotientRing) := ZZ=> R->(
-    if not isArtinian R then error "Expected Artinian ring";
-    K := coefficientRing R;
+traceCount (QuotientRing) := ZZ=> R->(
+    signature(traceForm(1_R))
+    )
+
+
+--Computes the Rational Univariate Representation of a zero-dimensional ideal
+----output is:
+------a linear functional l that separates the points of I
+------a polynomial ch defining the image of the points of V(I) under the map defined by l
+------a list of rational polynomials that consitite a rational inverse (on V(I)) of the map defined by l
+rationalUnivariateRepresentation = method()
+rationalUnivariateRepresentation (Ideal) := Sequence => I->(
+    R := ring I;
+    S := R/I;
+    if not isArtinian(S) then error "Error: Expected I to be a zero-dimensional ideal";
+    d := rank traceForm(1_S);
     
-    ch := charPoly(traceForm(1_R));
-    chNeg := sub(ch,(ring ch)_0=>-(ring ch)_0);
-    numSturm(ch,0,infinity,Multiplicity=>true) - numSturm(chNeg,0,infinity,Multiplicity=>true)
+    i := 1;
+    X := gens R;
+    n := #X;
+    while (i < n*(binomial(d,2))) do (
+    	l := sum(X,apply(n,k->i^k),(a,b)->a*b);
+	(B,m) := regularRepresentation(sub(l,S));
+	ch := characteristicPolynomial(m);
+	
+	chbar := ch/gcd(ch,diff((support ch)_0,ch));
+	chbar = sub(chbar,ring ch);
+	print(first degree chbar);
+	if (first degree chbar === d) then break;
+	i = i+1
+	);
+    
+    T := ring ch;
+    phi := map(S,T,{l});
+    H := phi matrix{HornerSequence(chbar)};
+    M := sub(matrix {gens R},S);        
+    tr := matrix{apply(first entries B,x-> trace last regularRepresentation x)};
+
+    gvCoeffs := sub(adjoint(tr*(last coefficients(M**H,Monomials=>B)),source M,source H),coefficientRing R);
+    g1 := sub(diff(variable ch,ch)/gcd(diff(variable ch,ch),ch),ring ch);
+    Z := matrix {apply(d,i->(ring ch)_0^(d-1-i))};
+    gv := first entries ((1/g1)*sub(Z*gvCoeffs,frac ring ch));
+        
+    return(l,ch,gv)
     )
 
+
+--Computes the Hurwitz matrix of f (of order k)
+HurwitzMatrix = method()
+HurwitzMatrix (RingElement) := Matrix => f->(
+    d := first degree f;
+    if not (d>0) then error "Error: Expected polynomial of positive degree";
+    
+    x := variable f;
+    a := apply(d+1,i->coefficient(x^i,f));
+    
+    M := matrix table(d,d,(i,j)->if (0 <= d-1+i-2*j and d-1+i-2*j <= d) then a#(d-1+i-2*j) else 0);
+    M
+    )
+
+HurwitzMatrix (RingElement,ZZ) := Matrix => (f,k)->(
+    M := HurwitzMatrix f;
+    if (k==0) then matrix{{1}} else submatrix(M,toList(0..k-1),toList(0..k-1))
+    )
+
+
+--Determines whether or not a univariate polynomial of degree >=1 is Hurwitz stable.
+----criterion requires lead coefficient of f to be positive
+isHurwitzStable = method()
+isHurwitzStable (RingElement) := Boolean => f->(
+    if (leadCoefficient f < 0) then f = -f;
+    d := first degree f;
+    all(d+1,k->det HurwitzMatrix(f,k) > 0)
+    )
 
 --------------------
 ---DOCUMENTATION----
@@ -401,149 +544,246 @@ numTrace (QuotientRing) := ZZ=> R->(
 beginDocumentation()
 document {
 	Key => RealRoots,
-	Headline =>"Package for exploring counting and locating real solutions to polynomial systems",
-	"The purpose of this package is to provide tools for elimination and solving, with a particular emphasis
-	on counting and isolating real zeros of ideals in QQ[X].",
+	Headline => "Package for exploring, counting and locating real solutions to polynomial systems",
+	"The purpose of this package is to provide general tools for elimination and solving systems of polynomial equations."
 	}
 
 document {
-	Key => {(eliminant, RingElement),(eliminant,RingElement,Ideal),eliminant},
-	Usage => "eliminant(f)",
-	Inputs => {"f"},
-	Outputs => { RingElement => { "the eliminant of", TT "f", "with respect to the polynomial ring in one variable", TT "Z"}},
-	PARA {"This computes the eliminant of an element ", TT "f", " of an Artinian ring ", TT "R", " and returns a polynomial in ",TT "Z"},
+	Key => {minimalPolynomial,(minimalPolynomial, RingElement),(minimalPolynomial,RingElement,Ideal),[minimalPolynomial,Strategy]},
+	Headline => "the minimal polynomial of an element of an Artinian ring",
+	Usage => "minimalPolynomial(f)
+	          minimalPolynomial(g,I)",
+	Inputs => {
+	    RingElement => "f" => {"an element of an Artinian ring"},
+	    RingElement => "g" => {"a polynomial"},
+	    Ideal => "I" => {"a zero-dimensional ideal"},
+	    Strategy => {"set method for computing the minimal polynomial"}
+	    },
+	Outputs => { RingElement => {"the desired minimal polynomial. See description"}},
+	PARA {"This computes the minimal polynomial of a ring element ", TT "f", " in the Artinian ring ", TT "ring f", ", or the minimal polynomial of a polynomial ", TT "g", " in the Artinian ring ", TT "(ring g)/I", ".
+	    When ",TT "f"," is a variable in ", TT "ring f", ", this is the eliminant with respect to that variable."},
 	EXAMPLE lines ///
 	    	R = QQ[x,y]
-		F = {y^2-x^2-1,x-y^2+4*y-2}
-		I = ideal F
+		I = ideal(y^2 - x^2 - 1,x - y^2 + 4*y - 2)
+		minimalPolynomial(y,I)
 		S = R/I
-		eliminant(x)
-	       	eliminant(y)	      
-	 	 ///,
-     	}
+		minimalPolynomial(y)
+	 	///,
+	PARA {"We provide two examples to compute minimal polynomials given by ",TT "Strategy => 0"," (computes the kernel of ",TEX///$k[T]\to$///,TT " ring f"," by sending ", TEX///$T$///," to ",TT "f",") and ",TT "Strategy => 1", " (a minimal linear combination of powers of the input)."},
+	EXAMPLE lines ///
+		minimalPolynomial(x,Strategy => 0)
+	    	minimalPolynomial(x,Strategy => 1)
+	        ///
+	}
+    
+document {
+        Key => {univariateEliminant,(univariateEliminant,RingElement),(univariateEliminant,RingElement,Ideal),[univariateEliminant,Strategy]},
+        Headline => "the univariate eliminant of an element of an Artinian ring",
+	Usage => "univariateEliminant(f)
+	          univariateEliminant(g,I)",
+	Inputs => {
+	    RingElement => "f" => {"an element of an Artinian ring"},
+	    RingElement => "g" => {"a polynomial"},
+	    Ideal => "I" => {"a zero-dimensional ideal"},
+	    Strategy => {"set method for computing the univariate eliminant"}
+	    },
+	Outputs => { RingElement => {"the desired univariate polynomial. See description"}},
+	PARA {"This computes the univariate eliminant of a ring element ", TT "f", " in the Artinian ring ", TT "ring f", ", or the univariate eliminant of a polynomial ", TT "g", " in the Artinian ring ", TT "(ring g)/I", ".
+	    When ",TT "f"," is a variable in ", TT "ring f", ", this is the eliminant with respect to that variable. This is computed by finding the minimal polynomial of the corresponding multiplication matrix."},
+	EXAMPLE lines ///
+	    	R = QQ[x,y]
+		I = ideal(y^2 - x^2 - 1,x - y^2 + 4*y - 2)
+		univariateEliminant(y,I)
+		S = R/I
+		univariateEliminant(y)
+	 	///,
+	PARA {"We provide two examples to compute minimal polynomials given by ",TT "Strategy => 0"," (computes the kernel of ",TEX///$k[T]\to$///,TT " ring f"," by sending ", TEX///$T$///," to ",TT "f",") and ",TT "Strategy => 1", " (a minimal linear combination of powers of the input)."},
+	EXAMPLE lines ///
+		univariateEliminant(x,Strategy => 0)
+	    	univariateEliminant(x,Strategy => 1)
+	        ///,
+	SeeAlso => {"minimalPolynomial"}
+	}
 
 document {
-	Key => {(regularRep, RingElement, Ideal), (regularRep, RingElement), regularRep},
-	Usage => "regularRep(f,I)",
-	Inputs => {"f", "I"},
-	Outputs => { Matrix => { "the matrix of the linear map defined by multiplication by", TT "f", "in terms of the standard basis of a finite-dimensional k-vector space", TT "I" }},
-	PARA {"This command gives the matrix of the linear map defined by multiplication by ", TT "f", " in terms of the standard basis of a finite-dimensional k-vector space ", TT "I" },
+	Key => {regularRepresentation,(regularRepresentation, RingElement, Ideal), (regularRepresentation, RingElement)},
+	Headline => "the regular representation of a rational polynomial",
+	Usage => "regularRepresentation(f)
+	          regularRepresentation(g,I)",
+	Inputs => {
+	    RingElement => "f"=> {"an element of an Artinian ring"},
+	    RingElement => "g"=> {"a rational polynomial"},
+	    Ideal => "I" => {"a zero-dimensional ideal in the same ring as ", TT "g"},
+	    },
+	Outputs => {
+	    Matrix => {"the standard basis of ",TT "ring f", " (resp. ",TT "(ring g)/I",")"},
+	    Matrix => {"the matrix of the linear map defined by multiplication by ", TT "f"," (resp. ",TT "g",") in ",TT "ring f", " (resp. ",TT "(ring g)/I",")"}},
+	PARA {"This command gives the matrix of the linear map defined by multiplication by ", TT "f", " (resp. ",TT "g",") in terms of the standard basis of the finite-dimensional vector space ", TT "ring f"," (resp. ",TT "(ring g)/I",")."},
 	EXAMPLE lines ///
 		 R = QQ[x,y]
-		 F = {y^2-x^2-1,x-y^2+4*y-2}
-		 I = ideal F
-		 regularRep(y,I)
+		 I = ideal(y^2 - x^2 - 1,x - y^2 + 4*y - 2)
+		 regularRepresentation(y,I)
 		 S = R/I
-		 regularRep(y)
+		 regularRepresentation(y)
 	 	 ///,
      	}
 
 document {
-	Key => {(charPoly, Matrix),charPoly},
-	Usage => "charPoly(M)",
-	Inputs => {"M"},
-	Outputs => { RingElement => { "the characteristic polynomial of", TT "M"}},
-	PARA {"This computes the characteristic polynomial of ", TT "M"},
+	Key => {characteristicPolynomial, (characteristicPolynomial, Matrix),(characteristicPolynomial,RingElement),(characteristicPolynomial,RingElement,Ideal),[characteristicPolynomial,Variable]},
+	Headline => "the characteristic polynomial of a matrix or the characteristic polynomial of the regular representation of a polynomial",
+	Usage => "characteristicPolynomial(M)
+	          characteristicPolynomial(f)
+		  characteristicPolynomial(g,I)",
+	Inputs => {
+	    Matrix => "M" => {"a square matrix"},
+	    RingElement => "f" => {"an element of an Artinian ring"},
+	    RingElement => "g" => {"a polynomial"},
+	    Ideal => "I"  => {"a zero-dimensional ideal"},
+	    },
+	Outputs => {RingElement => {"the desired characteristic polynomial. See description."}},
+	   
+	PARA  {"This computes the characteristic polynomial of the matrix ", TT "M", ", or the characteristic polynomial of the regular representation of ", TT "f"," on the Artinian ring ",TT "ring f", ", or the 
+		characteristic polynomial of the regular representation of ", TT "g"," on the Artinian ring ",TT "(ring g)/I", "." },
 	EXAMPLE lines ///
 	         R = QQ[x,y]
-		 F = {y^2-x^2-1,x-y^2+4*y-2}
-		 I = ideal F
+		 M = matrix{{2,1},{1,-1}}
+		 characteristicPolynomial(M)
+		 ///,
+    	PARA {"We can also change the variable name, as we show below."},
+	EXAMPLE lines ///
+	         characteristicPolynomial(M,Variable => "x")
+		 ///,
+	PARA {"We show the last two methods."},
+       	EXAMPLE lines ///
+		 I = ideal(y^2 - x^2 - 1,x - y^2 + 4*y - 2)
+		 characteristicPolynomial(y,I)
 		 S = R/I
-		 M = last regularRep(y)
-		 charPoly(M)
-	 	 ///,
+		 characteristicPolynomial(y)
+		 ///,
      	}
 
+
  document {
-	Key => {(SylvesterSequence, RingElement, RingElement),SylvesterSequence},
+	Key => {SylvesterSequence,(SylvesterSequence, RingElement, RingElement)},
+	Headline => "the Sylvester sequence of two rational univariate polynomials",
 	Usage => "SylvesterSequence(f,g)",
-	Inputs => {"f","g"},
+	Inputs => {
+	    RingElement => "f" => {"a rational univariate polynomial"},
+	    RingElement => "g" => {"a rational univariate polynomial in the same variable as ", TT"f"},
+	    },
 	Outputs => { List => { "the Sylvester sequence of ", TT "f", " and ",TT "g"}},
-	PARA {"This computes the Sylvester sequence of two univariate polynomials ", TT "f", " and ", TT "g", " in the same ring"},
+	PARA {"This computes the Sylvester sequence of two rational univariate polynomials ", TT "f", " and ", TT "g", " in the same ring."},
 	EXAMPLE lines ///
 	         R = QQ[t]
-		 f = (t+1)*(t+2)
-		 g = (t+2)
+		 f = (t + 1)*(t + 2)
+		 g = t + 2
 		 SylvesterSequence(f,g)
 	 	 ///,
-	SeeAlso => {"numSylvester"}
+	SeeAlso => {"SylvesterCount"}
      	}
     
 document {
-	Key => {(numSylvester, RingElement, RingElement, Number,Number),(numSylvester, RingElement, RingElement, InfiniteNumber,InfiniteNumber),(numSylvester, RingElement, RingElement, InfiniteNumber,Number),(numSylvester, RingElement, RingElement, Number,InfiniteNumber),numSylvester},
-	Usage => "numSylvester(f,g,a,b)",
-	Inputs => {"f","g","a","b"},
-	Outputs => { ZZ => {"the difference between number of roots of ",TT "f"," when ",TT "g",
-		"is positive and when g is negative"}},
-	PARA {"This computes the difference in variations of the Sylvester sequence of ", TT "f"," and ",TT "f'g"," at the values", TT "a"," and ", TT "b"},
+	Key => {SylvesterCount,(SylvesterCount,RingElement,RingElement)}|(flatten table({ZZ,QQ,RR,InfiniteNumber},{ZZ,QQ,RR,InfiniteNumber},(a,b)->(SylvesterCount,RingElement,RingElement,a,b))),
+	Headline => "the difference in variations of the Sylvester sequence of two rational univariate polynomials",
+	Usage => "SylvesterCount(f,g,a,b)
+	          SylvesterCount(f,g)",
+	Inputs => {
+	    RingElement => "f" => {"a rational univariate polynomial"},
+	    RingElement => "g" => {"a rational univariate polynomial"},
+	    RR => "a" => {"(optional) the lower bound of the interval"},
+	    RR => "b" => {"(optional) the upper bound of the interval"},
+	    Multiplicity => {"option for computing roots with multiplicity"}
+	    },
+	Outputs => { ZZ => {"the difference between the number of roots of ",TT "f"," in the interval ",TEX///$(a,b]$///," where ",TT "g",
+		" is positive and where ",TT "g"," is negative"}},
+	PARA {"This computes the difference in variations of the Sylvester sequence of ", TT "f"," and ",TT "f'g"," on the interval ",TEX///$(a,b]$///,"."},
 	EXAMPLE lines ///
 	    	 R = QQ[t]
-		 f = (t-2)*(t-1)*(t+3)
-		 g = t+1
+		 f = (t - 2)*(t - 1)*(t + 3)
+		 g = t + 1
 		 a = -5
 		 b = 4
-		 numSylvester(f,g,a,b)
+		 SylvesterCount(f,g,a,b)
 	 	 ///,
 	SeeAlso => {"SylvesterSequence"}
      	}
 
 document {
-	Key => {(SturmSequence, RingElement),SturmSequence},
+	Key => {SturmSequence,(SturmSequence, RingElement)},
+	Headline => "the Sturm sequence of a rational univariate polynomial",
 	Usage => "SturmSequence(f)",
-	Inputs => {"f"},
-	Outputs => { List => { "the Sturm sequence of", TT "f"}},
-	PARA {"This computes the Sturm Sequence of a univariate polynomial ", TT "f"},
+	Inputs => {
+	    RingElement => "f" => {"a rational univariate polynomial"},
+	    },
+	Outputs => { List => {"the Sturm sequence of ", TT "f"}},
+	PARA {"This computes the Sturm sequence of the square-free part of a univariate polynomial ", TT "f","."},
 	EXAMPLE lines ///
 	 	 R = QQ[t]
-		 f = 45 - 39*t - 34*t^2+38*t^3-11*t^4+t^5
+		 f = 45 - 39*t - 34*t^2 + 38*t^3 - 11*t^4 + t^5
 		 roots f
 		 SturmSequence(f)
 	 	 ///,
-	SeeAlso => {"numSturm"}
+	SeeAlso => {"SturmCount"}
      	}
 
 document {
-    	Key =>{"Multiplicity(RealRoots)", [numSturm, Multiplicity]},
+    	Key => {"Multiplicity(RealRoots)", [SylvesterCount, Multiplicity], [SturmCount, Multiplicity]},
 	PARA {"This is an optional input for counting roots with multiplicity."}
     }
 
+document {
+    	Key => {"Multiplicity"},
+	PARA {"This is a symbol for counting roots with multiplicity."}
+    }
 
 document {
-	Key => {(numSturm, RingElement, Number,Number), (numSturm,RingElement,Number,InfiniteNumber), (numSturm, RingElement,InfiniteNumber,Number), (numSturm, RingElement,InfiniteNumber,InfiniteNumber),numSturm},
-	Usage => "numSturm(f,a,b)",
-	Inputs => {"f, a univariate polynomial", "a, a lower bound of the interval", "b, an upper bound of the interval"},
-	Outputs => { ZZ => { "the number of real roots of a univariate polynomial ", TT "f"," not counting multiplicity in the interval ", TT "(a,b]"}},
-	PARA {"This computes the difference in variation of the Sturm sequence of ", TT "f", ". If ", TT "a", " and ", TT "b"," are not specified, the interval will be taken from negative infinity to infinity."},
+	Key => {SturmCount,(SturmCount,RingElement)}|(flatten table({ZZ,QQ,RR,InfiniteNumber},{ZZ,QQ,RR,InfiniteNumber},(a,b)->(SturmCount,RingElement,a,b))),
+	Headline => "the number of real roots of a rational univariate polynomial",
+	Usage => "SturmCount(f,a,b)
+	          SturmCount(f)",
+	Inputs => {
+	    RingElement => "f" => {"a rational univariate polynomial"},
+	    RR => "a" => {"a lower bound of the interval"},
+	    RR => "b" => {"an upper bound of the interval"},
+	    Multiplicity => {"option for computing roots with multiplicity"}
+	    },
+	Outputs => { ZZ => {"the number of real roots of ", TT "f"," in the interval ",TEX///$(a,b]$///}},
+	PARA {"This computes the difference in variation of the Sturm sequence of ", TT "f"," on the interval ",TEX///$(a,b]$///,". If ", TT "a", " and ", TT "b"," are not specified,
+	     the interval will be taken from ",TEX///$-\infty$///," to ",TEX///$\infty$///,". If the coefficients of ",TT "f"," are inexact, then the computations may be unreliable."},
 	EXAMPLE lines ///
 	    	 R = QQ[t]
-		 f = (t-5)*(t-3)^2*(t-1)*(t+1)
+		 f = (t - 5)*(t - 3)^2*(t - 1)*(t + 1)
 		 roots f
-		 numSturm(f)
-		 numSturm(f,0,5)
-		 numSturm(f,-2,2)
-		 numSturm(f,-1,5)
+		 SturmCount(f)
+		 SturmCount(f,0,5)
+		 SturmCount(f,-2,2)
+		 SturmCount(f,-1,5)	       
 	 	 ///,
-	PARA {"In the above example, multiplicity is not included so to include this we can make the multiplicity option true in the below example."},
+	PARA {"In the above example, multiplicity is not counted. To include it, make the multiplicity option ",TT "true","."},
 	EXAMPLE lines ///
-		numSturm(f,Multiplicity=>true)
-		numSturm(f,0,5,Multiplicity=>true)
-		numSturm(f,0,3,Multiplicity=>true)
+		SturmCount(f,Multiplicity=>true)
+		SturmCount(f,0,5,Multiplicity=>true)
+		SturmCount(f,0,3,Multiplicity=>true)
 		///,
-	PARA {"If ", TT "a"," is an ", TT "InfiniteNumber", ", then the lower bound will be negative infinity and if ", TT "b"," is an ", TT "InfiniteNumber", ", then the upper bound is infinity."},
+	PARA {"If ", TT "a"," is an ", TT "InfiniteNumber", ", then the lower bound will be ",TEX///$-\infty$///,", and if ", TT "b"," is an ", TT "InfiniteNumber", 
+	    ", then the upper bound is ",TEX///$\infty$///,"."},
 	EXAMPLE lines ///
-	    	numSturm(f,-infinity, 0)
-		numSturm(f,0,infinity)
-		numSturm(f,-infinity,infinity)
+	    	SturmCount(f,-infinity, 0)
+		SturmCount(f,0,infinity)
+		SturmCount(f,-infinity,infinity)
 		///,
 	SeeAlso => {"SturmSequence"}
      	}
     
 document {
-    	Key => {(variations, List),variations},
+    	Key => {variations,(variations, List)},
+	Headline => "the number of sign changes of an ordered list of numbers",
 	Usage => "variations(l)",
-	Inputs => {"l"},
-	Outputs => { ZZ => { "the number of sign changes in a sequence ", TT "l" }},
-	PARA {"This computes the number of changes of sign in a sequence ", TT "l"},
+	Inputs => {
+	    List => "l" => {" of ordered numbers"},
+	    },
+	Outputs => {ZZ => { "the number of sign changes in the ordered list ", TT "l" }},
+	PARA {"This computes the number of sign changes in the ordered list ", TT "l","."},
 	EXAMPLE lines ///
 		 L = for i to 10 list random(-50,50)
 		 variations(L)
@@ -551,73 +791,173 @@ document {
      	}
     
 document {
-        Key => {(realRootIsolation, RingElement,RR),realRootIsolation},
-	Usage => "realRootIsolation(f,eps)",
-	Inputs => {"f", "eps"},
-	Outputs => { List => { "the number of real roots of a univariate polynomial", TT "f"," not counting multiplicity"}},
-	PARA {"This method uses a Sturm sequence and a bisection method to isolate real solutions of a polynomial", TT "f"," to a real univariate polynomial and it lists an interval for which each real solution is located"},
+        Key => {realRootIsolation,(realRootIsolation, RingElement,ZZ),(realRootIsolation, RingElement,QQ),(realRootIsolation, RingElement,RR)},
+	Headline => "a list that isolates the real roots of a rational univariate polynomial",
+	Usage => "realRootIsolation(f,r)",
+	Inputs => {
+	    RingElement => "f" => {"a rational univariate polynomial"},
+	    RR => "r" => {"a positive rational number"},
+	    },
+	Outputs => {List => {"of intervals that contain all the real roots of ", TT "f"}},
+	PARA {"This method uses a Sturm sequence and a bisection method to isolate real solutions of ", TT "f",
+	       " in intervals of length at most ", TT "r","."},
 	EXAMPLE lines ///
 	    	 R = QQ[t]
-		 f = 45 - 39*t - 34*t^2+38*t^3-11*t^4+t^5
-		 realRootIsolation(f,0.5)
+		 f = 45 - 39*t - 34*t^2 + 38*t^3 - 11*t^4 + t^5
+		 realRootIsolation(f,1/2)
+		 realRootIsolation(f,.2)
 	 	 ///,
 	SeeAlso => {"SturmSequence"}
      	}
     
 document {
-	Key => {(BudanFourierBound, RingElement,Number,Number), (BudanFourierBound, RingElement, Number, InfiniteNumber), (BudanFourierBound, RingElement, InfiniteNumber, Number),(BudanFourierBound, RingElement, InfiniteNumber, InfiniteNumber),BudanFourierBound}, --maybe we can call it BFbound (Budan-Fourier bound?)
-	Usage => "BudanFourierBound(f, a, b)",
-	Inputs => {"f, a univariate polynomial", "a, a lower bound of the interval", "b, an upper bound of the interval"},
-	Outputs => { ZZ => { "a sharp upper  bound for the number of real roots of a univariate polynomial", TT "f", " in the interval ", TT "(a,b)"}},
-	PARA {"This computes a sharp upper bound for the number of real roots of a univariate polynomial ", TT "f", " from ", TT "a", " to ", TT "b", ". If interval is not specified, it computes a bound for the real roots of the function from negative infinity to infinity."},
+	Key => {BudanFourierBound,(BudanFourierBound,RingElement)}|(flatten table({ZZ,QQ,RR,InfiniteNumber},{ZZ,QQ,RR,InfiniteNumber},(a,b)->(BudanFourierBound,RingElement,a,b))),
+	Headline => "a bound for the number of real roots of a univariate polynomial with rational coefficients",
+	Usage => "BudanFourierBound(f, a, b)
+	          BudanFourierBound(f)",
+	Inputs => {
+	    RingElement => "f" => {"a univariate polynomial with rational coefficients, where", TT " ring f ", "is not necessarily univariate"},
+	    RR => "a" => {"(optional) the lower bound of the interval"},
+	    InfiniteNumber => "a" => {"(optional) the lower bound of the interval"},
+	    RR => "b" => {"(optional) the upper bound of the interval"},
+	    InfiniteNumber => "b" => {"(optional) the upper bound of the interval"},
+	    },
+	Outputs => { ZZ => { "the bound for the number of real roots of a rational univariate polynomial", TT " f ", "in the interval ", TT "(a,b]"}},
+	PARA {"This computes the bound from the Budan Fourier Theorem for the number of real roots of a rational univariate polynomial", TT " f ", "in the interval", TT "(a,b]",
+	      ", counted with multiplicity. If the interval is not specified, it 
+	      computes such bound on ", TEX///$(-\infty, \infty)$///,". Moreover,", TT " ring f ", "is allowed to be multivariate."},
 	EXAMPLE lines ///
 	         R = QQ[t]
-		 f = 45 - 39*t - 34*t^2+38*t^3-11*t^4+t^5
+		 f = 45 - 39*t - 34*t^2 + 38*t^3 - 11*t^4 + t^5
 		 BudanFourierBound(f)
-		 g = (t-4)*(t-1)^2*(t+1)*(t+3)*(t+5)*(t-6)
-		 a = -6
-		 BudanFourierBound(g,a,infinity)
+		 g = (t + 5)*(t + 3)*(t + 1)*(t - 1)^2*(t - 4)*(t - 6)
+		 BudanFourierBound(g,-6,infinity)
 		 BudanFourierBound(g,-1,5)
 	 	 ///,
+	PARA {"We also provide examples when the interval includes ", TEX///$-\infty$///," or ", TEX///$\infty$///, "."},
+	EXAMPLE lines ///
+	         BudanFourierBound(g,-infinity,0)
+	         BudanFourierBound(g,3,infinity)
+		 BudanFourierBound(g,-infinity,infinity)
+		 ///
      	}
     
+    
 document {
-	Key => {(traceForm, RingElement),traceForm},
-	Usage => "traceForm(f)",
-	Inputs => {"f"},
-	Outputs => { Matrix => { "the trace quadratic form of", TT "f" }},
-	PARA {"This computes the trace quadratic form of an element ", TT "f", " in an Artinian ring"},
+	Key => {traceForm,(traceForm, RingElement),(traceForm,RingElement,Ideal)},
+	Headline => "the trace quadratic form of a rational polynomial in an Artinian ring",
+	Usage => "traceForm(f)
+	          traceForm(f,I),",
+	Inputs => {
+	    RingElement => "f" => {"a rational polynomial in an Artinian Ring"},
+	    Ideal => "I" => {"the ideal generated by ", TT "f"},
+	    },
+	Outputs => {Matrix => {"a symmetric matrix representing the trace quadratic form of ", TT "f" , " in the standard basis of the Artinian ring"}},
+	PARA {"This computes the trace quadratic form of a polynomial ", TT "f", " in an Artinian ring."},
 	EXAMPLE lines ///
 	         R = QQ[x,y]
-		 F = {y^2 - x^2 - 1, x-y^2+4*y-2}
+		 F = {y^2 - x^2 - 1, x - y^2 + 4*y - 2}
 		 I = ideal F
 		 S = R/I
 		 f = y^2 - x^2 - x*y + 4
 		 traceForm(f)
 	 	 ///,
-	SeeAlso => {"numTrace"}
+	SeeAlso => {"traceCount"}
      	}
     
 
 document {
-	Key => {(numTrace, QuotientRing), (numTrace, RingElement), (numTrace, List),(numTrace,Ideal), numTrace},
+	Key => {traceCount,(traceCount, QuotientRing), (traceCount, RingElement), (traceCount, List),(traceCount,Ideal)},
+        Headline => "the number of real points of the spectrum of an Artinian ring (of characteristic 0)",
 	Usage => "numRealTrace(R)",
-	Inputs => {"R"},
-	Outputs => { ZZ => { "the number of real points of Spec", TT "R" }},
-	PARA {"This computes the number of real points of Spec", TT "R", " where ", TT "R", " is an Artinian ring with characteristic zero"},
+	Inputs => {
+	    QuotientRing => "S" => {"an Artinian ring"},
+	    RingElement => "f" => {"a rational univariate polynomial"},
+	    Ideal => "I" => {"the ideal generated by ", TT "f"},
+	    List => "l" => {"a system of rational univariate polynomials"},
+	    },
+	Outputs => { ZZ => {"the number of real points of Spec", TT "R" }},
+	PARA {"This computes the number of real points of Spec", TT "R", ", where ", TT "R", " is an Artinian ring with characteristic zero"},
 	EXAMPLE lines ///
 	         R = QQ[x,y]
-		 F = {y^2-x^2-1,x-y^2+4*y-2}
+		 F = {y^2 - x^2 - 1,x - y^2 + 4*y - 2}
 		 I = ideal F
 		 S = R/I
-		 numTrace(S)
+		 traceCount(S)
 		 ///,
 	EXAMPLE lines ///
 		 R = QQ[x,y]
 		 I = ideal(1 - x^2*y + 2*x*y^2, y - 2*x - x*y + x^2)
-		 numTrace(I)
+		 traceCount(I)
 	 	 ///,
 	SeeAlso => {"traceForm"}
+     	}
+    
+document {
+        Key => {rationalUnivariateRepresentation, (rationalUnivariateRepresentation, Ideal)},
+	Headline => "the rational univariate representation of a zero-dimensional ideal",
+	Usage => "rationalUnivariateRepresentation(I)",
+	Inputs => {
+	    Ideal => "I" => {"a zero-dimensional ideal"},
+	    },
+	Outputs => {List => {"the rational univariate representation of ",TT "I"}},
+	PARA{"This computes the rational univariate representation of a zero-dimensional ideal."},
+	
+	EXAMPLE lines ///
+	R = QQ[x,y]
+	I = ideal(x*y - 1,2*x - y + 3)
+	rationalUnivariateRepresentation(I)
+	///
+    }
+    
+document {
+	Key => {HurwitzMatrix,(HurwitzMatrix,RingElement),(HurwitzMatrix, RingElement, ZZ)},
+	Headline => "a specified principle submatrix of the Hurwitz matrix of a univariate polynomial",
+	Usage => "HurwitzMatrix(f,k)",
+	Inputs => {
+	    RingElement => "f" => {"a rational univariate polynomial of degree n"},
+	    ZZ => "k" => {"a nonnegative integer that determines the dimensions of a square submatrix of the ",TEX///$n\times n$///," Hurwitz matrix of ",TT "f","."},
+	    },
+	Outputs => {Matrix => {"the ",TEX///$k\times k$///, " submatrix ",TEX///$H_{k}$///," generated by the corresponding leading principal minor of the ",TEX///$n\times n$///," Hurwitz matrix ",TEX///$H$///," of ", TT "f","."}},
+	PARA{"This computes the ",TEX///$k\times k$///, " submatrix ",TEX///$H_{k}$///," of the corresponding leading principal minor of the ",TEX///$n\times n$///," Hurwitz matrix ",TEX///$H$///," of a rational univariate polynomial ", TT "f"," of degree n with positive leading coefficient and degree at least 1.
+	    The polynomial, however, is not necessarily from a univariate polynomial ring."},
+	
+	EXAMPLE lines ///
+	    	R = QQ[x]
+	        f = 3*x^4 - 7*x^3 + 5*x - 7
+		HurwitzMatrix(f) 
+		HurwitzMatrix(f,4)
+	        HurwitzMatrix(f,3)	      
+	 	 ///,
+	PARA{"We can also use mutliple variables to represent unknown coefficients. Note that we create another ring ",TT "S"," so 
+	    that ", TT "x", " and ", TT "y"," are not considered variables in the same ring and so confuse the monomials ", TEX///$x$///, " or ",TEX///$y$///,
+	    " with ",TEX///$xy$///,"."},
+	EXAMPLE lines ///
+	        S = R[y]
+		g = y^3 + 2*y^2 + y - x + 1
+		HurwitzMatrix(g,3)
+		HurwitzMatrix(g,2)
+		HurwitzMatrix(g,1)
+		 ///,
+	SeeAlso => {"isHurwitzStable"} 
+	}   
+    
+document {
+	Key => {isHurwitzStable,(isHurwitzStable, RingElement)},
+	Headline => "determines whether or not a rational univariate polynomial is Hurwitz stable",
+	Usage => "isHurwitzStable(f)",
+	Inputs => {RingElement => "f" => {"a rational univariate polynomial"}},
+	Outputs => { Boolean => { "the Hurwitz stability of a rational univariate polynomial ", TT "f"}},
+	PARA {"Recall that a univariate polynomial is Hurwitz stable if all its roots have negative real parts. This method determines the Hurwitz stability of a rational univariate polynomial ", TT "f", "with positive leading coefficient and degree at least 1. 
+	    The polynomial, however, is not necessarily from a univariate polynomial ring."},
+	EXAMPLE lines ///
+	    	R = QQ[x]
+            	f = 3*x^4 - 7*x^3 + 5*x - 7 
+		g = x^2 + 10*x + 21
+		isHurwitzStable(f)
+		isHurwitzStable(g)	      
+	 	 ///,
+	SeeAlso => {"HurwitzMatrix"}	 
      	}
 
 TEST ///
@@ -625,12 +965,12 @@ TEST ///
     F = {y^2-x^2-1,x-y^2+4*y-2};
     I = ideal F;
     S = R/I;
-    a = eliminant(x);
+    a = minimalPolynomial(x);
     T = ring a;
-    assert(flatten entries last coefficients(eliminant(x)) == {1,-2,-9,-6,-7});
-    assert(flatten entries last regularRep(y) == {0, 0, -3, -2, 0, 0, -1, 1, 0, 1, 4, 0, 1, 0, 4, 4});
-    M = last regularRep(y);
-    pol = charPoly(M);
+    assert(flatten entries last coefficients(minimalPolynomial(x)) == {1,-2,-9,-6,-7});
+    assert(flatten entries last regularRepresentation(y) == {0, 0, -3, -2, 0, 0, -1, 1, 0, 1, 4, 0, 1, 0, 4, 4});
+    M = last regularRepresentation(y);
+    pol = characteristicPolynomial(M);
     G = ring pol;
     ans = Z^4 - 8*Z^3 + 19*Z^2 - 16*Z + 5;
     assert(pol == ans); 
@@ -659,39 +999,41 @@ TEST ///
     assert(BudanFourierBound(f) == 7);
     assert(BudanFourierBound(g) == 4);
     assert(BudanFourierBound(p) == 6);
+    assert(BudanFourierBound(g,-infinity,0) == 2);
+    assert(BudanFourierBound(g,-1,infinity) == 3);
     
-    assert(numSturm(f)== 6);
-    assert(numSturm(f,-6,0) == 3);
-    assert(numSturm(f,-1,10) == 3);
-    assert(numSturm(f,Multiplicity=>true) == 7);
-    assert(numSturm(f,-10,5,Multiplicity=>true) == 6);
-    assert(numSturm(f,0,6,Multiplicity=>true) == 4);
+    assert(SturmCount(f)== 6);
+    assert(SturmCount(f,-6,0) == 3);
+    assert(SturmCount(f,-1,10) == 3);
+    assert(SturmCount(f,Multiplicity=>true) == 7);
+    assert(SturmCount(f,-10,5,Multiplicity=>true) == 6);
+    assert(SturmCount(f,0,6,Multiplicity=>true) == 4);
     
     
-    assert(numSturm(g) == 4);
-    assert(numSturm(g,-3,1) == 3);
-    assert(numSturm(g,0,10) == 2);
+    assert(SturmCount(g) == 4);
+    assert(SturmCount(g,-3,1) == 3);
+    assert(SturmCount(g,0,10) == 2);
     
-    assert(numSturm(p) == 6);
-    assert(numSturm(p,-15,0) == 3);
-    assert(numSturm(p,2,10) == 2);
+    assert(SturmCount(p) == 6);
+    assert(SturmCount(p,-15,0) == 3);
+    assert(SturmCount(p,2,10) == 2);
     ///
     
 TEST ///
     R = QQ[t];
     f = (t-2)*(t-1)*(t+3);
     g = t+1;
-    assert(numSylvester(f,g,-5,4) == 1);
+    assert(SylvesterCount(f,g,-5,4) == 1);
     h = (t-4)*(t-1)^2*(t+1)*(t+3)*(t+5)*(t-6);
     p = t+5;
-    assert(numSylvester(h,p,-10,10) == 5);
-    assert(numSylvester(h,p,0,10) == 3);
+    assert(SylvesterCount(h,p,-10,10,Multiplicity=>true) == 6);
+    assert(SylvesterCount(h,p,0,10) == 3);
     ///
     
 TEST ///
     R = QQ[t];
     f = (t-1)^2*(t+3)*(t+5)*(t-6);
-    assert(realRootIsolation(f,0.5) == {{-161/32, -299/64}, {-207/64, -23/8}, {23/32, 69/64}, {23/4, 391/64}});
+    assert(realRootIsolation(f,1/2) == {{-161/32, -299/64}, {-207/64, -23/8}, {23/32, 69/64}, {23/4, 391/64}});
     ///    
     
 TEST ///
@@ -706,49 +1048,35 @@ TEST ///
 TEST ///
      R = QQ[x,y];
      I = ideal(1 - x^2*y + 2*x*y^2, y - 2*x - x*y + x^2);
-     assert(numTrace(I) == 3);
+     assert(traceCount(I) == 3);
      F = {y^2-x^2-1,x-y^2+4*y-2};
-     assert(numTrace(F) == 2);
+     assert(traceCount(F) == 2);
      I = ideal F;
      S = R/I;
-     assert(numTrace(S) == 2);
+     assert(traceCount(S) == 2);
     ///
+    
+TEST ///
+     R = QQ[x];
+     f = 3*x^4 - 7*x^3 + 5*x - 7;
+     assert(HurwitzMatrix(f,4) == sub(matrix{{-7,5,0,0},{3,0,-7,0},{0,-7,5,0},{0,3,0,-7}},QQ));
+     assert(HurwitzMatrix(f,3) == sub( matrix{{-7,5,0},{3,0,-7},{0,-7,5}},QQ));
+     assert(isHurwitzStable(f) == false);
+     g = x^2 + 10*x + 21;
+     assert(isHurwitzStable(g) == true);
+     ///
+
+--TEST ///
+  --   R = QQ[x,y];
+  --   I = ideal(x*y - 1,2*x - y + 3);
+    -- Z = (support I)_0; --little trick to compute Z not being symbol
+    -- assert(rationalUnivariateRepresentationresentation(I) == {Z^2 - (3/2)*Z - 9, x + y});
+    -- ///	 
     
 end
 
---Computes the rank and signature of the trace form of f
-----change name
-----change output
-traceFormInfo = method()
-traceFormInfo (RingElement,Ideal) := Sequence => (f,I)->(
-    R := ring f;
-    traceFormInfo(sub(f,R/I))
-    )
 
-traceFormInfo (RingElement) := Sequence => f->(
-    R := ring f;
-    if not isArtinian R then error "Expected Artinian ring";
-    
-    trf := traceForm f;
-    ch := charPoly(trf);
-    chNeg := sub(ch,(ring ch)_0=>-(ring ch)_0);
-    sig := numSturm(ch,0,infinity,Multiplicity=>true) - numSturm(chNeg,0,infinity,Multiplicity=>true);
-    (rank(trf),sig)
-    )
 
---document {
---	Key => {(traceFormInfo, RingElement),traceFormInfo},
---	Usage => "traceFormInfo(f)",
---	Inputs => {"f"},
---	Outputs => { Sequence => { "the rank and signature of the trace quadratic form of", TT "f" }},
---	PARA {"This computes the rank and signature of the trace quadratic form of an element ", TT "f", " in an Artinian ring of characteristic zero"},
---	EXAMPLE lines ///
---	         R = QQ[x,y]
---		 I = ideal(1 - x^2*y + 2*x*y^2, y - 2*x - x*y + x^2)
---		 A = R/I
---		 traceFormInfo(x*y)
---		 traceFormInfo(x - 2)
---		 traceFormInfo(x + y - 3)
---	 	 ///,
---	SeeAlso => {"traceForm", "numTrace"}
-  --   	}
+
+
+
