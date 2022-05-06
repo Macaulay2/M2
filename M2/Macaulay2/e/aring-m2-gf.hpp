@@ -7,7 +7,7 @@
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-
+#include "exceptions.hpp" // for exc::division_by_zero_error, exc::internal_error
 #include <iostream>
 
 class GF;
@@ -119,8 +119,7 @@ class ARingGFM2 : public RingInterface
   void getGenerator(elem &result_gen) const { result_gen = 1; }
   int get_repr(elem f) const
   { /*TODO: WRITE WRITE ;*/
-    assert(false);
-    return 0;
+    throw exc::internal_error("get_repr not written");
   }
 
   void to_ring_elem(ring_elem &result, const ElementType &a) const
@@ -184,9 +183,9 @@ class ARingGFM2 : public RingInterface
   }
 
   void invert(elem &result, elem a) const
-  // we silently assume that a != 0.  If it is, result is set to a^0, i.e. 1
   {
-    assert(a != 0);
+    if (a == 0)
+      throw exc::division_by_zero_error();
     result = (a == mGF.one() ? mGF.one() : mGF.orderMinusOne() - a);
   }
 
@@ -253,7 +252,8 @@ class ARingGFM2 : public RingInterface
 
   void divide(elem &result, elem a, elem b) const
   {
-    assert(b != 0);
+    if (b == 0)
+      throw exc::division_by_zero_error();
     if (a != 0)
       {
         int c = a - b;
@@ -280,7 +280,7 @@ class ARingGFM2 : public RingInterface
         else if (n == 0)
           result = mGF.one();
         else
-          ERROR("division by zero");
+          throw exc::division_by_zero_error();
       }
   }
 
@@ -299,7 +299,7 @@ class ARingGFM2 : public RingInterface
         else if (mpz_sgn(n) == 0)
           result = mGF.one();
         else
-          ERROR("division by zero");
+          throw exc::division_by_zero_error();
       }
   }
 

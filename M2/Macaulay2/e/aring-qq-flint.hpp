@@ -17,7 +17,6 @@
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-
 #include "exceptions.hpp"
 
 // promote needs ring.hpp.  After moving promote out, remove it here!
@@ -167,13 +166,12 @@ class ARingQQFlint : public RingInterface
   }
 
   ///@brief test doc
-  bool divide(ElementType& result,
+  void divide(ElementType& result,
               const ElementType& a,
               const ElementType& b) const
   {
-    if (is_zero(b)) return false;
+    if (is_zero(b)) throw exc::division_by_zero_error();
     fmpq_div(&result, &a, &b);
-    return true;
   }
 
   void power(ElementType& result, const ElementType& a, long n) const

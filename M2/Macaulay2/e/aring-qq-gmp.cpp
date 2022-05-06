@@ -24,8 +24,7 @@ void ARingQQGMP::eval(const RingMap* map,
   if (!ok)
     {
       // if there is already an error message don't add in another
-      if (not error()) ERROR("cannot map rational to this ring");
-      result = map->get_ring()->from_long(0);
+      throw exc::engine_error("cannot map rational to this ring");
     }
 }
 

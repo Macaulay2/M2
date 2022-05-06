@@ -70,6 +70,7 @@ ARingZZp::~ARingZZp()
 }
 
 void ARingZZp::text_out(buffer &o) const { o << "AZZ/" << characteristic(); }
+
 void ARingZZp::elem_text_out(buffer &o,
                              ElementType a,
                              bool p_one,
