@@ -1,1 +1,4 @@
  times: (.634152 .72304)  MES M1 max git 2377498d9Fri Mar 25 13:35:53 EDT 2022
+ times: (1.08926 1.21248)  [MES M1 max M2 just pre 1.20] Fri May  6 08:27:23 EDT 2022
+ times: (.609685 .70623)  [MES M1 max M2 just pre 1.20 (no builds in background)] Fri May  6 08:36:55 EDT 2022
+ times: (.616174 1.22691)  [MES M1 max M2 1.19.1] Fri May  6 08:42:02 EDT 2022

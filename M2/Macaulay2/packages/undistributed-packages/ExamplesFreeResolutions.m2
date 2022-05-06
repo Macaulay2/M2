@@ -860,7 +860,8 @@ TEST ///
   debug needsPackage "ExamplesFreeResolutions"
   dir = "./Foo/"
   dir = "./ExamplesFreeResolutions/ExamplesAndTimings/"
-  comment = "MES M1 max git 2377498d9"
+  comment = "MES M1 max M2 just pre 1.20 (no builds in background)"
+  comment = "MES M1 max M2 1.19.1"
   -- CNC curves
   for i from 6 to 15 do (
       assert(elapsedTime runCNC(i, Directory => dir, Comment => comment) === bettiCNC#i);
