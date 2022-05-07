@@ -1039,17 +1039,21 @@ doc ///
 doc ///
 	Key
 		flats
-		(flats, Matroid, ZZ)
 		(flats, Matroid)
+		(flats, Matroid, ZZ)
+		(flats, Matroid, ZZ, String)
 	Headline
 		flats of a matroid
 	Usage
-		flats(M, s)
 		flats M
+		flats(M, r)
+		flats(M, r, s)
 	Inputs
 		M:Matroid
-		s:ZZ
-			a target corank (optional)
+		r:ZZ
+			a target (co)rank (optional)
+		s:String
+			either "rank" or "corank"
 	Outputs
 		:List
 	Description
@@ -1064,16 +1068,21 @@ doc ///
 			>= 3), the isomorphism type of the lattice is already a
 			complete invariant.
 			
-			If a target corank s is provided, then this method computes 
-			all intersections of s distinct hyperplanes. This is guaranteed to 
-			contain all flats of rank = rank M - s (cf. Oxley, Prop. 1.7.8), 
+			If a target rank r is provided, then this method returns
+			the list of all rank r flats of M.
+			
+			If a target corank r is provided along with the mode "corank", 
+			then this method computes 
+			all intersections of r distinct hyperplanes. This is guaranteed to 
+			contain all flats of rank = rank M - r (cf. Oxley, Prop. 1.7.8), 
 			and may be useful if the lattice of flats is large, and only the 
 			upper portion is required (such as in the Scum theorem).
 			
 		Example
-			M = matroid({a,b,c,d},{{a,b},{a,c}})
-			flats(M, 1)
+			M = uniformMatroid(4, 6)
 			netList flats M
+			flats(M, 1)
+			flats(M, 2, "corank")
 		
 		Text
 			In general, this method computes flats by iteratively 

@@ -318,10 +318,13 @@ hyperplanes Matroid := List => M -> (
 )
 
 flats = method()
-flats (Matroid, ZZ) := List => (M, r) -> ( -- computes all intersections of r hyperplanes (which contains all flats of rank = rank M - r)
-	if not M.cache#?"flatsOfCorank" then M.cache#"flatsOfCorank" = new MutableHashTable from {0 => {M.groundSet}, 1 => hyperplanes M};
-	if M.cache#"flatsOfCorank"#?r then M.cache#"flatsOfCorank"#r else M.cache#"flatsOfCorank"#r = unique flatten apply(flats(M, r-1), f -> apply(hyperplanes M, h -> h*f))
+flats (Matroid, ZZ, String) := List => (M, r, mode) -> ( -- computes all intersections of r hyperplanes (which contains all flats of rank = rank M - r)
+	if mode === "corank" then (
+		if not M.cache#?"flatsOfCorank" then M.cache#"flatsOfCorank" = new MutableHashTable from {0 => {M.groundSet}, 1 => hyperplanes M};
+		if M.cache#"flatsOfCorank"#?r then M.cache#"flatsOfCorank"#r else M.cache#"flatsOfCorank"#r = unique flatten apply(flats(M, r-1, "corank"), f -> apply(hyperplanes M, h -> h*f))
+	) else select(flats M, f -> rank_M f === r)
 )
+flats (Matroid, ZZ) := List => (M, r) -> flats(M, r, "rank")
 flats Matroid := List => M -> (
 	if M.cache.?flats then M.cache.flats else M.cache.flats = (
 		if debugLevel > 0 then printerr("flats: Finding hyperplanes...");
