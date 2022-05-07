@@ -1,0 +1,90 @@
+---------------------------------------------
+PAPER EDITS
+
+section changes:
+
+- intro should be shorter (Sasha pruned the intro)
+- do we need the overview paragraphs? maybe put them at the intro of each section instead (Sasha moved two to intros, scrapped others)
+
+- change section 1 to "constructors" or "making simplicial complexes" or "working with simplicial complexes" (?) and change emphasis (Ben began making this change, Sasha contributed)
+
+- pull a bunch of section 2 stuff into this (Ben began making this change, Sasha contributed)
+
+- combine the examples in intro + section 2, i.e. example 0.0 should be merged with 2.3 (Ben began making this change, Sasha contributed)
+
+- start with stanley reisner ideal definition etc. give the constructor example
+- then give examples of the database (example 1.3) (Sasha: atm, the structure is different based on how Ben added things, but I think it works)
+- end with the maps (example 1.2)
+- edit example 1.2 to start with a sentence (no longer have example environments)
+
+- change section 2 to "homological algebra," or "___ combinatorics" (__ could be algebraic, polyhedral, etc.?)
+- give the link, Hochster's formula, shellability and CM stuff
+
+- section 3 renamed to "commutative algebra" (too broad?), or "free resolutions"
+
+remove:
+
+- bounds on h vector don't seem necessary (Sasha commented them out)
+
+other things:
+
+- tighten up exposition everywhere (Sasha did a passthrough of his own writing)
+- we don't define an abstract simplicial complex which is a mistake (Sasha added this to intro, together with the basic definitions)
+- point out that our package isn't well suited for huge numbers of vertices, i.e. bad for topological data analysis (Sasha added a sentence in opening paragraph of section 1)
+- need a better title: "simplicial complexes in Macaulay2" or "Some simplicial complexes in Macaulay2" (Sasha changed this, still open to feedback)
+- homogenize pictures, i.e. the placement of vertices is done in an absolute way as opposed to, e.g. "above right, above left," etc.
+- we reuse k for a field and index which is slightly taboo. pick another letter in some way--maybe use A for comm. ring? (Sasha changed index to \ell. added a sentence in section 2 to assume k is a field)
+- use \dotsc or \dotsb instead of ... or \cdots
+- sub/superscript hell in some places, e.g. alexander dual
+
+- we could just take out the example environments entirely, any references to examples can be finessed--e.g. we can refer to <insert Ben's silly ascii symbol here> to refer to an example (and more generally we can label everything uniquely) (Ben began making this change)
+
+- Section 2 or 3 needs to have some relabelling of the ring S.
+
+---------------------------------------------
+FIRST WEEK PLANNING
+
+- find examples from other places in math that we can reproduce in macaulay2
+- showcase functionality, specifically on simplicial maps which are new
+- do some relative homology, try to find some interesting topological results
+- browse through some papers in jsag journal to get ideas for structure
+- showcase database functionality
+- basic fact that we represent complexes by stanley-reisner ideals
+- showcase lybenziunk complexes and general homogenization feature
+- database could be used to give examples of relative homology
+
+---------------------------------------------
+MORE DETAILED SECTION PLANNING
+
+- Section 2 (combinatorics)
+- f-vectors, h-vectors, cohen-macaulay + shellability are the themes for this section.
+- Should give some of the motivation in identifying Cohen-Macaulay rings
+- Prop 3.1 ch 3 of Stanley gives a condition for checking CM
+- Show examples of shellable + non-shellable
+- Rudin ball/Ziegler ball is Cohen-Macaulay but not shellable
+- Certain "chess-board" complexes are pure but not Cohen-Macaulay
+- Use Reisner's criterion (corollary 5.3.9) in Bruns-Herzog for an example + non-example
+- Another way to check CM is to look at the minimal free resolution to compute projective
+  dimension and compare with dimension (may be worth mentoning)
+- Lemma 5.1.8 relates h and f-vectors
+- Use Thm 5.1.15 in Bruns-Herzog on an example to illustrate connection with h-vector
+- Ex 1.2 in Stanley for h-vector relating to poincare series of P1 x P1
+- References: Stanley, Bruns-Herzog, ...
+
+- Section 3 (resolutions)
+- Give examples of all(?) of our complex constructions
+- Scarf resolution
+- Nearly scarf ideals: pick something in database, construct the nearly scarf ideal,
+  then show that scarf complex is the same
+- If you have a resolution supported on a complex, one way to determine if its a resolution
+  is to do all induced subcomplexes of the lcm sublattice of the ring
+- Reuse ex 1.2 above to compute minimal free resolution of irrelevant ideal of P1 x P1
+- Taylor resolution that's not minimal
+- References: Miller-Sturmfels, Peeva, ...
+
+- Section 4 (toplogy)
+- Simplicial maps, relative homology, database of small 2/3-manifolds
+- Maybe take a classical map (Hopf fibration), then approximate by simplicial complexes
+  and illustrate the example
+- To this end, find classical examples in toplogy. e.g. in Hatcher/Munkres
+- References: Munkres, Hatcher, Tight polyhedral submanifolds and tight triangulations, introduction to piecewise linear topology
