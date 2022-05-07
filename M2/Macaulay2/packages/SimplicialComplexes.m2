@@ -18,7 +18,7 @@
 newPackage(
     "SimplicialComplexes",
     Version => "2.0", 
-    Date => "6 May 2022",
+    Date => "7 May 2022",
     Authors => {
 	{Name     => "Gregory G. Smith", 
 	 Email    => "ggsmith@mast.queensu.ca", 
@@ -29,7 +29,7 @@ newPackage(
 	 Email => "18az45@queensu.ca"}
      },
     Headline => "exploring abstract simplicial complexes within commutative algebra",
-    Keywords => {"simplicial complex",},
+    Keywords => {"Combinatorial Commutative Algebra"},
     PackageExports => { "Polyhedra" },
     AuxiliaryFiles => true,
     DebuggingMode => true
