@@ -447,7 +447,7 @@ hasMinor (Matroid, Matroid) := Boolean => opts -> (M, N) -> (
 	if n > m or rank N > rank M or #bases N > #bases M then return false;
 	if opts.Strategy === "flats" and isSimple N then (
 		v := fVector N;
-		truncatedLattice := select(flats(M, rank N), f -> rank_M f >= rank M - rank N);
+		truncatedLattice := select(flats(M, rank N, "corank"), f -> rank_M f >= rank M - rank N);
 		possibleFlats := select(truncatedLattice, f -> rank_M f == rank M - rank N);
 		truncatedLattice = truncatedLattice - set possibleFlats;
 		for f in possibleFlats do (
