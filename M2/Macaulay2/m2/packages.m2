@@ -251,6 +251,10 @@ newPackage String := opts -> pkgname -> (
 	    (Headline, String),
 	    (HomePage, String)}, (name, type) -> if opts#name =!= null and not instance(opts#name, type) then
 	error("newPackage: expected ", toString name, " option of class ", toString type));
+    if opts.?Keywords then (
+	 if class opts.Keywords =!= List then error "expected Keywords value to be a list";
+	 if not all(opts.Keywords, k -> class k === String) then error "expected Keywords value to be a list of strings";
+	 );
     -- TODO: if #opts.Headline > 100 then error "newPackage: Headline is capped at 100 characters";
     -- the options coming from loadPackage are stored here
     loadOptions := if loadPackageOptions#?pkgname then loadPackageOptions#pkgname else loadPackageOptions#"default";
