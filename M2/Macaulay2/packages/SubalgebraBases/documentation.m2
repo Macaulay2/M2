@@ -6,7 +6,7 @@ undocumented {
 -- ############################
 doc ///
   Key
-    SubalgebraBasesStrat 
+    SubalgebraBases 
   Headline
     A package for finding canonical subalgebra bases (Sagbi bases)
   Description
