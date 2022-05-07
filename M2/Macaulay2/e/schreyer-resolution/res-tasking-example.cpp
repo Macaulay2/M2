@@ -23,8 +23,6 @@ std::random_device rd;
 std::mt19937 rng(rd());
 std::uniform_int_distribution<int> uni(250,1000);
 
-//using boost 
-
 tbb::flow::graph G;
 std::vector<std::vector<TBBNodePtr>> nodes; // nodes[lev][sldeg] is that particular node.
 
@@ -72,6 +70,8 @@ public:
 
    void print();
 
+   void startComputation() { mVertices[0].mFillMatrixNode->try_put(tbb::flow::continue_msg()); }
+
    void waitForCompletion() { mTBBGraph.wait_for_all(); }
 };
 
@@ -117,7 +117,7 @@ TBBNodePtr DependencyGraph::createReductionNode(int lev, int sldeg)
 				  int sleepTime = uni(rng);
                                   std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));;
 				  std::lock_guard<std::mutex> guard(myMutex);
-                                  std::cout << "reduction node lev=" << lev << " sldeg="
+                                  std::cout << "reduction node   lev=" << lev << " sldeg="
                                             << sldeg << " sum=" << lev + sldeg
 					    << " sleep time=" << sleepTime << std::endl;
                                   return msg;
@@ -132,7 +132,7 @@ TBBNodePtr DependencyGraph::createRankNode(int lev, int sldeg)
 				  int sleepTime = uni(rng);
                                   std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));;
 				  std::lock_guard<std::mutex> guard(myMutex);
-                                  std::cout << "rank node lev=" << lev << " sldeg="
+                                  std::cout << "rank node        lev=" << lev << " sldeg="
                                             << sldeg << " sum=" << lev + sldeg
 					    << " sleep time=" << sleepTime << std::endl;
                                   return msg;
@@ -242,8 +242,8 @@ int main()
 
   std::cout << "Hi there, we have " << tbb::info::default_concurrency()
             <<" thread(s) available." << std::endl;
-  const int nlevels = 3;
-  const int nslanted_degrees = 4;
+  const int nlevels = 4;
+  const int nslanted_degrees = 8;
   makeDependencyGraph(nlevels,nslanted_degrees);
   makeDependencyGraph2(newG,nlevels,nslanted_degrees);
 
@@ -270,7 +270,7 @@ int main()
 
   // Dependency Graph with more data
   std::cout << "New TBB Graph check:" << std::endl;
-  newG.getVertex(0).mFillMatrixNode->try_put(tbb::flow::continue_msg());
+  newG.startComputation();
   newG.waitForCompletion();
   
   return 0;
