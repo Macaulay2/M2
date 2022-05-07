@@ -4,7 +4,7 @@
 
 document { 
      Key => schreyerOrder,
-     Headline => "create or obtain free modules with Schryer monomial orders",
+     Headline => "create or obtain free modules with Schreyer monomial orders",
      SeeAlso => "monomial orders for free modules"
      }
 

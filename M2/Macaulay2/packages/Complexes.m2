@@ -1,7 +1,7 @@
 newPackage(
     "Complexes",
     Version => "0.9999",
-    Date => "3 Nov 2021",
+    Date => "25 April 2022",
     Authors => {
         {   Name => "Gregory G. Smith", 
             Email => "ggsmith@mast.queensu.ca", 
@@ -14,7 +14,7 @@ newPackage(
     Headline => "development package for beta testing new version of chain complexes",
     PackageExports => {"Truncations"},
     AuxiliaryFiles => true,
-    DebuggingMode => false
+    DebuggingMode => true
     )
 
 export {
@@ -69,6 +69,14 @@ export {
 
 -- keys into the type `Complex`
 protect modules
+
+-- These are keys used in the various ResolutionObject's
+protect SyzygyList
+protect FieldComputation
+protect compute
+protect radical
+protect SchreyerOrder
+protect isComputable
 
 --------------------------------------------------------------------
 -- code to be migrated to M2 Core ----------------------------------
@@ -170,7 +178,6 @@ chainComplex ComplexMap := ChainComplexMap => f -> (
 complex ChainComplexMap := ComplexMap => opts -> g -> (
     map(complex target g, complex source g, i -> g_i, Degree => degree g)
     )
-
 --------------------------------------------------------------------
 -- package documentation -------------------------------------------
 --------------------------------------------------------------------

@@ -1,44 +1,29 @@
+
+-- From main.m2
 export {
-    "Subring",
-    "subring",
-    "PresRing",
-    "makePresRing",
-    "VarBaseName",
-    "storePending",
-    "SAGBIBasis",
-    "sagbiBasis",
-    "verifySagbi",
-    "sagbiDone",
-    "internalSubduction",
-    "subduction",
     "subalgebraBasis",
     "sagbi",
-    "PrintLevel",
-    "SagbiDegrees",
-    "SubalgComputations",
-    "SagbiGens",
-    "SagbiDone",
-    "Autosubduce",
-    "debugPrintMap",
-    "debugPrintAllMaps",
-    "debugPrintGens",
-    "debugPrintMat",
-    "StrWidth",
-    "mingensSubring",
-    "moduleToSubringIdeal",
-    "intrinsicReduce",
-    "toricSyz",
-    "subalgEquals",
-    "genVars",
-    "isSubalg",
-    "autoreduce",
-    "autosubduce",
-    "extractEntries",
-    "extrinsicBuchberger"
-    -*
-    -- utility functions:
-    "monoCoef",
-    "toMonomial",
-    "leadCoef"
-    *-
+    "verifySagbi",
+    "AutoSubduce",
+    "ReduceNewGenerators",
+    "StorePending",
+    -- "FullSubduct",
+    -- "DegreeLimitedSubduction",
+    "Strategy",
+    "SubductionMethod",
+    "Limit",
+    "AutoSubduceOnPartialCompletion",
+    "PrintLevel"
     }
+
+-- From classes.m2
+export {
+    "Subring",
+    "SAGBIBasis",
+    "subring",
+    "isSAGBI",
+    "sagbiBasis",
+    "groebnerMembershipTest"
+    }
+
+end --

@@ -410,6 +410,11 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 		    return errorToken
 		    )
 	       is word:Word do return Token(word,file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
+	  else if ch == 226 then (
+	       tokenbuf << char(getc(file));
+	       tokenbuf << char(getc(file));
+	       tokenbuf << char(getc(file));
+	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else (
 	       when recognize(file)
 	       is null do (

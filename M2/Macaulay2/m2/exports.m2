@@ -1244,7 +1244,33 @@ export {
         "numcols" => "numColumns",
         "numrows" => "numRows",
         "res" => "resolution",
-        "sub" => "substitute"
+        "sub" => "substitute",
+	-- unicode synonyms:
+	"ℚ" => "QQ",
+	"ℝ" => "RR",
+	"ℤ" => "ZZ",
+	"ℂ" => "CC",
+	"∞" => "infinity",
+	"⊗" => "**",
+	"←" => "<-",
+	"→" => "->",
+	"⇒" => "=>",
+	"≠" => "!=",
+	"⊕" => "++",
+	"≪" => "<<",
+	"≫" => ">>",
+	"∀" => "all",
+	"∃" => "any",
+	"∈" => "member",
+	"∏" => "product",
+	"∑" => "sum",
+	"√" => "sqrt",
+	"∧" => "and",
+	"∨" => "or",
+	"∫" => "integrate",
+	"≤" => "<=",
+	"≥" => ">=",
+	"⊢" => "|-"
 }
 
 exportMutable {
