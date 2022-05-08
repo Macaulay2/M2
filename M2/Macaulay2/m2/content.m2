@@ -1,3 +1,5 @@
+needs "set.m2"
+
 protect qname 						    -- an internal key
 
 -- from xhtml-math11-f.dtd:
@@ -222,6 +224,9 @@ validContent#"cdata" = PCDATA
 
 -- <!ENTITY % style.content  "( #PCDATA )" >
 validContent#"style" = PCDATA
+
+-- <!ENTITY % script.content  "( #PCDATA )" >
+validContent#"script" = PCDATA
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

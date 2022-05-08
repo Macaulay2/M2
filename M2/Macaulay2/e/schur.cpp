@@ -20,8 +20,8 @@ void tableau::initialize(int nvars)
 void tableau::resize(int max_wt)
 {
   if (max_wt <= SCHUR_MAX_WT) return;
-  deletearray(xloc);
-  deletearray(yloc);
+  freemem(xloc);
+  freemem(yloc);
   maxwt = max_wt;
   wt = max_wt;
   xloc = newarray_atomic(int, maxwt + 1);
@@ -341,6 +341,7 @@ ring_elem SchurRing::dimension(const ring_elem f) const
       K_->add_to(result, h2);
       K_->remove(h);
     }
+  mpz_clear(dim);
   return result;
 }
 

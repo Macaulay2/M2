@@ -59,7 +59,8 @@ strat = LongPolynomial;
     I = flatten(m1*m2-m2*m1);
     J = flatten(m1*m2-m2*m1);
     h1 = poincare cokernel I;
-    (cokernel J).cache.poincare = h1;
+    -- cache poincare
+    poincare cokernel J = h1;
     g = generators gb(J, Strategy=>strat);
     assert(image g == image generators gb I)
 
@@ -69,7 +70,8 @@ strat = LongPolynomial;
     I = random(R^1, R^{-2,-2,-2,-2,-2});
     g = generators gb I;
     J = matrix entries I;
-    (cokernel J).cache.poincare = h;
+    -- cache poincare
+    poincare cokernel J = h;
     assert(image g == image generators gb(J,Strategy=>strat))
 
     -- an elimination, first we compute using rlex, obtaining Hilbert function
@@ -81,7 +83,8 @@ strat = LongPolynomial;
                Degrees=>{1,1,1,2,2,2,2,2,2},
                MonomialOrder => Lex];
     J = substitute(I, R1);
-    J.cache.poincare = h1;
+    -- cache poincare
+    poincare cokernel J = h1;
     g = gb(J, Strategy=>strat);
     assert(image generators gb I == image substitute(generators g, R))
 

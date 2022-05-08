@@ -1,5 +1,12 @@
 --		Copyright 2018 by Daniel R. Grayson and Lily Silverstein
 
+undocumented {
+    symbol (,  symbol ),
+    symbol [,  symbol ],
+    symbol <|, symbol |>,
+    symbol {,  symbol },
+    }
+
 doc///
  Key
   "lists and sequences"
@@ -58,8 +65,8 @@ doc///
   Example
    toSequence {1}
   Text
-   Lists and sequences can be used as vectors, provided their elements 
-   are the sorts of things that can be added and mutliplied.
+   Lists can be used as vectors, provided their elements
+   are the sorts of things that can be added and multiplied.
   Example
    10000*{3,4,5} + {1,2,3}
   Text

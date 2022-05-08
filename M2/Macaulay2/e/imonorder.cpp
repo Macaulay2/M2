@@ -12,6 +12,13 @@
 
 #include "overflow.hpp"
 
+std::vector<bool> laurentVariables(const MonomialOrder* mo)
+{
+  std::vector<bool> result;
+  for (auto i = 0; i < mo->nvars; ++i)
+    result.push_back(mo->is_laurent[i] == 1);
+  return result;
+}
 /* TODO:
    -- negative exponent versions need to be included (at least for MO_LEX)
    -- non-commutative blocks should be added in

@@ -207,6 +207,47 @@ then AC_MSG_RESULT(yes)
 else AC_MSG_ERROR($TAR: GNU tar is required)
 fi
 
+AC_ARG_ENABLE([documentation],
+    [AS_HELP_STRING([--enable-documentation=...],
+        [space-delimited list of types of documentation to build; available
+         options are "html", "info", and "pdf"; default value is "html info"])],
+    [DOCUMENTATION=$enableval],
+    [DOCUMENTATION="html info"])
+
+if test "$DOCUMENTATION" = no
+then DOCUMENTATION=""
+elif test "$DOCUMENTATION" = yes
+then DOCUMENTATION="html info"
+else for DOCTYPE in $DOCUMENTATION
+    do case $DOCTYPE in
+            html|info|pdf)
+                ;;
+            *)
+                AC_MSG_ERROR([unknown documentation type ($DOCTYPE); expected html, info, or pdf])
+                ;;
+        esac
+    done
+fi
+
+AC_SUBST(DOCUMENTATION)
+
+AC_ARG_ENABLE([syntax-highlighting],
+    [AS_HELP_STRING([--enable-syntax-highlighting],
+	[whether to enable syntax highlighting using highlightjs in the html
+	 documentation])],
+    [HIGHLIGHTJS=$enableval],
+    [HIGHLIGHTJS=no])
+
+if test "x$HIGHLIGHTJS" = xyes
+then AC_CHECK_PROGS(NPM,npm,false)
+     if test "x$NPM" = xfalse
+     then AC_MSG_ERROR([npm is required for syntax highlighting])
+     fi
+else AC_SUBST(NPM,false)
+fi
+
+AC_SUBST(HIGHLIGHTJS)
+
 AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
 AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
@@ -357,20 +398,26 @@ AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 
-AC_SUBST(HAVE_LIBTBB,no)
-AC_SUBST(LIBTBB)
-   AC_LANG(C++)
-   AC_CHECK_HEADER(tbb/tbb.h,
-      [AC_SEARCH_LIBS(TBB_runtime_interface_version,"tbb",
-	 LIBTBB=$ac_cv_search_TBB_runtime_interface_version
-	 HAVE_LIBTBB=yes,
-	 [AC_MSG_ERROR([tbb library not found])])],
-       [AC_MSG_ERROR([tbb include file (tbb.h) not found])])
-   AC_LANG(C)
-
-# the following line remove -ltbb from LIBS (only thing in LIBS so far).  It is not needed
-# for linking M2-binary.  It is used in mathicgb.
-# LIBS=
+AC_SUBST(ENABLE_TBB,yes)  AC_ARG_ENABLE(tbb, AS_HELP_STRING(--disable-tbb,disable use of the tbb (threaded building blocks) library), ENABLE_TBB=$enableval)
+if test $ENABLE_TBB = yes
+then AC_DEFINE(WITH_TBB,1,[whether the tbb library has been enabled by the builder])
+     AC_SUBST(LIBTBB)		dnl LIBTBB is usually set to -ltbb
+     AC_LANG(C++)
+     AC_CHECK_HEADER(tbb/tbb.h,
+	[AC_SEARCH_LIBS(TBB_runtime_interface_version,"tbb",
+	   LIBTBB=$ac_cv_search_TBB_runtime_interface_version,
+	   [AC_MSG_ERROR([tbb library not found])])],
+	 [AC_MSG_ERROR([tbb include file (tbb.h) not found])])
+     AC_RUN_IFELSE([AC_LANG_SOURCE([[
+		#include <stdio.h>
+		#define TBB_SUPPRESS_DEPRECATED_MESSAGES 1
+		#include <tbb/tbb.h>
+		int main () {
+		  printf("tbb version %d.%d found\n", TBB_VERSION_MAJOR, TBB_VERSION_MINOR);
+		  return 0;
+		}
+ 	     ]])])
+fi
 
 AC_CHECK_FUNCS([herror error clock_gettime getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink socket accept fcntl personality ioctl])
 
@@ -415,21 +462,11 @@ if test "$XML" = yes
 then AC_DEFINE(WITH_XML,1,[whether we are linking with the xml library])
 fi
 
-AC_SUBST(PYTHON,no)
-AC_ARG_WITH(python, AS_HELP_STRING(--with-python,[link with libpython]), PYTHON=$withval)
-if test "$PYTHON" = yes
-then AC_DEFINE(WITH_PYTHON,1,[whether we are linking with the python library])
-fi
-
 AC_SUBST(MYSQL,no)
 AC_ARG_WITH(mysql, AS_HELP_STRING(--with-mysql,[link with mysql]), MYSQL=$withval)
 if test "$MYSQL" = yes
 then AC_DEFINE(WITH_MYSQL,1,[whether we are linking with the mysql library])
 fi
-
-LIBPYTHONORIG=-lpython2.7
-AC_SUBST(LIBPYTHON,$LIBPYTHONORIG)
-AC_ARG_WITH(libpython, AS_HELP_STRING(--with-libpython=...,specify the python library ($LIBPYTHON)),LIBPYTHON=$withval)
 
 AC_ARG_ENABLE(altivec, AS_HELP_STRING(--enable-altivec,compile with "-faltivec" option))
 if test "$enable_altivec" = yes
@@ -538,17 +575,6 @@ case $COMPRESS in
   bz2) TAR_COMPRESS_OPTION=--bzip ;;
     *) AC_MSG_ERROR(unrecognized option for enable-compress) ;;
 esac
-
-AC_SUBST(CYGWIN,no)
-AC_ARG_ENABLE(cygwin,  AS_HELP_STRING(--enable-cygwin,prepare a binary package for cygwin), CYGWIN=$enableval)
-if test "$CYGWIN" = yes 
-then if test "$OPTIMIZE" = no
-     then AC_MSG_ERROR([--disable-optimize and --enable-cygwin both specified])
-     fi
-     if test "$DEBUG$" = yes
-     then AC_MSG_ERROR([--enable-cygwin and --enable-debug both specified])
-     fi
-fi
 
 AC_SUBST(GIT_DESCRIPTION)
 # TODO: currently finds the last commit that changed the VERSION file
@@ -672,6 +698,7 @@ AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom
 #     Initially, we offer no option for not compiling some of them.
 
 AC_SUBST(SUBLIST, " memtailor mathic mathicgb fflas_ffpack givaro ")
+
 # The list SUBLIST is the list of submodules that might be used and linked into M2.
 
 # These three lists reflect dependencies, with prerequisites listed first, including the following dependencies:
@@ -739,14 +766,14 @@ PKGNAME_fflas_ffpack=fflas-ffpack
 LIBLIST=" $LIBLIST "
 AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr mpfi readline ntl gftables factory lapack mpsolve frobby glpk cddlib givaro fflas_ffpack linbox 4ti2 gfan normaliz csdp nauty cddplus lrslib)]),
     [for i in $enableval
-    do case "$LIBLIST $SUBLIST $PROGLIST" in
+     do case " $LIBLIST $SUBLIST $PROGLIST " in
 	    *" $i "*) 
 	        eval BUILD_$i=yes 
 		BUILD_ALWAYS="$BUILD_ALWAYS $i"
 	    	;;
 	    *) AC_MSG_ERROR(--enable-build-libraries option: unrecognized library name: $i) ;;
-       esac
-    done])
+        esac
+     done])
 
 #############################################################################
 
@@ -772,18 +799,30 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      fi
 fi
 
-AC_MSG_CHECKING(whether package bdw-gc is provided)
+## we build gc by default so we can configure it for large memory spaces
+## see issue #2445
+AC_ARG_WITH([system-gc],
+    [AS_HELP_STRING([--with-system-gc],
+        [use system gc instead of building it])],
+    [],
+    [with_system_gc=no])
+
+AS_IF([test "x$with_system_gc" = xyes],
+    [AC_MSG_CHECKING(whether package bdw-gc is provided)
 dnl Note: we don't include -lgccpp below, because linking with that library is what replaces ::new and friends with GC_MALLOC_UNCOLLECTABLE and friends:
-if [ pkg-config --exists bdw-gc ]
-then AC_MSG_RESULT(yes)
-     CPPFLAGS="`pkg-config --cflags-only-I bdw-gc | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
-     dnl should probably use `pkg-config --libs bdw-gc` here instead
-     FOUND_gc=yes
-else AC_MSG_RESULT(no)
-     BUILD_gc=yes
-fi
+     if [ pkg-config --exists bdw-gc ]
+     then AC_MSG_RESULT(yes)
+          CPPFLAGS="`pkg-config --cflags-only-I bdw-gc | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
+          dnl should probably use `pkg-config --libs bdw-gc` here instead
+          FOUND_gc=yes
+     else AC_MSG_RESULT(no)
+          BUILD_gc=yes
+     fi],
+    [BUILD_gc=yes])
+
 if test $BUILD_gc = yes
 then BUILTLIBS="-lgc -lpthread $BUILTLIBS"
+     BUILD_ALWAYS="$BUILD_ALWAYS gc"
 else if test $SHARED = no -a $TRY_STATIC = yes
      then SEARCH_LIBRARIES(GC_malloc,"/usr/lib/libgc.a" "/usr/local/lib/libgc.a",,
           [AC_MSG_ERROR([libgc.a not found])])
@@ -919,26 +958,32 @@ if test $BUILD_givaro = yes
 then BUILTLIBS="-lgivaro $BUILTLIBS"
 fi
 
+# We add these directories to the end, so the user can override this by setting CPPFLAGS.
+# /cddlib/ is more modern than /cdd/
+if test -d /usr/local/include/cddlib 
+then CPPFLAGS="$CPPFLAGS -I/usr/local/include/cddlib"
+fi
+if test -d /usr/local/include/cdd 
+then CPPFLAGS="$CPPFLAGS -I/usr/local/include/cdd"
+fi
+if test -d /usr/include/cddlib 
+then CPPFLAGS="$CPPFLAGS -I/usr/include/cddlib"
+fi
+if test -d /usr/include/cdd 
+then CPPFLAGS="$CPPFLAGS -I/usr/include/cdd"
+fi
 AC_LANG(C)
-SAVE=$CPPFLAGS
-dnl topcom includes "setoper.h" -- no prefix
-dnl We try 3 different filenames to thwart the caching of results:
-AC_CHECK_HEADER(cdd.h,,[
-  dnl for Ubuntu
-  CPPFLAGS="$SAVE -I/usr/include/cdd"
-  AC_CHECK_HEADER(cddmp.h,,[
-    dnl for Fedora
-    CPPFLAGS="$SAVE -I/usr/include/cddlib"
-    AC_CHECK_HEADER(setoper.h,,CPPFLAGS=$SAVE
-			        AC_MSG_RESULT([[cddlib not found, will build]])
-			        BUILD_cddlib=yes)])],
-    [#include <setoper.h>])
+AC_CHECK_HEADER(cdd.h,,[ AC_MSG_RESULT([[cddlib not found, will build]])
+			     BUILD_cddlib=yes],
+		       [
+		          #include <setoper.h>
+		       ])
 if test $BUILD_cddlib = yes
 then BUILTLIBS="-lcdd $BUILTLIBS"
 else if test $SHARED = no -a $TRY_STATIC = yes
      then SEARCH_LIBRARIES(dd_Equal,"/usr/lib/libcdd.a" "/usr/local/lib/libcdd.a",,
-				    [AC_MSG_ERROR([libcdd.a not found])])
-     else AC_SEARCH_LIBS(dd_Equal,"cdd",,[AC_MSG_ERROR([libcdd not found])])
+				    [AC_MSG_ERROR([cdd.h found but libcdd.a not found])])
+     else AC_SEARCH_LIBS(dd_Equal,"cdd",,[AC_MSG_ERROR([cdd.h found but libcdd not found])])
      fi
 fi
 
@@ -1228,35 +1273,44 @@ then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
 fi
 
-if test $BUILD_memtailor = no
-then AC_LANG(C++)
-     SAVE_CXXFLAGS="$CXXFLAGS"
-     CXXFLAGS="$CXXFLAGS"
-     AC_SEARCH_LIBS(MEMTAILOR_VERSION_STRING,memtailor,,BUILD_memtailor=yes)
-     AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
-     CXXFLAGS="$SAVE_CXXFLAGS"
+AC_ARG_WITH([system-memtailor],
+    [AS_HELP_STRING([--with-system-memtailor],
+	[use system memtailor instead of building git submodule])],,
+    [with_system_memtailor=no])
+if test $with_system_memtailor = no
+then
+    BUILD_memtailor=yes
+    BUILTLIBS="-lmemtailor $BUILTLIBS"
+else AC_LANG(C++)
+    AC_SEARCH_LIBS(MEMTAILOR_VERSION_STRING,memtailor,,BUILD_memtailor=yes)
+    AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
 fi
-test $BUILD_memtailor = yes && BUILTLIBS="-lmemtailor $BUILTLIBS"
 
-if test $BUILD_mathic = no
-then AC_LANG(C++)
-     SAVE_CXXFLAGS="$CXXFLAGS"
-     CXXFLAGS="$CXXFLAGS"
-     AC_SEARCH_LIBS(MATHIC_VERSION_STRING,mathic,,BUILD_mathic=yes)
-     AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
-     CXXFLAGS="$SAVE_CXXFLAGS"
+AC_ARG_WITH([system-mathic],
+    [AS_HELP_STRING([--with-system-mathic],
+	[use system mathic instead of building git submodule])],,
+    [with_system_mathic=no])
+if test $with_system_mathic = no
+then
+    BUILD_mathic=yes
+    BUILTLIBS="-lmathic $BUILTLIBS"
+else AC_LANG(C++)
+    AC_SEARCH_LIBS(MATHIC_VERSION_STRING,mathic,,BUILD_mathic=yes)
+    AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
 fi
-test $BUILD_mathic = yes && BUILTLIBS="-lmathic $BUILTLIBS"
 
-if test $BUILD_mathicgb = no
-then AC_LANG(C++)
-     SAVE_CXXFLAGS="$CXXFLAGS"
-     CXXFLAGS="$CXXFLAGS"
-     AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes; AC_MSG_NOTICE(will build mathicgb))
-     AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes; AC_MSG_NOTICE(will build mathicgb))
-     CXXFLAGS="$SAVE_CXXFLAGS"
+AC_ARG_WITH([system-mathicgb],
+    [AS_HELP_STRING([--with-system-mathicgb],
+	[use system mathicgb instead of building git submodule])],,
+    [with_system_mathicgb=no])
+if test $with_system_mathicgb = no
+then
+    BUILD_mathicgb=yes
+    BUILTLIBS="-lmathicgb $BUILTLIBS"
+else AC_LANG(C++)
+    AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes)
+    AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes)
 fi
-test $BUILD_mathicgb = yes && BUILTLIBS="-lmathicgb $BUILTLIBS"
 
 if test $BUILD_gtest = no
 then
@@ -1276,13 +1330,35 @@ else
 fi
 AC_SUBST(GTEST_PATH)
 
-if test "$PYTHON" = yes
-then AC_LANG(C)
-     if test "$LIBPYTHON" = "$LIBPYTHONORIG"
-     then AC_SEARCH_LIBS(Py_Initialize,python2.7,,AC_MSG_ERROR(libpython2.7 not found))
-     else LIBS="$LIBPYTHON $LIBS"
-     fi
-     AC_CHECK_HEADER(python2.7/Python.h,,AC_MSG_ERROR(include file python2.7/Python.h not found))
+AC_SUBST(PYTHON,no)
+AC_ARG_WITH(python, AS_HELP_STRING(--with-python@<:@=3.x@:>@.,
+    [link with libpython. If the version number is not specified, then the
+     system's default version will be detected.]), PYTHON=$withval)
+if test $PYTHON != no
+then AC_DEFINE(WITH_PYTHON,1,[whether we are linking with the python library])
+    if test $PYTHON = yes
+    then
+	AC_CHECK_PROGS(PYTHON_BIN, python3, false)
+    else
+	AC_CHECK_PROGS(PYTHON_BIN, python$PYTHON, false)
+	PYTHON=yes
+    fi
+    if test $PYTHON_BIN = false
+    then
+	AC_MSG_ERROR([could not find python])
+    else
+	PYTHON_VERSION=`$PYTHON_BIN -c \
+	    "from sys import version_info; \
+	    print('%d.%d' % (version_info.major, version_info.minor))"`
+    fi
+    PYTHON_INCLUDE_DIR=`$PYTHON_BIN -c \
+	"from sysconfig import get_config_var; \
+	print(get_config_var('CONFINCLUDEPY'))"`
+    CPPFLAGS="$CPPFLAGS -I$PYTHON_INCLUDE_DIR"
+    AC_CHECK_HEADER(Python.h,,AC_MSG_ERROR(Python.h not found))
+    AC_SEARCH_LIBS(Py_Initialize,
+	python${PYTHON_VERSION} python${PYTHON_VERSION}m,,
+	AC_MSG_ERROR(libpython not found))
 fi
 
 dnl boost 1.65 was the first release containing the stacktrace library
@@ -1316,6 +1392,9 @@ fi
 
 AX_BOOST_REGEX
 LIBS="$LIBS $BOOST_REGEX_LIB"
+
+AC_CHECK_HEADERS([boost/math/special_functions.hpp], [],
+    [AC_MSG_ERROR([Boost Math Toolkit not available])])
 
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
@@ -1373,7 +1452,7 @@ SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
 then
     AC_MSG_CHECKING([whether factory library is installed])
-    FACTORY_MINVERSION=4.1.0
+    FACTORY_MINVERSION=4.2.0
     if $PKG_CONFIG --exists "factory >= $FACTORY_MINVERSION"
     then
 	FACTORY_NAME=factory
@@ -1398,21 +1477,6 @@ then
      CPPFLAGS="`$PKG_CONFIG --cflags $FACTORY_NAME` $CPPFLAGS"
 else
      BUILTLIBS="$SINGULARLIBS $BUILTLIBS"
-fi
-
-AC_DEFINE([HAVE_FACTORY_PREM], [1],
-    [whether Prem() from factory is public])
-if test $BUILD_factory = no
-then
-    AC_MSG_CHECKING([whether Prem() from factory is public])
-    AC_LANG([C++])
-    AC_COMPILE_IFELSE(
-	[AC_LANG_PROGRAM(
-	    [#include <factory/factory.h>],
-	    [CanonicalForm p,q; Prem(p,q)])],
-	[AC_MSG_RESULT([yes])],
-	[AC_MSG_RESULT([no])
-	 AC_DEFINE([HAVE_FACTORY_PREM], [0])])
 fi
 
 AC_ARG_VAR([GFTABLESDIR],
@@ -1863,6 +1927,7 @@ AC_MSG_NOTICE([with  OPTIMIZE          = $OPTIMIZE])
 AC_MSG_NOTICE([with  DEBUG             = $DEBUG])
 AC_MSG_NOTICE([with  GIT_DESCRIPTION   = $GIT_DESCRIPTION])
 AC_MSG_NOTICE([with  USING_MPIR        = $USING_MPIR])
+AC_MSG_NOTICE([with  DOCUMENTATION     = $DOCUMENTATION])
 
 subset() {
     # whether the words of $1 are among the words of $2
@@ -1897,15 +1962,13 @@ subset "$BUILDLIBLIST" "$BUILD_ALWAYS"
 sub=$?
 if test "$BUILDING" = no -a $sub = 1
 then c=`complement "$BUILDLIBLIST" "$BUILD_ALWAYS"`
-     AC_MSG_ERROR([automatic building of libraries disabled, but some must be built: $c])
+     AC_MSG_ERROR([ *** - automatic building of libraries disabled, but some must be built: $c])
 fi
 
 # Here we insert autoconf's default values so we can compute the relative locations in the directory tree
 test "$prefix" || prefix=/usr/local
 
 # for some distributions, we know what the prefix should be:
-test "$CYGWIN"  = yes && test "$prefix" != /usr && 
-     AC_MSG_ERROR(--enable-cygwin specified and --prefix not set to /usr)
 test "$DEB"     = yes && test "$prefix" != /usr && 
      AC_MSG_ERROR(--enable-deb specified and --prefix not set to /usr)
 test "$RPM"     = yes && test "$prefix" != /usr && 

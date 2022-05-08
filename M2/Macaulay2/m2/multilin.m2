@@ -1,6 +1,13 @@
 --		Copyright 1995-2002,2010 by Daniel R. Grayson and Michael Stillman
 
+needs "matrix1.m2"
+
 symmetricPower(ZZ, Matrix) := Matrix => (i,m) -> map(ring m, rawSymmetricPower(i, raw m))
+
+hasNoQuotients = method()
+hasNoQuotients QuotientRing := (R) -> isField R
+hasNoQuotients PolynomialRing := (R) -> hasNoQuotients coefficientRing R
+hasNoQuotients Ring := (R) -> true
 
 getMinorsStrategy := (R,options) -> (
      bareiss := 0;  -- WARNING: these must match the engine!!
@@ -16,10 +23,10 @@ getMinorsStrategy := (R,options) -> (
 	  -- a polynomial ring.  Note that if R is non-commutative
 	  -- then either algorithm is incorrect.  What is the correct
 	  -- thing to do in this case?
-	  if precision R =!= infinity or (isQuotientRing R and not isField R) then
+          if hasNoQuotients R and precision R === infinity then
+            bareiss
+          else
      	    cofactor
-	  else
-	    bareiss
      ))
 
 minors = method(Options => { Limit => infinity, First => null, Strategy => null })

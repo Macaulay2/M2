@@ -93,7 +93,7 @@ RingMap::~RingMap()
       if (!_elem[i].monom_is_one) M->remove(_elem[i].monom);
       R->remove(_elem[i].bigelem);
     }
-  deletearray(_elem);
+  freemem(_elem);
   K = NULL;
   M = NULL;
 }

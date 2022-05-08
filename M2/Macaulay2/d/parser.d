@@ -2,14 +2,6 @@
 use tokens;
 use lex;
 
-export parseInt(s:string):ZZ := (
-     i := zeroZZ;
-     foreach c in s do (
-	  if c == '\"'
-	  then nothing
-	  else i = 10 * i + (c - '0')
-	  );
-     i);
 export parseRR(s:string):RR := (			    -- 4.33234234234p345e-9
      prec := defaultPrecision;
      ss := new string len length(s) + 1 do (		    -- we add 1 to get at least one null character at the end
@@ -52,6 +44,23 @@ export hexvalue   (c:char ):int  := (
      else 0						    -- we don't expect this to happen
      );
 export hexvalue   (c:int ):int  := hexvalue(char(c));
+
+export parseInt(s:string):ZZ := (
+     i := zeroZZ;
+     n := length(s);
+     if n == 1 then i = toInteger(s.0 - '0')
+     else if s.0 == '0' && (s.1  == 'b' || s.1 == 'B') then
+     	  for j from 2 to n - 1 do i = 2 * i + (s.j - '0')
+     else if s.0 == '0' && (s.1 == 'o' || s.1 == 'O') then
+     	  for j from 2 to n - 1 do i = 8 * i + (s.j - '0')
+     else if s.0 == '0' && (s.1 == 'x' || s.1 == 'X') then
+     	  for j from 2 to n - 1 do i = 16 * i + hexvalue(s.j)
+     else foreach c in s do (
+	  if c == '\"'
+	  then nothing
+	  else i = 10 * i + (c - '0')
+	  );
+     i);
 
 export parseString(s:string):string := (
      parseError = false;

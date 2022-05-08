@@ -98,14 +98,19 @@ fghij"///,
 	  "stack v"
 	  },
      Subnodes => {
-	  TO "///",
 	  "functions for handling strings",
+	  TO "regular expressions",
 	  TO concatenate,
 	  TO format,
 	  TO lines,
-	  TO "regular expressions",
+	  TO ascii,
+	  TO utf8,
+	  TO substring,
+	  TO (symbol _, String, ZZ),
+	  TO (symbol _, String, Sequence),
 	  "functions for handling nets",
 	  TO horizontalJoin,
+	  TO pad,
 	  TO stack,
 	  TO unstack,
 	  "more information",
@@ -131,7 +136,8 @@ document {
      PARA{
 	  "A net is a two-dimensional array of characters, and strings are regarded
 	  as a type of ", TO2{ Net, "net" }, "."
-	  }
+	  },
+     Subnodes => TO \ {(net, String), toString, toExternalString, "///", "\""}
      }
 
 
@@ -152,7 +158,8 @@ document {
      PARA{},
      "Warning: if so many characters are written to a file that an internal buffer
      is filled before the line ends or first net is seen, then the buffer will be 
-     flushed, and writing a net subsequently will produce an unexpected result."
+     flushed, and writing a net subsequently will produce an unexpected result.",
+     Subnodes => TO \ {net, (width, Net), (height, Net), (depth, Net)}
      }
 
 document {
@@ -394,7 +401,7 @@ document {
 -- TODO: utf8check
 
 document {
-     Key => utf8,
+     Key => {utf8, utf8check},
      Headline => "encode and decode unicode utf-8-encoded strings",
      SYNOPSIS (
      	  Usage => "utf8 x",
@@ -423,6 +430,14 @@ document {
      PARA {
 	  "The two operations described above are inverse to each other."
 	  },
+     PARA {
+	  "The function ", TT "utf8check", " can be used to verify that a string contains a valid uft8-encoding of a sequence of
+	  unicode characters.  It returns ", TO "null", " upon success, and signals an error otherwise."
+	  },
+     EXAMPLE lines ///
+     try utf8check "你好" else "invalid"
+     try utf8check "\200\200" else "invalid"
+     ///,
      SeeAlso => {ascii},
      }
 

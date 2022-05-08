@@ -787,7 +787,9 @@ MutableMatrix *rawLinAlgInverse(MutableMatrix *A)
 {
   try
     {
-      return internMutableMatrix(A->invert());
+      MutableMatrix *B = A->invert();
+      if (B==0) ERROR("matrix not invertible");
+      return internMutableMatrix(B);
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -1289,7 +1291,7 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 ////    ElementType result = FFPACK::Det(F, n, n, N, n);
 ////    unsigned long res;
 ////    F.convert(res,result);
-////    deletearray(N);
+////    freemem(N);
 ////    return RingElement::make_raw(kk, kk->from_int(res));
 ////  }
 ////
@@ -1311,7 +1313,7 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 ////    std::cout << "M->n_cols() : " << M->n_cols() << std::endl;
 ////
 ////    size_t result = FFPACK::Rank(F, nr, nc, N, nc);
-////    deletearray(N);
+////    freemem(N);
 ////    return result;
 ////  }
 ////
@@ -1327,7 +1329,7 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 ////    size_t nr = M->n_rows();
 ////    size_t nc = M->n_cols();
 ////    size_t result = FFPACK::Rank(F, nr, nc, N, nc);
-////    deletearray(N);
+////    freemem(N);
 ////    return result;
 ////  }
 ////
@@ -1477,8 +1479,8 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 ////
 ////    MutableMatrix *result = fromFFPackMatrix(kk, F, invN, n, n);
 ////
-////    deletearray(N);
-////    deletearray(invN);
+////    freemem(N);
+////    freemem(invN);
 ////
 ////    if (nullspacedim > 0)
 ////      {

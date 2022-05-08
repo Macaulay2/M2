@@ -2,11 +2,54 @@
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
--- this routine computes the de Rham cohomolgy of K^n - V(f) using the
--- algorithm of Oaku-Takayama.
+-- Computes deRham cohomology of a smooth affine variety. For more options on localCohom strategy use ICcohom instead.
+-- Special algorithm for the de Rham cohomolgy of K^n - V(f) using the algorithm of Oaku-Takayama.
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+
+
+
 deRham = method( Options => {Strategy => Schreyer})
+deRham Ideal := options -> I -> (
+    R:= ring I;
+    if class R =!= PolynomialRing
+    then error "expected an ideal in a polynomial ring";
+    primes := minimalPrimes I;
+    if #primes > 1 then error "The variety defined by the ideal must be irreducible";
+    P := primes#0;
+    S := ideal (singularLocus P);
+    if R != S then error "expected an ideal defining a smooth affine variety";
+    n:= numgens R;
+    d:= dim I;
+    c:= n-d;
+    H:=localCohom(c,I);
+    M:=minimalPresentation H;
+    integrateTable := Dintegration(M, apply(n,i->1), options);
+    new HashTable from (for i from 0 to d list i=>integrateTable#(d-i))
+)
+
+deRham (ZZ, Ideal) := options -> (k, I) -> (    
+    R:= ring I;
+    if class R =!= PolynomialRing
+    then error "expected an ideal in a polynomial ring";
+    primes := minimalPrimes I;
+    if #primes > 1 then error "The variety defined by the ideal must be irreducible";
+    P := primes#0;
+    S := ideal (singularLocus P);
+    if R != S then error "expected an ideal defining a smooth affine variety";
+    n:= numgens R;
+    d:= dim I;
+    if k>d then 0
+    else (
+    	c:= n-d;
+    	H:=localCohom(c,I);
+    	M:=minimalPresentation H;
+    	Dintegration(d-k, M, apply(n,i->1),options)
+	)
+)
+
+
+
 deRham RingElement := options -> f -> (
      pInfo(1, "ENTERING deRham ...");     
      R := ring f;
@@ -311,60 +354,21 @@ getReducedTransfer (HashTable,ZZ) := (cohom,k) -> (
   tkreduced := apply(tktemp,i->apply(i,j-> (j % ggg)))
 )
 
-end -- the stuff after this point sets global variables and appears to be unused
+TEST ///
+--Boundary cases
+x = symbol x; y = symbol y;
+R = QQ[x,y]
+default := hashTable {0=>QQ^1, 1=>QQ^0, 2=>QQ^0};
+F2 = deRham(1_R); -- affine space
+assert all (keys default, i -> (F2#i == default#i));
 
-makeTauInputTest=method();
-makeTauInputTest ZZ:= dummy ->(
-  S=QQ[x,y];
-  -- ff=x*y*(x-y);
-  -- mysyzz={{-3,x,y},{2*x-y,-x^2+x*y,0}};
-  -- logco = logCohomology(ff);
-  ff := (x^3+y^4+x*y^3)*(x^2+y^2);
-  mysyzz:={{9*y-5/2*x-43/6*y^2+115/6*y*x-6*y^3, -2*y*x+1/2*x^2+x*y^2-23/6*y*x^2-5/6*y^3+x*y^3, 
-           -3/2*y^2+1/2*y*x+4/3*y^3+1/2*x^2-3*x*y^2+y^4+1/3*y*x^2}, 
-          {12/5*y^2+22/75*y*x+46/15*x^2-24/25*x*y^2, -8/15*x*y^2-2/25*y*x^2-46/75*x^3+4/25*y^2*x^2, 
-           -2/5*y^3-2/75*x*y^2-12/25*y*x^2+4/25*x*y^3+4/75*x^3}};
-  logco := logCohomology(ff);
-  ans := makeTauInput({ff,mysyzz},logco,1);
-  "t.txt" << toString ans << endl << close ;
-  ans  
-)
+--Small change doesn't affect deRham groups
+F1 = deRham(x^2-30*y^3)
+F2 = deRham(x^2-31*y^3)
+assert all (keys F1, i -> (F1#i == F2#i));
 
-makeTauInput=method();
-makeTauInput (List,HashTable,ZZ) := (fmysyz,cohom,k) -> (
-  f:=fmysyz#0;
-  mysyz:=fmysyz#1;
-  tkreduced := getReducedTransfer(cohom,k);
-
-  -- check if the syzygy is OK.
-  iii := (((cohom#VResolution).dd)#1 );
-  ggg := gb iii;
-  ggg2 := entries gens ggg; ggg2 = ggg2#0;
-  W := ring(ggg2#0);
-  vw := generators(W);
-  i:=0; j:=0; ell:=0; t:=0;
-  op:={};
-  m:=#mysyz;
-  n := numgens(W) // 2;
-  while i<m do (  
-    t = mysyz#i#0;
-    j = 1; ell=-value(toString(t));
-    while j<=n do (
-      t = mysyz#i#j;
-      ell = ell + value(toString(t))*vw_(n+j-1);
-      j = j+1;
-    );
-    op = join(op,{ell});
-    i = i+1;
-  );
-  gggell := gb ideal op;
-  -- check if op % ggg == 0, ggg2 % op == 0
-  apply(op,ell-> (if ((ell % ggg) != 0) then (print(ell,ggg); ell2=ell; error "syzygy error by ggg")));
-  apply(ggg2,ell-> (if ((ell % gggell) != 0) then (print(ell,gggell); ell2=ell; error "syzygy error by gggell")));
-
-  pInfo(2, (mysyz#0#1)*(mysyz#1#2)-(mysyz#0#2)*(mysyz#1#1));
-  pInfo(2, f);
-
-  abcd:={{mysyz#1#2,-mysyz#1#1},{-mysyz#0#2,mysyz#0#1}};  -- {{a,b},{c,d}}  in logc2.tex
-  {abcd,op,tkreduced}
-)
+--These lead to problems in factor at the moment
+F1 = deRham(x^2-y^10)
+F2 = deRham(2*x^2 - 3*y^10)
+assert all (keys F1, i -> (F1#i == F2#i));    
+///

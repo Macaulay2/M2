@@ -10,7 +10,7 @@ class PolynomialRing;
 class ResPolyRing;
 class Ring;
 class SchreyerFrame;
-class poly;
+class ResPolynomial;
 template <typename ACoeffRing> class DMat;
 
 class ResF4toM2Interface
@@ -19,10 +19,10 @@ class ResF4toM2Interface
   static void from_M2_vec(const ResPolyRing& R,
                           const FreeModule* F,
                           vec v,
-                          poly& result);
+                          ResPolynomial& result);
 
   static vec to_M2_vec(const ResPolyRing& R,
-                       const poly& f,
+                       const ResPolynomial& f,
                        const FreeModule* F);
 
   static FreeModule* to_M2_freemodule(const PolynomialRing* R,

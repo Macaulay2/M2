@@ -39,7 +39,7 @@ jobs:
           - autotools
         os:
           - ubuntu-20.04
-          - macos-10.15
+          - macos-11
         compiler:
           - default
         include:
@@ -50,13 +50,13 @@ jobs:
             cc: clang-11
           # This build tests Clang rather than AppleClang (keep)
           - build-system: cmake
-            os: macos-10.15
+            os: macos-11
             compiler: clang-11
             cxx: clang++
             cc: clang
         exclude:
           - build-system: cmake
-            os: macos-10.15
+            os: macos-11
             compiler: default
     env:
       VERBOSE: 1
@@ -73,7 +73,7 @@ jobs:
         run: |
           brew config
           brew tap macaulay2/tap
-          brew install autoconf automake bison ccache cmake ctags gnu-tar libtool make ninja pkg-config yasm
+          brew install autoconf automake bison boost tbb ccache cmake ctags gnu-tar libtool make ninja pkg-config yasm
           brew install --only-dependencies macaulay2/tap/M2
 
 # ----------------------
@@ -90,9 +90,9 @@ jobs:
                   libncurses-dev libncurses5-dev libreadline-dev libeigen3-dev liblapack-dev libxml2-dev \
                   libgc-dev libgdbm-dev libglpk-dev libgmp3-dev libgtest-dev libmpfr-dev libmpfi-dev libntl-dev gfan \
                   libgivaro-dev libboost-regex-dev fflas-ffpack libflint-dev libmps-dev libfrobby-dev \
-                  libsingular-dev singular-data libmemtailor-dev libmathic-dev libmathicgb-dev libcdd-dev \
+                  libsingular-dev singular-data libcdd-dev \
                   cohomcalg topcom 4ti2 normaliz coinor-csdp nauty lrslib polymake phcpack w3c-markup-validator \
-                  libtbb-dev # libomp5-12
+                  libtbb-dev qepcad # libomp5-12
 
 # ----------------------
 #   Steps common to all build variants
@@ -132,8 +132,9 @@ jobs:
         run: |
           cmake -S../.. -B. -GNinja \
             -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF \
-            -DCMAKE_PREFIX_PATH=`brew --prefix` \
+            -DCMAKE_PREFIX_PATH="`brew --prefix`" \
             -DCMAKE_INSTALL_PREFIX=/usr \
+            -DWITH_PYTHON=ON \
             --debug-trycompile
 
       - name: Build libraries using Ninja
@@ -160,9 +161,12 @@ jobs:
         run: |
           make -C ../.. get-libtool get-automake get-autoconf
           make -C ../.. all
-          export CPPFLAGS=-I`brew --prefix`/include
-          export  LDFLAGS=-L`brew --prefix`/lib
-          ../../configure --enable-download
+          export PYVERSION=`python3 -c "from sys import version_info; \
+            print(f'{version_info.major}.{version_info.minor}')"`
+          export CPPFLAGS="-I`brew --prefix`/include"
+          export  LDFLAGS="-L`brew --prefix`/lib \
+            -L`brew --prefix python`/Frameworks/Python.framework/Versions/${PYVERSION}/lib"
+          ../../configure --enable-download --with-python --with-system-gc --enable-syntax-highlighting
 
       - name: Build Macaulay2 using Make
         if: matrix.build-system == 'autotools'
@@ -182,6 +186,7 @@ jobs:
           ./M2 -q --check 3 -e 'exit 0'
           cmake --build . --target M2-tests
           cmake --build . --target M2-unit-tests
+          cmake --build . --target memtailor-unit-tests mathic-unit-tests mathicgb-unit-tests
           ctest -j1 --output-on-failure -R "unit-tests"
           ctest -j4 --output-on-failure -R "ComputationsBook"
           # TODO: add Macaulay2/tests/engine when https://github.com/Macaulay2/M2/issues/1213 is fixed

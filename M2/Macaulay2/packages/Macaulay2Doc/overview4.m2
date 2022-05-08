@@ -265,7 +265,7 @@ document {
      projective resolution of ", TT "M", ", then it can be installed
      with ", TT "M.cache.resolution = C", ".",
      PARA{},
-     "There are various optional arguments associated with ", TO "res", "
+     "There are various optional arguments associated with ", TO2(resolution, "res"), "
      which allow detailed control over the progress of the computation."
      }
 

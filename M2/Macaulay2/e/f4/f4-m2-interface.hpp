@@ -2,7 +2,7 @@
 #define __F4toM2interface_h_
 
 #include "engine-exports.h"  // for M2_arrayint
-#include "f4/f4-types.hpp"   // for gb_array, poly (ptr only), coefficient_m...
+#include "f4/f4-types.hpp"   // for gb_array, GBF4Polynomial (ptr only), coefficient_m...
 #include "ringelem.hpp"      // for vec
 
 class FreeModule;
@@ -17,7 +17,7 @@ class F4toM2Interface
   static void poly_set_degrees(const VectorArithmetic* VA,
                                const MonomialInfo *MI,
                                const M2_arrayint wts,
-                               const poly &f,
+                               const GBF4Polynomial &f,
                                int &deg,
                                int &alpha);
 
@@ -25,11 +25,11 @@ class F4toM2Interface
                           const MonomialInfo *MI,
                           const FreeModule *F,
                           vec v,
-                          poly &result);
+                          GBF4Polynomial &result);
 
   static vec to_M2_vec(const VectorArithmetic* VA,
                        const MonomialInfo *MI,
-                       const poly &f,
+                       const GBF4Polynomial &f,
                        const FreeModule *F);
 
   static void from_M2_matrix(const VectorArithmetic* VA,

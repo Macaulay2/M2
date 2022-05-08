@@ -2,7 +2,7 @@
 
 #include "f4/moninfo.hpp"
 #include "interface/monomial-ordering.h"  // for moGetWeightValues, moIsGRevLex
-#include "newdelete.hpp"                  // for deletearray, newarray_atomic
+#include "newdelete.hpp"                  // for freemem, newarray_atomic
 
 #include <cstdio>                         // for fprintf, stderr, stdout
 #include <cstdlib>                        // for rand
@@ -55,7 +55,7 @@ MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
   firstvar = 2 + nweights;
 }
 
-MonomialInfo::~MonomialInfo() { deletearray(hashfcn); }
+MonomialInfo::~MonomialInfo() { freemem(hashfcn); }
 monomial_word MonomialInfo::monomial_weight(const_packed_monomial m,
                                             const M2_arrayint wts) const
 {

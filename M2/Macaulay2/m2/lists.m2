@@ -1,5 +1,16 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "set.m2"
+needs "methods.m2"
+
+    Sequence.synonym = "sequence"
+       Array.synonym = "array"
+        List.synonym = "list"
+   BasicList.synonym = "basic list"
+ VisibleList.synonym = "visible list"
+ MutableList.synonym = "mutable list"
+AngleBarList.synonym = "angle bar list"
+
 List#"major documentation node" = true
 
 List ? List := (s,t) -> if class s === class t then toSequence s ? toSequence t else (class s) ? (class t)
@@ -17,6 +28,7 @@ List + List  := List => (v,w) -> apply(v,w,plus)
      - List  := List => v -> apply(v,minus)
 List - List  := List => (v,w) -> apply(v,w,difference)
 Thing * List := List => (a,v) -> apply(v,x->a * x)
+List ** List := List => (X,Y) -> flatten for x in X list apply(Y, y -> (x, y))
 
 List / Thing := List => (v,b) -> apply(v,x->x / b)	    -- slight conflict with List / Function!
 List // RingElement := List // Number := List => (v,b) -> apply(v,x->x // b)
@@ -103,7 +115,7 @@ member(Thing,VisibleList) := Boolean => (c,x) -> any(x, i -> c===i)
 sum List := x -> plus toSequence x
 
 sum(ZZ,Function) := (n,f) -> (
-     if n === 0 then 0
+     if n <= 0 then 0
      else (
 	  s := f 0;
 	  for i from 1 to n-1 do s = s + f i;
@@ -129,7 +141,7 @@ sum(VisibleList, VisibleList, Function) := (x,y,f) -> (
 product List := x -> times toSequence x
 
 product(ZZ,Function) := (n,f) -> (
-     if n === 0 then 1
+     if n <= 0 then 1
      else (
 	  s := f 0;
 	  for i from 1 to n-1 do s = s * f i;
@@ -162,6 +174,8 @@ rotate(ZZ,VisibleList) := (n,s) -> (
 -- sort should not accept sequences because sort is now a function with options!
 sort List :=  opts -> internalsort
 rsort List := opts -> internalrsort
+
+List << List := (A, B) -> all(min(#A, #B), i -> A#i <= B#i)
 
 -- we've been waiting to do this:
 binaryOperators = sort binaryOperators

@@ -54,6 +54,9 @@ VPATH = @srcdir@
 
 CONFIGOPTIONS += --enable-threads=posix
 
+## always build for large memory configurations
+CPPFLAGS += -DMAX_HEAP_SECTS=81920 -DMAXHINCR=4096
+
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared --enable-static
 endif
@@ -75,7 +78,7 @@ CONFIGOPTIONS +=  --enable-parallel-mark
 # INSTALLTARGET = install-strip
 endif
 
-CONFIGOPTIONS += --enable-large-config --disable-gcj-support --disable-java-finalization
+CONFIGOPTIONS += --disable-gcj-support --disable-java-finalization
 
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gc/Makefile

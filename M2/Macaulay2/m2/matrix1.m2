@@ -1,5 +1,9 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+needs "matrix.m2"
+needs "modules.m2"
+needs "quotient.m2"
+
 plurals := hashTable { "matrix" => "matrices" }
 pluralize := s -> if plurals#?s then plurals#s else s|"s"
 pluralsynonym := T -> try pluralize T.synonym else "objects of class "|toString T;
@@ -373,7 +377,8 @@ subquotient(Module,Matrix,Nothing) := (F,g,r) -> (
      subquotient(g,r))
 subquotient(Module,Nothing,Nothing) := (F,g,r) -> F
 
-Matrix ** Matrix := Matrix => ((f,g) -> (
+Matrix ** Matrix := Matrix => (A, B) -> tensor(A, B)
+tensor(Matrix, Matrix) := Matrix => {} >> opts -> ((f, g) -> (
      samering(target f,target g);
      samering(source f,source g);
      R := ring target f;
@@ -440,6 +445,7 @@ comodule Module := Module => M -> cokernel super map(M,M,1)
 quotient Module := Module => opts -> M -> comodule M
 comodule Ideal := Module => I -> cokernel generators I
 quotient Ideal := Module => opts -> I -> (ring I) / I
+module   Ideal := Module => (cacheValue symbol module) (I -> image generators I)
 
 genera Ideal := (I) -> genera ((ring I)^1/I)
 genus Ideal := (I) -> genus ((ring I)^1/I)
@@ -491,11 +497,9 @@ Ideal#{Standard,AfterPrint} = Ideal#{Standard,AfterNoPrint} = (I) -> (
 Ideal ^ ZZ := Ideal => (I,n) -> ideal symmetricPower(n,generators I)
 Ideal * Ideal := Ideal => ((I,J) -> ideal flatten (generators I ** generators J)) @@ samering
 Ideal * Module := Module => ((I,M) -> subquotient (generators I ** generators M, relations M)) @@ samering
-dim Ideal := I -> dim cokernel generators I
 Ideal + Ideal := Ideal => ((I,J) -> ideal (generators I | generators J)) @@ tosamering
 Ideal + RingElement := Ideal + Number := ((I,r) -> I + ideal r) @@ tosamering
 RingElement + Ideal := Number + Ideal := ((r,I) -> ideal r + I) @@ tosamering
-degree Ideal := I -> degree cokernel generators I
 Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
 Matrix % Ideal := Matrix => ((f,I) -> 
      if numRows f === 1
@@ -511,7 +515,6 @@ numgens Ideal := (I) -> numgens source generators I
 leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
 leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
 jacobian Ideal := Matrix => (I) -> jacobian generators I
-poincare Ideal := (I) -> poincare comodule I
 Ideal _ List := (I,w) -> (module I)_w
 
 ring Ideal := (I) -> I.ring
@@ -534,12 +537,6 @@ Ideal == Ideal := (I,J) -> (
 
 Ideal == Module := (I,M) -> module I == M
 Module == Ideal := (M,I) -> M == module I
-
-module Ideal := Module => (cacheValue symbol module) (
-     I -> (
-	  M := image generators I;
-	  if I.cache.?poincare then M.cache.poincare = I.cache.poincare;
-	  M))
 
 ideal Matrix := Ideal => (f) -> (
      R := ring f;
@@ -663,6 +660,7 @@ scan({ZZ,QQ}, S -> (
 	       else (ideal lift(generators I,S,opts)) + ideal (presentation ring I ** S))));
 
 content(RingElement) := Ideal => (f) -> ideal \\ last \ listForm f
+content(RingElement, RingElement) := Ideal => (f,x) -> ideal last coefficients(f, Variables => {x})
 
 cover(Matrix) := Matrix => (f) -> matrix f
 

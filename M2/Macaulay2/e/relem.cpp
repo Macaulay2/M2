@@ -240,7 +240,7 @@ bool RingElement::is_homogeneous() const { return R->is_homogeneous(val); }
 //       R->degree_monoid()->to_expvector(mon, d);
 //     }
 //
-//   deletearray(mon);
+//   freemem(mon);
 //   return result;
 // }
 #endif
@@ -273,7 +273,7 @@ M2_arrayint RingElement::multi_degree() const
   R->degree(get_value(), mon);
   M2_arrayint result = R->degree_monoid()->to_arrayint(mon);
 
-  deletearray(mon);
+  freemem(mon);
   return result;
 }
 

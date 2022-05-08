@@ -69,6 +69,9 @@ assert( w#0 == f * w#1 + g * w#2 )
 assert( w#0 % d == 0 ) -- test the two gcd's are associated; the precise (unit) factor varies
 assert( d % w#0 == 0 ) -- actually, we'd like w#0 == d.  I wonder why factory doesn't ensure that?
 
+R = QQ[x]; R2=R[t];
+assert ( gcd(t^2-x^2,t^3-x^3) == t-x )
+
 debug Core
 R = QQ[x,y]
 f = 1+x^2

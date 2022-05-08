@@ -1,5 +1,7 @@
 --		Copyright 1993-2008 by Daniel R. Grayson
 
+needs "enginering.m2"
+
 -- ImmutableType
 
 ImmutableType = new Type of HashTable
@@ -230,6 +232,7 @@ conjugate CC := z -> toCC(precision z, realPart z, - imaginaryPart z)
 isConstant Number := i -> true
 
 round RR := round CC := round0
+round Constant := round0 @@ numeric
 round(ZZ,RR) := (n,x) -> (
      prec := precision x;
      p := (toRR(prec,10))^n;
@@ -260,13 +263,15 @@ char InexactField := R -> 0
 
 pi = new Constant from { symbol pi, pi0, piRRi0 }
 EulerConstant = new Constant from { symbol EulerConstant, mpfrConstantEuler, eRRi0}
+CatalanConstant = new Constant from { symbol CatalanConstant, mpfrConstantCatalan, cRRi0}
 ii = new Constant from { symbol ii, ConstantII}
 
 lngamma = method()
-lngamma ZZ := lngamma QQ := lngamma RR := x -> (
+lngamma RR := x -> (
      (y,s) := lgamma x;
      if s == -1 then y + ii * numeric_(precision y) pi else y
      )
+lngamma ZZ := lngamma QQ := lngamma Constant := lngamma @@ numeric
 
 expression Constant := hold
 toString Constant := net Constant := c -> toString c#0
@@ -275,11 +280,11 @@ numeric Constant := c -> c#1 defaultPrecision
 numeric(ZZ,Constant) := (prec,c) -> c#1 prec
 numericInterval Constant := c -> if #c < 3 then interval(0,-1,Precision=>defaultPrecision) else c#2 defaultPrecision
 numericInterval(ZZ,Constant) := (prec,c) -> if #c < 3 then interval(0,-1,Precision=>prec) else c#2 prec
-exp Constant := c -> exp numeric c
 
 constantTexMath := new HashTable from {
     symbol pi => "\\pi",
     symbol EulerConstant => "\\gamma",
+    symbol CatalanConstant => "\\mathrm{G}",
     symbol ii => "\\mathbf{i}"
     }
 texMath Constant := c -> if constantTexMath#?(c#0) then constantTexMath#(c#0) else texMath toString c#0
@@ -310,11 +315,13 @@ Constant ^ Constant := (c,d) -> (numeric c) ^ (numeric d)
 Constant ^ InexactNumber := (c,x) -> (numeric(precision x,c)) ^ x
 InexactNumber ^ Constant := (x,c) -> x ^ (numeric(precision x,c))
 
-Constant == Constant := (c,d) -> numeric d == numeric d
+Constant == Constant := (c,d) -> numeric c == numeric d
 Constant == RingElement :=
 Constant == InexactNumber := (c,x) -> numeric(precision x,c) == x
 RingElement == Constant :=
 InexactNumber == Constant := (x,c) -> x == numeric(precision x,c)
+Constant ? Constant := (c,d) -> numeric c ? numeric d
+InexactNumber ? Constant := (x,c) -> x ? numeric(precision x,c)
 
 Constant _ Ring := (c,R) -> (
      prec := precision R;
@@ -334,6 +341,11 @@ Constant / Number := (c,x) -> numeric c / x
 Number / Constant := (x,c) -> x / numeric c
 Constant ^ Number := (c,x) -> (numeric c) ^ x
 Number ^ Constant := (x,c) -> x ^ (numeric c)
+
+Constant == Number := (c,x) -> numeric c == x
+Number == Constant := (x,c) -> x == numeric c
+Constant ? Number := (c,x) -> numeric c ? x
+Number ? Constant := (x,c) -> x ? numeric c
 
 Constant + InfiniteNumber := (c,x) -> x
 InfiniteNumber + Constant := (x,c) -> x
@@ -383,6 +395,15 @@ net CC := z -> simpleToString z
 toExternalString RR := toExternalString0
 toExternalString CC := toExternalString0
 texMath CC := x -> texMath expression x
+texMath RR := x -> (
+    if not isANumber x then texMath toString x else
+    if    isInfinite x then texMath(if x > 0 then infinity else -infinity)
+    else "{" | format(
+	printingPrecision,
+	printingAccuracy,
+	printingLeadLimit,
+	printingTrailLimit,
+	"}\\cdot 10^{", x ) | "}")
 withFullPrecision = f -> (
      prec := printingPrecision;
      acc := printingAccuracy;
@@ -413,17 +434,30 @@ InexactNumber#{Standard,AfterPrint} = x -> (
 isReal = method()
 isReal RRi := isReal RR := isReal QQ := isReal ZZ := x -> true
 isReal CC := z -> imaginaryPart z == 0
+isReal Constant := isReal @@ numeric
+isReal InfiniteNumber := x -> false
+
+isInfinite' = isInfinite
+isInfinite = method()
+isInfinite Number := isInfinite'
+isInfinite Constant := isInfinite @@ numeric
+isInfinite InfiniteNumber := x -> true
 
 acosh = method()
 acosh Number := z -> log(z+sqrt(z^2-1))
+acosh Constant := acosh @@ numeric
 asinh = method()
 asinh Number := z -> log(z+sqrt(z^2+1))
+asinh Constant := asinh @@ numeric
 atanh = method()
 atanh Number := z -> log((1+z)/(1-z))/2
+atanh Constant := atanh @@ numeric
 acoth = method()
 acoth Number := z -> atanh(1/z)
+acoth Constant := acoth @@ numeric
 acot = method()
 acot Number := z -> atan(1/z)
+acot Constant := acot @@ numeric
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

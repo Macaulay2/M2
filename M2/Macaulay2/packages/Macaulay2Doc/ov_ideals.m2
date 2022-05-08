@@ -260,7 +260,7 @@ document {
 	    },
 
      SUBSECTION "the generators as a matrix or list of elements",
-       "Use ", TO "generators", " or its abbreviation ", TO "gens", " to 
+       "Use ", TO "generators", " or its abbreviation ", TT "gens", " to
        get the generators of an ideal ", TT "I", " as a matrix.  
        Applying ", TT "first entries", " to this matrix converts it 
        to a list.",

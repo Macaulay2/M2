@@ -102,9 +102,6 @@
 /* Define to 1 if you have the <execinfo.h> header file. */
 #cmakedefine HAVE_EXECINFO_H 1
 
-/* whether Prem() from factory is public */
-#cmakedefine HAVE_FACTORY_PREM 1
-
 /* Define to 1 if you have the `fchmod' function. */
 #cmakedefine HAVE_FCHMOD 1
 
@@ -326,6 +323,9 @@
 
 /* Whether we use MPIR (instead of GMP) */
 #cmakedefine01 USING_MPIR
+
+/* Whether we are building with tbb version >= 2021 */
+#cmakedefine WITH_TBB
 
 /* whether we are linking with the libxml2 library */
 #cmakedefine WITH_XML

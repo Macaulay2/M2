@@ -36,6 +36,15 @@ RUN apt-get install -y --no-install-recommends libcdd-dev lrslib \
 	4ti2 cohomcalg coinor-csdp gfan nauty normaliz polymake topcom && \
     apt-get clean
 
+# Setting up Macaulay2 repository
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends software-properties-common apt-transport-https && \
+    add-apt-repository ppa:macaulay2/macaulay2 && add-apt-repository ppa:macaulay2/macaulay2 && \
+    apt-get update && apt-get clean
+
+RUN apt-get install -y libgivaro-dev fflas-ffpack
+RUN apt-get install -y libmpfi-dev
+
 # Optional packages
 RUN apt-get install -y mlocate bash-completion
 

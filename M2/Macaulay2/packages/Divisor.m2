@@ -5,7 +5,7 @@ newPackage( "Divisor",
      Date => "May 30th, 2018",
      Authors => {
 	  {Name => "Karl Schwede", Email=> "kschwede@gmail.com", HomePage=> "http://www.math.utah.edu/~schwede"},
-     	  {Name=> "Zhaoning Yang", Email=> "zyy5054@gmail.com", HomePage => "http://sites.psu.edu/zhaoningyang"}},
+     	  {Name=> "Zhaoning Yang", Email=> "zyy5054@gmail.com"}},
      Headline => "Weil divisors",
      Keywords => {"Commutative Algebra"},
      PackageImports => { "IntegralClosure", "RationalMaps" },
@@ -1555,7 +1555,9 @@ isVeryAmple(WeilDivisor) := Boolean => o->(D1) -> (
         D1#cache#isVeryAmple = false;
         false)
     else (
-        flag := isEmbedding(mapFromD1, Verbose=>o.Verbose);
+        val := 0;
+        if (o.Verbose) then val = 2;
+        flag := isEmbedding(mapFromD1, Verbosity=>val);
         D1#cache#isVeryAmple = flag;
         flag
     )

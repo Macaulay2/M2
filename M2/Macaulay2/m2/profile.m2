@@ -1,5 +1,7 @@
 --		Copyright 1997 by Daniel R. Grayson
 
+needs "methods.m2"
+
 profile = method()
 
 record := new MutableHashTable

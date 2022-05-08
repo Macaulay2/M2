@@ -496,7 +496,7 @@ doc ///
 	    the result returned from Polymake
     Description
         Text
-	    Runs a Polymake script and returns whatever Polymake prints in its stardard output as a String.
+	    Runs a Polymake script and returns whatever Polymake prints in its standard output as a String.
 	Example
 	    script = "use application \"polytope\"; my $a = cube(2,2); print $a->F_VECTOR;";
 	    runPolymake(script)

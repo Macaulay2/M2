@@ -92,7 +92,7 @@ class Element
 
 class ModulePoly
 {
-  CoeffVector mCoeffVector;
+  ElementArray mElementArray;
   std::vector<int> mComponents;
   std::vector<int> mMonomials;
   // above could be std::vector of Monoms, or maybe even together

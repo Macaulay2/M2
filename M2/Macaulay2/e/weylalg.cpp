@@ -49,8 +49,25 @@ bool WeylAlgebra::initialize_weyl(M2_arrayint derivs,
 
   // Now set whether this ring is graded.  This will be the case iff
   // deg(x_i) + deg(D_i) = 2 deg(h), for every i.
+
   if (_homog_var < 0)
-    this->setIsGraded(false);
+    {
+      bool isgraded = true;
+      const Monoid *D = degree_monoid();
+      int *degxD = D->make_one();
+      for (int j = 0; j < _nderivatives; j++)
+        {
+          const int *degx = M_->degree_of_var(_commutative[j]);
+          const int *degD = M_->degree_of_var(_derivative[j]);
+          D->mult(degx, degD, degxD);
+          if (not D->is_one(degxD))
+            {
+              isgraded = false;
+              break;
+            }
+        }
+      this->setIsGraded(isgraded);
+    }
   else
     {
       this->setIsGraded(true);
@@ -393,8 +410,8 @@ Nterm *WeylAlgebra::weyl_diff(const ring_elem c,
           result = tm;
         }
     }
-  deletearray(exp);
-  deletearray(result_exp);
+  freemem(exp);
+  freemem(result_exp);
   result->next = 0;
   return head.next;
 }
@@ -421,9 +438,9 @@ ring_elem WeylAlgebra::mult_by_term(const ring_elem f,
     }
   while (increment(current_derivative, top_derivative));
 
-  deletearray(expf);
-  deletearray(top_derivative);
-  deletearray(current_derivative);
+  freemem(expf);
+  freemem(top_derivative);
+  freemem(current_derivative);
   return result.value();
 }
 
@@ -514,8 +531,8 @@ gbvector *WeylAlgebra::gbvector_weyl_diff(
           result = tm;
         }
     }
-  deletearray(exp);
-  deletearray(result_exp);
+  freemem(exp);
+  freemem(result_exp);
   result->next = 0;
   return head.next;
 }
@@ -548,9 +565,9 @@ gbvector *WeylAlgebra::gbvector_mult_by_term(
     }
   while (increment(current_derivative, top_derivative));
 
-  deletearray(expf);
-  deletearray(top_derivative);
-  deletearray(current_derivative);
+  freemem(expf);
+  freemem(top_derivative);
+  freemem(current_derivative);
   return result.value();
 }
 

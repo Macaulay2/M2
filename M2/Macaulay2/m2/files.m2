@@ -1,5 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "methods.m2"
+
 printpass := ID -> x -> (stderr << ID << ": " << x << endl; x)
 fold3 := (f,x,v) -> (scan(v, y -> x = f(x,y)); x)
 fold2 := (f,v) -> fold3(f,v#0,drop(v,1))
@@ -7,7 +9,7 @@ mergeopts := x -> fold2((a,b) -> merge(a,b,last), x)
 makeDir := name -> if name != "" and (not fileExists name or not isDirectory (name | "/.")) then mkdir name
 
 searchPath = method()
-searchPath(List,String) := List => (pth,fn) -> select(pth, dir -> fileExists(dir|"/"|fn))
+searchPath(List,String) := List => (pth,fn) -> searchPath'(pth,fn)
 searchPath(String) := List => (fn) -> searchPath(path,fn)
 
 makeDirectory = method()
@@ -270,7 +272,7 @@ tt#"\\"= "_bs"			 -- can't occur in a file name: MS-DOS and sh
 tt#"_" = "_us"					      -- our escape character
 
 -- some OSes are case insensitive:
-apply(characters "ABCDEFGHIJKLMNOPQRSTUVWXYZ", cap -> tt#cap = concatenate("__", cap))
+apply("ABCDEFGHIJKLMNOPQRSTUVWXYZ", cap -> tt#cap = concatenate("__", cap))
 
 toFilename = method()
 toFilename String := s -> (
@@ -281,7 +283,7 @@ toFilename String := s -> (
      -- from occurring in the first position, where it would have a special
      -- meaning to Macaulay2.
      -- We should check which characters are allowed in URLs.
-     s = concatenate("_",apply(characters s, c -> tt#c));
+     s = concatenate("_",apply(s, c -> tt#c));
      s)
 
 regexpString := s -> replace(///([][\.^$+*{()}])///,///\\1///,s)

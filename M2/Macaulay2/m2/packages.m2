@@ -1,6 +1,14 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 -- TODO: eventually we won't be able to keep all packages open, anyway, since 256 can be our limit on open file descriptors
 
+needs "code.m2"
+needs "files.m2"
+needs "fold.m2"
+needs "lists.m2"
+needs "methods.m2"
+needs "regex.m2"
+needs "system.m2"
+
 loadedPackages = {}
 
 rawKey   = "raw documentation"
@@ -49,11 +57,12 @@ if notify then stderr << "--loading configuration for package \"PKG\" from file 
 warn0 := (sym, front, behind, syns) -> (
     -- just for debugging:
     -- error("symbol ", format sym, " in ", toString behind, " is shadowed by a symbol in ", toString front);
-    stderr << "--warning: symbol " << format toString sym << " in " << behind << " is shadowed by a symbol in " << front << endl;
+    printerr("warning: symbol ", format toString sym, " in ", toString behind,
+	" is shadowed by a symbol in ", toString front);
     if #syns > 0 then if #syns > 1
-    then stderr << "--  use one of the synonyms " << demark(", ", syns) << endl
-    else stderr << "--  use the synonym " << syns#0 << endl
-    else stderr << "--  no synonym is available" << endl)
+    then printerr("  use one of the synonyms ", demark(", ", syns))
+    else printerr("  use the synonym ", syns#0)
+    else printerr("  no synonym is available"))
 warn := x -> if not seenWarnings#?x and debuggingMode then (warn0 x; seenWarnings#x = true)
 
 checkShadow := () -> (
@@ -87,18 +96,6 @@ isPackageLoaded := pkgname -> PackageDictionary#?pkgname and instance(value Pack
 checkPackageName = title -> (
     if not match("^[[:alnum:]]+$", title) then error("package title not alphanumeric: ", format title))
 
------------------------------------------------------------------------------
--- gdbm functions
------------------------------------------------------------------------------
-
--- gdbm makes architecture dependent files, so we try to distinguish them, in case
--- they get mixed.  Yes, that's in addition to installing them in directories that
--- are specified to be suitable for machine dependent data.
-databaseSuffix := "-" | version#"endianness" | "-" | version#"pointer size" | ".db"
-
-databaseDirectory = (layout, pre, pkg) -> pre | replace("PKG", pkg, layout#"packagecache")
-databaseFilename  = (layout, pre, pkg) -> databaseDirectory(layout, pre, pkg) | "rawdocumentation" | databaseSuffix
-
 closePackage = pkg -> if pkg#?rawKeyDB then (db -> if isOpen db then close db) pkg#rawKeyDB
 
 -----------------------------------------------------------------------------
@@ -116,6 +113,7 @@ net      Package :=
 toString Package := pkg -> if pkg#?"pkgname" then pkg#"pkgname" else "-*package*-"
 texMath  Package := pkg -> texMath toString pkg
 options  Package := pkg -> pkg.Options
+methods  Package := memoize(pkg -> select(methods(), m -> package m === pkg))
 
 -- TODO: should this go elsewhere?
 toString Dictionary := dict -> (
@@ -142,11 +140,13 @@ readPackage = method(TypicalValue => OptionTable, Options => { FileName => null 
 readPackage Package := opts -> pkg     -> options pkg
 readPackage String  := opts -> pkgname -> (
     if pkgname === "Core" then return newPackageOptions#"Core";
+    remove(newPackageOptions, pkgname);
     filename := if opts.FileName === null then pkgname | ".m2" else opts.FileName;
     loadPackageOptions#pkgname = new OptionTable from { HeaderOnly => true };
     load filename;
     remove(loadPackageOptions, pkgname);
-    newPackageOptions#pkgname)
+    if newPackageOptions#?pkgname then return newPackageOptions#pkgname
+    else error("readPackage: ", filename, " does not contain a valid package (missing newPackage)"))
 
 loadPackage = method(
     TypicalValue => Package,
@@ -186,7 +186,9 @@ needsPackage = method(TypicalValue => Package, Options => options loadPackage)
 needsPackage String  := opts -> pkgname -> (
     if PackageDictionary#?pkgname
     and instance(pkg := value PackageDictionary#pkgname, Package)
-    and (opts.FileName === null or opts.FileName == pkg#"source file")
+    and (opts.FileName === null or
+	realpath opts.FileName == realpath pkg#"source file")
+    and pkg.PackageIsLoaded
     then use value PackageDictionary#pkgname
     else loadPackage(pkgname, opts))
 
@@ -316,6 +318,7 @@ newPackage String := opts -> pkgname -> (
 	    m = regex("(/|^)" | Layout#1#"packages" | "$", currentFileDirectory);
 	    -- this can be useful when running from the source tree, but this is a kludge
 	    if m#?1 then substring(currentFileDirectory, 0, m#1#0 + m#1#1) else prefixDirectory));
+    packageLayout := detectCurrentLayout packagePrefix;
     --
     newpkg := new Package from nonnull {
 	"pkgname"                  => pkgname,
@@ -345,27 +348,15 @@ newPackage String := opts -> pkgname -> (
 	if packagePrefix =!= null then
 	"package prefix"           => packagePrefix
 	};
+    newpkg.PackageIsLoaded = false;
     --
-    if packagePrefix =!= null then (
-	rawdbname := databaseFilename(Layout#(detectCurrentLayout packagePrefix), packagePrefix, pkgname);
+    if packageLayout =!= null then (
+	rawdbname := databaseFilename(Layout#packageLayout, packagePrefix, pkgname);
 	if fileExists rawdbname then (
 	    newpkg#rawKeyDB = rawdb := openDatabase rawdbname;
 	    addEndFunction(() -> if isOpen rawdb then close rawdb))
-	else if notify then stderr << "--database not present: " << rawdbname << endl;
-	newpkg#topFileName = packagePrefix | replace("PKG", newpkg#"pkgname", currentLayout#"packagehtml") | topFileName)
-    else if notify then stderr << "--package prefix null, not opening database for package " << newpkg << endl;
-    --
-    addStartFunction(() ->
-	if not ( newpkg#?rawKeyDB and isOpen newpkg#rawKeyDB ) and prefixDirectory =!= null
-	then (
-	    dbname := databaseFilename (currentLayout, prefixDirectory, pkgname); -- what if there is more than one prefix directory?
-	    if fileExists dbname then (
-		db := newpkg#rawKeyDB = openDatabase dbname;
-		if notify then stderr << "--opened database: " << rawdbname << endl;
-		addEndFunction(() -> if isOpen db then close db))
-	    else (
-		if notify then stderr << "--database not present: " << rawdbname << endl;
-		)));
+	else if notify then printerr("database not present: ", minimizeFilename rawdbname))
+    else if notify then printerr("package prefix null, not opening database for package ", format pkgname);
     --
     pkgsym := (
 	if PackageDictionary#?pkgname then getGlobalSymbol(PackageDictionary, pkgname)
@@ -440,6 +431,7 @@ exportFrom(Package, List) := (P, x) -> export \\ toString \ importFrom(P, x)
 
 ---------------------------------------------------------------------
 -- Here is where Core officially becomes a package
+-- TODO: is this line necessary? when does it ever run?
 addStartFunction( () -> if prefixDirectory =!= null then Core#"package prefix" = prefixDirectory )
 newPackage("Core",
      Authors => {
@@ -451,6 +443,9 @@ newPackage("Core",
      HomePage => "http://www.math.uiuc.edu/Macaulay2/",
      Version => version#"VERSION",
      Headline => "A computer algebra system designed to support algebraic geometry")
+Core#"pre-installed packages" = lines get (currentFileDirectory | "installedpackages")
+
+protect PackageIsLoaded
 
 endPackage = method()
 endPackage String := title -> (
@@ -462,10 +457,8 @@ endPackage String := title -> (
 	       protect s;
 	       ---if value s =!= s and not hasAttribute(value s, ReverseDictionary) then setAttribute((value s), ReverseDictionary, s)
 	       ));
-     if true or pkg =!= Core then (			    -- protect it later
-	  protect pkg#"private dictionary";
-	  protect exportDict;
-	  );
+     protect exportDict;
+     protect pkg#"private dictionary";
      if pkg#"pkgname" === "Core" then (
 	  loadedPackages = {pkg};
 	  dictionaryPath = {Core.Dictionary, OutputDictionary, PackageDictionary};
@@ -483,7 +476,7 @@ endPackage String := title -> (
      remove(pkg, "previous currentPackage");
      debuggingMode = pkg#"old debuggingMode"; remove(pkg, "old debuggingMode");
      checkShadow();
-     if notify then stderr << "--package \"" << pkg << "\" loaded" << endl;
+     if notify then printerr("package ", format title, " loaded");
      if pkg.?loadDepth then (
 	  loadDepth = pkg.loadDepth;
 	  remove(pkg, loadDepth);
@@ -494,6 +487,7 @@ endPackage String := title -> (
 	  error splice ("mutable unexported unset symbol(s) in package ", pkg#"pkgname", ": ", toSequence between_", " b);
 	  );
      -- TODO: check for hadDocumentationWarning and Error here?
+     pkg.PackageIsLoaded = true;
      pkg)
 
 beginDocumentation = () -> (
@@ -542,7 +536,6 @@ use Package := pkg -> (
     checkShadow();
     if pkg.?use then pkg.use pkg else pkg)
 
-debug = method()
 debug ZZ      := i   -> debugWarningHashcode = i
 debug Package := pkg -> (
     dict := pkg#"private dictionary";

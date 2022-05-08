@@ -1,6 +1,9 @@
 --  Copyright 1993-2003 by Daniel R. Grayson
 -- Revamped by P. Zinn-Justin and Mahrud Sayrafi 2020
--- html0.m2 -> hypertext.m2
+
+needs "regex.m2" -- for toLower
+needs "lists.m2" -- for all
+needs "methods.m2"
 
 -----------------------------------------------------------------------------
 -- Hypertext type declarations and basic constructors
@@ -111,6 +114,7 @@ PARA       = new MarkUpType of HypertextParagraph -- double spacing inside
 DIV        = new MarkUpType of HypertextContainer
 BR         = new MarkUpType of Hypertext
 HR         = new MarkUpType of HypertextParagraph
+SCRIPT     = new MarkUpType of HypertextParagraph
 
 -- Headers
 HEADER1    = new MarkUpType of HypertextParagraph
@@ -310,13 +314,15 @@ htmlGlobalAttr = {
     "style",
     "tabindex",
     "title",
-    "translate"
+    "translate",
+    "xmlns"
     }
 
 scan({HTML, HEAD, TITLE, BODY}, T -> addAttribute(T, htmlGlobalAttr))
 addAttribute(META,  htmlGlobalAttr | {"name", "content", "http-equiv"})
 addAttribute(LINK,  htmlGlobalAttr | {"href", "rel", "title", "type"})
 addAttribute(STYLE, htmlGlobalAttr | {"type"})
+addAttribute(SCRIPT, htmlGlobalAttr | {"src", "type"})
 
 -- html global and event attributes
 htmlAttr = htmlGlobalAttr | {
@@ -341,6 +347,8 @@ addAttribute(TH,     htmlAttr | {"colspan", "headers", "rowspan"})
 addAttribute(IMG,    htmlAttr | {"alt", "src", "srcset", "width", "height",
 	"sizes", "crossorigin", "longdesc", "referrerpolicy", "ismap", "usemap"})
 
+M2CODE = method()
+M2CODE Thing := x -> prepend("class" => "language-macaulay2", CODE x)
 
 -- Written by P. Zinn-Justin
 style = method(Options => true)

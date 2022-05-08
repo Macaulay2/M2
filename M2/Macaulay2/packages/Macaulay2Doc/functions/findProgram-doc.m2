@@ -1,5 +1,5 @@
 document {
-    Key => {Program, (net, Program)},
+    Key => Program,
     Headline => "external program object",
     PARA {"A hash table returned by ", TO "findProgram",
 	" with the following strings as keys:"},
@@ -110,7 +110,8 @@ document {
 	    ", where the programs shipped with Macaulay2 are installed."},
 	{"Each path specified by the ", TT "AdditionalPaths", " option."},
 	{"Each path specified by the user's ", TT "PATH",
-	    " environment variable."}
+	    " environment variable."},
+	{"The path to ", TT "M2-binary", "."}
     },
     PARA {"For each path, any prefixes specified by the ", TT "Prefix",
 	" option are checked."},
@@ -123,7 +124,7 @@ document {
 	"file, then ", TT "name", " should coincide with the name of this ",
 	"file."},
     EXAMPLE lines ///
-	programPaths#"gfan" = "/path/to/gfan/"
+	programPaths#"gfan" = "/path/to/gfan/" -* no-capture-flag *-
 	gfan = findProgram("gfan", "gfan _version --help", Verbose => true)///,
     PARA {"One program that is shipped with a variety of prefixes in ",
 	"different distributions and for which the ", TT "Prefix",

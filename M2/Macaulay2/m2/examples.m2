@@ -7,6 +7,9 @@
  * examples
  *-
 
+needs "hypertext.m2"
+needs "run.m2"
+
 processExamplesStrict = true
 
 -----------------------------------------------------------------------------
@@ -32,7 +35,7 @@ trimlines := L -> apply(L, x ->
 
 makeExampleItem = method()
 -- TODO: can this be handled with a NewFromMethod?
-makeExampleItem PRE    := p -> flatten apply(toList p, s -> PRE \ separateM2output s)
+makeExampleItem PRE    := p -> flatten apply(toList p, s -> PRE \ M2CODE \ separateM2output s)
 makeExampleItem String := s -> ExampleItem s
 
 -- allows canned examples with EXAMPLE PRE "..."
@@ -47,6 +50,7 @@ EXAMPLE VisibleList := x -> (
 -----------------------------------------------------------------------------
 -- capture
 -----------------------------------------------------------------------------
+-- TODO: move to capture.m2
 
 -- TODO: the output format is provisional
 -- TODO: doesn't capture stderr
@@ -64,7 +68,7 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     -* see run.m2 for details of defaultMode, argumentMode, etc. *-
     -- TODO: somehow use SetUlimit, GCMAXHEAP, GCSTATS, GCVERBOSE,
     --       ArgInt, ArgQ, ArgNoReadline, ArgNoSetup, and ArgNoThreads
-    argmode := if 0 < argumentMode & InvertArgs then xor(defaultMode, argumentMode) else argumentMode;
+    argmode := if 0 < argumentMode & InvertArgs then defaultMode ^^ argumentMode else argumentMode;
     hasmode := m -> argmode & m == m;
     pushvar(symbol randomSeed, if hasmode ArgNoRandomize then 0 else randomSeed);
     -- TODO: these two are overridden in interp.dd at the moment
@@ -79,12 +83,19 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     -- FIXME: why does OutputDictionary lose its Attribute if it isn't saved this way?
     pushvar(symbol OutputDictionary, new Dictionary);
     dictionaryPath = {
+	currentPackage.Dictionary,
 	Core.Dictionary,
 	OutputDictionary,
 	PackageDictionary};
     if not hasmode ArgNoPreload then
     scan(Core#"pre-installed packages", needsPackage);
-    needsPackage \ toString \ flatten { if opts.PackageExports === null then currentPackage else opts.PackageExports };
+    if opts.PackageExports =!= null then (
+	 if instance(opts.PackageExports, String) then needsPackage opts.PackageExports
+	 else if instance(opts.PackageExports, Package) then needsPackage toString opts.PackageExports
+	 else if instance(opts.PackageExports, List) then needsPackage \ opts.PackageExports
+	 else error ("expected PackageExports option value (",toString opts.PackageExports,") to be a string or a list of strings"));
+    --shallow copy, but we only need to remember which things started with attributes
+    oldAttributes := copy Attributes;
     -- TODO: is this still necessary? If so, add a test in tests/normal/capture.m2
     -- dictionaryPath = prepend(oldPrivateDictionary,      dictionaryPath); -- this is necessary mainly due to T from degreesMonoid
     dictionaryPath = prepend(User#"private dictionary", dictionaryPath); -- this is necessary mainly due to indeterminates.m2
@@ -93,9 +104,16 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     ret := capture' s;
     collectGarbage();
 
+    --Without the toSequence {v}, if v is a Sequence, hasAnAttribute breaks
     scan(value \ values User#"private dictionary", v ->
-	if hasAttribute(v, ReverseDictionary) then removeAttribute(v, ReverseDictionary));
+        if hasAnAttribute toSequence {v} and not oldAttributes#?v
+        then remove(Attributes,v));
+    -- null out all symbols in the private dictionary, otherwise those values leak
+    -- See bug #2330 for details.
+    scan(values User#"private dictionary", s -> (if mutable s then s <- null));
     User#"private dictionary" = oldPrivateDictionary;
+    -- null out the symbols in the OutputDictionary as well
+    scan(values OutputDictionary, s -> (if mutable s then s <- null));
     popvar symbol OutputDictionary;
     -- TODO: this should eventually be unnecessary
     scan(keys oldMutableVars, symb -> symb <- oldMutableVars#symb);
@@ -115,8 +133,8 @@ isCapturable = (inputs, pkg, isTest) -> (
     inputs = replace("-\\*.*?\\*-", "", inputs);
     -- TODO: remove this when the effects of capture on other packages is reviewed
     (isTest or match({"FirstPackage", "Macaulay2Doc"},            pkg#"pkgname"))
-    and not match({"MultiprojectiveVarieties", "EngineTests", "ThreadedGB", "RunExternalM2", "DiffAlg", "SpecialFanoFourfolds"}, pkg#"pkgname")
-    and not (match({"Core", "Cremona"}, pkg#"pkgname") and version#"pointer size" == 4)
+    and not match({"MultiprojectiveVarieties", "EngineTests","ThreadedGB","RunExternalM2","SpecialFanoFourfolds"}, pkg#"pkgname")
+    and not (match({"Cremona"}, pkg#"pkgname") and version#"pointer size" == 4)
     -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
     and not match("(gbTrace|NAGtrace)",                       inputs) -- cerr/cout directly from engine isn't captured
     and not match("(notify|stopIfError|debuggingMode)",       inputs) -- stopIfError and debuggingMode may be fixable
@@ -127,6 +145,7 @@ isCapturable = (inputs, pkg, isTest) -> (
     and not match("(addHook|export|newPackage)",              inputs) -- these commands have permanent effects
     and not match("(installMethod|installAssignmentMethod)",  inputs) -- same as above
     and not match("(Global.*Hook|add.*Function|Echo|Print)",  inputs) -- same as above
+    and not match("(importFrom|exportFrom)",                  inputs) -- currently capture tries to clear all symbols created, these break it
     )
 
 -----------------------------------------------------------------------------
@@ -190,20 +209,22 @@ storeExampleOutput = (pkg, fkey, outf, verboseLog) -> (
 
 -- used in installPackage.m2
 -- TODO: reduce the inputs to this function
-captureExampleOutput = (desc, inputs, pkg, cacheFunc, inf, outf, errf, data, inputhash, changeFunc, usermode) -> (
+captureExampleOutput = (desc, inputs, pkg, inf, outf, errf, data, inputhash, changeFunc, usermode) -> (
     stdio << flush; -- just in case previous timing information hasn't been flushed yet
     -- try capturing in the same process
     if isCapturable(inputs, pkg, false) then (
 	desc = concatenate(desc, 62 - #desc);
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
-	(err, output) := capture(inputs, UserMode => false, PackageExports => pkg);
+	(err, output) := capture(inputs, UserMode => false);
 	if err then printerr "capture failed; retrying ..."
-	else return outf << M2outputHash << inputhash << endl << output << close);
+	else (outf << M2outputHash << inputhash << endl << output << close;
+	    return true));
     -- fallback to using an external process
     stderr << commentize pad("making " | desc, 72) << flush;
     inf << replace("-\\* no-capture-flag \\*-", "", inputs) << endl << close;
-    if runFile(inf, inputhash, outf, errf, pkg, changeFunc, usermode, data)
-    then ( removeFile inf; cacheFunc() ))
+    r := runFile(inf, inputhash, outf, errf, pkg, changeFunc, usermode, data);
+    if r then removeFile inf;
+    r)
 
 -----------------------------------------------------------------------------
 -- process examples
@@ -222,7 +243,7 @@ processExamplesLoop Thing       := identity
 processExamplesLoop Sequence    :=
 processExamplesLoop Hypertext   := x -> apply(x, processExamplesLoop)
 processExamplesLoop ExampleItem := x -> (
-    result := if currentExampleResults#?currentExampleCounter then PRE currentExampleResults#currentExampleCounter else (
+    result := if currentExampleResults#?currentExampleCounter then PRE M2CODE currentExampleResults#currentExampleCounter else (
 	if #currentExampleResults === currentExampleCounter then (
 	    if processExamplesStrict
 	    then error("example results terminate prematurely: ", toString currentExampleKey)

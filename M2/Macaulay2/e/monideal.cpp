@@ -174,6 +174,7 @@ bool MonomialIdeal::is_equal(const MonomialIdeal &mi0) const
       i++;
       j++;
     }
+  GC_reachable_here(&mi0);
   return true;
 }
 
@@ -246,7 +247,7 @@ int MonomialIdeal::search(const int *m, Bag *&b) const
   int *exp = newarray_atomic(int, get_ring()->n_vars());
   varpower::to_ntuple(get_ring()->n_vars(), m, exp);
   int result = search_expvector(exp, b);
-  deletearray(exp);
+  freemem(exp);
   return result;
 }
 
@@ -619,6 +620,7 @@ MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
           }
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
+  GC_reachable_here(&J);
   return result;
 }
 
@@ -649,6 +651,7 @@ MonomialIdeal *MonomialIdeal::operator*(const MonomialIdeal &J) const
         new_elems.insert(b);
       }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
+  GC_reachable_here(&J);
   return result;
 }
 
@@ -666,6 +669,7 @@ MonomialIdeal *MonomialIdeal::operator+(const MonomialIdeal &J) const
       new_elems.insert(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
+  GC_reachable_here(&J);
   return result;
 }
 
@@ -683,6 +687,7 @@ MonomialIdeal *MonomialIdeal::operator-(const MonomialIdeal &J) const
           result->insert_minimal(b);
         }
     }
+  GC_reachable_here(&J);
   return result;
 }
 
@@ -714,6 +719,7 @@ MonomialIdeal *MonomialIdeal::quotient(const MonomialIdeal &J) const
       delete result;
       result = next_result;
     }
+  GC_reachable_here(&J);
   return result;
 }
 
@@ -792,6 +798,7 @@ MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
       delete result;
       result = next_result;
     }
+  GC_reachable_here(&J);
   return result;
 }
 
@@ -842,7 +849,7 @@ MonomialIdeal *MonomialIdeal::borel() const
       borel1(new_elems, bexp, get_ring()->n_vars() - 1, get_ring()->n_vars());
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
-  deletearray(bexp);
+  freemem(bexp);
   return result;
 }
 
@@ -865,7 +872,7 @@ bool MonomialIdeal::is_borel() const
             if (!isthere) return 0;
           }
     }
-  deletearray(bexp);
+  freemem(bexp);
   return 1;
 }
 

@@ -251,14 +251,14 @@ class ARingRRi : public RingInterface
   {
       if (mpz_cmp_si(n,2)>=0)
       {
-          mpz_ptr r = getmemstructtype(mpz_ptr);
+          mpz_t r;
           mpz_init(r);
           mpz_fdiv_r_ui(r,n,2);
           
           ElementType b;
           init(b);
           
-          mpz_ptr m = getmemstructtype(mpz_ptr);
+          mpz_t m;
           mpz_init(m);
           
           if (mpz_cmp_si(r,0) == 0)
@@ -275,6 +275,8 @@ class ARingRRi : public RingInterface
               power_mpz(b,a,m);
               mult(result,a,b);
           }
+          mpz_clear(r);
+          mpz_clear(m);
       }
       else if (mpz_cmp_si(n,1)==0)
           mpfi_set(&result,&a);

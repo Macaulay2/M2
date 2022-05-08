@@ -362,7 +362,7 @@ bool LLLoperations::LLL(MutableMatrix *A,
   int ret = doLLL(A, Achange, LLLstate);
   if (ret != COMP_DONE)
     {
-      deleteitem(LLLstate);
+      freemem(LLLstate);
       return false;
     }
   return true;

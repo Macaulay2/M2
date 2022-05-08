@@ -183,7 +183,7 @@ ChainComplex ** ChainComplexMap := ChainComplexMap => (C,f) -> (
 	  else 0)))))
 
 -- truncate a chain complex at a given homological degree 
-truncate(ChainComplex,ZZ):= (C,q) ->( 
+truncate(ChainComplex,ZZ):= {} >> o -> (C,q) ->(
      if q == 0 then return C 
      else (
 	  m := min support C;
@@ -216,8 +216,7 @@ pushFwd(RingMap,ChainComplex):=o->(f,C) ->
 
 
 -- New method for tensor that returns the tensor product of a complex via a ring map
-tensor(RingMap,ChainComplex) := ChainComplex => 
- opts -> (f,C) -> (
+tensor(RingMap, ChainComplex) := ChainComplex => {} >> opts -> (f,C) -> (
          k := min C; 
     D := chainComplex(
 	if even(k) then apply(

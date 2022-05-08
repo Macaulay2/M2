@@ -4126,12 +4126,12 @@ doc ///
 		gfanTropicalLinearSpace
 		(gfanTropicalLinearSpace, List, ZZ, ZZ)
 	Headline
-		equations of a tropical linear space from Pluecker coordinates
+		equations of a tropical linear space from Plücker coordinates
 	Usage
 		(L, S) = gfanTropicalLinearSpace(P,N,D)
 	Inputs
 		P:List
-			of Pluecker coordinates
+			of Plücker coordinates
 		N:ZZ
 			ambient dimension
 		D:ZZ
@@ -4143,7 +4143,7 @@ doc ///
 			a string describing which variable corresponds to which minor
 	Description
 		Text
-			This method takes Pluecker coordinates for a linear subspace and computes
+			This method takes Plücker coordinates for a linear subspace and computes
 			the polynomials which define the corresponding tropical linear space.
 			The output is a pair which contains both the defining polynomials and
 			a string which describes which coordinate corresponds to which minor.

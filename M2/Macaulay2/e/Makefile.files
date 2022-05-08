@@ -184,7 +184,7 @@ COMMANDS = \
 	matrix-symm \
 	matrix-sort \
 	ring-vecs \
-        res-a2-gb \
+	res-a2-gb \
 	engine \
 	interface/aring \
 	interface/cra \
@@ -206,6 +206,7 @@ COMMANDS = \
 	franzi-interface
 
 NAMES_H = \
+	m2tbb \
 	f4/f4-types \
 	f4/memblock \
 	VectorArithmetic \

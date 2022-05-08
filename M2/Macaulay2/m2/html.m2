@@ -3,10 +3,19 @@
 -- html output
 -----------------------------------------------------------------------------
 
+needs "debugging.m2" -- for Descent
+needs "format.m2"
+needs "gb.m2" -- for for GroebnerBasis
+needs "packages.m2" -- for Package
+needs "system.m2" -- for getViewer
+
+getStyleFile := fn -> locateCorePackageFileRelative("Style",
+    layout -> replace("PKG", "Style", layout#"package") | fn,
+    installPrefix, htmlDirectory);
+
 -- TODO: unify the definition of the tex macros so book/M2book.tex can use them
 KaTeX := () -> (
-    katexPath := locateCorePackageFileRelative("Style",
-	layout -> replace("PKG", "Style", layout#"package") | "katex", installPrefix, htmlDirectory);
+    katexPath := getStyleFile "katex";
     katexTemplate := ///
     <link rel="stylesheet" href="%PATH%/katex.min.css" />
     <script defer="defer" type="text/javascript" src="%PATH%/katex.min.js"></script>
@@ -34,20 +43,25 @@ KaTeX := () -> (
     <link href="%PATH%/contrib/copy-tex.min.css" rel="stylesheet" type="text/css" />
     <script defer="defer" type="text/javascript" src="%PATH%/contrib/copy-tex.min.js"></script>
     <script defer="defer" type="text/javascript" src="%PATH%/contrib/render-a11y-string.min.js"></script>///;
-    LITERAL replace("%PATH%", katexPath, katexTemplate))
+    LITERAL replace("%PATH%", katexPath, katexTemplate | newline))
 
 -- The default stylesheet for documentation
 defaultStylesheet := () -> LINK {
     "rel" => "stylesheet", "type" => "text/css",
-    "href" => locateCorePackageFileRelative("Style",
-	layout -> replace("PKG", "Style", layout#"package") | "doc.css", installPrefix, htmlDirectory)}
+    "href" => getStyleFile "doc.css"}
 
 -- Also set the character encoding with a meta http-equiv statement. (Sometimes XHTML
 -- is parsed as HTML, and then the HTTP header or a meta tag is used to determine the
 -- character encoding.  Locally-stored documentation does not have an HTTP header.)
 defaultCharset := () -> META { "http-equiv" => "Content-Type", "content" => "text/html; charset=utf-8" }
 
-defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStylesheet(), KaTeX() }
+defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStylesheet(), KaTeX(),
+    SCRIPT {
+	"type" => "text/javascript",
+	"src" => getStyleFile "highlight.js",
+	""
+	}
+    }
 
 -----------------------------------------------------------------------------
 -- Local utilities
@@ -65,22 +79,6 @@ htmlLiteral = s -> if s === null or regex("<|&|]]>|\42", s) === null then s else
 indentLevel := -1
 pushIndentLevel =  n     -> (indentLevel = indentLevel + n; n)
 popIndentLevel  = (n, s) -> (indentLevel = indentLevel - n; s)
-
--- whether fn exists on the path
--- TODO: check executable
-runnable := fn -> (
-    if fn == "" then return false;
-    if isAbsolutePath fn then fileExists fn
-    else 0 < # select(1, apply(separate(":", getenv "PATH"), p -> p|"/"|fn), fileExists))
-
--- preferred web browser
--- TODO: cache this value
-browser := () -> (
-    if runnable getenv "WWWBROWSER" then getenv "WWWBROWSER" -- compatibility
-    else if version#"operating system" === "Darwin" and runnable "open" then "open" -- Apple varieties
-    else if runnable "xdg-open" then "xdg-open" -- most Linux distributions
-    else if runnable "firefox" then "firefox" -- backup
-    else error "neither open nor xdg-open is found and WWWBROWSER is not set")
 
 -----------------------------------------------------------------------------
 -- Setup default rendering
@@ -167,6 +165,7 @@ html TO2  := x -> (
 ----------------------------------------------------------------------------
 
 html Thing := htmlLiteral @@ tex -- by default, we use tex (as opposed to actual html)
+html Nothing := x -> ""
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 html Net := n -> concatenate("<pre style=\"display:inline-table;text-align:left;vertical-align:",
@@ -190,6 +189,9 @@ html GroebnerBasis :=
 html Package :=
 html Boolean :=
 html Function :=
+html FilePosition :=
+html Manipulator :=
+html Dictionary :=
 html Type := html @@ toString
 -- except not these descendants
 html Monoid :=
@@ -210,7 +212,7 @@ show Hypertext := x -> (
     fn << html HTML { defaultHEAD "Macaulay2 Output", BODY {x}} << endl << close;
     show new URL from replace(" ", "%20", rootURI | realpath fn)) -- TODO: urlEncode might need to replace more characters
 show URL := url -> (
-    cmd := { browser(), url#0 }; -- TODO: silence browser messages, perhaps with "> /dev/null"
+    cmd := { getViewer("WWWBROWSER", "firefox"), url#0 }; -- TODO: silence browser messages, perhaps with "> /dev/null"
     if fork() == 0 then (
         setGroupID(0,0);
         try exec cmd;

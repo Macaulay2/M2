@@ -1,5 +1,8 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "expressions.m2"
+needs "methods.m2"
+
 -- indexed variables
 
 IndexedVariable = new Type of BasicList

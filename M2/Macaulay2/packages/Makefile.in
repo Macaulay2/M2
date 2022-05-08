@@ -12,7 +12,10 @@ PACKAGES = $(ALL_PACKAGES)
 # packages under development that should be checked but not installed:
 DEVEL = EngineTests
 
-MakeDocumentation ?= true
+MakeDocumentation ?= $(if @DOCUMENTATION@,true,false)
+MakeHTML ?= $(if $(filter html, @DOCUMENTATION@),true,false)
+MakeInfo ?= $(if $(filter info, @DOCUMENTATION@),true,false)
+MakePDF  ?= $(if $(filter pdf , @DOCUMENTATION@),true,false)
 RemakeAllDocumentation ?= false
 IgnoreExampleErrors ?= false
 CheckDocumentation ?= true
@@ -22,6 +25,9 @@ debugLevel ?= 0
 errorDepth ?= 0
 
 ARGS := MakeDocumentation => $(MakeDocumentation),		\
+	MakeHTML => $(MakeHTML),				\
+	MakeInfo => $(MakeInfo),				\
+	MakePDF => $(MakePDF),					\
 	RemakeAllDocumentation => $(RemakeAllDocumentation),	\
 	IgnoreExampleErrors => $(IgnoreExampleErrors),		\
 	RerunExamples => $(RerunExamples),			\
@@ -98,6 +104,13 @@ $(foreach i, $(PACKAGES), $(eval all: all-$i) $(eval install: install-$i))
 $(foreach i, $(patsubst Style,,$(ALL_PACKAGES)), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Style/.installed))
 $(foreach i, $(patsubst FirstPackage,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/FirstPackage/.installed))
 $(foreach i, $(patsubst Macaulay2Doc,,$(patsubst FirstPackage,,$(patsubst Style,,$(ALL_PACKAGES)))), $(eval @pre_libm2dir@/$i/.installed: | @pre_libm2dir@/Macaulay2Doc/.installed))
+
+@pre_packagesdir@/Style/highlight.js:
+	$(MAKE) -C ../editors highlightjs/highlight.js
+	$(MKDIR_P) $(dir $@)
+	cp ../editors/highlightjs/highlight.js $@
+
+@pre_libm2dir@/Style/.installed: @pre_packagesdir@/Style/highlight.js
 
 # the Info-validate function doesn't work well enough to be useful:
 # check::check-info

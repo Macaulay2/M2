@@ -4,11 +4,11 @@ name = baseFilename fn
 dir = replace(name | "$", "", fn)
 programPaths#name = dir
 
-fileMode(6*64 + 4*8 + 4, fn)
+fileMode(0o644, fn)
 program = findProgram(name, name, RaiseError => false)
 assert(program === null)
 
-fileMode(7*64 + 5*8 + 5, fn)
+fileMode(0o755, fn)
 program = findProgram(name, name)
 assert(program#"name" == name)
 assert(program#"path" == dir)

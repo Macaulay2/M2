@@ -10,7 +10,7 @@ void buffer::expand(int newcap)
   char *newbuf = newarray_atomic(char, n);
   _capacity = n;
   memcpy(newbuf, _buf, _size);
-  deletearray(_buf);
+  freemem(_buf);
   _buf = newbuf;
 }
 

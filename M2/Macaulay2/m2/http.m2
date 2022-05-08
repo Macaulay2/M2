@@ -1,30 +1,34 @@
 --		Copyright 1996 by Daniel R. Grayson
 
+needs "methods.m2"
+
 getWWW = method()
 httpProduct := concatenate("Macaulay2/", version#"VERSION")
+
+crlf := "\r\n";
 
 GET := (host,url,connection) -> (
      connection = 
      openInOut connection
-     << "GET " << url << " HTTP/1.1" << endl
-     << "User-Agent: " << httpProduct << endl
-     << "Connection: close" << endl
-     << "Host: " << host << endl
-     << endl << flush;
+     << "GET " << url << " HTTP/1.1" << crlf
+     << "User-Agent: " << httpProduct << crlf
+     << "Connection: close" << crlf
+     << "Host: " << host << crlf
+     << crlf << flush;
      first( get connection, close connection )
      )
 
 POST := (host,url,body,connection) -> (
      connection = 
      openInOut connection
-     << "POST " << url << " HTTP/1.1" << endl
-     << "User-Agent: " << httpProduct << endl
-     << "Connection: close" << endl
-     << "Host: " << host << endl
-     << "Content-type: application/x-www-form-urlencoded" << endl
-     << "Content-length: " << # body << endl << endl
-     << body << endl
-     << endl << flush;
+     << "POST " << url << " HTTP/1.1" << crlf
+     << "User-Agent: " << httpProduct << crlf
+     << "Connection: close" << crlf
+     << "Host: " << host << crlf
+     << "Content-type: application/x-www-form-urlencoded" << crlf
+     << "Content-length: " << # body << crlf << crlf
+     << body << crlf
+     << crlf << flush;
      first( get connection, close connection )
      )
 

@@ -1,6 +1,4 @@
 -- -*- M2-comint -*- hash: 370242144
-Hello world from process 0 out of 1 processes
--- COMPILE TIME: Feb 24 2021, 10:08:22
 
 i1 : R = CC[x,y,z]; f = {(x^2-y)*(x-1), x^3 - z};
 
@@ -20,4 +18,3 @@ o5 = L
 o5 : NumericalVariety
 
 i6 : 
-Bye world from process 0 out of 1 processes

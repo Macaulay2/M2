@@ -284,7 +284,6 @@ M2_arrayint ARingGFGivaro::representationToM2Array(UTT representation,
   std::cerr << "representation" << representation << std::endl;
 #endif
   long exp = 0;
-  assert(representation != 0);
 
   while (representation != 0)
     {
@@ -583,6 +582,9 @@ void ARingGFGivaro::power(ElementType &result,
       assert(tmp >= 0);  // tmp<0 should never occur
       if (tmp < 0) tmp += givaroField.cardinality() - 1;
       result = tmp;
+      mpz_clear(mpz_a);
+      mpz_clear(mpz_n);
+      mpz_clear(mpz_tmp);
     }
   else
     {

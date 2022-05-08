@@ -4,11 +4,11 @@
 #include "schreyer-resolution/res-monomial-sorter.hpp"  // for ResMonomialSorter
 struct ResSchreyerOrder;
 
-long poly::npoly_destructor = 0;
-long poly_constructor::ncalls = 0;
-long poly_constructor::ncalls_fromarray = 0;
+long ResPolynomial::npoly_destructor = 0;
+long ResPolynomialConstructor::ncalls = 0;
+long ResPolynomialConstructor::ncalls_fromarray = 0;
 
-void ResPolyRing::memUsage(const poly& f,
+void ResPolyRing::memUsage(const ResPolynomial& f,
                            long& nterms,
                            long& bytes_used,
                            long& bytes_alloc) const
@@ -23,14 +23,14 @@ void ResPolyRing::memUsage(const poly& f,
 
 #if 0
 bool check_poly(const ResPolyRing& R,
-                const poly& f,
+                const ResPolynomial& f,
                 const ResSchreyerOrder& ord)
 {
   // We loop through each monomial, checking it against the one before
   // The order used is the Schreyer order given.
   auto& M = R.monoid();
-  poly_iter i(R, f);
-  poly_iter end(R, f, 1);
+  ResPolynomialIterator i(R, f);
+  ResPolynomialIterator end(R, f, 1);
   res_const_packed_monomial prev = nullptr;
   for (; i != end; ++i)
     {
@@ -59,12 +59,12 @@ bool check_poly(const ResPolyRing& R,
 #endif
 
 bool check_poly(const ResPolyRing& R,
-                const poly& f,
+                const ResPolynomial& f,
                 const ResSchreyerOrder& ord)
 {
   std::vector<int*> monoms;
-  auto end = poly_iter(R,f,1);
-  for (auto i=poly_iter(R,f); i != end; ++i)
+  auto end = ResPolynomialIterator(R,f,1);
+  for (auto i = ResPolynomialIterator(R,f); i != end; ++i)
     {
       monoms.push_back(const_cast<res_packed_monomial>(i.monomial()));
     }

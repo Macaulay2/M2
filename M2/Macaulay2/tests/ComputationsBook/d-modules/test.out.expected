@@ -143,9 +143,9 @@ o22 : D-module, quotient of D
 
 i23 : ann2 = relations Dlocalize(R,f)
 
-o23 = | wDz-zDw wDy-yDw zDy-yDz wDx-xDw zDx-xDz yDx-xDy xDx+yDy+zDz+wDw+4 x2Dw+y2Dw+z2Dw+w2Dw+4w x2Dz+y2Dz+z2Dz+zwDw+4z x2Dy+y2Dy+yzDz+ywDw+4y |
+o23 = | wDz-zDw wDy-yDw zDy-yDz wDx-xDw zDx-xDz yDx-xDy -xDx-yDy-zDz-wDw-4 |
 
-              1       10
+              1       7
 o23 : Matrix D  <--- D
 
 i24 : F = matrix{{f}}
@@ -194,12 +194,12 @@ o30 : HashTable
 
 i31 : I2=DlocalizeAll(D^1/Delta,f)
 
-o31 = HashTable{GeneratorPower => -2                                                                                        }
+o31 = HashTable{GeneratorPower => -2                                                     }
                                          2       2     1      2
                 IntegrateBfunction => (s) (s + 1) (s + -)(s + -)
                                                        3      3
                 LocMap => | x6+2x3y3+y6+2x3z3+2y3z3+z6 |
-                LocModule => cokernel | xDx+yDy+zDz+6 z2Dy-y2Dz z2Dx-x2Dz y2Dx-x2Dy x3Dz+y3Dz+z3Dz+6z2 x3Dy+y3Dy+y2zDz+6y2 |
+                LocModule => cokernel | -xDx-yDy-zDz-6 -z2Dy+y2Dz -z2Dx+x2Dz -y2Dx+x2Dy |
 
 o31 : HashTable
 

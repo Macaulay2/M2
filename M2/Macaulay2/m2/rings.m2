@@ -1,15 +1,23 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "methods.m2"
+
+-----------------------------------------------------------------------------
+-- Ring
+-----------------------------------------------------------------------------
+
+Ring.synonym = "ring"
+
 Ring == ZZ := (R,i) -> (
      if i === 0 then 1_R == 0
      else error "comparison of ring with nonzero integer encountered"
      )
 
+options Ring := x -> null
+
 use Ring := x -> ( if x.?use then x.use x; x)
 
 ZZ == Ring := (i,R) -> R == i
-
-poincare Ring := R -> poincare module R
 
 dim Ring := R -> (
      if R.?dim then R.dim
