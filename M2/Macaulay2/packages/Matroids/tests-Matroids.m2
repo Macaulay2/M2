@@ -182,7 +182,6 @@ M = matroid G
 assert(set coloops M === set {4,3})
 p = {6, 0, 5, 1, 4, 7, 2, 3}
 assert(values isomorphism (M, relabel(M, p)) === p)
--- assert(values isomorphism (M, matroid(M_*, (circuits M)/(c -> c/(i -> p#i)), EntryMode => "circuits")) === p)
 ///
 
 TEST ///
