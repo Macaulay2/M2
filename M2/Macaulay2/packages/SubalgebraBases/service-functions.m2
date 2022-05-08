@@ -1,4 +1,5 @@
-importFrom (Core,{"raw","rawStatus1","rawMonoidNumberOfBlocks"});
+-- importFrom (Core,{"raw","rawStatus1","rawMonoidNumberOfBlocks"});
+importFrom (Core,{"raw","rawStatus1","rawMonoidNumberOfBlocks","rawSubduction1"});
 
 initializeCompTable = method();
 initializeCompTable (SAGBIBasis, HashTable):= (S,opts) -> (
@@ -157,8 +158,8 @@ subductionTopLevel(HashTable, Matrix) := (compTable, M) -> (
     while not (zero(g)) do (
 	if compTable#"options"#SubductionMethod == "Top" then (
             subductedPart = subductionTopLevelLeadTerm(compTable, g);
-	    ) else if compTable#"options"#SubductionMethod == "Internal" then (
-    	    subductedPart = subductionInternal(compTable, g);
+	    ) else if compTable#"options"#SubductionMethod == "Engine" then (
+    	    subductedPart = subductionEngineLevelLeadTerm(compTable, g);
 	    ) else (
 	    error ("Unknown subduction type " | toString compTable#"options"#SubductionMethod); 
 	    );
@@ -264,13 +265,41 @@ subductionTopLevelLeadTerm (HashTable, Matrix) := (compTable, M) -> (
 );
 
 
-
--- TODO: Internal Subduction of the initial term of M
--- NB called by TopLevelSubduction
-subductionInternal = method();
-subductionInternal(HashTable, Matrix) := (compTable, M) -> (
-    1/0;
+-- Engine Subduction of the lead term
+subductionEngineLevelLeadTerm = method();
+subductionEngineLevelLeadTerm(HashTable, RingElement) := (compTable, g) -> (
+    (subductionEngineLevelLeadTerm(compTable, matrix {{g}}))_(0,0) 
     );
+
+subductionEngineLevelLeadTerm(HashTable,Matrix) := (compTable, M) -> (
+    local result;
+    tense := compTable#"rings"#"tensorRing";
+    	    
+    ambR := source compTable#"maps"#"inclusionLifted";
+    if ring M === tense then (
+	M = (compTable#"maps"#"fullSubstitution")(M);
+	)else if ring M =!= ambR then (
+	error "M must be from ambR or tensorRing.";
+	);
+    -- It is possible for ring f === ambient to be true but f is still from a different ring
+    -- than pres#"tensorRing". In this case, it shouldn't try to prevent an error by using "sub"
+    -- or something. Instead, the following line will deliberately throw an error:
+    -- (This is done because otherwise there is potential for a segfault.)
+    throwError := M_(0,0) - 1_(ambR);
+    -- Use the same pres ring as much as possible.
+    -- M2 will automatically cache the gb calculation
+    -- as long as the pres ring is not reconstructed.
+    gbI := gb compTable#"ideals"#"I";
+    gbReductionIdeal := gb compTable#"ideals"#"reductionIdeal";
+    F := compTable#"maps"#"substitution";
+    N := monoid ambR;
+    numblocks := rawMonoidNumberOfBlocks raw N;
+    
+    result = rawSubduction1(numblocks, raw tense, raw ambR, raw M, raw compTable#"maps"#"inclusionLifted", raw compTable#"maps"#"fullSubstitution", raw (compTable#"maps"#"substitution" * compTable#"maps"#"sagbiInclusion"), raw gbI, raw gbReductionIdeal);
+    
+    result = matrix{apply(first entries result,i->promote(i,ambR))}
+    );
+
 
 ---------------
 -- AutoSubduce: (compTable)
