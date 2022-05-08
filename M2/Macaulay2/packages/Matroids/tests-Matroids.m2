@@ -132,7 +132,7 @@ assert(areIsomorphic(M0, matroid graph edges graph M0_*))
 Delta = independenceComplex M0
 F = fVector Delta
 assert(ideal Delta == ideal M0 and F === fVector independenceComplex M1)
-assert((sort keys F)/(k -> F#k) === {1,11,55,164,319,409,324,125})
+assert(F === {1,11,55,164,319,409,324,125})
 assert(not areIsomorphic(M0, M1))
 ///
 
@@ -242,7 +242,7 @@ elapsedTime assert Equation(hasMinor(BR, U36), true)
 
 TEST ///
 V8plus = specificMatroid "V8+"
-s = "Matroid(groundset = 'abcdefgh', bases = ['abce','abde','acde','bcde','abcf','abdf','acdf','bcdf','abef','acef','bdef','cdef','abcg','abdg','acdg','bcdg','abeg','aceg','bceg','adeg','bdeg','cdeg','abfg','acfg','bcfg','adfg','bdfg','cdfg','aefg','befg','cefg','defg','abch','abdh','acdh','bcdh','abeh','aceh','bceh','adeh','bdeh','cdeh','abfh','acfh','bcfh','adfh','bdfh','cdfh','aefh','befh','cefh','defh','abgh','acgh','bdgh','cdgh','aegh','begh','cegh','degh','afgh','bfgh','cfgh','dfgh'])"
+s = "Matroid(groundset = 'abcdefgh', bases = ['dfgh','cfgh','bfgh','afgh','degh','cegh','begh','aegh','bdgh','adgh','bcgh','acgh','defh','cefh','befh','aefh','cdfh','bdfh','adfh','bcfh','acfh','abfh','cdeh','bdeh','adeh','bceh','aceh','abeh','bcdh','acdh','abdh','abch','defg','cefg','befg','aefg','cdfg','bdfg','adfg','bcfg','acfg','abfg','cdeg','bdeg','adeg','bceg','aceg','abeg','bcdg','acdg','abdg','abcg','bdef','adef','bcef','acef','bcdf','acdf','abdf','abcf','bcde','acde','abde','abce'])"
 assert (s === toSageMatroid V8plus)
 assert (V8plus == fromSageMatroid s)
 ///

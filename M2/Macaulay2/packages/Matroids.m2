@@ -312,7 +312,7 @@ closure (Matroid, Set) := Set => (M, S) -> (
 	S + set select(toList(M.groundSet - S), s -> r == rank(M, S + set{s}))
 )
 
-hyperplanes = method()
+-- the 'hyperplanes' methods is defined in 'Polyhedra'
 hyperplanes Matroid := List => M -> (
 	if M.cache.?hyperplanes then M.cache.hyperplanes else M.cache.hyperplanes = (circuits dual M)/(c -> M.groundSet - c)
 )
@@ -377,7 +377,7 @@ latticeOfFlats Matroid := Poset => M -> (
 	poset(flats M/toList/sort, M.cache#"flatsRelations", M.cache#"flatsRelationsMatrix", AntisymmetryStrategy => "none")
 )
 
-fVector Matroid := HashTable => opts -> M -> hashTable pairs tally(flats M/rank_M)
+fVector Matroid := HashTable => M -> hashTable pairs tally(flats M/rank_M)
 
 dual Matroid := Matroid => {} >> opts -> M -> (
 	if M.cache.?dual then M.cache.dual else M.cache.dual = (
@@ -1130,7 +1130,7 @@ allMatroids (ZZ, ZZ) := List => (n, r) -> (
 	numMatroids := {7, 13, 23, 38, 37, 108, 58, 325, 940, 87, 1275, 190214}; -- cf. Table 1 in https://arxiv.org/pdf/math/0702316.pdf
 	K := {(4,2),(5,2),(6,2),(6,3),(7,2),(7,3),(8,2),(8,3),(8,4),(9,2),(9,3),(9,4)};
 	H := hashTable apply(#K, i -> K#i => {2*i+1+sum take(numMatroids,i), 2*i+sum take(numMatroids,i+1)});
-	db := get(first searchPath({"./Matroids/"} | path, "SmallMatroids.txt") | "SmallMatroids.txt");
+	db := get(first select(apply(path, p -> p | "Matroids/SmallMatroids.txt"), p -> fileExists p));
 	apply(take(lines db, H#(n,r)), l -> matroid(E, PE_(positions(characters l, c -> c === "*"))))
 )
 allMatroids ZZ := List => n -> flatten apply(n+1, i -> allMatroids(n, i))
