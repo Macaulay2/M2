@@ -274,3 +274,48 @@ document {
 	  },
      SeeAlso => {"mutable matrices", "row and column operations"} 
      }
+
+document {
+     Key => { nullSpace, (nullSpace, MutableMatrix) },
+     Headline => "find the null space of a mutable matrix",
+     Usage => "nullSpace m",
+     Inputs => {
+	  "m" => MutableMatrix => { "over ", TO "RR", " or ", TO "CC" }
+	  },
+     Outputs => {
+	  MutableMatrix => {"a mutable matrix whose columns span the null space of ", TT "m"}
+	  },
+     EXAMPLE {
+	  "m = mutableMatrix {{1.p500,1},{-2,-2}}",
+	  "nullSpace m",
+	  "precision oo"
+	  }
+     }
+
+document {
+     Key => { rowRankProfile, (rowRankProfile, MutableMatrix)},
+     Headline => "find the row rank profile of a mutable matrix",
+     Usage => "rowRankProfile m",
+     Inputs => {
+	  "m" => MutableMatrix => { "over ", TO "RR", " or ", TO "CC" }
+	  },
+     Outputs => {
+	  List => {"the lexicographically smallest list of indices of linearly independent rows generating the row space of ", TT "m"}
+	  },
+     EXAMPLE "rowRankProfile mutableMatrix {{1,2,3}, {0,0,0.}, {3,4,5} }",
+     SeeAlso => { columnRankProfile }
+     }
+
+document {
+     Key => { columnRankProfile, (columnRankProfile, MutableMatrix)},
+     Headline => "find the column rank profile of a mutable matrix",
+     Usage => "columnRankProfile m",
+     Inputs => {
+	  "m" => MutableMatrix => { "over ", TO "RR", " or ", TO "CC" }
+	  },
+     Outputs => {
+	  List => {"the lexicographically smallest list of indices of linearly independent columns generating the column space of ", TT "m"}
+	  },
+     EXAMPLE "columnRankProfile transpose mutableMatrix {{1,2,3}, {0,0,0.}, {3,4,5} }",
+     SeeAlso => { rowRankProfile }
+     }

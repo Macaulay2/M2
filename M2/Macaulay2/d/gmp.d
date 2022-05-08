@@ -2164,11 +2164,16 @@ export eRRi(prec:ulong):RRi := (
      Ccode( void, "mpfi_const_euler(",  z, ")" );
      moveToRRiandclear(z));
 
+export cRRi(prec:ulong):RRi := (
+     z := newRRimutable(prec);
+     Ccode( void, "mpfi_const_catalan(",  z, ")" );
+     moveToRRiandclear(z));
+
 export exp(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_exp(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
-                                     
+
 export exp(x:RRi):RRi := (
      z := newRRimutable(precision0(x));
      Ccode( void, "mpfi_exp(", z, ",", x, ")" );
@@ -2259,11 +2264,16 @@ export atan2(y:RR,x:RR):RR := (
      z := newRRmutable(min(precision0(x),precision0(y)));
      Ccode( void, "mpfr_atan2(", z, ",", y, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
-                                     
+
 export atan2(y:RRi,x:RRi):RRi := (
      z := newRRimutable(min(precision0(x),precision0(y)));
      Ccode( void, "mpfi_atan2(", z, ",", y, ",", x, ")" );
      moveToRRiandclear(z));
+
+export Beta(x:RR,y:RR):RR := (
+     z := newRRmutable(min(precision0(x),precision0(y)));
+     Ccode( void, "mpfr_beta(", z, ",", y, ",", x, ", GMP_RNDN)" );
+     moveToRRandclear(z));
 
 export agm(x:RR,y:RR):RR := (
      z := newRRmutable(min(precision0(x),precision0(y)));
@@ -2388,6 +2398,16 @@ export expm1(x:RRi):RRi := (
 export Gamma(x:RR):RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_gamma(", z, ",", x, ", GMP_RNDN)" );
+     moveToRRandclear(z));
+
+export Gamma(s:RR,x:RR):RR := (
+     z := newRRmutable(precision0(x));
+     Ccode( void, "mpfr_gamma_inc(", z, ",", s, ",", x, ", GMP_RNDN)" );
+     moveToRRandclear(z));
+
+export Digamma(x:RR):RR := (
+     z := newRRmutable(precision0(x));
+     Ccode( void, "mpfr_digamma(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
 
 export factorial(x:RR):RR := Gamma(x+1);

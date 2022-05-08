@@ -375,7 +375,7 @@ document {
      is continued by re-issuing the same command.  Alternatively, the
      command can be issued with the option ", TT "StopBeforeComputation => true", ".
      It will stop immediately, and return a Groebner basis object that can
-     be inspected with ", TO "gens", " or ", TO "syz", ".
+     be inspected with ", TO2(generators, "gens"), " or ", TO "syz", ".
      The computation can be continued later.",
 	EXAMPLE {
 		   "R = ZZ/1277[x..z];",
@@ -411,7 +411,7 @@ document {
 	  },
      "Now we provide the hint and compute the Groebner basis anew.",
      EXAMPLE {
-      	  "(cokernel f).cache.poincare = (1-T^3)*(1-T^3)*(1-T^5)*(1-T^6)",
+	  "poincare cokernel f = (1-T^3)*(1-T^3)*(1-T^5)*(1-T^6) -- cache poincare",
       	  "time betti gb f"
 	  },
      "The computation turns out to be substantially faster."

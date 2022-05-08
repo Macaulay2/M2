@@ -15,6 +15,7 @@ set(M2_ARGS --script)
 ## To add to the M2-editors target, add grammar filenames here and in .gitignore.
 set(GRAMMAR_FILES
   atom/macaulay2.cson
+  highlightjs/macaulay2.js
   prism/macaulay2.js
   pygments/macaulay2.py
 #  rouge/macaulay2.rb
@@ -58,3 +59,22 @@ add_custom_command(OUTPUT ${EMACS_FILES}
   MAIN_DEPENDENCY emacs/make-M2-emacs-help.m2
   WORKING_DIRECTORY ${M2_INSTALL_EMACSDIR}
   DEPENDS emacs/M2-symbols.el make-M2-symbols.m2)
+
+################################################################################
+## Generating highlight.js for syntax highlighting in the html documentation
+
+add_custom_target(M2-highlightjs ALL DEPENDS highlightjs/highlight.js)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/highlightjs)
+if(NOT NPM STREQUAL "NPM-NOTFOUND")
+  foreach(FILE IN ITEMS package.json webpack.config.js index.js
+      highlight-override.css)
+    configure_file(highlightjs/${FILE} highlightjs COPYONLY)
+  endforeach()
+  add_custom_command(OUTPUT highlightjs/highlight.js
+    COMMAND cd highlightjs && ${NPM} install && ${NPM} run build
+    DEPENDS highlightjs/macaulay2.js)
+else()
+  add_custom_command(OUTPUT highlightjs/highlight.js
+    COMMENT "warning: html docs will not have syntax highlighting"
+    COMMAND touch highlightjs/highlight.js)
+endif()

@@ -42,7 +42,7 @@ TEST String := opts -> teststring -> (
         testCode := get teststring;
         (minimizeFilename teststring, depth net testCode + 1, testCode)
         ) else
-        (minimizeFilename currentFileName, currentLineNumber(), teststring);
+        (minimizeFilename currentFileName, currentRowNumber(), teststring);
     currentPackage#"test number" = n + 1;)
 -- TODO: support test titles
 TEST(String, String) := (title, teststring) -> (

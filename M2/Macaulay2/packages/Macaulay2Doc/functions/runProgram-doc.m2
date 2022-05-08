@@ -1,5 +1,5 @@
 document {
-    Key => {ProgramRun, (net, ProgramRun)},
+    Key => ProgramRun,
     Headline => "result of running an external program",
     PARA {"A hash table returned by ", TO "runProgram",
 	" with the following strings as keys:"},

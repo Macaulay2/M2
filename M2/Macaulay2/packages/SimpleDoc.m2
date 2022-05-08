@@ -35,7 +35,7 @@ doc = method()
 doc String := str -> (
     docstring := if fileExists str then get str else str;
     -- hopefully the "doc" line, but may be off by one
-    topLinenum = if fileExists str then 0 else currentLineNumber() - #lines docstring - 2;
+    topLinenum = if fileExists str then 0 else currentRowNumber() - #lines docstring - 2;
     parsed := toDoc(NodeFunctions, docstring);
     document \ (
 	if all(parsed, elt -> instance(elt, Node)) then apply(parsed, node -> toList node)

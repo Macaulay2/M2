@@ -455,7 +455,15 @@ const Matrix /* or null */ *IM2_Matrix_exterior(int p,
                                                 const Matrix *M,
                                                 int strategy)
 {
-  return M->exterior(p, strategy);
+  try
+    {
+      return M->exterior(p, strategy);
+    } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
+
 }
 
 M2_arrayintOrNull IM2_Matrix_sort_columns(const Matrix *M,
@@ -465,18 +473,25 @@ M2_arrayintOrNull IM2_Matrix_sort_columns(const Matrix *M,
   try
     {
       return M->sort(deg_order, mon_order);
-  } catch (const exc::engine_error& e)
+    } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
-      return NULL;
-  }
+      return nullptr;
+    }
 }
 
 const Matrix /* or null */ *IM2_Matrix_minors(int p,
                                               const Matrix *M,
                                               int strategy)
 {
-  return M->minors(p, strategy);
+  try
+    {
+      return M->minors(p, strategy);
+    } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
 }
 
 const Matrix /* or null */ *rawMinors(
@@ -493,8 +508,15 @@ const Matrix /* or null */ *rawMinors(
    otherwise starting at the first (0..p-1,0..p-1).
 */
 {
-  return M->minors(
-      p, strategy, n_minors_to_compute, first_row_set, first_col_set);
+  try {
+      return M->minors(
+                       p, strategy, n_minors_to_compute,
+                       first_row_set, first_col_set);
+    } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
 }
 
 const Matrix /* or null */ *IM2_Matrix_pfaffians(int p, const Matrix *M)

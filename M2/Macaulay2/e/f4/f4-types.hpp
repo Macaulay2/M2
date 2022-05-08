@@ -3,12 +3,13 @@
 #ifndef _F4types_h_
 #define _F4types_h_
 
+
+#include "VectorArithmetic.hpp"      // for ElementArray
 #include "f4/f4-monlookup.hpp"       // for F4MonomialLookupTableT
 #include "f4/moninfo.hpp"            // for MonomialInfo, monomial_word, pac...
 #include "f4/varpower-monomial.hpp"  // for varpower_monomials, varpower_mon...
 #include "newdelete.hpp"             // for our_new_delete, VECTOR, (gc_allocator)
 #include "style.hpp"                 // for LT
-#include "VectorArithmetic.hpp"      // for CoeffVector
 
 #define sizeofspair(s, len) \
   (sizeof(*s) - sizeof(s->lcm) + (len) * sizeof(s->lcm[0]))
@@ -34,7 +35,7 @@ enum spair_type {
 struct GBF4Polynomial : public our_new_delete
 {
   int len;
-  CoeffVector coeffs;
+  ElementArray coeffs;
   monomial_word *monoms;  // This is all of the monomials written contiguously
 };
 
@@ -70,7 +71,7 @@ typedef VECTOR(gbelem *) gb_array;
 struct sparse_row : public our_new_delete
 {
   int len;
-  CoeffVector coeffs;
+  ElementArray coeffs;
   int *comps; // of length len, allocated in a memory block.
 };
 
@@ -82,7 +83,7 @@ struct row_elem : public our_new_delete
 
   // The polynomial itself
   int len;
-  CoeffVector coeffs;
+  ElementArray coeffs;
   int *comps; // of length len, allocated in a memory block.
 };
 

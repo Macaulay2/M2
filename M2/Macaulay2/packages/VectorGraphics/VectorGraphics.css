@@ -3,19 +3,30 @@
 svg.M2Svg {
     position: relative;
     display: inline;
+    stroke-linejoin:round;
+    stroke:black;
+    stroke-opacity:1;
+    fill:none;
+    fill-opacity:1;
+    vertical-align:middle;
+    stroke-width:1%;
 }
 
-svg.M2SvgClickable {
+.M2SvgDraggable {
     cursor: grab;
 }
 
-svg.M2Svg text {
+.M2SvgDraggable.active {
+    cursor: grabbing;
+}
+
+.M2Svg text {
 /*    font-size: 14px; /* /* just a reminder since code in M2 anyway:
 absolute sounds bad but actually it's not really absolute since it's in svg units */
     font-family: sans-serif;
 }
 
-svg.M2Svg foreign-object {
+.M2Svg foreign-object {
 /*    font-size: 14px;*/ /* same. absolute sounds bad but actually it's not really absolute since it's in svg units */
 }
 
@@ -41,10 +52,10 @@ svg.M2Svg foreign-object {
 }
 
 
-svg.M2Svg > .gfxauto {
+.M2Svg > .gfxauto {
     visibility: hidden;
 }
 
-svg.M2Svg:hover > .gfxauto {
+.M2Svg:hover > .gfxauto {
     visibility: visible;
 }

@@ -1,4 +1,29 @@
--- TODO: GCstats
+document {
+     Key => GCstats,
+     Headline => "information about the status of the garbage collector",
+     PARA {
+	  "Macaulay2 uses the Hans Boehm ", TO2 {"GC garbage collector", "garbage collector"}, " to reclaim unused memory.  The function ", TT "GCstats", " 
+	  provides information about its status."
+	  },
+     EXAMPLE lines ///
+     s = GCstats()
+     ///,
+     PARA {
+	  "The value returned is a hash table, from which individual bits of information can be
+	  easily extracted, as follows."
+	  },
+     EXAMPLE lines ///
+     s#"heap size"
+     ///,
+     PARA {
+	  "The entries whose keys are upper case give the values of environment variables affecting the operation of the 
+	  garbage collector that have been specified by the user."
+	  },
+     PARA {
+	  "For further information about the individual items in the table, we refer the user to the source code and documentation of the garbage collector."
+	  },
+     SeeAlso => { "GC garbage collector" }
+     }
 
 document {
     Key => "system facilities",
@@ -728,7 +753,7 @@ document {
 	  for your system."
 	  },
      PRE replace(regexQuote homeDirectory, "/home/m2user/",
-	   concatenate between_"\n" apply(value Core#"private dictionary"#"userpath",s -> (5,s))),
+	   concatenate between_"\n" apply(core "userpath", s -> (5, s))),
      EXAMPLE {
 	  "stack path",
 	  ///path = append(path, "~/resolutions/"); stack path///

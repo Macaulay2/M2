@@ -689,7 +689,7 @@ document {
      }
 
 document {
-     Key => {memoize,(memoize, Function),(memoize, Function, List)},
+     Key => {memoize,(memoize, Function),(memoize, Function, List), memoizeClear, memoizeValues},
      Headline => "record results of function evaluation for future use",
      TT "memoize f", " -- produces, from a function ", TT "f", ", a new function that
      behaves the same as ", TT "f", ", but remembers previous answers to be provided
@@ -702,22 +702,34 @@ document {
      time fib 28
      time fib 28
      ///,
-     PARA{},
-     "The function ", TT "memoize", " operates by constructing
-     a ", TO "MutableHashTable", " in which the argument sequences are used
-     as keys for accessing the return value of the function.",
-     PARA{},
-     "An optional second argument to memoize provides a list of initial values,
-     each of the form ", TT "x => v", ", where ", TT "v", " is the value to
-     be provided for the argument ", TT "x", ".",
-     PARA{},
-     "Warning: the new function created by ", TT "memoize", " will save
-     references to all arguments and values it encounters, and this will
-     often prevent those arguments and values from being garbage-collected
-     as soon as they might have been.  If the arguments are
-     implemented as mutable hash tables (modules, matrices and rings are
-     implemented this way) then a viable strategy is to stash computed
-     results in the arguments themselves.  See also ", TT "CacheTable", "."
+     PARA{
+	  "An optional second argument to memoize provides a list of initial values,
+	  each of the form ", TT "x => v", ", where ", TT "v", " is the value to
+	  be provided for the argument ", TT "x", "."
+	  },
+     PARA{
+	  "The function ", TT "memoize", " operates by constructing
+	  a ", TO "MutableHashTable", ", in which the arguments are used
+	  as keys for accessing the return value of the function.  This mutable hash table
+	  can be obtained using the function ", TT "memoizeValues", ", as follows."
+	  },
+     EXAMPLE "peek memoizeValues fib",
+     PARA {
+	  "That hash table can be replaced by an empty one with the function ", TT "memoizeClear", "."
+	  },
+     EXAMPLE lines ///
+     memoizeClear fib
+     peek memoizeValues fib
+     ///,
+     PARA{
+	  "Warning: the new function created by ", TT "memoize", " will save
+	  references to all arguments and values it encounters, and this will
+	  often prevent those arguments and values from being garbage-collected
+	  as soon as they might have been.  If the arguments are
+	  implemented as mutable hash tables (modules, matrices and rings are
+	  implemented this way) then a viable strategy is to stash computed
+	  results in the arguments themselves.  See also ", TT "CacheTable", "."
+	  },
      }
 
 document {
@@ -853,24 +865,48 @@ document {
      SeeAlso => { getGlobalSymbol }
      }
 
-document { Key => symbol currentLineNumber,
-     Headline => "current line number of the current input file",
-     Usage => "currentLineNumber()",
-     Outputs => { ZZ => "the current line number of the current input file" },
-     EXAMPLE "currentLineNumber()",
-     SeeAlso => "currentFileName" }
-document { Key => symbol currentFileDirectory,
+document { 
+     Key => currentColumnNumber,
+     Headline => "current column number of the current input file",
+     Usage => "currentColumnNumber()",
+     Outputs => { ZZ => "the current column number of the current input file" },
+     EXAMPLE "currentColumnNumber()",
+     SeeAlso => {"currentRowNumber", "currentFileName" }
+     }
+document { 
+     Key => currentRowNumber,
+     Headline => "current row number of the current input file",
+     Usage => "currentRowNumber()",
+     Outputs => { ZZ => "the current row number of the current input file" },
+     EXAMPLE "currentRowNumber()",
+     SeeAlso => {"currentColumnNumber", "currentFileName", "currentPosition" }
+     }
+document { 
+     Key => symbol currentFileDirectory,
      Headline => "the directory containing the current input file",
      Usage => "currentFileDirectory",
      Outputs => { String => "the directory containing the current input file" },
      EXAMPLE "currentFileDirectory",
      SeeAlso => "currentFileName" }
-document { Key => symbol currentFileName,
+document { 
+     Key => symbol currentFileName,
      Headline => "the current source file",
      Usage => "currentFileName",
      Outputs => { String => "the name of the current source file" },
      EXAMPLE "currentFileName",
-     SeeAlso => "currentLineNumber" }
+     SeeAlso => {"currentRowNumber", "currentColumnNumber", "currentPosition" }
+     }
+document { 
+     Key => currentPosition,
+     Headline => "the current position in the current source file",
+     Usage => "currentPosition()",
+     Outputs => { FilePosition => "the current position in the source file" },
+     EXAMPLE lines ///
+     currentPosition()
+     peek'_2 oo
+     ///,
+     SeeAlso => {"currentRowNumber", "currentColumnNumber" }
+     }
 
 document { Key => functionBody,
      Headline => "get the body of a function",

@@ -3,11 +3,11 @@
 
 newPackage(
 	"WeylGroups",
-	Version => "0.5.1",
-	Date => "March 20, 2012",
+	Version => "0.5.2",
+	Date => "November 1, 2021",
 	Authors => {
 		{Name => "Baptiste Calmès",
-		HomePage => "http://www.math.uni-bielefeld.de/~bcalmes/"},
+		HomePage => "http://bcalmes.perso.math.cnrs.fr/"},
                 {Name => "Viktor Petrov"}
 		},
 	Headline => "root systems and Weyl groups",
@@ -1088,7 +1088,7 @@ hasseGraphToPicture(HasseGraph) := {"top margin"=>100,"left margin"=>100,"horizo
 rootSystem(RootSystem,Parabolic) := (R,P) ->
 	(
 	L:=sort(toList P) - (toList ((#P):1));
-	M:= if #P>0 then matrix(subtable(L,L,R.CartanMatrixTr)) else (matrix{{1}})^{}_{};
+	M:= if #P>0 then submatrix(R.CartanMatrixTr,L,L) else (matrix{{1}})^{}_{};
 	new RootSystem from {
 	RootSystemRank => #P,
 	CartanMatrixTr => M,

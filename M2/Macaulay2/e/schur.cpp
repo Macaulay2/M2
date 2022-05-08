@@ -341,6 +341,7 @@ ring_elem SchurRing::dimension(const ring_elem f) const
       K_->add_to(result, h2);
       K_->remove(h);
     }
+  mpz_clear(dim);
   return result;
 }
 

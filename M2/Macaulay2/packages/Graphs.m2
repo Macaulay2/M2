@@ -24,36 +24,32 @@ of the License, or any later version.
 ------------------------------------------
 ------------------------------------------
 
-newPackage select((
+newPackage (
     "Graphs",
         Version => "0.3.4",
         Date => "May 15, 2021",
         Authors => {
             {Name => "Jack Burkart", Email => "jburkar1@nd.edu"},
-            {Name => "David Cook II", Email => "dwcook@eiu.edu", HomePage => "http://ux1.eiu.edu/~dwcook/"},
-            {Name => "Caroline Jansen", Email => "cjansen@nd.edu"},
-            	{Name => "Amelia Taylor", Email => "originalbrickhouse@gmail.com"},
+            {Name => "David Cook II", Email => "dcook.math@gmail.com", HomePage => "http://ux1.eiu.edu/~dwcook/"},
+            {Name => "Caroline Jansen", Email => "cjansen@alumni.nd.edu"},
+            {Name => "Amelia Taylor", Email => "originalbrickhouse@gmail.com"},
             {Name => "Augustine O'Keefe", Email => "aokeefe@tulane.edu"},
             {Name => "Contributors of note: Carlos Amendola, Alex Diaz, Luis David Garcia Puente, Roser Homs Pons, Olga Kuznetsova,  Shaowei Lin, Sonja Mapes, Harshit J Motwani, Mike Stillman, Doug Torrance"}
         },
         Headline => "graphs and directed graphs (digraphs)",
 	Keywords => {"Graph Theory"},
         Configuration => {
-            "DotBinary" => "dot",
-            "JpgViewer" => ""
+            "DotBinary" => "dot"
             },
 	PackageImports => { "PrimaryDecomposition" },
         PackageExports => {
             "SimplicialComplexes"
             },
-        DebuggingMode => false,
-        ), x -> x =!= null)
+        DebuggingMode => false
+        )
 
 -- Load configurations
 graphs'DotBinary = if instance((options Graphs).Configuration#"DotBinary", String) then (options Graphs).Configuration#"DotBinary" else "dot";
-
-if (options Graphs).Configuration#"JpgViewer" != "" then
-    printerr "warning: the \"JpgViewer\" configuration option is deprecated"
 
 -- Exports
 export {
@@ -69,6 +65,7 @@ export {
     -- Basic data
     "adjacencyMatrix",
     "degreeMatrix",
+    "degreeSequence",
     "edges",
     "incidenceMatrix",
     "laplacianMatrix",
@@ -131,7 +128,6 @@ export {
     "cliqueNumber",
     "closedNeighborhood",
     "clusteringCoefficient",
-    "connectedComponents",
     "coverIdeal",
     "criticalEdges",
     "degeneracy",
@@ -198,7 +194,6 @@ export {
     --
     -- Graph operations
     "cartesianProduct",
-    "directProduct",
     "disjointUnion",
     "graphComposition",
     "graphPower",
@@ -251,6 +246,9 @@ runcmd := cmd -> (
 ------------------------------------------
 Digraph = new Type of HashTable
 Graph = new Type of Digraph
+
+Digraph.synonym = "digraph"
+Graph.synonym = "graph"
 
 digraph = method(Options => {symbol Singletons => null, symbol EntryMode => "auto"})
 digraph List := Digraph => opts -> L -> (
@@ -363,6 +361,9 @@ degree (Digraph,Thing) := ZZ => (D,v) -> #(children(D,v) + parents(D,v))
 
 degreeMatrix = method()
 degreeMatrix Digraph := Matrix => G -> diagonalMatrix apply(entries transpose adjacencyMatrix G, a -> #positions(a, j -> j != 0))
+
+degreeSequence = method()
+degreeSequence Graph := List => G -> rsort \\ sum \ entries adjacencyMatrix G
 
 edges = method()
 edges Digraph := List => D -> (
@@ -773,7 +774,7 @@ clusteringCoefficient (Graph, Thing) := QQ => (G,v) -> (
     2 * #edges G' / (#N * (#N - 1))
     )
 
-connectedComponents = method()
+-- the 'conneectedComponents' methods is defined in 'SimplicialComplexies'
 connectedComponents Graph := List => G -> (
     V := vertexSet G;
     while #V != 0 list (
@@ -1367,7 +1368,7 @@ cartesianProduct(Graph, Graph) := Graph => (G, H) -> (
     graph(V, E, EntryMode => "edges")
     )
 
-directProduct = method()
+-- the 'directProduct' method is defined in 'Polyhedra'
 directProduct(Graph,Graph) := Graph => (G, H) -> (
     V := toList(set vertexSet G ** set vertexSet H);
     E := flatten for u in V list for v in V list
@@ -1823,6 +1824,7 @@ doc ///
         (graph, Matrix)
         [graph, Singletons]
         [graph, EntryMode]
+	EntryMode
     Headline
         Constructs a simple graph
     Usage
@@ -1871,7 +1873,7 @@ doc ///
             The hash table with a graph's vertices as keys and list of neighbors as values.
     Description
         Text
-            A graph consists of two sets, a vertex set and an edge set which is a subset of the collection of subsets of the vertex set. Edges in graphs are symmetric or two-way; if u and v are vertices then if {u,v} is an edge connecting them, {v,u} is also an edge (which is implicit in the definition, we will almost always just use one of the pairs). The options for EntryMode are "neighbors" (the default) and "edges."  This method returns a hash table where the keys are vertices of a given graph or digraph and the values are their children (or neighbors, in the case of undirected graphs).
+            A graph consists of two sets, a vertex set and an edge set which is a subset of the collection of subsets of the vertex set. Edges in graphs are symmetric or two-way; if u and v are vertices then if {u,v} is an edge connecting them, {v,u} is also an edge (which is implicit in the definition, we will almost always just use one of the pairs). The options for EntryMode are "neighbors" (the default) and "edges".  This method returns a hash table where the keys are vertices of a given graph or digraph and the values are their children (or neighbors, in the case of undirected graphs).
         Example
             G = graph digraph({{1,2},{2,1},{3,1}}, EntryMode => "edges")
             G = graph digraph(matrix {{0,1,1},{1,0,0},{1,0,0}})
@@ -1963,6 +1965,26 @@ doc ///
         adjacencyMatrix
         laplacianMatrix
         degree
+///
+
+doc ///
+    Key
+        degreeSequence
+        (degreeSequence, Graph)
+    Headline
+        the degree sequence of a graph
+    Usage
+        degreeSequence G
+    Inputs
+        G:Graph
+    Outputs
+        :List -- the degree sequence of G
+    Description
+        Text
+            The degree sequence of a graph is the list of the degrees of its
+            vertices sorted in nonincreasing order.
+        Example
+            degreeSequence pathGraph 5
 ///
 
 --edges
@@ -3168,7 +3190,6 @@ doc ///
 --connectedComponents
 doc ///
     Key
-        connectedComponents
         (connectedComponents, Graph)
     Headline
         Computes the connected components of a graph
@@ -3654,8 +3675,9 @@ doc ///
     Key
         forefathers
         (forefathers,Digraph,Thing)
+	symbol foreFathers
     Headline
-        returns the forefathers of a digrah
+        returns the forefathers of a digraph
     Usage
         L = forefathers (D, v)
     Inputs
@@ -4757,6 +4779,7 @@ doc ///
     Key
         directProduct
         (directProduct, Graph, Graph)
+	symbol tensorProduct
     Headline
         Computes the direct product of two graphs
     Usage
@@ -5343,9 +5366,33 @@ doc ///
    ///
 
 
-
-
-
+doc ///
+    Key
+        clusteringCoefficient
+        (clusteringCoefficient, Graph)  
+        (clusteringCoefficient, Graph, Thing)
+    Headline
+        a method for computing the clustering coefficient of a Graph
+    Usage
+        c = clusteringCoefficient(G, v)
+        g = clusteringCoefficient(G)
+    Inputs
+        G:Graph
+        v:Thing
+            v should be a member of the vertex set of G
+    Outputs
+        c:ZZ
+            The local clustering coefficient for G relative to v.
+        g:ZZ
+            The global clustering coefficient for G.
+    Description
+        Text
+            The clustering coefficient is a measure of the degree to which nodes in a graph tend to cluster together. The global clustering coefficient gives an overall
+            indication of the interconnectedness of the graph. The local clustering coefficient gives an indication of how embedded a single vertex is in the graph.
+        Example
+            clusteringCoefficient cycleGraph 4
+            clusteringCoefficient completeGraph 4
+///
 
 
 TEST ///
@@ -5458,6 +5505,9 @@ TEST ///
   digraph ({2, 1, 3}, {{2, 1}, {3, 1}})})
 ///
 
+TEST ///
+assert Equation(degreeSequence pathGraph 5, {2, 2, 2, 1, 1})
+///
 
 end;
 

@@ -445,7 +445,7 @@ print "coefficients interface is NOT complete"
 -- rawInitial -----
 -------------------
 -- test this for up and down orders, and also
--- for Schryer orders
+-- for Schreyer orders
 needs "raw-util.m2"
 R = polyring(rawZZ(), (symbol a .. symbol g))
 m = mat{{a^2-a^3*b*c, a^4*c*d+a^3*b+1, a*b*c*d}}

@@ -41,7 +41,6 @@ export {
 	"coloops",
 	"isDependent",
 	"closure",
-	"hyperplanes",
 	"flats",
 	"latticeOfFlats",
 	"restriction",

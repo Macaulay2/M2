@@ -12,6 +12,8 @@ degree Number := i -> {}
 conjugate Number := identity
 toExternalString Number := simpleToString
 floor Number := x -> floor0(x)
+floor Constant := floor0 @@ numeric
+ceiling Constant :=
 ceiling Number := x -> - floor(-x)
 
 -----------------------------------------------------------------------------

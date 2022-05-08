@@ -174,6 +174,7 @@ bool MonomialIdeal::is_equal(const MonomialIdeal &mi0) const
       i++;
       j++;
     }
+  GC_reachable_here(&mi0);
   return true;
 }
 
@@ -619,6 +620,7 @@ MonomialIdeal *MonomialIdeal::intersect(const MonomialIdeal &J) const
           }
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
+  GC_reachable_here(&J);
   return result;
 }
 
@@ -649,6 +651,7 @@ MonomialIdeal *MonomialIdeal::operator*(const MonomialIdeal &J) const
         new_elems.insert(b);
       }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
+  GC_reachable_here(&J);
   return result;
 }
 
@@ -666,6 +669,7 @@ MonomialIdeal *MonomialIdeal::operator+(const MonomialIdeal &J) const
       new_elems.insert(b);
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
+  GC_reachable_here(&J);
   return result;
 }
 
@@ -683,6 +687,7 @@ MonomialIdeal *MonomialIdeal::operator-(const MonomialIdeal &J) const
           result->insert_minimal(b);
         }
     }
+  GC_reachable_here(&J);
   return result;
 }
 
@@ -714,6 +719,7 @@ MonomialIdeal *MonomialIdeal::quotient(const MonomialIdeal &J) const
       delete result;
       result = next_result;
     }
+  GC_reachable_here(&J);
   return result;
 }
 
@@ -792,6 +798,7 @@ MonomialIdeal *MonomialIdeal::sat(const MonomialIdeal &J) const
       delete result;
       result = next_result;
     }
+  GC_reachable_here(&J);
   return result;
 }
 

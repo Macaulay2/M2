@@ -14,7 +14,7 @@ newPackage(
     	Headline => "unprojection and the Kustin-Miller complex construction",
 	Keywords => {"Commutative Algebra"},
 	PackageExports => {"SimplicialComplexes"},
-    	DebuggingMode => false,
+    	DebuggingMode => true,
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	     "journal URI" => "http://j-sag.org/",
@@ -59,25 +59,85 @@ You should have received a copy of the GNU General Public License along with thi
 
 *-
 
-
-
-
 --------------------------------------------------------------------
-
 -- the commands available to the user:
 
-
-
-export {"kustinMillerComplex","unprojectionHomomorphism"}
-
-export {"resBE"}
-
-export {"stellarSubdivision","delta","isExactRes"}
-
-export {"Tom","Jerry"}
+export {
+    "kustinMillerComplex",
+    "unprojectionHomomorphism",
+    "resBE",
+    "delta",
+    "isExactRes",
+    "Tom",
+    "Jerry",
+    "Face",
+    "face",
+    "isSubface",
+    "isFaceof"
+    }
 
 if version#"VERSION" < "1.4" then error "This package was written for Macaulay2 Version 1.4 or higher.";
 if (options SimplicialComplexes).Version < "1.2" then error "This package requires the SimplicialComplexes package Version 1.2 or higher."
+
+
+--------------------------------------------------------------------
+-- Code originally located in 'SimplicialComplexes'
+
+Face = new Type of MutableHashTable
+
+vertices Face := List => F -> F.vertices
+dim Face := ZZ => F -> -1 + # vertices F
+ring Face := Ring => F -> F.ring
+
+net Face := f -> (
+    v := vertices f;
+    if #v === 0 then return net({});
+    horizontalJoin apply(v,j->net(j)|net(" "))
+    )
+Face#{Standard,AfterPrint} = m -> (
+  n := # vertices m;
+  if n === 0 then vstr := "empty face";
+  if n === 1 then vstr = "face with " | n | " vertex";
+  if n > 1 then vstr = "face with " | n | " vertices";
+  << endl;
+  << concatenate(interpreterDepth:"o") << lineNumber << " : "
+  << vstr|" in "|net(ring m)
+  << endl;
+  )
+
+face = method()
+face List := Face => L -> new Face from {
+    symbol vertices => L, 
+    symbol ring=> ring L#0
+    }
+face(List, PolynomialRing) := Face => (L,R) -> new Face from {
+    symbol vertices => L, 
+    symbol ring => R
+    }
+face RingElement := m -> face(support m, ring m)
+
+
+Face == Face := Boolean => (F, G) -> (
+    # vertices F === # vertices G and set vertices F === set vertices G
+    )
+
+isSubface = method()
+isSubface(Face, Face) := Boolean => (F, G) -> (
+    isSubset(set vertices F, set vertices G)
+    )
+
+isFaceOf = method()
+isFaceOf(Face, SimplicialComplex) := Boolean => (F, C) -> (
+    fc := facets C / face;    
+    #(select(1,fc, G -> isSubface(F,G)))>0
+    )
+
+substitute(Face, PolynomialRing) := (F, R) -> (
+    v := vertices F;
+    face(apply(v, j -> sub(j, R)), R)
+    )
+
+
 
 ------------------------------------------------------------------------
 -- Buchsbaum-Eisenbud resolution of the ideal of submaximal Pfaffians of a 
@@ -233,9 +293,10 @@ assert(not isFaceOfCyclicPolytope({x_4,x_9},3))
 -- boundary complex of a cyclic polytope
 -- of dimension d on the vertices corresponding to the variables of R
 delta=method()
-delta(ZZ,PolynomialRing):=(d,R)->
-        simplicialComplex apply(select(subsets(gens R,d),j->isFaceOfCyclicPolytope(j,d)),face)
-
+delta(ZZ,PolynomialRing) := (d, R) -> (
+    L := apply(select(subsets(gens R,d), j -> isFaceOfCyclicPolytope(j,d)),face);
+    simplicialComplex apply(L, j -> product vertices j)
+    )
 
 
 -----------------------------------------------------------------------------
@@ -549,39 +610,32 @@ substitute(ChainComplex,Ring):=(cc,S)->(
         for i from min(cc)+1 to max(cc) do cn.dd_i = sub(cc.dd_i,S);
         cn)
 
-
-
-
-
-
-
 --------------------------------------------------------------------------
 -- Stellar subdivision code
-
-
 stellarSubdivisionSimplex=method()
 stellarSubdivisionSimplex(Face,Face,PolynomialRing,PolynomialRing):=(D,s,n,R)->(
         if isSubface(s,D) then
-           facets(subdivideFace (D,s,n,R),useFaceClass=>true)
+           facets(subdivideFace (D,s,n,R)) / face
         else
            {substitute(D,R)})
 
 -- stellar subdivision of a simplicial complex with respect to the face
 -- introducing a new variable
-stellarSubdivision=method()
+-- the 'stellarSubdivision' method is defined in 'Polyhedra'
 stellarSubdivision(SimplicialComplex,Face,PolynomialRing):= (D,s0,n)  ->  (
         R1:=ring D;
         s:=substitute(s0,R1);
         if not isFaceOf(s,D) then (
            error "second argument is not a face of the first argument";
         );
-        fc:=facets(D,useFaceClass=>true);
+        fc:=facets(D) / face;
         R1=ring D;
         K:=coefficientRing R1;
         v:=join(gens R1,gens n);
         R:=K(monoid[v]);
         L:=join toSequence for i to #fc-1 list stellarSubdivisionSimplex (fc#i,s,n,R);
-        simplicialComplex L)
+        simplicialComplex apply(L, j -> product vertices j)
+	)
 
 joinFaces=method()
 joinFaces(Face,Face):=(F,G)->(
@@ -612,7 +666,8 @@ subdivideFace(Face,Face,PolynomialRing,PolynomialRing):= (D,s,n,R) -> (
        nc:=joinFaces(comp,nface);
        vs:=vertices s;
        L := for i to #vs-1 list joinFaces(nc,substitute(coFace(face {vs#i},s),R));
-       simplicialComplex L)
+       simplicialComplex apply(L, j -> product vertices j)
+       )
 
 
 
@@ -622,7 +677,7 @@ I=monomialIdeal(product(gens R))
 D=simplicialComplex I
 Dsigma=stellarSubdivision(D,face {x_1,x_2,x_3},QQ[t])
 S=ring Dsigma
-assert(facets Dsigma == matrix {{x_2*x_3*x_5*x_6*t, x_1*x_3*x_5*x_6*t, x_1*x_2*x_5*x_6*t,      x_2*x_3*x_4*x_6*t, x_1*x_3*x_4*x_6*t, x_1*x_2*x_4*x_6*t,      x_2*x_3*x_4*x_5*t, x_1*x_3*x_4*x_5*t, x_1*x_2*x_4*x_5*t,      x_2*x_3*x_4*x_5*x_6, x_1*x_3*x_4*x_5*x_6, x_1*x_2*x_4*x_5*x_6}})
+assert(facets Dsigma == {x_2*x_3*x_5*x_6*t, x_1*x_3*x_5*x_6*t, x_1*x_2*x_5*x_6*t,      x_2*x_3*x_4*x_6*t, x_1*x_3*x_4*x_6*t, x_1*x_2*x_4*x_6*t,      x_2*x_3*x_4*x_5*t, x_1*x_3*x_4*x_5*t, x_1*x_2*x_4*x_5*t,      x_2*x_3*x_4*x_5*x_6, x_1*x_3*x_4*x_5*x_6, x_1*x_2*x_4*x_5*x_6})
 ///
 
 
@@ -1052,7 +1107,7 @@ doc ///
      I=monomialIdeal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
      betti res I
      D=simplicialComplex I 
-     fc=facets(D,useFaceClass=>true)
+     fc=facets(D) / face
      S=QQ[x_5]
      D5=stellarSubdivision(D,fc#0,S)
      I5=ideal D5
@@ -1189,6 +1244,285 @@ assert(isExactRes cc);
 -----------------------------------------------------------------
 -- Examples
 
+		  
+doc ///
+    Key
+        Face
+    Headline
+        The class of faces of simplicial complexes.
+    Description
+        Text
+            The class of faces of simplicial complexes on the variables of a
+            polynomial ring.  The faces are @TO MutableHashTable@s F with two
+            @TO keys@ F.vertices is a @TO List@ of vertices in the @TO
+            PolynomialRing@ F.ring
+	
+        Example
+            R=QQ[x_0..x_4];
+            F=face {x_0,x_2}
+            vertices F
+            I = monomialIdeal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+            D = simplicialComplex I
+            fc = faces(1, D)
+    SeeAlso
+        SimplicialComplex
+        faces
+        facets
+///
+
+doc ///
+  Key
+    (symbol ==,Face,Face)
+  Headline
+   Compare two faces.
+  Usage
+    F==G
+  Inputs
+    F:Face
+    G:Face
+  Outputs
+    :Boolean
+  Description
+   Text
+        Checks whether F and G are equal.
+
+   Example
+     K=QQ;
+     R=K[x_0..x_4];
+     F=face {x_0,x_1}
+     G1=face {x_1,x_0}
+     G2=face {x_1,x_2}
+     F==G1
+     F==G2
+  SeeAlso
+     Face
+     face
+///
+
+
+doc ///
+  Key
+    face
+    (face,List)
+    (face,List,PolynomialRing)
+    (face,RingElement)
+  Headline
+    Generate a face.
+  Usage
+    face(L)
+    face(L,R)
+    face(m)
+  Inputs
+    L:List
+    R:PolynomialRing
+    m:RingElement
+        a monomial
+  Outputs
+    :Face
+  Description
+   Text
+        Generates a face out of a list L or a squarefree monomial.
+        If L is not empty or a monomial the argument R is not required.
+
+   Example
+     K=QQ;
+     R=K[x_0..x_4];
+     F=face {x_0,x_1}
+  SeeAlso
+     SimplicialComplex
+     faces
+     facets
+///
+
+doc ///
+    Key
+        (dim, Face)
+    Headline
+        The dimension of a face.
+    Usage
+        dim F
+    Inputs
+        F : Face
+    Outputs
+        : ZZ
+            bigger or equal to -1
+    Description
+       Text
+            Returns the dimension of a @TO Face@, i.e., the number of 
+	    @TO vertices@ F minus 1.
+       Example
+            K = QQ;
+            R = K[x_0..x_4];
+            I = monomialIdeal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+            D = simplicialComplex I
+            fc = faces(D)
+            -- apply(-1..1, j->apply(fc#j,dim))
+    SeeAlso
+         face
+         (facets, SimplicialComplex)
+         (faces, SimplicialComplex)
+///
+
+doc ///
+  Key
+    (vertices, Face)
+  Headline
+    The vertices of a face of a simplicial complex.
+  Usage
+    vertices(F)
+  Inputs
+    F:Face
+  Outputs
+    :List
+  Description
+   Text
+        Returns a @TO List@ with the vertices of a @TO Face@ of a simplicial complex.
+   Example
+     R = QQ[x_0..x_4];
+     I = monomialIdeal(x_0*x_1,x_1*x_2,x_2*x_3,x_3*x_4,x_4*x_0);
+     D = simplicialComplex I
+     fc = facets(D)
+     (faces D)#(1)
+     --vertices fc#1
+  SeeAlso
+     face
+     (facets,SimplicialComplex)
+     (faces, SimplicialComplex)
+///
+
+doc ///
+  Key
+    isSubface
+    (isSubface,Face,Face)
+  Headline
+    Test whether a face is a subface of another face.
+  Usage
+    isSubface(F,G)
+  Inputs
+    F:Face
+    G:Face
+  Outputs
+    :Boolean
+  Description
+   Text
+        Test whether F is a subface of G.
+
+   Example
+     K=QQ;
+     R=K[x_0..x_4];
+     G=face {x_0,x_1,x_2}
+     F1=face {x_0,x_2}
+     F2=face {x_0,x_3}
+     isSubface(F1,G)
+     isSubface(F2,G)
+///
+
+doc ///
+  Key
+    (substitute,Face,PolynomialRing)
+  Headline
+    Substitute a face to a different ring.
+  Usage
+    substituteFace(F,R)
+  Inputs
+    F:Face
+    R:PolynomialRing
+  Outputs
+    :Face
+  Description
+   Text
+        Substitute a face to a different ring.
+
+   Example
+     K=QQ;
+     R=K[x_0..x_4];
+     F=face {x_0,x_1,x_2}
+     S=R**K[y]
+     substitute(F,S)
+///
+
+doc ///
+  Key
+    (ring,Face)
+  Headline
+    Ring of a face.
+  Usage
+    ring(F)
+  Inputs
+    F:Face
+  Outputs
+    :Ring
+  Description
+   Text
+        Ring of a face.
+
+   Example
+     K=QQ;
+     R=K[x_0..x_4];
+     F=face {x_0,x_1,x_2}
+     ring F
+///
+
+
+doc ///
+  Key
+    isFaceOf
+    (isFaceOf,Face,SimplicialComplex)
+  Headline
+    Substitute a face to a different ring.
+  Usage
+    substitute(F,R)
+  Inputs
+    F:Face
+    R:PolynomialRing
+  Outputs
+    :Face
+  Description
+   Text
+        Substitute a face to a different ring.
+
+   Example
+     R = QQ[x_1..x_5];
+     C = simplicialComplex monomialIdeal (x_1*x_2,x_3*x_4*x_5)
+     F1 = face {x_1,x_2}
+     F2 = face {x_1,x_3}
+     -- isFaceOf(F1,C)
+     -- isFaceOf(F2,C)
+///
+
+doc ///
+  Key
+    (net,Face)
+  Headline
+    Printing a face.
+  Usage
+    net(F)
+  Inputs
+    F:Face
+  Outputs
+    :Net
+  Description
+   Text
+        Prints a face. The vertices are printed without any brackets and with one space between them. Also prints the polynomial ring which contains the vertices.
+
+   Example
+     K=QQ;
+     R=K[x_0..x_4];
+     face {x_0,x_1}
+///
+
+///
+  Key
+    useFaceClass
+    [faces,useFaceClass]
+    [facets,useFaceClass]
+  Headline
+    Option to return faces in the class Face
+  Description
+   Text
+    @TO Boolean@ @TO Option@ to return in the methods @TO faces@ and @TO facets@ a @TO List@ of @TO Face@s instead of a @TO Matrix@.
+///
+
 
 doc ///
   Key
@@ -1274,7 +1608,7 @@ doc ///
     C'=substitute(stellarSubdivision(C,F,K[x_7]),R')
     fVector C'
     I'=monomialIdeal(sub(cc.dd_1,R'))
-    C'==simplicialComplex I'
+    C'===simplicialComplex I'
    Text
 
     One observes that in this case the resulting complex is minimal
@@ -1348,7 +1682,7 @@ doc ///
     C'=substitute(stellarSubdivision(C,F,K[x_10]),R')
     fVector C'
     I'=monomialIdeal(sub(cc.dd_1,R'))
-    C'==simplicialComplex I'
+    C'===simplicialComplex I'
   SeeAlso
     kustinMillerComplex
     res

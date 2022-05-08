@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
     "NoetherianOperators",
-    Version => "2.2",
-    Date => "Sep 3 2021",
+    Version => "2.2.1",
+    Date => "Nov 2 2021",
     Authors => {
         {Name => "Robert Krone", 
         Email => "krone@math.gatech.edu"},
@@ -222,14 +222,14 @@ eliminatingDual (Point,Matrix,List,ZZ) := o -> (p,Igens,ind,d) -> (
     RdBasis
     )
 
-truncate (PolySpace, ZZ) := (L,d) -> (
+truncate (PolySpace, ZZ) := {} >> o -> (L,d) -> (
     R := ring L;
     if not L.Reduced then L = reduceSpace L;
     tGens := select(flatten entries gens L, q -> first degree q <= d);
     if #tGens == 0 then polySpace map(R^1,R^0,0) else polySpace matrix{tGens}
     )
-truncate (DualSpace, ZZ) := (L,d) -> dualSpace(truncate(L.Space,d),L.BasePoint)
-truncate (PolySpace, List, ZZ) := (L,ind,d) -> (
+truncate (DualSpace, ZZ) := {} >> o -> (L,d) -> dualSpace(truncate(L.Space,d),L.BasePoint)
+truncate (PolySpace, List, ZZ) := {} >> o -> (L,ind,d) -> (
     R := ring L;
     n := numgens R;
     if not all(ind, i->class i === ZZ) or not all(ind, i -> i>=0 and i<n)
@@ -245,7 +245,7 @@ truncate (PolySpace, List, ZZ) := (L,ind,d) -> (
     TL = truncate(TL,d);
     polySpace(TtoR gens TL)
     )
-truncate (DualSpace, List, ZZ) := (L,ind,d) -> dualSpace(truncate(L.Space,ind,d),L.BasePoint)
+truncate (DualSpace, List, ZZ) := {} >> o -> (L,ind,d) -> dualSpace(truncate(L.Space,ind,d),L.BasePoint)
 
 gCorners = method(TypicalValue => Matrix, Options => {Tolerance => null, StandardBasis => false})
 gCorners (Point,Ideal) := o -> (p,I) -> gCorners(p,gens I,o)
@@ -1475,7 +1475,7 @@ solvePDE(Ideal) := List => true >> opts -> I -> solvePDE (module I, opts)
 solvePDE(Matrix) := List => true >> opts -> M -> solvePDE (image M, opts)
 
 -- differentialPrimaryDecomposition = solvePDE
-differentialPrimaryDecomposition = method()
+differentialPrimaryDecomposition = method(Options => true)
 differentialPrimaryDecomposition Module := List => true >> opts -> M -> solvePDE(M, opts)
 differentialPrimaryDecomposition Ideal := List => true >> opts -> I -> differentialPrimaryDecomposition(module I, opts)
 
@@ -1726,7 +1726,7 @@ getModuleFromNoetherianOperators (Ideal, List) := Module => (P,L) -> (
     R := ring P;
     FF := frac(R/P);
     D := ring L_0;
-    S := FF[gens D];
+    S := FF(monoid [gens D]);
     W := apply(L, F -> sub(F, S));
     m := 1 + max apply(W, M -> max(0, max flatten apply(flatten entries M, v -> degree v)));
     V := mingens vectorSpaceAnn(W);
@@ -1736,12 +1736,12 @@ getModuleFromNoetherianOperators (Ideal, List) := Module => (P,L) -> (
     -- some process of idealization of a module
     T := symbol T;
     p := rank super V;
-    AA := D[T_1..T_p];
-    BB := coefficientRing(R)[gens AA | gens R, Degrees => toList splice(p:1, (#gens R):0)];
+    AA := D(monoid [T_1..T_p]);
+    BB := (coefficientRing(R))(monoid [gens AA | gens R, Degrees => toList splice(p:1, (#gens R):0)]);
     X := AA / ideal((vars AA) * (gens V));
     Q := ker map(X, BB, vars AA | sub(vars R + vars D, AA));
     
-    U := image sub(last coefficients(sub(super basis(1, Q), R[T_1..T_p])), R);
+    U := image sub(last coefficients(sub(super basis(1, Q), R(monoid [T_1..T_p]))), R);
     AssU := ass comodule U;
     localizeModule(U, AssU, P)
 )

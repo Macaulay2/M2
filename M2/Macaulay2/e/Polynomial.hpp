@@ -243,7 +243,7 @@ public:
   coeffConstIterator cendCoeff() const { return mCoefficients.cend(); }
   monomConstIterator cendMonom() const { return mMonomials.cend(); }
 
-  const coeffVector & getCoeffVector() const { return mCoefficients; }
+  const coeffVector & getElementArray() const { return mCoefficients; }
 
   const monomVector & getMonomVector() const { return mMonomials; }
   monomVector & getMonomInserter() { return mMonomials; }

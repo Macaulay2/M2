@@ -7,6 +7,7 @@
 /* Used in monomial encoding/decoding/comparison */
 
 #include "interface/monomial-ordering.h"
+#include <vector>
 
 typedef int *exponents;
 typedef int *monomial;
@@ -54,6 +55,7 @@ void monomialOrderDecodeToActualExponents(const MonomialOrder *mo,
                                           const_monomial a,
                                           exponents b);
 
+std::vector<bool> laurentVariables(const MonomialOrder* mo);
 #endif
 
 /*

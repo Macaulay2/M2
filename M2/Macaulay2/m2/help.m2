@@ -49,10 +49,11 @@ counter := 0
 next := () -> counter = counter + 1
 optTO := key -> (
     tag := makeDocumentTag(key, Package => package key);
+    ptag := getPrimaryTag tag;
     fkey := format tag;
+    if currentHelpTag.?Key and instance(currentHelpTag.Key, Sequence) and currentHelpTag =!= ptag then return;
     if isUndocumented tag then return;
     if isSecondaryTag tag then (
-	ptag := getPrimaryTag tag;
 	-- this is to avoid doubling "\" in documentation for symbol \ and symbol \\
 	ref := if match("\\\\", fkey) then concatenate("/// ", fkey, " ///") else format fkey;
 	-- TODO: figure out how to align the lists using padding
@@ -179,15 +180,27 @@ documentationValue(Symbol, Option) := (S, o) -> (
     -- cf: https://github.com/Macaulay2/M2/issues/1649#issuecomment-738618652
     documentationValue(S, value o#0))
 -- e.g. Macaulay2Doc :: help
-documentationValue(Symbol, Command)         := (S, c) -> documentationValue(S, c#0)
--- e.g. Macaulay2Doc :: sum
+documentationValue(Symbol, Command)         :=
+-- e.g. Macaulay2Doc :: flush
+documentationValue(Symbol, Manipulator)     :=
+-- e.g. Macaulay2Doc :: HH
 documentationValue(Symbol, ScriptedFunctor) :=
+-- e.g. Macaulay2Doc :: sum
 documentationValue(Symbol, Function)        :=
+-- e.g. Macaulay2Doc :: xor
 documentationValue(Symbol, Keyword)         := (S, f) -> (
+    -- the command f
+    c := if instance(f, Command) and isDocumentableMethod f then LI TT format toString f;
     -- methods of f
     a := smenu documentableMethods f;
     if #a > 0 then DIV nonnull splice ( "class" => "waystouse",
-	SUBSECTION {"Ways to use ", TT toExternalString f, " :"}, a))
+	SUBSECTION {"Ways to use ", TT toExternalString f, " :"}, nonnull prepend(c, a)))
+-- this is the only one not involving a Symbol
+-- e.g. Depth :: depth(Ideal, Ring)
+documentationValue(Nothing, Sequence) := (S, s) -> (
+    a := smenu documentableMethods s#0;
+    if #a > 0 then DIV nonnull splice ( "class" => "waystouse",
+	SUBSECTION {"Ways to use this method:"}, a))
 
 -- TODO: simplify this process
 -- e.g. Macaulay2Doc :: Macaulay2Doc
@@ -204,10 +217,8 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
     -- types
     b := select(e, x -> instance(value x, Type));
     -- methods
-    -- TODO: if a package introduces a methods where all components are from
-    -- another package, e.g. (res, List), this code will miss it.
     -- TODO: should we limit to methods that have individual documentation? Probably not
-    m := unique select(flatten \\ documentableMethods \ value \ toList e, x -> package x === pkg);
+    m := documentableMethods pkg;
     -- symbols
     c := select(e, x -> instance(value x, Symbol));
     -- other things
@@ -253,7 +264,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 		    HREF { if installLayout =!= null then installLayout#"packages" | pkg#"pkgname" | "/" else pkg#"auxiliary files", pkg#"pkgname" | "/" }, ".")
 		}
 	    },
-	if #e > 0 then DIV {
+	if pkg#"pkgname" =!= "Macaulay2Doc" and #e + #m > 0 then DIV {
 	    SUBSECTION "Exports",
 	    DIV { "class" => "exports",
 		fixup UL {
@@ -357,11 +368,14 @@ getDescription := (key, tag, rawdoc) -> (
 
 -- This is the overall template of a documentation page
 -- for specialized templates, see documentationValue above
+-- TODO: allow customizing the template for different output methods
+-- TODO: combine sections when multiple tags are being documented (e.g. strings and methods)
 getBody := (key, tag, rawdoc) -> (
     currentHelpTag = tag;
+    synopsis := getSynopsis(key, tag, rawdoc);
     result := fixup DIV nonnull splice (
 	HEADER1{ formatDocumentTag key, commentize getOption(rawdoc, Headline) },
-	if (synopsis := getSynopsis(key, tag, rawdoc)) =!= null then DIV { SUBSECTION "Synopsis", synopsis },
+	if synopsis =!= null then DIV { SUBSECTION "Synopsis", synopsis },
 	getDescription(key, tag, rawdoc),
 	if instance(key, Array) then getDefaultOptions(key#0, key#1),
 	getOption(rawdoc, Acknowledgement),
@@ -370,10 +384,14 @@ getBody := (key, tag, rawdoc) -> (
 	getOption(rawdoc, Caveat),
 	getOption(rawdoc, SourceCode),
 	getOption(rawdoc, SeeAlso),
-	if instance(key, Symbol) then (
+	-- this is so a "Ways to use" section is listed when multiple
+	-- method keys are documented together without the base function
+	if instance(key, Sequence) then (
+	    documentationValue(, key)) else
+	if instance(key, Symbol)   then (
 	    documentationValue(key, value key),
-	    getTechnical(key, value key))
-	else if instance(key, Array) then (
+	    getTechnical(key, value key)) else
+	if instance(key, Array)    then (
 	    if instance(opt := key#1, Option)
 	    then documentationValue(opt#0, opt)
 	    else documentationValue(opt, value opt)),
@@ -385,39 +403,19 @@ getBody := (key, tag, rawdoc) -> (
 -- View help within Macaulay2
 -----------------------------------------------------------------------------
 
--- TODO: help symbol% before Macaulay2Doc is installed doesn't work
 help = method(Dispatch => Thing)
--- overview nodes and formatted documentation keys
-help String := key -> (
-    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    tag := getOption(rawdoc, symbol DocumentTag);
-    if tag.?Key and tag.Key =!= key then help tag.Key
-    else if      isGlobalSymbol key then help getGlobalSymbol key
-    else getBody(key, tag, rawdoc))
+help DocumentTag := tag -> (
+    rawdoc := fetchAnyRawDocumentation tag;
+    rawtag := if rawdoc =!= null then rawdoc.DocumentTag else tag;
+    getBody(tag.Key, rawtag, rawdoc))
 
--- Methods
 help Sequence := key -> (
-    if key === () then return if inDebugger then debuggerUsageMessage else help "initial help";
-    -- TODO: make this work with hook strategies; e.g. (foo, ZZ, Strategy => Default)
-    if lookup key === null then error("expected ", toString key, " to be a method");
-    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    tag := getOption(rawdoc, symbol DocumentTag);
-    getBody(key, tag, rawdoc))
+    if key =!= () then help makeDocumentTag key else
+    if inDebugger then debuggerUsageMessage else help "initial help")
 
--- Options
-help Array := key -> (
-    verifyKey key;
-    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    tag := getOption(rawdoc, symbol DocumentTag);
-    getBody(key, tag, rawdoc))
-
--- everything else: Symbols, Types, ScriptedFunctors, Functions, Keywords, and Packages
-help Symbol := key -> (
-    rawdoc := fetchAnyRawDocumentation makeDocumentTag key;
-    tag := getOption(rawdoc, symbol DocumentTag);
-    getBody(key, tag, rawdoc))
-
-help DocumentTag := tag -> help tag.Key
+help String :=
+help Symbol :=
+help Array :=
 help Thing := x -> help makeDocumentTag x
 help List  := l -> DIV between(HR{}, help \ l)
 help ZZ    := i -> seeAbout(help, i)

@@ -9,18 +9,25 @@ document { Key => isEmpty,      methodstr, SeeAlso => { "Polyhedra::Polyhedra",(
 
 -- also see functions/intersect-doc.m2
 document {
-    Key => { intersect, (intersect, List), (intersect, Sequence), intersection },
+    Key => { intersect, (intersect, List), (intersect, Sequence) },
     Headline => "compute an intersection",
-    PARA {
+    PARA {     
 	"This function calculates the intersection of a list or sequence of compatible objects."
 	},
     SeeAlso => {
 	-- add references to intersect methods installed in packages _other than Core_ here
+        intersection,
 	"M0nbar::M0nbar",
 	"NAGtypes::NAGtypes",
 	"Polyhedra::Polyhedra"
 	}
     }
+
+document {
+     Key => intersection,
+     Headline => "compute an intersection",
+     SeeAlso => { intersect }
+     }
 
 -- also see functions/tensor-doc.m2
 document {

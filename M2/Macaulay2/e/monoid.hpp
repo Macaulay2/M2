@@ -132,6 +132,10 @@ class Monoid : public MutableEngineObject
 
   std::vector<int> getPrimaryDegreeVector() const;
 
+  bool isLaurentVariable(int i) const {
+    return monorder_->is_laurent[i];
+  }
+
   void text_out(buffer &o) const;
 
   int n_vars() const { return nvars_; }
