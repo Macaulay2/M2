@@ -158,7 +158,7 @@ subductionTopLevel(HashTable, Matrix) := (compTable, M) -> (
     while not (zero(g)) do (
 	if compTable#"options"#SubductionMethod == "Top" then (
             subductedPart = subductionTopLevelLeadTerm(compTable, g);
-	    ) else if compTable#"options"#SubductionMethod == "Internal" then (
+	    ) else if compTable#"options"#SubductionMethod == "Engine" then (
     	    subductedPart = subductionEngineLevelLeadTerm(compTable, g);
 	    ) else (
 	    error ("Unknown subduction type " | toString compTable#"options"#SubductionMethod); 
