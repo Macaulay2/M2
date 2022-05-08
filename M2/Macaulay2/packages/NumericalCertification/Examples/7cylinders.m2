@@ -3,7 +3,7 @@
 
 needsPackage "NumericalCertification"
 
-FF = RR
+FF = CC
 --FF = QQ
 --FF = QQ[i]/ideal(i^2+1)
 -- Derive Eqs
@@ -46,42 +46,9 @@ sol2 = apply({2.075088491891, -2.688893665930, -4.033142850644, 6.311134419772, 
 sol1point = point {sol1};
 sol2point = point {sol2};
 L = {sol1point,point random(FF^1,FF^(#coordinates sol1point)), sol2point}
-apply(L, x->certifySolution(f,x))
-certifyCount(f, L)
-
+certifySolutions(f, L)
+peek oo
 
 -- Krawczyk (faster IntervalArithmetic needed?)
-sol1int = apply({1..20}#0, i -> I_i=interval(({sol1}#0)#(i-1)-(10^(-8)),({sol1}#0)#(i-1)+(10^(-8))));
---sol1int = apply({1..20}#0, i -> I_i=interval((promote(({sol1}#0)#(i-1)-(10^(-8)),QQ)),promote(({sol1}#0)#(i-1)+(10^(-8)),QQ)));
-o = intervalOptionList apply({x_3=>I_1, x_4=>I_2, x_5=>I_3, x_6=>I_4, x_7=>I_5,
-    y_3=>I_6, y_4=>I_7, y_5=>I_8, y_6=>I_9, y_7=>I_10,
-    t_3=>I_11, t_4=>I_12, t_5=>I_13, t_6=>I_14, t_7=>I_15,
-    u_3=>I_16, u_4=>I_17, u_5=>I_18, u_6=>I_19, u_7=>I_20}, i -> intervalOption i)
-krawczykMethod(f,o)
-
-
-
-restart
-needsPackage "NumericalCertification"
-needsPackage "SLPexpressions"
-X = inputGate symbol X
-Y = inputGate symbol Y
-C = sumGate {X+Y,Y,X}
-D = productGate {X*Y,Y,C}
-h = valueHashTable({X,Y},{interval(1,2),interval(3,4)})
-peek h
-time value(D,h)
-
-R = RR[x,y,z];
-d = x*y*y*(2*x+2*y);
-I1 = interval(1,2);
-op1 = intervalOption(x => I1)
-iI = sub(d,op1)
-
-I2 = interval(3,4);
-op2= intervalOption(y => I2)
-sub(iI, op2)
-
-`l = intervalOptionList {op1,op2}
-o = intervalOptionList {("x"=>"I1"),("y"=>"I2")}
-time sub(d, o)
+certifySolutions(f, L, Strategy => "intervalArithmetic")
+peek oo
