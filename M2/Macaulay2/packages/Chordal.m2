@@ -42,6 +42,7 @@ export {
     "chordalElim",
     "chordalTria",
     "codimCount",
+    "label",
     "rootCount",
     "nextChain",
     "nextOrderedPartition",
@@ -538,6 +539,7 @@ isTriangular(ChordalNet) := N -> N.isTriangular
 gens (ChordalNetNode) := Ni -> Ni.gens
 ineqs (ChordalNetNode) := Ni -> Ni.ineqs
 rank (ChordalNetNode) := Ni -> Ni.rank
+label = method()
 label (ChordalNetNode) := Ni -> Ni.label
 parents (ChordalNetNode) := Ni -> Ni.parents
 children (ChordalNetNode) := Ni -> Ni.children

@@ -777,7 +777,7 @@ dominanceLattice ZZ := Poset => n -> (
 
 facePoset = method()
 facePoset SimplicialComplex := Poset => D -> (
-    faceList := apply(toList(-1..dim D), i -> support \ toList flatten entries faces(i, D));
+    faceList := apply(toList(-1..dim D), i -> support \ faces(i, D));
     P := poset(flatten faceList, isSubset, AntisymmetryStrategy => "none");
     if posets'Precompute then (
         idx := hashTable apply(#P.GroundSet, i -> P_i => i);
@@ -1478,7 +1478,7 @@ fPolynomial Poset := RingElement => opts -> P -> (
     oP := orderComplex P;
     fV := fVector oP;
     R := ZZ(monoid [opts.VariableName]);
-    sum(-1..dim oP, i -> fV#i * R_0^(i + 1))
+    sum(-1..dim oP, i -> fV#(i+1) * R_0^(i + 1))
     )
 
 greeneKleitmanPartition = method(Options => {symbol Strategy => "antichains"})
@@ -1557,7 +1557,7 @@ zetaPolynomial Poset := RingElement => opts -> P -> (
     fV := fVector oP;
     R := QQ(monoid [opts.VariableName]);
     X := toList(2..dim oP+2);
-    Y := apply(X, n -> sum(2..n, i -> fV#(i-2) * binomial(n-2, i-2)));
+    Y := apply(X, n -> sum(2..n, i -> fV#(i-1) * binomial(n-2, i-2)));
     sum(#X, i -> Y_i * product(drop(X, {i,i}), xj -> (R_0 - xj)/(X_i-xj)))
     )
 
@@ -6281,7 +6281,7 @@ assert(isLowerSemilattice B)
 assert(isUpperSemilattice B)
 assert(isDistributive B)
 R=ring orderComplex B
-assert(sub(ideal(flatten entries facets orderComplex B),R) == sub(ideal(v_0*v_4*v_6*v_7,v_0*v_2*v_6*v_7,v_0*v_4*v_5*v_7,v_0*v_1*v_5*v_7,v_0*v_2*v_3*v_7,v_0*v_1*v_3*v_7),R))
+assert(sub(ideal(facets orderComplex B),R) == sub(ideal(v_0*v_4*v_6*v_7,v_0*v_2*v_6*v_7,v_0*v_4*v_5*v_7,v_0*v_1*v_5*v_7,v_0*v_2*v_3*v_7,v_0*v_1*v_3*v_7),R))
 assert(sub(ideal(orderComplex B),R) == sub(ideal(v_1*v_2, v_1*v_4, v_2*v_4, v_3*v_4, v_2*v_5, v_3*v_5, v_1*v_6, v_3*v_6, v_5*v_6),R))
 assert(closedInterval(B, "001","111") == booleanLattice 2)
 assert(openInterval(B, "001","111") == poset({a,b},{}))
@@ -6394,7 +6394,7 @@ assert(isLowerSemilattice B)
 assert(isUpperSemilattice B)
 assert(isDistributive B)
 R=ring orderComplex B
-assert(sub(ideal(flatten entries facets orderComplex B),R) == sub(ideal(v_0*v_1*v_2*v_3*v_4),R))
+assert(sub(ideal(facets orderComplex B),R) == sub(ideal(v_0*v_1*v_2*v_3*v_4),R))
 assert(sub(ideal(orderComplex B),R) == sub(ideal(),R))
 assert(closedInterval(B,1,4) == chain 4)
 assert(openInterval(B,1,4) == chain 2)
@@ -6498,7 +6498,7 @@ assert(isLowerSemilattice B)
 assert(isUpperSemilattice B)
 assert(isDistributive B)
 R=ring orderComplex B
-assert(sub(ideal(flatten entries facets orderComplex B),R) == sub(ideal(v_0*v_2*v_4*v_6*v_8*v_10*v_11,v_0*v_1*v_4*v_6*v_8*v_10*v_11,v_0*v_1*v_3*v_6*v_8*v_10*v_11,v_0*v_1*v_3*v_5*v_8*v_10*v_11,v_0*v_1*v_3*v_5*v_7*v_10*v_11,v_0*v_1*v_3*v_5*v_7*v_9*v_11),R))
+assert(sub(ideal(facets orderComplex B),R) == sub(ideal(v_0*v_2*v_4*v_6*v_8*v_10*v_11,v_0*v_1*v_4*v_6*v_8*v_10*v_11,v_0*v_1*v_3*v_6*v_8*v_10*v_11,v_0*v_1*v_3*v_5*v_8*v_10*v_11,v_0*v_1*v_3*v_5*v_7*v_10*v_11,v_0*v_1*v_3*v_5*v_7*v_9*v_11),R))
 assert(sub(ideal(orderComplex B),R) == sub(ideal(v_1*v_2,v_2*v_3,v_3*v_4,v_2*v_5,v_4*v_5,v_5*v_6,v_2*v_7,v_4*v_7,v_6*v_7,v_7*v_8,v_2*v_9,v_4*v_9,v_6*v_9,v_8*v_9,v_9*v_10),R))
 assert(closedInterval(B,2,24) == poset({{2, 4}, {2, 6}, {2, 8}, {2, 12}, {2, 24}, {4, 8}, {4, 12}, {4,24}, {6, 12}, {6, 24}, {8, 24}, {12, 24}}))
 assert(openInterval(B,2,24) == poset({{4, 8}, {4, 12}, {6, 12}}))
@@ -6612,7 +6612,7 @@ assert(isLowerSemilattice B)
 assert(isUpperSemilattice B)
 assert(isDistributive B)
 S=ring orderComplex B
-assert(sub(ideal(flatten entries facets orderComplex B),R) == sub(ideal(v_0*v_3*v_7*v_10*v_11,v_0*v_3*v_6*v_10*v_11,v_0*v_2*v_6*v_10*v_11,v_0*v_3*v_7*v_9*v_11,v_0*v_3*v_5*v_9*v_11,v_0*v_1*v_5*v_9*v_11,v_0*v_3*v_6*v_8*v_11,v_0*v_2*v_6*v_8*v_11,v_0*v_3*v_5*v_8*v_11,v_0*v_1*v_5*v_8*v_11,v_0*v_2*v_4*v_8*v_11,v_0*v_1*v_4*v_8*v_11),R))
+assert(sub(ideal(facets orderComplex B),R) == sub(ideal(v_0*v_3*v_7*v_10*v_11,v_0*v_3*v_6*v_10*v_11,v_0*v_2*v_6*v_10*v_11,v_0*v_3*v_7*v_9*v_11,v_0*v_3*v_5*v_9*v_11,v_0*v_1*v_5*v_9*v_11,v_0*v_3*v_6*v_8*v_11,v_0*v_2*v_6*v_8*v_11,v_0*v_3*v_5*v_8*v_11,v_0*v_1*v_5*v_8*v_11,v_0*v_2*v_4*v_8*v_11,v_0*v_1*v_4*v_8*v_11),R))
 assert(sub(ideal(orderComplex B),S) == sub(ideal(v_1*v_2,v_1*v_3,v_2*v_3,v_3*v_4,v_2*v_5,v_4*v_5,v_1*v_6,v_4*v_6,v_5*v_6,v_1*v_7,v_2*v_7,v_4*v_7,v_5*v_7,v_6*v_7,v_7*v_8,v_2*v_9,v_4*v_9,v_6*v_9,v_8*v_9,v_1*v_10,v_4*v_10,v_5*v_10,v_8*v_10,v_9*v_10),S))
 assert(closedInterval(B,y*z,x^2*y*z) == poset({{y*z, x*y*z}, {x*y*z, x^2*y*z}}))
 assert(openInterval(B,sub(1,R),x^2*y*z) == poset({{z, x*z}, {z, y*z}, {y, x*y}, {y, y*z}, {x, x*z}, {x, x*y}, {x, x^2}, {y*z, x*y*z}, {x*z, x^2*z}, {x*z, x*y*z}, {x*y, x^2*y}, {x*y, x*y*z}, {x^2, x^2*z}, {x^2, x^2*y}}))

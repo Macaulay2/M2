@@ -128,7 +128,6 @@ export {
     "cliqueNumber",
     "closedNeighborhood",
     "clusteringCoefficient",
-    "connectedComponents",
     "coverIdeal",
     "criticalEdges",
     "degeneracy",
@@ -195,7 +194,6 @@ export {
     --
     -- Graph operations
     "cartesianProduct",
-    "directProduct",
     "disjointUnion",
     "graphComposition",
     "graphPower",
@@ -776,7 +774,7 @@ clusteringCoefficient (Graph, Thing) := QQ => (G,v) -> (
     2 * #edges G' / (#N * (#N - 1))
     )
 
-connectedComponents = method()
+-- the 'conneectedComponents' methods is defined in 'SimplicialComplexies'
 connectedComponents Graph := List => G -> (
     V := vertexSet G;
     while #V != 0 list (
@@ -1370,7 +1368,7 @@ cartesianProduct(Graph, Graph) := Graph => (G, H) -> (
     graph(V, E, EntryMode => "edges")
     )
 
-directProduct = method()
+-- the 'directProduct' method is defined in 'Polyhedra'
 directProduct(Graph,Graph) := Graph => (G, H) -> (
     V := toList(set vertexSet G ** set vertexSet H);
     E := flatten for u in V list for v in V list
@@ -3192,7 +3190,6 @@ doc ///
 --connectedComponents
 doc ///
     Key
-        connectedComponents
         (connectedComponents, Graph)
     Headline
         Computes the connected components of a graph
