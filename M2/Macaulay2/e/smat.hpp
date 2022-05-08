@@ -596,8 +596,11 @@ void SMat<CoeffRing>::vec_row_op(sparsevec *&v,
   ring().init(c);
   ring().set_zero(c);
   ring().mult(c, vec2->coeff, a);
-  if (ring().is_zero(c)) return;  // nothing to change
-
+  if (ring().is_zero(c))
+    {
+      ring().clear(c);
+      return;  // nothing to change
+    }
   // Now add c to the r1'th row of v
   sparsevec head;
   head.next = v;

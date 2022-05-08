@@ -1205,6 +1205,8 @@ void GBRing::gbvector_combine_lead_terms_ZZ(const FreeModule *F,
     {
       result = 0;
       result_syz = 0;
+      mpz_clear(u1);
+      mpz_clear(v1);
       return;
     }
   gbvector_get_lead_exponents(F, f, EXP1);  // Removes the Schreyer part
