@@ -193,10 +193,10 @@ document {
      }
 
 document { 
-     Key => {(cohomology,ZZ,CoherentSheaf)},
+     Key => {(cohomology,ZZ,ProjectiveVariety,CoherentSheaf),(cohomology,ZZ,CoherentSheaf)},
      Headline => "cohomology of a coherent sheaf on a projective variety",
-     Usage => "HH^i F\ncohomology(i,F)",
-     Inputs => {"i"=> ZZ, "F" => CoherentSheaf =>{"on a projective variety ", TT "X"} },
+     Usage => "HH^i(X,F)\nHH^i F\ncohomology(i,X,F)\ncohomology(i,F)",
+     Inputs => {"i"=> ZZ, "X" => ProjectiveVariety, "F" => CoherentSheaf =>{"on the projective variety ", TT "X"} },
      Outputs => {Module=>{"the ", TT "i", "-th cohomology group of ", TT "F", " as a vector space 
 	       over the coefficient field of ", TT "X"} 
 	  },
@@ -266,7 +266,7 @@ document {
 	  "II'Z = sheaf module ideal Z"
 	  },
      PARA{
-	  TEX "The defect of W (that is, $h^{1,1}(W)-1$) can be computed from the 
+	  TEX "The defect of $W$ (that is, $h^{1,1}(W)-1$) can be computed from the
      	  cohomology of the ideal sheaf of the singular locus Z of V twisted by 5 
      	  (see Werner's thesis):"},
      EXAMPLE {          
@@ -274,8 +274,8 @@ document {
 	  "h11 = defect + 1"
 	  },
      PARA{
-     	  TEX "The number $h^{2,1}(W)$ (the dimension of the moduli space of W) can be computed (Clemens-Griffiths, Werner) 
-     	  as $dim H^0({\\bf I}_Z(5))/JacobianIdeal(V)_5$."},
+	  TEX "The number $h^{2,1}(W)$ (the dimension of the moduli space of $W$) can be computed (Clemens-Griffiths, Werner)
+	  as $\\dim H^0({\\mathbf I}_Z(5))/JacobianIdeal(V)_5$."},
      EXAMPLE {
 	  "quinticsJac = numgens source basis(5,ideal Z)", 
           "h21 = rank HH^0(II'Z(5)) - quinticsJac"

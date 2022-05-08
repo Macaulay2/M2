@@ -20,15 +20,6 @@ header "// required for toString routines
 #include <interface/ringelement.h>          // for IM2_RingElement_to_string
 #include <interface/ringmap.h>              // for IM2_RingMap_to_string";
 
-header "
-#ifndef WITH_PYTHON
-#  define PyObject_Str(o)       0
-#  define PyUnicode_AsUTF8(o)   0
-#  define Py_DECREF(o)          0
-#else
-#  include <Python.h>
-#endif";
-
 internalName(s:string):string := (
      -- was "$" + s in 0.9.2
      s
@@ -341,14 +332,6 @@ setupfun("any",any);
 --	       else WrongArg(1+1,"a list")))
 --     else WrongNumArgs(2));
 --setupfun("find",find);
-
-characters(e:Expr):Expr := (
-     when e
-     is s:stringCell do list(
-	  new Sequence len length(s.v) do (
-	       foreach c in s.v do provide chars.(int(uchar(c)))))
-     else buildErrorPacket("expects a string"));
-setupfun("characters",characters);
 
 ascii(e:Expr):Expr := (
      if isIntArray(e)
@@ -663,6 +646,14 @@ packlist(v:Sequence,n:int):Expr := (
 		    j := i;
 		    i = i+1;
 	       	    provide v.j))));
+packstring(s:string,n:int):Expr := (
+     d := length(s);
+     i := 0;
+     list(new Sequence len (d + n - 1) / n do
+	  provide stringCell(new string len if n < d - i then n else d - i do (
+	       j := i;
+	       i = i + 1;
+	       provide s.j))));
 packfun(e:Expr):Expr := (
      when e
      is a:Sequence do (
@@ -676,13 +667,15 @@ packfun(e:Expr):Expr := (
 			      when a.1
 			      is x:Sequence do packlist(x,nn)
 			      is x:List do packlist(x.v,nn)
+			      is x:stringCell do packstring(x.v,nn)
 			      else WrongArg(1,"a list or sequence")
 			      )
 			 else if nn == 0 then (
 			      when a.1
 			      is x:Sequence do if length(x) == 0 then emptyList else WrongArg(1,"a positive integer")
 			      is x:List do if length(x.v) == 0 then emptyList else WrongArg(1,"a positive integer")
-			      else WrongArg(1,"a list or sequence")
+			      is x:stringCell do if length(x.v) == 0 then emptyList else WrongArg(1,"a positive integer")
+			      else WrongArg(1,"a list, sequence, or string")
 			      )
 			 else WrongArg(1,"a positive integer")
 			 )
@@ -696,6 +689,8 @@ packfun(e:Expr):Expr := (
 			      nn := toInt(n);
 			      if nn > 0
 			      then packlist(x,nn)
+			      else if nn == 0 && length(x) == 0
+			      then emptyList
 			      else WrongArg(2,"a positive integer"))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
@@ -707,10 +702,25 @@ packfun(e:Expr):Expr := (
 			      nn := toInt(n);
 			      if nn > 0
 			      then packlist(x.v,nn)
+			      else if nn == 0 && length(x.v) == 0
+			      then emptyList
 			      else WrongArg(2,"a positive integer"))
 			 else WrongArgSmallInteger(2))
 		    else WrongArgZZ(2))
-	       else WrongArg(1,"a list or sequence"))
+	       is x:stringCell do (
+		    when a.1
+		    is n:ZZcell do (
+			 if isInt(n)
+			 then (
+			      nn := toInt(n);
+			      if nn > 0
+			      then packstring(x.v,nn)
+			      else if nn == 0 && length(x.v) == 0
+			      then emptyList
+			      else WrongArg(2,"a positive integer"))
+			 else WrongArgSmallInteger(2))
+		    else WrongArgZZ(2))
+	       else WrongArg(1,"a list, sequence, or string"))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 setupfun("pack", packfun);
@@ -1009,12 +1019,7 @@ tostringfun(e:Expr):Expr := (
 	  -- Ccode(string, "IM2_MonomialIdeal_to_string(",x.p,")" )
 	  )
      is c:RawComputationCell do toExpr(Ccode(string, "IM2_GB_to_string(",c.p,")" ))
-     is po:pythonObjectCell do (
-	  -- Expr("<<a python object>>")
-	  str := Ccode(pythonObject,"PyObject_Str(",po.v,")");
-	  r := toExpr(tostring(Ccode(constcharstarOrNull,"PyUnicode_AsUTF8(",str,")")));
-	  Ccode(void,"Py_DECREF(",str,")");
-	  r)
+     is pythonObjectCell do toExpr("<<a python object>>")
      is x:xmlNodeCell do toExpr(toString(x.v))
      is xmlAttrCell do toExpr("<<libxml attribute>>")
      is x:TaskCell do (

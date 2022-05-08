@@ -210,7 +210,7 @@ method = methodDefaults >> opts -> args -> (
      singleDispatch := chk opts.Dispatch;
      outputs := if not singleDispatch then apply(opts.Dispatch, c -> c === Type) else opts.Dispatch === Type;
      saveCurrentFileName := currentFileName;		    -- for debugging
-     saveCurrentLineNumber := currentLineNumber();	    -- for debugging
+     saveCurrentRowNumber := currentRowNumber();	    -- for debugging
      methodFunction := (
         if opts.Options === null then (
 	    if opts.Binary    then BinaryNoOptions(outputs) else
@@ -267,11 +267,11 @@ setupMethods((), {
 	  entries, borel, gcdCoefficients, singularLocus,
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
 	  koszul, symmetricPower, trace, target, source,
-	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
+	  getChangeMatrix, cover, coverMap, super, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
 	  substitute, rank, complete, ambient, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
-	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw, exp,
-	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
+	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
+	  content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, assign, numgens, realPart, imaginaryPart, conjugate,
 	  relations, cone, standardForm, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,
 	  presentation, dismiss, precision, 
@@ -329,8 +329,6 @@ status = method (
      	  Monomials => false
      	  })
 
-minimalBetti = method(Options => true)
-
 -- sort
 -- TODO: see sortBy in classes.m2
 -- cf. https://github.com/Macaulay2/M2/issues/1154
@@ -366,7 +364,6 @@ setupMethods(TypicalValue => List,
 
 length = method(TypicalValue => ZZ, Dispatch => Thing)
 codim = method( Options => true )
-regularity = method( TypicalValue => ZZ, Options => { Weights => null } )
 
 -- defined in d/actors4.d
 format' := format
@@ -419,6 +416,11 @@ depth Net := netDepth
 width String := s -> #s
 height String := s -> 1
 depth String := s -> 0
+
+-----------------------------------------------------------------------------
+
+toList = method(Dispatch => Thing)
+toList BasicList := toList Set := toList String := List => toList1
 
 -----------------------------------------------------------------------------
 
@@ -719,27 +721,6 @@ baseName Thing := R -> (
 	  x)
      else error "baseName: no base name available"
      )
-
--- exp
-exp = method()
-exp CC := CC => exp'
-exp RR := exp QQ := exp ZZ := RR => exp'
-exp RRi := RRi => exp'
-exp RingElement := RingElement => r -> (
-     try
-     promote(exp lift(r,RR),ring r)
-     else try
-     promote(exp lift(r,CC),ring r)
-     else (
-	  n := 1;
-	  rn := r;
-	  e := try 1/1 + rn else error "exp: expected an algebra over QQ";
-	  while true do (
-	       n = n+1;
-	       rn = (1/n)*rn*r;
-	       if rn == 0 then break e;
-	       e = e + rn;
-	       )))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

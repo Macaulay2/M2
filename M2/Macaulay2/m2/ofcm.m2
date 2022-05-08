@@ -403,7 +403,7 @@ findHeft List := opts -> (degs) -> (
      	  if not instance(degrk,ZZ) then error "expected DegreeRank option to be an integer";
 	  );
      if not all(degs, d -> #d === degrk) then error ("expected all degrees to be of length ", toString degrk);
-     if #degs === 0 then return toList(degrk : 0);
+     if #degs === 0 then return toList(degrk : 1);
      if degrk === 0 then return null;
      if degrk === 1 then return if all(degs,d->d#0 > 0) then {1} else if all(degs,d->d#0 < 0) then {-1} ;
      if all(degs,d->d#0 > 0) then return splice {  1, degrk-1:0 };

@@ -324,6 +324,9 @@
 /* Whether we use MPIR (instead of GMP) */
 #cmakedefine01 USING_MPIR
 
+/* Whether we are building with tbb version >= 2021 */
+#cmakedefine WITH_TBB
+
 /* whether we are linking with the libxml2 library */
 #cmakedefine WITH_XML
 

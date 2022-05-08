@@ -111,6 +111,13 @@ inline bool get_from_double(const ARingRRR& R,
 {
   return R.set_from_double(a, b);
 }
+  
+inline bool get_from_double(const ARingRRi& R,
+                            ARingRRi::ElementType& a,
+                            double b)
+{
+   return R.set_from_double(a, b);
+}  
     
 inline bool get_from_Interval(const ARingRRi& R,
                               ARingRRi::ElementType& a,

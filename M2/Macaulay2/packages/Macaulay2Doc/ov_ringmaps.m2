@@ -347,7 +347,7 @@ document {
 document {
      Key => "kernel and coimage of a ring map",
      "The kernel and coimage of a ring map can be computed
-     using ", TO "coimage", " and ", TO "ker", " .  The output
+     using ", TO "coimage", " and ", TO2(kernel, "ker"), " .  The output
      of ", TT "ker", " is an ideal and the output of ", TT "coimage", " is a
      ring or quotient ring.",
      EXAMPLE {

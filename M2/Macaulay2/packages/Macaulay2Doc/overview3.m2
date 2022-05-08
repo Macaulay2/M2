@@ -284,7 +284,7 @@ document {
       sometimes one can just start Macaulay2 by setting the GC_INITIAL_HEAP_SIZE environment variable 
       to some larger value with an environment setting prefix on the M2 command line, e.g., ", TT "GC_INITIAL_HEAP_SIZE=20G M2", ".",
 	  },
-     SeeAlso => { collectGarbage }
+     SeeAlso => { collectGarbage, GCstats }
      }
 
 doc /// 

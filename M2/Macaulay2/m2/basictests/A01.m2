@@ -33,13 +33,13 @@ assert( bb#1 === 44 )
 assert( aa#1 === 2 )
 
 -- test list
-assert( toList (1,2,3) === {1,2,3} )
-assert( toList () === {} )
-assert( toList {} === {} )
-assert( toList {1} === {1} )
-assert( toList {1,2} === {1,2} )
+assert( toList1 (1,2,3) === {1,2,3} )
+assert( toList1 () === {} )
+assert( toList1 {} === {} )
+assert( toList1 {1} === {1} )
+assert( toList1 {1,2} === {1,2} )
 aa = newClass(MutableList, {1,2,3})
-bb = toList aa
+bb = toList1 aa
 aa#2 = 444
 assert( not  mutable bb )
 assert( aa#2 === 444 )

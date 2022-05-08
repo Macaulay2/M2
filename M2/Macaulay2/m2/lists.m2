@@ -115,7 +115,7 @@ member(Thing,VisibleList) := Boolean => (c,x) -> any(x, i -> c===i)
 sum List := x -> plus toSequence x
 
 sum(ZZ,Function) := (n,f) -> (
-     if n === 0 then 0
+     if n <= 0 then 0
      else (
 	  s := f 0;
 	  for i from 1 to n-1 do s = s + f i;
@@ -141,7 +141,7 @@ sum(VisibleList, VisibleList, Function) := (x,y,f) -> (
 product List := x -> times toSequence x
 
 product(ZZ,Function) := (n,f) -> (
-     if n === 0 then 1
+     if n <= 0 then 1
      else (
 	  s := f 0;
 	  for i from 1 to n-1 do s = s * f i;
@@ -174,6 +174,8 @@ rotate(ZZ,VisibleList) := (n,s) -> (
 -- sort should not accept sequences because sort is now a function with options!
 sort List :=  opts -> internalsort
 rsort List := opts -> internalrsort
+
+List << List := (A, B) -> all(min(#A, #B), i -> A#i <= B#i)
 
 -- we've been waiting to do this:
 binaryOperators = sort binaryOperators

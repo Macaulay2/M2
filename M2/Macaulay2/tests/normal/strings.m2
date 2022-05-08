@@ -55,3 +55,18 @@ assert Equation(apply("foo", identity), ("f", "o", "o"))
 assert Equation(apply("foo", "bar", concatenate), ("fb", "oa", "or"))
 assert Equation(apply("foo", ("b", "a", "r"), concatenate), ("fb", "oa", "or"))
 assert Equation(apply(("f", "o", "o"), "bar", concatenate), ("fb", "oa", "or"))
+
+-- reverse
+assert Equation(reverse "Hello, world!", "!dlrow ,olleH")
+
+-- pack
+assert Equation(pack("The quick brown fox jumps over the lazy dog", 5),
+    {"The q","uick ","brown"," fox ","jumps"," over"," the ","lazy ","dog"})
+assert Equation(pack(5, "The quick brown fox jumps over the lazy dog"),
+    {"The q","uick ","brown"," fox ","jumps"," over"," the ","lazy ","dog"})
+assert Equation(pack(0, ""), pack("", 0))
+
+-- tally
+assert BinaryOperation(symbol ===, tally "Hello, world!", new Tally from {
+	" " => 1, "!" => 1, "r" => 1, "d" => 1, "e" => 1, "w" => 1,
+	"H" => 1, "l" => 3, "," => 1, "o" => 2})

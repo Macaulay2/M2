@@ -1005,7 +1005,7 @@ ring HyperGraph := H -> H#"ring"
 simplicialComplexToHyperGraph = method()
 
 simplicialComplexToHyperGraph SimplicialComplex := D -> (
-	  hyperGraph flatten entries facets D
+	  hyperGraph facets D
 	  )
 
 ------------------------------------------------------
@@ -2617,7 +2617,7 @@ doc ///
 		       g = graph {a*b,b*c,a*c,d*e,a*e}
 		       Delta1 = independenceComplex g 
 		       Delta2 = simplicialComplex edgeIdeal g
-                       Delta1 == Delta2
+                       Delta1 === Delta2
 	SeeAlso
 	         independenceNumber       	  
 ///	
@@ -3999,7 +3999,7 @@ R=QQ[w,x,y,z]
 e = graph {w*x,w*y,x*y,y*z}  -- clique on {w,x,y} and {y,z}
 Delta1 = cliqueComplex e  -- max facets {w,x,y} and {y,z}
 Delta2 = simplicialComplex {w*x*y,y*z}
-assert(Delta1 == Delta2)
+assert(Delta1 === Delta2)
 assert(cliqueNumber e -1 == dim Delta1)
 ///
 
@@ -4222,7 +4222,7 @@ TEST///
 R = QQ[a..e]
 c5 = graph {a*b,b*c,c*d,d*e,e*a}
 D = simplicialComplex monomialIdeal (a*b,b*c,c*d,d*e,e*a)
-assert(D == independenceComplex c5)
+assert(D === independenceComplex c5)
 ///
 
 

@@ -769,7 +769,8 @@ document {
      PARA {
      	  "If the heft vector is not provided, many computations will work (e.g., Gröbner bases and computation of resolutions),
 	  but certain other operations (such as ", TT "basis", " and ", TT "random", ") will raise errors."
-     	  }
+	  },
+     Subnodes => {TO "heft vectors"}
      }
 
 document {

@@ -1,0 +1,51 @@
+-- -*- M2-comint -*- hash: 1817891267
+
+i1 : fractions = import "fractions"
+
+o1 = <module 'fractions' from '/usr/lib/python3.9/fractions.py'>
+
+o1 : PythonObject of class module
+
+i2 : x = fractions@@"Fraction"(2, 3)
+
+o2 = 2/3
+
+o2 : PythonObject of class fractions.Fraction
+
+i3 : value x
+
+o3 = 2/3
+
+o3 : PythonObject of class fractions.Fraction
+
+i4 : toQQ = x -> value x@@"numerator" / value x@@"denominator";
+
+i5 : addPyToM2Function("Fraction", toQQ, "Fraction -> QQ");
+
+i6 : value x
+
+     2
+o6 = -
+     3
+
+o6 : QQ
+
+i7 : hooks value
+
+o7 = {0 => (value, PythonObject, Strategy => unknown -> PythonObject)    }
+     {1 => (value, PythonObject, Strategy => function -> FunctionClosure)}
+     {2 => (value, PythonObject, Strategy => Counter -> Tally)           }
+     {3 => (value, PythonObject, Strategy => dict -> HashTable)          }
+     {4 => (value, PythonObject, Strategy => set -> Set)                 }
+     {5 => (value, PythonObject, Strategy => list -> List)               }
+     {6 => (value, PythonObject, Strategy => tuple -> Sequence)          }
+     {7 => (value, PythonObject, Strategy => str -> String)              }
+     {8 => (value, PythonObject, Strategy => complex -> CC)              }
+     {9 => (value, PythonObject, Strategy => float -> RR)                }
+     {10 => (value, PythonObject, Strategy => int -> ZZ)                 }
+     {11 => (value, PythonObject, Strategy => bool -> Boolean)           }
+     {12 => (value, PythonObject, Strategy => Fraction -> QQ)            }
+
+o7 : NumberedVerticalList
+
+i8 : 

@@ -131,6 +131,15 @@ set(Macaulay2Doc_dependencies
 set(_default_dependencies
   ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/Macaulay2Doc/.installed)
 set(EngineTests_dependencies ${_default_dependencies})
+set(Style_dependencies
+  ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Style/highlight.js)
+
+add_custom_command(
+  OUTPUT ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Style/highlight.js
+  COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_BINARY_DIR}/../editors/highlightjs/highlight.js
+    ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Style
+  DEPENDS M2-highlightjs)
 
 # TODO: automate this process
 # 2. FourTiTwo needs 4ti2

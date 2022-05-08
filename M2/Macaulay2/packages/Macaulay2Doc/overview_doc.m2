@@ -198,9 +198,9 @@ Node
     (makeDocumentTag, Thing)
     (makeDocumentTag, DocumentTag)
     (makeDocumentTag, String)
+    (makeDocumentTag, List)
     (format, DocumentTag)
     (locate, DocumentTag)
-    (toExternalString, DocumentTag)
   Headline
     the class of all document tags
   Description

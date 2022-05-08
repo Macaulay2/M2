@@ -1,36 +1,44 @@
 newPackage( "RationalMaps",
-Version => "0.3", Date => "August 11th, 2019", Authors => {
-     {Name => "Karl Schwede",
-     Email=> "kschwede@gmail.com",
-     HomePage=> "http://www.math.utah.edu/~schwede"
-     }, --Karl Schwede was partially supported by  NSF FRG Grant DMS #1265261/1501115, NSF CAREER Grant DMS #1252860/1501102, and NSF grant #1801849
-     {Name => "Daniel Smolkin",
-     Email=> "smolkin@math.utah.edu",
-     HomePage=> "http://www.math.utah.edu/~smolkin"
-     },--Dan Smolkin was partially supported by  NSF FRG Grant DMS #1265261/1501115, NSF CAREER Grant DMS #1252860/1501102
-     {Name => "S. Hamid Hassanzadeh",
-     Email => "hassanzadeh.ufrj@gmail.com",
-     HomePage=>"https://www.researchgate.net/profile/Seyed_Hassanzadeh"
-     }, --S. Hamid Hassanzadeh was supported by CNPq-bolsa de Produtividade
-     {Name => "C.J. Bott",
-     Email => "cjamesbott@gmail.com"}
-}, --this file is in the public domain
-Keywords => {"Commutative Algebra"},
-Headline => "rational maps between varieties", PackageImports => {"FastMinors"})
+    Version => "1.0", Date => "March 11th, 2022", Authors => {
+        {Name => "Karl Schwede",
+        Email=> "kschwede@gmail.com",
+        HomePage=> "http://www.math.utah.edu/~schwede"
+        }, --Karl Schwede was partially supported by  NSF FRG Grant DMS #1265261/1501115, NSF CAREER Grant DMS #1252860/1501102, and NSF grant #1801849
+        {Name => "Daniel Smolkin",
+        Email=> "smolkind@umich.edu",
+        HomePage=> "http://dan.smolk.in"
+        },--Dan Smolkin was partially supported by  NSF FRG Grant DMS #1265261/1501115, NSF CAREER Grant DMS #1252860/1501102
+        {Name => "S. Hamid Hassanzadeh",
+        Email => "hassanzadeh.ufrj@gmail.com",
+        HomePage=>"https://www.researchgate.net/profile/Seyed_Hassanzadeh"
+        }, --S. Hamid Hassanzadeh was supported by CNPq-bolsa de Produtividade
+        {Name => "C.J. Bott",
+        Email => "cjamesbott@gmail.com",
+        HomePage=>"https://www.math.tamu.edu/directory/formalpg.php?user=cbott2"}
+    }, --this file is in the public domain
+    Keywords => {"Commutative Algebra"},
+    Headline => "rational maps between varieties", 
+    PackageExports => {"FastMinors"}    
+)
+--Hassanzadeh was supported by CNPq-bolsa de Produtividade and by the MathAmSud project ``ALGEO''
+--Schwede was supported in part by the NSF FRG Grant DMS \#1265261/1501115, NSF CAREER Grant DMS \#1252860/1501102, NSF Grants DMS \#1840190 and DMS \#2101800.
+--Smolkin was supported in part by the NSF FRG Grant DMS \#1265261/1501115, NSF CAREER Grant DMS \#1252860/1501102 and NSF Grant DMS \#1801849.
 export{
-	"isBirationalMap",
-	"idealOfImageOfMap",
-	"baseLocusOfMap",
-	"isRegularMap",
-	"isEmbedding",
+    "RationalMapping", --a new type
+    "rationalMapping", --constructor
+    "isBirationalMap",
+    "idealOfImageOfMap",
+    "baseLocusOfMap",
+    "isRegularMap",
+    "isEmbedding",
 --	"relationType",
-	"jacobianDualMatrix",
-	"isBirationalOntoImage",
-	"inverseOfMap",
+    "jacobianDualMatrix",
+    "isBirationalOntoImage",
+    "inverseOfMap",
 	"mapOntoImage",
     "QuickRank",
 	--"blowUpIdeals", --at some point we should document this and expose it to the user
-	--"nonZeroMinor",-- it is internal because the answer is probobalistic (either it finds one or it doesn't) and it is controlled by MinorsCount option
+	--"nonZeroMinor",-- it is internal because the answer is probobalistic (either it finds one or it doesn't) and it is controlled by MinorsLimit option
     "isSameMap",
     "sourceInversionFactor",
         --"simisAlgebra", --at some point we should document this and expose it to the user
@@ -41,90 +49,12 @@ export{
     "ReesStrategy", --an option for controlling how inversion of maps is run.
     "SimisStrategy", --an option for controlling how inversion of maps is run.
     "HybridStrategy", --an option for controlling how inversion of maps is run. (This is the default)
-    "MinorsCount", --an option for how many times we should randomly look for a minor before calling syz in inverseOfMap
+    "MinorsLimit", --an option for how many times we should randomly look for a minor before calling syz in inverseOfMap
     "HybridLimit", --an option for controlling inversion of maps (whether to do more simis or more rees strategies)
-    "CheckBirational", --an option for inverseOfMap, whether or not to check if something is birational
+    "CheckBirational", --an option for inverseOfMap, whether or not to check whether something is birational
     "SaturateOutput",  --option to turn off saturation of the output
     "AssumeDominant" --option to assume's that the map is dominant (ie, don't compute the kernel)
 }
-
-
-StrategyGRevLexSmallestTerm = new HashTable from {LexLargest=>0, LexSmallestTerm => 0, LexSmallest=>0, GRevLexSmallestTerm => 100, GRevLexSmallest => 0, GRevLexLargest=>0,Random=>0,RandomNonzero=>0,Points => 0};
-----------------------------------------------------------------
---************************************************************--
--------------------- Function Definitions ----------------------
---************************************************************--
-----------------------------------------------------------------
-
-idealOfImageOfMap = method(Options=>{Verbose=>false, QuickRank=>true});
-
-idealOfImageOfMap(Ideal,Ideal,Matrix) := o -> (a,b,f) -> (
-	h := map((ring a)/a, ring b ,f);
-	-- the image of f is the same as the kernel of its pullback on the
-	-- coordinate rings. h is this pullback
-        idealOfImageOfMap(h, o)
-	);
-
-idealOfImageOfMap(Ideal,Ideal,BasicList) := o -> (a,b,g) -> (
-	h:=map((ring a)/a, ring b ,g);
-	idealOfImageOfMap(h, o)
-	);
-
-idealOfImageOfMap(Ring,Ring,Matrix) := o -> (R,S,f) -> (
-	h := map(R,S,f);
-	idealOfImageOfMap(h, o)
-	);
-
-idealOfImageOfMap(Ring,Ring,BasicList) := o -> (R,S,g) -> (
-        h := map(R,S,g);
-        idealOfImageOfMap(h, o)
-);
-
-idealOfImageOfMap(RingMap) := o -> (p) -> (
-        --h := map(target p, ambient source p,p);
-        --do a quick check to see if the map is injective
-        if (instance(target p, PolynomialRing)) then(
-            if (o.Verbose == true) then print "idealOfImageOfMap: checking if map is zero using rank of the jacobian";
-            jac := jacobian matrix p;
-            if (o.QuickRank == true) then (
-               if (isRankAtLeast(dim source p, jac, Strategy => StrategyGRevLexSmallestTerm, MaxMinors=>2)) then return ideal(sub(0, source p));
-            )
-            else (
-                if (rank jac >= dim source p) then return ideal(sub(0, source p));
-            );            
-            if (o.Verbose == true) then print "idealOfImageOfMap: map not injective, computing the kernel.";
-        );
-        im := ker p;
-        im
-);
-
-dimImage = method();
-
-dimImage(Ideal,Ideal,Matrix) := (a,b,f) -> (
-        h := map( (ring a)/a, (ring b)/b, f);
-        dimImage(h)
-        	-- subtract 1 from the dimension of the image since in projective space
-	);
-
-dimImage(Ideal,Ideal,BasicList) := (a,b,g) -> (
-        h := map( (ring a)/a, (ring b)/b, g);
-        dimImage(h)
-       	);
-
-dimImage(Ring,Ring,Matrix) := (R,S,f) -> (
-        h := map( R, S, f);
-        dimImage(h)
-	);
-
-dimImage(Ring,Ring,BasicList) := (R,S,g) -> (
-        h := map( R, S, g);
-        dimImage(h)
-        );
-
-dimImage(RingMap) := (p) -> (
-	I := idealOfImageOfMap(p);
-	(dim I) - 1
-);
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 isSameDegree:=method();
@@ -150,15 +80,132 @@ isSameDegree(BasicList):=(L)->(
     d:=degree(first L);
     all(drop(L, 1), z -> ((z == 0_R) or (degree z == d) ))
 );
+--%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+RationalMapping = new Type of HashTable;
+--note Cremona already has a class called RationalMap, I'm trying to avoid conflicts
+--a RationalMapping has the following entries
+--map, a RingMap, corresponding to the rational map
+--cache, a CacheTable, storing anything that happens to be cached
+
+rationalMapping = method(Options=>{}); --constructor for RationalMapping
+
+rationalMapping(RingMap) := o->(phi) -> (
+    if not isSameDegree(first entries matrix phi) then error "rationalMapping:  expected all terms to have the same degree";
+    new RationalMapping from {map=>phi, cache => new CacheTable from {}}
+);
+
+rationalMapping(Ring, Ring, BasicList) := o->(R1, R2, L1) -> (
+    rationalMapping(map(R1, R2, L1))
+);
+
+rationalMapping(Ring, Ring, Matrix) := o->(R1, R2, M1) -> (
+    rationalMapping(map(R1, R2, M1))
+);
+
+rationalMapping(ProjectiveVariety, ProjectiveVariety, BasicList) := o->(X1, X2, L1) -> (
+    rationalMapping(map(ring X2, ring X1, L1))
+);
+
+rationalMapping(ProjectiveVariety, ProjectiveVariety, Matrix) := o->(X1, X2, M1) -> (
+    rationalMapping(map(ring X2, ring X1, M1))
+);
+
+target(RationalMapping) := myMap ->(
+    Proj source (myMap#map)
+)
+
+source(RationalMapping) := myMap ->(
+    Proj target (myMap#map)
+)
+
+net RationalMapping := t -> (
+    net(source t) | " - - - > " | net(target t) | "   " | net(first entries matrix map t)
+)
+
+RationalMapping * RationalMapping := RationalMapping => (phi, psi) -> (
+    rationalMapping( (psi#map)*(phi#map))
+);
+
+RationalMapping == RationalMapping := Boolean => (phi, psi) -> (
+    isSameMap(phi, psi)
+);
+
+map(RationalMapping) := o -> phi -> (
+    phi#map
+);
+
+RationalMapping ^ ZZ := RationalMapping => (myphi, n1) -> (
+    if (n1 == 1) then return myphi;
+    if (n1 == -1) then return inverseOfMap(myphi, Verbosity => 0);
+    if not (source myphi === target myphi) then error "RationalMapping^ZZ : expected a RationalMapping with the same target and source.";
+    if (n1 == 0) then (
+        --map to the zero should be the identity
+        return rationalMapping map(ring source myphi, ring source myphi);
+    )
+    else if (n1 > 0) then (
+        return fold((a,b)->a*b, apply(n1, i->myphi));
+    )
+    else if (n1 < 0) then (
+        inverseOfMyPhi := inverseOfMap(myphi, Verbosity=>0);
+        m1 := abs(n1);
+        return fold((a,b)->a*b, apply(m1, i->inverseOfMyPhi));
+    );    
+);
+-------------------------------------------------------
+
+
+
+StrategyGRevLexSmallestTerm = new HashTable from {LexLargest=>0, LexSmallestTerm => 0, LexSmallest=>0, GRevLexSmallestTerm => 100, GRevLexSmallest => 0, GRevLexLargest=>0,Random=>0,RandomNonzero=>0,Points => 0};
+----------------------------------------------------------------
+--************************************************************--
+-------------------- Function Definitions ----------------------
+--************************************************************--
+----------------------------------------------------------------
+
+idealOfImageOfMap = method(Options=>{Verbosity=>0, QuickRank=>true});
+
+idealOfImageOfMap(RationalMapping) := o-> (phi) -> (
+    if (phi#cache#?idealOfImageOfMap) then return phi#cache#idealOfImageOfMap;
+    J := idealOfImageOfMap(phi#map, o);
+    phi#cache#idealOfImageOfMap = J;
+    J
+);
+
+
+
+idealOfImageOfMap(RingMap) := o -> (p) -> (
+        --h := map(target p, ambient source p,p);
+        --do a quick check to see if the map is injective
+        if (instance(target p, PolynomialRing)) then(
+            if (o.Verbosity >= 2) then print "idealOfImageOfMap: checking if map is zero using rank of the jacobian";
+            jac := jacobian matrix p;
+            if (o.QuickRank == true) then (
+               if (isRankAtLeast(dim source p, jac, Strategy => StrategyGRevLexSmallestTerm, MaxMinors=>2)) then return ideal(sub(0, source p));
+            )
+            else (
+                if (rank jac >= dim source p) then return ideal(sub(0, source p));
+            );            
+            if (o.Verbosity >= 2) then print "idealOfImageOfMap: map not injective, computing the kernel.";
+        );
+        im := ker p;
+        im
+);
+
+
+
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-baseLocusOfMap = method(Options=>{SaturateOutput=>true});
+baseLocusOfMap = method(Options=>{Verbosity=>0, SaturateOutput=>true});
 
-baseLocusOfMap(Matrix) := o->(L1) -> ( --L1 is a row matrix
+internalBaseLocusOfMap = method(Options=>{SaturateOutput=>true, Verbosity=>0});
+internalBaseLocusOfMap(Matrix) := o->(L1) -> ( --L1 is a row matrix
+    if (o.Verbosity >= 2) then print "baseLocusOfMap:  starting";
     if numRows L1 > 1 then error "baseLocsOfMap: Expected a row matrix";
     if isSameDegree( first entries L1  )==false then error "baseLocsOfMap: Expected a matrix of homogeneous elements of the same degree";
-
+    if (o.Verbosity >= 2) then print "baseLocusOfMap:  about to compute ways to write the map";
+    
     M:= gens ker transpose presentation image L1;
     -- this matrix gives all the "equivalent"
     -- ways to write the map in question (e.g. (xy : xz) is
@@ -169,8 +216,10 @@ baseLocusOfMap(Matrix) := o->(L1) -> ( --L1 is a row matrix
     -- "Cremona Transformations and some Related Algebras" by Aron Simis,
     -- J. Algebra 280 (2004)
 
+
     L:= apply(entries M, ll->ideal(ll));
     if (o.SaturateOutput == true) then (
+        if (o.Verbosity >= 1) then print "baseLocusOfMap:  saturating output, if this is slow set SaturateOutput => false";
         saturate sum L
     )
     else (
@@ -187,34 +236,38 @@ baseLocusOfMap(Matrix) := o->(L1) -> ( --L1 is a row matrix
 
 );
 
-baseLocusOfMap(List) := o->(L) ->(
-    baseLocusOfMap(matrix{L}, SaturateOutput=>o.SaturateOutput)
-);
 
 baseLocusOfMap(RingMap) := o->(ff) ->(
     mm := sub(matrix ff, target ff);
-    baseLocusOfMap(mm, SaturateOutput=>o.SaturateOutput)
+    internalBaseLocusOfMap(mm, o)
 );
+
+baseLocusOfMap(RationalMapping) := o->(phi) -> (
+    if phi#cache#?baseLocusOfMap then return phi#cache#baseLocusOfMap;
+    J := baseLocusOfMap(phi#map, o);
+    phi#cache#baseLocusOfMap = J;
+    J    
+)
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 -- isRegularMap returns true if a map is regular (ie, has no base locus)
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-isRegularMap = method();
+isRegularMap = method(Options=>{Verbosity=>0});
 
-isRegularMap(Matrix) := (L1) -> ( --L1 is a row matrix
-    I:= baseLocusOfMap(L1, SaturateOutput=>false);
-    (dim I <= 0)
+
+isRegularMap(RingMap) := o->(ff) ->(
+    I:=baseLocusOfMap(ff, SaturateOutput=>false, Verbosity=>o.Verbosity);
+    --(dim I <= 0)
+    if (o.Verbosity >= 2) then print "isRegularMap: computed base locus, now checking its dimension.";
+    b := null;
+    b = isDimAtMost(0, I);
+    if (b === null) then b = dim I <= 0;
+    b
 );
 
-isRegularMap(List) := (L1) -> (
-    I:= baseLocusOfMap(L1, SaturateOutput=>false);
-    (dim I <= 0)
-);
-
-isRegularMap(RingMap) := (ff) ->(
-    I:=baseLocusOfMap(ff, SaturateOutput=>false);
-    (dim I <= 0)
+isRegularMap(RationalMapping) := o->(phi) ->(
+    isRegularMap(map phi, o)
 );
 
 --%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -347,7 +400,7 @@ simisAlgebra(Ideal, Matrix,ZZ):=(a,M,m)->(
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- relationType=method(Options => {Strategy=>ReesStrategy, Verbose=>true});
+ relationType=method(Options => {Strategy=>ReesStrategy, Verbosity=>1});
  --this function computes the "relation type" of an ideal in a ring R.
  --Let R be the ring given bythe  ideal a and L be a list of elements in R.
  --the relation type is the biggest degree in terms of new variables in the
@@ -357,7 +410,7 @@ simisAlgebra(Ideal, Matrix,ZZ):=(a,M,m)->(
  relationType(Ideal,BasicList):=o->(a,L)->(
      S:=ring L_0;
      J:=blowUpIdeals(a,L,Strategy=>o.Strategy);
-     if (o.Verbose) then print"blowUpIdeals computed.";
+     if (o.Verbosity >= 2) then print"blowUpIdeals computed.";
      n:=numgens J;
      L2:={};
      for i from 0 to n-1 do L2=append(L2,(degree J_i)_1);
@@ -393,7 +446,9 @@ simisAlgebra(Ideal, Matrix,ZZ):=(a,M,m)->(
  --);
 
 --%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-isBirationalMap = method(Options => {AssumeDominant=>false, Strategy=>HybridStrategy,MinorsCount=>null, Verbose=>true, HybridLimit=>15, Verbose=>true, QuickRank=>true});
+isBirationalMap = method(Options => {AssumeDominant=>false, Strategy=>HybridStrategy,MinorsLimit=>null, Verbosity=>1, HybridLimit=>15, Verbosity=>1, QuickRank=>true});
+isBirationalMapInternal = method(Options => {AssumeDominant=>false, Strategy=>HybridStrategy,MinorsLimit=>null, Verbosity=>1, HybridLimit=>15, Verbosity=>1, QuickRank=>true});
+
 
 --this checks whether a map X -> Y is birational.
 
@@ -404,40 +459,43 @@ isBirationalMap = method(Options => {AssumeDominant=>false, Strategy=>HybridStra
 --Below we have defining ideal of X = di
 --defining ideal of Y = im
 --list of elements = bm
-isBirationalMap(Ideal,Ideal,BasicList) :=o->(di,im,bm)->(
-    R:=ring di;
-    R2 := R/di;
-    S:=ring im;
-    ff := map(R2, S/di, apply(bm, z -> sub(z, R2)));
-    isBirationalMap(ff)
+--Strategy => HybridStrategy, ReesStrategy, SimisStrategy, SaturationStrategy
+
+
+isBirationalMap(RationalMapping) := o-> (phi) -> (
+    if (phi#cache#?isBirationalMap) then return phi#cache#isBirationalMap;
+    b := isBirationalMapInternal(phi, o);
+    phi#cache#isBirationalMap = b;
+    b
 );
 
-isBirationalMap(Ring,Ring,BasicList) := o->(R1, S1, bm)->(
-    isBirationalMap(ideal R1, ideal S1, bm,AssumeDominant=>o.AssumeDominant, Strategy=>o.Strategy,Verbose=>o.Verbose, HybridLimit=>o.HybridLimit,QuickRank=>o.QuickRank)
-    );
-
-
 isBirationalMap(RingMap) :=o->(f)->(
+    isBirationalMapInternal(rationalMapping f, o)
+);
+
+isBirationalMapInternal(RationalMapping) :=o->(phi1)->(
+    f := map phi1;
     di := ideal target f;
     R := ring di;
     im := ideal source f;
     S := ring im;
     bm := first entries matrix f; 
     local im1;
-    --isBirationalMap(target f, source f, first entries matrix f,AssumeDominant=>o.AssumeDominant,Strategy=>o.Strategy,Verbose=>o.Verbose, HybridLimit=>o.HybridLimit,QuickRank=>o.QuickRank)
+    --isBirationalMap(target f, source f, first entries matrix f,AssumeDominant=>o.AssumeDominant,Strategy=>o.Strategy,Verbosity=>o.Verbosity, HybridLimit=>o.HybridLimit,QuickRank=>o.QuickRank)
     if (o.AssumeDominant==false) then (
-        if (o.Verbose) then (
+        if (o.Verbosity >= 1) then (
             print "isBirationalMap: About to find the image of the map.  If you know the image, ";
             print "        you may want to use the AssumeDominant option if this is slow.";
         );
---        im1 = idealOfImageOfMap(di, im, bm, QuickRank=>o.QuickRank);
         if (instance(target f, PolynomialRing)) then(
-            if (o.Verbose == true) then print "isBirationalMap: initial birationality via rank of the jacobian";
+            if (o.Verbosity >= 2) then print "isBirationalMap: initial birationality via rank of the jacobian";
             jac := jacobian matrix f;
             local rk;
             fSourceDim := dim source f;
             if (o.QuickRank == true) then (
-                l1 := getSubmatrixOfRank(fSourceDim, jac, Strategy => StrategyGRevLexSmallestTerm, MaxMinors=>2);
+                l1 := getSubmatrixOfRank(fSourceDim, jac, Strategy => LexSmallest, MaxMinors=>1);                
+                if (l1 === null) then l1 = getSubmatrixOfRank(fSourceDim, jac, Strategy => GRevLexSmallest, MaxMinors=>1, Verbose=>(o.Verbosity >= 2));
+                if (l1 === null) then l1 = getSubmatrixOfRank(fSourceDim, jac, Strategy => GRevLexSmallestTerm, MaxMinors=>1, Verbose=>(o.Verbosity >= 2));
                 if (l1 === null) then (
                     rk = rank jac;
                 )
@@ -448,87 +506,108 @@ isBirationalMap(RingMap) :=o->(f)->(
             else (
                 rk = rank jac;
             );
-            if (o.Verbose == true) then print("isBirationalMap: jac rank = " | toString(rk) | ".  sourceDim = " | fSourceDim);
+            if (o.Verbosity >= 2) then print("isBirationalMap: jac rank = " | toString(rk) | ".  sourceDim = " | fSourceDim);
             if (rk == fSourceDim) then (im1 = im) else (
                 if (char S == 0) then print (
-                    if (o.Verbose === true) then print "isBirationalMap: the dimension is wrong, not birational.";
+                    if (o.Verbosity >= 2) then print "isBirationalMap: the dimension is wrong, not birational.";
                     return false;)
                 else (im1 = im + sub(ker f, S));
             ); 
         )
         else (
-            im1 = idealOfImageOfMap(di, im, bm, QuickRank=>o.QuickRank);
+            im1 = idealOfImageOfMap( map((ring di)/di, ring im, bm), QuickRank=>o.QuickRank);
         );
-        if (o.Verbose === true) then print "isBirationalMap: Found the image of the map.";
+        if (o.Verbosity >= 2) then print "isBirationalMap: Found the image of the map.";
 
         if (dim (S^1/im1) >= dim (source f)) then( --first check if the image is the closure of the image is even the right thing
-            if (o.Strategy==ReesStrategy or o.Strategy==SaturationStrategy ) then (isBirationalOntoImage(di,im1,bm,AssumeDominant=>true, MinorsCount=>o.MinorsCount, Strategy=>o.Strategy, Verbose=>o.Verbose, QuickRank=>o.QuickRank))
-            else if (o.Strategy==HybridStrategy) then ( isBirationalOntoImage(di,im1,bm,AssumeDominant=>true, MinorsCount=>o.MinorsCount, Strategy=>HybridStrategy, HybridLimit=>o.HybridLimit,Verbose=>o.Verbose, QuickRank=>o.QuickRank))
-            else if (o.Strategy==SimisStrategy) then (isBirationalOntoImage(di,im1,bm,AssumeDominant=>true, MinorsCount=>o.MinorsCount, Strategy=>SimisStrategy, Verbose=>o.Verbose, QuickRank=>o.QuickRank))
+            if (o.Strategy==ReesStrategy or o.Strategy==SaturationStrategy ) then (isBirationalOntoImageInternal(phi1,AssumeDominant=>true, MinorsLimit=>o.MinorsLimit, Strategy=>o.Strategy, Verbosity=>o.Verbosity, QuickRank=>o.QuickRank))
+            else if (o.Strategy==HybridStrategy) then ( isBirationalOntoImageInternal(phi1,AssumeDominant=>true, MinorsLimit=>o.MinorsLimit, Strategy=>HybridStrategy, HybridLimit=>o.HybridLimit,Verbosity=>o.Verbosity, QuickRank=>o.QuickRank))
+            else if (o.Strategy==SimisStrategy) then (isBirationalOntoImageInternal(phi1,AssumeDominant=>true, MinorsLimit=>o.MinorsLimit, Strategy=>SimisStrategy, Verbosity=>o.Verbosity, QuickRank=>o.QuickRank))
         )
         else(
-            if (o.Verbose === true) then print "isBirationalMap: the dimension is really wrong, not birational.";
+            if (o.Verbosity >= 2) then print "isBirationalMap: the dimension is really wrong, not birational.";
             false
         )
     )
     else(
-        isBirationalOntoImage(di,im1,bm,AssumeDominant=>true,Strategy=>o.Strategy,Verbose=>o.Verbose, MinorsCount=>o.MinorsCount, HybridLimit=>o.HybridLimit, QuickRank=>o.QuickRank)
+        isBirationalOntoImageInternal(phi1,AssumeDominant=>true,Strategy=>o.Strategy,Verbosity=>o.Verbosity, MinorsLimit=>o.MinorsLimit, HybridLimit=>o.HybridLimit, QuickRank=>o.QuickRank)
     )
 );
 
   --%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-isBirationalOntoImage = method(Options => {AssumeDominant=>false, MinorsCount => null, Strategy=>HybridStrategy,Verbose=>true, HybridLimit=>15, QuickRank=>true});
+isBirationalOntoImage = method(Options => {AssumeDominant=>false, MinorsLimit => null, Strategy=>HybridStrategy,Verbosity=>1, HybridLimit=>15, QuickRank=>true});
 --if AssumeDominant is true, it doesn't form the kernel.
-isBirationalOntoImageRees := method(Options => {AssumeDominant=>false, MinorsCount => null, Strategy=>ReesStrategy,Verbose=>true, QuickRank=>true});
- isBirationalOntoImageSimis := method(Options => {AssumeDominant=>false, MinorsCount=> null, HybridLimit=>15,Verbose=>true, QuickRank=>true});
 
+--*********************************************
+--*************the actual functions that do the work
+
+isBirationalOntoImageRees := method(Options => {AssumeDominant=>false, MinorsLimit => null, Strategy=>ReesStrategy,Verbosity=>1, QuickRank=>true});
+ isBirationalOntoImageSimis := method(Options => {AssumeDominant=>false, MinorsLimit=> null, HybridLimit=>15,Verbosity=>1, QuickRank=>true});
 
 --*****************************Strategies
-isBirationalOntoImage(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
-    if (o.Verbose) then (print "Starting isBirationalOntoImage" );
+--the following method controls how strategies are chosen
+isBirationalOntoImageInternal = method(Options => {AssumeDominant=>false, MinorsLimit => null, Strategy=>HybridStrategy,Verbosity=>1, HybridLimit=>15, QuickRank=>true});
+
+isBirationalOntoImageInternal(RationalMapping) :=o->(phi1)->(
+--isBirationalOntoImageInternal(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
+    if (o.Verbosity >= 2) then (print "Starting isBirationalOntoImage" );
     if ((o.Strategy == ReesStrategy) or (o.Strategy == SaturationStrategy)) then (
-        isBirationalOntoImageRees(di,im,bm, AssumeDominant=>o.AssumeDominant,  Strategy=>o.Strategy,Verbose=>o.Verbose, QuickRank=>o.QuickRank)
+        isBirationalOntoImageRees(phi1, AssumeDominant=>o.AssumeDominant,  Strategy=>o.Strategy,Verbosity=>o.Verbosity, QuickRank=>o.QuickRank)
     )
     else if (o.Strategy == SimisStrategy) then (
-        isBirationalOntoImageSimis(di,im,bm, AssumeDominant=>o.AssumeDominant,  HybridLimit=>infinity,Verbose=>o.Verbose, QuickRank=>o.QuickRank)
+        isBirationalOntoImageSimis(phi1, AssumeDominant=>o.AssumeDominant,  HybridLimit=>infinity,Verbosity=>o.Verbosity, QuickRank=>o.QuickRank)
     )
     else if (o.Strategy == HybridStrategy) then(
-        isBirationalOntoImageSimis(di,im,bm, AssumeDominant=>o.AssumeDominant, HybridLimit=>o.HybridLimit,Verbose=>o.Verbose, QuickRank=>o.QuickRank)
+        isBirationalOntoImageSimis(phi1, AssumeDominant=>o.AssumeDominant, HybridLimit=>o.HybridLimit,Verbosity=>o.Verbosity, QuickRank=>o.QuickRank)
     )
   );
---*********************************************
---*************other modes
-isBirationalOntoImage(Ring,Ring,BasicList) := o->(R1, S1, bm)->(
-    isBirationalOntoImage(ideal R1, ideal S1, bm, AssumeDominant=>o.AssumeDominant,Strategy=>o.Strategy,Verbose=>o.Verbose,HybridLimit=>o.HybridLimit, QuickRank=>o.QuickRank)
-);
+
+
 
 isBirationalOntoImage(RingMap) :=o->(f)->(
-    isBirationalOntoImage(target f, source f, first entries matrix f, AssumeDominant=>o.AssumeDominant,Strategy=>o.Strategy,Verbose=>o.Verbose,HybridLimit=>o.HybridLimit, QuickRank=>o.QuickRank)
+    --isBirationalOntoImageInternal(ideal target f, ideal source f, first entries matrix f, o)
+    isBirationalOntoImageInternal(rationalMapping f, o)
 );
 
+isBirationalOntoImage(RationalMapping) := o->(phi)->(
+    if (phi#cache#?isBirationalOntoImage) then return phi#cache#isBirationalOntoImage;
+    b := isBirationalOntoImageInternal(phi, o);
+    phi#cache#isBirationalOntoImage = b;
+    b
+);
+-*
 isBirationalOntoImageRees(Ring,Ring,BasicList) := o->(R1, S1, bm)->(
-   isBirationalOntoImageRees(ideal R1, ideal S1, bm, AssumeDominant=>o.AssumeDominant,Strategy=>o.Strategy,Verbose=>o.Verbose, QuickRank=>o.QuickRank)
+   isBirationalOntoImageRees(ideal R1, ideal S1, bm, o)
 );
 
 isBirationalOntoImageRees(RingMap) :=o->(f)->(
-    isBirationalOntoImageRees(target f, source f, first entries matrix f, AssumeDominant=>o.AssumeDominant,Strategy=>o.Strategy,Verbose=>o.Verbose, QuickRank=>o.QuickRank)
+    --isBirationalOntoImageRees(target f, source f, first entries matrix f, o)
+    isBirationalOntoImageRees(rationalMapping f)
 );
+*-
+
+-*
 isBirationalOntoImageSimis(Ring,Ring,BasicList) := o->(R1, S1, bm)->(
-    isBirationalOntoImageSimis(ideal R1, ideal S1, bm, AssumeDominant=>o.AssumeDominant,Strategy=>o.Strategy,HybridLimit=>o.HybridLimit,Verbose=>o.Verbose, QuickRank=>o.QuickRank)
+    isBirationalOntoImageSimis(ideal R1, ideal S1, bm, o)
 );
 
 isBirationalOntoImageSimis(RingMap) :=o->(f)->(
-    isBirationalOntoImageSimis(target f, source f, first entries matrix f, AssumeDominant=>o.AssumeDominant,Strategy=>o.Strategy,HybridLimit=>o.HybridLimit,Verbose=>o.Verbose, QuickRank=>o.QuickRank)
+    isBirationalOntoImageSimis(target f, source f, first entries matrix f, o)
 );
-
+*-
 
 --*************main part of function
 
 
 
-
-isBirationalOntoImageRees(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
+isBirationalOntoImageRees(RationalMapping) := o -> (phi1) -> (
+    f := map phi1;
+    di := ideal target f;
+    im := ideal source f;
+    bm := first entries matrix f;
+    --isBirationalOntoImageRees(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
+    
     if isSameDegree(bm)==false then error "isBirationalOntoImageRees: Expected a list of homogeneous elements of the same degree";
     R:=ring di;
     S:=ring im;
@@ -537,12 +616,12 @@ isBirationalOntoImageRees(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
         im1 =  im;
     )
     else (
-        if (o.Verbose) then (
+        if (o.Verbosity >= 1) then (
             print "isBirationalOntoImageRees: About to find the image of the map.  If you know the image, ";
             print "        you may want to use the AssumeDominant option if this is slow.";
         );
 
-        im1 = idealOfImageOfMap(di, im, bm, QuickRank=>o.QuickRank);
+        im1 = idealOfImageOfMap( map((ring di)/di, ring im, bm), QuickRank=>o.QuickRank);
     );
 
     K:=coefficientRing R;
@@ -557,22 +636,28 @@ isBirationalOntoImageRees(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
     bm1:=flatten first entries bm0;
  --From here the situation is under the assumption that the variety is not contained in any hyperplane.
     r:=numgens ambient Rlin1;
-     if (o.Verbose) then print "isBirationalOntoImageRees:  About to compute the Jacobian Dual Matrix,";
-      if (o.Verbose) then print "if it is slow, run again and  set Strategy=>HybridStrategy or SimisStrategy.";
-    --1/0;
-    barJD:=jacobianDualMatrix(di1,im1,bm1,AssumeDominant=>true);--JacobianDual Matrix is another function in this package
+    if (o.Verbosity >= 1) then print "isBirationalOntoImageRees:  About to compute the Jacobian Dual Matrix,";
+    if (o.Verbosity >= 1) then print "         if it is slow, run again and  set Strategy=>HybridStrategy or SimisStrategy.";
+    local barJD;
+    if phi1#cache#?jacobianDualMatrix then (
+        barJD = phi1#cache#jacobianDualMatrix;
+    )
+    else (
+        barJD=jacobianDualMatrix(phi1,AssumeDominant=>true, Strategy=>o.Strategy);
+    );
+    --barJD:=jacobianDualMatrix(di1,im1,bm1,AssumeDominant=>true);--JacobianDual Matrix is another function in this package
       nc:=numColumns(transpose barJD);
      nr:=numRows(transpose barJD);
-    if (o.Verbose) then print "isBirationalOntoImageRees: computed Jacobian Dual Matrix- barJD";
-    if (o#Verbose ) then(
+    if (o.Verbosity >= 1) then print "isBirationalOntoImageRees: computed Jacobian dual matrix";
+    if (o.Verbosity >= 2) then(
         print ( "Jacobain dual matrix has  " |nc|" columns  and   "|nr|" rows.");
     );
     jdd:=(numgens ambient Rlin1)-1;
-    if (o.Verbose) then print "isBirationalOntoImageRees: is computing the rank of the  Jacobian Dual Matrix- barJD";
+    if (o.Verbosity >= 2) then print "isBirationalOntoImageRees: is computing the rank of the  Jacobian dual matrix- barJD";
 
     --not(isSubset(minors(jdd,barJD),im1))
     if (o.QuickRank == true) then (
-        isRankAtLeast(jdd, barJD, Strategy => StrategyGRevLexSmallestTerm, MaxMinors=>2)
+        isRankAtLeast(jdd, barJD, Strategy => StrategyDefault, MaxMinors=>2)
     )
     else (
         rank barJD >= jdd
@@ -584,25 +669,30 @@ isBirationalOntoImageRees(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
 --isBirationalOntoImageSimis
 ---***************************************************
 
-isBirationalOntoImageSimis(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
+isBirationalOntoImageSimis(RationalMapping) := o-> (phi1) -> (
+    f := map phi1;
+    di := ideal target f;
+    im := ideal source f;
+    bm := first entries matrix f;
+--isBirationalOntoImageSimis(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
    -- invList := inverseOfMap(target f, source f, first entries matrix f);
 --    map(source f, target f, invList)
 --    inverseOfMap(target f, source f, first entries matrix f, AssumeDominant=>o.AssumeDominant)
 ---*******************
-    if (o.Verbose == true) then print "Starting inverseOfMapOntoImageSimis(SimisStrategy or HybridStrategy)";
+    if (o.Verbosity >= 2) then print "Starting inverseOfMapOntoImageSimis(SimisStrategy or HybridStrategy)";
 
     im1 := im;
     if (o.AssumeDominant == true) then (
         im1 =  im;
     )
     else (
-        if (o.Verbose) then (
+        if (o.Verbosity >= 1) then (
             print "isBirationalOntoImageSimis: About to find the image of the map.  If you know the image, ";
             print "        you may want to use the AssumeDominant option if this is slow.";
         );
 
-        im1 = idealOfImageOfMap(di, im, bm, QuickRank=>o.QuickRank);
-        if (o.Verbose === true) then print "isBirationalOntoImageSimis: Found the image of the map.";
+        im1 = idealOfImageOfMap( map((ring di)/di, ring im, bm), QuickRank=>o.QuickRank);
+        if (o.Verbosity >= 2) then print "isBirationalOntoImageSimis: Found the image of the map.";
     );
     if isSameDegree(bm)==false then error "isBirationalOntoImageSimis: Expected a list of homogeneous elements of the same degree";
     R:=ring di;
@@ -622,8 +712,8 @@ isBirationalOntoImageSimis(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
     r:=numgens ambient Rlin1;
     jdd:=(numgens ambient Rlin1)-1;
     --THe following is a part of simisAlgebra
-    minorsCt := o.MinorsCount;
-    if (o.MinorsCount === null) then ( --if the user didn't specify MinorsCount, we make some educated guesses
+    minorsCt := o.MinorsLimit;
+    if (o.MinorsLimit === null) then ( --if the user didn't specify MinorsLimit, we make some educated guesses
         if (jdd < 6) then(
             minorsCt = 3;
         )
@@ -653,20 +743,20 @@ isBirationalOntoImageSimis(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
     myt:=(gens tR)#0;
     J:=sub(di1,tR)+ideal apply(1..rs,j->(gens tR)_(n+j)-myt*F_(0,(j-1)));
 
-    flag := false;   --this boolian checks if it is birational
-    giveUp := false;  --this checks if we giveup checkin birationality or not yet
+    flag := false;   --this boolian checks whether it is birational
+    giveUp := false;  --this checks whether we giveup checkin birationality or not yet
     secdeg:=1;        --the second degree of rees equations
     jj := 1;
     M := null;
     while (giveUp == false) do (
-	    if (o.Verbose === true) then print("isBirationalOntoImageSimis:  About to compute partial Groebner basis of rees ideal up to degree " | toString({1, secdeg}) | "." );
+	    if (o.Verbosity >= 2) then print("isBirationalOntoImageSimis:  About to compute partial Groebner basis of Rees ideal up to degree " | toString({1, secdeg}) | "." );
 
         if (secdeg < o.HybridLimit) then (
             M=gb(J,DegreeLimit=>{1,secdeg}); --instead of computing the whole Grob.
                                             --Baisis of J we only compute the parts of degree (1,m) or less,
         )
         else(
-        if (o.Verbose === true) then print("isBirationalOntoImageSimis:  gave up, it will just compute the whole Groebner basis of the rees ideal.  Increase HybridLimit and rerun to avoid this." );
+        if (o.Verbosity >= 1) then print("isBirationalOntoImageSimis:  gave up, it will just compute the whole Groebner basis of the Rees ideal.  Increase HybridLimit and rerun to avoid this." );
             M=gb(J);
 
             giveUp = true;
@@ -684,12 +774,12 @@ isBirationalOntoImageSimis(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
         barJD:=g(JD);
         nc:=numColumns(transpose barJD);
         nr:=numRows(transpose barJD);
-        if (o#Verbose ) then( print ( "isBirationalOntoImageSimis: Found Jacobian dual matrix (or a weak form of it), it has  " |nc|" columns  and about  "|nr|" rows.");
+        if (o.Verbosity >= 2) then( print ( "isBirationalOntoImageSimis: Found Jacobian dual matrix (or a weak form of it), it has  " |nc|" columns  and about  "|nr|" rows.");
                             );
         if (giveUp == false) then(
-            if (o.Verbose === true) then print "isBirationalOntoImageSimis: is computing the rank of the  Jacobian Dual Matrix- barJD";
+            if (o.Verbosity >= 2) then print "isBirationalOntoImageSimis: is computing the rank of the  Jacobian Dual Matrix- barJD";
             if (o.QuickRank == true) then (
-                if (isRankAtLeast(jdd, barJD, Strategy => StrategyGRevLexSmallestTerm, MaxMinors=>minorsCt, Verbose=>o.Verbose)) then (
+                if (isRankAtLeast(jdd, barJD, Strategy => StrategyDefault, MaxMinors=>minorsCt, Verbose=>(o.Verbosity >= 2))) then (
                     flag=true;
                     giveUp=true;
                 );
@@ -702,11 +792,11 @@ isBirationalOntoImageSimis(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
             );
         )
         else (
-            if (o#Verbose ) then( print ( "isBirationalOntoImageSimis: Found Jacobian dual matrix (or a weak form of it), it has  " |nc|" columns  and   "|nr|" rows.");
+            if (o.Verbosity >= 2 ) then( print ( "isBirationalOntoImageSimis: Found Jacobian dual matrix (or a weak form of it), it has  " |nc|" columns  and   "|nr|" rows.");
                             );
-            if (o.Verbose === true) then print "isBirationalOntoImageSimis: is computing the rank of the  Jacobian Dual Matrix- barJD";
+            if (o.Verbosity >= 2) then print "isBirationalOntoImageSimis: is computing the rank of the  Jacobian Dual Matrix- barJD";
             if (o.QuickRank == true) then (
-                if (isRankAtLeast(jdd, barJD, Strategy => StrategyGRevLexSmallestTerm, MaxMinors=>minorsCt, Verbose=>o.Verbose)) then (
+                if (isRankAtLeast(jdd, barJD, Strategy => StrategyDefault, MaxMinors=>minorsCt, Verbose=>(o.Verbosity >= 2))) then (
                     flag = true;
                     giveUp=true;
                 );
@@ -726,9 +816,9 @@ isBirationalOntoImageSimis(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
 
  --%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- inverseOfMap = method(Options => {AssumeDominant=>false, CheckBirational=>true, Strategy=>HybridStrategy, HybridLimit=>15, Verbose=>true, MinorsCount=>null, QuickRank=>true});
- inverseOfMapRees := method(Options => {AssumeDominant=>false, CheckBirational=>true, Strategy=>ReesStrategy, Verbose=>true,MinorsCount=>null, QuickRank=>true});
- inverseOfMapSimis := method(Options => {AssumeDominant=>false, CheckBirational=>true,  HybridLimit=>15, Verbose=>true,MinorsCount=>null, QuickRank=>true});
+ inverseOfMap = method(Options => {AssumeDominant=>false, CheckBirational=>true, Strategy=>HybridStrategy, HybridLimit=>15, Verbosity=>1, MinorsLimit=>null, QuickRank=>true});
+ inverseOfMapRees := method(Options => {AssumeDominant=>false, CheckBirational=>true, Strategy=>ReesStrategy, Verbosity=>1,MinorsLimit=>null, QuickRank=>true, RationalMapping=>null});
+ inverseOfMapSimis := method(Options => {AssumeDominant=>false, CheckBirational=>true,  HybridLimit=>15, Verbosity=>1,MinorsLimit=>null, QuickRank=>true});
 --this checks whether a map X -> Y is birational.
 
 --X = Proj R
@@ -740,8 +830,13 @@ isBirationalOntoImageSimis(Ideal,Ideal, BasicList) :=o->(di,im,bm)->(
 --list of elements = bm
 ------*****************************Strategies
 inverseOfMap(RingMap):=o->(f)->(
-    minorsCt := o.MinorsCount;
-    if (o.MinorsCount === null) then ( --if the user didn't specify MinorsCount, we make some educated guesses
+    inverseOfMap(rationalMapping f, o)
+);
+
+inverseOfMap(RationalMapping) := o -> (phi) ->(
+    f := map phi;
+    minorsCt := o.MinorsLimit;
+    if (o.MinorsLimit === null) then ( --if the user didn't specify MinorsLimit, we make some educated guesses
         nn := #(gens ambient target f);
         if (nn < 6) then(
             minorsCt = 10;
@@ -750,33 +845,26 @@ inverseOfMap(RingMap):=o->(f)->(
             minorsCt = 6;
         )
         else if (nn < 12) then (
-            minorsCt = 3;
+            minorsCt = 2;
         )
         else (
             minorsCt = 0;
         );
     );
     if ((o.Strategy == ReesStrategy) or (o.Strategy == SaturationStrategy)) then (
-        inverseOfMapRees(f, QuickRank=>o.QuickRank, AssumeDominant=>o.AssumeDominant, CheckBirational=>o.CheckBirational, Strategy=>o.Strategy,Verbose=>o.Verbose, MinorsCount=>minorsCt)
+        rationalMapping inverseOfMapRees(phi, QuickRank=>o.QuickRank, AssumeDominant=>o.AssumeDominant, CheckBirational=>o.CheckBirational, Strategy=>o.Strategy,Verbosity=>o.Verbosity, MinorsLimit=>minorsCt)
     )
     else if (o.Strategy == SimisStrategy) then (
-        inverseOfMapSimis(f, QuickRank=>o.QuickRank, AssumeDominant=>o.AssumeDominant, CheckBirational=>o.CheckBirational, HybridLimit=>infinity,Verbose=>o.Verbose, MinorsCount=>minorsCt)
+        rationalMapping inverseOfMapSimis(phi, QuickRank=>o.QuickRank, AssumeDominant=>o.AssumeDominant, CheckBirational=>o.CheckBirational, HybridLimit=>infinity,Verbosity=>o.Verbosity, MinorsLimit=>minorsCt)
     )
     else if (o.Strategy == HybridStrategy) then(
-        inverseOfMapSimis(f, QuickRank=>o.QuickRank, AssumeDominant=>o.AssumeDominant, CheckBirational=>o.CheckBirational, HybridLimit=>o.HybridLimit,Verbose=>o.Verbose, MinorsCount=>minorsCt)
-    )
-  );
-
---**************other modes
-inverseOfMap(Ideal,Ideal,BasicList) :=o->(di,im,bm)->(
-    inverseOfMap( (ring di)/di, (ring im)/im, bm, o)
+        rationalMapping inverseOfMapSimis(phi, QuickRank=>o.QuickRank, AssumeDominant=>o.AssumeDominant, CheckBirational=>o.CheckBirational, HybridLimit=>o.HybridLimit,Verbosity=>o.Verbosity, MinorsLimit=>minorsCt)
+    )    
 );
 
-inverseOfMap(Ring,Ring,BasicList) := o->(R1, S1, bm)->(
-    inverseOfMap(map(R1, S1, bm), o)
-    );
 
 
+-*
 inverseOfMapRees(Ideal,Ideal,BasicList) :=o->(di,im,bm)->(
     inverseOfMapRees( (ring di)/di, (ring im)/im, bm, o)
 );
@@ -784,21 +872,23 @@ inverseOfMapRees(Ideal,Ideal,BasicList) :=o->(di,im,bm)->(
 inverseOfMapRees(Ring,Ring,BasicList) := o->(R1, S1, bm)->(
     inverseOfMapRees(map(R1, S1, bm), o)
     );
+*-
 
 --********************************main part Rees
-inverseOfMapRees(RingMap) := o->(f)->(
+inverseOfMapRees(RationalMapping) := o->(phi1)->(
    -- invList := inverseOfMap(target f, source f, first entries matrix f);
 --    map(source f, target f, invList)
 --    inverseOfMap(target f, source f, first entries matrix f, AssumeDominant=>o.AssumeDominant)
 ---*******************
-    if (o.Verbose == true) then print "Starting inverseOfMapRees(ReesStrategy or SaturationStrategy)";
+    f := map phi1;
+    if (o.Verbosity >= 2) then print "Starting inverseOfMapRees(ReesStrategy or SaturationStrategy)";
     if (o.AssumeDominant == false) then (
-        if (o.Verbose) then (
+        if (o.Verbosity >= 1) then (
             print "inverseOfMapRees: About to find the image of the map.  If you know the image, ";
             print "        you may want to use the AssumeDominant option if this is slow.";
         );
         f = mapOntoImage(f);
-        if (o.Verbose === true) then print "inverseOfMapRees: Found the image of the map.";
+        if (o.Verbosity >= 2) then print "inverseOfMapRees: Found the image of the map.";
     );
     di := ideal target f;
     im := ideal source f;
@@ -820,14 +910,21 @@ inverseOfMapRees(RingMap) := o->(f)->(
     bm1:=flatten first entries bm0;
     --From here the situation is under the assumption that the variety is not contained in any hyperplane.
     r:=numgens ambient Rlin1;
-     if (o.Verbose === true) then print "inverseOfMapRees: About to compute the Jacobian Dual Matrix";
-    barJD:=jacobianDualMatrix(di1,im1,bm1,AssumeDominant=>true, Strategy=>o.Strategy);--JacobianDual Matrix is another function in this package
-     if (o.Verbose === true) then print "inverseOfMapRees: Computed Jacobian Dual Matrix";
+     if (o.Verbosity >= 2) then print "inverseOfMapRees: About to compute the Jacobian dual matrix";
+    local barJD;
+    if phi1#cache#?jacobianDualMatrix then (
+        barJD = phi1#cache#jacobianDualMatrix;
+    )
+    else (
+        barJD=jacobianDualMatrix(phi1,AssumeDominant=>true, Strategy=>o.Strategy);
+    );
+    --JacobianDual Matrix is another function in this package
+     if (o.Verbosity >= 2) then print "inverseOfMapRees: Computed Jacobian dual matrix";
     --print "JD computed";
     jdd:=(numgens ambient Rlin1)-1;
     if (o.CheckBirational== true) then (
         if (o.QuickRank) then (
-            if not (isRankAtLeast(jdd, barJD, Strategy => StrategyGRevLexSmallestTerm, MaxMinors=>2, Verbose=>o.Verbose)) then error "inverseOfMapRees: The map is not birational onto its image";
+            if not (isRankAtLeast(jdd, barJD, Strategy => StrategyDefault, MaxMinors=>2, Verbose=>(o.Verbosity >= 2))) then error "inverseOfMapRees: The map is not birational onto its image";
         )
         else (
             if not (rank barJD >= jdd) then error "inverseOfMapRees: The map is not birational onto its image";
@@ -839,26 +936,30 @@ inverseOfMapRees(RingMap) := o->(f)->(
      SbarJD:=null;
      nc:=numColumns(transpose barJD);
      nr:=numRows(transpose barJD);
-    if (o#Verbose ) then(
+    if (o.Verbosity >= 2 ) then(
         print ( "Jacobain dual matrix has  " |nc|" columns  and about  "|nr|" rows.");
     );
     nonZMinor := null;
-    if (o.MinorsCount > 0) then (
-        if (o.Verbose == true) then print ("inverseOfMapRees: Looking for a nonzero minor. \r\n       If this fails, you may increase the attempts with MinorsCount => #");
-        nonZMinor = getSubmatrixOfRank(jdd, barJD, MaxMinors => o.MinorsCount, Verbose=>o.Verbose);
-        --nonZeroMinor(barJD,jdd,o.MinorsCount, Verbose=>o.Verbose);
+    if (o.MinorsLimit > 0) then (
+        if (o.Verbosity >= 1) then print ("inverseOfMapRees: Looking for a nonzero minor. \r\n       If this fails, you may increase the attempts with MinorsLimit => #");
+        --nonZMinor = getSubmatrixOfRank(jdd, barJD, MaxMinors => o.MinorsLimit, Verbosity=>o.Verbosity);
+        nonZMinor = getSubmatrixOfRank(jdd, barJD, Strategy=>LexSmallest, MaxMinors => 1, Verbose=>(o.Verbosity >= 2));
+        if (nonZMinor === null) then nonZMinor = getSubmatrixOfRank(jdd, barJD, Strategy=>GRevLexSmallest, MaxMinors => 1, Verbose=>(o.Verbosity >= 2));
+        if (nonZMinor === null) then nonZMinor = getSubmatrixOfRank(jdd, barJD, Strategy=>GRevLexSmallestTerm, MaxMinors => 1, Verbose=>(o.Verbosity >= 2));
+        if (nonZMinor === null) and (o.MinorsLimit > 3) then nonZMinor = getSubmatrixOfRank(jdd, barJD, MaxMinors => o.MinorsLimit-3, Verbose=>(o.Verbosity >= 2));        
+        --nonZeroMinor(barJD,jdd,o.MinorsLimit, Verbosity=>o.Verbosity);
     );
     if (nonZMinor === null) then (
-        if (o.Verbose==true) then (
-            if (o.MinorsCount > 0) then print "inverseOfMapRees: Failed to find a nonzero minor.  We now compute syzygies instead.";
-            if (o.MinorsCount == 0) then print "inverseOfMapRees: MinorsCount => 0, so we now compute syzygies instead.";
-            print "                   If this doesn't terminate quickly, you may want to try increasing the option MinorsCount.";
+        if (o.Verbosity >= 2) then (
+            if (o.MinorsLimit > 0) then print "inverseOfMapRees: Failed to find a nonzero minor.  We now compute syzygies instead.";
+            if (o.MinorsLimit == 0) then print "inverseOfMapRees: MinorsLimit => 0, so we now compute syzygies instead.";
+            print "                   If this doesn't terminate quickly, you may want to try increasing the option MinorsLimit.";
         );
         Inv =syz(transpose barJD,SyzygyLimit =>1);
         psi = map(source f, Rlin1, sub(transpose Inv, source f));
     )
     else (
-        if (o.Verbose==true) then print "inverseOfMapRees: We found a nonzero minor.  If this doesn't terminate quickly, rerun with MinorsCount=>0.";
+        if (o.Verbosity >= 1) then print "inverseOfMapRees: We found a nonzero minor.  If this doesn't terminate quickly, rerun with MinorsLimit=>0.";
         Col = (nonZMinor)#1;
         SbarJD=submatrix(barJD,,Col);
         for i from 0 to jdd do Inv=append(Inv,(-1)^i*det(submatrix'(SbarJD,{i},)));
@@ -872,21 +973,22 @@ inverseOfMapRees(RingMap) := o->(f)->(
 --**********************************
 
 
-inverseOfMapSimis(RingMap) :=o->(f)->(
+inverseOfMapSimis(RationalMapping) :=o->(phi1)->(
    -- invList := inverseOfMap(target f, source f, first entries matrix f);
 --    map(source f, target f, invList)
 --    inverseOfMap(target f, source f, first entries matrix f, AssumeDominant=>o.AssumeDominant)
----*******************
-    if (o.Verbose == true) then print "Starting inverseOfMapSimis(SimisStrategy or HybridStrategy)";
+---*******************    
+    f := map phi1;
+    if (o.Verbosity >= 2) then print "Starting inverseOfMapSimis(SimisStrategy or HybridStrategy)";
     if ((o.CheckBirational == true) and (o.HybridLimit == infinity)) then print "Warning:  when using the current default SimisStrategy, the map must be birational.  If the map is not birational, this function will never terminate.";
 
     if (o.AssumeDominant == false) then (
-        if (o.Verbose) then (
+        if (o.Verbosity >= 1) then (
             print "inverseOfMapSimis: About to find the image of the map.  If you know the image, ";
             print "        you may want to use the AssumeDominant option if this is slow.";
         );
         f = mapOntoImage(f);
-        if (o.Verbose === true) then print "inverseOfMapSimis: Found the image of the map.";
+        if (o.Verbosity >= 2) then print "inverseOfMapSimis: Found the image of the map.";
     );
     di := ideal target f; -- the defining ideal of the source variety
     im := ideal source f; -- the defining ideal of the target variety
@@ -934,13 +1036,13 @@ inverseOfMapSimis(RingMap) :=o->(f)->(
     while (flag == false) do (
 --  Jr:= simisAlgebra(di1,bm1,secdeg);
  --THe following is substituting simisAlgebra, we don't call that because we want to save the stored groebner basis
-        if (o.Verbose === true) then print("inverseOfMapSimis:  About to compute partial Groebner basis of rees ideal up to degree " | toString({1, secdeg}) | "." );
+        if (o.Verbosity >= 2) then print("inverseOfMapSimis:  About to compute partial Groebner basis of Rees ideal up to degree " | toString({1, secdeg}) | "." );
         if (secdeg < o.HybridLimit) then (
             M=gb(J,DegreeLimit=>{1,secdeg}); --instead of computing the whole Grob.
                                                --Baisis of J we only compute the parts of degree (1,m) or less,
         )
         else( --we are running the hybrid strategy, so we compute the whole gb
-            if (o.Verbose === true) then print("inverseOfMapSimis:  We give up.  Using the previous computations, we compute the whole \r\n        Groebner basis of the rees ideal.  Increase HybridLimit and rerun to avoid this." );
+            if (o.Verbosity >= 1) then print("inverseOfMapSimis:  We give up.  Using the previous computations, we compute the whole \r\n        Groebner basis of the Rees ideal.  Increase HybridLimit and rerun to avoid this." );
             M=gb(J); -- probably this should be DegreeLimit=>{1,infinity}, not sure if that works or not
             giveUp = true;
         );
@@ -955,14 +1057,16 @@ inverseOfMapSimis(RingMap) :=o->(f)->(
         vS:=gens ambient S;
         g:=map(source f,ring Jr, toList(apply(0..r-1,z->0))|vS);
         barJD:=g(JD);
-        --if (o.Verbose === true) then print("inverseOfMapSimis: computed barJD.");
+        if (o.Verbosity >= 2) then print("inverseOfMapSimis: computed barJD.");
 
         if (giveUp == false) then(            
             --if (rank barJD >= jdd) then (
             if (o.QuickRank == true) then (
-                if (o.Verbose === true) then print("inverseOfMapSimis: About to check rank, if this is very slow, you may try turning QuickRank=>false." );
-                if (isRankAtLeast(jdd, barJD, MaxMinors=>min(2, o.MinorsCount), Strategy=>StrategyGRevLexSmallestTerm)) then (
-                    if (o.Verbose === true) then print("inverseOfMapSimis: We computed enough of the Groebner basis." );
+                if (o.Verbosity >= 1) then print("inverseOfMapSimis: About to check rank, if this is very slow, you may want to try turning QuickRank=>false." );
+                if (isRankAtLeast(jdd, barJD, MaxMinors=>1, Strategy=>LexSmallest) or 
+                    isRankAtLeast(jdd, barJD, MaxMinors=>1, Strategy=>GRevLexSmallest) or 
+                    isRankAtLeast(jdd, barJD, MaxMinors=>1, Strategy=>GRevLexSmallestTerm) ) then (
+                    if (o.Verbosity >= 1) then print("inverseOfMapSimis: rank found, we computed enough of the Groebner basis." );
                     flag = true;
                 );
             )
@@ -976,7 +1080,7 @@ inverseOfMapSimis(RingMap) :=o->(f)->(
             flag = true;
             if (o.CheckBirational == true) then (
                 if (o.QuickRank) then (
-                    if (not isRankAtLeast(jdd, barJD, Strategy => StrategyGRevLexSmallestTerm, MaxMinors=>min(2, o.MinorsCount), Verbose=>o.Verbose)) then error "inverseOfMapSimis: The map is not birational onto its image";
+                    if (not isRankAtLeast(jdd, barJD, Strategy => StrategyDefault, MaxMinors=>min(2, o.MinorsLimit), Verbose=>(o.Verbosity >= 2))) then error "inverseOfMapSimis: The map is not birational onto its image";
                 )
                 else(
                     if (not (rank barJD >= jdd)) then error "inverseOfMapSimis: The map is not birational onto its image";
@@ -993,43 +1097,47 @@ inverseOfMapSimis(RingMap) :=o->(f)->(
     SbarJD:=null;
     nc:=numColumns(transpose barJD);
     nr:=numRows(transpose barJD);
-    if (o#Verbose ) then(
+    if (o.Verbosity >= 2 ) then(
         print ( "inverseOfMapSimis: Found Jacobian dual matrix (or a weak form of it), it has  " |nc|" columns  and about  "|nr|" rows.");
     );
 
     nonZMinor := null;
-    if (o.MinorsCount > 0) then (
-        if (o.Verbose==true) then print "inverseOfMapSimis: Looking for a nonzero minor.\r\n        If this fails, you may increase the attempts with MinorsCount => #";
-        nonZMinor = getSubmatrixOfRank(jdd, barJD, MaxMinors => o.MinorsCount, Verbose=>o.Verbose);
-        --nonZeroMinor(barJD,jdd,o.MinorsCount, Verbose=>o.Verbose);
+    if (o.MinorsLimit > 0) then (
+        if (o.Verbosity >= 1) then print "inverseOfMapSimis: Looking for a nonzero minor.\r\n        If this fails, you may increase the attempts with MinorsLimit => #";
+        nonZMinor = getSubmatrixOfRank(jdd, barJD, Strategy=>LexSmallest, MaxMinors => 1, Verbose=>(o.Verbosity >= 2));
+        if (nonZMinor === null) then nonZMinor = getSubmatrixOfRank(jdd, barJD, Strategy=>GRevLexSmallest, MaxMinors => 1, Verbose=>(o.Verbosity >= 2));
+        if (nonZMinor === null) then nonZMinor = getSubmatrixOfRank(jdd, barJD, Strategy=>GRevLexSmallestTerm, MaxMinors => 1, Verbose=>(o.Verbosity >= 2));
+        if (nonZMinor === null) and (o.MinorsLimit > 3) then nonZMinor = getSubmatrixOfRank(jdd, barJD, MaxMinors => o.MinorsLimit-3, Verbose=>(o.Verbosity >= 2));        
+        --nonZeroMinor(barJD,jdd,o.MinorsLimit, Verbosity=>o.Verbosity);
     );
 
     if (nonZMinor === null) then (
-        if (o.Verbose==true) then (
-            if (o.MinorsCount >  0) then print "inverseOfMapSimis: Failed to find a nonzero minor.  We now compute syzygies instead.";
-            if (o.MinorsCount == 0) then print "inverseOfMapSimis: MinorsCount => 0, so we now compute syzygies instead.";
-            print "                   If this doesn't terminate quickly, you may want to try increasing the option MinorsCount.";
+        if (o.Verbosity >= 2) then (
+            if (o.MinorsLimit >  0) then print "inverseOfMapSimis: Failed to find a nonzero minor.  We now compute syzygies instead.";
+            if (o.MinorsLimit == 0) then print "inverseOfMapSimis: MinorsLimit => 0, so we now compute syzygies instead.";
+            print "                   If this doesn't terminate quickly, you may want to try increasing the option MinorsLimit.";
         );
         Inv =syz(transpose barJD,SyzygyLimit =>1);
         psi = map(source f, Rlin1, sub(transpose Inv, source f));
     )
     else (
-        if (o.Verbose==true) then print "inverseOfMapSimis: We found a nonzero minor.";
+        if (o.Verbosity >= 1) then print "inverseOfMapSimis: We found a nonzero minor.";
         Col = (nonZMinor)#1;
-        SbarJD=submatrix(barJD,,Col);
+        SbarJD=submatrix(barJD,,Col);        
         for i from 0 to jdd do Inv=append(Inv,(-1)^i*det(submatrix'(SbarJD,{i},)));
         psi=map(source f,Rlin1,matrix{Inv});
     );
     psi*phi
 );
 
-
+-*
 inverseOfMapSimis(Ideal,Ideal,BasicList) :=o->(di,im,bm)->(
-    inverseOfMapSimis( (ring di)/di, (ring im)/im, bm, AssumeDominant=>o.AssumeDominant, CheckBirational=>o.CheckBirational,Verbose=>o.Verbose, MinorsCount=>o.MinorsCount)
+    inverseOfMapSimis( (ring di)/di, (ring im)/im, bm, AssumeDominant=>o.AssumeDominant, CheckBirational=>o.CheckBirational,Verbosity=>o.Verbosity, MinorsLimit=>o.MinorsLimit)
 );
+*-
 
 inverseOfMapSimis(Ring,Ring,BasicList) := o->(R1, S1, bm)->(
-    inverseOfMapSimis(map(R1, S1, bm), AssumeDominant=>o.AssumeDominant, CheckBirational=>o.CheckBirational,Verbose=>o.Verbose, MinorsCount=>o.MinorsCount)
+    inverseOfMapSimis(map(R1, S1, bm), AssumeDominant=>o.AssumeDominant, CheckBirational=>o.CheckBirational,Verbosity=>o.Verbosity, MinorsLimit=>o.MinorsLimit)
     );
 
 
@@ -1047,42 +1155,30 @@ mapOntoImage(RingMap) := o -> (f)->(
         return f;
     )
     else (
-        kk = JJ + I1;
+        kk = sub(JJ, S1) + I1;
     );
 --        newMap := map(target f, ambient source f, matrix f);        
     map(target f, (S1)/kk, matrix f)
 );
 
-mapOntoImage(Ring, Ring, BasicList) := o -> (R,S,l)->(
-        newMap := map(R, ambient S, l);
-        mapOntoImage(newMap, o)
-);
-
-mapOntoImage(Ideal, Ideal, BasicList) := o -> (a,b,l)->(
-        newMap := map((ring a)/a, (ring b)/b, l);
-        mapOntoImage(newMap, o)
-);
+mapOntoImage(RationalMapping) := o -> (phi) -> (
+    rationalMapping mapOntoImage(map phi, o)
+)
 
 --%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-isEmbedding = method(Options => {AssumeDominant=>false, CheckBirational=>true, Strategy=>HybridStrategy,
-	 HybridLimit=>15, Verbose=>true, MinorsCount=>0, QuickRank=>true});
+isEmbedding = method(Options => {AssumeDominant=>false, Strategy=>HybridStrategy,
+	 HybridLimit=>15, Verbosity=>1, MinorsLimit=>0, QuickRank=>true});
  --checks whether a map is a closed embedding.
 
-isEmbedding(Ideal, Ideal, BasicList) := o-> (a1, b1, f1)->(
-        newMap := map((ring a1)/a1, (ring b1)/b1, f1);
-        isEmbedding(newMap, o)
-);
-
-isEmbedding(Ring, Ring, BasicList) := o-> (R1, S1, f1)->(
-        newMap:=map(R1,S1,f1);
-        isEmbedding(newMap, o)
-);
+ isEmbedding(RationalMapping) := o -> (phi1) -> (
+     isEmbedding(map phi1, o)
+ )
 
 isEmbedding(RingMap):= o-> (f1)->(
     f2:=null;
     if (o.AssumeDominant==false) then(
-        if (o.Verbose) then (
+        if (o.Verbosity >= 1) then (
             print "isEmbedding: About to find the image of the map.  If you know the image, ";
             print "        you may want to use the AssumeDominant option if this is slow.";
         );        
@@ -1091,15 +1187,15 @@ isEmbedding(RingMap):= o-> (f1)->(
     else (
 	    f2=f1;
 	);
-    if (o.Verbose === true) then print "isEmbedding: Checking to see if the map is a regular map";
-        flag := isRegularMap(f2);
+    if (o.Verbosity >= 2) then print "isEmbedding: Checking to see whether the map is a regular map";
+        flag := isRegularMap(f2, Verbosity => o.Verbosity);
         if (flag == true) then (
-	        if (o.Verbose === true) then (print "isEmbedding: computing the inverse  map");
+	        if (o.Verbosity >= 2) then (print "isEmbedding: computing the inverse  map");
 
-            try(h := inverseOfMap(f2, AssumeDominant=>true, QuickRank=>o.QuickRank, Strategy=>o.Strategy,HybridLimit=>o.HybridLimit, Verbose=>o.Verbose, MinorsCount=>o.MinorsCount); ) then
+            try(h := (inverseOfMap(f2, AssumeDominant=>true, CheckBirational=>true, QuickRank=>o.QuickRank, Strategy=>o.Strategy,HybridLimit=>o.HybridLimit, Verbosity=>o.Verbosity, MinorsLimit=>o.MinorsLimit))#map; ) then
             (
-	            if (o.Verbose === true) then print "isEmbedding: checking if the inverse map is a regular map";
-        	    flag = isRegularMap(h);
+	            if (o.Verbosity >= 2) then print "isEmbedding: checking whether the inverse map is a regular map";
+        	    flag = isRegularMap(h, Verbosity=>o.Verbosity);
 	        )
             else(
 	            flag=false
@@ -1112,16 +1208,16 @@ isEmbedding(RingMap):= o-> (f1)->(
 
 
  isSameMap = method(); --checks whether two rational maps are the same. Assumes domain is irreducible
+ isSameMapInternal = method();
 
- isSameMap(List, List) := (L1, L2) -> (
-    theRing := ring first L1;
---    rank matrix(frac(theRing), {L1, L2}) == 1
-    isSameMap(L1, L1, theRing)
- );
-
- isSameMap(List, List, Ring) := (L1, L2, R1) -> (
+ isSameMapInternal(List, List, Ring) := (L1, L2, R1) -> (
     rank matrix(frac(R1), {L1, L2}) == 1
  );
+
+ isSameMap(RationalMapping, RationalMapping) := (phi, psi) -> (
+     isSameMap(map phi, map psi)
+ );
+
 
  isSameMap(RingMap, RingMap) := (f1, f2) -> (
     if (not (target f1 === target f2)) then (
@@ -1132,7 +1228,7 @@ isEmbedding(RingMap):= o-> (f1)->(
     );
     theRing := target f1;
 --    rank matrix(frac(theRing), entries ((matrix f1) || (matrix f2))) == 1
-    isSameMap(first entries matrix f1, first entries matrix f2, theRing)
+    isSameMapInternal(first entries matrix f1, first entries matrix f2, theRing)
 --    isSameMapToPn( first entries matrix f1, first entries matrix f2)
  );
 
@@ -1140,6 +1236,7 @@ isEmbedding(RingMap):= o-> (f1)->(
 
 --%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  jacobianDualMatrix = method(Options => {AssumeDominant=>false, Strategy=>ReesStrategy, QuickRank=>true});
+ internalJacobianDualMatrix = method(Options => {AssumeDominant=>false, Strategy=>ReesStrategy, QuickRank=>true});
 --this the jacobian dual matrix of  a  rational map X -> Y.
 
 --X = Proj R
@@ -1150,7 +1247,7 @@ isEmbedding(RingMap):= o-> (f1)->(
 --defining ideal of Y = im
 --list of elements = bm
 
-jacobianDualMatrix(Ideal,Ideal,BasicList) :=o->(di,im,bm)->(
+internalJacobianDualMatrix(Ideal,Ideal,BasicList) :=o->(di,im,bm)->(
     if isSameDegree(bm)==false then error "jacobianDualMatrix: Expected a list of homogeneous elements of the same degree";
     R:=ring di;
     K:=coefficientRing R;
@@ -1160,7 +1257,7 @@ jacobianDualMatrix(Ideal,Ideal,BasicList) :=o->(di,im,bm)->(
         im1 =  im;
     )
     else (
-        im1 = idealOfImageOfMap(di, im, bm, QuickRank=>o.QuickRank);
+        im1 = idealOfImageOfMap( map( (ring di)/di, ring im, bm), QuickRank=>o.QuickRank);
     );
     --In the following lines we remove the linear parts of the ideal di and
 --modify our map bm
@@ -1186,36 +1283,38 @@ jacobianDualMatrix(Ideal,Ideal,BasicList) :=o->(di,im,bm)->(
    barJD
    );
 
-jacobianDualMatrix(Ring,Ring,BasicList) := o->(R1, S1, bm)->(
-   jacobianDualMatrix(ideal R1, ideal S1, bm, AssumeDominant=>o.AssumeDominant)
-    );
 
 jacobianDualMatrix(RingMap) := o->(f)->(
-   -- invList := inverseOfMap(target f, source f, first entries matrix f);
---    map(source f, target f, invList)
-    jacobianDualMatrix(target f, source f, first entries matrix f, AssumeDominant=>o.AssumeDominant)
-    );
+    internalJacobianDualMatrix(ideal target f, ideal source f, first entries matrix f, o)
+);
+
+jacobianDualMatrix(RationalMapping) := o->(phi)->(
+    if (phi#cache#?jacobianDualMatrix) then return phi#cache#jacobianDualMatrix;
+    myDual := jacobianDualMatrix(map phi, o);
+    phi#cache#jacobianDualMatrix = myDual;
+    myDual
+);
 
 
 --%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 --SourceInversionFactor  is an invariant associated to a rational map which is useful in computation of symbolic powers
 sourceInversionFactor=method(Options => {AssumeDominant=>false, CheckBirational=>false, Strategy=>HybridStrategy,
-	 HybridLimit=>15, Verbose=>true, MinorsCount=>0, QuickRank=>true});
+	 HybridLimit=>15, Verbosity=>1, MinorsLimit=>0, QuickRank=>true});
 
 sourceInversionFactor(RingMap):=o->(f)->(
     R:=  target f;
     x:=R_0;
     f2:=f;
     if (o.AssumeDominant==false) then(
-    if (o.Verbose) then (
+    if (o.Verbosity >= 1) then (
         print "sourceInversionFactor: About to find the image of the map.  If you know the image, ";
         print "        you may want to use the AssumeDominant option if this is slow.";
     );
         f2 = mapOntoImage(f);
     );
 
-    invf2:=inverseOfMap(f2, AssumeDominant=>o.AssumeDominant, CheckBirational=>o.CheckBirational, Strategy=>o.Strategy,
-    HybridLimit=>o.HybridLimit, Verbose=>o.Verbose, MinorsCount=>o.MinorsCount, QuickRank=>o.QuickRank);
+    invf2:=(inverseOfMap(f2, AssumeDominant=>o.AssumeDominant, CheckBirational=>o.CheckBirational, Strategy=>o.Strategy,
+    HybridLimit=>o.HybridLimit, Verbosity=>o.Verbosity, MinorsLimit=>o.MinorsLimit, QuickRank=>o.QuickRank))#map;
     I:=ideal(matrix((f2)*invf2));
     s:=quotient(ideal(I_0),ideal(x));
     s_0
@@ -1238,7 +1337,7 @@ beginDocumentation();
 
 document {
     Key => RationalMaps,
-    Headline => "rational maps between varieties",
+    Headline => "rational maps between projective varieties",
     EM "RationalMaps", " is a package for computing things related to maps between projective varieties.",
     BR{},BR{},
     "It focuses on finding where a birational map is undefined, checking whether a map is a closed embedding, checking birationality and computing inverse maps",
@@ -1246,141 +1345,91 @@ document {
     BOLD "Mathematical background:",BR{},
     UL {
 	  {"A. V. Dória, S. H. Hassanzadeh, A. Simis,  ",EM "  A characteristic free criterion of birationality", ", Advances in Mathematics, Volume 230, Issue 1, 1 May 2012, Pages 390-413."},
-	  {"A. Simis, ",EM "  Cremona Transformations and some Related Algebras", ", Journal of Algebra, Volume 280, Issue 1, 1 October 2004, Pages 162–179"},
+	  {"A. Simis, ",EM "  Cremona Transformations and some Related Algebras", ", Journal of Algebra, Volume 280, Issue 1, 1 October 2004, Pages 162--179"},
 	},
     BOLD "Functionality overlap with other packages:\n\n",BR{},BR{},
-    BOLD "Parametrization.m2",
-      ":  While the package", TT "Parametrization", " focuses on mostly on curves, it also includes a function ", TT "invertBirationalMap", "
-      which has the same functionality as ", TO "inverseOfMap", ".  On the other hand, these two functions were implemented somewhat differently and so sometimes one function can be substantially faster than the other.\n", BR{}, BR{},
-    BOLD "Cremona.m2",
-    ":  The package ", TT "Cremona", " focuses on  fast probabilistic computations in general cases and  deterministic computations for special
+    EM HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/index.html", "Parametrization"},
+      ":  While the package ", HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/index.html", "Parametrization"}, " focuses mostly on curves, it also includes a function ", HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/_invert__Birational__Map.html", "invertBirationalMap"}, "
+      that has the same functionality as ", TO "inverseOfMap", ".  On the other hand, these two functions were implemented differently and so sometimes one function can be substantially faster than the other.\n", BR{}, BR{},
+    EM HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/index.html", "Cremona"},
+    ":  The package ", HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/index.html", "Cremona"}, " focuses on  fast probabilistic computations in general cases and  deterministic computations for special
      kinds of maps from projective space.  More precisely, ",BR{},
     UL {
-        {TT "isBirational", " gives a probabilisitc answer to the question of whether a map between varieties is birational.  Furthermore, if the
-	     source is projective space, then ", TT "degreeOfRationalMap", " with ", TT   "MathMode=>true", " can give a deterministic answer.
+        {HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/_is__Birational.html","isBirational"}, " gives a probabilistic answer to the question of whether a map between varieties is birational.  Furthermore, if the
+	     source is projective space, then ", TT "degreeOfRationalMap", " with ", TT   "MathMode=>true", " gives a deterministic correct answer.
 	      In some cases, the speed of the latter  is comparable with ", TO "isBirationalMap", " with ", TT   "AssumeDominant=>true." },
-        {TT "inverseMap", " gives a  fast computation of the inverse of a birational map if the source is projective space ", EM " and ",
+        {HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/_inverse__Map.html","inverseMap"}, " gives a  fast computation of the inverse of a birational map if the source is projective space ", EM " and ",
 	     "the map has maximal linear rank.   In some cases, even if the map has maximal linear rank, our function ", TO "inverseOfMap",
-	       " appears to be competitive however.  If you pass inverseMap a map not from projective space, then it calls a modified version ",
-	      TT "invertBirationalMap", " from ", TT "Parametrization", "."},
+	       " appears to be competitive however.  If you pass inverseMap a map not from projective space, then it calls a modified and improved version of ",
+	      HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/_invert__Birational__Map.html", "invertBirationalMap"}, " from ", HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/index.html", "Parametrization"}, "."},
     },
 }
 
---***************************************************************
-document {
-  Key => {[isBirationalMap,Verbose],
-	  [isBirationalOntoImage,Verbose],
-	   [isEmbedding, Verbose],
---	  [relationType,Verbose],
-	  [inverseOfMap, Verbose],
-	  [sourceInversionFactor, Verbose]},
-    Headline => "generate informative output",
-    "If this option is set, functions will generate additional output. Default is true. "}
 
 --***************************************************************
 
 document{
-    Key=>{CheckBirational, [isEmbedding, CheckBirational],
-	[inverseOfMap, CheckBirational],
-	[sourceInversionFactor, CheckBirational]},
-    Headline=> "If true, functions will check birationality.",
+    Key=>{CheckBirational},
+    Headline=> "whether to check birationality",
     Usage =>"  CheckBirational=>b",
       "If true, inverseOfMap, isEmbedding and sourceInversionFactor  will check whether the passed map is birational.
-      If it is not birational, it will throw an error."
-
+      If it is not birational, it will throw an error.",
+    SeeAlso =>{
+        "inverseOfMap",
+        "isEmbedding",
+        "sourceInversionFactor"
+    }
 }
 --***************************************************************
 
 document{
-    Key=>{HybridLimit, [isBirationalMap,HybridLimit],
-       	  [inverseOfMap, HybridLimit],
-          [isBirationalOntoImage,HybridLimit],
-	  [isEmbedding, HybridLimit],
-	  [sourceInversionFactor, HybridLimit]},
-    Headline=>"An option to control HybridStrategy",
-       "By increasing the HybridLimit value (default 15), you can weight
-       HybridStrategy it more towards SimisStrategy.
-	     Infinity will behave just like SimisStrategy.",
-    SeeAlso=>
-        HybridStrategy
-}
---***************************************************************
-document{
-    Key=>{AssumeDominant, [isBirationalMap, AssumeDominant],
-	[isBirationalOntoImage, AssumeDominant],
-	[isEmbedding, AssumeDominant],
-	[jacobianDualMatrix,AssumeDominant],
-	[inverseOfMap, AssumeDominant],
-	[sourceInversionFactor, AssumeDominant] },
-    Headline=>"
-        If true, certain functions assume that the map from X to Y is dominant.",
-    Usage=>"AssumeDominant=>b",
-       " If true, certain functions assume that $f : X \to Y$ is dominant.
-         In other words that the closure of $f(X)$ is equal to $Y$.
-	  In practice, this means that a kernel of a ring map will
-	   not be computed.",
+    Key=>{HybridLimit},
+    Headline=>"an option to control HybridStrategy",
+       "This controls behavior when using ", TT "Strategy=>HybridStrategy", ".  ", "By increasing the HybridLimit value (default 15), 
+       HybridStrategy will execte SimisStrategy longer. 
+	     Infinity will behave exactly like SimisStrategy.",
+    SeeAlso=>{
+        "HybridStrategy"        
+    }
 }
 --***************************************************************
 
+--***************************************************************
+
 document{
-    Key=>{MinorsCount, [isEmbedding, MinorsCount],
-	[inverseOfMap, MinorsCount],
-	[sourceInversionFactor,MinorsCount], 
-    [isBirationalOntoImage, MinorsCount],
-    [isBirationalMap, MinorsCount] },
-    Headline=>" An option controlling the behavior of isBirational and inverseOfMap
-     (and other functions which call those).",
-            "One of the ways to invert a map is to find a nonzero minor of a variant of the jacobialDualMatrix.
-	     This function controls how many (randomly chosen) minors to check before switching to another strategy (invovling computing a syzygy).
+    Key=>{MinorsLimit},
+    Headline=>"an option to limit the number of random minors computed",
+            "One of the ways to invert a map is to find a nonzero minor of a variant of the jacobianDualMatrix.
+	     This function controls how many minors (heuristically chosen via ", TO "FastMinors", ") to check before switching to another strategy (involving computing a syzygy).
 	     Setting it to zero will mean no minors are checked.
-	     If it is left as null (the default), the functions will try to make an educated guess as to how big to make this,
-	     depending on varieties you are working with.",
+	     If it is left as null (the default), these functions will determine a value using a heuristic that depends on the varieties involved.",
     SeeAlso=>
         inverseOfMap
 }
 
 document{
-    Key=>{QuickRank, [isEmbedding, QuickRank],
-	[inverseOfMap, QuickRank],
-	[isBirationalMap,QuickRank],
-    [isBirationalOntoImage, QuickRank],
-    [sourceInversionFactor, QuickRank],
-    [idealOfImageOfMap, QuickRank],
-    [jacobianDualMatrix, QuickRank],
-    [mapOntoImage, QuickRank]
-    },
-    Headline=>" An option for computing how rank is computed",
-            "If set to true, then checking if rank is at least a certain number will be computed via the package", TT "FastMinors",
+    Key=>{QuickRank},
+    Headline=>" an option for controlling how rank is computed",
+            "If set to true, then checking whether rank is at least a certain number will be computed via the package ", TO "FastMinors", ".",
     SeeAlso=>
         inverseOfMap
 }
---***************************************************************
-document{
-    Key=>{[sourceInversionFactor, Strategy],
-	[isBirationalMap, Strategy],
-	[isBirationalOntoImage,Strategy],
-	[jacobianDualMatrix,Strategy],
-	[isEmbedding, Strategy],
---	[relationType,Strategy],
-	[inverseOfMap, Strategy]
-	 },
-    Headline=>" Determines the desired Strategy in each function.",
-       "In sourceInversionFactor, isBirationalMap, isBirationalOntoImage,
-	    isEmbeddinga and inverseOfMap, Strategy may assumed any of three options
-	    ReesStrategy, SimisStrategy or  HybridStrategy (default). These functions as well as 
-	    jacobianDualMatrix may also attain the Strategy=>SaturationStrategy or ReesStrategy (default).  ",
 
-}
 --***************************************************************
 document{
-    Key=>{ SaturateOutput, [baseLocusOfMap, SaturateOutput]},
-    Headline =>"If false, certain functions will not saturate their output.",
+    Key=>{ SaturateOutput},
+    Headline =>"whether the value returned should be saturated",
     Usage =>"SaturateOutput=>b",
     "  If ", TT "SaturateOutput"," is ", TT "true"," (the default), then functions will saturate their output.
-    Otherwise they will not.  It may be beneficial not to saturate in certain circumstances.",
+    Otherwise they will not.  It may be beneficial not to saturate in certain circumstances as saturation may slow computation.",
 }
 --***************************************************************
-
+document{
+    Key=>{ AssumeDominant},
+    Headline =>"whether to assume a rational map between projective varieties is dominant",
+    Usage =>"AssumeDominant=>b",
+    "  If ", TT "AssumeDominant"," is ", TT "true",", it can speed up computation as a kernel will not be computed.",
+}
 
 --***************************************************************
 
@@ -1388,12 +1437,12 @@ doc ///
     Key
         HybridStrategy
     Headline
-        A strategy for inverseOfMap,  isBirationalMap and isEmbedding.
+        A strategy for determining whether a map is birational and computing its inverse
     Description
     	Text
-            It is a valid value for the Strategy Option for inverseOfMap.
+            HybridStrategy is a valid value for the Strategy Option for inverseOfMap, isBirationalMap, and isEmbedding.
 	    This is currently the default strategy.  It is a combination of ReesStrategy and SimisStrategy.
-	    By increasing the HybridLimit value (default 15), you can weight it more towards SimisStrategy.
+	    Increasing the HybridLimit value (default 15) will force SimisStrategy to be executed longer.
     SeeAlso
         ReesStrategy
         SaturationStrategy
@@ -1408,12 +1457,16 @@ doc ///
     Key
         ReesStrategy
     Headline
-        A strategy for inverseOfMap, isBirationalMap, and is Embedding.
+        a strategy for determining whether a map is birational and computing its inverse 
     Description
     	Text
-            It is a valid value for the Strategy Option for inverseOfMap (and other functions). By choosing Strategy=>ReesStrategy, the equation of the
-	    ideal of definition of the Rees algebra are generated by the known elimination technique.
-	    E.g. Vasconcelos, Rees algebras, multiplicities, algorithms. Springer Monographs in Mathematics. Springer-Verlag, Berlin, 2005.
+            ReesStrategy is a valid value for the Strategy Option for inverseOfMap, isBirationalMap, and isEmbedding. By choosing Strategy=>ReesStrategy, the ideal of
+            definition of the Rees algebra is computed by the known elimination technique. 
+            This technique is described in Proposition 1.5 on page 21 in the book
+        Text
+            @UL{
+                {"Vasconcelos, Wolmer.  ", BOLD "Integral closure.", " Springer Monographs in Mathematics. ", EM "Springer-Verlag, Berlin,", "2005. xii+519 pp."}
+            }@
     SeeAlso
         SaturationStrategy
         SimisStrategy
@@ -1426,13 +1479,13 @@ doc ///
     Key
         SaturationStrategy
     Headline
-        A strategy for inverseOfMap, isBirationalMap, isEmbedding.
+        a strategy for determining whether a map is birational and computing its inverse
     Description
     	Text
-            It is a valid value for the Strategy Option for inverseOfMap (and other functions). By choosing Strategy=>SaturationStrategy,
-	    the equation of the ideal of definition of the Rees algebra are generated by saturating the ideal of definition of the symmetric algebra into a non-zero element.
-	    Notice that in this package (and in particular in this Strategy Option) the rings are assumed to be integral domains.
-	    This Strategy appears to be slower in some examples.
+            SaturationStrategy is a valid value for the Strategy Option for inverseOfMap, isBirationalMap, and isEmbedding. By choosing Strategy=>SaturationStrategy,
+	        the equations of the ideal of definition of the Rees algebra are generated by saturating the ideal of definition of the symmetric algebra into a non-zero element.
+	        Notice that in this package (and in particular, in this Strategy option) the rings are assumed to be integral domains.
+	        This Strategy appears to be slower in some examples.
     SeeAlso
         ReesStrategy
         SimisStrategy
@@ -1444,18 +1497,156 @@ doc ///
     Key
         SimisStrategy
     Headline
-        A strategy for inverseOfMap, isBirationalMap and isEmbedding.
+        a strategy for determining whether a map is birational and computing its inverse
     Description
     	Text
-            It is a valid value for the Strategy Option for inverseOfMap (and other functions). Considering the bigraded structure of the
-	    equations of the ideal of definition of Rees algerba, SimisStrategy is looking for all Grobner basis with first degree 1. The advantage
-	    of this restriction is that only this part of the Rees ideal is enough to decide Birationality and to compute the inverse map; so that
-	    this Strategy reduces the number of computations. A disadvatage of this Strategy is that if the given map is not birational this Strategy may never
-	    end because the jacobianDualMatrix will not attain its maximum rank. To circumvent this problem we consider  HybridStrategy.
+            SimisStrategy is a valid value for the Strategy Option of inverseOfMap, isBirationalMap, and isEmbedding. Considering the bigraded structure of the
+            equations of the ideal of definition of a Rees algebra, SimisStrategy looks for all Gröbner bases where the degree is (1, n) for some natural number n. The advantage
+            of this restriction is that this part of the Rees ideal is enough to decide birationality and to compute the inverse map; this strategy reduces 
+            computation time. A disadvantage of this Strategy is that if the given map is not birational this Strategy may never
+            end because the jacobianDualMatrix will not attain its maximum rank. To circumvent this problem we implemented HybridStrategy.
     SeeAlso
         ReesStrategy
         SaturationStrategy
         HybridStrategy
+///
+
+--***************************************************************
+
+doc ///
+    Key
+        RationalMapping
+        rationalMapping
+        (rationalMapping, RingMap)
+        (rationalMapping, Ring, Ring, BasicList)
+        (rationalMapping, Ring, Ring, Matrix)
+        (rationalMapping, ProjectiveVariety, ProjectiveVariety, BasicList)
+        (rationalMapping, ProjectiveVariety, ProjectiveVariety, Matrix)
+    Headline
+        a rational mapping between projective varieties
+    Usage        
+        phi = rationalMapping(f)        
+        phi = rationalMapping(targetRing, sourceRing, l)        
+        phi = rationalMapping(targetRing, sourceRing, m)
+        phi = rationalMapping(targetVariety, sourceVariety, l)
+        phi = rationalMapping(targetVariety, sourceVariety, m)
+    Inputs
+        f:RingMap
+            a ring map corresponding to the rational map between varieties
+        targetRing:Ring
+            the ring corresponding to the source variety
+        sourceRing:Ring
+            the ring corresponding to the target variety
+        targetVariety:ProjectiveVariety
+            the target variety
+        sourceVariety:ProjectiveVariety
+            the source variety
+        l:BasicList
+            the list of elements describing the map
+        m:Matrix
+            the matrix describing the map
+    Description
+        Text
+            A {\tt RationalMapping} is a Type that is used to treat maps between projective varieties  geometrically.  It stores essentially equivalent data to the corresponding map between the homogeneous coordinate rings.  The way to construct the object is to use the function {\tt rationalMapping}.  
+        Text             
+            For example, the following is a Cremona transformation on $P^2$ constructed in multiple ways (in this case, the entries describing the map all have degree 2).
+        Example
+            R = QQ[x,y,z]
+            P2 = Proj(R)
+            phi1 = rationalMapping(P2, P2, {y*z,x*z,x*y})
+            phi2 = rationalMapping(R, R, matrix{{y*z,x*z,x*y}})
+            phi3 = rationalMapping(map(R, R, {y*z,x*z,x*y}))
+        Text
+            The source and target can also be different.  For example, consider the following map from $P^1$ to a nodal cubic in $P^2$.
+        Example
+            S = QQ[x,y,z];
+            P2 = Proj S;
+            R = QQ[a,b];
+            P1 = Proj R;
+            phi = rationalMapping(P2, P1, {b*a*(a-b), a^2*(a-b), b^3})  
+            h = map(R, S, {b*a*(a-b), a^2*(a-b), b^3})
+            psi = rationalMapping h
+            phi == psi
+        Text
+            Notice that when defining a map between projective varieties, we keep the target then source input convention.
+        Text
+            Warning, the list or matrix describing the map needs every entry to have the same degree. 
+    SeeAlso
+        (symbol *, RationalMapping, RationalMapping)
+        (symbol ==, RationalMapping, RationalMapping)
+///
+
+doc ///
+    Key
+        (symbol *, RationalMapping, RationalMapping)
+        (symbol ^, RationalMapping, ZZ)
+    Headline
+        compose rational maps between projective varieties
+    Description
+        Text
+            This allows one to compose two rational maps between projective varieties.  
+        Example
+            R = QQ[x,y,z]
+            P2 = Proj(R)
+            phi = rationalMapping (P2, P2, {y*z,x*z,x*y})
+            ident = rationalMapping (P2, P2, {x,y,z})
+            phi*phi == ident        
+        Text
+            Raising a map to the negative first power means computing the inverse birational map.  Raising a map to the first power simply returns the map itself.  In the next example we compute the blowup of a point on $P^2$ and its inverse.
+        Example
+            P5ring = ZZ/103[a..f];
+            R = ZZ/103[x,y,z];        
+            P2 = Proj R;
+            identP2 = rationalMapping(P2, P2, {x,y,z});
+            M = matrix{{a,b,c},{d,e,f}};
+            blowUp = Proj(P5ring/(minors(2, M)+ideal(b - d)));
+            identBlowUp = rationalMapping(blowUp, blowUp, {a,b,c,d,e,f});
+            tau = rationalMapping(P2, blowUp,{a, b, c});
+            tauInverse = tau^-1;
+            tau*tauInverse == identP2 --a map composed with its inverse is the identity
+            tauInverse*tau == identBlowUp
+        Text
+            Note that one can only raise maps to powers (with the exception of 1 and -1) if the source and target of the the same.  In that case, raising a map to a negative power means compose the inverse of a map with itself.  We illustrate this with the quadratic transformation on $P^2$ that we started with (an transformation of order 2 in the Cremona group).
+        Example
+            phi^3 == phi^-1 
+            phi^-2 == ident
+            phi^1 == ident
+    SeeAlso
+        isSameMap
+///
+
+doc ///
+    Key
+        (map, RationalMapping)
+    Headline    
+        the ring map associated to a RationalMapping between projective varieties
+    Description
+        Text
+            Given a {\tt RationalMapping} between projective varieties, this returns the associated map between projective varieties.
+///
+
+doc ///
+    Key
+        (source, RationalMapping)
+        (target, RationalMapping)
+    Headline
+        returns the source or target of a RationalMapping between projective varieties.
+    Description
+        Text
+            Given a {\tt RationalMapping} between projective varieties these functions can be used to return the source or target.  
+        Example
+            R = QQ[a,b];
+            S = QQ[x,y,z];
+            P2 = Proj R;
+            P3 = Proj S;
+            f = map(R, S, {a,b,0});
+            phi = rationalMapping f;
+            source phi
+            target phi
+            source f
+            target f
+        Text
+            Note that the source of phi corresponds to the target of f and the target of phi corresponds to the source of f.
 ///
 
 --***************************************************************
@@ -1465,52 +1656,56 @@ doc ///
 doc ///
     Key
         isBirationalMap
-        (isBirationalMap, Ideal, Ideal, BasicList)
-        (isBirationalMap, Ring, Ring, BasicList)
         (isBirationalMap, RingMap)
-       -- [isBirationalMap, AssumeDominant]
-       --[isBirationalMap, Strategy]
-	--[isBirationalMap,Verbose]
-	--[isBirationalMap,HybridLimit]
+        (isBirationalMap, RationalMapping)
+        [isBirationalMap, AssumeDominant]
+        [isBirationalMap, Strategy]
+	    [isBirationalMap,Verbosity]
+	    [isBirationalMap,HybridLimit]
+        [isBirationalMap,MinorsLimit]
+        [isBirationalMap, QuickRank]
     Headline
-        Checks if a map between projective varieties is birational.
-    Usage
-        val = isBirationalMap(a,b,f)
-        val = isBirationalMap(R,S,f)
-        val = isBirationalMap(Pi)
-    Inputs
-        a:Ideal
-            defining equations for X
-        b:Ideal
-            defining equations for Y
-        f:BasicList
-            A list of where to send the variables in the ring of b, to in the ring of a.
-        R:Ring
-            the homogeneous coordinate ring of X
-        S:Ring
-            the homogeneous coordinate ring of Y
+        whether a map between projective varieties is birational
+    Usage        
+        val = isBirationalMap(Pi)        
+        val = isBirationalMap(phi)        
+    Inputs        
         Pi:RingMap
-            A ring map S to R corresponding to X mapping to Y
+            a ring map S to R corresponding to X mapping to Y    
+        phi:RationalMapping
+            a rational map between projective varieties X to Y
+        Verbosity => ZZ
+            if 0 then silence the function, if 1 then generate informative output which can be used to adjust strategies, if > 1 then generate a detailed description of the execution
+        AssumeDominant => Boolean
+            whether to assume the provided rational map of projective varieties is dominant, if set to true it can speed up computation
+        Strategy=>Symbol
+            choose the strategy to use: HybridStrategy, SimisStrategy, or ReesStrategy
+        HybridLimit => ZZ
+            within HybridStrategy, within HybridStrategy, the option HybridLimit controls how often SimisStrategy and ReesStrategy are used
+        MinorsLimit => ZZ
+            how many submatrices of a variant of the Jacobian dual matrix to consider before switching to a different strategy       
+        QuickRank => Boolean
+            whether to compute rank via the package @TO2(FastMinors, "FastMinors")@
     Outputs
         val:Boolean
             true if the map is birational, false if otherwise
     Description
         Text
-            This checks if a map between projective varieties is birational.  There are a number of ways to call this.  A simple one is to pass the function a map between two graded rings.  In this case, the variables should be sent to elements of a single fixed degree.  The option {\tt AssumeDominant} being true will cause the function to assume that the kernel of the associated ring map is zero (default value is false).  The target and source must be varieties, in particular their defining ideals must be prime.  Let's check that the plane quadratic cremona transformation is birational.
+            The function {\tt isBirationalMap} computes whether a map between projective varieties is birational.   The option {\tt AssumeDominant} being true will cause the function to assume that the kernel of the associated ring map is zero (default value is false).  The target and source must be varieties; their defining ideals must be prime.  Let's check that the plane quadratic Cremona transformation is birational.
         Example
             R=QQ[x,y,z];
             S=QQ[a,b,c];
             Pi = map(R, S, {x*y, x*z, y*z});
-            isBirationalMap(Pi, Verbose=>false, Strategy=>SimisStrategy )
+            isBirationalMap(Pi, Verbosity=>0, Strategy=>SimisStrategy )
         Text
             We can also verify that a cover of $P^1$ by an elliptic curve is not birational.
         Example
             R=QQ[x,y,z]/(x^3+y^3-z^3);
             S=QQ[s,t];
             Pi = map(R, S, {x, y-z});
-            isBirationalMap(Pi, Verbose=>false)
+            isBirationalMap(Pi, Verbosity=>0)
         Text
-            Note the Frobenius map is not birational.
+            Note that the Frobenius map is not birational.
         Example
             R = ZZ/5[x,y,z]/(x^3+y^3-z^3);
             S = ZZ/5[a,b,c]/(a^3+b^3-b^3);
@@ -1518,56 +1713,74 @@ doc ///
             isBirationalMap(h, Strategy=>SaturationStrategy)
     SeeAlso
         isBirationalOntoImage
+        HybridStrategy
+        SimisStrategy
+        ReesStrategy
     Caveat
-        Also see the very fast probabilisitc birationality checking of the Cremona package: isBirational
+        Also see the very fast probabilistic birationality checking of the @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/index.html", "Cremona"}@ package: @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/_is__Birational.html","isBirational"}@.
 ///
 --***************************************************************
 
 doc ///
         Key
-		isBirationalOntoImage
-		(isBirationalOntoImage, Ideal, Ideal, BasicList)
-		(isBirationalOntoImage, Ring, Ring, BasicList)
-		(isBirationalOntoImage, RingMap)
+            isBirationalOntoImage
+            (isBirationalOntoImage, RingMap)        
+            (isBirationalOntoImage, RationalMapping)
+            [isBirationalOntoImage,Verbosity]
+            [isBirationalOntoImage, AssumeDominant]
+            [isBirationalOntoImage, Strategy]
+            [isBirationalOntoImage, HybridLimit]
+            [isBirationalOntoImage, MinorsLimit]
+            [isBirationalOntoImage, QuickRank]
         Headline
-                Checks if a map between projective varieties is birational onto its image.
+                whether a map between projective varieties is birational onto its image
         Usage
-                val = isBirationalOntoImage(a,b,f)
-                val = isBirationalOntoImage(R,S,f)
                 val = isBirationalOntoImage(Pi)
+                val = isBirationalOntoImage(phi)
         Inputs
-                a:Ideal
-                        defining equations for X
-                b:Ideal
-                        defining equations for Y
-                f:BasicList
-                        A list of where to send the variables in the ring of b, to in the ring of a.
-                R:Ring
-                        the homogeneous coordinate ring of X
-                S:Ring
-                        the homogeneous coordinate ring of Y
                 Pi:RingMap
-                        A ring map S to R corresponding to X mapping to Y
+                        A ring map S to R corresponding to a rational map between projective varieties
+                phi:RationalMapping
+                        A rational map between projective varieties
+                Verbosity => ZZ
+                    if 0 then silence the function, if 1 then generate informative output which can be used to adjust strategies, if > 1 then generate a detailed description of the execution
+                AssumeDominant => Boolean
+                    whether to assume the provided rational map of projective varieties is dominant, if true it can speed up computation as a kernel will not be computed                  
+                Strategy=>Symbol
+                    choose the strategy to use: HybridStrategy, SimisStrategy, or ReesStrategy  
+                HybridLimit => ZZ
+                    within HybridStrategy, the option HybridLimit controls how often SimisStrategy and ReesStrategy are used, larger numbers means SimisStrategy will be executed longer
+                MinorsLimit => ZZ
+                    how many submatrices of a variant of the Jacobian dual matrix to consider before switching to a different strategy
+                QuickRank => Boolean
+                    whether to compute rank via the package @TO2(FastMinors, "FastMinors")@
         Outputs
                 val:Boolean
                         true if the map is birational onto its image, false if otherwise
         Description
             Text
-                This checks whether $f : X \to Y$ is birational onto its image.  We do this by computing the image and then calling {\tt isBirationalOntoImage}.  The option {\tt AssumeDominant} being true will cause the function to assume that the kernel of the associated ring map is zero (default value is false).  The source must be a variety, in particular its defining ideals must be prime.  In the following example, the map is not birational, but it is birational onto its image.
+                The function {\tt isBirationalOntoImage} computes whether $f : X \to Y$ is birational onto its image.  It is essentially a combination of {\tt mapOntoImage} with {\tt isBirationalOntoImage}.  Setting option {\tt AssumeDominant} to true will cause the function to assume that the kernel of the associated ring map is zero (default value is false).  The source must be a variety; its defining ideal must be prime.  In the following example, the map is not birational, but it is birational onto its image.
             Example
                 R=QQ[x,y];
                 S=QQ[a,b,c,d];
                 Pi = map(R, S, {x^3, x^2*y, x*y^2, y^3});
-                isBirationalOntoImage(Pi, Verbose=>false)
-                isBirationalMap(Pi,  Verbose=>false)
+                isBirationalOntoImage(Pi, Verbosity=>0)
+                isBirationalMap(Pi,  Verbosity=>0)
             Text
-                Sub-Hankel matrices have homaloidal determinants.
+                Sub-Hankel matrices (matrices whose ascending skew-diagonal entries are constant) have homaloidal determinants (the associated partial derivatives define a Cremona map).
+                For more discussion see:
+            Text
+                @UL{
+                    { "Mostafazadehfard, Maral; Simis, Aron.  Homaloidal determinants.", EM " J. Algebra ", " 450 (2016), 59--101."}
+                }@
+            Text
+                Consider the following example illustrating this.
             Example
                 A = QQ[z_0..z_6];
                 H=map(A^4,4,(i,j)->A_(i+j));
                 SH=sub(H,{z_5=>0,z_6=>0})
                 sh=map(A, A, transpose jacobian ideal det SH );
-                isBirationalOntoImage(sh, Verbose=>false)
+                isBirationalOntoImage(sh, Verbosity=>0)
                 B=QQ[t_0..t_4];
                 li=map(B,A,matrix{{t_0..t_4,0,0}});
                 phi=li*sh;
@@ -1579,94 +1792,92 @@ doc ///
 
 
 doc ///
-	Key
-		idealOfImageOfMap
-		(idealOfImageOfMap,Ideal,Ideal,Matrix)
-		(idealOfImageOfMap,Ideal,Ideal,BasicList)
-		(idealOfImageOfMap,Ring,Ring,Matrix)
-		(idealOfImageOfMap,Ring,Ring,BasicList)
-		(idealOfImageOfMap,RingMap)
-		[idealOfImageOfMap, Verbose]
-	Headline
-		Finds defining equations for the image of a rational map between varieties or schemes
-	Usage
-		im = idealOfImageOfMap(a,b,f)
-		im = idealOfImageOfMap(a,b,g)
-		im = idealOfImageOfMap(R,S,f)
-		im = idealOfImageOfMap(R,S,g)
-		im = idealOfImageOfMap(p)
-	Inputs
-		a:Ideal
-			defining equations for X
-		b:Ideal
-			defining equations for Y
-		f:Matrix
-                        projective rational map given by polynomial representatives
-		g:BasicList
-			projective rational map given by polynomial representatives
-		R:Ring
-			coordinate ring of X
-		S:Ring
-			coordinate ring of Y
-		p:RingMap
-			projective rational map given by polynomial representatives
-	Outputs
-		im:Ideal
-			defining equations for the image of f
-	Description
-		Text
-			Given $f : X \to Y \subset P^N$, this returns the defining ideal of $f(x) \subseteq P^N$. It should be noted for inputs that all rings are quotients of polynomial rings, and all ideals and ring maps are of these.  In particular, this function returns an ideal defining a subset of the  the ambient projective space of the image.  In the following example we consider the image of $P^1$ inside $P^1 \times P^1$.
-		Example
-			S = QQ[x,y,z,w];
-			b = ideal(x*y-z*w);
-			R = QQ[u,v];
-			a = ideal(sub(0,R));
-			f = matrix {{u,0,v,0}};
-			idealOfImageOfMap(a,b,f)
-		Text
-			This function frequently just calls {\tt ker} from Macaulay2.  However, if the target of the ring map is a polynomial ring, then it first tries to verify if the ring map is injective.  This is done by computing the rank of an appropriate jacobian matrix.
+    Key
+        idealOfImageOfMap        
+        (idealOfImageOfMap, RingMap)
+        (idealOfImageOfMap, RationalMapping)
+        [idealOfImageOfMap, Verbosity]
+        [idealOfImageOfMap, QuickRank]
+    Headline
+        finds defining equations for the image of a rational map between varieties or schemes
+    Usage
+        im = idealOfImageOfMap(p)
+        im = idealOfImageOfMap(phi)
+    Inputs
+        p:RingMap
+            corresponding to a rational map of projective varieties
+        phi:RationalMapping
+            a rational map between projective varieties
+        QuickRank => Boolean
+            whether to compute rank via the package @TO2(FastMinors, "FastMinors")@
+    Outputs
+        im:Ideal
+            defining equations for the image
+    Description
+        Text
+            Given a rational map $f : X \to Y \subset P^N$, {\tt idealOfImageOfMap} returns the defining ideal of the image of $f$ in $P^N$. The rings provided implicitly in the inputs should be polynomial rings or quotients of polynomial rings. In particular, {\tt idealOfImageOfMap} function returns an ideal defining a subset of the ambient projective space of the image.  In the following example we consider the image of $P^1$ inside $P^1 \times P^1$.
+        Example
+            S = QQ[x,y,z,w];
+            b = ideal(x*y-z*w);
+            R = QQ[u,v];
+            a = ideal(sub(0,R));
+            f = matrix {{u,0,v,0}};
+            phi = rationalMapping(R/a, S/b, f)
+            idealOfImageOfMap(phi)
+            psi = rationalMapping(Proj(S/b), Proj(R/a), f)
+            idealOfImageOfMap(psi)
+        Text
+            This function frequently just calls @TO2((kernel, RingMap), "ker")@ from Macaulay2.  However, if the target of the ring map is a polynomial ring, then it first tries to verify whether the ring map is injective.  This is done by computing the rank of an appropriate Jacobian matrix.
 ///
 --***************************************************************
 
 doc ///
-	Key
-		jacobianDualMatrix
-		(jacobianDualMatrix,Ideal,Ideal,BasicList)
-		(jacobianDualMatrix,Ring,Ring,BasicList)
-		(jacobianDualMatrix,RingMap)
-	--	[jacobianDualMatrix,AssumeDominant]
-	--	[jacobianDualMatrix,Strategy]
-	Headline
-		Computes the Jacobian Dual Matrix, a matrix whose kernel describing the syzygies of the inverse map.
-	Usage
-		M = jacobianDualMatrix(a,b,g)
-		M = jacobianDualMatrix(R,S,g)
-		M = jacobianDualMatrix(p)
-	Inputs
-		a:Ideal
-			defining equations for X
-		b:Ideal
-			defining equations for Y
-		g:BasicList
-			projective rational map given by polynomial representatives
-		R:Ring
-			coordinate ring of X
-		S:Ring
-			coordinate ring of Y
-		p:RingMap
-			projective rational map given by polynomial representatives
-	Outputs
-		M:Matrix
-			Returns a matrix over the coordinate ring of the image, the kernel of this matrix
-			 describing the syzygies of the inverse map, if it exists.
-	Description
-		Text
-			This is mostly an internal function which is used when checking if a map is birational and when computing the inverse map.  If the {\tt AssumeDominant} option is set to {\tt true}, it assumes that the kernel of the associated ring map is zero (default value is false).  Valid values for the {\tt Strategy} option are {\tt ReesStrategy} and {\tt SaturationStrategy}.  For more information, see Doria, Hassanzadeh, Simis, A characteristic-free criterion of birationality.  Adv. Math. 230 (2012), no. 1, 390–413.
-		Example
-                       R=QQ[x,y];
-                       S=QQ[a,b,c,d];
-                       Pi = map(R, S, {x^3, x^2*y, x*y^2, y^3});
-		       jacobianDualMatrix(Pi, Strategy=>SaturationStrategy)
+    Key
+        jacobianDualMatrix        
+        (jacobianDualMatrix, RingMap)
+        (jacobianDualMatrix, RationalMapping)
+        [jacobianDualMatrix,AssumeDominant]
+        [jacobianDualMatrix,Strategy]
+        [jacobianDualMatrix, QuickRank]
+    Headline
+        computes the Jacobian dual matrix
+    Usage
+        M = jacobianDualMatrix(p)
+        M = jacobianDualMatrix(phi)
+    Inputs
+        phi:RationalMapping
+            a rational map between projective varieties
+        p:RingMap
+            ring map corresponding to a rational map between projective varieties
+        Strategy=>Symbol
+                choose the strategy to use: ReesStrategy or SaturationStrategy
+        AssumeDominant => Boolean
+            whether to assume the provided rational map of projective varieties is dominant, if set to true it can speed up computation
+        QuickRank => Boolean
+            whether to compute rank via the package @TO2(FastMinors, "FastMinors")@
+    Outputs
+        M:Matrix
+            a matrix $M$ over the coordinate ring of the image, the kernel of $M$
+            describes the syzygies of the inverse map, if it exists.
+    Description
+        Text
+            The Jacobian dual matrix is a matrix whose kernel describes the syzygies of the matrix corresponding to the inverse map.
+            For more information, see 
+        Text
+            @UL{
+                {"Doria, A. V.; Hassanzadeh, S. H.; Simis, A.", " A characteristic-free criterion of birationality.", EM " Adv. Math.", " 230 (2012), no. 1, 390--413."}
+            }@
+        Text
+            This is mostly an internal function. It is used when checking whether a map is birational and when computing the inverse map.  If the {\tt AssumeDominant} option is set to {\tt true}, it assumes that the kernel of the associated ring map is zero (default value is false).  Valid values for the {\tt Strategy} option are {\tt ReesStrategy} and {\tt SaturationStrategy}.  
+        Example
+            R=QQ[x,y];
+            S=QQ[a,b,c,d];
+            Pi = map(R, S, {x^3, x^2*y, x*y^2, y^3});
+            jacobianDualMatrix(Pi, Strategy=>SaturationStrategy)
+    SeeAlso
+        HybridStrategy
+        SimisStrategy
+        ReesStrategy
 ///
 --***************************************************************
 --***************************************************************
@@ -1676,40 +1887,35 @@ doc ///
         Key
                 mapOntoImage
                 (mapOntoImage, RingMap)
-                (mapOntoImage, Ideal, Ideal, BasicList)
-                (mapOntoImage, Ring, Ring, BasicList)
+                (mapOntoImage, RationalMapping)
+                [mapOntoImage, QuickRank]
         Headline
-                Given a map of rings, correspoing to X mapping to Y, this returns the map of rings corresponding to X mapping to f(X).
+                the induced map from a variety to the closure of its image under a rational map
         Usage
-                h = mapOntoImage(f)
-                h = mapOntoImage(a,b,l)
-                h = mapOntoImage(R,S,l)
-        Inputs
-                a:Ideal
-                        defining equations for X
-                b:Ideal
-                        defining equations for Y
-		l:BasicList
-                        projective rational map given by polynomial represenatives of the same degree
+                h = mapOntoImage(f)        
+                psi = mapOntoImage(phi)        
+        Inputs                
                 f:RingMap
-                        the ring map corresponding to $f : X \to Y$
-                R:Ring
-                        coordinate ring for X
-                S:Ring
-                        coordinate ring for Y
-
+                        the ring map corresponding to a rational map $\phi$ of projective varieties
+                phi:RationalMapping
+                        a rational map $\phi$ of projective varieties              
+                QuickRank => Boolean
+                        whether to compute rank via the package @TO2(FastMinors, "FastMinors")@
         Outputs
                 h:RingMap
-			the map of rings corresponding to $f : X \to f(X)$.
-	Description
-	        Text
-	                This function is really simple, given $S \to R$, this just returns $S/kernel \to R$.
-	        Example
-	                R = QQ[x,y];
-	                S = QQ[a,b,c];
-	                f = map(R, S, {x^2, x*y, y^2});
-	                mapOntoImage(f)
-	                mapOntoImage(R,S,{x^2,x*y,y^2})
+                    the map of rings corresponding to $X \to \overline{\phi(X)}$.
+                psi:RationalMapping
+                    the rational map 
+        Description
+                Text
+                        Given $f : X \to Y$ {\tt mapOntoImage} returns $X \to \overline{\phi(X)}$.  Alternately, given $f: S \to R$, {\tt mapOntoImage} just returns $S/(kernel f) \to R$.  {\tt mapOntoImage} first computes whether the kernel is $0$ without calling @TO2((kernel, RingMap), "ker")@, which can have speed advantages.
+                Example
+                        R = QQ[x,y];
+                        S = QQ[a,b,c];
+                        f = map(R, S, {x^2, x*y, y^2});
+                        mapOntoImage(f)	     
+                        phi = rationalMapping f
+                        mapOntoImage(phi)           
 ///
 --***************************************************************
 
@@ -1717,66 +1923,85 @@ doc ///
         Key
                 isEmbedding
                 (isEmbedding, RingMap)
-                (isEmbedding, Ideal, Ideal, BasicList)
-                (isEmbedding, Ring, Ring, BasicList)
-             --   [isEmbedding, AssumeDominant]
-                --[isEmbedding, CheckBirational]
-                --[isEmbedding, HybridLimit]
-               -- [isEmbedding, Strategy]
-               -- [isEmbedding, MinorsCount]
-                --[isEmbedding, Verbose]
+                (isEmbedding, RationalMapping)
+                [isEmbedding, AssumeDominant]                
+                [isEmbedding, HybridLimit]
+                [isEmbedding, Strategy]
+                [isEmbedding, MinorsLimit]
+                [isEmbedding, Verbosity]
+                [isEmbedding, QuickRank]
         Headline
-                Checks whether a map of projective varieties is a closed embedding.
+                whether a rational map of projective varieties is a closed embedding
         Usage
                 val = isEmbedding(f)
-                val = isEmbedding(a,b,l)
-                val = isEmbedding(R,S,l)
+                val = isEmbedding(phi)
         Inputs
-                a:Ideal
-                        defining equations for X
-                b:Ideal
-                        defining equations for Y
-		l:BasicList
-                        projective rational map given by polynomial represenatives of the same degree
                 f:RingMap
-                        the ring map corresponding to $f : X \to Y$
-                R:Ring
-                        coordinate ring for X
-                S:Ring
-                        coordinate ring for Y
-
+                    the ring map corresponding to $f : X \to Y$
+                phi:RationalMapping
+                    a rational map of projective varieties, $f : X \to Y$.
+                Verbosity => ZZ
+                    if 0 then silence the function, if 1 then generate informative output which can be used to adjust strategies, if > 1 then generate a detailed description of the execution
+                AssumeDominant => Boolean
+                    whether to assume the provided rational map of projective varieties is dominant, if set to true it can speed up computation               
+                Strategy=>Symbol
+                    choose the strategy to use: HybridStrategy, SimisStrategy, or ReesStrategy
+                HybridLimit => ZZ
+                    within HybridStrategy, the option HybridLimit controls how often SimisStrategy and ReesStrategy are used,   larger numbers means SimisStrategy will be executed longer
+                MinorsLimit => ZZ
+                    how many submatrices of a variant of the Jacobian dual matrix to consider before switching to a different strategy                
+                QuickRank => Boolean
+                    whether to compute rank via the package @TO2(FastMinors, "FastMinors")@
         Outputs
                 val:Boolean
-			true if the map is an embedding, otherwise false.
-	Description
-	        Text
-	                Given a map of rings, correspoing to $f : X \to Y$, this determines if this map embeds $X$ as a closed subscheme into $Y$.  The target and source must be varieties, in particular their defining ideals must be prime.  Consider the Veronese embedding.
-	        Example
-	                R = ZZ/7[x,y];
-	                S = ZZ/7[a,b,c];
-	                f = map(R, S, {x^2, x*y, y^2});
-	                isEmbedding(f, Verbose=>false)
-	        Text
-	                Now consider the projection from a point on the plane to the line at infinity.
-	        Example
-	                R=QQ[x,y,z];
-	                S=QQ[a,b];
-	                f=map(R, S, {y,z});
-	                isEmbedding(f, Verbose=>false)
-	        Text
-	                That is obviously not an embedding.  It is even not an embedding when we restrict to a quadratic curve, even though it is a regular map.
-	        Example
-	                R=QQ[x,y,z]/(x^2+y^2-z^2);
-	                S=QQ[a,b];
-	                f=map(R,S, {y,z});
-	                isRegularMap(f)
-	                isEmbedding(f)
-	        Text
-	                If the option {\tt Verbose} is set to {\tt true}, the function will describe what it is doing at each step.
-	        Text
-	                If the option {\tt AssumeDominant} is set to {\tt true}, the function won't compute the kernel of the ring map.  Otherwise it will.
-	        Text
-	                The remaining options, {\tt Strategy}, {\tt HybridLimit}, {\tt MinorsCount}, and {\tt CheckBirational} are simply passed when this function calls {\tt inverseOfMap}.  Note, this function, {\tt isEmbedding}, will only behave properly if {\tt CheckBirational} is set to {\tt true}.
+                    true if the map is an embedding, otherwise false.
+        Description
+                Text
+                        Given a map of rings, corresponding to a rational map $f : X \to Y$, {\tt isEmbedding} determines whether $f$ map embeds $X$ as a closed subscheme into $Y$.  The target and source must be varieties; their defining ideals must be prime.  Consider the Veronese embedding.
+                Example
+                        R = ZZ/7[x,y];
+                        S = ZZ/7[a,b,c];
+                        h = map(R, S, {x^2, x*y, y^2});
+                        isEmbedding(h, Verbosity=>1)
+                Text                        
+                        If the option {\tt Verbosity} is set to {\tt 2}, the function will produce very detailed output.  Setting it to {\tt 0} will suppress output such output.
+                        Now consider the projection from a point on the plane to the line at infinity.
+                Example
+                        R=QQ[x,y,z];
+                        S=QQ[a,b];
+                        h=rationalMapping(R, S, {y,z});
+                        isEmbedding(h, Verbosity=>0)
+                Text
+                        That is obviously not an embedding.  It is even not an embedding when we restrict to a quadratic curve, even though it is a regular map.
+                Example
+                        R=QQ[x,y,z]/(x^2+y^2-z^2);
+                        S=QQ[a,b];
+                        h=map(R,S, {y,z});
+                        isRegularMap(h)
+                        isEmbedding(h, Verbosity=>0)                
+                Text
+                        If the option {\tt AssumeDominant} is set to {\tt true}, the function won't compute the kernel of the ring map.  Otherwise it will.
+                Text
+                        The remaining options, {\tt Strategy}, {\tt HybridLimit}, {\tt MinorsLimit}, and {\tt CheckBirational} are simply passed when {\tt isEmbedding} calls {\tt inverseOfMap}.  Note, this function, {\tt isEmbedding}, will only behave properly if {\tt CheckBirational} is set to {\tt true}.
+                Text
+                        We conclude by considering the map from $P^1$ to a cuspidal curve in $P^2$.  This is not an embedding, but if we take the strict transform in the blowup of $P^2$, it is an embedding.
+                Example
+                        R = ZZ/103[x,y,z];    
+                        T = ZZ/103[u,v];
+                        P2 = Proj R;    
+                        P1 = Proj T;
+                        phi = rationalMapping(P2, P1, {u^3, u^2*v, v^3});                            
+                        isEmbedding(phi, Verbosity=>0)
+                        P5ring = ZZ/103[a..f];
+                        M = matrix{{a,b,c},{d,e,f}};
+                        blowUpSubvar = Proj(P5ring/(minors(2, M)+ideal(b - d)));
+                        tau = rationalMapping(P2, blowUpSubvar,{a, b, c}); --the blowup
+                        tauInverse = tau^-1; --the inverse blowup
+                        isEmbedding(tauInverse*phi, Verbosity => 0)
+        SeeAlso
+                HybridStrategy
+                SimisStrategy
+                ReesStrategy
 ///
 
 --***************************************************************
@@ -1784,41 +2009,42 @@ doc ///
 
 doc ///
     Key
-        baseLocusOfMap
-        (baseLocusOfMap, Matrix)
-        (baseLocusOfMap, List)
+        baseLocusOfMap        
         (baseLocusOfMap, RingMap)
---        [baseLocusOfMap, SaturateOutput]
+        (baseLocusOfMap, RationalMapping)
+        [baseLocusOfMap, SaturateOutput]
+        [baseLocusOfMap, Verbosity]
     Headline
-        Computes base locus of a map from a projective variety to projective space
-    Usage
-        I = baseLocusOfMap(M)
-        I = baseLocusOfMap(L)
+        the base locus of a map from a projective variety to projective space
+    Usage        
         I = baseLocusOfMap(h)
+        I = baseLocusOfMap(phi)
     Inputs
-        M: Matrix
-            Row matrix whose entries correspond to the coordinates of your map to projective space.
-        L: List
-            A list whose entries correspond to the coordinates of your map to projective space.
         h: RingMap
-            A ring map corresponding to a map of projective varieties.
+            a ring map corresponding to a rational map of projective varieties
+        phi: RationalMapping
+            a rational map between projective varieties
+        SaturateOutput => Boolean
+            if set to true then the output will be saturated
+        Verbosity => ZZ
+            if 0 then silence the function, if 1 then generate informative output which can be used to adjust strategies, if > 1 then generate a detailed description of the execution
     Outputs
         I: Ideal
-            The saturated defining ideal of the baselocus of the corresponding maps.
+            the saturated defining ideal of the base locus of the corresponding maps
     Description
         Text
-            This defines the locus where a given map of projective varieties is not defined.  If the option {\tt SaturateOutput} is set to {\tt false}, the output will not be saturated.  The default value is true.  Consider the following rational map from $P^2$ to $P^1$
+            This defines the locus where a given map of projective varieties is not defined.  If the option {\tt SaturateOutput} is set to {\tt false}, the output will not be saturated.  The default value is true.  Consider the following rational map from $P^2$ to $P^1$.
         Example
             R = QQ[x,y,z];
             S = QQ[a,b];
             f = map(R, S, {x,y});
             baseLocusOfMap(f)
         Text
-            Observe it is not defined at the point [0:0:1], which is exactly what one expects.  However, we can restrict the map to a curve on $P^2$ and then it will be defined everywhere.
+            Observe it is not defined at the point [0:0:1], which is exactly what one expects.  However, we can restrict the map to a curve in $P^2$ and then it will be defined everywhere.
         Example
             R=QQ[x,y,z]/(y^2*z-x*(x-z)*(x+z));
             S=QQ[a,b];
-            f=map(R,S,{x,y});
+            f=rationalMapping(R,S,{x,y});
             baseLocusOfMap(f)
         Text
             Let us next consider the quadratic Cremona transformation.
@@ -1840,7 +2066,7 @@ doc ///
 --        (relationType, Ideal,Ideal)
 --        (relationType, Ring,Ideal)
 --	[relationType,Strategy]
---	[relationType,Verbose]
+--	[relationType,Verbosity]
 --    Headline
 --        Given an ideal in a ring this computes the maximum degree, of the new variables, of the minimal generators of the defining ideal of the associated Rees algebra.
 --    Usage
@@ -1873,38 +2099,44 @@ doc ///
 doc ///
     Key
         isSameMap
-        (isSameMap, List,List)
-        (isSameMap, List,List,Ring)
+        (symbol ==, RationalMapping, RationalMapping)
         (isSameMap, RingMap,RingMap)
+        (isSameMap, RationalMapping, RationalMapping)
     Headline
-        Checks whether two maps to projective space are really the same
+        whether two rational maps to between projective varieties are really the same
     Usage
-        b = isSameMap(L1,L2)
-        b = isSameMap(L1,L2, R1)
         b = isSameMap(f1, f2)
+        phi == psi
+        b = isSameMap(phi, psi)
     Inputs
-        L1: List
-            The homogeneous forms that define the first map.
-        L2: List
-            The homogeneous forms that define the second map.
-        R1: Ring
-            The ring in which the homogeneous forms should live.
         f1: RingMap
-            The first map.
+            a map of rings corresponding to a rational map between projective varieties
         f2: RingMap
-            The second map.
+            a map of rings corresponding to a rational map between projective varieties
+        phi: RationalMapping
+            a map between projective varieties
+        psi: RationalMapping
+            a rational map between projective varieties
     Outputs
         b: Boolean
-            True if the maps are the same, false otherwise.
+            true if the rational maps are the same, false otherwise.
     Description
         Text
-            Checks whether two maps, from the same variety, to projective space are really the same. If you pass it two ring maps, it will check whether the source and targets are really the same.
+            Checks whether two rational maps between projective varieties are really the same (that is, agree on a dense open set).
         Example
             R=QQ[x,y,z];
             S=QQ[a,b,c];
-            L1={y*z,x*z,x*y};
-            L2={x*y*z,x^2*z,x^2*y};
-            isSameMap(L1,L2)
+            f1=map(R, S, {y*z,x*z,x*y});
+            f2=map(R, S, {x*y*z,x^2*z,x^2*y});
+            isSameMap(f1,f2)        
+        Text
+            The Cremona transformation is not the identity, but its square is.
+        Example
+            R = ZZ/7[x,y,z]
+            phi = rationalMapping(R, R, {y*z,x*z,x*y})
+            ident = rationalMapping(R, R, {x,y,z})
+            phi == ident
+            phi^2 == ident
 --        Example
 --            R = QQ[x_0..x_8];
 --            M = genericMatrix(R,x_0,3,3);
@@ -1918,143 +2150,163 @@ doc ///
 
 doc ///
     Key
-        isRegularMap
-        (isRegularMap, Matrix)
-        (isRegularMap, List)
+        isRegularMap        
         (isRegularMap, RingMap)
-
+        (isRegularMap, RationalMapping)
+        [isRegularMap, Verbosity]
     Headline
-        Checks whether a map to projective space is regular
-    Usage
-        b = isRegularMap(M)
-        b = isRegularMap(L)
+        whether a map to projective space is regular
+    Usage        
         b = isRegularMap(f)
     Inputs
-        M: Matrix
-            Row matrix whose entries correspond to the coordinates of your map to projective space
-        L: List
-            A list whose entries correspond to the coordinates of your map to projective space
         f: RingMap
-            A ring map corresponding to a map of projective varieties.
+            a ring map corresponding to a rational map of projective varieties
+        Verbosity => ZZ
+            if 0 then silence the function, if 1 then generate informative output which can be used to adjust strategies, if > 1 then generate a detailed description of the execution
     Outputs
         b: Boolean
     Description
         Text
-            This function just runs baseLocusOfMap(M) and checks if the ideal defining the base locus is the whole ring.
+            This function runs baseLocusOfMap(f) and checks whether the ideal defining the base locus is the whole ring.
         Example
             P5 = QQ[a..f];
+            P2 = QQ[x,y,z];
             M = matrix{{a,b,c},{d,e,f}};
-            segreProduct = P5/minors(2, M);
-            blowUpSubvar = segreProduct/ideal(b - d);
-            f = {a, b, c};
-            isRegularMap({a,b,c})
+            blowUpSubvar = P5/(minors(2, M) + ideal(b - d));
+            f = map(blowUpSubvar, P2, {a, b, c});
+            isRegularMap(f)
 ///
 --***************************************************************
 
 doc ///
     Key
         inverseOfMap
-		(inverseOfMap, Ideal, Ideal, BasicList)
-		(inverseOfMap, Ring, Ring, BasicList)
-		(inverseOfMap, RingMap)
---		[inverseOfMap, AssumeDominant]
---		[inverseOfMap, Strategy]
---               [inverseOfMap, CheckBirational]
---               [inverseOfMap, HybridLimit, MinorsCount]
---		[inverseOfMap, Verbose]
---		[inverseOfMap, MinorsCount]
+        (inverseOfMap, RingMap)
+        (inverseOfMap, RationalMapping)
+        [inverseOfMap, AssumeDominant]
+        [inverseOfMap, Strategy]
+        [inverseOfMap, CheckBirational]
+        [inverseOfMap, HybridLimit]
+        [inverseOfMap, Verbosity]
+        [inverseOfMap, MinorsLimit]
+        [inverseOfMap, QuickRank]
     Headline
-        Computes the inverse map of a given birational map between projective varieties. Returns an error if the map is not birational onto its image.
+        inverse of a birational map between projective varieties
     Usage
-        f = inverseOfMap(I, J, L)
-        f = inverseOfMap(R, S, L)
-        f = inverseOfMap(g)
+        psi = inverseOfMap(g)
+        psi = inverseOfMap(phi)
     Inputs
-        I: Ideal
-            Defining ideal of source
-        J: Ideal
-            Defining ideal of target
-        L: List
-            List of polynomials that define the coordinates of your birational map
         g: RingMap
-            Your birational map $f : X \to Y$.
+            corresponding to a birational map $f : X \to Y$
+        phi: RationalMapping
+            a rational map between projective varieties $f : X \to Y$
+        Verbosity => ZZ
+            if 0 then silence the function, if 1 then generate informative output which can be used to adjust strategies, if > 1 then generate a detailed description of the execution
+        CheckBirational => Boolean
+            whether to check birationality (if it is not birational, and CheckBirational is set to true, then an error will be thrown)
+        AssumeDominant => Boolean
+            whether to assume a rational map of schemes is dominant, if set to true it can speed up computation
+        Strategy=>Symbol
+                choose the strategy to use: HybridStrategy, SimisStrategy, or ReesStrategy
+        HybridLimit => ZZ
+            within HybridStrategy, the option HybridLimit controls how often SimisStrategy and ReesStrategy are used, larger numbers means SimisStrategy will be executed longer
+        MinorsLimit => ZZ
+            how many submatrices of a variant of the Jacobian dual matrix to consider before switching to a different strategy
+        QuickRank => Boolean
+            whether to compute rank via the package @TO2(FastMinors, "FastMinors")@
     Outputs
-        f: RingMap
-            Inverse function of your birational map, $f(X) \to X$.
+        psi: RationalMapping
+            inverse function of the birational map
     Description
         Text
-            Given a map $f : X \to Y$, this finds the inverse of your birational map $f(X) \to X$ (if it is birational onto its image).  The target and source must be varieties, in particular their defining ideals must be prime.
+            Given a rational map $f : X \to Y$, {\tt inverseOfMap} computes the inverse of the induced map $X \to \overline{f(X)}$, provided it is birational."
+            The target and source must be varieties; their defining ideals must be prime.
         Text
-            If {\tt AssumeDominant} is set to {\tt true} (default is {\tt false}) then it assumes that the map of varieties is dominant, otherwise the function will compute the image by finding the kernel of $f$.
+            If {\tt AssumeDominant} is set to {\tt true} (default is {\tt false}) then it assumes that the rational map of projective varieties is dominant, otherwise the function will compute the image by finding the kernel of $f$.
         Text
-            The {\tt Strategy} option can be set to {\tt HybridStrategy} (default), {\tt SimisStrategy}, {\tt ReesStrategy}, or {\tt SaturationStrategy}.  Note {\tt SimisStrategy} will never terminate for non-birational maps. If {\tt CheckBirational} is set to {\tt false} (default is {\tt true}), then no check for birationality will be done.  If it is set to {\tt true} and the map is not birational, an error will be thrown if you are not using {\tt SimisStrategy}. The option {\tt HybridLimit} can weight the {\tt HybridStrategy} between {\tt ReesStrategy} and {\tt SimisStrategy}, the default value is {\tt 15} and increasing it will weight towards {\tt SimisStrategy}.
+            The {\tt Strategy} option can be set to {\tt HybridStrategy} (default), {\tt SimisStrategy}, {\tt ReesStrategy}, or {\tt SaturationStrategy}.  Note that {\tt SimisStrategy} will never terminate for non-birational maps. If {\tt CheckBirational} is set to {\tt false} (default is {\tt true}), then no check for birationality will be done.  If it is set to {\tt true} and the map is not birational, then an error will be thrown if you are not using {\tt SimisStrategy}. The option {\tt HybridLimit} controls {\tt HybridStrategy}.  Larger values of {\tt HybridLimit} (the default value is 15) will mean that {\tt SimisStrategy} is executed longer, smaller values will mean that {\tt ReesStrategy} will be switched to sooner.
         Example
             R = ZZ/7[x,y,z];
             S = ZZ/7[a,b,c];
             h = map(R, S, {y*z, x*z, x*y});
-            inverseOfMap (h, Verbose=>false)
+            inverseOfMap (h, Verbosity=>0)
         Text
-            Notice that the leading minus signs do not change the projective map.  Next let us compute the inverse of the blowup of $P^2$ at a point.
+            Notice that removal of the leading minus signs would not change the projective map.  Next let us compute the inverse of the blowup of $P^2$ at a point.
         Example
             P5 = QQ[a..f];
             M = matrix{{a,b,c},{d,e,f}};
             blowUpSubvar = P5/(minors(2, M)+ideal(b - d));
             h = map(blowUpSubvar, QQ[x,y,z],{a, b, c});
-            g = inverseOfMap(h, Verbose=>false)
+            g = inverseOfMap(h, Verbosity=>0)
             baseLocusOfMap(g)
             baseLocusOfMap(h)
         Text
-            The next example, is a Birational map on $\mathbb{P}^4$. 
+            The next example is a birational map on $\mathbb{P}^4$. 
         Example
             Q=QQ[x,y,z,t,u];
             phi=map(Q,Q,matrix{{x^5,y*x^4,z*x^4+y^5,t*x^4+z^5,u*x^4+t^5}});
-            time inverseOfMap(phi,CheckBirational=>false)
+            time inverseOfMap(phi,CheckBirational=>false, Verbosity=>0)
         Text
             Finally, we do an example of plane Cremona maps whose source is not minimally embedded.
         Example
             R=QQ[x,y,z,t]/(z-2*t);
             F = {y*z*(x-z)*(x-2*y), x*z*(y-z)*(x-2*y),y*x*(y-z)*(x-z)};
             S = QQ[u,v,w];
-            h = map(R, S, F);
-            g = inverseOfMap h
-            use S;
-            (g*h)(u)*v==(g*h)(v)*u
-            (g*h)(u)*w==(g*h)(w)*u
-            (g*h)(v)*w==(g*h)(w)*v
-        Text
-            Notice the last checks are just verifying that the composition g*h agrees with the identity.
+            ident = rationalMapping map(S, S)
+            h = rationalMapping(R, S, F);
+            g = inverseOfMap(h, Verbosity=>0) 
+            h*g == ident        
+    SeeAlso
+        HybridStrategy
+        SimisStrategy
+        ReesStrategy
     Caveat
-        Only works for irreducible varieties right now.  Also see the function inverseMap in the package Cremona, which for certain types of maps from projective space is sometimes faster.  Additionally, also compare with the function invertBirationalMap of the package Parametrization.
+        The current implementation of this function works only for irreducible varieties.  Also see the function @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/_inverse__Map.html","inverseMap"}@ in the package @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/index.html", "Cremona"}@, which for some maps from projective space is faster.  Additionally, also compare with the function @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/_invert__Birational__Map.html", "invertBirationalMap"}@ of the package @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/index.html", "Parametrization"}@.
 ///
 --***************************************************************
 
 doc ///
     Key
         sourceInversionFactor
-		(sourceInversionFactor, RingMap)
---     	[sourceInversionFactor, AssumeDominant]
---       [sourceInversionFactor, Strategy]
---       [sourceInversionFactor, CheckBirational]
---       [sourceInversionFactor, HybridLimit]
---       [sourceInversionFactor, Verbose]
---	 [sourceInversionFactor,MinorsCount]
+        (sourceInversionFactor, RingMap)
+        [sourceInversionFactor, AssumeDominant]
+        [sourceInversionFactor, Strategy]
+        [sourceInversionFactor, CheckBirational]
+        [sourceInversionFactor, HybridLimit]
+        [sourceInversionFactor, Verbosity]
+        [sourceInversionFactor, MinorsLimit]
+        [sourceInversionFactor, QuickRank]
     Headline
-        Computes the the common factor among the the components of the composition of the inverse map and the original map.
+        computes the common factor among the components of the composition of the inverse map and the original map
     Usage
          s = sourceInversionFactor(g)
     Inputs
         g: RingMap
-            Your birational map $f : X \to Y$.
+            a birational map $f : X \to Y$.
+        Verbosity => ZZ
+            if 0 then silence the function, if 1 then generate informative output which can be used to adjust strategies, if > 1 then generate a detailed description of the execution
+        CheckBirational => Boolean
+            whether to check birationality (if it is not birational, and CheckBirational is set to true, then an error will be thrown)
+        Strategy=>Symbol
+            choose the strategy to use: HybridStrategy, SimisStrategy, or ReesStrategy
+        HybridLimit => ZZ
+            within HybridStrategy, the option HybridLimit controls how often SimisStrategy and ReesStrategy are used, larger numbers means SimisStrategy will be executed longer
+        MinorsLimit => ZZ
+            how many submatrices of a variant of the Jacobian dual matrix to consider before switching to a different strategy
+        AssumeDominant => Boolean
+            whether to assume a rational map of schemes is dominant, if set to true it can speed up computation
+        QuickRank => Boolean
+            whether to compute rank via the package @TO2(FastMinors, "FastMinors")@
     Outputs
         s: RingElement
              an element of the coordinate ring of $X$ .
     Description
         Text
-            Given a map $f : X \to Y$, this finds common factor among the the components of, $f^{(-1)}$ composed with $f$, which is an element of the coordinate ring of $X$ .
+            Given a map $f : X \to Y$, sourceInversionFactor computes the common factor among the components of, $f^{(-1)}$ composed with $f$, which is an element of the coordinate ring of $X$.
         Text
-            If {\tt AssumeDominant} is set to {\tt true} (default is {\tt false}) then it assumes that the map of varieties is dominant, otherwise the function will compute the image by finding the kernel of $f$.
+            If {\tt AssumeDominant} is set to {\tt true} (default is {\tt false}) then it assumes that the rational map of projective varieties is dominant, otherwise the function will compute the image by finding the kernel of $f$.
         Text
-            The {\tt Strategy} option can be set to {\tt HybridStrategy} (default), {\tt SimisStrategy}, {\tt ReesStrategy}, or {\tt SaturationStrategy}.  Note {\tt SimisStrategy} will never terminate for non-birational maps. If {\tt CheckBirational} is set to {\tt false} (default is {\tt true}), then no check for birationality will be done.  If it is set to {\tt true} and the map is not birational, an error will be thrown if you are not using {\tt SimisStrategy}. The option {\tt HybridLimit} can weight the {\tt HybridStrategy} between {\tt ReesStrategy} and {\tt SimisStrategy}, the default value is {\tt 15} and increasing it will weight towards {\tt SimisStrategy}.
+            The {\tt Strategy} option can be set to {\tt HybridStrategy} (default), {\tt SimisStrategy}, {\tt ReesStrategy}, or {\tt SaturationStrategy}.  Note {\tt SimisStrategy} will never terminate for non-birational maps. If {\tt CheckBirational} is set to {\tt false} (default is {\tt true}), then no check for birationality will be done.  If it is set to {\tt true} and the map is not birational, then an error will be thrown if you are not using {\tt SimisStrategy}. The option {\tt HybridLimit} controls {\tt HybridStrategy}.  Larger values of {\tt HybridLimit} (the default value is 15) will mean that {\tt SimisStrategy} is executed longer, smaller values will mean that {\tt ReesStrategy} will be switched to sooner.
         Example
             R = ZZ/7[x,y,z];
             S = ZZ/7[a,b,c];
@@ -2064,11 +2316,13 @@ doc ///
              S=QQ[a,b,c,d];
              g=(b^2-a*c)*c*d;
              phi=map(S,S,transpose jacobian ideal g);
-             sourceInversionFactor(phi, Verbose=>false)
-
-
+             sourceInversionFactor(phi, Verbosity=>0)
     Caveat
-        Only works for irreducible varieties right now.  Also see the function inverseMap in the package Cremona, which for certain types of maps from projective space is sometimes faster.  Additionally, also compare with the function invertBirationalMap of the package Parametrization.
+        The current implementation of this function works only for irreducible varieties..  Also see the function @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/_inverse__Map.html","inverseMap"}@ in the package @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Cremona/html/index.html", "Cremona"}@, which for some maps from projective space is faster.  Additionally, also compare with the function @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/_invert__Birational__Map.html", "invertBirationalMap"}@ of the package @HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/Parametrization/html/index.html", "Parametrization"}@.
+    SeeAlso
+        HybridStrategy
+        SimisStrategy
+        ReesStrategy
 ///
 
 
@@ -2088,8 +2342,9 @@ TEST /// --test #0
 	R = QQ[u,v];
 	a = ideal(sub(0,R));
 	f = matrix {{u,0,v,0}};
-	im = idealOfImageOfMap(a,b,f);
-	assert (im == ideal(y,w));
+    psi = rationalMapping(R/a, S/b, f)
+	im = idealOfImageOfMap(psi);
+	assert (im == sub(ideal(y,w), S/b));
     T = QQ[x,y,z];
     phi = map(T, T, {y*z, x*z, x*y});
     assert(ideal(0_T) == idealOfImageOfMap(phi));
@@ -2118,25 +2373,25 @@ TEST /// --test #2
 	-------------------------------------
 TEST ///	--test #3
     R = QQ[x,y,z]
-	M = matrix{{x^2*y, x^2*z, x*y*z}}
+	f = map(R, R, matrix{{x^2*y, x^2*z, x*y*z}})
 	I = ideal(x*y, y*z, x*z)
-	assert(I == baseLocusOfMap(M))
+	assert(I == baseLocusOfMap(f))
 ///
 
 TEST ///	--test #4
     R = QQ[x,y,z]
-	L = {x^2*y, x^2*z, x*y*z}
+	f = map(R, R, {x^2*y, x^2*z, x*y*z})
 	I = ideal(x*y, y*z, x*z)
-	assert(I == baseLocusOfMap(L))
+	assert(I == baseLocusOfMap(f))
 ///
 
 TEST /// --test #5
 	-- reducible source
 
 	R = QQ[x,y,z]/(x*y)
-	M = matrix{{x^2, x*y, y^2}}
+	f = map(R, R, matrix{{x^2, x*y, y^2}})
 	I = ideal(x,y)
-	assert(I == baseLocusOfMap(M))
+	assert(I == baseLocusOfMap(f))
 
     -- we should have a test for when that kernel is not a cyclic module
 ///
@@ -2146,21 +2401,23 @@ TEST /// --test #5
 	----- isRegularMap -----------------
 	-------------------------------------
 TEST /// --test #6
-	R = QQ[x,y,z,w]/(x*y - z*w)
-	M = matrix{{sub(1,R), 0, 0}}
-	assert(isRegularMap(M))
+    R = QQ[x,y,z,w]/(x*y - z*w)
+    S = QQ[a,b,c]
+    f = map(R, S, matrix{{sub(1,R), 0, 0}})
+    assert(isRegularMap(f))
 ///
 
 TEST /// --test #7
     R = QQ[x,y]/(x*y)
-    M = matrix{{x,y}}
-    assert(isRegularMap(M))
+    f = map(R, R, matrix{{x,y}})
+    assert(isRegularMap(f))
 ///
 
 TEST /// --test #8
     R = QQ[x,y,z]/(x^3 + y^3 - z^3)
-    M = matrix{{(y-z)*x, x^2}}
-    assert(isRegularMap(M) == true)
+    S = QQ[a,b]
+    f = map(R,S,matrix{{(y-z)*x, x^2}})
+    assert(isRegularMap(f))
 ///
 
 TEST /// --test #9
@@ -2182,10 +2439,10 @@ TEST /// -- test #11
 
     P5 = QQ[a..f];
     M = matrix{{a,b,c},{d,e,f}};
-    segreProduct = P5/minors(2, M);
-    blowUpSubvar = segreProduct/ideal(b - d);
-    f = {a, b, c};
-    assert(isRegularMap(matrix{{a,b,c}}) == true)
+    P2 = QQ[x,y,z];
+    blowUpSubvar = P5/(minors(2,M) + ideal(b - d));
+    f = map(blowUpSubvar, P2, {a, b, c});
+    assert(isRegularMap(f))
 ///
 
 	-------------------------------------
@@ -2196,8 +2453,8 @@ TEST /// --test #12 (a map from the blowup of P^2 at a point back down to P^2)
     P5 = QQ[a..f];
     M = matrix{{a,b,c},{d,e,f}};
     blowUpSubvar = P5/(minors(2, M) + ideal(b-d));
-    f = {a, b, c};
-    assert(isBirationalOntoImage(blowUpSubvar, QQ[x,y,z], f, Verbose=>false) == true)
+    f = map(blowUpSubvar, QQ[x,y,z], {a, b, c});
+    assert(isBirationalOntoImage(f, Verbosity=>0) == true)
 ///
 
 TEST /// --test #13 (quadratic cremona transformation)
@@ -2297,18 +2554,20 @@ TEST /// --test #23
 TEST /// --test #24
     R =  QQ[a..d]/(a*d - b*c);
     S = QQ[x,y,z];
-    f = inverseOfMap(R, S, {a,b,c});
-    g = inverseOfMap(R, S, {a,b,c},Strategy=>ReesStrategy);
-    assert( (isSameMap(first entries matrix f, {x^2, x*y, x*z, y*z})) and (isSameMap(first entries matrix g, {x^2, x*y, x*z, y*z})) )
+    h = rationalMapping(S, R, {x^2, x*y, x*z, y*z});
+    f = inverseOfMap(map(R, S, {a,b,c}));
+    g = inverseOfMap(map(R, S, {a,b,c}),Strategy=>ReesStrategy);    
+    assert( (isSameMap(f, h)) and (isSameMap(g, h)) )
 ///
 
 TEST /// --test #25 (quadratic cremona)
     R = ZZ/11[x,y,z];
     S = ZZ/11[a,b,c];
-    h = map(R, S, {y*z, x*z, x*y});
+    h = rationalMapping(R, S, {y*z, x*z, x*y});
+    phi = rationalMapping(S, R, {b*c,a*c,a*b});
     g = inverseOfMap(h,AssumeDominant=>true);
     f = inverseOfMap(h,AssumeDominant=>true, Strategy=>ReesStrategy);
-    assert( (isSameMap(first entries matrix g, {b*c, a*c, a*b})) and (isSameMap(first entries matrix f, {b*c, a*c, a*b})) )
+    assert((g == phi) and (f == phi))
 ///
 
 -----------------------------------
@@ -2345,7 +2604,7 @@ TEST /// --test #28
 
 TEST /// --test #29, map from genus 3 curve to projective space
     needsPackage "Divisor";
-    C = QQ[x,y,z]/(x^4+x^2*y*z+y^4+z^3*x);
+    C = ZZ/103[x,y,z]/(x^4+x^2*y*z+y^4+z^3*x);
     Q = ideal(y,x+z); --a point on our curve
     f2 = mapToProjectiveSpace(7*divisor(Q)); --a divisor of degree 7 (this is degree 7, so should induce an embedding)
     assert( (isEmbedding(f2) == true)) --note for this example, 6*divisor(Q) is not an embedding, indeed it appears the image is singular for 6*D.
@@ -2373,10 +2632,101 @@ TEST /// --test #30, maps between cones over elliptic curves and their blowups
     gg = inverseOfMap g;
     assert( b and ( isRegularMap gg == false))
 ///
+
+
+------------------------------------------
+------- Testing RationalMapping Type------
+------------------------------------------
+
+TEST /// --test #31, constructor testing, equality testing, source target testing
+    R = ZZ/101[x,y,z];
+    S = ZZ/101[u,v,w];
+    PR = Proj R;
+    PS = Proj S;
+    L = {random(3, R), random(3,R), random(3,R)};    
+    M = matrix{L};
+    p1 = rationalMapping map(R, S, L);
+    p2 = rationalMapping map(R, S, M);
+    p3 = rationalMapping(R, S, L);
+    p4 = rationalMapping(R, S, M);    
+    p5 = rationalMapping(PS, PR, L);
+    p6 = rationalMapping(PS, PR, M);
+    assert (source p1 === PR and source p2 === PR and source p3 === PR and source p4 === PR and source p5 === PR and source p6 === PR)
+    assert (target p1 === PS and target p2 === PS and target p3 === PS and target p4 === PS and target p5 === PS and target p6 === PS)
+    assert( p1 == p2 and p1 == p3 and p1 == p4 and p1 == p5 and p1 == p6);
+    L1 = {L#0 + x^3, L#1, L#2}
+    M1 = matrix{L1};
+    q1 = rationalMapping map(R, S, L1);
+    q2 = rationalMapping map(R, S, M1);
+    q3 = rationalMapping(R, S, L1);
+    q4 = rationalMapping(R, S, M1);
+    q5 = rationalMapping(PS, PR, L1);
+    q6 = rationalMapping(PS, PR, M1);
+    assert( p1 != q1 and p2 != q2 and p3 != q3 and p4 != q4 and p5 != q5 and p6 != q6)
+///
+
+TEST /// --test #32, composition testing, birational and embedding testing
+    R = ZZ/103[x,y,z];    
+    T = ZZ/103[u,v];
+    P2 = Proj R;    
+    P1 = Proj T;
+    phi = rationalMapping(P2, P1, {u^3, u^2*v, v^3});
+    psi = rationalMapping(P2, P2, {y*z,x*z,x*y});
+    assert isBirationalOntoImage(phi);
+    assert not isEmbedding(phi);
+    assert not isBirationalMap(phi);    
+    assert not isRegularMap(inverseOfMap phi);
+    rho = psi*phi;
+    assert isBirationalOntoImage(rho);
+    assert not isBirationalMap(rho);    
+    S = ZZ/103[m,n,l]/ideal(m^3 - n^2*l); --a cusp
+    cusp = Proj S;
+    kappa = rationalMapping(P2, cusp, {m,n,l});
+    assert isBirationalOntoImage(kappa);
+    assert isEmbedding(kappa); --this should be an embedding by definition
+    assert isBirationalOntoImage(psi*kappa);
+    P5 = ZZ/103[a..f];
+    M = matrix{{a,b,c},{d,e,f}};
+    blowUpSubvar = Proj(P5/(minors(2, M)+ideal(b - d)));
+    tau = rationalMapping(P2, blowUpSubvar,{a, b, c});
+    tauI = inverseOfMap tau;
+    assert isEmbedding(tauI*phi);  --the map of P1 to a cusp was not an embedding before but after we blow up the origin, it's fine.
+///
+
+TEST /// --test #33, self composition testing
+    R = ZZ/59[x,y,z];
+    P2 = Proj R;
+    phi = rationalMapping(P2, P2, {y*z, x*z, x*y});
+    ident = rationalMapping(P2, P2, {x,y,z});
+    assert(phi^2 == ident and phi^-1 == phi and ident^-1 == ident and phi^-2 == ident and phi^3 == ident*phi^-1 and phi^0 == ident)
+///
+
+TEST /// --test #34, an interesting example based on a question of Abbas Nasrolanejad.
+    A=QQ[x,y,z,w];
+    S={y*z*w^2,x*z*w^2,x*y*w^2,y*z^2*w,x*z^2*w,y^2*z*w,x^2*z*w,x*y^2*w,x^2*y*w,x*y*z*w,x*y*z^2,x*y^2*z,x^2*y*z};
+    R=QQ[t_0..t_12];
+    phi=map(A,R,S);
+    J=ker phi;
+    S=QQ[s_0..s_5];
+    psi=map(A,S, {x*y,x*z,x*w,y*z,y*w,z*w});
+    I=ker psi;
+    R1=R/J;
+    identR1 = rationalMapping(map(R1, R1));
+    S1=S/I;
+    identS1 = rationalMapping(map(S1, S1));
+    rat=rationalMapping(S1,R1,{s_4*s_5,s_2*s_5,s_2*s_4,s_3*s_5,s_1*s_5,s_3*s_4,s_1*s_2,s_0*s_4,s_0*s_2,s_0*s_5,s_1*s_3,s_0*s_3,s_0*s_1});
+   assert( isBirationalMap(rat, AssumeDominant=>true) )
+   ratI = rat^-1;
+   assert(rat*ratI == identR1 and ratI*rat == identS1)
+///
+
+
 ----Version information----
 --0.1  First version.
 --0.2  Substantial improvements in speed and documentation.
 --0.21 Minor changes especially to documentation.
+--1.0  added new Type RationalMapping, various rewrites, numerous small improvements, improved documentation
+
 
 ----FUTURE PLANS------
 --1.  Handle multi-graded rings (multi-graded maps etc.)

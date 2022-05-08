@@ -101,7 +101,7 @@ document {
 	  groebnerBasis,
 	  (generators,GroebnerBasis),
 	  "gbTrace",
-	  installHilbertFunction,
+	  poincare,
 	  -- Mike wanted this: installGroebner,
 	  gbSnapshot,
 	  gbRemove

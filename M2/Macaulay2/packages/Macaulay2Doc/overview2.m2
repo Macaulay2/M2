@@ -140,7 +140,10 @@ document {
      the target of ", TT "f", ".",
      EXAMPLE {
 	  "h = resolution inducedMap(M, m^2/m^4)"
-	  }
+	 },
+     Subnodes => {
+	 TO "computing resolutions",
+	 },
      }
 
 document {

@@ -7,8 +7,10 @@
 -- TODO: not reentrant yet, see resetCounters
 
 needs "document.m2"
+needs "examples.m2"
 needs "hypertext.m2"
 needs "packages.m2"
+needs "printing.m2"
 needs "validate.m2"
 
 -----------------------------------------------------------------------------
@@ -205,7 +207,7 @@ assembleTree := (pkg, nodes) -> (
 	    and pkg#"raw documentation"#fkey.?Subnodes then (
 		subnodes := pkg#"raw documentation"#fkey.Subnodes;
 		subnodes  = select(deepApply(subnodes, identity), DocumentTag);
-		subnodes  = select(subnodes, node -> package node === pkg);
+		subnodes  = select(fixup \ subnodes, node -> package node === pkg);
 		tag => getPrimaryTag \ subnodes)
 	    else tag => {}));
     -- build the forest

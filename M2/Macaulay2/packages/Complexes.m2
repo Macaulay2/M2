@@ -1,7 +1,7 @@
 newPackage(
     "Complexes",
-    Version => "0.999",
-    Date => "10 May 2021",
+    Version => "0.9999",
+    Date => "25 April 2022",
     Authors => {
         {   Name => "Gregory G. Smith", 
             Email => "ggsmith@mast.queensu.ca", 
@@ -14,7 +14,7 @@ newPackage(
     Headline => "development package for beta testing new version of chain complexes",
     PackageExports => {"Truncations"},
     AuxiliaryFiles => true,
-    DebuggingMode => false
+    DebuggingMode => true
     )
 
 export {
@@ -30,9 +30,9 @@ export {
     "concentration",
     "connectingMap",
     "connectingExtMap",
+    "connectingTorMap",
     "cylinder",
     "freeResolution",
-    "homotopic",
     "homotopyMap",
     "horseshoeResolution",
     "koszulComplex",
@@ -52,6 +52,7 @@ export {
     "randomComplexMap",
     "resolutionMap",
     "tensorCommutativity",
+    "torSymmetry",
     "yonedaExtension",
     "yonedaExtension'",
     "yonedaMap",
@@ -62,15 +63,20 @@ export {
     "Cycle",
     "Boundary",
     "InternalDegree",
-    "homotopy",
     "Base",
-    "ResolutionMap",
-    "UseTarget",
-    "HomWithComponents"
+    "UseTarget"
     }
 
 -- keys into the type `Complex`
 protect modules
+
+-- These are keys used in the various ResolutionObject's
+protect SyzygyList
+protect FieldComputation
+protect compute
+protect radical
+protect SchreyerOrder
+protect isComputable
 
 --------------------------------------------------------------------
 -- code to be migrated to M2 Core ----------------------------------
@@ -117,11 +123,22 @@ directSum Sequence := args -> (
         if y =!= null then y.cache#key = S;
         S))
 
+Hom(Module, Module) := Module => (M,N) -> (
+    Y := youngest(M.cache.cache,N.cache.cache);
+    if Y#?(Hom,M,N) then return Y#(Hom,M,N);
+    H := trim kernel (transpose presentation M ** N);
+    H.cache.homomorphism = (f) -> map(N,M,adjoint'(f,M,N), Degree => first degrees source f + degree f);
+    Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
+    H.cache.formation = FunctionApplication { Hom, (M,N) };
+    H)
+
 --------------------------------------------------------------------
 -- package code ----------------------------------------------------
 --------------------------------------------------------------------
 load "Complexes/ChainComplex.m2"
 load "Complexes/ChainComplexMap.m2"
+load "Complexes/Tor.m2"
+
 -- load "Complexes/Resolutions.m2"
 -- load(currentFileDirectory | "Complexes/res.m2")
 
@@ -161,7 +178,6 @@ chainComplex ComplexMap := ChainComplexMap => f -> (
 complex ChainComplexMap := ComplexMap => opts -> g -> (
     map(complex target g, complex source g, i -> g_i, Degree => degree g)
     )
-
 --------------------------------------------------------------------
 -- package documentation -------------------------------------------
 --------------------------------------------------------------------
@@ -170,6 +186,8 @@ beginDocumentation()
 undocumented{
     (net, Complex),
     (net, ComplexMap),
+    (texMath, Complex),
+    (texMath, ComplexMap),
     (expression, ComplexMap),
     (component,Module,Thing),
     component
@@ -386,7 +404,6 @@ uninstallPackage "Complexes"
 restart
 installPackage "Complexes"
 check "Complexes"
-
 viewHelp Complexes
 restart
 needsPackage "Complexes"

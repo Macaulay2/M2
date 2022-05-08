@@ -23,10 +23,10 @@ public:
     return mArena->allocArrayNoCon<T>(nelems);
   }
 
-  template<typename T, typename LockType>
-  std::pair<T*, T*> safeAllocateArray(size_t nelems, LockType& lock)
+  template<typename T, typename MutexType>
+  std::pair<T*, T*> safeAllocateArray(size_t nelems, MutexType& mutex)
   {
-    typename LockType::scoped_lock myLock(lock);
+    typename MutexType::scoped_lock myLock(mutex);
     return mArena->allocArrayNoCon<T>(nelems);
   }
 

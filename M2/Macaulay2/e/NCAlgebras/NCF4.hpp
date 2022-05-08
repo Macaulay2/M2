@@ -1,11 +1,7 @@
 #ifndef __nc_f4_hpp__
 #define __nc_f4_hpp__
 
-#include <tbb/queuing_mutex.h>                // for queuing_mutex
-#include <tbb/null_mutex.h>                   // for null_mutex
-#include <tbb/parallel_do.h>                  // for parallel_do_feeder
-#include <tbb/concurrent_unordered_map.h>     // for concurrent_unordered_map
-//#include <tbb/concurrent_vector.h>          // for concurrent_vector (no longer needed)
+#include "m2tbb.hpp"                      // for tbb interface
 
 #include "NCAlgebras/FreeMonoid.hpp"      // for MonomEq
 #include "MemoryBlock.hpp"                // for MemoryBlock
@@ -15,7 +11,7 @@
 #include "NCAlgebras/WordTable.hpp"       // for Overlap, WordTable
 #include "NCAlgebras/SuffixTree.hpp"      // for experimental suffix tree code
 #include "NCAlgebras/FreeAlgebra.hpp"     // for FreeAlgebra
-#include "VectorArithmetic.hpp"           // for VectorArithmetic, CoeffVector, etc
+#include "VectorArithmetic.hpp"           // for VectorArithmetic, ElementArray, etc
 #include "Polynomial.hpp"                 // for Monom, ConstPolyList, Poly
 #include "newdelete.hpp"                  // for VECTOR, our_new_delete
 
@@ -66,7 +62,7 @@ private:
 
   struct Row
   {
-    CoeffVector coeffVector;     // vector of coefficients
+    ElementArray coeffVector;     // vector of coefficients
     Range<int> columnIndices;    // column indices used in the row.  Valid *only* after labelAndSortF4Matrix, 
                                  // as the indices are not known during creation.
     Range<Word> columnWords;     // monoms used in the row.  Valid only *before* reduction begins, as reduction
@@ -87,12 +83,20 @@ private:
   using RowsVector = std::vector<Row,gc_allocator<Row>>;
   //using RowsVector = tbb::concurrent_vector<Row>;
 
-  using PreRowFeeder = tbb::parallel_do_feeder<PreRow>;
+  using PreRowFeeder = mtbb::feeder<PreRow>;
+
   // The pair in this unordered_map is (i,j) where:
   //    i is the column number
   //    j is the row that reduces it
   //      (and -1 if there is no such row).
-  using MonomialHash = tbb::concurrent_unordered_map<Word,std::pair<int,int>,MonomHash,MonomHashEqual>;
+  using MonomialHash = mtbb::unordered_map<Word,std::pair<int,int>,MonomHash,MonomHashEqual>;
+  
+  // thread local information
+  struct NCF4Stats {
+    NCF4Stats() : numCancellations(0), numRows(0) {}
+    long numCancellations;
+    long numRows;
+  };
 
   // data
   const FreeAlgebra& mFreeAlgebra;
@@ -131,20 +135,24 @@ private:
   // vector arithmetic class for reduction
   const VectorArithmetic* mVectorArithmetic;
 
+  int mNumThreads;
   bool mIsParallel;
+  
+  mtbb::task_arena mScheduler;
+
  
   // these are pointers to the MemoryBlocks used in creating the various structures.
   // only used in parallelBuildF4Matrix, which is currently not used.
   std::vector<MemoryBlock*> mMemoryBlocks;
   std::vector<MemoryBlock*> mPreviousMemoryBlocks;
-  tbb::queuing_mutex mColumnMutex;
+  mtbb::queuing_mutex mColumnMutex;
 
 public:
   NCF4(const FreeAlgebra& A,
        const ConstPolyList& input,
        int hardDegreeLimit,
        int strategy,
-       bool isParallel
+       int numThreads // 0 for tbb::info::default_concurrency(), for now
        );
 
   ~NCF4() {
@@ -227,22 +235,22 @@ private:
   void generalReduceF4Row(int index,
                           int first,
                           int firstcol,
-                          long &numCancellations,
-                          DenseCoeffVector& dense,
+                          NCF4Stats &ncF4Stats,
+                          ElementArray& dense,
                           bool updateColumnIndex,
                           LockType& lock);
 
   void reduceF4Row(int index,
                    int first,
                    int firstcol,
-                   long &numCancellations,
-                   DenseCoeffVector& dense)
+                   NCF4Stats &ncF4Stats,
+                   ElementArray& dense)
   {
-    tbb::null_mutex noLock;
-    generalReduceF4Row<tbb::null_mutex>(index,
+    mtbb::null_mutex noLock;
+    generalReduceF4Row<mtbb::null_mutex>(index,
                                         first,
                                         firstcol,
-                                        numCancellations,
+                                        ncF4Stats,
                                         dense,
                                         true,
                                         noLock);
@@ -251,14 +259,14 @@ private:
   void parallelReduceF4Row(int index,
                            int first,
                            int firstcol,
-                           long &numCancellations,
-                           DenseCoeffVector& dense,
-                           tbb::queuing_mutex& lock)
+                           NCF4Stats &ncF4Stats,
+                           ElementArray& dense,
+                           mtbb::queuing_mutex& lock)
   {
-    generalReduceF4Row<tbb::queuing_mutex>(index,
+    generalReduceF4Row<mtbb::queuing_mutex>(index,
                                            first,
                                            firstcol,
-                                           numCancellations,
+                                           ncF4Stats,
                                            dense,
                                            false,
                                            lock);

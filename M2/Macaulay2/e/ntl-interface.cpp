@@ -47,7 +47,7 @@ MutableMatrix *mutableMatrix_from_NTL_mat_ZZ(const NTL::mat_ZZ *A)
             B->set_entry(j, i, ring_elem(a));
           }
       }
-
+  mpz_clear(a);
   return B;
 }
 

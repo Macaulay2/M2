@@ -2,11 +2,13 @@
 
 needs "ext.m2"
 needs "gateway.m2"
+needs "hilbert.m2"
 needs "local.m2"
 needs "matrix1.m2"
 needs "modules.m2"
 needs "monideal.m2"
 needs "multilin.m2"
+needs "betti.m2"
 
 Variety = new Type of MutableHashTable
 Variety.synonym = "variety"
@@ -233,6 +235,7 @@ cohomology(ZZ,CoherentSheaf) := Module => opts -> (i,F) -> (
 	       n := numgens A;
 	       M := cokernel lift(presentation module F,A) ** cokernel p;
 	       rank source basis(0, Ext^(n-1-i)(M,A^{-n})))))
+cohomology(ZZ,ProjectiveVariety,CoherentSheaf) := Module => opts -> (i,X,F) -> cohomology(i,F,opts)
 
 cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
 

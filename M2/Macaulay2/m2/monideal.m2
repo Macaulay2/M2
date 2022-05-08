@@ -1,8 +1,10 @@
 -- Copyright 1995-2002 by Michael Stillman
 
+needs "basis.m2"
 needs "integers.m2" -- for lcm
 needs "matrix1.m2"
 needs "quotring.m2"
+needs "betti.m2"
 needs "res.m2"
 
 MonomialIdeal = new Type of Ideal
@@ -172,6 +174,7 @@ jacobian MonomialIdeal := Matrix => (I) -> jacobian generators I
 -- TODO: move to res.m2, or add as a strategy
 resolution MonomialIdeal := ChainComplex => opts -> I -> resolution ideal I
 betti MonomialIdeal := opts -> I -> betti(ideal I,opts)
+minimalBetti MonomialIdeal := opts -> I -> minimalBetti(ideal I,opts)
 
 lcm MonomialIdeal := (I) -> (if I.cache.?lcm 
   then I.cache.lcm

@@ -228,7 +228,7 @@ document {
 }
 
 document {
-     Key => {mRegularity,(mRegularity,Ideal)},
+     Key => {mRegularity,(mRegularity,Ideal), MonCurve},
      Headline => "compute Castelnuovo-Mumford regularity",
      Usage => " mRegularity I",
      Inputs => {"I" => Ideal => {"a homogeneous ", TO Ideal},

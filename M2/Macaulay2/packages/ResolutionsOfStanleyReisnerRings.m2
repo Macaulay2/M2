@@ -15,13 +15,13 @@ newPackage(
     Headline => "Comparing resolutions of Stanley-Reisner rings and computing various systems of parameters",
     PackageExports => {"SimplicialComplexes", "Posets", "SimplicialDecomposability"},
     Keywords => { "Combinatorial Commutative Algebra" },
-    DebuggingMode => false  
+    DebuggingMode => false 
     )
 
 -------------------
 -- Exports
 ------------------- 
-export {"colorfulSOP","universalSOP","colorfulPresentation","universalPresentation","barycentricSubdivision","sumBetti","equalBettiTally"}
+export {"colorfulSOP","universalSOP","colorfulPresentation","universalPresentation","sumBetti","equalBettiTally"}
 
 -------------------
 -- Exported Code
@@ -30,7 +30,7 @@ export {"colorfulSOP","universalSOP","colorfulPresentation","universalPresentati
 -----------------------------------------
 --Barycentric Subdivision-
 -----------------------------------------
-barycentricSubdivision = method(TypicalValue => SimplicialComplex)
+-- the 'barycentricSubdivison' method is defined in 'SimplicialComplexes'
 barycentricSubdivision (SimplicialComplex) := D -> (
    orderComplex(facePoset(D),CoefficientRing=>coefficientRing(ring(D)))
 );
@@ -62,14 +62,14 @@ colorfulSOP (SimplicialComplex,ZZ) := (B,n) -> (
 
    ColorsNotAllowed := {0};
    AlreadyColored   := splice{1..#colors#0};
-   NotColored       := splice{#colors#0+1..#faces(0,B,useFaceClass=>true)};
+   NotColored       := splice{#colors#0+1..#faces(0,B)};
    
    --Gives a proper coloring to the graph of B
    for i from 1 to #colors#0 do (
       for c in NotColored do (
-         if isFaceOf(face{R_i,R_c},B) then (
+	 if isSubset({R_i*R_c}, faces(1,B))  then (
             for a in AlreadyColored do (
-               if isFaceOf(face{R_c,R_a},B) then (
+	       if isSubset({R_c*R_a}, faces(1,B)) then (
                   ColorOfVertA := vertexColor(R_a,colors);
                      if not member(ColorOfVertA,ColorsNotAllowed) then (
                         ColorsNotAllowed = append(ColorsNotAllowed,ColorOfVertA);
@@ -92,21 +92,21 @@ colorfulSOP (SimplicialComplex) := (D) -> (
    B0      := barycentricSubdivision(D);
    R       := ring(B0);
    B       := faceDelete(R_0,B0);
-   n       := #faces(0,D,useFaceClass=>true);
+   n       := #faces(0,D);
    colors  := new MutableList from splice { dim(B)+1:{} };
    H       := gens R;
    colors#0 = H_{1..n};
 
    ColorsNotAllowed := {0};
    AlreadyColored   := splice{1..#colors#0};
-   NotColored       := splice{#colors#0+1..#faces(0,B,useFaceClass=>true)};
+   NotColored       := splice{#colors#0+1..#faces(0,B)};
 
    --Gives a proper coloring to the graph of B
    for i from 1 to #colors#0 do (
       for c in NotColored do (
-         if isFaceOf(face{R_i,R_c},B) then (
+	 if isSubset({R_i*R_c}, faces(1,B)) then (
             for a in AlreadyColored do (
-               if isFaceOf(face{R_c,R_a},B) then (
+	       if isSubset({R_c*R_a}, faces(1,B)) then (
                   ColorOfVertA := vertexColor(R_a,colors);
                      if not member(ColorOfVertA,ColorsNotAllowed) then (
                         ColorsNotAllowed = append(ColorsNotAllowed,ColorOfVertA);
@@ -141,7 +141,7 @@ colorfulPresentation (SimplicialComplex) := D -> (
    -----Constructs graded balanced polynomial ring-----
    seqOfDegrees := ();
    for i from 1 to #gens(STrivial) do (
-       seqOfDegrees = join(seqOfDegrees,(#faces(i-2,D, useFaceClass=>true):i-1));
+       seqOfDegrees = join(seqOfDegrees,(#faces(i-2,D):i-1));
    );
 
    ListOfDegs    := toList(seqOfDegrees);
@@ -150,7 +150,7 @@ colorfulPresentation (SimplicialComplex) := D -> (
    -----psi induces the grading on all ring related elements-----
    psi           := map(S,STrivial);
    I             := psi(ideal(B));
-   NonGradedKSOP := colorfulSOP(B,#faces(0,D,useFaceClass=>true));
+   NonGradedKSOP := colorfulSOP(B,#faces(0,D));
    KSOP          := {};
    for k in NonGradedKSOP do (
        KSOP = append(KSOP,psi(k));
@@ -172,7 +172,7 @@ colorfulPresentation (List) := F -> (
    -----Constructs graded balanced polynomial ring-----
    seqOfDegrees := ();
    for i from 1 to #gens(STrivial) do (
-       seqOfDegrees = join(seqOfDegrees,(#faces(i-2,D, useFaceClass=>true):i-1));
+       seqOfDegrees = join(seqOfDegrees,(#faces(i-2,D):i-1));
    );
 
    ListOfDegs    := toList(seqOfDegrees);
@@ -181,7 +181,7 @@ colorfulPresentation (List) := F -> (
    -----psi induces the grading on all ring related elements-----
    psi           := map(S,STrivial);
    I             := psi(ideal(B));
-   NonGradedKSOP := colorfulSOP(B,#faces(0,D,useFaceClass=>true));
+   NonGradedKSOP := colorfulSOP(B,#faces(0,D));
    KSOP          := {};
    for k in NonGradedKSOP do (
        KSOP = append(KSOP,psi(k));
@@ -199,7 +199,7 @@ universalSOP = method(TypicalValue => List)
 universalSOP (SimplicialComplex) := D -> (
    Theta    := new MutableList from {};
    for i from 0 to dim(D) do ( 
-     Theta#i = flatten(entries(faces(i,D)));
+     Theta#i = faces(i,D)
    );
    Theta     = apply(Theta, t->sum(t));
    return toList(Theta);
@@ -209,7 +209,7 @@ universalSOP (List) := F -> (
    D        := simplicialComplex(F);
    Theta    := new MutableList from {};
    for i from 0 to dim(D) do ( 
-     Theta#i = flatten(entries(faces(i,D)));
+     Theta#i = faces(i,D)
    );
    Theta     = apply(Theta, t->sum(t));
    return toList(Theta);
@@ -354,7 +354,7 @@ doc ///
         Example
             S = QQ[a..e];
             D = simplicialComplex {a*b*c,c*d,e};
-            n = #faces(0,D,useFaceClass=>true);
+            n = # vertices D
             ComplexIncludingMinElt = barycentricSubdivision D;
             R = ring(ComplexIncludingMinElt);
             B = faceDelete(R_0,ComplexIncludingMinElt);
@@ -505,7 +505,7 @@ doc ///
         Text
             Since the barycentric subdivision of a simplicial complex {\tt D} is a balanced simplicial complex {\tt B}, i.e., there exists a {\tt dim(D)+1} proper vertex coloring, this {\tt colorfulPresentation} takes in the barycentric subdivision of a simplicial complex, computes a colorful system of parameters for the Stanley-Reisner ring of {\tt B} and then returns this quotient ring as an N-graded module over the colorful parameter ring. 
         Example
-		        S = QQ[a..e];
+	    S = QQ[a..e];
             F = {a*b*c,c*d,e}
             D = simplicialComplex F
             colorfulPresentation D 

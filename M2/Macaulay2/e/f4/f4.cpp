@@ -84,7 +84,7 @@ void F4GB::delete_gb_array(gb_array &g)
   for (auto g0 : g)
     {
       if (! g0->f.coeffs.isNull())
-        mVectorArithmetic->deallocateCoeffVector(g0->f.coeffs);
+        mVectorArithmetic->deallocateElementArray(g0->f.coeffs);
       // Note: monomials will be cleared en-mass and so don't need to be freed.
       delete g0;
     }
@@ -393,7 +393,7 @@ void F4GB::clear_matrix()
   for (auto & r : mat->rows)
     {
       if (not r.coeffs.isNull())
-        mVectorArithmetic->deallocateCoeffVector(r.coeffs);
+        mVectorArithmetic->deallocateElementArray(r.coeffs);
       Mem->components.deallocate(r.comps);
       r.len = 0;
       r.elem = -1;
@@ -449,7 +449,7 @@ void F4GB::make_matrix()
 ///////////////////////////////////////////////////
 // Gaussian elimination ///////////////////////////
 ///////////////////////////////////////////////////
-const CoeffVector& F4GB::get_coeffs_array(row_elem &r)
+const ElementArray& F4GB::get_coeffs_array(row_elem &r)
 {
   // If r.coeffs is set, returns that, otherwise returns the coeffs array from
   // the generator or GB element.  The resulting value should not be modified.
@@ -489,7 +489,7 @@ void F4GB::gauss_reduce(bool diagonalize)
       if (n_newpivots == 0) return;
     }
 
-  DenseCoeffVector gauss_row { mVectorArithmetic->allocateDenseCoeffVector(ncols) };
+  ElementArray gauss_row { mVectorArithmetic->allocateElementArray(ncols) };
   for (int i = 0; i < nrows; i++)
     {
       row_elem &r = mat->rows[i];
@@ -498,9 +498,9 @@ void F4GB::gauss_reduce(bool diagonalize)
       int pivotrow = mat->columns[pivotcol].head;
       if (pivotrow == i) continue;  // this is a pivot row, so leave it alone
 
-      CoeffVector rcoeffs = get_coeffs_array(r);
+      const ElementArray& rcoeffs = get_coeffs_array(r);
       n_pairs_computed++;
-      mVectorArithmetic->sparseRowToDenseRow(gauss_row, rcoeffs, Range(r.comps, r.comps + r.len));
+      mVectorArithmetic->fillDenseArray(gauss_row, rcoeffs, Range(r.comps, r.comps + r.len));
 
       int firstnonzero = ncols;
       int first = r.comps[0];
@@ -511,9 +511,9 @@ void F4GB::gauss_reduce(bool diagonalize)
           if (pivotrow >= 0)
             {
               row_elem &pivot_rowelem = mat->rows[pivotrow];
-              auto pivot_coeffs = get_coeffs_array(pivot_rowelem);
+              auto& pivot_coeffs = get_coeffs_array(pivot_rowelem);
               n_reduction_steps++;
-              mVectorArithmetic->denseRowCancelFromSparse(gauss_row,
+              mVectorArithmetic->denseCancelFromSparse(gauss_row,
                                                           pivot_coeffs,
                                                           Range(pivot_rowelem.comps,
                                                                 pivot_rowelem.comps + pivot_rowelem.len)
@@ -523,16 +523,16 @@ void F4GB::gauss_reduce(bool diagonalize)
             }
           else if (firstnonzero == ncols)
             firstnonzero = first;
-          first = mVectorArithmetic->denseRowNextNonzero(gauss_row, first+1, last);
+          first = mVectorArithmetic->denseNextNonzero(gauss_row, first+1, last);
         }
       while (first <= last);
       if (not r.coeffs.isNull())
-        mVectorArithmetic->deallocateCoeffVector(r.coeffs);
+        mVectorArithmetic->deallocateElementArray(r.coeffs);
       Mem->components.deallocate(r.comps);
       r.len = 0;
       //Range<int> monomRange;
-      //mVectorArithmetic->denseRowToSparseRow(gauss_row, r.coeffs, monomRange, firstnonzero, last, mComponentSpace);
-      mVectorArithmetic->denseRowToSparseRow(gauss_row, r.coeffs, r.comps, firstnonzero, last, Mem->components);
+      //mVectorArithmetic->denseToSparse(gauss_row, r.coeffs, monomRange, firstnonzero, last, mComponentSpace);
+      mVectorArithmetic->denseToSparse(gauss_row, r.coeffs, r.comps, firstnonzero, last, Mem->components);
       // TODO set r.comps from monomRange.  Question: who has allocated this space??
       // Maybe for now it is just the following line:
       r.len = mVectorArithmetic->size(r.coeffs);
@@ -547,14 +547,14 @@ void F4GB::gauss_reduce(bool diagonalize)
       // it also potentially frees the old r.coeffs and r.comps (TODO: ?? r.comps??)
       if (r.len > 0)
         {
-          mVectorArithmetic->sparseRowMakeMonic(r.coeffs);
+          mVectorArithmetic->makeMonic(r.coeffs);
           mat->columns[r.comps[0]].head = i;
           if (--n_newpivots == 0) break;
         }
       else
         n_zero_reductions++;
     }
-  mVectorArithmetic->deallocateCoeffVector(gauss_row);
+  mVectorArithmetic->deallocateElementArray(gauss_row);
 
   if (M2_gbTrace >= 3)
     fprintf(stderr, "-- #zeroreductions %d\n", n_zero_reductions);
@@ -567,7 +567,7 @@ void F4GB::tail_reduce()
   int nrows = INTSIZE(mat->rows);
   int ncols = INTSIZE(mat->columns);
 
-  DenseCoeffVector gauss_row { mVectorArithmetic->allocateDenseCoeffVector(ncols) };
+  ElementArray gauss_row { mVectorArithmetic->allocateElementArray(ncols) };
   for (int i = nrows - 1; i >= 0; i--)
     {
       row_elem &r = mat->rows[i];
@@ -575,7 +575,7 @@ void F4GB::tail_reduce()
         continue;  // row reduced to zero, ignore it.
       // At this point, we should have an element to reduce
       bool anychange = false;
-      mVectorArithmetic->sparseRowToDenseRow(gauss_row, r.coeffs, Range(r.comps, r.comps + r.len));
+      mVectorArithmetic->fillDenseArray(gauss_row, r.coeffs, Range(r.comps, r.comps + r.len));
       int firstnonzero = r.comps[0];
       int first = (r.len == 1 ? ncols : r.comps[1]);
       int last = r.comps[r.len - 1];
@@ -587,7 +587,7 @@ void F4GB::tail_reduce()
               anychange = true;
               row_elem &pivot_rowelem =
                   mat->rows[pivotrow];  // pivot_rowelems.coeffs is set at this
-              mVectorArithmetic->denseRowCancelFromSparse(gauss_row,
+              mVectorArithmetic->denseCancelFromSparse(gauss_row,
                                                           pivot_rowelem.coeffs,
                                                           Range(pivot_rowelem.comps, pivot_rowelem.comps + pivot_rowelem.len));
               int last1 = pivot_rowelem.comps[pivot_rowelem.len - 1];
@@ -595,20 +595,20 @@ void F4GB::tail_reduce()
             }
           else if (firstnonzero == ncols)
             firstnonzero = first;
-          first = mVectorArithmetic->denseRowNextNonzero(gauss_row, first+1, last);
+          first = mVectorArithmetic->denseNextNonzero(gauss_row, first+1, last);
         };
       if (anychange)
         {
           Mem->components.deallocate(r.comps);
-          mVectorArithmetic->deallocateCoeffVector(r.coeffs);
+          mVectorArithmetic->deallocateElementArray(r.coeffs);
           r.len = 0;
           //Range<int> monomRange;
-          //mVectorArithmetic->denseRowToSparseRow(gauss_row,
+          //mVectorArithmetic->denseToSparse(gauss_row,
           //                                       r.coeffs,
           //                                       monomRange,
           //                                       firstnonzero, last,
           //                                       mComponentSpace);
-          mVectorArithmetic->denseRowToSparseRow(gauss_row,
+          mVectorArithmetic->denseToSparse(gauss_row,
                                                  r.coeffs,
                                                  r.comps,
                                                  firstnonzero, last,
@@ -626,11 +626,11 @@ void F4GB::tail_reduce()
         }
       if (r.len > 0)
         {
-          mVectorArithmetic->sparseRowMakeMonic(r.coeffs);
+          mVectorArithmetic->makeMonic(r.coeffs);
         }
     }
 
-  mVectorArithmetic->deallocateCoeffVector(gauss_row);
+  mVectorArithmetic->deallocateElementArray(gauss_row);
 }
 
 ///////////////////////////////////////////////////
@@ -656,12 +656,12 @@ void F4GB::insert_gb_element(row_elem &r)
   // original array
   // Here we copy it over.
 
-  //  const CoeffVector& v = (not r.coeffs.isNull() ? r.coeffs : mVectorArithmetic->copyCoeffVector(get_coeffs_array(r)));
+  //  const ElementArray& v = (not r.coeffs.isNull() ? r.coeffs : mVectorArithmetic->copyElementArray(get_coeffs_array(r)));
   //  result->f.coeffs.swap(v);
   if (r.coeffs.isNull())
     {
       // this means the actual coeff vector is coming from a GB element.  Copy it into result->f.coeffs
-      CoeffVector v { mVectorArithmetic->copyCoeffVector(get_coeffs_array(r)) };
+      ElementArray v { mVectorArithmetic->copyElementArray(get_coeffs_array(r)) };
       result->f.coeffs.swap(v);
     }
   else
@@ -694,7 +694,6 @@ void F4GB::insert_gb_element(row_elem &r)
       hilbert->addMonomial(exp, x + 1);
       freemem(exp);
     }
-
   // now insert the lead monomial into the lookup table
   varpower_monomial vp = newarray_atomic(varpower_word, 2 * M->n_vars() + 1);
   M->to_varpower_monomial(result->f.monoms, vp);
@@ -1001,11 +1000,11 @@ void F4GB::show_new_rows_matrix()
       {
         r++;
         row_elem &row = mat->rows[nr];
-        auto coeffs = get_coeffs_array(row);
+        auto& coeffs = get_coeffs_array(row);
         for (int i = 0; i < row.len; i++)
           {
             int c = row.comps[i];
-            ring_elem a = mVectorArithmetic->ringElemFromSparseVector(coeffs, i);
+            ring_elem a = mVectorArithmetic->ringElemFromElementArray(coeffs, i);
             gbM->set_entry(r, c, a);
           }
       }

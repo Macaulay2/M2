@@ -158,7 +158,7 @@ class F4GB : public our_new_delete
   void reorder_columns();
   void reorder_rows();
 
-  const CoeffVector& get_coeffs_array(row_elem &r);
+  const ElementArray& get_coeffs_array(row_elem &r);
   // If r.coeffs is set, returns that, otherwise returns the coeffs array from
   // the generator or GB element.  The resulting value should not be modified.
 
