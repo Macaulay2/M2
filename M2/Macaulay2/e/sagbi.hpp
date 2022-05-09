@@ -22,6 +22,26 @@ class sagbi
                            GBComputation *J);
 
   static Matrix *subduct(int numparts, const Matrix *m, const RingMap *phi, GBComputation *J);
+    
+  static ring_elem subduct1(int numslots,
+                            const PolyRing *T, // this is the tensor ring
+                            const PolyRing *S, // this is the poly ring
+                            ring_elem a,
+                            const RingMap *inclusionAmbient,
+                            const RingMap *fullSubstitution,
+                            const RingMap *substitutionInclusion,
+                            GBComputation *gbI,
+                            GBComputation *gbReductionIdeal);
+
+  static Matrix *subduct1(int numparts, 
+                          const Ring *rawT, 
+                          const Ring *rawS, 
+                          const Matrix *m, 
+                          const RingMap *inclusionAmbient, 
+                          const RingMap *fullSubstitution,
+                          const RingMap *substitutionInclusion, 
+                          GBComputation *gbI, 
+                          GBComputation *gbReductionIdeal);
 };
 
 #if 0

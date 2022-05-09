@@ -4238,6 +4238,33 @@ export rawSubduction(e:Expr):Expr := (
      else WrongNumArgs(4));
 setupfun("rawSubduction",rawSubduction);
 
+export rawSubduction1(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) !=9 then WrongNumArgs(9) else
+     when s.0 is numparts:ZZcell do 
+     if isInt(numparts) then
+     when s.1 is rawT:RawRingCell do
+     when s.2 is rawS:RawRingCell do
+     when s.3 is M:RawMatrixCell do
+     when s.4 is inclusionAmbient:RawRingMapCell do
+     when s.5 is fullSubstitution:RawRingMapCell do
+     when s.6 is substitutionInclusion:RawRingMapCell do
+     when s.7 is rawGBI:RawComputationCell do
+     when s.8 is rawGBReductionIdeal:RawComputationCell do    
+     	  toExpr(Ccode(RawMatrixOrNull, "rawSubduction1(", toInt(numparts), ",", rawT.p, ",", rawS.p, ",", M.p, ",", inclusionAmbient.p, ",", fullSubstitution.p, ",",
+	                 substitutionInclusion.p, ",", rawGBI.p, ",", rawGBReductionIdeal.p, ")"))
+     else WrongArg(9,"a raw computation")
+     else WrongArg(8,"a raw computation")
+     else WrongArgMatrix(7)
+     else WrongArgMatrix(6)
+     else WrongArgMatrix(5)
+     else WrongArgMutableMatrix(4)
+     else WrongArg(3,"a raw ring")
+     else WrongArg(2,"a raw ring")
+     else WrongArgSmallInteger(1)
+     else WrongArgSmallInteger(1)
+     else WrongNumArgs(4));
+setupfun("rawSubduction1",rawSubduction1);
+
 -----------------------------------------------------------------------------
 -- LAPACK 
 -----------------------------------------------------------------------------

@@ -634,6 +634,33 @@ Matrix /* or null */ *rawSubduction(int numparts, const Matrix *M,
   }
 }
 
+Matrix /* or null */ *rawSubduction1(int numparts,
+                                       const Ring *rawT,
+                                       const Ring *rawS,
+                                       const Matrix *m,
+                                       const RingMap *inclusionAmbient,
+                                       const RingMap *fullSubstitution,
+                                       const RingMap *substitutionInclusion,
+                                       Computation *rawGBI,
+                                       Computation *rawGBReductionIdeal)
+{
+    try
+    {
+        GBComputation *gbReductionIdeal = rawGBReductionIdeal->cast_to_GBComputation();
+        GBComputation *gbI = rawGBI->cast_to_GBComputation();
+        if ((gbReductionIdeal == 0) || (gbI == 0))
+        {
+            ERROR("expected a Groebner basis computation");
+            return 0;
+        }
+        return sagbi::subduct1(numparts, rawT, rawS, m, inclusionAmbient, fullSubstitution, substitutionInclusion, gbI, gbReductionIdeal);
+    } catch (const exc::engine_error& e)
+    {
+        ERROR(e.what());
+        return NULL;
+    }
+}
+
 #include "mathicgb.h"
 #include "matrix-stream.hpp"
 void rawDisplayMatrixStream(const Matrix *inputMatrix)

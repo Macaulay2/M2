@@ -68,6 +68,103 @@ Matrix *sagbi::subduct(int numparts, const Matrix *m, const RingMap *phi, GBComp
   return result.to_matrix();
 }
 
+ring_elem sagbi::subduct1(int numslots,
+                            const PolyRing *T, // this is the tensor ring
+                            const PolyRing *S, // this is the poly ring
+                            ring_elem a,
+                            const RingMap *inclusionAmbient,
+                            const RingMap *fullSubstitution,
+                            const RingMap *substitutionInclusion,
+                            GBComputation *gbI,
+                            GBComputation *gbReductionIdeal)
+{
+    Nterm *f = a;
+    ring_elem fr = f;
+    MatrixConstructor matT(T->make_FreeModule(1), 1);
+    MatrixConstructor matS(S->make_FreeModule(1), 1);
+    bool breakFlag = false;
+    
+    while ((f != NULL) && (breakFlag == false))
+    {
+        // tensorRingg = S#"inclusionAmbient" liftg
+        // tesnorRingg = gInT
+        ring_elem gInT = S->eval(inclusionAmbient,fr,0);
+
+        // This might be the wrong way to deal with this issue.
+        // I don't know what to do, however.
+        if(gInT != NULL)
+          {
+              // tensorRingLTg = leadTerm tensorRingg
+              // tensorRingLTg = LTgInT
+              Nterm *LTgInT = gInT;
+              LTgInT->next = NULL;
+        
+            // h = tensorRingLTg % (inAIdeal)
+            // h = h1
+            matT.set_entry(0,0,LTgInT);
+            Matrix *m = matT.to_matrix();
+            const Matrix *n = gbReductionIdeal->matrix_remainder(m);
+            ring_elem h1 = n->elem(0,0);
+            delete m;
+            delete n;
+
+            ring_elem projectionh = T->eval(substitutionInclusion,h1,0);
+            
+            if(projectionh != NULL)
+            {
+                // hSub = (S#"fullSubstitution" h) % I
+                ring_elem hInS = T->eval(fullSubstitution,h1,0);
+                matS.set_entry(0,0,hInS);
+                Matrix *k = matS.to_matrix();
+                const Matrix *l = gbI->matrix_remainder(k);
+                ring_elem h1InS = l->elem(0,0);
+                delete k;
+                delete l;
+                
+                S->internal_subtract_to(fr,h1InS);
+                f = fr;
+            }
+            else
+                breakFlag = true;
+          }
+        else
+            breakFlag = true;
+    }
+    
+    return ring_elem(f);
+}
+
+Matrix *sagbi::subduct1(int numparts,
+                        const Ring *rawT,
+                        const Ring *rawS,
+                        const Matrix *m,
+                        const RingMap *inclusionAmbient,
+                        const RingMap *fullSubstitution,
+                        const RingMap *substitutionInclusion,
+                        GBComputation *gbI,
+                        GBComputation *gbReductionIdeal)
+{
+    MatrixConstructor result(m->rows(), m->cols());
+    const PolyRing *T = rawT->cast_to_PolyRing();
+    const PolyRing *S = rawS->cast_to_PolyRing();
+    if ((T == 0) || (S == 0))
+    {
+        ERROR("expected polynomial ring");
+        return 0;
+    }
+    int nslots = T->getMonoid()->n_slots(numparts);
+    for (int i = 0; i < m->n_cols(); i++)
+    {
+        ring_elem a = m->elem(0, i);
+        ring_elem b = subduct1(nslots-2, T, S, S->copy(a),
+                        inclusionAmbient,fullSubstitution,substitutionInclusion,
+                                 gbI,gbReductionIdeal);
+        result.set_entry(0, i, b);
+    }
+
+    return result.to_matrix();
+}
+
 #ifdef DEVELOPMENT
 #warning "sagbi code commented out"
 #endif
