@@ -96,6 +96,7 @@ M2_SRCFILES += python-c.c python.d
 endif
 M2_DFILES += interface.dd interface2.d
 M2_DFILES += texmacs.d
+M2_DFILES += boostmath.dd
 # this one is last, because it contains the top level interpreter
 M2_DFILES += interp.dd
 

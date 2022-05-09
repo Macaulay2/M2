@@ -334,7 +334,8 @@ doc ///
         Text
             The straight-line program can also be evaluated at different inputs in different rings:
         Example
-            inp = mutableMatrix{{-5,3}}
+            inp = mutableMatrix{{-5_QQ,3}}
+            ring inp
             out = mutableMatrix(ring inp,1,4)
             evaluate(slp, inp, out)
             out

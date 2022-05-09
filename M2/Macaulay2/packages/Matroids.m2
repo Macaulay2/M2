@@ -41,7 +41,6 @@ export {
 	"coloops",
 	"isDependent",
 	"closure",
-	"hyperplanes",
 	"flats",
 	"latticeOfFlats",
 	"restriction",
@@ -284,7 +283,7 @@ closure (Matroid, Set) := Set => (M, S) -> (
 	S + limits
 )
 
-hyperplanes = method()
+-- the 'hyperplanes' methods is defined in 'Polyhedra'
 hyperplanes Matroid := List => M -> (
 	if not M.cache.?hyperplanes then M.cache.hyperplanes = (circuits dual M)/(c -> M.groundSet - c);
 	M.cache.hyperplanes
@@ -315,7 +314,7 @@ flats Matroid := List => M -> (
 latticeOfFlats = method()
 latticeOfFlats Matroid := Poset => M -> poset(flats M/toList, (a, b) -> isSubset(a, b))
 
-fVector Matroid := HashTable => opts -> M -> hashTable pairs tally(flats M/rank_M)
+fVector Matroid := HashTable => M -> hashTable pairs tally(flats M/rank_M)
 
 dual Matroid := Matroid => {} >> opts -> M -> (
 	if not M.cache.?dual then (
@@ -3902,7 +3901,7 @@ assert(areIsomorphic(M0, matroid graph edges graph M0_*))
 Delta = independenceComplex M0
 F = fVector Delta
 assert(ideal Delta == ideal M0 and F === fVector independenceComplex M1)
-assert((sort keys F)/(k -> F#k) === {1,11,55,164,319,409,324,125})
+assert(F === {1,11,55,164,319,409,324,125})
 assert(not areIsomorphic(M0, M1))
 ///
 

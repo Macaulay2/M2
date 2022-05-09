@@ -534,7 +534,7 @@ if(NOT CDDLIB_ROOT)
   set(CDDLIB_LIBRARY_DIR ${CDDLIB_ROOT}/lib)
   set(CDDLIB_INCLUDE_DIR ${CDDLIB_ROOT}/include/cddlib)
 endif()
-_ADD_COMPONENT_DEPENDENCY(libraries cddlib mp CDDLIB_FOUND)
+#_ADD_COMPONENT_DEPENDENCY(libraries cddlib mp CDDLIB_FOUND)
 
 
 # https://numpi.dm.unipi.it/software/mpsolve
@@ -768,8 +768,8 @@ ExternalProject_Add(build-mathicgb
                     -DBUILD_TESTING=OFF # FIXME: ${BUILD_TESTING}
                     -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                     -DCMAKE_CXX_FLAGS=${CXXFLAGS}
+                    -Dwith_tbb=${WITH_TBB}
                     -Denable_mgb=ON
-                    -Dwith_tbb=ON
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test

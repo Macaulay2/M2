@@ -66,7 +66,9 @@ info TITLE :=
 net  COMMENT :=
 info COMMENT :=
 net  LITERAL :=
-info LITERAL := x -> ""
+info LITERAL :=
+net  SCRIPT  :=
+info SCRIPT  := x -> ""
 
 info String  := identity
 info Nothing := net
@@ -174,7 +176,8 @@ net CODE  :=
 info TT   :=
 info CODE :=  x -> horizontalJoin apply(noopts x,net)
 
-info PRE  := x -> wrap(printWidth, "-", concatenate apply(noopts x,toString))
+info PRE  := x ->
+    wrap(printWidth, "-", concatenate apply(noopts x,toString @@ info))
 
 net TH := Hop(net, "-")
 

@@ -35,7 +35,7 @@ trimlines := L -> apply(L, x ->
 
 makeExampleItem = method()
 -- TODO: can this be handled with a NewFromMethod?
-makeExampleItem PRE    := p -> flatten apply(toList p, s -> PRE \ separateM2output s)
+makeExampleItem PRE    := p -> flatten apply(toList p, s -> PRE \ M2CODE \ separateM2output s)
 makeExampleItem String := s -> ExampleItem s
 
 -- allows canned examples with EXAMPLE PRE "..."
@@ -83,12 +83,17 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     -- FIXME: why does OutputDictionary lose its Attribute if it isn't saved this way?
     pushvar(symbol OutputDictionary, new Dictionary);
     dictionaryPath = {
+	currentPackage.Dictionary,
 	Core.Dictionary,
 	OutputDictionary,
 	PackageDictionary};
     if not hasmode ArgNoPreload then
     scan(Core#"pre-installed packages", needsPackage);
-    needsPackage \ toString \ flatten { if opts.PackageExports === null then currentPackage else opts.PackageExports };
+    if opts.PackageExports =!= null then (
+	 if instance(opts.PackageExports, String) then needsPackage opts.PackageExports
+	 else if instance(opts.PackageExports, Package) then needsPackage toString opts.PackageExports
+	 else if instance(opts.PackageExports, List) then needsPackage \ opts.PackageExports
+	 else error ("expected PackageExports option value (",toString opts.PackageExports,") to be a string or a list of strings"));
     --shallow copy, but we only need to remember which things started with attributes
     oldAttributes := copy Attributes;
     -- TODO: is this still necessary? If so, add a test in tests/normal/capture.m2
@@ -210,7 +215,7 @@ captureExampleOutput = (desc, inputs, pkg, inf, outf, errf, data, inputhash, cha
     if isCapturable(inputs, pkg, false) then (
 	desc = concatenate(desc, 62 - #desc);
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
-	(err, output) := capture(inputs, UserMode => false, PackageExports => pkg);
+	(err, output) := capture(inputs, UserMode => false);
 	if err then printerr "capture failed; retrying ..."
 	else (outf << M2outputHash << inputhash << endl << output << close;
 	    return true));
@@ -238,7 +243,7 @@ processExamplesLoop Thing       := identity
 processExamplesLoop Sequence    :=
 processExamplesLoop Hypertext   := x -> apply(x, processExamplesLoop)
 processExamplesLoop ExampleItem := x -> (
-    result := if currentExampleResults#?currentExampleCounter then PRE currentExampleResults#currentExampleCounter else (
+    result := if currentExampleResults#?currentExampleCounter then PRE M2CODE currentExampleResults#currentExampleCounter else (
 	if #currentExampleResults === currentExampleCounter then (
 	    if processExamplesStrict
 	    then error("example results terminate prematurely: ", toString currentExampleKey)

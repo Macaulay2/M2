@@ -401,7 +401,7 @@ document {
 -- TODO: utf8check
 
 document {
-     Key => utf8,
+     Key => {utf8, utf8check},
      Headline => "encode and decode unicode utf-8-encoded strings",
      SYNOPSIS (
      	  Usage => "utf8 x",
@@ -430,6 +430,14 @@ document {
      PARA {
 	  "The two operations described above are inverse to each other."
 	  },
+     PARA {
+	  "The function ", TT "utf8check", " can be used to verify that a string contains a valid uft8-encoding of a sequence of
+	  unicode characters.  It returns ", TO "null", " upon success, and signals an error otherwise."
+	  },
+     EXAMPLE lines ///
+     try utf8check "你好" else "invalid"
+     try utf8check "\200\200" else "invalid"
+     ///,
      SeeAlso => {ascii},
      }
 

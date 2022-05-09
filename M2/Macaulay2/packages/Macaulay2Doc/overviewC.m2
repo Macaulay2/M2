@@ -612,7 +612,7 @@ document {
      }
 
 document {
-     Key => "Weyl algebras",
+     Key => {"Weyl algebras", isWeylAlgebra},
      "A Weyl algebra is the non-commutative algebra of algebraic differential 
      operators on a polynomial ring.  To each variable ", TT "x", " corresponds 
      the operator ", TT "dx", " that differentiates with respect to that 
@@ -634,9 +634,20 @@ document {
 	  "dx*x",
 	  "matrix{{dx}} * matrix{{x}}"
 	  },
-     "All Gröbner basis and related computations work over this ring.  For an extensive
-     collection of D-module routines (A D-module is a module over a Weyl algebra), see ",
-     TO "Dmodules::Dmodules", "."
+     PARA {
+	  "All Gröbner basis and related computations work over this ring.  For an extensive
+	  collection of D-module routines (A D-module is a module over a Weyl algebra), see ",
+	  TO "Dmodules::Dmodules", "."
+	  },
+     PARA {
+	  "The function ", TT "isWeylAlgebra", " can be used to determine whether a polynomial ring has been
+	  constructed as a Weyl algebra."
+	  },
+     EXAMPLE lines ///
+     isWeylAlgebra R
+     S = QQ[x,y]
+     isWeylAlgebra S
+     ///
      }
 
 document {

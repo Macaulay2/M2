@@ -867,7 +867,9 @@ int system_strncmp(M2_string s,M2_string t,int n) {
      return strncmp((char *)s->array,(char *)t->array,n);
 }
 
-void do_nothing () { }
+void do_nothing () {
+     asm volatile ("nop");
+}
 
 /*
 // Local Variables:

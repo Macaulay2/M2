@@ -38,10 +38,27 @@ document {
 document {
      Key => "changes made for the next release",
      UL {
+   	  LI { "improved packages:",
+	       UL {
+	       	    LI { "The package ", TO "GraphicalModelsMLE", " has been improved following many recommendations through its certification process. Several computations have been optimized. The names of several procedures and options have been modified. " },
+  		    LI { "The package ", TO "Complexes::Complexes", " has been improved.  
+                The documentation has been enhanced, numerous minor bugs have been fixed, and 
+                free resolutions have been implemented independent of the 
+                current  ", TO "ChainComplex", " class."
+                }
+		    }
+	       },
  	  LI { "functionality added:",
 	       UL {
 		    LI { "New functions ", TO "memoizeValues", " and ", TO "memoizeClear", " have been added for dealing with the values retained by
-			 functions created with memoize." }
+			 functions created with memoize." },
+		    LI { "A new method ", TO "uniquePermutations", " has been added. Equivalent to ", M2CODE "unique @@ permutations", " except faster." },
+		    LI { "A number of unicode symbols have been added as synonyms, e.g., ℤ or ⊗." },
+		    LI { "New numeric functions ", TO "Beta", ", ", TO "Digamma", ", ", TO "inverseErf", ", ", TO "regularizedBeta", ", ", TO "inverseRegularizedBeta", ", ", TO "regularizedGamma", ", and ", TO "inverseRegularizedGamma", ", new numeric constant ", TO "CatalanConstant",
+			".  ", TO "Gamma", " now accepts two arguments, for the incomplete gamma function.  Numeric functions accept constants as arguments." },
+		    LI { TO "pack", ", ", TO "reverse", ", and ", TO "tally", " now support strings." },
+		    LI { TO "unique", " now supports all visible lists." },
+		    LI { "Syntax highlighting of Macaulay2 code in the HTML documentation has been added as a build-time option.  Use ", TO "M2CODE", " to indicate code to be highlighted." }
 		    }
 	       }
 	  }

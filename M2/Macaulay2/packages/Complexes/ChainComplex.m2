@@ -480,33 +480,48 @@ defaultLengthLimit = (R, baselen, len) -> (
       len
     )
 
-freeResolution = method(Options => options resolution)
-freeResolution Module := Complex => opts -> M -> (
-    if opts.LengthLimit < 0 then error "expected a non-negative value for LengthLimit";
-    if not M.cache.?freeResolution
-      or M.cache.freeResolution.cache.LengthLimit < opts.LengthLimit
-      then (
-          lengthlimit := defaultLengthLimit(ring M, 0, opts.LengthLimit);
-          -- note: we currently suppress other options of freeResolution available in 'res'.
-          C := res(M,opts,LengthLimit=>lengthlimit);
-          complete C;
-          FC := if length C == 0 then complex C_0
-                else (
-                    maps := for i from 1 to min(length C, opts.LengthLimit) list C.dd_i;
-                    complex maps
-                    );
-          FC.cache.LengthLimit = if length C < lengthlimit then infinity else lengthlimit;
-          FC.cache.Module = M;
-          M.cache.freeResolution = FC;
-         );
-    FM := M.cache.freeResolution;
-    if opts.LengthLimit < length FM
-    then (
-        FM = naiveTruncation(FM, 0, opts.LengthLimit);
-        FM.cache.Module = M;
-        );
-    FM
+freeResolution = method(Options => {
+	StopBeforeComputation	=> false,
+	LengthLimit		=> infinity,	-- (infinity means numgens R)
+	DegreeLimit		=> infinity,	-- slant degree limit
+	SyzygyLimit		=> infinity,	-- number of min syzs found
+	PairLimit		=> infinity,	-- number of pairs computed
+	HardDegreeLimit		=> {},		-- throw out information in degrees above this one
+	SortStrategy		=> 0,		-- strategy choice for sorting S-pairs
+	Strategy		=> null,	-- algorithm to use, usually 1, but sometimes 2
+	FastNonminimal		=> false
+	}
     )
+
+load "./ResolutionObject.m2"
+
+-- freeResolution Module := Complex => opts -> M -> (
+--     if opts.LengthLimit < 0 then error "expected a non-negative value for LengthLimit";
+--     if not M.cache.?freeResolution
+--       or M.cache.freeResolution.cache.LengthLimit < opts.LengthLimit
+--       then (
+--           lengthlimit := defaultLengthLimit(ring M, 0, opts.LengthLimit);
+--           -- note: we currently suppress other options of freeResolution available in 'res'.
+--           C := res(M,opts,LengthLimit=>lengthlimit);
+--           complete C;
+--           FC := if length C == 0 then complex C_0
+--                 else (
+--                     maps := for i from 1 to min(length C, opts.LengthLimit) list C.dd_i;
+--                     complex maps
+--                     );
+--           FC.cache.LengthLimit = if length C < lengthlimit then infinity else lengthlimit;
+--           FC.cache.Module = M;
+--           M.cache.freeResolution = FC;
+--          );
+--     FM := M.cache.freeResolution;
+--     if opts.LengthLimit < length FM
+--     then (
+--         FM = naiveTruncation(FM, 0, opts.LengthLimit);
+--         FM.cache.Module = M;
+--         );
+--     FM
+--     )
+
 freeResolution Ideal := Complex => opts -> I -> freeResolution(comodule I, opts)
 freeResolution MonomialIdeal := Complex => opts -> I -> freeResolution(comodule ideal I, opts)
 freeResolution Matrix := ComplexMap => opts -> f -> extend(
@@ -682,12 +697,12 @@ part(List, Complex) := Complex => (deg, C) -> (
     )
 part(ZZ, Complex) := Complex => (deg, C) -> part({deg}, C)
 
-truncate(List, Complex) := Complex => {} >> o -> (e, C) -> (
+truncate(List, Complex) := Complex => {} >> opts -> (e, C) -> (
     (lo, hi) := concentration C;
     if lo === hi then return complex truncate(e, C_lo);
     complex hashTable for i from lo+1 to hi list i => truncate(e, dd^C_i)
     )
-truncate(ZZ, Complex) := Complex => {} >> o -> (e, C) -> truncate({e}, C)
+truncate(ZZ, Complex) := Complex => {} >> opts -> (e, C) -> truncate({e}, C)
 
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------
@@ -949,11 +964,13 @@ resolutionMap Complex := ComplexMap => opts -> C -> (
 resolution Complex := opts -> C -> source resolutionMap(C, opts)
 
 augmentationMap = method()
-augmentationMap Complex := ComplexMap => C -> (
-    if not C.cache.?Module then error "expected a free resolution";
-    M := C.cache.Module;
-    map(complex M, C, i -> if i === 0 then map(M, C_0, 1))
-    )
+augmentationMap Complex := ComplexMap => 
+    (cacheValue symbol augmentationMap)(C -> (
+            if not C.cache.?Module then error "expected a free resolution";
+            M := C.cache.Module;
+            map(complex M, C, i -> if i === 0 then map(M, C_0, 1))
+            )
+        )
 
 -- TODO: get this to work over fields, poly rings, quotients, and also the local case.
 --       improve the performance of this function
@@ -1082,7 +1099,7 @@ yonedaExtension' Complex := Matrix => C -> (
     -- notice that D is a shifted complex which changes the sign of the differential
     D := naiveTruncation(C, (lo+1,hi))[1];
     s := map(M,D,i -> if i == lo then dd^C_(lo+1) else map(M_i, D_i, 0));
-    g := resolutionMap M;
+    g := resolutionMap(M, LengthLimit => hi);
     sinverse := liftMapAlongQuasiIsomorphism(g, s);
     yonedaMap := sinverse_(hi-1);  -- map FM_d --> N
     extd := Ext^(hi-lo-1)(C_lo, C_hi);
@@ -1104,6 +1121,7 @@ yonedaMap Matrix := ComplexMap => opts -> f -> (
     g := homomorphism E.cache.yonedaExtension f; -- g: FM_d --> N
     -- the " + degree f" is needed because of the behavior of homomorphism:
     -- that function appears to ignore the degree of the incoming map.
+    --TODO: is changing this line to the next one correct?  g0 := map(FN_0, FM_d, g, Degree => degree f + degree g);
     g0 := map(FN_0, FM_d, g, Degree => degree g);
     extend(FN, FM, g0, (0,d))
     )

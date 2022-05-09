@@ -6,7 +6,7 @@ document { Key => FunctionClosure,
 document { Key => CompiledFunction,
      Headline => "the class of all compiled functions",
      "Compiled functions in Macaulay2 are written in a special purpose language, translated to C during compilation and not available to general users.",
-     EXAMPLE "class sin"
+     EXAMPLE "class drop"
      }
 document { Key => CompiledFunctionClosure,
      Headline => "the class of all compiled function closures",

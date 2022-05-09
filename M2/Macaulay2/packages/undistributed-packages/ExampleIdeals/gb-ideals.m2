@@ -40,7 +40,10 @@ J1=ideal"dgjm-chjm-dfkm+bhkm+cflm-bglm-dgin+chin+dekn-ahkn-celn+agln+dfio-bhio-d
   JMPS-INPS-JLQS+HNQS+ILRS-HMRS-JMOT+INOT+JKQT-GNQT-IKRT+GMRT+JLOU-HNOU-JKPU+GNPU+HKRU-GLRU-ILOV+HMOV+IKPV-GMPV-HKQV+GLQV";
 J1
 -*
-  time gb(J1, Algorithm=>LinearAlgebra); -- 69.9 sec
+  time gb(ideal J1_*, Algorithm=>LinearAlgebra); -- 69.9 sec
+    -- Mike M1 max,  std::variant VectorArithmetic: 18.0 sec, 18.46 sec
+    -- Mike M1 max,  virtual VectorArithmetic: 17.88 sec, 19.06 sec
+
   time gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- 66.0 sec
   time gb(J1, Algorithm=>Homogeneous2, Strategy=>LongPolynomial); -- 43.8 sec
   time gb(J1, MaxReductionCount=>3000); -- 51.34 sec
@@ -63,7 +66,9 @@ J1 = ideal random(R1^1, R1^{-5,-5,-5,-6});
 J1
 -*     
   gbTrace=1
-  time gb(J1, Algorithm=>LinearAlgebra); -- 54.1 sec (53.25 sec, 58.7 sec, MBP 7/17/09)
+  time gb(ideal J1_*, Algorithm=>LinearAlgebra); -- 54.1 sec (53.25 sec, 58.7 sec, MBP 7/17/09)
+    -- Mike M1 max,  std::variant VectorArithmetic: 14.29 sec, 14.3  sec
+    -- Mike M1 max,  virtual VectorArithmetic: 14.43 sec, 14.28  sec
   time gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- > 120 sec
   time gb(J1, MaxReductionCount=>3000);
 
@@ -101,6 +106,8 @@ J1
   J1 = ideal J1_*; elapsedTime groebnerBasis(J1, Strategy => "F4"); -- 7.34 sec (3.1 sec tbb MES MBP 1/24/21)
   J1 = ideal J1_*; elapsedTime groebnerBasis(J1, Strategy => "MGB"); -- 59.1 sec
   J1 = ideal J1_*; elapsedTime gb(J1, Algorithm=>LinearAlgebra); -- 11.7 sec (10.0 sec MES MBP 1/24/21)
+  -- Mike M1 max,  std::variant VectorArithmetic: 8.47 sec, 8.49 sec
+  -- Mike M1 max,  virtual VectorArithmetic: 8.42 sec, 8.5 sec
   J1 = ideal J1_*; elapsedTime gens gb(J1); -- much longer! > 720 sec
   J1 = ideal J1_*; elapsedTime gens gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- 438 sec
   J1 = ideal J1_*; elapsedTime gens gb(J1, Algorithm=>Homogeneous2, Strategy=>LongPolynomial); -- 419 sec
@@ -137,6 +144,9 @@ J1
   J1 = ideal J1_*; elapsedTime groebnerBasis(J1, Strategy => "F4"); -- 3.2  sec
   J1 = ideal J1_*; elapsedTime groebnerBasis(J1, Strategy => "MGB"); -- 1.43  sec
   J1 = ideal J1_*; elapsedTime gb(J1, Algorithm=>LinearAlgebra); -- 2.89 sec
+    -- Mike M1 max,  std::variant VectorArithmetic: 1.69 sec, 1.97 sec
+    -- Mike M1 max,  virtual VectorArithmetic: 1.36 sec, 1.31  sec
+
   J1 = ideal J1_*; elapsedTime gens gb(J1); -- 48 sec
   J1 = ideal J1_*; elapsedTime gens gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- 1.7 sec
   J1 = ideal J1_*; elapsedTime gens gb(J1, Algorithm=>Homogeneous2, Strategy=>LongPolynomial); -- 1.8 sec
@@ -199,12 +209,16 @@ J1
   
   debug Core
   kk = ZZp(32003, Strategy => "Old")
+  kk = ZZ/32003
   R1 = kk[reverse(p_(1,1,1,1,1)..p_(2,2,2,2,2)), MonomialSize=>8];
   J1 = sub(J1, R1)
   gbTrace=1
   J1 = ideal J1_*; elapsedTime groebnerBasis(J1, Strategy => "F4"); -- 65 sec (72 sec tbb MES MBP 1/24/21 hmmm)
   J1 = ideal J1_*; elapsedTime groebnerBasis(J1, Strategy => "MGB"); -- 4.0  sec (3.4 sec MES MBP 1/24/21)
   J1 = ideal J1_*; elapsedTime gb(J1, Algorithm=>LinearAlgebra); -- 27.5  sec (23.5 sec MES MBP 1/24/21)
+    -- Mike M1 max,  std::variant VectorArithmetic: 18.83 sec, 18.43 sec
+    -- Mike M1 max,  virtual VectorArithmetic: 17.91 sec, 18.33 sec
+
   J1 = ideal J1_*; elapsedTime gens gb(J1); -- 21 sec
   J1 = ideal J1_*; elapsedTime gens gb(J1, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- 20 sec (but printing debugging stuff too)
   J1 = ideal J1_*; elapsedTime gens gb(J1, Algorithm=>Homogeneous2, Strategy=>LongPolynomial); -- 10.8 sec
@@ -598,9 +612,10 @@ fx = (d, a) -> x^d + sum(1..d, i -> a_i * x^(d-i))
 F = fx(m,a) * fx(n,b) - fx(m+n,h)
 --F = (x^m + sum(1..m, i -> a_i * x^(m-i))) * (x^n + sum(1..n, i -> b_i * x^(n-i))) - sum(1..m+n)
 I = sub(ideal last coefficients F, R)
+
 gbTrace=3
-time gb(I, Algorithm=>LinearAlgebra); -- 3/11/10 MBP r11025: 22.52 sec, over ZZ/32003
-time gens gb I;
+time gb(ideal I_*, Algorithm=>LinearAlgebra); -- 3/11/10 MBP r11025: 22.52 sec, over ZZ/32003
+time gens gb ideal I_*;
 ----------------------------------------------
 --chow-flag-7-7
 (m,n) = (7,7)

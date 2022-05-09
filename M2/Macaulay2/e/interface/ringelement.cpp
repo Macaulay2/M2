@@ -394,6 +394,8 @@ gmp_ZZpairOrNull rawWeightRange(M2_arrayint wts, const RingElement *a)
       p->b = newitem(__mpz_struct);
       mpz_init_set_si(const_cast<mpz_ptr>(p->a), static_cast<long>(lo));
       mpz_init_set_si(const_cast<mpz_ptr>(p->b), static_cast<long>(hi));
+      mpz_reallocate_limbs(const_cast<mpz_ptr>(p->a));
+      mpz_reallocate_limbs(const_cast<mpz_ptr>(p->b));
       return p;
   } catch (const exc::engine_error& e)
     {

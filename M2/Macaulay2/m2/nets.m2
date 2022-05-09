@@ -279,7 +279,7 @@ netList VisibleList := o -> (x) -> (
 	  ))
 
 characters = method()
-characters String := toList
+characters String := toList1
 
 -- TODO: move to debugging, except for Net?
 commentize = method(Dispatch => Thing)

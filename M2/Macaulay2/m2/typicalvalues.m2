@@ -107,7 +107,6 @@ substring(String,ZZ,ZZ) := String => substring
 substring(ZZ,String) := String => substring
 substring(Sequence,String) := String => substring
 substring(ZZ,ZZ,String) := String => substring
-toList Set := toList BasicList := toList String := List => toList
 toSequence BasicList := toSequence String := Sequence => toSequence
 ascii String := List => ascii
 ascii List := String => ascii
@@ -174,6 +173,14 @@ typval4k-*(Keyword,Type,Type,Type)*- := (f,X,Y,Z) -> (
      chk(youngest(X,Y), (f,X,Y));
      installMethod(f, X, Y, Z => x -> (dummy x;))
      )
+
+if member("--no-tvalues", commandLine) then end
+
+-- numerical functions that will be wrapped
+redefs := hashTable apply({acos, agm, asin, atan, atan2, BesselJ, BesselY, Beta, cos, cosh, cot, coth, csc, csch, Digamma, eint, erf, erfc, exp, expm1, Gamma, inverseErf, inverseRegularizedBeta, inverseRegularizedGamma, log, log1p, regularizedBeta, regularizedGamma, sec, sech, sin, sinh, sqrt, tan, tanh, zeta},
+    f -> f => method());
+variants := new MutableHashTable;
+
 typval = x -> (
      if #x == 3 then (
 	  if instance(x#0,Function) then typval3f x
@@ -186,9 +193,199 @@ typval = x -> (
 	  else error "typval: expected keyword or function"
 	  )
      else if #x == 5 then typval5f x
-     else error "typval: expected 3, 4, or 5 arguments"
+     else error "typval: expected 3, 4, or 5 arguments";
+     if redefs#?(x#0) then (
+	 f' := x#0;
+	 f := redefs#f';
+	 args := drop(drop(x,-1),1);
+	 installMethod append(prepend(f,args),last x => f');
+	 if args === sequence RR then variants#(f,Number) = variants#(f,Constant) = f' @@ numeric
+	 else if #args === 2 then (
+	     if args#0 === RR then variants#(f,Number,args#1) = variants#(f,Constant,args#1) = (x,y) -> f'(numeric_(precision y) x,y);
+	     if args#1 === RR then variants#(f,args#0,Number) = variants#(f,args#0,Constant) = (x,y) -> f'(x,numeric_(precision x) y);
+	     if args === (RR,RR) then variants#(f,Number,Number) = variants#(f,Number,Constant) = variants#(f,Constant,Number) = variants#(f,Constant,Constant) = (x,y) -> f'(numeric x,numeric y); -- phew
+	     )
+	 else if #args === 3 then (
+	     if args#0 === RR then
+		 variants#(f, Number,   args#1, args#2) =
+		 variants#(f, Constant, args#1, args#2) =
+		 (x,y,z) -> f'((numeric_min(precision y, precision z)) x, y, z);
+	     if args#1 === RR then
+		 variants#(f, args#0, Number,   args#2) =
+		 variants#(f, args#0, Constant, args#2) =
+		 (x,y,z) -> f'(x, (numeric_min(precision x, precision z)) y, z);
+	     if args#2 === RR then
+		 variants#(f, args#0, args#1, Number)   =
+		 variants#(f, args#0, args#1, Constant) =
+		 (x,y,z) -> f'(x, y, (numeric_min(precision x, precision y)) z);
+	     if args#0 === RR and args#1 === RR then
+		 variants#(f, Number,   Number,   args#2) =
+		 variants#(f, Number,   Constant, args#2) =
+		 variants#(f, Constant, Number,   args#2) =
+		 variants#(f, Constant, Constant, args#2) =
+		 (x,y,z) ->
+		     f'(numeric_(precision z) x, numeric_(precision z) y, z);
+	     if args#0 === RR and args#2 === RR then
+	         variants#(f, Number,   args#1, Number)   =
+		 variants#(f, Number,   args#1, Constant) =
+		 variants#(f, Constant, args#1, Number)   =
+		 variants#(f, Constant, args#1, Constant) =
+		 (x,y,z) ->
+		     f'(numeric_(precision y) x, y, numeric_(precision y) z);
+	     if args#1 === RR and args#2 === RR then
+		 variants#(f, args#0, Number,   Number)   =
+		 variants#(f, args#0, Number,   Constant) =
+		 variants#(f, args#0, Constant, Number)   =
+		 variants#(f, args#0, Constant, Constant) =
+		 (x,y,z) ->
+		     f'(x, numeric_(precision x) y, numeric_(precision x) z);
+	     if args === (RR, RR, RR) then
+		 variants#(f, Number,   Number,   Number)   =
+		 variants#(f, Number,   Number,   Constant) =
+		 variants#(f, Number,   Constant, Number)   =
+		 variants#(f, Number,   Constant, Constant) =
+		 variants#(f, Constant, Number,   Number)   =
+		 variants#(f, Constant, Number,   Constant) =
+		 variants#(f, Constant, Constant, Number)   =
+		 variants#(f, Constant, Constant, Constant) =
+		 (x,y,z) -> f'(numeric x, numeric y, numeric z);
+	     );
+	 )
      )
-if not member("--no-tvalues", commandLine) then load "tvalues.m2"
+
+load "tvalues.m2"
+
+scanPairs(redefs, (k,v) -> globalAssign(baseName k,v))
+scanPairs(new HashTable from variants, (args,f) -> (
+	installMethod append(args,f);
+	undocumented args;
+	))
+
+-- TODO abs Constant
+
+nilp := x -> (  -- degree of nilpotency
+    R := ring x;
+    k := R; while not isField k do k = baseRing k;
+    f := map(R,k(monoid [getSymbol "X"]),{x});
+    I := kernel f;
+    if I == 0 or (l:=listForm I_0; #l>1) then infinity else l#0#0#0
+    )
+
+taylor := (f,g) -> f RingElement := x -> (
+    try promote(f lift(x,RR),ring x)
+    else try promote(f lift(x,CC),ring x)
+    else (
+	n := try nilp x else error (toString f | ": expected an algebra over QQ"); -- by now this is incorrect; e.g., ZZ/p allowed
+	if n === infinity then error (toString f | ": undefined");
+	g(x,n)
+	)
+    )
+
+taylor (exp, (x,n) -> (
+	s := 1; xx := 1;
+	for k from 1 to n-1 do (
+            xx = (1/k)*xx*x;
+            s = s + xx;
+            );
+	s
+	))
+
+taylor (expm1, (x,n) -> (
+	s := 0; xx := 1;
+	for k from 1 to n-1 do (
+            xx = (1/k)*xx*x;
+            s = s + xx;
+            );
+	s
+	))
+
+sintaylor := (x,n) -> (
+    s := x; xx := x;
+    k := 3;
+    while k<n do (
+        xx = -(1/k/(k-1))*xx*x^2;
+	s = s + xx;
+	k=k+2;
+        );
+    s
+    )
+taylor (sin, sintaylor)
+
+costaylor := (x,n) -> (
+    s := 1; xx := 1;
+    k := 2;
+    while k<n do (
+        xx = -(1/k/(k-1))*xx*x^2;
+	s = s + xx;
+	k=k+2;
+        );
+    s
+    )
+taylor (cos, costaylor)
+
+taylor (tan, (x,n) -> sintaylor(x,n) * (costaylor(x,n))^-1)
+taylor (sec, (x,n) -> (costaylor(x,n))^-1)
+
+sinhtaylor := (x,n) -> (
+    s := x; xx := x;
+    k := 3;
+    while k<n do (
+        xx = (1/k/(k-1))*xx*x^2;
+	s = s + xx;
+	k=k+2;
+        );
+    s
+    )
+taylor (sinh, sinhtaylor)
+
+coshtaylor := (x,n) -> (
+    s := 1; xx := 1;
+    k := 2;
+    while k<n do (
+        xx = (1/k/(k-1))*xx*x^2;
+	s = s + xx;
+	k=k+2;
+        );
+    s
+    )
+taylor (cosh, coshtaylor)
+
+taylor (tanh, (x,n) -> sinhtaylor(x,n) * (coshtaylor(x,n))^-1)
+taylor (sech, (x,n) -> (coshtaylor(x,n))^-1)
+
+taylor (asin, (x,n) -> (
+	s := x; xx := x;
+	k := 3;
+	while k<n do (
+            xx = (k-2)/(k-1)*xx*x^2;
+	    s = s + xx/k;
+	    k=k+2;
+            );
+	s
+	))
+
+taylor (atan, (x,n) -> (
+	s := x; xx := x;
+	k := 3;
+	while k<n do (
+            xx = -xx*x^2;
+	    s = s + xx/k;
+	    k=k+2;
+            );
+	s
+	))
+
+taylor (log1p, (x,n) -> (
+	s:=x; xx := x;
+	k := 2;
+	while k<n do (
+        xx = -xx*x;
+	s = s + xx/k;
+	k=k+1;
+        );
+    s
+    ))
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

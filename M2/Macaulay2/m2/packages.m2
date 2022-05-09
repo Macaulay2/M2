@@ -188,6 +188,7 @@ needsPackage String  := opts -> pkgname -> (
     and instance(pkg := value PackageDictionary#pkgname, Package)
     and (opts.FileName === null or
 	realpath opts.FileName == realpath pkg#"source file")
+    and pkg.PackageIsLoaded
     then use value PackageDictionary#pkgname
     else loadPackage(pkgname, opts))
 
@@ -250,6 +251,10 @@ newPackage String := opts -> pkgname -> (
 	    (Headline, String),
 	    (HomePage, String)}, (name, type) -> if opts#name =!= null and not instance(opts#name, type) then
 	error("newPackage: expected ", toString name, " option of class ", toString type));
+    if opts.?Keywords then (
+	 if class opts.Keywords =!= List then error "expected Keywords value to be a list";
+	 if not all(opts.Keywords, k -> class k === String) then error "expected Keywords value to be a list of strings";
+	 );
     -- TODO: if #opts.Headline > 100 then error "newPackage: Headline is capped at 100 characters";
     -- the options coming from loadPackage are stored here
     loadOptions := if loadPackageOptions#?pkgname then loadPackageOptions#pkgname else loadPackageOptions#"default";
@@ -347,6 +352,7 @@ newPackage String := opts -> pkgname -> (
 	if packagePrefix =!= null then
 	"package prefix"           => packagePrefix
 	};
+    newpkg.PackageIsLoaded = false;
     --
     if packageLayout =!= null then (
 	rawdbname := databaseFilename(Layout#packageLayout, packagePrefix, pkgname);
@@ -443,6 +449,8 @@ newPackage("Core",
      Headline => "A computer algebra system designed to support algebraic geometry")
 Core#"pre-installed packages" = lines get (currentFileDirectory | "installedpackages")
 
+protect PackageIsLoaded
+
 endPackage = method()
 endPackage String := title -> (
      if currentPackage === null or title =!= currentPackage#"pkgname" then error ("package not current: ", title);
@@ -483,6 +491,7 @@ endPackage String := title -> (
 	  error splice ("mutable unexported unset symbol(s) in package ", pkg#"pkgname", ": ", toSequence between_", " b);
 	  );
      -- TODO: check for hadDocumentationWarning and Error here?
+     pkg.PackageIsLoaded = true;
      pkg)
 
 beginDocumentation = () -> (

@@ -13,6 +13,7 @@
 #include "matrix.hpp"
 #include "matrix-con.hpp"
 #include "mutablecomplex.hpp"
+#include "exceptions.hpp"
 
 LocalRing *LocalRing::create(const PolyRing *R, GBComputation *P)
 {
@@ -566,8 +567,7 @@ ring_elem LocalRing::power(const ring_elem a, int n) const
         }
       else
         {
-          ERROR("attempt to divide by non-unit");
-          return zero();
+          throw exc::engine_error("attempt to divide by a non-unit");
         }
 
       if (mRing->is_zero(bottom)) return set_non_unit_frac(f->numer);
@@ -590,17 +590,12 @@ ring_elem LocalRing::power(const ring_elem a, mpz_srcptr n) const
       mpz_t negative_n;
       mpz_init(negative_n);
       mpz_neg(negative_n, n);
-      if (is_unit(a))
+      if (not is_unit(a))
         {
-          top = mRing->power(f->denom, negative_n);
-          bottom = mRing->power(f->numer, negative_n);
+          throw exc::engine_error("attempt to divide by a non-unit");
         }
-      else
-        {
-          ERROR("attempt to divide by non-unit");
-          mpz_clear(negative_n);
-          return zero();
-        }
+      top = mRing->power(f->denom, negative_n);
+      bottom = mRing->power(f->numer, negative_n);
       mpz_clear(negative_n);
 
       if (mRing->is_zero(bottom)) return set_non_unit_frac(f->numer);
@@ -613,8 +608,7 @@ ring_elem LocalRing::invert(const ring_elem a) const
   const local_elem *f = a.get_local_elem();
   if (mRing->is_zero(f->numer) || !is_unit(a))
     {
-      ERROR("attempt to invert a non-unit");
-      return zero();
+      throw exc::engine_error("attempt to invert a non-unit");
     }
   ring_elem top = mRing->copy(f->denom);
   ring_elem bottom = mRing->copy(f->numer);
@@ -633,8 +627,7 @@ ring_elem LocalRing::divide(const ring_elem a, const ring_elem b) const
     }
   else
     {
-      ERROR("attempt to divide by non-unit");
-      return zero();
+      throw exc::engine_error("attempt to divide by a non-unit");
     }
   return ring_elem(make_elem(top, bottom));
 }
@@ -675,9 +668,7 @@ ring_elem LocalRing::eval(const RingMap *map,
     result = S->divide(top, bottom);
   else
     {
-      if (not error())  // FIXME: keep this?
-        ERROR("attempt to divide by non-unit");
-      result = S->from_long(0);
+      throw exc::engine_error("attempt to divide by a non-unit");
     }
   S->remove(top);
   S->remove(bottom);

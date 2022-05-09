@@ -928,7 +928,7 @@ document {
      "There is an ASCII version of this section of the documentation distributed
      in the file ", TT (Layout#1#"emacs" | "M2-emacs-help.txt"), ". It might be useful for you to visit
      that file with emacs now, thereby avoiding having to cut and paste bits of
-     text into emacs buffers for the deomonstrations below.",
+     text into emacs buffers for the demonstrations below.",
      PARA{},
      "If you are a newcomer to emacs, start up emacs with the command 
      ", TT "emacs", " and then start up the emacs tutorial with the keystrokes 

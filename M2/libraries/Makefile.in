@@ -21,6 +21,11 @@ $(foreach d,@LIBLIST@ @PROGLIST@,		\
 		$(eval $t-all: $t-in-$d)	\
 		$(eval .PHONY: $t-all)))
 
+ifeq (@HIGHLIGHTJS@,yes)
+fetch fetch-all:
+	$(MAKE) -C ../Macaulay2/editors highlightjs/node_modules
+endif
+
 uninstall:; rm -rf */.installed* $(BUILTLIBPATH)
 all:install-programs install-licenses
 install-programs:

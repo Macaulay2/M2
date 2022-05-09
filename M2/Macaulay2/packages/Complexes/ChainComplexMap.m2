@@ -535,13 +535,13 @@ part(List, ComplexMap) := ComplexMap => (deg, f) -> (
     )
 part(ZZ, ComplexMap) := ComplexMap => (deg, f) -> part({deg}, f)
 
-truncate(List, ComplexMap) := ComplexMap => {} >> o -> (e, f) -> (
+truncate(List, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> (
     C := truncate(e, source f);
     D := truncate(e, target f);
     d := degree f;
     map(D, C, i -> map(D_(i+d), C_i, truncate(e, f_i)), Degree => d)
     )
-truncate(ZZ, ComplexMap) := ComplexMap => {} >> o -> (e, f) -> truncate({e}, f)
+truncate(ZZ, ComplexMap) := ComplexMap => {} >> opts -> (e, f) -> truncate({e}, f)
 
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------
@@ -1354,7 +1354,7 @@ longExactSequence(ComplexMap, ComplexMap) := Complex => {Concentration => null} 
 horseshoeResolution = method(Options => {LengthLimit=>infinity})
 horseshoeResolution Complex := Sequence => opts -> ses -> (
     -- check that ses is a short exact sequence of modules
-    -- occurring in homological degrees 0,1,2.
+    -- occuring in homological degrees 0,1,2.
     -- at least check that the length is correct.
     f := yonedaExtension' ses;
     g := yonedaMap(f, LengthLimit => opts.LengthLimit);
@@ -1388,5 +1388,3 @@ connectingExtMap(Matrix, Matrix, Module) := ComplexMap => opts -> (g, f, N) -> (
     -- TODO: the indexing on opts.Concentration needs to be negated
     connectingMap(Hom(f', G), Hom(g', G), opts)
     )
-
-

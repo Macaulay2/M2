@@ -207,6 +207,47 @@ then AC_MSG_RESULT(yes)
 else AC_MSG_ERROR($TAR: GNU tar is required)
 fi
 
+AC_ARG_ENABLE([documentation],
+    [AS_HELP_STRING([--enable-documentation=...],
+        [space-delimited list of types of documentation to build; available
+         options are "html", "info", and "pdf"; default value is "html info"])],
+    [DOCUMENTATION=$enableval],
+    [DOCUMENTATION="html info"])
+
+if test "$DOCUMENTATION" = no
+then DOCUMENTATION=""
+elif test "$DOCUMENTATION" = yes
+then DOCUMENTATION="html info"
+else for DOCTYPE in $DOCUMENTATION
+    do case $DOCTYPE in
+            html|info|pdf)
+                ;;
+            *)
+                AC_MSG_ERROR([unknown documentation type ($DOCTYPE); expected html, info, or pdf])
+                ;;
+        esac
+    done
+fi
+
+AC_SUBST(DOCUMENTATION)
+
+AC_ARG_ENABLE([syntax-highlighting],
+    [AS_HELP_STRING([--enable-syntax-highlighting],
+	[whether to enable syntax highlighting using highlightjs in the html
+	 documentation])],
+    [HIGHLIGHTJS=$enableval],
+    [HIGHLIGHTJS=no])
+
+if test "x$HIGHLIGHTJS" = xyes
+then AC_CHECK_PROGS(NPM,npm,false)
+     if test "x$NPM" = xfalse
+     then AC_MSG_ERROR([npm is required for syntax highlighting])
+     fi
+else AC_SUBST(NPM,false)
+fi
+
+AC_SUBST(HIGHLIGHTJS)
+
 AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
 AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
@@ -357,20 +398,26 @@ AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 
-AC_SUBST(HAVE_LIBTBB,no)
-AC_SUBST(LIBTBB)
-   AC_LANG(C++)
-   AC_CHECK_HEADER(tbb/tbb.h,
-      [AC_SEARCH_LIBS(TBB_runtime_interface_version,"tbb",
-	 LIBTBB=$ac_cv_search_TBB_runtime_interface_version
-	 HAVE_LIBTBB=yes,
-	 [AC_MSG_ERROR([tbb library not found])])],
-       [AC_MSG_ERROR([tbb include file (tbb.h) not found])])
-   AC_LANG(C)
-
-# the following line remove -ltbb from LIBS (only thing in LIBS so far).  It is not needed
-# for linking M2-binary.  It is used in mathicgb.
-# LIBS=
+AC_SUBST(ENABLE_TBB,yes)  AC_ARG_ENABLE(tbb, AS_HELP_STRING(--disable-tbb,disable use of the tbb (threaded building blocks) library), ENABLE_TBB=$enableval)
+if test $ENABLE_TBB = yes
+then AC_DEFINE(WITH_TBB,1,[whether the tbb library has been enabled by the builder])
+     AC_SUBST(LIBTBB)		dnl LIBTBB is usually set to -ltbb
+     AC_LANG(C++)
+     AC_CHECK_HEADER(tbb/tbb.h,
+	[AC_SEARCH_LIBS(TBB_runtime_interface_version,"tbb",
+	   LIBTBB=$ac_cv_search_TBB_runtime_interface_version,
+	   [AC_MSG_ERROR([tbb library not found])])],
+	 [AC_MSG_ERROR([tbb include file (tbb.h) not found])])
+     AC_RUN_IFELSE([AC_LANG_SOURCE([[
+		#include <stdio.h>
+		#define TBB_SUPPRESS_DEPRECATED_MESSAGES 1
+		#include <tbb/tbb.h>
+		int main () {
+		  printf("tbb version %d.%d found\n", TBB_VERSION_MAJOR, TBB_VERSION_MINOR);
+		  return 0;
+		}
+ 	     ]])])
+fi
 
 AC_CHECK_FUNCS([herror error clock_gettime getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink socket accept fcntl personality ioctl])
 
@@ -752,18 +799,30 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      fi
 fi
 
-AC_MSG_CHECKING(whether package bdw-gc is provided)
+## we build gc by default so we can configure it for large memory spaces
+## see issue #2445
+AC_ARG_WITH([system-gc],
+    [AS_HELP_STRING([--with-system-gc],
+        [use system gc instead of building it])],
+    [],
+    [with_system_gc=no])
+
+AS_IF([test "x$with_system_gc" = xyes],
+    [AC_MSG_CHECKING(whether package bdw-gc is provided)
 dnl Note: we don't include -lgccpp below, because linking with that library is what replaces ::new and friends with GC_MALLOC_UNCOLLECTABLE and friends:
-if [ pkg-config --exists bdw-gc ]
-then AC_MSG_RESULT(yes)
-     CPPFLAGS="`pkg-config --cflags-only-I bdw-gc | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
-     dnl should probably use `pkg-config --libs bdw-gc` here instead
-     FOUND_gc=yes
-else AC_MSG_RESULT(no)
-     BUILD_gc=yes
-fi
+     if [ pkg-config --exists bdw-gc ]
+     then AC_MSG_RESULT(yes)
+          CPPFLAGS="`pkg-config --cflags-only-I bdw-gc | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
+          dnl should probably use `pkg-config --libs bdw-gc` here instead
+          FOUND_gc=yes
+     else AC_MSG_RESULT(no)
+          BUILD_gc=yes
+     fi],
+    [BUILD_gc=yes])
+
 if test $BUILD_gc = yes
 then BUILTLIBS="-lgc -lpthread $BUILTLIBS"
+     BUILD_ALWAYS="$BUILD_ALWAYS gc"
 else if test $SHARED = no -a $TRY_STATIC = yes
      then SEARCH_LIBRARIES(GC_malloc,"/usr/lib/libgc.a" "/usr/local/lib/libgc.a",,
           [AC_MSG_ERROR([libgc.a not found])])
@@ -1214,35 +1273,44 @@ then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
 fi
 
-dnl if test $BUILD_memtailor = no
-dnl then AC_LANG(C++)
-dnl      SAVE_CXXFLAGS="$CXXFLAGS"
-dnl      CXXFLAGS="$CXXFLAGS"
-dnl      AC_SEARCH_LIBS(MEMTAILOR_VERSION_STRING,memtailor,,BUILD_memtailor=yes)
-dnl      AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
-dnl      CXXFLAGS="$SAVE_CXXFLAGS"
-dnl fi
-dnl test $BUILD_memtailor = yes && BUILTLIBS="-lmemtailor $BUILTLIBS"
+AC_ARG_WITH([system-memtailor],
+    [AS_HELP_STRING([--with-system-memtailor],
+	[use system memtailor instead of building git submodule])],,
+    [with_system_memtailor=no])
+if test $with_system_memtailor = no
+then
+    BUILD_memtailor=yes
+    BUILTLIBS="-lmemtailor $BUILTLIBS"
+else AC_LANG(C++)
+    AC_SEARCH_LIBS(MEMTAILOR_VERSION_STRING,memtailor,,BUILD_memtailor=yes)
+    AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
+fi
 
-dnl if test $BUILD_mathic = no
-dnl then AC_LANG(C++)
-dnl      SAVE_CXXFLAGS="$CXXFLAGS"
-dnl      CXXFLAGS="$CXXFLAGS"
-dnl      AC_SEARCH_LIBS(MATHIC_VERSION_STRING,mathic,,BUILD_mathic=yes)
-dnl      AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
-dnl      CXXFLAGS="$SAVE_CXXFLAGS"
-dnl fi
-dnl test $BUILD_mathic = yes && BUILTLIBS="-lmathic $BUILTLIBS"
+AC_ARG_WITH([system-mathic],
+    [AS_HELP_STRING([--with-system-mathic],
+	[use system mathic instead of building git submodule])],,
+    [with_system_mathic=no])
+if test $with_system_mathic = no
+then
+    BUILD_mathic=yes
+    BUILTLIBS="-lmathic $BUILTLIBS"
+else AC_LANG(C++)
+    AC_SEARCH_LIBS(MATHIC_VERSION_STRING,mathic,,BUILD_mathic=yes)
+    AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
+fi
 
-dnl if test $BUILD_mathicgb = no
-dnl then AC_LANG(C++)
-dnl      SAVE_CXXFLAGS="$CXXFLAGS"
-dnl      CXXFLAGS="$CXXFLAGS"
-dnl      AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes; AC_MSG_NOTICE(will build mathicgb))
-dnl      AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes; AC_MSG_NOTICE(will build mathicgb))
-dnl      CXXFLAGS="$SAVE_CXXFLAGS"
-dnl fi
-dnl test $BUILD_mathicgb = yes && BUILTLIBS="-lmathicgb $BUILTLIBS"
+AC_ARG_WITH([system-mathicgb],
+    [AS_HELP_STRING([--with-system-mathicgb],
+	[use system mathicgb instead of building git submodule])],,
+    [with_system_mathicgb=no])
+if test $with_system_mathicgb = no
+then
+    BUILD_mathicgb=yes
+    BUILTLIBS="-lmathicgb $BUILTLIBS"
+else AC_LANG(C++)
+    AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes)
+    AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes)
+fi
 
 if test $BUILD_gtest = no
 then
@@ -1324,6 +1392,9 @@ fi
 
 AX_BOOST_REGEX
 LIBS="$LIBS $BOOST_REGEX_LIB"
+
+AC_CHECK_HEADERS([boost/math/special_functions.hpp], [],
+    [AC_MSG_ERROR([Boost Math Toolkit not available])])
 
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
@@ -1856,6 +1927,7 @@ AC_MSG_NOTICE([with  OPTIMIZE          = $OPTIMIZE])
 AC_MSG_NOTICE([with  DEBUG             = $DEBUG])
 AC_MSG_NOTICE([with  GIT_DESCRIPTION   = $GIT_DESCRIPTION])
 AC_MSG_NOTICE([with  USING_MPIR        = $USING_MPIR])
+AC_MSG_NOTICE([with  DOCUMENTATION     = $DOCUMENTATION])
 
 subset() {
     # whether the words of $1 are among the words of $2

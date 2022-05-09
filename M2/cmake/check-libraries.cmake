@@ -20,6 +20,7 @@ message(CHECK_START " Checking for existing libraries and programs")
 find_package(PkgConfig	REQUIRED QUIET)
 find_program(MAKE  NAMES gmake make)
 find_program(ETAGS NAMES etags)
+find_program(NPM   NAMES npm)
 
 if(BUILD_DOCS)
   find_package(Doxygen)
@@ -31,7 +32,7 @@ endif()
 #   Threads	libc6-dev	glibc-headers	N/A
 #   LAPACK	libopenblas-dev	openblas-devel	N/A (Accelerate)
 #   Boost	libboost-dev    boost-devel     boost (Regex and Stacktrace)
-#   TBB 	libtbb-dev	tbb-devel	tbb
+#   TBB 	libtbb-dev	tbb-devel	tbb (Optional)
 #   OpenMP	libomp-dev	libomp-devel	libomp (Optional)
 #   GDBM	libgdbm-dev	gdbm-devel	gdbm
 #   libatomic_ops libatomic_ops-dev libatomic_ops-devel libatomic_ops
@@ -52,7 +53,6 @@ else()
   set(Boost_stacktrace_header_only YES)
 endif()
 
-find_package(TBB	REQUIRED QUIET) # See FindTBB.cmake
 # TODO: replace gdbm, see https://github.com/Macaulay2/M2/issues/594
 find_package(GDBM	REQUIRED QUIET) # See FindGDBM.cmake
 # TODO: replace libatomic_ops, see https://github.com/Macaulay2/M2/issues/1113
@@ -74,6 +74,10 @@ foreach(lang IN ITEMS C CXX)
     set(OpenMP_${lang}_LDLIBS "${OpenMP_${lang}_LDLIBS} -L${_libdir} -Wl,-rpath,${_libdir} -l${_lib}")
   endforeach()
 endforeach()
+
+if(WITH_TBB)
+  find_package(TBB REQUIRED)
+endif()
 
 ###############################################################################
 ## Platform dependent requirements:

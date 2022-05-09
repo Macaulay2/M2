@@ -35,7 +35,6 @@ private:
 #include "interrupted.hpp"
 
 #include "aring-m2-gf.hpp"
-#include <iostream>
 
 bool GF::initialize_GF(const RingElement *prim)
 {
@@ -51,10 +50,9 @@ bool GF::initialize_GF(const RingElement *prim)
 
   if (_originalR->n_quotients() != 1)
     {
-      ERROR(
+      throw exc::engine_error(
           "rawGaloisField expected an element of a quotient ring of the form "
           "ZZ/p[x]/(f)");
-      return false;
     }
   ring_elem f = _originalR->quotient_element(0);
   Nterm *t = f;
@@ -90,8 +88,7 @@ bool GF::initialize_GF(const RingElement *prim)
 
   if (polys.size() != Q_)
     {
-      ERROR("GF: primitive element expected");
-      return false;
+      throw exc::engine_error("GF: primitive element expected");
     }
 
   assert(_x_exponent >= 0);
@@ -121,9 +118,6 @@ bool GF::initialize_GF(const RingElement *prim)
   zeroV = from_long(0);
   oneV = from_long(1);
   minus_oneV = from_long(-1);
-
-  // M2::GaloisFieldTable G(*_originalR, primelem);
-  //  G.display(std::cout);
 
   return true;
 }
@@ -382,30 +376,55 @@ ring_elem GF::mult(const ring_elem f, const ring_elem g) const
 
 ring_elem GF::power(const ring_elem f, int n) const
 {
-  if (f.get_int() == _ZERO) return ring_elem(_ZERO);
-  int m = (f.get_int() * n) % Q1_;
-  if (m <= 0) m += Q1_;
-  return ring_elem(m);
+  if (f.get_int() != _ZERO)
+    {
+      int m = (f.get_int() * n) % Q1_;
+      if (m <= 0) m += Q1_;
+      return ring_elem(m);
+    }
+  else
+    {
+      // f == 0 element.
+      if (n == 0)
+        return ring_elem(_ONE);
+      else if (n > 0)
+        return ring_elem(_ZERO);
+      else
+        throw exc::division_by_zero_error();
+    }
 }
 ring_elem GF::power(const ring_elem f, mpz_srcptr n) const
 {
-  if (f.get_int() == _ZERO) return ring_elem(_ZERO);
-  int exp = RingZZ::mod_ui(n, Q1_);
-  int m = (f.get_int() * exp) % Q1_;
-  if (m <= 0) m += Q1_;
-  return ring_elem(m);
+  if (f.get_int() != _ZERO)
+    {
+      int exp = RingZZ::mod_ui(n, Q1_);
+      int m = (f.get_int() * exp) % Q1_; // WARNING TODO: possible overflow! Check!
+      if (m <= 0) m += Q1_;
+      return ring_elem(m);
+    }
+  else
+    {
+      if (mpz_sgn(n) == 0)
+        return ring_elem(_ONE);
+      else if (mpz_sgn(n) > 0)
+        return ring_elem(_ZERO);
+      else
+        throw exc::division_by_zero_error();
+    }
 }
 
 ring_elem GF::invert(const ring_elem f) const
 {
-  // error if f == _ZERO
+  if (f.get_int() == _ZERO)
+    throw exc::division_by_zero_error();
   if (f.get_int() == _ONE) return ring_elem(_ONE);
   return ring_elem(Q1_ - f.get_int());
 }
 
 ring_elem GF::divide(const ring_elem f, const ring_elem g) const
 {
-  if (g.get_int() == _ZERO) assert(0);  // MES: raise an exception
+  if (g.get_int() == _ZERO)
+    throw exc::division_by_zero_error();
   if (f.get_int() == _ZERO) return ring_elem(_ZERO);
   return modulus_sub(f.get_int(), g.get_int(), Q1_);
 }

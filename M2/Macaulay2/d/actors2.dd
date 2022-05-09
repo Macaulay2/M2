@@ -64,7 +64,7 @@ toList(e:Expr):Expr := (
 	       	    false)))
      is s:stringCell do list(strtoseq(s))
      else WrongArg("list, sequence, set, or string"));
-setupfun("toList",toList);
+setupfun("toList1",toList);
 values(e:Expr):Expr := (
      when e
      is oc:DictionaryClosure do (

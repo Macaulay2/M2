@@ -1,8 +1,7 @@
 // Copyright 2011 Michael E. Stillman
 
 #include "aring-zzp-ffpack.hpp"
-#include "error.h"
-
+#include "exceptions.hpp"
 #include "ringmap.hpp"
 
 namespace M2 {
@@ -52,8 +51,7 @@ ARingZZpFFPACK::ElementType ARingZZpFFPACK::computeGenerator() const
           return currElem;
         }
     }
-  assert(false);  // we should not get here, if the program logic is OK
-  return ElementType(1);
+  throw exc::internal_error("program logic in ffpack code is wrong if we get to this error");
 }
 
 bool ARingZZpFFPACK::is_unit(const ElementType f) const
@@ -134,7 +132,7 @@ void ARingZZpFFPACK::negate(ElementType &result, const ElementType a) const
 /// I vote for two invert functions, one with this check and one without.(Jakob)
 void ARingZZpFFPACK::invert(ElementType &result, const ElementType a) const
 {
-  if (mFfpackField.isZero(a)) ERROR(" division by zero");
+  if (mFfpackField.isZero(a)) throw exc::division_by_zero_error();
   mFfpackField.inv(result, a);
 }
 
@@ -180,7 +178,8 @@ void ARingZZpFFPACK::divide(ElementType &result,
                             const ElementType a,
                             const ElementType b) const
 {
-  if (mFfpackField.isZero(b)) ERROR(" division by zero");
+  if (mFfpackField.isZero(b))
+    throw exc::division_by_zero_error();
   mFfpackField.div(result, a, b);
 }
 
@@ -190,8 +189,12 @@ void ARingZZpFFPACK::power(ElementType &result,
 {
   if (is_zero(a))
     {
-      if (n < 0) ERROR("division by zero");
-      set(result, a);
+      if (n < 0)
+        throw exc::division_by_zero_error();
+      else if (n == 0)
+        set_from_long(result, 1);
+      else
+        set_zero(result);
       return;
     }
   ElementType base;
@@ -206,7 +209,6 @@ void ARingZZpFFPACK::power(ElementType &result,
   if (n == 0) return;
 
   // Now use doubling algorithm
-  assert(n > 0);
   for (;;)
     {
       if ((n % 2) != 0) mFfpackField.mulin(result, base);  // result *= base
@@ -224,9 +226,21 @@ void ARingZZpFFPACK::power_mpz(ElementType &result,
                                const ElementType a,
                                mpz_srcptr n) const
 {
-  if (is_zero(a) && mpz_sgn(n)<0) ERROR("division by zero");
-  STT n1 = static_cast<STT>(mpz_fdiv_ui(n, mFfpackField.cardinality() - 1));
-  power(result, a, n1);
+  if (is_zero(a))
+    {
+      if (mpz_sgn(n) < 0)
+        throw exc::division_by_zero_error();
+      else if (mpz_sgn(n) == 0)
+        set_from_long(result, 1);
+      else
+        set_zero(result);
+    }
+  else
+    {
+      // a != 0
+      STT n1 = static_cast<STT>(mpz_fdiv_ui(n, mFfpackField.cardinality() - 1));
+      power(result, a, n1);
+    }
 }
 
 ///@note duplicate code

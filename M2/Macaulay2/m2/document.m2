@@ -389,7 +389,7 @@ hasDocumentation = key -> null =!= fetchAnyRawDocumentation makeDocumentTag(key,
 locate DocumentTag := tag -> (
     if (rawdoc := fetchAnyRawDocumentation tag) =!= null
     then (minimizeFilename rawdoc#"filename", rawdoc#"linenum")
-    else (currentFileName, currentLineNumber()))
+    else (currentFileName, currentRowNumber()))
 
 -----------------------------------------------------------------------------
 -- helpers for the document function
@@ -452,7 +452,8 @@ processSignature := (tag, fn) -> item -> (
 	opttag := getPrimaryTag makeDocumentTag([fn, optsymb], Package => package tag);
 	name := if tag === opttag then TT toString optsymb else TO2 { opttag, toString optsymb };
 	type  = if type =!= null and type =!= Nothing then ofClass type else TT "..."; -- type Nothing is treated as above
-	defval := SPAN{"default value ", reproduciblePaths replace("^-\\*Function.*?\\*-", "-*Function*-", toString opts#optsymb)};
+	maybeformat := if instance(opts#optsymb, String) then format else identity;
+	defval := SPAN{"default value ", maybeformat reproduciblePaths replace("^-\\*Function.*?\\*-", "-*Function*-", toString opts#optsymb)};
 	text = if text =!= null and #text > 0 then text else if tag =!= opttag then LATER {() -> headline opttag};
 	text = if text =!= null and #text > 0 then (", ", text);
 	-- e.g: Key => an integer, default value 42, the meaning of the universe
@@ -536,7 +537,7 @@ getUsage := val -> (
     if not instance(val, String) then error "Usage: expected a string";
     val = apply(nonempty separate val, u -> replace("^[[:space:]]*(.*)[[:space:]]*$", "\\1", u));
     if #val === 0 then error "Usage: expected content";
-    DL flatten { "class" => "element", DT "Usage: ", DD \ TT \ val } )
+    DL flatten { "class" => "element", DT "Usage: ", DD \ M2CODE \ val } )
 
 getHeadline   := (val, key)   -> (
     title := if instance(val, String) then fixup val else error("expected ", toString key, " option to be a string");
@@ -545,7 +546,7 @@ getHeadline   := (val, key)   -> (
     title)
 getSubsection := (val, title) -> fixup DIV { SUBSECTION title, val }
 getSourceCode :=  val         -> DIV {"class" => "waystouse",
-    fixup DIV {SUBSECTION "Code", PRE demark_newline unstack stack apply(enlist val, m -> (
+    fixup DIV {SUBSECTION "Code", PRE M2CODE demark_newline unstack stack apply(enlist val, m -> (
 		f := lookup m; if f === null then error("SourceCode: ", toString m, ": not a method");
 		c := code f;   if c === null then error("SourceCode: ", toString m, ": code for method not found");
 		reproduciblePaths toString c))}}
@@ -649,7 +650,7 @@ document List := opts -> args -> (
 		    PrimaryTag => tag, -- tag must be primary
 		    symbol DocumentTag => tag2,
 		    "filename" => currentFileName,
-		    "linenum" => currentLineNumber()
+		    "linenum" => currentRowNumber()
 		    })));
     -- Check BaseFunction
     assert(not o.?BaseFunction or instance(o.BaseFunction, Function));
@@ -668,7 +669,7 @@ document List := opts -> args -> (
     if #ino > 0 then o.Options = ino else remove(o, Options);
     -- Set the location of the documentation
     o#"filename" = currentFileName;
-    o#"linenum"  = currentLineNumber();
+    o#"linenum"  = currentRowNumber();
     currentDocumentTag = null;
     storeRawDocumentation(tag, new HashTable from o))
 
@@ -684,7 +685,7 @@ undocumented Thing := key -> if key =!= null then (
 	    symbol DocumentTag => tag,
 	    "undocumented"     => true,
 	    "filename"         => currentFileName,
-	    "linenum"          => currentLineNumber()
+	    "linenum"          => currentRowNumber()
 	    }))
 
 -- somehow, this is the very first method called by the Core!!

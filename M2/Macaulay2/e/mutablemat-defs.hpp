@@ -274,7 +274,7 @@ class MutableMat : public MutableMatrix
   // Returns false if (r,c) is out of range or if result is 0.  No error
   // is returned. result <-- this(r,c), and is set to zero if false is returned.
   {
-    if (r >= 0 && r < n_rows() && c >= 0 && c < n_cols())
+    if (r < n_rows() && c < n_cols())
       {
         elem a;
 
@@ -497,7 +497,7 @@ class MutableMat : public MutableMatrix
   virtual bool insert_columns(size_t i, size_t n_to_add)
   /* Insert n_to_add columns directly BEFORE column i. */
   {
-    if (i < 0 || i > n_cols() || n_to_add < 0)
+    if (i > n_cols())
       {
         ERROR("cannot insert %l columns before column %ln", n_to_add, i);
         return false;
@@ -509,7 +509,7 @@ class MutableMat : public MutableMatrix
   virtual bool insert_rows(size_t i, size_t n_to_add)
   /* Insert n_to_add rows directly BEFORE row i. */
   {
-    if (i < 0 || i > n_rows() || n_to_add < 0)
+    if (i > n_rows())
       {
         ERROR("cannot insert %l rows before row %ln", n_to_add, i);
         return false;

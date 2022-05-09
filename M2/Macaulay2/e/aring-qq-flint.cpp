@@ -13,7 +13,11 @@ ARingQQFlint::ARingQQFlint()
 }
 
 // This function will likely not ever get called.
-ARingQQFlint::~ARingQQFlint() { flint_randclear(mRandomState); }
+ARingQQFlint::~ARingQQFlint()
+{
+  flint_randclear(mRandomState);
+}
+
 void ARingQQFlint::eval(const RingMap* map,
                         const ElementType& f,
                         int first_var,
@@ -22,13 +26,12 @@ void ARingQQFlint::eval(const RingMap* map,
   mpq_t temp;
   flint_mpq_init_set_readonly(temp, &f);
   bool ok = map->get_ring()->from_rational(temp, result);
+  flint_mpq_clear_readonly(temp);
   if (!ok)
     {
       // if there is already an error message don't add in another
-      if (not error()) ERROR("cannot map rational to this ring");
-      result = map->get_ring()->from_long(0);
+      throw exc::engine_error("cannot map rational to this ring");
     }
-  flint_mpq_clear_readonly(temp);
 }
 
 void ARingQQFlint::elem_text_out(buffer& o,

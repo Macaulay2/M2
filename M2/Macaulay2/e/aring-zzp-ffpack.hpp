@@ -8,6 +8,7 @@
 #include "ringelem.hpp"
 
 #include <type_traits> // define bool_constant to fix issue #2347
+#include <utility>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"

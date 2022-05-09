@@ -145,6 +145,7 @@ ring_elem Z_mod::from_int(mpz_srcptr n) const
   mpz_init(result);
   mpz_mod_ui(result, n, P);
   int m = static_cast<int>(mpz_get_si(result));
+  mpz_clear(result);
   //  cout << m << endl;
   if (m < 0) m += P;
   m = _log_table[m];
@@ -249,7 +250,10 @@ ring_elem Z_mod::mult(const ring_elem f, const ring_elem g) const
 ring_elem Z_mod::power(const ring_elem f, int n) const
 {
   if (f.get_int() == _ZERO) {
-    if (n<0) ERROR("division by zero");
+    if (n < 0)
+      throw exc::division_by_zero_error();
+    else if (n == 0)
+      return ring_elem(0); // this is the element one in this ring.  (P-1) is the zero element...
     return ring_elem(_ZERO);
   }
   int m = (f.get_int() * n) % _P1;
@@ -259,7 +263,9 @@ ring_elem Z_mod::power(const ring_elem f, int n) const
 ring_elem Z_mod::power(const ring_elem f, mpz_srcptr n) const
 {
   if (f.get_int() == _ZERO) {
-    if (mpz_sgn(n)<0) ERROR("division by zero");
+    if (mpz_sgn(n)<0) throw exc::division_by_zero_error();
+    else if (mpz_sgn(n) == 0)
+      return ring_elem(0);
     return ring_elem(_ZERO);
   }
   int n1 = RingZZ::mod_ui(n, _P1);
@@ -270,16 +276,15 @@ ring_elem Z_mod::power(const ring_elem f, mpz_srcptr n) const
 
 ring_elem Z_mod::invert(const ring_elem f) const
 {
-  // MES: error if f == _ZERO
   int a = f.get_int();
-  if (a == _ZERO) ERROR("division by zero");
+  if (a == _ZERO) throw exc::division_by_zero_error();
   if (a == 0) return 0;  // this is the case f == ONE
   return ring_elem(P - 1 - a);
 }
 
 ring_elem Z_mod::divide(const ring_elem f, const ring_elem g) const
 {
-  if (g.get_int() == _ZERO) assert(false);  // MES: raise an exception
+  if (g.get_int() == _ZERO) throw exc::division_by_zero_error();
   if (f.get_int() == _ZERO) return ring_elem(_ZERO);
   int h = modulus_sub(f.get_int(), g.get_int(), _P1);
   return ring_elem(h);

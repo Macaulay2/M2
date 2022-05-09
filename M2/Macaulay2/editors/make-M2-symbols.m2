@@ -8,6 +8,7 @@
 --  - Atom & Linguist: https://github.com/Macaulay2/language-macaulay2
 --  - Rouge
 --  - Pygments
+--  - highlight.js
 
 -------------------------------------------------------------------------------
 -- TODO: Move these two elsewhere:
@@ -133,6 +134,16 @@ symbolsForPygments = template -> (
     output = replace("@M2STRINGS@",                  STRINGS,   output);
     output)
 
+hljsformat = symlist -> demark("," | newline | "	", format \ symlist)
+symbolsForHighlightJS = template -> (
+    output := replace("@M2BANNER@",   banner,               template);
+    output = replace("@M2VERSION@",   version#"VERSION",    output);
+    output = replace("@M2KEYWORDS@",  hljsformat KEYWORDS,  output);
+    output = replace("@M2DATATYPES@", hljsformat DATATYPES, output);
+    output = replace("@M2FUNCTIONS@", hljsformat FUNCTIONS, output);
+    output = replace("@M2CONSTANTS@", hljsformat CONSTANTS, output);
+    output)
+
 -------------------------------------------------------------------------------
 -- Generate syntax files from templates in the same directory
 
@@ -163,6 +174,9 @@ generateGrammar("vim/m2.vim.dict", symbolsForVim); -- TODO: is this necessary?
 
 -- Pygments: Write macaulay2.py
 generateGrammar("pygments/macaulay2.py", symbolsForPygments)
+
+-- highlight.js: Write macaulay2.js
+generateGrammar("highlightjs/macaulay2.js", symbolsForHighlightJS)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs M2-symbols "

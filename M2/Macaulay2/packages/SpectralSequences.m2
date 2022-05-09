@@ -297,10 +297,10 @@ filteredComplex(List) := FilteredComplex => opts -> L -> (
     if opts.ReducedHomology == true then (
     C = chainComplex L#0; -- By default the ambient simplicial complex is the first element of the list
     maps = apply(#L-1, p -> map(C, chainComplex L#(p+1), 
-        i -> sub(contract(transpose faces(i,L#0), faces(i,L#(p+1))), kk))))
+        i -> sub(contract(transpose matrix{faces(i,L#0)}, matrix{faces(i,L#(p+1))}), kk))))
     else (C = truncate(chainComplex L#0,1); -- By default the ambient simplicial complex is the first element of the list
     maps = apply(#L-1, p -> map(C, truncate(chainComplex L#(p+1),1), 
-        i -> sub(contract(transpose faces(i,L#0), faces(i,L#(p+1))), kk))))   
+        i -> sub(contract(transpose matrix{faces(i,L#0)}, matrix{faces(i,L#(p+1))}), kk))))   
  )
   else (
     maps = L;

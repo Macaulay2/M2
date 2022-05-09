@@ -149,6 +149,7 @@ export envp := array(string)();
 export argv := array(string)();
 export args := array(string)();
 export gbTrace := 0;
+export numTBBThreads := 0; -- 0 means use the maximum
 export numericalAlgebraicGeometryTrace := 0;
 export notify := false;
 export readonlyfiles := false;				    -- see stdio.d
