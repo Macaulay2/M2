@@ -742,7 +742,12 @@ M2Homotopy /* or null */ *rawHomotopy(M2SLEvaluator *Hx,
                                     M2SLEvaluator *Hxt,
                                     M2SLEvaluator *HxH)
 {
-  return new M2Homotopy(Hx->value().createHomotopy(&(Hxt->value()), &(HxH->value())));
+  try {
+    return new M2Homotopy(Hx->value().createHomotopy(&(Hxt->value()), &(HxH->value())));
+  } catch (const exc::engine_error& e) {
+    ERROR(e.what());
+    return nullptr;
+  }
 }
 
 M2_bool rawHomotopyTrack(M2Homotopy *H,
@@ -756,15 +761,20 @@ M2_bool rawHomotopyTrack(M2Homotopy *H,
                          gmp_RR infinity_threshold,
                          M2_bool checkPrecision)
 {
-  return H->value().track(inputs,
-                  outputs,
-                  output_extras,
-                  init_dt,
-                  min_dt,
-                  epsilon,  // o.CorrectorTolerance,
-                  max_corr_steps,
-                  infinity_threshold,
-                  checkPrecision);
+  try {
+    return H->value().track(inputs,
+                            outputs,
+                            output_extras,
+                            init_dt,
+                            min_dt,
+                            epsilon,  // o.CorrectorTolerance,
+                            max_corr_steps,
+                            infinity_threshold,
+                            checkPrecision);
+  } catch (const exc::engine_error& e) {
+    ERROR(e.what());
+    return false;
+  }
 }
 
 M2_string rawHomotopyToString(M2Homotopy *H)
@@ -786,14 +796,24 @@ M2SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(
     M2SLEvaluator *H,
     const MutableMatrix *parameters)
 {
-  return new M2SLEvaluator(H->value().specialize(parameters));
+  try {
+    return new M2SLEvaluator(H->value().specialize(parameters));
+  } catch (const exc::engine_error& e) {
+    ERROR(e.what());
+    return nullptr;
+  }
 }
 
 M2_bool rawSLEvaluatorEvaluate(M2SLEvaluator *sle,
                                const MutableMatrix *inputs,
                                MutableMatrix *outputs)
 {
-  return sle->value().evaluate(inputs, outputs);
+  try {
+    return sle->value().evaluate(inputs, outputs);
+  } catch (const exc::engine_error& e) {
+    ERROR(e.what());
+    return false;
+  }
 }
 
 M2_string rawSLEvaluatorToString(M2SLEvaluator *sle)
@@ -840,13 +860,23 @@ gmp_ZZ rawSLPDivideGate(M2SLProgram *S, M2_arrayint a)
 StraightLineProgram /* or null */ *rawSLP(const Matrix *consts,
                                           M2_arrayint program)
 {
-  return StraightLineProgram::make(consts, program);
+  try {
+    return StraightLineProgram::make(consts, program);
+  } catch (const exc::engine_error& e) {
+    ERROR(e.what());
+    return nullptr;
+  }
 }
 
 const Matrix /* or null */ *rawEvaluateSLP(StraightLineProgram *SLP,
                                            const Matrix *vals)
 {
-  return SLP->evaluate(vals);
+  try {
+    return SLP->evaluate(vals);
+  } catch (const exc::engine_error& e) {
+    ERROR(e.what());
+    return nullptr;
+  }
 }
 
 M2_string rawStraightLineProgramToString(StraightLineProgram *slp)
@@ -867,19 +897,34 @@ PathTracker /* or null */ *rawPathTrackerPrecookedSLPs(
     StraightLineProgram *slp_pred,
     StraightLineProgram *slp_corr)
 {
-  return PathTracker::make(slp_pred, slp_corr);
+  try {
+    return PathTracker::make(slp_pred, slp_corr);
+  } catch (const exc::engine_error& e) {
+    ERROR(e.what());
+    return nullptr;
+  }
 }
 
 PathTracker /* or null */ *rawPathTracker(const Matrix *HH)
 {
-  return PathTracker::make(HH);
+  try {
+    return PathTracker::make(HH);
+  } catch (const exc::engine_error& e) {
+    ERROR(e.what());
+    return nullptr;
+  }
 }
 
 PathTracker /* or null */ *rawPathTrackerProjective(const Matrix *S,
                                                     const Matrix *T,
                                                     gmp_RR productST)
 {
-  return PathTracker::make(S, T, productST);
+  try {
+    return PathTracker::make(S, T, productST);
+  } catch (const exc::engine_error& e) {
+    ERROR(e.what());
+    return nullptr;
+  }
 }
 
 M2_string rawPathTrackerToString(PathTracker *p)
@@ -906,7 +951,12 @@ unsigned int rawPointArrayHash(M2PointArray *pa)
 
 M2PointArray /* or null */ *rawPointArray(double epsilon, int n)
 {
-  return new M2PointArray(new PointArray(epsilon, n));
+  try {
+    return new M2PointArray(new PointArray(epsilon, n));
+  } catch (const exc::engine_error& e) {
+    ERROR(e.what());
+    return nullptr;
+  }
 }
 
 PointArray::RealVector getRealVector(const MutableMatrix *M, int col)
