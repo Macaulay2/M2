@@ -1126,13 +1126,13 @@ allMatroids (ZZ, ZZ) := List => (n, r) -> (
 	if r == 1 then return {uniformMatroid(1, n)} | apply(n-1, i -> matroid(E, take(subsets(n, 1), i+1), EntryMode => "nonbases"));
 	if n > 9 then error "allMatroids: Can only return all matroids on <= 9 elements";
 	PE := reverse sort subsets(set E, r);
-	dir := first select(prepend("./Matroids/", path), p -> fileExists(p | "SmallMatroids.txt"));
+	dir := first select(path, p -> fileExists(p | "Matroids/SmallMatroids.txt"));
 	db := if (n, r) =!= (9, 4) then (
 		numMatroids := {7,13,23,38,37,108,58,325,940,87,1275}; -- cf. Table 1 in https://arxiv.org/pdf/math/0702316.pdf
 		K := {(4,2),(5,2),(6,2),(6,3),(7,2),(7,3),(8,2),(8,3),(8,4),(9,2),(9,3)};
 		H := hashTable apply(#K, i -> K#i => {2*i+1+sum take(numMatroids,i), 2*i+sum take(numMatroids,i+1)});
-		take(lines get(dir | "SmallMatroids.txt"), H#(n,r))
-	) else lines get(dir | "r4n9.txt");
+		take(lines get(dir | "Matroids/SmallMatroids.txt"), H#(n,r))
+	) else lines get(dir | "Matroids/r4n9.txt");
 	apply(db, l -> matroid(E, PE_(positions(characters l, c -> c === "*"))))
 )
 allMatroids ZZ := List => n -> flatten apply(n+1, i -> allMatroids(n, i))
