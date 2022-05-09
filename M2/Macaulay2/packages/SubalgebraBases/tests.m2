@@ -19,7 +19,7 @@
 -- 15) invariants of A^1, with a nilpotent action of A^4
 -- 16) elimination order on ambient ring
 -- 17) 'symmetric' quadratic artin ideal in 2x3 variables
--- 18) toricSyz, Sturmfels example 11.19
+-- 18) toricSyz, Sturmfels example 11.19 -- Removed due to toricSyz removal
 
 ----------------------------------------
 -- New Tests 
@@ -437,12 +437,12 @@ assert(
 ----------------------------------------------------
 
 -- 18) toricSyz, Sturmfels example 11.19
-TEST ///
-R = QQ[t_1,t_2];
-A = subring sagbi{t_1^2,t_1*t_2,t_2^2};
-M = matrix{{t_1^2, t_1*t_2}};
-assert(toricSyz(A, M)==matrix {{-t_2^2, t_1*t_2}, {-t_1*t_2, t_1^2}});
-///
+--TEST ///
+--R = QQ[t_1,t_2];
+--A = subring sagbi{t_1^2,t_1*t_2,t_2^2};
+--M = matrix{{t_1^2, t_1*t_2}};
+--assert(toricSyz(A, M)==matrix {{-t_2^2, t_1*t_2}, {-t_1*t_2, t_1^2}});
+--///
 ----------------------------------------------------
 
 ------------------------------------------
