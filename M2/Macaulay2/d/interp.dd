@@ -107,6 +107,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 		    promptWanted = true;
 	       	    if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 	       	    if stopIfError || returnIfError then return buildErrorPacket("--backtrace: token read error--");
+		    if isatty(file) || file.posFile.file.fulllines then flush(file);
 		    )
 	       )
 	  else (
