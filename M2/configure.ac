@@ -1423,7 +1423,8 @@ then AC_MSG_CHECKING([for fflas_ffpack library, version at least 2])
           FFLAS_FFPACK_CXXFLAGS=$(for x in $(fflas-ffpack-config --cflags 2>&1) ; do case $x in (-I*) /bin/echo -n "$x " ;; esac done)
 	  AC_MSG_NOTICE([adding fflas_ffpack flags $FFLAS_FFPACK_CXXFLAGS])
           M2_CXXFLAGS="$M2_CXXFLAGS $FFLAS_FFPACK_CXXFLAGS"
-	  LIBS="$LIBS `fflas-ffpack-config --libs`"
+	  LIBS="$LIBS `fflas-ffpack-config --libs`" dnl note: this might add "-Xpreprocessor -fopenmp" to LIBS, and that will confuse libtool
+	  LIBS=`echo $LIBS | sed 's/-Xpreprocessor -fopenmp//'`
      else AC_MSG_RESULT(not found, will build)
           BUILD_fflas_ffpack=yes
      fi
