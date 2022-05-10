@@ -248,12 +248,12 @@ ring_elem M2FreeAlgebraQuotient::power(const ring_elem f1, int n) const
 
 ring_elem M2FreeAlgebraQuotient::invert(const ring_elem f) const
 {
-  return f; // TODO: bad return value.
+  return m2FreeAlgebra().invert(f);
 }
 
 ring_elem M2FreeAlgebraQuotient::divide(const ring_elem f, const ring_elem g) const
 {
-  return f; // TODO: bad return value.
+  return m2FreeAlgebra().divide(f, g);
 }
 
 void M2FreeAlgebraQuotient::syzygy(const ring_elem a, const ring_elem b,

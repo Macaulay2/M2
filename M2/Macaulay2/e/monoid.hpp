@@ -70,6 +70,9 @@ class Monoid : public MutableEngineObject
   int first_weights_slot_;  // < 0 if none, otherwise the location of the first
                             // weight vec value
                             // in each monomial
+
+  std::vector<bool> mLaurentVariablesPredicate;
+  
   VECTOR(int) nslots_;
 
   void set_degrees();
@@ -136,6 +139,10 @@ class Monoid : public MutableEngineObject
     return monorder_->is_laurent[i];
   }
 
+  std::vector<bool> laurentVariables() const {
+    return mLaurentVariablesPredicate;
+  }
+
   void text_out(buffer &o) const;
 
   int n_vars() const { return nvars_; }
@@ -199,8 +206,9 @@ class Monoid : public MutableEngineObject
   int partial_compare(int num, const_monomial m, const_monomial n) const;
   int compare(const_monomial m, int mcomp, const_monomial n, int ncomp) const;
   bool is_equal(const_monomial m1, const_monomial m2) const { return compare(m1, m2) == EQ; }
-  
-  bool divides(const_monomial m, const_monomial n) const;
+
+  bool divides_partial_order(const_monomial m, const_monomial n) const; // s.t. n/m only has >= exponents.
+  bool divides(const_monomial m, const_monomial n) const; // s.t. n/m might have negative exponents, for Laurent variables.
   void divide(const_monomial m, const_monomial n, monomial result) const;
   void lcm(const_monomial m, const_monomial n, monomial result) const;
   void gcd(const_monomial m, const_monomial n, monomial result) const;
