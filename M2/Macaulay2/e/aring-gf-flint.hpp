@@ -14,6 +14,7 @@
 #include <flint/flint.h>
 #pragma GCC diagnostic pop
 
+#include "interface/random.h"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
@@ -275,8 +276,11 @@ class ARingGFFlint : public RingInterface
 
   void random(ElementType& result) const
   {
-    //      printf("calling ARingGFFlint::random\n");
-    fq_zech_randtest(&result, mRandomState, mContext);
+    std::vector<long> poly;
+    for (int i = 0; i < dimension(); ++i)
+      poly.push_back(rawRandomULong(characteristic()));
+    fromSmallIntegerCoefficients(result, poly);
+    //    fq_zech_randtest(&result, mRandomState, mContext);
   }
 
   void fromSmallIntegerCoefficients(ElementType& result,

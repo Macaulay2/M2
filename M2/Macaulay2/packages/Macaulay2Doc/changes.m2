@@ -38,16 +38,40 @@ document {
 document {
      Key => "changes made for the next release",
      UL {
-   	  LI { "improved packages:",
-	       UL {
-	       	    LI { "The package ", TO "GraphicalModelsMLE", " has been improved following many recommendations through its certification process. Several computations have been optimized. The names of several procedures and options have been modified. " },
-  		    LI { "The package ", TO "Complexes::Complexes", " has been improved.  
-                The documentation has been enhanced, numerous minor bugs have been fixed, and 
-                free resolutions have been implemented independent of the 
-                current  ", TO "ChainComplex", " class."
+   	   LI { "improved packages:",
+          UL {
+       	    LI { "The package ", TO "GraphicalModelsMLE::GraphicalModelsMLE", 
+                " has been improved following many recommendations
+       	        through its certification process. Several
+       	        computations have been optimized. The names of several
+       	        procedures and options have been modified. " 
+                },
+  		    LI { "The package ", TO "Complexes::Complexes", 
+                " has been improved.  The documentation has been
+                enhanced, numerous minor bugs have been fixed, and
+                free resolutions have been implemented independent of
+                the current ", TO "ChainComplex", " class."
+                },
+  		    LI { "The package ", TO "HyperplaneArrangements::HyperplaneArrangements", 
+                " has been improved.  It includes several improvements
+                in the basic code, increased functionality with the
+                Matroids package, completely rewritten documentation,
+                numerous bug fixes, and better consistency with
+                Macaulay2 conventions."
+                },
+  		    LI { "The package ", TO "SimplicialComplexes::SimplicialComplexes", 
+                " has been improved.  It adds constructors for many
+                classic examples, implements a new data type for
+                simplicial maps, incorporates many improvements to the
+                methods, improves interoperability with ", 
+                TO "Polyhedra::Polyhedra", " and completely overhauls the
+                documentation. Changes that break backwards
+                compatiblity include changing the output of faces and
+                facets from Matrix to List, changing the output type
+                of fVector from HashTable to List, and replacing ==
+                with === for SimplicialComplexes."
                 }
-		    }
-	       },
+	       }},
  	  LI { "functionality added:",
 	       UL {
 		    LI { "New functions ", TO "memoizeValues", " and ", TO "memoizeClear", " have been added for dealing with the values retained by
@@ -60,9 +84,15 @@ document {
 		    LI { TO "unique", " now supports all visible lists." },
 		    LI { "Syntax highlighting of Macaulay2 code in the HTML documentation has been added as a build-time option.  Use ", TO "M2CODE", " to indicate code to be highlighted." }
 		    }
-	       }
+	       },
+
+	 LI { "functionality changed in a way that could break code:",
+	      UL {
+            LI { "The update to SimplicialComplexes has several minor breaking changes, outlined above." 
+                }
+	      }
 	  }
-     }
+     }}
 
 document {
      Key => "changes, 1.19.1",

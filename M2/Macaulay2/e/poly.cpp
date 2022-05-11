@@ -16,6 +16,9 @@
 #include "relem.hpp"
 
 #include "aring-glue.hpp"  // for globalQQ
+
+#include "debug.hpp"
+
 #define POLY(q) ((q).poly_val)
 
 PolyRing *PolyRing::trivial_poly_ring = 0;  // Will be ZZ[]
@@ -1470,7 +1473,7 @@ Nterm *PolyRing::division_algorithm(Nterm *f, Nterm *g, Nterm *&quot) const
 
   //  buffer o;
   while (t != NULL)
-    if (M_->divides(b->monom, t->monom))
+    if (M_->divides_partial_order(b->monom, t->monom))
       {
         // o << "t = "; elem_text_out(o,t); o << newline;
         a = t;
@@ -1523,7 +1526,7 @@ Nterm *PolyRing::division_algorithm(Nterm *f, Nterm *g) const
   ring_elem c;
   int *m = M_->make_one();
   while (t != NULL)
-    if (M_->divides(b->monom, t->monom))
+    if (M_->divides_partial_order(b->monom, t->monom))
       {
         a = t;
         bool cancelled = imp_attempt_to_cancel_lead_term(a, g, c, m);
@@ -1590,8 +1593,6 @@ Nterm *PolyRing::powerseries_division_algorithm(Nterm *f,
 
   // This returns the remainder, and sets quot to be the quotient.
 
-  std::vector expf = setNegativeExponentMonomial(f);
-  std::vector expg = setNegativeExponentMonomial(g);
   ring_elem a = copy(f);
   Nterm *t = a;
   Nterm *b = g;
@@ -1648,7 +1649,10 @@ Nterm *PolyRing::powerseries_division_algorithm(Nterm *f,
       ffirst = M_->first_weight_value(t->monom);
       long fval = ffirst - flast;
 
-      if (fval >= gval)
+      // std::cout << "f: "; dNterm(this, t); std::cout << std::endl;
+      // std::cout << "g: "; dNterm(this, g); std::cout << std::endl;
+      if (fval >= gval and M_->divides(g->monom, t->monom))
+        //if (fval >= gval)
         {
           // o << "t = "; elem_text_out(o,t); o << newline;
           a = t;
