@@ -29,9 +29,9 @@ Here is the procedure:
        - on the development branch:
 	 - increment version to X.Y, as described above
 	 - make a git branch of the form release-X.Y and switch to it
-	      git branch -b release-X.Y-branch
+	      git checkout -b release-X.Y-branch
 	 - push it upstream:
-	      git push -u origin release-X.Y
+	      git push -u origin release-X.Y-branch
 	 - make builds on that branch, making modifications as needed
 	 - when the builds complete, then
 	      git tag release-X.Y
@@ -41,6 +41,14 @@ Here is the procedure:
 	      git merge release-X.Y
 	 - update version to X.Y.0.1 on the development branch, as described above
 	      
+	 Update the file M2/Macaulay2/packages/Macaulay2Doc/changes.m2 to take
+	 the release into account: check JSAG for published packages that need
+	 certification (download the published version and add it, if
+	 necessary, to the git repository tree so it can be linked to by the
+	 certification data added now to the package; also add an entry to
+	 changes.m2); find out what the new packages are since the previous
+	 release and add entries for them.
+
          Prepare binary releases on the release-X.Y branch, committing minor
          changes needed for building on various architectures.  Periodically
          merge the branch into the development branch.  Continue accepting pull
