@@ -42,8 +42,8 @@ deflatedWSet(Ideal,Ideal,ZZ,List) := (F,S,m,pts) -> (
     -- TO DO: make the above robust... precondition, refine when lifting, ???
     --        Is there a way to detect an incorrectly computed numerical rank?
     for wpts in P list (
-	F0 := (first wpts).LiftedSystem;
-	wpts0 := apply(wpts, p->p.LiftedPoint);
+	F0 := (first wpts).cache.LiftedSystem;
+	wpts0 := apply(wpts, p->p.cache.LiftedPoint);
 	W0 := witnessSet(ideal F0,S,wpts0);
 	A := affineSpace ring F;
 	--M := coordinateProjection(ambient F, ambient F0);

@@ -720,8 +720,8 @@ document {
 	Deflation, DeflationSequence, DeflationRandomMatrix, -- attached to a PolySystem
 	liftPointToDeflation,(liftPointToDeflation,Point,PolySystem,ZZ),
 	LiftedSystem, LiftedPoint, SolutionSystem, DeflationSequenceMatrices, -- attached to a Point
-	deflateInPlace, (deflateInPlace,Point,PolySystem), 
-	SquareUp, [deflateInPlace,SquareUp], -- whether to square up at each step
+	deflateAndStoreDeflationSequence, (deflateAndStoreDeflationSequence,Point,PolySystem), 
+	SquareUp, [deflateAndStoreDeflationSequence,SquareUp], -- whether to square up at each step
 	[deflate,Variable]
 	},
     Headline => "first-order deflation",
@@ -1034,7 +1034,7 @@ doc ///
 	    p0 = first sols;
 	    peek p0
 	    t'end = 1
-    	    p = endGameCauchy(p0#"H",t'end,p0)
+    	    p = endGameCauchy(p0.cache#"H",t'end,p0)
     SeeAlso
     	refine
 ///

@@ -860,7 +860,7 @@ trackHomotopy(Homotopy,List) := List => o -> (H,solsS) -> (
 		 currentPrec := prec;
 	     	 while not ( 
 		     member(status s, {Regular,Infinity,Origin}) 
-		     or realPart(1-s.LastT) < o.EndZoneFactor
+		     or realPart(1-s.cache.LastT) < o.EndZoneFactor
 		     or currentPrec === null 
 		     ) do ( 
 		     if status s === DecreasePrecision then (
@@ -870,19 +870,19 @@ trackHomotopy(Homotopy,List) := List => o -> (H,solsS) -> (
 			 F := o.Field_currentPrec;
 			 inp = tempInpMatrix F;
 			 scan(n, i->inp_(i,0) = (coordinates s)#i);
-			 inp_(n,0) = s.LastT;
+			 inp_(n,0) = s.cache.LastT;
 			 out = tempOutMatrix F; 
 			 out_(n,0) = 1;
 			 ti'out := timing trackHomotopyM2engine(H, inp, 
 			     out, statusOut,
-			     abs s.LastIncrement, minimalStepSize currentPrec, 
+			     abs s.cache.LastIncrement, minimalStepSize currentPrec, 
 			     o.CorrectorTolerance, o.maxCorrSteps, 
 			     toRR o.InfinityThreshold,
 			     checkPrecision);
 			 if DBG>3 then 
 			 << "-- trackHomotopyM2engine (at decreased prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
 			 sols#nS = first extractM2engineOutput(out,statusOut);
-			 (sols#nS).NumberOfSteps = (sols#nS).NumberOfSteps+s.NumberOfSteps;
+			 (sols#nS).NumberOfSteps = (sols#nS).NumberOfSteps+s.cache.NumberOfSteps;
 			 s = sols#nS;
 			 )
 		     else ( -- status s === IncreasePrecision... or other reason
@@ -892,25 +892,25 @@ trackHomotopy(Homotopy,List) := List => o -> (H,solsS) -> (
 			     F = o.Field_currentPrec;
 			     inp = tempInpMatrix F;
 			     scan(n, i->inp_(i,0) = (coordinates s)#i);
-			     inp_(n,0) = s.LastT;
+			     inp_(n,0) = s.cache.LastT;
 			     out = tempOutMatrix F; 
 			     out_(n,0) = 1;
 			     ti'out = timing trackHomotopyM2engine(H, inp, 
 	     			 out, statusOut,
-	     			 abs s.LastIncrement, minimalStepSize currentPrec, 
+	     			 abs s.cache.LastIncrement, minimalStepSize currentPrec, 
 	     			 o.CorrectorTolerance, o.maxCorrSteps, 
 	     			 toRR o.InfinityThreshold,
 				 checkPrecision);
 	 		     if DBG>3 then 
 	 		     << status s << "-- trackHomotopyM2engine (at increased prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
 			     sols#nS = first extractM2engineOutput(out,statusOut);
-			     (sols#nS).NumberOfSteps = (sols#nS).NumberOfSteps+s.NumberOfSteps;
+			     (sols#nS).cache.NumberOfSteps = (sols#nS).cache.NumberOfSteps+s.cache.NumberOfSteps;
 			     s = sols#nS;
     	 		     )			 
 		  	 )
 		     ); -- while ... 
 		     if status s =!= Regular then -- change status to Regular if at t=1 
-		     if abs(realPart s.LastT) < theSmallestNumber then s.SolutionStatus = Regular;   
+		     if abs(realPart s.cache.LastT) < theSmallestNumber then s.cache.SolutionStatus = Regular;   
 		 ) -- for nS ... 
 	     );	      
 	 toList sols 
@@ -1034,7 +1034,7 @@ trackHomotopy(Homotopy,List) := List => o -> (H,solsS) -> (
 	    << "Evaluation time (M2 measured): Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
 	    )
 	);
-     scan(ret,s->s#"H"=H);
+     scan(ret,s->s.cache#"H"=H);
      ret
      ) -- trackHomotopy
 
@@ -1121,7 +1121,7 @@ T = apply(n, i->if i==0 then x_i^d-eps^d else (x_i-i)^d-eps^(d-1)*x_i)
 H = segmentHomotopy(S,T,gamma=>1+pi*ii)
 sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 53,CorrectorTolerance=>1e-15,Precision=>infinity,EndZoneFactor=>0)
 peek sols 
-assert all(sols, s->status s === Regular and s.NumberOfSteps > 100)
+assert all(sols, s->status s === Regular and s.cache.NumberOfSteps > 100)
 
 sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 53,CorrectorTolerance=>1e-15,Precision=>53,EndZoneFactor=>0)
 peek sols 

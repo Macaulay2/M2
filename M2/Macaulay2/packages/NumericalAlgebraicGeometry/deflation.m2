@@ -5,7 +5,7 @@
 
 export { "deflate", 
     "SolutionSystem", "Deflation", "DeflationRandomMatrix", "liftPointToDeflation", 
-    "deflateInPlace", "DeflationSequence", "DeflationSequenceMatrices",
+    "deflateAndStoreDeflationSequence", "DeflationSequence", "DeflationSequenceMatrices",
     "LiftedPoint", "LiftedSystem", "SquareUp"
     }
 
@@ -108,13 +108,11 @@ P = point {take(coordinates P2, F.NumberOfVariables)}
 assert(residual(F,P) < 1e-50)
 NP2 = newton(F2,P2)
 NNP2 = newton(F2,NP2)
-NP2.ErrorBoundEstimate
-NNP2.ErrorBoundEstimate
-assert(P2.ErrorBoundEstimate^2 > NP2.ErrorBoundEstimate)
+assert(P2.cache.ErrorBoundEstimate^2 > NP2.cache.ErrorBoundEstimate)
 ///
 
-deflateInPlace = method(Options=>{SquareUp=>true})
-deflateInPlace(Point,PolySystem) := o -> (P,F) -> (
+deflateAndStoreDeflationSequence = method(Options=>{SquareUp=>true})
+deflateAndStoreDeflationSequence(Point,PolySystem) := o -> (P,F) -> (
     P0 := P;
     F0 := F;
     d'seq := {}; -- deflation sequence: a sequence of matrices used for deflation
@@ -135,14 +133,15 @@ deflateInPlace(Point,PolySystem) := o -> (P,F) -> (
 	d'seq'mat = d'seq'mat | {new'mat'or'pair}; 
 	P0 = newton(F0,P0');
 	);
-    P.Coordinates = take(coordinates P0, F.NumberOfVariables);
-    if #d'seq>0 then P.ErrorBoundEstimate = P0.ErrorBoundEstimate;
-    P.DeflationSequence = d'seq;
-    P.DeflationSequenceMatrices = d'seq'mat;
-    P.SolutionSystem = F;
-    P.LiftedSystem = P0.SolutionSystem = F0;
-    P.LiftedPoint = P0;
-    P.SolutionStatus = if #d'seq > 0 then Singular else Regular
+    P = point{take(coordinates P0, F.NumberOfVariables)};
+    if #d'seq>0 then P.cache.ErrorBoundEstimate = P0.cache.ErrorBoundEstimate;
+    P.cache.DeflationSequence = d'seq;
+    P.cache.DeflationSequenceMatrices = d'seq'mat;
+    P.cache.SolutionSystem = F;
+    P.cache.LiftedSystem = P0.cache.SolutionSystem = F0;
+    P.cache.LiftedPoint = P0;
+    P.cache.SolutionStatus = if #d'seq > 0 then Singular else Regular;
+    P
     )
 
 TEST ///
@@ -151,18 +150,18 @@ C=CC_200
 C[x,y,z]
 F = polySystem {x^3,y^3,x^2*y,z*(z-1)^2}
 P = point sub(matrix{{0.000001, 0.000001*ii,1.000001-0.000001*ii}},C)
-deflateInPlace(P,F)
-assert(P.DeflationSequence == {0,1})
-assert(10-*a not too large constant*-*P.ErrorBoundEstimate^2 > (newton(P.LiftedSystem,P.LiftedPoint)).ErrorBoundEstimate)
+P = deflateAndStoreDeflationSequence(P,F)
+assert(P.cache.DeflationSequence == {0,1})
+assert(10-*a not too large constant*-*P.cache.ErrorBoundEstimate^2 > (newton(P.cache.LiftedSystem,P.cache.LiftedPoint)).cache.ErrorBoundEstimate)
 ///
 
 partitionViaDeflationSequence = method()
 partitionViaDeflationSequence (List,PolySystem) := (pts,F) -> (
     H := new MutableHashTable;
     for p in pts do (
-	if not p.?DeflationSequence or p.SolutionSystem =!= F 
-	then deflateInPlace(p,F);
-	ds := p.DeflationSequence;
+	if not p.cache.?DeflationSequence or p.cache.SolutionSystem =!= F 
+	then p = deflateAndStoreDeflationSequence(p,F);
+	ds := p.cache.DeflationSequence;
 	if H#?ds then H#ds = H#ds | {p}
 	else H#ds = {p}; 
 	);

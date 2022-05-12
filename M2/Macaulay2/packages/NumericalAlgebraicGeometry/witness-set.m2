@@ -111,10 +111,10 @@ movePoints (WitnessSet, List, List, List) := List => o -> (W,S,S',w) -> (
      local w';
      E := equations polySystem W;
      if status P === Singular then (
-	 seq := P.DeflationSequenceMatrices;
-	 F := squareUp P.LiftedSystem; -- assumes P.SolutionSystem == equations W.SolutionSystem | S
+	 seq := P.cache.DeflationSequenceMatrices;
+	 F := squareUp P.cache.LiftedSystem; -- assumes P.SolutionSystem == equations W.SolutionSystem | S
 	 ES' := polySystem(E|S');
-	 F' := squareUp(deflate(ES', seq), squareUpMatrix P.LiftedSystem); -- square-up using the same matrix
+	 F' := squareUp(deflate(ES', seq), squareUpMatrix P.cache.LiftedSystem); -- square-up using the same matrix
 	 );
      while (not success and attempts > 0) do (
 	 attempts = attempts - 1;
@@ -128,20 +128,19 @@ movePoints (WitnessSet, List, List, List) := List => o -> (W,S,S',w) -> (
 	     success = all(w', p->member(status p, {Regular-*,Singular*-}));
 	     )
 	 else (
-	     assert all(w, p->p.LiftedSystem===P.LiftedSystem); -- !!!
+	     assert all(w, p->p.cache.LiftedSystem===P.cache.LiftedSystem); -- !!!
 	     F'.PolyMap = (map(ring F, ring F', vars ring F)) F'.PolyMap; -- hack!!!: rewrite with trackHomotopy
 	     lifted'w' := --refine(F',
-	     	 track(F, F', w/(p->p.LiftedPoint), 
+	     	 track(F, F', w/(p->p.cache.LiftedPoint), 
 		     NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii), Software=>o.Software)
 		 --)
 		 ;
 	     if success = all(lifted'w', p->member(status p, {Regular-*,Singular*-})) 
 	     then w' = apply(lifted'w', p->(
-		     q := new Point from P;
-		     q.System = ES';
-		     q.LiftedSystem = F';
-		     q.LiftedPoint = p;
-		     q.Coordinates = take(coordinates p, ES'.NumberOfVariables);
+		     q := point{take(coordinates p, ES'.NumberOfVariables)};
+		     q.cache.SolutionSystem = ES';
+		     q.cache.LiftedSystem = F';
+		     q.cache.LiftedPoint = p;
 		     q
 		     ));
 	     );
@@ -216,13 +215,17 @@ W4 = witnessSet(
      {{{0,1,0_CC}},{{0,-1,0_CC}}}/point
      ) 
 F = polySystem(equations W4 | slice W4)
-scan(W4.Points, P->deflateInPlace(P,F))
-for i to 5 do assert isOn(random W4,W4)
+W4' = witnessSet( 
+    ideal {x^2+y^2+z^2-1, z^2},
+    matrix "1,0,0,0",
+    apply(points W4, P->deflateAndStoreDeflationSequence(P,F))
+    )
+for i to 5 do assert isOn(random W4',W4)
 
 P = sample(W3, Tolerance=>1e-15)
-assert(P.ErrorBoundEstimate < 1e-15) 
+assert(P.cache.ErrorBoundEstimate < 1e-15) 
 P = sample(W4, Tolerance=>1e-15)
-assert(P.ErrorBoundEstimate < 1e-15) 
+assert(P.cache.ErrorBoundEstimate < 1e-15) 
 ///
 
 -- a constructor for witnessSet that depends on NAG
