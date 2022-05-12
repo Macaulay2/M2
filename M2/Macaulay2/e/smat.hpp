@@ -659,8 +659,15 @@ void SMat<CoeffRing>::vec_row_op2(sparsevec *&v,
   ring().set_zero(e2);
   bool r1_nonzero = vec_get_entry(v, r1, e1);
   bool r2_nonzero = vec_get_entry(v, r2, e2);
-  if (!r1_nonzero && !r2_nonzero) return;
-
+  if (!r1_nonzero && !r2_nonzero){
+      ring().clear(c1);
+      ring().clear(c2);
+      ring().clear(c3);
+      ring().clear(c4);
+      ring().clear(e1);
+      ring().clear(e2);
+      return;
+  }
   if (r1_nonzero)
     {
       ring().mult(c1, a1, e1);
@@ -706,7 +713,7 @@ void SMat<CoeffRing>::vec_dot_product(sparsevec *v,
   ring().set_zero(result);
   while (true)
     {
-      if (v == 0 || w == 0) return;
+      if (v == 0 || w == 0) break;
       if (v->row > w->row)
         v = v->next;
       else if (v->row < w->row)
