@@ -96,8 +96,9 @@ recognize(file:PosFile):(null or Word) := (
 	  );
      when last
      is null do (
-	  printErrorMessage(position(file),"invalid character" );
+	  p := position(file);
 	  getc(file);
+	  printErrorMessage(p,"invalid character" );
 	  (null or Word)(NULL))
      is word:Word do ( 
 	  for length(word.name) do getc(file); 

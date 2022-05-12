@@ -535,6 +535,7 @@ const RingElement /* or null */ *rawGCDRingElement(const RingElement *f,
         return NULL;
       }
   }
+  if (ret->is_zero()) return ret;
   ring_elem a = P->getNumeratorRing()->preferred_associate_divisor(
       ret->get_value());  // an element in the coeff ring
   ring_elem b = P->getCoefficients()->invert(a);

@@ -7,7 +7,7 @@
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-#include "error.h"           // for ERROR
+#include "exceptions.hpp"    // for division_by_zero_error
 
 class RingMap;
 
@@ -119,8 +119,9 @@ class ARingZZpFlint : public RingInterface
   }
 
   void invert(ElementType &result, ElementType a) const
-  // we silently assume that a != 0.  If it is, result is set to a^0, i.e. 1
   {
+    if (is_zero(a)) throw exc::division_by_zero_error();
+    
     result = n_invmod(a, mCharac);
   }
 
@@ -163,8 +164,8 @@ class ARingZZpFlint : public RingInterface
 
   void divide(ElementType &result, ElementType a, ElementType b) const
   {
-    //    assert(b != 0);
-    if (b == 0) ERROR("division by zero");
+    if (b == 0)
+      throw exc::division_by_zero_error();
     result = nmod_div(a, b, mModulus);
   }
 
@@ -177,7 +178,7 @@ class ARingZZpFlint : public RingInterface
     else
       {
         // case a == 0
-        if (n < 0) ERROR("division by zero"); // TODO: throw error.
+        if (n < 0) throw exc::division_by_zero_error();
         if (n == 0) return set_from_long(result, 1);
         if (n > 0) return set_zero(result);
       }
@@ -198,7 +199,7 @@ class ARingZZpFlint : public RingInterface
         else if (mpz_sgn(n) > 0)
           set_zero(result);
         else
-          ERROR("division by zero"); // TODO: throw error.
+          throw exc::division_by_zero_error();
       }
   }
 

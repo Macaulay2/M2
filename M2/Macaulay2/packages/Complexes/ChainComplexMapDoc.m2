@@ -1241,7 +1241,7 @@ doc ///
             h2 = Hom(m, f)
             assert(h2 == Hom(map(complex target m, complex source m, i -> m), f))
         Text
-            Todo: write this text after writing doc for homomorphism and homomorphism'.
+            XXX write this text after writing doc for homomorphism and homomorphism'.
         Example
             e = randomComplexMap(source h, complex(S^1, Base => -1))
             phi = homomorphism e
@@ -3211,7 +3211,7 @@ doc ///
             assert isIsomorphism HH_0 f
             assert isIsomorphism HH_1 f
         Text
-            TODO. Free resolutions of complexes produce quasi 
+            XXX TODO. Free resolutions of complexes produce quasi 
             isomorphisms. (use example to doc of (resolution, Complex)).
         Example
             D = complex{random(S^2, S^{-3,-3,-4})}
@@ -3666,6 +3666,11 @@ doc ///
             assert isComplexMorphism f'
             h = homotopyMap f'
             isNullHomotopyOf(h, g * (f//g) - f)
+        Text
+            TODO: XXX start here. Do triangles, invert interesting quasi-isomorphism.
+            isSemiFree, and add in an example or 2.  Include
+            finding an inverse for a quasi-isomorphism.
+            We need some kind of better example here.
     Caveat
         The following three assumptions are not checked:
         $f$ is a morphism, the source of $f$ is semifree,
@@ -3675,12 +3680,6 @@ doc ///
         isQuasiIsomorphism
         isComplexMorphism
 ///
-
--- TODO: In the above doc node (liftMapAlongQuasiIsomorphism, ComplexMap, ComplexMap)
--- Do triangles, invert interesting quasi-isomorphism.
--- isSemiFree, and add in an example or 2.  Include
--- finding an inverse for a quasi-isomorphism.
--- We need some kind of better example here.
 
 doc ///
     Key
@@ -4233,6 +4232,9 @@ doc ///
         Tor
 ///
 
+
+-- XXX start here.  We just need to figure out symmetry of Tor
+-- and relate to the connecting maps
 doc ///
     Key
         (connectingTorMap, Module, Matrix, Matrix)

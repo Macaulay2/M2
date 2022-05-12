@@ -11,6 +11,7 @@ add_subdirectory(mathicgb)
 
 target_compile_options(mathicgb PRIVATE
   -Wall -Wextra -Wno-unused-parameter -Wno-unused-value -Wno-unused-variable -Wno-sign-compare
+  -Wno-deprecated-declarations
   )
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug") # Debugging

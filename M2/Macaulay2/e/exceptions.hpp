@@ -3,6 +3,7 @@
 
 #include "newdelete.hpp"
 #include <stdexcept>
+#include <string>
 
 namespace exc {
 struct engine_error : public std::runtime_error, public our_new_delete
@@ -16,6 +17,7 @@ struct overflow_exception : public engine_error
 struct division_by_zero_error : public engine_error
 {
   explicit division_by_zero_error(const std::string &msg) : engine_error(msg) {}
+  explicit division_by_zero_error() : engine_error(std::string{"atttempt to divide by zero"}) {}
 };
 struct internal_error : public engine_error
 {

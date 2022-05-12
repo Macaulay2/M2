@@ -648,11 +648,11 @@ export present(x:string):string := (
 	       ))
      else x);
 
-export presentn(x:string):string := ( -- fix newlines, also
+export presentn(x:string):string := ( -- fix newlines and other special chars, also
      fixesneeded := 0;
      foreach cc in x do (
 	  c := cc; 
-	  if c == char(0) || c == '\t' || c == '\b' || c == '\r' || c == '\"' || c == '\\' || c == '\n' 
+	  if c < char(32) || c == '\"' || c == '\\'
 	  then fixesneeded = fixesneeded + 1 
 	  );
      if fixesneeded != 0 then (
@@ -663,6 +663,7 @@ export presentn(x:string):string := ( -- fix newlines, also
 	       else if c == '\n' then (provide '\\'; provide 'n';)
 	       else if c == '\b' then (provide '\\'; provide 'b';)
 	       else if c == '\t' then (provide '\\'; provide 't';)
+	       else if c < char(32) then (provide '\\'; provide '?';)
 	       else (
 		    if c == '\"' || c == '\\' then provide '\\';
 	       	    provide c;

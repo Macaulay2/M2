@@ -143,7 +143,7 @@ build-in-$1: submodules/$1/Makefile
 	$(MAKE) -C submodules/$1 all
 check-in-$1: run-configure-in-$1
 ifeq ($(no-check-$1),)
-	ulimit -v 1000000 && $(MAKE) -C submodules/$1 check
+	$(MAKE) -C submodules/$1 check
 endif
 
 install-in-$1: build-in-$1

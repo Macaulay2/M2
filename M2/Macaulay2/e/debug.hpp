@@ -24,6 +24,8 @@ void dfree(const FreeModule *F);
 
 extern "C" void dringelem(const Ring *R, const ring_elem f);
 
+extern "C" void dNterm(const Ring *R, const Nterm *f);
+
 extern "C" void dvec(const Ring *R, const vec v);
 
 extern "C" void dgbvec(const GBRing *R, gbvector *v);

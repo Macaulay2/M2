@@ -1,6 +1,16 @@
 --------------------------------------------------------------------
 -- documentation for chain complexes -------------------------------
 --------------------------------------------------------------------
+
+-*
+        Text
+            The major change is replacing the @TO ChainComplex@ data type with @TO Complex@.
+            The internal structure of this new data type is somewhat different, but more
+            importantly, it has a richer set of constructors.  Use the functions
+            @TO (complex, ChainComplex)@, @TO (complex, ChainComplexMap)@, @TO (chainComplex, Complex)@, @TO (chainComplex, ComplexMap)@, 
+            to translate between these representations.
+*-
+
 doc ///
     Key
         Complexes
@@ -13,12 +23,6 @@ doc ///
             We are making this available in order to get feedback from users before
             making this change.  Please email the authors with any and all comments or
             suggestions.
-        Text
-            The major change is replacing the @TO ChainComplex@ data type with @TO Complex@.
-            The internal structure of this new data type is somewhat different, but more
-            importantly, it has a richer set of constructors.  Use the functions
-            @TO (complex, ChainComplex)@, @TO (complex, ChainComplexMap)@, @TO (chainComplex, Complex)@, @TO (chainComplex, ComplexMap)@, 
-            to translate between these representations.
         Text
             The overarching goal is to make all of the homological algebra routines functorial.
             For instance, we have @TO2(canonicalMap, "canonical maps")@ associated to kernels,
@@ -1939,7 +1943,6 @@ doc ///
         (canonicalTruncation, Complex, ZZ, ZZ)
 ///
 
--- truncate start
 doc ///
     Key
         (truncate, List, Complex)
@@ -3006,7 +3009,6 @@ doc ///
         (yonedaProduct, Module, Module)
 ///
 
---XXXX
 doc ///
     Key
         (yonedaProduct, Matrix, Matrix)

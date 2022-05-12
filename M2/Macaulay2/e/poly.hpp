@@ -135,6 +135,8 @@ class PolyRing : public PolyRingFlat
   Nterm *division_algorithm(Nterm *f, Nterm *g, Nterm *&quot) const;
   Nterm *division_algorithm(Nterm *f, Nterm *g) const;
   Nterm *powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm *&quot) const;
+  std::vector<int> setNegativeExponentMonomial(Nterm* f) const;
+  Nterm *division_algorithm_with_laurent_variables(Nterm *f, Nterm *g, Nterm *&quot) const;
 
  public:
   virtual ring_elem remainder(const ring_elem f, const ring_elem g) const;
@@ -248,7 +250,7 @@ class PolyRing : public PolyRingFlat
   // the pointer to the first term of f not used (possibly 0).
 
  public:
-  virtual void monomial_divisor(const ring_elem a, int *exp) const;
+  virtual void monomial_divisor(const ring_elem a, int *exp) const; // not used
 
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const;
   virtual bool in_subring(int nslots, const ring_elem a) const;

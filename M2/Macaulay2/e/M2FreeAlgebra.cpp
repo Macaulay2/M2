@@ -6,6 +6,7 @@
 #include <utility>
 #include <vector>
 
+#include "exceptions.hpp"
 #include "monomial.hpp"
 #include "relem.hpp"
 
@@ -259,17 +260,27 @@ ring_elem M2FreeAlgebra::power(const ring_elem f1, int n) const
 
 ring_elem M2FreeAlgebra::invert(const ring_elem f) const
 {
-  return f; // TODO: bad return value.
+  if (not is_unit(f))
+    throw exc::engine_error("attempting to divide by a non-unit");
+
+  ring_elem cf = lead_coefficient(coefficientRing(), f);
+  // At this point, f should be an element of the coefficient ring, times the monomial 1.
+  // The following will throw an error if it cannot invert the element.
+  ring_elem finv = coefficientRing()->invert(cf);
+  return from_coefficient(finv);
 }
 
 ring_elem M2FreeAlgebra::divide(const ring_elem f, const ring_elem g) const
 {
-  return f; // TODO: bad return value.
+  ring_elem ginv = invert(g); // this will throw an error unless g is invertible in the coeff ring
+  return mult(ginv, f);
 }
 
 void M2FreeAlgebra::syzygy(const ring_elem a, const ring_elem b,
                       ring_elem &x, ring_elem &y) const
 {
+  throw exc::internal_error("M2FreeAlgebra::syzygy is not yet written!");
+
   // TODO: In the commutative case, this function is to find x and y (as simple as possible)
   //       such that ax + by = 0.  No such x and y may exist in the noncommutative case, however.
   //       In this case, the function should return x = y = 0.
