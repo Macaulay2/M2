@@ -50,7 +50,8 @@ document {
 		    LI { TO "OnlineLookup::OnlineLookup", ", a package by Paul Zinn-Justin for looking up mathematical information online, has been added." },
 		    LI { TO "MergeTeX::MergeTeX", ", a package by Paul Zinn-Justin for runniung Macaulay2 code and inserting the results into a LaTeX file, has been added." },
 		    LI { TO "Probability::Probability", ", a package by Doug Torrance for basic probability, has been added." },
-		    LI { TO "Isomorphism::Isomorphism", ", a package by David Eisenbud for probabalistic searching for isomorphisms between modules, has been added." }
+		    LI { TO "Isomorphism::Isomorphism", ", a package by David Eisenbud for probabalistic searching for isomorphisms between modules, has been added." },
+		    LI { star, " ", TO "CodingTheory::CodingTheory", ", a package by Taylor Ball, Eduardo Camps, Henry Chimal-Dzul, Delio Jaramillo-Velez, Hiram H. Lopez, Nathan Nichols, Matthew Perkins, Ivan Soprunov, German Vera, and Gwyn Whieldon for coding theory, has been added and published." },
 		    }
 	       },
 	  LI { "packages that have been published and certified:",
@@ -63,8 +64,8 @@ document {
 		    LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
 		    LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
 		    LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
-		    LI { TO "ThreadedGB::ThreadedGB", ", a package by Sonja Petrovic and Shahrzad Zelenberg, for computing a Groebner basis using the classical Buchberger algorithm with multiple threads, has been published." },
-		    LI { TO "MultiprojectiveVarieties::MultiprojectiveVarieties", ", a package by Giovanni Staglianò for multi-projective varieties, has been published." },
+		    LI { star, " ", TO "ThreadedGB::ThreadedGB", ", a package by Sonja Petrovic and Shahrzad Zelenberg, for computing a Groebner basis using the classical Buchberger algorithm with multiple threads, has been published." },
+		    LI { star, " ", TO "MultiprojectiveVarieties::MultiprojectiveVarieties", ", a package by Giovanni Staglianò for multi-projective varieties, has been published." },
 		    }
 	       },
 	  LI { "improved packages:",

@@ -49,8 +49,23 @@ newPackage(
 	    },
         PackageExports => {
 	    "Graphs"
+	    },
+       Keywords => { "Coding theory" },
+       Certification => {
+	    "journal name" => "The Journal of Software for Algebra and Geometry",
+	    "journal URI" => "http://j-sag.org/",
+	    "article title" => "Coding theory package for Macaulay2",
+	    "acceptance date" => "10 August 2021",
+	    "published article URI" => "https://msp.org/jsag/2021/11-1/p11.xhtml",
+	    "published article DOI" => "10.2140/jsag.2021.11.113",
+	    "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x11-CodingTheory.m2",
+	    "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/CodingTheory.m2",
+	    "release at publication" => "9224486f3fc4b8e00e883570756ab969be351009",	    -- git commit number in hex
+	    "version at publication" => "1.0",
+	    "volume number" => "11",
+	    "volume URI" => "https://msp.org/jsag/2021/11-1/"
 	    }
-	)
+       )
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
