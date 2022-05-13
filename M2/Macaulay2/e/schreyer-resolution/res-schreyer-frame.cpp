@@ -61,7 +61,8 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
       mSlantedDegree(0),
       mLoSlantedDegree(0),
       mHiSlantedDegree(0),
-      mComputer(new F4Res(*this))
+      mComputer(new F4Res(*this)),
+      mDepGraph(this)
 {
   mFrame.mLevels.resize(max_level + 1);
   mMaxVPSize = 2 * monoid().n_vars() + 1;
@@ -241,7 +242,12 @@ void SchreyerFrame::start_computation(StopConditions& stop)
   if (stop.stop_after_degree and mHiSlantedDegree > stop.degree_limit->array[0])
     top_slanted_degree = stop.degree_limit->array[0];
 
-  computeSyzygies(top_slanted_degree, mMaxLength);
+  // build the dependency graph
+  makeDependencyGraph(mDepGraph,mMaxLength+1,top_slanted_degree - mLoSlantedDegree);
+  mDepGraph.startComputation();
+  mDepGraph.waitForCompletion();
+
+  // computeSyzygies(top_slanted_degree, mMaxLength);
 
   if (M2_gbTrace >= 1)
     {
