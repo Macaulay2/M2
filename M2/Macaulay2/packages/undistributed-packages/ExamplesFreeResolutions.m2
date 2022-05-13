@@ -1013,11 +1013,3 @@ F.dd
 peek M.cache
 debug Core
 peek M.cache#(ResolutionContext{}).Result.Resolution.RawComputation
-
-restart
-needsPackage "ExamplesFreeResolutions"
-I = CNC 14;
-R = ring I
-F = res(I, FastNonminimal => true)
-betti F
-minimalBetti I
