@@ -5,11 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
-#include <unistd.h>
 #include <mutex>
-#include <thread>
-#include <chrono>
-#include <random>
 #include <stack>
 
 using TBBNode = tbb::flow::continue_node<tbb::flow::continue_msg>;
@@ -32,8 +28,7 @@ struct Node {
     int mLevel;
     int mSlantedDegree;
     std::vector<int> mEdges;
-    TBBNodePtr mFillMatrixNode;
-    TBBNodePtr mReductionNode;
+    TBBNodePtr mFillAndReduceNode;
     TBBNodePtr mRankNode;
     TBBNodePtr mMinimalBettiNode;
 };
@@ -50,8 +45,7 @@ private:
 
    void topologicalSortWorker(int curVertex, std::vector<bool> &visited, std::stack<int> &result) const;
 
-   TBBNodePtr createFillMatrixNode(int level, int slantedDegree);
-   TBBNodePtr createReductionNode(int level, int slantedDegree);
+   TBBNodePtr createFillAndReduceNode(int level, int slantedDegree);
    TBBNodePtr createRankNode(int level, int slantedDegree);
    TBBNodePtr createMinimalBettiNode(int level, int slantedDegree);
 
@@ -75,11 +69,11 @@ public:
    void print() const;
 
    // need to ensure that mVertices[0] will always be the 'top' of the dependency tree
-   void startComputation() { mVertices[0].mFillMatrixNode->try_put(tbb::flow::continue_msg()); }
+   void startComputation() { mVertices[0].mFillAndReduceNode->try_put(tbb::flow::continue_msg()); }
 
    void waitForCompletion() { mTBBGraph.wait_for_all(); }
 };
 
-void makeDependencyGraph(DependencyGraph &G, int nlevels, int nslanted_degrees);
+void makeDependencyGraph(DependencyGraph &G, int nlevels, int nslanted_degrees, bool doMinimalBetti);
 
 #endif

@@ -173,6 +173,11 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
       // computeFrame()
     }
 
+  // build the dependency graph
+  makeDependencyGraph(mDepGraph,length_limit+1,top_degree - mLoSlantedDegree,false);
+  mDepGraph.startComputation();
+  mDepGraph.waitForCompletion();
+
   // What needs to be computed?
   // lodeg..hideg, level: 0..maxlevel.  Note: need to compute at level
   // maxlevel+1 in order to get min betti numbers at
@@ -186,10 +191,10 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
         computeRank(deg, lev);
       }
 
-  for (int lev = 1; lev <= length_limit; lev++)
-    {
-      computeRank(top_degree, lev);
-    }
+   for (int lev = 1; lev <= length_limit; lev++)
+     {
+       computeRank(top_degree, lev);
+     }
 
   if (M2_gbTrace >= 1)
     {
@@ -243,7 +248,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
     top_slanted_degree = stop.degree_limit->array[0];
 
   // build the dependency graph
-  makeDependencyGraph(mDepGraph,mMaxLength+1,top_slanted_degree - mLoSlantedDegree);
+  makeDependencyGraph(mDepGraph,mMaxLength+1,top_slanted_degree - mLoSlantedDegree,false);
   mDepGraph.startComputation();
   mDepGraph.waitForCompletion();
 
@@ -880,8 +885,7 @@ void SchreyerFrame::computeRanks(int slanted_degree, int maxlevel)
 }
 void SchreyerFrame::fillinSyzygies(int slanted_deg, int lev)
 {
-  // Fill in syzygies of slanted degree mSlantedDegree, at level mCurrentLevel =
-  // 2.
+  // Fill in syzygies of slanted degree mSlantedDegree, at level mCurrentLevel = 2.
   // Assumption/prereq:
   // Compute the matrix at this level, where lev >= 2. (lev=0,1 have already
   // been filled in).

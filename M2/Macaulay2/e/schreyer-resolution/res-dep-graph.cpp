@@ -4,22 +4,19 @@
 
 int DependencyGraph::addVertex(int level, int slantedDegree)
 {
-   auto fillMatrixNode   = createFillMatrixNode(level,slantedDegree);
-   auto reductionNode    = createReductionNode(level,slantedDegree);
-   auto rankNode         = createRankNode(level,slantedDegree);
-   auto minimalBettiNode = createMinimalBettiNode(level,slantedDegree);
+   auto fillAndReduceNode = createFillAndReduceNode(level,slantedDegree);
+   auto rankNode          = createRankNode(level,slantedDegree);
+   auto minimalBettiNode  = createMinimalBettiNode(level,slantedDegree);
    mVertices.emplace_back(Node {level, 
                                 slantedDegree, 
 				std::vector<int> {},
-				fillMatrixNode,
-				reductionNode,
+				fillAndReduceNode,
 				rankNode,
 				minimalBettiNode});
 
    // add flows from the fill matrix stage to the reduction stage, and from reduction to rank
    // FM: do we have to add other edges for the reduction and rank computations, or will this suffice?
-   tbb::flow::make_edge(* fillMatrixNode,* reductionNode);
-   tbb::flow::make_edge(* reductionNode,* rankNode);
+   tbb::flow::make_edge(* fillAndReduceNode,* rankNode);
 
    return mVertices.size()-1;
 }
@@ -27,7 +24,7 @@ int DependencyGraph::addVertex(int level, int slantedDegree)
 void DependencyGraph::addFillMatrixEdge(int source, int target)
 {
    mVertices[source].mEdges.push_back(target);
-   tbb::flow::make_edge(* mVertices[source].mReductionNode, * mVertices[target].mFillMatrixNode);
+   tbb::flow::make_edge(* mVertices[source].mFillAndReduceNode, * mVertices[target].mFillAndReduceNode);
 }
 
 void DependencyGraph::addMinimalBettiEdge(int level, int slantedDegree, int nLevels, int nSlantedDegrees)
@@ -40,7 +37,7 @@ void DependencyGraph::addMinimalBettiEdge(int level, int slantedDegree, int nLev
      tbb::flow::make_edge(* mVertices[source].mRankNode, * mVertices[target].mMinimalBettiNode);
 }
 
-TBBNodePtr DependencyGraph::createFillMatrixNode(int lev, int sldeg)
+TBBNodePtr DependencyGraph::createFillAndReduceNode(int lev, int sldeg)
 {
   return std::make_shared<TBBNode>(mTBBGraph,
                                 [lev, sldeg, this](const tbb::flow::continue_msg &msg)
@@ -59,26 +56,26 @@ TBBNodePtr DependencyGraph::createFillMatrixNode(int lev, int sldeg)
                                 });
 }
 
-TBBNodePtr DependencyGraph::createReductionNode(int lev, int sldeg)
-{
-  return std::make_shared<TBBNode>(mTBBGraph,
-                                [lev, sldeg, this](const tbb::flow::continue_msg &msg)
-                                {
-				  std::lock_guard<std::mutex> guard(mMutex);
-                                  std::cout << "reduction node       lev=" << lev << " sldeg="
-                                            << sldeg << " sum=" << lev + sldeg << std::endl;
-                                 return msg;
-                                });
-}
-
 TBBNodePtr DependencyGraph::createRankNode(int lev, int sldeg)
 {
   return std::make_shared<TBBNode>(mTBBGraph,
                                 [lev, sldeg, this](const tbb::flow::continue_msg &msg)
                                 {
 				  std::lock_guard<std::mutex> guard(mMutex);
+				  //int& status = mFrame->mComputationStatus.entry(sldeg,lev);
+				  //if (status != 2) return msg;
+
                                   std::cout << "rank node           lev=" << lev << " sldeg="
                                             << sldeg << " sum=" << lev + sldeg << std::endl;
+
+                                  //int rk = mFrame->rank(sldeg,lev);
+                                  //if (rk > 0)
+                                  //{
+                                  //   mFrame->mBettiMinimal.entry(sldeg, lev) -= rk;
+                                  //   if (sldeg <= mFrame->mHiSlantedDegree and lev > 0)
+                                  //     mFrame->mBettiMinimal.entry(sldeg + 1, lev - 1) -= rk;
+                                  //}
+                                  //status = 3;
                                   return msg;
                                 });
 }
@@ -130,7 +127,7 @@ void DependencyGraph::print() const
   }
 }
 
-void makeDependencyGraph(DependencyGraph &G, int nlevels, int nslanted_degrees)
+void makeDependencyGraph(DependencyGraph &G, int nlevels, int nslanted_degrees, bool doMinimalBetti)
 {
   // Create the nodes
   for (int sldeg=0; sldeg < nslanted_degrees; ++sldeg)
@@ -153,7 +150,7 @@ void makeDependencyGraph(DependencyGraph &G, int nlevels, int nslanted_degrees)
         if (sldeg > 0)
           G.addFillMatrixEdge(getIndex(lev,sldeg-1,nlevels,nslanted_degrees),
                               getIndex(lev,sldeg,nlevels,nslanted_degrees));
-	if (lev < nlevels-1)
+	if ((lev < nlevels-1) && doMinimalBetti)
 	  G.addMinimalBettiEdge(lev,sldeg,nlevels,nslanted_degrees);
       }
 }

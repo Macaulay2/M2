@@ -37,7 +37,7 @@ class F4Res;
 
 typedef int ComponentIndex;  // index into f4 matrices over kk.  These tend to
                              // be larger, not sure if they
-// will ever be > 2billion, but probably...
+                             // will ever be > 2billion, but probably...
 
 namespace SchreyerFrameTypes {
 struct FrameElement
