@@ -44,11 +44,17 @@ ARGS := $(ARGS), $(IARGS)
 endif
 
 STOP = --stop --silent
+ArgumentMode = defaultMode
+m2-need-template = "needsPackage(\"$(1)\",LoadDocumentation=>true,DebuggingMode=>true)"
+m2-check-template = "check($(1),UserMode=>false,Verbose=>$(Verbose)); exit 0"
 $(foreach i,\
 	$(sort $(ALL_PACKAGES) $(DEVEL)),\
 	$(eval check::check-$i)\
 	$(eval check-$i:; \
-		@pre_bindir@/M2 -q --no-preload $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true,DebuggingMode=>true); check($i,UserMode=>false,Verbose=>$(Verbose)); exit 0" ))
+		@pre_bindir@/M2 -q --no-preload $(STOP)                 \
+			-e $(call m2-need-template,$i)                  \
+			-e "debug Core; argumentMode = $(ArgumentMode)" \
+			-e $(call m2-check-template,$i)))
 info-dir: @pre_infodir@/dir
 @pre_infodir@/dir:|@pre_infodir@
 	@INSTALL_DATA@ @abs_top_srcdir@/files/info-dir-template $@
