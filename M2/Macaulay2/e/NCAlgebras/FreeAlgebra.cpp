@@ -99,8 +99,7 @@ FreeAlgebra* FreeAlgebra::create(const Ring* K,
                                  )
 {
   assert(K != nullptr);
-  std::shared_ptr<FreeMonoid> M =
-      std::make_shared<FreeMonoid>(names, degreeRing, degrees, wtvecs, heftVector);
+  std::shared_ptr<FreeMonoid> M (new FreeMonoid(names, degreeRing, degrees, wtvecs, heftVector));
   FreeAlgebra* result = new FreeAlgebra(K, M);
 
   return result;
