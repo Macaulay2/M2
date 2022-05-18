@@ -51,6 +51,8 @@ Here is the procedure:
 	      git push origin release-X.Y
 	   This ensures that changes needed for building on various
 	      architectures are available downstream
+	 - using the common *.deb file on the web site, update the documentation and
+	   version number there
        - on the development branch:
 	 - merge the new release branch into development
 	      git checkout development
