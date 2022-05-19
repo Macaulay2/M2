@@ -58,6 +58,12 @@ class SMat : public our_new_delete
 
   SMat(const SMat<ACoeffRing> &M);  // Copies (clones) M
 
+  virtual ~SMat()
+  {
+    for (size_t c = 0; c < ncols_; c++) { vec_remove(columns_[c]); }
+    freemem(columns_);
+  }
+
   void grab(SMat *M);  // swaps M and this.
 
   SMat<CoeffRing> *copy() const;
@@ -198,7 +204,7 @@ class SMat : public our_new_delete
       *coeffR;  // Same as R, optimized for speed.  R->get_CoeffRing()
   size_t nrows_;
   size_t ncols_;
-  sparsevec **columns_;  // array has length nrows*ncols
+  sparsevec **columns_;  // array has length ncols
                          // columns stored one after another
 
   ////////////////////////
@@ -253,7 +259,8 @@ typename SMat<CoeffRing>::sparsevec *SMat<CoeffRing>::vec_new() const
 template <typename CoeffRing>
 void SMat<CoeffRing>::vec_remove_node(sparsevec *&v) const
 {
-  freemem(v);
+  ring().clear(v->coeff);
+  delete v;
 }
 
 template <typename CoeffRing>
@@ -303,7 +310,7 @@ bool SMat<CoeffRing>::vec_get_entry(const sparsevec *v,
       break;
     else if (p->row == r)
       {
-        ring().init_set(result, p->coeff);
+        ring().set(result, p->coeff);
         return true;
       }
   return false;
@@ -659,7 +666,8 @@ void SMat<CoeffRing>::vec_row_op2(sparsevec *&v,
   ring().set_zero(e2);
   bool r1_nonzero = vec_get_entry(v, r1, e1);
   bool r2_nonzero = vec_get_entry(v, r2, e2);
-  if (!r1_nonzero && !r2_nonzero){
+  if (!r1_nonzero && !r2_nonzero)
+    {
       ring().clear(c1);
       ring().clear(c2);
       ring().clear(c3);
@@ -667,7 +675,7 @@ void SMat<CoeffRing>::vec_row_op2(sparsevec *&v,
       ring().clear(e1);
       ring().clear(e2);
       return;
-  }
+    }
   if (r1_nonzero)
     {
       ring().mult(c1, a1, e1);

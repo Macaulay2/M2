@@ -235,6 +235,7 @@ bool ntl_LLL(MutableMatrix *M,
             U->set_entry(i, j, b);
           }
     }
+  mpz_clear(a);
   delete A;
   if (V) delete V;
   return true;

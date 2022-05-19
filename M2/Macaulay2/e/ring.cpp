@@ -129,6 +129,7 @@ ring_elem Ring::power(const ring_elem gg, mpz_srcptr m) const
           ERROR(
               "either element not invertible, or no method available to "
               "compute its inverse");
+          mpz_clear(n);
           return ff;
         }
     }
