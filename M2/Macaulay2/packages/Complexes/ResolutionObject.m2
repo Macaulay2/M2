@@ -120,7 +120,7 @@ freeResolution Module := Complex => opts -> M -> (
 
     -- Question: where is the actual computation happening? In the hook!
     
-    error("no method implemented to handle this ring and module");
+    error("no method implemented to handle this ring and module"); -- FIX THIS ERROR MESSAGE.
     );
 
 resolutionObjectInEngine = (opts, M, matM) -> (
@@ -408,7 +408,61 @@ resolutionBySyzygies = (opts, M) -> (
     RO.complex(opts.LengthLimit)
     )
 
+protect HomogenizedModule
+protect DehomogenizationMap
+protect HomogenizedModuleResolution
+
+resolutionByHomogenization = (opts, M) -> (
+    R := ring M;
+    if isHomogeneous M or 
+        not isCommutative R or 
+        not degreeLength R === 1 
+    then return null;
+
+    RO := M.cache.ResolutionObject;
+
+    f    := presentation M;
+    p    := presentation R;
+    A    := ring p;
+    k    := coefficientRing A;
+    if not isHomogeneous k then return null;
+    n    := numgens A;
+    X    := local X;
+    N    := monoid [X_0 .. X_n, MonomialOrder => GRevLex, Join => false];
+    A'   := k N;
+    toA' := map(A',A,(vars A')_{0 .. n-1});
+    p'   := toA' p;
+    R'   := A'/(ideal p');
+    toR' := map(R',R,(vars R')_{0 .. n-1});
+    f'   := toR' f;
+    pH   := homogenize(generators gb p', A'_n);     	  forceGB pH;
+    RH   := A' / ideal pH;
+    toRH := map(RH, R', vars RH);
+    fH   := homogenize(toRH generators gb f',RH_n); 	  forceGB fH;
+    MH   := cokernel fH;
+    if not isHomogeneous MH then 
+        error "oops, our logic involving homogenization is incorrect";
+    toR  := map(R, RH, vars R | 1);
+    RO.HomogenizedModule = MH;
+    RO.DehomogenizationMap = toR;
+
+    RO.compute = (lengthlimit, degreelimit) -> (
+        RO.HomogenizedModuleResolution = freeResolution(RO.HomogenizedModule, LengthLimit => lengthlimit, DegreeLimit => degreelimit);
+        );
+
+    RO.isComputable = (lengthlimit, degreelimit) -> true;
+
+    RO.complex = (lengthlimit) -> (
+        C := RO.DehomogenizationMap RO.HomogenizedModuleResolution;
+        C.cache.augmentationMap = map(complex M, C, i -> map(M, target presentation M, 1)); -- TODO: might need some work to determine this?
+        C);
+    
+    RO.compute(opts.LengthLimit, opts.DegreeLimit);
+    RO.complex(opts.LengthLimit)
+    )
+
 addHook((freeResolution, Module), resolutionBySyzygies, Strategy => "Syzygies")
+addHook((freeResolution, Module), resolutionByHomogenization, Strategy => "Homogenization")
 addHook((freeResolution, Module), resolutionInEngine0, Strategy => 0)
 addHook((freeResolution, Module), resolutionInEngine2, Strategy => 2)
 addHook((freeResolution, Module), resolutionInEngine3, Strategy => 3)
@@ -819,3 +873,67 @@ prune HH C
 prune HH C
 n = 3
 entries (id_(ZZ^n) || - id_(ZZ^n))
+
+---- Inhomogeneous
+restart
+needsPackage "Complexes"
+kk = ZZ/32003
+A = kk[a,b,c,d]
+I = ideal"a2b-c2, abc-d2"
+isHomogeneous I
+debugLevel = 1
+gbTrace=1
+C = freeResolution I
+peek C.cache
+
+I = ideal"a2b-c2, abc-d2"
+freeResolution(I, LengthLimit => 2)
+freeResolution(I, LengthLimit => 3)
+C = oo
+peek C.cache
+minimize C
+methods minimize
+dd^C
+(res I).dd
+
+-- homogeneous quotient ring as coefficient ring
+restart
+loadPackage "Complexes"
+kk = ZZ/32003
+A = kk[s,t]/(s^3, t^3)
+B = A[x,y,z, Join => false]
+I = ideal(s*x-t*y, s^2*z^3-x^5)
+isHomogeneous I
+debugLevel = 1
+gbTrace = 1
+res I
+I = ideal I_*
+res(I, Strategy => 2)
+(B1,f1) = flattenRing B
+I1 = f1 I
+res I1
+res(I1, LengthLimit => 4)
+freeResolution(I, LengthLimit => 4)
+
+
+-- Test of Strategy => Homogenization
+restart
+needsPackage "Complexes"
+kk = ZZ/32003
+A = kk[s,t]/(s^2-t^3, t^5)
+B = A[x,y,z, Join => false]
+I = ideal(s*x-t*y, s^2*z^3-x^4)
+isHomogeneous I
+debugLevel = 1
+gbTrace=1
+res I
+res(I, Strategy => "Syzygies", LengthLimit => 3)
+freeResolution(I, Strategy => "Syzygies", LengthLimit => 3)
+freeResolution(I, LengthLimit => 3)
+minimize o10
+
+-- XXX Start here: make an example for inhomg resolution computation.
+-- 19 May 2022.
+
+-- need a suite of examples for towers/homogeneity, which algorithm is best?
+-- 
