@@ -94,6 +94,11 @@ class ARingGFFlintBig : public RingInterface
     ElementType* b = getmemstructtype(ElementType*);
     init(*b);
     copy(*b, a);
+    size_t coeffs_size = sizeof(mp_limb_t)*b->alloc;
+    mp_ptr coeffs = reinterpret_cast<mp_ptr>(getmem_atomic(coeffs_size));
+    memcpy(coeffs,b->coeffs,coeffs_size);
+    flint_free(b->coeffs);
+    b->coeffs = coeffs;
     result.poly_val = reinterpret_cast<Nterm*>(b);
   }
 
