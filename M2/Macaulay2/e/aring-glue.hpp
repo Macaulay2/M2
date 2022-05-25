@@ -44,7 +44,7 @@ class ConcreteRing : public Ring
     // a reference to this so long as it has a reference to R, and this is in
     // the gc heap, so that reference keeps R alive. Really, the MutableMat
     // constructor should probably be calling ring(), but ring() is not virtual
-    // and not ever Ring is an instance of ConcreteRing.
+    // and not every Ring is an instance of ConcreteRing.
     if (dense)
       return new MutableMat<DMat<RingType> >(this, R.get(), nrows, ncols);
     else
