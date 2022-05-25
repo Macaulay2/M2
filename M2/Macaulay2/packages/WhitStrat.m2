@@ -3,7 +3,7 @@ newPackage(
 	Version => "1.1", 
     	Date => "May 24, 2022",
     	Authors => {{Name => "Martin Helmer", 
-		  Email => "martin.helmer@anu.edu.au", 
+		  Email => "mhelmer@ncsu.edu", 
 		  HomePage => "http://martin-helmer.com/"}},
     	Headline => "Compute Whitney Statifications Algebraically",
     	DebuggingMode => false,
@@ -251,71 +251,20 @@ TEST ///
     installPackage "WhitStrat"
 *- 
 n=3;
-R=QQ[x_0..x_3]
-I=ideal(x_1^2*x_2-x_3*x_0^2)
-time V=whitneyStratify I
-peek V
-Eu=eulerObsToTop(V)
-peek Eu
-mu=linkingNumbers I
-mu#"Strat"
-mu#(0,3)
-mu#"Eu"_(2,3)
+R=QQ[x_0..x_3];
+I=ideal(x_1^2*x_2-x_3*x_0^2);
+time V=whitneyStratify I;
+v0={ideal(x_2,x_1,x_0), ideal(x_3,x_1,x_0)};
+assert(V#0==v0);
 
+R=QQ[x_0..x_2];
+I=ideal(x_1^2*x_2-x_0^2);
+V=whitneyStratify I;
+assert((first V#0)==ideal(gens R));
 
-
-sum for i from 0 to n-codim(I) list V#i
-peek V
-peek Eu
-remove(V,2)
-peek V
-eulerObsToTop(V)
-peek oo
-
-peek V
-peek Eu
-V1=last V#0
-pols=polarVars I
-for p in pols list codim p
-for p in pols list codim (p+V1)
-polMults=new MutableHashTable;
-Eu=new MutableHashTable;
-for i from 0 to n-codim(I) do(
-    pMdimi={};
-    Eudimi={};
-    for v in V#i do(
-	pMult={};
-	for p in pols do(
-	    if codim(p+v)==codim(v) then(
-		pMult=append(pMult,multiplicity(v,p));
-		)
-    	    else(
-		pMult=append(pMult,0);
-		);
-    	    );
-	pMult=reverse pMult;
-	EuVi=sum(0..#pMult-1, j-> (-1)^j*pMult_j);
-	pMdimi=append(pMdimi,pMult);
-	Eudimi=append(Eudimi,EuVi);
-	);
-    Eu#i=Eudimi;
-    polMults#i=pMdimi;
-    );
-peek Eu
-peek polMults
-
-v0={ideal(x_2,x_1,x_0), ideal(x_3,x_1,x_0)}
-assert(V#0==v0)
-
-R=QQ[x_0..x_2]
-I=ideal(x_1^2*x_2-x_0^2)
-V=whitneyStratify I
-assert((first V#0)==ideal(gens R))
-
-R=QQ[x_0..x_4]
-I=ideal(x_0^2*x_4-x_1*x_2^2+x_3^3-x_3*x_0^2-x_4^2*x_3)
-time V=whitneyStratify I
-peek V
-v0={ideal(x_4,x_3,x_2,x_0), ideal(x_3-x_4,x_2,x_1,x_0^2-2*x_4^2)}
-assert(V#0==v0)
+R=QQ[x_0..x_4];
+I=ideal(x_0^2*x_4-x_1*x_2^2+x_3^3-x_3*x_0^2-x_4^2*x_3);
+time V=whitneyStratify I;
+v0={ideal(x_4,x_3,x_2,x_0), ideal(x_3-x_4,x_2,x_1,x_0^2-2*x_4^2)};
+assert(V#0==v0);
 ///
