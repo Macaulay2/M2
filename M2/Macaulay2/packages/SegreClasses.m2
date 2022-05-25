@@ -163,9 +163,9 @@ projectiveDegree(Scheme,Scheme,RingElement) := opts -> (sX,sY,w) -> (
     irrelevantIdeals := values irrelevantIdealsHash / ideal;
     LA := sum(irrelevantIdeals, p -> sub(ideal(1-sum(numgens(p),i->random(kk)*p_i)),R));
     pd := 0;
-    S:=kk(monoid[gens R,getSymbol "t"]);
-    t := last gens S;
-    EqT:=ideal( 1-t*sum((numgens X),j->(random(kk)*substitute(X_j,S))));
+    S:=kk(monoid[gens R,getSymbol "TTT"]);
+    TTT := last gens S;
+    EqT:=ideal( 1-TTT*sum((numgens X),j->(random(kk)*substitute(X_j,S))));
     ZeroDimGB:=groebnerBasis(sub(Y+Ls+G+LA,S)+EqT, Strategy=>"F4");
     pd = numColumns basis(cokernel leadTerm ZeroDimGB);
     return pd;
