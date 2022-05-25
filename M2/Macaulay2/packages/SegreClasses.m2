@@ -1,9 +1,9 @@
 newPackage( "SegreClasses",
-    Version =>"1.02",
-    Date => "July 13, 2018",
+    Version =>"1.03",
+    Date => "May 22, 2022",
     Authors => {
         {Name => "Martin Helmer",
-         Email => "m.helmer@math.ku.dk",
+         Email => "mhelmer@ncsu.edu",
          HomePage => "http://martin-helmer.com"},
         {Name => "Corey Harris",
          Email => "Corey.Harris@mis.mpg.de",
@@ -1130,5 +1130,6 @@ assert(isComponentContained(X,Y)==true)
 
 end
 	    
+
 
 
