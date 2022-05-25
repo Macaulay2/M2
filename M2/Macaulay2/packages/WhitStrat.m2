@@ -12,7 +12,6 @@ newPackage(
 needsPackage "Elimination";
 needsPackage "PrimaryDecomposition";
 needsPackage "Saturation";
-needsPackage "SegreClasses";
 export{
     "conormal",
     "conormRing",
@@ -247,7 +246,6 @@ TEST ///
 -*  
     restart
     needsPackage "WhitStrat"
-    needsPackage "SegreClasses"
     installPackage "WhitStrat"
 *- 
 n=3;
