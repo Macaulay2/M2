@@ -265,7 +265,7 @@ setupMethods := (args, symbols) -> (
 
 setupMethods((), { 
 	  entries, baseName, borel, gcdCoefficients, singularLocus,
-	  Hom, diff, diff', contract, contract', subsets, partitions, member,
+	  Hom, diff, diff', contract, contract', member,
 	  koszul, target, source,
 	  getChangeMatrix, cover, coverMap, super, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
