@@ -147,6 +147,12 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       if strictequality(x.v,y.v) then True else False
 	       )
 	  else False)
+     is x:CCicell do (
+	  when rhs
+	  is y:CCicell do (
+	       if strictequality(x.v,y.v) then True else False
+	       )
+	  else False)
      is x:SymbolClosure do (
 	  when rhs 
 	  is y:SymbolClosure do (

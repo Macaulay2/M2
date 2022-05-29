@@ -59,21 +59,36 @@ export RRmutable := Pointer "mpfr_ptr";
 
 export CCmutable := { re:RRmutable, im:RRmutable };
 
+export CCimutable := { re:RRimutable, im:RRimutable };
+
 export CC := { re:RR, im:RR };
+
+export CCi := { re:RRi, im:RRi };
 
 export CCorNull := CC or null;
 
+export CCiorNull := CCi or null;
+
 export CCcell := {+v:CC};
+export CCicell := {+v:CCi};
 dummy(x:RR):string := "";
 dummyi(x:RRi):string := "";  -- Added for MPFI
 
 export tostringRRpointer := dummy;
 export tostringRRipointer := dummyi;  -- Added for MPFI
+export tostringCCipointer := dummyi;  -- Added for MPFI
 dummy(x:CC):string := "";
+dummyi(x:CCi):string := "";  -- Added for MPFI
 
 export tonetCCpointer := dummy;
 
 export tonetCCparenpointer := dummy;
+
+dummy(x:CCi):string := "";
+
+export tonetCCipointer := dummy;
+
+export tonetCCiparenpointer := dummy;
 
 
 export min(x:int,y:int):int := if x<y then x else y;
@@ -912,11 +927,15 @@ precision0(x:RR) ::= Ccode(ulong,"(unsigned long)mpfr_get_prec(", x, ")");
 
 precision0(x:RRi) ::= Ccode(ulong,"(unsigned  long)mpfi_get_prec(", x, ")");
 
+precision0(x:CCi) ::= Ccode(ulong,"(unsigned  long)mpfi_get_prec(", x, ")");
+
 export precision(x:RR):ulong := precision0(x);
 
 export precision(x:RRi):ulong := precision0(x);
 
 export precision(x:CC):ulong := precision0(x.re);
+
+export precision(x:CCi):ulong := precision0(x.re);
 
 export toRR(x:RR,prec:ulong):RR := (
      if precision0(x) == prec then return x;
@@ -1126,6 +1145,14 @@ export toCC(x:RR,y:RR):CC := (
      else CC(toRR(x,precision0(y)),y)
     );
 
+export toCCi(x:RRi,y:RRi):CCi := (
+     if ( isnan0(x) || isnan0(y) ) then (prec := precision0(x); z := nanRRi(prec); CCi(z,z))
+     else if ( isinf0(x) || isinf0(y) ) then (prec := precision0(x); z := infinityRRi(prec,1); CCi(z,z))
+     else if precision0(x) == precision0(y) then CCi(x,y)
+     else if precision0(x) < precision0(y) then CCi(x,toRRi(y,precision0(x)))
+     else CCi(toRRi(x,precision0(y)),y)
+    );
+
 export infinityCC(prec:ulong):CC := (x := infinityRR(prec,1); toCC(x,x));
 
 export nanCC(prec:ulong):CC := (x := nanRR(prec); toCC(x,x));
@@ -1191,7 +1218,11 @@ export isfinite(x:CC):bool := isfinite0(x.re) && isfinite0(x.im);
 
 export isinf(x:CC):bool := isinf0(x.re) && !isnan0(x.im) || isinf0(x.im) && !isnan0(x.re);
 
+export isinf(x:CCi):bool := isinf0(x.re) && !isnan0(x.im) || isinf0(x.im) && !isnan0(x.re);
+
 export isnan(x:CC):bool := isnan0(x.re) || isnan0(x.im);
+
+export isnan(x:CCi):bool := isnan0(x.re) || isnan0(x.im);
 
 export (x:RR) === (y:RR):bool := (			    -- weak equality
      Ccode( void, "mpfr_clear_flags()" );
@@ -1420,7 +1451,10 @@ export hash(x:RRi):int := int(precision0(x)) + Ccode(int,
     ); -- End added for MPFI
 
 export hash(x:CC):int := 123 + hash(x.re) + 111 * hash(x.im);
-     
+
+export hash(x:CCi):int := 137 + hash(x.re) + 139 * hash(x.im);
+
+
 export (x:RR) + (y:RR) : RR := (
      z := newRRmutable(min(precision0(x),precision0(y)));
      Ccode( void, "mpfr_add(", z, ",",  x, ",",  y, ", MPFR_RNDN)" );
@@ -2056,6 +2090,8 @@ export (x:RRi) >> (n:int) : RRi := x << long(-n);
 
 export (x:CC) + (y:CC) : CC := toCC(x.re+y.re, x.im+y.im);
 
+export (x:CCi) + (y:CCi) : CCi := toCCi(x.re+y.re, x.im+y.im);
+
 export (x:CC) - (y:CC) : CC := toCC(x.re-y.re, x.im-y.im);
 
 export (x:RR) - (y:CC) : CC := toCC(x-y.re,-y.im);
@@ -2144,7 +2180,9 @@ export (x:ZZ) / (y:CC) : CC := x * inverse(y);
 export (x:int) / (y:CC) : CC := x * inverse(y);
 
 export strictequality(x:CC,y:CC):bool := strictequality(x.re,y.re) && strictequality(x.im,y.im);
-     
+
+export strictequality(x:CCi,y:CCi):bool := strictequality(x.re,y.re) && strictequality(x.im,y.im);
+
 export (x:CC) === (y:CC) : bool := x.re === y.re && x.im === y.im;
 
 export (x:CC) === (y:RR) : bool := x.re === y && x.im === 0;

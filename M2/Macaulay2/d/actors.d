@@ -62,6 +62,11 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
      	  is y:CCcell do toExpr(x.v + y.v)			    -- # typical value: symbol +, CC, CC, CC
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
+     is x:CCicell do (
+	  when rhs
+     	  is y:CCicell do toExpr(x.v + y.v)			    -- # typical value: symbol +, CCi, CCi, CCi
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,PlusS))
      is x:RawMatrixCell do (
 	  when rhs
 	  is y:RawMatrixCell do (				    -- # typical value: symbol +, RawMatrix, RawMatrix, RawMatrix

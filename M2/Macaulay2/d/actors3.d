@@ -1087,9 +1087,15 @@ round0(e:Expr):Expr := (
 	  if isnan(x.v) then buildErrorPacket("encountered NotANumber in conversion to integer") else
 	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
 	  toExpr(round(x.v)))
+     is x:CCicell do (
+	  if isnan(x.v) then buildErrorPacket("encountered NotANumber in conversion to integer") else
+	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
+	  toExpr(round(x.v.re)))
      else buildErrorPacket("expected a real number")
      );
 setupfun("round0",round0);
+
+
 
 run(e:Expr):Expr := (
      when e

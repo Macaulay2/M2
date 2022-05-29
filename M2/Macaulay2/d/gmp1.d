@@ -230,8 +230,12 @@ export format(
 	  );
      concatenate(array(string)(lp,x.0,x.1,y.0,y.1,star,i,rp)));
 
+
 export tostringCC(z:CC):string := (
      format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,false,false,z)
+     );
+export tostringCCi(z:CCi):string := (
+     concatenate(array(string)(tostringRRi(z.re),"+",tostringRRi(z.im),"*ii"))
      );
 export tonetCC(z:CC):string := (
      format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,printingSeparator,true,false,z)

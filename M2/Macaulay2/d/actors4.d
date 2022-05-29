@@ -992,6 +992,7 @@ tostringfun(e:Expr):Expr := (
      is x:RRcell do toExpr(tostringRR(x.v))
      is x:RRicell do toExpr(tostringRRi(x.v))
      is z:CCcell do toExpr(tostringCC(z.v))
+     is z:CCicell do toExpr(tostringCCi(z.v))
      is Error do toExpr("<<an error message>>")
      is Sequence do toExpr("<<a sequence>>")
      is HashTable do toExpr("<<a hash table>>")
@@ -1541,11 +1542,27 @@ toCC(e:Expr):Expr := (
      else WrongArg("a real or complex number, or 2 or 3 arguments"));
 setupfun("toCC",toCC);
 
+toCCi(e:Expr):Expr := (
+     when e
+     is s:Sequence do (
+	  if length(s) == 2 then (
+	       when s.0 is x:RRicell do(
+	       	    when s.1 is y:RRicell do toExpr(toCCi(x.v,y.v))
+		    else WrongArgRR()
+		    )
+		    else WrongArgRR()
+		    )
+		else WrongNumArgs(1,3))
+     else WrongArg("a real or complex number, or 2 or 3 arguments"));
+setupfun("toCCi",toCCi);
+
+
 precision(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(precision(x.v))
      is x:RRicell do toExpr(precision(x.v))
      is x:CCcell do toExpr(precision(x.v))
+     is x:CCicell do toExpr(precision(x.v))
      else WrongArgRR());
 setupfun("precision0",precision);
 
