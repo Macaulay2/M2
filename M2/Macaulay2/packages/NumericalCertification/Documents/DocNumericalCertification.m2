@@ -678,7 +678,7 @@ doc ///
 
 		In order to use alphaCertified, users need to let the package knows a directory for alphaCertified when it is loaded.
 	    Example
-	    	needsPackage("NumericalCertification", Configuration => {"some/path/to/alphaCertified"})
+	    	needsPackage("NumericalCertification", Configuration => {"ALPHACERTIFIEDexec" => "some/path/to/alphaCertified"})
 	    Text
 		Function only takes elements over @TO "RR"@ or @TO "CC"@ as an input.
     	    Example
