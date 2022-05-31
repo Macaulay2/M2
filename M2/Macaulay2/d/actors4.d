@@ -1542,17 +1542,76 @@ toCC(e:Expr):Expr := (
      else WrongArg("a real or complex number, or 2 or 3 arguments"));
 setupfun("toCC",toCC);
 
+
 toCCi(e:Expr):Expr := (
      when e
+     is x:ZZcell do toExpr(toCCi(x.v,defaultPrecision)) -- # typical value: toCCi, ZZ, CCi
+     is x:QQcell do toExpr(toCCi(x.v,defaultPrecision)) -- # typical value: toCCi, QQ, CCi
+     is x:RRcell do toExpr(toCCi(x.v)) -- # typical value: toCCi, RR, CCi
+     is x:RRicell do toExpr(toCCi(x.v)) -- # typical value: toCCi, RRi, CCi
+     is x:CCcell do toExpr(toCCi(x.v.re,x.v.im)) -- # typical value: toCCi, CC, CCi
+     is CCicell do e -- # typical value: toCCi, CCi, CCi
      is s:Sequence do (
 	  if length(s) == 2 then (
-	       when s.0 is x:RRicell do(
-	       	    when s.1 is y:RRicell do toExpr(toCCi(x.v,y.v))
+	       when s.0 is prec:ZZcell do (
+		    if !isULong(prec.v) then WrongArgSmallUInteger(1)
+		    else (
+			 when s.1
+			 is x:ZZcell do toExpr(toCCi(x.v,toULong(prec.v))) -- # typical value: toCCi, ZZ, ZZ, CCi
+			 is x:QQcell do toExpr(toCCi(x.v,toULong(prec.v))) -- # typical value: toCCi, ZZ, QQ, CCi
+			 is x:RRcell do toExpr(toCCi(x.v,toULong(prec.v))) -- # typical value: toCCi, ZZ, RR, CCi
+			 is x:RRicell do toExpr(toCCi(x.v,toULong(prec.v))) -- # typical value: toCCi, ZZ, RRi, CCi
+			 is x:CCcell do toExpr(toCCi(x.v,toULong(prec.v))) -- # typical value: toCCi, ZZ, CC, CCi
+			 is x:CCicell do toExpr(toCCi(x.v,toULong(prec.v))) -- # typical value: toCCi, ZZ, CCi, CCi
+			 else WrongArg("a rational number, real number, or an integer")
+			 )
+		    )
+	       is x:RRcell do (
+		    when s.1
+		    is y:RRcell do toExpr(toCCi(x.v,y.v))	    -- # typical value: toCCi, RR, RR, CCi
+		    is y:RRicell do toExpr(toCCi(x.v,y.v))	    -- # typical value: toCCi, RR, RRi, CCi
 		    else WrongArgRR()
 		    )
+	       is x:RRicell do(
+		    when s.1
+		    is y:RRcell do toExpr(toCCi(x.v,y.v))	    -- # typical value: toCCi, RRi, RR, CCi
+	       	    is y:RRicell do toExpr(toCCi(x.v,y.v))	    -- # typical value: toCCi, RRi, RRi, CCi
 		    else WrongArgRR()
 		    )
-		else WrongNumArgs(1,3))
+	       else WrongArgZZ(1)
+	       )
+	  else if length(s) == 3 then (
+	       when s.0 is prec:ZZcell do (
+		    -- # typical value: toCCi, ZZ, ZZ, ZZ, CCi
+		    -- # typical value: toCCi, ZZ, ZZ, QQ, CCi
+		    -- # typical value: toCCi, ZZ, ZZ, RR, CCi
+		    -- # typical value: toCCi, ZZ, QQ, ZZ, CCi
+		    -- # typical value: toCCi, ZZ, QQ, QQ, CCi
+		    -- # typical value: toCCi, ZZ, QQ, RR, CCi
+		    -- # typical value: toCCi, ZZ, RR, ZZ, CCi
+		    -- # typical value: toCCi, ZZ, RR, QQ, CCi
+		    -- # typical value: toCCi, ZZ, RR, RR, CCi
+		    if !isULong(prec.v) then WrongArgSmallUInteger(1)
+		    else toExpr(CCi(
+			      when s.1
+			      is x:QQcell do toRRi(x.v,toULong(prec.v))
+			      is x:ZZcell do toRRi(x.v,toULong(prec.v))
+			      is x:RRcell do toRRi(x.v,toULong(prec.v))
+			      else (
+				   return WrongArg("a rational number, real number, or an integer");
+				   toRRi(0,toULong(prec.v)) -- dummy
+				   )
+			      ,
+			      when s.2
+			      is x:QQcell do toRRi(x.v,toULong(prec.v))
+			      is x:ZZcell do toRRi(x.v,toULong(prec.v))
+			      is x:RRcell do toRRi(x.v,toULong(prec.v))
+			      else (
+				   return WrongArg("a rational number, real number, or an integer");
+				   toRRi(0,toULong(prec.v)) -- dummy
+				   ))))
+	       else WrongArgZZ(1))
+	  else WrongNumArgs(1,3))
      else WrongArg("a real or complex number, or 2 or 3 arguments"));
 setupfun("toCCi",toCCi);
 

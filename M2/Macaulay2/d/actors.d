@@ -431,6 +431,8 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
           is y:RRicell do (toExpr(x.v / y.v))   -- # typical value: symbol /, ZZ, RRi, RRi
      	  is y:CCcell do (					    -- # typical value: symbol /, ZZ, CC, CC
 	       toExpr(x.v / y.v))
+     	  is y:CCicell do (					    -- # typical value: symbol /, ZZ, CCi, CCi
+	       toExpr(toCCi(x.v / y.v.re, x.v / y.v.im)))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,DivideS))
      is x:QQcell do (
@@ -449,6 +451,8 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
      	  is y:CCcell do (					    -- # typical value: symbol /, QQ, CC, CC
 	       if y.v === 0 then buildErrorPacket("division by zero") else
 	       toExpr(toRR(x.v,precision(y.v.re)) / y.v))
+     	  is y:CCicell do (					    -- # typical value: symbol /, QQ, CCi, CCi
+	       toExpr(toCCi(toRR(x.v,precision(y.v.re)) / y.v.re,toRR(x.v,precision(y.v.re)) / y.v.im)))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,DivideS))
      is x:RRcell do (
@@ -466,6 +470,8 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
           is y:RRicell do (toExpr(x.v / y.v))   -- # typical value: symbol /, RR, RRi, RRi
      	  is y:CCcell do (					    -- # typical value: symbol /, RR, CC, CC
 	       toExpr(x.v / y.v))
+     	  is y:CCicell do (					    -- # typical value: symbol /, RR, CCi, CCi
+	       toExpr(toCCi(x.v / y.v.re, x.v / y.v.im)))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,DivideS))
     is x:RRicell do (
@@ -480,6 +486,8 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	         else toExpr(x.v / y.v))
            is y:RRcell do (toExpr(x.v / y.v))    -- # typical value: symbol /, RRi, RR, RRi
            is y:RRicell do (toExpr(x.v / y.v))   -- # typical value: symbol /, RRi, RRi, RRi
+           is y:CCcell do (toExpr(x.v / y.v))    -- # typical value: symbol /, RRi, CC, CCi
+           is y:CCicell do (toExpr(toCCi((x.v * y.v.re)/(y.v.re * y.v.re + y.v.im * y.v.im),(-x.v * y.v.im)/(y.v.re * y.v.re + y.v.im * y.v.im))))    -- # typical value: symbol /, RRi, CCi, CCi
 	       is Error do rhs
 	       else binarymethod(lhs,rhs,DivideS))
      is x:CCcell do (
@@ -496,8 +504,34 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       )
      	  is y:RRcell do (					    -- # typical value: symbol /, CC, RR, CC
 	       toExpr(x.v / y.v))
+     	  is y:RRicell do (					    -- # typical value: symbol /, CC, RRi, CCi
+	       toExpr(toCCi(x.v.re / y.v,x.v.im / y.v)))
      	  is y:CCcell do (					    -- # typical value: symbol /, CC, CC, CC
 	       toExpr(x.v / y.v))
+     	  is y:CCicell do (					    -- # typical value: symbol /, CC, CCi, CCi
+	       toExpr(toCCi((y.v.re * x.v.re + y.v.im * x.v.im)/(y.v.re * y.v.re + y.v.im * y.v.im),(y.v.re * x.v.im - y.v.im * x.v.re)/(y.v.re * y.v.re + y.v.im * y.v.im))))
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,DivideS))
+     is x:CCicell do (
+	  when rhs
+	  is y:ZZcell do (					    -- # typical value: symbol /, CCi, ZZ, CCi
+	       if y.v === 0
+	       then buildErrorPacket("division by zero")
+	       else toExpr(toCCi(x.v.re / toRR(y.v,precision(x.v.re)),x.v.im / toRR(y.v,precision(x.v.re))))
+	       )
+     	  is y:QQcell do (					    -- # typical value: symbol /, CCi, QQ, CCi
+	       if y.v === 0
+	       then buildErrorPacket("division by zero")
+	       else toExpr(toCCi(x.v.re / toRR(y.v,precision(x.v.re)),x.v.im / toRR(y.v,precision(x.v.re))))
+	       )
+     	  is y:RRcell do (					    -- # typical value: symbol /, CCi, RR, CCi
+	       toExpr(toCCi(x.v.re / y.v, x.v.im / y.v)))
+     	  is y:RRicell do (					    -- # typical value: symbol /, CCi, RRi, CCi
+	       toExpr(toCCi(x.v.re / y.v,x.v.im / y.v)))
+     	  is y:CCcell do (					    -- # typical value: symbol /, CCi, CC, CCi
+	       toExpr(x.v / y.v))
+     	  is y:CCicell do (					    -- # typical value: symbol /, CCi, CCi, CCi
+	       toExpr(toCCi((y.v.re * x.v.re + y.v.im * x.v.im)/(y.v.re * y.v.re + y.v.im * y.v.im),(y.v.re * x.v.im - y.v.im * x.v.re)/(y.v.re * y.v.re + y.v.im * y.v.im))))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,DivideS))
      is x:RawMonomialCell do (
