@@ -225,7 +225,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  is y:ZZcell do toExpr(x.v - toCCi(y.v,precision(x.v.re)))	    -- # typical value: symbol -, CCi, ZZ, CCi
      	  is y:QQcell do toExpr(x.v - toCCi(y.v,precision(x.v.re)))	    -- # typical value: symbol -, CCi, QQ, CCi
 	  is y:RRcell do toExpr(x.v - toCCi(y.v))			    -- # typical value: symbol -, CCi, RR, CCi
-	  is y:RRicell do toExpr(x.v - toCCi(y.v))			    -- # typical value: symbol -, CCi, RR, CCi
+	  is y:RRicell do toExpr(x.v - toCCi(y.v))			    -- # typical value: symbol -, CCi, RRi, CCi
 	  is y:CCcell do toExpr(x.v - toCCi(y.v))			    -- # typical value: symbol -, CCi, CC, CCi
 	  is y:CCicell do toExpr(x.v - y.v)			    -- # typical value: symbol -, CCi, CCi, CCi
 	  is Error do rhs
