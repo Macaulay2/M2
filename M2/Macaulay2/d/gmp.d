@@ -2452,7 +2452,7 @@ export abs(x:CC):RR := (
 
 export abs(x:CCi):RRi := (
      z := newRRimutable(precision(x));
-     Ccode( void, "mpfr_hypot(", z, ",", x.re, ",", x.im, ",GMP_RNDN)" );
+     Ccode( void, "mpfi_hypot(", z, ",", x.re, ",", x.im,")");
      moveToRRiandclear(z));
 
 header "#include <complex.h> ";
@@ -2953,8 +2953,8 @@ export (x:CCi) ^ (y:ZZ):CCi := (
 	  if n == long(-2) then return inverse(square(x));
 	  -- we could do a few more of these optimizations here...
 	 );
-     exp(log(x)*y));
-
+     if isEven(y) then (n := x^(y << 1); return n*n)
+     else (return x*(x^(y-1))));
 
 export (x:RR) ^ (y:CC):CC := if isNegative(x) then exp(log(toCC(x))*y) else exp(log(x)*y);
 
