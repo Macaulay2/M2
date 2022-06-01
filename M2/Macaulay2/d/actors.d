@@ -712,6 +712,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       else toExpr(toRR(x.v,precision(y.v))^y.v)
 	       )
 	  is y:CCcell do toExpr(toRR(x.v,precision(y.v))^y.v)
+	  is y:CCicell do toExpr(toRR(x.v,precision(y.v))^y.v)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
      is x:QQcell do (
@@ -746,6 +747,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       then buildErrorPacket("negative base not implemented")
 	       else toExpr(toRR(x.v,precision(y.v))^y.v))
 	  is y:CCcell do toExpr(toRR(x.v,precision(y.v))^y.v)
+	  is y:CCicell do toExpr(toRR(x.v,precision(y.v))^y.v)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
      is x:RRcell do (
@@ -774,6 +776,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       else toExpr(x.v^y.v)
 	       )
 	  is y:CCcell do toExpr(x.v^y.v)
+	  is y:CCicell do toExpr(x.v^y.v)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
     is x:RRicell do (
@@ -795,6 +798,8 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       then toExpr(x.v^y.v)
 	       else buildErrorPacket("negative base not implemented")
 	       )
+	  is y:CCcell do toExpr(x.v^y.v)
+	  is y:CCicell do toExpr(x.v^y.v)
       else binarymethod(lhs,rhs,PowerS))
      is x:CCcell do (
 	  when rhs
@@ -804,10 +809,25 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       else if denominator(y.v) === 2 then toExpr(sqrt(x.v)^numerator(y.v))
 	       else toExpr(x.v^toRR(y.v,precision(x.v))))
 	  is y:RRcell do toExpr(x.v^y.v)
+	  is y:RRicell do toExpr(x.v^y.v)
 	  is y:CCcell do toExpr(x.v^y.v)
+	  is y:CCicell do toExpr(x.v^y.v)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
-     is x:RawRingElementCell do (
+     is x:CCicell do (
+	  when rhs
+	  is y:ZZcell do toExpr(x.v^y.v)
+	  is y:QQcell do (
+	       if denominator(y.v) === 1 then toExpr(x.v^numerator(y.v))
+	       else if denominator(y.v) === 2 then toExpr(sqrt(x.v)^numerator(y.v))
+	       else toExpr(x.v^toRR(y.v,precision(x.v))))
+	  is y:RRcell do toExpr(x.v^y.v)
+	  is y:RRicell do toExpr(x.v^y.v)
+	  is y:CCcell do toExpr(x.v^y.v)
+	  is y:CCicell do toExpr(x.v^y.v)
+     	  is Error do rhs
+	  else binarymethod(lhs,rhs,PowerS))
+	is x:RawRingElementCell do (
 	  when rhs
 	  is y:ZZcell do (
 	       when x.p^y.v
@@ -1248,6 +1268,7 @@ isFinite(e:Expr):Expr := (
      is x:RRcell do toExpr(isfinite(x.v))
      is x:RRicell do toExpr(isfinite(x.v))
      is x:CCcell do toExpr(isfinite(x.v))
+     is x:CCicell do toExpr(isfinite(x.v))
      else WrongArg("a number")
      );
 setupfun("isFinite",isFinite);
@@ -1260,6 +1281,7 @@ isANumber(e:Expr):Expr := (
      is x:RRcell do toExpr(!isnan(x.v))
      is x:RRicell do toExpr(!isnan(x.v))
      is x:CCcell do toExpr(!isnan(x.v))
+     is x:CCicell do toExpr(!isnan(x.v))
      else WrongArg("a number")
      );
 setupfun("isANumber",isANumber);
@@ -1271,6 +1293,7 @@ isInfinite(e:Expr):Expr := (
      is x:RRcell do toExpr(isinf(x.v))
      is x:RRicell do toExpr(isinf(x.v))
      is x:CCcell do toExpr(isinf(x.v))
+     is x:CCicell do toExpr(isinf(x.v))
      else WrongArg("a number")
      );
 setupfun("isInfinite",isInfinite).Protected=false;
