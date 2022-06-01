@@ -989,6 +989,7 @@ exp(e:Expr):Expr := (
      is x:CCcell do toExpr(exp(x.v))			    -- # typical value: exp, CC, CC
      is x:RRcell do toExpr(exp(x.v))			    -- # typical value: exp, RR, RR
      is x:RRicell do toExpr(exp(x.v))			    -- # typical value: exp, RRi, RRi
+     is x:CCicell do toExpr(exp(x.v))                       -- # typical value: exp, CCi, CCi
      else buildErrorPacket("expected a number")
      );
 setupfun("exp",exp).Protected=false;
