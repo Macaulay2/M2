@@ -2953,7 +2953,7 @@ export (x:CCi) ^ (y:ZZ):CCi := (
 	  if n == long(-2) then return inverse(square(x));
 	  -- we could do a few more of these optimizations here...
 	 );
-     if isEven(y) then (n := x^(y << 1); return n*n)
+     if isEven(y) then (n := x^(y << 1); return n^long(2))
      else (return x*(x^(y-1))));
 
 export (x:RR) ^ (y:CC):CC := if isNegative(x) then exp(log(toCC(x))*y) else exp(log(x)*y);
