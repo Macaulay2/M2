@@ -891,7 +891,7 @@ BesselJ(e:Expr):Expr := (
      when e is s:Sequence do (
 	  when s.0 is n:ZZcell do if !isLong(n.v) then WrongArg(1,"a small integer") else (
 	       when s.1 
-	       is x:RRcell do toExpr(BesselJ(toLong(n.v),x.v))	    -- # typical value: BesselJ, ZZ, RR, RR
+	       is x:RRcell do toExpr(BesselJ(toLong(n.v),x.v))
 	       else WrongArgRR(2))
 	  else WrongArgZZ(1))
      else WrongNumArgs(2));
@@ -904,7 +904,7 @@ BesselY(e:Expr):Expr := (
      when e is s:Sequence do (
 	  when s.0 is n:ZZcell do if !isLong(n.v) then WrongArg(1,"a small integer") else (
 	       when s.1 
-	       is x:RRcell do toExpr(BesselY(toLong(n.v),x.v))	    -- # typical value: BesselY, ZZ, RR, RR
+	       is x:RRcell do toExpr(BesselY(toLong(n.v),x.v))
 	       else WrongArgRR(2))
 	  else WrongArgZZ(1))
      else WrongNumArgs(2));
