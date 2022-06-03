@@ -38,7 +38,7 @@ class ARingRRi : public RingInterface
 
   unsigned int computeHashValue(const elem &a) const
   {
-    double d = 12347. * mpfr_get_d(&(a.left), GMP_RNDN) + 865800. * mpfr_get_d(&(a.right), GMP_RNDN);
+    double d = 12347. * mpfr_get_d(&(a.left), MPFR_RNDN) + 865800. * mpfr_get_d(&(a.right), MPFR_RNDN);
     return static_cast<unsigned int>(d);
   }
 

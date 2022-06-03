@@ -1079,7 +1079,7 @@ static gmp_RRmutable get_norm_start(gmp_RR p, const Ring *R)
     }
   gmp_RRmutable norm = getmemstructtype(gmp_RRmutable);
   mpfr_init2(norm, mpfr_get_prec(p));
-  mpfr_ui_div(norm, 1, p, GMP_RNDN);
+  mpfr_ui_div(norm, 1, p, MPFR_RNDN);
   if (!mpfr_zero_p(norm))
     {
       ERROR("Lp norm only implemented for p = infinity");

@@ -103,7 +103,7 @@ class ARingRR : public RingInterface
 
   bool set_from_BigReal(ElementType &result, gmp_RR a) const
   {
-    result = mpfr_get_d(a, GMP_RNDN);
+    result = mpfr_get_d(a, MPFR_RNDN);
     return true;
   }
   bool set_from_double(ElementType &result, double a) const
@@ -236,7 +236,7 @@ class ARingRR : public RingInterface
   void increase_norm(mpfr_ptr norm, const ElementType &a) const
   {
     double d = fabs(a);
-    if (mpfr_cmp_d(norm, d) < 0) mpfr_set_d(norm, d, GMP_RNDN);
+    if (mpfr_cmp_d(norm, d) < 0) mpfr_set_d(norm, d, MPFR_RNDN);
   }
 
   double coerceToDouble(const ElementType &a) const { return a; }

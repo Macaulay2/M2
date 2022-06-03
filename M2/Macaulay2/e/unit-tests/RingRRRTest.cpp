@@ -10,7 +10,7 @@ bool almostEqual(const RingRRR *R, int nbits, ring_elem a, ring_elem b)
 {
   mpfr_t epsilon;
   mpfr_init2(epsilon, 100);
-  mpfr_set_ui_2exp(epsilon, 1, -nbits, GMP_RNDN);
+  mpfr_set_ui_2exp(epsilon, 1, -nbits, MPFR_RNDN);
 
   ring_elem c = R->subtract(a, b);
   bool ret = mpfr_cmpabs(c.get_mpfr(), epsilon) < 0;

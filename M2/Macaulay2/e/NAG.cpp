@@ -1454,7 +1454,7 @@ PathTracker /* or null */* PathTracker::make(const Matrix* S,
       ERROR("complex coefficients expected");
       return NULL;
     }
-  p->productST = mpfr_get_d(productST, GMP_RNDN);
+  p->productST = mpfr_get_d(productST, MPFR_RNDN);
   // p->bigT = asin(sqrt(1-p->productST*p->productST));
   // const double pi = 3.141592653589793238462643383279502;
   // if (p->productST < 0)
@@ -1637,15 +1637,15 @@ const Matrix /* or null */* rawRefinePT(PathTracker* PT,
 int PathTracker::track(const Matrix* start_sols)
 {
   double the_smallest_number = 1e-13;
-  double epsilon2 = mpfr_get_d(epsilon, GMP_RNDN);
+  double epsilon2 = mpfr_get_d(epsilon, MPFR_RNDN);
   epsilon2 *= epsilon2;                           // epsilon^2
-  double t_step = mpfr_get_d(init_dt, GMP_RNDN);  // initial step
-  double dt_min_dbl = mpfr_get_d(min_dt, GMP_RNDN);
-  double dt_increase_factor_dbl = mpfr_get_d(dt_increase_factor, GMP_RNDN);
-  double dt_decrease_factor_dbl = mpfr_get_d(dt_decrease_factor, GMP_RNDN);
-  double infinity_threshold2 = mpfr_get_d(infinity_threshold, GMP_RNDN);
+  double t_step = mpfr_get_d(init_dt, MPFR_RNDN);  // initial step
+  double dt_min_dbl = mpfr_get_d(min_dt, MPFR_RNDN);
+  double dt_increase_factor_dbl = mpfr_get_d(dt_increase_factor, MPFR_RNDN);
+  double dt_decrease_factor_dbl = mpfr_get_d(dt_decrease_factor, MPFR_RNDN);
+  double infinity_threshold2 = mpfr_get_d(infinity_threshold, MPFR_RNDN);
   infinity_threshold2 *= infinity_threshold2;
-  double end_zone_factor_dbl = mpfr_get_d(end_zone_factor, GMP_RNDN);
+  double end_zone_factor_dbl = mpfr_get_d(end_zone_factor, MPFR_RNDN);
 
   if (C == NULL)
     C = cast_to_CCC(
@@ -1976,7 +1976,7 @@ Matrix /* or null */* PathTracker::refine(const Matrix* sols,
                                           gmp_RR tolerance,
                                           int max_corr_steps_refine)
 {
-  double epsilon2 = mpfr_get_d(tolerance, GMP_RNDN);
+  double epsilon2 = mpfr_get_d(tolerance, MPFR_RNDN);
   epsilon2 *= epsilon2;
   int n = n_coords;
   if (!cast_to_CCC(sols->get_ring()))
@@ -2049,8 +2049,8 @@ Matrix /* or null */* PathTracker::refine(const Matrix* sols,
   for (i = 0; i < n_sols; i++)
     for (j = 0; j < n; j++, c++)
       {
-        // mpfr_set_d(re, c->getreal(), GMP_RNDN);
-        // mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
+        // mpfr_set_d(re, c->getreal(), MPFR_RNDN);
+        // mpfr_set_d(im, c->getimaginary(), MPFR_RNDN);
         // ring_elem e = from_BigReals(C,re,im);
         ring_elem e = from_doubles(C, c->getreal(), c->getimaginary());
 
@@ -2082,8 +2082,8 @@ Matrix /* or null */* PathTracker::getSolution(int solN)
   complex* c = s->x;
   for (int j = 0; j < n_coords; j++, c++)
     {
-      // mpfr_set_d(re, c->getreal(), GMP_RNDN);
-      // mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
+      // mpfr_set_d(re, c->getreal(), MPFR_RNDN);
+      // mpfr_set_d(im, c->getimaginary(), MPFR_RNDN);
       // ring_elem e = from_BigReals(C,re,im);
       ring_elem e = from_doubles(C, c->getreal(), c->getimaginary());
 
@@ -2109,8 +2109,8 @@ Matrix /* or null */* PathTracker::getAllSolutions()
       complex* c = s->x;
       for (int j = 0; j < n_coords; j++, c++)
         {
-          // mpfr_set_d(re, c->getreal(), GMP_RNDN);
-          // mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
+          // mpfr_set_d(re, c->getreal(), MPFR_RNDN);
+          // mpfr_set_d(im, c->getimaginary(), MPFR_RNDN);
           // ring_elem e = from_BigReals(C,re,im);
           ring_elem e = from_doubles(C, c->getreal(), c->getimaginary());
 
@@ -2139,7 +2139,7 @@ gmp_RRorNull PathTracker::getSolutionLastT(int solN)
   if (solN < 0 || solN >= n_sols) return NULL;
   gmp_RRmutable result = getmemstructtype(gmp_RRmutable);
   mpfr_init2(result, C->get_precision());
-  mpfr_set_d(result, raw_solutions[solN].t, GMP_RNDN);
+  mpfr_set_d(result, raw_solutions[solN].t, MPFR_RNDN);
   return moveTo_gmpRR(result);
 }
 
@@ -2148,7 +2148,7 @@ gmp_RRorNull PathTracker::getSolutionRcond(int solN)
   if (solN < 0 || solN >= n_sols) return NULL;
   gmp_RRmutable result = getmemstructtype(gmp_RRmutable);
   mpfr_init2(result, C->get_precision());
-  mpfr_set_d(result, raw_solutions[solN].cond, GMP_RNDN);
+  mpfr_set_d(result, raw_solutions[solN].cond, MPFR_RNDN);
   return moveTo_gmpRR(result);
 }
 
