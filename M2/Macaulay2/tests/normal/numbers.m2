@@ -876,6 +876,14 @@ assert small(regularizedBeta(1/3, 4, 5) -
 assert small(1/3 - inverseRegularizedBeta(regularizedBeta(1/3, 4, 5), 4, 5))
 assert small(1/3 - regularizedBeta(inverseRegularizedBeta(1/3, 4, 5), 4, 5))
 
+-- a few values from Abrahamowitz & Stegun Table 9.1
+assert ( BesselJ(0, 0) == 1 )
+assert ( abs(BesselJ(1, 2) - 0.5767248078) < 1e-10 )
+assert ( abs(BesselJ(2, 3) - 0.4860912606) < 1e-10 )
+assert ( abs(BesselY(0, 1) - 0.0882569642) < 1e-10 )
+assert ( abs(BesselY(1, 2) + 0.1070324315) < 1e-10 )
+assert ( abs(BesselY(2, 3) + 0.16040039) < 1e-8 )
+
 -- I don't know whether we want to fix this:
 -- assert ( 1/11 == toRR(1/11) )
 -- assert ( 1/11 == 1p200/11 )
