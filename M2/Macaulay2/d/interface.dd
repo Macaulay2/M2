@@ -4473,7 +4473,7 @@ setupfun("cRRi0",cRRi0);
 mpfrConstantEuler(e:Expr):Expr := (
      when e is prec:ZZcell do if !isULong(prec) then WrongArgSmallUInteger(1) else (
 	  z := newRRmutable(toULong(prec));
-	  Ccode( void, "mpfr_const_euler(", z, ", GMP_RNDN)" );
+	  Ccode( void, "mpfr_const_euler(", z, ", MPFR_RNDN)" );
 	  toExpr(moveToRRandclear(z)))
      else WrongArgZZ(1));
 setupfun("mpfrConstantEuler",mpfrConstantEuler);
@@ -4481,7 +4481,7 @@ setupfun("mpfrConstantEuler",mpfrConstantEuler);
 mpfrConstantCatalan(e:Expr):Expr := (
      when e is prec:ZZcell do if !isULong(prec) then WrongArgSmallUInteger(1) else (
 	  z := newRRmutable(toULong(prec));
-	  Ccode( void, "mpfr_const_catalan(", z, ", GMP_RNDN)" );
+	  Ccode( void, "mpfr_const_catalan(", z, ", MPFR_RNDN)" );
 	  toExpr(moveToRRandclear(z)))
      else WrongArgZZ(1));
 setupfun("mpfrConstantCatalan",mpfrConstantCatalan);

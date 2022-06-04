@@ -5,7 +5,7 @@
 
 /* The interface is similar to mpfr:
    Every gmp_CC struct needs to be initialized with init or init_set.
-   All rounding is GMP_RNDN.
+   All rounding is MPFR_RNDN.
    Resulting values are the first argument
 */
 

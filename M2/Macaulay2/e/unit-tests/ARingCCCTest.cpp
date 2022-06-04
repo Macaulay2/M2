@@ -19,7 +19,7 @@ bool almostEqual(const M2::ARingCCC& C,
 {
   mpfr_t epsilon;
   mpfr_init2(epsilon, C.get_precision());
-  mpfr_set_ui_2exp(epsilon, 1, -nbits, GMP_RNDN);  // should there be exp() ???
+  mpfr_set_ui_2exp(epsilon, 1, -nbits, MPFR_RNDN);  // should there be exp() ???
 
   M2::ARingCCC::ElementType c;
   C.init(c);
