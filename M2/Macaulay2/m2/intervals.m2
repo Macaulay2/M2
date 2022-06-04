@@ -67,3 +67,5 @@ intersect(RRi, RRi) := RRi => { Precision => -1 } >> opts -> (N, M) -> (
     else intersectRRi(opts.Precision,N,M))
 
 isEmpty RRi := Boolean => isEmptyRRi
+
+toExternalString RRi:= x -> "interval" | toExternalString (left x, right x)
