@@ -59,9 +59,6 @@ doc ///
     Example
       erf 2
       inverseErf oo
-  Caveat
-    This function always returns a double precision real number (53 bits)
-    regardless of the precision of its arguments.
   SeeAlso
     erf
     erfc

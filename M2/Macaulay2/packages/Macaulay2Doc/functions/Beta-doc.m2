@@ -41,9 +41,6 @@ doc ///
     Example
       regularizedBeta(1/2, 3, 4)
       1/Beta(3,4) * integrate(t -> t^2 * (1 - t)^3, 0, 1/2)
-  Caveat
-    This function always returns a double precision real number (53 bits)
-    regardless of the precision of its arguments.
   SeeAlso
     Beta
     inverseRegularizedBeta
@@ -69,9 +66,6 @@ doc ///
     Example
       regularizedBeta(1/2, 3, 4)
       inverseRegularizedBeta(oo, 3, 4)
-  Caveat
-    This function always returns a double precision real number (53 bits)
-    regardless of the precision of its arguments.
   SeeAlso
     Beta
     regularizedBeta

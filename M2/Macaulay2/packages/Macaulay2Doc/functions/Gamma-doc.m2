@@ -47,9 +47,6 @@ doc ///
     Example
       regularizedGamma(3, 7)
       Gamma(3, 7) / Gamma 3
-  Caveat
-    This function always returns a double precision real number (53 bits)
-    regardless of the precision of its arguments.
   SeeAlso
     Gamma
     inverseRegularizedGamma
@@ -74,12 +71,9 @@ doc ///
     Example
       regularizedGamma(3, 7)
       inverseRegularizedGamma(3, oo)
-  Caveat
-    This function always returns a double precision real number (53 bits)
-    regardless of the precision of its arguments.
   SeeAlso
     Gamma
-    inverseRegularizedGamma
+    regularizedGamma
 ///
 
 doc ///
