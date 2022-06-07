@@ -1394,7 +1394,7 @@ assert Equation(density_X 0.3, 0.756) -- R: dbeta(0.3, 3, 2)
 assert Equation(density_X 2 , 0)
 
 assert Equation(probability_X(-1), 0)
-assert Equation(probability_X 0.3, 0.0837) -- R: pbeta(0.3., 3, 2)
+assert (abs(probability_X 0.3 - 0.0837) < 1e-15) -- R: pbeta(0.3., 3, 2)
 assert Equation(probability_X 2, 1)
 
 assert Equation(quantile_X 0, 0)
