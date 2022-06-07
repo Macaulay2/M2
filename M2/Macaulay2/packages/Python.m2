@@ -476,6 +476,14 @@ assert Equation(foo@@replace("f", "F"), pythonValue "'Foo'")
 assert Equation(foo@@upper(), pythonValue "'FOO'")
 ///
 
+TEST ///
+-- issue #2315
+rand = import "random"
+L = toPython {1, 2, 3}
+assert member(value rand@@choice L, {1, 2, 3})
+assert Equation(L + L, toPython {1, 2, 3, 1, 2, 3})
+///
+
 end --------------------------------------------------------
 
 
