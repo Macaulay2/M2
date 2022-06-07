@@ -83,6 +83,11 @@ various modern operating systems:
         # note: libflint-dev will work starting with Ubuntu 20.10 and Debian 11 (version >= 2.6.0 is required)
         # note: libmps-dev is available only starting with Ubuntu 21.04 and Debian 11
         # note: topcom is available only starting with Ubuntu 20.10 and Debian 11
+    Dependencies that aren't available in the official Ubuntu repositories on
+      older systems may be available in the Macaulay2 PPA:
+        sudo apt install software-properties-common
+        sudo add-apt-repository ppa:macaulay2/macaulay2
+      Then proceed with installing the missing dependencies as above.
     If configuring with "--with-system-X", then also install the following
     packages for each value of X:
       - gc:        libgc-dev
