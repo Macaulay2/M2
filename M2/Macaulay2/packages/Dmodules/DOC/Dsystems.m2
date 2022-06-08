@@ -20,13 +20,13 @@ doc ///
   Description
     Text
       The GKZ hypergeometric system of PDE's associated to a $d$ $\times$ $n$
-      integer matrix A is an ideal in the Weyl algebra $D_n$ over &#x2102;
+      integer matrix A is an ideal in the Weyl algebra $D_n$ over $\mathbb{C}$
       with generators $x_1,\dots,x_n$ and $\partial_1,\dots,\partial_n$.
       It consists of the toric ideal $I_A$ in the polynomial
-      subring &#x2102;$[\partial_1,...,\partial_n]$ and Euler relations given by the entries
+      subring  $\mathbb{C}[\partial_1,...,\partial_n]$ and Euler relations given by the entries
       of the vector (A $\theta$ - b), where $\theta$ is the vector
       $(\theta_1,...,\theta_n)^t$, and $\theta_i = x_i \partial_i$. 
-      A field of characteristic zero may be used instead of &#x2102;.
+      A field of characteristic zero may be used instead of  $\mathbb{C}$.
       For more details, see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Chapters 3 and 4].
     Example
       A = matrix{{1,1,1},{0,1,2}}
@@ -142,3 +142,5 @@ doc ///
   SeeAlso
     PolyAnn
 ///
+
+
