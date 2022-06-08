@@ -103,25 +103,35 @@ doc ///
      (Fourier,Matrix)
      (Fourier,RingElement)
      (Fourier,Ideal)
+     (Fourier,Module)
+     (Fourier,ChainComplex)
    Headline
      Fourier transform for Weyl algebra
    Usage
     Fourier A
    Inputs
-     A:Matrix
-       a matrix, function, or ideal over the Weyl algebra
+     A:{Matrix, RingElement, Ideal, ChainComplex}
+       over the Weyl algebra
    Outputs
-     :Matrix
-       the Fourier transform of @TT "A"@ as a matrix, function, or ideal over the Weyl algebra
+     :{Matrix, RingElement, Ideal, ChainComplex}
+       the Fourier transform of @TT "A"@ as a matrix, function, ideal, or chain complex over the Weyl algebra
    Description
     Text
       The Fourier transform is the automorphism of the Weyl algebra
-      which sends @EM {"x",SUB "i"}@ to @EM {"-D", SUB "i"}@
-      and @EM  {"D", SUB "i"}@ to @EM {"x",SUB "i"}@.
+      that sends @EM {"x",SUB "i"}@ to @EM {"-D", SUB "i"}@
+      and @EM  {"D", SUB "i"}@ to @EM {"x",SUB "i"}@. In order to compute the Fourier transform of the finitely generated module M, we compute 
+      the Fourier transform of the matrix A of which M is the cokernel.
     Example
       makeWA(QQ[x,y])
+      A = matrix{{2*x^2+1,y*dy},{9*x*dx, x*y*dx^2}}
+      Fourier A
       L = x^2*dy + y*dy^2 + 3*dx^5*dy
       Fourier L
+      I = ideal(8*x*y*dy^3+y^5, dx^7+5)
+      Fourier I
+      C = chainComplex{matrix{{x*dx, y^2+dx}},matrix{{dx*dy},{y^2*dy^3}}}
+      FC = Fourier C
+      FC.dd
    SeeAlso
      WeylAlgebra
 ///
