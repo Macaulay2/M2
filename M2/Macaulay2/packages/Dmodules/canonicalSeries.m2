@@ -94,18 +94,10 @@ indicialIdeal(Ideal,List) := (Ideal) => (I,w) ->(
     distraction(inw(I,flatten{-w|w}))
     )
 
-
-
 --Input: 0-dimensional primary ideal I
---Output: corresponding point, as a vector, with its multiplicity  
+--Output: corresponding point, as a vector
 solveMax = method();
-solveMax(Ideal) := List => (I)->(
-   l := numgens ring I;
-   v := apply(l,i-> 0);
-   J := radical I;
-   assert(dim J == 0 and degree J == 1);
-   flatten entries ( vars ring J % J)
- )
+solveMax Ideal := List => I -> first entries lift(vars ring I % radical I, coefficientRing ring I)
 
 --internal method
 --Input: holonomic D-ideal H, weight vector w as List, half the number of variables in H
@@ -141,18 +133,33 @@ cssExptsMult(Ideal,List) := List => (H,w)->(
     	apply(L,l->( {degree l,solveMax(l)}))
 	)    
 
+-- making monomial expressions with arbitrary exponents
+makeMonomial = (R, L) -> Product apply(L,
+    (i, e) -> if e == 1 then expression R_i else Power(expression R_i, expression e))
+makeRationalMonomial = (R, p) -> (
+    A := select(pairs  p,  (i, e) -> e > 0);
+    B := select(pairs(-p), (i, e) -> e > 0);
+    num := makeMonomial(R, A);
+    if #B == 0 then num else
+    num / makeMonomial(R, B))
+makeLogTerm = f -> (expression log) makeRationalMonomial(ring f,
+    first entries transpose lift(last coefficients(f, Monomials => vars ring f), ZZ))
+makeLogMonomial = g -> Product(makeLogTerm \ select(first \ toList factor g, f -> degree f == {1}))
+
+factorial' = alpha -> (first exponents alpha) / (k -> k!) // product
+
 -- Perform a lexographic breadth first search on monomials in k[x_1..x_n] \ S_< (I)
 -- and compute c#(alpha, beta) as in Algorithm 2.3.14 of SST (pp. 74)
 -- Input:  an Ideal, zero-dimensional Frobenius m-primary ideal
--- Output: a HashTable, { beta => f_beta } 
-solveFrobeniusIdeal = method();
-solveFrobeniusIdeal Ideal := Ideal => I -> (
+-- Output: a HashTable, { t^beta => f_beta } 
+solvePrimaryFrobeniusIdeal = method();
+solvePrimaryFrobeniusIdeal Ideal := List => I -> (
     R := ring I;
     n := # gens R;
     if dim I > 0 then error "expected zero-dimensional ideal";
     -- standard monomials S_<(I)
     S := new MutableHashTable from apply( first entries basis (R^1/I), elt -> (elt, elt) );
-    B := keys S;
+    B := sort keys S;
     -- the coefficients c#(alpha,beta)
     c := new MutableHashTable from {};
     -- non-standard monomials N_<(I)
@@ -168,20 +175,34 @@ solveFrobeniusIdeal Ideal := Ideal => I -> (
 
 	if S#?alpha then continue;
 
-	lambda := alpha % I;
+	lambda := alpha % I; -- computes the normal form
 	if lambda == 0 then continue;
 
-	coeffs := last coefficients(lambda, Monomials => keys S);
+	coeffs := last coefficients(lambda, Monomials => B);
 	for j to #B - 1 do c#(alpha, B_j) = coeffs_0_j;
-	apply(B,  beta ->
-	    S#beta = S#beta + c#(alpha, beta) * ((first exponents beta)/(k -> k!)//product) / ((first exponents alpha)/(k -> k!)//product) * alpha
-	    );
+	apply(B, beta -> if degree beta == degree alpha then S#beta = S#beta + c#(alpha, beta) * factorial' beta / factorial' alpha * alpha);
 
 	-- Add the product of alpha and generators of R to N
 	-- TODO: R_j * lambda is easier to reduce, so add that instead?
 	for j to n - 1 do if not M#?(R_j * alpha) then N#(R_j * alpha) = (j, alpha);
 	);
-    sort values S
+    makeLogMonomial \ sort values S
+    -- hashTable apply(pairs S, (k, v) -> (k, factor v))
+    )
+
+solveFrobeniusIdeal = method();
+solveFrobeniusIdeal Ideal := List => I -> (
+    R := ring I;
+    n := # gens R;
+    flatten apply(primaryDecomposition I, C -> (
+	if dim C > 0 then error "expected zero-dimensional components";
+	(p, m) := (solveMax C, degree C); -- the point and its multiplicity
+	--mon := makeRationalMonomial(R, p);
+	mon := makeMonomial(R, select(pairs p, (i, e) -> e != 0));
+	if m == 1 then return mon;
+	psi := map(R, R, apply(n, i -> R_i + p_i));
+	apply(solvePrimaryFrobeniusIdeal psi C, ell -> mon * ell)
+	))
     )
 
 
@@ -193,8 +214,14 @@ TEST /// -- test solveFrobeniusIdeal
   R = QQ[t_1..t_5]
   I = ideal(R_0+R_1+R_2+R_3+R_4, R_0+R_1-R_3, R_1+R_2-R_3, R_0*R_2, R_1*R_3)
   F = solveFrobeniusIdeal I
-  assert(F_3 == 1/8*(t_2+t_4-2*t_5)*(2*t_1-t_2+2*t_3+t_4-4*t_5))
-  assert(-2*F_2+F_1 == t_2 + t_4 - 2*t_5)
+  (A, B, C, D1, D2) = value \ (F_0, F_1#0#1, F_2#0#1, F_3#0#1, F_3#1#1)
+  assert(A == 1)
+  assert(B == (t_1^2*t_3^2)/(t_2^3*t_4))
+  assert(C == (t_1*t_3)/(t_2*t_5))
+  assert(D1 == (t_2*t_4)/t_5^2)
+  assert(D2 == (t_1^2*t_3^2*t_4)/(t_2*t_5^4))
+  assert(C^2 * B^-1 == D1)
+  assert(C^4 * B^-1 == D2)
 ///
 
 end;
