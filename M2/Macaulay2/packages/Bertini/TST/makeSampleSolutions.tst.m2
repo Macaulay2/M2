@@ -33,7 +33,7 @@ runBertini(storeBM2Files)
 assert(#importMainDataFile(storeBM2Files)==3)
 
 onePoint=(importMainDataFile(storeBM2Files))_0
-assert(class onePoint===Point)
+assert(class onePoint===FrontLevelPoint)
 makeSampleSolutionsFile(storeBM2Files,7,
     SpecifyComponent=>onePoint	)---We sample from the component containing onePoint.
 assert(7==#importSolutionsFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file"))

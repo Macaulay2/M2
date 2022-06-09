@@ -39,7 +39,7 @@ doc ///
 
     Text
       We see that there are three solutions to the above system. 
-      Each solution is of type @TO Point@ and contains diagnostic information 
+      Each solution is of type @TO FrontLevelPoint@ and contains diagnostic information 
       about the quality of the solution.    
     
     Example
@@ -412,13 +412,13 @@ doc ///
 doc ///
   Key 
     isCoordinateZero
-    (isCoordinateZero,Point,ZZ,RR)
+    (isCoordinateZero,AbstractPoint,ZZ,RR)
   Headline
     checks if coordinate has absolute value less than a given tolerance
   Usage
     isCoordinateZero(sol,k,tol)
   Inputs
-    sol:Point
+    sol:AbstractPoint
       solution to a polynomial system
     k:ZZ
       index of coordinate
@@ -459,7 +459,7 @@ doc ///
 doc ///
   Key
     isWitnessSetMember
-    (isWitnessSetMember,WitnessSet,Point)
+    (isWitnessSetMember,WitnessSet,AbstractPoint)
   Headline
     tests whether a point belongs to a solution set
   Usage
@@ -467,7 +467,7 @@ doc ///
   Inputs
     W:WitnessSet
       positive dimensional, properly embedded with slack variables
-    p:Point
+    p:AbstractPoint
   Outputs
     :Boolean
       true if p is a member of the solution set of W, 
@@ -866,7 +866,7 @@ doc ///
     f:List
       a system of polynomials
     sols:List
-      solutions of the system f, each of type @TO Point@ 
+      solutions of the system f, each of type @TO AbstractPoint@ 
       (from a previous calculation)
     dp:ZZ
       the number of decimal places in working precision
@@ -895,7 +895,7 @@ doc ///
       R = CC[x,y]; S = {x^2 - 1/3, x*y - 1}; ourRoots = solveSystem(S);
       r0 = ourRoots#0#Coordinates#1
       newRoots = refineSolutions(S,ourRoots,64)
-      newRoots#0 -- recall that solutions are of type Point
+      newRoots#0 -- recall that solutions are of type FrontLevelPoint
       r1 = newRoots#0#Coordinates#1
 ///;
 
@@ -931,7 +931,7 @@ doc ///
       a system of rational equations with a finite number of solutions
   Outputs
     :List
-      containing the solutions of f, each of type @TO Point@
+      containing the solutions of f, each of type @TO FrontLevelPoint@
   Consequences
     Item
       converts the rational system into a Laurent system, invokes the 
@@ -959,8 +959,8 @@ doc ///
       sols = solveRationalSystem(system)
       
     Text
-      The solutions are of type @TO Point@. Each Point comes with 
-      diagnostics. For example, {\tt LastT} is the end value of the 
+      The solutions are of type @TO FrontLevelPoint@. Each point {\tt p} comes with cached 
+      diagnostics. For example, {\tt p.cache.LastT} is the end value of the 
       continuation parameter; if it equals 1, 
       then the solver reached the end of the path properly.  
     
@@ -1010,7 +1010,7 @@ doc ///
       that contains at least as many equations as indeterminates 
   Outputs
     :List 
-      containing the solutions of S, each of type @TO Point@. 
+      containing the solutions of S, each of type @TO FrontLevelPoint@. 
   Consequences
     Item
       Writes the system to temporary file
@@ -1037,9 +1037,9 @@ doc ///
       L = solveSystem(S)
     Text
       The method {\tt solveSystem} prints the the {\tt PHCpack} input and output file names 
-      and returns two solutions. The solutions are of type @TO Point@, defined in @TO NAGtypes@. 
-      Each Point comes with diagnostics.
-      For example, {\tt LastT} is the end value of the continuation parameter; 
+      and returns two solutions. The solutions are of type @TO FrontLevelPoint@, defined in @TO NAGtypes@. 
+      Each point {\tt p} comes with cached diagnostics.
+      For example, {\tt p.cache.LastT} is the end value of the continuation parameter; 
       if it equals 1, then the solver reached the end of the path properly.
     
     Example

@@ -32,7 +32,7 @@ HomotopyEdge = new Type of MutableHashTable
 HomotopyGraph = new Type of MutableHashTable
 
 addNode = method()
-addNode (HomotopyGraph, Point, PointArray) := (HG, params, partialSols) -> (
+addNode (HomotopyGraph, AbstractPoint, PointArray) := (HG, params, partialSols) -> (
     N := new HomotopyNode from {
         BasePoint => params,
         PartialSols => partialSols,

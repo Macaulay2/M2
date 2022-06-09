@@ -26,15 +26,15 @@ if residual(polySystem(equations polySystem W | slice W), p) > 1000*DEFAULT.Tole
 
 randomSlice = method()
 randomSlice (ZZ,ZZ,Ring) := (d,n,C) -> (randomUnitaryMatrix n)^(toList(0..d-1)) | random(C^d,C^1)   
-randomSlice (ZZ,ZZ,Ring,Point) := (d,n,C,point) -> (
+randomSlice (ZZ,ZZ,Ring,AbstractPoint) := (d,n,C,point) -> (
      SM := (randomUnitaryMatrix n)^(toList(0..d-1));
      SM | (-SM * transpose matrix point)
      )
 randomSlice (ZZ,ZZ) := (d,n) -> randomSlice(d,n,CC_53)
-randomSlice (ZZ,ZZ,Point) := (d,n,point) -> randomSlice(d,n,CC_53,point)
+randomSlice (ZZ,ZZ,AbstractPoint) := (d,n,point) -> randomSlice(d,n,CC_53,point)
 
 isOn = method(Options=>{Tolerance=>null,Software=>null})
-isOn (Point,WitnessSet) := o -> (p, W) -> (
+isOn (AbstractPoint,WitnessSet) := o -> (p, W) -> (
     o = fillInDefaultOptions o;
     if # coordinates p != numgens ring W 
     then if W.cache.?ProjectionDimension then isOn(p,W,W.ProjectionDimension,o) 
@@ -50,7 +50,7 @@ isOn (Point,WitnessSet) := o -> (p, W) -> (
     )
 
 -- checks if the projection of W to the first m coordinates contains p
-isOn (Point,WitnessSet,ZZ) := o -> (p, W, m) -> (
+isOn (AbstractPoint,WitnessSet,ZZ) := o -> (p, W, m) -> (
     o = fillInDefaultOptions o;
     if # coordinates p != m then error "wrong number of coordinates",
     R := ring W.Equations;                    
@@ -64,10 +64,10 @@ isOn (Point,WitnessSet,ZZ) := o -> (p, W, m) -> (
     )
 
 -- ... hypersurface V(f)
-isOn (Point,RingElement) := o -> (p, f) ->  isOn (p, witnessSet(ideal f, numgens ring f - 1), o)
+isOn (AbstractPoint,RingElement) := o -> (p, f) ->  isOn (p, witnessSet(ideal f, numgens ring f - 1), o)
 
 -- ... V(I)
-isOn (Point,Ideal) := o -> (p, I) -> all(I_*, f->isOn(p,f,o))
+isOn (AbstractPoint,Ideal) := o -> (p, I) -> all(I_*, f->isOn(p,f,o))
         
 isSubset (WitnessSet,WitnessSet) := (V,W) -> (
      coD := dim W - dim V;
@@ -176,7 +176,7 @@ moveSlice (WitnessSet, Matrix) := WitnessSet => o->(W,S) -> (
      moveSlice(W,sliceEquations(S,ring W),o)             	  
      )
 
--- get a random Point
+-- get a random FrontLevelPoint
 sample = method(Options=>{Tolerance=>1e-6})
 sample WitnessSet := o -> W -> (
     W' := moveSlice(W, randomSlice(dim W, numgens ring W, coefficientRing ring W));

@@ -1,29 +1,25 @@
 -- Abstract classes ------------------------
-Point = new Type of HashTable
+AbstractPoint = new Type of HashTable
 
-Point.synonym = "point"
-texMath Point := x -> texMath coordinates x
--- Point
-net Point := p -> net coordinates p
+AbstractPoint.synonym = "point"
+texMath AbstractPoint := x -> texMath coordinates x
+net AbstractPoint := p -> net coordinates p
 
-point = method()
-point List := s -> error "not implemented"
-point Point := identity
-Point == Point := (a,b) -> areEqual(a,b) -- the default Tolerance is used
-Point ? Point := (a,b) -> if isGEQ(a,b) then symbol > else symbol <
+AbstractPoint == AbstractPoint := (a,b) -> areEqual(a,b) -- the default Tolerance is used
+AbstractPoint ? AbstractPoint := (a,b) -> if isGEQ(a,b) then symbol > else symbol <
 
 -- expected methods
 notImplementedError := p -> error ("implementation of this method for the descendant of (abstract) type "|toString class p |" is expected")
 coordinates = method()
-coordinates Point := notImplementedError 
-status Point := o -> notImplementedError
+coordinates AbstractPoint := notImplementedError 
+status AbstractPoint := o -> notImplementedError
 project = method() -- project point to the first n coordinates
-project (Point,ZZ) := (p,n) -> notImplementedError p
+project (AbstractPoint,ZZ) := (p,n) -> notImplementedError p
 
 -- methods relying on expected methods 
-matrix Point := o -> p -> matrix {coordinates p}
+matrix AbstractPoint := o -> p -> matrix {coordinates p}
 
-norm (Thing, Point) := (no,p) -> norm(no, coordinates p)
+norm (Thing, AbstractPoint) := (no,p) -> norm(no, coordinates p)
 norm (Thing, Matrix) := (no,M) -> norm(no, flatten entries M)
 norm (Thing, List) := (no,p) -> (
      if instance(no,InfiniteNumber) and no === infinity then return max(p/abs);
@@ -32,7 +28,7 @@ norm (Thing, List) := (no,p) -> (
      )
 
 isRealPoint = method(Options=>{Tolerance=>1e-6})
-isRealPoint Point := o -> p -> norm (coordinates p / imaginaryPart) < o.Tolerance
+isRealPoint AbstractPoint := o -> p -> norm (coordinates p / imaginaryPart) < o.Tolerance
 
 realPoints = method(Options=>{Tolerance=>1e-6})
 realPoints List := o -> pp -> select(pp, isRealPoint)
@@ -50,7 +46,7 @@ areEqual (Matrix,Matrix) := o -> (a,b) -> (
 areEqual (MutableMatrix,MutableMatrix) := o -> (a,b) -> (
      areEqual(flatten entries a, flatten entries b, o)
      ) 
-areEqual (Point,Point) := o -> (a,b) -> (
+areEqual (AbstractPoint,AbstractPoint) := o -> (a,b) -> (
     a = coordinates a;
     b = coordinates b;
     if o.Projective 
@@ -63,12 +59,12 @@ areEqual (Point,Point) := o -> (a,b) -> (
 	)
     )
 -*
-areEqual (Point,BasicList) := o -> (a,b) -> areEqual(coordinates a, toList b)
-areEqual (BasicList,Point) := o -> (a,b) -> areEqual(toList a, coordinates b)
+areEqual (AbstractPoint,BasicList) := o -> (a,b) -> areEqual(coordinates a, toList b)
+areEqual (BasicList,AbstractPoint) := o -> (a,b) -> areEqual(toList a, coordinates b)
 *-
 
 isGEQ = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6})
-isGEQ(Point,Point) := o->(t,s)-> isGEQ(coordinates t, coordinates s, o)
+isGEQ(AbstractPoint,AbstractPoint) := o->(t,s)-> isGEQ(coordinates t, coordinates s, o)
 isGEQ(List,List) := o->(t,s)-> (
      n := #t;
      for i from 0 to n-1 do ( 

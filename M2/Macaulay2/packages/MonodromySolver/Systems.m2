@@ -12,7 +12,7 @@ specializeSystemInternal := (p, M, R'PR'toPR'X) -> (
     (R, PR, toPR, X) := R'PR'toPR'X; -- see below for ingredients
     flatten entries (map(R,PR,X|matrix p)) toPR transpose M
     )   
-specializeSystem (Point, PolySystem) := (p, F) -> (
+specializeSystem (AbstractPoint, PolySystem) := (p, F) -> (
     if not F#?"specialization ingredients" then (
     	nParameters := numgens coefficientRing ring F;
     	assert(nParameters == #coordinates p);
@@ -24,7 +24,7 @@ specializeSystem (Point, PolySystem) := (p, F) -> (
 	);
     specializeSystemInternal(p, F#PolyMap, F#"specialization ingredients")
     )
-specializeSystem (Point, Matrix) := (p, M) -> (
+specializeSystem (AbstractPoint, Matrix) := (p, M) -> (
     nParameters := numgens coefficientRing ring M;
     assert(nParameters == #coordinates p);
     (PR,toPR) := flattenRing ring M;
@@ -33,7 +33,7 @@ specializeSystem (Point, Matrix) := (p, M) -> (
     X = vars R;
     specializeSystemInternal(p,M,(R,PR,toPR,X))
     )
-specializeSystem (Point, GateSystem) := (p, GS) -> (
+specializeSystem (AbstractPoint, GateSystem) := (p, GS) -> (
     pMat := matrix p;
     assert(numrows pMat == 1);
     pGateMatrix := sub(flatten GS, pMat | vars GS);
@@ -52,8 +52,8 @@ expand (Thing, System) := (FF, sys) -> (
     polys/(p -> sub(p, S))
     )
 
--- needed to override "not implemented error" for (evaluate, PolySystem, Point, Point)
-evaluate (PolySystem, Point, Point) := (PS, p0, x0) -> evaluate(polySystem specializeSystem(p0, PS), x0)
+-- needed to override "not implemented error" for (evaluate, PolySystem, AbstractPoint, AbstractPoint)
+evaluate (PolySystem, AbstractPoint, AbstractPoint) := (PS, p0, x0) -> evaluate(polySystem specializeSystem(p0, PS), x0)
 
 -- used for automated seeding
 -- will also be useful for trace test
@@ -123,7 +123,7 @@ perp = (M, L) -> if areEqual(norm L, 0) then M else (
 
 -- findng a square subsystem of maximal rank
 rowSelector = method(Options=>{"BlockSize"=>1,Verbose=>false})
-rowSelector (Point, Point, GateSystem) := o -> (y0, c0, GS) -> (
+rowSelector (AbstractPoint, AbstractPoint, GateSystem) := o -> (y0, c0, GS) -> (
     (n, m, N) := (numVariables GS, numParameters GS, numFunctions GS);
     blockSize := o#"BlockSize";
     numBlocks := ceiling(N/blockSize);
@@ -152,7 +152,7 @@ rowSelector (Point, Point, GateSystem) := o -> (y0, c0, GS) -> (
     )
 
 squareDown = method(Options=>{"BlockSize"=>1, Verbose=>false})
-squareDown (Point, Point, GateSystem) := o -> (y0, c0, F) -> F^(rowSelector(y0, c0, F, "BlockSize" => o#"BlockSize", Verbose=>o.Verbose))
+squareDown (AbstractPoint, AbstractPoint, GateSystem) := o -> (y0, c0, F) -> F^(rowSelector(y0, c0, F, "BlockSize" => o#"BlockSize", Verbose=>o.Verbose))
 
 
 newtonHomotopy = method(Options=>{Iterations=>10})

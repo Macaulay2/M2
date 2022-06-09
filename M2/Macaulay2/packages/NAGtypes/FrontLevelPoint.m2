@@ -14,7 +14,7 @@
 --   [LiftedSystem]          -- a regularization of SolutionSystem (in case the point is not regular)
 --   [LiftedPoint]           -- the corresponding solution of the LiftedSystem
 --   }
-FrontLevelPoint = new Type of Point
+FrontLevelPoint = new Type of AbstractPoint
 
 net FrontLevelPoint := p -> (
     if hasAnAttribute p then (
@@ -36,15 +36,20 @@ net FrontLevelPoint := p -> (
     ) 
 globalAssignment FrontLevelPoint
 
-point List := s -> new FrontLevelPoint from {
-    Coordinates=>(
-	c := first s;
-	if instance(c,List) then c	
-	else if instance(c,Matrix) or instance(c,MutableMatrix) then flatten entries c
-	else error "wrong type of coordinates: List or Matrix expected"   
-	), 
-    cache => new CacheTable from drop(s,1) }
+point = method()
+point AbstractPoint := p -> point {coordinates p} 
+prepareCoordinates := c	-> (
+    if instance(c,List) then c 
+    else if instance(c,Matrix) or instance(c,MutableMatrix) then flatten entries c
+    else error "wrong type of coordinates: List or Matrix expected"   
+    )
+point (List,CacheTable) := (c,h) -> new FrontLevelPoint from {
+    Coordinates=>prepareCoordinates c,
+    cache => copy h
+    }
+point List := s -> point(prepareCoordinates first s, new CacheTable from drop(s,1))
 point Matrix := M -> point {flatten entries M} 
+        
 toExternalString FrontLevelPoint := p -> "point { " | toExternalString coordinates p |" }"
 
 coordinates FrontLevelPoint := p -> p.Coordinates

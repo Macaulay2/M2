@@ -3,7 +3,7 @@ pointSet = method()
 pointSet Thing := L -> (
     if not instance(L,List) and not instance(L,Set) then error "a list/set is expected"; 
     LL := toList L;
-    if not all(LL, x->instance(x,Point)) then error "a list/set of Points is expected"; 
+    if not all(LL, x->instance(x,AbstractPoint)) then error "a list/set of Points is expected"; 
     S := solutionsWithMultiplicity LL;
     new PointSet from apply(#S, i->((S#i).cache.Multiplicity=1; i=>S#i))	 
     ) 

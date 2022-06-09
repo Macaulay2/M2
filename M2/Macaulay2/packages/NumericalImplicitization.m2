@@ -72,7 +72,7 @@ newPackage("NumericalImplicitization",
         "Initial"
     }
 
--- Point sampling code
+-- FrontLevelPoint sampling code
 load "NumericalImplicitization/approxPoint.m2"
     
 -- software options: default is M2engine throughout
@@ -115,7 +115,7 @@ numericalSourceSample = method(Options => {Software => M2engine})
 numericalSourceSample (Ideal, Thing, ZZ) := List => opts -> (I, W, sampleSize) -> (
     R := ring I;
     if I == 0 then ( k := coefficientRing R; return (entries random(k^(sampleSize), k^(#gens R)))/(p -> {p})/point; );
-    -- samplePoints := if instance(W, Point) and not I.cache.?WitnessSet then (
+    -- samplePoints := if instance(W, FrontLevelPoint) and not I.cache.?WitnessSet then (
     	-- d := first numericalDimensions(vars R, I, W);
     	-- squaredUpSource := randomSlice(gens I, #gens R - d, {});
 	-- startSys := squaredUpSource | randomSlice(vars R, d, {W, "source"});
@@ -126,7 +126,7 @@ numericalSourceSample (Ideal, Thing, ZZ) := List => opts -> (I, W, sampleSize) -
     if precision R <= precision ring samplePoints#0#Coordinates#0 then samplePoints else refine(polySystem(I_*), samplePoints, Bits => precision R)
 )
 numericalSourceSample (Ideal, WitnessSet) := List => opts -> (I, W) -> numericalSourceSample(I, W, 1, opts)
-numericalSourceSample (Ideal, Point) := List => opts -> (I, p) -> numericalSourceSample(I, p, 1, opts)
+numericalSourceSample (Ideal, FrontLevelPoint) := List => opts -> (I, p) -> numericalSourceSample(I, p, 1, opts)
 numericalSourceSample (Ideal, ZZ) := List => opts -> (I, sampleSize) -> numericalSourceSample(I, null, sampleSize, opts)
 numericalSourceSample Ideal := List => opts -> I -> numericalSourceSample(I, 1, opts)
 
@@ -147,14 +147,14 @@ numericalImageSample (RingMap, Ideal) := List => opts -> (F, I) -> numericalImag
 
 
 numericalEval = method()
-numericalEval (Matrix, List, Boolean) := List => (F, upstairsPoints, includeUpstairs) -> ( -- returns a list of either matrices, or pairs of the form (Point, Matrix)
+numericalEval (Matrix, List, Boolean) := List => (F, upstairsPoints, includeUpstairs) -> ( -- returns a list of either matrices, or pairs of the form (FrontLevelPoint, Matrix)
     evalPts := upstairsPoints/(p -> (p, sub(F, matrix p)));
     if includeUpstairs then evalPts else evalPts/last
 )
 
 
 numericalDimensions = method(Options => options numericalSourceSample)
-numericalDimensions (Matrix, Ideal, Point) := List => opts -> (F, I, p) -> ( --outputs {dim(V(I)), dim(F(V(I))}
+numericalDimensions (Matrix, Ideal, FrontLevelPoint) := List => opts -> (F, I, p) -> ( --outputs {dim(V(I)), dim(F(V(I))}
     (F, I, p) = checkRings(F, I, {p});
     p0 := 1/norm(2, matrix p#0)*(matrix p#0);
     dF := sub(transpose jacobian F, p0);
@@ -167,11 +167,11 @@ numericalDimensions (Matrix, Ideal) := ZZ => opts -> (F, I) -> numericalDimensio
 
 
 numericalImageDim = method(Options => options numericalSourceSample)
-numericalImageDim (Matrix, Ideal, Point) := ZZ => opts -> (F, I, p) -> last numericalDimensions(F, I, p, opts)
+numericalImageDim (Matrix, Ideal, FrontLevelPoint) := ZZ => opts -> (F, I, p) -> last numericalDimensions(F, I, p, opts)
 numericalImageDim (Matrix, Ideal) := ZZ => opts -> (F, I) -> last numericalDimensions(F, I, opts)
-numericalImageDim (List, Ideal, Point) := ZZ => opts -> (F, I, p) -> last numericalDimensions(matrix{F}, I, p, opts)
+numericalImageDim (List, Ideal, FrontLevelPoint) := ZZ => opts -> (F, I, p) -> last numericalDimensions(matrix{F}, I, p, opts)
 numericalImageDim (List, Ideal) := ZZ => opts -> (F, I) -> last numericalDimensions(matrix{F}, I, opts)
-numericalImageDim (RingMap, Ideal, Point) := ZZ => opts -> (F, I, p) -> last numericalDimensions(F.matrix, I, p, opts)
+numericalImageDim (RingMap, Ideal, FrontLevelPoint) := ZZ => opts -> (F, I, p) -> last numericalDimensions(F.matrix, I, p, opts)
 numericalImageDim (RingMap, Ideal) := ZZ => opts -> (F, I) -> last numericalDimensions(F.matrix, I, opts)
 
 
@@ -392,7 +392,7 @@ pseudoWitnessSet (Matrix, Ideal, List, Thing) := PseudoWitnessSet => opts -> (F,
 	symbol trace => traceResult
     }
 )
-pseudoWitnessSet(Matrix, Ideal, Point) := PseudoWitnessSet => opts -> (F, I, p) -> (
+pseudoWitnessSet(Matrix, Ideal, FrontLevelPoint) := PseudoWitnessSet => opts -> (F, I, p) -> (
     (F, I, p) = checkRings(F, I, {p});
     pseudoWitnessSet(F, I, numericalEval(F, p, true), null, opts)
 )
@@ -401,10 +401,10 @@ pseudoWitnessSet (Matrix, Ideal) := PseudoWitnessSet => opts -> (F, I) -> (
     pseudoWitnessSet(F, I, first numericalSourceSample I, opts)
 )
 pseudoWitnessSet(List, Ideal, List, Thing) := PseudoWitnessSet => opts -> (F, I, pointPairs, L) -> pseudoWitnessSet(matrix{F}, I, pointPairs, L, opts)
-pseudoWitnessSet(List, Ideal, Point) := PseudoWitnessSet => opts -> (F, I, p) -> pseudoWitnessSet(matrix{F}, I, p, opts)
+pseudoWitnessSet(List, Ideal, FrontLevelPoint) := PseudoWitnessSet => opts -> (F, I, p) -> pseudoWitnessSet(matrix{F}, I, p, opts)
 pseudoWitnessSet (List, Ideal) := PseudoWitnessSet => opts -> (F, I) -> pseudoWitnessSet(matrix{F}, I, opts)
 pseudoWitnessSet(RingMap, Ideal, List, Thing) := PseudoWitnessSet => opts -> (F, I, pointPairs, L) -> pseudoWitnessSet(F.matrix, I, pointPairs, L, opts)
-pseudoWitnessSet(RingMap, Ideal, Point) := PseudoWitnessSet => opts -> (F, I, p) -> pseudoWitnessSet(F.matrix, I, p, opts)
+pseudoWitnessSet(RingMap, Ideal, FrontLevelPoint) := PseudoWitnessSet => opts -> (F, I, p) -> pseudoWitnessSet(F.matrix, I, p, opts)
 pseudoWitnessSet (RingMap, Ideal) := PseudoWitnessSet => opts -> (F, I) -> pseudoWitnessSet(F.matrix, I, opts)
 
 
@@ -434,7 +434,7 @@ myTrack (List, List, List) := List => opts -> (startSystem, targetSystem, startS
     	T := timing targetSolutions = track(startSystem, targetSystem, startSolutions, gamma => randomGamma, Software => opts.Software);
 	if opts.Verbose and T#0 > 1 then print ("     -- used " | toString(T#0) | " seconds");
     );
-    goodSols := select(targetSolutions, p -> p#?SolutionStatus and p#SolutionStatus == Regular);
+    goodSols := select(targetSolutions, p -> p.cache#?SolutionStatus and status p == Regular);
     if opts.Verbose and #goodSols < #startSolutions then print("Paths going to infinity: " | #startSolutions - #goodSols | " out of " | #startSolutions);
     if opts.DoRefinements then goodSols = apply(refine(polySystem targetSystem, goodSols, Bits => precision k), p -> point sub(matrix p, k));
     goodSols
@@ -513,12 +513,12 @@ isOnImage = method(Options => {
     Software => M2engine,
     Threshold => 5,
     Verbose => true})
-isOnImage (PseudoWitnessSet, Point) := Boolean => opts -> (W, q) -> (
+isOnImage (PseudoWitnessSet, FrontLevelPoint) := Boolean => opts -> (W, q) -> (
     q = matrix q;
     if not W.isCompletePseudoWitnessSet then print "Warning: not a complete pseudo-witness set! May return false negative.";
     F := W.map;
     I := W.sourceEquations;
-    if not ring q === coefficientRing ring I then error "Point must have coordinates in the coefficient ring of the ideal.";
+    if not ring q === coefficientRing ring I then error "FrontLevelPoint must have coordinates in the coefficient ring of the ideal.";
     fiberSlice := flatten entries W.sourceSlice;
     pullbackSlice := flatten entries W.imageSlice;
     squaredUpSource := flatten entries W.generalCombinations;
@@ -528,9 +528,9 @@ isOnImage (PseudoWitnessSet, Point) := Boolean => opts -> (W, q) -> (
     imagePointTable := hashTable apply(numericalEval(F, targetUpstairsPoints, false), p -> round(opts.Threshold, p) => 0);
     imagePointTable#?(round(opts.Threshold, q))
 )
-isOnImage (Matrix, Ideal, Point) := Boolean => opts -> (F, I, q) -> isOnImage(pseudoWitnessSet(F, I, opts), q, opts)
-isOnImage (List, Ideal, Point) := Boolean => opts -> (F, I, q) -> isOnImage(matrix{F}, I, q, opts)
-isOnImage (RingMap, Ideal, Point) := Boolean => opts -> (F, I, q) -> isOnImage(F.matrix, I, q, opts)
+isOnImage (Matrix, Ideal, FrontLevelPoint) := Boolean => opts -> (F, I, q) -> isOnImage(pseudoWitnessSet(F, I, opts), q, opts)
+isOnImage (List, Ideal, FrontLevelPoint) := Boolean => opts -> (F, I, q) -> isOnImage(matrix{F}, I, q, opts)
+isOnImage (RingMap, Ideal, FrontLevelPoint) := Boolean => opts -> (F, I, q) -> isOnImage(F.matrix, I, q, opts)
 
 
 isWellDefined NumericalInterpolationTable := Boolean => T -> (
@@ -670,7 +670,7 @@ isWellDefined PseudoWitnessSet := Boolean => W -> (
         if debugLevel > 0 then << "-- expected `witnessPointPairs' to be a list of sequences" << endl;
         return false
     );
-    if not all(W.witnessPointPairs, pair -> all(pair, p -> instance(p, Point))) then (
+    if not all(W.witnessPointPairs, pair -> all(pair, p -> instance(p, FrontLevelPoint))) then (
         if debugLevel > 0 then << "-- expected `witnessPointPairs' to be a list of sequences of points" << endl;
         return false
     );

@@ -18,8 +18,8 @@ w2=witnessPoints_1
 w3=witnessPoints_2
 
 for w in witnessPoints do(
-if w#Multiplicity>1 then (
-  assert(w#Multiplicity===3);
+if w.cache#Multiplicity>1 then (
+  assert(w.cache#Multiplicity===3);
   assert(abs(w#Coordinates_0)<1e-6);
   assert(abs(w#Coordinates_1)<1e-6);
       )  )
@@ -66,7 +66,7 @@ runBertini(storeBM2Files);
 wp=importMainDataFile(storeBM2Files) ;
 
 
-assert(( sort for i in wp list {i#Dimension,i#ComponentNumber})==={{0, 0}, {0, 1}, {1, 0}})
+assert(( sort for i in wp list {i.cache#Dimension,i.cache#ComponentNumber})==={{0, 0}, {0, 1}, {1, 0}})
 
 
 

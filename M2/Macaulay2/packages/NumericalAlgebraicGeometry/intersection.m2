@@ -14,7 +14,7 @@ insertComponent(WitnessSet,MutableHashTable) := (W,H) -> (
      )
 
 isPointOnAnyComponent = method()
-isPointOnAnyComponent(Point,HashTable) := (p,H) -> any(keys H, d -> any(keys H#d, k -> isOn(p,H#d#k)))
+isPointOnAnyComponent(AbstractPoint,HashTable) := (p,H) -> any(keys H, d -> any(keys H#d, k -> isOn(p,H#d#k)))
 
 splitWitness = method(TypicalValue=>Sequence, Options =>{Tolerance=>null})
 splitWitness (WitnessSet,RingElement) := Sequence => o -> (w,f) -> (

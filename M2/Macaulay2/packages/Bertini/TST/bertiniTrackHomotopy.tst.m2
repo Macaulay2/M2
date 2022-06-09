@@ -19,7 +19,7 @@ loadPackage("Bertini",Reload=>true)
      --assert(#S0==2) --Not always passing. 
      target1=coordinates first S0
      target2=coordinates last S0
-     assert(instance(first S0,Point))
+     assert(instance(first S0,FrontLevelPoint))
      if #S0 ==2 then assert(abs(.6 -((last target1/first target1)    +      (last target2/first target2)))<1e-6)
 ---  
 

@@ -32,7 +32,7 @@ export {
      "NumericalVariety", "numericalVariety", "numericalAffineSpace",
      "ProjectiveNumericalVariety", "projectiveNumericalVariety",
      -- point (solution)
-     "Point", "point", "coordinates",
+     "AbstractPoint", "FrontLevelPoint", "point", "coordinates",
      "project",
      "isRealPoint", "realPoints", "residual", "origin",
      "Norm", 
@@ -41,7 +41,7 @@ export {
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
      "MaxPrecision", "WindingNumber", "DeflationNumber",
-     -- values for status(Point) 
+     -- values for status(AbstractPoint) 
      "Regular", "Singular", "Infinity", 
      "MinStepFailure", "NumericalRankFailure", "RefinementFailure", 
      "Origin", "IncreasePrecision", "DecreasePrecision", 
@@ -69,7 +69,7 @@ NumericalVariety = new Type of MutableHashTable
 
 -- methods involving several abstract types
 residual = method(Options=>{Norm=>2})
-residual (System,Point) := o -> (s,p) -> error "not implemented"
+residual (System,AbstractPoint) := o -> (s,p) -> error "not implemented"
 
 load "./NAGtypes/FrontLevelPoint.m2"
 load "./NAGtypes/PolySystem.m2"
@@ -103,7 +103,7 @@ toAffineChart (ZZ,List) := List => (k,x) -> (
 -- !!! this seems to be unused
 -- projectiveDistance = method()
 -- projectiveDistance (List,List) := (a,b) -> acos((abs sum(a,b,(x,y)->x*conjugate y)) / ((norm2 a) * (norm2 b)))
--- projectiveDistance (Point,Point) := (a,b) -> projectiveDistance(coordinates a, coordinates b)
+-- projectiveDistance (AbstractPoint,AbstractPoint) := (a,b) -> projectiveDistance(coordinates a, coordinates b)
 
 solutionDuplicates = method(TypicalValue=>MutableHashTable, Options=>{Tolerance=>1e-6})
 solutionDuplicates List := o -> sols -> ( 
@@ -287,7 +287,7 @@ undocumented {
 undocumented {(toExternalString,FrontLevelPoint), (toExternalString,PolySystem),
     unionPointSet,  (unionPointSet,PointSet,PointSet), pointSet, (pointSet,Thing), (areEqual,PointSet,PointSet), PointSet,
     differencePointSet, (differencePointSet,PointSet,PointSet), specialize, (specialize,ParameterHomotopy,Matrix),
-    (symbol ==,PointSet,PointSet), (symbol ?,Point,Point), (net,PointSet), 
+    (symbol ==,PointSet,PointSet), (symbol ?,AbstractPoint,AbstractPoint), (net,PointSet), 
     (symbol +,PointSet,PointSet), (symbol -,PointSet,PointSet),
     }
 

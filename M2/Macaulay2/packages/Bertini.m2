@@ -595,7 +595,7 @@ makeBertiniInput = method(TypicalValue=>Nothing,Options=>{
 	dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})
 makeBertiniInput List := o -> T -> ( -- T=polynomials
     startS1:=apply(o.StartSolutions,
-	p->(if instance(p,Point) then coordinates p else p));
+	p->(if instance(p,AbstractPoint) then coordinates p else p));
     t:=o.PathVariable;
     gamma:=random(CC);
     params:=o.Parameters;
@@ -1350,15 +1350,13 @@ parseWitnessDataFile (MutableHashTable,String,String) := (PWD,dir,name) -> (
 	    numPoints#ic = value(first l);
 	    l=drop(l,1);
 	    pts := new MutableList from for i to numPoints#ic-1 list null ;  
-	    -- We now construct a new point using the type Point.
+	    -- We now construct a new point using the type FrontLevelPoint.
     	    print"numPoints#ic loop";
 --
             scan(numPoints#ic,
-		ptNum->(
-            	    pt := new Point;
-	    	    maxPrec := value(first l);
+		ptNum->( -- !!! none of the tests/examples seem to reach this part !!! 
+		    maxPrec := value(first l);
             	    l = drop(l,1);
-	    	    pt#"MaxPrecisionBits"=maxPrec;
             	    coords := new MutableList from for i to numVars-1 list null;
     	    	    print"numVars loop";
             	    scan(numVars,
@@ -1371,26 +1369,29 @@ parseWitnessDataFile (MutableHashTable,String,String) := (PWD,dir,name) -> (
               		    )
 			);
     	    	    --If we have an affine variety, we homogenize by the first coordinate. 
-    	    	    pt#"ProjectiveCoordinates"=coords;
             	    l = drop(l,numVars+1);  -- don't need second copy of point or extra copy of maxPrec
-	    	    if PWD.IsProjective===1 
-		    then pt.Coordinates = toList coords 
-            	    -- If we have an affine variety we dehomogenize, assuming the first variable is the hom coord:
-	    	    else pt.Coordinates =(1/coords#0)*toList drop(coords,1);    	    
+	    	    pt := point (
+			if PWD.IsProjective===1 
+		    	then toList coords 
+            	    	-- If we have an affine variety we dehomogenize, assuming the first variable is the hom coord:
+	    	    	else (1/coords#0)*toList drop(coords,1)
+			);    	    
+    	    	    pt.cache#"ProjectiveCoordinates"=coords;
+	    	    pt.cache#"MaxPrecisionBits"=maxPrec;
 	    	    condNum := value(cleanupOutput(first l)); 
-	    	    pt#"ConditionNumber"=condNum;
+	    	    pt.cache#"ConditionNumber"=condNum;
 	    	    l=drop(l,4);
     	    	    --What is type?
             	    ptType := value(first l); l=drop(l,1);
-	    	    pt#"PointType"=ptType;
+	    	    pt.cache#"PointType"=ptType;
             	    ptMult := value(first l); l=drop(l,1);
-            	    pt#"Multiplicity"=ptMult;
+            	    pt.cache#"Multiplicity"=ptMult;
     	    	    compNum := value(first l); l=drop(l,1);
-	    	    pt#"ComponentNumber"=compNum;
+	    	    pt.cache#"ComponentNumber"=compNum;
             	    numDeflations := value(first l); l=drop(l,1);
-    	    	    pt#"NumDeflations"=numDeflations;
+    	    	    pt.cache#"NumDeflations"=numDeflations;
     	    	    --Append pt to pts
-    	    	    print pt.Coordinates;
+    	    	    print coordinates pt;
             	    pts#ptNum = pt;
     	    	    print (componentIndex#ic);
             	    if not member(compNum,componentIndex#ic)
@@ -1726,7 +1727,7 @@ makeSampleSolutionsFile(String,Number) := o ->(IFD,aNumber)->(
     then error"SpecifyComponent option must be set to a point or a list {dimension,component number}.";
     if  class o.SpecifyComponent===List     then (
       theDim:=(o.SpecifyComponent)_0;
-      theComponent:=(o.SpecifyComponent)_1) else if class o.SpecifyComponent===Point then(
+      theComponent:=(o.SpecifyComponent)_1) else if instance(o.SpecifyComponent,AbstractPoint) then(
       theDim=(o.SpecifyComponent).cache.Dimension;
       theComponent=(o.SpecifyComponent).cache.ComponentNumber);
     if theNumberOfPoints<1 then error" The number of sample points should be positive. ";
@@ -2105,7 +2106,7 @@ writeStartFile = method(TypicalValue=>Nothing,Options=>{
     	StorageFolder=>null
 	})
 writeStartFile(String,List) := o ->(IFD,listOfListCoords) ->(
-     if instance(first listOfListCoords,Point) then listOfListCoords=listOfListCoords/coordinates;
+     if instance(first listOfListCoords,AbstractPoint) then listOfListCoords=listOfListCoords/coordinates;
      IFD=addSlash(IFD);
      if o.StorageFolder=!=null
      then (
@@ -2395,9 +2396,9 @@ subPoint = method(TypicalValue=>List,Options=>{
 subPoint(Thing,List,Thing) := o ->(polyOrMatrix,listVars,aPoint)->(
     if o.SubIntoCC===true and o.SpecifyVariables=!=false then (
       if #o.SpecifyVariables=!=listVars then print"Warning: SubIntoCC may set unassigned variables to be zero." );
-    if class aPoint===Point then coords:=aPoint#Coordinates else
-    if class aPoint===Matrix then coords=flatten entries aPoint else
-    if class aPoint===List then coords=aPoint else print "class of "|toString aPoint|" is not recognized.";
+    if instance(aPoint, AbstractPoint) then coords:=coordinates aPoint else
+    if instance(aPoint, Matrix) then coords=flatten entries aPoint else
+    if instance(aPoint, List) then coords=aPoint else print "class of "|toString aPoint|" is not recognized.";
     if false=== o.SpecifyVariables then selectedVars:=listVars else selectedVars=o.SpecifyVariables;
     afterSub:=sub(polyOrMatrix,flatten for i to #listVars-1 list
       if member(listVars_i,selectedVars) then listVars_i=>coords_i else {}
@@ -2596,7 +2597,7 @@ doc ///
       F = {x^2-1,y^2-2};
       S = bertiniZeroDimSolve F
     Text
-      Each solution is of type @TO Point@.  Additional information about the solution can be accessed by using @TO peek@.
+      Each solution is of type @TO FrontLevelPoint@.  Additional information about the solution can be accessed by using @TO peek@.
     Example
       peek S_0
     Text
@@ -2768,7 +2769,7 @@ doc ///
     Text
       In the previous example, we solved $x^2-2$ by moving
       from $x^2-1$ with a linear homotopy. {\tt Bertini} tracks homotopies starting at
-      $t=1$ and ending at $t=0$. Final solutions are of the type Point.
+      $t=1$ and ending at $t=0$. Final solutions are of the type FrontLevelPoint.
     Example
       R=CC[x,y,t]; -- include the path variable in the ring
       f1=(x^2-y^2);
@@ -2882,7 +2883,7 @@ doc ///
       a list of points to be sharpened
   Outputs
     S:List
-      a list of solutions of type Point
+      a list of solutions of type FrontLevelPoint
   Description
     Text
       This method takes the list l of solutions of F and sharpens them to d digits using the sharpening module of {\tt Bertini}.

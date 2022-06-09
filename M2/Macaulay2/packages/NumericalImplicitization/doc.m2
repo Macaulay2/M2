@@ -49,7 +49,7 @@ doc ///
     	numericalSourceSample
 	(numericalSourceSample, Ideal, Thing, ZZ)
         (numericalSourceSample, Ideal, WitnessSet)
-        (numericalSourceSample, Ideal, Point)
+        (numericalSourceSample, Ideal, FrontLevelPoint)
 	(numericalSourceSample, Ideal, ZZ)
         (numericalSourceSample, Ideal)
     Headline
@@ -66,7 +66,7 @@ doc ///
 	    which is prime, specifying a variety $V(I)$
 	W:WitnessSet
             a witness set for $V(I)$
-        p:Point
+        p:FrontLevelPoint
             a point on the source $V(I)$
         s:ZZ
 	    the number of points to sample on the source $V(I)$
@@ -151,7 +151,7 @@ doc ///
 	I:Ideal
 	    specifying a source variety $V(I)$
     Outputs
-    	:Point
+    	:FrontLevelPoint
 	    a sample real point on $V(I)$
     Description
 	Text
@@ -253,11 +253,11 @@ doc ///
 doc ///
     Key
     	numericalImageDim
-	(numericalImageDim, Matrix, Ideal, Point)
+	(numericalImageDim, Matrix, Ideal, FrontLevelPoint)
 	(numericalImageDim, Matrix, Ideal)
-        (numericalImageDim, List, Ideal, Point)
+        (numericalImageDim, List, Ideal, FrontLevelPoint)
 	(numericalImageDim, List, Ideal)
-        (numericalImageDim, RingMap, Ideal, Point)
+        (numericalImageDim, RingMap, Ideal, FrontLevelPoint)
 	(numericalImageDim, RingMap, Ideal)
     Headline
     	computes the dimension of the image of a variety
@@ -270,7 +270,7 @@ doc ///
 	    @TO2{RingMap, "ring map"}@, specifying a map
 	I:Ideal
 	    which is prime, specifying a source variety $V(I)$
-	p:Point
+	p:FrontLevelPoint
 	    a sample point on the source $V(I)$
     Outputs
     	:ZZ
@@ -605,13 +605,13 @@ doc ///
     Key
     	pseudoWitnessSet
         (pseudoWitnessSet, Matrix, Ideal)
-	(pseudoWitnessSet, Matrix, Ideal, Point)
+	(pseudoWitnessSet, Matrix, Ideal, FrontLevelPoint)
 	(pseudoWitnessSet, Matrix, Ideal, List, Thing)
         (pseudoWitnessSet, List, Ideal)
-	(pseudoWitnessSet, List, Ideal, Point)
+	(pseudoWitnessSet, List, Ideal, FrontLevelPoint)
 	(pseudoWitnessSet, List, Ideal, List, Thing)
         (pseudoWitnessSet, RingMap, Ideal)
-	(pseudoWitnessSet, RingMap, Ideal, Point)
+	(pseudoWitnessSet, RingMap, Ideal, FrontLevelPoint)
 	(pseudoWitnessSet, RingMap, Ideal, List, Thing)
         Repeats
     	[pseudoWitnessSet, Repeats]
@@ -646,7 +646,7 @@ doc ///
 	    @TO2{RingMap, "ring map"}@, specifying a map
 	I:Ideal
 	    which is prime, specifying a source variety $V(I)$
-	p:Point
+	p:FrontLevelPoint
 	    a general point on the source $V(I)$
 	P:List
 	    of pairs $(p, q)$ with $p$ a general point on the source $V(I)$,
@@ -844,10 +844,10 @@ doc ///
 doc ///
     Key
     	isOnImage
-	(isOnImage, PseudoWitnessSet, Point)
-	(isOnImage, Matrix, Ideal, Point)
-        (isOnImage, List, Ideal, Point)
-        (isOnImage, RingMap, Ideal, Point)
+	(isOnImage, PseudoWitnessSet, FrontLevelPoint)
+	(isOnImage, Matrix, Ideal, FrontLevelPoint)
+        (isOnImage, List, Ideal, FrontLevelPoint)
+        (isOnImage, RingMap, Ideal, FrontLevelPoint)
     Headline
     	tests whether a point lies on the image of a variety
     Usage
@@ -856,7 +856,7 @@ doc ///
     Inputs
         W:PseudoWitnessSet
             a pseudo-witness set for $F(V(I))$
-	p:Point
+	p:FrontLevelPoint
 	    a point in the ambient space of $F(V(I))$
         F:
 	    a @TO2{Matrix, "matrix"}@, or @TO2{List, "list"}@, or 

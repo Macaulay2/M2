@@ -90,7 +90,7 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
      	  );
     
      solsS = solsS / (s->sub(transpose matrix (
-		 if instance(s,Point) then s
+		 if instance(s,AbstractPoint) then s
 	     	 else {toList s}
 	     	 ), CC)); -- convert to vectors
      if o.Projectivize then (
@@ -834,7 +834,7 @@ trackHomotopy(Homotopy,List) := List => o -> (H,solsS) -> (
 	 nSols := #solsS;
 	 statusOut := mutableMatrix(ZZ,2,nSols); -- 2 rows (status, number of steps), #solutions columns 
 	 inp := mutableMatrix promote(matrix(
-	     	 transpose apply(solsS, s->(if instance(s,Point) 
+	     	 transpose apply(solsS, s->(if instance(s,AbstractPoint) 
 		     	 then coordinates s 	 
 		     	 else flatten entries s) | {0} -- track from t=0 
 		     )),
@@ -927,7 +927,7 @@ trackHomotopy(Homotopy,List) := List => o -> (H,solsS) -> (
 	       if DBG > 2 then << "tracking solution " << toString s << endl;
      	       tStep := sub(o.tStep,K);
 	       predictorSuccesses := 0;
-	       x0 := if instance(s,Point) then transpose matrix s else s; 
+	       x0 := if instance(s,AbstractPoint) then transpose matrix s else s; 
 	       t0 := 0_K; 
 	       count := 1; -- number of computed points
 	       stepAdj := 0; -- step adjustment number (wrt previous step): 
@@ -1026,7 +1026,7 @@ trackHomotopy(Homotopy,List) := List => o -> (H,solsS) -> (
     else error "wrong Software option";
     
     if DBG>3 then print rawSols;
-    ret := if instance(first rawSols,Point) then rawSols else
+    ret := if instance(first rawSols,AbstractPoint) then rawSols else
          apply(rawSols,s->point({flatten entries first s} | drop(toList s,1))); 	 
     if DBG>1 then (
 	if member(o.Software,{M2,M2engine}) then (

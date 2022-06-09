@@ -7,7 +7,7 @@ export {"refine", "newton", "endGameCauchy"}
 newton = method()
 -- assumes F has coefficients in field RR_prec or CC_prec 
 --         P has coordinates in that can be promoted to the above field 
-newton (PolySystem, Point) := (F,P) -> (
+newton (PolySystem, AbstractPoint) := (F,P) -> (
     X := transpose matrix P;
     X' := newton(F,X); 
     P' := point X';
@@ -79,7 +79,7 @@ refine = method(TypicalValue => List, Options =>{
 	  })
 refine (List,List) := List => o -> (T,solsT) -> refine(polySystem T, solsT, o)
 
-refine Point := o -> P -> if P.cache.?SolutionSystem then (
+refine AbstractPoint := o -> P -> if P.cache.?SolutionSystem then (
     local ret;
     if P.cache.?LiftedSystem then (
 	P' := refine(P.cache.LiftedSystem,P.cache.LiftedPoint,o);
@@ -98,7 +98,7 @@ refine Point := o -> P -> if P.cache.?SolutionSystem then (
     ) else error "there is no polynomial system associated with the point"
 
 -- this is the main function for M2
-refine (PolySystem,Point) := Point => o -> (F',s) -> 
+refine (PolySystem,AbstractPoint) := FrontLevelPoint => o -> (F',s) -> 
 if member(o.Software,{PHCPACK}) then first refine(F',{s},o) else 
 if member(o.Software,{BERTINI}) then refineBertini(F',s,o) else 
 (
@@ -199,20 +199,14 @@ refine (PolySystem,List) := List => o -> (F,solsT) -> (
      if #solsT == 0 then return solsT;
      
      if isProjective then (
-     	  if o.Software === M2engine then ( -- engine refiner is primitive
---      	       PT := if class first solsT === Point and (first solsT).?Tracker then (first solsT).Tracker else null;
---                if PT=!=null then (
---  		    ref'sols = apply(entries map(CC_53, 
---  		    	      rawRefinePT(PT, raw matrix solsT, o.ErrorTolerance, o.Iterations)
---  		    	      ), s->{s}); -- old format
--- 		    );
-	       error "refine is not implemented in the engine yet";
-	       ) 
-	   else error "refining projective solutions is not implemented yet";
+     	  if o.Software === M2engine then (
+	      error "refine is not implemented in the engine yet";
+	      ) 
+	  else error "refining projective solutions is not implemented yet";
     	  );  
     if o.Software === PHCPACK then return refinePHCpack(equations F,solsT,o)/point 
     else apply(solsT, s->refine(F,    		  
-	    if instance(s,Point) then s else point {s/toCC},
+	    if instance(s,AbstractPoint) then s else point {s/toCC},
 	    o 
 	    ))
     )         
@@ -246,9 +240,9 @@ assert(P''.cache.ErrorBoundEstimate < 1e-6 and P''.cache.ConditionNumber < 100 a
 ------------------------------- ENGAMES -------------------------------------------------------------------
 -- H: a homotopy
 -- t'end: the end value of the continuation parameter t
--- p0: a Point = a solution to H_t(x)=0, with t0=p0.LastT close to t'end
+-- p0: an AbstractPoint = a solution to H_t(x)=0, with t0=p0.LastT close to t'end
 -- "number of vertices" (optional): ... of the regular polygon approximating the circle |t-t'end|=|t0-t'end|
--- OUTPUT: a Point
+-- OUTPUT: a FrontLevelPoint
 endGameCauchy = method(Options=>{"number of vertices"=>16,"backtrack factor"=>1.,
 	tStep => null, -- initial
 	tStepMin => null,
@@ -261,7 +255,7 @@ endGameCauchy = method(Options=>{"number of vertices"=>16,"backtrack factor"=>1.
 	InfinityThreshold => null -- used to tell if the path is diverging
 	})
 
-endGameCauchy (GateHomotopy, Number, Point):= o -> (H, t'end, p0) -> (
+endGameCauchy (GateHomotopy, Number, AbstractPoint):= o -> (H, t'end, p0) -> (
     x0 := mutableMatrix transpose {coordinates p0 | {p0.cache.LastT}} ; 
     w := endGameCauchy(H,t'end,x0,o);
     -- if w == 0 then error "endGameCauchy: something went wrong";

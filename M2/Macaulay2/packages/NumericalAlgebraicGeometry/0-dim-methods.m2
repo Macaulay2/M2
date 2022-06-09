@@ -4,7 +4,7 @@
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
 satisfiesOverdeterminedSystem = method(Options=>{ResidualTolerance=>null})
-satisfiesOverdeterminedSystem (Point, List) := o -> (s,F) -> (
+satisfiesOverdeterminedSystem (AbstractPoint, List) := o -> (s,F) -> (
     o = fillInDefaultOptions o; 
     norm evaluate(matrix{F},s) < o.ResidualTolerance    
     )

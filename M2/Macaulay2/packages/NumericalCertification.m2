@@ -60,7 +60,7 @@ net Interval := i -> net "[" | net first i | ", " | net last i | "]"
 
 
 pointNorm = method()
-pointNorm(Point) := x -> (
+pointNorm(AbstractPoint) := x -> (
     N := sqrt(1+((norm(2,x))^2))
     )
 
@@ -87,7 +87,7 @@ polySysNorm(PolySystem) := f -> (
 
 
 newtonOper = method()
-newtonOper(PolySystem, Point) := (f, x) -> (
+newtonOper(PolySystem, AbstractPoint) := (f, x) -> (
     jacOfPoly := jacobian f;
     evalJac := evaluate(jacOfPoly, x);
     if det evalJac == 0 then ( x )
@@ -101,7 +101,7 @@ newtonOper(PolySystem, Point) := (f, x) -> (
 
 
 computeConstants = method()
-computeConstants(PolySystem, Point) := (ff, xx) -> (
+computeConstants(PolySystem, AbstractPoint) := (ff, xx) -> (
     R := ring ff;
     numOfPoly := # equations ff;
     jacobianOfSys := jacobian ff;
@@ -136,7 +136,7 @@ certifySolution(PolySystem, List) := (f, X) -> (
 
 
 certifyDistinctSoln = method()
-certifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
+certifyDistinctSoln(PolySystem, AbstractPoint, AbstractPoint) := (f, x1, x2) -> (
     Consts1 := computeConstants(f,x1);
     Consts2 := computeConstants(f,x2);
     if Consts1 #0 >= (13-3*sqrt(17))/4 then (
@@ -158,7 +158,7 @@ certifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
 
 
 certifyRealSoln = method()
-certifyRealSoln(PolySystem, Point) := (f, x) -> (
+certifyRealSoln(PolySystem, AbstractPoint) := (f, x) -> (
     (a, b, c) := computeConstants(f,x);
     coordinate := coordinates x;
     imagPart := apply(coordinate, c -> imaginaryPart(c));

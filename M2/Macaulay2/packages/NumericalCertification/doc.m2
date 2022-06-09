@@ -105,14 +105,14 @@ doc ///
 doc ///
     	Key
 	    pointNorm
-	    (pointNorm, Point)
-	    "(pointNorm, Point)"
+	    (pointNorm, AbstractPoint)
+	    "(pointNorm, AbstractPoint)"
 	Headline
 	    compute the "projectivized" norm of the given point
 	Usage
 	    n = pointNorm(p)
 	Inputs
-	    p:Point
+	    p:AbstractPoint
 	Description
 	    Text
 	    	For the given point this function computes the "projectivized" norm (square root of $1+ x_1^2 + ... + x_n^2$) of the given point.
@@ -166,15 +166,15 @@ doc ///
 doc ///
     	Key
     	    newtonOper
-	    (newtonOper, PolySystem, Point)
-	    "(newtonOper, PolySystem, Point)"
+	    (newtonOper, PolySystem, AbstractPoint)
+	    "(newtonOper, PolySystem, AbstractPoint)"
 	Headline
     	    apply Newton's method on a given point.
 	Usage
     	    newtonOper(PS, P)
 	Inputs
             PS:PolySystem
-	    P:Point
+	    P:AbstractPoint
 	Description
 	    Text
     	    	This function applies Newton's method on a given point and given polynomial system.
@@ -198,15 +198,15 @@ doc ///
 doc ///
     	Key
     	    computeConstants
-	    (computeConstants, PolySystem, Point)
-	    "(computeConstants, PolySystem, Point)"
+	    (computeConstants, PolySystem, AbstractPoint)
+	    "(computeConstants, PolySystem, AbstractPoint)"
 	Headline
 	    compute the auxiliary quantities related to alpha theory
 	Usage
 	    (alpha, beta, gamma) = computeConstants(PS, P)
 	Inputs
             PS:PolySystem
-	    P:Point
+	    P:AbstractPoint
 	Description
 	    Text
     	    	alpha theory uses three auxiliary quantities related to the input polynomial system and point.
@@ -247,7 +247,7 @@ doc ///
 	        R = QQ[x1,x2,y1,y2];
 		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
 	    Text
-	    	Input should be a list of @TO "Point"@ type objects.
+	    	Input should be a list of @TO "AbstractPoint"@ type objects.
 	    Example
 		p = point{{.95,.32,-.30,.95}};
     	    	certifySolution(f,{p})
@@ -258,16 +258,16 @@ doc ///
 doc ///
     	Key
     	    certifyDistinctSoln
-	    (certifyDistinctSoln, PolySystem, Point, Point)
-	    "(certifySolution, PolySystem, Point, Point)"
+	    (certifyDistinctSoln, PolySystem, AbstractPoint, AbstractPoint)
+	    "(certifySolution, PolySystem, AbstractPoint, AbstractPoint)"
 	Headline
 	    determine whether given points are distinct approximate solutions to the system
 	Usage
 	    certifyDistinctSoln(PS, P1, P2)
 	Inputs
             PS:PolySystem
-	    P1:Point
-	    P2:Point
+	    P1:AbstractPoint
+	    P2:AbstractPoint
 	Description
 	    Text
     	    	This function executes the gamma test based on the value computed by @TO "computeConstants"@, and determine whether given points are distinct or not.
@@ -298,15 +298,15 @@ doc ///
 doc ///
     	Key
     	    certifyRealSoln
-	    (certifyRealSoln, PolySystem, Point)
-	    "(certifyRealSoln, PolySystem, Point)"
+	    (certifyRealSoln, PolySystem, AbstractPoint)
+	    "(certifyRealSoln, PolySystem, AbstractPoint)"
 	Headline
 	    determine whether a given point is an real approximate solution to the system
 	Usage
 	    certifyDistinctSoln(PS, P)
 	Inputs
             PS:PolySystem
-	    P:Point
+	    P:AbstractPoint
 	Description
 	    Text
     	    	When the system is real (or rational) polynomial system, this function executes the gamma test based on the value computed by @TO "computeConstants"@, and determine whether a given point is a real approximate solution  or not.
@@ -336,7 +336,7 @@ doc ///
 	    (D, R, CS, C) = certifyCount(PS, P)
 	Inputs
             PS:PolySystem
-	    P:Point
+	    P:AbstractPoint
 	Outputs
 	    D:List
 	    	a list of certified distinct solutions

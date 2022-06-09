@@ -189,7 +189,7 @@ parseSolutions (String,Ring) := o -> (s,R) -> (
   -- parses solutions in PHCpack format 
   -- IN:  s = string of solutions in PHCmaple format 
   --      V = list of variable names
-  -- OUT: List of solutions, each of type Point, 
+  -- OUT: List of solutions, each of type FrontLevelPoint, 
   --      carrying also other diagnostic information about each.
   oldprec := defaultPrecision;
   defaultPrecision = o.Bits;
@@ -533,7 +533,7 @@ dimEmbedding (List) := (system) -> (
 )
 
 -----------------------------
----  conversion to Point  ---
+---  conversion to FrontLevelPoint  ---
 -----------------------------
 
 outputToPoint = method()
@@ -604,7 +604,7 @@ witnessSuperSetsFilter (MutableList,List) := (witsets,pts) -> (
   local c;
   for p in pts do (
     found := false;
-    if instance(p,Point)
+    if instance(p,AbstractPoint)
      then c = p
      else c = point{p};
     for w in witsets when (not found) do (
@@ -710,7 +710,7 @@ cascade (List) := o -> (system) -> (
         ) else (
           supsols := points(supwit);
           genpts := witnessSuperSetsFilter(result,supsols);
-	  g := toList(apply(genpts,x->if class x === Point then x else point{x}));
+	  g := toList(apply(genpts,x->if instance(x,AbstractPoint) then point x else point{x}));
           ws := witnessSet(ideal(equations(supwit)),ideal(slice(supwit)),g);
           if #g!=0 then result = append(result,(i,ws));
         );
@@ -848,7 +848,7 @@ factorWitnessSet (WitnessSet ) := o->  w -> (
 ------------------------
 
 isCoordinateZero = method(TypicalValue => Boolean)
-isCoordinateZero (Point,ZZ,RR) := (sol,k,tol) -> (
+isCoordinateZero (AbstractPoint,ZZ,RR) := (sol,k,tol) -> (
   -- IN: sol, a solution of a polynomial system;
   --     k, index to a coordinate must be within range;
   --     tol, tolerance for the absolute value of the k-th coordinate.
@@ -863,7 +863,7 @@ isCoordinateZero (Point,ZZ,RR) := (sol,k,tol) -> (
 ---------------------------
 
 isWitnessSetMember = method(TypicalValue => Boolean, Options => {Verbose => false})
-isWitnessSetMember (WitnessSet,Point) := o-> (witset,testpoint) -> (
+isWitnessSetMember (WitnessSet,AbstractPoint) := o-> (witset,testpoint) -> (
   -- IN: witset, a witness set for a positive dimensional solution set,
   --     testpoint, does it belong to the solution set?
   -- OUT: true if testpoint is a member of the solution set,
@@ -1194,7 +1194,7 @@ solveSystem List := List =>  o->system -> (
     if o.Verbose then
       stdio << "after filtering nonsolutions : "
             << #result << " solutions left" << endl;
-    scan(result, (sol -> sol#Coordinates = take(sol#Coordinates, numgens R)));
+    result = apply(result, sol -> point(take(coordinates sol, numgens R), sol.cache));
     newR = (coefficientRing R)(gens R) -- put variables back in original ring
   );
   result
@@ -1961,7 +1961,7 @@ TEST///
       S = {x^2 - 1/3, x*y - 1}; 
       oldRoots = solveSystem(S);
       r0 = oldRoots#0#Coordinates#1
-      newRoots = refineSolutions(S,oldRoots,64) --recall that solutions are of type Point. 
+      newRoots = refineSolutions(S,oldRoots,64) --recall that solutions are of type FrontLevelPoint. 
       --check if precision increased:
       assert(precision newRoots#0#Coordinates#1 > precision oldRoots#0#Coordinates#1) 
       --check if input number of decimal places, 64, used correctly: 

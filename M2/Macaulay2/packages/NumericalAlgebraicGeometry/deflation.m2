@@ -13,7 +13,7 @@ deflate = method(Options=>{Variable=>null})
 
 -- creates and stores (if not stored already) a deflated system and the corresponding random matrix 
 -- returns the deflation rank
-deflate (PolySystem, Point) := o -> (F,P) -> (
+deflate (PolySystem, AbstractPoint) := o -> (F,P) -> (
     J := evaluate(jacobian F, P);
     r := numericalRank J;
     deflate(F,r,o);
@@ -76,7 +76,7 @@ deflate Ideal := o -> I -> (
 liftPointToDeflation = method() 
 -- approximates the coordinates corresponding to the augmented deflation variables
 -- for the deflation of F of rank r
-liftPointToDeflation (Point,PolySystem,ZZ) := (P,F,r) -> (
+liftPointToDeflation (AbstractPoint,PolySystem,ZZ) := (P,F,r) -> (
     if F.NumberOfVariables == (F.Deflation#r).NumberOfVariables then P
     else (
     	A := evaluate(jacobian F, P)*(F.DeflationRandomMatrix#r);
@@ -112,7 +112,7 @@ assert(P2.cache.ErrorBoundEstimate^2 > NP2.cache.ErrorBoundEstimate)
 ///
 
 deflateAndStoreDeflationSequence = method(Options=>{SquareUp=>true})
-deflateAndStoreDeflationSequence(Point,PolySystem) := o -> (P,F) -> (
+deflateAndStoreDeflationSequence(AbstractPoint,PolySystem) := o -> (P,F) -> (
     P0 := P;
     F0 := F;
     d'seq := {}; -- deflation sequence: a sequence of matrices used for deflation
