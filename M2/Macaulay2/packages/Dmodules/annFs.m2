@@ -58,6 +58,7 @@ AnnFs List := Ideal => F -> (
 	       )) 	  
      );
 ------------------------------------------------------------------------------
+--This needs documentation.
 AnnIFs = method()
 AnnIFs(Ideal, RingElement) := Ideal => (I, f) -> (
      pInfo(1, "AnnIFs: Warning! The method expects an f-saturated module"); 

@@ -20,6 +20,9 @@ f = x_1 + x_2 * z + x_3 * z^2 + x_4 * z^3
 W = QQ[x,dx, WeylAlgebra=>{x=>dx}]
 AnnIFs(ideal dx, x^2) 
 
+--I2 = AnnIFs(ideal(d_2,d_3,d_4), f)
+--I3 = AnnIFs(ideal(x_1*x_2,x_3,x_4), f)
+
 --------------------------------------- EXAMPLES for AnnFs or several polys
 restart
 loadPackage "Dmodules"
