@@ -8,7 +8,7 @@ doc ///
     toricIdealPartials(A,D)
   Inputs
     A:Matrix
-    D:Polynomial ring  
+    D:PolynomialRing  
   Outputs
      :Ideal
       the toric ideal of the matrix A in the polynomial ring of the partials inside of the Weyl algerba D.
