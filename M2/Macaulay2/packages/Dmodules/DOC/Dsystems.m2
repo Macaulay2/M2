@@ -1,4 +1,29 @@
 doc ///
+  Key 
+    toricIdealPartials
+    (toricIdealPartials,Matrix,PolynomialRing)
+  Headline
+   The toric ideal of the matrix A in the polynomial ring of the partials inside of the Weyl algerba D
+  Usage
+    toricIdealPartials(A,D)
+  Inputs
+    A:Matrix
+    D:Polynomial ring  
+  Outputs
+     :Ideal
+      the toric ideal of the matrix A in the polynomial ring of the partials inside of the Weyl algerba D.
+  Description
+    Text 
+      A $d \times n$ integer matrix $A$ determines a GKZ hypergeometric system of PDEs 
+      in the Weyl algebra $D_n$ over $\mathbb{C}$.  The matrix $A$ is associated to the toric ideal 
+      $I_A$ in the polynomial subring $\mathbb{C}[\partial_1,...,\partial_n]$ of $D$.  A field of characteristic zero may be used instead of  $\mathbb{C}$.
+      For more details, see [@HREF("https://mathscinet.ams.org/mathscinet/pdf/1734566.pdf","SST")@, Chapters 3 and 4].
+    Example 
+      A = matrix{{1,2,0},{-1,1,3}}
+      D = makeWA(QQ[x_1..x_3])
+///
+    
+doc ///
   Key
     gkz
     (gkz, Matrix, List)
@@ -143,4 +168,8 @@ doc ///
     PolyAnn
 ///
 
+end
+restart
+installPackage("Dmodules",FileName =>"../../Dmodules.m2")
 
+viewHelp toricIdealPartials
