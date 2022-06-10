@@ -129,14 +129,14 @@ gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
       case M2::ring_RR:
         result = getmemstructtype(gmp_RRmutable);
         mpfr_init2(result, 53);
-        mpfr_set_d(result, a->get_value().get_double(), GMP_RNDN);
+        mpfr_set_d(result, a->get_value().get_double(), MPFR_RNDN);
         return moveTo_gmpRR(result);
       case M2::ring_RRR:
         R1 =
             dynamic_cast<const M2::ConcreteRing<M2::ARingRRR> *>(a->get_ring());
         result = getmemstructtype(gmp_RRmutable);
         mpfr_init2(result, R1->get_precision());
-        mpfr_set(result, a->get_value().get_mpfr(), GMP_RNDN);
+        mpfr_set(result, a->get_value().get_mpfr(), MPFR_RNDN);
         return moveTo_gmpRR(result);
       default:
         ERROR("expected an element of RRR");

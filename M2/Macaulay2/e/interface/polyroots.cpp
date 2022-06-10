@@ -64,10 +64,10 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
       mpc_t mpc_cc;
       mpc_init2(mpc_cc,K->get_precision());
       if (ID==M2::ring_RRR) {
-          mpfr_get_f(mpc_cc->r,t->coeff.get_mpfr(),GMP_RNDN);
+          mpfr_get_f(mpc_cc->r,t->coeff.get_mpfr(),MPFR_RNDN);
       } else {
-        mpfr_get_f(mpc_cc->r,&t->coeff.get_cc()->re,GMP_RNDN);
-        mpfr_get_f(mpc_cc->i,&t->coeff.get_cc()->im,GMP_RNDN);
+        mpfr_get_f(mpc_cc->r,&t->coeff.get_cc()->re,MPFR_RNDN);
+        mpfr_get_f(mpc_cc->i,&t->coeff.get_cc()->im,MPFR_RNDN);
       }
       mps_monomial_poly_set_coefficient_f (s, mps_p, deg, mpc_cc); 
       mpc_clear(mpc_cc);
@@ -146,8 +146,8 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p,
     C0.init(cc);
     for (int i = 0; i < hideg; i++) {
       auto& mps_root = roots[i];
-      mpfr_set_f(&cc.re,mpc_Re(mps_root),GMP_RNDN);
-      mpfr_set_f(&cc.im,mpc_Im(mps_root),GMP_RNDN);
+      mpfr_set_f(&cc.re,mpc_Re(mps_root),MPFR_RNDN);
+      mpfr_set_f(&cc.im,mpc_Im(mps_root),MPFR_RNDN);
       ring_elem m2_root;
       C0.to_ring_elem(m2_root, cc);
       result->array[i] = RingElement::make_raw(C, m2_root);

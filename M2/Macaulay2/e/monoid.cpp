@@ -177,6 +177,12 @@ Monoid::Monoid(const MonomialOrdering *mo,
 
   local_vars = rawNonTermOrderVariables(mo);
 
+  for (int i=0; i<n_vars(); ++i)
+    {
+      bool isLaurent = isLaurentVariable(i);
+      mLaurentVariablesPredicate.push_back(isLaurent);
+    }
+
   // Debugging only:
   //  fprintf(stderr, "%d variables < 1\n", local_vars->len);
   //  if (local_vars->len > 0)
@@ -507,6 +513,19 @@ void Monoid::copy(const_monomial m, monomial result) const
   memcpy(result, m, monomial_size() * sizeof(int));
 }
 
+bool Monoid::divides_partial_order(const_monomial m, const_monomial n) const
+// Is each exponent m_i <= n_i, for all i=0..nvars-1?
+{
+  if (nvars_ == 0) return true;
+
+  exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
+  exponents EXP2 = ALLOCATE_EXPONENTS(exp_size);
+  // can we speed this up by not unpacking ??
+  to_expvector(m, EXP1);
+  to_expvector(n, EXP2);
+  return ntuple::divides(nvars_, EXP1, EXP2);
+}
+
 bool Monoid::divides(const_monomial m, const_monomial n) const
 // Does m divide n?
 {
@@ -517,7 +536,12 @@ bool Monoid::divides(const_monomial m, const_monomial n) const
   // can we speed this up by not unpacking ??
   to_expvector(m, EXP1);
   to_expvector(n, EXP2);
-  return ntuple::divides(nvars_, EXP1, EXP2);
+  if (numInvertibleVariables() == 0)
+    return ntuple::divides(nvars_, EXP1, EXP2);
+  for (int i=0; i < nvars_; ++i)
+    if (not mLaurentVariablesPredicate[i] and EXP1[i] > EXP2[i])
+      return false;
+  return true;
 }
 
 void Monoid::power(const_monomial m, int n, monomial result) const

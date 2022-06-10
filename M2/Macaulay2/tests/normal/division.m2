@@ -170,6 +170,35 @@ assert( (quotientRemainder(1-u^3,1-u)) === (1+u+u^2,0_R) )
   m3 = minors(3, psi, Strategy => Cofactor) -- works!
   assert(sub(m1, RP) == m3)
 
+-- git issue 2249 FIXED (move these to AssociativeAlgebras?)
+  needsPackage "AssociativeAlgebras"
+  R = frac(QQ[t])
+  S = R<|T|>
+  f = map(S,S)
+  a = t^(-1)*T
+  assert(f a == a)
+  f
+
+  needsPackage "AssociativeAlgebras"
+  R = frac(QQ[t])
+  S = R<|T,X|>/(X*T-T*X)
+  f = map(S,S)
+  a = t^(-1)*(T*X-X)
+  assert(f a == a)
+  f
+
+-- git issue #595 FIXED
+  R = QQ{t}
+  assert(1//t == 0_R)
+  assert((1//t)*1 == 0_R) -- used to monomial overflow...
+  assert(1//t == 0) -- used to not be a valid element in this ring! 
+  assert(1_R % t == 1)
+  assert(1_R == (1//t) * t + (1%t))
+
+-- git issue #2496 fixed
+  R = QQ[x]
+  assert(try (0_R / 0_R; false) else true) -- should give an error
+
 end--
 generateAssertions ///
 R = ZZ[t..u, Degrees => {2:1}, MonomialOrder => { MonomialSize => 32, GroupRevLex => 2, Position => Up}, Inverses => true]

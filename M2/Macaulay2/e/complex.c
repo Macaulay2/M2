@@ -8,8 +8,8 @@ void mpfc_init_set(gmp_CCmutable result, gmp_CCmutable a)
 {
   result->re = getmemstructtype(gmp_RRmutable);
   result->im = getmemstructtype(gmp_RRmutable);
-  mpfr_init_set(result->re, a->re, GMP_RNDN);
-  mpfr_init_set(result->im, a->im, GMP_RNDN);
+  mpfr_init_set(result->re, a->re, MPFR_RNDN);
+  mpfr_init_set(result->im, a->im, MPFR_RNDN);
 }
 
 void mpfc_init(gmp_CCmutable result, long precision)
@@ -21,8 +21,8 @@ void mpfc_init(gmp_CCmutable result, long precision)
 }
 void mpfc_set(gmp_CCmutable result, gmp_CCmutable a)
 {
-  mpfr_set(result->re, a->re, GMP_RNDN);
-  mpfr_set(result->im, a->im, GMP_RNDN);
+  mpfr_set(result->re, a->re, MPFR_RNDN);
+  mpfr_set(result->im, a->im, MPFR_RNDN);
 }
 
 void mpfc_clear(gmp_CCmutable result)
@@ -36,8 +36,8 @@ void mpfc_clear(gmp_CCmutable result)
 }
 void mpfc_set_si(gmp_CCmutable result, long re)
 {
-  mpfr_set_si(result->re, re, GMP_RNDN);
-  mpfr_set_si(result->im, 0, GMP_RNDN);
+  mpfr_set_si(result->re, re, MPFR_RNDN);
+  mpfr_set_si(result->im, 0, MPFR_RNDN);
 }
 int mpfc_is_zero(gmp_CCmutable a)
 {
@@ -50,18 +50,18 @@ int mpfc_is_equal(gmp_CCmutable a, gmp_CCmutable b)
 }
 void mpfc_add(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b)
 {
-  mpfr_add(result->re, a->re, b->re, GMP_RNDN);
-  mpfr_add(result->im, a->im, b->im, GMP_RNDN);
+  mpfr_add(result->re, a->re, b->re, MPFR_RNDN);
+  mpfr_add(result->im, a->im, b->im, MPFR_RNDN);
 }
 void mpfc_neg(gmp_CCmutable result, gmp_CCmutable a)
 {
-  mpfr_neg(result->re, a->re, GMP_RNDN);
-  mpfr_neg(result->im, a->im, GMP_RNDN);
+  mpfr_neg(result->re, a->re, MPFR_RNDN);
+  mpfr_neg(result->im, a->im, MPFR_RNDN);
 }
 void mpfc_sub(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b)
 {
-  mpfr_sub(result->re, a->re, b->re, GMP_RNDN);
-  mpfr_sub(result->im, a->im, b->im, GMP_RNDN);
+  mpfr_sub(result->re, a->re, b->re, MPFR_RNDN);
+  mpfr_sub(result->im, a->im, b->im, MPFR_RNDN);
 }
 void mpfc_mul(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b)
 {
@@ -69,16 +69,16 @@ void mpfc_mul(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b)
   mpfr_init2(tmp, mpfr_get_prec(a->re));
 
   // result->re = a->re*b->re - a->im*b->im;
-  mpfr_mul(tmp, a->re, b->re, GMP_RNDN);
-  mpfr_set(result->re, tmp, GMP_RNDN);
-  mpfr_mul(tmp, a->im, b->im, GMP_RNDN);
-  mpfr_sub(result->re, result->re, tmp, GMP_RNDN);
+  mpfr_mul(tmp, a->re, b->re, MPFR_RNDN);
+  mpfr_set(result->re, tmp, MPFR_RNDN);
+  mpfr_mul(tmp, a->im, b->im, MPFR_RNDN);
+  mpfr_sub(result->re, result->re, tmp, MPFR_RNDN);
 
   // result->im = a->re*b->im + a->im*b->re;
-  mpfr_mul(tmp, a->re, b->im, GMP_RNDN);
-  mpfr_set(result->im, tmp, GMP_RNDN);
-  mpfr_mul(tmp, a->im, b->re, GMP_RNDN);
-  mpfr_add(result->im, result->im, tmp, GMP_RNDN);
+  mpfr_mul(tmp, a->re, b->im, MPFR_RNDN);
+  mpfr_set(result->im, tmp, MPFR_RNDN);
+  mpfr_mul(tmp, a->im, b->re, MPFR_RNDN);
+  mpfr_add(result->im, result->im, tmp, MPFR_RNDN);
 
   mpfr_clear(tmp);
 }
@@ -95,12 +95,12 @@ void mpfc_invert(gmp_CCmutable result, gmp_CCmutable v)
       // result->re = 1.0/denom;
       // result->im = - p/denom;
 
-      mpfr_div(p, v->im, v->re, GMP_RNDN);
-      mpfr_mul(denom, p, v->im, GMP_RNDN);
-      mpfr_add(denom, denom, v->re, GMP_RNDN);
-      mpfr_si_div(result->re, 1, denom, GMP_RNDN);
-      mpfr_div(result->im, p, denom, GMP_RNDN);
-      mpfr_neg(result->im, result->im, GMP_RNDN);
+      mpfr_div(p, v->im, v->re, MPFR_RNDN);
+      mpfr_mul(denom, p, v->im, MPFR_RNDN);
+      mpfr_add(denom, denom, v->re, MPFR_RNDN);
+      mpfr_si_div(result->re, 1, denom, MPFR_RNDN);
+      mpfr_div(result->im, p, denom, MPFR_RNDN);
+      mpfr_neg(result->im, result->im, MPFR_RNDN);
     }
   else
     {
@@ -109,12 +109,12 @@ void mpfc_invert(gmp_CCmutable result, gmp_CCmutable v)
       // result->re = p/denom;
       // result->im = -1.0/denom;
 
-      mpfr_div(p, v->re, v->im, GMP_RNDN);
-      mpfr_mul(denom, p, v->re, GMP_RNDN);
-      mpfr_add(denom, denom, v->im, GMP_RNDN);
-      mpfr_si_div(result->im, 1, denom, GMP_RNDN);
-      mpfr_neg(result->im, result->im, GMP_RNDN);
-      mpfr_div(result->re, p, denom, GMP_RNDN);
+      mpfr_div(p, v->re, v->im, MPFR_RNDN);
+      mpfr_mul(denom, p, v->re, MPFR_RNDN);
+      mpfr_add(denom, denom, v->im, MPFR_RNDN);
+      mpfr_si_div(result->im, 1, denom, MPFR_RNDN);
+      mpfr_neg(result->im, result->im, MPFR_RNDN);
+      mpfr_div(result->re, p, denom, MPFR_RNDN);
     }
 
   mpfr_clear(p);
@@ -140,18 +140,18 @@ void mpfc_div(gmp_CCmutable result, gmp_CCmutable u, gmp_CCmutable v)
       // result.re = (u.re + p*u.im)/denom;
       // result.im = (u.im - p*u.re)/denom;
 
-      mpfr_div(p, v->im, v->re, GMP_RNDN);
-      mpfr_mul(denom, p, v->im, GMP_RNDN);
-      mpfr_add(denom, denom, v->re, GMP_RNDN);
+      mpfr_div(p, v->im, v->re, MPFR_RNDN);
+      mpfr_mul(denom, p, v->im, MPFR_RNDN);
+      mpfr_add(denom, denom, v->re, MPFR_RNDN);
 
-      mpfr_mul(result->re, p, u->im, GMP_RNDN);
-      mpfr_add(result->re, result->re, u->re, GMP_RNDN);
-      mpfr_div(result->re, result->re, denom, GMP_RNDN);
+      mpfr_mul(result->re, p, u->im, MPFR_RNDN);
+      mpfr_add(result->re, result->re, u->re, MPFR_RNDN);
+      mpfr_div(result->re, result->re, denom, MPFR_RNDN);
 
-      mpfr_mul(result->im, p, u->re, GMP_RNDN);
-      mpfr_neg(result->im, result->re, GMP_RNDN);
-      mpfr_add(result->im, result->re, u->im, GMP_RNDN);
-      mpfr_div(result->im, result->re, denom, GMP_RNDN);
+      mpfr_mul(result->im, p, u->re, MPFR_RNDN);
+      mpfr_neg(result->im, result->re, MPFR_RNDN);
+      mpfr_add(result->im, result->re, u->im, MPFR_RNDN);
+      mpfr_div(result->im, result->re, denom, MPFR_RNDN);
     }
   else
     {
@@ -160,17 +160,17 @@ void mpfc_div(gmp_CCmutable result, gmp_CCmutable u, gmp_CCmutable v)
       // result.re = (u.re * p + u.im)/denom;
       // result.im = (-u.re + p * u.im)/denom;
 
-      mpfr_div(p, v->re, v->im, GMP_RNDN);
-      mpfr_mul(denom, p, v->re, GMP_RNDN);
-      mpfr_add(denom, denom, v->im, GMP_RNDN);
+      mpfr_div(p, v->re, v->im, MPFR_RNDN);
+      mpfr_mul(denom, p, v->re, MPFR_RNDN);
+      mpfr_add(denom, denom, v->im, MPFR_RNDN);
 
-      mpfr_mul(result->re, p, u->re, GMP_RNDN);
-      mpfr_add(result->re, result->re, u->im, GMP_RNDN);
-      mpfr_div(result->re, result->re, denom, GMP_RNDN);
+      mpfr_mul(result->re, p, u->re, MPFR_RNDN);
+      mpfr_add(result->re, result->re, u->im, MPFR_RNDN);
+      mpfr_div(result->re, result->re, denom, MPFR_RNDN);
 
-      mpfr_mul(result->im, p, u->im, GMP_RNDN);
-      mpfr_sub(result->im, result->re, u->re, GMP_RNDN);
-      mpfr_div(result->im, result->re, denom, GMP_RNDN);
+      mpfr_mul(result->im, p, u->im, MPFR_RNDN);
+      mpfr_sub(result->im, result->re, u->re, MPFR_RNDN);
+      mpfr_div(result->im, result->re, denom, MPFR_RNDN);
     }
 
   mpfr_clear(p);
@@ -204,22 +204,22 @@ void mpfc_sub_mult(gmp_CCmutable result, gmp_CCmutable a, gmp_CCmutable b)
   mpfr_t tmp;
   mpfr_init2(tmp, mpfr_get_prec(a->re));
 
-  mpfr_mul(tmp, a->re, b->re, GMP_RNDN);
-  mpfr_add(result->re, result->re, tmp, GMP_RNDN);
-  mpfr_mul(tmp, a->im, b->im, GMP_RNDN);
-  mpfr_sub(result->re, result->re, tmp, GMP_RNDN);
+  mpfr_mul(tmp, a->re, b->re, MPFR_RNDN);
+  mpfr_add(result->re, result->re, tmp, MPFR_RNDN);
+  mpfr_mul(tmp, a->im, b->im, MPFR_RNDN);
+  mpfr_sub(result->re, result->re, tmp, MPFR_RNDN);
 
-  mpfr_mul(tmp, a->re, b->im, GMP_RNDN);
-  mpfr_add(result->im, result->im, tmp, GMP_RNDN);
-  mpfr_mul(tmp, a->im, b->re, GMP_RNDN);
-  mpfr_add(result->im, result->im, tmp, GMP_RNDN);
+  mpfr_mul(tmp, a->re, b->im, MPFR_RNDN);
+  mpfr_add(result->im, result->im, tmp, MPFR_RNDN);
+  mpfr_mul(tmp, a->im, b->re, MPFR_RNDN);
+  mpfr_add(result->im, result->im, tmp, MPFR_RNDN);
 
   mpfr_clear(tmp);
 }
 void mpfc_conj(gmp_CCmutable result, gmp_CCmutable a)
 {
-  mpfr_set(result->re, a->re, GMP_RNDN);
-  mpfr_neg(result->im, a->im, GMP_RNDN);
+  mpfr_set(result->re, a->re, MPFR_RNDN);
+  mpfr_neg(result->im, a->im, MPFR_RNDN);
 }
 void mpfc_abs(gmp_RRmutable result, gmp_CCmutable c)
 {
@@ -227,33 +227,33 @@ void mpfc_abs(gmp_RRmutable result, gmp_CCmutable c)
 
   mpfr_init2(a, mpfr_get_prec(c->re));
   mpfr_init2(b, mpfr_get_prec(c->re));
-  mpfr_abs(a, c->re, GMP_RNDN);
-  mpfr_abs(b, c->im, GMP_RNDN);
+  mpfr_abs(a, c->re, MPFR_RNDN);
+  mpfr_abs(b, c->im, MPFR_RNDN);
   if (mpfr_zero_p(a))
-    mpfr_set(result, b, GMP_RNDN);
+    mpfr_set(result, b, MPFR_RNDN);
   else if (mpfr_zero_p(b))
-    mpfr_set(result, a, GMP_RNDN);
+    mpfr_set(result, a, MPFR_RNDN);
   else if (mpfr_greater_p(a, b))
     {
       // double d = b/a;
       // But use b for d, as it is not needed later.
       // result = a * ::sqrt(1.0 + d*d);
-      mpfr_div(b, b, a, GMP_RNDN);
-      mpfr_sqr(b, b, GMP_RNDN);
-      mpfr_add_si(b, b, 1, GMP_RNDN);
-      mpfr_sqrt(b, b, GMP_RNDN);
-      mpfr_mul(result, a, b, GMP_RNDN);
+      mpfr_div(b, b, a, MPFR_RNDN);
+      mpfr_sqr(b, b, MPFR_RNDN);
+      mpfr_add_si(b, b, 1, MPFR_RNDN);
+      mpfr_sqrt(b, b, MPFR_RNDN);
+      mpfr_mul(result, a, b, MPFR_RNDN);
     }
   else
     {
       // double d = a/b;
       // But use a for d, as it is not needed later.
       // result = b * ::sqrt(1.0 + d*d);
-      mpfr_div(a, a, b, GMP_RNDN);
-      mpfr_sqr(a, a, GMP_RNDN);
-      mpfr_add_si(a, a, 1, GMP_RNDN);
-      mpfr_sqrt(a, a, GMP_RNDN);
-      mpfr_mul(result, b, a, GMP_RNDN);
+      mpfr_div(a, a, b, MPFR_RNDN);
+      mpfr_sqr(a, a, MPFR_RNDN);
+      mpfr_add_si(a, a, 1, MPFR_RNDN);
+      mpfr_sqrt(a, a, MPFR_RNDN);
+      mpfr_mul(result, b, a, MPFR_RNDN);
     }
   mpfr_clear(a);
   mpfr_clear(b);
@@ -289,8 +289,8 @@ void mpfc_sqrt(gmp_CCmutable result, gmp_CC a)
 
   if (mpfr_zero_p(a->re) && mpfr_zero_p(a->im))
     {
-      mpfr_set_si(result->re, 0, GMP_RNDN);
-      mpfr_set_si(result->im, 0, GMP_RNDN);
+      mpfr_set_si(result->re, 0, MPFR_RNDN);
+      mpfr_set_si(result->im, 0, MPFR_RNDN);
       return;
     }
 
@@ -304,53 +304,53 @@ void mpfc_sqrt(gmp_CCmutable result, gmp_CC a)
 
   // b = fabs(a.re);
   // c = fabs(a.im);
-  mpfr_abs(b, a->re, GMP_RNDN);
-  mpfr_abs(c, a->im, GMP_RNDN);
+  mpfr_abs(b, a->re, MPFR_RNDN);
+  mpfr_abs(c, a->im, MPFR_RNDN);
   if (mpfr_greater_p(b, c))
     {
       // d = c/b;
       // e = ::sqrt(b) * ::sqrt(0.5 * (1.0 + ::sqrt(1.0 + d*d)));
       // but use c as d, and also as e
-      mpfr_div(d, c, b, GMP_RNDN);
-      mpfr_sqr(d, d, GMP_RNDN);
-      mpfr_add_si(d, d, 1, GMP_RNDN);
-      mpfr_sqrt(d, d, GMP_RNDN);
-      mpfr_add_si(d, d, 1, GMP_RNDN);
-      mpfr_div_2ui(d, d, 1, GMP_RNDN);
-      mpfr_sqrt(d, d, GMP_RNDN);
-      mpfr_sqrt(b, b, GMP_RNDN);
-      mpfr_mul(d, d, b, GMP_RNDN); /* this is now e ! */
+      mpfr_div(d, c, b, MPFR_RNDN);
+      mpfr_sqr(d, d, MPFR_RNDN);
+      mpfr_add_si(d, d, 1, MPFR_RNDN);
+      mpfr_sqrt(d, d, MPFR_RNDN);
+      mpfr_add_si(d, d, 1, MPFR_RNDN);
+      mpfr_div_2ui(d, d, 1, MPFR_RNDN);
+      mpfr_sqrt(d, d, MPFR_RNDN);
+      mpfr_sqrt(b, b, MPFR_RNDN);
+      mpfr_mul(d, d, b, MPFR_RNDN); /* this is now e ! */
     }
   else
     {
       // d = b/c;
       // e = ::sqrt(c) * ::sqrt(0.5 * (d + ::sqrt(1.0 + d*d)));
-      mpfr_div(d, b, c, GMP_RNDN);
-      mpfr_sqr(d2, d, GMP_RNDN);
-      mpfr_add_si(d2, d2, 1, GMP_RNDN);
-      mpfr_sqrt(d2, d2, GMP_RNDN);
-      mpfr_add(d, d2, d, GMP_RNDN);
-      mpfr_div_2ui(d, d, 1, GMP_RNDN);
-      mpfr_sqrt(d, d, GMP_RNDN);
-      mpfr_sqrt(c, c, GMP_RNDN);
-      mpfr_mul(d, d, c, GMP_RNDN); /* this is now e ! */
+      mpfr_div(d, b, c, MPFR_RNDN);
+      mpfr_sqr(d2, d, MPFR_RNDN);
+      mpfr_add_si(d2, d2, 1, MPFR_RNDN);
+      mpfr_sqrt(d2, d2, MPFR_RNDN);
+      mpfr_add(d, d2, d, MPFR_RNDN);
+      mpfr_div_2ui(d, d, 1, MPFR_RNDN);
+      mpfr_sqrt(d, d, MPFR_RNDN);
+      mpfr_sqrt(c, c, MPFR_RNDN);
+      mpfr_mul(d, d, c, MPFR_RNDN); /* this is now e ! */
     }
   if (mpfr_sgn(a->re) >= 0)
     {
       // result.re = e;
       // result.im = a.im/(2.0 * e);
-      mpfr_set(result->re, d, GMP_RNDN);
-      mpfr_mul_2ui(d, d, 1, GMP_RNDN);
-      mpfr_div(result->im, a->im, d, GMP_RNDN);
+      mpfr_set(result->re, d, MPFR_RNDN);
+      mpfr_mul_2ui(d, d, 1, MPFR_RNDN);
+      mpfr_div(result->im, a->im, d, MPFR_RNDN);
     }
   else
     {
       // result.im = (a.im >= 0.0 ? e : -e);
       // result.re = a.re/(2.0*result.im);
-      mpfr_set(result->im, d, GMP_RNDN);
-      if (mpfr_sgn(a->im) < 0) mpfr_neg(result->im, result->im, GMP_RNDN);
-      mpfr_mul_2ui(d, result->im, 1, GMP_RNDN);
-      mpfr_div(result->re, a->im, d, GMP_RNDN);
+      mpfr_set(result->im, d, MPFR_RNDN);
+      if (mpfr_sgn(a->im) < 0) mpfr_neg(result->im, result->im, MPFR_RNDN);
+      mpfr_mul_2ui(d, result->im, 1, MPFR_RNDN);
+      mpfr_div(result->re, a->im, d, MPFR_RNDN);
     }
 
   mpfr_clear(b);

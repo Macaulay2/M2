@@ -1241,8 +1241,8 @@ assert Equation(density_X 3, 3^3/3! * exp(-3))
 assert Equation(density_X 3.5, 0)
 
 assert Equation(probability_X(-1), 0)
-assert Equation(probability_X 3, sum(0..3, x -> 3^x / x! * exp(-3)))
-assert Equation(probability_X 3.5, sum(0..3, x -> 3^x / x! * exp(-3)))
+assert (abs(probability_X 3 - sum(0..3, x -> 3^x / x! * exp(-3))) < 1e-15)
+assert (abs(probability_X 3.5 - sum(0..3, x -> 3^x / x! * exp(-3))) < 1e-15)
 
 assert Equation(quantile_X 0, 0)
 assert Equation(quantile_X 0.3, 2)
@@ -1398,7 +1398,7 @@ assert Equation(probability_X 0.3, 0.0837) -- R: pbeta(0.3., 3, 2)
 assert Equation(probability_X 2, 1)
 
 assert Equation(quantile_X 0, 0)
-assert Equation(quantile_X 0.0837, 0.3)
+assert (abs(quantile_X 0.0837 - 0.3) < 1e-15)
 assert Equation(quantile_X 1, 1)
 ///
 

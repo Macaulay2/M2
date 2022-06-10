@@ -46,7 +46,7 @@ ifeq ($(MACOSX),yes)
 # # if we don't do this, we may get an absolute path in currentLayout:
 # #    i8 : currentLayout#"factory gftables"
 # #    o8 = /usr/local/Cellar/singular/4.1.3p2_2/share/factory/
-BUILDLIBS += 4ti2 gfan normaliz nauty lrslib gftables topcom cohomcalg
+BUILDLIBS += 4ti2 gfan normaliz nauty lrslib gftables factory topcom cohomcalg
 
 #### csdp can't be compiled with /usr/bin/cc, because it uses the "inline" keyword
 # BUILDLIBS += csdp 

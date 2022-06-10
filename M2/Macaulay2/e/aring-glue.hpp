@@ -1201,7 +1201,7 @@ inline void ConcreteRing<ARingRR>::increase_maxnorm(gmp_RRmutable norm,
   R->init(b);
   R->from_ring_elem(b, f);
   R->abs(a, b);
-  if (mpfr_cmp_d(norm, a) < 0) mpfr_set_d(norm, a, GMP_RNDN);
+  if (mpfr_cmp_d(norm, a) < 0) mpfr_set_d(norm, a, MPFR_RNDN);
   R->clear(b);
   R->clear(a);
 }
@@ -1217,7 +1217,7 @@ inline void ConcreteRing<ARingCC>::increase_maxnorm(gmp_RRmutable norm,
   R->init(b);
   R->from_ring_elem(b, f);
   R->abs(a, b);
-  if (mpfr_cmp_d(norm, a) < 0) mpfr_set_d(norm, a, GMP_RNDN);
+  if (mpfr_cmp_d(norm, a) < 0) mpfr_set_d(norm, a, MPFR_RNDN);
   R->clear(b);
   realR.clear(a);
 }
@@ -1232,7 +1232,7 @@ inline void ConcreteRing<ARingRRR>::increase_maxnorm(gmp_RRmutable norm,
   R->init(b);
   R->from_ring_elem(b, f);
   R->abs(a, b);
-  if (mpfr_cmp(&a, norm) > 0) mpfr_set(norm, &a, GMP_RNDN);
+  if (mpfr_cmp(&a, norm) > 0) mpfr_set(norm, &a, MPFR_RNDN);
   R->clear(b);
   R->clear(a);
 }
@@ -1248,7 +1248,7 @@ inline void ConcreteRing<ARingCCC>::increase_maxnorm(gmp_RRmutable norm,
   R->init(b);
   R->from_ring_elem(b, f);
   R->abs(a, b);
-  if (mpfr_cmp(&a, norm) > 0) mpfr_set(norm, &a, GMP_RNDN);
+  if (mpfr_cmp(&a, norm) > 0) mpfr_set(norm, &a, MPFR_RNDN);
   R->clear(b);
   realR.clear(a);
 }

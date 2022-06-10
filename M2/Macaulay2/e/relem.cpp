@@ -421,6 +421,9 @@ RingElement *RingElement::denominator() const
 RingElement *RingElement::fraction(const Ring *K,
                                    const RingElement *bottom) const
 {
+  if (bottom->is_zero())
+    throw exc::division_by_zero_error();
+      
   if (K == globalQQ)
     return new RingElement(globalQQ,
                            globalQQ->fraction(val, bottom->get_value()));

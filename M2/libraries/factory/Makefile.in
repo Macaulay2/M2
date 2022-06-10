@@ -5,6 +5,9 @@
 # URL = ftp://jim.mathematik.uni-kl.de/pub/Math/Factory
 # https://github.com/Singular/Sources
 # https://service.mathematik.uni-kl.de/ftp/pub/Math/Factory/factory-4.2.0.tar.gz
+# ftp://jim.mathemathematik.uni-kl.de/pub/Math/Singular
+# https://www.singular.uni-kl.de
+# https://www.singular.uni-kl.de/ftp/pub/Math/Singular/SOURCES/4-3-0/singular-4.3.0.tar.gz
 
 # We seem to be the only users of the factory library, which is part of
 # Singular.  Its source code accompanies binary installations of Singular,

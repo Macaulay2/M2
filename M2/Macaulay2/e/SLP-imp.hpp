@@ -69,10 +69,7 @@ SLEvaluator* SLEvaluatorConcrete<RT>::specialize(
   // std::cout << "SLEvaluatorConcrete::specialize:" << this << std::endl;
   auto p = dynamic_cast<const MutableMat<DMat<RT> >*>(parameters);
   if (p == nullptr)
-    {
-      ERROR("specialize: expected a dense mutable matrix");
-      return nullptr;
-    }
+    throw exc::engine_error("specialize: expected a dense mutable matrix");
   return specialize(p);
 }
 
@@ -80,10 +77,8 @@ template <typename RT>
 SLEvaluator* SLEvaluatorConcrete<RT>::specialize(
     const MutableMat<DMat<RT> >* parameters) const
 {
-  if (parameters->n_cols() != 1 || parameters->n_rows() > varsPos.size()) {
-    ERROR("1-column matrix expected; or #parameters > #vars");
-    return nullptr;
-  }
+  if (parameters->n_cols() != 1 || parameters->n_rows() > varsPos.size()) 
+    throw exc::engine_error("1-column matrix expected; or #parameters > #vars");
   SLEvaluatorConcrete<RT>* e = new SLEvaluatorConcrete<RT>(*this);
   size_t nParams = parameters->n_rows();
   for (int i = 0; i < nParams; ++i)

@@ -27,24 +27,37 @@ Here is the procedure:
 
     Things to do when developing a binary release for version X.Y (or version X.Y.Z)
        - on the development branch:
-	 - increment version to X.Y, as described above
+	 - increment version to X.Y, as described above.  Commit and push.
+       - on the release branch:
 	 - make a git branch of the form release-X.Y and switch to it
-	      git branch -b release-X.Y-branch
+	      git checkout -b release-X.Y-branch
 	 - push it upstream:
-	      git push -u origin release-X.Y
-	 - make builds on that branch, making modifications as needed
-	 - when the builds complete, then
+	      git push -u origin release-X.Y-branch
+	 - update the file M2/Macaulay2/packages/Macaulay2Doc/changes.m2 to take
+	      the release into account: check JSAG for published packages that
+	      need certification (download the published version and add it, if
+	      necessary, to the git repository tree so it can be linked to by
+	      the certification data added now to the package; also add an
+	      entry to changes.m2; for packages that are not already in the
+	      repository, add them also to the file =distributed-packages);
+	      find out what the new packages are since the previous release and
+	      add entries for them.  Commit and push.
+	 - prepare binary releases on the release-X.Y branch, committing minor
+	      changes needed for building on various architectures.  Periodically
+	      merge the branch into the development branch.  Continue accepting pull
+	      requests into the development branch.
+	 - when all the builds are complete, then
 	      git tag release-X.Y
 	      git push origin release-X.Y
-	 - switch to development and merge the new release branch with development
+	   This ensures that changes needed for building on various
+	      architectures are available downstream
+	 - using the common *.deb file on the web site, update the documentation and
+	   version number there
+       - on the development branch:
+	 - merge the new release branch into development
 	      git checkout development
 	      git merge release-X.Y
 	 - update version to X.Y.0.1 on the development branch, as described above
-	      
-         Prepare binary releases on the release-X.Y branch, committing minor
-         changes needed for building on various architectures.  Periodically
-         merge the branch into the development branch.  Continue accepting pull
-         requests into the development branch.
 
 Note:
   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N

@@ -19,8 +19,22 @@ newPackage(
     PackageImports => {"PrimaryDecomposition","TangentCone"},
     PackageExports => {"Cremona","SparseResultants"},
     DebuggingMode => false,
-    Reload => false
-)
+    Reload => false,
+    Certification => {
+	 "journal name" => "The Journal of Software for Algebra and Geometry",
+	 "journal URI" => "http://j-sag.org/",
+	 "article title" => "Computations with rational maps between multi-projective varieties",
+	 "acceptance date" => "31 August 2021",
+	 "published article URI" => "https://msp.org/jsag/2021/11-1/p14.xhtml",
+	 "published article DOI" => "10.2140/jsag.2021.11.143",
+	 "published code URI" => "https://msp.org/jsag/2021/11-1/jsag-v11-n1-x14-MultiprojectiveVarieties.m2",
+	 "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MultiprojectiveVarieties.m2",
+	 "release at publication" => "5831dc6b020fae7365f257256b92539d5d496954",	    -- git commit number in hex
+	 "version at publication" => "2.3",
+	 "volume number" => "11",
+	 "volume URI" => "https://msp.org/jsag/2021/11-1/"
+	 }
+    )
 
 if Cremona.Options.Version < "5.1" then (
     <<endl<<"Your version of the Cremona package is outdated (required version 5.1 or newer);"<<endl;
