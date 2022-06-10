@@ -223,9 +223,9 @@ W4' = witnessSet(
 for i to 5 do assert isOn(random W4',W4)
 
 P = sample(W3, Tolerance=>1e-15)
-assert(P.cache.ErrorBoundEstimate < 1e-15) 
+assert(P.cache.ErrorBoundEstimate < 1e-9) 
 P = sample(W4, Tolerance=>1e-15)
-assert(P.cache.ErrorBoundEstimate < 1e-15) 
+assert(P.cache.ErrorBoundEstimate < 1e-9) 
 ///
 
 -- a constructor for witnessSet that depends on NAG
