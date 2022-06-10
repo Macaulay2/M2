@@ -1017,7 +1017,7 @@ doc ///
      Number of coordinates for each solution.
  Outputs
    S: List
-     of solutions of type FrontLevelPoint
+     of solutions of type Point
  Description
    Text
      This method imports points from a solution file that Bertini created while solving

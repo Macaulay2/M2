@@ -16,7 +16,7 @@
 --   
 --- Notice that solns1 could come from a numerical Newton step,
 -- so the function first check if the solution is of type List or 
--- of type FrontLevelPoint
+-- of type Point
 --
 --------- FOR DAN AND MIKE -------
 -- Notice we had to do this function because

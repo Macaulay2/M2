@@ -32,7 +32,7 @@ export {
      "NumericalVariety", "numericalVariety", "numericalAffineSpace",
      "ProjectiveNumericalVariety", "projectiveNumericalVariety",
      -- point (solution)
-     "AbstractPoint", "FrontLevelPoint", "point", "coordinates",
+     "AbstractPoint", "Point", "point", "coordinates",
      "project",
      "isRealPoint", "realPoints", "residual", "origin",
      "Norm", 
@@ -71,7 +71,7 @@ NumericalVariety = new Type of MutableHashTable
 residual = method(Options=>{Norm=>2})
 residual (System,AbstractPoint) := o -> (s,p) -> error "not implemented"
 
-load "./NAGtypes/FrontLevelPoint.m2"
+load "./NAGtypes/Point.m2"
 load "./NAGtypes/PolySystem.m2"
 load "./NAGtypes/PointSet.m2"
 
@@ -284,7 +284,7 @@ undocumented {
     evaluateH, (evaluateH,Homotopy,Matrix,Number), (evaluateH,ParameterHomotopy,Matrix,Matrix,Number), (evaluateH,SpecializedParameterHomotopy,Matrix,Number)
     }
 
-undocumented {(toExternalString,FrontLevelPoint), (toExternalString,PolySystem),
+undocumented {(toExternalString,Point), (toExternalString,PolySystem),
     unionPointSet,  (unionPointSet,PointSet,PointSet), pointSet, (pointSet,Thing), (areEqual,PointSet,PointSet), PointSet,
     differencePointSet, (differencePointSet,PointSet,PointSet), specialize, (specialize,ParameterHomotopy,Matrix),
     (symbol ==,PointSet,PointSet), (symbol ?,AbstractPoint,AbstractPoint), (net,PointSet), 

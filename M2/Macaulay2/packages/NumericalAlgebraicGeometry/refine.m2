@@ -98,7 +98,7 @@ refine AbstractPoint := o -> P -> if P.cache.?SolutionSystem then (
     ) else error "there is no polynomial system associated with the point"
 
 -- this is the main function for M2
-refine (PolySystem,AbstractPoint) := FrontLevelPoint => o -> (F',s) -> 
+refine (PolySystem,AbstractPoint) := Point => o -> (F',s) -> 
 if member(o.Software,{PHCPACK}) then first refine(F',{s},o) else 
 if member(o.Software,{BERTINI}) then refineBertini(F',s,o) else 
 (
@@ -242,7 +242,7 @@ assert(P''.cache.ErrorBoundEstimate < 1e-6 and P''.cache.ConditionNumber < 100 a
 -- t'end: the end value of the continuation parameter t
 -- p0: an AbstractPoint = a solution to H_t(x)=0, with t0=p0.LastT close to t'end
 -- "number of vertices" (optional): ... of the regular polygon approximating the circle |t-t'end|=|t0-t'end|
--- OUTPUT: a FrontLevelPoint
+-- OUTPUT: a Point
 endGameCauchy = method(Options=>{"number of vertices"=>16,"backtrack factor"=>1.,
 	tStep => null, -- initial
 	tStepMin => null,

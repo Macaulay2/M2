@@ -39,7 +39,7 @@ doc ///
 
     Text
       We see that there are three solutions to the above system. 
-      Each solution is of type @TO FrontLevelPoint@ and contains diagnostic information 
+      Each solution is of type @TO Point@ and contains diagnostic information 
       about the quality of the solution.    
     
     Example
@@ -895,7 +895,7 @@ doc ///
       R = CC[x,y]; S = {x^2 - 1/3, x*y - 1}; ourRoots = solveSystem(S);
       r0 = ourRoots#0#Coordinates#1
       newRoots = refineSolutions(S,ourRoots,64)
-      newRoots#0 -- recall that solutions are of type FrontLevelPoint
+      newRoots#0 -- recall that solutions are of type Point
       r1 = newRoots#0#Coordinates#1
 ///;
 
@@ -931,7 +931,7 @@ doc ///
       a system of rational equations with a finite number of solutions
   Outputs
     :List
-      containing the solutions of f, each of type @TO FrontLevelPoint@
+      containing the solutions of f, each of type @TO Point@
   Consequences
     Item
       converts the rational system into a Laurent system, invokes the 
@@ -959,7 +959,7 @@ doc ///
       sols = solveRationalSystem(system)
       
     Text
-      The solutions are of type @TO FrontLevelPoint@. Each point {\tt p} comes with cached 
+      The solutions are of type @TO Point@. Each point {\tt p} comes with cached 
       diagnostics. For example, {\tt p.cache.LastT} is the end value of the 
       continuation parameter; if it equals 1, 
       then the solver reached the end of the path properly.  
@@ -1010,7 +1010,7 @@ doc ///
       that contains at least as many equations as indeterminates 
   Outputs
     :List 
-      containing the solutions of S, each of type @TO FrontLevelPoint@. 
+      containing the solutions of S, each of type @TO Point@. 
   Consequences
     Item
       Writes the system to temporary file
@@ -1037,7 +1037,7 @@ doc ///
       L = solveSystem(S)
     Text
       The method {\tt solveSystem} prints the the {\tt PHCpack} input and output file names 
-      and returns two solutions. The solutions are of type @TO FrontLevelPoint@, defined in @TO NAGtypes@. 
+      and returns two solutions. The solutions are of type @TO Point@, defined in @TO NAGtypes@. 
       Each point {\tt p} comes with cached diagnostics.
       For example, {\tt p.cache.LastT} is the end value of the continuation parameter; 
       if it equals 1, then the solver reached the end of the path properly.

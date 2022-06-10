@@ -3704,7 +3704,7 @@ standardBasis(M)
 dualHilbert(M,Truncate=>25)
 dualBasis(M)
 dualInfo(M)
-dualInfo(M,FrontLevelPoint=>{0.01,0.01})
+dualInfo(M,Point=>{0.01,0.01})
 
 -- small example
 restart

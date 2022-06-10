@@ -176,7 +176,7 @@ moveSlice (WitnessSet, Matrix) := WitnessSet => o->(W,S) -> (
      moveSlice(W,sliceEquations(S,ring W),o)             	  
      )
 
--- get a random FrontLevelPoint
+-- get a random Frontlevelpoint
 sample = method(Options=>{Tolerance=>1e-6})
 sample WitnessSet := o -> W -> (
     W' := moveSlice(W, randomSlice(dim W, numgens ring W, coefficientRing ring W));

@@ -170,7 +170,7 @@ isAffineLinearInParameters = {Tolerance => 1e-6} >> o -> GS -> (
     )
 
 -- find the "seed" for the parametric system
--- out: (parameters FrontLevelPoint, variables FrontLevelPoint)
+-- out: (parameters Point, variables Point)
 -- assumes (at least for now): systems is affine linear in parameters
 createSeedPair = method(Options=>SeedingOptions | {Verbose => false})
 createSeedPair System := o -> P -> (

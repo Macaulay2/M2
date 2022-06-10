@@ -30,7 +30,7 @@ sph = x^2+y^2+z^2-1;
 I = ideal {x*sph*(y-x^2), sph*(z-x^3)};
 numericalIrreducibleDecomposition I 
 ///,      
-     PARA {"Basic types (such as ", TO FrontLevelPoint, " and ", TO "WitnessSet", ") are defined in the package ", TO NAGtypes, "."},
+     PARA {"Basic types (such as ", TO Point, " and ", TO "WitnessSet", ") are defined in the package ", TO NAGtypes, "."},
      
      HEADER3 "Basic functions:",
      UL{
@@ -132,7 +132,7 @@ solveSystem F
 	///,
      	PARA {"The system is assumed to have finitely many solutions. If it is not square (number of equations = number of variables), ", 
 	    TO squareUp, " is applied and solutions to the original system are then picked out from the resulting (larger) set of solutions."},
-	PARA {"The output (produced by ", TO track, " with default options) contains all ", TO2{FrontLevelPoint,"points"}, 
+	PARA {"The output (produced by ", TO track, " with default options) contains all ", TO2{Point,"points"}, 
 	    " obtained at the end of homotopy paths when tracking starting at the ", TO totalDegreeStartSystem, ". ",
 	    "In particular, this means that solving a system that 
 	    has fewer than Bezout bound many solutions will produce 
@@ -280,7 +280,7 @@ document {Key => { (track, List, List, List), track, (track,PolySystem,PolySyste
 	     "Note that the projective tracker is invoked either if the target system is a homogeneous system or if ", TO "Projectivize", TT"=>true",
 	     " is specified. "
 	     },
-	SeeAlso => {solveSystem, setDefault, FrontLevelPoint},
+	SeeAlso => {solveSystem, setDefault, Point},
 	Caveat => {"Predictor=>Certified works only with (Software=>M2 or Software=>M2engine) and Normalize=>true. ", 
 	     PARA{"Unspecified optional arguments (with default values ", TO null, 
 	     	  ") have their actual values taken from a local hashtable of defaults controlled by the functions ", 
@@ -668,7 +668,7 @@ e = 0.0000001
 W = witnessSet(ideal I_0 , ideal(x-y), {point {{ (1-e)*ii,(1-e)*ii}},point {{ -(1+e)*ii,-(1+e)*ii}}})	
 isOn(point {{sqrt 5*ii,sqrt 3}},W)
 ///,
-    SeeAlso=>{FrontLevelPoint,NumericalVariety}
+    SeeAlso=>{Point,NumericalVariety}
     }
 
 document {
@@ -703,7 +703,7 @@ document {
     Headline => "sample a point on a component",
     Usage => "P = sample W",
     Inputs => { "W" },
-    Outputs => { "P"=>FrontLevelPoint },
+    Outputs => { "P"=>Point },
     "Gets a random point on a component represented numerically.", 
     EXAMPLE lines ///
 R = CC[x,y,z]
@@ -720,14 +720,14 @@ document {
 	(deflate,PolySystem,AbstractPoint),(deflate,PolySystem,Sequence),(deflate,PolySystem,ZZ),
 	Deflation, DeflationSequence, DeflationRandomMatrix, -- attached to a PolySystem
 	liftPointToDeflation,(liftPointToDeflation,AbstractPoint,PolySystem,ZZ),
-	LiftedSystem, LiftedPoint, SolutionSystem, DeflationSequenceMatrices, -- attached to a FrontLevelPoint
+	LiftedSystem, LiftedPoint, SolutionSystem, DeflationSequenceMatrices, -- attached to a Point
 	deflateAndStoreDeflationSequence, (deflateAndStoreDeflationSequence,AbstractPoint,PolySystem), 
 	SquareUp, [deflateAndStoreDeflationSequence,SquareUp], -- whether to square up at each step
 	[deflate,Variable]
 	},
     Headline => "first-order deflation",
     Usage => "r = deflate(F,P); r = deflate(F,r); r = deflate(F,B), ...",
-    Inputs => { "P"=>FrontLevelPoint, "F"=>PolySystem, "r"=>ZZ, "B"=>Matrix },
+    Inputs => { "P"=>Point, "F"=>PolySystem, "r"=>ZZ, "B"=>Matrix },
     Outputs => { "r"=>ZZ=>"the rank used in the (last) deflation"},
     PARA{
 	"The purpose of deflation is to restore quadratic convergence of Newton's method in a neighborhood of a singular 
@@ -739,7 +739,7 @@ document {
 	and DF is obtained by appending to F the matrix equation J*B*[L_1,...,L_r,1]^T = 0.
 	The polynomials of DF use the original variables and augmented variables L_1,...,L_r."}},
     PARA{
-	"Apart from ", TT "P", ", ", ofClass FrontLevelPoint,", one can pass various things as the second argument."  
+	"Apart from ", TT "P", ", ", ofClass Point,", one can pass various things as the second argument."  
 	},
     UL {
 	{ofClass ZZ, " ", TT "r", " specifies the rank of the Jacobian dF (that may be known to the user)"},

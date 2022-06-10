@@ -14,9 +14,9 @@
 --   [LiftedSystem]          -- a regularization of SolutionSystem (in case the point is not regular)
 --   [LiftedPoint]           -- the corresponding solution of the LiftedSystem
 --   }
-FrontLevelPoint = new Type of AbstractPoint
+Point = new Type of AbstractPoint
 
-net FrontLevelPoint := p -> (
+net Point := p -> (
     if hasAnAttribute p then (
 	if hasAttribute(p,PrintNet) then return getAttribute(p,PrintNet);
   	if hasAttribute(p,PrintNames) then return net getAttribute(p,PrintNames);
@@ -34,7 +34,7 @@ net FrontLevelPoint := p -> (
     else if s === Origin then net "[0]"         
     else error "the point is corrupted"
     ) 
-globalAssignment FrontLevelPoint
+globalAssignment Point
 
 point = method()
 point AbstractPoint := p -> point {coordinates p} 
@@ -43,31 +43,31 @@ prepareCoordinates := c	-> (
     else if instance(c,Matrix) or instance(c,MutableMatrix) then flatten entries c
     else error "wrong type of coordinates: List or Matrix expected"   
     )
-point (List,CacheTable) := (c,h) -> new FrontLevelPoint from {
+point (List,CacheTable) := (c,h) -> new Point from {
     Coordinates=>prepareCoordinates c,
     cache => copy h
     }
 point List := s -> point(prepareCoordinates first s, new CacheTable from drop(s,1))
 point Matrix := M -> point {flatten entries M} 
         
-toExternalString FrontLevelPoint := p -> "point { " | toExternalString coordinates p |" }"
+toExternalString Point := p -> "point { " | toExternalString coordinates p |" }"
 
-coordinates FrontLevelPoint := p -> p.Coordinates
+coordinates Point := p -> p.Coordinates
 
-status FrontLevelPoint := o -> p -> if p.cache.?SolutionStatus then p.cache.SolutionStatus else null
+status Point := o -> p -> if p.cache.?SolutionStatus then p.cache.SolutionStatus else null
 
 -- project point to the first n coordinates
-project (FrontLevelPoint,ZZ) := (p,n) -> (
+project (Point,ZZ) := (p,n) -> (
     p' := point { take(coordinates p, n) };
     if p.cache.?ErrorBoundEstimate then p'.cache.ErrorBoundEstimate = p.cache.ErrorBoundEstimate;
     p'
     )
     
-residual (List,FrontLevelPoint) := o->(S,p)-> residual(polySystem S,p,o)
-residual (PolySystem,FrontLevelPoint) := o->(P,p)-> residual(P.PolyMap,matrix p,o)
+residual (List,Point) := o->(S,p)-> residual(polySystem S,p,o)
+residual (System,Point) := o->(P,p)->norm(o.Norm, point evaluate(P,p))
 residual (Matrix,Matrix) := o->(S,p)->norm(o.Norm, point evaluate(S,p))
 
-origin = method(TypicalValue=>FrontLevelPoint)
+origin = method(TypicalValue=>Point)
 origin Ring := R -> point matrix{toList(numgens R:0_(ultimate(coefficientRing, R)))};
 
 sortSolutionsWithWeights = method()
@@ -113,9 +113,9 @@ sortSolutions List := o -> sols -> (
      else (
      	 if o.Weights =!= null then return sortSolutionsWithWeights(sols,o.Weights);
 	 sorted = {0};
-	 get'coordinates := sol -> if class sol === FrontLevelPoint then coordinates sol else 
+	 get'coordinates := sol -> if class sol === Point then coordinates sol else 
 	     if ancestor(BasicList, class sol) then toList sol
-	     else error "expected FrontLevelPoints or BasicLists";
+	     else error "expected Points or BasicLists";
 	 scan(#sols-1, s->(
 		    -- find the first element that is "larger";
 		    -- "larger" means the first coord that is not (approx.) equal 

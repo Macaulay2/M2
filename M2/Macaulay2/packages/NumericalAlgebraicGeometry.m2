@@ -70,7 +70,7 @@ exportMutable {
 -- local functions/symbols:
 protect Processing; protect Undetermined -- possible values of SolutionStatus
 protect SolutionAttributes -- option of getSolution 
-protect Tracker -- an internal key in FrontLevelPoint 
+protect Tracker -- an internal key in Point 
 protect LastIncrement;
 
 -- possible solution statuses returned by engine
@@ -209,7 +209,7 @@ getDefault Symbol := (s)->DEFAULT#s
 -- Solutions are lists {s, a, b, c, ...} where s is list of coordinates (in CC)
 -- and a,b,c,... contain extra information, e.g, SolutionStatus=>Regular indicates the solution is regular.
 -- NEW FORMAT:
--- Solutions are of a type derived from AbstractPoint (defined in NAGtypes), e.g. FrontLevelPoint.
+-- Solutions are of a type derived from AbstractPoint (defined in NAGtypes), e.g. Point.
  
 -- M2 tracker ----------------------------------------
 integratePoly = method(TypicalValue => RingElement)

@@ -71,7 +71,7 @@ doc ///
             whose coefficients are complex numbers
     Outputs
         sols:List
-            containing solutions to sys, each represented as a @TO FrontLevelPoint @.
+            containing solutions to sys, each represented as a @TO Point @.
     Description
         Text
             Blackbox monodromy solver for a square polynomial system without parameters.
@@ -108,7 +108,7 @@ doc ///
         p:AbstractPoint
            consisting of target parameter values (optional.)
     Outputs
-        p:FrontLevelPoint
+        p:Point
             parameter values. If not part of the input, they are chosen uniformly as complex numbers w/ modulus 1.
         sols:PointArray
             containing solutions to PS specialized at p.
@@ -217,9 +217,9 @@ doc ///
 	x0:AbstractPoint
 	    an initial solution for some system
     Outputs
-        p0:FrontLevelPoint
+        p0:Point
             representing a random system
-        x0:FrontLevelPoint
+        x0:Point
             representing a solution to the system defined by p0
     Description
         Text

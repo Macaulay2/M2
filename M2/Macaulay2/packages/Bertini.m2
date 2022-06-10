@@ -1350,7 +1350,7 @@ parseWitnessDataFile (MutableHashTable,String,String) := (PWD,dir,name) -> (
 	    numPoints#ic = value(first l);
 	    l=drop(l,1);
 	    pts := new MutableList from for i to numPoints#ic-1 list null ;  
-	    -- We now construct a new point using the type FrontLevelPoint.
+	    -- We now construct a new point using the type Point.
     	    print"numPoints#ic loop";
 --
             scan(numPoints#ic,
@@ -2597,7 +2597,7 @@ doc ///
       F = {x^2-1,y^2-2};
       S = bertiniZeroDimSolve F
     Text
-      Each solution is of type @TO FrontLevelPoint@.  Additional information about the solution can be accessed by using @TO peek@.
+      Each solution is of type @TO Point@.  Additional information about the solution can be accessed by using @TO peek@.
     Example
       peek S_0
     Text
@@ -2769,7 +2769,7 @@ doc ///
     Text
       In the previous example, we solved $x^2-2$ by moving
       from $x^2-1$ with a linear homotopy. {\tt Bertini} tracks homotopies starting at
-      $t=1$ and ending at $t=0$. Final solutions are of the type FrontLevelPoint.
+      $t=1$ and ending at $t=0$. Final solutions are of the type Point.
     Example
       R=CC[x,y,t]; -- include the path variable in the ring
       f1=(x^2-y^2);
@@ -2883,7 +2883,7 @@ doc ///
       a list of points to be sharpened
   Outputs
     S:List
-      a list of solutions of type FrontLevelPoint
+      a list of solutions of type Point
   Description
     Text
       This method takes the list l of solutions of F and sharpens them to d digits using the sharpening module of {\tt Bertini}.

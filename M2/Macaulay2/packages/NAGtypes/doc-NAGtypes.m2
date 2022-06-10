@@ -8,7 +8,7 @@ document {
 	  },  
      PARA{"Datatypes: "},
      UL{    
-	 {TO FrontLevelPoint, " -- a numerical approximation of a point in a complex space"},
+	 {TO Point, " -- a numerical approximation of a point in a complex space"},
 	 {TO PolySystem, " -- a polynomial system (usually with complex coefficients)"},
 	 {TO WitnessSet, " -- a witness set representing (possibly positive-dimensional) solution components"},
 	 {TO NumericalVariety, " -- a numerical description of a variety"},
@@ -36,7 +36,9 @@ peek O
 
 -- AbstractPoint ---------------------------------------------------------------------------
 document {
-     Key => {AbstractPoint, coordinates, (coordinates,AbstractPoint), (status,AbstractPoint), (matrix,AbstractPoint), (net, AbstractPoint),
+     Key => {AbstractPoint, Point, 
+	 coordinates, (coordinates,AbstractPoint), (coordinates,Point),
+	 (status,AbstractPoint), (matrix,AbstractPoint), (net, AbstractPoint),
 	  Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, RefinementFailure,
 	  Origin, IncreasePrecision, DecreasePrecision,
 	  Multiplicity,
@@ -44,7 +46,7 @@ document {
 	  MaxPrecision, WindingNumber, DeflationNumber
 	  },
      Headline => "a type used to store a point in complex space",
-     "This type is used to store a solution to a polynomial system obtained by such functions as ", 
+     "The type ", TT "Point", " inherited from ", TT "AbstractPoint", " is used to store a solution to a polynomial system obtained by such functions as ", 
      TO "NumericalAlgebraicGeometry::solveSystem", ", ", TO "NumericalAlgebraicGeometry::track",
      ". The following methods can be used to access a ", 
      TO "AbstractPoint", ":",
@@ -53,7 +55,7 @@ document {
 	  {"matrix", " -- get the coordinates (returns a matrix)"},
 	  {"status", " -- get the type of solution (e.g., Regular)"}
 	  },
-     "Possible types of Points (accessed by ", TO "status", "): ",
+     "Possible return values of ", TO "status", " reflect the status with respect to a homotopy continuation procedure that obtained this point:",
      UL { {"Regular", " -- the jacobian of the polynomial system is regular at the point"}, 
 	  {"Singular", " -- the jacobian of the polynomial system is (near)singular at the point"}, 
 	  {"Infinity", " -- the solution path is deemed divergent"},
@@ -65,8 +67,7 @@ document {
 	  {"DecreasePrecision", " -- the current precision is deemed excessive (more than the double of sufficient precision)"},
 	  {"null", " -- the point has not been classified"}
 	  },
-     "Only coordinates are displayed (by ", TO "net", "); to see the rest use ", 
-     TO "peek", ".  Different algorithms attach different information describing the point. For example, ", TO "NumericalAlgebraicGeometry::solveSystem", " produces the following.",
+     "Only coordinates are displayed (by ", TO "net", "); other attributes of a ", TO "Point", TT " p", " are stored in ", TT "p.cache", ".  Different algorithms attach different information describing the point. For example, ", TO "NumericalAlgebraicGeometry::solveSystem", " produces the following.",
      PARA{},
      EXAMPLE lines ///
        loadPackage "NumericalAlgebraicGeometry";
@@ -77,13 +78,6 @@ document {
        coordinates pt
        status pt
      ///,
-     -* condition number is not computed by default anymore !!!
-     PARA{"For example, one may see the condition number of the Jacobian of the polynomial system, evaluated at this point
-      (the smaller the value, the better) as follows."},
-     EXAMPLE lines ///
-       pt.ConditionNumber
-     ///,
-     *-
      PARA{"The other keys that may be attached include "}, 
      UL{
 	  {TO NumberOfSteps, " -- the number of steps in made by the continuation procedure"}, 
@@ -108,17 +102,18 @@ document {
      }
 
 document {
-	Key => {point, (point,List), (point,Matrix), (point,AbstractPoint)},
-	Headline => "construct a FrontLevelPoint",
+	Key => {point, (point,List), (point,Matrix), (point,AbstractPoint), 
+	    (point, List, CacheTable)},
+	Headline => "construct a Point",
 	Usage => "p = point c",
 	Inputs => { 
 	     "c"=> {ofClass List, "containing  elements in the form {{list of complex coordinates}, other data} or ",
-		 ofClass Matrix, " (only coordinates) or ", ofClass AbstractPoint}
+		 ofClass Matrix, " (only coordinates) or ", ofClass AbstractPoint, " or ", ofClass CacheTable}
 	     },
-	Outputs => {"p"=>FrontLevelPoint},
+	Outputs => {"p"=>Point},
         EXAMPLE lines ///
 p := point {{1+0.2*ii, 0.5}, SolutionStatus=>Regular, LastT=>1., NumberOfSteps=>10, ConditionNumber=>2.3}
-peek p 
+peek p.cache
 q := point p
      	///
 	}
@@ -290,7 +285,7 @@ document {
      Inputs => {
 	     "S" => {TO2{AbstractPoint,"points"}}
 	     },
-     Outputs => {"M"=>{TO2{FrontLevelPoint,"points"}, " with a multiplicity field"}},  
+     Outputs => {"M"=>{TO2{Point,"points"}, " with a multiplicity field"}},  
      PARA{"Clusters the points and outputs a list with one point ", TT "p", " per cluster with ", TT "p.", TO Multiplicity, 
 	 " equal to the size of the cluster. If the multiplicity is not 1, then ", TT "p.", TO SolutionStatus, " is set to ", TO Singular, 
 	 "; otherwise, it is inherited from one of the points in the cluster."},
@@ -309,7 +304,7 @@ document {
 
 
 document {
-	Key => {(project,AbstractPoint,ZZ), project},
+	Key => {(project,AbstractPoint,ZZ), (project,Point,ZZ), project},
 	Headline => "project a point",
 	Usage => "q = project(p,n)",
 	Inputs => {
@@ -420,10 +415,10 @@ evaluate(jacobian S, p)
 
 document {
     Key => {residual,
-	(residual,System,AbstractPoint) --??? 
---	(residual,List,AbstractPoint),
---	(residual,Matrix,Matrix),
---	(residual,PolySystem,AbstractPoint)
+	(residual,System,AbstractPoint),
+	(residual,System,Point),	 
+	(residual,Matrix,Matrix),    
+	(residual,List,Point)
 	},
     Headline => "residual of a polynomial function at a point",
     Usage => "y = residual(f,x)",
@@ -552,8 +547,9 @@ H' := substituteContinuationParameter(H,1-t)
 -- WitnessSet ------------------------------------------------------------------------------
 document {
      Key => {WitnessSet,equations,(equations,WitnessSet),slice,(slice,WitnessSet),
+--	  (polySystem,WitnessSet),
 	  points,(points,WitnessSet),(ideal,WitnessSet),Equations,Slice,Points,IsIrreducible,ProjectionDimension,
-     	  (codim,WitnessSet),(degree,WitnessSet),(dim,WitnessSet),(ring,WitnessSet),(net,WitnessSet) 
+     	  (codim,WitnessSet),(degree,WitnessSet),(dim,WitnessSet),(ring,WitnessSet),(net,WitnessSet)
      	  },
      Headline => "a witness set",
      "This type stores a witness set of an equidimensional solution component. ", 
@@ -562,6 +558,7 @@ document {
      UL{
      	  {"ideal", " -- get the defining ideal of the algebraic superset"},
 	  {"equations", " -- get the list of defining polynomials of the algebraic superset"},
+--	  {"polySystem", " -- get the list above as a polynomial system"},
 	  {"slice", " -- get linear functions defining the slicing plane"},
 	  {"points", " -- get the list of witness points (which are zeroes of all above)"}
 	  },

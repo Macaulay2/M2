@@ -189,7 +189,7 @@ parseSolutions (String,Ring) := o -> (s,R) -> (
   -- parses solutions in PHCpack format 
   -- IN:  s = string of solutions in PHCmaple format 
   --      V = list of variable names
-  -- OUT: List of solutions, each of type FrontLevelPoint, 
+  -- OUT: List of solutions, each of type Point, 
   --      carrying also other diagnostic information about each.
   oldprec := defaultPrecision;
   defaultPrecision = o.Bits;
@@ -533,7 +533,7 @@ dimEmbedding (List) := (system) -> (
 )
 
 -----------------------------
----  conversion to FrontLevelPoint  ---
+---  conversion to Point  ---
 -----------------------------
 
 outputToPoint = method()
@@ -1961,7 +1961,7 @@ TEST///
       S = {x^2 - 1/3, x*y - 1}; 
       oldRoots = solveSystem(S);
       r0 = oldRoots#0#Coordinates#1
-      newRoots = refineSolutions(S,oldRoots,64) --recall that solutions are of type FrontLevelPoint. 
+      newRoots = refineSolutions(S,oldRoots,64) --recall that solutions are of type Point. 
       --check if precision increased:
       assert(precision newRoots#0#Coordinates#1 > precision oldRoots#0#Coordinates#1) 
       --check if input number of decimal places, 64, used correctly: 

@@ -93,14 +93,14 @@ doc ///
 doc ///
     	Key
 	    pointNorm
-	    (pointNorm, FrontLevelPoint)
-	    "(pointNorm, FrontLevelPoint)"
+	    (pointNorm, Point)
+	    "(pointNorm, Point)"
 	Headline
 	    compute the "projectivized" norm of the given point
 	Usage
 	    n = pointNorm(p)
 	Inputs
-	    p:FrontLevelPoint
+	    p:Point
 	Description
 	    Text
 	    	For the given point this function computes the "projectivized" norm (square root of 1+ x1^2 + ... + xn^2) of the given point.
@@ -156,15 +156,15 @@ doc ///
 doc ///
     	Key
     	    computeConstants
-	    (computeConstants, PolySystem, FrontLevelPoint)
-	    "(computeConstants, PolySystem, FrontLevelPoint)"
+	    (computeConstants, PolySystem, Point)
+	    "(computeConstants, PolySystem, Point)"
 	Headline
 	    compute the auxiliary quantities related to alpha theory
 	Usage
 	    (alpha, beta, gamma) = computeConstants(PS, P)
 	Inputs
             PS:PolySystem
-	    P:FrontLevelPoint
+	    P:Point
 	Description
 	    Text
     	    	alpha theory uses three auxiliary quantities related to the input polynomial system and point.
@@ -184,15 +184,15 @@ doc ///
 doc ///
     	Key
     	    certifySolution
-	    (certifySolution, PolySystem, FrontLevelPoint)
-	    "(certifySolution, PolySystem, FrontLevelPoint)"
+	    (certifySolution, PolySystem, Point)
+	    "(certifySolution, PolySystem, Point)"
 	Headline
 	    execute the alpha test
 	Usage
 	    certifySolution(PS, P)
 	Inputs
             PS:PolySystem
-	    P:FrontLevelPoint
+	    P:Point
 	Description
 	    Text
     	    	This function executes the alpha test based on the value computed by @TO "computeConstants"@.
@@ -208,16 +208,16 @@ doc ///
 doc ///
     	Key
     	    certifyDistinctSoln
-	    (certifyDistinctSoln, PolySystem, FrontLevelPoint, FrontLevelPoint)
-	    "(certifySolution, PolySystem, FrontLevelPoint, FrontLevelPoint)"
+	    (certifyDistinctSoln, PolySystem, Point, Point)
+	    "(certifySolution, PolySystem, Point, Point)"
 	Headline
 	    determine whether given points are distinct approximate solutions.
 	Usage
 	    certifyDistinctSoln(PS, P1, P2)
 	Inputs
             PS:PolySystem
-	    P1:FrontLevelPoint
-	    P2:FrontLevelPoint
+	    P1:Point
+	    P2:Point
 	Description
 	    Text
     	    	This function executes the gamma test based on the value computed by @TO "computeConstants"@, and determine whether given points are distinct or not.
