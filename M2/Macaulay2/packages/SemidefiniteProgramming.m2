@@ -366,7 +366,7 @@ refine(SDP,Sequence) := o -> (P,X0y0) -> (
     (J,X,y,Z) := rawCriticalIdeal(P,,true);
     pt := smat2vec entries X0 | flatten entries y0;
     pt' := first refine (polySystem J, {pt}, o);
-    if pt'#SolutionStatus==RefinementFailure then(
+    if status pt'==RefinementFailure then(
         print "refinement failed";
         return (X0,y0) );
     L := coordinates pt';
