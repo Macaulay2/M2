@@ -1145,6 +1145,11 @@ floor(e:Expr):Expr := (
 	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
 	  toExpr(floor(x.v.re))
 	  )
+     is x:CCicell do (
+	  if isnan(x.v) then buildErrorPacket("encountered NotANumber in conversion to integer") else
+	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
+	  toExpr(floor(x.v.re))
+	  )
      is x:QQcell do toExpr(floor(x.v))
      is ZZcell do e
      else buildErrorPacket("expected an integral, rational, or real number")
@@ -1197,6 +1202,7 @@ sqrt(a:Expr):Expr := (
 	  else buildErrorPacket("Not implemented")
 	  )
      is x:CCcell do toExpr(sqrt(x.v))				    -- # typical value: sqrt, CC, CC
+     is x:CCicell do toExpr(sqrt(x.v))				    -- # typical value: sqrt, CCi, CCi
      is Error do a
      else WrongArgRR());
 setupfun("sqrt",sqrt).Protected=false;
