@@ -108,6 +108,7 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  is yy:RRcell do toExpr(yy.v === xx.v)			    -- # typical value: symbol ==, ZZ, RR, Boolean
       is yy:RRicell do toExpr(yy.v === xx.v)			-- # typical value: symbol ==, ZZ, RRi, Boolean
 	  is yy:CCcell do toExpr(yy.v === xx.v)			    -- # typical value: symbol ==, ZZ, CC, Boolean
+	  is yy:CCicell do toExpr(yy.v === xx.v)			    -- # typical value: symbol ==, ZZ, CCi, Boolean
 	  else equalmethod(x,y)
 	  )
      is xx:SymbolClosure do (
@@ -121,6 +122,7 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  is yy:RRcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, QQ, RR, Boolean
       is yy:RRicell do toExpr(yy.v === xx.v)			-- # typical value: symbol ==, QQ, RRi, Boolean
 	  is yy:CCcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, QQ, CC, Boolean
+	  is yy:CCicell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, QQ, CCi, Boolean
 	  else equalmethod(x,y)
 	  )
      is xx:RRcell do (
@@ -130,6 +132,7 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
 	  is yy:RRcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, RR, RR, Boolean
       is yy:RRicell do toExpr(yy.v === xx.v)			-- # typical value: symbol ==, RR, RRi, Boolean
 	  is yy:CCcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, RR, CC, Boolean
+	  is yy:CCicell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, RR, CCi, Boolean
 	  else equalmethod(x,y)
 	  )
       is xx:RRicell do (
@@ -137,13 +140,27 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
                  is yy:ZZcell do toExpr(xx.v === yy.v)   -- # typical value: symbol ==, RRi, ZZ, Boolean
                  is yy:QQcell do toExpr(xx.v === yy.v)   -- # typical value: symbol ==, RRi, QQ, Boolean
                  is yy:RRcell do toExpr(xx.v === yy.v)   -- # typical value: symbol ==, RRi, RR, Boolean
-          else buildErrorPacket(EngineError("equality not implemented")))
+	  is yy:CCcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, RRi, CC, Boolean
+	  is yy:CCicell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, RRi, CCi, Boolean
+          else equalmethod(x,y))
      is xx:CCcell do (
 	  when y
 	  is yy:ZZcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CC, ZZ, Boolean
 	  is yy:QQcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CC, QQ, Boolean
 	  is yy:RRcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CC, RR, Boolean
+	  is yy:RRicell do toExpr(xx.v === yy.v)  -- # typical value: symbol ==, CC, RRi, Boolean
 	  is yy:CCcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CC, CC, Boolean
+	  is yy:CCicell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CC, CCi, Boolean
+	  else equalmethod(x,y)
+	  )
+     is xx:CCicell do (
+	  when y
+	  is yy:ZZcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CCi, ZZ, Boolean
+	  is yy:QQcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CCi, QQ, Boolean
+	  is yy:RRcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CCi, RR, Boolean
+	  is yy:RRicell do toExpr(xx.v === yy.v)  -- # typical value: symbol ==, CCi, RRi, Boolean
+	  is yy:CCcell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CCi, CC, Boolean
+	  is yy:CCicell do toExpr(xx.v === yy.v)			    -- # typical value: symbol ==, CCi, CCi, Boolean
 	  else equalmethod(x,y)
 	  )
      is xx:Boolean do (
@@ -242,6 +259,11 @@ compare(left:Expr,right:Expr):Expr := (
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
+	  is y:CCicell do (
+	       r := compare(x.v,y.v);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
      	  is Error do right
 	  else binarycomparison(left,right))
      is x:stringCell do (
@@ -302,6 +324,11 @@ compare(left:Expr,right:Expr):Expr := (
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
+	  is y:CCicell do (
+	       r := compare(x.v,y.v);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
      	  is Error do right
 	  else binarycomparison(left,right))
      is x:RRcell do (
@@ -331,6 +358,11 @@ compare(left:Expr,right:Expr):Expr := (
               else incomparableE
 	       )
 	  is y:CCcell do (
+	       r := compare(x.v,y.v);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
+	  is y:CCicell do (
 	       r := compare(x.v,y.v);
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
@@ -393,7 +425,51 @@ compare(left:Expr,right:Expr):Expr := (
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
+	  is y:RRicell do (
+	       r := compare(x.v,y.v);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
 	  is y:CCcell do (
+	       r := compare(x.v,y.v);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
+	  is y:CCicell do (
+	       r := compare(x.v,y.v);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
+     	  is Error do right
+	  else binarycomparison(left,right))
+     is x:CCicell do (
+	  when right
+	  is y:ZZcell do (
+	       r := compare(x.v,y.v);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
+	  is y:QQcell do (
+	       r := compare(x.v,y.v);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
+	  is y:RRcell do (
+	       r := compare(x.v,y.v);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
+	  is y:RRicell do (
+	       r := compare(x.v,y.v);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
+	  is y:CCcell do (
+	       r := compare(x.v,y.v);
+	       if flagged() then incomparableE else
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+	       )
+	  is y:CCicell do (
 	       r := compare(x.v,y.v);
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE

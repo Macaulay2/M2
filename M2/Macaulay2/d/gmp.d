@@ -861,7 +861,11 @@ export (x:QQ) >= (y:double) : bool := numeratorRef(x) >= y * denominatorRef(x);
 
 export realPart(z:CC):RR := z.re;
 
+export realPart(z:CCi):RRi := z.re;
+
 export imaginaryPart(z:CC):RR := z.im;
+
+export imaginaryPart(z:CCi):RRi := z.im;
 
 -- warning: these routines just check the sign bit, and don't verify finiteness!
 isPositive0(x:RR) ::=  1 == Ccode(int, "mpfr_sgn(", x, ")");
@@ -1347,6 +1351,10 @@ export strictequality(x:RRi,y:RRi):bool := (
 
 compare0(x:RR, y:RR) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp(",  x, ",",  y, "))" );
 
+compare0(x:RRi, y:RR) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp(",  x, ",",  y, "))" );
+
+compare0(x:RR, y:RRi) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp(",  x, ",",  y, "))" );
+
 compare0(x:RRi, y:RRi) ::= Ccode( int,  "(mpfr_clear_flags(),mpfi_cmp(",  x, ",",  y, "))" ); -- No equivalent for clear in mpfi.  -- returns 0 when x and y overlap, different behavior than mpfr
 
 export compare(x:RR, y:RR):int := compare0(x,y);	    -- use flagged(), too!
@@ -1357,7 +1365,25 @@ export (x:RR)  <  (y:RR) : bool := compare0(x,y) <  0 && !flagged0();
 export (x:RR)  >= (y:RR) : bool := compare0(x,y) >= 0 && !flagged0();
 
 export (x:RR)  <= (y:RR) : bool := compare0(x,y) <= 0 && !flagged0();
-                                    
+
+export compare(x:RRi, y:RR):int := compare0(x,y);	    -- use flagged(), too!
+export (x:RRi)  >  (y:RR) : bool := compare0(x,y) >  0 && !flagged0();
+
+export (x:RRi)  <  (y:RR) : bool := compare0(x,y) <  0 && !flagged0();
+
+export (x:RRi)  >= (y:RR) : bool := (compare0(x,y)>0 || (leftRR(x) == y)) && !flagged0();
+
+export (x:RRi)  <= (y:RR) : bool := (compare0(x,y)<0 || (rightRR(x) == y))  && !flagged0();
+
+export compare(x:RR, y:RRi):int := compare0(x,y);	    -- use flagged(), too!
+export (x:RR)  >  (y:RRi) : bool := compare0(x,y) >  0 && !flagged0();
+
+export (x:RR)  <  (y:RRi) : bool := compare0(x,y) <  0 && !flagged0();
+
+export (x:RR)  >= (y:RRi) : bool := (compare0(x,y)>0 || (x == rightRR(y))) && !flagged0();
+
+export (x:RR)  <= (y:RRi) : bool := (compare0(x,y)<0 || (x == leftRR(y))) && !flagged0();
+
 export compare(x:RRi, y:RRi):int := compare0(x,y);	    -- use flagged(), too!
 export (x:RRi)  >  (y:RRi) : bool := compare0(x,y) >  0 && !flagged0();
 
@@ -1404,7 +1430,9 @@ export (x:RR)  <= (y:int) : bool :=  compare0(x,long(y)) <= 0 && !flagged0();
 export (x:RRi)  <= (y:int) : bool :=  (compare0(x,long(y)) < 0 || rightRR(x) === y) && !flagged0();
 
 export (x:CC) === (y:int) : bool :=  x.re === y && x.im === 0;
-                                    
+
+export (x:CCi) === (y:int) : bool :=  x.re === y && x.im === 0;
+
 compare0(x:RR, y:double) ::= Ccode( int, "(mpfr_clear_flags(),mpfr_cmp_d(",  x, ",", y, "))" );  
 
 export compare(x:RR, y:double):int := Ccode( int, "(mpfr_clear_flags(), mpfr_cmp_d(",  x, ",", y, "))" );
@@ -2370,19 +2398,72 @@ export strictequality(x:CCi,y:CCi):bool := strictequality(x.re,y.re) && stricteq
 
 export (x:CC) === (y:CC) : bool := x.re === y.re && x.im === y.im;
 
+export (x:CCi) === (y:CC) : bool := x.re === y.re && x.im === y.im;
+
+export (x:CC) === (y:CCi) : bool := x.re === y.re && x.im === y.im;
+
+export (x:CCi) === (y:CCi) : bool := x.re === y.re && x.im === y.im;
+
 export (x:CC) === (y:RR) : bool := x.re === y && x.im === 0;
+
+export (x:CC) === (y:RRi) : bool := x.re === y && x.im === 0;
+
+export (x:CCi) === (y:RRi) : bool := x.re === y && x.im === 0;
+
+export (x:CCi) === (y:RR) : bool := x.re === y && x.im === 0;
 
 export (x:RR) === (y:CC) : bool := x === y.re && y.im === 0;
 
+export (x:RRi) === (y:CC) : bool := x === y.re && y.im === 0;
+
+export (x:RRi) === (y:CCi) : bool := x === y.re && y.im === 0;
+
+export (x:RR) === (y:CCi) : bool := x === y.re && y.im === 0;
+
 export (x:CC) === (y:ZZ) : bool := x.re === y && x.im === 0;
+
+export (x:CCi) === (y:ZZ) : bool := x.re === y && x.im === 0;
 
 export (x:ZZ) === (y:CC) : bool := x === y.re && y.im === 0;
 
+export (x:ZZ) === (y:CCi) : bool := x === y.re && y.im === 0;
+
 export (x:CC) === (y:QQ) : bool := x.re === y && x.im === 0;
+
+export (x:CCi) === (y:QQ) : bool := x.re === y && x.im === 0;
 
 export (x:QQ) === (y:CC) : bool := x === y.re && y.im === 0;
 
+export (x:QQ) === (y:CCi) : bool := x === y.re && y.im === 0;
+
 export compare(x:CC,y:CC):int := (
+     if ( isinf(x.re) || isinf(y.re) || isinf(x.im) || isinf(y.im) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x.re,y.re);
+     if flagged() || r != 0 then r
+     else compare(x.im,y.im));
+
+export compare(x:CCi,y:CC):int := (
+     if ( isinf(x.re) || isinf(y.re) || isinf(x.im) || isinf(y.im) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x.re,y.re);
+     if flagged() || r != 0 then r
+     else compare(x.im,y.im));
+
+export compare(x:CC,y:CCi):int := (
+     if ( isinf(x.re) || isinf(y.re) || isinf(x.im) || isinf(y.im) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x.re,y.re);
+     if flagged() || r != 0 then r
+     else compare(x.im,y.im));
+
+export compare(x:CCi,y:CCi):int := (
      if ( isinf(x.re) || isinf(y.re) || isinf(x.im) || isinf(y.im) ) then (
        setflag0();
        return 0;
@@ -2400,7 +2481,61 @@ export compare(x:CC,y:RR):int := (
      if flagged() || r != 0 then r
      else compare0(x.im,0));
 
+export compare(x:CC,y:RRi):int := (
+     if ( isinf(x.re) || isinf(x.im) || isinf(y) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x.re,y);
+     if flagged() || r != 0 then r
+     else compare0(x.im,0));
+
+export compare(x:CCi,y:RR):int := (
+     if ( isinf(x.re) || isinf(x.im) || isinf(y) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x.re,y);
+     if flagged() || r != 0 then r
+     else compare0(x.im,0));
+
+export compare(x:CCi,y:RRi):int := (
+     if ( isinf(x.re) || isinf(x.im) || isinf(y) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x.re,y);
+     if flagged() || r != 0 then r
+     else compare0(x.im,0));
+
 export compare(x:RR,y:CC):int := (
+     if ( isinf(x) || isinf(y.re) || isinf(y.im) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x,y.re);
+     if flagged() || r != 0 then r
+     else -compare0(y.im,0));
+
+export compare(x:RRi,y:CC):int := (
+     if ( isinf(x) || isinf(y.re) || isinf(y.im) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x,y.re);
+     if flagged() || r != 0 then r
+     else -compare0(y.im,0));
+
+export compare(x:RR,y:CCi):int := (
+     if ( isinf(x) || isinf(y.re) || isinf(y.im) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x,y.re);
+     if flagged() || r != 0 then r
+     else -compare0(y.im,0));
+
+export compare(x:RRi,y:CCi):int := (
      if ( isinf(x) || isinf(y.re) || isinf(y.im) ) then (
        setflag0();
        return 0;
@@ -2418,7 +2553,25 @@ export compare(x:CC,y:ZZ):int := (
      if flagged() || r != 0 then r
      else compare0(x.im,0));
 
+export compare(x:CCi,y:ZZ):int := (
+     if ( isinf(x.re) || isinf(x.im) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x.re,y);
+     if flagged() || r != 0 then r
+     else compare0(x.im,0));
+
 export compare(x:ZZ,y:CC):int := (
+     if ( isinf(y.re) || isinf(y.im) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x,y.re);
+     if flagged() || r != 0 then r
+     else -compare0(y.im,0));
+
+export compare(x:ZZ,y:CCi):int := (
      if ( isinf(y.re) || isinf(y.im) ) then (
        setflag0();
        return 0;
@@ -2436,7 +2589,25 @@ export compare(x:CC,y:QQ):int := (
      if flagged() || r != 0 then r
      else compare0(x.im,0));
 
+export compare(x:CCi,y:QQ):int := (
+     if ( isinf(x.re) || isinf(x.im) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x.re,y);
+     if flagged() || r != 0 then r
+     else compare0(x.im,0));
+
 export compare(x:QQ,y:CC):int := (
+     if ( isinf(y.re) || isinf(y.im) ) then (
+       setflag0();
+       return 0;
+    );
+     r := compare(x,y.re);
+     if flagged() || r != 0 then r
+     else -compare0(y.im,0));
+
+export compare(x:QQ,y:CCi):int := (
      if ( isinf(y.re) || isinf(y.im) ) then (
        setflag0();
        return 0;
