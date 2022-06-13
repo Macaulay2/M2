@@ -101,6 +101,7 @@ absfun(e:Expr):Expr := (
      is x:RRcell do toExpr(if sign(x.v) then -x.v else x.v)
      is x:RRicell do toExpr(abs(x.v))
      is x:CCcell do toExpr(abs(x.v))
+     is x:CCicell do toExpr(abs(x.v))
      is r:QQcell do toExpr(abs(r.v))
      else WrongArg("a number, real or complex"));
 setupfun("abs0",absfun);
@@ -1094,6 +1095,7 @@ format(e:Expr):Expr := (
      is RRcell do format(Expr(Sequence(e)))
      is RRicell do format(Expr(Sequence(e)))
      is CCcell do format(Expr(Sequence(e)))
+     is CCicell do format(Expr(Sequence(e)))
      is args:Sequence do (
 	  s := printingPrecision;
 	  ac := printingAccuracy;
