@@ -280,6 +280,7 @@ The main targets for building Macaulay2 are:
 - `M2-binary`: build the Macaulay2 executable
 - `M2-core`: generate and copy the Core package
 - `M2-emacs`: generate the M2-mode package for Emacs
+- `M2-highlightjs`: generate syntax highlighting library for javascript
 
 In addition, the following targets are available:
 - `scc1`: build the Safe C Compiler
