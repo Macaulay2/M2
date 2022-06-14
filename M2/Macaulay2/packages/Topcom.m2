@@ -20,42 +20,43 @@ newPackage(
                 HomePage=>"http://www.math.cornell.edu/~mike"
                 }},
         Headline => "interface to a small part of topcom",
-	Keywords => {"Interfaces"},
-        Configuration => {
-            "path" => ""
-            },
+        Keywords => {"Interfaces"},
         PackageImports => {"FourierMotzkin"}
         )
 
 export {
+    -- triangulations
+    "augment",
     "allTriangulations",
-    "chirotope",
     "fineStarTriangulation",
     "flips",
     "isRegularTriangulation",
-    "naiveChirotope",
-    "naiveIsTriangulation",
     "numFlips",
     "numTriangulations",
-    "orientedCircuits",
-    "orientedCocircuits",
     "regularFineTriangulation",
     "regularFineStarTriangulation",
     "regularTriangulationWeights",
+
+    "naiveIsTriangulation",
+    "topcomIsTriangulation", -- not written, I believe.
+
+    -- chirotopes
+    "chirotopeString",
+    "naiveChirotopeString",
+    "orientedCircuits",
+    "orientedCocircuits",
+    
+    -- option names
     "ConnectedToRegular",
     "Homogenize",
     "RegularOnly",
-    "Fine",
-    "topcomIsTriangulation"
+    "Fine"
     }
-
--- for backward compatibility
-if not programPaths#?"topcom" and Topcom#Options#Configuration#"path" != ""
-    then programPaths#"topcom" = Topcom#Options#Configuration#"path"
 
 topcomProgram = null
 
-augment = (A) -> (
+augment = method()
+augment Matrix := (A) -> (
     -- A is a matrix over ZZ
     -- add in a last row of 1's.
     n := numColumns A;
@@ -118,7 +119,7 @@ callTopcom(String, List) := (command, inputs) -> (
 --   checked 1 triangulations, 0 non-regular so far.
 
 isRegularTriangulation = method(Options=>{Homogenize=>true})
-isRegularTriangulation(Matrix, List) := opts -> (A, tri) -> (
+isRegularTriangulation(Matrix, List) := Boolean => opts -> (A, tri) -> (
     -- now create the output file
     (outfile, errfile) := callTopcom("checkregularity --checktriang -v", {topcomPoints(A, opts), [], tri });
     match("[Cc]hecked 1 triangulations, 0 non-regular so far", get errfile)
@@ -131,7 +132,7 @@ isRegularTriangulation(Matrix, List) := opts -> (A, tri) -> (
 --   h[1] := [1,0,0,0];
 
 regularTriangulationWeights = method(Options => options isRegularTriangulation)
-regularTriangulationWeights(Matrix, List) := opts -> (A, tri) -> (
+regularTriangulationWeights(Matrix, List) := List => opts -> (A, tri) -> (
     -- returns null if the triangulation is not regular.
     -- otherwise returns a list of rational numbers which are the 
     -- heights that result in the triangulation.
@@ -147,19 +148,22 @@ regularTriangulationWeights(Matrix, List) := opts -> (A, tri) -> (
     )
 
 regularFineTriangulation = method(Options => options isRegularTriangulation)
-regularFineTriangulation Matrix := opts -> (A) -> (
+regularFineTriangulation Matrix := List => opts -> (A) -> (
     (outfile,errfile) := callTopcom("points2finetriang --regular", {topcomPoints(A, opts)});
     value get outfile
     )
 
-chirotope = method(Options => options isRegularTriangulation)
-chirotope Matrix := opts -> A -> (
+-----------------------------------
+-- Chirotope interface functions --
+-----------------------------------
+chirotopeString = method(Options => options isRegularTriangulation)
+chirotopeString Matrix := String => opts -> A -> (
     (outfile,errfile) := callTopcom("points2chiro", {topcomPoints(A, opts)});
     get outfile
     )
 
-naiveChirotope = method(Options => options chirotope)
-naiveChirotope Matrix := opts -> A -> (
+naiveChirotopeString = method(Options => options chirotopeString)
+naiveChirotopeString Matrix := String => opts -> A -> (
     A1 := if opts.Homogenize then augment A else A;
     n := numColumns A1;
     d := numRows A1;
@@ -198,7 +202,7 @@ orientedCircuits String := opts -> (chiro) -> (
     -- now sort it all
     circs/sort//sort
     )
-orientedCircuits Matrix := opts -> A -> orientedCircuits chirotope(A, opts)
+orientedCircuits Matrix := opts -> A -> orientedCircuits chirotopeString(A, opts)
 
 orientedCocircuits = method(Options => {Homogenize=>true})
 orientedCocircuits String := opts -> (chiro) -> (
@@ -207,8 +211,11 @@ orientedCocircuits String := opts -> (chiro) -> (
     s = drop(drop(s, 2), -1);
     s/(x -> toList value x)
     )
-orientedCocircuits Matrix := opts -> A -> orientedCocircuits chirotope(A, opts)
+orientedCocircuits Matrix := opts -> A -> orientedCocircuits chirotopeString(A, opts)
 
+-------------------------------------------
+-- The key part: generate triangulations --
+-------------------------------------------
 allTriangsExecutable = hashTable {
     -- Fine?, COnnectedToRegular?
     (true, true) => "points2finetriangs",
@@ -229,8 +236,13 @@ numTriangsExecutable = hashTable {
 -- after 1.1.0:
 --   T[0] := {{0,1,2},{1,2,3}};
 
-allTriangulations = method(Options => {Homogenize=>true, RegularOnly => true, Fine => false, ConnectedToRegular => true})
-allTriangulations Matrix := opts -> (A) -> (
+allTriangulations = method(Options => {
+    Homogenize=>true, 
+    RegularOnly => true, 
+    Fine => false, 
+    ConnectedToRegular => true
+    })
+allTriangulations Matrix := List => opts -> (A) -> (
     if not opts.ConnectedToRegular and opts.RegularOnly then error "cannot have both RegularOnly=>true and ConnectedToRegular=>false";
     executable := allTriangsExecutable#(opts.Fine, opts.ConnectedToRegular);
     args := if opts.RegularOnly then " --regular" else "";
@@ -299,6 +311,7 @@ naiveIsTriangulation(Matrix, List, List) := (A, circuits, tri) -> (
         positions(flatten entries(matrix {e} * aA), x -> x == 0)
         );
     -- test 1: each wall should be in a facet of the convex hull, or occur exactly twice.
+    -- This is NOT correct?!
     walls := tally flatten for t in tri list subsets(t,#t-1);
     test1 := for k in keys walls list (
         if any(myfacets, f -> isSubset(k,f)) then 
@@ -434,7 +447,7 @@ TEST ///
     -- TODO: need a function which takes a point set, weights, and creates the lift (easy)
     --       compute the lower hull of this polytope.
 
-  assert(chirotope A == naiveChirotope A)
+  assert(chirotopeString A == naiveChirotopeString A)
   orientedCircuits A
   orientedCocircuits A
   A = transpose matrix {{1,0},{0,1}}
@@ -498,8 +511,8 @@ TEST ///
 *-
   A = transpose matrix {{-1,-1},{-1,1},{1,-1},{1,1},{0,0}}
   tri = {{0, 2, 4}, {2, 3, 4}, {0, 1, 4}, {1, 3, 4}}
-  ch1 = chirotope A
-  ch2 = naiveChirotope A
+  ch1 = chirotopeString A
+  ch2 = naiveChirotopeString A
   assert(ch1 == ch2)
 ///
 
@@ -636,10 +649,12 @@ end----------------------------------------------------
 restart
 uninstallPackage "Topcom"
 restart
+needsPackage "Topcom"
+restart
 check "Topcom"
 restart
 installPackage "Topcom"
-needsPackage "Topcom"
+
 
 
 TEST /// 
@@ -791,8 +806,8 @@ viewHelp
   tri2 = regularFineTriangulation A2
   #tri
   #tri2
-  elapsedTime chiro1 = chirotope A1;
-  elapsedTime chiro2 = chirotope A2;
+  elapsedTime chiro1 = chirotopeString A1;
+  elapsedTime chiro2 = chirotopeString A2;
   elapsedTime # orientedCircuits chiro1
   elapsedTime # orientedCircuits chiro2
   elapsedTime # orientedCocircuits chiro1
