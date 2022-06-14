@@ -401,11 +401,10 @@ AC_SEARCH_LIBS(gethostbyname,nsl)
 AC_SUBST(ENABLE_TBB,yes)  AC_ARG_ENABLE(tbb, AS_HELP_STRING(--disable-tbb,disable use of the tbb (threaded building blocks) library), ENABLE_TBB=$enableval)
 if test $ENABLE_TBB = yes
 then AC_DEFINE(WITH_TBB,1,[whether the tbb library has been enabled by the builder])
-     AC_SUBST(LIBTBB)		dnl LIBTBB is usually set to -ltbb
      AC_LANG(C++)
      AC_CHECK_HEADER(tbb/tbb.h,
 	[AC_SEARCH_LIBS(TBB_runtime_interface_version,"tbb",
-	   LIBTBB=$ac_cv_search_TBB_runtime_interface_version,
+	   ,
 	   [AC_MSG_ERROR([tbb library not found])])],
 	 [AC_MSG_ERROR([tbb include file (tbb.h) not found])])
      AC_RUN_IFELSE([AC_LANG_SOURCE([[
