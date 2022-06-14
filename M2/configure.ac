@@ -767,7 +767,7 @@ then AC_DEFINE(WITH_TBB,1,[whether the tbb library has been enabled by the build
      AC_LANG(C++)
      AC_CHECK_HEADER(tbb/tbb.h,
 	[AC_SEARCH_LIBS(TBB_runtime_interface_version,"tbb",
-	   ,
+	   [LIBS="$LIBS -latomic"],
 	   [AC_MSG_ERROR([tbb library not found])])],
 	 [AC_MSG_ERROR([tbb include file (tbb.h) not found])])
      AC_RUN_IFELSE([AC_LANG_SOURCE([[
