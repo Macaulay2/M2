@@ -1207,6 +1207,7 @@ export {
 	"userSymbols",
 	"utf8",
 	"utf8check",
+	"utf8substring",
 	"value",
 	"values",
 	"variety",
