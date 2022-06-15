@@ -261,6 +261,11 @@ class ARingQQGMP : public RingInterface
     mpq_set(&result, a.get_mpq());
   }
 
+  const ElementType& from_ring_elem_const(const ring_elem& a) const
+  {
+    return *a.get_mpq();
+  }
+
 /** @} */
 
 #if 0    

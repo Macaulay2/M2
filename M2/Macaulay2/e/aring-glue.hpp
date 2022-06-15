@@ -232,64 +232,46 @@ class ConcreteRing : public Ring
   virtual bool is_unit(const ring_elem f) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling is_unit\n");
-    ElementType a;
-    R->init(a);
-    R->from_ring_elem(a, f);
+    const ElementType &a = R->from_ring_elem_const(f);
     bool ret = R->is_unit(a);
-    R->clear(a);
     return ret;
   }
 
   virtual bool is_zero(const ring_elem f) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling is_zero\n");
-    ElementType a;
-    R->init(a);
-    R->from_ring_elem(a, f);
+    const ElementType &a = R->from_ring_elem_const(f);
     bool ret = R->is_zero(a);
-    R->clear(a);
     return ret;
   }
 
   virtual bool is_equal(const ring_elem f, const ring_elem g) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling is_equal\n");
-    ElementType a, b;
-    R->init(a);
-    R->init(b);
-    R->from_ring_elem(a, f);
-    R->from_ring_elem(b, g);
+    const ElementType &a = R->from_ring_elem_const(f);
+    const ElementType &b = R->from_ring_elem_const(g);
     bool ret = R->is_equal(a, b);
-    R->clear(a);
-    R->clear(b);
     return ret;
   }
 
   virtual int compare_elems(const ring_elem f, const ring_elem g) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling compare_elems\n");
-    ElementType a, b;
-    R->init(a);
-    R->init(b);
-    R->from_ring_elem(a, f);
-    R->from_ring_elem(b, g);
+    const ElementType &a = R->from_ring_elem_const(f);
+    const ElementType &b = R->from_ring_elem_const(g);
     int ret = R->compare_elems(a, b);
-    R->clear(a);
-    R->clear(b);
     return ret;
   }
 
   virtual ring_elem copy(const ring_elem f) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling copy\n");
-    ElementType a, b;
+    const ElementType &a = R->from_ring_elem_const(f);
+    ElementType b;
     ring_elem result;
-    R->init(a);
     R->init(b);
-    R->from_ring_elem(a, f);
     R->set(b, a);
     R->to_ring_elem(result, b);
-    R->clear(a);
     R->clear(b);
     return result;
   }
@@ -303,14 +285,12 @@ class ConcreteRing : public Ring
   virtual ring_elem negate(const ring_elem f) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling negate\n");
-    ElementType a, b;
+    const ElementType &a = R->from_ring_elem_const(f);
+    ElementType b;
     ring_elem result;
-    R->init(a);
     R->init(b);
-    R->from_ring_elem(a, f);
     R->negate(b, a);
     R->to_ring_elem(result, b);
-    R->clear(a);
     R->clear(b);
     return result;
   }
@@ -318,17 +298,13 @@ class ConcreteRing : public Ring
   virtual ring_elem add(const ring_elem f, const ring_elem g) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling add\n");
-    ElementType a, b, c;
+    const ElementType &a = R->from_ring_elem_const(f);
+    const ElementType &b = R->from_ring_elem_const(g);
+    ElementType c;
     ring_elem result;
-    R->init(a);
-    R->init(b);
     R->init(c);
-    R->from_ring_elem(a, f);
-    R->from_ring_elem(b, g);
     R->add(c, a, b);
     R->to_ring_elem(result, c);
-    R->clear(a);
-    R->clear(b);
     R->clear(c);
     return result;
   }
@@ -336,17 +312,13 @@ class ConcreteRing : public Ring
   virtual ring_elem subtract(const ring_elem f, const ring_elem g) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling subtract\n");
-    ElementType a, b, c;
+    const ElementType &a = R->from_ring_elem_const(f);
+    const ElementType &b = R->from_ring_elem_const(g);
+    ElementType c;
     ring_elem result;
-    R->init(a);
-    R->init(b);
     R->init(c);
-    R->from_ring_elem(a, f);
-    R->from_ring_elem(b, g);
     R->subtract(c, a, b);
     R->to_ring_elem(result, c);
-    R->clear(a);
-    R->clear(b);
     R->clear(c);
     return result;
   }
@@ -354,17 +326,13 @@ class ConcreteRing : public Ring
   virtual ring_elem mult(const ring_elem f, const ring_elem g) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling mult\n");
-    ElementType a, b, c;
+    const ElementType &a = R->from_ring_elem_const(f);
+    const ElementType &b = R->from_ring_elem_const(g);
+    ElementType c;
     ring_elem result;
-    R->init(a);
-    R->init(b);
     R->init(c);
-    R->from_ring_elem(a, f);
-    R->from_ring_elem(b, g);
     R->mult(c, a, b);
     R->to_ring_elem(result, c);
-    R->clear(a);
-    R->clear(b);
     R->clear(c);
     return result;
   }
@@ -372,14 +340,12 @@ class ConcreteRing : public Ring
   virtual ring_elem power(const ring_elem f, mpz_srcptr n) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling power mpz\n");
-    ElementType a, b;
+    const ElementType &a = R->from_ring_elem_const(f);
+    ElementType b;
     ring_elem result;
-    R->init(a);
     R->init(b);
-    R->from_ring_elem(a, f);
     R->power_mpz(b, a, n);
     R->to_ring_elem(result, b);
-    R->clear(a);
     R->clear(b);
     return result;
   }
@@ -387,14 +353,12 @@ class ConcreteRing : public Ring
   virtual ring_elem power(const ring_elem f, int n) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling power int\n");
-    ElementType a, b;
+    const ElementType &a = R->from_ring_elem_const(f);
+    ElementType b;
     ring_elem result;
-    R->init(a);
     R->init(b);
-    R->from_ring_elem(a, f);
     R->power(b, a, n);
     R->to_ring_elem(result, b);
-    R->clear(a);
     R->clear(b);
     return result;
   }
@@ -402,14 +366,12 @@ class ConcreteRing : public Ring
   virtual ring_elem invert(const ring_elem f) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling invert\n");
-    ElementType a, b;
+    const ElementType &a = R->from_ring_elem_const(f);
+    ElementType b;
     ring_elem result;
-    R->init(a);
     R->init(b);
-    R->from_ring_elem(a, f);
     R->invert(b, a);
     R->to_ring_elem(result, b);
-    R->clear(a);
     R->clear(b);
     return result;
   }
@@ -417,17 +379,13 @@ class ConcreteRing : public Ring
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling divide\n");
-    ElementType a, b, c;
+    const ElementType &a = R->from_ring_elem_const(f);
+    const ElementType &b = R->from_ring_elem_const(g);
+    ElementType c;
     ring_elem result;
-    R->init(a);
-    R->init(b);
     R->init(c);
-    R->from_ring_elem(a, f);
-    R->from_ring_elem(b, g);
     R->divide(c, a, b);
     R->to_ring_elem(result, c);
-    R->clear(a);
-    R->clear(b);
     R->clear(c);
     return result;
   }
@@ -438,18 +396,14 @@ class ConcreteRing : public Ring
                       ring_elem &y) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling syzygy\n");
-    ElementType a, b, xe, ye;
-    R->init(a);
-    R->init(b);
+    const ElementType &a = R->from_ring_elem_const(f);
+    const ElementType &b = R->from_ring_elem_const(g);
+    ElementType xe, ye;
     R->init(xe);
     R->init(ye);
-    R->from_ring_elem(a, f);
-    R->from_ring_elem(b, g);
     R->syzygy(a, b, xe, ye);
     R->to_ring_elem(x, xe);
     R->to_ring_elem(y, ye);
-    R->clear(a);
-    R->clear(b);
     R->clear(xe);
     R->clear(ye);
   }
@@ -473,11 +427,8 @@ class ConcreteRing : public Ring
                              bool p_parens = false) const
   {
     if (displayArithmeticCalls) fprintf(stderr, "calling elem_text_out\n");
-    ElementType a;
-    R->init(a);
-    R->from_ring_elem(a, f);
+    const ElementType &a = R->from_ring_elem_const(f);
     R->elem_text_out(o, a, p_one, p_plus, p_parens);
-    R->clear(a);
   }
 
   // map : this = R --> S, f in R
@@ -487,6 +438,9 @@ class ConcreteRing : public Ring
                          const ring_elem f,
                          int first_var) const
   {
+    // TODO we shouldn't have to use a non-const element type,
+    // but lots of ARing instances use a non-const reference for the input
+    // this should be fixable, but will require checking
     ElementType a;
     ring_elem result;
     R->init(a);

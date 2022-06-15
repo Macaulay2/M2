@@ -108,6 +108,11 @@ class ARingGFFlintBig : public RingInterface
     copy(result, *b);
   }
 
+  const ElementType& from_ring_elem_const(const ring_elem& a) const
+  {
+    return *reinterpret_cast<ElementType*>(a.poly_val);
+  }
+
   bool is_unit(const ElementType& f) const { return not is_zero(f); }
   bool is_zero(const ElementType& f) const
   {

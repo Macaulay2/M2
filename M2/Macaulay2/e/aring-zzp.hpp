@@ -96,6 +96,16 @@ class ARingZZp : public RingInterface
       result = a.get_int();
   }
 
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    if (a.get_int() == 0)
+      return p1;
+    else if (a.get_int() == p1)
+      return 0;
+    else
+      return a.get_int();
+  }
+
   // 'init', 'init_set' functions
 
   void init(elem &result) const { result = 0; }

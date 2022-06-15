@@ -86,6 +86,11 @@ class ARingGFFlint : public RingInterface
     result.value = a.get_int();
   }
 
+  ElementType from_ring_elem_const(const ring_elem& a) const
+  {
+    return {.value = static_cast<mp_limb_t>(a.get_int())};
+  }
+
   bool is_unit(const ElementType& f) const { return not is_zero(f); }
   bool is_zero(const ElementType& f) const
   {

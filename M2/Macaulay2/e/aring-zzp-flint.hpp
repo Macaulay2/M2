@@ -261,6 +261,11 @@ class ARingZZpFlint : public RingInterface
     result = static_cast<mp_limb_t>(a.get_long());
   }
 
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return static_cast<mp_limb_t>(a.get_long());
+  }
+
  private:
   nmod_t mModulus;
   size_t mCharac;  // not needed, as it is in mModulus

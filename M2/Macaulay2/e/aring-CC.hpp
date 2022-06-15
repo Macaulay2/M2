@@ -92,6 +92,11 @@ class ARingCC : public RingInterface
     result = * a.get_cc_doubles();
   }
 
+  const ElementType& from_ring_elem_const(const ring_elem& a) const
+  {
+    return *a.get_cc_doubles();
+  }
+
   // 'init', 'init_set' functions
 
   void init(ElementType& result) const

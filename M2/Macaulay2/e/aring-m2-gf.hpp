@@ -135,6 +135,11 @@ class ARingGFM2 : public RingInterface
     result = a.get_int();
   }
 
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return a.get_int();
+  }
+
   bool is_unit(ElementType f) const { return f != 0; }
   bool is_zero(ElementType f) const { return f == 0; }
   bool is_equal(ElementType f, ElementType g) const { return f == g; }

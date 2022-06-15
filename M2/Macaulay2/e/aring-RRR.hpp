@@ -79,6 +79,11 @@ class ARingRRR : public RingInterface
     mpfr_set(&result, a.get_mpfr(), MPFR_RNDN);
   }
 
+  const ElementType &from_ring_elem_const(const ring_elem &a) const
+  {
+    return *a.get_mpfr();
+  }
+
   // 'init', 'init_set' functions
 
   void init(ElementType &result) const { mpfr_init2(&result, mPrecision); }

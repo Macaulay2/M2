@@ -234,6 +234,11 @@ class ARingQQFlint : public RingInterface
     fmpq_set_mpq(&result, a.get_mpq());
   }
 
+  const ElementType& from_ring_elem_const(const ring_elem& a) const
+  {
+    return *reinterpret_cast<const fmpq*>(a.get_mpq());
+  }
+
   /** @} */
 
   bool promote(const Ring* Rf, const ring_elem f, ElementType& result) const

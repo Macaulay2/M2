@@ -120,6 +120,13 @@ class ARingTower : public RingInterface
     result = reinterpret_cast<ElementType>(b);
   }
 
+  // There's a strong argument that ElementType shouldn't be a pointer type
+  // it makes this function not particularly safe
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return reinterpret_cast<ElementType>(a.poly_val);
+  }
+
   // 'init', 'init_set' functions
 
   void init(elem &result) const { result = NULL; }

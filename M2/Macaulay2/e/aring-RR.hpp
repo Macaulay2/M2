@@ -72,6 +72,12 @@ class ARingRR : public RingInterface
     result = a.get_double();
   }
 
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return a.get_double();
+  }
+
+
   // 'init', 'init_set' functions
 
   void init(ElementType &result) const { result = 0.0; }

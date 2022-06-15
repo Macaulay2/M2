@@ -228,6 +228,11 @@ class ARingZZGMP : public RingInterface
     mpz_set(&result, t);
   }
 
+  const ElementType& from_ring_elem_const(const ring_elem& a) const
+  {
+    return *a.get_mpz();
+  }
+
   /** @} */
 
   bool promote(const Ring* Rf, const ring_elem f, ElementType& result) const

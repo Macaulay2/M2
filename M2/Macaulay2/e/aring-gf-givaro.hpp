@@ -174,6 +174,12 @@ class ARingGFGivaro : public RingInterface
   {
     result = a.get_int();
   }
+
+  ElementType from_ring_elem_const(const ring_elem &a) const
+  {
+    return a.get_int();
+  }
+
   /** @} */
 
   /** @name operators
