@@ -1489,7 +1489,9 @@ toCC(e:Expr):Expr := (
      is x:ZZcell do toExpr(toCC(x.v,defaultPrecision)) -- # typical value: toCC, ZZ, CC
      is x:QQcell do toExpr(toCC(x.v,defaultPrecision)) -- # typical value: toCC, QQ, CC
      is x:RRcell do toExpr(toCC(x.v)) -- # typical value: toCC, RR, CC
+     is x:RRicell do toExpr(toCC(midpointRR(x.v))) -- # typical value: toCC, RRi, CC
      is CCcell do e -- # typical value: toCC, CC, CC
+     is x:CCicell do toExpr(toCC(midpointRR(x.v.re),midpointRR(x.v.im))) -- # typical value: toCC, CCi, CC
      is s:Sequence do (
 	  if length(s) == 2 then (
 	       when s.0 is prec:ZZcell do (
@@ -1616,6 +1618,36 @@ toCCi(e:Expr):Expr := (
 	  else WrongNumArgs(1,3))
      else WrongArg("a real or complex number, or 2 or 3 arguments"));
 setupfun("toCCi",toCCi);
+
+rightCC(e:Expr):Expr := (
+     when e
+        is x:CCicell do toExpr(toCC(rightRR(x.v.re),rightRR(x.v.im)))
+        else WrongArg("an interval"));
+setupfun("right",rightCC);
+
+leftCC(e:Expr):Expr := (
+     when e
+        is x:CCicell do toExpr(toCC(leftRR(x.v.re),leftRR(x.v.im)))
+        else WrongArg("an interval"));
+setupfun("left",leftCC);
+
+widthCC(e:Expr):Expr := (
+     when e
+        is x:CCicell do toExpr(toCC(widthRR(x.v.re),widthRR(x.v.im)))
+        else WrongArg("an interval"));
+setupfun("diameter",widthCC).Protected = false;
+                                                     
+midpointCC(e:Expr):Expr := (
+     when e
+        is x:CCicell do toExpr(toCC(midpointRR(x.v.re),midpointRR(x.v.im)))
+        else WrongArg("an interval"));
+setupfun("midpoint",midpointCC);
+                                                     
+isEmptyCCi(e:Expr):Expr := (
+     when e
+        is x:CCicell do toExpr(isEmpty(x.v.re) && isEmpty(x.v.im))
+        else WrongArg("an interval"));
+setupfun("isEmptyCCi",isEmptyCCi);
 
 
 precision(e:Expr):Expr := (
