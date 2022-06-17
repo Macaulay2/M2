@@ -1650,7 +1650,7 @@ setupfun("midpoint",midpointCC);
 isEmptyCCi(e:Expr):Expr := (
      when e
         is x:RRicell do toExpr(isEmpty(x.v))
-        is x:CCicell do toExpr(isEmpty(x.v.re) && isEmpty(x.v.im))
+        is x:CCicell do toExpr(isEmpty(x.v.re) || isEmpty(x.v.im))
         else WrongArg("an interval"));
 setupfun("isEmptyCCi",isEmptyCCi);
 
