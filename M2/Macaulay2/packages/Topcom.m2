@@ -239,12 +239,6 @@ allTriangulations = method(Options => {
 -- after 1.1.0:
 --   T[0] := {{0,1,2},{1,2,3}};
 
-allTriangulations = method(Options => {
-    Homogenize=>true, 
-    RegularOnly => true, 
-    Fine => false, 
-    ConnectedToRegular => true
-    })
 allTriangulations Matrix := List => opts -> (A) -> (
     if not opts.ConnectedToRegular and opts.RegularOnly then error "cannot have both RegularOnly=>true and ConnectedToRegular=>false";
     executable := allTriangsExecutable#(opts.Fine, opts.ConnectedToRegular);
