@@ -12,20 +12,21 @@
 --   need to be able to check that weights are correct.
 newPackage(
         "Triangulations",
-        Version => "0.5", 
-        Date => "6 May 2018",
+        Version => "0.6", 
+        Date => "14 May 2022",
         Authors => {{
                 Name => "Mike Stillman", 
                 Email => "mike@math.cornell.edu", 
                 HomePage=>"http://www.math.cornell.edu/~mike"
                 }},
         Headline => "interface to a small part of topcom",
-        Keywords => {"Interfaces"},
+        Keywords => {"Combinatorics"},
         PackageImports => {"FourierMotzkin"},
         PackageExports => {
             "Topcom", 
             "Polyhedra" -- really only needed for `regularSubdivision`?
-            }
+            },
+        DebuggingMode => true
         )
 
 export {
@@ -40,12 +41,30 @@ export {
     "naiveChirotope",
     "bistellarFlip",
     "neighbors",
+    "generateTriangulations",
     
     "affineCircuits",
     "volumeVector",
-    "gkzVector"
+    "gkzVector",
     
+    "delaunayWeights",
+    "delaunaySubdivision",
+
+    "fineStarTriangulation",
+    "regularFineStarTriangulation",
+    "naiveIsTriangulation",
+    
+    "ConeIndex"
     }
+
+augment = method()
+augment Matrix := (A) -> (
+    -- A is a matrix over ZZ
+    -- add in a last row of 1's.
+    n := numColumns A;
+    ones := matrix {{n : 1}};
+    A || ones
+    )
 
 -- also defined:
 -- isRegularTriangulation T
@@ -59,6 +78,80 @@ export {
 --   Accessors: max, rays?
 Triangulation = new Type of HashTable
 Chirotope = new Type of HashTable
+
+
+-- XXX working on this 15 June 2022.
+-- Change all uses of fineStarTriangulation to return 
+-- Assumptions: A is a dxn matrix over the integers, or rationals.
+--              convexHull A 
+-- all columns of A should be boundary points (with the possible exception of the last column).
+-- A can either contain the interior point to cone over, or not.
+-- If it does contain it, I believe that no element of tri should use that index.
+
+-- Returns: a new triangulation of the point set A | 0.
+--  NOTE: not yet!  it currently returns a list of subsets, such that if one appends to each subset 
+--    the number "numcols A", this will be a star triangulation.
+--  NOTE: I'm not sure why this would need to be regular either...
+
+fineStarTriangulation = method(Options => {ConeIndex => null})
+fineStarTriangulation(Matrix, List) := List => opts -> (A, tri) -> (
+    coneindex := if opts.ConeIndex === null then 
+                     numcols A -- in this case, assume that the cone point is a new index, which would be 'numcols A'
+                 else if instance(opts.ConeIndex, ZZ) and opts.ConeIndex >= 0 and opts.ConeIndex <= numcols A + 1 then
+                     opts.ConeIndex
+                 else
+                     error "ConeIndex must be an index from 0 .. number of columns + 1...";
+    aA := augment A;
+    -- H := first halfspaces convexHull aA;
+    H := transpose(-(first fourierMotzkin aA));
+    myfacets := for e in entries H list (
+        positions(flatten entries(matrix {e} * aA), x -> x == 0)
+        );
+    sort unique flatten for f in tri list for g in myfacets list (
+        a := toList(set g * set f); 
+        if #a < numRows A then 
+            continue 
+        else 
+            sort append(a, coneindex)
+        )
+    -- newtri = for f in newtri list append(f, numColumns A)
+    )
+
+-- TODO: is this really a regular triangulation?
+-- I think it might be, as long as the cone index is not used in regularFineTriangulation.
+regularFineStarTriangulation = method()
+regularFineStarTriangulation Matrix := List => (A) -> fineStarTriangulation(A, regularFineTriangulation A)
+
+
+-- TODO: I am not sure that this is correct.
+naiveIsTriangulation = method()
+naiveIsTriangulation(Matrix, List, List) := (A, circuits, tri) -> (
+    aA := augment A;
+    -- H := first halfspaces convexHull aA;
+    H := transpose(-(first fourierMotzkin aA));
+    myfacets := for e in entries H list (
+        positions(flatten entries(matrix {e} * aA), x -> x == 0)
+        );
+    -- test 1: each wall should be in a facet of the convex hull, or occur exactly twice.
+    -- This is NOT correct?!
+    walls := tally flatten for t in tri list subsets(t,#t-1);
+    test1 := for k in keys walls list (
+        if any(myfacets, f -> isSubset(k,f)) then 
+          walls#k == 1
+        else
+          walls#k == 2
+        );
+    if any(test1, x -> not x) then return false;
+    -- test 2: for each oriented circuit Z = (Z+, Z-)
+    test2 := for z in circuits list (
+      # select(tri, t -> isSubset(z_0, t)),
+      # select(tri, t -> isSubset(z_1, t))
+      );
+    all(test2, x -> x#0 == 0 or x#1 == 0)
+    )
+naiveIsTriangulation(Matrix, List) := (A, tri) -> naiveIsTriangulation(A, orientedCircuits A, tri)
+
+
 
 -- Allow both rays and points, i.e. homogenized A or not
 triangulation = method(Options => {Homogenize => true}) -- true means this is a point set.
@@ -91,6 +184,8 @@ max Triangulation := List => T -> T.max
 matrix Triangulation := opts -> T -> transpose matrix vectors T
 
 isWellDefined Triangulation := Boolean => T -> (
+    -- Let's assume first that T is a presumed triangulation of a point set.
+    
     error "`isWellDefined Triangulation` is not yet implemented"
     -- This will check that T is a well defined triangulation
     )
@@ -99,6 +194,29 @@ Triangulation == Triangulation := Boolean => (S, T) -> S === T
 
 naiveIsTriangulation Triangulation := Boolean => T -> (
     naiveIsTriangulation(matrix T, max T) -- BUG: needs to take Homogenize?
+    )
+
+-- The following is currently only for point sets
+-- and is probably slow for larger triangulations too.
+isTriangulation = method()
+isTriangulation(Matrix, List) := (M, tri) -> (
+    -- for the moment, we assume that M is a point set.
+    d := #(tri#0) - 1;
+    P := convexHull M;
+    M' := M || matrix{{numcols M: 1}};
+    volP := d! * volume P;
+    volP2 := sum for t in tri list abs det M'_t;
+    if volP != volP2 then (
+        << "volume is not correct: " << volP << " != " << volP2 << endl;
+        return false;
+        );
+    simplices := hashTable for t in tri list t => convexHull M_t;
+    for x in subsets(keys simplices, 2) do 
+        if dim(intersection(simplices#(x#0), simplices#(x#1))) == d then (
+            << "simplices " << x << " intersect in full dimensional region" << endl;
+            return false;
+            );
+    true
     )
 
 isRegularTriangulation Triangulation := Boolean => opts -> T -> (
@@ -131,6 +249,18 @@ regularSubdivision (Matrix,Matrix) := (M,w) -> (
     sort apply (F, f -> sort apply(f#0, v -> LPH#(vertsP#v)))
     )
 
+delaunayWeights = method()
+delaunayWeights Matrix := (A) -> (
+    matrix{for i from 0 to numcols A - 1 list ((transpose A_{i}) * A_{i})_(0,0)}
+    )
+
+delaunaySubdivision = method()
+delaunaySubdivision Matrix := A -> elapsedTime regularSubdivision(A, elapsedTime delaunayWeights A)
+
+-----------------------------------------------------------
+-- Chirotope code.  This could potentially go elsewhere? --
+-----------------------------------------------------------
+
 chirotope = method(Options => true)
 
 chirotope String := {} >> opts -> s -> (
@@ -160,6 +290,8 @@ Chirotope == Chirotope := Boolean => (C, D) -> toString C === toString D
 --   This is my own code, which used to be 
 --   part of `StringTorics`, but seems more 
 --   appropriate in a `Triangulations` package.
+-- It is much slower than topcom, but allows to collect a certain number of triangulations.
+-- TODO: make an interface that yields the next triangulation when called? (matching python usage).
 --------------------------------------
 sortTriangulation = method()
 sortTriangulation List := (T) -> sort for t in T list sort t
@@ -259,7 +391,8 @@ neighbors = method()
 neighbors Triangulation := List => T -> (
     -- each element of the result is of the form:
     -- {triangulation, circuit}
-    circuits := affineCircuits T;
+    circuits0 := affineCircuits T;
+    circuits := select(circuits0, z -> #z#0 > 1 and #z#1 > 1);
     for c in circuits list (
         T1 := bistellarFlip(T, c);
         if T1 === null then continue else {c, T1}
@@ -294,7 +427,7 @@ generateTriangulations Triangulation := opts -> T -> (
 
 -- TODO? need Homogenize?
 generateTriangulations Matrix := opts -> Amat -> (
-    generateTriangulations(regularFineTriangulation Amat, opts)
+    generateTriangulations(regFineTriangulation Amat, opts)
     )
 
 volumeVector = method()
@@ -402,6 +535,31 @@ doc ///
   SeeAlso
 ///
 
+doc ///
+  Key
+    (generateTriangulations, Matrix)
+    [generateTriangulations, Limit]
+    [generateTriangulations, RegularOnly]
+  Headline
+    generate all triangulations with certain properties
+  Usage
+    Ts = generateTriangulations A
+    generateTriangulations(A, Limit => n)
+  Inputs
+    A:Matrix
+        over the integers (or rationals?), whose columns are the
+        points to use
+    Limit => ZZ
+    RegularOnly => Boolean
+  Outputs
+    Ts:List
+        of lists of integers, each such list represents a triangulation
+  Description
+    Text
+  SeeAlso
+    "Topcom::allTriangulations"
+///
+
 TEST ///
 -- of homogenization and need for it.
 -*
@@ -417,7 +575,6 @@ TEST ///
   assert(sum (for t in max T list volume convexHull A_t) == 4)
 
   A1 = transpose matrix {{-1,-1,1},{-1,1,1},{1,-1,1},{1,1,1},{0,0,1}}
-  assert(A1 == augment A) --- augment is not exported.
   T1 = regFineTriangulation(A1, Homogenize=>false)
   assert(T1 === T)
   assert(max T === {{0, 1, 4}, {0, 2, 4}, {1, 3, 4}, {2, 3, 4}}) -- they are sorted, so it should be this.
@@ -565,6 +722,7 @@ assert(not topcomIsTriangulation(V, T3))
 ///
 
 -- This example is a good one, but takes too long to be run automatically
+-- Actually, this is a test of Topcom....
 ///
 restart
   needsPackage "Topcom"  
@@ -630,12 +788,8 @@ restart
   FSRT = select(starsFine1, x -> isRegularTriangulation(A1,x)); -- 48 here...!
 
 
-  unique for tri in set5 list (
-      tri1 := fineStarTriangulation(A, tri);
-      newtri := for t in tri1 list append(t, 10);
-      newtri
-      );
-  select(oo, tri -> isRegularTriangulation(A1, tri))  
+  unique for tri in set5 list fineStarTriangulation(A, tri);
+  --select(oo, tri -> isRegularTriangulation(A1, tri))  -- this isn't defined here...
 
   -- let's test this one for being a triangulation:
   oA = orientedCircuits A
@@ -738,13 +892,14 @@ TEST ///
   bistellarFlip(tri, possibles#3) -- null
 
   neighbors tri
-  neighbors = possibles/(c -> c => bistellarFlip(tri, c))
+  nbors = possibles/(c -> c => bistellarFlip(tri, c))
   24 * gkzVector tri
-  for t in neighbors list if last t === null then continue else {t, gkzVector last t}
+  for t in nbors list if last t === null then continue else {t, gkzVector last t}
   gkzVector tri    
 ///
 
-TEST ///
+-- The following is too long for a test.
+///
   -- how many triangulations at h11=8? (roughly?)
   needsPackage "ReflexivePolytopesDB"  
   topes = kreuzerSkarke 8;
@@ -753,14 +908,26 @@ TEST ///
   P2 = polar P
   LP = matrix{latticePoints P2}
   T = regFineTriangulation LP
-  neighbors T
-  gkzVector T
+
+  T = {T}
+  T1 = T/neighbors/(t -> t/last)//flatten
+  T1/gkzVector
+
+  #T1
+  T2 = T1/(t -> neighbors t)//flatten/last//unique;
+  T2/gkzVector//matrix
+  T1 = T2;
   
+
+
+    
   methods allTriangulations
   options allTriangulations
   debugLevel = 1
-  trisLP = allTriangulations(LP, Fine => true, RegularOnly => true);  
-  
+  elapsedTime trisLP = allTriangulations(LP, Fine => true, RegularOnly => true);  
+  frsts = for t in trisLP list if all(t, t1 -> member(numcols LP - 1, t1)) then t else continue;
+  #frsts == 108
+  isStar(t, numcols LP - 1) then t else continue;
   T = regFineTriangulation LP
   debug Triangulations
   debugLevel = 0
@@ -893,6 +1060,57 @@ TEST ///
   run (topcompath|"checkregularity"|" --heights <topcomfoo.in >topcomfoo.out")
   assert not isRegularTriangulation(A,tri)
 
+///
+
+///  
+  -- now let's see about the naive way of getting regular star triangulations 
+  -- i.e. we add in the origin
+  
+  pts1 =  {{-1,0,0,-1},{-1,0,1,-1},{-1,0,1,0},{-1,1,0,-1},{-1,1,0,0},{-1,1,1,2},{1,-1,0,-1},{1,0,-1,1},{1,-1,-1,-1},{0,0,0,-1},{0,0,0,0}}
+  A1 = transpose matrix pts1
+  elapsedTime tris1 = allTriangulations(A1, Fine=>false, ConnectedToRegular=>true, RegularOnly=>false); -- 
+  fineTris1 = select(tris1, x -> # unique flatten x == numColumns A1);
+  regTris1 = select(tris1, x -> isRegularTriangulation(A1, x));  
+  fineRegTris1 = select(regTris1, x -> # unique flatten x == numColumns A1);
+  stars1 = select(tris1, x -> all(x, x1 -> member(10, x1))); -- 100 here
+  starsFine1 = select(stars1, x -> # unique flatten x == numColumns A1);
+  RST = select(stars1, x -> isRegularTriangulation(A1,x)); -- 80 here...
+  FSRT = select(starsFine1, x -> isRegularTriangulation(A1,x)); -- 48 here...!
+  #tris1 == 2254
+  #RST == 80
+  #FRST = 48
+
+  unique for tri in set5 list (
+      tri1 := fineStarTriangulation(A, tri);
+      newtri := for t in tri1 list append(t, 10);
+      newtri
+      );
+  select(oo, tri -> isRegularTriangulation(A1, tri))  
+
+  -- let's test this one for being a triangulation:
+  oA = orientedCircuits A
+  tri = set5_3
+  tally flatten for t in tri list subsets(t,4)
+  for z in oA list (
+      # select(tri, t -> isSubset(z_0, t)),
+      # select(tri, t -> isSubset(z_1, t))
+      )
+///
+
+TEST ///
+-- Bad triangulations of the square
+  V = transpose matrix {{0,0},{1,0},{0,1},{1,1}}
+  T1 = {{0,1,2}}
+  T2 = {{0,1,2},{0,1,3}}
+  T3 = {{0,1,2,3}}
+  assert(not topcomIsTriangulation(V, T1))
+  assert(not topcomIsTriangulation(V, T2))
+  assert(not topcomIsTriangulation(V, T3))
+
+  debug needsPackage "Triangulations" -- TODO: isTriangulation should be exported, or called naiveIsTriangulation.
+  assert(not isTriangulation(V, T1))
+  assert(not isTriangulation(V, T2))
+  assert(not isTriangulation(V, T3)) -- gives error, should give false!
 ///
 
 
