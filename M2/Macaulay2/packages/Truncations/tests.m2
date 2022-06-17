@@ -340,7 +340,7 @@ TEST /// -- test of truncationPolyhedron with Nef option
   N = nefGenerators dP6
 
   A = effGenerators S -- generates the effective cone
-  P = truncationPolyhedron(A, {0,0,0,0}, Nef => nefCone dP6)
+  P = truncationPolyhedron(A, {0,0,0,0}, Cone => nefCone dP6)
   Q = truncationPolyhedron(A, {0,0,0,0})
   assert(#hilbertBasis cone P == 13)
   assert(#hilbertBasis cone Q == 10)

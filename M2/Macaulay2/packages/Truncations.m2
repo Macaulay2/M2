@@ -22,7 +22,7 @@ newPackage(
         { Name => "Mahrud Sayrafi", Email => "mahrud@umn.edu",        HomePage => "https://math.umn.edu/~mahrud" }
         },
     Keywords => { "Commutative Algebra" },
-    PackageImports => { "Polyhedra" },
+    PackageExports => { "Polyhedra" },
     AuxiliaryFiles => true
     )
 
@@ -40,7 +40,6 @@ export {
     }
 
 protect Exterior
-protect Nef
 
 --------------------------------------------------------------------
 -- Helpers
@@ -102,13 +101,13 @@ nefCone Ring := R -> null -- will be overridden in Varieties package
 -- and b is an element of the Picard group of X (e.g. a multidegree in S)
 -- then truncationPolyhedron returns a polyhedron in the lattice of
 -- exponent vectors of monomials of S whose degree is in b + nef cone of X
-truncationPolyhedron = method(Options => { Exterior => {}, Nef => null })
+truncationPolyhedron = method(Options => { Exterior => {}, Cone => null })
 -- Exterior should be a list of variable indices which are skew commutative; i.e. have max degree 1.
 truncationPolyhedron(Matrix, List)   := Polyhedron => opts -> (A, b) -> truncationPolyhedron(A, transpose matrix {b}, opts)
 truncationPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
     -- assumption: A is m x n. b is m x 1.
     -- returns the polyhedron {Ax >= b, x_i >= 0}
-    -- or if Nef is present   {Ax - b in Nef cone, x_i >= 0}
+    -- or if cone C is given  {Ax - b in C, x_i >= 0}
     -- TODO: why is it better to be over QQ?
     if ring A === ZZ then A = A ** QQ;
     if ring A =!= QQ then error "expected matrix over ZZ or QQ";
@@ -124,17 +123,11 @@ truncationPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
         hdataLHS = hdataLHS || (I ^ (opts.Exterior));
         hdataRHS = hdataRHS || matrix toList(#opts.Exterior : {1_QQ});
         );
-    return if opts.Nef === null or rays opts.Nef == id_(target A)
-    -- this is correct when the Nef cone equals the positive quadrant
+    if opts#Cone === null or rays opts#Cone == id_(target A)
+    -- this is correct when the truncation cone equals the positive quadrant
     then polyhedronFromHData(hdataLHS, hdataRHS)
-    -- otherwise, compute the preimage of the Nef cone
-    else affinePreimage(-hdataLHS, opts.Nef * convexHull(z, I), hdataRHS);
-    --
-    -- this is correct when the Nef cone equals the positive quadrant
-    P := polyhedronFromHData(hdataLHS, hdataRHS);
-    if opts.Nef === null or rays opts.Nef == id_(target A) then return P;
-    -- otherwise, intersect with the preimage of the Nef cone
-    intersection(P, affinePreimage(A, opts.Nef, -b)))
+    -- otherwise, compute the preimage of the truncation cone
+    else affinePreimage(-hdataLHS, opts#Cone * convexHull(z, I), hdataRHS))
 
 -- Assume the same conditions as above,
 -- then basisPolyhedron returns a polyhedron in the lattice of
@@ -161,23 +154,23 @@ basisPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
 -- Algorithms for truncations of a polynomial ring
 --------------------------------------------------------------------
 
-truncationMonomials = method(Options => { Exterior => {}, Nef => null })
+truncationMonomials = method(Options => { Exterior => {}, Cone => null })
 truncationMonomials(List, Module) := opts -> (degs, F) -> (
     -- inputs: a list of multidegrees, a free module F = sum_i R(-a_i)
     -- assume checkOrMakeDegreeList has already been called on degs
     (R1, phi1) := flattenRing (R := ring F);
     ext := if opts.Exterior =!= null then opts.Exterior else (options R1).SkewCommutative;
-    nef := if opts.Nef      =!= null then opts.Nef      else  nefCone R1; -- changing to effCone gives an alternative result
+    nef := if opts#Cone     =!= null then opts#Cone     else  nefCone R1; -- changing to effCone gives an alternative result
     -- the free components of the degree group
     free := freeComponents degreeGroup R;
-    -- TODO: call findMins on degs, but with respect to the Nef cone!
+    -- TODO: call findMins on degs, but with respect to the given cone!
     -- checks to see if twist S(-a) needs to be truncated
-    isInNef := if nef === null then a -> any(degs, d -> d_free << a) else (
+    isInCone := if nef === null then a -> any(degs, d -> d_free << a) else (
         truncationCone := nef + convexHull(matrix (transpose degs)_free);
 	a -> contains(truncationCone, convexHull matrix transpose{a}));
     -- TODO: either figure out a way to use cached results or do this in parallel
-    directSum apply(degrees F, a -> if isInNef a_free then gens R^{a} else concatCols(
-	     apply(degs, d -> truncationMonomials(d - a, R, Exterior => ext, Nef => nef)))))
+    directSum apply(degrees F, a -> if isInCone a_free then gens R^{a} else concatCols(
+	     apply(degs, d -> truncationMonomials(d - a, R, Exterior => ext, Cone => nef)))))
 truncationMonomials(List, Ring) := opts -> (d, R) -> (
     -- inputs: a single multidegree, a graded ring
     -- valid for total coordinate ring of any simplicial toric variety
@@ -240,6 +233,7 @@ truncation1 = (deg, M) -> (
 --------------------------------------------------------------------
 
 truncateModuleOpts := {
+    Cone              => null,
     MinimalGenerators => true -- whether to trim the output
     }
 
@@ -258,12 +252,12 @@ truncate(List, Module) := Module => truncateModuleOpts >> opts -> (degs, M) -> (
     doTrim if degreeLength R === 1 and any(degrees R, d -> d =!= {0})
     then truncation1(min degs, M)
     else if isFreeModule M then return ( -- NOTE: skip trimming
-        image map(M, , truncationMonomials(degs, M)))
+        image map(M, , truncationMonomials(degs, M, Cone => opts#Cone)))
     else if not M.?relations then (
-        image map(M, , truncationMonomials(degs, cover M)))
+        image map(M, , truncationMonomials(degs, cover M, Cone => opts#Cone)))
     else subquotient(
-        gens truncate(degs, image generators M, MinimalGenerators => false),
-        gens truncate(degs, image  relations M, MinimalGenerators => false))
+        gens truncate(degs, image generators M, opts ++ { MinimalGenerators => false }),
+        gens truncate(degs, image  relations M, opts ++ { MinimalGenerators => false }))
     )
 
 --------------------------------------------------------------------
