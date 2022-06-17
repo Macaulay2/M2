@@ -2221,6 +2221,8 @@ export (x:RR) - (y:CC) : CC := toCC(x-y.re,-y.im);
 
 export (x:int) - (y:CC) : CC := toCC(x-y.re,-y.im);
 
+export (x:int) - (y:CCi) : CCi := toCCi(x-y.re,-y.im);
+
 export (x:CC) - (y:RR) : CC := toCC(x.re-y,x.im);
 
 export (x:CC) + (y:RR) : CC := toCC(x.re+y,x.im);
@@ -2284,6 +2286,11 @@ export (y:int) * (x:CC) : CC := (
      then infinityCC(precision(x))
      else toCC(x.re*y, x.im*y));
 
+export (y:int) * (x:CCi) : CCi := (
+     if isinf(x) && y != 0
+     then infinityCCi(precision(x))
+     else toCCi(x.re*y, x.im*y));
+
 export (x:CC) * (y:ZZ) : CC := (
      if isinf(x) && !isZero(y)
      then infinityCC(precision(x))
@@ -2333,6 +2340,11 @@ export (x:CC) / (y:int) : CC := (
      if y == 0 && !isnan(x) && !isZero(x)
      then infinityCC(precision(x))
      else toCC(x.re/y, x.im/y));
+
+export (x:CCi) / (y:int) : CCi := (
+     if y == 0 && !isnan(x) && !isZero(x)
+     then infinityCCi(precision(x))
+     else toCCi(x.re/y, x.im/y));
 
 export conj(x:CC):CC := toCC(x.re,-x.im);
 
@@ -2384,6 +2396,8 @@ export (x:CC) / (y:CC) : CC := x * inverse(y);
 
 export (x:CCi) / (y:CC) : CCi := x * inverse(y);
 
+export (x:CCi) / (y:CCi) : CCi := toCCi((x.re * y.re+ x.im * y.im)/(y.re * y.re + y.im * y.im),(x.im * y.re- x.re * y.im)/(y.re * y.re + y.im * y.im));
+
 export (x:RR) / (y:CC) : CC := x * inverse(y);
 
 export (x:RRi) / (y:CC) : CCi := x * inverse(y);
@@ -2391,6 +2405,8 @@ export (x:RRi) / (y:CC) : CCi := x * inverse(y);
 export (x:ZZ) / (y:CC) : CC := x * inverse(y);
 
 export (x:int) / (y:CC) : CC := x * inverse(y);
+
+export (x:int) / (y:CCi) : CCi := toCCi((y.re+y.im)/(y.re * y.re + y.im * y.im),(y.re-y.im)/(y.re * y.re + y.im * y.im));
 
 export strictequality(x:CC,y:CC):bool := strictequality(x.re,y.re) && strictequality(x.im,y.im);
 
@@ -3024,6 +3040,7 @@ mitimes(z:CC):CC := toCC(z.im, -z.re);
 idiv(z:CC):CC := toCC(z.im, -z.re);
 eitimes(z:CC):CC := exp(itimes(z));
 emitimes(z:CC):CC := exp(mitimes(z));
+
 
 export cos(z:CC):CC := (eitimes(z) + emitimes(z))/2;
 

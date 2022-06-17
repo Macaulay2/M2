@@ -13,6 +13,7 @@ globalAssignment ImmutableType
 RR.synonym = "real number"
 RRi.synonym = "real interval"
 CC.synonym = "complex number"
+CCi.synonym = "complex interval"
 RR.texMath = ///{\mathbb R}///
 RRi.texMath = ///{\square\mathbb R}///
 CC.texMath = ///{\mathbb C}///
@@ -35,6 +36,7 @@ raw InexactField := R -> R.RawRing
 RR.InexactField = RealField    = new Type of InexactField   ; RealField.synonym = "real field"
 RRi.InexactField = RealIntervalField    = new Type of InexactField   ; RealIntervalField.synonym = "real interval field"
 CC.InexactField = ComplexField = new Type of InexactField; ComplexField.synonym = "complex field"
+CCi.InexactField = ComplexIntervalField = new Type of InexactField; ComplexIntervalField.synonym = "complex interval field"
 
 Nothing' = Nothing					    -- maybe we'll want to rename it later...
 RingFamily_* := RR -> RR#(symbol _*)
@@ -45,15 +47,18 @@ InexactNumber' = new Type of Nothing'
 RR_* = RR' = new Type of InexactNumber'
 RRi_* = RRi' = new Type of InexactNumber'
 CC_* = CC' = new Type of InexactNumber'
+CCi_* = CCi' = new Type of InexactNumber'
 
 RR'.texMath = ///{\mathbb R}_*///
 RRi'.texMath = ///{\square\mathbb R}_*///
 CC'.texMath = ///{\mathbb C}_*///
 
 setAttribute(CC',PrintNet,"CC" | "*"^-1)
+setAttribute(CCi',PrintNet,"CCi" | "*"^-1)
 setAttribute(RR',PrintNet,"RR" | "*"^-1)
 setAttribute(RRi',PrintNet,"RRi" | "*"^-1)
 setAttribute(CC',PrintNames,"CC_*")
+setAttribute(CCi',PrintNames,"CCi_*")
 setAttribute(RR',PrintNames,"RR_*")
 setAttribute(RRi',PrintNames,"RRi_*")
 setAttribute(InexactNumber',PrintNet,"InexactNumber" | "*"^-1)
@@ -62,6 +67,7 @@ protect back
 RR'.back = RR
 RRi'.back = RRi
 CC'.back = CC
+CCi'.back = CCi
 new RealField of Nothing' from ZZ := memoize (
      (RealField,Nothing',prec) -> newClass(RealField,Nothing',
 	  hashTable { 
@@ -139,9 +145,11 @@ numeric Number := x -> numeric(defaultPrecision, x)
 numeric CC := identity
 numeric RR := identity
 numeric RRi := identity
+numeric CCi := identity
 numeric(ZZ,Number) := toRR
 numeric(ZZ,RRi) := (prec,x) -> toRRi(prec,left(x),right(x))
 numeric(ZZ,CC) := toCC
+numeric(ZZ,CCi) := toCCi
 infty := prec -> 1/toRR(prec,0)
 numeric InfiniteNumber := infinity -> infinity#0 * infty defaultPrecision
 numeric(ZZ, InfiniteNumber) := (prec,infinity) -> infinity#0 * infty prec
@@ -202,6 +210,7 @@ lift(RRi,ZZ) := opts -> (r,ZZ) -> (
 ring RR := x -> new RealField of RR' from precision x
 ring RRi := x -> new RealIntervalField of RRi' from precision x
 ring CC := x -> new ComplexField of CC' from precision x
+ring CCi := x -> new ComplexIntervalField of CCi' from precision x
 
 new RR from RawRingElement := (RRR,x) -> ( assert( RRR === RR ); rawToRR x)
 new RRi from RawRingElement := (RRRi,x) -> ( assert( RRRi === RRi ); rawToRRi x)
@@ -374,10 +383,12 @@ Constant ! := c -> (numeric c)!
 toString RealField := R -> concatenate("RR_",toString R.precision)
 toString RealIntervalField := R -> concatenate("RRi_",toString R.precision)
 toString ComplexField := R -> concatenate("CC_",toString R.precision)
+toString ComplexIntervalField := R -> concatenate("CCi_",toString R.precision)
 
 expression RealField := R -> new Subscript from {symbol RR, R.precision}
 expression RealIntervalField := R -> new Subscript from {symbol RRi, R.precision}
 expression ComplexField := R -> new Subscript from {symbol CC, R.precision}
+expression ComplexIntervalField := R -> new Subscript from {symbol CCi, R.precision}
 expression RR := x -> (
      if x < 0 
      then (
