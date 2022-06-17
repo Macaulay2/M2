@@ -194,7 +194,7 @@ export toExternalString(x:RR):string := (
 	       )));
 
 export toExternalString(x:RRi):string := (
-     concatenate(array(string)("[", toExternalString(leftRR(x)),",", toExternalString(rightRR(x)),"]")));
+     concatenate(array(string)("interval(", toExternalString(leftRR(x)),",", toExternalString(rightRR(x)),")")));
 
 export format(
      s:int,			  -- number of significant digits (0 means all)

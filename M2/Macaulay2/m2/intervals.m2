@@ -51,19 +51,43 @@ span List := span Sequence := {Precision => -1} >> opts -> L -> fold(L, (N, M) -
 
 for A in {ZZ,QQ,RR} do
 isMember(A,RRi) := (N,M) -> subsetRRi(N,M);
+isMember(CC,RRi) := (N,M) -> subsetCCi(N,M);
+
+for A in {ZZ,QQ,RR,CC} do
+isMember(A,CCi) := (N,M) -> subsetCCi(N,M);
 
 isSubset(RRi,RRi) := (N,M) -> subsetRRi(N,M);
+isSubset(CCi,RRi) := (N,M) -> subsetCCi(N,M);
+isSubset(CCi,CCi) := (N,M) -> subsetCCi(N,M);
 
 -- TODO: now that intersect is a binary method with arbitrary options, we can remove this
 intersection(RRi,RRi) := {Precision => -1} >> opts -> (N,M) -> (
     intersect(N, M, opts))
+intersection(RRi,CCi) := {Precision => -1} >> opts -> (N,M) -> (
+    intersect(N, M, opts))
+intersection(CCi,RRi) := {Precision => -1} >> opts -> (N,M) -> (
+    intersect(N, M, opts))
+intersection(CCi,CCi) := {Precision => -1} >> opts -> (N,M) -> (
+    intersect(N, M, opts))
 
 -- intersect is an associative binary method, so it works on arbitrary lists and sequences
 intersect RRi       := RRi => { Precision => -1 } >> opts -> identity
+intersect CCi       := CCi => { Precision => -1 } >> opts -> identity
 intersect(RRi, RRi) := RRi => { Precision => -1 } >> opts -> (N, M) -> (
     if opts.Precision < 0 then intersectRRi(N,M)
     else intersectRRi(opts.Precision,N,M))
+intersect(RRi, CCi) := CCi => { Precision => -1 } >> opts -> (N, M) -> (
+    if opts.Precision < 0 then intersectCCi(N,M)
+    else intersectCCi(opts.Precision,N,M))
+intersect(CCi, RRi) := CCi => { Precision => -1 } >> opts -> (N, M) -> (
+    if opts.Precision < 0 then intersectCCi(N,M)
+    else intersectCCi(opts.Precision,N,M))
+intersect(CCi, CCi) := CCi => { Precision => -1 } >> opts -> (N, M) -> (
+    if opts.Precision < 0 then intersectCCi(N,M)
+    else intersectCCi(opts.Precision,N,M))
 
 isEmpty RRi := Boolean => isEmptyRRi
+isEmpty CCi := Boolean => isEmptyCCi
 
+toExternalString CCi :=
 toExternalString RRi:= x -> "interval" | toExternalString (left x, right x)

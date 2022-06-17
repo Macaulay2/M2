@@ -96,6 +96,7 @@ default InexactFieldFamily := R -> R_defaultPrecision
 diameter' = diameter
 diameter = method()
 diameter RRi := diameter'
+diameter CCi := diameter'
 
 -- lift and promote between real or complex rings
 promote(RawRingElement,RR') := (x,R) -> new RR from x
@@ -404,6 +405,8 @@ net InexactField := R -> net expression R
 net CC := z -> simpleToString z
 toExternalString RR := toExternalString0
 toExternalString CC := toExternalString0
+toExternalString RRi := toExternalString0
+toExternalString CCi := toExternalString0
 texMath CC := x -> texMath expression x
 texMath RR := x -> (
     if not isANumber x then texMath toString x else

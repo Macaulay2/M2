@@ -1621,34 +1621,123 @@ setupfun("toCCi",toCCi);
 
 rightCC(e:Expr):Expr := (
      when e
+        is x:RRicell do toExpr(rightRR(x.v))
         is x:CCicell do toExpr(toCC(rightRR(x.v.re),rightRR(x.v.im)))
         else WrongArg("an interval"));
 setupfun("right",rightCC);
 
 leftCC(e:Expr):Expr := (
      when e
+        is x:RRicell do toExpr(leftRR(x.v))
         is x:CCicell do toExpr(toCC(leftRR(x.v.re),leftRR(x.v.im)))
         else WrongArg("an interval"));
 setupfun("left",leftCC);
 
 widthCC(e:Expr):Expr := (
      when e
+        is x:RRicell do toExpr(widthRR(x.v))
         is x:CCicell do toExpr(toCC(widthRR(x.v.re),widthRR(x.v.im)))
         else WrongArg("an interval"));
 setupfun("diameter",widthCC).Protected = false;
                                                      
 midpointCC(e:Expr):Expr := (
      when e
+        is x:RRicell do toExpr(midpointRR(x.v))
         is x:CCicell do toExpr(toCC(midpointRR(x.v.re),midpointRR(x.v.im)))
         else WrongArg("an interval"));
 setupfun("midpoint",midpointCC);
                                                      
 isEmptyCCi(e:Expr):Expr := (
      when e
+        is x:RRicell do toExpr(isEmpty(x.v))
         is x:CCicell do toExpr(isEmpty(x.v.re) && isEmpty(x.v.im))
         else WrongArg("an interval"));
 setupfun("isEmptyCCi",isEmptyCCi);
 
+subsetCCi(e:Expr):Expr := (
+     when e is s:Sequence do (
+	    if length(s) > 3 then WrongNumArgs(1,3) else
+	    if length(s) == 2 then (
+               when s.0 is x:ZZcell do (
+               	    when s.1 is y:ZZcell do (toExpr(x.v===y.v))
+		    	             is y:QQcell do (toExpr(x.v===y.v))
+			                 is y:RRcell do (toExpr(x.v===y.v))
+			                 is y:CCcell do (toExpr(x.v===y.v))
+                             is y:RRicell do (toExpr(contains(x.v,y.v)))
+                             is y:CCicell do (toExpr(contains(x.v,y.v.re) && rightRR(y.v.im) > 0 && leftRR(y.v.im) < 0))
+                    else WrongArg(1,"a pair of integral, rational, real numbers or intervals"))
+               is x:QQcell do (
+               	    when s.1 is y:ZZcell do (toExpr(x.v===y.v))
+		    	             is y:QQcell do (toExpr(x.v===y.v))
+			                 is y:RRcell do (toExpr(x.v===y.v))
+			                 is y:CCcell do (toExpr(x.v===y.v))
+                             is y:RRicell do (toExpr(contains(x.v,y.v)))
+                             is y:CCicell do (toExpr(contains(x.v,y.v.re) && rightRR(y.v.im) > 0 && leftRR(y.v.im) < 0))
+                    else WrongArg(1,"a pair of integral, rational, real numbers or intervals"))
+               is x:RRcell do (
+               	    when s.1 is y:ZZcell do (toExpr(x.v===y.v))
+		    	             is y:QQcell do (toExpr(x.v===y.v))
+			                 is y:RRcell do (toExpr(x.v===y.v))
+			                 is y:CCcell do (toExpr(x.v===y.v))
+                             is y:RRicell do (toExpr(contains(x.v,y.v)))
+                             is y:CCicell do (toExpr(contains(x.v,y.v.re) && rightRR(y.v.im) > 0 && leftRR(y.v.im) < 0))
+                    else WrongArg(1,"a pair of integral, rational, real numbers or intervals"))
+                is x:RRicell do (
+               	    when s.1 is y:ZZcell do (toExpr(x.v===y.v))
+		    	             is y:QQcell do (toExpr(x.v===y.v))
+			                 is y:RRcell do (toExpr(x.v===y.v))
+			                 is y:CCcell do (toExpr(x.v===y.v))
+                             is y:RRicell do (toExpr(contains(x.v,y.v)))
+                             is y:CCicell do (toExpr(contains(x.v,y.v.re) && rightRR(y.v.im) > 0 && leftRR(y.v.im) < 0))
+                    else WrongArg(1,"a pair of integral, rational, real numbers or intervals"))
+               is x:CCcell do (
+               	    when s.1 is y:ZZcell do (toExpr(x.v===y.v))
+		    	             is y:QQcell do (toExpr(x.v===y.v))
+			                 is y:RRcell do (toExpr(x.v===y.v))
+			                 is y:CCcell do (toExpr(x.v===y.v))
+                             is y:RRicell do (toExpr(contains(x.v.re,y.v) && x.v.im === 0))
+                             is y:CCicell do (toExpr(contains(x.v.re,y.v.re) && contains(x.v.im,y.v.im)))
+                    else WrongArg(1,"a pair of integral, rational, real numbers or intervals"))
+                is x:CCicell do (
+               	    when s.1 is y:ZZcell do (toExpr(x.v===y.v))
+		    	             is y:QQcell do (toExpr(x.v===y.v))
+			                 is y:RRcell do (toExpr(x.v===y.v))
+			                 is y:CCcell do (toExpr(x.v===y.v))
+                             is y:RRicell do (toExpr(contains(x.v.re,y.v) && contains(x.v.im,toCCi(y.v).im)))
+                             is y:CCicell do (toExpr(contains(x.v.re,y.v.re) && contains(x.v.im,y.v.im)))
+                    else WrongArg(1,"a pair of integral, rational, real numbers or intervals"))
+                else WrongArg(1,"a pair of integral, rational, real numbers or intervals")) else
+            WrongArg(1,"a pair of integral, rational, real numbers or intervals"))
+         else WrongArg(1,"a pair of integral, rational, real numbers or intervals"));
+setupfun("subsetCCi",subsetCCi);
+
+intersectCCi(e:Expr):Expr := (
+    when e
+    	 is s:Sequence do (
+	     if length(s) > 3 then WrongNumArgs(1,3) else
+	     if length(s) == 2 then (
+               when s.0 is x:RRicell do (
+               	       when s.1 is y:RRicell do toExpr(intersectRRi(x.v,y.v))
+		       is y:CCicell do toExpr(toCCi(intersectRRi(x.v,y.v.re)))
+                    	        else WrongArg(1,"a pair of intervals"))
+			is x:CCicell do (
+               	       when s.1 is y:RRicell do toExpr(toCCi(intersectRRi(x.v.re,y.v)))
+		       is y:CCicell do toExpr(toCCi(intersectRRi(x.v.re,y.v.re),intersectRRi(x.v.im,y.v.im)))
+                    	        else WrongArg(1,"a pair of intervals"))
+                       else WrongArg("a pair of intervals"))
+	    else when s.0 is prec:ZZcell do (
+	           when s.1 is x:RRicell do (
+                       when s.2 is y:RRicell do toExpr(intersectRRi(x.v,y.v,toULong(prec.v)))
+		       		       is y:CCicell do toExpr(toCCi(intersectRRi(x.v,y.v.re,toULong(prec.v))))
+                                else WrongArg(1,"a pair of intervals"))
+	           is x:CCicell do (
+                       when s.2 is y:RRicell do toExpr(toCCi(intersectRRi(x.v.re,y.v,toULong(prec.v))))
+		       		       is y:CCicell do toExpr(toCCi(intersectRRi(x.v.re,y.v.re,toULong(prec.v)),intersectRRi(x.v.im,y.v.im,toULong(prec.v))))
+                                else WrongArg(1,"a pair of intervals"))
+	       else WrongArg(1,"a pair of intervals"))
+	    else WrongArg(1,"a pair of intervals"))
+   	 else WrongArg("a pair of intervals"));
+setupfun("intersectCCi",intersectCCi);
 
 precision(e:Expr):Expr := (
      when e
