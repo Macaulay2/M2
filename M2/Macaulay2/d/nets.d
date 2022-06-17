@@ -71,7 +71,7 @@ export lines(s:string):array(string) := (
 export toNet(s:string):Net := (
      v := if length(s) > 0 then lines(s) else array(string)(s);
      wid := 0;
-     foreach s in v do if wid < length(s) then wid = length(s);
+     foreach s in v do if wid < utf8width(s) then wid = utf8width(s);
      Net(1,wid,v));
 export toNet(c:char):Net := toNet(string(c));
 export RaiseNet(n:Net,i:int):Net := Net(n.height+i,n.width,n.body);
@@ -79,11 +79,7 @@ export HorizontalJoin(v:array(Net)):Net := (
      if length(v) == 0 then return Net(0,0,array(string)());
      if length(v) == 1 then return v.0;
      width := 0;
-     accumwids := new array(int) len length(v) do (
-	  foreach n in v do (
-	       o := width;
-	       width = width + n.width;
-	       provide o));
+     foreach n in v do width = width + n.width;
      height := v . 0 . height;
      for i from 1 to length(v)-1 do (
 	  if height < v.i.height then height = v.i.height);
@@ -92,35 +88,28 @@ export HorizontalJoin(v:array(Net)):Net := (
 	  thislen := height - v . i . height + length(v.i.body);
 	  if leng < thislen then leng = thislen;
 	  );
-     widths := new array(int) len leng at row do (
-	  j := length(v)-1;
-	  while true do (
+     lengths := new array(int) len leng at row do (
+	  l := 0;
+	  for j from length(v)-1 to 0 by -1 do (
 	       n := v.j;
-	       k := row + n.height - height ;
+	       k := row + n.height - height;
 	       body := n.body;
 	       if 0 <= k && k < length(body) then (
-		    l := length(body.k);
-		    if l > 0 then (
-		    	 provide l + accumwids.j;
-			 break;
-			 );
-		    );
-	       j = j-1;
-	       if j < 0 then (
-	  	    provide 0;
-		    break;
-		    );
+		    if l > 0 then l = l + length(body.k) + n.width - utf8width(body.k)
+		    else l = length(body.k);
+		    ) else if l > 0 then l = l + n.width;
 	       );
+	       provide l
 	  );
      Net(height,width, 
 	  new array(string) len leng at row do
-	  provide new string len widths.row do (
+	  provide new string len lengths.row do (
 	       foreach n in v do (
 	       	    k := row + n.height - height ;
 		    if 0 <= k && k < length(n.body) then (
 			 s := n.body.k;
 		    	 foreach c in s do provide c;
-		    	 for n.width - length(s) do provide ' ')
+			 for n.width - utf8width(s) do provide ' ')
 		    else for n.width do provide ' '))));
 
 export VerticalJoin(v:array(Net)):Net := (
@@ -256,7 +245,7 @@ subnet(t:Net,startcol:int,wid:int):Net := (
      if startcol == 0 && wid == t.width then return t;
      Net( t.height, 
 	  wid, 
-	  new array(string) len length(t.body) do foreach s in t.body do provide substr(s,startcol,wid)
+	  new array(string) len length(t.body) do foreach s in t.body do provide utf8substr(s,startcol,wid)
 	  ));
 
 export wrap(wid:int, sep:char, t:Net):Net := (

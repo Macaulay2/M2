@@ -64,6 +64,41 @@ export index(s:string,offset:int,c:char,d:char):int := (
      while i+1 < length(s) do if c == s.i && d==s.(i+1) then return i else i=i+1;
      -1);     
 
+utf8charlength(c0:char):int := (
+    c := int(uchar(c0));
+    if (c & 0x80) == 0 then 1
+    else if (c & 0xe0) == 0xc0 then 2
+    else if (c & 0xf0) == 0xe0 then 3
+    -- else if (c & 0xf8) == 0xf0 then 4
+    else 4
+);
+
+export utf8width(s:string):int := (
+     n := length(s);
+     i := 0;
+     l := 0;
+     while i < n do (
+	  l = l + 1;
+	  i = i + utf8charlength(s.i);
+     );
+     l
+);
+
+export utf8substr(s:string,start:int,wid:int):string := ( -- compared to substr, start and wid are in utf8 characters, not bytes
+     i := 0;
+     for j from 0 to start-1 do (
+	  if i >= length(s) then break;
+	  i = i + utf8charlength(s.i);
+	  );
+     start1 := i;
+     for j from 0 to wid-1 do (
+	  if i >= length(s) then break;
+	  i = i + utf8charlength(s.i);
+	  );
+     substr(s,start1,i-start1)
+);
+
+
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d strings.o "
