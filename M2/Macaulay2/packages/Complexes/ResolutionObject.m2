@@ -856,7 +856,7 @@ Hom(D^1, D^1/(dx,dy,dz))
 
 restart
 needsPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
+load "ResolutionObject.m2"
 
 R = ZZ/101[x,y,z]
 cechComplex monomialIdeal(x,y,z)
@@ -883,8 +883,22 @@ I = ideal"a2b-c2, abc-d2"
 isHomogeneous I
 debugLevel = 1
 gbTrace=1
-C = freeResolution I
-peek C.cache
+elapsedTime C1 = freeResolution I
+I = ideal I_*
+elapsedTime C2 = freeResolution(I, Strategy => "Syzygies")
+peek C1.cache
+peek C2.cache
+
+I = ideal"a7b-c2, ab5c-d2, a5c-c2-d2, a3b3-c2d-a2"
+isHomogeneous I
+debugLevel = 1
+gbTrace=1
+elapsedTime C1 = freeResolution I
+I = ideal I_*
+elapsedTime C2 = freeResolution(I, Strategy => "Syzygies")
+peek C1.cache
+peek C2.cache
+
 
 I = ideal"a2b-c2, abc-d2"
 freeResolution(I, LengthLimit => 2)
