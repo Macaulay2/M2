@@ -1,7 +1,6 @@
--- todo for April 11, 2022:
---   we just had finished resolutionBySyzygies, although maybe some more testing is in order.
+-- todo for June/July 2022:
+--   we just had finished resolutionBySyzgyies, although maybe some more testing is in order.
 --   e.g.: interrupts, Weyl algebra.
---   need: Strategy => OverZZ.
 --   need: Strategy => Inhomogeneous.
 --   . take our example collection and make into a robust set of tests.
 --   . write gradedModule function to make a complex out of a hashtable of modules (maps are zero).
@@ -330,14 +329,36 @@ resolutionOverField = (opts, M) -> (
     RO := M.cache.ResolutionObject;
     
     RO.compute = (lengthlimit, degreelimit) -> (
-        RO.FieldComputation = minimalPresentation M;
+        RO.Computation = minimalPresentation M;
         );
 
     RO.isComputable = (lengthlimit, degreelimit) -> true;
 
     RO.complex = (lengthlimit) -> (
-        N := RO.FieldComputation;
+        N := RO.Computation;
         C := complex N;
+        C.cache.augmentationMap = map(complex M, C, i -> 
+            if i === 0 then map(M, C_0, matrix N.cache.pruningMap));
+        C);
+    
+    RO.compute(opts.LengthLimit, opts.DegreeLimit);
+    RO.complex(opts.LengthLimit)
+    )
+
+resolutionOverZZ = (opts, M) -> (
+    R := ring M;
+    if R =!= ZZ then return null;
+    RO := M.cache.ResolutionObject;
+    
+    RO.compute = (lengthlimit, degreelimit) -> (
+        RO.Computation = minimalPresentation M;
+        );
+
+    RO.isComputable = (lengthlimit, degreelimit) -> true;
+
+    RO.complex = (lengthlimit) -> (
+        N := RO.Computation;
+        C := complex {presentation N};
         C.cache.augmentationMap = map(complex M, C, i -> 
             if i === 0 then map(M, C_0, matrix N.cache.pruningMap));
         C);
@@ -378,7 +399,7 @@ resolutionBySyzygies = (opts, M) -> (
             else if hasNoQuotients R then (
                 K = ultimate(coefficientRing, R);
                 lengthlimit = # gens(R, CoefficientRing => K);
-                if K === ZZ then lengthlimit = lengthlimit + 1;
+                if K === ZZ then lengthlimit = lengthlimit + 2; -- +1 if we can change the first matrix.
                 )
             else error "require LengthLimit to be finite";
             );
@@ -468,12 +489,13 @@ addHook((freeResolution, Module), resolutionInEngine2, Strategy => 2)
 addHook((freeResolution, Module), resolutionInEngine3, Strategy => 3)
 addHook((freeResolution, Module), resolutionInEngine1, Strategy => 1)
 addHook((freeResolution, Module), resolutionInEngine, Strategy => Engine)
+addHook((freeResolution, Module), resolutionOverZZ, Strategy => "ZZ")
 addHook((freeResolution, Module), resolutionOverField, Strategy => "Field")
 
 debug Core
 cechComplex = method()
 cechComplex MonomialIdeal := Complex => B -> (
-    if radical B != B then error "expected squarefree monomial ideal";
+    if not isSquareFree B then error "expected squarefree monomial ideal";
     R := ring B;
     n := numgens R;
     g := gens R;
@@ -507,7 +529,9 @@ cechComplex MonomialIdeal := Complex => B -> (
 end--
 restart
 debug loadPackage("Complexes", FileName => "../Complexes.m2")
-load "ResolutionObject.m2"
+needsPackage "Complexes" -- running M2 in packages directory...
+
+--load "ResolutionObject.m2"
 gbTrace=1
 S = ZZ/101[a..d]
 I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
@@ -551,7 +575,6 @@ F3 = freeResolution(M, LengthLimit => 5)
 
 restart
 debug loadPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
 gbTrace=1
 S = ZZ/101[vars(0..20)]
 I = ideal for i from 1 to numgens S list S_(i-1)^i
@@ -559,18 +582,16 @@ M = S^1/I
 F = freeResolution(M, Strategy => Engine)
 -- control-c in the middle, look at M.cache.ResolutionObject
 peek M.cache.ResolutionObject
-F = freeResolution(M, LengthLimit => 4)
+F = freeResolution(M, LengthLimit => 4) -- BUG? Doesn't seem to finish.
 assert isWellDefined F
-F2 = freeResolution(M, LengthLimit => 2)
+F2 = freeResolution(M, LengthLimit => 2) -- BUG? Doesn't seem to finish.
 
 -- exterior algebra example
 restart
 debug loadPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
 E = ZZ/101[a..d, SkewCommutative => true]
 I = ideal"ab, acd"
 C = freeResolution(I) -- gives an error
-break
 C = freeResolution(I, LengthLimit => 5)
 
 I = ideal"ab, acd"
@@ -589,7 +610,6 @@ res(R^1/I, Strategy => "Syzygies")
 -- module over a quotient ring
 restart
 debug loadPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
 R = ZZ/101[a..d]/(a^2-b^2, a*b*c)
 I = ideal"ab, acd"
 C0 = freeResolution(I, LengthLimit => 6, Strategy => 0)
@@ -617,43 +637,43 @@ I = ideal"ab, acd"
 -- inhomogeneous example
 restart
 debug loadPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
 R = ZZ/101[a..d]
 I = ideal"a3-b2, abc-d, a3-d"
-freeResolution(I, Strategy=>2)
+freeResolution(I, Strategy=>2) -- BUG: error message is not accurate.
 
+C = freeResolution(I, LengthLimit => 6) -- BUG: the last call to freeResolution left the computation in a bad state probably.
 prune HH C
-C = freeResolution(I, LengthLimit => 6)
+
 methods res
 --
 
 -- Over the rationals
 restart
+needsPackage "Complexes"
 S = QQ[a..d]
 I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
 M = S^1/I
 res M
---F = freeResolution(M, Strategy => Engine)
+F = freeResolution(M, Strategy => Engine)
 F = freeResolution(M)
 
 -- Weyl algebra
 restart
+needsPackage "Complexes"
 S = QQ[x,y,Dx,Dy,h, WeylAlgebra => {{x,Dx}, {y,Dy}, h}]
 M = coker matrix{{x*Dx, y*Dx}}
 isHomogeneous M
 gbTrace=1
-res(M, Strategy => 2)
+res(M, Strategy => 2) -- fails
+res M --works
 
-I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-M = S^1/I
-res M
---F = freeResolution(M, Strategy => Engine)
-F = freeResolution(M)
+
+F = freeResolution(M) -- BUG.  
+F = freeResolution(M, Strategy => 2) -- works
 
 -- Over a field
 restart
 debug loadPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
 gbTrace=1
 kk = ZZ/32003
 M = coker random(kk^3, kk^2)
@@ -665,14 +685,12 @@ isWellDefined g
 coker g == 0
 ker g == 0 -- since this is an isomorphism
 
-res M -- BUG: this is wrong. 
-
+assert(instance(res M, ChainComplex)) -- BUG: this is wrong. It is returning a Matrix!
 
 
 -- Over an inexact field
 restart
 debug loadPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
 gbTrace=1
 kk = RR_53
 kk = ZZ/101
@@ -690,7 +708,6 @@ res M
 
 restart
 debug loadPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
 gbTrace=1
 kk = ZZ/101
 A = kk[a,b,c]
@@ -703,100 +720,47 @@ freeResolution(M, LengthLimit => 5, DegreeLimit => 4)
 freeResolution(M, LengthLimit => 4)
 freeResolution(M, LengthLimit => 6, DegreeLimit => 1)
 M = comodule ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-F = freeResolution(M, Strategy => 2)
+F = freeResolution(M, Strategy => 2, LengthLimit => 5)
 assert isWellDefined F
 
 M = comodule ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-F = freeResolution(M, Strategy => 0)
+F = freeResolution(M, Strategy => 0, LengthLimit => 5)
 assert isWellDefined F
 
 M = comodule ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-F = freeResolution(M, Strategy => 3)
+F = freeResolution(M, Strategy => 3, LengthLimit => 6)
 assert isWellDefined F
 
 I = ideal(a*b-c*d, a^3-c^3, a*b^2-c*d^2)
-F = freeResolution(I, Strategy => 4) -- nonminimal...
+F = freeResolution(I, Strategy => 4, LengthLimit => 6) -- nonminimal... NOT PUT BACK INTO Complexes yet...
 assert isWellDefined F
 
 I = ideal I_*
 F = freeResolution(I, DegreeLimit => 3, LengthLimit => 2)
 F = freeResolution(I, DegreeLimit => 2, LengthLimit => 2)
-F = freeResolution I
--- change strategy
--- degree limit, changing degree limit
--- hooks
--- ComputationContext stuff...
-
-
-use S
-R = S/(a^2, b^2, c^2, d^2)
-I = ideal(a,b,c,d)
-F = freeResolution I
-betti F
-assert isWellDefined F
-
-I = ideal(a,b,c,d)
-F = freeResolution(I, LengthLimit => 3)
-F = freeResolution(I, LengthLimit => 4)
-F = freeResolution(I, LengthLimit => 6)
 F = freeResolution(I, LengthLimit => 4)
 
-W = resolutionObject(gens I, Strategy => 4)
-compute W
-F = complex W
-assert isWellDefined F
-assert(prune HH F == complex comodule I)
-
-raw W
-peek W
-raw W
-
-restart
-R = ZZ/101[a..d]
-M = coker vars R
-C = res M
-C.cache
-debug Core
-peek M.cache#(new ResolutionContext)
 
 -- Resolution by syzygies
--- #1 Over ZZ needs separate hook.
+-- #1 Over ZZ needs separate hook. Done!
   restart
   needsPackage "Complexes"
-  load "Complexes/ResolutionObject.m2"
   
   m = matrix{{2,3,7},{7,14,21}}
   M = coker m
   -- new code:
-  C = freeResolution(M, Strategy => "Syzygies")
+  C = freeResolution M -- BUG: not a resolution!!
+  f = augmentationMap C
+  assert isWellDefined f
+  assert isQuasiIsomorphism f
+  assert(HH coker f == 0)
 
-  gbTrace=2
-  syz m
-  C = res M
-  C.dd
-  res(M, Strategy => "Syzygies")
-  presentation M
-  minimalPresentation M
-
--- Example 2
-  restart
-  needsPackage "Complexes"
-  load "Complexes/ResolutionObject.m2"
-  S = ZZ/101[a..d]
-  R = S/(a^2, b^2, c^2, d^2)
-  I = ideal(a,b,c,d)
-  m = syz gens I
-  schreyerOrder source m
-  debug Core
-  raw source m
-  n = schreyerOrder m
-  schreyerOrder source n
-  n2 = syz n
-  raw target n2
-  raw source n2
-  F = freeResolution(I, LengthLimit => 7, Strategy => "Syzygies")
-  isWellDefined F
-  prune HH F
+  M = coker matrix {{2,3,7},{7,14,21}}
+  C = freeResolution(M, Strategy => "Syzygies") 
+  f = augmentationMap C
+  assert isWellDefined f
+  assert isQuasiIsomorphism f
+  assert(HH coker f == 0)
 
   -- Weyl algebra example
   -- Exterior algebra example
@@ -809,54 +773,12 @@ peek M.cache#(new ResolutionContext)
   F = freeResolution(E^1/I, LengthLimit => 7, Strategy => "Syzygies")
   isWellDefined F
   -- TODO: write gradedModule function to make a complex out of a hashtable of modules (maps are zero).
-  for i from 0 to length F - 1 list i => prune HH_i F
+  hashTable for i from 0 to length F - 1 list i => prune HH_i F
   betti F
 
-D = QQ[x,y,z,dx,dy,dz, WeylAlgebra => {x => dx, y => dy, z => dz}, Degrees => {{1},{1},{1},{-1},{-1},{-1}}];
-degree (x*dx)
-isHomogeneous (x*dx)
-
--- Cech complex on P^2
-restart
-needsPackage("Complexes")
-load "Complexes/ResolutionObject.m2"
-R = ZZ/101[x,y,z]
-F = dual freeResolution module ideal vars R
-dd^F
-
-
-
-D = QQ[x,y,z,dx,dy,dz, WeylAlgebra => {x => dx, y => dy, z => dz}, Degrees => {
-        {1,0,0},{0,1,0},{0,0,1},
-        {-1,0,0},{0,-1,0},{0,0,-1}}]
-I = ideal(x,y,z)
-FI = freeResolution module I
-F = dual FI
-Fx = D^{{1,0,0}}/(x*dx+1, dy, dz)
-Fy = D^{{0,1,0}}/(dx, y*dy+1, dz)
-Fz = D^{{0,0,1}}/(dx, dy, z*dz+1)
-Fxy = D^{{1,1,0}}/(x*dx+1, y*dy+1, dz)
-Fxz = D^{{1,0,1}}/(x*dx+1, dy, z*dz+1)
-Fyz = D^{{0,1,1}}/(dx, y*dy+1, z*dz+1)
-Fxyz = D^{{1,1,1}}/(x*dx+1, y*dy+1, z*dz+1)
-
-phi = map(D, R)
-FD = phi F
-d1 = map(Fxyz, Fxy ++ Fxz ++ Fyz, dd^FD_-1)
-isWellDefined d1
-d0 = map(source d1, Fx ++ Fy ++ Fz, dd^FD_0)
-isWellDefined d0
-d1 * d0
-C = complex({d1, d0}, Base => -2)
-isWellDefined C
-prune HH C
-prune HH^2 C
-prune Hom(C, D^1/(dx,dy,dz))
-Hom(D^1, D^1/(dx,dy,dz))
 
 restart
-needsPackage("Complexes")
-load "ResolutionObject.m2"
+debug needsPackage("Complexes")
 
 R = ZZ/101[x,y,z]
 cechComplex monomialIdeal(x,y,z)
@@ -870,10 +792,6 @@ I = monomialIdeal intersect(ideal(s_0,s_1), ideal(t_0,t_1))
 C = cechComplex I
 prune HH C
 
-prune HH C
-n = 3
-entries (id_(ZZ^n) || - id_(ZZ^n))
-
 ---- Inhomogeneous
 restart
 needsPackage "Complexes"
@@ -884,6 +802,12 @@ isHomogeneous I
 debugLevel = 1
 gbTrace=1
 elapsedTime C1 = freeResolution I
+assert isWellDefined C1
+f = augmentationMap C1
+assert isWellDefined f
+assert isQuasiIsomorphism f
+assert(coker f == 0)
+
 I = ideal I_*
 elapsedTime C2 = freeResolution(I, Strategy => "Syzygies")
 peek C1.cache
@@ -899,17 +823,6 @@ elapsedTime C2 = freeResolution(I, Strategy => "Syzygies")
 peek C1.cache
 peek C2.cache
 
-
-I = ideal"a2b-c2, abc-d2"
-freeResolution(I, LengthLimit => 2)
-freeResolution(I, LengthLimit => 3)
-C = oo
-peek C.cache
-minimize C
-methods minimize
-dd^C
-(res I).dd
-
 -- homogeneous quotient ring as coefficient ring
 restart
 loadPackage "Complexes"
@@ -918,17 +831,8 @@ A = kk[s,t]/(s^3, t^3)
 B = A[x,y,z, Join => false]
 I = ideal(s*x-t*y, s^2*z^3-x^5)
 isHomogeneous I
-debugLevel = 1
-gbTrace = 1
-res I
-I = ideal I_*
-res(I, Strategy => 2)
-(B1,f1) = flattenRing B
-I1 = f1 I
-res I1
-res(I1, LengthLimit => 4)
-freeResolution(I, LengthLimit => 4)
-
+C = freeResolution(I, LengthLimit => 4)
+isWellDefined C
 
 -- Test of Strategy => Homogenization
 restart
@@ -940,14 +844,17 @@ I = ideal(s*x-t*y, s^2*z^3-x^4)
 isHomogeneous I
 debugLevel = 1
 gbTrace=1
-res I
+res I -- BUG! (one we don't care about)
 res(I, Strategy => "Syzygies", LengthLimit => 3)
 freeResolution(I, Strategy => "Syzygies", LengthLimit => 3)
-freeResolution(I, LengthLimit => 3)
-minimize o10
+debugLevel = 3
+gbTrace = 1
+printLevel = 1
+I = ideal I_*
+freeResolution(I, LengthLimit => 3) -- how to tell what strategy is being used
 
 -- XXX Start here: make an example for inhomg resolution computation.
--- 19 May 2022.
+-- 20 June 2022.
 
--- need a suite of examples for towers/homogeneity, which algorithm is best?
+-- *** need a suite of examples for towers/homogeneity, which algorithm is best?
 -- 

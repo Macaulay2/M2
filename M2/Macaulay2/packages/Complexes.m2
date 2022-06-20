@@ -73,9 +73,8 @@ protect modules
 
 -- These are keys used in the various ResolutionObject's
 protect SyzygyList
-protect FieldComputation
+protect Computation
 protect compute
-protect radical
 protect SchreyerOrder
 protect isComputable
 
