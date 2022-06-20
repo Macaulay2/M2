@@ -395,26 +395,26 @@ cechComplex MonomialIdeal := Complex => B -> (
     n := numgens R;
     g := gens R;
     makediff := (s) -> (
-        if class s === Symbol then "d" | toString s
+        if class s === Symbol then getSymbol("D" | toString s)
         else if class s === IndexedVariable then (
-            ds := getSymbol("d"|toString first s); 
+            ds := getSymbol("D"|toString first s); 
             ds_(last s)
             )
         );
     dg := for x in R.generatorSymbols list makediff x;
-    weylPairs := for i to #g-1 list g#i =>  dg#i;
-    D := (coefficientRing R)(monoid[g, dg, 
+    weylPairs := for i to #g-1 list g#i => dg#i;
+    W := (coefficientRing R)(monoid[g, dg, 
             WeylAlgebra => weylPairs,
             Degrees => entries (id_(ZZ^n) || - id_(ZZ^n))
             ]);
-    phi := map(D, R);
+    phi := map(W, R);
     F := dual freeResolution module phi B;
     (lo, hi) := concentration F;
     modules := hashTable for i from lo to hi list i => (
         degs := degrees F_i;
         directSum for d in degs list (
             -- d is a list of -1's and 0's of length n
-            D^{-d}/ideal for i to n-1 list if d#i === -1 then D_i * D_(n+i) + 1 else D_(n+i)
+            W^{-d}/ideal for i to n-1 list if d#i === -1 then W_i * W_(n+i) + 1 else W_(n+i)
             )
         );
     maps := for i from lo+1 to hi list map(modules#(i-1), modules#i, dd^F_i);
@@ -780,6 +780,7 @@ cechComplex monomialIdeal(x,y,z)
 
 R = ZZ/101[a..d]
 C = cechComplex monomialIdeal(a*c,b*c,a*d,b*d)
+prune HH C
 
 R = ZZ/101[s_0,s_1,t_0,t_1]
 I = monomialIdeal intersect(ideal(s_0,s_1), ideal(t_0,t_1))
