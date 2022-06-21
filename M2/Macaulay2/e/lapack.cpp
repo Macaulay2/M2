@@ -25,7 +25,7 @@ double *make_lapack_array(const DMat<M2::ARingRRR> &mat)
     {
       auto end = mat.columnEnd(c);
       for (auto a = mat.columnBegin(c); a != end; ++a)
-        *p++ = mpfr_get_d(&(*a), GMP_RNDN);
+        *p++ = mpfr_get_d(&(*a), MPFR_RNDN);
     }
   return result;
 }
@@ -41,8 +41,8 @@ double *make_lapack_array(const DMat<M2::ARingCCC> &mat)
       auto end = mat.columnEnd(c);
       for (auto a = mat.columnBegin(c); a != end; ++a)
         {
-          *p++ = mpfr_get_d(&(*a).re, GMP_RNDN);
-          *p++ = mpfr_get_d(&(*a).im, GMP_RNDN);
+          *p++ = mpfr_get_d(&(*a).re, MPFR_RNDN);
+          *p++ = mpfr_get_d(&(*a).im, MPFR_RNDN);
         }
     }
   return result;
@@ -503,7 +503,7 @@ bool Lapack::eigenvectors(const LMatrixRRR *A,
           eigvals->ring().set_from_doubles(elems[j], real[j], imag[j]);
           auto end = eigvecs->columnEnd(j);
 
-          // mpfr_get_d(&(*a), GMP_RNDN);
+          // mpfr_get_d(&(*a), MPFR_RNDN);
           int loc = j * size;
           if (imag[j] == 0)
             {
@@ -2160,7 +2160,7 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
           eigvals->ring().set_from_doubles(elems[j], real[j], imag[j]);
           auto end = eigvecs->columnEnd(j);
 
-          // mpfr_get_d(&(*a), GMP_RNDN);
+          // mpfr_get_d(&(*a), MPFR_RNDN);
           int loc = j * size;
           if (imag[j] == 0)
             {

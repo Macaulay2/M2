@@ -2,68 +2,78 @@ use util;
 use common;
 
 header "#include <iostream>
+  #include <boost/multiprecision/mpfr.hpp>
   #include <boost/math/special_functions/beta.hpp>
   #include <boost/math/special_functions/erf.hpp>
   #include <boost/math/special_functions/gamma.hpp>
 
-  #define BOOST_MATH_CALL(f, ...)       \\
-  try {                                 \\
-    return boost::math::f(__VA_ARGS__); \\
-  } catch (const std::exception& e) {   \\
-    std::cout << e.what() << std::endl; \\
-    return NAN;                         \\
+  #define RR_TO_BOOST(x) boost::multiprecision::mpfr_float(x)
+
+  #define BOOST_MATH_CALL(f, prec, ...)                                  \\
+  try {                                                                  \\
+    boost::multiprecision::mpfr_float::default_precision(                \\
+	boost::multiprecision::detail::digits2_2_10(prec));              \\
+    return gmp_toRR(boost::math::f(__VA_ARGS__).backend().data(), prec); \\
+  } catch (const std::exception& e) {                                    \\
+    std::cout << e.what() << std::endl;                                  \\
+    return nullptr;                                                      \\
   }";
 
-handleBoostError(x:double):Expr:=
-    if isnan(x) then buildErrorPacket("Boost Math Toolkit error")
-    else toExpr(x);
+handleBoostError(x:RRorNull):Expr:=
+    when x
+    is null do buildErrorPacket("Boost Math Toolkit error")
+    is y:RR do toExpr(y);
 
 -- # typical value: inverseErf, RR, RR
-inverseErf(p:double):double:=
-    Ccode(returns, "BOOST_MATH_CALL(erf_inv, ", p, ")");
+inverseErf(p:RR):RRorNull:= (
+    prec := precision(p);
+    Ccode(returns, "BOOST_MATH_CALL(erf_inv, ", prec,
+	", RR_TO_BOOST(", p,"))"));
 inverseErf(e:Expr):Expr :=
-    when e is p:RRcell do handleBoostError(inverseErf(toDouble(p)))
+    when e is p:RRcell do handleBoostError(inverseErf(p.v))
     else WrongArgRR();
 setupfun("inverseErf",inverseErf).Protected=false;
 
 -- # typical value: regularizedGamma, RR, RR, RR
-regularizedGamma(a:double,z:double):double:=
-    Ccode(returns, "BOOST_MATH_CALL(gamma_q, ", a, ", ", z, ")");
+regularizedGamma(a:RR,z:RR):RRorNull:= (
+    prec := min(precision(a), precision(z));
+    Ccode(returns, "BOOST_MATH_CALL(gamma_q, ", prec, ", RR_TO_BOOST(", a,
+	"), RR_TO_BOOST(", z, "))"));
 regularizedGamma(e:Expr):Expr :=
     when e is s:Sequence do
 	when s.0 is a:RRcell do
-	    when s.1 is z:RRcell do
-		handleBoostError(regularizedGamma(toDouble(a),
-		    toDouble(z)))
+	    when s.1 is z:RRcell do handleBoostError(regularizedGamma(a.v, z.v))
 	    else WrongArgRR(2)
 	else WrongArgRR(1)
     else WrongNumArgs(2);
 setupfun("regularizedGamma",regularizedGamma).Protected=false;
 
 -- # typical value: inverseRegularizedGamma, RR, RR, RR
-inverseRegularizedGamma(a:double,q:double):double:=
-    Ccode(returns, "BOOST_MATH_CALL(gamma_q_inv, ", a, ", ", q, ")");
+inverseRegularizedGamma(a:RR,q:RR):RRorNull:= (
+    prec := min(precision(a), precision(q));
+    Ccode(returns, "BOOST_MATH_CALL(gamma_q_inv, ", prec, ", RR_TO_BOOST(", a,
+	"), RR_TO_BOOST(", q, "))"));
 inverseRegularizedGamma(e:Expr):Expr :=
     when e is s:Sequence do
 	when s.0 is a:RRcell do
 	    when s.1 is q:RRcell do
-		handleBoostError(inverseRegularizedGamma(toDouble(a),
-		    toDouble(q)))
+		handleBoostError(inverseRegularizedGamma(a.v, q.v))
 	    else WrongArgRR(2)
 	else WrongArgRR(1)
     else WrongNumArgs(2);
 setupfun("inverseRegularizedGamma",inverseRegularizedGamma).Protected=false;
 
 -- # typical value: regularizedBeta, RR, RR, RR, RR
-regularizedBeta(x:double,a:double,b:double):double:=
-   Ccode(returns, "BOOST_MATH_CALL(ibeta, ", a, ", ", b, ", ", x, ")");
+regularizedBeta(x:RR,a:RR,b:RR):RRorNull:= (
+    prec := min(precision(x), min(precision(a), precision(b)));
+    Ccode(returns, "BOOST_MATH_CALL(ibeta, ", prec, ", RR_TO_BOOST(", a,
+	"), RR_TO_BOOST(", b, "), RR_TO_BOOST(", x, "))"));
 regularizedBeta(e:Expr):Expr :=
     when e is s:Sequence do
 	when s.0 is x:RRcell do
 	    when s.1 is a:RRcell do
 		when s.2 is b:RRcell do
-		    handleBoostError(regularizedBeta(toDouble(x),
-			    toDouble(a), toDouble(b)))
+		    handleBoostError(regularizedBeta(x.v, a.v, b.v))
 		else WrongArgRR(3)
 	    else WrongArgRR(2)
 	else WrongArgRR(1)
@@ -71,15 +81,16 @@ regularizedBeta(e:Expr):Expr :=
 setupfun("regularizedBeta",regularizedBeta).Protected=false;
 
 -- # typical value: inverseRegularizedBeta, RR, RR, RR, RR
-inverseRegularizedBeta(p:double,a:double,b:double):double:=
-   Ccode(returns, "BOOST_MATH_CALL(ibeta_inv, ", a, ", ", b, ", ", p, ")");
+inverseRegularizedBeta(p:RR,a:RR,b:RR):RRorNull:= (
+    prec := min(precision(p), min(precision(a), precision(b)));
+    Ccode(returns, "BOOST_MATH_CALL(ibeta_inv, ", prec, ", RR_TO_BOOST(", a,
+       "), RR_TO_BOOST(", b, "), RR_TO_BOOST(", p, "))"));
 inverseRegularizedBeta(e:Expr):Expr :=
     when e is s:Sequence do
 	when s.0 is p:RRcell do
 	    when s.1 is a:RRcell do
 		when s.2 is b:RRcell do
-		    handleBoostError(inverseRegularizedBeta(toDouble(p),
-			    toDouble(a), toDouble(b)))
+		    handleBoostError(inverseRegularizedBeta(p.v, a.v, b.v))
 		else WrongArgRR(3)
 	    else WrongArgRR(2)
 	else WrongArgRR(1)

@@ -21,14 +21,14 @@ bool almostEqual(const M2::ARingRRi& R,
 {
     mpfr_t epsilon;
     mpfr_init2(epsilon, R.get_precision());
-    mpfr_set_ui_2exp(epsilon, 1, -nbits, GMP_RNDN);
+    mpfr_set_ui_2exp(epsilon, 1, -nbits, MPFR_RNDN);
     
     mpfr_t c,d;
     mpfr_init2(c, R.get_precision());
     mpfr_init2(d, R.get_precision());
     
-    mpfr_sub(c,&(a.left),&(b.left),GMP_RNDN);
-    mpfr_sub(d,&(a.right),&(b.right),GMP_RNDN);
+    mpfr_sub(c,&(a.left),&(b.left),MPFR_RNDN);
+    mpfr_sub(d,&(a.right),&(b.right),MPFR_RNDN);
     
     bool retL = mpfr_cmpabs(c, epsilon) < 0,
          retR = mpfr_cmpabs(d, epsilon) < 0;

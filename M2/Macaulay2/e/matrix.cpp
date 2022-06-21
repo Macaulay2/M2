@@ -2038,7 +2038,7 @@ gmp_RRorNull Matrix::norm(gmp_RR p) const
     }
   gmp_RRmutable nm = getmemstructtype(gmp_RRmutable);
   mpfr_init2(nm, mpfr_get_prec(p));
-  mpfr_ui_div(nm, 1, p, GMP_RNDN);
+  mpfr_ui_div(nm, 1, p, MPFR_RNDN);
   if (!mpfr_zero_p(nm))
     {
       ERROR("Lp norm only implemented for p = infinity");

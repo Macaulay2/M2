@@ -459,6 +459,14 @@ acot = method()
 acot Number := z -> atan(1/z)
 acot Constant := acot @@ numeric
 
+BesselJ' = BesselJ
+BesselJ = method()
+BesselJ(ZZ, Number) := BesselJ(ZZ, Constant) := (n, x) -> BesselJ'(n, numeric x)
+
+BesselY' = BesselY
+BesselY = method()
+BesselY(ZZ, Number) := BesselY(ZZ, Constant) := (n, x) -> BesselY'(n, numeric x)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

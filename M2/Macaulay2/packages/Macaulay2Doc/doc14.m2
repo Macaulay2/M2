@@ -308,7 +308,7 @@ document { Key => {InexactNumber'},
 document { Key => {RingFamily},
      "This family is used to contain classes that correspond to a family of similar rings with a default member."
      }
-document { Key => {BesselJ,(BesselJ, ZZ, RR)},
+document { Key => {BesselJ,(BesselJ, ZZ, Number), (BesselJ, ZZ, Constant)},
      Usage => "BesselJ(n,x)\nBesselJ_n x",
      Headline => "Bessel function of the first kind",
      Inputs => {
@@ -325,7 +325,7 @@ document { Key => {BesselJ,(BesselJ, ZZ, RR)},
      PARA {"See ", wikipedia "Bessel function", "."},
      SeeAlso => { BesselY }
      }
-document { Key => {BesselY,(BesselY, ZZ, RR)},
+document { Key => {BesselY,(BesselY, ZZ, Number), (BesselY, ZZ, Constant)},
      Usage => "BesselY(n,x)\nBesselY_n x",
      Headline => "Bessel function of the second kind",
      Inputs => {

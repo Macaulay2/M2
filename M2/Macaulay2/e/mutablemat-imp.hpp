@@ -327,7 +327,7 @@ gmp_RRorNull MutableMat<T>::norm() const
 
   gmp_RRmutable nm = getmemstructtype(gmp_RRmutable);
   mpfr_init2(nm, get_ring()->get_precision());
-  mpfr_set_si(nm, 0, GMP_RNDN);
+  mpfr_set_si(nm, 0, MPFR_RNDN);
 
   MatrixOps::increase_norm(nm, mat);
   return moveTo_gmpRR(nm);

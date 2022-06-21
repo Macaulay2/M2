@@ -127,7 +127,7 @@ double randomDouble()
   mpfr_t val;
   mpfr_init2(val, 53);
   randomMpfr(val);
-  double result = mpfr_get_d(val, GMP_RNDN);
+  double result = mpfr_get_d(val, MPFR_RNDN);
   mpfr_clear(val);
   return result;
 }
