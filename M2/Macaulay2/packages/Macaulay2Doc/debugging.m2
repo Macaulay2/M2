@@ -313,14 +313,14 @@ doc ///
     (assert, Thing)
     (assert, Expression)
   Headline
-    assert something is true
+    check whether something is true, raise an error if not
   Usage
     assert x
   Inputs
     x:Thing
   Description
     Text
-      @TT "assert x"@ prints an error message if @TT "x"@ isn't true.
+      @TT "assert x"@ raises an error if @TT "x"@ isn't true.
     Example
       stopIfError = false;
       assert( (2+2) === 4)
