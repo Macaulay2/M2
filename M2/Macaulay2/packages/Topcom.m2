@@ -266,7 +266,7 @@ numFlips = method(Options => {Homogenize=>true, RegularOnly =>true})
 numFlips(Matrix, List) := ZZ => opts -> (A, tri) -> (
     executable := "points2nflips";
     args := if opts.RegularOnly then " --regular" else "";
-    (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize)});
+    (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize), [], tri});
     value get outfile
     )
 
@@ -274,7 +274,7 @@ flips = method(Options => {Homogenize=>true, RegularOnly =>true})
 flips(Matrix, List) := List => opts -> (A, tri) -> (
     executable := "points2flips";
     args := if opts.RegularOnly then " --regular" else "";
-    (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize)});
+    (outfile, errfile) := callTopcom(executable | args, {topcomPoints(A, Homogenize=>opts.Homogenize), [], tri});
     s := get outfile;
     s = replace("->0","",s); -- I don't understand why this is in their notation...
     s = replace("[0-9,]*:", "", s);
@@ -296,12 +296,12 @@ flips(Matrix, List) := List => opts -> (A, tri) -> (
 
 -- The code we add to this assumes that convexHull Vin is full dimensional.
 -- TODO: also, can we give homogenized matrix too?
-topcomIsTriangulation = method();
-topcomIsTriangulation(Matrix, List) := Boolean => (Vin, T) -> (
+topcomIsTriangulation = method(Options => {Homogenize => true});
+topcomIsTriangulation(Matrix, List) := Boolean => opts -> (Vin, T) -> (
    -- Topcom does not check whether the sets in T actually form simplices. In
    -- that case it throws an error instead of giving an answer.  -- So we do it
    -- manually:
-   V := promote(augment Vin, QQ);
+   V := if opts.Homogenize then promote(augment Vin, QQ) else promote(Vin, QQ);
    d := numRows V;
    if not all(T, t-> #t == d) then (
       << "Index sets do not correspond to full-dimensional simplices" << endl;
