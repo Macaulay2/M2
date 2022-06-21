@@ -42,6 +42,8 @@ export {
     "bistellarFlip",
     "neighbors",
     "generateTriangulations",
+    "isStar",
+    "isFine",
     
     "affineCircuits",
     "volumeVector",
@@ -184,6 +186,7 @@ max Triangulation := List => T -> T.max
 matrix Triangulation := opts -> T -> transpose matrix vectors T
 
 isWellDefined Triangulation := Boolean => T -> (
+    return topcomIsTriangulation(matrix T, max T, Homogenize => false);
     -- Let's assume first that T is a presumed triangulation of a point set.
     
     error "`isWellDefined Triangulation` is not yet implemented"
@@ -233,6 +236,23 @@ regFineTriangulation Matrix := Triangulation => opts -> (A) -> (
     if tri === null then null else 
         triangulation(A, tri, opts)
     )
+
+-- TODO/BUG: this ASSUMES (A, tri) is a triangulation.
+isFine = method()
+isFine(Matrix, List) := Boolean => (A, tri) -> (
+    numcols A == tri//flatten//unique//length
+    )
+
+-- TODO/BUG: this ASSUMES (A, tri) is a triangulation.
+isStar = method()
+isStar(Matrix, List) := Boolean => (A, tri) -> (
+    -- assumption?  last column of A is the zero element?  (or the one the star is taken with respect to).
+    origin := numcols A - 1;
+    all(tri, t -> member(origin, t))
+    )
+
+isStar Triangulation := Boolean => T -> isStar(matrix T, max T)
+isFine Triangulation := Boolean => T -> isFine(matrix T, max T)
 
 -- TODO: this routine should be submitted to Polyhedra as a bug fix.
 regularSubdivision (Matrix,Matrix) := (M,w) -> (
