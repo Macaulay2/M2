@@ -17,6 +17,7 @@ CCi.synonym = "complex interval"
 RR.texMath = ///{\mathbb R}///
 RRi.texMath = ///{\square\mathbb R}///
 CC.texMath = ///{\mathbb C}///
+CCi.texMath = ///{\square\mathbb C}///
 Number.synonym = "number"
 InexactFieldFamily.synonym = "inexact field family"
 InexactNumber.synonym = "inexact number"
@@ -165,6 +166,12 @@ ZZ _ ComplexField :=
 QQ _ ComplexField :=
 RR _ ComplexField :=
 CC _ ComplexField := (x,R) -> toCC(R.precision,x)
+ZZ _ ComplexIntervalField :=
+QQ _ ComplexIntervalField :=
+RR _ ComplexIntervalField := (x,R) -> toCCi(R.precision,x,x)
+RRi _ ComplexIntervalField := (x,R) -> toCCi(R.precision,left(x),right(x))
+CC _ ComplexIntervalField := (x,R) -> toCCi(R.precision,x,x)
+CCi _ ComplexIntervalField := (x,R) -> toCCi(R.precision,left(x),right(x))
 
 lift(RR,QQ) := opts -> (r,QQ) -> (
      if r == 0 then return 0/1;
