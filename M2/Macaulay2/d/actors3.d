@@ -362,11 +362,11 @@ compare(left:Expr,right:Expr):Expr := (
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
-	  is y:CCicell do (
-	       r := compare(x.v,y.v);
-	       if flagged() then incomparableE else
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
-	       )
+--	  is y:CCicell do (
+--	       r := compare(x.v,y.v);
+--	       if flagged() then incomparableE else
+--	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+--	       )
      	  is Error do right
 	  else binarycomparison(left,right))
      is x:RRicell do (
@@ -425,55 +425,21 @@ compare(left:Expr,right:Expr):Expr := (
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
-	  is y:RRicell do (
-	       r := compare(x.v,y.v);
-	       if flagged() then incomparableE else
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
-	       )
+--	  is y:RRicell do (
+--	       r := compare(x.v,y.v);
+--	       if flagged() then incomparableE else
+--	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+--	       )
 	  is y:CCcell do (
 	       r := compare(x.v,y.v);
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
-	  is y:CCicell do (
-	       r := compare(x.v,y.v);
-	       if flagged() then incomparableE else
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
-	       )
-     	  is Error do right
-	  else binarycomparison(left,right))
-     is x:CCicell do (
-	  when right
-	  is y:ZZcell do (
-	       r := compare(x.v,y.v);
-	       if flagged() then incomparableE else
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
-	       )
-	  is y:QQcell do (
-	       r := compare(x.v,y.v);
-	       if flagged() then incomparableE else
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
-	       )
-	  is y:RRcell do (
-	       r := compare(x.v,y.v);
-	       if flagged() then incomparableE else
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
-	       )
-	  is y:RRicell do (
-	       r := compare(x.v,y.v);
-	       if flagged() then incomparableE else
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
-	       )
-	  is y:CCcell do (
-	       r := compare(x.v,y.v);
-	       if flagged() then incomparableE else
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
-	       )
-	  is y:CCicell do (
-	       r := compare(x.v,y.v);
-	       if flagged() then incomparableE else
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
-	       )
+--	  is y:CCicell do (
+--	       r := compare(x.v,y.v);
+--	       if flagged() then incomparableE else
+--	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
+--	       )
      	  is Error do right
 	  else binarycomparison(left,right))
      is x:Net do (
