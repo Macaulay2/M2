@@ -1164,11 +1164,18 @@ sqrt(a:Expr):Expr := (
 	  )
      is x:RRicell do (
 	  if leftRR(x.v) >= 0
-	  then toExpr(sqrt(x.v))                   -- # typical value: sqrt, RRi, RRi
+	  then toExpr(sqrt(x.v))                 -- # typical value: sqrt, RRi, RRi
+	  else if rightRR(x.v) <= 0
+	  then toExpr(negSqrt(x.v))		   -- # typical value: sqrt, RRi, CCi
 	  else buildErrorPacket("Not implemented")
 	  )
      is x:CCcell do toExpr(sqrt(x.v))				    -- # typical value: sqrt, CC, CC
-     is x:CCicell do toExpr(sqrt(x.v))				    -- # typical value: sqrt, CCi, CCi
+     is x:CCicell do (
+     	  if leftRR(x.v.re) >= 0 || rightRR(x.v.re) <= 0 || leftRR(x.v.im) >= 0 || rightRR(x.v.im) <= 0
+	  then if leftRR(x.v.re) <= rightRR(x.v.re) && leftRR(x.v.im) <= rightRR(x.v.im) then toExpr(sqrt(x.v))  -- # typical value: sqrt, CCi, CCi
+	       else buildErrorPacket("Not implemented")
+	       else buildErrorPacket("Not implemented")
+	  )
      is Error do a
      else WrongArgRR());
 setupfun("sqrt",sqrt).Protected=false;

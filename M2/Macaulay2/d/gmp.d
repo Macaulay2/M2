@@ -1828,8 +1828,11 @@ export sqrt(x:RR):RR := (
 export sqrt(x:RRi):RRi := (
      z := newRRimutable(precision0(x));
      Ccode( void, "mpfi_sqrt(",  z, ",",  x, ")" );
-     moveToRRiandclear(z));
-
+     moveToRRiandclear(z)
+     );
+export negSqrt(x:RRi):CCi := (
+     toCCi(toRRi(0,precision0(x)),toRRi(sqrt(leftRR(-x)),sqrt(rightRR(-x))))
+     );
 export (x:RR) ^ (n:long) : RR := (
      z := newRRmutable(precision0(x));
      Ccode( void, "mpfr_pow_si(",  z, ",",  x, ",", n, ", MPFR_RNDN)" );
@@ -2572,9 +2575,18 @@ export sqrt(x:CC):CC := (
      moveToCCandclear(z));
 
 export sqrt(x:CCi):CCi := (
-     z := newCCimutable(precision(x));
-     Ccode( void, "mpfc_sqrt(", z, ",", x, ")" );	    -- see ../e/complex.c
-     moveToCCiandclear(z));
+	  a := sqrt(toCC(leftRR(x.re),leftRR(x.im))).re;
+	  b := sqrt(toCC(leftRR(x.re),leftRR(x.im))).im;
+	  c := sqrt(toCC(rightRR(x.re),rightRR(x.im))).re;
+	  d := sqrt(toCC(rightRR(x.re),rightRR(x.im))).im;
+	  e := sqrt(toCC(rightRR(x.re),leftRR(x.im))).re;
+	  f := sqrt(toCC(rightRR(x.re),leftRR(x.im))).im;
+	  g := sqrt(toCC(leftRR(x.re),rightRR(x.im))).re;
+	  h := sqrt(toCC(leftRR(x.re),rightRR(x.im))).im;
+	  if leftRR(x.im) >= 0 then return toCCi(toRRi(a,c),toRRi(f,h));             
+	  if leftRR(x.im) <= 0 && rightRR(x.im) >= 0 then return toCCi(toRRi(a,c),toRRi(b,h));
+	  if leftRR(x.im) < 0 then toCCi(toRRi(g,e),toRRi(b,d))             
+	  );
 
 -- real transcendental functions
 
