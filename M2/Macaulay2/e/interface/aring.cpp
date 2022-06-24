@@ -24,7 +24,7 @@ const RingQQ *globalQQ;
 
 void initializeRationalRing()
 {
-  globalQQ = RingQQ::create(std::make_unique<M2::ARingQQ>());
+  globalQQ = RingQQ::create();
 }
 
 const RingQQ *rawARingQQ() { return globalQQ; }

@@ -514,8 +514,9 @@ class RingQQ : public ConcreteRing<ARingQQ>
   }
   bool is_QQ() const { return true; }
   CoefficientType coefficient_type() const { return COEFF_QQ; }
-  static RingQQ *create(std::unique_ptr<ARingQQ> R0)
+  static RingQQ *create()
   {
+    auto R0 = std::make_unique<ARingQQ>();
     auto characteristic = R0->characteristic();
     RingQQ *result = new RingQQ(std::move(R0));
     result->initialize_ring(characteristic);
