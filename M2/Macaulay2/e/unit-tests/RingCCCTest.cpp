@@ -34,7 +34,7 @@ ring_elem getElement<RingCCC>(const RingCCC &R, int index)
 ////////////////////////////////////////////////////////
 TEST(RingCCC, create)
 {
-  RingCCC *R = RingCCC::create(std::make_unique<M2::ARingCCC>(100));
+  RingCCC *R = RingCCC::create(100);
   EXPECT_TRUE(R != 0);
 
   EXPECT_TRUE(dynamic_cast<const Z_mod *>(R) == 0);
@@ -45,7 +45,7 @@ TEST(RingCCC, create)
 }
 TEST(RingCCC, ones)
 {
-  RingCCC *R = RingCCC::create(std::make_unique<M2::ARingCCC>(100));
+  RingCCC *R = RingCCC::create(100);
   EXPECT_TRUE(R->is_equal(R->one(), R->from_long(1)));
   EXPECT_TRUE(R->is_equal(R->minus_one(), R->from_long(-1)));
   EXPECT_TRUE(R->is_equal(R->zero(), R->from_long(0)));
@@ -53,12 +53,12 @@ TEST(RingCCC, ones)
 }
 TEST(RingCCC, negate)
 {
-  RingCCC *R = RingCCC::create(std::make_unique<M2::ARingCCC>(100));
+  RingCCC *R = RingCCC::create(100);
   testRingNegate(R, ntrials);
 }
 TEST(RingCCC, add)
 {
-  RingCCC *R = RingCCC::create(std::make_unique<M2::ARingCCC>(100));
+  RingCCC *R = RingCCC::create(100);
   RingElementGenerator<RingCCC> gen(*R);
 
   for (int i = 0; i < ntrials; i++)
@@ -74,12 +74,12 @@ TEST(RingCCC, add)
 }
 TEST(RingCCC, subtract)
 {
-  RingCCC *R = RingCCC::create(std::make_unique<M2::ARingCCC>(100));
+  RingCCC *R = RingCCC::create(100);
   testRingSubtract(R, ntrials);
 }
 TEST(RingCCC, multDivide)
 {
-  RingCCC *R = RingCCC::create(std::make_unique<M2::ARingCCC>(100));
+  RingCCC *R = RingCCC::create(100);
   RingElementGenerator<RingCCC> gen(*R);
   for (int i = 0; i < ntrials; i++)
     {
@@ -98,7 +98,7 @@ TEST(RingCCC, multDivide)
 }
 TEST(RingCCC, axioms)
 {
-  RingCCC *R = RingCCC::create(std::make_unique<M2::ARingCCC>(100));
+  RingCCC *R = RingCCC::create(100);
   RingElementGenerator<RingCCC> gen(*R);
   for (int i = 0; i < ntrials; i++)
     {
@@ -141,7 +141,7 @@ TEST(RingCCC, axioms)
 }
 TEST(RingCCC, power)
 {
-  RingCCC *R = RingCCC::create(std::make_unique<M2::ARingCCC>(100));
+  RingCCC *R = RingCCC::create(100);
 
   mpz_t gmp1;
   mpz_init(gmp1);
@@ -179,7 +179,7 @@ TEST(RingCCC, syzygy)
 {
   // NOTE: RingCCC::syzygy, RingCCC::syzygy are not useful functions.
   // Should we remove these tests, and the corresponding functions?
-  RingCCC *R = RingCCC::create(std::make_unique<M2::ARingCCC>(100));
+  RingCCC *R = RingCCC::create(100);
 
   RingElementGenerator<RingCCC> gen(*R);
   for (int i = 0; i < ntrials; i++)

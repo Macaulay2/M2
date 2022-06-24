@@ -30,13 +30,12 @@ void initializeRationalRing()
 const RingQQ *rawARingQQ() { return globalQQ; }
 const Ring * /* or null */ rawARingZZFlint()
 {
-  return M2::ConcreteRing<M2::ARingZZ>::create(std::make_unique<M2::ARingZZ>());
+  return M2::ConcreteRing<M2::ARingZZ>::create();
 }
 
 const Ring * /* or null */ rawARingQQFlint()
 {
-  return M2::ConcreteRing<M2::ARingQQFlint>::create(
-      std::make_unique<M2::ARingQQFlint>());
+  return M2::ConcreteRing<M2::ARingQQFlint>::create();
 }
 
 const Ring /* or null */ *rawARingZZp(unsigned long p)
@@ -46,13 +45,11 @@ const Ring /* or null */ *rawARingZZp(unsigned long p)
       ERROR("ZZP: expected a prime number p in range 2 <= p <= 32749");
       return 0;
     }
-  return M2::ConcreteRing<M2::ARingZZp>::create(
-      std::make_unique<M2::ARingZZp>(p));
+  return M2::ConcreteRing<M2::ARingZZp>::create(p);
 }
 const Ring /* or null */ *rawARingZZpFlint(unsigned long p)
 {
-  return M2::ConcreteRing<M2::ARingZZpFlint>::create(
-      std::make_unique<M2::ARingZZpFlint>(p));
+  return M2::ConcreteRing<M2::ARingZZpFlint>::create(p);
 }
 
 static const PolynomialRing * /* or null */ checkGaloisFieldInput(
@@ -90,8 +87,7 @@ const Ring /* or null */ *rawARingGaloisField1(const RingElement *f)
   if (R == 0) return 0;  // error message has already been logged
   try
     {
-      return M2::ConcreteRing<M2::ARingGFM2>::create(
-          std::make_unique<M2::ARingGFM2>(*R, f->get_value()));
+      return M2::ConcreteRing<M2::ARingGFM2>::create(*R, f->get_value());
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -104,8 +100,7 @@ const Ring /* or null */ *rawARingGaloisFieldFlintBig(const RingElement *f)
   if (R == 0) return 0;  // error message has already been logged
   try
     {
-      return M2::ConcreteRing<M2::ARingGFFlintBig>::create(
-          std::make_unique<M2::ARingGFFlintBig>(*R, f->get_value()));
+      return M2::ConcreteRing<M2::ARingGFFlintBig>::create(*R, f->get_value());
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -119,8 +114,7 @@ const Ring /* or null */ *rawARingGaloisFieldFlintZech(const RingElement *f)
   if (R == 0) return 0;  // error message has already been logged
   try
     {
-      return M2::ConcreteRing<M2::ARingGFFlint>::create(
-          std::make_unique<M2::ARingGFFlint>(*R, f->get_value()));
+      return M2::ConcreteRing<M2::ARingGFFlint>::create(*R, f->get_value());
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());
@@ -169,16 +163,14 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
         {
           // std::cout << "maximum modulus = " <<
           // M2::ARingZZpFFPACK::getMaxModulus() << std::endl;
-          return M2::ConcreteRing<M2::ARingZZpFFPACK>::create(
-              std::make_unique<M2::ARingZZpFFPACK>(prime));
+          return M2::ConcreteRing<M2::ARingZZpFFPACK>::create(prime);
         }
       if (dimension == 1)
         {
           ERROR("maximum modulus = %f\n", M2::ARingZZpFFPACK::getMaxModulus());
           return 0;
         }
-      return M2::ConcreteRing<M2::ARingGFGivaro>::create(
-          std::make_unique<M2::ARingGFGivaro>(prime, dimension));
+      return M2::ConcreteRing<M2::ARingGFGivaro>::create(prime, dimension);
 #else
       ERROR("add --enable-fflas-ffpack --enable-givaro when building M2");
       return 0;
@@ -238,9 +230,8 @@ const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *a)
       M2_arrayint primitiveElementPoly = a->getSmallIntegerCoefficients();
       if (primitiveElementPoly == 0) return NULL;
 
-      auto A = std::make_unique<M2::ARingGFGivaro>(
+      return M2::ConcreteRing<M2::ARingGFGivaro>::create(
           R->characteristic(), modPoly, primitiveElementPoly, *R);
-      return M2::ConcreteRing<M2::ARingGFGivaro>::create(std::move(A));
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());

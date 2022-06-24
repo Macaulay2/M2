@@ -89,21 +89,19 @@ const Ring /* or null */ *rawGaloisField(const RingElement *f)
 
 const Ring /* or null */ *IM2_Ring_RRi(unsigned long prec)
 {
-    return M2::ConcreteRing<M2::ARingRRi>::create(std::make_unique<M2::ARingRRi>(prec));
+  return M2::ConcreteRing<M2::ARingRRi>::create(prec);
 }
 
 const Ring /* or null */ *IM2_Ring_RRR(unsigned long prec)
 {
-  if (prec <= 53)
-      return M2::ConcreteRing<M2::ARingRR>::create(std::make_unique<M2::ARingRR>());
-  return M2::ConcreteRing<M2::ARingRRR>::create(std::make_unique<M2::ARingRRR>(prec));
+  if (prec <= 53) return M2::ConcreteRing<M2::ARingRR>::create();
+  return M2::ConcreteRing<M2::ARingRRR>::create(prec);
 }
 
 const Ring /* or null */ *IM2_Ring_CCC(unsigned long prec)
 {
-  if (prec <= 53)
-    return M2::ConcreteRing<M2::ARingCC>::create(std::make_unique<M2::ARingCC>());
-  return M2::ConcreteRing<M2::ARingCCC>::create(std::make_unique<M2::ARingCCC>(prec));
+  if (prec <= 53) return M2::ConcreteRing<M2::ARingCC>::create();
+  return M2::ConcreteRing<M2::ARingCCC>::create(prec);
 }
 
 const Ring *IM2_Ring_trivial_polyring()

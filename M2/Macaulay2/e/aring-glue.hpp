@@ -33,6 +33,9 @@ class ConcreteRing : public Ring
 
   static ConcreteRing<RingType> *create(std::unique_ptr<RingType> R);
 
+  template <class... Args>
+  static ConcreteRing<RingType> *create(Args &&...args);
+
   virtual M2::RingID ringID() const { return RingType::ringID; }
   const RingType &ring() const { return *R; }
   /// Create either a dense or sparse MutableMatrix of the given size
@@ -612,6 +615,14 @@ ConcreteRing<RingType> *ConcreteRing<RingType>::create(
   result->minus_oneV = result->from_long(-1);
 
   return result;
+}
+
+template <class RingType>
+template <class... Args>
+ConcreteRing<RingType> *ConcreteRing<RingType>::create(Args &&...args)
+{
+  return ConcreteRing<RingType>::create(
+      std::make_unique<RingType>(std::forward<Args>(args)...));
 }
 
 //////////////////////
