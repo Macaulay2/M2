@@ -287,7 +287,7 @@ undocumented {
 undocumented {(toExternalString,Point), (toExternalString,PolySystem),
     unionPointSet,  (unionPointSet,PointSet,PointSet), pointSet, (pointSet,Thing), (areEqual,PointSet,PointSet), PointSet,
     differencePointSet, (differencePointSet,PointSet,PointSet), specialize, (specialize,ParameterHomotopy,Matrix),
-    (symbol ==,PointSet,PointSet), (symbol ?,AbstractPoint,AbstractPoint), (net,PointSet), 
+    (symbol ==,PointSet,PointSet), (net,PointSet), 
     (symbol +,PointSet,PointSet), (symbol -,PointSet,PointSet),
     }
 

@@ -6,7 +6,6 @@ texMath AbstractPoint := x -> texMath coordinates x
 net AbstractPoint := p -> net coordinates p
 
 AbstractPoint == AbstractPoint := (a,b) -> areEqual(a,b) -- the default Tolerance is used
-AbstractPoint ? AbstractPoint := (a,b) -> if isGEQ(a,b) then symbol > else symbol <
 
 -- expected methods
 notImplementedError := p -> error ("implementation of this method for the descendant of (abstract) type "|toString class p |" is expected")
