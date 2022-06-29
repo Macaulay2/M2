@@ -2,7 +2,7 @@
 newPackage(
 	"SubalgebraBases",
 	AuxiliaryFiles => true,
-    	Version => "1.1",
+    	Version => "1.2",
     	Date => "May 2022",
     	Authors => {
 	    {Name => "Michael Burr",
