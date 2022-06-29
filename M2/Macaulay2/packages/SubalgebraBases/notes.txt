@@ -1,2 +1,19 @@
 Some notes for how to modify the current code.
 
+Todo list
+---------
+> Remove unnecessary/old code
+
+
+Discussion
+----------
+Ollie: It would be great to have a separate file(s) for subduction/sagbi related functions.
+       Currently, service-functions.m2 is getting very crowded and contains many levels of functions:
+       E.g. updateComputation passes off to one of three different functions.
+       There are at least two ways to solve this:
+       1) Have functions that do similar things in one file, such as the four update-related functions above
+       2) Have functions on a similar level in one file, such as updateComputation in a higher-level file than what it calls
+          We already do this for sagbi, since it sits in one file and calls stuff in service-functions.m2
+
+
+
