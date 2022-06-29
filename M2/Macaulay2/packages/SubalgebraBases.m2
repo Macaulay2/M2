@@ -2,7 +2,7 @@
 newPackage(
 	"SubalgebraBases",
 	AuxiliaryFiles => true,
-    	Version => "1.1",
+    	Version => "1.2",
     	Date => "May 2022",
     	Authors => {
 	    {Name => "Michael Burr",
@@ -50,7 +50,7 @@ end--
 uninstallAllPackages()
 restart
 loadPackage("SubalgebraBases",FileName=>"./SubalgebraBases.m2",DebuggingMode=>true)
-check(1, SubalgebraBases)
+
 
 path = prepend("./", path)
 installPackage("SubalgebraBases",FileName=>"./SubalgebraBases.m2",InstallPrefix=>"./")
