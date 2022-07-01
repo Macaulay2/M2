@@ -362,11 +362,6 @@ compare(left:Expr,right:Expr):Expr := (
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
---	  is y:CCicell do (
---	       r := compare(x.v,y.v);
---	       if flagged() then incomparableE else
---	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
---	       )
      	  is Error do right
 	  else binarycomparison(left,right))
      is x:RRicell do (
@@ -425,21 +420,11 @@ compare(left:Expr,right:Expr):Expr := (
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
---	  is y:RRicell do (
---	       r := compare(x.v,y.v);
---	       if flagged() then incomparableE else
---	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
---	       )
 	  is y:CCcell do (
 	       r := compare(x.v,y.v);
 	       if flagged() then incomparableE else
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
---	  is y:CCicell do (
---	       r := compare(x.v,y.v);
---	       if flagged() then incomparableE else
---	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
---	       )
      	  is Error do right
 	  else binarycomparison(left,right))
      is x:Net do (
@@ -1166,7 +1151,7 @@ sqrt(a:Expr):Expr := (
 	  if leftRR(x.v) >= 0
 	  then toExpr(sqrt(x.v))                 -- # typical value: sqrt, RRi, RRi
 	  else if rightRR(x.v) <= 0
-	  then toExpr(negSqrt(x.v))		   -- # typical value: sqrt, RRi, CCi
+	  then toExpr(negSqrt(x.v))		   
 	  else buildErrorPacket("Not implemented")
 	  )
      is x:CCcell do toExpr(sqrt(x.v))				    -- # typical value: sqrt, CC, CC
