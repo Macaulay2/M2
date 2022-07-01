@@ -225,7 +225,13 @@ void Monoid::set_degrees()
       }
   else
     {
-      for (int i = 0; i < nvars_; i++) heft_degree_of_var_->array[i] = 1;
+      for (int i = 0; i < nvars_; i++)
+        {
+          monomial m = degree_monoid_->make_one();
+          degree_monoid_->from_expvector(t, m);
+          degree_of_var_.push_back(m);
+          heft_degree_of_var_->array[i] = 1;
+        }
     }
   degree_of_var_.push_back(degree_monoid_->make_one());
 }
