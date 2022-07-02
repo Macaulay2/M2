@@ -25,6 +25,10 @@ class ARingCCi : public RingInterface
 {
   // Higher precision complex intervals
 
+ private:
+  const ARingRRi mRRi;
+
+
  public:
   static const RingID ringID = ring_CCi;
 
