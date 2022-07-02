@@ -7,11 +7,11 @@ export {"refine", "newton", "endGameCauchy"}
 newton = method()
 -- assumes F has coefficients in field RR_prec or CC_prec 
 --         P has coordinates in that can be promoted to the above field 
-newton (PolySystem, Point) := (F,P) -> (
+newton (PolySystem, AbstractPoint) := (F,P) -> (
     X := transpose matrix P;
     X' := newton(F,X); 
     P' := point X';
-    P'.ErrorBoundEstimate = norm(X'-X);
+    P'.cache.ErrorBoundEstimate = norm(X'-X);
     P'
     )
 newton (PolySystem, Matrix) := (F,X) -> (
@@ -79,26 +79,26 @@ refine = method(TypicalValue => List, Options =>{
 	  })
 refine (List,List) := List => o -> (T,solsT) -> refine(polySystem T, solsT, o)
 
-refine Point := o -> P -> if P.?SolutionSystem then (
-    ret := new Point from P;
-    if P.?LiftedSystem then (
-	P' := refine(P.LiftedSystem,P.LiftedPoint,o);
-    	ret.Coordinates = take(P'.Coordinates, P.SolutionSystem.NumberOfVariables);
-    	ret.SolutionStatus = P'.SolutionStatus;
-	if ret.SolutionStatus === Regular then ret.SolutionStatus = Singular
+refine AbstractPoint := o -> P -> if P.cache.?SolutionSystem then (
+    local ret;
+    if P.cache.?LiftedSystem then (
+	P' := refine(P.cache.LiftedSystem,P.cache.LiftedPoint,o);
+    	ret = point{take(coordinates P', P.cache.SolutionSystem.NumberOfVariables)};
+    	ret.cache.SolutionStatus = P'.cache.SolutionStatus;
+	if status ret === Regular then ret.cache.SolutionStatus = Singular
 	) 
     else (
-	P' = refine(P.SolutionSystem,P,o);
-    	ret.Coordinates = P'.Coordinates;
-    	ret.SolutionStatus = P'.SolutionStatus;
+	P' = refine(P.cache.SolutionSystem,P,o);
+    	ret = point{P'.Coordinates};
+    	ret.cache.SolutionStatus = P'.cache.SolutionStatus;
 	);
-    ret.ErrorBoundEstimate = P'.ErrorBoundEstimate;
-    ret.ConditionNumber = P'.ConditionNumber;
+    ret.cache.ErrorBoundEstimate = P'.cache.ErrorBoundEstimate;
+    ret.cache.ConditionNumber = P'.cache.ConditionNumber;
     ret
     ) else error "there is no polynomial system associated with the point"
 
 -- this is the main function for M2
-refine (PolySystem,Point) := Point => o -> (F',s) -> 
+refine (PolySystem,AbstractPoint) := Point => o -> (F',s) -> 
 if member(o.Software,{PHCPACK}) then first refine(F',{s},o) else 
 if member(o.Software,{BERTINI}) then refineBertini(F',s,o) else 
 (
@@ -164,9 +164,9 @@ if member(o.Software,{BERTINI}) then refineBertini(F',s,o) else
 	SolutionSystem => F, 
 	ConditionNumber => conditionNumber evaluate(jacobian F, x1)
 	};
-    s'.ErrorBoundEstimate = error'bound;
-    s'.SolutionStatus = if refinement'success then (
-	if s'.ConditionNumber > o.SingularConditionNumber 
+    s'.cache.ErrorBoundEstimate = error'bound;
+    s'.cache.SolutionStatus = if refinement'success then (
+	if s'.cache.ConditionNumber > o.SingularConditionNumber 
 	then Singular 
 	else Regular
 	)
@@ -199,20 +199,14 @@ refine (PolySystem,List) := List => o -> (F,solsT) -> (
      if #solsT == 0 then return solsT;
      
      if isProjective then (
-     	  if o.Software === M2engine then ( -- engine refiner is primitive
---      	       PT := if class first solsT === Point and (first solsT).?Tracker then (first solsT).Tracker else null;
---                if PT=!=null then (
---  		    ref'sols = apply(entries map(CC_53, 
---  		    	      rawRefinePT(PT, raw matrix solsT, o.ErrorTolerance, o.Iterations)
---  		    	      ), s->{s}); -- old format
--- 		    );
-	       error "refine is not implemented in the engine yet";
-	       ) 
-	   else error "refining projective solutions is not implemented yet";
+     	  if o.Software === M2engine then (
+	      error "refine is not implemented in the engine yet";
+	      ) 
+	  else error "refining projective solutions is not implemented yet";
     	  );  
     if o.Software === PHCPACK then return refinePHCpack(equations F,solsT,o)/point 
     else apply(solsT, s->refine(F,    		  
-	    if class s === Point then s else point {s/toCC},
+	    if instance(s,AbstractPoint) then s else point {s/toCC},
 	    o 
 	    ))
     )         
@@ -227,25 +221,26 @@ R = CC[x,y];
 T = {x^2+y^2-1, x*y};
 sols = { {1.1_CC,0.1}, { -0.1,1.2} };
 rsols = refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
-assert areEqual(rsols, {{1,0},{0,1}})
+exactSols = {point{{1,0}},point{{0,1}}}
+assert areEqual(rsols, exactSols)
 r1000sols = refine(T, rsols, Software=>M2, Bits=>1000)
-assert areEqual(r1000sols, {{1,0},{0,1}}, Tolerance=>2^-997)
+assert areEqual(r1000sols, exactSols, Tolerance=>2^-997)
 
 
 T = polySystem {x^2+y^2-1, (x-y)^2};
 e = 1e-9; 
 P = point {{sqrt 2/2 + e*ii,sqrt 2/2 - e*ii}};
 P' = refine(T,P)
-assert(P'.ErrorBoundEstimate < 1e-6 and P'.ConditionNumber > 1e6 and status P' === Singular)
-deflateInPlace(P,T)
+assert(P'.cache.ErrorBoundEstimate < 1e-6 and P'.cache.ConditionNumber > 1e6 and status P' === Singular)
+P = deflateAndStoreDeflationSequence(P,T)
 P'' = refine P
-assert(P''.ErrorBoundEstimate < 1e-6 and P''.ConditionNumber < 100 and status P'' === Singular)
+assert(P''.cache.ErrorBoundEstimate < 1e-6 and P''.cache.ConditionNumber < 100 and status P'' === Singular)
 ///
 
 ------------------------------- ENGAMES -------------------------------------------------------------------
 -- H: a homotopy
 -- t'end: the end value of the continuation parameter t
--- p0: a Point = a solution to H_t(x)=0, with t0=p0.LastT close to t'end
+-- p0: an AbstractPoint = a solution to H_t(x)=0, with t0=p0.LastT close to t'end
 -- "number of vertices" (optional): ... of the regular polygon approximating the circle |t-t'end|=|t0-t'end|
 -- OUTPUT: a Point
 endGameCauchy = method(Options=>{"number of vertices"=>16,"backtrack factor"=>1.,
@@ -260,18 +255,18 @@ endGameCauchy = method(Options=>{"number of vertices"=>16,"backtrack factor"=>1.
 	InfinityThreshold => null -- used to tell if the path is diverging
 	})
 
-endGameCauchy (GateHomotopy, Number, Point):= o -> (H, t'end, p0) -> (
-    x0 := mutableMatrix transpose {coordinates p0 | {p0.LastT}} ; 
+endGameCauchy (GateHomotopy, Number, AbstractPoint):= o -> (H, t'end, p0) -> (
+    x0 := mutableMatrix transpose {coordinates p0 | {p0.cache.LastT}} ; 
     w := endGameCauchy(H,t'end,x0,o);
     -- if w == 0 then error "endGameCauchy: something went wrong";
     p := point {drop(first entries transpose x0,-1)};
     if w>0 then ( 
-	p.Multiplicity = w; 
-	p.SolutionStatus = (if w == 1 then Regular else Singular);
-	p.LastT = t'end;
+	p.cache.Multiplicity = w; 
+	p.cache.SolutionStatus = (if w == 1 then Regular else Singular);
+	p.cache.LastT = t'end;
 	) 
     else (
-	p.SolutionStatus = RefinementFailure; 
+	p.cache.SolutionStatus = RefinementFailure; 
 	);
     p
     )
@@ -355,11 +350,11 @@ p0 = first sols
 peek p0
 t'end = 1
 NAGtrace 1
-p = endGameCauchy(p0#"H",t'end,p0)
-p = endGameCauchy(p0#"H",t'end,p0,"backtrack factor"=>0.5)
-assert (d == p.Multiplicity)
-p = endGameCauchy(p0#"H",t'end,p0,"number of vertices"=>20)
-assert (d == p.Multiplicity)
+p = endGameCauchy(p0.cache#"H",t'end,p0)
+p = endGameCauchy(p0.cache#"H",t'end,p0,"backtrack factor"=>0.5)
+assert (d == p.cache.Multiplicity)
+p = endGameCauchy(p0.cache#"H",t'end,p0,"number of vertices"=>20)
+assert (d == p.cache.Multiplicity)
 ///
 
 TEST ///
@@ -373,18 +368,18 @@ sols = solveSystem(T,PostProcess=>false)
 p0 = first select(sols, s->status s =!= Regular)
 peek p0
 t'end = 1
-p = endGameCauchy(p0#"H",t'end,p0)
+p = endGameCauchy(p0.cache#"H",t'end,p0)
 norm evaluate(T,p)
-assert (d == p.Multiplicity)
-p = endGameCauchy(p0#"H",t'end,p0,"backtrack factor"=>2)
+assert (d == p.cache.Multiplicity)
+p = endGameCauchy(p0.cache#"H",t'end,p0,"backtrack factor"=>2)
 norm evaluate(T,p)
-assert (d == p.Multiplicity)
-p = endGameCauchy(p0#"H",t'end,p0,"number of vertices"=>16)
+assert (d == p.cache.Multiplicity)
+p = endGameCauchy(p0.cache#"H",t'end,p0,"number of vertices"=>16)
 norm evaluate(T,p)
-assert (d == p.Multiplicity)
-p = endGameCauchy(p0#"H",t'end,p0,"backtrack factor"=>100,"number of vertices"=>100)
+assert (d == p.cache.Multiplicity)
+p = endGameCauchy(p0.cache#"H",t'end,p0,"backtrack factor"=>100,"number of vertices"=>100)
 norm evaluate(T,p)
-assert (d == p.Multiplicity)
+assert (d == p.cache.Multiplicity)
 ///
 
 TEST ///

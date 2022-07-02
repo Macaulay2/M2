@@ -219,7 +219,7 @@ document {Key => { (track, List, List, List), track, (track,PolySystem,PolySyste
 	     "T" => {" contains the polynomials in the target system"},
 	     "solsS" => {" contains start solutions"},
 	     },
-	Outputs => {{ TT "solsT", " is a list of ", TO2{Point,"points"}, " that are solutions of ", TT "T=0", " obtained by continuing ", TT "solsS", " of ", TT "S=0" }},
+	Outputs => {{ TT "solsT", " is a list of ", TO2{AbstractPoint,"points"}, " that are solutions of ", TT "T=0", " obtained by continuing ", TT "solsS", " of ", TT "S=0" }},
 	"Polynomial homotopy continuation techniques are used to obtain solutions 
 	of the target system given a start system. ",
 	"For an introduction to the subject see ", UL{
@@ -243,7 +243,7 @@ document {Key => { (track, List, List, List), track, (track,PolySystem,PolySyste
 	PARA {
 	     "Another outcome of tracking a path is divergence (established heuristically). 
 	     In that case the divergent paths are marked with an ", TT "I", 
-	     " (", TO2{Point, "status"}, " is set to ", TO Infinity, "). "
+	     " (", TO2{AbstractPoint, "status"}, " is set to ", TO Infinity, "). "
 	     },
         EXAMPLE lines ///
      	R = CC[x,y];
@@ -255,7 +255,7 @@ document {Key => { (track, List, List, List), track, (track,PolySystem,PolySyste
 	PARA {
 	     "Some divergent paths as well as most of the paths ending in singular (multiplicity>1) 
 	     or near-singular (clustered) solutions are marked with an ", TT "M", 
-	     " (", TO2{Point, "status"}, " is set to ", TO MinStepFailure, "). "
+	     " (", TO2{AbstractPoint, "status"}, " is set to ", TO MinStepFailure, "). "
 	     },
 	EXAMPLE lines ///
      	R = CC[x,y];
@@ -300,15 +300,16 @@ document {
 document {
 	Key => {
 	     (refine, List, List), refine, 
-	     (refine,Point), (refine,PolySystem,List), (refine,PolySystem,Point),
+	     (refine,AbstractPoint), (refine,PolySystem,List), (refine,PolySystem,AbstractPoint),
 	     },
 	Headline => "refine numerical solutions to a system of polynomial equations",
 	Usage => "solsR = refine(T,sols)",
 	Inputs => { 
 	     "T" => {"contains the polynomials of the system (may be of type ", TO PolySystem, ")"},
-	     "sols" => {"contains (a) solution(s) (", TO2{Point,"points"}," or lists of coordinates or ", TO2{Point,"points"}, ")"},
+	     "sols" => {"contains (a) solution(s) (", TO2{AbstractPoint,"points"},
+		 " or lists of coordinates of points)"},
 	     },
-	Outputs => {"solsR" => {"contains refined solutions (as ", TO2{Point, "points"}, ")" }},
+	Outputs => {"solsR" => {"contains refined solutions (as ", TO2{AbstractPoint, "points"}, ")" }},
 	"Uses Newton's method to correct the given solutions so that the resulting approximation 
 	has its estimated relative error bounded by min(", TO "ErrorTolerance", ",2^(-", TO "Bits", ")). ",
 	"The number of iterations made is at most ", TO "Iterations", ".",
@@ -647,14 +648,14 @@ numericalIrreducibleDecomposition I
 
 
 document {
-    Key => {isOn, (isOn,Point,Ideal), (isOn,Point,NumericalVariety), 
-	(isOn,Point,RingElement), (isOn,Point,WitnessSet), (isOn,Point,WitnessSet,ZZ),
+    Key => {isOn, (isOn,AbstractPoint,Ideal), (isOn,AbstractPoint,NumericalVariety), 
+	(isOn,AbstractPoint,RingElement), (isOn,AbstractPoint,WitnessSet), (isOn,AbstractPoint,WitnessSet,ZZ),
 	[isOn,Tolerance]
 	},
     Headline => "determines if a point belongs to a variety",
     Usage => "B = isOn(P,V)",
     Inputs => { 
-	"P"=>Point,  
+	"P"=>AbstractPoint,  
 	"V"=>{ofClass NumericalVariety, ", ", ofClass WitnessSet, ", ", ofClass Ideal, ", or ", ofClass RingElement}
 	},
     Outputs => { "B"=>Boolean },
@@ -671,7 +672,7 @@ isOn(point {{sqrt 5*ii,sqrt 3}},W)
     }
 
 document {
-    Key => {newton, (newton,PolySystem,Matrix), (newton,PolySystem,Point)},
+    Key => {newton, (newton,PolySystem,Matrix), (newton,PolySystem,AbstractPoint)},
     Headline => "Newton-Raphson method",
     "Performs one step of the Newton-Raphson method.",
     Caveat=>{"Works for a regular square or overdetermined system."}
@@ -716,12 +717,12 @@ isOn(P,W)
 
 document {
     Key => {deflate,(deflate,Ideal),(deflate,PolySystem,List),(deflate,PolySystem,Matrix),
-	(deflate,PolySystem,Point),(deflate,PolySystem,Sequence),(deflate,PolySystem,ZZ),
+	(deflate,PolySystem,AbstractPoint),(deflate,PolySystem,Sequence),(deflate,PolySystem,ZZ),
 	Deflation, DeflationSequence, DeflationRandomMatrix, -- attached to a PolySystem
-	liftPointToDeflation,(liftPointToDeflation,Point,PolySystem,ZZ),
+	liftPointToDeflation,(liftPointToDeflation,AbstractPoint,PolySystem,ZZ),
 	LiftedSystem, LiftedPoint, SolutionSystem, DeflationSequenceMatrices, -- attached to a Point
-	deflateInPlace, (deflateInPlace,Point,PolySystem), 
-	SquareUp, [deflateInPlace,SquareUp], -- whether to square up at each step
+	deflateAndStoreDeflationSequence, (deflateAndStoreDeflationSequence,AbstractPoint,PolySystem), 
+	SquareUp, [deflateAndStoreDeflationSequence,SquareUp], -- whether to square up at each step
 	[deflate,Variable]
 	},
     Headline => "first-order deflation",
@@ -818,7 +819,7 @@ document {
     }
 
 document {
-    Key => {(isSolution,Point,PolySystem), isSolution, [isSolution,Tolerance] },
+    Key => {(isSolution,AbstractPoint,PolySystem), isSolution, [isSolution,Tolerance] },
     Headline => "check if a point satisfies a polynomial system approximately",
     Caveat => {"Either rewrite or phase out!!!"}
     }
@@ -996,8 +997,8 @@ undocumented {
     (toExternalString,GateSystem),
     (evaluateJacobian,GateSystem,Matrix),
     (evaluateJacobian,GateSystem,Matrix,Matrix),    
-    (evaluateJacobian,GateSystem,Point),
-    (evaluateJacobian,GateSystem,Point,Point)
+    (evaluateJacobian,GateSystem,AbstractPoint),
+    (evaluateJacobian,GateSystem,AbstractPoint,AbstractPoint)
     }
 
 doc ///
@@ -1011,7 +1012,7 @@ Headline
 doc ///
     Key
     	endGameCauchy
-	(endGameCauchy,GateHomotopy,Number,Point)
+	(endGameCauchy,GateHomotopy,Number,AbstractPoint)
 	(endGameCauchy,GateHomotopy,Number,MutableMatrix)
     Headline
         Cauchy end game for getting a better approximation of a singular solution 
@@ -1021,7 +1022,7 @@ doc ///
     Inputs
 	H:GateHomotopy
 	t'end:Number
-	p0:Point
+	p0:AbstractPoint
 	points:MutableMatrix
     Description
     	Text 
@@ -1034,7 +1035,7 @@ doc ///
 	    p0 = first sols;
 	    peek p0
 	    t'end = 1
-    	    p = endGameCauchy(p0#"H",t'end,p0)
+    	    p = endGameCauchy(p0.cache#"H",t'end,p0)
     SeeAlso
     	refine
 ///
@@ -1068,7 +1069,7 @@ doc ///
     SeeAlso
     	GateHomotopy
 	segmentHomotopy
-    	Point	    
+    	AbstractPoint	    
 ///
 
 doc ///

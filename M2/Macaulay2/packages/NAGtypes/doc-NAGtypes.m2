@@ -34,9 +34,11 @@ peek O
 ///
      }
 
--- Point ---------------------------------------------------------------------------
+-- AbstractPoint ---------------------------------------------------------------------------
 document {
-     Key => {Point, coordinates, (coordinates,Point), (status,Point), (matrix,Point), (net, Point),
+     Key => {AbstractPoint, Point, 
+	 coordinates, (coordinates,AbstractPoint), (coordinates,Point),
+	 (status,AbstractPoint), (matrix,AbstractPoint), (net, AbstractPoint),
 	  Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, RefinementFailure,
 	  Origin, IncreasePrecision, DecreasePrecision,
 	  Multiplicity,
@@ -44,16 +46,16 @@ document {
 	  MaxPrecision, WindingNumber, DeflationNumber
 	  },
      Headline => "a type used to store a point in complex space",
-     "This type is used to store a solution to a polynomial system obtained by such functions as ", 
+     "The type ", TT "Point", " inherited from ", TT "AbstractPoint", " is used to store a solution to a polynomial system obtained by such functions as ", 
      TO "NumericalAlgebraicGeometry::solveSystem", ", ", TO "NumericalAlgebraicGeometry::track",
      ". The following methods can be used to access a ", 
-     TO "Point", ":",
+     TO "AbstractPoint", ":",
      UL{
 	  {"coordinates", " -- get the coordinates (returns a list)"},
 	  {"matrix", " -- get the coordinates (returns a matrix)"},
 	  {"status", " -- get the type of solution (e.g., Regular)"}
 	  },
-     "Possible types of Points (accessed by ", TO "status", "): ",
+     "Possible return values of ", TO "status", " reflect the status with respect to a homotopy continuation procedure that obtained this point:",
      UL { {"Regular", " -- the jacobian of the polynomial system is regular at the point"}, 
 	  {"Singular", " -- the jacobian of the polynomial system is (near)singular at the point"}, 
 	  {"Infinity", " -- the solution path is deemed divergent"},
@@ -65,8 +67,7 @@ document {
 	  {"DecreasePrecision", " -- the current precision is deemed excessive (more than the double of sufficient precision)"},
 	  {"null", " -- the point has not been classified"}
 	  },
-     "Only coordinates are displayed (by ", TO "net", "); to see the rest use ", 
-     TO "peek", ".  Different algorithms attach different information describing the point. For example, ", TO "NumericalAlgebraicGeometry::solveSystem", " produces the following.",
+     "Only coordinates are displayed (by ", TO "net", "); other attributes of a ", TO "Point", TT " p", " are stored in ", TT "p.cache", ".  Different algorithms attach different information describing the point. For example, ", TO "NumericalAlgebraicGeometry::solveSystem", " produces the following.",
      PARA{},
      EXAMPLE lines ///
        loadPackage "NumericalAlgebraicGeometry";
@@ -77,13 +78,6 @@ document {
        coordinates pt
        status pt
      ///,
-     -* condition number is not computed by default anymore !!!
-     PARA{"For example, one may see the condition number of the Jacobian of the polynomial system, evaluated at this point
-      (the smaller the value, the better) as follows."},
-     EXAMPLE lines ///
-       pt.ConditionNumber
-     ///,
-     *-
      PARA{"The other keys that may be attached include "}, 
      UL{
 	  {TO NumberOfSteps, " -- the number of steps in made by the continuation procedure"}, 
@@ -102,24 +96,24 @@ document {
 	 TO isRealPoint,
 	 TO realPoints,
 	 TO solutionsWithMultiplicity,
-	 TO (norm,Thing,Point),
+	 TO (norm,Thing,AbstractPoint),
 	 TO toAffineChart
 	 }
      }
 
 document {
-	Key => {point, (point,List), (point,Matrix), (point,Point)},
+	Key => {point, (point,List), (point,Matrix), (point,AbstractPoint), 
+	    (point, List, CacheTable)},
 	Headline => "construct a Point",
 	Usage => "p = point c",
 	Inputs => { 
 	     "c"=> {ofClass List, "containing  elements in the form {{list of complex coordinates}, other data} or ",
-		 ofClass Matrix, " (only coordinates) or ", ofClass Point}
+		 ofClass Matrix, " (only coordinates) or ", ofClass AbstractPoint, " or ", ofClass CacheTable}
 	     },
 	Outputs => {"p"=>Point},
-	PARA{"Used to construct a ", TO2{Point, "point"}, " from the old format of output."},
         EXAMPLE lines ///
 p := point {{1+0.2*ii, 0.5}, SolutionStatus=>Regular, LastT=>1., NumberOfSteps=>10, ConditionNumber=>2.3}
-peek p 
+peek p.cache
 q := point p
      	///
 	}
@@ -129,7 +123,7 @@ document {
 	Headline => "sort the list of solutions",
 	Usage => "t = sortSolutions s",
 	Inputs => { 
-	     "s"=>{"contains solutions (represented either by lists of coordinates or ", TO2{Point,"points"}, ")"}
+	     "s"=>{"contains solutions (represented either by lists of coordinates or ", TO2{AbstractPoint,"points"}, ")"}
 	     },
 	Outputs => {"t"=> "contains solutions sorted as described below"},
 	"The sorting is done lexicographically regarding each complex n-vector as real 2n-vector. ",
@@ -171,12 +165,12 @@ document { Key => {Norm,
      }
 
 document {
-	Key => {isGEQ, (isGEQ,List,List),(isGEQ,Point,Point)},
+	Key => {isGEQ, (isGEQ,List,List),(isGEQ,AbstractPoint,AbstractPoint)},
 	Headline => "compare two points",
 	Usage => "b = isGEQ(x,y)",
 	Inputs => {
-	     "x" => {ofClass Point, "or a list of complex (floating point) numbers"},
-	     "y" => {ofClass Point, "or a list of complex (floating point) numbers"}
+	     "x" => {ofClass AbstractPoint, "or a list of complex (floating point) numbers"},
+	     "y" => {ofClass AbstractPoint, "or a list of complex (floating point) numbers"}
 	     },
 	Outputs => {"b"=>{"tells if ", TT "x", " is (approximately) greater or equal than ", TT "y"}},
 	PARA {"The inputs are lists of complex numbers, the order is (approximately) lexicographic: regard each complex n-vector as real 2n-vector, 
@@ -190,9 +184,9 @@ isGEQ({1,1e-7},{1, 0})
 document {
 	Key => {areEqual, (areEqual,CC,CC), (areEqual,Number,Number), 
 	    (areEqual,List,List), (areEqual,BasicList,BasicList),
-	    (areEqual,Matrix,Matrix), (areEqual,MutableMatrix,MutableMatrix), (areEqual,Point,Point), 
-	    (areEqual,BasicList,Point), (areEqual,Point,BasicList),
-	    (symbol ==,Point,Point),
+	    (areEqual,Matrix,Matrix), (areEqual,MutableMatrix,MutableMatrix), (areEqual,AbstractPoint,AbstractPoint), 
+	    --(areEqual,BasicList,AbstractPoint), (areEqual,AbstractPoint,BasicList),
+	    (symbol ==,AbstractPoint,AbstractPoint),
 	    [areEqual,Projective]},
 	Headline => "determine if solutions are equal",
 	Usage => "b = areEqual(x,y)",
@@ -204,8 +198,8 @@ document {
 	     },
 	Outputs => {"b"=>{"tells if ", TT "x", " and ", TT "y", " are approximately equal"}},
 	PARA {
-	    "The inputs can be complex numbers, ", TO2{Point, "points"}, ", ", 
-	    " or lists of points (presented as ", TO2{Point, "points"}, " or lists of coordinates). ",
+	    "The inputs can be complex numbers, ", TO2{AbstractPoint, "points"}, ", ", 
+	    " or lists of points (presented as ", TO2{AbstractPoint, "points"}, " or lists of coordinates). ",
 	    "The function returns false if the distance between ", TT "x", " and ", TT "y", 
 	    " exceeds ", TO Tolerance, " and true, otherwise."
 	    },
@@ -219,7 +213,7 @@ areEqual({{-1,1e-7},{1e-7*ii,-1}}, {{-1, 0}, {0, -1}})
 areEqual({3*ii,2*ii,1+ii}, {-6,-4,-2+2*ii}, Projective=>true)  
      	///,
 	PARA {
-	    "For two ", TO2(Point, "points"), " ", TT "A", " and ", TT "B", 
+	    "For two ", TO2(AbstractPoint, "points"), " ", TT "A", " and ", TT "B", 
 	    "calling ", TT "A == B", "is equivalent to ", TT "areEqual(A,B)", 
 	    ", however, there is no way to specify the optional parameter."
 	    },
@@ -233,7 +227,7 @@ A == B
 
 
 document {
-     Key => {isRealPoint, (isRealPoint,Point)},
+     Key => {isRealPoint, (isRealPoint,AbstractPoint)},
      Headline => "determine whether a point is real",
      Usage => "b = isRealPoint p",
      Inputs => {
@@ -253,9 +247,9 @@ document {
      Headline => "select real points",
      Usage => "R = realPoints L",
      Inputs => {
-	     "L" => {TO2{Point,"points"}}
+	     "L" => {TO2{AbstractPoint,"points"}}
 	     },
-     Outputs => {"R"=>{TO2{Point,"points"}, " that are real (up to ", TO Tolerance, ")"}},
+     Outputs => {"R"=>{TO2{AbstractPoint,"points"}, " that are real (up to ", TO Tolerance, ")"}},
      PARA{"Selects real points from a list of points using the function ", TO isRealPoint, "."},
      EXAMPLE lines ///
      needsPackage "NumericalAlgebraicGeometry"
@@ -266,7 +260,7 @@ document {
      SeeAlso => {realPoints}
      }
 document {
-     Key => {(norm,Thing,Point)},
+     Key => {(norm,Thing,AbstractPoint)},
      Headline => "p-norm of the point",
      Usage => "a = norm(p,pt)",
      Inputs => {
@@ -289,7 +283,7 @@ document {
      Headline => "replaces clusters of approximately equal points by single points with multiplicity",
      Usage => "M = solutionsWithMultiplicity S",
      Inputs => {
-	     "S" => {TO2{Point,"points"}}
+	     "S" => {TO2{AbstractPoint,"points"}}
 	     },
      Outputs => {"M"=>{TO2{Point,"points"}, " with a multiplicity field"}},  
      PARA{"Clusters the points and outputs a list with one point ", TT "p", " per cluster with ", TT "p.", TO Multiplicity, 
@@ -310,7 +304,7 @@ document {
 
 
 document {
-	Key => {(project,Point,ZZ), project},
+	Key => {(project,AbstractPoint,ZZ), (project,Point,ZZ), project},
 	Headline => "project a point",
 	Usage => "q = project(p,n)",
 	Inputs => {
@@ -401,12 +395,12 @@ evaluate(jacobian S, p)
      }
 
 document {
-    Key => {evaluate, (evaluate,Matrix,Matrix), (evaluate,Matrix,Point), (evaluate,PolySystem,Matrix), (evaluateJacobian,PolySystem,Point)},
+    Key => {evaluate, (evaluate,Matrix,Matrix), (evaluate,Matrix,AbstractPoint), (evaluate,PolySystem,Matrix), (evaluateJacobian,PolySystem,AbstractPoint)},
     Headline => "evaluate a polynomial system or matrix at a point",
     Usage => "y = evaluate(f,x)",
     Inputs => { 
 	"f" => {ofClass PolySystem, " or ", ofClass Matrix},
-	"x" => {ofClass Point, " or ", ofClass Matrix},
+	"x" => {ofClass AbstractPoint, " or ", ofClass Matrix},
 	},
     Outputs => {"y"=> {"the value ", TT "f(x)"}},
     PARA {"Evaluates a ", TO PolySystem, " or a matrix with polynomial entries at a point."},
@@ -420,16 +414,17 @@ evaluate(jacobian S, p)
     }
 
 document {
-    Key => {residual, 
-	(residual,List,Point),
-	(residual,Matrix,Matrix),
-	(residual,PolySystem,Point)
+    Key => {residual,
+	(residual,System,AbstractPoint),
+	(residual,System,Point),	 
+	(residual,Matrix,Matrix),    
+	(residual,List,Point)
 	},
     Headline => "residual of a polynomial function at a point",
     Usage => "y = residual(f,x)",
     Inputs => { 
 	"f" => {ofClass PolySystem, " or ", ofClass Matrix},
-	"x" => {ofClass Point, " or ", ofClass Matrix},
+	"x" => {ofClass AbstractPoint, " or ", ofClass Matrix},
 	},
     Outputs => {"y"=> {"the norm of ", TT "f(x)"}},
     PARA {
@@ -552,8 +547,9 @@ H' := substituteContinuationParameter(H,1-t)
 -- WitnessSet ------------------------------------------------------------------------------
 document {
      Key => {WitnessSet,equations,(equations,WitnessSet),slice,(slice,WitnessSet),
+--	  (polySystem,WitnessSet),
 	  points,(points,WitnessSet),(ideal,WitnessSet),Equations,Slice,Points,IsIrreducible,ProjectionDimension,
-     	  (codim,WitnessSet),(degree,WitnessSet),(dim,WitnessSet),(ring,WitnessSet),(net,WitnessSet) 
+     	  (codim,WitnessSet),(degree,WitnessSet),(dim,WitnessSet),(ring,WitnessSet),(net,WitnessSet)
      	  },
      Headline => "a witness set",
      "This type stores a witness set of an equidimensional solution component. ", 
@@ -562,6 +558,7 @@ document {
      UL{
      	  {"ideal", " -- get the defining ideal of the algebraic superset"},
 	  {"equations", " -- get the list of defining polynomials of the algebraic superset"},
+--	  {"polySystem", " -- get the list above as a polynomial system"},
 	  {"slice", " -- get linear functions defining the slicing plane"},
 	  {"points", " -- get the list of witness points (which are zeroes of all above)"}
 	  },
@@ -579,7 +576,7 @@ document {
      UL {
 	  {TT "Equations", " -- ", ofClass Ideal},
 	  {TT "Slice", " -- ", ofClass List, " or ", ofClass Matrix},
-	  {TT "Points", "--  a list of ", TO2(Point, "points")},
+	  {TT "Points", "--  a list of ", TO2(AbstractPoint, "points")},
 	  {TT "cache.IsIrreducible", " -- takes values ", TO "null", "(not determined), ", TO "true", ", or ", TO "false"}
 	  },
      "Optional keys:",
@@ -603,7 +600,7 @@ document {
 	     "S" => {ofClass Ideal, " generated by linear polynomials (or ", 
 		 ofClass PolySystem, " of the generators or ", 
 		 ofClass Matrix, " of their coefficients)"},
-	     "P" => List => {"contains witness points (of type ", TO "Point", ")"}
+	     "P" => List => {"contains witness points (of type ", TO "AbstractPoint", ")"}
 	     },
 	Outputs => {"w"=> WitnessSet},
 	PARA {"Used to construct a witness set of a component of the variety ", TT "V(E)", ". It is expected that ", TT "codim E == dim S", 
@@ -630,7 +627,7 @@ document {
 	     "E" => Ideal => {"in a polynomial ring over ", TO CC },
 	     "C" => Matrix => {"in a polynomial ring over ", TO CC },
 	     "S" => Matrix => {" complex coefficients of a linear system"},
-	     "P" => List => {"contains witness points (of type ", TO "Point", ")"}
+	     "P" => List => {"contains witness points (of type ", TO "AbstractPoint", ")"}
 	     },
 	Outputs => {"w"=> ProjectiveWitnessSet},
 	PARA {"Used to construct a witness set for a component of the variety ", TT "V(E)", 
@@ -886,7 +883,7 @@ doc ///
     Text
       This type stores a finite dimensional subspace of the local dual of a polynomial ring at a point.
       In practice, the subspace is stored as a @TO PolySpace@ with functionals represented by the
-      corresponding polynomial, along with a @TO Point@. 
+      corresponding polynomial, along with a @TO AbstractPoint@. 
       The following methods can be used to access a {\tt DualSpace}: 
 
       @UL {
@@ -903,8 +900,8 @@ doc ///
 doc ///
   Key
     dualSpace
-    (dualSpace,Matrix,Point)
-    (dualSpace,PolySpace,Point)
+    (dualSpace,Matrix,AbstractPoint)
+    (dualSpace,PolySpace,AbstractPoint)
     (dualSpace,DualSpace)
   Headline
     construct a DualSpace
@@ -915,7 +912,7 @@ doc ///
     M:Matrix
       with one row of generators
     S:PolySpace
-    p:Point
+    p:AbstractPoint
   Outputs
     D:DualSpace
   Description
@@ -985,13 +982,13 @@ doc ///
     (numParameters,System)
     (evaluate,System,Matrix)
     (evaluate,System,Matrix,Matrix)
-    (evaluate,System,Point)
-    (evaluate,System,Point,Point)
+    (evaluate,System,AbstractPoint)
+    (evaluate,System,AbstractPoint,AbstractPoint)
     evaluateJacobian
     (evaluateJacobian,System,Matrix)
     (evaluateJacobian,System,Matrix,Matrix)
-    (evaluateJacobian,System,Point)
-    (evaluateJacobian,System,Point,Point)
+    (evaluateJacobian,System,AbstractPoint)
+    (evaluateJacobian,System,AbstractPoint,AbstractPoint)
   Headline
     a system of functions
   Description
@@ -1181,7 +1178,7 @@ doc ///
     (texMath, PolySpace)
     (texMath, WitnessSet)
     (texMath, PolySystem)
-    (texMath, Point)
+    (texMath, AbstractPoint)
     (texMath, DualSpace)
   Headline
     convert to TeX math format

@@ -604,7 +604,7 @@ witnessSuperSetsFilter (MutableList,List) := (witsets,pts) -> (
   local c;
   for p in pts do (
     found := false;
-    if instance(p,Point)
+    if instance(p,AbstractPoint)
      then c = p
      else c = point{p};
     for w in witsets when (not found) do (
@@ -710,7 +710,7 @@ cascade (List) := o -> (system) -> (
         ) else (
           supsols := points(supwit);
           genpts := witnessSuperSetsFilter(result,supsols);
-	  g := toList(apply(genpts,x->if class x === Point then x else point{x}));
+	  g := toList(apply(genpts,x->if instance(x,AbstractPoint) then point x else point{x}));
           ws := witnessSet(ideal(equations(supwit)),ideal(slice(supwit)),g);
           if #g!=0 then result = append(result,(i,ws));
         );
@@ -848,7 +848,7 @@ factorWitnessSet (WitnessSet ) := o->  w -> (
 ------------------------
 
 isCoordinateZero = method(TypicalValue => Boolean)
-isCoordinateZero (Point,ZZ,RR) := (sol,k,tol) -> (
+isCoordinateZero (AbstractPoint,ZZ,RR) := (sol,k,tol) -> (
   -- IN: sol, a solution of a polynomial system;
   --     k, index to a coordinate must be within range;
   --     tol, tolerance for the absolute value of the k-th coordinate.
@@ -863,7 +863,7 @@ isCoordinateZero (Point,ZZ,RR) := (sol,k,tol) -> (
 ---------------------------
 
 isWitnessSetMember = method(TypicalValue => Boolean, Options => {Verbose => false})
-isWitnessSetMember (WitnessSet,Point) := o-> (witset,testpoint) -> (
+isWitnessSetMember (WitnessSet,AbstractPoint) := o-> (witset,testpoint) -> (
   -- IN: witset, a witness set for a positive dimensional solution set,
   --     testpoint, does it belong to the solution set?
   -- OUT: true if testpoint is a member of the solution set,
@@ -1194,7 +1194,7 @@ solveSystem List := List =>  o->system -> (
     if o.Verbose then
       stdio << "after filtering nonsolutions : "
             << #result << " solutions left" << endl;
-    scan(result, (sol -> sol#Coordinates = take(sol#Coordinates, numgens R)));
+    result = apply(result, sol -> point(take(coordinates sol, numgens R), sol.cache));
     newR = (coefficientRing R)(gens R) -- put variables back in original ring
   );
   result

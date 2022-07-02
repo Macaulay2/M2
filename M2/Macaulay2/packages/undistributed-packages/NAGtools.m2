@@ -38,11 +38,11 @@ debug NumericalAlgebraicGeometry
 -- Monodromy-based algorithm
 -- in: 
 --     PH, a homotopy from f_A to f_B, where f is a family of (polynomial or other) systems; depends on 2m parameters, m=|A|=|B| 
---     p0, Point, values of m parameters (assumed generic)
+--     p0, AbstractPoint, values of m parameters (assumed generic)
 --     s0, a nonempty list of points, solutions of PH_(p0,*)(0)
 --     RandomPointFunction, a function that returns a random point p1 suitable for PH  
 preimageViaMonodromy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3),Precision=>DoublePrecision})
-preimageViaMonodromy (ParameterHomotopy, Point, List) := o -> (PH,point0,s0) -> (
+preimageViaMonodromy (ParameterHomotopy, AbstractPoint, List) := o -> (PH,point0,s0) -> (
     if #s0 < 1 then error "at least one solution expected";  
     p0 := transpose matrix point0; 
     nextP := if o.RandomPointFunction =!= null then o.RandomPointFunction else (
@@ -87,7 +87,7 @@ preimageViaMonodromy (ParameterHomotopy, Point, List) := o -> (PH,point0,s0) -> 
 --     point0, (as above)
 --     s0, (as above)
 solveViaMonodromy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
-solveViaMonodromy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
+solveViaMonodromy (Matrix, AbstractPoint, List) := o -> (PF,point0,s0) -> (
     if #s0 < 1 then error "at least one solution expected";  
     p0 := matrix point0; -- points are row matrices
     nParameters := numgens coefficientRing ring PF;
@@ -189,7 +189,7 @@ assert (#preimageViaMonodromy(PH,point p,{point p}) == 2)
 beginDocumentation()
 undocumented{
 preimageViaMonodromy,
-(preimageViaMonodromy,ParameterHomotopy,Point,List),
+(preimageViaMonodromy,ParameterHomotopy,AbstractPoint,List),
 gateHomotopy4preimage,
 (gateHomotopy4preimage,GateMatrix,GateMatrix,List,List),
 (gateHomotopy4preimage,GateMatrix,List),

@@ -2,13 +2,13 @@
 undocumented {
     Vertices, 
     (pointArray,List), 
-    saturateEdges,  (saturateEdges,HomotopyGraph), (makeRandomizedSelect,RR), (makeBatchPotential,ZZ), (dynamicFlowerSolve,Matrix,Point,List), RandomPointFunction, 
+    saturateEdges,  (saturateEdges,HomotopyGraph), (makeRandomizedSelect,RR), (makeBatchPotential,ZZ), (dynamicFlowerSolve,Matrix,AbstractPoint,List), RandomPointFunction, 
      Correspondence21, Edges, Correspondence12, Potential21, Potential12, Family, gamma1, gamma2, Graph, Node1,  Node2, HomotopyEdge, makeRandomizedSelect,
-     isAffineLinearFunction, (symbol <<, File, PointArray), (position, Point, PointArray, FunctionClosure), (toExternalString, PointArray), PartialSolBins, LinearSegment, FirstDirectedEdge
+     isAffineLinearFunction, (symbol <<, File, PointArray), (position, AbstractPoint, PointArray, FunctionClosure), (toExternalString, PointArray), PartialSolBins, LinearSegment, FirstDirectedEdge
      }
     --, SpecializedSystem,  HomotopyNode, HomotopyGraph,PartialSols}
 -- undocument tags
-undocumented {(symbol _,PointArray,List), (symbol _,PointArray,ZZ), (points,PointArray), (position,Point,PointArray), 1:(homotopyGraph), [dynamicFlowerSolve,RandomPointFunction], [homotopyGraph,Potential], [dynamicFlowerSolve,TargetSolutionCount],FilterFailure}
+undocumented {(symbol _,PointArray,List), (symbol _,PointArray,ZZ), (points,PointArray), (position,AbstractPoint,PointArray), 1:(homotopyGraph), [dynamicFlowerSolve,RandomPointFunction], [homotopyGraph,Potential], [dynamicFlowerSolve,TargetSolutionCount],FilterFailure}
 
 doc ///
     Key
@@ -47,7 +47,7 @@ doc ///
         Text
             In the example above, the system is linear in parameters, allowing for the seed pair to be computed automatically. 
 	    The current seeding implementation will report failure in other cases.
-	    Depending on the problem of interest, there may still be a natural way to generate the seed pair, as in @TO (monodromySolve, System, Point, List) @.
+	    Depending on the problem of interest, there may still be a natural way to generate the seed pair, as in @TO (monodromySolve, System, AbstractPoint, List) @.
 	Text
             Some references for numerical monodromy methods:
     	    
@@ -96,7 +96,7 @@ doc ///
     Key
         solveFamily
         (solveFamily,System)
-        (solveFamily,Point,System)
+        (solveFamily,AbstractPoint,System)
     Headline
         a solver for parametric families with simple output
     Usage
@@ -105,7 +105,7 @@ doc ///
     Inputs 
         PS:System
            : a parametric polynomial system, represented as either a @TO PolySystem@ whose underlying coefficient ring itself a polynomial ring in the parameters, or a @TO GateSystem@ with parameters.
-        p:Point
+        p:AbstractPoint
            consisting of target parameter values (optional.)
     Outputs
         p:Point
@@ -133,23 +133,23 @@ doc ///
         Code
 	    HEADER3 "Ways to use:",
 	    UL {
-		TO (monodromySolve, System, Point, List),             
+		TO (monodromySolve, System, AbstractPoint, List),             
                 TO (monodromySolve, System)
                 }
        ///       
 
 doc ///
     Key
-        (monodromySolve, System, Point, List)
+        (monodromySolve, System, AbstractPoint, List)
     Usage
             (N, npaths) = monodromySolve(PS,p0,L)
     Inputs
         PS:System
 	    with parametric coefficients
-        p0:Point
+        p0:AbstractPoint
             representing a parametrized system
         L:List
-            containing solutions associated to p0, each represented as a @TO Point @.
+            containing solutions associated to p0, each represented as a @TO AbstractPoint @.
     Outputs
         N:HomotopyNode
         npaths:ZZ
@@ -186,12 +186,12 @@ doc ///
 doc ///
     Key
         specializeSystem
-	(specializeSystem, Point, PolySystem)
-	(specializeSystem, Point, Matrix)
+	(specializeSystem, AbstractPoint, PolySystem)
+	(specializeSystem, AbstractPoint, Matrix)
     Usage
         equations = specializeSystem(p0, PS)
     Inputs
-        p0:Point
+        p0:AbstractPoint
 	    in parameter space
         PS:System
 	    with parameters as coefficients
@@ -205,7 +205,7 @@ doc ///
     Key
         createSeedPair
         (createSeedPair, System)
-        (createSeedPair, System, Point)
+        (createSeedPair, System, AbstractPoint)
     Headline
         create initial seed for the homotopy continuation
     Usage
@@ -214,7 +214,7 @@ doc ///
     Inputs
         PS:System
 	    a parametric polynomial system
-	x0:Point
+	x0:AbstractPoint
 	    an initial solution for some system
     Outputs
         p0:Point
@@ -235,7 +235,7 @@ doc ///
             -- line below checks that the system defined by p0 nearly vanishes at x0
             apply(polys0,p->sub(p,{x=>first x0.Coordinates,y=>last x0.Coordinates}))
    SeeAlso
-       (monodromySolve,System,Point,List)
+       (monodromySolve,System,AbstractPoint,List)
     ///
 
 doc ///
@@ -583,7 +583,7 @@ doc ///
     Inputs
         M:Matrix
             defining polynomial system
-        p0:Point
+        p0:AbstractPoint
             associated to a specialized system
         L:List
             containing partial solutions associated to p0
@@ -604,14 +604,14 @@ doc ///
 doc ///
     Key
         appendPoint
-        (appendPoint, PointArray, Point)
+        (appendPoint, PointArray, AbstractPoint)
     Headline
         append a point at the end of a PointArray
     Usage
         appendPoint(A,p)
     Inputs
         A:PointArray
-        p:Point
+        p:AbstractPoint
     ///
 
 doc ///
@@ -684,7 +684,7 @@ doc ///
         A = pointArray L
     Inputs
         L:List
-            containing objects of type @TO Point@
+            containing objects of type @TO AbstractPoint@
     Outputs
         A:PointArray
     ///
@@ -744,13 +744,13 @@ doc ///
 
 doc ///
     Key
-        (member, Point, PointArray)
+        (member, AbstractPoint, PointArray)
     Headline
-        test Point membership in a PointArray
+        test point membership in a PointArray
     Usage
         member(p,A)
     Inputs
-        p:Point
+        p:AbstractPoint
         A:PointArray
     SeeAlso
         "member"
@@ -761,7 +761,7 @@ doc ///
     Key
         monodromyGroup
         (monodromyGroup, System)
-        (monodromyGroup, System, Point, List)
+        (monodromyGroup, System, AbstractPoint, List)
     Headline
         compute the group of permutations implicitly defined by a homotopy graph
     Usage
@@ -769,7 +769,7 @@ doc ///
         monodromyGroup(S, p0, x0s)
     Inputs
         S:System
-        p0:Point
+        p0:AbstractPoint
             a basepoint for the monodromy group in the parameter space for S
         x0s:List
             points in the fiber over S        
@@ -807,14 +807,14 @@ monodromyGroup(G,FileName=>"eddGG","msOptions" => {Verbose=>true,NumberOfEdges=>
 doc ///
     Key
         seedTest
-	(seedTest, System, Point, Point)
+	(seedTest, System, AbstractPoint, AbstractPoint)
     Headline
         test initial seed
     Usage
         H = seedTest(P,p0,L)
     Inputs
         P:System
-        p0:Point
+        p0:AbstractPoint
 	L:List
     Outputs
         H:MutableHashTable

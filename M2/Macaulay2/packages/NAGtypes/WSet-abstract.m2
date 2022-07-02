@@ -37,7 +37,7 @@ slicingVariety WSet := W -> error "not implemented"
 
 -- low-level methods
 -- isOn = method()
--- isOn (Point,WSet) := (P,W) -> error "not implemented"
+-- isOn (AbstractPoint,WSet) := (P,W) -> error "not implemented"
 
 moveSlicingVariety = method(TypicalValue=>WSet) 
 moveSlicingVariety (WSet, SlicingVariety) := (W,S) -> error "not implemented"
@@ -59,7 +59,7 @@ coordinateProjection(Ambient,Ambient) := (B,A) -> (
     rationalMap matrix {vs}
     )
 evaluate = method()
-evaluate(RationalMap, Point) := (M,P) -> point sub(matrix M, matrix P)
+evaluate(RationalMap, AbstractPoint) := (M,P) -> point sub(matrix M, matrix P)
 compose(RationalMap, RationalMap) := (M,N) -> rationalMap sub(matrix M, matrix N)
 
 -- SlicingVariety -------------------(hacked to work with AffineSpace)-----------------

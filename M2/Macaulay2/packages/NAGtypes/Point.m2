@@ -14,15 +14,15 @@
 --   [LiftedSystem]          -- a regularization of SolutionSystem (in case the point is not regular)
 --   [LiftedPoint]           -- the corresponding solution of the LiftedSystem
 --   }
-Point.synonym = "point"
-texMath Point := x -> texMath coordinates x
+Point = new Type of AbstractPoint
+
 net Point := p -> (
     if hasAnAttribute p then (
 	if hasAttribute(p,PrintNet) then return getAttribute(p,PrintNet);
   	if hasAttribute(p,PrintNames) then return net getAttribute(p,PrintNames);
   	if hasAttribute(p,ReverseDictionary) then return toString getAttribute(p,ReverseDictionary);
   	);
-    s := if p.?SolutionStatus then p.SolutionStatus else Regular;
+    s := if p.cache.?SolutionStatus then p.cache.SolutionStatus else Regular;
     if s === Regular then net p.Coordinates 
     else if s === Singular then net toSequence p.Coordinates
     else if s === MinStepFailure then net "[M,t=" | net p.LastT | net "]"
@@ -37,97 +37,38 @@ net Point := p -> (
 globalAssignment Point
 
 point = method()
-point Point := p -> new Point from p
-point List := s -> new Point from {Coordinates=>(
-	c := first s;
-	if instance(c,List) then c	
-	else if instance(c,Matrix) or instance(c,MutableMatrix) then flatten entries c
-	else error "wrong type of coordinates: List or Matrix expected"   
-	)} | drop(s,1)
+point AbstractPoint := p -> point {coordinates p} 
+prepareCoordinates := c	-> (
+    if instance(c,List) then c 
+    else if instance(c,Matrix) or instance(c,MutableMatrix) then flatten entries c
+    else error "wrong type of coordinates: List or Matrix expected"   
+    )
+point (List,CacheTable) := (c,h) -> new Point from {
+    Coordinates=>prepareCoordinates c,
+    cache => copy h
+    }
+point List := s -> point(prepareCoordinates first s, new CacheTable from drop(s,1))
 point Matrix := M -> point {flatten entries M} 
+        
 toExternalString Point := p -> "point { " | toExternalString coordinates p |" }"
 
-Point == Point := (a,b) -> areEqual(a,b) -- the default Tolerance is used
-Point ? Point := (a,b) -> if isGEQ(a,b) then symbol > else symbol < 
-
-
-coordinates = method()
 coordinates Point := p -> p.Coordinates
 
-status Point := o -> p -> if p.?SolutionStatus then p.SolutionStatus else null
-matrix Point := o -> p -> matrix {coordinates p}
+status Point := o -> p -> if p.cache.?SolutionStatus then p.cache.SolutionStatus else null
 
-project = method()
 -- project point to the first n coordinates
 project (Point,ZZ) := (p,n) -> (
     p' := point { take(coordinates p, n) };
-    if p.?ErrorBoundEstimate then p'.ErrorBoundEstimate = p.ErrorBoundEstimate;
+    if p.cache.?ErrorBoundEstimate then p'.cache.ErrorBoundEstimate = p.cache.ErrorBoundEstimate;
     p'
     )
-   
-norm (Thing, Point) := (no,p) -> norm(no, coordinates p)
-norm (Thing, Matrix) := (no,M) -> norm(no, flatten entries M)
-norm (Thing, List) := (no,p) -> (
-     if instance(no,InfiniteNumber) and no === infinity then return max(p/abs);
-     assert((instance(no, ZZ) or instance(no, QQ) or instance(no, RR)) and no>0);
-     (sum(p, c->abs(c)^no))^(1/no)
-     )
- 
-residual = method(Options=>{Norm=>2})
+    
 residual (List,Point) := o->(S,p)-> residual(polySystem S,p,o)
-residual (PolySystem,Point) := o->(P,p)-> residual(P.PolyMap,matrix p,o)
+residual (System,Point) := o->(P,p)->norm(o.Norm, point evaluate(P,p))
 residual (Matrix,Matrix) := o->(S,p)->norm(o.Norm, point evaluate(S,p))
-
-isRealPoint = method(Options=>{Tolerance=>1e-6})
-isRealPoint Point := o -> p -> norm (coordinates p / imaginaryPart) < o.Tolerance
-
-realPoints = method(Options=>{Tolerance=>1e-6})
-realPoints List := o -> pp -> select(pp, isRealPoint)
-
-areEqual = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6, Projective=>false})
-areEqual (List,List) := o -> (a,b) -> #a == #b and all(#a, i->areEqual(a#i,b#i,o))
-areEqual (BasicList,BasicList) := o-> (a,b) -> areEqual(toList a, toList b, o)
-areEqual (Number,Number) := o -> (a,b) -> areEqual(toCC a, toCC b, o)
-areEqual (CC,CC) := o -> (a,b) -> (
-     abs(a-b) < o.Tolerance
-     ) 
-areEqual (Matrix,Matrix) := o -> (a,b) -> (
-     areEqual(flatten entries a, flatten entries b, o)
-     ) 
-areEqual (MutableMatrix,MutableMatrix) := o -> (a,b) -> (
-     areEqual(flatten entries a, flatten entries b, o)
-     ) 
-areEqual (Point,Point) := o -> (a,b) -> (
-    a = a.Coordinates; 
-    b = b.Coordinates;
-    if o.Projective 
-    then (1 - abs sum(a,b,(x,y)->x*conjugate y))/((norm(2,a)) * (norm(2,b))) < o.Tolerance  -- projective distance is too rough in practice
-    else (
-	na := norm(2,a); 
-	nb := norm(2,b);
-	if na > 1 or nb > 1 then norm(2,(a-b)) < o.Tolerance * max(na,nb)
-	else norm(2,a-b) < o.Tolerance -- in case both points are close to the origin, absolute error is looked at 
-	)
-    )
-areEqual (Point,BasicList) := o -> (a,b) -> areEqual(coordinates a, toList b)
-areEqual (BasicList,Point) := o -> (a,b) -> areEqual(toList a, coordinates b)
 
 origin = method(TypicalValue=>Point)
 origin Ring := R -> point matrix{toList(numgens R:0_(ultimate(coefficientRing, R)))};
-
-isGEQ = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6})
-isGEQ(Point,Point) := o->(t,s)-> isGEQ(coordinates t, coordinates s, o)
-isGEQ(List,List) := o->(t,s)-> (
-     n := #t;
-     for i from 0 to n-1 do ( 
-	  if not areEqual(t#i,s#i, Tolerance=>o.Tolerance) 
-	  then 
-	  if abs(realPart t#i - realPart s#i) < o.Tolerance then 
-	  return imaginaryPart t#i > imaginaryPart s#i
-	  else return realPart t#i > realPart s#i
-	  ); 
-     true -- if approx. equal 
-     )
 
 sortSolutionsWithWeights = method()
 sortSolutionsWithWeights (List, List) := (sols,w) -> (
