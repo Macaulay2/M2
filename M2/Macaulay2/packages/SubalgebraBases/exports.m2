@@ -26,4 +26,8 @@ export {
     "groebnerMembershipTest"
     }
 
+-- From service-functions.m2
+export {
+    "subduction"
+    }
 end --

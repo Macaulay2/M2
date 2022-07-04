@@ -91,15 +91,33 @@ limitedCompTable (HashTable, Matrix) := (H,M) -> (
     }
 )
 
+
+
 -- Subduction takes a compTable and 1-row matrix M with entries in the quotientRing and subducts the elements of M against compTable
 -- there may be some significant overhead for creating a MutableMatrix
 
-subduction = method();
-subduction(HashTable, MutableMatrix) := (compTable, M) -> (
+subduction = method( 
+    TypicalValue => Matrix,
+    Options => { -- These options are only used when the user wants to use subduction for their own purposes
+	AutoSubduce => true,
+        ReduceNewGenerators => true, -- applys gaussian elimination to sagbiGens before adding them
+	StorePending => true,
+        -- FullSubduct => true,
+        -- DegreeLimitedSubduction => false,
+        Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
+        SubductionMethod => "Top", -- top or engine
+    	Limit => 10, -- change back to 100
+	AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
+    	PrintLevel => 0
+    	}
+);
+
+
+subduction(HashTable, MutableMatrix) := opts -> (compTable, M) -> (
     new MutableMatrix from subduction(compTable, matrix M)
     )
 
-subduction(HashTable, Matrix) := (compTable, M) -> (
+subduction(HashTable, Matrix) := opts -> (compTable, M) -> (
     local result;
     
     if compTable#"options"#PrintLevel > 3 then (    
@@ -120,6 +138,26 @@ subduction(HashTable, Matrix) := (compTable, M) -> (
     result
     )
 
+-- the user-friendly subduction methods:
+--
+subduction(Matrix, Matrix) := opts -> (F, M) -> (
+    SB := initializeCompTable(sagbiBasis subring F, opts);
+    SB#"data"#"sagbiGenerators" = F;
+    updateComputation(SB);
+    subduction(opts, SB, M)
+    )
+
+subduction(Matrix, RingElement) := opts -> (F, m) -> (
+    first first entries subduction(opts, F, matrix {{m}})
+    )
+
+subduction(List, List) := opts -> (FList, MList) -> (
+    first entries subduction(opts, matrix {FList}, matrix {MList})
+    )
+
+subduction(List, RingElement) := opts -> (FList, m) -> (
+    first first entries subduction(opts, matrix {FList}, matrix {{m}})
+    )
 
 -- subduction TopLevel (compTable, M) -> Matrix
 -- M a 1 row matrix of ring elements in the liftedRing
