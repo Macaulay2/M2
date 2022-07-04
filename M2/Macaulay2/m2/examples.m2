@@ -216,6 +216,7 @@ captureExampleOutput = (desc, inputs, pkg, inf, outf, errf, data, inputhash, cha
 	desc = concatenate(desc, 62 - #desc);
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
 	(err, output) := capture(inputs, UserMode => false);
+	alarm 0;			     -- cancel any alarms that were set
 	if err then printerr "capture failed; retrying ..."
 	else (outf << M2outputHash << inputhash << endl << output << close;
 	    return true));
