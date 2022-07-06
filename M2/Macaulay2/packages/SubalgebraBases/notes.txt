@@ -5,6 +5,15 @@ Todo list
 > Remove unnecessary/old code
 
 
+> Remove unnecessary parentheses
+> Separate CompTable modifying functions from service-functions.m2 (see discussion below).
+> Strategy "Markov basis" --- only subduct on generators of the binomial ideal (rather than a GB), which we can compute quickly using FourTiTwo.
+  -- do we have an implementation that would work with just the binomial generators
+> Which subductions to export? Anything without compTable
+   ? Can we export only some methods ?
+
+
+
 Discussion
 ----------
 Ollie: It would be great to have a separate file(s) for subduction/sagbi related functions.
