@@ -14,7 +14,7 @@ fugacityH = p -> ( -- equivariant H
     defineFH n;
     product(n-1, i -> product(n-1-i, j -> (
                 X := p#(i,j,1); W:=p#(i,j,0); U := p#(i+1,j,0);
-                if not p.?Separation then (
+                if p.Separation === null then (
                     X = ind X; W = ind W; U = ind U;
                     s := scalar_(U,X);
                     t := scalar_(W,X); -- print(i,j,X,W,U,s,t);
@@ -29,9 +29,10 @@ q:=FK_0_0; zbar:=FK_-1_1;
 fugacityK = p -> (
     d:=p.Steps;
     n:=p.Length;
-    if p.?Separation then (
+    if p.Separation =!= null then (
+	sep := toString p.Separation;
 	tri := (a,b) -> if  a==" " or b==" " or a<b then 1
-			else if a>=p.Separation and b<p.Separation then -q^(-1) else -q; -- needs more checks
+			else if a>=sep and b<sep then -q^(-1) else -q; -- needs more checks
 	if p.Equivariant then (
 	    defineFK n;
             product(n-1, i -> product(n-1-i, j ->
@@ -40,7 +41,7 @@ fugacityK = p -> (
 			(a,b,c,d) := (p#(i+1,j,0),p#(i,j+1,1),p#(i,j,1),p#(i,j,0)); -- i,j,k,l
 			if a==b then (if a==" " then q else 1)*(1-z)/(1-q^2*z) else if a==d then 1
 			else ((1-q^2)/(1-q^2*z)
-			    * (if (a!=" " and b!=" " and a>b) or (a==" " and b<p.Separation) or (b==" " and a>=p.Separation) then 1 else z)
+			    * (if (a!=" " and b!=" " and a>b) or (a==" " and b<sep) or (b==" " and a>=sep) then 1 else z)
 			    * (tri(a,b))^(-1) * tri(d,c)
 			    )
 			)
@@ -95,23 +96,22 @@ fugacityK0 = p -> (
 
 fugacity = true >> o -> p -> (
     if #o>0 then p = p ++ o; -- change options
-    if not p.?Separation and p#Steps > 3 then error "Fugacities not implemented yet for d>3";
+    if p.Separation =!= null and p#Steps > 3 then error "Fugacities not implemented yet for d>3";
     if not p.Equivariant and not p.Ktheory then return 1; -- ha
     if not p.Generic and not p.Equivariant then return (-1)^(inversion nwside p+inversion neside p-inversion bottom p); -- difference of inversion numbers -- careful with multinumber on bdry
-    if not p.Generic and not p.?Separation and p#Steps>2 then error "cannot compute d>2 nongeneric equivariant fugacities";
+    if not p.Generic and p.Separation === null and p#Steps>2 then error "cannot compute d>2 nongeneric equivariant fugacities";
     (if p.Generic then if p.Ktheory then fugacityK else fugacityH else if p.Ktheory then fugacityK0 else fugacityH0) p
     )
 
 --tallyFugacities = true >> o -> L -> applyKeys(hashTable apply(L,p->p=>fugacity p),bottom,plus)
 fugacityTally = true >> o -> L -> sum(L,p->new VirtualTally from {bottom p=>fugacity(p,o)})
 
-String ? ZZ := (s,n) -> s ? concatenate(#s:toString n) -- 0 < 10 < 1 < 21 < 2 ...
-ZZ ? String := (n,s) -> concatenate(#s:toString n) ? s
-
+-- ordering of labels
+ord = s -> (sum ascii s)/#s -- 0 < 10 < 1 < 21 < 2 ...
 
 fugacityVector = true >> o -> L -> (
     if #L === 0 then return 0; -- error "can't determine puzzle size";
-    I := uniquePermutations sort bottom(first L);
+    I := uniquePermutations new LabelList from sort(bottom(first L),ord);
     t := fugacityTally(L,o);
     vector apply(I,i->t_i)
     )
