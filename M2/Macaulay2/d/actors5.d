@@ -496,6 +496,14 @@ utf8substrfun(e:Expr):Expr := (
 );
 setupfun("utf8substring",utf8substrfun);
 
+utf8charactersfun(e:Expr):Expr := (
+     when e
+     is s:stringCell do toExpr(utf8characters(s.v))
+     else WrongArg("a string"));
+setupfun("characters",utf8charactersfun);
+
+
+
 stringWidth(e:Expr):Expr := (
      when e
      is s:stringCell do toExpr(utf8width(s.v))

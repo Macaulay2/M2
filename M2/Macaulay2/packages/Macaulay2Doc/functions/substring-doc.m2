@@ -57,5 +57,31 @@ doc ///
   separate
   "strings and nets"
   "regular expressions"
+  utf8substring
+///
+doc ///
+ Key
+  utf8substring
+ Headline
+  extract part of a utf8 string
+ Usage
+  utf8substring(s, i, n)
+ Inputs
+  s:String
+  i:ZZ
+   starting index of substring
+  n:ZZ
+   length of substring
+ Outputs
+  :String
+ Description
+  Text
+   Returns the substring of {\tt s} that starts at index
+   {\tt i} and has {\tt n} characters, both measured in utf8 characters.
+  Example
+   s = "π ≈ 3.14159";
+   utf8substring(s, 4, 4)
+ SeeAlso
+  substring
 ///
 

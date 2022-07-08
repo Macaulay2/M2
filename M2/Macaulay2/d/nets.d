@@ -200,33 +200,24 @@ export netcmp(s:string, t:Net):int := (
 
 use vararray;
 
-blankcolumn(i:int, t:Net):bool := (
-     if i >= 0 then foreach s in t.body do if length(s) > i && s.i != ' ' then return false;
+blankcolumn(i:int, t:array(array(string))):bool := (
+     if i >= 0 then foreach s in t do if length(s) > i && s.i.0 != ' ' then return false;
      true
      );
 
-splitcolumn(i:int, t:Net):bool := (			    -- whether we can split between column i and column i-1
+splitcolumn(i:int, t:array(array(string))):bool := (			    -- whether we can split between column i and column i-1
                                                             -- we don't want to split: identifiers; M2 operators
      if i <= 0 then return false;			    -- shouldn't happen!
-     foreach s in t.body do if length(s) > i && (
+     foreach s in t do if length(s) > i && (
           x := s.(i-1);	    	     y := s.i;
 	  a := isalnum(x);           b := isalnum(y);
 	  a && b
 	  ||
-	  (!a && x != ' ') && (!b && y != ' ')		    -- not between two punctuation characters
+	  (!a && x.0 != ' ') && (!b && y.0 != ' ')		    -- not between two punctuation characters
 	  ||
-	  (x == '.' && isdigit(y))     			    -- not between . and digit
+	  (x.0 == '.' && isdigit(y.0))     			    -- not between . and digit
 	  ||
-	  (y == '.' && isdigit(x))			    -- not between . and digit
-	  ) then return false;
-     true);
-
-splitcolumnUTF(i:int, t:Net):bool := (			    -- whether we can split between column i and column i-1
-                                                            -- we don't want to split: unicode characters encoded in utf-8
-     if i <= 0 then return false;			    -- shouldn't happen!
-     foreach s in t.body do if length(s) > i && (
-          x := s.(i-1);	    	     y := s.i;
-	  ((int(x) & 0x80) != 0) && ((int(y) & 0xc0) == 0x80)
+	  (y.0 == '.' && isdigit(x.0))			    -- not between . and digit
 	  ) then return false;
      true);
 
@@ -249,8 +240,8 @@ subnet(t:Net,startcol:int,wid:int):Net := (
 	  ));
 
 export wrap(wid:int, sep:char, t:Net):Net := (
-     if t.width <= wid then return t;
-     if wid <= 0 then return t;
+     if wid <= 0 || t.width <= wid then return t;
+     tt := new array(array(string)) len length(t.body) do foreach s in t.body do provide utf8characters(s);
      breaks := newvararrayint(t.width/wid + 5);
      minwid := wid/3;
      if minwid == 0 then minwid = 1;
@@ -269,20 +260,20 @@ export wrap(wid:int, sep:char, t:Net):Net := (
 	       rightbkpt = t.width;
 	       nextleftbkpt = t.width;
 	       )
-	  else if blankcolumn(n,t)
+	  else if blankcolumn(n,tt)
 	  then (
 	       found = true;
 	       rightbkpt = n;
 	       nextleftbkpt = n+1;
 	       )
 	  else for i from n to leftbkpt + minwid by -1 do (
-	       if blankcolumn(i-1,t) then (
+	       if blankcolumn(i-1,tt) then (
 	       	    found = true;
 		    rightbkpt = i-1;
 		    nextleftbkpt = i;
 		    break;
 		    ));
-	  while rightbkpt>leftbkpt && blankcolumn(rightbkpt-1,t) do rightbkpt = rightbkpt-1;
+	  while rightbkpt>leftbkpt && blankcolumn(rightbkpt-1,tt) do rightbkpt = rightbkpt-1;
 	  if !found then (
 	       -- find a good break point where we don't split any identifiers or any operators
 	       nextleftbkpt2 := n;
@@ -293,56 +284,35 @@ export wrap(wid:int, sep:char, t:Net):Net := (
 		    rightbkpt2 = t.width;
 		    nextleftbkpt2 = t.width;
 		    )
-	       else if splitcolumn(n,t)
+	       else if splitcolumn(n,tt)
 	       then (
 		    found2 = true;
 		    rightbkpt2 = n;
 		    nextleftbkpt2 = n;
 		    )
 	       else for i from n to leftbkpt + minwid by -1 do (
-		    if splitcolumn(i,t) then (
+		    if splitcolumn(i,tt) then (
 			 found2 = true;
 			 rightbkpt2 = i;
 			 nextleftbkpt2 = i;
 			 break;
-			 ));
-	       while rightbkpt2>leftbkpt && blankcolumn(rightbkpt2-1,t) do rightbkpt2 = rightbkpt2-1;
+		     )
+	       );
+	       while rightbkpt2>leftbkpt && blankcolumn(rightbkpt2-1,tt) do rightbkpt2 = rightbkpt2-1;
 	       if found2 then (
 	       	    rightbkpt = rightbkpt2;
 	       	    nextleftbkpt = nextleftbkpt2;
 		    )
 	       else (
-		    -- find a good break point where we don't split any utf8 characters, which is always possible within about 4 bytes
-		    nextleftbkpt3 := n;
-		    rightbkpt3 := n;
-		    -- found3 := false;
-		    if n >= t.width then (
-			 -- found3 = true;
-			 rightbkpt3 = t.width;
-			 nextleftbkpt3 = t.width;
-			 )
-		    else if splitcolumnUTF(n,t)
-		    then (
-			 -- found3 = true;
-			 rightbkpt3 = n;
-			 nextleftbkpt3 = n;
-			 )
-		    else for i from n to leftbkpt + minwid by -1 do (
-			 if splitcolumnUTF(i,t) then (
-			      -- found3 = true;
-			      rightbkpt3 = i;
-			      nextleftbkpt3 = i;
-			      break;
-			      ));
-		    while rightbkpt3>leftbkpt && blankcolumn(rightbkpt3-1,t) do rightbkpt3 = rightbkpt3-1;
-	       	    rightbkpt = rightbkpt3;
-	       	    nextleftbkpt = nextleftbkpt3;
-		    );
-	       );
+		    rightbkpt = n;
+		    nextleftbkpt = n;
+		    while rightbkpt>leftbkpt && blankcolumn(rightbkpt-1,tt) do rightbkpt = rightbkpt-1;
+		);
+	  );
 	  -- record the break point for future use
 	  breaks << rightbkpt;
 	  leftbkpt = nextleftbkpt;
-	  while leftbkpt < t.width && blankcolumn(leftbkpt,t) do leftbkpt = leftbkpt+1;
+	  while leftbkpt < t.width && blankcolumn(leftbkpt,tt) do leftbkpt = leftbkpt+1;
 	  if leftbkpt >= t.width then break;
 	  );
      j := 0;
