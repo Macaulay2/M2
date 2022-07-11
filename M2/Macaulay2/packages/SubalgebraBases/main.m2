@@ -133,11 +133,52 @@ sagbi(SAGBIBasis) := opts -> S -> (
     sagbiBasis compTable
 )
 
+
+
+-- internal verify sagbi is a version of verifySabi just for SAGBIBasis objects
+-- it returns a SAGBIBasis object with its SB#"data"#"sagbiDone" flag correctly set
+-- it is used as an intermediate step for verifySagbi since matrices and subrings
+--   are handled slightly differently
+-- 
+
+internalVerifySagbi = method(
+    TypicalValue => SAGBIBasis,
+    Options => {
+	-- FullSubduct => true,
+        Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
+        SubductionMethod => "Top", -- top or engine
+	Limit => 100,
+	PrintLevel => 0 -- see print level for sagbi
+    	}
+    );
+
+
+internalVerifySagbi(SAGBIBasis) := opts -> SB -> (
+    compTable := initializeCompTable(SB, opts);
+    
+    -- Get the SPairs
+    sagbiGB := gb(compTable#"ideals"#"reductionIdeal");
+    k := rawMonoidNumberOfBlocks(raw monoid (compTable#"rings"#"tensorRing")) - 2;
+    zeroGens := selectInSubring(k, gens sagbiGB);
+    SPairs := compTable#"maps"#"fullSubstitution"(zeroGens) % compTable#"ideals"#"I";
+    
+    -- Reduce the SPairs
+    reducedSPairs := subduction(compTable, SPairs);
+    
+    -- if all the reduced SPairs are zero then we have a sagbiBasis
+    compTable#"data"#"sagbiDone" = zero(reducedSPairs);
+    sagbiBasis compTable
+    );
+
 -- checks whether or not the generators of a subring S form a sagbi basis wrt the given term order
 -- 
 -- the method uses the code from inside the method that collects SPairs to find them
 -- the method uses the subduction fuction so setting the option SubductionMethod will change the strategy
 -- print level will be called inside of subduction so it can be used to perform subduction 
+--
+-- the resulting SAGBIBasis object SB will have SB#"data"#"sagbiDone" updated appropriately
+-- the function then returns true or false depending on whether the generating set is a SAGBIBasis 
+--
 
 verifySagbi = method(
     TypicalValue => Subring,
@@ -155,33 +196,42 @@ verifySagbi(Subring) := opts -> S -> (
     
     if (S#cache#?"SAGBIBasis") and (S#cache#"SAGBIBasis"#"data"#"sagbiGenerators" == gens S) then (
 	-- S has a sagbi basis so use this object as a compTable
-	SB = initializeCompTable(S#cache#"SAGBIBasis", opts);
+	SB = S#cache#"SAGBIBasis";
 	) else (
 	SB = initializeCompTable(sagbiBasis S, opts);
 	-- add the generators to the sagbiGenerators
 	SB#"data"#"sagbiGenerators" = gens S;
 	updateComputation(SB);
+	SB = sagbiBasis SB;
 	);
     
-    -- the sagbiGens of SB should be equal to the gens of S
-    assert(SB#"data"#"sagbiGenerators" == gens S);
-    
-    -- Get the SPairs
-    sagbiGB := gb(SB#"ideals"#"reductionIdeal");
-    k := rawMonoidNumberOfBlocks(raw monoid (SB#"rings"#"tensorRing")) - 2;
-    zeroGens := selectInSubring(k, gens sagbiGB);
-    SPairs := SB#"maps"#"fullSubstitution"(zeroGens) % SB#"ideals"#"I";
-    
-    -- Reduce the SPairs
-    reducedSPairs := subduction(SB, SPairs);
-    
-    -- if all the reduced SPairs are zero then we have a sagbiBasis
-    zero(reducedSPairs)
+    SB = internalVerifySagbi(opts, SB);
+    S.cache#"SAGBIBasis" = SB;
+    isSAGBI S
     )
 
 verifySagbi(Matrix) := opts -> M -> (
-    verifySagbi(opts, subring M)
+    local SB;
+    
+    if (M#cache#?"SAGBIBasis") and (M#cache#"SAGBIBasis"#"data"#"sagbiGenerators" == M) then (
+	-- S has a sagbi basis so use this object as a compTable
+	SB = M#cache#"SAGBIBasis";
+	) else (
+	SB = initializeCompTable(sagbiBasis M, opts);
+	-- add the generators to the sagbiGenerators
+	SB#"data"#"sagbiGenerators" = M;
+	updateComputation(SB);
+	SB = sagbiBasis SB;
+	);
+    
+    SB = internalVerifySagbi(opts, SB);
+    M.cache#"SAGBIBasis" = SB;
+    isSAGBI M
     )
+
+-- A list does not have a cache, so verifySagbi on a list 
+--   is only checking whether it forms a sagbi basis
+--   the SAGBIBasis object becomes inaccessible
 
 verifySagbi(List) := opts -> L -> (
     verifySagbi(opts, subring L)

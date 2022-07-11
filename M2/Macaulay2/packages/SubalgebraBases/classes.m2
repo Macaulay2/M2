@@ -13,7 +13,7 @@ subring Matrix := M -> (
     new Subring from{
         "ambientRing" => ring M,
         "generators" => M,
-        cache => new CacheTable from {}
+        cache => new CacheTable from M.cache
     }
 )
 subring List := L -> subring(matrix{L})
@@ -30,6 +30,11 @@ isSAGBI = method()
 isSAGBI Subring := S -> (
     if S.cache#?"SAGBIBasis" then isSAGBI S.cache#"SAGBIBasis" else null
 )
+
+isSAGBI Matrix := M -> (
+    if M.cache#?"SAGBIBasis" then isSAGBI M.cache#"SAGBIBasis" else null
+)
+
 
 -- Defining a new computation object for SAGBI bases
 SAGBIBasis = new Type of HashTable
