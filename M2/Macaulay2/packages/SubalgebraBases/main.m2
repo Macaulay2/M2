@@ -20,15 +20,37 @@ subalgebraBasis = method(
 );
 
 subalgebraBasis(Matrix) := opts -> M -> (
-    gens sagbi(opts, subring M)
+    local sagbiInput;
+    
+    if M.cache#?"SAGBIBasis" then (
+	sagbiInput = M.cache#"SAGBIBasis";
+	) else (
+	sagbiInput = subring M;
+	);
+    
+    SB := sagbi(opts, sagbiInput);
+    output := gens SB;
+    output.cache#"SAGBIBasis" = SB;
+    output
 );
 
 subalgebraBasis(List) := opts -> L -> (
-    gens sagbi(opts, subring L)
+    subalgebraBasis(opts, matrix {L})
 );
 
 subalgebraBasis(Subring) := opts -> S -> (
-    gens sagbi(opts, S)
+    local sagbiInput;
+    
+    if S.cache#?"SAGBIBasis" then (
+	sagbiInput = S.cache#"SAGBIBasis";
+	) else (
+	sagbiInput = S;
+	);
+    
+    SB := sagbi(opts, sagbiInput);
+    output := gens SB;
+    output.cache#"SAGBIBasis" = SB;
+    output
 );
 
 -- sagbi returns a computation object
