@@ -68,7 +68,7 @@ NoCapture      = 1 << 63 -* don't use capture *-
 InvertArgs     = 1 << 64 -* negate the effect of argumentMode *-
 
 -* by default, the following commandline fixtures are used *-
-defaultMode  = (SetUlimit + GCMAXHEAP + ArgQ + ArgInt -- + ArgNoPreload
+defaultMode  = (SetUlimit + GCMAXHEAP + ArgQ
     + ArgNoRandomize + ArgNoReadline + ArgSilent + ArgStop
     + ArgPrintWidth + SetInputFile + SetOutputFile + SetCaptureErr)
 -* making this global, so it can be edited after entering debug Core *-
