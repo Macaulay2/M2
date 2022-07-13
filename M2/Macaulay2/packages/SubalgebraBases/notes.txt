@@ -12,7 +12,8 @@ Todo list
 > Which subductions to export? Anything without compTable
    ? Can we export only some methods ?
 
-
+> Determine what "subduction" and "%" should do with (RingElement, SAGBIBasis)
+  -- currently this "subduction" is not implemented and "%" performs a subduction.
 
 Discussion
 ----------
@@ -23,6 +24,7 @@ Ollie: It would be great to have a separate file(s) for subduction/sagbi related
        1) Have functions that do similar things in one file, such as the four update-related functions above
        2) Have functions on a similar level in one file, such as updateComputation in a higher-level file than what it calls
           We already do this for sagbi, since it sits in one file and calls stuff in service-functions.m2
+
 
 
 
