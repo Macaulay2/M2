@@ -140,6 +140,18 @@ subduction(HashTable, Matrix) := opts -> (compTable, M) -> (
 
 -- the user-friendly subduction methods:
 --
+subduction(SAGBIBasis, Matrix) := opts -> (SB, M) -> (
+    compTable := initializeCompTable(SB, opts);
+    -- updateComputation(SB); -- Ollie: you shouldn't need to update a comp table from a SAGBIBasis object
+    subduction(opts, compTable, M)
+    )
+
+subduction(SAGBIBasis, RingElement) := opts -> (SB, m) -> (
+    compTable := initializeCompTable(SB, opts);
+    -- updateComputation(SB); -- Ollie: you shouldn't need to update a comp table from a SAGBIBasis object
+    first first entries subduction(opts, compTable, matrix {{m}})
+    )
+
 subduction(Matrix, Matrix) := opts -> (F, M) -> (
     SB := initializeCompTable(sagbiBasis subring F, opts);
     SB#"data"#"sagbiGenerators" = F;
@@ -148,6 +160,16 @@ subduction(Matrix, Matrix) := opts -> (F, M) -> (
     )
 
 subduction(Matrix, RingElement) := opts -> (F, m) -> (
+    first first entries subduction(opts, F, matrix {{m}})
+    )
+
+subduction(Subring, Matrix) := opts -> (S, M) -> (
+    F := gens S;
+    subduction(opts, F, M)
+    )
+
+subduction(Subring, RingElement) := opts -> (S, m) -> (
+    F := gens S;
     first first entries subduction(opts, F, matrix {{m}})
     )
 
