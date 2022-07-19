@@ -96,6 +96,22 @@ limitedCompTable (HashTable, Matrix) := (H,M) -> (
 -- Subduction takes a compTable and 1-row matrix M with entries in the quotientRing and subducts the elements of M against compTable
 -- there may be some significant overhead for creating a MutableMatrix
 
+compSubduction = method( 
+    TypicalValue => HashTable,
+    Options => { -- These options are only used when the user wants to use subduction for their own purposes
+	AutoSubduce => true,
+        ReduceNewGenerators => true, -- applys gaussian elimination to sagbiGens before adding them
+	StorePending => true,
+        -- FullSubduct => true,
+        -- DegreeLimitedSubduction => false,
+        Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
+        SubductionMethod => "Top", -- top or engine
+    	Limit => 10, -- change back to 100
+	AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
+    	PrintLevel => 0
+    	}
+);
+
 subduction = method( 
     TypicalValue => Matrix,
     Options => { -- These options are only used when the user wants to use subduction for their own purposes
@@ -113,11 +129,11 @@ subduction = method(
 );
 
 
-subduction(HashTable, MutableMatrix) := opts -> (compTable, M) -> (
-    new MutableMatrix from subduction(compTable, matrix M)
+compSubduction(HashTable, MutableMatrix) := opts -> (compTable, M) -> (
+    new MutableMatrix from compSubduction(compTable, matrix M)
     )
 
-subduction(HashTable, Matrix) := opts -> (compTable, M) -> (
+compSubduction(HashTable, Matrix) := opts -> (compTable, M) -> (
     local result;
     
     if compTable#"options"#PrintLevel > 3 then (    
@@ -143,20 +159,20 @@ subduction(HashTable, Matrix) := opts -> (compTable, M) -> (
 subduction(SAGBIBasis, Matrix) := opts -> (SB, M) -> (
     compTable := initializeCompTable(SB, opts);
     -- updateComputation(SB); -- Ollie: you shouldn't need to update a comp table from a SAGBIBasis object
-    subduction(opts, compTable, M)
+    compSubduction(opts, compTable, M)
     )
 
 subduction(SAGBIBasis, RingElement) := opts -> (SB, m) -> (
     compTable := initializeCompTable(SB, opts);
     -- updateComputation(SB); -- Ollie: you shouldn't need to update a comp table from a SAGBIBasis object
-    first first entries subduction(opts, compTable, matrix {{m}})
+    first first entries compSubduction(opts, compTable, matrix {{m}})
     )
 
 subduction(Matrix, Matrix) := opts -> (F, M) -> (
     SB := initializeCompTable(sagbiBasis subring F, opts);
     SB#"data"#"sagbiGenerators" = F;
     updateComputation(SB);
-    subduction(opts, SB, M)
+    compSubduction(opts, SB, M)
     )
 
 subduction(Matrix, RingElement) := opts -> (F, m) -> (
@@ -378,7 +394,7 @@ autosubduce (HashTable) := (compTable) -> (
     for i from 0 to (numColumns generatorMatrix) - 1 do (
             M = new Matrix from generatorMatrix_(toList join(0..(i-1),(i+1)..((numColumns generatorMatrix)-1)));
             tempCompTable = limitedCompTable(compTable,lift(M,compTable#"rings"#"liftedRing"));
-	    generatorMatrix_(0,i) = (subduction(tempCompTable,generatorMatrix_{i}))_(0,0);
+	    generatorMatrix_(0,i) = (compSubduction(tempCompTable,generatorMatrix_{i}))_(0,0);
             if not generatorMatrix_(0,i) == 0 then
                 generatorMatrix_(0,i) = generatorMatrix_(0,i)*(1/leadCoefficient(generatorMatrix_(0,i)));
     );
@@ -405,7 +421,7 @@ autosubduceSagbi (HashTable) := (compTable) -> (
     for i from 0 to (numColumns generatorMatrix) - 1 do (
             M = new Matrix from generatorMatrix_(toList join(0..(i-1),(i+1)..((numColumns generatorMatrix)-1)));
             tempCompTable = limitedCompTable(compTable,lift(M,compTable#"rings"#"liftedRing"));
-	    generatorMatrix_(0,i) = (subduction(tempCompTable,generatorMatrix_{i}))_(0,0);
+	    generatorMatrix_(0,i) = (compSubduction(tempCompTable,generatorMatrix_{i}))_(0,0);
             if not generatorMatrix_(0,i) == 0 then
                 generatorMatrix_(0,i) = generatorMatrix_(0,i)*(1/leadCoefficient(generatorMatrix_(0,i)));
     );

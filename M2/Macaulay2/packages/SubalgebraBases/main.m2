@@ -109,7 +109,7 @@ sagbi(SAGBIBasis) := opts -> S -> (
           (not compTable#"data"#"sagbiDone") do (
     		
         SPairs = collectSPairs(compTable);
-	SPairs = subduction(compTable, SPairs);
+	SPairs = compSubduction(compTable, SPairs);
 	
 	-- update and process the new sagbi generators
 	-- update pending returns true if new sagbiGenerators were added and false otherwise
@@ -163,7 +163,7 @@ internalVerifySagbi(SAGBIBasis) := opts -> SB -> (
     SPairs := compTable#"maps"#"fullSubstitution"(zeroGens) % compTable#"ideals"#"I";
     
     -- Reduce the SPairs
-    reducedSPairs := subduction(compTable, SPairs);
+    reducedSPairs := compSubduction(compTable, SPairs);
     
     -- if all the reduced SPairs are zero then we have a sagbiBasis
     compTable#"data"#"sagbiDone" = zero(reducedSPairs);
