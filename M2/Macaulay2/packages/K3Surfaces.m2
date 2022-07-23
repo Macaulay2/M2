@@ -162,7 +162,7 @@ K3 ZZ := o -> g -> (
     local X; local p; local Ass;
     makegeneralK3 := (f,p,g) -> (
         K3surf := new EmbeddedK3surface from image f;
-        assert(sectionalGenus K3surf == g and degree K3surf == 2*g-2 and dim ambient K3surf == g and dim p == 0 and isSubset(p,K3surf));
+        assert(sectionalGenus K3surf == g and degree K3surf == 2*g-2 and dim ambient K3surf == g and dim p <= 0 and isSubset(p,K3surf));
         if g <= 12 then assert(degree p == 1);
         f#"image" = K3surf;
         K3surf.cache#"mapK3" = f;
