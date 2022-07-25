@@ -364,8 +364,8 @@ class Ring : public MutableEngineObject
   virtual void remove(ring_elem &f) const = 0;
 
   void negate_to(ring_elem &f) const;
-  void add_to(ring_elem &f, ring_elem &g) const;
-  void subtract_to(ring_elem &f, ring_elem &g) const;
+  void add_to(ring_elem &f, const ring_elem &g) const;
+  void subtract_to(ring_elem &f, const ring_elem &g) const;
   void mult_to(ring_elem &f, const ring_elem g) const;
   virtual ring_elem negate(const ring_elem f) const = 0;
   virtual ring_elem add(const ring_elem f, const ring_elem g) const = 0;

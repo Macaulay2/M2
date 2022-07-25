@@ -199,8 +199,8 @@ ring_elem Ring::power(const ring_elem gg, int n) const
 }
 
 void Ring::mult_to(ring_elem &f, const ring_elem g) const { f = mult(f, g); }
-void Ring::add_to(ring_elem &f, ring_elem &g) const { f = add(f, g); }
-void Ring::subtract_to(ring_elem &f, ring_elem &g) const { f = subtract(f, g); }
+void Ring::add_to(ring_elem &f, const ring_elem &g) const { f = add(f, g); }
+void Ring::subtract_to(ring_elem &f, const ring_elem &g) const { f = subtract(f, g); }
 void Ring::negate_to(ring_elem &f) const { f = negate(f); }
 ring_elem Ring::remainder(const ring_elem f, const ring_elem g) const
 {
