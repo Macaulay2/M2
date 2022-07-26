@@ -108,7 +108,7 @@ setStoppingCriterion = (n , HG, mutableOptions) -> (
 -- "naive" implementation of monodromy, independent of core methods
 -- makes many assumptions, not maintained
 dynamicFlowerSolve = method(Options=>{TargetSolutionCount=>null,RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
-dynamicFlowerSolve (Matrix, Point, List) := o -> (PF,point0,s0) -> (
+dynamicFlowerSolve (Matrix, AbstractPoint, List) := o -> (PF,point0,s0) -> (
     if #s0 < 1 then error "at least one solution expected";  
     p0 := matrix point0; -- points are row matrices
     stoppingCriterion := o.StoppingCriterion;
@@ -181,7 +181,7 @@ createSeedPair System := o -> P -> (
       else error "unknown option";
     createSeedPair(P, x0)
     )
-createSeedPair (System, Point) := o -> (P, x0) -> (
+createSeedPair (System, AbstractPoint) := o -> (P, x0) -> (
     GS := if instance(P, GateSystem) then P else gateSystem P.PolyMap;
     n := numVariables GS;
     m := numParameters GS;
@@ -245,7 +245,7 @@ solveFamily System := o -> P -> (
         );
     (V1.BasePoint, V1.PartialSols)
     )
-solveFamily (Point, System) := o -> (p1, P) -> (
+solveFamily (AbstractPoint, System) := o -> (p1, P) -> (
     (p0, sols0) := solveFamily(P, o);
     GS := if instance(P, GateSystem) then P else (
         R := ring P;
@@ -262,7 +262,7 @@ monodromySolve System := o -> PS -> (
     (p0, x0) := createSeedPair(PS, Verbose => o.Verbose);
     monodromySolve(PS, p0, {x0}, o)
     )
-monodromySolve (System, Point, List) := o -> (PS,point0,s0) -> (
+monodromySolve (System, AbstractPoint, List) := o -> (PS,point0,s0) -> (
 	if o.AugmentGraphFunction =!= null then
 		result := dynamicMonodromySolve(PS, point0, s0, o)
 	else
@@ -273,7 +273,7 @@ monodromySolve (System, Point, List) := o -> (PS,point0,s0) -> (
 --3) "solving", core methods: (static/dynamic/core)MonodromySolve
 
 dynamicMonodromySolve = method(Options=>MonodromyOptions)
-dynamicMonodromySolve (MutableHashTable, Point, List) := o -> (PS, point0, s0) -> (
+dynamicMonodromySolve (MutableHashTable, AbstractPoint, List) := o -> (PS, point0, s0) -> (
     augmentNumberOfRepeats := o.AugmentNumberOfRepeats;
     if not instance(augmentNumberOfRepeats, ZZ) then error "dynamic solver triggered: need to properly set AugmentNumberOfRepeats";
     mutableOptions := new MutableHashTable from o;  
@@ -296,7 +296,7 @@ dynamicMonodromySolve (MutableHashTable, Point, List) := o -> (PS, point0, s0) -
 
 
 staticMonodromySolve = method(Options=>MonodromyOptions)
-staticMonodromySolve (System, Point, List) := o -> (PS, p0, sols0) -> (
+staticMonodromySolve (System, AbstractPoint, List) := o -> (PS, p0, sols0) -> (
     -- general error handling for MonodromyOptions can be done here
     isGS := instance(PS, GateSystem);
     if isGS and not o#"new tracking routine" then error "GateSystem requires new tracking routine";

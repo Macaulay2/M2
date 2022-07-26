@@ -138,7 +138,7 @@ Description
      Example
          F = polySystem {x^3,y^3,x^2*y,z*(z-1)^2};
 	 P = point {{0.000001, 0.000001*ii,1.000001-0.000001*ii}};
-	 deflateInPlace(P,F)
+	 deflateAndStoreDeflationSequence(P,F)
 	 peek P 
      
      Code

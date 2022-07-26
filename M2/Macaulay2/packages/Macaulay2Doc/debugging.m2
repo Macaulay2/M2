@@ -81,7 +81,11 @@ document { Key => "debugError",
      }
 
 document { Key => "stopIfError",
-     Headline => "whether to stop the program when an error occurs"
+     Headline => "whether to stop the program when an error occurs",
+     PARA {
+	  "This can be useful for showing code in documentation examples that results
+	  in an error being raised.  For an example, see ", TO "assert", "."
+	  }     
      }
 document { Key => "interpreterDepth",
      Headline => "nesting depth of the interpreter",
@@ -313,14 +317,14 @@ doc ///
     (assert, Thing)
     (assert, Expression)
   Headline
-    assert something is true
+    check whether something is true, raise an error if not
   Usage
     assert x
   Inputs
     x:Thing
   Description
     Text
-      @TT "assert x"@ prints an error message if @TT "x"@ isn't true.
+      @TT "assert x"@ raises an error if @TT "x"@ isn't true.
     Example
       stopIfError = false;
       assert( (2+2) === 4)
@@ -333,6 +337,7 @@ doc ///
       assert Equation(rank matrix {{1, 2}, {2, 4}}, 2)
   SeeAlso
     generateAssertions
+    "stopIfError"
 ///
 
 document {

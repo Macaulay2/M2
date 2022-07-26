@@ -169,7 +169,7 @@ toFunction = method()
 toFunction PythonObject := x -> y -> (
     p := partition(a -> instance(a, Option),
 	if instance(y, Sequence) then y else 1:y);
-    args := toPython if p#?false then toSequence p#false else ();
+    args := toPython if p#?false then p#false else ();
     kwargs := toPython hashTable if p#?true then toList p#true else {};
     if debugLevel > 0 then printerr(
 	"callable: " | toString x    ||
@@ -474,6 +474,14 @@ assert Equation((pythonValue "'{0}, {1}!'")@@format("Hello", "world"),
     pythonValue "'Hello, world!'")
 assert Equation(foo@@replace("f", "F"), pythonValue "'Foo'")
 assert Equation(foo@@upper(), pythonValue "'FOO'")
+///
+
+TEST ///
+-- issue #2315
+rand = import "random"
+L = toPython {1, 2, 3}
+assert member(value rand@@choice L, {1, 2, 3})
+assert Equation(L + L, toPython {1, 2, 3, 1, 2, 3})
 ///
 
 end --------------------------------------------------------

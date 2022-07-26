@@ -413,7 +413,7 @@ width Net := netWidth
 height Net := netHeight
 depth Net := netDepth
 
-width String := s -> #s
+width String := stringWidth
 height String := s -> 1
 depth String := s -> 0
 

@@ -14,7 +14,7 @@ insertComponent(WitnessSet,MutableHashTable) := (W,H) -> (
      )
 
 isPointOnAnyComponent = method()
-isPointOnAnyComponent(Point,HashTable) := (p,H) -> any(keys H, d -> any(keys H#d, k -> isOn(p,H#d#k)))
+isPointOnAnyComponent(AbstractPoint,HashTable) := (p,H) -> any(keys H, d -> any(keys H#d, k -> isOn(p,H#d#k)))
 
 splitWitness = method(TypicalValue=>Sequence, Options =>{Tolerance=>null})
 splitWitness (WitnessSet,RingElement) := Sequence => o -> (w,f) -> (
@@ -92,19 +92,19 @@ hypersurfaceSection(NumericalVariety,RingElement) := o -> (c1,f) -> (
 		Software=>o.Software)
     	    else (
 	 	seq := P.DeflationSequenceMatrices;
-	 	S' := squareUp(deflate(S, seq), squareUpMatrix P.LiftedSystem); -- square-up using the same matrix
-		T' := squareUp(deflate(T, seq), squareUpMatrix P.LiftedSystem); -- square-up using the same matrix
-		S'sols := flatten apply(dWS,W->apply(W.Points,p->p.LiftedPoint));
+	 	S' := squareUp(deflate(S, seq), squareUpMatrix P.cache.LiftedSystem); -- square-up using the same matrix
+		T' := squareUp(deflate(T, seq), squareUpMatrix P.cache.LiftedSystem); -- square-up using the same matrix
+		S'sols := flatten apply(dWS,W->apply(W.Points,p->p.cache.LiftedPoint));
 		
 	     	T'.PolyMap = (map(ring S', ring T', vars ring S')) T'.PolyMap; -- hack!!!: rewrite with trackHomotopy
 	     	lifted'w' := track(S',T',S'sols, 
 		    NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii), Software=>o.Software);
 	     	targetPoints = apply(lifted'w', p->(
 		     	q := project(p,T.NumberOfVariables);
-		     	q.System = T;
-		     	q.LiftedSystem = T';
-		     	q.LiftedPoint = p;
-		     	q.SolutionStatus = Singular;
+		     	q.cache.SolutionSystem = T;
+		     	q.cache.LiftedSystem = T';
+		     	q.cache.LiftedPoint = p;
+		     	q.cache.SolutionStatus = Singular;
 		     	q
 		     	));
 	 	);
@@ -113,8 +113,8 @@ hypersurfaceSection(NumericalVariety,RingElement) := o -> (c1,f) -> (
 		ErrorTolerance=>DEFAULT.ErrorTolerance*LARGE,
 		ResidualTolerance=>DEFAULT.ResidualTolerance*LARGE,
 		Software=>o.Software);
-	    regPoints := select(refinedPoints, p->p.SolutionStatus===Regular);
-	    singPoints := select(refinedPoints, p->p.SolutionStatus===Singular);
+	    regPoints := select(refinedPoints, p->p.cache.SolutionStatus===Regular);
+	    singPoints := select(refinedPoints, p->p.cache.SolutionStatus===Singular);
 	    targetPoints = if o.Output == Regular then regPoints else regPoints | solutionsWithMultiplicity singPoints;
 	    if DBG>2 then << "( regeneration: " << net cOut << " meets V(f) at " 
 	    << #targetPoints << " points for" << endl 

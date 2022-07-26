@@ -155,14 +155,14 @@ latticePolarizedK3surface (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,L
 latticePolarizedK3surface (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,List) := (T,C,H,gdn) -> latticePolarizedK3surface(new EmbeddedK3surface from T,C,H,gdn);
 latticePolarizedK3surface (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,Nothing,List) := (T,C,H,gdn) -> latticePolarizedK3surface(new EmbeddedK3surface from T,C,H,gdn);
 
-K3 = method(Options => {CoefficientRing => ZZ/65521, Verbose => true});
+K3 = method(Options => {CoefficientRing => ZZ/65521, Verbose => false});
 
 K3 ZZ := o -> g -> (
     K := o.CoefficientRing;
     local X; local p; local Ass;
     makegeneralK3 := (f,p,g) -> (
         K3surf := new EmbeddedK3surface from image f;
-        assert(sectionalGenus K3surf == g and degree K3surf == 2*g-2 and dim ambient K3surf == g and dim p == 0 and isSubset(p,K3surf));
+        assert(sectionalGenus K3surf == g and degree K3surf == 2*g-2 and dim ambient K3surf == g and dim p <= 0 and isSubset(p,K3surf));
         if g <= 12 then assert(degree p == 1);
         f#"image" = K3surf;
         K3surf.cache#"mapK3" = f;
@@ -187,7 +187,12 @@ K3 ZZ := o -> g -> (
     );
     if g == 14 then (
         if o.Verbose then <<"-- constructing general K3 surface of genus "<<g<<" and degree "<<2*g-2<<" in PP^"<<g<<endl;
-        error "procedure known but not implemented yet; see the function associatedK3surface from SpecialFanoFourfolds";
+        if o.Verbose then <<"-- (taking a random cubic fourfold X of discriminant 26, hence containing a surface S of degree 7 and genus 1)"<<endl;
+        X = specialCubicFourfold("one-nodal septic del Pezzo surface",K);
+        if o.Verbose then <<"-- (running procedure 'associatedK3surface' for the cubic fourfold X of discriminant 26)"<<endl<<"-- *** --"<<endl;
+        Ass = associatedK3surface(X,Verbose=>o.Verbose);
+        if o.Verbose then <<"-- *** --"<<endl;
+        return makegeneralK3(last Ass,(last Ass) first Ass_2,g);
     );    
     if g == 20 then (
         if o.Verbose then <<"-- constructing general K3 surface of genus "<<g<<" and degree "<<2*g-2<<" in PP^"<<g<<endl;

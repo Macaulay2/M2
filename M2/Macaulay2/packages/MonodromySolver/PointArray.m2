@@ -45,7 +45,7 @@ indices PointArray := P -> toList(0..length(P)-1)
 points PointArray := P -> P_(indices P)
 
 appendPoint = method()
-appendPoint(PointArray,Point) := (A,b) -> (
+appendPoint(PointArray,AbstractPoint) := (A,b) -> (
     if A#"raw" === null then A#"raw" = rawPointArray(PointArrayTolerance,2*#coordinates b); -- 2*n real coordinates
     lookupOrAppendResult := rawPointArrayLookupOrAppend(A#"raw",raw mutableMatrix transpose sub(matrix b,CC_53),0);
     if  lookupOrAppendResult =!= length A then error "can't append";
@@ -54,15 +54,15 @@ appendPoint(PointArray,Point) := (A,b) -> (
 appendPoints = method()
 appendPoints(PointArray,List) := (A,B) -> for b in B do appendPoint(A,b)
 
-member(Point,PointArray,FunctionClosure) := (b,A,eq) -> position(b,A,eq) =!= null
-member(Point,PointArray) := (b,A) -> member(b,A,x->x)
+member(AbstractPoint,PointArray,FunctionClosure) := (b,A,eq) -> position(b,A,eq) =!= null
+member(AbstractPoint,PointArray) := (b,A) -> member(b,A,x->x)
 
-position(Point,PointArray,FunctionClosure) := o -> (b, A, eq) -> (
+position(AbstractPoint,PointArray,FunctionClosure) := o -> (b, A, eq) -> (
     if A#"raw" === null then return null;
     ret := rawPointArrayLookup(A#"raw",raw mutableMatrix transpose sub(matrix b,CC_53),0);
     if ret == -1 then null else ret
     )
-position(Point,PointArray) := o -> (b, A) -> position(b, A, x -> x)
+position(AbstractPoint,PointArray) := o -> (b, A) -> position(b, A, x -> x)
 
 PointArray_List := (A,inds) -> apply(inds,i->A#i)
 

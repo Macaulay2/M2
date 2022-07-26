@@ -6,7 +6,7 @@
 undocumented{(substitute, RingElement, CCiMatrix),
     sqabsForGaussianRational, (sqabsForGaussianRational, RingElement),
     conjugateGaussian, (conjugateGaussian, RingElement),
-    pointNorm, (pointNorm, Point), (pointNorm, Matrix),
+    pointNorm, (pointNorm, AbstractPoint), (pointNorm, Matrix),
     conjugateGaussianRationalMatrix, (conjugateGaussianRationalMatrix, Matrix)
 --    subOnTerm, (subOnTerm, Number, Matrix), (subOnTerm, RingElement, Matrix),
 --    (subOnTerm, RingElement, CCiMatrix)
@@ -178,9 +178,9 @@ doc ///
 doc ///
     	Key
     	    computeConstants
-	    (computeConstants, PolySystem, Point)
+	    (computeConstants, PolySystem, AbstractPoint)
 	    (computeConstants, PolySystem, Matrix)
-	    "(computeConstants, PolySystem, Point)"
+	    "(computeConstants, PolySystem, AbstractPoint)"
 	    "(computeConstants, PolySystem, Matrix)"
 	Headline
 	    compute the square of the auxiliary quantities related to alpha theory
@@ -188,7 +188,7 @@ doc ///
 	    (alpha, beta, gamma) = computeConstants(PS, P)
 	Inputs
             PS:PolySystem
-	    P:Point
+	    P:AbstractPoint
 	Description
 	    Text
     	    	alpha theory uses three auxiliary quantities related to the input polynomial system and point.
@@ -208,10 +208,10 @@ doc ///
 doc ///
     	Key
     	    certifyRegularSolution
-	    (certifyRegularSolution, PolySystem, Point)
+	    (certifyRegularSolution, PolySystem, AbstractPoint)
 	    (certifyRegularSolution, PolySystem, Matrix)
 	    (certifyRegularSolution, PolySystem, List)
-	    "(certifyRegularSolution, PolySystem, Point)"
+	    "(certifyRegularSolution, PolySystem, AbstractPoint)"
 	    "(certifyRegularSolution, PolySystem, Matrix)"
 	    "(certifyRegularSolution, PolySystem, List)"
 	Headline
@@ -220,7 +220,7 @@ doc ///
 	    alpha = certifyRegularSolution(PS, P)
 	Inputs
             PS:PolySystem
-	    P:Point
+	    P:AbstractPoint
 	Description
 	    Text
     	    	This function executes the alpha test based on the value computed by @TO "computeConstants"@.
@@ -228,7 +228,7 @@ doc ///
 	        R = RR[x1,x2,y1,y2];
 		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -3.5,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
 	    Text
-	    	Input can be a @TO "Point"@ or @TO "Matrix"@ representing coordinates or a list of points or matrices.
+	    	Input can be a @TO "AbstractPoint"@ or @TO "Matrix"@ representing coordinates or a list of points or matrices.
 	    Example
 		p1 = point{{.95,.32,-.30,.95}};
     	    	certifyRegularSolution(f,p1)
@@ -241,9 +241,9 @@ doc ///
 doc ///
     	Key
     	    certifyDistinctSolutions
-	    (certifyDistinctSolutions, PolySystem, Point, Point)
+	    (certifyDistinctSolutions, PolySystem, AbstractPoint, AbstractPoint)
 	    (certifyDistinctSolutions, PolySystem, Matrix, Matrix)
-	    "(certifyDistinctSolutions, PolySystem, Point, Point)"
+	    "(certifyDistinctSolutions, PolySystem, AbstractPoint, AbstractPoint)"
 	    "(certifyDistinctSolutions, PolySystem, Matrix, Matrix)"
 	Headline
 	    determine whether given points are distinct approximate solutions to the system
@@ -251,8 +251,8 @@ doc ///
 	    certifyDistinctSolutions(PS, P1, P2)
 	Inputs
             PS:PolySystem
-	    P1:Point
-	    P2:Point
+	    P1:AbstractPoint
+	    P2:AbstractPoint
 	Description
 	    Text
     	    	This function executes the gamma test based on the value computed by @TO "computeConstants"@, and determine whether given points are distinct or not.
@@ -283,9 +283,9 @@ doc ///
 doc ///
     	Key
     	    certifyRealSolution
-	    (certifyRealSolution, PolySystem, Point)
+	    (certifyRealSolution, PolySystem, AbstractPoint)
 	    (certifyRealSolution, PolySystem, Matrix)
-	    "(certifyRealSolution, PolySystem, Point)"
+	    "(certifyRealSolution, PolySystem, AbstractPoint)"
 	    "(certifyRealSolution, PolySystem, Matrix)"
 	Headline
 	    determine whether a given point is an real approximate solution to the system
@@ -293,7 +293,7 @@ doc ///
 	    certifyRealSolution(PS, P)
 	Inputs
             PS:PolySystem
-	    P:Point
+	    P:AbstractPoint
 	Description
 	    Text
     	    	When the system is real (or rational) polynomial system, this function executes the gamma test based on the value computed by @TO "computeConstants"@, and determine whether a given point is a real approximate solution  or not.
@@ -351,7 +351,7 @@ doc ///
 	    krawczykOperator
 	    (krawczykOperator, PolySystem, Matrix)
 	    (krawczykOperator, PolySystem, CCiMatrix)
-	    (krawczykOperator, PolySystem, Point)
+	    (krawczykOperator, PolySystem, AbstractPoint)
 	Headline
 	    compute the Krawczyk operator
 	Description
@@ -381,7 +381,7 @@ doc ///
 	    krawczykTest
 	    (krawczykTest, PolySystem, Matrix)
 	    (krawczykTest, PolySystem, CCiMatrix)
-	    (krawczykTest, PolySystem, Point)
+	    (krawczykTest, PolySystem, AbstractPoint)
 	Headline
 	    certify the interval box for square polynomial system
 	Description
@@ -401,7 +401,7 @@ doc ///
 	    Example
     	    	krawczykTest(f,M)
 	    Text
-	    	If the function encounters a @TO "Point"@ as an input, then it computes a proper interval box for the given point using @TO "pointToMatrix"@ function.
+	    	If the function encounters a @TO "AbstractPoint"@ as an input, then it computes a proper interval box for the given point using @TO "pointToMatrix"@ function.
 	    Example
 		p = point {{.95437+0.0001*ii, .318445, -.298627, .947941}}
     	    	krawczykTest(f,p)
@@ -415,7 +415,7 @@ doc ///
     	Key
 	    krawczykRealnessTest
 	    (krawczykRealnessTest, PolySystem, CCiMatrix)
-	    (krawczykRealnessTest, PolySystem, Point)
+	    (krawczykRealnessTest, PolySystem, AbstractPoint)
 	Headline
 	    certify the realness of the associated solution for the square polynomial system from the given interval box
 	Description
@@ -443,8 +443,8 @@ doc ///
 doc ///
     	Key
     	    certifySingularSolution
-	    (certifySingularSolution, PolySystem, Point)
-	    (certifySingularSolution, PolySystem, Point, Number)
+	    (certifySingularSolution, PolySystem, AbstractPoint)
+	    (certifySingularSolution, PolySystem, AbstractPoint, Number)
 	    (certifySingularSolution, PolySystem, Matrix)
 	    (certifySingularSolution, PolySystem, Matrix, Number)
 	    (certifySingularSolution, PolySystem, CCiMatrix)
@@ -546,8 +546,8 @@ doc ///
 doc ///
     	Key
     	    pointToMatrix
-	    (pointToMatrix, Point, Number)
-    	    (pointToMatrix, PolySystem, Point)
+	    (pointToMatrix, AbstractPoint, Number)
+    	    (pointToMatrix, PolySystem, AbstractPoint)
 	Headline
 	    finds an interval box from a given point
 	Description
