@@ -19,6 +19,9 @@ Todo list
   -- A subring is an immutable object - in its cache we store the 'most computationally advanced' SAGBIBasis object
   -- When resuming a subalgebraBasis or sagbi computation from a SAGBIBasis object, use the previously selected options
 
+> When picking up where a computation left off, if the original set of generators was autosubducted then do not autosubduct them again.
+
+
 Discussion
 ----------
 Ollie: It would be great to have a separate file(s) for subduction/sagbi related functions.
