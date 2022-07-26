@@ -8,6 +8,7 @@
 #include <utility>
 #include <vector>
 #include <map>
+#include <algorithm>
 
 const int DET_BAREISS = 0;
 const int DET_COFACTOR = 1;

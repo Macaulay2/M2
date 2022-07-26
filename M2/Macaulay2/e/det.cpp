@@ -118,7 +118,7 @@ void DetComputation::make_dynamic_cache() {
             // Check if x and D live on distinct columns
             const std::vector<int>& Dcols = Didx.second;
             int xcol = x.first.second[0];
-            auto col_find = find(Dcols.begin(), Dcols.end(), xcol);
+            auto col_find = std::find(Dcols.begin(), Dcols.end(), xcol);
             if(col_find != Dcols.end()) { continue; } // xcol found in Dcols, so skip
             // if no skip, compute a term in the cofactor
             ColRowIndices newKey = Didx;
