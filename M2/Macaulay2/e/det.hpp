@@ -47,14 +47,23 @@ class DetComputation : public our_new_delete
   ring_elem **D;  // size p by p, dense representation.
 
   // Dynamic method, vector of maps
-  using Key = std::pair<std::vector<int>, std::vector<int>>;
-  using DynamicMap = std::map<Key, ring_elem, std::less<Key>, gc_allocator<std::pair<const Key, ring_elem>>>;
-  using DynamicVector = std::vector<DynamicMap, gc_allocator<DynamicMap>>;
+  using ColRowIndices = std::pair<std::vector<int>, std::vector<int>>;
+  using Subdeterminant = std::map<ColRowIndices, ring_elem, std::less<ColRowIndices>, gc_allocator<std::pair<const ColRowIndices, ring_elem>>>;
+  using MinorsSubCache = std::map<int, Subdeterminant, std::less<int>, gc_allocator<std::pair<const int, Subdeterminant>>>;
+  using MinorsCache = std::vector<MinorsSubCache, gc_allocator<MinorsSubCache>>;
+  // The entry dynamic_cache[i][j][{r, c}] is the determinant of the submatrix
+  // corresponding to rows r and columns c, given as vectors of ints.
+  // The sizes of r and c are i, and the first entry of r is the jth nonzero row.
+  // The jth nonzero row is also the row given by row_lookup[j].
+  MinorsCache dynamic_cache;
+  std::map<int, int> row_lookup;
 
-  DynamicVector dynamic_cache;
 
   void get_minor(size_t *r, size_t *c, int p, ring_elem **D);
   // Sets D[0..p-1,0..p-1] with the given minor of M.
+
+  // Used in Dynamic:
+  void make_dynamic_cache();
 
   // Used in Bareiss:
   bool get_pivot(ring_elem **D, size_t p, ring_elem &pivot, size_t &pivot_col);
@@ -79,8 +88,6 @@ class DetComputation : public our_new_delete
 
   // Subroutines for use in Bareiss algorithm:
 
-  // Subroutines for use in Dynamic algorithm:
-  void make_dynamic_cache();
 
  public:
   DetComputation(const Matrix *M, int p, bool do_exterior, int strategy);

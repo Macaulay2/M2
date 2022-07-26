@@ -84,9 +84,9 @@ DetComputation::DetComputation(const Matrix *M0,
       for (size_t j = 0; j < p; j++) D[i][j] = ZERO_RINGELEM;
     }
   if (strategy == DET_DYNAMIC) {
-    std::cout << "old dynamic_cache size: " << dynamic_cache.size() << std::endl;
+    // std::cout << "old dynamic_cache size: " << dynamic_cache.size() << std::endl;
     dynamic_cache.resize(p);
-    std::cout << "new dynamic_cache size: " << dynamic_cache.size() << std::endl;
+    // std::cout << "new dynamic_cache size: " << dynamic_cache.size() << std::endl;
     make_dynamic_cache();
   }
 }
@@ -104,86 +104,92 @@ DetComputation::~DetComputation()
 }
 
 void DetComputation::make_dynamic_cache() {
-  // Vector to hold indices of nonzero rows in order
-  std::vector<int> nonzero_rows(0);
-  nonzero_rows.reserve(M->n_rows());
-
+  std::cout<<"new dynamic"<<std::endl;
+  
   // Traverse through matrix entries, find nonzero entries
+  int nonzero = -1;
   for(int i = 0; i < M->n_rows(); ++i) {
     bool flag = false;
     for(int j = 0; j < M->n_cols(); ++j) {
       if(!R->is_zero(M->elem(i,j))) {
-        dynamic_cache[0][{ {i}, {j} }] = M->elem(i,j);
-        if(!flag) { flag = true; nonzero_rows.push_back(i); }
+        if(!flag) { flag = true; dynamic_cache[0][++nonzero] = { }; row_lookup[i]=nonzero; }
+        dynamic_cache[0][nonzero][{ {i}, {j} }] = M->elem(i,j);
       }
     }
   }
+  int n_nonzero_rows = dynamic_cache[0].size();
   // DEBUG
-  for(auto kv: dynamic_cache[0]) {
-    std::cout << "(" << kv.first.first[0] << ", " << kv.first.second[0] << "): ";
-    dringelem(R, kv.second);
-    std::cout << std::endl;
-    std::cout << "Nonzero rows: ";
-    
-  }
-  for(auto r: nonzero_rows) { std::cout << r << " "; }
-  std::cout << std::endl;
+  // for(const auto& [pp, map]: new_dynamic_cache[0]) {
+  //   std::cout << "p: " << pp << std::endl;
+  //   for (auto kv: map) {
+  //       std::cout << "(" << kv.first.first[0] << ", " << kv.first.second[0] << "): ";
+  //       dringelem(R, kv.second);
+  //       std::cout << std::endl;
+  //     }
+  // }
   // DEBUG
   for(int minor_size = 1; minor_size < p; ++minor_size) {
-    for(int cur_row_idx = p-(minor_size+1); cur_row_idx <= nonzero_rows.size()-minor_size; ++cur_row_idx) {
-      for(const auto& [Didx, Dval]: dynamic_cache[minor_size-1]) {
-        if(nonzero_rows[cur_row_idx] >= Didx.first[0]) { continue; }
-
-        // Find 1x1 such that row = cur_row_idx
-        auto row_filter = [&](const std::pair<Key, ring_elem>& bar){ return bar.first.first[0] == nonzero_rows[cur_row_idx]; };
-        auto first = std::find_if(dynamic_cache[0].begin(), dynamic_cache[0].end(), row_filter);
-        auto last = std::find_if_not(first, dynamic_cache[0].end(), row_filter);
-        for(auto x = first; x != last; ++x) {
-          //DEBUG
-          std::cout << "cur_row_idx: " << nonzero_rows[cur_row_idx] << " x: (" << x->first.first[0] << ", " << x->first.second[0] << ")\n";
-          //DEBUG
-
-          // Find whether j is in Lcols
-          const std::vector<int>& Lcols = Didx.second;
-          int j = x->first.second[0];
-          auto j_find = find(Lcols.begin(), Lcols.end(), j);
-          if(j_find != Lcols.end()) { continue; }
-          // j not there, so we add it
-          Key newKey = Didx;
-          newKey.first.insert(newKey.first.begin(), x->first.first[0]);
-          // Get iterator to future location of j
-          auto j_iter = std::upper_bound(newKey.second.begin(), newKey.second.end(), j);
-          newKey.second.insert(j_iter, j);
-          bool negate = ((j_iter - newKey.second.begin())%2 != 0);
-          // Insert or add or negate to the right place
-          auto search = dynamic_cache[minor_size].find(newKey);
-          if(search == dynamic_cache[minor_size].end()) { //not found
-            dynamic_cache[minor_size].insert({ newKey, R->mult(x->second, Dval) });
-            if(negate) { R->negate_to(dynamic_cache[minor_size].at(newKey)); }
-          }
-          else { // found
-            if(!negate) { R->add_to(dynamic_cache[minor_size].at(newKey), R->mult(x->second, Dval)); }
-            else { R->subtract_to(dynamic_cache[minor_size].at(newKey), R->mult(x->second, Dval)); }
-          }
+    // DEBUG
+    // std::cout << "minor_size: " << minor_size << std::endl;
+    // DEBUG
+    for(int top_row = p-(minor_size+1); top_row <= n_nonzero_rows-minor_size; ++top_row) {
+      // DEBUG
+      // std::cout << "cur_row_idx: " << cur_row_idx << std::endl;
+      // DEBUG
+      dynamic_cache[minor_size].insert({ top_row, {} });
+      for(const auto& [pp, map]: dynamic_cache[minor_size-1]) {
+        if(pp <= top_row) { continue; } // top_row wouldn't be the top row, so skip
+        for(auto x: dynamic_cache[0][top_row]) {
+          for(const auto& [Didx, Dval]: map) {
+            // DEBUG
+            // std::cout << "looking at: " << x.first.first[0] << "," << x.first.second[0] << " and (";
+            // for(auto i: Didx.first) { std::cout << i << ","; }
+            // std::cout << "),(";
+            // for(auto i: Didx.second) { std::cout << i << ","; }
+            // std::cout << std::endl;
+            // DEBUG
+            // Check if x and D live on distinct columns
+            const std::vector<int>& Dcols = Didx.second;
+            int xcol = x.first.second[0];
+            auto col_find = find(Dcols.begin(), Dcols.end(), xcol);
+            if(col_find != Dcols.end()) { continue; } // xcol found in Dcols, so skip
+            // if no skip, compute a term in the cofactor
+            ColRowIndices newKey = Didx;
+            newKey.first.insert(newKey.first.begin(), x.first.first[0]);
+            // Get iterator to future location of xcol
+            auto xcol_position = std::upper_bound(newKey.second.begin(), newKey.second.end(), xcol);
+            newKey.second.insert(xcol_position, xcol);
+            bool negate = ((xcol_position - newKey.second.begin())%2 != 0);
+            // Insert, add or negate cofactor term
+            auto search = dynamic_cache[minor_size][top_row].find(newKey);
+            if(search == dynamic_cache[minor_size][top_row].end()) { // not found
+              dynamic_cache[minor_size][top_row].insert({ newKey, R->mult(x.second, Dval) });
+              if(negate) { R->negate_to(dynamic_cache[minor_size][top_row][newKey]); }
+            }
+            else { // found
+              if(!negate) { R->add_to(dynamic_cache[minor_size][top_row][newKey], R->mult(x.second, Dval)); }
+              else { R->subtract_to(dynamic_cache[minor_size][top_row][newKey], R->mult(x.second, Dval)); }
+            }
+          }          
         }
       }
     }
   }
 
   //DEBUG
-  for(int i = 0; i<dynamic_cache.size(); ++i) {
-    std::cout << "Minor size: " << i << std::endl;
-    for(const auto& [key, val]: dynamic_cache[i]) {
-      std::cout << "({";
-      for(auto i: key.first) { std::cout << i << ","; }
-      std::cout << "}, {";
-      for(auto i: key.second) { std::cout << i << ","; }
-      std::cout << "}) ---> ";
-      dringelem(R, val);
-      std::cout << std::endl;
-    }
-    std::cout << std::endl << std::endl;
-  }
+  // for(int i = 0; i<new_dynamic_cache.size(); ++i) {
+  //   std::cout << "Minor size: " << i << std::endl;
+  //   for(const auto& [key, val]: new_dynamic_cache[i]) {
+  //     std::cout << "({";
+  //     for(auto i: key.first) { std::cout << i << ","; }
+  //     std::cout << "}, {";
+  //     for(auto i: key.second) { std::cout << i << ","; }
+  //     std::cout << "}) ---> ";
+  //     dringelem(R, val);
+  //     std::cout << std::endl;
+  //   }
+  //   std::cout << std::endl << std::endl;
+  // }
   //DEBUG
 }
 
@@ -206,8 +212,10 @@ int DetComputation::step()
       row_vec[i] = static_cast<int>(row_set[i]);
       col_vec[i] = static_cast<int>(col_set[i]);
     }
-    auto it = dynamic_cache[p-1].find({ row_vec, col_vec });
-    if(it != dynamic_cache[p-1].end()) { r = it->second; }
+    // Find row number
+    const Subdeterminant& map = dynamic_cache[p-1][row_lookup[row_vec[0]]];
+    auto it = map.find({ row_vec, col_vec });
+    if(it != map.end()) { r = it->second; }
     else{ r = ZERO_RINGELEM; }
   }
   else
