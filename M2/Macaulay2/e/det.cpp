@@ -5,12 +5,6 @@
 #include "interrupted.hpp"
 #include "comb.hpp"
 
-//DEBUG
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include "debug.hpp"
-
 DetComputation::DetComputation(const Matrix *M0,
                                int p0,
                                bool do_exterior0,
@@ -84,9 +78,7 @@ DetComputation::DetComputation(const Matrix *M0,
       for (size_t j = 0; j < p; j++) D[i][j] = ZERO_RINGELEM;
     }
   if (strategy == DET_DYNAMIC) {
-    // std::cout << "old dynamic_cache size: " << dynamic_cache.size() << std::endl;
     dynamic_cache.resize(p);
-    // std::cout << "new dynamic_cache size: " << dynamic_cache.size() << std::endl;
     make_dynamic_cache();
   }
 }
@@ -104,8 +96,6 @@ DetComputation::~DetComputation()
 }
 
 void DetComputation::make_dynamic_cache() {
-  std::cout<<"new dynamic"<<std::endl;
-  
   // Traverse through matrix entries, find nonzero entries
   int nonzero = -1;
   for(int i = 0; i < M->n_rows(); ++i) {
@@ -118,36 +108,13 @@ void DetComputation::make_dynamic_cache() {
     }
   }
   int n_nonzero_rows = dynamic_cache[0].size();
-  // DEBUG
-  // for(const auto& [pp, map]: new_dynamic_cache[0]) {
-  //   std::cout << "p: " << pp << std::endl;
-  //   for (auto kv: map) {
-  //       std::cout << "(" << kv.first.first[0] << ", " << kv.first.second[0] << "): ";
-  //       dringelem(R, kv.second);
-  //       std::cout << std::endl;
-  //     }
-  // }
-  // DEBUG
   for(int minor_size = 1; minor_size < p; ++minor_size) {
-    // DEBUG
-    // std::cout << "minor_size: " << minor_size << std::endl;
-    // DEBUG
     for(int top_row = p-(minor_size+1); top_row <= n_nonzero_rows-minor_size; ++top_row) {
-      // DEBUG
-      // std::cout << "cur_row_idx: " << cur_row_idx << std::endl;
-      // DEBUG
       dynamic_cache[minor_size].insert({ top_row, {} });
       for(const auto& [pp, map]: dynamic_cache[minor_size-1]) {
         if(pp <= top_row) { continue; } // top_row wouldn't be the top row, so skip
         for(auto x: dynamic_cache[0][top_row]) {
           for(const auto& [Didx, Dval]: map) {
-            // DEBUG
-            // std::cout << "looking at: " << x.first.first[0] << "," << x.first.second[0] << " and (";
-            // for(auto i: Didx.first) { std::cout << i << ","; }
-            // std::cout << "),(";
-            // for(auto i: Didx.second) { std::cout << i << ","; }
-            // std::cout << std::endl;
-            // DEBUG
             // Check if x and D live on distinct columns
             const std::vector<int>& Dcols = Didx.second;
             int xcol = x.first.second[0];
@@ -175,22 +142,6 @@ void DetComputation::make_dynamic_cache() {
       }
     }
   }
-
-  //DEBUG
-  // for(int i = 0; i<new_dynamic_cache.size(); ++i) {
-  //   std::cout << "Minor size: " << i << std::endl;
-  //   for(const auto& [key, val]: new_dynamic_cache[i]) {
-  //     std::cout << "({";
-  //     for(auto i: key.first) { std::cout << i << ","; }
-  //     std::cout << "}, {";
-  //     for(auto i: key.second) { std::cout << i << ","; }
-  //     std::cout << "}) ---> ";
-  //     dringelem(R, val);
-  //     std::cout << std::endl;
-  //   }
-  //   std::cout << std::endl << std::endl;
-  // }
-  //DEBUG
 }
 
 int DetComputation::step()
@@ -429,9 +380,6 @@ Matrix /* or null */ *Matrix::exterior(int p, int strategy) const
           "determinant computations over RR or CC requires Strategy=>Cofactor");
       return 0;
     }
-  if (strategy == DET_DYNAMIC) {
-    std::cout << "Using dynamic strategy" << std::endl;
-  }
   DetComputation *d = new DetComputation(this, p, 1, strategy);
   d->calc(-1);
   Matrix *result = d->determinants();
@@ -447,9 +395,6 @@ Matrix /* or null */ *Matrix::minors(int p, int strategy) const
           "determinant computations over RR or CC requires Strategy=>Cofactor");
       return 0;
     }
-  if (strategy == DET_DYNAMIC) {
-    std::cout << "Using dynamic strategy" << std::endl;
-  }
   DetComputation *d = new DetComputation(this, p, 0, strategy);
   d->calc(-1);
   Matrix *result = d->determinants();
