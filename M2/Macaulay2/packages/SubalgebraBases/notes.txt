@@ -18,8 +18,13 @@ Todo list
 > Implement the correct caching behaviour in subalgebraBasis and sagbi:
   -- A subring is an immutable object - in its cache we store the 'most computationally advanced' SAGBIBasis object
   -- When resuming a subalgebraBasis or sagbi computation from a SAGBIBasis object, use the previously selected options
+    * Only adjust the Limit option
+  -- Add another option to sagbi / subalgebraBasis: RenewOptions (default: false)
+    * if RenewOptions == true then set all the options to ones supplied by the user
+    * RenewOptions is false by default because the first priority is to recover the options from the previous computation
 
-> When picking up where a computation left off, if the original set of generators was autosubducted then do not autosubduct them again.
+> When picking up where a computation left off, if the original set of generators was autosubducted then don't autosubduct again.
+  -- Could be implemented by setting the AutoSubduce option to false once autosubduction is done
 
 
 Discussion
