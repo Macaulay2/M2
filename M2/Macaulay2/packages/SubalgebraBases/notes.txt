@@ -22,6 +22,8 @@ Todo list
   -- Add another option to sagbi / subalgebraBasis: RenewOptions (default: false)
     * if RenewOptions == true then set all the options to ones supplied by the user
     * RenewOptions is false by default because the first priority is to recover the options from the previous computation
+  -- matrices cache a Subring which, in turn, cache the SAGBIBasis
+
 
 > When picking up where a computation left off, if the original set of generators was autosubducted then don't autosubduct again.
   -- Could be implemented by setting the AutoSubduce option to false once autosubduction is done
