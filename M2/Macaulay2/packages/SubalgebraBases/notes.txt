@@ -24,10 +24,29 @@ Todo list
     * RenewOptions is false by default because the first priority is to recover the options from the previous computation
   -- matrices cache a Subring which, in turn, cache the SAGBIBasis
 
-
 > When picking up where a computation left off, if the original set of generators was autosubducted then don't autosubduct again.
   -- Could be implemented by setting the AutoSubduce option to false once autosubduction is done
 
+> sort out keys for subrings - remove the quotes around the keys
+  ? Can we use unexported symbols for keys in classes ?
+  
+> sagbi and subalgebraBasis always uses the sagbiBasis object of the subring in the cache of the passed in object
+  -- E.g. sagbi M (matrix) --> sagbi M.cache#"Subring".cache."SAGBIBasis" (or something like that)
+  -- In the above example, if the matrix has no subring cached then calling sagbi on a matrix makes a subring
+  -- methodology: have only 1 subring floating around linked with the latest computation object
+
+> groebner membership test for quotients
+  ? Can we just sum the ideal I and the quotienting ideal (lifted to the tensor ring) ?
+
+> Add more asserts!
+
+> Add groebnerNormalForm method. It should be a non-exported method that returns an element of the tensor ring
+  -- it can be used by groebnerMembershipTest and %
+  -- this method may also want to return a projection map from the tensorRing to the ambientRing
+
+> copy over the intersection of subrings method to classes.
+  -- Add other input options: e.g. intersection(SAGBIBasis, SAGBIBasis), etc.
+  
 
 Discussion
 ----------
