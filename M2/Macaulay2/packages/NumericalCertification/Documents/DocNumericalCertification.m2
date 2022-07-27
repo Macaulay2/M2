@@ -6,7 +6,7 @@
 undocumented{(substitute, RingElement, CCiMatrix),
     sqabsForGaussianRational, (sqabsForGaussianRational, RingElement),
     conjugateGaussian, (conjugateGaussian, RingElement),
-    pointNorm, (pointNorm, AbstractPoint), (pointNorm, Matrix),
+    pointNorm, -*(pointNorm, AbstractPoint),*- (pointNorm, Matrix),
     conjugateGaussianRationalMatrix, (conjugateGaussianRationalMatrix, Matrix)
 --    subOnTerm, (subOnTerm, Number, Matrix), (subOnTerm, RingElement, Matrix),
 --    (subOnTerm, RingElement, CCiMatrix)
@@ -38,6 +38,15 @@ undocumented{(symbol +, CCi, CCi), (symbol *, CCi, CCi),
     (symbol ^, CCiMatrix, Number),
     (flatten, CCi), (isEmpty, CCi), (net, CCi)}
 
+undocumented{(intervalCCi,Number), (intervalCCi,Number,Number),
+    (intervalCCi,Number,RRi),(intervalCCi,RRi),(intervalCCi,RRi,Number),(intervalCCi,RRi,RRi),
+    (matrixCCi, AbstractPoint), (matrixCCi, List), (matrixCCi,Matrix, Matrix)}
+
+undocumented{(certifyRegularSolution,PolySystem,AbstractPoint,Sequence),
+    (certifyRegularSolution,PolySystem,Matrix,Sequence),
+    (certifyRealSolution,PolySystem,Matrix,Sequence),
+    (certifyRealSolution,PolySystem,AbstractPoint,Sequence),
+    (certifyDistinctSolutions,PolySystem,List,List)}
 
 
 doc ///
@@ -59,7 +68,7 @@ doc ///
 
 			Moreover, the package has a function certifying regular roots via a software @HREF("https://www.math.tamu.edu/~sottile/research/stories/alphaCertified/", "\"alphaCertified\"")@.
 
-			For singular roots, the concept of the iterated deflation established in @HREF("https://arxiv.org/abs/1904.07937","\"On isolation of singular zeros of multivariate analytic systems\" (2020)")@ is implemented.
+			For singular roots, the concept of the iterated deflation established in @HREF("https://www.sciencedirect.com/science/article/pii/S030439750600168X","\"Newton's method with deflation for isolated singularities of polynomial systems\" (2006)")@ is implemented.
 			For a given system and a point, the package provides a function constructing a system having a given point as a regular solution and certifies it via alpha theory or interval arithmetic.
 
     	    	Text
@@ -145,13 +154,13 @@ doc ///
 		Example
 		    krawczykTest(f,matrix{{I1,I2,I3,I4}})
 		Text
-		    For a given point, the function @TO "pointToMatrix"@ provides a proper complex interval box for the input.
+		    For a given point, the function @TO "pointToInterval"@ provides a proper complex interval box for the input.
 		    For constructing a complex interval and a matrix with complex interval entries, see @TO "CCi"@ and @TO "CCiMatrix"@.
 		Example
 		    R = RR[x1,x2,y1,y2];
 		    f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -3.5, x1^2 + y1^2 -1, x2^2 + y2^2 -1};
 		    p = point{{.954379, .318431, -.298633, .947949}};
-		    I = pointToMatrix(f,p)
+		    I = pointToInterval(f,p)
 		    krawczykTest(f,I)
 
 
@@ -164,8 +173,8 @@ doc ///
 	        	The function @TO "certifySingularSolution"@ determines if a given point is associated to a singular solution of a given system using the deflation method.
 	    	Example
     	    	    R = CC[x,y,z];
-		    f = polySystem {x^3-y*z,y^3-x*z,z^3-x*y};
-		    p = point {{6.23416e-18-2.81893e-18*ii, 6.24772e-18-2.81893e-18*ii, 6.30193e-18-2.75116e-18*ii}}; -- a numerical approximation of the singular solution
+		    f = polySystem {x^2+y+z-1,x+y^2+z-1,x+y+z^2-1};
+		    p = point{{1e-7-1e-7*ii,1e-7+1e-7*ii,1+1e-7}};
     	            certifySingularSolution(f,p)
 
 
@@ -210,10 +219,8 @@ doc ///
     	    certifyRegularSolution
 	    (certifyRegularSolution, PolySystem, AbstractPoint)
 	    (certifyRegularSolution, PolySystem, Matrix)
-	    (certifyRegularSolution, PolySystem, List)
 	    "(certifyRegularSolution, PolySystem, AbstractPoint)"
 	    "(certifyRegularSolution, PolySystem, Matrix)"
-	    "(certifyRegularSolution, PolySystem, List)"
 	Headline
 	    certify whether a given point is an approximate solution to the system
 	Usage
@@ -232,8 +239,6 @@ doc ///
 	    Example
 		p1 = point{{.95,.32,-.30,.95}};
     	    	certifyRegularSolution(f,p1)
-		p2 = point{{.65,.77,.76,-.64}};
-    	    	certifyRegularSolution(f, {p1,p2})
 ///
 
 
@@ -271,7 +276,7 @@ doc ///
 	    Text
 	    	Even worse, if two solutions are close enough and both have alpha value which are bigger than $0.03$, it gives indecisive comments.
 
-		In this case, user should apply @TO "newtonOper"@ to the point to get more precise approximation.
+		In this case, user should apply @TO "newton"@ to the point to get more precise approximation.
 	    Example
 		p1 = point{{.95,.32,-.30,.95}};
 		p2 = point{{.95,.32,-.301,.95}};
@@ -304,7 +309,7 @@ doc ///
     	    	certifyRealSolution(f,p)
 	    Text
 	    	However, an input point is poorly approximated, it gives false even if the point is real.
-		In this case, user should apply @TO "newtonOper"@ to the point to get more precise approximation.
+		In this case, user should apply @TO "newton"@ to the point to get more precise approximation.
 	    Example
 		p = point{{.65,.77,.75,-.64}};  -- poorly approximated solution
     	    	certifyRealSolution(f,p)
@@ -352,6 +357,9 @@ doc ///
 	    (krawczykOperator, PolySystem, Matrix)
 	    (krawczykOperator, PolySystem, CCiMatrix)
 	    (krawczykOperator, PolySystem, AbstractPoint)
+	    (krawczykOperator, Matrix, Matrix)
+	    (krawczykOperator, Matrix, CCiMatrix)
+	    (krawczykOperator, Matrix, AbstractPoint)
 	Headline
 	    compute the Krawczyk operator
 	Description
@@ -363,7 +371,7 @@ doc ///
 	        (I1, I2, I3, I4) = (interval(.94,.96), interval(.31,.33), interval(-.31,-.29), interval(.94,.96));
 	    Text
 	        Intervals for certification should be given as a Matrix, and we set the relationships between variables and intervals by aligning them in the order of variables of the polynomial ring.
-	        For constructing a proper interval box from a given point, see the function @TO "pointToMatrix"@.
+	        For constructing a proper interval box from a given point, see the function @TO "pointToInterval"@.
 	    Example
 		M = matrix{{I1,I2,I3,I4}}
     	    Text
@@ -382,6 +390,11 @@ doc ///
 	    (krawczykTest, PolySystem, Matrix)
 	    (krawczykTest, PolySystem, CCiMatrix)
 	    (krawczykTest, PolySystem, AbstractPoint)
+	    (krawczykTest, PolySystem, List)
+	    (krawczykTest, Matrix, Matrix)
+	    (krawczykTest, Matrix, CCiMatrix)
+	    (krawczykTest, Matrix, AbstractPoint)
+	    (krawczykTest, Matrix, List)
 	Headline
 	    certify the interval box for square polynomial system
 	Description
@@ -393,7 +406,7 @@ doc ///
 	        (I1, I2, I3, I4) = (interval(.94,.96), interval(.31,.33), interval(-.31,-.29), interval(.94,.96));
 	    Text
 	        Intervals for certification should be given as a Matrix, and we set the relationships between variables and intervals by aligning them in the order of variables of the polynomial ring.
-	        For constructing a proper interval box from a given point, see the function @TO "pointToMatrix"@.
+	        For constructing a proper interval box from a given point, see the function @TO "pointToInterval"@.
 	    Example
 		M = matrix{{I1,I2,I3,I4}}
 	    Text
@@ -401,7 +414,7 @@ doc ///
 	    Example
     	    	krawczykTest(f,M)
 	    Text
-	    	If the function encounters a @TO "AbstractPoint"@ as an input, then it computes a proper interval box for the given point using @TO "pointToMatrix"@ function.
+	    	If the function encounters a @TO "AbstractPoint"@ as an input, then it computes a proper interval box for the given point using @TO "pointToInterval"@ function.
 	    Example
 		p = point {{.95437+0.0001*ii, .318445, -.298627, .947941}}
     	    	krawczykTest(f,p)
@@ -416,6 +429,10 @@ doc ///
 	    krawczykRealnessTest
 	    (krawczykRealnessTest, PolySystem, CCiMatrix)
 	    (krawczykRealnessTest, PolySystem, AbstractPoint)
+	    (krawczykRealnessTest, PolySystem, List)
+	    (krawczykRealnessTest, Matrix, CCiMatrix)
+	    (krawczykRealnessTest, Matrix, AbstractPoint)
+	    (krawczykRealnessTest, Matrix, List)
 	Headline
 	    certify the realness of the associated solution for the square polynomial system from the given interval box
 	Description
@@ -425,10 +442,10 @@ doc ///
 	    	R = CC[x1,x2,y1,y2];
 		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
 		p = point {{.95437+0.0001*ii, .318445, -.298627, .947941}} -- a numerical solution over the complex number
-    	    	I = pointToMatrix(p, 1e-2) -- an interval box centered at p with radius 1e-2
+    	    	I = pointToInterval(p, 1e-2) -- an interval box centered at p with radius 1e-2
 	    Text
 	        Intervals for certification should be given as a Matrix, and we set the relationships between variables and intervals by aligning them in the order of variables of the polynomial ring.
-	        For constructing a proper interval box from a given point, see the function @TO "pointToMatrix"@.
+	        For constructing a proper interval box from a given point, see the function @TO "pointToInterval"@.
 	    	If the given interval box passes the Krawczyk test and its associated solution is real, then the function returns true
 	    Example
     	    	krawczykRealnessTest(f,I)
@@ -449,25 +466,25 @@ doc ///
 	    (certifySingularSolution, PolySystem, Matrix, Number)
 	    (certifySingularSolution, PolySystem, CCiMatrix)
 	    (certifySingularSolution, PolySystem, CCiMatrix, Number)
-	    "certifySolutions(PolySystem, List)"
 	Headline
     	    certify if a given point is a singular solution for a given system using the deflation method.
 	Description
 	    Text
 	        This function determines if a given point or interval box is associated to a singular solution for a given system.
 		It uses the fact that a singular solution can be regularized via the deflation method (e.g. see  @HREF("https://www.sciencedirect.com/science/article/pii/S030439750600168X","\"Newton's method with deflation for isolated singularities of polynomial systems\" (2006)")@.
+		{\bf Caveat :} Certification is done by a subsystem obtained from the deflation method. It may produce a false positive result probabilistically.
 	    Example
-    	    	R = CC[x,y,z];
-		f = polySystem {x^3-y*z,y^3-x*z,z^3-x*y};
-		p = point {{6.23416e-18-2.81893e-18*ii, 6.24772e-18-2.81893e-18*ii, 6.30193e-18-2.75116e-18*ii}}; -- a numerical approximation of the singular solution
-    	        certifySingularSolution(f,p)
+    	    	    R = CC[x,y,z];
+		    f = polySystem {x^2+y+z-1,x+y^2+z-1,x+y+z^2-1};
+		    p = point{{1e-7-1e-7*ii,1e-7+1e-7*ii,1+1e-7}};
+    	            certifySingularSolution(f,p)
 	    Text
                 It is known that an isolated singular solution is regularized within finitely many steps by the iterated first order deflation (e.g. see  @HREF("https://www.sciencedirect.com/science/article/pii/S030439750600168X","\"Newton's method with deflation for isolated singularities of polynomial systems\" (2006)")@).
 		A positive integer can be given as a number of iterations. If no number is given, it iterates until the solution is regularized (hence, it may not be terminated).
 	    Example
 	        R = CC[x,y]
-		f = polySystem ideal(x+y^3,x^2 *y -y^4)
-		p = point {{-3.38813e-21+1.35525e-20*ii, -3.38813e-21+2.03288e-20*ii}}
+		f = polySystem {x+y^3,x^2*y-y^4};
+		p = point {{-3.38813e-21+1.35525e-20*ii, -3.38813e-21+2.03288e-20*ii}};
     	        certifySingularSolution(f,p,2) -- false, two iterations are not enough
 		certifySingularSolution(f,p,3)
 	    Text
@@ -489,14 +506,13 @@ doc ///
 	    options for certification method
 	Description
 	    Text
-	    	This is an option for @TO "certifySingularSolution"@ and @TO "certifySolutions"@. By default, it takes alpha theory as a strategy.
+	    	This is an option for @TO "certifySingularSolution"@ and @TO "certifySolutions"@. There are three possible options {\tt alphaTheory, intervalArithmetic} and {\tt alphaCertified}. By default, it takes alpha theory as a strategy.
 	    Example
 	    	R = RR[x1,x2,y1,y2];
 		f = polySystem {3*y1 + 2*y2 -1, 3*x1 + 2*x2 -7/2,x1^2 + y1^2 -1, x2^2 + y2^2 - 1};
 		p = point {{.95437, .318445, -.298627, .947941}};
     	    	peek certifySolutions(f, {p})
 		peek certifySolutions(f, {p}, Strategy => "intervalArithmetic")
-		peek certifySolutions(f, {p}, Strategy => "alphaCertified")
 ///
 
 
@@ -505,6 +521,7 @@ doc ///
     	Key
     	    certifySolutions
 	    (certifySolutions, PolySystem, List)
+	    (certifySolutions, PolySystem, List, Number)
 	    "(certifySolutions, PolySystem, List)"
 	Headline
     	    executes certification on a given system and list of points
@@ -522,8 +539,8 @@ doc ///
 		The option ''alphaTheory'' returns alpha values of solutions, a list of regular distinct solutions, a list of real solutions, a list of regular solutions, a list of certified singular solutions and a list of non-certified solutions
 	    Example
     	    	R = CC[x,y,z];
-		f = polySystem {x^3 - y*z, y^3 - x*z, z^3 - x*y};
-		listOfSols = solveSystem f; -- 27 solutions
+	    	f = polySystem {(x-y)^3 - z^2, (z-x)^3 - y^2, (y-z)^3 - x^2};
+		listOfSols = solveSystem f; 
     	        c = certifySolutions(f,listOfSols);
 		peek c
 	    Text
@@ -545,9 +562,9 @@ doc ///
 
 doc ///
     	Key
-    	    pointToMatrix
-	    (pointToMatrix, AbstractPoint, Number)
-    	    (pointToMatrix, PolySystem, AbstractPoint)
+    	    pointToInterval
+	    (pointToInterval, AbstractPoint, Number)
+    	    (pointToInterval, PolySystem, AbstractPoint)
 	Headline
 	    finds an interval box from a given point
 	Description
@@ -555,14 +572,14 @@ doc ///
 	        This function finds an interval box from a given point. There are two ways to find an interval box. If a user has a desired radius for the interval box, then running the function with the point and the radius returns an interval centered at the point with the given radius.
 	    Example
     	    	p = point{{.151879*ii, -.142332-.358782*ii, .142332-.358782*ii}};
-    	    	I = pointToMatrix(p, 1e-3) -- returns an interval box centered at the point with the radius 1e-3
+    	    	I = pointToInterval(p, 1e-3) -- returns an interval box centered at the point with the radius 1e-3
 	    Text
 	        If a user doesn't know what radius to choose, but there is a given system, the function computes a proper interval box with the radius estimating the distance between the input point and its Newton convergence limit via the epsilon-inflation method (see @HREF("https://www.degruyter.com/document/doi/10.1515/9783110499469/html?lang=en", "\"Interval Analysis\"")@).
 	    Example
 	    	R = CC[x,y,z];
 	    	f = polySystem {(x-y)^3 - z^2, (z-x)^3 - y^2, (y-z)^3 - x^2};
     	    	p = point{{.151879*ii, -.142332-.358782*ii, .142332-.358782*ii}};
-    	    	I = pointToMatrix(f,p)
+    	    	I = pointToInterval(f,p)
 ///
 
 
