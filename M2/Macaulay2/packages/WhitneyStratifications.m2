@@ -1,7 +1,7 @@
 newPackage(
 	"WhitneyStratifications",
 	Version => "1.2", 
-    	Date => "July 22, 2022",
+    	Date => "July 29, 2022",
     	Authors => {{Name => "Martin Helmer", 
 		  Email => "mhelmer@ncsu.edu", 
 		  HomePage => "http://martin-helmer.com/"}},
@@ -235,16 +235,17 @@ V=whitneyStratify I;
 assert((first V#0)==ideal(gens R));
 
 --Whitney Cusp, affine 
-R=QQ[x_1..x_3]
-I=ideal(x_2^2+x_1^3-x_1^2*x_3^2)
-V=whitneyStratify I
-assert((first V#0)==ideal(gens R))
+R=QQ[x_1..x_3];
+I=ideal(x_2^2+x_1^3-x_1^2*x_3^2);
+V=whitneyStratify I;
+assert((first V#0)==ideal(gens R));
+
 
 --Whitney Cusp, projective 
 R=QQ[x_0..x_3]
-I=ideal(x_2^2*x_0^2+x_1^3*x_0-x_1^2*x_3^2)
-V=whitneyStratify I
-assert((first V#0)==ideal(R_1,R_2,R_3))
+I=ideal(x_2^2*x_0^2+x_1^3*x_0-x_1^2*x_3^2);
+V=whitneyStratify I;
+assert((first V#0)==ideal(R_1,R_2,R_3));
 
 R=QQ[x_0..x_4];
 I=ideal(x_0^2*x_4-x_1*x_2^2+x_3^3-x_3*x_0^2-x_4^2*x_3);
@@ -252,7 +253,4 @@ V=whitneyStratify I;
 v0={ ideal(x_3-x_4,x_2,x_1,x_0^2-2*x_4^2),ideal(x_4,x_3,x_2,x_0)};
 assert(V#0==v0);
 
-
-R=QQ[x,y,c0,c1]
-I=ideal((c0*x+c1*y)*x*y)
 ///
