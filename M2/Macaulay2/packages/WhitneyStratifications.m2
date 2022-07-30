@@ -1,7 +1,7 @@
 newPackage(
 	"WhitneyStratifications",
-	Version => "1.1", 
-    	Date => "June 17, 2022",
+	Version => "1.2", 
+    	Date => "July 29, 2022",
     	Authors => {{Name => "Martin Helmer", 
 		  Email => "mhelmer@ncsu.edu", 
 		  HomePage => "http://martin-helmer.com/"}},
@@ -85,6 +85,7 @@ whitneyStratify (Ideal):=(I)->(
 	    );
 	wS=V;
 	);
+    use R;
     return wS;
     );
 whitneyStratify (Ideal,Ring,Ring):=(I,R,S)->(
@@ -109,16 +110,14 @@ whitneyStratify (Ideal,Ring,Ring):=(I,R,S)->(
     if codim(J)==n then return V;
     CI:=conormal(ideal mingens I,S);
     Cpull:=0;
-    Ccap:=0;
     for j from 0 to mu do(
 	ell=mu-j;
 	for Z in V#ell do(
 	    Cpull=(CI+sub(Z,S));
-	    Ccap=conormal(Z,S)+CI;
-	    W=(Z+sub(eliminate((gens S)_{(numgens(R))..numgens(S)-1},saturate(Cpull,Ccap)),R));
-	    for K in decompose(W) do(
+	    W=for q in decompose Cpull list sub(eliminate((gens S)_{(numgens(R))..numgens(S)-1},q),R);
+	    for K in W do(
 		for i from 0 to ell-1 do(
-		    if i==(n-codim(K)) then (V#i)#(#(V#i))=K;
+		    if i==(n-codim(K)) then (V#i)#(#(V#i))=ideal mingens(K+Z);
 		    );
 		);
 	    );
@@ -220,23 +219,38 @@ TEST ///
 -*  
     restart
     needsPackage "WhitneyStratifications"
-    needsPackage "SegreClasses"
-    installPackage "WhitStrat"
+    installPackage "WhitneyStratifications"
 *- 
+--Whitney Umbrella, projective
 R=QQ[x_0..x_3];
 I=ideal(x_1^2*x_2-x_3*x_0^2);
 V=whitneyStratify I;
 v0={ideal(x_2,x_1,x_0), ideal(x_3,x_1,x_0)};
 assert(V#0==v0);
 
+--Whitney Umbrella, affine
 R=QQ[x_0..x_2];
 I=ideal(x_1^2*x_2-x_0^2);
 V=whitneyStratify I;
 assert((first V#0)==ideal(gens R));
 
+--Whitney Cusp, affine 
+R=QQ[x_1..x_3];
+I=ideal(x_2^2+x_1^3-x_1^2*x_3^2);
+V=whitneyStratify I;
+assert((first V#0)==ideal(gens R));
+
+
+--Whitney Cusp, projective 
+R=QQ[x_0..x_3]
+I=ideal(x_2^2*x_0^2+x_1^3*x_0-x_1^2*x_3^2);
+V=whitneyStratify I;
+assert((first V#0)==ideal(R_1,R_2,R_3));
+
 R=QQ[x_0..x_4];
 I=ideal(x_0^2*x_4-x_1*x_2^2+x_3^3-x_3*x_0^2-x_4^2*x_3);
 V=whitneyStratify I;
-v0={ideal(x_4,x_3,x_2,x_0), ideal(x_3-x_4,x_2,x_1,x_0^2-2*x_4^2)};
+v0={ ideal(x_3-x_4,x_2,x_1,x_0^2-2*x_4^2),ideal(x_4,x_3,x_2,x_0)};
 assert(V#0==v0);
+
 ///
