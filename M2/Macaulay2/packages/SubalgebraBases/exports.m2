@@ -23,7 +23,8 @@ export {
     "subring",
     "isSAGBI",
     "sagbiBasis",
-    "groebnerMembershipTest"
+    "groebnerMembershipTest",
+    "subringIntersection"
     }
 
 -- From service-functions.m2

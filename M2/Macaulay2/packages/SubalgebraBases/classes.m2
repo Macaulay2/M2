@@ -333,6 +333,81 @@ RingElement % Subring := (f, S) -> (
     first first entries (matrix{{f}} % S)
     );
 
+subringIntersection = method(
+    Options => {
+	Strategy => "Master",
+	SubductionMethod => "Top",
+	"SAGBILimitType" => "Fixed", -- "Fixed" or "Function"
+	Limit => 20,
+	PrintLevel => 0
+	}
+    )
+
+
+
+
+subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
+    local limit;
+    local t;
+        
+    Q1 := ambient S1;
+    Q2 := ambient S2;
+    
+    assert(Q1 === Q2);
+    Q := Q1;
+    I := ideal(Q);
+    R := ambient(Q);
+    
+    -- construct the large ring
+    
+    -- monomial order:
+    -- 1) monomial order from R (on p_1 ... p_n+1)
+    -- 2) eliminate p_0
+    
+    newMonomialOrder := prepend(GRevLex => 1, (monoid Q).Options.MonomialOrder); -- product order with p_0 in a different subring
+    M := monoid [
+	Variables => (numgens Q + 1), 
+	MonomialOrder => newMonomialOrder
+	];
+    TAmb := (coefficientRing Q) M;
+    t = (vars TAmb)_(0,0);
+    
+    RtoTAmb := map(TAmb, R, (vars TAmb)_{1 .. numgens Q});
+    J := (RtoTAmb I) + ideal(t^2 - t); -- I + (t^2 + t)
+    
+    T := TAmb / J; -- tensor product of Q and K[t]/(t^2-t)
+    QtoT := map(T, Q, (vars T)_{1 .. numgens Q});
+    TtoQ := map(Q, T, matrix{{0_Q}} | vars Q);
+    t = (vars T)_(0,0);
+    
+    ---------
+    G1 := QtoT gens S1;
+    G2 := QtoT gens S2;
+    
+    use T;
+    G := t*G1 | (1-t)*G2;
+    S := subring G;
+    
+    if opts#"SAGBILimitType" == "Fixed" then (
+	limit = opts.Limit;
+	) else if opts#"SAGBILimitType" == "Function" then (
+	limit = (max (degrees gens S1)_1)*(max (degrees gens S2)_1);
+	);
+    
+    
+    SB := sagbi(S, 
+	Strategy => opts.Strategy,
+	SubductionMethod => opts.SubductionMethod,
+	Limit => limit,
+	PrintLevel => opts.PrintLevel
+	);
+    
+    -- if SB is a sagbi basis the intersection computation is correct!
+    intersectionGens := selectInSubring(1, gens SB);
+    subring TtoQ intersectionGens
+    );
+
+
 end--
 
 -- f % Subring is never going to be an element of the subalgebra, hence the ouput
