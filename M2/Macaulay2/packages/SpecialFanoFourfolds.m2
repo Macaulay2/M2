@@ -2664,7 +2664,7 @@ toExternalString SpecialCubicFourfold := toExternalString SpecialGushelMukaiFour
     s = s|"(i -> (x := local x;"|newline;
     s = s|"R := "|toExternalString(K)|"[x_0..x_"|toString(n)|"];"|newline;
     s = s|"S := projectiveVariety "|toString sub(ideal surface X,vars R)|";"|newline;
-    if not instance(X,SpecialCubicFourfold) then s = s|"V := projectiveVariety "|toString sub(ideal ambientFivefold X,vars R)|";"|newline;
+    if instance(X,SpecialCubicFourfold) then s = s|"V := ambient S;"|newline else s = s|"V := projectiveVariety "|toString sub(ideal ambientFivefold X,vars R)|";"|newline;
     s = s|"X := projectiveVariety "|toString sub(ideal X,vars R)|";"|newline;
     if instance(X,SpecialCubicFourfold) 
     then s = s|"X = specialFourfold(S,X,NumNodes=>"|toString(numberNodes surface X)|");"|newline else
