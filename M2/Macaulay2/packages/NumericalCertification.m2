@@ -1,6 +1,6 @@
 newPackage(
 	"NumericalCertification",
-    	Version => "1.5",
+    	Version => "1.6",
     	Date => "May, 2022",
     	Authors => {
 	     {Name => "Kisun Lee", Email => "kil004@ucsd.edu",     	HomePage => "https://klee669.github.io"},
@@ -29,7 +29,7 @@ export {
     "intervalCCi",
     "matrixCCi",
     "midpointCCi",
-    "pointToMatrix",
+    "pointToInterval",
     "krawczykOperator",
     "krawczykTest",
     "krawczykRealnessTest",
@@ -82,7 +82,9 @@ sqabsForGaussianRational(RingElement) := x -> (
 
 
 pointNorm = method()
-pointNorm(AbstractPoint) := x -> pointNorm matrix x
+-*pointNorm(AbstractPoint) := x -> (
+    pointNorm matrix x
+    )*-
 pointNorm(Matrix) := x -> (
     coordinateList := flatten entries x;
     -- returns the square of the norm
@@ -145,56 +147,48 @@ polySysNorm(PolySystem) := f -> (
     )
 
 
-newtonOper = method()
-newtonOper(PolySystem, AbstractPoint) := (f, x) -> newtonOper(f, matrix x)
-newtonOper(PolySystem, Matrix) := (f, x) -> (
-    jacOfPoly := jacobian f;
-    evalJac := evaluate(jacOfPoly, x);
-    inverseOfJac := inverse(evalJac);
-    evalSys := evaluate(f, x);
-    point {transpose x - inverseOfJac * evalSys}
-    )    
-
 computeConstants = method() --computes alpha^2 beta^2 gamma^2
 computeConstants(PolySystem, Matrix) := (f, x) -> (
     computeConstants(f, point x)
     )
 computeConstants(PolySystem, AbstractPoint) := (f, x) -> (
+    slpF := gateSystem f;
     eqs := equations f;
-    J := evaluate(jacobian f, x);
-    inverseJ := inverse J;
+    n := length eqs;
     R := coefficientRing ring f;
-    pointNormx := pointNorm x;
+    J := transpose reshape(R^n,R^n,evaluate(jacobian slpF, matrix x));
+    inverseJ := inverse J;
+    pointNormx := pointNorm matrix x;
     degs := select(flatten apply(eqs, i -> degree i), i -> i =!= 0);
     if precision R =!= infinity then (
 	R = R;
     	if det J == 0 then error "The Jacobian is not invertible";
     	-- beta
-    	y := point(inverseJ * evaluate(f,x));
+    	y := point(inverseJ * transpose evaluate(slpF,matrix x));
     	beta := sub(sum apply(y#Coordinates, i -> abs(i)^2),R);
-    	deltaD := diagonalMatrix flatten apply(degs, i -> sqrt(i * (pointNormx)^(i-1)));
+    	deltaD := diagonalMatrix flatten apply(degs, i -> sqrt(i * (pointNormx)^(i-1))); 
      	mu := max {1, polySysNorm(f) * (norm(2,inverseJ * deltaD))^2};
 	)
     else if R =!= QQ then (
 	var := first gens R;
 	R = coefficientRing R;
-	print "Warning: invertibility check for Jacobian is skipped for Gaussian rational inputs";
+    	if det J == 0 then error "The Jacobian is not invertible";
     	-- beta
-    	y = point(inverseJ * evaluate(f,x));
+    	y = point(inverseJ * transpose evaluate(slpF, matrix x));
     	beta = sub(sum apply(y#Coordinates, i -> sqabsForGaussianRational i),R);
-    	deltaD = diagonalMatrix flatten apply(degs, i -> i * (pointNormx)^(i-1));
+    	deltaD = diagonalMatrix flatten apply(degs, i -> i * (pointNormx)^(i-1)); 
 	sqFrobenius := trace(inverseJ * deltaD * (transpose conjugateGaussianRationalMatrix inverseJ));
-     	mu = max {1, polySysNorm(f) * (sub((coefficient(var, sqFrobenius))^2, R) + sub((sqFrobenius - var * coefficient(var,sqFrobenius)), R))};
+     	mu = max {1, polySysNorm(f) * (sub((coefficient(var, sqFrobenius))^2, R) + sub((sqFrobenius - var * coefficient(var,sqFrobenius)), R))};  
 	)
     else (
 	R = R;
     	if det J == 0 then error "The Jacobian is not invertible";
     	-- beta
-    	y = point(inverseJ * evaluate(f,x));
+    	y = point(inverseJ * transpose evaluate(slpF,matrix x));
     	beta = sub(sum apply(y#Coordinates, i -> i^2),R);
-    	deltaD = diagonalMatrix flatten apply(degs, i -> i * (pointNormx)^(i-1));
-     	mu = max {1, polySysNorm(f) * trace(inverseJ * deltaD * (transpose inverseJ))};
-	);
+    	deltaD = diagonalMatrix flatten apply(degs, i -> i * (pointNormx)^(i-1)); 
+     	mu = max {1, polySysNorm(f) * trace(inverseJ * deltaD * (transpose inverseJ))};  
+	); 
     -- gamma
     gamma := sub(mu*((max degs)^3)/(4* pointNormx), R);
     alpha := sub(beta * gamma, R);
@@ -202,7 +196,7 @@ computeConstants(PolySystem, AbstractPoint) := (f, x) -> (
     )
 
 
-certifyRegularSolution = method() -- returns null if not successful, (alpha,beta,gamma) if alpha-certified
+certifyRegularSolution = method() -- returns null if not successful, (alpha,beta,gamma) if alpha-certified 
 certifyRegularSolution(PolySystem, Matrix) := (f, x) -> (
     certifyRegularSolution(f, point x)
     )
@@ -211,9 +205,13 @@ certifyRegularSolution(PolySystem, AbstractPoint) := (f, x) -> (
     -- check: alpha < (13-3*sqrt(17))/4
     if 16*alpha < 169 and (322-16*alpha)^2 > 78*78*17 then true else false
     )
-certifyRegularSolution(PolySystem, List) := (f, L) -> (
-    apply(L, i -> certifyRegularSolution(f, i))
+certifyRegularSolution(PolySystem, AbstractPoint, Sequence) := (f, x, consts) -> (
+    alpha := consts#0;
+    if 16*alpha < 169 and (322-16*alpha)^2 > 78*78*17 then true else false
     )
+certifyRegularSolution(PolySystem, Matrix, Sequence) := (f, x, consts) -> (
+    certifyRegularSolution(f, point x, consts)
+    ) 
 
 certifyDistinctSolutions = method()
 certifyDistinctSolutions(PolySystem, Matrix, Matrix) := (f, x1, x2) -> (
@@ -229,22 +227,54 @@ certifyDistinctSolutions(PolySystem, AbstractPoint, AbstractPoint) := (f, x1, x2
 	)
     else (
  	R = R;
-	);
-    Consts1 := computeConstants(f,x1);
-    Consts2 := computeConstants(f,x2);
+	); 
+    consts1 := computeConstants(f,x1);
+    consts2 := computeConstants(f,x2);
     if precision R =!= infinity then (
     	normOfDist := (norm(2,point{(coordinates x1)-(coordinates x2)}))^2;
 	)
     else (
     	normOfDist = sum apply((point{(coordinates x1)-(coordinates x2)})#Coordinates, c->sub(c^2,R));
 	);
-    if Consts1 #0 >= ((13-3*sqrt(17))/4)^2 or Consts2 #0 >= ((13-3*sqrt(17))/4)^2 then (
+    if consts1 #0 >= ((13-3*sqrt(17))/4)^2 or consts2 #0 >= ((13-3*sqrt(17))/4)^2 then (
 	false
 	)
-    else if normOfDist > 4*((Consts1)#1 + (Consts2)#1 + 2*sqrt((Consts1)#1 * (Consts2)#1)) then (
+    else if normOfDist > 4*((consts1)#1 + (consts2)#1 + 2*sqrt((consts1)#1 * (consts2)#1)) then (
 	true
 	)
-    else if (Consts1)#0 < 9/10000 and normOfDist < 1/(400*(Consts1)#2) or (Consts2)#0 < 9/10000 and normOfDist < 1/(400*(Consts2)#2) then (
+    else if (consts1)#0 < 9/10000 and normOfDist < 1/(400*(consts1)#2) or (consts2)#0 < 9/10000 and normOfDist < 1/(400*(consts2)#2) then (
+	false
+	)
+    else (
+      	false
+	)
+    )
+certifyDistinctSolutions(PolySystem, List, List) := (f, x1, x2) -> (
+    consts1 := x1#1;
+    consts2 := x2#1;
+    R := coefficientRing ring f;
+    if precision R =!= infinity then (
+	R = R;
+	)
+    else if R =!= QQ then (
+	R = coefficientRing R;
+	)
+    else (
+ 	R = R;
+	); 
+    if precision R =!= infinity then (
+    	normOfDist := (norm(2,point{(coordinates x1#0)-(coordinates x2#0)}))^2;
+	)
+    else (
+    	normOfDist = sum apply((point{(coordinates x1#0)-(coordinates x2#0)})#Coordinates, c->sub(c^2,R));
+	);
+    if consts1#0 >= ((13-3*sqrt(17))/4)^2 or consts2#0 >= ((13-3*sqrt(17))/4)^2 then (
+	false
+	)
+    else if normOfDist > 4*((consts1)#1 + (consts2)#1 + 2*sqrt((consts1)#1 * (consts2)#1)) then (
+	true
+	)
+    else if (consts1)#0 < 9/10000 and normOfDist < 1/(400*(consts1)#2) or (consts2)#0 < 9/10000 and normOfDist < 1/(400*(consts2)#2) then (
 	false
 	)
     else (
@@ -279,43 +309,83 @@ certifyRealSolution(PolySystem, AbstractPoint) := (f, x) -> (
     else (
     	imagPart = apply(coordinates x, i -> imaginaryPart(i));
 	R = R;
-	);
+	); 
     normOfimagPart := sum apply(imagPart, i -> sub(i^2,R));
     if (normOfimagPart > 4*beta) then false
     else if alpha < 9/10000 and normOfimagPart < 1/(400*gamma) then true
     else (
---	print "apply more Newton's operators!";
     false
     )
+    )
+certifyRealSolution(PolySystem, Matrix,Sequence) := (f, x, consts) -> (
+    certifyRealSolution(f, point x, consts)
+    )
+certifyRealSolution(PolySystem, AbstractPoint,Sequence) := (f, x, consts) -> (
+    (alpha,beta,gamma) := consts;
+    R := coefficientRing ring f;
+    if precision R =!= infinity then (
+    	imagPart := apply(coordinates x, i -> imaginaryPart(i));
+	R = R;
+	)
+    else if R =!= QQ then (
+	coordinatesOfx := coordinates x;
+	l := length coordinatesOfx;
+	imagPart = {};
+	for i from 0 to l-1 do if degree(coordinatesOfx#i) === 1 then (
+		append(imagPart,leadCoefficient sub(i,R));
+		)
+	    else (
+		append(imagPart, 0);
+		);
+	R = coefficientRing R;
+	)
+    else (
+    	imagPart = apply(coordinates x, i -> imaginaryPart(i));
+	R = R;
+	); 
+    normOfimagPart := sum apply(imagPart, i -> sub(i^2,R));
+    if (normOfimagPart > 4*beta) then false
+    else if alpha < 9/10000 and normOfimagPart < 1/(400*gamma) then true
+    else (
+    	false
+    	)
     )
 
 alphaTheoryCertification = method()
 alphaTheoryCertification(PolySystem, List) := (f, X) -> (
-    R := coefficientRing ring f;
-    if precision R =!= infinity then (
-	R = R;
-	)
-    else if R =!= QQ then (
-	R = coefficientRing R;
-	)
-    else (
- 	R = R;
-	);
-    Y := select(X, i->certifyRegularSolution(f,i)=!=false);
-    C := apply(X, i-> first computeConstants(f,i)); -- Can we have this without using function twice?
-    S := new MutableList from Y;
-    for i from 0 to length(Y) - 1 do S#i = true;
-    for i from 0 to length(Y) - 2 do for j from i+1 to length(Y) - 1 do if (
-	S#i == true and S#j == true
-	)
-    then (
-	S#j = certifyDistinctSolutions(f,Y#i, Y#j);
-	);
-    D := {};
-    for i from 0 to length(Y) - 1 do if S#i == true then D = append(D, Y#i);
-    Real := {};
-    if R =!= CC then for i from 0 to length(D) - 1 do if certifyRealSolution(f,D#i) == true then Real = append(Real,D#i);
-    new MutableHashTable from {"certifiedSolutions" => Y, "alphaValues" => C, "certifiedDistinct" =>D, "certifiedReal" => Real}
+    if class first X =!= List then (
+	    X = apply(X, i -> {i, computeConstants(f,i)});
+    	    );
+    	R := coefficientRing ring f;
+    	if precision R =!= infinity then (
+	    R = R;
+	    )
+    	else if R =!= QQ then (
+	    R = coefficientRing R;
+	    )
+    	else (
+ 	    R = R;
+	    ); 
+    	Y := select(X, i->certifyRegularSolution(f,i#0,i#1)=!=false); 
+    	C := apply(X, i-> i#1#0); 
+    	S := new MutableList from Y;
+    	for i from 0 to length(Y) - 1 do S#i = true;
+    	for i from 0 to length(Y) - 2 do for j from i+1 to length(Y) - 1 do if (
+	    S#i == true and S#j == true
+	    )
+    	then (
+	    S#j = certifyDistinctSolutions(f,Y#i, Y#j);
+	    );
+    	D := delete( ,apply(length(Y), i -> if S#i == true then Y#i else null));--{};
+    	if R =!= CC then (
+	    Real := delete( ,apply(length(D), i -> 
+	    if certifyRealSolution(f,D#i#0,D#i#1) == true then D#i
+	    else null));
+    	    );
+	Y = apply(Y, i -> i#0);
+	D = apply(D, i -> i#0);
+	Real = apply(Real, i -> i#0);
+    	new MutableHashTable from {"certifiedRegular" => Y, "alphaValues" => C, "certifiedDistinct" =>D, "certifiedReal" => Real}
     )
 
 
@@ -427,8 +497,6 @@ alphaCertified(PolySystem, List) := o -> (P, L) -> (
     fin3 << close;
     run("cd " | ALPHACERTIFIEDexe |"; ./alphaCertified " | fin1 |" "| fin2 |" " | fin3);
     )
-alphaCertified(List, List) := (P, L) -> alphaCertified(polySystem P, L)
-alphaCertified(Ideal, List) := (P, L) -> alphaCertified(polySystem P, L)
 
 
 
@@ -449,107 +517,107 @@ certifySolutions(PolySystem, List) := opts -> (P, L) -> (
     else if opts.Strategy == "alphaCertified" then return alphaCertified(P,L)
     else error "Unknown strategy";
     )
-certifySolutions(Ideal, List, Number) := opts -> (P, L, iL) -> (
-    if opts.Strategy == "alphaTheory" then return certifySolutionsAlpha(polySystem P,L,iL)
-    else if opts.Strategy == "intervalArithmetic" then return certifySolutionsInterval(polySystem P,L,iL)
-    else if opts.Strategy == "alphaCertified" then return alphaCertified(polySystem P,L)
-    else error "Unknown strategy";
-    )
-certifySolutions(Ideal, List) := opts -> (P, L) -> (
-    if opts.Strategy == "alphaTheory" then return certifySolutionsAlpha(polySystem P,L)
-    else if opts.Strategy == "intervalArithmetic" then return certifySolutionsInterval(polySystem P,L)
-    else if opts.Strategy == "alphaCertified" then return alphaCertified(polySystem P,L)
-    else error "Unknown strategy";
-    )
-certifySolutions(List, List, Number) := opts -> (P, L, iL) -> (
-    if opts.Strategy == "alphaTheory" then return certifySolutionsAlpha(polySystem P,L,iL)
-    else if opts.Strategy == "intervalArithmetic" then return certifySolutionsInterval(polySystem P,L,iL)
-    else if opts.Strategy == "alphaCertified" then return alphaCertified(polySystem P,L)
-    else error "Unknown strategy";
-    )
-certifySolutions(List, List) := opts -> (P, L) -> (
-    if opts.Strategy == "alphaTheory" then return certifySolutionsAlpha(polySystem P,L)
-    else if opts.Strategy == "intervalArithmetic" then return certifySolutionsInterval(polySystem P,L)
-    else if opts.Strategy == "alphaCertified" then return alphaCertified(polySystem P,L)
-    else error "Unknown strategy";
-    )
 
 
 certifySolutionsAlpha = method()
 certifySolutionsAlpha(PolySystem, List, Number) := (P, L, iL) -> (
-    regSolutions := delete( ,apply(L, i -> if certifyRegularSolution(P, i) then i else null));
-    apply(regSolutions, i -> L = delete(i, L));
+    X := apply(L, i -> {i, computeConstants(P, i)});
+    regSolutions := delete( ,apply(X, i -> if certifyRegularSolution(P, i#0, i#1) then i else null));
+    apply(regSolutions, i -> L = delete(first i, L));
     multSolutions := delete( ,apply(L, i -> (
 	    iter := 1;
-	    c := certifySingularSolution(P, i, iter,Strategy => "alphaTheory");
+	    c := certifySingularSolutionAlpha(P, i, iter);
 	    while c == false and iter <= iL do (
 		iter = iter + 1;
-	    	c = certifySingularSolution(P, i, iter,Strategy => "alphaTheory");
+	    	c = certifySingularSolutionAlpha(P, i, iter);
 		);
 	    if c == true then i else null
 	    )));
     apply(multSolutions, i -> L = delete(i, L));
-    ac := alphaTheoryCertification(P, regSolutions);
-    new MutableHashTable from {"certifiedRegularSolutions" => ac#"certifiedSolutions",
-	 "alphaValues" => ac#"alphaValues",
-	 "certifiedDistinct" => ac#"certifiedDistinct",
-	 "certifiedReal" => ac#"certifiedReal",
-	 "certifiedSingularSolutions" => multSolutions,
-	 "nonCertifiedSolutions" => L}
+    if length regSolutions == 0 then (
+    	new MutableHashTable from {"certifiedRegular" => {},
+	    "alphaValues" => {},
+	    "certifiedDistinct" => {},
+	    "certifiedReal" => {},
+	    "certifiedSingular" => multSolutions,
+	    "nonCertified" => L}
+	)
+    else (ac := alphaTheoryCertification(P, regSolutions);
+    	new MutableHashTable from {"certifiedRegular" => ac#"certifiedSolutions",
+	    "alphaValues" => ac#"alphaValues",
+	    "certifiedDistinct" => ac#"certifiedDistinct",
+	    "certifiedReal" => ac#"certifiedReal",
+	    "certifiedSingular" => multSolutions,
+	    "nonCertified" => L}
+	)
     )
 certifySolutionsAlpha(PolySystem, List) := (P, L) -> (
-    regSolutions := delete( ,apply(L, i -> if certifyRegularSolution(P, i) then i else null));
-    apply(regSolutions, i -> L = delete(i, L));
+    X := apply(L, i -> {i, computeConstants(P, i)});
+    regSolutions := delete( ,apply(X, i -> if certifyRegularSolution(P, i#0, i#1) then i else null));
+    apply(regSolutions, i -> L = delete(first i, L));
     multSolutions := delete( ,apply(L, i -> (
-	    c := certifySingularSolution(P, i, Strategy => "alphaTheory");
+	    iter := 1;
+	    c := certifySingularSolutionAlpha(P, i);
 	    if c == true then i else null
 	    )));
     apply(multSolutions, i -> L = delete(i, L));
-    ac := alphaTheoryCertification(P, regSolutions);
-    new MutableHashTable from {"certifiedRegularSolutions" => ac#"certifiedSolutions",
-	 "alphaValues" => ac#"alphaValues",
-	 "certifiedDistinct" => ac#"certifiedDistinct",
-	 "certifiedReal" => ac#"certifiedReal",
-	 "certifiedSingularSolutions" => multSolutions,
-	 "nonCertifiedSolutions" => L}
+    if length regSolutions == 0 then (
+    	new MutableHashTable from {"certifiedRegular" => {},
+	    "alphaValues" => {},
+	    "certifiedDistinct" => {},
+	    "certifiedReal" => {},
+	    "certifiedSingular" => multSolutions,
+	    "nonCertified" => L}
+	)
+    else (ac := alphaTheoryCertification(P, regSolutions);
+    	new MutableHashTable from {"certifiedRegular" => ac#"certifiedRegular",
+	    "alphaValues" => ac#"alphaValues",
+	    "certifiedDistinct" => ac#"certifiedDistinct",
+	    "certifiedReal" => ac#"certifiedReal",
+	    "certifiedSingular" => multSolutions,
+	    "nonCertified" => L}
+	)
     )
 
 
 certifySolutionsInterval = method()
 certifySolutionsInterval(PolySystem, List, Number) := (P, I, iL) -> (
+    I = apply(I, i -> {pointToInterval(P,i),krawczykOperator(P, i)});
     regSolutions := delete( ,apply(#I, i -> if krawczykTest(P, I#i) then I#i));
     apply(regSolutions, i -> I = delete(i, I));
     multSolutions := delete( ,apply(#I, i -> (
 	    iter := 1;
-	    c := certifySingularSolution(P, I#i, iter, Strategy => "intervalArithmetic");
+	    c := certifySingularSolutionInterval(P, I#i#0, iter);
 	    while c == false and iter <= iL do (
 		iter = iter + 1;
-	    	c = certifySingularSolution(P, I#i, iter, Strategy => "intervalArithmetic");
+	    	c = certifySingularSolutionInterval(P, I#i#0, iter);
 		);
 	    if c == true then I#i else null
 	    )));
     apply(multSolutions, i -> I = delete(i, I));
-    new MutableHashTable from {"certifiedRegularSolutions" => apply(regSolutions, i ->
-	    krawczykOperator(P, i)),
-	 "certifiedReal" => delete( ,apply(regSolutions, i ->
-	     if krawczykRealnessTest(P, i) then krawczykOperator(P, i) else null)),
-	 "certifiedSingularSolutions" => multSolutions,
-	 "nonCertifiedSolutions" => I}
+    new MutableHashTable from {"certifiedRegular" => apply(regSolutions, i -> 
+	    i#1#0),
+	 "certifiedReal" => delete( ,apply(regSolutions, i -> 
+	     if krawczykRealnessTest(P, i) then i#1#0 else null)),
+	 "certifiedSingular" => apply(multSolutions, i -> i#1#0),
+	 "nonCertified" => apply(I, i -> i#0)}
     )
 certifySolutionsInterval(PolySystem, List) := (P, I) -> (
+    I = apply(I, i -> {pointToInterval(P,i),krawczykOperatorAndNorm(P, i)});
     regSolutions := delete( ,apply(#I, i -> if krawczykTest(P, I#i) then I#i));
     apply(regSolutions, i -> I = delete(i, I));
     multSolutions := delete( ,apply(#I, i -> (
-	    c := certifySingularSolution(P, I#i, Strategy => "intervalArithmetic");
+	    iter := 1;
+	    c := certifySingularSolutionInterval(P, I#i#0, iter);
 	    if c == true then I#i else null
 	    )));
     apply(multSolutions, i -> I = delete(i, I));
-    new MutableHashTable from {"certifiedRegularSolutions" => apply(regSolutions, i ->
-	    krawczykOperator(P, i)),
-	 "certifiedReal" => delete( ,apply(regSolutions, i ->
-	     if krawczykRealnessTest(P, i) then krawczykOperator(P, i) else null)),
-	 "certifiedSingularSolutions" => multSolutions,
-	 "nonCertifiedSolutions" => I}
+    new MutableHashTable from {"certifiedRegular" => apply(regSolutions, i -> 
+	    i#1#0),
+	 "certifiedReal" => delete( ,apply(regSolutions, i -> 
+	     if krawczykRealnessTest(P, i) then i#1#0 else null)),
+	 "certifiedSingular" => apply(multSolutions, i -> i#1#0),
+	 "nonCertified" => apply(I, i -> i#0)}
     )
 
 
@@ -930,17 +998,15 @@ subFloat(Matrix, Matrix) := (F, ab) -> (
     else return matrix {A}
     )
 
-
-
 ------ Functions for Krawczyk method
 ------------------------------------
 
 
-pointToMatrix = method()
-pointToMatrix (AbstractPoint, Number) := (p, r) -> (
+pointToInterval = method()
+pointToInterval (AbstractPoint, Number) := (p, r) -> (
     c := coordinates p;
     if any(c, i -> imaginaryPart i =!= 0) then (
-	matrixCCi{apply(c, i ->
+	matrixCCi{apply(c, i -> 
 		intervalCCi(interval((realPart i) - r, (realPart i) + r),
 		    interval((imaginaryPart i) - r, (imaginaryPart i) + r)))}
 	)
@@ -948,7 +1014,7 @@ pointToMatrix (AbstractPoint, Number) := (p, r) -> (
     matrix{apply(c, i -> interval(i-r,i+r))}
     )
     )
-pointToMatrix (PolySystem, AbstractPoint) := (F, rp) -> (
+pointToInterval (PolySystem, AbstractPoint) := (F, rp) -> (
     jacOfI := jacobian F;
     evalJac := evaluate(jacOfI, rp);
     Y := inverse evalJac;
@@ -956,17 +1022,17 @@ pointToMatrix (PolySystem, AbstractPoint) := (F, rp) -> (
     eqF := equations F;
     u := (2.22*1e-16)^(-1/4); --machine precision
     evalF := transpose matrixCCi {eqF/(i -> subFloat(i, I))};
-    radii := (flatten entries(Y*evalF))/(i ->
-	u*max{abs(right realPart i), abs(left realPart i)}
+    radii := (flatten entries(Y*evalF))/(i -> 
+	u*max{abs(right realPart i), abs(left realPart i)} 
 	+ ii*u*max{abs(right imaginaryPart i), abs(left imaginaryPart i)});
     coords := coordinates rp;
-    matrixEntries := apply(length coords, i ->
+    matrixEntries := apply(length coords, i -> 
 	intervalCCi(interval(realPart coords#i - realPart radii#i,realPart coords#i + realPart radii#i)
 	    , interval(imaginaryPart coords#i - imaginaryPart radii#i, imaginaryPart coords#i + imaginaryPart radii#i)));
     matrixCCi {matrixEntries}
     )
-
-
+    
+    
 
 matrixCCiApply = method()
 matrixCCiApply (Matrix,FunctionClosure) := (M,F) -> (matrixCCi (apply(entries M,L->apply(L,i->F i))))
@@ -977,15 +1043,8 @@ generalizedKrawczykOperator = (y,Y,Fy,DF',X) -> (
     H := id_((ring y)^(numrows y))-Y*DF';
     y - Y*Fy+H*(X-y))
 
-generalizedKrawczykOperatorNormCC = (F,X) -> (
-    ym := midpointMatrix X;
-	jac := transpose jacobian(F);
-	DF' := matrixCCiApply (jac,i->subFloat(i,X));
-	midJac := matrix apply(DF',i->apply(i, j -> midpointCCi j));
-	Y := midJac^(-1);
-	Fy := transpose sub(F,ym);
-	ty := transpose ym;
-    H := id_((ring ym)^(numrows ty))-Y*DF';
+generalizedKrawczykOperatorNormCC = (y,Y,Fy,DF',X) -> (
+    H := id_((ring y)^(numrows y))-Y*DF';
     norm H
     )
 
@@ -996,10 +1055,24 @@ midpointMatrix (CCiMatrix) := I -> matrix apply(I,L->apply(L,i->midpointCCi i))
 
 
 
+krawczykOperatorAndNorm = method()
+krawczykOperatorAndNorm (Matrix,AbstractPoint) := (F,X) -> krawczykOperatorAndNorm(F, pointToInterval(F, X))
+krawczykOperatorAndNorm (Matrix,CCiMatrix) := (F,X) -> (
+    	ym := midpointMatrix X;
+    	CR := coefficientRing ring F;
+	jac := transpose jacobian(F);
+	jacInterval := matrixCCiApply (jac,i->subFloat(i,X));
+	midJac := matrix apply(jacInterval,i->apply(i, j -> midpointCCi j));
+	Y := midJac^(-1);
+	(transpose generalizedKrawczykOperator(transpose ym,Y,transpose sub(F,ym),jacInterval,transpose X),
+	    generalizedKrawczykOperatorNormCC(transpose ym,Y,transpose sub(F,ym),jacInterval,transpose X))
+)
+krawczykOperatorAndNorm (PolySystem,CCiMatrix) := (F,X) -> krawczykOperatorAndNorm(matrix{equations F},X)
+krawczykOperatorAndNorm (PolySystem,AbstractPoint) := (F,X) -> krawczykOperatorAndNorm(matrix{equations F}, pointToInterval(F, X))
+
 krawczykOperator = method()
-krawczykOperator (Ideal,AbstractPoint) := (F,X) -> krawczykOperator(F, pointToMatrix(F, X))
-krawczykOperator (Ideal,CCiMatrix) := (F,X) -> (
-    	F = gens F;
+krawczykOperator (Matrix,AbstractPoint) := (F,X) -> krawczykOperatorAndNorm(F, pointToInterval(F, X))
+krawczykOperator (Matrix,CCiMatrix) := (F,X) -> (
     	ym := midpointMatrix X;
     	CR := coefficientRing ring F;
 	jac := transpose jacobian(F);
@@ -1008,40 +1081,41 @@ krawczykOperator (Ideal,CCiMatrix) := (F,X) -> (
 	Y := midJac^(-1);
 	transpose generalizedKrawczykOperator(transpose ym,Y,transpose sub(F,ym),jacInterval,transpose X)
 )
-krawczykOperator (Ideal,Matrix) := (F,X) -> (
-    	F = gens F;
+krawczykOperator (Matrix,Matrix) := (F,X) -> (
     	CR := coefficientRing ring F;
+	n := numcols F;
 	if class CR === ComplexField then (
 	    X = matrixCCi apply(entries X, i -> apply(i, j -> intervalCCi j));
-	    return krawczykOperator(F,X);
+	    return krawczykOperatorAndNorm(F,X);
 	    );
     	ym := midpointMatrix X;
 	jac := transpose jacobian(F);
 	if precision CR < infinity then (
-		jacInterval := matrixApply (jac, i -> subFloat(i, X));
-		midJac := matrixApply(jacInterval,i->midpoint i);
-		)
+	    jacInterval := matrixApply (jac, i -> subFloat(i, X));
+	    midJac := matrixApply(jacInterval,i->midpoint i);
+	    )
 	else (
-	    	jacInterval = matrixApply (jac, i -> sub(i, X));
-		midJac = matrixApply(jacInterval,i->midpoint i);
-		);
+	    slpf := gateSystem transpose F;
+    	    jacInterval = transpose reshape(RRi^n,RRi^n,evaluate(jacobian slpf, X));
+--	    jacInterval = matrixApply (jac, i -> sub(i, X));
+	    midJac = matrixApply(jacInterval,i->midpoint i);
+	    F = slpf;
+	    );
 	Y := midJac^(-1);
-	transpose generalizedKrawczykOperator(transpose ym,Y,transpose sub(F,ym),jacInterval,transpose X)
+	transpose generalizedKrawczykOperator(transpose ym,Y,transpose evaluate(F,ym),jacInterval,transpose X)
 )
 
-krawczykOperator (List,Matrix) := (F,X) -> krawczykOperator(ideal matrix{F},X)
-krawczykOperator (List,CCiMatrix) := (F,X) -> krawczykOperator(ideal matrix{F},X)
-krawczykOperator (PolySystem,Matrix) := (F,X) -> krawczykOperator(equations F,X)
-krawczykOperator (PolySystem,CCiMatrix) := (F,X) -> krawczykOperator(equations F,X)
-krawczykOperator (List,AbstractPoint) := (F,X) -> krawczykOperator(ideal matrix{F}, pointToMatrix(F, X))
-krawczykOperator (PolySystem,AbstractPoint) := (F,X) -> krawczykOperator(equations F, pointToMatrix(F, X))
+
+krawczykOperator (PolySystem,Matrix) := (F,X) -> krawczykOperator(matrix{equations F},X)
+krawczykOperator (PolySystem,CCiMatrix) := (F,X) -> krawczykOperator(matrix{equations F},X)
+krawczykOperator (PolySystem,AbstractPoint) := (F,X) -> krawczykOperator(matrix{equations F}, pointToInterval(F, X))
 
 krawczykTest = method()
-krawczykTest (Ideal,AbstractPoint) := (F,X) -> krawczykTest(F, pointToMatrix(F, X))
-krawczykTest (Ideal,CCiMatrix) := (F,X) -> (
+krawczykTest (Matrix,AbstractPoint) := (F,X) -> krawczykTest(F, pointToInterval(F, X))
+krawczykTest (Matrix,CCiMatrix) := (F,X) -> (
     	ym := midpointMatrix X;
     	CR := coefficientRing ring F;
-	(n, I) := (generalizedKrawczykOperatorNormCC(gens F,X),krawczykOperator(F,X));
+	(I, n) := krawczykOperatorAndNorm(F,X);
 	if {true} == unique apply(flatten entries I,flatten entries X,(i,j)->isSubset(i,j)) then
 	   (
 		if n < 1/sqrt(2) then true else (
@@ -1053,19 +1127,44 @@ krawczykTest (Ideal,CCiMatrix) := (F,X) -> (
 	     print "Certifying existence fail";
 	     false
 	     )*-
-	 else if all(apply(flatten entries I, flatten entries X, (i,j) ->
+	 else if all(apply(flatten entries I, flatten entries X, (i,j) -> 
 	     isEmpty intersect(i,j)), k -> k == false) then (
---	 s := matrixCCi {apply(flatten entries I, flatten entries X, (i, j) ->
---		 intersect(i,j))};
+--	 s := matrixCCi {apply(flatten entries I, flatten entries X, (i, j) -> 
+--		 intersect(i,j))};    	 
 --	 print("No conclusion! Try again with the intersection of the input and Krawczyk operator.");
 	 false
 	 )
      else (
---	 print("There is no solution in the input");
+--	 print("There is no solution in the input"); 
      	 false
-	 )
+	 ) 
 )
-krawczykTest (Ideal,Matrix) := (F,X) ->
+krawczykTest (Matrix,List) := (F,X) -> (
+	(I, n) := X#1;
+	if {true} == unique apply(flatten entries I,flatten entries X#0,(i,j)->isSubset(i,j)) then
+	   (
+		if n < 1/sqrt(2) then true else (
+--		    print "Certifying uniqueness fail";
+		    false
+		    )
+	   )
+-*	 else (
+	     print "Certifying existence fail";
+	     false
+	     )*-
+	 else if all(apply(flatten entries I, flatten entries X#0, (i,j) -> 
+	     isEmpty intersect(i,j)), k -> k == false) then (
+--	 s := matrixCCi {apply(flatten entries I, flatten entries X, (i, j) -> 
+--		 intersect(i,j))};    	 
+--	 print("No conclusion! Try again with the intersection of the input and Krawczyk operator.");
+	 false
+	 )
+     else (
+--	 print("There is no solution in the input"); 
+     	 false
+	 ) 
+)
+krawczykTest (Matrix,Matrix) := (F,X) ->
 (
     	ym := midpointMatrix X;
     	CR := coefficientRing ring F;
@@ -1080,31 +1179,29 @@ krawczykTest (Ideal,Matrix) := (F,X) ->
 		M := max flatten entries matrixApply(X,i->diameter(i)/2);
 		if m < M then true else false
 	   )
-	 else if all(apply(flatten entries I, flatten entries X, (i,j) ->
+	 else if all(apply(flatten entries I, flatten entries X, (i,j) -> 
 	     isEmpty intersect(i,j)), k -> k == false) then (
---	 s := matrix {apply(flatten entries I, flatten entries X, (i, j) ->
---		 intersect(i,j))};
+--	 s := matrix {apply(flatten entries I, flatten entries X, (i, j) -> 
+--		 intersect(i,j))};    	 
 --	 print("No conclusion! Try again with the intersection of the input and Krawczyk operator.");
 	 false
 	 )
      else (
---	 print("There is no solution in the input");
+--	 print("There is no solution in the input"); 
      	 false
-	 )
+	 ) 
 )
-krawczykTest (List,Matrix) := (F,X) -> krawczykTest(ideal matrix{F},X)
-krawczykTest (List,CCiMatrix) := (F,X) -> krawczykTest(ideal matrix{F},X)
-krawczykTest (PolySystem,Matrix) := (F,X) -> krawczykTest(equations F,X)
-krawczykTest (PolySystem,CCiMatrix) := (F,X) -> krawczykTest(equations F,X)
-krawczykTest (List,AbstractPoint) := (F,X) -> krawczykTest(ideal matrix{F}, pointToMatrix(F, X))
-krawczykTest (PolySystem,AbstractPoint) := (F,X) -> krawczykTest(equations F, pointToMatrix(F, X))
+krawczykTest (PolySystem,List) := (F,X) -> krawczykTest(matrix{equations F},X)
+krawczykTest (PolySystem,Matrix) := (F,X) -> krawczykTest(matrix{equations F},X)
+krawczykTest (PolySystem,CCiMatrix) := (F,X) -> krawczykTest(matrix{equations F},X)
+krawczykTest (PolySystem,AbstractPoint) := (F,X) -> krawczykTest(matrix{equations F}, pointToInterval(F, X))
 
 krawczykRealnessTest = method()
-krawczykRealnessTest (Ideal,AbstractPoint) := (F,X) -> krawczykRealnessTest(F, pointToMatrix(F, X))
-krawczykRealnessTest (Ideal, CCiMatrix) := (F,X) -> (
+krawczykRealnessTest (Matrix,AbstractPoint) := (F,X) -> krawczykRealnessTest(F, pointToInterval(F, X))
+krawczykRealnessTest (Matrix, CCiMatrix) := (F,X) -> (
     	ym := midpointMatrix X;
     	CR := coefficientRing ring F;
-	(n, I) := (generalizedKrawczykOperatorNormCC(gens F,X),krawczykOperator(F,X));
+	(I, n) := krawczykOperatorAndNorm(F,X);
 	if {true} == unique apply(flatten entries I,flatten entries X,(i,j)->isSubset(i,j)) then
 	   (
 		if n >= 1/sqrt(2) then (
@@ -1112,7 +1209,7 @@ krawczykRealnessTest (Ideal, CCiMatrix) := (F,X) -> (
 		    )
 		else (
 		    entriesI := flatten entries I;
-		    conjugateIntervals := matrixCCi {apply(entriesI, i ->
+		    conjugateIntervals := matrixCCi {apply(entriesI, i -> 
 			intervalCCi(realPart i,(-1)*(imaginaryPart i)))};
 		    if {true} == unique apply(flatten entries conjugateIntervals,flatten entries X,(i,j)->isSubset(i,j)) then true
 		    else false
@@ -1120,10 +1217,26 @@ krawczykRealnessTest (Ideal, CCiMatrix) := (F,X) -> (
 		)
 	    else false
 	    )
-krawczykRealnessTest (List,CCiMatrix) := (F,X) -> krawczykRealnessTest(ideal matrix{F},X)
-krawczykRealnessTest (PolySystem,CCiMatrix) := (F,X) -> krawczykRealnessTest(equations F,X)
-krawczykRealnessTest (List,AbstractPoint) := (F,X) -> krawczykRealnessTest(ideal matrix{F}, pointToMatrix(F, X))
-krawczykRealnessTest (PolySystem,AbstractPoint) := (F,X) -> krawczykRealnessTest(equations F, pointToMatrix(F, X))
+krawczykRealnessTest (Matrix, List) := (F,X) -> (
+	(I, n) := X#1;
+	if {true} == unique apply(flatten entries I,flatten entries X#0,(i,j)->isSubset(i,j)) then
+	   (
+		if n >= 1/sqrt(2) then (
+		    false
+		    )
+		else (
+		    entriesI := flatten entries I;
+		    conjugateIntervals := matrixCCi {apply(entriesI, i -> 
+			intervalCCi(realPart i,(-1)*(imaginaryPart i)))};
+		    if {true} == unique apply(flatten entries conjugateIntervals,flatten entries X#0,(i,j)->isSubset(i,j)) then true
+		    else false
+		    )
+		)
+	    else false
+	    )
+krawczykRealnessTest (PolySystem,List) := (F,X) -> krawczykRealnessTest(matrix{equations F},X)
+krawczykRealnessTest (PolySystem,CCiMatrix) := (F,X) -> krawczykRealnessTest(matrix{equations F},X)
+krawczykRealnessTest (PolySystem,AbstractPoint) := (F,X) -> krawczykRealnessTest(matrix{equations F}, pointToInterval(F, X))
 
 
 
@@ -1134,10 +1247,10 @@ matrixApply (Matrix,FunctionClosure) := (M,F) -> (
     else matrix(A)
     )
 
--*intervalEval = method(Options => {Strategy=>Substitution})
+intervalEval = method(Options => {Strategy=>"Substitution"})
 intervalEval (RingElement,Matrix) := o -> (f,X) -> (
-	     if o.Strategy == Substitution then sub(f,X))
-*-
+	     if o.Strategy == "Substitution" then sub(f,X))
+
 
 
 --------Multiple roots certification
@@ -1175,32 +1288,28 @@ certifySingularSolution(PolySystem, Matrix) := opts -> (P, L) -> (
     else if opts.Strategy == "intervalArithmetic" then return certifySingularSolutionInterval(P,point L)
     else error "Unknown strategy";
     )
-certifySingularSolution(Ideal, AbstractPoint, Number) := opts -> (P, L, iL) -> certifySingularSolution(polySystem P, L, iL)
-certifySingularSolution(Ideal, AbstractPoint) := opts -> (P, L) -> certifySingularSolution(polySystem P, L)
-certifySingularSolution(Ideal, Matrix, Number) := opts -> (P, L, iL) -> certifySingularSolution(polySystem P, point L, iL)
-certifySingularSolution(Ideal, Matrix) := opts -> (P, L) -> certifySingularSolution(polySystem P, point L)
-certifySingularSolution(Ideal, CCiMatrix, Number) := opts -> (P, L, iL) -> certifySingularSolution(polySystem P, L, iL)
-certifySingularSolution(Ideal, CCiMatrix) := opts -> (P, L) -> certifySingularSolution(polySystem P, L)
-certifySingularSolution(List, AbstractPoint, Number) := opts -> (P, L, iL) -> certifySingularSolution(polySystem P, L, iL)
-certifySingularSolution(List, AbstractPoint) := opts -> (P, L) -> certifySingularSolution(polySystem P, L)
-certifySingularSolution(List, Matrix, Number) := opts -> (P, L, iL) -> certifySingularSolution(polySystem P, point L, iL)
-certifySingularSolution(List, Matrix) := opts -> (P, L) -> certifySingularSolution(polySystem P, point L)
-certifySingularSolution(List, CCiMatrix, Number) := opts -> (P, L, iL) -> certifySingularSolution(polySystem P, L, iL)
-certifySingularSolution(List, CCiMatrix) := opts -> (P, L) -> certifySingularSolution(polySystem P, L)
-certifySingularSolution(PolySystem, List, Number) := opts -> (P, L, iL) -> (
-    apply(L, i -> certifySingularSolution(P, i, iL))
-    )
-certifySingularSolution(Ideal, List, Number) := opts -> (P, L, iL) -> (
-    apply(L, i -> certifySingularSolution(polySystem P, i, iL))
-    )
-certifySingularSolution(List, List, Number) := opts -> (P, L, iL) -> (
-    apply(L, i -> certifySingularSolution(polySystem P, i, iL))
-    )
-
 
 certifySingularSolutionInterval = method()
-certifySingularSolutionInterval(PolySystem, AbstractPoint, Number) := (F, P, iter) -> certifySingularSolutionInterval(F, pointToMatrix(F, P), iter)
+certifySingularSolutionInterval(PolySystem, AbstractPoint, Number) := (F, P, iter) -> (
+    I := ideal F;
+    n := numcols gens I;
+    R := ring I;
+    CR := coefficientRing ring I;
+    dummyF1 := F;
+    FList := {F};
+    for i from 1 to iter do (
+    	jacOfI1 := jacobian dummyF1;
+    	nK1 := numericalKernel(evaluate(jacOfI1, P));
+    	k := numcols nK1;
+    	u := sub(random(CR^1, CR^k) * transpose nK1, R);
+	dummyF1 = polySystem(transpose gens ideal dummyF1 + jacOfI1 * transpose u);
+	FList = append(FList,dummyF1);
+	);
+    F1 := polySystem(transpose(gens ideal F + gens ideal dummyF1));
+    krawczykTest(F1, pointToInterval(F1,P))
+    )
 certifySingularSolutionInterval(PolySystem, Matrix, Number) := (F, P, iter) -> (
+    y := midpointMatrix P;
     I := ideal F;
     n := numcols gens I;
     R := ring I;
@@ -1220,6 +1329,7 @@ certifySingularSolutionInterval(PolySystem, Matrix, Number) := (F, P, iter) -> (
     krawczykTest(F1, P)
     )
 certifySingularSolutionInterval(PolySystem, CCiMatrix, Number) := (F, P, iter) -> (
+    y := midpointMatrix P;
     I := ideal F;
     n := numcols gens I;
     R := ring I;
@@ -1238,7 +1348,27 @@ certifySingularSolutionInterval(PolySystem, CCiMatrix, Number) := (F, P, iter) -
     F1 := polySystem(transpose(gens ideal F + gens ideal dummyF1));
     krawczykTest(F1, P)
     )
-certifySingularSolutionInterval(PolySystem, AbstractPoint) := (F, P) -> certifySingularSolutionInterval(F, pointToMatrix(F, P))
+certifySingularSolutionInterval(PolySystem, AbstractPoint) := (F, P) -> (
+    I := ideal F;
+    n := numcols gens I;
+    R := ring I;
+    CR := coefficientRing ring I;
+    dummyF1 := F;
+    FList := {F};
+    jacOfI1 := jacobian dummyF1;
+    evalJac := evaluate(jacOfI1, P);
+    while isFullNumericalRank(evalJac) == false do (
+    	nK1 := numericalKernel(evalJac);
+    	k := numcols nK1;
+    	u := sub(random(CR^1, CR^k) * transpose nK1, R);
+	dummyF1 = polySystem(transpose gens ideal dummyF1 + jacOfI1 * transpose u);
+    	jacOfI1 = jacobian dummyF1;
+    	evalJac = evaluate(jacOfI1, P);
+	FList = append(FList,dummyF1);
+	);
+    F1 := polySystem(transpose(gens ideal F + gens ideal dummyF1));
+    krawczykTest(F1, pointToInterval(F1,P))
+    )
 certifySingularSolutionInterval(PolySystem, Matrix) := (F, P) -> (
     y := midpointMatrix P;
     I := ideal F;
@@ -1327,6 +1457,12 @@ certifySingularSolutionAlpha(PolySystem, AbstractPoint) := (F, P) -> (
     F1 := polySystem(transpose(gens ideal F + gens ideal dummyF1));
     certifyRegularSolution(F1, P)
     )
+certifySingularSolutionAlpha (PolySystem,Matrix,Number) := (F,P,iter) -> certifySingularSolutionAlpha(F, point P,iter)
+certifySingularSolutionAlpha (PolySystem,Matrix) := (F,P) -> certifySingularSolutionAlpha(F, point P)
+
+
+
+
 
 
 
