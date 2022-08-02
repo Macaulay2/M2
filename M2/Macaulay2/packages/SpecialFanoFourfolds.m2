@@ -2678,7 +2678,7 @@ toExternalString SpecialCubicFourfold := toExternalString SpecialGushelMukaiFour
         T := K[y_0..y_m];
         mu = sub(mu,R,T);
         s = s|"y := local y; T := "|toExternalString(K)|"[y_0..y_"|toString(m)|"];"|newline;
-        if m > 4 then s = s|"T = T/"|toString image mu|";"|newline;
+        if m > 4 then s = s|"T = T/"|toString ideal target mu|";"|newline;
         s = s|"mu := rationalMap map(ring V,T,"|toString entries mu|");"|newline;
         s = s|"forceImage(mu,ideal(0_(target mu)));"|newline;
         s = s|///(mu#"map").cache#"multiplicityFanoMap" = ///|toString(((fanoMap X)#"map").cache#"multiplicityFanoMap")|";"|newline;
