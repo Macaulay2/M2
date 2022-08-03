@@ -14,7 +14,8 @@ export {
     "Limit",
     "AutoSubduceOnPartialCompletion",
     "PrintLevel",
-    "Recompute"
+    "Recompute",
+    "RenewOptions"
     }
 
 -- From classes.m2
