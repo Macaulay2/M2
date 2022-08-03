@@ -271,31 +271,31 @@ doc ///
 
 doc ///
     Key
-        makeSLProgram
-        (makeSLProgram,GateMatrix,GateMatrix)
-        (makeSLProgram,List,List)
-        SLProgram
+        makeInterpretedSLProgram
+        (makeInterpretedSLProgram,GateMatrix,GateMatrix)
+        (makeInterpretedSLProgram,List,List)
+        InterpretedSLProgram
     Headline
         create a straight-line program
     Usage
-        makeSLProgram(inL, outL)
+        makeInterpretedSLProgram(inL, outL)
     Inputs
         inL:List
             of inputs
         outL:List
             of outputs
     Outputs
-        :SLProgram
+        :InterpretedSLProgram
     Description
         Text
-            This method returns an object of type @TO SLProgram@, which encodes a method for evaluating an algebraic circuit.
+            This method returns an object of type @TO InterpretedSLProgram@, which encodes a method for evaluating an algebraic circuit.
         Example
             declareVariable X; declareVariable C;
             XpC = X+C
             XXC = productGate{X,X,C}
             detXCCX = detGate{{X,C},{C,X}}
             XoC = X/C
-            slp = makeSLProgram(matrix{{C,X}},matrix{{XXC,detXCCX,XoC,XpC+2}})
+            slp = makeInterpretedSLProgram(matrix{{C,X}},matrix{{XXC,detXCCX,XoC,XpC+2}})
     SeeAlso
         (evaluate, SLProgram, MutableMatrix, MutableMatrix)
 ///
@@ -304,6 +304,8 @@ doc ///
     Key
         (evaluate,SLProgram,MutableMatrix,MutableMatrix)
         (evaluate,SLProgram,Matrix)
+        (evaluate,InterpretedSLProgram,MutableMatrix,MutableMatrix)
+        (evaluate,InterpretedSLProgram,Matrix)
     Headline
         evaluate a straight-line program
     Usage
@@ -326,7 +328,7 @@ doc ///
             XXC = productGate{X,X,C}
             detXCCX = detGate{{X,C},{C,X}}
             XoC = X/C
-            slp = makeSLProgram(matrix{{C,X}},matrix{{XXC,detXCCX,XoC,XpC+2}})
+            slp = makeInterpretedSLProgram(matrix{{C,X}},matrix{{XXC,detXCCX,XoC,XpC+2}})
             inp = mutableMatrix{{1.2,-1}}
             out = mutableMatrix(ring inp,1,4)
             evaluate(slp,inp,out)
@@ -341,6 +343,8 @@ doc ///
             out
     SeeAlso
         SLProgram
+	InterpretedSLProgram
+	CompiledSLProgram 
 ///
 
 doc ///
@@ -540,7 +544,9 @@ doc ///
         G':GateMatrix
     Description
         Text
-	    These commands attempt to remove superfluous operations involving constants from the building blocks of an @TO SLProgram@. The example below is contrived, but illustrates what may happen in general.
+	    These commands attempt to remove superfluous operations involving constants 
+	    from the building blocks of a compound @TO Gate@ or @TO GateMatrix@. 
+	    The example below is contrived, but illustrates what may happen in general.
 	Example
 	    declareVariable \ {a,b,c}
 	    x = inputGate 1

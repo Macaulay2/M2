@@ -218,7 +218,7 @@ makeInterpolationMatrix (Matrix, List) := List => (mons, pts) -> (
     X := apply(#gens ring mons, i -> inputGate ("x"|i));
     Y := matrix{apply(flatten entries mons, m -> monomialGate(m, X))};
     -- E := makeEvaluator(Y, matrix{X});
-    E := makeSLProgram(matrix{X}, Y);
+    E := makeInterpretedSLProgram(matrix{X}, Y);
     out := mutableMatrix(ring pts#0, numrows Y, numcols Y);
     apply(pts/mutableMatrix, p -> (
         evaluate(E, p, out);

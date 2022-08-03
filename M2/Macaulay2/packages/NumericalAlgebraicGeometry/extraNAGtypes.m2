@@ -13,7 +13,7 @@ debug SLPexpressions
 
 gateSystem = method()
 
-GateSystem = new Type of System -- this essentially is a wrapper for SLProgram
+GateSystem = new Type of System -- this essentially is a wrapper for an SLProgram
 net GateSystem := S -> (
     out := net "gate system: " | net numVariables S | " ---> " | net numFunctions S;
     if numParameters S =!= 0 then out = out || net "(#parameters = " | net numParameters S | ")";
@@ -27,7 +27,7 @@ gateSystem (GateMatrix,GateMatrix,GateMatrix) := (P,I,O) -> (
     if numrows I != 1 then error "expected the matrix of inputs (2nd argument) to be a row vector";
     if numcols O != 1 then error "expected the output matrix (3rd argument) with 1 column";
     new GateSystem from {Variables=>I, GateMatrix=>O, Parameters=>P,
-	"SLP"=>makeSLProgram(P|I,O), cache => new CacheTable from {}}
+	"SLP"=>makeInterpretedSLProgram(P|I,O), cache => new CacheTable from {}}
     )
 
 
@@ -103,7 +103,7 @@ jacobian (List, GateSystem) := (inds, GS) -> (
     	F := gateMatrix GS;
     	I := (vars GS)_inds;
     	J := diff(I,F);
-    	GS.cache.Jacobian = makeSLProgram(parameters GS | vars GS, J);
+    	GS.cache.Jacobian = makeInterpretedSLProgram(parameters GS | vars GS, J);
 	);
     GS.cache.Jacobian
     )
@@ -214,11 +214,11 @@ gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     else if soft === M2engine then (
         varMat := X | matrix{{T}};
         if para then varMat = o.Parameters | varMat;
-        GH#"EH" = makeSLProgram(varMat, GH#"H");
-        GH#"EHx" = makeSLProgram(varMat, GH#"Hx");
-        GH#"EHt" = makeSLProgram(varMat, GH#"Ht");
-        GH#"EHxt" = makeSLProgram(varMat, GH#"Hx"|GH#"Ht");
-        GH#"EHxH" = makeSLProgram(varMat, GH#"Hx"|GH#"H");
+        GH#"EH" = makeInterpretedSLProgram(varMat, GH#"H");
+        GH#"EHx" = makeInterpretedSLProgram(varMat, GH#"Hx");
+        GH#"EHt" = makeInterpretedSLProgram(varMat, GH#"Ht");
+        GH#"EHxt" = makeInterpretedSLProgram(varMat, GH#"Hx"|GH#"Ht");
+        GH#"EHxH" = makeInterpretedSLProgram(varMat, GH#"Hx"|GH#"H");
         )
     else error "unknown Software option value";
     if para then (
