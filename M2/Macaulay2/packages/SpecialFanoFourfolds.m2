@@ -10,7 +10,7 @@
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.6", 
-    Date => "July 22, 2022",
+    Date => "August 2, 2022",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -53,7 +53,9 @@ export{
    "parametrizeFanoFourfold",
    "trisecantFlop",
    "specialFourfold", 
-   "ambientFivefold"
+   "ambientFivefold",
+   "Singular",
+   "mirrorFourfold"
 }
 
 needsPackage "IntegralClosure"; -- for method: normalization
@@ -315,6 +317,7 @@ recognizeCubicFourfold = X -> (
     if (d == 26 and e == -1 and n == 1 and invS === (7,1,0) and degs == toList(14:3)) then return "oneNodalSepticDelPezzoSurfaceC26";
     if (d == 42 and e == -23 and n == 5 and invS === (9,2,-4) and degs == toList(9:3)) then return "C42";
     if (d == 48 and e == -29 and n == 6 and invS === (9,2,-5) and degs == {2,3,3,3,3}) then return "C48";
+    if (d == 14 and e == 46 and n == 0 and invS === (13,12,4) and degs == toList(7:3)) then return "hyperplane section of a conic bundle over PP2";
     "NotRecognized"
 );
 
@@ -370,6 +373,13 @@ fanoMapCubic = X -> (
         forceImage(mu,image(2,mu));
         mu = rationalMap(mu,Dominant=>true);
         (mu#"map").cache#"multiplicityFanoMap" = 3;
+        return mu;
+    );
+    if recognize X === "hyperplane section of a conic bundle over PP2" then (
+        mu = rationalMap(S^5 : ideal first gens ring S,14);
+        interpolateImage(mu,{2,2,2},2);
+        mu = rationalMap(mu,Dominant=>true);
+        (mu#"map").cache#"multiplicityFanoMap" = 5;
         return mu;
     );
     error "not implemented yet: fourfold not recognized yet or not rational";
@@ -1256,7 +1266,7 @@ intersectionOfThreeQuadricsInP7 Ideal := o -> idS -> intersectionOfThreeQuadrics
 
 intersectionOfThreeQuadricsInP7 (String,Ring) := o -> (str,K) -> (
     local X; local S;
-    if str === "plane" then (
+    if str === "plane in PP^7" then (
         X = intersectionOfThreeQuadricsInP7(surface({1},K,ambient=>7),InputCheck=>o.InputCheck,Verbose=>o.Verbose);
         assert(recognize X === "planeInPP7");
         return X;
@@ -1269,7 +1279,7 @@ intersectionOfThreeQuadricsInP7 (String,Ring) := o -> (str,K) -> (
         return X;
     );
     error(///not valid string, permitted strings are:
-"plane",
+"plane in PP^7",
 "internal projection of K3 surface of genus 8"///);
 );
 
@@ -1674,7 +1684,7 @@ exceptionalCurves EmbeddedProjectiveVariety := o -> X -> (
     if NumLines =!= infinity then if not(instance(NumLines,ZZ) and NumLines >= 0) then error "option NumberLines expects a nonnegative integer";
     if NumLines === infinity then (
         if member(recognize X,{"planeInPP7", "quarticScrollSurface", "oneNodalSepticDelPezzoSurfaceC26", "FarkasVerra", 3, "6NodalOcticSrollC38", 18, "gushel26''"}) then NumLines = 0;
-        if member(recognize X,{"surf-5-7-0-1", 17, 6, "mukai26''"}) then NumLines = 1;
+        if member(recognize X,{"surf-5-7-0-1", 17, 6, "mukai26''", "hyperplane section of a conic bundle over PP2"}) then NumLines = 1;
         if recognize X === 1 then NumLines = 2;
         if recognize X === "october2021-34'" then NumLines = 3;
         if recognize X === "october2021-26''" then NumLines = 4;
@@ -1725,11 +1735,13 @@ exceptionalCurves EmbeddedProjectiveVariety := o -> X -> (
     U.cache#"exceptionalCurves" = (L%U,C%U)
 );
 
-associatedK3surface = method(Options => {Verbose => false, Strategy => null});
+associatedK3surface = method(Options => {Verbose => false, Strategy => null, Singular => false});
 associatedK3surface SpecialGushelMukaiFourfold := associatedK3surface SpecialCubicFourfold := o -> X -> (
     if (not X.cache#?(surface X,"label")) and o.Verbose then <<"-- trying to recognize the fourfold"<<endl;
     recognize X;
     if o.Verbose then (if X.cache#(surface X,"label") === "NotRecognized" then <<"-- fourfold not recognized"<<endl else <<"-- the fourfold has been successfully recognized"<<endl);
+    if not instance(o.Singular,Boolean) then error "option Singular expects true or false";
+    if o.Singular then fanoMapSingular(X,Verbose=>o.Verbose);
     (L,C) := exceptionalCurves(X,Verbose=>o.Verbose,Strategy=>o.Strategy);
     U := ambientVariety L;
     mu := multirationalMap super fanoMap X;
@@ -1789,6 +1801,8 @@ associatedK3surface IntersectionOfThreeQuadricsInP7 := o -> X -> ( -- inappropri
     if (not X.cache#?(surface X,"label")) and o.Verbose then <<"-- trying to recognize the fourfold"<<endl;
     recognize X;
     if o.Verbose then (if X.cache#(surface X,"label") === "NotRecognized" then <<"-- fourfold not recognized"<<endl else <<"-- the fourfold has been successfully recognized"<<endl);
+    if not instance(o.Singular,Boolean) then error "option Singular expects true or false";
+    if o.Singular then fanoMapSingular(X,Verbose=>o.Verbose);
     (L,C) := exceptionalCurves(X,Verbose=>o.Verbose,Strategy=>o.Strategy);
     U := ambientVariety L;
     mu := multirationalMap super fanoMap X;
@@ -1807,6 +1821,38 @@ associatedK3surface IntersectionOfThreeQuadricsInP7 := o -> X -> ( -- inappropri
          U.cache#"MapToMinimalK3Surface" = f;
     );
     return (mu,U,{L,C},f);
+);
+
+AssociatedFourfold = new Type of EmbeddedProjectiveVariety;
+globalAssignment AssociatedFourfold;
+expression AssociatedFourfold := X -> expression((if dim ambient X == 4 then "a " else "fourfold in ")|"PP^"|toString(dim ambient X)|" containing a surface of degree "|toString(degree surface X)|" and sectional genus "|toString(sectionalGenus surface X));
+surface AssociatedFourfold := X -> first X#"SurfaceContainedInTheFourfold";
+
+mirrorFourfold = method(Options => {Verbose => false, Strategy => null, Singular => null});
+mirrorFourfold SpecialCubicFourfold := mirrorFourfold SpecialGushelMukaiFourfold := mirrorFourfold IntersectionOfThreeQuadricsInP7 := o -> X -> (
+    if X.cache#?(surface X,"associatedFourfold") then return X.cache#(surface X,"associatedFourfold");
+    P := o.Singular;
+    if P === null then (
+        P = findProgram("Singular","Singular --help",RaiseError=>false) =!= null;
+        if o.Verbose then P = P and findProgram("xterm","xterm -version",RaiseError=>false) =!= null;
+    );
+    if not instance(P,Boolean) then error "option Singular expects true or false";
+    if o.Verbose then <<"-- computing the Fano map"<<endl;
+    mu := multirationalMap super if P then fanoMapSingular(X,Verbose=>o.Verbose) else fanoMap(X);
+    if o.Verbose then <<"-- computing the surface U corresponding to the given fourfold"<<endl;
+    U := surfaceDeterminingInverseOfFanoMap(X,Verbose=>o.Verbose,Strategy=>o.Strategy);
+    if not((mu#"image" =!= null or mu#"isDominant" === true) and dim image mu == 4 and isSubset(U,image mu)) then error "something went wrong";
+    W := new AssociatedFourfold from image mu;
+    if W#?"SurfaceContainedInTheFourfold" then W#"SurfaceContainedInTheFourfold" = prepend(U,W#"SurfaceContainedInTheFourfold") else W#"SurfaceContainedInTheFourfold" = {U};
+    if ((dim ambient W == 5 and degree W == 3 and degrees W == {({3},1)}) or 
+       (dim ambient W == 8 and degree W == 10 and degrees W == {({2},6)}) or
+       (dim ambient W == 7 and degree W == 8 and degrees W == {({2},3)})) then try W = specialFourfold(surface W,W);
+    W.cache#(surface W,"associatedFourfold") = X;
+    X.cache#(surface X,"associatedFourfold") = W
+);
+mirrorFourfold AssociatedFourfold := o -> X -> (
+    if not(X#?"SurfaceContainedInTheFourfold" and X.cache#?(surface X,"associatedFourfold")) then error "can't find associated fourfold";
+    X.cache#(surface X,"associatedFourfold")
 );
 
 ------------------------------------------------------------------------
@@ -2423,7 +2469,7 @@ imageOfAssociatedMap EmbeddedProjectiveVariety := X -> (
     if e === "C38Coble" or e === "C42" then forceImage(f,image(f,3));
     if instance(e,ZZ) and e >= 1 and e <= 21 and e != 3 and e != 21 then forceImage(f,image(f,2));
     if instance(e,ZZ) and (e == 3 or e == 21) then forceImage(f,trim lift(kernel(map rationalMap(f,Dominant=>2),SubringLimit=>1),ambient target f));
-    if e === "gushel26''" then forceImage(f,trim kernel(map f,SubringLimit=>1));
+    if e === "gushel26''" or e === "hyperplane section of a conic bundle over PP2" then forceImage(f,trim kernel(map f,SubringLimit=>1));
     ch := char coefficientRing X;
     if (coefficientRing X === ZZ/ch and ch <= 65521) then image(f,"F4") else image f
 );
@@ -2452,6 +2498,106 @@ Var = method(Options => {MinimalGenerators => false});
 Var Ideal := o -> I -> projectiveVariety(I,MinimalGenerators=>o.MinimalGenerators,Saturate=>false);
 Var Ring := o -> R -> projectiveVariety(R,MinimalGenerators=>o.MinimalGenerators,Saturate=>false);
 Var Matrix := o -> M -> projectiveVariety(M,MinimalGenerators=>o.MinimalGenerators,Saturate=>false);
+
+fanoMapSingular = method(Options => {Verbose => true});
+fanoMapSingular (EmbeddedProjectiveVariety,ZZ,ZZ) := o -> (X,e,sat) -> ( 
+    V := ambientFivefold X;
+    S := surface X;
+    if S.cache#?("fanoMap",V) then return S.cache#("fanoMap",V);
+    Singular := findProgram("Singular", "Singular --help");
+    if o.Verbose then XTermSingular := findProgram("xterm", "xterm -version");
+    x := local x;
+    K := coefficientRing X;
+    if not (if char K == 0 then K === QQ else K === ZZ/(char K)) then error "expected coefficient ring of the form ZZ/p or QQ";
+    R := Grass(0,dim ambient X,K,Variable=>x);
+    idV := sub(ideal V,vars R);
+    R = R/idV;
+    I := sub(idealOfSubvariety(S%V),vars R);
+    dir := temporaryFileName() | "/";
+    mkdir dir;
+    if o.Verbose then <<"-- writing Singular code on file: "<<(dir|"input.singular")<<endl;
+    F := openOut(dir|"input.singular");
+    F << "// Singular code " << endl;
+    F << "// Singular -qc 'execute(read(\"input.singular\"));'" << endl;  
+    F << "// " << endl;
+    if o.Verbose then F << "print(\"Singular: starting computation, input file: "<< (dir|"input.singular")<<"\");"<<endl;
+    F << "ring R = "<< char K << "," << toString unsequence toSequence gens R << ",dp;" << endl;
+    F << "short = 0;" << endl;
+    if idV != 0 then (
+        F << "ideal idV = " << toString unsequence toSequence flatten entries gens idV << ";" << endl;
+        F << "qring qR = std(idV);" << endl;
+    );
+    F << "ideal I = " << toString unsequence toSequence flatten entries gens I << ";" << endl;
+    if o.Verbose then F << "print(\"Singular: computing power of ideal\");"<<endl;
+    F << "ideal Ie = minbase(I^"<<e<< ");" << endl;
+    if o.Verbose then F << "print(\"Singular: computing colon ideal\");"<<endl;
+    F << "ideal J = x_0;" << endl;
+    F << "ideal Q = quotient(Ie,J);" << endl; 
+    for i from 1 to sat-1 do F << "Q = quotient(Q,J);" << endl; 
+    F << "int m = size(Q);" << endl;
+    F << "ideal E;" << endl;
+    F << "for (int i=m; i>=1; i=i-1) {if (deg(Q[i]) <= "<<degreeHypersurface(X)*e-1<< ") {E = E,Q[i];}};" << endl;
+    F << "write(\":w output.singular\",\"OUTPUTVALUE = ideal(\",E,\");\");" << endl;
+    if o.Verbose then F << "print(\"Singular: computation ended\");"<<endl;    
+    F << "exit;" << endl;
+    close F;
+    if o.Verbose then <<"-- running Singular"<<endl;
+    if o.Verbose 
+    then runProgram(XTermSingular,"-e Singular -qc 'execute(read(\"input.singular\"));'",RunDirectory=>dir,RaiseError=>true,Verbose=>o.Verbose,KeepFiles=>false)
+    else runProgram(Singular,"-qc 'execute(read(\"input.singular\"));'",RunDirectory=>dir,RaiseError=>true,Verbose=>o.Verbose,KeepFiles=>false);
+    Out := "x := local x; x = gens Grass(0,"|toString(dim ambient X)|","|(toExternalString K)|",Variable=>x);" | newline | get(dir|"output.singular") | newline | "OUTPUTVALUE" | newline;
+    D := value Out;
+    D = if ring D === ZZ then sub(D,ring V) else sub(D,vars ring V);
+    mu := rationalMap gens trim D;
+    M := numgens target mu -1;
+    if M <= 3 then error "something went wrong; try to disable the option Singular";
+    if o.Verbose then <<"-- computing/forcing image of map to PP^"<<M<<endl;
+    if member(recognize X,{"quarticScrollSurface", "6NodalOcticSrollC38", 6}) 
+    then forceImage(mu,image(2,mu))
+    else if recognize X === "october2021-26''" 
+    then interpolateImage(mu,{2},2,Verbose=>o.Verbose)
+    else if member(recognize X,{3, "internal-projection-K3-genus-8", "october2021-34'"}) 
+    then interpolateImage(mu,{3},3,Verbose=>o.Verbose)
+    else if recognize X === "hyperplane section of a conic bundle over PP2" 
+    then interpolateImage(mu,{2,2,2},2,Verbose=>o.Verbose)
+    else if M == 4 
+    then forceImage(mu,ideal(0_(target mu)))
+    else if M == 6 
+    then interpolateImage(mu,{2,2},2,Verbose=>o.Verbose)
+    else if M == 7 
+    then interpolateImage(mu,{2,2,2,2,2},2,Verbose=>o.Verbose)
+    else if member(M,{8,9,10,11,12})
+    then interpolateImage(mu,toList(binomial(M-4,2) : 2),2,Verbose=>o.Verbose);
+    if mu#"idealImage" =!= null then (
+        if dim mu#"idealImage" != 5 then error "something went wrong; try to disable the option Singular";
+        mu = rationalMap(mu,Dominant=>true);
+        (mu#"map").cache#"multiplicityFanoMap" = e;
+        S.cache#("fanoMap",V) = mu;
+    ) else (
+        <<"--error: not implemented yet: image of Fano map for unrecognized fourfold"<<endl<<"--returning non-dominant map"<<endl;
+    );
+    return mu;
+);
+fanoMapSingular EmbeddedProjectiveVariety := o -> X -> ( 
+    if (surface X).cache#?("fanoMap",ambientFivefold X) then return (surface X).cache#("fanoMap",ambientFivefold X);
+    local e; sat := 1;
+    if member(recognize X,{"quinticDelPezzoSurface","quarticScrollSurface",1,6,"planeInPP7"}) 
+    then e = 1
+    else if member(recognize X,{"C38Coble","FarkasVerra","oneNodalSepticDelPezzoSurfaceC26",17,18,"october2021-26''"})
+    then e = 2
+    else if member(recognize X,{"C42","6NodalOcticSrollC38",3,"october2021-34'","mukai26''","october2021-20","surf-5-7-0-1"})
+    then e = 3
+    else if member(recognize X,{"surf-5-10-1"})
+    then e = 4
+    else if member(recognize X,{"gushel26''","internal-projection-K3-genus-8", "hyperplane section of a conic bundle over PP2"})
+    then e = 5
+    else if member(recognize X,{})
+    then e = 6
+    else e = (detectCongruence(X,Verbose=>o.Verbose))#"degree";
+    if o.Verbose then <<"-- detected degree of the curves of the congruence: "<<e<<endl;
+    if member(recognize X,{"october2021-34'","gushel26''"}) then sat = 2;
+    fanoMapSingular(X,e,sat,Verbose=>o.Verbose)
+);
 
 degreeHypersurface = X -> if instance(X,SpecialCubicFourfold) then 3 else if instance(X,SpecialGushelMukaiFourfold) or instance(X,IntersectionOfThreeQuadricsInP7) then 2 else error "expected an instance of the class SpecialCubicFourfold or SpecialGushelMukaiFourfold or IntersectionOfThreeQuadricsInP7";
 
@@ -2503,11 +2649,55 @@ specialFourfold (String,Ring) := o -> (str,K) -> (
 "GM 4-fold of discriminant 34(')",
 "triple projection of K3 surface of degree 26"
 *** Complete intersections of 3 quadrics in PP^7 ***
-"plane",
+"plane in PP^7",
 "internal projection of K3 surface of genus 8"///;
 );
 specialFourfold String := o -> str -> specialFourfold(str,ZZ/65521,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 specialFourfold (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety) := o -> (S,X,V) -> intersectionOfThreeQuadricsInP7(S,X,V,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
+
+toExternalString SpecialCubicFourfold := toExternalString SpecialGushelMukaiFourfold := toExternalString IntersectionOfThreeQuadricsInP7 := X -> (
+    x := local x;
+    K := coefficientRing X;
+    n := dim ambient X;
+    R := K[x_0..x_n];
+    s := ///debug needsPackage "SpecialFanoFourfolds";///|newline;
+    s = s|"(i -> (x := local x;"|newline;
+    s = s|"R := "|toExternalString(K)|"[x_0..x_"|toString(n)|"];"|newline;
+    s = s|"S := projectiveVariety "|toString sub(ideal surface X,vars R)|";"|newline;
+    if instance(X,SpecialCubicFourfold) then s = s|"V := ambient S;"|newline else s = s|"V := projectiveVariety "|toString sub(ideal ambientFivefold X,vars R)|";"|newline;
+    s = s|"X := projectiveVariety "|toString sub(ideal X,vars R)|";"|newline;
+    if instance(X,SpecialCubicFourfold) 
+    then s = s|"X = specialFourfold(S,X,NumNodes=>"|toString(numberNodes surface X)|");"|newline else
+    if instance(X,SpecialGushelMukaiFourfold) 
+    then s = s|"X = specialFourfold(S,X);"|newline|///X.cache#"varietyDefinedBylinearSyzygies" = V;///|newline else
+    s = s|"X = specialFourfold(S,X,V);"|newline;
+    if (surface X).cache#?("fanoMap",ambientFivefold X) then (
+        mu := fanoMap X;
+        m := numgens ambient target mu -1;
+        y := local y;
+        T := K[y_0..y_m];
+        mu = sub(mu,R,T);
+        s = s|"y := local y; T := "|toExternalString(K)|"[y_0..y_"|toString(m)|"];"|newline;
+        if m > 4 then s = s|"T = T/"|toString ideal target mu|";"|newline;
+        s = s|"mu := rationalMap map(ring V,T,"|toString entries mu|");"|newline;
+        s = s|"forceImage(mu,ideal(0_(target mu)));"|newline;
+        s = s|///(mu#"map").cache#"multiplicityFanoMap" = ///|toString(((fanoMap X)#"map").cache#"multiplicityFanoMap")|";"|newline;
+        s = s|///(surface X).cache#("fanoMap",ambientFivefold X) = mu;///|newline;
+        if (surface X).cache#?("surfaceDeterminingInverseOfFanoMap",ideal X) then (
+            U := surfaceDeterminingInverseOfFanoMap X;
+            s = s|"U := Var "|toString sub(ideal U,vars T)|";"|newline;
+            s = s|///(surface X).cache#("surfaceDeterminingInverseOfFanoMap",ideal X) = U;///|newline;
+            if U.cache#?"exceptionalCurves" then (
+                (L,C) := exceptionalCurves X;
+                s = s|"L := "|(if dim L >= 0 then "Var "|toString sub(ideal L,vars T) else "0_U")|";"|newline;
+                s = s|"C := "|(if dim C >= 0 then "Var "|toString sub(ideal C,vars T) else "0_U")|";"|newline;
+                s = s|///U.cache#"exceptionalCurves" = (L%U,C%U);///|newline;
+            );
+        );
+    );
+    s = s|"X))()";
+    return s;
+);
 
 ------------------------------------------------------------------------
 --------------------------- Trisecant Flops ----------------------------
@@ -3095,7 +3285,7 @@ Inputs => {"X" => SpecialCubicFourfold => {"containing a surface ", TEX///$S\sub
 Outputs => {{"the dominant ",TO2{MultirationalMap,"rational map"}," ",TEX///$\mu:\mathbb{P}^5 \dashrightarrow W$///," defined by the linear system of hypersurfaces of degree ",TEX///$3e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{EmbeddedProjectiveVariety,"surface"}," ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\mu$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{MultirationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to a minimal K3 surface, the associated K3 surface to ",TEX///$X$///,"."}},
 PARA {"Thus, the code ",TT "image last associatedK3surface X"," gives the (minimal) associated K3 surface to ",TT"X",". For more details and notation, see the papers ",HREF{"https://arxiv.org/abs/1909.01263","Trisecant Flops, their associated K3 surfaces and the rationality of some Fano fourfolds"}," and ",HREF{"https://arxiv.org/abs/2204.11518","Explicit computations with cubic fourfolds, Gushel-Mukai fourfolds, and their associated K3 surfaces"},"."},
 EXAMPLE {"X = specialCubicFourfold \"quartic scroll\";", "describe X", "time (mu,U,C,f) = associatedK3surface(X,Verbose=>true);", "? mu", "? U", "last C", "image f"},
-SeeAlso => {(associatedK3surface, SpecialGushelMukaiFourfold), detectCongruence}} 
+SeeAlso => {(associatedK3surface, SpecialGushelMukaiFourfold), detectCongruence, mirrorFourfold}} 
 
 document {Key => {(associatedK3surface, SpecialGushelMukaiFourfold)}, 
 Headline => "associated K3 surface to a rational Gushel-Mukai fourfold", 
@@ -3104,7 +3294,7 @@ Inputs => {"X" => SpecialGushelMukaiFourfold => {"containing a surface ", TEX///
 Outputs => {{"the dominant ",TO2{MultirationalMap,"rational map"}," ",TEX///$\mu:Y\dashrightarrow W$///," defined by the linear system of hypersurfaces of degree ",TEX///$2e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{EmbeddedProjectiveVariety,"surface"}," ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\mu$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{MultirationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to a minimal K3 surface, the associated K3 surface to ",TEX///$X$///,"."}},
 PARA {"Thus, the code ",TT "image last associatedK3surface X"," gives the (minimal) associated K3 surface to ",TT"X",". For more details and notation, see the paper ",HREF{"https://arxiv.org/abs/2204.11518","Explicit computations with cubic fourfolds, Gushel-Mukai fourfolds, and their associated K3 surfaces"},"."},
 EXAMPLE {"X = specialGushelMukaiFourfold \"tau-quadric\";", "describe X", "time (mu,U,C,f) = associatedK3surface X;", "? mu", "? U", "first C -- two disjoint lines", "image f"},
-SeeAlso => {(associatedK3surface, SpecialCubicFourfold), detectCongruence}} 
+SeeAlso => {(associatedK3surface, SpecialCubicFourfold), detectCongruence, mirrorFourfold}} 
 
 document {Key => {parametrizeFanoFourfold, (parametrizeFanoFourfold, EmbeddedProjectiveVariety), [parametrizeFanoFourfold,Strategy]}, 
 Headline => "rational parametrization of a prime Fano fourfold of coindex at most 3", 
@@ -3182,6 +3372,31 @@ SeeAlso => {(surface,VisibleList,Ring), GMtables}}
 document {Key => {specialFourfold, (specialFourfold, EmbeddedProjectiveVariety), (specialFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (specialFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (specialFourfold, Ideal), (specialFourfold, Ideal, Ideal), (specialFourfold, Ideal, RingElement), (specialFourfold, String), (specialFourfold, String, Ring), [specialFourfold, NumNodes], [specialFourfold, InputCheck], [specialFourfold, Verbose]}, 
 Headline => "make a special cubic fourfold or GM fourfold", 
 PARA{"This is just a shortcut for both ",TO specialCubicFourfold," and ",TO specialGushelMukaiFourfold,"."}}
+
+document {
+Key => {Singular, [associatedK3surface, Singular], [mirrorFourfold, Singular]},
+Headline => "whether to transfer computation to Singular",
+Usage => "Singular => true/false",
+PARA{"This option allows you to transfer part of the computation to Singular."},
+SeeAlso => {associatedK3surface}} 
+
+document {Key => {mirrorFourfold, (mirrorFourfold, SpecialCubicFourfold), (mirrorFourfold, SpecialGushelMukaiFourfold), [mirrorFourfold, Strategy], [mirrorFourfold, Verbose]}, 
+Headline => "associated fourfold to a rational cubic or GM fourfold", 
+Usage => "mirrorFourfold X", 
+Inputs => {"X" => SpecialCubicFourfold => {"or ", ofClass SpecialGushelMukaiFourfold}}, 
+Outputs => {EmbeddedProjectiveVariety => {"the fourfold ",TT"W"," containing the surface ",TT"U",", with the same notation as in the function ",TO associatedK3surface,"."}}, 
+EXAMPLE {"X = specialFourfold(PP_(ZZ/65521)[2,2]);", "W = mirrorFourfold X;", "U = surface W;", "mirrorFourfold W", "(associatedK3surface X)_1", "assert(oo === U)"},
+EXAMPLE {"X' = specialFourfold \"tau-quadric\";", "W' = mirrorFourfold X';", "U' = surface W';", "mirrorFourfold W'", "(associatedK3surface X')_1", "assert(oo === U')"},
+SeeAlso => {associatedK3surface}} 
+
+document { 
+Key => {(toExternalString, SpecialCubicFourfold), (toExternalString, SpecialGushelMukaiFourfold)}, 
+Headline => "convert to a readable string", 
+Usage => "toExternalString X", 
+Inputs => {"X" => SpecialCubicFourfold => {"or ", ofClass SpecialGushelMukaiFourfold}}, 
+Outputs => {String => {"a string representation of ",TT "X",", which can be used, in conjunction with ",TO "value",", to read the object back into the program later"}},
+PARA{"Some of the internal data of the input ",TT"X"," are included in the returned string."},
+EXAMPLE {"describe (X = specialFourfold \"tau-quadric\")", "str := toExternalString X;", "describe (value str)"}}
 
 ------------------------------------------------------------------------
 ------------------------------- Tests ----------------------------------
