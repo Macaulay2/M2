@@ -15,7 +15,9 @@ subalgebraBasis = method(
         SubductionMethod => "Top", -- top or engine
     	Limit => 100,
 	AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
-    	PrintLevel => 0
+    	PrintLevel => 0,
+	Recompute => false,
+	RenewOptions => false
 	}
 );
 
@@ -77,7 +79,9 @@ sagbi = method(
         SubductionMethod => "Top", -- top or engine
     	Limit => 10, -- change back to 100
 	AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
-    	PrintLevel => 0
+    	PrintLevel => 0,
+	Recompute => false,
+	RenewOptions => false
     	}
 );
 
@@ -133,6 +137,10 @@ sagbi(SAGBIBasis) := opts -> S -> (
     sagbiBasis compTable
 )
 
+
+-- #################################################
+-- ## remove: intervalVerifySagbi and verifySagbi ##
+-- #################################################
 
 
 -- internal verify sagbi is a version of verifySabi just for SAGBIBasis objects

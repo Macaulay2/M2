@@ -13,7 +13,8 @@ export {
     "SubductionMethod",
     "Limit",
     "AutoSubduceOnPartialCompletion",
-    "PrintLevel"
+    "PrintLevel",
+    "Recompute"
     }
 
 -- From classes.m2
@@ -22,6 +23,7 @@ export {
     "SAGBIBasis",
     "subring",
     "isSAGBI",
+    "Compute",
     "sagbiBasis",
     "groebnerMembershipTest",
     "subringIntersection"
@@ -31,4 +33,7 @@ export {
 export {
     "subduction"
     }
+
+-- Pull things in from Core:
+importFrom (Core,{"raw","rawStatus1","rawMonoidNumberOfBlocks","rawSubduction1"});
 end --

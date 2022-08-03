@@ -26,15 +26,6 @@ gens Subring := opts -> A -> A#"generators"
 numgens Subring := A -> (numcols gens A)
 net Subring := A -> "subring of " | toString(ambient A) | " with " | numgens A | " generators"
 
-isSAGBI = method()
-isSAGBI Subring := S -> (
-    if S.cache#?"SAGBIBasis" then isSAGBI S.cache#"SAGBIBasis" else null
-)
-
-isSAGBI Matrix := M -> (
-    if M.cache#?"SAGBIBasis" then isSAGBI M.cache#"SAGBIBasis" else null
-)
-
 
 -- Defining a new computation object for SAGBI bases
 SAGBIBasis = new Type of HashTable
@@ -234,7 +225,6 @@ gens SAGBIBasis := opts -> S -> (
     else S#"maps"#"quotient" S#"data"#"sagbiGenerators" 
 )
 
-isSAGBI SAGBIBasis := S -> S#"data"#"sagbiDone"
 
 -- Returns the lifted ring
 ring SAGBIBasis := A -> (
@@ -254,6 +244,110 @@ subring SAGBIBasis := S -> (
         cache => new CacheTable from {"SAGBIBasis" => S}
     }
 )
+
+
+-- internalIsSAGBI is a version of isSAGBI for SAGBIBasis objects SB
+-- it returns a SAGBIBasis object with its SB#"data"#"sagbiDone" flag correctly set
+-- it is used as an intermediate step for isSAGBI when it is passed something
+--   that does not have a cached SAGBIBasis object
+-- 
+
+internalIsSAGBI = method(
+    TypicalValue => SAGBIBasis,
+    Options => {
+	Compute => true,
+	Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
+        SubductionMethod => "Top", -- top or engine
+	Limit => 100,
+	PrintLevel => 0 -- see print level for sagbi
+    	}
+    );
+
+
+internalIsSAGBI(SAGBIBasis) := opts -> SB -> (
+    compTable := initializeCompTable(SB, opts);
+    
+    -- Get the SPairs
+    sagbiGB := gb(compTable#"ideals"#"reductionIdeal");
+    k := rawMonoidNumberOfBlocks(raw monoid (compTable#"rings"#"tensorRing")) - 2;
+    zeroGens := selectInSubring(k, gens sagbiGB);
+    SPairs := compTable#"maps"#"fullSubstitution"(zeroGens) % compTable#"ideals"#"I";
+    
+    -- Reduce the SPairs
+    reducedSPairs := compSubduction(compTable, SPairs);
+    
+    -- if all the reduced SPairs are zero then we have a sagbiBasis
+    compTable#"data"#"sagbiDone" = zero(reducedSPairs);
+    sagbiBasis compTable
+    );
+
+
+
+-- isSAGBI check whether the SAGBI generators of an object form a sagbi basis
+-- isSAGBI Subring checks the sagbi generators of the cached SAGBIBAsis object
+-- if an object that does not have a cached SAGBIBasis object is passed then 
+--   if Compute then we perform 1-step of the sagbi algorithm to check
+--      whether all the S-polys subduct to 0
+--
+-- Default options:
+--  Recompute => true 
+--  Limit => 0
+--    If a subring or SAGBIBasis object is created then its options will be set 
+--    so that it will recompute because the generators are not autosubducted in 
+--    isSAGBI 
+
+isSAGBI = method(
+    TypicalValue => SAGBIBasis,
+    Options => {
+	Compute => true,
+	Strategy => "Master",
+	SubductionMethod => "Top",
+	Limit => 0, 
+	PrintLevel => 0,
+	Recompute => true -- when running sagbi on a subring / SAGBIBasis object constructed
+	}
+    );
+
+isSAGBI SAGBIBasis := opts -> SB -> SB#"data"#"sagbiDone"
+
+isSAGBI Subring := opts -> S -> (
+    local SB;
+    if S.cache#?"SAGBIBasis" then (
+	isSAGBI S.cache#"SAGBIBasis" 
+	) else (
+	if opts.Compute then (
+	    -- construct a SAGBIBasis for S and verify whether it is a sagbi basis
+	    SB = initializeCompTable(sagbiBasis S, opts);
+	    -- add the generators to the sagbiGenerators
+	    SB#"data"#"sagbiGenerators" = gens S;
+	    updateComputation(SB);
+	    SB = sagbiBasis SB;
+	    SB = internalIsSAGBI(opts, SB);
+    	    S.cache#"SAGBIBasis" = SB;
+    	    isSAGBI SB
+	    ) else ( 
+	    null -- S has no SAGBIBasis cached and Compute is set to false
+	    )
+	)
+    )    
+
+isSAGBI Matrix := opts -> M -> (
+    local S;
+    if M.cache#?"Subring" then (
+	isSAGBI(M.cache#"Subring", opts) 
+	) else (
+	S = subring M;
+	M.cache#"Subring" = S;
+	isSAGBI S
+	)
+    )
+
+isSAGBI List := opts -> L -> (
+    local S;
+    S = subring L;
+    isSAGBI S
+    )
+
 
 -- groebnerMembershipTest(f, S) = (f lies in S)
 -- f an element of the ambient ring of S

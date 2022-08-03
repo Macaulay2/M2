@@ -1,5 +1,6 @@
 -- importFrom (Core,{"raw","rawStatus1","rawMonoidNumberOfBlocks"});
-importFrom (Core,{"raw","rawStatus1","rawMonoidNumberOfBlocks","rawSubduction1"});
+-- importFrom (Core,{"raw","rawStatus1","rawMonoidNumberOfBlocks","rawSubduction1"});
+
 
 initializeCompTable = method();
 initializeCompTable (SAGBIBasis, HashTable):= (S,opts) -> (
