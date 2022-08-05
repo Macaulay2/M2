@@ -2,19 +2,31 @@
 -- importFrom (Core,{"raw","rawStatus1","rawMonoidNumberOfBlocks","rawSubduction1"});
 
 
+-- initializeCompTable: produces a compTable - a mutable version of a SAGBIBasis object, to be used for sagbi computation 
+-- 
+-- the options for the compTable are taken from SAGBIBasis except 
+--   if RenewOptions is true then only the specified options are used
+
 initializeCompTable = method();
 initializeCompTable (SAGBIBasis, HashTable):= (S,opts) -> (
+    local options;
+    
     rings := new MutableHashTable from S#"rings";
     maps := new MutableHashTable from S#"maps";
     ideals := new MutableHashTable from S#"ideals";
     data := new MutableHashTable from S#"data";
     pending := new MutableHashTable from S#"pending";
-
-    -- Need to check that there aren't clashes between old options and new options
-    options := new MutableHashTable from opts;
-
+    
+    if opts.RenewOptions then (
+	options = new MutableHashTable from opts;
+	) else (
+	options = new MutableHashTable from S#"options";
+	);
+    
     data#"limit" = opts.Limit;
-    options#"variableName" = S#"options"#"variableName";
+    options#RenewOptions = false; -- reset RenewOptions since they are now set correctly
+    options#Recompute = false; -- at this point the correct SAGBIBasis must have been supplied so the option is reset
+    options#"variableName" = "p"; -- S#"options"#"variableName";
     apply(keys pending, i -> pending#i = new MutableList from pending#i);
 
     new HashTable from {
@@ -841,6 +853,7 @@ processFirstStep HashTable := (compTable) -> (
         if compTable#"options"#PrintLevel > 0 then
             print("-- Performing initial autosubduction...");
 	compTable#"data"#"subalgebraGenerators" = autosubduce compTable;
+    	compTable#"options"#AutoSubduce = false; -- autosubduction may now be skipped if the computation is resumed
     );
     
     if (numcols compTable#"data"#"sagbiGenerators" == 0) then (

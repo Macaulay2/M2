@@ -32,7 +32,7 @@ SAGBIBasis = new Type of HashTable
 
 -- Constructor for a sagbiBasis
 -- Options:
--- -- VariableBaseName is a choice for which variable is used
+-- -- VariableBaseName [no longer used] is a choice for which variable is used
 -- to name variables in the constructed rings
 -- -- Strategy is the strategy used in the algorithm.
 -- It can be either DegreeByDegree or Incremental
@@ -40,8 +40,24 @@ SAGBIBasis = new Type of HashTable
 -- whether the pending list is stored in the computation
 -- object.  The pending list may be quite large in some
 -- cases.
-sagbiBasis = method(Options => {
-    VariableBaseName => "p"
+-- the sagbiBasis object stores all the options used for the computation
+
+sagbiBasis = method(
+    TypicalValue => Subring,
+    Options => {
+    	-- VariableBaseName => "p"
+    	AutoSubduce => true,
+        ReduceNewGenerators => true, -- applys gaussian elimination to sagbiGens before adding them
+	StorePending => true,
+        -- FullSubduct => true,
+        -- DegreeLimitedSubduction => false,
+        Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
+        SubductionMethod => "Top", -- top or engine
+    	Limit => 10, -- change back to 100
+	AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
+    	PrintLevel => 0,
+	Recompute => false,
+	RenewOptions => false
     }
 )
 
@@ -78,7 +94,7 @@ sagbiBasis Subring := opts -> S -> (
     newMonomialOrder := (monoid liftedRing).Options.MonomialOrder;
     
     tensorVariables := monoid[
-        VariableBaseName => opts.VariableBaseName,
+        VariableBaseName => "p", -- opts.VariableBaseName,
         Variables => numberVariables,
         Degrees => degrees source vars liftedRing,
         MonomialOrder => newMonomialOrder];
@@ -165,7 +181,8 @@ sagbiBasis Subring := opts -> S -> (
         "sagbiDone" => false,
         "degree" => -1,
         "limit" => -1,
-	"autoSubductedSagbiGenerators" => false -- have the sagbiGenerators been autoSubducted (see sagbi option: AutoSubductOnPartialCompletion)
+	"autoSubductedSagbiGenerators" => false, -- have the sagbiGenerators been autoSubducted (see sagbi option: AutoSubductOnPartialCompletion)
+	"subring" => S -- points back to the original subring
     };
 
     -- Pending is an empty hashtable, later it is filled with
@@ -173,7 +190,7 @@ sagbiBasis Subring := opts -> S -> (
 
     pending := new HashTable from {};
 
-    options := new HashTable from {"variableName" => opts.VariableBaseName};
+    options := new HashTable from opts; -- {"variableName" => opts.VariableBaseName};
 
     new SAGBIBasis from {
         "rings" => rings,
@@ -246,8 +263,8 @@ subring SAGBIBasis := S -> (
 )
 
 
--- internalIsSAGBI is a version of isSAGBI for SAGBIBasis objects SB
--- it returns a SAGBIBasis object with its SB#"data"#"sagbiDone" flag correctly set
+-- internalIsSAGBI is a version of isSAGBI for SAGBIBasis a object SB
+-- it returns a SAGBIBasis object with the SB#"data"#"sagbiDone" flag correctly set
 -- it is used as an intermediate step for isSAGBI when it is passed something
 --   that does not have a cached SAGBIBasis object
 -- 
@@ -259,8 +276,10 @@ internalIsSAGBI = method(
 	Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
         SubductionMethod => "Top", -- top or engine
 	Limit => 100,
-	PrintLevel => 0 -- see print level for sagbi
-    	}
+	PrintLevel => 0, -- see print level for sagbi
+    	Recompute => false,
+	RenewOptions => false
+	}
     );
 
 
@@ -278,6 +297,7 @@ internalIsSAGBI(SAGBIBasis) := opts -> SB -> (
     
     -- if all the reduced SPairs are zero then we have a sagbiBasis
     compTable#"data"#"sagbiDone" = zero(reducedSPairs);
+    compTable#"options"#Recompute = opts.Recompute; -- set the recompute option for resuming computation purposes
     sagbiBasis compTable
     );
 
@@ -304,7 +324,8 @@ isSAGBI = method(
 	SubductionMethod => "Top",
 	Limit => 0, 
 	PrintLevel => 0,
-	Recompute => true -- when running sagbi on a subring / SAGBIBasis object constructed
+	Recompute => true, -- when running sagbi on a subring / SAGBIBasis object constructed
+	RenewOptions => false
 	}
     );
 
@@ -312,16 +333,17 @@ isSAGBI SAGBIBasis := opts -> SB -> SB#"data"#"sagbiDone"
 
 isSAGBI Subring := opts -> S -> (
     local SB;
+    local compTable;
     if S.cache#?"SAGBIBasis" then (
 	isSAGBI S.cache#"SAGBIBasis" 
 	) else (
 	if opts.Compute then (
 	    -- construct a SAGBIBasis for S and verify whether it is a sagbi basis
-	    SB = initializeCompTable(sagbiBasis S, opts);
+	    compTable = initializeCompTable(sagbiBasis S, opts);
 	    -- add the generators to the sagbiGenerators
-	    SB#"data"#"sagbiGenerators" = gens S;
-	    updateComputation(SB);
-	    SB = sagbiBasis SB;
+	    compTable#"data"#"sagbiGenerators" = gens S;
+	    updateComputation(compTable);
+	    SB = sagbiBasis compTable;
 	    SB = internalIsSAGBI(opts, SB);
     	    S.cache#"SAGBIBasis" = SB;
     	    isSAGBI SB

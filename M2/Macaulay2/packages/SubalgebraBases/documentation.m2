@@ -652,15 +652,15 @@ doc ///
      sagbiBasis
      (sagbiBasis,Subring)
      (sagbiBasis,HashTable)
-     [sagbiBasis,VariableBaseName]
+     --[sagbiBasis,VariableBaseName]
    Headline
      Constructs a computation object from a subring.
    Usage
      B = sagbiBasis S
    Inputs
      S:Subring
-     VariableBaseName=>String
-        name to be used internally for variables in the tensor ring.
+     --VariableBaseName=>String
+        --name to be used internally for variables in the tensor ring.
    Outputs
      B:SAGBIBasis
    Description
@@ -1947,7 +1947,7 @@ doc ///
      (subring, List)
      (subring, Matrix)
      (subring, SAGBIBasis)
-     [subring, VarBaseName]
+     --[subring, VarBaseName]
    Headline
      Constructs a subring of a polynomial ring.
    Usage
@@ -1960,8 +1960,8 @@ doc ///
      L:List 
        a list of generators for the constructed @TO "Subring"@.
      S:SAGBIBasis
-     VarBaseName=>String
-       determines the symbol used for the variables of the @TT "tensorRing"@ for the constructed @TO "Subring"@.
+     --VarBaseName=>String
+       --determines the symbol used for the variables of the @TT "tensorRing"@ for the constructed @TO "Subring"@.
    Outputs
      A:Subring
    Description
