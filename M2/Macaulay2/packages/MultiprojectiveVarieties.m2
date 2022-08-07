@@ -53,7 +53,8 @@ export{"MultiprojectiveVariety", "projectiveVariety", "Saturate", "projections",
        "MultirationalMap", "multirationalMap", "baseLocus", "degreeSequence", "inverse2", "toRationalMap",
        "∏","⋂","⋃","PP",
        "ambientVariety",
-       "GrassmannianVariety", "GG", "schubertCycle", "cycleClass"}
+       "GrassmannianVariety", "GG", "schubertCycle", "cycleClass",
+       "segreEmbedding"}
 
 debug Cremona;
 debug SparseResultants;
@@ -285,6 +286,14 @@ projections MultiprojectiveVariety := X -> (
 );
 
 segre MultiprojectiveVariety := (cacheValue "SegreMap") (X -> segre ring X);
+
+segreEmbedding = method();
+segreEmbedding MultiprojectiveVariety := X -> (
+    s := multirationalMap segre X;
+    if ring source s =!= ring X then error "internal error encountered";
+    s#"source" = X;
+    s
+);
 
 toStringDegreesVar = X -> toString(concatenate for l in degrees X list (toString unsequence toSequence first l)|"^"|(toString(last l)|" "));
 
@@ -790,7 +799,10 @@ EmbeddedProjectiveVariety ! := X -> (
 
 dual EmbeddedProjectiveVariety := {} >> o -> X -> (
     if codim linearSpan X > 0 then return projectiveVariety(dualVariety ideal X,MinimalGenerators=>false,Saturate=>false); -- from Resultants
-    return projectiveVariety(dualvariety ideal X,MinimalGenerators=>false,Saturate=>false); -- from SparseResultants
+    x := local x;
+    I := sub(ideal X,vars((coefficientRing X)[x_0..x_(dim ambient X)]));
+    D := sub(dualvariety I,vars ring ambient X); -- from SparseResultants
+    return projectiveVariety(D,MinimalGenerators=>false,Saturate=>false);
 );
 
 conormalVariety EmbeddedProjectiveVariety := o -> X -> ( 
@@ -1924,6 +1936,14 @@ rationalMap (MultiprojectiveVariety,Tally) := o -> (X,E) -> (
     return f;
 );
 
+rationalMap (MultiprojectiveVariety,Tally,List) := o -> (X,D,d) -> (
+    D = applyPairs(D,(F,m) -> if not isSubset(F,X) then (F*X,m) else (F,m));
+    Y := ⋃ for p in pairs D list (last p) * (first p); 
+    V := X * random(d,Y);
+    W := V\Y;
+    rationalMap(W_X,d,Dominant=>o.Dominant)
+);
+rationalMap (EmbeddedProjectiveVariety,Tally,ZZ) := o -> (X,D,d) -> rationalMap(X,D,{d},Dominant=>o.Dominant);
 
 GrassmannianVariety = new Type of EmbeddedProjectiveVariety;
 
@@ -2104,11 +2124,11 @@ EXAMPLE {
 "describe X -- long description"},
 PARA{"Below, we calculate the image of ",TEX///$X$///," via the Segre embedding of ",TEX///$\mathbb{P}^{2}\times\mathbb{P}^{3}\times\mathbb{P}^{1}$///," in ",TEX///$\mathbb{P}^{23}$///,"; thus we get a projective variety isomorphic to ",TEX///$X$///," and embedded in a single projective space ",TEX///$\mathbb{P}^{19}=<X>\subset\mathbb{P}^{23}$///,"."},
 EXAMPLE {
-"s = segre X;",
-"X' = projectiveVariety image s",
+"s = segreEmbedding X;",
+"X' = image s",
 "(dim X', codim X', degree X')",
 "? X'"},
-SeeAlso => {(segre,MultiprojectiveVariety),(dim,MultiprojectiveVariety),(codim,MultiprojectiveVariety),(degree,MultiprojectiveVariety),(singularLocus,MultiprojectiveVariety),(point,MultiprojectiveVariety)}} 
+SeeAlso => {(segreEmbedding,MultiprojectiveVariety),(dim,MultiprojectiveVariety),(codim,MultiprojectiveVariety),(degree,MultiprojectiveVariety),(singularLocus,MultiprojectiveVariety),(point,MultiprojectiveVariety)}} 
 
 document {Key => {(projectiveVariety,List,Ring),(projectiveVariety,ZZ,Ring),symbol PP}, 
 Headline => "product of projective spaces", 
@@ -2177,7 +2197,7 @@ Usage => "degree X",
 Inputs => {"X" => MultiprojectiveVariety}, 
 Outputs => { ZZ => {"the degree of the image of ", TEX///$X$///," via the Segre embedding of the ",TO2{(ambient,MultiprojectiveVariety),"ambient"}," of ",TEX///$X$///}}, 
 EXAMPLE {"X = PP_QQ^({2,1},{1,3});","degree X"}, 
-SeeAlso => {(multidegree,MultiprojectiveVariety),(segre,MultiprojectiveVariety)}} 
+SeeAlso => {(multidegree,MultiprojectiveVariety),(segreEmbedding,MultiprojectiveVariety)}} 
 
 document {Key => {projections,(projections,MultiprojectiveVariety)}, 
 Headline => "projections of a multi-projective variety", 
@@ -2206,7 +2226,16 @@ Headline => "the Segre embedding of the variety",
 Usage => "segre X", 
 Inputs => {"X" => MultiprojectiveVariety}, 
 Outputs => {{"the map returned by ",TO segre," ",TO2{(ring,MultiprojectiveVariety),"ring"}," ", TEX///$X$///}}, 
+PARA {"This function is intended for internal use. Use the ",TO segreEmbedding," function instead."},
 EXAMPLE {"X = PP_(ZZ/3331)^({2,1,1},{2,1,3});","segre X"}, 
+SeeAlso => {(segreEmbedding,MultiprojectiveVariety),segre}}
+
+document {Key => {segreEmbedding,(segreEmbedding,MultiprojectiveVariety)}, 
+Headline => "the Segre embedding of the variety", 
+Usage => "segreEmbedding X", 
+Inputs => {"X" => MultiprojectiveVariety}, 
+Outputs => {MultirationalMap => {"the Segre embedding of ",TT "X"," (calculated through ",TO segre," ",TO2{(ring,MultiprojectiveVariety),"ring"}," ", TEX///$X$///,")"}}, 
+EXAMPLE {"X = PP_(ZZ/3331)^({2,1,1},{2,1,3});","segreEmbedding X"}, 
 SeeAlso => {segre,(segre,MultirationalMap)}}
 
 document {Key => {(point,MultiprojectiveVariety),(symbol |-, MultiprojectiveVariety)}, 
@@ -2623,7 +2652,7 @@ document {Key => {(segre,MultirationalMap)},
 Headline => "the composition of a multi-rational map with the Segre embedding of the target", 
 Usage => "segre Phi", 
 Inputs => {"Phi" => MultirationalMap}, 
-Outputs => {RationalMap => {"the composition of the multi-rational map ",TT"Phi"," with the ",TO2{(segre,MultiprojectiveVariety),"Segre embedding"}," of the ",TO2{(target,MultirationalMap),"target"}," of ",TT"Phi"}}, 
+Outputs => {RationalMap => {"the composition of the multi-rational map ",TT"Phi"," with the ",TO2{(segreEmbedding,MultiprojectiveVariety),"Segre embedding"}," of the ",TO2{(target,MultirationalMap),"target"}," of ",TT"Phi"}}, 
 EXAMPLE {"ZZ/65521[x_0..x_4];",
 "f = rationalMap({x_3^2-x_2*x_4,x_2*x_3-x_1*x_4,x_1*x_3-x_0*x_4,x_2^2-x_0*x_4,x_1*x_2-x_0*x_3,x_1^2-x_0*x_2},Dominant=>true);",
 "g = rationalMap {x_3^2-x_2*x_4,x_2*x_3-x_1*x_4,x_1*x_3-x_0*x_4,x_2^2-x_0*x_4,x_1*x_2-x_0*x_3};",
@@ -2631,7 +2660,7 @@ EXAMPLE {"ZZ/65521[x_0..x_4];",
 "Phi = rationalMap {f,g,h};",
 "time segre Phi;",
 "describe segre Phi"}, 
-SeeAlso => {(segre,MultiprojectiveVariety)}}
+SeeAlso => {(segreEmbedding,MultiprojectiveVariety)}}
 
 document {Key => {(parametrize,MultiprojectiveVariety)}, 
 Headline => "try to get a parametrization of a multi-projective variety", 
@@ -3565,6 +3594,16 @@ PARA{"For the general theory, see e.g. the book ", HREF{"https://scholar.harvard
 EXAMPLE {"G = GG(ZZ/33331,1,5);", "S = schubertCycle({2,1},G)", "cycleClass S"}, 
 SeeAlso => {cycleClass}}
 
+document {Key => {(rationalMap,MultiprojectiveVariety,Tally), (rationalMap,MultiprojectiveVariety,Tally,List), (rationalMap,EmbeddedProjectiveVariety,Tally,ZZ)}, 
+Headline => "rational map defined by an effective divisor", 
+Usage => "rationalMap(X,D)", 
+Inputs => {"X" => MultiprojectiveVariety, "D" => Tally => {"a multiset of pure codimension 1 ",TO2{(symbol %,MultiprojectiveVariety,MultiprojectiveVariety),"subschemes"}," of ",TEX///$X$///," with no embedded components; so that ",TT"D"," is interpreted as an effective divisor on ",TEX///$X$///}}, 
+Outputs => {MultirationalMap => {"the rational map defined by the complete linear system ",TEX///$|D|$///}},
+PARA{"In the example below, we take a smooth complete intersection ",TEX///$X\subset\mathbb{P}^5$///," of three quadrics containing a conic ",TEX///$C\subset\mathbb{P}^5$///,". Then we calculate the map defined by the linear system ",TEX///$|2H+C|$///,", where ",TEX///$H$///," is the hyperplane section class of ",TEX///$X$///,"."},
+EXAMPLE {"P5 = PP_(ZZ/65521)^5;", "C = random({{2},3:{1}},0_P5);", "X = random({3:{2}},C);", "H = random(1,0_X); -- it's interpreted as X * H", "D = tally {H, H, C}", "phi = rationalMap(X,D)", "assert(phi == rationalMap(X,tally {X*H, X*H, C}))"},
+PARA{"This function is based internally on the function ",TO (rationalMap,Ring,Tally),", provided by the package ",TO Cremona,"."},
+SeeAlso => {(rationalMap,Ring,Tally)}}
+
 undocumented {
 (expression,MultiprojectiveVariety),
 (net,MultiprojectiveVariety),
@@ -3594,7 +3633,6 @@ undocumented {
 (Fano,ZZ,EmbeddedProjectiveVariety,Option),
 (image,MultirationalMap,ZZ),(image,ZZ,MultirationalMap), -- This is dangerous because the defining ideal may not be saturated
 (image,MultirationalMap,String),
-(rationalMap,MultiprojectiveVariety,Tally), -- It is already documented in Cremona.m2
 (matrix,MultirationalMap),
 (random,MultirationalMap),
 (hilbertPolynomial,EmbeddedProjectiveVariety) -- To be documented
