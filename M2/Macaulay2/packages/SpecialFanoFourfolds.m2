@@ -12,7 +12,7 @@ if version#"VERSION" < "1.20" then error "this package requires Macaulay2 versio
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.6", 
-    Date => "August 7, 2022",
+    Date => "August 8, 2022",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -1167,7 +1167,7 @@ describe IntersectionOfThreeQuadricsInP7 := X -> (
     descr = descr|(if n > 0 then toString(n)|"-nodal " else (if n == 0 then "smooth " else ""));
     descr = descr|"surface of degree "|toString(d)|" and sectional genus "|toString(g)|newline;
     descr = descr|(if # unique degs == 1 then "cut out by "|toString(#degs)|" hypersurfaces of degree "|toString(first degs) else "cut out by "|toString(#degs)|" hypersurfaces of degrees "|toString(toSequence degs));
-    if member(recognize X,{"surf-5-7-0-1","surf-5-10-1","internal-projection-K3-genus-8","surf-4-3-1-external","surf-5-6-2-nodal"}) then descr = descr|newline|"(This is a rational fourfold discovered in August 2022)";
+    if member(recognize X,{"surf-5-7-0-1","surf-5-10-1","internal-projection-K3-genus-8","surf-4-3-1-external","surf-5-6-2-nodal","surf-7-1-9"}) then descr = descr|newline|"(This is a rational fourfold discovered in August 2022)";
     if recognize X === "planeInPP7" then descr = descr|newline|"(This is a classical example of rational fourfold)";
     net expression descr
 );
@@ -1195,7 +1195,8 @@ recognize3QuadricsP7 = X -> (
     if (d == 55 and e == 14 and invS === (11,5,1) and degs == toList(10:2)) then return "surf-5-10-1";
     if (d == 55 and e == 25 and invS === (13,8,2) and degs == toList(9:2)) then return "internal-projection-K3-genus-8";
     if (d == 79 and e == 7 and invS === (9,2,1) and degs == {2,2,2,2,2,2,2,2,2,2,3}) then return "surf-4-3-1-external";
-    if ((d == 71 or d == 87) and e == 5 and invS === (11,4,0) and degs == toList(9:2)) then if numberNodes(S,Verbose=>false) == 1 and discriminant X == 87 then return "surf-5-6-2-nodal";    
+    if ((d == 71 or d == 87) and e == 5 and invS === (11,4,0) and degs == toList(9:2)) then if numberNodes(S,Verbose=>false) == 1 and discriminant X == 87 then return "surf-5-6-2-nodal";
+    if (d == 96 and e == 13 and invS === (12,6,1) and degs == {2,2,2,2,2,2,2,2,2,3}) then return "surf-7-1-9";
     "NotRecognized"
 );
 
@@ -1243,7 +1244,7 @@ fanoMap HodgeSpecialFourfold := o -> X -> (
     then e = 2
     else if member(recognize X,{"C42","6NodalOcticSrollC38",3,"october2021-34'","mukai26''","october2021-20","surf-5-7-0-1"})
     then e = 3
-    else if member(recognize X,{"surf-5-10-1"})
+    else if member(recognize X,{"surf-5-10-1","surf-7-1-9"})
     then e = 4
     else if member(recognize X,{"gushel26''","internal-projection-K3-genus-8", "hyperplane section of a conic bundle over PP2", "surf-4-3-1-external"})
     then e = 5
@@ -1251,13 +1252,13 @@ fanoMap HodgeSpecialFourfold := o -> X -> (
     then e = 6
     else e = (detectCongruence(X,Verbose=>o.Verbose))#"degree";
     if o.Verbose then <<"-- detected degree of the curves of the congruence: "<<e<<endl;
-    if member(recognize X,{"october2021-34'","gushel26''"}) then sat = 2;
+    if member(recognize X,{"october2021-34'","gushel26''","surf-7-1-9"}) then sat = 2;
     fanoMap(X,e,sat,Singular=>o.Singular,RaiseError=>o.RaiseError,Verbose=>o.Verbose)
 );
 
 fanoMap (HodgeSpecialFourfold,ZZ) := o -> (X,e) -> (
     sat := 1;
-    if member(recognize X,{"october2021-34'","gushel26''"}) then sat = 2;
+    if member(recognize X,{"october2021-34'","gushel26''","surf-7-1-9"}) then sat = 2;
     fanoMap(X,e,sat,Singular=>o.Singular,RaiseError=>o.RaiseError,Verbose=>o.Verbose)
 );
 
@@ -1635,6 +1636,7 @@ surfaceDeterminingInverseOfFanoMap HodgeSpecialFourfold := o -> X -> (
         )
     );
     if member(recognize X,{"NotRecognized", "FarkasVerra", 1, "surf-5-6-2-nodal"}) then U = top U;
+    if recognize X === "surf-7-1-9" then (if o.Verbose then <<"-- removing cubic scroll component from surface"<<endl; U = U \ Fano Fano(1,U));
     (surface X).cache#("surfaceDeterminingInverseOfFanoMap",ideal X) = U
 );
 
@@ -1643,7 +1645,7 @@ exceptionalCurves HodgeSpecialFourfold := o -> X -> (
     NumLines := o#"NumberLines";
     if NumLines =!= infinity then if not(instance(NumLines,ZZ) and NumLines >= 0) then error "option NumberLines expects a nonnegative integer";
     if NumLines === infinity then (
-        if member(recognize X,{"planeInPP7", "quarticScrollSurface", "oneNodalSepticDelPezzoSurfaceC26", "FarkasVerra", 3, "6NodalOcticSrollC38", 18, "gushel26''", "surf-5-6-2-nodal", "surf-4-3-1-external"}) then NumLines = 0;
+        if member(recognize X,{"planeInPP7", "quarticScrollSurface", "oneNodalSepticDelPezzoSurfaceC26", "FarkasVerra", 3, "6NodalOcticSrollC38", 18, "gushel26''", "surf-5-6-2-nodal", "surf-4-3-1-external", "surf-7-1-9"}) then NumLines = 0;
         if member(recognize X,{"surf-5-7-0-1", 17, 6, "mukai26''", "hyperplane section of a conic bundle over PP2"}) then NumLines = 1;
         if recognize X === 1 then NumLines = 2;
         if recognize X === "october2021-34'" then NumLines = 3;
@@ -1767,7 +1769,7 @@ associatedCastelnuovoSurface IntersectionOfThreeQuadricsInP7 := o -> X -> (
     mu := multirationalMap super fanoMap X;
     if U.cache#?"MapToMinimalK3Surface" then return (mu,U,{L,C},U.cache#"MapToMinimalK3Surface"); -- inappropriate key name
     f := null; H := random(1,0_U);
-    if member(recognize X,{"NotRecognized", "surf-5-10-1"}) then (
+    if member(recognize X,{"NotRecognized", "surf-5-10-1", "surf-7-1-9"}) then (
         if o.Verbose then <<"-- skipping computation of the map f from U to the minimal Castelnuovo surface"<<endl;
     ) else if member(recognize X,{"planeInPP7", "internal-projection-K3-genus-8", "surf-5-6-2-nodal", "surf-4-3-1-external"}) then (
         f = multirationalMap super toRationalMap 1_U;

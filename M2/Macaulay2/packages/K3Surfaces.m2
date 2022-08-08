@@ -3,8 +3,8 @@ if version#"VERSION" < "1.18" then error "this package requires Macaulay2 versio
 
 newPackage(
     "K3Surfaces",
-    Version => "1.0", 
-    Date => "November 10, 2021",
+    Version => "1.1", 
+    Date => "August 8, 2022",
     Authors => {{Name => "Michael Hoff", 
                  Email => "hahn@math.uni-sb.de"},
                 {Name => "Giovanni Staglianò", 
@@ -15,14 +15,14 @@ newPackage(
     DebuggingMode => false
 )
 
-if SpecialFanoFourfolds.Options.Version < "2.5" then (
-    <<endl<<"Your version of the SpecialFanoFourfolds package is outdated (required version 2.5 or newer);"<<endl;
+if SpecialFanoFourfolds.Options.Version < "2.6" then (
+    <<endl<<"Your version of the SpecialFanoFourfolds package is outdated (required version 2.6 or newer);"<<endl;
     <<"you can manually download the latest version from"<<endl;
     <<"https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages."<<endl;
     <<"To automatically download the latest version of SpecialFanoFourfolds in your current directory,"<<endl;
     <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
     <<///run "curl -s -o SpecialFanoFourfolds.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/SpecialFanoFourfolds.m2";///<<endl<<endl<<"***"<<endl;
-    error "required SpecialFanoFourfolds package version 2.5 or newer";
+    error "required SpecialFanoFourfolds package version 2.6 or newer";
 );
 
 export{"K3","LatticePolarizedK3surface","EmbeddedK3surface","project","mukaiModel",
@@ -155,7 +155,7 @@ latticePolarizedK3surface (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,L
 latticePolarizedK3surface (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,List) := (T,C,H,gdn) -> latticePolarizedK3surface(new EmbeddedK3surface from T,C,H,gdn);
 latticePolarizedK3surface (EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,Nothing,List) := (T,C,H,gdn) -> latticePolarizedK3surface(new EmbeddedK3surface from T,C,H,gdn);
 
-K3 = method(Options => {CoefficientRing => ZZ/65521, Verbose => false});
+K3 = method(Options => {CoefficientRing => ZZ/65521, Verbose => false, Singular => null});
 
 K3 ZZ := o -> g -> (
     K := o.CoefficientRing;
@@ -181,7 +181,7 @@ K3 ZZ := o -> g -> (
         if o.Verbose then <<"-- (taking a random GM fourfold X of discriminant 20, hence containing a surface S of degree 9 and genus 2)"<<endl;
         X = specialGushelMukaiFourfold("general GM 4-fold of discriminant 20",K);
         if o.Verbose then <<"-- (running procedure 'associatedK3surface' for the GM fourfold X of discriminant 20)"<<endl<<"-- *** --"<<endl;
-        Ass = associatedK3surface(X,Verbose=>o.Verbose);
+        Ass = associatedK3surface(X,Verbose=>o.Verbose,Singular=>o.Singular);
         if o.Verbose then <<"-- *** --"<<endl;
         return makegeneralK3(last Ass,(last Ass) first Ass_2,g);
     );
@@ -190,7 +190,7 @@ K3 ZZ := o -> g -> (
         if o.Verbose then <<"-- (taking a random cubic fourfold X of discriminant 26, hence containing a surface S of degree 7 and genus 1)"<<endl;
         X = specialCubicFourfold("one-nodal septic del Pezzo surface",K);
         if o.Verbose then <<"-- (running procedure 'associatedK3surface' for the cubic fourfold X of discriminant 26)"<<endl<<"-- *** --"<<endl;
-        Ass = associatedK3surface(X,Verbose=>o.Verbose);
+        Ass = associatedK3surface(X,Verbose=>o.Verbose,Singular=>o.Singular);
         if o.Verbose then <<"-- *** --"<<endl;
         return makegeneralK3(last Ass,(last Ass) first Ass_2,g);
     );    
@@ -199,7 +199,7 @@ K3 ZZ := o -> g -> (
         if o.Verbose then <<"-- (taking a random cubic fourfold X of discriminant 38, hence containing a surface S of degree 10 and genus 6)"<<endl;
         X = specialCubicFourfold("C38",K);
         if o.Verbose then <<"-- (running procedure 'associatedK3surface' for the cubic fourfold X of discriminant 38)"<<endl<<"-- *** --"<<endl;
-        Ass = associatedK3surface(X,Verbose=>o.Verbose);
+        Ass = associatedK3surface(X,Verbose=>o.Verbose,Singular=>o.Singular);
         if o.Verbose then <<"-- *** --"<<endl;
         return makegeneralK3(last Ass,(last Ass) first Ass_2,g);
     );
@@ -208,7 +208,7 @@ K3 ZZ := o -> g -> (
         if o.Verbose then <<"-- (taking a random cubic fourfold X of discriminant 42, hence containing a surface S of degree 9 and genus 2)"<<endl;
         X = specialCubicFourfold("C42",K);
         if o.Verbose then <<"-- (running procedure 'associatedK3surface' for the cubic fourfold X of discriminant 42)"<<endl<<"-- *** --"<<endl;
-        Ass = associatedK3surface(X,Verbose=>o.Verbose);
+        Ass = associatedK3surface(X,Verbose=>o.Verbose,Singular=>o.Singular);
         if o.Verbose then <<"-- *** --"<<endl;
         return makegeneralK3(last Ass,(last Ass) first Ass_2,g);
     );
@@ -865,7 +865,7 @@ document {Key => {EmbeddedK3surface},
 Headline => "the class of all embedded K3 surfaces",
 SeeAlso => {LatticePolarizedK3surface,(symbol SPACE,LatticePolarizedK3surface,Sequence)}}
 
-document {Key => {K3,(K3,ZZ,ZZ,ZZ),[K3,Verbose],[K3,CoefficientRing]}, 
+document {Key => {K3,(K3,ZZ,ZZ,ZZ),[K3,Verbose],[K3,CoefficientRing],[K3,Singular]}, 
 Headline => "make a lattice-polarized K3 surface",
 Usage => "K3(d,g,n)
 K3(d,g,n,CoefficientRing=>K)", 
