@@ -5,8 +5,8 @@
 
 newPackage select((
      "SLPexpressions",
-     Version => "1.14",
-     Date => "Aug 2019",
+     Version => "1.20",
+     Date => "Aug 2022",
      Headline => "straight line programs and algebraic circuits",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -417,7 +417,13 @@ assert(evaluate(slp,vars R)==f)
 SLProgram = new Type of HashTable -- abstract type
 errorSLProgramAbstract := () -> error "not implemented (SLProgram is an abstract Type)"
 evaluate(SLProgram, MutableMatrix, MutableMatrix) := (slp,I,O) -> errorSLProgramAbstract() 
-evaluate(SLProgram, Matrix) := (slp, inp) -> errorSLProgramAbstract()
+evaluate(SLProgram, Matrix) := (slp, inp) -> (
+		I := mutableMatrix inp;
+		O := mutableMatrix(ring I, 1, slp#"number of outputs");
+		evaluate(slp,I,O);
+		matrix O
+		)
+
 
 InterpretedSLProgram = new Type of SLProgram
 CompiledSLProgram = new Type of SLProgram
@@ -425,34 +431,11 @@ CompiledSLProgram = new Type of SLProgram
 -------------------
 makeCompiledSLProgram = method(TypicalValue=>InterpretedSLProgram)
 makeCompiledSLProgram (List,List) := (inL,outL) -> (
-    os := "Linux"; -- or "MacOsX" 
-    fname := temporaryFileName() | "-GateSystem";
-    cppName := fname | ".c";
-    libName := fname | ".dynamicM2";
-    f := openOut cppName;
-    f << "typedef double C;" << endl; -- the type needs to be adjusted!!!
-    cCode (inL, outL, f);
-    f << close;
-    
-    -- THIS CODE NEEDS TO MOVE to CompiledSLEvaluator
-    compileCommand := -*if os === "Linux" then *- "gcc -shared -Wl,-soname," | libName | " -o " | libName | " " | cppName | " -lc -fPIC"
-    ;-*else if os === "MacOsX" and version#"pointer size" === 8 then "g++ -m64 -dynamiclib -O2 -o " | libName | " " | cppName
-    else if os === "MacOsX" then (
-	"gcc -dynamiclib -O1 -o " | libName | " " | cppName
-	)
-    else error "unknown OS";*-
-    print compileCommand;
-    if run compileCommand > 0 then error ("error compiling a straightline program:\n"|compileCommand);      
-    -- END (THIS CODE...)
-    
-    print get cppName;
-    print libName;
     new CompiledSLProgram from {
-				"source name" => cppName, 
-				"number of inputs" => #inL,
-				"number of outputs" => #outL,
-				cache => new CacheTable 
-				}
+	"input" => inL,
+	"output" => outL,
+	cache => new CacheTable 
+	}
     )
 -------------------
 makeInterpretedSLProgram = method(TypicalValue=>InterpretedSLProgram)
@@ -734,12 +717,13 @@ matrix (Ring,RawMatrix,ZZ,ZZ) := o -> (R,M,m,n) -> (
     )
 
 rawSLEvaluatorK = method()
-rawSLEvaluatorK (InterpretedSLProgram, Ring) := (slp, K) -> if slp.cache#?K then slp.cache#K else slp.cache#K = rawSLEvaluator(
+rawSLEvaluatorK (InterpretedSLProgram, Ring) := (slp, K) -> if slp.cache#?K then 
+slp.cache#K else slp.cache#K = rawSLEvaluator(
     slp#RawSLProgram, 
     slp#"constant positions", 
     slp#"variable positions",
     raw mutableMatrix promote(slp#"constants",K)
-    );
+    )
   
 evaluate(InterpretedSLProgram, MutableMatrix, MutableMatrix) := (slp,I,O) -> (
 		--if numrows I =!= 1 or numrows O =!= 1 then error "expected matrices with 1 row";
@@ -750,13 +734,43 @@ evaluate(InterpretedSLProgram, MutableMatrix, MutableMatrix) := (slp,I,O) -> (
     rawSLEvaluatorEvaluate(rawSLEvaluatorK(slp,K), raw I, raw O);
     )
 
-evaluate(InterpretedSLProgram, Matrix) := (slp, inp) -> (
-		I := mutableMatrix inp;
-		O := mutableMatrix(ring I, 1, slp#"number of outputs");
-		evaluate(slp,I,O);
-		matrix O
-		)
- 
+rawCompiledSLEvaluator = (a,b,c) -> error "implement me in the kernel!!!"
+
+rawCompiledSLEvaluatorK = method()
+rawCompiledSLEvaluatorK (CompiledSLProgram, Ring) := (slp, K) -> if slp.cache#?K then 
+slp.cache#K else (
+    typeName := (
+	if K === RR_53 then "double" else 
+	if K === CC_53 then "std::complex<double>" else 
+    	error ("just-in-time compilation is not implemented for "| toString K) 
+    	);
+    fname := temporaryFileName() | "-GateSystem";
+    cppName := fname | ".c";
+    libName := fname | ".dynamicM2";
+    f := openOut cppName;
+    f << "#include <complex>" 
+    f << "typedef " | typeName | " C;" << endl; -- the type needs to be adjusted!!!
+    cCode (slp#"input", slp#"output", f);
+    f << close;
+    compileCommand := "gcc -shared -Wl,-soname," | libName | " -o " | libName | " " | cppName | " -lc -fPIC";
+    print compileCommand;
+    if run compileCommand > 0 then error ("error compiling a straightline program:\n"|compileCommand);      
+    print get cppName;
+    print libName;
+    slp.cache#K = rawCompiledSLEvaluator(libName, numcols slp#"input", numcols slp#"output")
+    )
+
+rawCompiledSLEvaluatorEvaluate = (a,b,c) -> error "implement me in the kernel!!!"
+
+evaluate(CompiledSLProgram, MutableMatrix, MutableMatrix) := (slp,I,O) -> (
+		--if numrows I =!= 1 or numrows O =!= 1 then error "expected matrices with 1 row";
+		if numrows I * numcols I =!= numcols slp#"input" then error "wrong number of inputs";
+		if numrows O * numcols O =!= numcols slp#"output" then error "wrong number of outputs";
+		K := ring I; 
+    if ring O =!= K then error "expected same Ring for input and output";
+    rawCompiledSLEvaluatorEvaluate(rawCompiledSLEvaluatorK(slp,K), raw I, raw O);
+    )
+
 TEST /// 
 X = inputGate symbol X
 C = inputGate symbol C

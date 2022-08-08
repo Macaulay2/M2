@@ -19,6 +19,7 @@ cCode (H#"Hx"|H#"Ht", inputs)
 ----------------------------------
 -- makeCompiledSLProgram
 restart
+errorDepth = 0
 needsPackage "SLPexpressions"
 declareVariable X; declareVariable C;
 XpC = X+C

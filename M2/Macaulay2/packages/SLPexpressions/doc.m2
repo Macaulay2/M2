@@ -305,7 +305,7 @@ doc ///
         (evaluate,SLProgram,MutableMatrix,MutableMatrix)
         (evaluate,SLProgram,Matrix)
         (evaluate,InterpretedSLProgram,MutableMatrix,MutableMatrix)
-        (evaluate,InterpretedSLProgram,Matrix)
+        (evaluate,CompiledSLProgram,MutableMatrix,MutableMatrix)
     Headline
         evaluate a straight-line program
     Usage
