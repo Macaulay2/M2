@@ -10,12 +10,14 @@ Subring = new Type of HashTable
 -- SAGBI basis.
 subring = method()
 subring Matrix := M -> (
-    new Subring from{
+    S := new Subring from{
         "ambientRing" => ring M,
         "generators" => M,
         cache => new CacheTable from M.cache
-    }
-)
+    	};
+    S#"generators".cache#"Subring" = S;
+    S
+    )
 subring List := L -> subring(matrix{L})
 
 -- Subring access functions
@@ -238,8 +240,14 @@ sagbiBasis HashTable := opts -> H -> (
 -- Perhaps we need the quotient map and this should be applied here.
 
 gens SAGBIBasis := opts -> S -> (
-    if numColumns S#"data"#"sagbiGenerators" == 0 then matrix(S#"rings"#"liftedRing",{{}})
-    else S#"maps"#"quotient" S#"data"#"sagbiGenerators" 
+    local M;
+    if numColumns S#"data"#"sagbiGenerators" == 0 then (
+    	M = matrix(S#"rings"#"liftedRing",{{}});
+    	) else (
+    	M = S#"maps"#"quotient" S#"data"#"sagbiGenerators";
+	);
+    M.cache#"Subring" = S#"data"#"subring";
+    M 
 )
 
 

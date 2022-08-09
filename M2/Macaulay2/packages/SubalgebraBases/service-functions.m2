@@ -121,7 +121,9 @@ compSubduction = method(
         SubductionMethod => "Top", -- top or engine
     	Limit => 10, -- change back to 100
 	AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
-    	PrintLevel => 0
+    	PrintLevel => 0,
+	Recompute => false,
+	RenewOptions => false
     	}
 );
 
@@ -137,7 +139,9 @@ subduction = method(
         SubductionMethod => "Top", -- top or engine
     	Limit => 10, -- change back to 100
 	AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
-    	PrintLevel => 0
+    	PrintLevel => 0,
+	Recompute => false,
+	RenewOptions => false
     	}
 );
 

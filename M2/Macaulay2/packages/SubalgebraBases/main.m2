@@ -22,27 +22,20 @@ subalgebraBasis = method(
 );
 
 subalgebraBasis(Matrix) := opts -> M -> (
-    local sagbiInput;
+    local S;
     
-    if M.cache#?"SAGBIBasis" then (
-	sagbiInput = M.cache#"SAGBIBasis";
+    if M.cache#?"Subring" then (
+	S = M.cache#"Subring";
 	) else (
-	sagbiInput = subring M;
+	S = subring M;
 	);
     
-    SB := sagbi(opts, sagbiInput);
-    output := gens SB;
-    output.cache#"SAGBIBasis" = SB;
-    output
-);
-
-subalgebraBasis(List) := opts -> L -> (
-    SB := sagbi(opts, L);
+    SB := sagbi(opts, S);
     gens SB
     );
 
-subalgebraBasis(Matrix) := opts -> M -> (
-    SB := sagbi(opts, M);
+subalgebraBasis(List) := opts -> L -> (
+    SB := sagbi(opts, L);
     gens SB
     );
 
@@ -62,6 +55,7 @@ subalgebraBasis(Subring) := opts -> S -> (
 -- PrintLevel > 3: Print the input and output of each subduction.
 -- PrintLevel > 4: Print processPending data and Master Strategy choices (for debugging)
 -- PrintLevel > 5: Print subductionTopLevel intermediate steps (for debugging)
+--
 --
 -- On the behaviour of RenewOptions and Recompute:
 --   if RenewOptions is false and Recompute is true
@@ -181,8 +175,10 @@ internalVerifySagbi = method(
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
         SubductionMethod => "Top", -- top or engine
 	Limit => 100,
-	PrintLevel => 0 -- see print level for sagbi
-    	}
+	PrintLevel => 0, -- see print level for sagbi
+    	Recompute => false,
+	RenewOptions => false
+	}
     );
 
 
@@ -220,8 +216,10 @@ verifySagbi = method(
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
         SubductionMethod => "Top", -- top or engine
 	Limit => 100,
-	PrintLevel => 0 -- see print level for sagbi
-    	}
+	PrintLevel => 0, -- see print level for sagbi
+    	Recompute => false,
+	RenewOptions => false
+	}
 );
 
 verifySagbi(Subring) := opts -> S -> (
