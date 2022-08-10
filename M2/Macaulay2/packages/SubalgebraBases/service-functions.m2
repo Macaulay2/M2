@@ -6,7 +6,10 @@
 -- 
 -- the options for the compTable are taken from SAGBIBasis except 
 --   if RenewOptions is true then only the specified options are used
-
+--
+-- TODO: Print Level can be respecified by the user
+-- TODO: Check the behaviour of AutoSubduce and Recompute 
+-- 
 initializeCompTable = method();
 initializeCompTable (SAGBIBasis, HashTable):= (S,opts) -> (
     local options;

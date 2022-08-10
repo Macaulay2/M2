@@ -381,24 +381,31 @@ isSAGBI List := opts -> L -> (
 
 -- groebnerMembershipTest(f, S) = (f lies in S)
 -- f an element of the ambient ring of S
--- S a subring of a polynomial ring
-
+-- S a subring of a polynomial ring (or quotient ring)
+--
 groebnerMembershipTest = method() 
 groebnerMembershipTest(RingElement, Subring) := (f, S) -> (
     G := gens S;
-    Amb := ring G;
-    assert instance(Amb, PolynomialRing);
-    tensorRingNumVars := (numgens Amb) + (numcols G);
-    tensorRing := QQ[Variables => tensorRingNumVars, MonomialOrder => {Eliminate(numgens Amb)}];
+    Q := ring G;
+    R := ambient Q;
+    J := ideal Q;
     
-    liftToTensorRing := map(tensorRing, Amb, (vars tensorRing)_{0 .. numgens Amb - 1});
-    fInTensorRing := liftToTensorRing f;
-    GInTensorRing := liftToTensorRing G;
-    I := ideal((vars tensorRing)_{numgens Amb .. tensorRingNumVars - 1} - GInTensorRing);
-    fNormalForm := fInTensorRing % I;
+    fR := lift(f, R);
+    GR := lift(G, R);
+    -- assert instance(Amb, PolynomialRing);
+    tensorRingNumVars := (numgens R) + (numcols G);
+    tensorRing := QQ[Variables => tensorRingNumVars, MonomialOrder => {Eliminate(numgens R)}];
+    
+    liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
+    fInTensorRing := liftToTensorRing fR;
+    GInTensorRing := liftToTensorRing GR;
+    JInTensorRing := liftToTensorRing J;
+    I := ideal((vars tensorRing)_{numgens R .. tensorRingNumVars - 1} - GInTensorRing);
+    fNormalForm := fInTensorRing % (I + JInTensorRing);
     
     numcols selectInSubring(1, matrix {{fNormalForm}}) == 1
     )
+
 
 
 -- Matrix or RingElement % Subring
