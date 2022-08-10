@@ -497,7 +497,7 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
     t = (vars TAmb)_(0,0);
     
     RtoTAmb := map(TAmb, R, (vars TAmb)_{1 .. numgens Q});
-    J := (RtoTAmb I) + ideal(t^2 - t); -- I + (t^2 + t)
+    J := (RtoTAmb I) + ideal(t^2 - t); -- I + (t^2 - t)
     
     T := TAmb / J; -- tensor product of Q and K[t]/(t^2-t)
     QtoT := map(T, Q, (vars T)_{1 .. numgens Q});
@@ -518,7 +518,6 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
 	limit = (max (degrees gens S1)_1)*(max (degrees gens S2)_1);
 	);
     
-    
     SB := sagbi(S, 
 	Strategy => opts.Strategy,
 	SubductionMethod => opts.SubductionMethod,
@@ -527,6 +526,9 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
 	);
     
     -- if SB is a sagbi basis the intersection computation is correct!
+    --  in this case, we can use forceSAGBI on the intersectionGens or
+    --  on their image under TtoQ or on the subring
+    --
     intersectionGens := selectInSubring(1, gens SB);
     subring TtoQ intersectionGens
     );

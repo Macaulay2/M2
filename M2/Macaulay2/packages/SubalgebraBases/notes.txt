@@ -46,7 +46,8 @@ Todo list
 
 > copy over the intersection of subrings method to classes.
   -- Add other input options: e.g. intersection(SAGBIBasis, SAGBIBasis), etc.
-  
+
+> forceSAGBI - assert that a subring / matrix of generators is a sagbi basis
 
 Discussion
 ----------
