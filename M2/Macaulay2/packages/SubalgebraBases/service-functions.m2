@@ -7,7 +7,6 @@
 -- the options for the compTable are taken from SAGBIBasis except 
 --   if RenewOptions is true then only the specified options are used
 --
--- TODO: Print Level can be respecified by the user
 -- TODO: Check the behaviour of AutoSubduce and Recompute 
 -- 
 initializeCompTable = method();
@@ -27,6 +26,7 @@ initializeCompTable (SAGBIBasis, HashTable):= (S,opts) -> (
 	);
     
     data#"limit" = opts.Limit;
+    options#PrintLevel = opts.PrintLevel; -- allow the user to specify the print level
     options#RenewOptions = false; -- reset RenewOptions since they are now set correctly
     options#Recompute = false; -- at this point the correct SAGBIBasis must have been supplied so the option is reset
     options#"variableName" = "p"; -- S#"options"#"variableName";
