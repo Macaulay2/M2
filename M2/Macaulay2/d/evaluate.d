@@ -782,7 +782,13 @@ export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr := (
 	  recursionDepth = recursionDepth + 1;
 	  v := evalSequence(cs);
 	  recursionDepth = recursionDepth - 1;
-	  if evalSequenceHadError then evalSequenceErrorMessage else applyFCS(c,v)
+	  if evalSequenceHadError 
+	  then (
+	       tmp := evalSequenceErrorMessage;
+	       evalSequenceHadError = false;
+	       evalSequenceErrorMessage = nullE;
+	       tmp)
+	  else applyFCS(c,v)
 	  )
      else if desc.numparms != length(cs)
      then WrongNumArgs(model.arrow,desc.numparms,length(cs))
@@ -1421,20 +1427,44 @@ export evalraw(c:Code):Expr := (
 	  is v:sequenceCode do (
 	       if length(v.x) == 0 then return emptySequence;
 	       r := evalSequence(v.x);
-	       if evalSequenceHadError then evalSequenceErrorMessage else Expr(r)) -- speed up
+	       if evalSequenceHadError 
+	       then (
+	       	    tmp := evalSequenceErrorMessage;
+	       	    evalSequenceHadError = false;
+	       	    evalSequenceErrorMessage = nullE;
+	       	    tmp)
+	       else Expr(r))
 	  is v:listCode do (
 	       if length(v.y) == 0 then return emptyList;
 	       r := evalSequence(v.y);
-	       if evalSequenceHadError then evalSequenceErrorMessage else list(r))
+	       if evalSequenceHadError 
+	       then (
+	       	    tmp := evalSequenceErrorMessage;
+	       	    evalSequenceHadError = false;
+	       	    evalSequenceErrorMessage = nullE;
+	       	    tmp)
+	       else list(r))
 	  is v:arrayCode do (
 	       if length(v.z) == 0 then return emptyArray;
 	       r := evalSequence(v.z);
-	       if evalSequenceHadError then evalSequenceErrorMessage else Array(r)
+	       if evalSequenceHadError 
+	       then (
+	       	    tmp := evalSequenceErrorMessage;
+	       	    evalSequenceHadError = false;
+	       	    evalSequenceErrorMessage = nullE;
+	       	    tmp)
+	       else Array(r)
 	       )
 	  is v:angleBarListCode do (
 	       if length(v.t) == 0 then return emptyAngleBarList;
 	       r := evalSequence(v.t);
-	       if evalSequenceHadError then evalSequenceErrorMessage else AngleBarList(r)
+	       if evalSequenceHadError 
+	       then (
+	       	    tmp := evalSequenceErrorMessage;
+	       	    evalSequenceHadError = false;
+	       	    evalSequenceErrorMessage = nullE;
+	       	    tmp)
+	       else AngleBarList(r)
 	       ));
      when e is Error do handleError(c,e) else e);
 
