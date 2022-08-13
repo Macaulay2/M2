@@ -14,3 +14,6 @@ expectedCode =  "--" | toAbsolutePath testpkg |
 	":4: location of test code" | newline | "assert Equation(1 + 1, 2)"
 assert Equation(code pkgtest, expectedCode)
 assert Equation(code 0, expectedCode)
+
+
+assert( (for i from 1 to 2 list { for j from 1 to 2 do { if j == 2 then break 444; } }) === {{444}, {444}} ) -- see issue #2522
