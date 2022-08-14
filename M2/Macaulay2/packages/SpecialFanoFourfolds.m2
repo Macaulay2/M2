@@ -12,9 +12,9 @@ if version#"VERSION" < "1.20" then error "this package requires Macaulay2 versio
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.6", 
-    Date => "August 9, 2022",
+    Date => "August 13, 2022",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
-    Headline => "special cubic fourfolds and special Gushel-Mukai fourfolds",
+    Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
     PackageImports => {"PrimaryDecomposition"},
     PackageExports => {"MultiprojectiveVarieties"},
@@ -42,7 +42,6 @@ export{
    "CongruenceOfCurves",
    "detectCongruence",
    "ambientFivefold",
-   "grassmannianHull",
    "surface",
    "NumNodes",
    "InputCheck",
@@ -55,7 +54,8 @@ export{
    "mirrorFourfold",
    "Singular",
    "associatedK3surface",
-   "associatedCastelnuovoSurface",   
+   "associatedCastelnuovoSurface",
+   "building",
    "trisecantFlop",
    "GMtables",
    "fanoFourfold",
@@ -505,10 +505,20 @@ toExternalString HodgeSpecialFourfold := X -> (
     if codim ambientFivefold X == 0 then s = s|"V := ambient S;"|newline else s = s|"V := projectiveVariety "|toString sub(ideal ambientFivefold X,vars R)|";"|newline;
     s = s|"X := projectiveVariety "|toString sub(ideal X,vars R)|";"|newline;
     if instance(X,SpecialCubicFourfold) 
-    then s = s|"X = specialFourfold(S,X,NumNodes=>"|toString(numberNodes surface X)|");"|newline else
+    then s = s|"X = specialFourfold(S,X,NumNodes=>"|toString(numberNodes surface X)|",InputCheck=>0);"|newline else
     if instance(X,SpecialGushelMukaiFourfold) 
-    then s = s|"X = specialFourfold(S,X);"|newline|///X.cache#"AmbientFivefold" = V;///|newline else
-    s = s|"X = specialFourfold(S,X,V);"|newline;
+    then s = s|"X = specialFourfold(S,X,InputCheck=>0);"|newline|///X.cache#"AmbientFivefold" = V;///|newline else
+    s = s|"X = specialFourfold(S,X,V,InputCheck=>0);"|newline;
+    if (surface X).cache#?"euler" then s = s|///(surface X).cache#"euler" = ///|toString(euler surface X)|";"|newline;
+    if (surface X).cache#?"FiniteNumberOfNodes" then s = s|///(surface X).cache#"FiniteNumberOfNodes" = ///|toString(numberNodes surface X)|";"|newline;
+    N := numgens target map X -1;
+    if N >= 6 and (map X)#"idealImage" =!= null then (
+        z := local z; Z := K[z_0..z_N]; 
+        phi := sub(map X,R,Z);
+        s = s|"z := local z; Z := "|toExternalString(K)|"[z_0..z_"|toString(N)|"];"|newline;
+        s = s|///(surface X).cache#("AssociatedMapFromFivefold",ambientFivefold X) = rationalMap(ring V,Z,///|(toString entries phi)|");"|newline;
+        s = s|"forceImage(map X,"|(toString image phi)|");"|newline;
+    );
     if (surface X).cache#?("fanoMap",ambientFivefold X) then (
         mu := fanoMap X;
         m := numgens ambient target mu -1;
@@ -1134,9 +1144,6 @@ cycleClass SpecialGushelMukaiFourfold := X -> (
     X.cache#(surface X,"classSurfaceInG14") = (cS,ab)
 );
 
-grassmannianHull = method();
-grassmannianHull SpecialGushelMukaiFourfold := X -> ambientFivefold X;
-
 map SpecialGushelMukaiFourfold := o -> X -> associatedMapFromFivefold X;
 
 recognizeGMFourfold = X -> ( 
@@ -1397,7 +1404,7 @@ imageOfFanoMap (HodgeSpecialFourfold,RationalMap) := o -> (X,mu) -> (
     if M <= 3 then error "Fano map not valid";
     if mu#"idealImage" =!= null then return image mu;
     if o.Verbose then <<"-- computing/forcing image of map to PP^"<<M<<endl;
-    if member(recognize X,{"quarticScrollSurface", "6NodalOcticSrollC38", 6}) 
+    if member(recognize X,{"quarticScrollSurface", 6}) 
     then forceImage(mu,image(2,mu))
     else if recognize X === "october2021-26''" 
     then interpolateImage(mu,{2},2,Verbose=>o.Verbose)
@@ -1407,12 +1414,14 @@ imageOfFanoMap (HodgeSpecialFourfold,RationalMap) := o -> (X,mu) -> (
     then interpolateImage(mu,{2,2,2},2,Verbose=>o.Verbose)
     else if M == 4 
     then forceImage(mu,ideal(0_(target mu)))
+    else if M == 5 
+    then (try interpolateImage(mu,{2},2,Verbose=>o.Verbose) else try interpolateImage(mu,{3},3,Verbose=>o.Verbose))
     else if M == 6 
-    then interpolateImage(mu,{2,2},2,Verbose=>o.Verbose)
+    then (try interpolateImage(mu,{2,2},2,Verbose=>o.Verbose))
     else if M == 7 
-    then interpolateImage(mu,{2,2,2,2,2},2,Verbose=>o.Verbose)
+    then (try interpolateImage(mu,{2,2,2,2,2},2,Verbose=>o.Verbose) else try interpolateImage(mu,{2,2,2},2,Verbose=>o.Verbose))
     else if member(M,{8,9,10,11,12})
-    then interpolateImage(mu,toList(binomial(M-4,2) : 2),2,Verbose=>o.Verbose);
+    then (try interpolateImage(mu,toList(binomial(M-4,2) : 2),2,Verbose=>o.Verbose));
     if mu#"idealImage" =!= null then (
         if dim image mu != 5 then error "something went wrong; the image of the Fano map is not of dimension 4";
         return image mu;
@@ -1645,6 +1654,13 @@ map CongruenceOfCurves := o -> f -> (
     multirationalMap mu
 );
 
+check (ZZ,CongruenceOfCurves) := o -> (n,f) -> (
+    X := f#"fourfold";
+    try for i to n-1 do f(point ambientFivefold X) else error "the congruence of curves is not valid";
+    f
+);
+check CongruenceOfCurves := o -> f -> check(5,f);
+
 ------------------------------------------------------------------------
 --------------------------- Discriminants ------------------------------
 ------------------------------------------------------------------------
@@ -1825,6 +1841,44 @@ exceptionalCurves HodgeSpecialFourfold := o -> X -> (
     U.cache#"exceptionalCurves" = (L%U,C%U)
 );
 
+SurfaceAssociatedToRationalFourfold = new Type of EmbeddedProjectiveVariety;
+
+globalAssignment SurfaceAssociatedToRationalFourfold;
+
+SurfaceAssociatedToRationalFourfold.synonym = "surface associated to rational fourfold";
+
+expression SurfaceAssociatedToRationalFourfold := U -> (
+    X := U.cache#"Hodge-special fourfold";
+    (S,F) := if instance(X,SpecialCubicFourfold)
+             then ("K3 surface","cubic fourfold")
+             else if instance(X,SpecialGushelMukaiFourfold)
+             then ("K3 surface","GM fourfold")
+             else if instance(X,IntersectionOfThreeQuadricsInP7)
+             then ("Castelnuovo surface","complete intersection of 3 quadrics in PP^7")
+             else ("surface","fourfold");
+    if dim U == -1 then S = "not-fully-calculated "|S;
+    A := if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else (F|" of discriminant "|toString(discriminant X));
+    expression(S|" associated to "|A)
+);
+
+net SurfaceAssociatedToRationalFourfold := U -> (
+    if hasAttribute(U,ReverseDictionary) then return toString getAttribute(U,ReverseDictionary);
+    if dim U >= 0 then return ? U;
+    "-* some calculations are missing *-"
+);
+
+makeSurfaceAssociated = (X,mu,U,C,f) -> (
+    assert(instance(X,HodgeSpecialFourfold) and instance(mu,MultirationalMap) and instance(U,EmbeddedProjectiveVariety) and instance(C,List) and (instance(f,Nothing) or instance(f,MultirationalMap)));
+    S := if f =!= null then image f else projectiveVariety((coefficientRing X)[],Saturate=>false);
+    S = new SurfaceAssociatedToRationalFourfold from S;
+    S.cache#"construction of SurfaceAssociatedToRationalFourfold" = (mu,U,C,f);
+    S.cache#"Hodge-special fourfold" = X;
+    return S;
+);
+
+building = method();
+building SurfaceAssociatedToRationalFourfold := S -> S.cache#"construction of SurfaceAssociatedToRationalFourfold";
+
 associatedK3surface = method(Options => {Verbose => false, Strategy => null, Singular => null});
 associatedK3surface SpecialGushelMukaiFourfold := associatedK3surface SpecialCubicFourfold := o -> X -> (
     if (not X.cache#?(surface X,"label")) and o.Verbose then <<"-- trying to recognize the fourfold"<<endl;
@@ -1833,8 +1887,8 @@ associatedK3surface SpecialGushelMukaiFourfold := associatedK3surface SpecialCub
     fanoMap(X,Singular=>o.Singular,Verbose=>o.Verbose);
     (L,C) := exceptionalCurves(X,Verbose=>o.Verbose,Strategy=>o.Strategy);
     U := ambientVariety L;
-    mu := multirationalMap super fanoMap X;
-    if U.cache#?"MapToMinimalK3Surface" then return (mu,U,{L,C},U.cache#"MapToMinimalK3Surface");
+    mu := multirationalMap fanoMap X;
+    if U.cache#?"MapToMinimalK3Surface" then return makeSurfaceAssociated(X,mu,U,{L,C},U.cache#"MapToMinimalK3Surface");
     genK3 := lift((discriminant(X)+2)/2,ZZ);
     f := null; H := random(1,0_U); local normU;
     if member(recognize X,{"NotRecognized", "october2021-34'", "october2021-20"}) then (
@@ -1883,7 +1937,7 @@ associatedK3surface SpecialGushelMukaiFourfold := associatedK3surface SpecialCub
         if degrees image f =!= {({2},binomial(genK3-2,2))} then error "the degrees for the generators of the ideal of the K3 surface are not as expected";
         U.cache#"MapToMinimalK3Surface" = f;
     );
-    return (mu,U,{L,C},f);
+    return makeSurfaceAssociated(X,mu,U,{L,C},f);
 );
 
 associatedCastelnuovoSurface = method(Options => {Verbose => false, Strategy => null, Singular => null});
@@ -1894,8 +1948,8 @@ associatedCastelnuovoSurface IntersectionOfThreeQuadricsInP7 := o -> X -> (
     fanoMap(X,Singular=>o.Singular,Verbose=>o.Verbose);
     (L,C) := exceptionalCurves(X,Verbose=>o.Verbose,Strategy=>o.Strategy);
     U := ambientVariety L;
-    mu := multirationalMap super fanoMap X;
-    if U.cache#?"MapToMinimalK3Surface" then return (mu,U,{L,C},U.cache#"MapToMinimalK3Surface"); -- inappropriate key name
+    mu := multirationalMap fanoMap X;
+    if U.cache#?"MapToMinimalK3Surface" then return makeSurfaceAssociated(X,mu,U,{L,C},U.cache#"MapToMinimalK3Surface"); -- inappropriate key name
     f := null; H := random(1,0_U);
     if member(recognize X,{"NotRecognized", "surf-5-10-1", "surf-7-1-9"}) then (
         if o.Verbose then <<"-- skipping computation of the map f from U to the minimal Castelnuovo surface"<<endl;
@@ -1909,10 +1963,10 @@ associatedCastelnuovoSurface IntersectionOfThreeQuadricsInP7 := o -> X -> (
     if f =!= null then (
          U.cache#"MapToMinimalK3Surface" = f;
     );
-    return (mu,U,{L,C},f);
+    return makeSurfaceAssociated(X,mu,U,{L,C},f);
 );
 
-mirrorFourfold = method(Options => {Verbose => false, Strategy => null, Singular => null});
+mirrorFourfold = method(TypicalValue => HodgeSpecialFourfold, Options => {Verbose => false, Strategy => null, Singular => null});
 mirrorFourfold SpecialCubicFourfold := mirrorFourfold SpecialGushelMukaiFourfold := mirrorFourfold IntersectionOfThreeQuadricsInP7 := o -> X -> (
     if X.cache#?(surface X,"associatedFourfold") then return X.cache#(surface X,"associatedFourfold");
     if o.Verbose then <<"-- computing the Fano map"<<endl;
@@ -2828,7 +2882,7 @@ specialGushelMukaiFourfold (Array,Array) := o -> (a,b) -> specialGushelMukaiFour
 beginDocumentation() 
 
 document {Key => SpecialFanoFourfolds, 
-Headline => "A package for working with special cubic fourfolds and special Gushel-Mukai fourfolds",
+Headline => "A package for working with Hodge-special fourfolds",
 PARA {"This package contains several tools related to the rationality problem for cubic fourfolds, Gushel-Mukai fourfolds, and some other special Fano fourfolds. See ",HREF{"https://arxiv.org/abs/2204.11518","arXiv:2204.11518"}," for some applications."},
 PARA {"The following are some references that have benefited from this package."},
 References => UL{
@@ -2871,7 +2925,10 @@ typicalValues#discriminant = typValDisc;
 
 undocumented{(expression, SpecialGushelMukaiFourfold), (describe, SpecialGushelMukaiFourfold)} 
 
-document {Key => {specialGushelMukaiFourfold, (specialGushelMukaiFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (specialGushelMukaiFourfold, Ideal, Ideal), [specialGushelMukaiFourfold, InputCheck], [specialGushelMukaiFourfold, Verbose]}, 
+document {Key => {Verbose, [specialCubicFourfold, Verbose], [specialGushelMukaiFourfold, Verbose], [mirrorFourfold, Verbose], [specialFourfold, Verbose], [parameterCount, Verbose],  [associatedK3surface, Verbose], [detectCongruence, Verbose], [trisecantFlop, Verbose]}, 
+Headline => "request verbose feedback"}
+
+document {Key => {specialGushelMukaiFourfold, (specialGushelMukaiFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (specialGushelMukaiFourfold, Ideal, Ideal), [specialGushelMukaiFourfold, InputCheck]}, 
 Headline => "make a special Gushel-Mukai fourfold", 
 Usage => "specialGushelMukaiFourfold(S,X)", 
 Inputs => {"S" => EmbeddedProjectiveVariety => {"a smooth irreducible surface ", TEX///$S\subset\mathbb{P}^8$///}, "X" => EmbeddedProjectiveVariety => {"a smooth prime Fano fourfold ", TEX///$X\subset \mathbb{P}^8$///, " of degree 10 and sectional genus 6, which contains the surface ", TEX///$S$///}}, 
@@ -2933,7 +2990,7 @@ SeeAlso => {(specialGushelMukaiFourfold,String,Ring),(specialGushelMukaiFourfold
 
 undocumented {(GMtables, Ring, String), (GMtables,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety,EmbeddedProjectiveVariety)}; 
 
-document {Key => {parameterCount, (parameterCount, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (parameterCount, HodgeSpecialFourfold), [parameterCount, Verbose]}, 
+document {Key => {parameterCount, (parameterCount, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (parameterCount, HodgeSpecialFourfold)}, 
 Headline => "count of parameters",
 Usage => "parameterCount(S,X)", 
 Inputs => {"S" => EmbeddedProjectiveVariety, "X" => EmbeddedProjectiveVariety => {"such that ", TEX///$S\subseteq X$///}}, 
@@ -3015,7 +3072,7 @@ SeeAlso => {(symbol SPACE, CongruenceOfCurves, EmbeddedProjectiveVariety)}}
 
 undocumented{(toString, CongruenceOfCurves), (net, CongruenceOfCurves)} 
 
-document {Key => {detectCongruence, (detectCongruence, HodgeSpecialFourfold, ZZ), (detectCongruence, HodgeSpecialFourfold),  [detectCongruence, Verbose]}, 
+document {Key => {detectCongruence, (detectCongruence, HodgeSpecialFourfold, ZZ), (detectCongruence, HodgeSpecialFourfold)}, 
 Headline => "detect and return a congruence of secant curves to a surface", 
 PARA{"See ",TO (detectCongruence, SpecialCubicFourfold)," and ",TO (detectCongruence, SpecialGushelMukaiFourfold),"."}} 
 
@@ -3032,7 +3089,7 @@ Headline => "detect and return a congruence of (2e-1)-secant curves of degree e 
 Usage => "detectCongruence X"|newline|"detectCongruence(X,e)", 
 Inputs => {"X" => SpecialGushelMukaiFourfold => {"containing a surface ", TEX///$S\subset Y$///,", where ",TEX///$Y$///," denotes the unique del Pezzo fivefold containing the fourfold ",TEX///$X$///}, "e" => ZZ => {"a positive integer (optional but recommended)"}}, 
 Outputs => {CongruenceOfCurves => {"that is a function which takes a (general) point ", TEX///$p\in Y$///, " and returns the unique rational curve of degree ", TEX///$e$///, ", ", TEX///$(2e-1)$///, "-secant to ", TEX///$S$///, ", contained in ",TEX///$Y$///," and passing through ", TEX///$p$///, " (an error is thrown if such a curve does not exist or is not unique)"}}, 
-EXAMPLE{"-- A GM fourfold of discriminant 20"|newline|"X = specialGushelMukaiFourfold(\"17\",ZZ/33331);", "describe X", "time f = detectCongruence(X,Verbose=>true);", "Y = grassmannianHull X; -- del Pezzo fivefold containing X", "p := point Y -- random point on Y", "time C = f p; -- 3-secant conic to the surface", "S = surface X;", "assert(dim C == 1 and degree C == 2 and dim(C*S) == 0 and degree(C*S) == 3 and isSubset(p,C) and isSubset(C,Y))"}, 
+EXAMPLE{"-- A GM fourfold of discriminant 20"|newline|"X = specialGushelMukaiFourfold(\"17\",ZZ/33331);", "describe X", "time f = detectCongruence(X,Verbose=>true);", "Y = ambientFivefold X; -- del Pezzo fivefold containing X", "p := point Y -- random point on Y", "time C = f p; -- 3-secant conic to the surface", "S = surface X;", "assert(dim C == 1 and degree C == 2 and dim(C*S) == 0 and degree(C*S) == 3 and isSubset(p,C) and isSubset(C,Y))"}, 
 SeeAlso => {(detectCongruence, SpecialCubicFourfold, ZZ), coneOfLines}} 
 
 document {Key => {SpecialCubicFourfold}, 
@@ -3045,7 +3102,7 @@ undocumented{(expression, SpecialCubicFourfold), (describe, SpecialCubicFourfold
 
 undocumented{InputCheck, NumNodes}
 
-document {Key => {specialCubicFourfold, (specialCubicFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (specialCubicFourfold, Ideal, Ideal), (specialCubicFourfold, Ideal, RingElement), [specialCubicFourfold, NumNodes], [specialCubicFourfold, InputCheck], [specialCubicFourfold, Verbose]}, 
+document {Key => {specialCubicFourfold, (specialCubicFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (specialCubicFourfold, Ideal, Ideal), (specialCubicFourfold, Ideal, RingElement), [specialCubicFourfold, NumNodes], [specialCubicFourfold, InputCheck]}, 
 Headline => "make a special cubic fourfold", 
 Usage => "specialCubicFourfold(S,X)"|newline|"specialCubicFourfold(S,X,NumNodes=>n)", 
 Inputs => {"S" => EmbeddedProjectiveVariety => {"an irreducible surface ", TEX///$S\subset\mathbb{P}^5$///, ", which has as singularities only a finite number ",TEX///$n\geq 0$///," of non-normal nodes (this number ",TEX///$n$///," should be passed with the option ", TT "NumNodes",", otherwise it is obtained using a probabilistic method)"}, "X" => EmbeddedProjectiveVariety => {"a smooth cubic fourfold ", TEX///$X\subset \mathbb{P}^5$///, " containing the surface ", TEX///$S$///}}, 
@@ -3071,15 +3128,17 @@ Outputs => {SpecialCubicFourfold => {"a random special cubic fourfold of the ind
 EXAMPLE {"X = specialCubicFourfold(\"3-nodal septic scroll\",ZZ/65521);", "describe X"},
 SeeAlso => (specialCubicFourfold, EmbeddedProjectiveVariety)}
 
-document {Key => {grassmannianHull, (grassmannianHull, SpecialGushelMukaiFourfold), ambientFivefold, (ambientFivefold, HodgeSpecialFourfold)}, 
-Headline => "grassmannian hull of a Gushel-Mukai fourfold", 
-Usage => "grassmannianHull X"|newline|"ambientFivefold X", 
-Inputs => {"X" => SpecialGushelMukaiFourfold}, 
-Outputs => {EmbeddedProjectiveVariety => {"a fivefold ",TEX///$Y\subset\mathbb{P}^8$///," of degree 5 such that ",TEX///$X\subset Y$///," is a quadric section (the fourfold ",TEX///$X$///," is of ordinary type if and only if ",TEX///$Y$///," is smooth)"}},
+document {Key => {ambientFivefold, (ambientFivefold, HodgeSpecialFourfold)}, 
+Headline => "get the ambient fivefold of the Hodge-special fourfold", 
+Usage => "ambientFivefold X", 
+Inputs => {"X" => HodgeSpecialFourfold}, 
+Outputs => {EmbeddedProjectiveVariety => {"the ambient fivefold of ",TT"X"}},
+EXAMPLE {"S = surface {4,5,1};", "V = random(3,S);", "X = V * random(2,S);", "F = specialFourfold(S,X,V);", "ambientFivefold F"},
+PARA {"When ",TEX///$X$///," is a ",TO2{SpecialGushelMukaiFourfold,"GM fourfold"},", the ambient fivefold of ",TEX///$X$///," is a fivefold ",TEX///$Y\subset\mathbb{P}^8$///," of degree 5 such that ",TEX///$X\subset Y$///," is a quadric hypersurface. We have that the fourfold ",TEX///$X$///," is of ordinary type if and only if ",TEX///$Y$///," is smooth."},
 EXAMPLE {
-"X = specialGushelMukaiFourfold(\"21\",ZZ/33331);",
+"X = specialFourfold(\"21\",ZZ/33331);",
 "describe X",
-"Y = grassmannianHull X;",
+"Y = ambientFivefold X;",
 "isSubset(X,Y)",
 "Y!"}}
 
@@ -3100,7 +3159,8 @@ Headline => "get the special surface contained in the fourfold",
 Usage => "surface X", 
 Inputs => {"X" => HodgeSpecialFourfold}, 
 Outputs => {EmbeddedProjectiveVariety => {"the special surface contained in the fourfold ",TT"X"}}, 
-EXAMPLE {"X = specialFourfold \"quintic del Pezzo surface\";", "S = surface X;", "assert isSubset(S,X)"}} 
+EXAMPLE {"X = specialFourfold \"quintic del Pezzo surface\";", "V = ambientFivefold X;", "S = surface X;", "assert isSubset(S,X)"},
+SeeAlso => {(surface,List)}} 
 
 document { 
 Key => {(surface, List), (surface, VisibleList, Ring), (surface, VisibleList, Option), (surface, VisibleList, Option), (surface, VisibleList, Ring, Option), (surface, VisibleList, Option, Option), (surface, VisibleList, Ring, Option, Option)},
@@ -3145,28 +3205,30 @@ Headline => "try to deform to a fourfold of Gushel type",
 Usage => "< X", 
 Inputs => {"X" => SpecialGushelMukaiFourfold => {"a fourfold of ordinary type"}}, 
 Outputs => {SpecialGushelMukaiFourfold => {"a fourfold of Gushel type, a deformation of ",TT"X"}}, 
-EXAMPLE {"X = specialGushelMukaiFourfold \"quintic del Pezzo surface\";", "singularLocus grassmannianHull X", "time X' = < X;", "decompose singularLocus grassmannianHull X'"}} 
+EXAMPLE {"X = specialGushelMukaiFourfold \"quintic del Pezzo surface\";", "singularLocus ambientFivefold X", "X' = < X;", "support singularLocus ambientFivefold X'"}} 
 
-document {Key => {associatedK3surface, [associatedK3surface, Verbose], [associatedK3surface, Strategy]}, 
+document {Key => {associatedK3surface, [associatedK3surface, Strategy], building}, 
 Headline => "associated K3 surface to a rational fourfold", 
 PARA{"See ",TO (associatedK3surface, SpecialCubicFourfold)," and ",TO (associatedK3surface, SpecialGushelMukaiFourfold),"."}} 
 
 document {Key => {(associatedK3surface, SpecialCubicFourfold)}, 
 Headline => "associated K3 surface to a rational cubic fourfold", 
-Usage => "associatedK3surface X", 
-Inputs => {"X" => SpecialCubicFourfold => {"containing a surface ", TEX///$S\subset\mathbb{P}^5$///," that admits a congruence of ",TEX///$(3e-1)$///,"-secant curves of degree ",TEX///$e$///}}, 
-Outputs => {{"the dominant ",TO2{MultirationalMap,"rational map"}," ",TEX///$\mu:\mathbb{P}^5 \dashrightarrow W$///," defined by the linear system of hypersurfaces of degree ",TEX///$3e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{EmbeddedProjectiveVariety,"surface"}," ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\mu$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{MultirationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to a minimal K3 surface, the associated K3 surface to ",TEX///$X$///,"."}},
-PARA {"Thus, the code ",TT "image last associatedK3surface X"," gives the (minimal) associated K3 surface to ",TT"X",". For more details and notation, see the papers ",HREF{"https://arxiv.org/abs/1909.01263","Trisecant Flops, their associated K3 surfaces and the rationality of some Fano fourfolds"}," and ",HREF{"https://arxiv.org/abs/2204.11518","Explicit computations with cubic fourfolds, Gushel-Mukai fourfolds, and their associated K3 surfaces"},"."},
-EXAMPLE {"X = specialCubicFourfold \"quartic scroll\";", "describe X", "time (mu,U,C,f) = associatedK3surface(X,Verbose=>true);", "? mu", "? U", "last C", "image f"},
+Usage => "U' = associatedK3surface X", 
+Inputs => {"X" => SpecialCubicFourfold => {"containing a surface ", TEX///$S\subset\mathbb{P}^5$///," that admits a ",TO2{CongruenceOfCurves,"congruence"}," of ",TEX///$(3e-1)$///,"-secant curves of degree ",TEX///$e$///}}, 
+Outputs => {"U'" => {"the (minimal) K3 surface associated to ",TEX///$X$///}},
+Consequences => {{{TT"building U'"," will return the following four objects:"}, UL{{"the dominant ",TO2{MultirationalMap,"rational map"}," ",TEX///$\mu:\mathbb{P}^5 \dashrightarrow W$///," defined by the linear system of hypersurfaces of degree ",TEX///$3e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{EmbeddedProjectiveVariety,"surface"}," ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\mu$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{MultirationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to the minimal K3 surface ",TEX///$U'$///,"."}}}},
+PARA {"For more details and notation, see the papers ",HREF{"https://arxiv.org/abs/1909.01263","Trisecant Flops, their associated K3 surfaces and the rationality of some Fano fourfolds"}," and ",HREF{"https://arxiv.org/abs/2204.11518","Explicit computations with cubic fourfolds, Gushel-Mukai fourfolds, and their associated K3 surfaces"},"."},
+EXAMPLE {"X = specialCubicFourfold \"quartic scroll\";", "describe X", "time U' = associatedK3surface X;", "(mu,U,C,f) = building U';", "? mu", "? U", "last C", "assert(image f == U')"},
 SeeAlso => {(associatedK3surface, SpecialGushelMukaiFourfold), detectCongruence, mirrorFourfold}} 
 
 document {Key => {(associatedK3surface, SpecialGushelMukaiFourfold)}, 
 Headline => "associated K3 surface to a rational Gushel-Mukai fourfold", 
-Usage => "associatedK3surface X", 
-Inputs => {"X" => SpecialGushelMukaiFourfold => {"containing a surface ", TEX///$S\subset Y$///," that admits a congruence of ",TEX///$(2e-1)$///,"-secant curves of degree ",TEX///$e$///," inside the unique del Pezzo fivefold ",TEX///$Y$///," containing the fourfold ",TEX///$X$///}}, 
-Outputs => {{"the dominant ",TO2{MultirationalMap,"rational map"}," ",TEX///$\mu:Y\dashrightarrow W$///," defined by the linear system of hypersurfaces of degree ",TEX///$2e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{EmbeddedProjectiveVariety,"surface"}," ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\mu$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{MultirationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to a minimal K3 surface, the associated K3 surface to ",TEX///$X$///,"."}},
-PARA {"Thus, the code ",TT "image last associatedK3surface X"," gives the (minimal) associated K3 surface to ",TT"X",". For more details and notation, see the paper ",HREF{"https://arxiv.org/abs/2204.11518","Explicit computations with cubic fourfolds, Gushel-Mukai fourfolds, and their associated K3 surfaces"},"."},
-EXAMPLE {"X = specialGushelMukaiFourfold \"tau-quadric\";", "describe X", "time (mu,U,C,f) = associatedK3surface X;", "? mu", "? U", "first C -- two disjoint lines", "image f"},
+Usage => "U' = associatedK3surface X", 
+Inputs => {"X" => SpecialGushelMukaiFourfold => {"containing a surface ", TEX///$S\subset Y$///," that admits a ",TO2{CongruenceOfCurves,"congruence"}," of ",TEX///$(2e-1)$///,"-secant curves of degree ",TEX///$e$///," inside the ",TO2{ambientFivefold,"ambient fivefold"}," ",TEX///$Y$///," of the fourfold ",TEX///$X$///}}, 
+Outputs => {"U'" => {"the (minimal) K3 surface associated to ",TEX///$X$///}},
+Consequences => {{{TT"building U'"," will return the following four objects:"}, UL{{"the dominant ",TO2{MultirationalMap,"rational map"}," ",TEX///$\mu:Y\dashrightarrow W$///," defined by the linear system of hypersurfaces of degree ",TEX///$2e-1$///," having points of multiplicity ",TEX///$e$///," along ",TEX///$S$///,";"}, {"the ",TO2{EmbeddedProjectiveVariety,"surface"}," ",TEX///$U\subset W$///," determining the inverse map of the restriction of ",TEX///$\mu$///," to ",TEX///$X$///,";"}, {"the ",TO2{List,"list"}," of the exceptional curves on the surface ",TEX///$U$///,";"}, {"a ",TO2{MultirationalMap,"rational map"}," of degree 1 from the surface ",TEX///$U$///," to the minimal K3 surface ",TEX///$U'$///,"."}}}},
+PARA {"For more details and notation, see the paper ",HREF{"https://arxiv.org/abs/2204.11518","Explicit computations with cubic fourfolds, Gushel-Mukai fourfolds, and their associated K3 surfaces"},"."},
+EXAMPLE {"X = specialGushelMukaiFourfold \"tau-quadric\";", "describe X", "time U' = associatedK3surface X;", "(mu,U,C,f) = building U';", "? mu", "? U", "first C -- two disjoint lines", "assert(image f == U')"},
 SeeAlso => {(associatedK3surface, SpecialCubicFourfold), detectCongruence, mirrorFourfold}} 
 
 document {Key => {parametrizeFanoFourfold, (parametrizeFanoFourfold, EmbeddedProjectiveVariety), [parametrizeFanoFourfold,Strategy]}, 
@@ -3198,7 +3260,7 @@ PARA{"This function is only useful for testing."},
 EXAMPLE {"X = specialFourfold \"quartic scroll\"", "X' = clean X", "X === X'"}}
 
 document {
-Key => {trisecantFlop,[trisecantFlop,Verbose]}, 
+Key => {trisecantFlop}, 
 Headline => "examples of trisecant flops", 
 Usage => "trisecantFlop i", 
 Inputs => {"i" => ZZ => {"an integer between 0 and 17"}},
@@ -3231,10 +3293,10 @@ assert(C == S * B)///,
 References => UL{{"G. S., ",EM"Explicit computations with cubic fourfolds, Gushel-Mukai fourfolds, and their associated K3 surfaces",", available at ",HREF{"https://arxiv.org/abs/2204.11518","arXiv:2204.11518"}," (2022)."}},
 SeeAlso => {(surface,VisibleList,Ring), GMtables}}
 
-document {Key => {specialFourfold, (specialFourfold, EmbeddedProjectiveVariety), (specialFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (specialFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (specialFourfold, Ideal), (specialFourfold, Ideal, Ideal), (specialFourfold, Ideal, RingElement), (specialFourfold, String), (specialFourfold, String, Ring), [specialFourfold, NumNodes], [specialFourfold, InputCheck], [specialFourfold, Verbose]}, 
+document {Key => {specialFourfold, (specialFourfold, EmbeddedProjectiveVariety), (specialFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (specialFourfold, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety, EmbeddedProjectiveVariety), (specialFourfold, Ideal), (specialFourfold, Ideal, Ideal), (specialFourfold, Ideal, RingElement), (specialFourfold, String), (specialFourfold, String, Ring), [specialFourfold, NumNodes], [specialFourfold, InputCheck]}, 
 Headline => "make a Hodge-special fourfold", 
-Usage => "specialFourfold(S,X)"|newline|"specialFourfold S", 
-Inputs => {"S" => EmbeddedProjectiveVariety => {"an irreducible surface"}, "X" => EmbeddedProjectiveVariety => {"a smooth fourfold ", TEX///$X$///, " containing the surface ", TEX///$S$///}}, 
+Usage => "specialFourfold(S,X,V)"|newline|"specialFourfold(S,X)"|newline|"specialFourfold S", 
+Inputs => {"S" => EmbeddedProjectiveVariety => {"an irreducible ",TO2{(surface,HodgeSpecialFourfold),"surface"}}, "X" => EmbeddedProjectiveVariety => {"a smooth fourfold ", TEX///$X$///, " containing the surface ", TEX///$S$///}, "V" => EmbeddedProjectiveVariety => {"optional, a ",TO2{ambientFivefold,"fivefold"}," where ",TT"X"," is a hypersurface"}}, 
 Outputs => {HodgeSpecialFourfold => {"which corresponds to the pair ", TEX///$(S,X)$///}}, 
 PARA{"This can also be used as a shortcut for both ",TO specialCubicFourfold," and ",TO specialGushelMukaiFourfold,"."},
 EXAMPLE {"S = surface {3,4};", "X = specialFourfold S -- a random cubic fourfold through S", "describe X", "Y = specialFourfold \"tau-quadric\" -- a random GM fourfold through a tau-quadric", "describe Y", "T = surface {3,2};", "Z = specialFourfold T -- a random c. i. of 3 quadrics through T", "describe Z"},
@@ -3247,13 +3309,13 @@ Usage => "Singular => true/false",
 PARA{"This option allows you to transfer part of the computation to Singular."},
 SeeAlso => {associatedK3surface}} 
 
-document {Key => {mirrorFourfold, (mirrorFourfold, SpecialCubicFourfold), (mirrorFourfold, SpecialGushelMukaiFourfold), (mirrorFourfold, HodgeSpecialFourfold), [mirrorFourfold, Strategy], [mirrorFourfold, Verbose]}, 
+document {Key => {mirrorFourfold, (mirrorFourfold, SpecialCubicFourfold), (mirrorFourfold, SpecialGushelMukaiFourfold), (mirrorFourfold, HodgeSpecialFourfold), [mirrorFourfold, Strategy]}, 
 Headline => "associated fourfold to a rational cubic or GM fourfold", 
 Usage => "mirrorFourfold X", 
 Inputs => {"X" => SpecialCubicFourfold => {"or ", ofClass SpecialGushelMukaiFourfold}}, 
-Outputs => {EmbeddedProjectiveVariety => {"the fourfold ",TT"W"," containing the surface ",TT"U",", with the same notation as in the function ",TO associatedK3surface,"."}}, 
-EXAMPLE {"X = specialFourfold(PP_(ZZ/65521)[2,2]);", "W = mirrorFourfold X;", "U = surface W;", "mirrorFourfold W", "(associatedK3surface X)_1", "assert(oo === U)"},
-EXAMPLE {"X' = specialFourfold \"tau-quadric\";", "W' = mirrorFourfold X';", "U' = surface W';", "mirrorFourfold W'", "(associatedK3surface X')_1", "assert(oo === U')"},
+Outputs => {HodgeSpecialFourfold => {"the fourfold ",TT"W"," containing the surface ",TT"U",", with the same notation as in the function ",TO associatedK3surface,"."}}, 
+EXAMPLE {"X = specialFourfold(PP_(ZZ/65521)[2,2]);", "W = mirrorFourfold X;", "U = surface W;", "mirrorFourfold W", "(building associatedK3surface X)_1", "assert(oo === U)"},
+EXAMPLE {"X' = specialFourfold \"tau-quadric\";", "W' = mirrorFourfold X';", "U' = surface W';", "mirrorFourfold W'", "(building associatedK3surface X')_1", "assert(oo === U')"},
 SeeAlso => {associatedK3surface}} 
 
 document { 
@@ -3265,12 +3327,18 @@ Outputs => {String => {"a string representation of ",TT "X",", which can be used
 PARA{"Some of the internal data of the input ",TT"X"," are included in the returned string."},
 EXAMPLE {"describe (X = specialFourfold \"tau-quadric\")", "str = toExternalString X;", "describe (value str)"}}
 
-undocumented {associatedCastelnuovoSurface, [associatedCastelnuovoSurface, Singular], (expression, HodgeSpecialFourfold)}
+undocumented {associatedCastelnuovoSurface, [associatedCastelnuovoSurface, Singular], [associatedCastelnuovoSurface, Verbose], (expression, HodgeSpecialFourfold)}
 
 document {Key => {HodgeSpecialFourfold}, 
 Headline => "the class of all Hodge-special fourfolds", 
 PARA{"An object of the class ", TO HodgeSpecialFourfold, " is basically represented by a couple ", TEX///(S,X)///, ", where ", TEX///$X$///, " is a fourfold and ", TEX///$S$///, " is a surface contained in ", TEX///$X$///,". Such objects are created by the function ",TO specialFourfold,"."},
 SeeAlso => {specialFourfold, SpecialCubicFourfold, SpecialGushelMukaiFourfold}}
+
+document {Key => {(check, ZZ, CongruenceOfCurves), (check, CongruenceOfCurves)}, 
+Headline => "check that a congruence of curves is well-defined", 
+Usage => "check f"|newline|"check(n,f)",
+Inputs => {"n" => ZZ => {"(optional with default value 5)"}, "f" => CongruenceOfCurves},
+Outputs => {CongruenceOfCurves => {"the same object passed as input, but an error is thrown if the congruence fails when ",TO2{(symbol SPACE, CongruenceOfCurves, EmbeddedProjectiveVariety),"evaluated"}," on ",TT"n"," random points."}}}
 
 ------------------------------------------------------------------------
 ------------------------------- Tests ----------------------------------
@@ -3421,17 +3489,17 @@ assert(degree(g,Strategy=>"random point") == 1 and target g === Y and dim ambien
 ///
 
 TEST /// -- Test 6 (1/3) -- associated K3 surfaces
-f = last associatedK3surface(specialCubicFourfold "quartic scroll",Verbose=>true);
+f = last building associatedK3surface(specialCubicFourfold "quartic scroll",Verbose=>true);
 assert(f#"image" =!= null and dim image f == 2 and degree image f == 14 and dim target f == 8)
 ///
 
 TEST /// -- Test 7 (2/3) -- associated K3 surfaces
-g = last associatedK3surface(specialCubicFourfold "quintic del Pezzo surface",Verbose=>true);
+g = last building associatedK3surface(specialCubicFourfold "quintic del Pezzo surface",Verbose=>true);
 assert(g#"image" =!= null and dim image g == 2 and degree image g == 14 and dim target g == 8)
 ///
 
 TEST /// -- Test 8 (3/3) -- associated K3 surfaces
-associatedK3surface(specialGushelMukaiFourfold "tau-quadric",Verbose=>true);
+building associatedK3surface(specialGushelMukaiFourfold "tau-quadric",Verbose=>true);
 ///
 
 TEST /// -- Test 9 -- simple tests on schubertCycle
@@ -3516,5 +3584,10 @@ S = surface({3,1},NumNodes=>2);
 assert(dim S == 2 and degree S == 8 and dim ambient S == 6 and degrees S == {({2},5),({3},4)});
 T = image experimentalNormalizationInv S;
 assert(dim T == 2 and degree T == 8 and dim ambient T == 8 and degrees T == {({2},20)})
+///
+
+TEST /// -- Test 17
+S = associatedCastelnuovoSurface specialFourfold "plane in PP^7";
+assert((dim S,dim ambient S,degree S,sectionalGenus S,degrees S) == (2, 4, 9, 9, {({3}, 1), ({4}, 3)}))
 ///
 
