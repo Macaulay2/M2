@@ -693,7 +693,7 @@ lcmMRed List := (L) -> (
     )
 faceBuchberger = (m, L) -> (
 -- true iff the monomial m defines a face in the Buchberger complex.  if x has
--- a variable with index greather than #L-1, then this code produces an error
+-- a variable with index greater than #L-1, then this code produces an error
      x := rawIndices raw m;
      mon := lcmMRed(L_x);
      all(L, n -> mon//n == 0)
