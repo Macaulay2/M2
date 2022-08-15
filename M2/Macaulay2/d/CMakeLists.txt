@@ -147,6 +147,11 @@ add_library(M2-interpreter OBJECT ${CLIST} ${CXXLIST} ${TAGS}
 target_link_libraries(M2-interpreter PRIVATE M2-supervisor Boost::regex TBB::tbb
   $<$<BOOL:${WITH_FFI}>:FFI::ffi>)
 
+# TODO: c.f. https://github.com/Macaulay2/M2/issues/2682
+if(NOT APPLE)
+  target_link_libraries(M2-interpreter PRIVATE quadmath)
+endif()
+
 target_include_directories(M2-interpreter
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
