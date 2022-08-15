@@ -4,7 +4,7 @@ if version#"VERSION" < "1.18" then error "this package requires Macaulay2 versio
 newPackage(
     "K3Surfaces",
     Version => "1.1", 
-    Date => "August 8, 2022",
+    Date => "August 13, 2022",
     Authors => {{Name => "Michael Hoff", 
                  Email => "hahn@math.uni-sb.de"},
                 {Name => "Giovanni Staglianò", 
@@ -181,7 +181,7 @@ K3 ZZ := o -> g -> (
         if o.Verbose then <<"-- (taking a random GM fourfold X of discriminant 20, hence containing a surface S of degree 9 and genus 2)"<<endl;
         X = specialGushelMukaiFourfold("general GM 4-fold of discriminant 20",K);
         if o.Verbose then <<"-- (running procedure 'associatedK3surface' for the GM fourfold X of discriminant 20)"<<endl<<"-- *** --"<<endl;
-        Ass = associatedK3surface(X,Verbose=>o.Verbose,Singular=>o.Singular);
+        Ass = building associatedK3surface(X,Verbose=>o.Verbose,Singular=>o.Singular);
         if o.Verbose then <<"-- *** --"<<endl;
         return makegeneralK3(last Ass,(last Ass) first Ass_2,g);
     );
@@ -190,7 +190,7 @@ K3 ZZ := o -> g -> (
         if o.Verbose then <<"-- (taking a random cubic fourfold X of discriminant 26, hence containing a surface S of degree 7 and genus 1)"<<endl;
         X = specialCubicFourfold("one-nodal septic del Pezzo surface",K);
         if o.Verbose then <<"-- (running procedure 'associatedK3surface' for the cubic fourfold X of discriminant 26)"<<endl<<"-- *** --"<<endl;
-        Ass = associatedK3surface(X,Verbose=>o.Verbose,Singular=>o.Singular);
+        Ass = building associatedK3surface(X,Verbose=>o.Verbose,Singular=>o.Singular);
         if o.Verbose then <<"-- *** --"<<endl;
         return makegeneralK3(last Ass,(last Ass) first Ass_2,g);
     );    
@@ -199,7 +199,7 @@ K3 ZZ := o -> g -> (
         if o.Verbose then <<"-- (taking a random cubic fourfold X of discriminant 38, hence containing a surface S of degree 10 and genus 6)"<<endl;
         X = specialCubicFourfold("C38",K);
         if o.Verbose then <<"-- (running procedure 'associatedK3surface' for the cubic fourfold X of discriminant 38)"<<endl<<"-- *** --"<<endl;
-        Ass = associatedK3surface(X,Verbose=>o.Verbose,Singular=>o.Singular);
+        Ass = building associatedK3surface(X,Verbose=>o.Verbose,Singular=>o.Singular);
         if o.Verbose then <<"-- *** --"<<endl;
         return makegeneralK3(last Ass,(last Ass) first Ass_2,g);
     );
@@ -208,7 +208,7 @@ K3 ZZ := o -> g -> (
         if o.Verbose then <<"-- (taking a random cubic fourfold X of discriminant 42, hence containing a surface S of degree 9 and genus 2)"<<endl;
         X = specialCubicFourfold("C42",K);
         if o.Verbose then <<"-- (running procedure 'associatedK3surface' for the cubic fourfold X of discriminant 42)"<<endl<<"-- *** --"<<endl;
-        Ass = associatedK3surface(X,Verbose=>o.Verbose,Singular=>o.Singular);
+        Ass = building associatedK3surface(X,Verbose=>o.Verbose,Singular=>o.Singular);
         if o.Verbose then <<"-- *** --"<<endl;
         return makegeneralK3(last Ass,(last Ass) first Ass_2,g);
     );
