@@ -1717,7 +1717,7 @@ int PathTracker::track(const Matrix* start_sols)
               !end_zone)
             {
               end_zone = true;
-              // to do: see if this path coinsides with any other path on entry
+              // to do: see if this path coincides with any other path on entry
               // to the end zone
             }
           if (end_zone)

@@ -1470,7 +1470,7 @@ doc ///
             peek StrategyDefaultWithPoints
             peek StrategyPoints
         Text
-            {\tt StrategyDefaultNonRandom} is like {\tt StrategyDefault} but removes random submatrices (which can be suprisingly beneficial in some cases).  {\tt StrategyDefaultWithPoints} removes randomness but adds in points instead.  
+            {\tt StrategyDefaultNonRandom} is like {\tt StrategyDefault} but removes random submatrices (which can be surprisingly beneficial in some cases).  {\tt StrategyDefaultWithPoints} removes randomness but adds in points instead.  
         Text
             {\it A warning on chooseGoodMinors:}  The strategies {\tt LexSmallest} and {\tt LexSmallestTerm} will very frequently {\bf repeatedly} choose the same submatrix of the given matrix.  Hence if one tries to run {\tt chooseGoodMinors} and choose too many minors with such a strategy, one can get into a long loop (the function give up eventually, but only after doing way too much work).  The {\tt GRevLex} strategies periodically temporarily change the underlying matrix to avoid this sort of loop.
         Text
@@ -1727,7 +1727,7 @@ doc ///
         M1: Matrix
     Outputs
         : List
-            the first entry is a list of row indicies, the second is a list of column indices
+            the first entry is a list of row indices, the second is a list of column indices
     Description
         Text
             This function looks at submatrices of the given matrix, and tries to find
