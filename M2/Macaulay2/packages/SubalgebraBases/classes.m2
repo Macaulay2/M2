@@ -157,9 +157,9 @@ sagbiBasis Subring := opts -> S -> (
     -- a finite sagbi basis.  It is initially false.
     -- The degree is the current degree under consideration by
     -- the algorithm.  It is initially -1 to indicate that no
-    -- computation has occured.
+    -- computation has occurred.
     -- The limit is the maximum value of the degree.
-    -- It is initally set to infinity to indicate that no limit
+    -- It is initially set to infinity to indicate that no limit
     -- is set.
 
     data := new HashTable from {

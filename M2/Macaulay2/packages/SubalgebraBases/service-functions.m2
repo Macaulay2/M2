@@ -389,7 +389,7 @@ updateComputation(HashTable) := (compTable) -> (
 -- if 0 or 1 sagbiGenerators were added and the degree of the last added generator > 5 then use Incremental
 -- otherwise use DegreeByDegree
 --
--- TODO: the number 5 is COMPLETELY ABRITRARY, find a better heuristic
+-- TODO: the number 5 is COMPLETELY ARBITRARY, find a better heuristic
 --       Ollie's idea is that while there are generators of low degree it's okay to use DegreeByDegree
 --       
 
