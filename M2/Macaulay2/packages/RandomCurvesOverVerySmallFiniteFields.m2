@@ -504,7 +504,7 @@ smoothCanonicalCurveViaSpaceModel = method(Options => {Printing => false})
 smoothCanonicalCurveViaSpaceModel (ZZ,ZZ) := opt -> (g,p) -> (
   kk := ZZ/p;
   if isPrime(p) == false then error "p is not prime";
--- costruction of space model of degree d and genus g
+-- construction of space model of degree d and genus g
 -- therefore we first construct the HR-module
   d := g+4-floor(g/3);
   if opt.Printing then  (print("--> computing space curve of genus "|toString(g)|" and degree "|toString(d)));

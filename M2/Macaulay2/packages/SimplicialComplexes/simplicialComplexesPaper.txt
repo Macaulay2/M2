@@ -82,9 +82,9 @@ MORE DETAILED SECTION PLANNING
 - Taylor resolution that's not minimal
 - References: Miller-Sturmfels, Peeva, ...
 
-- Section 4 (toplogy)
+- Section 4 (topology)
 - Simplicial maps, relative homology, database of small 2/3-manifolds
 - Maybe take a classical map (Hopf fibration), then approximate by simplicial complexes
   and illustrate the example
-- To this end, find classical examples in toplogy. e.g. in Hatcher/Munkres
+- To this end, find classical examples in topology. e.g. in Hatcher/Munkres
 - References: Munkres, Hatcher, Tight polyhedral submanifolds and tight triangulations, introduction to piecewise linear topology

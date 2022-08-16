@@ -21,7 +21,7 @@ A = matrix{{1,1,1,1},{0,1,3,4}}
 b = {1,2}
 I = gkz(A,b,Vars=>Local)
 
-Ddim I -- check it's holoomic
+Ddim I -- check it's holonomic
 holonomicRank I  -- holonomic rank
 singLocus I -- singular locus
 charIdeal I -- characteristic ideal

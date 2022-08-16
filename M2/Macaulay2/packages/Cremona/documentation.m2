@@ -356,7 +356,7 @@ Headline => "inverse image via a rational map",
 Usage => "phi^** I", 
 Inputs => { 
 RationalMap => "phi",
-Ideal => "I" => {"a homogeneus ideal in the coordinate ring of the target of ",TT "phi"}}, 
+Ideal => "I" => {"a homogeneous ideal in the coordinate ring of the target of ",TT "phi"}}, 
 Outputs => { 
 Ideal => {"the ideal of the closure of the inverse image of ", TT"V(I)", " via ",TT"phi"}},
 PARA{"In most cases this is equivalent to ",TT"phi^* I", ", which is faster but may not take into account other representations of the map."},
@@ -375,7 +375,7 @@ Key => {(symbol _*,RationalMap),(symbol SPACE,RationalMap,Ideal)},
 Headline => "direct image via a rational map", 
 Usage => "phi_* I", 
 Inputs => { 
-RationalMap => "phi" => {TT"I", " a homogeneus ideal in the coordinate ring of the source of ",TT "phi"}}, 
+RationalMap => "phi" => {TT"I", " a homogeneous ideal in the coordinate ring of the source of ",TT "phi"}}, 
 Outputs => { 
 Ideal => {"the ideal of the closure of the direct image of ", TT"V(I)", " via ",TT"phi"}},
 PARA{"In most cases this is equivalent to ",TT"phi I", ", which is faster but may not take into account other representations of the map."},

@@ -26,7 +26,7 @@ if w.cache#Multiplicity>1 then (
 
 
 ----------------------
---Bertini has a USEREGENERATION option. When Bertini uses regenereation singular solutions are ignored in zero dimensional runs. 
+--Bertini has a USEREGENERATION option. When Bertini uses regeneration singular solutions are ignored in zero dimensional runs. 
 makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y},B'Polynomials=>{"(x^2-2)*x^3","y"},
     BertiniInputConfiguration=>{UseRegeneration=>1})
 runBertini(storeBM2Files)

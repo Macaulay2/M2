@@ -898,7 +898,7 @@ doc ///
      Text
        The result is zero if and only if the input belongs to the subring.
        If a sagbi basis is known for the subring then subduction is used to compute the normal forms.
-       If no sagbi basis is known then an extrisic method is used, similar to @TT "groebnerMembershipTest"@.   
+       If no sagbi basis is known then an extrinsic method is used, similar to @TT "groebnerMembershipTest"@.   
      Example
        R = QQ[x1, x2, x3];
        S = subring {x1+x2+x3, x1*x2+x1*x3+x2*x3, x1*x2*x3, (x1-x2)*(x1-x3)*(x2-x3)} --usual invariants of A_3

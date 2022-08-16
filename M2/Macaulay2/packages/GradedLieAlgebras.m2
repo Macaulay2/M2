@@ -3434,7 +3434,7 @@ minimalModel(ZZ,LieAlgebra):=(d,L)->(
 ----------------------------------------    
 -- minmodelone
 ----------------------------------------
---contruction of the model in first degree 1
+--construction of the model in first degree 1
 
 minmodelone=(L)->(
     computeLie(1,L);

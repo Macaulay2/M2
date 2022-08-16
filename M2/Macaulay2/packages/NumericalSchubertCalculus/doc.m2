@@ -162,7 +162,7 @@ doc ///
 	 by a condition $c$ either a partition or a bracket (see  @TO partition2bracket@ for details) and a flag $F$ 
 	 (given as an $n \times n$ matrix).
 	 The codimension of the Schubert variety is $|c|$.
-	 A Schubert problem is a list of Schubert varieties, whose codimention
+	 A Schubert problem is a list of Schubert varieties, whose codimension
 	 add up to $k(n-k)$, which is the dimension of the Grassmannian.
          -----
 	 

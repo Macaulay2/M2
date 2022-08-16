@@ -57,7 +57,7 @@ doc ///
 			on the axioms, see below. The list of components of the
 			grading except the sign 
 			is called the @TO weight@, and the last component of the 
-			weight is called the homoogical degree. If no differential
+			weight is called the homological degree. If no differential
 			is defined, then the homological degree will be zero for
 			all elements.
 			Each object of type {\tt LieAlgebra} 

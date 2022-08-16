@@ -2168,7 +2168,7 @@ doc ///
 	  Text
 	       See also @TO truncatedDual@.
      Caveat
-	  The space of dual elements satisying the conditions is not in general of finite dimension.
+	  The space of dual elements satisfying the conditions is not in general of finite dimension.
 	  If the dimension is infinite, this function will not terminate.  This is not checked.  To ensure
 	  termination, the local dimension of I at p should not exceed the length of v, and certain genericity
 	  constraints on the coordinates must be met.
@@ -2609,7 +2609,7 @@ Outputs
 Description
     Text
         Let $R = \mathbb{F}[x_1,\dots,x_n]$ and $S = R[dx_1,\dotsc,dx_n]$. The elements of $S$ operate naturally on elements of $R$.
-        The operator $dx_i$ acts as a partial derivarive with respect to $x_i$, i.e., $dx_i \bullet f = \frac{\partial f}{\partial x_i}$,
+        The operator $dx_i$ acts as a partial derivative with respect to $x_i$, i.e., $dx_i \bullet f = \frac{\partial f}{\partial x_i}$,
         and a polynomial acts by multiplication, i.e., $x_i \bullet f = x_i f$.
 
         Suppose $D \in S^k$ and $f \in R^k$. Then the operation of $D$ on $f$ is defined as $D\bullet f := \sum_{i=1}^k D_i \bullet f_i \in R$.

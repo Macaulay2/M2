@@ -561,7 +561,7 @@ document {
     Outputs => {ofClass EllPoint},
     Usage => "ellPoint(L,E)",
     Headline => "A method for defining point on an elliptic curve.",
-    PARA {"Returns the point of projecive coordinates { ", TT "L#0"," : ", TT "L#1"," : ", TT "L#2"," } on the elliptic curve ", TT "E"},
+    PARA {"Returns the point of projective coordinates { ", TT "L#0"," : ", TT "L#1"," : ", TT "L#2"," } on the elliptic curve ", TT "E"},
     EXAMPLE {"E=ellCurve(3,8,GF(13))","P=ellPoint({1,5,1},E)"}
     }
 document {
@@ -582,7 +582,7 @@ document {
     Inputs => {"L"=>{"the projective coordinates of the point"}, "E"=>{"the elliptic curve on which the point lies"}},
     Usage => "isOnEllCurve(L,E)",
     Headline => "A method to check if a point is on an elliptic curve.",
-    PARA {"Tells whether the point of projecive coordinates { ", TT "L#0"," : ", TT "L#1"," : ", TT "L#2"," } is on the elliptic curve ", TT "E"},
+    PARA {"Tells whether the point of projective coordinates { ", TT "L#0"," : ", TT "L#1"," : ", TT "L#2"," } is on the elliptic curve ", TT "E"},
     EXAMPLE {"E=ellCurve(3,8,GF(13))","isOnEllCurve({1,5,1},E)"}
     }
 document {
@@ -590,7 +590,7 @@ document {
     Inputs => {"L"=>{"the projective coordinates of the point"}, "E"=>{"the elliptic curve on which the point lies"}},
     Usage => "isOnEllCurve(L,E)",
     Headline => "A method to check if a point is on an elliptic curve.",
-    PARA {"Tells whether the point of projecive coordinates { ", TT "L#0"," : ", TT "L#1"," : ", TT "L#2"," } is on the elliptic curve ", TT "E"},
+    PARA {"Tells whether the point of projective coordinates { ", TT "L#0"," : ", TT "L#1"," : ", TT "L#2"," } is on the elliptic curve ", TT "E"},
     EXAMPLE {"E=ellCurve({1,2,3,4,6},GF(29))","isOnEllCurve({1,5,1},E)"}
     }
 document {
