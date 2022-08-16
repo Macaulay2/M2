@@ -248,7 +248,6 @@ random RingFamily := opts -> R -> random(default R,opts)
 
 RR.isBasic = CC.isBasic = RRi.isBasic = true
 
-InexactFieldFamily Array := (T,X) -> (default T) X
 Thing ** InexactFieldFamily := (X,T) -> X ** default T
 
 generators InexactField := opts -> R -> {}

@@ -272,7 +272,7 @@ setupMethods((), {
 	  substitute, complete, ambient, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
 	  coefficients, monomials, size, sum, product, nullhomotopy, module, raw,
 	  content, leadTerm, leadCoefficient, leadMonomial, components,
-	  leadComponent, degreesRing, assign, realPart, imaginaryPart, conjugate,
+	  leadComponent, assign, realPart, imaginaryPart, conjugate,
 	  relations, cone, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,
 	  presentation, dismiss, precision, 
 	  norm, clean, fraction, part, preimage,

@@ -5,12 +5,12 @@ needs "methods.m2"
 needs "enginering.m2"
 needs "monoids.m2"
 needs "tables.m2"
+needs "indeterminates.m2" -- runLengthEncode
 
 -----------------------------------------------------------------------------
 -- PolynomialRing type declaration and basic methods
 -----------------------------------------------------------------------------
 
-terms := symbol terms
 PolynomialRing = new Type of EngineRing
 PolynomialRing.synonym = "polynomial ring"
 PolynomialRing#{Standard,AfterPrint} = R -> (
@@ -25,74 +25,89 @@ PolynomialRing#{Standard,AfterPrint} = R -> (
 
 isPolynomialRing = method(TypicalValue => Boolean)
 isPolynomialRing Thing := x -> false
-isPolynomialRing PolynomialRing := (R) -> true
+isPolynomialRing PolynomialRing := R -> true
 
 isHomogeneous PolynomialRing := R -> true
+isWeylAlgebra PolynomialRing := R -> isWeylAlgebra coefficientRing R or ( o := options R;
+    o.?WeylAlgebra     and 0 < #o.WeylAlgebra)
+isSkewCommutative PolynomialRing := R -> isSkewCommutative coefficientRing R or (
+    R.?SkewCommutative and 0 < #R.SkewCommutative)
 
-expression PolynomialRing := R -> (
-     if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
-     k := last R.baseRings;
-     T := if (options R).Local === true then List else Array;
-     (expression k) (new T from toSequence runLengthEncode R.generatorExpressions)
-     )
+-- TODO: is the second one needed?
+Ring _ List :=
+PolynomialRing _ List := RingElement => (R, v) -> if #v === 0 then 1_R else product ( #v , i -> R_i^(v#i) )
 
-describe PolynomialRing := R -> (
-     k := last R.baseRings;
-     Describe (expression k) (expressionMonoid monoid R)) -- not describe k, we only expand one level
---toExternalString PolynomialRing := R -> toString describe R;
-toExternalString PolynomialRing := R -> (
-     k := last R.baseRings;
-     toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))
-
-degreeLength PolynomialRing := (RM) -> degreeLength RM.FlatMonoid
-
+coefficientRing PolynomialRing := R -> last R.baseRings
 monoid PolynomialRing := o -> R -> R.monoid
-options PolynomialRing := options @@ monoid
+monoid FractionField  := o -> monoid @@ baseRing
+monoid Ring           := o -> degreesMonoid @@ degreeLength
+
+generators PolynomialRing := opts -> R -> (
+    if opts.CoefficientRing === null then R.generators else
+    if opts.CoefficientRing === R then {}
+    else join(R.generators, generators(coefficientRing R, opts) / (r -> promote(r, R))))
+
+char      PolynomialRing :=      char @@ coefficientRing
+precision PolynomialRing := precision @@ coefficientRing
+numgens   PolynomialRing := numgens @@ monoid
+options   PolynomialRing := options @@ monoid
+dim       PolynomialRing := R -> dim coefficientRing R + #generators R - (
+    if R.?SkewCommutative then #R.SkewCommutative else 0)
+
+-- printing helpers
+expressionPolynomialRing = R -> (
+    T := if (options R).Local === true then List else Array;
+    new T from toSequence runLengthEncode R.generatorExpressions)
+
+describe   PolynomialRing := R -> Describe (expression last R.baseRings) expressionMonoid monoid R
+expression PolynomialRing := R -> (
+    if hasAttribute(R, ReverseDictionary)
+    then expression getAttribute(R, ReverseDictionary)
+    else(expression last R.baseRings) expressionPolynomialRing R)
+
+toExternalString PolynomialRing := toString @@ describe
+-- the rest are inherited from EngineRing
+
+-----------------------------------------------------------------------------
+-- degreesRing, etc.
+-----------------------------------------------------------------------------
 
 protect basering
 protect FlatMonoid
 
-degreesRing List := PolynomialRing => memoize(
+degreesRing = method(TypicalValue => PolynomialRing)
+degreesRing ZZ   := memoize( n -> if n == 0 then degreesRing {} else ZZ degreesMonoid n )
+degreesRing List := memoize(
      hft -> if #hft === 0 then (
 	       S := new PolynomialRing from rawPolynomialRing();
 	       S.basering = ZZ;
-	       S.FlatMonoid = S.monoid = monoid[DegreeRank => 0, Inverses => true, Global => false];
+	       S.FlatMonoid = monoid[DegreeRank => 0, Inverses => true, Global => false];
 	       S.numallvars = 0;
 	       S.baseRings = {ZZ};
 	       S.degreesRing = S;
+	       S.degreesMonoid = S.monoid = S.FlatMonoid;
 	       S.isCommutative = true;
 	       S.generatorSymbols = S.generatorExpressions = S.generators = {};
 	       S.indexSymbols = S.indexStrings = new HashTable;
 	       S)
 	  else ZZ degreesMonoid hft)
+degreesRing Ring   :=
+degreesRing Monoid :=
+degreesRing PolynomialRing   := R -> if R.?degreesRing   then R.degreesRing   else error "no degrees ring present"
+degreesMonoid PolynomialRing := R -> if R.?degreesMonoid then R.degreesMonoid else error "no degrees monoid present"
+degreeLength  PolynomialRing := R -> degreeLength R.FlatMonoid
 
-degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then degreesRing {} else ZZ degreesMonoid n )
-
-degreesRing Ring := R -> error "no degreesRing for this ring"
-degreesRing GeneralOrderedMonoid := M -> if M.?degreesRing then M.degreesRing else error "no degrees ring present"
-
-degreesRing PolynomialRing := PolynomialRing => R -> (
-     if R.?degreesRing then R.degreesRing
-     else error "no degreesRing for this ring")
-
-degreesMonoid PolynomialRing := R -> (
-     if R.?degreesMonoid then R.degreesMonoid
-     else error "no degreesMonoid for this ring")
-
-generators PolynomialRing := opts -> R -> (
-     if opts.CoefficientRing === null then R.generators
-     else if opts.CoefficientRing === R then {}
-     else join(R.generators, generators(coefficientRing R, opts) / (r -> promote(r,R))))
-coefficientRing PolynomialRing := R -> last R.baseRings
-precision PolynomialRing := precision @@ coefficientRing
+-----------------------------------------------------------------------------
+-- Main polynomial ring constructor
+-----------------------------------------------------------------------------
 
 protect diffs0						    -- private keys for storing info about indices of WeylAlgebra variables
 protect diffs1
 
-InexactFieldFamily OrderedMonoid := (T,M) -> (default T) M
-Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
-     (R,M) -> (
-	  if not M.?RawMonoid then error "expected ordered monoid handled by the engine";
+Ring List   := PolynomialRing => (R, M) -> use R monoid(M, Local => true)
+Ring Array  := PolynomialRing => (R, M) -> use R monoid M
+Ring Monoid := PolynomialRing => (R, M) -> (
+    if not M.?RawMonoid then error "expected monoid handled by the engine";
 	  if not R.?RawRing then error "expected coefficient ring handled by the engine";
      	  num := numgens M;
 	  (basering,flatmonoid,numallvars) := (
@@ -102,6 +117,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       else if instance(R,FractionField) then (R,M,num)
 	       else error "internal error: expected coefficient ring to have a base ring and a flat monoid"
 	       );
+	  -----------------------------------------------------------------------------
      	  local RM;
 	  Weyl := M.Options.WeylAlgebra =!= {};
 	  skews := monoidIndices(M,M.Options.SkewCommutative);
@@ -110,10 +126,12 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  coeffSkew := coeffOptions =!= null and coeffOptions.SkewCommutative =!= {};
 	  coeffConstants := coeffOptions =!= null and coeffOptions.Constants;
 	  constants := false;
+	  -----------------------------------------------------------------------------
 	  if M.Options.Constants or coeffConstants then (
 	       constants = true;
 	       RM = new PolynomialRing from rawTowerRing(char R, flatmonoid.generatorSymbols / toString // toSequence);
 	       )
+	  -----------------------------------------------------------------------------
 	  else if Weyl or coeffWeyl then (
 	       if Weyl and R.?SkewCommutative then error "coefficient ring has skew commuting variables";
 	       if Weyl and skews =!= {} then error "skew commutative Weyl algebra requested";
@@ -156,17 +174,20 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      	       addHook(RM, QuotientRingHook, S -> (S.diffs0 = diffs0; S.diffs1 = diffs1));
      	       if h != -1 then RM.homogenize = h;
 	       )
+	  -----------------------------------------------------------------------------
 	  else if skews =!= {} or R.?SkewCommutative then (
 	       if R.?diffs0 then error "coefficient ring is a Weyl algebra";
 	       if R.?SkewCommutative then skews = join(skews, apply(R.SkewCommutative, i -> i + num));
 	       RM = new PolynomialRing from rawSkewPolynomialRing(rawPolynomialRing(raw basering, raw flatmonoid),skews);
 	       RM.SkewCommutative = skews;
 	       )
+	  -----------------------------------------------------------------------------
 	  else (
 	       log := FunctionApplication {rawPolynomialRing, (raw basering, raw flatmonoid)};
 	       RM = new PolynomialRing from value log;
 	       RM#"raw creation log" = Bag {log};
 	       );
+	  -----------------------------------------------------------------------------
 	  if R#?"has quotient elements" or isQuotientOf(PolynomialRing,R) then (
 	       RM.RawRing = rawQuotientRing(RM.RawRing, R.RawRing);
 	       RM#"has quotient elements" = true;
@@ -189,40 +210,25 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    degs -> apply(degs,lm)
 		    ));
 	  RM.baseRings = append(R.baseRings,R);
+	  -- see enginering.m2
 	  commonEngineRingInitializations RM;
 	  RM.monoid = M;
-	  if flatmonoid.?degreesRing then RM.degreesRing = flatmonoid.degreesRing;
+	  if flatmonoid.?degreesRing   then RM.degreesRing   = flatmonoid.degreesRing;
 	  if flatmonoid.?degreesMonoid then RM.degreesMonoid = flatmonoid.degreesMonoid;
 	  RM.isCommutative = not Weyl and not RM.?SkewCommutative;
      	  ONE := RM#1;
 	  if R.?char then RM.char = R.char;
+	  -- TODO: what is this?
 	  RM _ M := (f,m) -> new R from rawCoefficient(R.RawRing, raw f, raw m);
-	  if constants
-	  then expression RM := f -> (
-	       -- later we'll put in something prettier, maybe
-	       toString raw f
-	       )
-	  else expression RM := f -> (
-	       (
-		    (coeffs,monoms) -> (
-			 if #coeffs === 0
-			 then expression 0
-			 else sum(coeffs,monoms, (a,m) -> expression (if a == 1 then 1 else promote(a,R)) * expression (if m == 1 then 1 else new M from m))
-			 )
-		    ) rawPairs(raw R, raw f)
---	       new Holder2 from {(
---		    (coeffs,monoms) -> (
---			 if #coeffs === 0
---			 then expression 0
---			 else sum(coeffs,monoms, (a,m) -> unhold expression (if a == 1 then 1 else promote(a,R)) * unhold expression (if m == 1 then 1 else new M from m))
---			 )
---		    ) rawPairs(raw R, raw f),
---	       f}
-	  );
+	  processMons := (coeffs, monoms) -> if #coeffs === 0 then expression 0 else sum(coeffs, monoms,
+	      (c, m) -> expression(if c == 1 then 1 else promote(c, R)) * expression(if m == 1 then 1 else new M from m));
+	  -- TODO: put in something prettier when there are constants
+	  expression RM := if constants then f -> toString raw f else f -> processMons rawPairs(raw R, raw f);
      	  if M.Options.Inverses === true then (
 	       denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
 	       numerator RM := f -> f * denominator f;
 	       );
+	  -----------------------------------------------------------------------------
 	  factor RM := opts -> f -> (
 	       c := 1_R; 
 	       if (options RM).Inverses then (
@@ -266,43 +272,37 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    exps = append(exps,1);
 		    );
 	       new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
+	  -----------------------------------------------------------------------------
 	  isPrime RM := {} >> o -> f -> (
 	      v := factor f;
 	      cnt := 0; -- counts number of factors
 	      scan(v, x -> ( if not isUnit(x#0) then cnt=cnt+x#1 ));
 	      cnt == 1 -- cnt=0 is invertible element; cnt>1 is composite element; cnt=1 is prime element
 	       );
+	  -----------------------------------------------------------------------------
+	  RM.generatorExpressions = M.generatorExpressions;
 	  RM.generatorSymbols = M.generatorSymbols;
 	  RM.generators = apply(num, i -> RM_i);
-	  RM.generatorExpressions = (
-	       M.generatorExpressions
-	       -- apply(M.generatorExpressions,RM.generators,(e,x) -> (new Holder2 from {e#0,x}))
-	       );
 	  RM.indexSymbols = new HashTable from join(
 	       if R.?indexSymbols then apply(pairs R.indexSymbols, (nm,x) -> nm => new RM from rawPromote(raw RM,raw x)) else {},
 	       apply(num, i -> M.generatorSymbols#i => RM_i)
 	       );
      	  RM.indexStrings = hashTable apply(pairs RM.indexSymbols, (k,v) -> (toString k, v));
-	  RM))
+	  RM)
+-- e.g RR[x] or CC[x]
+InexactFieldFamily List   :=
+InexactFieldFamily Array  :=
+InexactFieldFamily Monoid := PolynomialRing => (T, M) -> (default T) M
 
-samering := (f,g) -> (
-     if ring f =!= ring g then error "expected elements from the same ring";
-     )
+-----------------------------------------------------------------------------
 
-Ring Array := PolynomialRing => (R,variables) -> use R monoid variables
-Ring List := PolynomialRing => (R,variables) -> use R monoid (variables,Local => true)
-PolynomialRing _ List := (R,v) -> if #v === 0 then 1_R else product ( #v , i -> R_i^(v#i) )
-Ring _ List := RingElement => (R,w) -> product(#w, i -> (R_i)^(w_i))
-dim PolynomialRing := R -> dim coefficientRing R + # generators R - if R.?SkewCommutative then #R.SkewCommutative else 0
-char PolynomialRing := (R) -> char coefficientRing R
-numgens PolynomialRing := R -> numgens monoid R
-isSkewCommutative PolynomialRing := R -> isSkewCommutative coefficientRing R or 0 < #(options R).SkewCommutative
 weightRange = method()
 weightRange(List,RingElement) := (w,f) -> rawWeightRange(w,raw f)
 weightRange RingElement := f -> (
      if degreeLength ring f === 1
      then weightRange(first \ degrees ring f, f)
      else error "weightRange: expected a singly graded ring")
+
 parts = method()
 parts RingElement := f -> (
      if degreeLength ring f === 1
@@ -310,6 +310,8 @@ parts RingElement := f -> (
 	       ((i,j) -> i .. j) weightRange(first \ degrees (ring f).FlatMonoid, f),
 	       n -> part_n f), p -> p != 0), p -> new Parenthesize from {p})
      else error "parts: expected a singly graded ring")
+
+-----------------------------------------------------------------------------
 
 off := 0
 pw := (v,wts) -> (
@@ -339,6 +341,8 @@ selectVariables(List,PolynomialRing) := (v,R) -> (
      o.Degrees = o.Degrees_v;
      o = new OptionTable from o;
      (S := (coefficientRing R)(monoid [o]),map(R,S,(generators R)_v)))
+
+-----------------------------------------------------------------------------
 
 antipode = method();
 antipode RingElement := (f) -> new ring f from rawAntipode raw f;
