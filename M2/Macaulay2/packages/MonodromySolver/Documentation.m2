@@ -697,7 +697,7 @@ doc ///
     Description
         Text
             PointArray is a data structure that organizes the solutions found
-            by a solver. Each @TO HomotopyNode @ object V has an assocaciated
+            by a solver. Each @TO HomotopyNode @ object V has an associated
             PointArray accessed via V.PartialSols. A "fingerprinting"
             scheme allows for equality of points to be checked quickly.        
     ///

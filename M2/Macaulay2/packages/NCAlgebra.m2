@@ -1285,7 +1285,7 @@ toNCRing Ring := R -> (
    isComm := isCommutative R;
    isExter := isExterior R;
    if not isComm and not isExter then error "Input ring must be either strictly (-1)-skew commutative or commutative.";
-   --- generate the (skew)commutivity relations
+   --- generate the (skew)commutativity relations
    Q := coefficientRing R;
    A := Q (gens R);
    phi := ncMap(A,ambient R,gens A);

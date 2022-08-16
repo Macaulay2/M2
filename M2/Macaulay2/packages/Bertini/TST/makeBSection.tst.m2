@@ -1,8 +1,8 @@
 needsPackage "Bertini"
 
---In Numerical Algbebraic Geometry the 'slice' is very important. For multiprojective varieties we ant a way to create slices or sections in an easy manner.
+--In Numerical Algebraic Geometry the 'slice' is very important. For multiprojective varieties we ant a way to create slices or sections in an easy manner.
 --A section corresponds to a linear equation. 
---A slice coorresponds to a set of linear equations. 
+--A slice corresponds to a set of linear equations. 
 
 --The input makeB'Section is a a list. To each element of this list we will apply toString and use the string to create a linear system of equations. 
 --We use strings to avoid the need to create a ring with these elements.

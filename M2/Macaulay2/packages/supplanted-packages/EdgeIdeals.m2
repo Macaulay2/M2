@@ -110,7 +110,7 @@ hyperGraph (PolynomialRing, List) := HyperGraph => (R, E) -> (
      -- Assert: E is a List of Lists of variables of R or
      --         E is a List of square-free monomials in R 
      if any(E, e -> class e =!= List) and any(E, e -> class class e =!= PolynomialRing)
-     then ( print apply(E, e -> class e) ;error "Edges must be lists of varibles or monomials.");
+     then ( print apply(E, e -> class e) ;error "Edges must be lists of variables or monomials.");
 
      V := gens R;
      --- check needed for square free 
@@ -1918,7 +1918,7 @@ doc ///
 		m:ZZ
 			size of each partition
 		L:List
-			of integers giving the size of each partition, or a list of paritions which are lists of variables
+			of integers giving the size of each partition, or a list of partitions which are lists of variables
 	Outputs
 		K:Graph
 			which is the complete multipartite graph on the given partitions

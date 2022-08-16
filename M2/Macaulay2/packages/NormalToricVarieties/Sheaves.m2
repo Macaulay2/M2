@@ -129,7 +129,7 @@ cotangentSheaf(ZZ,NormalToricVariety) := CoherentSheaf => opts -> (i,X) ->
 
 -- THIS FUNCTION IS NOT EXPORTED.  Given a normal toric variety, this function
 -- creates a HashTable describing the cohomology of all twists of the
--- structure sheaf.  For more information, see Propositon~3.2 in
+-- structure sheaf.  For more information, see Proposition~3.2 in
 -- Maclagan-Smith "Multigraded regularity"
 setupHHOO = X -> (
     X.cache.emsBound = new MutableHashTable;

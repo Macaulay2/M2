@@ -1208,7 +1208,7 @@ supportFunctional(ChainComplex, BettiTally):=(E,B)->(
 rkSchur = (n,L) -> (
 --rank of a Schur functor on a module
 --input: a non-neg integer n and a non-increasing sequence of non-neg integers L
---output: the rank of the representation S_L(C^n). Here (11111) represents an exterior power, (k) a symmetrci power.
+--output: the rank of the representation S_L(C^n). Here (11111) represents an exterior power, (k) a symmetric power.
      M:=L;
      if #M<n then M=L|toList(n-#M:0);
      det map(ZZ^n, ZZ^n, (i,j)->binomial(M_i+n-1-i+j, n-1)))

@@ -2044,7 +2044,7 @@ doc ///
 	    polynomial ring kk[s,t]
     Description
     	Text
-	     The base ring kk[s,t] which is the coordnate ring of PP^1.  
+	     The base ring kk[s,t] which is the coordinate ring of PP^1.  
 	Example
 	    kk=ZZ/101;
 	    g=1;

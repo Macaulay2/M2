@@ -3234,14 +3234,14 @@ multidoc ///
 		 the ring $K[\theta_1,\ldots,\theta_n]$ is the ring of symmetric polynomials.
 	    
 	    	The secondary invariants are obtained by considering the quotient ring $R/(e_1,\ldots,e_n)$.
-		This quotient ring is called the coinvariant algebre of $S_n$. This quotient is isomorphic to the regular representation of $S_n$. In particular as
+		This quotient ring is called the coinvariant algebra of $S_n$. This quotient is isomorphic to the regular representation of $S_n$. In particular as
 		a K-vector space it is finite dimensional.
 		In this space we find the subspace that is invariant under the action of $H$. The secondary invariants
 		correspond to a basis for this space.
 		
 	    	The advantage of this algorithm is that it decomposes the regular representation into its
 		irreducible representation by means of the higher Specht polynomials basis. This reduces
-		significantly de dimension of the vector spaces in which the invariant spaces must be found.
+		significantly the dimension of the vector spaces in which the invariant spaces must be found.
 	        
 		To illustrate we calculate the secondary invariants for a subgroup of cardinality 24 in $S_6$.   
 	    Example

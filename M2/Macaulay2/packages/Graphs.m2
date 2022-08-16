@@ -2269,7 +2269,7 @@ doc ///
             The complement graph of G
     Description
         Text
-            The complement graph of a graph G is the graph G^c where any two vertcies are adjacent in G^c iff they are not adjacent in G. The original vertex set is preserved, only the edges are changed.
+            The complement graph of a graph G is the graph G^c where any two vertices are adjacent in G^c iff they are not adjacent in G. The original vertex set is preserved, only the edges are changed.
         Example
             G = cycleGraph 4
             complementGraph G
@@ -4881,7 +4881,7 @@ doc ///
         (diameter, Graph)
 ///
 
---strongProuduct
+--strongProduct
 doc ///
     Key
         strongProduct
@@ -4898,7 +4898,7 @@ doc ///
             The Strong Product of G and H
     Description
         Text
-            This method will take in any two graphs and output the strong proudct of the two graphs. The vertex set of 
+            This method will take in any two graphs and output the strong product of the two graphs. The vertex set of 
             the strong product of G and H is the cartesian product of the vertex sets of G and H. The keys for each 
             vertex will be output as a sequence to represent this clearly. The edge set of the strong product of G and H 
             is formed by the rule any two distinct vertices (u,u') and (v,v') are adjacent in G and H if and only if u' 

@@ -694,7 +694,7 @@ isExterior Ring := A -> (
 
 toFreeAlgebraQuotient = method()
 toFreeAlgebraQuotient Ring := FreeAlgebraQuotient => R -> (
-   --- generate the (skew)commutivity relations
+   --- generate the (skew)commutativity relations
    Q := coefficientRing R;
    gensA := new AngleBarList from ((gens R) / baseName | {Degrees=> degrees R});
    A := Q gensA;

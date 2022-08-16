@@ -2,7 +2,7 @@ newPackage(
     "Isomorphism",
     Version => "1.0",
     Date => "April 27, 2022",
-    Headline => "Probabalistic test of isomorphism between modules",
+    Headline => "Probabilistic test of isomorphism between modules",
     Authors => {{Name => "David Eisenbud", 
                   Email => "de@msri.org", 
                   HomePage => "http://www.msri.org/~de"}
@@ -234,7 +234,7 @@ doc ///
 Key
  Isomorphism
 Headline
- Probabalistic test for isomorphism
+ Probabilistic test for isomorphism
 Description
   Text
    Two modules are isomorphic if there is a surjection in each direction.
@@ -339,7 +339,7 @@ Key
  [isIsomorphic, Homogeneous]
  [isIsomorphic, Strict] 
 Headline
- Probabalistic test for isomorphism of modules
+ Probabilistic test for isomorphism of modules
 Usage
  t = isIsomorphic (N,M)
  t = isIsomorphic (n,m) 

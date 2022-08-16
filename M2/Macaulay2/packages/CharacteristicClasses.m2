@@ -266,7 +266,7 @@ ToricChowRing NormalToricVariety:=TorVar->(
     R:=ring(TorVar);
     A:=0;
     --For simplical toric var. Lemma 3.5 of Euler characteristic of coherent sheaves on simplicial torics via the Stanley-Reisner ring
-    -- (and probally other sources) tell us that the SR ideal is the Alexander
+    -- (and probably other sources) tell us that the SR ideal is the Alexander
     --dual of the toric irrelevant ideal 
     --SR:=dual monomialIdeal TorVar;
     P:=primaryDecomposition ideal TorVar;
@@ -1794,7 +1794,7 @@ Description
 	       I=ideal(r_0^2*r_3-r_4*r_1*r_2,r_2^2*r_5)
 	       Chern I
 	  Text 
-	       In the case where the ambient space is a toric variety which is not a product of projective spaces we must load the NormalToricVarieites package and must also input the toric variety. If the toric variety is a product of projective space it is recommended to use the form above rather than inputting the toric variety for efficiency reasons. Below we verify that the Chern-Fulton class equals the Chern class for this smooth subvariety. 
+	       In the case where the ambient space is a toric variety which is not a product of projective spaces we must load the NormalToricVarieties package and must also input the toric variety. If the toric variety is a product of projective space it is recommended to use the form above rather than inputting the toric variety for efficiency reasons. Below we verify that the Chern-Fulton class equals the Chern class for this smooth subvariety. 
 	  Example
 	       needsPackage "NormalToricVarieties"
 	       Rho = {{1,0,0},{0,1,0},{0,0,1},{-1,-1,0},{0,0,-1}}
@@ -2026,7 +2026,7 @@ doc ///
          :Boolean
 Description
      Text
-         Note that if you are working with subvarieites of some product of projective spaces \PP^{n_1}\times \cdots \times \PP^{n_m} then the ambient space is a valid choice for use with the ChacteristicsClasses package and there is no need to load the NormalToricVarieties Package or to check validity. For other cases the CheckToricVarietyValid method returns true if the input toric variety X may be used as an ambient space for other characteristic class computations, i.e. if this method returns true we may use methods such as CSM(X,I), Chern(X,I) and Segre(X,I) for I an ideal in the coordinate ring of X. We will see an example of a valid toric variety which is not a product of projective spaces and a smooth toric variety which is not valid.
+         Note that if you are working with subvarieties of some product of projective spaces \PP^{n_1}\times \cdots \times \PP^{n_m} then the ambient space is a valid choice for use with the ChacteristicsClasses package and there is no need to load the NormalToricVarieties Package or to check validity. For other cases the CheckToricVarietyValid method returns true if the input toric variety X may be used as an ambient space for other characteristic class computations, i.e. if this method returns true we may use methods such as CSM(X,I), Chern(X,I) and Segre(X,I) for I an ideal in the coordinate ring of X. We will see an example of a valid toric variety which is not a product of projective spaces and a smooth toric variety which is not valid.
      Example
          needsPackage "NormalToricVarieties"
 	 Rho = {{1,0,0},{0,1,0},{0,0,1},{-1,-1,0},{0,0,-1}}
@@ -2145,7 +2145,7 @@ Description
 	       m#{0,1}=csmKHash#{0,1}
 	       time CSM(A,K,m)
 	  Text 
-	       In the case where the ambient space is a toric variety which is not a product of projective spaces we must load the NormalToricVarieites package and must also input the toric variety. If the toric variety is a product of projective space it is recommend to use the form above rather than inputting the toric variety for efficiency reasons. 
+	       In the case where the ambient space is a toric variety which is not a product of projective spaces we must load the NormalToricVarieties package and must also input the toric variety. If the toric variety is a product of projective space it is recommend to use the form above rather than inputting the toric variety for efficiency reasons. 
 	  Example
 	       needsPackage "NormalToricVarieties"
 	       Rho = {{1,0,0},{0,1,0},{0,0,1},{-1,-1,0},{0,0,-1}}
@@ -2159,7 +2159,7 @@ Description
 	       CSM(X,I)
 	       CSM(Ch,X,I)
           Text
-               This function may also compute the CSM class of a normal toric variety defined by a fan. In this case a combinitorial method is used. This method is accessed with the usual CSM command with either only a toric variety or a toric variety and a Chow ring as input. In this case we only require that the input toric variety is complete and simplicial (in particular we do not need it to be smooth).
+               This function may also compute the CSM class of a normal toric variety defined by a fan. In this case a combinatorial method is used. This method is accessed with the usual CSM command with either only a toric variety or a toric variety and a Chow ring as input. In this case we only require that the input toric variety is complete and simplicial (in particular we do not need it to be smooth).
           Example
                needsPackage "NormalToricVarieties"
                U = hirzebruchSurface 7
@@ -2246,7 +2246,7 @@ Description
 	       csmK= CSM(K)
 	       EulerK==Euler(csmK)	       
 	  Text 
-	       In the case where the ambient space is a toric variety which is not a product of projective spaces we must load the NormalToricVarieites package and must also input the toric variety. If the toric variety is a product of projective space it is recommended to use the form above rather than inputting the toric variety for efficiency reasons. 
+	       In the case where the ambient space is a toric variety which is not a product of projective spaces we must load the NormalToricVarieties package and must also input the toric variety. If the toric variety is a product of projective space it is recommended to use the form above rather than inputting the toric variety for efficiency reasons. 
 	  Example
 	       needsPackage "NormalToricVarieties"
 	       Rho = {{1,0,0},{0,1,0},{0,0,1},{-1,-1,0},{0,0,-1}}

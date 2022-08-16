@@ -1499,7 +1499,7 @@ doc ///
     Description
     	  Text
 	       Here we give an example of a spectral sequence that takes n+2 steps to degenerate, where
-	       n is the embedding dimesion of the ring.  We present this when n = 2 but the user with 
+	       n is the embedding dimension of the ring.  We present this when n = 2 but the user with 
 	       computational power can easily do a bigger case. 	       
      	  Example
     	       S = ZZ/101[x,y];

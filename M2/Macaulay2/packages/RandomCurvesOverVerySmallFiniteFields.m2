@@ -513,7 +513,7 @@ smoothCanonicalCurveViaSpaceModel (ZZ,ZZ) := opt -> (g,p) -> (
 -- calculate values of h^1 that are forced by the maximal rank assumption
   h1 := for i from 0 when ((i < 4) or(d*i+1-g) > binomial(i+3,3)) list max(d*i+1-g-binomial(3+i,3),0);
   e := 0; for i in h1 when i == 0 do e = e+1;
--- calculate support of Hartshorne Rao Moduole
+-- calculate support of Hartshorne Rao Module
   HRao := select(h1,i->i!=0);  
   expBettiHR := expectedBetti(HRao|{0,0,0,0},3);  
   emptyResHR := R^expBettiHR;
