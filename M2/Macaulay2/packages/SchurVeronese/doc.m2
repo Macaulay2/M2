@@ -167,7 +167,7 @@ doc ///
       table $H$ are pairs $(p,q)$ where $H#(p,q)$ gives the the Schur functor 
       decomposition of $K_{p,q}(\mathbb{P}^n, d;b)$. $\mathcal{O}(b)$ the 
       Schur functor decomposition as a list of tuples $(\{a_1,a_2,a_3\},b)$ where
-      $\{a_1,a_2,a_3\}$ specifies the weight of the Schur functor and $m$ the multiplicty
+      $\{a_1,a_2,a_3\}$ specifies the weight of the Schur functor and $m$ the multiplicity
       with which that particular Schur functor appears in the decomposition
       of $K_{p,q}(\mathbb{P}^n, d;b)$. 
       
@@ -347,7 +347,7 @@ doc ///
     bsCoeffs
     (bsCoeffs,ZZ,ZZ,ZZ)
    Headline
-    a list of the Boij-Soederberg coefficents of a Veronese embedding 
+    a list of the Boij-Soederberg coefficients of a Veronese embedding 
    Usage
     bsCoeffs(d,n,b)
    Inputs
@@ -358,7 +358,7 @@ doc ///
     : List
    Description
     Text
-      This function returns a list of the Boij-Soederberg coefficents for the 
+      This function returns a list of the Boij-Soederberg coefficients for the 
       decomposition of the Betti table of $\mathcal{O}(b)$ on 
       $\mathbb{P}^{n}$ under the $d$-fold Veronese embedding. See Section 6.3 of [BEGY].  Of course,
       these coefficients and the corresponding pure diagrams are easily computed
