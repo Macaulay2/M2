@@ -541,6 +541,8 @@ void PolyRing::degree(const ring_elem f, monomial degf) const
   multi_degree(f, degf);
 }
 
+// TODO: what's the relationship between PolyRing and PolynomialRing?
+// PolyRing has no M_, but PolynomialRing has no multi_degree implemented
 bool PolyRing::multi_degree(const ring_elem f, monomial degf) const
 {
   auto DM = degree_monoid();
