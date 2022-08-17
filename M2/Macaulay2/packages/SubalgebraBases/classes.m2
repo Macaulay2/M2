@@ -305,7 +305,14 @@ internalIsSAGBI(SAGBIBasis) := opts -> SB -> (
     
     -- if all the reduced SPairs are zero then we have a sagbiBasis
     compTable#"data"#"sagbiDone" = zero(reducedSPairs);
-    compTable#"options"#Recompute = opts.Recompute; -- set the recompute option for resuming computation purposes
+    
+    -- if the computation gives a sagbi basis then the don't recompute in the future
+    if compTable#"data"#"sagbiDone" then (
+	compTable#"options"#Recompute = false;
+	) else (
+	compTable#"options"#Recompute = opts.Recompute; -- set the recompute option for resuming computation purposes
+	);
+    
     sagbiBasis compTable
     );
 
