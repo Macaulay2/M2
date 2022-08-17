@@ -191,7 +191,7 @@ internalVerifySagbi(SAGBIBasis) := opts -> SB -> (
     reducedSPairs := compSubduction(compTable, SPairs);
     
     -- check the sagbi gens are high enough degree (i.e. higher than the subring generators)
-    highEnoughDegree := max flatten (degrees compTable#"data"#"subalgebraGenerators")_1 < max flatten (degrees compTable#"data"#"sagbiGenerators")_1;
+    highEnoughDegree := max flatten (degrees compTable#"data"#"subalgebraGenerators")_1 <= max flatten (degrees compTable#"data"#"sagbiGenerators")_1;
     
     -- if all the reduced SPairs are zero then we have a sagbiBasis
     compTable#"data"#"sagbiDone" = zero(reducedSPairs) and highEnoughDegree;

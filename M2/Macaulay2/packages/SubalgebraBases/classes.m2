@@ -303,8 +303,12 @@ internalIsSAGBI(SAGBIBasis) := opts -> SB -> (
     -- Reduce the SPairs
     reducedSPairs := compSubduction(compTable, SPairs);
     
+    -- check the sagbi gens are high enough degree (i.e. higher than the subring generators)
+    highEnoughDegree := max flatten (degrees compTable#"data"#"subalgebraGenerators")_1 <= max flatten (degrees compTable#"data"#"sagbiGenerators")_1;
+    
     -- if all the reduced SPairs are zero then we have a sagbiBasis
-    compTable#"data"#"sagbiDone" = zero(reducedSPairs);
+    compTable#"data"#"sagbiDone" = zero(reducedSPairs) and highEnoughDegree;
+    
     
     -- if the computation gives a sagbi basis then the don't recompute in the future
     if compTable#"data"#"sagbiDone" then (
@@ -312,7 +316,7 @@ internalIsSAGBI(SAGBIBasis) := opts -> SB -> (
 	) else (
 	compTable#"options"#Recompute = true; -- opts.Recompute; -- set the recompute option for resuming computation purposes
 	);
-    
+
     sagbiBasis compTable
     );
 
@@ -349,8 +353,10 @@ isSAGBI SAGBIBasis := opts -> SB -> (
         SB#"data"#"sagbiDone"
 	) else (
 	SB' := internalVerifySagbi(SB, opts);
-	S := SB#"data"#"subring";
-	S.cache#"SAGBIBasis" = SB';
+	if SB'#"data"#"sagbiDone" then ( -- only update the Subring of the SAGBIBasis if we have a sagbi basis
+	    S := SB#"data"#"subring";
+	    S.cache#"SAGBIBasis" = SB';
+	    );
 	SB'#"data"#"sagbiDone"
 	)
     )
@@ -361,7 +367,7 @@ isSAGBI Subring := opts -> S -> (
     if S.cache#?"SAGBIBasis" then (
 	SB = S.cache#"SAGBIBasis";
 	if isSubset(first entries gens SB , first entries gens S) then (
-	    isSAGBI S.cache#"SAGBIBasis"
+	    isSAGBI SB
 	    ) else (
 	    false
 	    ) 
@@ -375,7 +381,7 @@ isSAGBI Subring := opts -> S -> (
 	    SB = sagbiBasis compTable;
 	    SB = internalIsSAGBI(opts, SB);
     	    S.cache#"SAGBIBasis" = SB;
-    	    isSAGBI SB
+    	    SB#"data"#"sagbiDone"
 	    ) else ( 
 	    null -- S has no SAGBIBasis cached and Compute is set to false
 	    )
