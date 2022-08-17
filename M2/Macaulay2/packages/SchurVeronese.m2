@@ -189,7 +189,7 @@ getFileName := (d,n,b) ->(curDir|"SchurVeronese/bettiP"|toString(n)|"_" | toStri
 ----- multigraded Betti data for O(b) on P^n embedded by O(d). The
 ----- keys for this hash table are pairs (p,q) corresponding to the
 ----- Betti number K_{p,q}(n,b;d). Notice that the multigraded Betti
------ data is stored via a mulitgraded Hilbert series. See
+----- data is stored via a multigraded Hilbert series. See
 ----- [Sec 1.1, BEGY] for definitions.
 --------------------------------------------------------------------
 --------------------------------------------------------------------
@@ -374,7 +374,7 @@ numRepsBetti  (ZZ,ZZ,ZZ) := (d,n,b) ->(
 ----- Betti numbers are numerical in nature there is room for error,
 ----- and so, we have implemented post processing to catch errors. 
 ----- This function returns a hash table whose keys are pairs (p,q)
------ with the corresponding value being a multigraded Hilber 
+----- with the corresponding value being a multigraded Hilbert
 ----- series recording the errors encountered when computing the
 ----- multigraded Betti numbers for K_{p,q}(n,b;d). See [Sec 5.2, BEGY]
 ----- for a discussion on error processing.

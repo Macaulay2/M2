@@ -107,7 +107,7 @@ ensurePartitions(List,ZZ,ZZ) :=  (conds'flags, k,n) ->(
 ------------------------------------------
 --  NSC2phc
 -- converts from numerical Schubert Calculus data for a Schubert problem
---  (partitions or brackets) to input for PHCPack's data (matrix of multiplcities and brackets)
+--  (partitions or brackets) to input for PHCPack's data (matrix of multiplicities and brackets)
 ------------------------------------------
 -- Input: 
 --    conds - list of partitions or brackets 

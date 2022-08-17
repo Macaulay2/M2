@@ -170,7 +170,7 @@ tgb (Ideal) := MutableHashTable => o -> (I) -> (
 -- of the ideal (leadTerm f : f in values H). 
 -- If values H constitutes a Groebner basis of the ideal it generates,
 -- this method returns a minimal Groebner basis.
--- Keys of non-minimial elements are retained within the hashtable (H#those=null).
+-- Keys of non-minimal elements are retained within the hashtable (H#those=null).
 ---------------------------------------------------------------------------------------------
 minimize = method(TypicalValue => LineageTable)
 minimize(LineageTable) := LineageTable => (H) -> (

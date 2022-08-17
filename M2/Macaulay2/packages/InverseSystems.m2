@@ -383,7 +383,7 @@ Description
   which is of course defined only on divided monomials of 
   small degree.  
 Caveat
- The translations used involve multiplying or dividing by scalars; if the polynoimials
+ The translations used involve multiplying or dividing by scalars; if the polynomials
  involved have maximum degree n, then n! must be invertible for theUsing the tool of translation to make sense.
 SeeAlso
  inverseSystem
@@ -821,7 +821,7 @@ assert(
 
 ///
 
---inverseSystem is equivariant on matricses
+--inverseSystem is equivariant on matrices
 TEST///
 setRandomSeed 0
 kk = QQ

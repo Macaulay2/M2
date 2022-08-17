@@ -636,7 +636,7 @@ randomPointViaDefaultStrategy(ZZ, Ideal) := List => opts -> (n1, I1) -> (
     );    
 
     if (runDecomp) then (
-        if (opts.Verbose) or (debugLevel > 0) then print "randomPointViaDefaultStrategy(step 4): attempting linear intersection with triinomials.";
+        if (opts.Verbose) or (debugLevel > 0) then print "randomPointViaDefaultStrategy(step 4): attempting linear intersection with trinomials.";
         tempPtsList =  linearIntersectionNew(n1 - #pointsList, I1, 
             Homogeneous => opts.Homogeneous,          
             Replacement => Trinomial,        
@@ -1058,7 +1058,7 @@ dimViaBezout(Ideal) := opts-> I1 -> (
             cancel t2;
             return tr;            
         );
-        if opts.Verbose or debugLevel > 0 then print "dimViaBezout: Something went wrong with multithrading.";              
+        if opts.Verbose or debugLevel > 0 then print "dimViaBezout: Something went wrong with multithreading.";              
         return null;
         *-
         

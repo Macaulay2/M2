@@ -2933,7 +2933,7 @@ document {
      PARA{}, "The list ",TT "L"," contains a list for each maximal cone ",TEX///$\sigma$///," of the 
      underlying fan. For each maximal cone ",TEX///$\sigma$///," this list contains all matrices of 
      possible weight vectors, that induce the filtrations on the rays of this cone (modulo permutations, 
-     but yet not all permutations). This means that for one of these matrices ",TEX///$M$///," multplied 
+     but yet not all permutations). This means that for one of these matrices ",TEX///$M$///," multiplied 
      with the matrix ",TEX///$R$///," of rays of this cone (the rays are the rows) gives the matrix of 
      filtrations of these rays (where for each filtration the entries may be permuted).",
      

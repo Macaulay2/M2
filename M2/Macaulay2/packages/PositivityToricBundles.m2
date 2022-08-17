@@ -925,7 +925,7 @@ document {
   Given a toric vector bundle $\mathcal E$ in Klyachko's description on a toric variety $X = TV(\Sigma)$, 
   it is encoded by increasing filtrations $E^{\rho}(j)$  for each ray $\rho \in \Sigma(1)$.
   To these filtrations we can associated the set $L(\mathcal E)$ of intersections $\cap_{\rho} E^{\rho} (j_{\rho})$, where $(j_{\rho})_\rho$ runs over all tuples in $\mathbb Z^{\Sigma(1)}$.
-  This set $L(\mathcal E)$ is ordered by inclusion and there is a unique matriod $M(\mathcal E)$ associated to it, see [RJS, Proposition 3.1].
+  This set $L(\mathcal E)$ is ordered by inclusion and there is a unique matroid $M(\mathcal E)$ associated to it, see [RJS, Proposition 3.1].
   ///,
   TT "groundSet", " computes the ground set (i.e. building blocks) of this matroid.",
   

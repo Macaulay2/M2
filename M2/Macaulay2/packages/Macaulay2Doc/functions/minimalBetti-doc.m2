@@ -8,7 +8,7 @@ doc ///
      [minimalBetti,LengthLimit]
      [minimalBetti,Weights]
    Headline
-     minimal betti numbers of (the mininimal free resolution of) a homogeneous ideal or module
+     minimal betti numbers of (the minimal free resolution of) a homogeneous ideal or module
    Usage
      B = minimalBetti I
      B = minimalBetti(I, DegreeLimit=>d, LengthLimit=>len, Weights=>h)

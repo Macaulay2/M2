@@ -1089,7 +1089,7 @@ doc ///
      jetMatrix(A,2,pt)
     
    Text
-    If no point is provided the matrix of k-jets is provided as a matrix over a polynomoial ring.
+    If no point is provided the matrix of k-jets is provided as a matrix over a polynomial ring.
     
    Example
      A=latticePoints(convexHull(matrix{{0,0,2},{0,2,0}}))

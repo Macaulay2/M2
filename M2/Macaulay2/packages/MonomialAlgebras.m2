@@ -2318,7 +2318,7 @@ doc ///
     randomMonomialAlgebra
     (randomMonomialAlgebra,ZZ,ZZ,ZZ)
   Headline
-    Generate random monoimal algebra.
+    Generate random monomial algebra.
   Usage
     randomMonomialAlgebra(a,d,c)
   Inputs
