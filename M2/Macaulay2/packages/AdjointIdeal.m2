@@ -115,7 +115,7 @@ k+minPosition(del))
 --J=adjointIdeal(I,ib,ver)
 
 
--- permute the columns of the matrix trmw by the permutaton in the 2-list lip
+-- permute the columns of the matrix trmw by the permutation in the 2-list lip
 permute=method()
 permute(List,Matrix):=(lip,trmw)->(
 n:=rank source trmw;

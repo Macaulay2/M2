@@ -1210,7 +1210,7 @@ doc///
         fourierToProbability
 	(fourierToProbability,Ring,Ring,ZZ,Model)
     Headline
-        map from Fourier coordinates to probablity coordinates
+        map from Fourier coordinates to probability coordinates
     Usage
         fourierToProbability(S,R,n,M)
     Inputs
@@ -1223,7 +1223,7 @@ doc///
 	M:Model
     Outputs
         :RingMap
-	    from Fourier coordinates to probablity coordinates
+	    from Fourier coordinates to probability coordinates
     Description
         Text
 	    This function creates a ring map from the ring of Fourier coordinates to the ring of probability coordinates,
@@ -2651,7 +2651,7 @@ TEST ///
 --by computing directly from the parameterization in probability 
 --coordinates and the second is by using phyloToric42 to compute
 --the ideal in Fourier coordinates and then forming an ideal by 
---converting each of the generators into probablity coordinates. 
+--converting each of the generators into probability coordinates. 
 --We assert the two ideals are equal modulo the certain linear invariants
 --that are suppressed when computing in the ring of Fourier coordinates.
 

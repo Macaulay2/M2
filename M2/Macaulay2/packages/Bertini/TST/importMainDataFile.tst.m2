@@ -4,7 +4,7 @@ needsPackage "Bertini"
 
 --------
 --Bertini keeps much more information that just the coordinates of solutions. 
---Bertini determines witness points, and these points have a lot of numerical infomration. 
+--Bertini determines witness points, and these points have a lot of numerical information. 
 --Witness points are stored in the main_data file.  The format of the main_data file depends on if you are using regeneration or positive dimensional solves. 
 
 makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y},B'Polynomials=>{"(x^2-2)*x^3","y"})

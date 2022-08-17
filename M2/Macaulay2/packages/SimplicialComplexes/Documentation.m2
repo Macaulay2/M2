@@ -4431,7 +4431,7 @@ doc ///
 	i : ZZ
 	f : SimplicialMap
 	Degree => ZZ
-	    which is ignored by this particual function	
+	    which is ignored by this particular function	
     Outputs
         : Matrix
 	    which is the induced map on cohomology

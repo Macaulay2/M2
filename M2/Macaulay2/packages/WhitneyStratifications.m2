@@ -144,7 +144,7 @@ Node
      	  Computes Whitney Statifications of complex varieties.
      Description
      	  Text
-	      This package computes Whitney stratifications of complex algebraic varieites using algorithms described in [1]. Homogeneous ideals will be treated as defining a projective variety, non-homogeneous ideals will be treated as defining affine varieties. Input ideals are assumed to define pure dimensional varieties.   
+	      This package computes Whitney stratifications of complex algebraic varieties using algorithms described in [1]. Homogeneous ideals will be treated as defining a projective variety, non-homogeneous ideals will be treated as defining affine varieties. Input ideals are assumed to define pure dimensional varieties.   
 	      
 	      References:
 	      

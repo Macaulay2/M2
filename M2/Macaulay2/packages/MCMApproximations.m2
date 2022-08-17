@@ -236,7 +236,7 @@ Headline
   Maximal Cohen-Macaulay Approximations and Complete Intersections
 Description
   Text
-   Maximal Cohen-Macaulay approximatiodns were introduced by Auslander and Buchweitz
+   Maximal Cohen-Macaulay approximations were introduced by Auslander and Buchweitz
    [The homological theory of maximal Cohen-Macaulay (MCM) approximations, 
    Colloque en l'honneur de Pierre Samuel (Orsay, 1987)
    Soc. Math. France (N.S.)} No. {\bf 38}, (1989), 5 - 37.] 

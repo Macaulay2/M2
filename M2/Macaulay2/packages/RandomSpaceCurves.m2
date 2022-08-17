@@ -423,7 +423,7 @@ randomSpaceCurve(ZZ,ZZ,PolynomialRing) := opt->(d,g,R)->(
      h1 := for i from 0 when ((i<4) or(d*i+1-g)>binomial(i+3,3)) list max(d*i+1-g-binomial(3+i,3),0);
      -- calculate offset (i.e. number of leading 0's in h1)
      e := 0; for i in h1 when i==0 do e=e+1;
-     -- calculate support of Hartshorne Rao Moduole
+     -- calculate support of Hartshorne Rao Module
      HRao := select(h1,i->i!=0);
      -- if the Hartshorne Rao Module is zero, the curve is ACM
      -- and it can be defined by the minors of an appropriate

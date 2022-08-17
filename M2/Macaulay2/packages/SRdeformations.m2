@@ -2499,7 +2499,7 @@ I)
 -- this is the Stanley-Reisner complex
 -- but the cocomplex is always dual to a complex in the polytope
 -- which is the true geometric strata of the vanishing locus of the ideal
--- in the Cox ring of the toric varietey)
+-- in the Cox ring of the toric variety)
 
 ---------------------------------------------------------
 -- cocomplexes:

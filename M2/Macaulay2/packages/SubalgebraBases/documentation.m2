@@ -1616,7 +1616,7 @@ doc ///
        @UL{
 	   "0: default, print nothing.",
 	   "1: Print information about the progress of the computation, but do not print any polynomials.",
-	   "2: Print all information about the progress of the computaiton, including polynomials."
+	   "2: Print all information about the progress of the computation, including polynomials."
 	   }@
    SeeAlso
      sagbi

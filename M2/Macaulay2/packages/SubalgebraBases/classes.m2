@@ -55,7 +55,7 @@ sagbiBasis Subring := opts -> S -> (
     -- rings stores the various rings we need in our constructions
     -- maps stores the maps between our rings
     -- ideals stores the ideals for the sagbi computations
-    -- data stores any SAGBI-related data from the computaiton
+    -- data stores any SAGBI-related data from the computation
     -- pending stores the pending list from the computation
     -- (if StorePending is true)
     -- strategy stores the desired strategy.  DegreeByDegree is 0

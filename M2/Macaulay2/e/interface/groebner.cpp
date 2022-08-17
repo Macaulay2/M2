@@ -499,7 +499,7 @@ MutableMatrix /* or null */ *rawResolutionGetMutableMatrixB(Computation *C,
 // First: C must be a nonminimal res computation, over QQ M.
 // Second: R must be a polynomial ring with the same monoid M as C's,
 //  and the coefficient ring must be either RR, or ZZ/p, where p is the (a)
-//  prime being used in the computaiton.
+//  prime being used in the computation.
 {
   try
     {

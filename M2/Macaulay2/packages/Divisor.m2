@@ -3884,7 +3884,7 @@ doc ///
 	Inputs
 	 D: WeilDivisor
 	 IsGraded => Boolean
-	   specify that we are computing this locus on a projective varietys
+	   specify that we are computing this locus on a projective variety
 	Outputs
 	 : Ideal
 	Description

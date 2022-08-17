@@ -131,7 +131,7 @@ evansGriffith(Matrix, ZZ) := (f,n)->(
      --rank target f1 = (rank f)+n. 
      --The routine reduces the target of f by elementary moves 
      --involving just n+1 variables.
-     --The outcome is probabalistic, but if the routine fails, it 
+     --The outcome is probabilistic, but if the routine fails, it 
      --gives an error message.
      N:=numgens ring f;
      f1:=transpose sort(transpose f, DegreeOrder=>Descending); -- this is f with rows sorted so that the degrees are ascending.
@@ -405,7 +405,7 @@ Description
   Text
    The routine reduces the target of M by elementary moves (see
    @TO elementary @) involving just d+1 variables.
-   The outcome is probabalistic, but if the routine fails, it 
+   The outcome is probabilistic, but if the routine fails, it 
    gives an error message.  
    
    See the book of Evans and Griffith

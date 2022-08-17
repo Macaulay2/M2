@@ -4659,7 +4659,7 @@ doc ///
    Description
     Text
      A possible obstruction to the commutativity of the CI operators in codim c,
-     even assymptotically,
+     even asymptotically,
      would be the non-triviality of the map
      M_{(k+4)} --> M_k \otimes \wedge^2(S^c)
      in the stable category of maximal Cohen-Macaulay modules.

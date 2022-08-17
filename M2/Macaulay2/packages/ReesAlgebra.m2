@@ -927,7 +927,7 @@ doc ///
       syzygy map of the dual of the presentation of $M$.
 
       We first give a simple example looking at the syzygy matrix of the cube of
-      the maximial ideal of a polynomial ring.
+      the maximal ideal of a polynomial ring.
    Example
       S = ZZ/101[x,y,z];
       FF=res ((ideal vars S)^3);

@@ -38,7 +38,7 @@ export{
 	"mapOntoImage",
     "QuickRank",
 	--"blowUpIdeals", --at some point we should document this and expose it to the user
-	--"nonZeroMinor",-- it is internal because the answer is probobalistic (either it finds one or it doesn't) and it is controlled by MinorsLimit option
+	--"nonZeroMinor",-- it is internal because the answer is probabilistic (either it finds one or it doesn't) and it is controlled by MinorsLimit option
     "isSameMap",
     "sourceInversionFactor",
         --"simisAlgebra", --at some point we should document this and expose it to the user

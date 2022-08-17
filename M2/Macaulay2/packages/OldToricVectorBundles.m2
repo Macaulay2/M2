@@ -3441,7 +3441,7 @@ document {
      
      PARA{}, "Note that this is only necessary for toric vector bundles generated 'by hand' 
      using ",TO addBaseChange," and ",TO addDegrees,", since bundles generated for example by 
-     ",TO tangentBundle," satisfy the condition autmatically.",
+     ",TO tangentBundle," satisfy the condition automatically.",
      
      EXAMPLE {
 	  " E = tangentBundle(pp1ProductFan 2,\"Type\" => \"Kaneyama\")",

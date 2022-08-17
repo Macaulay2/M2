@@ -105,7 +105,7 @@ export {
 -- LastWeightHomological may be set to true if the last weight is considered to be the 
 -- homological degree. A differential Lie algebra 
 -- may be constructed using D=differentialLieAlgebra(x)
--- where x is a list of homogeneous elememnts in a free Lie algebra L. 
+-- where x is a list of homogeneous elements in a free Lie algebra L. 
 -- The elements in x must obey some
 -- rules for weight and sign, which is checked by the program. 
 -- The square of the differential might
