@@ -3656,7 +3656,7 @@ composedFunctions = () -> (
       betti LP
       coLP=apply(toList(min LP..max LP),i->dim HH^(-i) LP)
      --Text
-     -- Hence both Lp and RMc are azyclic.
+     -- Hence both Lp and RMc are acyclic.
      --Example
       Mc=prune truncate(c,M)**S^{c}
       betti (Mc'=HH^0 LP), betti Mc
@@ -4035,7 +4035,7 @@ doc ///
       betti LP
       coLP=apply(toList(min LP..max LP),i->dim HH^(-i) LP)
      Text
-      Hence both Lp and RMc are azyclic.
+      Hence both Lp and RMc are acyclic.
      Example
       Mc=prune truncate(c,M)**S^{c}
       betti (Mc'=HH^0 LP), betti Mc
@@ -5473,7 +5473,7 @@ doc ///
     apply the beilinson functor
   Usage
     M=beilinson F
-    phi=beilison psi
+    phi=beilinson psi
     C=beilinson T
   Inputs
     F: Module

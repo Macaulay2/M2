@@ -410,7 +410,7 @@ doc ///
 	    assert (isWellDefined g and source g === X and
 		target g === Z and matrix g === 2*id_(ZZ^(dim X)))	    
     	Text
-	    Setting {\tt m = 1} is a easy way to construct the canoncal
+	    Setting {\tt m = 1} is a easy way to construct the canonical
 	    @TO2((symbol ^, NormalToricVariety, Array), "projection")@
 	    associated to a @TO2(toricBlowup, "blow-up")@ or the 
 	    @TO2((id, NormalToricVariety), "identity map")@.	    

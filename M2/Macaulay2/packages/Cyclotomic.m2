@@ -104,7 +104,7 @@ cyclotomicPoly = (i,v) -> (
      if i <= 0 then error "the input should be > 0.";
      if i==1 then return v-1 ;
      mini := v^i -1;
-     -- dividing out the first cylcotomic polynomial
+     -- dividing out the first cyclotomic polynomial
      -- (with result a polynomial)
      mini = (flatten entries syz matrix {{mini ,(v-1)}})#1;
      -- i is prime:

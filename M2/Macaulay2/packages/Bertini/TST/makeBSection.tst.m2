@@ -27,7 +27,7 @@ sInteger=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomIntegerCoeffici
 assert(class sInteger#B'NumberCoefficients_0===ZZ)
 
 ---These equations are homogeneous. 
---We can consider an affine system by appeneding a 1 to the inputted list.
+--We can consider an affine system by appending a 1 to the inputted list.
 affineSection=makeB'Section({x,y,z,1})
 
 --If we set the ContainsPoint option then we will create a linear equation.

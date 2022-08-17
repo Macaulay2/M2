@@ -1634,7 +1634,7 @@ doc///
 	      prune HH C
     	 Text
 	      Let $S$ be the simplicial complex with facets $\{A_0 A_1, A_0 A_2, A_1 A_2\}$.  Then $S$ is a triangulation of $S^1$.  The simplicial map
-	      $\pi : \Delta \rightarrow S$ given by $\pi(a_{i,j}) = A_i$ is a combinatorial relization of the fibration
+	      $\pi : \Delta \rightarrow S$ given by $\pi(a_{i,j}) = A_i$ is a combinatorial realization of the fibration
 	      $S^1 \rightarrow {\rm Klein Bottle} \rightarrow S^1$.
 	      The subsimplicial complexes of $\Delta$, which arise from the 
 	      the inverse images of the simplicies of $S$, are described below.
@@ -1685,7 +1685,7 @@ doc ///
 	      prune HH C
 	 Text
 	      Let $S$ be the simplicial complex with facets $\{A_0 A_1, A_0 A_2, A_1 A_2\}$.  Then $S$ is a triangulation of $S^1$.  The simplicial map
-	      $\pi : \Delta \rightarrow S$ given by $\pi(a_{i,j}) = A_i$ is a combinatorial relization of the trivial fibration
+	      $\pi : \Delta \rightarrow S$ given by $\pi(a_{i,j}) = A_i$ is a combinatorial realization of the trivial fibration
 	      $\mathbb{S}^1 \rightarrow \mathbb{S}^1 \times \mathbb{S}^1 \rightarrow \mathbb{S}^1$.
 	      We now make subsimplicial complexes arising from the filtrations of the
 	      inverse images of the simplicies.
@@ -1894,7 +1894,7 @@ doc ///
 		    associated to the Hopf Fibration 
 		    $S^1 \rightarrow S^3 \rightarrow S^2$.
 		    This example is made possible by the minimal
-		    triangualtion of this fibration given in the paper
+		    triangulation of this fibration given in the paper
 		    "A minimal triangulation of the Hopf map and its application"
 		    by K.V. Madahar and K.S Sarkaria. Geom Dedicata, 2000.
      	       Text
@@ -2752,7 +2752,7 @@ doc ///
 	    compute the hard truncation of a chain complex   
      Description
      	  Text
-	       Computes the hard trucaton of a chain complex as a specified homological degree.
+	       Computes the hard truncation of a chain complex as a specified homological degree.
 	  Example
 	       B = QQ[a..d];
 	       C = koszul vars B

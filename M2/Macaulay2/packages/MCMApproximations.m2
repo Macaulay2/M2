@@ -297,7 +297,7 @@ Description
    netList apply({1,2,3}, i-> betti res Ea_i)
   Text
    Here is a similar display for the co-approximation sequence. Here
-   the Betti table of M is at the bottom, the Betti table of the module of finite projecdtive dimension
+   the Betti table of M is at the bottom, the Betti table of the module of finite projective dimension
    is in the middle, and that of the MCM module is at the top (
   Example
    Ec = coApproximationSequence M;
@@ -709,7 +709,7 @@ doc ///
     c:ZZ
      desired codimension
     d:ZZ
-     degree of homogoneous generators
+     degree of homogeneous generators
     ff:Matrix
      a regular sequence
    Outputs

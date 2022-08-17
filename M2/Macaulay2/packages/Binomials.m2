@@ -1064,7 +1064,7 @@ cellularBinomialUnmixedDecomposition Ideal := Ideal => o -> I -> (
      b := sub(makeBinomial(CoeffR(monoid [cv]), L2cols#i, l2#1#i), R);
      
      -- We can't follow Section 4.1 of Ojeda/Sanchez because there is no 
-     -- effictive criterion to decide that mb^[e] will never lie in I, no
+     -- effective criterion to decide that mb^[e] will never lie in I, no
      -- matter how divisible e is.
     
      -- We take the approach of computing e_b by actually coloning.

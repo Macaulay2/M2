@@ -685,7 +685,7 @@ isNormal(Ring) := Boolean => (R) -> (
      )
 
 --------------------------------------------------------------------
--- MES TODO: don't require homogeneeous!!
+-- MES TODO: don't require homogeneous!!
 conductor = method()
 conductor RingMap := Ideal => (F) -> (
      --Input:  A ring map where the target is finitely generated as a 

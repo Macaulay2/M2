@@ -119,7 +119,7 @@ createCommAlgebra PolynomialRing := W -> (
 
 
 
--- These routines compute the Fourier transform which is the automorhpism
+-- These routines compute the Fourier transform which is the automorphism
 -- of the Weyl algebra sending x -> -dx, dx -> x.
 -- Input: RingElement f, Matrix m, Ideal I, ChainComplex C, or Module M
 -- Output: Fourier transform of f, m, I, C, or M

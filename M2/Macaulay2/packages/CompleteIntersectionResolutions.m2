@@ -1639,7 +1639,7 @@ insertT (Matrix, List) := (phi,Ti) -> (
     	--phi is a matrix of linear forms in vars x_1..x_c.
     	--Ti is a list of lists, each a
 	--1-rowed matrix of scalars over R
-	--corresonding to one of the x_i.
+	--corresponding to one of the x_i.
 	--replace each entry of phi by the 
 	--appropriate linear combination of these matrices 
 	--and the output is a matrix of scalars over R.
@@ -5062,7 +5062,7 @@ doc///
         Description
          Text
 	  The form expo(c,N) returns partitions of N with c non-negative parts.
-	  The form expo(c, L) returns partitions with non-negaive parts that are
+	  The form expo(c, L) returns partitions with non-negative parts that are
 	  componentwise <= L (and any sum <= sum L).
 	  
 	  The list expo(c,N)  may be thought of as the list of exponent vectors of the 

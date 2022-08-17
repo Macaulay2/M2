@@ -3239,7 +3239,7 @@ doc ///
     Description
         Text
             A map of chain complexes $f \colon C \to D$ is
-            null-homopic if there exists a map of chain
+            null-homotopic if there exists a map of chain
             complexes $h : C \to D$ of degree $\deg(f)+1$,
             such that we have the equality 
             \[ f = \operatorname{dd}^D h 
@@ -3301,7 +3301,7 @@ doc ///
     Description
         Text
             A map of chain complexes $f \colon C \to D$ is
-            null-homopic if there exists a map of chain
+            null-homotopic if there exists a map of chain
             complexes $h : C \to D$ of degree $\deg(f)+1$,
             such that we have the equality 
             \[ f = \operatorname{dd}^D h 
@@ -3361,7 +3361,7 @@ doc ///
     Description
         Text
             A map of chain complexes $f \colon C \to D$ is
-            null-homopic if there exists a map of chain
+            null-homotopic if there exists a map of chain
             complexes $h : C \to D$ of degree $\deg(f)+1$,
             such that we have the equality 
             \[ f = \operatorname{dd}^D h 

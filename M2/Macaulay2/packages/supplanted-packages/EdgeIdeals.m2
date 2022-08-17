@@ -1739,7 +1739,7 @@ doc ///
 		     S = QQ[a..f];
 		     c4 = cycle(S,4) -- 4-cycle; chromatic number = 2
 		     c5 = cycle(S,5) -- 5-cycle; chromatic number = 3
-		     k6 = completeGraph S  -- complete graph on 6 vertices; chormatic number = 6
+		     k6 = completeGraph S  -- complete graph on 6 vertices; chromatic number = 6
 		     chromaticNumber c4
 		     chromaticNumber c5
 		     chromaticNumber k6

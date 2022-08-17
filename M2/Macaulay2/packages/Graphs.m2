@@ -5297,7 +5297,7 @@ doc ///
         Text
 	    This method outputs a HashTable with keys digraph, map and newDigraph, where digraph is the original digraph,
 	    map is the relation between old ordering and the new ordering of vertices and newDigraph is the Digraph with 
-	    topologically sorted vertices. This method needs the input to be directed adyclic graph (DAG).
+	    topologically sorted vertices. This method needs the input to be directed acyclic graph (DAG).
 	    S provides the preference given to the vertices in order to break ties and provide unique topological sorting to the DAG.
 	    
 	    Permissible values of S are: "random", "max", "min", "degree".

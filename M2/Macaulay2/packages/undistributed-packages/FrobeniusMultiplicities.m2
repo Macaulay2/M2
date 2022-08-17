@@ -297,7 +297,7 @@ document {
      Key => {tensorF,
 	  (tensorF, Module, ZZ, ZZ)
 	  },
-     Headline => "computes the complex F^n(C) where C is the free resoltuion of M (with LengthLimit set to i+1) and where F^n is the nth iteration of the Frobenius functor",
+     Headline => "computes the complex F^n(C) where C is the free resolution of M (with LengthLimit set to i+1) and where F^n is the nth iteration of the Frobenius functor",
      Usage => "tensorF(M,i,n)",
      Inputs => {
 	  "M" => Module,

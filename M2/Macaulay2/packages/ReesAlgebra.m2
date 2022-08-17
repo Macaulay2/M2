@@ -2192,7 +2192,7 @@ doc ///
      such that T*phi = X*psi. Under reasonable hypotheses (eg when R is a domain) the relation
      X*psi = 0 in the Rees algebra implies that the n x n minors of psi are 0. Thus these minors lie in the ideal
      defining the Rees algebra. The expectedReesIdeal is the sum of the ideals (T*phi) and the ideal of nxn minors of psi.
-     Under particularly good circumstances this sum is known to be equal to the ideal of the Rees algrebra. More generally,
+     Under particularly good circumstances this sum is known to be equal to the ideal of the Rees algebra. More generally,
      it may speed computations of @TO reesIdeal@ to start with this sum rather than with the ideal T*phi, as in the following
      example. (This can be turned off with the Jacobian=>false option.)
     

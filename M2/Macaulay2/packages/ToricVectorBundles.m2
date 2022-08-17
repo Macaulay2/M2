@@ -1870,7 +1870,7 @@ intersectMatrices = (M,N) -> (
 
 -- PURPOSE : Building a Vector Bundle of rank 'k' on the Toric Variety given by the Fan 'F'
 --           with 0 degrees and identity transition matrices
---   INPUT : '(k,F)',  a strictly psoitive integer 'k' and a pure and full dimensional
+--   INPUT : '(k,F)',  a strictly positive integer 'k' and a pure and full dimensional
 --                     Fan 'F' 
 --  OUTPUT : The ToricVectorBundleKaneyama 'VB'
 makeVBKaneyama = method(TypicalValue => ToricVectorBundleKaneyama)
@@ -1932,7 +1932,7 @@ makeVBKaneyama (ZZ,Fan,List,List) := (k,F,degreelist,matrixlist) -> (
 
 -- PURPOSE : Building a Vector Bundle in the Klyachko description of rank 'k' on the Toric Variety given by the Fan 'F'
 --           with trivial Filtration for every ray
---   INPUT : '(k,F)',  a strictly psoitive integer 'k' and a pure and full dimensional Fan 'F' 
+--   INPUT : '(k,F)',  a strictly positive integer 'k' and a pure and full dimensional Fan 'F' 
 --  OUTPUT : The ToricVectorBundleKlyachko 'VB'
 makeVBKlyachko = method(TypicalValue => ToricVectorBundleKlyachko)
 makeVBKlyachko (ZZ,Fan) := (k,F) -> (

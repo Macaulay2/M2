@@ -1490,7 +1490,7 @@ multidoc ///
 	    characterTable n
 	Inputs
 	    n:ZZ
-	    	the degree of the symmmetric group
+	    	the degree of the symmetric group
 	Outputs
 	    :CharacterTable
 	    	the character table with the irreducible characters of $S_n$ indexed by partitions

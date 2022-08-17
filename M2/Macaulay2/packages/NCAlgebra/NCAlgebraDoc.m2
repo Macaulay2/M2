@@ -3929,7 +3929,7 @@ doc ///
       Text
          The endomorphism ring is computed using @ TO endomorphismRing @. This method
 	 computes a presentation, but the presentation is typically not minimal. We
-	 see from the following calcuation that X_3 = X_0X_2.
+	 see from the following calculation that X_3 = X_0X_2.
       Example
          B = endomorphismRing(M,X); 
 	 gensI = gens ideal B

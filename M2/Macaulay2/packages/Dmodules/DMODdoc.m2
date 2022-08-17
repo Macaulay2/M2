@@ -747,7 +747,7 @@ document {
 	     ///,
      Caveat =>{
 	  "Input modules M, N should be holonomic.",
-	  "Does not yet compute explicit reprentations of Ext groups
+	  "Does not yet compute explicit representations of Ext groups
 	  such as Yoneda representation."
 	  },
      SeeAlso => {"DHom", "Drestriction"}

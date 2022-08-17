@@ -3405,7 +3405,7 @@ secondaryPolytope Polyhedron := P -> (
 
 
 -- PURPOSE : Computing the state polytope of the ideal 'I'
---   INPUT : 'I',  a homogeneous ideal with resect to some strictly psoitive grading
+--   INPUT : 'I',  a homogeneous ideal with resect to some strictly positive grading
 --  OUTPUT : The state polytope as a polyhedron
 statePolytope = method(TypicalValue => Polyhedron)
 statePolytope Ideal := I -> (
@@ -5094,7 +5094,7 @@ document {
      of them. If one of the first two conditions fails, there will be an error and no PolyhedralComplex 
      will be returned. The pairs of incompatible polyhedra can be accessed with the 
      function ",TO incompPolyhedra,". If the last condition fails, then the Polyhedron is already in 
-     the PolyhedralComplex as a face of one of the poyhedra, so it does not have to be added. The conditions 
+     the PolyhedralComplex as a face of one of the polyhedra, so it does not have to be added. The conditions 
      are checked in this order.",
      
      PARA{}, "If ",TT "addPolyhedron"," is applied to a ",TO List," and a ",TO PolyhedralComplex,", then 

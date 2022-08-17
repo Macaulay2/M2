@@ -90,7 +90,7 @@ FormalSeries * FormalSeries := (s,t) ->
 	new FormalSeries from {sum for i from 0 to k list (part(i,i,n,s#0))*(part(0,(k-i),m,t#0)),k}
 	)
 
---Defining inverse of FormalSeries. It has the same precision. Still slow because the internal multiplication of macaulay2 is not used. Instead, we use our multiplciation, that is slow.
+--Defining inverse of FormalSeries. It has the same precision. Still slow because the internal multiplication of macaulay2 is not used. Instead, we use our multiplication, that is slow.
 
 inverse(FormalSeries) := (s) ->
 	(
