@@ -261,6 +261,7 @@ void RingElement::degree_weights(M2_arrayint wts, int &lo, int &hi) const
   P->degree_weights(val, wts, lo, hi);
 }
 
+// TODO: align this with other multi_degree functions
 M2_arrayint RingElement::multi_degree() const
 {
   if (is_zero())
@@ -268,13 +269,11 @@ M2_arrayint RingElement::multi_degree() const
       ERROR("the zero element has no degree");
       return 0;
     }
-
-  int *mon = newarray_atomic(int, R->degree_monoid()->monomial_size());
-  R->degree(get_value(), mon);
-  M2_arrayint result = R->degree_monoid()->to_arrayint(mon);
-
-  freemem(mon);
-  return result;
+  auto M = R->degree_monoid();
+  auto n = MONOMIAL_BYTE_SIZE(M->monomial_size());
+  auto m = ALLOCATE_MONOMIAL(n);
+  R->degree(get_value(), m);
+  return M->to_arrayint(m);
 }
 
 RingElement *RingElement::homogenize(int v, M2_arrayint wts) const
