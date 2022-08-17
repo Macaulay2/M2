@@ -242,7 +242,7 @@ sagbiBasis HashTable := opts -> H -> (
 gens SAGBIBasis := opts -> S -> (
     local M;
     if numColumns S#"data"#"sagbiGenerators" == 0 then (
-    	M = matrix(S#"rings"#"liftedRing",{{}});
+    	M = S#"maps"#"quotient" matrix(S#"rings"#"liftedRing",{{}});
     	) else (
     	M = S#"maps"#"quotient" S#"data"#"sagbiGenerators";
 	);
@@ -310,7 +310,7 @@ internalIsSAGBI(SAGBIBasis) := opts -> SB -> (
     if compTable#"data"#"sagbiDone" then (
 	compTable#"options"#Recompute = false;
 	) else (
-	compTable#"options"#Recompute = opts.Recompute; -- set the recompute option for resuming computation purposes
+	compTable#"options"#Recompute = true; -- opts.Recompute; -- set the recompute option for resuming computation purposes
 	);
     
     sagbiBasis compTable
@@ -318,8 +318,8 @@ internalIsSAGBI(SAGBIBasis) := opts -> SB -> (
 
 
 
--- isSAGBI check whether the SAGBI generators of an object form a sagbi basis
--- isSAGBI Subring checks the sagbi generators of the cached SAGBIBAsis object
+-- isSAGBI checks whether the SAGBI generators of an objects associated SAGBIBasis object form a sagbi basis
+-- isSAGBI Subring checks the generators of the subring
 -- if an object that does not have a cached SAGBIBasis object is passed then 
 --   if Compute then we perform 1-step of the sagbi algorithm to check
 --      whether all the S-polys subduct to 0
@@ -339,18 +339,32 @@ isSAGBI = method(
 	SubductionMethod => "Top",
 	Limit => 0, 
 	PrintLevel => 0,
-	Recompute => true, -- when running sagbi on a subring / SAGBIBasis object constructed
+	Recompute => false, -- when running sagbi on a subring / SAGBIBasis object constructed
 	RenewOptions => false
 	}
     );
 
-isSAGBI SAGBIBasis := opts -> SB -> SB#"data"#"sagbiDone"
+isSAGBI SAGBIBasis := opts -> SB -> (
+    if SB#"data"#"sagbiDone" or (not opts.Compute) then (
+        SB#"data"#"sagbiDone"
+	) else (
+	SB' := internalVerifySagbi(SB, opts);
+	S := SB#"data"#"subring";
+	S.cache#"SAGBIBasis" = SB';
+	SB'#"data"#"sagbiDone"
+	)
+    )
 
 isSAGBI Subring := opts -> S -> (
     local SB;
     local compTable;
     if S.cache#?"SAGBIBasis" then (
-	isSAGBI S.cache#"SAGBIBasis" 
+	SB = S.cache#"SAGBIBasis";
+	if isSubset(first entries gens SB , first entries gens S) then (
+	    isSAGBI S.cache#"SAGBIBasis"
+	    ) else (
+	    false
+	    ) 
 	) else (
 	if opts.Compute then (
 	    -- construct a SAGBIBasis for S and verify whether it is a sagbi basis
@@ -370,8 +384,24 @@ isSAGBI Subring := opts -> S -> (
 
 isSAGBI Matrix := opts -> M -> (
     local S;
+    local SB;
+    -*
     if M.cache#?"Subring" then (
 	isSAGBI(M.cache#"Subring", opts) 
+	) else (
+	S = subring M;
+	M.cache#"Subring" = S;
+	isSAGBI S
+	)
+    *-
+    if (M.cache#?"Subring") and (M.cache#"Subring".cache#?"SAGBIBasis") then (
+	S = M.cache#"Subring";
+	SB = S.cache#"SAGBIBasis";
+	if isSubset(first entries gens SB, first entries M) then (
+	    isSAGBI SB
+	    ) else (
+	    false
+	    ) 
 	) else (
 	S = subring M;
 	M.cache#"Subring" = S;

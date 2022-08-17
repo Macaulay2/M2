@@ -119,7 +119,7 @@ sagbi(SAGBIBasis) := opts -> SB -> (
 	S = SB;
 	);
     
-    if (S#"data"#"limit" > opts.Limit) or (isSAGBI S) then return S;
+    if (S#"data"#"limit" > opts.Limit) or S#"data"#"sagbiDone" then return S;
 
     -- Should also be able to initialize when pending doesn't exist.
     -- This case isn't taken care of yet.
@@ -157,11 +157,6 @@ sagbi(SAGBIBasis) := opts -> SB -> (
 )
 
 
--- #################################################
--- ## remove: intervalVerifySagbi and verifySagbi ##
--- #################################################
-
-
 -- internal verify sagbi is a version of verifySabi just for SAGBIBasis objects
 -- it returns a SAGBIBasis object with its SB#"data"#"sagbiDone" flag correctly set
 -- it is used as an intermediate step for verifySagbi since matrices and subrings
@@ -171,6 +166,7 @@ sagbi(SAGBIBasis) := opts -> SB -> (
 internalVerifySagbi = method(
     TypicalValue => SAGBIBasis,
     Options => {
+	Compute => true,
 	-- FullSubduct => true,
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
         SubductionMethod => "Top", -- top or engine
@@ -194,8 +190,11 @@ internalVerifySagbi(SAGBIBasis) := opts -> SB -> (
     -- Reduce the SPairs
     reducedSPairs := compSubduction(compTable, SPairs);
     
+    -- check the sagbi gens are high enough degree (i.e. higher than the subring generators)
+    highEnoughDegree := max flatten (degrees compTable#"data"#"subalgebraGenerators")_1 < max flatten (degrees compTable#"data"#"sagbiGenerators")_1;
+    
     -- if all the reduced SPairs are zero then we have a sagbiBasis
-    compTable#"data"#"sagbiDone" = zero(reducedSPairs);
+    compTable#"data"#"sagbiDone" = zero(reducedSPairs) and highEnoughDegree;
     sagbiBasis compTable
     );
 
@@ -212,6 +211,7 @@ internalVerifySagbi(SAGBIBasis) := opts -> SB -> (
 verifySagbi = method(
     TypicalValue => Subring,
     Options => {
+	Compute => true,
 	-- FullSubduct => true,
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
         SubductionMethod => "Top", -- top or engine
@@ -237,27 +237,39 @@ verifySagbi(Subring) := opts -> S -> (
 	);
     
     SB = internalVerifySagbi(opts, SB);
-    S.cache#"SAGBIBasis" = SB;
-    isSAGBI S
+    if not S.cache#?"SAGBIBasis" then (
+    	S.cache#"SAGBIBasis" = SB; -- add a new SAGBIBasis if there wasn't one already
+	) else if (SB#"data"#"sagbiDone" and not S.cache#"SAGBIBasis"#"data"#"sagbiDone") then (
+	S.cache#"SAGBIBasis" = SB; -- update the SAGBIBasis if we managed to newly verify the sagbi basis
+	);
+    SB#"data"#"sagbiDone"
     )
 
 verifySagbi(Matrix) := opts -> M -> (
+    local S;
     local SB;
 
     if (M#cache#?"Subring") and (M#cache#"Subring"#cache#"SAGBIBasis"#"data"#"sagbiGenerators" == M) then (
 	-- S has a sagbi basis so use this object as a compTable
-	SB = M#cache#"Subring"#cache#"SAGBIBasis";
+	S = M.cache#"Subring";
+	SB = S.cache#"SAGBIBasis";
 	) else (
 	SB = initializeCompTable(sagbiBasis M, opts);
 	-- add the generators to the sagbiGenerators
 	SB#"data"#"sagbiGenerators" = M;
 	updateComputation(SB);
 	SB = sagbiBasis SB;
+	S = SB#"data"#"subring";
+	M.cache#"Subring" = S;
 	);
     
     SB = internalVerifySagbi(opts, SB);
-    M.cache#"Subring"#cache#"SAGBIBasis" = SB;
-    isSAGBI M
+    if not S.cache#?"SAGBIBasis" then (
+    	S.cache#"SAGBIBasis" = SB; -- add a new SAGBIBasis if there wasn't one already
+	) else if (SB#"data"#"sagbiDone" and not S.cache#"SAGBIBasis"#"data"#"sagbiDone") then (
+	S.cache#"SAGBIBasis" = SB; -- update the SAGBIBasis if we managed to newly verify the sagbi basis
+	);
+    SB#"data"#"sagbiDone"
     )
 
 -- A list does not have a cache, so verifySagbi on a list 
