@@ -98,8 +98,24 @@ use S
 R = S/(x-y)
 monoid R
 
+--- test Cox rings with torsion degree group
+needsPackage "NormalToricVarieties"
+B = {{2, -1}, {-1, 2}, {-1,-1}}
+X = normalToricVariety(B, {{0, 1}, {1, 2}, {2, 0}})
+G = classGroup X -- prune coker matrix B
+A = fromWDivToCl X -- G.cache.pruningMap^-1
+S = ring X -- :)
+assert(degreeGroup S == G)
+assert(degrees S == transpose entries A)
+
+-- test basis
+L = monomials(D = 3*X_0)
+assert(set first entries basis(degree D, S) === set L)
+-- FIXME should be homogeneous
+isHomogeneous sum({1,1,1,1}, L, times)
+
 --- test passing a map of ZZ-modules for Degrees
-M = monoid[a,b,c, Degrees => map(G, ZZ^3, transpose degrees A)]
+M = monoid[a,b,c, Degrees => A]
 assert(degreeGroup M == G)
 assert(degrees M == degrees S)
 
@@ -113,7 +129,7 @@ assert(degreeGroup M == ZZ^2)
 assert(degrees M == splice {{1, 0}, 2:{0, 1}})
 
 --- test passing degrees from generators of the degree group
-H = subquotient(matrix transpose degrees A, relations G)
+H = subquotient(ambient A, relations G)
 M = monoid[a,b,c, DegreeGroup => H]
 assert(degreeGroup M == G)
 assert(degrees M == degrees S)
