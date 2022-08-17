@@ -275,7 +275,7 @@ setupMethods((), {
 	  leadComponent, assign, realPart, imaginaryPart, conjugate,
 	  relations, cone, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,
 	  presentation, dismiss, precision, 
-	  norm, clean, fraction, part, preimage,
+	  norm, clean, fraction, part,
 	  hasEngineLinearAlgebra, nullSpace,
       isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile
 	  })
