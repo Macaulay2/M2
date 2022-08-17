@@ -224,7 +224,7 @@ verifySagbi = method(
 
 verifySagbi(Subring) := opts -> S -> (
     local SB;
-    
+
     if (S#cache#?"SAGBIBasis") and (S#cache#"SAGBIBasis"#"data"#"sagbiGenerators" == gens S) then (
 	-- S has a sagbi basis so use this object as a compTable
 	SB = S#cache#"SAGBIBasis";
@@ -243,10 +243,10 @@ verifySagbi(Subring) := opts -> S -> (
 
 verifySagbi(Matrix) := opts -> M -> (
     local SB;
-    
-    if (M#cache#?"SAGBIBasis") and (M#cache#"SAGBIBasis"#"data"#"sagbiGenerators" == M) then (
+
+    if (M#cache#?"Subring") and (M#cache#"Subring"#cache#"SAGBIBasis"#"data"#"sagbiGenerators" == M) then (
 	-- S has a sagbi basis so use this object as a compTable
-	SB = M#cache#"SAGBIBasis";
+	SB = M#cache#"Subring"#cache#"SAGBIBasis";
 	) else (
 	SB = initializeCompTable(sagbiBasis M, opts);
 	-- add the generators to the sagbiGenerators
@@ -256,7 +256,7 @@ verifySagbi(Matrix) := opts -> M -> (
 	);
     
     SB = internalVerifySagbi(opts, SB);
-    M.cache#"SAGBIBasis" = SB;
+    M.cache#"Subring"#cache#"SAGBIBasis" = SB;
     isSAGBI M
     )
 
