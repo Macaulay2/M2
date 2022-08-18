@@ -14,8 +14,6 @@ use Monoid := x -> ( if x.?use then x.use x; x)
 
 options Monoid := x -> null
 
-baseName Symbol := identity
-
 OrderedMonoid = new Type of Monoid
 OrderedMonoid.synonym = "ordered monoid"
 degreeLength OrderedMonoid := M -> M.degreeLength

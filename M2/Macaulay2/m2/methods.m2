@@ -264,7 +264,7 @@ setupMethods := (args, symbols) -> (
 	  )))
 
 setupMethods((), { 
-	  entries, borel, gcdCoefficients, singularLocus,
+	  entries, baseName, borel, gcdCoefficients, singularLocus,
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
 	  koszul, symmetricPower, trace, target, source,
 	  getChangeMatrix, cover, coverMap, super, terms,
@@ -712,16 +712,6 @@ locate Sequence   := Sequence => x -> locate' x
 locate Symbol     := Sequence => x -> locate' x
 locate List       := List     => x -> apply(x, locate)
 protect symbol locate
-
--- baseName
-baseName = method()
-baseName Thing := R -> (
-     if hasAttribute(R,ReverseDictionary) then (
-	  x := getAttribute(R,ReverseDictionary);
-	  if not mutable x then error("baseName: base name ",toString x," is not mutable, hence not available for use as a variable");
-	  x)
-     else error "baseName: no base name available"
-     )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
