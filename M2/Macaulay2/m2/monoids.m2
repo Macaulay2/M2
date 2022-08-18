@@ -203,31 +203,47 @@ monoid Array := opts -> args -> (
     makeMonoid opts)
 
 -----------------------------------------------------------------------------
--- helpers for printing Monoids
+-- helpers for printing Monoid objects
 -----------------------------------------------------------------------------
 
-monoidParts = (M) -> (
-     O := monoidDefaults;
-     o := M#"original options";	-- if we used M.Options we'd run into lots of long lists as in GRevLex => {1,1,1,1,1,1,1}
-     o = M.Options;
-     nonnull splice (
-	  if M.?generatorExpressions then toSequence runLengthEncode M.generatorExpressions,
-	  Degrees => runLengthEncode if o.DegreeRank === 1 then flatten o.Degrees else (x -> VerticalList x) \ o.Degrees,
-	  if o.Heft =!= null then Heft => runLengthEncode o.Heft,
-	  MonomialOrder => rle o.MonomialOrder,
-	  ( DegreeRank, MonomialSize, WeylAlgebra, SkewCommutative, Inverses, Global ) / (key -> if o#?key and o#key =!= O#key then key => o#key)))
+isDefault = (opts, key) -> (opts#key === monoidDefaults#key
+-- TODO: uncomment more lines to adjust which default options are shown
+    or key == DegreeRank    and        opts#key ==   1
+--    or key == Degrees       and unique opts#key == {{1}}
+--    or key == Heft          and unique opts#key ==  {1}
+    or key == MonomialOrder and opts#key === new VerticalList from {
+	MonomialSize => 32, GRevLex => toList(#opts.Degrees:1), Position => Up }
+    )
+
+monoidParts = M -> (
+    opts := M.Options;
+    G := if M.?generatorExpressions then toSequence runLengthEncode M.generatorExpressions;
+    D := runLengthEncode if opts.DegreeRank === 1 then flatten opts.Degrees else opts.Degrees / (deg -> VerticalList deg);
+    L := nonnull splice ( G, if not isDefault(opts, Degrees) then Degrees => D,
+	apply(( Heft, MonomialOrder, DegreeRank, WeylAlgebra, SkewCommutative, Inverses, Global ),
+	    key -> if opts#?key and not isDefault(opts, key) then key => rle opts#key)))
 
 expressionMonoid = M -> (
-     T := if (options M).Local === true then List else Array;
-     new T from apply(monoidParts M,expression))
+    T := if (options M).Local === true then List else Array;
+    new T from apply(monoidParts M, expression))
 
-expression Monoid := M -> if hasAttribute(M,ReverseDictionary) then expression getAttribute(M,ReverseDictionary) else new Parenthesize from { (expression monoid) expressionMonoid M }
-describe Monoid := M -> Describe new Parenthesize from { (expression monoid) expressionMonoid M }
+describe   Monoid := M -> Describe new Parenthesize from { (expression monoid) expressionMonoid M }
+expression Monoid := M -> (
+    if hasAttribute(M, ReverseDictionary)
+    then expression getAttribute(M, ReverseDictionary)
+    else new Parenthesize from { (expression monoid) expressionMonoid M } )
 
 toExternalString Monoid := toString @@ describe
 toString Monoid := toString @@ expression
-net Monoid := net @@ expression
-texMath Monoid := x -> texMath expression x
+net      Monoid :=      net @@ expression
+texMath  Monoid :=  texMath @@ expression
+
+Monoid#{Standard,AfterPrint} = M -> (
+    << endl << concatenate(interpreterDepth:"o") << lineNumber << " : "; -- standard template
+    << toString class M;
+    -- TODO: print whether M is ordered, a free algebra, etc.
+    << endl;
+    )
 
 -----------------------------------------------------------------------------
 
