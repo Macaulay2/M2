@@ -7,12 +7,19 @@ needs "methods.m2"
 needs "shared.m2" -- for tensor
 needs "variables.m2"
 
+-- TODO:
+-- 1. implement a free monoid M whose degrees have torsion
+-- 2. implement the degrees ring of M as a quotient ring (optional?)
+-- 3. implement the degrees monoid of M as a monoid with relations (optional?)
+
 -- see "degreesRing 0" in last.m2
 madeTrivialMonoid := false
 
 -----------------------------------------------------------------------------
 -- Local utilities
 -----------------------------------------------------------------------------
+
+dotprod = (c,d) -> sum( min(#c, #d), i -> c#i * d#i )
 
 makeSparse := v -> select(pairs v, (k, v) -> v != 0)
 
@@ -27,6 +34,8 @@ indices := (M, variables) -> apply(variables, x -> (
 	if M.index#?x then M.index#x
 	else error "expected a variable of the ring"))
 
+sameMonoid := (x, y) -> if (M := class x) === class y then M else error "expected elements in the same monoid"
+
 -----------------------------------------------------------------------------
 -- MonoidElement type declarations and basic methods
 -----------------------------------------------------------------------------
@@ -35,19 +44,50 @@ MonoidElement = new Type of HashTable
 MonoidElement.synonym = "monoid element"
 
 -- TODO: why is this a hash table? compare with RingElement
-new MonoidElement from RawMonomial := (MonoidElement, f) -> hashTable{ symbol RawMonomial => f }
+new MonoidElement from RawMonomial := (M, f) -> hashTable{ symbol RawMonomial => f }
 raw MonoidElement := x -> x.RawMonomial
 
-MonoidElement == MonoidElement := (x,y) -> x === y
+MonoidElement == MonoidElement := (x, y) -> x === y
+MonoidElement  ? MonoidElement := (x, y) -> rawCompareMonomial(raw sameMonoid(x, y), raw x, raw y);
+MonoidElement  * MonoidElement := (x, y) -> new sameMonoid(x, y) from x.RawMonomial * y.RawMonomial;
+MonoidElement  : MonoidElement := (x, y) -> new sameMonoid(x, y) from x.RawMonomial : y.RawMonomial;
+MonoidElement  / MonoidElement := (x, y) -> (sameMonoid(x, y))_(listForm x - listForm y);
 
-MonoidElement ? ZZ := (x,n) -> x ? n_(class x)
-ZZ ? MonoidElement := (n,x) -> n_(class x) ? x
+MonoidElement Array := (m, x) -> product(rawSparseListFormMonomial raw m, (k, e) -> x#k^e)
+MonoidElement == ZZ := (m, i) -> if i === 1 then m == (class m)#1 else error "no method for '=='"
+MonoidElement  * ZZ := (x, i) -> if i === 1 then x else error "no method for multiplying available"
+MonoidElement  ^ ZZ := (x, n) -> new class x from x.RawMonomial ^ n
+MonoidElement  ? ZZ := (x, n) -> x ? n_(class x)
+ZZ  ? MonoidElement := (n, x) -> n_(class x) ? x
+ZZ  * MonoidElement := (i, x) -> x  * i
+ZZ == MonoidElement := (i, m) -> m == i
+
+-- TODO: move to engine
+degree MonoidElement := m -> (
+    degs := degrees(M := class m);
+    if m == 1 then toList(degreeLength M : 0) else
+    sum(rawSparseListFormMonomial raw m, (k, e) -> e * degs#k))
+
+baseName MonoidElement := m -> if #(s := rawSparseListFormMonomial raw m) == 1 and s#0#1 == 1
+    then (class m).generatorSymbols#(s#0#0) else error "expected a generator"
 
 promote(MonoidElement, RingElement) := RingElement => (m, R) -> (
     M := monoid R;
     k := coefficientRing R;
     if not instance(m, M) then error "expected monomial from same ring";
     new R from rawTerm(R.RawRing, raw 1_k, m.RawMonomial))
+
+-- printing helpers
+expressionTerm  := (exps, k, v) -> if v =!= 1 then Power{exps#k, v} else hold exps#k -- hold needed for single variables
+expressionTerms := (M, trms) -> ( exps := M.generatorExpressions;
+    if #trms === 1 then expressionTerm_exps trms#0 else Product apply(trms, expressionTerm_exps))
+
+expression MonoidElement := x -> expressionTerms(class x, rawSparseListFormMonomial x.RawMonomial);
+
+toExternalString MonoidElement :=
+toString MonoidElement := toString @@ expression;
+net      MonoidElement :=      net @@ expression;
+texMath  MonoidElement :=  texMath @@ expression;
 
 -----------------------------------------------------------------------------
 
@@ -129,7 +169,7 @@ raw GeneralOrderedMonoid := M -> M.RawMonoid
 
 use        Monoid := M ->(if M.?use     then M.use M; M)
 vars       Monoid := M -> if M.?vars    then M.vars    else {}
-numgens    Monoid := M -> if M.?vars    then#M.vars    else 0
+numgens    Monoid := M -> if M.?numgens then M.numgens else 0
 options    Monoid := M -> if M.?Options then M.Options
 generators Monoid := o -> lookup(vars, Monoid)
 
@@ -170,29 +210,31 @@ IndexedVariable _ Ring := RingElement => (x, M) -> (
 -- monoid
 -----------------------------------------------------------------------------
 
--- TODO: document each
-monoidDefaults = (
-     new OptionTable from {
-	  Variables => null,
-	  VariableBaseName => "p",     	    	 	    -- would be overridden by Variables => {...}
-	  Weights => {},				    -- default weight is 1, unless Local=>true
-	  Global => true,				    -- means that all variables are > 1
-     	  Local => false, 				    -- means that all variables are < 1, default weight = -1, and implies Global => false
-	  Degrees => null,
-	  Inverses => false,
-	  MonomialOrder => {GRevLex, Position => Up},
-	  MonomialSize => 32,				    -- we had this set to null, but some of the code needs a number here...
-	  SkewCommutative => {},
-	  -- VariableOrder => null,		  -- not implemented yet
-	  WeylAlgebra => {},
-     	  Heft => null -* find one *-,
-	  DegreeRank => null,				    -- specifying DegreeRank=>3 and no Degrees means degrees {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 1}, ...}
-	  Join => null -* true *-,			    -- whether the degrees in the new monoid ring will be obtained by joining the degrees in the coefficient with the degrees in the monoid
-      	  DegreeMap => null -* identity *-,		    -- the degree map to use, if Join=>false is specified, for converting degrees in the coefficient ring to degrees in the monoid
-     	  DegreeLift => null,				    -- a function for lifting degrees from the monoid ring to the coefficient ring.  Length must be correct.  Gives an error if lifting is not possible.
-	  Constants => false				    -- whether to use rawTowerRing when making a monoid ring
-	  }
-     )
+monoidDefaults = new OptionTable from {
+    Variables        => null,		-- either the number or a list of variables
+    VariableBaseName => "p",		-- the symbol to use as a IndexedVariableTable
+    -- VariableOrder => null,		-- not implemented yet
+    --
+    Global   => true,			-- means that all variables are > 1
+    Local    => false,			-- means that all variables are < 1, default weight = -1, and implies Global => false
+    Inverses => false,			-- means that the exponent vectors may be negative
+    Weights  => {},			-- default weight is 1, unless Local=>true
+    --
+    Degrees     => null,		-- the degrees of the variables in the monoid
+    DegreeLift  => null,		-- a degree lifting map from the monoid ring to the coeff ring. Gives an error if lifting is not possible
+    DegreeMap   => null -* identity *-,	-- the degree map to use, if Join=>false is specified, for converting degrees in the coeff ring to degrees in the monoid ring
+    DegreeRank  => null,		-- specifying DegreeRank=>3 and no Degrees means degrees {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 1}, ...}
+    Heft        => null -* find one *-,	-- an integer vector whose dot product with the degrees of all variables is positive
+    Join        => null -* true *-,	-- whether the degrees in the monoid ring are given by joining the degree of the coefficient with the degree of the monomial
+    --
+    MonomialOrder => {			-- the monomial ordering of the monoid
+	GRevLex, Position => Up},
+    MonomialSize  => 32,		-- we had this set to null, but some of the code needs a number here...
+    --
+    SkewCommutative => {},		-- list of skew commuting variables in the monoid ring
+    WeylAlgebra     => {},		-- pairs of Weyl algebra variables in the monoid ring
+    Constants       => false,		-- whether to use rawTowerRing when making a monoid ring
+    }
 
 monoid = method(
     Dispatch     => Thing,
@@ -204,7 +246,11 @@ monoid Array := opts -> args -> (
     if opts.Variables === null
     then opts = merge(opts, new OptionTable from {Variables => args}, last)
     else if args =!= () then error "variables provided conflict with Variables option";
-    makeit1 setMonoidOptions opts)
+    newMonoid setMonoidOptions opts)
+
+-- TODO: Would these be useful?
+--monoid MonoidElement := o -> x -> class x
+--monoid RingElement   := o -> x -> monoid ring x
 
 -----------------------------------------------------------------------------
 -- helpers for printing Monoid objects
@@ -279,131 +325,6 @@ degreesMonoid List := memoize(
 	       Inverses => true]))
 
 -----------------------------------------------------------------------------
--- helpers for monoid
------------------------------------------------------------------------------
-
-dotprod = (c,d) -> sum( min(#c, #d), i -> c#i * d#i )
-
-makeit1 = opts -> (
-     M := new GeneralOrderedMonoid of MonoidElement;
-     M#"original options" = opts;
-     M.Engine = true;
-     varlist := baseName \ opts.Variables;
-     numvars := # varlist;
-     vardegs := M.degrees = opts.Degrees;
-     degrk := M.degreeLength = opts.DegreeRank;
-     assert( degrk =!= null );
-     order := transpose vardegs;
-     variableOrder := toList (0 .. numvars-1);
-     scan(varlist, sym -> if not (instance(sym,Symbol) or null =!= lookup(symbol <-, class sym)) then error "expected variable or symbol");
-     M.standardForm = somethingElse;
-     w := reverse applyTable(order, minus);
-     w = if # w === 0 then apply(numvars,i -> {}) else transpose w;
-     w = apply(w, x -> apply(makeSparse x, (k,v) -> (k + numvars, v)));
-     if #w =!= #varlist then error "expected same number of degrees as variables";
-     M.vars = M.generators = apply(# varlist, i -> new M from rawVarMonomial(i,1));
-     M.generatorSymbols = varlist;
-     M.generatorExpressions = (
-	  apply(varlist,
-	       x -> if instance(x, Symbol) then x else expression x
-	       )
-	  -- apply(varlist,M.generators,(e,x) -> new Holder2 from {expression e,x})
-	  );
-     processTrm := (k,v) -> if v =!= 1 then Power{M.generatorExpressions#k, v} else M.generatorExpressions#k;
-     processTrms := trms -> (
-	  if # trms === 1
-	  then processTrm trms#0
-	  else new Product from apply(trms, processTrm));
-     expression M := x -> (
-	  hold processTrms rawSparseListFormMonomial x.RawMonomial -- hold needed if single variable
-	  -- new Holder2 from { processTrms rawSparseListFormMonomial x.RawMonomial, x }
-	  );
-     M.indexSymbols = hashTable apply(M.generatorSymbols,M.generators,(v,x) -> v => x);
-     M.index = new MutableHashTable;
-     scan(#varlist, i -> M.index#(varlist#i) = i);
-     (MOopts,MOoptsint,rawMO,logMO) := makeMonomialOrdering (
-     	  opts.MonomialSize,
-	  opts.Inverses,
-     	  #varlist,
-	  if degreeLength M > 0 and opts.Heft =!= null then (
-	       apply(vardegs,d -> (
-			 w := dotprod(d,opts.Heft);
-			 if w > 0 then w else 1
-			 )))
-	  else toList (#vardegs:1),
-	  opts.Weights,
-	  opts.MonomialOrder
-	  );
-     M.RawMonomialOrdering = rawMO;
-     M#"raw creation log" = new Bag from {logMO};
-     opts = new MutableHashTable from opts;
-     opts.MonomialOrder = new VerticalList from MOoptsint; -- these are the options given to rawMonomialOrdering, except Tiny and Small aren't there yet and GRevLex=>n hasn't been expanded
-     M#"options" = MOopts; -- these are exactly the arguments given to rawMonomialOrdering
-     remove(opts, MonomialSize);
-     remove(opts, Weights);
-     remove(opts, VariableBaseName);
-     M.Options = new OptionTable from opts;
-     toString M := toExternalString M := x -> toString expression x;
-     texMath M := x -> texMath expression x;
-     if numvars == 0 and not madeTrivialMonoid then (
-	  madeTrivialMonoid = true;
-	  M.RawMonoid = rawMonoid();
-	  )
-     else (
-     	  M.degreesRing = (
-	       if opts.Heft =!= null 
-	       then degreesRing opts.Heft 
-	       else degreesRing degrk -* shouldn't really be needed *-
-	       );
-     	  M.degreesMonoid = monoid M.degreesRing;
-	  M.RawMonoid = rawMonoid(
-	       M.RawMonomialOrdering,
-	       toSequence M.generators / toString,
-	       raw M.degreesRing,
-	       flatten vardegs,
-	       if opts.Heft === null then toList(degrk:0) else flatten opts.Heft);
-	  );
-     raw M := x -> x.RawMonomial;
-     net M := x -> net expression x;
-     M ? M := (x,y) -> rawCompareMonomial(raw M, raw x, raw y);
-     M Array := (m,x) -> (
-	  if # x != numvars then error (
-	       "expected a list of length ", toString numvars
-	       );
-	  x = flatten toList x;
-	  product(m, (k,v) -> if k < numvars then x#k^v else 1)
-	  );
-     M == ZZ := (m,i) -> (
-	  if i === 1
-	  then m == 1_M
-	  else error "no method for '=='"
-	  );
-     ZZ == M := (i,m) -> m == i;
-     M * ZZ := (x,i) -> (
-	  if i === 1
-	  then x
-	  else error "no method for multiplying available"
-	  );
-     ZZ * M := (i,x) -> (
-	  if i === 1
-	  then x
-	  else error "no method for multiplying available"
-	  );
-     M * M := (x,y) -> new M from x.RawMonomial * y.RawMonomial;
-     M#1 = new M from rawMakeMonomial{};
-     degree M := x -> notImplemented();
-     baseName M := x -> (
-	  s := rawSparseListFormMonomial raw x;
-	  if #s == 1 and s#0#1 == 1 then M.generatorSymbols#(s#0#0) else error "expected a generator"
-	  );
-     M / M := (x,y) -> new M from somethingElse();		    -- there will be no remainder, and it will depend on the monoid, too!
-     M : M := (x,y) -> new M from x.RawMonomial : y.RawMonomial;
-     M ^ ZZ := (x,n) -> new M from x.RawMonomial ^ n;
-     M.use = x -> scan(M.generatorSymbols,M.vars,(sym,val) -> sym <- val);
-     if opts.Global and not opts.Inverses then scan(M.generators, x -> if x <= 1 then error "not all variables are > 1, and Global => true");
-     M)
-
------------------------------------------------------------------------------
 -- findHeft
 -----------------------------------------------------------------------------
 
@@ -437,6 +358,10 @@ findHeft List := opts -> degs -> (
     if (g := gcd heftvec) > 1   then heftvec = apply(heftvec, h -> h // g);
     if checkHeft(degs, heftvec) then heftvec)
 
+-----------------------------------------------------------------------------
+-- helpers for monoid
+-----------------------------------------------------------------------------
+
 processHeft = (degrk, degs, heftvec, inverses) -> (
      if inverses then return null;
     if heftvec =!= null then (
@@ -447,10 +372,6 @@ processHeft = (degrk, degs, heftvec, inverses) -> (
     then heftvec else findHeft(DegreeRank => degrk, degs))
 
 -----------------------------------------------------------------------------
-
--- 1. implement a free monoid M whose degrees have torsion
--- 2. implement the degrees ring of M as a quotient ring
--- 3. implement the degrees monoid of M as a monoid with relations (optional?)
 
 diagonalDegrees = (degrk, nvars) -> table(nvars, degrk,
     (i, j) -> if j === i or i >= degrk and j === degrk-1 then 1 else 0)
@@ -537,6 +458,63 @@ setMonoidOptions = opts -> (
     if opts.Local === true then ( opts.Global = false;
 	if opts.Weights === {} then opts.Weights = toList(n:-1));
     opts)
+
+-----------------------------------------------------------------------------
+-- Main monoid constructor
+-----------------------------------------------------------------------------
+
+newMonoid = opts -> (
+    M := new GeneralOrderedMonoid of MonoidElement;
+    M#1 = new M from rawMakeMonomial{}; -- identity
+    M.Engine = true; -- used in quotring.m2 and res.m2
+    --
+    varlist := baseName       \ opts.Variables;
+    degrk   := M.degreeLength = opts.DegreeRank;
+    degs    := M.degrees      = opts.Degrees;
+    nvars   := M.numgens      = #varlist;
+    M.vars   = M.generators   = apply(nvars, i -> new M from rawVarMonomial(i, 1));
+    heftvec := M.heft         = if opts.Heft === null then toList(degrk:0) else opts.Heft;
+    -- see engine.m2
+    (MOopts, MOoptsint, rawMO, logMO) := makeMonomialOrdering(
+	opts.MonomialSize, opts.Inverses, nvars,
+	if degreeLength M == 0 or opts.Heft === null then toList(nvars:1)
+	else apply(degs, d -> if (w := dotprod(d, heftvec)) > 0 then w else 1),
+	opts.Weights, opts.MonomialOrder);
+    M.RawMonomialOrdering = rawMO;
+    M#"raw creation log" = new Bag from {logMO};
+    M#"options" = MOopts; -- these are exactly the arguments given to rawMonomialOrdering
+    -- these are the options given to rawMonomialOrdering minus MonomialSize,
+    -- except Tiny and Small aren't there yet and GRevLex=>nvars hasn't been expanded
+    opts.MonomialOrder = new VerticalList from MOoptsint;
+    remove(opts, MonomialSize);
+    remove(opts, Weights);
+    remove(opts, VariableBaseName);
+    M.Options = new OptionTable from opts;
+    -- symbols and expressions
+    M.generatorSymbols     = varlist;
+    M.generatorExpressions = apply(varlist, x -> if instance(x, Symbol) then x else expression x);
+    -- the empty monoid is the unique monoid without a degrees ring or degrees monoid
+    M.RawMonoid = if nvars == 0 and not madeTrivialMonoid then (
+	madeTrivialMonoid = true;
+	rawMonoid())
+    else (
+	M.degreesRing = if opts.Heft =!= null then degreesRing heftvec else degreesRing degrk; -* shouldn't really be needed *-
+	M.degreesMonoid = monoid M.degreesRing;
+	rawMonoid(
+	    M.RawMonomialOrdering,
+	    toSequence M.generators / toString,
+	    raw M.degreesRing,
+	    flatten degs,
+	    flatten heftvec));
+    -- TODO: is this necessary?
+    if opts.Global and not opts.Inverses and not all(M.generators, x -> x > M#1)
+    then error "not all variables are > 1, and Global => true";
+    --
+    M.index        = hashTable apply(M.generatorSymbols, 0 ..< nvars,  identity);
+    M.indexSymbols = hashTable apply(M.generatorSymbols, M.generators, identity);
+    try M.indexStrings = applyKeys(M.indexSymbols, toString); -- no error, because this is often harmless
+    M.use = M -> scan(M.generatorSymbols, M.vars, (sym, val) -> sym <- val);
+    M)
 
 -----------------------------------------------------------------------------
 
@@ -648,6 +626,6 @@ tensor(Monoid, Monoid) := Monoid => monoidTensorDefaults >> opts0 -> (M, N) -> (
      oddp := x -> x#?0 and odd x#0;
      m := numgens M;
      opts.SkewCommutative = join(monoidIndices(M,M.Options.SkewCommutative), apply(monoidIndices(N,N.Options.SkewCommutative), i -> i+m));
-     makeit1 setMonoidOptions opts)
+     newMonoid setMonoidOptions opts)
 
 -----------------------------------------------------------------------------
