@@ -464,52 +464,44 @@ processDegrees = (degs,degrk,nvars) -> (
 -- findHeft
 -----------------------------------------------------------------------------
 
-chkHeft = (degs,heft) -> all(degs, d -> sum apply(d,heft,times) > 0)
+checkHeft = (degs, heftvec) -> all(degs, d -> sum apply(d, heftvec, times) > 0)
 
 findHeft = method(Options => { DegreeRank => null }, TypicalValue => List )
-findHeft List := opts -> (degs) -> (
-     -- this function is adapted from one written by Greg Smith; it appears in the FourierMotzkin package documentation
-     -- we return null if no heft vector exists
-     degrk := opts.DegreeRank;
-     if not isListOfListsOfIntegers degs then error "expected a list of degrees (lists of integers)";
-     if degrk === null then (
-	  if #degs === 0 then error "empty list requires DegreeRank to be made explicit";
-	  degrk = #degs#0;
-	  )
-     else (
-     	  if not instance(degrk,ZZ) then error "expected DegreeRank option to be an integer";
-	  );
-     if not all(degs, d -> #d === degrk) then error ("expected all degrees to be of length ", toString degrk);
+findHeft List := opts -> degs -> (
+    -- this function is adapted from one written by Greg Smith;
+    -- it appears in the FourierMotzkin package documentation
+    -- we return null if no heft vector exists
+    degrk := opts.DegreeRank;
+    if not isListOfListsOfIntegers degs   then error "findHeft: expected a list of lists of integers";
+    if degrk === null then (
+	if #degs > 0 then degrk = #degs#0 else error "findHeft: expected either a degree list or DegreeRank");
+    if not instance(degrk, ZZ)            then error "findHeft: expected option DegreeRank to be an integer";
+    if not all(degs, d -> #d === degrk)   then error("findHeft: expected all degrees to be of length ", degrk);
+    --
      if #degs === 0 then return toList(degrk : 1);
      if degrk === 0 then return null;
      if degrk === 1 then return if all(degs,d->d#0 > 0) then {1} else if all(degs,d->d#0 < 0) then {-1} ;
      if all(degs,d->d#0 > 0) then return splice {  1, degrk-1:0 };
      if all(degs,d->d#0 < 0) then return splice { -1, degrk-1:0 };
-     A := transpose matrix degs;
-     needsPackage "FourierMotzkin";
-     B := ((value getGlobalSymbol "fourierMotzkin") A)#0;
+    -- TODO: should FourierMotzkin become preloaded?
+    fm := symbolFrom_"FourierMotzkin" "fourierMotzkin";
+    A := transpose matrix degs;
+    B := first fm A;
      r := rank source B;
      f := (matrix{toList(r:-1)} * transpose B);
      if f == 0 then return;
-     heft := first entries f;
-     if not chkHeft(degs,heft) then return;
-     g := gcd heft;
-     if g > 1 then heft = apply(heft, h -> h // g);
-     heft);
+    heftvec := first entries f;
+    if (g := gcd heftvec) > 1   then heftvec = apply(heftvec, h -> h // g);
+    if checkHeft(degs, heftvec) then heftvec)
 
-processHeft = (degrk,degs,heft,inverses) -> (
+processHeft = (degrk, degs, heftvec, inverses) -> (
      if inverses then return null;
-     if heft === null then heft = findHeft(DegreeRank => degrk, degs)
-     else (
-	  if not instance(heft,List) or (
-	       heft = deepSplice heft;
-	       not all(heft,i -> instance(i,ZZ))
-	       ) then error "expected Heft option to be a list of integers";
-	  if #heft > degrk then error("expected Heft option to be of length at most the degree rank (", degrk, ")");
-	  if #heft < degrk then heft = join(heft, degrk - #heft : 0);
-	  if not chkHeft(degs,heft) then heft = findHeft(DegreeRank => degrk, degs);
-	  );
-     heft)
+    if heftvec =!= null then (
+	if not isListOfIntegers heftvec then error "expected Heft option to be a list of integers";
+	if #heftvec > degrk then error("expected Heft option to be of length at most the degree rank (", degrk, ")");
+	if #heftvec < degrk then heftvec = join(heftvec, degrk - #heftvec : 0));
+    if heftvec =!= null and checkHeft(degs, heftvec)
+    then heftvec else findHeft(DegreeRank => degrk, degs))
 
 -----------------------------------------------------------------------------
 
