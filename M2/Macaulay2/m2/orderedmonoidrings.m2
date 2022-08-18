@@ -1,23 +1,13 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
--- TODO: seems to need ofcm.m2 for monoid and tensor
 -- TODO: seems to need quotring.m2 for isQuotientOf
 needs "methods.m2"
 needs "enginering.m2"
+needs "monoids.m2"
 needs "tables.m2"
 
 -----------------------------------------------------------------------------
-
-Monoid = new Type of Type
-Monoid.synonym = "monoid"
-use Monoid := x -> ( if x.?use then x.use x; x)
-
-options Monoid := x -> null
-
-OrderedMonoid = new Type of Monoid
-OrderedMonoid.synonym = "ordered monoid"
-degreeLength OrderedMonoid := M -> M.degreeLength
-
+-- PolynomialRing type declaration and basic methods
 -----------------------------------------------------------------------------
 
 terms := symbol terms
@@ -39,8 +29,6 @@ isPolynomialRing PolynomialRing := (R) -> true
 
 isHomogeneous PolynomialRing := R -> true
 
-exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
-
 expression PolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      k := last R.baseRings;
@@ -57,6 +45,9 @@ toExternalString PolynomialRing := R -> (
      toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))
 
 degreeLength PolynomialRing := (RM) -> degreeLength RM.FlatMonoid
+
+monoid PolynomialRing := o -> R -> R.monoid
+options PolynomialRing := options @@ monoid
 
 protect basering
 protect FlatMonoid
@@ -77,11 +68,16 @@ degreesRing List := PolynomialRing => memoize(
 
 degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then degreesRing {} else ZZ degreesMonoid n )
 
+degreesRing Ring := R -> error "no degreesRing for this ring"
+degreesRing GeneralOrderedMonoid := M -> if M.?degreesRing then M.degreesRing else error "no degrees ring present"
+
 degreesRing PolynomialRing := PolynomialRing => R -> (
      if R.?degreesRing then R.degreesRing
      else error "no degreesRing for this ring")
 
-degreesRing Ring := R -> error "no degreesRing for this ring"
+degreesMonoid PolynomialRing := R -> (
+     if R.?degreesMonoid then R.degreesMonoid
+     else error "no degreesMonoid for this ring")
 
 generators PolynomialRing := opts -> R -> (
      if opts.CoefficientRing === null then R.generators
@@ -89,47 +85,9 @@ generators PolynomialRing := opts -> R -> (
      else join(R.generators, generators(coefficientRing R, opts) / (r -> promote(r,R))))
 coefficientRing PolynomialRing := R -> last R.baseRings
 precision PolynomialRing := precision @@ coefficientRing
-standardForm RingElement := (f) -> (
-     R := ring f;
-     k := coefficientRing R;
-     (cc,mm) := rawPairs(raw k, raw f);
-     new HashTable from toList apply(cc, mm, (c,m) -> (standardForm m, new k from c)))
-
--- this way turns out to be much slower by a factor of 10
--- standardForm RingElement := (f) -> (
---      R := ring f;
---      k := coefficientRing R;
---      (mm,cc) := coefficients f;
---      new HashTable from apply(
--- 	  flatten entries mm / leadMonomial / raw / standardForm,
--- 	  flatten entries lift(cc, k),
--- 	  identity))
-
-listForm = method()
-listForm RingElement := (f) -> (
-     R := ring f;
-     n := numgens R;
-     k := coefficientRing R;
-     (cc,mm) := rawPairs(raw k, raw f);
-     toList apply(cc, mm, (c,m) -> (exponents(n,m), promote(c,k))))
-
--- this way turns out to be much slower by a factor of 10
--- listForm RingElement := (f) -> (
---      R := ring f;
---      k := coefficientRing R;
---      (mm,cc) := coefficients f;
---      reverse apply(
--- 	  flatten entries mm / leadMonomial / exponents,
--- 	  flatten entries lift(cc, k),
--- 	  identity))
 
 protect diffs0						    -- private keys for storing info about indices of WeylAlgebra variables
 protect diffs1
-
-protect indexStrings
-protect generatorSymbols
-protect generatorExpressions
-protect indexSymbols
 
 InexactFieldFamily OrderedMonoid := (T,M) -> (default T) M
 Ring OrderedMonoid := PolynomialRing => (			  -- no memoize

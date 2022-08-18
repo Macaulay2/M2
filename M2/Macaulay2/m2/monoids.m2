@@ -4,12 +4,33 @@ needs "engine.m2"
 needs "expressions.m2"
 needs "indeterminates.m2"
 needs "methods.m2"
-needs "orderedmonoidrings.m2"
 needs "shared.m2" -- for tensor
 needs "variables.m2"
 
+-- see "degreesRing 0" in last.m2
+madeTrivialMonoid := false
+
+-----------------------------------------------------------------------------
+-- Local utilities
+-----------------------------------------------------------------------------
+
+makeSparse := v -> select(pairs v, (k, v) -> v != 0)
+
+-- TODO: where should this go?
+-- MES: I grabbed this from orderedmonoidrings.m2, to handle skew variables in the monoid/ring.
+indices := (M, variables) -> apply(variables, x -> (
+	x = baseName x;
+	if M.index#?x then M.index#x
+	else error "expected a variable of the ring"))
+
+-----------------------------------------------------------------------------
+-- MonoidElement type declarations and basic methods
+-----------------------------------------------------------------------------
+
 MonoidElement = new Type of HashTable
 MonoidElement.synonym = "monoid element"
+
+-- TODO: why is this a hash table? compare with RingElement
 new MonoidElement from RawMonomial := (MonoidElement, f) -> hashTable{ symbol RawMonomial => f }
 raw MonoidElement := x -> x.RawMonomial
 
@@ -18,38 +39,139 @@ MonoidElement == MonoidElement := (x,y) -> x === y
 MonoidElement ? ZZ := (x,n) -> x ? n_(class x)
 ZZ ? MonoidElement := (n,x) -> n_(class x) ? x
 
-ZZ _ Monoid := MonoidElement => (i,M) -> (
-     if i === 1 then M#1
-     else error "expected integer to be 1"
-     )
+promote(MonoidElement, RingElement) := RingElement => (m, R) -> (
+    M := monoid R;
+    k := coefficientRing R;
+    if not instance(m, M) then error "expected monomial from same ring";
+    new R from rawTerm(R.RawRing, raw 1_k, m.RawMonomial))
+
+-----------------------------------------------------------------------------
 
 rawLeadMonomialR = method()
-rawLeadMonomialR RingElement := RawMonomial => (f) -> rawLeadMonomial(numgens monoid ring f, raw f)
+rawLeadMonomialR RingElement := RawMonomial => f -> rawLeadMonomial(numgens monoid ring f, raw f)
 
-leadMonomial RingElement := RingElement => (f) -> (
+-- TODO: confirm whether this way of catching is efficient
+leadMonomial RingElement := RingElement => f -> (
      R := ring f;
      k := coefficientRing R;
      n := numgens monoid R;
      leadMonomial R := f -> new R from rawTerm(raw R, raw 1_k, rawLeadMonomial(n, raw f)); -- quicker the second time
      leadMonomial f)
 
-makeSparse := (v) -> select(apply(#v, i -> (i,v#i)), (k,v) -> v != 0)
+listForm = method()
+listForm MonoidElement := m -> (
+    x := new MutableList from numgens class m : 0;
+    scan(rawSparseListFormMonomial raw m, (i, e) -> x#i = e);
+    toList x)
+listForm RingElement := f -> (
+    R := ring f;
+    n := numgens R;
+    k := coefficientRing R;
+    (cc, mm) := rawPairs(raw k, raw f);
+    toList apply(cc, mm, (c, m) -> (exponents(n, m), promote(c, k))))
+
+-- declared in engine.m2, where exponents(ZZ, RawMonomial) is defined
+exponents MonoidElement := lookup(listForm, MonoidElement)
+exponents RingElement   := f -> first \ listForm f
+
+-- declared in engine.m2
+standardForm MonoidElement := m -> new HashTable from rawSparseListFormMonomial raw m
+standardForm RingElement   := f -> (
+    R := ring f;
+    k := coefficientRing R;
+    (cc, mm) := rawPairs(raw k, raw f);
+    new HashTable from toList apply(cc, mm, (c, m) -> (standardForm m, new k from c)))
+
+-- used to be in matrix2.m2
+coefficient = method (TypicalValue => RingElement)
+coefficient(MonoidElement, RingElement) := (m, f) -> (
+    R := ring f;
+    M := monoid R;
+    k := coefficientRing R;
+    if instance(m, M)
+    then new k from rawCoefficient(raw k, raw f, raw m)
+    else error "coefficient: expected a monomial from the corresponding monoid")
+coefficient(RingElement, RingElement) := (m, f) -> (
+    R := ring f;
+    k := coefficientRing R;
+    -- TODO: audit this code and how it is used in towers and inexact fields
+    if size m === 1 and leadCoefficient m == 1
+    then promote(rawCoefficient(raw k, raw f, rawLeadMonomialR m), k)
+    else error "coefficient: expected a monomial from the same ring")
+
+RingElement _ MonoidElement := RingElement => (f, m) -> coefficient(m, f)
+RingElement _ RingElement   := RingElement => (f, m) -> coefficient(m, f)
+
+-----------------------------------------------------------------------------
+-- Monoid type declarations and basic methods
+-----------------------------------------------------------------------------
+
+-- internal Monoid keys
+protect generatorExpressions
+protect generatorSymbols
+protect indexStrings
+protect indexSymbols
+
+Monoid = new Type of Type
+Monoid.synonym = "monoid"
+
+OrderedMonoid = new Type of Monoid
+OrderedMonoid.synonym = "ordered monoid"
 
 GeneralOrderedMonoid = new Type of OrderedMonoid
 GeneralOrderedMonoid.synonym = "general ordered monoid"
 GeneralOrderedMonoid.Engine = true
+
 vars GeneralOrderedMonoid := M -> M.vars
 options GeneralOrderedMonoid := M -> M.Options
 degrees GeneralOrderedMonoid := M -> M.Options.Degrees
 raw GeneralOrderedMonoid := M -> M.RawMonoid
 
-rle = method(Dispatch => Thing)
-rle VisibleList := x -> apply(runLengthEncode x, y -> if instance(y,Holder) then rle y#0 else y)
-rle Option := x -> x#0 => rle x#1
-rle Thing := identity
+GeneralOrderedMonoid_* := M -> generators M
+vars GeneralOrderedMonoid := M -> M.generators
+numgens GeneralOrderedMonoid := M -> # M.generators
+generators GeneralOrderedMonoid := opts -> M -> M.generators
 
-fixbasename = s -> if instance(s,String) then getSymbol s else s
+options Monoid := x -> null
+use     Monoid := x -> ( if x.?use then x.use x; x )
 
+degreeLength OrderedMonoid := M -> M.degreeLength
+degreeLength GeneralOrderedMonoid := M -> M.degreeLength
+
+monomialOrderMatrix Ring   := R -> monomialOrderMatrix monoid R
+monomialOrderMatrix Monoid := M -> monomialOrderMatrix M.RawMonomialOrdering
+
+-----------------------------------------------------------------------------
+
+-- this implementation is for sparse monomials, but it might
+-- make sense to have a dense implementation
+Monoid _ ZZ   := MonoidElement => (M, i) -> M.generators#i
+Monoid _ List := MonoidElement => (M, v) -> if #v === 0 then 1_M else product(
+    take(M.generators, #v), v, (x, i) -> x^i)
+
+ZZ _ Monoid := MonoidElement => (i, M) -> if i === 1 then M#1 else error "expected integer to be 1"
+
+MonoidElement _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (baseName x)_M
+
+Symbol _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (
+    if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
+    else error "symbol not found in monoid")
+IndexedVariable _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (
+    if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
+    else error "indexed variable not found in monoid")
+
+Symbol _ Ring := RingElement => (x,M) -> (
+    if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
+    else error "symbol not found in ring")
+IndexedVariable _ Ring := RingElement => (x,M) -> (
+    if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
+    else error "indexed variable not found in ring")
+
+-----------------------------------------------------------------------------
+-- monoid
+-----------------------------------------------------------------------------
+
+-- TODO: document each
 monoidDefaults = (
      new OptionTable from {
 	  Variables => null,
@@ -73,6 +195,22 @@ monoidDefaults = (
 	  }
      )
 
+monoid = method(
+    Dispatch     => Thing,
+    Options      => monoidDefaults,
+    TypicalValue => GeneralOrderedMonoid)
+monoid List  := opts -> args -> monoid(new Array from args, opts, Local => true)
+monoid Array := opts -> args -> (
+    (opts, args) = override(opts, toSequence args);
+    if opts.Variables === null
+    then opts = merge(opts, new OptionTable from {Variables => deepSplice sequence args}, last)
+    else if args =!= () then error "variables provided conflict with Variables option";
+    makeMonoid opts)
+
+-----------------------------------------------------------------------------
+-- helpers for printing Monoids
+-----------------------------------------------------------------------------
+
 monoidParts = (M) -> (
      O := monoidDefaults;
      o := M#"original options";	-- if we used M.Options we'd run into lots of long lists as in GRevLex => {1,1,1,1,1,1,1}
@@ -87,6 +225,7 @@ monoidParts = (M) -> (
 expressionMonoid = M -> (
      T := if (options M).Local === true then List else Array;
      new T from apply(monoidParts M,expression))
+
 expression GeneralOrderedMonoid := M -> if hasAttribute(M,ReverseDictionary) then expression getAttribute(M,ReverseDictionary) else new Parenthesize from { (expression monoid) expressionMonoid M }
 describe GeneralOrderedMonoid := M -> Describe new Parenthesize from { (expression monoid) expressionMonoid M }
 
@@ -95,30 +234,11 @@ toString GeneralOrderedMonoid := toString @@ expression
 net GeneralOrderedMonoid := net @@ expression
 texMath GeneralOrderedMonoid := x -> texMath expression x
 
+-----------------------------------------------------------------------------
+
 degreesMonoid = method(TypicalValue => GeneralOrderedMonoid)
-degreesMonoid PolynomialRing := R -> (
-     if R.?degreesMonoid then R.degreesMonoid
-     else error "no degreesMonoid for this ring")
-degreesMonoid Ring := R -> error "no degreesMonoid for this ring"
-
--- this implementation is for sparse monomials, but it might
--- make sense to have a dense implementation
-
-Monoid _ ZZ := MonoidElement => (M,i) -> M.generators#i
-
-Monoid _ List := MonoidElement => (M,v) -> (
-     if #v === 0 then 1_M
-     else product(take(M.generators,#v),v,(x,i)->x^i)
-     )
-numgens GeneralOrderedMonoid := M -> # M.generators
-degreeLength GeneralOrderedMonoid := M -> M.degreeLength
-
--- MES: I grabbed this from orderedmonoidrings.m2, to handle skew variables
--- in the monoid/ring.
-indices := (M,vars) -> apply(vars, x -> (
-	  x = baseName x;
-	  if M.index#?x then M.index#x
-	  else error "expected a variable of the ring"))
+degreesMonoid Ring := R -> error "no degrees monoid present"
+degreesMonoid GeneralOrderedMonoid := M -> if M.?degreesMonoid then M.degreesMonoid else error "no degrees monoid present"
 
 degreesMonoid ZZ := memoize(
      n -> (
@@ -143,61 +263,9 @@ degreesMonoid List := memoize(
 	       Global => false,
 	       Inverses => true]))
 
-monoidTensorDefaults = merge(monoidDefaults,
-     new OptionTable from {
-	  MonomialOrder => null,
-	  VariableBaseName => null,			    -- monoids being tensored already have variable names
-	  Inverses => null				    -- so we can detect a mixture and give an error
-	  },
-     (x,y) -> y)
-
-monoid = method(Dispatch => Thing, Options => monoidDefaults, TypicalValue => GeneralOrderedMonoid)
-monoid PolynomialRing := o -> R -> R.monoid
-options PolynomialRing := options @@ monoid
-
-generators GeneralOrderedMonoid := opts -> M -> M.generators
-vars GeneralOrderedMonoid := M -> M.generators
-degreesMonoid GeneralOrderedMonoid := GeneralOrderedMonoid => M -> if M.?degreesMonoid then M.degreesMonoid else error "no degrees monoid present"
-degreesRing GeneralOrderedMonoid := PolynomialRing => M -> if M.?degreesRing then M.degreesRing else error "no degrees ring present"
-
-GeneralOrderedMonoid_* := M -> generators M
-
-standardForm(MonoidElement) := (m) -> new HashTable from rawSparseListFormMonomial raw m
-exponents(MonoidElement) :=
-listForm(MonoidElement) := (m) -> (
-     x := numgens class m : 0;
-     x = new MutableList from x;
-     scan(rawSparseListFormMonomial raw m, (i,e) -> x#i = e);
-     toList x)
-
-MonoidElement _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (baseName x)_M
-
-Symbol _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (
-     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
-     else error "symbol not found in monoid"
-     )
-IndexedVariable _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (
-     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
-     else error "indexed variable not found in monoid"
-     )
-
-Symbol _ Ring := RingElement => (x,M) -> (
-     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
-     else error "symbol not found in ring"
-     )
-IndexedVariable _ Ring := RingElement => (x,M) -> (
-     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
-     else error "indexed variable not found in ring"
-     )
-
-Number _ Ring := promote
-RingElement ^ Ring := Number ^ Ring := (x,R) -> lift(x,R)
-RingElement ^ RingFamily := Number ^ RingFamily := (x,R) -> lift(x, default R)
-Constant ^ Ring := Constant ^ RingFamily := (x,R) -> lift(x,R)
-
-RingElement _ Ring := promote
-
-madeTrivialMonoid := false
+-----------------------------------------------------------------------------
+-- helpers for monoid
+-----------------------------------------------------------------------------
 
 dotprod = (c,d) -> sum( min(#c, #d), i -> c#i * d#i )
 
@@ -213,6 +281,7 @@ fixWA := diffs -> (
 	       fix x#0 => fix x#1)
 	  else fix x))
 
+-- TODO: use it here, or move it to AssociativeAlgebras.m2
 findSymbols = varlist -> (
     -- varlist is a list or sequence of items we wish to use for variable names.
     -- these may be: Symbol's, RingElement's (which are variables in a ring)
@@ -356,6 +425,8 @@ makeit1 := (opts) -> (
      if opts.Global and not opts.Inverses then scan(M.generators, x -> if x <= 1 then error "not all variables are > 1, and Global => true");
      M)
 
+-----------------------------------------------------------------------------
+
 processDegrees = (degs,degrk,nvars) -> (
      if not (degrk === null or instance(degrk,ZZ)) then error("DegreeRank => ... : expected an integer or null");
      if degs === null then degs = (
@@ -378,14 +449,9 @@ processDegrees = (degs,degrk,nvars) -> (
      if nvars != #degs then error "expected length of list of degrees to equal the number of variables";
      (degs,degrk));
 
-monoidIndex = (M,x) -> if class x === ZZ then x else (
-	       x = baseName x;
-	       if M.index#?x then M.index#x
-	       else error("expected an integer or variable of the ring (or monoid): ", toString x))
-
-monoidIndices = (M,varlist) -> (				    -- also used in orderedmonoidrings.m2, but we should phase that out
-     apply(varlist, x -> monoidIndex(M,x))
-     )
+-----------------------------------------------------------------------------
+-- findHeft
+-----------------------------------------------------------------------------
 
 chkHeft = (degs,heft) -> all(degs, d -> sum apply(d,heft,times) > 0)
 
@@ -434,7 +500,11 @@ processHeft = (degrk,degs,heft,inverses) -> (
 	  );
      heft)
 
-makeMonoid := (opts) -> (
+-----------------------------------------------------------------------------
+
+fixbasename = s -> if instance(s, String) then getSymbol s else s
+
+makeMonoid = (opts) -> (
      -- check the options for consistency, and set everything to the correct defaults
      opts = new MutableHashTable from opts;
 
@@ -491,14 +561,15 @@ makeMonoid := (opts) -> (
      opts = new OptionTable from opts;
      makeit1 opts)
 
-monoid List := opts -> args -> monoid (new Array from args, opts, Local => true)
-monoid Array := opts -> args -> (
-     (opts,args) = override(opts,toSequence args);
-     if opts.Variables === null
-     then opts = merge(opts, new OptionTable from {Variables => deepSplice sequence args}, last)
-     else if args =!= () then error "variables provided conflict with Variables option";
-     makeMonoid opts)
+-----------------------------------------------------------------------------
 
+monoidTensorDefaults = monoidDefaults ++ {
+    MonomialOrder    => null,
+    VariableBaseName => null,	-- monoids being tensored already have variable names
+    Inverses         => null,	-- so we can detect a mixture and give an error
+    }
+
+-- TODO: not being used currently
 tensoradj := (f,g,m,n) -> (
      if f === identity then (
 	  if g === identity 
@@ -522,6 +593,13 @@ degreePad = (n,x) -> (
      join(toList(n-#x:0),x));
 
 degreeNoLift = () -> error "degree not liftable"
+
+monoidIndex = (M, x) -> if instance(x, ZZ) then x else (
+    if M.index#?(x = baseName x) then M.index#x else error(
+	"expected an integer or variable of the ring or monoid: ", toString x))
+
+-- also used in orderedmonoidrings.m2, but we should phase that out
+monoidIndices = (M, varlist) -> apply(varlist, x -> monoidIndex(M, x))
 
 -- TODO: do we want to support a syntax this?
 --   'tensor (a => ZZ^2, b => ZZ^3, c => ZZ^4)'
@@ -595,34 +673,4 @@ tensor(Monoid, Monoid) := Monoid => monoidTensorDefaults >> opts0 -> (M, N) -> (
      opts.SkewCommutative = join(monoidIndices(M,M.Options.SkewCommutative), apply(monoidIndices(N,N.Options.SkewCommutative), i -> i+m));
      makeMonoid new OptionTable from opts)
 
--- delayed installation of methods for monoid elements
-
-promote(MonoidElement, RingElement) := RingElement => (m,R) -> (
-     M := monoid R;
-     k := coefficientRing R;
-     if not instance(m,M) then error "expected monomial from same ring";
-     new R from rawTerm(R.RawRing, raw 1_k, m.RawMonomial))
-
-
-----------------------------
--- monomial order code -----
--- this should go in its own file...
-monomialOrderMatrix = method()
-monomialOrderMatrix RawMonomialOrdering := (mo) -> (
-     nvars := rawNumberOfVariables mo;
-     mat := rawMonomialOrderingToMatrix mo;
-     -- the last entry of 'mat' determines whether the tie breaker is Lex or RevLex.
-     -- there may be no other elements of mat, so the next line needs to handle that case.
-     ordermat := if #mat === 3 then map(ZZ^0, ZZ^nvars, 0) else matrix pack(drop(mat,-3),nvars);
-     (ordermat, 
-         if mat#-3 == 0 then Lex else RevLex,
-         if mat#-2 == -1 then Position=>Down else if mat#-2 == 1 then Position=>Up else Position=>mat#-2,
-         "ComponentBefore" => mat#-1
-         )
-     )
-monomialOrderMatrix Monoid := (M) -> monomialOrderMatrix M.RawMonomialOrdering
-monomialOrderMatrix Ring := (R) -> monomialOrderMatrix monoid R
-
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
--- End:
+-----------------------------------------------------------------------------

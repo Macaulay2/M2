@@ -21,12 +21,14 @@ RawMonomial == RawMonomial := (x,y) -> x === y
 RawMonomial : RawMonomial := (x,y) -> rawColon(x,y)
 ZZ == RawMonomial := (i,x) -> x == i
 
+standardForm = method()
 standardForm RawMonomial := m -> new HashTable from toList rawSparseListFormMonomial m
 expression RawMonomial := x -> (
      v := rawSparseListFormMonomial x;
      if #v === 0 then expression 1
      else new Product from apply(v, (i,e) -> new Power from {vars i, e})
      )
+exponents = method()
 exponents(ZZ,RawMonomial) := (nvars,x) -> (
      z := new MutableList from (nvars : 0);
      scan(rawSparseListFormMonomial x, (i,e) -> z#i = z#i + e);
@@ -215,6 +217,21 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      (t,t',value logmo, logmo))
 
 RawMonomialOrdering ** RawMonomialOrdering := RawMonomialOrdering => rawProductMonomialOrdering
+
+-- used for debugging mgb interface, moved from ofcm.m2
+monomialOrderMatrix = method()
+monomialOrderMatrix RawMonomialOrdering := mo -> (
+    nvars := rawNumberOfVariables mo;
+    mat := rawMonomialOrderingToMatrix mo;
+    -- the last entry of 'mat' determines whether the tie breaker is Lex or RevLex.
+    -- there may be no other elements of mat, so the next line needs to handle that case.
+    ordermat := if #mat === 3 then map(ZZ^0, ZZ^nvars, 0) else matrix pack(drop(mat, -3), nvars);
+    (ordermat,
+	if mat#-3 ==  0 then Lex else RevLex,
+	if mat#-2 == -1 then Position => Down else
+	if mat#-2 ==  1 then Position => Up   else Position => mat#-2,
+	"ComponentBefore" => mat#-1)
+    )
 
 -- monoids
 

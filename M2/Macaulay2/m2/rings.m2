@@ -87,6 +87,17 @@ promote = method(Dispatch=>{Thing,Type,Type})
 lift = method(Dispatch=>{Thing,Type,Type}, Options => {Verify => true})
 liftable  = method(Dispatch=>{Thing,Type,Type}, TypicalValue => Boolean)
 
+Number   ^ Ring :=
+Constant ^ Ring :=
+Constant ^ RingFamily :=
+RingElement ^ Ring    := (x, R) -> lift(x, R)
+
+Number      ^ RingFamily :=
+RingElement ^ RingFamily := (x, R) -> lift(x, default R)
+
+Number      _ Ring := promote
+RingElement _ Ring := promote
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
