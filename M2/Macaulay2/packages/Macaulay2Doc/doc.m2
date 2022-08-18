@@ -10,39 +10,6 @@ document {
      }
 
 document {
-     Key => {describe,
-	  (describe, PolynomialRing),
-	  (describe, QuotientRing),
-	  (describe, FractionField),
-	  (describe, Thing),
-	  (describe, AffineVariety),
-	  (describe, CoherentSheaf),
-	  (describe, GaloisField),
-	  (describe, GeneralOrderedMonoid),
-	  (describe, Matrix),
-	  (describe, Module),
-	  (describe, ProjectiveVariety),
-	  (describe, RingMap)
-	  },
-     Headline => "real description",
-     TT "describe x", " -- returns ", ofClass Expression, " containing the 
-     real description of ", TT "x", ", bypassing the feature that causes
-     certain types of things to acquire, for brevity, the names of global variables to which
-     they are assigned.  For polynomial rings, it also displays the options used at creation.",
-     PARA{},
-     EXAMPLE lines ///
-	  R = ZZ/101[a,b,c_1,c_2];
-      	  R
-      	  describe R
-	  toString describe R
-	  toExternalString R
-	  QQ[x,d,WeylAlgebra=>{x=>d}]
-	  describe oo
-	  ///,
-     SeeAlso => {"toString", "toExternalString"}
-     }
-
-document {
      Key => symbol SPACE, 
      Headline => "blank operator; often used for function application, making polynomial rings",
      SeeAlso =>(symbol SPACE, Function, Thing)		    -- not really a method
