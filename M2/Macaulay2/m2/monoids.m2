@@ -64,7 +64,7 @@ ZZ == MonoidElement := (i, m) -> m == i
 
 -- TODO: would skipping the the free module check make this slower?
 -- TODO: make new G from vector deg do this in the engine?
-reduceDegree = (G, deg) -> if isFreeModule G then deg else entries sum(deg, G_*, times)
+reduceDegree = (G, deg) -> if isFreeModule G then deg else entries sum(deg, (super G)_*, times)
 
 -- TODO: move to engine
 degree MonoidElement := m -> (
@@ -406,9 +406,19 @@ processDegrees = (degs, degrk, group, nvars) -> (
     then error("expected DegreeRank option to be a non-negative integer");
     if not (group === null or instance(group, Module) and ring group === ZZ)
     then error "expected DegreeGroup option to be a ZZ-module";
-    if degs === null then (
-	if degrk =!= null then diagonalDegrees(degrk, nvars) else (degrk = 1; apply(nvars, i -> {1})), degrk, ZZ^degrk)
-    else if instance(degs, List) then (
+    -- read the degrees from the generators of the degree group
+    if degs === null then degs = (
+	if group =!= null then
+	if nvars === numgens group then generators group
+	else diagonalDegrees(rank ambient group, nvars)
+	else diagonalDegrees(if degrk === null then 1 else degrk, nvars));
+    -- read the degrees from (the columns of) a map of ZZ-modules
+    if instance(degs, Matrix) then (
+	if group === null then group = target degs;
+	if degrk === null then degrk = numRows degs;
+	degs = entries transpose matrix degs);
+    -- sanity checks
+    if instance(degs, List) then (
 	degs = apply(spliceInside degs, d -> if class d === ZZ then {d} else spliceInside d);
 	degrk = if degrk =!= null then degrk else if degs#?0 then #degs#0 else 1; -- so that degreeLength monoid[] = 1
 	group = if group =!= null then group else ZZ^degrk;

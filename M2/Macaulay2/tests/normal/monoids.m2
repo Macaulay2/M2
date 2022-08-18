@@ -98,10 +98,31 @@ use S
 R = S/(x-y)
 monoid R
 
+--- test passing a map of ZZ-modules for Degrees
+M = monoid[a,b,c, Degrees => map(G, ZZ^3, transpose degrees A)]
+assert(degreeGroup M == G)
+assert(degrees M == degrees S)
+
+--- test passing degrees from the degree rank
+M = monoid[a,b,c, DegreeGroup => G]
+assert(degreeGroup M == G)
+assert(degrees M == splice {{1, 0}, 2:{0, 1}})
+
+M = monoid[a,b,c, DegreeRank => 2]
+assert(degreeGroup M == ZZ^2)
+assert(degrees M == splice {{1, 0}, 2:{0, 1}})
+
+--- test passing degrees from generators of the degree group
+H = subquotient(matrix transpose degrees A, relations G)
+M = monoid[a,b,c, DegreeGroup => H]
+assert(degreeGroup M == G)
+assert(degrees M == degrees S)
+
 --- test symmetric algebra
--- TODO: add DegreeGroup
-R = ZZ/101[a, b, DegreeRank => 2]
-assert(rank degreeGroup monoid symmetricAlgebra image vars R == 3)
+R = (ZZ/101) M
+assert(degreeGroup R == G)
+-- TODO: make sure this is correct
+assert(degreeGroup monoid symmetricAlgebra image vars R == ZZ^3)
 
 --- test the Join option
 M = monoid[]
