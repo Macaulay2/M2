@@ -121,49 +121,44 @@ OrderedMonoid.synonym = "ordered monoid"
 GeneralOrderedMonoid = new Type of OrderedMonoid
 GeneralOrderedMonoid.synonym = "general ordered monoid"
 GeneralOrderedMonoid.Engine = true
-
-vars GeneralOrderedMonoid := M -> M.vars
-options GeneralOrderedMonoid := M -> M.Options
-degrees GeneralOrderedMonoid := M -> M.Options.Degrees
 raw GeneralOrderedMonoid := M -> M.RawMonoid
 
-GeneralOrderedMonoid_* := M -> generators M
-vars GeneralOrderedMonoid := M -> M.generators
-numgens GeneralOrderedMonoid := M -> # M.generators
-generators GeneralOrderedMonoid := opts -> M -> M.generators
+use        Monoid := M ->(if M.?use     then M.use M; M)
+vars       Monoid := M -> if M.?vars    then M.vars    else {}
+numgens    Monoid := M -> if M.?vars    then#M.vars    else 0
+options    Monoid := M -> if M.?Options then M.Options
+generators Monoid := o -> lookup(vars, Monoid)
 
-options Monoid := x -> null
-use     Monoid := x -> ( if x.?use then x.use x; x )
-
-degreeLength OrderedMonoid := M -> M.degreeLength
-degreeLength GeneralOrderedMonoid := M -> M.degreeLength
+degrees      Monoid := M -> if (o := options M).?Degrees then o.Degrees else {}
+degreeLength Monoid := M -> if M.?degreeLength then M.degreeLength      else 0
 
 monomialOrderMatrix Ring   := R -> monomialOrderMatrix monoid R
 monomialOrderMatrix Monoid := M -> monomialOrderMatrix M.RawMonomialOrdering
 
 -----------------------------------------------------------------------------
 
+Monoid _*     := List => M -> vars M
 -- this implementation is for sparse monomials, but it might
 -- make sense to have a dense implementation
-Monoid _ ZZ   := MonoidElement => (M, i) -> M.generators#i
-Monoid _ List := MonoidElement => (M, v) -> if #v === 0 then 1_M else product(
-    take(M.generators, #v), v, (x, i) -> x^i)
+Monoid _ ZZ   := MonoidElement => (M, i) -> (vars M)#i
+Monoid _ List := MonoidElement => (M, v) -> if #v === 0 then M#1 else product(
+    take(vars M, #v), v, (x, i) -> x^i)
 
-ZZ _ Monoid := MonoidElement => (i, M) -> if i === 1 then M#1 else error "expected integer to be 1"
+ZZ            _ Monoid := MonoidElement => (i, M) -> if i === 1 then M#1 else error "expected integer to be 1"
+RingElement   _ Monoid :=
+MonoidElement _ Monoid := MonoidElement => (x, M) -> (baseName x)_M
 
-MonoidElement _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (baseName x)_M
-
-Symbol _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (
+Symbol _ Monoid := MonoidElement => (x, M) -> (
     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
     else error "symbol not found in monoid")
-IndexedVariable _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (
+IndexedVariable _ Monoid := MonoidElement => (x, M) -> (
     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
     else error "indexed variable not found in monoid")
 
-Symbol _ Ring := RingElement => (x,M) -> (
+Symbol _ Ring := RingElement => (x, M) -> (
     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
     else error "symbol not found in ring")
-IndexedVariable _ Ring := RingElement => (x,M) -> (
+IndexedVariable _ Ring := RingElement => (x, M) -> (
     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
     else error "indexed variable not found in ring")
 
@@ -198,7 +193,7 @@ monoidDefaults = (
 monoid = method(
     Dispatch     => Thing,
     Options      => monoidDefaults,
-    TypicalValue => GeneralOrderedMonoid)
+    TypicalValue => Monoid)
 monoid List  := opts -> args -> monoid(new Array from args, opts, Local => true)
 monoid Array := opts -> args -> (
     (opts, args) = override(opts, toSequence args);
@@ -226,19 +221,19 @@ expressionMonoid = M -> (
      T := if (options M).Local === true then List else Array;
      new T from apply(monoidParts M,expression))
 
-expression GeneralOrderedMonoid := M -> if hasAttribute(M,ReverseDictionary) then expression getAttribute(M,ReverseDictionary) else new Parenthesize from { (expression monoid) expressionMonoid M }
-describe GeneralOrderedMonoid := M -> Describe new Parenthesize from { (expression monoid) expressionMonoid M }
+expression Monoid := M -> if hasAttribute(M,ReverseDictionary) then expression getAttribute(M,ReverseDictionary) else new Parenthesize from { (expression monoid) expressionMonoid M }
+describe Monoid := M -> Describe new Parenthesize from { (expression monoid) expressionMonoid M }
 
-toExternalString GeneralOrderedMonoid := toString @@ describe
-toString GeneralOrderedMonoid := toString @@ expression
-net GeneralOrderedMonoid := net @@ expression
-texMath GeneralOrderedMonoid := x -> texMath expression x
+toExternalString Monoid := toString @@ describe
+toString Monoid := toString @@ expression
+net Monoid := net @@ expression
+texMath Monoid := x -> texMath expression x
 
 -----------------------------------------------------------------------------
 
-degreesMonoid = method(TypicalValue => GeneralOrderedMonoid)
+degreesMonoid = method(TypicalValue => Monoid)
 degreesMonoid Ring := R -> error "no degrees monoid present"
-degreesMonoid GeneralOrderedMonoid := M -> if M.?degreesMonoid then M.degreesMonoid else error "no degrees monoid present"
+degreesMonoid Monoid := M -> if M.?degreesMonoid then M.degreesMonoid else error "no degrees monoid present"
 
 degreesMonoid ZZ := memoize(
      n -> (
