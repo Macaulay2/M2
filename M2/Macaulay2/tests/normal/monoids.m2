@@ -24,3 +24,20 @@ monoid[Variables => 4, VariableBaseName => "e", SkewCommutative => {0,1,2,3}]
 monoid[vars(0..3), VariableBaseName => "e", SkewCommutative => {0,1,2,3}]
 monoid[vars(0..3), VariableBaseName => "e", SkewCommutative => vars(0..3)]
 ---
+
+---- checking degreeLength, degreesMonoid, degreesRing
+assert(degreeLength degreesMonoid 0 == 0)
+assert(degreeLength degreesMonoid 2 == 0)
+assert(degreeLength degreesMonoid{} == 0)
+assert(degreeLength degreesMonoid{1} == 1)
+assert(degreeLength degreesMonoid{1,2} == 1)
+
+assert(degreeLength degreesRing 0 == 0)
+assert(degreeLength degreesRing 2 == 0)
+assert(degreeLength degreesRing{} == 0)
+assert(degreeLength degreesRing{1} == 1)
+assert(degreeLength degreesRing{1,2} == 1)
+
+assert(degreeLength(monoid[]) == 1)
+assert(degreeLength(monoid[a]) == 1)
+assert(degreeLength(monoid[a,b]) == 1)

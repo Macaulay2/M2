@@ -296,33 +296,34 @@ Monoid#{Standard,AfterPrint} = M -> (
     )
 
 -----------------------------------------------------------------------------
+-- degreesMonoid
+-----------------------------------------------------------------------------
 
 degreesMonoid = method(TypicalValue => Monoid)
 degreesMonoid Ring := R -> error "no degrees monoid present"
 degreesMonoid Monoid := M -> if M.?degreesMonoid then M.degreesMonoid else error "no degrees monoid present"
 
-degreesMonoid ZZ := memoize(
-     n -> (
-	  T := getSymbol "T";
-	  monoid [
-	       if n === 1 then T else T_0 .. T_(n-1),
-	       Degrees => {n : {}}, 
-	       MonomialOrder => {Weights => {n:-1}, GroupLex => n},
-	       Global => false,
-	       Inverses=>true]))
+degreesMonoid ZZ := n -> if n == 0 then degreesMonoid {} else (
+    T := getSymbol "T";
+    monoid [ if n === 1 then T else T_0 .. T_(n-1),
+	Degrees       => { n:{} },
+	DegreeRank    => 0,
+	MonomialOrder => { Weights => { n:-1 }, GroupLex => n }, -- TODO: why are there weights?
+	Global        => false,
+	Inverses      => true])
+degreesMonoid ZZ := memoize lookup(degreesMonoid, ZZ)
 
-degreesMonoid List := memoize(
-     hft -> (
-	  hft = deepSplice hft;
-	  if not all(hft, i -> instance(i,ZZ)) then error "degreesMonoid: expected a list of integers";
-	  n := # hft;
-	  T := getSymbol "T";
-	  monoid [
-	       if n === 1 then T else T_0 .. T_(n-1),
-	       Degrees => hft,
-	       MonomialOrder => {Weights => -hft, GroupLex => n},
-	       Global => false,
-	       Inverses => true]))
+degreesMonoid List := vec -> (
+    T := getSymbol "T";
+    n := if isListOfIntegers(vec = deepSplice vec) then #vec
+    else error "degreesMonoid: expected a list of integers";
+    monoid [ if n === 1 then T else T_0 .. T_(n-1),
+	Degrees       => vec,
+	DegreeRank    => min(#vec, 1),
+	MonomialOrder => { Weights => -vec, GroupLex => n },
+	Global        => false,
+	Inverses      => true])
+degreesMonoid List := memoize lookup(degreesMonoid, List)
 
 -----------------------------------------------------------------------------
 -- findHeft
