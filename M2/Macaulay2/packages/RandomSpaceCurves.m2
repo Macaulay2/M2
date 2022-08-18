@@ -78,11 +78,11 @@ TEST ///
 --
 -- this function is needed to construct
 -- expected betti tables from
--- a HilberNumerator
+-- a HilbertNumerator
 termToBettiKey = (mon) -> (
      -- the coefficient of the monomial
      c := lift((last coefficients mon)_0_0,ZZ);
-     -- the degree of the monmial
+     -- the degree of the monomial
      d := sum degree mon;
      (c,({d},d))
      )

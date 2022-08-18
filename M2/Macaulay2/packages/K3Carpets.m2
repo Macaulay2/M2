@@ -322,7 +322,7 @@ canonicalCarpet = method(Options=>{Characteristic=>32003,FineGrading => false,Sc
 canonicalCarpet(ZZ,ZZ) := opts -> (gen,cliff) -> 
      carpet(gen-cliff-1, cliff,Characteristic => opts.Characteristic, FineGrading => opts.FineGrading,Scrolls=>opts.Scrolls)
 
---Here's a structural approach that instead takes the kernel of the unique map of mainimal degree
+--Here's a structural approach that instead takes the kernel of the unique map of minimal degree
 --from the ideal of the scroll to the canonical module of the scroll. This code produces
 --Gorenstein double structures on ACM varieties more generally. 
 --computationally, the bare hands approach of carpet is much faster.

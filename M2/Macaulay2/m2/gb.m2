@@ -118,7 +118,7 @@ processAlgorithm := (alg, m) -> (
     k := ultimate(coefficientRing, R);
     -- compatibility checking
     if (alg === Homogeneous or alg === Homogeneous2) and not isHomogeneous m
-    then error "gb: homogeneous algorithm specified with inhomogeneous matrrix";
+    then error "gb: homogeneous algorithm specified with inhomogeneous matrix";
     if k === ZZ and alg =!= Inhomogeneous
     then error "gb: only the algorithm 'Inhomogeneous' may be used with base ring ZZ";
     if R.?FlatMonoid and not R.FlatMonoid.Options.Global and alg =!= Inhomogeneous

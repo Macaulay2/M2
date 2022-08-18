@@ -302,7 +302,7 @@ Node
      of dimension greater than 0 returns
      a symbolic expression indicating the further integration that ought to be done.
      In this example, we choose to implement the integral by taking the coefficient of the
-     monomoial in our ring of top degree.
+     monomial in our ring of top degree.
    Example
      integral A := f -> coefficient(t^2,f);
    Text

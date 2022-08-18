@@ -92,7 +92,7 @@ netList sortSolutions sols''
 -- y matrix, A matrix
 -- check toric, check balanced, check endotactic?
 -- multistationarity (real, pos >1)?
--- manipuations of CRNs: how to reduce,
+-- manipulations of CRNs: how to reduce,
 
 needsPackage "Graphs"
 ReactionNetwork = new Type of Graph

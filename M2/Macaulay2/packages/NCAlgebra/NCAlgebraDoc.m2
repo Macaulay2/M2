@@ -2864,7 +2864,7 @@ doc ///
    Description
       Text 
          This method converts a list of ring elements to coordinate vectors - returned
-	 as a matrix - relative to a list of monomilas. If the user does not 
+	 as a matrix - relative to a list of monomials. If the user does not 
 	 supply a monomial list, the list is taken to be the monomials 
 	 occurring in the elements of the list (with repetition).
       Example

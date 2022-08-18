@@ -33,7 +33,7 @@ If you don't have Maple/Convex or haven't set up "ConvexInterface"
 stay with the standard option UseConvex=>false.
 
 Then automatically the package "OldPolyhedra" is used,
-but that is several magnitues slower compared to maple/convex.
+but that is several magnitudes slower compared to maple/convex.
 
 "OldPolyhedra" relies on the package "FourierMotzkin".
 

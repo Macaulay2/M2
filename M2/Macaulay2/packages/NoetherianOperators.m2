@@ -3063,7 +3063,7 @@ Description
         will be used as the trusted point.
 
         {\tt NoetherianDegreeLimit =>} a non-negative @TO2 {ZZ, "integer"}@. Limits the degrees of the Noetherian operators (with respect to the variables $dx_i$).
-            If unset, will compute the full Noetherian operators of the "trusted" point. Can introduce speed-ups when the maxmial degree of the Noetherian operators
+            If unset, will compute the full Noetherian operators of the "trusted" point. Can introduce speed-ups when the maximal degree of the Noetherian operators
             is known in advance.
 
         {\tt Tolerance =>} a positive real number. This specifies the numerical precision when computing the

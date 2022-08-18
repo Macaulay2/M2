@@ -59,7 +59,7 @@ q=q+1);
 --print(ibm,ibl);
 matrix {ibl});
 
--- the quotient of two one-row matrixes
+-- the quotient of two one-row matrices
 matdiv=(ibm)->(
 q:=0;
 ibl:={};

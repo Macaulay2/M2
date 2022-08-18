@@ -253,7 +253,7 @@ localHm1Rees0 := (ReesEq) -> (
 -- It simply calls localHm1Rees0 after a sannity check.
 -- INPUT: A single-graded ideal I.
 -- OUTPUT: it computes the module  $[H_m^1(Rees(I))]_0$.
--- CAVEAT: For the momment, it only supports single-graded ideals on a polynomial ring.
+-- CAVEAT: For the moment, it only supports single-graded ideals on a polynomial ring.
 Hm1Rees0 = method()
 Hm1Rees0(Ideal) := (I) -> (
     checkSingleGraded(I);
@@ -388,7 +388,7 @@ degreeOfMap = method(Options => {Strategy => Hm1Rees0Strategy})
 
 -- Computes the degree of the rational represented by the generators of the ideal I.
 -- It contains a computational implementation of Corollary 2.12.
--- CAVEAT: For the momment, it only supports projective spaces.
+-- CAVEAT: For the moment, it only supports projective spaces.
 -- INPUT: A single-graded ideal.
 -- OUTPUT: Returns the degree of the rational map.
 --         If the map is not generically finite then the output is 0.
@@ -507,7 +507,7 @@ partialJDRs(Ideal) := (I) -> (
 -- Computes the full Jacobian dual rank of a rational map (this is defined in Notation 4.2)
 -- INPUT: A multi-graded ideal. 
 -- OUTPUT: The full Jacobian dual rank. 
--- CAVEAT: For the momment, it only supports multi-projective spaces in the source.
+-- CAVEAT: For the moment, it only supports multi-projective spaces in the source.
 jacobianDualRank = method()
 jacobianDualRank(Ideal) := (I) -> (
     checkMultiGraded(I);
@@ -533,7 +533,7 @@ jacobianDualRank(Ideal) := (I) -> (
 -- Given a multigraded rational map, it determines the birationality of the rational map
 -- INPUT: A multi-graded ideal
 -- OUTPUT: true/false if the rational map is birational/non-birational onto its image
--- CAVEAT: For the momment, it only supports multi-projective spaces in the source
+-- CAVEAT: For the moment, it only supports multi-projective spaces in the source
 -- REMARK: From Theorem 4.4 we can simply compute the rank of the "full" Jacobian dual matrix.
 --         Therefore, we only need to check the rank of one matrix and it allows us to treat 
 --         the muli-graded case similarly to the single-graded.

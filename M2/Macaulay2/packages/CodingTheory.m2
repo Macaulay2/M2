@@ -2312,7 +2312,7 @@ assert(dim C.LinearCode == 3)
 
 TEST ///
 -- Toric code.
-M=matrix{{1,4},{2,5},{10,6}} -- martrix of exponent vectors definind the polytope P, exponents vectors are rows
+M=matrix{{1,4},{2,5},{10,6}} -- matrix of exponent vectors definind the polytope P, exponents vectors are rows
 T=toricCode(GF 4,M) --- a toric code over F_4 with polytope P
 assert(length T.LinearCode == 9)
 assert(dim T.LinearCode == 5)
