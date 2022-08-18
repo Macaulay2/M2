@@ -145,7 +145,7 @@ doc ///
           (TT "?", " -- display information about all of the possible keystrokes"),
           (TT "q", " -- quit info, return to Macaulay2"),
           (TT "n", " -- go to the next documentation node"),
-          (TT "p", " -- go to the revious node"),
+          (TT "p", " -- go to the previous node"),
           (TT "m", " -- follow the menu link"),
           (TT "r", " -- follow a cross-reference"),
           (TT "l", " -- go to the last node visited"),

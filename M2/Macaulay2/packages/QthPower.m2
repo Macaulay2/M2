@@ -1311,7 +1311,7 @@ assert(ic0#3 == matrix{{2,2,2,2,1,1}})
 TEST ///
 ------------------------------------------------------------------------------
 --MAGMA example found in GLS--------------------------------------------------
--- genus 1, but try to figure that out from most pesentations-----------------
+-- genus 1, but try to figure that out from most presentations-----------------
 --(x-y)*x*(y+x^2)^3-y^3*(x^3+x*y-y^2)=0---------------------------------------
 --change of variables gives a type I problem----------------------------------
 ------------------------------------------------------------------------------

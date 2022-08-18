@@ -2595,7 +2595,7 @@ TEST /// --test #27
 ///
 
 TEST /// --test #28
-     --let's parameterize the nodal plane cubic
+     --let's parametrize the nodal plane cubic
      P2 = QQ[x,y,z]
      C = QQ[a,b]
      h = map(C, P2, {b*a*(a-b), a^2*(a-b), b^3})

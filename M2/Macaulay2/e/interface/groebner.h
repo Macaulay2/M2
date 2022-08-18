@@ -53,7 +53,7 @@ const RingElement /* or null */ *IM2_Matrix_Hilbert(const Matrix *M);
    computing Hilbert series, or the computation was interrupted. */
 
 ///////////////////////////////////////////////////////////////////////////////
-/////// The following will be reomoved once the new code is functional  ///////
+/////// The following will be removed once the new code is functional  ///////
 ///////////////////////////////////////////////////////////////////////////////
 Computation /* or null */ *IM2_GB_make(
     const Matrix *m,

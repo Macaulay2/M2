@@ -1868,7 +1868,7 @@ latticePoints Polyhedron := P -> (
      if not P.cache.?latticePoints then (
 	  -- Checking for input errors
 	  if  not isCompact P then error("The polyhedron must be compact");
-	  -- Recursive function that intersects the polyhedron with paralell hyperplanes in the axis direction
+	  -- Recursive function that intersects the polyhedron with parallel hyperplanes in the axis direction
 	  -- in which P has its minimum extension
 	  latticePointsRec := P -> (
 	       -- Finding the direction with minimum extension of P

@@ -948,7 +948,7 @@ document { Key => Pseudocode,
      the internal function ", TO "disassemble", " can display their contents, the function ", TO "pseudocode", " can convert
      a function closure to pseudocode, the function ", TO "value", " can evaluate it (bindings of values to local symbols
      are enclosed with the pseudocode), the operator ", TO "===", " can be used for equality testing,
-     and when the debugger is activated after an error, the variable ", TO "current", " contains the pseudcode step whose execution produced the error.",
+     and when the debugger is activated after an error, the variable ", TO "current", " contains the pseudocode step whose execution produced the error.",
      }
 document { Key => pseudocode,
      Headline => "produce the pseudocode for a function",

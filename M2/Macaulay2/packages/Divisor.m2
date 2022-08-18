@@ -3658,7 +3658,7 @@ doc ///
 	 : WeilDivisor
 	Description
 	 Text
-	  Compute the ramification (relevative canonical) divisor corresponding the finite inclusion of normal domains.  If you pass it a non-finite map, it will compute the divisorial part of the locus where the map is not smooth.  If {\tt IsGraded} is set to {\tt false} (the default value), then the coefficient ring of both the source and target of $f$ must be equal.  
+	  Compute the ramification (relative canonical) divisor corresponding the finite inclusion of normal domains.  If you pass it a non-finite map, it will compute the divisorial part of the locus where the map is not smooth.  If {\tt IsGraded} is set to {\tt false} (the default value), then the coefficient ring of both the source and target of $f$ must be equal.  
 	 Example
 	  R = QQ[x];
 	  S = QQ[y];

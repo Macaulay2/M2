@@ -424,7 +424,7 @@ document{
     UL{"0 = no extra information displayed [default]",
        "1 = print the progress information and time the main process",
        "2 = besides the information of level 1, it also displays the checkerboard steps"},
-   PARA{"Consider the problem of four lines with resepct to random flags"},
+   PARA{"Consider the problem of four lines with respect to random flags"},
     EXAMPLE{
        "SchPblm = randomSchubertProblemInstance ({{1},{1},{1},{1}},2,4)",
        "setVerboseLevel 0;",

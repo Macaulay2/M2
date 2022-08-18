@@ -1578,7 +1578,7 @@ doc ///
 	      B = truncate(chainComplex realProjectivePlane,1)	 
 	      prune HH B
     	  Text
-	      We now compute the fibers of the anti-podal quoitent map
+	      We now compute the fibers of the anti-podal quotient map
  	      $\mathbb{S}^2 \rightarrow  \mathbb{R} \mathbb{P}^2$.
 	      The way this works for example is:
 	      $a = v3 ~ v1, b = v6 ~ v5, d = v36 ~ v15, c = v4 ~ v2, 

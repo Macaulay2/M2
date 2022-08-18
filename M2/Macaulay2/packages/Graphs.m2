@@ -2787,7 +2787,7 @@ doc ///
         G:Graph
     Description
         Text
-            A threshold graph is a graph that is constructed by starting with an isolated vertex and iteratively adding another isolated vertex or a vertex that shares an edge with each vertex generated before it (the dominating vertices). The isolated vertices are represented by 0's and the dominating vertices are rerpresented by 1's. In this method, the initial vertex is implicit and by default is constructed, so the first entry need not always be 0 in the list.
+            A threshold graph is a graph that is constructed by starting with an isolated vertex and iteratively adding another isolated vertex or a vertex that shares an edge with each vertex generated before it (the dominating vertices). The isolated vertices are represented by 0's and the dominating vertices are represented by 1's. In this method, the initial vertex is implicit and by default is constructed, so the first entry need not always be 0 in the list.
         Example
             L = {1,0,0,1,0,1}
             thresholdGraph L

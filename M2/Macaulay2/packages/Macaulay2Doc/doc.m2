@@ -190,7 +190,7 @@ document {
 	  "isHomogeneous N"
 	  },
      HEADER3 "Intervals",
-     PARA { "If one of the factors is an ", TO "RRi", ", the output is an interval containing all poducts of pairs in the factors." },
+     PARA { "If one of the factors is an ", TO "RRi", ", the output is an interval containing all products of pairs in the factors." },
     EXAMPLE {
     "2*interval(1,3)",
     "interval(1,3)*interval(-1,2)",

@@ -3000,7 +3000,7 @@ doc ///
 		gfanFanCommonRefinement
 		(gfanFanCommonRefinement, Fan, Fan)
 	Headline
-		find the common refinement of two polyheadral fans
+		find the common refinement of two polyhedral fans
 	Usage
 		P = gfanFanCommonRefinement(F,G)
 	Inputs
@@ -4321,7 +4321,7 @@ doc ///
 		(gfanOverIntegers,Ideal)
 		(gfanOverIntegers,Ideal,List)
 	Headline
-		all reduced Groebner bases of a poynomial ideal with coefficients in ZZ
+		all reduced Groebner bases of a polynomial ideal with coefficients in ZZ
 	Usage
 		G = gfanOverIntegers(I)
 	Inputs

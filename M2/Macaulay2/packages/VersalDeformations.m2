@@ -927,7 +927,7 @@ document {
      Key =>{firstOrderDeformations,(firstOrderDeformations,Matrix,Matrix,Matrix),
 	  [firstOrderDeformations,SanityCheck],
      	  [firstOrderDeformations,DefParam]},
-     Headline => "use tangent space to create first order peturbations and find relations",
+     Headline => "use tangent space to create first order perturbations and find relations",
      Usage => "(F,R) = firstOrderDeformations(F0,R0,T1)",
      Inputs => {"F0" =>Matrix, "R0"=>Matrix, "T1"=>Matrix},
      Outputs=>{"F" => {ofClass List, " of matrices"},

@@ -433,7 +433,7 @@ doc ///
             This is an option for the Potential option for @TO "monodromySolve" @ when we use
             @TO "selectBestEdgeAndDirection" @ option to select edge and direction. This option
             observes discovered and undiscovered points first, and then follows the homotopy which
-            has the minimal number of new points quaranteed to be found.
+            has the minimal number of new points guaranteed to be found.
         Example
             R = CC[a,b,c,d][x,y];
             polys = polySystem {a*x+b*y^2,c*x*y+d};
