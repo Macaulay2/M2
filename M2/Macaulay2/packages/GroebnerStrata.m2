@@ -327,7 +327,7 @@ minimalizeFamily (Ideal, Ideal) := (J,H) -> (
      )
 *-
 
--- take an ideal in A[vars], homogeneous, and a ring S (in vars, but with different, often standrd, grading)
+-- take an ideal in A[vars], homogeneous, and a ring S (in vars, but with different, often standard, grading)
 -- return: free non-minimal resolution, as well as the degree zero maps in the resolution.
 nonminimalMaps = method()
 nonminimalMaps(Ideal) := Sequence => (F) -> (

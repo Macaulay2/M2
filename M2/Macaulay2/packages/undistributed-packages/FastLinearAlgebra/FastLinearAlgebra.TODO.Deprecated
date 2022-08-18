@@ -348,7 +348,7 @@ XXXXXXXXXXXXXX
 --  mike todo:
 --   make fplll a standard install?
 --     make linear algebra code ready for 1.5.1?  or 1.6?
---   latest scientifuc linux (version 6.3) uses gcc 4.4.6, too bad!
+--   latest scientific linux (version 6.3) uses gcc 4.4.6, too bad!
 --     check on std++0x and gcc 4.4.6, and what is available.
 --   make sure the linear algebra routines runwith the original ZZ/p.
 --     maybe only need to connect the top level routines:

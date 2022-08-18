@@ -1918,7 +1918,7 @@ doc ///
 		    $c_i \mapsto c$, and $d_i \mapsto d$.  
 		    		    
 		    We now explain how to construct the filtration of $S3$ obtained by
-		    considering the $k$-sketeltons of this fibration.
+		    considering the $k$-skeletons of this fibration.
 		    
 		    The simplicial complex $F1S3$ below
 		    is the subsimplicial complex of $S3$ obtained by considering the 
@@ -4060,7 +4060,7 @@ doc ///
      Key
      	  "Example 1"
      Headline
-     	  Easy example of a filtered simpilcial complex	  
+     	  Easy example of a filtered simplicial complex	  
      Description
      	  Text
 	       Here we provide an easy example of a filtered simplicial complex and 

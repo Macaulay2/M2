@@ -2059,7 +2059,7 @@ doc ///
    Description
     Text 
      We compute the twists of the relative resolution in the resonance scroll of a degenerate K3 
-     X_e(a,b) in case of k resonance after re-embedding the resonace scroll with |H+jR|
+     X_e(a,b) in case of k resonance after re-embedding the resonance scroll with |H+jR|
      for j=am-a_0=bm-b_0 where $\{a_i\}|\{b_j\}$ is the splitting type of the resonance scroll. 
     Example
      F = relativeResolution(5,4,3);
@@ -2087,7 +2087,7 @@ doc ///
     b:ZZ
      type of the degenerate K3
     k:ZZ
-     the resonace
+     the resonance
    Outputs
     as:List
     bs:List

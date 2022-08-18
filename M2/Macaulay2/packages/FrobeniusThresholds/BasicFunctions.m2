@@ -55,7 +55,7 @@ isPolynomialOverPosCharField RingElement := Boolean => F ->
 
 --===============================================================================
 
--- isDefinedOverFiniteField checks if somethethig is a polynomial ring over a
+-- isDefinedOverFiniteField checks if something is a polynomial ring over a
 -- finite field, or an element or ideal in such ring
 isDefinedOverFiniteField = method( TypicalValue => Boolean )
 

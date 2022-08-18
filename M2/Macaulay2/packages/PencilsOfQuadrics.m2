@@ -164,7 +164,7 @@ randomNicePencil(Ring,ZZ) := (kk,g) -> (
     X -- is the irrelevant ideal of PP^(2g+1)
     Y -- Y is the coefficient vector of qq written as a linear combination of X
     assert(X*transpose Y==qq)
-    u -- are the linear equations defining a maximal isotropic saubspace
+    u -- are the linear equations defining a maximal isotropic subspace
     betti M1, betti M2 -- is the matrix factorization of qq   
     --  corresponding to the resolution of kk
     betti Mu1, betti Mu2  -- is the matrix factorization of qq 
