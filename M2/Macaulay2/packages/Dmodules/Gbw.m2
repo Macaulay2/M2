@@ -26,7 +26,7 @@ inw (Matrix, List) := (m, w) -> (
      -- error checking
      if W.monoid.Options.WeylAlgebra === {}
      then error "expected a Weyl algebra";
-     if any(W.monoid.Options.WeylAlgebra, v -> class v =!= Option)
+     if any(W.monoid.Options.WeylAlgebra, v -> class v =!= List)
      then error "expected non-homogenized Weyl algebra";
      if #w =!= numgens W
      then error ("expected weight vector of length " | numgens W);
@@ -130,7 +130,7 @@ gbw (Matrix, List) := (m, w) -> (
      -- error checking
      if W.monoid.Options.WeylAlgebra === {} 
      then error "expected a Weyl algebra";
-     if any(W.monoid.Options.WeylAlgebra, v -> class v =!= Option)
+     if any(W.monoid.Options.WeylAlgebra, v -> class v =!= List)
      then error "expected non-homogenized Weyl algebra";
      if #w =!= numgens W
      then error ("expected weight vector of length " | numgens W);

@@ -126,7 +126,7 @@ Dresolution (Module, List) := options -> (M, w) -> (
      -- check that W is a Weyl algebra
      if W.monoid.Options.WeylAlgebra == {}
      then error "expected a Weyl algebra";
-     if any(W.monoid.Options.WeylAlgebra, v -> class v =!= Option)
+     if any(W.monoid.Options.WeylAlgebra, v -> class v =!= List)
      then error "expected non-homogenized Weyl algebra";
      -- check that w is of the form (-u,u)
      createDpairs W;

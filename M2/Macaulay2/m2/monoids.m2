@@ -16,6 +16,10 @@ madeTrivialMonoid := false
 
 makeSparse := v -> select(pairs v, (k, v) -> v != 0)
 
+listSplice := L -> deepSplice flatten sequence L
+
+baseName' = var -> baseName if instance(var, String) and match("[[:alnum:]$]+", var) then getSymbol var else var
+
 -- TODO: where should this go?
 -- MES: I grabbed this from orderedmonoidrings.m2, to handle skew variables in the monoid/ring.
 indices := (M, variables) -> apply(variables, x -> (
@@ -196,11 +200,11 @@ monoid = method(
     TypicalValue => Monoid)
 monoid List  := opts -> args -> monoid(new Array from args, opts, Local => true)
 monoid Array := opts -> args -> (
-    (opts, args) = override(opts, toSequence args);
+    (opts, args) = override(opts, nonnull toSequence args);
     if opts.Variables === null
-    then opts = merge(opts, new OptionTable from {Variables => deepSplice sequence args}, last)
+    then opts = merge(opts, new OptionTable from {Variables => args}, last)
     else if args =!= () then error "variables provided conflict with Variables option";
-    makeMonoid opts)
+    makeit1 setMonoidOptions opts)
 
 -----------------------------------------------------------------------------
 -- helpers for printing Monoid objects
@@ -280,43 +284,7 @@ degreesMonoid List := memoize(
 
 dotprod = (c,d) -> sum( min(#c, #d), i -> c#i * d#i )
 
-fix := s -> if instance(s,ZZ) then s else baseName s;
-fixWA := diffs -> (
-     if class diffs =!= List then diffs = {diffs};
-     apply(diffs, x -> 
-	  if instance(x,List) then (
-	       if #x =!= 2 then error "WeylAlgebra option member: expected {x,dx}";
-	       fix \ x)
-	  else if instance(x,Option) then (
-	       if #x =!= 2 then error "WeylAlgebra option member: expected x=>dx";
-	       fix x#0 => fix x#1)
-	  else fix x))
-
--- TODO: use it here, or move it to AssociativeAlgebras.m2
-findSymbols = varlist -> (
-    -- varlist is a list or sequence of items we wish to use for variable names.
-    -- these may be: Symbol's, RingElement's (which are variables in a ring)
-    -- or lists or sequences of such.
-    -- Return value: a List of Symbol's and IndexVariable's (or an error message gets issued)
-    varlist = deepSplice sequence varlist;
-    v := flatten toList apply(varlist, x->if class x === MutableList then toList x else x);
-    genList := for i from 0 to #v-1 list (
-            try baseName v#i
-            else if instance(v#i,String) and match("[[:alnum:]$]+",v#i) then getSymbol v#i
-            else (
-                msg := concatenate("encountered object not usable as variable at position ",toString i," in list:");
-                preX := "        ";
-                pw := max(printWidth,80);
-                error (msg,newline,toString (preX | silentRobustNetWithClass(pw - width  preX, 5, 3, v#i)));
-                )
-            );
-     -- is this next line needed?
-     -- what is the purpose of this line?
-     scan(genList, sym -> if not (instance(sym,Symbol) or null =!= lookup(symbol <-, class sym)) then error "expected variable or symbol");
-     genList
-    )
-
-makeit1 := (opts) -> (
+makeit1 = opts -> (
      M := new GeneralOrderedMonoid of MonoidElement;
      M#"original options" = opts;
      M.Engine = true;
@@ -369,7 +337,6 @@ makeit1 := (opts) -> (
      M.RawMonomialOrdering = rawMO;
      M#"raw creation log" = new Bag from {logMO};
      opts = new MutableHashTable from opts;
-     opts.WeylAlgebra = fixWA opts.WeylAlgebra;
      opts.MonomialOrder = new VerticalList from MOoptsint; -- these are the options given to rawMonomialOrdering, except Tiny and Small aren't there yet and GRevLex=>n hasn't been expanded
      M#"options" = MOopts; -- these are exactly the arguments given to rawMonomialOrdering
      remove(opts, MonomialSize);
@@ -437,30 +404,6 @@ makeit1 := (opts) -> (
      M)
 
 -----------------------------------------------------------------------------
-
-processDegrees = (degs,degrk,nvars) -> (
-     if not (degrk === null or instance(degrk,ZZ)) then error("DegreeRank => ... : expected an integer or null");
-     if degs === null then degs = (
-	  if degrk === null then (
-	       degrk = 1;
-	       apply(nvars,i->{1})
-	       )
-	  else apply(nvars, i -> apply(degrk, j -> if j === i or i >= degrk and j === degrk-1  then 1 else 0))
-	  )
-     else (
-     	  if not instance(degs,List) then error "Degrees: expected a list";
-     	  degs = apply(spliceInside degs, d -> if class d === ZZ then {d} else spliceInside d);
-     	  scan(degs, d -> if not (instance(d,List) and all(d, i -> instance(i,ZZ))) then error "expected degree to be an integer or list of integers");
-     	  if degrk === null then (
-	       if not same(length \ degs) then error "expected degrees all of the same rank";
- 	       degrk = if #degs > 0 then #degs#0 else 1;
-	       )
-	  else scan(degs, d -> if #d =!= degrk then error("expected degree of rank ",degrk));
-	  );
-     if nvars != #degs then error "expected length of list of degrees to equal the number of variables";
-     (degs,degrk));
-
------------------------------------------------------------------------------
 -- findHeft
 -----------------------------------------------------------------------------
 
@@ -505,64 +448,95 @@ processHeft = (degrk, degs, heftvec, inverses) -> (
 
 -----------------------------------------------------------------------------
 
-fixbasename = s -> if instance(s, String) then getSymbol s else s
+-- 1. implement a free monoid M whose degrees have torsion
+-- 2. implement the degrees ring of M as a quotient ring
+-- 3. implement the degrees monoid of M as a monoid with relations (optional?)
 
-makeMonoid = (opts) -> (
-     -- check the options for consistency, and set everything to the correct defaults
-     opts = new MutableHashTable from opts;
+diagonalDegrees = (degrk, nvars) -> table(nvars, degrk,
+    (i, j) -> if j === i or i >= degrk and j === degrk-1 then 1 else 0)
 
-     if opts.Local === true then opts.Global = false;
+processDegrees = (degs, degrk, nvars) -> (
+    if not (degrk === null or instance(degrk, ZZ) and degrk >= 0)
+    then error("expected DegreeRank option to be a non-negative integer");
+    if degs === null then (
+	if degrk =!= null then diagonalDegrees(degrk, nvars) else (degrk = 1; apply(nvars, i -> {1})), degrk)
+    else if instance(degs, List) then (
+	degs = apply(spliceInside degs, d -> if class d === ZZ then {d} else spliceInside d);
+	degrk = if degrk =!= null then degrk else if degs#?0 then #degs#0 else 1; -- so that degreeLength monoid[] = 1
+	if not #degs === nvars                          then error "expected as many degrees as there are variables";
+	if not isListOfListsOfIntegers degs             then error "expected each degree to be an integer or list of integers";
+	if degs#?0 and unique(length \ degs) != {degrk} then error("expected all degrees to have length ", degrk);
+	(degs, degrk))
+    else error "expected Degrees option to be list of degrees")
 
-     if not member(opts.Join,{null,true,false}) then error "expected Join option to be true, false, or null";
+-----------------------------------------------------------------------------
 
-     -- if opts.Join =!= false then (
-     -- 	  if opts.DegreeMap =!= null then error "DegreeMap option provided without Join=>false";
-     -- 	  if opts.DegreeLift =!= null then error "DegreeLift option provided without Join=>false";
-     -- 	  );
+-- check that the objects serving as variables have an assignment method
+-- TODO: why is (symbol <-, T) and not (symbol <-, T, Thing) the right method sequence for assignment?
+checkSymbol = sym -> if instance(sym, Symbol) or lookup(symbol <-, class sym) =!= null then sym else error()
 
-     if class opts.Inverses =!= Boolean then error "expected true or false in option";
-     
-     if opts.SkewCommutative =!= {} and opts.Inverses then error "skew commutative ring with inverses requested";
+-- also used in AssociativeAlgebras.m2
+findSymbols = varlist -> toList apply(pairs listSplice varlist,
+    -- varlist is a list or sequence of items we wish to use for variable names.
+    -- these may be: Symbol's, RingElement's (which are variables in a ring) or lists or sequences of such.
+    -- Return value: a List of Symbol's and IndexVariable's (or an error message gets issued)
+    -- if 0 != repeats varlist then error "encountered repeated variables"; -- M ** M will have repeated variables
+    (i, var) -> try checkSymbol baseName' var else error concatenate(
+	"encountered object not usable as variable at position ", toString i, " in list:",
+	newline, 8, silentRobustNetWithClass(max(printWidth, 80) - 8, 5, 3, var)))
 
-     -- First check the variable names
-     if class opts.Variables === ZZ 
-     then (
-	  x := baseName fixbasename opts.VariableBaseName;
-          opts.Variables = toList (x_0 .. x_(opts.Variables - 1)))
-     else (
-	  v := flatten toList apply(opts.Variables, x->if class x === MutableList then toList x else x);
-          opts.Variables = apply(#v, 
-	       i -> (
-		    try baseName v#i
-		    else if instance(v#i,String) and match("[[:alnum:]$]+",v#i) then getSymbol v#i
-		    else (
-			 msg := concatenate("encountered object not usable as variable at position ",toString i," in list:");
-			 preX := "        ";
-			 pw := max(printWidth,80);
-			 error (msg,newline,toString (preX | silentRobustNetWithClass(pw - width  preX, 5, 3, v#i)))))));
-     -- if length unique opts.Variables < length opts.Variables then error "at least one variable listed twice";
+processVars := method()
+processVars Thing := x -> findSymbols {x}
+processVars VisibleList := findSymbols
+processVars(VisibleList, Thing) := (L, xx) -> findSymbols L
+processVars(Thing, Thing) := (x, xx) -> findSymbols {x}
+processVars(ZZ,    Thing) := (n, xx) -> toList( xx = baseName' xx; xx_0 .. xx_(n-1) )
+processVars ZZ := x -> {x}
 
-     (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length opts.Variables );
-     opts.Degrees = degs;
-     opts.DegreeRank = degrk;
+processSkew := (n, skewvars) -> toList(
+    if skewvars === true  then 0 ..< n else
+    if skewvars === false then {}      else
+    if instance(skewvars, VisibleList) then flatten apply(listSplice skewvars, processVars)
+    else error "SkewCommutative: expected option to be true, false, or a list or indices or variables")
 
-     if opts.Local === true and opts.Weights === {} then opts.Weights = toList ( #opts.Variables : -1 );
+processWeyl := weylvars -> (
+    (xvars, dvars, hvar) := ({}, {}, {});
+    scan(flatten {weylvars},
+	x -> if instance(x, VisibleList) or instance(x, Option) then (
+	    if #x == 2 then (xvars, dvars) = (join(xvars, processVars x#0), join(dvars, processVars x#1))
+	    else error "WeylAlgebra: expected option formats {{x,dx},...}, {x=>dx,...}, or {(x,...)=>(dx,...)}")
+	else hvar = join(hvar, processVars x));
+    if #dvars =!= #xvars              then error "WeylAlgebra: unexpected number of differential variables";
+    if #hvar > min(#dvars, 1)         then error "WeylAlgebra: encountered extra homogenizing variable";
+    if 0 < repeats join(xvars, dvars) then error "WeylAlgebra: encountered a repeated variable";
+    join(pack_2 mingle(xvars, dvars), hvar))
 
-     num := # opts.Variables;
+-----------------------------------------------------------------------------
 
-     skews := opts.SkewCommutative;
-     opts.SkewCommutative = (
-	  if skews === false then {}
-	  else if skews === true then toList (0 .. num - 1)
-     	  else (
-	       if not instance(skews, List) then error "expected SkewCommutative option to a true, false, or a list";
-	       apply(skews, i -> (
-			 if instance(i,ZZ) or instance(i,Symbol) or instance(i,IndexedVariable) then i
-			 else try baseName i else error("SkewCommutative option: expected base name for: ",toString i)
-			 ))));
-     opts.Heft = processHeft(degrk,degs,opts.Heft,opts.Inverses);
-     opts = new OptionTable from opts;
-     makeit1 opts)
+-- check the options for consistency, and set everything to the correct defaults
+setMonoidOptions = opts -> (
+    opts = new MutableHashTable from opts;
+    opts.Variables = processVars(opts.Variables, opts.VariableBaseName);
+    (degs, degrk) := processDegrees(
+	opts.Degrees, opts.DegreeRank, n := #opts.Variables);
+    opts.Heft = processHeft(degrk, degs, opts.Heft, opts.Inverses);
+    opts.Degrees = degs;
+    opts.DegreeRank = degrk;
+    if not member(opts.Join, {null, true, false}) then error "expected Join option to be true, false, or null";
+    -- if opts.Join =!= false then (
+    --	if opts.DegreeMap =!= null then error "DegreeMap option provided without Join=>false";
+    --	if opts.DegreeLift =!= null then error "DegreeLift option provided without Join=>false";
+    --	);
+    -- TODO: bring the sanity checking for the Weyl and Skew variables here
+    opts.WeylAlgebra = processWeyl opts.WeylAlgebra;
+    opts.SkewCommutative = processSkew(n, opts.SkewCommutative);
+    -- TODO: allow rings with only some invertible variables
+    if class opts.Inverses =!= Boolean then error "expected Inverses option to be true or false";
+    -- TODO: allow rings with some skew commuting variables and some inverses https://github.com/Macaulay2/M2/issues/1440
+    if opts.SkewCommutative =!= {} and opts.Inverses then error "skew commutative monoid with inverses requested";
+    if opts.Local === true then ( opts.Global = false;
+	if opts.Weights === {} then opts.Weights = toList(n:-1));
+    opts)
 
 -----------------------------------------------------------------------------
 
@@ -616,7 +590,7 @@ tensor(Monoid, Monoid) := Monoid => monoidTensorDefaults >> opts0 -> (M, N) -> (
      then opts.Variables = join(Mopts.Variables, Nopts.Variables)
      else opts.Variables = spliceInside opts.Variables;
      if opts.VariableBaseName =!= null then (
-	  x := fixbasename opts.VariableBaseName;
+	  x := baseName' opts.VariableBaseName;
 	  opts.Variables = apply(#opts.Variables, i -> x_i);
 	  );
      if opts.MonomialOrder === null 
@@ -674,6 +648,6 @@ tensor(Monoid, Monoid) := Monoid => monoidTensorDefaults >> opts0 -> (M, N) -> (
      oddp := x -> x#?0 and odd x#0;
      m := numgens M;
      opts.SkewCommutative = join(monoidIndices(M,M.Options.SkewCommutative), apply(monoidIndices(N,N.Options.SkewCommutative), i -> i+m));
-     makeMonoid new OptionTable from opts)
+     makeit1 setMonoidOptions opts)
 
 -----------------------------------------------------------------------------
