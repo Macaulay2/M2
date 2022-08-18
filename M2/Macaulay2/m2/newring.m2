@@ -100,6 +100,7 @@ graphIdeal RingMap := Ideal => opts -> (cacheValue (symbol graphIdeal => opts)) 
      if not all(gensk, x -> promote(x,R) == f promote(x,S)) then error "expected ring map to be identity on coefficient ring";
      RS := tensor(R,S, opts, 
 	  MonomialOrder => Eliminate m, 
+	  DegreeGroup => degreeGroup R,
 	  Degrees => join(degrees R, apply(degrees S, f.cache.DegreeMap)),
 	  Heft => heft R);
      v := vars RS;

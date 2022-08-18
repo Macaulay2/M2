@@ -19,6 +19,7 @@ isQuotientOf(Ring,QuotientRing) := (R,S) -> R === ambient S or isQuotientOf(R,am
 isQuotientOf(Type,Ring) := (X,S) -> false
 isQuotientOf(Type,QuotientRing) := (X,S) -> instance(ambient S,X) or isQuotientOf(X,ambient S)
 degreeLength QuotientRing := S -> degreeLength ambient S
+degreeGroup  QuotientRing := S -> degreeGroup  ambient S
 vars QuotientRing := (cacheValue vars) (S -> map(S^1,, table (1, numgens S, (i,j) -> S_j)))
 numgens QuotientRing := (cacheValue numgens) (S -> numgens ambient S)
 pretty := relns -> (

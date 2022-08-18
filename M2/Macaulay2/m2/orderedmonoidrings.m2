@@ -96,6 +96,8 @@ degreesRing Monoid :=
 degreesRing PolynomialRing   := R -> if R.?degreesRing   then R.degreesRing   else error "no degrees ring present"
 degreesMonoid PolynomialRing := R -> if R.?degreesMonoid then R.degreesMonoid else error "no degrees monoid present"
 degreeLength  PolynomialRing := R -> degreeLength R.FlatMonoid
+degreeGroup   PolynomialRing := R -> degreeGroup  R.FlatMonoid
+degreeGroup   FractionField  := degreeGroup @@ baseRing
 
 -----------------------------------------------------------------------------
 -- Main polynomial ring constructor
