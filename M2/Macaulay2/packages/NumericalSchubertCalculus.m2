@@ -185,7 +185,7 @@ moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
     critdiag := 0;
     g:=2; -- g answers where is the red checker in the critical row
     r:=2; -- r answers where is the red checker in the critical diagonal
-    -- r,g is the coordinate of the moving situaion in the 3x3 table of moves
+    -- r,g is the coordinate of the moving situation in the 3x3 table of moves
     indx := new List;
     redpos := new MutableList from redposition;
     -- find the critical row, and how the red checkers sit with respect to it

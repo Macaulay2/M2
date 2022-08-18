@@ -93,7 +93,7 @@ isEquallyGenerated := (I) -> (
 )
 
 
--- Makes some sannity checks in the multi-graded case
+-- Makes some sanity checks in the multi-graded case
 checkMultiGraded := (I) -> (
     if not isEquallyGenerated I 
        then error "The ideal needs to be homogeneous and equally generated.";
@@ -106,14 +106,14 @@ checkMultiGraded := (I) -> (
 )
 
 
--- Makes some sannity checks in the single-graded case
+-- Makes some sanity checks in the single-graded case
 checkSingleGraded := (I) -> (
     if not isEquallyGenerated I 
        then error "The ideal needs to be homogeneous and equally generated.";
     R := ring I;
     grading := getGrading R;
     if not isPolynomialRing R or not grading_1 or length grading_0 != 1 
-       then error "The ring of the ideal needs to be a stantard single-graded polynomial ring.";
+       then error "The ring of the ideal needs to be a standard single-graded polynomial ring.";
 )
 
 
@@ -250,7 +250,7 @@ localHm1Rees0 := (ReesEq) -> (
 
 
 
--- It simply calls localHm1Rees0 after a sannity check.
+-- It simply calls localHm1Rees0 after a sanity check.
 -- INPUT: A single-graded ideal I.
 -- OUTPUT: it computes the module  $[H_m^1(Rees(I))]_0$.
 -- CAVEAT: For the momment, it only supports single-graded ideals on a polynomial ring.

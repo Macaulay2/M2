@@ -1847,7 +1847,7 @@ doc ///
 	    than or equal to $k$
     Description
         Text
-	    The $k$-skeleton of an abstract simplcial complex is the
+	    The $k$-skeleton of an abstract simplicial complex is the
 	    subcomplex consisting of all of the faces of dimension at most
 	    $k$.  When the abstract simplicial complex is 
 	    @TO2((isPure, SimplicialComplex), "pure")@ its $k$-skeleton is

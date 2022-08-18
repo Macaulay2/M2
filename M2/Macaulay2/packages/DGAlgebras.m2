@@ -1043,7 +1043,7 @@ masseyTripleProductOnCycles(DGAlgebra, RingElement, RingElement, RingElement) :=
 -- lift13*z4 + lift12*lift34 + z1*lift24
 
 -- Furthermore, according to O'Niell's paper, the two Massey
--- operations must vanish *simulaneously*.  That is, one must
+-- operations must vanish *simultaneously*.  That is, one must
 -- trivialize the Massey operations defining lift13 and lift24 with
 -- the same lifts lift12, lift23 and lift34.  to check that they
 -- simultaneously vanish, one must perform a calculation similar to

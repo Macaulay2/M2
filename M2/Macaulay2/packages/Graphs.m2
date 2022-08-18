@@ -470,9 +470,9 @@ lineGraph Graph := Graph => (G) -> (
             );   
          ); 
       );
-   --non-singeltons
+   --non-singletons
    nS:=unique flatten EE;
-   --singeltons
+   --singletons
    S:=for e in E list if member(e,nS)===false then e else continue;
    return graph(EE,Singletons=>S);
 )

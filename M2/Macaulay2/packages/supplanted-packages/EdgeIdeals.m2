@@ -1023,7 +1023,7 @@ smallestCycleSize Graph := G -> (
      -- the first non-linear syzygy tells us the smallest induced
      -- cycle has lenght >= 4.  This is based upon 
      -- the paper of Eisenbud-Green-Hulek-Popescu,
-     -- "Restricting linear syzygyies: algebra and geometry"
+     -- "Restricting linear syzygies: algebra and geometry"
      while  ((smallestCycle == 0) and (i <= pdim betti R)) do (
 	  A := R_i;
           B := flatten degrees A     ;

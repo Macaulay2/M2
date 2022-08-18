@@ -443,7 +443,7 @@ randomHartshorneRaoModuleDiameter3 = (HRao,R) -> (
 -- for g=11,12,13 we will only need the diameter 3 part, but we also include the functions for diameter 1 and 2:
 -- Try to construct a random Hartshorne-Rau module of
 -- length 2. Here the only problem is, that the
--- generic module may not have expected syzgies
+-- generic module may not have expected syzygies
 --
 -- HRau = {h1,h2} the Hilbertfunction of the desired module 
 -- R the ring where the module should live. It is assumed, that 
