@@ -244,6 +244,11 @@ Ring _ String :=
 Ring _ Symbol :=
 Ring _ IndexedVariable := RingElement => (M, x) -> x_M -- deprecated
 
+-- fixes the issue of declaring kk[x] followed by kk[x_1]
+-- TODO: remove the warning
+RingElement   _ Thing :=
+MonoidElement _ Thing := IndexedVariable => (x, i) -> (baseName x)_i
+
 -----------------------------------------------------------------------------
 -- monoid
 -----------------------------------------------------------------------------
