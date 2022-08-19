@@ -1286,7 +1286,7 @@ binomialSolve = I -> (
 	  );
      
      expo := q -> (
-     -- This auxiallary function maps a quotient from QQ to its
+     -- This auxiliary function maps a quotient from QQ to its
      -- element in S
      if q === null then return 0_C;
      if q == 0 or q == 1 then return 1_C;
@@ -1732,7 +1732,7 @@ document {
      Inputs => {
           "I" => {"a cellular binomial ideal"}},
      Outputs => {
-          {"a binoimal primary decomposition of I"}},
+          {"a binomial primary decomposition of I"}},
      "If the cell variables are known, they can be given via the option ", 
      TO CellVariables, " otherwise they are computed.",
      EXAMPLE {

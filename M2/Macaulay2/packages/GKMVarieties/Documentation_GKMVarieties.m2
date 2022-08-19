@@ -1394,7 +1394,7 @@ doc ///
 			Let $X$ be a generalized flag variety parameterizing flags of linear subspaces of dimensions $\{r_1, ... , r_k\}$ 
 			in $\mathbb C^n$ with $1 <= r_1 < \cdots < r_k$. Then a point $p$ of $X$ can be identified with a matrix $M$ of 
 			size  $r_k \times n$ such that the first $r_i$ rows of $M$ spans a subspace of dimension $r_i$. Given $X$ and
-			such a matrix $M$ representing the point $p$, this method computes the equivariant K-class of the closue of
+			such a matrix $M$ representing the point $p$, this method computes the equivariant K-class of the closure of
 			the torus orbit of $p$. 
 		
 

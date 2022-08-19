@@ -569,7 +569,7 @@ decompose3 = B -> (
 -- Same as decompose but with options.
 -- this was done in order to preserve the old functionality and give 
 -- the ability to add options to the method.
--- We would like to replace 'decompse' with 'decomposeBetti'.
+-- We would like to replace 'decompose' with 'decomposeBetti'.
 decomposeBetti = method(Options => {TableEntries => LeastIntegerEntries})
 decomposeBetti BettiTally := o -> B -> (
     

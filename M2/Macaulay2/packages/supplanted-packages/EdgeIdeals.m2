@@ -1705,7 +1705,7 @@ doc ///
 		     changeRing(H,S,{x,y,y})
 		     changeRing(H,S,{x,y,y},MaximalEdges=>true)
 		Text
-			By defualt, changeRing uses minimal edges that appear after substitution to
+			By default, changeRing uses minimal edges that appear after substitution to
 			construct its output. The optional argument @TO MaximalEdges@ allows 
 			one to get the maximal edges instead.
 	SeeAlso

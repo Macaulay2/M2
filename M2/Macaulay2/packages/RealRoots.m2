@@ -471,7 +471,7 @@ traceCount (QuotientRing) := ZZ=> R->(
 ----output is:
 ------a linear functional l that separates the points of I
 ------a polynomial ch defining the image of the points of V(I) under the map defined by l
-------a list of rational polynomials that consitite a rational inverse (on V(I)) of the map defined by l
+------a list of rational polynomials that constitute a rational inverse (on V(I)) of the map defined by l
 rationalUnivariateRepresentation = method()
 rationalUnivariateRepresentation (Ideal) := Sequence => I->(
     R := ring I;

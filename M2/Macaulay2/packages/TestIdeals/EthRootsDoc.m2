@@ -190,7 +190,7 @@ doc ///
 	    whose image is the {\tt p^e}-th Frobenius root of the image of the matrix {\tt A}
     Description
         Text
-            In a polynomial ring $R = k[x_1, \ldots, x_n]$ with cofficients in a field of positive characteristic $p$, the $p^e$-th Frobenius root $I^{[1/p^e]}$ of an ideal $I$ is the smallest ideal $J$ such that $I\subseteq J^{[p^e]}$ ({\tt = frobeniusPower(p^e, J)}).
+            In a polynomial ring $R = k[x_1, \ldots, x_n]$ with coefficients in a field of positive characteristic $p$, the $p^e$-th Frobenius root $I^{[1/p^e]}$ of an ideal $I$ is the smallest ideal $J$ such that $I\subseteq J^{[p^e]}$ ({\tt = frobeniusPower(p^e, J)}).
             Similarly, if $M$ is a submodule of $R^k$, the $p^e$-th Frobenius root of $M$, denoted $M^{[1/p^e]}$, is the smallest submodule $V$ of $R^k$ such that $M\subseteq V^{[p^e]}$.
 	    The function {\tt frobeniusRoot} computes such ideals and submodules.
 

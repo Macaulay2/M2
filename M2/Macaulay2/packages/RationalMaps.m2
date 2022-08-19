@@ -375,7 +375,7 @@ simisAlgebra(Ideal, BasicList, ZZ):=(a,L,m)->(
     F:=f(matrix{LL});
     myt:=(gens tR)#0;
     J:=sub(a,tR)+ideal apply(1..r,j->(gens tR)_(n+j)-myt*F_(0,(j-1)));
-    M:=gb(J,DegreeLimit=>{1,m}); --instead of computing the whole Grob. Baisis of J we only compute the parts of degree (1,m) or less,
+    M:=gb(J,DegreeLimit=>{1,m}); --instead of computing the whole Grob. Basis of J we only compute the parts of degree (1,m) or less,
     gM:=selectInSubring(1,gens M);
     L2:=ideal mingens ideal gM;
     W:=local W;
@@ -743,8 +743,8 @@ isBirationalOntoImageSimis(RationalMapping) := o-> (phi1) -> (
     myt:=(gens tR)#0;
     J:=sub(di1,tR)+ideal apply(1..rs,j->(gens tR)_(n+j)-myt*F_(0,(j-1)));
 
-    flag := false;   --this boolian checks whether it is birational
-    giveUp := false;  --this checks whether we giveup checkin birationality or not yet
+    flag := false;   --this boolean checks whether it is birational
+    giveUp := false;  --this checks whether we give up checkin birationality or not yet
     secdeg:=1;        --the second degree of rees equations
     jj := 1;
     M := null;
@@ -753,7 +753,7 @@ isBirationalOntoImageSimis(RationalMapping) := o-> (phi1) -> (
 
         if (secdeg < o.HybridLimit) then (
             M=gb(J,DegreeLimit=>{1,secdeg}); --instead of computing the whole Grob.
-                                            --Baisis of J we only compute the parts of degree (1,m) or less,
+                                            --Basis of J we only compute the parts of degree (1,m) or less,
         )
         else(
         if (o.Verbosity >= 1) then print("isBirationalOntoImageSimis:  gave up, it will just compute the whole Groebner basis of the Rees ideal.  Increase HybridLimit and rerun to avoid this." );
@@ -1039,7 +1039,7 @@ inverseOfMapSimis(RationalMapping) :=o->(phi1)->(
         if (o.Verbosity >= 2) then print("inverseOfMapSimis:  About to compute partial Groebner basis of Rees ideal up to degree " | toString({1, secdeg}) | "." );
         if (secdeg < o.HybridLimit) then (
             M=gb(J,DegreeLimit=>{1,secdeg}); --instead of computing the whole Grob.
-                                               --Baisis of J we only compute the parts of degree (1,m) or less,
+                                               --Basis of J we only compute the parts of degree (1,m) or less,
         )
         else( --we are running the hybrid strategy, so we compute the whole gb
             if (o.Verbosity >= 1) then print("inverseOfMapSimis:  We give up.  Using the previous computations, we compute the whole \r\n        Groebner basis of the Rees ideal.  Increase HybridLimit and rerun to avoid this." );

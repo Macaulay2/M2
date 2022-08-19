@@ -215,7 +215,7 @@ isProper Ideal := Boolean => I -> not isUnitIdeal I
  
 cost = method()
 
--- These are the default weights, so the computatinal cost is 
+-- These are the default weights, so the computational cost is 
 -- assumed to be proportional to b + 1.5*c.
 defaultWeights := { 0, 1, 1.5 }
 

@@ -1411,7 +1411,7 @@ doc ///
        Betti tables of the degenerate K3 for various characteristics of the ground field  
    Description
     Text
-     We compute the equation and nonminimal resolution F of the degeneate K3 of type (a,b,e)
+     We compute the equation and nonminimal resolution F of the degenerate K3 of type (a,b,e)
      where $a \ge b$ over a large finite prime field, lift the complex to the integers,
      which is possible if the coefficients are small. Finally we study the nonminimal
      strands over ZZ by computing the Smith normal form. The resulting data allow us

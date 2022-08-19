@@ -312,7 +312,7 @@ Betti1(Triplet) := (L) -> (
      b := C_0;
      c := A_0;
      n := A_0 + B_nB;
-     --make the conugate set of C
+     --make the conjugate set of C
      BarC := apply(nC+1, i -> n- C_(nC-i));     
      -- make the interval [a,Barb] containing BarC
      IntBarC := apply(n-b-a+1, i-> i+a);
