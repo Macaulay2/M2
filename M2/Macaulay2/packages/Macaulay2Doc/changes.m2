@@ -2189,9 +2189,7 @@ document {
 		    TO (symmetricAlgebra,Nothing,Ring,Matrix),
 		    TO (symmetricAlgebra,Ring,Nothing,Matrix),
 		    TO (symmetricAlgebra,Ring,Ring,Matrix),
-		    TO (symbol ^, RingElement, Ring),
 		    TO (symbol ^, Number, Ring),
-		    TO (symbol ^, RingElement, RingFamily),
 		    TO (symbol ^, Number, RingFamily),
 		    TO (symbol ^, Constant, Ring),
 		    TO (symbol ^, Constant, RingFamily)

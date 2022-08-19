@@ -78,20 +78,30 @@ isHomogeneous Ring := R -> (
      degreeLength R == 0 
      )
 
-promote = method(Dispatch=>{Thing,Type,Type})
-lift = method(Dispatch=>{Thing,Type,Type}, Options => {Verify => true})
-liftable  = method(Dispatch=>{Thing,Type,Type}, TypicalValue => Boolean)
+-----------------------------------------------------------------------------
+-- promote, lift, liftable, and isConstant
+-----------------------------------------------------------------------------
 
+-- some remnants from lift and promote, version 2
+liftable = method(TypicalValue => Boolean, Dispatch => {Thing, Type, Type})
+liftable(Number,      Number)      :=
+liftable(Number,      RingElement) :=
+liftable(Constant,    Number)      :=
+liftable(Constant,    RingElement) :=
+liftable(RingElement, Number)      :=
+liftable(RingElement, RingElement) := (f, R) -> null =!= lift(f, R, Verify => false)
+
+isConstant = method(TypicalValue => Boolean)
+isConstant RingElement := r -> liftable(r, coefficientRing ring r)
+
+lift = method(Dispatch => {Thing, Type, Type}, Options => {Verify => true})
 Number   ^ Ring :=
-Constant ^ Ring :=
-Constant ^ RingFamily :=
-RingElement ^ Ring    := (x, R) -> lift(x, R)
+Constant ^ Ring := lift
 
-Number      ^ RingFamily :=
-RingElement ^ RingFamily := (x, R) -> lift(x, default R)
+promote = method(Dispatch => {Thing, Type, Type})
+Number   _ Ring :=
+Constant _ Ring := promote
 
-Number      _ Ring := promote
-RingElement _ Ring := promote
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

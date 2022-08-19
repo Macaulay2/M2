@@ -94,9 +94,6 @@ diameter = method()
 diameter RRi := diameter'
 
 -- lift and promote between real or complex rings
-
-Number _ InexactFieldFamily := (x,RR) -> x_(default RR)
-
 promote(RawRingElement,RR') := (x,R) -> new RR from x
 promote(RawRingElement,RRi') := (x,R) -> new RRi from x
 promote(RawRingElement,CC') := (x,R) -> new CC from x
@@ -333,7 +330,12 @@ Constant _ Ring := (c,R) -> (
      if prec === infinity
      then error "cannot promote constant to a ring with exact arithmetic"
      else (numeric (prec, c))_R)
-Constant _ InexactFieldFamily := (x,RR) -> x_(default RR)
+-- e.g. 1_CC or ii_CC
+Number   _ RingFamily :=
+Constant _ RingFamily := (x, R) -> x_(default R)
+-- TODO: find examples, or remove
+Number   ^ RingFamily :=
+Constant ^ RingFamily := (x, R) -> lift(x, default R) -- TODO: set Verify => false?
 
 Constant + Number := (c,x) -> numeric c + x
 Number + Constant := (x,c) -> x + numeric c

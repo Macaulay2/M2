@@ -25,6 +25,27 @@ monoid[vars(0..3), VariableBaseName => "e", SkewCommutative => {0,1,2,3}]
 monoid[vars(0..3), VariableBaseName => "e", SkewCommutative => vars(0..3)]
 ---
 
+--- checking element access in towers
+-* currently not working reliably
+R = ((frac(QQ[x,y]))[t,u])/(t^2-x,u^2-y)
+assert(sum({"x", "y", "t", "u"}, s -> s_R) === t + u + x + y)
+
+-- promote
+F = frac(QQ[x,y])
+S = F[t,u]
+R = S/(t-x)
+assert all({"x", "y"}, s -> promote(s_(monoid F), R) === s_R)
+assert all({"t", "u"}, s -> promote(s_(monoid S), R) === s_R) -- monoid S === S.FlatMonoid
+assert all({"t", "u"}, s -> promote(s_(monoid R), R) === s_R)
+assert all({"t", "u"}, s -> promote(s_(R.FlatMonoid), R) === s_R)
+
+-- lift
+F = frac(kk[a,b])
+S = F[x,y]
+R = S[t,u]/(x^4-t*a*y)
+-- TODO
+*-
+
 ---- checking degreeLength, degreesMonoid, degreesRing
 assert(degreeLength degreesMonoid 0 == 0)
 assert(degreeLength degreesMonoid 2 == 0)

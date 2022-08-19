@@ -79,10 +79,22 @@ baseName MonoidElement := m -> if #(s := rawSparseListFormMonomial raw m) == 1 a
     then (class m).generatorSymbols#(s#0#0) else error "expected a generator"
 
 promote(MonoidElement, RingElement) := RingElement => (m, R) -> (
-    M := monoid R;
-    k := coefficientRing R;
-    if not instance(m, M) then error "expected monomial from same ring";
-    new R from rawTerm(R.RawRing, raw 1_k, m.RawMonomial))
+    k := coefficientRing first flattenRing R;
+    -- TODO: audit this code
+    if instance(m, k)
+    or instance(m, monoid R)
+    or instance(m, R.FlatMonoid)
+    -- TODO: what does rawTerm expect?
+    then new R from rawTerm(R.RawRing, raw 1_k, m.RawMonomial)
+    else "expected monomial from same ring")
+
+lift(RingElement, MonoidElement) := MonoidElement => (m, M) -> (
+    k := coefficientRing first flattenRing(R := ring m);
+    if instance(m, monoid k)
+    or instance(m, monoid R)
+    or instance(m, R.FlatMonoid)
+    then new M from m.RawMonomial
+    else error "expected monomial from same monoid")
 
 -- printing helpers
 expressionTerms := (M, trms) -> ( exps := M.generatorExpressions;
@@ -204,6 +216,9 @@ ZZ            _ Monoid := MonoidElement => (i, M) -> if i === 1 then M#1 else er
 RingElement   _ Monoid :=
 MonoidElement _ Monoid := MonoidElement => (x, M) -> (baseName x)_M
 
+String _ Monoid := MonoidElement => (s, M) -> (
+    if M.?indexStrings and M.indexStrings#?s then M.indexStrings#s
+    else error "variable not found in monoid")
 Symbol _ Monoid := MonoidElement => (x, M) -> (
     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
     else error "symbol not found in monoid")
@@ -211,12 +226,23 @@ IndexedVariable _ Monoid := MonoidElement => (x, M) -> (
     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
     else error "indexed variable not found in monoid")
 
+RingElement   _ Ring :=
+MonoidElement _ Ring := RingElement => (x, M) -> try (baseName x)_M else promote(x, M)
+
+String _ Ring := RingElement => (s, M) -> (
+    if M.?indexStrings and M.indexStrings#?s then M.indexStrings#s
+    else error "variable not found in ring")
 Symbol _ Ring := RingElement => (x, M) -> (
     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
     else error "symbol not found in ring")
 IndexedVariable _ Ring := RingElement => (x, M) -> (
     if M.?indexSymbols and M.indexSymbols#?x then M.indexSymbols#x
     else error "indexed variable not found in ring")
+
+-- kept for backwards compatibility
+Ring _ String :=
+Ring _ Symbol :=
+Ring _ IndexedVariable := RingElement => (M, x) -> x_M -- deprecated
 
 -----------------------------------------------------------------------------
 -- monoid

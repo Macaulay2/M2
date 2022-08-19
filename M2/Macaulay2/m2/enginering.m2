@@ -30,12 +30,6 @@ promote(QQ,RingElement) := (r,S) -> (
      if a % b == 0 then a // b
      else error ("promotion of this rational number to the ring ", toString S, " not possible"))
 
--- some remnants from lift and promote, version 2
-liftable(RingElement,RingElement) := 
-liftable(Number,RingElement) := 
-liftable(RingElement,Number) := 
-liftable(Number,Number) := (f,R) -> null =!= lift(f,R,Verify=>false)
-
 --- new lift and promote, version 3
 basicLift = opts -> (r,Brawring,Bclass) -> (
      s := rawLift(Brawring, raw r);
@@ -660,8 +654,6 @@ fraction(RingElement,RingElement) := (r,s) -> (
 
 Ring _ String := RingElement => (x,s) -> x.indexStrings#s
 Ring _ Symbol := RingElement => (x,s) -> x.indexSymbols#s
-
-isConstant RingElement := r -> liftable(r, coefficientRing ring r)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
