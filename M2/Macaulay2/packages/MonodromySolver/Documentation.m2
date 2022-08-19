@@ -197,7 +197,7 @@ doc ///
 	    with parameters as coefficients
     Outputs
         equations:List
-            containing equtaions of system with parameters specialized at p0
+            containing equations of system with parameters specialized at p0
     Headline
             specialize parametric system at a point in the parameter space.///
     

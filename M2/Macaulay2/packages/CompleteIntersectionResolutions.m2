@@ -3524,7 +3524,7 @@ doc ///
      
      The degrees of the targets of the T_j are
      changed by the degrees of the f_j to make the T_j
-     homogeneneous.
+     homogeneous.
     Example
      S = ZZ/101[x,y,z];
      ff = matrix"x3,y3,z3";
@@ -5130,7 +5130,7 @@ doc ///
      Grading =>2}
      
      If Grading =>1, then a singly graded result is returned (just forgetting the
-     honological grading.)
+     homological grading.)
 
     Example
      n = 3

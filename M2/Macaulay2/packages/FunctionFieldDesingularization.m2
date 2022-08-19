@@ -643,7 +643,7 @@ document {
      PARA {
      	  "Each node is described by an irreducible polynomial bnew,
 	  cnew its reduction mod x_d, a list of inequality constraints,
-	  an ideal of equaltiy constraints, a birational change-of-variables
+	  an ideal of equality constraints, a birational change-of-variables
 	  from its previous node, and one from the root as well. 
 	  See the test examples for syntax." 
      	  }

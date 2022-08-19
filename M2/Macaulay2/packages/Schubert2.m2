@@ -1593,7 +1593,7 @@ computeWedges = (n,A,d) -> (
      )
 
 exteriorPower(ZZ, AbstractSheaf) := AbstractSheaf => opts -> (n,E) -> (
-     -- wedge is an array 0..n of the chern characters of the exerior 
+     -- wedge is an array 0..n of the Chern characters of the exterior 
      -- powers of E.  The last one is what we want.
 
      -- this line of code is incorrect for virtual bundles:

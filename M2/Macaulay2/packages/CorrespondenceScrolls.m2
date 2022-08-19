@@ -328,7 +328,7 @@ doc ///
      P^{N-1} consisting set theoretically of the planes spanned by the points of the 
      Segre-Veronese embedding corresponding to Z.
      
-     More generally, we treat the case of a multi-homogneous subscheme
+     More generally, we treat the case of a multi-homogeneous subscheme
      Z' \subset A^{a_0-1} x .. x A^{a_{n-1}-1}.
 ///
 

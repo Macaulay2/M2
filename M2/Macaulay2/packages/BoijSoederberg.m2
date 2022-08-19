@@ -1273,7 +1273,7 @@ for i from 0 to #W-1 list (W_i/P_0)
 -- Constructions often producing pure resolutions --
 ----------------------------------------------------
 
---Given a strictly increasing degree sequence L and a number of gneerators m,
+--Given a strictly increasing degree sequence L and a number of generators m,
 --this routine produces a "generic" module of finite length with the 
 --m generators and number of socle elements  and regularity corresponding
 --to the pure resolution with degree sequence L. The module is constructed

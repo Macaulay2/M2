@@ -1260,7 +1260,7 @@ schurPolynomial = method(Options => {AsExpression => false, Strategy=>"semistand
 schurPolynomial(List,Partition,PolynomialRing) := o->(indices, partition, R) -> (
     ans := 0;
     ans= 1_R;
-    if #indices < #partition then error "size of indices and exponets does not match"; 
+    if #indices < #partition then error "size of indices and exponents does not match"; 
     if o.Strategy == "determinant" then (
 	exponents := join (toList (#indices - #partition:0), reverse toList partition) + toList 0..(#indices-1);
 	ans = determinant generalizedVandermondeMatrix(indices,exponents,R)// vandermondeDeterminant(indices,R))

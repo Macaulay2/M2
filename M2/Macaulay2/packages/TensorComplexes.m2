@@ -365,7 +365,7 @@ The input to the code is a map of labeled free modules
 Based on f and w, we could define 
 a degree sequence d via the formula for d'(w) given in Notation 5.2 of the BEKS paper.  However,
 since we only need d1 in the construction, we only define that number in the code.
-The output map will go from a module F1 enerated in degree d1 to a module F0 generated in
+The output map will go from a module F1 generated in degree d1 to a module F0 generated in
 degree 0.
 
 We also define r0 and r1 following the formulas given in Notation 5.2 of BEKS.  By

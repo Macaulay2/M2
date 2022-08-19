@@ -2296,7 +2296,7 @@ assert(I == J)
 --kernel of the homomorphism defined by the standard parameterization. We check that
 --this ideal matches the ideal defined by phyloToricFP, I == J. We extract the
 --linear generators for the kernel I, and check that these generate the same
---ideal as the generatros given as output for phyloToricLinears, M == Q.
+--ideal as the generators given as output for phyloToricLinears, M == Q.
 --We also check the number of linear generators defined by N and those defined
 --by phyloToricLinears, P. Although these sets are not minimal, we check that
 --each list is 51. This coincides with the fact that there are 13 distinct

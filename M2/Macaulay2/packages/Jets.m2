@@ -1107,7 +1107,7 @@ Node
 	    GS= jetsRadical(1,I);
 	    netList sort MP_* | netList sort GS_*
     	Text
-	    An ideal with genereators which are not squarefree:
+	    An ideal with generators which are not squarefree:
 	Example
 	    R= QQ[x,y,z]
 	    I= ideal(x*y^2, z*x, x^3)

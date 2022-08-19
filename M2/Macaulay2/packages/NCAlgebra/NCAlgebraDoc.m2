@@ -3878,7 +3878,7 @@ doc ///
          basis(2,D)	 
       Text
          The output of normalElements tells us that in order for a degree 2 element of D
-	 to be normal, it must be an expresison in powers of the generators. The coefficients
+	 to be normal, it must be an expression in powers of the generators. The coefficients
 	 of these powers must satisfy the six equations listed.
       Example
          isNormal (x^2+z^2-y^2-w^2)	 
