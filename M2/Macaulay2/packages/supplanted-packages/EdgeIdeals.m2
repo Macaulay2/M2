@@ -1323,7 +1323,7 @@ doc ///
 			be a clutter. The reason is that this package is designed for edge ideals, which would
 			lose any information about edges that are supersets of other edges.			
 			
-			For the first possiblity, the user inputs a polynomial ring, which specifices the vertices
+			For the first possibility, the user inputs a polynomial ring, which specifices the vertices
 			of graph, and a list of the edges of the graph.  The edges are represented as lists.
 		Example
 		        R = QQ[a..f]
@@ -1410,7 +1410,7 @@ doc ///
 			can input a graph in a number of different ways, which we describe below.  The information
 			describing the graph is stored in a hash table.
 			
-			For the first possiblity, the user inputs a polynomial ring, which specifices the vertices
+			For the first possibility, the user inputs a polynomial ring, which specifices the vertices
 			of graph, and a list of the edges of the graph.  The edges are represented as lists.
 		Example
 		        R = QQ[a..f]

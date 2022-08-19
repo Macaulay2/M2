@@ -2474,7 +2474,7 @@ doc ///
     Text
      A vector bundle on a hyperelliptic curve E with
      equation y^2 - (-1)^g * f
-     can be represeted by it's pushforward V to PP^1,
+     can be represented by it's pushforward V to PP^1,
      under the degree 2 map, 
      which will be a vector bundle of twice the rank,
      together with a matrix 

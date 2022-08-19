@@ -152,7 +152,7 @@ makeTree := (parent, graph, visits, node) -> (
     new TreeNode from {node, tree})
 
 -- pre-compute the list of orphan nodes in a graph, with parent
--- node (typcally topDocumentTag) appearing in the beginning
+-- node (typically topDocumentTag) appearing in the beginning
 orphanNodes := (parent, graph) -> (
     nonLeaves := set keys graph - set flatten values graph;
     if not nonLeaves#?parent and signalDocumentationWarning parent then printerr("warning: top node ", parent, " not a root");

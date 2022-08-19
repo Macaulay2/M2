@@ -106,7 +106,7 @@ load "NumericalSchubertCalculus/service-functions.m2"
 --load "NumericalSchubertCalculus/UnderDevelopment/galois.m2"
 
 --------------------------------------
--- produces a matrix that parmeterizes
+-- produces a matrix that parametrizes
 -- the "big cell" of Gr(k,n)
 ------------------------------
 bigCellLocalCoordinates = method()

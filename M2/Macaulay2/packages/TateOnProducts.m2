@@ -4579,7 +4579,7 @@ doc ///
        where a is a multi-index, low<=a<=high in the partial order
        (thus the value is 0 when i is not in the range 0..sum n.)
        In case T is a Tate resolution corresponding to an object F in D^b(P^n), then
-       the values returned are the polyomials of the hypercohomology groups of twists of F, and
+       the values returned are the polynomials of the hypercohomology groups of twists of F, and
        the values can be nonzero in a wider range.
 
        In case the number of factors t is 2, the output of @ TO cohomologyMatrix @ is

@@ -643,7 +643,7 @@ doc ///
      at infinity {z = 0} and the point (1:0:0) is not on C.
      Note that these conditions can always be met by a projective automorphism.
 
-     Considering the affine curve in z!=0 we take y as trancendental and x as algebraic
+     Considering the affine curve in z!=0 we take y as transcendental and x as algebraic
      and compute an integral basis in CC(y)[x] of the integral closure of CC[y] in CC(x,y) using 
      the algorithm from
     

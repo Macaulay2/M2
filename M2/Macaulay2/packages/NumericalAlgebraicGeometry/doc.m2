@@ -685,7 +685,7 @@ document {
     Inputs => { "V","W" },
     Outputs => { "VW"=>NumericalVariety },
     "Constructs the union of numerical varieties", 
-    Caveat => {"The rusulting numerical variety may have redundant components."},
+    Caveat => {"The resulting numerical variety may have redundant components."},
     SeeAlso=>{removeRedundantComponents}
     }
 

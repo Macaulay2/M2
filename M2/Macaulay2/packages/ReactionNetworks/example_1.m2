@@ -21,7 +21,7 @@ R = ring I
 S = FF[gens R]
 coefficientRing R
 coefficientRing S
--- ramdom setting of k_i for homotopy
+-- random setting of k_i for homotopy
 -- lets us compute dimension
 kstart = apply(gens coefficientRing R, k -> k => random FF)
 J = sub(sub(I, kstart), S)

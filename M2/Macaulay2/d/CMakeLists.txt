@@ -197,7 +197,7 @@ target_compile_options(M2-interpreter PRIVATE
   # FIXME: mismatched-tags and parentheses-equality errors are caused by scc1
   $<$<COMPILE_LANG_AND_ID:C,AppleClang,Clang>:-Wno-parentheses-equality>
   $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-mismatched-tags -Wno-parentheses-equality>
-  # FIXME: caused by SIMD macro redefenition in fflas_ffpack
+  # FIXME: caused by SIMD macro redefinition in fflas_ffpack
   $<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang>:-Wno-macro-redefined>
 
   # FIXME: __builtin_frame_address M2lib.c:165 causes this:

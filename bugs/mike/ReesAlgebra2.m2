@@ -125,7 +125,7 @@ universalEmbedding(Module) := Matrix => (M) -> (
 --           the rees algebra of a versal embedding of the 
 --           Module regardless of the ring and for an ideal over a quotient ring. 
 --           In the case of an ideal over a polynomial ring the process is slightly 
---           streamlined, skipping the unneccessary versal computation as in that 
+--           streamlined, skipping the unnecessary versal computation as in that 
 --           case the inclusion map is a versal map.
 
 reesIdeal = method(Options => {Variable => w})

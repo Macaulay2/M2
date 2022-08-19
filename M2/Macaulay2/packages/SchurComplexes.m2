@@ -49,7 +49,7 @@ export {"straightenTableau", "schurComplex"}
 -- Input:
 -- A Partition lambda and integers m and n, the admissible entries in tableaux of shape lambda.
 -- Output: 
--- A List of all the standard Z/2-graded tablueax with shape lambda and possible "odd"
+-- A List of all the standard Z/2-graded tableaux with shape lambda and possible "odd"
 -- (resp. "even") entries {1, ..., m} (resp. {1, ..., n}). The tableaux
 -- are encoded as HashTables. See Section 1.1 of Weyman's "Cohomology of Vector Bundles
 -- and Syzygies" for background on Z/2-graded tableaux.

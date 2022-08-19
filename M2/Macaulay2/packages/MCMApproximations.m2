@@ -277,7 +277,7 @@ Description
    gives the coapproximation sequence
    0\to M \to N''\to M'' \to 0.
    
-   The routine coApproximation M resurns the map M --> N''.
+   The routine coApproximation M returns the map M --> N''.
    Here is an example of a simple approximation sequence, 
    exhibited by the betti tables of its 3 middle terms:
    

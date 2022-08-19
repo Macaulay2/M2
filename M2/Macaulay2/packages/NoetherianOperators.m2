@@ -143,7 +143,7 @@ zeroDimensionalDual (AbstractPoint,Matrix) := o -> (p,I) -> zeroDimensionalDual(
 zeroDimensionalDual (Matrix,Matrix) := o -> (p,I) -> zeroDimensionalDual(point p, ideal I, o)
 ----------------------------------
 
---An object that stores the data for an ongoing iterative tuncated dual space computation
+--An object that stores the data for an ongoing iterative truncated dual space computation
 TruncDualData = new Type of MutableHashTable
 initializeDualData = method(Options => {KernelStrategy => "Default"})
 initializeDualData (Matrix,Boolean,Number) := opts -> (Igens,syl,t) -> (
@@ -2346,7 +2346,7 @@ doc ///
       [truncatedDual, Tolerance]
       [zeroDimensionalDual, Tolerance]
      Headline
-          optional argument for numerical tolernace
+          optional argument for numerical tolerance
      Description
           Text
 	       Many of the numerical operations require a tolerance value, below which numbers are considered to be numerically zero.

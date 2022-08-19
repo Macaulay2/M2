@@ -451,7 +451,7 @@ getRandomLinearForms(Ring, List) := opts -> (R1, L1) ->(
         J1 := jacobian ideal formList;
         val := min(d, #formList);
         if (rank J1 < val) then ( 
-            if (opts.Verbose) or (debugLevel > 0) then print "getRandomLinearForms: forms were not random enough, trying again recusrively.";            
+            if (opts.Verbose) or (debugLevel > 0) then print "getRandomLinearForms: forms were not random enough, trying again recursively.";            
             return getRandomLinearForms(R1, L1, opts);
         );
     );

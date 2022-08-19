@@ -2198,7 +2198,7 @@ document {
 
 document { 
      Key => (bott,List,ZZ,ZZ),
-     Headline => "cohomology table of Schur functor of tautolgical bundle on P^n",
+     Headline => "cohomology table of Schur functor of tautological bundle on P^n",
      Usage => "bott(L,lowDegree,highDegree)",
      Inputs => {
 	  "L" => "a non-increasing sequence of integers",

@@ -377,7 +377,7 @@ cocycleCheck ToricVectorBundleKaneyama := (cacheValue symbol cocycle)( tvb -> (
 --   INPUT : 'tvb',  a ToricVectorBundleKaneyama
 --  OUTPUT : '(A,C)',	 where 'A' is a hashTable giving the enumeration of the maximal cones with their rays and degree matrix, 
 --     	    	      	 and 'B' gives the transition matrices for the codim 1 pairs
--- COMMENT : This function gives the posibillity to have a quick overview on the main properties of a ToricVectorBundleKaneyama
+-- COMMENT : This function gives the possibility to have a quick overview on the main properties of a ToricVectorBundleKaneyama
 details = method()
 details ToricVectorBundle := tvb -> (
      if instance(tvb,ToricVectorBundleKaneyama) then (hashTable apply(pairs(tvb#"topConeTable"), p -> ( p#1 => (rays p#0,tvb#"degreeTable"#(p#0)))),tvb#"baseChangeTable")

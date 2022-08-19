@@ -331,7 +331,7 @@ slackFromPlucker List := Matrix => opts -> V -> (
     -- OUTPUT: slack matrix filled with Plücker coordinates
     (newV, B) := getFacetBases(V, Object => opts.Object);
 	if opts.Object == "polytope" or opts.Object == "cone" then (
-		<< "\nInput has been reorderd to" << endl << newV << endl;
+		<< "\nInput has been reordered to" << endl << newV << endl;
 	);
     slackFromPlucker(newV, B, Object => opts.Object)
 )
@@ -626,7 +626,7 @@ symbolicSlackOfPlucker List := Matrix => opts -> V -> (
     -- OUTPUT: slack matrix filled with Plücker variables
     (newV, B) := getFacetBases(V, Object => opts.Object);
 	if opts.Object == "polytope" or opts.Object == "cone" then (
-		<< "\nInput has been reorderd to" << endl << newV << endl;
+		<< "\nInput has been reordered to" << endl << newV << endl;
 	);
     symbolicSlackOfPlucker(#V, B, CoefficientRing => opts.CoefficientRing)
 )
