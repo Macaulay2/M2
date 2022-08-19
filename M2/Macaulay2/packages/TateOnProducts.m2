@@ -3777,7 +3777,7 @@ betti M1,betti M
 M1'=M1**S^{{-2,-2}}
 betti M1',betti M
 isIsomorphic(M,M1')
--- we comclude: It works for various P=kerC.dd_p
+-- we conclude: It works for various P=kerC.dd_p
 
 
 RM=bgg M
@@ -5645,7 +5645,7 @@ doc ///
     value for the option BundleType in beilinson
   Description
      Text
-      The Beilinson bundlse U^a will be represented by subbundles.
+      The Beilinson bundles U^a will be represented by subbundles.
   SeeAlso
     beilinson
     BundleType

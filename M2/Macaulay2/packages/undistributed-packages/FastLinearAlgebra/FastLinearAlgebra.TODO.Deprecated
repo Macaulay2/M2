@@ -153,7 +153,7 @@ XXXXXXXXXXXXXX
 --    a. bugs in ffpack ZZ/p: basis(2,R) fails (R = polyring over ZZ/p).  Fix this?  MIKE
 --    b. DONE GF givaro: routine to get the defining polynomial coeffs (see M2_makearrayint in monordering.c). JAKOB
 ---   b1. DONE M2 GF in the same framework (as ConcreteRing). MIKE
---    c. promote/lift/eval beween these rings MIKE (or both of us, after a,b,d,e are done).
+--    c. promote/lift/eval between these rings MIKE (or both of us, after a,b,d,e are done).
 --    d. DONE top level M2 function to create GF from Givaro. (needs (b).  MIKE).
 --       this needs: the polynomial
 --       DONE another routine: create givaro GF ring using a specific poly (M2_arrayint as input) (JAKOB)

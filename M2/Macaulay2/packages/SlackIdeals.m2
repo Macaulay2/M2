@@ -376,7 +376,7 @@ slackFromGalePlucker (List, List) := Matrix => (B, G) -> (
     -- INPUT: a set B of hyperplane spanning set indices; list of Gale vectors G 
     -- OUTPUT: slack matrix filled with Plücker coordinates
     -- CAVEAT: does not check if B actually spans for given V, does not check orientation of simplices in B\
-	-- CAVEAT: make sure elements of G are listed in the order correspondong to indices in B 
+	-- CAVEAT: make sure elements of G are listed in the order corresponding to indices in B 
     v := #G;
     d := v-1-#(G_0);
     if #(B_0) != d then error "Dimensions do not match.";

@@ -273,7 +273,7 @@ lowestOrder:=(G,F,C,nk)->(
     A:=sub(matrix {LO},ring G_0);
     (A,B))
 
---auxilliary function, used to translate a vector representation of a homomorphism to a map
+--auxiliary function, used to translate a vector representation of a homomorphism to a map
 vecToHom:=(v,T,S)->(
 	matrix map(T,S, transpose matrix pack(flatten entries v,numgens T)))
 
@@ -1271,7 +1271,7 @@ document {
 document {
     Key =>DefParam,
    Headline => "deformation parameter",
-   PARA {TT "DefParam"," is the name of an optional arguemt. Its value is ",ofClass Symbol,", which specifies the name of the deformation parameter.
+   PARA {TT "DefParam"," is the name of an optional argument. Its value is ",ofClass Symbol,", which specifies the name of the deformation parameter.
 	Its default value is determined by the loadtime configuration ",TO Option," ",TT "DefaultDefParam",", which
 	 has default value ",TT "t","."
 	},

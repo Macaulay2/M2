@@ -2185,7 +2185,7 @@ doc ///
 	E: PolynomialRing
 	    a skew-commutative polynomial ring with one variable for each hyperplane
 	    with indexed variables, optionally, given by the symbol $e$.  
-	    The user can also just specify a cofficient ring $k$.
+	    The user can also just specify a coefficient ring $k$.
     Outputs
     	: Ideal
 	    the defining ideal of the Orlik-Solomon algebra of A

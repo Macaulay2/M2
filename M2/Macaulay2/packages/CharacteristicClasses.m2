@@ -1718,7 +1718,7 @@ doc ///
 	       All the examples were done using symbolic computations with Gr\"obner bases. Changing the
 	       option @TO CompMethod@ to bertini will do the main computations numerically, provided
 	       Bertini is  @TO2 {"configuring Bertini", "installed and configured"}@. Note that the bertini option
-	       is only avalibe for subschemes of \PP^n.
+	       is only available for subschemes of \PP^n.
 	       
 	       Observe that the algorithm is a probabilistic algorithm and may give a wrong answer with a small but nonzero probability. Read more under 
 	       @TO "probabilistic algorithm"@.
@@ -2099,7 +2099,7 @@ doc ///
 	  CheckSmooth => 
 	    this option is only used when computing the CSM class of a input toric variety X (not of a subscheme), if true it checks if the toric variety is smooth before computing its CSM class, this will lead to faster computation in the smooth cases
 	  InputIsSmooth=>
-	    this option has values true/false and tells the method whether to assume the input ideal defines a smooth scheme, and hence to call the method Chern instead for reduced run time, alternitively the Chern function can be used directly
+	    this option has values true/false and tells the method whether to assume the input ideal defines a smooth scheme, and hence to call the method Chern instead for reduced run time, alternatively the Chern function can be used directly
 	  Output=>"ChowRingElement"
 	    the type of output to return, "ChowRingElement" is default and returns a RingElement in the Chow ring of the appropriate ambient space 
 	  Output=>"HashForm"

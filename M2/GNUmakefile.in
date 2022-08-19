@@ -279,7 +279,7 @@ status: @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 srcdir: GNUmakefile
 	: creating or removing symbolic link to common staging area, if necessary,
-	: based on comparision of these directories:
+	: based on comparison of these directories:
 	:                      pre_prefix : @pre_prefix@
 	: abs_builddir/usr-dist/common : @abs_builddir@/usr-dist/common
 	@ if [ "@abs_builddir@"/usr-dist/common != "@pre_prefix@" ] ;\

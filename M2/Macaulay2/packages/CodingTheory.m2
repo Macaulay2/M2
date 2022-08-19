@@ -1220,7 +1220,7 @@ locallyRecoverableCode(List,List,RingElement) := LinearCode => (L,A,g) -> (
     -- generate a linear Locally Recoverable Code.
     -- input:   L={q,n,k,r}  alphabet size q, target code length n, dimension k, and locality r.
     --          A is a partition of n symbols from the alphabet,
-    --          g is a polynomial that is constanst on each subset of A (a "good" polynomial).
+    --          g is a polynomial that is constant on each subset of A (a "good" polynomial).
     
     -- output:  a linear code for which given a symbol c_i in a codeword, there exists
     --           "r" other symbols in the codeword c_j such that f(c_i)=f(c_j).

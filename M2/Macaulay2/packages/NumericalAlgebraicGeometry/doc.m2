@@ -731,7 +731,7 @@ document {
     Outputs => { "r"=>ZZ=>"the rank used in the (last) deflation"},
     PARA{
 	"The purpose of deflation is to restore quadratic convergence of Newton's method in a neighborhood of a singular 
-    isolated solution P. This is done by constructing an augemented polynomial system with a solution of strictly lower multiplicity projecting to P."},
+    isolated solution P. This is done by constructing an augmented polynomial system with a solution of strictly lower multiplicity projecting to P."},
     Consequences => {{"Attaches the keys ", TO Deflation, " and ", TO DeflationRandomMatrix, 
 	" which are MutableHashTables that (for rank r, a potential rank of the jacobian J of F) store ",
 	" the deflated system DF and a matrix B used to obtain it. ", 

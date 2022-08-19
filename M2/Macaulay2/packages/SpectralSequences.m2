@@ -909,7 +909,7 @@ SpectralSequencePageMap _ List := Matrix => (d,i)-> (if (d)#?i then d#i
 SpectralSequencePageMap ^ List := Matrix => (d,i)-> (d_(-i))    
 
 
--- auxlillary spectral sequence stuff.  
+-- auxiliary spectral sequence stuff.  
 
 filteredComplex SpectralSequence := FilteredComplex => opts -> E -> E.filteredComplex
 chainComplex SpectralSequence := ChainComplex => E -> chainComplex filteredComplex E
@@ -3627,7 +3627,7 @@ doc ///
      	  Text 
 	       Returns the chain complex map specifying the inclusion of the i piece 
 	       of the filtered
-	       complex to the ambeint chain complex.
+	       complex to the ambient chain complex.
 	  Example
 	      A = QQ[x,y];
 	      C = koszul vars A;
