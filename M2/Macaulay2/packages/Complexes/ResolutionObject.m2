@@ -114,7 +114,7 @@ freeResolution Module := Complex => opts -> M -> (
     -- each hook must do the following:
     -- set Strategy.
     -- create any data it needs (in the RO object).
-    -- place functions RO.isComputatable, RO.compute, RO.complex into RO. (or have some other way of doing that).
+    -- place functions RO.isComputable, RO.compute, RO.complex into RO. (or have some other way of doing that).
     -- or, perhaps, make a ResolutionObjectHook type, and have each hook create methods on that.
     -- either way, each hook has to create these functions...
 

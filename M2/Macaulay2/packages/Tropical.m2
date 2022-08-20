@@ -861,7 +861,7 @@ doc ///
 		tropical hypersurface given an input polynomial. The input
 		should be entered as a homogeneous polynomial. Running
 		this method opens an image in a new browser window. The
-		coefficients can be intereted as p-adic coefficients or as
+		coefficients can be interpreted as p-adic coefficients or as
 		polynomials via the option @TO Valuation@. Examples are
 		commented out because they open a new browser window.
 	    Example

@@ -611,7 +611,7 @@ outsideBeilinsonRange(Matrix) :=  m -> (
      t:=#unique degrees E;
      n:=apply(unique degrees E,d-> (#select( degrees  E, e-> e==d)-1));
      d:=0;
-	  --source indices not in the Beilison window
+	  --source indices not in the Beilinson window
      sourcem := select(rank source m,i-> (d=degree (source m)_i;#select(#d,i->d_i<0 or d_i>n_i)>0));
      m_sourcem)
 
@@ -3685,7 +3685,7 @@ composedFunctions = () -> (
       comT=cohomologyMatrix(T,low,high)
       assert(sub(comT',vars ring comT)==comT)
      --Text
-     -- Finally we illustate how shifting the Beilinson window works.
+     -- Finally we illustrate how shifting the Beilinson window works.
      --Example
       cohomologyMatrix(T,low,high)
       cohomologyMatrix(beilinsonWindow T,low, high)

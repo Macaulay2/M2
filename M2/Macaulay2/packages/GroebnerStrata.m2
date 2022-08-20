@@ -290,7 +290,7 @@ groebnerStratum = method(Options => {
 groebnerStratum Ideal := Ideal => opts -> (J) -> (
     --input: the ideal of the family.
     -- output: the ideal defining the parameter space.
-    if opts.Minimalize then << "warning: Minialize=>true, which will likely be the default, is not yet implemented" << endl;
+    if opts.Minimalize then << "warning: Minimalize=>true, which will likely be the default, is not yet implemented" << endl;
     R := ring J;
     G := forceGB gens J;
     M := leadTerm gens J;

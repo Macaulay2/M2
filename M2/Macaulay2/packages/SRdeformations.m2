@@ -5119,7 +5119,7 @@ doc ///
        If L is specified then the grading of a weighted projective space is added.
        
        This command does not change the behaviour of R with respect to the standard
-       Macaualy2 image grading, which we want to use independently.
+       Macaulay2 image grading, which we want to use independently.
 
    Example
         R=QQ[x_0..x_4];
@@ -5185,7 +5185,7 @@ doc ///
         
         {\bf The data stored in a face F:}
         
-        {\it F.vert}, a list with the vertices of F, which are variables of a @TO PolynomialRing@ R. We use a list to prevent Macaualy from reordering sets or monomials.
+        {\it F.vert}, a list with the vertices of F, which are variables of a @TO PolynomialRing@ R. We use a list to prevent Macaulay from reordering sets or monomials.
         
         {\it F.ofComplex}, a list with the @TO Complex@es and @TO CoComplex@es of which F is a face (optional).
         

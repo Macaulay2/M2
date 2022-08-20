@@ -1964,7 +1964,7 @@ doc ///
      	       Text		    
 		    We now compute the various pages of the spectral sequence.
 		    To make the output 
-		    intelliagble we prune the spectral sequence.
+		    intelligible we prune the spectral sequence.
      	       Example		     
      	       	    E = prune spectralSequence K;
      	       Example		    		    

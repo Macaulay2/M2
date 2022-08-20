@@ -649,7 +649,7 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 ---------------------------------
 -- takes a solution matrix in global coordinates
 -- and converts it into local coordinates to know
--- what the values of the variables of the loocal 
+-- what the values of the variables of the local 
 -- coordinates are, i.e., 
 -- writes a solution Matrix in terms 
 -- of the chart MX  (as a list of values 

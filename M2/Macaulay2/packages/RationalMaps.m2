@@ -650,7 +650,7 @@ isBirationalOntoImageRees(RationalMapping) := o -> (phi1) -> (
      nr:=numRows(transpose barJD);
     if (o.Verbosity >= 1) then print "isBirationalOntoImageRees: computed Jacobian dual matrix";
     if (o.Verbosity >= 2) then(
-        print ( "Jacobain dual matrix has  " |nc|" columns  and   "|nr|" rows.");
+        print ( "Jacobian dual matrix has  " |nc|" columns  and   "|nr|" rows.");
     );
     jdd:=(numgens ambient Rlin1)-1;
     if (o.Verbosity >= 2) then print "isBirationalOntoImageRees: is computing the rank of the  Jacobian dual matrix- barJD";
@@ -937,7 +937,7 @@ inverseOfMapRees(RationalMapping) := o->(phi1)->(
      nc:=numColumns(transpose barJD);
      nr:=numRows(transpose barJD);
     if (o.Verbosity >= 2 ) then(
-        print ( "Jacobain dual matrix has  " |nc|" columns  and about  "|nr|" rows.");
+        print ( "Jacobian dual matrix has  " |nc|" columns  and about  "|nr|" rows.");
     );
     nonZMinor := null;
     if (o.MinorsLimit > 0) then (
