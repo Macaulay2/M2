@@ -125,7 +125,7 @@ polarCone = method();
 --  polarCone(Matrix, Matrix)  -----------------------------
 -- RECEIVES : 
 --   'Z' a matrix; the columns are the rays generating the cone.
---   'H' a matrix; the columns are the rays generaing the 
+--   'H' a matrix; the columns are the rays generating the 
 --       linear space in the cone.  
 -- RETURNS : a sequence (A,E)
 --   'A' a matrix; the columns are the rays generating the polar cone.

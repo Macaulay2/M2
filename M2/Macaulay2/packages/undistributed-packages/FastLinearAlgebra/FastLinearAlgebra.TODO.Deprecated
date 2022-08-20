@@ -303,7 +303,7 @@ XXXXXXXXXXXXXX
 --   Milestone #2:
 --     Connect sparse matrix routines from linbox to M2 (over ZZ/p, other fields)
 --   Milestone #3:
---     Write basic linear algebra functiions (more generic versions) for more general rings/fields
+--     Write basic linear algebra functions (more generic versions) for more general rings/fields
 --   Milestone #4:
 --     Connect normal form operations from linbox to M2 (Hermite, Smith, LLL, Frobenius, ...)
 --     Make sure that ZZ operations and QQ operations match linbox

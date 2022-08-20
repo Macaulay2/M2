@@ -121,7 +121,7 @@ perp = (M, L) -> if areEqual(norm L, 0) then M else (
     ONB Lperp
     )
 
--- findng a square subsystem of maximal rank
+-- finding a square subsystem of maximal rank
 rowSelector = method(Options=>{"BlockSize"=>1,Verbose=>false})
 rowSelector (AbstractPoint, AbstractPoint, GateSystem) := o -> (y0, c0, GS) -> (
     (n, m, N) := (numVariables GS, numParameters GS, numFunctions GS);

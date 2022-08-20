@@ -348,7 +348,7 @@ cliqueNumber Graph := G -> (
 ---------------------------------------------------------------
 -- complementGraph
 -- returns the complement of a graph or hypergraph
--- NOTE:  does something different for graphs vs hyerpergraphs
+-- NOTE:  does something different for graphs vs hypergraphs
 --------------------------------------------------------------
 
 complementGraph = method();
@@ -1318,7 +1318,7 @@ doc ///
 	        Text	 
 		        The function {\tt hyperGraph} is a constructor for @TO HyperGraph @.  The user
 			can input a hypergraph in a number of different ways, which we describe below.
-			The information decribing the hypergraph is stored in a hash table. We require that
+			The information describing the hypergraph is stored in a hash table. We require that
 			there be no inclusion relations between the edges of a hypergraph; that is, that it
 			be a clutter. The reason is that this package is designed for edge ideals, which would
 			lose any information about edges that are supersets of other edges.			

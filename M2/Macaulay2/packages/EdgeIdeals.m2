@@ -385,7 +385,7 @@ cliqueNumber Graph := G -> (
 ---------------------------------------------------------------
 -- complementGraph
 -- returns the complement of a graph or hypergraph
--- NOTE:  does something different for graphs vs hyerpergraphs
+-- NOTE:  does something different for graphs vs hypergraphs
 --------------------------------------------------------------
 
 complementGraph = method();

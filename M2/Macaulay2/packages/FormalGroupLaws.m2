@@ -174,7 +174,7 @@ compositionInverse(FormalSeries):= (s) ->
 --Defining the class of formal group laws
 FormalGroupLaw = new Type of FormalSeries 
 
---Method to construct a new formal group law from a FormalSeries in two variables. It tests if the formal series defines a commutative formal group law with neutral element. This is quite conservative. We might also want to make things quicker by forgeting about formal series in the computations, and then truncating at the end. 
+--Method to construct a new formal group law from a FormalSeries in two variables. It tests if the formal series defines a commutative formal group law with neutral element. This is quite conservative. We might also want to make things quicker by forgetting about formal series in the computations, and then truncating at the end. 
 FGL = method()
 FGL(FormalSeries) := (s) -> 
 	(
