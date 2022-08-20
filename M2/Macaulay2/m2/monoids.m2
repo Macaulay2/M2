@@ -62,6 +62,8 @@ ZZ  ? MonoidElement := (n, x) -> n_(class x) ? x
 ZZ  * MonoidElement := (i, x) -> x  * i
 ZZ == MonoidElement := (i, m) -> m == i
 
+-- TODO: would skipping the the free module check make this slower?
+-- TODO: make new G from vector deg do this in the engine?
 reduceDegree = (G, deg) -> if isFreeModule G then deg else entries sum(deg, G_*, times)
 
 -- TODO: move to engine
