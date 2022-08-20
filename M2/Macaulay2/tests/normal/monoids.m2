@@ -123,3 +123,14 @@ degreeLength tensor(C, M) == 5
 degreeLength tensor(A, M, Degrees => {{1,0},{0,1}}) == 2
 degreeLength tensor(A, M, DegreeRank => 3) == 3
 degreeLength tensor(A, M, DegreeGroup => coker matrix {{0}, {2}, {3}}) == 3
+
+-- test newRing
+G = coker matrix{{3}, {0}}
+R = QQ[x,y,z, Degrees => {{1,1}, {-1,1}, {0,1}}]
+S = newRing(R, DegreeGroup => G)
+assert(degreeGroup S == G)
+assert(degrees S == degrees R)
+T = newRing(S, Degrees => degrees S)
+assert(degreeGroup T == ZZ^2)
+U = newRing(S, DegreeRank => 3)
+assert(degreeGroup U == ZZ^3)
