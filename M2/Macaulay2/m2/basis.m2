@@ -69,6 +69,7 @@ liftBasis = (M, phi, B, offset) -> (
     (R, S) := (phi.target, phi.source);
     (n, m) := degreeLength \ (R, S);
     offset  = if offset =!= null then splice offset else toList( n:0 );
+    -- TODO: audit this line. Why doesn't map(M, , B, Degree => offset) work?
     if R === S then return map(M, , B, Degree => offset);
     r := if n === 0 then rank source B else (
         lifter := phi.cache.DegreeLift;
@@ -78,6 +79,33 @@ liftBasis = (M, phi, B, offset) -> (
             apply(pack(n, degrees source B),
                 deg -> try - lifter(deg - offset) else zeroDegree)));
     map(M, S ^ r, phi, B, Degree => offset))
+
+-- TODO: is there already code to do this? if not then
+-- implement related functions and move to modules.m2?
+-- Non-torsion components of a ZZ-module
+freeComponents = N -> select(numgens N, i -> QQ ** N_{i} != 0)
+-- Torsion components of a ZZ-module
+torsionComponents = N -> select(numgens N, i -> QQ ** N_{i} == 0)
+-- Map to a ring where degree components are permuted so that
+-- the free components come before the torsion components.
+permuteDegreeGroup = R -> (
+    G := degreeGroup R;
+    F := freeComponents G;
+    P := F | torsionComponents G;
+    H := subquotient(
+	if G.?generators then G.generators^P,
+	if G.?relations  then G.relations^P);
+    f := deg -> if deg =!= null then deg_F;
+    p := deg -> if deg =!= null then deg_P;
+    S := newRing(R,
+	Heft        => p heft R,
+	Degrees     => p \ degrees R,
+	DegreeGroup => H);
+    -- FIXME: why is inverse phi not automatically homogeneous?
+    phi := map(S, R, generators S, DegreeMap => p);
+    -- TODO: this shouldn't be necessary, see https://github.com/Macaulay2/M2/issues/2580
+    psi := map(R, S, generators R, DegreeMap => deg -> deg_(inversePermutation P)); -- TODO: F^-1 for inversePermutation F?
+    (S, phi, psi, p, f))
 
 -----------------------------------------------------------------------------
 -- basis
@@ -237,9 +265,18 @@ basisDefaultStrategy = (opts, lo, hi, M) -> (
 -- Note: for now, the strategies must return a RawMatrix
 algorithms#(basis, List, List, Module) = new MutableHashTable from {
     Default => basisDefaultStrategy,
+    -- For rings whose degree group has torsion
+    -- TODO: should be handled in the engine
+    Torsion => (opts, lo, hi, M) -> (
+	G := degreeGroup(R := ring M);
+	if G == 0 or isFreeModule G then return null;
+	(S, phi, psi, p, f) := permuteDegreeGroup R;
+	B := psi map_S basisDefaultStrategy(opts, f lo, f hi, phi M);
+	L := positions(degrees source B, deg -> lo <= deg and deg <= hi);
+	raw submatrix(B, , L)),
     -- TODO: add separate strategies for skew commutative rings, vector spaces, and ZZ-modules
     }
 
 -- Installing hooks for resolution
-scan({Default}, strategy ->
+scan({Default, Torsion}, strategy ->
     addHook(key := (basis, List, List, Module), algorithms#key#strategy, Strategy => strategy))

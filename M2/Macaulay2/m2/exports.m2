@@ -410,6 +410,7 @@ export {
 	"Time",
 	"Tor",
 	"Toric",
+	"Torsion",
 	"TotalPairs",
 	"Truncate",
 	"Type",
