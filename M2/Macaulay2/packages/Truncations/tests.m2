@@ -387,6 +387,34 @@ TEST /// -- test of subtruncate
   assert(truncate(1, 2, id_M) == map(truncate(1, M), truncate(2, M), {{y, 0, 0}, {0, y, x}}))
 ///
 
+TEST /// -- test of truncationPolyhedron with torsion in class group
+  debug needsPackage "Truncations"
+  needsPackage "NormalToricVarieties"
+  needsPackage "Polyhedra"
+  B = matrix {{2, -1}, {-1, 2}, {-1,-1}}
+  Y = normalToricVariety(entries B,
+      {{0, 1}, {1, 2}, {2, 0}})
+  S = ring Y
+  D = 3 * Y_0
+  deg = degree D
+
+  -- TODO: is this correct?
+  -- I = truncate(deg, S)
+  -- assert(I == ideal {x_2^3, x_0*x_1*x_2, x_1^3, x_0^3})
+  -- assert(degrees I == {{0, 3}, {0, 3}, {0, 3}, {0, 3}})
+
+  assert same { set monomials D,
+      set first entries basis(deg, module S, Strategy => Torsion),
+      set first entries basis(deg, module S, Strategy => Toric),
+      set first entries basis(deg, module S) }
+
+  -- TODO
+  --X = normalToricVariety (id_(ZZ^3) | -id_(ZZ^3));
+  --Y = makeSimplicial X;
+  --Bl1 = toricBlowup({0}, X);
+  --Y = toricBlowup({7}, Bl1);
+///
+
 end--
 
 restart
