@@ -1360,17 +1360,17 @@ isWeaklyConnected Digraph := Boolean => D -> isConnected underlyingGraph D
 
 cartesianProduct = method()
 cartesianProduct(Graph, Graph) := Graph => (G, H) -> (
-    V := toList(set vertexSet G ** set vertexSet H);
+    V := vertexSet G ** vertexSet H;
     E := flatten for u in V list for v in V list
-        if (u_0 == v_0 and member(set {u_1, v_1}, edges H))
-        or (u_1 == v_1 and member(set {u_0, v_0}, edges G))
+        if (u_0 === v_0 and member(set {u_1, v_1}, edges H))
+        or (u_1 === v_1 and member(set {u_0, v_0}, edges G))
         then {u, v} else continue;
     graph(V, E, EntryMode => "edges")
     )
 
 -- the 'directProduct' method is defined in 'Polyhedra'
 directProduct(Graph,Graph) := Graph => (G, H) -> (
-    V := toList(set vertexSet G ** set vertexSet H);
+    V := vertexSet G ** vertexSet H;
     E := flatten for u in V list for v in V list
         if member(set {u_0, v_0}, edges G) and member(set {u_1, v_1}, edges H)
         then {u, v} else continue;
@@ -1387,10 +1387,10 @@ disjointUnion List := Graph => L -> (
 
 graphComposition = method()
 graphComposition (Graph, Graph) := Graph => (G, H) -> (
-    V := toList(set vertexSet G ** set vertexSet H);
+    V := vertexSet G ** vertexSet H;
     E := flatten for u in V list for v in V list
         if member(set {u_0, v_0}, edges G)
-        or (u_0 == v_0 and member(set {u_1, v_1}, edges H))
+        or (u_0 === v_0 and member(set {u_1, v_1}, edges H))
         then {u, v} else continue;
     graph(V, E, EntryMode => "edges")
     )
@@ -1410,8 +1410,8 @@ strongProduct = method()
 strongProduct (Graph, Graph) := Graph => (G, H) -> (
     V := toList \ toList(set vertexSet G ** set vertexSet H);
     E' := flatten for u in V list for v in V list
-        if (u_0 == v_0 and member(set {u_1, v_1}, edges H))
-        or (u_1 == v_1 and member(set {u_0, v_0}, edges G))
+        if (u_0 === v_0 and member(set {u_1, v_1}, edges H))
+        or (u_1 === v_1 and member(set {u_0, v_0}, edges G))
         then {u, v} else continue;
     E'' := flatten for u in V list for v in V list
         if member(set {u_0, v_0}, edges G) and member(set {u_1, v_1}, edges H)
@@ -5507,6 +5507,18 @@ TEST ///
 
 TEST ///
 assert Equation(degreeSequence pathGraph 5, {2, 2, 2, 1, 1})
+///
+
+TEST ///
+-check products with arbitrary labels
+G = graph{{a,1}};
+H = graph{{b,2}};
+cp = cartesianProduct(G,H);
+assert #(vertexSet cp) == 4
+dp = directProduct(G,H);
+assert #(vertexSet dp) == 4
+gc = graphComposition(G,H);
+assert #(vertexSet gc) == 4
 ///
 
 end;
