@@ -5510,7 +5510,7 @@ assert Equation(degreeSequence pathGraph 5, {2, 2, 2, 1, 1})
 ///
 
 TEST ///
--check products with arbitrary labels
+--check products with arbitrary labels
 G = graph{{a,1}};
 H = graph{{b,2}};
 cp = cartesianProduct(G,H);
