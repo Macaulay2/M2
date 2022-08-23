@@ -236,7 +236,7 @@ Headline
   Maximal Cohen-Macaulay Approximations and Complete Intersections
 Description
   Text
-   Maximal Cohen-Macaulay approximatiodns were introduced by Auslander and Buchweitz
+   Maximal Cohen-Macaulay approximations were introduced by Auslander and Buchweitz
    [The homological theory of maximal Cohen-Macaulay (MCM) approximations, 
    Colloque en l'honneur de Pierre Samuel (Orsay, 1987)
    Soc. Math. France (N.S.)} No. {\bf 38}, (1989), 5 - 37.] 
@@ -277,7 +277,7 @@ Description
    gives the coapproximation sequence
    0\to M \to N''\to M'' \to 0.
    
-   The routine coApproximation M resurns the map M --> N''.
+   The routine coApproximation M returns the map M --> N''.
    Here is an example of a simple approximation sequence, 
    exhibited by the betti tables of its 3 middle terms:
    
@@ -297,7 +297,7 @@ Description
    netList apply({1,2,3}, i-> betti res Ea_i)
   Text
    Here is a similar display for the co-approximation sequence. Here
-   the Betti table of M is at the bottom, the Betti table of the module of finite projecdtive dimension
+   the Betti table of M is at the bottom, the Betti table of the module of finite projective dimension
    is in the middle, and that of the MCM module is at the top (
   Example
    Ec = coApproximationSequence M;
@@ -709,7 +709,7 @@ doc ///
     c:ZZ
      desired codimension
     d:ZZ
-     degree of homogoneous generators
+     degree of homogeneous generators
     ff:Matrix
      a regular sequence
    Outputs

@@ -50,12 +50,12 @@ GateSystem || GateSystem := (P, Q) -> (
 	)
     )
 
-evaluate (GateMatrix, GateMatrix, Point) := (GM, varMat, xVals) -> (
+evaluate (GateMatrix, GateMatrix, AbstractPoint) := (GM, varMat, xVals) -> (
     Peval := gateSystem(varMat, transpose gateMatrix{flatten entries GM});
     result := evaluate(Peval, xVals);
     matrix(result, numrows GM, numcols GM)
     )
-evaluate (GateMatrix, VisibleList, Point) := (GM, xVars, xVals) -> evaluate(GM, gateMatrix{xVars}, xVals)
+evaluate (GateMatrix, VisibleList, AbstractPoint) := (GM, xVars, xVals) -> evaluate(GM, gateMatrix{xVars}, xVals)
 evaluate (GateMatrix, VisibleList, Matrix) := (GM, xVars, xVals) -> (
     I := if instance(xVars, GateMatrix) then xVars else gateMatrix{toList xVars};
     evaluate(GM, I, point xVals)

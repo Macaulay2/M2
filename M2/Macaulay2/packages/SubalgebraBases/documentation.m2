@@ -223,7 +223,7 @@ doc ///
    Description
      Text 
        By default, the function @TO "sagbi"@ performs autosubduction on the generators of the given subring before starting the main algorithm. 
-       This step is required to guarentee correctness of the result.  
+       This step is required to guarantee correctness of the result.  
        However, the output of the @TO "sagbi"@ algorithm is often correct even when this step is skipped.  
        Setting this flag to @TT "false"@ may result in a performance improvement, albeit with a risk of errors.
    SeeAlso
@@ -817,7 +817,7 @@ doc ///
      Text
        After running sagbi on a subring, the result of the computation is stored in that subring.
        If new sagbi generators need to be added to S to make it a sagbi basis then @TT "isSAGBI"@ will return false.
-       If @TT "isSAGBI"@ is run on a ring for which no sagbi computation has been peformed, then @TT "isSAGBI"@ will return null.
+       If @TT "isSAGBI"@ is run on a ring for which no sagbi computation has been performed, then @TT "isSAGBI"@ will return null.
        In this case it is recommended to use @TO "verifySagbi"@ to check whether the generators are a sagbi basis.
      Example
        R = QQ[x,y,z];
@@ -898,7 +898,7 @@ doc ///
      Text
        The result is zero if and only if the input belongs to the subring.
        If a sagbi basis is known for the subring then subduction is used to compute the normal forms.
-       If no sagbi basis is known then an extrisic method is used, similar to @TT "groebnerMembershipTest"@.   
+       If no sagbi basis is known then an extrinsic method is used, similar to @TT "groebnerMembershipTest"@.   
      Example
        R = QQ[x1, x2, x3];
        S = subring {x1+x2+x3, x1*x2+x1*x3+x2*x3, x1*x2*x3, (x1-x2)*(x1-x3)*(x2-x3)} --usual invariants of A_3
@@ -1616,7 +1616,7 @@ doc ///
        @UL{
 	   "0: default, print nothing.",
 	   "1: Print information about the progress of the computation, but do not print any polynomials.",
-	   "2: Print all information about the progress of the computaiton, including polynomials."
+	   "2: Print all information about the progress of the computation, including polynomials."
 	   }@
    SeeAlso
      sagbi

@@ -312,7 +312,7 @@ Betti1(Triplet) := (L) -> (
      b := C_0;
      c := A_0;
      n := A_0 + B_nB;
-     --make the conugate set of C
+     --make the conjugate set of C
      BarC := apply(nC+1, i -> n- C_(nC-i));     
      -- make the interval [a,Barb] containing BarC
      IntBarC := apply(n-b-a+1, i-> i+a);
@@ -533,7 +533,7 @@ assert(15*chiPol(d,1,{Th#0,Th#1},K) == d^5 + 10*d^4 + 35*d^3 + 50*d^2 + 24*d)
 --Computes the hypercohomology tables of the complex of coherent sheaves
 -----------------------------------------
 
---this is the hypercohomlogy table in matrix form
+--this is the hypercohomology table in matrix form
 cohMatrix=method(TypicalValue => MutableMatrix)
 cohMatrix(ZZ,ZZ,Triplet) := (lo,hi,Lh) -> (
      B := Lh#0; H := Lh#1; C := Lh#2;
@@ -716,7 +716,7 @@ document {
      
      PARA{}, 
      "The routines ", TO isDegreeTriplet, " and ", TO isHomologyTriplet, " checks if a triplet fulfills
-     the compatibility conditions for degree and homlogy triplets, respectively.
+     the compatibility conditions for degree and homology triplets, respectively.
      
      The routine ", TO toHomology, " converts from a degree triplet to a homology triplet, and
      the routine ", TO toDegree, " converts from a homology triplet to a degree triplet."

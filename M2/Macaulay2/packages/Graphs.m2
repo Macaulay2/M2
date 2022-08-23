@@ -470,9 +470,9 @@ lineGraph Graph := Graph => (G) -> (
             );   
          ); 
       );
-   --non-singeltons
+   --non-singletons
    nS:=unique flatten EE;
-   --singeltons
+   --singletons
    S:=for e in E list if member(e,nS)===false then e else continue;
    return graph(EE,Singletons=>S);
 )
@@ -2269,7 +2269,7 @@ doc ///
             The complement graph of G
     Description
         Text
-            The complement graph of a graph G is the graph G^c where any two vertcies are adjacent in G^c iff they are not adjacent in G. The original vertex set is preserved, only the edges are changed.
+            The complement graph of a graph G is the graph G^c where any two vertices are adjacent in G^c iff they are not adjacent in G. The original vertex set is preserved, only the edges are changed.
         Example
             G = cycleGraph 4
             complementGraph G
@@ -2787,7 +2787,7 @@ doc ///
         G:Graph
     Description
         Text
-            A threshold graph is a graph that is constructed by starting with an isolated vertex and iteratively adding another isolated vertex or a vertex that shares an edge with each vertex generated before it (the dominating vertices). The isolated vertices are represented by 0's and the dominating vertices are rerpresented by 1's. In this method, the initial vertex is implicit and by default is constructed, so the first entry need not always be 0 in the list.
+            A threshold graph is a graph that is constructed by starting with an isolated vertex and iteratively adding another isolated vertex or a vertex that shares an edge with each vertex generated before it (the dominating vertices). The isolated vertices are represented by 0's and the dominating vertices are represented by 1's. In this method, the initial vertex is implicit and by default is constructed, so the first entry need not always be 0 in the list.
         Example
             L = {1,0,0,1,0,1}
             thresholdGraph L
@@ -4881,7 +4881,7 @@ doc ///
         (diameter, Graph)
 ///
 
---strongProuduct
+--strongProduct
 doc ///
     Key
         strongProduct
@@ -4898,7 +4898,7 @@ doc ///
             The Strong Product of G and H
     Description
         Text
-            This method will take in any two graphs and output the strong proudct of the two graphs. The vertex set of 
+            This method will take in any two graphs and output the strong product of the two graphs. The vertex set of 
             the strong product of G and H is the cartesian product of the vertex sets of G and H. The keys for each 
             vertex will be output as a sequence to represent this clearly. The edge set of the strong product of G and H 
             is formed by the rule any two distinct vertices (u,u') and (v,v') are adjacent in G and H if and only if u' 
@@ -5297,7 +5297,7 @@ doc ///
         Text
 	    This method outputs a HashTable with keys digraph, map and newDigraph, where digraph is the original digraph,
 	    map is the relation between old ordering and the new ordering of vertices and newDigraph is the Digraph with 
-	    topologically sorted vertices. This method needs the input to be directed adyclic graph (DAG).
+	    topologically sorted vertices. This method needs the input to be directed acyclic graph (DAG).
 	    S provides the preference given to the vertices in order to break ties and provide unique topological sorting to the DAG.
 	    
 	    Permissible values of S are: "random", "max", "min", "degree".

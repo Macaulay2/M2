@@ -1639,7 +1639,7 @@ insertT (Matrix, List) := (phi,Ti) -> (
     	--phi is a matrix of linear forms in vars x_1..x_c.
     	--Ti is a list of lists, each a
 	--1-rowed matrix of scalars over R
-	--corresonding to one of the x_i.
+	--corresponding to one of the x_i.
 	--replace each entry of phi by the 
 	--appropriate linear combination of these matrices 
 	--and the output is a matrix of scalars over R.
@@ -3524,7 +3524,7 @@ doc ///
      
      The degrees of the targets of the T_j are
      changed by the degrees of the f_j to make the T_j
-     homogeneneous.
+     homogeneous.
     Example
      S = ZZ/101[x,y,z];
      ff = matrix"x3,y3,z3";
@@ -4659,7 +4659,7 @@ doc ///
    Description
     Text
      A possible obstruction to the commutativity of the CI operators in codim c,
-     even assymptotically,
+     even asymptotically,
      would be the non-triviality of the map
      M_{(k+4)} --> M_k \otimes \wedge^2(S^c)
      in the stable category of maximal Cohen-Macaulay modules.
@@ -5062,7 +5062,7 @@ doc///
         Description
          Text
 	  The form expo(c,N) returns partitions of N with c non-negative parts.
-	  The form expo(c, L) returns partitions with non-negaive parts that are
+	  The form expo(c, L) returns partitions with non-negative parts that are
 	  componentwise <= L (and any sum <= sum L).
 	  
 	  The list expo(c,N)  may be thought of as the list of exponent vectors of the 
@@ -5130,7 +5130,7 @@ doc ///
      Grading =>2}
      
      If Grading =>1, then a singly graded result is returned (just forgetting the
-     honological grading.)
+     homological grading.)
 
     Example
      n = 3

@@ -1,5 +1,5 @@
 -- todo for April 11, 2022:
---   we just had finished resolutionBySyzgyies, although maybe some more testing is in order.
+--   we just had finished resolutionBySyzygies, although maybe some more testing is in order.
 --   e.g.: interrupts, Weyl algebra.
 --   need: Strategy => OverZZ.
 --   need: Strategy => Inhomogeneous.

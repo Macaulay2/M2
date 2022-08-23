@@ -228,11 +228,11 @@ undocumented { hilbertNumerator, (hilbertNumerator,List,ZZ,RingElement) }
 --
 -- this function is needed to construct 
 -- expected betti tables from
--- a HilberNumerator
+-- a HilbertNumerator
 termToBettiKey = (mon) -> (
      -- the coefficient of the monomial
      c := lift((last coefficients mon)_0_0,ZZ);
-     -- the degree of the monmial
+     -- the degree of the monomial
      d := sum degree mon;
      (c,({d},d))
      );
@@ -443,7 +443,7 @@ randomHartshorneRaoModuleDiameter3 = (HRao,R) -> (
 -- for g=11,12,13 we will only need the diameter 3 part, but we also include the functions for diameter 1 and 2:
 -- Try to construct a random Hartshorne-Rau module of
 -- length 2. Here the only problem is, that the
--- generic module may not have expected syzgies
+-- generic module may not have expected syzygies
 --
 -- HRau = {h1,h2} the Hilbertfunction of the desired module 
 -- R the ring where the module should live. It is assumed, that 
@@ -504,7 +504,7 @@ smoothCanonicalCurveViaSpaceModel = method(Options => {Printing => false})
 smoothCanonicalCurveViaSpaceModel (ZZ,ZZ) := opt -> (g,p) -> (
   kk := ZZ/p;
   if isPrime(p) == false then error "p is not prime";
--- costruction of space model of degree d and genus g
+-- construction of space model of degree d and genus g
 -- therefore we first construct the HR-module
   d := g+4-floor(g/3);
   if opt.Printing then  (print("--> computing space curve of genus "|toString(g)|" and degree "|toString(d)));
@@ -513,7 +513,7 @@ smoothCanonicalCurveViaSpaceModel (ZZ,ZZ) := opt -> (g,p) -> (
 -- calculate values of h^1 that are forced by the maximal rank assumption
   h1 := for i from 0 when ((i < 4) or(d*i+1-g) > binomial(i+3,3)) list max(d*i+1-g-binomial(3+i,3),0);
   e := 0; for i in h1 when i == 0 do e = e+1;
--- calculate support of Hartshorne Rao Moduole
+-- calculate support of Hartshorne Rao Module
   HRao := select(h1,i->i!=0);  
   expBettiHR := expectedBetti(HRao|{0,0,0,0},3);  
   emptyResHR := R^expBettiHR;

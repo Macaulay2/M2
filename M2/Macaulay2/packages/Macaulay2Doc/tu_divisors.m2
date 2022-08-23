@@ -29,7 +29,7 @@
 -- extensions to handle the non $S_2$-case.
 --
 -- An example that we will use throughout is the plane
--- cubic curve $E$, whose homogenoeus coordinate ring is {\tt SE}:
+-- cubic curve $E$, whose homogeneous coordinate ring is {\tt SE}:
 
 KK = ZZ/31991
 SE = KK[x,y,z]/(y^2*z - x*(x-z)*(x+3*z))

@@ -62,7 +62,7 @@ trackBertini (List,List,List,OptionTable) := List => (S,T,solS,o) -> (
 trackBertini (PolySystem,PolySystem,List,OptionTable) := List => (S,T,solS,o) -> trackBertini (equations S, equations T, solS, o)
 
 refineBertini = method()
-refineBertini (PolySystem,Point,OptionTable) := List => (F,x,o) -> (              
+refineBertini (PolySystem,AbstractPoint,OptionTable) := List => (F,x,o) -> (              
     -- bits to decimals 
     decimals := if o.Bits =!= infinity then ceiling(o.Bits * log 2 / log 10) else log_10 o.ErrorTolerance;
     first bertiniRefineSols(decimals, equations F, {x}) -*toBertiniOptions o*-

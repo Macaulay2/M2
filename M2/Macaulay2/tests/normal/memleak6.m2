@@ -19,7 +19,7 @@ end
  -- minutes).
  -- The problem is then that after 20 hours the memory use reaches 800MB....and 
  -- then M2 exits (we have 1GRAM).
- -- Theorically it should run stably at around 22MB or less:
+ -- Theoretically it should run stably at around 22MB or less:
  -- it should just create a list of "desired" matrices, which should not appear 
  -- more than 10-20 times in 5^7 attempts.
  -- Instead, it happens that the RAM usage increases linarly in time.

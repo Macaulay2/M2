@@ -451,7 +451,7 @@ getRandomLinearForms(Ring, List) := opts -> (R1, L1) ->(
         J1 := jacobian ideal formList;
         val := min(d, #formList);
         if (rank J1 < val) then ( 
-            if (opts.Verbose) or (debugLevel > 0) then print "getRandomLinearForms: forms were not random enough, trying again recusrively.";            
+            if (opts.Verbose) or (debugLevel > 0) then print "getRandomLinearForms: forms were not random enough, trying again recursively.";            
             return getRandomLinearForms(R1, L1, opts);
         );
     );
@@ -636,7 +636,7 @@ randomPointViaDefaultStrategy(ZZ, Ideal) := List => opts -> (n1, I1) -> (
     );    
 
     if (runDecomp) then (
-        if (opts.Verbose) or (debugLevel > 0) then print "randomPointViaDefaultStrategy(step 4): attempting linear intersection with triinomials.";
+        if (opts.Verbose) or (debugLevel > 0) then print "randomPointViaDefaultStrategy(step 4): attempting linear intersection with trinomials.";
         tempPtsList =  linearIntersectionNew(n1 - #pointsList, I1, 
             Homogeneous => opts.Homogeneous,          
             Replacement => Trinomial,        
@@ -1058,7 +1058,7 @@ dimViaBezout(Ideal) := opts-> I1 -> (
             cancel t2;
             return tr;            
         );
-        if opts.Verbose or debugLevel > 0 then print "dimViaBezout: Something went wrong with multithrading.";              
+        if opts.Verbose or debugLevel > 0 then print "dimViaBezout: Something went wrong with multithreading.";              
         return null;
         *-
         
@@ -1791,7 +1791,7 @@ doc ///
         Replacement => Trinomial        
     Description
         Text
-            When calling various functions, setting {\tt Replacement => Full} will mean that coordinates are changed to a general degree 1 form.  If {\tt Replacement => Binomial}, the coordinates are only changed to bionomials, which can be much faster for certain applications.  Other options include {\tt Replacement => Monomial} and {\tt Replacement => Trinomial}.
+            When calling various functions, setting {\tt Replacement => Full} will mean that coordinates are changed to a general degree 1 form.  If {\tt Replacement => Binomial}, the coordinates are only changed to binomials, which can be much faster for certain applications.  Other options include {\tt Replacement => Monomial} and {\tt Replacement => Trinomial}.
         Example
             R = ZZ/101[a,b,c,d,e];            
             randomCoordinateChange(R, Replacement=>Monomial)

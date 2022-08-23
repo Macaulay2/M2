@@ -200,7 +200,7 @@ class HomotopyConcrete : public Homotopy
   /* columns of inputs are initial solutions (last coordinate is the initial
      value of continuation parameter t,
      outputs have the same shape as inputs (last coordinate of outputs is set to
-     the desirted value of t),
+     the desired value of t),
      output_extras: the first row gives the status of the solutions (or path) */
 
   bool track(const MutableMatrix* inputs,
@@ -232,7 +232,7 @@ class HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm> : public Homotopy
   /* columns of inputs are initial solutions (last coordinate is the initial
      value of continuation parameter t,
      outputs have the same shape as inputs (last coordinate of outputs is set to
-     the desirted value of t),
+     the desired value of t),
      output_extras: the first row gives the status of the solutions (or path) */
   bool track(const MutableMatrix* inputs,
              MutableMatrix* outputs,

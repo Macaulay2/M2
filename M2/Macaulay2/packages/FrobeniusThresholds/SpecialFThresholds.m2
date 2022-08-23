@@ -477,7 +477,7 @@ binaryFormFPT ( List, List ) := QQ => opt -> ( L, m ) ->
 ---------------------------------------------------------------------------------
 --%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
----monomiaFPT computes the FPT of a monomial
+---monomialFPT computes the FPT of a monomial
 
 monomialFPT = method( TypicalValue => QQ )
 

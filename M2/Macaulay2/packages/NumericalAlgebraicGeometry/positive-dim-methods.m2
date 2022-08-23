@@ -4,7 +4,7 @@
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
 
-isOn (Point,NumericalVariety) := o -> (p, V) -> (
+isOn (AbstractPoint,NumericalVariety) := o -> (p, V) -> (
     o = fillInDefaultOptions o;
     if o.Software === BERTINI then #bertiniComponentMemberTest({p},V)>0
     else any(keys V, d->any(V#d, C->isOn(p,C,o)))  

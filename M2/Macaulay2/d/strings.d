@@ -98,7 +98,13 @@ export utf8substr(s:string,start:int,wid:int):string := ( -- compared to substr,
      substr(s,start1,i-start1)
 );
 
-
+export utf8characters(s:string):array(string) := (
+     i := 0; j := 0; l := length(s);
+     new array(string) len utf8width(s) do for k from 0 to utf8width(s)-1 do provide (
+          i = i+j;
+	  j = utf8charlength(s.i);
+	  substr(s,i,j)
+     ))
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d strings.o "

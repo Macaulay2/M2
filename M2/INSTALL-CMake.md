@@ -10,7 +10,7 @@ Also see [this guide](BUILD/docker/README.md) for building and packaging Macaula
 
 ## Getting started
 [Download](https://cmake.org/download/) the latest CMake for your platform.
-CMake is availeble through [Homebrew](https://brew.sh/) for both Mac OS X and Linux distributions.
+CMake is available through [Homebrew](https://brew.sh/) for both Mac OS X and Linux distributions.
 If using a packaged distribution, confirm using `cmake --version` that you have version at least 3.15.
 This build system is tested on GCC 6+, Clang 6+, and Xcode 9+ compilers.
 

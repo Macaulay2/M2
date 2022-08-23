@@ -240,7 +240,7 @@ function itself:
 utility:
 adjoin(is, qs, qh) -- makes new sets (qs, i) for i in is.  But only takes those that are not in qh (?is this description right??!)
 adjoinb(is,qs,qh,cs) -- adds in (qs,i,cs) for each i in is.
-factorps(ps) retuns the list of al irred constant factors of ps
+factorps(ps) returns the list of al irred constant factors of ps
 
 irras(cs,ja,reducible) -- irred ascending set?
   int ja: output

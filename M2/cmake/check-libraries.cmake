@@ -282,7 +282,7 @@ endforeach()
 ###############################################################################
 ## Check that found libraries can be linked to catch linking conflicts early.
 # When a conflict is detected, default to building all involved libraries.
-# TIP: cmake --debug-trycompile keeps the termporary sources and binaries
+# TIP: cmake --debug-trycompile keeps the temporary sources and binaries
 option(CHECK_LIBRARY_COMPATIBILITY "Check for library incompatibilities" ON)
 
 set(CMAKE_REQUIRED_LIBRARIES "")

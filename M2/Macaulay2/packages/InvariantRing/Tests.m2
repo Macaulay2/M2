@@ -405,7 +405,7 @@ assert(
  -- Test 23
  -- Checks the dadeHSOP routine by checking that the list of polynomials output
 -- has the expected output. Namely:
--- they are invariant polynimials,
+-- they are invariant polynomials,
 -- they form a homogeneous system of parameters for the polynomial ring
 -- they have degrees equal to the cardinality of the group (which should occur
 -- with probability 1)*

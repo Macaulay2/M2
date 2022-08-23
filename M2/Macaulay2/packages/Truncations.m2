@@ -107,7 +107,7 @@ truncationPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
     -- data for the polyhedron inequalities
     hdataLHS := -(A || I);
     hdataRHS := -(b || z);
-    -- added to ensure x_i <= 1 for skew commutating variables
+    -- added to ensure x_i <= 1 for skew commuting variables
     if #opts.Exterior > 0 then (
         -- also need to add in the conditions that each variable in the list has degree <= 1.
         hdataLHS = hdataLHS || (I ^ (opts.Exterior));
@@ -138,7 +138,7 @@ basisPolyhedron(Matrix, Matrix) := Polyhedron => opts -> (A, b) -> (
     -- added to ensure x_i >= 0
     I := id_(source A);
     z := map(source A, QQ^1, 0);
-    -- added to ensure x_i <= 1 for skew commutating variables
+    -- added to ensure x_i <= 1 for skew commuting variables
     if #opts.Exterior > 0 then (
         -- also need to add in the conditions that each variable in the list has degree <= 1.
         I = I || (-I ^ (opts.Exterior));

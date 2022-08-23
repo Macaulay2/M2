@@ -803,7 +803,7 @@ tex svgElement GraphicsHtml :=
 tex svgElement GraphicsText := x -> concatenate(
     (op,ct,st) := ovr x;
     col := null;
-     -- TODO intepret options correctly (stroke vs fill)
+     -- TODO interpret options correctly (stroke vs fill)
     st = apply(st, s -> if substring(s,0,4) == "fill" or substring(s,0,4) == "draw" then if substring(s,5) != "none" then substring(s,5) else "" else s);
     "\\node",
     if #st>0 then "["|demark(",",st)|"]",
@@ -1051,7 +1051,7 @@ plot2d = true >> o -> (P,r) -> ( -- #r == 2, P should be a polynomial or nonempt
     flag := all(r,x->instance(x,Number)); -- only first coord specified
     explicit := numgens R === 1; -- no solving, just plotting
     rx := if flag then r else ( r = gParse r; apply(r,x->x_0) );
-    ymin := 1000; ymax := -1000; -- TODO beter
+    ymin := 1000; ymax := -1000; -- TODO better
     val := transpose apply(n+1, i -> (
 	    x := i*(rx#1-rx#0)/n+rx#0;
 	    yy := if explicit then apply(P, p -> sub (p,R_0=>x)) else sort apply(sS append(P, R_0 -x), p -> p#Crd#1); -- there are subtle issues with sorting solutions depending on real/complex...

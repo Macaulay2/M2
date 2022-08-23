@@ -569,7 +569,7 @@ decompose3 = B -> (
 -- Same as decompose but with options.
 -- this was done in order to preserve the old functionality and give 
 -- the ability to add options to the method.
--- We would like to replace 'decompse' with 'decomposeBetti'.
+-- We would like to replace 'decompose' with 'decomposeBetti'.
 decomposeBetti = method(Options => {TableEntries => LeastIntegerEntries})
 decomposeBetti BettiTally := o -> B -> (
     
@@ -1208,7 +1208,7 @@ supportFunctional(ChainComplex, BettiTally):=(E,B)->(
 rkSchur = (n,L) -> (
 --rank of a Schur functor on a module
 --input: a non-neg integer n and a non-increasing sequence of non-neg integers L
---output: the rank of the representation S_L(C^n). Here (11111) represents an exterior power, (k) a symmetrci power.
+--output: the rank of the representation S_L(C^n). Here (11111) represents an exterior power, (k) a symmetric power.
      M:=L;
      if #M<n then M=L|toList(n-#M:0);
      det map(ZZ^n, ZZ^n, (i,j)->binomial(M_i+n-1-i+j, n-1)))
@@ -1273,7 +1273,7 @@ for i from 0 to #W-1 list (W_i/P_0)
 -- Constructions often producing pure resolutions --
 ----------------------------------------------------
 
---Given a strictly increasing degree sequence L and a number of gneerators m,
+--Given a strictly increasing degree sequence L and a number of generators m,
 --this routine produces a "generic" module of finite length with the 
 --m generators and number of socle elements  and regularity corresponding
 --to the pure resolution with degree sequence L. The module is constructed
@@ -2198,7 +2198,7 @@ document {
 
 document { 
      Key => (bott,List,ZZ,ZZ),
-     Headline => "cohomology table of Schur functor of tautolgical bundle on P^n",
+     Headline => "cohomology table of Schur functor of tautological bundle on P^n",
      Usage => "bott(L,lowDegree,highDegree)",
      Inputs => {
 	  "L" => "a non-increasing sequence of integers",

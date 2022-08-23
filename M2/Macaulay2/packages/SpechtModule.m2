@@ -1260,7 +1260,7 @@ schurPolynomial = method(Options => {AsExpression => false, Strategy=>"semistand
 schurPolynomial(List,Partition,PolynomialRing) := o->(indices, partition, R) -> (
     ans := 0;
     ans= 1_R;
-    if #indices < #partition then error "size of indices and exponets does not match"; 
+    if #indices < #partition then error "size of indices and exponents does not match"; 
     if o.Strategy == "determinant" then (
 	exponents := join (toList (#indices - #partition:0), reverse toList partition) + toList 0..(#indices-1);
 	ans = determinant generalizedVandermondeMatrix(indices,exponents,R)// vandermondeDeterminant(indices,R))
@@ -1371,9 +1371,9 @@ multidoc ///
 		
 		The main features of the package include a method for calculating the character table of $S_n$, algorithms for
     		calculating list of tableaux given a partition (tabloids, standard tableaux and semistandard tableaux among others)
-    		an implementation of the straightening algorithm which includes an implementation of the garnir element given a tableau
+    		an implementation of the straightening algorithm which includes an implementation of the Garnir element given a tableau
     		an a row descent. Methods for calculating Higher Specht Polynomials which give a basis of
-    		the Specht Modules that arrise in the coinvariant ring of $S_n$ which is the quotient $k[x_1,..,x_n]/({\rm Sym}(n)^+)$. 
+    		the Specht Modules that arise in the coinvariant ring of $S_n$ which is the quotient $k[x_1,..,x_n]/({\rm Sym}(n)^+)$. 
     		And finally methods for calculating the secondary invariants described above.	    
 	Caveat	  
 	    An improvement can be made by finding an efficient way to calculate or represent Schur Polynomials
@@ -1490,7 +1490,7 @@ multidoc ///
 	    characterTable n
 	Inputs
 	    n:ZZ
-	    	the degree of the symmmetric group
+	    	the degree of the symmetric group
 	Outputs
 	    :CharacterTable
 	    	the character table with the irreducible characters of $S_n$ indexed by partitions
@@ -2018,8 +2018,8 @@ multidoc ///
 		the list of semistandard tableaux
     	Description
 	    Text
-    	    	The semistandard tableaux are tableaux that are strictly decreasign in rows and
-		weakly deacreasing in rows. 	
+    	    	The semistandard tableaux are tableaux that are strictly decreasing in rows and
+		weakly decreasing in rows. 	
 	    Example
     		p = new Partition from {3,2}
 	    	semistandardTableaux (p,4)
@@ -3234,14 +3234,14 @@ multidoc ///
 		 the ring $K[\theta_1,\ldots,\theta_n]$ is the ring of symmetric polynomials.
 	    
 	    	The secondary invariants are obtained by considering the quotient ring $R/(e_1,\ldots,e_n)$.
-		This quotient ring is called the coinvariant algebre of $S_n$. This quotient is isomorphic to the regular representation of $S_n$. In particular as
+		This quotient ring is called the coinvariant algebra of $S_n$. This quotient is isomorphic to the regular representation of $S_n$. In particular as
 		a K-vector space it is finite dimensional.
 		In this space we find the subspace that is invariant under the action of $H$. The secondary invariants
 		correspond to a basis for this space.
 		
 	    	The advantage of this algorithm is that it decomposes the regular representation into its
 		irreducible representation by means of the higher Specht polynomials basis. This reduces
-		significantly de dimension of the vector spaces in which the invariant spaces must be found.
+		significantly the dimension of the vector spaces in which the invariant spaces must be found.
 	        
 		To illustrate we calculate the secondary invariants for a subgroup of cardinality 24 in $S_6$.   
 	    Example

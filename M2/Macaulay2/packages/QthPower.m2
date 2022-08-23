@@ -25,7 +25,7 @@ export{"qthConductor",
 --	     over ZZ/q or QQ as qthIntegralClosure and rationalIntegralClosure respectively.
 --          [rationalIntegralClosure calls qthIntegralClosure for several small q.]
 --   INPUT : weight matrix wtR used to generate an appropriate weight-over-grevlex monomial ordering, 
---           multivarite polynomial ring R over ZZ/q or QQ
+--           multivariate polynomial ring R over ZZ/q or QQ
 --          (with Noether normalization, P the subring of the last numRows(wtR) (independent) variables), 
 --	     and generating set for the ideal defining an affine domain 
 --          A=R/ideal(I) that is an integral extension of P 
@@ -1311,7 +1311,7 @@ assert(ic0#3 == matrix{{2,2,2,2,1,1}})
 TEST ///
 ------------------------------------------------------------------------------
 --MAGMA example found in GLS--------------------------------------------------
--- genus 1, but try to figure that out from most pesentations-----------------
+-- genus 1, but try to figure that out from most presentations-----------------
 --(x-y)*x*(y+x^2)^3-y^3*(x^3+x*y-y^2)=0---------------------------------------
 --change of variables gives a type I problem----------------------------------
 ------------------------------------------------------------------------------

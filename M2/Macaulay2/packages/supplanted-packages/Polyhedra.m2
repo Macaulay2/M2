@@ -1347,7 +1347,7 @@ latticePoints = method(TypicalValue => List)
 latticePoints Polyhedron := P -> (
      -- Checking for input errors
      if  not isCompact P then error("The polyhedron must be compact");
-     -- Recursive function that intersects the polyhedron with paralell hyperplanes in the axis direction
+     -- Recursive function that intersects the polyhedron with parallel hyperplanes in the axis direction
      -- in which P has its minimum extension
      latticePointsRec := P -> (
 	  -- Finding the direction with minimum extension of P
@@ -2477,7 +2477,7 @@ posOrthant ZZ := n -> posHull map(QQ^n,QQ^n,1)
 
 
 -- PURPOSE : Computing the state polytope of the ideal 'I'
---   INPUT : 'I',  a homogeneous ideal with resect to some strictly psoitive grading
+--   INPUT : 'I',  a homogeneous ideal with resect to some strictly positive grading
 --  OUTPUT : The state polytope as a polyhedron
 statePolytope = method(TypicalValue => Polyhedron)
 statePolytope Ideal := I -> (

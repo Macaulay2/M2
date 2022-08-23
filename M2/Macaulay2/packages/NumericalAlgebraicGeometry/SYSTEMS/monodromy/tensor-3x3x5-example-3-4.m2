@@ -53,7 +53,7 @@ needsPackage "NumericalAlgebraicGeometry"
 s0 = random(CC^1,CC^45);
 T0 = sub(F,s0)
 
--- we know one decpomposition at the moment:
+-- we know one decomposition at the moment:
 sols0 = {point s0};
 
 -* outsource to an external solver:

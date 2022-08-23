@@ -589,7 +589,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	       else (
 		    ex := - y.v;
 		    if !isLong(ex)
-		    then buildErrorPacket("exected exponent to be a small integer")
+		    then buildErrorPacket("expected exponent to be a small integer")
 		    else (
 	       	    	 den := x.v^ex;
 		    	 if isNegative(den)

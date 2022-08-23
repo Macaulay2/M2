@@ -360,7 +360,7 @@ Description
     what files are written to Topcom, and what the executable is.
     Setting debugLevel to 0 means that the function will run silently.
 Caveat
-  Do we check that the triangulation is actually welll defined?
+  Do we check that the triangulation is actually well defined?
 SeeAlso
   regularFineTriangulation  
 ///

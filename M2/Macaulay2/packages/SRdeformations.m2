@@ -33,7 +33,7 @@ If you don't have Maple/Convex or haven't set up "ConvexInterface"
 stay with the standard option UseConvex=>false.
 
 Then automatically the package "OldPolyhedra" is used,
-but that is several magnitues slower compared to maple/convex.
+but that is several magnitudes slower compared to maple/convex.
 
 "OldPolyhedra" relies on the package "FourierMotzkin".
 
@@ -2499,7 +2499,7 @@ I)
 -- this is the Stanley-Reisner complex
 -- but the cocomplex is always dual to a complex in the polytope
 -- which is the true geometric strata of the vanishing locus of the ideal
--- in the Cox ring of the toric varietey)
+-- in the Cox ring of the toric variety)
 
 ---------------------------------------------------------
 -- cocomplexes:

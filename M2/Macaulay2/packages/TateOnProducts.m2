@@ -3656,7 +3656,7 @@ composedFunctions = () -> (
       betti LP
       coLP=apply(toList(min LP..max LP),i->dim HH^(-i) LP)
      --Text
-     -- Hence both Lp and RMc are azyclic.
+     -- Hence both Lp and RMc are acyclic.
      --Example
       Mc=prune truncate(c,M)**S^{c}
       betti (Mc'=HH^0 LP), betti Mc
@@ -3777,7 +3777,7 @@ betti M1,betti M
 M1'=M1**S^{{-2,-2}}
 betti M1',betti M
 isIsomorphic(M,M1')
--- we comclude: It works for various P=kerC.dd_p
+-- we conclude: It works for various P=kerC.dd_p
 
 
 RM=bgg M
@@ -4035,7 +4035,7 @@ doc ///
       betti LP
       coLP=apply(toList(min LP..max LP),i->dim HH^(-i) LP)
      Text
-      Hence both Lp and RMc are azyclic.
+      Hence both Lp and RMc are acyclic.
      Example
       Mc=prune truncate(c,M)**S^{c}
       betti (Mc'=HH^0 LP), betti Mc
@@ -4579,7 +4579,7 @@ doc ///
        where a is a multi-index, low<=a<=high in the partial order
        (thus the value is 0 when i is not in the range 0..sum n.)
        In case T is a Tate resolution corresponding to an object F in D^b(P^n), then
-       the values returned are the polyomials of the hypercohomology groups of twists of F, and
+       the values returned are the polynomials of the hypercohomology groups of twists of F, and
        the values can be nonzero in a wider range.
 
        In case the number of factors t is 2, the output of @ TO cohomologyMatrix @ is
@@ -5473,7 +5473,7 @@ doc ///
     apply the beilinson functor
   Usage
     M=beilinson F
-    phi=beilison psi
+    phi=beilinson psi
     C=beilinson T
   Inputs
     F: Module
@@ -5645,7 +5645,7 @@ doc ///
     value for the option BundleType in beilinson
   Description
      Text
-      The Beilinson bundlse U^a will be represented by subbundles.
+      The Beilinson bundles U^a will be represented by subbundles.
   SeeAlso
     beilinson
     BundleType

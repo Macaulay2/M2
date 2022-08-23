@@ -27,8 +27,8 @@ sph = (x^2+y^2+z^2-1);
 I = ideal {sph, (x+y+z-1)^2};
 result = regeneration I_* -- deflation sequences are supposed to be the same
 assert(dim result == 1 and degree result#1#0 == 2)
-p = first (result#1#0).Points
-assert(numericalRank evaluate(jacobian p.SolutionSystem,p) == 2)
+p = first points result#1#0
+assert(numericalRank evaluate(jacobian p.cache.SolutionSystem,p) == 2)
 ///
 
 -----------------------------------------------------------------------
@@ -68,7 +68,7 @@ decompose WitnessSet := {} >> unusedOpts -> (W) -> (
 	      ) 
 	  do (); 
 	  pt := first movePoints(W, T, slice W, {pt'}, Software=>M2engine);
-	  if (c' :=  findComponent coordinates pt) === null then error "point outside of any current component";
+	  if (c' :=  findComponent pt) === null then error "point outside of any current component";
 	  if c' == c then n'misses = n'misses + 1
 	  else ( 
 	       mergeComponents(c,c');

@@ -976,7 +976,7 @@ doc ///
       quantile_X 0.4
       random X
  Caveat
-   Probabiltity texts often use the total number of balls (our @TT "m + n"@)
+   Probability texts often use the total number of balls (our @TT "m + n"@)
    as one of the parameters of this distribution.  Our definition is
    consistent with R.
 ///

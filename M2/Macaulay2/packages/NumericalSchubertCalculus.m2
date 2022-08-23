@@ -106,7 +106,7 @@ load "NumericalSchubertCalculus/service-functions.m2"
 --load "NumericalSchubertCalculus/UnderDevelopment/galois.m2"
 
 --------------------------------------
--- produces a matrix that parmeterizes
+-- produces a matrix that parametrizes
 -- the "big cell" of Gr(k,n)
 ------------------------------
 bigCellLocalCoordinates = method()
@@ -185,7 +185,7 @@ moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
     critdiag := 0;
     g:=2; -- g answers where is the red checker in the critical row
     r:=2; -- r answers where is the red checker in the critical diagonal
-    -- r,g is the coordinate of the moving situaion in the 3x3 table of moves
+    -- r,g is the coordinate of the moving situation in the 3x3 table of moves
     indx := new List;
     redpos := new MutableList from redposition;
     -- find the critical row, and how the red checkers sit with respect to it

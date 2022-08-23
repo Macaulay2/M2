@@ -414,7 +414,7 @@ cocycleCheck ToricVectorBundleKaneyama := (cacheValue symbol cocycle)( tvb -> (
 --   INPUT : 'tvb',  a ToricVectorBundleKaneyama
 --  OUTPUT : '(A,C)',	 where 'A' is a hashTable giving the enumeration of the maximal cones with their rays and degree matrix, 
 --     	    	      	 and 'B' gives the transition matrices for the codim 1 pairs
--- COMMENT : This function gives the posibillity to have a quick overview on the main properties of a ToricVectorBundleKaneyama
+-- COMMENT : This function gives the possibility to have a quick overview on the main properties of a ToricVectorBundleKaneyama
 details = method()
 details ToricVectorBundle := tvb -> (
      if instance(tvb,ToricVectorBundleKaneyama) then (hashTable apply(pairs(tvb#"topConeTable"), p -> ( p#1 => (rays posHull p#0,tvb#"degreeTable"#(p#0)))),tvb#"baseChangeTable")
@@ -1870,7 +1870,7 @@ intersectMatrices = (M,N) -> (
 
 -- PURPOSE : Building a Vector Bundle of rank 'k' on the Toric Variety given by the Fan 'F'
 --           with 0 degrees and identity transition matrices
---   INPUT : '(k,F)',  a strictly psoitive integer 'k' and a pure and full dimensional
+--   INPUT : '(k,F)',  a strictly positive integer 'k' and a pure and full dimensional
 --                     Fan 'F' 
 --  OUTPUT : The ToricVectorBundleKaneyama 'VB'
 makeVBKaneyama = method(TypicalValue => ToricVectorBundleKaneyama)
@@ -1932,7 +1932,7 @@ makeVBKaneyama (ZZ,Fan,List,List) := (k,F,degreelist,matrixlist) -> (
 
 -- PURPOSE : Building a Vector Bundle in the Klyachko description of rank 'k' on the Toric Variety given by the Fan 'F'
 --           with trivial Filtration for every ray
---   INPUT : '(k,F)',  a strictly psoitive integer 'k' and a pure and full dimensional Fan 'F' 
+--   INPUT : '(k,F)',  a strictly positive integer 'k' and a pure and full dimensional Fan 'F' 
 --  OUTPUT : The ToricVectorBundleKlyachko 'VB'
 makeVBKlyachko = method(TypicalValue => ToricVectorBundleKlyachko)
 makeVBKlyachko (ZZ,Fan) := (k,F) -> (

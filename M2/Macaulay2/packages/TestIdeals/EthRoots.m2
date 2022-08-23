@@ -302,7 +302,7 @@ ascendIdeal ( ZZ, List, List, Ideal ) := o -> ( ek, akList,  hkList, Jk ) ->
 
 -----------------------------------------------------------------------------
 --- Extend the Frobenius p^e th roots and star operations to submodules of
---- free modules (over polynomial rings with *prime* coeeficient field)
+--- free modules (over polynomial rings with *prime* coefficient field)
 --- This implements the methods described in
 --- Moty Katzman and Wenliang Zhang's paper
 --- "Annihilators of Artinian modules compatible with a Frobenius map"

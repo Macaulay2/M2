@@ -2864,7 +2864,7 @@ doc ///
    Description
       Text 
          This method converts a list of ring elements to coordinate vectors - returned
-	 as a matrix - relative to a list of monomilas. If the user does not 
+	 as a matrix - relative to a list of monomials. If the user does not 
 	 supply a monomial list, the list is taken to be the monomials 
 	 occurring in the elements of the list (with repetition).
       Example
@@ -3878,7 +3878,7 @@ doc ///
          basis(2,D)	 
       Text
          The output of normalElements tells us that in order for a degree 2 element of D
-	 to be normal, it must be an expresison in powers of the generators. The coefficients
+	 to be normal, it must be an expression in powers of the generators. The coefficients
 	 of these powers must satisfy the six equations listed.
       Example
          isNormal (x^2+z^2-y^2-w^2)	 
@@ -3929,7 +3929,7 @@ doc ///
       Text
          The endomorphism ring is computed using @ TO endomorphismRing @. This method
 	 computes a presentation, but the presentation is typically not minimal. We
-	 see from the following calcuation that X_3 = X_0X_2.
+	 see from the following calculation that X_3 = X_0X_2.
       Example
          B = endomorphismRing(M,X); 
 	 gensI = gens ideal B

@@ -173,7 +173,7 @@ doc ///
 	    containing elements from a common @TO Ring @
     Outputs
         sols:List
-            each element of class @TO Point @
+            each element of class @TO AbstractPoint @
     Description
         Text
             This is the basic interface to the @HREF("https://www.juliahomotopycontinuation.org/HomotopyContinuation.jl/latest/solving.html","\"solve function")@.

@@ -419,7 +419,7 @@ numberOfPositiveRoots(DynkinType) := (T) ->
 
 numberOfPositiveRoots(RootSystem) := (R) -> numberOfPositiveRoots dynkinType R
 
---Defining the class of weights (expressed as vectors in ZZ^n, the basis consisting in the fundumental weights)
+--Defining the class of weights (expressed as vectors in ZZ^n, the basis consisting in the fundamental weights)
 Weight = new Type of Vector
 
 --Constructor for weights

@@ -39,7 +39,7 @@
 	    in the node page. 
 
  When done, change the status from TODO to DRAFT.
-   (After reivew, it will become "REVIEWED")
+   (After review, it will become "REVIEWED")
    (When accepted, the status line will disappear.)
 
  Then run "installPackage Macaulay2" in M2. Fix any errors that occur

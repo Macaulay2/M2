@@ -87,7 +87,7 @@ export {
 ----- INPUT: file
 -----        file should be a filename for a file with betti data
 -----
------ OUPUT: The contents of the file with value applied.
+----- OUTPUT: The contents of the file with value applied.
 -----
 ----- DESCRIPTION: This function is used to load values from the
 ----- appropriate betti data file while caching the result
@@ -103,7 +103,7 @@ readBettiFile := memoize (file -> (
 -----        file should be a filename for a file with betti data
 -----        var should be a symbol or a string to be evaluated
 -----
------ OUPUT: The desired value
+----- OUTPUT: The desired value
 -----
 ----- DESCRIPTION: This function is used to load values from the
 ----- appropriate betti data file
@@ -120,10 +120,10 @@ withBettiFile := (file,var) -> (
 --------------------------------------------------------------------
 ----- INPUT: A hash table representing a Betti table 
 -----
------ OUPUT: The BettiTally for the inputed Betti table
+----- OUTPUT: The BettiTally for the inputted Betti table
 -----
 ----- DESCRIPTION: This function is used to convert a hash table
------ representing a Betti Table into the more familar BettiTally.
+----- representing a Betti Table into the more familiar BettiTally.
 ----- The input hash table is assumed to have its keys being pairs
 ----- (p,q) such that H#(p,q)=>{K_{p,q}(M)}.
 --------------------------------------------------------------------
@@ -138,7 +138,7 @@ makeBettiTally HashTable := H ->(
 --------------------------------------------------------------------
 ----- INPUT: (d,n,b) 
 -----
------ OUPUT: (true,null) or (false, error message)
+----- OUTPUT: (true,null) or (false, error message)
 -----
 ----- DESCRIPTION: This unexported function is used to check whether 
 ----- we have  data for a particular case. If we have data for O(b)
@@ -152,7 +152,7 @@ rangeCheck (ZZ,ZZ,ZZ) :=(d,n,b) ->(
     message := (true,null);
     if n > 2 or n < 1 then message = (false, error "Dimension of projective space needed to be n = 1 or 2");
     if b >= d then message = (false, error "Degree of auxiliary line bundle required to be strictly smaller than degree of embedding");    
-    if b < 0 then message = (false, error "Degree of auxiliary line bundle required to be positve");    
+    if b < 0 then message = (false, error "Degree of auxiliary line bundle required to be positive");    
     if n == 1 and d > 10 or d < 2 then message = (
 	false, error "If dimension of projective space = 1 then degree of embedding must satisfy 2 <= d <= 10");
     if n == 2 and d > 8 or d < 2 then message = (
@@ -165,7 +165,7 @@ rangeCheck (ZZ,ZZ,ZZ) :=(d,n,b) ->(
 --------------------------------------------------------------------
 ----- INPUT: (d,n,b) 
 -----
------ OUPUT: string
+----- OUTPUT: string
 -----
 ----- DESCRIPTION: This non-exported function outputs the path for 
 ----- the auxiliary file containing the data for O(b) on P^n embedded
@@ -182,14 +182,14 @@ getFileName := (d,n,b) ->(curDir|"SchurVeronese/bettiP"|toString(n)|"_" | toStri
 --------------------------------------------------------------------
 ----- INPUT: (d,n,b) 
 -----
------ OUPUT: A hash table containing the multigraded Betti data for 
+----- OUTPUT: A hash table containing the multigraded Betti data for 
 ----- O(b) on P^n embedded by O(d).
 -----
 ----- DESCRIPTION: This function returns a hashtable containing the 
 ----- multigraded Betti data for O(b) on P^n embedded by O(d). The
 ----- keys for this hash table are pairs (p,q) corresponding to the
 ----- Betti number K_{p,q}(n,b;d). Notice that the multigraded Betti
------ data is stored via a mulitgraded Hilbert series. See
+----- data is stored via a multigraded Hilbert series. See
 ----- [Sec 1.1, BEGY] for definitions.
 --------------------------------------------------------------------
 --------------------------------------------------------------------
@@ -205,7 +205,7 @@ multiBetti (ZZ,ZZ,ZZ) := (d,n,b) ->(
 --------------------------------------------------------------------
 ----- INPUT: (d,n,b) 
 -----
------ OUPUT: A hash table containing the Schur Betti data for 
+----- OUTPUT: A hash table containing the Schur Betti data for 
 ----- O(b) on P^n embedded by O(d).
 -----
 ----- DESCRIPTION: This function returns a hashtable containing the 
@@ -230,14 +230,14 @@ schurBetti (ZZ,ZZ,ZZ) := (d,n,b) ->(
 --------------------------------------------------------------------
 ----- INPUT: (d,n,b) 
 -----
------ OUPUT: A hash table containing the total graded Betti data for 
+----- OUTPUT: A hash table containing the total graded Betti data for 
 ----- O(b) on P^n embedded by O(d).
 -----
 ----- DESCRIPTION: This function returns a hash table containing the 
 ----- total graded Betti data for O(b) on P^n embedded by O(d). The
 ----- keys for this hash table are pairs (p,q) with the corresponding
 ----- value being the Betti number dim K_{p,q}(n,b;d). This function
------ is the same as totalBettiTally expect that the ouptut is a hash table
+----- is the same as totalBettiTally expect that the output is a hash table
 ----- instead of a BettiTally. See [Sec 1.1, BEGY] for definitions.
 ---------------------------------------------------------------------
 ---------------------------------------------------------------------
@@ -253,12 +253,12 @@ totalBetti (ZZ,ZZ,ZZ) := (d,n,b) ->(
 --------------------------------------------------------------------
 ----- INPUT: (d,n,b) 
 -----
------ OUPUT: A BettiTally containing the total graded Betti data for 
+----- OUTPUT: A BettiTally containing the total graded Betti data for 
 ----- O(b) on P^n embedded by O(d).
 -----
 ----- DESCRIPTION: This function returns a BettiTally containing the 
 ----- total graded Betti data for O(b) on P^n embedded by O(d). This 
------ function is the same as totalBetti expect that the ouptut is a
+----- function is the same as totalBetti expect that the output is a
 ----- BettiTally instead of a hash table. See [Sec 1.1, BEGY] for 
 ----- definitions.
 ---------------------------------------------------------------------
@@ -274,7 +274,7 @@ totalBettiTally (ZZ,ZZ,ZZ) := (d,n,b) ->(
 --------------------------------------------------------------------
 ----- INPUT: (d,n,b) 
 -----
------ OUPUT: A hash table containing lists of the dominant Schur 
+----- OUTPUT: A hash table containing lists of the dominant Schur 
 ----- functors appearing in the decomposition of the graded Betti 
 ----- numbers for O(b) on P^n embedded by O(d).
 -----
@@ -298,7 +298,7 @@ dominantWeightsBetti (ZZ,ZZ,ZZ) := (d,n,b) ->(
 --------------------------------------------------------------------
 ----- INPUT: (d,n,b) 
 -----
------ OUPUT: A hash table containing lists of the lex-leading
+----- OUTPUT: A hash table containing lists of the lex-leading
 ----- weights of the Schur functors appearing in the decomposition 
 ----- of the graded Betti numbers for O(b) on P^n embedded by O(d).
 -----
@@ -323,7 +323,7 @@ lexWeightsBetti (ZZ,ZZ,ZZ) := (d,n,b) ->(
 --------------------------------------------------------------------
 ----- INPUT: (d,n,b) 
 -----
------ OUPUT: A hash table containing the number of distinct Schur 
+----- OUTPUT: A hash table containing the number of distinct Schur 
 ----- functors appearing in the decomposition of the graded Betti 
 ----- numbers for O(b) on P^n embedded by O(d).
 -----
@@ -345,7 +345,7 @@ numDistinctRepsBetti  (ZZ,ZZ,ZZ) := (d,n,b) ->(
 --------------------------------------------------------------------
 ----- INPUT: (d,n,b) 
 -----
------ OUPUT: A hash table containing the number of Schur functors
+----- OUTPUT: A hash table containing the number of Schur functors
 ----- appearing in the decomposition of the graded Betti numbers 
 ----- for O(b) on P^n embedded by O(d).
 -----
@@ -367,14 +367,14 @@ numRepsBetti  (ZZ,ZZ,ZZ) := (d,n,b) ->(
 --------------------------------------------------------------------
 ----- INPUT: (d,n,b) 
 -----
------ OUPUT: A hash table containing the errors found when computing
+----- OUTPUT: A hash table containing the errors found when computing
 ----- the multigraded Betti numbers for O(b) on P^n embedded by O(d).
 -----
 ----- DESCRIPTION: As the methods we use to compute multigraded 
 ----- Betti numbers are numerical in nature there is room for error,
 ----- and so, we have implemented post processing to catch errors. 
 ----- This function returns a hash table whose keys are pairs (p,q)
------ with the corresponding value being a multigraded Hilber 
+----- with the corresponding value being a multigraded Hilbert
 ----- series recording the errors encountered when computing the
 ----- multigraded Betti numbers for K_{p,q}(n,b;d). See [Sec 5.2, BEGY]
 ----- for a discussion on error processing.
@@ -392,7 +392,7 @@ errorBetti  (ZZ,ZZ,ZZ) := (d,n,b) ->(
 --------------------------------------------------------------------
 ----- INPUT: (d,n,b) 
 -----
------ OUPUT: (true,null) or (false, error message)
+----- OUTPUT: (true,null) or (false, error message)
 -----
 ----- DESCRIPTION: This unexported function is used to check whether 
 ----- we have Boij-Soederberg data for a particular case. If we have data for O(b)
@@ -406,7 +406,7 @@ rangeCheckBS (ZZ,ZZ,ZZ) :=(d,n,b) ->(
     message := (true,null);
     if n > 2 or n < 1 then message = (false, error "Dimension of projective space needed to be n = 1 or 2");
     if b >= d then message = (false, error "Degree of auxiliary line bundle required to be strictly smaller than degree of embedding");    
-    if b < 0 then message = (false, error "Degree of auxiliary line bundle required to be positve");    
+    if b < 0 then message = (false, error "Degree of auxiliary line bundle required to be positive");    
     if n == 1 and d > 10 or d < 2 then message = (
 	false, error "If dimension of projective space = 1 then degree of embedding must satisfy 2 <= d <= 10");
     if n == 2 and d > 8 or d < 2 then message = (
@@ -424,11 +424,11 @@ rangeCheckBS (ZZ,ZZ,ZZ) :=(d,n,b) ->(
 --------------------------------------------------------------------
 ----- INPUT: (d,n,b) 
 -----
------ OUPUT: A list of the Boij-Soederberg coefficents for the 
+----- OUTPUT: A list of the Boij-Soederberg coefficients for the 
 ----- decomposition of the Betti table of O(b) on P^n embedded by O(d).
 -----
 ----- DESCRIPTION: This function returns a list of the Boij-Soederberg 
------ coefficents for the  decomposition of the Betti table of O(b) on
+----- coefficients for the  decomposition of the Betti table of O(b) on
 ----- P^n embedded by O(d). See [Sec 6.3, BEGY] for definitions. 
 ---------------------------------------------------------------------
 ---------------------------------------------------------------------

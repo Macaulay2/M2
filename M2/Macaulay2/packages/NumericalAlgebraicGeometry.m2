@@ -209,7 +209,7 @@ getDefault Symbol := (s)->DEFAULT#s
 -- Solutions are lists {s, a, b, c, ...} where s is list of coordinates (in CC)
 -- and a,b,c,... contain extra information, e.g, SolutionStatus=>Regular indicates the solution is regular.
 -- NEW FORMAT:
--- Solutions are of type Point (defined in NAGtypes).
+-- Solutions are of a type derived from AbstractPoint (defined in NAGtypes), e.g. Point.
  
 -- M2 tracker ----------------------------------------
 integratePoly = method(TypicalValue => RingElement)
@@ -507,7 +507,7 @@ conditionNumber (List,List) := (F,x) -> (
      )
 
 isSolution = method(Options=>{Tolerance=>null})
-isSolution(Point,PolySystem) := o -> (P,F) -> (
+isSolution(AbstractPoint,PolySystem) := o -> (P,F) -> (
     o = fillInDefaultOptions o;
     -- P = newton(F,P); -- !!! change for non regular
     -- P.ErrorBoundEstimate < o.Tolerance
@@ -523,7 +523,7 @@ undocumented {
     Field, 
     GateParameterHomotopy, 
     GateHomotopy, trackHomotopy, (trackHomotopy,Thing,List), endGameCauchy, (endGameCauchy,GateHomotopy,Number,MutableMatrix), 
-    (endGameCauchy,GateHomotopy,Number,Point),
+    (endGameCauchy,GateHomotopy,Number,AbstractPoint),
     (evaluateH,GateHomotopy,Matrix,Number),
 (evaluateH,GateParameterHomotopy,Matrix,Matrix,Number),
 (evaluateHt,GateHomotopy,Matrix,Number),

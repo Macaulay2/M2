@@ -293,7 +293,7 @@ document {
 
 -- document {
 --      Key => EliminationOrder,
---      Headline => "use the natural elmination order in a pushForward1 computation",
+--      Headline => "use the natural elimination order in a pushForward1 computation",
 --      TT "EliminationOrder", " -- a value for the ", TO "MonomialOrder", "
 --      option to ", TO "pushForward1", " which specifies the natural elimination
 --      order be used."

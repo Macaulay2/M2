@@ -59,7 +59,7 @@ q=q+1);
 --print(ibm,ibl);
 matrix {ibl});
 
--- the quotient of two one-row matrixes
+-- the quotient of two one-row matrices
 matdiv=(ibm)->(
 q:=0;
 ibl:={};
@@ -115,7 +115,7 @@ k+minPosition(del))
 --J=adjointIdeal(I,ib,ver)
 
 
--- permute the columns of the matrix trmw by the permutaton in the 2-list lip
+-- permute the columns of the matrix trmw by the permutation in the 2-list lip
 permute=method()
 permute(List,Matrix):=(lip,trmw)->(
 n:=rank source trmw;
@@ -643,7 +643,7 @@ doc ///
      at infinity {z = 0} and the point (1:0:0) is not on C.
      Note that these conditions can always be met by a projective automorphism.
 
-     Considering the affine curve in z!=0 we take y as trancendental and x as algebraic
+     Considering the affine curve in z!=0 we take y as transcendental and x as algebraic
      and compute an integral basis in CC(y)[x] of the integral closure of CC[y] in CC(x,y) using 
      the algorithm from
     

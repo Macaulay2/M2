@@ -162,7 +162,7 @@ doc ///
 	 by a condition $c$ either a partition or a bracket (see  @TO partition2bracket@ for details) and a flag $F$ 
 	 (given as an $n \times n$ matrix).
 	 The codimension of the Schubert variety is $|c|$.
-	 A Schubert problem is a list of Schubert varieties, whose codimention
+	 A Schubert problem is a list of Schubert varieties, whose codimension
 	 add up to $k(n-k)$, which is the dimension of the Grassmannian.
          -----
 	 
@@ -424,7 +424,7 @@ document{
     UL{"0 = no extra information displayed [default]",
        "1 = print the progress information and time the main process",
        "2 = besides the information of level 1, it also displays the checkerboard steps"},
-   PARA{"Consider the problem of four lines with resepct to random flags"},
+   PARA{"Consider the problem of four lines with respect to random flags"},
     EXAMPLE{
        "SchPblm = randomSchubertProblemInstance ({{1},{1},{1},{1}},2,4)",
        "setVerboseLevel 0;",
@@ -643,7 +643,7 @@ doc ///
       Text
          This first verifies that the conditions are either all partitions or all brackets, and that they form a Schubert problem on $Gr(k,n)$.
 	 
-	 Then it computes the intersection number of the prodiuct of Schubert classes in the cohomology ring of the Grassmannnian
+	 Then it computes the intersection number of the product of Schubert classes in the cohomology ring of the Grassmannnian
       Text
          For instance, the problem of four lines is given by 4 partitions {1}$^4$ in $Gr(2,4)$
       Example

@@ -221,7 +221,9 @@ assert Equation(numgens tim#1, 33)
 -- https://github.com/Macaulay2/M2/issues/1804
 -- https://github.com/Macaulay2/M2/pull/1811
 -- https://github.com/Macaulay2/M2/pull/1957
-assert BinaryOperation {symbol <, tim#0, standardSecond}
+-- version 1.20: often fails in Ubuntu amd64 autopkgtests
+-- https://github.com/Macaulay2/M2/issues/2533
+assert BinaryOperation {symbol <, tim#0, 1.3 * standardSecond}
 
 P=QQ[x,y,z,MonomialOrder=>Lex];
 d=z^4+z^2*x*y^9+z*x^9*y+x^5*y^5;

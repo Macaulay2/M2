@@ -385,7 +385,7 @@ cliqueNumber Graph := G -> (
 ---------------------------------------------------------------
 -- complementGraph
 -- returns the complement of a graph or hypergraph
--- NOTE:  does something different for graphs vs hyerpergraphs
+-- NOTE:  does something different for graphs vs hypergraphs
 --------------------------------------------------------------
 
 complementGraph = method();
@@ -1115,7 +1115,7 @@ smallestCycleSize Graph := G -> (
      -- the first non-linear syzygy tells us the smallest induced
      -- cycle has length >= 4.  This is based upon 
      -- the paper of Eisenbud-Green-Hulek-Popescu,
-     -- "Restricting linear syzygyies: algebra and geometry"
+     -- "Restricting linear syzygies: algebra and geometry"
      while  ((smallestCycle == 0) and (i <= pdim betti R)) do (
 	  A := R_i;
           B := flatten degrees A     ;
@@ -1952,7 +1952,7 @@ doc ///
 		     S = QQ[a..f];
 		     c4 = cycle(S,4) -- 4-cycle; chromatic number = 2
 		     c5 = cycle(S,5) -- 5-cycle; chromatic number = 3
-		     k6 = completeGraph S  -- complete graph on 6 vertices; chormatic number = 6
+		     k6 = completeGraph S  -- complete graph on 6 vertices; chromatic number = 6
 		     chromaticNumber c4
 		     chromaticNumber c5
 		     chromaticNumber k6

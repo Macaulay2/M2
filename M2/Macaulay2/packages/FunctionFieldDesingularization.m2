@@ -604,7 +604,7 @@ document {
      Key => {
 	  arcs
 	  },
-     Headline => "prints node lables for the desingularization tree",
+     Headline => "prints node labels for the desingularization tree",
      Usage => "(prevlist,levellist,clist,blist,nlist,elist,philist,leaflist,Philist) = arcs(b0,n0e0,fout)",
      Inputs => {
 	  "polyb" => "irreducible polynomial for the domain A_k",
@@ -643,7 +643,7 @@ document {
      PARA {
      	  "Each node is described by an irreducible polynomial bnew,
 	  cnew its reduction mod x_d, a list of inequality constraints,
-	  an ideal of equaltiy constraints, a birational change-of-variables
+	  an ideal of equality constraints, a birational change-of-variables
 	  from its previous node, and one from the root as well. 
 	  See the test examples for syntax." 
      	  }

@@ -412,13 +412,13 @@ doc ///
 doc ///
   Key 
     isCoordinateZero
-    (isCoordinateZero,Point,ZZ,RR)
+    (isCoordinateZero,AbstractPoint,ZZ,RR)
   Headline
     checks if coordinate has absolute value less than a given tolerance
   Usage
     isCoordinateZero(sol,k,tol)
   Inputs
-    sol:Point
+    sol:AbstractPoint
       solution to a polynomial system
     k:ZZ
       index of coordinate
@@ -459,7 +459,7 @@ doc ///
 doc ///
   Key
     isWitnessSetMember
-    (isWitnessSetMember,WitnessSet,Point)
+    (isWitnessSetMember,WitnessSet,AbstractPoint)
   Headline
     tests whether a point belongs to a solution set
   Usage
@@ -467,7 +467,7 @@ doc ///
   Inputs
     W:WitnessSet
       positive dimensional, properly embedded with slack variables
-    p:Point
+    p:AbstractPoint
   Outputs
     :Boolean
       true if p is a member of the solution set of W, 
@@ -866,7 +866,7 @@ doc ///
     f:List
       a system of polynomials
     sols:List
-      solutions of the system f, each of type @TO Point@ 
+      solutions of the system f, each of type @TO AbstractPoint@ 
       (from a previous calculation)
     dp:ZZ
       the number of decimal places in working precision
@@ -959,8 +959,8 @@ doc ///
       sols = solveRationalSystem(system)
       
     Text
-      The solutions are of type @TO Point@. Each Point comes with 
-      diagnostics. For example, {\tt LastT} is the end value of the 
+      The solutions are of type @TO Point@. Each point {\tt p} comes with cached 
+      diagnostics. For example, {\tt p.cache.LastT} is the end value of the 
       continuation parameter; if it equals 1, 
       then the solver reached the end of the path properly.  
     
@@ -1038,8 +1038,8 @@ doc ///
     Text
       The method {\tt solveSystem} prints the the {\tt PHCpack} input and output file names 
       and returns two solutions. The solutions are of type @TO Point@, defined in @TO NAGtypes@. 
-      Each Point comes with diagnostics.
-      For example, {\tt LastT} is the end value of the continuation parameter; 
+      Each point {\tt p} comes with cached diagnostics.
+      For example, {\tt p.cache.LastT} is the end value of the continuation parameter; 
       if it equals 1, then the solver reached the end of the path properly.
     
     Example

@@ -55,7 +55,7 @@ gin(Ideal) := opts -> (I) -> (
      -- and it is ZZ mod a random large prime if Modular option is used
      -- l is a list of large primes
      -- R is the ring obtained from the ring of I by replacing the coefficient field with c and the
-     -- monomial order with the one specitied by the optional parameter 
+     -- monomial order with the one specified by the optional parameter 
      -- attempts is a list of initial ideals out of which we choose the most frequent as the gin 
      S:= ring I;
      c := 0; 

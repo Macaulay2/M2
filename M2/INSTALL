@@ -431,7 +431,7 @@ instructions above.
 
 To take advantage of parallelism when running "make", append an option of
 the form "-jN" to the command line, where "N" is replaced by the number of
-processors you wish to devote to the task.  (Our makefiles are just begining to
+processors you wish to devote to the task.  (Our makefiles are just beginning to
 take advantage of this.)
 
 To enable the running of the NTL "wizard", which conducts time consuming

@@ -110,7 +110,7 @@ hyperGraph (PolynomialRing, List) := HyperGraph => (R, E) -> (
      -- Assert: E is a List of Lists of variables of R or
      --         E is a List of square-free monomials in R 
      if any(E, e -> class e =!= List) and any(E, e -> class class e =!= PolynomialRing)
-     then ( print apply(E, e -> class e) ;error "Edges must be lists of varibles or monomials.");
+     then ( print apply(E, e -> class e) ;error "Edges must be lists of variables or monomials.");
 
      V := gens R;
      --- check needed for square free 
@@ -348,7 +348,7 @@ cliqueNumber Graph := G -> (
 ---------------------------------------------------------------
 -- complementGraph
 -- returns the complement of a graph or hypergraph
--- NOTE:  does something different for graphs vs hyerpergraphs
+-- NOTE:  does something different for graphs vs hypergraphs
 --------------------------------------------------------------
 
 complementGraph = method();
@@ -1023,7 +1023,7 @@ smallestCycleSize Graph := G -> (
      -- the first non-linear syzygy tells us the smallest induced
      -- cycle has lenght >= 4.  This is based upon 
      -- the paper of Eisenbud-Green-Hulek-Popescu,
-     -- "Restricting linear syzygyies: algebra and geometry"
+     -- "Restricting linear syzygies: algebra and geometry"
      while  ((smallestCycle == 0) and (i <= pdim betti R)) do (
 	  A := R_i;
           B := flatten degrees A     ;
@@ -1318,12 +1318,12 @@ doc ///
 	        Text	 
 		        The function {\tt hyperGraph} is a constructor for @TO HyperGraph @.  The user
 			can input a hypergraph in a number of different ways, which we describe below.
-			The information decribing the hypergraph is stored in a hash table. We require that
+			The information describing the hypergraph is stored in a hash table. We require that
 			there be no inclusion relations between the edges of a hypergraph; that is, that it
 			be a clutter. The reason is that this package is designed for edge ideals, which would
 			lose any information about edges that are supersets of other edges.			
 			
-			For the first possiblity, the user inputs a polynomial ring, which specifices the vertices
+			For the first possibility, the user inputs a polynomial ring, which specifices the vertices
 			of graph, and a list of the edges of the graph.  The edges are represented as lists.
 		Example
 		        R = QQ[a..f]
@@ -1410,7 +1410,7 @@ doc ///
 			can input a graph in a number of different ways, which we describe below.  The information
 			describing the graph is stored in a hash table.
 			
-			For the first possiblity, the user inputs a polynomial ring, which specifices the vertices
+			For the first possibility, the user inputs a polynomial ring, which specifices the vertices
 			of graph, and a list of the edges of the graph.  The edges are represented as lists.
 		Example
 		        R = QQ[a..f]
@@ -1705,7 +1705,7 @@ doc ///
 		     changeRing(H,S,{x,y,y})
 		     changeRing(H,S,{x,y,y},MaximalEdges=>true)
 		Text
-			By defualt, changeRing uses minimal edges that appear after substitution to
+			By default, changeRing uses minimal edges that appear after substitution to
 			construct its output. The optional argument @TO MaximalEdges@ allows 
 			one to get the maximal edges instead.
 	SeeAlso
@@ -1739,7 +1739,7 @@ doc ///
 		     S = QQ[a..f];
 		     c4 = cycle(S,4) -- 4-cycle; chromatic number = 2
 		     c5 = cycle(S,5) -- 5-cycle; chromatic number = 3
-		     k6 = completeGraph S  -- complete graph on 6 vertices; chormatic number = 6
+		     k6 = completeGraph S  -- complete graph on 6 vertices; chromatic number = 6
 		     chromaticNumber c4
 		     chromaticNumber c5
 		     chromaticNumber k6
@@ -1918,7 +1918,7 @@ doc ///
 		m:ZZ
 			size of each partition
 		L:List
-			of integers giving the size of each partition, or a list of paritions which are lists of variables
+			of integers giving the size of each partition, or a list of partitions which are lists of variables
 	Outputs
 		K:Graph
 			which is the complete multipartite graph on the given partitions

@@ -1,7 +1,7 @@
 --  From: Burt Totaro <B.J.Totaro@dpmms.cam.ac.uk>
 --  Date: Wed, 15 Jan 2003 19:02:53 +0000
 
---  Here is a more detailed description of Grobner bases for commmutative
+--  Here is a more detailed description of Grobner bases for commutative
 --  Z/p^r-algebras R, in particular how to find a Grobner basis.
 --  This note ends with some programs I wrote, for reducing modulo
 --  such a Grobner basis (with various restrictions).

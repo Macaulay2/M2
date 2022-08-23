@@ -4,8 +4,8 @@ setDefault (Software=>BERTINI)
 R = CC[x,y];
 S = {x^2-1,y^2-1};
 T = {x^2+y^2-1, x*y};
-solsS = {(1,-1),(1,1),(-1,1),(-1,-1)};
-solsT = {(1,0),(0,1),(-1,0),(0,-1)};
+solsS = point\{{{1,-1}},{{1,1}},{{-1,1}},{{-1,-1}}};
+solsT = point\{{{1,0}},{{0,1}},{{-1,0}},{{0,-1}}};
 
 /// -- larger example (commented out)
 loadPackage "NumericalAlgebraicGeometry"
@@ -15,7 +15,7 @@ T = (katsuraBench 11)_*; -- #sols=1024, M2:4, H:7, B:15, P:37
 ///
 
 -- solveSystem
-sols = solveSystem(T)
+sols = solveSystem T
 assert(areEqual(sortSolutions solsT, sortSolutions sols))
 
 -- track
@@ -25,9 +25,9 @@ assert(areEqual(sortSolutions solsT, sortSolutions sols))
 -- refine 
 R = CC[x,y];
 T = {x^2+y^2-1, x*y};
-sols = { {1.00000001,0.00000001}, { -0.0000001,1.0000002} };
+sols = { point{{1.00000001,0.00000001}}, point{{ -0.0000001,1.0000002}} };
 rsols = refine(T, sols, Bits=>1000)
-assert areEqual(sortSolutions rsols, {{0,1},{1,0}})
+assert areEqual(sortSolutions rsols, point\{{{0,1}},{{1,0}}})
 
 -- numericalVariety
 V = numericalIrreducibleDecomposition ideal T
@@ -46,7 +46,7 @@ sols = parameterHomotopy(
     {u1,u2,u3},-- parameters
     {finalParameters0,finalParameters1}
     )
-assert areEqual(sortSolutions first sols, sortSolutions {{11, 1}, {12, 1}, {13, 1}})
+assert areEqual(sortSolutions first sols, sortSolutions\\point\{{{11, 1}}, {{12, 1}}, {{13, 1}}})
 
 -- isOn
 R = CC[x,y,z];
