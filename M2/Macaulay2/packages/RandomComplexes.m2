@@ -387,6 +387,7 @@ doc ///
    Key
      disturb
      (disturb,ChainComplex,RR)
+     [disturb, Strategy]
    Headline
      disturb the matrices of a chain complex over RR
    Usage
@@ -458,6 +459,7 @@ doc ///
    Key
      testTimeForLLLonSyzygies
      (testTimeForLLLonSyzygies,ZZ,ZZ)
+     [testTimeForLLLonSyzygies, Height]
    Headline
      test timing for LLL on syzygies 
    Usage

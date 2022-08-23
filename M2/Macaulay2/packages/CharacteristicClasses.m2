@@ -2058,7 +2058,12 @@ doc ///
 	  (CSM, QuotientRing, NormalToricVariety,Ideal,MutableHashTable)
 	  (CSM, Ideal, Symbol)
 	  (CSM,NormalToricVariety)
-          (CSM,QuotientRing,NormalToricVariety)	  
+	  (CSM,QuotientRing,NormalToricVariety)
+	  [CSM, CompMethod]
+	  [CSM, Method]
+	  [CSM, CheckSmooth]
+	  [CSM, InputIsSmooth]
+	  [CSM, IndsOfSmooth]
      Headline
      	  The Chern-Schwartz-MacPherson class
      Usage
