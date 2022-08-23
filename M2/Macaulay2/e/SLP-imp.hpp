@@ -21,6 +21,30 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
   abort();
 }
 
+template <typename RT>
+SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
+      M2_string libName,
+      int nInputs,
+      int nOutputs,
+      const MutableMat<SMat<RT> >* empty
+      ): mRing(empty->getMat().ring())
+{
+  std::cerr << "SLEvaluatorConcrete constructor not defined for sparse matrices\n";  
+  abort();
+}
+
+template <typename RT>
+SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
+      M2_string libName,
+      int nInputs,
+      int nOutputs,
+      const MutableMat<DMat<RT> >* empty
+      ): mRing(empty->getMat().ring())
+{
+  std::cerr << "SLEvaluatorConcrete constructor for JIT compilation TBI...\n";  
+  abort();
+}
+  
 // copy constructor
 template <typename RT>
 SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(const SLEvaluatorConcrete<RT>& a)

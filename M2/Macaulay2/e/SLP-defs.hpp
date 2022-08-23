@@ -150,6 +150,18 @@ class SLEvaluatorConcrete : public SLEvaluator
       M2_arrayint constsPos,
       M2_arrayint varsPos,
       const MutableMat<SMat<RT> >* consts /*const SMat<RT>& consts*/);
+  SLEvaluatorConcrete(
+      M2_string libName,
+      int nInputs,
+      int nOutputs,
+      const MutableMat<DMat<RT> >* empty
+      );
+  SLEvaluatorConcrete(
+      M2_string libName,
+      int nInputs,
+      int nOutputs,
+      const MutableMat<SMat<RT> >* empty
+      );
   ~SLEvaluatorConcrete();
   SLEvaluator* specialize(const MutableMatrix* parameters) const;
   SLEvaluator* specialize(const MutableMat<DMat<RT> >* parameters) const;

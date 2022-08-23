@@ -734,8 +734,6 @@ evaluate(InterpretedSLProgram, MutableMatrix, MutableMatrix) := (slp,I,O) -> (
     rawSLEvaluatorEvaluate(rawSLEvaluatorK(slp,K), raw I, raw O);
     )
 
-rawCompiledSLEvaluator = (a,b,c) -> error "implement me in the kernel!!!"
-
 rawCompiledSLEvaluatorK = method()
 rawCompiledSLEvaluatorK (CompiledSLProgram, Ring) := (slp, K) -> if slp.cache#?K then 
 slp.cache#K else (
@@ -745,10 +743,10 @@ slp.cache#K else (
     	error ("just-in-time compilation is not implemented for "| toString K) 
     	);
     fname := temporaryFileName() | "-GateSystem";
-    cppName := fname | ".c";
+    cppName := fname | ".cpp";
     libName := fname | ".dynamicM2";
     f := openOut cppName;
-    f << "#include <complex>" 
+    f << "#include <complex>" << endl; 
     f << "typedef " | typeName | " C;" << endl; -- the type needs to be adjusted!!!
     cCode (slp#"input", slp#"output", f);
     f << close;
@@ -757,7 +755,9 @@ slp.cache#K else (
     if run compileCommand > 0 then error ("error compiling a straightline program:\n"|compileCommand);      
     print get cppName;
     print libName;
-    slp.cache#K = rawCompiledSLEvaluator(libName, numcols slp#"input", numcols slp#"output")
+    slp.cache#K = rawCompiledSLEvaluator(libName, numcols slp#"input", numcols slp#"output",
+	 raw mutableMatrix(K,0,0) -- we need to pass only the field 
+	 )
     )
 
 rawCompiledSLEvaluatorEvaluate = (a,b,c) -> error "implement me in the kernel!!!"

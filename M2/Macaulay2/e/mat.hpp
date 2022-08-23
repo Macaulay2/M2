@@ -343,6 +343,11 @@ class MutableMatrix : public MutableEngineObject
       M2SLProgram *P,
       M2_arrayint constsPos,
       M2_arrayint varsPos) const = 0;  // this = const matrix
+
+  virtual M2SLEvaluator* createCompiledSLEvaluator(
+      M2_string libName,
+      int nInputs,
+      int nOutputs) const = 0;  // this = const matrix
 };
 
 #endif
