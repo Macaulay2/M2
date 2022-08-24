@@ -27,6 +27,7 @@ export {
     "Compute",
     "sagbiBasis",
     "groebnerMembershipTest",
+    "groebnerSubductionQuotient",
     "subringIntersection"
     }
 

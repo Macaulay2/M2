@@ -449,6 +449,53 @@ groebnerMembershipTest(RingElement, Subring) := (f, S) -> (
     numcols selectInSubring(1, matrix {{fNormalForm}}) == 1
     )
 
+-- groebnerSubductionQuotient(f, S) = h
+--
+-- h in K[y1 .. ys]
+groebnerSubductionQuotient = method() 
+groebnerSubductionQuotient(RingElement, Subring) := (f, S) -> (
+    local outputRing;
+    
+    G := gens S;
+    Q := ring G;
+    R := ambient Q;
+    J := ideal Q;
+    FF := coefficientRing R;
+    
+    fR := lift(f, R);
+    GR := lift(G, R);
+    -- assert instance(Amb, PolynomialRing);
+    tensorRingNumVars := (numgens R) + (numcols G);
+    oldOrder := (options R).MonomialOrder;
+    newOrder := prepend(Eliminate(numgens R), oldOrder); -- probably not necessary
+    tensorRing := FF[Variables => tensorRingNumVars, MonomialOrder => oldOrder];
+    
+    liftToTensorRing := map(tensorRing, R, (vars tensorRing)_{0 .. numgens R - 1});
+    fInTensorRing := liftToTensorRing fR;
+    GInTensorRing := liftToTensorRing GR;
+    JInTensorRing := liftToTensorRing J;
+    I := ideal((vars tensorRing)_{numgens R .. tensorRingNumVars - 1} - GInTensorRing);
+    fNormalForm := fInTensorRing % (I + JInTensorRing);
+    
+    -- present fNormalForm to the user in the subductionQuotientRing
+    --  construct the ring if not present in the cache 
+    --  also give the natural map from the subductionQuotientRing to Q 
+    if not S.cache#?"subductionQuotientRing" then (
+	outputRing = FF[Variables => numcols G];
+	S.cache#"subductionQuotientRing" = outputRing;
+	S.cache#"subductionQuotientRingMap" = map(Q, outputRing, G);
+	);
+    outputRing = S.cache#"subductionQuotientRing";
+    outputMap := map(outputRing, tensorRing, matrix {toList((numgens R):0)} | vars outputRing);
+    
+    outputMap fNormalForm
+    
+--    numcols selectInSubring(1, matrix {{fNormalForm}}) == 1
+    )
+
+RingElement // Subring := (f, S) -> (
+    groebnerSubductionQuotient(f, S)    
+    )
 
 
 -- Matrix or RingElement % Subring
