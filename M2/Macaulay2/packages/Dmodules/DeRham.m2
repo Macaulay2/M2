@@ -188,6 +188,7 @@ deRhamAll RingElement := options -> f -> (
 
 protect Input						    -- not exported?
 
+-- internal
 iAllt = method( Options => {Strategy => Schreyer})
 iAllt Module:= options -> I -> (
      pInfo(2, "iAllt (integrationAllWithTransfer) in trans.m2");
@@ -264,6 +265,7 @@ iAllt Module:= options -> I -> (
 -- Example:  QQ[x,y]
 --           f = x*y*(x-y)
 --           iAllt cokernel matrix derLogF(f)
+-- internal
 derLogF = method();
 derLogF RingElement := f -> (
   R := ring f;
@@ -319,6 +321,7 @@ logCohomology RingElement := f -> (
 -- use S; f=(x^3+y^4+x*y^3)*(x^2-y^2); logCohomology f;
 --  the transfer cycles contains dx and dy.
 
+-- internal
 getTransfer=method();
 getTransfer (HashTable,ZZ) := (cohom,k) -> (
   t:=cohom#TransferCycles;
@@ -329,6 +332,7 @@ getTransfer (HashTable,ZZ) := (cohom,k) -> (
 -- Example:
 -- use S; f=x*y*(x-y); cc=logCohomology f; getReducedTransfer(cc,1);
 -- use S; f=(x^3+y^4+x*y^3)*(x^2+y^2); cc=logCohomology f; getReducedTransfer(cc,1);
+-- internal
 getReducedTransfer=method();
 getReducedTransfer (HashTable,ZZ) := (cohom,k) -> (
   tmp:=cohom;

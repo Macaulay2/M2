@@ -107,6 +107,7 @@ extractDiffsAlgebra PolynomialRing := D -> (
 protect CommAlgebra
 protect CAtoWA
 protect WAtoCA
+-- internal
 createCommAlgebra = method()
 createCommAlgebra PolynomialRing := W -> (
      if W.monoid.Options.WeylAlgebra === {} then
@@ -227,6 +228,7 @@ Dtransposition ChainComplex := C -> (
      )
 
 -- puts a module or matrix purely in shift degree 0.
+-- internal
 zeroize = method()
 zeroize Module := M -> (
      W := ring M;
@@ -244,6 +246,7 @@ zeroize Matrix := m -> (
 --   In the Dmodule code, it appears that this is checked in
 --   3 ways: using isQuotientModule, doing what is done here,
 --   and doing what is done here, without the zeroize.
+-- internal
 ensureQuotientModule = method()
 ensureQuotientModule(Module, String) := (M,errorString) -> (
    F := (ring M)^(numgens source gens M);
@@ -279,6 +282,10 @@ Ddim Module := M -> (
      ltm := W.WAtoCA leadTerm gens gbm;
      dim cokernel ltm
      )
+
+-- install a new hook
+addHook((codim, Module), Strategy => WeylAlgebra,
+    (o, M) -> if isWeylAlgebra(R := ring M) then (dim ring M - Ddim M))
 
 -- This routine determines whether a D-module is holonomic
 isHolonomic = method()
@@ -345,61 +352,6 @@ holonomicRank Module := M -> (
      holRank
      )
 
--- This routine computes the characteristic ideal of a D-module
-charIdeal = method()
-charIdeal Ideal := I -> (
-     W := ring I;
-     if W.monoid.Options.WeylAlgebra == {}
-     then error "expected a Weyl algebra";
-     createDpairs W;
-     w := apply( toList(0..numgens W - 1), 
-	  i -> if member(i, W.dpairInds#1) then 1 else 0 );
-     ideal mingens inw (I, w)
-     )
-
-charIdeal Module := M -> (
-     W := ring M;
-     m := presentation M;
-     if W.monoid.Options.WeylAlgebra == {}
-     then error "expected a Weyl algebra";
-     createDpairs W;
-     w := apply( toList(0..numgens W - 1), 
-	  i -> if member(i, W.dpairInds#1) then 1 else 0 );
-     ideal mingens ann cokernel inw (m, w)
-     )
-
--- This routine computes the singular locus of a D-ideal
--- SHOULD IT BE CHANGED SO THAT OUTPUT IS IN POLY SUBRING?
-singLocus = method()
-singLocus Ideal := I -> (
-     singLocus ((ring I)^1/I)
-     )
-
-singLocus Module := M -> (
-     W := ring M;
-     createDpairs W;
-     if not W.?CommAlgebra then createCommAlgebra W;
-     I1 := charIdeal M;
-     I2 := W.WAtoCA ideal W.dpairVars#1;
-     -- do the saturation
-     SatI := saturate(I1, I2);
-     -- set up an auxiliary ring to perform intersection
-     tempCA := (coefficientRing W)(monoid [W.dpairVars#1, W.dpairVars#0, 
-          MonomialOrder => Eliminate (#W.dpairInds#1)]);
-     newInds := inversePermutation join(W.dpairInds#1, W.dpairInds#0);
-     CAtotempCA := map(tempCA, W.CommAlgebra, 
-	  matrix {apply(newInds, i -> tempCA_i)});
-     tempCAtoCA := map(W.CommAlgebra, tempCA, matrix{ join (
-		    apply(W.dpairVars#1, i -> W.WAtoCA i),
-	            apply(W.dpairVars#0, i -> W.WAtoCA i) ) } );
-     -- do the intersection
-
-     gbSatI := gb CAtotempCA SatI;
-     I3 := ideal compress tempCAtoCA selectInSubring(1, gens gbSatI);
-     if I3 == ideal 1_(W.CommAlgebra) then W.CAtoWA I3
-     else W.CAtoWA radical I3
-     )
-
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- This routine prunes a matrix (whose cokernel represents a module) by
@@ -461,14 +413,14 @@ Dprune Module := options -> M -> (
      cokernel Dprune relations M
      )
 
---- OLD VERSION OF Dprune.  Will be phased out ---
-Dprune2 = method(Options => {optGB => true})
-Dprune2 Matrix := options -> M -> (
-     Dprune cokernel M
-     )
+importFrom_Core {
+    "raw",
+    "rawMatrix",
+    "rawMutableMatrix",
+    "rawReduceByPivots",
+    }
 
-debug Core
-
+-- internal, used by Dprune only
 reduceCompress = method()
 reduceCompress Matrix := (m) -> (
      R := ring m;
@@ -493,6 +445,8 @@ reduceCompress Matrix := (m) -> (
 	  );
      mout
      )
+
+----------------------------------------------------------------
 
 TEST ///
 --Things needing tests: Dprune (waiting for documentation)
@@ -639,7 +593,6 @@ assert(describe extractDiffsAlgebra D === describe(QQ[Du,Dv, Degrees => {-3,9}])
 ///
 
 TEST///
-needsPackage("Dmodules")
 W = makeWA(QQ[x,y])
 assert (W^1*x  == image matrix{{x}});
 assert (entries map(W^1,W^1,x)=={{x}});

@@ -45,20 +45,8 @@ findExps := (w, k0, k1) -> (
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-Drestrict = method( Options => {Strategy => Schreyer} )
-Drestrict(Ideal,List)  := options -> (I,w) -> (     print("WARNING! Drestrict is an obsolete name for Drestriction");
-Drestriction(I,w,options))
-Drestrict(Module,List) := options -> (M,w) -> (     print("WARNING! Drestrict is an obsolete name for Drestriction");
-Drestriction(M,w,options))
-Drestrict(ZZ,Ideal,List) := options->(k,I,w)->(     print("WARNING! Drestrict is an obsolete name for Drestriction");
-Drestriction(k,I,w,options))
-Drestrict(ZZ,Module,List) := options->(k,M,w)->(     print("WARNING! Drestrict is an obsolete name for Drestriction");
-Drestriction(k,M,w,options))
-
 Drestriction = method( Options => {Strategy => Schreyer} )
-Drestriction(Ideal,List) := options -> (I,w) -> (
-     Drestriction ((ring I)^1/I, w, options )     )
-
+Drestriction(Ideal,  List) := options -> (I,w) -> Drestriction(comodule I, w, options)
 Drestriction(Module, List) := options -> (M,w) -> (
      ensureQuotientModule(M, 
 	  "Drestriction currently only handles quotient modules");
@@ -69,9 +57,7 @@ Drestriction(Module, List) := options -> (M,w) -> (
      outputTable#HomologyModules
      )
 
-Drestriction(ZZ,Ideal,List) := options -> (k,I,w) -> (
-     Drestriction (k, (ring I)^1/I, w, options)     )
-
+Drestriction(ZZ, Ideal, List) := options -> (k,I,w) -> Drestriction (k, comodule I, w, options)
 Drestriction(ZZ,Module,List) := options -> (k,M,w) -> (
      ensureQuotientModule(M, 
 	  "Drestriction currently only handles quotient modules");
@@ -86,28 +72,10 @@ Drestriction(ZZ,Module,List) := options -> (k,M,w) -> (
      output
      )
 
-DrestrictClasses = method( Options => {Strategy => Schreyer} )
-DrestrictClasses(Ideal,List)  := options -> (I,w) -> (
-     print("WARNING! Drestrict is an obsolete name for Drestriction");
-     DrestrictionClasses(I,w,options))
-
-DrestrictClasses(Module,List) := options -> (M,w) -> (
-     print("WARNING! Drestrict is an obsolete name for Drestriction");
-     DrestrictionClasses(M,w,options))
-
-DrestrictClasses(Ideal,List,ZZ) := options->(I,w,k)->(
-     print("WARNING! Drestrict is an obsolete name for Drestriction");
-     DrestrictionClasses(I,w,k,options))
-
-DrestrictClasses(Module,List,ZZ) := options->(M,w,k)->(
-     print("WARNING! Drestrict is an obsolete name for Drestriction");
-     DrestrictionClasses(M,w,k,options))
-
+--------------------------------------------------------------------------------
 
 DrestrictionClasses = method( Options => {Strategy => Schreyer} )
-DrestrictionClasses(Ideal,List) := options -> (I,w) -> (
-     DrestrictionClasses ((ring I)^1/I, w, options)     )
-
+DrestrictionClasses(Ideal, List) := options -> (I,w) -> DrestrictionClasses(comodule I, w, options)
 DrestrictionClasses(Module, List) := options -> (M,w) -> (
      ensureQuotientModule(M, 
 	  "Drestriction currently only handles quotient modules");
@@ -122,9 +90,7 @@ DrestrictionClasses(Module, List) := options -> (M,w) -> (
      outputTable
      )
 
-DrestrictionClasses(ZZ,Ideal,List) := options -> (k,I,w) -> (
-     DrestrictionClasses (k, (ring I)^1/I, w, options)     )
-
+DrestrictionClasses(ZZ, Ideal, List) := options -> (k,I,w) -> DrestrictionClasses (k, comodule I, w, options)
 DrestrictionClasses(ZZ,Module,List) := options -> (k,M,w) -> (
      ensureQuotientModule(M, 
 	  "Drestriction currently only handles quotient modules");
@@ -152,24 +118,7 @@ DrestrictionClasses(ZZ,Module,List) := options -> (k,M,w) -> (
      output
      )
 
-
-DrestrictComplex = method( Options => {Strategy => Schreyer} )
-DrestrictComplex(Ideal,List)  := options -> (I,w) -> (
-     print("WARNING! Drestrict is an obsolete name for Drestriction");
-     DrestrictionComplex(I,w,options))
-
-DrestrictComplex(Module,List) := options -> (M,w) -> (
-     print("WARNING! Drestrict is an obsolete name for Drestriction");
-     DrestrictionComplex(M,w,options))
-
-DrestrictComplex(Ideal,List,ZZ) := options->(I,w,k)->(
-     print("WARNING! Drestrict is an obsolete name for Drestriction");
-     DrestrictionComplex(I,w,k,options))
-
-DrestrictComplex(Module,List,ZZ) := options->(M,w,k)->(
-     print("WARNING! Drestrict is an obsolete name for Drestriction");
-     DrestrictionComplex(M,w,k,options))
-
+--------------------------------------------------------------------------------
 
 DrestrictionComplex = method( Options => {Strategy => Schreyer} )
 DrestrictionComplex(Ideal,List) := options -> (I,w) -> (
@@ -187,10 +136,7 @@ DrestrictionComplex(Module, List) := options -> (M,w) -> (
      outputTable#RestrictComplex
      )
 
-DrestrictIdeal = method( Options => {Strategy => Schreyer} )
-DrestrictIdeal(Ideal,List)  := options -> (I,w) -> (
-     print("WARNING! Drestrict is an obsolete name for Drestriction");
-     DrestrictionIdeal(I,w,options))
+--------------------------------------------------------------------------------
 
 DrestrictionIdeal = method( Options => {Strategy => Schreyer} )
 DrestrictionIdeal(Ideal,List) := options -> (I,w) -> (
@@ -209,14 +155,7 @@ DrestrictionIdeal(Ideal,List) := options -> (I,w) -> (
      outputIdeal
      )
 
-DrestrictAll = method( Options => {Strategy => Schreyer} )
-DrestrictAll(Ideal,List)  := options -> (I,w) -> (
-     print("WARNING! Drestrict is an obsolete name for Drestriction");
-     DrestrictionAll(I,w,options))
-
-DrestrictAll(Module,List) := options -> (M,w) -> (
-     print("WARNING! Drestrict is an obsolete name for Drestriction");
-     DrestrictionAll(M,w,options))
+--------------------------------------------------------------------------------
 
 DrestrictionAll = method( Options => {Strategy => Schreyer} )
 DrestrictionAll(Ideal,List) := options -> (I,w) -> (
@@ -245,16 +184,6 @@ DrestrictionAll(Module, List) := options -> (M,w) -> (
 -- and Drestriction routines
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-
-Dintegrate = method( Options => {Strategy => Schreyer} )
-Dintegrate(Ideal,List)  := options -> (I,w) -> (     print("WARNING! Dintegrate is an obsolete name for Dintegration");
-Dintegration(I,w,options))
-Dintegrate(Module,List) := options -> (M,w) -> (     print("WARNING! Dintegrate is an obsolete name for Dintegration");
-     Dintegration(M,w,options))
-Dintegrate(ZZ,Ideal,List)  := options -> (k,I,w) -> (     print("WARNING! Dintegrate is an obsolete name for Dintegration");
-     Dintegration(k,I,w,options))
-Dintegrate(ZZ,Module,List) := options -> (k,M,w) -> (     print("WARNING! Dintegrate is an obsolete name for Dintegration");
-     Dintegration(k,M,w,options))
 
 Dintegration = method( Options => {Strategy => Schreyer} )
 Dintegration(Ideal,List) := options -> (I,w) -> (
@@ -303,19 +232,7 @@ Dintegration(ZZ, Module, List) := options -> (k,M,w)  -> (
      Mout
      )     
 
-DintegrateClasses = method( Options => {Strategy => Schreyer} )
-DintegrateClasses(Ideal,List)  := options -> (I,w) -> (
-     print("WARNING! Dintegrate is an obsolete name for Dintegration");
-     DintegrationClasses(I,w,options))
-DintegrateClasses(Module,List) := options -> (M,w) -> (
-     print("WARNING! Dintegrate is an obsolete name for Dintegration");
-     DintegrationClasses(M,w,options))
-DintegrateClasses(ZZ,Ideal,List) := options->(k,I,w)->(
-     print("WARNING! Dintegrate is an obsolete name for Dintegration");
-     DintegrationClasses(I,w,k,options))
-DintegrateClasses(ZZ,Module,List) := options->(k,M,w)->(
-     print("WARNING! Dintegrate is an obsolete name for Dintegration");
-     DintegrationClasses(M,w,k,options))
+--------------------------------------------------------------------------------
 
 DintegrationClasses = method( Options => {Strategy => Schreyer} )
 DintegrationClasses(Ideal,List) := options -> (I,w) -> (
@@ -397,15 +314,7 @@ DintegrationClasses(ZZ,Module,List) := options -> (k,M,w) -> (
      output
      )
 
-
-DintegrateComplex = method( Options => {Strategy => Schreyer} )
-DintegrateComplex(Ideal,List)  := options -> (I,w) -> (
-     print("WARNING! Dintegrate is an obsolete name for Dintegration");
-     DintegrationComplex(I,w,options))
-DintegrateComplex(Module,List) := options -> (M,w) -> (
-     print("WARNING! Dintegrate is an obsolete name for Dintegration");
-     DintegrationComplex(M,w,options))
-
+--------------------------------------------------------------------------------
 
 DintegrationComplex = method( Options => {Strategy => Schreyer} )
 DintegrationComplex(Ideal, List) := options -> (I,w) -> (
@@ -427,10 +336,7 @@ DintegrationComplex(Module, List) := options -> (M,w) -> (
      F
      )
 
-DintegrateIdeal = method( Options => {Strategy => Schreyer} )
-DintegrateIdeal(Ideal,List)  := options -> (I,w) -> (
-     print("WARNING! Dintegrate is an obsolete name for Dintegration");
-     DintegrationIdeal(I,w,options))
+--------------------------------------------------------------------------------
 
 DintegrationIdeal = method( Options => {Strategy => Schreyer} )
 DintegrationIdeal(Ideal,List) := options -> (I,w) -> (
@@ -455,14 +361,7 @@ DintegrationIdeal(Ideal,List) := options -> (I,w) -> (
      outputIdeal
      )
 
-DintegrateAll = method( Options => {Strategy => Schreyer} )
-DintegrateAll(Ideal,List)  := options -> (I,w) -> (
-     print("WARNING! Dintegrate is an obsolete name for Dintegration");
-     DintegrationAll(I,w,options))
-
-DintegrateAll(Module,List) := options -> (M,w) -> (
-     print("WARNING! Dintegrate is an obsolete name for Dintegration");
-     DintegrationAll(M,w,options))
+--------------------------------------------------------------------------------
 
 DintegrationAll = method( Options => {Strategy => Schreyer} )
 DintegrationAll(Ideal,List) := options -> (I,w) -> (

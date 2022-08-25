@@ -18,18 +18,6 @@ isInMultiplierIdeal(RingElement, Ideal, QQ) := o -> (g,I,c) -> (
      -c > max roots
      )
 
-star = method()
-star (Ideal,List) := (I,vw) -> (
-     W := ring I;
-     n := numgens W;
-     u := symbol u;
-     Wu := (coefficientRing W)(monoid [gens W, u_1, u_2, 
-	       WeylAlgebra => W.monoid.Options.WeylAlgebra]);
-     (u1,u2) := toSequence (gens Wu)_{n,n+1};
-     Ih := ideal homogenize(sub(gens I,Wu), u1, vw | {1,0}) + ideal (1-u1*u2);
-     sub(eliminateWA(Ih,{u1,u2}),W)
-     ) 
-
 multiplierIdeal = method(Options => {Strategy=>ViaElimination, DegreeLimit=>null})
 multiplierIdeal (Ideal, ZZ) := o -> (a,c) -> multiplierIdeal(a, promote(c,QQ), Strategy=>o.Strategy, DegreeLimit=>o.DegreeLimit)
 multiplierIdeal (Ideal, QQ) := o -> (a,c) -> first multiplierIdeal(a, {c}, Strategy=>o.Strategy, DegreeLimit=>o.DegreeLimit) 

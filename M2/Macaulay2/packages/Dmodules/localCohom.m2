@@ -1,11 +1,7 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
-local localCohomOT
-local localCohomILOaku
-local computeLocalCohomOT
-local localCohomRegular
-local localCohomILOTW
 local Generator
+
 ------------------------------------------------------------------
 -- LOCAL COHOMOLOGY
 -- 

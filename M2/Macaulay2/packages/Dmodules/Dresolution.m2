@@ -27,8 +27,7 @@ shifts := (m, w, oldshifts) -> (
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-debug Core
-
+importFrom_Core {"rawKernelOfGB"}
 kerGB := m -> (
      -- m should be a matrix which is a GB, and
      -- whose source has the Schreyer order.
@@ -63,18 +62,8 @@ kerGB := m -> (
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-Dres = method( Options => {Strategy => Schreyer, LengthLimit => infinity} )
-Dres Ideal  := options -> I -> ( Dresolution I )
-Dres Module := options -> M -> ( Dresolution M )
-Dres(Ideal,List)  := options -> (I,w) -> ( Dresolution(I,w,options) )
-Dres(Module,List) := options -> (M,w) -> ( Dresolution(M,w,options) )
-
-
 Dresolution = method( Options => {Strategy => Schreyer, LengthLimit => infinity} )
-Dresolution Ideal := options -> I -> (
-     Dresolution((ring I)^1/I, options)
-     )
-
+Dresolution Ideal  := options -> I -> Dresolution(comodule I, options)
 Dresolution Module := options -> M -> (
 
      pInfo (1, "ENTERING Dresolution ... ");
@@ -250,6 +239,10 @@ Dresolution (Module, List) := options -> (M, w) -> (
      M.cache.resolution#w
      )
 
+-- install a new hook
+addHook((resolution, Module), Strategy => WeylAlgebra,
+    (o, M) -> if isWeylAlgebra(R := ring M) then Dresolution(M,
+	applyPairs(options Dresolution, (key, val) -> (key, o#key))))
 
 TEST ///
 -- Boundary cases

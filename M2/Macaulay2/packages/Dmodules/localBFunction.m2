@@ -1,15 +1,21 @@
+-- internal, also used in multiplierIdeals.m2
+-- TODO: move to Dbasic?
 eliminateWA = method()
-eliminateWA (Ideal, List) := Ideal => (I,v) -> (
-     R := ring I;
-     if not all(v,g->isSubset(set {g},set gens R) ) then error "expected generators of the ring";
-     w := apply(gens R, g->if isSubset(set{g}, set v) then 1 else 0); 
-     W := (coefficientRing R)(monoid [gens R, WeylAlgebra => R.monoid.Options.WeylAlgebra,  MonomialOrder=>{Weights=>w}]);
-     G := flatten entries gens gb sub(I,W);
-     sub(ideal select(G, f->all(listForm f, m->sum(numgens W, i->m#0#i*w#i) ==0)),R)
-     ) 
+eliminateWA(Ideal, List) := Ideal => (I, v) -> (
+    R := ring I;
+    if not isSubset(v, gens R) then error "expected generators of the ring";
+    w := apply(gens R, g -> if member(g, v) then 1 else 0);
+    W := (coefficientRing R)(monoid [gens R,
+	    MonomialOrder => { Weights => w },
+	    WeylAlgebra   => R.monoid.Options.WeylAlgebra]);
+    G := flatten entries gens gb sub(I, W);
+    -- TODO: simplify this
+    sub(ideal select(G, f -> all(listForm f, m -> sum(numgens W, i -> m#0#i*w#i) == 0)), R))
 
+-- FIXME: use getSymbol
 protect s						    -- is this right?  should s be visible to the user?
 
+-- internal
 computeJf = method()
 computeJf RingElement := Ideal => f -> (
      if #(options (ring f).monoid)#WeylAlgebra > 0 -- isWA
@@ -59,6 +65,7 @@ computeJf RingElement := Ideal => f -> (
      sub(I3a,Rs)
      )
 
+-- internal, also used in multiplierIdeals.m2
 exceptionalLocusB = method(Options => {Strategy => Syzygies})
 
 -- find an algebraic set where b is not a multiple of the local b-function of f

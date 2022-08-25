@@ -320,6 +320,7 @@ RatSols(Ideal, List, List) := (I, f, w) -> (
      solsList
      )
 
+-- internal
 TwistOperator = method()
 TwistOperator(Ideal, RingElement, ZZ) := (I, f, k) -> (
      ideal apply((entries gens I)#0, L -> TwistOperator(L, f, k))
@@ -842,6 +843,7 @@ ExternalProduct(ChainComplex, ChainComplex) := options -> (F, G) -> (
 
 
 ----- A utility function for the tests in this file -------
+-- internal
 compareSpans = method();
 compareSpans (List, List) := (list1, list2) -> (
     -- INPUT: list1, list2      two lists of polynomials (assumed to be in the same ring)

@@ -1,11 +1,10 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
-needsPackage "FourTiTwo"; -- Needed only for gkz
-
 
 -----------------------------------------
 -- GKZ related things
 -----------------------------------------
 
+-- internal
 gkzInputValidation = method();
 gkzInputValidation (Matrix, List, PolynomialRing) := (A, b, W) -> (
     if (numRows A != #b) then
@@ -27,6 +26,7 @@ eulerOperators (Matrix, List, PolynomialRing) := (A, b, W) -> (
 eulerOperators (Matrix, PolynomialRing) := (A, W) -> eulerOperators(A, toList((numRows A): 0), W)
 
 
+-- Constructs a toric ideal in the partials as an ideal in the Weyl algebra
 toricIdealPartials = method();
 toricIdealPartials (Matrix, PolynomialRing) := (A, W) -> (
     gkzInputValidation(A, W);
@@ -63,7 +63,6 @@ gkz(Matrix, List) := (A, b) -> (
     x := symbol x;
     W := QQ(monoid [x_1 .. x_n, D_1 .. D_n,
 	WeylAlgebra => apply(toList(1..n), i -> x_i=>D_i)]);
-        
     gkz(A, b, W)
     )
     
@@ -93,70 +92,9 @@ AppellF1 List := options -> w -> (
      --J = ideal(I_2, I_1+y^2*I_2); 
      I)
 
-
 --------------------------------------
 -- Other things
 --------------------------------------
-
--- This routine takes a polynomial element f of the Weyl algebra 
--- and returns its annihilator ideal.
-PolyAnn = method()
-PolyAnn RingElement := f -> (
-     W := ring f;
-     createDpairs W;
-     dpV := W.dpairVars;
-     -- error checking
-     if W.monoid.Options.WeylAlgebra === {} then
-     error "Expected element of a Weyl algebra";
-     if substitute(f, (dpV#1 | dpV#2) / (i->(i=>0))) != f then
-     error "Expected polynomial element of Weyl algebra";
-     if W.monoid.Options.Degrees =!= toList(numgens W:{1}) then
-     error "Expect all degrees in a Weyl algebra to be 1";
-     tempL := (dpV#1 / (i -> 2*f*i - i*f));  -- (fD_i - df/dx_i)
-     suffHigh := (degree f)#0 + 1;
-     tempL = join(tempL, (dpV#1 / (i -> i^suffHigh)));  -- D_i^(large m)
-     ideal tempL
-     )
-
--- This routine takes a polynomial element f of the Weyl algebra 
--- and returns the annihilator ideal of 1/f, or takes two polynomials
--- g and f and returns the annihilator ideal of g/f
-RatAnn = method()
-RatAnn RingElement := f -> (
-     W := ring f;
-     RatAnn(1_W, f)
-     )
-
-RatAnn(RingElement, RingElement) := (g,f) -> (
-     W := ring f;
-     createDpairs W;
-     dpV := W.dpairVars;
-     -- error checking
-     if W =!= ring g then
-     error "Expected elements of the same ring";
-     if W.monoid.Options.WeylAlgebra === {} then
-     error "Expected element of a Weyl algebra";
-     if substitute(f, (dpV#1 | dpV#2) / (i->(i=>0))) != f then
-     error "Expected polynomial element of Weyl algebra";
-     if substitute(g, (dpV#1 | dpV#2) / (i->(i=>0))) != g then
-     error "Expected polynomial element of Weyl algebra";
-     if W.monoid.Options.Degrees =!= toList(numgens W:{1}) then
-     error "Expect all degrees in a Weyl algebra to be 1";
-
-     -- get min root of b-function
-     a := min getIntRoots globalBFunction f;
-
-     IFs := AnnFs f;
-     WFs := ring IFs;
-     nFs := numgens WFs;
-     Ia := substitute ( substitute(IFs, {WFs_(nFs-1) => a}), W);
-     
-     if a == -1 and g == 1_W then Ia
-     else (
-	  compensate := -1 - a;
-	  F := map(W^1/Ia, W^1, matrix{{g*f^compensate}});
-	  ideal mingens kernel F)
-     )
 
 -- reiffen curves
 reiffen = method()

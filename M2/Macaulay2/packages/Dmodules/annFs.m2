@@ -154,11 +154,10 @@ diffRatFun (List, RingElement, RingElement, ZZ) := (m,g,f,a) -> (
      else  diffRatFun(replace(p,m#p-1,m), diff(R_p,g)*f-a*g*diff(R_p,f), f, a+1) 
      )
 memoize'diffRatFun = memoize diffRatFun
-     
-
 
 -- IN: g,f in K[s,x_1,...,x_n]
 -- OUT: h, where hf^(s-k) = f^(k-ord(D_m)) * D_m(g*f^s)
+-- internal
 kDiffFs = method()
 kDiffFs (ZZ, List, RingElement, RingElement) := RingElement => (k,m,g,f) -> (
      a := position(m,i->i>0);
@@ -279,6 +278,64 @@ kappaAnnF1PlanarCurve RingElement := f -> (
      (k,A)
      )
 
+---------------------------------------------------------------------------------
+-- moved from Dsystems.m2
+
+-- This routine takes a polynomial element f of the Weyl algebra
+-- and returns its annihilator ideal.
+PolyAnn = method()
+PolyAnn RingElement := f -> (
+    W := ring f;
+    createDpairs W;
+    dpV := W.dpairVars;
+    -- error checking
+    if W.monoid.Options.WeylAlgebra === {} then
+    error "Expected element of a Weyl algebra";
+    if substitute(f, (dpV#1 | dpV#2) / (i->(i=>0))) != f then
+    error "Expected polynomial element of Weyl algebra";
+    if W.monoid.Options.Degrees =!= toList(numgens W:{1}) then
+    error "Expect all degrees in a Weyl algebra to be 1";
+    tempL := (dpV#1 / (i -> 2*f*i - i*f));  -- (fD_i - df/dx_i)
+    suffHigh := (degree f)#0 + 1;
+    tempL = join(tempL, (dpV#1 / (i -> i^suffHigh)));  -- D_i^(large m)
+    ideal tempL
+    )
+
+-- This routine takes a polynomial element f of the Weyl algebra
+-- and returns the annihilator ideal of 1/f, or takes two polynomials
+-- g and f and returns the annihilator ideal of g/f
+RatAnn = method()
+RatAnn RingElement := f -> RatAnn(1_(ring f), f)
+RatAnn(RingElement, RingElement) := (g,f) -> (
+    W := ring f;
+    createDpairs W;
+    dpV := W.dpairVars;
+    -- error checking
+    if W =!= ring g then
+    error "Expected elements of the same ring";
+    if W.monoid.Options.WeylAlgebra === {} then
+    error "Expected element of a Weyl algebra";
+    if substitute(f, (dpV#1 | dpV#2) / (i->(i=>0))) != f then
+    error "Expected polynomial element of Weyl algebra";
+    if substitute(g, (dpV#1 | dpV#2) / (i->(i=>0))) != g then
+    error "Expected polynomial element of Weyl algebra";
+    if W.monoid.Options.Degrees =!= toList(numgens W:{1}) then
+    error "Expect all degrees in a Weyl algebra to be 1";
+
+-- get min root of b-function
+a := min getIntRoots globalBFunction f;
+
+IFs := AnnFs f;
+WFs := ring IFs;
+nFs := numgens WFs;
+Ia := substitute ( substitute(IFs, {WFs_(nFs-1) => a}), W);
+
+if a == -1 and g == 1_W then Ia
+else (
+    compensate := -1 - a;
+    F := map(W^1/Ia, W^1, matrix{{g*f^compensate}});
+    ideal mingens kernel F)
+)
 
 TEST ///
 -- TESTS TO WRITE (exported symbols);

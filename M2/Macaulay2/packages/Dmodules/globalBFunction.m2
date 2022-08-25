@@ -18,9 +18,23 @@ makeMonic := f -> ( if coefficientRing ring f === QQ
      else (1 // (leadCoefficient f)) * f
      );
 
+-- also used in multiplierIdeals.m2
+star = method()
+star (Ideal,List) := (I,vw) -> (
+     W := ring I;
+     n := numgens W;
+     u := symbol u;
+     Wu := (coefficientRing W)(monoid [gens W, u_1, u_2, 
+	       WeylAlgebra => W.monoid.Options.WeylAlgebra]);
+     (u1,u2) := toSequence (gens Wu)_{n,n+1};
+     Ih := ideal homogenize(sub(gens I,Wu), u1, vw | {1,0}) + ideal (1-u1*u2);
+     sub(eliminateWA(Ih,{u1,u2}),W)
+     ) 
+
 --------------------------------------------------------
 -- version that uses bFunction
 --------------------------------------------------------
+-- internal
 globalBFunctionIdeal := method(Options => {Strategy => TryGeneric})
 globalBFunctionIdeal RingElement := RingElement => o -> f -> (
      W := ring f;
@@ -236,9 +250,8 @@ generalB (List, RingElement) := RingElement => o->(F,g) -> (
 
 --------------------------------------------------------------
 -- global generalized Bernstein-Sato ideal 
-generalBideal = method(Options => {
-	  Strategy => ViaLinearAlgebra
-	  })
+-- internal
+generalBideal = method(Options => { Strategy => ViaLinearAlgebra })
 generalBideal (List, RingElement) := RingElement => o->(F,g) -> (
 -- Input:   F = {f_1,...,f_r}, a list of polynomials in n variables                                                                                                                                       
 --                             (f_i has to be an element of A_n, the Weyl algebra).                                                                                                                       

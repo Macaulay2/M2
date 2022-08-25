@@ -1,5 +1,19 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
+----------------------------------------------------------------------------------
+-- Homogenization switch
+-- determines whether homogenized Weyl algebra is used in certain algorithms
+----------------------------------------------------------------------------------
+HOMOGENIZATION := true
+
+setHomSwitch = method ()
+setHomSwitch(Boolean) := Boolean => s -> (
+    t := HOMOGENIZATION;
+    HOMOGENIZATION = s;
+    t)
+getHomSwitch = ()->HOMOGENIZATION
+
+----------------------------------------------------------------------------------
 
 -- this routine computes an initial basis of an ideal or matrix with respect
 -- a weight vector w.
@@ -15,10 +29,6 @@ inw (RingElement, List) := (L, w) -> (
 inw (Ideal, List) := (I, w) -> (
      ideal inw(gens I, w)
      )
-
-protect WAtoHWA								    -- used as a key
-protect HWAtoWA
-protect HomWeylAlgebra
 
 inw (Matrix, List) := (m, w) -> (
      -- preprocessing
@@ -116,6 +126,7 @@ inw (Matrix, List) := (m, w) -> (
      inm
      )
 
+----------------------------------------------------------------------------------
 
 -- this routine computes a grobner basis of an ideal or matrix with respect
 -- a weight vector w.
@@ -204,11 +215,63 @@ inW2 (Ideal, List) := (I, w) -> (
      setHomSwitch(true);
      inw(I, w)
      )
+-- used in Dlocalize.m2
 gbW2 = method()
 gbW2 (Ideal, List) := (I, w) -> (
      setHomSwitch(true);
      gbw(I, w)
      )
+
+--------------------------------------------------------------------------------
+
+-- This routine computes the characteristic ideal of a D-module
+charIdeal = method()
+charIdeal Ideal := I -> (
+    if not isWeylAlgebra(W := ring I) then error "expected an ideal in a Weyl algebra";
+    createDpairs W;
+    w := apply( toList(0..numgens W - 1),
+	i -> if member(i, W.dpairInds#1) then 1 else 0 );
+    ideal mingens inw (I, w)
+    )
+
+charIdeal Module := M -> (
+    if not isWeylAlgebra(W := ring M) then error "expected a module over a Weyl algebra";
+    m := presentation M;
+    createDpairs W;
+    w := apply( toList(0..numgens W - 1),
+	i -> if member(i, W.dpairInds#1) then 1 else 0 );
+    ideal mingens ann cokernel inw (m, w)
+    )
+
+--------------------------------------------------------------------------------
+
+-- This routine computes the singular locus of a D-ideal
+-- SHOULD IT BE CHANGED SO THAT OUTPUT IS IN POLY SUBRING?
+singLocus = method()
+singLocus Ideal  := I -> singLocus comodule I
+singLocus Module := M -> (
+    if not isWeylAlgebra(W := ring M) then error "expected a module over a Weyl algebra";
+    createDpairs W;
+    if not W.?CommAlgebra then createCommAlgebra W;
+    I1 := charIdeal M;
+    I2 := W.WAtoCA ideal W.dpairVars#1;
+    -- do the saturation
+    SatI := saturate(I1, I2);
+    -- set up an auxiliary ring to perform intersection
+    tempCA := (coefficientRing W)(monoid [W.dpairVars#1, W.dpairVars#0,
+            MonomialOrder => Eliminate (#W.dpairInds#1)]);
+    newInds := inversePermutation join(W.dpairInds#1, W.dpairInds#0);
+    CAtotempCA := map(tempCA, W.CommAlgebra,
+	matrix {apply(newInds, i -> tempCA_i)});
+    tempCAtoCA := map(W.CommAlgebra, tempCA, matrix{ join (
+		apply(W.dpairVars#1, i -> W.WAtoCA i),
+		apply(W.dpairVars#0, i -> W.WAtoCA i) ) } );
+    -- do the intersection
+    gbSatI := gb CAtotempCA SatI;
+    I3 := ideal compress tempCAtoCA selectInSubring(1, gens gbSatI);
+    if I3 == ideal 1_(W.CommAlgebra) then W.CAtoWA I3
+    else W.CAtoWA radical I3
+    )
 
 TEST///
 x = symbol x;

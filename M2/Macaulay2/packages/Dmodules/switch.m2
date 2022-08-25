@@ -31,15 +31,3 @@ pInfo(ZZ, List) := (minLevel, l) -> (
      	  << endl << flush;
 	  )
      ); 
-----------------------------------------------------------------------------------
--- Homogenization switch 
--- determines whether homogenized Weyl algebra is used in certain algorithms
----------------------------------------------------------------------------------- 
-HOMOGENIZATION := true
-
-setHomSwitch = method ()
-setHomSwitch(Boolean) := Boolean => s -> (
-     t := HOMOGENIZATION; 
-     HOMOGENIZATION = s; 
-     t) 
-getHomSwitch = ()->HOMOGENIZATION

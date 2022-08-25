@@ -903,7 +903,7 @@ document {
      }
 
 document {
-     Key => {[Dlocalize,Strategy],[DlocalizeAll,Strategy],[Dlocalization,Strategy],[DlocalizeMap,Strategy],
+     Key => {[Dlocalize,Strategy],[DlocalizeAll,Strategy],[DlocalizeMap,Strategy],
 	 Oaku,OTW,OTWcyclic},
      Headline=>"strategy for computing a localization of a D-module",
      UL{
@@ -1008,13 +1008,6 @@ document {
 
 
 document {
-     Key => {Dlocalization, (Dlocalization,Ideal,RingElement), (Dlocalization,Module,RingElement),
-     	  DlocalizationAll, (DlocalizationAll,Ideal,RingElement), (DlocalizationAll,Module,RingElement),
-	  DlocalizationMap, (DlocalizationMap,Ideal,RingElement), (DlocalizationMap,Module,RingElement)},
-     Headline => "Dlocalization* is an OBSOLETE name for Dlocalize*", 
-     "See ", TO "Dlocalize", "."
-     }
-document {
      Key => LocModule,
      Headline => "a key created by Dlocalize",
      "See ", TO "Dlocalize", "."
@@ -1116,14 +1109,8 @@ document {
      }
 
 document {
-     Key => {Dres, (Dres,Module), (Dres,Ideal,List), (Dres,Ideal), (Dres,Module,List)},
-     Headline => "abbreviation for Dresolution",
-     SeeAlso =>{"Dresolution"}
-     }	
-
-document {
      Key => {[DintegrationIdeal,Strategy],
-	  [DintegrationComplex,Strategy],[Dintegrate,Strategy],
+	  [DintegrationComplex,Strategy],
 	  [DintegrationAll,Strategy],[DintegrationClasses,Strategy],
 	  [Drestriction,Strategy],[DrestrictionIdeal,Strategy],
 	  [DrestrictionComplex,Strategy],[Drestrict,Strategy],
@@ -1294,19 +1281,6 @@ document {
 	  is a module over the nth Weyl algebra."},
      SeeAlso =>{"Drestriction", "DrestrictionAll", "Dintegration"}
 }
-
-document {
-     Key => {Drestrict, (Drestrict, ZZ, Module, List), (Drestrict, Ideal, List), 
-	  (Drestrict, Module, List), (Drestrict, ZZ, Ideal, List),
-	  DrestrictAll, (DrestrictAll, Module, List), (DrestrictAll, Ideal, List),
-	  DrestrictClasses, (DrestrictClasses,Module,List,ZZ), (DrestrictClasses,Ideal,List), 
-	  (DrestrictClasses,Module,List),(DrestrictClasses,Ideal,List,ZZ),
-	  DrestrictComplex, (DrestrictComplex,Module,List,ZZ), (DrestrictComplex,Ideal,List), 
-	  (DrestrictComplex,Module,List),(DrestrictComplex,Ideal,List,ZZ),
-	  DrestrictIdeal, (DrestrictIdeal,Ideal,List)},
-     Headline => "an (OBSOLETE) abbreviation for Drestriction",
-     SeeAlso =>{"Drestriction"}
-     }	
 
 document {
      Key => HomologyModules,
@@ -1520,21 +1494,6 @@ document {
 	  is a module over the nth Weyl algebra."},
      SeeAlso =>{"Dintegration", "DintegrationAll", "Drestriction"}
 }
-
-document {
-     Key => {
-	  Dintegrate, (Dintegrate,ZZ,Module,List), (Dintegrate,Ideal,List), 
-	  (Dintegrate,Module,List), (Dintegrate,ZZ,Ideal,List),
-	  DintegrateAll, (DintegrateAll,Module,List), (DintegrateAll,Ideal,List),
-	  DintegrateClasses, (DintegrateClasses,ZZ,Module,List), (DintegrateClasses,Ideal,List), 
-	  (DintegrateClasses,Module,List),(DintegrateClasses,ZZ,Ideal,List),
-	  DintegrateComplex, (DintegrateComplex,Module,List), (DintegrateComplex,Ideal,List),
-	  DintegrateIdeal,(DintegrateIdeal, Ideal, List)
-	  },
-     Headline => "Dintegrate* is an (OBSOLETE) abbreviation for Dintegration*",
-     SeeAlso =>{"Dintegration", "DintegrationAll", "DintegrationClasses", 
-	  "DintegrationComplex", "DintegrationIdeal"}
-     }	
 
 document {
      Key => {(putWeylAlgebra, HashTable), putWeylAlgebra},

@@ -27,6 +27,7 @@ isTorusFixed(Ideal) := Boolean => (J)->(
 
 --Input: element in Weyl algebra in a torus-fixed ideal
 --Output: list of the form {list a, list b, list of coefficients and exponents for poly p}, as in SST Lem. 2.3.1 
+-- internal
 apbFactor = method();
 apbFactor(RingElement) := List => (f) -> (
     n := (numgens ring f)//2;
@@ -53,6 +54,7 @@ apbFactor(RingElement) := List => (f) -> (
 --Input: b is a List of length n (= numVars of ambient space for D)
 --       S is a ring for the output
 --Output: [theta]_b as in SST p.68
+-- internal
 thetaBracketSub = method();
 thetaBracketSub(List,Ring) := (RingElement) => (b,S)->( 
     n := length b;
@@ -99,12 +101,14 @@ indicialIdeal(Ideal,List) := (Ideal) => (I,w) ->(
 
 --Input: 0-dimensional primary ideal I
 --Output: corresponding point, as a vector
+-- internal
 solveMax = method();
 solveMax Ideal := List => I -> first entries lift(vars ring I % radical I, coefficientRing ring I)
 
 --internal method
 --Input: holonomic D-ideal H, weight vector w as List, half the number of variables in H
 --Output: list of 0-dimensional ideals encoding css exponents and their multiplicities
+-- internal
 beginExptComp = method();
 beginExptComp(Ideal,List,ZZ,Ring) := List => (H,w,n,S)->(
     	if not isHolonomic(H) then error "ideal is not holonomic";
@@ -137,6 +141,7 @@ cssExptsMult(Ideal,List) := List => (H,w)->(
 	)    
 
 -- making monomial expressions with arbitrary exponents
+-- internal
 makeMonomial = (R, L) -> Product apply(L,
     (i, e) -> if e == 1 then expression R_i else Power(expression R_i, expression e))
 makeRationalMonomial = (R, p) -> (
@@ -153,8 +158,8 @@ factorial' = alpha -> (first exponents alpha) / (k -> k!) // product
 
 -- Perform a lexographic breadth first search on monomials in k[x_1..x_n] \ S_< (I)
 -- and compute c#(alpha, beta) as in Algorithm 2.3.14 of SST (pp. 74)
--- Input:  an Ideal, zero-dimensional Frobenius m-primary ideal
--- Output: a HashTable, { t^beta => f_beta } 
+--Input:  an Ideal, zero-dimensional Frobenius m-primary ideal
+--Output: a HashTable, { t^beta => f_beta } 
 solvePrimaryFrobeniusIdeal = method();
 solvePrimaryFrobeniusIdeal Ideal := List => I -> (
     R := ring I;
@@ -213,6 +218,7 @@ solveFrobeniusIdeal Ideal := List => I -> (
 -- Tests section
 --------------------
 
+-- FIXME
 TEST /// -- test solveFrobeniusIdeal
   R = QQ[t_1..t_5]
   I = ideal(R_0+R_1+R_2+R_3+R_4, R_0+R_1-R_3, R_1+R_2-R_3, R_0*R_2, R_1*R_3)

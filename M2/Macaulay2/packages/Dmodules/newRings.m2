@@ -1,5 +1,12 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
+-- All internal functions
+
+-- used as a key
+protect WAtoHWA
+protect HWAtoWA
+protect HomWeylAlgebra
+
 -- this function associates to a Weyl algebra W
 -- the Weyl algebra W[h], where h is used for homogenizing purposes
 createHomWeylAlgebra = method()

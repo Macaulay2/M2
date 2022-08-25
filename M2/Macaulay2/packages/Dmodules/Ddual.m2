@@ -7,10 +7,7 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 Ddual = method()
-Ddual Ideal := I -> (
-     Ddual ((ring I)^1/I)
-     )
-
+Ddual Ideal  := I -> Ddual comodule I
 Ddual Module := M -> (
      pInfo(1, "ENTERING Ddual ... ");
      W := ring M;
@@ -23,7 +20,7 @@ Ddual Module := M -> (
      n := #W.dpairVars#0; 
      outputList := {};
      
-     C := Dres(M, LengthLimit => n+1);
+     C := Dresolution(M, LengthLimit => n+1);
      m0 := transpose Dtransposition C.dd#n;
      m1 := transpose Dtransposition C.dd#(n+1);  
      
