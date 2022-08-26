@@ -446,7 +446,7 @@ findSymbols = varlist -> toList apply(pairs listSplice varlist,
 processVars := method()
 processVars Thing := x -> findSymbols {x}
 processVars VisibleList := findSymbols
-processVars(VisibleList, Thing) := (L, xx) -> findSymbols L
+processVars(VisibleList, Thing) := (v, xx) -> findSymbols v
 processVars(Thing, Thing) := (x, xx) -> findSymbols {x}
 processVars(ZZ,    Thing) := (n, xx) -> toList( xx = baseName' xx; xx_0 .. xx_(n-1) )
 processVars ZZ := x -> {x}
@@ -533,7 +533,6 @@ newMonoid = opts -> (
     remove(opts, MonomialSize);
     remove(opts, Weights);
     remove(opts, VariableBaseName);
-    M.Options = new OptionTable from opts;
     -- symbols and expressions
     M.generatorSymbols     = varlist;
     M.generatorExpressions = apply(varlist, x -> if instance(x, Symbol) then x else expression x);
@@ -558,7 +557,19 @@ newMonoid = opts -> (
     M.indexSymbols = hashTable apply(M.generatorSymbols, M.generators, identity);
     try M.indexStrings = applyKeys(M.indexSymbols, toString); -- no error, because this is often harmless
     M.use = M -> scan(M.generatorSymbols, M.vars, (sym, val) -> sym <- val);
+    M.Options = (new OptionTable from opts) ++ {
+	WeylAlgebra     => monoidIndices_M opts.WeylAlgebra,
+	SkewCommutative => monoidIndices_M opts.SkewCommutative,
+	};
     M)
+
+-- also used in Elimination
+monoidIndices = (M, v) -> apply(v, monoidIndex_M)
+monoidIndex   = (M, x) -> (
+    if instance(x, ZZ)           then x else
+    if instance(x, List)         then monoidIndices(M, x) else
+    if M.index#?(x = baseName x) then M.index#x else
+    error("expected an integer or variable of the ring or monoid: ", toString x))
 
 -----------------------------------------------------------------------------
 
@@ -592,13 +603,6 @@ degreePad = (n,x) -> (
      join(toList(n-#x:0),x));
 
 degreeNoLift = () -> error "degree not liftable"
-
-monoidIndex = (M, x) -> if instance(x, ZZ) then x else (
-    if M.index#?(x = baseName x) then M.index#x else error(
-	"expected an integer or variable of the ring or monoid: ", toString x))
-
--- also used in orderedmonoidrings.m2, but we should phase that out
-monoidIndices = (M, varlist) -> apply(varlist, x -> monoidIndex(M, x))
 
 -- TODO: do we want to support a syntax this?
 --   'tensor (a => ZZ^2, b => ZZ^3, c => ZZ^4)'

@@ -179,3 +179,16 @@ T = newRing(S, Degrees => degrees S)
 assert(degreeGroup T == ZZ^2)
 U = newRing(S, DegreeRank => 3)
 assert(degreeGroup U == ZZ^3)
+
+-- test tensor
+U = QQ[x, dx, WeylAlgebra => x => dx]
+assert((options U).WeylAlgebra == {{0, 1}})
+assert(U^1 == Hom(U^1, U^1))
+W = U ** U
+assert((options W).WeylAlgebra == {{0, 1}, {2, 3}})
+
+E = QQ[u, v, SkewCommutative => true]
+assert((options E).SkewCommutative == {0, 1})
+assert(E^1 == Hom(E^1, E^1))
+F = E ** E
+assert((options F).SkewCommutative == {0, 1, 2, 3})

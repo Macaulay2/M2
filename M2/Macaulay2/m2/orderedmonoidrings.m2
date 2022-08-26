@@ -15,10 +15,11 @@ PolynomialRing = new Type of EngineRing
 PolynomialRing.synonym = "polynomial ring"
 PolynomialRing#AfterPrint = R -> (
     class R,
-    if #R.monoid.Options.WeylAlgebra > 0
-    then (", ", #R.monoid.Options.WeylAlgebra, " differential variables"),
     if #R.monoid.Options.SkewCommutative > 0
-    then (", ", #R.monoid.Options.SkewCommutative, " skew commutative variables")
+    then (", ", #R.monoid.Options.SkewCommutative, " skew commutative variable(s)"),
+    if #R.monoid.Options.WeylAlgebra > 0
+    then (", ", #R.monoid.Options.WeylAlgebra, " differential variable(s)"),
+    if R.?homogenize then (" and one homogenizing variable")
     )
 
 isPolynomialRing = method(TypicalValue => Boolean)
@@ -37,8 +38,8 @@ PolynomialRing _ List := RingElement => (R, v) -> if #v === 0 then 1_R else prod
 
 coefficientRing PolynomialRing := R -> last R.baseRings
 monoid PolynomialRing := o -> R -> R.monoid
-monoid FractionField  := o -> monoid @@ baseRing
-monoid Ring           := o -> degreesMonoid @@ degreeLength
+monoid FractionField := o -> monoid @@ baseRing
+monoid Ring := o -> degreesMonoid @@ degreeLength
 
 generators PolynomialRing := opts -> R -> (
     if opts.CoefficientRing === null then R.generators else
@@ -98,197 +99,179 @@ degreeGroup   PolynomialRing := R -> degreeGroup  R.FlatMonoid
 degreeGroup   FractionField  := degreeGroup @@ baseRing
 
 -----------------------------------------------------------------------------
+-- Helpers for polynomial ring
+-----------------------------------------------------------------------------
+
+shiftAndJoin = (n, L, R) -> if R === null then L else join(L, apply(R, plus_n))
+
+newSkewPolyRing = (S, R, RSkew, M, MSkew, num) -> (
+    if RSkew =!= {} then MSkew = shiftAndJoin_num (MSkew, RSkew);
+    RM := new PolynomialRing from rawSkewPolynomialRing(S, MSkew);
+    RM.SkewCommutative = MSkew;
+    RM)
+
+newWeylAlgebra = (S, R, RWeyl, M, MWeyl, num) -> (
+    -- identify the homogenizing variable
+    hvar := if MWeyl#?-1 and instance(MWeyl#-1, ZZ)
+    then first(MWeyl#-1, MWeyl = drop(MWeyl, -1)) else -1;
+    if R.?homogenize then (
+	if hvar == -1 then hvar = R.homogenize + num else
+	if hvar =!= R.homogenize + num then error "WeylAlgebra: expected the same homogenizing variable as the base ring")
+    else if RWeyl =!= {} and hvar != -1 then error "WeylAlgebra: coefficient Weyl algebra has no homogenizing variable";
+    --
+    xvars := shiftAndJoin_num (first \ MWeyl, if R.?xvars then R.xvars);
+    dvars := shiftAndJoin_num (last  \ MWeyl, if R.?dvars then R.dvars);
+    if any(xvars, dvars, (x, dx) -> dx < x) then error "WeylAlgebra: expected differential variables to occur to the right of their variables";
+    --
+    RM := new PolynomialRing from rawWeylAlgebra(S, xvars, dvars, hvar);
+    RM.xvars = xvars; RM.dvars = dvars;
+    if hvar != -1 then RM.homogenize = hvar;
+    addHook(RM, QuotientRingHook, S -> (S.xvars = xvars; S.dvars = dvars));
+    RM)
+
+-----------------------------------------------------------------------------
 -- Main polynomial ring constructor
 -----------------------------------------------------------------------------
 
-protect diffs0						    -- private keys for storing info about indices of WeylAlgebra variables
-protect diffs1
+-- private keys for storing info about indices of WeylAlgebra variables
+protect xvars
+protect dvars
 
 Ring List   := PolynomialRing => (R, M) -> use R monoid(M, Local => true)
 Ring Array  := PolynomialRing => (R, M) -> use R monoid M
 Ring Monoid := PolynomialRing => (R, M) -> (
     if not M.?RawMonoid then error "expected monoid handled by the engine";
-	  if not R.?RawRing then error "expected coefficient ring handled by the engine";
-     	  num := numgens M;
-	  (basering,flatmonoid,numallvars) := (
-	       if R.?isBasic then (R,M,num)
-	       else if R.?basering and R.?FlatMonoid 
-	       then ( R.basering, tensor(M, R.FlatMonoid), num + R.numallvars)
-	       else if instance(R,FractionField) then (R,M,num)
-	       else error "internal error: expected coefficient ring to have a base ring and a flat monoid"
-	       );
-	  -----------------------------------------------------------------------------
-     	  local RM;
-	  Weyl := M.Options.WeylAlgebra =!= {};
-	  skews := monoidIndices(M,M.Options.SkewCommutative);
-	  coeffOptions := options R;
-	  coeffWeyl := coeffOptions =!= null and coeffOptions.WeylAlgebra =!= {};
-	  coeffSkew := coeffOptions =!= null and coeffOptions.SkewCommutative =!= {};
-	  coeffConstants := coeffOptions =!= null and coeffOptions.Constants;
-	  constants := false;
-	  -----------------------------------------------------------------------------
-	  if M.Options.Constants or coeffConstants then (
-	       constants = true;
-	       RM = new PolynomialRing from rawTowerRing(char R, flatmonoid.generatorSymbols / toString // toSequence);
-	       )
-	  -----------------------------------------------------------------------------
-	  else if Weyl or coeffWeyl then (
-	       if Weyl and R.?SkewCommutative then error "coefficient ring has skew commuting variables";
-	       if Weyl and skews =!= {} then error "skew commutative Weyl algebra requested";
-	       diffs := M.Options.WeylAlgebra;
-	       if class diffs === Option then diffs = {diffs}
-	       else if class diffs =!= List then error "expected list as WeylAlgebra option";
-	       diffs = apply(diffs, x -> if class x === Option then toList x else x);
-	       h    := select(diffs, x -> class x =!= List);
-	       if #h > 1 then error "WeylAlgebra: expected at most one homogenizing variable";
-	       h = monoidIndices(M,h);
-	       if #h === 1 then h = h#0 else h = -1;
-     	       if R.?homogenize then (
-		    if h == -1 then h = R.homogenize + num
-		    else if R.homogenize + num =!= h then error "expected the same homogenizing variable";
-		    )
-	       else if coeffWeyl and h != -1 then error "coefficient Weyl algebra has no homogenizing variable";
-	       diffs = select(diffs, x -> class x === List);
-	       diffs = apply(diffs, x -> (
-			 if class x#0 === Sequence and class x#1 === Sequence
-			 then (
-			      if #(x#0) =!= #(x#1) then error "expected sequences of the same length";
-			      mingle x
-			      )
-			 else toList x
-			 ));
-	       diffs = flatten diffs;
-	       local diffs0; local diffs1;
-	       diffs = pack(2,diffs);
-	       diffs0 = monoidIndices(M,first\diffs);
-	       diffs1 = monoidIndices(M,last\diffs);
-	       if any(values tally join(diffs0,diffs1), n -> n > 1) then error "WeylAlgebra option: a variable specified more than once";
-	       if coeffWeyl then (
-		    diffs0 = join(diffs0, apply(R.diffs0, i -> i + num));
-		    diffs1 = join(diffs1, apply(R.diffs1, i -> i + num));
-		    );
-	       scan(diffs0,diffs1,(x,dx) -> if not x<dx then error "expected differentiation variables to occur to the right of their variables");
-	       RM = new PolynomialRing from rawWeylAlgebra(rawPolynomialRing(raw basering, raw flatmonoid),diffs0,diffs1,h);
-	       RM.diffs0 = diffs0;
-	       RM.diffs1 = diffs1;
-     	       addHook(RM, QuotientRingHook, S -> (S.diffs0 = diffs0; S.diffs1 = diffs1));
-     	       if h != -1 then RM.homogenize = h;
-	       )
-	  -----------------------------------------------------------------------------
-	  else if skews =!= {} or R.?SkewCommutative then (
-	       if R.?diffs0 then error "coefficient ring is a Weyl algebra";
-	       if R.?SkewCommutative then skews = join(skews, apply(R.SkewCommutative, i -> i + num));
-	       RM = new PolynomialRing from rawSkewPolynomialRing(rawPolynomialRing(raw basering, raw flatmonoid),skews);
-	       RM.SkewCommutative = skews;
-	       )
-	  -----------------------------------------------------------------------------
-	  else (
-	       log := FunctionApplication {rawPolynomialRing, (raw basering, raw flatmonoid)};
-	       RM = new PolynomialRing from value log;
-	       RM#"raw creation log" = Bag {log};
-	       );
-	  -----------------------------------------------------------------------------
-	  if R#?"has quotient elements" or isQuotientOf(PolynomialRing,R) then (
-	       RM.RawRing = rawQuotientRing(RM.RawRing, R.RawRing);
-	       RM#"has quotient elements" = true;
-	       );
-	  RM.basering = basering;
-	  RM.FlatMonoid = flatmonoid;
-	  RM.numallvars = numallvars;
-	  RM.promoteDegree = (
-	       if flatmonoid.Options.DegreeMap === null
-	       then makepromoter degreeLength RM	    -- means the degree map is zero
-	       else (
-	       	    dm := flatmonoid.Options.DegreeMap;
-	       	    nd := flatmonoid.Options.DegreeRank;
-	       	    degs -> apply(degs,deg -> degreePad(nd,dm deg))));
-	  RM.liftDegree = (
-	       if flatmonoid.Options.DegreeLift === null
-	       then makepromoter degreeLength R		    -- lifing the zero degree map
-	       else (
-		    lm := flatmonoid.Options.DegreeLift;
-		    degs -> apply(degs,lm)
-		    ));
-	  RM.baseRings = append(R.baseRings,R);
-	  -- see enginering.m2
-	  commonEngineRingInitializations RM;
-	  RM.monoid = M;
-	  if flatmonoid.?degreesRing   then RM.degreesRing   = flatmonoid.degreesRing;
-	  if flatmonoid.?degreesMonoid then RM.degreesMonoid = flatmonoid.degreesMonoid;
-	  RM.isCommutative = not Weyl and not RM.?SkewCommutative;
-     	  ONE := RM#1;
-	  if R.?char then RM.char = R.char;
-	  -- TODO: what is this?
-	  RM _ M := (f,m) -> new R from rawCoefficient(R.RawRing, raw f, raw m);
-	  processMons := (coeffs, monoms) -> if #coeffs === 0 then expression 0 else sum(coeffs, monoms,
-	      (c, m) -> expression(if c == 1 then 1 else promote(c, R)) * expression(new M from m));
-	  -- TODO: put in something prettier when there are constants
-	  expression RM := if constants then f -> toString raw f else f -> processMons rawPairs(raw R, raw f);
-     	  if M.Options.Inverses === true then (
-	       denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
-	       numerator RM := f -> f * denominator f;
-	       );
-	  -----------------------------------------------------------------------------
-	  factor RM := opts -> f -> (
-	       c := 1_R; 
-	       if (options RM).Inverses then (
-        	   minexps:=min\transpose apply(toList (rawPairs(raw RM.basering,raw f))#1,m->exponents(RM.numallvars,m));
-		   f=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
-		   c=RM_minexps;
-		   );
-	       isSimpleNumberField := F -> isField F and instance(baseRing F, QuotientRing) and coefficientRing baseRing F === QQ and numgens baseRing F == 1 and numgens ideal baseRing F == 1; 
-	       (facs,exps) := if isSimpleNumberField R then (
-		   (RM', toRM') := flattenRing(RM, CoefficientRing=>QQ);
-		   minp := (ideal RM')_0;
-		   ((fs,es) -> (for f in fs list raw (map(RM, RM', generators RM|{R_0})) new RM' from f, es)) (
-		       rawFactor(raw toRM' f, raw minp)) -- apply rawFactor, but the factors need to be converted back to RM
-	       ) else if instance(R, FractionField) then (
-        	   denom := lcm \\ (t -> denominator t_1) \ listForm f;
-        	   baseRM := (baseRing R)(RM.monoid);
-		   f = (map(baseRM, RM, generators baseRM)) (denom * f);
-		   ((fs,es) -> (for i in (0..<#fs) list raw (((map(RM, baseRM, generators RM)) new baseRM from fs_i) * if i==0 then 1/denom else 1), es)) (
-		       rawFactor raw f) -- similar: convert back to RM, and put denom back into the leadCoefficient
-	       ) else rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
-	       leadCoeff := x->( -- iterated leadCoefficient
-		   R:=ring x;
-		   if class R === PolynomialRing then leadCoeff leadCoefficient x else
-		   if class R === QuotientRing or class R === GaloisField then leadCoeff lift(x,ambient R) else
-    	    	   x);
-     	       facs = apply(#facs, i -> (
-		       p:=new RM from facs#i;
-		       if leadCoeff p >= 0 then p else (if odd(exps#i) then c=-c; -p)
-		       ));
-    	       if liftable(facs#0,RM.basering) then (
-		    -- factory returns the possible constant factor in front
-	       	    assert(exps#0 == 1);
-		    c = c*(facs#0);
-		    facs = drop(facs,1);
-		    exps = drop(exps,1);
-		    );
-	       if #facs != 0 then (facs,exps) = toSequence transpose sort transpose {toList facs, toList exps};
-	       if c != 1 then (
-		    -- we put the possible constant (and monomial for Laurent polynomials) at the end
-		    facs = append(facs,c);
-		    exps = append(exps,1);
-		    );
-	       new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
-	  -----------------------------------------------------------------------------
-	  isPrime RM := {} >> o -> f -> (
-	      v := factor f;
-	      cnt := 0; -- counts number of factors
-	      scan(v, x -> ( if not isUnit(x#0) then cnt=cnt+x#1 ));
-	      cnt == 1 -- cnt=0 is invertible element; cnt>1 is composite element; cnt=1 is prime element
-	       );
-	  -----------------------------------------------------------------------------
-	  RM.generatorExpressions = M.generatorExpressions;
-	  RM.generatorSymbols = M.generatorSymbols;
-	  RM.generators = apply(num, i -> RM_i);
-	  RM.indexSymbols = new HashTable from join(
-	       if R.?indexSymbols then apply(pairs R.indexSymbols, (nm,x) -> nm => new RM from rawPromote(raw RM,raw x)) else {},
-	       apply(num, i -> M.generatorSymbols#i => RM_i)
-	       );
-     	  RM.indexStrings = hashTable apply(pairs RM.indexSymbols, (k,v) -> (toString k, v));
-	  RM)
+    if not R.?RawRing then error "expected coefficient ring handled by the engine";
+    nvars := numgens M;
+    (basering, flatMonoid, numallvars) := (
+	if R.?isBasic or instance(R, FractionField) then (R, M, nvars) else
+	if R.?basering and R.?FlatMonoid            then (R.basering, tensor(M, R.FlatMonoid), nvars + R.numallvars)
+	else error "internal error: expected coefficient ring to have a base ring and a flat monoid");
+    -----------------------------------------------------------------------------
+    MOpts := options M;
+    ROpts := options R;
+    RCons := if ROpts.?Constants       then ROpts.Constants else false;
+    MCons := if MOpts.?Constants       then MOpts.Constants else false;
+    RWeyl := if ROpts.?WeylAlgebra     then ROpts.WeylAlgebra else {};
+    MWeyl := if MOpts.?WeylAlgebra     then MOpts.WeylAlgebra else {};
+    RSkew := if ROpts.?SkewCommutative then ROpts.SkewCommutative else {};
+    MSkew := if MOpts.?SkewCommutative then MOpts.SkewCommutative else {};
+    if (MWeyl =!= {} or RWeyl =!= {}) and (MSkew =!= {} or RSkew =!= {})
+    then error "rings with both skew commuting and differential variables are not yet implemented";
+    -----------------------------------------------------------------------------
+    S := if (constants := RCons or MCons)
+    then rawTowerRing(char R, flatMonoid.generatorSymbols / toString // toSequence) -- TODO: document this
+    else rawPolynomialRing(raw basering, raw flatMonoid);
+    -----------------------------------------------------------------------------
+    local RM;
+    if MWeyl =!= {} or RWeyl =!= {} then RM =  newWeylAlgebra(S, R, RWeyl, M, MWeyl, nvars) else
+    if MSkew =!= {} or RSkew =!= {} then RM = newSkewPolyRing(S, R, RSkew, M, MSkew, nvars)
+    else RM = new PolynomialRing from S;
+    -----------------------------------------------------------------------------
+    if R#?"has quotient elements" or isQuotientOf(PolynomialRing, R) then (
+	RM.RawRing = rawQuotientRing(RM.RawRing, R.RawRing);
+	RM#"has quotient elements" = true);
+    --
+    RM.monoid     = M;
+    RM.basering   = basering;
+    RM.FlatMonoid = flatMonoid;
+    RM.numallvars = numallvars;
+    RM.baseRings  = append(R.baseRings, R);
+    RM.promoteDegree = (
+	if flatMonoid.Options.DegreeMap === null
+	then makepromoter degreeLength RM -- means the degree map is zero
+	else (
+	    dm := flatMonoid.Options.DegreeMap;
+	    nd := flatMonoid.Options.DegreeRank;
+	    degs -> apply(degs, deg -> degreePad(nd, dm deg))));
+    RM.liftDegree = (
+	if flatMonoid.Options.DegreeLift === null
+	then makepromoter degreeLength R -- lifing the zero degree map
+	else (
+	    lm := flatMonoid.Options.DegreeLift;
+	    degs -> apply(degs, lm)));
+    --
+    if R.?char                   then RM.char          = R.char; -- TODO: what ring doesn't have .char?
+    if flatMonoid.?degreesRing   then RM.degreesRing   = flatMonoid.degreesRing;
+    if flatMonoid.?degreesMonoid then RM.degreesMonoid = flatMonoid.degreesMonoid;
+    RM.isCommutative = RWeyl === {} and MWeyl === {} and not RM.?SkewCommutative;
+    -- see enginering.m2
+    commonEngineRingInitializations RM;
+    -- TODO: what is this?
+    RM _ M := (f,m) -> new R from rawCoefficient(R.RawRing, raw f, raw m);
+    -- printing
+    processMons := (coeffs, monoms) -> if #coeffs === 0 then expression 0 else sum(coeffs, monoms,
+	(c, m) -> expression(if c == 1 then 1 else promote(c, R)) * expression(new M from m));
+    -- TODO: put in something prettier when there are constants
+    expression RM := if constants then f -> toString raw f else f -> processMons rawPairs(raw R, raw f);
+    --
+    if MOpts.Inverses === true then (
+	denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
+	numerator   RM := f -> f * denominator f);
+    -----------------------------------------------------------------------------
+    factor RM := opts -> f -> (
+	c := 1_R;
+	if (options RM).Inverses then (
+	    minexps:=min\transpose apply(toList (rawPairs(raw RM.basering,raw f))#1,m->exponents(RM.numallvars,m));
+	    f=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
+	    c=RM_minexps;
+	    );
+	isSimpleNumberField := F -> isField F and instance(baseRing F, QuotientRing) and coefficientRing baseRing F === QQ and numgens baseRing F == 1 and numgens ideal baseRing F == 1;
+	(facs,exps) := if isSimpleNumberField R then (
+	    (RM', toRM') := flattenRing(RM, CoefficientRing=>QQ);
+	    minp := (ideal RM')_0;
+	    ((fs,es) -> (for f in fs list raw (map(RM, RM', generators RM|{R_0})) new RM' from f, es)) (
+		rawFactor(raw toRM' f, raw minp)) -- apply rawFactor, but the factors need to be converted back to RM
+	    ) else if instance(R, FractionField) then (
+	    denom := lcm \\ (t -> denominator t_1) \ listForm f;
+	    baseRM := (baseRing R)(RM.monoid);
+	    f = (map(baseRM, RM, generators baseRM)) (denom * f);
+	    ((fs,es) -> (for i in (0..<#fs) list raw (((map(RM, baseRM, generators RM)) new baseRM from fs_i) * if i==0 then 1/denom else 1), es)) (
+		rawFactor raw f) -- similar: convert back to RM, and put denom back into the leadCoefficient
+	    ) else rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
+	leadCoeff := x->( -- iterated leadCoefficient
+	    R:=ring x;
+	    if class R === PolynomialRing then leadCoeff leadCoefficient x else
+	    if class R === QuotientRing or class R === GaloisField then leadCoeff lift(x,ambient R) else
+	    x);
+	facs = apply(#facs, i -> (
+		p:=new RM from facs#i;
+		if leadCoeff p >= 0 then p else (if odd(exps#i) then c=-c; -p)
+		));
+	if liftable(facs#0,RM.basering) then (
+	    -- factory returns the possible constant factor in front
+	    assert(exps#0 == 1);
+	    c = c*(facs#0);
+	    facs = drop(facs,1);
+	    exps = drop(exps,1);
+	    );
+	if #facs != 0 then (facs,exps) = toSequence transpose sort transpose {toList facs, toList exps};
+	if c != 1 then (
+	    -- we put the possible constant (and monomial for Laurent polynomials) at the end
+	    facs = append(facs,c);
+	    exps = append(exps,1);
+	    );
+	new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
+    -----------------------------------------------------------------------------
+    isPrime RM := {} >> o -> f -> (
+	v := factor f;
+	cnt := 0; -- counts number of factors
+	scan(v, x -> ( if not isUnit(x#0) then cnt=cnt+x#1 ));
+	cnt == 1 -- cnt=0 is invertible element; cnt>1 is composite element; cnt=1 is prime element
+	);
+    -----------------------------------------------------------------------------
+    RM.generators           = apply(nvars, i -> RM_i);
+    RM.generatorSymbols     = M.generatorSymbols;
+    RM.generatorExpressions = M.generatorExpressions;
+    --
+    RM.indexSymbols = hashTable join(
+	-- FIXME: switching the order of the following two reveals a bug in Schubert2
+	apply(if R.?indexSymbols then pairs R.indexSymbols else {},
+	    (sym, x) -> sym => new RM from rawPromote(raw RM, raw x)),
+	apply(RM.generatorSymbols, RM.generators, identity)
+	);
+    try RM.indexStrings = applyKeys(RM.indexSymbols, toString); -- no error, because this is often harmless
+    RM)
 -- e.g RR[x] or CC[x]
 InexactFieldFamily List   :=
 InexactFieldFamily Array  :=
