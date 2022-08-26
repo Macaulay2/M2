@@ -379,7 +379,9 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       	    c = peek(file);
 		    if c == int('e') then (
 			 tokenbuf << char(getc(file));
-			 if ( peek(file) == int('-') && isdigit(peek(file,1)) || isdigit(peek(file)) )
+			 if ( peek(file) == int('-') && isdigit(peek(file,1)) ||
+			      peek(file) == int('+') && isdigit(peek(file,1)) ||
+			      isdigit(peek(file)) )
 			 then (
 			      tokenbuf << char(getc(file));
 			      while isdigit(peek(file)) do tokenbuf << char(getc(file));
