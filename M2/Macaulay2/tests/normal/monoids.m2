@@ -192,3 +192,21 @@ assert((options E).SkewCommutative == {0, 1})
 assert(E^1 == Hom(E^1, E^1))
 F = E ** E
 assert((options F).SkewCommutative == {0, 1, 2, 3})
+
+-- test variable deduplication
+assert(gens(A = monoid[x,y]) == {x,y})
+assert(gens(B = A ** A) == {x_0,y_0,x_1,y_1}) -- TODO: eliminate the warning
+assert(gens(C = B ** B) == {x_(0,0),y_(0,0),x_(1,0),y_(1,0),x_(0,1),y_(0,1),x_(1,1),y_(1,1)})
+assert(toString gens(A ** B) == "{x, y, x_0, y_0, x_1, y_1}") -- TODO: not yet working without toString
+assert(toString gens(monoid[x,y,x,z]) == "{x_0, y, x_1, z}") -- TODO: not yet working without toString
+
+-- test of Weyl algebra variable handling
+A = QQ[t, dt, WeylAlgebra => {t => dt}]
+B = first flattenRing(A[t])
+assert(gens B == {t_0, t_1, dt})
+assert((options B).WeylAlgebra == {{1, 2}})
+
+-- test of adjoining variables with local variables
+needsPackage "Dmodules"
+W = QQ[u, v, Du, Dv, WeylAlgebra => {u => Du, v => Dv}];
+assert(RatAnn(u^5 - v^2) == ideal{2*u*Du+5*v*Dv+10, 5*u^4*Dv+2*v*Du})

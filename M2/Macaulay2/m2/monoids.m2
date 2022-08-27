@@ -429,16 +429,33 @@ processDegrees = (degs, degrk, group, nvars) -> (
 
 -----------------------------------------------------------------------------
 
+makeVars = (n, var) -> toList(
+    (a, b) := (0, n-1);
+    (name, ind) := if instance(var = baseName' var, IndexedVariable) then toSequence var else (var, null);
+    if ind =!= null then (a, b)  = (append(listSplice ind, 0), append(listSplice ind, n-1));
+    name_a .. name_b)
+
 -- check that the objects serving as variables have an assignment method
 -- TODO: why is (symbol <-, T) and not (symbol <-, T, Thing) the right method sequence for assignment?
 checkSymbol = sym -> if instance(sym, Symbol) or lookup(symbol <-, class sym) =!= null then sym else error()
 
+-- turns {x, y, z, y} into {x, y_0, z, y_1}
+-- adding 'toString' in a few places will eliminate more duplications
+-- but makes creating temporary rings in functions more difficult.
+dedupSymbols = varlist -> if 0 == repeats varlist then varlist else while 0 < repeats varlist do (
+    mapping := hashTable toList pairs varlist;
+    -- TODO: applyPairs with collision handler, and accepting MutableHashTable
+    counter := new MutableHashTable from applyKeys(mapping,
+	i -> varlist#i, dups -> makeVars(#dups, first dups));
+    varlist = values applyValues(mapping, var -> if instance(counter#(name := var), List)
+	then first(counter#name#0, counter#name = drop(counter#name, 1)) else var);
+    if 0 == repeats varlist then break varlist else varlist)
+
 -- also used in AssociativeAlgebras.m2
-findSymbols = varlist -> toList apply(pairs listSplice varlist,
+findSymbols = varlist -> dedupSymbols toList apply(pairs listSplice varlist,
     -- varlist is a list or sequence of items we wish to use for variable names.
     -- these may be: Symbol's, RingElement's (which are variables in a ring) or lists or sequences of such.
     -- Return value: a List of Symbol's and IndexVariable's (or an error message gets issued)
-    -- if 0 != repeats varlist then error "encountered repeated variables"; -- M ** M will have repeated variables
     (i, var) -> try checkSymbol baseName' var else error concatenate(
 	"encountered object not usable as variable at position ", toString i, " in list:",
 	newline, 8, silentRobustNetWithClass(max(printWidth, 80) - 8, 5, 3, var)))
@@ -448,7 +465,7 @@ processVars Thing := x -> findSymbols {x}
 processVars VisibleList := findSymbols
 processVars(VisibleList, Thing) := (v, xx) -> findSymbols v
 processVars(Thing, Thing) := (x, xx) -> findSymbols {x}
-processVars(ZZ,    Thing) := (n, xx) -> toList( xx = baseName' xx; xx_0 .. xx_(n-1) )
+processVars(ZZ,    Thing) := (n, xx) -> makeVars(n, xx)
 processVars ZZ := x -> {x}
 
 processSkew := (n, skewvars) -> toList(
