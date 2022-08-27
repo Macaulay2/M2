@@ -77,7 +77,7 @@ doc ///
 	    The total coordinate ring, which is also known as the Cox ring, of
   	    a normal toric variety is a polynomial ring in which the variables
   	    correspond to the rays in the fan.  The map from the group of
-  	    torus-invarient Weil divisors to the class group endows this ring
+  	    torus-invariant Weil divisors to the class group endows this ring
   	    with a grading by the @TO2(classGroup,"class group")@.  For more
   	    information, see Subsection 5.2 in Cox-Little-Schenck's 
 	    {\em Toric Varieties}.

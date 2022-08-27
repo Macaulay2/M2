@@ -1030,7 +1030,7 @@ SeeAlso =>{isFTVector}
 
 document {
 Key => {isFTVector,(isFTVector,Ring,List,ZZ)},
-Headline => "whether a given list of nonnegative intengers is the ft-vector of a t-strongly stable ideal of a given polynomial ring",
+Headline => "whether a given list of nonnegative integers is the ft-vector of a t-strongly stable ideal of a given polynomial ring",
 Usage => "isFTVector(S,f,t)",
 Inputs => {"S" => {"a polynomial ring"},
            "f" => {"a list of nonnegative integers"},

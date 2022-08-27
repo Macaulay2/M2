@@ -1186,7 +1186,7 @@ doc ///
 
 	Caveat
 		Functionalities concerning intersection cohomology of sheaves on moment graphs, which had been 
-		implemenented before (see @HREF{"https://people.math.umass.edu/~braden/MG/index.html","MG: moment graph computations"}@),
+		implemented before (see @HREF{"https://people.math.umass.edu/~braden/MG/index.html","MG: moment graph computations"}@),
 		have not been imported into this package yet.
 
 	SeeAlso

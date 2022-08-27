@@ -380,7 +380,7 @@ isMassEliminate BettiTally :=  B -> (
      )
 
 --  input:  BettiTally of a Cohen-Macaulay Module
---     	    Cohen-Macualay Ideal
+--     	    Cohen-Macaulay Ideal
 -- output:  List, if no mass elimination occurs, a list is given sequencing
 --     	    the homological degree of the elimination of betti numbers
 -- options: EliminationSequence => Boolean; default is false, thus the output is 

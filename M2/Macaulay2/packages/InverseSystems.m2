@@ -214,7 +214,7 @@ Description
   In the 1880's these ideas were used by Max Noether, in the
   local version, as a substitute for primary decomposition in the 
   case of what he called multiple points in the plane. 
-  F. S. Macaualay studied and greatly refined Noether's
+  F. S. Macaulay studied and greatly refined Noether's
   work, and for example identified the ideals I that are
   annihilators of cyclic submodules of $D'$ as the ideals
   such that one could do residuation in $S'/I$ -- 
@@ -229,7 +229,7 @@ Description
   will have only primary components contained in
   $(x_1,\dots,x_n)$ so the distinction
   will not be important for us on that side. 
-  However, it is imporant
+  However, it is important
   to note that when taking the inverse system of an ideal,
   only the primary components contained in 
   $(x_1,\dots,x_n)$ play a role.

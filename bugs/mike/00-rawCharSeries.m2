@@ -272,7 +272,7 @@ CharSet(PS) : Cset
 charseta(PS) : Cset
   this one calls CharSet, but otherwise looks identical, what is this about?
 
-initalset1
+initialset1
 
 I don't understand factory routine "mapinto"
 or libfac routine: (csutil.cc): myfitting
@@ -335,7 +335,7 @@ MCharSetN(List, PremForm) := (PS, remembern) -> (
         CS := basicSet QS;
         oldCS := CS;
         -- this next line seems not ever to be used
-        --remembern.FS1 = remembern.FS1 + set initalset1 CS;
+        --remembern.FS1 = remembern.FS1 + set initialset1 CS;
         RS := if CS is not trivial then (
             D = QS - CS;
             for d in D list (
@@ -368,7 +368,7 @@ factorps = (factorset) -> (
     -- returning a (unique) list of all monic factors
     )
 
-inital RingElement := (F) -> (
+initial RingElement := (F) -> (
     -- return the "monic" lead coefficient of F
     -- if F = f(x1,...,x(n-1)) x_n^r + lower terms
     --   then return numerator(f/lc(f)), where lc(f) is (I think) the coefficient of the lead monomial, as
@@ -443,7 +443,7 @@ irrCharSeries(List) := (PS) -> (
                      qsi = append(qsi, cs);
                      is := if #cs == highestlevel
                            then factorps factorset;
-                           else (initalset1 cs) + factorps factorset;
+                           else (initialset1 cs) + factorps factorset;
                      adjoin(is, qs, qqi)
                    )
             else adjoin(factorps factorset, qs, qqi)

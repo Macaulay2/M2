@@ -3,7 +3,7 @@
 
   Update your files using "cvs update" before starting.
 
- Look in M2doc/Macaualay2/functions for the command you are working on
+ Look in M2doc/Macaulay2/functions for the command you are working on
    and open up the file <command>-doc.m2.
 
  Put your name on top.
