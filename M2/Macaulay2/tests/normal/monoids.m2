@@ -182,16 +182,26 @@ assert(degreeGroup U == ZZ^3)
 
 -- test tensor
 U = QQ[x, dx, WeylAlgebra => x => dx]
-assert((options U).WeylAlgebra == {{0, 1}})
+A = monoid U
 assert(U^1 == Hom(U^1, U^1))
+assert(U.WeylAlgebra == {{0, 1}})
+assert(A.Options.WeylAlgebra == {{A_0, A_1}})
 W = U ** U
-assert((options W).WeylAlgebra == {{0, 1}, {2, 3}})
+B = monoid W
+assert(W^1 == Hom(W^1, W^1))
+assert(W.WeylAlgebra == {{0, 1}, {2, 3}})
+assert(B.Options.WeylAlgebra == {{B_0, B_1}, {B_2, B_3}})
 
 E = QQ[u, v, SkewCommutative => true]
-assert((options E).SkewCommutative == {0, 1})
+A = monoid E
 assert(E^1 == Hom(E^1, E^1))
+assert(E.SkewCommutative == {0, 1})
+assert(A.Options.SkewCommutative == {0, 1})
 F = E ** E
-assert((options F).SkewCommutative == {0, 1, 2, 3})
+B = monoid F
+assert(F^1 == Hom(F^1, F^1))
+assert(F.SkewCommutative == {0, 1, 2, 3})
+assert(B.Options.SkewCommutative == {0, 1, 2, 3})
 
 -- test variable deduplication
 assert(gens(A = monoid[x,y]) == {x,y})
@@ -202,9 +212,14 @@ assert(toString gens(monoid[x,y,x,z]) == "{x_0, y, x_1, z}") -- TODO: not yet wo
 
 -- test of Weyl algebra variable handling
 A = QQ[t, dt, WeylAlgebra => {t => dt}]
+M = monoid A
+assert(A.WeylAlgebra == {{0, 1}})
+assert(M.Options.WeylAlgebra == {{M_0, M_1}})
 B = first flattenRing(A[t])
 assert(gens B == {t_0, t_1, dt})
-assert((options B).WeylAlgebra == {{1, 2}})
+N = monoid B
+assert(B.WeylAlgebra == {{1, 2}})
+assert(N.Options.WeylAlgebra == {{N_1, N_2}})
 
 -- test of adjoining variables with local variables
 needsPackage "Dmodules"

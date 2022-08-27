@@ -102,8 +102,6 @@ degreeGroup   FractionField  := degreeGroup @@ baseRing
 -- Helpers for polynomial ring
 -----------------------------------------------------------------------------
 
-shiftAndJoin = (n, L, R) -> if R === null then L else join(L, apply(R, plus_n))
-
 newSkewPolyRing = (S, R, RSkew, M, MSkew, num) -> (
     if RSkew =!= {} then MSkew = shiftAndJoin_num (MSkew, RSkew);
     RM := new PolynomialRing from rawSkewPolynomialRing(S, MSkew);
@@ -127,6 +125,7 @@ newWeylAlgebra = (S, R, RWeyl, M, MWeyl, num) -> (
     RM.xvars = xvars; RM.dvars = dvars;
     if hvar != -1 then RM.homogenize = hvar;
     addHook(RM, QuotientRingHook, S -> (S.xvars = xvars; S.dvars = dvars));
+    RM.WeylAlgebra = pack_2 mingle(xvars, dvars);
     RM)
 
 -----------------------------------------------------------------------------
@@ -143,11 +142,12 @@ Ring Monoid := PolynomialRing => (R, M) -> (
     if not M.?RawMonoid then error "expected monoid handled by the engine";
     if not R.?RawRing then error "expected coefficient ring handled by the engine";
     nvars := numgens M;
-    (basering, flatMonoid, numallvars) := (
+    (K, F, numallvars) := (
 	if R.?isBasic or instance(R, FractionField) then (R, M, nvars) else
 	if R.?basering and R.?FlatMonoid            then (R.basering, tensor(M, R.FlatMonoid), nvars + R.numallvars)
 	else error "internal error: expected coefficient ring to have a base ring and a flat monoid");
     -----------------------------------------------------------------------------
+    -- TODO: why not use K and F here?
     MOpts := options M;
     ROpts := options R;
     RCons := if ROpts.?Constants       then ROpts.Constants else false;
@@ -156,12 +156,15 @@ Ring Monoid := PolynomialRing => (R, M) -> (
     MWeyl := if MOpts.?WeylAlgebra     then MOpts.WeylAlgebra else {};
     RSkew := if ROpts.?SkewCommutative then ROpts.SkewCommutative else {};
     MSkew := if MOpts.?SkewCommutative then MOpts.SkewCommutative else {};
+    -- FIXME: remove once Weyl variables are stored as indices in the monoid
+    RWeyl = monoidIndices_R RWeyl;
+    MWeyl = monoidIndices_M MWeyl;
     if (MWeyl =!= {} or RWeyl =!= {}) and (MSkew =!= {} or RSkew =!= {})
     then error "rings with both skew commuting and differential variables are not yet implemented";
     -----------------------------------------------------------------------------
     S := if (constants := RCons or MCons)
-    then rawTowerRing(char R, flatMonoid.generatorSymbols / toString // toSequence) -- TODO: document this
-    else rawPolynomialRing(raw basering, raw flatMonoid);
+    then rawTowerRing(char R, F.generatorSymbols / toString // toSequence) -- TODO: document this
+    else rawPolynomialRing(raw K, raw F);
     -----------------------------------------------------------------------------
     local RM;
     if MWeyl =!= {} or RWeyl =!= {} then RM =  newWeylAlgebra(S, R, RWeyl, M, MWeyl, nvars) else
@@ -173,27 +176,27 @@ Ring Monoid := PolynomialRing => (R, M) -> (
 	RM#"has quotient elements" = true);
     --
     RM.monoid     = M;
-    RM.basering   = basering;
-    RM.FlatMonoid = flatMonoid;
+    RM.basering   = K;
+    RM.FlatMonoid = F;
     RM.numallvars = numallvars;
     RM.baseRings  = append(R.baseRings, R);
     RM.promoteDegree = (
-	if flatMonoid.Options.DegreeMap === null
+	if F.Options.DegreeMap === null
 	then makepromoter degreeLength RM -- means the degree map is zero
 	else (
-	    dm := flatMonoid.Options.DegreeMap;
-	    nd := flatMonoid.Options.DegreeRank;
+	    dm := F.Options.DegreeMap;
+	    nd := F.Options.DegreeRank;
 	    degs -> apply(degs, deg -> degreePad(nd, dm deg))));
     RM.liftDegree = (
-	if flatMonoid.Options.DegreeLift === null
+	if F.Options.DegreeLift === null
 	then makepromoter degreeLength R -- lifing the zero degree map
 	else (
-	    lm := flatMonoid.Options.DegreeLift;
+	    lm := F.Options.DegreeLift;
 	    degs -> apply(degs, lm)));
     --
-    if R.?char                   then RM.char          = R.char; -- TODO: what ring doesn't have .char?
-    if flatMonoid.?degreesRing   then RM.degreesRing   = flatMonoid.degreesRing;
-    if flatMonoid.?degreesMonoid then RM.degreesMonoid = flatMonoid.degreesMonoid;
+    if R.?char          then RM.char          = R.char; -- TODO: what ring doesn't have .char?
+    if F.?degreesRing   then RM.degreesRing   = F.degreesRing;
+    if F.?degreesMonoid then RM.degreesMonoid = F.degreesMonoid;
     RM.isCommutative = RWeyl === {} and MWeyl === {} and not RM.?SkewCommutative;
     -- see enginering.m2
     commonEngineRingInitializations RM;
@@ -213,6 +216,7 @@ Ring Monoid := PolynomialRing => (R, M) -> (
     RM.generatorSymbols     = M.generatorSymbols;
     RM.generatorExpressions = M.generatorExpressions;
     --
+    RM.index        = hashTable apply(RM.generatorSymbols, 0 ..< nvars,  identity);
     RM.indexSymbols = hashTable join(
 	-- FIXME: switching the order of the following two reveals a bug in Schubert2
 	apply(if R.?indexSymbols then pairs R.indexSymbols else {},

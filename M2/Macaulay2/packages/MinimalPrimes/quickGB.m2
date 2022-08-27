@@ -62,7 +62,7 @@ quickEliminate (List,Ideal) := (v,I) -> (
      error "expected a polynomial ring over ZZ or a field";
    if #v === 0 then return I;
    if not all(v, x -> class x === R) then error "expected a list of elements in the ring of the ideal";
-   varlist := monoidIndices(R.FlatMonoid, v);
+   varlist := monoidIndices_R v;
    quickEliminate1(varlist, I)
 )
 

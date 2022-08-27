@@ -180,6 +180,7 @@ EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
 	  R.generatorExpressions
 	  -- apply(R.generatorExpressions,S.generators,(e,x) -> new Holder2 from {e#0,x})
 	  );
+     if R.?index        then S.index = R.index;
      if R.?indexStrings then S.indexStrings = applyValues(R.indexStrings, x -> promote(x,S));
      if R.?indexSymbols then S.indexSymbols = applyValues(R.indexSymbols, x -> promote(x,S));
      expression S := lookup(expression,R);

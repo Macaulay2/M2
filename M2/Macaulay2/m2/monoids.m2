@@ -575,17 +575,26 @@ newMonoid = opts -> (
     try M.indexStrings = applyKeys(M.indexSymbols, toString); -- no error, because this is often harmless
     M.use = M -> scan(M.generatorSymbols, M.vars, (sym, val) -> sym <- val);
     M.Options = (new OptionTable from opts) ++ {
-	WeylAlgebra     => monoidIndices_M opts.WeylAlgebra,
+	WeylAlgebra     => monoidSymbols_M opts.WeylAlgebra, -- FIXME: monoidIndices breaks Dmodules
 	SkewCommutative => monoidIndices_M opts.SkewCommutative,
 	};
     M)
 
+monoidSymbols = (M, v) -> apply(v, monoidSymbol_M)
+monoidSymbol  = (M, x) -> ( b := try baseName x;
+    if instance(x, ZZ)    then M.generators#x else
+    if instance(x, List)  then monoidSymbols(M, x)  else
+    if M.indexSymbols#?b  then M.indexSymbols#b     else
+    if M.?indexStrings
+    and M.indexStrings#?x then M.indexSymbols#x     else
+    error("expected an index, symbol, or name of variable of the ring or monoid: ", toString x))
+
 -- also used in Elimination
 monoidIndices = (M, v) -> apply(v, monoidIndex_M)
-monoidIndex   = (M, x) -> (
-    if instance(x, ZZ)           then x else
-    if instance(x, List)         then monoidIndices(M, x) else
-    if M.index#?(x = baseName x) then M.index#x else
+monoidIndex   = (M, x) -> ( b := try baseName x;
+    if instance(x, ZZ)    then x else
+    if instance(x, List)  then monoidIndices(M, x) else
+    if M.index#?b         then M.index#b else
     error("expected an integer or variable of the ring or monoid: ", toString x))
 
 -----------------------------------------------------------------------------
@@ -620,6 +629,10 @@ degreePad = (n,x) -> (
      join(toList(n-#x:0),x));
 
 degreeNoLift = () -> error "degree not liftable"
+
+-- for handling SkewCommutative and WeylAlgebra indices when adjoining monoids
+shiftAndJoin = (n, L, R) -> if R === null then L else join(L,
+    apply(R, r -> if instance(r, ZZ) then r + n else apply(r, plus_n)))
 
 -- TODO: do we want to support a syntax this?
 --   'tensor (a => ZZ^2, b => ZZ^3, c => ZZ^4)'
@@ -686,14 +699,12 @@ tensor(Monoid, Monoid) := Monoid => monoidTensorDefaults >> opts0 -> (M, N) -> (
 	  )
      else opts.Inverses = opts.Inverses;
     opts.Heft = processHeft(opts.DegreeRank, opts.Degrees, opts.DegreeGroup, opts.Heft, opts.Inverses);
-     wfix := (M,w,bump) -> (
-	  if class w === Option then w = {w};
-	  apply(w, o -> monoidIndex(M,o#0) + bump => monoidIndex(M,o#1) + bump));
-     opts.WeylAlgebra = join(wfix(M, Mopts.WeylAlgebra, 0), wfix(N, Nopts.WeylAlgebra, numgens M));
      if Mopts.Global === false or Nopts.Global === false then opts.Global = false;
      oddp := x -> x#?0 and odd x#0;
      m := numgens M;
-     opts.SkewCommutative = join(monoidIndices(M,M.Options.SkewCommutative), apply(monoidIndices(N,N.Options.SkewCommutative), i -> i+m));
+    -- FIXME: remove these two lines once Weyl variables are stored as indices in the monoid
+    opts.WeylAlgebra     = shiftAndJoin_m (monoidIndices_M Mopts.WeylAlgebra, monoidIndices_N Nopts.WeylAlgebra);
+    opts.SkewCommutative = shiftAndJoin_m (Mopts.SkewCommutative, Nopts.SkewCommutative);
      newMonoid setMonoidOptions opts)
 
 -----------------------------------------------------------------------------

@@ -57,6 +57,8 @@ eliminationRing = (elimvars, R) -> (
      skew := (options R).SkewCommutative;
      degs = degs_perm;
      vars = vars_perm;
+     -- FIXME: remove this line when Weyl variables are stored as indices in the monoid
+     weyl = monoidIndices_R weyl;
      weyl = apply(weyl, pair -> invperm_pair);
      M := monoid [vars,MonomialOrder=>Eliminate(#elimvars), Degrees=>degs, 
 	  WeylAlgebra => weyl, SkewCommutative => skew, MonomialSize=>16];
@@ -86,7 +88,7 @@ eliminate (List, Ideal) := (v,I) -> (
        error "expected a polynomial ring over ZZ or a field";
      if #v === 0 then return I;
      if not all(v, x -> class x === R) then error "expected a list of elements in the ring of the ideal";
-     varlist := unique monoidIndices(R.FlatMonoid, v);
+     varlist := unique monoidIndices_R v;
      eliminate1(varlist, I)
      )
 
@@ -292,8 +294,8 @@ TEST ///
       --
       (F, G) := eliminationRing({1, 2}, W);
       perm := {1, 2, 0, 3}; invperm := inversePermutation perm;
-      weyl := apply((options W).WeylAlgebra, pair -> invperm_pair);
-      assert((options target F).WeylAlgebra == weyl);
+      weyl := apply(W.WeylAlgebra, pair -> invperm_pair);
+      assert((target F).WeylAlgebra == weyl);
       --
       W = QQ[W_*_perm, WeylAlgebra => weyl, MonomialOrder => Eliminate 2];
       I = sub(I, W);
