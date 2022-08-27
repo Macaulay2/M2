@@ -36,9 +36,9 @@ newPackage select((
 	     "article title" => "Partially ordered sets in Macaulay2",
 	     "acceptance date" => "5 June 2015",
 	     "published article URI" => "http://msp.org/jsag/2015/7-1/p02.xhtml",
-	     "published article DOI" => "http://dx.doi.org/10.2140/jsag.2015.7.9-15",
+	     "published article DOI" => "https://dx.doi.org/10.2140/jsag.2015.7.9-15",
 	     "published code URI" => "http://msp.org/jsag/2015/7-1/jsag-v7-n1-x02-Posets.m2",
-	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Posets.m2",
+	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/Posets.m2",
 	     "release at publication" => "3a8d880a524f36a9668750375bb6079a7b00ea0f",
 	     "version at publication" => "1.1.2",
 	     "volume number" => "7",
@@ -2120,7 +2120,7 @@ doc ///
             with entries $(i,j)$ equal to 1 if $G_j \leq G_i$ and 0 otherwise
     Description
         Text
-            This method uses the @TO "descendents"@ method from the @TO "Graphs"@ package
+            This method uses the @TO "descendants"@ method from the @TO "Graphs"@ package
             to compute the @TO "RelationMatrix"@ from the relations $R$.
         Example
             G = {1,2,3,4,5};
@@ -2448,6 +2448,7 @@ doc ///
         pPartitionRing
         (pPartitionRing,Poset)
         [pPartitionRing,CoefficientRing]
+        [pPartitionRing,Strategy]
     Headline
         produces the p-partition ring of a poset
     Usage
