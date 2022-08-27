@@ -9,11 +9,7 @@ newPackage("Elimination",
 
 export {"eliminate", "sylvesterMatrix", "discriminant", "resultant"}
 
----------------------
---- Preliminaries  --
----------------------
-
-getIndices = (R,v) -> unique apply(v, index)
+importFrom_Core {"monoidIndices"}
 
 ------------------------------
 -- Elimination of variables --
@@ -36,7 +32,7 @@ eliminateH = (v,I) -> (
      return trim phi eS;
      )
 
-isFlatPolynomialRing := (R) -> (
+isFlatPolynomialRing = R -> (
      -- R should be a ring
      -- determines if R is a poly ring over ZZ or a field
      kk := coefficientRing R;
@@ -61,6 +57,7 @@ eliminationRing = (elimvars, R) -> (
      skew := (options R).SkewCommutative;
      degs = degs_perm;
      vars = vars_perm;
+     weyl = apply(weyl, pair -> invperm_pair);
      M := monoid [vars,MonomialOrder=>Eliminate(#elimvars), Degrees=>degs, 
 	  WeylAlgebra => weyl, SkewCommutative => skew, MonomialSize=>16];
      k := coefficientRing R;
@@ -89,7 +86,7 @@ eliminate (List, Ideal) := (v,I) -> (
        error "expected a polynomial ring over ZZ or a field";
      if #v === 0 then return I;
      if not all(v, x -> class x === R) then error "expected a list of elements in the ring of the ideal";
-     varlist := getIndices(ring I,v);
+     varlist := unique monoidIndices(R.FlatMonoid, v);
      eliminate1(varlist, I)
      )
 
@@ -279,6 +276,31 @@ f1 = a^4 + b*a + c
 f2 = a^2 + d*a + e
 time resultant(f1,f2,a)
 time eliminate(ideal(f1,f2),a)
+///
+
+TEST ///
+  debug Elimination
+  W1 = QQ[x, t_0, dt_0, s, WeylAlgebra => {{1, 2}}]
+  W2 = QQ[x, t_0, dt_0, s, WeylAlgebra => { 1=>2 }]
+  W3 = QQ[x, t_0, dt_0, s, WeylAlgebra => { t_0=>dt_0 }]
+  W4 = QQ[x, t_0, dt_0, s, WeylAlgebra => {{t_0, dt_0}}]
+
+  checkWeylAlgebra = W -> (
+      I := ideal(W_0*W_1*W_2, W_0^2, 2*W_1^2*W_2^2+3*W_1*W_2, W_1*W_2+W_3+1);
+      J := eliminate(I, {W_1, W_2});
+      assert isSubset(J, I);
+      --
+      (F, G) := eliminationRing({1, 2}, W);
+      perm := {1, 2, 0, 3}; invperm := inversePermutation perm;
+      weyl := apply((options W).WeylAlgebra, pair -> invperm_pair);
+      assert((options target F).WeylAlgebra == weyl);
+      --
+      W = QQ[W_*_perm, WeylAlgebra => weyl, MonomialOrder => Eliminate 2];
+      I = sub(I, W);
+      J = ideal selectInSubring(1, gens gb I);
+      assert isSubset(J, I);
+      )
+  scan({W1, W2, W3, W4}, checkWeylAlgebra)
 ///
 
 end
