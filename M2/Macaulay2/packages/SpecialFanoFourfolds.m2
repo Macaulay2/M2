@@ -193,14 +193,7 @@ specialFourfold (String,Ring) := o -> (str,K) -> (
 
 specialFourfold String := o -> str -> specialFourfold(str,ZZ/65521,NumNodes=>o.NumNodes,InputCheck=>o.InputCheck,Verbose=>o.Verbose);
 
-specialFourfold (String,ZZ) := o -> (str,i) -> (
-    if str === "prebuilt-example-in-P7" or str === "prebuilt-example" then (
-        trisecantFlop(-190181,Verbose=>o.Verbose);
-        return (value "exampleOfRationalIntersectionsOfThreeQuadricsInP7") i;
-    );
-    if str === "prebuilt-example-in-P5" then return source trisecantFlop(i,Verbose=>o.Verbose);
-    error ///"the strings allowed for the method 'specialFourfold(String,ZZ)' are "prebuilt-example-in-P5" and "prebuilt-example-in-P7"///;
-);
+specialFourfold (String,ZZ) := o -> (str,i) -> (prebuiltExamplesOfRationalFourfolds()) (str,i);
 
 expression HodgeSpecialFourfold := X -> (
     E := if dim ambient X == 4 
@@ -2644,7 +2637,7 @@ Var Ring := o -> R -> projectiveVariety(R,MinimalGenerators=>o.MinimalGenerators
 Var Matrix := o -> M -> projectiveVariety(M,MinimalGenerators=>o.MinimalGenerators,Saturate=>false);
 
 ------------------------------------------------------------------------
---------------------------- Trisecant Flops ----------------------------
+-------------------------- Prebuilt Examples ---------------------------
 ------------------------------------------------------------------------
 
 trisecantFlop = method(Options => {Verbose => false});
@@ -2681,6 +2674,40 @@ trisecantFlop ZZ := o -> i -> (
     );    
     value("trisecantFlop("|toString(i)|",Verbose=>"|toString(o.Verbose)|")")    
 );
+
+prebuiltExamplesOfRationalFourfolds = memoize(() -> (
+    try needsPackage "PrebuiltExamplesOfRationalFourfolds" else (
+        curl := findProgram("curl", "curl -h");
+        dir := temporaryFileName() | "/";
+        mkdir dir;
+        <<"The package PrebuiltExamplesOfRationalFourfolds is not present."<<endl;
+        e := "";
+        while not(e == "y" or e == "yes" or e == "Y" or e == "Yes") do (
+            e = read("Do you want to download the latest version of the package now? (y/n) ");
+            if e == "n" or e == "no" or e == "N" or e == "No" then error "required package PrebuiltExamplesOfRationalFourfolds";
+        );
+        <<"-- downloading the package PrebuiltExamplesOfRationalFourfolds from https://github.com/giovannistagliano"<<endl;    
+        runProgram(curl,"-s -o PrebuiltExamplesOfRationalFourfolds.m2 https://raw.githubusercontent.com/giovannistagliano/PrebuiltExamplesOfRationalFourfolds/main/PrebuiltExamplesOfRationalFourfolds.m2",RunDirectory=>dir);
+        if not fileExists(dir|"/PrebuiltExamplesOfRationalFourfolds.m2") then error "something went wrong in downloading the package PrebuiltExamplesOfRationalFourfolds";
+        try needsPackage("PrebuiltExamplesOfRationalFourfolds",FileName => dir|"/PrebuiltExamplesOfRationalFourfolds.m2") else error "something went wrong in loading the package PrebuiltExamplesOfRationalFourfolds";
+        <<"The package PrebuiltExamplesOfRationalFourfolds has been successfully loaded."<<endl;
+        f := "";
+        while not(f == "y" or f == "yes" or f == "Y" or f == "Yes" or f == "n" or f == "no" or f == "N" or f == "No") 
+        do f = read("Do you want to install the package for future use? (y/n) ");
+        if f == "y" or f == "yes" or f == "Y" or f == "Yes" then (
+            <<"-- installing the package PrebuiltExamplesOfRationalFourfolds"<<endl;    
+            installPackage("PrebuiltExamplesOfRationalFourfolds",Verbose => false,FileName => dir|"/PrebuiltExamplesOfRationalFourfolds.m2");
+        );
+    );
+    if not member(value "PrebuiltExamplesOfRationalFourfolds",loadedPackages) then error "something went wrong";
+    if (value "PrebuiltExamplesOfRationalFourfolds").Options.Version < "1.0" then (
+        <<"-- removing old version of PrebuiltExamplesOfRationalFourfolds"<<endl;  
+        uninstallPackage "PrebuiltExamplesOfRationalFourfolds";
+        error "Your version of the PrebuiltExamplesOfRationalFourfolds package was outdated and has been removed. Macaulay2 should be restarted as soon as possible.";
+    );    
+    value ///importFrom(PrebuiltExamplesOfRationalFourfolds,{"prebuiltExampleOfRationalFourfold"});///;
+    value ///prebuiltExampleOfRationalFourfold///
+));
 
 ------------------------------------------------------------------------
 ----------- GM fourfolds from curves on surfaces in PP^6 ---------------
