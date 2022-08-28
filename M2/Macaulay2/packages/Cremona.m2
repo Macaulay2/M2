@@ -426,10 +426,14 @@ net RationalMap := (Phi) -> nicePrint Phi;
 
 net MultihomogeneousRationalMap := (Phi) -> nicePrint Phi;
 
+texMath MultihomogeneousRationalMap := texMath RationalMap := texMath @@ net;
+
+RationalMap#{WebApp,AfterPrint} = RationalMap#{WebApp,AfterNoPrint} = 
 RationalMap#{Standard,AfterPrint} = RationalMap#{Standard,AfterNoPrint} = (Phi) -> (
   << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class Phi << " (" << expression Phi << ")" << endl;
 );
 
+MultihomogeneousRationalMap#{WebApp,AfterPrint} = MultihomogeneousRationalMap#{WebApp,AfterNoPrint} = 
 MultihomogeneousRationalMap#{Standard,AfterPrint} = MultihomogeneousRationalMap#{Standard,AfterNoPrint} = (Phi) -> (
   << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class Phi << " (" << expression Phi << ")" << endl;
 );
@@ -2187,7 +2191,9 @@ net AbstractRationalMap := (Phi) -> (
    if Phi#"degForms" =!= null then s=s||"defining forms: given by a function (degree = "|toString(Phi#"degForms")|")" else s=s||"defining forms: given by a function"; 
    net(s)
 );
+texMath AbstractRationalMap := texMath @@ net;
 
+AbstractRationalMap#{WebApp,AfterPrint} = AbstractRationalMap#{WebApp,AfterNoPrint} = 
 AbstractRationalMap#{Standard,AfterPrint} = AbstractRationalMap#{Standard,AfterNoPrint} = (Phi) -> (
   << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class Phi << " (" << expression Phi << ")" << endl;
 );
