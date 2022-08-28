@@ -71,7 +71,7 @@ toExternalString PolynomialRing := toString @@ describe
 -- degreesRing, etc.
 -----------------------------------------------------------------------------
 
-protect basering
+protect BaseRing
 protect FlatMonoid
 
 degreesRing = method(TypicalValue => PolynomialRing)
@@ -79,7 +79,7 @@ degreesRing ZZ   := memoize( n -> if n == 0 then degreesRing {} else ZZ degreesM
 degreesRing List := memoize(
      hft -> if #hft === 0 then (
 	       S := new PolynomialRing from rawPolynomialRing();
-	       S.basering = ZZ;
+	       S.BaseRing = ZZ;
 	       S.FlatMonoid = monoid[DegreeRank => 0, Inverses => true, Global => false];
 	       S.numallvars = 0;
 	       S.baseRings = {ZZ};
@@ -144,7 +144,7 @@ Ring Monoid := PolynomialRing => (R, M) -> (
     nvars := numgens M;
     (K, F, numallvars) := (
 	if R.?isBasic or instance(R, FractionField) then (R, M, nvars) else
-	if R.?basering and R.?FlatMonoid            then (R.basering, tensor(M, R.FlatMonoid), nvars + R.numallvars)
+	if R.?BaseRing and R.?FlatMonoid            then (R.BaseRing, tensor(M, R.FlatMonoid), nvars + R.numallvars)
 	else error "internal error: expected coefficient ring to have a base ring and a flat monoid");
     -----------------------------------------------------------------------------
     -- TODO: why not use K and F here?
@@ -176,7 +176,7 @@ Ring Monoid := PolynomialRing => (R, M) -> (
 	RM#"has quotient elements" = true);
     --
     RM.monoid     = M;
-    RM.basering   = K;
+    RM.BaseRing   = K;
     RM.FlatMonoid = F;
     RM.numallvars = numallvars;
     RM.baseRings  = append(R.baseRings, R);

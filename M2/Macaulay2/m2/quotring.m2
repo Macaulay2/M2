@@ -165,7 +165,7 @@ EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
      S := new QuotientRing from rawQuotientRing(raw R, raw gensgbI);
      S#"raw creation log" = Bag { FunctionApplication {rawQuotientRing, (raw R, raw gensgbI)} };
      S.cache = new CacheTable;
-     S.basering = R.basering;
+     S.BaseRing   = R.BaseRing;
      S.FlatMonoid = R.FlatMonoid;
      S.numallvars = R.numallvars;
      S.ideal = I;

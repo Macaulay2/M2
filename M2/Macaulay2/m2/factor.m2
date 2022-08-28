@@ -77,7 +77,7 @@ factor RingElement := opts -> f -> (
     c := 1_R;
     -- get rid of monomial in factor if f Laurent polynomial
     if (options RM).Inverses then (
-	minexps := toList last rawPairs(raw RM.basering, raw f);
+	minexps := toList last rawPairs(raw RM.BaseRing, raw f);
 	minexps  = min \ transpose apply(minexps, exponents_(RM.numallvars));
 	f = RM_(-minexps) * f;
 	c = RM_minexps);
@@ -86,7 +86,7 @@ factor RingElement := opts -> f -> (
     then ret else error "factor: no method implemented for this type of element";
     -- TODO: simplify this
     facs = apply(facs, exps, (f, e) -> if leadCoeff(p := new RM from f) >= 0 then p else (if odd e then c = -c; -p));
-    if liftable(facs#0, RM.basering) then (
+    if liftable(facs#0, RM.BaseRing) then (
 	-- factory returns the possible constant factor in front
 	assert(exps#0 == 1);
 	c = c * facs#0;
