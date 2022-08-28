@@ -209,57 +209,6 @@ Ring Monoid := PolynomialRing => (R, M) -> (
 	denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
 	numerator   RM := f -> f * denominator f);
     -----------------------------------------------------------------------------
-    factor RM := opts -> f -> (
-	c := 1_R;
-	if (options RM).Inverses then (
-	    minexps:=min\transpose apply(toList (rawPairs(raw RM.basering,raw f))#1,m->exponents(RM.numallvars,m));
-	    f=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
-	    c=RM_minexps;
-	    );
-	isSimpleNumberField := F -> isField F and instance(baseRing F, QuotientRing) and coefficientRing baseRing F === QQ and numgens baseRing F == 1 and numgens ideal baseRing F == 1;
-	(facs,exps) := if isSimpleNumberField R then (
-	    (RM', toRM') := flattenRing(RM, CoefficientRing=>QQ);
-	    minp := (ideal RM')_0;
-	    ((fs,es) -> (for f in fs list raw (map(RM, RM', generators RM|{R_0})) new RM' from f, es)) (
-		rawFactor(raw toRM' f, raw minp)) -- apply rawFactor, but the factors need to be converted back to RM
-	    ) else if instance(R, FractionField) then (
-	    denom := lcm \\ (t -> denominator t_1) \ listForm f;
-	    baseRM := (baseRing R)(RM.monoid);
-	    f = (map(baseRM, RM, generators baseRM)) (denom * f);
-	    ((fs,es) -> (for i in (0..<#fs) list raw (((map(RM, baseRM, generators RM)) new baseRM from fs_i) * if i==0 then 1/denom else 1), es)) (
-		rawFactor raw f) -- similar: convert back to RM, and put denom back into the leadCoefficient
-	    ) else rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
-	leadCoeff := x->( -- iterated leadCoefficient
-	    R:=ring x;
-	    if class R === PolynomialRing then leadCoeff leadCoefficient x else
-	    if class R === QuotientRing or class R === GaloisField then leadCoeff lift(x,ambient R) else
-	    x);
-	facs = apply(#facs, i -> (
-		p:=new RM from facs#i;
-		if leadCoeff p >= 0 then p else (if odd(exps#i) then c=-c; -p)
-		));
-	if liftable(facs#0,RM.basering) then (
-	    -- factory returns the possible constant factor in front
-	    assert(exps#0 == 1);
-	    c = c*(facs#0);
-	    facs = drop(facs,1);
-	    exps = drop(exps,1);
-	    );
-	if #facs != 0 then (facs,exps) = toSequence transpose sort transpose {toList facs, toList exps};
-	if c != 1 then (
-	    -- we put the possible constant (and monomial for Laurent polynomials) at the end
-	    facs = append(facs,c);
-	    exps = append(exps,1);
-	    );
-	new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
-    -----------------------------------------------------------------------------
-    isPrime RM := {} >> o -> f -> (
-	v := factor f;
-	cnt := 0; -- counts number of factors
-	scan(v, x -> ( if not isUnit(x#0) then cnt=cnt+x#1 ));
-	cnt == 1 -- cnt=0 is invertible element; cnt>1 is composite element; cnt=1 is prime element
-	);
-    -----------------------------------------------------------------------------
     RM.generators           = apply(nvars, i -> RM_i);
     RM.generatorSymbols     = M.generatorSymbols;
     RM.generatorExpressions = M.generatorExpressions;
