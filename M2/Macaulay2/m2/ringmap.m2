@@ -229,23 +229,24 @@ RingMap \ List := List => (f,v) -> apply(v,x -> f x)
 -----------------------------------------------------------------------------
 
 kernel = method(Options => { SubringLimit => infinity })
-kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
-     (f) -> (
-	  R := source f;
-	  n2 := numgens R;
-	  F := target f;
-	  n1 := numgens F;
-	  if 0_F == 1_F then return ideal(1_R);
-	  if class F === FractionField then (
-	       C := last F.baseRings;
-	       if not (
-		    (isPolynomialRing C or isQuotientOf(PolynomialRing,C))
-		    and
-		    (isPolynomialRing R or isQuotientOf(PolynomialRing,R))
-		    and
-		    coefficientRing R === coefficientRing C
-		    ) then error "kernel: not implemented yet";
-	       k := coefficientRing R;
+kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (f -> (
+    (F, R) := (target f, source f);
+    if 0_F == 1_F then return ideal 1_R;
+    -- the actual computation occurs here
+    I := runHooks((kernel, RingMap), (opts, f));
+    if I =!= null then I else error "kernel: no method implemented for this type of ring map"))
+
+-- This is a map from method keys to strategy hash tables
+algorithms := new MutableHashTable from {}
+algorithms#(kernel, RingMap) = new MutableHashTable from {
+    FractionField => (opts, f) -> (
+	(F, R) := (target f, source f);
+	C := last F.baseRings;
+	if not instance(F, FractionField)
+	or not coefficientRing R === (k := coefficientRing C)
+	or not(isPolynomialRing C or isQuotientOf(PolynomialRing, C))
+	or not(isPolynomialRing R or isQuotientOf(PolynomialRing, R))
+	then return null;
 	       prs := presentation C;
 	       B := ring prs;
 	       images := apply(generators R, x -> (
@@ -274,6 +275,7 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
 	       h := symbol h;
 	       x := symbol x;
 	       y := symbol y;
+	(n1, n2) := (numgens F, numgens R);
 	       S := k[x_1 .. x_n1, d, y_1 .. y_n2, h,
 		    MonomialOrder => Eliminate (n1 + 1),
 		    Degrees => join(degrees C, {{1}}, degrees R, {{1}})];
@@ -288,13 +290,18 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
 			      in3 vars source in3 - d * in1 matrix {apply(images, first)}
 			      | d * in1 commonDenominator - 1,
 			      h),
-			 Strategy => LongPolynomial, opts)))
-	  else if (
-	       isAffineRing R and instance(ambient R, PolynomialRing) and isField coefficientRing R
-	       and isAffineRing F and instance(ambient F, PolynomialRing)
-	       and coefficientRing R === coefficientRing F
-	       ) 
-	  then (
+			 Strategy => LongPolynomial, opts))
+	),
+
+    "AffineRing" => (opts, f) -> (
+	(F, R) := (target f, source f);
+	if not isAffineRing R
+	or not isAffineRing F
+	or not instance(ambient R, PolynomialRing)
+	or not instance(ambient F, PolynomialRing)
+	or not isField coefficientRing R
+	or not coefficientRing R === coefficientRing F
+	then return null;
 	       graph := generators graphIdeal f;
 	       assert( not isHomogeneous f or isHomogeneous graph );
 	       SS := ring graph;
@@ -307,12 +314,15 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
 		   -- cache poincare
 		   poincare cokernel graph = hf;
 		   );
+	n1 := numgens F;
 	       mapback := map(R, ring graph, map(R^1, R^n1, 0) | vars R);
 	       G := gb(graph,opts);
 	       assert (not chh or G#?"rawGBSetHilbertFunction log"); -- ensure the Hilbert function hint was actually used in gb.m2
 	       ideal mapback selectInSubring(1,generators G)
-	       )
-	  else (
+	),
+
+    Default => (opts, f) -> (
+	(F, R) := (target f, source f);
 	       numsame := 0;
 	       while (
 		    R.baseRings#?numsame and
@@ -326,11 +336,19 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
 		    F.baseRings#(numsame-1).?isBasic
 		    )
 	       do numsame = numsame - 1;
-	       k = F.baseRings#(numsame-1);
+	       k := F.baseRings#(numsame-1);
 	       (R',p) := flattenRing(R, CoefficientRing => k);
 	       (F',r) := flattenRing(F, CoefficientRing => k);
-	       if R' === R and F' === F then error "kernel RingMap: not implemented yet";
-	       p^-1 kernel (r * f * p^-1))))
+	if R' === R and F' === F then return null;
+	p^-1 kernel (r * f * p^-1)
+	),
+    }
+
+-- Installing hooks for kernel RingMap
+scan({Default, "AffineRing", FractionField}, strategy ->
+    addHook(key := (kernel, RingMap), algorithms#key#strategy, Strategy => strategy))
+
+-----------------------------------------------------------------------------
 
 preimage = method()
 preimage(RingMap, Ideal) := Ideal => (f, J) -> (
