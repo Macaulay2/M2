@@ -132,15 +132,19 @@ expression JoinOfCoincidentRootLoci := (Z) -> (
 
 net CoincidentRootLocus := (X) -> net expression X;
 
+CoincidentRootLocus#{WebApp,AfterPrint} = CoincidentRootLocus#{WebApp,AfterNoPrint} = 
 CoincidentRootLocus#{Standard,AfterPrint} = CoincidentRootLocus#{Standard,AfterNoPrint} = X -> (
   << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Coincident root locus" << endl;
 );
 
 net JoinOfCoincidentRootLoci := (Z) -> net expression Z;
 
+JoinOfCoincidentRootLoci#{WebApp,AfterPrint} = JoinOfCoincidentRootLoci#{WebApp,AfterNoPrint} = 
 JoinOfCoincidentRootLoci#{Standard,AfterPrint} = JoinOfCoincidentRootLoci#{Standard,AfterNoPrint} = X -> (
   << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "Join of ", << #(X#"listCRloci") <<" coincident root loci" << endl;
 );
+
+texMath JoinOfCoincidentRootLoci := texMath CoincidentRootLocus := texMath @@ net;
 
 toString CoincidentRootLocus := (X) -> "CRL("|toString partition X|","|toString coefficientRing X|","|"Variable=>"|toString X#"variable"|")"; 
 

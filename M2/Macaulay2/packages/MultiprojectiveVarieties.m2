@@ -240,7 +240,9 @@ expression MultiprojectiveVariety := X -> (
 );
 
 net MultiprojectiveVariety := X -> if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else ?X;
+texMath MultiprojectiveVariety := texMath @@ net;
 
+MultiprojectiveVariety#{WebApp,AfterPrint} = MultiprojectiveVariety#{WebApp,AfterNoPrint} = 
 MultiprojectiveVariety#{Standard,AfterPrint} = MultiprojectiveVariety#{Standard,AfterNoPrint} = X -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << "ProjectiveVariety, " << expression X;
     if isSubvariety X then << " (subvariety of codimension " << dim ambientVariety X - dim X << " in " << ambientVariety X << ")";
@@ -1058,7 +1060,9 @@ expression MultirationalMap := Phi -> (
 );
 
 net MultirationalMap := Phi -> if hasAttribute(Phi,ReverseDictionary) then toString getAttribute(Phi,ReverseDictionary) else ?Phi;
+texMath MultirationalMap := texMath @@ net;
 
+MultirationalMap#{WebApp,AfterPrint} = MultirationalMap#{WebApp,AfterNoPrint} = 
 MultirationalMap#{Standard,AfterPrint} = MultirationalMap#{Standard,AfterNoPrint} = Phi -> (
     << endl << concatenate(interpreterDepth:"o") << lineNumber << " : " << class Phi << " (" << expression Phi << ")" << endl;
 );
@@ -1095,10 +1099,14 @@ multirationalMap (List,MultiprojectiveVariety) := (L,Y) -> (
 );
 
 multirationalMap List := L -> (
-    if not (# L > 0 and all(L,f -> instance(f,RationalMap) or instance(f,MultihomogeneousRationalMap))) then error "expected a list of rational maps";
+    if not (# L > 0 and all(L,f -> instance(f,RationalMap) or instance(f,MultihomogeneousRationalMap))) then error "expected a list of rational maps";    
     Y := productVars apply(L,f -> projectiveVariety(target f,Saturate=>false));
     Phi := multirationalMap(L,Y);
     if #L == 1 then (
+        if (map first L).cache#?"toMultirationalMapFromRationalMap" then Phi = (map first L).cache#"toMultirationalMapFromRationalMap" else (
+            Phi.cache#"toRationalMapFromMultirationalMap" = first L;
+            (map first L).cache#"toMultirationalMapFromRationalMap" = Phi;
+        );
         Phi#"isDominant" = (first L)#"isDominant";
         Phi#"isBirational" = (first L)#"isBirational";
         if # (first L)#"projectiveDegrees" > 0 then Phi#"multidegree" = (first L)#"projectiveDegrees";
@@ -1151,6 +1159,10 @@ toRationalMap = method(TypicalValue => RationalMap);
 toRationalMap (MultirationalMap,Boolean) := (Phi,withInverse) -> (
     if # factor Phi > 1 then error "expected a multi-rational map whose target is embedded in a single projective space"; 
     f := rationalMap(toRingMap(Phi,ring target Phi),Dominant=>"notSimplify");
+    if Phi.cache#?"toRationalMapFromMultirationalMap" then f = Phi.cache#"toRationalMapFromMultirationalMap" else (
+        (map f).cache#"toMultirationalMapFromRationalMap" = Phi;
+        Phi.cache#"toRationalMapFromMultirationalMap" = f;
+    );
     if Phi#"isDominant" =!= null then setKeyValue(f,"isDominant",Phi#"isDominant");
     if Phi#"isBirational" =!= null then setKeyValue(f,"isBirational",Phi#"isBirational");
     if Phi#"multidegree" =!= null then setKeyValue(f,"projectiveDegrees",Phi#"multidegree");
@@ -3607,6 +3619,7 @@ SeeAlso => {(rationalMap,Ring,Tally)}}
 undocumented {
 (expression,MultiprojectiveVariety),
 (net,MultiprojectiveVariety),
+(texMath,MultiprojectiveVariety),
 (toString,MultiprojectiveVariety),
 (point,MultiprojectiveVariety,Boolean), -- Intended for internal use only
 (euler,MultiprojectiveVariety,Option),
@@ -3616,6 +3629,7 @@ undocumented {
 (tangentialChowForm,EmbeddedProjectiveVariety,ZZ,ZZ),
 (expression,MultirationalMap),
 (net,MultirationalMap),
+(texMath,MultirationalMap),
 (toString,MultirationalMap),
 (multirationalMap,RationalMap,RationalMap), -- Intended for internal use only
 (multirationalMap,MultirationalMap,MultirationalMap), -- Intended for internal use only
@@ -4000,4 +4014,29 @@ j := check multirationalMap(permute(W,{1,0}),W');
 assert(isIsomorphism j);
 ///
 
+TEST /// -- conversion between RationalMap and MultirationalMap
+X = random(2,0_(PP_(ZZ/65521)^4));
+f = parametrize X;
+assert(instance(f,MultirationalMap) and f#"inverse" =!= null)
+assert(inverse f === multirationalMap inverse toRationalMap f)
+assert(multirationalMap toRationalMap f === f)
+-- assert(inverse toRationalMap f === toRationalMap inverse f) -- this fails (28/08/2022)
+assert(inverse toRationalMap f == toRationalMap inverse f)
+assert(multirationalMap inverse toRationalMap f === multirationalMap toRationalMap inverse f)
+I = ideal random(2,0_(PP_(ZZ/333331)^4));
+g = rationalMap(parametrize I,Dominant=>true);
+assert(instance(g,RationalMap) and g#"inverseRationalMap" === null)
+assert(inverse inverse g === g)
+assert(toRationalMap multirationalMap g === g)
+-- assert(inverse multirationalMap g === multirationalMap inverse g)  -- this fails (28/08/2022)
+assert(inverse multirationalMap g == multirationalMap inverse g)
+assert(toRationalMap inverse multirationalMap g === toRationalMap multirationalMap inverse g)
+-- assert(inverse g === toRationalMap inverse multirationalMap g) -- this fails (28/08/2022)
+assert(inverse g == toRationalMap inverse multirationalMap g)
+-- assert(inverse inverse (inverse multirationalMap g) === inverse multirationalMap g) -- this fails (28/08/2022)
+assert(inverse inverse (inverse multirationalMap g) == inverse multirationalMap g)
+assert(inverse inverse multirationalMap g === multirationalMap g)
+-- assert(toRationalMap multirationalMap g === g) -- this fails (28/08/2022)
+assert(toRationalMap multirationalMap g == g)
+///
 

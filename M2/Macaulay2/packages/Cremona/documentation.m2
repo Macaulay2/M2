@@ -879,7 +879,7 @@ EXAMPLE {
 "describe phi!"},
 SeeAlso => {(rationalMap,Ideal,ZZ,ZZ),point}} 
 
-undocumented{(net,RationalMap),(expression,RationalMap),(toString,RationalMap),(toMap,RationalMap),(lift,RationalMap),(lift,RingMap),(symbol ~,RationalMap),(symbol (*),RationalMap)}
+undocumented{(texMath,RationalMap),(net,RationalMap),(expression,RationalMap),(toString,RationalMap),(toMap,RationalMap),(lift,RationalMap),(lift,RingMap),(symbol ~,RationalMap),(symbol (*),RationalMap)}
 
 document { 
 Key => {specialCremonaTransformation,(specialCremonaTransformation,Ring,ZZ),(specialCremonaTransformation,ZZ,Ring),(specialCremonaTransformation,ZZ)}, 
