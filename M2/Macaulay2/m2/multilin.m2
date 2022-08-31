@@ -44,28 +44,28 @@ symmetricPower(ZZ, Matrix) := Matrix => (i, m) -> map(ring m, rawSymmetricPower(
 
 exteriorPower = method(Options => { Strategy => null })
 exteriorPower(ZZ, Module) := Module => opts -> (p, M) -> (
-     R := ring M;
-     if p < 0 then R^0
-     else if p === 0 then R^1
-     else if p === 1 then M
-     else (
-	  if isFreeModule M then new Module from (R, rawExteriorPower(p,M.RawFreeModule))
-	  else (
-	       m := presentation M;
-	       F := target m;
-	       G := source m;
-	       Fp1 := exteriorPower(p-1, F, opts);
-	       Fp := exteriorPower(p, F, opts);
-	       h1 := m ** id_Fp1;
-	       h2 := wedgeProduct(1,p-1,F);
-	       cokernel (h2*h1))))
+    if M.cache#?(exteriorPower, p) then M.cache#(exteriorPower, p) else M.cache#(exteriorPower, p) = (
+	R := ring M;
+	if p   < 0 then R^0 else
+	if p === 0 then R^1 else
+	if p === 1 then M   else
+	if isFreeModule M   then new Module from (R, rawExteriorPower(p, M.RawFreeModule))
+	else (
+	    m := presentation M;
+	    F := target m;
+	    Fp1 := exteriorPower(p-1, F, opts);
+	    h1 := m ** id_Fp1;
+	    h2 := wedgeProduct(1,p-1,F);
+	    cokernel(h2 * h1))
+    ))
 
 exteriorPower(ZZ, Matrix) := Matrix => opts -> (p, m) -> (
-     R := ring m;
-     if p < 0 then map(R^0,R^0,0)
-     else if p === 0 then map(R^1,R^1,1)
-     else if p === 1 then m
-     else map(
+    R := ring m;
+    if p   < 0 then id_(R^0) else
+    if p === 0 then id_(R^1) else
+    if p === 1 then m
+    -- TODO: should this be cached, too?
+    else map(
 	exteriorPower(p, target m, opts),
 	exteriorPower(p, source m, opts),
 	rawExteriorPower(p, raw m, getMinorsStrategy(R, opts)))
