@@ -12,6 +12,14 @@ scan(modules, M -> assert( cover M == target presentation M ))
 table(modules, modules,
     (P, Q) -> assert( cover P ** cover Q == cover(P ** Q) ));
 
+-- see https://github.com/Macaulay2/M2/issues/2550
+(t, M) = toSequence timing symmetricPower(2, R^(splice{3:2, 16:1, 3:0}))
+assert(flatten degrees M == splice{3:-4, 16:-3, 3:-2, 2:-4, 16:-3, 3:-2, -4..-3,
+	15:-3, 19:-2, 3:-1, 15:-2, 3:-1, 14:-2, 3:-1, 13:-2, 3:-1, 12:-2, 3:-1,
+	11:-2, 3:-1, 10:-2, 3:-1, 9:-2, 3:-1, 8:-2, 3:-1, 7:-2, 3:-1, 6:-2, 3:-1,
+	5:-2, 3:-1, 4:-2, 3:-1, 3:-2, 3:-1, 2:-2, 3:-1, -2..-1, 2:-1, 6:0})
+assert(t < 1)
+
 --
 R = ZZ/101
 exteriorPower(3,R^5)

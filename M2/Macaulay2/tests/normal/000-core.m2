@@ -741,12 +741,6 @@ annihilator E
 
 
 --
-    R = ZZ/101[s,t]
-    J = image matrix {{s^4, s^3*t, s*t^3, t^4}}
-    S = symmetricAlgebra J  -- MES: make an assertion here...
-
-
---
 R = ZZ/101[a,b,c,d]
 f = matrix {{c^3-b*d^2, b*c-a*d, b^3-a^2*c, a*c^2-b^2*d}}
 M = cokernel f
