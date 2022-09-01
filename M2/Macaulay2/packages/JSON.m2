@@ -1,13 +1,15 @@
 newPackage(
     "JSON",
     Headline => "JSON encoding and decoding",
+    Version => "0.1",
+    Date => "August 31, 2022",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
+    Keywords => {"System"},
     PackageImports => {"Parsing"},
-    AuxiliaryFiles => true,
-    Version => "0.1")
+    AuxiliaryFiles => true)
 
 export {
     "toJSON",
