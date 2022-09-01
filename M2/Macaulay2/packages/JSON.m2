@@ -5,7 +5,7 @@ newPackage(
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
-    PackageExports => {"Parsing"},
+    PackageImports => {"Parsing"},
     AuxiliaryFiles => true,
     Version => "0.1")
 
@@ -16,6 +16,8 @@ export {
     "NameSeparator",
     "ValueSeparator"
     }
+
+exportFrom_Parsing {"nil"}
 
 ----------------------------------------------------------------
 -- parser based on https://datatracker.ietf.org/doc/html/rfc8259
