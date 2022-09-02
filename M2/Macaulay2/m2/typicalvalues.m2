@@ -261,8 +261,6 @@ scanPairs(new HashTable from variants, (args,f) -> (
 	undocumented args;
 	))
 
--- TODO abs Constant
-
 nilp := x -> (  -- degree of nilpotency
     R := ring x;
     k := R; while not isField k do k = baseRing k;

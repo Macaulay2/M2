@@ -55,6 +55,7 @@ gcd(QQ,QQ) := QQ => (x,y) -> (
 
 abs = method()
 abs ZZ := abs RR := abs RRi := abs CC := abs QQ := abs0
+abs Constant := abs @@ numeric
 
 lcm = method(Binary => true)
 lcm(ZZ,ZZ) := (f,g) -> abs f * (abs g // gcd(f,g))
