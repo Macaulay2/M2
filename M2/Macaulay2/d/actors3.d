@@ -698,6 +698,13 @@ bitxorfun(e:Expr):Expr := (
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("bitxorfun",bitxorfun);
+
+bitnotfun(e:Expr):Expr := (
+    when e
+    is x:ZZcell do toExpr(not(x.v))
+    else WrongArgZZ());
+setupfun("bitnotfun", bitnotfun);
+
 semicolonfun(lhs:Code,rhs:Code):Expr := when eval(lhs) is err:Error do Expr(err) else eval(rhs);
 setup(SemicolonS,semicolonfun);
 starfun(rhs:Code):Expr := unarymethod(rhs,StarS);
