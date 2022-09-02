@@ -53,6 +53,9 @@ gcd(QQ,QQ) := QQ => (x,y) -> (
      d := denominator x * (denominator y // gcd(denominator x, denominator y));
      gcd(numerator (x * d), numerator (y * d)) / d)
 
+abs = method()
+abs ZZ := abs RR := abs RRi := abs CC := abs QQ := abs0
+
 lcm = method(Binary => true)
 lcm(ZZ,ZZ) := (f,g) -> abs f * (abs g // gcd(f,g))
 lcm(ZZ,QQ) := (f,g) -> abs f * (abs g / gcd(f,g))
