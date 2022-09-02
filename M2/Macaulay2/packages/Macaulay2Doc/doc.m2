@@ -214,7 +214,7 @@ document {
      	       integers ", TT "m", " and ", TT "n", " by logical 'and'."}
 	  },
      EXAMPLE "(2^15 + 2^13 + 2^42) & (2^15 + 2^23 + 2^42) == 2^15 + 2^42",
-     SeeAlso => {(symbol |,ZZ,ZZ),(symbol ^^,ZZ,ZZ)}
+     SeeAlso => {(symbol |,ZZ,ZZ),(symbol ^^,ZZ,ZZ), (symbol ~, ZZ)}
      }
 
 undocumented {
@@ -604,6 +604,32 @@ document {
      SeeAlso =>{ "and", "or" }
      }
 
+doc ///
+  Key
+    (symbol ~, ZZ)
+  Headline
+    logical not
+  Usage
+    n~
+  Inputs
+    n:ZZ
+  Outputs
+    :ZZ -- the bitwise complement of @TT "n"@
+  Description
+    Example
+      7~
+    Text
+      Note that @TT "~"@ has @TO2 {"precedence of operators",
+      "higher precedence"}@ than @TT "-"@, so enclose negative integers in
+      parentheses.
+    Example
+      (-12)~
+  SeeAlso
+    (symbol &, ZZ, ZZ)
+    (symbol |, ZZ, ZZ)
+    (symbol ^^, ZZ, ZZ)
+///
+
 document {
      Key => symbol |, 
      Headline => "a binary operator, often used for horizontal concatenation",
@@ -656,7 +682,7 @@ document {
      	       integers ", TT "m", " and ", TT "n", " by logical 'or'."}
 	  },
      EXAMPLE "2^42 | 2^15 == 2^42 + 2^15",
-     SeeAlso => {(symbol &,ZZ,ZZ),(symbol ^^,ZZ,ZZ)}
+     SeeAlso => {(symbol &,ZZ,ZZ),(symbol ^^,ZZ,ZZ), (symbol ~, ZZ)}
      }
 
 document {
