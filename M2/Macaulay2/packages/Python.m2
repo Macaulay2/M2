@@ -287,6 +287,9 @@ setattr(PythonObject, String, Thing) := (x, y, e) ->
     pythonObjectSetAttrString(x, y, toPython e)
 PythonObject @@ Thing = (x, y, e) -> setattr(x, toString y, e)
 
+member(Thing,        PythonObject) := (x, y) -> false
+member(PythonObject, PythonObject) := (x, y) -> value y@@"__contains__" x
+
 toPython = method(Dispatch => Thing)
 toPython RR := pythonFloatFromDouble
 toPython QQ := toPython @@ toRR
