@@ -299,6 +299,11 @@ quotientRemainder(PythonObject, Thing) := (x, y
 quotientRemainder(Thing, PythonObject) := (x, y
     ) -> quotientRemainder(toPython x, y)
 
+round PythonObject := x -> x@@"__round__"()
+truncate PythonObject := {} >> o -> x -> x@@"__trunc__"()
+floor PythonObject := x -> x@@"__floor__"()
+ceiling PythonObject := x -> x@@"__ceil__"()
+
 toPython = method(Dispatch => Thing)
 toPython RR := pythonFloatFromDouble
 toPython QQ := toPython @@ toRR
