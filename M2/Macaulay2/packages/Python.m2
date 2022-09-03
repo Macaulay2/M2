@@ -291,6 +291,14 @@ PythonObject @@ Thing = (x, y, e) -> setattr(x, toString y, e)
 member(Thing,        PythonObject) := (x, y) -> false
 member(PythonObject, PythonObject) := (x, y) -> value y@@"__contains__" x
 
+quotientRemainder(PythonObject, PythonObject) := (x, y) -> (
+    qr := x@@"__divmod__" y;
+    (qr_0, qr_1))
+quotientRemainder(PythonObject, Thing) := (x, y
+    ) -> quotientRemainder(x, toPython y)
+quotientRemainder(Thing, PythonObject) := (x, y
+    ) -> quotientRemainder(toPython x, y)
+
 toPython = method(Dispatch => Thing)
 toPython RR := pythonFloatFromDouble
 toPython QQ := toPython @@ toRR
