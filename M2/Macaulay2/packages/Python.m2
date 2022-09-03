@@ -225,6 +225,7 @@ scan({
 	(symbol +, "add"),
 	(symbol -, "sub"),
 	(symbol *, "mul"),
+	(symbol @, "matmul"),
 	(symbol /, "truediv"),
 	(symbol //, "floordiv"),
 	(symbol %, "mod"),
