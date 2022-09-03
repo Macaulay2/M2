@@ -501,6 +501,28 @@ assert member(value rand@@choice L, {1, 2, 3})
 assert Equation(L + L, toPython {1, 2, 3, 1, 2, 3})
 ///
 
+TEST ///
+-- issue #2590
+ChildPythonObject = new Type of PythonObject
+x = new ChildPythonObject from toPython 5
+y = new ChildPythonObject from toPython 10
+assert BinaryOperation(symbol <, x, y)
+assert hasattr(x, "__abs__")
+assert Equation(x@@"__abs__"(), 5)
+assert Equation(toString x, "5")
+assert Equation(value x, 5)
+math = new ChildPythonObject from import "math"
+math@@pi = 3.14159
+assert Equation(math@@pi, 3.14159)
+z = new ChildPythonObject from math@@pi
+assert Equation(value z, 3.14159)
+hello = new ChildPythonObject from toPython "Hello, world!"
+assert Equation(value hello, "Hello, world!")
+assert Equation(toPython (x, y, z), (5, 10, 3.14159))
+assert Equation(toPython {x, y, z}, {5, 10, 3.14159})
+assert Equation(toPython hashTable {x => y}, hashTable {x => y})
+///
+
 end --------------------------------------------------------
 
 
