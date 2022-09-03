@@ -122,18 +122,6 @@ R = QQ[x,y]
      	  "tutorial oo",
 	  "peek oo"
 	  }}
-document { Key => {preimage,(preimage, RingMap, Ideal)},
-     Headline => "preimage of an ideal under a ring map",   -- hopefully more general later
-     Usage => "preimage(f,I)",
-     Inputs => { "I" => { "an ideal in the target ring of ", TT "f" }, "f" },
-     Outputs => { { "the preimage of ", TT "I", " under the map ", TT "f" } },
-     EXAMPLE lines /// 
-	  R = QQ[x,y,z]
-	  S = QQ[t,u]
-	  f = map(R,S,{x*y,y*z})
-	  preimage_f ideal(x^2,y^2)
-     	  ///
-     }
 document { Key => {round,(round,QQ),(round,RR),(round,ZZ,RR),(round,ZZ),(round,CC)},
      Headline => "round a number",
      SYNOPSIS (

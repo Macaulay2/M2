@@ -355,6 +355,11 @@ preimage(RingMap, Ideal) := Ideal => (f, J) -> (
     R := ring J;
     kernel( map(R/J, R) * f ))
 
+preimage(Matrix, Module) := (f, M) -> (
+    T := target f;
+    g := map(T/M, T);
+    kernel(g * f))
+
 coimage RingMap := QuotientRing => f -> f.source / kernel f
 
 isInjective RingMap := f -> kernel f == 0
