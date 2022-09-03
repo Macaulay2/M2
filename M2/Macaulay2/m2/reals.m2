@@ -238,6 +238,12 @@ round(ZZ,RR) := (n,x) -> (
      p := (toRR(prec,10))^n;
      toRR(prec,round(x*p)/p))
 
+truncate Number := {} >> o -> x -> (
+    if x >= 0 then floor x
+    else if x < 0 then ceiling x
+    else 0) -- e.g., RRi's containing 0 as interior pt
+truncate Constant := {} >> o -> truncate @@ numeric
+
 random RR := RR => opts -> x -> x * rawRandomRR precision x
 random(RR,RR) := opts -> (x,y) -> x + random(y-x)
 RR'.random = opts -> R -> rawRandomRR R.precision
