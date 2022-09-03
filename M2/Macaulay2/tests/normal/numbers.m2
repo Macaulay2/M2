@@ -884,6 +884,16 @@ assert ( abs(BesselY(0, 1) - 0.0882569642) < 1e-10 )
 assert ( abs(BesselY(1, 2) + 0.1070324315) < 1e-10 )
 assert ( abs(BesselY(2, 3) + 0.16040039) < 1e-8 )
 
+assert Equation(truncate 1, 1)
+assert Equation(truncate 1.9, 1)
+assert Equation(truncate(-1.9), -1)
+assert Equation(truncate(19/10), 1)
+assert Equation(truncate(-19/10), -1)
+assert Equation(truncate pi, 3)
+assert Equation(truncate(2.5 + ii), 2)
+assert Equation(truncate interval(2.7, 3.4), 2)
+assert Equation(truncate interval(-2.3, 5.1), 0)
+
 -- I don't know whether we want to fix this:
 -- assert ( 1/11 == toRR(1/11) )
 -- assert ( 1/11 == 1p200/11 )
