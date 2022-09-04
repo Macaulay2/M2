@@ -29,6 +29,9 @@ doc ///
     (symbol *, PythonObject, PythonObject)
     (symbol *, PythonObject, Thing)
     (symbol *, Thing, PythonObject)
+    (symbol @, PythonObject, PythonObject)
+    (symbol @, PythonObject, Thing)
+    (symbol @, Thing, PythonObject)
     (symbol /, PythonObject, PythonObject)
     (symbol /, PythonObject, Thing)
     (symbol /, Thing, PythonObject)
@@ -110,6 +113,7 @@ doc ///
         LI {TT "-", " → ", TT "__sub__", " (binary), ",
 	    TT "__neg__", " (unary)"},
         LI {TT "*", " → ", TT "__mul__"},
+	LI {TT "@", " → ", TT "__matmul__"},
         LI {TT "/", " → ", TT "__truediv__"},
         LI {TT "//", " → ", TT "__floordiv__"},
         LI {TT "%", " → ", TT "__mod__"},
