@@ -633,6 +633,33 @@ doc ///
 
 doc ///
   Key
+    (member, Thing, PythonObject)
+    (member, PythonObject, PythonObject)
+  Headline
+    test membership in a python object
+  Usage
+    member(e, x)
+  Inputs
+    e:Thing
+    x:PythonObject
+  Outputs
+    :Boolean -- whether @TT "e"@ is in @TT "x"@
+  Description
+    Text
+      This calls Python's @TT "__contains__"@ method, which is equivalent
+      to using the Python @TT "in"@ keyword.
+    Example
+      member(toPython 3, toPython {1, 2, 3})
+      member(toPython 4, toPython {1, 2, 3})
+    Text
+      Note that testing a non-Python object for membership will always return
+      @TT "false"@.
+    Example
+      member(3, toPython {1, 2, 3})
+///
+
+doc ///
+  Key
     (quotientRemainder, PythonObject, PythonObject)
     (quotientRemainder, PythonObject, Thing)
     (quotientRemainder, Thing, PythonObject)
