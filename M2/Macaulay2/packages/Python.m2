@@ -298,7 +298,9 @@ quotientRemainder(PythonObject, Thing) := (x, y
 quotientRemainder(Thing, PythonObject) := (x, y
     ) -> quotientRemainder(toPython x, y)
 
-round PythonObject := x -> x@@"__round__"()
+round(PythonObject, PythonObject) := (n, x) -> x@@"__round__" n
+round(ZZ, PythonObject) := (n, x) -> round(toPython n, x)
+round PythonObject := x -> round(pythonNone, x)
 truncate PythonObject := {} >> o -> x -> x@@"__trunc__"()
 floor PythonObject := x -> x@@"__floor__"()
 ceiling PythonObject := x -> x@@"__ceil__"()
