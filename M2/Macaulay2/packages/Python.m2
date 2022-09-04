@@ -532,6 +532,16 @@ assert Equation(toPython {x, y, z}, {5, 10, 3.14159})
 assert Equation(toPython hashTable {x => y}, hashTable {x => y})
 ///
 
+
+TEST ///
+-- built-in functions
+
+-- divmod
+assert Equation(quotientRemainder(toPython 1234, toPython 456), (2, 322))
+assert Equation(quotientRemainder(toPython 1234, 456), (2, 322))
+assert Equation(quotientRemainder(1234, toPython 456), (2, 322))
+///
+
 end --------------------------------------------------------
 
 
