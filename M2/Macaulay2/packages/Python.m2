@@ -561,6 +561,11 @@ assert Equation(floor(-e), -3)
 -- mail.ceil
 assert Equation(ceiling e, 3)
 assert Equation(ceiling(-e), -2)
+
+-- help
+x = help (import "math")@@cos
+assert instance(x, String)
+assert match("cosine", x)
 ///
 
 end --------------------------------------------------------
