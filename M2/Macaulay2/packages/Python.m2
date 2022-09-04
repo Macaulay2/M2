@@ -549,6 +549,10 @@ assert Equation(round e, 3)
 assert Equation(round(3, e), 2.718)
 assert Equation(round toPython 2.5, 2)
 assert Equation(round toPython 3.5, 4)
+
+-- math.trunc
+assert Equation(truncate e, 2)
+assert Equation(truncate(-e), -2)
 ///
 
 end --------------------------------------------------------
