@@ -659,3 +659,34 @@ doc ///
       quotientRemainder(toPython 37, 5)
       class \ oo
 ///
+
+doc ///
+  Key
+    (round, ZZ, PythonObject)
+    (round, PythonObject, PythonObject)
+    (round, PythonObject)
+  Headline
+    round a python object
+  Usage
+    round(n, x)
+    round x
+  Inputs
+    n:ZZ
+    x:PythonObject
+  Outputs
+    :PythonObject
+  Description
+    Text
+      This calls Python's built-in @TT "round"@ function, which round @TT "x"@
+      to @TT "n"@ decimal places, or to the nearest integer if @TT "n"@ is not
+      given.
+    Example
+      x = (import "math")@@pi
+      round x
+      round(3, x)
+    Text
+      Ties are broken by @EM "round half to even"@.
+    Example
+      round toPython 2.5
+      round toPython 3.5
+///
