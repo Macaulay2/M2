@@ -710,3 +710,42 @@ doc ///
       truncate toPython 5.8
       truncate toPython(-5.8)
 ///
+doc ///
+  Key
+    (floor, PythonObject)
+  Headline
+    floor of a python object
+  Usage
+    floor x
+  Inputs
+    x:PythonObject
+  Outputs
+    :PythonObject
+  Description
+    Text
+      This calls Python's built-in @TT "math.floor"@ function, which rounds
+      toward negative infinity.
+    Example
+      floor toPython 5.8
+      floor toPython(-5.8)
+///
+
+doc ///
+  Key
+    (ceiling, PythonObject)
+  Headline
+    ceiling of a python object
+  Usage
+    ceiling x
+  Inputs
+    x:PythonObject
+  Outputs
+    :PythonObject
+  Description
+    Text
+      This calls Python's built-in @TT "math.ceil"@ function, which rounds
+      toward positive infinity.
+    Example
+      ceiling toPython 5.8
+      ceiling toPython(-5.8)
+///
