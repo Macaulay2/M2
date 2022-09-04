@@ -553,6 +553,14 @@ assert Equation(round toPython 3.5, 4)
 -- math.trunc
 assert Equation(truncate e, 2)
 assert Equation(truncate(-e), -2)
+
+-- math.floor
+assert Equation(floor e, 2)
+assert Equation(floor(-e), -3)
+
+-- mail.ceil
+assert Equation(ceiling e, 3)
+assert Equation(ceiling(-e), -2)
 ///
 
 end --------------------------------------------------------
