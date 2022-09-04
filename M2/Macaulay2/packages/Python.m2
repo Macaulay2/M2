@@ -542,6 +542,13 @@ TEST ///
 assert Equation(quotientRemainder(toPython 1234, toPython 456), (2, 322))
 assert Equation(quotientRemainder(toPython 1234, 456), (2, 322))
 assert Equation(quotientRemainder(1234, toPython 456), (2, 322))
+
+-- round
+e = (import "math")@@e
+assert Equation(round e, 3)
+assert Equation(round(3, e), 2.718)
+assert Equation(round toPython 2.5, 2)
+assert Equation(round toPython 3.5, 4)
 ///
 
 end --------------------------------------------------------
