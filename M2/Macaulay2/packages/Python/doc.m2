@@ -690,3 +690,23 @@ doc ///
       round toPython 2.5
       round toPython 3.5
 ///
+
+doc ///
+  Key
+    (truncate, PythonObject)
+  Headline
+    truncate a python object
+  Usage
+    truncate x
+  Inputs
+    x:PythonObject
+  Outputs
+    :PythonObject
+  Description
+    Text
+      This calls Python's built-in @TT "math.trunc"@ function, which rounds
+      toward zero.
+    Example
+      truncate toPython 5.8
+      truncate toPython(-5.8)
+///
