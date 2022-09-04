@@ -749,3 +749,24 @@ doc ///
       ceiling toPython 5.8
       ceiling toPython(-5.8)
 ///
+
+doc ///
+  Key
+    (help#0, PythonObject)
+  Headline
+    documentation for python object
+  Usage
+    help x
+  Inputs
+    x:PythonObject
+  Outputs
+    :String
+  Description
+    Text
+      This calls Python's built-in @TT "help"@ function, which provides
+      documentation for Python objects.
+    Example
+      math = import "math"
+      help math
+      help math@@sin
+///
