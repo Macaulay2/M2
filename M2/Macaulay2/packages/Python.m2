@@ -465,6 +465,14 @@ assert Equation(-x, -5)
 assert Equation(+x, 5)
 ///
 
+-- test @ (not part of default testsuite since it requires numpy)
+///
+np = import "numpy"
+v = np@@array {1, 2, 3}
+w = np@@array {4, 5, 6}
+assert Equation(v @ w, 32)
+///
+
 TEST ///
 -----------------------
 -- string operations --
