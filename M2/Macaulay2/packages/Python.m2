@@ -538,6 +538,11 @@ assert Equation(toPython hashTable {x => y}, hashTable {x => y})
 TEST ///
 -- built-in functions
 
+-- __contains__
+assert member(toPython 3, toPython {1, 2, 3})
+assert not member(toPython 4, toPython {1, 2, 3})
+assert not member(3, toPython {1, 2, 3})
+
 -- divmod
 assert Equation(quotientRemainder(toPython 1234, toPython 456), (2, 322))
 assert Equation(quotientRemainder(toPython 1234, 456), (2, 322))
