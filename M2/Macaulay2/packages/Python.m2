@@ -303,6 +303,8 @@ truncate PythonObject := {} >> o -> x -> x@@"__trunc__"()
 floor PythonObject := x -> x@@"__floor__"()
 ceiling PythonObject := x -> x@@"__ceil__"()
 
+help#0 PythonObject := x -> toString x@@"__doc__"
+
 toPython = method(Dispatch => Thing)
 toPython RR := pythonFloatFromDouble
 toPython QQ := toPython @@ toRR
