@@ -630,3 +630,32 @@ doc ///
       objectType pythonValue "2"
       objectType pythonValue "'Hello, world!'"
 ///
+
+doc ///
+  Key
+    (quotientRemainder, PythonObject, PythonObject)
+    (quotientRemainder, PythonObject, Thing)
+    (quotientRemainder, Thing, PythonObject)
+  Headline
+    quotient and remainder of python objects
+  Usage
+    quotientRemainder(x, y)
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :Sequence -- a pair of two python objects
+  Description
+    Text
+      The quotient and remainder when @TT "x"@ is divided by @TT "y"@.  This
+      calls Python's built-in @TT "divmod"@ function.
+    Example
+      quotientRemainder(toPython 37, toPython 5)
+      class \ oo
+    Text
+      If just one of the arguments is a python object, then the other is
+      converted to a python object using @TO "toPython"@.
+    Example
+      quotientRemainder(toPython 37, 5)
+      class \ oo
+///
