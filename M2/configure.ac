@@ -640,10 +640,10 @@ AC_SUBST(BUILTLIBS)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " gc gdbm gmp mpfr mpfi readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox gtest memtailor mathic mathicgb ")
+AC_SUBST(LIBLIST, " gc gdbm gmp mpfr mpfi normaliz readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll givaro fflas_ffpack linbox gtest memtailor mathic mathicgb ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
-AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
+AC_SUBST(PROGLIST, "4ti2 gfan csdp nauty cddplus lrslib gftables topcom cohomcalg")
 # The list PROGLIST is the list of programs and libraries for them that are distributed with M2.
 #     Initially, we offer no option for not compiling some of them.
 
@@ -991,17 +991,33 @@ else AC_MSG_RESULT([no, will build])
      BUILD_csdp=yes
 fi
 
-AC_MSG_CHECKING(whether the package normaliz is installed)
-if command -v normaliz
-then normaliz_version=`normaliz --version | head -1 | cut -d " " -f 2`
-     AX_COMPARE_VERSION([$normaliz_version], [ge], [2.11],
-          [AC_MSG_RESULT([yes])
-           FILE_PREREQS="$FILE_PREREQS `command -v normaliz`"],
-          [AC_MSG_RESULT([yes, but < 2.11, will build])
-           BUILD_normaliz=yes])
-else AC_MSG_RESULT([no, will build])
-     BUILD_normaliz=yes
-fi
+AS_IF([test $BUILD_normaliz = no],
+    [AC_MSG_CHECKING(whether the package normaliz is installed)
+     AS_IF([command -v normaliz > /dev/null],
+	 [normaliz_version=`normaliz --version | head -1 | cut -d " " -f 2`
+	  AX_COMPARE_VERSION([$normaliz_version], [ge], [2.11],
+	      [AC_MSG_RESULT([yes])
+	       AC_MSG_CHECKING([for libnormaliz])
+	       AC_LANG(C++)
+	       SAVELIBS=$LIBS
+	       LIBS="$LIBS -lnormaliz -lnauty -lgmp"
+	       AC_LINK_IFELSE(
+		   [AC_LANG_PROGRAM([
+		       #include <libnormaliz/libnormaliz.h>
+		       ],
+		       [libnormaliz::Cone<long long>()])],
+		   [AC_MSG_RESULT([yes])
+		    FILE_PREREQS="$FILE_PREREQS `command -v normaliz`"],
+		   [AC_MSG_RESULT([no, will build])
+		    BUILD_normaliz=yes
+		    LIBS=$SAVELIBS])],
+	      [AC_MSG_RESULT([yes, but < 2.11, will build])
+	       BUILD_normaliz=yes])],
+        [AC_MSG_RESULT([no, will build])
+         BUILD_normaliz=yes])])
+
+AS_IF([test $BUILD_normaliz = yes],
+    [BUILTLIBS="-lnormaliz -fopenmp $BUILTLIBS"])
 
 if test "$BUILD_nauty" = no
 then dnl debian/fedora: nauty-

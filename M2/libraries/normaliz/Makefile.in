@@ -1,6 +1,6 @@
 HOMEPAGE = https://www.normaliz.uni-osnabrueck.de/
 # get releases from https://github.com/Normaliz/Normaliz/releases
-VERSION = 3.10.2
+VERSION = 3.10.3
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 URL = https://github.com/Normaliz/Normaliz/releases/download/v$(VERSION)
@@ -26,7 +26,7 @@ endif
 NORMFLAGS = 
 ####
 
-CXXFLAGS1 = $(CPPFLAGS) -Wall -O3 -Wno-unknown-pragmas -std=c++11 -I .. -I . $(CXXFLAGS0)
+CXXFLAGS1 = $(CPPFLAGS) -Wall -O3 -Wno-unknown-pragmas -I .. -I . $(CXXFLAGS0)
 BUILDOPTIONS =  CXX="$(CXX)" \
 		NORMFLAGS="$(NORMFLAGS)" \
 		CXXFLAGS="$(CXXFLAGS1)" \
