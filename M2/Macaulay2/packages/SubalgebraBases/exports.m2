@@ -2,13 +2,10 @@
 -- From main.m2
 export {
     "subalgebraBasis",
-    "sagbi",
-    "verifySagbi",
+    "sagbi",    
     "AutoSubduce",
     "ReduceNewGenerators",
     "StorePending",
-    -- "FullSubduct",
-    -- "DegreeLimitedSubduction",
     "Strategy",
     "SubductionMethod",
     "Limit",
@@ -23,19 +20,25 @@ export {
     "Subring",
     "SAGBIBasis",
     "subring",
-    "isSAGBI",
     "Compute",
-    "sagbiBasis",
+    "sagbiBasis"
+    }
+
+-- From high-level-sagbi-functions.m2
+export {
+    "verifySagbi",
+    "isSAGBI",
     "groebnerMembershipTest",
     "groebnerSubductionQuotient",
     "subringIntersection"
     }
+
 
 -- From service-functions.m2
 export {
     "subduction"
     }
 
--- Pull things in from Core:
+-- From Core:
 importFrom (Core,{"raw","rawStatus1","rawMonoidNumberOfBlocks","rawSubduction1"});
 end --
