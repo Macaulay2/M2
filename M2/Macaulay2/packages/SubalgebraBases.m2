@@ -36,12 +36,12 @@ exportMutable {}
 needs "./SubalgebraBases/exports.m2"
 needs "./SubalgebraBases/classes.m2"
 needs "./SubalgebraBases/high-level-sagbi-functions.m2"
-needs "./SubalgebraBases/service-functions.m2"
+needs "./SubalgebraBases/sagbi-top-level-functions.m2"
 --needs "./SubalgebraBases/toric_syz.m2"
 --needs "./SubalgebraBases/subring_modules.m2"
 needs "./SubalgebraBases/tests.m2"
 --needs "./SubalgebraBases/print_util.m2"
-needs "./SubalgebraBases/main.m2"
+needs "./SubalgebraBases/sagbi-main.m2"
 
 beginDocumentation()
 needs "./SubalgebraBases/documentation.m2"

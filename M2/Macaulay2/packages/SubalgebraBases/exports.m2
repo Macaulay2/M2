@@ -1,5 +1,5 @@
 
--- From main.m2
+-- From sagbi-main.m2
 export {
     "subalgebraBasis",
     "sagbi",    
@@ -34,7 +34,7 @@ export {
     }
 
 
--- From service-functions.m2
+-- From sagbi-top-level-functions.m2
 export {
     "subduction"
     }
