@@ -114,7 +114,7 @@ sagbi(SAGBIBasis) := opts -> S -> (
 -- checks whether or not the generators of a subring S form a sagbi basis wrt the given term order
 -- 
 -- the method uses the code from inside the method that collects SPairs to find them
--- the method uses the subduction fuction so setting the option SubductionMethod will change the strategy
+-- the method uses the subduction function so setting the option SubductionMethod will change the strategy
 -- print level will be called inside of subduction so it can be used to perform subduction 
 
 verifySagbi = method(

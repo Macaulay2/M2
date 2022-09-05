@@ -2,7 +2,7 @@
     character
     (character,List,ZZ)
   Headline
-    Determines the character of a compostion of schur functors applied to the representation of GL(V) on V
+    Determines the character of a composition of Schur functors applied to the representation of GL(V) on V
   Usage
     character(L,d)
   Inputs

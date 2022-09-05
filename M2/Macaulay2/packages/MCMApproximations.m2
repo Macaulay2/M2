@@ -368,7 +368,7 @@ doc ///
      If k==0 then the N=M. If k>0 then the syzygy module is computed from the 
      resolution. If k<0 then the program returns the dual of the (n-k)-th syzygy
      of the dual of the k-th syzygy, where n is one more than Codepth if that
-     opition is specified, and else n is the number of variables of ring M. 
+     option is specified, and else n is the number of variables of ring M. 
      Of course the resulting N is 0 if ring M is regular, and otherwise correct
      only if ring M is Gorenstein. In the Gorenstein case, syzygyModule(-k, syzygyModule(k, M))
      -is the non-free part of the source of the MCM approximation of M.

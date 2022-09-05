@@ -98,7 +98,7 @@ document { Key => {Digamma,(Digamma, RR)},
      Usage => "Digamma x",
      Headline => "Digamma function",
      Inputs => { "x" },
-     Outputs => { RR => { "the digamma function (logarithmic derivative of the gamma fuction) of ", TT "x" }},
+     Outputs => { RR => { "the digamma function (logarithmic derivative of the gamma function) of ", TT "x" }},
      EXAMPLE lines ///
 	  Digamma 6
      ///,
