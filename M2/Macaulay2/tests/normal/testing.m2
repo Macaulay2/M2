@@ -17,3 +17,8 @@ assert Equation(code 0, expectedCode)
 
 
 assert( (for i from 1 to 2 list { for j from 1 to 2 do { if j == 2 then break 444; } }) === {{444}, {444}} ) -- see issue #2522
+
+
+f = x -> () -> x
+assert ( hash f 1 =!= hash f 2 )
+assert ( hash res =!= hash syz )
