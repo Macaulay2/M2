@@ -21,6 +21,7 @@ add_custom_command(OUTPUT ${CORE_DIR}/tvalues.m2
   COMMAND
     M2-binary ${M2_ARGS} ${CMAKE_CURRENT_SOURCE_DIR}/tvalues-make.m2 -e "make \"${CMAKE_SOURCE_DIR}/Macaulay2/d/\"; exit 0"
   WORKING_DIRECTORY ${CORE_DIR}
+  DEPENDS M2-binary
   VERBATIM)
 
 configure_file(version.m2.in ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/version.m2 @ONLY)
