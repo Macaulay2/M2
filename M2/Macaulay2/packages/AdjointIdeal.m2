@@ -571,7 +571,7 @@ trmw:=traceMatrix(I1,ib);
 --return trmw;
 if ver>0 then (print("Trace matrix = ",trmw);print(" "););
 --
--- differentation of f by the first variable of R
+-- differentiation of f by the first variable of R
 dfdv:=substitute((diff(vars R,gens I))_(0,0),QR);
 if ver>1 then (print("df/dv = ",dfdv);print(" "););
 --

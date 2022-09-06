@@ -3092,7 +3092,7 @@ Node
   f:
  Outputs
   :
-   the compostion of {\tt g} and {\tt f}
+   the composition of {\tt g} and {\tt f}
  Description
   Example
    X = abstractProjectiveSpace_3 point
