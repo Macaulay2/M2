@@ -20,4 +20,7 @@ doc ///
       For complex numbers, the real part is truncated.
     Example
       truncate(2.5 + ii)
+  SeeAlso
+    (floor, Number)
+    (ceiling, Number)
 ///
