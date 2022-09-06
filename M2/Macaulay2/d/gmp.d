@@ -453,6 +453,13 @@ export (x:ZZ) ^^ (y:ZZ) : ZZ := (
      xor(w,x,y);
      moveToZZandclear(w));
 
+not(x:ZZmutable, y:ZZ) ::= Ccode(void, "mpz_com(", x, ",", y, ")");
+
+export not(y:ZZ) : ZZ := (
+    x := newZZmutable();
+    not(x, y);
+    moveToZZandclear(x));
+
 base := 10;
 toCstring(x:ZZ) ::= getstr(charstarOrNull(null()), base, x);
 
