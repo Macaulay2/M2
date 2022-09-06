@@ -264,7 +264,8 @@ compvals := hashTable { 0 => symbol == , 1 => symbol > , -1 => symbol < }
 comparison := n -> compvals#n
 RawRingElement ? RawRingElement := (f,g) -> comparison rawCompare(f,g)
 
-quotientRemainder(RawRingElement,RawRingElement) := rawDivMod
+quotientRemainder(RawRingElement,RawRingElement) :=
+quotientRemainder(ZZ, ZZ) := rawDivMod
 
 -- monomial ideals
 

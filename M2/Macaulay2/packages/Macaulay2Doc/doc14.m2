@@ -533,7 +533,8 @@ document {
 document {
      Key => {(quotientRemainder,RingElement,RingElement),
 	  (quotientRemainder,InexactNumber,RingElement), (quotientRemainder,RingElement,InexactNumber),
-	  (quotientRemainder,Number,RingElement), (quotientRemainder,RingElement,Number)},
+	  (quotientRemainder,Number,RingElement), (quotientRemainder,RingElement,Number),
+	  (quotientRemainder,ZZ,ZZ)},
      Headline => "quotient and remainder",
      Usage => "(q,r) = quotientRemainder(f,g)",
      Inputs => {"f","g"},
