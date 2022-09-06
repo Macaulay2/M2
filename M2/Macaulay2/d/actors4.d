@@ -96,13 +96,13 @@ setupfun("setGroupID",setpgidfun);
 
 absfun(e:Expr):Expr := (
      when e
-     is i:ZZcell do toExpr(abs(i.v))				    -- # typical value: abs, ZZ, ZZ
-     is x:RRcell do toExpr(if sign(x.v) then -x.v else x.v)		    -- # typical value: abs, RR, RR
-     is x:RRicell do toExpr(abs(x.v))            -- # typical value: abs, RRi, RRi
-     is x:CCcell do toExpr(abs(x.v))				    -- # typical value: abs, CC, RR
-     is r:QQcell do toExpr(abs(r.v))				    -- # typical value: abs, QQ, RR
+     is i:ZZcell do toExpr(abs(i.v))
+     is x:RRcell do toExpr(if sign(x.v) then -x.v else x.v)
+     is x:RRicell do toExpr(abs(x.v))
+     is x:CCcell do toExpr(abs(x.v))
+     is r:QQcell do toExpr(abs(r.v))
      else WrongArg("a number, real or complex"));
-setupfun("abs",absfun);
+setupfun("abs0",absfun);
 
 select(a:Sequence,f:Expr):Expr := (
      b := new array(bool) len length(a) do provide false;
