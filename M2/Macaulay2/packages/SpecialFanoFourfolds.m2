@@ -12,7 +12,7 @@ if version#"VERSION" < "1.20" then error "this package requires Macaulay2 versio
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.6", 
-    Date => "August 27, 2022",
+    Date => "September 6, 2022",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -22,14 +22,14 @@ newPackage(
     Reload => false
 )
 
-if MultiprojectiveVarieties.Options.Version < "2.5" then (
-    <<endl<<"Your version of the MultiprojectiveVarieties package is outdated (required version 2.5 or newer);"<<endl;
+if MultiprojectiveVarieties.Options.Version < "2.6" then (
+    <<endl<<"Your version of the MultiprojectiveVarieties package is outdated (required version 2.6 or newer);"<<endl;
     <<"you can manually download the latest version from"<<endl;
     <<"https://github.com/Macaulay2/M2/tree/development/M2/Macaulay2/packages."<<endl;
     <<"To automatically download the latest version of MultiprojectiveVarieties in your current directory,"<<endl;
     <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
     <<///run "curl -s -o MultiprojectiveVarieties.m2 https://raw.githubusercontent.com/Macaulay2/M2/development/M2/Macaulay2/packages/MultiprojectiveVarieties.m2";///<<endl<<endl<<"***"<<endl;
-    error "required MultiprojectiveVarieties package version 2.5 or newer";
+    error "required MultiprojectiveVarieties package version 2.6 or newer";
 );
 
 export{
@@ -1376,6 +1376,14 @@ fanoMap = method(Options => {Singular => null, RaiseError => true, Verbose => fa
 
 fanoMap HodgeSpecialFourfold := o -> X -> ( 
     if (surface X).cache#?("fanoMap",ambientFivefold X) then return (surface X).cache#("fanoMap",ambientFivefold X);
+    if (surface X).cache#?("fanoMap",ambient X) and dim ambient X >= 5 then (
+        Mu := (surface X).cache#("fanoMap",ambient X);
+        mu := toRationalMap(Mu|(ambientFivefold X));
+        (mu#"map").cache#"multiplicityFanoMap" = (Mu#"map").cache#"multiplicityFanoMap";
+        if mu#"idealImage" === null then forceImage(mu,ideal(0_(target mu))); -- 
+        (surface X).cache#("fanoMap",ambientFivefold X) = mu;
+        return mu
+    );
     local e; sat := 1;
     if member(recognize X,{"quinticDelPezzoSurface","quarticScrollSurface",1,6,"planeInPP7"}) 
     then e = 1
@@ -1931,6 +1939,7 @@ associatedK3surface SpecialGushelMukaiFourfold := associatedK3surface SpecialCub
         if o.Verbose then <<"-- computing the map f from U to the minimal K3 surface of degree "<<discriminant X<<endl;    
         m := degree C;
         if recognize X === "C42" then m = 2;
+        if recognize X === "mukai26''" then m = 3;
         f = mapDefinedByDivisor(U,{(H,1),(L,1),(C,m)});
         if recognize X === "FarkasVerra" then f = f * experimentalNormalizationInv(image(f,"F4"),Verbose=>o.Verbose);
     );

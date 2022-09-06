@@ -9,8 +9,8 @@
 
 newPackage(
        "Cremona",
-	Version => "5.1", 
-        Date => "February 24, 2021",
+	Version => "5.2", 
+        Date => "September 6, 2022",
     	Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com" }},
     	Headline => "rational maps between projective varieties",
 	Keywords => {"Algebraic Geometry"},
@@ -68,6 +68,7 @@ export{
 certificate := "MathMode: output certified!"|newline;
 
 MultihomogeneousRationalMap = new Type of MutableHashTable;
+WeightedHomogeneousRationalMap = new Type of MultihomogeneousRationalMap; -- this isn't really a subtype
 RationalMap = new Type of MutableHashTable;
 
 RationalMap.synonym = "rational map";
@@ -101,7 +102,8 @@ exceptionalLocus = method(TypicalValue => Ideal, Options => {MathMode => false})
 rationalMap RingMap := o -> ((cacheValue (o.Dominant,"RationalMapAssociatedToRingMap")) (phi -> (
    checkMultihomogeneousRationalMap phi;
    isStandardMap := degrees ambient target phi == toList((numgens ambient target phi):{1});
-   if (not isStandardMap) and (o.Dominant =!= "notSimplify") then phi = simplifyMap phi;
+   isWeightedMap := degreeLength ambient target phi == 1 and max flatten degrees ambient target phi >= 2;
+   if (not isStandardMap) and (not isWeightedMap) and (o.Dominant =!= "notSimplify") then phi = simplifyMap phi;
    if (o.Dominant =!= null and o.Dominant =!= "notSimplify") then phi = toMap(phi,Dominant=>o.Dominant);
    if isStandardMap then return new RationalMap from {
            "map" => phi,
@@ -116,9 +118,8 @@ rationalMap RingMap := o -> ((cacheValue (o.Dominant,"RationalMapAssociatedToRin
            "dimTarget" => max(dim target phi -1,-1),
            "dimAmbientSource" => numgens ambient source phi -1,
            "dimSource" => max(dim source phi -1,-1),
-           "blowUpIdeal" => null
-      }
-   else return new MultihomogeneousRationalMap from {
+           "blowUpIdeal" => null};
+   Phi := new MultihomogeneousRationalMap from {
            "map" => phi,
            "maps" => null,
            "isDominant" => if o.Dominant === true or o.Dominant === infinity then true else null,
@@ -131,8 +132,9 @@ rationalMap RingMap := o -> ((cacheValue (o.Dominant,"RationalMapAssociatedToRin
            "dimAmbientSource" => numgens ambient source phi -1,
            "dimSource" => max(dim source phi -1,-1),
            "blowUpIdeal" => null,
-           "baseLocus" => null
-      };
+           "baseLocus" => null};
+   if isWeightedMap then (Phi = new WeightedHomogeneousRationalMap from Phi; Phi#"dimAmbientTarget" = toSequence flatten degrees ambient target phi);
+   return Phi;
 )));
 rationalMap (Matrix) := o -> (F) -> rationalMap(toMap(F,Dominant=>null),Dominant=>o.Dominant);
 rationalMap (List) := o -> (F) -> rationalMap(toMap(F,Dominant=>null),Dominant=>o.Dominant);
@@ -274,7 +276,7 @@ RationalMap ~ := (Phi) -> (
 );
 
 targetProj = memoize ((R,N) -> (
-   if (numgens R -1 == N and # heft R == 1) then return R;
+   if (numgens R -1 == N and # heft R == 1 and unique degrees R == {{1}}) then return R;
    K:=coefficientRing R;
    t:=local t; x:=local x; y:=local y; txy:=baseName first gens R; if class txy === IndexedVariable then txy = first txy; txy=toString txy;
    PNl:=(K[t_0..t_N],K[x_0..x_N],K[y_0..y_N]);   
@@ -450,6 +452,7 @@ nicePrint (Ideal) := (I) -> nicePrint flatten entries gens I;
 
 nicePrint (PolynomialRing) := (R) -> (
    K := coefficientRing R;
+   if degreeLength R == 1 and min flatten degrees R >= 1 and max flatten degrees R >= 2 then return "Proj("|net(K)|net(new Array from gens R)|",Degrees=>"|net(degrees R)|")";
    mm := apply(multigens R,m -> new Array from m);
    P := "Proj("|net(K)|net(mm_0)|")";
    for i from 1 to #mm-1 do P = P|" x Proj("|net(K)|net(mm_i)|")";
@@ -1735,6 +1738,18 @@ expressionVar (ZZ,List) := (Dim,DimAmbient) -> (
    return(toString(Dim) | "-dimensional subvariety of "| str);
 );
 
+expressionVar (ZZ,Sequence) := (Dim,DimAmbient) -> (
+   if # DimAmbient == 0 then return "empty scheme";
+   str := "PP"|(toString DimAmbient);   
+   if Dim < 0 then return ("empty subscheme of "| str);
+   if Dim === # DimAmbient - 1 then return str;
+   if Dim === 1 then return ("curve in "| str);
+   if Dim === 2 then return ("surface in "| str);
+   if (# DimAmbient - 1) - Dim === 1 then return ("hypersurface in "| str);
+   if Dim === 3 then return ("threefold in "| str);
+   return(toString(Dim) | "-dimensional subvariety of "| str);
+);
+
 expressionVar (Ideal,ZZ,ZZ) := (I,k,n) -> ( -- assume V(I) absolutely irreducible, linearly normal, etc...
   I = trim I;  d:=degree I; degs := flatten degrees I; 
   try assert(isPolynomialRing ring I and isHomogeneous I and k == max(dim I -1,-1) and n == numgens ring I -1) else error "internal error encountered";
@@ -1795,10 +1810,19 @@ expressionVar (Ideal,ZZ,List) := (I,k,n) -> (
   return(expressionVar(k,n)|cutOut);
 );
 
+expressionVar (Ideal,ZZ,Sequence) := (I,k,n) -> ( 
+  I = trim I;  degs := degrees I; 
+  try assert(isPolynomialRing ring I and isHomogeneous I and k == max(dim I - 1,-1) and #n == numgens ring I) else error "internal error encountered";
+  if k <= 0 or k >= #n-1 then return expressionVar(k,n);
+  if # degs == 1 then return(expressionVar(k,n)|" defined by a form of degree "|toString(first degs));
+  cutOut:=""; if #degs>1 then cutOut = if # unique degs == 1 then " cut out by "|toString(#degs)|" hypersurfaces of degree "|toString(first degs) else " cut out by "|toString(#degs)|" hypersurfaces of degrees "|toString(toSequence degs); 
+  return(expressionVar(k,n)|cutOut);
+);
+
 expressionVar (Ideal) := (I) -> (
+   if degreeLength ring I == 1 then (if max flatten degrees ring I >= 2 then return expressionVar(I,dim I - 1,toSequence flatten degrees ring I) else return expressionVar(I,dim I - 1,numgens ring I - 1));
    k := max(dim I - (# multigens ring I),-1);
    n := apply(multigens ring I,g->(#g -1));
-   if #n == 1 then n = first n;
    expressionVar(I,k,n)
 );
 
@@ -2031,7 +2055,7 @@ checkRationalMap = (phi) -> ( -- phi RingMap
 
 checkMultihomogeneousRationalMap = (phi) -> ( -- phi RingMap
    if not (degrees ambient source phi == toList((numgens ambient source phi):{1})) then error "expected standard grading on source ring map";
-   if not (flatten multigens ambient target phi == gens ambient target phi) then error ("given grading on target ring map is not permitted");
+   if not ((flatten multigens ambient target phi == gens ambient target phi) or (degreeLength ambient target phi == 1 and min flatten degrees ambient target phi >= 1)) then error ("given grading on target ring map is not permitted");
    checkRationalMap0 phi;
 );
 
