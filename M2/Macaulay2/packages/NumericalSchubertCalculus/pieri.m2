@@ -104,7 +104,7 @@ positionVariableChildren(Sequence,List,List,List):=(kn,l,m,v)->(
 -----------------------
 precookPieriHomotopy = method(TypicalValue=>List)
 precookPieriHomotopy(Sequence,List,List) := (kn,l,m)->(
-     -- k and n are the integers defining the Grassmanian G(k,n)
+     -- k and n are the integers defining the Grassmannian G(k,n)
      -- l and m are partitions of n
      (k,n) := kn;
      l = verifyLength(l, k);

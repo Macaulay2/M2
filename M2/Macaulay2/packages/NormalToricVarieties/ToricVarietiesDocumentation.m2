@@ -2028,7 +2028,7 @@ doc ///
     Headline 
         make a birational simplicial toric variety
     Usage 
-        makeSimplical X
+        makeSimplicial X
     Inputs
         X : NormalToricVariety
         Strategy => ZZ

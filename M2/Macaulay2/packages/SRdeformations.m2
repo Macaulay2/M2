@@ -4661,7 +4661,7 @@ doc ///
     :Boolean
   Description
    Text
-        Checks whether a deformation f is homogeneous with respect to the small torus gradin, i.e., the grading added to R = @TO simplexRing@ f by @TO addCokerGrading@.
+        Checks whether a deformation f is homogeneous with respect to the small torus grading, i.e., the grading added to R = @TO simplexRing@ f by @TO addCokerGrading@.
    Example
         R=QQ[x_0..x_4];
         addCokerGrading(R);

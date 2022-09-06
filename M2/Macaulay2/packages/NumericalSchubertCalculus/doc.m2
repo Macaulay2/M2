@@ -643,7 +643,7 @@ doc ///
       Text
          This first verifies that the conditions are either all partitions or all brackets, and that they form a Schubert problem on $Gr(k,n)$.
 	 
-	 Then it computes the intersection number of the product of Schubert classes in the cohomology ring of the Grassmannnian
+	 Then it computes the intersection number of the product of Schubert classes in the cohomology ring of the Grassmannian
       Text
          For instance, the problem of four lines is given by 4 partitions {1}$^4$ in $Gr(2,4)$
       Example

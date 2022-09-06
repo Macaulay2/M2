@@ -2214,7 +2214,7 @@ doc ///
 	    phi=stanleyReisner(V,F,BaseRing=>R,Homogenize=>false)
 	    ker phi--decone of simplicial complex is a three-cycle
 	Text
-	    The Stanley Reisner ring of a simpicial complex is obtained using the function @TO ringStructure@, where the
+	    The Stanley Reisner ring of a simplicial complex is obtained using the function @TO ringStructure@, where the
 	    ring generators are chosen to be the Courant functions.
 	Example
 	    V={{0,0},{0,1},{-1,-1},{1,0}};

@@ -298,7 +298,7 @@ slEquivariantConstantRankMatrix (ZZ,ZZ,ZZ,PolynomialRing) := opts -> (n,d,m,X) -
     if n <= 0 then error "\targument 1 : expected a positive integer";
     if d <= 0 then error "\targument 2 : expected a positive integer";
     if m <= 1 then error "\targument 3 : expected a integer greater than 1";
-    if numgens X != (N := binomial(n+d,n)) then error ("\targument 4 : expected a polymial ring with " | toString(N) | " variables");
+    if numgens X != (N := binomial(n+d,n)) then error ("\targument 4 : expected a polynomial ring with " | toString(N) | " variables");
 
     M := slEquivariantConstantRankMatrix (n,d,m);
     phi := map(X,ring M,gens X);
@@ -310,7 +310,7 @@ slEquivariantConstantRankMatrix (PolynomialRing,ZZ,ZZ,PolynomialRing) := opts ->
     if n <= 0 then error "\targument 1 : expected a ring with at least 2 variables";
     if d <= 0 then error "\targument 2 : expected a positive integer";
     if m <= 1 then error "\targument 3 : expected a integer greater than 1";
-    if numgens X != (N := binomial(n+d,n)) then error ("\targument 4 : expected a polymial ring with " | toString(N) | " variables");
+    if numgens X != (N := binomial(n+d,n)) then error ("\targument 4 : expected a polynomial ring with " | toString(N) | " variables");
 
     M := slEquivariantConstantRankMatrix (R,d,m);
     phi := map(X,ring M,gens X);
@@ -339,7 +339,7 @@ slEquivariantVectorBundle (ZZ,ZZ,ZZ,PolynomialRing) := opts -> (n,d,m,X) -> (
     if n <= 0 then error "\targument 1 : expected a positive integer";
     if d <= 0 then error "\targument 2 : expected a positive integer";
     if m <= 1 then error "\targument 3 : expected an integer greater than 1";
-    if numgens X != (N := binomial(n+d,n)) then error ("\targument 4 : expected a polymial ring with " | toString(N) | " variables");
+    if numgens X != (N := binomial(n+d,n)) then error ("\targument 4 : expected a polynomial ring with " | toString(N) | " variables");
 
     return sheaf minimalPresentation ker slEquivariantConstantRankMatrix(n,d,m,X);  
 )
@@ -349,7 +349,7 @@ slEquivariantVectorBundle (PolynomialRing,ZZ,ZZ,PolynomialRing) := opts -> (R,d,
     if n <= 0 then error "\targument 1 : expected a ring with at least 2 variables";
     if d <= 0 then error "\targument 2 : expected a positive integer";
     if m <= 1 then error "\targument 3 : expected an integer greater than 1";
-    if numgens X != (N := binomial(n+d,n)) then error ("\targument 4 : expected a polymial ring with " | toString(N) | " variables");
+    if numgens X != (N := binomial(n+d,n)) then error ("\targument 4 : expected a polynomial ring with " | toString(N) | " variables");
 
     return sheaf minimalPresentation ker slEquivariantConstantRankMatrix(R,d,m,X);  
 )

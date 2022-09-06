@@ -200,7 +200,7 @@ minimize(LineageTable) := LineageTable => (H) -> (
 	    f:=G#kf;
 	    remove(G,kf);
 	    lt := leadTerm matrix {values G};
-	    -- if LT(f) is divisble by any LT(g) for (g\in G\setminus f), then f is not minimal:
+	    -- if LT(f) is divisible by any LT(g) for (g\in G\setminus f), then f is not minimal:
 	    if leadTerm f%lt==0 then nonminimalElements#kf=null else G#kf=f;
 	    )
 	);
