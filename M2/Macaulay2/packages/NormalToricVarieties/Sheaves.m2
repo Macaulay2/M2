@@ -126,6 +126,12 @@ cotangentSheaf NormalToricVariety := CoherentSheaf => opts -> (
 cotangentSheaf(ZZ,NormalToricVariety) := CoherentSheaf => opts -> (i,X) -> 
   exteriorPower (i, cotangentSheaf (X,opts)) 
 
+cotangentSheaf(List, NormalToricVariety) := CoherentSheaf => opts -> (a, X) -> (
+    assert(#a == #(Xs := components X));
+    if X#?(cotangentSheaf, a)
+    then X#(cotangentSheaf, a)
+    else X#(cotangentSheaf, a) = tensor apply(#a, i -> pullback(X^[i], cotangentSheaf(a#i, Xs#i))))
+
 
 -- THIS FUNCTION IS NOT EXPORTED.  Given a normal toric variety, this function
 -- creates a HashTable describing the cohomology of all twists of the

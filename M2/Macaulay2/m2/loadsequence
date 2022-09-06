@@ -56,7 +56,6 @@ mutablemat.m2
 localring.m2
 quotring.m2
 freealgebras.m2
-multilin.m2
 flint.m2
 modules2.m2
 hilbert.m2
@@ -67,6 +66,7 @@ ringmap.m2
 newring.m2
 basis.m2
 genmat.m2
+multilin.m2
 pushforward.m2
 ext.m2
 tor.m2

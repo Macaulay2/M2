@@ -82,7 +82,7 @@ irrelevantIdeal Ring := S -> (
     )
 
 exponent = method()
---Redundant with unexported function dimVector in VirtualResolutions
+--redundant with unexported function dimVector in VirtualResolutions
 exponent Ring := S -> (
     alldegs := degrees S;
     degs := unique alldegs;
@@ -320,7 +320,10 @@ isQuasiLinear ChainComplex := opts -> F -> isQuasiLinear(betti F, opts)
 
 supportOfTor = method()
 supportOfTor ChainComplex := F -> (
-    for i from min F to max F-1 list unique degrees F_i
+    for i from min F to max F list (
+	degs := unique degrees F_i;
+	if degs == {} then continue else degs
+	)
     )
 supportOfTor Module := M -> supportOfTor res prune M
 

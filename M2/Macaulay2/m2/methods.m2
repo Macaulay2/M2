@@ -264,18 +264,18 @@ setupMethods := (args, symbols) -> (
 	  )))
 
 setupMethods((), { 
-	  entries, borel, gcdCoefficients, singularLocus,
-	  Hom, diff, diff', contract, contract', subsets, partitions, member,
-	  koszul, symmetricPower, trace, target, source,
+	  entries, baseName, borel, gcdCoefficients, singularLocus,
+	  Hom, diff, diff', contract, contract', member,
+	  koszul, target, source,
 	  getChangeMatrix, cover, coverMap, super, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
-	  substitute, rank, complete, ambient, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
+	  substitute, complete, ambient, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
 	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
 	  content, leadTerm, leadCoefficient, leadMonomial, components,
-	  leadComponent, degreesRing, degrees, assign, numgens, realPart, imaginaryPart, conjugate,
+	  leadComponent, degreesRing, assign, realPart, imaginaryPart, conjugate,
 	  relations, cone, standardForm, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,
 	  presentation, dismiss, precision, 
-	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage,
+	  norm, clean, fraction, part, coefficient, preimage,
 	  hasEngineLinearAlgebra, nullSpace,
       isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile
 	  })
@@ -293,8 +293,6 @@ default = method()
 --     m := lookup(X,symbol default);
 --     if m === null then error "no method found";
 --     m ())
-
-determinant = method(Options => { Strategy => null })
 
 random = method(Options => {
 	  MaximalRank => false,
@@ -357,10 +355,11 @@ setupMethods(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit,
 	  isSubset,isHomogeneous, isIsomorphism, isField, isConstant
 	  })
-setupMethods(TypicalValue => ZZ,
-     {binomial,degreeLength,height,char,pdim,dim,depth,width,euler,genus})
-setupMethods(TypicalValue => List,
-     {eulers, genera})
+setupMethods(TypicalValue => ZZ, {
+	binomial, char, degreeLength, depth, dim, euler, genus, height,
+	numgens, numColumns, numRows, pdim, rank, width})
+setupMethods(TypicalValue => List, {
+	degrees, eulers, genera})
 
 length = method(TypicalValue => ZZ, Dispatch => Thing)
 codim = method( Options => true )
@@ -711,16 +710,6 @@ locate Sequence   := Sequence => x -> locate' x
 locate Symbol     := Sequence => x -> locate' x
 locate List       := List     => x -> apply(x, locate)
 protect symbol locate
-
--- baseName
-baseName = method()
-baseName Thing := R -> (
-     if hasAttribute(R,ReverseDictionary) then (
-	  x := getAttribute(R,ReverseDictionary);
-	  if not mutable x then error("baseName: base name ",toString x," is not mutable, hence not available for use as a variable");
-	  x)
-     else error "baseName: no base name available"
-     )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
