@@ -540,6 +540,12 @@ assert Equation(toPython hashTable {x => y}, hashTable {x => y})
 TEST ///
 -- built-in functions
 
+-- abs
+assert Equation(abs toPython(-3), 3)
+
+-- ~ (bitwise not)
+assert Equation((toPython 5)~, -6)
+
 -- __contains__
 assert member(toPython 3, toPython {1, 2, 3})
 assert not member(toPython 4, toPython {1, 2, 3})
