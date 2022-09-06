@@ -206,6 +206,7 @@ export toExpr(x:QQ):Expr := Expr(QQcell(x));
 export toExpr(x:RR):Expr := Expr(RRcell(x));
 export toExpr(x:RRi):Expr := Expr(RRicell(x));
 export toExpr(x:CC):Expr := Expr(CCcell(x));
+export toExpr(x:float):Expr := Expr(RRcell(toRR(x,ulong(24))));
 export toExpr(x:double):Expr := Expr(RRcell(toRR(x,ulong(53))));
 export toExpr(x:RawComputation):Expr := Expr(RawComputationCell(x));
 export toExpr(x:RawFreeModule):Expr := Expr(RawFreeModuleCell(x));
