@@ -936,7 +936,7 @@ ambDim PolyhedralObject := X -> X#"ambient dimension"
 
 
 
--- PURPOSE : Giving the k dimensionial Cones of the Fan
+-- PURPOSE : Giving the k dimensional Cones of the Fan
 --   INPUT : (k,F)  where 'k' is a positive integer and F is a Fan 
 --  OUTPUT : a List of Cones
 cones = method(TypicalValue => List)
@@ -948,7 +948,7 @@ cones(ZZ,Fan) := (k,F) -> (
 	unique flatten apply(L, C -> faces(dim(C)-k,C)))
 
 
--- PURPOSE : Giving the k dimensionial Polyhedra of the Polyhedral Complex
+-- PURPOSE : Giving the k dimensional Polyhedra of the Polyhedral Complex
 --   INPUT : (k,PC)  where 'k' is a positive integer and PC is a PolyhedralComplex 
 --  OUTPUT : a List of Polyhedra
 polyhedra = method(TypicalValue => List)

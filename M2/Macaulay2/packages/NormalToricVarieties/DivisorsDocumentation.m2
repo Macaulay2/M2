@@ -1864,7 +1864,7 @@ doc ///
             @UL {
     		{"the divisor is a very ample divisor;"},
     		{"for every vertex of the associated lattice polytope
-    		  associated to the divsor, the corresponding semigroup is
+    		  associated to the divisor, the corresponding semigroup is
     		  saturated in the group characters."}
 	    }@
         Text    

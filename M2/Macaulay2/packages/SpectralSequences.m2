@@ -1252,7 +1252,7 @@ doc ///
 	      E^infinity    
 	  Text
      	     If we want the homology of the complex to be the non-reduced homology
-     	     of the simpicial complex we set the ReducedHomology option to false:
+     	     of the simplicial complex we set the ReducedHomology option to false:
      	  Example 
 	     k = filteredComplex({F2D, F1D, F0D}, ReducedHomology => false)
 	  Text
@@ -2915,7 +2915,7 @@ doc ///
 	      K = filteredComplex{D,E,F}
 	  Text
      	     If we want the resulting complexes to correspond to the non-reduced homology
-     	     of the simpicial complexes we can do the following.
+     	     of the simplicial complexes we can do the following.
      	  Example 
 	     filteredComplex({D,E,F}, ReducedHomology => false)
      SeeAlso
@@ -2938,7 +2938,7 @@ doc ///
           K: FilteredComplex
      Description	  
      	  Text
-	     Produces the filtered complex obtained by succesively truncating the complex.
+	     Produces the filtered complex obtained by successively truncating the complex.
 	  Example 
 	    needsPackage "SpectralSequences"
 	    A = QQ[x,y]
@@ -3826,7 +3826,7 @@ doc ///
     	       (prune E) ^infinity
 	  Text
      	     If we want the resulting complexes to correspond to the non-reduced homology
-     	     of the simpicial complexes we set the ReducedHomology option
+     	     of the simplicial complexes we set the ReducedHomology option
 	     to false.
      	  Example 
 	     J = filteredComplex({a,b,c}, ReducedHomology => false)           	     
@@ -4085,7 +4085,7 @@ doc ///
 	  Text
 	       Considering the $E^2$ and $E^3$ pages of the spectral sequence 
 	       we conclude that the map $d^2_{2,-1}$ must have a $1$-dimensional
-	       image and a $1$-dimensinal kernel.  This can be verified easily:
+	       image and a $1$-dimensional kernel.  This can be verified easily:
 	  Example
 	      rank ker E^2 .dd_{2,-1}
 	      rank image E^2 .dd_{2,-1}     

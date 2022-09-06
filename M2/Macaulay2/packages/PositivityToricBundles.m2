@@ -735,7 +735,7 @@ circularOrder (List) := p -> (
 
 -- MAIN METHOD: drawParliament2Dtikz -----------------------------------------
 
--- PURPOSE: Draw a two-dimensional parliamant of polytopes using tikz
+-- PURPOSE: Draw a two-dimensional parliament of polytopes using tikz
 --   INPUT: 'tvb', toric vector bundle,
 --          'parliament', parliament of 2-dim polytopes
 --          'file', string with file name

@@ -4115,9 +4115,9 @@ doc ///
     R = coarseMultigradedRegularity M
    Inputs
     M:Module
-     multi-graded module over a multi-graded polynomomial ring
+     multi-graded module over a multi-graded polynomial ring
     M:ChainComplex
-     multi-graded module over a multi-graded polynomomial ring
+     multi-graded module over a multi-graded polynomial ring
     Strategy => String
    Outputs
     R:List

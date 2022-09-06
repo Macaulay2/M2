@@ -58,7 +58,7 @@ doc ///
 
      In addition to the functions highlighted above, the @TT "VirtualResolutions"@ package contains
      a number of other tools for constructing and studying virtual resolutions. In particular,
-     there are functions to construct virtual resolutions for zero dimensionsal subschemes, to
+     there are functions to construct virtual resolutions for zero dimensional subschemes, to
      check whether a complex is a virtual resolution, and to construct curves in $\PP^1\times\PP^2$.
   References
     @UL {

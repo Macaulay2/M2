@@ -316,7 +316,7 @@ Betti1(Triplet) := (L) -> (
      BarC := apply(nC+1, i -> n- C_(nC-i));     
      -- make the interval [a,Barb] containing BarC
      IntBarC := apply(n-b-a+1, i-> i+a);
-     --make the iternal  nondegrees of BarC
+     --make the internal  nondegrees of BarC
      SBarC := set(BarC);
      INdBarC := IntBarC - SBarC;
      nINdC := #INdBarC-1;

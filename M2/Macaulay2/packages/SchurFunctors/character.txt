@@ -18,6 +18,6 @@
        Given a list L of partitions {L1,...,Ln} computes the character of the composition of Schur functors
        SL1(SL2(...(SLn(V)))) applied to the canonical representation of GL(V) where dim(V)=d
     Example 
-       character({{1,1,1},{2}},4)--The GL(4) action on the grassmannian of 3-dimensional subspaces of quadrics in four variables
+       character({{1,1,1},{2}},4)--The GL(4) action on the Grassmannian of 3-dimensional subspaces of quadrics in four variables
   SeeAlso
     schur

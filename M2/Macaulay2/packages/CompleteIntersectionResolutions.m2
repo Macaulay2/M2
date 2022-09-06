@@ -4938,7 +4938,7 @@ doc///
     D = layeredMFaug (ff,M)
    Inputs
     ff:Matrix
-     1 x c matrix containing a regular sequence in a polynomomial ring S
+     1 x c matrix containing a regular sequence in a polynomial ring S
     M:Module
      MCM module over S/(ideal ff)
     Check:Boolean
@@ -5028,7 +5028,7 @@ doc///
     D = layeredMFaug (ff,M)
    Inputs
     ff:Matrix
-     1 x c matrix containing a regular sequence in a polynomomial ring S
+     1 x c matrix containing a regular sequence in a polynomial ring S
     M:Module
      MCM module over S/(ideal ff)
     Check:Boolean

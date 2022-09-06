@@ -570,7 +570,7 @@ notAboveLambda(List,ZZ,ZZ) := (lambda,k,n) ->(
 
 skewSchubertVariety = method(TypicalValue=>Matrix, Options=>{Inputs=>53})
 skewSchubertVariety(Sequence,List,List) := o->(kn,l,m)->(
-     -- k and n are the integers defining the Grassmanian G(k,n)
+     -- k and n are the integers defining the Grassmannian G(k,n)
      -- l and m are partitions of n
      (k,n):=kn;
      l = verifyLength(l, k);

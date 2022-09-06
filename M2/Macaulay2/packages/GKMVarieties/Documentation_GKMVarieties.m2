@@ -443,7 +443,7 @@ doc ///
 			peek SpFl4
 		
 		Text
-			The following example produces the Orthogonal Grassmaninnian $SOGr(2,5)$ from its
+			The following example produces the Orthogonal Grassmannian $SOGr(2,5)$ from its
 			moment graph.
 
 		Example
