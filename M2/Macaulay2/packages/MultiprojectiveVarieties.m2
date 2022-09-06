@@ -90,7 +90,7 @@ projectiveVariety Ideal := o -> I -> (
     isWeighted := degreeLength R == 1 and min flatten degrees R >= 1 and max flatten degrees R >= 2;
     m := if isWeighted then {gens R} else multigens R;
     if flatten m != gens R then error "the given grading on the polynomial ring is not allowed: the degree of each variable must be a standard basis vector of ZZ^r in the commonly used order";
-    if not isHomogeneous I then error "expected a (multi)-homogeneous ideal";
+    if not isHomogeneous I then error ("trying to construct projective variety from a non-homogeneous ideal: numgens ring: "|(toString numgens R)|", degrees: "|(toString toSequence degrees R));
     J := I;
     if o.Saturate then (
         if not(J.cache#?"isMultisaturated" and J.cache#"isMultisaturated") then (
@@ -319,11 +319,13 @@ describe MultiprojectiveVariety := X -> (
         amb = "PP^"|toString(n_0);
         for i from 1 to #n-1 do amb = amb | " x PP^" | toString(n_i);
     );
+    if instance(X,WeightedProjectiveVariety) then amb = "PP"|(toString toSequence flatten degrees ring ideal X);
     s := "ambient:.............. "|toString(amb)|newline;
     s = s|"dim:.................. "|toString(dim X);
     if dim X == -1 then return s;
-    s = s|newline|"codim:................ "|toString(codim X)|newline;
-    s = s|"degree:............... "|toString(degree X);
+    s = s|newline|"codim:................ "|toString(codim X);
+    if codim X == 0 then return s;
+    s = s|newline|"degree:............... "|toString(degree X);
     if codim X == 0 then return s; 
     s = s|newline;
     if # n > 1 then s = s|"multidegree:.......... "|toString(multidegree X)|newline;        
@@ -1557,6 +1559,7 @@ graphViaKoszul = Phi -> (
 
 graph MultirationalMap := o -> Phi -> (
     if Phi#"graph" =!= null then return Phi#"graph";
+    if instance(source Phi,WeightedProjectiveVariety) then error "not implemented yet: rational map with target a weighted projective variety";
     local G;
     if o.BlowUpStrategy === "Eliminate" then G = graphViaElim(Phi) else (
         if o.BlowUpStrategy === "Syzygies" or o.BlowUpStrategy === "Saturate" then G = graphViaSyzygies(Phi) else (
@@ -1879,9 +1882,11 @@ describe MultirationalMap := Phi -> (
     descr=descr|"target variety: "|(? target Phi)|newline;
     descr=descr|"base locus: "|(? baseLocus Phi)|newline;
     if image Phi == target Phi then descr=descr|"dominance: "|toString(Phi#"isDominant")|newline else descr=descr|"dominance: "|toString(Phi#"isDominant")|newline|"image: "|(? image Phi)|newline;
-    descr = descr|"multidegree: "|toString(multidegree Phi)|newline;
-    descr=descr|"degree: "|toString(degree Phi)|newline;
-    for i to n-1 do descr=descr|"degree sequence (map "|toString(i+1)|"/"|toString(n)|"): "|toString(degreeSequence (factor Phi)_i)|newline;
+    if not instance(Phi,WeightedRationalMap) then (
+        descr = descr|"multidegree: "|toString(multidegree Phi)|newline;
+        descr=descr|"degree: "|toString(degree Phi)|newline;
+        for i to n-1 do descr=descr|"degree sequence (map "|toString(i+1)|"/"|toString(n)|"): "|toString(degreeSequence (factor Phi)_i)|newline;
+    );
     descr=descr|"coefficient ring: "|toString(coefficientRing Phi);
     net expression descr
 );
