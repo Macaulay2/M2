@@ -11,8 +11,8 @@ if version#"VERSION" < "1.18" then error "this package requires Macaulay2 versio
 
 newPackage(
     "MultiprojectiveVarieties",
-    Version => "2.5", 
-    Date => "November 6, 2021",
+    Version => "2.6", 
+    Date => "September 6, 2022",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -36,14 +36,14 @@ newPackage(
 	 }
     )
 
-if Cremona.Options.Version < "5.1" then (
-    <<endl<<"Your version of the Cremona package is outdated (required version 5.1 or newer);"<<endl;
+if Cremona.Options.Version < "5.2" then (
+    <<endl<<"Your version of the Cremona package is outdated (required version 5.2 or newer);"<<endl;
     <<"you can manually download the latest version from"<<endl;
     <<"https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages."<<endl;
     <<"To automatically download the latest version of Cremona in your current directory,"<<endl;
     <<"you may run the following Macaulay2 code:"<<endl<<"***"<<endl<<endl;
     <<///(makeDirectory("Cremona"), for f in {"Cremona.m2","Cremona/documentation.m2","Cremona/examples.m2","Cremona/tests.m2"} do run("curl -s -o "|f|" https://raw.githubusercontent.com/Macaulay2/M2/master/M2/Macaulay2/packages/"|f));///<<endl<<endl<<"***"<<endl;
-    error "required Cremona package version 5.1 or newer";
+    error "required Cremona package version 5.2 or newer";
 );
 
 if SparseResultants.Options.Version < "1.1" then error "your version of the SparseResultants package is outdated (required version 1.1 or newer); you can download the latest version from https://github.com/Macaulay2/M2/tree/master/M2/Macaulay2/packages";
@@ -73,6 +73,12 @@ globalAssignment EmbeddedProjectiveVariety;
 
 EmbeddedProjectiveVariety.synonym = "embedded projective variety";
 
+WeightedProjectiveVariety = new Type of MultiprojectiveVariety; -- this isn't really a subtype
+
+globalAssignment WeightedProjectiveVariety;
+
+WeightedProjectiveVariety.synonym = "weighted projective variety";
+
 projectiveVariety = method(TypicalValue => MultiprojectiveVariety, Options => {MinimalGenerators => true, Saturate => true});
 
 projectiveVariety Ideal := o -> I -> (
@@ -81,9 +87,10 @@ projectiveVariety Ideal := o -> I -> (
     R := ring I;
     if not isPolynomialRing R then error "expected an ideal in a polynomial ring";
     if not isField coefficientRing R then error "the coefficient ring needs to be a field";
-    m := multigens R;
+    isWeighted := degreeLength R == 1 and min flatten degrees R >= 1 and max flatten degrees R >= 2;
+    m := if isWeighted then {gens R} else multigens R;
     if flatten m != gens R then error "the given grading on the polynomial ring is not allowed: the degree of each variable must be a standard basis vector of ZZ^r in the commonly used order";
-    if not isHomogeneous I then error "expected a (multi)-homogeneous ideal";
+    if not isHomogeneous I then error ("trying to construct projective variety from a non-homogeneous ideal: numgens ring: "|(toString numgens R)|", degrees: "|(toString toSequence degrees R));
     J := I;
     if o.Saturate then (
         if not(J.cache#?"isMultisaturated" and J.cache#"isMultisaturated") then (
@@ -104,7 +111,7 @@ projectiveVariety Ideal := o -> I -> (
         "projections" => null,
         "expression" => null
     };
-    if # X#"dimAmbientSpaces" == 1 then X = new EmbeddedProjectiveVariety from X;
+    if # X#"dimAmbientSpaces" == 1 then (if isWeighted then X = new WeightedProjectiveVariety from X else X = new EmbeddedProjectiveVariety from X);
     J.cache#"multiprojectiveVariety" = X;
     I.cache#"multiprojectiveVariety" = J.cache#"multiprojectiveVariety"
 );
@@ -206,7 +213,8 @@ PP = new ScriptedFunctor from {
                 argument => (
                     d -> (
                         if instance(d,Array) then higherSecantVarietyToRationalNormalScroll(d,1,K)
-                        else if instance(d,Sequence) and #d==2 then higherSecantVarietyToRationalNormalScroll(d_0,d_1,K)
+                        else if instance(d,Sequence) and #d==2 and instance(d_0,Array) then higherSecantVarietyToRationalNormalScroll(d_0,d_1,K)
+                        else if instance(d,Sequence) and all(d,i->instance(i,ZZ) and i>=1) then projectiveVariety(newRing(Grass(0,#d-1,K),Degrees=>toList(d)),MinimalGenerators=>false,Saturate=>false)
                         else error errStr
                     )
                 )
@@ -237,6 +245,11 @@ expression MultiprojectiveVariety := X -> (
     n := X#"dimAmbientSpaces";
     if dim X == 0 and codim X > 0 then if isPoint X then return expression("a point in "|expressionVar(sum n,n));
     expression expressionVar(dim X,n)
+);
+
+expression WeightedProjectiveVariety := X -> (
+    if X#"expression" =!= null then return X#"expression";
+    expression expressionVar(dim X,toSequence flatten degrees ring ideal X)
 );
 
 net MultiprojectiveVariety := X -> if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else ?X;
@@ -306,11 +319,13 @@ describe MultiprojectiveVariety := X -> (
         amb = "PP^"|toString(n_0);
         for i from 1 to #n-1 do amb = amb | " x PP^" | toString(n_i);
     );
+    if instance(X,WeightedProjectiveVariety) then amb = "PP"|(toString toSequence flatten degrees ring ideal X);
     s := "ambient:.............. "|toString(amb)|newline;
     s = s|"dim:.................. "|toString(dim X);
     if dim X == -1 then return s;
-    s = s|newline|"codim:................ "|toString(codim X)|newline;
-    s = s|"degree:............... "|toString(degree X);
+    s = s|newline|"codim:................ "|toString(codim X);
+    if codim X == 0 then return s;
+    s = s|newline|"degree:............... "|toString(degree X);
     if codim X == 0 then return s; 
     s = s|newline;
     if # n > 1 then s = s|"multidegree:.......... "|toString(multidegree X)|newline;        
@@ -331,11 +346,12 @@ describe MultiprojectiveVariety := X -> (
 
 ? MultiprojectiveVariety := X -> (
     if dim X == -1 or codim X <= 0 then return toString expression X;
-    if isPoint X then return ("point of coordinates "|toString coordinates X); 
+    if (not instance(X,WeightedProjectiveVariety)) and isPoint X then return ("point of coordinates "|toString coordinates X); 
     n := X#"dimAmbientSpaces";
     degs := degrees ideal X; 
     m := "multi-";
     if #n == 1 then m = "";
+    if instance(X,WeightedProjectiveVariety) then n = toSequence flatten degrees ring ideal X;
     if # degs == 1 then return(toString expressionVar(dim X,n)|" defined by a "|m|"form of "|m|"degree "|toString(unsequence toSequence first degs));
     cutOut:=""; if #degs>1 then cutOut = if # unique degs == 1 then " cut out by "|toString(#degs)|" hypersurfaces of "|m|"degree "|toString(unsequence toSequence first degs) else " cut out by "|toString(#degs)|" hypersurfaces of "|m|"degrees "|toStringDegreesVar(X); 
     (expressionVar(dim X,n))|cutOut
@@ -527,6 +543,19 @@ point MultiprojectiveVariety := X -> (
     p := point(X,true);
     if isSubvariety X then p = makeSubvariety(p,ambientVariety X,Verify=>false);
     return p;
+);
+
+point WeightedProjectiveVariety := X -> (
+    if codim X > 0 then error "not implemented yet: point on weighted-projective variety of positive codimension";
+    a := flatten degrees ring ideal X;
+    n := #a-1;
+    p := apply(n+1,i -> random coefficientRing X);
+    x := gens ring X;
+    P := projectiveVariety ideal flatten for k to n list for i to n list ((p_i)^(a_k) * (x_k)^(a_i) - (p_k)^(a_i) * (x_i)^(a_k));
+    assert(dim P == 0);
+    P.cache#"isPoint" = true;
+    P.cache#"coordinates" = new Array from p;
+    P
 );
 
 pointOnLinearSectionOfG14 = X -> (
@@ -1045,6 +1074,12 @@ globalAssignment MultirationalMap;
 
 MultirationalMap.synonym = "multi-rational map";
 
+WeightedRationalMap = new Type of MultirationalMap; -- this isn't really a subtype
+
+globalAssignment WeightedRationalMap;
+
+WeightedRationalMap.synonym = "weighted-rational map";
+
 expression MultirationalMap := Phi -> (
     X := if hasAttribute(source Phi,ReverseDictionary) then toString getAttribute(source Phi,ReverseDictionary) else toString expression source Phi;
     Y := if hasAttribute(target Phi,ReverseDictionary) then toString getAttribute(target Phi,ReverseDictionary) else toString expression target Phi;
@@ -1083,7 +1118,7 @@ multirationalMap (List,MultiprojectiveVariety) := (L,Y) -> (
     then if # m == 1 
          then error("expected a subvariety of PP^"|toString(first m))
          else error("expected a subvariety of a product of "|toString(# m)|" projective spaces of dimensions "|(toString toSequence m));
-    new MultirationalMap from {
+    Phi := new MultirationalMap from {
         symbol cache => new CacheTable,
         "maps" => L,
         "target" => Y,
@@ -1095,7 +1130,9 @@ multirationalMap (List,MultiprojectiveVariety) := (L,Y) -> (
         "multidegree" => null,
         "baseLocus" => null,
         "inverse" => null
-    }
+    };
+    if instance(Phi#"source",WeightedProjectiveVariety) then Phi = new WeightedRationalMap from Phi;
+    return Phi;
 );
 
 multirationalMap List := L -> (
@@ -1347,6 +1384,7 @@ random MultirationalMap := o -> Phi -> (
 
 multirationalMap (MultiprojectiveVariety,MultiprojectiveVariety,Boolean) := (X,Y,b) -> ( --undocumented
     if X === Y then return multirationalMap X;
+    if instance(X,WeightedProjectiveVariety) and ambient X === ambient Y and isSubset(X,Y) then return multirationalMap rationalMapWithoutChecking map(ring X,ring Y,vars ring X); -- fake rational map
     I := multirationalMap(multirationalMap X,Y);
     if b then (try return check I else error "not able to define a natural map between the two varieties") else return I;
 );
@@ -1521,6 +1559,7 @@ graphViaKoszul = Phi -> (
 
 graph MultirationalMap := o -> Phi -> (
     if Phi#"graph" =!= null then return Phi#"graph";
+    if instance(source Phi,WeightedProjectiveVariety) then error "not implemented yet: rational map with target a weighted projective variety";
     local G;
     if o.BlowUpStrategy === "Eliminate" then G = graphViaElim(Phi) else (
         if o.BlowUpStrategy === "Syzygies" or o.BlowUpStrategy === "Saturate" then G = graphViaSyzygies(Phi) else (
@@ -1843,9 +1882,11 @@ describe MultirationalMap := Phi -> (
     descr=descr|"target variety: "|(? target Phi)|newline;
     descr=descr|"base locus: "|(? baseLocus Phi)|newline;
     if image Phi == target Phi then descr=descr|"dominance: "|toString(Phi#"isDominant")|newline else descr=descr|"dominance: "|toString(Phi#"isDominant")|newline|"image: "|(? image Phi)|newline;
-    descr = descr|"multidegree: "|toString(multidegree Phi)|newline;
-    descr=descr|"degree: "|toString(degree Phi)|newline;
-    for i to n-1 do descr=descr|"degree sequence (map "|toString(i+1)|"/"|toString(n)|"): "|toString(degreeSequence (factor Phi)_i)|newline;
+    if not instance(Phi,WeightedRationalMap) then (
+        descr = descr|"multidegree: "|toString(multidegree Phi)|newline;
+        descr=descr|"degree: "|toString(degree Phi)|newline;
+        for i to n-1 do descr=descr|"degree sequence (map "|toString(i+1)|"/"|toString(n)|"): "|toString(degreeSequence (factor Phi)_i)|newline;
+    );
     descr=descr|"coefficient ring: "|toString(coefficientRing Phi);
     net expression descr
 );
