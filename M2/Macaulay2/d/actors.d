@@ -89,6 +89,12 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	       )
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
+     is x:pointerCell do (
+	  when rhs
+	  is y:ZZcell do Expr(pointerCell(Ccode(voidPointer, x.v, " + ",
+		      toLong(y))))
+	  is Error do rhs
+	  else binarymethod(lhs,rhs,PlusS))
      is Error do lhs
      else binarymethod(lhs,rhs,PlusS));
 plus(e:Expr):Expr := accumulate(plus0,plus1,op+,e);
