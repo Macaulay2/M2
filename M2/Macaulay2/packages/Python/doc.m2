@@ -364,6 +364,43 @@ doc ///
 
 doc ///
   Key
+    (abs, PythonObject)
+  Headline
+    absolute value of a python object
+  Usage
+    abs x
+  Inputs
+    x:PythonObject
+  Outputs
+    :PythonObject -- the absolute value of @TT "x"@
+  Description
+    Text
+      This is equivalent to the Python @HREF {
+      "https://docs.python.org/3/library/functions.html#abs", "abs"}@ function.
+    Example
+      abs toPython(-12)
+///
+
+doc ///
+  Key
+    (symbol ~, PythonObject)
+  Headline
+    bitwise not of a python object
+  Usage
+    x~
+  Inputs
+    x:PythonObject
+  Outputs
+    :PythonObject -- the bitwise not of @TT "x"@
+  Description
+    Text
+      This calls Python's special @TT "__invert__"@ method.
+    Example
+      (toPython 5)~
+///
+
+doc ///
+  Key
     (length,PythonObject)
   Headline
     returns the length of a python object
