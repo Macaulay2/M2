@@ -1319,7 +1319,7 @@ export evalraw(c:Code):Expr := (
      	       	    else binarymethod(left,b.rhs,AdjacentS))
 	       is Error do left
 	       else binarymethod(left,b.rhs,AdjacentS))
-	  is m:functionCode do return Expr(FunctionClosure(noRecycle(localFrame),m))
+	  is m:functionCode do return Expr(FunctionClosure(noRecycle(localFrame),m,nextHash()))
 	  is r:localMemoryReferenceCode do (
 	       f := localFrame;
 	       nd := r.nestingDepth;

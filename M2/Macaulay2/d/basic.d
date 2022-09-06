@@ -40,7 +40,7 @@ export hash(e:Expr):int := (
      is n:Net do hash(n)
      is n:NetFile do hash(n)
      is x:file do x.hash
-     is f:FunctionClosure do f.model.hash
+     is f:FunctionClosure do f.hash
      is x:Error do (
 	  929+hash(x.message)+12963*(
 	       hash(x.position.filename) 

@@ -307,7 +307,7 @@ export DictionaryClosure := {+
      frame:Frame,      -- every symbol in the dictionary has the same frameID as this frame does
      dictionary:Dictionary
      };
-export FunctionClosure := {+ frame:Frame, model:functionCode };
+export FunctionClosure := {+ frame:Frame, model:functionCode, hash:int };
 export SymbolClosure := {+
      frame:Frame,      -- this is a frame whose frameID is the same as that of the symbol
      symbol:Symbol
