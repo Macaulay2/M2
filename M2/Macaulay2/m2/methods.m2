@@ -711,6 +711,11 @@ locate Symbol     := Sequence => x -> locate' x
 locate List       := List     => x -> apply(x, locate)
 protect symbol locate
 
+-- registerFinalizer
+registerFinalizer' = registerFinalizer
+registerFinalizer = method()
+registerFinalizer(Thing, String) := registerFinalizer'
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
