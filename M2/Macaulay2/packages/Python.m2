@@ -254,6 +254,8 @@ scan({
 
 -PythonObject := o -> o@@"__neg__"()
 +PythonObject := o -> o@@"__pos__"()
+abs PythonObject := o -> o@@"__abs__"()
+PythonObject~ := o -> o@@"__invert__"()
 
 PythonObject Thing := (o, x) -> (toFunction o) x
 
