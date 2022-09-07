@@ -78,7 +78,7 @@ sagbi = method(
 );
 
 sagbi(Matrix) := opts -> M -> (
-    B := sagbi(opts, sagbiBasis subring M);
+    B := sagbi(opts, subring M);
     M.cache#"Subring" = B#"data"#"subring";
     B
 );
@@ -89,11 +89,10 @@ sagbi(List) := opts -> L -> (
 
 sagbi(Subring) := opts -> S -> (
     local SB;
-    if S.cache#?"SAGBIBasis" and not opts.Recompute then (
-	SB = S.cache#"SAGBIBasis";
-	) else (
-    	SB = sagbiBasis(opts, S);
+    if opts.Recompute then ( -- forget about the previous computation object
+	remove(S.cache, "SAGBIBasis");
 	);
+    SB = sagbiBasis(S, opts);
     newSB := sagbi(opts, SB);
     S.cache#"SAGBIBasis" = newSB;
     newSB
@@ -101,9 +100,11 @@ sagbi(Subring) := opts -> S -> (
 
 sagbi(SAGBIBasis) := opts -> SB -> (
     local S;
+    SBSubring := subring SB;
     -- if Recomputing then create a new SAGBIBasis object
     if opts.Recompute or SB#"options"#Recompute then (
-	S = sagbiBasis(opts, SB#"data"#"subring"); 
+	remove(SBSubring.cache, "SAGBIBasis");
+	S = sagbiBasis(SBSubring, opts); 
 	) else (
 	S = SB;
 	);

@@ -133,7 +133,8 @@ forceSB = method(
     	}
     )
 forceSB SAGBIBasis := opts -> SB -> (
-    compTable := initializeCompTable(SB);
+    compTable := initializeCompTable(SB, opts);
+    if zero compTable#"data"#"sagbiGenerators" then compTable#"data"#"sagbiGenerators" = compTable#"data"#"subalgebraGenerators";
     if opts#AutoSubduce then (
     	compTable#"data"#"sagbiGenerators" = autosubduceSagbi compTable;
     	);
@@ -145,9 +146,8 @@ forceSB SAGBIBasis := opts -> SB -> (
 
 forceSB Subring := opts -> S -> (
     local SB;
-    SB = sagbiBasis S;
-    if zero SB#"data"#"sagbiGenerators" then SB#"data"#"sagbiGenerators" = gens S;
-    forceSB SB; -- cache of S is updated
+    SB = sagbiBasis(S, opts);
+    forceSB(SB, opts); -- cache of S is updated
     )
 
 -- internalIsSAGBI is a version of isSAGBI for a SAGBIBasis a object SB
