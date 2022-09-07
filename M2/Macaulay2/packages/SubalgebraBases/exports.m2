@@ -28,6 +28,7 @@ export {
 -- From high-level-sagbi-functions.m2
 export {
     "verifySagbi",
+    "forceSB",
     "isSAGBI",
     "groebnerMembershipTest",
     "groebnerSubductionQuotient",
