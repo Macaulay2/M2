@@ -631,8 +631,6 @@ doc ///
        f = x^3;
        f - (f%S)
        h = groebnerSubductionQuotient(f, S)
-       S.cache#"subductionQuotientRingMap"
-       (f - (f%S)) == (S.cache#"subductionQuotientRingMap" h)
    SeeAlso
      Subring
      (symbol %, RingElement, Subring)

@@ -19,7 +19,7 @@ subring Matrix := opts -> M -> (
             "generators" => M,
             cache => new CacheTable from M.cache
     	    };
-    	S#"generators".cache#"Subring" = S;
+    	M.cache#"Subring" = S;
 	FF := coefficientRing R;
 	S.cache#"subductionQuotientRing" = (
 	    if instance(opts.GeneratorSymbol, Nothing) then FF[Variables => numcols M]
@@ -266,7 +266,7 @@ ambient SAGBIBasis := A -> (
 )
 
 -- Returns the subring that a SAGBIBasis points to
-subring SAGBIBasis := S -> (
+subring SAGBIBasis := opts -> S -> (
     S#"data"#"subring"
 )
 
