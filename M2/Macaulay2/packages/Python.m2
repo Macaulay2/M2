@@ -304,8 +304,17 @@ round(PythonObject, PythonObject) := (n, x) -> x@@"__round__" n
 round(ZZ, PythonObject) := (n, x) -> round(toPython n, x)
 round PythonObject := x -> round(pythonNone, x)
 truncate PythonObject := {} >> o -> x -> x@@"__trunc__"()
-floor PythonObject := x -> x@@"__floor__"()
-ceiling PythonObject := x -> x@@"__ceil__"()
+
+-- __floor__ and __ceil__ were added for floats in Python 3.9
+-- (https://bugs.python.org/issue38629), so we include backup definitions
+-- for older versions
+if hasattr(pythonFloatFromDouble 1.0, "__floor__") then (
+    floor PythonObject := x -> x@@"__floor__"();
+    ceiling PythonObject := x -> x@@"__ceil__"()
+    ) else (
+    math := import "math";
+    floor PythonObject := toFunction math@@"floor";
+    ceiling PythonObject := toFunction math@@"ceil")
 
 help#0 PythonObject := x -> toString x@@"__doc__"
 
