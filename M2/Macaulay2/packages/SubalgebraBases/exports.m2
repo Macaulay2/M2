@@ -21,7 +21,8 @@ export {
     "SAGBIBasis",
     "subring",
     "Compute",
-    "sagbiBasis"
+    "sagbiBasis",
+    "GeneratorSymbol"
     }
 
 -- From high-level-sagbi-functions.m2

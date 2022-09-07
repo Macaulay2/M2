@@ -8,28 +8,40 @@
 Subring = new Type of HashTable
 
 -- Subring constructor
-subring = method()
-subring Matrix := M -> (
+subring = method(Options => {GeneratorSymbol => null})
+subring Matrix := o -> M -> (
     if M.cache#?"Subring" then (
 	M.cache#"Subring"
 	) else (
+	R := ring M;
     	S := new Subring from{
-            "ambientRing" => ring M,
+            "ambientRing" => R,
             "generators" => M,
             cache => new CacheTable from M.cache
     	    };
     	S#"generators".cache#"Subring" = S;
+	FF := coefficientRing R;
+	S.cache#"subductionQuotientRing" = (
+	    if instance(o.GeneratorSymbol, Nothing) then FF[Variables => numcols M]
+	    else if instance(o.GeneratorSymbol, Symbol) then FF[o.GeneratorSymbol_1..o.GeneratorSymbol_(numcols M)]
+	    else error("Invalid value for the option Symbol")
+	    );
     	S
 	)
     )
-subring List := L -> subring(matrix{L})
+subring List := o -> L -> subring(matrix{L}, o)
 
 -- Subring access functions
 -- gens must take an option since gens is defined to be a method function with options
-ambient Subring := A -> A#"ambientRing"
-gens Subring := opts -> A -> A#"generators"
-numgens Subring := A -> (numcols gens A)
-net Subring := A -> "subring of " | toString(ambient A) | " with " | numgens A | " generators"
+ambient Subring := S -> S#"ambientRing"
+gens Subring := o -> S -> S#"generators"
+numgens Subring := S -> numcols gens S
+subductionQuotientRing = S -> S.cache#"subductionQuotientRing"
+net Subring := S -> (
+    R := ambient S;
+    A := subductionQuotientRing S;    
+    toString(A) | ", subring of " | toString(R)
+    )
 
 
 -- SAGBIBasis computation object data-type that inherits from a HashTable
