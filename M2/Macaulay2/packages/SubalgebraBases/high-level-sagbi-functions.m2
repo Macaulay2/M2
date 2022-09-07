@@ -50,7 +50,7 @@ verifySagbi = method(
     Options => {
 	Compute => true,
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
-        SubductionMethod => "Top", -- top or engine
+        SubductionMethod => "Engine", -- top or engine
 	Limit => 100,
 	PrintLevel => 0, -- see print level for sagbi
     	Recompute => false,
@@ -65,14 +65,15 @@ verifySagbi(Subring) := opts -> S -> (
 	-- S has a sagbi basis so use this object as a compTable
 	SB = S#cache#"SAGBIBasis";
 	) else (
-	SB = initializeCompTable(sagbiBasis S, opts);
+    	trimmedOptionKeys := delete(Compute, keys opts);
+    	trimmedOptionTable := new OptionTable from apply(trimmedOptionKeys, k -> k => opts#k);
+	SB = initializeCompTable(sagbiBasis(S, trimmedOptionTable), trimmedOptionTable);
 	-- add the generators to the sagbiGenerators
 	SB#"data"#"sagbiGenerators" = gens S;
 	updateComputation(SB);
-	SB = sagbiBasis SB;
+	SB = sagbiBasis(SB, trimmedOptionTable);
 	);
-    
-    SB = internalVerifySagbi(opts, SB);
+    SB = internalVerifySagbi(SB, opts);
     if not S.cache#?"SAGBIBasis" then (
     	S.cache#"SAGBIBasis" = SB; -- add a new SAGBIBasis if there wasn't one already
 	) else if (SB#"data"#"sagbiDone" and not S.cache#"SAGBIBasis"#"data"#"sagbiDone") then (
@@ -121,23 +122,27 @@ forceSB = method(
     Options => {
 	-- FullSubduct => true,
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
-        SubductionMethod => "Top", -- top or engine
+        SubductionMethod => "Engine", -- top or engine
 	Limit => 100,
 	RenewOptions => false,
 	PrintLevel => 0 -- see print level for sagbi
     	}
 )
 forceSB Subring := opts -> S -> (
+    -- consider: making this more like forceGB (modify matrix instead of Subring)
     local SB;
     if S#cache#?"SAGBIBasis" then (
 	-- S has a sagbi basis so use this object as a compTable
 	SB = initializeCompTable(S#cache#"SAGBIBasis", opts);
 	) else (
 	SB = initializeCompTable(sagbiBasis S, opts);
-	-- add the generators to the sagbiGenerators
 	SB#"data"#"sagbiGenerators" = gens S;
---	updateComputation SB;
 	);
+    SB#"data"#"sagbiDone" = true;
+    -- add the generators to the sagbiGenerators
+    S.cache#"SAGBIBasis" = sagbiBasis SB;
+    --	updateComputation SB;
+
     )
 
 -- internalIsSAGBI is a version of isSAGBI for a SAGBIBasis a object SB

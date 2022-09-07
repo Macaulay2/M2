@@ -195,7 +195,7 @@ subduction(SAGBIBasis, RingElement) := opts -> (SB, m) -> (
     )
 
 subduction(Matrix, Matrix) := opts -> (F, M) -> (
-    SB := initializeCompTable(sagbiBasis subring F, opts);
+    SB := initializeCompTable(sagbiBasis(subring F, opts), opts);
     SB#"data"#"sagbiGenerators" = F;
     updateComputation(SB);
     compSubduction(opts, SB, M)
@@ -300,12 +300,13 @@ subductionEngineLevelLeadTerm(HashTable,Matrix) := (compTable, M) -> (
     -- Use the same pres ring as much as possible.
     -- M2 will automatically cache the gb calculation
     -- as long as the pres ring is not reconstructed.
-    gbI := gb compTable#"ideals"#"I";
-    gbReductionIdeal := gb compTable#"ideals"#"reductionIdeal";
+    elapsedTime gbI := gb compTable#"ideals"#"I";
+    elapsedTime gbReductionIdeal := gb compTable#"ideals"#"reductionIdeal";
     F := compTable#"maps"#"substitution";
     N := monoid ambR;
     numblocks := rawMonoidNumberOfBlocks raw N;
-    result = rawSubduction1(numblocks, raw tense, raw ambR, raw M, raw compTable#"maps"#"inclusionLifted", raw compTable#"maps"#"fullSubstitution", raw (compTable#"maps"#"substitution" * compTable#"maps"#"sagbiInclusion"), raw gbI, raw gbReductionIdeal);
+    print "timing raw subduction";
+    elapsedTime result = rawSubduction1(numblocks, raw tense, raw ambR, raw M, raw compTable#"maps"#"inclusionLifted", raw compTable#"maps"#"fullSubstitution", raw (compTable#"maps"#"substitution" * compTable#"maps"#"sagbiInclusion"), raw gbI, raw gbReductionIdeal);
     result = matrix{apply(first entries result,i->promote(i,ambR))}
     );
 
