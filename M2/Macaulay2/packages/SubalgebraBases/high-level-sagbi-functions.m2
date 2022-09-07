@@ -100,7 +100,7 @@ verifySagbi(Matrix) := opts -> M -> (
 	S = SB#"data"#"subring";
 	M.cache#"Subring" = S;
 	);
-    
+        
     SB = internalVerifySagbi(opts, SB);
     if not S.cache#?"SAGBIBasis" then (
     	S.cache#"SAGBIBasis" = SB; -- add a new SAGBIBasis if there wasn't one already
@@ -118,6 +118,29 @@ verifySagbi(List) := opts -> L -> (
     verifySagbi(opts, subring L)
     )
 
+-- !!! code duplicated from verifySagbi in higher-level-sagbi-functions.m2 !!!
+forceSB = method(
+    Options => {
+	-- FullSubduct => true,
+        Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
+        SubductionMethod => "Top", -- top or engine
+	Limit => 100,
+	RenewOptions => false,
+	PrintLevel => 0 -- see print level for sagbi
+    	}
+)
+forceSB Subring := opts -> S -> (
+    local SB;
+    if S#cache#?"SAGBIBasis" then (
+	-- S has a sagbi basis so use this object as a compTable
+	SB = initializeCompTable(S#cache#"SAGBIBasis", opts);
+	) else (
+	SB = initializeCompTable(sagbiBasis S, opts);
+	-- add the generators to the sagbiGenerators
+	SB#"data"#"sagbiGenerators" = gens S;
+--	updateComputation SB;
+	);
+    )
 
 -- internalIsSAGBI is a version of isSAGBI for a SAGBIBasis a object SB
 -- it returns a modified SAGBIBasis object with the SB#"data"#"sagbiDone" flag correctly set
@@ -298,12 +321,7 @@ groebnerSubductionQuotient(RingElement, Subring) := (f, S) -> (
     -- output fNormalForm in the subductionQuotientRing
     --  construct the ring if not present in the cache of S 
     --  also store the natural map from the subductionQuotientRing to Q 
-    if not S.cache#?"subductionQuotientRing" then (
-	outputRing = FF[Variables => numcols G];
-	S.cache#"subductionQuotientRing" = outputRing;
-	S.cache#"subductionQuotientRingMap" = map(Q, outputRing, G);
-	);
-    outputRing = S.cache#"subductionQuotientRing";
+    outputRing = subductionQuotientRing S;
     outputMap := map(outputRing, tensorRing, matrix {toList((numgens R):0)} | vars outputRing);
     outputMap fNormalForm
     )

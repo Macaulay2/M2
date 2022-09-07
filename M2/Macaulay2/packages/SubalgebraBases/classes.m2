@@ -9,7 +9,7 @@ Subring = new Type of HashTable
 
 -- Subring constructor
 subring = method(Options => {GeneratorSymbol => null})
-subring Matrix := o -> M -> (
+subring Matrix := opts -> M -> (
     if M.cache#?"Subring" then (
 	M.cache#"Subring"
 	) else (
@@ -22,19 +22,19 @@ subring Matrix := o -> M -> (
     	S#"generators".cache#"Subring" = S;
 	FF := coefficientRing R;
 	S.cache#"subductionQuotientRing" = (
-	    if instance(o.GeneratorSymbol, Nothing) then FF[Variables => numcols M]
-	    else if instance(o.GeneratorSymbol, Symbol) then FF[o.GeneratorSymbol_1..o.GeneratorSymbol_(numcols M)]
-	    else error("Invalid value for the option Symbol")
+	    if instance(opts.GeneratorSymbol, Nothing) then FF[Variables => numcols M]
+	    else if instance(opts.GeneratorSymbol, Symbol) then FF[opts.GeneratorSymbol_1..opts.GeneratorSymbol_(numcols M)]
+	    else error("Invalid value for the option GeneratorSymbol")
 	    );
     	S
 	)
     )
-subring List := o -> L -> subring(matrix{L}, o)
+subring List := opts -> L -> subring(matrix{L}, opts)
 
 -- Subring access functions
 -- gens must take an option since gens is defined to be a method function with options
 ambient Subring := S -> S#"ambientRing"
-gens Subring := o -> S -> S#"generators"
+gens Subring := opts -> S -> S#"generators"
 numgens Subring := S -> numcols gens S
 subductionQuotientRing = S -> S.cache#"subductionQuotientRing"
 net Subring := S -> (

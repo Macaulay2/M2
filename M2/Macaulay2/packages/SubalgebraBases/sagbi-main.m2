@@ -128,7 +128,7 @@ sagbi(SAGBIBasis) := opts -> SB -> (
 	if not updatePending(compTable, SPairs) then (
 	    checkTermination(compTable);
 	    );
-	
+
 	-- move on to the next degree
 	compTable#"data"#"degree" = compTable#"data"#"degree" + 1;
 	
