@@ -60,7 +60,7 @@ verifySagbi = method(
 
 verifySagbi(Subring) := opts -> S -> (
     local SB;
-
+    
     if (S#cache#?"SAGBIBasis") and (S#cache#"SAGBIBasis"#"data"#"sagbiGenerators" == gens S) then (
 	-- S has a sagbi basis so use this object as a compTable
 	SB = S#cache#"SAGBIBasis";
@@ -117,32 +117,37 @@ verifySagbi(List) := opts -> L -> (
     verifySagbi(opts, subring L)
     )
 
--- !!! code duplicated from verifySagbi in higher-level-sagbi-functions.m2 !!!
+-- forceSB(Subring / SAGBIBasis) constructs a SAGBIBasis object, using any
+-- existing one as a template, applied autosubduction to the (sagbi)generators,
+-- and sets the sagbiDone flag to true - this function should only be applied to
+-- subrings whose generators are known to be a sagbi basis.
+
 forceSB = method(
     Options => {
-	-- FullSubduct => true,
+	AutoSubduce => true,
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
         SubductionMethod => "Engine", -- top or engine
 	Limit => 100,
 	RenewOptions => false,
 	PrintLevel => 0 -- see print level for sagbi
     	}
-)
-forceSB Subring := opts -> S -> (
-    -- consider: making this more like forceGB (modify matrix instead of Subring)
-    local SB;
-    if S#cache#?"SAGBIBasis" then (
-	-- S has a sagbi basis so use this object as a compTable
-	SB = initializeCompTable(S#cache#"SAGBIBasis", opts);
-	) else (
-	SB = initializeCompTable(sagbiBasis S, opts);
-	SB#"data"#"sagbiGenerators" = gens S;
-	);
-    SB#"data"#"sagbiDone" = true;
-    -- add the generators to the sagbiGenerators
-    S.cache#"SAGBIBasis" = sagbiBasis SB;
-    --	updateComputation SB;
+    )
+forceSB SAGBIBasis := opts -> SB -> (
+    compTable := initializeCompTable(SB);
+    if opts#AutoSubduce then (
+    	compTable#"data"#"sagbiGenerators" = autosubduceSagbi compTable;
+    	);
+    compTable#"data"#"sagbiDone" = true;
+    newSB := sagbiBasis compTable;
+    S := newSB#"data"#"subring";
+    S.cache#"SAGBIBasis" = newSB;
+    )
 
+forceSB Subring := opts -> S -> (
+    local SB;
+    SB = sagbiBasis S;
+    if zero SB#"data"#"sagbiGenerators" then SB#"data"#"sagbiGenerators" = gens S;
+    forceSB SB; -- cache of S is updated
     )
 
 -- internalIsSAGBI is a version of isSAGBI for a SAGBIBasis a object SB
@@ -235,7 +240,9 @@ isSAGBI Subring := opts -> S -> (
 	) else (
 	if opts.Compute then (
 	    -- construct a SAGBIBasis for S and verify whether it is a sagbi basis
-	    compTable = initializeCompTable(sagbiBasis S, opts);
+	    trimmedOptionKeys := delete(Compute, keys opts);
+    	    trimmedOptionTable := new OptionTable from apply(trimmedOptionKeys, k -> k => opts#k);
+	    compTable = initializeCompTable(sagbiBasis(S, trimmedOptionTable), trimmedOptionTable);
 	    -- add the generators to the sagbiGenerators
 	    compTable#"data"#"sagbiGenerators" = gens S;
 	    updateComputation(compTable);

@@ -91,6 +91,8 @@ sagbiBasis = method(
 
 -- SAGBIBasis constructor
 sagbiBasis Subring := opts -> S -> (
+    if S.cache#?"SABIBasis" then return S.cache#"SAGBIBasis"; 
+    
     -- Keys:
     -- > rings stores the various rings we need in our constructions
     -- > maps stores the maps between our rings
@@ -201,14 +203,17 @@ sagbiBasis Subring := opts -> S -> (
     
     -- Options: see above description of the options for sagbi computations
     options := new HashTable from opts;
-    new SAGBIBasis from {
+    SB := new SAGBIBasis from {
         "rings" => rings,
         "maps" => maps,
         "ideals" => ideals,
         "data" => data,
         "pending" => pending,
         "options" => options
-    }
+    	};
+    
+    S.cache#"SAGBIBasis" = SB;
+    SB
 )
 
 net SAGBIBasis := S -> (

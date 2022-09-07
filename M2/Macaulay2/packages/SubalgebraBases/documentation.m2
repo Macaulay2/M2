@@ -904,6 +904,7 @@ doc ///
      (subring, List)
      (subring, Matrix)
      (subring, SAGBIBasis)
+     [subring, GeneratorSymbol]
    Headline
      Constructs a subring of a polynomial ring.
    Usage
@@ -916,6 +917,8 @@ doc ///
      L:List 
        a list of generators for the constructed @TO "Subring"@.
      S:SAGBIBasis
+     GeneratorSymbol=>Symbol
+       a symbol to be used for the variables of the subductionQuotientRing.
    Outputs
      A:Subring
    Description
@@ -1051,7 +1054,25 @@ doc ///
      (net, Subring)
 ///
 
-
+doc ///
+   Key
+     GeneratorSymbol
+   Headline
+     variables for the subductionQuotientRing
+   Description
+     Text
+       A symbol to be used for variables of the subductionQuotientRing
+     Example
+       R = QQ[x,y];
+       S = subring({x^2, y^2, x*y}, GeneratorSymbol => f)
+   SeeAlso
+     Subring
+     subring
+     (gens, Subring)
+     (ambient, Subring)
+     (numgens, Subring)
+     (net, Subring)
+///
 doc ///
    Key
      SAGBIBasis
@@ -1249,6 +1270,45 @@ doc ///
      (net, SAGBIBasis)
      sagbi
 ///
+doc ///
+   Key
+      forceSB
+     (forceSB, SAGBIBasis)
+     (forceSB, Subring)
+     [forceSB, AutoSubduce]
+     [forceSB, Strategy]
+     [forceSB, SubductionMethod]
+     [forceSB, Limit]
+     [forceSB, RenewOptions]
+     [forceSB, PrintLevel]
+   Headline
+     declare the generators of a subring or SAGBIBasis to be a complete sagbi basis
+   Usage
+     forceSB S
+     forceSB SB
+   Inputs
+     S:Subring
+     SB:SAGBIBasis
+     AutoSubduce=>Boolean
+       subduct the generators against themselves 
+   Description
+     Text
+       If forceSB is given a @TO "SAGBIBasis"@ $SB$, then the function performs
+       autosubduction on the sagbiGenerators of $SB$. The sagbiDone flag is then
+       set to true without checking whether the generators form a sagbi basis.
+       
+       If forceSB is given a @TO "Subring"@ $S$, then the function checks whether a
+       @TO "SAGBIBasis"@ $SB$ has been created for $S$. If $SB$ exists, then forceSB
+       is applied to $SB$ as described above. Otherwise, $SB$ is created from $S$ and
+       has its sagbiDone flag set to true.
+       
+       Note, if the generators supplied to forceSB do not form a sagbi basis, then it
+       may cause unexpected behaviour. 
+   SeeAlso
+     Subring
+     SAGBIBasis
+///
+
 
 -- ##################################
 -- ## sagbi-top-level-functions.m2 ##
