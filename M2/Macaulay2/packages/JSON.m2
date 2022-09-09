@@ -153,17 +153,18 @@ decIndentLevel = method()
 decIndentLevel JSONEncoder := e -> e.IndentLevel = e.IndentLevel - 1
 
 toJSON(JSONEncoder, VisibleList):= o -> (e, L) -> (
-    concatenate("[",
+    if #L > 0 then concatenate("[",
 	maybeNewline e,
 	(incIndentLevel e; indent e),
 	demark(e.ValueSeparator | maybeNewline e | indent e,
 	    apply(L, x -> toJSON(e, x))),
 	maybeNewline e,
 	(decIndentLevel e; indent e),
-	"]"))
+	"]")
+    else "[]")
 
 toJSON(JSONEncoder, HashTable) := o -> (e, H) -> (
-    concatenate("{",
+    if #H > 0 then concatenate("{",
 	maybeNewline e,
 	(incIndentLevel e; indent e),
 	demark(e.ValueSeparator | maybeNewline e | indent e,
@@ -173,7 +174,8 @@ toJSON(JSONEncoder, HashTable) := o -> (e, H) -> (
 		    toJSON(e, H#k)))),
 	maybeNewline e,
 	(decIndentLevel e; indent e),
-	"}"))
+	"}")
+    else "{}")
 
 beginDocumentation()
 
