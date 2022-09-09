@@ -12,7 +12,7 @@ if version#"VERSION" < "1.20" then error "this package requires Macaulay2 versio
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.6", 
-    Date => "September 6, 2022",
+    Date => "September 9, 2022",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -1859,12 +1859,14 @@ exceptionalCurves HodgeSpecialFourfold := o -> X -> (
 );
 
 SurfaceAssociatedToRationalFourfold = new Type of EmbeddedProjectiveVariety;
+WeightedSurfaceAssociatedToRationalFourfold = new Type of WeightedProjectiveVariety;
 
 globalAssignment SurfaceAssociatedToRationalFourfold;
+globalAssignment WeightedSurfaceAssociatedToRationalFourfold;
 
-SurfaceAssociatedToRationalFourfold.synonym = "surface associated to rational fourfold";
+WeightedSurfaceAssociatedToRationalFourfold.synonym = SurfaceAssociatedToRationalFourfold.synonym = "surface associated to rational fourfold";
 
-expression SurfaceAssociatedToRationalFourfold := U -> (
+expression WeightedSurfaceAssociatedToRationalFourfold := expression SurfaceAssociatedToRationalFourfold := U -> (
     X := U.cache#"Hodge-special fourfold";
     (S,F) := if instance(X,SpecialCubicFourfold)
              then ("K3 surface","cubic fourfold")
@@ -1878,24 +1880,24 @@ expression SurfaceAssociatedToRationalFourfold := U -> (
     expression(S|" associated to "|A)
 );
 
-net SurfaceAssociatedToRationalFourfold := U -> (
+net WeightedSurfaceAssociatedToRationalFourfold := net SurfaceAssociatedToRationalFourfold := U -> (
     if hasAttribute(U,ReverseDictionary) then return toString getAttribute(U,ReverseDictionary);
     if dim U >= 0 then return ? U;
     "-* some calculations are missing *-"
 );
-texMath SurfaceAssociatedToRationalFourfold := texMath @@ net;
+texMath WeightedSurfaceAssociatedToRationalFourfold := texMath SurfaceAssociatedToRationalFourfold := texMath @@ net;
 
 makeSurfaceAssociated = (X,mu,U,C,f) -> (
     assert(instance(X,HodgeSpecialFourfold) and instance(mu,MultirationalMap) and instance(U,EmbeddedProjectiveVariety) and instance(C,List) and (instance(f,Nothing) or instance(f,MultirationalMap)));
     S := if f =!= null then image f else projectiveVariety((coefficientRing X)[],Saturate=>false);
-    S = new SurfaceAssociatedToRationalFourfold from S;
+    S = if instance(S,WeightedProjectiveVariety) then new WeightedSurfaceAssociatedToRationalFourfold from S else new SurfaceAssociatedToRationalFourfold from S;
     S.cache#"construction of SurfaceAssociatedToRationalFourfold" = (mu,U,C,f);
     S.cache#"Hodge-special fourfold" = X;
     return S;
 );
 
 building = method();
-building SurfaceAssociatedToRationalFourfold := S -> S.cache#"construction of SurfaceAssociatedToRationalFourfold";
+building WeightedSurfaceAssociatedToRationalFourfold := building SurfaceAssociatedToRationalFourfold := S -> S.cache#"construction of SurfaceAssociatedToRationalFourfold";
 
 associatedK3surface = method(Options => {Verbose => false, Strategy => null, Singular => null});
 associatedK3surface SpecialGushelMukaiFourfold := associatedK3surface SpecialCubicFourfold := o -> X -> (
