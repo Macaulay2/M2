@@ -1510,7 +1510,7 @@ Node
       the natural map from {\tt X} to {\tt Z}.
   Description
     Text
-      Given the pullback map {\tt f} from {\tt A} to {\tt B}, builds the freest possible extension {\tt E} of {\tt A} by {\tt B} (see @ TO extensionAlgebra @), and then adds appropriate metadata to make the maps from {\tt E} to {\tt B} and vice-versa into an @ TO AbstractVarietyMap @.  Enough information must be given to compute the dimensions of {\tt X} and {\tt Y}, either by using the SubDimension, SuperDimension, and Codimension optons, or by having varieties already attached to {\tt A} and/or {\tt B}.  Likewise, enough information must be given to compute the tangent classes of {\tt X} and {\tt Y}.
+      Given the pullback map {\tt f} from {\tt A} to {\tt B}, builds the freest possible extension {\tt E} of {\tt A} by {\tt B} (see @ TO extensionAlgebra @), and then adds appropriate metadata to make the maps from {\tt E} to {\tt B} and vice-versa into an @ TO AbstractVarietyMap @.  Enough information must be given to compute the dimensions of {\tt X} and {\tt Y}, either by using the SubDimension, SuperDimension, and Codimension options, or by having varieties already attached to {\tt A} and/or {\tt B}.  Likewise, enough information must be given to compute the tangent classes of {\tt X} and {\tt Y}.
     Text
       This construction is useful for computations where the pullback map is known but the pushforward is either not known or cannot be defined.
     Example
