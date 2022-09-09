@@ -1323,7 +1323,7 @@ unirationalParametrization SpecialGushelMukaiFourfold := (cacheValue "unirationa
     P := plucker(W,2); while dim P <= 0 do P = plucker(W,2); P = trim sub(plucker P,vars ring W);
     Q := trim quotient(W,P);
     q := trim minors(2,vars ring W || transpose submatrix(coefficients parametrize(P+Q),,{0}));
-    f := (inverse(rationalMap trim sub(q,quotient Q),MathMode=>true)) * j;
+    f := (inverse(rationalMap trim sub(q,quotient Q),Certify=>true)) * j;
     ringP2xP2 := (source s) ** K[gens source f];
     K'' := frac(ringP2xP2);
     ringP8'' := K''[gens ring ambient X];
@@ -1685,11 +1685,11 @@ eulerCharacteristic EmbeddedProjectiveVariety := o -> X -> (
     if X.cache#?"euler" then return X.cache#"euler"; 
     if codim linearSpan X > 0 then return X.cache#"euler" = eulerCharacteristic((parametrize linearSpan X)^^ X,Algorithm=>o.Algorithm);
     if o.Algorithm === "Hodge" then return X.cache#"euler" = euler variety X;
-    if o.Algorithm === "CremonaMathModeTrue" then return euler(X,Verify=>true);
+    if o.Algorithm === "CremonaCertifyTrue" then return euler(X,Verify=>true);
     K := coefficientRing X;
     if K === QQ then return X.cache#"euler" = eulerCharacteristic(X ** (ZZ/65521),Algorithm=>o.Algorithm);
     if char K < 1000 and K === ZZ/(char K) then <<"--warning: base field too small to use probabilistic methods"<<endl;
-    if o.Algorithm === "CremonaMathModeFalse" then return X.cache#"euler" = euler(X,Verify=>false);
+    if o.Algorithm === "CremonaCertifyFalse" then return X.cache#"euler" = euler(X,Verify=>false);
     if o.Algorithm === "CharacteristicClasses" then return X.cache#"euler" = Euler(ideal X,InputIsSmooth=>true);
     if o.Algorithm === null then (
         X' := if max flatten degrees ideal X > 2 and dim X == 2 then isomorphicProjectionOfSurfaceInP5 X else X;
@@ -1698,8 +1698,8 @@ eulerCharacteristic EmbeddedProjectiveVariety := o -> X -> (
     error(///Algorithm option: Expected method to compute the topological Euler characteristic.
 Possible methods are the following:
 "Hodge" -- command: euler variety X -- package: Core;
-"CremonaMathModeTrue" -- command: EulerCharacteristic(ideal X,MathMode=>true) -- package: Cremona;
-"CremonaMathModeFalse" -- command: EulerCharacteristic ideal X -- package: Cremona;
+"CremonaCertifyTrue" -- command: EulerCharacteristic(ideal X,Certify=>true) -- package: Cremona;
+"CremonaCertifyFalse" -- command: EulerCharacteristic ideal X -- package: Cremona;
 "CharacteristicClasses" -- command: Euler(ideal X,InputIsSmooth=>true) -- package: CharacteristicClasses///);  
 );
 

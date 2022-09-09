@@ -12,7 +12,7 @@ if version#"VERSION" < "1.18" then error "this package requires Macaulay2 versio
 newPackage(
     "MultiprojectiveVarieties",
     Version => "2.6", 
-    Date => "September 6, 2022",
+    Date => "September 9, 2022",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovannistagliano@gmail.com"}},
     Headline => "multi-projective varieties and multi-rational maps",
     Keywords => {"Projective Algebraic Geometry"},
@@ -87,10 +87,9 @@ projectiveVariety Ideal := o -> I -> (
     R := ring I;
     if not isPolynomialRing R then error "expected an ideal in a polynomial ring";
     if not isField coefficientRing R then error "the coefficient ring needs to be a field";
-    isWeighted := degreeLength R == 1 and min flatten degrees R >= 1 and max flatten degrees R >= 2;
-    m := if isWeighted then {gens R} else multigens R;
+    m := multigens R;
     if flatten m != gens R then error "the given grading on the polynomial ring is not allowed: the degree of each variable must be a standard basis vector of ZZ^r in the commonly used order";
-    if not isHomogeneous I then error ("trying to construct projective variety from a non-homogeneous ideal: numgens ring: "|(toString numgens R)|", degrees: "|(toString toSequence degrees R));
+    if not isHomogeneous I then error ("attempting to construct projective variety from a non-homogeneous ideal: numgens ring: "|(toString numgens R)|", degrees: "|(toString toSequence degrees R));
     J := I;
     if o.Saturate then (
         if not(J.cache#?"isMultisaturated" and J.cache#"isMultisaturated") then (
@@ -111,7 +110,7 @@ projectiveVariety Ideal := o -> I -> (
         "projections" => null,
         "expression" => null
     };
-    if # X#"dimAmbientSpaces" == 1 then (if isWeighted then X = new WeightedProjectiveVariety from X else X = new EmbeddedProjectiveVariety from X);
+    if degreeLength R == 1 then (if max flatten degrees R >= 2 then X = new WeightedProjectiveVariety from X else X = new EmbeddedProjectiveVariety from X);
     J.cache#"multiprojectiveVariety" = X;
     I.cache#"multiprojectiveVariety" = J.cache#"multiprojectiveVariety"
 );
@@ -586,6 +585,7 @@ productMem = memoize(L -> (
     if #L == 1 then return first L;
     K := coefficientRing first L;
     for i from 1 to #L-1 do if K =!= coefficientRing(L_i) then error "different coefficient rings encountered";
+    if any(L,X -> instance(X,WeightedProjectiveVariety)) then error "not implemented yet: product of weighted projective varieties";
     n := toSequence apply(L,X -> apply(X#"dimAmbientSpaces",i->i+1));
     R := ring first first gensRing(K,join n);
     j := for i to #L list sum toList join take(n,i);
@@ -696,10 +696,10 @@ euler (MultiprojectiveVariety,Option) := (X,opt) -> (
     local e;
     if # X#"dimAmbientSpaces" == 1 then (
         if codim X == 0 then return X.cache#"euler" = numgens ring ideal X;
-        e = EulerCharacteristic(ideal X,MathMode=>last o,Verbose=>false);
+        e = EulerCharacteristic(ideal X,Certify=>last o,Verbose=>false);
      ) else (
         -- <<"--warning: code to be improved"<<endl;
-        e = EulerCharacteristic(image segre X,MathMode=>last o,Verbose=>false);
+        e = EulerCharacteristic(image segre X,Certify=>last o,Verbose=>false);
     );
     if last o then X.cache#"euler" = e;
     return e;
@@ -1113,7 +1113,7 @@ multirationalMap (List,MultiprojectiveVariety) := (L,Y) -> (
     R = first R;
     K := coefficientRing ambient R;
     if K =!= coefficientRing Y then error("expected a multi-projective variety defined over "|toString(K));
-    m := apply(L,f -> f#"dimAmbientSource");
+    m := apply(L,f -> if instance(f#"dimAmbientSource",ZZ) then f#"dimAmbientSource" else if instance(f#"dimAmbientSource",Sequence) then #(f#"dimAmbientSource")-1 else error "internal error encountered");
     if m =!= Y#"dimAmbientSpaces"
     then if # m == 1 
          then error("expected a subvariety of PP^"|toString(first m))
@@ -1131,7 +1131,7 @@ multirationalMap (List,MultiprojectiveVariety) := (L,Y) -> (
         "baseLocus" => null,
         "inverse" => null
     };
-    if instance(Phi#"source",WeightedProjectiveVariety) then Phi = new WeightedRationalMap from Phi;
+    if instance(Phi#"source",WeightedProjectiveVariety) or instance(Phi#"target",WeightedProjectiveVariety) then Phi = new WeightedRationalMap from Phi;
     return Phi;
 );
 
@@ -1384,7 +1384,6 @@ random MultirationalMap := o -> Phi -> (
 
 multirationalMap (MultiprojectiveVariety,MultiprojectiveVariety,Boolean) := (X,Y,b) -> ( --undocumented
     if X === Y then return multirationalMap X;
-    if instance(X,WeightedProjectiveVariety) and ambient X === ambient Y and isSubset(X,Y) then return multirationalMap rationalMapWithoutChecking map(ring X,ring Y,vars ring X); -- fake rational map
     I := multirationalMap(multirationalMap X,Y);
     if b then (try return check I else error "not able to define a natural map between the two varieties") else return I;
 );
@@ -1559,7 +1558,7 @@ graphViaKoszul = Phi -> (
 
 graph MultirationalMap := o -> Phi -> (
     if Phi#"graph" =!= null then return Phi#"graph";
-    if instance(source Phi,WeightedProjectiveVariety) then error "not implemented yet: rational map with target a weighted projective variety";
+    if instance(Phi,WeightedRationalMap) then error "not implemented yet: graph of a weighted-rational map";
     local G;
     if o.BlowUpStrategy === "Eliminate" then G = graphViaElim(Phi) else (
         if o.BlowUpStrategy === "Syzygies" or o.BlowUpStrategy === "Saturate" then G = graphViaSyzygies(Phi) else (
@@ -1668,25 +1667,25 @@ projectiveDegrees MultirationalMap := o -> Phi -> (
     if o.NumDegrees < 0 then return {};
     r := dim source Phi;
     ll := {(r - min(r,o.NumDegrees))..r};
-    certificate := "MathMode: output certified!"|newline;
-    if Phi#"multidegree" =!= null then (if o.MathMode and o.Verbose then <<certificate; return (Phi#"multidegree")_ll);
-    if o.MathMode or # shape source Phi > 1 or # shape target Phi > 1 then (
+    certificate := "Certify: output certified!"|newline;
+    if Phi#"multidegree" =!= null then (if o.Certify and o.Verbose then <<certificate; return (Phi#"multidegree")_ll);
+    if o.Certify or # shape source Phi > 1 or # shape target Phi > 1 then (
         graph(Phi,BlowUpStrategy=>o.BlowUpStrategy);
         d := multidegree Phi;
-        if o.MathMode and o.Verbose then <<certificate;
+        if o.Certify and o.Verbose then <<certificate;
         return d_ll;
-    ) else return projectiveDegrees(toRationalMap Phi,MathMode=>o.MathMode,NumDegrees=>o.NumDegrees,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+    ) else return projectiveDegrees(toRationalMap Phi,Certify=>o.Certify,NumDegrees=>o.NumDegrees,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
 );
 
 degreeMap MultirationalMap := o -> Phi -> (
-    certificate := "MathMode: output certified!"|newline;
-    if o.MathMode or Phi#"isBirational" === true or (Phi#"multidegree" =!= null and Phi#"image" =!= null) then (
+    certificate := "Certify: output certified!"|newline;
+    if o.Certify or Phi#"isBirational" === true or (Phi#"multidegree" =!= null and Phi#"image" =!= null) then (
         -- this ignores the option BlowUpStrategy
         d := degree Phi;
-        if o.MathMode and o.Verbose then <<certificate; 
+        if o.Certify and o.Verbose then <<certificate; 
         return d;
     );
-    if # shape target Phi == 1 then return degreeMap(toRationalMap Phi,MathMode=>o.MathMode,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
+    if # shape target Phi == 1 then return degreeMap(toRationalMap Phi,Certify=>o.Certify,BlowUpStrategy=>o.BlowUpStrategy,Verbose=>o.Verbose);
     return degree(Phi,Strategy=>"random point");
 );
 
@@ -2515,7 +2514,7 @@ euler(X,Verify=>b)",
 Inputs => { 
 MultiprojectiveVariety => "X" => {"which is assumed to be smooth, and ",TT"b"," is a ",TO2{Boolean,"boolean value"},", that is, ",TT"true"," or ",TT"false"," (the default value is ",TT"true",")"}}, 
 Outputs => { 
-ZZ => {"the topological Euler characteristics of the variety ",TT"X",", generally calculated as ",TO EulerCharacteristic,TT"(ideal X,MathMode=>b)"}},
+ZZ => {"the topological Euler characteristics of the variety ",TT"X",", generally calculated as ",TO EulerCharacteristic,TT"(ideal X,Certify=>b)"}},
 EXAMPLE {
 "X = PP_QQ^(2,2); -- Veronese surface",
 "euler X",
