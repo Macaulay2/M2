@@ -2,6 +2,4 @@
 
 debug needsPackage "LanguageServer"
 
-while true do (
-    x := read();
-    printerr net fromLSP x)
+while true do print respond fromLSP read()

@@ -102,6 +102,19 @@ notificationMessage(String, HashTable) := (
     "method" => meth,
     "params" => params}
 
+responses = hashTable{
+    "initialize" => request -> (
+	responseMessage(request#"id", hashTable{
+		"capabilities" => hashTable {},
+		"serverInfo" => hashTable {
+		    "name" => "Macaulay2 Language Server",
+		    "version" => currentPackage.Options.Version}}))}
+
+respond = method()
+respond RequestMessage := msg -> (
+    if responses#?(msg#"method") then toLSP responses#(msg#"method") msg)
+respond ResponseMessage := msg -> ""
+
 --------------------------
 --------------------------
 -- LSPMessage -> string --
@@ -167,6 +180,38 @@ debug loadPackage("LanguageServer", Reload => true)
 errorDepth = 2
 RequestMessage {}
 
-fromLSP toLSP fromLSP toLSP requestMessage(1, "foo")
+e
+msg = requestMessage(1, "initialize")
+
+print responses#(msg#"method") msg
+print oo
+print (responses#(msg#"method") msg)
+
+respond msg
+
+responses#(msg#"method") msg
+
+responses#?(msg#"method")
+
 fromLSP toLSP responseMessage(3, responseError(4, "foo"))
 fromLSP toLSP notificationMessage("foo")
+
+
+infoHelp "currentPackage"
+currentPackage.Options.Version
+
+#///{
+    "jsonrpc": "2.0",
+    "result": {
+        "serverInfo": {
+            "version": "0.0",
+            "name": "Macaulay2 Language Server"
+        },
+        "capabilities": {
+            
+        }
+    },
+    "id": 42
+}///
+
+#demark("xxxxx", {})
