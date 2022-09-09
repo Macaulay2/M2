@@ -200,7 +200,7 @@ PP = new ScriptedFunctor from {
         K -> (
             if not (instance(K,Ring) and isField K) then error "expected a field";
             if PP.ring === null then PP.ring = K;
-            errStr := toString(///These are some ways of using PP:///||///PP^n -> n-dimensional projective space///||///PP^{n1,n2,...} -> product of projective spaces: PP^n1 x PP^n2 x ...///||///PP^(n,d) -> d-uple embedding of PP^n: v_d(PP^n)///||///PP^({n1,n2,...},{d1,d2,...}) -> Segre-Veronese variety: v_d1(PP^n1) x v_d2(PP^n2) x ...///||///PP[a1,a2,...] -> rational normal scroll: P(O(a1))+P(O(a2))+...///||///PP([a1,a2,...],k) -> k-th secant variety of PP[a1,a2,...]///||///(PP([a1,a2,...],k)).matrix -> the matrix from which PP([a1,a2,...],k) is constructed///);
+            errStr := toString(///These are some ways of using PP:///||///PP^n -> n-dimensional projective space///||///PP^{n1,n2,...} -> product of projective spaces: PP^n1 x PP^n2 x ...///||///PP^(n,d) -> d-uple embedding of PP^n: v_d(PP^n)///||///PP^({n1,n2,...},{d1,d2,...}) -> Segre-Veronese variety: v_d1(PP^n1) x v_d2(PP^n2) x ...///||///PP[a1,a2,...] -> rational normal scroll: P(O(a1))+P(O(a2))+...///||///PP([a1,a2,...],k) -> k-th secant variety of PP[a1,a2,...]///||///(PP([a1,a2,...],k)).matrix -> the matrix from which PP([a1,a2,...],k) is constructed///||///PP(a1,a2,...) -> weighted-projective space///);
             new ScriptedFunctor from {
                 superscript => (
                     l -> (
@@ -293,6 +293,8 @@ multidegree MultiprojectiveVariety := X -> (
 
 degree MultiprojectiveVariety := X -> getMultidegree(multidegree X, X#"dimAmbientSpaces");
 
+degree WeightedProjectiveVariety := X -> degree((segreEmbedding ambient X) X);
+
 projections = method();
 projections MultiprojectiveVariety := X -> (
     if X#"projections" =!= null then return X#"projections";
@@ -300,6 +302,11 @@ projections MultiprojectiveVariety := X -> (
 );
 
 segre MultiprojectiveVariety := (cacheValue "SegreMap") (X -> segre ring X);
+
+segre WeightedProjectiveVariety := (cacheValue "SegreMap") (X -> (  -- straightening out
+    d := lcm flatten degrees ring ideal X;
+    rationalMap(ideal(1_(ring X)),{d})
+));
 
 segreEmbedding = method();
 segreEmbedding MultiprojectiveVariety := X -> (
@@ -544,8 +551,19 @@ point MultiprojectiveVariety := X -> (
     return p;
 );
 
+point (MultiprojectiveVariety,VisibleList) := (X,l) -> (
+    if # shape X == 1 and # l == numgens ring ideal X and # l > 1 then return point(X,{l});
+    if # l != # shape X then error("expected "|(toString # shape X)|" lists of coefficients");
+    F := apply(projections ambient X,matrix);
+    p := projectiveVariety sum for i to #l-1 list minors(2,(F_i || matrix {toList l_i}));
+    if not isPoint p then error "the output of point(MultiprojectiveVariety,List) is not a point";
+    if not isSubset(p,X) then error "the point does not belong to the variety";
+    if isSubvariety X then p = makeSubvariety(p,ambientVariety X,Verify=>false);
+    return p;
+);
+
 point WeightedProjectiveVariety := X -> (
-    if codim X > 0 then error "not implemented yet: point on weighted-projective variety of positive codimension";
+    if codim X > 0 then return (segreEmbedding ambient X)^* point ((segreEmbedding ambient X) X);
     a := flatten degrees ring ideal X;
     n := #a-1;
     p := apply(n+1,i -> random coefficientRing X);
@@ -555,6 +573,19 @@ point WeightedProjectiveVariety := X -> (
     P.cache#"isPoint" = true;
     P.cache#"coordinates" = new Array from p;
     P
+);
+
+point (WeightedProjectiveVariety,VisibleList) := (X,p) -> (
+    n := dim ambient X;
+    if # p == n + 1 and # p > 1 then return point(X,{p});
+    a := flatten degrees ring ideal X;     
+    x := gens ring ideal X;
+    p = first p;
+    P := projectiveVariety ideal flatten for k to n list for i to n list ((p_i)^(a_k) * (x_k)^(a_i) - (p_k)^(a_i) * (x_i)^(a_k));
+    if dim P != 0 then error "the output of point(WeightedProjectiveVariety,List) is not a point";
+    if not isSubset(P,X) then error "the point does not belong to the variety";
+    if isSubvariety X then P = makeSubvariety(P,ambientVariety X,Verify=>false);
+    return P;
 );
 
 pointOnLinearSectionOfG14 = X -> (
@@ -747,7 +778,9 @@ MultiprojectiveVariety ** Ring := (X,K) -> (
         error "expected a field";
     );
     if (char coefficientRing X =!= char K and char coefficientRing X =!= 0) then error "characteristic not valid";
-    projectiveVariety(sub(ideal X,vars ring projectiveVariety(shape X,K)),Saturate=>false,MinimalGenerators=>true)
+    R := ring projectiveVariety(shape X,K);
+    if instance(X,WeightedProjectiveVariety) then R = newRing(R,Degrees=>degrees ring ideal X);
+    projectiveVariety(sub(ideal X,vars R),Saturate=>false,MinimalGenerators=>true)
 );
 
 MultiprojectiveVariety ? MultiprojectiveVariety := (X,Y) -> (
@@ -1349,7 +1382,7 @@ MultihomogeneousRationalMap == MultirationalMap := (Phi,Psi) -> multirationalMap
 RationalMap == MultirationalMap := (Phi,Psi) -> multirationalMap {Phi} == Psi;
 
 multirationalMap MultiprojectiveVariety := X -> (
-    I := multirationalMap(apply(multigens ring X,o -> rationalMap(o,Dominant=>"notSimplify")),X);
+    I := multirationalMap(projections X,X);
     if ring source I =!= ring X then error "internal error encountered: bad source found";
     I#"source" = X;
     I#"isDominant" = true;
@@ -1420,6 +1453,13 @@ MultirationalMap MultiprojectiveVariety := (Phi,Z) -> (
     suby' := map(ring ambient target Phi,R,matrix{toList(s + sum n : 0)} | vars ring ambient target Phi);       
     yy := (target Phi)#"multigens";
     I := subx(ideal Z) + sum(s,i -> ideal(suby(matrix{yy_i}) - t_i * subx(F_i)));
+    if instance(target Phi,WeightedProjectiveVariety) then (     
+        d := flatten degrees ring ideal target Phi;
+        y := flatten entries suby(matrix{yy_0});
+        f := flatten entries subx(F_0);
+        if not(# yy == 1 and # F == 1 and # m == 1 and # d == m_0 and # y == m_0 and # f == m_0) then error "internal error encountered";
+        I = subx(ideal Z) + ideal(for i to #d-1 list (y#i - t#0^(d#i) * f#i));
+    );
     Phi.cache#("directImage",Z) = projectiveVariety(suby' ideal selectInSubring(1,gens gb I),MinimalGenerators=>true,Saturate=>false)
 );
 
@@ -1461,8 +1501,10 @@ inverseImageViaMultirationalMapWeak = (Phi,Z) -> (
     F := apply(factor Phi,f -> ideal matrix f);
     g := toRingMap(Phi,ring target Phi);
     I := g sub(ideal Z,ring target Phi);
+    K := coefficientRing Phi;
+    if K === ZZ/(char K) then F = apply(F,f -> ideal sum(for i to numgens f -1 list random K, f_*, (u,v) -> u*v));
     for f in F do I = saturate(I,f);
-    Phi.cache#("inverseImage",Z) = projectiveVariety trim lift(I,ring ambient source Phi)
+    Phi.cache#("inverseImage",Z) = makeSubvariety multisaturate I
 );
 
 MultirationalMap ^* := (Phi) -> MultiprojectiveVariety := (Z) -> inverseImageViaMultirationalMapWeak(Phi,Z);
@@ -1479,10 +1521,10 @@ MultirationalMap ^^ MultiprojectiveVariety := (Phi,Z) -> (
 );
 
 MultirationalMap ^** MultiprojectiveVariety := (Phi,Z) -> (
-    if ring ambient target Phi =!= ring ambient Z then error "expected a multi-projective variety in the same ambient of the target of the map";
+    if ring ambient target Phi =!= ring ambient Z then error "expected a multi-projective variety in the same ambient multi-projective space of the target of the map";
     -- if not isSubset(Z,target Phi) then error "expected a subvariety of the target of the map";
-    <<"--warning: the code for ^** must be improved, use instead the method ^*"<<endl;
-    projectiveVariety trim lift((segre Phi)^** ((segre target Phi) ideal Z),ring ambient source Phi)
+    -- <<"--warning: the code for ^** must be improved, use instead the method ^*"<<endl;
+    makeSubvariety multisaturate ((segre Phi)^** ((segre target Phi) ideal Z))
 );
 
 inverseImageWeakInt (MutableHashTable,EmbeddedProjectiveVariety) := (Phi,X) -> (
@@ -3662,6 +3704,7 @@ undocumented {
 (texMath,MultiprojectiveVariety),
 (toString,MultiprojectiveVariety),
 (point,MultiprojectiveVariety,Boolean), -- Intended for internal use only
+(point,MultiprojectiveVariety,VisibleList),
 (euler,MultiprojectiveVariety,Option),
 (singularLocus,EmbeddedProjectiveVariety,Option),
 (symbol *,ZZ,MultiprojectiveVariety), -- hidden to the user, since it returns non-reduced varieties
@@ -4078,5 +4121,35 @@ assert(inverse inverse (inverse multirationalMap g) == inverse multirationalMap 
 assert(inverse inverse multirationalMap g === multirationalMap g)
 -- assert(toRationalMap multirationalMap g === g) -- this fails (28/08/2022)
 assert(toRationalMap multirationalMap g == g)
+///
+
+TEST /// -- weighted-projective varieties
+K = ZZ/333331;
+X = PP_K(2,3,4);
+assert(dim X == 2 and degree X == 6)
+p = point X;
+assert(dim p == 0 and degree p == 1 and instance(|- p,Array))
+Y = random(4,0_X);
+assert(dim Y == 1 and degree Y == 2)
+assert(? Y == "curve in PP(2,3,4) defined by a form of degree 4")
+assert(? image segreEmbedding Y == "curve in PP^2 defined by a form of degree 2")
+psi = rationalMap((gens ideal (2 * point X))|(gens ideal point X));
+Psi = multirationalMap psi;
+debug Cremona
+debug MultiprojectiveVarieties
+assert(instance(psi,WeightedHomogeneousRationalMap) and instance(Psi,WeightedRationalMap));
+assert(ideal image Psi == image psi and projectiveVariety image psi == image Psi)
+p = point source Psi;
+assert(p == Psi^* Psi p)
+I = ideal point source Psi;
+assert(I == psi^* psi I)
+Z = random(3,0_(PP_K(3,2,1)))
+assert(dim Z == 1 and degree Z == 3);
+p = point Z;
+assert(isSubset(p,Z) and isPoint (segreEmbedding ambient Z) p and p == (segre ambient Z)^* (segreEmbedding ambient Z) p)
+P := PP_K(1,1,2,3)
+l = {10,-4,3,7};
+p = point_P l;
+assert(p == point_(random(3,p)) l)
 ///
 
