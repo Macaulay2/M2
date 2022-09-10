@@ -94,7 +94,7 @@ importFrom_Core {
 -- pointer --
 -------------
 
-exportFrom_Core {"Pointer"}
+exportFrom_Core {"Pointer", "nullPointer"}
 Pointer.synonym = "pointer"
 Pointer + ZZ := (ptr, n) -> ptr + n -- defined in actors.d
 ZZ + Pointer := (n, ptr) -> ptr + n
