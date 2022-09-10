@@ -24,6 +24,7 @@ export {
     "ForeignPointerType",
     "ForeignStringType",
     "ForeignArrayType",
+    "ForeignPointerArrayType",
     "ForeignUnionType",
     "ForeignStructType",
     "ForeignObject",
@@ -50,6 +51,8 @@ export {
     "double",
     "voidstar",
     "charstar",
+    "voidstarstar",
+    "charstarstar",
 
 -- methods
     "openSharedLibrary",
@@ -57,6 +60,7 @@ export {
     "foreignObject",
     "address",
     "foreignArrayType",
+    "foreignPointerArrayType",
     "foreignStructType",
     "foreignUnionType",
 
@@ -319,6 +323,60 @@ next ForeignArrayIterator := i -> (
 	ret := dereference_(i.Type) i.Pointer;
 	i.Index = i.Index + 1;
 	i.Pointer = i.Pointer + size i.Type;
+	ret))
+
+-- null-terminated arrays of pointers
+ForeignPointerArrayType = new Type of ForeignType
+ForeignPointerArrayType.synonym = "foreign array type"
+
+foreignPointerArrayType = method(TypicalValue => ForeignPointerArrayType)
+foreignPointerArrayType ForeignType := T -> foreignPointerArrayType(
+    net T | "*", T)
+foreignPointerArrayType(String, ForeignType) := (name, T) -> (
+    if address T =!= ffiPointerType then error "expected a pointer type";
+    S := new ForeignPointerArrayType;
+    S.Name = name;
+    S.Address = ffiPointerType;
+    sz := version#"pointer size";
+    length S := x -> (
+	len := 0;
+	ptr := ffiPointerValue address x;
+	while ffiPointerValue ptr =!= nullPointer
+	do (
+	    len = len + 1;
+	    ptr = ptr + sz);
+	len);
+    new S from VisibleList := (S, x) -> new S from ForeignObject {
+	Address => ffiPointerAddress(address T,
+	    append(apply(x, y -> address T y), address voidstar nullPointer))};
+    value S := x -> for y in x list y;
+    S_ZZ := (x, i) -> (
+	len := 0;
+	ptr := ffiPointerValue address x;
+	while ffiPointerValue ptr =!= nullPointer
+	do (
+	    if len == i then return dereference_T ptr;
+	    len = len + 1;
+	    ptr = ptr + sz);
+	if i >= 0 or i < -len then error(
+	    "array index ", i, " out of bounds 0 .. ", len - 1)
+	else dereference_T(ptr + sz * i));
+    iterator S := x -> ForeignPointerArrayIterator {
+	symbol Pointer => ffiPointerValue address x, symbol Type => T};
+    S)
+
+voidstarstar = foreignPointerArrayType voidstar
+charstarstar = foreignPointerArrayType charstar
+
+ForeignPointerArrayType VisibleList := (T, x) -> new T from x
+
+ForeignPointerArrayIterator = new SelfInitializingType of MutableHashTable
+iterator ForeignPointerArrayIterator := identity
+next ForeignPointerArrayIterator := i -> (
+    if ffiPointerValue i.Pointer === nullPointer then StopIteration
+    else (
+	ret := dereference_(i.Type) i.Pointer;
+	i.Pointer = i.Pointer + version#"pointer size";
 	ret))
 
 -------------------------
