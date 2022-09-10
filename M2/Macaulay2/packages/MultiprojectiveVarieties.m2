@@ -293,7 +293,7 @@ multidegree MultiprojectiveVariety := X -> (
 
 degree MultiprojectiveVariety := X -> getMultidegree(multidegree X, X#"dimAmbientSpaces");
 
-degree WeightedProjectiveVariety := X -> degree((segreEmbedding ambient X) X);
+degree WeightedProjectiveVariety := X -> degree image segreEmbedding X;
 
 projections = method();
 projections MultiprojectiveVariety := X -> (
@@ -563,7 +563,7 @@ point (MultiprojectiveVariety,VisibleList) := (X,l) -> (
 );
 
 point WeightedProjectiveVariety := X -> (
-    if codim X > 0 then return (segreEmbedding ambient X)^* point ((segreEmbedding ambient X) X);
+    if codim X > 0 then return (segreEmbedding X)^* point image segreEmbedding X;
     a := flatten degrees ring ideal X;
     n := #a-1;
     p := apply(n+1,i -> random coefficientRing X);
@@ -1372,6 +1372,7 @@ MultirationalMap == MultirationalMap := (Phi,Psi) -> (
     F := factor Phi;
     G := factor Psi;
     assert(#F == #G);
+    if instance(target Phi,WeightedProjectiveVariety) then error "not implemented yet: equality of (multi-)rational maps with target a weighted-projective variety";
     for i to #F-1 do if minors(2,(matrix F_i)||(matrix G_i)) != 0 then return false;
     return true;
 );
@@ -1493,6 +1494,20 @@ image (MultirationalMap,String) := (Phi,alg) -> (
     if Phi#"isDominant" then Phi#"image" = target Phi;
     return Phi#"image";
 );
+
+forceImage (MultirationalMap,MultiprojectiveVariety) := (Phi,X) -> (
+    if X === target Phi then (if Phi#"isDominant" === null then Phi#"isDominant" = true; return);
+    if ring ideal X =!= ring ideal target Phi then error "expected a subvariety of the target of the map";
+    if Phi#"image" =!= null then error "not permitted to reassign image of rational map";
+    if # shape X > 1 then error "not implemented yet: forceImage for rational maps with target a multi-projective variety";
+    f := toRationalMap Phi;
+    assert(multirationalMap f === Phi);
+    forceImage(f,sub(ideal X,target f));
+    multirationalMap f;
+    assert(Phi#"image" =!= null and Phi#"image" == X);
+    Phi#"image" = X;
+);
+forceImage (MultirationalMap,ZZ) := (Phi,d) -> forceImage(Phi,image(Phi,d));
 
 inverseImageViaMultirationalMapWeak = (Phi,Z) -> (
     if Phi.cache#?("inverseImage",Z) then return Phi.cache#("inverseImage",Z);
@@ -2292,6 +2307,14 @@ Inputs => {"X" => MultiprojectiveVariety},
 Outputs => { ZZ => {"the degree of the image of ", TEX///$X$///," via the Segre embedding of the ",TO2{(ambient,MultiprojectiveVariety),"ambient"}," of ",TEX///$X$///}}, 
 EXAMPLE {"X = PP_QQ^({2,1},{1,3});","degree X"}, 
 SeeAlso => {(multidegree,MultiprojectiveVariety),(segreEmbedding,MultiprojectiveVariety)}} 
+
+document {Key => {(hilbertPolynomial,EmbeddedProjectiveVariety)}, 
+Headline => "the Hilbert polynomial of the variety", 
+Usage => "hilbertPolynomial X", 
+Inputs => {"X" => EmbeddedProjectiveVariety}, 
+Outputs => {ProjectiveHilbertPolynomial => {"the Hilbert polynomial of ",TT"X"," (calculated as ",TO2{(hilbertPolynomial,Ideal),"hilbertPolynomial ideal"}," ",TT"X",")"}},
+EXAMPLE {"X = PP_QQ^(2,3);","hilbertPolynomial X", "hilbertPolynomial(X,Projective=>false)"}, 
+SeeAlso => {(hilbertPolynomial,Ideal)}} 
 
 document {Key => {projections,(projections,MultiprojectiveVariety)}, 
 Headline => "projections of a multi-projective variety", 
@@ -3698,6 +3721,16 @@ EXAMPLE {"P5 = PP_(ZZ/65521)^5;", "C = random({{2},3:{1}},0_P5);", "X = random({
 PARA{"This function is based internally on the function ",TO (rationalMap,Ring,Tally),", provided by the package ",TO Cremona,"."},
 SeeAlso => {(rationalMap,Ring,Tally)}}
 
+document {Key => {(forceImage,MultirationalMap,MultiprojectiveVariety),(forceImage,MultirationalMap,ZZ)}, 
+Headline => "declare which is the image of a multi-rational map", 
+Usage => "forceImage(Phi,Y)", 
+Inputs => {"Phi" => MultirationalMap, "Y" => MultiprojectiveVariety},
+Outputs => {Nothing => {TO null}}, 
+PARA{"This method allows to inform the system about the image of a given multi-rational map without performing any computation. In particular, this can be used to declare that a rational map is dominant."},
+EXAMPLE {///Phi = rationalMap {minors(3,(PP_(ZZ/65521)([6],2)).matrix)};///, "Y = image(Phi,2)", "forceImage(Phi,Y)", "image Phi", ///Psi = rationalMap({minors(3,(PP_(ZZ/65521)([6],2)).matrix)},Dominant=>2);///, "forceImage(Psi,target Psi)", "Psi;"},
+Caveat => {"If the declaration is false, nonsensical answers may result."},
+SeeAlso => {(image,MultirationalMap),(forceImage,RationalMap,Ideal)}}
+
 undocumented {
 (expression,MultiprojectiveVariety),
 (net,MultiprojectiveVariety),
@@ -3731,8 +3764,7 @@ undocumented {
 (image,MultirationalMap,ZZ),(image,ZZ,MultirationalMap), -- This is dangerous because the defining ideal may not be saturated
 (image,MultirationalMap,String),
 (matrix,MultirationalMap),
-(random,MultirationalMap),
-(hilbertPolynomial,EmbeddedProjectiveVariety) -- To be documented
+(random,MultirationalMap)
 }
 
 ---------------

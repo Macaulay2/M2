@@ -665,6 +665,7 @@ RationalMap == RationalMap :=
 MultihomogeneousRationalMap == RationalMap :=
 RationalMap == MultihomogeneousRationalMap := 
 MultihomogeneousRationalMap == MultihomogeneousRationalMap := (Phi,Psi) -> ( 
+   if (degreeLength target Phi == 1 and any(flatten degrees target Phi,i -> i =!= 1)) or (degreeLength target Psi == 1 and any(flatten degrees target Psi,i -> i =!= 1)) then error "not implemented yet: equality of rational maps with target a weighted-projective variety";
    if not areEqualMaps(Phi#"map",Psi#"map") then return false;
            if Phi#"isDominant" =!= Psi#"isDominant" then (
                     if Phi#"isDominant" =!= null and Psi#"isDominant" =!= null then error("internal error encountered");
