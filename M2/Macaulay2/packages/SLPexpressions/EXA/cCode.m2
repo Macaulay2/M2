@@ -28,5 +28,8 @@ XoC = X/C
 slp = makeCompiledSLProgram(matrix{{C,X}},matrix{{XXC,XoC,XpC+2}})
 inp = mutableMatrix{{1.2,-1}}
 out = mutableMatrix(ring inp,1,3)
+debug SLPexpressions
+compiledE = rawCompiledSLEvaluatorK(slp,ring inp); -- SIGSEGV when prints
 evaluate(slp,inp,out)
-out      
+a
+out

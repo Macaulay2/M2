@@ -743,14 +743,14 @@ slp.cache#K else (
     	error ("just-in-time compilation is not implemented for "| toString K) 
     	);
     fname := temporaryFileName() | "-GateSystem";
-    cppName := fname | ".cpp";
-    libName := fname | ".dynamicM2";
+    cppName := fname | ".c";
+    libName := fname | ".so";
     f := openOut cppName;
-    f << "#include <complex>" << endl; 
-    f << "typedef " | typeName | " C;" << endl; -- the type needs to be adjusted!!!
+    -- f << "#include <complex>" << endl; 
+    f << "typedef " | typeName | " C;" << endl; -- << "extern" << endl; -- the type needs to be adjusted!!!
     cCode (slp#"input", slp#"output", f);
     f << close;
-    compileCommand := "gcc -shared -Wl,-soname," | libName | " -o " | libName | " " | cppName | " -lc -fPIC";
+    compileCommand := "gcc -shared -Wall -fPIC -Wextra -o "| libName | " " | cppName;
     print compileCommand;
     if run compileCommand > 0 then error ("error compiling a straightline program:\n"|compileCommand);      
     print get cppName;
@@ -760,15 +760,13 @@ slp.cache#K else (
 	 )
     )
 
-rawCompiledSLEvaluatorEvaluate = (a,b,c) -> error "implement me in the kernel!!!"
-
 evaluate(CompiledSLProgram, MutableMatrix, MutableMatrix) := (slp,I,O) -> (
 		--if numrows I =!= 1 or numrows O =!= 1 then error "expected matrices with 1 row";
 		if numrows I * numcols I =!= numcols slp#"input" then error "wrong number of inputs";
 		if numrows O * numcols O =!= numcols slp#"output" then error "wrong number of outputs";
 		K := ring I; 
     if ring O =!= K then error "expected same Ring for input and output";
-    rawCompiledSLEvaluatorEvaluate(rawCompiledSLEvaluatorK(slp,K), raw I, raw O);
+    rawSLEvaluatorEvaluate(rawCompiledSLEvaluatorK(slp,K), raw I, raw O);
     )
 
 TEST /// 

@@ -304,8 +304,6 @@ doc ///
     Key
         (evaluate,SLProgram,MutableMatrix,MutableMatrix)
         (evaluate,SLProgram,Matrix)
-        (evaluate,InterpretedSLProgram,MutableMatrix,MutableMatrix)
-        (evaluate,CompiledSLProgram,MutableMatrix,MutableMatrix)
     Headline
         evaluate a straight-line program
     Usage

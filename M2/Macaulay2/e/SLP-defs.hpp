@@ -173,14 +173,22 @@ class SLEvaluatorConcrete : public SLEvaluator
   Homotopy* createHomotopy(SLEvaluator* Hxt, SLEvaluator* HxH);
 
  private:
-  typedef typename RT::ElementType ElementType;
   void computeNextNode();  // !!! should this and vIt be here???
+  using ElementType = typename RT::ElementType;
+  typename std::vector<ElementType>::iterator vIt;  // values
+
+  // common data
   const RT& mRing;
+
+  // data used by interpreted evaluation
   std::vector<ElementType>
       values; /* should be a vector of values
          starting with inputCounter many vars and consts and
          continuing with the values of other GATEs */
-  typename std::vector<ElementType>::iterator vIt;  // values
+
+  // data used by compiled evaluation
+  // void (*)(ElementType const*, ElementType*)  compiled_fn;
+  void (*compiled_fn)(double const*, double*);
 };
 
 class Homotopy : public MutableEngineObject

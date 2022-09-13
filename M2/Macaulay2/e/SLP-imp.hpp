@@ -41,8 +41,15 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(
       const MutableMat<DMat<RT> >* empty
       ): mRing(empty->getMat().ring())
 {
-  std::cerr << "SLEvaluatorConcrete constructor for JIT compilation TBI...\n";  
-  abort();
+  const char* funname = "evaluate";
+  auto libName_std = string_M2_to_std(libName);
+  const char* lib_name = libName_std.c_str();
+  printf("loading from %s\n", lib_name);
+  void* handle = dlopen(lib_name, RTLD_LAZY | RTLD_GLOBAL);
+  if (handle == NULL) ERROR("can't load library %s", lib_name);
+  compiled_fn = (void (*)(double const*, double*)) dlsym(handle, funname);
+  if (compiled_fn == NULL) 
+    std::cerr << "can't link function " << funname << " from library " << lib_name << std::endl;
 }
   
 // copy constructor
@@ -175,7 +182,6 @@ bool SLEvaluatorConcrete<RT>::evaluate(const MutableMatrix* inputs,
       ERROR("outputs are in a different ring");
       return false;
     }
-
   return evaluate(inp->getMat(), out->getMat());
 }
 
@@ -193,6 +199,9 @@ bool SLEvaluatorConcrete<RT>::evaluate(const DMat<RT>& inputs,
                 << std::endl;
       return false;
     }
+  if (compiled_fn!=NULL) {
+    std::cerr << "need to implement JIT evaluation\n";    abort();
+  }                           
   size_t i = 0;
   for (size_t r = 0; r < inputs.numRows(); r++)
     for (size_t c = 0; c < inputs.numColumns(); c++)
