@@ -61,7 +61,7 @@ verifySagbi = method(
 verifySagbi(Subring) := opts -> S -> (
     local SB;
     
-    if (S#cache#?"SAGBIBasis") and (S#cache#"SAGBIBasis"#"data"#"sagbiGenerators" == gens S) then (
+    if (S#cache#?"SAGBIBasis") and (gens(S#cache#"SAGBIBasis") == gens S) then (
 	-- S has a sagbi basis so use this object as a compTable
 	SB = S#cache#"SAGBIBasis";
 	) else (
@@ -69,7 +69,7 @@ verifySagbi(Subring) := opts -> S -> (
     	trimmedOptionTable := new OptionTable from apply(trimmedOptionKeys, k -> k => opts#k);
 	SB = initializeCompTable(sagbiBasis(S, trimmedOptionTable), trimmedOptionTable);
 	-- add the generators to the sagbiGenerators
-	SB#"data"#"sagbiGenerators" = gens S;
+	SB#"data"#"sagbiGenerators" = lift(gens S, SB#"rings"#"liftedRing");
 	updateComputation(SB);
 	SB = sagbiBasis(SB, trimmedOptionTable);
 	);
@@ -86,14 +86,14 @@ verifySagbi(Matrix) := opts -> M -> (
     local S;
     local SB;
 
-    if (M#cache#?"Subring") and (M#cache#"Subring"#cache#"SAGBIBasis"#"data"#"sagbiGenerators" == M) then (
+    if (M#cache#?"Subring") and (gens(M#cache#"Subring"#cache#"SAGBIBasis") == M) then (
 	-- S has a sagbi basis so use this object as a compTable
 	S = M.cache#"Subring";
 	SB = S.cache#"SAGBIBasis";
 	) else (
 	SB = initializeCompTable(sagbiBasis M, opts);
 	-- add the generators to the sagbiGenerators
-	SB#"data"#"sagbiGenerators" = M;
+	SB#"data"#"sagbiGenerators" = lift(M, SB#"rings"#"liftedRing");
 	updateComputation(SB);
 	SB = sagbiBasis SB;
 	S = SB#"data"#"subring";
@@ -134,9 +134,11 @@ forceSB = method(
     )
 forceSB SAGBIBasis := opts -> SB -> (
     compTable := initializeCompTable(SB, opts);
-    if zero compTable#"data"#"sagbiGenerators" then compTable#"data"#"sagbiGenerators" = compTable#"data"#"subalgebraGenerators";
+    if zero compTable#"data"#"sagbiGenerators" then (
+	compTable#"data"#"sagbiGenerators" = lift(compTable#"data"#"subalgebraGenerators", compTable#"rings"#"liftedRing");
+	);
     if opts#AutoSubduce then (
-    	compTable#"data"#"sagbiGenerators" = autosubduceSagbi compTable;
+    	compTable#"data"#"sagbiGenerators" = lift(autosubduceSagbi compTable, compTable#"rings"#"liftedRing");
     	);
     compTable#"data"#"sagbiDone" = true;
     newSB := sagbiBasis compTable;
@@ -244,7 +246,7 @@ isSAGBI Subring := opts -> S -> (
     	    trimmedOptionTable := new OptionTable from apply(trimmedOptionKeys, k -> k => opts#k);
 	    compTable = initializeCompTable(sagbiBasis(S, trimmedOptionTable), trimmedOptionTable);
 	    -- add the generators to the sagbiGenerators
-	    compTable#"data"#"sagbiGenerators" = gens S;
+	    compTable#"data"#"sagbiGenerators" = lift(gens S, compTable#"rings"#"liftedRing"); --put into the correct ring (lifted ring)
 	    updateComputation(compTable);
 	    SB = sagbiBasis compTable;
 	    SB = internalIsSAGBI(opts, SB);
@@ -460,6 +462,8 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
     -- if SB is a sagbi basis the intersection computation is correct!
     --  in this case, the intersectionGens form a sagbi basis for the intersection 
     intersectionGens := selectInSubring(1, gens SB);
-    subring TtoQ intersectionGens
+    result := subring TtoQ intersectionGens;
+    if isSAGBI SB then forceSB result;
+    result
     );
 

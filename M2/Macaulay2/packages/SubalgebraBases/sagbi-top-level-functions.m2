@@ -350,7 +350,7 @@ autosubduceSagbi (HashTable) := (compTable) -> (
     
     local tempCompTable;
     local M;
-    generatorMatrix := new MutableMatrix from compTable#"data"#"sagbiGenerators";
+    generatorMatrix := new MutableMatrix from compTable#"maps"#"quotient" compTable#"data"#"sagbiGenerators";
     for i from 0 to (numColumns generatorMatrix) - 1 do (
             M = new Matrix from generatorMatrix_(toList join(0..(i-1),(i+1)..((numColumns generatorMatrix)-1)));
             tempCompTable = limitedCompTable(compTable,lift(M,compTable#"rings"#"liftedRing"));

@@ -91,7 +91,7 @@ sagbiBasis = method(
 
 -- SAGBIBasis constructor
 sagbiBasis Subring := opts -> S -> (
-    if S.cache#?"SABIBasis" then return S.cache#"SAGBIBasis"; 
+    if S.cache#?"SAGBIBasis" then return S.cache#"SAGBIBasis"; 
     
     -- Keys:
     -- > rings stores the various rings we need in our constructions
