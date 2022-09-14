@@ -124,7 +124,7 @@ verifySagbi(List) := opts -> L -> (
 
 forceSB = method(
     Options => {
-	AutoSubduce => true,
+	AutoSubduce => false,
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
         SubductionMethod => "Engine", -- top or engine
 	Limit => 100,
@@ -138,7 +138,7 @@ forceSB SAGBIBasis := opts -> SB -> (
 	compTable#"data"#"sagbiGenerators" = lift(compTable#"data"#"subalgebraGenerators", compTable#"rings"#"liftedRing");
 	);
     if opts#AutoSubduce then (
-    	compTable#"data"#"sagbiGenerators" = lift(autosubduceSagbi compTable, compTable#"rings"#"liftedRing");
+	compTable#"data"#"sagbiGenerators" = lift(autosubduceSagbi compTable, compTable#"rings"#"liftedRing");
     	);
     compTable#"data"#"sagbiDone" = true;
     newSB := sagbiBasis compTable;
@@ -149,7 +149,7 @@ forceSB SAGBIBasis := opts -> SB -> (
 forceSB Subring := opts -> S -> (
     local SB;
     SB = sagbiBasis(S, opts);
-    forceSB(SB, opts); -- cache of S is updated
+    forceSB(SB, opts); -- cache of S is updated    
     )
 
 -- internalIsSAGBI is a version of isSAGBI for a SAGBIBasis a object SB
@@ -250,7 +250,7 @@ isSAGBI Subring := opts -> S -> (
 	    updateComputation(compTable);
 	    SB = sagbiBasis compTable;
 	    SB = internalIsSAGBI(opts, SB);
-    	    S.cache#"SAGBIBasis" = SB;
+    	    -- S.cache#"SAGBIBasis" = SB;
     	    SB#"data"#"sagbiDone"
 	    ) else ( 
 	    null -- S has no SAGBIBasis cached and Compute is set to false
@@ -270,8 +270,6 @@ isSAGBI Matrix := opts -> M -> (
 	    false
 	    ) 
 	) else (
-	S = subring M;
-	M.cache#"Subring" = S;
 	isSAGBI(opts, S)
 	)
     )
@@ -466,4 +464,3 @@ subringIntersection(Subring, Subring) := opts -> (S1, S2) -> (
     if isSAGBI SB then forceSB result;
     result
     );
-
