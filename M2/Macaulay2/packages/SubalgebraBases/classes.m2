@@ -20,10 +20,10 @@ subring Matrix := opts -> M -> (
             cache => new CacheTable from M.cache
     	    };
     	M.cache#"Subring" = S;
-	FF := coefficientRing R;
+	baseRing := coefficientRing R;
 	S.cache#"subductionQuotientRing" = (
-	    if instance(opts.GeneratorSymbol, Nothing) then FF[Variables => numcols M]
-	    else if instance(opts.GeneratorSymbol, Symbol) then FF[opts.GeneratorSymbol_1..opts.GeneratorSymbol_(numcols M)]
+	    if instance(opts.GeneratorSymbol, Nothing) then baseRing[Variables => numcols M]
+	    else if instance(opts.GeneratorSymbol, Symbol) then baseRing[opts.GeneratorSymbol_1..opts.GeneratorSymbol_(numcols M)]
 	    else error("Invalid value for the option GeneratorSymbol")
 	    );
     	S
@@ -63,7 +63,7 @@ SAGBIBasis = new Type of HashTable
 --   object. The pending list may be quite large in some cases.
 -- > Strategy is the strategy used in the algorithm: Master, DegreeByDegree or Incremental
 -- > SubductionMethod is either "Top" or "Engine", determines which code is used for performing subductions
--- > Limit is a positive integer that determines which the computation should terminate if no finite sagbi
+-- > Limit is a positive integer that determines when the computation should terminate if no finite sagbi
 --   basis is computed
 -- > AutoSubduceOnPartialCompletion if true then apllies autoSubduction to the sagbi Generators the first time no new
 --   sagbi generators are added at a particular degree
@@ -80,7 +80,7 @@ sagbiBasis = method(
         ReduceNewGenerators => true,
 	StorePending => true,
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
-        SubductionMethod => "Top", -- Top or Engine
+        SubductionMethod => "Top", -- Top (default) or Engine
     	Limit => 100,
 	AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
     	PrintLevel => 0,
@@ -102,7 +102,6 @@ sagbiBasis Subring := opts -> S -> (
     -- (if StorePending is true)
     -- > options stores the options used for the computation
     
-    
     -- Rings:
     -- The rings are the quotientRing, liftedRing, tensorRing.
     -- > quotientRing is the ring of the generators of S
@@ -116,7 +115,6 @@ sagbiBasis Subring := opts -> S -> (
     numberGenerators := numColumns gens S;
     newMonomialOrder := (monoid liftedRing).Options.MonomialOrder;
     tensorVariables := monoid[
-        VariableBaseName => "p",
         Variables => numberVariables,
         Degrees => degrees source vars liftedRing,
         MonomialOrder => newMonomialOrder];
@@ -203,7 +201,7 @@ sagbiBasis Subring := opts -> S -> (
     
     -- Options: see above description of the options for sagbi computations
     options := new HashTable from opts;
-    SB := new SAGBIBasis from {
+    newSAGBIBasis := new SAGBIBasis from {
         "rings" => rings,
         "maps" => maps,
         "ideals" => ideals,
@@ -212,8 +210,8 @@ sagbiBasis Subring := opts -> S -> (
         "options" => options
     	};
     
-    S.cache#"SAGBIBasis" = SB;
-    SB
+    S.cache#"SAGBIBasis" = newSAGBIBasis;
+    newSAGBIBasis
 )
 
 net SAGBIBasis := S -> (
@@ -233,14 +231,17 @@ sagbiBasis HashTable := opts -> H -> (
     data := new HashTable from H#"data";
     pending := new HashTable from apply(keys H#"pending",i-> i => new List from (H#"pending"#i));
     options := new HashTable from H#"options";
-    new SAGBIBasis from {
+    newSAGBIBasis := new SAGBIBasis from {
         "rings" => rings,
         "maps" => maps,
         "ideals" => ideals,
         "data" => data,
         "pending" => pending,
         "options" => options
-    }
+    };
+    
+    newSAGBIBasis#"data"#"subring".cache#"SAGBIBasis" = newSAGBIBasis;
+    newSAGBIBasis
 )
 
 -- gens(SAGBIBasis) returns the current list of sagbi generators.
