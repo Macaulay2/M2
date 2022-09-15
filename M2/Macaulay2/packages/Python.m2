@@ -69,9 +69,6 @@ export { "pythonHelp", "context", "Preprocessor", "toPython",
     "getitem",
     "hasattr",
     "import",
-    "iter",
-    "iterableToList",
-    "next",
     "pythonValue",
     "setattr",
     "setitem",
@@ -154,17 +151,6 @@ Context String := (c,s) -> c.stmtexpr s
 import = method()
 import(String) := pythonImportImportModule
 
-iterableToList = method()
-iterableToList(PythonObject) :=  x -> (
-	i := iter x;
-	while (y := next i; y =!= null) list value y)
-
-dictToHashTable = method()
-dictToHashTable(PythonObject) := x -> (
-    i := iter x;
-    hashTable while (y := next i; y =!= null)
-	list value y => value x_y)
-
 toFunction = method()
 toFunction PythonObject := x -> y -> (
     p := partition(a -> instance(a, Option),
@@ -192,12 +178,14 @@ addHook((value, PythonObject),
     Strategy => "unknown -> PythonObject")
 addPyToM2Function({"function", "builtin_function_or_method", "method-wrapper"},
     toFunction, "function -> FunctionClosure")
+dictToHashTable = x -> hashTable for key in x list value key => value x_key
 addPyToM2Function("Counter", x -> new Tally from dictToHashTable x,
     "Counter -> Tally")
 addPyToM2Function({"dict", "defaultdict"}, dictToHashTable, "dict -> HashTable")
-addPyToM2Function({"set", "frozenset"}, set @@ iterableToList, "set -> Set")
-addPyToM2Function("list", iterableToList, "list -> List")
-addPyToM2Function({"tuple", "range"}, toSequence @@ iterableToList,
+pyListToM2List = x -> for y in x list value y
+addPyToM2Function({"set", "frozenset"}, set @@ pyListToM2List, "set -> Set")
+addPyToM2Function("list", pyListToM2List, "list -> List")
+addPyToM2Function({"tuple", "range"}, toSequence @@ pyListToM2List,
     "tuple -> Sequence")
 addPyToM2Function("str", toString, "str -> String")
 addPyToM2Function("complex", x -> x@@"real" + ii * x@@"imag", "complex -> CC")
@@ -259,11 +247,9 @@ PythonObject Thing := (o, x) -> (toFunction o) x
 
 length PythonObject := x -> value x@@"__len__"()
 
-next = method()
 next PythonObject := x -> x@@"__next__"();
 
-iter = method()
-iter PythonObject := x -> x@@"__iter__"()
+iterator PythonObject := x -> x@@"__iter__"()
 
 getitem = method()
 getitem(PythonObject, Thing) :=

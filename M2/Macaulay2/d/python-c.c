@@ -28,11 +28,11 @@ static void init() {
  * exceptions *
  **************/
 
-/* simplified to return 1 or 0 rather than a PyObject or NULL */
+/* simplified to return -1, 0, or 1 rather than a PyObject or NULL */
 int python_ErrOccurred(void) {
 	if (PyErr_ExceptionMatches(PyExc_StopIteration)) {
 		PyErr_Clear();
-		return 0;
+		return -1;
 	} else
 		return (PyErr_Occurred() != NULL);
 }
