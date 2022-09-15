@@ -8,15 +8,18 @@ doc///
   (scan, BasicList, BasicList, Function)
   (scan, ZZ, Function)
   (scan, String, Function)
+  (scan, Thing, Function)
  Headline
   apply a function to each element in a list or sequence
  Usage
   scan(L, f)
   scan(L, L', f)
   scan(n, f)
+  scan(x, f)
  Inputs
   L: {BasicList, String}
   n: ZZ
+  x: Thing -- an instance of an iterable class (see @TO "iterators"@)
   f: Function
  Description
   Text
