@@ -20,6 +20,12 @@ export chars := new array(Expr) len 256 do (
 	provide Expr(stringCell(string(char(i))));
 	i = i+1;
 	));
+
+-- symbols for iteration
+-- "iterator" and "next" will be reassigned as methods at top level
+export iteratorS := setupvar("iterator", nullE);
+export nextS := setupvar("next", nullE);
+
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
 export evalAllButTail(c:Code):Code := while true do c = (
