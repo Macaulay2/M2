@@ -261,7 +261,7 @@ multistepPredictorLooseEnd (QQ,List) := List => memoize((c,s) -> (
 -- coefficients for a multistep predictor with intederminate last step
 -- IN:  c = step adjustment coefficient (in QQ)
 --      s = list of step adjustments (from the initial stepsize h = t_1-t_0)
--- OUT: b = list of polinomials in QQ[a], where a=(last step size)/(next to last stepsize)   
+-- OUT: b = list of polynomials in QQ[a], where a=(last step size)/(next to last stepsize)   
      t := symbol t;
      n := #s + 2; -- t_n is the one for which prediction is being made
      a := symbol a;

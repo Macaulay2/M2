@@ -318,7 +318,7 @@ Node
  Key
   "maxAllowableThreads"
  Headline
-  the maximum possibl number of simultaneously running tasks
+  the maximum possible number of simultaneously running tasks
  Usage
   maxAllowableThreads
  Outputs

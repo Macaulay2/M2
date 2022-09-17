@@ -3044,7 +3044,7 @@ Cone + Cone := minkowskiSum
 -- PURPOSE : Scaling respectively the multiple Minkowski sum of a polyhedron
 --   INPUT : '(k,P)',  where 'k' is a strictly positive rational or integer number and 
 --     	    	             'P' is a Polyhedron
---  OUTPUT : The polyehdron 'P' scaled by 'k'
+--  OUTPUT : The polyhedron 'P' scaled by 'k'
 QQ * Polyhedron := (k,P) -> (
      -- Checking for input errors
      if k <= 0 then error("The factor must be strictly positiv");
@@ -4942,7 +4942,7 @@ document {
 	  " Q = intersection (M,v,N,w)"
 	  },
      
-     PARA{}, "If we have another polyehdron or cone, we can also intersect them with the others.",
+     PARA{}, "If we have another polyhedron or cone, we can also intersect them with the others.",
      
      EXAMPLE {
 	  " HC = intersection(matrix {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}},matrix {{1},{1},{1},{1},{1},{1}})",

@@ -2108,7 +2108,7 @@ doc ///
 	  Output=>"ChowRingElement"
 	    the type of output to return, "ChowRingElement" is default and returns a RingElement in the Chow ring of the appropriate ambient space 
 	  Output=>"HashForm"
-	    the type of output to return, HashForm returns a MutableHashTable containing the key "CSM" (the CSM class), and keys of the form \{0\},\{1\},\{2\},...,\{0,1\},\{0,2\} ....\{0,1,2\}... and so on which correspond to the indices of the possible subsets of the generators of the input ideal, for each set of indices the CSM class of the hypersurface given by the product of all polynomails in the corresponding set of generators is stored, there is no extra cost to using this option
+	    the type of output to return, HashForm returns a MutableHashTable containing the key "CSM" (the CSM class), and keys of the form \{0\},\{1\},\{2\},...,\{0,1\},\{0,2\} ....\{0,1,2\}... and so on which correspond to the indices of the possible subsets of the generators of the input ideal, for each set of indices the CSM class of the hypersurface given by the product of all polynomials in the corresponding set of generators is stored, there is no extra cost to using this option
           IndsOfSmooth=>
 	    this option may speed up the run time when using the DirectCompleteInt Method if the user knows additional information about the input ideal, see @TO IndsOfSmooth@ 
      Outputs
@@ -2217,7 +2217,7 @@ doc ///
 	  Output=>
 	    the type of output to return the default output is an integer
 	  Output=>"HashForm"
-	    the type of output to return, HashForm returns a MutableHashTable containing the key "CSM" (the CSM class), and keys of the form  \{0\},\{1\},\{2\},...,\{0,1\},\{0,2\} ....\{0,1,2\}... and so on which correspond to the indices of the possible subsets of the generators of the input ideal, for each set of indices the CSM class of the hypersurface given by the product of all polynomails in the corresponding set of generators is stored, there is no extra cost to using this option
+	    the type of output to return, HashForm returns a MutableHashTable containing the key "CSM" (the CSM class), and keys of the form  \{0\},\{1\},\{2\},...,\{0,1\},\{0,2\} ....\{0,1,2\}... and so on which correspond to the indices of the possible subsets of the generators of the input ideal, for each set of indices the CSM class of the hypersurface given by the product of all polynomials in the corresponding set of generators is stored, there is no extra cost to using this option
           IndsOfSmooth=>
 	    this option may speed up the run time when using the DirectCompleteInt Method if the user knows additional information about the input ideal, see @TO IndsOfSmooth@
      Outputs
