@@ -73,7 +73,7 @@ jobs:
         run: |
           brew config
           brew tap macaulay2/tap
-          brew install autoconf automake bison boost tbb ccache cmake ctags gnu-tar libtool make ninja pkg-config yasm
+          brew install autoconf automake bison boost tbb ccache cmake ctags gnu-tar libtool make ninja pkg-config yasm libffi
           brew install --only-dependencies macaulay2/tap/M2
 
 # ----------------------
@@ -132,7 +132,7 @@ jobs:
         run: |
           cmake -S../.. -B. -GNinja \
             -DCMAKE_BUILD_TYPE=Release -DBUILD_NATIVE=OFF \
-            -DCMAKE_PREFIX_PATH="`brew --prefix`" \
+            -DCMAKE_PREFIX_PATH="`brew --prefix`;`brew --prefix libffi`" \
             -DCMAKE_INSTALL_PREFIX=/usr \
             -DWITH_PYTHON=ON \
             --debug-trycompile
@@ -145,7 +145,7 @@ jobs:
       - name: Build Macaulay2 using Ninja
         if: matrix.build-system == 'cmake'
         run: |
-          cmake --build . --target M2-core M2-emacs install-packages
+          cmake --build . --target M2-core M2-emacs M2-highlightjs install-packages
           if [[ "${{ runner.os }}" == "Linux" ]] && [[ "${{ matrix.compiler }}" == "clang-11" ]]; then
               sudo apt-get install -y -q --no-install-recommends dpkg-dev
               echo "GIT_COMMIT=`git describe --dirty --always --match HEAD`" >> $GITHUB_ENV

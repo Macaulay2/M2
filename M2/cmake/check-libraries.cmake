@@ -7,7 +7,7 @@
 ##    reconfigure NTL variables: cmake -U*NTL* .
 
 # These are some of the libraries linked with Macaulay2 in Macaulay2/{d,e,bin}/CMakeLists.txt
-# Others, like TBB::tbb and Boost::regex, are linked as imported libraries in those files.
+# Others, like TBB::tbb, FFI::ffi, and Boost::regex, are linked as imported libraries in those files.
 # TODO: turn all these libraries into imported libraries and find incompatibilities another way.
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
 set(LIBRARIES_LIST MPSOLVE FROBBY FACTORY FLINT NTL MPFI MPFR MP BDWGC LAPACK)
@@ -77,6 +77,10 @@ endforeach()
 
 if(WITH_TBB)
   find_package(TBB REQUIRED)
+endif()
+
+if(WITH_FFI)
+  find_package(FFI REQUIRED QUIET)
 endif()
 
 ###############################################################################

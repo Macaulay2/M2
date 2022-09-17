@@ -918,6 +918,11 @@ export toRRi(n:ulong,prec:ulong):RRi := (
     Ccode( void, "mpfi_set_ui(",  x, ",(unsigned long)", n, ")" );
     moveToRRiandclear(x));
 
+export toRR(n:float, prec:ulong):RR := (
+     x := newRRmutable(prec);
+     Ccode(void, "mpfr_set_flt(",  x, ", ", n, ", MPFR_RNDN)");
+     moveToRRandclear(x));
+
 export toRR(n:double,prec:ulong):RR := (
      x := newRRmutable(prec);
      Ccode( void, "mpfr_set_d(",  x, ",", n, ", MPFR_RNDN)" );
@@ -1084,6 +1089,11 @@ export toCC(x:ulong,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 export toCC(x:double,prec:ulong):CC := CC(toRR(x,prec),toRR(0,prec));
 
 export toCC(x:double,y:double,prec:ulong):CC := CC(toRR(x,prec),toRR(y,prec));
+
+export toFloat(x:RR):float := Ccode(float, "mpfr_get_flt(", x, ", MPFR_RNDN)");
+export toFloat(x:RRi):float := toFloat(midpointRR(x));
+export toFloat(x:RRcell):float := toFloat(x.v);
+export toFloat(x:RRicell):float := toFloat(x.v);
 
 export toDouble(x:RR):double := Ccode( double, "mpfr_get_d(",  x, ", MPFR_RNDN)" );
                                     

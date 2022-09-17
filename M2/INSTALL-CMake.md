@@ -23,9 +23,9 @@ There are various tools needed to compile Macaulay2 dependencies.
 - On Mac OS X, using Homebrew, install `autoconf automake bison libtool pkg-config yasm`.
 
 There are 10 libraries that must be found on the system.
-- On Debian/Ubuntu, install `libopenblas-dev libgmp3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-regex-dev libboost-stacktrace-dev libatomic-ops-dev libomp-dev libtbb-dev`.
-- On Fedora/CentOS, install `openblas-devel gmp-devel libxml2-devel readline-devel gdbm-devel boost-devel libatomic_ops-devel libomp-devel tbb-devel`.
-- On Mac OS X, using Homebrew, install `gmp libxml2 readline gdbm boost libatomic_ops libomp tbb`.
+- On Debian/Ubuntu, install `libopenblas-dev libgmp3-dev libxml2-dev libreadline-dev libgdbm-dev libboost-regex-dev libboost-stacktrace-dev libatomic-ops-dev libomp-dev libtbb-dev libffi-dev`.
+- On Fedora/CentOS, install `openblas-devel gmp-devel libxml2-devel readline-devel gdbm-devel boost-devel libatomic_ops-devel libomp-devel tbb-devel libffi-devel`.
+- On Mac OS X, using Homebrew, install `gmp libxml2 readline gdbm boost libatomic_ops libomp tbb libffi`.
 
 **TIP**: x86_64 binary packages for all dependencies on Mac OS X 10.15+ and Linux distributions are available through the [Macaulay2 tap](https://github.com/Macaulay2/homebrew-tap/) for Homebrew. To download the dependencies this way run:
 ```
@@ -150,6 +150,7 @@ For a complete list, along with descriptions, try `cmake -LAH .` or see `cmake/c
 - `USING_MPIR:BOOL=OFF`: use MPIR instead of GMP
 - `WITH_OMP:BOOL=ON`: link with the OpenMP library
 - `WITH_TBB:BOOL=ON`: link with the TBB library
+- `WITH_FFI:BOOL=ON`: link with the FFI library
 - `WITH_PYTHON:BOOL=OFF`: link with the Python library (set to `ON` to use the `Python` package)
 - `WITH_SQL:BOOL=OFF`: link with the MySQL library
 - `WITH_XML:BOOL=ON`: link with the libxml2 library
@@ -279,6 +280,7 @@ The main targets for building Macaulay2 are:
 - `M2-binary`: build the Macaulay2 executable
 - `M2-core`: generate and copy the Core package
 - `M2-emacs`: generate the M2-mode package for Emacs
+- `M2-highlightjs`: generate syntax highlighting library for javascript
 
 In addition, the following targets are available:
 - `scc1`: build the Safe C Compiler

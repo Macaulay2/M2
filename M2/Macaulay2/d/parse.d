@@ -361,6 +361,7 @@ export TaskCellBody := {+
      fun:Expr, arg:Expr, returnValue:Expr  };
 export TaskCell := {+ body:TaskCellBody };
 
+export pointerCell := {+ v:voidPointer };
 
 export Expr := (
      CCcell or
@@ -415,7 +416,8 @@ export Expr := (
      pythonObjectCell or
      xmlNodeCell or xmlAttrCell or
      TaskCell or 
-     fileOutputSyncState
+     fileOutputSyncState or
+     pointerCell
      );
 export fun := function(Expr):Expr;
 
