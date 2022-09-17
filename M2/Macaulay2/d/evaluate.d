@@ -283,6 +283,18 @@ evalWhileListDoCode(c:whileListDoCode):Expr := (
 	       else if i == length(r) then r
 	       else new Sequence len i do foreach x in r do provide x)));
 
+export getIterator(e:Expr):Expr := (
+    f := lookup1(Class(e), getGlobalVariable(iteratorS));
+    if f == notfoundE
+    then nullE
+    else applyEE(f, e));
+
+export getNextFunction(e:Expr):Expr := (
+    f := lookup1(Class(e), getGlobalVariable(nextS));
+    if f == notfoundE
+    then nullE
+    else f);
+
 export strtoseq(s:stringCell):Sequence := new Sequence len length(s.v) do
     foreach c in s.v do provide chars.(int(uchar(c)));
 
