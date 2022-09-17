@@ -12,7 +12,7 @@ if version#"VERSION" < "1.20" then error "this package requires Macaulay2 versio
 newPackage(
     "SpecialFanoFourfolds",
     Version => "2.6", 
-    Date => "September 6, 2022",
+    Date => "September 9, 2022",
     Authors => {{Name => "Giovanni Staglianò", Email => "giovanni.stagliano@unict.it" }},
     Headline => "Hodge-special fourfolds",
     Keywords => {"Algebraic Geometry"},
@@ -1323,7 +1323,7 @@ unirationalParametrization SpecialGushelMukaiFourfold := (cacheValue "unirationa
     P := plucker(W,2); while dim P <= 0 do P = plucker(W,2); P = trim sub(plucker P,vars ring W);
     Q := trim quotient(W,P);
     q := trim minors(2,vars ring W || transpose submatrix(coefficients parametrize(P+Q),,{0}));
-    f := (inverse(rationalMap trim sub(q,quotient Q),MathMode=>true)) * j;
+    f := (inverse(rationalMap trim sub(q,quotient Q),Certify=>true)) * j;
     ringP2xP2 := (source s) ** K[gens source f];
     K'' := frac(ringP2xP2);
     ringP8'' := K''[gens ring ambient X];
@@ -1685,11 +1685,11 @@ eulerCharacteristic EmbeddedProjectiveVariety := o -> X -> (
     if X.cache#?"euler" then return X.cache#"euler"; 
     if codim linearSpan X > 0 then return X.cache#"euler" = eulerCharacteristic((parametrize linearSpan X)^^ X,Algorithm=>o.Algorithm);
     if o.Algorithm === "Hodge" then return X.cache#"euler" = euler variety X;
-    if o.Algorithm === "CremonaMathModeTrue" then return euler(X,Verify=>true);
+    if o.Algorithm === "CremonaCertifyTrue" then return euler(X,Verify=>true);
     K := coefficientRing X;
     if K === QQ then return X.cache#"euler" = eulerCharacteristic(X ** (ZZ/65521),Algorithm=>o.Algorithm);
     if char K < 1000 and K === ZZ/(char K) then <<"--warning: base field too small to use probabilistic methods"<<endl;
-    if o.Algorithm === "CremonaMathModeFalse" then return X.cache#"euler" = euler(X,Verify=>false);
+    if o.Algorithm === "CremonaCertifyFalse" then return X.cache#"euler" = euler(X,Verify=>false);
     if o.Algorithm === "CharacteristicClasses" then return X.cache#"euler" = Euler(ideal X,InputIsSmooth=>true);
     if o.Algorithm === null then (
         X' := if max flatten degrees ideal X > 2 and dim X == 2 then isomorphicProjectionOfSurfaceInP5 X else X;
@@ -1698,8 +1698,8 @@ eulerCharacteristic EmbeddedProjectiveVariety := o -> X -> (
     error(///Algorithm option: Expected method to compute the topological Euler characteristic.
 Possible methods are the following:
 "Hodge" -- command: euler variety X -- package: Core;
-"CremonaMathModeTrue" -- command: EulerCharacteristic(ideal X,MathMode=>true) -- package: Cremona;
-"CremonaMathModeFalse" -- command: EulerCharacteristic ideal X -- package: Cremona;
+"CremonaCertifyTrue" -- command: EulerCharacteristic(ideal X,Certify=>true) -- package: Cremona;
+"CremonaCertifyFalse" -- command: EulerCharacteristic ideal X -- package: Cremona;
 "CharacteristicClasses" -- command: Euler(ideal X,InputIsSmooth=>true) -- package: CharacteristicClasses///);  
 );
 
@@ -1859,12 +1859,14 @@ exceptionalCurves HodgeSpecialFourfold := o -> X -> (
 );
 
 SurfaceAssociatedToRationalFourfold = new Type of EmbeddedProjectiveVariety;
+WeightedSurfaceAssociatedToRationalFourfold = new Type of WeightedProjectiveVariety;
 
 globalAssignment SurfaceAssociatedToRationalFourfold;
+globalAssignment WeightedSurfaceAssociatedToRationalFourfold;
 
-SurfaceAssociatedToRationalFourfold.synonym = "surface associated to rational fourfold";
+WeightedSurfaceAssociatedToRationalFourfold.synonym = SurfaceAssociatedToRationalFourfold.synonym = "surface associated to rational fourfold";
 
-expression SurfaceAssociatedToRationalFourfold := U -> (
+expression WeightedSurfaceAssociatedToRationalFourfold := expression SurfaceAssociatedToRationalFourfold := U -> (
     X := U.cache#"Hodge-special fourfold";
     (S,F) := if instance(X,SpecialCubicFourfold)
              then ("K3 surface","cubic fourfold")
@@ -1878,24 +1880,24 @@ expression SurfaceAssociatedToRationalFourfold := U -> (
     expression(S|" associated to "|A)
 );
 
-net SurfaceAssociatedToRationalFourfold := U -> (
+net WeightedSurfaceAssociatedToRationalFourfold := net SurfaceAssociatedToRationalFourfold := U -> (
     if hasAttribute(U,ReverseDictionary) then return toString getAttribute(U,ReverseDictionary);
     if dim U >= 0 then return ? U;
     "-* some calculations are missing *-"
 );
-texMath SurfaceAssociatedToRationalFourfold := texMath @@ net;
+texMath WeightedSurfaceAssociatedToRationalFourfold := texMath SurfaceAssociatedToRationalFourfold := texMath @@ net;
 
 makeSurfaceAssociated = (X,mu,U,C,f) -> (
     assert(instance(X,HodgeSpecialFourfold) and instance(mu,MultirationalMap) and instance(U,EmbeddedProjectiveVariety) and instance(C,List) and (instance(f,Nothing) or instance(f,MultirationalMap)));
     S := if f =!= null then image f else projectiveVariety((coefficientRing X)[],Saturate=>false);
-    S = new SurfaceAssociatedToRationalFourfold from S;
+    S = if instance(S,WeightedProjectiveVariety) then new WeightedSurfaceAssociatedToRationalFourfold from S else new SurfaceAssociatedToRationalFourfold from S;
     S.cache#"construction of SurfaceAssociatedToRationalFourfold" = (mu,U,C,f);
     S.cache#"Hodge-special fourfold" = X;
     return S;
 );
 
 building = method();
-building SurfaceAssociatedToRationalFourfold := S -> S.cache#"construction of SurfaceAssociatedToRationalFourfold";
+building WeightedSurfaceAssociatedToRationalFourfold := building SurfaceAssociatedToRationalFourfold := S -> S.cache#"construction of SurfaceAssociatedToRationalFourfold";
 
 associatedK3surface = method(Options => {Verbose => false, Strategy => null, Singular => null});
 associatedK3surface SpecialGushelMukaiFourfold := associatedK3surface SpecialCubicFourfold := o -> X -> (

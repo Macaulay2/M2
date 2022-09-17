@@ -3,7 +3,7 @@ beginDocumentation()
 document { 
 Key => Cremona, 
 Headline => "package for some computations on rational maps between projective varieties", 
-EM "Cremona", " is a package to perform some basic computations on rational and birational maps between absolutely irreducible projective varieties over a field ",TEX///$K$///,". For instance, it provides general methods to compute degrees and projective degrees of rational maps (see ", TO"degreeMap", " and ", TO"projectiveDegrees",") and a general method to compute the push-forward to projective space of Segre classes (see ",TO"SegreClass","). Moreover, all the main methods are available both in version probabilistic and in version deterministic, and one can switch from one to the other with the boolean option ",TO "MathMode",".",
+EM "Cremona", " is a package to perform some basic computations on rational and birational maps between absolutely irreducible projective varieties over a field ",TEX///$K$///,". For instance, it provides general methods to compute degrees and projective degrees of rational maps (see ", TO"degreeMap", " and ", TO"projectiveDegrees",") and a general method to compute the push-forward to projective space of Segre classes (see ",TO"SegreClass","). Moreover, all the main methods are available both in version probabilistic and in version deterministic, and one can switch from one to the other with the boolean option ",TO "Certify",".",
 PARA{"Let ",TEX///$\Phi:X \dashrightarrow Y$///," be a rational map from a subvariety ",TEX///$X=V(I)\subseteq\mathbb{P}^n=Proj(K[x_0,\ldots,x_n])$///," to a subvariety ",TEX///$Y=V(J)\subseteq\mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///,". Then the map ",TEX///$\Phi $///," can be represented, although not uniquely, by a homogeneous ring map ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]/I$///," of quotients of polynomial rings by homogeneous ideals. These kinds of ring maps, together with the objects of the ",TO RationalMap," class, are the typical inputs for the methods in this package. The method ", TO toMap," (resp. ",TO rationalMap,") constructs such a ring map (resp. rational map) from a list of ",TEX///$m+1$///," homogeneous elements of the same degree in ",TEX///$K[x_0,...,x_n]/I$///,"."}, 
 PARA{"Below is an example using the methods provided by this package, dealing with a birational transformation ",TEX///$\Phi:\mathbb{P}^6 \dashrightarrow \mathbb{G}(2,4)\subset\mathbb{P}^9$///," of bidegree ",TEX///$(3,3)$///,"."},
 EXAMPLE { 
@@ -52,7 +52,7 @@ phi'=phi*map(ringP14,ringP8,for i to 8 list random(1,ringP14))",
 "time degreeMap phi'"},
 SeeAlso => {(degree,RationalMap),projectiveDegrees}} 
 
-undocumented{(projectiveDegrees,MutableHashTable,ZZ),(projectiveDegrees,RingMap,ZZ)}
+undocumented{(projectiveDegrees,RationalMap,ZZ),(projectiveDegrees,RingMap,ZZ)}
 
 document { 
 Key => {projectiveDegrees,(projectiveDegrees,RingMap)}, 
@@ -60,13 +60,13 @@ Headline => "projective degrees of a rational map between projective varieties",
 Usage => "projectiveDegrees phi", 
 Inputs => { "phi" => RingMap => {"which represents a rational map ",TEX///$\Phi$///," between projective varieties"}}, 
 Outputs => {List => {"the list of the projective degrees of ",TEX///$\Phi$///}}, 
-PARA{"Let ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]/I$///," be a ring map representing a rational map ",TEX///$\Phi: V(I) \subseteq \mathbb{P}^n=Proj(K[x_0,\ldots,x_n]) \dashrightarrow V(J) \subseteq \mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///,". The ",TEX///$i$///,"-th projective degree of ",TEX///$\Phi$///," is defined in terms of dimension and degree of the closure of ",TEX///$\Phi^{-1}(L)$///,", where ",TEX///$L$///," is a general linear subspace of ",TEX///$\mathbb{P}^m$///," of a certain dimension; for the precise definition, see Harris's book (Algebraic geometry: A first course - Vol. 133 of Grad. Texts in Math., p. 240). If ",TEX///$\Phi$///," is defined by elements ",TEX///$F_0(x_0,\ldots,x_n),\ldots,F_m(x_0,\ldots,x_n)$///," and ",TEX///$I_L$///," denotes the ideal of the subspace ",TEX///$L\subseteq \mathbb{P}^m$///,", then the ideal of the closure of ",TEX///$\Phi^{-1}(L) $///," is nothing but the saturation of the ideal ",TEX///$(\phi(I_L))$///," by ",TEX///$(F_0,....,F_m)$///," in the ring ",TEX///$K[x_0,\ldots,x_n]/I$///,". So, replacing in the definition, ", EM "general linear subspace", " by ", EM "random linear subspace", ", we get a probabilistic algorithm to compute all projective degrees. Furthermore, we can considerably speed up this algorithm by taking into account two simple remarks: 1) the saturation ",TEX///$(\phi(I_L)):{(F_0,\ldots,F_m)}^{\infty}$///," is the same as ",TEX///$(\phi(I_L)):{(\lambda_0 F_0+\cdots+\lambda_m F_m)}^{\infty}$///,", where ",TEX///$\lambda_0,\ldots,\lambda_m\in\mathbb{K}$///," are general scalars; 2) the ",TEX///$i$///,"-th projective degree of ",TEX///$\Phi$///," coincides with the ",TEX///$(i-1)$///,"-th projective degree of the restriction of ",TEX///$\Phi$///," to a general hyperplane section of ",TEX///$X$///," (see ",EM"loc. cit.","). This is what the method uses if ", TO MathMode, " is set to ", TT "false",". If instead ", TO MathMode, " is set to ", TT "true", ", then the method simply computes the ",TO "multidegree"," of the ",TO "graph","."},
+PARA{"Let ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]/I$///," be a ring map representing a rational map ",TEX///$\Phi: V(I) \subseteq \mathbb{P}^n=Proj(K[x_0,\ldots,x_n]) \dashrightarrow V(J) \subseteq \mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///,". The ",TEX///$i$///,"-th projective degree of ",TEX///$\Phi$///," is defined in terms of dimension and degree of the closure of ",TEX///$\Phi^{-1}(L)$///,", where ",TEX///$L$///," is a general linear subspace of ",TEX///$\mathbb{P}^m$///," of a certain dimension; for the precise definition, see Harris's book (Algebraic geometry: A first course - Vol. 133 of Grad. Texts in Math., p. 240). If ",TEX///$\Phi$///," is defined by elements ",TEX///$F_0(x_0,\ldots,x_n),\ldots,F_m(x_0,\ldots,x_n)$///," and ",TEX///$I_L$///," denotes the ideal of the subspace ",TEX///$L\subseteq \mathbb{P}^m$///,", then the ideal of the closure of ",TEX///$\Phi^{-1}(L) $///," is nothing but the saturation of the ideal ",TEX///$(\phi(I_L))$///," by ",TEX///$(F_0,....,F_m)$///," in the ring ",TEX///$K[x_0,\ldots,x_n]/I$///,". So, replacing in the definition, ", EM "general linear subspace", " by ", EM "random linear subspace", ", we get a probabilistic algorithm to compute all projective degrees. Furthermore, we can considerably speed up this algorithm by taking into account two simple remarks: 1) the saturation ",TEX///$(\phi(I_L)):{(F_0,\ldots,F_m)}^{\infty}$///," is the same as ",TEX///$(\phi(I_L)):{(\lambda_0 F_0+\cdots+\lambda_m F_m)}^{\infty}$///,", where ",TEX///$\lambda_0,\ldots,\lambda_m\in\mathbb{K}$///," are general scalars; 2) the ",TEX///$i$///,"-th projective degree of ",TEX///$\Phi$///," coincides with the ",TEX///$(i-1)$///,"-th projective degree of the restriction of ",TEX///$\Phi$///," to a general hyperplane section of ",TEX///$X$///," (see ",EM"loc. cit.","). This is what the method uses if ", TO Certify, " is set to ", TT "false",". If instead ", TO Certify, " is set to ", TT "true", ", then the method simply computes the ",TO "multidegree"," of the ",TO "graph","."},
 EXAMPLE { 
 "-- map from P^4 to G(1,3) given by the quadrics through a rational normal curve of degree 4
 GF(331^2)[t_0..t_4]; phi=toMap minors(2,matrix{{t_0..t_3},{t_1..t_4}})", 
-"time projectiveDegrees(phi,MathMode=>true)",
+"time projectiveDegrees(phi,Certify=>true)",
 "psi=inverseMap(toMap(phi,Dominant=>infinity))", 
-"time projectiveDegrees(psi,MathMode=>true)"}, 
+"time projectiveDegrees(psi,Certify=>true)"}, 
 EXAMPLE { 
 "-- Cremona transformation of P^6 defined by the quadrics through a rational octic surface
 phi = map specialCremonaTransformation(7,ZZ/300007)",
@@ -76,7 +76,7 @@ PARA{"Another way to use this method is by passing an integer ",TT"i"," as secon
 SeeAlso => {(degrees,RationalMap),degreeMap, SegreClass}} 
 
 document { 
-Key => {MathMode, [inverseMap,MathMode], [projectiveDegrees,MathMode],[degreeMap,MathMode],[approximateInverseMap,MathMode],[isDominant,MathMode],[isBirational,MathMode],[SegreClass,MathMode],[ChernSchwartzMacPherson,MathMode],[EulerCharacteristic,MathMode],[exceptionalLocus,MathMode]}, 
+Key => {Certify, [inverseMap,Certify], [projectiveDegrees,Certify],[degreeMap,Certify],[approximateInverseMap,Certify],[isDominant,Certify],[isBirational,Certify],[SegreClass,Certify],[ChernSchwartzMacPherson,Certify],[EulerCharacteristic,Certify],[exceptionalLocus,Certify]}, 
 Headline => "whether to ensure correctness of output", 
 "This option accepts a ", TO Boolean, " value, default value ",TT "false",".",
 PARA{"If turned on in the methods ", TO inverseMap," and ", TO approximateInverseMap, ", then it will be checked whether the maps in input and output are one the inverse of the other, throwing an error if they are not. Actually, ", TO approximateInverseMap, " will first try to fix the error of the approximation. When turned on in the methods ", TO projectiveDegrees,", ", TO degreeMap, ", ", TO isBirational,", ", TO isDominant, ", ", TO SegreClass, ", ", TO EulerCharacteristic, " and ", TO ChernSchwartzMacPherson, ", it means whether to use a non-probabilistic algorithm."}} 
@@ -135,7 +135,7 @@ EXAMPLE {
 "GF(331^2)[t_0..t_4]",
 "phi = rationalMap(minors(2,matrix{{t_0..t_3},{t_1..t_4}}),Dominant=>infinity)",
 "time isBirational phi",
-"time isBirational(phi,MathMode=>true)"},
+"time isBirational(phi,Certify=>true)"},
 SeeAlso => {isDominant}}
 
 document { 
@@ -150,12 +150,12 @@ PARA{"This method is based on the fibre dimension theorem. A more standard way w
 EXAMPLE { 
 "P8 = ZZ/101[x_0..x_8];",
 "phi = rationalMap ideal jacobian ideal det matrix{{x_0..x_4},{x_1..x_5},{x_2..x_6},{x_3..x_7},{x_4..x_8}};",
-"time isDominant(phi,MathMode=>true)",
+"time isDominant(phi,Certify=>true)",
 "P7 = ZZ/101[x_0..x_7];", 
 "-- hyperelliptic curve of genus 3
 C = ideal(x_4*x_5+23*x_5^2-23*x_0*x_6-18*x_1*x_6+6*x_2*x_6+37*x_3*x_6+23*x_4*x_6-26*x_5*x_6+2*x_6^2-25*x_0*x_7+45*x_1*x_7+30*x_2*x_7-49*x_3*x_7-49*x_4*x_7+50*x_5*x_7,x_3*x_5-24*x_5^2+21*x_0*x_6+x_1*x_6+46*x_3*x_6+27*x_4*x_6+5*x_5*x_6+35*x_6^2+20*x_0*x_7-23*x_1*x_7+8*x_2*x_7-22*x_3*x_7+20*x_4*x_7-15*x_5*x_7,x_2*x_5+47*x_5^2-40*x_0*x_6+37*x_1*x_6-25*x_2*x_6-22*x_3*x_6-8*x_4*x_6+27*x_5*x_6+15*x_6^2-23*x_0*x_7-42*x_1*x_7+27*x_2*x_7+35*x_3*x_7+39*x_4*x_7+24*x_5*x_7,x_1*x_5+15*x_5^2+49*x_0*x_6+8*x_1*x_6-31*x_2*x_6+9*x_3*x_6+38*x_4*x_6-36*x_5*x_6-30*x_6^2-33*x_0*x_7+26*x_1*x_7+32*x_2*x_7+27*x_3*x_7+6*x_4*x_7+36*x_5*x_7,x_0*x_5+30*x_5^2-11*x_0*x_6-38*x_1*x_6+13*x_2*x_6-32*x_3*x_6-30*x_4*x_6+4*x_5*x_6-28*x_6^2-30*x_0*x_7-6*x_1*x_7-45*x_2*x_7+34*x_3*x_7+20*x_4*x_7+48*x_5*x_7,x_3*x_4+46*x_5^2-37*x_0*x_6+27*x_1*x_6+33*x_2*x_6+8*x_3*x_6-32*x_4*x_6+42*x_5*x_6-34*x_6^2-37*x_0*x_7-28*x_1*x_7+10*x_2*x_7-27*x_3*x_7-42*x_4*x_7-8*x_5*x_7,x_2*x_4-25*x_5^2-4*x_0*x_6+2*x_1*x_6-31*x_2*x_6-5*x_3*x_6+16*x_4*x_6-24*x_5*x_6+31*x_6^2-30*x_0*x_7+32*x_1*x_7+12*x_2*x_7-40*x_3*x_7+3*x_4*x_7-28*x_5*x_7,x_0*x_4+15*x_5^2+48*x_0*x_6-50*x_1*x_6+46*x_2*x_6-48*x_3*x_6-23*x_4*x_6-28*x_5*x_6+39*x_6^2+38*x_1*x_7-5*x_3*x_7+5*x_4*x_7-34*x_5*x_7,x_3^2-31*x_5^2+41*x_0*x_6-30*x_1*x_6-4*x_2*x_6+43*x_3*x_6+23*x_4*x_6+7*x_5*x_6+31*x_6^2-19*x_0*x_7+25*x_1*x_7-49*x_2*x_7-16*x_3*x_7-45*x_4*x_7+25*x_5*x_7,x_2*x_3+13*x_5^2-45*x_0*x_6-22*x_1*x_6+33*x_2*x_6-26*x_3*x_6-21*x_4*x_6+34*x_5*x_6-21*x_6^2-47*x_0*x_7-10*x_1*x_7+29*x_2*x_7-46*x_3*x_7-x_4*x_7+20*x_5*x_7,x_1*x_3+22*x_5^2+4*x_0*x_6+3*x_1*x_6+45*x_2*x_6+37*x_3*x_6+17*x_4*x_6+36*x_5*x_6-2*x_6^2-31*x_0*x_7+3*x_1*x_7-12*x_2*x_7+19*x_3*x_7+28*x_4*x_7+30*x_5*x_7,x_0*x_3-47*x_5^2-43*x_0*x_6+6*x_1*x_6-40*x_2*x_6+21*x_3*x_6+26*x_4*x_6-5*x_5*x_6-5*x_6^2+4*x_0*x_7-15*x_1*x_7+18*x_2*x_7-31*x_3*x_7+50*x_4*x_7-46*x_5*x_7,x_2^2+4*x_5^2+31*x_0*x_6+41*x_1*x_6+31*x_2*x_6+28*x_3*x_6+42*x_4*x_6-28*x_5*x_6-4*x_6^2-7*x_0*x_7+15*x_1*x_7-9*x_2*x_7+31*x_3*x_7+3*x_4*x_7+7*x_5*x_7,x_1*x_2-46*x_5^2-6*x_0*x_6-50*x_1*x_6+32*x_2*x_6-10*x_3*x_6+42*x_4*x_6+33*x_5*x_6+18*x_6^2-9*x_0*x_7-20*x_1*x_7+45*x_2*x_7-9*x_3*x_7+10*x_4*x_7-8*x_5*x_7,x_0*x_2-9*x_5^2+34*x_0*x_6-45*x_1*x_6+19*x_2*x_6+24*x_3*x_6+23*x_4*x_6-37*x_5*x_6-44*x_6^2+24*x_0*x_7-33*x_2*x_7+41*x_3*x_7-40*x_4*x_7+4*x_5*x_7,x_1^2+x_1*x_4+x_4^2-28*x_5^2-33*x_0*x_6-17*x_1*x_6+11*x_3*x_6+20*x_4*x_6+25*x_5*x_6-21*x_6^2-22*x_0*x_7+24*x_1*x_7-14*x_2*x_7+5*x_3*x_7-39*x_4*x_7-18*x_5*x_7,x_0*x_1-47*x_5^2-5*x_0*x_6-9*x_1*x_6-45*x_2*x_6+48*x_3*x_6+45*x_4*x_6-29*x_5*x_6+3*x_6^2+29*x_0*x_7+40*x_1*x_7+46*x_2*x_7+27*x_3*x_7-36*x_4*x_7-39*x_5*x_7,x_0^2-31*x_5^2+36*x_0*x_6-30*x_1*x_6-10*x_2*x_6+42*x_3*x_6+9*x_4*x_6+34*x_5*x_6-6*x_6^2+48*x_0*x_7-47*x_1*x_7-19*x_2*x_7+25*x_3*x_7+28*x_4*x_7+34*x_5*x_7);",
 "phi = rationalMap(C,3,2);",
-"time isDominant(phi,MathMode=>true)"},
+"time isDominant(phi,Certify=>true)"},
 SeeAlso => {isBirational}} 
 
 document { 
@@ -190,7 +190,7 @@ EXAMPLE {
 phi = map quadroQuadricCremonaTransformation(26,1)",
 "time psi = inverseMap phi", 
 "assert isInverseMap(phi,psi)"},
-Caveat => {"If the map passed is not birational and the option ", TO MathMode, " is set to ", TT "false", ", you might not get any error message."},
+Caveat => {"If the map passed is not birational and the option ", TO Certify, " is set to ", TT "false", ", you might not get any error message."},
 SeeAlso => {approximateInverseMap,(inverse,RationalMap)}}
 
 document { 
@@ -218,11 +218,11 @@ EXAMPLE {
 time psi=approximateInverseMap(phi,CodimBsInv=>4)",
 "-- but...
 phi * psi == 1",
-"-- in this case we can remedy enabling the option MathMode
-time psi = approximateInverseMap(phi,CodimBsInv=>4,MathMode=>true)",
+"-- in this case we can remedy enabling the option Certify
+time psi = approximateInverseMap(phi,CodimBsInv=>4,Certify=>true)",
 "assert(phi * psi == 1)"},
 PARA{"The method also accepts as input a ",TO2{RingMap,"ring map"}," representing a rational map between projective varieties. In this case, a ",TO2{RingMap,"ring map"}," is returned as well."},
-Caveat => {"For the purpose of this method, the option ", TO MathMode, TT"=>true"," is too rigid, especially when the source of the passed map is not a projective space."},
+Caveat => {"For the purpose of this method, the option ", TO Certify, TT"=>true"," is too rigid, especially when the source of the passed map is not a projective space."},
 SeeAlso => {inverseMap,(inverse,RationalMap)}}
 
 document { 
@@ -281,8 +281,8 @@ EXAMPLE {
 "X = sub(ideal jacobian Y,P7/Y)",
 "time SegreClass X",
 "time SegreClass lift(X,P7)",
-"time SegreClass(X,MathMode=>true)",
-"time SegreClass(lift(X,P7),MathMode=>true)",
+"time SegreClass(X,Certify=>true)",
+"time SegreClass(lift(X,P7),Certify=>true)",
 "o4 == o6 and o5 == o7"},
 PARA{"The method also accepts as input a ring map ",TT"phi"," representing a rational map ",TEX///$\Phi:X\dashrightarrow Y$///," between projective varieties. In this case, the method returns the push-forward to the Chow ring of the ambient projective space of ",TEX///$X$///," of the Segre class of the base locus of ",TEX///$\Phi$///, " in ",TEX///$X$///, ", i.e., it basically computes ",TT"SegreClass ideal matrix phi",". In the next example, we compute the Segre class of the base locus of a birational map ",TEX///$\mathbb{G}(1,4)\subset\mathbb{P}^9 \dashrightarrow \mathbb{P}^6$///,"."},
 EXAMPLE {
@@ -310,18 +310,18 @@ EXAMPLE {
 "GF(5^7)[x_0..x_4]",
 "C = minors(2,matrix{{x_0,x_1,x_2},{x_1,x_2,x_3}})",
 "time ChernSchwartzMacPherson C",
-"time ChernSchwartzMacPherson(C,MathMode=>true)",
+"time ChernSchwartzMacPherson(C,Certify=>true)",
 "oo == ooo"},
 PARA{"In the case when the input ideal ",TT"I"," defines a smooth projective variety ",TEX///$X$///,", the push-forward of ",TEX///$c_{SM}(X)$///," can be computed much more efficiently using ",TO SegreClass, ". Indeed, in this case, ", TEX///$c_{SM}(X)$///," coincides with the (total) Chern class of the tangent bundle of ",TEX///$X$///," and can be obtained as follows (in general the method below gives the push-forward of the so-called Chern-Fulton class)."},
 EXAMPLE {
-"ChernClass = method(Options=>{MathMode=>false});",
+"ChernClass = method(Options=>{Certify=>false});",
 "ChernClass (Ideal) := o -> (I) -> (
-   s := SegreClass(I,MathMode=>o.MathMode);
+   s := SegreClass(I,Certify=>o.Certify);
    s*(1+first gens ring s)^(numgens ring I));",
 "-- example: Chern class of G(1,4)
 G = Grassmannian(1,4,CoefficientRing=>ZZ/190181)",
 "time ChernClass G",
-"time ChernClass(G,MathMode=>true)"},
+"time ChernClass(G,Certify=>true)"},
 SeeAlso => {SegreClass,EulerCharacteristic,(euler,ProjectiveVariety)}}
 
 document { 
@@ -338,7 +338,7 @@ PARA{"In the example below, we compute the Euler characteristic of ",TEX///$\mat
 EXAMPLE { 
 "I = Grassmannian(1,4,CoefficientRing=>ZZ/190181);",
 "time EulerCharacteristic I",
-"time EulerCharacteristic(I,MathMode=>true)"},
+"time EulerCharacteristic(I,Certify=>true)"},
 Caveat => {"No test is made to see if the projective variety is smooth."},
 SeeAlso => {(euler,ProjectiveVariety),ChernSchwartzMacPherson,SegreClass}}
 
@@ -396,13 +396,13 @@ document {
 Key => {(inverse,RationalMap),(inverse,RationalMap,Option)}, 
 Headline => "inverse of a birational map", 
 Usage => "inverse phi
-inverse(phi,MathMode=>b)", 
+inverse(phi,Certify=>b)", 
 Inputs => { 
 RationalMap => "phi" => {"which has to be birational, and ",TT"b"," is a ",TO2{Boolean,"boolean value"},", that is, ",TT"true"," or ",TT"false"," (the default value is ",TT"false",")"}}, 
 Outputs => { 
 RationalMap => {"the inverse map of ",TT"phi"}},
-PARA{TT"inverse(phi,MathMode=>true)"," is the same as ",TO inverseMap,TT"(phi,MathMode=>true,Verbose=>false)",", while ",
-TT"inverse(phi,MathMode=>false)"," applies a middle ground approach between ",TO inverseMap,TT"(phi,MathMode=>true)"," and ",TO inverseMap,TT"(phi,MathMode=>false)",
+PARA{TT"inverse(phi,Certify=>true)"," is the same as ",TO inverseMap,TT"(phi,Certify=>true,Verbose=>false)",", while ",
+TT"inverse(phi,Certify=>false)"," applies a middle ground approach between ",TO inverseMap,TT"(phi,Certify=>true)"," and ",TO inverseMap,TT"(phi,Certify=>false)",
 ". The procedure for the latter is as follows: It first computes the inverse map of ",TT "phi"," using ",TT "psi = ",TO "inverseMap",TT" phi",". Then it is checked that ",TO2{(symbol SPACE,RationalMap,Ideal),"psi phi p"},TT" == p"," and ",TO2{(symbol SPACE,RationalMap,Ideal),"phi psi q"},TT" == q",", where ",TT"p,q"," are, respectively, a ",TO2{point,"random point"}," on the ",TO2{(source,RationalMap),"source"}," and the ",TO2{(target,RationalMap),"target"}," of ",TT"phi",". Finally, if the tests pass, the command ",TO forceInverseMap,TT"(phi,psi)"," is invoked and ",TT"psi"," is returned."},
 EXAMPLE {
 "R = QQ[x_0..x_4]; phi = rationalMap minors(4,random(R^{4:1},R^5)) -- special Cremona transformation of P^4 of type (4,4)",
@@ -488,7 +488,7 @@ Inputs => {
 RationalMap => "phi"}, 
 Outputs => { 
 ZZ => {"the degree of ",TT"phi",". So this value is 1 if and only if the map is birational onto its image."}},
-PARA{"This is a shortcut for ",TT "degreeMap(phi,MathMode=>true,Verbose=>false)",", see ",TO (degreeMap,RationalMap),"."}}
+PARA{"This is a shortcut for ",TT "degreeMap(phi,Certify=>true,Verbose=>false)",", see ",TO (degreeMap,RationalMap),"."}}
 
 document { 
 Key => {(symbol !,RationalMap)}, 
@@ -508,12 +508,6 @@ EXAMPLE {
 "describe phi",
 "time phi! ;",
 "describe phi"},
-PARA{"The command ",TT"phi(*)"," does more or less the same thing but it uses probabilistic methods and treats them as deterministic (the user should never use this)."},
-EXAMPLE {
-"phi = rationalMap rationalMap map specialQuadraticTransformation(8,ZZ/33331);",
-"describe phi",
-"time phi(*) ;",
-"describe phi"},
 SeeAlso => {(describe,RationalMap)}}
 
 document { 
@@ -525,7 +519,7 @@ Inputs => {
 RationalMap => "phi"}, 
 Outputs => { 
 List => {"the list of projective degrees of ",TT"phi"}},
-PARA{"This is a shortcut for ",TT "projectiveDegrees(phi,MathMode=>true,Verbose=>false)",", see ",TO (projectiveDegrees,RationalMap),"."}}
+PARA{"This is a shortcut for ",TT "projectiveDegrees(phi,Certify=>true,Verbose=>false)",", see ",TO (projectiveDegrees,RationalMap),"."}}
 
 document { 
 Key => {(coefficients,RationalMap)}, 
@@ -685,8 +679,13 @@ Inputs => { "Phi" => RationalMap,{"\"F4\" or \"MGB\""}},
 Outputs => {{"the ",TO2{"Ideal","ideal"}," defining the closure of the image of ",TT"Phi","; the calculation passes through ",TO groebnerBasis,"(...,Strategy=>\"F4\") or ",TO groebnerBasis,"(...,Strategy=>\"MGB\")."}}, 
 SeeAlso => {(image,RationalMap),(image,RationalMap,ZZ),groebnerBasis}}
 
+document {Key => {parametrize}, 
+Headline => "parametrization of a rational projective variety", 
+PARA{"See ",HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/MultiprojectiveVarieties/html/_parametrize_lp__Multiprojective__Variety_rp.html", TT "parametrize(MultiprojectiveVariety)"},
+" and ",TO2{(parametrize,QuotientRing),"parametrize(QuotientRing)"},"."}}
+
 document { 
-Key => {parametrize,(parametrize,Ideal),(parametrize,QuotientRing),(parametrize,PolynomialRing)}, 
+Key => {(parametrize,Ideal),(parametrize,QuotientRing),(parametrize,PolynomialRing)}, 
 Headline => "parametrization of linear varieties and hyperquadrics", 
 Usage => "parametrize I", 
 Inputs => { 
@@ -879,7 +878,7 @@ EXAMPLE {
 "describe phi!"},
 SeeAlso => {(rationalMap,Ideal,ZZ,ZZ),point}} 
 
-undocumented{(texMath,RationalMap),(net,RationalMap),(expression,RationalMap),(toString,RationalMap),(toMap,RationalMap),(lift,RationalMap),(lift,RingMap),(symbol ~,RationalMap),(symbol (*),RationalMap)}
+undocumented{(texMath,RationalMap),(net,RationalMap),(expression,RationalMap),(toString,RationalMap),(toMap,RationalMap),(lift,RationalMap)}
 
 document { 
 Key => {specialCremonaTransformation,(specialCremonaTransformation,Ring,ZZ),(specialCremonaTransformation,ZZ,Ring),(specialCremonaTransformation,ZZ)}, 
@@ -952,11 +951,11 @@ SeeAlso => {"specialCremonaTransformation","specialQuadraticTransformation","qua
 
 document { 
 Key => {[inverseMap,Verbose], [projectiveDegrees,Verbose],[degreeMap,Verbose],[approximateInverseMap,Verbose],[isDominant,Verbose],[isBirational,Verbose],[SegreClass,Verbose],[ChernSchwartzMacPherson,Verbose],[EulerCharacteristic,Verbose]}, 
-PARA{"This option accepts a ", TO Boolean, " value. Set this to ",TT "false"," if you don't want to get the certification message from ",TO MathMode,"."},
+PARA{"This option accepts a ", TO Boolean, " value. Set this to ",TT "false"," if you don't want to get the certification message from ",TO Certify,"."},
 EXAMPLE {
 "f = toMap vars(QQ[x_0..x_2]);",
-"isBirational(f,MathMode=>true)",
-"isBirational(f,MathMode=>true,Verbose=>false)"}} 
+"isBirational(f,Certify=>true)",
+"isBirational(f,Certify=>true,Verbose=>false)"}} 
 
 document { 
 Key => {BlowUpStrategy,[graph,BlowUpStrategy],[inverseMap,BlowUpStrategy], [projectiveDegrees,BlowUpStrategy],[degreeMap,BlowUpStrategy],[isBirational,BlowUpStrategy],[SegreClass,BlowUpStrategy],[ChernSchwartzMacPherson,BlowUpStrategy],[EulerCharacteristic,BlowUpStrategy]}, 
@@ -1011,13 +1010,18 @@ EXAMPLE {
 Caveat => {"If the declaration is false, nonsensical answers may result."},
 SeeAlso => {(image,RationalMap),forceInverseMap}}
 
+document {Key => {point}, 
+Headline => "pick a random rational point on a projective variety", 
+PARA{"See ",HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/MultiprojectiveVarieties/html/_point_lp__Multiprojective__Variety_rp.html","point(MultiprojectiveVarieties)"},
+" and ",TO2{(point,QuotientRing),"point(QuotientRing)"},"."}}
+
 undocumented {(point,Ideal),(point,Ideal,Boolean)}
 document { 
-Key => {point,(point,QuotientRing),(point,PolynomialRing)}, 
+Key => {(point,QuotientRing),(point,PolynomialRing)}, 
 Headline => "pick a random rational point on a projective variety", 
 Usage => "point R", 
 Inputs => { 
-Ring => "R" => {"the homogeneous coordinate ring of a closed subscheme ",TEX///$X\subseteq\mathbb{P}^n$///," over a finite ground field"}}, 
+QuotientRing => "R" => {"the homogeneous coordinate ring of a closed subscheme ",TEX///$X\subseteq\mathbb{P}^n$///," over a finite ground field"}}, 
 Outputs => { 
 Ideal => {"an ideal in ",TT "R"," defining a point on ",TEX///$X$///}}, 
 PARA{"This function is a variant of the ",TO randomKRationalPoint," function, which has been further improved and extended in the package ",HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/MultiprojectiveVarieties/html/index.html","MultiprojectiveVarieties"},", see ",HREF{"https://faculty.math.illinois.edu/Macaulay2/doc/Macaulay2/share/doc/Macaulay2/MultiprojectiveVarieties/html/_point_lp__Multiprojective__Variety_rp.html", TT "point(MultiprojectiveVariety)"},"."},
