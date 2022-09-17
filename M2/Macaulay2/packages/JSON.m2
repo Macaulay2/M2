@@ -152,28 +152,31 @@ incIndentLevel JSONEncoder := e -> e.IndentLevel = e.IndentLevel + 1
 decIndentLevel = method()
 decIndentLevel JSONEncoder := e -> e.IndentLevel = e.IndentLevel - 1
 
+demarkValues = method()
+demarkValues(JSONEncoder, Function) := (e, f) -> concatenate(
+    maybeNewline e,
+    (incIndentLevel e; indent e),
+    demark(e.ValueSeparator | maybeNewline e | indent e, f()),
+    maybeNewline e,
+    (decIndentLevel e; indent e))
+
 toJSON(JSONEncoder, VisibleList):= o -> (e, L) -> (
-    concatenate("[",
-	maybeNewline e,
-	(incIndentLevel e; indent e),
-	demark(e.ValueSeparator | maybeNewline e | indent e,
-	    apply(L, x -> toJSON(e, x))),
-	maybeNewline e,
-	(decIndentLevel e; indent e),
-	"]"))
+    if #L > 0 then concatenate(
+	"[",
+	demarkValues(e, () -> apply(L, x -> toJSON(e, x))),
+	"]")
+    else "[]")
 
 toJSON(JSONEncoder, HashTable) := o -> (e, H) -> (
-    concatenate("{",
-	maybeNewline e,
-	(incIndentLevel e; indent e),
-	demark(e.ValueSeparator | maybeNewline e | indent e,
-	    (if e.Sort then sort else identity) apply(keys H, k -> concatenate(
+    if #H > 0 then concatenate(
+	"{",
+	demarkValues(e, () -> (if e.Sort then sort else identity) apply(
+		keys H, k -> concatenate(
 		    toJSON(e, toString k),
 		    e.NameSeparator,
 		    toJSON(e, H#k)))),
-	maybeNewline e,
-	(decIndentLevel e; indent e),
-	"}"))
+	"}")
+    else "{}")
 
 beginDocumentation()
 

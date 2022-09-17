@@ -47,6 +47,11 @@ assert Equation(toJSON({1, 2, 3, {4, 5}}, Indent => "  "), ///[
   ]
 ]///)
 
+assert Equation(toJSON({}, Indent => 2), "[]")
+assert Equation(toJSON({{}}, Indent => 2), ///[
+  []
+]///)
+
 -- objects
 assert Equation(toJSON(hashTable{"a" => 1, "b" => 2, "c" => 3}, Sort => true),
     "{\"a\": 1, \"b\": 2, \"c\": 3}")
