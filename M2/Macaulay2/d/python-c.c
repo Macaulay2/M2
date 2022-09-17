@@ -162,10 +162,6 @@ PyObject *python_UnicodeFromString(char *u) {
 	return PyUnicode_FromString(u);
 }
 
-PyObject *python_UnicodeConcat(PyObject *o1, PyObject *o2) {
-	return PyUnicode_Concat(o1, o2);
-}
-
 /**********
  * tuples *
  **********/

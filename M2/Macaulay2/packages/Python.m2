@@ -59,7 +59,6 @@ importFrom_Core {
     "pythonTupleNew",
     "pythonTupleSetItem",
     "pythonUnicodeAsUTF8",
-    "pythonUnicodeConcat",
     "pythonUnicodeFromString"
 }
 
@@ -225,6 +224,7 @@ scan({
 	(symbol +, "add"),
 	(symbol -, "sub"),
 	(symbol *, "mul"),
+	(symbol @, "matmul"),
 	(symbol /, "truediv"),
 	(symbol //, "floordiv"),
 	(symbol %, "mod"),
@@ -254,6 +254,8 @@ scan({
 
 -PythonObject := o -> o@@"__neg__"()
 +PythonObject := o -> o@@"__pos__"()
+abs PythonObject := o -> o@@"__abs__"()
+PythonObject~ := o -> o@@"__invert__"()
 
 PythonObject Thing := (o, x) -> (toFunction o) x
 
@@ -286,6 +288,35 @@ setattr = method()
 setattr(PythonObject, String, Thing) := (x, y, e) ->
     pythonObjectSetAttrString(x, y, toPython e)
 PythonObject @@ Thing = (x, y, e) -> setattr(x, toString y, e)
+
+member(Thing,        PythonObject) := (x, y) -> false
+member(PythonObject, PythonObject) := (x, y) -> value y@@"__contains__" x
+
+quotientRemainder(PythonObject, PythonObject) := (x, y) -> (
+    qr := x@@"__divmod__" y;
+    (qr_0, qr_1))
+quotientRemainder(PythonObject, Thing) := (x, y
+    ) -> quotientRemainder(x, toPython y)
+quotientRemainder(Thing, PythonObject) := (x, y
+    ) -> quotientRemainder(toPython x, y)
+
+round(PythonObject, PythonObject) := (n, x) -> x@@"__round__" n
+round(ZZ, PythonObject) := (n, x) -> round(toPython n, x)
+round PythonObject := x -> round(pythonNone, x)
+truncate PythonObject := {} >> o -> x -> x@@"__trunc__"()
+
+-- __floor__ and __ceil__ were added for floats in Python 3.9
+-- (https://bugs.python.org/issue38629), so we include backup definitions
+-- for older versions
+if hasattr(pythonFloatFromDouble 1.0, "__floor__") then (
+    floor PythonObject := x -> x@@"__floor__"();
+    ceiling PythonObject := x -> x@@"__ceil__"()
+    ) else (
+    math := import "math";
+    floor PythonObject := toFunction math@@"floor";
+    ceiling PythonObject := toFunction math@@"ceil")
+
+help#0 PythonObject := x -> toString x@@"__doc__"
 
 toPython = method(Dispatch => Thing)
 toPython RR := pythonFloatFromDouble
@@ -447,6 +478,14 @@ assert Equation(-x, -5)
 assert Equation(+x, 5)
 ///
 
+-- test @ (not part of default testsuite since it requires numpy)
+///
+np = import "numpy"
+v = np@@array {1, 2, 3}
+w = np@@array {4, 5, 6}
+assert Equation(v @ w, 32)
+///
+
 TEST ///
 -----------------------
 -- string operations --
@@ -482,6 +521,73 @@ rand = import "random"
 L = toPython {1, 2, 3}
 assert member(value rand@@choice L, {1, 2, 3})
 assert Equation(L + L, toPython {1, 2, 3, 1, 2, 3})
+///
+
+TEST ///
+-- issue #2590
+ChildPythonObject = new Type of PythonObject
+x = new ChildPythonObject from toPython 5
+y = new ChildPythonObject from toPython 10
+assert BinaryOperation(symbol <, x, y)
+assert hasattr(x, "__abs__")
+assert Equation(x@@"__abs__"(), 5)
+assert Equation(toString x, "5")
+assert Equation(value x, 5)
+math = new ChildPythonObject from import "math"
+math@@pi = 3.14159
+assert Equation(math@@pi, 3.14159)
+z = new ChildPythonObject from math@@pi
+assert Equation(value z, 3.14159)
+hello = new ChildPythonObject from toPython "Hello, world!"
+assert Equation(value hello, "Hello, world!")
+assert Equation(toPython (x, y, z), (5, 10, 3.14159))
+assert Equation(toPython {x, y, z}, {5, 10, 3.14159})
+assert Equation(toPython hashTable {x => y}, hashTable {x => y})
+///
+
+
+TEST ///
+-- built-in functions
+
+-- abs
+assert Equation(abs toPython(-3), 3)
+
+-- ~ (bitwise not)
+assert Equation((toPython 5)~, -6)
+
+-- __contains__
+assert member(toPython 3, toPython {1, 2, 3})
+assert not member(toPython 4, toPython {1, 2, 3})
+assert not member(3, toPython {1, 2, 3})
+
+-- divmod
+assert Equation(quotientRemainder(toPython 1234, toPython 456), (2, 322))
+assert Equation(quotientRemainder(toPython 1234, 456), (2, 322))
+assert Equation(quotientRemainder(1234, toPython 456), (2, 322))
+
+-- round
+e = (import "math")@@e
+assert Equation(round e, 3)
+assert Equation(round(3, e), 2.718)
+assert Equation(round toPython 2.5, 2)
+assert Equation(round toPython 3.5, 4)
+
+-- math.trunc
+assert Equation(truncate e, 2)
+assert Equation(truncate(-e), -2)
+
+-- math.floor
+assert Equation(floor e, 2)
+assert Equation(floor(-e), -3)
+
+-- mail.ceil
+assert Equation(ceiling e, 3)
+assert Equation(ceiling(-e), -2)
+
+-- help
+x = help (import "math")@@cos
+assert instance(x, String)
+assert match("cosine", x)
 ///
 
 end --------------------------------------------------------

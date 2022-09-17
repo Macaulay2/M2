@@ -36,7 +36,11 @@ setupfun("pythonMain",PyMain);
 -------------
 
 import ObjectType(o:pythonObject):pythonObjectOrNull;
-PyObjectType(e:Expr):Expr := when e is o:pythonObjectCell do toExpr(ObjectType(o.v)) else WrongArgPythonObject();
+PyObjectType(e:Expr):Expr := (
+    when e
+    is o:pythonObjectCell do toExpr(ObjectType(o.v))
+    is s:SpecialExpr do PyObjectType(s.e)
+    else WrongArgPythonObject());
 setupfun("objectType",PyObjectType);
 
 import ObjectRichCompareBool(o1:pythonObject,o2:pythonObject,opid:int):int;
@@ -51,7 +55,9 @@ PyObjectRichCompareBool(e1:Expr,e2:Expr,e3:Expr):Expr :=
 		if r == -1 then buildPythonErrorPacket()
 		else toExpr(r == 1))
 	    else WrongArgZZ(3)
+	is s:SpecialExpr do PyObjectRichCompareBool(e1, s.e, e3)
 	else WrongArgPythonObject(2)
+    is s:SpecialExpr do PyObjectRichCompareBool(s.e, e2, e3)
     else WrongArgPythonObject(1);
 PyObjectRichCompareBool(e:Expr):Expr :=
     when e
@@ -69,6 +75,7 @@ PyObjectHasAttrString(lhs:Expr,rhs:Expr):Expr :=
 	is y:stringCell do
 	    toExpr(ObjectHasAttrString(x.v, tocharstar(y.v)) == 1)
 	else WrongArgString(2)
+    is s:SpecialExpr do PyObjectHasAttrString(s.e, rhs)
     else WrongArgPythonObject(1);
 PyObjectHasAttrString(e:Expr):Expr :=
     when e
@@ -85,6 +92,7 @@ PyObjectGetAttrString(lhs:Expr,rhs:Expr):Expr :=
 	when rhs
 	is y:stringCell do toExpr(ObjectGetAttrString(x.v, tocharstar(y.v)))
 	else WrongArgString(2)
+    is s:SpecialExpr do PyObjectGetAttrString(s.e, rhs)
     else WrongArgPythonObject(1);
 PyObjectGetAttrString(e:Expr):Expr :=
     when e
@@ -105,8 +113,10 @@ PyObjectSetAttrString(e1:Expr,e2:Expr,e3:Expr):Expr :=
 		if ObjectSetAttrString(x.v, tocharstar(y.v), z.v) == -1 then
 		    buildPythonErrorPacket()
 		else nullE)
+	    is s:SpecialExpr do PyObjectSetAttrString(e1, e2, s.e)
 	    else WrongArgPythonObject(3)
 	else WrongArgString(2)
+    is s:SpecialExpr do PyObjectSetAttrString(s.e, e2, e3)
     else WrongArgPythonObject(1);
 PyObjectSetAttrString(e:Expr):Expr :=
     when e
@@ -120,6 +130,7 @@ import ObjectStr(o:pythonObject):pythonObjectOrNull;
 PyObjectStr(e:Expr):Expr :=
     when e
     is x:pythonObjectCell do toExpr(ObjectStr(x.v))
+    is s:SpecialExpr do PyObjectStr(s.e)
     else WrongArgPythonObject();
 setupfun("pythonObjectStr",PyObjectStr);
 
@@ -148,6 +159,7 @@ PyLongAsLong(e:Expr):Expr :=
 	y := LongAsLong(x.v);
 	if ErrOccurred() == 1 then buildPythonErrorPacket()
 	else toExpr(y))
+    is s:SpecialExpr do PyLongAsLong(s.e)
     else WrongArgPythonObject();
 setupfun("pythonLongAsLong",PyLongAsLong);
 
@@ -169,6 +181,7 @@ PyFloatAsDouble(e:Expr):Expr :=
 	y := FloatAsDouble(x.v);
 	if ErrOccurred() == 1 then buildPythonErrorPacket()
 	else toExpr(y))
+    is s:SpecialExpr do PyFloatAsDouble(s.e)
     else WrongArgPythonObject();
 setupfun("pythonFloatAsDouble",PyFloatAsDouble);
 
@@ -207,6 +220,7 @@ import UnicodeAsUTF8(o:pythonObject):constcharstar;
 PyUnicodeAsUTF8(e:Expr):Expr :=
     when e
     is x:pythonObjectCell do toExpr(UnicodeAsUTF8(x.v))
+    is s:SpecialExpr do PyUnicodeAsUTF8(s.e)
     else WrongArgPythonObject();
 setupfun("pythonUnicodeAsUTF8",PyUnicodeAsUTF8);
 
@@ -216,22 +230,6 @@ PyUnicodeFromString(e:Expr):Expr :=
     is x:stringCell do toExpr(UnicodeFromString(tocharstar(x.v)))
     else WrongArgString();
 setupfun("pythonUnicodeFromString",PyUnicodeFromString);
-
-import UnicodeConcat(o1:pythonObject,o2:pythonObject):pythonObjectOrNull;
-PyUnicodeConcat(lhs:Expr,rhs:Expr):Expr :=
-    when lhs
-    is x:pythonObjectCell do
-	when rhs
-	is y:pythonObjectCell do toExpr(UnicodeConcat(x.v, y.v))
-	else WrongArgPythonObject(2)
-    else WrongArgPythonObject(1);
-PyUnicodeConcat(e:Expr):Expr :=
-    when e
-    is a:Sequence do
-	if length(a) == 2 then PyUnicodeConcat(a.0, a.1)
-	else WrongNumArgs(2)
-    else WrongNumArgs(2);
-setupfun("pythonUnicodeConcat",PyUnicodeConcat);
 
 ------------
 -- tuples --
@@ -255,6 +253,7 @@ PyTupleSetItem(e1:Expr,e2:Expr,e3:Expr):Expr :=
 		if TupleSetItem(x.v, toInt(y), z.v) == -1 then
 		    buildPythonErrorPacket()
 		else nullE)
+	    is s:SpecialExpr do PyTupleSetItem(e1, e2, s.e)
 	    else WrongArgPythonObject(3)
 	else WrongArgZZ(2)
     else WrongArgPythonObject(1);
@@ -288,6 +287,7 @@ PyListSetItem(e1:Expr,e2:Expr,e3:Expr):Expr :=
 		if ListSetItem(x.v, toInt(y), z.v) == -1 then
 		    buildPythonErrorPacket()
 		else nullE)
+	    is s:SpecialExpr do PyListSetItem(e1, e2, s.e)
 	    else WrongArgPythonObject(3)
 	else WrongArgZZ(2)
     else WrongArgPythonObject(1);
@@ -323,7 +323,9 @@ PyDictSetItem(e1:Expr,e2:Expr,e3:Expr):Expr :=
 		if DictSetItem(x.v, y.v, z.v) == -1 then
 		    buildPythonErrorPacket()
 		else nullE)
+	    is s:SpecialExpr do PyDictSetItem(e1, e2, s.e)
 	    else WrongArgPythonObject(3)
+	is s:SpecialExpr do PyDictSetItem(e1, s.e, e3)
 	else WrongArgPythonObject(2)
     else WrongArgPythonObject(1);
 PyDictSetItem(e:Expr):Expr :=
@@ -360,6 +362,7 @@ PyObjectCall(e1:Expr,e2:Expr,e3:Expr):Expr :=
 	    is z:pythonObjectCell do toExpr(ObjectCall(x.v, y.v, z.v))
 	    else WrongArgPythonObject(3)
 	else WrongArgPythonObject(2)
+    is s:SpecialExpr do PyObjectCall(s.e, e2, e3)
     else WrongArgPythonObject(1);
 PyObjectCall(e:Expr):Expr :=
     when e

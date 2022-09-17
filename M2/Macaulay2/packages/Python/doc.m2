@@ -29,6 +29,9 @@ doc ///
     (symbol *, PythonObject, PythonObject)
     (symbol *, PythonObject, Thing)
     (symbol *, Thing, PythonObject)
+    (symbol @, PythonObject, PythonObject)
+    (symbol @, PythonObject, Thing)
+    (symbol @, Thing, PythonObject)
     (symbol /, PythonObject, PythonObject)
     (symbol /, PythonObject, Thing)
     (symbol /, Thing, PythonObject)
@@ -110,6 +113,7 @@ doc ///
         LI {TT "-", " → ", TT "__sub__", " (binary), ",
 	    TT "__neg__", " (unary)"},
         LI {TT "*", " → ", TT "__mul__"},
+	LI {TT "@", " → ", TT "__matmul__"},
         LI {TT "/", " → ", TT "__truediv__"},
         LI {TT "//", " → ", TT "__floordiv__"},
         LI {TT "%", " → ", TT "__mod__"},
@@ -356,6 +360,43 @@ doc ///
       function will be called with the Macaulay2 object as its argument.
     Example
       math@@cos pi
+///
+
+doc ///
+  Key
+    (abs, PythonObject)
+  Headline
+    absolute value of a python object
+  Usage
+    abs x
+  Inputs
+    x:PythonObject
+  Outputs
+    :PythonObject -- the absolute value of @TT "x"@
+  Description
+    Text
+      This is equivalent to the Python @HREF {
+      "https://docs.python.org/3/library/functions.html#abs", "abs"}@ function.
+    Example
+      abs toPython(-12)
+///
+
+doc ///
+  Key
+    (symbol ~, PythonObject)
+  Headline
+    bitwise not of a python object
+  Usage
+    x~
+  Inputs
+    x:PythonObject
+  Outputs
+    :PythonObject -- the bitwise not of @TT "x"@
+  Description
+    Text
+      This calls Python's special @TT "__invert__"@ method.
+    Example
+      (toPython 5)~
 ///
 
 doc ///
@@ -625,4 +666,171 @@ doc ///
     Example
       objectType pythonValue "2"
       objectType pythonValue "'Hello, world!'"
+///
+
+doc ///
+  Key
+    (member, Thing, PythonObject)
+    (member, PythonObject, PythonObject)
+  Headline
+    test membership in a python object
+  Usage
+    member(e, x)
+  Inputs
+    e:Thing
+    x:PythonObject
+  Outputs
+    :Boolean -- whether @TT "e"@ is in @TT "x"@
+  Description
+    Text
+      This calls Python's @TT "__contains__"@ method, which is equivalent
+      to using the Python @TT "in"@ keyword.
+    Example
+      member(toPython 3, toPython {1, 2, 3})
+      member(toPython 4, toPython {1, 2, 3})
+    Text
+      Note that testing a non-Python object for membership will always return
+      @TT "false"@.
+    Example
+      member(3, toPython {1, 2, 3})
+///
+
+doc ///
+  Key
+    (quotientRemainder, PythonObject, PythonObject)
+    (quotientRemainder, PythonObject, Thing)
+    (quotientRemainder, Thing, PythonObject)
+  Headline
+    quotient and remainder of python objects
+  Usage
+    quotientRemainder(x, y)
+  Inputs
+    x:PythonObject
+    y:PythonObject
+  Outputs
+    :Sequence -- a pair of two python objects
+  Description
+    Text
+      The quotient and remainder when @TT "x"@ is divided by @TT "y"@.  This
+      calls Python's built-in @TT "divmod"@ function.
+    Example
+      quotientRemainder(toPython 37, toPython 5)
+      class \ oo
+    Text
+      If just one of the arguments is a python object, then the other is
+      converted to a python object using @TO "toPython"@.
+    Example
+      quotientRemainder(toPython 37, 5)
+      class \ oo
+///
+
+doc ///
+  Key
+    (round, ZZ, PythonObject)
+    (round, PythonObject, PythonObject)
+    (round, PythonObject)
+  Headline
+    round a python object
+  Usage
+    round(n, x)
+    round x
+  Inputs
+    n:ZZ
+    x:PythonObject
+  Outputs
+    :PythonObject
+  Description
+    Text
+      This calls Python's built-in @TT "round"@ function, which round @TT "x"@
+      to @TT "n"@ decimal places, or to the nearest integer if @TT "n"@ is not
+      given.
+    Example
+      x = (import "math")@@pi
+      round x
+      round(3, x)
+    Text
+      Ties are broken by @EM "round half to even"@.
+    Example
+      round toPython 2.5
+      round toPython 3.5
+///
+
+doc ///
+  Key
+    (truncate, PythonObject)
+  Headline
+    truncate a python object
+  Usage
+    truncate x
+  Inputs
+    x:PythonObject
+  Outputs
+    :PythonObject
+  Description
+    Text
+      This calls Python's built-in @TT "math.trunc"@ function, which rounds
+      toward zero.
+    Example
+      truncate toPython 5.8
+      truncate toPython(-5.8)
+///
+doc ///
+  Key
+    (floor, PythonObject)
+  Headline
+    floor of a python object
+  Usage
+    floor x
+  Inputs
+    x:PythonObject
+  Outputs
+    :PythonObject
+  Description
+    Text
+      This calls Python's built-in @TT "math.floor"@ function, which rounds
+      toward negative infinity.
+    Example
+      floor toPython 5.8
+      floor toPython(-5.8)
+///
+
+doc ///
+  Key
+    (ceiling, PythonObject)
+  Headline
+    ceiling of a python object
+  Usage
+    ceiling x
+  Inputs
+    x:PythonObject
+  Outputs
+    :PythonObject
+  Description
+    Text
+      This calls Python's built-in @TT "math.ceil"@ function, which rounds
+      toward positive infinity.
+    Example
+      ceiling toPython 5.8
+      ceiling toPython(-5.8)
+///
+
+doc ///
+  Key
+    (help#0, PythonObject)
+  Headline
+    documentation for python object
+  Usage
+    help x
+  Inputs
+    x:PythonObject
+  Outputs
+    :String
+  Description
+    Text
+      This calls Python's built-in @TT "help"@ function, which provides
+      documentation for Python objects.
+    Example
+      math = import "math"
+      help math
+      help math@@sin
 ///
