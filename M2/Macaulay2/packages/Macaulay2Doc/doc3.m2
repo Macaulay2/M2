@@ -481,7 +481,7 @@ document { Key => "printingTrailLimit",
 	  "n" => ZZ
 	  },
      Consequences => {
-	  {"Real numbers are printed with at most ", TT "n", " additional trailing digist, in addition to those specified by ", TT "printingPrecision", "."}
+	  {"Real numbers are printed with at most ", TT "n", " additional trailing digits, in addition to those specified by ", TT "printingPrecision", "."}
 	  },
      EXAMPLE lines ///
      	  3000000000000.

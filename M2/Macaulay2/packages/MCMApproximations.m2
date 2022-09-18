@@ -216,7 +216,7 @@ setupModules = method()
 setupModules(List,Module) := (R,M)->(
     --R_i is a ci of codim i in a ring S
     --returns (MM,kk,p) where
-    --MM,kk are lists whose i-compoents are the module M and residue field k, but over R_i
+    --MM,kk are lists whose i-components are the module M and residue field k, but over R_i
     --p_i_j is the projection from R_j to R_i (c >= i >= j >= 0)
     --M is a a module over R_c.
     c := length R-1;
@@ -729,7 +729,7 @@ doc ///
 ///
     --R_i is a ci of codim i in a ring S
     --returns (MM,kk,p) where
-    --MM,kk are lists whose i-compoents are the module M and residue field k, but over R_i
+    --MM,kk are lists whose i-components are the module M and residue field k, but over R_i
     --p_i_j is the projection from R_j to R_i (c >= i >= j >= 0)
 
 doc ///

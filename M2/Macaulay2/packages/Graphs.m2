@@ -3437,9 +3437,9 @@ doc ///
     Description
         Text
             The descendants of a directed graph are all the vertexSet u of D such that u is reachable from v.
-            Another way to more intuitively see what the descendants are is to see the descandants of a vertex v
+            Another way to more intuitively see what the descendants are is to see the descendants of a vertex v
             can be found by first taking the children of v. Then if you take the children of each of the
-            children, and continue the process until the list stops growing, this will form all the descandants of v.
+            children, and continue the process until the list stops growing, this will form all the descendants of v.
         Example
             D = digraph({a,b,c,d,e},{{a,b},{b,c},{b,d},{e,b}});
             descendants (D, a)
@@ -3689,7 +3689,7 @@ doc ///
             a set of all the forefathers of v in D
     Description
         Text
-            The forefathers of a vertex v in a digraph D are all the vertexSet u in D such that v is reachable from u. Another way to more intuitively see what the forefathers are is to see the forefathers of a vertex v can be found by first taking the parents of v. Then if you find the parents of each of the parents of v, and continue the process until the list stops growing, this will form all the descandants of v.
+            The forefathers of a vertex v in a digraph D are all the vertexSet u in D such that v is reachable from u. Another way to more intuitively see what the forefathers are is to see the forefathers of a vertex v can be found by first taking the parents of v. Then if you find the parents of each of the parents of v, and continue the process until the list stops growing, this will form all the descendants of v.
         Example
             D = digraph({a,b,c,d,e},{{a,b},{b,c},{b,d},{e,b}});
             forefathers (D, d)

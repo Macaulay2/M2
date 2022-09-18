@@ -3958,7 +3958,7 @@ doc ///
 	 for ideals in both commutative and noncommutative polynomial 
 	 rings with coefficients in Q or Z/p. Bergman was created by 
 	 J. Backelin (U. of Stockholm) and its capabilities were extended 
-	 by V. Ufnarovski, S. Cojacaru, and A. Podoplelov.
+	 by V. Ufnarovski, S. Cojocaru, and A. Podoplelov.
       Text
          Though Bergman is limited in terms of the coefficients it can 
 	 handle and the choice of orderings it offers, it is a very 

@@ -298,7 +298,7 @@ moveCheckers Array := blackred -> (
 ---------------
 -- this function displays some information about
 -- the type of moves that are performed in each
--- checkerboard game. These are the redcheker moves
+-- checkerboard game. These are the redchecker moves
 -- encoded in the 9x9 table in the paper, where we
 -- denote them by a triplet {i,j,k} where i is the
 -- row (0,1, or 2), j is the column (0,1,2) and
@@ -534,7 +534,7 @@ load "NumericalSchubertCalculus/LR-resolveNode.m2"
 solveSchubertProblem = method(Options=>{LinearAlgebra=>true})
 solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
     -- SchPblm is a list of sequences with two entries  a condition and a flag
-    -- Check that it does indeed form a Schubert problem, and convert the consitions to partitions (if they were brackes)
+    -- Check that it does indeed form a Schubert problem, and convert the conditions to partitions (if they were brackets)
     SchPblm = ensurePartitions(SchPblm,k,n);
 
     twoconds := take(SchPblm,2);
@@ -843,7 +843,7 @@ redCheckersColumnReduce2(Matrix, MutableHashTable) := (X'', father) -> (
 --    	      	    assumes the matrix lives in the Schubert cell for l with
 --                  the standard flag, but not all pivots are 1.
 --    	      b -- the bracket corresponding to the standard flag
---    	      	    this is just a list of the parts of the flag that are afected by a partition lambda
+--    	      	    this is just a list of the parts of the flag that are affected by a partition lambda
 --    	      	    (equivalent to a partition with k parts of size <= n-k)
 --            (the default bracket is  
 -- output:  Sred  --matrix reduced

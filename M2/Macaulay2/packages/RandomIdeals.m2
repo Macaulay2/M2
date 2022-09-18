@@ -752,7 +752,7 @@ doc ///
 	      the degree of the smallest ideal
      Outputs
           L:List
-	      list of Stanley-Riesner ideals of the simplicial comlexes of the truncations of the shelling.
+	      list of Stanley-Riesner ideals of the simplicial complexes of the truncations of the shelling.
      Description
      	  Text  
           Example

@@ -2417,7 +2417,7 @@ Description
   module Ext_R(M,k). TateResolution returns 
   a specified part of the Tate resolution of a 
   maximal Cohen-Macaulay module M
-  first calling the routine cosysyzy.
+  first calling the routine cosyzygy.
   
   The routines moduleAsExt and hfModuleAsExt give
   partial converse constructions (following Avramov-Jorgensen)
