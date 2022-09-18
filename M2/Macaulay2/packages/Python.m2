@@ -576,6 +576,14 @@ assert instance(x, String)
 assert match("cosine", x)
 ///
 
+TEST ///
+-- large integers
+assert Equation(toPython 10^100, pythonValue "10**100")
+assert Equation(toPython(-10^100), pythonValue "-10**100")
+assert Equation(value pythonValue "10**100", 10^100)
+assert Equation(value pythonValue "-10**100", -10^100)
+///
+
 end --------------------------------------------------------
 
 
