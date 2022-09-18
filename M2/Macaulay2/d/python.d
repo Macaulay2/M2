@@ -152,12 +152,18 @@ setupconst("pythonFalse", toExpr(Ccode(pythonObjectOrNull, "Py_False")));
 -- ints --
 ----------
 
+import LongAsZZ(z:ZZmutable, x:pythonObject):ZZmutable;
 PyLongAsLong(e:Expr):Expr :=
     when e
     is x:pythonObjectCell do (
-	y := Ccode(long, "PyLong_AsLong(", x.v, ")");
+	overflow := 0;
+	y := Ccode(long,
+	    "PyLong_AsLongAndOverflow(", x.v, ", &", overflow, ")");
 	if ErrOccurred() == 1 then buildPythonErrorPacket()
-	else toExpr(y))
+	else if overflow == 0 then toExpr(y)
+	else (
+	    z := newZZmutable();
+	    toExpr(moveToZZandclear(LongAsZZ(z, x.v)))))
     is s:SpecialExpr do PyLongAsLong(s.e)
     else WrongArgPythonObject();
 setupfun("pythonLongAsLong",PyLongAsLong);

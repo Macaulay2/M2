@@ -95,6 +95,46 @@ void python_initspam() {
  * Copyright 2008-2022 Case Van Horsen
  * LGPL-3.0+ */
 
+mpz_ptr python_LongAsZZ(mpz_ptr z, PyObject *obj)
+{
+  int negative;
+  Py_ssize_t len;
+  PyLongObject *templong;
+
+  templong = (PyLongObject *)obj;
+
+  switch (Py_SIZE(templong)) {
+  case -1:
+    mpz_set_si(z, -(sdigit)templong->ob_digit[0]);
+    break;
+  case 0:
+    mpz_set_si(z, 0);
+    break;
+  case 1:
+    mpz_set_si(z, templong->ob_digit[0]);
+    break;
+  default:
+    mpz_set_si(z, 0);
+
+    if (Py_SIZE(templong) < 0) {
+      len = -Py_SIZE(templong);
+      negative = 1;
+    } else {
+      len = Py_SIZE(templong);
+      negative = 0;
+    }
+
+    mpz_import(z, len, -1, sizeof(templong->ob_digit[0]), 0,
+	       sizeof(templong->ob_digit[0])*8 - PyLong_SHIFT,
+	       templong->ob_digit);
+
+    if (negative)
+      mpz_neg(z, z);
+  }
+
+  return z;
+}
+
 PyObject *python_LongFromZZ(mpz_srcptr z)
 {
   int negative;
