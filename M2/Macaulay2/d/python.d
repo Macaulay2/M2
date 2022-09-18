@@ -162,10 +162,15 @@ PyLongAsLong(e:Expr):Expr :=
     else WrongArgPythonObject();
 setupfun("pythonLongAsLong",PyLongAsLong);
 
+import LongFromZZ(x:ZZ):pythonObjectOrNull;
 PyLongFromLong(e:Expr):Expr :=
     when e
-    is x:ZZcell do toExpr(Ccode(pythonObjectOrNull,
-	    "PyLong_FromLong(", toLong(x), ")"))
+    is x:ZZcell do (
+	if isLong(x) then toExpr(Ccode(pythonObjectOrNull,
+		"PyLong_FromLong(", toLong(x), ")"))
+	else if isULong(x) then toExpr(Ccode(pythonObjectOrNull,
+		"PyLong_FromUnsignedLong(", toULong(x), ")"))
+	else toExpr(LongFromZZ(x.v)))
     else WrongArgPythonObject();
 setupfun("pythonLongFromLong",PyLongFromLong);
 

@@ -1,6 +1,8 @@
 #include <Python.h>
 #include "python-exports.h"
 
+#include <gmp.h>
+
 int python_RunSimpleString(M2_string s) {
   char *t = M2_tocharstar(s);
   int ret = PyRun_SimpleString(t);
@@ -81,6 +83,58 @@ void python_initspam() {
   SpamError = PyErr_NewException(name, NULL, NULL);
   Py_INCREF(SpamError);
   PyModule_AddObject(m, "error", SpamError);
+}
+
+/********
+ * ints *
+ ********/
+
+/* GMP <-> Python integer conversion routines from gmpy2
+ * https://github.com/aleaxit/gmpy
+ * Copyright 2000-2009 Alex Martelli
+ * Copyright 2008-2022 Case Van Horsen
+ * LGPL-3.0+ */
+
+PyObject *python_LongFromZZ(mpz_srcptr z)
+{
+  int negative;
+  size_t count, size;
+  PyLongObject *result;
+
+  if (mpz_sgn(z) < 0)
+    negative = 1;
+  else
+    negative = 0;
+
+  size = (mpz_sizeinbase(z, 2) + PyLong_SHIFT + 1) / PyLong_SHIFT;
+  result = _PyLong_New(size);
+  if (!result)
+    return NULL;
+
+  mpz_export(result->ob_digit, &count, -1, sizeof(result->ob_digit[0]), 0,
+	     sizeof(result->ob_digit[0]) * 8 - PyLong_SHIFT, z);
+
+  if (count == 0)
+    result->ob_digit[0] = 0;
+
+  while ((size > 0) && (result->ob_digit[size - 1] == 0))
+    size--;
+
+#if PY_VERSION_HEX >= 0x030900A4
+  Py_SET_SIZE(result, size);
+#else
+  Py_SIZE(result) = size;
+#endif
+
+  if (negative) {
+#if PY_VERSION_HEX >= 0x030900A4
+    Py_SET_SIZE(result, - Py_SIZE(result));
+#else
+    Py_SIZE(result) = - Py_SIZE(result);
+#endif
+  }
+
+  return (PyObject*)result;
 }
 
 #if 0
