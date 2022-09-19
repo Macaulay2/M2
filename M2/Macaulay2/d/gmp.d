@@ -248,6 +248,7 @@ export moveToRRiandclear(z:RRimutable):RRi := (
      
 set(x:ZZmutable, y:ZZ   ) ::= Ccode( void, "mpz_set   (", x, ",", y, ")" );
 set(x:ZZmutable, n:int  ) ::= Ccode( void, "mpz_set_si(", x, ",", n, ")" );
+set(x:ZZmutable, n:uint ) ::= Ccode( void, "mpz_set_ui(", x, ",", n, ")" );
 set(x:ZZmutable, n:long ) ::= Ccode( void, "mpz_set_si(", x, ",", n, ")" );
 set(x:ZZmutable, n:ulong) ::= Ccode( void, "mpz_set_ui(", x, ",", n, ")" );
 
@@ -261,6 +262,13 @@ smallints := (
 
 export toInteger(i:int):ZZ := (
      if i >= negsmall && i <= possmall then smallints.(i-negsmall)
+     else (
+	  x := newZZmutable();
+	  set(x,i);
+	  moveToZZandclear(x)));
+
+export toInteger(i:uint):ZZ := (
+     if i <= uint(possmall) then smallints.(int(i)-negsmall)
      else (
 	  x := newZZmutable();
 	  set(x,i);
