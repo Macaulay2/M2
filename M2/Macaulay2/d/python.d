@@ -244,35 +244,27 @@ setupfun("pythonUnicodeFromString",PyUnicodeFromString);
 -- tuples --
 ------------
 
-PyTupleNew(e:Expr):Expr :=
-    when e
-    is n:ZZcell do toExpr(Ccode(pythonObjectOrNull,
-	    "PyTuple_New(", toInt(n), ")"))
-    else WrongArgZZ();
-setupfun("pythonTupleNew",PyTupleNew);
+PyTupleSetItem(t:pythonObject, i:int, y:Expr):int := (
+    when y
+    is x:pythonObjectCell do Ccode(int,
+	"PyTuple_SetItem(", t, ", ", i, ", ", x.v, ")")
+    is x:SpecialExpr do PyTupleSetItem(t, i, x.e)
+    else -2);
 
-PyTupleSetItem(e1:Expr,e2:Expr,e3:Expr):Expr :=
-    when e1
-    is x:pythonObjectCell do
-	when e2
-	is y:ZZcell do
-	    when e3
-	    is z:pythonObjectCell do (
-		if Ccode(int, "PyTuple_SetItem(",
-		    x.v, ", ", toInt(y), ", ", z.v, ")") == -1
-		then buildPythonErrorPacket()
-		else nullE)
-	    is s:SpecialExpr do PyTupleSetItem(e1, e2, s.e)
-	    else WrongArgPythonObject(3)
-	else WrongArgZZ(2)
-    else WrongArgPythonObject(1);
-PyTupleSetItem(e:Expr):Expr :=
+PyTupleNew(e:Expr):Expr := (
     when e
-    is a:Sequence do
-	if length(a) == 3 then PyTupleSetItem(a.0, a.1, a.2)
-	else WrongNumArgs(3)
-    else WrongNumArgs(3);
-setupfun("pythonTupleSetItem",PyTupleSetItem);
+    is a:Sequence do (
+	n := length(a);
+	x := Ccode(pythonObjectOrNull, "PyTuple_New(", n, ")");
+	when x
+	is null do return buildPythonErrorPacket()
+	is t:pythonObject do foreach y at i in a do (
+	    r := PyTupleSetItem(t, i, y);
+	    if r == -1 then return buildPythonErrorPacket()
+	    else if r == -2 then return WrongArgPythonObject(i + 1));
+	toExpr(x))
+    else WrongArg("a sequence"));
+setupfun("pythonTupleNew", PyTupleNew);
 
 -----------
 -- lists --
