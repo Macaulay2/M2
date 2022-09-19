@@ -281,7 +281,7 @@ export  minusoneZZcell := ZZcell( minusoneZZ);
 export toInteger(i:ushort):ZZ := toInteger(int(i));
 
 export toInteger(i:ulong):ZZ := (
-     if i >= ulong(negsmall) && i <= ulong(possmall) then smallints.(int(i)-negsmall)
+     if i <= ulong(possmall) then smallints.(int(i)-negsmall)
      else (
 	  x := newZZmutable();
 	  set(x,i);
