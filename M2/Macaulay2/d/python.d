@@ -153,8 +153,10 @@ setupfun("initspam",runinitspam);
 -- bools -
 ----------
 
-setupconst("pythonTrue", toExpr(Ccode(pythonObjectOrNull, "Py_True")));
-setupconst("pythonFalse", toExpr(Ccode(pythonObjectOrNull, "Py_False")));
+setupconst("pythonTrue",
+    Expr(pythonObjectCell(Ccode(pythonObject, "Py_True"), 1)));
+setupconst("pythonFalse",
+    Expr(pythonObjectCell(Ccode(pythonObject, "Py_False"), 0)));
 
 ----------
 -- ints --
