@@ -18,7 +18,15 @@ buildPythonErrorPacket():Expr := (
     else nullE);
 
 pythonObjectOrNull := pythonObject or null;
-toExpr(r:pythonObjectOrNull):Expr := when r is null do buildPythonErrorPacket() is po:pythonObject do Expr(pythonObjectCell(po));
+toExpr(r:pythonObjectOrNull):Expr := (
+    when r
+    is null do buildPythonErrorPacket()
+    is po:pythonObject do (
+	h := int(Ccode(long, "PyObject_Hash(", po, ")"));
+	if h == -1 then ( -- unhashable object (e.g., a list)
+	    Ccode(void, "PyErr_Clear()");
+	    h = nextHash());
+	Expr(pythonObjectCell(po, h))));
 
 import RunSimpleString(s:string):int;
 PyRunSimpleString(e:Expr):Expr := (

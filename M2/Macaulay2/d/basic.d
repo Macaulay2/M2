@@ -3,13 +3,6 @@
 use expr;
 
 header "#include <engine.h>"; -- required for raw hash functions
-header "
-#ifdef WITH_PYTHON
-#  include <Python.h>
-#else
-#  define PyObject_Hash(o) 0
-#  define PyErr_Clear()    0
-#endif";
 
 export hash(e:Expr):int := (
      when e
@@ -70,12 +63,7 @@ export hash(e:Expr):int := (
      is x:CompiledFunction do x.hash
      is x:CompiledFunctionClosure do x.hash
      is f:CompiledFunctionBody do 12347
-     is po:pythonObjectCell do (
-	 h := int(Ccode(long, "PyObject_Hash(",po.v,")"));
-	 if h == -1 then ( -- unhashable object (e.g., a list)
-	     Ccode(void, "PyErr_Clear()");
-	     int(123455))
-	 else h)
+     is po:pythonObjectCell do po.hash
      is xmlNodeCell do int(123456)
      is xmlAttrCell do int(123457)
      is t:TaskCell do t.body.hash
