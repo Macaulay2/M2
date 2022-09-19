@@ -35,12 +35,12 @@ exportFrom_Core {
     "objectType"}
 
 importFrom_Core {
+    "getPythonNone",
     "pythonComplexFromDoubles",
     "pythonDictNew",
     "pythonDictSetItem",
     "pythonFalse",
     "pythonImportImportModule",
-    "pythonNone",
     "pythonListNew",
     "pythonListSetItem",
     "pythonLongAsLong",
@@ -87,6 +87,8 @@ PythonObject#{Standard,AfterPrint} = x -> (
      t = replace("<([a-z]+) '(.*)'>","of \\1 \\2",t);
      << concatenate(interpreterDepth:"o") << lineNumber << " : PythonObject " << t << endl;
      )
+
+pythonNone = getPythonNone()
 
 pythonValue = method(Dispatch => Thing)
 pythonValue String := s -> (

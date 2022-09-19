@@ -383,7 +383,8 @@ setupfun("pythonObjectCall",PyObjectCall);
 -- none --
 ----------
 
-setupconst("pythonNone", toExpr(Ccode(pythonObjectOrNull, "Py_None")));
+PyNone(e:Expr):Expr := toExpr(Ccode(pythonObjectOrNull, "Py_None"));
+setupfun("getPythonNone", PyNone);
 
 ---------------
 -- importing --
