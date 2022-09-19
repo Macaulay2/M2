@@ -302,6 +302,18 @@ export toInteger(i:long):ZZ := (
 	  set(x,i);
 	  moveToZZandclear(x)));
 
+-- ints are at least 16 bits, so cast 8- and 16-bit fixed-width ints to int
+export toInteger(i:int8_t  ):ZZ := toInteger(int(i));
+export toInteger(i:uint8_t ):ZZ := toInteger(uint(i));
+export toInteger(i:int16_t ):ZZ := toInteger(int(i));
+export toInteger(i:uint16_t):ZZ := toInteger(uint(i));
+-- longs are at least 32 bits, so cast 32-bit fixed-width ints to long
+export toInteger(i:int32_t ):ZZ := toInteger(long(i));
+export toInteger(i:uint32_t):ZZ := toInteger(ulong(i));
+-- TODO: on 32-bit systems, longs are only 32 bits, so this won't work
+export toInteger(i:int64_t ):ZZ := toInteger(long(i));
+export toInteger(i:uint64_t):ZZ := toInteger(ulong(i));
+
 neg(x:ZZmutable, y:ZZ) ::= Ccode( void, "mpz_neg(", x, ",", y, ")" );
 
 export - (x:ZZ) : ZZ := (
