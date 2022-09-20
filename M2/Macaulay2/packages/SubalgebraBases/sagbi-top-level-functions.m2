@@ -1,5 +1,6 @@
--- initializeCompTable: produces a compTable - a mutable version of a SAGBIBasis object, to be used for sagbi computation 
--- expect this function to be called at the beginning of sagbi computation
+-- initializeCompTable: produces a compTable
+--   a mutable version of a SAGBIBasis object, to be used for sagbi computation 
+-- This function should be called at the beginning of sagbi computation
 -- the options for the compTable are taken from SAGBIBasis except 
 --   if RenewOptions is true then only the specified options are used
 initializeCompTable = method();
@@ -19,10 +20,9 @@ initializeCompTable (SAGBIBasis, HashTable):= (S,opts) -> (
 	);
     
     data#"limit" = opts.Limit;
-    options#PrintLevel = opts.PrintLevel; -- allow the user to specify the print level
-    options#RenewOptions = false; -- reset RenewOptions since they are now set correctly
-    options#Recompute = false; -- at this point the correct SAGBIBasis must have been supplied so the option is reset
-    options#"variableName" = "p"; -- S#"options"#"variableName";
+    options#PrintLevel = opts.PrintLevel;
+    options#RenewOptions = false;
+    options#Recompute = false;
     apply(keys pending, i -> pending#i = new MutableList from pending#i);
 
     new HashTable from {
@@ -37,30 +37,38 @@ initializeCompTable (SAGBIBasis, HashTable):= (S,opts) -> (
 
 -- limitedCompTable: construct a small compTable with enough data for use in autoSubduction
 limitedCompTable = method();
-limitedCompTable (HashTable, Matrix) := (H,M) -> (
-    -- Construct the monoid of a ring with variables corresponding to generators of the ambient ring and the subalgebra.
+limitedCompTable (HashTable, Matrix) := (compTable,M) -> (
+    -- Construct the monoid of a ring with variables corresponding
+    --    to generators of the ambient ring and the subalgebra.
     -- Has an elimination order that eliminates the generators of the ambient ring.
     -- The degrees of generators are set so that the SyzygyIdeal is homogeneous.
-    numberVariables := numgens H#"rings"#"liftedRing";
+    numberVariables := numgens compTable#"rings"#"liftedRing";
     numberGenerators := numColumns M;
-    newMonomialOrder := append((monoid H#"rings"#"liftedRing").Options.MonomialOrder, Eliminate numberVariables);
+    newMonomialOrder := append((monoid compTable#"rings"#"liftedRing").Options.MonomialOrder,
+    		     Eliminate numberVariables);
     tensorVariables := monoid[
-        VariableBaseName => H#"options"#"variableName",
         Variables => numberVariables + numberGenerators,
-        Degrees => first entries (matrix{flatten degrees source vars H#"rings"#"liftedRing"}|matrix{flatten degrees source M}),
+        Degrees => first entries (matrix{
+		flatten degrees source vars compTable#"rings"#"liftedRing"}|
+		matrix{flatten degrees source M}),
         MonomialOrder => newMonomialOrder];
-    tensorRing := (coefficientRing H#"rings"#"liftedRing") tensorVariables;
+    tensorRing := (coefficientRing compTable#"rings"#"liftedRing") tensorVariables;
     rings := new MutableHashTable from {
-        "quotientRing" => H#"rings"#"quotientRing",
-        "liftedRing" => H#"rings"#"liftedRing",
+        "quotientRing" => compTable#"rings"#"quotientRing",
+        "liftedRing" => compTable#"rings"#"liftedRing",
         "tensorRing" => tensorRing
     };
 
     -- Maps:
-    inclusionLifted := map(rings#"tensorRing",rings#"liftedRing",(vars rings#"tensorRing")_{0..numberVariables-1});
-    substitution := map(rings#"tensorRing",rings#"tensorRing",(vars rings#"tensorRing")_{0..numberVariables-1} | inclusionLifted(M));
-    projectionLifted := map(rings#"liftedRing",rings#"tensorRing",vars rings#"liftedRing" | matrix {toList(numberGenerators:0_(rings#"liftedRing"))});
-    sagbiInclusion := map(rings#"tensorRing",rings#"tensorRing",matrix {toList (numberVariables:0_(rings#"tensorRing"))} | (vars rings#"tensorRing")_{numberVariables .. numberVariables + numberGenerators - 1});
+    inclusionLifted := map(rings#"tensorRing",rings#"liftedRing",
+    		    (vars rings#"tensorRing")_{0..numberVariables-1});
+    substitution := map(rings#"tensorRing",rings#"tensorRing",
+    		    (vars rings#"tensorRing")_{0..numberVariables-1} | inclusionLifted(M));
+    projectionLifted := map(rings#"liftedRing",rings#"tensorRing",
+    		    vars rings#"liftedRing" | matrix {toList(numberGenerators:0_(rings#"liftedRing"))});
+    sagbiInclusion := map(rings#"tensorRing",rings#"tensorRing",
+    		    matrix {toList (numberVariables:0_(rings#"tensorRing"))} |
+		    (vars rings#"tensorRing")_{numberVariables .. numberVariables + numberGenerators - 1});
 
     maps := new MutableHashTable from {
         "inclusionLifted" => inclusionLifted,
@@ -68,19 +76,19 @@ limitedCompTable (HashTable, Matrix) := (H,M) -> (
         "sagbiInclusion" => sagbiInclusion,
         "substitution" => substitution,
         "fullSubstitution" => projectionLifted * substitution,
-        "quotient" => H#"maps"#"quotient"
+        "quotient" => compTable#"maps"#"quotient"
     };
     
     -- Ideals:
     generatingVariables := (vars rings#"tensorRing")_{numberVariables..numberVariables + numberGenerators - 1};
     SIdeal := ideal(generatingVariables - maps#"inclusionLifted"(leadTerm M));
     ideals := new MutableHashTable from {
-        "I" => H#"ideals"#"I",
+        "I" => compTable#"ideals"#"I",
         "SIdeal" => SIdeal,
-        "leadTermsI" => H#"ideals"#"leadTermsI",
-        "reductionIdeal" => maps#"inclusionLifted" H#"ideals"#"leadTermsI" + SIdeal
+        "leadTermsI" => compTable#"ideals"#"leadTermsI",
+        "reductionIdeal" => maps#"inclusionLifted" compTable#"ideals"#"leadTermsI" + SIdeal
     };
-    options := new MutableHashTable from H#"options";
+    options := new MutableHashTable from compTable#"options";
     data := null;
     pending := null;
     new HashTable from {
@@ -95,41 +103,25 @@ limitedCompTable (HashTable, Matrix) := (H,M) -> (
 
 
 -- compSubduction is an internal (unexported) version of subduction for use in sagbi
--- the user-friendly version is subduction, defined below, which is exported
--- compSubduction takes a compTable and 1-row matrix M with entries in the quotientRing and subducts the elements of M against compTable
+-- the user-friendly version is subduction
+-- compSubduction takes a compTable and 1-row matrix M
+--     with entries in the quotientRing and subducts the elements of M against compTable
 
 compSubduction = method( 
     TypicalValue => HashTable,
     Options => {
 	AutoSubduce => true,
-        ReduceNewGenerators => true, -- applys gaussian elimination to sagbiGens before adding them
+        ReduceNewGenerators => true,
 	StorePending => true,
         Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
-        SubductionMethod => "Top", -- top or engine
+        SubductionMethod => "Top", -- Top or Engine
     	Limit => 100,
-	AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
+	AutoSubduceOnPartialCompletion => false,
     	PrintLevel => 0,
 	Recompute => false,
 	RenewOptions => false
     	}
 );
-
-subduction = method( 
-    TypicalValue => Matrix,
-    Options => { -- These options are only used when the user wants to use subduction for their own purposes
-	AutoSubduce => true,
-        ReduceNewGenerators => true, -- applys gaussian elimination to sagbiGens before adding them
-	StorePending => true,
-        Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
-        SubductionMethod => "Top", -- top or engine
-    	Limit => 100,
-	AutoSubduceOnPartialCompletion => false, -- applies autosubduction to the sagbiGens the first time no new terms are added
-    	PrintLevel => 0,
-	Recompute => false,
-	RenewOptions => false
-    	}
-);
-
 
 compSubduction(HashTable, MutableMatrix) := opts -> (compTable, M) -> (
     new MutableMatrix from compSubduction(compTable, matrix M)
@@ -137,7 +129,7 @@ compSubduction(HashTable, MutableMatrix) := opts -> (compTable, M) -> (
 
 compSubduction(HashTable, Matrix) := opts -> (compTable, M) -> (
     local result;
-    local g;
+    local liftedM;
     if compTable#"options"#PrintLevel > 3 then (    
 	print("-- subduction input:");
 	print(M);
@@ -145,33 +137,33 @@ compSubduction(HashTable, Matrix) := opts -> (compTable, M) -> (
     
     if zero(M) then return M;
     result = matrix {toList(numcols(M):0_(compTable#"rings"#"liftedRing"))};
-    g = matrix {
+    liftedM = matrix {
 	for m in first entries M list sub(m, compTable#"rings"#"liftedRing")
 	};
     local subductedPart;
     local leadTermSubductedPart;    
     if compTable#"options"#PrintLevel > 5 then(
-	print("-- [compSubduction] polys to subduct:");
-	print(transpose g);
+	print("-- [compSubduction] elements to subduct:");
+	print(transpose liftedM);
 	);
     
-    while not (zero(g)) do (
+    while not (zero(liftedM)) do (
 	if compTable#"options"#SubductionMethod == "Top" then (
-            subductedPart = subductionTopLevelLeadTerm(compTable, g);
+            subductedPart = subductionTopLevelLeadTerm(compTable, liftedM);
 	    ) else if compTable#"options"#SubductionMethod == "Engine" then (
-    	    subductedPart = subductionEngineLevelLeadTerm(compTable, g);
+    	    subductedPart = subductionEngineLevelLeadTerm(compTable, liftedM);
 	    ) else (
 	    error ("Unknown subduction type " | toString compTable#"options"#SubductionMethod); 
 	    );
 	leadTermSubductedPart = leadTerm subductedPart;
 	result = result + leadTermSubductedPart;
-	g = (subductedPart - leadTermSubductedPart) % compTable#"ideals"#"I";
+	liftedM = (subductedPart - leadTermSubductedPart) % compTable#"ideals"#"I";
 	
 	if compTable#"options"#PrintLevel > 5 then(
 	    print("-- [compSubduction] result so far:");
 	    print(transpose result);
 	    print("--[compSubduction] remaining to subduct:");
-	    print(transpose g);
+	    print(transpose liftedM);
 	    );
 	);
     result = result % compTable#"ideals"#"I";
@@ -183,22 +175,39 @@ compSubduction(HashTable, Matrix) := opts -> (compTable, M) -> (
     result
     )
 
--- the user-friendly subduction methods:
-subduction(SAGBIBasis, Matrix) := opts -> (SB, M) -> (
-    compTable := initializeCompTable(SB, opts);
+-- the user subduction methods:
+subduction = method( 
+    TypicalValue => Matrix,
+    Options => { -- These options are only used when the user wants to use subduction for their own purposes
+	AutoSubduce => true,
+        ReduceNewGenerators => true,
+	StorePending => true,
+        Strategy => "Master", -- Master (default), DegreeByDegree, Incremental
+        SubductionMethod => "Top", -- Top or Engine
+    	Limit => 100,
+	AutoSubduceOnPartialCompletion => false,
+    	PrintLevel => 0,
+	Recompute => false,
+	RenewOptions => false
+    	}
+);
+
+
+subduction(SAGBIBasis, Matrix) := opts -> (S, M) -> (
+    compTable := initializeCompTable(S, opts);
     compSubduction(opts, compTable, M)
     )
 
-subduction(SAGBIBasis, RingElement) := opts -> (SB, m) -> (
-    compTable := initializeCompTable(SB, opts);
+subduction(SAGBIBasis, RingElement) := opts -> (S, m) -> (
+    compTable := initializeCompTable(S, opts);
     first first entries compSubduction(opts, compTable, matrix {{m}})
     )
 
 subduction(Matrix, Matrix) := opts -> (F, M) -> (
-    SB := initializeCompTable(sagbiBasis(subring F, opts), opts);
-    SB#"data"#"sagbiGenerators" = F;
-    updateComputation(SB);
-    compSubduction(opts, SB, M)
+    S := initializeCompTable(sagbiBasis(subring F, opts), opts);
+    S#"data"#"sagbiGenerators" = F;
+    updateComputation(S);
+    compSubduction(opts, S, M)
     )
 
 subduction(Matrix, RingElement) := opts -> (F, m) -> (
@@ -441,7 +450,6 @@ updateComputationDegreeByDegree(HashTable) := (compTable) -> (
     numberGenerators := numColumns sagbiGens;
     newMonomialOrder := append((monoid liftedRing).Options.MonomialOrder, Eliminate numberVariables);    
     tensorVariables := monoid[
-        VariableBaseName => compTable#"options"#"variableName",
         Variables => numberVariables + numberGenerators,
         Degrees => degrees source vars liftedRing | degrees source sagbiGens,
         MonomialOrder => newMonomialOrder];
@@ -505,7 +513,6 @@ updateComputationIncremental(HashTable) := (compTable) -> (
     numberGenerators := numColumns sagbiGens;
     newMonomialOrder := append((monoid liftedRing).Options.MonomialOrder, Eliminate numberVariables);    
     tensorVariables := monoid[
-        VariableBaseName => compTable#"options"#"variableName",
         Variables => numberVariables + numberGenerators,
         Degrees => degrees source vars liftedRing | degrees source sagbiGens,
         MonomialOrder => newMonomialOrder];
