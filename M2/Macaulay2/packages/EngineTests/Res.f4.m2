@@ -548,7 +548,7 @@ TEST ///
   P1 = map(F,,P)
   isHomogeneous P1
   betti(res(coker P1, FastNonminimal => true), Minimize=>true)
-  res coker P1 -- this one looks wrong if one diesn't do the line before this? (MES: I don't see any issue here 3/2018)
+  res coker P1 -- this one looks wrong if one does not do the line before this? (MES: I don't see any issue here 3/2018)
   -- ?? is this a bug??
 ///
 

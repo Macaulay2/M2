@@ -756,7 +756,7 @@ hasFactor (RingElement,ZZ) := (f,n) -> (
      
 hasFactor (Ideal,ZZ) := (I,n) -> (
      -- check whether a homogeneous principal ideal I in two variables over finite ground field FF
-     -- is square-free and has a factor of degee n defined over FF. 
+     -- is square-free and has a factor of degree n defined over FF. 
      R := ring I;
      if not class R === PolynomialRing and dim R !=2 then error "expected a polynomial in P^1";
      cp := decompose I; -- decompose I in its irreducible factors

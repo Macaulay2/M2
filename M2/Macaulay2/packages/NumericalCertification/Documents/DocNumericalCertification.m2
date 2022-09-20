@@ -90,7 +90,7 @@ doc ///
 
 
 		Text
-		    	{\bf Regular Root Ceritification Methods:}
+		    	{\bf Regular Root Certification Methods:}
 
 			    $\bullet$ @TO "certifyRegularSolution"@
 
@@ -165,7 +165,7 @@ doc ///
 
 
 		Text
-		    	{\bf Multiple Root Ceritification Method:}
+		    	{\bf Multiple Root Certification Method:}
 
 			    $\bullet$ @TO "certifySingularSolution"@
 

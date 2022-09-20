@@ -1783,7 +1783,7 @@ doc ///
         Full
         Trinomial
     Headline
-        When changing coordinates, whether to replace variables by general degre 1 forms, binomials, etc.
+        When changing coordinates, whether to replace variables by general degree 1 forms, binomials, etc.
     Usage
         Replacement => Full
         Replacement => Monomial

@@ -1632,7 +1632,7 @@ doc///
 	    assert all (facets Γ, F -> member(F, faces(#support F - 1, Δ)))
 	Text
 	    As a special case, we can consider induced subcomplexes of the
-	    void and irrelevant comlexes.
+	    void and irrelevant complexes.
         Example
 	    void = simplicialComplex monomialIdeal(1_S);
 	    inducedSubcomplex(void, {})
@@ -4163,7 +4163,7 @@ doc ///
 	    Bf = barycentricSubdivision(f, S, R)
         Text
 	    In order to understand the data for $Bf$, we first look at the
-	    corresponce between the faces of $\Delta$, $\Gamma$, and the
+	    correspondence between the faces of $\Delta$, $\Gamma$, and the
 	    vertices of $B\Delta$, $B\Gamma$, respectively.
         Example
 	    ΔFaces = flatten for i to dim Δ + 1 list faces(i, Δ)

@@ -1697,7 +1697,7 @@ document {
 	  TableEntries => String => "proscribes the scaled versions of the entries of the pure diagram; options are LeastIntegerEntries, HerzogKuhl, and RealizationModules."
 	  },
      Outputs => {
-	  BettiTally => "containing the Betti numbers which satisfy the Herzog-Kuhl equations according to given options. Defults to the minimal integral Betti numberswhich satisfy the Herzog-Kuhl equations."
+	  BettiTally => "containing the Betti numbers which satisfy the Herzog-Kuhl equations according to given options. Defaults to the minimal integral Betti numbers which satisfy the Herzog-Kuhl equations."
 	  },
      "See ", TO "pureBetti", " for a description of the Herzog-Kuhl equations.",
      EXAMPLE lines ///

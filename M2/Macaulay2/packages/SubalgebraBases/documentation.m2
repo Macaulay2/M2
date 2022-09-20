@@ -1037,7 +1037,7 @@ doc ///
 	    sag := sagbi transpose translation;
 	    netList first entries gens sag
         Text
-    	    The above is precisely the 5 invariants Crook and Donelon give in equation (9), plus the additional 6th invariant.
+    	    The above is precisely the 5 invariants Crook and Donelan give in equation (9), plus the additional 6th invariant.
 	    
 	    The generators computed below verify Theorem 2 of Crook and Donelan, describing rotational invariants in the case where m=3.
         Example

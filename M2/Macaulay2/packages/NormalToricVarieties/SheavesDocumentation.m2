@@ -17,7 +17,7 @@ doc ///
   	    the pair $(S,B)$.
         Text	  
   	    @UL {
-    		{"The variety ", EM "X", " is a good categorial ",
+    		{"The variety ", EM "X", " is a good categorical ",
     		 "quotient of Spec(", EM "S", ") -  V(", EM "B",
 		 ") by a suitable group action."},
                 {"The category of coherent sheaves on ", EM "X", " is

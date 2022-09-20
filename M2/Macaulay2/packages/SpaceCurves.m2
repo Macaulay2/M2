@@ -1328,7 +1328,7 @@ document {
     Headline => "produces a random determinantal ideal",
     {
     	"Given a ring and a degree matrix, we produce a random determinantal ideal
-	with forms in prescribed dergee. Forms of non-positive degrees are taken as
+	with forms in prescribed degree. Forms of non-positive degrees are taken as
 	0 to ensure minimality of presentation."	
     },
     Usage => "I = randomDeterminantalIdeal(R,M)",

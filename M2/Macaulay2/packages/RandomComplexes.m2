@@ -438,11 +438,11 @@ doc ///
        the number of subintervals to be considered.  
    Outputs
      h:List
-       of n integers, the number of entries in the L in i-th equidistant
+       of n integers, the number of entries in L in i-th equidistant
        subdivision of the interval from min L to max L
    Description
     Text
-       We combute h_i th number to elements in the i-th equidistant subdivision
+       We compute h_i the number to elements in the i-th equidistant subdivision
        of the interval [min L, max L] into n parts 
     Example
        M=(randomChainComplex({20,20},{20},ZeroMean=>true)).dd_1;

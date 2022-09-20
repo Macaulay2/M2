@@ -173,7 +173,7 @@ raySort = rays -> rays _ (reverse sortColumns (- matrix {rays}))
 --  -Symmetry group for polytopes
 
 
--- Definind the new type PolyhedralObject
+-- Defining the new type PolyhedralObject
 PolyhedralObject = new Type of HashTable
 globalAssignment PolyhedralObject
 
@@ -3412,7 +3412,7 @@ statePolytope Ideal := I -> (
      -- Check if there exists a strictly positive grading such that 'I' is homogeneous with
      -- respect to this grading
      homogeneityCheck := I -> (
-	  -- Generate the matrix 'M' that spans the space of the differeneces of the 
+	  -- Generate the matrix 'M' that spans the space of the differences of the 
 	  -- exponent vectors of the generators of 'I'
 	  L := flatten entries gens I;
 	  lt := apply(L, leadTerm);
