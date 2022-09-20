@@ -221,17 +221,6 @@ sagbiBasis Subring := opts -> S -> (
     S.cache#"SAGBIBasis" = newSAGBIBasis
 )
 
-net SAGBIBasis := S -> (
-    local description;
-    if S#"data"#"sagbiDone" then (
-    	description = "SAGBIBasis Computation Object with "
-    ) else (
-    	description = "Partial SAGBIBasis Computation Object with "
-    );
-    description | toString(numcols S#"data"#"sagbiGenerators") |
-    		" generators, Limit = " | toString(S#"data"#"limit") | "."
-)
-
 sagbiBasis HashTable := opts -> H -> (
     rings := new HashTable from H#"rings";
     maps := new HashTable from H#"maps";
@@ -249,6 +238,17 @@ sagbiBasis HashTable := opts -> H -> (
     };
     
     newSAGBIBasis#"data"#"subring".cache#"SAGBIBasis" = newSAGBIBasis
+)
+
+net SAGBIBasis := S -> (
+    local description;
+    if S#"data"#"sagbiDone" then (
+    	description = "SAGBIBasis Computation Object with "
+    ) else (
+    	description = "Partial SAGBIBasis Computation Object with "
+    );
+    description | toString(numcols S#"data"#"sagbiGenerators") |
+    		" generators, Limit = " | toString(S#"data"#"limit") | "."
 )
 
 -- gens(SAGBIBasis) returns the current list of sagbi generators.
