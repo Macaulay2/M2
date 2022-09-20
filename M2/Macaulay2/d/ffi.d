@@ -207,28 +207,34 @@ ffiIntegerAddress(e:Expr):Expr := (
 			bits := toInt(y);
 			ptr := getMemAtomic(bits / 8);
 			if signed.v then (
-			    n := toLong(x);
 			    if bits == 8
-			    then Ccode(void, "*(int8_t *)", ptr, " = ", n)
+			    then Ccode(void, "*(int8_t *)", ptr, " = ",
+				toInt(x))
 			    else if bits == 16
-			    then Ccode(void, "*(int16_t *)", ptr, " = ", n)
+			    then Ccode(void, "*(int16_t *)", ptr, " = ",
+				toInt(x))
 			    else if bits == 32
-			    then Ccode(void, "*(int32_t *)", ptr, " = ", n)
+			    then Ccode(void, "*(int32_t *)", ptr, " = ",
+				toLong(x))
 			    else if bits == 64
-			    then Ccode(void, "*(int64_t *)", ptr, " = ", n)
+			    then Ccode(void, "*(int64_t *)", ptr, " = ",
+				toInt64(x))
 			    else return buildErrorPacket(
 				"expected 8, 16, 32, or 64 bits");
 			    toExpr(ptr))
 			else (
-			    n := toULong(x);
 			    if bits == 8
-			    then Ccode(void, "*(uint8_t *)", ptr, " = ", n)
+			    then Ccode(void, "*(uint8_t *)", ptr, " = ",
+				toUInt(x))
 			    else if bits == 16
-			    then Ccode(void, "*(uint16_t *)", ptr, " = ", n)
+			    then Ccode(void, "*(uint16_t *)", ptr, " = ",
+				toUInt(x))
 			    else if bits == 32
-			    then Ccode(void, "*(uint32_t *)", ptr, " = ", n)
+			    then Ccode(void, "*(uint32_t *)", ptr, " = ",
+				toULong(x))
 			    else if bits == 64
-			    then Ccode(void, "*(uint64_t *)", ptr, " = ", n)
+			    then Ccode(void, "*(uint64_t *)", ptr, " = ",
+				toUInt64(x))
 			    else return buildErrorPacket(
 				"expected 8, 16, 32, or 64 bits");
 			    toExpr(ptr)))
