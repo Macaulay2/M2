@@ -310,9 +310,6 @@ export toInteger(i:uint16_t):ZZ := toInteger(uint(i));
 -- longs are at least 32 bits, so cast 32-bit fixed-width ints to long
 export toInteger(i:int32_t ):ZZ := toInteger(long(i));
 export toInteger(i:uint32_t):ZZ := toInteger(ulong(i));
--- TODO: on 32-bit systems, longs are only 32 bits, so this won't work
-export toInteger(i:int64_t ):ZZ := toInteger(long(i));
-export toInteger(i:uint64_t):ZZ := toInteger(ulong(i));
 
 neg(x:ZZmutable, y:ZZ) ::= Ccode( void, "mpz_neg(", x, ",", y, ")" );
 
@@ -320,6 +317,25 @@ export - (x:ZZ) : ZZ := (
      w := newZZmutable();
      neg(w,x);
      moveToZZandclear(w));
+
+export toInteger(i:int64_t):ZZ := (
+    if i >= int64_t(negsmall) && i <= int64_t(possmall) then (
+	smallints.(int(i) - negsmall))
+    else if Ccode(bool, "sizeof(long) >= 8") then toInteger(long(i))
+    else (
+	isneg := i < int64_t(0);
+	absi := if isneg then -i else i;
+	x := newZZmutable();
+	Ccode(void, "mpz_import(", x, ", 1, 1, 8, 0, 0, &", absi, ")");
+	if isneg then -moveToZZandclear(x)
+	else moveToZZandclear(x)));
+export toInteger(i:uint64_t):ZZ := (
+    if i <= uint64_t(possmall) then smallints.(int(i) - negsmall)
+    else if Ccode(bool, "sizeof(long) >= 8") then toInteger(ulong(i))
+    else (
+	x := newZZmutable();
+	Ccode(void, "mpz_import(", x, ", 1, 1, 8, 0, 0, &", i, ")");
+	moveToZZandclear(x)));
 
 abs(x:ZZmutable, y:ZZ) ::= Ccode( void, "mpz_abs(", x, ",", y, ")" );
 
