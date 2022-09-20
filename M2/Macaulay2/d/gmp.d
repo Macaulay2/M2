@@ -120,6 +120,14 @@ export toInt(x:ZZ):int  := int(Ccode(long, "mpz_get_si(", x, ")"));
 
 export toInt(x:ZZcell):int  := int(Ccode(long, "mpz_get_si(", x.v, ")"));
 
+export isUInt(x:ZZ):bool := 0 != Ccode(int, "mpz_fits_uint_p(", x, ")");
+
+export isUInt(x:ZZcell):bool := 0 != Ccode(int, "mpz_fits_uint_p(", x.v, ")");
+
+export toUInt(x:ZZ):uint  := uint(Ccode(ulong, "mpz_get_ui(", x, ")"));
+
+export toUInt(x:ZZcell):uint  := uint(Ccode(ulong, "mpz_get_ui(", x.v, ")"));
+
 export isLong(x:ZZ):bool := 0 != Ccode(int, "mpz_fits_slong_p(", x, ")");
 
 export isLong(x:ZZcell):bool := 0 != Ccode(int, "mpz_fits_slong_p(", x.v, ")");
