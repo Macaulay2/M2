@@ -292,12 +292,14 @@ foreignArrayType(String, ForeignType, ZZ) := (name, T, n) -> (
 	if #x != n then error("expected a list of length ", n);
 	new S from ForeignObject {Address =>
 	    ffiPointerAddress(address T, address \ apply(x, y -> T y))});
-    value S := x -> (
-	ptr := ffiPointerValue address x;
-	sz := size T;
-	apply(n, i -> dereference_T(ptr + i * sz)));
+    value S := x -> for y in x list y;
     S_ZZ := (x, i) -> dereference_T(
 	ffiPointerValue address x + size T * checkarraybounds(n, i));
+    iterator S := x -> ForeignArrayIterator {
+	symbol Pointer => ffiPointerValue address x,
+	symbol Type => T,
+	Index => 0,
+	Length => n};
     S)
 
 ForeignArrayType VisibleList := (T, x) -> new T from x
@@ -305,6 +307,19 @@ ForeignArrayType VisibleList := (T, x) -> new T from x
 -- syntactic sugar based on Python's ctypes
 ZZ * ForeignType := (n, T) -> foreignArrayType(T, n)
 ForeignType * ZZ := (T, n) -> n * T
+
+-- iterator for foreign arrays
+protect Index
+protect Length
+ForeignArrayIterator = new SelfInitializingType of MutableHashTable
+iterator ForeignArrayIterator := identity
+next ForeignArrayIterator := i -> (
+    if i.Index >= i.Length then StopIteration
+    else (
+	ret := dereference_(i.Type) i.Pointer;
+	i.Index = i.Index + 1;
+	i.Pointer = i.Pointer + size i.Type;
+	ret))
 
 -------------------------
 -- foreign struct type --
