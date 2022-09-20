@@ -104,7 +104,7 @@ Pointer - ZZ := (ptr, n) -> ptr + -n
 -- foreign object --
 --------------------
 
-ForeignObject = new SelfInitializingType of BasicList
+ForeignObject = new SelfInitializingType of HashTable
 ForeignObject.synonym = "foreign object"
 net ForeignObject := x -> net value x
 ForeignObject#{Standard, AfterPrint} = x -> (
@@ -115,7 +115,7 @@ ForeignObject#{Standard, AfterPrint} = x -> (
 value ForeignObject := x -> error("no value function exists for ", class x)
 
 address = method(TypicalValue => Pointer)
-address ForeignObject := first
+address ForeignObject := x -> x.Address
 
 foreignObject = method(TypicalValue => ForeignObject)
 foreignObject ForeignObject := identity
@@ -152,7 +152,8 @@ size ForeignType := ffiTypeSize @@ address
 -- so we add the unexported "dereference" method for the latter case
 
 dereference = method()
-dereference(ForeignType, Pointer) := (T, ptr) -> new T from ForeignObject {ptr}
+dereference(ForeignType, Pointer) := (T, ptr) -> new T from ForeignObject {
+    Address => ptr}
 ForeignType Pointer := dereference
 ForeignType ForeignObject := (T, x) -> dereference_T address x
 
@@ -181,7 +182,8 @@ foreignIntegerType(String, ZZ, Boolean) := (name, bits, signed) -> (
     T := new ForeignIntegerType;
     T.Name = name;
     T.Address = ffiIntegerType(bits, signed);
-    new T from ZZ := (T, n) -> new T from {ffiIntegerAddress(n, bits, signed)};
+    new T from ZZ := (T, n) -> new T from {
+	Address => ffiIntegerAddress(n, bits, signed)};
     value T := x -> ffiIntegerValue(address x, bits, signed);
     T)
 
@@ -221,7 +223,7 @@ foreignRealType(String, ZZ) := (name, bits) -> (
     T := new ForeignRealType;
     T.Name = name;
     T.Address = ffiRealType(bits);
-    new T from RR := (T, x) -> new T from {ffiRealAddress(x, bits)};
+    new T from RR := (T, x) -> new T from {Address => ffiRealAddress(x, bits)};
     value T := x -> ffiRealValue(address x, bits);
     T)
 
@@ -243,7 +245,8 @@ voidstar = new ForeignPointerType
 voidstar.Name = "void*"
 voidstar.Address = ffiPointerType
 value voidstar := ffiPointerValue @@ address
-ForeignPointerType Pointer := (T, x) -> new T from {ffiPointerAddress x}
+ForeignPointerType Pointer := (T, x) -> new T from {
+    Address => ffiPointerAddress x}
 
 registerFinalizer(voidstar, Function) := (
     x, f) -> registerFinalizerForPointer(address x, f, value x)
@@ -259,7 +262,8 @@ charstar = new ForeignStringType
 charstar.Name = "char*"
 charstar.Address = ffiPointerType
 value charstar := ffiStringValue @@ address
-ForeignStringType String := (T, x) -> new T from {ffiPointerAddress x}
+ForeignStringType String := (T, x) -> new T from {
+    Address => ffiPointerAddress x}
 
 ------------------------
 -- foreign array type --
@@ -286,7 +290,7 @@ foreignArrayType(String, ForeignType, ZZ) := (name, T, n) -> (
     length S := x -> n;
     new S from VisibleList := (S, x) -> (
 	if #x != n then error("expected a list of length ", n);
-	new S from ForeignObject {
+	new S from ForeignObject {Address =>
 	    ffiPointerAddress(address T, address \ apply(x, y -> T y))});
     value S := x -> (
 	ptr := ffiPointerValue address x;
@@ -321,8 +325,10 @@ foreignStructType(String, VisibleList) := (name, x) -> (
     ptr := T.Address = ffiStructType \\ address \ last \ x;
     types := hashTable x;
     offsets := hashTable transpose {first \ x, ffiGetStructOffsets ptr};
-    new T from HashTable := (T, H) -> new T from {ffiStructAddress(ptr,
-	    apply(first \ x, mbr -> address types#mbr H#mbr))};
+    new T from VisibleList := (T, L) -> (
+	H := hashTable L;
+	new T from hashTable {Address => ffiStructAddress(ptr,
+		apply(first \ x, mbr -> address types#mbr H#mbr))});
     value T := y -> (
 	ptr' := address y;
 	applyPairs(types, (mbr, type) ->
@@ -330,7 +336,7 @@ foreignStructType(String, VisibleList) := (name, x) -> (
     T_String := (y, mbr) -> dereference_(types#mbr)(address y + offsets#mbr);
     T)
 
-ForeignStructType VisibleList := (T, x) -> new T from hashTable x
+ForeignStructType VisibleList := (T, x) -> new T from x
 
 ------------------------
 -- foreign union type --
@@ -355,7 +361,8 @@ foreignUnionType(String, VisibleList) := (name, x) -> (
     T_String := (y, mbr) -> dereference_(types#mbr) address y;
     T)
 
-ForeignUnionType Thing := (T, x) -> new T from {address foreignObject x}
+ForeignUnionType Thing := (T, x) -> new T from {Address =>
+    address foreignObject x}
 
 --------------------
 -- shared library --
