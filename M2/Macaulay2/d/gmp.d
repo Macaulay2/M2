@@ -144,6 +144,22 @@ export toULong(x:ZZ):ulong  := Ccode(ulong, "mpz_get_ui(", x, ")");
 
 export toULong(x:ZZcell):ulong  := Ccode(ulong, "mpz_get_ui(", x.v, ")");
 
+export toInt64(x:ZZ):int64_t := (
+    if Ccode(bool, "sizeof(long) >= 8") then int64_t(toLong(x))
+    else (
+	rop := int64_t(0);
+	Ccode(void, "mpz_export(&", rop, ", NULL, 1, 8, 0, 0, ", x, ")");
+	if isNegative0(x) then -rop else rop));
+export toInt64(x:ZZcell):int64_t := toInt64(x.v);
+
+export toUInt64(x:ZZ):uint64_t := (
+    if Ccode(bool, "sizeof(long) >= 8") then uint64_t(toULong(x))
+    else (
+	rop := uint64_t(0);
+	Ccode(void, "mpz_export(&", rop, ", NULL, 1, 8, 0, 0, ", x, ")");
+	rop));
+export toUInt64(x:ZZcell):uint64_t := toUInt64(x.v);
+
 export minprec := Ccode(ulong,"MPFR_PREC_MIN");
 
 export maxprec := Ccode(ulong,"MPFR_PREC_MAX");
